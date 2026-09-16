@@ -96,6 +96,18 @@ find_package(GTest CONFIG REQUIRED)
 # ProjectMetadataView/BranchTip/RunInfo/DraftInfo〕＋ProjectStore.hpp
 # 增挂 query() 访问器＋PersistenceFormat.hpp 增量 RunManifest 读取类型
 # 〔首消费者＝listRuns；dump 随 T14〕＋Codec 增量 parseRunManifest）。
+# PRJ-T10 落位：src/CommandServiceImpl.cpp 增列（§12 PRJ-T10 行产物——
+# 命令服务与内置命令：S1～S7 编排〔串行槽/形式校验/基线解析/确认决策
+# 映射/双编译编排/CommitPlan 装配〕＋HandlerRegistry＋QueryPort 的
+# hasUnresolvedPayload 判据注入＋ProjectStore::commands() 访问器挂载；
+# CommandServiceImpl.hpp 为 src/ 私有实现头——R-2；公共契约面＝include/
+# sdurws/ird/project/CommandService.hpp〔§3.1 组成表行〕＋ProjectStore.
+#hpp 增挂 commands()；**P-PR-9 阻断登记**：内置元数据命令族
+# （project.create-branch 等，§6.5）的注册 token 被任务卡明示待所有者
+# 裁决（§15.3），本任务不落位该族——机制面与测试处理器先行）。
+# PRJ-T10 同步增列：src/DiagRecords.hpp（PRJ-* 诊断记录共享工厂——
+# ProjectStoreImpl 原文件局部两工厂收敛至此＋stale-revision 新增；
+# 私有实现头不出 include/——R-2）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -104,6 +116,7 @@ add_library(sdurws_ird_project STATIC
     src/TxEngine.cpp
     src/ProjectStoreImpl.cpp
     src/QueryPortImpl.cpp
+    src/CommandServiceImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -204,6 +217,15 @@ endif()
 # 区分〕＋ObjectCache 预算参数生效〔预算传导＋LRU 逐出观测面〕；acceptance 4
 # P-PR-1 视图身份类型 core v0.1 同一性〔编译期 static_assert＋运行期
 # 规范文本往返〕）。
+# PRJ-T10 增列：CommandServiceTest（acceptance 3 单元面＝S1 形式校验
+# 拒绝矩阵〔unknown-command/invalid-payload/未知分支/not-writable＋
+# PRJ-LOCK-HELD/PRJ-WRITE-AUTHORITY-LOST 稳定诊断〕＋S3 处理器三态＋S4
+# 确认决策四路〔unresolved/rejected/lost/放行——§6.7〕＋S6 提交面
+# 〔恰一修订/seq 单调/负载透传 D-10/逆命令持久化 round-trip/对象身份
+# 双路径/元数据增量机制面〔P-PR-9 不越界——无点 token〕〕＋S7 事件
+# FIFO 与 D-18 不回滚＋hasUnresolvedPayload 判据注入〔T09 承诺兑现〕
+# ＋注册表契约/命令槽直接观测/装配违约）；StubHandlers.cpp（§12 行
+# test/StubHandlers.*——测试处理器桩/编译端口桩/交互桩/共享夹具）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -216,7 +238,9 @@ add_executable(sdurws_ird_project_test
     test/RevisionIndexTest.cpp
     test/TxEngineTest.cpp
     test/ProjectStoreTest.cpp
-    test/QueryPortTest.cpp)
+    test/QueryPortTest.cpp
+    test/CommandServiceTest.cpp
+    test/StubHandlers.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
 # src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经
@@ -278,9 +302,17 @@ add_custom_command(TARGET sdurws_ird_project_test POST_BUILD
 # （_test 目标）建立——CapturingSink 实现 §5.0 IDiagnosticsSink 并以
 # core::DiagnosticRecord 承载断言；本目标仍以构建图文本扫描＋配置期守卫
 # ＋双模式链接成功承载边界证据（LinkageContractTest 零改动）。
+# PRJ-T10 增列：CommandContractTest（acceptance 1/2 的契约面——§3.3
+# "命令契约属跨单元契约测试面"：PRJ-TX-1 双线程并发 submit 全局串行
+# 〔各恰一修订/seq 单调无重复/线性链〕＋过期基线 Rejected(stale-revision)
+# ＋PRJ-STALE-REVISION-REJECTED 稳定码双通道；PRJ-TX-3 双编译桩三路
+# 〔WC 失败/DWC 失败→Failed(compile-failed)＋无修订无发布＋.staging/tmp
+# 清理；双成功→恰一修订〕；§5.3.6 冻结签名消费——P-PR-7）。
 add_executable(sdurws_ird_project_contract_test
     test/LinkageContractTest.cpp
-    test/LockContractTest.cpp)
+    test/LockContractTest.cpp
+    test/CommandContractTest.cpp
+    test/StubHandlers.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：LockContractTest.cpp 消费
 # src/win32/{StoreLock,PathCanonical}.hpp 与 ILockOps 真实实现（acceptance

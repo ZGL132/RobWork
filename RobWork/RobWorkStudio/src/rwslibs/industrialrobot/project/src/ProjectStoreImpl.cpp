@@ -87,6 +87,8 @@
 #include <utility>
 
 #include "Codec.hpp"
+#include "CommandServiceImpl.hpp"
+#include "DiagRecords.hpp"
 #include "QueryPortImpl.hpp"
 #include "win32/AtomicFile.hpp"
 #include "win32/ILockOps.hpp"
@@ -103,6 +105,15 @@ namespace {
 /// 新建项目登记的创建工具版本（§4.2 createdWithToolVersion；诊断/兼容
 /// 排查用透传串——阶段 A 首版固定值，版本管理随产品发布流程演进）。
 constexpr const char* kCreatedWithToolVersion = "RobWork-IndustrialRobot/0.1";
+
+/// 初始修订 r0 的命令留痕 token（createNew 存储侧占位——元数据零增量，
+/// 随 r0 持久化供历史浏览）。无点形态符合 §4.4.4 冻结语法；该 token 是
+/// project 自有 bootstrap 面（非 §6.5 内置元数据命令族成员——后者属
+/// P-PR-9 待裁决面）：无任何域处理器消费它，因此 §6.3 末行的
+/// hasUnresolvedPayload 判据必须显式豁免（否则每个新建项目的根修订都
+/// 被误报"payload 不解析"——历史浏览 PM-12-S1 失真；查询端口注入的
+/// CommandKnownFn 消费本常量，见 ProjectStoreImpl 构造体）。
+constexpr const char* kInitialCommandType = "project-init";
 
 /// 初始分支显示名（label 创建时一次写入——P-PR-8；单元卡 §4.5.1 走查
 /// 与 TxEngineTest 种子同名的惯例主分支名）。
@@ -305,32 +316,9 @@ core::DiagnosticRecord makeOrphanDraftRecord(std::size_t count)
         "清理（存储区文件由软件管理，请勿手工删除）");
 }
 
-/// PRJ-WRITE-AUTHORITY-LOST 记录（上下文态写拒绝——§5.1 生命周期图
-/// "迟到写请求=拒绝+诊断"；锁面拒绝的诊断由 StoreLock 产出）。
-core::DiagnosticRecord makeWriteAuthorityLostRecord(const std::string& detail)
-{
-    return core::DiagnosticRecord::make(
-        std::string{"PRJ-WRITE-AUTHORITY-LOST"},
-        std::nullopt,
-        std::nullopt, std::nullopt,
-        "项目存储上下文已不接受写入（关闭中或已关闭/写权限已丢失）",
-        detail,
-        "如需继续编辑，请重新打开该项目；迟到的保存/提交/归档请求"
-        "已被拒绝，数据未受影响");
-}
-
-/// PRJ-LOCK-HELD 记录（只读上下文写拒绝＋降级打开场景——含持有 PID）。
-core::DiagnosticRecord makeLockHeldRecord(const std::string& detail)
-{
-    return core::DiagnosticRecord::make(
-        std::string{"PRJ-LOCK-HELD"},
-        std::nullopt,
-        std::nullopt, std::nullopt,
-        "项目当前以只读方式打开（写权限由其他实例持有或介质只读）",
-        detail,
-        "关闭占用该项目的其他窗口/实例后重试；只读模式下可以查看"
-        "但不能编辑、提交或保存草稿");
-}
+// PRJ-WRITE-AUTHORITY-LOST／PRJ-LOCK-HELD 记录工厂已随 PRJ-T10 收敛至
+// src/DiagRecords.hpp（diagrec 命名空间——多端口共享装配点，防码值/文案
+// 漂移；本文件原 file-local 版本删除，调用点改用 diagrec:: 别名）。
 
 /**
  * @brief 工厂级互斥（§5.1"内部互斥"）：open/createNew 的全程串行点＋
@@ -666,8 +654,10 @@ ProjectStoreImpl::ProjectStoreImpl(std::unique_ptr<win32::StoreLock> lock,
                                    const ProjectMetadataRecord& authoritative,
                                    const ObjectRefPair& authoritativeRef,
                                    core::IDomainEventBus* eventBus,
-                                   IDiagnosticsSink* sink)
-    : m_lock(std::move(lock))
+                                   IDiagnosticsSink* sink,
+                                   std::shared_ptr<void> collectorLifetime)
+    : m_collectorLifetime(std::move(collectorLifetime))
+    , m_lock(std::move(lock))
     , m_lockView(lockView)
     , m_canonicalDir(std::move(canonicalDir))
     , m_canonicalDirFs(m_canonicalDir)
@@ -688,13 +678,28 @@ ProjectStoreImpl::ProjectStoreImpl(std::unique_ptr<win32::StoreLock> lock,
             "project/store: 装配违约——objects/index/engine 不得为空");
     }
 
+    // 命令服务装配（PRJ-T10——§5.1 commands() 访问器的交付物）：先于
+    // 查询端口创建——注册表引用注入查询端口的 hasUnresolvedPayload 判据
+    // （§5.2 增量落位说明 3：T10 装配注册表后注入判据，届时真判定）。
+    // 编译端口装配期可空（§5.3.6 L5 注入面——requiresDualCompile 命令
+    // 在空端口态 fail-fast）；诊断 sink 与宿主同源（§5.0）。
+    m_commands = std::make_unique<CommandServiceImpl>(*this,
+                                                      nullptr,
+                                                      m_sink);
+
     // 查询端口装配（PRJ-T09——§5.1 query() 访问器的交付物）：构造于
     // 装配末尾，部件（索引/对象库/权威快照）已全部就绪；端口消费宿主
     // 的锁与部件（friend 窄访问），本身不持有项目状态。命令类型判据
-    // 本阶段为空——命令注册表归命令服务（PRJ-T10）落位时注入
-    // （hasUnresolvedPayload 判定机制见 QueryPort.hpp 增量落位说明 3）。
-    m_query = std::make_unique<QueryPortImpl>(*this,
-                                              QueryPortImpl::CommandKnownFn{});
+    // 自本任务起注入命令服务注册表查询（§6.3 末行：历史修订中的未知
+    // 命令类型 → hasUnresolvedPayload=true——判据线程安全由注册表
+    // 内部互斥保证）。
+    m_query = std::make_unique<QueryPortImpl>(
+        *this, [service = m_commands.get()](std::string_view commandType) {
+            // 初始修订 bootstrap token 豁免（kInitialCommandType 注释——
+            // 无域处理器消费的 project 自有留痕，不构成"未知命令类型"）。
+            return commandType == kInitialCommandType
+                || service->registry().find(commandType) != nullptr;
+        });
 }
 
 IProjectQueryPort& ProjectStoreImpl::query() const noexcept
@@ -704,6 +709,14 @@ IProjectQueryPort& ProjectStoreImpl::query() const noexcept
     // 碰宿主成员）——本类对象生存期内该引用恒可用。noexcept 纯指针
     // 返回，任何状态下可调（Closed 后端口方法自行拒绝）。
     return *m_query;
+}
+
+ProjectCommandService& ProjectStoreImpl::commands() const noexcept
+{
+    // 同 query() 的装配不变量（m_commands 构造先于 m_query——命令服务
+    // 就绪早于查询端口，本引用在宿主生存期内恒可用）。Closed 后仍可取
+    // 引用（提交在 S1 拒绝——拒绝语义在 submit 内，§6.1）。
+    return *m_commands;
 }
 
 bool ProjectStoreImpl::writable() const noexcept
@@ -864,7 +877,7 @@ tx::CommitResult ProjectStoreImpl::executeCommit(const tx::CommitPlan& plan)
                 = m_state == StoreLifecycleState::Draining ? "draining"
                                                            : "closed";
             if (m_sink != nullptr) {
-                m_sink->report(makeWriteAuthorityLostRecord(
+                m_sink->report(diagrec::makeWriteAuthorityLost(
                     "project/store: 写拒绝（上下文非 Active） state="
                     + std::string{stateName} + " branch="
                     + plan.branchId.toCanonical()));
@@ -879,7 +892,7 @@ tx::CommitResult ProjectStoreImpl::executeCommit(const tx::CommitPlan& plan)
     // 存储侧落实——§8.6）。诊断 PRJ-LOCK-HELD（§9.5 锁竞争行）。
     if (m_lock == nullptr) {
         if (m_sink != nullptr) {
-            m_sink->report(makeLockHeldRecord(
+            m_sink->report(diagrec::makeLockHeld(
                 "project/store: 写拒绝（只读上下文——写权限由其他实例"
                 "持有）"));
         }
@@ -959,7 +972,16 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
     // 打开期统一诊断出口（收集型包装——RecoveryReport 快照与 sink 上报
     // 同源同序；见 CollectingSink 头注）。工厂串行由调用方负责
     // （openLocked 的前置约定——公开 open/createNew 均已持锁）。
-    CollectingSink collector(request.diagnostics);
+    // 生命周期（wp04-t10 缺陷修复登记，DTB §5.4）：collector 以
+    // shared_ptr 堆分配并由返回的上下文持有锚（m_collectorLifetime）——
+    // TxEngine/ObjectStore/StoreLock 三个**长寿命部件**构造期绑定的
+    // sink 指针指向它，打开后仍持续转发到调用方 sink。此前为工厂栈
+    // 局部对象，open 返回即悬空——任何打开后的引擎级开发诊断（事件
+    // 发布失败重试 D-18、第 3/5/7 步开发诊断等）都会踩悬空指针（T10
+    // 的 D-18 端到端用例暴露；此前 T07 的 D-18 用例直连引擎未覆盖
+    // 工厂装配路径）。
+    auto collector
+        = std::make_shared<CollectingSink>(request.diagnostics);
 
     // ---- ② 目录形态与版本检查（PM-02②/PM-06）：project.json 缺失＝
     // 非项目目录（§4.1 行）；版本判定由 Codec（FormatLegacy/
@@ -977,11 +999,11 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
     } catch (const StoreError& e) {
         // 稳定只读拒绝＋诊断码（PM-06）。原文件不动——打开路径零写入。
         if (e.code() == StoreErrorCode::FormatLegacy) {
-            collector.report(makeFormatLegacyRecord(e.what()));
+            collector->report(makeFormatLegacyRecord(e.what()));
         } else if (e.code() == StoreErrorCode::SchemaFuture) {
-            collector.report(makeSchemaFutureRecord(e.what()));
+            collector->report(makeSchemaFutureRecord(e.what()));
         } else {
-            collector.report(makeOpenCorruptRecord("project/open: "
+            collector->report(makeOpenCorruptRecord("project/open: "
                                                    "project.json 解析拒绝 "
                                                    + std::string(e.what())));
         }
@@ -1006,7 +1028,7 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
         // 分支（PM-07 降级只读＋PRJ-LOCK-HELD 由 StoreLock 内产出——
         // 其 sink 参数给 collector，诊断同时进报告快照）。
         auto acquired = std::make_unique<win32::StoreLock>(
-            &sharedLockOps(), &collector, (projectDir / "lock").wstring(),
+            &sharedLockOps(), collector.get(), (projectDir / "lock").wstring(),
             self);
         if (acquired->status() == win32::AcquireStatus::HeldByOther) {
             // 降级只读（不阻塞等待）；lockView 保留他方持有者（PM-07）。
@@ -1019,7 +1041,7 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
                 // media-read-only——diagnostics 映射表行）。
                 lockView.holder = acquired->lastHolder();
                 lockView.isSelf = false;
-                collector.report(makeLockHeldRecord(
+                collector->report(diagrec::makeLockHeld(
                     "project/open: 介质只读，已降级只读打开 kind="
                     "media-read-only osError="
                         + std::to_string(acquired->acquireOsError())));
@@ -1064,11 +1086,11 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
         request.cacheBudget.budgetBytes != 0
             ? request.cacheBudget.budgetBytes
             : objstore::ObjectStore::kDefaultCacheBudgetBytes,
-        &collector);
+        collector.get());
     auto index = std::make_unique<revindex::RevisionIndex>();
     auto engine = std::make_unique<tx::TxEngine>(&sharedFileOps(), projectDir,
                                              objects.get(), index.get(),
-                                             request.eventBus, &collector);
+                                             request.eventBus, collector.get());
 
     const tx::TxRecoveryScan scan = engine->scanForRecovery();
     if (!scan.headIntegrityVerified) {
@@ -1083,24 +1105,25 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
     ProjectMetadataRecord authoritative;
     ObjectRefPair authoritativeRef;
     loadCommittedState(*engine, *objects, *index, scan, identity.projectId,
-                       identity.schemaVersion, &collector, head, authoritative,
-                       authoritativeRef);
+                       identity.schemaVersion, collector.get(), head,
+                       authoritative, authoritativeRef);
 
     // ---- ⑤ 孤儿草稿扫描（§7.4③）＋用户级汇总诊断（报告快照同步收集）。
     const std::vector<std::string> orphans
         = scanOrphanDrafts(projectDir, authoritative, identity.projectId,
-                           &collector);
+                           collector.get());
     if (!orphans.empty()) {
-        collector.report(makeOrphanDraftRecord(orphans.size()));
+        collector->report(makeOrphanDraftRecord(orphans.size()));
     }
 
     // ---- 激活（完整构造成功后才交付——§8.7"激活前失败不影响当前
-    // 项目"；装配序实现口径⑧）。
+    // 项目"；装配序实现口径⑧）。collector 锚随上下文移交（生命周期
+    // 缺陷修复——见 openLocked 内 collector 注释）。
     OpenStoreResult result;
     std::unique_ptr<ProjectStoreImpl> impl(new ProjectStoreImpl(
         std::move(lock), lockView, canon.canonical, std::move(objects),
         std::move(index), std::move(engine), head, authoritative,
-        authoritativeRef, request.eventBus, request.diagnostics));
+        authoritativeRef, request.eventBus, request.diagnostics, collector));
     registryGuard.disarm();  // 注册表注销责任移交 impl 的关闭路径
     result.store = std::move(impl);
     result.writable = result.store->writable();
@@ -1109,7 +1132,7 @@ OpenStoreResult openLocked(const OpenStoreRequest& request)
     result.recovery.ignoredStagingTxs = scan.ignoredStagingTxs;
     result.recovery.orphanDraftFiles = orphans;
     result.recovery.danglingObjectCount = scan.danglingObjectCount;
-    result.recovery.diagnostics = collector.seen();
+    result.recovery.diagnostics = collector->seen();
     return result;
 }
 
@@ -1262,7 +1285,7 @@ OpenStoreResult ProjectStoreFactory::createNew(
         // 初始命令留痕（§4.4.4；project-init＝新建存储侧的占位留痕——
         // 元数据零增量，随 r0 持久化供历史浏览）。
         CommandRecord initCommand;
-        initCommand.commandType = "project-init";
+        initCommand.commandType = kInitialCommandType;
         initCommand.payloadFormatVersion = 1;
         initCommand.payloadCanonical = "{}";
         initCommand.summary = "createNew: 初始修订（M0/main）";

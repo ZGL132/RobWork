@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T10",
+  "masterWp": "WP-04-T10",
+  "branch": "wp04-t10",
+  "base": "a02a8a9d073af7c78a93c6ee7531c75ad1032d6c",
+  "date": "2026-09-16",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "partialDelivery": {
+    "blocked": "P-PR-9（units/project.md §15.3，PRJ-T04 登记）",
+    "scope": "acceptance 4 的内置元数据命令族半区（project.create-branch 等，§6.5 含点示例）不落位——§4.4.4 冻结语法 ^[a-z0-9-]{3,64} 与含点 token 的二选一属单元卡明示的所有者裁决面（『PRJ-T10 落位内置元数据命令族时注册 token 被字段校验拒绝……不在代码中私自裁决』）。本任务交付该命令族之外的全部契约面：CommandService.hpp 全类型、CommandServiceImpl（S1～S7/串行槽/注册表/编译编排/确认决策映射）、HandlerRegistry 机制与判据注入、ProjectStore::commands() 访问器、测试处理器桩（断言判定注入——P-PR-3 处置的测试侧形态，无点 token）与元数据增量机制面（test-create-branch 走 CommandPlan.metadataChange 声明面验证）。裁决后内置命令族按其增量任务落位（HandlerRegistry/提交路径/持久化面均已就绪，仅缺处理器实体与注册）。",
+    "acceptanceCoverage": "1=全（契约测试 PRJ-TX-1 两用例）；2=全（契约测试 PRJ-TX-3 三用例）；3=全（S1～S7 时序/串行槽/§6.3 拒绝码/§6.4 载荷版本/§5.3.6 冻结签名）；4=部分（HandlerRegistry＋测试处理器＋P-PR-3 处置＝全；内置元数据命令族＝blocked）；5=全（P-PR-6 sink 注入＋收编码值、P-PR-1 事件 v0.1 基线、D-18 不回滚端到端）"
+  },
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成构建 exit 0 零 error）",
+      "notes": "PRJ-T10 落位：include/sdurws/ird/project/CommandService.hpp 新增（§3.1 组成表行——CommandEnvelope/CommandStatus/CommandResult、ObjectWrite/MetadataChange/CommandPlan/PrepareOutcome/HandlerContext/ICommandHandler、ICommandInteraction、IModelCompilePort/CompileRequest/CompileResult〔§5.3.6 三字段冻结签名——P-PR-7 单侧冻结不私改〕、HandlerRegistry、ProjectCommandService）＋ProjectStore.hpp 增挂 commands() 访问器（§5.1 原文形态）＋src/CommandServiceImpl.{hpp,cpp} 新增（§12 PRJ-T10 行产物——S1～S7 编排/串行槽/确认决策映射/CommitPlan 装配单一分配点）＋src/DiagRecords.hpp 新增（PRJ-* 诊断记录共享工厂——ProjectStoreImpl 原文件局部两工厂收敛＋makeStaleRevision 新增）＋ProjectStoreImpl 增挂 commands()/commandService()/readOnlyContext()/compileTmpDir()＋QueryPortImpl 的 hasUnresolvedPayload 判据注入（T09 预留口径兑现）。CMakeLists.txt 增列与注释更新。"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "206/206 PASSED（两模式一致：smoke 与 integration 各 206/206，零失败零跳过）",
+      "notes": "新增 CommandServiceTest 23 用例（acceptance 3＝S1 拒绝矩阵〔UnknownCommandType/InvalidPayload 版本不受理/未知分支〔实现口径① invalid-payload〕/ReadOnlyContext〔Rejected(not-writable)＋PRJ-LOCK-HELD＋error=LockHeldByOther〕/ClosedContext〔同上＋PRJ-WRITE-AUTHORITY-LOST＋error=ContextClosed〕〕＋S3 处理器三态〔HardAssertFailed 诊断透传无修订/PrepareInvalidInput〕＋S4 确认决策四路〔FindingsWithoutInteraction→confirmations-unresolved＋findings 回传/InteractionRejects→confirmations-rejected/InteractionDead·Throws→interaction-lost/InteractionConfirms→Committed——§5.3.3/§6.7〕＋S6 提交面〔AppendObject 恰一修订 seq 单调/负载透传 D-10/事件 FIFO §6.8；ObjectIdAllocation 双路径；InverseDeclaration 持久化 round-trip——§6.9；UnknownCommandTypeInHistory 重开三态——§6.3 末行/T09 注入点真判定〕＋元数据增量机制面〔CreateBranchMechanics 无 tipUpdate＋addedBranches base/tip=源 tip——§4.5.1 走查步骤 1 形态；DisplayNameR2Reserved 拒绝——增量落位说明 1〕；acceptance 4＝CommandRegistry〔RegisteredTypes 字典序 NFR-COR-02/DuplicateRegistration 边界拒绝 invalid_argument〕＋测试处理器桩断言判定注入；acceptance 5＝EventPublishFailure D-18 端到端〔submit 经工厂装配上下文——发布失败提交不回滚＋开发诊断可见〕）。既有 183 用例零回归（QueryPortTest 一处预期更新见 implementationNotes）。稳定性：契约目标 6 连跑全绿；本目标单跑 3 次全绿。",
+      "xml": "sdurws_ird_project_test-smoke.xml / sdurws_ird_project_test-integration.xml"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "15/15 PASSED（两模式一致：smoke 与 integration 各 15/15；稳定化后 6 连跑全绿）",
+      "notes": "新增 CommandContractTest 5 用例（命令契约属 §3.3 跨单元契约测试面——契约 note 明示）：acceptance 1＝PRJ-TX-1 两用例〔TwoConcurrentSubmits：双线程并发 submit 全局串行（第二等待）——各恰一新修订/seq 相差恰 1 无重复/parent 线性链 {原 tip, 先提交者}/HEAD=后提交者/revisions 目录计数恰 +2；StaleBaseline：expectedRevision=旧 tip → Rejected(stale-revision)＋PRJ-STALE-REVISION-REJECTED 双通道（sink 用户级＋结果内诊断）＋无修订落盘＋分支 tip 不变＋缺省基线不受影响〕；acceptance 2＝PRJ-TX-3 三用例〔WC 失败/DWC 失败→Failed(compile-failed)＋端口诊断透传＋无修订无发布（对象库无新对象）＋.staging/tmp 清理＋编译输入观测（plannedWrites/baseRevision/查询端口可用——§6.6 编译输入＝计划闭包）；双成功→恰一新修订（对象库 +2＝域对象＋元数据对象）〕；acceptance 3＝串行槽直接观测归单元面（CommandSlot.SecondSubmitWaitsWhileFirstInPrepare）。既有 10 用例零回归。"
+    }
+  ],
+  "builds": [
+    { "mode": "integration", "log": "integration-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_test（契约 verify 命令 1）" },
+    { "mode": "integration", "log": "integration-contract-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_contract_test（契约 verify 命令 2）" },
+    { "mode": "smoke-configure", "log": "smoke-configure.log", "exitCode": 0, "toolchain": "vcpkg 绝对路径（AGENTS §4.1 冒烟必带）" },
+    { "mode": "smoke-build", "log": "smoke-build.log", "exitCode": 0, "errors": 0 },
+    { "mode": "smoke-test-run", "log": "smoke-test-run.log", "exitCode": 0 },
+    { "mode": "smoke-contract-test-run", "log": "smoke-contract-test-run.log", "exitCode": 0 },
+    { "mode": "integration-test-run", "log": "integration-test-run.log", "exitCode": 0 },
+    { "mode": "integration-contract-test-run", "log": "integration-contract-test-run.log", "exitCode": 0 }
+  ],
+  "gates": {
+    "ird_gates": "实跑（2026-09-16，集成构建树 ird_gates 目标；日志 ird-gates.log）：命中 9 项＝7×IRD-GATE-SUB（测试目标直链 sdurws_ird_testkit——跨单元经 testkit 替身/登记的既有形态提示）＋1×IRD-GATE-T1（sdurws_ird_testdata_lint 产品目标链接 testkit）＋1×IRD-GATE-R4（ProjectStoreImpl.cpp 的 \"RobWork\" 字面量 1 处——kCreatedWithToolVersion 工具版本串，git show base 核对为 T08 既有、非本任务新增）。命中集合与 wp04-t08/t09 基线逐项一致＝零新增命中（PRJ-T07 起同口径）；门禁目标按 SA-10 设计命中即非零退出（exit 1），既有命中属基线登记面非本任务违规。",
+    "validateTask": "PASS（validate-task.log；pwsh -File validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T10.json，exit 0——PASS (1 tasks)）"
+  },
+  "implementationNotes": "实现口径登记六项（DTB §5.4，详见 CommandService.hpp/CommandServiceImpl.hpp/CommandServiceImpl.cpp 文件头）：①S1 未知分支→Rejected(invalid-payload)（§5.0 封闭集无『未知分支』稳定码，不私扩——§5.2 branchHistory 先例）；②Rejected(not-writable) 的 error 字段携带对应门卫稳定码（ContextClosed/LockHeldByOther/WriteRejected）＋同码用户诊断（diagrec 共享工厂）；执行中门卫 ContextClosed→Aborted(context-closing)（§6.7 排空中止）；③CreateBranch 型提交形态＝无 tipUpdate＋addedBranches（base/tip＝源分支 tip——§4.5.1 走查步骤 1/3：CreateBranch 修订 parent＝源分支 tip、非任何分支 tip）；其余提交一律 tipUpdate{活动分支→新修订}；④逆命令载荷版本＝处理器 currentPayloadVersion()（CommandPlan 未单列逆版本字段）；⑤编译临时产物清理（D-09/§6.6『随事务/命令结束清理』）由命令服务编排兑现——命令结束清空 .staging/tmp 内容（目录保留）；§6.6『CompileRequest 携带专用临时目录』与 §5.3.6 冻结三字段签名冲突——按 P-PR-7 冻结面执行不增字段，runtime 详设如需专用目录随其裁决；⑥requiresDualCompile 而端口未注入＝装配违约 invalid_argument fail-fast；HandlerRegistry 重复/空 token 注册＝invalid_argument（§5.3.5 边界拒绝）。确认绑定复核与 command.json confirmations[] 留痕归 PRJ-T11（§12 分工——本任务 S4 落决策映射＋凭据回填 finding）。缺陷修复登记（PRJ-T08 装配期遗留，本任务 D-18 端到端用例暴露）：openLocked 的 CollectingSink 为工厂栈局部对象，而 TxEngine/ObjectStore/StoreLock 三个长寿命部件构造期绑定其指针——open 返回即悬空，任何打开后的引擎级开发诊断（事件发布失败重试 D-18、ObjectStore 容错 reportDev、StoreLock 心跳面）踩悬空指针。修复＝collector 改 shared_ptr 堆分配＋ProjectStoreImpl 持有生命周期锚 m_collectorLifetime（声明序在全部部件之前＝析构最后；类型擦除 shared_ptr<void>，删除器创建点捕获），部件绑定的指针语义不变（转发到调用方 sink——§5.1 注入面生存期契约由调用方继续承担）。测试侧修正两项（评审可核）：QueryPortTest.RevisionView_HeadAndRevision 预期 hasUnresolvedPayload false→true（该用例提交 token 未注册——T09 注释明文预留『T10 注入判据后真判定』，现真判定为 true＝§6.3 末行正确行为）；新增测试的夹具端口所有权归夹具成员（构造器局部 unique_ptr 释放即悬空的 use-after-free 于稳定化 6 连跑中暴露并修复——留痕于实现过程，非产品代码缺陷）。"
+}
