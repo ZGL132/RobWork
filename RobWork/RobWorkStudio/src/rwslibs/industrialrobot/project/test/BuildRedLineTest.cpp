@@ -127,8 +127,18 @@ TEST(ProjectBuild, NoQtInclude_DT_BUILD_NFR_MNT_01)
                 // project 的文件/线程/时间原语用 std＋Win32（§1.4），定时器
                 // 归 ui 会话层（ARCH §3.1 DraftController）——零 Qt 是设计
                 // 决策 D-01 而非仅层规则底线。
-                if (line.find("#include <Q") != std::string::npos
-                    || line.find("#include \"Q") != std::string::npos) {
+                // 误报排除（PRJ-T09 登记）：单元卡 §3.1 点名的公共头
+                // QueryPort.hpp（②查询端口契约——§5.2）及其实现头以
+                // "Query" 开头，命中 `#include "Q` 前缀启发式——Qt 头
+                // 词表无 "Query*"（QtCore/QtGui/QtWidgets/…），本单元
+                // 自有 Q 头以显式白名单排除；白名单随新增 Q 开头的自有
+                // 头增量维护（红线判定不受影响——Qt 形态仍全盖）。
+                const bool qtLikeInclude
+                    = line.find("#include <Q") != std::string::npos
+                      || line.find("#include \"Q") != std::string::npos;
+                const bool ownQHeader
+                    = line.find("#include \"QueryPort") != std::string::npos;
+                if (qtLikeInclude && !ownQHeader) {
                     ADD_FAILURE() << "project 禁含 Qt 头（含 Core，D-01）: "
                                   << rel.string() << ":" << lineno;
                 }
