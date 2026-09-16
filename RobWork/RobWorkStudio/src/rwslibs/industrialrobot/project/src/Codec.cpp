@@ -1349,6 +1349,67 @@ DraftDocument parseDraftDocument(std::string_view text)
     return v;
 }
 
+RunManifest parseRunManifest(std::string_view text)
+{
+    JsonParser parser(text);
+    const JsonValue root = parser.parseDocument();
+    // 无 schemaVersion/formatId 字段（§4.4.7 表）——同 RevisionManifest/
+    // CommandRecord，版本语义由容器判定，按当前支持版本的结构严格解析
+    // （未知字段拒绝——tolerate 恒 false）。
+    if (root.kind != JsonValue::Kind::Object) {
+        corrupt("top-level value must be an object (run-manifest)");
+    }
+
+    RunManifest v;
+    // taskIdentity 五元组（§4.4.7 必填；字段序＝core TaskIdentity 声明序
+    // ——project/branch/revision/run/attempt）。身份字段一律 core 规范
+    // 文本（§4.4 约定），五个身份逐字段严格解析。
+    {
+        const JsonValue& task = requireObjectField(root, "taskIdentity");
+        core::TaskIdentity t;
+        t.project = requireIdField<core::ProjectId>(task, "project");
+        t.branch = requireIdField<core::BranchId>(task, "branch");
+        t.revision = requireIdField<core::RevisionId>(task, "revision");
+        t.run = requireIdField<core::RunId>(task, "run");
+        // attempt＝"att-<十进制>"（core AttemptId 规范文本；0 与溢出在
+        // 解析边界拒绝——core 契约）。
+        t.attempt = requireIdField<core::AttemptId>(task, "attempt");
+        if (!t.isValid()) {
+            corrupt("taskIdentity has invalid member（五元组须全有效）");
+        }
+        rejectUnknownFields(task, {"project", "branch", "revision", "run", "attempt"},
+                            false);
+        v.taskIdentity = t;
+    }
+    // items ≥1（§4.4.7 必填（≥1）——空运行不发布 manifest）。
+    const JsonValue& items = requireArrayField(root, "items");
+    if (items.items.empty()) {
+        corrupt("items must not be empty（§4.4.7 ≥1）");
+    }
+    for (const JsonValue& item : items.items) {
+        if (item.kind != JsonValue::Kind::Object) {
+            corrupt("items entries must be objects");
+        }
+        RunManifestItem r;
+        r.relPath = requireStringField(item, "relPath");  // 相对路径透传
+        r.sha256 = requireHex64Field(item, "sha256");     // 透传不重算（CR-02）
+        r.sizeBytes = requireUint64Field(item, "sizeBytes");
+        rejectUnknownFields(item, {"relPath", "sha256", "sizeBytes"}, false);
+        v.items.push_back(std::move(r));
+    }
+    v.runKind = requireTokenField(root, "runKind");
+    // evaluationKey＝execution 登记透传（评估键；非空 ASCII token 口径，
+    // 词表归 execution——本层只做 token 形态校验）。
+    v.evaluationKey = requireTokenField(root, "evaluationKey");
+    v.finalizedAtUtc = requireTimestampField(root, "finalizedAtUtc");
+    v.manifestDigest = requireHex64Field(root, "manifestDigest");  // 幂等判据（§10.1）
+    rejectUnknownFields(root,
+                        {"taskIdentity", "items", "runKind", "evaluationKey",
+                         "finalizedAtUtc", "manifestDigest"},
+                        false);
+    return v;
+}
+
 // ---- CR-02 唯一摘要入口 ----
 
 core::ContentVersion contentVersionOf(std::string_view payloadBytes)

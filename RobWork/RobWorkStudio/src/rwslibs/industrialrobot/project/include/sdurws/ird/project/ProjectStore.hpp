@@ -54,6 +54,11 @@
 
 namespace sdurws::ird::project {
 
+// IProjectQueryPort 完整定义于 QueryPort.hpp（本头只前向声明——query()
+// 以引用返回接口；消费者调用端口方法需自行 include QueryPort.hpp，
+// 存储上下文头不承载端口契约——头职责单一）。
+class IProjectQueryPort;
+
 /**
  * @brief 关闭完成观察者（§5.1 ProjectStore::subscribeClose 的回调契约）。
  *
@@ -131,6 +136,32 @@ public:
      *        判定与最近项目去重的键）。
      */
     [[nodiscard]] virtual std::filesystem::path canonicalPath() const = 0;
+
+    // ---- 端口访问器（§5.1 原文形态；随端口实现任务增量挂载） ----
+
+    /**
+     * @brief 查询端口（②端口，§5.1 原文"含只读实例"——PRJ-T09 增量
+     *        挂载）。项目只读状态的唯一合法视图入口（ARC-02 端口协作：
+     *        消费方只经本端口取只读快照，无私有互访——ARCH §7.2）。
+     *
+     * 语义（§5.2/§4.7）：
+     *   - 引用与上下文同生命周期（上下文销毁后引用失效——常规 C++
+     *     生存期纪律）；同一上下文多次调用返回同一实例（端口无独立
+     *     生命周期——它是上下文的视图面）；
+     *   - 只读打开的实例同样提供查询（PM-07 可查看——写入被拒但读取
+     *     全量可用）；
+     *   - 上下文 Closed 后端口进入拒绝态（各方法抛 ContextClosed；
+     *     noexcept 的 tryObject 以 nullopt 表达——§5.2 签名契约），
+     *     Draining 排空期查询仍可用（PM-03 关闭对话框的呈现数据源）；
+     *   - 本访问器本身 noexcept 不抛、任何状态下可调（Closed 后仍可取
+     *     引用再观察拒绝态——诊断/呈现场景）。
+     *
+     * @return 查询端口接口引用（非 owning——随上下文消亡）
+     *
+     * 线程安全：并发安全（返回同一实例的引用；实例方法各自线程安全
+     * ——§4.7"查询端口全部方法线程安全"）。
+     */
+    [[nodiscard]] virtual IProjectQueryPort& query() const noexcept = 0;
 
     // ---- 关闭协议（PM-03"等待"选项的实现锚点；§9.7） ----
 
