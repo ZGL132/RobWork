@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-C",
   "title": "打开与恢复（ProjectStoreFactory/ProjectStoreImpl）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T03", "PRJ-T07"],
   "requirements": ["PM-02", "PM-06", "PM-08"],
   "designRefs": ["units/project.md#12", "units/project.md#8.7", "units/project.md#7.4"],
