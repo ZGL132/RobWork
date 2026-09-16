@@ -147,6 +147,21 @@ struct LockRecordRead {
 LockRecordRead readHolderRecord(ILockOps* ops, const std::wstring& lockPath);
 
 /**
+ * @brief 任意 UTC 时刻的 ISO-8601 带毫秒文本（定宽 24 字节）。
+ *
+ * 格式 YYYY-MM-DDTHH:MM:SS.mmmZ——本单元时间戳的**唯一编码形式**（PRJ-T11
+ * 增量：确认凭据 confirmedAtUtc 的 time_point→磁盘文本转换载体——§4.4.4
+ * ConfirmationCredentialRecord"互转归确认流编排"的落位点），锁记录心跳
+ * 与命令提交时间同用此格式。确定性说明：结果随时钟输入变化，**不得**参与
+ * 任何内容寻址/身份计算（CON-05）——它只进诊断与留痕展示通道。
+ *
+ * @param tp [in] UTC 时刻（system_clock 时间点；精度高于毫秒时截断到毫秒）
+ * @return 定宽 24 字节 ISO-8601 文本（gmtime_s 失败的实现层边缘回退为
+ *         全零时刻 "1970-01-01T00:00:00.000Z"——与 utcNowIsoMilli 同口径）
+ */
+std::string formatIsoMilli(std::chrono::system_clock::time_point tp);
+
+/**
  * @brief 当前 UTC 时刻的 ISO-8601 带毫秒文本（定宽 24 字节）。
  *
  * 格式 YYYY-MM-DDTHH:MM:SS.mmmZ——锁记录心跳字段的唯一编码形式；初始
