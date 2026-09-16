@@ -1406,6 +1406,66 @@
       "title": "F-134 半执行状态持续（F-123→F-133→F-134 之后第四次再现，F-134 两条建议全部未执行）：PRJ-T07 触及 units/project.md（§15.4 追加 v0.9 行）且卡头『文档版本』行已同步至 v0.9（版本半边合格），但卡头『日期』行仍停留 2026-09-09 未推进至 2026-09-16（§15.4 末行 v0.9＝2026-09-16）；且提交 e61ade92 与 v0.9 行均未注明 F-133/F-134 消账进展（ACC §4.8『可随本任务顺手消账的须注明』未满足）。方向仍为文档内部不一致（日期少报），v0.9 登记内容本身完整准确；validate-docs 不校验该维度，机检未红",
       "owner": "实施纪律（触及 units/project.md 的任务应同步卡头版本＋日期两行——F-133 建议①原文）；validate-docs 是否增补该维度机检归治理所有者裁决",
       "resolution": "处置建议＝①下一触及 units/project.md 的任务同步卡头『日期』行至该版登记日期并注明家族消账；②validate-docs 增补『卡头版本行/日期行与 §15.4 末行一致』机检（F-123 后半建议的再次提出）。编号顺延自 F-139，合入时由所有者确认。"
+    },
+    {
+      "id": "F-141",
+      "source": "traceability/acceptance/PRJ-T08-20260916.md#4.10（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08，验收者 git ls-tree／ird-test-report.json builds 字段实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125/F-127/F-129/F-132/F-136/F-138 之后第 15 例，较 F-138 无缓解形态再现）：PRJ-T08 送验提交 69ca3e2c 正文声称入库 traceability/builds/wp04-t08/ 十项证据（ird-test-report.json＋四份 gtest XML＋smoke-configure/smoke-build/integration-build 四份测试控制台日志/verify-target-build/validate-task 共七份 .log），git ls-tree 实证仅入库 5 件（ird-test-report.json＋四份 XML）——七份 .log 全部命中根 .gitignore:87 *.log 规则（F-010 根因）未入库，且提交正文未内联明示该处置；ird-test-report.json 的 builds[] 字段将四份库外 .log 与库内结论混列且无 localOnlyNote 字段（F-138 处置建议①的收敛形态未采纳）。缓解面：后续提交 3e19fc67 主动自曝并修正了 XML 缺失根因（MSYS 路径传 Windows 程序致 gtest_output 未落盘而退出码 0——教训登记属实），且验证结论性内容（两模式 169/169＋10/10、validate-task PASS）经验收者 detached worktree 亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3：builds[]/evidence 字段只列库内文件或增设 localOnlyNote——F-136/F-138 先例形态）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
+      "resolution": "处置建议＝①ird-test-report.json 的 builds[] 收敛为库内实测清单（git ls-tree 口径），库外留痕移入 localOnlyNote（F-136/wp04-t06 先例已示范）；②提交信息列举证据时内联注明『X 件入库＋Y 份 .log 工作区留痕』；③根因处置同 F-129/F-132/F-138 建议（.gitignore 否定规则或留痕统一 .txt 后缀）。编号顺延自 F-140，合入时由所有者确认。"
+    },
+    {
+      "id": "F-142",
+      "source": "traceability/acceptance/PRJ-T08-20260916.md#4.9（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "提交标题家族再现（F-012 系，一次三例）：PRJ-T08 送验四提交中三份标题前缀后以名词开头非动词开头——69ca3e2c『[WP-04-T08] PRJ-T08 验证留痕归档（双模式构建/测试执行证据）』与 3e19fc67『[WP-04-T08] PRJ-T08 留痕补齐（gtest XML 四份——XML 生成路径修正后重跑）』均为任务名词开头（F-139 已判『PRJ-Txx 验证留痕归档/留痕补齐』逐字标题模板的第六/七连例）；185c221d『[units] project.md v0.10：PRJ-T08 打开与恢复落位登记』以文件名词短语开头（F-037/F-079/F-092/F-130/F-139 的 [units] 车道同型）。实现提交 5cb6bc9e『实现 project 打开与恢复（…）』动词开头合规。纯风格瑕疵：三提交正文四段齐备、Acc-Covered 行在位、验证结论经验收者独立复现全部为真（3e19fc67 且主动自曝上一提交 XML 缺失教训——反粉饰），既往判例均不阻断",
+      "owner": "实施纪律（AGENTS §6.3/ACC §4.9 提交标题动词开头）；模板补救（实施者模板补动词开头示例与逐字模板黑名单）在 F-121/F-126/F-139 处置建议中反复提出，落地前家族持续累积",
+      "resolution": "处置建议＝同 F-121/F-126/F-139：实施者会话模板增补提交标题硬约束（动词开头示例＋『PRJ-Txx 验证留痕归档/留痕补齐』等既有逐字模板列为反例）；治理侧可考虑在 verify-task/validate-task 增加 commit 标题形态机检。编号顺延自 F-141，合入时由所有者确认。"
+    },
+    {
+      "id": "F-143",
+      "source": "traceability/acceptance/PRJ-T08-20260916.md#4.8（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08）：验收者核对单元卡卡头与 §15.4 行序时实测",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-134/F-140 家族第五次再现且新增行序倒置形态：PRJ-T08 触及 units/project.md（§15.4 追加 v0.10 行）且卡头『文档版本』行已同步至 v0.10（版本半边合格），但卡头『日期』行仍停留 2026-09-09 未推进至 2026-09-16（§15.4 v0.10 行＝2026-09-16）；F-140 处置建议①『下一触及任务同步日期行并注明家族消账』未执行且 185c221d/§15.4 v0.10 行均未注明 F-133/F-134/F-140 消账进展。另新增形态：§15.4 变更记录表的新 v0.10 行插在 v0.8 行与 v0.9 行之间（时序倒置——表内呈现 v0.6/v0.7/v0.8/v0.10/v0.9，新行未追加于表尾；内容本身完整准确，按版本号阅读不受阻，但版本链的时序可读性受损）。方向为文档内部不一致（日期少报＋行序错插），v0.10 登记内容完整准确；validate-docs 不校验该两维度，机检未红",
+      "owner": "实施纪律（触及 units/project.md 的任务应同步卡头版本＋日期两行并把 §15.4 新行追加于表尾——F-133 建议①扩展）；validate-docs 是否增补『卡头行＝§15.4 末行』与『变更行时序』机检归治理所有者裁决",
+      "resolution": "处置建议＝①下一触及 units/project.md 的任务同步卡头『日期』行并把本条与 F-140 家族一并注明消账（顺带把 v0.10 行移至 v0.9 行之后的正确时序位）；②validate-docs 增补『卡头版本/日期行＝§15.4 末行』机检时一并覆盖变更行时序（F-123/F-140 建议的再次提出）。编号顺延自 F-142，合入时由所有者确认。"
+    },
+    {
+      "id": "F-144",
+      "source": "traceability/acceptance/PRJ-T08-20260916.md#4.8/附（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08）：验收者实跑 ird_gates 与送验报告自查行比对",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-028/F-035 家族再现（实现类任务第二次）：PRJ-T08 为实现类任务，未实跑 ird_gates 自查，ird-test-report.json gates 字段称『未执行——如实标注：门禁目标随 WP-01-T01 落地前的口径与本单元既有任务一致』——理由失实：门禁已随 WP-01-T01 于 2026-09-10 建成且持续运行（F-019/F-051 证其基线红可运行），本单元前序任务（PRJ-T05/T06/T07）的报告均载有门禁结论（『ird_gates 命中集合与 wp04-t0x 基线逐项一致』）；F-035 处置建议『实现类任务一律实际执行 cmake --build build --config Release --target ird_gates 并登记真实结论』在本任务未传导。验收者实跑补证：exit 1 共 9 处命中（基线 8＋新增 R4 一处，见 F-145）——『未执行』为实（未虚标通过），方向为少报、无粉饰，但跳过的强制自查恰漏掉了本可发现的新增命中，非阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-035 同辖域）；AGENTS §6.3『ird_gates 随 WP-01-T01 落地，落地前如实标注门禁未建成』过时注记删除随 F-028/F-035 合并处置",
+      "resolution": "处置建议＝实现类任务一律实跑 ird_gates 并登记真实结论（红＝逐条解码命中归属，区分既有/新增）；模板/自查清单中删除『门禁未建成』过时口径（F-028/F-035 处置合并执行）。编号顺延自 F-143，合入时由所有者确认。"
+    },
+    {
+      "id": "F-145",
+      "source": "traceability/acceptance/PRJ-T08-20260916.md#4.6/附（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08）：验收者实跑 ird_gates 与 PRJ-T07 基线（8 命中零 project 项）比对",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "ird_gates 新增命中 1 处（本任务引入，实施侧自查缺位未发现——F-144 同根）：IRD-GATE-R4（不做 RobWork 名称前缀拼接/剥离的启发式扫描）命中 project/src/ProjectStoreImpl.cpp:104『constexpr const char* kCreatedWithToolVersion = \"RobWork-IndustrialRobot/0.1\"』——语义核查：该常量为 units/project.md §4.2 createdWithToolVersion 字段的创建工具版本透传串（随 project.json 持久化，诊断/兼容排查用），并非 RobWork 对象名称的拼接/剥离解析逻辑，红线 R-4 本体未违反；但门禁命中消息明示『例外须 DTB §4.5 登记』，而 DTB 不在本任务 allowedFiles 内，实施侧无法自行登记，且实施侧因 F-144（未实跑门禁）未发现该命中。后果：不登记则 ird_gates 基线由 8 命中（F-019×2＋F-051 家族×6）升至 9 命中，后续全部任务的自查/验收持续带此红",
+      "owner": "构建约定所有者／DTB §4.5 例外登记所有者（project 实现所有者配合提供语义依据）；实施侧不得私改送验对象与 DTB",
+      "resolution": "处置建议＝所有者在 DTB §4.5 登记该常量例外（R-4 扫描对 createdWithToolVersion 类工具版本透传串的豁免，注明 §4.2 字段语义依据），或裁决改值（如去 RobWork 前缀的工具名——需评估 §4.2 字段语义与已发布项目文件的兼容性）；登记后基线回 8。后续单元落位任务若需自证可在 ird-test-report.json 引用本条编号。编号顺延自 F-144，合入时由所有者确认。"
+    },
+    {
+      "id": "F-146",
+      "source": "traceability/acceptance/PRJ-T08-20260916.md#4.4（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08）：验收者逐条核对 acceptance 3『失权后写拒绝（§9.6 联动）』的测试证据面",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "契约 acceptance 3 的『失权后写拒绝』在存储上下文层缺端到端用例：ProjectStoreTest 18 用例覆盖了门卫第①道（状态机：Closed/Draining→ContextClosed）与只读锁面（无锁→LockHeldByOther），但门卫第②道『已打开上下文的锁句柄失权/释放后 executeCommit → requireWriteAuthority 返回 false → StoreError(WriteRejected)』无直接用例钉住（该路径为三行委托）。缓解面：原语级语义已由 StoreLockTest 5+ 用例覆盖（PRJ-T03 交付：陈旧心跳不失权/他方拒绝/释放后拒绝等）；实现侧无失实声明（ird-test-report.json 与单元卡 v0.10 均未声称存在该直接用例）；PRJ-TX-9 全量用例已登记归 PRJ-T15 进程级复验。验收者代码走读证实门卫②实现与 §9.6①② 一致，属测试覆盖面建议非实现缺陷",
+      "owner": "project 实现所有者（建议随 PRJ-T15 进程级复验补用例，或 PRJ-T10 挂载命令服务经同一门卫时顺带）",
+      "resolution": "处置建议＝补一条上下文级失权用例（如 Writable 打开后对 StoreLock 注入失权态/直接 release，再 executeCommit 断言 StoreError(WriteRejected)＋PRJ-WRITE-AUTHORITY-LOST 诊断），随 PRJ-T15 复验批次或用例增补批次执行，不单开任务。编号顺延自 F-145，合入时由所有者确认。"
     }
   ]
 }
