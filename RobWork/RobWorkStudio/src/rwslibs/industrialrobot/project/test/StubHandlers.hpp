@@ -47,6 +47,7 @@
 #include <sdurws/ird/project/StoreTypes.hpp>
 
 #include "CommandServiceImpl.hpp"
+#include "ConfirmationFlow.hpp"
 #include "ProjectStoreImpl.hpp"
 
 #include <atomic>
@@ -58,6 +59,7 @@
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace sdurws::ird::project::stub {
@@ -511,6 +513,135 @@ public:
             credentials.push_back(credential);
         }
         return credentials;
+    }
+};
+
+/**
+ * @brief 可门控确认交互桩（PRJ-T11——§5.3.4 确认等待的注入面）：回调在
+ *        release() 前一直阻塞，模拟"用户停留在确认对话框"的挂起态；放行
+ *        时按配置返回确认/拒绝或抛出（ui 拆除形态——diagnostics.md §5.6
+ *        "回调抛出→同 interaction-lost 路径"）。
+ *
+ * 观测面：entered（回调已进入）、callbackThreadId（回调执行线程——§5.3.3
+ * "命令服务在命令执行线程同步调用"的断言面）、lastFindings（确认对话
+ * 收到的数据——UX-03 三要素齐备的断言面）。
+ *
+ * 线程约束：由用例串行驱动（submit 线程阻塞于回调、主线程放行——命令
+ * 槽保证同上下文串行）；观测字段在回调进入时写入、放行后由主线程读取。
+ */
+class GatedInteraction final : public ICommandInteraction {
+public:
+    std::mutex mutex;
+    std::condition_variable gate;
+    bool releaseRequested = false;   ///< 放行旗标（release() 置位）
+    bool confirmOnRelease = true;    ///< true＝放行时返回确认凭据；false＝nullopt
+    bool throwOnRelease = false;     ///< true＝放行时抛出（ui 拆除形态）
+    std::atomic<bool> entered{false};
+    std::thread::id callbackThreadId{};
+    std::vector<core::ConfirmableFinding> lastFindings;
+
+    /// 放行挂起中的回调（主线程调用——唤醒 wait）。
+    void release()
+    {
+        {
+            std::lock_guard<std::mutex> guard(mutex);
+            releaseRequested = true;
+        }
+        gate.notify_all();
+    }
+
+    [[nodiscard]] bool isAlive() const override { return true; }
+
+    std::optional<std::vector<core::ConfirmationCredential>> requestConfirmations(
+        const std::vector<core::ConfirmableFinding>& findings) override
+    {
+        entered = true;
+        callbackThreadId = std::this_thread::get_id();
+        lastFindings = findings;
+        // 挂起：有界等待（10 s 上限防用例悬挂——GateHandler 同款口径；
+        // 超时未放行按配置面继续走，用例断言会暴露超时）。
+        std::unique_lock<std::mutex> lock(mutex);
+        gate.wait_for(lock, std::chrono::seconds(10),
+                      [this] { return releaseRequested; });
+        if (throwOnRelease) {
+            throw std::runtime_error("stub: ui teardown during confirm wait");
+        }
+        if (!confirmOnRelease) {
+            return std::nullopt;  // 用户取消对话框（整体拒绝）
+        }
+        std::vector<core::ConfirmationCredential> credentials;
+        credentials.reserve(findings.size());
+        for (std::size_t i = 0; i < findings.size(); ++i) {
+            core::ConfirmationCredential credential;
+            credential.principal = "stub-user";
+            credential.confirmedAtUtc = std::chrono::system_clock::now();
+            credentials.push_back(credential);
+        }
+        return credentials;
+    }
+};
+
+/**
+ * @brief 扰动型绑定复核探针（PRJ-T11 实现口径⑤的测试侧 fake——D-10
+ *        "生产窄接口，测试侧 fake"形态的确认流实例）。
+ *
+ * 行为：**每次咨询（即每个复核点）都注入扰动**——冻结不经探针（S4 冻结
+ * 直调 confirm::freezeConfirmation 生产真值），探针只在复核点被命令服务
+ * 咨询，因此首次咨询即复核点。选定成员替换为确定性的"必不等"值（摘要
+ * 成员翻字节、身份成员换规范文本），驱动 §6.7 绑定复核失配分支。
+ *
+ * 背景：失配分支在生产执行序内不可达（§6.7"输入变化不可能——槽内无
+ * 并发写"），PRJ-TX-2 第四路经本探针在 submit 级注入（IFileOps 故障
+ * 注入同款接缝纪律）。
+ */
+class PerturbingProbe final : public confirm::IConfirmationProbe {
+public:
+    /// 注入扰动的成员（四元组逐一可注入——acceptance 1"任一不符"）。
+    enum class Member {
+        FindingDigest,
+        PolicyContent,
+        CommandDigest,
+        BaseRevision,
+    };
+
+    Member member = Member::FindingDigest;
+    int calls = 0;   ///< 咨询总次数观测面（每复核点每 finding 一次）
+
+    [[nodiscard]] confirm::ConfirmationActuals actuals(
+        const CommandEnvelope& envelope,
+        const core::ConfirmableFinding& finding,
+        const core::RevisionId& currentBaseRevision) override
+    {
+        ++calls;
+        // 真值基底：生产探针同源采集（扰动只替换选定成员——失配定位
+        // 精确到该成员，其余成员保持一致面）。
+        confirm::ConfirmationActuals actuals
+            = confirm::ProductionConfirmationProbe{}.actuals(
+                envelope, finding, currentBaseRevision);
+        switch (member) {
+            case Member::FindingDigest:
+                // 摘要成员：首字符翻转（hex 字符集内必不等——64 位摘要
+                // 任一字节差异即失配的语义缩影）。
+                actuals.findingDigest[0]
+                    = (actuals.findingDigest[0] == '0') ? '1' : '0';
+                break;
+            case Member::PolicyContent:
+                // 策略身份：cid- 规范文本尾字符翻转（同上——文本级"必
+                // 不等"注入；codec 校验口径下仍为合法 cid- 形态）。
+                actuals.policyContentId.back()
+                    = (actuals.policyContentId.back() == '0') ? '1' : '0';
+                break;
+            case Member::CommandDigest:
+                actuals.commandDigest[0]
+                    = (actuals.commandDigest[0] == '0') ? '1' : '0';
+                break;
+            case Member::BaseRevision:
+                // 输入版本：换成全零保留值文本（rev- + 64 个 0——rev-
+                // tag 保持、值必不等；比对是文本级，解析不发生）。
+                actuals.baseRevisionId = std::string("rev-") + std::string(64, '0');
+                break;
+            }
+        return actuals;
     }
 };
 
