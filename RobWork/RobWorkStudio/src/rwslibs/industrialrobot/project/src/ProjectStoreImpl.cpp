@@ -91,6 +91,7 @@
 #include "DiagRecords.hpp"
 #include "DraftServiceImpl.hpp"
 #include "QueryPortImpl.hpp"
+#include "UndoRedoServiceImpl.hpp"
 #include "win32/AtomicFile.hpp"
 #include "win32/ILockOps.hpp"
 #include "win32/PathCanonical.hpp"
@@ -707,6 +708,14 @@ ProjectStoreImpl::ProjectStoreImpl(std::unique_ptr<win32::StoreLock> lock,
     // 析构不触碰宿主成员，逆序安全）。写路径经宿主门卫/writer 互斥/
     // 在途票据（§9.6～§9.8——与命令/归档写同一串行化点）。
     m_drafts = std::make_unique<DraftServiceImpl>(*this);
+
+    // 撤销/重做服务装配（PRJ-T13——§5.1 undoRedo() 访问器的交付物）：
+    // 装配于最末（构造序最末、析构序最先——服务只持宿主引用，查询/
+    // 命令端口在调用期经宿主访问器解引用，装配时点两者已就绪；析构无
+    // 操作，逆序安全）。会话栈归属本实例（D-11"会话内按分支"的机制
+    // 边界＝存储上下文生命周期）；无独立写通道——undo/redo 全部经
+    // commands() 的唯一写路径进入（§5.5/§6.5）。
+    m_undoRedo = std::make_unique<UndoRedoServiceImpl>(*this);
 }
 
 IProjectQueryPort& ProjectStoreImpl::query() const noexcept
@@ -733,6 +742,16 @@ DraftService& ProjectStoreImpl::drafts() const noexcept
     // 返回，任何状态下可调（拒绝语义在草稿服务方法内：写轨走返回值轨、
     // 读轨 ContextClosed——DraftService.hpp 错误语义）。
     return *m_drafts;
+}
+
+UndoRedoService& ProjectStoreImpl::undoRedo() const noexcept
+{
+    // 装配不变量同 query()（PRJ-T13——构造体末尾创建 m_undoRedo；析构
+    // 逆序中最先销毁且析构无操作，宿主引用不悬空使用）。noexcept 纯指
+    // 针返回，任何状态下可调（拒绝语义在服务方法内：status 降级为稳定
+    // 空状态、undo/redo 终态经 CommandResult 承载——UndoRedo.hpp 错误
+    // 语义总表）。
+    return *m_undoRedo;
 }
 
 bool ProjectStoreImpl::writable() const noexcept

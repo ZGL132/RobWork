@@ -30,13 +30,14 @@
  *   的所有权容器。
  *
  * 增量落位说明（DTB §5.4 口径登记）：§5.1 原文的五个端口访问器
- *   query()/commands()/drafts()/archive()/undoRedo() 随其实现任务增量
+ *   query()/commands()/drafts()/undoRedo()/archive() 随其实现任务增量
  *   增补（PRJ-T09/T10/T12/T13/T14——各端口实现类尚未存在，先落访问器
  *   只能 stub，违反"禁止空实现"纪律；与 StoreTypes.hpp/§3.1 组成表
  *   "随任务节奏增量落位"同一口径）。本头先落**生命周期与身份子集**：
  *   打开/新建协议、关闭排空、身份查询——它们正是 PRJ-T08 的契约产物，
  *   且是后续端口挂载的基座（端口实现经 ProjectStoreImpl 的内部通道
- *   获得写权限门卫与部件访问）。
+ *   获得写权限门卫与部件访问）。前四个访问器已分别随 T09/T10/T12/T13
+ *   挂载（archive() 归 PRJ-T14——归档端口）。
  *
  * 线程模型（§9.8）：身份查询面（writable/lockInfo/projectId/schema/
  * canonicalPath/closed）并发安全（内部互斥）；requestClose 幂等、可与
@@ -66,6 +67,10 @@ class ProjectCommandService;
 // DraftService 完整定义于 DraftService.hpp（同款前向声明纪律——drafts()
 // 以引用返回接口，PRJ-T12 增量挂载）。
 class DraftService;
+
+// UndoRedoService 完整定义于 UndoRedo.hpp（同款前向声明纪律——undoRedo()
+// 以引用返回接口，PRJ-T13 增量挂载）。
+class UndoRedoService;
 
 /**
  * @brief 关闭完成观察者（§5.1 ProjectStore::subscribeClose 的回调契约）。
@@ -216,6 +221,34 @@ public:
      * 串行——§9.8）。
      */
     [[nodiscard]] virtual DraftService& drafts() const noexcept = 0;
+
+    /**
+     * @brief 撤销/重做服务端口（§5.1 原文五端口访问器之最后挂载位——
+     *        PRJ-T13 增量挂载）。项目命令级撤销/重做的唯一入口（撤销＝
+     *        逆命令提交产生新修订——PM-18/PA-2；D-11 会话栈归属本端口）。
+     *
+     * 语义（§5.5/§6.9——契约详见 UndoRedo.hpp）：
+     *   - 引用与上下文同生命周期（同 query()/commands()/drafts()——端口
+     *     无独立生命周期）；同一上下文多次调用返回同一实例——**会话栈
+     *     归属该实例**（D-11"会话内按分支"的机制边界：上下文消亡＝会话
+     *     消亡，redo 记录不持久化；undo 可用性由 tip 修订 inverse 推导，
+     *     重启后照常推导——§5.5）；
+     *   - 只读打开的实例同样提供本端口：status() 全量可用（读轨）；
+     *     undo/redo 经命令端口 S1 形式校验拒绝（Rejected(not-writable)＋
+     *     门卫稳定码——§6.1/§9.6，与直接提交同表）；
+     *   - Draining/Closed 后 undo/redo 同样在 S1/查询段拒绝（CommandResult
+     *     终态承载——Aborted(context-closing)/Failed；status() noexcept
+     *     降级为稳定空状态）；
+     *   - 与草稿局部撤销的边界（§2.3/§6.9 末行）：本端口只承接项目命令
+     *     级撤销（产生修订）；草稿内编辑级撤销归 ui＋业务域，不经本端口。
+     *
+     * @return 撤销/重做服务接口引用（非 owning——随上下文消亡；方法集
+     *         契约见 UndoRedo.hpp）
+     *
+     * 线程安全：并发安全（返回同一实例；三方法各自线程安全——会话栈
+     * 内部互斥，提交段经命令端口执行槽串行）。
+     */
+    [[nodiscard]] virtual UndoRedoService& undoRedo() const noexcept = 0;
 
     // ---- 关闭协议（PM-03"等待"选项的实现锚点；§9.7） ----
 
