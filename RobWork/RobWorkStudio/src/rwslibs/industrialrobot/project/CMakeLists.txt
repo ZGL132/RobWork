@@ -85,6 +85,17 @@ find_package(GTest CONFIG REQUIRED)
 # 私有实现头——R-2；公共契约面＝include/sdurws/ird/project/ProjectStore.hpp
 # ＋StoreTypes.hpp 增量的 §5.1 打开协议类型；端口访问器随 PRJ-T09/T10/
 # T12/T13/T14 增量挂载——不预建无实现接口，NFR-MNT-04）。
+# PRJ-T09 落位：src/QueryPortImpl.cpp 增列（§12 PRJ-T09 行产物——查询
+# 端口：IProjectQueryPort 六类只读视图〔修订/元数据/分支/对象/草稿/运行〕、
+# 闭包约束〔tryRevision 仅会话索引可达＋head/revision 的一致性窗口〕、
+# ObjectCache 消费〔预算经打开请求传导至 ObjectStore——§5.2〕、读写隔离
+# 〔值拷贝视图 PA-3＋writer 互斥窗口防"已注册未切 HEAD"中间态〕；§4.7
+# 全方法线程安全/context-closed 拒绝/只读实例可查询；QueryPortImpl.hpp
+# 为 src/ 私有实现头——R-2；公共契约面＝include/sdurws/ird/project/
+# QueryPort.hpp〔§3.1 组成表行：IProjectQueryPort/RevisionView/
+# ProjectMetadataView/BranchTip/RunInfo/DraftInfo〕＋ProjectStore.hpp
+# 增挂 query() 访问器＋PersistenceFormat.hpp 增量 RunManifest 读取类型
+# 〔首消费者＝listRuns；dump 随 T14〕＋Codec 增量 parseRunManifest）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -92,6 +103,7 @@ add_library(sdurws_ird_project STATIC
     src/RevisionIndex.cpp
     src/TxEngine.cpp
     src/ProjectStoreImpl.cpp
+    src/QueryPortImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -182,6 +194,16 @@ endif()
 # 〔PM-08/§7.4①③④〕；acceptance 3 createNew 骨架/关闭排空〔Draining〕/
 # 只读打开〔PM-07〕/进程内重复可写打开拒绝〔§9.3〕；acceptance 4 P-PR-1
 # core 身份基线＋P-PR-6 诊断码收编清单/sink 可选注入）。
+# PRJ-T09 增列：QueryPortTest（acceptance 1 并发只读全方法线程安全＋
+# 与提交并发的一致性窗口压力〔4 线程×40 轮×全方法〕＋值拷贝/一经返回
+# 不可变〔PA-2/PA-3〕；acceptance 2 闭包外修订端口级不可见〔tryRevision
+# nullopt/revision StoreCorrupt/branchHistory 不含——A-6〕＋try 轨不存在
+# 不抛＋context-closed 全方法拒绝〔tryObject noexcept 面 nullopt＋开发
+# 诊断〕＋只读实例查询全量可用〔PM-07〕；acceptance 3 修订/元数据/分支
+# /草稿/结果六类视图齐备逐字段断言〔含 INV-M3 权威纪律与 R2 历史浏览
+# 区分〕＋ObjectCache 预算参数生效〔预算传导＋LRU 逐出观测面〕；acceptance 4
+# P-PR-1 视图身份类型 core v0.1 同一性〔编译期 static_assert＋运行期
+# 规范文本往返〕）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -193,7 +215,8 @@ add_executable(sdurws_ird_project_test
     test/ObjectStoreTest.cpp
     test/RevisionIndexTest.cpp
     test/TxEngineTest.cpp
-    test/ProjectStoreTest.cpp)
+    test/ProjectStoreTest.cpp
+    test/QueryPortTest.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
 # src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经

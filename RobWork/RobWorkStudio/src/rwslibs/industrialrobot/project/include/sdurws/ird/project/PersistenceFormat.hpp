@@ -33,6 +33,9 @@
  *   CommandRecord           ↔ revisions/<rev-id>/command.json（命令摘要/载荷/
  *                             逆命令/确认留痕）
  *   DraftDocument           ↔ drafts/<branch-id>/<module>.draft.json（草稿）
+ *   RunManifest             ↔ results/<run-id>/manifest.json（运行完整性
+ *                             清单——PRJ-T09 增量，首消费者＝查询端口
+ *                             listRuns；dump 随归档写路径 PRJ-T14 落位）
  *
  * 线程安全：全部为纯值类型（可任意拷贝，无共享状态）。
  * 确定性：编入类型的字段序即 canonical 序（§4.8 固定字段序），Codec 按此序
@@ -628,6 +631,91 @@ struct DraftDocument {
             && origin == o.origin;
     }
     bool operator!=(const DraftDocument& o) const noexcept { return !(*this == o); }
+};
+
+// =====================================================================
+// §4.4.7 RunManifest——results/<run-id>/manifest.json（运行结果完整性清单）
+// =====================================================================
+
+/**
+ * @brief 运行批次文件完整性条目（§4.4.7 items[] 元素 {relPath, sha256,
+ *        sizeBytes}）。
+ *
+ * 背景说明：批次文件在 finalize 前分批写入（目录内可见但不完整——
+ * §10.1），manifest 以本清单声明"哪些文件属于本次运行、内容是什么"，
+ * 消费方（reporting/evidence）据此校验工件完整性（sha256/sizeBytes）。
+ * relPath 为运行目录内的相对路径（透传；解析与安全校验归消费方——
+ * ExternalRefRecord.absolutePath 同款分工）。
+ *
+ * 线程安全：纯值类型。
+ */
+struct RunManifestItem {
+    /// 批次文件相对路径（相对 results/<run-id>/；非空）。
+    std::string relPath;
+    /// 文件内容 SHA-256，64 个小写十六进制字符（透传不重算——CR-02）。
+    std::string sha256;
+    /// 文件字节数（单位＝字节；uint64——大工件不截断）。
+    std::uint64_t sizeBytes = 0;
+
+    bool operator==(const RunManifestItem& o) const noexcept
+    {
+        return relPath == o.relPath && sha256 == o.sha256 && sizeBytes == o.sizeBytes;
+    }
+    bool operator!=(const RunManifestItem& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief results/<run-id>/manifest.json（§4.4.7 字段表）——一次运行归档
+ *        的完整性清单与"完整"标志（PRJ-T09 增量落位）。
+ *
+ * 背景说明（为什么落位于本头、为什么只有 parse 没有 dump）：
+ *   1. 本头定位＝"磁盘格式读取类型"（§3.1 行注），RunManifest 是 §4.4
+ *      冻结的字段级契约之一；PRJ-T04 落位时该类型零消费者（NFR-MNT-04
+ *      不预建），其首个真实消费者是查询端口 listRuns（PRJ-T09——§5.2
+ *      "仅 finalize（有 manifest）的运行"需要解析 manifest 才能按修订
+ *      过滤），随 T09 增量落位（单元卡 §12 v0.11 登记）。
+ *   2. dump（写侧 canonical 编码）随归档端口 finalize 写路径落位
+ *      （PRJ-T14——§3.1 ArchivePort.hpp 行"RunManifest"的写侧消费）；
+ *      本任务读侧先行不预建写入口。测试以手写 canonical 样本正向解析
+ *      承载（PersistenceFormatTest 同款非法拒绝形态）。
+ *
+ * "manifest 在＝运行完整"（D-13/§10.1）：manifest.json 由归档 finalize
+ * 原子发布、最后写入——文件存在即该运行完整可消费；批次文件写入期目录
+ * 可见但不完整（无 manifest），查询端口不列入运行清单。manifestDigest
+ * 是幂等重投递判据（§10.1——同 (runId,attempt) 重投递时与既有 manifest
+ * 摘要比对），Codec 对其只透传不重算（CR-02：不私设第二哈希路径）。
+ *
+ * 本结构无 schemaVersion/formatId 字段（§4.4.7 表无此字段）：版本语义由
+ * 容器判定（同 RevisionManifest/CommandRecord 口径——Codec 按当前支持
+ * 版本的结构严格解析）。
+ *
+ * 线程安全：纯值类型。
+ */
+struct RunManifest {
+    /// 任务身份五元组（§4.4.7 taskIdentity——execution 核验后登记信息的
+    /// 原样记录；project 不解释，归档绑定与幂等判定的数据源）。canonical
+    /// 字段序＝core TaskIdentity 声明序（project/branch/revision/run/
+    /// attempt）。
+    core::TaskIdentity taskIdentity{};
+    /// 批次文件完整性清单（§4.4.7 items ≥1——空运行不发布 manifest）。
+    std::vector<RunManifestItem> items;
+    /// 任务类型 token（execution 登记透传）。非空。
+    std::string runKind;
+    /// 评估键（execution 登记透传）。非空。
+    std::string evaluationKey;
+    /// finalize 时间，ISO-8601 UTC 文本。
+    std::string finalizedAtUtc;
+    /// 自身规范化摘要，64 个小写十六进制字符（幂等重投递判据，§10.1；
+    /// 透传不重算——CR-02）。
+    std::string manifestDigest;
+
+    bool operator==(const RunManifest& o) const noexcept
+    {
+        return taskIdentity == o.taskIdentity && items == o.items
+            && runKind == o.runKind && evaluationKey == o.evaluationKey
+            && finalizedAtUtc == o.finalizedAtUtc && manifestDigest == o.manifestDigest;
+    }
+    bool operator!=(const RunManifest& o) const noexcept { return !(*this == o); }
 };
 
 }  // namespace sdurws::ird::project

@@ -87,6 +87,7 @@
 #include <utility>
 
 #include "Codec.hpp"
+#include "QueryPortImpl.hpp"
 #include "win32/AtomicFile.hpp"
 #include "win32/ILockOps.hpp"
 #include "win32/PathCanonical.hpp"
@@ -686,6 +687,23 @@ ProjectStoreImpl::ProjectStoreImpl(std::unique_ptr<win32::StoreLock> lock,
         throw std::invalid_argument(
             "project/store: 装配违约——objects/index/engine 不得为空");
     }
+
+    // 查询端口装配（PRJ-T09——§5.1 query() 访问器的交付物）：构造于
+    // 装配末尾，部件（索引/对象库/权威快照）已全部就绪；端口消费宿主
+    // 的锁与部件（friend 窄访问），本身不持有项目状态。命令类型判据
+    // 本阶段为空——命令注册表归命令服务（PRJ-T10）落位时注入
+    // （hasUnresolvedPayload 判定机制见 QueryPort.hpp 增量落位说明 3）。
+    m_query = std::make_unique<QueryPortImpl>(*this,
+                                              QueryPortImpl::CommandKnownFn{});
+}
+
+IProjectQueryPort& ProjectStoreImpl::query() const noexcept
+{
+    // 装配不变量：构造函数末尾创建 m_query（成功构造的实例必非空）；
+    // 析构逆序中 m_query 先于部件销毁（QueryPortImpl 析构无操作，不触
+    // 碰宿主成员）——本类对象生存期内该引用恒可用。noexcept 纯指针
+    // 返回，任何状态下可调（Closed 后端口方法自行拒绝）。
+    return *m_query;
 }
 
 bool ProjectStoreImpl::writable() const noexcept

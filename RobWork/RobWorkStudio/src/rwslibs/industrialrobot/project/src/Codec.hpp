@@ -214,6 +214,23 @@ CommandRecord parseCommandRecord(std::string_view text);
  */
 DraftDocument parseDraftDocument(std::string_view text);
 
+/**
+ * @brief canonical JSON → RunManifest（results/<run-id>/manifest.json
+ *        读取；PRJ-T09 增量——查询端口 listRuns 的解析入口）。
+ *
+ * 本类型无 schemaVersion/formatId 字段（§4.4.7 表）——同
+ * parseRevisionManifest 的容器判定说明，按当前支持版本的结构严格解析
+ * （未知字段拒绝）。items ≥1（§4.4.7 必填约束）。dump（写侧编码）随
+ * 归档端口 finalize 写路径落位（PRJ-T14）——读侧先行不预建写入口。
+ *
+ * @param text [in] 磁盘字节（纯 ASCII canonical JSON）
+ * @return 解析结果
+ *
+ * @throws StoreError StoreCorrupt（语法/缺字段/五元组身份非法/items 空/
+ *         摘要字段非 64 小写 hex 等）
+ */
+RunManifest parseRunManifest(std::string_view text);
+
 // =====================================================================
 // CR-02 唯一摘要入口（D-10：对象负载摘要＝收到的字节经 core ContentDigester）
 // =====================================================================

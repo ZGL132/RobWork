@@ -76,6 +76,11 @@
 
 namespace sdurws::ird::project {
 
+// 前向声明：查询端口实现（PRJ-T09 落位——完整定义于 QueryPortImpl.hpp，
+// 仅实现文件消费；m_query 的 unique_ptr 成员以不完整类型持有，析构在
+// ProjectStoreImpl.cpp 的 out-of-line 定义处完成——那里 include 全量头）。
+class QueryPortImpl;
+
 /**
  * @brief 存储上下文状态机（§9.6①的载体；Draining/Closed/LostWrite 一律
  *        拒绝新写——LostWrite 不单列状态：锁失权锁存在 StoreLock 内部，
@@ -116,6 +121,16 @@ public:
     [[nodiscard]] std::uint32_t requestClose() override;
     [[nodiscard]] bool closed() const noexcept override;
     void subscribeClose(ICloseObserver& observer) override;
+
+    /**
+     * @brief 查询端口访问器（§5.1 原文形态——PRJ-T09 增量挂载；契约见
+     *        ProjectStore::query() 公共头注释）。
+     *
+     * 返回装配期创建的 QueryPortImpl 实例（同一上下文恒同一实例——
+     * 端口无独立生命周期）；noexcept 纯指针返回，任何状态下可调
+     * （Closed 后端口自身拒绝——拒绝语义在端口方法内）。
+     */
+    [[nodiscard]] IProjectQueryPort& query() const noexcept override;
 
     // ---- 内部通道（同单元后续端口实现/测试消费；不进公共头） ----
 
@@ -170,7 +185,25 @@ public:
         return *m_index;
     }
 
+    /**
+     * @brief 对象库只读访问（同单元测试观测面——缓存预算/LRU 逐出的
+     *        验收断言经 ObjectStore::cacheStats/cacheLruOrder；不进公共
+     *        头，与 revisionIndex() 同款先例：R-2 禁令是跨单元暴露，
+     *        同单元测试消费私有头是既定形态）。
+     *
+     * 可写方法（publishObject 等）不得经此调用——返回 const 引用；
+     * 查询端口持有可变访问（读侧缓存推进）走 friend 成员通道。
+     */
+    [[nodiscard]] const objstore::ObjectStore& objectStore() const noexcept
+    {
+        return *m_objects;
+    }
+
 private:
+    // 查询端口实现是本类的视图面（消费部件/锁/权威快照——窄 friend 访问
+    // 收敛于 QueryPortImpl 类整体，不散落到自由函数）。
+    friend class QueryPortImpl;
+
     friend class ProjectStoreFactory;
 
     /// 工厂内部打开协议主体（ProjectStoreImpl.cpp 内与公开 open/createNew
@@ -236,6 +269,18 @@ private:
      */
     void finishClose(bool invokeObservers);
 
+    /**
+     * @brief 查询端口的开发诊断通道（QueryPortImpl friend 窄访问器——
+     *        容错路径的 reportDev 上报口；可空＝丢弃，§5.0 sink 约定）。
+     *
+     * 用户级稳定码不经此产出（查询期无对应收编码——不私造，CR-08；
+     * 恢复/打开期诊断的产出点在工厂协议）。
+     */
+    [[nodiscard]] IDiagnosticsSink* queryDevSink() const noexcept
+    {
+        return m_sink;
+    }
+
     // ---- 状态（锁序：m_lifecycleMutex 先于 m_writerMutex；不反向） ----
 
     mutable std::mutex m_lifecycleMutex;  ///< 状态/在途/订阅者汇合点
@@ -266,6 +311,11 @@ private:
 
     core::IDomainEventBus* m_eventBus{nullptr};  ///< 事件总线（非 owning）
     IDiagnosticsSink* m_sink{nullptr};  ///< 诊断 sink（非 owning，可空）
+
+    /// 查询端口实现（PRJ-T09——§5.1 端口访问器 query() 的交付物）。声明
+    /// 序在全部部件之后：构造于装配末尾（部件就绪后创建），析构先于部件
+    /// （QueryPortImpl 析构不触碰宿主成员——host 引用不悬空使用，安全）。
+    std::unique_ptr<QueryPortImpl> m_query;
 };
 
 }  // namespace sdurws::ird::project
