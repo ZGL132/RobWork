@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "确认放行流（交互回调编排与留痕）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T10"],
   "requirements": ["MDL-06", "ERR-01", "UX-03"],
   "designRefs": ["units/project.md#12", "units/project.md#5.3.3", "units/project.md#5.3.4", "units/project.md#6.7"],
