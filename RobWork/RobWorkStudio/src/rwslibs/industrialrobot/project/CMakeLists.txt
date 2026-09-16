@@ -70,11 +70,20 @@ find_package(GTest CONFIG REQUIRED)
 # 校验〔branch-metadata-regression〕、§6.1 S6 rev 单调序号分配〔O-15〕、
 # D-5 权威元数据底本拷贝更新；RevisionIndex.hpp 为 src/ 私有实现头——R-2；
 # 纯进程内语义模型，零磁盘 I/O——文件读写归 TxEngine/T07）。
+# PRJ-T07 落位：src/TxEngine.cpp 增列（§12 PRJ-T07 行产物——事务引擎：
+# §7.1 七步提交协议〔.staging 暂存/验证/只增发布/HEAD 原子切换＝唯一提交点/
+# 事件 FIFO D-18/清理〕、§7.3 闭包外识别、§7.4①④⑤ 恢复扫描〔PM-08〕；
+# TxEngine.hpp 为 src/ 私有实现头——R-2；文件/目录操作一律经 win32 原语
+# ——IFileOps 接缝随本任务增补目录两方法〔createDirectories/removeTree〕，
+# F1/F7 注入点登记 faultpoint::kCreateDirectories/kRemoveTree；对象发布
+# 的共享判定复用 ObjectStore 读回校验通道，摘要一律经 contentVersionOf
+# ＝core ContentDigester〔CR-02/P-PR-1 消费基线〕）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
     src/ObjectStore.cpp
     src/RevisionIndex.cpp
+    src/TxEngine.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -152,6 +161,12 @@ endif()
 # ＋谱系成环/分支表回退注入拒绝——PRJ-TX-12/INV-M1/M2/M3；3 O-15 序号
 # 单调分配＋D-5 底本拷贝；4 P-PR-1 core 身份基线/P-PR-8 label 一次写入
 # 处置自证）。
+# PRJ-T07 增列：TxEngineTest（acceptance 1 §7.6 F1～F7 边界注入逐项——
+# 经 IFileOps 接缝＋失败前后已提交内容字节比对＋恢复诊断；acceptance 2
+# F8 崩溃边界进程内模拟——提交点前后两态字节不变，进程级 kill 归
+# PRJ-T15；acceptance 3 §7.3 闭包外识别/查询不可见＋.staging/tmp 启动
+# 清理〔D-09〕；acceptance 4 P-PR-1 处置——清单摘要与 core ContentDigester
+# 直算比对）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -161,7 +176,8 @@ add_executable(sdurws_ird_project_test
     test/PathCanonicalTest.cpp
     test/PersistenceFormatTest.cpp
     test/ObjectStoreTest.cpp
-    test/RevisionIndexTest.cpp)
+    test/RevisionIndexTest.cpp
+    test/TxEngineTest.cpp)
 
 # src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
 # src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经

@@ -167,6 +167,21 @@ public:
         });
     }
 
+    // 目录操作两方法（PRJ-T07 随 IFileOps 增补的接缝面——本文件用例不注入
+    // 目录故障，转发真实实现保持装饰器全转发形态；故障点
+    // project/tx-engine/* 的注入消费在 TxEngineTest.cpp）。
+    FileResult createDirectories(const std::wstring& path) override
+    {
+        return step(fp::kCreateDirectories,
+                    [&] { return m_real->createDirectories(path); });
+    }
+
+    FileResult removeTree(const std::wstring& path) override
+    {
+        return step(fp::kRemoveTree,
+                    [&] { return m_real->removeTree(path); });
+    }
+
 private:
     /// 单条注入计划（occurrence 从 1 计——FaultTrigger 同语义）。
     struct Plan

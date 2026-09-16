@@ -83,6 +83,11 @@ public:
                           const std::wstring& targetPath) override;
     FileResult replaceExisting(const std::wstring& tempPath,
                                const std::wstring& targetPath) override;
+    // 目录操作两方法（PRJ-T07 增补——故障点登记见 IFileOps.hpp
+    // faultpoint::kCreateDirectories/kRemoveTree）：std::filesystem 薄封装，
+    // 幂等语义（已存在＝成功 / 不存在＝删除成功）在接口契约中冻结。
+    FileResult createDirectories(const std::wstring& path) override;
+    FileResult removeTree(const std::wstring& path) override;
 };
 
 /**
