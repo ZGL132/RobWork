@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T09",
+  "masterWp": "WP-04-T09",
+  "branch": "wp04-t09",
+  "base": "9f35fa2f67bdc74ece8f772d41e9c4c6c4bb64af",
+  "date": "2026-09-16",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量构建 exit 0 零 error）",
+      "notes": "PRJ-T09 落位：src/QueryPortImpl.cpp＋src/QueryPortImpl.hpp 新增（§12 PRJ-T09 行产物——查询端口实现：视图/闭包约束/缓存/隔离；QueryPortImpl.hpp 为 src/ 私有实现头——R-2）；公共契约面＝include/sdurws/ird/project/QueryPort.hpp 新增（§3.1 组成表行：IProjectQueryPort＋RevisionView/ProjectMetadataView/BranchTip/RunInfo/DraftInfo＋InverseRef 别名）＋ProjectStore.hpp 增挂 query() 访问器（§5.1 原文形态——②端口含只读实例）＋PersistenceFormat.hpp 增量 RunManifest/RunManifestItem 读取类型（§4.4.7；首消费者＝listRuns，dump 随 PRJ-T14 写路径——不预建）＋src/Codec.{hpp,cpp} 增量 parseRunManifest（读侧解析，§4.8 严格解析同款）。CMakeLists.txt 增列与注释更新。"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "183/183 PASSED（两模式一致：smoke 与 integration 各 183/183，零失败零跳过）",
+      "notes": "新增 QueryPortTest 14 用例（acceptance 1＝ConcurrentReadOnly_ThreadSafeWithConcurrentCommits〔4 线程×40 轮×全方法＋主线程并发提交 3 次——head seq 单调不回退/对象字节恒等/链完整性；工作线程失败经互斥消息表汇合主线程断言——gtest 断言非线程安全口径〕＋ViewIsValueCopy_ImmutableAfterReturn〔进程内值拷贝/一经返回不可变——PA-2/PA-3〕；acceptance 2＝ClosureOutsideRevision_InvisibleToQueryPort〔闭包外修订 tryRevision/metadataAt nullopt、revision StoreCorrupt、branchHistory 不含——A-6/PRJ-TX-9 端口级落位面〕＋TryTrack_MissingReturnsNullopt_NoThrow〔不存在/全零不抛〕＋ContextClosed_AllMethodsRejected〔§4.7 全方法拒绝；tryObject noexcept 面 nullopt＋开发诊断〕＋ReadOnlyInstance_QueriesFullyServed〔显式只读打开查询全量可用——PM-07〕；acceptance 3＝RevisionView_HeadAndRevision_FieldsAssembled＋MetadataAndBranchViews_AuthoritativeDiscipline〔INV-M3：currentMetadata 权威 vs metadataAt 历史快照区分〕＋BranchHistory_WalksParentChainWithLimit〔沿 parent 链/maxCount 截断/未知分支 invalid_argument〕＋ObjectRead_TryTrackAndStrongTrack〔引用缺失二分——§5.2 错误表〕＋ObjectCacheBudget_EnforcedThroughQueryPort〔预算传导 1024B＋LRU 逐出观测面——具名验收点〕＋DraftListing_CurrentOnly_StaleAndOrder〔.new 残留不列/stale 判据/moduleId 字典序〕＋RunListing_OnlyFinalizedFiltered_runDir〔D-13 仅 finalize/按修订过滤/runDir 规范编址〕；acceptance 4＝Ppr1_ViewIdentityTypes_AreCoreContractTypes〔编译期 static_assert 类型同一＋运行期规范文本往返〕）。既有 169 用例零回归（其中 BuildRedLineTest 一处误报修复见 implementationNotes）。",
+      "xml": "sdurws_ird_project_test-smoke.xml / sdurws_ird_project_test-integration.xml"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "10/10 PASSED（两模式一致；零改动零回归——LinkageContractTest 构建图边界与 LockContractTest 真双进程锁契约不受本任务影响）",
+      "notes": "本任务零新增跨单元契约用例（②端口消费面＝project→core 既有唯一边；视图类型消费 core 公共契约头不产生新边——P-PR-1 基线内消费）。"
+    }
+  ],
+  "builds": [
+    { "mode": "integration", "log": "integration-build.log", "exitCode": 0, "errors": 0 },
+    { "mode": "smoke-configure", "log": "smoke-configure.log", "exitCode": 0, "toolchain": "vcpkg（绝对路径——AGENTS §4.1 冒烟必带）" },
+    { "mode": "smoke-build", "log": "smoke-build.log", "exitCode": 0, "errors": 0 },
+    { "mode": "verify-target", "log": "verify-target-build.log", "exitCode": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_test（契约 verify 命令）" }
+  ],
+  "gates": {
+    "ird_gates": "未执行——如实标注：门禁目标随 WP-01-T01 落地前的口径与本单元既有任务一致；本任务以 CMakeLists.txt 配置期依赖红线守卫（project 仅链 core、零 Qt、产品库零 gtest）＋BuildRedLineTest/LinkageContractTest 源码面与构建图边界用例承载红线证据",
+    "validateTask": "PASS（validate-task.log；pwsh -File validate-task.ps1 -TaskFile tasks/foundation/PRJ-T09.json）"
+  },
+  "implementationNotes": "实现口径登记五项（DTB §5.4，详见 QueryPort.hpp/QueryPortImpl.hpp/QueryPortImpl.cpp 文件头）：①tryObject 的 noexcept 边界：§5.2 签名原文 noexcept 与底层『损坏＝抛 StoreCorrupt』二分在异常面冲突——落位为 noexcept 契约优先：一切失败（关闭/不存在/损坏/无效身份）→ nullopt＋reportDev 开发诊断（损坏/拒绝不静默）；强语义调用方走 object()；②hasUnresolvedPayload 判据注入：本阶段无注册表（PRJ-T10 产物），QueryPortImpl 构造接受 CommandKnownFn 判据（可空）——空＝字段按 §5.2 默认值语义 false（『无法判定』≠『已知未知』），T10 注入注册表查询后真判定；③branchHistory 的『未知分支抛』：StoreErrorCode 封闭集无 unknown-branch 码（不私扩——新增码＝单元卡增量修订），落位 std::invalid_argument（调用方违约 fail-fast）；④listDrafts/listRuns 扫描容错：单条目解析失败→跳过＋reportDev（清单面不虚报可用条目——§4.1『无 manifest＝不列为完整运行』『损坏草稿处置归恢复流程』）；迭代中途失败→整表按 StoreCorrupt 拒绝（不交付半表）；⑤ProjectMetadataView 字段级落位＝{ObjectRefPair ref; ProjectMetadataRecord record}（§5.2 原文未给字段级定义——复用 §4.4.3 冻结类型不重定义，InverseRef＝InverseCommand using 别名同理）；DraftInfo/RunInfo 按 §5.2 注释最小集落位。另登记者：RunManifest 读取类型＋parseRunManifest 随本任务增量（首消费者＝listRuns；类型落 PersistenceFormat.hpp 符合『磁盘格式读取类型』头定位，dump 随 PRJ-T14——PRJ-T04 六类型先例的『随消费者落位』同一纪律）；ProjectStoreImpl 增 queryDevSink()/objectStore() 窄访问器（friend/同单元测试观测面——revisionIndex() 同款先例）；BuildRedLineTest NoQtInclude 一处误报修复（`#include \"QueryPort*` 命中 `#include \"Q` 前缀启发式——单元卡 §3.1 点名头名，自有 Q 头显式白名单排除，Qt 形态判定不变）。并发一致性设计：head/tryRevision/revision/currentMetadata/metadataAt/branchTips/branchHistory 在 writer 互斥内取『HEAD/权威快照＋首级索引读』，锁外组装只读不可变数据（已注册清单/command.json 只增不改——PA-2）；tryObject/object/listDrafts/listRuns/runDir 不取 writer 锁（对象文件不可变/草稿与 manifest 原子替换或原子发布——天然并发安全）；Draining 不拒查询（PM-03 关闭对话框的呈现数据源），仅 Closed 拒绝（§4.7）。"
+}
