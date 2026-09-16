@@ -1606,6 +1606,26 @@
       "title": "PRJ-T11 新增代码零行为影响风格微瑕两处（F-046/F-063 同型，验收者逐行通读发现）：①CommandServiceTest.cpp 约 L1112 用例头注释笔误『ReRejected(confirmations-rejected)』（应为 Rejected，重复首字母）；②CommandServiceImpl.cpp recheckConfirmations 的 currentBase 解析 lambda 在逐 finding 循环体内每轮重复构造——其输入（currentBaseRevision 字符串）与循环变量无关，可提至循环外一次求解（当前每轮重复 tryFromCanonical 解析，零正确性影响、finding 数量级为个位数）",
       "owner": "project 单元实现（建议随下次触及该两文件的任务顺手规整，避免独立格式化提交）",
       "resolution": "①更正注释为 Rejected；②currentBase 解析提至循环外（或注释说明保持现状的理由）。不影响 PRJ-T11 验收（pass）。编号顺延自 F-159，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-161",
+      "source": "traceability/acceptance/PRJ-T12-20260916.md#4.8-G-1（attempt 1，送验对象 ff39c51deacfa439667c476a6998ea8a8f69387a，分支 wp04-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159 家族第九次再现：PRJ-T12 触及 units/project.md（§15.4 追加 v0.14 行＋卡头文档版本行 v0.13→v0.14 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.14 行日期 2026-09-16 更新——版本半边落地、日期半边连续第九跳未落地（F-134/F-147/F-155/F-159 处置建议持续被跳过）",
+      "owner": "project 详设所有者（units/project.md 辖域；F-133/F-140/F-147/F-155/F-159 处置建议原文承责）",
+      "resolution": "处置建议＝同 F-147/F-155/F-159：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-160，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-162",
+      "source": "traceability/acceptance/PRJ-T12-20260916.md#4.9-G-2（attempt 1，送验对象 ff39c51deacfa439667c476a6998ea8a8f69387a，分支 wp04-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-012/F-157/F-158 家族再现：ff39c51d『[governance] PRJ-T12 验证留痕：两模式构建日志＋gtest XML＋ird-test-report＋门禁实跑』名词短语开头（[governance] 车道＋『PRJ-Txx 验证留痕』逐字模板第四例）；实现提交 5006e293『[WP-04-T12] 实现草稿服务…』动词开头合规",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，句式如『[governance] 登记验证留痕…』）；对已推送历史（ff39c51d 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-161，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
