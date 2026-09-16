@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-exec-record/1",
+  "taskId": "PRJ-T16",
+  "masterWp": "WP-04-T16",
+  "branch": "wp04-t16",
+  "base": "94a2072ecee79a746f1b00e3a2ab40606caf0617",
+  "date": "2026-09-17",
+  "taskKind": "纯文档与门禁同步（outputs=traceability-update，interUnit=false）——双模式构建按 DTB §5.2 DoD 第 1 条免除；无 gtest 执行面（零代码变更，不触及任何测试目标）。留痕形态说明：本目录原始执行日志（validate-docs.log/validate-task.log/ird-gates.log）因仓库 .gitignore 规则 *.log（第 87 行）不入库——同 F-172 登记口径（处置建议②『留痕 .txt 后缀约定』尚未成文，本记录以 JSON 收录核心结论先行，该治理项归 findings 流程，不在本任务私改 .gitignore）；先例对照：traceability/builds/doc-t13/（纯文档任务）仅入库两份校验日志。",
+  "validations": [
+    {
+      "name": "validate-docs（契约 verify 命令）",
+      "command": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "result": "PASS",
+      "detail": "PASS (20 units, 12 trace entries, 150 task files)——执行时点在本任务全部文档修改（units/project.md v0.18、公共头 README、裁决申请文档）之后",
+      "evidenceFile": "validate-docs.log（工作区，git 忽略）"
+    },
+    {
+      "name": "validate-task（契约自查）",
+      "command": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T16.json",
+      "result": "PASS",
+      "detail": "PASS (1 tasks)",
+      "evidenceFile": "validate-task.log（工作区，git 忽略）"
+    },
+    {
+      "name": "ird_gates（依赖红线与补丁门禁）",
+      "command": "cmake --build build --config Release --target ird_gates（构建树缓存已确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON）",
+      "result": "rc=1——命中 11 项＝wp04-t15 基线，与基线逐项一致（零新增）；本任务零代码变更，不引入任何新命中",
+      "detail": "命中构成（与 wp04-t15/ird-gates.log 工具输出段逐字比对一致）：IRD-GATE-SUB×9（8 个既有测试目标直链 sdurws_ird_testkit——diagnostics_contract/evidence/evidence_contract/policy/policy_contract/project/project_contract/runtime，PRJ-T15 契约 interUnit=true 消费面；另 1 个 sdurws_ird_testdata_lint 表外边）＋IRD-GATE-T1×1（testdata_lint 链接 testkit）＋IRD-GATE-R4×1（project 产品面 RobWork 字面量 1 处——ProjectStoreImpl.cpp，wp04-t08 既有）。例外收编归 WP-01-T03（F-173），不属本任务。比对注意：两份门禁日志为 cmake/MSBuild 混合编码且多命中共享同一物理行，逐行 diff 前需按 '[ird_gates] ' 分隔重建；wp04-t15 日志末尾『实施者注记』段为该任务实施者手工追加文本（含 2 条独立命中文本行），非工具输出，不参与比对。",
+      "evidenceFile": "ird-gates.log（工作区，git 忽略）"
+    }
+  ],
+  "acceptanceCoverage": {
+    "1": "零偏差核对登记（§15.4 v0.18＋§3.1 README 行更正＋§3.4 磁盘现状注记）＋公共头 README 核对（README.md 2026-09-17 登记段——指向 units/project.md §12 零偏差）",
+    "2": "§11 标题过期陈述更正＋表后实现状态登记表（PRJ-TX-1～14 逐组：TX-1～10/12～14 已执行通过附具名载体与 wp04-t15 留痕指针；TX-11 阻塞登记 GTEST_SKIP 不计通过）＋§15.3 P-PR-1～8 状态逐条同步（P-PR-4/P-PR-7 确认消账；P-PR-1/2 仍未决；P-PR-3/8 裁决中；P-PR-5/6 裁决申请提交）",
+    "3": "P-PR-5/P-PR-6 裁决申请提交：traceability/wp04-t16-adjudication-requests.md（O-09 处置联动＋P-DIAG-5 联动；申请≠裁决，未私改对端契约）"
+  },
+  "notes": "PRJ-T15 验收建议级发现 F-170～F-174 对本任务适用性核对：F-170/F-171（提交标题模板）已在本任务提交遵循；F-172（留痕后缀/.gitignore 豁免）如上处理并如实登记，不私改 .gitignore；F-173（门禁例外行登记）归 WP-01-T03；F-174（ProcessCrashContractTest 加固）本任务零代码变更不触及，维持其 resolution『随下次触及该文件的任务顺手加固』。"
+}
