@@ -89,6 +89,7 @@
 #include "Codec.hpp"
 #include "CommandServiceImpl.hpp"
 #include "DiagRecords.hpp"
+#include "DraftServiceImpl.hpp"
 #include "QueryPortImpl.hpp"
 #include "win32/AtomicFile.hpp"
 #include "win32/ILockOps.hpp"
@@ -700,6 +701,12 @@ ProjectStoreImpl::ProjectStoreImpl(std::unique_ptr<win32::StoreLock> lock,
             return commandType == kInitialCommandType
                 || service->registry().find(commandType) != nullptr;
         });
+
+    // 草稿服务装配（PRJ-T12——§5.1 drafts() 访问器的交付物）：装配于
+    // 末尾（构造序最末、析构序最先——DraftServiceImpl 只持宿主引用，
+    // 析构不触碰宿主成员，逆序安全）。写路径经宿主门卫/writer 互斥/
+    // 在途票据（§9.6～§9.8——与命令/归档写同一串行化点）。
+    m_drafts = std::make_unique<DraftServiceImpl>(*this);
 }
 
 IProjectQueryPort& ProjectStoreImpl::query() const noexcept
@@ -717,6 +724,15 @@ ProjectCommandService& ProjectStoreImpl::commands() const noexcept
     // 就绪早于查询端口，本引用在宿主生存期内恒可用）。Closed 后仍可取
     // 引用（提交在 S1 拒绝——拒绝语义在 submit 内，§6.1）。
     return *m_commands;
+}
+
+DraftService& ProjectStoreImpl::drafts() const noexcept
+{
+    // 装配不变量同 query()（PRJ-T12——构造体末尾创建 m_drafts；析构逆序
+    // 中最先销毁且析构无操作，宿主引用不悬空使用）。noexcept 纯指针
+    // 返回，任何状态下可调（拒绝语义在草稿服务方法内：写轨走返回值轨、
+    // 读轨 ContextClosed——DraftService.hpp 错误语义）。
+    return *m_drafts;
 }
 
 bool ProjectStoreImpl::writable() const noexcept

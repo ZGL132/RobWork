@@ -85,6 +85,10 @@ class QueryPortImpl;
 // hpp；m_commands 同款不完整类型持有，装配与析构在实现文件完成）。
 class CommandServiceImpl;
 
+// 前向声明：草稿服务实现（PRJ-T12 落位——完整定义于 DraftServiceImpl.
+// hpp；m_drafts 同款不完整类型持有，装配与析构在实现文件完成）。
+class DraftServiceImpl;
+
 /**
  * @brief 存储上下文状态机（§9.6①的载体；Draining/Closed/LostWrite 一律
  *        拒绝新写——LostWrite 不单列状态：锁失权锁存在 StoreLock 内部，
@@ -145,6 +149,16 @@ public:
      * （只读/Closed 后提交在 S1 形式校验拒绝——§6.1）。
      */
     [[nodiscard]] ProjectCommandService& commands() const noexcept override;
+
+    /**
+     * @brief 草稿服务端口访问器（§5.1 原文形态——PRJ-T12 增量挂载；
+     *        契约见 ProjectStore::drafts() 公共头注释）。
+     *
+     * 返回装配期创建的 DraftServiceImpl 实例（同一上下文恒同一实例
+     * ——端口无独立生命周期）；noexcept 纯指针返回，任何状态下可调
+     * （拒绝语义在草稿服务方法内——写轨返回值轨、读轨 ContextClosed）。
+     */
+    [[nodiscard]] DraftService& drafts() const noexcept override;
 
     // ---- 内部通道（同单元后续端口实现/测试消费；不进公共头） ----
 
@@ -224,6 +238,15 @@ public:
     }
 
     /**
+     * @brief 草稿服务实现访问（PRJ-T12——同单元测试消费面，先例同上：
+     *        草稿用例的磁盘残留构造/门卫观测经实现类型；不进公共头）。
+     */
+    [[nodiscard]] DraftServiceImpl& draftService() noexcept
+    {
+        return *m_drafts;
+    }
+
+    /**
      * @brief 只读上下文判定（从未持锁＝PM-07 显式只读或降级——与
      *        "持锁但失权"区分；CommandServiceImpl S1 的 not-writable
      *        分类用——§9.6 门卫两道防线的提前面）。
@@ -246,6 +269,10 @@ private:
     // 查询端口实现是本类的视图面（消费部件/锁/权威快照——窄 friend 访问
     // 收敛于 QueryPortImpl 类整体，不散落到自由函数）。
     friend class QueryPortImpl;
+
+    // 草稿服务实现是本类的草稿写面（写门卫/writer 互斥/在途票据/身份
+    // 事实——同款窄 friend 访问，PRJ-T12）。
+    friend class DraftServiceImpl;
 
     friend class ProjectStoreFactory;
 
@@ -377,6 +404,11 @@ private:
     /// 序在全部部件之后：构造于装配末尾（部件就绪后创建），析构先于部件
     /// （QueryPortImpl 析构不触碰宿主成员——host 引用不悬空使用，安全）。
     std::unique_ptr<QueryPortImpl> m_query;
+
+    /// 草稿服务实现（PRJ-T12——§5.1 端口访问器 drafts() 的交付物）。声明
+    /// 序在 m_query 之后＝构造序最末、析构序最先（DraftServiceImpl 只持
+    /// 宿主引用、析构无操作——不触碰宿主成员，逆序安全）。
+    std::unique_ptr<DraftServiceImpl> m_drafts;
 };
 
 }  // namespace sdurws::ird::project

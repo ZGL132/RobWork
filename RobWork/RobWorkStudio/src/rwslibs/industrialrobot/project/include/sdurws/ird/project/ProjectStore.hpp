@@ -63,6 +63,10 @@ class IProjectQueryPort;
 // 纪律——commands() 以引用返回接口，PRJ-T10 增量挂载）。
 class ProjectCommandService;
 
+// DraftService 完整定义于 DraftService.hpp（同款前向声明纪律——drafts()
+// 以引用返回接口，PRJ-T12 增量挂载）。
+class DraftService;
+
 /**
  * @brief 关闭完成观察者（§5.1 ProjectStore::subscribeClose 的回调契约）。
  *
@@ -188,6 +192,30 @@ public:
      * §6.1）。
      */
     [[nodiscard]] virtual ProjectCommandService& commands() const noexcept = 0;
+
+    /**
+     * @brief 草稿服务端口（§5.1 原文"定时落盘/恢复/投影/放弃"——PRJ-T12
+     *        增量挂载）。未应用草稿的唯一读写入口（PM-04"保存与应用
+     *        分离"：本端口落盘不产生修订；"应用"走 commands()）。
+     *
+     * 语义（§5.4/§8）：
+     *   - 引用与上下文同生命周期（同 query()/commands()——端口无独立
+     *     生命周期）；同一上下文多次调用返回同一实例；
+     *   - 只读打开的实例可读不可写（tryLoad/summarize/list 可用——
+     *     PM-07"可查看"；save/discard 经门卫拒绝并产 PRJ-LOCK-HELD——
+     *     拒绝走返回值轨，ui 定时器安全）；
+     *   - Draining 排空期读轨可用（PM-03 关闭对话框的草稿恢复态）、
+     *     写轨拒绝（ContextClosed 返回值）；Closed 后读轨抛 ContextClosed；
+     *   - save 执行期间持在途票据（§9.7——requestClose 排空等待在途
+     *     草稿落盘，"末次草稿 flush 确认"）。
+     *
+     * @return 草稿服务接口引用（非 owning——随上下文消亡；方法集契约
+     *         见 DraftService.hpp）
+     *
+     * 线程安全：并发安全（返回同一实例；写方法内部经门卫＋writer 互斥
+     * 串行——§9.8）。
+     */
+    [[nodiscard]] virtual DraftService& drafts() const noexcept = 0;
 
     // ---- 关闭协议（PM-03"等待"选项的实现锚点；§9.7） ----
 
