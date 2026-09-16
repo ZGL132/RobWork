@@ -1786,6 +1786,26 @@
       "title": "流水线收尾误分支事故：PRJ-T16 实施子代理完成后将主工作树遗留于 wp04-t16（未切回 redesign-main），编排者收尾 §4.7② 执行 merge 前未重新断言当前分支（守卫的分支检查仅发生在 tick 开头），两笔收尾合并（验收记录＋代码）误打在 wp04-t16 上产生未推送 merge commit 4bb3ce3d；§4.7③ 输出异常暴露后就地修复：checkout redesign-main→branch -f wp04-t16 复位到实施头 3fe0ee71（与 origin/wp04-t16 一致）→在 redesign-main 重做②③（f3223e50/03c3c7ab）→推送；redesign-main 与 origin/wp04-t16 全程零污染。根因有二：①T-IMPL v3 工程流程无『完成后切回 redesign-main』步骤（PIPE §7 单工作树模型的既有风险在子代理派发模式下的具体化）；②§4.7 七步在②③ merge 前缺『当前分支==redesign-main』断言",
       "owner": "治理任务面（PIPE 增量修订：§4.7②③ 前增分支断言；T-IMPL 工程流程增『推送后切回 redesign-main』步骤）",
       "resolution": "处置建议＝PIPE 增量修订承载两处修复：①§4.7 第②步执行 merge 前断言 git branch --show-current == redesign-main（不符即停转 blocked，防误分支合并）；②T-IMPL 工程流程末尾增『push 后切回 redesign-main』。本事故已就地修复且 redesign-main 零污染（4bb3ce3d 为未推送对象，随分支复位丢弃），无数据损失。编号顺延自 F-177。"
+    },
+    {
+      "id": "F-179",
+      "source": "traceability/acceptance/IO-T01-20260917.md#问题清单（attempt 1，送验对象 d175a4e4b8b1de79dbb12de6a3a1cddcd2742625，分支 wp11-t01）：验收者 4.9 逐提交核对发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-012/F-023/F-024/F-026/F-027/F-100/F-176 家族再现：IO-T01 送验三提交中两笔标题名词开头——881f67ff『io 单元构建落位：INTERFACE 占位升级 STATIC 并就位 IoFwd/IoError 公共头』以单元名词开头、d175a4e4『io.md 同步 IO-T01 落位现状…』以文件名词开头，均非动词开头（8d45c17c『登记…』合规）。正文四段齐备、验证结论与留痕一致（验收者逐项复现：全新树双模式构建 exit 0、ird_gates 基线 11 命中零新增、validate 双 PASS、门禁/校验器双失效探针即红），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012 家族合并处置（模板补动词开头示例——构建落位类可用 F-120 已登记的『落地 <unit> 单元构建（占位升级 STATIC…）』句式）；对已推送历史（881f67ff/d175a4e4）不追溯改写（AGENTS §6.3）。编号顺延自 F-178，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-180",
+      "source": "traceability/acceptance/IO-T01-20260917.md#4.8（attempt 1，送验对象 d175a4e4b8b1de79dbb12de6a3a1cddcd2742625，分支 wp11-t01）：验收者 findings 未关闭条目相关性核对（F-175 家族排查）发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163/F-168/F-170/F-175 家族第十四次再现：IO-T01 触及 units/io.md（卡头版本行 v0.2→v0.3＋§15.5 追加 v0.3 行＝2026-09-17），卡头『日期』行仍停留 2026-09-10 未同步——版本半边更新、日期半边遗漏的同型微瑕。零行为影响，仅文档头自洽性",
+      "owner": "io 实施侧（随下次触及 units/io.md 的任务顺手同步卡头日期行）",
+      "resolution": "处置建议＝随下次触及 units/io.md 的任务顺手将卡头『日期』行同步为最新变更记录行日期（2026-09-17）；治理级根治（收尾脚本自动核对卡头日期与变更记录末行日期）仍归 F-170 所登记的治理任务面。编号顺延自 F-179，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
