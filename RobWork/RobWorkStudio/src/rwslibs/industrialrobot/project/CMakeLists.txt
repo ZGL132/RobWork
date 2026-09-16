@@ -108,6 +108,13 @@ find_package(GTest CONFIG REQUIRED)
 # PRJ-T10 同步增列：src/DiagRecords.hpp（PRJ-* 诊断记录共享工厂——
 # ProjectStoreImpl 原文件局部两工厂收敛至此＋stale-revision 新增；
 # 私有实现头不出 include/——R-2）。
+# PRJ-T11 增列：src/ConfirmationFlow.cpp（§12 PRJ-T11 行产物——确认放行
+# 流绑定设施：四元组〔findingDigest/policyContentId/commandDigest/
+# baseRevisionId〕的计算/冻结/复核＋生产探针＋IConfirmationProbe D-10
+# 接缝；ConfirmationFlow.hpp 为 src/ 私有实现头——R-2。实现口径①～⑤
+# 登记于该头/.cpp 文件头：摘要编码表、阶段 A 策略身份来源、复核时机、
+# 失配归类、探针注入面。同文件时间辅助增量：win32::formatIsoMilli——
+# 确认凭据 time_point→ISO-8601 文本〔StoreLock 重构，行为零变化〕）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -117,6 +124,7 @@ add_library(sdurws_ird_project STATIC
     src/ProjectStoreImpl.cpp
     src/QueryPortImpl.cpp
     src/CommandServiceImpl.cpp
+    src/ConfirmationFlow.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)

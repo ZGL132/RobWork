@@ -401,18 +401,21 @@ LockRecordRead readHolderRecord(ILockOps* ops, const std::wstring& lockPath)
     return out;
 }
 
-std::string utcNowIsoMilli()
+std::string formatIsoMilli(std::chrono::system_clock::time_point tp)
 {
     using namespace std::chrono;
-    const auto now = system_clock::now();
-    // 毫秒分量＝自纪元毫秒数对 1000 取模（负值不会出现——系统时钟单调
-    // 起点为正；即便回拨，取模语义仍给出 0..999 的合法展示值）。
-    const auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
-    const std::time_t t = system_clock::to_time_t(now);
+    // PRJ-T11 增量：格式化主体自 utcNowIsoMilli 抽出——确认凭据的
+    // time_point→磁盘文本转换（§4.4.4 ConfirmationCredentialRecord）与
+    // 心跳/提交时间共用同一编码形式（单元内唯一时间格式来源，防第二
+    // 格式漂移）。毫秒分量＝自纪元毫秒数对 1000 取模（负值不会出现——
+    // system_clock 纪元为 1970，合法时刻非负；截断语义：高于毫秒的精度
+    // 丢弃，不留入文本）。
+    const auto ms = duration_cast<milliseconds>(tp.time_since_epoch()) % 1000;
+    const std::time_t t = system_clock::to_time_t(tp);
     std::tm tmUtc{};
     if (::gmtime_s(&tmUtc, &t) != 0) {
-        // gmtime_s 失败（实现层边缘）：回退为全零时刻——心跳是诊断字段，
-        // 错误文本优于抛异常打断锁获取路径。
+        // gmtime_s 失败（实现层边缘）：回退为全零时刻——心跳/凭据时刻是
+        // 诊断与留痕字段，错误文本优于抛异常打断调用路径。
         return std::string{"1970-01-01T00:00:00.000Z"};
     }
     char buf[32];
@@ -422,6 +425,13 @@ std::string utcNowIsoMilli()
                   tmUtc.tm_hour, tmUtc.tm_min, tmUtc.tm_sec,
                   static_cast<int>(ms.count()));
     return buf;
+}
+
+std::string utcNowIsoMilli()
+{
+    // 委托共享格式化（PRJ-T11 重构——行为零变化，原实现主体移入
+    // formatIsoMilli；锁心跳路径的取时点仍在此处）。
+    return formatIsoMilli(std::chrono::system_clock::now());
 }
 
 // ---------------------------------------------------------------------

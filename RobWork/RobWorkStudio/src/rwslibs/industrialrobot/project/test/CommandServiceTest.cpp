@@ -5,21 +5,25 @@
  *         S6/S7 提交与事件（§6.8/D-18）、注册表契约（§5.3.5）、载荷
  *         版本策略与逆命令持久化（§6.4/§6.9）、hasUnresolvedPayload
  *         判据注入（§6.3 末行/T09 注入点）、元数据增量机制面（§4.5.1
- *         走查语义/P-PR-9 不越界）与 P-PR-6 处置自证。
+ *         走查语义/P-PR-9 不越界）、P-PR-6 处置自证与确认放行流
+ *         （PRJ-T11——PRJ-TX-2 四路/绑定与取消路径/确认留痕/UX-03）。
  *
  * 设计依据：
  *   - units/project.md §5.3（命令端口各节）、§6（S1～S7/拒绝语义/事件）、
- *     §11 PRJ-TX 组（本组承接其 T10 落位面的单元内半区；PRJ-TX-1/TX-3
- *     的契约测试半区见 CommandContractTest.cpp——§3.3 测试目标分工）；
+ *     §11 PRJ-TX 组（本组承接其 T10/T11 落位面的单元内半区；PRJ-TX-1/
+ *     TX-3 的契约测试半区见 CommandContractTest.cpp——§3.3 测试目标分工）；
  *   - 需求 ARC-01（命令原子产生修订）、PM-04（过期基线——契约测试承载）、
- *     SA-15（确认放行）、MDL-06（双编译——契约测试承载）、D-18（事件
- *     发布失败不回滚）；
- *   - 任务契约 tasks/foundation/PRJ-T10.json acceptance 3/4/5：acceptance 3
- *     ＝S1～S7 时序与全局串行槽＋未知命令/非法输入/过期修订处理＋载荷
- *     版本策略＋IModelCompilePort 冻结面（PRJ-TX-1/TX-3 契约半区在
- *     contract_test 目标）；acceptance 4＝HandlerRegistry＋测试处理器
- *     （断言判定注入）＋P-PR-3 处置自证；acceptance 5＝P-PR-6（诊断经
- *     sink 注入、码值取收编清单）＋P-PR-1（事件基线 v0.1）＋D-18。
+ *     SA-15（确认放行）、MDL-06（双编译——契约测试承载；MDL-06④ 可确认
+ *     诊断放行——PRJ-T11 组）、D-18（事件发布失败不回滚）、UX-03（确认
+ *     对话数据齐备）、ERR-01（诊断字段完整）；
+ *   - 任务契约 tasks/foundation/PRJ-T10.json acceptance 3/4/5 与 tasks/
+ *     foundation/PRJ-T11.json acceptance 1～4：acceptance 1＝PRJ-TX-2 四
+ *     路拒绝（硬断言/无交互/拒绝/绑定失效）均无修订＋command.json 无新
+ *     记录＋诊断字段完整；acceptance 2＝确认等待占槽/零事务资源/关闭取
+ *     消（无永久等待）＋interaction 生命周期（挂起/恢复/丢失）；acceptance
+ *     3＝确认留痕入 command.json（round-trip）＋UX-03 回调数据面；
+ *     acceptance 4＝零 Widgets（回调纯接口）＋P-PR-7 签名不私改＋P-PR-6
+ *     经 sink 注入。
  *
  * 测试口径登记（DTB §5.4）：
  *   1. 内置元数据命令族（project.create-branch 等，§6.5 含点示例）不落
@@ -27,17 +31,29 @@
  *      经无点测试处理器 test-create-branch 走 CommandPlan.metadataChange
  *      声明面验证（元数据增量装配/发布校验/查询视图）。
  *   2. "无修订落盘"的观测点＝磁盘 revisions/ 目录计数＋查询端口视图
- *      双通道（地面事实优先——ProjectStoreTest 口径 2 同源）。
+ *      双通道（地面事实优先——ProjectStoreTest 口径 2 同源）；"command.
+ *      json 无新记录"的观测点＝磁盘逐修订目录文件存在性（acceptance 1
+ *      ——无修订 ⇒ 无新 command.json，二者同源）。
  *   3. 事件观测经 core ReferenceEventBus（测试内参考总线——生产总线归
  *      execution/ui，T-1 边界）；事件发布失败注入经 FailingEventBus。
+ *   4. 绑定失配分支的 submit 级注入经 PerturbingProbe（D-10 接缝的测试
+ *      侧 fake——§6.7 失配分支生产不可达，ConfirmationFlow.hpp 实现口径
+ *      ⑤）；四成员逐一失配的判定面另设纯函数级用例（BindingVerify 组）。
+ *   5. "诊断字段完整"的观测＝显式逐字段断言（ERR-01 必填字段非空＋比较
+ *      型出席）——testkit ContractCheck 谓词的消费随 PRJ-T15 按 T-1 允许
+ *      形态登记（本目标不链 testkit——CMakeLists 登记口径），diagnostics
+ *      单元的 DiagContractCheckTest 已钉住该谓词与本断言的同判性。
  */
 
+#include "Codec.hpp"
 #include "StubHandlers.hpp"
 
 #include <gtest/gtest.h>
 
 #include <chrono>
+#include <fstream>
 #include <future>
+#include <iterator>
 #include <string>
 #include <thread>
 #include <vector>
@@ -743,6 +759,517 @@ TEST(CommandSlot, DualCompileWithoutPort_FailsFastInvalidArgument)
     envelope.payloadFormatVersion = 1;
     envelope.payloadCanonical = {'y'};
     EXPECT_THROW(fx.commands().submit(envelope), std::invalid_argument);
+}
+
+// =====================================================================
+// 确认放行流（PRJ-T11——§5.3.3/§5.3.4/§6.7；acceptance 1～4）
+// =====================================================================
+
+namespace {
+
+/// 构造与 FindingsHandler 同形的比较型 finding（BindingVerify 纯函数级
+/// 用例的注入件——四元组计算的输入；M-10 形态测试面，码值＝测试域自有）。
+core::ConfirmableFinding makeUnitFinding()
+{
+    core::ComparativeFields comparison;
+    comparison.actual.quantity = core::SourcedValue<double>::provided(
+        2.0, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    comparison.actual.unit = *core::UnitToken::find("m");
+    comparison.expected.quantity = core::SourcedValue<double>::provided(
+        1.0, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    comparison.expected.unit = *core::UnitToken::find("m");
+    return core::ConfirmableFinding::make(core::DiagnosticRecord::make(
+        std::string{"TEST-COMPARE-LIMIT"}, std::nullopt, std::nullopt,
+        std::nullopt, "test: 超限策略注入（四元组纯函数级用例）",
+        "actual=2m expected=1m", "test: 确认或修正输入", comparison));
+}
+
+/// 读取修订目录的 command.json 并解析（磁盘地面事实——确认留痕与
+/// "无新记录"观测点；解析失败即用例失败，不留假阳性通道）。
+CommandRecord readCommandRecord(const std::filesystem::path& dir,
+                                const core::RevisionId& rev)
+{
+    const std::filesystem::path path
+        = dir / "revisions" / rev.toCanonical() / "command.json";
+    std::ifstream in(path, std::ios::binary);
+    EXPECT_TRUE(static_cast<bool>(in)) << "command.json 不可读: "
+                                       << path.string();
+    const std::string text{std::istreambuf_iterator<char>(in),
+                           std::istreambuf_iterator<char>()};
+    return codec::parseCommandRecord(text);
+}
+
+/// .staging 一级子目录名清单（排除 tmp——D-09 临时目录非事务资源；
+/// 事务资源观测点＝是否存在 .staging/<tx-id>）。
+std::vector<std::string> stagingTxDirs(const std::filesystem::path& dir)
+{
+    std::vector<std::string> names;
+    std::error_code ec;
+    const std::filesystem::path staging = dir / ".staging";
+    if (!std::filesystem::exists(staging, ec) || ec) {
+        return names;  // .staging 不存在＝零事务资源（常态）
+    }
+    for (const std::filesystem::directory_entry& entry :
+         std::filesystem::directory_iterator(staging, ec)) {
+        if (ec) {
+            break;
+        }
+        const std::string name = entry.path().filename().string();
+        if (entry.is_directory(ec) && !ec && name != "tmp") {
+            names.push_back(name);
+        }
+    }
+    return names;
+}
+
+/// 提交"test-confirm-required"信封（确认流用例组的标准信封）。
+CommandEnvelope confirmEnvelope(const core::BranchId& branch,
+                                const std::string& payload)
+{
+    CommandEnvelope envelope;
+    envelope.branch = branch;
+    envelope.commandType = "test-confirm-required";
+    envelope.payloadFormatVersion = 1;
+    envelope.payloadCanonical.assign(payload.begin(), payload.end());
+    return envelope;
+}
+
+}  // namespace
+
+// ---------------------------------------------------------------------
+// acceptance 1——PRJ-TX-2 四路：均无修订、command.json 无新记录、诊断
+// 字段完整（§11 PRJ-TX-2 行的 T11 落位面；路径 1～3 的决策映射语义
+// 已由 CommandSubmitS4/S3 组钉住，本组补齐"零磁盘副作用＋诊断完整"
+// 观测点；路径 4 绑定失效为本任务新增拒绝面）。
+// ---------------------------------------------------------------------
+
+/// 路径 1 硬断言失败：Rejected(hard-assert-failed)＋诊断字段完整
+/// （ERR-01 必填字段非空），无修订、无新 command.json。
+TEST(CommandConfirmTx2, Path1_HardAssert_NoRevisionNoCommandRecord)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    const std::size_t revisionsBefore = fx.revisionDirCount();
+
+    CommandEnvelope envelope;
+    envelope.branch = fx.primaryBranch();
+    envelope.commandType = "test-hard-assert-fail";
+    envelope.payloadFormatVersion = 1;
+    const CommandResult result = fx.commands().submit(envelope);
+
+    EXPECT_TRUE(result.rejected());
+    EXPECT_EQ(result.status.rejection, CommandStatus::Rejection::HardAssertFailed);
+    ASSERT_GE(result.diagnostics.size(), 1u);
+    // 诊断字段完整（ERR-01：码/上下文/原因/建议动作必填非空——core C-3
+    // 的事实面在结果回传后仍成立）。
+    EXPECT_FALSE(result.diagnostics[0].code.empty());
+    EXPECT_FALSE(result.diagnostics[0].context.empty());
+    EXPECT_FALSE(result.diagnostics[0].cause.empty());
+    EXPECT_FALSE(result.diagnostics[0].recommendedAction.empty());
+    // 零磁盘副作用：无新修订 ⇒ 无新 command.json（同源观测，口径 2）。
+    EXPECT_EQ(fx.revisionDirCount(), revisionsBefore);
+}
+
+/// 路径 2 无 interaction＋待确认集：Rejected(confirmations-unresolved)
+/// ＋findings 回传，无修订、无新 command.json（§6.7 末行）。
+TEST(CommandConfirmTx2, Path2_NoInteraction_NoRevisionNoCommandRecord)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    const std::size_t revisionsBefore = fx.revisionDirCount();
+
+    const CommandResult result
+        = fx.commands().submit(confirmEnvelope(fx.primaryBranch(), "tx2-p2"));
+
+    EXPECT_TRUE(result.rejected());
+    EXPECT_EQ(result.status.rejection,
+              CommandStatus::Rejection::ConfirmationsUnresolved);
+    EXPECT_EQ(result.findings.size(), 1u);
+    EXPECT_EQ(result.findings[0].state, core::ConfirmationState::Pending);
+    EXPECT_EQ(fx.revisionDirCount(), revisionsBefore);
+}
+
+/// 路径 3 interaction 拒绝：Rejected(confirmations-rejected)＋findings
+/// 回传，无修订、无新 command.json（§5.3.3"拒绝 → 不产生修订"）。
+TEST(CommandConfirmTx2, Path3_InteractionRejects_NoRevisionNoCommandRecord)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    StubInteraction interaction;
+    interaction.rejectAll = true;
+    const std::size_t revisionsBefore = fx.revisionDirCount();
+
+    const CommandResult result = fx.commands().submit(
+        confirmEnvelope(fx.primaryBranch(), "tx2-p3"), &interaction);
+
+    EXPECT_TRUE(result.rejected());
+    EXPECT_EQ(result.status.rejection,
+              CommandStatus::Rejection::ConfirmationsRejected);
+    EXPECT_EQ(result.findings.size(), 1u);
+    EXPECT_EQ(fx.revisionDirCount(), revisionsBefore);
+}
+
+/// 路径 4 确认凭据绑定失效：复核失配 → Rejected(confirmations-unresolved)
+/// （§6.7"四者任一不符…命令按未确认处置"——实现口径④），无修订、无新
+/// command.json；失配维度进开发诊断（P-PR-6——reportDev 通道，不私造
+/// 用户码 CR-08）；findings 保持 Pending（未确认处置的事实面）。
+TEST(CommandConfirmTx2, Path4_BindingMismatch_RejectedUnresolvedNoRevision)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    StubInteraction interaction;  // 回调正常确认——失配由复核面捕获
+    PerturbingProbe probe;        // 冻结点真值、复核点扰动（实现口径⑤）
+    probe.member = PerturbingProbe::Member::FindingDigest;
+    fx.impl().commandService().setConfirmationProbe(&probe);
+    const std::size_t revisionsBefore = fx.revisionDirCount();
+
+    const CommandResult result = fx.commands().submit(
+        confirmEnvelope(fx.primaryBranch(), "tx2-p4"), &interaction);
+
+    EXPECT_TRUE(result.rejected());
+    EXPECT_EQ(result.status.rejection,
+              CommandStatus::Rejection::ConfirmationsUnresolved);
+    EXPECT_EQ(result.findings.size(), 1u);
+    EXPECT_EQ(result.findings[0].state, core::ConfirmationState::Pending);
+    EXPECT_FALSE(result.newRevision.has_value());
+    EXPECT_EQ(fx.revisionDirCount(), revisionsBefore);  // 无修订＝无新留痕
+    EXPECT_TRUE(fx.sink.devContains("绑定复核失配"));    // 维度定位（dev 通道）
+    EXPECT_TRUE(fx.sink.reports.empty());               // 未私造用户级码
+    // 探针面：冻结不经探针（生产真值直调），探针只在复核点被咨询——
+    // 单 finding 一次复核失配即终止（calls==1，实现口径⑤）。
+    EXPECT_EQ(probe.calls, 1);
+}
+
+/// 绑定复核纯函数级：四成员逐一失配均可检出且定性正确（acceptance 1
+/// "findingDigest/policyContentId/commandDigest/baseRevisionId 任一不符"
+/// 的判定面——生产执行序内不可达的失配分支在此逐成员驱动）。
+TEST(BindingVerify, EachMemberMismatch_DetectedAndClassified)
+{
+    const core::ConfirmableFinding finding = makeUnitFinding();
+    CommandEnvelope envelope;
+    envelope.commandType = "test-confirm-required";
+    envelope.payloadFormatVersion = 1;
+    envelope.payloadCanonical = {'b', 'i', 'n', 'd'};
+    const core::RevisionId base = core::RevisionId::generate();
+    core::ConfirmationCredential credential;
+    credential.principal = "unit-user";
+    credential.confirmedAtUtc = std::chrono::system_clock::now();
+
+    // 冻结（确认时点）与真值采集（复核时点）——同源计算必一致。
+    const ConfirmationRecord frozen = confirm::freezeConfirmation(
+        envelope, finding, credential, base);
+    const confirm::ConfirmationActuals truth
+        = confirm::ProductionConfirmationProbe{}.actuals(envelope, finding,
+                                                         base);
+    EXPECT_EQ(confirm::verifyBinding(frozen, truth),
+              confirm::BindingVerdict::Bound);
+
+    // 逐一扰动（四成员序——与 §6.7 四元组序一致）：成员失配 ⇒ 凭据失效
+    // （verifyBinding 返回对应定性——实现口径④的判定前提）。
+    confirm::ConfirmationActuals perturbed = truth;
+    perturbed.findingDigest[0] = (perturbed.findingDigest[0] == '0') ? '1' : '0';
+    EXPECT_EQ(confirm::verifyBinding(frozen, perturbed),
+              confirm::BindingVerdict::FindingDigestMismatch);
+
+    perturbed = truth;
+    perturbed.policyContentId.back()
+        = (perturbed.policyContentId.back() == '9') ? '8' : '9';
+    EXPECT_EQ(confirm::verifyBinding(frozen, perturbed),
+              confirm::BindingVerdict::PolicyContentMismatch);
+
+    perturbed = truth;
+    perturbed.commandDigest[0] = (perturbed.commandDigest[0] == '0') ? '1' : '0';
+    EXPECT_EQ(confirm::verifyBinding(frozen, perturbed),
+              confirm::BindingVerdict::CommandDigestMismatch);
+
+    perturbed = truth;
+    perturbed.baseRevisionId = std::string("rev-") + std::string(64, '0');
+    EXPECT_EQ(confirm::verifyBinding(frozen, perturbed),
+              confirm::BindingVerdict::BaseRevisionMismatch);
+}
+
+// ---------------------------------------------------------------------
+// acceptance 2——确认绑定与取消路径：等待占用命令执行槽、零事务资源、
+// 可被关闭取消（§5.3.4/D-07——无永久等待）；interaction 生命周期
+// （挂起/恢复/丢失——§5.3.3/§5.6）。
+// ---------------------------------------------------------------------
+
+/// 确认等待占用命令执行槽（§5.3.4"确认等待占用命令执行槽"的直接观测）：
+/// 回调挂起期间第二提交不得完成；放行后二者串行完成（seq 递增＋线性链）。
+TEST(CommandConfirmLifecycle, ConfirmWait_HoldsSlot_SecondSubmitQueued)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    GatedInteraction interaction;
+    const core::BranchId mainBranch = fx.primaryBranch();
+
+    // 线程 A：提交待确认命令——在回调内挂起（用户停留在确认对话框）。
+    auto firstDone = std::async(std::launch::async, [&fx, &interaction, mainBranch] {
+        return fx.commands().submit(confirmEnvelope(mainBranch, "slot-a"),
+                                    &interaction);
+    });
+    for (int i = 0; i < 100 && !interaction.entered.load(); ++i) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    ASSERT_TRUE(interaction.entered.load());
+
+    // 线程 B：A 持槽期间不得完成（§6.1——第二个等待）。
+    auto secondDone = std::async(std::launch::async, [&fx, mainBranch] {
+        return fx.commands().submit(fx.appendEnvelope("slot-b", mainBranch));
+    });
+    EXPECT_EQ(secondDone.wait_for(std::chrono::milliseconds(300)),
+              std::future_status::timeout);
+
+    // 放行（恢复）——A 确认提交、B 随后串行完成。
+    interaction.release();
+    const CommandResult firstResult = firstDone.get();
+    const CommandResult secondResult = secondDone.get();
+    ASSERT_TRUE(firstResult.committed());
+    ASSERT_TRUE(secondResult.committed());
+    const RevisionView a
+        = fx.opened.store->query().revision(*firstResult.newRevision);
+    const RevisionView b
+        = fx.opened.store->query().revision(*secondResult.newRevision);
+    EXPECT_EQ(b.seq, a.seq + 1);  // 串行序（槽内先 A 后 B）
+}
+
+/// 确认等待零事务资源（§5.3.4"不占用任何事务资源"的直接观测）：回调
+/// 挂起期间 .staging 无事务目录、revisions 无增长（尚未创建 .staging/
+/// <tx-id>、未写任何文件）。
+TEST(CommandConfirmLifecycle, ConfirmWait_ZeroTransactionResources)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    GatedInteraction interaction;
+    const std::size_t revisionsBefore = fx.revisionDirCount();
+
+    auto pending = std::async(std::launch::async, [&fx, &interaction] {
+        return fx.commands().submit(
+            confirmEnvelope(fx.primaryBranch(), "zero-tx"), &interaction);
+    });
+    for (int i = 0; i < 100 && !interaction.entered.load(); ++i) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    ASSERT_TRUE(interaction.entered.load());
+
+    // 挂起时点的地面事实：无 .staging/<tx-id>（tmp 为 D-09 编译临时目录
+    // ——非事务资源，排除）＋修订目录数不变。
+    EXPECT_TRUE(stagingTxDirs(fx.dir).empty());
+    EXPECT_EQ(fx.revisionDirCount(), revisionsBefore);
+
+    interaction.release();
+    EXPECT_TRUE(pending.get().committed());
+}
+
+/// 确认等待可被会话关闭取消（§5.3.4/D-07——无永久等待）：关闭请求使
+/// 上下文进入 Draining（在途>0 时立即返回在途计数——排空由票据释放路径
+/// 收尾，§9.7）；回调按 ui 拆除形态结束（抛出——§5.6"回调抛出→同
+/// interaction-lost 路径"）→ 提交 Aborted、无修订；票据随 submit 返回
+/// 释放，排空收尾随即完成（无死锁、无永久等待）。
+TEST(CommandConfirmLifecycle, SessionClose_CancelsConfirmWait_NoPermanentWait)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    GatedInteraction interaction;
+    interaction.throwOnRelease = true;  // ui 拆除形态（会话关闭传导）
+    const std::size_t revisionsBefore = fx.revisionDirCount();
+
+    auto pending = std::async(std::launch::async, [&fx, &interaction] {
+        return fx.commands().submit(
+            confirmEnvelope(fx.primaryBranch(), "close-cancel"), &interaction);
+    });
+    for (int i = 0; i < 100 && !interaction.entered.load(); ++i) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    ASSERT_TRUE(interaction.entered.load());
+
+    // 关闭请求：立即进入 Draining 并返回在途计数（非阻塞——排空收尾由
+    // 票据释放触发，§9.7"排空等待"的机制化形态）。
+    auto closer = std::async(std::launch::async,
+                             [&fx] { return fx.opened.store->requestClose(); });
+    ASSERT_EQ(closer.wait_for(std::chrono::seconds(5)),
+              std::future_status::ready);      // 请求本身不等待（无阻塞）
+    EXPECT_EQ(closer.get(), 1u);               // 在途计数＝挂起中的提交
+    EXPECT_FALSE(fx.opened.store->closed());   // 排空未完成（票据在途）
+
+    // 回调终结（ui 拆除）→ 提交中止、无修订；票据随 submit 返回释放，
+    // Draining 排空收尾被触发——关闭事实随之成立（无永久等待）。
+    interaction.release();
+    const CommandResult result = pending.get();
+    EXPECT_TRUE(result.aborted());
+    EXPECT_EQ(result.status.abort, CommandStatus::Abort::InteractionLost);
+    EXPECT_FALSE(result.newRevision.has_value());
+    EXPECT_EQ(fx.revisionDirCount(), revisionsBefore);
+    // 排空收尾在票据释放路径完成（提交线程）——有界轮询等待（不预设
+    // 调度时序；5 s 上限防用例悬挂）。
+    for (int i = 0; i < 500 && !fx.opened.store->closed(); ++i) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    EXPECT_TRUE(fx.opened.store->closed());
+}
+
+/// 用户取消对话框（挂起后整体拒绝——§5.3.3"空 optional＝整体拒绝"在
+/// 挂起/恢复面上的形态）：ReRejected(confirmations-rejected)、无修订，
+/// 会话不受影响（可继续提交——取消不破坏上下文）。
+TEST(CommandConfirmLifecycle, SuspendThenUserCancel_RejectedContextUnharmed)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    GatedInteraction interaction;
+    interaction.confirmOnRelease = false;  // 用户点取消
+    const core::BranchId mainBranch = fx.primaryBranch();
+
+    auto pending = std::async(std::launch::async, [&fx, &interaction, mainBranch] {
+        return fx.commands().submit(confirmEnvelope(mainBranch, "cancel"),
+                                    &interaction);
+    });
+    for (int i = 0; i < 100 && !interaction.entered.load(); ++i) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    interaction.release();
+    const CommandResult result = pending.get();
+    EXPECT_TRUE(result.rejected());
+    EXPECT_EQ(result.status.rejection,
+              CommandStatus::Rejection::ConfirmationsRejected);
+
+    // 上下文可继续：同一会话再次提交照常落盘（取消只终结该次命令）。
+    const CommandResult next
+        = fx.commands().submit(fx.appendEnvelope("after-cancel", mainBranch));
+    EXPECT_TRUE(next.committed());
+}
+
+/// 回调同步执行于提交线程（§5.3.3"命令服务在命令执行线程同步调用"——
+/// ui Marshal 契约的 project 侧观测；P-PR-7 冻结签名的行为面自证）。
+TEST(CommandConfirmLifecycle, Callback_SynchronousOnSubmitterThread)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    GatedInteraction interaction;
+
+    std::thread::id submitterThreadId{};
+    auto pending = std::async(std::launch::async, [&] {
+        submitterThreadId = std::this_thread::get_id();
+        return fx.commands().submit(
+            confirmEnvelope(fx.primaryBranch(), "thread-check"), &interaction);
+    });
+    for (int i = 0; i < 100 && !interaction.entered.load(); ++i) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    ASSERT_TRUE(interaction.entered.load());
+    EXPECT_EQ(interaction.callbackThreadId, submitterThreadId);  // 同线程同步
+
+    interaction.release();
+    EXPECT_TRUE(pending.get().committed());
+}
+
+// ---------------------------------------------------------------------
+// acceptance 3——确认留痕入 command.json（§4.4.4/§6.7；core.md §13.2
+// 交接项：确认留痕编码由 project 交接冻结）＋UX-03 承接（确认对话数据
+// 齐备由回调纯接口提供、文案不在 project 生成）。
+// ---------------------------------------------------------------------
+
+/// 确认通过的提交把绑定四元组＋凭据写入 command.json，磁盘回读逐字段
+/// 与计算值一致（四元组重算同源比对——绑定事实可复核）＋canonical
+/// round-trip（dump(parse(x))==x）。
+TEST(CommandConfirmPersistence, Confirmations_PersistedToCommandJson_RoundTrip)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    StubInteraction interaction;  // 确认（principal=stub-user）
+    const core::BranchId mainBranch = fx.primaryBranch();
+    const RevisionView headBefore = fx.opened.store->query().head();
+
+    const CommandEnvelope envelope = confirmEnvelope(mainBranch, "bind-rt");
+    const CommandResult result = fx.commands().submit(envelope, &interaction);
+    ASSERT_TRUE(result.committed());
+    ASSERT_TRUE(result.newRevision.has_value());
+
+    // 磁盘地面事实：修订目录内 command.json 的 confirmations[]。
+    const CommandRecord persisted
+        = readCommandRecord(fx.dir, *result.newRevision);
+    ASSERT_EQ(persisted.confirmations.size(), 1u);
+    const ConfirmationRecord& c = persisted.confirmations[0];
+    ASSERT_GE(interaction.lastFindings.size(), 1u);
+    const core::ConfirmableFinding& confirmed = interaction.lastFindings[0];
+    // 四元组逐字段同源比对（重算值与落盘值一致——绑定可复核）。
+    EXPECT_EQ(c.findingDigest, confirm::findingDigestHex(confirmed.record));
+    EXPECT_EQ(c.policyContentId,
+              confirm::policyContentIdentity(confirmed.record).toCanonical());
+    EXPECT_EQ(c.commandDigest, confirm::commandDigestHex(envelope.payloadCanonical));
+    EXPECT_EQ(c.baseRevisionId, headBefore.id.toCanonical());  // 确认基线＝提交前 tip
+    // 凭据（§4.4.4 credential）：主体透传＋ISO-8601 带毫秒 UTC 文本。
+    EXPECT_EQ(c.credential.principal, "stub-user");
+    ASSERT_EQ(c.credential.confirmedAtUtc.size(), 24u);
+    EXPECT_EQ(c.credential.confirmedAtUtc.back(), 'Z');
+    EXPECT_EQ(c.credential.confirmedAtUtc[4], '-');
+    EXPECT_EQ(c.credential.confirmedAtUtc[10], 'T');
+    // 策略身份形态：cid- core 规范文本（CON-06——Codec 校验同级）。
+    EXPECT_TRUE(core::ContentIdentity::tryFromCanonical(c.policyContentId)
+                    .has_value());
+    // canonical round-trip：重编码逐字节复现磁盘文本（NFR-COR-02）。
+    const std::filesystem::path path = fx.dir / "revisions"
+        / result.newRevision->toCanonical() / "command.json";
+    std::ifstream in(path, std::ios::binary);
+    ASSERT_TRUE(static_cast<bool>(in));
+    const std::string diskText{std::istreambuf_iterator<char>(in),
+                               std::istreambuf_iterator<char>()};
+    EXPECT_EQ(codec::dump(persisted), diskText);
+}
+
+/// 无待确认集的提交不产出 confirmations 字段（§4.4.4 canonical 省略
+/// 规则：空列表＝缺省字段——留痕面不写空结构）。
+TEST(CommandConfirmPersistence, NoFindings_ConfirmationsFieldOmitted)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+
+    const CommandEnvelope envelope
+        = fx.appendEnvelope("no-confirmations", fx.primaryBranch());
+    const CommandResult result = fx.commands().submit(envelope);
+    ASSERT_TRUE(result.committed());
+
+    const std::filesystem::path path = fx.dir / "revisions"
+        / result.newRevision->toCanonical() / "command.json";
+    std::ifstream in(path, std::ios::binary);
+    ASSERT_TRUE(static_cast<bool>(in));
+    const std::string diskText{std::istreambuf_iterator<char>(in),
+                               std::istreambuf_iterator<char>()};
+    EXPECT_EQ(diskText.find("\"confirmations\""), std::string::npos);
+    const CommandRecord parsed = codec::parseCommandRecord(diskText);
+    EXPECT_TRUE(parsed.confirmations.empty());
+}
+
+/// UX-03 承接：确认对话所需数据齐备由回调纯接口提供（比较三要素——
+/// 实际/期望/单位随 finding 原样到达回调）；文案不在 project 生成
+/// （NFR-REL-05 口径——project 在确认流零用户级诊断产出，文案权威归
+/// diagnostics/ui）。
+TEST(CommandConfirmPersistence, Callback_ReceivesComparativeData_Ux03)
+{
+    ServiceFixture fx;
+    fx.registerDefaults();
+    StubInteraction interaction;
+
+    const CommandResult result = fx.commands().submit(
+        confirmEnvelope(fx.primaryBranch(), "ux03"), &interaction);
+    ASSERT_TRUE(result.committed());
+
+    // 回调数据面：比较三要素齐备（实际/期望侧四态值＋单位——确认对话
+    // 的呈现输入；core C-1 保证比较型出席）。
+    ASSERT_GE(interaction.lastFindings.size(), 1u);
+    const core::DiagnosticRecord& record = interaction.lastFindings[0].record;
+    EXPECT_EQ(record.code, "TEST-COMPARE-LIMIT");
+    ASSERT_TRUE(record.comparison.has_value());
+    ASSERT_TRUE(record.comparison->actual.quantity.tryValue().has_value());
+    ASSERT_TRUE(record.comparison->expected.quantity.tryValue().has_value());
+    EXPECT_DOUBLE_EQ(*record.comparison->actual.quantity.tryValue(), 2.0);
+    EXPECT_EQ(record.comparison->actual.unit.symbol(), "m");
+    EXPECT_DOUBLE_EQ(*record.comparison->expected.quantity.tryValue(), 1.0);
+    EXPECT_EQ(record.comparison->expected.unit.symbol(), "m");
+    // 文案边界：project 在确认放行全流程零用户级诊断产出（finding 的
+    // context/cause 文案由域处理器产出、project 原样透传——呈现归 ui，
+    // 文案权威归 diagnostics/ui——P-PR-6 链路）。
+    EXPECT_TRUE(fx.sink.reports.empty());
+    EXPECT_TRUE(result.diagnostics.empty());
 }
 
 }  // namespace sdurws::ird::project::stub

@@ -1,7 +1,8 @@
 /**
  * @file   CommandServiceImpl.cpp
  * @brief  命令服务实现——S1～S7 生命周期编排（§6.1）、命令执行槽串行、
- *         确认放行决策映射（§6.7）与双编译事务编排（§6.6）的实现体。
+ *         确认放行决策映射与确认绑定冻结/复核/留痕（§6.7——PRJ-T11）、
+ *         双编译事务编排（§6.6）的实现体。
  *
  * 设计依据：见私有头 CommandServiceImpl.hpp（文件头全量登记设计锚点、
  *   实现口径①～⑥与 P-PR-9 阻断面）；本文件注释聚焦每段编排的"为什么"
@@ -144,6 +145,9 @@ CommandServiceImpl::CommandServiceImpl(ProjectStoreImpl& host,
     : m_host(host)
     , m_compilePort(compilePort)
     , m_sink(sink)
+    , m_probe(nullptr)  // 空＝生产探针（confirm::ProductionConfirmationProbe
+                        // ——probe() 访问面兜底；测试经 setConfirmationProbe
+                        // 注入扰动探针——D-10 接缝，实现口径⑤）
 {
 }
 
@@ -429,6 +433,10 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
     // ---- [S4] 确认放行（§5.3.3/§5.3.4/§6.7）。待确认集为空＝直接放行
     //      （SA-15——无 finding 无需交互）。等待持槽零事务资源（§5.3.4）：
     //      此时尚未创建 .staging、未写任何文件。
+    //      PRJ-T11 增量：决策通过后冻结确认绑定（四元组＋凭据 →
+    //      §4.4.4 ConfirmationRecord），并做确认提交时复核（实现口径③
+    //      ——diagnostics.md §5.5 要点⑦前半"回调返回后、放行前"）。
+    std::vector<ConfirmationRecord> confirmations;
     if (!plan.confirmableFindings.empty()) {
         // 非交互提交（测试/后台通道）＋待确认集 → 阻止应用（§6.7 末行
         // ——未确认不落盘）。
@@ -466,8 +474,35 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
             result.findings = std::move(plan.confirmableFindings);
             return;
         }
-        // 逐项确认（core C-2：Confirmed⇔凭据——状态推进在数据面留痕，
-        // 凭据绑定复核与 command.json 留痕随 PRJ-T11——§12 分工）。
+        // ---- [PRJ-T11] 凭据绑定冻结（§6.7"确认绑定"）：回调返回的每个
+        //      凭据与它所针对的输入绑定成一条留痕——{findingDigest（事实
+        //      内容摘要）, policyContentId（策略语境身份——CON-06）,
+        //      commandDigest（本次载荷摘要）, baseRevisionId（S2 解析的
+        //      基线——确认所针对的输入版本）, credential}。冻结发生在
+        //      core confirm() 推进之前：finding 尚为 Pending 态，摘要只
+        //      覆盖 record 内容（状态/凭据不进 findingDigest——实现口径
+        //      ①编码表只含 DiagnosticRecord 字段）。
+        confirmations.reserve(plan.confirmableFindings.size());
+        for (std::size_t i = 0; i < plan.confirmableFindings.size(); ++i) {
+            confirmations.push_back(confirm::freezeConfirmation(
+                envelope, plan.confirmableFindings[i], (*decisions)[i],
+                baseView.id));
+        }
+        // ---- [PRJ-T11] 绑定复核一：确认提交时（回调返回后、放行前——
+        //      §6.7"编译前复核绑定"的前置复核＋diagnostics.md §5.5 要点
+        //      ⑦前半）。失配 ⇒ 确认凭据失效 → 命令按未确认处置（实现
+        //      口径④：Rejected(confirmations-unresolved)；§6.7"输入变化
+        //      不可能（槽内无并发写）"——生产不可达的防御纵深分支）。
+        if (const std::optional<confirm::BindingVerdict> mismatch
+            = recheckConfirmations(envelope, plan.confirmableFindings,
+                                   confirmations);
+            mismatch.has_value()) {
+            fillBindingMismatchRejection(plan.confirmableFindings,
+                                         *mismatch, result);
+            return;
+        }
+        // 逐项确认（core C-2：Confirmed⇔凭据——状态推进在数据面留痕；
+        // 绑定已在上一步复核通过）。
         for (std::size_t i = 0; i < plan.confirmableFindings.size(); ++i) {
             plan.confirmableFindings[i].confirm((*decisions)[i]);
         }
@@ -483,6 +518,20 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
             throw std::invalid_argument(
                 "project/command: requiresDualCompile 但 IModelCompilePort "
                 "未注入（§5.3.6 L5 装配面——装配违约 fail-fast）");
+        }
+        // ---- [PRJ-T11] 绑定复核二：编译前（§6.7"编译前复核绑定"——
+        //      diagnostics.md §5.5 要点⑦后半；MDL-06④"确认不豁免编译"
+        //      的顺序面：复核不过不进编译，更不进提交）。无待确认集＝
+        //      无复核对象（纯编译命令跳过）。
+        if (!confirmations.empty()) {
+            if (const std::optional<confirm::BindingVerdict> mismatch
+                = recheckConfirmations(envelope, plan.confirmableFindings,
+                                       confirmations);
+                mismatch.has_value()) {
+                fillBindingMismatchRejection(plan.confirmableFindings,
+                                             *mismatch, result);
+                return;
+            }
         }
         // 编译输入＝计划闭包（baseSnapshot 引用集＋plannedWrites 合成
         // 视图——§6.6；请求持引用，调用期有效）。runtime 只读快照语义
@@ -592,8 +641,7 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
     }
 
     // 命令留痕（§4.4.4/§6.4 版本三元组）：project 原样持久化不解释
-    // （D-10）；confirmations[] 留痕随 PRJ-T11（§12 分工——本任务落位
-    // 面恒空表，§4.4.4 省略规则下不输出该字段）。
+    // （D-10）。
     commitPlan.command.commandType = envelope.commandType;
     commitPlan.command.payloadFormatVersion = envelope.payloadFormatVersion;
     commitPlan.command.payloadCanonical.assign(
@@ -611,6 +659,11 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
         commitPlan.command.inverse->payloadCanonical.assign(
             inversePayload.begin(), inversePayload.end());
     }
+    // 确认留痕（§4.4.4 confirmations[]/§6.7——PRJ-T11 落位：确认通过的
+    // 凭据连同绑定四元组随命令摘要持久化，随修订永久留痕〔PM-12-S1 可
+    // 浏览〕；两处复核已通过——落盘的即"复核通过时点"的绑定事实。空表
+    // ＝缺省省略该字段，§4.4.4 canonical 省略规则）。
+    commitPlan.command.confirmations = std::move(confirmations);
     commitPlan.command.summary = plan.summary;
 
     // 七步事务（S6 文件事务＋第 6 步内的事件发布——S7；失败重试一次
@@ -629,6 +682,103 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
                           "提交后视图装配未命中（防御面——数据侧异常）rev="
                               + committed.revisionId.toCanonical());
     }
+}
+
+// =====================================================================
+// 确认绑定复核（PRJ-T11——§6.7 数据半区的编排消费面）
+// =====================================================================
+
+std::optional<confirm::BindingVerdict> CommandServiceImpl::recheckConfirmations(
+    const CommandEnvelope& envelope,
+    const std::vector<core::ConfirmableFinding>& findings,
+    const std::vector<ConfirmationRecord>& confirmations) const
+{
+    // 复核时点的"当前基线"：权威元数据重查（INV-M3——只读 HEAD 引用版
+    // 本，禁止经历史修订重建）。槽内应与 S2 解析值一致（§6.1 命令槽保证
+    // 无并发写）；不一致或分支缺失＝确认所针对的输入版本已不存在——按
+    // baseRevision 失配处置（§6.7 失效条件的输入版本成员）。
+    std::string currentBaseRevision;
+    const ProjectMetadataView meta = m_host.query().currentMetadata();
+    for (const BranchRecord& b : meta.record.branches) {
+        if (b.branchId == envelope.branch) {
+            currentBaseRevision = b.tipRevisionId.toCanonical();
+            break;
+        }
+    }
+
+    // 探针解析：装配通道为空＝生产探针（真值采集——与冻结同源同函数，
+    // 无第二计算路径）；非空＝测试注入（D-10 接缝——实现口径⑤）。
+    // 无状态对象栈上构造——命令槽内调用（§6.1），零共享状态。
+    confirm::ProductionConfirmationProbe productionProbe;
+    confirm::IConfirmationProbe& probe
+        = (m_probe != nullptr) ? *m_probe : productionProbe;
+
+    for (std::size_t i = 0; i < confirmations.size(); ++i) {
+        // 当前基线兜底：分支重查缺失（防御面——S1 已验证分支存在，此处
+        // nullopt 只可能来自槽内数据异常）时以空串参与比对——与任何冻结
+        // 值（rev- 规范文本）必不等 ⇒ 按输入版本失配定性，符合"输入版本
+        // 不存在则凭据失效"的 §6.7 语义。
+        const core::RevisionId currentBase = [&]() {
+            if (!currentBaseRevision.empty()) {
+                auto parsed = core::RevisionId::tryFromCanonical(
+                    currentBaseRevision);
+                if (parsed.has_value()) {
+                    return *parsed;
+                }
+            }
+            return core::RevisionId{};
+        }();
+        const confirm::ConfirmationActuals actuals
+            = probe.actuals(envelope, findings[i], currentBase);
+        const confirm::BindingVerdict verdict
+            = confirm::verifyBinding(confirmations[i], actuals);
+        if (verdict != confirm::BindingVerdict::Bound) {
+            // 首个失配即定性返回（§6.7 四元组序）；维度定位随失败出口
+            // 进开发诊断（fillBindingMismatchRejection——不进用户码，
+            // CR-08）。
+            return verdict;
+        }
+    }
+    return std::nullopt;  // 全部绑定一致——放行继续
+}
+
+void CommandServiceImpl::fillBindingMismatchRejection(
+    std::vector<core::ConfirmableFinding>& findings,
+    confirm::BindingVerdict verdict,
+    CommandResult& result) const
+{
+    // 失配维度的开发诊断（reportDev 通道——定位哪个成员失配；§5.0 收编
+    // 清单无确认流用户码，不私造——CR-08；机器可读面由 status.rejection
+    // 承载）。
+    if (m_sink != nullptr) {
+        const char* member = "unknown";
+        switch (verdict) {
+        case confirm::BindingVerdict::FindingDigestMismatch:
+            member = "finding-digest";
+            break;
+        case confirm::BindingVerdict::PolicyContentMismatch:
+            member = "policy-content";
+            break;
+        case confirm::BindingVerdict::CommandDigestMismatch:
+            member = "command-digest";
+            break;
+        case confirm::BindingVerdict::BaseRevisionMismatch:
+            member = "base-revision";
+            break;
+        case confirm::BindingVerdict::Bound:
+            member = "bound";
+            break;
+        }
+        m_sink->reportDev(
+            "project/command",
+            std::string("确认绑定复核失配 member=") + member
+                + "——确认凭据失效，命令按未确认处置（§6.7/实现口径④）");
+    }
+    // 终态组装（§6.7"四者任一不符…命令按未确认处置（confirmations-
+    // unresolved）"——diagnostics.md §5.3 同语；未决集回传调用方呈现）。
+    result.status.kind = CommandStatus::Kind::Rejected;
+    result.status.rejection = CommandStatus::Rejection::ConfirmationsUnresolved;
+    result.findings = std::move(findings);
 }
 
 // =====================================================================

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T11",
+  "masterWp": "WP-04-T11",
+  "branch": "wp04-t11",
+  "base": "900d7eb74f36bd1c100c771dba6475c71054eb01",
+  "date": "2026-09-16",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC library",
+      "result": "两模式构建零错误（smoke 与 integration；本任务新增 src/ConfirmationFlow.cpp 编译单元＋win32/StoreLock 时间辅助重构，其余编译单元行为零变化）",
+      "notes": "PRJ-T11 产物：确认放行流绑定设施（§6.7 数据半区）——{findingDigest, policyContentId, commandDigest, baseRevisionId} 四元组计算〔CR-02：算法唯一路径＝core::ContentDigester；编码表登记于 src/ConfirmationFlow.cpp 文件头实现口径①〕、freezeConfirmation 冻结（§4.4.4 ConfirmationRecord 五字段）、verifyBinding 复核（四元组序逐成员定性）、IConfirmationProbe/ProductionConfirmationProbe（D-10 生产窄接口/测试侧 fake——实现口径⑤）；CommandServiceImpl 编排接入（S4 冻结＋确认提交时复核、S5 编译前复核、S6 确认留痕入 commitPlan.command.confirmations）；win32::formatIsoMilli（凭据 time_point→ISO-8601 带毫秒文本——与心跳/提交时间同钟面同格式，utcNowIsoMilli 重构委托之，行为零变化）。"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "219/219 PASSED（两模式一致：smoke 与 integration 各 219/219；既有 206 用例零回归＋本任务新增 13 用例全绿）",
+      "notes": "新增 13 用例（acceptance 逐条对账）：acceptance 1＝CommandConfirmTx2 四用例〔Path1 硬断言/Path2 无交互/Path3 交互拒绝——三路各断言 Rejected 终态＋诊断字段完整（ERR-01 必填非空）＋无修订落盘（revisions 目录计数不变＝无新 command.json，观测口径 2）；Path4 绑定失效——PerturbingProbe 注入（实现口径⑤接缝）→ Rejected(confirmations-unresolved)（§6.7『按未确认处置』实现口径④）＋findings 保持 Pending 回传＋无修订＋失配维度进 reportDev（不私造用户码 CR-08）＋零用户级诊断〕＋BindingVerify.EachMemberMismatch 一用例〔四成员逐一扰动：findingDigest/policyContentId/commandDigest/baseRevisionId 任一不符均可检出且定性正确；真值面 Bound〕；acceptance 2＝CommandConfirmLifecycle 五用例〔ConfirmWait_HoldsSlot：确认等待占用命令执行槽（§5.3.4——回调挂起期间第二提交 300 ms 不得完成，放行后串行完成 seq 递增线性链）；ConfirmWait_ZeroTransactionResources：挂起期间 .staging 无事务目录（排除 D-09 tmp）＋revisions 无增长；SessionClose_CancelsConfirmWait：requestClose 立即入 Draining 返回在途计数 1（非阻塞——§9.7 排空由票据释放路径收尾）＋回调 ui 拆除形态抛出→Aborted(interaction-lost)＋无修订＋排空收尾完成（无永久等待/无死锁）；SuspendThenUserCancel：挂起后 nullopt→confirmations-rejected＋上下文可继续提交；Callback_SynchronousOnSubmitterThread：回调线程＝提交线程（§5.3.3 命令执行线程同步调用——P-PR-7 冻结签名的行为面）〕；acceptance 3＝CommandConfirmPersistence 三用例〔Confirmations_PersistedToCommandJson_RoundTrip：落盘五字段与重算值逐字段同源一致＋credential ISO-8601 24 字节 Z 尾＋cid-/rev- 形态＋dump(parse(x))==x canonical round-trip；NoFindings_ConfirmationsFieldOmitted：§4.4.4 空列表缺省省略；Callback_ReceivesComparativeData_Ux03：比较三要素（实际 2m/期望 1m）齐备到达回调＋project 确认流零用户级诊断（文案不在 project 生成——NFR-REL-05/P-PR-6 链路）〕；acceptance 4＝零 Widgets（BuildRedLineTest 既有源码扫描自动覆盖新增文件＋公共头零改动）＋P-PR-7（ICommandInteraction/IModelCompilePort 签名零改动——git diff 为证；§5.3.3 行为契约由上列具名用例钉住）＋P-PR-6（LinkageContractTest 既有零 diagnostics 链接边＋Path4 的 reportDev 通道断言）。"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "15/15 PASSED（两模式一致：smoke 与 integration 各 15/15）",
+      "notes": "本任务零改动零新增（PRJ-TX-2 的契约测试全量归 PRJ-T15——§12 PRJ-T15 行『§11 表逐项』；本任务单元内半区已覆盖四路/生命周期/留痕的 submit 级行为）。既有 15 用例零回归（PRJ-TX-1 两用例＋PRJ-TX-3 三用例＋锁/链接契约 10 用例）。"
+    }
+  ],
+  "builds": [
+    { "mode": "integration", "log": "integration-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project" },
+    { "mode": "integration", "log": "integration-contract-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_contract_test" },
+    { "mode": "integration", "log": "verify-target-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_test（契约 verify 命令）" },
+    { "mode": "smoke-configure", "log": "smoke-configure.log", "exitCode": 0, "toolchain": "vcpkg 绝对路径（AGENTS §4.1 冒烟必带）" },
+    { "mode": "smoke-build", "log": "smoke-build.log", "exitCode": 0, "errors": 0 },
+    { "mode": "smoke-test-run", "log": "smoke-test-run.log", "exitCode": 0 },
+    { "mode": "smoke-contract-test-run", "log": "smoke-contract-test-run.log", "exitCode": 0 },
+    { "mode": "integration-test-run", "log": "integration-test-run.log", "exitCode": 0 },
+    { "mode": "integration-contract-test-run", "log": "integration-contract-test-run.log", "exitCode": 0 }
+  ],
+  "gates": {
+    "ird_gates": "实跑（2026-09-16，集成构建树 ird_gates 目标；日志 ird-gates.log）：命中 9 项＝7×IRD-GATE-SUB（测试目标直链 sdurws_ird_testkit——跨单元经 testkit 替身/登记的既有形态提示）＋1×IRD-GATE-T1（sdurws_ird_testdata_lint 产品目标链接 testkit）＋1×IRD-GATE-R4（ProjectStoreImpl.cpp 的 \"RobWork\" 字面量 1 处——kCreatedWithToolVersion 工具版本串，git show base 核对为 T08 既有、非本任务新增）。命中集合与 wp04-t08/t09/t10 基线逐项一致＝零新增命中；本任务新增/改动文件（ConfirmationFlow.{hpp,cpp}/CommandServiceImpl.{hpp,cpp}/StoreLock.{hpp,cpp}/测试三文件/CMakeLists.txt）零命中。门禁目标按 SA-10 设计命中即非零退出（exit 1），既有命中属基线登记面非本任务违规。",
+    "validateTask": "PASS（validate-task.log；pwsh -File validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/PRJ-T11.json，exit 0——PASS (1 tasks)）"
+  },
+  "acceptanceCoverage": "acceptance 1＝全（PRJ-TX-2 四路具名用例：Path1～Path4＋BindingVerify 逐成员——均无修订、command.json 无新记录〔无修订同源观测〕、诊断字段完整〔ERR-01 逐字段断言；testkit ContractCheck 谓词消费随 PRJ-T15 按 T-1 允许形态登记——本目标不链 testkit 为 CMakeLists 登记口径，diagnostics 单元 DiagContractCheckTest 已钉住谓词同判性〕）；acceptance 2＝全（占槽/零事务资源/关闭取消无永久等待/用户取消/挂起-恢复-丢失全生命周期具名用例）；acceptance 3＝全（确认留痕入 command.json round-trip＋空省略＋UX-03 回调数据面与文案边界）；acceptance 4＝全（零 Widgets 扫描＋ICommandInteraction 纯接口签名零改动〔P-PR-7 处置：git diff 为证＋行为用例钉住〕＋确认流诊断经 §5.0 IDiagnosticsSink 注入、零 diagnostics 链接边〔P-PR-6 处置〕）。",
+  "implementationNotes": "实现口径登记五项（DTB §5.4，详见 src/ConfirmationFlow.hpp/.cpp 文件头）：①findingDigest 的 canonical 编码表（magic 'IRD-PRJ-FINDING-DIGEST-V1'＋tag＋u64le 长度前缀框架；对什么做摘要归所有者单元——core.md §4.2；双精度取 IEEE-754 位模式大端直编，无浮点文本化；一经有修订落盘不可更改——演进换 magic）；②policyContentId 阶段 A 来源＝finding 比较语境投影（code＋比较三要素＋cause，magic 'IRD-PRJ-POLICY-CONTEXT-V1'）的内容身份——project 无④策略端口通道（P-PR-3：判定与阈值读取全在域处理器），finding 内嵌比较语境即 project 可见面的已解析策略内容（CON-06）；真实域处理器落位后经计划声明面接入④端口身份（增量切换，不改形状——§13 交接）；③复核时机落点＝S4 冻结后（确认提交时——diagnostics.md §5.5 要点⑦前半）与 S5 IModelCompilePort 调用前（编译前——要点⑦后半，确认不豁免编译 MDL-06④ 的顺序面；非编译命令仅确认提交时复核）；④失配处置＝Rejected(confirmations-unresolved)（§6.7『四者任一不符…命令按未确认处置』＋diagnostics.md §5.3 同语），失配维度经 reportDev 开发诊断定位（§4.6 收编清单无确认流用户码，不私造——CR-08）；⑤IConfirmationProbe 接缝（D-10 生产窄接口/测试侧 fake——IFileOps/ILockOps 先例）：§6.7 失配分支生产不可达（槽内无并发写明文），冻结不经探针（直调 freezeConfirmation 真值）、探针只在复核点被咨询；CommandServiceImpl.setConfirmationProbe 装配通道（setCompilePort 同款形态）。缺陷登记两项（实现期自测暴露并修复，终态全绿）：①ConfirmationFlow.cpp appendField 双重载（const std::string&/string_view）对字面量调用歧义——收敛 string_view 单入口；②测试侧 PerturbingProbe 初版误设『前 N 次真值』——冻结不经探针的设计下扰动须自首次咨询生效，修正后 13 用例全绿。文档同步：units/project.md v0.13（§12 PRJ-T11 行＋§15.4 变更记录）。"
+}

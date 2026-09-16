@@ -28,7 +28,9 @@
  *   ——本类零编译算法）、S6 的七步文件事务归 TxEngine（§7）、S7 的事
  *   件发布在事务第 6 步内（TxEngine——D-18 重试口径）。本类自有语义＝
  *   形式校验（S1）、基线解析与过期拒绝（S2）、槽串行化、确认决策映射
- *   （S4——决策判定在本类，凭据绑定复核与留痕归 PRJ-T11）、计划到
+ *   形式校验（S1）、基线解析与过期拒绝（S2）、槽串行化、确认决策映射
+ *   （S4——决策判定在本类）与确认绑定冻结/复核/留痕（S4/S5/S6——PRJ-T11
+ *   落位：数据语义归 ConfirmationFlow 设施，本类持有编排时点）、计划到
  *   CommitPlan 的装配（S6 前半：身份分配点——tx::CommitPlan 登记）。
  *
  * 实现口径登记（DTB §5.4——单元卡未定义判据，详见各私有方法注释）：
@@ -80,12 +82,15 @@
 #define SDURWS_IRD_PROJECT_SRC_COMMANDSERVICEIMPL_HPP
 
 #include <mutex>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include <sdurws/ird/core/DiagData.hpp>
 #include <sdurws/ird/project/CommandService.hpp>
 #include <sdurws/ird/project/StoreTypes.hpp>
+
+#include "ConfirmationFlow.hpp"
 
 namespace sdurws::ird::project {
 
@@ -154,6 +159,21 @@ public:
         m_compilePort = port;
     }
 
+    /**
+     * @brief 绑定复核探针装配通道（PRJ-T11——confirm::IConfirmationProbe
+     *        的 D-10 形态接缝；指针非 owning，所有权归装配方）。
+     *
+     * 背景说明：构造默认空＝消费生产探针（confirm::
+     * ProductionConfirmationProbe——真值采集）；本通道供测试注入扰动探针
+     * 驱动 §6.7 绑定失配分支（槽内生产不可达——ConfirmationFlow.hpp 实
+     * 现口径⑤的注入面，同 setCompilePort"构造默认空＋本通道"先例）。
+     * 提交前装配、提交中替换属装配纪律违约。
+     */
+    void setConfirmationProbe(confirm::IConfirmationProbe* probe) noexcept
+    {
+        m_probe = probe;
+    }
+
 private:
     // ---- S1～S7 的私有步骤（submit 的线性编排体；每步失败即返回） ----
 
@@ -210,12 +230,48 @@ private:
      */
     void cleanCompileTmp();
 
+    /**
+     * @brief 确认绑定复核（PRJ-T11——一个复核点的完整判定；§6.7 数据
+     *        半区消费面，两处调用：S4 冻结后〔确认提交时〕与 S5 编译前）。
+     *
+     * 执行序：重查权威元数据的分支 tip（INV-M3 只读 HEAD 引用版本——
+     * 复核时点的"当前基线"；分支缺失＝防御面按输入版本失配定性）→ 逐
+     * finding 经探针采集四元组当前值 → verifyBinding 判定 → 首个失配
+     * 即返回其定性（开发诊断在此产出——维度 token 进 reportDev）。
+     *
+     * @param envelope      [in] 命令信封（commandDigest 的当前值来源）
+     * @param findings      [in] 计划待确认集（与 confirmations 一一对应）
+     * @param confirmations [in] 确认时点冻结的留痕（复核比对的冻结侧）
+     * @return nullopt＝全部绑定一致（放行继续）；有值＝首个失配成员的
+     *         定性（调用方按未确认处置——实现口径④）
+     */
+    [[nodiscard]] std::optional<confirm::BindingVerdict> recheckConfirmations(
+        const CommandEnvelope& envelope,
+        const std::vector<core::ConfirmableFinding>& findings,
+        const std::vector<ConfirmationRecord>& confirmations) const;
+
+    /**
+     * @brief 组装绑定失配拒绝终态（两处复核点共用的失败出口——§6.7
+     *        "四者任一不符…命令按未确认处置"的归类落点）。
+     *
+     * @param findings [in] 计划待确认集（原样回传调用方呈现未决项）
+     * @param verdict  [in] 失配定性（开发诊断定位用）
+     * @param result   [out] 填充 Rejected(confirmations-unresolved)＋
+     *                 findings 回传；不产生修订
+     */
+    void fillBindingMismatchRejection(
+        std::vector<core::ConfirmableFinding>& findings,
+        confirm::BindingVerdict verdict,
+        CommandResult& result) const;
+
     /// 宿主存储上下文（写通道/查询面/目录——非 owning，见类头）。
     ProjectStoreImpl& m_host;
     /// 双编译端口（可空——§5.3.6 L5 注入面）。
     IModelCompilePort* m_compilePort;
     /// 诊断 sink（可空——§5.0）。
     IDiagnosticsSink* m_sink;
+    /// 绑定复核探针（可空＝生产探针——PRJ-T11 实现口径⑤；D-10 接缝）。
+    confirm::IConfirmationProbe* m_probe;
     /// 处理器注册表（§5.3.5——S1 解析与查询判据共用；registry() 交付）。
     HandlerRegistry m_registry;
     /// 命令执行槽（§6.1——submit 全程互斥；每存储上下文一个）。
