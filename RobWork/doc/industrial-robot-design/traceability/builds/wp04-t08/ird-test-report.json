@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T08",
+  "masterWp": "WP-04-T08",
+  "branch": "wp04-t08",
+  "base": "cc49f39fce2115f0991179bb436d40f2b0c75ddf",
+  "date": "2026-09-16",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；_test 目标 main 自持 GTest::gtest_main，contract_test 目标 main 自持自有入口——PRJ-T03 形态不变）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，集成全量构建 exit 0 零 error）",
+      "notes": "PRJ-T08 落位：src/ProjectStoreImpl.cpp＋src/ProjectStoreImpl.hpp 新增（§12 PRJ-T08 行产物——打开与恢复：ProjectStoreFactory open/createNew〔PM-02②③⑤ 打开协议服务侧/PM-01 存储侧组装〕、ProjectStoreImpl 生命周期〔§9.6 失权门卫＋§9.7 Draining 排空〕＋RecoveryReport 汇编〔§7.4 恢复顺序①③④⑤〕；ProjectStoreImpl.hpp 为 src/ 私有实现头——R-2）；公共契约面＝include/sdurws/ird/project/ProjectStore.hpp 新增（ProjectStore/ProjectStoreFactory/ICloseObserver——§5.1 生命周期与身份子集）＋StoreTypes.hpp 增量（OpenMode/ObjectCacheBudget/SchemaInfo/LockInfo/RecoveryReport/OpenStoreRequest/OpenStoreResult）。CMakeLists.txt 增列与注释更新。"
+    },
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "169/169 PASSED（两模式一致：smoke 与 integration 各 169/169，零失败零跳过）",
+      "notes": "新增 ProjectStoreTest 18 用例（acceptance 1＝PRJ-TX-9 落位面：Tx9_ClosedLateWrite_RejectedWithStableDiag／Tx9_DrainingRejectsWrite_ThenDrainsInFlight／Tx9_UncommittedRevision_InvisibleAfterReopen／Tx9_OpenFailure_DoesNotTouchCurrentProject〔完成条件具名用例〕；acceptance 2＝LegacyFormat_StableReadOnlyRejection／SchemaFuture_RejectedWithUpgradeGuidance／RecoveryReport_StagingResidueAndOrphanDrafts／RecoveryReport_HeadIntegrityFailure_StopsOpen；acceptance 3＝CreateNew_SkeletonIdentityAndReopen／Open_ReopenClosedProject_IdentityPreserved／ReadOnlyOpen_ProvidesQueriesAndRejectsWrites／WritableOpen_DegradesToReadOnlyWhenHeld／InProcessSecondWritableOpen_Rejected／WriteChannel_HeadAdvancesMonotonically；acceptance 4＝Ppr1_CoreIdentityBaselineConsumed／Ppr6_SinkInjectionOptionalWithSameCodes＋边界 Open_NotAProject_MissingPathOrManifest／CreateNew_NonEmptyTarget_FailsFast）。既有 151 用例零回归。写入口代表＝ProjectStoreImpl 内部写通道 executeCommit（口径登记：全写入口 archive.begin/submit/draft.save 随 PRJ-T10/T12/T14 经同一门卫挂载，PRJ-TX-9 全量用例归 PRJ-T15 复验——§12 PRJ-T15 行）。",
+      "xml": "sdurws_ird_project_test-smoke.xml / sdurws_ird_project_test-integration.xml"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "10/10 PASSED（两模式一致；零改动零回归——LinkageContractTest 构建图边界与 LockContractTest 真双进程锁契约不受本任务影响）",
+      "notes": "本任务零新增用例（锁双实例/构建图边界契约已由 PRJ-T03 落位；PRJ-T08 无新增跨单元契约面——进程内注册表与只读打开的行为级断言在 _test 目标承载）。",
+      "xml": "sdurws_ird_project_contract_test-smoke.xml / sdurws_ird_project_contract_test-integration.xml"
+    }
+  ],
+  "builds": [
+    { "mode": "integration", "log": "integration-build.log", "exitCode": 0, "errors": 0 },
+    { "mode": "smoke-configure", "log": "smoke-configure.log", "exitCode": 0, "toolchain": "vcpkg（绝对路径——AGENTS §4.1 冒烟必带）" },
+    { "mode": "smoke-build", "log": "smoke-build.log", "exitCode": 0, "errors": 0 },
+    { "mode": "verify-target", "log": "verify-target-build.log", "exitCode": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_test（契约 verify 命令）" }
+  ],
+  "gates": {
+    "ird_gates": "未执行——如实标注：门禁目标随 WP-01-T01 落地前的口径与本单元既有任务一致；本任务以 CMakeLists.txt 配置期依赖红线守卫（project 仅链 core、零 Qt、产品库零 gtest）＋BuildRedLineTest/LinkageContractTest 源码面与构建图边界用例承载红线证据",
+    "validateTask": "PASS（validate-task.log）"
+  },
+  "implementationNotes": "实现口径登记七项（DTB §5.4，详见 ProjectStoreImpl.cpp 文件头）：①open 步骤顺序＝②版本→锁半步→③装载→⑤草稿，PM-06 拒绝不触碰锁；②锁 OsError §9.5 映射（WRITE_PROTECT 降级只读＋PRJ-LOCK-HELD kind=media-read-only；ACCESS_DENIED→access-denied 打开失败）；③createNew 组装区＝目标父目录同卷临时名，逐顶层条目 rename 就位，失败清理不留半成品；④闭包装载两段式（scanForRecovery 预检＋跳过 uncommittedRevisions 的搬运装载——闭包外修订不注册进会话索引＝T09 查询可见性纪律的结构前提）；⑤孤儿草稿判定保守版（.new/.bak 直接报告；解析失败/跨项目/分支不存在/路径不一致四类）；⑥草稿 flush 钩子随 PRJ-T12 挂载，T08 排空等待面只有在途票据；⑦析构静默终局不回调（回调仅 requestClose 完成路径）；另登记者⑧部件装配序（索引/引擎指针共享同一对象）与 OpenStoreResult out-of-line 特殊成员（unique_ptr<ProjectStore> 完整类型要求）。端口访问器（query/commands/drafts/archive/undoRedo）随 PRJ-T09/T10/T12/T13/T14 增量挂载（不预建无实现接口——NFR-MNT-04，单元卡 §3.1 增量落位纪律）。"
+}

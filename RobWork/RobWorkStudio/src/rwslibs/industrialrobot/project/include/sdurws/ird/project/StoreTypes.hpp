@@ -8,14 +8,29 @@
  *     详见 §4、§5.0/§5.1。**本文件按 §12 任务节奏增量落位**：PRJ-T03 落 §9.2
  *     锁持有者记录与 §5.0 IDiagnosticsSink；PRJ-T04 增补 §5.0 StoreError/
  *     StoreErrorCode（canonical 编解码的错误通道——格式解析的稳定拒绝码
- *     format-legacy/schema-future/store-corrupt 由此承载）；其余类型
- *     （OpenStoreRequest/RecoveryReport 等）随 PRJ-T08 落地时增补，不预建
- *     无消费者接口（NFR-MNT-04））；
+ *     format-legacy/schema-future/store-corrupt 由此承载）；PRJ-T08 增补
+ *     §5.1 打开协议类型（OpenMode/ObjectCacheBudget/SchemaInfo/LockInfo/
+ *     RecoveryReport/OpenStoreRequest/OpenStoreResult）；
+ *     不预建无消费者接口（NFR-MNT-04））；
  *   - §5.0（错误类型、诊断码与 diagnostics 适配——IDiagnosticsSink 定义原文）；
+ *   - §5.1（打开与存储上下文——OpenStoreRequest/OpenStoreResult/RecoveryReport
+ *     定义原文）；
  *   - §9.2（第二实例读取 PID：固定宽度记录，容忍撕裂读）；
+ *   - §4.7（只读查询的线程与生命周期契约——上下文 Closed 后查询拒绝）；
  *   - 任务契约 tasks/foundation/PRJ-T03.json acceptance 2/4（PRJ-LOCK-HELD 含
  *     持有 PID；锁诊断经 IDiagnosticsSink 适配器产出 core::DiagnosticRecord
- *     ——P-PR-6 处置：注入式先行、不直链 diagnostics 库）。
+ *     ——P-PR-6 处置：注入式先行、不直链 diagnostics 库）、tasks/foundation/
+ *     PRJ-T08.json acceptance 1～3（打开五步协议②③⑤、恢复报告、生命周期）。
+ *
+ * 增量落位说明（PRJ-T08，DTB §5.4 口径登记两处）：
+ *   1. §3.1 组成表点名的 `StorePath` 类型本任务**不落位**——§5.1 公共接口
+ *      全部使用 std::filesystem::path（canonicalPath() 原文签名）与宽字符串
+ *      规范形态（win32::canonicalStorePath 返回值），StorePath 当前零消费者；
+ *      后续出现真实消费者（如最近项目列表的路径键类型）时随其任务增量登记。
+ *   2. `ObjectCacheBudget` 原文见于 §5.1 OpenStoreRequest.cacheBudget 字段
+ *      与 §3.1 QueryPort.hpp 行"ObjectCache 预算参数"——因 OpenStoreRequest
+ *      随本任务落位，预算类型先行落于本头（QueryPort.hpp 归 PRJ-T09，届时
+ *      直接消费本类型，不重复定义）。
  *
  * 背景说明（P-PR-6 处置口径，为什么 sink 在 project 而实现在外部）：
  *   ARCH §3.5 登记 project→diagnostics 边，但 sink 的统一形态与归属归
@@ -36,13 +51,31 @@
 #ifndef SDURWS_IRD_PROJECT_STORETYPES_HPP
 #define SDURWS_IRD_PROJECT_STORETYPES_HPP
 
+#include <cstddef>
 #include <cstdint>
+#include <filesystem>
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include <sdurws/ird/core/DiagData.hpp>
 
+// core::IDomainEventBus 仅以指针形式出现于 OpenStoreRequest（注入面），
+// 前向声明即可（完整接口契约见 core 公共头 Events.hpp——P-PR-1 消费
+// 基线 v0.1 §4.9/§5.8；include 链上不引入本头不消费的接口定义）。
+// 注意位置：须在 sdurws::ird::project 命名空间之外声明（限定名的
+// namespace 声明语法在嵌套位置会落错命名空间层级）。
+namespace sdurws::ird::core {
+class IDomainEventBus;
+}
+
 namespace sdurws::ird::project {
+
+// ProjectStore 完整类型定义于 ProjectStore.hpp（本头只前向声明——
+// OpenStoreResult 持有其 unique_ptr；特殊成员函数 out-of-line 定义于
+// 实现文件，保证仅包含本头的翻译单元也能安全析构结果对象）。
+class ProjectStore;
 
 /**
  * @brief 存储层稳定错误码（§5.0 原文形态；token 表 §4.4.8）。
@@ -187,6 +220,178 @@ public:
      *                用户级脱敏归 diagnostics 的 NFR-SEC-07 处置）。
      */
     virtual void reportDev(const std::string& channel, const std::string& message) = 0;
+};
+
+// =====================================================================
+// §5.1 打开协议类型（PRJ-T08 增量落位）
+// =====================================================================
+
+/**
+ * @brief 打开模式（§5.1 OpenMode 原文）。
+ *
+ * 背景说明（PM-07 只读打开的两种来源）：Writable＝请求写权限（被其他
+ * 实例持锁时**降级为只读**并携带持有者信息，不阻塞等待——§9.2）；ReadOnly
+ * ＝用户显式只要读（同样不尝试获取写锁、可查看禁编辑）。两种来源的最终
+ * 形态一致：OpenStoreResult.writable 报告实际取得的权限（唯一依据＝本
+ * 实例是否持有 OS 排他句柄，SA-17）。
+ */
+enum class OpenMode {
+    Writable,   ///< 请求写权限；失败降级只读（PM-07 不阻塞等待）
+    ReadOnly,   ///< 显式只读打开（可查看、禁编辑与应用提交——§9.2③）
+};
+
+/**
+ * @brief 对象缓存预算参数（§5.1 OpenStoreRequest.cacheBudget 字段类型；
+ *        §3.1 QueryPort.hpp 行"ObjectCache 预算参数"——随本任务先行落位）。
+ *
+ * 背景说明：包装而非裸 size_t，是为了让"预算"语义在打开协议签名上自明
+ * （§4.6：LRU 缓存默认 256 MiB 可配——字节预算是打开时一次性注入的
+ * 上下文级参数，存续期不变）。默认值与 ObjectStore::kDefaultCacheBudgetBytes
+ * 同源（§4.6 原文 256 MiB）。
+ */
+struct ObjectCacheBudget {
+    /// 缓存预算，单位：字节；0＝使用实现默认（256 MiB，§4.6）。
+    std::size_t budgetBytes = 0;
+
+    bool operator==(const ObjectCacheBudget& o) const noexcept
+    {
+        return budgetBytes == o.budgetBytes;
+    }
+};
+
+/**
+ * @brief 存储格式信息（§5.1 ProjectStore::schema() 返回类型）。
+ *
+ * 背景说明：projectId 是身份（随对象可能复现），schemaVersion/formatId 是
+ * **格式契约**（决定本实现能否解读该存储）——打开成功即表示格式被支持
+ * （§8.11：旧格式/未来版本在打开②步稳定拒绝，不会到达此处）。
+ */
+struct SchemaInfo {
+    /// schema 版本编码值（主版本×10000＋次版本，kSchemaVersionCurrent 口径）。
+    int schemaVersion = 0;
+    /// 格式标识 token（当前恒 "rwdesign"——kFormatId）。
+    std::string formatId;
+
+    bool operator==(const SchemaInfo& o) const noexcept
+    {
+        return schemaVersion == o.schemaVersion && formatId == o.formatId;
+    }
+};
+
+/**
+ * @brief 锁信息视图（§5.1 ProjectStore::lockInfo() 返回类型：
+ *        "{pid, host, heartbeatUtc, isSelf}"）。
+ *
+ * 背景说明（PM-07 提示的数据面）：持有者字段复用 §9.2 固定宽度记录的
+ * 撕裂容忍解析结果（零值字段＝"未知"，呈现层须按未知处理而非显示 0）；
+ * isSelf＝本上下文自身持有写锁（writable==true 时恒 true）。全部字段仅
+ * 诊断用途，不作权限判据（SA-17：写权限唯一依据＝OS 排他句柄）。
+ */
+struct LockInfo {
+    /// 持有者记录（本上下文持有＝自我身份；被拒/只读＝他方或零值）。
+    LockHolderRecord holder;
+    /// 是否本上下文自身持有（true 时 writable() 亦为 true——同一事实的
+    /// 两个观察面）。
+    bool isSelf = false;
+
+    bool operator==(const LockInfo& o) const noexcept
+    {
+        return holder == o.holder && isSelf == o.isSelf;
+    }
+};
+
+/**
+ * @brief 恢复报告（§5.1 原文形态；PM-08 恢复诊断数据——呈现归 PM-15/ui）。
+ *
+ * 背景说明（§7.4 恢复顺序的数据落点）：headIntegrityVerified＝④闭包
+ * 完整性校验结论；ignoredStagingTxs＝①未提交事务清单（忽略不删＋
+ * PRJ-RECOVERY-IGNORED-UNCOMMITTED）；orphanDraftFiles＝③孤儿/损坏草稿
+ * 清单（PRJ-RECOVERY-ORPHAN-DRAFT）；danglingObjectCount＝⑤悬挂对象
+ * 只读计数（不删——GC 范围外）；diagnostics＝本次打开产出的全部用户级
+ * 诊断记录快照（与经 IDiagnosticsSink 逐条上报的内容同源同序——报告
+ * 随结果返回＋sink 即时上报双通道，消费方按需取用）。
+ *
+ * 清单确定性排序（NFR-COR-02）：字符串清单按字典序；诊断按产出时序
+ * （①→③→⑤）。同磁盘状态必得同报告。
+ *
+ * 线程安全：纯值类型（由 factory.open 一次性产出，此后不可变）。
+ */
+struct RecoveryReport {
+    /// true＝HEAD 引用闭包的全部清单/对象可读且 size＋SHA-256 校验通过
+    /// （§7.4④；false＝存储损坏——open 语义下伴随 StoreCorrupt 失败，
+    /// 不产生可用的存储上下文）。
+    bool headIntegrityVerified = false;
+    /// 未提交事务的 .staging/<tx-id> 目录名清单（忽略不删，现场保留）。
+    std::vector<std::string> ignoredStagingTxs;
+    /// 孤儿/损坏草稿文件清单（相对 drafts/ 的路径，含 .new/.bak 残留——
+    /// §7.4③/§8.4；草稿恢复入口数据，DraftService/PRJ-T12 消费）。
+    std::vector<std::string> orphanDraftFiles;
+    /// 悬挂对象计数（闭包外对象——只读计数不删，PM-08-S1/R2 报告源）。
+    std::uint64_t danglingObjectCount = 0;
+    /// 本次打开产出的用户级诊断记录快照（码值限于 diagnostics.md §4.6
+    /// 收编的 PRJ-* 清单——CR-08 不私造码；P-PR-6：经 IDiagnosticsSink
+    /// 注入上报，本字段是同步回执）。
+    std::vector<core::DiagnosticRecord> diagnostics;
+};
+
+/**
+ * @brief 打开请求（§5.1 OpenStoreRequest 原文形态）。
+ *
+ * 背景说明：path 指向 .rwdesign 项目目录（包文件形态归阶段 B——workflow
+ * 解包后转目录打开，§5.1 字段注释）。eventBus/diagnostics 为装配注入的
+ * 非 owning 指针，**可空**：空总线＝跳过提交第 6 步事件发布（测试/只读
+ * 场景，§7.1）；空 sink＝诊断退化为丢弃（§5.0——装配方失去观察面是其
+ * 自身选择，存储行为不受影响）。
+ *
+ * 所有权与生存期：两个注入指针非 owning，其生存期必须覆盖返回的存储
+ * 上下文（ProjectStore）的整个生命周期——上下文在其存续期随时可能使用
+ * （提交事件/诊断上报）。
+ */
+struct OpenStoreRequest {
+    /// .rwdesign 项目目录（任意拼写——打开协议内部先规范化为最终路径，
+    /// §9.3；不存在＝not-a-project，§8.7①兜底口径）。
+    std::filesystem::path path;
+    /// 打开模式（默认可写——PM-07 降级语义见 OpenMode 注释）。
+    OpenMode mode = OpenMode::Writable;
+    /// 事件总线（§3.2 消费清单 core v0.1 §4.9/§5.8；可空＝跳过事件步）。
+    core::IDomainEventBus* eventBus = nullptr;
+    /// 诊断 sink（§5.0；可空＝丢弃诊断）。
+    IDiagnosticsSink* diagnostics = nullptr;
+    /// 对象缓存预算（默认 256 MiB，§4.6）。
+    ObjectCacheBudget cacheBudget;
+};
+
+/**
+ * @brief 打开结果（§5.1 OpenStoreResult 原文形态）。
+ *
+ * 背景说明：失败以异常表达（§5 章约定——错误一律 StoreError），本结构
+ * 只承载成功打开；store 失败时为空的原文语义由"异常路径不构造本结构"
+ * 承接（等价表达：能拿到本结构则 store 必非空）。writable＝实际取得的
+ * 写权限（Writable 请求可能降级 ReadOnly）；lockInfo＝锁视图（PM-07
+ * "项目被 PID=<n> 持有"提示数据）；recovery＝恢复报告（⑤步产出）。
+ *
+ * 特殊成员函数 out-of-line（实现文件内定义，那里 ProjectStore 为完整
+ * 类型）：unique_ptr<ProjectStore> 成员的删除器实例化需要完整类型，
+ * out-of-line 让仅包含 StoreTypes.hpp 的翻译单元也能安全移动/析构。
+ */
+struct OpenStoreResult {
+    /// 析构（实现于 ProjectStoreImpl.cpp——ProjectStore 完整类型可见处）。
+    ~OpenStoreResult();
+    /// 默认构造（store 为空——测试占位/移动目标）。
+    OpenStoreResult() = default;
+    /// 移动构造/赋值（unique_ptr 所有权转移；实现同上 out-of-line）。
+    OpenStoreResult(OpenStoreResult&& other) noexcept;
+    OpenStoreResult& operator=(OpenStoreResult&& other) noexcept;
+
+    /// 打开的存储上下文（成功打开必非空；调用方独占持有）。
+    std::unique_ptr<ProjectStore> store;
+    /// 实际取得的写权限（Writable 请求可能降级 ReadOnly——PM-07）。
+    bool writable = false;
+    /// 锁视图（持有者 PID/host/心跳＋isSelf——仅诊断用途，SA-17）。
+    LockInfo lockInfo;
+    /// 恢复报告（§7.4 恢复顺序①③④⑤的产出；正常打开全空/false 之外
+    /// 均为默认值——headIntegrityVerified 恒 true，否则打开已失败）。
+    RecoveryReport recovery;
 };
 
 }  // namespace sdurws::ird::project
