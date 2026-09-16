@@ -4,9 +4,12 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "构建落位：io 占位转真实库",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
-  "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
+  "requirements": [
+    "NFR-MNT-01",
+    "NFR-MNT-02"
+  ],
   "designRefs": [
     "units/io.md#12",
     "units/io.md#3.3",
@@ -23,11 +26,19 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_io"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_io"
+  ],
   "branch": "wp11-t01",
   "interUnit": true,
-  "knownPitfalls": ["P-IO-3"],
+  "knownPitfalls": [
+    "P-IO-3"
+  ],
   "acceptance": [
     "双模式构建零错误（独立冒烟＋集成——DTB §5.1）：sdurws_ird_io 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 RWS::ird::core＋RWS::ird::diagnostics——io.md §3.3），目标名与别名 RWS::ird::io 不变；L1 文件/XML 第三方目标待 P-IO-3 冻结后登记（§3.3，本任务不引入）；新建 io/CMakeLists.txt 并在父 CMakeLists 注册（卡行产出列）；IoFwd/IoError 公共头就位，不在骨架预建占位实现（父 CMakeLists 既有约定，EX-T01 同款口径）",
     "红线扫描零命中：仅 io→core/io→diagnostics 两条登记边（io.md §2.1/§3.3）；零 Qt/零 Widgets（NFR-MNT-01——io.md §3.3『零 Qt、零 Widgets』＋DTB §2.12 WP-11-T02 禁止项『零 Widgets』）、无私有头出 include（NFR-MNT-02/R-2）、无业务单元表外边（R-1）、产品目标不链 testkit（T-1 红线）",

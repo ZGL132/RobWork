@@ -1806,6 +1806,16 @@
       "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163/F-168/F-170/F-175 家族第十四次再现：IO-T01 触及 units/io.md（卡头版本行 v0.2→v0.3＋§15.5 追加 v0.3 行＝2026-09-17），卡头『日期』行仍停留 2026-09-10 未同步——版本半边更新、日期半边遗漏的同型微瑕。零行为影响，仅文档头自洽性",
       "owner": "io 实施侧（随下次触及 units/io.md 的任务顺手同步卡头日期行）",
       "resolution": "处置建议＝随下次触及 units/io.md 的任务顺手将卡头『日期』行同步为最新变更记录行日期（2026-09-17）；治理级根治（收尾脚本自动核对卡头日期与变更记录末行日期）仍归 F-170 所登记的治理任务面。编号顺延自 F-179，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-181",
+      "source": "traceability/pipeline/state.json tick#178（tickId f8f92dbb，2026-09-17）：IO-T01 验收 pass 后执行 PIPE §4.7 收尾期间，编排者 reflog 取证发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "流水线收尾落分支缺陷：附录 B（T-IMPL v3）未要求实施完成后将工作树切回 redesign-main，PIPE §4.7 七步亦无『确认当前分支＝redesign-main』前置断言——tick#178 收尾②③在仍被实施子代理检出的 wp11-t01 上执行（merge 提交 92b9f7aa 落于任务分支，redesign-main 未收到合入，push 报 Everything up-to-date）；经 reflog 取证后机械纠错：本地 wp11-t01 复位回已推送尖端 d175a4e4（branch -f，仅丢弃未推送本地 merge，不触碰远程历史），切回 redesign-main 重跑②③④（2cad0cc5→ac6c1de4 已推送），合并对象均为已通过双漂移检测的冻结 SHA，内容零损失，提交图恢复协议理想拓扑（②记录 2 文件、③代码 17 文件各自独立）",
+      "owner": "governance（PIPE 增量修订候选：§4.7 步骤①前增加当前分支断言；附录 B 增补『push 后切回 redesign-main』）",
+      "resolution": "处置建议＝PIPE 增量修订在 §4.7 收尾步骤①之前增加『git rev-parse --abbrev-ref HEAD 必须为 redesign-main，不符先切回再续』断言，同轮可同步 T-IMPL 模板增补完成动作；本 tick 已按既有协议语义完成纠错（未转 blocked：无漂移、无冲突、无未审查内容，属机械性环境错误而非收尾步骤失败）"
     }
   ]
 }
