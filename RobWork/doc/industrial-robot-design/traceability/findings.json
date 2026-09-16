@@ -1626,6 +1626,36 @@
       "title": "F-012/F-157/F-158 家族再现：ff39c51d『[governance] PRJ-T12 验证留痕：两模式构建日志＋gtest XML＋ird-test-report＋门禁实跑』名词短语开头（[governance] 车道＋『PRJ-Txx 验证留痕』逐字模板第四例）；实现提交 5006e293『[WP-04-T12] 实现草稿服务…』动词开头合规",
       "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
       "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，句式如『[governance] 登记验证留痕…』）；对已推送历史（ff39c51d 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-161，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-163",
+      "source": "traceability/acceptance/PRJ-T13-20260916.md#4.8-G-1（attempt 1，送验对象 03eb0fe0012b4e7a4318ca7bed812653b279f144，分支 wp04-t13）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161 家族第十次再现：PRJ-T13 触及 units/project.md（§15.4 追加 v0.15 行＋卡头文档版本行 v0.14→v0.15 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.15 行日期 2026-09-16 更新——版本半边落地、日期半边连续第十跳未落地（F-134/F-147/F-155/F-159/F-161 处置建议持续被跳过）",
+      "owner": "project 详设所有者（units/project.md 辖域；F-133/F-140/F-147/F-155/F-159/F-161 处置建议原文承责）",
+      "resolution": "处置建议＝同 F-147/F-155/F-159/F-161：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单；validate-docs 侧『卡头日期＝§15.4 末行日期』机检维度建议归治理脚本所有者（与 F-057 后半同批评估）。编号顺延自 F-162，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-164",
+      "source": "traceability/acceptance/PRJ-T13-20260916.md#4.9-G-2（attempt 1，送验对象 03eb0fe0012b4e7a4318ca7bed812653b279f144，分支 wp04-t13）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-012/F-157/F-158/F-162 家族再现：03eb0fe0『[governance] PRJ-T13 验证留痕：两模式构建日志＋gtest XML＋ird-test-report＋门禁实跑』名词短语开头（[governance] 车道＋『PRJ-Txx 验证留痕』逐字模板第五例）；实现提交 c2144fe1『[WP-04-T13] 实现撤销/重做服务（UndoRedoServiceImpl）：逆命令提交产生新修订、历史不改写』动词开头合规",
+      "owner": "实施纪律（DTB §5 会话流程所有者，F-012 家族统一处置；提交已推送不追溯改写）",
+      "resolution": "与 F-012 家族合并处置（实施者模板补提交标题动词开头示例，句式如『[governance] 登记验证留痕…』）；对已推送历史（03eb0fe0 及本家族所涉提交）不追溯改写（AGENTS §6.3）。编号顺延自 F-163，合入时由所有者确认与并行验收分支无撞车。"
+    },
+    {
+      "id": "F-165",
+      "source": "traceability/acceptance/PRJ-T13-20260916.md#4.10-G-3（attempt 1，送验对象 03eb0fe0012b4e7a4318ca7bed812653b279f144，分支 wp04-t13；验收者 git ls-tree 实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-125 之后又一例）：PRJ-T13 送验提交 03eb0fe0 正文声称新增『构建日志五份＋测试执行日志四份＋ird-gates.log＋validate-task.log』且『与 wp04-t03～t12 同构』，实际入库仅 5 件留痕（XML×4＋ird-test-report.json）、日志 0 份（git ls-tree 实证 builds/wp04-t13/ 恰 5 文件；对照 T12 目录实有 16 件、T10/T11 同为 5 件形态）；ird-test-report.json 的 builds[].log 与 gates 字段引用的 11 份日志均为库外幻影引用。根因沿袭 F-010（.gitignore:87 全局 *.log 规则吞没 traceability/** 留痕日志）。验证结论性内容（两模式 242/242＋15/15、verify exit 0、ird_gates 9 命中零新增、validate-task PASS）经验收者全新树亲手复现全部为真，无结论性粉饰——按家族既有判例（F-125）登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 核对正文清单与实际入库一致；日志入库用 git add -f 或 .txt 后缀）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
+      "resolution": "处置建议＝①F-010 根因消账（.gitignore 增否定规则 !RobWork/doc/industrial-robot-design/traceability/**/*.log 或留痕统一 .txt 后缀）使 T10/T11/T13 形态的日志可入库；②本任务 11 份日志若实施侧仍留存，可随合入窗口或返工窗口补交，否则更正 ird-test-report.json 的日志引用字段；③提交前以 git status/diff --stat 核对正文清单与实际入库件数一致。编号顺延自 F-164，合入时由所有者确认与并行验收分支无撞车。"
     }
   ]
 }
