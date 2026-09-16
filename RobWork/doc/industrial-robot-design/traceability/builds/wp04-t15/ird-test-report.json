@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "PRJ-T15",
+  "masterWp": "WP-04-T15",
+  "branch": "wp04-t15",
+  "base": "13fdfb753c21aa377ec46ec7853f17ead2e9cb5d",
+  "date": "2026-09-17",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；本任务起两测试目标均以自有 main 提供入口：_test 目标＝TestMainReport.cpp（GTest::gtest_main→GTest::gtest 换轨），contract_test 目标＝LockContractTest.cpp main（子进程分派先行拦截）；两 main 均安装 testkit TestRecordListener（§7.2/§7.3——ird-test-report.json 与 gtest XML 并存，--ird_report 可指定落盘路径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_project_test",
+      "kind": "gtest executable",
+      "result": "254/255 PASSED＋1 SKIPPED（两模式一致：smoke 与 integration 各 254 过＋1 显式跳过；既有 253 用例零回归＋本任务新增 2 用例——Tx13 遍历过、Tx11 按契约登记为前置未就绪的显式跳过，不计通过）",
+      "notes": "新增 2 用例（acceptance 逐条对账）：acceptance 1/2＝Tx13ReadOnlyAllWrites.TraversesEveryWriteEntry_AllRejectedWithStableDiag〔PRJ-TX-13 具名用例体——只读上下文遍历阶段 A 全部写入口：commands().submit／undoRedo().undo（均 Rejected(NotWritable)＋error.code=LockHeldByOther＋PRJ-LOCK-HELD 经 sink 上报）、undoRedo().redo（只读会话 redo 栈恒空 D-11→前置违约 invalid_argument——该入口在只读上下文的唯一可达行为，不私造稳定码 CR-08）、drafts().save/discard（返回值轨 LockHeldByOther＋PRJ-LOCK-HELD）、archive().begin（异常轨 LockHeldByOther＋PRJ-LOCK-HELD）；零磁盘副作用（HEAD 不前移/results 不出现）＋读轨对照面（status.canUndo 由磁盘推导、branchTips 可用）；IRD_TEST_INFO 需求追溯登记〕；acceptance 3＝Tx11CopyConsistency.StageBPrerequisiteNotReady_SkipRegistered〔PRJ-TX-11 阻塞登记——另存为/包导入导出实体归阶段 B WP-04-T17/T18（units/project.md §13.1；§5.8 接口先冻结、实体未落地），GTEST_SKIP 如实标注阻塞原因，§7.2 四类分列计 skipped 不计通过；§11 行用例体语义在实体落位任务中执行并留痕〕。testkit 消费（acceptance 2）：TempDir（两新用例的项目根——§6.2 资源隔离＋keepOnFailure 接缝）、IRD_TEST_INFO/IRD_EXPECT_IDENTICAL（经 AssertMacros.hpp——展开于消费方 TU，checkIdentical using 声明）、TestRecordListener（TestMainReport.cpp 安装——IRD_TEST_INFO 落地通道，--ird_report=...json 证据）。"
+    },
+    {
+      "target": "sdurws_ird_project_contract_test",
+      "kind": "gtest executable",
+      "result": "28/28 PASSED（两模式一致：smoke 与 integration 各 28/28；既有 18 用例零回归＋本任务新增 10 用例全绿；进程类用例连跑 3 轮稳定无竞态）",
+      "notes": "新增 10 用例（acceptance 逐条对账）：acceptance 3（TestProcessRunner 真进程——testkit §10.1 触发登记的兑现，AT-11/13 自动化载体：进程崩溃/强杀/事件等待）＝9 用例〔TransactionBoundaries/F8ProcessCrash 参数化 5 挡：子进程经 testkit FaultInterceptor<IFileOps> 接缝停靠在 §7.1 事务步骤边界（T1 暂存目录已建/T2T3 暂存验证完成/T4 发布完成 HEAD 未切/T5 提交点后/T6 事件已发布清理未跑）→父进程 EventWatch.awaitFile 等停靠标记→TestProcessRunner.kill 强杀（outcome.Killed）→重启打开（子进程死亡遗留写锁——D-02 接管路径一并实证）→未提交挡＝旧状态字节不变＋tip 仍 r0＋恢复报告（完整性 true/暂存残留恰 1/PRJ-RECOVERY-IGNORED-UNCOMMITTED/无 PRJ-STORE-CORRUPT），已提交挡＝新状态在盘（HEAD 前移/清单＋命令文件就位）＋r0 文件逐字节不变＋tip 可见＋同上恢复报告——§7.6 F8『重启：已提交字节不变；未提交忽略＋恢复诊断』真进程全覆盖；Tx8ArchiveProcessKill.KillWhileArchiveInFlight_NoManifestRunNotListed：子进程 begin＋writeBatch（不 finalize）停靠→强杀→重启＝批次文件残留、manifest.json 不在（D-13 反例面）、listRuns 空（CON-04）、恢复报告干净；Tx7ProcessLock 三用例：第二实例子进程降级只读＋holder=父 PID（PM-07/§9.2）／持锁者子进程存活停靠期间竞争者不接管（D-03）＋强杀后接管成功（锁记录重写为胜利者 PID）／强杀后双竞争者并发恰一胜者（胜利者持锁停靠保证重叠窗口——winner=Killed/loser=Exited 形态互证，D-02〕。acceptance 1/2/4＝Tx2DiagnosticContract.FourRejectionPaths_DiagnosticRecordsPassContractCheck〔PRJ-TX-2 观测点『诊断字段完整（ContractCheck.checkDiagnosticRecord）』——四路拒绝（硬断言/无交互待确认/交互拒绝/绑定复核失配 PerturbingProbe 探针注入）产出的 core::DiagnosticRecord 逐条过 testkit checkDiagnosticRecord 机器校验（allowTransient=true——测试域记录无主体；code 句法/必填串/比较型三要素 checkComparativeFields(Length)/NotApplicable 纪律全量生效）＋IRD_EXPECT_IDENTICAL 稳定码精确匹配＋IRD_TEST_INFO 追溯；四路均无修订（revisionsBefore 基线）；P-PR-7 处置＝双编译 IModelCompilePort 桩（CommandContractTx3 既有三路，§5.3.6 单侧冻结签名零改动）、P-PR-4 处置＝PRJ-TX-8 归档线程模型进程内模拟（ArchiveContractTest 既有，真进程半边为本任务 Tx8 新增——调用线程单侧冻结口径不变）、P-PR-1 处置＝用例构造的 core 数据（DiagnosticRecord/ConfirmableFinding/凭据/身份）随 v0.1 基线消费零 core 修改〕。既有 3 用例增量修订：LinkageContractTest.UnitEdgeOnlyCore_DT_BUILD_R1_R2 白名单按其原文预告路径显式增量（+sdurws_ird_testkit——PRJ-T15 登记的仅测试目标消费面）＋NoTestkitEdge_DT_BUILD_T1 升级为双侧钉住（①产品目标 target_link_libraries 块零 testkit＝T-1 红线；②两测试目标链接块显式登记 testkit 消费＝acceptance 2 消费边界用例化在案，防漂移）。"
+    },
+    {
+      "target": "LinkageContractTest（构建图红线增量修订说明）",
+      "kind": "contract test（同上目标内）",
+      "result": "白名单增量＝PRJ-T15 契约 note『interUnit=true 判定：消费 testkit 公共测试设施』的构建图兑现",
+      "notes": "T-1 红线边界不变：产品目标零 testkit 边（链接块文本扫描断言）。新增的是测试目标的 T-1 允许形态消费登记——testkit.md §2.4『fake 实现编译进测试目标』＋§10.2 project 行（FaultInterceptor/TempDir/按需 TestProcessRunner）的链接面落地。ird_gates 的 2 条新增 SUB 命中即此两链接边（详见 ird-gates.log 实施者注记——DTB §4.5 既有例外行『各 _test/_contract_test 经 testkit/policy 替身消费』的同型实例；实例行增补归 WP-01-T03 登记册持续维护，不在本任务 allowedFiles 内）。"
+    }
+  ],
+  "builds": [
+    { "mode": "integration", "log": "integration-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release（全目标；RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已 grep 确认）" },
+    { "mode": "integration-verify", "log": "verify-target-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build --config Release --target sdurws_ird_project_test ＆ cmake --build build --config Release --target sdurws_ird_project_contract_test（契约 verify 列两条命令，rc=0/0）" },
+    { "mode": "smoke-configure", "log": "smoke-configure.log", "exitCode": 0, "errors": 0, "command": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp04-t15 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake" },
+    { "mode": "smoke-build", "log": "smoke-build.log", "exitCode": 0, "errors": 0, "command": "cmake --build build-smoke-wp04-t15 --config Release" }
+  ],
+  "testRuns": [
+    { "target": "sdurws_ird_project_test", "mode": "smoke", "exitCode": 0, "summary": "254 passed＋1 skipped（Tx11 前置未就绪显式跳过）＋0 failed", "xml": "sdurws_ird_project_test-smoke.xml", "listenerReport": "ird-test-report-unit-smoke.json", "runLog": "smoke-test-run.log" },
+    { "target": "sdurws_ird_project_contract_test", "mode": "smoke", "exitCode": 0, "summary": "28 passed＋0 failed", "xml": "sdurws_ird_project_contract_test-smoke.xml", "listenerReport": "ird-test-report-contract-smoke.json", "runLog": "smoke-contract-test-run.log" },
+    { "target": "sdurws_ird_project_test", "mode": "integration", "exitCode": 0, "summary": "254 passed＋1 skipped＋0 failed", "xml": "sdurws_ird_project_test-integration.xml", "listenerReport": "ird-test-report-unit-integration.json", "runLog": "integration-test-run.log" },
+    { "target": "sdurws_ird_project_contract_test", "mode": "integration", "exitCode": 0, "summary": "28 passed＋0 failed", "xml": "sdurws_ird_project_contract_test-integration.xml", "listenerReport": "ird-test-report-contract-integration.json", "runLog": "integration-contract-test-run.log" },
+    { "target": "sdurws_ird_project_contract_test", "mode": "integration（稳定性复跑×3）", "exitCode": 0, "summary": "28 passed×3（真进程用例无竞态——F8 五挡/TX-7 三场景/TX-8 各轮全绿）", "xml": null, "listenerReport": null, "runLog": null }
+  ],
+  "gates": {
+    "log": "ird-gates.log",
+    "exitCode": 1,
+    "baseline": "wp04-t14 基线 9 项（7×SUB＋1×T1＋1×R4）",
+    "current": "11 项＝基线 9＋本任务新增 2×SUB（sdurws_ird_project_test→sdurws_ird_testkit、sdurws_ird_project_contract_test→sdurws_ird_testkit）",
+    "disposition": "新增 2 项＝PRJ-T15 契约 interUnit=true（消费 testkit 公共测试设施）＋testkit.md §10.2 project 行交接登记＋DTB §4.5 既有例外行『各 _test/_contract_test 经 testkit/policy 替身消费（生效 2026-09-10）』的同型实例；T-1 红线面（产品目标零 testkit 边）由 NoTestkitEdge 双侧断言钉住未动；DTB §4.5 实例行增补归 WP-01-T03（不在本任务 allowedFiles，随验收请求转呈）",
+    "selfTest": "门禁自测 9 项（pass_clean/pass_r4comment/fail_r1/fail_t1/fail_r5/fail_sub/fail_r3/fail_r4/fail_t2）全部按预期"
+  },
+  "validateTask": { "log": "validate-task.log", "exitCode": 0, "result": "PASS (1 tasks)" },
+  "acceptanceMapping": [
+    { "item": "acceptance 1（§11 表 PRJ-TX-1～14 逐项执行通过并留痕）", "evidence": "TX-1/TX-2/TX-3＝CommandContractTx1.*/Tx2DiagnosticContract.*/CommandContractTx3.*（contract XML）；TX-4＝TxEngineTest F1～F7＋F8 进程内（unit XML）＋F8 真进程五挡（contract XML——本任务新增）；TX-5＝Walkthrough.*＋UndoRedoServiceTest.*；TX-6＝DraftServiceTest.*；TX-7＝LockContractTest.*（T03 原语层）＋Tx7ProcessLock.*（本任务存储上下文层）；TX-8＝ArchiveContractTest.*（进程内）＋Tx8ArchiveProcessKill.*（真进程，本任务新增）；TX-9＝ProjectStoreTest.Tx9_*；TX-10＝TxEngineTest F2/F4/F7（磁盘满/rename 拒绝/清理失败）；TX-11＝Tx11CopyConsistency.SkipRegistered（前置未就绪显式登记——另存为/包实体阶段 B）；TX-12＝RevisionIndexTest Closure.*/PublishValidation.*（闭包双通道/谱系成环/分支表回退）；TX-13＝Tx13ReadOnlyAllWrites.*（本任务新增全入口遍历）；TX-14＝BuildRedLineTest.*＋LinkageContractTest.*。全部两模式执行，gtest XML＋listener ird-test-report 四份＋运行日志留痕" },
+    { "item": "acceptance 2（testkit 消费边界用例化声明在案；产品目标不链 testkit）", "evidence": "FaultInterceptor 经 src/win32/IFileOps 接缝（Tx15Child.cpp ParkFileOps——D-10 形态，faultpoint ID 取 IFileOps.hpp 冻结登记）；TempDir（F8/TX-7/TX-8/TX-13 四个新夹具）；DeterministicEnv/IRD_TEST_INFO/IRD_EXPECT_*（IRD_TEST_INFO 四处登记＋IRD_EXPECT_IDENTICAL 稳定码匹配＋TestRecordListener 双 main 安装）；ContractCheck（TX-2 诊断契约）；TestProcessRunner/EventWatch（真进程组）；产品目标零 testkit 边＝LinkageContractTest.NoTestkitEdge_DT_BUILD_T1 双侧断言＋ird_gates 零 T1 产品命中（仅既有 testdata_lint 基线项）" },
+    { "item": "acceptance 3（TestProcessRunner 接入的 F8/PRJ-TX-7/8 真进程场景；前置未就绪如实标注）", "evidence": "F8 真进程五挡＋PRJ-TX-7 三场景＋PRJ-TX-8 在途归档强杀＝contract 套件 9 用例（TK-T11 已 ready、消费触发成立——§10.1 消账）；前置未就绪＝PRJ-TX-11（另存为/包实体阶段 B WP-04-T17/T18）以 GTEST_SKIP 登记，ird-test-report 计 skipped 不计通过，不带病前进" },
+    { "item": "acceptance 4（P-PR-7/P-PR-4/P-PR-1 处置）", "evidence": "P-PR-7＝PRJ-TX-3 双编译以 IModelCompilePort 桩验证（CommandContractTx3 三路——§5.3.6 单侧冻结签名零改动，runtime 对端确认前不私改）；P-PR-4＝归档线程模型按 §5.6/§9.8 进程内模拟（ArchiveContractTest.Ppr4_*）＋真进程半边不预设 RunRegistry 对接细节（execution 详设定稿后二次对齐）；P-PR-1＝用例构造的 core 数据（身份/凭据/事件/诊断记录）随 v0.1 基线消费，零 core 文件改动（diff 核对），core 冻结 diff 后增量同步" }
+  ]
+}

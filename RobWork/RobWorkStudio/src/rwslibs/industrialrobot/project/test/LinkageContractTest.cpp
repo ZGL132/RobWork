@@ -99,14 +99,17 @@ std::set<std::string> collectTargetRefs(const std::string& text)
  *
  * 扫描单元 CMakeLists.txt 文本中出现的全部 sdurws_ird_* 目标引用，与白名单
  * 比对：产品目标链接 core（唯一单元边）＋本单元自身三目标（产品/测试/契约
- * 测试——同一单元内部引用不构成跨单元边，R-1 判定范围）。出现任何其他
- * 产品单元目标（modeling/requirements/kinematics/trajectory/dynamics/
- * selection/optimization 等业务域，或 runtime/evidence 等平台单元）即构建
- * 图越界（R-1：业务域单元互链禁止——DTB §5.3③）。
+ * 测试——同一单元内部引用不构成跨单元边，R-1 判定范围）＋testkit（PRJ-T15
+ * 登记的 T-1 允许形态——**仅测试目标**消费 FaultInterceptor/TempDir/
+ * TestProcessRunner 等；产品目标零 testkit 边由 NoTestkitEdge 用例单侧钉
+ * 住）。出现任何其他产品单元目标（modeling/…/optimization 业务域，或
+ * runtime/evidence 等平台单元）即构建图越界（R-1：业务域单元互链禁止
+ * ——DTB §5.3③）。
  *
- * 与 diagnostics 落位期白名单的差异：本任务不消费 testkit（无 testkit 条目
- * ——testkit 契约谓词的消费随 PRJ-T15 契约套件落地时按 T-1 允许形态登记，
- * 届时本白名单增量修订并留痕）。
+ * 白名单增量登记（PRJ-T15，2026-09-17）：按本文件 NoTestkitEdge 用例
+ * v0 原文预告的路径执行——"契约目标消费随 PRJ-T15 登记后白名单同步增量
+ * 修订（不可静默越界）"；本次修订伴随 PRJ-T15 契约测试落地同一提交，
+ * 消费面登记于 project/CMakeLists.txt 两个测试目标的链接注释。
  */
 TEST(ProjectLinkage, UnitEdgeOnlyCore_DT_BUILD_R1_R2)
 {
@@ -114,12 +117,14 @@ TEST(ProjectLinkage, UnitEdgeOnlyCore_DT_BUILD_R1_R2)
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
     // 白名单：core（唯一允许的产品单元边）＋ project 本单元三目标（产品/
-    // 测试/契约测试——单元内部引用不构成跨单元边）。
+    // 测试/契约测试——单元内部引用不构成跨单元边）＋ testkit（PRJ-T15
+    // 登记的仅测试目标消费面——T-1 允许形态）。
     const std::set<std::string> allowed = {
         "sdurws_ird_core",
         "sdurws_ird_project",
         "sdurws_ird_project_test",
-        "sdurws_ird_project_contract_test"};
+        "sdurws_ird_project_contract_test",
+        "sdurws_ird_testkit"};
     for (const auto& ref : refs) {
         EXPECT_NE(allowed.find(ref), allowed.end())
             << "project 构建图出现白名单外目标引用（产品单元边仅 project→core "
@@ -128,21 +133,76 @@ TEST(ProjectLinkage, UnitEdgeOnlyCore_DT_BUILD_R1_R2)
 }
 
 /**
- * T-1 红线具名自证：project 落位期构建图零 testkit 边（PRJ-TX-14 第 4 项）。
+ * T-1 红线具名自证（PRJ-T15 增量修订版）：**产品目标**零 testkit 边＋
+ * 测试目标消费显式在案（PRJ-TX-14 第 4 项＋任务契约 PRJ-T15 acceptance 2
+ * "testkit 消费边界用例化声明在案"）。
  *
  * testkit 是测试侧单元（不随产品分发）；T-1 红线规定产品目标不链 testkit。
- * 落位期更进一步：连 `_contract_test` 也不消费 testkit（FaultInterceptor/
- * TempDir 等消费随 PRJ-T15 按 T-1 允许形态 `sdurws_ird_project_contract_test
- * → {被测产品目标, sdurws_ird_testkit, gtest}` 登记）——本断言确保登记
- * testkit 前本文件白名单扫描先行为零，届时增链必须伴随本用例白名单的
- * 显式增量修订（不可静默越界）。
+ * PRJ-T15 起测试目标按 T-1 允许形态消费 testkit（FaultInterceptor 经
+ * IFileOps 接缝／TempDir／TestProcessRunner／ContractCheck／RecordListener
+ * ——D-10 形态）。本用例双侧钉住：①产品目标 sdurws_ird_project 的
+ * target_link_libraries 块内零 sdurws_ird_testkit（红线面）；②两个测试
+ * 目标的链接块内**必须**显式引用 sdurws_ird_testkit（消费面在案——防止
+ * "白名单放行了却没人消费"的漂移，也与 §11 头注的 testkit 消费清单互证）。
  */
+
+/// 截取 CMakeLists 中某 target_link_libraries(<target> ...) 命令的括号体。
+/// 逐次出现地核对目标名边界（名字后不得紧跟字母/数字/下划线——防
+/// "project" 前缀误配 "project_test"），命中首个真实命令即返回。
+std::string linkBlockOf(const std::string& text, const std::string& target)
+{
+    const std::string needle = "target_link_libraries(" + target;
+    const auto isNameChar = [](char c) {
+        return std::isalnum(static_cast<unsigned char>(c)) != 0 || c == '_';
+    };
+    for (auto start = text.find(needle); start != std::string::npos;
+         start = text.find(needle, start + 1)) {
+        const auto open = text.find('(', start);
+        // 名字边界核对：目标名后须为参数分隔符（空白/右括号）。
+        const std::size_t nameEnd = open + 1 + target.size();
+        if (nameEnd < text.size() && isNameChar(text[nameEnd])) {
+            continue;  // 更长目标名的前缀碰撞——找下一次出现
+        }
+        std::size_t depth = 0;
+        std::size_t i = open;
+        for (; i < text.size(); ++i) {
+            if (text[i] == '(') {
+                ++depth;
+            } else if (text[i] == ')') {
+                --depth;
+                if (depth == 0) {
+                    break;
+                }
+            }
+        }
+        return text.substr(open + 1, i - open - 1);
+    }
+    return {};
+}
+
 TEST(ProjectLinkage, NoTestkitEdge_DT_BUILD_T1)
 {
-    const auto refs = collectTargetRefs(readCMakeLists());
-    EXPECT_EQ(refs.find("sdurws_ird_testkit"), refs.end())
-        << "project 落位期构建图不得出现 testkit 边（T-1：产品目标不链 "
-           "testkit；契约目标消费随 PRJ-T15 登记后白名单同步增量修订）";
+    const std::string cmake = readCMakeLists();
+    // ① 红线面：产品目标的链接块零 testkit（T-1——产品分发面纯净）。
+    // linkBlockOf 的名字边界核对已消除 project_test/contract_test 前缀碰撞。
+    const std::string productBlock = linkBlockOf(cmake, "sdurws_ird_project");
+    ASSERT_FALSE(productBlock.empty())
+        << "未找到产品目标 target_link_libraries 块（扫描失效）";
+    EXPECT_EQ(productBlock.find("sdurws_ird_testkit"), std::string::npos)
+        << "产品目标出现 testkit 边（T-1 红线：sdurws_ird_project 不链 "
+           "testkit——testkit.md §2.4）";
+    // ② 消费面：两个测试目标显式登记 testkit 消费（PRJ-T15 acceptance 2
+    // ——消费边界用例化声明在案；缺登记＝消费漂移，同样失败）。
+    const std::string testBlock
+        = linkBlockOf(cmake, "sdurws_ird_project_test");
+    const std::string contractBlock
+        = linkBlockOf(cmake, "sdurws_ird_project_contract_test");
+    EXPECT_NE(testBlock.find("sdurws_ird_testkit"), std::string::npos)
+        << "单元测试目标未登记 testkit 消费（PRJ-T15 acceptance 2——"
+           "TempDir/IRD_TEST_INFO/IRD_EXPECT_* 接入面缺失）";
+    EXPECT_NE(contractBlock.find("sdurws_ird_testkit"), std::string::npos)
+        << "契约测试目标未登记 testkit 消费（PRJ-T15 acceptance 2——"
+           "FaultInterceptor/TestProcessRunner/EventWatch 接入面缺失）";
 }
 
 /**
