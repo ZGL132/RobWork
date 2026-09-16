@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "草稿服务（DraftServiceImpl）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T08"],
   "requirements": ["PM-04"],
   "designRefs": ["units/project.md#12", "units/project.md#5.4", "units/project.md#8.1", "units/project.md#8.2", "units/project.md#8.3", "units/project.md#8.4", "units/project.md#8.5", "units/project.md#8.6"],
