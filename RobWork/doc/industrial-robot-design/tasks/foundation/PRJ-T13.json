@@ -4,7 +4,7 @@
   "unit": "project",
   "masterWp": "WP-D",
   "title": "撤销/重做（UndoRedoServiceImpl：新修订不改写历史）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["PRJ-T10"],
   "requirements": ["PM-18"],
   "designRefs": ["units/project.md#12", "units/project.md#5.5", "units/project.md#6.9"],
