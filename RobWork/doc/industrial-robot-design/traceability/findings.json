@@ -1516,6 +1516,56 @@
       "title": "提交标题家族再现（F-012 系，一次两例）：PRJ-T09 送验四提交中两份标题前缀后以名词开头非动词开头——3c0b8bf6『[units] project.md v0.11：PRJ-T09 查询端口落位登记』以文件名词短语开头（F-037/F-079/F-092/F-130 的 [units] 车道同型）、93489c02『[governance] PRJ-T09 验证留痕：两模式构建日志＋gtest XML＋ird-test-report＋validate-task』以任务名词开头（F-139 已判『PRJ-Txx 验证留痕』逐字模板第七连例，本例第八例且首次出现 [governance] 车道变体）。实现提交 b2fa1c5e『实现查询端口（…）』与测试提交 60e10e78『新增查询端口用例组（…）』动词开头合规。纯风格瑕疵：两提交正文四段齐备、Acc-Covered 行在位、验证结论经验收者独立复现全部为真，既往判例均不阻断",
       "owner": "实施纪律（AGENTS §6.3/ACC §4.9 提交标题动词开头）；模板补救（动词开头示例＋『PRJ-Txx 验证留痕归档/留痕补齐』等既有逐字模板黑名单——F-121/F-126/F-139/F-142 处置建议反复提出，落地前家族持续累积）",
       "resolution": "处置建议＝同 F-121/F-126/F-139/F-142：实施者会话模板增补提交标题硬约束（动词开头示例＋逐字模板反例清单，覆盖 [units]/[governance] 车道）；治理侧可考虑在 verify-task/validate-task 增加 commit 标题形态机检。编号顺延自 F-150，合入时由所有者确认。"
+    },
+    {
+      "id": "F-152",
+      "source": "traceability/acceptance/PRJ-T10-20260916.md#4.9-4.10（attempt 1，送验对象 37d05852530d6512b22091c9a1f24ad027908820，分支 wp04-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-118/F-125/F-127/F-129/F-132/F-136/F-138/F-141/F-148 之后又一例，且为家族规模之最）：PRJ-T10 留痕提交 37d05852 正文与 ird-test-report.json builds[]/gates 段声称 11 份日志（integration-build.log、integration-contract-build.log、verify-target-build.log、smoke-configure.log、smoke-build.log、smoke-test-run.log、smoke-contract-test-run.log、integration-test-run.log、integration-contract-test-run.log、ird-gates.log、validate-task.log），git ls-tree @37d05852 实证 builds/wp04-t10/ 仅 5 件（ird-test-report.json＋双模式 gtest XML 四份）、.log 零入库。验证结论性内容（双模式 206/206＋15/15、ird_gates 9 命中＝wp04-t08/t09 基线零新增、validate-task PASS）经验收者 detached worktree 亲手复现全部为真，无结论性粉饰——按家族既有判例登记建议级",
+      "owner": "实施纪律（AGENTS §4.2/§6.3：提交前 git status 自查正文清单与实际入库一致）；.gitignore 根因处置归 F-010 登记辖域（仓库治理所有者）",
+      "resolution": "处置建议＝①同 F-125/F-127/F-129：.gitignore 增加否定规则（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或将留痕日志统一 .txt 后缀（家族第 18 例后处置紧迫度持续上升）；②提交前以 git status/diff --stat 核对正文清单与实际入库件数一致；③本任务 11 份日志若实施侧仍留存，可随返工窗口补交，否则更正 ird-test-report.json 的 builds[]/gates 日志引用字段。编号顺延自 F-151，合入时由所有者确认。"
+    },
+    {
+      "id": "F-153",
+      "source": "traceability/acceptance/PRJ-T10-20260916.md#4.10（attempt 1，同 F-152 送验对象）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-010 根因第八次踩中（F-081 第二次、F-083 第三次、F-085 第四次、F-087 第五次、F-088 第六次、F-090 第七次之后）：.gitignore:87 全局 *.log 规则吞没 traceability/builds/wp04-t10/ 全部 11 份留痕日志（git check-ignore -v 实证逐文件命中同一规则行）——实施侧未察觉、未按先例（wp02-t02/wp02-t08/wp04-t01/wp05-* 等任务同型日志均以 git add -f 强加入库）处置，致 F-152 幻影清单",
+      "owner": "构建约定所有者（DTB §5.1 辖域；F-010 处置建议原文承责）",
+      "resolution": "处置建议＝同 F-010：为 traceability/** 增加负向豁免（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或明文『留痕一律 .txt 后缀／-f 强加』约定；该家族已八连踩，建议随 WP-01-T02 CI 门禁优先消账。编号顺延自 F-152，合入时由所有者确认。"
+    },
+    {
+      "id": "F-154",
+      "source": "traceability/acceptance/PRJ-T10-20260916.md#4.9（attempt 1，同 F-152 送验对象）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "提交标题家族再现（F-012 系，一次两例）：PRJ-T10 送验四提交中两份标题前缀后以名词开头非动词开头——e9d6da3f『[units] project.md v0.12：PRJ-T10 命令服务落位登记』以文件名词短语开头（F-037/F-079/F-092/F-130/F-151 的 [units] 车道同型）、37d05852『[governance] PRJ-T10 验证留痕：两模式构建日志＋gtest XML＋ird-test-report＋门禁实跑』以任务名词开头（F-139 判定的『PRJ-Txx 验证留痕』逐字模板连例之后再现、[governance] 车道继 F-151 后第二例）。实现提交 c6527070『实现命令服务（…）』与测试提交 43925b3c『新增命令服务用例组（…）』动词开头合规。纯风格瑕疵：两提交正文四段齐备、Acc-Covered 行在位、验证结论经验收者独立复现全部为真，既往判例均不阻断",
+      "owner": "实施纪律（AGENTS §6.3/ACC §4.9 提交标题动词开头）",
+      "resolution": "处置建议＝同 F-121/F-126/F-139/F-142/F-151：实施者会话模板增补提交标题硬约束（动词开头示例＋逐字模板反例清单，覆盖 [units]/[governance] 车道）；治理侧可考虑机检。编号顺延自 F-153，合入时由所有者确认。"
+    },
+    {
+      "id": "F-155",
+      "source": "traceability/acceptance/PRJ-T10-20260916.md#4.8（attempt 1，同 F-152 送验对象）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "F-122/F-133/F-134/F-140/F-143/F-147 家族第七次再现：PRJ-T10 触及 units/project.md（§15.4 追加 v0.12 行＋卡头文档版本行 v0.11→v0.12 已同步）但卡头『日期』行停留 2026-09-09 未随 §15.4 v0.12 行日期 2026-09-16 更新——版本半边落地、日期半边连续第七跳未落地（F-134 处置建议两条之一持续被跳过）",
+      "owner": "project 详设所有者（units/project.md 辖域；F-133/F-140/F-147 处置建议原文承责）",
+      "resolution": "处置建议＝同 F-147：随下次触及 units/project.md 的任务（或登记的批量修正载体）一次性把卡头日期行更新为该次修订日期，并把『卡头版本行与日期行必须同批同步』写入单元卡修订自检清单。编号顺延自 F-154，合入时由所有者确认。"
+    },
+    {
+      "id": "F-156",
+      "source": "traceability/acceptance/PRJ-T10-20260916.md#4.5（attempt 1，同 F-152 送验对象）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-16",
+      "title": "既有用例偶发失败观察（非本任务新增用例）：sdurws_ird_project_contract_test 的 LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02（T05/T08 面——进程崩溃模拟＋并发接管时序）在验收环境探针还原后首轮全量复跑 1 次失败，随后 3 连跑全绿（本验收全程前后另有 2 次全量 15/15）——高负载（MSBuild 重建收尾窗口）下时序敏感偶发，与 F-068 增量陷阱场景叠加出现过一次",
+      "owner": "测试约定所有者（units/testkit.md 辖域）＋project 单元测试维护者",
+      "resolution": "处置建议＝评估为该用例（及同族崩溃模拟用例）增加确定性重试容忍（gtest retry 或用例内接管窗口放宽）或在验收探针流程中隔离重建与测试执行的负载窗口；本例不构成 PRJ-T10 阻断（复跑稳定、非送验范围用例），仅作稳定性跟踪。编号顺延自 F-155，合入时由所有者确认。"
     }
   ]
 }
