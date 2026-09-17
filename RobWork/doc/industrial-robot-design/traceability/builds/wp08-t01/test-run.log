@@ -1,0 +1,29 @@
+=== 独立冒烟模式测试执行（build-smoke-wp08-t01，Release）===
+$ ./build-smoke-wp08-t01/execution/Release/sdurws_ird_execution_test.exe
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 7 tests.
+exit=0
+
+$ ./build-smoke-wp08-t01/execution/Release/sdurws_ird_execution_contract_test.exe
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 5 tests.
+exit=0
+
+=== 集成模式测试执行（build/，Release）===
+$ ./build/RobWorkStudio/bin/Release/sdurws_ird_execution_test.exe
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 7 tests.
+exit=0
+
+$ ./build/RobWorkStudio/bin/Release/sdurws_ird_execution_contract_test.exe
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 5 tests.
+exit=0
