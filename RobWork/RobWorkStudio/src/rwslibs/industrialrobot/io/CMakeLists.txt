@@ -29,6 +29,16 @@
 #   3. IO-T03（≙WP-11-T04）：src/ 增列 Csv.cpp；公共头增列 Csv.hpp
 #      （§3.1 表 Csv.hpp 行）；测试目标增列 test/CsvTest.cpp（V01~V05
 #      ＋方言封闭集/预算接线/数据-only 用例——契约 acceptance 1~5）。
+#   4. IO-T04（≙WP-11-T05）：src/ 增列 Json.cpp/ZipChannel.cpp（§3.4
+#      布局同名任务文件）；公共头增列 Json.hpp/ZipChannel.hpp（§3.1 表
+#      Json.hpp 行＋ZipChannel.hpp 行——后者为 DTB §5.4 登记的文件名等
+#      价增补，io.md §15.5 v0.7）；P-IO-3 冻结选型（ZIP=libzip 1.11.4、
+#      XML=expat 2.8.3——io.md §15.3/governance-log §1.9）的 L1 目标
+#      链接登记落位（§3.3"链接 …＋L1 文件/XML 目标（选型 P-IO-3 冻结
+#      后登记）"；§15.3 R-IO-1 行"L1 文件/XML 目标链接登记随 IO-T04"）；
+#      测试目标增列 test/JsonTest.cpp（V07/V08＋canonical/摘要——契约
+#      acceptance 1~3）与 test/ZipChannelTest.cpp（逐字节还原＋哈希校验
+#      ——acceptance 4，恶意 zip 构造器为 §11.1 登记的测试基础设施）。
 # =====================================================================
 
 # ---- gtest 接入（DTB §5.5 定稿，唯一机制；随 IO-T02 首个测试目标引入）----
@@ -37,21 +47,36 @@
 # （从未生成），也不源码 vendor——两份 gtest 混用会破坏 ODR。
 find_package(GTest CONFIG REQUIRED)
 
+# ---- L1 第三方依赖（P-IO-3 冻结选型——io.md §15.3/§3.3，随 IO-T04 登记）----
+# ZIP＝libzip 1.11.4（ZipChannel.cpp 消费——§7.1 容器层/zip64/加密检测）；
+# XML＝expat 2.8.3（§6.2 URDF/Xacro XML 设施——消费方 ResourceIo.cpp 随
+# IO-T05 落位，链接面按 §15.3 R-IO-1"链接登记随 IO-T04"先行登记，避免
+# 下一任务再动本文件）。两库均经 vcpkg x64-windows 经典模式（仓库根 vendored
+# ports 树为准——NFR-DEP-03 离线/NFR-SEC-05 依赖清单），REQUIRED＝不可用
+# 即配置失败（失败即停，不私选第二渠道——acceptance 5 红线）。
+find_package(libzip CONFIG REQUIRED)
+find_package(expat CONFIG REQUIRED)
+
 # ---- 产品库目标：STATIC（目标名不变，DTB §5.1）----
 # src/Io.cpp＝IO-T01 锚点翻译单元（先例：core/src/Core.cpp 等）；
 # IO-T02 增列 SafePath.cpp（路径安全核——§4.2/§4.3/§9.1）、Budget.cpp
 # （预算守卫——§4.5/§9.2）、IoDiagnostics.cpp（IO-* 码表注册＋比较型
 # 三要素助手——§9.12/P-IO-6）。IO-T03 增列 Csv.cpp（§5/§9.3/§9.4——
 # 方言标识行＋可逆转义＋流式读取/逐行错误定位＋canonical 写出，任务卡
-# §12 IO-T03 行同名任务文件）。IO-T04 起按 §3.4 布局继续增列：
-# Json.cpp/ZipChannel.cpp（IO-T04）、ResourceIo.cpp（IO-T05）、
-# Package.cpp/TempArea.cpp/AtomicFile.cpp（IO-T06）。
+# §12 IO-T03 行同名任务文件）。IO-T04 增列 Json.cpp（§5.9/§9.5——受限
+# DOM＋JsonProfile 校验＋canonical 写出＋内容摘要，同名任务文件）与
+# ZipChannel.cpp（§7.1——ZIP 容器层读取/逐字节还原/manifest 哈希校验；
+# ZipChannel.hpp 为 §3.4 布局的同名公共头——文件名等价增补见 io.md
+# §15.5 v0.7）。后续按 §3.4 布局继续增列：
+# ResourceIo.cpp（IO-T05）、Package.cpp/TempArea.cpp/AtomicFile.cpp（IO-T06）。
 add_library(sdurws_ird_io STATIC
     src/Io.cpp
     src/SafePath.cpp
     src/Budget.cpp
     src/IoDiagnostics.cpp
-    src/Csv.cpp)
+    src/Csv.cpp
+    src/Json.cpp
+    src/ZipChannel.cpp)
 
 # C++17（单元卡 §1.4／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：io 公共头使用 C++17 设施（std::string_view/inline constexpr
@@ -81,17 +106,21 @@ target_include_directories(sdurws_ird_io PUBLIC
 # 白名单、ird_gates_whitelist.cmake "io->core"/"io->diagnostics" 行一致）。
 # PUBLIC 形态：IoDiagnostics.hpp 内嵌 diagnostics 承载的 CodeDescriptor/
 # IDiagnosticRegistry 契约类型（P-IO-6 注册协议——§10.3），消费方必须随
-# 链到达。零 L1/第三方目标：ZIP/XML 选型 P-IO-3 未冻结（§3.3"冻结后登记"
-# ——IO-T01 契约 acceptance 1/4），冻结评审通过后由 IO-T04 以增量修订
-# 登记于此。零 Qt（D-01/NFR-MNT-01）、零 Widgets（WP-11-T02 禁止项）、
-# 零其他 industrialrobot 单元（R-1——io 不直链任何业务域单元，协作走
-# 六类端口/注入面，§10）、零 testkit（T-1——testkit 仅随 _test/
-# _contract_test 目标消费）。用统一真名 sdurws_ird_core/sdurws_ird_
-# diagnostics：集成与独立冒烟两种模式下都可解析（别名 RWS::ird::* 仅
-# 集成模式存在——core/diagnostics 落位时同款取舍）。
+# 链到达。L1（libzip/expat——P-IO-3 冻结）PRIVATE：实现细节（zip.h/expat.h
+# 不出现在任何 io 公共头——ZipChannel.hpp 文件头注），STATIC 库的 PRIVATE
+# 链接依赖经 $<LINK_ONLY> 自动传播给消费方（链接面完整），而用法要求
+# （include 路径）不外泄——封装与链接两全。零 Qt（D-01/NFR-MNT-01）、
+# 零 Widgets（WP-11-T02 禁止项）、零其他 industrialrobot 单元（R-1——
+# io 不直链任何业务域单元，协作走六类端口/注入面，§10）、零 testkit
+# （T-1——testkit 仅随 _test/_contract_test 目标消费）。用统一真名
+# sdurws_ird_core/sdurws_ird_diagnostics：集成与独立冒烟两种模式下都可
+# 解析（别名 RWS::ird::* 仅集成模式存在——core/diagnostics 落位时同款取舍）。
 target_link_libraries(sdurws_ird_io PUBLIC
     sdurws_ird_core
     sdurws_ird_diagnostics)
+target_link_libraries(sdurws_ird_io PRIVATE
+    libzip::zip
+    expat::expat)
 
 # 别名（集成模式）：供消费方单元以 RWS::ird::io 消费；冒烟模式无别名
 # （与骨架期行为一致，DTB §5.1）。
@@ -106,15 +135,22 @@ endif()
 # CSV 读写器本体随 IO-T03 落位后由其通道复用同一 BudgetGuard 行维）、
 # 预算三要素/双保险/账本可观测（acceptance 3）、IO-* 码表注册（P-IO-6，
 # acceptance 5）＋源码头红线扫描（零 Qt/零跨单元头——BuildRedLine 同款
-# 运行期扫描，与文件末尾配置期守卫互为两道防线）。IO-T06/T07 增列
-# 资源/包/契约面用例与 sdurws_ird_io_contract_test（§3.3）。
+# 运行期扫描，与文件末尾配置期守卫互为两道防线）。IO-T04 增列
+# test/JsonTest.cpp（IoJsonTest 组——IO-V07/V08＋canonical 字节一致＋
+# 内容摘要＋版本门＋Preserve/预算接线，契约 acceptance 1~3）与
+# test/ZipChannelTest.cpp（IoZipTest 组——逐字节还原＋manifest 哈希校验
+# ＋加密/压缩方法拒绝，acceptance 4；恶意 zip 构造器＝§11.1 登记的测试
+# 替身，经 libzip 写侧构造合法样例、手工字节构造恶意样例）。IO-T06/T07
+# 增列资源/包/契约面用例与 sdurws_ird_io_contract_test（§3.3）。
 enable_testing()
 
 add_executable(sdurws_ird_io_test
     test/SafePathTest.cpp
     test/BudgetTest.cpp
     test/IoDiagnosticsTest.cpp
-    test/CsvTest.cpp)
+    test/CsvTest.cpp
+    test/JsonTest.cpp
+    test/ZipChannelTest.cpp)
 
 target_compile_features(sdurws_ird_io_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_io_test PROPERTIES
@@ -138,6 +174,11 @@ endif()
 target_link_libraries(sdurws_ird_io_test PRIVATE
     sdurws_ird_io
     GTest::gtest_main)
+# libzip 供测试侧恶意 zip 构造器使用（§11.1 替身清单——合法样例经 libzip
+# 写侧构造、恶意样例手工字节构造；T-1 同款"测试目标可链"形态——产品库
+# 本体已 PRIVATE 链接，此处仅为测试翻译单元的 <zip.h> 头与链接符号）。
+target_link_libraries(sdurws_ird_io_test PRIVATE
+    libzip::zip)
 # 峰值内存观测（V06）经 kernel32 的 K32GetProcessMemoryInfo 直调——零
 # 词表外链接面（ird_gates IRD-GATE-LIB 零命中；曾试 Psapi.lib 被门禁拦
 # 下，改走 kernel32 缺省链接面）。
