@@ -39,6 +39,13 @@
 #      测试目标增列 test/JsonTest.cpp（V07/V08＋canonical/摘要——契约
 #      acceptance 1~3）与 test/ZipChannelTest.cpp（逐字节还原＋哈希校验
 #      ——acceptance 4，恶意 zip 构造器为 §11.1 登记的测试基础设施）。
+#   5. IO-T05（≙WP-11-T06）：src/ 增列 ResourceIo.cpp（§3.4 布局同名任
+#      务文件——资源读取/快照/依赖树/检测/固化中转；expat 消费点＝本
+#      文件〔§3.3 登记行"expat 消费＝ResourceIo.cpp（IO-T05）"〕）；
+#      公共头增列 ResourceIo.hpp（§3.1 表对应行）；测试目标增列
+#      test/ResourceIoTest.cpp（IoRes 组——V15/V16/V25/V26/V27＋基础
+#      契约，提交 1/3）与 test/ResourceSolidifyTest.cpp（V17/V24＋三段
+#      边界＋§8.6 生命周期，提交 2/3）。
 # =====================================================================
 
 # ---- gtest 接入（DTB §5.5 定稿，唯一机制；随 IO-T02 首个测试目标引入）----
@@ -67,8 +74,9 @@ find_package(expat CONFIG REQUIRED)
 # DOM＋JsonProfile 校验＋canonical 写出＋内容摘要，同名任务文件）与
 # ZipChannel.cpp（§7.1——ZIP 容器层读取/逐字节还原/manifest 哈希校验；
 # ZipChannel.hpp 为 §3.4 布局的同名公共头——文件名等价增补见 io.md
-# §15.5 v0.7）。后续按 §3.4 布局继续增列：
-# ResourceIo.cpp（IO-T05）、Package.cpp/TempArea.cpp/AtomicFile.cpp（IO-T06）。
+# §15.5 v0.7）。IO-T05 增列 ResourceIo.cpp（§6/§8/§9.6~§9.8——资源
+# 读取/快照/依赖树/检测/固化中转＋expat 消费，同名任务文件）。后续按
+# §3.4 布局继续增列：Package.cpp/TempArea.cpp/AtomicFile.cpp（IO-T06）。
 add_library(sdurws_ird_io STATIC
     src/Io.cpp
     src/SafePath.cpp
@@ -76,7 +84,8 @@ add_library(sdurws_ird_io STATIC
     src/IoDiagnostics.cpp
     src/Csv.cpp
     src/Json.cpp
-    src/ZipChannel.cpp)
+    src/ZipChannel.cpp
+    src/ResourceIo.cpp)
 
 # C++17（单元卡 §1.4／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：io 公共头使用 C++17 设施（std::string_view/inline constexpr
@@ -140,8 +149,12 @@ endif()
 # 内容摘要＋版本门＋Preserve/预算接线，契约 acceptance 1~3）与
 # test/ZipChannelTest.cpp（IoZipTest 组——逐字节还原＋manifest 哈希校验
 # ＋加密/压缩方法拒绝，acceptance 4；恶意 zip 构造器＝§11.1 登记的测试
-# 替身，经 libzip 写侧构造合法样例、手工字节构造恶意样例）。IO-T06/T07
-# 增列资源/包/契约面用例与 sdurws_ird_io_contract_test（§3.3）。
+# 替身，经 libzip 写侧构造合法样例、手工字节构造恶意样例）。IO-T05 增列
+# test/ResourceIoTest.cpp（IoRes 组——V15 环与深度/V16 网格预算/V25 权限
+# 四分类/V26 缺失清单/V27 摘要稳定＋基础契约）与 test/ResourceSolidify
+# Test.cpp（V17 复制期变化/V24 只读码区分＋三段边界＋§8.6 生命周期——
+# 提交 2/3）。IO-T06/T07 增列包/契约面用例与 sdurws_ird_io_contract_test
+# （§3.3）。
 enable_testing()
 
 add_executable(sdurws_ird_io_test
@@ -150,7 +163,9 @@ add_executable(sdurws_ird_io_test
     test/IoDiagnosticsTest.cpp
     test/CsvTest.cpp
     test/JsonTest.cpp
-    test/ZipChannelTest.cpp)
+    test/ZipChannelTest.cpp
+    test/ResourceIoTest.cpp
+    test/ResourceSolidifyTest.cpp)
 
 target_compile_features(sdurws_ird_io_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_io_test PROPERTIES

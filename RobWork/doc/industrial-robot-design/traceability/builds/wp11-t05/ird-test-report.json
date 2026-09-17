@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "IO-T05",
+  "masterWp": "WP-11（io.md §12 IO-T05 行＝WP-11-T06：资源导入服务与外部源检测 ResourceIo——§6.2/§6.5/§6.6/§8.1~§8.4、§9.6~§9.8）",
+  "branch": "wp11-t05",
+  "base": "cb0047d73f4bcbe323c3c2f25137e74604fc902b",
+  "date": "2026-09-17",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main）",
+  "targets": [
+    {
+      "target": "sdurws_ird_io",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，exit 0 零 error——integration-build.log 计 error=0；smoke-build.log 计 error=0）",
+      "notes": "IO-T05 落位（§3.4 布局同名任务文件）：公共头增列 ResourceIo.hpp（§3.1 表 ResourceIo.hpp 行——ResourceSnapshot/ResourceContentId〔digest 为内容身份、路径不作身份〕/ResourceKind〔阶段 A 格式族含 GenericXml＝§6.4 R2 文件层形态〕/ResourceStreamHandle〔opaque PIMPL RAII 句柄〕/ResourceOpenSpec/ResourceDependencyTree/IResourceReader/IResourceSnapshotter/ExternalRefProbe 事实三态/IProjectBytesSource·IExternalRefSource·IRuntimeResourceAdapter〔§9.7 注入面——P-IO-1/P-IO-2 处置载体〕）。src/ 增列 ResourceIo.cpp（expat 消费点——§3.3 登记行）：①读取通道（§4.4 防护流程②→⑦：SafePath 规范化→SingleFileBytes 预检先拒后开→Win32 打开〔P-5/P-6 带 FILE_FLAG_OPEN_REPARSE_POINT 拒绝打开 reparse point＋SP-6 final-path 复核，比较面归一 \\\\?\\ 前缀/分隔符/折叠；P-1 跟随链接按实体路径记录〕→流式读取每块 TotalBytes＋取消合并检查点→core ContentDigester SHA-256→快照〔mtime=NT FILETIME 预筛〕）；②网格规模护栏（§6.3：二进制 STL 声明面读前预检＋声明跨度补账＋实际大小反推复核、ASCII STL facet 精确词计数与 OBJ v/f 行前缀流式计数读中中止——识别失败不阻断字节资源快照，格式族门禁归消费通道）；③依赖树（expat 边抽取 include/mesh＋OBJ mtllib/MTL map_Kd 文本边；显式栈 DFS＋出口标记——环检测回边指向进行中节点〔环与 DAG 共享正确分界〕、IncludeDepth 深度预算先比后展开、缺失叶入树汇总 IO-RES-MISSING 缺失清单、include 越界 IO-SEC-PATH-ESCAPE、XML 良构 IO-FORMAT-XML-SYNTAX）；④OS 错误 §4.2.5 四分类（写方向以 READONLY 属性判别 READONLY/ACCESS-DENIED——V24；读方向不降级 NOT-FOUND——V25）；⑤IResourceSnapshotter（probe 事实三态＋环境失败错误轨道〔等价调整 1〕；solidifyToStaging＝§8.4 步骤 1~6：budgetBytes 取小的收紧子 scope、前后双快照、CREATE_ALWAYS 中转复制〔预删除刻意不做——MSVC filesystem::remove 会静默清只读属性，写护栏须在打开面〕、变化检出→清理中转→IO-RES-CHANGED 比较型诊断、成功副本保留待 project 入库——objects 零写入；.staging 授权段校验）；⑥IRuntimeResourceAdapter（§9.7 路由：Solidified {resourceId,accessVersion} 缓存命中同指针→IProjectBytesSource 注入〔摘要复算防御〕；Recorded→IExternalRefSource→P-1 每次重读＋重算 digest 绝不缓存〔§8.6.4 S10 前提〕；缓冲 deque 稳定区至析构〔§8.6.1〕；互斥仅护插入、发布后只读〔§8.6.3〕；四分映射 Missing/Changed/Budget）。IoError.hpp 表尾追加 FormatXmlSyntax（IO-FORMAT-XML-SYNTAX 第 59 值——§6.1 XML 良构检查码面缺口，IO-T04 FormatJsonSyntax 同款先例）；IoDiagnostics.cpp token＋描述符同步（57 条）；IoDiagnosticsTest 枚举上界/字面清单机械同步"
+    },
+    {
+      "target": "sdurws_ird_io_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 102/102、smoke 102/102——本任务新增 IoResTest 17 用例＋IoSolidifyTest 10 用例，既有 IoSec/IoCsv/IoJson/IoZip/Budget/IoDiag 75 用例零回归）——契约 verify 命令（cmake --build build --config Release --target sdurws_ird_io_test）经 verify-task.log PASS（verify-task: PASS IO-T05）",
+      "notes": "新增 test/ResourceIoTest.cpp（IoRes 组——V15/V16/V25/V26/V27＋基础契约）与 test/ResourceSolidifyTest.cpp（IoSolidify 组——V17/V24＋三段边界＋§8.6 五条）。测试替身均为真实临时文件＋自持注入源（不链 testkit——T-1；V17 的 FaultInterceptor 定点注入以进度检查点〔§9.13 驱动线程同步回调〕承载，注入点确定不依赖时序；V25 ACL 拒读以 S-1-1-0 SID DENY ACE 注入〔仅拒 FILE_READ_DATA|FILE_READ_EA，保留属性读——规范化存在性检查通过、失败发生在数据面打开，分类语义被精确钉住〕；V24 以预置只读目标文件形态）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "14 处命中＝wp11-t04 基线全等（diagnostics/evidence/policy/project/runtime 的 _test/_contract_test 直链 testkit＋testdata_lint 表外依赖/T-1×2＋project R4×1 共 11 处 DTB §4.5 登记例外＋3 处 F-191 登记的 IRD-GATE-LIB〔sdurws_ird_io/sdurws_ird_io_test 链接 libzip::zip/expat::expat——依赖本体＝P-IO-3 冻结裁决，词表扩登归门禁所有者〕；留痕 gates-ird-gates-target.log，命中码型分布与 wp11-t04 日志逐类比对一致，本任务零新增命中）。io 源码零 R-1/R-3/R-4/T-1 新增命中"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/IO-T05.json——前置引用/设计锚点/knownPitfalls 三查，留痕 validate-task.log）＋verify-task PASS（契约 verify 命令 cmake --build build --config Release --target sdurws_ird_io_test 实跑零 error，留痕 verify-task.log）",
+    "probeCapability": "V15 以真实环 A→B→A/自包含/17 层深度链触发（环清单 params cycle 断言相对键序列＋回边；深度三要素 actual=17/limit=16/unit=levels；菱形 DAG 共享对照证明环判据精确）；V16 二进制 STL 头谎报 100 万面读前即拒（tighten MeshFaceCount=100，三要素断言＋detail 阶段短语'读前'）与 ASCII STL 真实 12 面读中止（tighten 10，actual=12/limit=10＋detail'读中'）；V17 以 256 KiB 源＋进度检查点改写注入——Changed 诊断 recorded/actual 摘要对、双快照 digest 不等、中转目录不存在三重断言＋未变源对照（副本保留、逐字节完整、objects 零写入负断言）；V24 预置只读目标→READONLY 且≠ACCESS-DENIED（写方向）；V25 以 DENY ACE 注入→ACCESS-DENIED 不降级 NOT-FOUND（属性读保留使失败精确定位于数据面打开）；V26 依赖树缺叶（missing-count=2＋清单逐项）与 probe Missing（actual 留空＋unreachable 注记）；V27 同文件 100 次快照 digest 恒定＋改名不改 digest；§8.6 五条以双源替身承载：Solidified 缓存同指针、Recorded 改源后二次调用返回 Changed（不缓存证据）、先取缓冲跨多次调用后仍完整（实际至析构）、4 线程×8 并发读取全 Ok 且视图 join 后逐字节校验",
+    "pitfall": "P-IO-2 处置（acceptance 5）：ResourceBytes 生命周期按 io.md §8.6 五条裁决实现——最低至下次调用/实际至 provider 析构（稳定区）、调用方同步消费纪律（文档面）、并发只读安全（互斥护插入＋不可变发布）、Recorded 绝不跨调用缓存（每次重读＋重算）、值拷贝兼容（未来语义不弱于本裁决）——测试逐条钉住；P-IO-1 处置（acceptance 5）：对象库字节经 IProjectBytesSource 注入、引用记录经 IExternalRefSource 注入（测试替身即 L5/project 注入形态），io 零 project/runtime 编译依赖（公共头仅消费 core 的 Digest/Identity 与 io 自有类型）、不直读项目存储（§2.3 非目标 6）；knownPitfalls 两项均无未决阻断"
+  },
+  "testSuites": [
+    {
+      "suite": "IoRes/CyclicIncludes（IO-V15——acceptance 1）",
+      "designRef": "units/io.md §6.2（include 解析/循环/深度）、§6.5（依赖树）、§4.5.1（IncludeDepth）；需求 NFR-SEC-02、MDL-19",
+      "cases": [
+        { "name": "IoResTest.CyclicIncludeReportsCycleWithPathList", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V15——A→B→A 环拒（IO-FORMAT-XML-CYCLE），params cycle 含环相对键序列＋回边闭合（观测点'环清单内容'）" },
+        { "name": "IoResTest.SelfIncludeReportsCycle", "status": "passed", "modes": ["integration", "smoke"], "trace": "§6.2'自包含'——A→A 自环最小情形同样拒绝" },
+        { "name": "IoResTest.IncludeChainBeyondDepthTriggersIncludeBudget", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V15——17 层深度链超默认 16（IO-SEC-BUDGET-INCLUDE 三要素 actual=17/limit=16/unit=levels——'循环与深度双保险'深度半边）" },
+        { "name": "IoResTest.DiamondIncludeIsNotCycle", "status": "passed", "modes": ["integration", "smoke"], "trace": "环判据精确性对照——菱形 DAG 共享（B/C→D）放行：回边指向进行中节点才判环，已完成节点共享跳过（显式栈＋出口标记算法）" },
+        { "name": "IoResTest.IncludeEscapeOutsideImportRootRejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "§6.2'include 目标必须落在导入根内'——../逃逸拒（IO-SEC-PATH-ESCAPE，NFR-SEC-01 红线抽查）" },
+        { "name": "IoResTest.MalformedXmlReportsSyntaxCodeWithLocation", "status": "passed", "modes": ["integration", "smoke"], "trace": "§6.1 XML 良构检查——标签不闭合拒（IO-FORMAT-XML-SYNTAX＋行列定位；表尾追加码 v0.8）" }
+      ]
+    },
+    {
+      "suite": "IoRes/MeshBudget（IO-V16——acceptance 1）",
+      "designRef": "units/io.md §6.3（格式识别/规模预检）、§4.5.1（网格预算）；需求 NFR-SEC-02",
+      "cases": [
+        { "name": "IoResTest.BinaryStlDeclaredFacesLyingRejectedBeforeBodyRead", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V16——二进制 STL 谎报 100 万面读前即拒（IO-SEC-BUDGET-MESH actual=1000000/limit=100/count，detail 阶段短语'读前'——不读体，§6.3'超限即拒不读体'）" },
+        { "name": "IoResTest.AsciiStlRealOversizeTriggersMeshBudgetMidRead", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V16——真实 12 面 ASCII STL 流式计数触发（actual=12/limit=10，detail'读中'——触发时机读前/读中可断言）" },
+        { "name": "IoResTest.ValidBinaryStlSnapshotDigestMatchesManual", "status": "passed", "modes": ["integration", "smoke"], "trace": "预算内放行对照——digest 与手工 core ContentDigester 复算一致（SA-12）、sizeBytes/mtime/finalPath 三元组完整" }
+      ]
+    },
+    {
+      "suite": "IoRes/AccessDenied 与基础契约（acceptance 3 reader 半边）",
+      "designRef": "units/io.md §4.2.5（错误四分类）、§9.6（接口契约）；需求 NFR-SEC-01/02",
+      "cases": [
+        { "name": "IoResTest.AclDeniedReadMapsToAccessDeniedNotNotFound", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V25——ACL DENY（S-1-1-0，仅拒 FILE_READ_DATA|FILE_READ_EA）读→IO-RES-ACCESS-DENIED 不降级 NOT-FOUND（失败精确定位于数据面打开；params direction=read）" },
+        { "name": "IoResTest.UserSourceMissingFileIsNotFound", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.2.5 分类一——P-1 不存在→IO-RES-NOT-FOUND（四分类对照面）" },
+        { "name": "IoResTest.ProjectResourceRefRoleSnapshotWorksWithBase", "status": "passed", "modes": ["integration", "smoke"], "trace": "P-5 角色＋base 通道冒烟——纯相对区内引用快照产出（SP-3 区内判定＋SP-6 final-path 复核接线）" },
+        { "name": "IoResTest.OpenReadHandleReturnsBytesAndEof", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.6 open 契约——句柄流式读取至 EOF=0、sizeBytes 提示面" },
+        { "name": "IoResTest.IdentifyKnowsMeshAndTextureFamilies", "status": "passed", "modes": ["integration", "smoke"], "trace": "§6.3 格式识别——二进制/ASCII STL 判定、OBJ、纹理字节族；未知格式拒（IO-FORMAT-MESH-UNKNOWN＋首 16 字节 head-hex）" }
+      ]
+    },
+    {
+      "suite": "IoRes/MissingResource 与 DigestStability（IO-V26/V27——acceptance 3）",
+      "designRef": "units/io.md §6.5（缺失清单）、§6.6（缺失≠不可行）、§8.2（快照稳定性/路径不作身份）；需求 NFR-REL-04、CON-05",
+      "cases": [
+        { "name": "IoResTest.DependencyTreeMissingLeafReportsMissingList", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V26——依赖树缺叶（2 项）→IO-RES-MISSING＋缺失清单（missing-count/逐项 detail）＋诊断类别＝资源事实（§2.5 正交——错误面无任何工程不可行结论字段，判定归 evidence 门禁）" },
+        { "name": "IoResTest.SnapshotDigestStableAcross100Reads", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V27——同文件 100 次快照 digest 恒定（§8.2 快照稳定性；恒定值＝手工复算摘要）" },
+        { "name": "IoResTest.RenameDoesNotChangeDigestPathIsNotIdentity", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V27——改名后 digest 恒等、contentId 相等、finalPath 确实不同（路径不作身份——SP-5 资源面）" }
+      ]
+    },
+    {
+      "suite": "IoRes/SourceChangedDuringCopy 与固化前契约（IO-V17——acceptance 2/4）",
+      "designRef": "units/io.md §8.4（固化流程步骤 1~6）、§9.8（solidify 契约）、§11.1（FaultInterceptor 替身）；需求 NFR-REL-04、CON-03、PM-01 段③",
+      "cases": [
+        { "name": "IoSolidifyTest.SourceChangedDuringCopyDetectedAndStagingCleaned", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/IO-V17——256 KiB 源复制中途改写（进度检查点定点注入）→IO-RES-CHANGED（recorded/actual 摘要对＋source-changed=true）＋测试双快照 digest 不等断言＋中转目录不存在（无部分副本）" },
+        { "name": "IoSolidifyTest.SolidifyUnchangedSourceKeepsStagingCopyForProject", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4 段③固化前契约——未变源成功：sourceChangedDuringCopy=false、copiedDigest 一致、中转副本逐字节完整保留待 project 入库；objects 目录零创建负断言（io 不写 objects/——发布归 project N-7）；段①一次性读取＝P-1 用户区源（NFR-SEC-01 例外、预算照常）" },
+        { "name": "IoSolidifyTest.NonAuthorizedStagingDirRejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.1 P-6——非 .staging 授权形态中转拒（IO-SEC-PATH-ESCAPE，拒绝路径零写入）" },
+        { "name": "IoSolidifyTest.ReadonlyTargetWritesMapToReadonlyCode", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V24——预置只读目标写→IO-RES-READONLY 且≠ACCESS-DENIED（§4.2.5 码区分；写方向判别＝ACCESS_DENIED＋目标 READONLY 属性；实现侧不做预删除——MSVC filesystem::remove 会静默清只读属性，护栏在打开面）" }
+      ]
+    },
+    {
+      "suite": "IoRes/probe 检测事实（IO-V26 probe 半边——acceptance 3/4）",
+      "designRef": "units/io.md §8.3（检测算法）、§8.1（段②）；需求 NFR-REL-04、PM-01 段②",
+      "cases": [
+        { "name": "IoSolidifyTest.ProbeReportsMissingForDeletedExternalFile", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V26——记录指向已删文件→ExternalRefProbe::Missing（actual 留空＋unreachable 细分注记）；资源事实类别——返回面仅事实三态＋注记，无工程不可行结论字段（§2.5/§6.6——判定归 evidence，流程归 PM-09/project）" },
+        { "name": "IoSolidifyTest.ProbeReportsChangedWhenContentReplaced", "status": "passed", "modes": ["integration", "smoke"], "trace": "§8.3 Changed 行——内容替换→Changed＋actual 快照（digest 权威判据 IO-D10；recorded/actual 事实对）" },
+        { "name": "IoSolidifyTest.ProbeReportsOkAndIgnoresPurePathSpelling", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4 段②——{绝对路径＋内容哈希} 记录形态；Ok 判定不随大小写拼写变化（路径不作身份）；size 漂移仅提示注记（防 touch 误报——§8.3）" }
+      ]
+    },
+    {
+      "suite": "IoRes/IRuntimeResourceAdapter 生命周期与路由（acceptance 5——P-IO-2/P-IO-1）",
+      "designRef": "units/io.md §8.6（五条裁决）、§8.5（引用关系图/路由）、§9.7（注入面）；需求 NFR-REL-04、CON-05",
+      "cases": [
+        { "name": "IoSolidifyTest.AdapterRoutingAndLifecycleRulings", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 5/P-IO-2——Solidified 命中缓存同指针（§8.6.4 允许）＋digest 复算校验；Recorded 改源后二次调用返回 Changed（绝不缓存——S10 复查可发现替换）；先取缓冲跨多次调用后仍逐字节完整（§8.6.1 实际至析构，强于最低保证）；accessVersion=kAccessVersion 标记；双源未命中→Missing" },
+        { "name": "IoSolidifyTest.AdapterConcurrentRecordedReadsAreSafe", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 5/§8.6.3——4 线程×8 并发 Recorded 读取全 Ok；join 后全部视图逐字节校验（独立稳定缓冲、发布后只读、无数据竞争）" },
+        { "name": "IoSolidifyTest.AdapterRecordedFailureMapping", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 5——Recorded 不可达→Missing（细分嵌 detail 不降级）；对象库通道预算失败→Budget 四分映射（§9.7 错误类型行）；P-IO-1——注入源替身即 L5/project 注入形态，io 零 project 编译依赖" }
+      ]
+    }
+  ]
+}

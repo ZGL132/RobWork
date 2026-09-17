@@ -65,6 +65,7 @@ std::string_view errorCodeToken(IoErrorCode code)
     case IoErrorCode::FormatPackManifest:       return "IO-FORMAT-PACK-MANIFEST";
     // ---- 格式-XML/网格族 ----
     case IoErrorCode::FormatXmlCycle:           return "IO-FORMAT-XML-CYCLE";
+    case IoErrorCode::FormatXmlSyntax:          return "IO-FORMAT-XML-SYNTAX";
     case IoErrorCode::FormatMeshUnknown:        return "IO-FORMAT-MESH-UNKNOWN";
     // ---- 安全-路径族（§9.12 连字符展开；正文简写 IO-SEC-SYMLINK 同指
     //      SecPathSymlink——IoError.hpp 枚举注释同源）----
@@ -184,7 +185,8 @@ std::vector<diagnostics::CodeDescriptor> ioCodeDescriptors()
     using DC = diagnostics::DiagnosticCategory;
     using DS = diagnostics::DiagnosticSeverity;
     std::vector<diagnostics::CodeDescriptor> out;
-    out.reserve(56);   // §9.12 建议值 55＋IO-T04 表尾追加 1（IO-FORMAT-JSON-SYNTAX）
+    out.reserve(57);   // §9.12 建议值 55＋IO-T04 表尾追加 1（IO-FORMAT-JSON-SYNTAX）
+                       // ＋IO-T05 表尾追加 1（IO-FORMAT-XML-SYNTAX）
 
     // =================================================================
     // 格式-CSV 族（§9.12 第 2 行）——diagnostics §8.6：CSV 逐行错误→
@@ -220,9 +222,11 @@ std::vector<diagnostics::CodeDescriptor> ioCodeDescriptors()
 
     // =================================================================
     // 格式-XML/网格族（§9.12 第 5 行）——循环码携带环清单（V15 观测点
-    // "环清单内容"）；网格码定位文件。
+    // "环清单内容"）；语法码定位行列（IO-T05 表尾追加——§6.1 XML 良构
+    // 检查的码面）；网格码定位文件。
     // =================================================================
     out.push_back(makeDescriptor("IO-FORMAT-XML-CYCLE", DC::FormatOrVersion, DS::Error, "[\"cycle\"]"));
+    out.push_back(makeDescriptor("IO-FORMAT-XML-SYNTAX", DC::FormatOrVersion, DS::Error, "[\"path\",\"row\",\"column\"]"));
     out.push_back(makeDescriptor("IO-FORMAT-MESH-UNKNOWN", DC::FormatOrVersion, DS::Error, "[\"path\"]"));
 
     // =================================================================
