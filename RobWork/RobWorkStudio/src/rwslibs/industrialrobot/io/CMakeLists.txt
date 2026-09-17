@@ -164,7 +164,8 @@ add_executable(sdurws_ird_io_test
     test/CsvTest.cpp
     test/JsonTest.cpp
     test/ZipChannelTest.cpp
-    test/ResourceIoTest.cpp)
+    test/ResourceIoTest.cpp
+    test/ResourceSolidifyTest.cpp)
 
 target_compile_features(sdurws_ird_io_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_io_test PROPERTIES

@@ -1680,7 +1680,653 @@ IResourceReaderPtr makeResourceReader(ISafePathResolverPtr resolver)
     return std::make_shared<ResourceReaderImpl>(std::move(resolver));
 }
 
-// IResourceSnapshotter 与 IRuntimeResourceAdapter 的实现随 IO-T05 提交 2/3
-// 在本文件续承载（probe/solidifyToStaging——§8.3/§8.4；§8.6 五条裁决）。
+// =====================================================================
+// ResourceSnapshotterImpl——IResourceSnapshotter 实现（提交 2/3 续承载：
+// probe＝§8.3 检测事实；solidifyToStaging＝§8.4 步骤 1~6 io 执行侧）
+// =====================================================================
+
+namespace fs = std::filesystem;   // 本区段内路径类型的本地简写（语义同 std::filesystem）
+
+namespace {
+
+class ResourceSnapshotterImpl final : public IResourceSnapshotter {
+public:
+    explicit ResourceSnapshotterImpl(ISafePathResolverPtr resolver)
+        : m_resolver(resolver ? std::move(resolver) : makeSafePathResolver()),
+          m_reader(makeResourceReader(m_resolver))   // 复用读取通道（同一防护核——SA-14）
+    {
+    }
+
+    // ---- probe（§8.3——纯事实三态；等价调整 1：环境失败走错误轨道） ----
+    IoResult<ExternalRefState> probe(const ExternalRefRecord& record, IBudgetGuard* budget,
+                                     IoCancelToken* cancel,
+                                     std::optional<ProbeDetail>* out) const override
+    {
+        IoResult<ExternalRefState> result;
+        // out 语义（§9.8）：调用方传 optional 容器则 emplace 后直接写入；
+        // 未传时写入局部（不外泄——细节仅诊断链需要时才索取）。
+        std::optional<ProbeDetail> localOpt;
+        ProbeDetail* sink = (out != nullptr) ? &out->emplace() : &localOpt.emplace();
+
+        // 前置（§9.8 契约表）：recordedDigest 非全零——全零＝调用方违约，
+        // 非抛出约束（§1.4）下以 Missing 事实上报＋注记（fail-fast 语义由
+        // 调用方装配期校验承担；io 面保守上报不崩溃）。
+        bool allZero = true;
+        for (std::uint8_t b : record.recordedDigest) {
+            if (b != 0) {
+                allZero = false;
+                break;
+            }
+        }
+        if (allZero) {
+            sink->notes.push_back("recorded-digest-zero (record contract violation, io.md 9.8)");
+            result.value = ExternalRefState::Missing;            return result;
+        }
+        IoError cancelErr;
+        if (checkCancelled(cancel, cancelErr)) {
+            // 取消＝环境状态（非资源事实——等价调整 1 的错误轨道）。
+            IoResult<ExternalRefState> cancelled;
+            cancelled.error = cancelErr;
+            return cancelled;
+        }
+
+        // Missing 检测（§8.3 行一）：实体路径不可达——经 SafePath 规范化
+        // （P-1 存在性）＋快照读取，环境失败按可达性细分记入注记。
+        ResourceOpenSpec spec;
+        spec.role = PathRole::UserSource;
+        IoResult<ResourceSnapshot> actual = m_reader->snapshot(record.absPath, spec, budget, cancel);
+        if (!actual) {
+            if (actual.error.code == IoErrorCode::Cancelled
+                || actual.error.code == IoErrorCode::FormatInternal
+                || actual.error.code == IoErrorCode::SecBudgetFile
+                || actual.error.code == IoErrorCode::SecBudgetTotal) {
+                // 取消/预算＝探测过程环境失败——错误轨道（不是 Missing 事实）。
+                IoResult<ExternalRefState> failed;
+                failed.error = actual.error;
+                return failed;
+            }
+            // 不可达族（NOT-FOUND/ACCESS-DENIED/READONLY/LOCK——§8.3"NOT_
+            // FOUND/ACCESS_DENIED 细分记录"）＝Missing 事实＋细分注记。
+            sink->notes.push_back("unreachable: " + std::string(errorCodeToken(actual.error.code))
+                                  + " os-error=" + paramValueOf(actual.error, "os-error")
+                                  + " direction=" + paramValueOf(actual.error, "direction"));
+            result.value = ExternalRefState::Missing;            return result;
+        }
+
+        // Changed 检测（§8.3 行二）：重算 digest 与记录比对——**digest 为
+        // 权威判据**（IO-D10；size 预筛仅提示，不短路比对）。
+        sink->actual = actual.value;
+        if (actual.value.contentDigest != record.recordedDigest) {
+            sink->notes.push_back("digest-mismatch (recorded " + digestToHex(record.recordedDigest)
+                                  + " vs actual " + digestToHex(actual.value.contentDigest) + ")");
+            result.value = ExternalRefState::Changed;
+        } else {
+            if (record.recordedSizeBytes != 0 && record.recordedSizeBytes != actual.value.sizeBytes) {
+                // size/mtime 不同而 digest 相同＝仅提示性（§8.3"防 touch 误报"）。
+                sink->notes.push_back("size-drift-hint (recorded " + std::to_string(record.recordedSizeBytes)
+                                      + " actual " + std::to_string(actual.value.sizeBytes) + ")");
+            }
+            result.value = ExternalRefState::Ok;
+        }        return result;
+    }
+
+    // ---- solidifyToStaging（§8.4 步骤 1~6——发布/objects 入库归 project） ----
+    IoResult<SolidifyStagingResult>
+        solidifyToStaging(const std::filesystem::path& source,
+                          const std::filesystem::path& stagingDir,
+                          std::uint64_t budgetBytes, IBudgetGuard* budget, IoCancelToken* cancel,
+                          IoProgressCallback progress, BudgetScopeId budgetScope) override
+    {
+        IoResult<SolidifyStagingResult> out;
+
+        // 授权中转位校验（§4.1 P-6 典型值：.staging/tmp/…——路径折叠段中
+        // 必须含 ".staging" 段；防止误写任意目录——防御性守门，授权本体
+        // 归 project 的端口协议）。
+        std::wstring folded = foldForCompare(stagingDir.wstring());
+        normalizeSeparators(&folded);
+        if (folded.find(L"\\.staging\\") == std::wstring::npos && folded != L".staging"
+            && folded.rfind(L".staging\\", 0) != 0) {
+            out.error.code = IoErrorCode::SecPathEscape;
+            out.error.params.emplace_back("role", "staging");
+            out.error.params.emplace_back("path", displayOf(stagingDir));
+            out.error.detail = "固化中转目录非 .staging 授权形态（§4.1 P-6——io 只写授权中转位）";
+            return out;
+        }
+
+        // 预算会话（等价调整 2：budgetBytes 0＝未声明→产品默认；非 0＝与
+        // 产品默认取小后作子 scope 收紧——§8.4 步骤 1"budgetBytes 与产品
+        // 默认取小；三段共用 ledger"）。
+        BudgetScopeSession session;
+        if (IoResult<void> r = session.enter(budget, budgetScope); !r) {
+            out.error = r.error;
+            return out;
+        }
+        BudgetScopeId chargeScope = session.scope();
+        BudgetScopeId tightened{};
+        if (budgetBytes != 0) {
+            BudgetSpec child = BudgetSpec::productDefault();
+            const std::uint64_t fileLimit = child.limit(BudgetDimension::SingleFileBytes);
+            child.tighten(BudgetDimension::SingleFileBytes, std::min(budgetBytes, fileLimit));
+            const IoResult<BudgetScopeId> r = session.guard()->openScope(child, session.scope());
+            if (!r) {
+                out.error = r.error;
+                return out;
+            }
+            tightened = r.value;
+            chargeScope = tightened;
+        }
+
+        // 步骤 2：前置快照 A（P-1 例外区——stat＋SHA-256 全读）。
+        ResourceOpenSpec srcSpec;
+        srcSpec.role = PathRole::UserSource;
+        IoResult<ResourceSnapshot> before = m_reader->snapshot(source, srcSpec, session.guard(),
+                                                               cancel, chargeScope);
+        if (!before) {
+            out.error = before.error;
+            closeTightened(tightened, session);
+            return out;
+        }
+
+        // 步骤 3：复制到中转（P-6 唯一写点；目标名＝源文件名；中转目录不
+        // 存在则创建——solidify-<id> 会话目录由 io 管理）。
+        std::error_code fsEc;
+        fs::create_directories(stagingDir, fsEc);
+        if (fsEc && !fs::is_directory(stagingDir)) {
+            // 目录创建失败＝写方向环境错误（四分类——V24 只读判别在 classify）。
+            out.error = makeResourceOsError(static_cast<DWORD>(fsEc.value()), true, stagingDir,
+                                            "固化中转目录创建失败（§8.4 步骤 3）");
+            closeTightened(tightened, session);
+            return out;
+        }
+        const fs::path target = stagingDir / source.filename();
+        // 残留会话处理：目标以 CREATE_ALWAYS 打开——可写的陈旧半成品被
+        // 截断重建（重试语义，§7.5）；**只读**陈旧实体则被 OS 以
+        // ERROR_ACCESS_DENIED 拒绝→经写方向属性判别分类为 IO-RES-READONLY
+        // （§4.2.5，V24 码区分）。此处刻意不做预删除：MSVC 的
+        // std::filesystem::remove 会先复位只读属性，预删除会把"只读介质"
+        // 信号静默抹掉——写护栏必须发生在打开面上。
+
+        HANDLE src = ::CreateFileW(before.value.finalPath.wstring().c_str(), GENERIC_READ,
+                                   FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                                   nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+        if (src == INVALID_HANDLE_VALUE) {
+            const DWORD err = ::GetLastError();
+            out.error = makeResourceOsError(err, false, before.value.finalPath,
+                                            "固化复制打开源失败（§8.4 步骤 3）");
+            cleanupStaging(stagingDir, out.error);
+            closeTightened(tightened, session);
+            return out;
+        }
+        HANDLE dst = ::CreateFileW(target.wstring().c_str(), GENERIC_WRITE, FILE_SHARE_READ,
+                                   nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+        if (dst == INVALID_HANDLE_VALUE) {
+            const DWORD err = ::GetLastError();
+            // 写方向四分类（§4.2.5）——只读介质/实体判 READONLY（V24 码区分）。
+            out.error = makeResourceOsError(err, true, target, "固化复制写中转失败（§8.4 步骤 3）");
+            ::CloseHandle(src);
+            cleanupStaging(stagingDir, out.error);
+            closeTightened(tightened, session);
+            return out;
+        }
+
+        // 复制循环（每块：取消/进度/TotalBytes 检查——V17 的 FaultInterceptor
+        // 定点注入经进度检查点落位；§9.13 进度在驱动线程同步回调）。
+        core::ContentDigester copyDigester;
+        std::uint64_t copied = 0;
+        std::vector<std::uint8_t> block(kResourceReadBlockBytes);
+        bool copyFailed = false;
+        for (;;) {
+            if (checkCancelled(cancel, out.error)) {
+                copyFailed = true;
+                break;
+            }
+            DWORD got = 0;
+            if (!::ReadFile(src, block.data(), static_cast<DWORD>(block.size()), &got, nullptr)) {
+                const DWORD err = ::GetLastError();
+                out.error = makeResourceOsError(err, false, before.value.finalPath,
+                                                "固化复制读源失败（§8.4 步骤 3）");
+                copyFailed = true;
+                break;
+            }
+            if (got == 0) {
+                break;                                  // 源 EOF
+            }
+            DWORD written = 0;
+            if (!::WriteFile(dst, block.data(), got, &written, nullptr) || written != got) {
+                const DWORD err = ::GetLastError();
+                out.error = makeResourceOsError(err == 0 ? ERROR_WRITE_FAULT : err, true, target,
+                                                "固化复制写块失败（§8.4 步骤 3）");
+                copyFailed = true;
+                break;
+            }
+            copyDigester.update(block.data(), got);
+            copied += got;
+            if (IoResult<void> c = session.guard()->charge(chargeScope, BudgetDimension::TotalBytes, got);
+                !c) {
+                out.error = c.error;
+                copyFailed = true;
+                break;
+            }
+            if (progress) {
+                const IoProgress p{copied, before.value.sizeBytes, "solidify-copy"};
+                progress(p);
+            }
+        }
+        // 写句柄落盘顺序：FlushFileBuffers（复制完整性先于关闭——失败按写失败处理）。
+        if (!copyFailed && !::FlushFileBuffers(dst)) {
+            const DWORD err = ::GetLastError();
+            out.error = makeResourceOsError(err, true, target, "固化复制落盘失败（§8.4 步骤 3）");
+            copyFailed = true;
+        }
+        ::CloseHandle(dst);
+        ::CloseHandle(src);
+        if (copyFailed) {
+            cleanupStaging(stagingDir, out.error);      // 失败/取消→中转清理（§9.8 后置行）
+            closeTightened(tightened, session);
+            return out;
+        }
+
+        // 步骤 4：复制后快照 B（重读源文件——变化检测基准）。
+        IoResult<ResourceSnapshot> after = m_reader->snapshot(source, srcSpec, session.guard(),
+                                                              cancel, chargeScope);
+        if (!after) {
+            out.error = after.error;
+            cleanupStaging(stagingDir, out.error);
+            closeTightened(tightened, session);
+            return out;
+        }
+
+        // 步骤 5：A/B 比对（digest 或 size 不同＝复制窗口内源变化——
+        // NFR-REL-04/IO-D10；清理中转→IO-RES-CHANGED 失败，V17 观测面）。
+        const bool changedDuringCopy = before.value.contentDigest != after.value.contentDigest
+                                       || before.value.sizeBytes != after.value.sizeBytes;
+
+        // 步骤 6：副本字节复算 digest（与 A 一致——传输完整性；A==B 而副本
+        // 不符同样视为窗口内变化，处置同步骤 5）。
+        const core::Digest256 copiedDigest = digestFile(target, out.error);
+        if (out.error.code != IoErrorCode::Ok) {
+            cleanupStaging(stagingDir, out.error);
+            closeTightened(tightened, session);
+            return out;
+        }
+        if (changedDuringCopy || copiedDigest != before.value.contentDigest) {
+            IoError e;
+            e.code = IoErrorCode::ResChanged;
+            e.params.emplace_back("path", displayOf(before.value.finalPath));
+            e.params.emplace_back("recorded", digestToHex(before.value.contentDigest));
+            e.params.emplace_back("actual", digestToHex(after.value.contentDigest));
+            e.params.emplace_back("source-changed", changedDuringCopy ? "true" : "copy-drift");
+            e.detail = "固化复制期间源发生变化（§8.4 步骤 5 前后双快照——中转已清理，无部分副本）";
+            out.error = std::move(e);
+            cleanupStaging(stagingDir, out.error);
+            closeTightened(tightened, session);
+            return out;
+        }
+
+        // 成功：中转副本**保留**（project 入对象库/发布——步骤 7~8 归
+        // project 编排；io 不写 objects/——§9.8 副作用行/卡行禁止项）。
+        if (IoResult<void> r = closeTightened(tightened, session); !r) {
+            out.error = r.error;
+            return out;
+        }
+        out.value.before = before.value;
+        out.value.after = after.value;
+        out.value.copiedDigest = copiedDigest;
+        out.value.sourceChangedDuringCopy = false;
+        return out;
+    }
+
+private:
+    /// IoError params 取值（内部用）。
+    static std::string paramValueOf(const IoError& e, const char* key)
+    {
+        for (const auto& kv : e.params) {
+            if (kv.first == key) {
+                return kv.second;
+            }
+        }
+        return {};
+    }
+
+    /// 收紧子 scope 的关闭（budgetBytes=0 时为空句柄 no-op）。
+    static IoResult<void> closeTightened(BudgetScopeId tightened, BudgetScopeSession& session)
+    {
+        if (tightened.value != 0) {
+            return session.guard()->closeScope(tightened);
+        }
+        return {};
+    }
+
+    /**
+     * 中转会话清理（失败路径——V17"中转清理/无部分副本"）：删除 io 会话
+     * 产物（目标副本＋会话目录）；清理前复位本会话产物的只读属性（仅
+     * .staging 会话目录内——§7.5"清理失败→残留报告"由 TempArea（IO-T06）
+     * 承接完整形态，此处保持单目录会话的等价语义）。清理失败不覆盖原始
+     * 错误码（原因为主、残留注记进 detail——§7.6"清理失败≠业务失败"）。
+     */
+    static void cleanupStaging(const fs::path& stagingDir, IoError& original)
+    {
+        std::error_code ec;
+        // 递归复位只读属性（Win32 remove 对只读文件失效——先复位再删）。
+        std::vector<fs::path> stack{stagingDir};
+        while (!stack.empty()) {
+            const fs::path cur = stack.back();
+            stack.pop_back();
+            std::error_code itEc;
+            for (const fs::directory_entry& entry : fs::directory_iterator(cur, itEc)) {
+                if (itEc) {
+                    break;
+                }
+                const DWORD attr = ::GetFileAttributesW(entry.path().wstring().c_str());
+                if (attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) != 0) {
+                    ::SetFileAttributesW(entry.path().wstring().c_str(),
+                                         attr & ~FILE_ATTRIBUTE_READONLY);
+                }
+                if (entry.is_directory()) {
+                    stack.push_back(entry.path());
+                }
+            }
+        }
+        fs::remove_all(stagingDir, ec);
+        if (ec) {
+            original.detail += " [staging-cleanup-failed: " + wideToUtf8(stagingDir.wstring())
+                               + " " + ec.message() + "（IO-PACK-CLEANUP-FAILED 同族语义——§7.6）]";
+        }
+    }
+
+    /// 文件字节摘要（副本复算——io 自产会话文件的直读面，非外部输入通道）。
+    static core::Digest256 digestFile(const fs::path& target, IoError& errOut)
+    {
+        HANDLE h = ::CreateFileW(target.wstring().c_str(), GENERIC_READ,
+                                 FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                                 nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+        if (h == INVALID_HANDLE_VALUE) {
+            const DWORD e = ::GetLastError();
+            errOut = makeResourceOsError(e, false, target, "副本复算摘要打开失败（§8.4 步骤 6）");
+            return core::Digest256{};
+        }
+        core::ContentDigester digester;
+        std::vector<std::uint8_t> block(kResourceReadBlockBytes);
+        DWORD got = 0;
+        for (;;) {
+            if (!::ReadFile(h, block.data(), static_cast<DWORD>(block.size()), &got, nullptr)) {
+                const DWORD e = ::GetLastError();
+                errOut = makeResourceOsError(e, false, target, "副本复算摘要读取失败");
+                ::CloseHandle(h);
+                return core::Digest256{};
+            }
+            if (got == 0) {
+                break;
+            }
+            digester.update(block.data(), got);
+        }
+        ::CloseHandle(h);
+        errOut.code = IoErrorCode::Ok;
+        return digester.finalize();
+    }
+
+    /// SafePath 解析器（构造后不可变）。
+    ISafePathResolverPtr m_resolver;
+    /// 读取服务（复用同一防护核——snapshot/probe 的 P-1 通道）。
+    IResourceReaderPtr m_reader;
+};
+
+// =====================================================================
+// RuntimeResourceAdapterImpl——IRuntimeResourceAdapter 实现（P-RT-6/
+// P-IO-2 裁决落点：§8.6 五条的执行面；路由＝§9.7）
+// =====================================================================
+
+class RuntimeResourceAdapterImpl final : public IRuntimeResourceAdapter {
+public:
+    RuntimeResourceAdapterImpl(IProjectBytesSource* projectBytes, IExternalRefSource* externalRefs,
+                               ISafePathResolverPtr resolver)
+        : m_projectBytes(projectBytes),
+          m_externalRefs(externalRefs),
+          m_resolver(resolver ? std::move(resolver) : makeSafePathResolver()),
+          m_reader(makeResourceReader(m_resolver))
+    {
+    }
+
+    ResourceReadResult tryResourceBytes(const core::ObjectId& resourceId) override
+    {
+        // ---- ①Solidified 缓存命中（§8.6.4：{resourceId, accessVersion} 键
+        // ——不可变对象缓存安全；缓冲发布后只读，并发视图无竞争）。
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            const auto it = m_solidified.find({resourceId, kAccessVersion});
+            if (it != m_solidified.end()) {
+                return okView(it->second.bytes, it->second.digest);
+            }
+        }
+
+        // ---- ②对象库通道（Solidified：注入源字节→入缓存）。
+        if (m_projectBytes != nullptr) {
+            // contentVersion 全零＝当前 materialized 版本（头注注入契约——
+            // 对象库不可变性保证取到即固化版本）。
+            const IoResult<ProjectBytesView> bytes =
+                m_projectBytes->tryObjectBytes(resourceId, core::ContentVersion{});
+            if (bytes) {
+                // 字节进入缓存前校验注入源摘要一致（"含摘要校验后的不可变副
+                // 本"——§9.7；不一致＝装配缺陷，防御性拒绝）。
+                std::vector<std::uint8_t> copy(bytes.value.data,
+                                               bytes.value.data + bytes.value.size);
+                core::ContentDigester d;
+                d.update(copy.data(), copy.size());
+                const core::Digest256 actual = d.finalize();
+                if (actual != bytes.value.digest) {
+                    ResourceReadResult r;
+                    r.status = ResourceReadStatus::Missing;
+                    r.error.code = IoErrorCode::FormatInternal;
+                    r.error.detail = "对象库注入源摘要与字节不符（装配缺陷防御——SA-12）";
+                    return r;
+                }
+                std::lock_guard<std::mutex> lock(m_mutex);
+                CacheEntry& entry = m_solidified[{resourceId, kAccessVersion}];
+                entry.bytes = std::move(copy);
+                entry.digest = bytes.value.digest;
+                return okView(entry.bytes, entry.digest);
+            }
+            if (bytes.error.code != IoErrorCode::ResNotFound) {
+                // 未命中（ResNotFound）＝可能为 Recorded——转投引用记录通道；
+                // 其余对象库侧失败按可达性/预算映射（§9.7 错误类型行）。
+                ResourceReadResult r;
+                if (bytes.error.code == IoErrorCode::SecBudgetFile
+                    || bytes.error.code == IoErrorCode::SecBudgetTotal) {
+                    r.status = ResourceReadStatus::Budget;
+                } else {
+                    r.status = ResourceReadStatus::Missing;
+                }
+                r.error = bytes.error;
+                return r;
+            }
+        }
+
+        // ---- ③Recorded 通道（IExternalRefSource → P-1 读取——每次重读＋
+        // 重算 digest，绝不跨调用缓存——§8.6.4，runtime S10 复查前提）。
+        if (m_externalRefs != nullptr) {
+            // id 文本形态由注入侧解释（io 透传 canonical 文本——R-4 不拼剥）。
+            const IoResult<ExternalRefRecord> rec =
+                m_externalRefs->tryRecord(resourceId.toCanonical());
+            if (!rec) {
+                ResourceReadResult r;
+                if (rec.error.code == IoErrorCode::SecBudgetFile
+                    || rec.error.code == IoErrorCode::SecBudgetTotal) {
+                    r.status = ResourceReadStatus::Budget;      // 预算失败非缺失事实
+                    r.error = rec.error;
+                    return r;
+                }
+                r.status = ResourceReadStatus::Missing;
+                if (rec.error.code == IoErrorCode::ResNotFound) {
+                    r.error = makeMissing();                    // 双源均未命中＝路由终态
+                } else {
+                    r.error = rec.error;                        // 注入源侧其他错误原样上抛
+                }
+                return r;
+            }
+            return readRecorded(rec.value);
+        }
+
+        // ---- ④双源未注入/均未命中：Missing（细分在 detail）。
+        ResourceReadResult r;
+        r.status = ResourceReadStatus::Missing;
+        r.error = makeMissing();
+        return r;
+    }
+
+private:
+    struct CacheEntry {
+        std::vector<std::uint8_t> bytes;    ///< 固化副本字节（发布后只读——缓存安全）
+        core::Digest256 digest;             ///< 副本摘要（project 侧已校验，入前复算）
+    };
+
+    static IoError makeMissing()
+    {
+        IoError e;
+        e.code = IoErrorCode::ResMissing;
+        e.detail = "资源不可达：对象库与外部引用记录均未命中（§9.7 路由终态）";
+        return e;
+    }
+
+    /// Ok 结果装配（视图指向稳定缓冲——生命周期＝§8.6.1 实际至析构）。
+    static ResourceReadResult okView(const std::vector<std::uint8_t>& bytes,
+                                     const core::Digest256& digest)
+    {
+        ResourceReadResult r;
+        r.status = ResourceReadStatus::Ok;
+        r.bytes.data = bytes.data();
+        r.bytes.size = bytes.size();
+        r.bytes.digest = digest;
+        r.bytes.accessVersion = kAccessVersion;
+        return r;
+    }
+
+    /**
+     * Recorded 读取：P-1 规范化→预算受控全读→digest 复算比对记录。
+     * 缓冲进入稳定区（deque——push_back 不失效元素引用），至析构释放
+     * （§8.6.1"实际保证"；§8.6.3 并发：各调用独立缓冲）。
+     */
+    ResourceReadResult readRecorded(const ExternalRefRecord& record)
+    {
+        ResourceReadResult r;
+        // 每次调用独立内部预算（SingleFileBytes 上界——§9.7"读取耗时受
+        // SingleFileBytes 上界约束"；不接受取消令牌——runtime 契约）。
+        IBudgetGuardPtr guard = makeBudgetGuard();
+        const BudgetScopeId scope = guard->openScope(BudgetSpec::productDefault()).value;
+
+        ResourceOpenSpec spec;
+        spec.role = PathRole::UserSource;
+        const IoResult<ResourceSnapshot> snap =
+            m_reader->snapshot(record.absPath, spec, guard.get(), nullptr, scope);
+        guard->closeScope(scope);
+        if (!snap) {
+            // 环境失败映射（§9.7 错误类型行）：预算→Budget；不可达族→Missing
+            // （§8.3"不可达"口径）；其他→Missing＋原始码嵌 detail。
+            if (snap.error.code == IoErrorCode::SecBudgetFile
+                || snap.error.code == IoErrorCode::SecBudgetTotal) {
+                r.status = ResourceReadStatus::Budget;
+                r.error = snap.error;
+                return r;
+            }
+            r.status = ResourceReadStatus::Missing;
+            r.error.code = IoErrorCode::ResMissing;
+            r.error.detail = std::string("外部源读取失败（") + std::string(errorCodeToken(snap.error.code))
+                             + std::string("）：原始诊断嵌 detail；") + snap.error.detail;
+            for (const auto& kv : snap.error.params) {
+                r.error.params.push_back(kv);
+            }
+            return r;
+        }
+        if (snap.value.contentDigest != record.recordedDigest) {
+            // 与记录不符＝Changed（S10 复查语义——替换可被发现；bytes 不返回，
+            // 内容已不可信，重关联/固化流程接管——§8.3）。
+            r.status = ResourceReadStatus::Changed;
+            r.error.code = IoErrorCode::ResChanged;
+            r.error.params.emplace_back("recorded", digestToHex(record.recordedDigest));
+            r.error.params.emplace_back("actual", digestToHex(snap.value.contentDigest));
+            r.error.detail = "Recorded 外部源与记录摘要不符（每次重读复算——§8.6.4）";
+            return r;
+        }
+
+        // 全量读入稳定区（快照通道不保留字节——二次读经同一预算口径；
+        // digest 已验证一致，读取失败＝极端并发改写，按 Missing 上报兜底）。
+        std::vector<std::uint8_t> bytes;
+        if (IoResult<std::vector<std::uint8_t>> rd = readAllBytesSimple(record.absPath); rd) {
+            bytes = std::move(rd.value);
+        } else {
+            r.status = ResourceReadStatus::Missing;
+            r.error = rd.error;
+            return r;
+        }
+        core::ContentDigester d;
+        d.update(bytes.data(), bytes.size());
+        if (d.finalize() != record.recordedDigest) {
+            r.status = ResourceReadStatus::Changed;     // 双读窗口内被改写——保守判 Changed
+            r.error.code = IoErrorCode::ResChanged;
+            r.error.detail = "Recorded 读取窗口内内容变化（双读不一致——保守上报）";
+            return r;
+        }
+
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_recordedRegion.push_back(std::move(bytes));   // 稳定区：至析构（§8.6.1）
+        return okView(m_recordedRegion.back(), record.recordedDigest);
+    }
+
+    /// 简单全读（Recorded 字节装载——摘要复核见调用点）。
+    static IoResult<std::vector<std::uint8_t>> readAllBytesSimple(const fs::path& path)
+    {
+        IoResult<std::vector<std::uint8_t>> out;
+        HANDLE h = ::CreateFileW(path.wstring().c_str(), GENERIC_READ,
+                                 FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                                 nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+        if (h == INVALID_HANDLE_VALUE) {
+            const DWORD err = ::GetLastError();
+            out.error = makeResourceOsError(err, false, path, "Recorded 字节装载失败");
+            return out;
+        }
+        std::vector<std::uint8_t> block(kResourceReadBlockBytes);
+        for (;;) {
+            DWORD got = 0;
+            if (!::ReadFile(h, block.data(), static_cast<DWORD>(block.size()), &got, nullptr)) {
+                const DWORD err = ::GetLastError();
+                out.error = makeResourceOsError(err, false, path, "Recorded 字节读取失败");
+                ::CloseHandle(h);
+                return out;
+            }
+            if (got == 0) {
+                break;
+            }
+            out.value.insert(out.value.end(), block.begin(), block.begin() + static_cast<std::ptrdiff_t>(got));
+        }
+        ::CloseHandle(h);
+        return out;
+    }
+
+    IProjectBytesSource* m_projectBytes;        ///< 注入源（借用——L5/project 持有，§9.0）
+    IExternalRefSource* m_externalRefs;         ///< 注入源（借用）
+    ISafePathResolverPtr m_resolver;            ///< Recorded 路径 P-1 规范化
+    IResourceReaderPtr m_reader;                ///< 读取通道（同一防护核）
+    mutable std::mutex m_mutex;                 ///< 缓存/稳定区插入互斥（§8.6.3）
+    std::map<std::pair<core::ObjectId, std::uint32_t>, CacheEntry> m_solidified;   ///< 固化缓存
+    std::deque<std::vector<std::uint8_t>> m_recordedRegion;  ///< Recorded 稳定区（至析构）
+};
+
+} // namespace
+
+// =====================================================================
+// 工厂（公共接口——声明见 ResourceIo.hpp）
+// =====================================================================
+
+IResourceSnapshotterPtr makeResourceSnapshotter(ISafePathResolverPtr resolver)
+{
+    return std::make_shared<ResourceSnapshotterImpl>(std::move(resolver));
+}
+
+IRuntimeResourceAdapterPtr makeRuntimeResourceAdapter(IProjectBytesSource* projectBytes,
+                                                      IExternalRefSource* externalRefs,
+                                                      ISafePathResolverPtr resolver)
+{
+    return std::make_shared<RuntimeResourceAdapterImpl>(projectBytes, externalRefs,
+                                                        std::move(resolver));
+}
 
 } // namespace sdurws::ird::io
