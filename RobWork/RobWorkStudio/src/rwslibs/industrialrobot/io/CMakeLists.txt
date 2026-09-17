@@ -75,7 +75,8 @@ add_library(sdurws_ird_io STATIC
     src/Budget.cpp
     src/IoDiagnostics.cpp
     src/Csv.cpp
-    src/Json.cpp)
+    src/Json.cpp
+    src/ZipChannel.cpp)
 
 # C++17（单元卡 §1.4／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：io 公共头使用 C++17 设施（std::string_view/inline constexpr
@@ -148,7 +149,8 @@ add_executable(sdurws_ird_io_test
     test/BudgetTest.cpp
     test/IoDiagnosticsTest.cpp
     test/CsvTest.cpp
-    test/JsonTest.cpp)
+    test/JsonTest.cpp
+    test/ZipChannelTest.cpp)
 
 target_compile_features(sdurws_ird_io_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_io_test PROPERTIES
