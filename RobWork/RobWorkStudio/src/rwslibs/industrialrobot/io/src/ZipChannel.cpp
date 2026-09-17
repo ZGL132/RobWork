@@ -271,6 +271,20 @@ public:
                 if ((st.valid & ZIP_STAT_FLAGS) != 0 && (st.flags & 0x0001) != 0) {
                     info.encrypted = true;
                 }
+                // 条目外部属性（IO-T06 表尾增补字段的填充——原始透传不做
+                // 解释；symlink 判定＝导入器步骤③预检，§4.3.1 SP-4）。
+                {
+                    zip_uint8_t opsys = 0;
+                    zip_uint32_t attr = 0;
+                    if (zip_file_get_external_attributes(m_za, static_cast<zip_uint64_t>(i),
+                                                         0, &opsys, &attr) == 0) {
+                        info.attributeHostSystem = opsys;
+                        info.externalAttributes = attr;
+                    }
+                    // 取属性失败不阻断枚举（字段保持缺省 0——FAT 宿主形
+                    // 态；导入器预检按"无 symlink 属性"处理，展开产物层
+                    // 的 SP-4 双检仍是纵深防线，§7.4 双检行）。
+                }
                 info.index = static_cast<std::uint64_t>(i);
                 out.value.push_back(std::move(info));
             }

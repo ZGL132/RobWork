@@ -81,6 +81,16 @@ struct ZipEntryInfo {
     std::uint32_t crc32 = 0;          ///< zip CRC-32（容器层完整性；与 SHA-256 内容身份互不替代）
     bool encrypted = false;           ///< 加密标记（中央目录 encryption_method ≠ NONE）
     std::uint16_t compressionMethod = 0;  ///< 压缩方法码（0=STORED、8=DEFLATE；其余＝本通道拒绝）
+
+    // ---- 表尾增补（IO-T06——DTB §5.4 增量修订，io.md §15.5 v0.9 登记）----
+    // 导入九步协议步骤③需在**展开前**执行 SP-4"zip 条目属性含 symlink/
+    // 设备标志→拒绝"（§4.3.1 规则总表；§7.4 威胁矩阵"符号链接条目"行的
+    // 预检半边），而容器层此前不暴露条目外部属性——预检面缺数据源。增补
+    // 两字段（原始透传，不做语义解释——解释权在导入器）：
+    std::uint8_t attributeHostSystem = 0;   ///< 属性宿主系统码（zip 外部属性高字节：
+                                            ///< 0=FAT、3=UNIX——symlink 判定前提）
+    std::uint32_t externalAttributes = 0;   ///< 外部属性原始值（UNIX 形态高 16 位＝
+                                            ///< st_mode——S_IFLNK(0xA000) 位＝符号链接条目）
 };
 
 /**

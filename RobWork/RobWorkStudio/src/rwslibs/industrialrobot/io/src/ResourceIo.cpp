@@ -43,25 +43,12 @@
 
 #include <expat.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-// WC_ERR_INVALID_CHARS/GetFileInformationByHandleEx/GetFinalPathNameBy-
-// HandleW 等 API 需要 Vista+ 目标宏——RobWork 构建树全局把 _WIN32_WINNT
-// 钉在旧值（XP 基线），此处强制抬到 Win7（仍在 NFR-DEP-01 Windows x64
-// 口径内；仅本翻译单元生效，不影响其他目标）。
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
-#endif
-#define _WIN32_WINNT 0x0601
-#ifdef WINVER
-#undef WINVER
-#endif
-#define WINVER 0x0601
-#include <windows.h>
+// Win32 环境与平台助手统一自 IO-T06 起消费私有头（NFR-MNT-04 单一实现
+// 点——UTF 转换/四分类/display 呈现与 TempArea/AtomicFile/Package 共用
+// 同一份实现；本文件原有本地副本按同一语义收编，行为零变更）。该头内部
+// 完成 WIN32_LEAN_AND_MEAN/NOMINMAX 与 _WIN32_WINNT 抬升（原文件头同名
+// 宏块的收编形态）。
+#include "IoPlatform.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -69,6 +56,9 @@
 #include <deque>
 #include <map>
 #include <memory>
+#include <mutex>    // std::mutex/std::lock_guard——IRuntimeResourceAdapter 缓存与
+                    // 稳定区插入互斥（§8.6.3）。F-194 消账：显式包含，不再依赖
+                    // <memory> 等传递头（IO-T06 顺手补齐，零行为变化）。
 #include <optional>
 #include <set>
 #include <string>
@@ -164,60 +154,15 @@ IoResult<std::size_t> ResourceStreamHandle::read(void* dst, std::size_t maxBytes
 namespace {
 
 // ---------------------------------------------------------------------
-// UTF-8 ↔ UTF-16 转换（接口面 UTF-8/宽路径并存——§4.2；Win32 转换 API，
-// 失败返回空串由调用方按防御性内部错误拒绝）
+// UTF-8 ↔ UTF-16 转换与诊断 display（IO-T06 起消费私有头 IoPlatform.hpp
+// 的单一实现——NFR-MNT-04；using 声明把平台实现的同名助手引入本匿名
+// 命名空间，既有点名全部不变）
 // ---------------------------------------------------------------------
 
-std::wstring utf8ToWide(const std::string& utf8)
-{
-    if (utf8.empty()) {
-        return {};
-    }
-    const int n = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8.data(),
-                                      static_cast<int>(utf8.size()), nullptr, 0);
-    if (n <= 0) {
-        return {};
-    }
-    std::wstring out(static_cast<std::size_t>(n), L'\0');
-    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8.data(),
-                        static_cast<int>(utf8.size()), out.data(), n);
-    return out;
-}
-
-std::string wideToUtf8(const std::wstring& wide)
-{
-    if (wide.empty()) {
-        return {};
-    }
-    const int n = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wide.data(),
-                                      static_cast<int>(wide.size()), nullptr, 0, nullptr, nullptr);
-    if (n <= 0) {
-        return {};
-    }
-    std::string out(static_cast<std::size_t>(n), '\0');
-    WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wide.data(),
-                        static_cast<int>(wide.size()), out.data(), n, nullptr, nullptr);
-    return out;
-}
-
-/// 去除 \\?\ / \\?\UNC\ 扩展前缀（诊断 display 形态——§4.3.2）。
-std::wstring stripExtendedPrefix(const std::wstring& native)
-{
-    if (native.rfind(L"\\\\?\\UNC\\", 0) == 0) {
-        return L"\\\\" + native.substr(8);
-    }
-    if (native.rfind(L"\\\\?\\", 0) == 0) {
-        return native.substr(4);
-    }
-    return native;
-}
-
-/// 诊断用脱敏呈现路径（display——UTF-8、去扩展前缀；敏感值进用户文案前
-/// 仍须经 diagnostics 脱敏——§10.3）。
-std::string displayOf(const std::filesystem::path& p)
-{
-    return wideToUtf8(stripExtendedPrefix(p.wstring()));
-}
+using platform::utf8ToWide;
+using platform::wideToUtf8;
+using platform::stripExtendedPrefix;
+using platform::displayOf;
 
 // ---------------------------------------------------------------------
 // 字节十六进制（摘要/魔数呈现——十六进制编码不是哈希，SA-12 不受影响）
@@ -241,61 +186,21 @@ std::string digestToHex(const core::Digest256& d)
 }
 
 // ---------------------------------------------------------------------
-// OS 错误四分类（§4.2.5——互斥稳定错误，不把一切失败都报"找不到"）
+// OS 错误四分类（IO-T06 起消费 IoPlatform.hpp 单一实现——NFR-MNT-04；
+// using 声明保持既有点名不变）
 // ---------------------------------------------------------------------
 
-/// 目标路径是否带只读属性（写方向 ACCESS_DENIED 的 READONLY 判别源——
-/// §4.2.5 READONLY 行"目标卷只读属性/写探测失败"的落点：OS 对只读实体
-/// 的写打开以 ERROR_ACCESS_DENIED 拒绝，属性复核把两者分开——V24 码区分）。
-bool hasReadonlyAttribute(const std::wstring& nativePath)
-{
-    const DWORD attr = ::GetFileAttributesW(nativePath.c_str());
-    return attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) != 0;
-}
-
-/// Win32 错误码 → io 资源错误码（§4.2.5 四分类；写方向做 READONLY 判别）。
-IoErrorCode classifyWin32Error(DWORD win32Error, bool writeDirection,
-                               const std::wstring& nativePath)
-{
-    switch (win32Error) {
-    case ERROR_FILE_NOT_FOUND:
-    case ERROR_PATH_NOT_FOUND:
-        return IoErrorCode::ResNotFound;    // §4.2.5 分类一（用户修正后重试）
-    case ERROR_WRITE_PROTECT:               // 介质写保护——READONLY 直判（§4.2.5 表）
-    case ERROR_NOT_READY:                   // 介质不可用（软只读族）归 READONLY——换介质语义
-        return IoErrorCode::ResReadonly;
-    case ERROR_SHARING_VIOLATION:
-    case ERROR_LOCK_VIOLATION:
-        return IoErrorCode::ResLockConflict; // §4.2.5 分类四（io 绝不删对方锁）
-    case ERROR_ACCESS_DENIED:
-    case ERROR_PRIVILEGE_NOT_HELD:
-        // 写方向＋目标实体带只读属性 → IO-RES-READONLY（与 ACCESS-DENIED
-        // 区分——V24 观测点"码区分断言"；两码诊断建议动作各异：换介质/
-        // 位置 vs 调整权限——§4.2.5 两行）。读方向一律 ACCESS-DENIED
-        //（V25：不降级为 NOT-FOUND）。
-        if (writeDirection && hasReadonlyAttribute(nativePath)) {
-            return IoErrorCode::ResReadonly;
-        }
-        return IoErrorCode::ResAccessDenied;
-    default:
-        // 四分类外的 OS 错误保守归 ACCESS-DENIED（"无法访问"语义最近——
-        // Csv.cpp mapSystemError 同款兜底），OS 原码进 params 供开发定位。
-        return IoErrorCode::ResAccessDenied;
-    }
-}
+using platform::hasReadonlyAttribute;
+using platform::classifyWin32Error;
 
 } // namespace
 
 IoError makeResourceOsError(DWORD win32Error, bool writeDirection,
                             const std::filesystem::path& target, std::string context)
 {
-    IoError e;
-    e.code = classifyWin32Error(win32Error, writeDirection, target.wstring());
-    e.params.emplace_back("path", displayOf(target));
-    e.params.emplace_back("direction", writeDirection ? "write" : "read");
-    e.params.emplace_back("os-error", std::to_string(static_cast<unsigned long>(win32Error)));
-    e.detail = std::move(context);
-    return e;
+    // IO-T06 收编：实现体＝私有头 IoPlatform.hpp 的单一实现（本函数保留
+    // 既有点名作薄转发——既有点一处不改，行为零变更）。
+    return platform::makeOsError(win32Error, writeDirection, target, std::move(context));
 }
 
 // =====================================================================

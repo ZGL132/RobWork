@@ -46,6 +46,16 @@
 #      test/ResourceIoTest.cpp（IoRes 组——V15/V16/V25/V26/V27＋基础
 #      契约，提交 1/3）与 test/ResourceSolidifyTest.cpp（V17/V24＋三段
 #      边界＋§8.6 生命周期，提交 2/3）。
+#   6. IO-T06（≙WP-11-T05/T07）：src/ 增列 Package.cpp（§7/§9.9——
+#      导入九步协议＋导出六步协议；libzip 写侧消费点〔读侧仍归
+#      ZipChannel.cpp——io.md §15.5 v0.9 登记〕）、TempArea.cpp（§7.5/
+#      §9.10——临时区/互斥/标记回收/幂等清理）、AtomicFile.cpp（§4.6/
+#      §9.10——原子替换协议）；公共头增列 Package.hpp/TempArea.hpp/
+#      AtomicFile.hpp（§3.1 表对应行）；**sdurws_ird_io_contract_test
+#      随本任务登记**（§3.3——契约/故障注入用例落位，不预建空目标；
+#      故障注入经 PackageIoFacilities 的 fake 适配层——§11.1）；
+#      test/PackageTest.cpp（IoPack/IoTemp/IoAtomic 组——V12/V13/V14/
+#      V19/V29＋设施单元用例）。
 # =====================================================================
 
 # ---- gtest 接入（DTB §5.5 定稿，唯一机制；随 IO-T02 首个测试目标引入）----
@@ -85,7 +95,10 @@ add_library(sdurws_ird_io STATIC
     src/Csv.cpp
     src/Json.cpp
     src/ZipChannel.cpp
-    src/ResourceIo.cpp)
+    src/ResourceIo.cpp
+    src/TempArea.cpp
+    src/AtomicFile.cpp
+    src/Package.cpp)
 
 # C++17（单元卡 §1.4／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：io 公共头使用 C++17 设施（std::string_view/inline constexpr
@@ -165,7 +178,8 @@ add_executable(sdurws_ird_io_test
     test/JsonTest.cpp
     test/ZipChannelTest.cpp
     test/ResourceIoTest.cpp
-    test/ResourceSolidifyTest.cpp)
+    test/ResourceSolidifyTest.cpp
+    test/PackageTest.cpp)
 
 target_compile_features(sdurws_ird_io_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_io_test PROPERTIES
@@ -239,6 +253,47 @@ macro(ird_add_gtest target)
 endmacro()
 
 ird_add_gtest(sdurws_ird_io_test)
+
+# ---- 契约测试目标 sdurws_ird_io_contract_test（随 IO-T06 登记——§3.3）----
+# 契约与故障注入用例（§3.4 布局 contract_test/ 目录；§11.1 故障注入原则
+# ——文件系统故障经 ITempAreaManager/IAtomicFileWriter 的 fake 适配层注
+# 入〔PackageIoFacilities 注入面——Package.hpp〕，不依赖真实磁盘满）：
+# test/PackageContractTest.cpp（IoPackContract 组——V18 导出并发写/V20
+# 磁盘满/V21 清理失败/V23 导出仅暂存/V31 后台不阻塞/V32 已提交对暂存
+# ——AT-20"包导出/导入主线、取消不留半成品"的契约面）。
+add_executable(sdurws_ird_io_contract_test
+    contract_test/PackageContractTest.cpp)
+
+target_compile_features(sdurws_ird_io_contract_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_io_contract_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+# 测试源文件同为 UTF-8＋中文注释（/utf-8 说明同产品目标处）。
+if(MSVC)
+    target_compile_options(sdurws_ird_io_contract_test PRIVATE /utf-8)
+endif()
+
+# 链接面与 sdurws_ird_io_test 同款（T-1：测试目标可链 testkit——本目标
+# 暂不链，契约谓词消费随 IO-T07 契约套件整备评估；libzip 供包构造替身
+# 写侧使用——与 _test 目标同款口径）。
+target_link_libraries(sdurws_ird_io_contract_test PRIVATE
+    sdurws_ird_io
+    GTest::gtest_main
+    libzip::zip)
+
+# 源码树位置注入（红线扫描用例同 _test 口径——值内以单元名作子目录前缀）。
+target_compile_definitions(sdurws_ird_io_contract_test PRIVATE
+    IRD_IO_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+# 运行期 DLL 拷贝（vcpkg gtest 动态库——同 _test 目标的 POST_BUILD 口径）。
+add_custom_command(TARGET sdurws_ird_io_contract_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_io_contract_test>
+            $<TARGET_FILE_DIR:sdurws_ird_io_contract_test>
+    COMMAND_EXPAND_LISTS)
+
+ird_add_gtest(sdurws_ird_io_contract_test)
 
 # ---- 依赖红线守卫（配置期断言——IO-T01 既有自律，IO-T02 保持）----
 # io 的 industrialrobot 单元依赖仅限 core＋diagnostics（§3.2/§3.3：ARCH

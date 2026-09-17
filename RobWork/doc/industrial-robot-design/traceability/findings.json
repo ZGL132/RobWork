@@ -1945,11 +1945,12 @@
       "id": "F-194",
       "source": "traceability/acceptance/IO-T05-20260917.md §4.11②（验收 attempt 1，送验对象 7f4c1143）：实现文件实读发现",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "io/src/ResourceIo.cpp 使用 std::mutex/std::lock_guard（第 2095/2123/2269/2308 行——IRuntimeResourceAdapter 缓存/稳定区插入互斥，§8.6.3）但 include 列表无 <mutex>——现依赖 MSVC STL 经 <memory> 等传递包含侥幸编译（实测两模式零错误），属头文件自包含性/可移植性缺陷：换标准库实现或调整传递头即可能断编",
       "owner": "io 单元后续任务（IO-T06/T07 实施顺手一行补 #include <mutex>，零行为变化）；验收记录 §4.11 同款判级（非空实现/非缩水，纯 include 卫生）",
-      "resolution": "不构成 IO-T05 返工项（pass 判定不受影响，双模式实测编译运行正常）；随 io 单元下一实现任务补齐即可消账"
+      "resolution": "不构成 IO-T05 返工项（pass 判定不受影响，双模式实测编译运行正常）；随 io 单元下一实现任务补齐即可消账。【消账 2026-09-17】ResourceIo.cpp 显式 #include <mutex> 已随 IO-T06 实施落位（IO-T06-20260917.md §4.8 实读 ResourceIo.cpp:59-61——显式 include＋消账注释）；按该验收记录 §4.8 建议于 IO-T06 attempt 2 返工提交置 fixed，fixedBy=16d7fee9",
+      "fixedAt": "2026-09-17"
     },
     {
       "id": "F-195",
@@ -1970,6 +1971,36 @@
       "title": "IO-FORMAT-XML-SYNTAX（IoErrorCode 第 59 值，io.md §9.12 v0.8 表尾追加——§6.1 XML 良构检查的解析器级失败码面）向 diagnostics 内置码表（§4.6 的 87 码清单）的收编确认未发生——F-192（IO-FORMAT-JSON-SYNTAX 同型在途）的新增同类项，P-IO-6『与 diagnostics 所有者收编确认』治理侧动作",
       "owner": "diagnostics 单元所有者（内置码表扩编）——随 F-192 与 P-IO-6 全表收编确认一并处置",
       "resolution": "io 侧注册面（ioCodeDescriptors/registerIoCodeTable，paramSchema [\"path\",\"row\",\"column\"]）已含本码并经真实 StableCodeRegistry 注册验证（IoDiagCodeTable 双清单机械比对 59 值/57 描述符同步）；内置清单收编滞后不影响运行（StableCodeRegistry 注册机制先于内置清单）"
+    },
+    {
+      "id": "F-197",
+      "source": "IO-T06 实施段自登记（wp11-t06 实施会话，ird_gates 运行实录）——F-191 同类新增项",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "ird_gates IRD-GATE-LIB 词表未含 P-IO-3 冻结选型的 vcpkg 目标（libzip::zip/expat::expat）——IO-T06 按 §3.3『sdurws_ird_io_contract_test 随本任务登记』落地后，该契约测试目标为构造 .rwpack 测试替身链接 libzip::zip（与 sdurws_ird_io_test 的既有同款形态），ird_gates 在 F-191 的 3 处之外新增 1 处 LIB 命中（sdurws_ird_io_contract_test→libzip::zip；全量 15 处＝基线 14＋本处）；词表/引擎位于 industrialrobot/cmake/、DTB 登记位在 development-task-breakdown.md——均不在 IO-T06 契约 allowedFiles 内",
+      "owner": "门禁/构建约定所有者（DTB §5.1/ird_gates 辖域）——随 F-191 词表扩登一并消账（libzip::zip/expat::expat 一次扩入后本条与 F-191 同时归零）",
+      "resolution": "IO-T06 侧处置＝依赖本体按 P-IO-3 冻结裁决链接（测试替身写侧构造 .rwpack 样例——§11.1『恶意 zip 构造器』替身清单；T-1 允许形态：仅 _test/_contract_test 目标链接 testkit/第三方，产品目标不涉），新增命中在 build 留痕（gates-ird-gates-target.log）与 ird-test-report.json 与基线 14 处分列如实登记；不越权修改 ird_gates.cmake/whitelist 与 DTB"
+    },
+    {
+      "id": "F-198",
+      "source": "traceability/acceptance/IO-T06-20260917.md §4.11（验收 attempt 1，送验对象 16d7fee9）：实现文件实读发现。编号注：F-197 已由 IO-T06 实施段在 wp11-t06 分支登记（ird_gates LIB 命中，随任务合入本文件时顺延就位），本条跳号顺延避让",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "io/src/Package.cpp writeBytesToFile 与 AtomicTarget::write（AtomicFile.cpp）的写入长度经 DWORD 截断（want = min(size, 0xFFFFFFFF)）：若输入超过 4 GiB−1 字节，仅前 4 GiB−1 字节落盘且 written==want 判定通过——静默截断无错误。当前全部调用面受 Budget SingleFileBytes 硬上限 2 GiB（Budget.cpp kDimTable）与 ZipChannel 内部 scope 管辖，截断分支不可达（实测推演）；属纵深防御缺口而非现实缺陷",
+      "owner": "io 单元所有者（随 IO-T07 契约套件整备或下次 io 实现任务顺手加固）",
+      "resolution": "建议任选其一：①writeBytesToFile/AtomicTarget::write 入口对 size > 0xFFFFFFFFull 显式 fail-fast（IO-FORMAT-INTERNAL 或分块循环写）；②注释钉死『调用方须保证 ≤ SingleFileBytes 硬上限 2 GiB』的前置契约。验收者推演依据：导出暂存/导入展开两通路的字节均先经 SingleFileBytes 预检与 ZipChannel budgetScope 读取面，2 GiB < 4 GiB 截断阈值"
+    },
+    {
+      "id": "F-199",
+      "source": "traceability/acceptance/IO-T06-20260917.md §4.4/§4.11④（验收 attempt 1，送验对象 16d7fee9）：契约 acceptance 2『ImportCancel（各阶段取消令牌注入…）』逐字对照测试面发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "IO-V19『各阶段注入取消令牌』（io.md §11.2 卡面样例列）当前仅覆盖展开阶段一个样例（IoPackTest.ImportCancelMidExtractCleansAndEmitsNoDiagnostic——第 3 条目检查点置位）：begin 入口预取消、步骤②临时区创建检查点、步骤③预检阶段等其余阶段的取消路径无用例。取消机制本体经验收者缺陷注入实证有效（禁用 Package.cpp cancelHit 单层未变红——ZipChannel readEntryBytes 内部检查点构成第二层防线；注入 UX-03 违例后 V19 精确变红），非恒真测试；属覆盖深度缺口",
+      "owner": "io 单元（IO-T07 契约测试套件整备任务——其卡面『§11.2 全用例可执行且结果登记』为本条天然消账位）；实施者返工时亦可顺带补",
+      "resolution": "建议 IO-T07 至少补『begin 入口预取消』用例（预置位令牌→begin 返回 IO-CANCELLED 且无会话产物/临时区残留——纯入口检查点，无需慢速替身即可构造）；其余阶段取消视 fake 解压替身整备情况登记"
     },
     {
       "id": "F-200",

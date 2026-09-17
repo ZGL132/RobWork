@@ -1,0 +1,275 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 116 tests from 12 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from IoSecTest
+[ RUN      ] IoSecTest.PathTraversalP4IllegalTableRejectedWithExactCodes
+[       OK ] IoSecTest.PathTraversalP4IllegalTableRejectedWithExactCodes (0 ms)
+[ RUN      ] IoSecTest.PathTraversalP4LegalRowsAndBatchDuplicateDetection
+[       OK ] IoSecTest.PathTraversalP4LegalRowsAndBatchDuplicateDetection (0 ms)
+[ RUN      ] IoSecTest.PathTraversalP5IllegalTableRejectedWithExactCodes
+[       OK ] IoSecTest.PathTraversalP5IllegalTableRejectedWithExactCodes (0 ms)
+[ RUN      ] IoSecTest.PathTraversalP5LegalRowsAccepted
+[       OK ] IoSecTest.PathTraversalP5LegalRowsAccepted (1 ms)
+[ RUN      ] IoSecTest.SameProjectAltPathsEquivalentKeysAndSessionMutex
+[       OK ] IoSecTest.SameProjectAltPathsEquivalentKeysAndSessionMutex (2 ms)
+[ RUN      ] IoSecTest.SymlinkJunctionEscapeRejectedWithIoSecSymlink
+为 C:\Users\zgl18\AppData\Local\Temp\ird_wp11_t03_safepath\SymlinkJunctionEscapeRejectedWithIoSecSymlink_29424\proj\objects\junc <<===>> C:\Users\zgl18\AppData\Local\Temp\ird_wp11_t03_safepath\SymlinkJunctionEscapeRejectedWithIoSecSymlink_29424\proj\outside 创建的联接
+[       OK ] IoSecTest.SymlinkJunctionEscapeRejectedWithIoSecSymlink (85 ms)
+[ RUN      ] IoSecTest.ExceptionNotWidenedUserSourceAndExportTargetUnrestricted
+[       OK ] IoSecTest.ExceptionNotWidenedUserSourceAndExportTargetUnrestricted (3 ms)
+[----------] 7 tests from IoSecTest (95 ms total)
+
+[----------] 1 test from IoSecHeaderRedLines
+[ RUN      ] IoSecHeaderRedLines.IoHeadersFreeOfQtAndCrossUnitIncludes
+[       OK ] IoSecHeaderRedLines.IoHeadersFreeOfQtAndCrossUnitIncludes (12 ms)
+[----------] 1 test from IoSecHeaderRedLines (12 ms total)
+
+[----------] 8 tests from BudgetTest
+[ RUN      ] BudgetTest.StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory
+[       OK ] BudgetTest.StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory (66 ms)
+[ RUN      ] BudgetTest.BudgetTriadFileDepthTotalRejectWithComparativeParams
+[       OK ] BudgetTest.BudgetTriadFileDepthTotalRejectWithComparativeParams (1 ms)
+[ RUN      ] BudgetTest.DeclaredVsActualDoubleBookingKeepsLarger
+[       OK ] BudgetTest.DeclaredVsActualDoubleBookingKeepsLarger (0 ms)
+[ RUN      ] BudgetTest.SaturatingAccumulatorNeverWraps
+[       OK ] BudgetTest.SaturatingAccumulatorNeverWraps (0 ms)
+[ RUN      ] BudgetTest.ScopeTreeRollupToParentAndParentLimitEnforced
+[       OK ] BudgetTest.ScopeTreeRollupToParentAndParentLimitEnforced (0 ms)
+[ RUN      ] BudgetTest.ArchiveDualSidedBookingExpandAndRatio
+[       OK ] BudgetTest.ArchiveDualSidedBookingExpandAndRatio (0 ms)
+[ RUN      ] BudgetTest.ProductDefaultValuesPinnedToCardSection451
+[       OK ] BudgetTest.ProductDefaultValuesPinnedToCardSection451 (1 ms)
+[ RUN      ] BudgetTest.PackImportChannelHardenedSpecRelaxForbidden
+[       OK ] BudgetTest.PackImportChannelHardenedSpecRelaxForbidden (0 ms)
+[----------] 8 tests from BudgetTest (71 ms total)
+
+[----------] 4 tests from IoDiagCodeTable
+[ RUN      ] IoDiagCodeTable.TokenMappingCoversAllEnumValuesAndMatchesSection912
+[       OK ] IoDiagCodeTable.TokenMappingCoversAllEnumValuesAndMatchesSection912 (0 ms)
+[ RUN      ] IoDiagCodeTable.RegistrationIntoStableCodeRegistryFullTableVerified
+[       OK ] IoDiagCodeTable.RegistrationIntoStableCodeRegistryFullTableVerified (0 ms)
+[ RUN      ] IoDiagCodeTable.CoexistsWithBuiltinTableOrderIndependentManifest
+[       OK ] IoDiagCodeTable.CoexistsWithBuiltinTableOrderIndependentManifest (0 ms)
+[ RUN      ] IoDiagCodeTable.ComparativeErrorCarriesThreeElementParams
+[       OK ] IoDiagCodeTable.ComparativeErrorCarriesThreeElementParams (0 ms)
+[----------] 4 tests from IoDiagCodeTable (1 ms total)
+
+[----------] 20 tests from IoCsvTest
+[ RUN      ] IoCsvTest.RenderDialectMarkerMatchesCard51Verbatim
+[       OK ] IoCsvTest.RenderDialectMarkerMatchesCard51Verbatim (1 ms)
+[ RUN      ] IoCsvTest.EscapeUnescapeReflexiveOverPrefixSampleSet
+[       OK ] IoCsvTest.EscapeUnescapeReflexiveOverPrefixSampleSet (0 ms)
+[ RUN      ] IoCsvTest.RoundtripBasicQuotesDelimsNewlineChineseEmpty
+[       OK ] IoCsvTest.RoundtripBasicQuotesDelimsNewlineChineseEmpty (16 ms)
+[ RUN      ] IoCsvTest.RoundtripPrefixedEscapeOnlyAtFileLayer
+[       OK ] IoCsvTest.RoundtripPrefixedEscapeOnlyAtFileLayer (2 ms)
+[ RUN      ] IoCsvTest.UnmarkedNoRewriteKeepsAllFieldsVerbatim
+[       OK ] IoCsvTest.UnmarkedNoRewriteKeepsAllFieldsVerbatim (1 ms)
+[ RUN      ] IoCsvTest.BomStrippingAndUtf16Decoding
+[       OK ] IoCsvTest.BomStrippingAndUtf16Decoding (53 ms)
+[ RUN      ] IoCsvTest.EolToleranceAndQuotedNewlineNesting
+[       OK ] IoCsvTest.EolToleranceAndQuotedNewlineNesting (33 ms)
+[ RUN      ] IoCsvTest.NonUtf8WithoutBomStableReject
+[       OK ] IoCsvTest.NonUtf8WithoutBomStableReject (4 ms)
+[ RUN      ] IoCsvTest.DuplicateHeaderColumnsRejectedWithLocation
+[       OK ] IoCsvTest.DuplicateHeaderColumnsRejectedWithLocation (3 ms)
+[ RUN      ] IoCsvTest.ArityPoliciesDefaultRejectAndExplicitPadTrim
+[       OK ] IoCsvTest.ArityPoliciesDefaultRejectAndExplicitPadTrim (10 ms)
+[ RUN      ] IoCsvTest.BlankRowPoliciesSkipCountAndReject
+[       OK ] IoCsvTest.BlankRowPoliciesSkipCountAndReject (1 ms)
+[ RUN      ] IoCsvTest.RowErrorTruncationAndStopOnFirstError
+[       OK ] IoCsvTest.RowErrorTruncationAndStopOnFirstError (12 ms)
+[ RUN      ] IoCsvTest.DialectMarkerClosedKeySetRejections
+[       OK ] IoCsvTest.DialectMarkerClosedKeySetRejections (111 ms)
+[ RUN      ] IoCsvTest.ProbeDetectsMarkerAndSniffsDelimiter
+[       OK ] IoCsvTest.ProbeDetectsMarkerAndSniffsDelimiter (21 ms)
+[ RUN      ] IoCsvTest.RowBudgetChargedThroughReaderChannel
+[       OK ] IoCsvTest.RowBudgetChargedThroughReaderChannel (13 ms)
+[ RUN      ] IoCsvTest.DataOnlyNoExecutionEntryInCsvChannelSources
+[       OK ] IoCsvTest.DataOnlyNoExecutionEntryInCsvChannelSources (3 ms)
+[ RUN      ] IoCsvTest.UnclosedQuoteFatalAtStartRow
+[       OK ] IoCsvTest.UnclosedQuoteFatalAtStartRow (1 ms)
+[ RUN      ] IoCsvTest.WriterRejectsNulNonFiniteAndBadDialectWithoutTouchingTarget
+[       OK ] IoCsvTest.WriterRejectsNulNonFiniteAndBadDialectWithoutTouchingTarget (1 ms)
+[ RUN      ] IoCsvTest.WriterFormatsNumbersCanonicallyWithoutEscape
+[       OK ] IoCsvTest.WriterFormatsNumbersCanonicallyWithoutEscape (1 ms)
+[ RUN      ] IoCsvTest.WriterRaiiAbandonLeavesNoStagingResidue
+[       OK ] IoCsvTest.WriterRaiiAbandonLeavesNoStagingResidue (2 ms)
+[----------] 20 tests from IoCsvTest (297 ms total)
+
+[----------] 26 tests from IoJsonTest
+[ RUN      ] IoJsonTest.SchemaUnknownKeyRejectedWithLocation
+[       OK ] IoJsonTest.SchemaUnknownKeyRejectedWithLocation (0 ms)
+[ RUN      ] IoJsonTest.PreserveSubtreePassedThrough
+[       OK ] IoJsonTest.PreserveSubtreePassedThrough (1 ms)
+[ RUN      ] IoJsonTest.SchemaVersion999FutureRejectWithUpgradeData
+[       OK ] IoJsonTest.SchemaVersion999FutureRejectWithUpgradeData (0 ms)
+[ RUN      ] IoJsonTest.SchemaVersionLegacyReject
+[       OK ] IoJsonTest.SchemaVersionLegacyReject (0 ms)
+[ RUN      ] IoJsonTest.VersionGateMissingTypeAndPrecedesSchema
+[       OK ] IoJsonTest.VersionGateMissingTypeAndPrecedesSchema (0 ms)
+[ RUN      ] IoJsonTest.DuplicateKeyRejectedWithLocationAndNestingScoping
+[       OK ] IoJsonTest.DuplicateKeyRejectedWithLocationAndNestingScoping (0 ms)
+[ RUN      ] IoJsonTest.RequiredMissingLocatedAndNoDefaultInjection
+[       OK ] IoJsonTest.RequiredMissingLocatedAndNoDefaultInjection (0 ms)
+[ RUN      ] IoJsonTest.TypeErrorAndComparativeRange
+[       OK ] IoJsonTest.TypeErrorAndComparativeRange (0 ms)
+[ RUN      ] IoJsonTest.UnregisteredProfileIdMapsToInternal
+[       OK ] IoJsonTest.UnregisteredProfileIdMapsToInternal (0 ms)
+[ RUN      ] IoJsonTest.NanInfLiteralsRejectedAsNumber
+[       OK ] IoJsonTest.NanInfLiteralsRejectedAsNumber (0 ms)
+[ RUN      ] IoJsonTest.NumberOverflowRejectedUnderflowAccepted
+[       OK ] IoJsonTest.NumberOverflowRejectedUnderflowAccepted (1 ms)
+[ RUN      ] IoJsonTest.DeepNestingTriggersDepthBudget
+[       OK ] IoJsonTest.DeepNestingTriggersDepthBudget (0 ms)
+[ RUN      ] IoJsonTest.OversizedStringTriggersStringBudget
+[       OK ] IoJsonTest.OversizedStringTriggersStringBudget (101 ms)
+[ RUN      ] IoJsonTest.DocBytesBudgetChargedThroughGuard
+[       OK ] IoJsonTest.DocBytesBudgetChargedThroughGuard (0 ms)
+[ RUN      ] IoJsonTest.OutOfRangeIntegerPassthroughWithStringAndHint
+[       OK ] IoJsonTest.OutOfRangeIntegerPassthroughWithStringAndHint (0 ms)
+[ RUN      ] IoJsonTest.EncodingGateBomStripAndStableReject
+[       OK ] IoJsonTest.EncodingGateBomStripAndStableReject (0 ms)
+[ RUN      ] IoJsonTest.SyntaxViolationsUseAppendedSyntaxCode
+[       OK ] IoJsonTest.SyntaxViolationsUseAppendedSyntaxCode (0 ms)
+[ RUN      ] IoJsonTest.CancelTokenReturnsStateNotError
+[       OK ] IoJsonTest.CancelTokenReturnsStateNotError (0 ms)
+[ RUN      ] IoJsonTest.CanonicalSameSemanticsSameBytes
+[       OK ] IoJsonTest.CanonicalSameSemanticsSameBytes (1 ms)
+[ RUN      ] IoJsonTest.CanonicalDeterministicAndDigestViaCoreDigester
+[       OK ] IoJsonTest.CanonicalDeterministicAndDigestViaCoreDigester (5 ms)
+[ RUN      ] IoJsonTest.CanonicalKeyOrderProfileDeclaredVsLexicographic
+[       OK ] IoJsonTest.CanonicalKeyOrderProfileDeclaredVsLexicographic (0 ms)
+[ RUN      ] IoJsonTest.WriterFileTargetAtomicReplaceAndRoundtrip
+[       OK ] IoJsonTest.WriterFileTargetAtomicReplaceAndRoundtrip (2 ms)
+[ RUN      ] IoJsonTest.RegistryContractFailFastOnAssemblyErrors
+[       OK ] IoJsonTest.RegistryContractFailFastOnAssemblyErrors (1 ms)
+[ RUN      ] IoJsonTest.VersionSetMembershipAndHoleAsFuture
+[       OK ] IoJsonTest.VersionSetMembershipAndHoleAsFuture (0 ms)
+[ RUN      ] IoJsonTest.ParseFileReadsRealFileAndMapsMissing
+[       OK ] IoJsonTest.ParseFileReadsRealFileAndMapsMissing (5 ms)
+[ RUN      ] IoJsonTest.StringEscapesRoundtripAndSurrogatePolicy
+[       OK ] IoJsonTest.StringEscapesRoundtripAndSurrogatePolicy (0 ms)
+[----------] 26 tests from IoJsonTest (131 ms total)
+
+[----------] 9 tests from IoZipTest
+[ RUN      ] IoZipTest.StoreAndDeflateEntriesByteExactRestore
+[       OK ] IoZipTest.StoreAndDeflateEntriesByteExactRestore (21 ms)
+[ RUN      ] IoZipTest.ManifestHashVerifyOkMismatchLocatedAndRefIncomplete
+[       OK ] IoZipTest.ManifestHashVerifyOkMismatchLocatedAndRefIncomplete (7 ms)
+[ RUN      ] IoZipTest.EncryptedEntryRejectedBeforeDecompression
+[       OK ] IoZipTest.EncryptedEntryRejectedBeforeDecompression (16 ms)
+[ RUN      ] IoZipTest.UnsupportedCompressionMethodRejected
+[       OK ] IoZipTest.UnsupportedCompressionMethodRejected (13 ms)
+[ RUN      ] IoZipTest.CorruptedCrcDetectedAtContainerLevel
+[       OK ] IoZipTest.CorruptedCrcDetectedAtContainerLevel (18 ms)
+[ RUN      ] IoZipTest.NonZipContentAndMissingFileMapCorrectly
+[       OK ] IoZipTest.NonZipContentAndMissingFileMapCorrectly (9 ms)
+[ RUN      ] IoZipTest.ExpandedBytesBudgetChargedThroughCallerScope
+[       OK ] IoZipTest.ExpandedBytesBudgetChargedThroughCallerScope (18 ms)
+[ RUN      ] IoZipTest.ZipBombRatioRejectedAtDeclaredPrecheck
+[       OK ] IoZipTest.ZipBombRatioRejectedAtDeclaredPrecheck (9 ms)
+[ RUN      ] IoZipTest.CancelTokenReturnsStateDuringRead
+[       OK ] IoZipTest.CancelTokenReturnsStateDuringRead (24 ms)
+[----------] 9 tests from IoZipTest (140 ms total)
+
+[----------] 17 tests from IoResTest
+[ RUN      ] IoResTest.CyclicIncludeReportsCycleWithPathList
+[       OK ] IoResTest.CyclicIncludeReportsCycleWithPathList (14 ms)
+[ RUN      ] IoResTest.SelfIncludeReportsCycle
+[       OK ] IoResTest.SelfIncludeReportsCycle (2 ms)
+[ RUN      ] IoResTest.IncludeChainBeyondDepthTriggersIncludeBudget
+[       OK ] IoResTest.IncludeChainBeyondDepthTriggersIncludeBudget (24 ms)
+[ RUN      ] IoResTest.DiamondIncludeIsNotCycle
+[       OK ] IoResTest.DiamondIncludeIsNotCycle (15 ms)
+[ RUN      ] IoResTest.IncludeEscapeOutsideImportRootRejected
+[       OK ] IoResTest.IncludeEscapeOutsideImportRootRejected (2 ms)
+[ RUN      ] IoResTest.MalformedXmlReportsSyntaxCodeWithLocation
+[       OK ] IoResTest.MalformedXmlReportsSyntaxCodeWithLocation (1 ms)
+[ RUN      ] IoResTest.BinaryStlDeclaredFacesLyingRejectedBeforeBodyRead
+[       OK ] IoResTest.BinaryStlDeclaredFacesLyingRejectedBeforeBodyRead (1 ms)
+[ RUN      ] IoResTest.AsciiStlRealOversizeTriggersMeshBudgetMidRead
+[       OK ] IoResTest.AsciiStlRealOversizeTriggersMeshBudgetMidRead (1 ms)
+[ RUN      ] IoResTest.ValidBinaryStlSnapshotDigestMatchesManual
+[       OK ] IoResTest.ValidBinaryStlSnapshotDigestMatchesManual (1 ms)
+[ RUN      ] IoResTest.AclDeniedReadMapsToAccessDeniedNotNotFound
+[       OK ] IoResTest.AclDeniedReadMapsToAccessDeniedNotNotFound (1 ms)
+[ RUN      ] IoResTest.DependencyTreeMissingLeafReportsMissingList
+[       OK ] IoResTest.DependencyTreeMissingLeafReportsMissingList (23 ms)
+[ RUN      ] IoResTest.SnapshotDigestStableAcross100Reads
+[       OK ] IoResTest.SnapshotDigestStableAcross100Reads (15 ms)
+[ RUN      ] IoResTest.RenameDoesNotChangeDigestPathIsNotIdentity
+[       OK ] IoResTest.RenameDoesNotChangeDigestPathIsNotIdentity (14 ms)
+[ RUN      ] IoResTest.OpenReadHandleReturnsBytesAndEof
+[       OK ] IoResTest.OpenReadHandleReturnsBytesAndEof (2 ms)
+[ RUN      ] IoResTest.IdentifyKnowsMeshAndTextureFamilies
+[       OK ] IoResTest.IdentifyKnowsMeshAndTextureFamilies (3 ms)
+[ RUN      ] IoResTest.UserSourceMissingFileIsNotFound
+[       OK ] IoResTest.UserSourceMissingFileIsNotFound (1 ms)
+[ RUN      ] IoResTest.ProjectResourceRefRoleSnapshotWorksWithBase
+[       OK ] IoResTest.ProjectResourceRefRoleSnapshotWorksWithBase (2 ms)
+[----------] 17 tests from IoResTest (129 ms total)
+
+[----------] 10 tests from IoSolidifyTest
+[ RUN      ] IoSolidifyTest.SourceChangedDuringCopyDetectedAndStagingCleaned
+[       OK ] IoSolidifyTest.SourceChangedDuringCopyDetectedAndStagingCleaned (45 ms)
+[ RUN      ] IoSolidifyTest.SolidifyUnchangedSourceKeepsStagingCopyForProject
+[       OK ] IoSolidifyTest.SolidifyUnchangedSourceKeepsStagingCopyForProject (32 ms)
+[ RUN      ] IoSolidifyTest.NonAuthorizedStagingDirRejected
+[       OK ] IoSolidifyTest.NonAuthorizedStagingDirRejected (1 ms)
+[ RUN      ] IoSolidifyTest.ReadonlyTargetWritesMapToReadonlyCode
+[       OK ] IoSolidifyTest.ReadonlyTargetWritesMapToReadonlyCode (10 ms)
+[ RUN      ] IoSolidifyTest.ProbeReportsMissingForDeletedExternalFile
+[       OK ] IoSolidifyTest.ProbeReportsMissingForDeletedExternalFile (1 ms)
+[ RUN      ] IoSolidifyTest.ProbeReportsChangedWhenContentReplaced
+[       OK ] IoSolidifyTest.ProbeReportsChangedWhenContentReplaced (9 ms)
+[ RUN      ] IoSolidifyTest.ProbeReportsOkAndIgnoresPurePathSpelling
+[       OK ] IoSolidifyTest.ProbeReportsOkAndIgnoresPurePathSpelling (2 ms)
+[ RUN      ] IoSolidifyTest.AdapterRoutingAndLifecycleRulings
+[       OK ] IoSolidifyTest.AdapterRoutingAndLifecycleRulings (11 ms)
+[ RUN      ] IoSolidifyTest.AdapterConcurrentRecordedReadsAreSafe
+[       OK ] IoSolidifyTest.AdapterConcurrentRecordedReadsAreSafe (20 ms)
+[ RUN      ] IoSolidifyTest.AdapterRecordedFailureMapping
+[       OK ] IoSolidifyTest.AdapterRecordedFailureMapping (0 ms)
+[----------] 10 tests from IoSolidifyTest (135 ms total)
+
+[----------] 9 tests from IoPackTest
+[ RUN      ] IoPackTest.ExportImportRoundtripRestoresPayloadBytewise
+[       OK ] IoPackTest.ExportImportRoundtripRestoresPayloadBytewise (29 ms)
+[ RUN      ] IoPackTest.ZipBombRatioAbortsAndCleansStaging
+[       OK ] IoPackTest.ZipBombRatioAbortsAndCleansStaging (20 ms)
+[ RUN      ] IoPackTest.ZipBombOverExpandAbortsOnBudgetExpand
+[       OK ] IoPackTest.ZipBombOverExpandAbortsOnBudgetExpand (38 ms)
+[ RUN      ] IoPackTest.DuplicateEntriesRejectedBeforeExtraction
+[       OK ] IoPackTest.DuplicateEntriesRejectedBeforeExtraction (4 ms)
+[ RUN      ] IoPackTest.CaseDifferingEntryPairRejectedAsDuplicate
+[       OK ] IoPackTest.CaseDifferingEntryPairRejectedAsDuplicate (32 ms)
+[ RUN      ] IoPackTest.TamperedPayloadHashMismatchLocatedPerEntry
+[       OK ] IoPackTest.TamperedPayloadHashMismatchLocatedPerEntry (41 ms)
+[ RUN      ] IoPackTest.ImportCancelMidExtractCleansAndEmitsNoDiagnostic
+[       OK ] IoPackTest.ImportCancelMidExtractCleansAndEmitsNoDiagnostic (26 ms)
+[ RUN      ] IoPackTest.ManifestReferencingMissingArchiveEntryRejected
+[       OK ] IoPackTest.ManifestReferencingMissingArchiveEntryRejected (21 ms)
+[ RUN      ] IoPackTest.MissingRequiredMirrorEntryRejected
+[       OK ] IoPackTest.MissingRequiredMirrorEntryRejected (22 ms)
+[----------] 9 tests from IoPackTest (238 ms total)
+
+[----------] 3 tests from IoTempTest
+[ RUN      ] IoTempTest.CreateMarksAndCleanupIsIdempotent
+[       OK ] IoTempTest.CreateMarksAndCleanupIsIdempotent (2 ms)
+[ RUN      ] IoTempTest.EquivalentKeyMutexAllowsSingleSession
+[       OK ] IoTempTest.EquivalentKeyMutexAllowsSingleSession (3 ms)
+[ RUN      ] IoTempTest.CrashResidueWithMarkerRecoveredWithoutMarkerUntouched
+[       OK ] IoTempTest.CrashResidueWithMarkerRecoveredWithoutMarkerUntouched (5 ms)
+[----------] 3 tests from IoTempTest (11 ms total)
+
+[----------] 2 tests from IoAtomicTest
+[ RUN      ] IoAtomicTest.PreparePolicyAndCommitReplace
+[       OK ] IoAtomicTest.PreparePolicyAndCommitReplace (24 ms)
+[ RUN      ] IoAtomicTest.AbortLeavesTargetUntouched
+[       OK ] IoAtomicTest.AbortLeavesTargetUntouched (2 ms)
+[----------] 2 tests from IoAtomicTest (26 ms total)
+
+[----------] Global test environment tear-down
+[==========] 116 tests from 12 test suites ran. (1292 ms total)
+[  PASSED  ] 116 tests.
