@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EX-T01",
+  "masterWp": "WP-08-T02",
+  "branch": "wp08-t01",
+  "base": "2673b21b7091c7c246b3542a369db5f616a2d960",
+  "date": "2026-09-18",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持＝GTest::gtest_main，testkit RecordListener 报告设施随 EX-T09 接入）",
+  "targets": [
+    {
+      "target": "sdurws_ird_execution",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EX-T01 落位：INTERFACE 占位升级 STATIC（目标名/别名 RWS::ird::execution/include 根不变——DTB §5.1）。新建 execution/CMakeLists.txt：C++17 双设（target_compile_features PUBLIC cxx_std_17＋CXX_STANDARD 17——P-ENV-1 同口径复证：显式 C++17 不用 C++20，双模式构建即与框架 C++11 基线混链复证）、/utf-8 PUBLIC、PUBLIC 链 sdurws_ird_core＋sdurws_ird_evidence＋sdurws_ird_project（统一真名两模式可解析——ARCH §3.5 三条登记编译链接边，execution.md §3.4 原文）；diagnostics 边按注入形态不落链接（P-EX-8 裁决，ird_gates 白名单预登记 execution->diagnostics 不构成链接义务）；零 Qt 含 Core（D-01/NFR-MNT-01）、零 Eigen/rw::math 直接包含、零 runtime/policy 编译边（P-EX-3 处置：经 execution.md §3.3 最小注入接口消费、policy 经快照 PolicyRef 值传递——不私建 ARCH §3.5 表外边，SA-10 表外边＝构建失败）、零业务域单元（R-1）、零 testkit（T-1）。src/ 空起步＝锚点翻译单元 Execution.cpp（单元卡 §12 EX-T01 行产物定义的既定先例形态——CORE-T01/POL-T01/DIAG-T02/PRJ-T01 同款：CMake 零源码 STATIC 库生成期即报 No SOURCES given to target〔实测〕，锚点 TU＝库可生成且无任何接口预建〔NFR-MNT-04〕的最小载体；头注释载明 EX-T02~T09 同名任务文件落位安排）。配置期红线守卫：仅 core/evidence/project＋自身单元边（^sdurws_ird_ 通配同时拦截 testkit/runtime/policy/业务域——T-1/R-1/P-EX-3）、零 Qt、产品库零 gtest（LINK/INTERFACE 两面读取）。顶层 industrialrobot/CMakeLists.txt 同步：execution 移出 INTERFACE 占位循环（占位余 13 单元）、add_subdirectory(execution) 挂接于 io 之后（次序约束：core/evidence/project 之后〔链接〕），头注释状态行更新。P-EX-1 处置：消费的 core/evidence/project 卡 v0.1 仍 Draft 未冻结，本任务仅建立三条登记链接边、零跨单元头消费（产品与测试源码均无 sdurws/ird/<他单元> include——BuildRedLineTest 扫描用例常驻自证），冻结 diff 后按影响面增量同步留痕。O-24 处置：TaskState/TaskOutcome/EvaluationMode/EngineeringStatus 四词表按 core 词表现状承接（sdurws/ird/core/Evaluation.hpp——九态词表归 core，execution.md §2.2 不可越界列），execution 侧零重定义（NoVocabularyRedefinition_O24 用例钉住公共头面零产出）；O-24 在 DTB §4 仍为登记未决态，本任务不私裁消账（消账权在 DTB §4 登记流程/所有者）。"
+    },
+    {
+      "target": "sdurws_ird_execution_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 7/7）",
+      "notes": "EX-T01 登记（execution.md §3.4/DTB §5.5；契约 verify 命令构建对象——cmake --build build --config Release --target sdurws_ird_execution_test exit 0，留痕 verify-target-build.log）。首批用例＝落位期允许的最小构建冒烟用例（契约 acceptance 3 明文；业务用例随 EX-T02~T09 落地，不在骨架预建占位实现——父 CMakeLists 既有约定）：ExecutionBuild.SourceTreeReachable（锚点翻译单元＋README 保留位在位——EX-BLD-1 扫描前提）、NoVocabularyRedefinition_O24（acceptance 4：公共头面仅 README.md——execution 侧零词表重定义）、NoQtInclude（EX-BLD-1 第 1 项/NFR-MNT-01/D-01 零 Qt 含 Core）、NoEigenOrRwMathDirectInclude（§3.2 依赖图——几何类型仅经 core/evidence 传递）、NoCrossUnitInclude（include 面 sdurws/ird/* 白名单 {core,evidence,project,execution}——R-1/R-2）、RuntimePolicyZeroCompileFace（P-EX-3 具名自证——零 sdurws/ird/runtime、sdurws/ird/policy include）、PublicHeaderPathLayout（EX-BLD-1 第 2 项/R-2 无私有头出 include）。扫描器以 #include 指令行门控，注释散文不误报。测试真实失败能力探针：实施期向 src/ 注入临时 _fault_probe.cpp（#include <QObject>）——NoQtInclude 用例 FAILED 精确检出，删除探针后复跑全绿（留痕 test-fault-probe.log）。"
+    },
+    {
+      "target": "sdurws_ird_execution_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 5/5）",
+      "notes": "EX-T01 登记（§3.4 测试目标分工：跨单元契约面——与 evidence 校验器、与 project 归档端口、真实 worker 进程场景随 EX-T04/T06/T09 展开；落位期＝构建图边界契约，取 contract_test/ 目录——§3.5 布局，io 单元同款）。首批用例＝契约 acceptance 1/2 逐项具名自证：UnitEdgesRegisteredOnly（构建图 sdurws_ird_* 目标引用白名单＝{core,evidence,project}＋本单元三目标——R-1/T-1/P-EX-3）、NoTestkitEdge（EX-BLD-1 第 4 项/T-1——EX-T09 报告设施接入时白名单显式增量修订）、RegisteredEdgesPresent（三条登记边存在性——acceptance 1 的构建图半区；链接器半区＝双模式测试链接成功）、DiagnosticsEdgeInjectionNotLink（P-EX-8 具名自证——构建图零 sdurws_ird_diagnostics 引用，卡存在不自动转链接）、RuntimePolicyInjectionNotLink（P-EX-3 具名自证——构建图面＋include 面双向扫描零 runtime/policy）。与配置期守卫、_test 源码扫描互为三道防线。"
+    }
+  ],
+  "runs": [
+    {
+      "mode": "integration（仓库根 build/ 构建树，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已 grep 确认——AGENTS.md §4.1）",
+      "configure": "自动重配置（CMakeLists 变更触发——integration-build.log 内 Configuring/Generating done）＋全量 Release 构建 exit 0、零 error（integration-build.log）",
+      "tests": "sdurws_ird_execution_test 7/7 PASSED＋sdurws_ird_execution_contract_test 5/5 PASSED（test-run.log；gtest XML＝sdurws_ird_execution_test-integration.xml、sdurws_ird_execution_contract_test-integration.xml——tests 7/5、failures 0）"
+    },
+    {
+      "mode": "smoke（独立冒烟 build-smoke-wp08-t01/，-DCMAKE_TOOLCHAIN_FILE=<仓库根>/vcpkg/scripts/buildsystems/vcpkg.cmake 绝对路径——CORE-T01 验收 G-2 教训）",
+      "configure": "cmake -S industrialrobot -B build-smoke-wp08-t01 exit 0（smoke-configure.log）；cmake --build --config Release exit 0 零 error（smoke-build.log——log 中 warning 均为 io/project 既有单元既有告警，非本次引入）",
+      "tests": "sdurws_ird_execution_test 7/7 PASSED＋sdurws_ird_execution_contract_test 5/5 PASSED（test-run.log；gtest XML＝sdurws_ird_execution_test-smoke.xml、sdurws_ird_execution_contract_test-smoke.xml——tests 7/5、failures 0）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "exit 1＝17 命中，与 wp11-t07 基线（gates-ird-gates-target.log 同为 17 命中）逐码同集、零新增：全部位于 evidence/policy/project/runtime/diagnostics/io 各契约目标的 testkit 链接（SUB）、io 的 libzip/expat（LIB）、testdata_lint（SUB/T-1）与 project R4 既有辖区——零 execution 相关命中（ acceptance 2 红线扫描零命中的门禁半区；命中处置权归 WP-01 所有者按 DTB §4.5 登记，本任务未私改门禁）。配置期守卫＋运行期三面扫描（_test/_contract_test 用例）零命中——acceptance 2 的执行半区。",
+    "validate-task": "PASS exit 0（validate-task.log）",
+    "validate-docs": "PASS exit 0（validate-docs.log——20 units/12 trace/150 task files）"
+  },
+  "acceptanceMapping": [
+    {
+      "id": 1,
+      "item": "双模式构建零错误（独立冒烟＋集成——DTB §5.1）：sdurws_ird_execution 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 RWS::ird::core/evidence/project——§3.4；diagnostics 边已登记但当前经注入实现、目标暂不链接——P-EX-8 裁决不自动消账），EX-BLD-1 构建项通过",
+      "evidence": "integration-build.log＋smoke-configure.log＋smoke-build.log（两模式 exit 0 零 error）；verify-target-build.log（契约 verify 命令 exit 0）；RegisteredEdgesPresent＋UnitEdgesRegisteredOnly 用例（构建图三边存在且仅三边）；DiagnosticsEdgeInjectionNotLink 用例（P-EX-8 不落链接钉住）；配置期守卫（CMakeLists 文件末尾）；EX-BLD-1 前两项＝NoQtInclude＋PublicHeaderPathLayout 用例通过（XML×4）"
+    },
+    {
+      "id": 2,
+      "item": "红线扫描零命中：仅 execution→core/evidence/project 三条 ARCH §3.5 登记边；零 Qt（NFR-MNT-01）＋零业务域互链/无私有头出 include（NFR-MNT-02）——P-EX-3 处置：runtime/policy 经 §3.3 最小接口注入消费零编译依赖，不私建表外边（SA-10 表外边＝构建失败）",
+      "evidence": "运行期三面扫描零命中（NoQtInclude/NoCrossUnitInclude/RuntimePolicyZeroCompileFace/PublicHeaderPathLayout＋UnitEdgesRegisteredOnly/NoTestkitEdge/RuntimePolicyInjectionNotLink——XML×4 全绿）；配置期守卫零触发（两模式构建成功即证）；ird_gates 17 命中＝wp11-t07 基线零新增、零 execution 项（gates-ird-gates-target.log）；测试真实失败能力探针（test-fault-probe.log）"
+    },
+    {
+      "id": 3,
+      "item": "sdurws_ird_execution_test / sdurws_ird_execution_contract_test 目标按 DTB §5.5 注册并可构建（googletest 经 vcpkg find_package(GTest CONFIG REQUIRED)；实现任务未落地前允许最小构建冒烟用例，业务用例随 EX-T02~T09 落地——不在骨架预建占位实现，父 CMakeLists 既有约定）",
+      "evidence": "两目标两模式 build-pass（integration-build.log/smoke-build.log）；find_package(GTest CONFIG REQUIRED) 于 execution/CMakeLists.txt（失败即停）；ird_add_gtest 宏自持（add_test＋<target>_report XML 报告目标，EXCLUDE_FROM_ALL——XML×4 已生成）；首批用例为最小构建冒烟用例（红线扫描＋构建图契约），产品 src/ 仅有锚点翻译单元零接口预建（SourceTreeReachable＋NoVocabularyRedefinition_O24 用例钉住）"
+    },
+    {
+      "id": 4,
+      "item": "O-24 处置：TaskState/TaskOutcome/EvaluationMode/EngineeringStatus 四词表按 core 词表现状承接（九态词表归 core——§2.2 不可越界列）——O-24 在 DTB §4 仍为登记未决态，本契约显式登记「O-24 未决，core 现状承接」，不私裁消账；P-EX-1 处置：消费的 core/evidence/project 卡 v0.1 Draft 未冻结（R-1），冻结 diff 后按影响面增量同步留痕",
+      "evidence": "NoVocabularyRedefinition_O24 用例（公共头面仅 README.md——execution 侧零词表重定义，承接约束随 EX-T02 兑现）；Execution.cpp/CMakeLists.txt/本报告注释登记「O-24 未决，core 现状承接」口径、未动 DTB §4（消账权归所有者）；P-EX-1：产品与测试源码零 sdurws/ird/<他单元> include（NoCrossUnitInclude 用例常驻自证——仅链接边零头消费），core/evidence/project 冻结 diff 后按影响面增量同步（本报告与单元卡 v0.3 变更记录登记）"
+    }
+  ]
+}

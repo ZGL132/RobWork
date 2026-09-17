@@ -8,9 +8,11 @@
 #       runtime/evidence/policy 已随 RT-T01/EV-T01/POL-T01、diagnostics 已随
 #       DIAG-T02（≙WP-09-T02）、project 已随 PRJ-T01（≙WP-04-T01）、io 已随
 #       IO-T01（≙WP-11-T02）落地为真实 STATIC 库（见各自 CMakeLists.txt；
-#       io 落位期无测试目标——随 IO-T06/T07 登记）；其余 14 个单元仍为
-#       INTERFACE 占位，源码随各自单元任务卡落地，落地时升级为真实库
-#       （CMake 目标名不变）
+#       io 落位期无测试目标——随 IO-T06/T07 登记）、execution 已随 EX-T01
+#       （≙WP-08-T02）落地为真实 STATIC 库（测试目标 sdurws_ird_execution_
+#       test/_contract_test 随落位登记——见 execution/CMakeLists.txt）；
+#       其余 13 个单元仍为 INTERFACE 占位，源码随各自单元任务卡落地，
+#       落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
 # 独立冒烟模式：允许脱离 RobWorkStudio 单独配置本目录（验证目标注册、include
@@ -26,9 +28,9 @@ endif()
 # core 与 testkit 分别自 WP-03-T01/WP-02-T01 起移出 INTERFACE 占位循环
 # （下方 add_subdirectory 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
 # diagnostics 自 DIAG-T02（≙WP-09-T02）、project 自 PRJ-T01（≙WP-04-T01）、
-# io 自 IO-T01（≙WP-11-T02）起移出（下方 add_subdirectory）。
+# io 自 IO-T01（≙WP-11-T02）、execution 自 EX-T01（≙WP-08-T02）起移出
+# （下方 add_subdirectory）。
 set(IRD_MODULES
-    execution
     ui reporting
     modeling requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
@@ -102,6 +104,19 @@ add_subdirectory(project)
 # （NFR-MNT-01＋WP-11-T02 禁止项）。次序约束：必须在 core 与 diagnostics
 # 之后（链接两者目标——diagnostics 卡 §3.2 已注明 io 属其消费方）。
 add_subdirectory(io)
+# execution（EX-T01≙WP-08-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、
+# PUBLIC 链 core＋evidence＋project——ARCH §3.5 三条登记编译链接边，本卡
+# §3.4 原文；diagnostics 边按注入形态不落链接——P-EX-8 裁决，白名单预登记
+# 不构成链接义务；零 Qt 含 Core——D-01；零 runtime/policy 编译边——P-EX-3
+# 处置：经本卡 §3.3 最小注入接口消费、policy 经快照 PolicyRef 值传递，不私
+# 建表外边），并注册 gtest 测试目标 sdurws_ird_execution_test（EX-BLD-1 前
+# 两项源码面扫描＋P-EX-3/O-24 具名自证）与 sdurws_ird_execution_contract_
+# test（构建图边界契约——落位期允许的最小构建冒烟用例，业务用例随
+# EX-T02~T09 落地，不在骨架预建占位实现）与配置期守卫——细节见
+# execution/CMakeLists.txt。src/ 空起步＝锚点翻译单元 Execution.cpp
+# （PRJ-T01 同款先例，无接口预建——NFR-MNT-04）。次序约束：必须在 core、
+# evidence、project 之后（链接三者目标——ARCH §3.5 登记边）。
+add_subdirectory(execution)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake

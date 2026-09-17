@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
+| 文档版本 | v0.3（EX-T01 构建落位登记——卡头构建落位行更新＋§15.4 变更记录行，契约语义零变更；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-EXECUTION |
@@ -12,7 +12,7 @@
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.11（`Draft`，待评审）** |
 | 协作输入 | `units/core.md` v0.1、`units/evidence.md` v0.1、`units/project.md` v0.1、`units/runtime.md` v0.1、`units/policy.md` v0.1、`units/testkit.md` v0.1（均 `Draft` 未冻结）；`DETAILED-DESIGN.md`（已建立为 20 单元详设总目录）；`development-task-breakdown.md` **v0.2**（任务分配与构建约定；其 §2.9 WP-08-T01 即本文，§5.1 构建约定本文全部承接）。协作卡如有变更，本文按影响面增量同步（P-EX-1） |
 | 上游下游链位置 | ARCHITECTURE §11.1：`DETAILED-DESIGN.md` → `units/*.md`（单元任务卡）。本文即 `units/execution.md`，按任务卡深度编写（接口签名、数据类型在本文件冻结） |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/`（骨架已建：目标 `sdurws_ird_execution`〔INTERFACE 占位〕＋别名 `RWS::ird::execution`＋公共头保留位 `include/sdurws/ird/execution/README.md`；见上级 `industrialrobot/CMakeLists.txt`） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/`（**已随 EX-T01 落位〔2026-09-18〕**：目标 `sdurws_ird_execution` 升级 STATIC〔C++17、PUBLIC 链 core/evidence/project——ARCH §3.5 三条登记编译链接边，§3.4 原文；diagnostics 边按注入形态不落链接——P-EX-8 裁决；零 Qt 含 Core——D-01；零 runtime/policy 编译边——P-EX-3 处置：经 §3.3 最小接口注入消费、policy 经快照 PolicyRef 值传递；src/ 空起步锚点翻译单元 `Execution.cpp`——STATIC 库最小翻译单元先例形态，CORE-T01/POL-T01/DIAG-T02/PRJ-T01 同款，无接口预建〕，别名 `RWS::ird::execution`；测试目标 `sdurws_ird_execution_test`/`sdurws_ird_execution_contract_test` 已按 DTB §5.5 注册〔gtest vcpkg 接入；落位期最小构建冒烟用例＝EX-BLD-1 红线扫描＋构建图边界契约，业务用例随 EX-T02~T09〕；配置期红线守卫就位。公共头保留位 `include/sdurws/ird/execution/README.md` 指向本文 §12——原 §9 指向已于 2026-09-10 版修正，EX-T01 复核确认零偏差，"不参与编译/不表示已实现"声明保留；§3.1 契约头随 EX-T02+ 落地。见单元 `execution/CMakeLists.txt` 与上级 `industrialrobot/CMakeLists.txt`） |
 | 任务包 | WP-08（任务执行平台；TASK-01～03 主 WP、CON-04 支持方、NFR-PERF-02/04 主 WP、NFR-REL-02/03 主 WP、PM-13 主 WP；REQUIREMENTS §3 阶段 A；主 WP 归属 WP-D"任务执行与诊断闭环"，见 DTB §0） |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释、框架零源码修改、双模式构建与留痕、提交后推送。Windows Qt GUI 测试须在 VS x64 环境设 `QT_QPA_PLATFORM=windows`，逐个绝对路径启动。 |
 | 实现口径 | 从头构建（REQUIREMENTS v1.9/v1.11、ARCHITECTURE 文档头）；`old/` 仅功能范围对照且**当前磁盘不存在**（core.md §1.2 R-5、DTB §4.1 O-01 同源登记）；不复制、不恢复任何历史实现 |
@@ -1246,6 +1246,7 @@ public:
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版：基于 REQUIREMENTS v1.16（Accepted）、ARCHITECTURE v0.11（Draft）、六张协作卡（core/evidence/project/runtime/policy/testkit v0.1 Draft）与 development-task-breakdown v0.2 完成 15 章详细设计；冻结任务/运行/尝试三级身份与分配协议、九态状态机逐转移矩阵与四轴正交表、调度与资源治理（70% 先节流）、worker 模型与 IRDCHN/1 通道协议、取消/暂停/继续/强杀协议（2 s/10 s）、检查点契约与缓存四分治理、RunRegistry 九步接纳与迟到结果防护、project 归档协作（P-PR-4 冻结答复）；验证矩阵 EX-\* 33 组；实现任务 EX-T01～T10（≙ WP-08-T02～T10）；待裁决 10 项（P-EX-1～10）。同日：execution README 任务卡指向 §9→§12 修正（与本文 §12 一致，同 evidence.md 先例） |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：①§7.5 `DrainPolicy::WaitForInFlight`（枚举中不存在）更正为 `CancelQueuedAndWait`——销账 ui.md CF-2/P-UI-3；②§3.4 稳定码清单由"未产出建议值"更新为"已收编 18 项（diagnostics.md §4.6）"，并冻结枚举对齐说明（ContextClosed/InvalidState＝fail-fast token 不发码；EX-TASK-INTERRUPTED＝状态标注码无枚举值）；③§2.1.2/§3.1/§3.3/§3.4 四处"diagnostics 详设未产出/产出前"过期表述更正——P-EX-8（sink 统一与链接形态）保持登记不消账 |
+| v0.3 | 2026-09-18 | EX-T01（≙WP-08-T02）构建落位登记：卡头构建落位行更新（INTERFACE 占位升级 STATIC、PUBLIC 链 core/evidence/project、`_test`/`_contract_test` 注册、src/ 空起步锚点翻译单元 `Execution.cpp`、P-EX-1/P-EX-3/P-EX-8/O-24 处置留痕）＋README 指向复核（§9→§12 已于 2026-09-10 版修正，复核零偏差）；§3.4 括注"骨架 INTERFACE → EX-T01 升级 STATIC"兑现，本文契约语义零变更。证据：traceability/builds/wp08-t01/（双模式构建零错误＋12/12 用例通过＋ird_gates 零新增命中） |
 
 ### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
 
