@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.12（2026-09-15 所有者处置：B 模式波次范围缺陷登记（T10/T11 批次排除构建落位任务 PRJ-T01/IO-T01→队首死锁 blocked，findings F-120）——两契约按 CCP 七步编译放行＋队列插入（所有者处置口令委托），波次表历史记录保持原样，后续波次范围定义沿用 F-120 教训；T-ORCH 模板不变仍 v9） |
+| 文档版本 | v1.13（2026-09-18 治理修订（所有者授权"需要"）：io 波次 IO-T04/T06/T07 收尾 §4.7③ findings.json 三连冲突 blocked（16b4646a/fa865524/d98be7bc）根因治理——登记簿双端并行追加×②→③固定合并次序＝尾部 hunk 必撞，三次所有者裁决结论一致（条目并集·编号序）＝可机械化确定性冲突；§4.7③ 增补唯一例外：冲突仅为 findings.json 时由 merge-findings-union.ps1 三方集合运算并集解算（撞号/删除/双方异改/顶层差异仍即停），发现闭环 F-204；T-ORCH 升 v10） |
 | 文档代号 | PIPE |
 | 上游 | acceptance-protocol.md（验收段完全复用其清单与独立性要求）、contract-compilation.md（ready 契约的唯一产出通道）、development-task-breakdown.md §5.7/§8（三段式流程与契约家族）、AGENTS.md §6（提交/推送/循环约定） |
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
@@ -119,7 +119,7 @@
 7. **收尾**（v1.8 起随 pass 自动执行；原"仅凭所有者'合并 <taskId>'指令"门控按所有者 2026-09-10 全自动化指令移除，七步固化次序不变）：
    ① `git fetch origin`，验证 `git rev-parse origin/<branch>` **== acceptedHead**——不符即转 blocked 报告"验收后分支漂移"（有人绕过流水线推送），不自行取舍；
    ② 合入验收记录：验证 `git rev-parse origin/<evidence分支>` **== acceptanceRecord.commit**（evidence 分支漂移同样转 blocked），随后 `git merge --no-ff <acceptanceRecord.commit>`——**按不可变 SHA 合并，不合并分支尖端**（evidence 分支被后续追加提交时不会带入未审查内容）；
-   ③ **按 SHA 合入代码**：`git merge --no-ff <acceptedHead>`（不是分支引用——即使分支被移动也只合并已验收提交）；冲突即停转 blocked；
+   ③ **按 SHA 合入代码**：`git merge --no-ff <acceptedHead>`（不是分支引用——即使分支被移动也只合并已验收提交）；冲突即停转 blocked——**唯一例外（v1.13 findings.json 并集解算）**：冲突文件**仅为** traceability/findings.json 时，运行 `pwsh -File RobWork/scripts/industrialrobot/merge-findings-union.ps1`：以 merge-base(:1) 为参照对双方(:2/:3)条目块集合运算——双方各自新增条目全部并存（按 id 编号序并入，我方既有条目相对序不变）、同号新增内容一致取一、对方独改既有条目按对方版本替换；同号异义（撞号）/任一方删除既有条目/双方异改同一条目/顶层字段（schemaVersion、note）不一致/文件形状或解析校验失败一律退出非 0 照旧即停；解算写入前经 JSON 解析＋无重复 id＋条目计数三重校验，全过才写盘并 git add；其余任一文件冲突不受本例外影响仍即停（自动化的只是已三次人工裁决一致的机械并集，真分歧裁决权仍在所有者）；
    ④ `git push origin redesign-main`；
    ⑤ 治理提交：契约 status=done、解锁 dependents、history 追加（含 failReason 若有）、queue 移出该任务、heartbeat 重置、清 currentTask/branch/base/headSha/acceptedHead/acceptanceRecord/lastFailureRecord、phase=idle、再 push；
    ⑥ 删除任务分支与 evidence 分支（本地＋origin）、state 落盘、出 tick 报告；
@@ -167,7 +167,7 @@
 
 > 模板即纪律的载体：派发对应子代理时**逐字使用并仅替换 `<>` 占位符**，不增删条款（v1.9 §0.4：实施者/验收者由 tick 派发全新子代理承载）；模板修订＝PIPE 增量修订（版本行同步）。
 
-### 附录 A · 编排者模板（T-ORCH v9）
+### 附录 A · 编排者模板（T-ORCH v10）
 
 ```text
 你是本仓库自动化流水线的 tick 编排者。输入仅限：automation-pipeline.md、
@@ -208,7 +208,10 @@ traceability/pipeline/state.json（docRefs 给出全部指针）。禁止：读�
 8. 收尾（v1.8 全自动：pass 后同 tick 执行，不再需要所有者"合并 <taskId>"指令；
    PIPE §4.7 七步固化次序不变：任务分支漂移检测→
    evidence 分支漂移检测→按 acceptanceRecord.commit 合并记录→按 acceptedHead 合并代码→
-   push→治理提交与状态清理→删双分支）；任何一步失败即转 blocked 报告，不自行取舍。
+   push→治理提交与状态清理→删双分支）；任何一步失败即转 blocked 报告，不自行取舍
+   （唯一例外 v1.13：第 3 步合并若冲突文件仅为 findings.json，逐字运行
+   pwsh -File RobWork/scripts/industrialrobot/merge-findings-union.ps1 作确定性并集
+   解算（语义见 §4.7③）；脚本退出码非 0 仍按冲突即停转 blocked）。
 9. 每次状态写回同步 heartbeat.updatedAt、tickToken=你的 token 与 tickCount+1；tick 结束
    输出固定报告（phase 变迁/当前任务/证据路径/下一步等待点），并执行
    pipeline-lock release -Token <你的 tickId>——token 失配（退出码 4）＝你的租约已被接管，
@@ -296,3 +299,4 @@ traceability/findings.json（F-xxx 编号顺延）；你不得合入，不得修
 | v1.10 | 2026-09-11 | F-013 整改（tick#40 报告编造"队首 TK-T03 依赖均已 done"，权威队列实为 CORE-T10 且 TK-T03 尚 planned——报告叙述失实而状态未被污染）：附录 A T-ORCH 步骤 9 增补硬性规定——tick 报告的队列摘要必须逐字引用 validate-state 的 queue-head: 行，禁止叙述性改写、预测性表述或对未入队契约作可领取性判断（队列空按 "(empty)" 原样转述）；T-ORCH 升 v8 |
 | v1.11 | 2026-09-11 | 所有者裁决"预授权平台层整链批次序列（B 模式）＋autoDiscovery"：①§6.1 autoDiscovery 语义行登记开启依据——DOC-Txx 编译批次放行的新 ready 契约由 tick 自动追加队尾，消除逐批手工"调整队列"（state 侧翻转随本修订之后执行）；②批次波次固化：DOC-T06 runtime(12)→T07 evidence(11)→T08 policy(11)→T09 diagnostics(10)→T10 project(15)→T11 io(6)→T12 execution(10)→T13 ui(13)，EX/UI 的跨单元依赖由前序波次自然满足；③附录 A T-ORCH 升 v9（步骤 4 增补扫描动作与字母序＝拓扑序说明）；④O 项阻塞（O-09/O-24/O-31）浮出时仍停等所有者，预授权不掩盖真失败 |
 | v1.12 | 2026-09-15 | 所有者处置（"请处置"口令委托治理会话）：①登记 v1.11 波次范围缺陷——T10 project(15)/T11 io(6) 以"主链"口径排除了 PRJ-T01/IO-T01 两个构建落位任务，而队内后续任务依赖它们：DIAG-T11 合入后队首 PRJ-T02 永不可领，无进展熔断转 blocked（tick#133~136；findings F-120）——流水线按 §7 设计安全停等，但例行自动化被批次定义缺陷卡死；②处置＝PRJ-T01/IO-T01 按 CCP §3 七步编译放行（机器校验＋独立评审双 PASS，留痕 compile-log 2026-09-15 两行）＋所有者"调整队列"授权下插入（PRJ-T01 队首、IO-T01 居 IO-T02 前）＋state 置 idle——下一自动 tick 恢复；③本修订不改变任何机制语义与 T-ORCH 模板，仅为波次表历史记录登记缺陷证据；后续单元批次（reporting/modeling 等）范围定义必须含构建落位任务或显式登记排除理由（F-120 教训） |
+| v1.13 | 2026-09-18 | io 波次三连 blocked 根因治理（治理会话奉所有者"需要"授权，根因分析答所有者问询）：①根因登记（F-204）——findings.json 双端并行追加（实施端任务分支自登记＋验收端 evidence 分支基于主线建出、看不见对方编号、按主线尾部顺延取号）×§4.7 ②→③固定合并次序＝第二笔合并尾部 hunk 必撞；单侧登记任务（IO-T01/T02/T03/T05）③ 实测干净、双侧登记（IO-T04/T06/T07）三连冲突即停，每次停滞约 2~2.5 小时且三次所有者裁决结论完全一致（条目并集·编号序）——属可机械化确定性冲突而非真分歧；②§4.7③ 增补唯一例外：冲突文件仅为 findings.json 时由 scripts/industrialrobot/merge-findings-union.ps1 以 merge-base 为参照三方条目块集合运算（双方新增按编号序并存、同号同义取一、对方独改按对方替换；撞号/删除/双方异改/顶层字段不一致/校验失败一律退出非 0 仍即停；写前三重校验）——真分歧与撞号的人工裁决保护全部保留；③附录 A T-ORCH 升 v10（步骤 8 增补例外括注）；④发现闭环 F-204（status=fixed，本修订即消账）；否决替代案：验收端不改 findings.json 改随 ⑤ 统一转登（闭环登记时机推迟失真）、evidence 分支改基任务分支 head（削弱 ACC §2/§3 独立性）。竞态注记：EX-T01（tick#201，base 冻结于本修订合入前）若实施自登记 findings 将取号 F-204 与本条撞号——收尾 ③ 由 v1.13 脚本检出撞号即停，属预期保护非故障 |
