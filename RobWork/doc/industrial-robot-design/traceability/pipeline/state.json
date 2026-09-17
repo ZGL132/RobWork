@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 179,
+  "tickCount": 180,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 2
   },
   "heartbeat": {
-    "updatedAt": "2026-09-17T09:36:53+08:00",
+    "updatedAt": "2026-09-17T12:43:49+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1070,6 +1070,19 @@
       "acceptanceRecord": "traceability/acceptance/IO-T02-20260917-r2.md",
       "mergedAt": "2026-09-17",
       "failReason": "attempt1 fail（B-1：8 份 .log 留痕被 .gitignore 全局规则吞，§4.10 不通过）——返工 git add -f 补证＋S-1/S-3 补正后 attempt2 pass"
+    },
+    {
+      "task": "IO-T03",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "c4cfdf06c3c96314bd42a65fa7b4196528db8545",
+        "64bdbcb00352141608620fb4c7c878fe0074bbc8",
+        "cb2b793b6a6d16207591caae9bf7e7a711ef37d1"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T03-20260917-r2.md",
+      "mergedAt": "2026-09-17",
+      "failReason": "attempt1 fail（B-1：units/io.md 未随实现做落位同步）——返工补 io.md v0.5 落位同步后 attempt2 pass"
     }
   ],
   "policy": {
@@ -1095,11 +1108,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "IO-T03",
-      "contractPath": "tasks/foundation/IO-T03.json",
-      "branch": "wp11-t03"
-    },
     {
       "taskId": "IO-T04",
       "contractPath": "tasks/foundation/IO-T04.json",
@@ -1184,5 +1192,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "b785350d-d782-4cf8-b06a-10ca0c9c5a1d"
+  "tickToken": "4b2e0e06-614c-4f10-97df-467ed714e824"
 }
