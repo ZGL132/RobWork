@@ -1940,6 +1940,36 @@
       "title": "IO-T04 第 3 笔提交 59573704 标题前缀 `[docs]` 与内容主体不符：该提交主体为 units/io.md 单元卡增量修订（v0.7）＋traceability 留痕——AGENTS §6.2 规定单元卡修订用 `[units]` 前缀（任务相关修订亦可用 `[WP-nn-Tkk]`，同单元先例 IO-T03 同类提交 cb2b793b 即用 `[WP-11-T04]`），`[docs]` 为治理文件（AGENTS.md 等）专用——F-012/F-027/F-179/F-180/F-185 提交标题风格家族同型再现。纯风格瑕疵：正文四段齐备、验证结论与留痕一致（验收者双模式从零复跑逐数值吻合），无任何失实",
       "owner": "实施流程纪律（随 F-027 标题风格家族统一治理——模板补救或提交前自查项）；不追溯已推送提交（AGENTS §6.3 禁止改写历史）",
       "resolution": "不构成 IO-T04 返工项（pass 判定不受影响，验收记录 §4.9 同款判级）；建议随标题风格家族治理一并处置（示例模板补齐『单元卡修订前缀选取』行）"
+    },
+    {
+      "id": "F-194",
+      "source": "traceability/acceptance/IO-T05-20260917.md §4.11②（验收 attempt 1，送验对象 7f4c1143）：实现文件实读发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "io/src/ResourceIo.cpp 使用 std::mutex/std::lock_guard（第 2095/2123/2269/2308 行——IRuntimeResourceAdapter 缓存/稳定区插入互斥，§8.6.3）但 include 列表无 <mutex>——现依赖 MSVC STL 经 <memory> 等传递包含侥幸编译（实测两模式零错误），属头文件自包含性/可移植性缺陷：换标准库实现或调整传递头即可能断编",
+      "owner": "io 单元后续任务（IO-T06/T07 实施顺手一行补 #include <mutex>，零行为变化）；验收记录 §4.11 同款判级（非空实现/非缩水，纯 include 卫生）",
+      "resolution": "不构成 IO-T05 返工项（pass 判定不受影响，双模式实测编译运行正常）；随 io 单元下一实现任务补齐即可消账"
+    },
+    {
+      "id": "F-195",
+      "source": "traceability/acceptance/IO-T05-20260917.md §4.9（验收 attempt 1，送验对象 7f4c1143）：三笔实施提交逐份实读发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "IO-T05 第 3 笔提交 7f4c1143 标题前缀 `[docs]` 与内容主体不符：该提交主体为 units/io.md 单元卡增量修订（v0.8）＋traceability 留痕——AGENTS §6.2 规定单元卡修订用 `[units]` 前缀（任务相关修订亦可用 `[WP-nn-Tkk]`），`[docs]` 为治理文件（AGENTS.md 等）专用——F-012/F-027/F-179/F-185/F-193 提交标题风格家族再现。纯风格瑕疵：正文四段齐备、验证结论与留痕一致（验收者双模式从零复跑 102/102 逐数值吻合），无任何失实",
+      "owner": "实施流程纪律（随 F-027 标题风格家族统一治理——模板补救或提交前自查项）；不追溯已推送提交（AGENTS §6.3 禁止改写历史）",
+      "resolution": "不构成 IO-T05 返工项（pass 判定不受影响，验收记录 §4.9 同款判级）；建议随标题风格家族治理一并处置"
+    },
+    {
+      "id": "F-196",
+      "source": "traceability/acceptance/IO-T05-20260917.md §4.8（验收 attempt 1，送验对象 7f4c1143）：findings.json 未关闭条目相关性核对发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "IO-FORMAT-XML-SYNTAX（IoErrorCode 第 59 值，io.md §9.12 v0.8 表尾追加——§6.1 XML 良构检查的解析器级失败码面）向 diagnostics 内置码表（§4.6 的 87 码清单）的收编确认未发生——F-192（IO-FORMAT-JSON-SYNTAX 同型在途）的新增同类项，P-IO-6『与 diagnostics 所有者收编确认』治理侧动作",
+      "owner": "diagnostics 单元所有者（内置码表扩编）——随 F-192 与 P-IO-6 全表收编确认一并处置",
+      "resolution": "io 侧注册面（ioCodeDescriptors/registerIoCodeTable，paramSchema [\"path\",\"row\",\"column\"]）已含本码并经真实 StableCodeRegistry 注册验证（IoDiagCodeTable 双清单机械比对 59 值/57 描述符同步）；内置清单收编滞后不影响运行（StableCodeRegistry 注册机制先于内置清单）"
     }
   ]
 }
