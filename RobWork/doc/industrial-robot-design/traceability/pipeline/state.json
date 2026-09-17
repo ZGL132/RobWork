@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 186,
+  "tickCount": 187,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-17T17:08:30+08:00",
+    "updatedAt": "2026-09-17T19:39:13+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1096,6 +1096,18 @@
       "acceptanceRecord": "traceability/acceptance/IO-T04-20260917.md",
       "mergedAt": "2026-09-17",
       "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 §4.7③ 合并时 findings.json 数组尾部冲突（HEAD 侧 F-193 vs 任务分支侧 F-191/F-192）按 PIPE 冲突即停转 blocked，所有者裁决三条目并存后续完（② 81b2876a、③ 16b4646a）"
+    },
+    {
+      "task": "IO-T05",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "b9e894cfa2923a9fe66d10e37a045c8cfb36852d",
+        "3019f4e67ad327b411f7db19bd803f1dc9f26dd0",
+        "7f4c1143b0037ddd9eee245b210823e83e1845ce"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T05-20260917.md",
+      "mergedAt": "2026-09-17"
     }
   ],
   "policy": {
@@ -1121,11 +1133,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "IO-T05",
-      "contractPath": "tasks/foundation/IO-T05.json",
-      "branch": "wp11-t05"
-    },
     {
       "taskId": "IO-T06",
       "contractPath": "tasks/foundation/IO-T06.json",
@@ -1200,5 +1207,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "944387d2-125b-4348-9f9c-05fa86d11962"
+  "tickToken": "2f8904f0-59b0-4aa1-a8b8-f58446c67dd8"
 }

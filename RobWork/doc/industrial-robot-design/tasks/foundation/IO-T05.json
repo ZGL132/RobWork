@@ -4,7 +4,7 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "资源导入服务与外部源检测（ResourceIo：reader/snapshotter/probe）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["IO-T02"],
   "requirements": ["NFR-REL-04", "NFR-SEC-02", "PM-01", "CON-03", "MDL-19"],
   "designRefs": ["units/io.md#12", "units/io.md#4.2.5", "units/io.md#6.2", "units/io.md#6.3", "units/io.md#6.5", "units/io.md#6.6", "units/io.md#8.1", "units/io.md#8.2", "units/io.md#8.3", "units/io.md#8.4", "units/io.md#9.6", "units/io.md#9.8"],
