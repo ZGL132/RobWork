@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 187,
+  "tickCount": 194,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-17T19:39:13+08:00",
+    "updatedAt": "2026-09-18T01:47:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1108,6 +1108,20 @@
       ],
       "acceptanceRecord": "traceability/acceptance/IO-T05-20260917.md",
       "mergedAt": "2026-09-17"
+    },
+    {
+      "task": "IO-T06",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "ae8a15a14535637f130bda24e9245a86ac9325f7",
+        "82aa537601187bf50012d7f0413bd3bc5d7178fb",
+        "16d7fee90b8810b027ff8019c407777dfe9f31f3",
+        "de10bec9ad496a66dd4327e2e61f0e410df6dde6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T06-20260917-r2.md",
+      "mergedAt": "2026-09-18",
+      "failReason": "attempt1 fail（4.9/4.10 验证留痕落位缺失——12 份现产日志未落库）——返工 de10bec9 重跑现产留痕后 attempt2 pass；收尾 §4.7③ 合并时 findings.json 尾部冲突（HEAD 侧 F-200/F-201 vs 任务分支侧 F-197，另有 F-194 open→fixed 翻转）按 PIPE 冲突即停转 blocked，所有者裁决并集并存后续完（② 89a277d3、③ fa865524）：F-197~F-201 五条目入主线（F-198/F-199 自 acc/IO-T06/1@a0a212b0 逐字转录，循 attempt2 记录 §4.8 指令），F-194 保留 fixed（fixedBy=16d7fee9）"
     }
   ],
   "policy": {
@@ -1133,11 +1147,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "IO-T06",
-      "contractPath": "tasks/foundation/IO-T06.json",
-      "branch": "wp11-t06"
-    },
     {
       "taskId": "IO-T07",
       "contractPath": "tasks/foundation/IO-T07.json",
@@ -1207,5 +1216,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "2f8904f0-59b0-4aa1-a8b8-f58446c67dd8"
+  "tickToken": "b4320b08-4623-4d37-89e1-2935442789b8"
 }
