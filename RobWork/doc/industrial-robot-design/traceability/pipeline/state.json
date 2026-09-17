@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 200,
+  "tickCount": 201,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -12,12 +12,12 @@
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
-    "fix": 0,
     "implement": 0,
-    "accept": 1
+    "fix": 1,
+    "accept": 2
   },
   "heartbeat": {
-    "updatedAt": "2026-09-18T05:01:28+08:00",
+    "updatedAt": "2026-09-18T07:00:57+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1135,6 +1135,18 @@
       "acceptanceRecord": "traceability/acceptance/IO-T07-20260918.md",
       "mergedAt": "2026-09-18",
       "failReason": "验收 attempt2 pass（attempt1＝验收派发中断重派，未产出 verdict、acc/IO-T07/1 分支未建立——零返工，fix 保持 0）；收尾 §4.7③ 合并时 findings.json 尾部冲突（HEAD 侧 F-203 vs 任务分支侧 F-202）按 PIPE 冲突即停转 blocked，所有者裁决并集并存后续完（② 259ba6ce、③ d98be7bc）：F-202/F-203 按编号序并存；F-198/F-199/F-203 随 ⑤ 治理收尾提交统一翻转 fixed（fixedBy=da13bb66，循 F-203 resolution 与 IO-T07-20260918.md §4.8）"
+    },
+    {
+      "task": "EX-T01",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "b0861ec2671d74e004d65e8724256c966fe6a130",
+        "a83a5ce476709c07de3d1a61f4580787f2c6ab43"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T01-20260918-r2.md",
+      "mergedAt": "2026-09-18",
+      "failReason": "attempt1 fail（4.9/4.10：九件验证日志被 .gitignore *.log 规则吞且未 add -f，留痕声称与在库不符）——返工 a83a5ce4 补交九件日志后 attempt2 pass；实施期检出窗口事故另见 F-205（治理提交一度误落本地主线，所有者治理会话 840688a9 实录并确认完整补救；任务侧最终以 b0861ec2 承载实现）"
     }
   ],
   "policy": {
@@ -1160,11 +1172,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "EX-T01",
-      "contractPath": "tasks/foundation/EX-T01.json",
-      "branch": "wp08-t01"
-    },
     {
       "taskId": "EX-T02",
       "contractPath": "tasks/foundation/EX-T02.json",
@@ -1224,5 +1231,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "108731a7-9c43-448a-b6a1-8f60f0ce0f0a"
+  "tickToken": "dc0bb160-c5e6-4cc5-a6c6-d8bf0c9ae708"
 }

@@ -4,7 +4,7 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "构建落位：execution 占位转真实库",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
   "designRefs": [
