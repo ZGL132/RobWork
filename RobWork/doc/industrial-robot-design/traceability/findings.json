@@ -1879,6 +1879,16 @@
       "title": "F-181 同型收尾落分支事故复发：tick#179 收尾②执行时主工作树仍停驻 wp11-t02（实施子代理建分支后停留所致，编排者未复核当前分支），验收记录合入误落任务分支（5af1ca54，未推送）——发现后 checkout redesign-main 复位重跑（②=a05f63e4、③=c1d01df5），内容零损失，origin/redesign-main 与 origin/wp11-t02 全程未污染；误落 merge 已随任务分支删除清理。F-181 已登记『PIPE/T-IMPL 模板增量修订候选』而修订未落地即复发",
       "owner": "governance（PIPE 增量修订落地防复发：T-ORCH 收尾②前置断言『当前分支必须＝redesign-main，否则先切回』；T-IMPL 完成输出增加『切回 redesign-main』步骤候选）",
       "resolution": "处置建议＝PIPE/T-ORCH/T-IMPL 增量修订尽快落地（两次同类事故防复发修订均未及落地）；本条不阻塞流水线例行推进"
+    },
+    {
+      "id": "F-188",
+      "source": "traceability/acceptance/IO-T03-20260917.md §4.8/S-1（验收 attempt 1，送验对象 64bdbcb00352141608620fb4c7c878fe0074bbc8，分支 wp11-t03）：io.md 文末落款行与卡头版本对照发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "io.md 文末落款行滞留『本文档结束（io 单元详细设计 v0.3……对应任务 WP-11-T01，构建落位 WP-11-T02 已随 IO-T01 完成。）』——与卡头 v0.4（IO-T02 落位同步）及实际进度（IO-T03 已送验）不一致；F-122 文档滞后家族残留，先于 IO-T03 diff 存在（v0.4 修订时未随迁落款行），非 IO-T03 引入",
+      "owner": "io 单元任务实施者（随 IO-T03 返工的 io.md v0.5 落位同步提交顺手更正）",
+      "resolution": "处置建议＝随 IO-T03 4.8 阻断返工（补 v0.5 落位同步）一并更正落款行版本与任务指向；建议后续单元卡落位同步把文末落款行纳入固定检查清单（T-IMPL 模板候选）。建议级，不单独构成返工项"
     }
   ]
 }
