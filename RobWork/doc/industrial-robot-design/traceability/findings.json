@@ -1970,6 +1970,16 @@
       "title": "IO-FORMAT-XML-SYNTAX（IoErrorCode 第 59 值，io.md §9.12 v0.8 表尾追加——§6.1 XML 良构检查的解析器级失败码面）向 diagnostics 内置码表（§4.6 的 87 码清单）的收编确认未发生——F-192（IO-FORMAT-JSON-SYNTAX 同型在途）的新增同类项，P-IO-6『与 diagnostics 所有者收编确认』治理侧动作",
       "owner": "diagnostics 单元所有者（内置码表扩编）——随 F-192 与 P-IO-6 全表收编确认一并处置",
       "resolution": "io 侧注册面（ioCodeDescriptors/registerIoCodeTable，paramSchema [\"path\",\"row\",\"column\"]）已含本码并经真实 StableCodeRegistry 注册验证（IoDiagCodeTable 双清单机械比对 59 值/57 描述符同步）；内置清单收编滞后不影响运行（StableCodeRegistry 注册机制先于内置清单）"
+    },
+    {
+      "id": "F-197",
+      "source": "IO-T06 实施段自登记（wp11-t06 实施会话，ird_gates 运行实录）——F-191 同类新增项",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "ird_gates IRD-GATE-LIB 词表未含 P-IO-3 冻结选型的 vcpkg 目标（libzip::zip/expat::expat）——IO-T06 按 §3.3『sdurws_ird_io_contract_test 随本任务登记』落地后，该契约测试目标为构造 .rwpack 测试替身链接 libzip::zip（与 sdurws_ird_io_test 的既有同款形态），ird_gates 在 F-191 的 3 处之外新增 1 处 LIB 命中（sdurws_ird_io_contract_test→libzip::zip；全量 15 处＝基线 14＋本处）；词表/引擎位于 industrialrobot/cmake/、DTB 登记位在 development-task-breakdown.md——均不在 IO-T06 契约 allowedFiles 内",
+      "owner": "门禁/构建约定所有者（DTB §5.1/ird_gates 辖域）——随 F-191 词表扩登一并消账（libzip::zip/expat::expat 一次扩入后本条与 F-191 同时归零）",
+      "resolution": "IO-T06 侧处置＝依赖本体按 P-IO-3 冻结裁决链接（测试替身写侧构造 .rwpack 样例——§11.1『恶意 zip 构造器』替身清单；T-1 允许形态：仅 _test/_contract_test 目标链接 testkit/第三方，产品目标不涉），新增命中在 build 留痕（gates-ird-gates-target.log）与 ird-test-report.json 与基线 14 处分列如实登记；不越权修改 ird_gates.cmake/whitelist 与 DTB"
     }
   ]
 }

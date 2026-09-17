@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "IO-T06",
+  "masterWp": "WP-11（io.md §12 IO-T06 行＝WP-11-T05/T07：包导入导出 io 侧设施＋固化中转 Package/TempArea/AtomicFile——§7.1~§7.8、§4.6、§9.9/§9.10）",
+  "branch": "wp11-t06",
+  "base": "0c778f51c281892c5037ea31f8cbb2c3db8ace14",
+  "date": "2026-09-17",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main）",
+  "targets": [
+    {
+      "target": "sdurws_ird_io",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，exit 0 零 error——integration-build.log 计 error=0；smoke-build.log 计 error=0）",
+      "notes": "IO-T06 落位（§3.4 布局同名任务文件）：公共头增列 Package.hpp/TempArea.hpp/AtomicFile.hpp（§3.1 表对应行）。src/ 增列 Package.cpp（导入九步协议 §7.3〔①选择/②临时区/③版本与条目名预检〔展开前——V13 零落盘〕/④展开＋预算磁盘/⑤逐文件哈希＋镜像结构/⑥引用完整性/⑦报告＋⑧前目标预检〔⑧发布归 project——文件无任何 rename API，N-7〕/⑨清理＋§7.6 失败/取消状态机：自动清理失败转 CleanupFailed 可重试〕与导出六步协议 §7.2〔枚举→逐文件暂存〔单文件读失败按快照重读恰一次——稳定版本语义/V18〕→manifest/rwpack canonical 写出〔totalDigest＝manifest canonical 字节摘要〕→压缩〔zip64；条目时间戳统一 createdAtUtc——IO-D11〕→完整性自检〔重开包全量复算〕→IAtomicFileWriter 原子替换〕；libzip 写侧消费点增登——zip_source_win32w_create 宽路径可写源＋zip_source_file 窄 UTF-8 入口）、TempArea.cpp（§7.5：三角色命名前缀、EquivKeyMutex 等价键互斥、io-session.json 标记的崩溃残留回收〔仅清带标记残留〕、幂等清理＋残留清单脱敏报告〔§7.6 CleanupFailed〕、availableBytes 可用空间探测〔等价增补——V20 注入面〕）、AtomicFile.cpp（§4.6：同目录 .tmp 暂存→FlushFileBuffers→ReplaceFileW/MoveFileExW 原子替换；abort 目标零接触）。ZipChannel.hpp/.cpp：ZipEntryInfo 表尾增补 attributeHostSystem/externalAttributes（步骤③ SP-4 symlink 属性展开前预检数据源）。私有头 src/IoPlatform.hpp 增登（UTF 转换/§4.2.5 四分类/display/8hex 标签单一实现点——NFR-MNT-04；ResourceIo.cpp 本地副本收编为 using 声明）。F-194 消账：ResourceIo.cpp 显式补 <mutex>"
+    },
+    {
+      "target": "sdurws_ird_io_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 116/116、smoke 116/116——本任务新增 IoPack/IoTemp/IoAtomic 14 用例，既有 IoSec/IoCsv/IoJson/IoZip/IoRes/IoSolidify/Budget/IoDiag 102 用例零回归）——契约 verify 命令（cmake --build build --config Release --target sdurws_ird_io_test）经 verify-task.log PASS（verify-task: PASS IO-T06）",
+      "notes": "新增 test/PackageTest.cpp：导出→导入 roundtrip（payload 逐字节还原＋cleanup 幂等）、IoPack/ZipBombRatio 与 ZipBombOverExpand（V12 两半边——SecBombRatio/SecBudgetExpand＋ledger 快照观测＋assertNoTarget）、DuplicateEntries（V13 同名×2 手工 zip）与 CaseDifferingEntryPair（V13 折叠键对）、TamperedPayloadHashMismatch（V14——manifest/totalDigest 自洽仅 payload 篡改，params entry 条目级定位）、ImportCancelMidExtract（V19——③~⑤逐条目检查点取消、临时区清理、diagnostics 空〔UX-03〕）、ManifestReferencingMissingArchiveEntry 与 MissingRequiredMirrorEntry（V29 两样本——IO-PACK-REF-INCOMPLETE 断裂链定位）、IoTempTest 3 用例（create 标记/清理幂等/等价键互斥/崩溃残留回收且无标记目录不触碰）、IoAtomicTest 2 用例（NeverOverwrite 拒绝/commit 原子替换/abort 目标零接触）。合法包经 libzip 写侧构造（与被测读侧互为独立实现），重复条目样例经手工字节构造"
+    },
+    {
+      "target": "sdurws_ird_io_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 8/8、smoke 8/8——§3.3 随本任务以真实用例登记，非预建空目标）",
+      "notes": "新增 contract_test/PackageContractTest.cpp（IoPackContract 组）：ExportConcurrentWrite（V18——fake 源首读失败注入，重读恰 2 次、包自洽经导入全绿、drafts 内容＝稳定版本 v2；持续失败半边＝目标不存在且临时区无残留）、DiskFull（V20——FaultTempAreaManager 注入可用 10 字节，IO-PACK-DISK-FULL required/available 比较型，清理成功终态 Failed）、CleanupFailed（V21——fake 首次清理失败，IO-PACK-CLEANUP-FAILED＋residual 清单无 \\\\?\\ 前缀〔脱敏〕，二次 cleanup 幂等成功转 Cleaned）、ExportCommitFailure 与 ExportFailurePreservesPreviousCompletePack（V23 两半边——fake commit 失败目标不存在；先前完整包逐字节保留）、BackgroundImportKeepsUiThreadResponsive（V31——24 MiB 大包后台线程导入，UI 线程打点最大间隙 <2s、进度回调全部落在任务线程〔io 不创建线程 §9.13〕、Verified）、CommittedVsStaged（V32——快照外落盘文件绝不入包，包条目枚举＝清单全等）。故障注入全部经 PackageIoFacilities 的 fake 适配层（§11.1 原则——不依赖真实磁盘满/删除失败；FaultTempAreaManager/FaultAtomicWriter 以真实实现为底覆写注入点）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "15 处命中＝wp11-t05 基线 14＋1 处新增（IRD-GATE-LIB：sdurws_ird_io_contract_test 链接 libzip::zip——contract_test 目标为构造 .rwpack 测试替身所需，与 sdurws_ird_io_test 既有同款形态；依赖本体＝P-IO-3 冻结裁决 c9613806/governance-log §1.9，词表扩登归门禁所有者——已自登记 findings.json F-197，与 F-191 同批消账后归零；留痕 gates-ird-gates-target.log）。11 处登记例外（diagnostics/evidence/policy/project/runtime 的 _test/_contract_test 直链 testkit＋testdata_lint 表外依赖/T-1×2＋project R4×1——DTB §4.5 登记册）维持不变；io 源码零 R-1/R-3/R-4/T-1 新增命中"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/IO-T06.json——前置引用/设计锚点/knownPitfalls 三查，留痕 validate-task.log）＋verify-task PASS（契约 verify 命令 cmake --build build --config Release --target sdurws_ird_io_test 与 --target sdurws_ird_io_contract_test 实跑零 error，留痕 verify-task.log/verify-target-io-*.log）",
+    "probeCapability": "V12 比例半边以 200KiB 全零 DEFLATE 条目（压缩比≫100:1）触发 IO-SEC-BOMB-RATIO（声明面 chargeArchive 预检——零解压拒绝），超展开半边以 3×512KiB 伪随机 STORED（比例≈1 排除比例判据干扰）＋tighten ArchiveExpandedBytes=1MiB 触发 IO-SEC-BUDGET-EXPAND，两半边均带 ledger 快照观测（ArchiveRatio 维 limit=100 断言）与临时区清理/目标零写入结构性断言；V13 同名×2 以手工字节 zip 构造（libzip 写侧不便编排同名条目），断言展开前 payload 树零落盘；仅大小写异对经 libzip 写侧构造（折叠键查重路径）；V14 以『manifest/totalDigest 自洽仅 payload 篡改一字节』的正样本构造（切断 totalDigest 失配的混淆路径），params entry 精确定位被篡改条目；V19 以进度回调在第 3 条目检查点置位令牌，断言返回 IO-CANCELLED＋state=Canceled＋diagnostics 空〔UX-03 状态非错误〕＋临时区清理＋目标零创建；V29 幽灵引用（manifest 自洽但归档缺条目）与必备缺失（无 payload/HEAD）分别以 params entry 定位；V18 以 failFirstNReads 注入极窄窗口，断言重读恰 2 次＋包导入全绿＋drafts 内容为完整 v2（openZipChannel 独立取证），持续失败半边断言目标不存在；V20/V21 以 FaultTempAreaManager 注入（availableBytes 固定 10 字节/cleanup 首次失败），不依赖真实磁盘故障；V23 以 FaultAtomicWriter.commit 失败注入与先前完整包逐字节保留双向断言；V31 以 24MiB 大包＋std::thread 任务线程替身，UI 线程 5ms 节拍打点最大间隙 <2s＋进度回调线程 id≠UI 线程（io 不创建线程——§9.13）；V32 断言包条目枚举与快照清单全等且无 .staging/drafts 残留条目",
+    "pitfall": "P-IO-1/O-09 处置（acceptance 5）：ISnapshotFileSource/发布入口以 project fake 注入（FakeSnapshotSource 即 L5/project 注入形态）——io 公共头零 project/runtime 类型与头依赖（Package.hpp 仅消费 core Digest 与 io 自有类型），不私裁补边（P-PR-5/O-09 裁决申请维持登记在途——DTB §4.2 O-09 行『不阻塞注入式先行设计』口径）；P-IO-2 处置（acceptance 5）：IRuntimeResourceAdapter 按 §8.6 五条裁决实现——IO-T05 已落位（ResourceIo.hpp makeRuntimeResourceAdapter＋IoSolidifyTest 既有用例逐条钉住），本任务零新码、如实引用既有证据；P-IO-7 处置（acceptance 5）：§7.8 目录包文件名/清单 schema 未预写——本任务仅承载 .rwpack 协议（§7.1~§7.7），selection 字段字典注册归阶段 C（§13.2）。knownPitfalls 四项均无未决阻断",
+    "acceptanceStructural": "acceptance 4 结构性保证的执行面：Package.hpp/IPackageImporter 类型层面无 rename/发布 API（发布归 project——§7.7、§2.1 N-7）；导入通道不触达 .staging（内容仅来自 ZIP 容器）；导出通道仅读 ISnapshotFileSource 清单（清单外不读——V32）；V12~V14/V19~V21 全部失败样例与 V18/V20/V21/V23 契约样例均带『目标目录从未创建＋.rwpack-import-*/导出临时区无残留』的结构性断言（assertNoTarget/expectNoTarget）"
+  },
+  "testSuites": [
+    {
+      "suite": "IoPack/ZipBomb（IO-V12——acceptance 1）",
+      "designRef": "units/io.md §7.4 威胁矩阵（压缩炸弹行）、§4.5.2（包通道预算/双重计数/饱和算法）、§9.9；需求 NFR-SEC-02、PM-05",
+      "cases": [
+        { "name": "IoPackTest.ZipBombRatioAbortsAndCleansStaging", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V12——高压缩比包（200KiB 全零 DEFLATE）IO-SEC-BOMB-RATIO 中止＋临时区清理＋目标零写入＋ledger 快照（ArchiveRatio limit=100）可观测" },
+        { "name": "IoPackTest.ZipBombOverExpandAbortsOnBudgetExpand", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V12——累计展开超收紧预算（3×512KiB 伪随机 STORED＋tighten 1MiB）IO-SEC-BUDGET-EXPAND 中止＋清理＋零写入（比例≈1 排除比例判据干扰——判据正交性对照）" }
+      ]
+    },
+    {
+      "suite": "IoPack/DuplicateEntries（IO-V13——acceptance 1）",
+      "designRef": "units/io.md §4.3.3 P-4 表末行（折叠键重复）、§7.3 步骤③『展开前！』、§7.4 重复条目行；需求 NFR-SEC-01",
+      "cases": [
+        { "name": "IoPackTest.DuplicateEntriesRejectedBeforeExtraction", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V13——同名条目×2（手工字节 zip）步骤③ IO-PACK-DUPLICATE-ENTRY 整体拒绝；payload 树零落盘断言（展开前）＋目标零写入" },
+        { "name": "IoPackTest.CaseDifferingEntryPairRejectedAsDuplicate", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V13——仅大小写异条目对（A/a）折叠键查重同样拒绝（Windows 落盘冲突预防）" }
+      ]
+    },
+    {
+      "suite": "IoPack/HashMismatch（IO-V14——acceptance 1）",
+      "designRef": "units/io.md §7.3 步骤⑤『展开即验』、§7.4 哈希不匹配行；需求 PM-05",
+      "cases": [
+        { "name": "IoPackTest.TamperedPayloadHashMismatchLocatedPerEntry", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V14——manifest/totalDigest 自洽仅 payload 篡改一字节：IO-PACK-HASH-MISMATCH＋params entry 精确定位（条目级）＋整体拒绝＋清理＋零写入" }
+      ]
+    },
+    {
+      "suite": "IoPack/ImportCancel（IO-V19——acceptance 2）",
+      "designRef": "units/io.md §7.3 步注（每条目检查点）、§9.13、UX-03；需求 PM-05、AT-20",
+      "cases": [
+        { "name": "IoPackTest.ImportCancelMidExtractCleansAndEmitsNoDiagnostic", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/IO-V19——展开阶段（第 3 条目检查点）取消：IO-CANCELLED 返回＋state=Canceled＋diagnostics 空（无 Canceled 诊断——UX-03）＋临时区清理＋目标零写入" }
+      ]
+    },
+    {
+      "suite": "IoPack/ImportRefIntegrity（IO-V29——acceptance 3）",
+      "designRef": "units/io.md §7.3 步骤⑥、§7.4 缺失文件行；需求 PM-05、SEL-02（文件层支撑——字段字典/单位/唯一性归 selection，本用例仅文件层闭合核对）",
+      "cases": [
+        { "name": "IoPackTest.ManifestReferencingMissingArchiveEntryRejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V29——manifest 引用不存在条目（幽灵条目、manifest 自洽）：IO-PACK-REF-INCOMPLETE＋params entry 定位断裂链" },
+        { "name": "IoPackTest.MissingRequiredMirrorEntryRejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V29——镜像缺必备文件（无 payload/HEAD）：IO-PACK-REF-INCOMPLETE＋定位缺失必备条目（§7.1 恒在集）" }
+      ]
+    },
+    {
+      "suite": "IoPack/ExportImportRoundtrip（AT-20 主线 io 侧——acceptance 2 前置）",
+      "designRef": "units/io.md §7.2/§7.3 全链、§7.1 逐字节镜像；需求 PM-05、AT-20",
+      "cases": [
+        { "name": "IoPackTest.ExportImportRoundtripRestoresPayloadBytewise", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2——fake 快照源导出（IO-D11 固定时间戳）→导入 Verified（哈希全量复算全绿）→payload 逐字节还原断言→cleanup 幂等（Cleaned＋临时区消失）" }
+      ]
+    },
+    {
+      "suite": "IoPackContract/ExportConcurrentWrite（IO-V18——acceptance 2）",
+      "designRef": "units/io.md §7.2 场景表『导出期间后台写入并存』（D-17/稳定版本语义）；需求 PM-05",
+      "cases": [
+        { "name": "IoPackContractTest.ExportConcurrentWriteRereadsStableVersion", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/IO-V18——drafts 键首读失败（fake 极窄窗口注入）→按快照重读恰一次（readCounts=2）→包自洽（导入全绿）→drafts 内容＝完整 v2（openZipChannel 独立取证——无混合版本）" },
+        { "name": "IoPackContractTest.ExportConcurrentWritePersistentFailureLeavesNoTarget", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/IO-V18 失败半边——重读仍失败→导出失败，目标包不存在＋导出临时区无残留（不产出混合版本包）" }
+      ]
+    },
+    {
+      "suite": "IoPackContract/DiskFull（IO-V20——acceptance 2）",
+      "designRef": "units/io.md §7.3 步骤④、§7.4 磁盘不足行；需求 PM-05",
+      "cases": [
+        { "name": "IoPackContractTest.DiskFullReportsRequiredAvailableAndCleansUp", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/IO-V20——fake TempAreaManager 注入可用 10 字节：IO-PACK-DISK-FULL（required/available/unit 比较型三要素）＋清理成功（终态 Failed 非 CleanupFailed）＋目标零写入" }
+      ]
+    },
+    {
+      "suite": "IoPackContract/CleanupFailure（IO-V21——acceptance 2）",
+      "designRef": "units/io.md §7.5 残留报告行、§7.6 CleanupFailed 终态；需求 PM-05",
+      "cases": [
+        { "name": "IoPackContractTest.CleanupFailedListsResiduesAndRetrySucceeds", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/IO-V21——fake 首次清理失败：IO-PACK-CLEANUP-FAILED＋residual0/1 清单（无 \\\\?\\ 前缀——脱敏 display）＋state=CleanupFailed；二次 cleanup 幂等成功→Cleaned＋目标零写入" }
+      ]
+    },
+    {
+      "suite": "IoPackContract/ExportStagingOnly（IO-V23——acceptance 2）",
+      "designRef": "units/io.md §4.6 失败分段、§7.2⑥；需求 PM-05、MDL-20、AT-20",
+      "cases": [
+        { "name": "IoPackContractTest.ExportCommitFailureLeavesNoTargetFile", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/IO-V23——fake atomic commit 失败：导出失败且目标 .rwpack 不存在（原子替换未发生——仅暂存）" },
+        { "name": "IoPackContractTest.ExportFailurePreservesPreviousCompletePack", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/IO-V23——先前完整包在场＋源持续读失败：目标内容逐字节保留（MDL-20『导出失败恢复先前输出』）" }
+      ]
+    },
+    {
+      "suite": "IoPackContract/BackgroundNonBlocking（IO-V31——acceptance 3）",
+      "designRef": "units/io.md §9.13（io 不创建线程/同步可取消库调用）、§11.2 V31 行；需求 NFR-PERF-01/02、AT-34",
+      "cases": [
+        { "name": "IoPackContractTest.BackgroundImportKeepsUiThreadResponsive", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V31——24MiB 大包后台任务线程导入：UI 线程 5ms 节拍打点最大间隙 <2s（无 >2s 无响应窗口）＋进度回调线程 id≠UI 线程（§9.13.4 同步回调在驱动线程）＋导入 Verified" }
+      ]
+    },
+    {
+      "suite": "IoPackContract/CommittedVsStaged（IO-V32——acceptance 3）",
+      "designRef": "units/io.md §7.2②『清单外文件一概不读』、§7.1 镜像纪律；需求 PM-05、NFR-REL-01（D-17）",
+      "cases": [
+        { "name": "IoPackContractTest.CommittedVsStagedOnlySnapshotEntriesPacked", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3/IO-V32——快照外落盘文件（.staging 残留/未提交 drafts）：包条目枚举与快照清单全等（存在≠已提交）" }
+      ]
+    },
+    {
+      "suite": "IoPack/FailureNoTarget 总断言（acceptance 4）",
+      "designRef": "units/io.md §7.6 状态图、§7.7 责任切分、§2.1 N-7；需求 PM-05、AT-20",
+      "cases": [
+        { "name": "（结构性断言面——分布于上述全部失败样例）", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4——V12 两半边/V13×2/V14/V19/V29×2（unit）与 V18 持续失败/V20/V21/V23×2（contract）全部样例跑后 assertNoTarget/expectNoTarget：目标目录从未创建＋.rwpack-import-*/导出临时区前缀零残留；io 侧无 rename 发布 API（类型层面排除）且不读 .staging（内容仅来自 ZIP 容器与快照清单）" }
+      ]
+    },
+    {
+      "suite": "IoTemp/临时区单元契约（acceptance 2/5 设施面）",
+      "designRef": "units/io.md §7.5/§9.10；需求 PM-05、CON-03",
+      "cases": [
+        { "name": "IoTempTest.CreateMarksAndCleanupIsIdempotent", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.5 标记/清理行——io-session.json 标记写入＋cleanup 删除会话根＋二次 cleanup 幂等成功＋availableBytes 探测（等价增补真实半边）" },
+        { "name": "IoTempTest.EquivalentKeyMutexAllowsSingleSession", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.5 互斥行/§4.2.4——同 baseDir 同前缀第二会话 IO-RES-LOCK-CONFLICT；释放后可再建；PackExport 前缀命名（.<name>.<8hex>.tmp）与跨角色隔离" },
+        { "name": "IoTempTest.CrashResidueWithMarkerRecoveredWithoutMarkerUntouched", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.5 崩溃残留行——含 io-session.json 标记的同前缀残留被回收；无标记用户目录绝不触碰（『绝不误删用户目录』负断言）" }
+      ]
+    },
+    {
+      "suite": "IoAtomic/原子写出单元契约（acceptance 2 设施面——V23 结构基础）",
+      "designRef": "units/io.md §4.6/§9.10；需求 MDL-20、PM-05",
+      "cases": [
+        { "name": "IoAtomicTest.PreparePolicyAndCommitReplace", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.6 ReplacePolicy——NeverOverwrite 拒绝既有目标（IO-PACK-TARGET-EXISTS）且目标不变；OverwriteAtomic commit 原子替换＋无 .tmp 残留" },
+        { "name": "IoAtomicTest.AbortLeavesTargetUntouched", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.6 失败分段——abort 清理暂存、目标逐字节保留（先前输出）＋幂等 abort" }
+      ]
+    }
+  ]
+}
