@@ -2065,6 +2065,26 @@
       "title": "流水线实施段活跃期间（phase=implementing），主线工作树被实施者会话占用——此时段的并行治理修订存在工作树竞态：实施者 checkout 任务分支会无冲突携带治理会话的未提交改动，治理会话随后的 commit 即落错分支（本次 f607bb80 落于 wp08-t01）。PIPE §7『单工作树＝单轨道：流水线占用工作区期间请勿并行手动实施』条文未涵盖治理修订会话这一主体。事故已完整补救：f607bb80 cherry-pick 至 redesign-main（b9c39cf9，已推送）后 wp08-t01 重置回 2673b21b（执行前核实实施者零提交、零未提交产物），state.json 备份/恢复逐字节一致，validate-state PASS——任务分支送验对象未被污染",
       "owner": "PIPE 文档所有者（§7 工作树纪律是否扩展至治理/所有者会话的修订裁决）",
       "resolution": "处置建议（待所有者裁决，不自动生效）：①治理/所有者修订会话提交前强制核对 git branch --show-current==redesign-main（最小防线，零成本）；②修订动作尽量安排在 phase∈{idle,blocked} 窗口（实施者不占用工作树）；③§7 条文增补治理会话主体。不构成任何在飞任务（tick#201）的返工项——实施产物与 state 写回未受影响"
+    },
+    {
+      "id": "F-206",
+      "source": "traceability/acceptance/EX-T01-20260918.md#4.9（attempt 1，送验对象 b0861ec2671d74e004d65e8724256c966fe6a130，提交 b0861ec2）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "F-012/F-023/F-024/F-026/F-027/F-030 同型再现：EX-T01 送验提交 b0861ec2 标题『execution 单元构建落位：INTERFACE 占位升级 STATIC 真实库』以单元名词开头，非动词开头——ACC §4.9/AGENTS §6.3 提交标题字面要求未满足；正文四段齐备、数值结论经验收者亲手复跑全部证实（双模式构建零错误、测试 7/7＋5/5、ird_gates 17 命中零新增），纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012/F-023/F-024/F-026/F-027/F-030 合并处置（提交模板补动词开头示例，句式如『落地 execution 单元构建（…升级…）』）；对已推送历史（b0861ec2）不追溯改写（AGENTS §6.3）。编号顺延自 F-205，合入时由所有者确认与并行 evidence 分支无撞车。注意：EX-T01 attempt 1 判 fail 的阻断依据是另一独立事实（九件验证日志声称入库而 0 件在库——验收记录 4.9/4.10），与本条风格瑕疵无关，勿混淆。"
+    },
+    {
+      "id": "F-207",
+      "source": "traceability/acceptance/EX-T01-20260918-r2.md#4.10（attempt 2，送验对象 a83a5ce476709c07de3d1a61f4580787f2c6ab43）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "gates 留痕日志系统性含双重编码乱码（UTF-8 中文输出被按 GBK 误读后再编为 UTF-8，如『命中 17 项』呈『鍛戒腑 17 椤?』），影响 gates-ird-gates-target.log 人读质量；实测 wp02-t08/wp02-t10/wp02-t11/wp04-t01/wp04-t12/wp05-t02/wp05-t03/wp05-t04/wp11-t07 等全基线同型日志均带同一缺陷——捕获侧环境特征，非本任务引入（本任务 integration/smoke-build.log 为干净 UTF-8 零乱码；日志内 ASCII 门禁码 IRD-GATE-* 可正常 grep，机器可读性不受损）",
+      "owner": "构建留痕规范（DTB §5 留痕口径所有者）",
+      "resolution": "建议在留痕口径层面统一捕获管道编码（msbuild/cmake 捕获前切控制台 UTF-8：chcp 65001 或 PowerShell [Console]::OutputEncoding=UTF-8），向后修复新留痕；既有基线日志不追溯改写。不构成任何在飞任务的返工项"
     }
   ]
 }
