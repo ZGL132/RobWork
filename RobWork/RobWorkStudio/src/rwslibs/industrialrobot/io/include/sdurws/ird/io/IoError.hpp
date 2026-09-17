@@ -59,8 +59,9 @@ namespace sdurws::ird::io {
 
 // =====================================================================
 // IoErrorCode——io 单元稳定错误码全表（units/io.md §9.12 建议值 57 值
-// ＋IO-T04 表尾追加 1 值＝58 值；枚举顺序＝§9.12 表行序，表尾追加纪律
-// 见 FormatJsonSyntax 成员注）。每个枚举成员注释末尾给出其稳定
+// ＋IO-T04 表尾追加 1 值＋IO-T05 表尾追加 1 值＝59 值；枚举顺序＝§9.12
+// 表行序，表尾追加纪律见 FormatJsonSyntax/FormatXmlSyntax 成员注）。
+// 每个枚举成员注释末尾给出其稳定
 // token（§9.12 原文连字符串面，如 "IO-FORMAT-CSV-DIALECT"）——token 是
 // 跨进程/持久化产物中的码面标识，枚举成员名是 C++ 侧拼写（C++ 标识符
 // 不允许连字符），两者一一对应，映射关系一经交付不得改义。
@@ -166,8 +167,19 @@ enum class IoErrorCode : std::uint16_t {
     // 的码面——JSON 族其余码各有所辖（NUMBER 仅数值字面量）。按本头
     // "只允许表尾追加并走单元卡增量修订"纪律补登（§9.12 JSON 族行同步、
     // §15.5 变更记录 v0.7、ioCodeDescriptors 同步注册）。
-    FormatJsonSyntax       ///< "IO-FORMAT-JSON-SYNTAX"——JSON 语法层违例（非数值字面量的
-};                         ///< 结构/记号非法；数值字面量语法非法仍归 IO-FORMAT-JSON-NUMBER）
+    FormatJsonSyntax,      ///< "IO-FORMAT-JSON-SYNTAX"——JSON 语法层违例（非数值字面量的
+                           ///< 结构/记号非法；数值字面量语法非法仍归 IO-FORMAT-JSON-NUMBER）
+
+    // ---- 表尾追加（IO-T05 落位——DTB §5.4 单元卡增量修订）----
+    // 卡面缺口补登（IO-T04 同款先例）：§6.1 把"XML 良构检查"登记为 io
+    // 文件层读取职责（§6.2/§6.5 依赖树遍历的第一道文件层闸），但 §9.12
+    // XML/网格族只有 IO-FORMAT-XML-CYCLE（循环）与 IO-FORMAT-MESH-UNKNOWN
+    // （网格识别失败）两个码——良构性违例（标签不闭合/属性语法错/编码
+    // 违例等解析器级失败）无码面可归。静默把坏 XML 当无依赖叶子放行会
+    // 违背 §2.5"格式错误不得转化为放行"，故按表尾追加纪律补登（§9.12
+    // XML 族行同步、§15.5 变更记录 v0.8、ioCodeDescriptors 同步注册）。
+    FormatXmlSyntax        ///< "IO-FORMAT-XML-SYNTAX"——资源 XML 良构性违例（依赖树遍历的
+};                         ///< 解析器级失败；循环仍归 IO-FORMAT-XML-CYCLE，互不混用）
 
 /**
  * @brief io 错误值类型：稳定码＋上下文参数＋原始细节（§9.0 公共约定
