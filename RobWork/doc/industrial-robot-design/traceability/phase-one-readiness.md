@@ -34,7 +34,7 @@
 | O-25 / P-RPT-6 | reporting §14.3 已裁决不留 PDF 专用接口桩 | 设计级关闭；只同步消费者，不改需求范围 |
 | P-PR-6 / P-EX-8 / P-DIAG-5 | diagnostics 已编写，但 sink 名称/归属统一仍未裁决 | 不因卡片存在而自动消账；相关真实装配前完成接口确认 |
 | P-PR-5 / P-IO-1 / P-RPT-1～3 | 注入、包编解码、正式写入与 L5 适配仍有交接项 | 不新增 project→io、reporting→io/runtime 编译依赖；受影响任务逐项阻塞 |
-| P-IO-3 | ZIP/XML 选型尚待 vcpkg 可用性与版本登记 | IO-T04 保持阻塞条件，不擅自选库 |
+| P-IO-3 | ZIP/XML 选型已冻结（2026-09-17 所有者裁决：ZIP＝libzip 1.11.4、XML＝expat 2.8.3，经 vcpkg x64-windows——依据 IO-T01 探针＋io.md §15.3；登记 governance-log §1.9 closed） | IO-T04 解除阻塞；L1 文件/XML 目标链接登记随 IO-T04 实现 |
 | CR-06 | TK-T04/05 依赖 CORE-T04/05 实现后的 API diff；DOC-T04（2026-09-11）已将 CORE-T04/05 置 ready（契约内 CR-06 门禁 acceptance 条目原样保留） | TK-T04/05 保持 planned；不能仅凭详设置 ready，须待 CORE-T04/05 实现后 API diff 通过 |
 | O-03 | ARCHITECTURE v0.11 仍 Draft | 未擅自 Accepted；发现实际架构冲突的任务停止并登记，不阻塞既定 M0 落位 |
 | M0～M3 | 本次没有执行构建、产品测试、ird_gates | 不宣布任何实现里程碑通过；各任务按 DTB §5.2 DoD 留痕 |
@@ -48,7 +48,7 @@
 | io 包装配与 project→io 依赖（P-PR-5/P-IO-1） | 无编译边，注入式先行；补边与否待架构所有者裁决 | IO-T06 限定"io 侧 rename 发布/读 .staging 禁止"；PRJ-T18（阶段 B）落位实体 |
 | reporting 写入通道（P-RPT-1～3） | reports/ 写入经 project 归档端口协调，reporting 不直写磁盘；L5 适配交接 | RPT-T09（IReportArtifactSink 契约＋Fake）、RPT-T12（L5 适配建议） |
 | 摘要接口（RPT-T12 ↔ runtime §9.7 交接） | ModelSummary/ITaskStatusSource schema 未冻结——冻结留痕前不做消费端实现 | RPT-T12 acceptance 限定"schema 冻结留痕" |
-| ZIP/XML 选型（P-IO-3） | 待 vcpkg 可用性与版本登记 | IO-T04 阻塞条件写入契约（未冻结不执行） |
+| ZIP/XML 选型（P-IO-3） | 已冻结：ZIP＝libzip 1.11.4、XML＝expat 2.8.3（2026-09-17 所有者裁决，登记 io.md §15.3＋governance-log §1.9） | IO-T04 契约 blocked 触发条件解除（契约文本不回改，实施前置已满足） |
 
 ## 3. 可执行顺序与任务准备
 

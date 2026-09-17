@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.5（IO-T03 落位同步；v0.4＝IO-T02 落位同步；v0.3＝IO-T01 落位同步；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
+| 文档版本 | v0.6（P-IO-3 选型冻结登记；v0.5＝IO-T03 落位同步；v0.4＝IO-T02 落位同步；v0.3＝IO-T01 落位同步；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-17 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试通过或正式验收） |
 | 文档代号 | UNIT-IO |
@@ -1684,7 +1684,7 @@ Xacro 展开机制实现（护栏已定）；`ResourceKind` 扩展（DAE 完整/
 
 | ID | 风险 | 影响 | 缓解 |
 | --- | --- | --- | --- |
-| R-IO-1 | ZIP/XML 第三方库选型（P-IO-3）未冻结，IO-T04 阻塞 | 进度 | 候选已列（libzip/miniz；expat/pugixml），vcpkg 可用性验证前置到 IO-T01 |
+| R-IO-1 | ZIP/XML 第三方库选型（P-IO-3）**已冻结**（2026-09-17 所有者裁决，见 §15.3），IO-T04 解除阻塞 | 进度 | 候选已列（libzip/miniz；expat/pugixml），vcpkg 可用性验证前置到 IO-T01——已完成并留痕（io-pio3-dependency-probe.md）；冻结登记见 §15.3 P-IO-3 与 governance-log §1.9 |
 | R-IO-2 | Windows reparse point/长路径行为与文档偏差 | 安全边界 | SP-6 句柄级复核（final-path）纵深；V11 用例覆盖 symlink/junction；实现期对照官方文档复核 |
 | R-IO-3 | 注入式协作（P-IO-1）增加 L5 装配代码 | 装配复杂度 | IoRuntime 单一入口收口；若架构补边可零改动直连 |
 | R-IO-4 | CSV 方言嗅针（无标识文件分隔符统计）在边界样本上不稳定 | 用户体验 | 探测失败→稳定诊断＋显式选择路径（REQ-05 映射 UI）；永不静默猜测 |
@@ -1697,7 +1697,7 @@ Xacro 展开机制实现（护栏已定）；`ResourceKind` 扩展（DAE 完整/
 | --- | --- | --- | --- | --- | --- |
 | P-IO-1 | ARCH §3.5 未登记 io↔project、io↔runtime 边，而 PM-05/CON-03/runtime §8.6 需要协作 | ARCH §3.5"表外边＝构建失败"；project.md P-PR-5；runtime.md §3.2 注入登记 | 编译形态 | **io 侧已免依赖**：注入式（IO-D02）先行可用、接口契约与裁决无关；建议架构统一处置：a) 补登 project→io（接口依赖，无环）＋确认 runtime 注入为正式形态（本文推荐）；或 b) 全注入式 | 架构所有者（P-PR-5 同案合并裁决） |
 | P-IO-2（=P-RT-6 关闭） | ResourceBytes 指针生命周期 | runtime.md §15.3 P-RT-6（裁决者＝io 详设所有者） | runtime/io 实现 | **本文裁决**（§8.6 五条：最低至下次调用、实际至析构、并发安全、Recorded 不缓存、值拷贝兼容） | 已裁决（io）；runtime 侧按此同步其文档表述 |
-| P-IO-3 | ZIP 与 XML 解析库选型（vcpkg：libzip/miniz；expat/pugixml 或 RobWork 自带 XML） | NFR-DEP-03（离线）、NFR-SEC-05（依赖清单）、确定性导出 | IO-T04 | 建议：ZIP＝libzip（成熟/zip64）；XML＝expat（流式/小）；随 IO-T01 验证 vcpkg 可用性后冻结 | WP-11 评审（实现期） |
+| P-IO-3 | ZIP 与 XML 解析库选型（vcpkg：libzip/miniz；expat/pugixml 或 RobWork 自带 XML） | NFR-DEP-03（离线）、NFR-SEC-05（依赖清单）、确定性导出 | IO-T04 | **已冻结（2026-09-17 所有者裁决）**：ZIP＝libzip 1.11.4、XML＝expat 2.8.3（均经 vcpkg x64-windows 经典模式，版本以仓库根 vendored `vcpkg/` ports 树为准）——沿用本表原建议；依据＝IO-T01 候选全集可用性验证（`traceability/io-pio3-dependency-probe.md`）＋libzip 安装树头文件复核（zipconf.h 1.11.4；`ZIP_EM_AES_128/256` 加密方法枚举——§7.1 包加密拒绝语义只需检测；62 处 `zip_uint64_t` 原生 64 位 API——zip64 形态）；expat 已随裁决装机＋二进制缓存就绪（NFR-DEP-03 首装离线风险消除）；miniz/pugixml/RobWork 自带 XML 落选留档；L1 文件/XML 目标链接登记仍随 IO-T04（§3.3） | WP-11 评审（实现期）——已裁决（governance-log §1.9 同步 closed） |
 | P-IO-4 | §4.5.1 预算默认数值表冻结 | NFR-SEC-02 未定数值 | 产品行为 | 数值＝本卡建议默认（Draft）；包通道四维强制不可放宽已定；请架构/评审确认数值档位 | 架构评审（数值可见性） |
 | P-IO-5 | CSV 方言标识行 v1 语法（`#rwcsv1`）冻结 | NFR-SEC-03 未定语法 | 导出文件格式 | 语法已给全（§5.1）；请确认后视为 v1 冻结（此后变更走方言版本升级） | 需求/架构评审（格式可见性） |
 | P-IO-6 | 诊断码 IO-\* 建议值收编 | diagnostics.md §12（码值随 io 卡注册） | 诊断稳定性 | §9.12 建议值；随 IO-T02 向 StableCodeRegistry 注册时与 diagnostics 收编确认 | diagnostics 所有者 |
@@ -1731,7 +1731,8 @@ Xacro 展开机制实现（护栏已定）；`ResourceKind` 扩展（DAE 完整/
 | v0.3 | 2026-09-17 | IO-T01（≙WP-11-T02）落位同步：§1.2"io 构建骨架"行更新——`sdurws_ird_io` 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 core＋diagnostics——§3.3 两条登记边），`io/CMakeLists.txt` 新建、`IoFwd.hpp`/`IoError.hpp` 公共头就位（§3.1 表前两行）、`src/Io.cpp` 锚点翻译单元（零接口实现预建）；P-IO-3 候选库 vcpkg 可用性验证完成并留痕（`traceability/io-pio3-dependency-probe.md`——R-IO-1 前置处置；选型冻结权仍归 WP-11 评审，L1 文件/XML 目标冻结后随 IO-T04 登记）；测试目标不预建（§12 IO-T01 禁止项，随 IO-T06/T07）。双模式构建零错误＋红线扫描零新增命中（留痕 `traceability/builds/wp11-t01/`）。设计正文（§2~§14）零变更。 |
 | v0.4 | 2026-09-17 | IO-T02（≙WP-11-T03）落位同步：①§4/§9.1/§9.2/§9.12 的实现落位——`SafePath.hpp/.cpp`（PathRole/NormalizedPath/SafePathRuleSet/ISafePathResolver＋EquivKeyMutex，§4.2.4/§9.10"会话互斥经等价键"的原语随 SafePath 头承载，§3.1 头内容表按此增记）、`Budget.hpp/.cpp`（BudgetDimension/BudgetSpec/IBudgetGuard/BudgetLedgerSnapshot——§3.1 表名 `BudgetLedger` 与实现名 `BudgetLedgerSnapshot` 的命名等价依 §9.0 条款在此补记〔IO-T02 返工补正，命名等价此前未登记〕；§9.2 建议签名两处等价调整：openScope 增带默认 parent 参数〔§4.5.2 多阶段累计 scope 成树所需〕、增补 chargeArchive 承载 ArchiveRatio 双侧记账〔压缩/展开分别记录后比较〕）、`IoDiagnostics.hpp/.cpp`（IO-\* 码表 55 值向 StableCodeRegistry 注册——P-IO-6 执行面；码值＝§9.12 建议值逐字〔含连字符展开的 IO-SEC-PATH-SYMLINK，正文简写 IO-SEC-SYMLINK 同指〕；与 diagnostics 所有者的内置表收编确认随验收请求提请，不在实现侧扩编 diagnostics 单元）；②P-IO-4 处置——§4.5.1 建议默认/硬上限数值逐维落位为 Draft 档位常量并测试钉住（TempAreaBytes 硬上限取编译期项"展开预算×2"，磁盘项由临时区会话运行时收紧）；③`sdurws_ird_io_test` 提前随 IO-T02 以真实用例登记（契约 verify 命令指向该目标；§12 IO-T01 禁止项语义＝无内容占位目标——本落位非预建空目标；`_contract_test` 仍随 IO-T06/T07）；④`IoFwd.hpp` 增补 IoResult\<void\> 特化（§9.1/§9.2 动作型接口的返回形态——IO-T01 类型契约头的补全）。设计正文语义零变更。双模式构建零错误＋测试 20/20 双模式通过（IO-V09/V10/V11/V06＋三要素/双保险/账本/码表/头红线——留痕 `traceability/builds/wp11-t02/`）；ird_gates 零 io 命中（基线例外集与 wp09-t09 登记口径同源）。 |
 | v0.5 | 2026-09-17 | IO-T03（≙WP-11-T04）落位同步：CSV 读写器实现落位——`Csv.hpp/.cpp`（§3.1 表 Csv.hpp 行内容清单按实现刷新：`CsvEol`/`CsvEncoding`/`CsvDialect`〔含 rwDefault〕/转义原语 `escapeCsvText`·`unescapeCsvText`·`renderDialectMarker`/`CsvCell`/`CsvArityPolicy`/`CsvBlankPolicy`/`CsvReadOptions`/`CsvRowView`/`CsvRowError`/`CsvParseReport`/`RawTable`/`CsvOutputTarget`/`CsvWriteOptions`/`ICsvReader`/`ICsvWriter`/工厂 `makeCsvReader`·`makeCsvWriter`）；`IoDiagnostics` 增补逐行列定位助手 `makeRowColError`（IO-T02 头注"随首个消费者 CSV 通道落位"的兑现——§5.8 诊断脱敏/定位语义不变）；`sdurws_ird_io_test` 增列 `test/CsvTest.cpp`（IoCsvTest 20 用例——§11.2 IO-V01~V05）。§9.0"签名均为实现建议……实现期允许等价调整，语义不变"条款覆盖的等价调整四项登记：①§9.4 `open` 首参——卡面 `IOutputTarget&&` → 实现 `CsvOutputTarget&&`（io 自有公共承载类型：MemoryBuffer/FilePath 两类别；§4.6 `IAtomicFileWriter` 原子目标随 IO-T06 `AtomicFile.hpp` 落位后收编）；②§9.3 `probe`/`read` 签名增补尾随参数 `BudgetScopeId budgetScope = {}`（承载前置"budget scope 已开"——调用方可传已收紧的 scope，缺省 0＝reader 自开内部子 scope）；③§9.3 `CsvReadOptions` 增补 `retainRows`（后置"RawTable 可配置保留行"的选项承载，缺省 false＝流式交付不在表内重复存储）与 `stopOnFirstRowError`（§5.6"StopOnFirstError 可选"的选项承载，缺省 false＝继续解析并收集全部行错误）；④无标识文件读取形态——卡面 §9.3"单遍流式"→ 实现"嗅探遍＋交付遍两遍"（带标识文件直接采用标识行方言，无标识文件先探测编码/分隔符再逐行交付；对外回调与 RawTable 语义不变）。设计正文（§2~§14）语义零变更。双模式构建零错误＋测试 40/40 双模式通过（IoCsvTest 20 用例＋IO-T01/T02 既有 20 用例零回归——留痕 `traceability/builds/wp11-t03/`）；ird_gates 零 io 命中（基线 11 处与 wp11-t02 登记口径同源）。P-IO-5 处置随实现登记：方言标识行 v1 语法按 §5.1 已给全文实现（渲染与卡面示例逐字节钉住、封闭键集外拒绝不猜测），冻结确认仍待需求/架构评审，实现侧未私改语法；此后变更走方言版本升级（不就地改 v1 语义）。 |
+| v0.6 | 2026-09-17 | P-IO-3 选型冻结登记（所有者裁决，非实现落位修订）：ZIP/XML 第三方库选型冻结——ZIP＝libzip 1.11.4、XML＝expat 2.8.3（均经 vcpkg x64-windows 经典模式，版本以仓库根 vendored ports 树为准），沿用 §15.3 原建议；依据＝IO-T01 候选全集可用性验证留痕（traceability/io-pio3-dependency-probe.md）＋libzip 安装树头文件复核（zipconf.h 1.11.4、62 处 zip_uint64_t 原生 64 位 API——zip64 形态、ZIP_EM_AES_128/256 加密方法枚举——§7.1 包加密拒绝语义只需检测）；expat 已随裁决装机＋二进制缓存就绪（NFR-DEP-03 首装离线风险消除）。§15.2 R-IO-1 同步消账、§15.3 P-IO-3 置已冻结；governance-log §1.9 同步 closed（消账留痕即本版本）。IO-T04（WP-11-T05）解除阻塞；L1 文件/XML 目标链接登记仍随 IO-T04（§3.3）。设计正文（§2~§14）零变更。 |
 
 ---
 
-**本文档结束**（io 单元详细设计 v0.5，状态 `Draft`；构建落位进度：骨架随 IO-T01、SafePath/BudgetGuard 随 IO-T02、CSV 读写器随 IO-T03 落位完成。）
+**本文档结束**（io 单元详细设计 v0.6，状态 `Draft`；构建落位进度：骨架随 IO-T01、SafePath/BudgetGuard 随 IO-T02、CSV 读写器随 IO-T03 落位完成；P-IO-3 选型冻结随 v0.6 登记。）

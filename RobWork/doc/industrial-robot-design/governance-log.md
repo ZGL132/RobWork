@@ -127,7 +127,7 @@
 | --- | --- | --- | --- | --- |
 | P-IO-1 | io↔project/io↔runtime 边未登记（同源：O-09/P-PR-5） | 架构所有者 | open | io 侧已免依赖（IO-D02 注入先行）；与 P-PR-5/P-RPT-1 同案合并裁决 |
 | P-IO-2 | ResourceBytes 生命周期（=P-RT-6，同源：O-17） | io 详设所有者 | **closed** | io §8.6 五条裁决（2026-09-10）；实现测试待 IO-T05/06 |
-| P-IO-3 | ZIP/XML 库选型（libzip/miniz；expat/pugixml） | WP-11 评审（实现期） | open | IO-T04 保持阻塞条件（phase-one §2.1 确认）；vcpkg 可用性验证后冻结 |
+| P-IO-3 | ZIP/XML 库选型（libzip/miniz；expat/pugixml） | WP-11 评审（实现期） | **closed** | 2026-09-17 所有者裁决冻结：ZIP＝libzip 1.11.4、XML＝expat 2.8.3（vcpkg x64-windows 经典模式，版本以仓库根 vendored ports 树为准）——依据 IO-T01 候选全集可用性验证（traceability/io-pio3-dependency-probe.md）＋io.md §15.3 原建议；expat 已随裁决装机＋缓存预热；io.md v0.6 同步登记；IO-T04 解除阻塞 |
 | P-IO-4 | §4.5.1 预算默认数值表冻结 | 架构评审 | open | 数值＝本卡建议默认（Draft） |
 | P-IO-5 | CSV 方言标识行 v1 语法（`#rwcsv1`）冻结 | 需求/架构评审 | open | 语法已给全；确认后视为 v1 冻结 |
 | P-IO-6 | IO-\* 诊断码建议值收编 | diagnostics 所有者 | open | 随 IO-T02 注册时与 diagnostics 收编确认 |
@@ -223,7 +223,7 @@
 
 ## 4. 状态汇总与维护规则
 
-- 汇总（2026-09-10）：P-\* 93 项——closed 9（P-ENV-1/P-ENV-2/P-TK-1/P-POL-1/P-RT-6/P-IO-2/P-RPT-6/P-RT-9/P-POL-9；其中 P-RT-6 与 P-IO-2 为同案双登记，去重后 8 案）、partial 5（P-TK-3/P-PR-4/P-EX-5/P-POL-8/P-RPT-8）、stale 2（P-EV-6/P-POL-6）、open 77；O-\* 33 项——closed 6（O-04/O-05/O-06/O-17/O-21/O-25）、deferred 1（O-28）、open 26。
+- 汇总（2026-09-17）：P-\* 93 项——closed 10（P-ENV-1/P-ENV-2/P-TK-1/P-POL-1/P-RT-6/P-IO-2/P-IO-3/P-RPT-6/P-RT-9/P-POL-9；其中 P-RT-6 与 P-IO-2 为同案双登记，去重后 9 案）、partial 5（P-TK-3/P-PR-4/P-EX-5/P-POL-8/P-RPT-8）、stale 2（P-EV-6/P-POL-6）、open 76；O-\* 33 项——closed 6（O-04/O-05/O-06/O-17/O-21/O-25）、deferred 1（O-28）、open 26。
 - 维护规则：①各卡/DTB 增量修订消账后，其任务提交或紧随治理提交同步翻转本表对应行（留痕＝消账文档版本/验收记录/findings 编号）；②本表不新增待裁决项——新待裁决一律先登记到所属卡/DTB §4，再在本表补行（保持权威方向）；③发现本表与卡/DTB 不一致：以卡/DTB 为准回改本表并在提交信息注明。
 
 ## 5. 与 phase-one-readiness.md 状态口径的一致性核对（acceptance 第 3 条）
@@ -234,7 +234,7 @@
 | O-25/P-RPT-6 已裁决不留 PDF 桩 | §1.10/§2 状态 closed | ✔ 一致 |
 | P-PR-6/P-EX-8/P-DIAG-5 sink 统一未裁决（"不因卡片存在而自动消账"） | §1.6/§1.7/§1.8 三项 open | ✔ 一致 |
 | P-PR-5/P-IO-1/P-RPT-1~3 注入先行、交接项保留 | §1.6/§1.9/§1.10 open＋备注 | ✔ 一致 |
-| P-IO-3 选型待 vcpkg 验证（IO-T04 阻塞） | §1.9 open | ✔ 一致 |
+| P-IO-3 选型已冻结（2026-09-17 所有者裁决，IO-T04 解除阻塞） | §1.9 closed | ✔ 一致 |
 | O-03 ARCH Draft 未 Accepted | §2 open | ✔ 一致 |
 | project 文档完整性（"只有 §1~§7 已过时"） | P-EV-6/P-POL-6 状态 stale（登记过时待翻转） | ✔ 一致（本表进一步区分"事实已消、卡内未翻转"的 stale 态） |
 
