@@ -147,6 +147,11 @@ IoResult<void> AtomicTarget::write(std::string_view bytes)
         return out;   // 空块 no-op——调用方循环驱动的边界豁免
     }
     // 单次 WriteFile（≤DWORD 上限；调用方以 1 MiB 块驱动，不触顶）。
+    // 前置契约（findings F-198 处置②——注释钉死，IO-T07）：单块 size ≤
+    // DWORD 上限 4 GiB−1；实际调用面（Package 导出暂存/CSV/JSON 写出通道）
+    // 以 1 MiB 块循环驱动且总量受 SingleFileBytes 硬上限 2 GiB 管辖（
+    // Budget.cpp 维表）——越界单块属调用方契约违例，不为不可达分支付
+    // 截断语义（静默截断 4 GiB 写为部分写）。
     const DWORD want = static_cast<DWORD>(
         bytes.size() > 0xFFFFFFFFull ? 0xFFFFFFFFull : bytes.size());
     DWORD written = 0;

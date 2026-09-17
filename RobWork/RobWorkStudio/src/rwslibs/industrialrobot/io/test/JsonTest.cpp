@@ -27,6 +27,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
@@ -198,6 +200,10 @@ protected:
  */
 TEST_F(IoJsonTest, SchemaUnknownKeyRejectedWithLocation)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V07 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-DEP-04", "PM-06", "REQ-12"},
+                  std::vector<std::string>{"AT-22"});
     auto reader = makeStructuredDataReader(makeRegistryWithTestProfile());
     JsonReadOptions opt;
     const IoString profileId = "ird-test/1";
@@ -237,6 +243,10 @@ TEST_F(IoJsonTest, PreserveSubtreePassedThrough)
  */
 TEST_F(IoJsonTest, SchemaVersion999FutureRejectWithUpgradeData)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V07 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-DEP-04", "PM-06", "REQ-12"},
+                  std::vector<std::string>{});
     auto reader = makeStructuredDataReader(makeRegistryWithTestProfile());
     JsonReadOptions opt;
     const IoString profileId = "ird-test/1";
@@ -306,6 +316,10 @@ TEST_F(IoJsonTest, VersionGateMissingTypeAndPrecedesSchema)
  */
 TEST_F(IoJsonTest, DuplicateKeyRejectedWithLocationAndNestingScoping)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V07 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-DEP-04", "PM-06", "REQ-12"},
+                  std::vector<std::string>{});
     auto reader = makeStructuredDataReader(nullptr);   // 仅语法/安全层（无 profile）
     JsonReadOptions opt;   // profileId=null——manifest 等内部件口径
     // 顶层重复：第二个 "a" 在第 1 行第 8 字节列起（{=1、"a"=2..4、:=5、
@@ -333,6 +347,10 @@ TEST_F(IoJsonTest, DuplicateKeyRejectedWithLocationAndNestingScoping)
  */
 TEST_F(IoJsonTest, RequiredMissingLocatedAndNoDefaultInjection)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V07 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-DEP-04", "PM-06", "REQ-12"},
+                  std::vector<std::string>{});
     auto reader = makeStructuredDataReader(makeRegistryWithTestProfile());
     JsonReadOptions opt;
     const IoString profileId = "ird-test/1";
@@ -401,6 +419,10 @@ TEST_F(IoJsonTest, UnregisteredProfileIdMapsToInternal)
  */
 TEST_F(IoJsonTest, NanInfLiteralsRejectedAsNumber)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V08 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
     auto reader = makeStructuredDataReader(nullptr);
     JsonReadOptions opt;
     for (const char* doc : {"{\"x\":NaN}", "{\"x\":Infinity}", "{\"x\":-Infinity}"}) {
@@ -431,6 +453,10 @@ TEST_F(IoJsonTest, NanInfLiteralsRejectedAsNumber)
  */
 TEST_F(IoJsonTest, NumberOverflowRejectedUnderflowAccepted)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V08 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
     auto reader = makeStructuredDataReader(nullptr);
     JsonReadOptions opt;
     IoResult<JsonDocument> r = reader->parseBytes("{\"x\":1e999}", opt, nullptr, nullptr);
@@ -452,6 +478,10 @@ TEST_F(IoJsonTest, NumberOverflowRejectedUnderflowAccepted)
  */
 TEST_F(IoJsonTest, DeepNestingTriggersDepthBudget)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V08 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
     auto reader = makeStructuredDataReader(nullptr);
     JsonReadOptions opt;
     // 100 层嵌套数组 > 默认 64——第 65 层递归前拒绝（先比后递归——栈安全）。
@@ -471,6 +501,10 @@ TEST_F(IoJsonTest, DeepNestingTriggersDepthBudget)
  */
 TEST_F(IoJsonTest, OversizedStringTriggersStringBudget)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V08 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
     auto reader = makeStructuredDataReader(nullptr);
     JsonReadOptions opt;
     // 16 Mi＋1 个 ASCII 字符的字符串（默认限额 16 Mi 码点——越界 1 码点

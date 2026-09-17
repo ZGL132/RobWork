@@ -36,6 +36,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 #include <algorithm>
 #include <atomic>
 #include <cstdint>
@@ -532,6 +534,10 @@ TEST_F(IoPackTest, ExportImportRoundtripRestoresPayloadBytewise)
 /// IO-SEC-BOMB-RATIO 中止；临时区清理；目标零写入；ledger 快照可观测。
 TEST_F(IoPackTest, ZipBombRatioAbortsAndCleansStaging)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V12 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02", "PM-05"},
+                  std::vector<std::string>{"AT-20"});
     // HEAD＝200 KiB 全零（DEFLATE 压至约百字节级）→ 比例远超 100:1。
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
     payload[0].second = std::string(200 * 1024, '\0');
@@ -569,6 +575,10 @@ TEST_F(IoPackTest, ZipBombRatioAbortsAndCleansStaging)
 /// IO-SEC-BUDGET-EXPAND 中止；近不可压数据（比例≈1）排除比例判据干扰。
 TEST_F(IoPackTest, ZipBombOverExpandAbortsOnBudgetExpand)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V12 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02", "PM-05"},
+                  std::vector<std::string>{"AT-20"});
     // 3×512 KiB 伪随机（STORED——比例 1:1，只让"累计展开"触限）。
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
     payload.push_back({"payload/objects/obj-b/blob1.bin", pseudoRandomBytes(512 * 1024, 1)});
@@ -603,6 +613,10 @@ TEST_F(IoPackTest, ZipBombOverExpandAbortsOnBudgetExpand)
 /// IO-PACK-DUPLICATE-ENTRY 整体拒绝；展开前零落盘（临时区未产生）。
 TEST_F(IoPackTest, DuplicateEntriesRejectedBeforeExtraction)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V13 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01", "PM-05"},
+                  std::vector<std::string>{"AT-20"});
     // 手工构造：payload/HEAD 出现两次（字节不同——"后写覆盖先写"歧义
     // 的载体）；manifest/rwpack 按合法集合自洽。
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
@@ -650,6 +664,10 @@ TEST_F(IoPackTest, DuplicateEntriesRejectedBeforeExtraction)
 /// （§4.3.3 P-4 表末行——落盘冲突预防）。
 TEST_F(IoPackTest, CaseDifferingEntryPairRejectedAsDuplicate)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V13 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01", "PM-05"},
+                  std::vector<std::string>{"AT-20"});
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
     payload.push_back({"payload/objects/A", std::string("upper")});
     payload.push_back({"payload/objects/a", std::string("lower")});
@@ -687,6 +705,10 @@ TEST_F(IoPackTest, CaseDifferingEntryPairRejectedAsDuplicate)
 /// IO-PACK-HASH-MISMATCH 且 params entry 精确定位被篡改条目；整体拒绝。
 TEST_F(IoPackTest, TamperedPayloadHashMismatchLocatedPerEntry)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V14 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05"},
+                  std::vector<std::string>{"AT-20"});
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
     const fs::path packFile = m_root / "tampered.rwpack";
     // 先构造合法包（manifest 自洽），再用"篡改字节＋原 manifest"重建
@@ -733,6 +755,10 @@ TEST_F(IoPackTest, TamperedPayloadHashMismatchLocatedPerEntry)
 /// 临时区清理、目标零写入、无任何诊断（取消是状态非错误——UX-03）。
 TEST_F(IoPackTest, ImportCancelMidExtractCleansAndEmitsNoDiagnostic)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V19 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05", "NFR-PERF-02"},
+                  std::vector<std::string>{"AT-20"});
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
     for (int i = 0; i < 5; ++i) {
         payload.push_back({"payload/objects/obj-a/f" + std::to_string(i) + ".bin",
@@ -777,6 +803,10 @@ TEST_F(IoPackTest, ImportCancelMidExtractCleansAndEmitsNoDiagnostic)
 /// payload 条目→IO-PACK-REF-INCOMPLETE 且定位到缺失条目（断裂链定位）。
 TEST_F(IoPackTest, ManifestReferencingMissingArchiveEntryRejected)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V29 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05", "SEL-02"},
+                  std::vector<std::string>{});
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
     // manifest 多声明一个幽灵条目（有真实形状的摘要/大小，但归档无此
     // 条目）——manifest 与 totalDigest 自洽（切断其他判据）。
@@ -814,6 +844,10 @@ TEST_F(IoPackTest, ManifestReferencingMissingArchiveEntryRejected)
 /// IO-PACK-REF-INCOMPLETE 且定位到缺失的必备条目（§7.1 恒在集）。
 TEST_F(IoPackTest, MissingRequiredMirrorEntryRejected)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V29 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05", "SEL-02"},
+                  std::vector<std::string>{});
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
     payload.erase(payload.begin());   // 去掉 payload/HEAD
     const fs::path packFile = buildValidPack(m_root / "no-head.rwpack", payload);
@@ -957,4 +991,52 @@ TEST_F(IoAtomicTest, AbortLeavesTargetUntouched)
     EXPECT_FALSE(fs::exists(t.value.tempPath())) << "abort 未清理暂存";
     // 幂等 abort（失败路径统一调用形态）。
     EXPECT_TRUE(writer->abort(t.value));
+}
+
+// =====================================================================
+// F-199 消账用例（IO-T07——acceptance 1/V19 覆盖深度）：begin 入口预取消
+// =====================================================================
+
+/// 验证（IO-V19 覆盖深度——F-199 建议的"begin 入口预取消"样例）：预置
+/// 位取消令牌传入 begin→入口检查点立即取消：返回 IO-CANCELLED、无会话
+/// 产物（值轨道空）、无临时区残留（隐藏前缀 .rwpack-* 目录不存在）、
+/// 目标零写入、无诊断（取消是状态非错误——UX-03）。
+TEST_F(IoPackTest, ImportCancelAtBeginPreCancelledTokenLeavesNoArtifacts)
+{
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V19 行（覆盖深度消账
+    // findings F-199）；ird-test-report.json 需求/AT 字段）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05", "NFR-PERF-02"},
+                  std::vector<std::string>{"AT-20"});
+
+    const fs::path packFile = buildValidPack(m_root / "cancel-begin.rwpack",
+                                             standardPayload());
+    const fs::path targetDir = m_root / "target";
+
+    auto importer = sdurws::ird::io::makePackageImporter();
+    PackageImportOptions options;
+    options.targetDir = targetDir;
+    options.budget = BudgetSpec::packImportHardened();
+
+    // 预置位令牌（一经真值不复位）——begin 的入口检查点必须先于一切
+    // 副作用（临时区创建/归档打开前的落盘动作）响应取消。
+    FlagToken cancel;
+    cancel.cancel();
+
+    auto session = importer->begin(packFile, options, &cancel, {});
+    ASSERT_FALSE(session) << "预取消未被 begin 入口响应";
+    EXPECT_EQ(session.error.code, IoErrorCode::Cancelled)
+        << "取消返回码非 IO-CANCELLED";
+    // 无诊断（UX-03——取消不是错误，不落诊断；错误面仅状态码不带参数）。
+    EXPECT_TRUE(session.error.params.empty())
+        << "取消错误面携带参数（应仅状态返回）";
+    // 临时区零残留：目标父目录（本用例工作区）无任何 .rwpack- 隐藏前缀
+    // 目录（§7.5 PackImport 命名前缀——展开面只存在于该前缀内）。
+    std::error_code ec;
+    for (fs::directory_iterator it(m_root, ec), end; !ec && it != end; it.increment(ec)) {
+        const std::wstring name = it->path().filename().wstring();
+        EXPECT_TRUE(name.rfind(L".rwpack-", 0) != 0)
+            << "预取消残留临时区：" << it->path();
+        EXPECT_TRUE(name.rfind(L"target", 0) != 0)
+            << "预取消创建了目标目录";
+    }
 }

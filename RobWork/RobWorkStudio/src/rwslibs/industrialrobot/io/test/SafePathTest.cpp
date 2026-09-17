@@ -26,6 +26,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 // Win32（junction 创建经 mklink；GetProcessMemoryInfo 供峰值内存观测——
 // BudgetTest 同款）：宏守卫防重定义告警。
 #ifndef WIN32_LEAN_AND_MEAN
@@ -119,6 +121,10 @@ void expectRelKey(const IoResult<NormalizedPath>& r, const std::string& relKey, 
  */
 TEST_F(IoSecTest, PathTraversalP4IllegalTableRejectedWithExactCodes)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V09 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01"},
+                  std::vector<std::string>{});
     struct Row {
         const wchar_t* input;
         IoErrorCode code;
@@ -214,6 +220,10 @@ TEST_F(IoSecTest, PathTraversalP4LegalRowsAndBatchDuplicateDetection)
  */
 TEST_F(IoSecTest, PathTraversalP5IllegalTableRejectedWithExactCodes)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V09 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01"},
+                  std::vector<std::string>{});
     const fs::path root = projectRoot();
     struct Row {
         const wchar_t* input;
@@ -279,6 +289,10 @@ TEST_F(IoSecTest, PathTraversalP5LegalRowsAccepted)
  */
 TEST_F(IoSecTest, SameProjectAltPathsEquivalentKeysAndSessionMutex)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V10 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01"},
+                  std::vector<std::string>{});
     // 实体目录（真实存在——canonical 取实路径大小写）。
     const fs::path real = m_dir / L"ProjRoot";
     std::error_code ec;
@@ -344,6 +358,10 @@ TEST_F(IoSecTest, SameProjectAltPathsEquivalentKeysAndSessionMutex)
  */
 TEST_F(IoSecTest, SymlinkJunctionEscapeRejectedWithIoSecSymlink)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V11 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01"},
+                  std::vector<std::string>{});
     const fs::path root = projectRoot();
     std::error_code ec;
     // 布景：资源区实体＋区外目标。

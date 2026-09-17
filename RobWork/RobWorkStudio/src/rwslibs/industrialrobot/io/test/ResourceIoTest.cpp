@@ -33,6 +33,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -190,6 +192,10 @@ protected:
 /// 环上全部相对键（§6.2"列出环路径"；观测点"环清单内容"）。
 TEST_F(IoResTest, CyclicIncludeReportsCycleWithPathList)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V15 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02", "MDL-19"},
+                  std::vector<std::string>{});
     writeText("a.xacro", xacroDoc({"b.xacro"}));
     writeText("b.xacro", xacroDoc({"a.xacro"}));
 
@@ -208,6 +214,10 @@ TEST_F(IoResTest, CyclicIncludeReportsCycleWithPathList)
 /// IO-V15：自包含（A→A 自环）同样拒绝——环检测的最小情形（§6.2"自包含"）。
 TEST_F(IoResTest, SelfIncludeReportsCycle)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V15 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02", "MDL-19"},
+                  std::vector<std::string>{});
     writeText("self.xacro", xacroDoc({"self.xacro"}));
 
     const IResourceReaderPtr reader = makeResourceReader();
@@ -223,6 +233,10 @@ TEST_F(IoResTest, SelfIncludeReportsCycle)
 /// 深度双保险"的深度半边）。
 TEST_F(IoResTest, IncludeChainBeyondDepthTriggersIncludeBudget)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V15 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02", "MDL-19"},
+                  std::vector<std::string>{});
     // n01→n02→…→n17：17 个文件，链深 17 > 默认 16。
     for (int i = 1; i <= 17; ++i) {
         char cur[16];
@@ -306,6 +320,10 @@ TEST_F(IoResTest, MalformedXmlReportsSyntaxCodeWithLocation)
 /// 预算比对（超限即拒，不读体）"；观测点"触发时机读前"）。
 TEST_F(IoResTest, BinaryStlDeclaredFacesLyingRejectedBeforeBodyRead)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V16 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
     // 头声明 1,000,000 面，实体只有头（84 字节）——声明与实际严重不符。
     const fs::path p = write("lie.stl", binaryStl(1000000u, 0u));
 
@@ -334,6 +352,10 @@ TEST_F(IoResTest, BinaryStlDeclaredFacesLyingRejectedBeforeBodyRead)
 /// 读中"；"真实计数与预检不符→以实际计数触发预算"）。
 TEST_F(IoResTest, AsciiStlRealOversizeTriggersMeshBudgetMidRead)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V16 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
     const fs::path p = writeText("real.stl", asciiStl(12));     // 真实 12 面
 
     auto guard = makeBudgetGuard();
@@ -459,6 +481,10 @@ private:
 /// 检查通过（属性读保留）、失败发生在数据面打开——分类语义被精确钉住）。
 TEST_F(IoResTest, AclDeniedReadMapsToAccessDeniedNotNotFound)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V25 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01"},
+                  std::vector<std::string>{});
     const fs::path p = writeText("secret.txt", "top secret content\n");
 
     aclutil::DenyReadGuard guard(p);
@@ -488,6 +514,10 @@ TEST_F(IoResTest, AclDeniedReadMapsToAccessDeniedNotNotFound)
 /// 资源码＋清单，无业务语义字段）。
 TEST_F(IoResTest, DependencyTreeMissingLeafReportsMissingList)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V26 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-REL-04", "MDL-19"},
+                  std::vector<std::string>{});
     writeText("root.xacro", xacroDoc({"alive.xacro", "gone-a.xacro", "gone-b.xacro"}));
     writeText("alive.xacro", xacroDoc({}));
 
@@ -511,6 +541,10 @@ TEST_F(IoResTest, DependencyTreeMissingLeafReportsMissingList)
 /// 文件重复读取 digest 必须相同"——确定性 NFR-COR-01 的资源面）。
 TEST_F(IoResTest, SnapshotDigestStableAcross100Reads)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V27 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-REL-04", "CON-05"},
+                  std::vector<std::string>{});
     std::vector<std::uint8_t> bytes(1024);
     for (std::size_t i = 0; i < bytes.size(); ++i) {
         bytes[i] = static_cast<std::uint8_t>(i * 7 + 3);
@@ -538,6 +572,10 @@ TEST_F(IoResTest, SnapshotDigestStableAcross100Reads)
 /// 不改变 digest"）。
 TEST_F(IoResTest, RenameDoesNotChangeDigestPathIsNotIdentity)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V27 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"CON-05"},
+                  std::vector<std::string>{});
     const std::vector<std::uint8_t> bytes = {static_cast<std::uint8_t>('r'), static_cast<std::uint8_t>('e'),
                                              static_cast<std::uint8_t>('n'), static_cast<std::uint8_t>('a'),
                                              static_cast<std::uint8_t>('m'), static_cast<std::uint8_t>('e')};

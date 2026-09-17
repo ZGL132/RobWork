@@ -37,6 +37,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 #include <algorithm>
 #include <cstdint>
 #include <filesystem>
@@ -134,6 +136,10 @@ protected:
  */
 TEST_F(BudgetTest, StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V06 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02", "NFR-PERF-03"},
+                  std::vector<std::string>{});
     // ①生成 10⁶ 行 CSV（每行 "i,cell-i"≈12 字节——文件约 12 MB）。
     const std::uint64_t kTotalRows = 1000000;
     const fs::path csv = m_dir / L"big.csv";

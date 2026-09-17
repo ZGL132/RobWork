@@ -378,6 +378,11 @@ bool writeBytesToFile(const std::filesystem::path& dest, const std::string& byte
         return false;
     }
     // 单次 WriteFile（≤DWORD 上限——调用方按预算 SingleFileBytes 有界）。
+    // 前置契约（findings F-198 处置②——注释钉死，IO-T07）：调用方必须
+    // 保证 bytes.size() ≤ SingleFileBytes 硬上限 2 GiB（Budget.cpp 维表；
+    // 展开落盘/导出暂存两条通路的字节均先经该维预检与 ZipChannel budget
+    // scope 读取面），2 GiB < 4 GiB 截断阈值——越界输入属调用方契约违例，
+    // 本函数不为不可达分支付截断语义（静默截断 4 GiB 写为部分写）。
     const DWORD want = static_cast<DWORD>(bytes.size() > 0xFFFFFFFFull
                                               ? 0xFFFFFFFFull
                                               : bytes.size());

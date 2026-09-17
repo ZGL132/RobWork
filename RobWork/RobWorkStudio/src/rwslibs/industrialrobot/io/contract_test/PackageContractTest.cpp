@@ -35,6 +35,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -230,7 +232,8 @@ std::vector<std::pair<std::string, std::string>> standardPayload()
 }
 
 fs::path buildValidPack(const fs::path& file,
-                        const std::vector<std::pair<std::string, std::string>>& payload)
+                        const std::vector<std::pair<std::string, std::string>>& payload,
+                        std::int32_t payloadMethod = ZIP_CM_STORE)
 {
     std::string totalDigestHex;
     const std::string manifestJson = buildManifestJson(payload, &totalDigestHex);
@@ -243,10 +246,124 @@ fs::path buildValidPack(const fs::path& file,
     entries.push_back(ZipEntrySpec{PackFormat::kRwpackEntryName, rwpackJson, ZIP_CM_DEFLATE});
     entries.push_back(ZipEntrySpec{PackFormat::kManifestEntryName, manifestJson, ZIP_CM_DEFLATE});
     for (const auto& kv : payload) {
-        entries.push_back(ZipEntrySpec{kv.first, kv.second, ZIP_CM_STORE});
+        // payloadMethod：V22 比例炸弹样例需要 DEFLATE（全零高压缩）——
+        // 其余样例保持 STORE（压缩方法与哈希/展开校验语义正交）。
+        entries.push_back(ZipEntrySpec{kv.first, kv.second, payloadMethod});
     }
     makeArchiveViaLibzip(file, entries);
     return file;
+}
+
+// =====================================================================
+// V22 聚合负断言所需的本地构造助手（PackageTest.cpp 同款口径——自持
+// 不跨文件共享：伪随机字节、手工 zip 小端字节流与 CRC-32）
+// =====================================================================
+
+/// 伪随机不可压缩字节（LCG——超展开量样例的近 STORED 数据源；确定性
+/// 生成——同参数同字节，失败可复现）。
+std::string pseudoRandomBytes(std::size_t n, std::uint32_t seed)
+{
+    std::string out(n, '\0');
+    std::uint32_t state = seed;
+    for (std::size_t i = 0; i < n; ++i) {
+        state = state * 1664525u + 1013904223u;
+        out[i] = static_cast<char>((state >> 16) & 0xFF);
+    }
+    return out;
+}
+
+/// 手工 zip 小端追加（恶意样例构造——重复条目需容器层容忍，libzip 写
+/// 侧不便编排同名条目，故手工字节）。
+void appendU16(std::string& out, std::uint16_t v)
+{
+    out.push_back(static_cast<char>(v & 0xFF));
+    out.push_back(static_cast<char>((v >> 8) & 0xFF));
+}
+
+void appendU32(std::string& out, std::uint32_t v)
+{
+    for (int i = 0; i < 4; ++i) {
+        out.push_back(static_cast<char>((v >> (8 * i)) & 0xFF));
+    }
+}
+
+/// CRC-32（IEEE 802.3，zip 口径——测试侧独立表驱动实现）。
+std::uint32_t crc32Of(const std::string& s)
+{
+    static std::uint32_t table[256];
+    static const bool ready = [] {
+        for (std::uint32_t i = 0; i < 256; ++i) {
+            std::uint32_t c = i;
+            for (int k = 0; k < 8; ++k) {
+                c = (c & 1) != 0 ? 0xEDB88320u ^ (c >> 1) : c >> 1;
+            }
+            table[i] = c;
+        }
+        return true;
+    }();
+    (void)ready;
+    std::uint32_t c = 0xFFFFFFFFu;
+    for (const char ch : s) {
+        c = table[(c ^ static_cast<std::uint8_t>(ch)) & 0xFF] ^ (c >> 8);
+    }
+    return c ^ 0xFFFFFFFFu;
+}
+
+/// 手工字节 zip（STORED 条目＋中央目录＋EOCD——V13 同名条目样例载体）。
+std::string handcraftZip(const std::vector<ZipEntrySpec>& entries)
+{
+    struct CdRow { std::string name; std::uint32_t crc; std::uint32_t size; std::uint32_t offset; };
+    std::string out;
+    std::vector<CdRow> cd;
+    for (const ZipEntrySpec& e : entries) {
+        const std::uint32_t offset = static_cast<std::uint32_t>(out.size());
+        out.append("PK\x03\x04", 4);
+        appendU16(out, 20);            // 版本
+        appendU16(out, 0);             // flags
+        appendU16(out, 0);             // method＝STORED
+        appendU16(out, 0);             // time
+        appendU16(out, 0);             // date
+        appendU32(out, crc32Of(e.data));
+        appendU32(out, static_cast<std::uint32_t>(e.data.size()));
+        appendU32(out, static_cast<std::uint32_t>(e.data.size()));
+        appendU16(out, static_cast<std::uint16_t>(e.name.size()));
+        appendU16(out, 0);             // 扩展区
+        out.append(e.name);
+        out.append(e.data);
+        cd.push_back(CdRow{e.name, crc32Of(e.data),
+                           static_cast<std::uint32_t>(e.data.size()), offset});
+    }
+    const std::uint32_t cdOffset = static_cast<std::uint32_t>(out.size());
+    for (const CdRow& r : cd) {
+        out.append("PK\x01\x02", 4);
+        appendU16(out, 20);
+        appendU16(out, 20);
+        appendU16(out, 0);
+        appendU16(out, 0);
+        appendU16(out, 0);
+        appendU16(out, 0);
+        appendU32(out, r.crc);
+        appendU32(out, r.size);
+        appendU32(out, r.size);
+        appendU16(out, static_cast<std::uint16_t>(r.name.size()));
+        appendU16(out, 0);
+        appendU16(out, 0);
+        appendU16(out, 0);
+        appendU16(out, 0);
+        appendU32(out, 0);
+        appendU32(out, r.offset);
+        out.append(r.name);
+    }
+    const std::uint32_t cdSize = static_cast<std::uint32_t>(out.size()) - cdOffset;
+    out.append("PK\x05\x06", 4);
+    appendU16(out, 0);
+    appendU16(out, 0);
+    appendU16(out, static_cast<std::uint16_t>(cd.size()));
+    appendU16(out, static_cast<std::uint16_t>(cd.size()));
+    appendU32(out, cdSize);
+    appendU32(out, cdOffset);
+    appendU16(out, 0);
+    return out;
 }
 
 // =====================================================================
@@ -420,6 +537,10 @@ protected:
 /// 重读一次→产出包自洽且内容为完整稳定版本（无混合版本）；重读计数＝2。
 TEST_F(IoPackContractTest, ExportConcurrentWriteRereadsStableVersion)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V18 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05"},
+                  std::vector<std::string>{"AT-20"});
     // 快照面 v2（完整稳定版本）；v1 只存在于注释语义中——注入方式＝首读
     // 失败（源替换窗口），重读返回稳定 v2（§7.2 场景表"同 key 重读返回
     // 稳定版本"的 source 语义）。
@@ -468,6 +589,10 @@ TEST_F(IoPackContractTest, ExportConcurrentWriteRereadsStableVersion)
 /// （"仍失败→导出失败清理，不产出混合版本包"——§7.2 场景表）。
 TEST_F(IoPackContractTest, ExportConcurrentWritePersistentFailureLeavesNoTarget)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V18 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05"},
+                  std::vector<std::string>{"AT-20"});
     FakeSnapshotSource source;
     source.files = {
         {"payload/HEAD", std::string("rev-1\n")},
@@ -501,6 +626,10 @@ TEST_F(IoPackContractTest, ExportConcurrentWritePersistentFailureLeavesNoTarget)
 /// Failed 而非 CleanupFailed）；目标零写入。
 TEST_F(IoPackContractTest, DiskFullReportsRequiredAvailableAndCleansUp)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V20 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05"},
+                  std::vector<std::string>{"AT-20"});
     const fs::path packFile = buildValidPack(m_root / "pack.rwpack", standardPayload());
     const fs::path targetDir = m_root / "target";
 
@@ -542,6 +671,10 @@ TEST_F(IoPackContractTest, DiskFullReportsRequiredAvailableAndCleansUp)
 /// CleanupFailed；二次 cleanup 幂等可成功→Cleaned；目标零写入。
 TEST_F(IoPackContractTest, CleanupFailedListsResiduesAndRetrySucceeds)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V21 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05"},
+                  std::vector<std::string>{"AT-20"});
     // 篡改 payload 的包（触发导入失败→自动清理→注入的清理失败）。
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
     const fs::path packFile = buildValidPack(m_root / "bad.rwpack", payload);
@@ -601,6 +734,10 @@ TEST_F(IoPackContractTest, CleanupFailedListsResiduesAndRetrySucceeds)
 /// 存在（原子替换未发生——暂存面不外泄）。
 TEST_F(IoPackContractTest, ExportCommitFailureLeavesNoTargetFile)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V23 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05", "MDL-20"},
+                  std::vector<std::string>{"AT-20"});
     FakeSnapshotSource source;
     for (const auto& kv : standardPayload()) {
         source.files[kv.first] = kv.second;
@@ -624,6 +761,10 @@ TEST_F(IoPackContractTest, ExportCommitFailureLeavesNoTargetFile)
 /// 输出"）。
 TEST_F(IoPackContractTest, ExportFailurePreservesPreviousCompletePack)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V23 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05", "MDL-20"},
+                  std::vector<std::string>{"AT-20"});
     // 先前完整版本：一次成功导出的包。
     FakeSnapshotSource good;
     for (const auto& kv : standardPayload()) {
@@ -657,6 +798,10 @@ TEST_F(IoPackContractTest, ExportFailurePreservesPreviousCompletePack)
 /// 任务线程（io 同步库调用、不创建线程——§9.13）；导入 Verified。
 TEST_F(IoPackContractTest, BackgroundImportKeepsUiThreadResponsive)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V31 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-PERF-01", "NFR-PERF-02"},
+                  std::vector<std::string>{"AT-34"});
     // 大负载（~24 MiB 全零，DEFLATE 后包很小、解压耗时毫秒级——足以
     // 覆盖多个检查点又不拖慢用例）。
     std::vector<std::pair<std::string, std::string>> payload = standardPayload();
@@ -719,6 +864,10 @@ TEST_F(IoPackContractTest, BackgroundImportKeepsUiThreadResponsive)
 /// 断言：io 只迭代 enumerate 清单）。
 TEST_F(IoPackContractTest, CommittedVsStagedOnlySnapshotEntriesPacked)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V32 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05", "NFR-REL-01"},
+                  std::vector<std::string>{"AT-20"});
     FakeSnapshotSource source;
     source.files = {
         {"payload/HEAD", std::string("rev-1\n")},
@@ -757,4 +906,258 @@ TEST_F(IoPackContractTest, CommittedVsStagedOnlySnapshotEntriesPacked)
         }
     }
     EXPECT_EQ(payloadEntries, source.files.size());
+}
+
+namespace {
+
+/// 可编程取消令牌（IoCancelToken 测试实现——原子标志；一经真值不复位；
+/// PackageTest.cpp 同款口径，自持不跨文件共享）。
+class FlagToken final : public IoCancelToken {
+public:
+    void cancel() { m_flag.store(true, std::memory_order_relaxed); }
+    bool isCancelled() const override
+    {
+        return m_flag.load(std::memory_order_relaxed);
+    }
+
+private:
+    std::atomic<bool> m_flag{false};
+};
+
+} // namespace
+
+// =====================================================================
+// IO-V22：失败不建目标（PM-05/AT-20——IO-T07 acceptance 1/3；聚合负断言）
+// =====================================================================
+
+/// 验证（IO-V22）：§11.2 全部失败样例分支（V12 比例/超展开、V13 重复条
+/// 目、V14 哈希不符、V19 发布前取消、V20 磁盘满、V21 清理失败）逐一以
+/// **全新目标目录**执行后枚举检查——目标项目目录从未被创建/写入（含发
+/// 布前取消、校验失败、清理失败各分支）。观测点＝目录存在性断言（结构
+/// 性）：失败路径的目标面零污染由本聚合用例整体钉住，与单分支用例内的
+/// expectNoTarget 互为冗余防线（卡行验收原文"全部失败样例跑后检查"）。
+TEST_F(IoPackContractTest, FailureScenariosNeverCreateTargetDirectory)
+{
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V22 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05"},
+                  std::vector<std::string>{"AT-20"});
+
+    // 每分支独立目标目录（target-<k>）；任一分支失败即在本用例内短路
+    // （ASSERT），最终统一枚举复核——聚合语义＝"跑后检查"。
+    int k = 0;
+    auto freshTarget = [this, &k]() {
+        return m_root / ("target-" + std::to_string(k++));
+    };
+
+    // ---- 分支 1（V12 比例半边）：HEAD＝200 KiB 全零 DEFLATE（≫100:1）----
+    {
+        std::vector<std::pair<std::string, std::string>> payload = standardPayload();
+        payload[0].second = std::string(200 * 1024, '\0');
+        const fs::path packFile =
+            buildValidPack(m_root / "v22-ratio.rwpack", payload, ZIP_CM_DEFLATE);
+        const fs::path targetDir = freshTarget();
+        auto importer = sdurws::ird::io::makePackageImporter();
+        PackageImportOptions options;
+        options.targetDir = targetDir;
+        options.budget = BudgetSpec::packImportHardened();
+        auto session = importer->begin(packFile, options, nullptr, {});
+        ASSERT_TRUE(session) << session.error.detail;
+        auto verified = importer->verifyThrough(session.value);
+        ASSERT_FALSE(verified) << "比例炸弹样例未被拒绝";
+        EXPECT_EQ(verified.error.code, IoErrorCode::SecBombRatio);
+        EXPECT_EQ(session.value.state(), PackageImportState::Failed);
+        expectNoTarget(targetDir);
+    }
+
+    // ---- 分支 2（V12 超展开半边）：3×512 KiB 伪随机 STORED＋收紧 1 MiB----
+    {
+        std::vector<std::pair<std::string, std::string>> payload = standardPayload();
+        payload.push_back({"payload/objects/obj-b/blob1.bin", pseudoRandomBytes(512 * 1024, 11)});
+        payload.push_back({"payload/objects/obj-b/blob2.bin", pseudoRandomBytes(512 * 1024, 12)});
+        payload.push_back({"payload/objects/obj-b/blob3.bin", pseudoRandomBytes(512 * 1024, 13)});
+        const fs::path packFile =
+            buildValidPack(m_root / "v22-expand.rwpack", payload, ZIP_CM_STORE);
+        const fs::path targetDir = freshTarget();
+        auto importer = sdurws::ird::io::makePackageImporter();
+        PackageImportOptions options;
+        options.targetDir = targetDir;
+        options.budget = BudgetSpec::packImportHardened();
+        options.budget.tighten(BudgetDimension::ArchiveExpandedBytes, 1024ull * 1024ull);
+        auto session = importer->begin(packFile, options, nullptr, {});
+        ASSERT_TRUE(session) << session.error.detail;
+        auto verified = importer->verifyThrough(session.value);
+        ASSERT_FALSE(verified) << "超展开样例未被拒绝";
+        EXPECT_EQ(verified.error.code, IoErrorCode::SecBudgetExpand);
+        EXPECT_EQ(session.value.state(), PackageImportState::Failed);
+        expectNoTarget(targetDir);
+    }
+
+    // ---- 分支 3（V13）：同名条目×2（手工字节 zip——容器层容忍编排）----
+    {
+        std::vector<std::pair<std::string, std::string>> payload = standardPayload();
+        std::string totalDigestHex;
+        const std::string manifestJson = buildManifestJson(payload, &totalDigestHex);
+        const std::string rwpackJson = buildRwpackJson(totalDigestHex, payload.size(), 0);
+        const std::string zipBytes = handcraftZip({
+            ZipEntrySpec{PackFormat::kRwpackEntryName, rwpackJson, ZIP_CM_STORE},
+            ZipEntrySpec{PackFormat::kManifestEntryName, manifestJson, ZIP_CM_STORE},
+            ZipEntrySpec{"payload/HEAD", std::string("first\n"), ZIP_CM_STORE},
+            ZipEntrySpec{"payload/HEAD", std::string("second\n"), ZIP_CM_STORE},
+            ZipEntrySpec{payload[1].first, payload[1].second, ZIP_CM_STORE},
+            ZipEntrySpec{payload[2].first, payload[2].second, ZIP_CM_STORE},
+            ZipEntrySpec{payload[3].first, payload[3].second, ZIP_CM_STORE},
+        });
+        const fs::path packFile = m_root / "v22-dup.rwpack";
+        {
+            std::ofstream out(packFile, std::ios::binary);
+            ASSERT_TRUE(out.is_open());
+            out.write(zipBytes.data(), static_cast<std::streamsize>(zipBytes.size()));
+        }
+        const fs::path targetDir = freshTarget();
+        auto importer = sdurws::ird::io::makePackageImporter();
+        PackageImportOptions options;
+        options.targetDir = targetDir;
+        options.budget = BudgetSpec::packImportHardened();
+        auto session = importer->begin(packFile, options, nullptr, {});
+        ASSERT_TRUE(session) << session.error.detail;
+        auto verified = importer->verifyThrough(session.value);
+        ASSERT_FALSE(verified) << "重复条目样例未被拒绝";
+        EXPECT_EQ(verified.error.code, IoErrorCode::PackDuplicateEntry);
+        EXPECT_EQ(session.value.state(), PackageImportState::Failed);
+        expectNoTarget(targetDir);
+    }
+
+    // ---- 分支 4（V14）：payload 篡改一字节（manifest/totalDigest 自洽）----
+    {
+        std::vector<std::pair<std::string, std::string>> payload = standardPayload();
+        const fs::path packFile = buildValidPack(m_root / "v22-hash.rwpack", payload);
+        {
+            // 原地篡改：重建归档——data.bin 翻转一字节、manifest 不变
+            // （与 V21 用例同款构造）。
+            std::string tampered = payload[3].second;
+            tampered[0] = static_cast<char>(tampered[0] ^ 0xFF);
+            std::string totalDigestHex;
+            const std::string manifestJson = buildManifestJson(payload, &totalDigestHex);
+            const std::string rwpackJson = buildRwpackJson(totalDigestHex, payload.size(), 0);
+            std::vector<ZipEntrySpec> entries;
+            entries.push_back(ZipEntrySpec{PackFormat::kRwpackEntryName, rwpackJson, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{PackFormat::kManifestEntryName, manifestJson, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{payload[0].first, payload[0].second, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{payload[1].first, payload[1].second, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{payload[2].first, payload[2].second, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{payload[3].first, tampered, ZIP_CM_STORE});
+            makeArchiveViaLibzip(packFile, entries);
+        }
+        const fs::path targetDir = freshTarget();
+        auto importer = sdurws::ird::io::makePackageImporter();
+        PackageImportOptions options;
+        options.targetDir = targetDir;
+        options.budget = BudgetSpec::packImportHardened();
+        auto session = importer->begin(packFile, options, nullptr, {});
+        ASSERT_TRUE(session) << session.error.detail;
+        auto verified = importer->verifyThrough(session.value);
+        ASSERT_FALSE(verified) << "哈希不符样例未被拒绝";
+        EXPECT_EQ(verified.error.code, IoErrorCode::PackHashMismatch);
+        EXPECT_EQ(session.value.state(), PackageImportState::Failed);
+        expectNoTarget(targetDir);
+    }
+
+    // ---- 分支 5（V19）：展开检查点取消（发布前取消——UX-03 无诊断）----
+    {
+        const fs::path packFile = buildValidPack(m_root / "v22-cancel.rwpack", standardPayload());
+        const fs::path targetDir = freshTarget();
+        auto importer = sdurws::ird::io::makePackageImporter();
+        PackageImportOptions options;
+        options.targetDir = targetDir;
+        options.budget = BudgetSpec::packImportHardened();
+        FlagToken cancel;
+        bool cancelled = false;
+        sdurws::ird::io::IoProgressCallback progress =
+            [&](const sdurws::ird::io::IoProgress& p) {
+                if (!cancelled && std::strcmp(p.stage, "extract") == 0 && p.done >= 3) {
+                    cancel.cancel();
+                    cancelled = true;
+                }
+            };
+        auto session = importer->begin(packFile, options, nullptr, {});
+        ASSERT_TRUE(session) << session.error.detail;
+        auto verified = importer->verifyThrough(session.value, &cancel, progress);
+        ASSERT_FALSE(verified) << "取消未被响应";
+        EXPECT_EQ(verified.error.code, IoErrorCode::Cancelled);
+        EXPECT_EQ(session.value.state(), PackageImportState::Canceled);
+        EXPECT_TRUE(session.value.report().diagnostics.empty()) << "取消路径产生诊断（UX-03）";
+        expectNoTarget(targetDir);
+    }
+
+    // ---- 分支 6（V20）：fake TempArea 注入可用 10 字节（磁盘满）----
+    {
+        const fs::path packFile = buildValidPack(m_root / "v22-disk.rwpack", standardPayload());
+        const fs::path targetDir = freshTarget();
+        auto faults = std::make_shared<FaultTempAreaManager>(sdurws::ird::io::makeTempAreaManager());
+        faults->availableOverride = std::make_shared<std::uint64_t>(10);
+        sdurws::ird::io::PackageIoFacilities facilities;
+        facilities.tempAreas = faults;
+        auto importer = sdurws::ird::io::makePackageImporter(facilities);
+        PackageImportOptions options;
+        options.targetDir = targetDir;
+        options.budget = BudgetSpec::packImportHardened();
+        auto session = importer->begin(packFile, options, nullptr, {});
+        ASSERT_TRUE(session) << session.error.detail;
+        auto verified = importer->verifyThrough(session.value);
+        ASSERT_FALSE(verified) << "磁盘满样例未被检出";
+        EXPECT_EQ(verified.error.code, IoErrorCode::PackDiskFull);
+        EXPECT_EQ(session.value.state(), PackageImportState::Failed);
+        expectNoTarget(targetDir);
+    }
+
+    // ---- 分支 7（V21）：哈希不符触发自动清理＋注入清理失败（终态
+    // CleanupFailed——残留仅在隐藏前缀临时区，目标同样零污染）----
+    {
+        std::vector<std::pair<std::string, std::string>> payload = standardPayload();
+        const fs::path packFile = buildValidPack(m_root / "v22-clean.rwpack", payload);
+        {
+            std::string tampered = payload[3].second;
+            tampered[0] = static_cast<char>(tampered[0] ^ 0xFF);
+            std::string totalDigestHex;
+            const std::string manifestJson = buildManifestJson(payload, &totalDigestHex);
+            const std::string rwpackJson = buildRwpackJson(totalDigestHex, payload.size(), 0);
+            std::vector<ZipEntrySpec> entries;
+            entries.push_back(ZipEntrySpec{PackFormat::kRwpackEntryName, rwpackJson, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{PackFormat::kManifestEntryName, manifestJson, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{payload[0].first, payload[0].second, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{payload[1].first, payload[1].second, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{payload[2].first, payload[2].second, ZIP_CM_STORE});
+            entries.push_back(ZipEntrySpec{payload[3].first, tampered, ZIP_CM_STORE});
+            makeArchiveViaLibzip(packFile, entries);
+        }
+        const fs::path targetDir = freshTarget();
+        auto faults = std::make_shared<FaultTempAreaManager>(sdurws::ird::io::makeTempAreaManager());
+        faults->failCleanupTimes = 1;
+        sdurws::ird::io::PackageIoFacilities facilities;
+        facilities.tempAreas = faults;
+        auto importer = sdurws::ird::io::makePackageImporter(facilities);
+        PackageImportOptions options;
+        options.targetDir = targetDir;
+        options.budget = BudgetSpec::packImportHardened();
+        auto session = importer->begin(packFile, options, nullptr, {});
+        ASSERT_TRUE(session) << session.error.detail;
+        auto verified = importer->verifyThrough(session.value);
+        ASSERT_FALSE(verified);
+        EXPECT_EQ(verified.error.code, IoErrorCode::PackCleanupFailed);
+        EXPECT_EQ(session.value.state(), PackageImportState::CleanupFailed);
+        expectNoTarget(targetDir);
+        // 清理失败分支收尾：重试清理成功，不留会话残留（本用例自清理）。
+        auto retry = importer->cleanup(session.value);
+        ASSERT_TRUE(retry) << retry.error.detail;
+    }
+
+    // ---- 聚合观测点：全部分支跑完后枚举目标面——零目标目录存在 ----
+    std::error_code ec;
+    ASSERT_TRUE(fs::exists(m_root, ec)) << "工作区丢失（测试自身缺陷）";
+    for (fs::directory_iterator it(m_root, ec), end; !ec && it != end; it.increment(ec)) {
+        const std::wstring name = it->path().filename().wstring();
+        EXPECT_TRUE(name.rfind(L"target-", 0) != 0)
+            << "失败样例创建了目标目录：" << it->path();
+    }
 }

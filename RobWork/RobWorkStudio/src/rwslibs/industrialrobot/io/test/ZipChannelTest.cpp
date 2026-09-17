@@ -31,6 +31,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -324,6 +326,10 @@ TEST_F(IoZipTest, StoreAndDeflateEntriesByteExactRestore)
  */
 TEST_F(IoZipTest, ManifestHashVerifyOkMismatchLocatedAndRefIncomplete)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V14(容器层支撑) 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-05"},
+                  std::vector<std::string>{});
     const std::string data1 = "payload-one-中文";
     const std::string data2 = "payload-two";
     const fs::path pack = m_dir / "hash.pack";
