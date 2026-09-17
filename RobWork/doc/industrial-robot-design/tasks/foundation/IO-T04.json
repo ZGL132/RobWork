@@ -4,7 +4,7 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "JSON 读写器＋ZIP 通道（P-IO-3 冻结后）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["IO-T01"],
   "requirements": ["REQ-12", "OPT-12", "PM-05"],
   "designRefs": ["units/io.md#12", "units/io.md#5.9", "units/io.md#5.9.1", "units/io.md#5.9.2", "units/io.md#5.9.3", "units/io.md#5.9.4", "units/io.md#9.5", "units/io.md#7.1"],

@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 180,
+  "tickCount": 186,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -12,12 +12,12 @@
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
-    "fix": 1,
+    "fix": 0,
     "implement": 0,
-    "accept": 2
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-17T12:43:49+08:00",
+    "updatedAt": "2026-09-17T17:08:30+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1083,6 +1083,19 @@
       "acceptanceRecord": "traceability/acceptance/IO-T03-20260917-r2.md",
       "mergedAt": "2026-09-17",
       "failReason": "attempt1 fail（B-1：units/io.md 未随实现做落位同步）——返工补 io.md v0.5 落位同步后 attempt2 pass"
+    },
+    {
+      "task": "IO-T04",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "e8240fb89302dec30761b8945b4be51d9dc0deb2",
+        "d820e5dd6aeb406ab9e435f02af0abd32e9d5b34",
+        "595737049abff486e823436a0690afe4553e099a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T04-20260917.md",
+      "mergedAt": "2026-09-17",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 §4.7③ 合并时 findings.json 数组尾部冲突（HEAD 侧 F-193 vs 任务分支侧 F-191/F-192）按 PIPE 冲突即停转 blocked，所有者裁决三条目并存后续完（② 81b2876a、③ 16b4646a）"
     }
   ],
   "policy": {
@@ -1108,11 +1121,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "IO-T04",
-      "contractPath": "tasks/foundation/IO-T04.json",
-      "branch": "wp11-t04"
-    },
     {
       "taskId": "IO-T05",
       "contractPath": "tasks/foundation/IO-T05.json",
@@ -1192,5 +1200,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "4b2e0e06-614c-4f10-97df-467ed714e824"
+  "tickToken": "944387d2-125b-4348-9f9c-05fa86d11962"
 }
