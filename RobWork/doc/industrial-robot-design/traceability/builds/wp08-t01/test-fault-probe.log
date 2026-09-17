@@ -1,0 +1,16 @@
+=== 测试真实失败能力探针（2026-09-18 实施期执行）===
+目的：证明红线扫描用例具备真实失败能力（非恒通过）——PRJ-T01 同款留痕口径。
+
+步骤 1：向 execution/src/ 注入临时故障探针文件 _fault_probe.cpp（内容＝#include <QObject>，
+        即植入 NFR-MNT-01/D-01 零 Qt 红线违例）。
+步骤 2：运行 sdurws_ird_execution_test.exe（冒烟模式构建产物），观察用例 ExecutionBuild.
+        NoQtInclude_DT_BUILD_NFR_MNT_01 的判定。
+
+实测输出（节选）：
+  [ RUN      ] ExecutionBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+  [  FAILED  ] ExecutionBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (0 ms)
+（同批其余 6 用例仍 OK——失败被精确定位到植入违例的用例，无误报扩散）
+
+步骤 3：删除探针文件后复跑：全部 7 用例 PASSED，exit=0（复证通过）。
+
+结论：扫描用例对真实违例具备检出能力，零命中结论可信。
