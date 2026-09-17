@@ -46,17 +46,16 @@
 #      test/ResourceIoTest.cpp（IoRes 组——V15/V16/V25/V26/V27＋基础
 #      契约，提交 1/3）与 test/ResourceSolidifyTest.cpp（V17/V24＋三段
 #      边界＋§8.6 生命周期，提交 2/3）。
-#   6. IO-T06（≙WP-11-T05/T07）实施提交 1/3（产品库实现段）：src/ 增列
-#      Package.cpp（§7/§9.9——导入九步协议＋导出六步协议；libzip 写侧
-#      消费点〔读侧仍归 ZipChannel.cpp——io.md §15.5 v0.9 登记〕）、
-#      TempArea.cpp（§7.5/§9.10——临时区/等价键互斥/io-session.json
-#      标记的崩溃残留回收/幂等清理）、AtomicFile.cpp（§4.6/§9.10——
-#      原子替换协议）；公共头增列 Package.hpp/TempArea.hpp/AtomicFile.hpp
-#      （§3.1 表对应行）；私有头 src/IoPlatform.hpp（平台助手单一实现点
-#      ——NFR-MNT-04，ResourceIo.cpp 本地副本同步收编）；ZipEntryInfo
-#      表尾增补条目属性两字段（步骤③ SP-4 symlink 展开前预检数据源）。
-#      测试目标增列（test/PackageTest.cpp 与 sdurws_ird_io_contract_test
-#      登记）随实施提交 2/3。
+#   6. IO-T06（≙WP-11-T05/T07）：src/ 增列 Package.cpp（§7/§9.9——
+#      导入九步协议＋导出六步协议；libzip 写侧消费点〔读侧仍归
+#      ZipChannel.cpp——io.md §15.5 v0.9 登记〕）、TempArea.cpp（§7.5/
+#      §9.10——临时区/互斥/标记回收/幂等清理）、AtomicFile.cpp（§4.6/
+#      §9.10——原子替换协议）；公共头增列 Package.hpp/TempArea.hpp/
+#      AtomicFile.hpp（§3.1 表对应行）；**sdurws_ird_io_contract_test
+#      随本任务登记**（§3.3——契约/故障注入用例落位，不预建空目标；
+#      故障注入经 PackageIoFacilities 的 fake 适配层——§11.1）；
+#      test/PackageTest.cpp（IoPack/IoTemp/IoAtomic 组——V12/V13/V14/
+#      V19/V29＋设施单元用例）。
 # =====================================================================
 
 # ---- gtest 接入（DTB §5.5 定稿，唯一机制；随 IO-T02 首个测试目标引入）----
@@ -179,7 +178,8 @@ add_executable(sdurws_ird_io_test
     test/JsonTest.cpp
     test/ZipChannelTest.cpp
     test/ResourceIoTest.cpp
-    test/ResourceSolidifyTest.cpp)
+    test/ResourceSolidifyTest.cpp
+    test/PackageTest.cpp)
 
 target_compile_features(sdurws_ird_io_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_io_test PROPERTIES
