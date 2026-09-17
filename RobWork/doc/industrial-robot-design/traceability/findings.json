@@ -1910,6 +1910,26 @@
       "title": "实施/返工子代理在共享工作树检出任务分支 wp11-t03 后残留检出状态，编排者执行 §4.7② 首次合并前未复查当前分支，致验收记录合并（提交 02e431bb）误落在 wp11-t03 上而非 redesign-main（③ 因此误报 Already up to date）——当 tick 发现并纠正：wp11-t03 本地指针复位至与 origin 一致（cb2b793b）、redesign-main 上重做 ②（5ea01639）与 ③（315424a0）；02e431bb 从未推送、随 ⑥ 删分支丢弃，任何分支未混入未审内容（带入范围全部位于已验收区间 bff27c07..cb2b793b）",
       "owner": "所有者裁决是否将『§4.7② 首次合并前必须 git branch --show-current==redesign-main（不符即转 blocked）』固化入 T-ORCH 模板（PIPE 增量修订）；编排者自本 tick 起在收尾合并前自行执行该复查",
       "resolution": "归因＝T-ORCH 步骤 8 未明文要求收尾合并前复查工作树分支状态，而实施/返工子代理按附录 B 必然在任务分支上提交（共享工作树模式下必留检出残留）；建议随下次 PIPE 修订在 §4.7① 与 T-ORCH 步骤 8 增补该前置复查"
+    },
+    {
+      "id": "F-191",
+      "source": "IO-T04 实施段自登记（wp11-t04 实施会话，ird_gates 运行实录）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "ird_gates IRD-GATE-LIB 词表未含 P-IO-3 冻结选型的 vcpkg 目标（libzip::zip/expat::expat）——IO-T04 按 io.md §15.3 R-IO-1『L1 文件/XML 目标链接登记随 IO-T04』完成 PRIVATE 链接后，ird_gates 产生 3 处新 LIB 命中（sdurws_ird_io×2＋sdurws_ird_io_test×1；词表/引擎位于 industrialrobot/cmake/、DTB 登记位在 development-task-breakdown.md——均不在 IO-T04 契约 allowedFiles 内）",
+      "owner": "门禁/构建约定所有者（DTB §5.1/ird_gates 辖域）：确认 P-IO-3 冻结裁决（c9613806，governance-log §1.9）构成 DTB §5.1『第三方依赖登记』的等价登记后，扩 ird_gates 词表（libzip::zip/expat::expat）",
+      "resolution": "IO-T04 侧处置＝依赖本体按所有者冻结裁决链接（非私选第二渠道——NFR-DEP-03/NFR-SEC-05 满足），3 处新命中在 build 留痕与 ird-test-report.json 与基线 11 处分列如实登记；不越权修改 ird_gates.cmake/whitelist 与 DTB。词表扩登为行级配置变更，归所有者消账后 IO-T05/T06 即零新增命中"
+    },
+    {
+      "id": "F-192",
+      "source": "IO-T04 实施段自登记（wp11-t04 实施会话，IO-FORMAT-JSON-SYNTAX 补登的治理侧尾巴）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "IO-FORMAT-JSON-SYNTAX（IoErrorCode 第 58 值，io.md §9.12 v0.7 表尾追加——§5.9.1/§5.9.4 语法层拒绝在非数值类语法违例上的码面缺口）向 diagnostics 内置码表（§4.6 的 87 码清单）的收编确认未发生——P-IO-6『与 diagnostics 所有者收编确认』同款治理侧动作（IO-T02 起 P-IO-6 全表收编确认亦同在途）",
+      "owner": "diagnostics 单元所有者（内置码表扩编）——随 P-IO-6 全表收编确认一并处置",
+      "resolution": "io 侧注册面（ioCodeDescriptors/registerIoCodeTable）已含 SYNTAX 码并经真实 StableCodeRegistry 注册验证（IoDiagCodeTable 双清单机械比对同步）；内置清单收编滞后不影响运行（StableCodeRegistry 注册机制先于内置清单）"
     }
   ]
 }

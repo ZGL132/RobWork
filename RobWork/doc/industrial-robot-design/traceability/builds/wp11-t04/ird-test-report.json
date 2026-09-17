@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "IO-T04",
+  "masterWp": "WP-11（io.md §12 IO-T04 行＝WP-11-T05：JSON 读写器＋ZIP 通道（P-IO-3 冻结后）——§5.9.1~§5.9.4/§7.1、§9.5）",
+  "branch": "wp11-t04",
+  "base": "c96138060650d7a9b360b21cdb361130b154a93c",
+  "date": "2026-09-17",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main）",
+  "targets": [
+    {
+      "target": "sdurws_ird_io",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，exit 0 零 error——integration-build.log 计 error=0；smoke-build.log 计 error=0）",
+      "notes": "IO-T04 落位（§3.4 布局同名任务文件）：src/ 增列 Json.cpp——严格 UTF-8 DFA 预检（与 Csv.cpp 同源公共域表；仅 UTF-8，UTF-16 BOM 拒绝，BOM 容忍剥离）、受限递归下降解析器（每值位置区间〔行列 1 起、列按 UTF-8 字节〕/同层重复键拒绝〔解码后键名比对，\\u 转义不改键身份〕/深度预算先比后递归〔栈安全〕/字符串码点预算/NaN·Infinity·-Infinity 具名记号与 1e999 溢出拒绝〔NUMBER〕/超范围整数原文 String 透传＋报告计数/取消逐值检查点/解析与校验失败无部分 DOM 外泄）、版本判定先于 schema 校验（FUTURE 携 file-version/supported 升级指引数据＋升级器归 project 注记——PM-06 执行侧；界内空洞按 FUTURE）、JsonProfile 结构校验器（未知键默认 Reject 定位到键路径/Preserve 子树透传/required 缺失不注默认值/TYPE 带 expected-actual/RANGE 比较型 actual-limit-unit/枚举值域）、canonical 序列化器（键序二态：profile 声明序/无 profile 字典序；std::to_chars 最短数值；2 空格缩进＋LF＋UTF-8 无 BOM——同语义同字节）、digestCanonicalJson 恒经 core ContentDigester（SA-12 唯一摘要算法）、JsonProfileRegistry（C-6 注册协议：装配期注册 fail-fast〔空 id/非升序 invalid_argument、重复 logic_error〕、运行期并发只读）、IJsonWriter（内存目标整体替换/文件目标同目录暂存＋rename 原子替换、写出侧 isfinite 断言）。src/ 增列 ZipChannel.cpp——libzip 1.11.4 容器层（zip_source_filep_create＋zip_open_from_source，Windows 侧 _wfopen 宽路径无损全名空间；ZIP_RDONLY）、条目枚举（加密标记双源检测〔encryption_method＋一般标志 bit0〕）、readEntryBytes 逐字节还原（加密解压前拒绝/压缩方法白名单 STORED·DEFLATE/§4.5.2 声明双记账预检笔＋实际超声明补差笔/块循环取消检查点/ fclose CRC 容器完整性兜底）、verifyManifestEntries（逐条目 SHA-256 复算经 core ContentDigester、HASH-MISMATCH 携 entry/expected/actual 定位条目、REF-INCOMPLETE 携 ref——V14 前置能力；条目级失败不中断整表）。公共头增列 Json.hpp（§3.1 表行按实现刷新）与 ZipChannel.hpp（§3.1 新增行＝文件名等价增补，io.md §15.5 v0.7 登记；libzip 类型不出公共面）。IoError.hpp 表尾追加 FormatJsonSyntax（IO-FORMAT-JSON-SYNTAX——第 58 值，§9.12 v0.7 同步）；IoDiagnostics.cpp token 映射＋描述符同步注册。CMake：L1 目标 PRIVATE 链接 libzip::zip＋expat::expat（P-IO-3 冻结裁决执行面——io.md §15.3 R-IO-1『链接登记随 IO-T04』）"
+    },
+    {
+      "target": "sdurws_ird_io_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 75/75、smoke 75/75——本任务新增 IoJsonTest 26 用例＋IoZipTest 9 用例，既有 IoSec/IoCsv/Budget/IoDiag 40 用例零回归）——契约 verify 命令（cmake --build build --config Release --target sdurws_ird_io_test）经 verify-task.log PASS",
+      "notes": "新增 test/JsonTest.cpp（组名 IoJsonTest——§11.1 组名 IoJson 口径）与 test/ZipChannelTest.cpp（IoZipTest）；测试目标 PRIVATE 链 libzip::zip 供恶意 zip 构造器写侧（§11.1 登记的测试替身——合法样例经 libzip 写侧构造与被测读侧互为独立实现，恶意样例〔加密标志/压缩方法谎报/CRC 谎报〕经手工字节构造器）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "14 处命中＝基线既有 11 处（diagnostics/evidence/policy/project/runtime 的 _test/_contract_test 直链 testkit×8＋testdata_lint 表外依赖/T-1×2＋project R4×1——DTB §4.5 登记例外，SA-10 判构建失败为基线口径，与 wp11-t02/t03 登记口径同源）＋**3 处新增 IRD-GATE-LIB（F-191 登记）**：sdurws_ird_io/sdurws_ird_io_test 链接 libzip::zip/expat::expat 不在门禁词表——依赖本体＝P-IO-3 冻结裁决（所有者裁决 c9613806，governance-log §1.9 closed；io.md §15.3 R-IO-1『L1 文件/XML 目标链接登记随 IO-T04』），非私选第二渠道；词表/引擎文件（industrialrobot/cmake/）与 DTB 均不在本契约 allowedFiles 内，词表扩登归门禁所有者（findings.json F-191）。io 源码零 R-1/R-3/R-4/T-1 命中（留痕 gates-ird-gates-target.log）；集成全量构建（cmake --build build --config Release）exit 0 零 error（留痕 integration-build.log）；独立冒烟构建零 error（smoke-build.log）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/IO-T04.json——前置引用/设计锚点/knownPitfalls 三查，留痕 validate-task.log）＋verify-task PASS（契约 verify 命令 cmake --build build --config Release --target sdurws_ird_io_test 实跑零 error，留痕 verify-task.log）",
+    "probeCapability": "V07/V08 以真实构造字节经 parseBytes/parse 双入口触发（重复键第二次键 token 行列定位、schemaVersion=999 三要素 file-version/supported、NaN/1e999/深嵌套 100 层/16 Mi＋1 码点字符串/文档字节经调用方 tighten scope 的记账通道三要素）；canonical 字节一致以『同语义异写法文档〔键序/空白/1 与 1.0/5e-1 与 0.5〕canonical 全等＋同 DOM 两次全等＋digest 恒等于 core ContentDigester 手工复算』三重断言；ZIP 逐字节还原以 libzip 写侧构造（STORED/DEFLATE/二进制 NUL 高位字节/空条目）独立实现互证；哈希校验以篡改声明摘要/大小谎报/幽灵条目三态定位断言；恶意样例（加密标志 bit0/压缩方法 93/CRC 反码）手工字节构造（§11.1 恶意 zip 构造器替身）",
+    "pitfall": "P-IO-3 处置（acceptance 5）：选型已随所有者裁决冻结（base 提交 c9613806——ZIP=libzip 1.11.4、XML=expat 2.8.3，vcpkg x64-windows 经典模式，governance-log §1.9 closed）——本任务按裁决执行：ZipChannel.cpp 消费 libzip、expat 链接面按 §15.3 R-IO-1 随本任务登记（消费方 ResourceIo.cpp 随 IO-T05 落位）；未引入任何词表外第二渠道；门禁 LIB 词表滞后登记为 F-191 归所有者。JsonLite（testkit）零引用——产品格式路径仅 Json.hpp/.cpp 自研受限读写器（IoJson 通道源码不含 testkit 头）"
+  },
+  "testSuites": [
+    {
+      "suite": "IoJson/SchemaUnknownFuture（IO-V07——acceptance 1）",
+      "designRef": "units/io.md §5.9.1（重复键/受限 DOM）、§5.9.2（版本字段/JsonProfile/未知字段/必填/类型范围）、§5.9.4（校验边界/无部分成功）、§11.2 IO-V07 行；需求 NFR-DEP-04、PM-06、REQ-12",
+      "cases": [
+        { "name": "IoJsonTest.SchemaUnknownKeyRejectedWithLocation", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/IO-V07——Preserve 名单外未知字段拒（IO-FORMAT-JSON-UNKNOWN），params path=$.bogus＋row/column 定位（NFR-DEP-04 不静默吞字段）" },
+        { "name": "IoJsonTest.PreserveSubtreePassedThrough", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.2 未知字段行——preserve 声明子树任意未声明结构透传（前向兼容扩展块），DOM 值可读" },
+        { "name": "IoJsonTest.SchemaVersion999FutureRejectWithUpgradeData", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 1/PM-06——schemaVersion=999 只读拒绝（IO-FORMAT-JSON-VERSION-FUTURE），params file-version=999＋supported=1..1（格式探测数据）、detail 注明升级器归 project；失败无部分 DOM 外泄" },
+        { "name": "IoJsonTest.SchemaVersionLegacyReject", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.2——schemaVersion=0 → IO-FORMAT-VERSION-LEGACY 同口径" },
+        { "name": "IoJsonTest.VersionGateMissingTypeAndPrecedesSchema", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.2 版本字段行——缺失（非对象根/对象无键）→VERSION-MISSING、类型错→VERSION-TYPE；未知字段＋未来版本并存报 FUTURE 而非 UNKNOWN（版本判定先于一切 schema 校验的顺序硬约束证据）" },
+        { "name": "IoJsonTest.DuplicateKeyRejectedWithLocationAndNestingScoping", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.1 重复键行——同层第二次出现即拒（IO-FORMAT-JSON-DUPKEY）；定位＝所属对象路径＋第二次键 token 行列（第 1 行第 8 列钉住）；嵌套层同层语义（$.o）；\\u0061 与 a 解码后同名判重" },
+        { "name": "IoJsonTest.RequiredMissingLocatedAndNoDefaultInjection", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.2 必填行——REQUIRED 缺失定位（key=a＋对象路径）；io 不注入默认值" },
+        { "name": "IoJsonTest.TypeErrorAndComparativeRange", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.2 类型/范围行——TYPE 带 expected/actual（$.a）；RANGE 比较型三要素 actual=500/limit=[0,360]/unit=deg（$.angle）" },
+        { "name": "IoJsonTest.UnregisteredProfileIdMapsToInternal", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.5 前置行——未注册 profileId＝IO-FORMAT-INTERNAL（装配期防漏，Dev 级）" },
+        { "name": "IoJsonTest.VersionSetMembershipAndHoleAsFuture", "status": "passed", "modes": ["integration", "smoke"], "trace": "JsonProfile supportedVersions 语义——{1,3} 在册版本放行；界内空洞（2）按 FUTURE 拒绝＋指引数据（语义不猜测）" }
+      ]
+    },
+    {
+      "suite": "IoJson/NaNInfLimits（IO-V08——acceptance 2）",
+      "designRef": "units/io.md §5.9.1 全表（NaN/数值/嵌套深度/大字符串/文档大小/编码/数值范围）、§4.5.1/§4.5.2（预算维度与记账）、§11.2 IO-V08 行；需求 NFR-SEC-02",
+      "cases": [
+        { "name": "IoJsonTest.NanInfLiteralsRejectedAsNumber", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.1 NaN 行——NaN/Infinity/-Infinity 语法层拒绝（IO-FORMAT-JSON-NUMBER）；写出侧 isfinite 断言（程序化 DOM 非有限 Real 拒绝写出）" },
+        { "name": "IoJsonTest.NumberOverflowRejectedUnderflowAccepted", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.1 数值行——1e999 溢出拒（NUMBER）；1e-999 下溢按 IEEE754 最近值接受为 0；1e308 合法解析" },
+        { "name": "IoJsonTest.DeepNestingTriggersDepthBudget", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.1 嵌套深度行——100 层嵌套在 65 层入口拒（先比后递归——栈安全），三要素 actual=65/limit=64/unit=levels（IO-SEC-BUDGET-JSON-DEPTH）" },
+        { "name": "IoJsonTest.OversizedStringTriggersStringBudget", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.1 大字符串行——16 Mi＋1 码点触发 IO-SEC-BUDGET-JSON-STRING（actual/limit/unit=chars——比较型）" },
+        { "name": "IoJsonTest.DocBytesBudgetChargedThroughGuard", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.1 文档大小行——调用方 tighten JsonDocBytes=16 后经等价增补 budgetScope 记账拒绝（actual=18/limit=16/unit=bytes），预算内文档同 scope 放行（记账通道非旁路比较）" },
+        { "name": "IoJsonTest.OutOfRangeIntegerPassthroughWithStringAndHint", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.1 数值行——超 int64 整数原文 String 透传（逐字节保留）＋report.outOfRangeIntegers 提示计数（不静默截断）" },
+        { "name": "IoJsonTest.EncodingGateBomStripAndStableReject", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.1 编码行——UTF-8 BOM 剥离（report.bomStripped）；UTF-16 BOM 拒绝（仅 UTF-8）；非法序列 0xE9 拒绝＋行列定位（IO-FORMAT-JSON-ENCODING，不猜转码）" },
+        { "name": "IoJsonTest.SyntaxViolationsUseAppendedSyntaxCode", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.12 v0.7 表尾追加码——截断/缺失分隔符/尾随内容/非法记号/坏字面量归 IO-FORMAT-JSON-SYNTAX；数值字面量畸形（前导零/.5/1.）归 NUMBER（码面分工钉住）" },
+        { "name": "IoJsonTest.CancelTokenReturnsStateNotError", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.5 取消行为行——恒取消令牌在首个值检查点命中返回 IO-CANCELLED（状态非错误——UX-03）" },
+        { "name": "IoJsonTest.RegistryContractFailFastOnAssemblyErrors", "status": "passed", "modes": ["integration", "smoke"], "trace": "C-6 注册协议装配契约——重复注册 logic_error；空 id/空版本表/非升序 invalid_argument；非法注册零入库" },
+        { "name": "IoJsonTest.ParseFileReadsRealFileAndMapsMissing", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.5 parse——真实文件读取；不存在路径 IO-RES-NOT-FOUND（stat 预检——先 stat 后读）" },
+        { "name": "IoJsonTest.StringEscapesRoundtripAndSurrogatePolicy", "status": "passed", "modes": ["integration", "smoke"], "trace": "RFC 8259 string 语义——短转义/\\uXXXX（中文）/代理对（U+1D11E）解码正确；悬空高代理拒绝（不可交换文本不予承载）" }
+      ]
+    },
+    {
+      "suite": "IoJson/canonical 字节一致＋内容身份（acceptance 3——§5.9.3、SA-12/NFR-MNT-03）",
+      "designRef": "units/io.md §5.9.3（顺序规范化与内容身份）、§5.9.1 NaN 行写出侧、§9.5 写出器契约；需求 SA-12/NFR-MNT-03（SHA-256 唯一摘要算法）、NFR-COR-01",
+      "cases": [
+        { "name": "IoJsonTest.CanonicalSameSemanticsSameBytes", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.3——同语义文档（键序/空白/1 与 1.0/5e-1 与 0.5 差异）canonical 字节全等；摘要随字节全等（内容身份对 canonical 字节）" },
+        { "name": "IoJsonTest.CanonicalDeterministicAndDigestViaCoreDigester", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.3——同 DOM 两次 canonical 字节相同（NFR-COR-01）；版面钉住（2 空格缩进/LF 无 CR）；digestCanonicalJson 恒等于 core ContentDigester 手工复算（摘要算法唯一性通道证据——无第二摘要实现）" },
+        { "name": "IoJsonTest.CanonicalKeyOrderProfileDeclaredVsLexicographic", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.9.3 写行——键序二态：profile 声明序（cc,aa,bb）优先；无 profile 字典序（aa,bb,cc）" },
+        { "name": "IoJsonTest.WriterFileTargetAtomicReplaceAndRoundtrip", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.5 副作用行/§4.6——文件目标原子替换（旧内容被替换、暂存零残留）；写读 roundtrip 语义一致（中文/实数/数组）；内存目标整体替换" }
+      ]
+    },
+    {
+      "suite": "IoZip/逐字节还原＋manifest 哈希校验（acceptance 4——§7.1、PM-05；V14 前置）",
+      "designRef": "units/io.md §7.1（包格式契约——容器层约束/条目哈希）、§12 IO-T04 行（解包逐字节还原＋哈希——V14 前置能力）、§11.1（恶意 zip 构造器替身）；需求 PM-05、NFR-SEC-02、SA-12",
+      "cases": [
+        { "name": "IoZipTest.StoreAndDeflateEntriesByteExactRestore", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4——STORED/DEFLATE/空条目逐字节还原（二进制 NUL/高位字节安全；libzip 写侧与被测读侧互为独立实现）；条目枚举元数据（名/大小/加密标记/压缩方法）；不存在条目 IO-PACK-REF-INCOMPLETE（ref 参数）" },
+        { "name": "IoZipTest.ManifestHashVerifyOkMismatchLocatedAndRefIncomplete", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4/V14 前置——全一致逐条目 Ok（清单序）；篡改声明摘要 → IO-PACK-HASH-MISMATCH（entry/expected/actual 定位，其余条目不牵连）；幽灵条目 → REF-INCOMPLETE（ref）；大小谎报 → HASH-MISMATCH（字节数比较）；复算恒经 core ContentDigester（SA-12）" },
+        { "name": "IoZipTest.EncryptedEntryRejectedBeforeDecompression", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.1 加密拒绝——手工加密标志（bit0）条目：枚举呈报 encrypted=true、读取 IO-FORMAT-PACK-ENCRYPTED（解压前，不给解密尝试面）" },
+        { "name": "IoZipTest.UnsupportedCompressionMethodRejected", "status": "passed", "modes": ["integration", "smoke"], "trace": "§7.1 压缩方法白名单——method=93（zstd）手工谎报 → IO-FORMAT-PACK-ZIP（防额外解码器攻击面进入导入路径）" },
+        { "name": "IoZipTest.CorruptedCrcDetectedAtContainerLevel", "status": "passed", "modes": ["integration", "smoke"], "trace": "容器完整性——CRC 反码谎报检出（fclose 报告 → IO-FORMAT-PACK-ZIP；与 SHA-256 内容身份互不替代）" },
+        { "name": "IoZipTest.NonZipContentAndMissingFileMapCorrectly", "status": "passed", "modes": ["integration", "smoke"], "trace": "环境错误四分类——非 ZIP 内容 → IO-FORMAT-PACK-ZIP；缺失文件 → IO-RES-NOT-FOUND" },
+        { "name": "IoZipTest.ExpandedBytesBudgetChargedThroughCallerScope", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.5.2 包通道预算——调用方 tighten ArchiveExpandedBytes=100 后声明量 1000 的条目预检笔拒绝（IO-SEC-BUDGET-EXPAND 三要素 limit=100）" },
+        { "name": "IoZipTest.ZipBombRatioRejectedAtDeclaredPrecheck", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.5.2 压缩比——1 MiB 全零 DEFLATE（比例远超 100:1）解压前 IO-SEC-BOMB-RATIO 拒绝（无守卫防御性比较路径——炸弹不获执行窗口）" },
+        { "name": "IoZipTest.CancelTokenReturnsStateDuringRead", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.13 协作取消——读取块检查点命中返回 IO-CANCELLED（状态非错误——UX-03）" }
+      ]
+    }
+  ]
+}
