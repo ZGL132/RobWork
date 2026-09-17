@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "IO-T02",
+  "masterWp": "WP-11（io.md §12 IO-T02 行＝WP-11-T03：SafePath＋BudgetGuard——§4/§9.1/§9.2）",
+  "branch": "wp11-t02",
+  "base": "ce90896fa7c1fc43895148e3d302ca823d26f96f",
+  "date": "2026-09-17",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main）",
+  "targets": [
+    {
+      "target": "sdurws_ird_io",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，exit 0 零 error——integration-build.log/smoke-build.log 计数 0）",
+      "notes": "IO-T02 落位（§3.4 布局同名任务文件）：src/ 增列 SafePath.cpp（路径规范化核——§4.2 算法 6 步/§4.3.3 合法非法示例表逐行实现/§4.2.3 reparse point 逐段复核〔GetFileAttributesW，MSVC std::filesystem 不呈 junction 为 symlink〕/等价类键〔折叠＋weakly_canonical，失败退化折叠键〕/EquivKeyMutex 会话互斥——§9.10 经等价键）、Budget.cpp（§4.5.1 十六维数值表 Draft 档位/饱和加法/scope 树父回收/chargeArchive 双侧重账——§4.5.2 语义细则逐行）、IoDiagnostics.cpp（IoErrorCode→§9.12 token 全映射 57 值；55 条 CodeDescriptor 产出与注册——P-IO-6 执行面；比较型三要素构造助手）；IoFwd.hpp 增补 IoResult<void> 特化（§9.1/§9.2 动作型接口返回形态——IO-T01 类型契约头补全）"
+    },
+    {
+      "target": "sdurws_ird_io_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 20/20、smoke 20/20）——契约 verify 命令（cmake --build build --config Release --target sdurws_ird_io_test）经 verify-task.ps1 PASS",
+      "notes": "本任务新建测试目标（契约 verify 指向该目标、acceptance 1~3 要求 §11.2 矩阵行全绿——以真实用例登记，非 §12 IO-T01 禁止项所指无内容占位目标；_contract_test 仍随 IO-T06/T07）。20 用例四大组：IoSec（V09/V10/V11＋例外不扩大化＋头红线运行期扫描）、IoCsv/StreamBudget（V06——行预算经流式读取路径生效＋峰值提交内存有界断言〔kernel32!K32GetProcessMemoryInfo 动态解析直调，零词表外链接面〕）、BudgetTest（三要素/双保险记账/账本可观测/饱和/scope 树回收/包通道强化/P-IO-4 数值钉住）、IoDiagCodeTable（token 全映射＋55 码注册进真实 StableCodeRegistry＋内置表合注册顺序无关 manifest）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "io 零命中（IRD-GATE-LIB 曾因 sdurws_ird_io_test 链接 Psapi.lib 命中 1 处——改为 kernel32!K32GetProcessMemoryInfo 动态解析直调后复扫零命中）；门禁整体命中集＝基线既有 11 处（diagnostics/evidence/policy/project/runtime 的 _test/_contract_test 直链 testkit×8＋testdata_lint 表外依赖/T-1×2＋project R4×1——DTB §4.5 登记例外，SA-10 判构建失败为基线口径，与 wp09-t09 登记口径同源、随其后各契约目标落位自然扩集），零新增命中（留痕 gates-ird-gates-target.log）；集成全量构建（cmake --build build --config Release）exit 0 零 error（留痕 integration-build.log）；独立冒烟构建零 error（smoke-build.log）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/IO-T02.json——前置引用/设计锚点/knownPitfalls 三查，留痕 validate-task.log）＋verify-task PASS（契约 verify 命令实跑零 error，留痕 verify-task.log）",
+    "probeCapability": "V09/V11 以真实 reparse point 断言（实施段实测本环境 mklink 文件/目录 symlink 与 /J junction 全部可创建——非替身降级；若环境禁用链接创建则断言如实失败不伪造通过）；V06 以真实 10⁶ 行文件＋流式逐行消费验证（峰值提交内存经 K32GetProcessMemoryInfo 实测采样，断言增量 < 文件大小/2——整文件驻留形态必失败）；P-IO-4 数值钉住为逐维字面值断言（Draft 档位防实现侧漂移）；码表注册以真实 diagnostics::StableCodeRegistry 验证（含 seal 后重复注册 DuplicateCode、内置 87 码合注册、注册顺序无关 manifest 摘要）"
+  },
+  "testSuites": [
+    {
+      "suite": "IoSec/PathTraversal＋IoSec/SameProjectAltPaths＋IoSec/SymlinkJunction（IO-V09/V10/V11——acceptance 1）",
+      "designRef": "units/io.md §4.3.3（合法/非法示例表）、§4.2.4（等价类键）、§4.2.3＋§11.2 IO-V09/V10/V11 行、§4.3.1 SP-1~SP-9；需求 NFR-SEC-01",
+      "cases": [
+        { "name": "IoSecTest.PathTraversalP4IllegalTableRejectedWithExactCodes", "status": "passed", "modes": ["integration", "smoke"], "trace": "V09/§4.3.3 P-4 表——穿越（payload/../evil、绝对/盘符/UNC/设备前缀）逐条拒绝＋正确码 IO-SEC-PATH-ESCAPE；非法字符族（:*?\"<>| 控制字符）IO-FORMAT-PACK-ENTRY；保留名/尾随点空白 IO-SEC-PATH-RESERVED；段长 256>255 与总长 4097>4096 IO-SEC-PATH-TOO-LONG（SP-9）；空/点条目拒绝" },
+        { "name": "IoSecTest.PathTraversalP4LegalRowsAndBatchDuplicateDetection", "status": "passed", "modes": ["integration", "smoke"], "trace": "V09 P-4 合法行放行（relKey＝正斜杠＋折叠）；批量预检折叠键查重——仅大小写异两条件目 IO-PACK-DUPLICATE-ENTRY 整批拒绝（§4.3.3 P-4 表末行）；errors 全量列出（§9.1：违规明细按序入 detail、code 取最小序号处错误）；空包合法；全合法批量放行" },
+        { "name": "IoSecTest.PathTraversalP5IllegalTableRejectedWithExactCodes", "status": "passed", "modes": ["integration", "smoke"], "trace": "V09 P-5 表——objects/../../evil.dll、分隔符混用、绝对形式引用、UNC 引用逐条 IO-SEC-PATH-ESCAPE；objects/nul 与 objects/a./x IO-SEC-PATH-RESERVED；净逃逸（消解后以 .. 开头——§4.3.3 P-5 表对照词法消解语义）拒绝；SP-3 首段非 objects/catalog 拒绝；P-5 缺 base/P-1 多传 base＝调用方契约违约 IO-FORMAT-INTERNAL（§9.1 非法调用行）" },
+        { "name": "IoSecTest.PathTraversalP5LegalRowsAccepted", "status": "passed", "modes": ["integration", "smoke"], "trace": "V09 P-5 合法行——objects/obj-abc…/cv-64hex、消解后回落仍在区内（objects/obj-a/../../objects/obj-b/x→objects/obj-b/x——卡面原文'消解前不上报'）、大小写折叠命中（OBJECTS/OBJ-A/X）、catalog 区同权" },
+        { "name": "IoSecTest.SameProjectAltPathsEquivalentKeysAndSessionMutex", "status": "passed", "modes": ["integration", "smoke"], "trace": "V10/§4.2.4——同一项目 D:\\P、d:\\p\\、D:/P 三拼写等价键相同（折叠＋分隔符归一＋canonical）；TempArea 会话互斥经等价键（§9.10）：第二拼写 acquire 失败、heldCount=1（'单会话；无重复临时区'——临时区计数观测点）、释放后同键可再取、异项目异键不互斥（反例钉住互斥粒度）" },
+        { "name": "IoSecTest.SymlinkJunctionEscapeRejectedWithIoSecSymlink", "status": "passed", "modes": ["integration", "smoke"], "trace": "V11/§4.2.3 P-5——文件 symlink、目录 symlink、junction 指向资源区外一律 IO-SEC-SYMLINK（区内名字指向区外同样拒；Win32 属性位逐段复核）；错误 params 携带 offender 层级脱敏路径（final-path 记录观测点）；区内真实实体不受牵连（防护不误伤）" },
+        { "name": "IoSecTest.ExceptionNotWidenedUserSourceAndExportTargetUnrestricted", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4/§4.1 P-1 P-7 行——用户源 symlink 目标照常解析（存在性准入＋equivKey＝最终实体路径）、不存在给 IO-RES-NOT-FOUND（环境错误码不虚报安全违规）、P-7 允许尚不存在；反例钉住：同一路径换 P-5 角色仍拒——例外不因路径形态扩大（角色由调用方声明）" },
+        { "name": "IoSecHeaderRedLines.IoHeadersFreeOfQtAndCrossUnitIncludes", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 5 P-IO-1 面/R-3/R-1——io 全部头与实现零 Qt include/符号、零 io/core/diagnostics 之外跨单元 include（运行期源码扫描，diagnostics BuildRedLine 同款第二道防线；纯注释行跳过——负向表述非违例）" }
+      ]
+    },
+    {
+      "suite": "IoCsv/StreamBudget＋IoSec/BudgetGuard（IO-V06＋acceptance 2/3/5——三要素/双保险/账本/包通道/P-IO-4）",
+      "designRef": "units/io.md §11.2 IO-V06 行、§4.4（防护流程③⑤）、§4.5.1（数值表）、§4.5.2（语义细则）、§9.2（接口契约）；需求 NFR-SEC-02、PM-05",
+      "cases": [
+        { "name": "BudgetTest.StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory", "status": "passed", "modes": ["integration", "smoke"], "trace": "V06——生成 10⁶ 行 CSV（流式生成器），行预算收紧至 10⁵：流式逐行消费第 100001 笔检查点触发 IO-SEC-BUDGET-ROWS（三要素 actual=100001/limit=100000/unit=count）；峰值提交内存增量 < 文件大小/2（实测采样——不整文件驻留）；账本可观测（失败笔不入账，used＝限额——§9.2 状态不变）。CSV 读写器本体随 IO-T03 落位后经其通道复用同一 BudgetGuard 行维" },
+        { "name": "BudgetTest.BudgetTriadFileDepthTotalRejectWithComparativeParams", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3——单文件大小/递归深度/会话总量三维分别触发 IO-SEC-BUDGET-FILE/-DEPTH/-TOTAL，诊断均携带比较型三要素（actual/limit/unit＝bytes/levels/bytes——§4.5.2、diagnostics §8.6）" },
+        { "name": "BudgetTest.DeclaredVsActualDoubleBookingKeepsLarger", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3 双保险（§4.4③⑤/§4.5.2）——预检笔（声明大小）先行、实际小于声明不追加、大于声明补差到实际（累计＝按文件取 max 累加）；预检笔越限先拒不开（③在④前）；失败笔不入账状态不变" },
+        { "name": "BudgetTest.SaturatingAccumulatorNeverWraps", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.5.2 溢出防护——uint64 饱和加法：巨量笔拒绝且 actual＝饱和投影值（不回绕）；状态不变后小额恰满仍可入账" },
+        { "name": "BudgetTest.ScopeTreeRollupToParentAndParentLimitEnforced", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.5.2 多阶段累计/§9.2 父回收——子用量回收至父（共享额度防 N 子 scope 绕过会话总量）；回收触发父超限＝close 失败父子状态均不变；已关闭 scope 操作 IO-FORMAT-INTERNAL" },
+        { "name": "BudgetTest.ArchiveDualSidedBookingExpandAndRatio", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.5.2 双侧比较（无除法）——展开总量 IO-SEC-BUDGET-EXPAND、压缩比 IO-SEC-BOMB-RATIO（2:1 收紧触发）、压缩 0 展开>0＝比例无穷大拒绝（防除零式逃逸——本用例实测暴露 archiveCompressed 漏初始化缺陷并修复）；压缩侧不随回收（per-archive 事实）、展开侧回收（加性量）；比较型维误走 charge＝IO-FORMAT-INTERNAL" },
+        { "name": "BudgetTest.ProductDefaultValuesPinnedToCardSection451", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 5 P-IO-4——§4.5.1 表 16 维默认值＋硬上限逐维字面钉住（Draft 档位防实现侧漂移；TempAreaBytes 硬上限＝编译期项'展开预算×2'，磁盘项归临时区会话运行时收紧）；relax 只到硬上限＋isRelaxed 标记（导入报告放宽项清单）" },
+        { "name": "BudgetTest.PackImportChannelHardenedSpecRelaxForbidden", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 5/§4.5.2/§9.2——包导入强化 spec：ArchiveExpandedBytes/ArchiveRatio/FileCount/DirDepth 四维 isHardLimited 全真；对四维 relax 抛 invalid_argument（禁放宽契约违约 fail-fast）；tighten 超当前值抛出（只收紧）；openScope 拒绝超硬上限 spec（IO-FORMAT-INTERNAL 不部分生效）与非法父句柄" }
+      ]
+    },
+    {
+      "suite": "IoDiag/CodeTable（P-IO-6 注册——acceptance 5）",
+      "designRef": "units/io.md §9.12（码汇总建议值）、§10.3（io→diagnostics 产出 CodeDescriptor）；units/diagnostics.md §4.5（注册协议）、§8.6（映射义务）",
+      "cases": [
+        { "name": "IoDiagCodeTable.TokenMappingCoversAllEnumValuesAndMatchesSection912", "status": "passed", "modes": ["integration", "smoke"], "trace": "errorCodeToken 全枚举 57 值覆盖（switch 缺项即空串暴露）；枚举侧 token 集＝§9.12 应注册字面集（55 码双向比对——防 IoError.hpp/实现/卡面三处失同步）；Ok/IO-CANCELLED 为状态码不注册（UX-03）" },
+        { "name": "IoDiagCodeTable.RegistrationIntoStableCodeRegistryFullTableVerified", "status": "passed", "modes": ["integration", "smoke"], "trace": "P-IO-6 执行面——55 条描述符全部通过真实 StableCodeRegistry 注册期验证（句法/前缀-所有权 IO→io/paramSchema/Dev 强制不可见）；预算族 requiresComparison＋SecurityOrRedaction＋Error＋三要素 schema（§8.6）；路径族 role/path 参数面；文案键 diag.<code-lower>.* 命名约定；ownerUnit=io 全表字典序列出；manifest 两次计算稳定；重复注册 DuplicateCode（码值冻结面）" },
+        { "name": "IoDiagCodeTable.CoexistsWithBuiltinTableOrderIndependentManifest", "status": "passed", "modes": ["integration", "smoke"], "trace": "L5 装配真实形态——内置 87 码＋IO 55 码合注册无冲突；注册顺序无关 manifest（io 先/builtin 先同摘要——跨进程一致性装配保障）；io 名下全部 IO- 前缀。收编确认（IO 码进 diagnostics §4.6 内置清单）属 diagnostics 所有者治理动作，随本验收请求提请——实现侧未扩编 diagnostics 单元" },
+        { "name": "IoDiagCodeTable.ComparativeErrorCarriesThreeElementParams", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 3 诊断形状——makeComparativeError 恰三键（actual/limit/unit，构造序＝paramSchema 序）；数值十进制定点文本化不经 locale（NFR-COR-02）；与预算码 paramSchema 对齐（工厂占位一致性可过）" }
+      ]
+    }
+  ]
+}
