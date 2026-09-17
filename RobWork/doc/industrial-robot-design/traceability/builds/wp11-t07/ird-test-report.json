@@ -1,0 +1,1007 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "IO-T07",
+  "masterWp": "WP-11（io.md §12 IO-T07 行＝WP-11-T07：契约测试套件整备与留痕——§11.2 全矩阵 32 行可执行且结果逐条登记）",
+  "branch": "wp11-t07",
+  "base": "eab17eee77880b2121cca767053188cef986a67a",
+  "date": "2026-09-18",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5；IO-T07 起双测试目标以自有 main 安装 testkit TestRecordListener（PRJ-T15 同款先例，T-1 允许形态：仅测试目标链 sdurws_ird_testkit），ird-test-report.json 用例级明细（ird-test-report-unit/contract-{integration,smoke}.json——requirementIds/atIds 经 IRD_TEST_INFO 逐用例登记）与 gtest XML 并存，本文件为任务级汇总",
+  "acceptanceMapping": {
+    "acc1": "§11.2 全矩阵 32 行→本表 testSuites 28 项逐项（V01~V32 全行→gtest 用例全名→双模式实跑结果）；结果不预设通过——实测 129/129 双模式一致 passed，零跳过零失败；AT-02/AT-20 迁注＝CSV 族 atIds 含 AT-02、包/固化族 atIds 含 AT-20（V31＝AT-34、V01/V07 另携 AT-22）——ird-test-report-unit-*.json 用例级字段可查",
+    "acc2": "故障注入全部经 fake 适配层：文件系统故障（磁盘满/写失败/清理失败）经 ITempAreaManager/IAtomicFileWriter 的 fake（FaultTempAreaManager.availableOverride/FaultAtomicWriter.failCommit——PackageIoFacilities 注入面）注入，不依赖真实磁盘满；TempDir 每用例隔离（各夹具 SetUp 独立临时根）；恶意 zip 构造器＝libzip 写侧构造合法样例＋手工字节构造恶意样例（同名条目）；V17 复制期变化经进度检查点定点注入；产品目标零 testkit 链接（T-1——io 测试目标自本任务起链 testkit 为允许形态，产品库 sdurws_ird_io 零 testkit 边，ird_gates 无 T-1 新增命中）",
+    "acc3": "覆盖核对登记＝units/io.md §11.4 覆盖核对表（28 项逐项→V 行→用例编号可查）＋本表 testSuites 逐项追溯字段（需求/AT、前置、操作、预期、观测点五面齐备）；用例跳过＝零（无 GTEST_SKIP）；伪造通过状态＝禁止并未发生（结果均来自真实执行，留痕 XML×4＋listener 报告×4 可复核）",
+    "acc4": "P-IO-2 处置＝IoSolidifyTest.AdapterResourceBytesLifecycleFiveRulingsPinned 专用用例固化 §8.6 五条裁决（最低至下次调用/实际至析构/Recorded 独立缓冲不缓存＋Solidified 缓存命中；第 3 条并发面＝既有 AdapterConcurrentRecordedReadsAreSafe；第 2/5 条纪律/契约登记注释口径）；O-09 处置＝V28 对端 project 命令 fake（FakeProjectCommandLog 调用序列记录＋io 不产生修订负断言）、V30 对端 diagnostics sink fake（FakeTwoTierSink 双级行槽＋真实 RedactionService）、V31 对端驱动线程 fake（std::thread 任务线程替身＋UI 线程打点）——io 零 project/runtime 编译依赖（公共头零该两类类型与头依赖），裁决申请维持 IO-T06/PRJ-T16 联动在途，不补边"
+  },
+  "targets": [
+    {
+      "target": "sdurws_ird_io_test",
+      "kind": "gtest executable（自有 main＋TestRecordListener）",
+      "result": "build-pass（两模式）＋run-pass（两模式一致：integration 120/120、smoke 120/120——既有 116 零回归＋V28/V30/P-IO-2/F-199 四用例）",
+      "notes": "IO-T07 变更：链接面 GTest::gtest_main→GTest::gtest＋增链 sdurws_ird_testkit（报告/追溯设施）；增列 test/TestMainReport.cpp（自有 main）；§11.2 全部 V 行用例增 IRD_TEST_INFO 追溯（CSV/JSON/SafePath/Budget/ZipChannel/ResourceIo/ResourceSolidify/Package 八文件 44 处）；新增 V28/V30/P-IO-2/F-199 四用例"
+    },
+    {
+      "target": "sdurws_ird_io_contract_test",
+      "kind": "gtest executable（自有 main＋TestRecordListener）",
+      "result": "build-pass（两模式）＋run-pass（两模式一致：integration 9/9、smoke 9/9——既有 8 零回归＋V22 聚合用例）",
+      "notes": "IO-T07 变更：链接面同上＋增列 contract_test/ContractTestMain.cpp（自有 main）；新增 FailureScenariosNeverCreateTargetDirectory（V12~V14/V19~V21 全失败分支聚合目标零污染负断言，本地自持 handcraftZip/pseudoRandomBytes/FlagToken 构造助手——PackageTest 同款口径不跨文件共享）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "17 处命中＝wp11-t06 基线 15＋2 处新增（IRD-GATE-SUB：sdurws_ird_io_test→sdurws_ird_testkit 与 sdurws_ird_io_contract_test→sdurws_ird_testkit——本任务契约 acceptance 1 明文的 testkit 报告设施消费链接边，T-1 允许形态＝仅测试目标链 testkit；DTB §4.5 既有例外行『各 _test/_contract_test 经 testkit 替身消费』同型实例——PRJ-T15/F-173 先例；实例行增补归门禁所有者，已自登记 findings.json F-202，不越权改 ird_gates/whitelist/DTB）。基线 15 处构成不变（diagnostics/evidence/policy/project/runtime 测试目标 testkit 边＋testdata_lint 两项＋io LIB 词表 F-191/F-197 五处＋project R4 F-145 一处）；产品目标 sdurws_ird_io 零 T-1 新增命中（T-1 红线保持）。留痕 gates-ird-gates-target.log（exit 1＝SA-10 设计：命中即非零）",
+    "selfTest": "门禁自测 9 项（pass_clean/pass_r4comment＋7 项 fail 按预期检出）全部符合（日志尾部）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/IO-T07.json，exit 0——留痕 validate-task.log）",
+    "verifyTask": "PASS（verify-task.ps1 exit 0——契约 verify 两命令实跑：cmake --build build --config Release --target sdurws_ird_io_test / --target sdurws_ird_io_contract_test 均零 error——留痕 verify-task.log/verify-target-io-*.log）",
+    "builds": "集成模式全量构建 exit 0 零 error（integration-build.log）；独立冒烟模式全新配置（build-smoke-wp11-t07，CMAKE_TOOLCHAIN_FILE 绝对路径指向 vcpkg——AGENTS §4.1 口径）＋全量构建 exit 0 零 error（smoke-configure.log/smoke-build.log）",
+    "probeCapability": "测试真实失败能力已实证（实施段自证两条）：①V30 首版断言误设片段为长字母数字串（57 字符）→被 RedactionService 判独立长凭证串两级脱敏→用例 FAILED 暴露断言与设施语义偏差→修正片段形态后按 Tier-U 词表外字段不渲染的真实分层语义重构断言（断言有牙齿）；②contract 文件在重构中曾缺函数收尾括号→编译错误立即检出（构建门禁有效）。V22 聚合负断言对各失败分支注入点均为确定性 fake（availableOverride=10/failCleanupTimes=1/预置位令牌/篡改字节），非恒真",
+    "findings": "F-202 自登记（本任务新增 2 处门禁 SUB 命中——testkit 消费边）；F-199 消账（ImportCancelAtBegin 预取消用例落地）；F-198 消账（writeBytesToFile/AtomicTarget::write 前置契约注释钉死——处置②口径）"
+  },
+  "testSuites": [
+    {
+      "item": "CSV roundtrip",
+      "vrows": [
+        "IO-V01",
+        "IO-V02",
+        "IO-V03"
+      ],
+      "reqs": [
+        "NFR-SEC-03"
+      ],
+      "ats": [
+        "AT-02",
+        "AT-22"
+      ],
+      "pre": "生成含引号/分隔符/换行/中文/空串字段与前缀样例（'=x、-3.5 等）的表；无标识外部 CSV",
+      "op": "write→read→逐字段比对；再 write 比对字节；无标识文件 read",
+      "expected": "数据层逐字符一致；文件层字节一致；'=x→x 还原、自反性成立；无标识全字段原样",
+      "obs": "断言宏逐字段；文件 SHA-256 二次比较；RawTable 无转义残留",
+      "cases": [
+        {
+          "name": "IoCsvTest.RoundtripBasicQuotesDelimsNewlineChineseEmpty",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoCsvTest.RoundtripPrefixedEscapeOnlyAtFileLayer",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoCsvTest.UnmarkedNoRewriteKeepsAllFieldsVerbatim",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "BOM/编码/引号/换行",
+      "vrows": [
+        "IO-V04"
+      ],
+      "reqs": [
+        "NFR-SEC-03"
+      ],
+      "ats": [
+        "AT-02"
+      ],
+      "pre": "UTF-8 BOM/UTF-16LE/BE、CRLF/LF/CR、RFC4180 引号嵌套样例；非 UTF-8 无 BOM 样例",
+      "op": "read",
+      "expected": "BOM 剥离、编码识别、行尾容错、引号语义正确；非 UTF-8 无 BOM 稳定拒绝",
+      "obs": "方言报告字段；错误码 IO-FORMAT-CSV-ENCODING",
+      "cases": [
+        {
+          "name": "IoCsvTest.BomStrippingAndUtf16Decoding",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoCsvTest.EolToleranceAndQuotedNewlineNesting",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoCsvTest.NonUtf8WithoutBomStableReject",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "列异常",
+      "vrows": [
+        "IO-V05"
+      ],
+      "reqs": [
+        "REQ-05"
+      ],
+      "ats": [
+        "AT-02"
+      ],
+      "pre": "重复列名/缺列/多列/空行样例",
+      "op": "read（默认策略＋显式策略两轮）",
+      "expected": "默认拒绝且定位（列号/名字/行号）；策略模式下按声明处置并记录",
+      "obs": "RowError 集合内容与顺序",
+      "cases": [
+        {
+          "name": "IoCsvTest.DuplicateHeaderColumnsRejectedWithLocation",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoCsvTest.ArityPoliciesDefaultRejectAndExplicitPadTrim",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoCsvTest.BlankRowPoliciesSkipCountAndReject",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "预算超限（CSV 行维）",
+      "vrows": [
+        "IO-V06"
+      ],
+      "reqs": [
+        "NFR-SEC-02",
+        "NFR-PERF-03"
+      ],
+      "ats": [],
+      "pre": "流式生成 10^6 行 CSV；行预算设 10^5",
+      "op": "read 流式",
+      "expected": "第 10^5+1 行触发 IO-SEC-BUDGET-ROWS；峰值内存有界",
+      "obs": "预算诊断三要素；内存计数器",
+      "cases": [
+        {
+          "name": "BudgetTest.StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoCsvTest.RowBudgetChargedThroughReaderChannel",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "JSON schema/未知/未来",
+      "vrows": [
+        "IO-V07"
+      ],
+      "reqs": [
+        "NFR-DEP-04",
+        "PM-06",
+        "REQ-12"
+      ],
+      "ats": [
+        "AT-22"
+      ],
+      "pre": "注册测试 profile；未知字段/schemaVersion=999/重复键/缺必填样例",
+      "op": "parse＋validate",
+      "expected": "未知字段拒（Preserve 名单外）；未来版本只读拒绝；重复键/必填定位",
+      "obs": "错误码＋JSON 路径＋行列区间",
+      "cases": [
+        {
+          "name": "IoJsonTest.SchemaUnknownKeyRejectedWithLocation",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoJsonTest.SchemaVersion999FutureRejectWithUpgradeData",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoJsonTest.DuplicateKeyRejectedWithLocationAndNestingScoping",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoJsonTest.RequiredMissingLocatedAndNoDefaultInjection",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "NaN/超长/深度",
+      "vrows": [
+        "IO-V08"
+      ],
+      "reqs": [
+        "NFR-SEC-02"
+      ],
+      "ats": [],
+      "pre": "NaN/1e999、超长字符串、深嵌套构造器",
+      "op": "parse",
+      "expected": "NaN/Inf/溢出拒；字符串/深度超限给 IO-SEC-BUDGET-JSON*",
+      "obs": "错误码与实际/上限值",
+      "cases": [
+        {
+          "name": "IoJsonTest.NanInfLiteralsRejectedAsNumber",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoJsonTest.NumberOverflowRejectedUnderflowAccepted",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoJsonTest.DeepNestingTriggersDepthBudget",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoJsonTest.OversizedStringTriggersStringBudget",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "穿越",
+      "vrows": [
+        "IO-V09"
+      ],
+      "reqs": [
+        "NFR-SEC-01"
+      ],
+      "ats": [],
+      "pre": "§4.3.3 非法表（..、绝对、盘符、UNC、保留名、尾点）",
+      "op": "normalize(P-4/P-5)",
+      "expected": "逐条拒绝＋正确码；消解后合法者放行",
+      "obs": "表驱动断言全集",
+      "cases": [
+        {
+          "name": "IoSecTest.PathTraversalP4IllegalTableRejectedWithExactCodes",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoSecTest.PathTraversalP5IllegalTableRejectedWithExactCodes",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "UNC/大小写/多路径",
+      "vrows": [
+        "IO-V10"
+      ],
+      "reqs": [
+        "NFR-SEC-01"
+      ],
+      "ats": [],
+      "pre": "同目录以 D:\\P、d:\\p\\、D:/P 打开",
+      "op": "等价键计算＋TempArea 互斥",
+      "expected": "等价键相同；单会话；无重复临时区",
+      "obs": "等价键相等断言；临时区计数",
+      "cases": [
+        {
+          "name": "IoSecTest.SameProjectAltPathsEquivalentKeysAndSessionMutex",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "symlink/junction",
+      "vrows": [
+        "IO-V11"
+      ],
+      "reqs": [
+        "NFR-SEC-01"
+      ],
+      "ats": [],
+      "pre": "symlink（文件/目录）与 junction 指向资源区外",
+      "op": "P-5 引用解析；P-4 展开产物",
+      "expected": "均 IO-SEC-PATH-SYMLINK（§9.12 连字符展开全拼）；区内名字指向区外同样拒",
+      "obs": "码＋final-path 记录",
+      "cases": [
+        {
+          "name": "IoSecTest.SymlinkJunctionEscapeRejectedWithIoSecSymlink",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "炸弹",
+      "vrows": [
+        "IO-V12"
+      ],
+      "reqs": [
+        "NFR-SEC-02",
+        "PM-05"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "高压缩比包（>100:1）与超展开量包（比例≈1 对照）",
+      "op": "begin→verifyThrough",
+      "expected": "IO-SEC-BOMB-RATIO/IO-SEC-BUDGET-EXPAND 中止；临时区清理；目标零写入",
+      "obs": "ledger 快照；临时区存在性检查",
+      "cases": [
+        {
+          "name": "IoPackTest.ZipBombRatioAbortsAndCleansStaging",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoPackTest.ZipBombOverExpandAbortsOnBudgetExpand",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "重复条目",
+      "vrows": [
+        "IO-V13"
+      ],
+      "reqs": [
+        "NFR-SEC-01",
+        "PM-05"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "同名条目×2（手工字节 zip）、仅大小写异条目对",
+      "op": "步骤③预检",
+      "expected": "IO-PACK-DUPLICATE-ENTRY；展开前拒绝（无任何落盘）",
+      "obs": "展开前断言临时区空",
+      "cases": [
+        {
+          "name": "IoPackTest.DuplicateEntriesRejectedBeforeExtraction",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoPackTest.CaseDifferingEntryPairRejectedAsDuplicate",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "哈希",
+      "vrows": [
+        "IO-V14"
+      ],
+      "reqs": [
+        "PM-05"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "篡改 manifest 一条目对应 payload 一字节（manifest/totalDigest 自洽）",
+      "op": "导入",
+      "expected": "IO-PACK-HASH-MISMATCH（定位条目）；整体拒绝",
+      "obs": "报告条目级结果（params entry）",
+      "cases": [
+        {
+          "name": "IoPackTest.TamperedPayloadHashMismatchLocatedPerEntry",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoZipTest.ManifestHashVerifyOkMismatchLocatedAndRefIncomplete",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "循环",
+      "vrows": [
+        "IO-V15"
+      ],
+      "reqs": [
+        "NFR-SEC-02",
+        "MDL-19"
+      ],
+      "ats": [],
+      "pre": "A→B→A include；自包含；深度链 17 层",
+      "op": "dependencyTree",
+      "expected": "IO-FORMAT-XML-CYCLE（环路径）；深度链 IO-SEC-BUDGET-INCLUDE",
+      "obs": "环清单内容",
+      "cases": [
+        {
+          "name": "IoResTest.CyclicIncludeReportsCycleWithPathList",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoResTest.SelfIncludeReportsCycle",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoResTest.IncludeChainBeyondDepthTriggersIncludeBudget",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "网格预算",
+      "vrows": [
+        "IO-V16"
+      ],
+      "reqs": [
+        "NFR-SEC-02"
+      ],
+      "ats": [],
+      "pre": "二进制 STL 谎报三角形数；真实超限 ASCII STL",
+      "op": "identify＋预检",
+      "expected": "头声明即拒或读中复核触发 IO-SEC-BUDGET-MESH",
+      "obs": "触发时机（读前/读中）",
+      "cases": [
+        {
+          "name": "IoResTest.BinaryStlDeclaredFacesLyingRejectedBeforeBodyRead",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoResTest.AsciiStlRealOversizeTriggersMeshBudgetMidRead",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "复制期变化",
+      "vrows": [
+        "IO-V17"
+      ],
+      "reqs": [
+        "NFR-REL-04",
+        "CON-03"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "快照源文件；复制中途（进度检查点定点）改写源内容",
+      "op": "solidifyToStaging",
+      "expected": "sourceChangedDuringCopy=true＋Changed 诊断；中转清理；无部分副本",
+      "obs": "before/after digest 不等断言；中转目录不存在",
+      "cases": [
+        {
+          "name": "IoSolidifyTest.SourceChangedDuringCopyDetectedAndStagingCleaned",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "导出并发写",
+      "vrows": [
+        "IO-V18"
+      ],
+      "reqs": [
+        "PM-05"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "fake ISnapshotFileSource：读取中某 drafts 键版本切换（首读失败注入）",
+      "op": "export_",
+      "expected": "按快照重读稳定版本；产出包自洽；重读仍失败→失败清理零目标",
+      "obs": "重读计数＝2；包内 drafts 内容＝完整版本；导入全绿",
+      "cases": [
+        {
+          "name": "IoPackContractTest.ExportConcurrentWriteRereadsStableVersion",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoPackContractTest.ExportConcurrentWritePersistentFailureLeavesNoTarget",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "导入取消",
+      "vrows": [
+        "IO-V19"
+      ],
+      "reqs": [
+        "PM-05",
+        "NFR-PERF-02"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "大包导入；各阶段取消令牌（展开检查点＋begin 入口预置位——F-199 消账）",
+      "op": "各阶段注入取消令牌",
+      "expected": "≤检查点间隔即中止；临时区清理；无 Canceled 诊断（UX-03）；目标零写入",
+      "obs": "会话终态 Canceled；诊断计数=0；.rwpack- 前缀零残留",
+      "cases": [
+        {
+          "name": "IoPackTest.ImportCancelMidExtractCleansAndEmitsNoDiagnostic",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoPackTest.ImportCancelAtBeginPreCancelledTokenLeavesNoArtifacts",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "磁盘不足",
+      "vrows": [
+        "IO-V20"
+      ],
+      "reqs": [
+        "PM-05"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "TempArea fake 注入剩余空间 10 字节",
+      "op": "展开至超限",
+      "expected": "IO-PACK-DISK-FULL（所需/可用比较型）；清理成功",
+      "obs": "报告建议字段（required/available）",
+      "cases": [
+        {
+          "name": "IoPackContractTest.DiskFullReportsRequiredAvailableAndCleansUp",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "清理失败",
+      "vrows": [
+        "IO-V21"
+      ],
+      "reqs": [
+        "PM-05"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "fake 删除失败（首次清理失败注入）",
+      "op": "失败后 cleanup",
+      "expected": "IO-PACK-CLEANUP-FAILED＋残留路径清单（脱敏）；重试幂等可成功",
+      "obs": "残留列表内容（无 \\\\?\\ 前缀）；二次 cleanup 结果 Cleaned",
+      "cases": [
+        {
+          "name": "IoPackContractTest.CleanupFailedListsResiduesAndRetrySucceeds",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "失败不建目标",
+      "vrows": [
+        "IO-V22",
+        "IO-V23"
+      ],
+      "reqs": [
+        "PM-05"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "全部失败样例分支（V12~V14/V19~V21）各以全新目标目录执行；导出中途失败注入",
+      "op": "逐分支导入失败后枚举目标面；export_ 压缩/提交阶段失败",
+      "expected": "目标项目目录从未创建/写入；目标 .rwpack 不存在或先前完整版本",
+      "obs": "目录存在性断言（结构性）；先前包逐字节保留",
+      "cases": [
+        {
+          "name": "IoPackContractTest.FailureScenariosNeverCreateTargetDirectory",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoPackContractTest.ExportCommitFailureLeavesNoTargetFile",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoPackContractTest.ExportFailurePreservesPreviousCompletePack",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "只读",
+      "vrows": [
+        "IO-V24"
+      ],
+      "reqs": [
+        "NFR-SEC-01"
+      ],
+      "ats": [],
+      "pre": "只读属性目标实体（§4.2.5 写方向）",
+      "op": "固化中转写",
+      "expected": "IO-RES-READONLY（与 ACCESS-DENIED 区分）",
+      "obs": "码区分断言＋direction=write 参数",
+      "cases": [
+        {
+          "name": "IoSolidifyTest.ReadonlyTargetWritesMapToReadonlyCode",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "权限",
+      "vrows": [
+        "IO-V25"
+      ],
+      "reqs": [
+        "NFR-SEC-01"
+      ],
+      "ats": [],
+      "pre": "ACL 拒读文件",
+      "op": "读取",
+      "expected": "IO-RES-ACCESS-DENIED；不降级为 NOT-FOUND",
+      "obs": "码＋方向参数",
+      "cases": [
+        {
+          "name": "IoResTest.AclDeniedReadMapsToAccessDeniedNotNotFound",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "缺失",
+      "vrows": [
+        "IO-V26"
+      ],
+      "reqs": [
+        "NFR-REL-04",
+        "MDL-19"
+      ],
+      "ats": [],
+      "pre": "依赖树缺叶；外部引用记录指向已删文件",
+      "op": "dependencyTree/probe",
+      "expected": "IO-RES-MISSING＋缺失清单；ExternalRef Missing；无工程不可行结论产出",
+      "obs": "诊断类别＝资源事实（§2.5）",
+      "cases": [
+        {
+          "name": "IoResTest.DependencyTreeMissingLeafReportsMissingList",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoSolidifyTest.ProbeReportsMissingForDeletedExternalFile",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "摘要稳定",
+      "vrows": [
+        "IO-V27"
+      ],
+      "reqs": [
+        "NFR-REL-04",
+        "CON-05"
+      ],
+      "ats": [],
+      "pre": "同文件；改名/移动后文件",
+      "op": "snapshot 循环 100 次；改名后快照",
+      "expected": "digest 恒定；路径变化不改变 digest（路径不作身份）",
+      "obs": "逐次比对",
+      "cases": [
+        {
+          "name": "IoResTest.SnapshotDigestStableAcross100Reads",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoResTest.RenameDoesNotChangeDigestPathIsNotIdentity",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "重关联新修订",
+      "vrows": [
+        "IO-V28"
+      ],
+      "reqs": [
+        "PM-09",
+        "CON-03"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "固化后外部源变化→用户重关联新源→再固化；project 命令 fake",
+      "op": "project 命令编排（契约级：命令 fake 记录序列）",
+      "expected": "新固化产生新 materializedVersion＋新修订（project 断言）；io 仅提供前后快照与检测",
+      "obs": "命令调用序列记录（materialize→reassociate→materialize）；io 不产生修订的负断言（O-09 对端＝project 命令 fake）",
+      "cases": [
+        {
+          "name": "IoSolidifyTest.ReassociateNewRevisionProjectCommandFakeSequence",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "引用完整性",
+      "vrows": [
+        "IO-V29"
+      ],
+      "reqs": [
+        "PM-05",
+        "SEL-02"
+      ],
+      "ats": [],
+      "pre": "manifest 引用不存在条目（幽灵引用）；镜像缺必备文件",
+      "op": "verifyThrough⑥",
+      "expected": "IO-PACK-REF-INCOMPLETE＋断裂链定位",
+      "obs": "报告引用链字段（params entry）",
+      "cases": [
+        {
+          "name": "IoPackTest.ManifestReferencingMissingArchiveEntryRejected",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        },
+        {
+          "name": "IoPackTest.MissingRequiredMirrorEntryRejected",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "脱敏",
+      "vrows": [
+        "IO-V30"
+      ],
+      "reqs": [
+        "NFR-SEC-07",
+        "REQ-05"
+      ],
+      "ats": [
+        "AT-02"
+      ],
+      "pre": "含本机绝对路径与原文片段的真实行错误诊断（rawSnippet＝登记的开发级参数）",
+      "op": "产码→diagnostics sink fake 两级入槽（路径经真实 RedactionService）",
+      "expected": "用户级仅定位（无完整路径/片段，保留文件名）；开发级片段保留；报告导出面无路径原文",
+      "obs": "两级日志内容比对；safeSummary [trunc] 标注（O-09 对端＝diagnostics sink fake）",
+      "cases": [
+        {
+          "name": "IoDiagSanitization.UserTierLocatesWithoutFullPathOrRawSnippetDevKeepsSnippet",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "后台不阻塞",
+      "vrows": [
+        "IO-V31"
+      ],
+      "reqs": [
+        "NFR-PERF-01",
+        "NFR-PERF-02"
+      ],
+      "ats": [
+        "AT-34"
+      ],
+      "pre": "24 MiB 大导入运行于后台任务（驱动线程 fake＝std::thread 任务线程替身）",
+      "op": "导入中 UI 线程空转打点",
+      "expected": "UI 线程无 >2s 无响应窗口；进度回调全部在任务线程；Verified",
+      "obs": "打点时间戳序列；回调线程 id（O-09 对端＝驱动线程 fake）",
+      "cases": [
+        {
+          "name": "IoPackContractTest.BackgroundImportKeepsUiThreadResponsive",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    },
+    {
+      "item": "已提交对暂存",
+      "vrows": [
+        "IO-V32"
+      ],
+      "reqs": [
+        "PM-05",
+        "NFR-REL-01"
+      ],
+      "ats": [
+        "AT-20"
+      ],
+      "pre": "fake source 在快照外投放 .staging 残留/未提交 drafts 文件",
+      "op": "export_",
+      "expected": "清单外文件不出现在包内（存在≠已提交）",
+      "obs": "包条目枚举比对（全等）",
+      "cases": [
+        {
+          "name": "IoPackContractTest.CommittedVsStagedOnlySnapshotEntriesPacked",
+          "status": "passed",
+          "modes": [
+            "integration",
+            "smoke"
+          ]
+        }
+      ]
+    }
+  ]
+}

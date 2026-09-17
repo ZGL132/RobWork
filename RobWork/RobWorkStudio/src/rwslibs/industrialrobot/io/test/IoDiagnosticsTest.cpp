@@ -22,14 +22,21 @@
 #include <sdurws/ird/io/IoDiagnostics.hpp>
 
 #include <sdurws/ird/diagnostics/DiagCodes.hpp>
+#include <sdurws/ird/diagnostics/Logging.hpp>
+#include <sdurws/ird/diagnostics/Redaction.hpp>
+#include <sdurws/ird/io/Csv.hpp>
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
 #include <gtest/gtest.h>
 
 #include <algorithm>
 #include <cctype>
+#include <filesystem>
+#include <fstream>
 #include <iterator>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 using sdurws::ird::diagnostics::CodeDescriptor;
@@ -245,4 +252,172 @@ TEST(IoDiagCodeTable, ComparativeErrorCarriesThreeElementParams)
     EXPECT_EQ(e.params[2].first, "unit");
     EXPECT_EQ(e.params[2].second, "count");
     EXPECT_EQ(e.detail, "行预算超限——V06");
+}
+
+// =====================================================================
+// IO-V30：诊断脱敏两级（NFR-SEC-07/ERR-01/REQ-05 支撑——IO-T07
+// acceptance 1/4；O-09 对端＝diagnostics sink fake 承载）
+// =====================================================================
+
+namespace {
+
+/**
+ * diagnostics sink 替身（O-09 处置——"V30 的对端以 diagnostics sink fake
+ * 承载"）：io 只产出结构化诊断事实（稳定码 token＋定位参数＋开发级原文
+ * 片段字段），诊断落入的日志槽位与两级呈现组装归 diagnostics/ui 侧——
+ * 本替身承载"双级行槽"：
+ *   - User 级（Tier-U＝稳定码＋脱敏参数＋对象定位，diagnostics.md §9.6
+ *     原文口径）：**不渲染**开发级字段（rawSnippet 结构上不进用户级行），
+ *     路径经真实 RedactionService::redactPath 脱敏后入行；
+ *   - Dev 级（Tier-D＝全量技术细节）：整条原文经 redact(raw, Dev) 入行
+ *     （真实脱敏设施——凭据/路径形态仍过滤，普通技术细节保留）。
+ * 脱敏规则本体是真实 RedactionService（io 产品库本就链接 diagnostics）；
+ * fake 的是"槽位与呈现组装"，不是脱敏规则本身。
+ */
+class FakeTwoTierSink {
+public:
+    explicit FakeTwoTierSink(const sdurws::ird::diagnostics::IRedactionService& redaction)
+        : m_redaction(redaction)
+    {
+    }
+
+    /// 接收一条诊断的结构化面（原文片段＋定位＋来源路径），两级入槽。
+    void emit(const std::string& codeToken, std::uint64_t row, std::uint64_t col,
+              const std::string& devSnippet, const std::string& sourcePath)
+    {
+        using sdurws::ird::diagnostics::LogTier;
+        // 用户级行：稳定码＋定位＋脱敏后路径——devSnippet（开发级字段）
+        // 不参与组装（Tier-U 词表外字段一概不渲染——NFR-SEC-07 分层面）。
+        userLine_ = codeToken + " row=" + std::to_string(row)
+                    + " col=" + std::to_string(col)
+                    + " source=" + m_redaction.redactPath(sourcePath);
+        // 开发级行：整条原文经 Dev 档脱敏（凭据/环境变量仍过滤——§9.5）。
+        devLine_ = m_redaction.redact(
+            codeToken + " row=" + std::to_string(row) + " col=" + std::to_string(col)
+                + " snippet=" + devSnippet + " source=" + sourcePath,
+            LogTier::Dev);
+    }
+
+    const std::string& userLine() const { return userLine_; }
+    const std::string& devLine() const { return devLine_; }
+
+private:
+    const sdurws::ird::diagnostics::IRedactionService& m_redaction;  ///< 调用方持有
+    std::string userLine_;   ///< 用户级槽位行（Tier-U）
+    std::string devLine_;    ///< 开发级槽位行（Tier-D）
+};
+
+} // namespace
+
+/**
+ * 产码→sink 全链脱敏断言（V30"用户级仅定位、开发级片段保留、报告无原
+ * 始文本"）：①真实 io 产码——CSV 行错误把原文片段承载为**独立开发级字
+ * 段** rawSnippet（定位参数 row/column 不携带原文——io 结构面已用户安
+ * 全）；②sink fake 两级入槽（路径经真实 RedactionService 脱敏）；③断
+ * 言：用户级无完整路径（默认 RootOnly：盘符＋一级目录＋…＋文件名）、保
+ * 留文件名可定位、无片段；开发级片段保留；safeSummary（报告导出双保险
+ * 入口）无路径原文＋截断标注。
+ */
+TEST(IoDiagSanitization, UserTierLocatesWithoutFullPathOrRawSnippetDevKeepsSnippet)
+{
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V30 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-07", "REQ-05"},
+                  std::vector<std::string>{"AT-02"});
+
+    namespace fs = std::filesystem;
+    using sdurws::ird::diagnostics::RedactionService;
+    using sdurws::ird::io::CsvReadOptions;
+    using sdurws::ird::io::RawTable;
+    using sdurws::ird::io::errorCodeToken;
+    using sdurws::ird::io::makeCsvReader;
+
+    // ---- ① 真实产码：无标识 CSV，表头 2 列、数据行 4 列（默认 Reject
+    // 策略→行错误）；片段单元格＝带空格的短短语（<40 字符且含空格——
+    // 不命中凭据键值/独立长凭证串/长十六进制等脱敏规则，判据聚焦路径与
+    // 原文片段本身）。
+    const std::string rawFragment = "raw cell fragment kept for dev tier";
+    const fs::path csvPath = fs::temp_directory_path() / "ird-io-v30-sanit.csv";
+    {
+        std::ofstream f(csvPath, std::ios::binary | std::ios::trunc);
+        ASSERT_TRUE(f.is_open());
+        f << "name,val\n";
+        f << rawFragment << ",extra1,extra2,extra3\n";
+    }
+
+    auto reader = makeCsvReader();
+    CsvReadOptions ropts;
+    ropts.headerRow = 1;
+    const sdurws::ird::io::IoResult<RawTable> parsed = reader->read(
+        csvPath, ropts,
+        [](std::uint64_t, sdurws::ird::io::CsvRowView&&) { return true; },
+        nullptr, nullptr);
+    ASSERT_TRUE(parsed) << parsed.error.detail;
+    ASSERT_EQ(parsed.value.rowErrors.size(), 1u)
+        << "前置：恰一条行错误（超列数 Reject）";
+    const sdurws::ird::io::CsvRowError rowErr = parsed.value.rowErrors.front();
+    // rawSnippet 承载片段原文（截断上限 120 B——本片段 35 B 全量在内）。
+    EXPECT_NE(rowErr.rawSnippet.find("raw cell fragment kept"), std::string::npos)
+        << "前置：rawSnippet 携带片段原文";
+    // io 结构面登记口径（脱敏第一道防线在产码侧——IoError.hpp 头注）：
+    // params 按 CSV 族 paramSchema＝["row","column","snippet"]（IoDiagnostics
+    // 注册值）承载——其中 snippet 是**登记的开发级参数**（呈现须经脱敏/
+    // 分级过滤——AT-02"用户级仅定位"），row/column 为用户安全定位；完整
+    // 本机路径不得进 params（路径仅经 display 脱敏形态出场）。
+    bool sawRow = false;
+    bool sawCol = false;
+    bool sawSnippet = false;
+    for (const auto& kv : rowErr.reason.params) {
+        EXPECT_EQ(kv.second.find(csvPath.string()), std::string::npos)
+            << "参数携带完整本机路径（kv=" << kv.first << "）";
+        if (kv.first == "row") {
+            sawRow = true;
+        }
+        if (kv.first == "column") {
+            sawCol = true;
+        }
+        if (kv.first == "snippet") {
+            sawSnippet = true;
+        }
+    }
+    EXPECT_TRUE(sawRow) << "缺 row 定位参数（paramSchema 登记面）";
+    EXPECT_TRUE(sawCol) << "缺 col 定位参数（paramSchema 登记面）";
+    EXPECT_TRUE(sawSnippet) << "缺 snippet 开发级参数（paramSchema 登记面）";
+
+    // ---- ② 真实脱敏设施（默认策略 RootOnly/32——§9.5 原文默认值）＋
+    // sink fake 双级入槽（原始片段仅作为开发级字段传入）。
+    RedactionService redaction;                 // 默认策略——产品默认口径
+    FakeTwoTierSink sink(redaction);
+    sink.emit(std::string(errorCodeToken(rowErr.reason.code)), rowErr.rowNo,
+              rowErr.colNo, rowErr.rawSnippet, csvPath.string());
+
+    // ---- ③ 用户级仅定位：无完整路径（绝对路径原文不出现在呈现行），
+    // 但保留文件名（RootOnly"盘符＋一级目录＋…＋文件名"——可定位入口）；
+    // 开发级片段不出现（Tier-U 不渲染开发级字段）。
+    EXPECT_EQ(sink.userLine().find(csvPath.string()), std::string::npos)
+        << "用户级泄露完整本机路径：" << sink.userLine();
+    EXPECT_EQ(sink.userLine().find(csvPath.parent_path().string()), std::string::npos)
+        << "用户级泄露路径目录段";
+    EXPECT_NE(sink.userLine().find("sanit.csv"), std::string::npos)
+        << "用户级应保留文件名（仅定位口径）";
+    EXPECT_EQ(sink.userLine().find("raw cell fragment"), std::string::npos)
+        << "用户级出现原文片段（开发级字段渲染进 Tier-U）";
+
+    // ---- 开发级片段保留（Tier-D 全量技术细节——NFR-SEC-07 分层本意）。
+    EXPECT_NE(sink.devLine().find("raw cell fragment"), std::string::npos)
+        << "开发级未保留原文片段";
+
+    // ---- 报告导出面（exportSafeSummary→safeSummary 双保险入口）：报告
+    // 管线以 safeSummary 兜底导出诊断原文——敏感的完整路径不得出现＋
+    // 超限截断标注（本断言把含路径原文喂入，验证设施真实过滤）。
+    const std::string rawWithSource =
+        std::string(errorCodeToken(rowErr.reason.code))
+        + " snippet=" + rowErr.rawSnippet + " source=" + csvPath.string();
+    const std::string summary = redaction.safeSummary(rawWithSource, 64);
+    EXPECT_EQ(summary.find(csvPath.string()), std::string::npos) << "摘要泄露完整路径";
+    EXPECT_NE(summary.find("[trunc]"), std::string::npos) << "截断未标注";
+
+    // ---- 现场清理（本用例自持——临时文件不残留）。
+    std::error_code cleanupEc;
+    fs::remove(csvPath, cleanupEc);
 }

@@ -46,6 +46,14 @@
 #      test/ResourceIoTest.cpp（IoRes 组——V15/V16/V25/V26/V27＋基础
 #      契约，提交 1/3）与 test/ResourceSolidifyTest.cpp（V17/V24＋三段
 #      边界＋§8.6 生命周期，提交 2/3）。
+#   7. IO-T07（≙WP-11-T07）：契约测试套件整备与留痕——两测试目标接入
+#      testkit 报告设施（test/TestMainReport.cpp＋contract_test/
+#      ContractTestMain.cpp 自有 main 安装 TestRecordListener，ird-test-
+#      report.json 用例级明细与 gtest XML 并存——testkit §7.2/§7.3，
+#      PRJ-T15 同款先例）；链接面相应 GTest::gtest_main→GTest::gtest
+#      （gtest_main 固定入口无监听器安装点）＋增链 sdurws_ird_testkit
+#      （T-1 允许形态：仅测试目标链 testkit，产品目标零 testkit 边不变）；
+#      §11.2 全矩阵用例经 IRD_TEST_INFO 携带需求/AT 追溯字段。
 #   6. IO-T06（≙WP-11-T05/T07）：src/ 增列 Package.cpp（§7/§9.9——
 #      导入九步协议＋导出六步协议；libzip 写侧消费点〔读侧仍归
 #      ZipChannel.cpp——io.md §15.5 v0.9 登记〕）、TempArea.cpp（§7.5/
@@ -171,6 +179,7 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_io_test
+    test/TestMainReport.cpp
     test/SafePathTest.cpp
     test/BudgetTest.cpp
     test/IoDiagnosticsTest.cpp
@@ -193,16 +202,18 @@ if(MSVC)
     target_compile_options(sdurws_ird_io_test PRIVATE /utf-8)
 endif()
 
-# 测试 main 自持（DTB §5.5）：GTest::gtest_main 提供入口；测试链接产品库
-# sdurws_ird_io 同时验证"公共头可被正常 include＋库可链接"（io→core/
-# diagnostics 的 PUBLIC 传染链随目标自动到达）。
-# 不链 sdurws_ird_testkit：红线用例以 gtest 原生断言承载（需求/AT 追溯
-# 在用例名与 ird-test-report.json 的 trace 字段——diagnostics 先例同款）；
-# testkit 契约谓词消费随 IO-T07 契约套件登记（届时 _contract_test 目标
-# 链 testkit 为 T-1 允许形态，产品目标不链）。
+# 测试 main 自持（IO-T07 起为自有 main——test/TestMainReport.cpp 安装
+# testkit TestRecordListener，ird-test-report.json 用例级明细与 gtest XML
+# 并存；链接面相应 GTest::gtest_main→GTest::gtest——gtest_main 固定入口
+# 无监听器安装点）：测试链接产品库 sdurws_ird_io 同时验证"公共头可被正常
+# include＋库可链接"（io→core/diagnostics 的 PUBLIC 传染链随目标自动到达）。
+# sdurws_ird_testkit＝IO-T07 报告/追溯设施消费面（RecordListener/
+# IRD_TEST_INFO——T-1 允许形态：仅测试目标链 testkit，产品目标不链；
+# PRJ-T15 同款先例，门禁新增命中随任务留痕自登记 findings）。
 target_link_libraries(sdurws_ird_io_test PRIVATE
     sdurws_ird_io
-    GTest::gtest_main)
+    sdurws_ird_testkit
+    GTest::gtest)
 # libzip 供测试侧恶意 zip 构造器使用（§11.1 替身清单——合法样例经 libzip
 # 写侧构造、恶意样例手工字节构造；T-1 同款"测试目标可链"形态——产品库
 # 本体已 PRIVATE 链接，此处仅为测试翻译单元的 <zip.h> 头与链接符号）。
@@ -260,8 +271,12 @@ ird_add_gtest(sdurws_ird_io_test)
 # 入〔PackageIoFacilities 注入面——Package.hpp〕，不依赖真实磁盘满）：
 # test/PackageContractTest.cpp（IoPackContract 组——V18 导出并发写/V20
 # 磁盘满/V21 清理失败/V23 导出仅暂存/V31 后台不阻塞/V32 已提交对暂存
-# ——AT-20"包导出/导入主线、取消不留半成品"的契约面）。
+# ——AT-20"包导出/导入主线、取消不留半成品"的契约面）。IO-T07 增列
+# V22 聚合负断言（FailureScenariosNeverCreateTargetDirectory——全部失败
+# 样例跑后目标目录枚举）与自有 main（ContractTestMain.cpp——报告设施
+# 接入，与单元测试目标同款）。
 add_executable(sdurws_ird_io_contract_test
+    contract_test/ContractTestMain.cpp
     contract_test/PackageContractTest.cpp)
 
 target_compile_features(sdurws_ird_io_contract_test PRIVATE cxx_std_17)
@@ -274,12 +289,14 @@ if(MSVC)
     target_compile_options(sdurws_ird_io_contract_test PRIVATE /utf-8)
 endif()
 
-# 链接面与 sdurws_ird_io_test 同款（T-1：测试目标可链 testkit——本目标
-# 暂不链，契约谓词消费随 IO-T07 契约套件整备评估；libzip 供包构造替身
-# 写侧使用——与 _test 目标同款口径）。
+# 链接面与 sdurws_ird_io_test 同款（IO-T07 起自有 main＋链 sdurws_ird_
+# testkit——报告设施与 IRD_TEST_INFO 追溯消费，T-1 允许形态：仅测试目标
+# 链 testkit，产品目标不链；libzip 供包构造替身写侧使用——与 _test 目标
+# 同款口径）。
 target_link_libraries(sdurws_ird_io_contract_test PRIVATE
     sdurws_ird_io
-    GTest::gtest_main
+    sdurws_ird_testkit
+    GTest::gtest
     libzip::zip)
 
 # 源码树位置注入（红线扫描用例同 _test 口径——值内以单元名作子目录前缀）。

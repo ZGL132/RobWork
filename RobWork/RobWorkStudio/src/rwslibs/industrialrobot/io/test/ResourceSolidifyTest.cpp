@@ -32,6 +32,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -180,6 +182,10 @@ protected:
 /// 调用"）在首个复制块完成后改写源——注入点确定，不依赖时序。
 TEST_F(IoSolidifyTest, SourceChangedDuringCopyDetectedAndStagingCleaned)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V17 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-REL-04", "CON-03"},
+                  std::vector<std::string>{"AT-20"});
     // 源＝256 KiB（4 个 64 KiB 块）——保证复制跨越多个检查点。
     const std::vector<std::uint8_t> original = rampBytes(256 * 1024, 7);
     const fs::path src = write("model.bin", original);
@@ -284,6 +290,10 @@ TEST_F(IoSolidifyTest, NonAuthorizedStagingDirRejected)
 /// 观测点"码区分断言"）。清理通道复位只读属性（io 自会话产物——不污染）。
 TEST_F(IoSolidifyTest, ReadonlyTargetWritesMapToReadonlyCode)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V24 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01"},
+                  std::vector<std::string>{});
     const fs::path src = write("payload.bin", rampBytes(1024, 5));
     const fs::path staging = stagingOf("v24");
     const fs::path target = staging / "payload.bin";    // 预置只读目标（残留会话产物形态）
@@ -314,6 +324,10 @@ TEST_F(IoSolidifyTest, ReadonlyTargetWritesMapToReadonlyCode)
 /// 无任何工程不可行结论字段（判定归 evidence 门禁——§6.6/§10.8）。
 TEST_F(IoSolidifyTest, ProbeReportsMissingForDeletedExternalFile)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V26 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-REL-04", "MDL-19"},
+                  std::vector<std::string>{});
     const fs::path src = write("gone.bin", {'a', 'b'});
     const Digest256 recorded = manualDigest({'a', 'b'});
     fs::remove(src);                                    // 记录后源被删除
@@ -601,6 +615,270 @@ TEST_F(IoSolidifyTest, AdapterRecordedFailureMapping)
         makeRuntimeResourceAdapter(&budgetSource, &refs);
     const ResourceReadResult rb = budgetAdapter->tryResourceBytes(ObjectId::generate());
     EXPECT_EQ(rb.status, ResourceReadStatus::Budget);
+}
+
+// =====================================================================
+// IO-V28：重关联新修订（PM-09/CON-03/AT-20——IO-T07 acceptance 1/4；
+// O-09 对端＝project 命令 fake 承载，io 零 project 编译依赖）
+// =====================================================================
+
+/// project 侧命令编排替身（O-09 处置——"V28 的对端以 project 命令 fake
+/// 承载"）：真实编排归 project（§10.1——固化命令、重关联命令均为
+/// project 拥有的写路径），io 仅提供前后快照与检测。本替身以"命令调用
+/// 序列记录器"形态模拟 project 端：记录 io 交付物（摘要/路径）驱动的
+/// 命令调用，并产出假的 materializedVersion（修订号），供序列断言与
+/// "io 不产生修订"的负断言对照。
+struct FakeProjectCommandLog {
+    /// 记录项：命令名＋关键参数（digest 取 8 位短十六进制——断言可读）。
+    struct Call {
+        std::string name;
+        std::string arg;
+    };
+    std::vector<Call> calls;
+
+    static std::string shortHex(const Digest256& d)
+    {
+        return hexOf(d).substr(0, 8);
+    }
+
+    /// 固化入库命令（project 段③后半：中转副本→objects 正式入库，分配
+    /// materializedVersion——此处以"mat-<n>"假修订号承载）。
+    std::string materialize(const Digest256& stagingDigest)
+    {
+        const std::string version = "mat-" + std::to_string(calls.size());
+        calls.push_back(Call{"materialize", shortHex(stagingDigest) + "->" + version});
+        return version;
+    }
+
+    /// 重关联命令（PM-09：用户显式选择新源后——旧记录摘要→新实际摘要）。
+    void reassociate(const Digest256& recorded, const Digest256& actual)
+    {
+        calls.push_back(Call{"reassociate", shortHex(recorded) + "->" + shortHex(actual)});
+    }
+};
+
+/// IO-V28 契约级编排：固化(v1)→外部源变化→probe 检出 Changed→用户重
+/// 关联（命令 fake 记录旧→新摘要）→再固化→新 materializedVersion。
+/// 断言三面：①命令调用序列精确（materialize→reassociate→materialize，
+/// 参数＝前后快照摘要）；②io 侧负断言——io 只交付快照/中转副本/检测
+/// 事实，**不产生修订**（返回面无修订字段＋工作区无修订痕迹物）；③新
+/// 固化产生新 materializedVersion（v2 内容≠v1，digest 为身份）。
+TEST_F(IoSolidifyTest, ReassociateNewRevisionProjectCommandFakeSequence)
+{
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V28 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"PM-09", "CON-03"},
+                  std::vector<std::string>{"AT-20"});
+
+    FakeProjectCommandLog project;                 // O-09 对端：命令 fake
+    const std::vector<std::uint8_t> v1 = rampBytes(4096, 21);
+    const fs::path src = write("reassociate.bin", v1);
+
+    // —— 第一轮：固化 v1（io 执行侧，中转副本待 project 入库）。
+    const fs::path staging1 = stagingOf("v28-a");
+    const IoResult<SolidifyStagingResult> s1 =
+        snapshotter->solidifyToStaging(src, staging1, 0, nullptr, nullptr);
+    ASSERT_TRUE(s1) << s1.error.detail;
+    ASSERT_FALSE(s1.value.sourceChangedDuringCopy);
+    EXPECT_EQ(s1.value.copiedDigest, manualDigest(v1));
+    // project 固化入库命令：以 io 交付的摘要入库 → materializedVersion v1。
+    const std::string mat1 = project.materialize(s1.value.copiedDigest);
+
+    // —— 外部源内容替换（用户编辑了外部引用的源文件）。
+    const std::vector<std::uint8_t> v2 = rampBytes(4096, 77);
+    {
+        std::ofstream f(src, std::ios::binary | std::ios::trunc);
+        f.write(reinterpret_cast<const char*>(v2.data()),
+                static_cast<std::streamsize>(v2.size()));
+    }
+
+    // —— 检测段②：probe 以记录摘要比对实际 → Changed＋actual 快照
+    //    （比较型 recorded/actual——重关联命令的参数来源）。
+    ExternalRefRecord record;
+    record.externalRefId = "ext-v28";
+    record.absPath = src;
+    record.recordedDigest = manualDigest(v1);
+    record.recordedSizeBytes = v1.size();
+    std::optional<ProbeDetail> detail;
+    const IoResult<ExternalRefState> probed =
+        snapshotter->probe(record, nullptr, nullptr, &detail);
+    ASSERT_TRUE(probed);
+    ASSERT_EQ(probed.value, ExternalRefState::Changed);
+    ASSERT_TRUE(detail.has_value());
+    EXPECT_EQ(detail->actual.contentDigest, manualDigest(v2));
+
+    // —— 用户重关联新源（显式提交——PM-09）：project 命令 fake 记录
+    //    旧记录摘要→新实际摘要；io 在此只是事实提供方。
+    project.reassociate(record.recordedDigest, detail->actual.contentDigest);
+
+    // —— 第二轮：再固化 v2（新授权中转位——新一轮会话）。
+    const fs::path staging2 = stagingOf("v28-b");
+    const IoResult<SolidifyStagingResult> s2 =
+        snapshotter->solidifyToStaging(src, staging2, 0, nullptr, nullptr);
+    ASSERT_TRUE(s2) << s2.error.detail;
+    EXPECT_EQ(s2.value.copiedDigest, manualDigest(v2));
+    const std::string mat2 = project.materialize(s2.value.copiedDigest);
+
+    // ① 命令调用序列精确断言（观测点"命令调用序列记录"）。
+    ASSERT_EQ(project.calls.size(), 3u);
+    EXPECT_EQ(project.calls[0].name, "materialize");
+    EXPECT_EQ(project.calls[0].arg,
+              FakeProjectCommandLog::shortHex(manualDigest(v1)) + "->" + mat1);
+    EXPECT_EQ(project.calls[1].name, "reassociate");
+    EXPECT_EQ(project.calls[1].arg,
+              FakeProjectCommandLog::shortHex(manualDigest(v1)) + "->"
+                  + FakeProjectCommandLog::shortHex(manualDigest(v2)));
+    EXPECT_EQ(project.calls[2].name, "materialize");
+    EXPECT_EQ(project.calls[2].arg,
+              FakeProjectCommandLog::shortHex(manualDigest(v2)) + "->" + mat2);
+
+    // ② io 不产生修订的负断言：SolidifyStagingResult 返回面只有快照对＋
+    //    副本摘要（无修订/版本字段——结构上不可能携带修订产出）；工作
+    //    区扫描无 revisions 痕迹物（修订持久化归 project——§10.1）。
+    bool revisionArtifact = false;
+    for (const fs::directory_entry& e :
+         fs::recursive_directory_iterator(dir)) {
+        if (e.path().filename() == "revisions"
+            || e.path().extension() == ".rev") {
+            revisionArtifact = true;
+        }
+    }
+    EXPECT_FALSE(revisionArtifact) << "io 侧出现修订痕迹物（PA-1 违例）";
+
+    // ③ 新固化产生新 materializedVersion：两轮入库版本不同，且各自内容
+    //    摘要与对应源版本一致（新 materializedVersion 的内容身份＝v2）。
+    EXPECT_NE(mat1, mat2);
+    EXPECT_EQ(s1.value.copiedDigest, manualDigest(v1));
+    EXPECT_EQ(s2.value.copiedDigest, manualDigest(v2));
+    EXPECT_NE(s1.value.copiedDigest, s2.value.copiedDigest);
+}
+
+// =====================================================================
+// P-IO-2 专用固化用例（IO-T07 acceptance 4——§8.6 五条裁决逐条断言）
+// =====================================================================
+
+/// §8.6 ResourceBytes 生命周期五条裁决的**专用**断言用例（与既有
+/// AdapterRoutingAndLifecycleRulings 的路由混编断言、
+/// AdapterConcurrentRecordedReadsAreSafe 的第 3 条并发面互补，把五条
+/// 逐条钉住，防止实现弱化）：
+///
+///  - 第 1 条（最低保证）：缓冲自返回起**至少**有效至同一 provider 的
+///    下一次调用——取缓冲→再调用→旧缓冲仍完整可读；
+///  - 第 1 条（实际保证）：io 实际保证"至 provider 析构均有效"——多轮
+///    多资源取全部视图，析构前逐一校验（析构后不可解引用——调用方纪律，
+///    注释声明不越线）；
+///  - 第 2 条（调用方纪律）：同步消费、不跨调用长期持有——本用例自身
+///    即纪律的模型（视图在使用窗口内消费完毕；该条是纪律不是可断言行
+///    为，登记为注释口径）；
+///  - 第 3 条（并发只读安全）：见 AdapterConcurrentRecordedReadsAreSafe
+///    （专用并发用例——此处不重复时序面）；
+///  - 第 4 条（Recorded 不缓存/Solidified 可缓存）：Recorded 两次调用
+///    返回**独立**缓冲（指针不同、均有效），且源更新＋记录刷新后新调用
+///    反映新内容新摘要（每次重读＋重算）；Solidified 命中缓存（同指针）；
+///  - 第 5 条（值拷贝兼容）：未来改值拷贝语义与本裁决兼容（更强不弱）
+///    ——契约层登记，无行为断言面（注释口径）。
+TEST_F(IoSolidifyTest, AdapterResourceBytesLifecycleFiveRulingsPinned)
+{
+    // 追溯登记（IO-T07——units/io.md §8.6/§15.3 P-IO-2 行；ird-test-
+    // report.json 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-REL-04"},
+                  std::vector<std::string>{});
+
+    // 三个 Recorded 外部资源（各自独立缓冲的可观测面）＋一个 Solidified。
+    const std::size_t kRecorded = 3;
+    std::vector<std::vector<std::uint8_t>> recordedBytes;
+    std::vector<fs::path> recordedPaths;
+    FakeProjectBytes project;                       // 空对象库——全部走 Recorded
+    FakeExternalRefs refs;
+    std::vector<ObjectId> recordedIds;
+    for (std::size_t i = 0; i < kRecorded; ++i) {
+        recordedBytes.push_back(rampBytes(8192, static_cast<std::uint8_t>(30 + i)));
+        recordedPaths.push_back(write("ruling-" + std::to_string(i) + ".bin",
+                                      recordedBytes.back()));
+        const ObjectId id = ObjectId::generate();
+        ExternalRefRecord rec;
+        rec.externalRefId = id.toCanonical();
+        rec.absPath = recordedPaths.back();
+        rec.recordedDigest = manualDigest(recordedBytes.back());
+        rec.recordedSizeBytes = recordedBytes.back().size();
+        refs.records[id.toCanonical()] = rec;
+        recordedIds.push_back(id);
+    }
+    const std::vector<std::uint8_t> solidBytes = rampBytes(1024, 99);
+    const ObjectId solidId = ObjectId::generate();
+    project.store[solidId.toCanonical()] = solidBytes;
+
+    const IRuntimeResourceAdapterPtr adapter = makeRuntimeResourceAdapter(&project, &refs);
+
+    // —— 第 1 条（实际保证）前置采集：每个 Recorded 取一个视图。
+    std::vector<ResourceBytesView> firstViews;
+    for (const ObjectId& id : recordedIds) {
+        const ResourceReadResult r = adapter->tryResourceBytes(id);
+        ASSERT_EQ(r.status, ResourceReadStatus::Ok);
+        firstViews.push_back(r.bytes);
+    }
+
+    // —— 第 1 条（最低保证）：上面的视图经历"多次后续调用"后仍完整。
+    //    （保证强度≥"至下次调用"：即便实现只保证到下次调用，本断言在
+    //    "下次调用已发生"后检查，正是最低保证的下边界验证形态。）
+    (void)adapter->tryResourceBytes(solidId);
+    (void)adapter->tryResourceBytes(recordedIds[0]);
+    for (std::size_t i = 0; i < kRecorded; ++i) {
+        ASSERT_NE(firstViews[i].data, nullptr);
+        EXPECT_EQ(std::memcmp(firstViews[i].data, recordedBytes[i].data(),
+                              recordedBytes[i].size()),
+                  0)
+            << "下次调用后旧缓冲失效（低于 §8.6.1 最低保证，idx=" << i << "）";
+    }
+
+    // —— 第 4 条（Recorded 不缓存）：同资源连续两次调用返回独立缓冲
+    //    （指针不同——两视图同时暴露，复用即数据竞争）；随后把源与记录
+    //    一并更新，新调用必须返回新内容新摘要（每次重读＋重算——若缓存
+    //    则仍回旧字节，S10 摘要复查语义失效）。
+    const ResourceReadResult a = adapter->tryResourceBytes(recordedIds[1]);
+    const ResourceReadResult b = adapter->tryResourceBytes(recordedIds[1]);
+    ASSERT_EQ(a.status, ResourceReadStatus::Ok);
+    ASSERT_EQ(b.status, ResourceReadStatus::Ok);
+    EXPECT_NE(a.bytes.data, b.bytes.data)
+        << "Recorded 复用了仍在暴露中的缓冲（§8.6.3/§8.6.4 违例）";
+    {
+        const std::vector<std::uint8_t> v2 = rampBytes(8192, 200);
+        {
+            std::ofstream f(recordedPaths[1], std::ios::binary | std::ios::trunc);
+            f.write(reinterpret_cast<const char*>(v2.data()),
+                    static_cast<std::streamsize>(v2.size()));
+        }
+        refs.records[recordedIds[1].toCanonical()].recordedDigest = manualDigest(v2);
+        const ResourceReadResult c = adapter->tryResourceBytes(recordedIds[1]);
+        ASSERT_EQ(c.status, ResourceReadStatus::Ok);
+        EXPECT_EQ(c.bytes.digest, manualDigest(v2))
+            << "Recorded 未重读（缓存了旧字节——§8.6.4 违例）";
+        EXPECT_EQ(std::memcmp(c.bytes.data, rampBytes(8192, 200).data(), 8192), 0);
+        // 旧视图不受新调用影响（独立稳定——并发语义的时序面推论）。
+        EXPECT_EQ(std::memcmp(a.bytes.data, rampBytes(8192, 31).data(), 8192), 0);
+    }
+
+    // —— 第 4 条后半（Solidified 允许缓存）：命中缓存＝同指针（不可变
+    //    对象缓存安全——§8.6.4 括号条款）。
+    const ResourceReadResult s1 = adapter->tryResourceBytes(solidId);
+    const ResourceReadResult s2 = adapter->tryResourceBytes(solidId);
+    ASSERT_EQ(s1.status, ResourceReadStatus::Ok);
+    ASSERT_EQ(s2.status, ResourceReadStatus::Ok);
+    EXPECT_EQ(s1.bytes.data, s2.bytes.data) << "Solidified 未命中缓存";
+
+    // —— 第 1 条（实际保证）终检：全部视图（含中途取得的 a/b/c/s1/s2）
+    //    在 provider 析构前仍完整可读——"至析构均有效"的强保证面。
+    //    （此后 provider 析构，视图随之失效——第 2 条调用方纪律：不同步
+    //    消费到析构之外，本用例在此收束，不越线解引用。）
+    for (std::size_t i = 0; i < kRecorded; ++i) {
+        EXPECT_EQ(std::memcmp(firstViews[i].data, recordedBytes[i].data(),
+                              recordedBytes[i].size()),
+                  0)
+            << "析构前旧缓冲损坏（§8.6.1 实际保证违例，idx=" << i << "）";
+    }
+
+    // 第 5 条（值拷贝兼容）：实现未来改为小资源值拷贝亦兼容本裁决（更强
+    // 不弱）——契约层登记，无行为断言面（units/io.md §8.6 第 5 条原文）。
 }
 
 } // namespace

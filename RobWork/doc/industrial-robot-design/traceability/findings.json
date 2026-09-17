@@ -2023,6 +2023,16 @@
       "resolution": "不构成 IO-T06 返工项（pass 判定不受影响——任务级留痕 16 文件真实落库且数值经验收者双模式复现一致）。建议 ACC 修订 §4.10 为『任务级留痕目录（traceability/builds/<branch>/）落位：gtest XML＋ird-test-report.json＋构建/测试/验证日志』口径并删去无维护路径的两载体表述，或恢复对应载体的维护机制——两者择一，消除历史任务的口径歧义"
     },
     {
+      "id": "F-202",
+      "source": "IO-T07 实施段自登记（wp11-t07 实施会话，ird_gates 运行实录）——F-197 同型新增项（测试目标 testkit 消费边）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "ird_gates 对『测试目标直链他单元产品目标』的 SUB 检查按目标×依赖逐边计数，例外登记（DTB §4.5『各 _test/_contract_test 经 testkit 替身消费』）暂以逐实例命中呈现：IO-T07 按任务契约 acceptance 1（ird-test-report.json 报告设施）将 io 两测试目标链接 sdurws_ird_testkit（PRJ-T15 同款先例，T-1 允许形态——仅测试目标链 testkit，产品目标不链），ird_gates 在 wp11-t06 基线 15 处之外新增 2 处 SUB 命中（sdurws_ird_io_test→sdurws_ird_testkit、sdurws_ird_io_contract_test→sdurws_ird_testkit；全量 17 处＝基线 15＋本批 2）；词表/引擎位于 industrialrobot/cmake/、DTB 登记位在 development-task-breakdown.md——均不在 IO-T07 契约 allowedFiles 内",
+      "owner": "门禁/构建约定所有者（DTB §4.5/§5.1/ird_gates 辖域）——与 F-145/F-173 同批：例外实例行批量增登，或改为『对已登记例外类型（testkit 消费边）按类型豁免』的引擎口径，两者择一后本条与同族命中一并消账",
+      "resolution": "IO-T07 侧处置＝testkit 消费为本任务契约明文（acceptance 1：§11.2 全用例结果逐条登记 ird-test-report.json——testkit §7.2/§7.3 TestRecordListener＋IRD_TEST_INFO），T-1 红线保持（产品目标 sdurws_ird_io 零 testkit 边，ird_gates 无 T-1 新增命中）；新增 2 处命中在 build 留痕（gates-ird-gates-target.log）与 ird-test-report.json 与基线 15 处分列如实登记；不越权修改 ird_gates.cmake/whitelist 与 DTB"
+    },
+    {
       "id": "F-203",
       "source": "traceability/acceptance/IO-T07-20260918.md §4.8（验收 attempt 2，送验对象 d381d9d3）：findings.json 未关闭条目消账状态核对发现。编号注：F-202 系 IO-T07 实施段在 wp11-t07 分支 d381d9d3 登记（ird_gates SUB 命中，随任务合入本文件时顺延就位于本条之前）",
       "severity": "suggestion",

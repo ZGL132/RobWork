@@ -25,6 +25,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
+
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
@@ -287,6 +289,10 @@ TEST_F(IoCsvTest, EscapeUnescapeReflexiveOverPrefixSampleSet)
  */
 TEST_F(IoCsvTest, RoundtripBasicQuotesDelimsNewlineChineseEmpty)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V01 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-03"},
+                  std::vector<std::string>{"AT-02", "AT-22"});
     // 导出数据：引号/分隔符/换行/中文/空串全覆盖（NFR-SEC-03 R5 样例域）。
     const std::vector<StringRow> table{
         {"名称", "公式", "备注"},
@@ -379,6 +385,10 @@ TEST_F(IoCsvTest, RoundtripBasicQuotesDelimsNewlineChineseEmpty)
  */
 TEST_F(IoCsvTest, RoundtripPrefixedEscapeOnlyAtFileLayer)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V02 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-03"},
+                  std::vector<std::string>{"AT-02"});
     // 样例集：前缀五类＋原文自带 '＋空串＋组合。每行配第二列行号哨兵——
     // 纯空串单列行在文件层与空行同形（由 §5.4 空行策略管辖，属格式固有
     // 歧义），哨兵列使全样例成为可交付数据行（含空串字段的 roundtrip
@@ -449,6 +459,10 @@ TEST_F(IoCsvTest, RoundtripPrefixedEscapeOnlyAtFileLayer)
  */
 TEST_F(IoCsvTest, UnmarkedNoRewriteKeepsAllFieldsVerbatim)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V03 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-03"},
+                  std::vector<std::string>{});
     const fs::path file = m_dir / "external.csv";
     writeFileBytes(file,
                    "name,val\n"        // 表头（无标识）
@@ -497,6 +511,10 @@ TEST_F(IoCsvTest, UnmarkedNoRewriteKeepsAllFieldsVerbatim)
  */
 TEST_F(IoCsvTest, BomStrippingAndUtf16Decoding)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V04 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-03"},
+                  std::vector<std::string>{"AT-02"});
     auto reader = makeCsvReader();
 
     // ① UTF-8 BOM＋无标识：BOM 剥离后正常解析（首字段不含 BOM 字节）。
@@ -641,6 +659,10 @@ TEST_F(IoCsvTest, BomStrippingAndUtf16Decoding)
  */
 TEST_F(IoCsvTest, EolToleranceAndQuotedNewlineNesting)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V04 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-03"},
+                  std::vector<std::string>{"AT-02"});
     auto reader = makeCsvReader();
 
     // ① 行尾三形态混布＋引号嵌套/引号内换行与分隔符（无标识文件）。
@@ -700,6 +722,10 @@ TEST_F(IoCsvTest, EolToleranceAndQuotedNewlineNesting)
  */
 TEST_F(IoCsvTest, NonUtf8WithoutBomStableReject)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V04 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-03"},
+                  std::vector<std::string>{});
     auto reader = makeCsvReader();
     const fs::path latin1 = m_dir / "latin1.csv";
     writeFileBytes(latin1, std::string("name,val\r\ncaf\xE9,1\r\n")); // 0xE9＝Latin-1 é
@@ -724,6 +750,10 @@ TEST_F(IoCsvTest, NonUtf8WithoutBomStableReject)
  */
 TEST_F(IoCsvTest, DuplicateHeaderColumnsRejectedWithLocation)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V05 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-05"},
+                  std::vector<std::string>{"AT-02"});
     auto reader = makeCsvReader();
     const fs::path dup = m_dir / "dupcol.csv";
     writeFileBytes(dup,
@@ -753,6 +783,10 @@ TEST_F(IoCsvTest, DuplicateHeaderColumnsRejectedWithLocation)
  */
 TEST_F(IoCsvTest, ArityPoliciesDefaultRejectAndExplicitPadTrim)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V05 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-05"},
+                  std::vector<std::string>{"AT-02"});
     auto reader = makeCsvReader();
     const fs::path anom = m_dir / "arity.csv";
     writeFileBytes(anom,
@@ -847,6 +881,10 @@ TEST_F(IoCsvTest, ArityPoliciesDefaultRejectAndExplicitPadTrim)
  */
 TEST_F(IoCsvTest, BlankRowPoliciesSkipCountAndReject)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V05 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-05"},
+                  std::vector<std::string>{"AT-02"});
     auto reader = makeCsvReader();
     const fs::path blanks = m_dir / "blanks.csv";
     writeFileBytes(blanks,
@@ -1059,6 +1097,10 @@ TEST_F(IoCsvTest, ProbeDetectsMarkerAndSniffsDelimiter)
  */
 TEST_F(IoCsvTest, RowBudgetChargedThroughReaderChannel)
 {
+    // 追溯登记（IO-T07——units/io.md §11.2 IO-V06 行；ird-test-report.json
+    // 需求/AT 字段，testkit.md §7.3 IRD_TEST_INFO）。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02", "NFR-PERF-03"},
+                  std::vector<std::string>{});
     const fs::path big = m_dir / "budget.csv";
     writeFileBytes(big, "a,1\na,2\na,3\na,4\na,5\na,6\n");   // 6 行（无标识）
     BudgetSpec spec = BudgetSpec::productDefault();
