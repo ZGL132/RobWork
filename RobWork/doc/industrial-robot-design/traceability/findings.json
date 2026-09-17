@@ -1879,6 +1879,27 @@
       "title": "F-181 同型收尾落分支事故复发：tick#179 收尾②执行时主工作树仍停驻 wp11-t02（实施子代理建分支后停留所致，编排者未复核当前分支），验收记录合入误落任务分支（5af1ca54，未推送）——发现后 checkout redesign-main 复位重跑（②=a05f63e4、③=c1d01df5），内容零损失，origin/redesign-main 与 origin/wp11-t02 全程未污染；误落 merge 已随任务分支删除清理。F-181 已登记『PIPE/T-IMPL 模板增量修订候选』而修订未落地即复发",
       "owner": "governance（PIPE 增量修订落地防复发：T-ORCH 收尾②前置断言『当前分支必须＝redesign-main，否则先切回』；T-IMPL 完成输出增加『切回 redesign-main』步骤候选）",
       "resolution": "处置建议＝PIPE/T-ORCH/T-IMPL 增量修订尽快落地（两次同类事故防复发修订均未及落地）；本条不阻塞流水线例行推进"
+    },
+    {
+      "id": "F-188",
+      "source": "traceability/acceptance/IO-T03-20260917.md §4.8（验收 attempt 1，送验对象 64bdbcb0；attempt 2 验收者自 acc/IO-T03/1 移植入册——fail 记录不合并，条目随 evidence 分支滞留，随 IO-T03 pass 记录落档移植）：实读 io.md 文末落款行与卡头版本行对照",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-17",
+      "title": "io.md 文末落款行过期表述：卡头已随 IO-T02 落位同步升 v0.4、§15.5 变更记录止于 v0.4，而文末落款仍写『io 单元详细设计 v0.3……构建落位 WP-11-T02 已随 IO-T01 完成』——版本引用与落位进度双滞后",
+      "owner": "io 单元任务实施者（随本任务落位同步提交顺手更正）",
+      "resolution": "IO-T03 attempt 2 复验：送验提交 cb2b793b（io.md v0.5 落位同步）文末落款实测已更正为『io 单元详细设计 v0.5，状态 Draft；构建落位进度：骨架随 IO-T01、SafePath/BudgetGuard 随 IO-T02、CSV 读写器随 IO-T03 落位完成』——与卡头版本行及 §15.5 v0.5 行一致。fixedAt=2026-09-17，fixedBy=wp11-t03 cb2b793b",
+      "fixedAt": "2026-09-17"
+    },
+    {
+      "id": "F-189",
+      "source": "traceability/acceptance/IO-T03-20260917-r2.md §4.7（验收 attempt 2，送验对象 cb2b793b）：公共头 Csv.hpp 全查逐行核读发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "Csv.hpp ICsvReader::read 的 Doxygen 注释中 @param progress 重复出现两条（L496~497 与 L500~501），且措辞不一（一条『done＝已消费物理行号』、一条『done＝已消费物理行数』）——文档重复瑕疵；回调契约语义（IoProgressCallback，done/total/stage，total=0 流式未知）两条均有表达且无实质矛盾，不影响编译与行为（MSVC/Doxygen 均不视为错误）",
+      "owner": "io 单元任务实施者（随后续任务顺手去重，保留一条并统一措辞；不追溯已推送提交——AGENTS §6.3 禁止改写历史）",
+      "resolution": "处置建议＝注释去重属零风险文档微修，随 IO 单元下一任务（IO-T04/T06/T07）触及 Csv.hpp 时顺手处理即可；单独返工不值得。不构成 IO-T03 返工项"
     }
   ]
 }
