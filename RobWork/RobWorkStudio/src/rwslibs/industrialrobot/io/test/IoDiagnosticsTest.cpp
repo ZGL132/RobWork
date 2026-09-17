@@ -57,6 +57,9 @@ const char* kSection912DiagnosticTokens[] = {
     "IO-FORMAT-JSON-VERSION-FUTURE", "IO-FORMAT-JSON-VERSION-LEGACY",
     "IO-FORMAT-JSON-UNKNOWN", "IO-FORMAT-JSON-REQUIRED", "IO-FORMAT-JSON-TYPE",
     "IO-FORMAT-JSON-RANGE",
+    // IO-T04 表尾追加（DTB §5.4 单元卡增量修订——§9.12 JSON 族行同步；
+    // 语法层违例的码面缺口补登，IoError.hpp FormatJsonSyntax 成员注）。
+    "IO-FORMAT-JSON-SYNTAX",
     "IO-FORMAT-PACK-ZIP", "IO-FORMAT-PACK-ENCRYPTED", "IO-FORMAT-PACK-ENTRY",
     "IO-FORMAT-PACK-MANIFEST",
     "IO-FORMAT-XML-CYCLE", "IO-FORMAT-MESH-UNKNOWN",
@@ -87,8 +90,8 @@ const char* kSection912DiagnosticTokens[] = {
  */
 TEST(IoDiagCodeTable, TokenMappingCoversAllEnumValuesAndMatchesSection912)
 {
-    // 全枚举（IoError.hpp §9.12 表行序 57 值）——token 非空＋词形合法。
-    for (int v = 0; v <= static_cast<int>(IoErrorCode::FormatInternal); ++v) {
+    // 全枚举（IoError.hpp §9.12 表行序 57 值＋IO-T04 表尾追加 1 值＝58 值）——token 非空＋词形合法。
+    for (int v = 0; v <= static_cast<int>(IoErrorCode::FormatJsonSyntax); ++v) {
         const std::string tok(errorCodeToken(static_cast<IoErrorCode>(v)));
         EXPECT_FALSE(tok.empty()) << "枚举值 " << v << " 无 token（switch 缺项）";
         if (v != static_cast<int>(IoErrorCode::Ok)) {
@@ -102,7 +105,7 @@ TEST(IoDiagCodeTable, TokenMappingCoversAllEnumValuesAndMatchesSection912)
 
     // 枚举侧 token 集 ↔ 字面清单集：双向一致（无多映射、无漏映射）。
     std::set<std::string> fromEnum;
-    for (int v = 0; v <= static_cast<int>(IoErrorCode::FormatInternal); ++v) {
+    for (int v = 0; v <= static_cast<int>(IoErrorCode::FormatJsonSyntax); ++v) {
         const std::string tok(errorCodeToken(static_cast<IoErrorCode>(v)));
         if (v != static_cast<int>(IoErrorCode::Ok) && v != static_cast<int>(IoErrorCode::Cancelled)) {
             fromEnum.insert(tok);
@@ -118,7 +121,7 @@ TEST(IoDiagCodeTable, TokenMappingCoversAllEnumValuesAndMatchesSection912)
 // =====================================================================
 
 /**
- * 注册行为：55 条描述符全部通过注册期验证（§4.5——句法/前缀-所有权/
+ * 注册行为：56 条描述符全部通过注册期验证（§4.5——句法/前缀-所有权/
  * paramSchema/Dev 强制）；ownerUnit=io 全表可列且字典序；Ok/Cancelled
  * 不在注册表（状态码不落诊断）；重复注册被注册表拒绝（DuplicateCode）
  * ——码值冻结的注册表面。
@@ -127,7 +130,7 @@ TEST(IoDiagCodeTable, RegistrationIntoStableCodeRegistryFullTableVerified)
 {
     const std::vector<CodeDescriptor> descriptors = ioCodeDescriptors();
     const std::size_t expected = std::size(kSection912DiagnosticTokens);
-    ASSERT_EQ(descriptors.size(), expected) << "描述符数＝§9.12 应注册码数（55）";
+    ASSERT_EQ(descriptors.size(), expected) << "描述符数＝§9.12 应注册码数（56——§9.12 建议值 55＋表尾追加 1）";
 
     StableCodeRegistry registry;
     registerIoCodeTable(registry);              // 不抛＝全部通过注册期验证
@@ -191,7 +194,7 @@ TEST(IoDiagCodeTable, RegistrationIntoStableCodeRegistryFullTableVerified)
 }
 
 /**
- * 与 diagnostics 内置码表合注册（L5 装配真实形态）：内置 87 码＋IO 55
+ * 与 diagnostics 内置码表合注册（L5 装配真实形态）：内置 87 码＋IO 56
  * 码共存无冲突；注册顺序不影响 manifest（io 先/builtin 先同摘要——装配
  * 顺序无关性，跨进程一致性的装配侧保障）。
  */

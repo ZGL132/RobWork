@@ -57,6 +57,7 @@ std::string_view errorCodeToken(IoErrorCode code)
     case IoErrorCode::FormatJsonRequired:       return "IO-FORMAT-JSON-REQUIRED";
     case IoErrorCode::FormatJsonType:           return "IO-FORMAT-JSON-TYPE";
     case IoErrorCode::FormatJsonRange:          return "IO-FORMAT-JSON-RANGE";
+    case IoErrorCode::FormatJsonSyntax:         return "IO-FORMAT-JSON-SYNTAX";
     // ---- 格式-包族 ----
     case IoErrorCode::FormatPackZip:            return "IO-FORMAT-PACK-ZIP";
     case IoErrorCode::FormatPackEncrypted:      return "IO-FORMAT-PACK-ENCRYPTED";
@@ -183,7 +184,7 @@ std::vector<diagnostics::CodeDescriptor> ioCodeDescriptors()
     using DC = diagnostics::DiagnosticCategory;
     using DS = diagnostics::DiagnosticSeverity;
     std::vector<diagnostics::CodeDescriptor> out;
-    out.reserve(55);
+    out.reserve(56);   // §9.12 建议值 55＋IO-T04 表尾追加 1（IO-FORMAT-JSON-SYNTAX）
 
     // =================================================================
     // 格式-CSV 族（§9.12 第 2 行）——diagnostics §8.6：CSV 逐行错误→
@@ -204,7 +205,7 @@ std::vector<diagnostics::CodeDescriptor> ioCodeDescriptors()
     }
     for (const std::string_view token : {"IO-FORMAT-JSON-ENCODING", "IO-FORMAT-JSON-DUPKEY", "IO-FORMAT-JSON-NUMBER",
                                          "IO-FORMAT-JSON-UNKNOWN", "IO-FORMAT-JSON-REQUIRED", "IO-FORMAT-JSON-TYPE",
-                                         "IO-FORMAT-JSON-RANGE"}) {
+                                         "IO-FORMAT-JSON-RANGE", "IO-FORMAT-JSON-SYNTAX"}) {
         out.push_back(makeDescriptor(token, DC::FormatOrVersion, DS::Error, "[\"path\",\"row\",\"column\"]"));
     }
 
