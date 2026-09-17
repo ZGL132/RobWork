@@ -2,48 +2,51 @@
 # io 单元（项目 I/O：路径安全/CSV/JSON/资源读取/.rwpack 包）构建脚本
 #
 # 设计依据：
-#   - units/io.md §3.3（命名空间/目标/CMake 集成：骨架 INTERFACE → IO-T01
-#     升级 STATIC；别名 RWS::ird::io；测试目标随 IO-T06 登记，不预建；
-#     链接 sdurws_ird_core＋sdurws_ird_diagnostics＋L1 文件/XML 目标——
-#     选型 P-IO-3 冻结后登记；零 Qt、零 Widgets）、§3.4（源码目录布局）、
-#     §2.1（拥有/不拥有总表）、§12 IO-T01 行（产物与验收）
+#   - units/io.md §3.3（命名空间/目标/CMake 集成：STATIC 库 sdurws_ird_io；
+#     别名 RWS::ird::io；测试目标 sdurws_ird_io_test＋sdurws_ird_io_contract_
+#     test——googletest 经 vcpkg find_package(GTest CONFIG REQUIRED)；零 Qt、
+#     零 Widgets）、§3.4（源码目录布局）、§2.1（拥有/不拥有总表）、
+#     §12 IO-T01/T02 行（产物与验收）
 #   - development-task-breakdown.md §5.1（双模式/目标命名/C++17 不用
-#     C++20）、§5.3（全局禁止项：L2 计算内核零 Qt——R-3）
+#     C++20）、§5.3（全局禁止项：L2 计算内核零 Qt——R-3）、§5.5（gtest
+#     接入定稿）
 #   - 需求 NFR-MNT-01（计算内核零 Qt）、NFR-MNT-02（单元边界——无私有
 #     头出 include）；红线 R-1（业务单元互链禁止）/R-2（跨单元私有头
 #     禁止）/T-1（产品目标不链 testkit）
 #
-# 本文件随 IO-T01（≙WP-11-T02，任务契约 tasks/foundation/IO-T01.json）
-# 落地：
-#   1. 骨架期 INTERFACE 占位升级为 STATIC 库（目标名 sdurws_ird_io 不变，
-#      别名 RWS::ird::io 不变，公共 include 根不变）；
-#   2. 公共头就位 IoFwd.hpp/IoError.hpp（§3.1 表前两行——类型契约头，
-#      inline/纯值定义自含，无对应 .cpp）；src/ 空起步＝锚点翻译单元
-#      Io.cpp（core/policy/diagnostics/project 同先例：STATIC 库至少一个
-#      翻译单元纪律，零任何接口实现预建——NFR-MNT-04，契约 acceptance 1）；
-#   3. P-IO-3 处置（契约 acceptance 4）：ZIP/XML 候选库（libzip/miniz；
-#      expat/pugixml 或 RobWork 自带）仅做 vcpkg 可用性验证并留痕
-#      （traceability/io-pio3-dependency-probe.md），**选型冻结权在
-#      WP-11 评审**——本脚本冻结前不登记任何 L1/第三方链接目标
-#      （NFR-DEP-03 离线约束：不私裁引入依赖）；
-#   4. 不注册测试目标：sdurws_ird_io_test / sdurws_ird_io_contract_test
-#      随 IO-T06/T07 登记（§3.3"随 IO-T06 登记，不预建"＋§12 IO-T01
-#      禁止项"预建空测试目标"——契约 acceptance 3）；因此本文件无
-#      find_package(GTest)——gtest 接入随上述任务落位时按 DTB §5.5
-#      引入（diagnostics/project CMakeLists 同款机制，不在无测试目标的
-#      单元里提前配置）。
+# 本文件随 IO-T01（≙WP-11-T02）落地、随 IO-T02（≙WP-11-T03）扩展：
+#   1. IO-T01：骨架期 INTERFACE 占位升级为 STATIC 库（目标名/别名/include
+#      根不变）；公共头 IoFwd.hpp/IoError.hpp；锚点翻译单元 Io.cpp；
+#      P-IO-3 候选库仅验证可用性不登记链接目标（选型冻结权在 WP-11 评审）。
+#   2. IO-T02：src/ 增列 SafePath.cpp/Budget.cpp/IoDiagnostics.cpp
+#      （§3.4 布局同名任务文件）；公共头增列 SafePath.hpp/Budget.hpp/
+#      IoDiagnostics.hpp（§3.1 表对应行）；**sdurws_ird_io_test 随本任务
+#      登记**——任务契约 verify 命令指向该目标、acceptance 1/2/3 要求
+#      V09/V10/V11/V06 全绿（§11.2 矩阵），故测试目标（含 gtest 接入）
+#      提前于 IO-T06 落位为"已含真实用例的目标"，不是骨架期禁止的
+#      "预建空测试目标"（§12 IO-T01 禁止项语义＝无内容的占位目标；
+#      IO-T06/T07 届时增列资源/包/契约面用例与 _contract_test 目标）。
 # =====================================================================
 
-# ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
-# src/Io.cpp＝落位期锚点翻译单元（src/ 空起步——core/src/Core.cpp、
-# policy/src/Policy.cpp、diagnostics/src/Diagnostics.cpp、
-# project/src/Project.cpp 同先例；零源码 STATIC 在 CMake 生成期即报
-# "No SOURCES given to target"，实测）。IO-T02 起按 §3.4 布局增列：
-# SafePath.cpp/Budget.cpp（IO-T02）、Csv.cpp（IO-T03）、Json.cpp/
-# ZipChannel.cpp（IO-T04）、ResourceIo.cpp（IO-T05）、Package.cpp/
-# TempArea.cpp/AtomicFile.cpp（IO-T06）——同名任务文件按 §12 行增列。
+# ---- gtest 接入（DTB §5.5 定稿，唯一机制；随 IO-T02 首个测试目标引入）----
+# gtest 经 vcpkg 安装（gtest:x64-windows，经典模式）；REQUIRED＝找不到即
+# 配置失败（失败即停，不静默跳过测试目标）。不消费框架的 USE_gtest/RW::gtest
+# （从未生成），也不源码 vendor——两份 gtest 混用会破坏 ODR。
+find_package(GTest CONFIG REQUIRED)
+
+# ---- 产品库目标：STATIC（目标名不变，DTB §5.1）----
+# src/Io.cpp＝IO-T01 锚点翻译单元（先例：core/src/Core.cpp 等）；
+# IO-T02 增列 SafePath.cpp（路径安全核——§4.2/§4.3/§9.1）、Budget.cpp
+# （预算守卫——§4.5/§9.2）、IoDiagnostics.cpp（IO-* 码表注册＋比较型
+# 三要素助手——§9.12/P-IO-6）。IO-T03 起按 §3.4 布局增列：Csv.cpp
+# （IO-T03）、Json.cpp/ZipChannel.cpp（IO-T04）、ResourceIo.cpp（IO-T05）、
+# Package.cpp/TempArea.cpp/AtomicFile.cpp（IO-T06）——同名任务文件按
+# §12 行增列。
 add_library(sdurws_ird_io STATIC
-    src/Io.cpp)
+    src/Io.cpp
+    src/SafePath.cpp
+    src/Budget.cpp
+    src/IoDiagnostics.cpp)
 
 # C++17（单元卡 §1.4／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：io 公共头使用 C++17 设施（std::string_view/inline constexpr
@@ -71,20 +74,16 @@ target_include_directories(sdurws_ird_io PUBLIC
 
 # 编译依赖：core＋diagnostics（§3.2 依赖表仅有的两条单元边，与 ARCH §3.5
 # 白名单、ird_gates_whitelist.cmake "io->core"/"io->diagnostics" 行一致）。
-# PUBLIC 形态：io 公共头（IoFwd/IoError 起步，后续任务扩展）的契约类型面
-# 将随任务进展内嵌 core 承载的值类型（Digest256/诊断构造输入等——§3.2
-# 消费表）与 diagnostics 承载的 DiagnosticRecord 基类型，消费方必须随链
-# 到达。当前落位期两公共头为纯标准库头、零 ird 头消费（与 PRJ-T01 的
-# P-PR-1 同款口径：仅建立链接边，消费随首个消费任务按冻结签名进入）。
-# 零 L1/第三方目标：ZIP/XML 选型 P-IO-3 未冻结（§3.3"冻结后登记"——
-# 契约 acceptance 1/4），冻结评审通过后由 IO-T04 以增量修订登记于此。
-# 零 Qt（D-01/NFR-MNT-01）、零 Widgets（WP-11-T02 禁止项）、零其他
-# industrialrobot 单元（R-1——io 不直链任何业务域单元，协作走六类端口/
-# 注入面，§10）、零 testkit（T-1——testkit 仅随 _test/_contract_test 目标
-# 消费，本文件无测试目标）。
-# 用统一真名 sdurws_ird_core/sdurws_ird_diagnostics：集成与独立冒烟两种
-# 模式下都可解析（别名 RWS::ird::* 仅集成模式存在——core/diagnostics
-# 落位时同款取舍）。
+# PUBLIC 形态：IoDiagnostics.hpp 内嵌 diagnostics 承载的 CodeDescriptor/
+# IDiagnosticRegistry 契约类型（P-IO-6 注册协议——§10.3），消费方必须随
+# 链到达。零 L1/第三方目标：ZIP/XML 选型 P-IO-3 未冻结（§3.3"冻结后登记"
+# ——IO-T01 契约 acceptance 1/4），冻结评审通过后由 IO-T04 以增量修订
+# 登记于此。零 Qt（D-01/NFR-MNT-01）、零 Widgets（WP-11-T02 禁止项）、
+# 零其他 industrialrobot 单元（R-1——io 不直链任何业务域单元，协作走
+# 六类端口/注入面，§10）、零 testkit（T-1——testkit 仅随 _test/
+# _contract_test 目标消费）。用统一真名 sdurws_ird_core/sdurws_ird_
+# diagnostics：集成与独立冒烟两种模式下都可解析（别名 RWS::ird::* 仅
+# 集成模式存在——core/diagnostics 落位时同款取舍）。
 target_link_libraries(sdurws_ird_io PUBLIC
     sdurws_ird_core
     sdurws_ird_diagnostics)
@@ -95,23 +94,100 @@ if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     add_library(RWS::ird::io ALIAS sdurws_ird_io)
 endif()
 
-# ---- 测试目标：本任务不注册（契约 acceptance 3 显式登记）----
-# sdurws_ird_io_test（单元/黄金）与 sdurws_ird_io_contract_test（契约/故障
-# 注入）随 IO-T06/T07 落地（§3.3"随 IO-T06 登记，不预建"；§12 IO-T01
-# 禁止项"预建空测试目标"；父 CMakeLists"不在骨架中预建空目标"约定）。
-# 届时按 DTB §5.5 接入 gtest（find_package(GTest CONFIG REQUIRED) 失败即
-# 停）＋ird_add_gtest 宏（add_test＋XML 报告目标——diagnostics/project
-# 单元 CMake 内宏定义先例，本单元随首个测试目标自持定义）。
+# ---- 测试目标 sdurws_ird_io_test（随 IO-T02 登记——见文件头注第 2 条）----
+# 首批用例＝任务契约 acceptance 1~5 的 §11.2 矩阵行：IoSec/PathTraversal
+# （IO-V09）、IoSec/SameProjectAltPaths（IO-V10）、IoSec/SymlinkJunction
+# （IO-V11）、IoCsv/StreamBudget（IO-V06——行预算经流式读取路径生效；
+# CSV 读写器本体随 IO-T03 落位后由其通道复用同一 BudgetGuard 行维）、
+# 预算三要素/双保险/账本可观测（acceptance 3）、IO-* 码表注册（P-IO-6，
+# acceptance 5）＋源码头红线扫描（零 Qt/零跨单元头——BuildRedLine 同款
+# 运行期扫描，与文件末尾配置期守卫互为两道防线）。IO-T06/T07 增列
+# 资源/包/契约面用例与 sdurws_ird_io_contract_test（§3.3）。
+enable_testing()
 
-# ---- 依赖红线守卫（配置期断言——diagnostics/project 同款自律）----
+add_executable(sdurws_ird_io_test
+    test/SafePathTest.cpp
+    test/BudgetTest.cpp
+    test/IoDiagnosticsTest.cpp)
+
+target_compile_features(sdurws_ird_io_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_io_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+# 测试源文件同为 UTF-8＋中文注释（/utf-8 说明见产品目标处；gtest 头为
+# ASCII 不受影响）。显式再设一次以自洽——测试目标应独立可读，不依赖
+# 被测目标的编译选项细节。
+if(MSVC)
+    target_compile_options(sdurws_ird_io_test PRIVATE /utf-8)
+endif()
+
+# 测试 main 自持（DTB §5.5）：GTest::gtest_main 提供入口；测试链接产品库
+# sdurws_ird_io 同时验证"公共头可被正常 include＋库可链接"（io→core/
+# diagnostics 的 PUBLIC 传染链随目标自动到达）。
+# 不链 sdurws_ird_testkit：红线用例以 gtest 原生断言承载（需求/AT 追溯
+# 在用例名与 ird-test-report.json 的 trace 字段——diagnostics 先例同款）；
+# testkit 契约谓词消费随 IO-T07 契约套件登记（届时 _contract_test 目标
+# 链 testkit 为 T-1 允许形态，产品目标不链）。
+target_link_libraries(sdurws_ird_io_test PRIVATE
+    sdurws_ird_io
+    GTest::gtest_main)
+# 峰值内存观测（V06）经 kernel32 的 K32GetProcessMemoryInfo 直调——零
+# 词表外链接面（ird_gates IRD-GATE-LIB 零命中；曾试 Psapi.lib 被门禁拦
+# 下，改走 kernel32 缺省链接面）。
+
+# 源码树位置注入：头红线扫描用例在运行期扫描 io 源码核对红线（零 Qt/
+# 零跨单元 include——§1.4/§3.2）。经编译定义传 industrialrobot 根
+# （diagnostics/project 同款——值内以单元名作子目录前缀，扫描面随单元
+# 自包含）。
+target_compile_definitions(sdurws_ird_io_test PRIVATE
+    IRD_IO_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+# vcpkg 的 gtest:x64-windows 是动态库（gtest.dll/gtest_main.dll）：把测试
+# 可执行文件的运行期 DLL 拷到其输出目录，保证不经 PATH 配置即可直接运行
+# （留痕与验收都要直接执行该可执行文件）。TARGET_RUNTIME_DLLS 需 CMake
+# ≥3.21，本仓库工具链为 VS2022 自带的更新版本，满足。
+add_custom_command(TARGET sdurws_ird_io_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_io_test>
+            $<TARGET_FILE_DIR:sdurws_ird_io_test>
+    COMMAND_EXPAND_LISTS)
+
+# ---- ird_add_gtest：add_test＋XML 报告目标（DTB §5.5，宏各单元自持）----
+# 框架原宏见 RobWork/RobWork/gtest/CMakeLists.txt：add_test ＋ <target>_
+# report（运行测试并落 gtest XML）。本宏按 DTB §5.5 在本单元 CMake 内
+# 定义（定义先于全部调用——CMake 顺序解析）；不做跨单元共享（io 不是
+# 构建工具设施提供方——NFR-MNT-04，diagnostics/project 同款口径）。报告
+# 输出于构建树本目录 gtest_reports/<target>.xml；任务留痕时拷贝入
+# doc/industrial-robot-design/traceability/（AGENTS.md §4.2 验证留痕）。
+# 报告目标不进默认构建（EXCLUDE_FROM_ALL）：跑测试是显式动作，与框架
+# "不随 ordinary build 执行测试"的约定一致。
+macro(ird_add_gtest target)
+    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+    add_custom_target(
+        ${target}_report
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+                ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+        COMMAND $<TARGET_FILE:${target}>
+                --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+        DEPENDS ${target}
+        COMMENT "ird: run ${target} and write gtest XML report")
+    set_target_properties(${target}_report PROPERTIES
+        EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+endmacro()
+
+ird_add_gtest(sdurws_ird_io_test)
+
+# ---- 依赖红线守卫（配置期断言——IO-T01 既有自律，IO-T02 保持）----
 # io 的 industrialrobot 单元依赖仅限 core＋diagnostics（§3.2/§3.3：ARCH
 # §3.5 仅有的两条登记出边）；零 Qt（R-3/NFR-MNT-01——比 L3 上限更严，
 # D-01 精神：io 无界面职责）；产品库本体零 gtest（D-06——断言宏只在
-# 消费方 _test 目标展开；本文件无测试目标，gtest 边即违例）。两面读取
-# （LINK_LIBRARIES 含 PRIVATE 边＋INTERFACE_LINK_LIBRARIES 含 PUBLIC 边）
-# 防漏。属性未设置时 get_target_property 返回 "<var>-NOTFOUND" 字面串，
-# 不匹配任何模式，不会误报。正式全仓门禁（依赖图白名单）归 ird_gates
-# （WP-01-T01），本守卫不替代它。
+# 消费方 _test 目标展开；本守卫遍历的是产品目标 sdurws_ird_io 的链接
+# 面，测试目标的 gtest 边不在其内）。两面读取（LINK_LIBRARIES 含
+# PRIVATE 边＋INTERFACE_LINK_LIBRARIES 含 PUBLIC 边）防漏。属性未设置时
+# get_target_property 返回 "<var>-NOTFOUND" 字面串，不匹配任何模式，
+# 不会误报。正式全仓门禁（依赖图白名单）归 ird_gates（WP-01-T01），本
+# 守卫不替代它。
 get_target_property(_ird_io_link_libs sdurws_ird_io LINK_LIBRARIES)
 get_target_property(_ird_io_iface_libs sdurws_ird_io INTERFACE_LINK_LIBRARIES)
 foreach(_lib IN LISTS _ird_io_link_libs _ird_io_iface_libs)

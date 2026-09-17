@@ -154,6 +154,22 @@ struct IoResult {
     }
 };
 
+/**
+ * void 特化：无值载荷的成功/失败容器（§9.1 normalizePackEntries、§9.2
+ * charge/closeScope 等接口的返回形态——动作型接口只需要 ok/错误轨道，
+ * 无值可携）。字段与判定语义同主模板（仅去 value 成员）。
+ */
+template <>
+struct IoResult<void> {
+    IoError error;      ///< 错误信息；ok 时 error.code == Ok
+
+    /// ok 判定：同主模板（错误轨道单一权威；explicit 限定同款理由）。
+    explicit operator bool() const noexcept
+    {
+        return error.code == IoErrorCode::Ok;
+    }
+};
+
 } // namespace sdurws::ird::io
 
 #endif // SDURWS_IRD_IO_IOFWD_HPP

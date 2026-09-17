@@ -1,0 +1,59 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 20 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from IoSecTest
+[ RUN      ] IoSecTest.PathTraversalP4IllegalTableRejectedWithExactCodes
+[       OK ] IoSecTest.PathTraversalP4IllegalTableRejectedWithExactCodes (1 ms)
+[ RUN      ] IoSecTest.PathTraversalP4LegalRowsAndBatchDuplicateDetection
+[       OK ] IoSecTest.PathTraversalP4LegalRowsAndBatchDuplicateDetection (0 ms)
+[ RUN      ] IoSecTest.PathTraversalP5IllegalTableRejectedWithExactCodes
+[       OK ] IoSecTest.PathTraversalP5IllegalTableRejectedWithExactCodes (1 ms)
+[ RUN      ] IoSecTest.PathTraversalP5LegalRowsAccepted
+[       OK ] IoSecTest.PathTraversalP5LegalRowsAccepted (2 ms)
+[ RUN      ] IoSecTest.SameProjectAltPathsEquivalentKeysAndSessionMutex
+[       OK ] IoSecTest.SameProjectAltPathsEquivalentKeysAndSessionMutex (2 ms)
+[ RUN      ] IoSecTest.SymlinkJunctionEscapeRejectedWithIoSecSymlink
+为 C:\Users\zgl18\AppData\Local\Temp\ird_wp11_t03_safepath\SymlinkJunctionEscapeRejectedWithIoSecSymlink_98140\proj\objects\junc <<===>> C:\Users\zgl18\AppData\Local\Temp\ird_wp11_t03_safepath\SymlinkJunctionEscapeRejectedWithIoSecSymlink_98140\proj\outside 创建的联接
+[       OK ] IoSecTest.SymlinkJunctionEscapeRejectedWithIoSecSymlink (77 ms)
+[ RUN      ] IoSecTest.ExceptionNotWidenedUserSourceAndExportTargetUnrestricted
+[       OK ] IoSecTest.ExceptionNotWidenedUserSourceAndExportTargetUnrestricted (4 ms)
+[----------] 7 tests from IoSecTest (90 ms total)
+
+[----------] 1 test from IoSecHeaderRedLines
+[ RUN      ] IoSecHeaderRedLines.IoHeadersFreeOfQtAndCrossUnitIncludes
+[       OK ] IoSecHeaderRedLines.IoHeadersFreeOfQtAndCrossUnitIncludes (1 ms)
+[----------] 1 test from IoSecHeaderRedLines (1 ms total)
+
+[----------] 8 tests from BudgetTest
+[ RUN      ] BudgetTest.StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory
+[       OK ] BudgetTest.StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory (60 ms)
+[ RUN      ] BudgetTest.BudgetTriadFileDepthTotalRejectWithComparativeParams
+[       OK ] BudgetTest.BudgetTriadFileDepthTotalRejectWithComparativeParams (0 ms)
+[ RUN      ] BudgetTest.DeclaredVsActualDoubleBookingKeepsLarger
+[       OK ] BudgetTest.DeclaredVsActualDoubleBookingKeepsLarger (0 ms)
+[ RUN      ] BudgetTest.SaturatingAccumulatorNeverWraps
+[       OK ] BudgetTest.SaturatingAccumulatorNeverWraps (0 ms)
+[ RUN      ] BudgetTest.ScopeTreeRollupToParentAndParentLimitEnforced
+[       OK ] BudgetTest.ScopeTreeRollupToParentAndParentLimitEnforced (0 ms)
+[ RUN      ] BudgetTest.ArchiveDualSidedBookingExpandAndRatio
+[       OK ] BudgetTest.ArchiveDualSidedBookingExpandAndRatio (0 ms)
+[ RUN      ] BudgetTest.ProductDefaultValuesPinnedToCardSection451
+[       OK ] BudgetTest.ProductDefaultValuesPinnedToCardSection451 (0 ms)
+[ RUN      ] BudgetTest.PackImportChannelHardenedSpecRelaxForbidden
+[       OK ] BudgetTest.PackImportChannelHardenedSpecRelaxForbidden (0 ms)
+[----------] 8 tests from BudgetTest (65 ms total)
+
+[----------] 4 tests from IoDiagCodeTable
+[ RUN      ] IoDiagCodeTable.TokenMappingCoversAllEnumValuesAndMatchesSection912
+[       OK ] IoDiagCodeTable.TokenMappingCoversAllEnumValuesAndMatchesSection912 (0 ms)
+[ RUN      ] IoDiagCodeTable.RegistrationIntoStableCodeRegistryFullTableVerified
+[       OK ] IoDiagCodeTable.RegistrationIntoStableCodeRegistryFullTableVerified (0 ms)
+[ RUN      ] IoDiagCodeTable.CoexistsWithBuiltinTableOrderIndependentManifest
+[       OK ] IoDiagCodeTable.CoexistsWithBuiltinTableOrderIndependentManifest (0 ms)
+[ RUN      ] IoDiagCodeTable.ComparativeErrorCarriesThreeElementParams
+[       OK ] IoDiagCodeTable.ComparativeErrorCarriesThreeElementParams (0 ms)
+[----------] 4 tests from IoDiagCodeTable (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 20 tests from 4 test suites ran. (160 ms total)
+[  PASSED  ] 20 tests.
