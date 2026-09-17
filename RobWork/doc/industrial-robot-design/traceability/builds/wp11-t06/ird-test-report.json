@@ -5,6 +5,7 @@
   "branch": "wp11-t06",
   "base": "0c778f51c281892c5037ea31f8cbb2c3db8ace14",
   "date": "2026-09-17",
+  "rework": "attempt 2（返工输入＝IO-T06-20260917.md §问题清单 B-1）：首轮提交 16d7fee9 提交信息所列 12 份 .log 留痕因仓库全局 .gitignore『*.log』被静默忽略、未随提交入库（幻影清单——验收 §4.9/§4.10 唯一阻断根因）；attempt 2 已按返工要求于 wp11-t06 尖端将全部留痕对应命令真实重跑现产（集成模式全量构建＋契约 verify 两目标构建＋双模式双目标实跑＋validate-task＋verify-task＋ird_gates——门禁退出码 1 为 15 处登记命中的既定基线行为），复跑结果与本报告逐数值一致（io_test 116/116、io_contract_test 8/8×双模式；ird_gates 命中集合与本表 gates.ird_gates 描述完全一致：基线 14＋io_contract_test→libzip::zip），12 份 .log 经 git add -f 强制入库。冒烟树为删除后全新配置（build-smoke-wp11-t06 重建，CMAKE_TOOLCHAIN_FILE 绝对路径指向 vcpkg——AGENTS §4.1 口径；相对路径会被按构建树解析而失败）。自此本文件所引全部日志名真实可查",
   "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main）",
   "targets": [
     {

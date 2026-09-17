@@ -1945,11 +1945,12 @@
       "id": "F-194",
       "source": "traceability/acceptance/IO-T05-20260917.md §4.11②（验收 attempt 1，送验对象 7f4c1143）：实现文件实读发现",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "io/src/ResourceIo.cpp 使用 std::mutex/std::lock_guard（第 2095/2123/2269/2308 行——IRuntimeResourceAdapter 缓存/稳定区插入互斥，§8.6.3）但 include 列表无 <mutex>——现依赖 MSVC STL 经 <memory> 等传递包含侥幸编译（实测两模式零错误），属头文件自包含性/可移植性缺陷：换标准库实现或调整传递头即可能断编",
       "owner": "io 单元后续任务（IO-T06/T07 实施顺手一行补 #include <mutex>，零行为变化）；验收记录 §4.11 同款判级（非空实现/非缩水，纯 include 卫生）",
-      "resolution": "不构成 IO-T05 返工项（pass 判定不受影响，双模式实测编译运行正常）；随 io 单元下一实现任务补齐即可消账"
+      "resolution": "不构成 IO-T05 返工项（pass 判定不受影响，双模式实测编译运行正常）；随 io 单元下一实现任务补齐即可消账。【消账 2026-09-17】ResourceIo.cpp 显式 #include <mutex> 已随 IO-T06 实施落位（IO-T06-20260917.md §4.8 实读 ResourceIo.cpp:59-61——显式 include＋消账注释）；按该验收记录 §4.8 建议于 IO-T06 attempt 2 返工提交置 fixed，fixedBy=16d7fee9",
+      "fixedAt": "2026-09-17"
     },
     {
       "id": "F-195",

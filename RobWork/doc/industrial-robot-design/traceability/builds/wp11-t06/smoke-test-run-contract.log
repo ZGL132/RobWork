@@ -1,0 +1,25 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 8 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 8 tests from IoPackContractTest
+[ RUN      ] IoPackContractTest.ExportConcurrentWriteRereadsStableVersion
+[       OK ] IoPackContractTest.ExportConcurrentWriteRereadsStableVersion (33 ms)
+[ RUN      ] IoPackContractTest.ExportConcurrentWritePersistentFailureLeavesNoTarget
+[       OK ] IoPackContractTest.ExportConcurrentWritePersistentFailureLeavesNoTarget (3 ms)
+[ RUN      ] IoPackContractTest.DiskFullReportsRequiredAvailableAndCleansUp
+[       OK ] IoPackContractTest.DiskFullReportsRequiredAvailableAndCleansUp (6 ms)
+[ RUN      ] IoPackContractTest.CleanupFailedListsResiduesAndRetrySucceeds
+[       OK ] IoPackContractTest.CleanupFailedListsResiduesAndRetrySucceeds (5 ms)
+[ RUN      ] IoPackContractTest.ExportCommitFailureLeavesNoTargetFile
+[       OK ] IoPackContractTest.ExportCommitFailureLeavesNoTargetFile (48 ms)
+[ RUN      ] IoPackContractTest.ExportFailurePreservesPreviousCompletePack
+[       OK ] IoPackContractTest.ExportFailurePreservesPreviousCompletePack (20 ms)
+[ RUN      ] IoPackContractTest.BackgroundImportKeepsUiThreadResponsive
+[       OK ] IoPackContractTest.BackgroundImportKeepsUiThreadResponsive (244 ms)
+[ RUN      ] IoPackContractTest.CommittedVsStagedOnlySnapshotEntriesPacked
+[       OK ] IoPackContractTest.CommittedVsStagedOnlySnapshotEntriesPacked (10 ms)
+[----------] 8 tests from IoPackContractTest (373 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 1 test suite ran. (374 ms total)
+[  PASSED  ] 8 tests.
