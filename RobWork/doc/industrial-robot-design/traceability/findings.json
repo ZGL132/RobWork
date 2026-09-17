@@ -1970,6 +1970,26 @@
       "title": "IO-FORMAT-XML-SYNTAX（IoErrorCode 第 59 值，io.md §9.12 v0.8 表尾追加——§6.1 XML 良构检查的解析器级失败码面）向 diagnostics 内置码表（§4.6 的 87 码清单）的收编确认未发生——F-192（IO-FORMAT-JSON-SYNTAX 同型在途）的新增同类项，P-IO-6『与 diagnostics 所有者收编确认』治理侧动作",
       "owner": "diagnostics 单元所有者（内置码表扩编）——随 F-192 与 P-IO-6 全表收编确认一并处置",
       "resolution": "io 侧注册面（ioCodeDescriptors/registerIoCodeTable，paramSchema [\"path\",\"row\",\"column\"]）已含本码并经真实 StableCodeRegistry 注册验证（IoDiagCodeTable 双清单机械比对 59 值/57 描述符同步）；内置清单收编滞后不影响运行（StableCodeRegistry 注册机制先于内置清单）"
+    },
+    {
+      "id": "F-200",
+      "source": "traceability/acceptance/IO-T06-20260917-r2.md §4.2/§4.10（验收 attempt 2，送验对象 de10bec9）：全新 worktree 复现现场建立时发现",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "全新 checkout/worktree 的集成模式配置依赖两个未跟踪文件：RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static 与 RobWorkStudio.ini.shared.in（git ls-files 为空、仅主工作树物理存在）——fresh 树 cmake -S RobWork -B build 配置期 CMake Error『File ...RobWorkStudio.ini.template.static does not exist』直接失败（configure incomplete）；验收以从主工作树拷贝两文件修复后配置成功。与 F-007（全新集成树配置参数未载明 vcpkg toolchain×Qt CMAKE_PREFIX_PATH）同族不同因：F-007 是命令行参数缺口，本条是仓库未跟踪文件依赖",
+      "owner": "构建约定所有者（框架侧文件——SA-02 约束下先登记 patches/PATCHES.md 再改动，或经治理任务将两模板入库/改为 CMake configure 期生成）",
+      "resolution": "不构成 IO-T06 返工项（pass 判定不受影响——送验对象自身在既有主构建树口径与冒烟模式下零错误；io 单元与 RobWorkSim/框架配置面无任何关联）。建议与 F-007 一并治理：bin 模板两文件 git add -f 入库，或框架 CMake 改为 configure_file 缺省生成，使 AGENTS §4.1 字面命令在 fresh 树可一次通过"
+    },
+    {
+      "id": "F-201",
+      "source": "traceability/acceptance/IO-T06-20260917-r2.md §4.10（验收 attempt 2，送验对象 de10bec9）：留痕载体核对发现条文与实践脱节",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "acceptance-protocol.md §4.10 条文『phase-one-validation.log 或 resultNote 已更新』与流水线实践脱节：phase-one-validation.log 尾行停在 CORE-T01（2026-09-10），其后的全部已合入任务（TK-T03 系至 IO-T05 系数十个）均未追加；traceability/pipeline/state.json 的 schema 中不存在 resultNote 字段（全文 grep 计数 0）——条文两个载体均无实际维护路径。任务级验证留痕的实际落位为 traceability/builds/<branch>/（gtest XML＋ird-test-report.json＋日志），IO-T06 attempt 1/2 验收均按此口径判定 4.10",
+      "owner": "ACC/PIPE 文档所有者（acceptance-protocol.md 与 automation-pipeline.md 的条文修订）",
+      "resolution": "不构成 IO-T06 返工项（pass 判定不受影响——任务级留痕 16 文件真实落库且数值经验收者双模式复现一致）。建议 ACC 修订 §4.10 为『任务级留痕目录（traceability/builds/<branch>/）落位：gtest XML＋ird-test-report.json＋构建/测试/验证日志』口径并删去无维护路径的两载体表述，或恢复对应载体的维护机制——两者择一，消除历史任务的口径歧义"
     }
   ]
 }
