@@ -4,7 +4,7 @@
   "unit": "io",
   "masterWp": "WP-E",
   "title": "SafePath＋BudgetGuard（路径穿越/预算防护）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["IO-T01"],
   "requirements": ["NFR-SEC-01", "NFR-SEC-02", "PM-05"],
   "designRefs": ["units/io.md#12", "units/io.md#4.2", "units/io.md#4.3", "units/io.md#4.5", "units/io.md#9.1", "units/io.md#9.2", "units/io.md#9.12"],

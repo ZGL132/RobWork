@@ -1869,6 +1869,16 @@
       "title": "门禁留痕载体弱：在库 traceability/builds/wp11-t02/gates-ird-gates-target.log 仅 3 行尾部片段——门禁引擎 GBK 控制台输出被直接捕获进 UTF-8 文件产生乱码，且不含任何 IRD-GATE 命中明细行；ird-test-report.json gates 字段声称『命中集＝基线既有 11 处（…留痕 gates-ird-gates-target.log）』，从该日志本身无法核对命中明细（attempt 2 验收者独立实跑 ird_gates 确认：去重真实命中 11 处全为基线〔SUB×9＋T1×1＋R4×1〕、零 io 命中——结论为真，仅载体不足自证）。同目录 integration-build.log/validate-task.log/verify-task.log 为完整输出无此问题",
       "owner": "io 实施侧（后续任务门禁留痕时截取含命中明细的输出段）；governance（候选：gate-all.ps1/ird_gates 目标输出重定向统一 UTF-8 并保明细行——脚本侧规范化）",
       "resolution": "处置建议＝门禁留痕至少包含命中明细行与汇总行；可随 ird_gates 自定义目标输出改造一并处置。不构成 IO-T02 返工项（结论经复跑证实）"
+    },
+    {
+      "id": "F-187",
+      "source": "tick#179 收尾段（编排者自登，PIPE §7 治理资产自身缺陷入册）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-181 同型收尾落分支事故复发：tick#179 收尾②执行时主工作树仍停驻 wp11-t02（实施子代理建分支后停留所致，编排者未复核当前分支），验收记录合入误落任务分支（5af1ca54，未推送）——发现后 checkout redesign-main 复位重跑（②=a05f63e4、③=c1d01df5），内容零损失，origin/redesign-main 与 origin/wp11-t02 全程未污染；误落 merge 已随任务分支删除清理。F-181 已登记『PIPE/T-IMPL 模板增量修订候选』而修订未落地即复发",
+      "owner": "governance（PIPE 增量修订落地防复发：T-ORCH 收尾②前置断言『当前分支必须＝redesign-main，否则先切回』；T-IMPL 完成输出增加『切回 redesign-main』步骤候选）",
+      "resolution": "处置建议＝PIPE/T-ORCH/T-IMPL 增量修订尽快落地（两次同类事故防复发修订均未及落地）；本条不阻塞流水线例行推进"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 178,
+  "tickCount": 179,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -12,12 +12,12 @@
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
-    "fix": 0,
+    "fix": 1,
     "implement": 0,
-    "accept": 1
+    "accept": 2
   },
   "heartbeat": {
-    "updatedAt": "2026-09-17T06:17:37+08:00",
+    "updatedAt": "2026-09-17T09:36:53+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1056,6 +1056,20 @@
       ],
       "acceptanceRecord": "traceability/acceptance/IO-T01-20260917.md",
       "mergedAt": "2026-09-17"
+    },
+    {
+      "task": "IO-T02",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "aafb66ac3bcf9854482d31d97c860e7a0d8b49a8",
+        "eaa6aa9975e0da756676e00177845104fdc1e2eb",
+        "3e0314f8cc188dd5c977996ade89eaa9fe81139b",
+        "8c61896d3a1a6ec5a5eb17f1890de7734f899dd3"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T02-20260917-r2.md",
+      "mergedAt": "2026-09-17",
+      "failReason": "attempt1 fail（B-1：8 份 .log 留痕被 .gitignore 全局规则吞，§4.10 不通过）——返工 git add -f 补证＋S-1/S-3 补正后 attempt2 pass"
     }
   ],
   "policy": {
@@ -1081,11 +1095,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "IO-T02",
-      "contractPath": "tasks/foundation/IO-T02.json",
-      "branch": "wp11-t02"
-    },
     {
       "taskId": "IO-T03",
       "contractPath": "tasks/foundation/IO-T03.json",
@@ -1175,5 +1184,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "f8f92dbb-0b0b-40b5-bc87-530cf8e9233b"
+  "tickToken": "b785350d-d782-4cf8-b06a-10ca0c9c5a1d"
 }
