@@ -2021,6 +2021,16 @@
       "title": "acceptance-protocol.md §4.10 条文『phase-one-validation.log 或 resultNote 已更新』与流水线实践脱节：phase-one-validation.log 尾行停在 CORE-T01（2026-09-10），其后的全部已合入任务（TK-T03 系至 IO-T05 系数十个）均未追加；traceability/pipeline/state.json 的 schema 中不存在 resultNote 字段（全文 grep 计数 0）——条文两个载体均无实际维护路径。任务级验证留痕的实际落位为 traceability/builds/<branch>/（gtest XML＋ird-test-report.json＋日志），IO-T06 attempt 1/2 验收均按此口径判定 4.10",
       "owner": "ACC/PIPE 文档所有者（acceptance-protocol.md 与 automation-pipeline.md 的条文修订）",
       "resolution": "不构成 IO-T06 返工项（pass 判定不受影响——任务级留痕 16 文件真实落库且数值经验收者双模式复现一致）。建议 ACC 修订 §4.10 为『任务级留痕目录（traceability/builds/<branch>/）落位：gtest XML＋ird-test-report.json＋构建/测试/验证日志』口径并删去无维护路径的两载体表述，或恢复对应载体的维护机制——两者择一，消除历史任务的口径歧义"
+    },
+    {
+      "id": "F-203",
+      "source": "traceability/acceptance/IO-T07-20260918.md §4.8（验收 attempt 2，送验对象 d381d9d3）：findings.json 未关闭条目消账状态核对发现。编号注：F-202 系 IO-T07 实施段在 wp11-t07 分支 d381d9d3 登记（ird_gates SUB 命中，随任务合入本文件时顺延就位于本条之前）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "F-198/F-199 的实质消账动作已随 IO-T07 实施落位（da13bb66）：F-198＝Package.cpp writeBytesToFile 与 AtomicFile.cpp AtomicTarget::write 的『≤SingleFileBytes 硬上限 2 GiB』前置契约注释钉死（处置②——验收者实读核验，纯注释零行为变更）；F-199＝IoPackTest.ImportCancelAtBeginPreCancelledTokenLeavesNoArtifacts（begin 入口预取消用例——与 F-199 resolution 建议逐字对应，且经验收者缺陷注入实证：begin 忽略取消的契约级注入下精确变红）——但两条目 status 仍 open、resolution 未附消账记录，对照 F-194 先例（fixed＋fixedAt＋fixedBy＋消账注）缺登记簿翻转；纯记账滞后，非实现缺口",
+      "owner": "io 单元实施者（IO-T07 合入收尾提交顺手翻转），或治理收尾动作统一翻转——依据＝IO-T07-20260918.md §4.8",
+      "resolution": "翻转操作：F-198 置 fixed（fixedBy=da13bb66，处置②口径）＋F-199 置 fixed（fixedBy=da13bb66，begin 预取消用例落位；『其余阶段取消视 fake 解压替身整备情况登记』半句已由该用例的契约级覆盖满足——begin/展开两检查点在案，步骤②③检查点为临时区创建/批量预检的同型透传面）；不构成 IO-T07 返工项（pass 判定不受影响——实质消账动作已经验收者实读＋实跑核验并留痕，仅登记面翻转待办）"
     }
   ]
 }
