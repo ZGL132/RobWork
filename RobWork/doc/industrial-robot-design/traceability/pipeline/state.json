@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 194,
+  "tickCount": 200,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-18T01:47:00+08:00",
+    "updatedAt": "2026-09-18T05:01:28+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1122,6 +1122,19 @@
       "acceptanceRecord": "traceability/acceptance/IO-T06-20260917-r2.md",
       "mergedAt": "2026-09-18",
       "failReason": "attempt1 fail（4.9/4.10 验证留痕落位缺失——12 份现产日志未落库）——返工 de10bec9 重跑现产留痕后 attempt2 pass；收尾 §4.7③ 合并时 findings.json 尾部冲突（HEAD 侧 F-200/F-201 vs 任务分支侧 F-197，另有 F-194 open→fixed 翻转）按 PIPE 冲突即停转 blocked，所有者裁决并集并存后续完（② 89a277d3、③ fa865524）：F-197~F-201 五条目入主线（F-198/F-199 自 acc/IO-T06/1@a0a212b0 逐字转录，循 attempt2 记录 §4.8 指令），F-194 保留 fixed（fixedBy=16d7fee9）"
+    },
+    {
+      "task": "IO-T07",
+      "unit": "io",
+      "result": "pass-merged",
+      "commits": [
+        "da13bb6668864ad20b8cbc6489aeb48abd80fee7",
+        "cee796ab1a07c61797fc72f6cd4bbc119421634c",
+        "d381d9d3e430d910b2a8ed8a4bf41eadd5dbc180"
+      ],
+      "acceptanceRecord": "traceability/acceptance/IO-T07-20260918.md",
+      "mergedAt": "2026-09-18",
+      "failReason": "验收 attempt2 pass（attempt1＝验收派发中断重派，未产出 verdict、acc/IO-T07/1 分支未建立——零返工，fix 保持 0）；收尾 §4.7③ 合并时 findings.json 尾部冲突（HEAD 侧 F-203 vs 任务分支侧 F-202）按 PIPE 冲突即停转 blocked，所有者裁决并集并存后续完（② 259ba6ce、③ d98be7bc）：F-202/F-203 按编号序并存；F-198/F-199/F-203 随 ⑤ 治理收尾提交统一翻转 fixed（fixedBy=da13bb66，循 F-203 resolution 与 IO-T07-20260918.md §4.8）"
     }
   ],
   "policy": {
@@ -1147,11 +1160,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "IO-T07",
-      "contractPath": "tasks/foundation/IO-T07.json",
-      "branch": "wp11-t07"
-    },
     {
       "taskId": "EX-T01",
       "contractPath": "tasks/foundation/EX-T01.json",
@@ -1216,5 +1224,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "b4320b08-4623-4d37-89e1-2935442789b8"
+  "tickToken": "108731a7-9c43-448a-b6a1-8f60f0ce0f0a"
 }

@@ -1986,21 +1986,23 @@
       "id": "F-198",
       "source": "traceability/acceptance/IO-T06-20260917.md §4.11（验收 attempt 1，送验对象 16d7fee9）：实现文件实读发现。编号注：F-197 已由 IO-T06 实施段在 wp11-t06 分支登记（ird_gates LIB 命中，随任务合入本文件时顺延就位），本条跳号顺延避让",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "io/src/Package.cpp writeBytesToFile 与 AtomicTarget::write（AtomicFile.cpp）的写入长度经 DWORD 截断（want = min(size, 0xFFFFFFFF)）：若输入超过 4 GiB−1 字节，仅前 4 GiB−1 字节落盘且 written==want 判定通过——静默截断无错误。当前全部调用面受 Budget SingleFileBytes 硬上限 2 GiB（Budget.cpp kDimTable）与 ZipChannel 内部 scope 管辖，截断分支不可达（实测推演）；属纵深防御缺口而非现实缺陷",
       "owner": "io 单元所有者（随 IO-T07 契约套件整备或下次 io 实现任务顺手加固）",
-      "resolution": "建议任选其一：①writeBytesToFile/AtomicTarget::write 入口对 size > 0xFFFFFFFFull 显式 fail-fast（IO-FORMAT-INTERNAL 或分块循环写）；②注释钉死『调用方须保证 ≤ SingleFileBytes 硬上限 2 GiB』的前置契约。验收者推演依据：导出暂存/导入展开两通路的字节均先经 SingleFileBytes 预检与 ZipChannel budgetScope 读取面，2 GiB < 4 GiB 截断阈值"
+      "resolution": "建议任选其一：①writeBytesToFile/AtomicTarget::write 入口对 size > 0xFFFFFFFFull 显式 fail-fast（IO-FORMAT-INTERNAL 或分块循环写）；②注释钉死『调用方须保证 ≤ SingleFileBytes 硬上限 2 GiB』的前置契约。验收者推演依据：导出暂存/导入展开两通路的字节均先经 SingleFileBytes 预检与 ZipChannel budgetScope 读取面，2 GiB < 4 GiB 截断阈值。【消账 2026-09-18】处置②落位：Package.cpp writeBytesToFile 与 AtomicFile.cpp AtomicTarget::write 的『调用方须保证 ≤ SingleFileBytes 硬上限 2 GiB』前置契约注释已随 IO-T07 提交 da13bb66 钉死（IO-T07-20260918.md §4.8——验收者实读核验，纯注释零行为变更）；按 F-203 登记随 IO-T07 合入收尾治理提交统一翻转，fixedBy=da13bb66",
+      "fixedAt": "2026-09-18"
     },
     {
       "id": "F-199",
       "source": "traceability/acceptance/IO-T06-20260917.md §4.4/§4.11④（验收 attempt 1，送验对象 16d7fee9）：契约 acceptance 2『ImportCancel（各阶段取消令牌注入…）』逐字对照测试面发现",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-17",
       "title": "IO-V19『各阶段注入取消令牌』（io.md §11.2 卡面样例列）当前仅覆盖展开阶段一个样例（IoPackTest.ImportCancelMidExtractCleansAndEmitsNoDiagnostic——第 3 条目检查点置位）：begin 入口预取消、步骤②临时区创建检查点、步骤③预检阶段等其余阶段的取消路径无用例。取消机制本体经验收者缺陷注入实证有效（禁用 Package.cpp cancelHit 单层未变红——ZipChannel readEntryBytes 内部检查点构成第二层防线；注入 UX-03 违例后 V19 精确变红），非恒真测试；属覆盖深度缺口",
       "owner": "io 单元（IO-T07 契约测试套件整备任务——其卡面『§11.2 全用例可执行且结果登记』为本条天然消账位）；实施者返工时亦可顺带补",
-      "resolution": "建议 IO-T07 至少补『begin 入口预取消』用例（预置位令牌→begin 返回 IO-CANCELLED 且无会话产物/临时区残留——纯入口检查点，无需慢速替身即可构造）；其余阶段取消视 fake 解压替身整备情况登记"
+      "resolution": "建议 IO-T07 至少补『begin 入口预取消』用例（预置位令牌→begin 返回 IO-CANCELLED 且无会话产物/临时区残留——纯入口检查点，无需慢速替身即可构造）；其余阶段取消视 fake 解压替身整备情况登记。【消账 2026-09-18】建议用例已落位：IoPackTest.ImportCancelAtBeginPreCancelledTokenLeavesNoArtifacts（begin 入口预取消——预置位令牌路径）随 IO-T07 提交 da13bb66 补齐，与 resolution 建议逐字对应且经验收者缺陷注入实证（begin 忽略取消的契约级注入下精确变红）；『其余阶段取消』半句按 F-203 判定已由该用例的契约级覆盖满足（begin/展开两检查点在案，步骤②③为临时区创建/批量预检的同型透传面）；按 F-203 登记随 IO-T07 合入收尾治理提交统一翻转，fixedBy=da13bb66",
+      "fixedAt": "2026-09-18"
     },
     {
       "id": "F-200",
@@ -2036,11 +2038,12 @@
       "id": "F-203",
       "source": "traceability/acceptance/IO-T07-20260918.md §4.8（验收 attempt 2，送验对象 d381d9d3）：findings.json 未关闭条目消账状态核对发现。编号注：F-202 系 IO-T07 实施段在 wp11-t07 分支 d381d9d3 登记（ird_gates SUB 命中，随任务合入本文件时顺延就位于本条之前）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-18",
       "title": "F-198/F-199 的实质消账动作已随 IO-T07 实施落位（da13bb66）：F-198＝Package.cpp writeBytesToFile 与 AtomicFile.cpp AtomicTarget::write 的『≤SingleFileBytes 硬上限 2 GiB』前置契约注释钉死（处置②——验收者实读核验，纯注释零行为变更）；F-199＝IoPackTest.ImportCancelAtBeginPreCancelledTokenLeavesNoArtifacts（begin 入口预取消用例——与 F-199 resolution 建议逐字对应，且经验收者缺陷注入实证：begin 忽略取消的契约级注入下精确变红）——但两条目 status 仍 open、resolution 未附消账记录，对照 F-194 先例（fixed＋fixedAt＋fixedBy＋消账注）缺登记簿翻转；纯记账滞后，非实现缺口",
       "owner": "io 单元实施者（IO-T07 合入收尾提交顺手翻转），或治理收尾动作统一翻转——依据＝IO-T07-20260918.md §4.8",
-      "resolution": "翻转操作：F-198 置 fixed（fixedBy=da13bb66，处置②口径）＋F-199 置 fixed（fixedBy=da13bb66，begin 预取消用例落位；『其余阶段取消视 fake 解压替身整备情况登记』半句已由该用例的契约级覆盖满足——begin/展开两检查点在案，步骤②③检查点为临时区创建/批量预检的同型透传面）；不构成 IO-T07 返工项（pass 判定不受影响——实质消账动作已经验收者实读＋实跑核验并留痕，仅登记面翻转待办）"
+      "resolution": "翻转操作：F-198 置 fixed（fixedBy=da13bb66，处置②口径）＋F-199 置 fixed（fixedBy=da13bb66，begin 预取消用例落位；『其余阶段取消视 fake 解压替身整备情况登记』半句已由该用例的契约级覆盖满足——begin/展开两检查点在案，步骤②③检查点为临时区创建/批量预检的同型透传面）；不构成 IO-T07 返工项（pass 判定不受影响——实质消账动作已经验收者实读＋实跑核验并留痕，仅登记面翻转待办）。【消账 2026-09-18】登记簿翻转已随 IO-T07 合入收尾治理提交统一执行（F-198/F-199 均置 fixed、fixedBy=da13bb66——循本条 resolution 操作说明与 IO-T07-20260918.md §4.8）；本条随消账动作完成一并置 fixed",
+      "fixedAt": "2026-09-18"
     }
   ]
 }
