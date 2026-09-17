@@ -1816,6 +1816,46 @@
       "title": "流水线收尾落分支缺陷：附录 B（T-IMPL v3）未要求实施完成后将工作树切回 redesign-main，PIPE §4.7 七步亦无『确认当前分支＝redesign-main』前置断言——tick#178 收尾②③在仍被实施子代理检出的 wp11-t01 上执行（merge 提交 92b9f7aa 落于任务分支，redesign-main 未收到合入，push 报 Everything up-to-date）；经 reflog 取证后机械纠错：本地 wp11-t01 复位回已推送尖端 d175a4e4（branch -f，仅丢弃未推送本地 merge，不触碰远程历史），切回 redesign-main 重跑②③④（2cad0cc5→ac6c1de4 已推送），合并对象均为已通过双漂移检测的冻结 SHA，内容零损失，提交图恢复协议理想拓扑（②记录 2 文件、③代码 17 文件各自独立）",
       "owner": "governance（PIPE 增量修订候选：§4.7 步骤①前增加当前分支断言；附录 B 增补『push 后切回 redesign-main』）",
       "resolution": "处置建议＝PIPE 增量修订在 §4.7 收尾步骤①之前增加『git rev-parse --abbrev-ref HEAD 必须为 redesign-main，不符先切回再续』断言，同轮可同步 T-IMPL 模板增补完成动作；本 tick 已按既有协议语义完成纠错（未转 blocked：无漂移、无冲突、无未审查内容，属机械性环境错误而非收尾步骤失败）"
+    },
+    {
+      "id": "F-182",
+      "source": "traceability/acceptance/IO-T02-20260917.md §4.8（验收 attempt 1，2026-09-17）：io.md §15.5 已追加 v0.4 行而卡头两行未动——对照实测",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-122/F-133/F-134/F-140/F-143/F-147/F-155/F-159/F-161/F-163/F-168/F-170/F-175 家族第十五次再现，且为本家族首例『版本行也未随迁』：IO-T02 触及 units/io.md（§15.5 追加 v0.4 行）但卡头『文档版本』行仍 v0.3、『日期』行仍 2026-09-10——此前各例至少版本行随迁（F-175 系『版本动日期不动』），本例两行均滞留，随迁纪律进一步退化",
+      "owner": "io 单元任务实施者（随 IO-T02 返工补证提交顺手补正卡头两行：版本 v0.4、日期 2026-09-17）；governance（家族根因：附录 B T-IMPL/D-DOC 模板增补『卡头版本/日期随 §15.x 增行强制同步』检查项）",
+      "resolution": "处置建议＝IO-T02 返工（4.10 补证）时随补 units/io.md 卡头两行；模板级根治随 F-175 系既有登记一并由 governance 裁决"
+    },
+    {
+      "id": "F-183",
+      "source": "traceability/acceptance/IO-T02-20260917.md §4.9/§4.10（验收 attempt 1）：git show eaa6aa99 正文与 git diff --stat 对照实测",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "幻影清单家族再现（F-081/F-102/F-103/F-106/F-108/F-111/F-113/F-114/F-118/F-125/F-127/F-129/F-132/F-136/F-138/F-141/F-148/F-152/F-165/F-166/F-172 之后又一例，且为与 4.10 留痕缺失同发的形态）：eaa6aa99 正文『改动内容』声称新增 traceability/builds/wp11-t02/ 下 integration/smoke 两模式构建日志＋运行日志＋ird_gates 门禁日志＋validate-task/verify-task 日志共 8 份，实测该提交 diff 仅 4 件（两模式 gtest XML＋report-target XML＋ird-test-report.json）——8 份 .log 被 .gitignore:87 全局 *.log 规则吞没未跟踪（F-153/F-010 同根）；ird-test-report.json gates/selfCheck 字段亦按名引用其中 3 份。注：提交正文的验证结论（双模式零 error、20/20、门禁零新增、validate/verify PASS）经验收者全量复现为真——幻影仅在证据文件清单，非结论粉饰；本例与 CORE-T02 attempt-1 同型，已判 IO-T02 attempt 1 fail",
+      "owner": "io 单元任务实施者（返工：git add -f 强制入库 8 份日志——IO-T01 wp11-t01 9 份在库同目录先例；已推送两提交不改写）",
+      "resolution": "处置建议＝返工补证提交将 8 份 .log 以 git add -f 入库并新 headSha 重新送验；根治归 F-153 既有处置（.gitignore 对 traceability/** 的 *.log 辖域豁免），owner governance"
+    },
+    {
+      "id": "F-184",
+      "source": "traceability/acceptance/IO-T02-20260917.md §4.8（验收 attempt 1）：io.md L198 与 §15.5 v0.4 行对照实测",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "文档幻影表述（F-081 家族文档侧变体）：io.md §15.5 v0.4 行声称 EquivKeyMutex『§3.1 头内容表按此增记』，实测 §3.1 SafePath.hpp 行（L198）仍为 PathRole/NormalizedPath/ISafePathResolver/SafePathRuleSet 四类型、未增记 EquivKeyMutex（全卡 grep 该词仅命中 v0.4 行自身）；另 §3.1 Budget.hpp 行类型名 BudgetLedger 与实现名 BudgetLedgerSnapshot 的命名等价调整未在 §15.5 登记（§9.0『签名均为实现建议……允许等价调整』条款覆盖语义，仅登记缺位）",
+      "owner": "io 单元任务实施者（随 IO-T02 返工补证提交顺手：①§3.1 SafePath.hpp 行补 EquivKeyMutex 或修订 v0.4 行表述；②§15.5 补一句 BudgetLedger→BudgetLedgerSnapshot 命名等价登记）",
+      "resolution": "处置建议＝随返工提交两处微修；均在单元卡增量修订（§15.5）载体内，无语义变更"
+    },
+    {
+      "id": "F-185",
+      "source": "traceability/acceptance/IO-T02-20260917.md §4.9（验收 attempt 1）：git log --format 标题逐笔核对",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-17",
+      "title": "F-012/F-179 家族再现：eaa6aa99『[WP-11-T03] io.md v0.4 同步 IO-T02 落位并登记实施留痕』前缀后以文件名词短语开头非动词开头（同提交正文四段齐备、验证结论复现为真）；同任务 aafb66ac『实现 io 单元 SafePath＋BudgetGuard…』合规——F-012 判例口径（纯风格瑕疵不阻断）",
+      "owner": "io 单元任务实施者（已推送提交不改写——AGENTS §6.3 禁止改写历史；风格自觉随后续任务）",
+      "resolution": "处置建议＝不追溯；T-IMPL 模板提交标题检查项由 governance 随 F-012 系既有登记一并根治"
     }
   ]
 }
