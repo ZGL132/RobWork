@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "IO-T03",
+  "masterWp": "WP-11（io.md §12 IO-T03 行＝WP-11-T04：CSV 读写器（方言标识＋可逆编码，唯一转义/还原实现）——§5.1~§5.6/§5.8、§9.3/§9.4）",
+  "branch": "wp11-t03",
+  "base": "bff27c07c881494a5642b74d0eb42fa34a302114",
+  "date": "2026-09-17",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main）",
+  "targets": [
+    {
+      "target": "sdurws_ird_io",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，exit 0 零 error——integration-build.log 计 error=0；smoke-build.log 计 error=0）",
+      "notes": "IO-T03 落位（§3.4 布局同名任务文件）：src/ 增列 Csv.cpp——DecodedStream（BOM 判定剥离/UTF-16LE·BE 解码含代理对/无 BOM 严格 UTF-8 DFA 校验稳定拒绝 IO-FORMAT-CSV-ENCODING——IO-D09）、RowScanner（RFC4180 流式行状态机：\"\" 字面引号/引号内换行逐字节保留/CRLF·LF·CR 容错/引号不闭合定位起始行/字段超长与字段数防御上限 SecBudgetField）、v1 方言标识行字节级精确判定与封闭键集解析（P-IO-5：#rwcsv1 语法按 §5.1 原文实现不私改）、分隔符嗅探（§5.2 前 101 行引号外计数、一致且最多者）、转义/还原唯一实现点（SA-12：= + - @ ' 前置恰一个 '/剥恰一个 '，decode(encode(s))==s）、ICsvReader（探测遍＋交付遍单遍流式/逐行错误定位 CsvRowError 五元组/maxRowErrors 截断＋计数/部分成功 AT-02 正确行保留/预算检查点行·字段·文件·总量四维/协作取消/进度）、ICsvWriter（canonical 写出：固定键序方言行＋声明行尾＋UTF-8 无 BOM＋std::to_chars 最短表示/文本转义＋RFC4180 引号化/NUL 拒绝 E7 写侧/非有限实数防御拒绝/同目录暂存＋rename 原子替换——§9.4 后置/RAII 放弃清理）；公共头增列 Csv.hpp（§3.1 表行：CsvDialect/CsvCell/RawTable/CsvParseReport/ICsvReader/ICsvWriter＋escapeCsvText/unescapeCsvText/renderDialectMarker 唯一实现点）；IoDiagnostics.hpp/.cpp 增逐行列定位助手 makeRowColError（§3.1 头注承诺随首个消费者 CSV 通道 IO-T03 落位——row/column/snippet 三键与 CSV 族 paramSchema 对齐）"
+    },
+    {
+      "target": "sdurws_ird_io_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式：integration 40/40、smoke 40/40——本任务新增 IoCsvTest 组 20 用例，既有 IoSec/Budget/IoDiag 20 用例零回归）——契约 verify 命令（cmake --build build --config Release --target sdurws_ird_io_test）经 verify-task.ps1 PASS",
+      "notes": "新增 test/CsvTest.cpp（组名 IoCsvTest——§11.1 组名 IoCsv 口径）：20 用例五组覆盖契约 acceptance 1~5（逐条映射见 testSuites）；测试以真实文件为载体（TempDir 每用例隔离），SHA-256 经 core ContentDigester（D-05 唯一摘要算法），UTF-16 构码器为测试替身自持（与被测解码路径互为校验）"
+    }
+  ],
+  "gates": {
+    "ird_gates": "io 零命中：IRD-GATE 全部命中 11 处均为基线既有（diagnostics/evidence/policy/project/runtime 的 _test/_contract_test 直链 testkit×8＋testdata_lint 表外依赖/T-1×2＋project R4×1——DTB §4.5 登记例外，SA-10 判构建失败为基线口径，与 wp11-t02 登记口径同源），零新增命中（留痕 gates-ird-gates-target.log）；集成全量构建（cmake --build build --config Release）exit 0 零 error（留痕 integration-build.log）；独立冒烟构建零 error（smoke-build.log）"
+  },
+  "selfCheck": {
+    "validateTask": "PASS（validate-task.ps1 -TaskFile tasks/foundation/IO-T03.json——前置引用/设计锚点/knownPitfalls 三查，留痕 validate-task.log）＋verify-task PASS（契约 verify 命令实跑零 error，留痕 verify-task.log）",
+    "probeCapability": "V01/V02 文件层字节一致以 SHA-256（core ContentDigester）＋直接字节比对双断言；V03/V04/V05 以真实构造文件读取（UTF-8 BOM/UTF-16LE/BE 真实字节、CRLF/LF/CR 混布、GBK 时代 Latin-1 高位字节真实非法序列）；V02 文件层转义形态以文件字节 contains 断言＋结构化层无残留负断言双面钉住；预算接线用例以真实 BudgetGuard（tighten CsvRowCount=3）经 ICsvReader 通道触发三要素诊断；数据-only 以 CSV 通道源文件执行入口 token 源级扫描断言（acceptance 4）；#rwcsv12 非法记号零改写（字节级精确判定负例）",
+    "pitfall": "P-IO-5 处置（acceptance 5）：方言标识行 v1 语法按 units/io.md §5.1 已给全文实现——渲染与卡面示例逐字节钉住（IoCsvTest.RenderDialectMarkerMatchesCard51Verbatim）、封闭键集外（未知键/quote='/encoding≠utf-8/未知值/重复键/空记号）一律 IO-FORMAT-CSV-DIALECT 拒绝不猜测；未私改语法，未在代码中裁决冻结事宜（冻结确认仍待需求/架构评审，登记治理日志 open 项不变）"
+  },
+  "testSuites": [
+    {
+      "suite": "IoCsv/RoundtripBasic＋RoundtripPrefixed（IO-V01/V02——acceptance 1）",
+      "designRef": "units/io.md §5.3（可逆转义编码/自反性）、§5.5（roundtrip 数据层逐字符一致/文件层字节一致）、§5.7（唯一转义点/唯一还原点）、§11.2 IO-V01/V02 行；需求 NFR-SEC-03（M-15＋R5）、AT-02",
+      "cases": [
+        { "name": "IoCsvTest.RenderDialectMarkerMatchesCard51Verbatim", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 5 P-IO-5＋§5.1——rwDefault 方言渲染与卡面示例逐字节相同（#rwcsv1 delimiter=, quote=\" eol=CRLF encoding=utf-8）；tab→tab 词法、eol=LF 变体；内存目标写出＝标识行＋CRLF＋数据行、恒无 BOM" },
+        { "name": "IoCsvTest.EscapeUnescapeReflexiveOverPrefixSampleSet", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 2/§5.3 自反性行——decode(encode(s))==s 逐字符全样例成立（= + - @ ' 五类前缀、原文自带 '、空串、含引号/分隔符/换行/中文）；转义只增不改（恰一前导 '）" },
+        { "name": "IoCsvTest.RoundtripBasicQuotesDelimsNewlineChineseEmpty", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V01——引号/分隔符/换行/中文/空串字段 write→read 逐字段逐字符比对一致（report.marked=true、dataRows 相符、零行错误）；再 write 文件 SHA-256 二次比较＋直接字节比对相等（§5.5 文件层字节一致）" },
+        { "name": "IoCsvTest.RoundtripPrefixedEscapeOnlyAtFileLayer", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V02——'=x→x、''q→'q、-3.5→'-3.5→-3.5；文件字节 contains 断言转义形态存在于文件层（'=SUM(A1)、''quoted'）；RawTable/回调交付单元格＝剥离后原文，无转义形式残留（负断言：原文无 ' 前缀者还原后不以 ' 开头）；样例集第二列行号哨兵防纯空串行与空行同形（§5.4 空行策略管辖的格式固有歧义，卡面注记）" }
+      ]
+    },
+    {
+      "suite": "IoCsv/UnmarkedNoRewrite（IO-V03——acceptance 2）",
+      "designRef": "units/io.md §5.3 导入行·无标识、§5.2、§2.3 非目标 9、§11.2 IO-V03 行；需求 NFR-SEC-03",
+      "cases": [
+        { "name": "IoCsvTest.UnmarkedNoRewriteKeepsAllFieldsVerbatim", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V03——无标识外部 CSV 全字段原样读入（'=x 保持 '=x、=SUM(A1)/-3.5/@cmd/+1 原样），不执行任何前缀剥离或字段改写；report.marked=false 钉住判定路径" }
+      ]
+    },
+    {
+      "suite": "IoCsv/BomQuotEol＋ColumnAnomalies（IO-V04/V05——acceptance 3）",
+      "designRef": "units/io.md §5.1（与 BOM）、§5.2（编码/引号/行尾/小数点）、§5.4（结构问题处置表）、§5.6（逐行错误定位/截断/StopOnFirstError）、§5.8（部分成功）、E1~E12 矩阵、§11.2 IO-V04/V05 行；需求 REQ-05、AT-02",
+      "cases": [
+        { "name": "IoCsvTest.BomStrippingAndUtf16Decoding", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V04 编码面——UTF-8 BOM 剥离（无标识/带标识两态：BOM 剥离先于标识判定）；UTF-16LE/BE 带 BOM 解码（E3 接受）；UTF-16LE＋合法 v1 标识行按解码后判定为带标识（剥离语义生效）" },
+        { "name": "IoCsvTest.EolToleranceAndQuotedNewlineNesting", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V04 行尾/引号面——CRLF/LF/孤立 CR 混布 5 行全收（§5.2 行尧行）；引号内分隔符/换行逐字节保留（E12/RFC4180）；\"\" 字面引号；带标识文件引号内换行 roundtrip 还原一致" },
+        { "name": "IoCsvTest.NonUtf8WithoutBomStableReject", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V04 编码拒绝面——Latin-1 高位字节（0xE9 非 UTF-8 序列）无 BOM＝IO-FORMAT-CSV-ENCODING 稳定拒绝（read＋probe 双入口；不猜测 ANSI/GBK 转码——IO-D09/§2.3 非目标 10）" },
+        { "name": "IoCsvTest.DuplicateHeaderColumnsRejectedWithLocation", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V05 DUPCOL——折叠大小写后同名（id/ID）与精确同名（a/a）均致命拒绝；诊断定位表头物理行号（row=2，含标识行偏移）＋重复列号（column=2）＋名字（AT-02 定位口径）" },
+        { "name": "IoCsvTest.ArityPoliciesDefaultRejectAndExplicitPadTrim", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V05 ARITY——缺列/多列默认拒绝且定位（行号/首缺失或首多余列号/fieldName/expected/actual params）；正确行保留（行 5 照常交付，dataRows=1）；PadTrailing 补空 rowsPadded=1＋arityApplied 记录；TrimExcess 截断 rowsTrimmed=1；行错误集合按行号序可断言（§9.3 确定性）" },
+        { "name": "IoCsvTest.BlankRowPoliciesSkipCountAndReject", "status": "passed", "modes": ["integration", "smoke"], "trace": "IO-V05 空行（E10）——缺省 Skip 跳过并计数（blankSkipped=2，正确行保留）；RejectBlank 策略计为行错误（blankRejected=2、码面按结构事实归 IO-FORMAT-CSV-ARITY、detail 注明 CsvBlankPolicy::Reject 出处——§5.4 码列'—'的处置登记）" },
+        { "name": "IoCsvTest.RowErrorTruncationAndStopOnFirstError", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.6 部分成功粒度（acceptance 4）——maxRowErrors=2 时集合截到上限、rowErrorsTruncated=1＋errorRows=3 如实计数、正确行照常产出；stopOnFirstRowError 首错即停（ok 结束、错误入集合）" },
+        { "name": "IoCsvTest.UnclosedQuoteFatalAtStartRow", "status": "passed", "modes": ["integration", "smoke"], "trace": "E4/§5.4 引号不闭合行——致命拒绝 IO-FORMAT-CSV-QUOTE，params row=起始行（定位起始行）" }
+      ]
+    },
+    {
+      "suite": "IoCsv/DialectMarker＋Probe＋数据-only（acceptance 4/5——P-IO-5、方言语法不超 §5.1 声明集、预算接线）",
+      "designRef": "units/io.md §5.1（封闭键集/缺失键缺省/字节级精确判定）、§5.2 分隔符行、§5.5 数值规范化、§5.6 写出模型、§9.3/§9.4 契约表、E1/E7/E8、§4.4/§4.5（预算检查点）；治理日志 P-IO-5",
+      "cases": [
+        { "name": "IoCsvTest.DialectMarkerClosedKeySetRejections", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4/5＋E1——九种损坏标识行（未知键/quote='/encoding≠utf-16 之外值/未知 delimiter/eol=CR/双空格/空值/重复键/缺 =）一律 IO-FORMAT-CSV-DIALECT 拒绝不猜测；合法变体 tab 词法＋缺失键缺省生效（report.dialect.delimiter='\\t'）；#rwcsv12 非 v1 记号＝无标识文件零改写（字节级精确，'不存在疑似本软件文件'）" },
+        { "name": "IoCsvTest.ProbeDetectsMarkerAndSniffsDelimiter", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.3 probe/§5.2 分隔符行——带标识文件返回标识行方言；无标识 ';' 与 ',' 文件嗅探各中其的；单列文件无一致候选→DIALECT＋候选统计摘要（rows/comma/semicolon/tab，供调用方提示用户显式选择）" },
+        { "name": "IoCsvTest.RowBudgetChargedThroughReaderChannel", "status": "passed", "modes": ["integration", "smoke"], "trace": "§4.4⑤/§4.5.1/IO-T02 V06 交接承诺——调用方 tighten CsvRowCount=3 开 scope 传入 reader：第 4 行检查点触发 IO-SEC-BUDGET-ROWS（三要素 actual=4/limit=3/unit=count），超限即中止；证明 ICsvReader 行检查点接同一 BudgetGuard 行维" },
+        { "name": "IoCsvTest.DataOnlyNoExecutionEntryInCsvChannelSources", "status": "passed", "modes": ["integration", "smoke"], "trace": "acceptance 4 数据-only——Csv.hpp/Csv.cpp 源级扫描零执行入口 token（system、popen、exec 族、CreateProcess、ShellExecute、WinExec、CoCreateInstance、std::system）：解析路径结构上不存在公式/命令执行入口" },
+        { "name": "IoCsvTest.WriterFormatsNumbersCanonicallyWithoutEscape", "status": "passed", "modes": ["integration", "smoke"], "trace": "§5.5 数值规范化——Int/Real 以 std::to_chars 最短表示写出（-42、0.1、3.0→3、1e21→1e+21，'.' 小数点无本地化）；数值/空字段不经转义（§5.3）：文件层裸 -2.5 无 ' 前缀，带标识读取原样还原（io 保留原文）" },
+        { "name": "IoCsvTest.WriterRejectsNulNonFiniteAndBadDialectWithoutTouchingTarget", "status": "passed", "modes": ["integration", "smoke"], "trace": "E7 写侧/§9.4 契约表——NUL 文本单元格＝IO-FORMAT-CSV-CHAR 拒绝；非有限实数＝防御性 IO-FORMAT-INTERNAL（isfinite 前置的运行时形态，不静默落盘 nan）；quote=' 方言拒开＝IO-FORMAT-CSV-DIALECT；未 open 即 write/finish＝契约违约防御拒绝；全部失败路径目标文件零写入（§9.4 后置'finish 前失败＝目标不变'）" },
+        { "name": "IoCsvTest.WriterRaiiAbandonLeavesNoStagingResidue", "status": "passed", "modes": ["integration", "smoke"], "trace": "§9.4 生命周期行/§5.6 取消即中止——未 finish 析构＝放弃＝暂存清理（.ird-csv-tmp 零残留）、发布目标从未出现（'取消即中止（目标不受影响）'）" }
+      ]
+    }
+  ]
+}

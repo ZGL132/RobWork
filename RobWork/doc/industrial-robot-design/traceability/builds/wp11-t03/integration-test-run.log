@@ -1,0 +1,102 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 40 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from IoSecTest
+[ RUN      ] IoSecTest.PathTraversalP4IllegalTableRejectedWithExactCodes
+[       OK ] IoSecTest.PathTraversalP4IllegalTableRejectedWithExactCodes (1 ms)
+[ RUN      ] IoSecTest.PathTraversalP4LegalRowsAndBatchDuplicateDetection
+[       OK ] IoSecTest.PathTraversalP4LegalRowsAndBatchDuplicateDetection (1 ms)
+[ RUN      ] IoSecTest.PathTraversalP5IllegalTableRejectedWithExactCodes
+[       OK ] IoSecTest.PathTraversalP5IllegalTableRejectedWithExactCodes (0 ms)
+[ RUN      ] IoSecTest.PathTraversalP5LegalRowsAccepted
+[       OK ] IoSecTest.PathTraversalP5LegalRowsAccepted (1 ms)
+[ RUN      ] IoSecTest.SameProjectAltPathsEquivalentKeysAndSessionMutex
+[       OK ] IoSecTest.SameProjectAltPathsEquivalentKeysAndSessionMutex (2 ms)
+[ RUN      ] IoSecTest.SymlinkJunctionEscapeRejectedWithIoSecSymlink
+为 C:\Users\zgl18\AppData\Local\Temp\ird_wp11_t03_safepath\SymlinkJunctionEscapeRejectedWithIoSecSymlink_98016\proj\objects\junc <<===>> C:\Users\zgl18\AppData\Local\Temp\ird_wp11_t03_safepath\SymlinkJunctionEscapeRejectedWithIoSecSymlink_98016\proj\outside 创建的联接
+[       OK ] IoSecTest.SymlinkJunctionEscapeRejectedWithIoSecSymlink (58 ms)
+[ RUN      ] IoSecTest.ExceptionNotWidenedUserSourceAndExportTargetUnrestricted
+[       OK ] IoSecTest.ExceptionNotWidenedUserSourceAndExportTargetUnrestricted (5 ms)
+[----------] 7 tests from IoSecTest (71 ms total)
+
+[----------] 1 test from IoSecHeaderRedLines
+[ RUN      ] IoSecHeaderRedLines.IoHeadersFreeOfQtAndCrossUnitIncludes
+[       OK ] IoSecHeaderRedLines.IoHeadersFreeOfQtAndCrossUnitIncludes (4 ms)
+[----------] 1 test from IoSecHeaderRedLines (4 ms total)
+
+[----------] 8 tests from BudgetTest
+[ RUN      ] BudgetTest.StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory
+[       OK ] BudgetTest.StreamBudgetRowsOverBudgetTriggersIoSecBudgetRowsWithBoundedMemory (54 ms)
+[ RUN      ] BudgetTest.BudgetTriadFileDepthTotalRejectWithComparativeParams
+[       OK ] BudgetTest.BudgetTriadFileDepthTotalRejectWithComparativeParams (0 ms)
+[ RUN      ] BudgetTest.DeclaredVsActualDoubleBookingKeepsLarger
+[       OK ] BudgetTest.DeclaredVsActualDoubleBookingKeepsLarger (0 ms)
+[ RUN      ] BudgetTest.SaturatingAccumulatorNeverWraps
+[       OK ] BudgetTest.SaturatingAccumulatorNeverWraps (0 ms)
+[ RUN      ] BudgetTest.ScopeTreeRollupToParentAndParentLimitEnforced
+[       OK ] BudgetTest.ScopeTreeRollupToParentAndParentLimitEnforced (0 ms)
+[ RUN      ] BudgetTest.ArchiveDualSidedBookingExpandAndRatio
+[       OK ] BudgetTest.ArchiveDualSidedBookingExpandAndRatio (0 ms)
+[ RUN      ] BudgetTest.ProductDefaultValuesPinnedToCardSection451
+[       OK ] BudgetTest.ProductDefaultValuesPinnedToCardSection451 (0 ms)
+[ RUN      ] BudgetTest.PackImportChannelHardenedSpecRelaxForbidden
+[       OK ] BudgetTest.PackImportChannelHardenedSpecRelaxForbidden (0 ms)
+[----------] 8 tests from BudgetTest (59 ms total)
+
+[----------] 4 tests from IoDiagCodeTable
+[ RUN      ] IoDiagCodeTable.TokenMappingCoversAllEnumValuesAndMatchesSection912
+[       OK ] IoDiagCodeTable.TokenMappingCoversAllEnumValuesAndMatchesSection912 (0 ms)
+[ RUN      ] IoDiagCodeTable.RegistrationIntoStableCodeRegistryFullTableVerified
+[       OK ] IoDiagCodeTable.RegistrationIntoStableCodeRegistryFullTableVerified (0 ms)
+[ RUN      ] IoDiagCodeTable.CoexistsWithBuiltinTableOrderIndependentManifest
+[       OK ] IoDiagCodeTable.CoexistsWithBuiltinTableOrderIndependentManifest (0 ms)
+[ RUN      ] IoDiagCodeTable.ComparativeErrorCarriesThreeElementParams
+[       OK ] IoDiagCodeTable.ComparativeErrorCarriesThreeElementParams (0 ms)
+[----------] 4 tests from IoDiagCodeTable (1 ms total)
+
+[----------] 20 tests from IoCsvTest
+[ RUN      ] IoCsvTest.RenderDialectMarkerMatchesCard51Verbatim
+[       OK ] IoCsvTest.RenderDialectMarkerMatchesCard51Verbatim (1 ms)
+[ RUN      ] IoCsvTest.EscapeUnescapeReflexiveOverPrefixSampleSet
+[       OK ] IoCsvTest.EscapeUnescapeReflexiveOverPrefixSampleSet (0 ms)
+[ RUN      ] IoCsvTest.RoundtripBasicQuotesDelimsNewlineChineseEmpty
+[       OK ] IoCsvTest.RoundtripBasicQuotesDelimsNewlineChineseEmpty (6 ms)
+[ RUN      ] IoCsvTest.RoundtripPrefixedEscapeOnlyAtFileLayer
+[       OK ] IoCsvTest.RoundtripPrefixedEscapeOnlyAtFileLayer (2 ms)
+[ RUN      ] IoCsvTest.UnmarkedNoRewriteKeepsAllFieldsVerbatim
+[       OK ] IoCsvTest.UnmarkedNoRewriteKeepsAllFieldsVerbatim (2 ms)
+[ RUN      ] IoCsvTest.BomStrippingAndUtf16Decoding
+[       OK ] IoCsvTest.BomStrippingAndUtf16Decoding (7 ms)
+[ RUN      ] IoCsvTest.EolToleranceAndQuotedNewlineNesting
+[       OK ] IoCsvTest.EolToleranceAndQuotedNewlineNesting (3 ms)
+[ RUN      ] IoCsvTest.NonUtf8WithoutBomStableReject
+[       OK ] IoCsvTest.NonUtf8WithoutBomStableReject (2 ms)
+[ RUN      ] IoCsvTest.DuplicateHeaderColumnsRejectedWithLocation
+[       OK ] IoCsvTest.DuplicateHeaderColumnsRejectedWithLocation (2 ms)
+[ RUN      ] IoCsvTest.ArityPoliciesDefaultRejectAndExplicitPadTrim
+[       OK ] IoCsvTest.ArityPoliciesDefaultRejectAndExplicitPadTrim (2 ms)
+[ RUN      ] IoCsvTest.BlankRowPoliciesSkipCountAndReject
+[       OK ] IoCsvTest.BlankRowPoliciesSkipCountAndReject (2 ms)
+[ RUN      ] IoCsvTest.RowErrorTruncationAndStopOnFirstError
+[       OK ] IoCsvTest.RowErrorTruncationAndStopOnFirstError (2 ms)
+[ RUN      ] IoCsvTest.DialectMarkerClosedKeySetRejections
+[       OK ] IoCsvTest.DialectMarkerClosedKeySetRejections (11 ms)
+[ RUN      ] IoCsvTest.ProbeDetectsMarkerAndSniffsDelimiter
+[       OK ] IoCsvTest.ProbeDetectsMarkerAndSniffsDelimiter (6 ms)
+[ RUN      ] IoCsvTest.RowBudgetChargedThroughReaderChannel
+[       OK ] IoCsvTest.RowBudgetChargedThroughReaderChannel (1 ms)
+[ RUN      ] IoCsvTest.DataOnlyNoExecutionEntryInCsvChannelSources
+[       OK ] IoCsvTest.DataOnlyNoExecutionEntryInCsvChannelSources (1 ms)
+[ RUN      ] IoCsvTest.UnclosedQuoteFatalAtStartRow
+[       OK ] IoCsvTest.UnclosedQuoteFatalAtStartRow (1 ms)
+[ RUN      ] IoCsvTest.WriterRejectsNulNonFiniteAndBadDialectWithoutTouchingTarget
+[       OK ] IoCsvTest.WriterRejectsNulNonFiniteAndBadDialectWithoutTouchingTarget (1 ms)
+[ RUN      ] IoCsvTest.WriterFormatsNumbersCanonicallyWithoutEscape
+[       OK ] IoCsvTest.WriterFormatsNumbersCanonicallyWithoutEscape (1 ms)
+[ RUN      ] IoCsvTest.WriterRaiiAbandonLeavesNoStagingResidue
+[       OK ] IoCsvTest.WriterRaiiAbandonLeavesNoStagingResidue (0 ms)
+[----------] 20 tests from IoCsvTest (63 ms total)
+
+[----------] Global test environment tear-down
+[==========] 40 tests from 5 test suites ran. (200 ms total)
+[  PASSED  ] 40 tests.
