@@ -2055,6 +2055,16 @@
       "owner": "PIPE 文档所有者（§4.7③ 合并协议修订与解算脚本辖域）",
       "resolution": "PIPE v1.13 落地（治理修订＋RobWork/scripts/industrialrobot/merge-findings-union.ps1）：§4.7③ 增补唯一例外——冲突文件仅为 findings.json 时按 merge-base 三方条目块集合运算作确定性并集（双方新增条目编号序并存、同号同义取一、对方独改既有条目按对方替换；撞号/一方删除/双方异改同一条目/顶层字段不一致/解析校验失败一律退出非 0 照旧即停），解算写入前经 JSON 解析＋无重复 id＋条目计数三重校验；脚本经合成冲突仓库五场景（双方追加/撞号异义/对方独改/双方异改/删除）＋IO-T07 真实三方版本重放实测，重放结果与人工裁决 d98be7bc 完全一致；真分歧裁决权保留所有者。【消账 2026-09-18】PIPE v1.13 与脚本同提交落地，本条随修订即消账；否决替代案：验收端不改 findings.json 改随 ⑤ 统一转登（闭环登记时机推迟失真）、evidence 分支改基任务分支 head（削弱 ACC §2/§3 独立性）",
       "fixedAt": "2026-09-18"
+    },
+    {
+      "id": "F-205",
+      "source": "治理会话事故实录（2026-09-18，自登记）：PIPE v1.13 修订提交时，tick#201（EX-T01）实施子代理已在共享工作树检出 wp08-t01（base 2673b21b），治理会话的未提交改动（PIPE 文档＋脚本＋findings F-204）被 git checkout 无冲突携带至任务分支，commit 落错分支（f607bb80 @ wp08-t01）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "流水线实施段活跃期间（phase=implementing），主线工作树被实施者会话占用——此时段的并行治理修订存在工作树竞态：实施者 checkout 任务分支会无冲突携带治理会话的未提交改动，治理会话随后的 commit 即落错分支（本次 f607bb80 落于 wp08-t01）。PIPE §7『单工作树＝单轨道：流水线占用工作区期间请勿并行手动实施』条文未涵盖治理修订会话这一主体。事故已完整补救：f607bb80 cherry-pick 至 redesign-main（b9c39cf9，已推送）后 wp08-t01 重置回 2673b21b（执行前核实实施者零提交、零未提交产物），state.json 备份/恢复逐字节一致，validate-state PASS——任务分支送验对象未被污染",
+      "owner": "PIPE 文档所有者（§7 工作树纪律是否扩展至治理/所有者会话的修订裁决）",
+      "resolution": "处置建议（待所有者裁决，不自动生效）：①治理/所有者修订会话提交前强制核对 git branch --show-current==redesign-main（最小防线，零成本）；②修订动作尽量安排在 phase∈{idle,blocked} 窗口（实施者不占用工作树）；③§7 条文增补治理会话主体。不构成任何在飞任务（tick#201）的返工项——实施产物与 state 写回未受影响"
     }
   ]
 }
