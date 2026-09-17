@@ -309,4 +309,22 @@ IoError makeComparativeError(IoErrorCode code, std::uint64_t actual, std::uint64
     return e;
 }
 
+IoError makeRowColError(IoErrorCode code, std::uint64_t rowNo, std::uint64_t colNo,
+                        std::string_view snippet, std::string detail)
+{
+    IoError e;
+    e.code = code;
+    // 三键固定序 row/column/snippet——与 CSV 族 paramSchema（§3.1
+    // ioCodeDescriptors 注："CSV 族 [\"row\",\"column\",\"snippet\"]"）
+    // 对齐；行/列号十进制文本化不经 locale（NFR-COR-02 确定性，与
+    // makeComparativeError 同款纪律）。snippet 原样收编：截断是调用方
+    // （CsvRowError::rawSnippet，120 字节 UTF-8 边界）的职责——本助手
+    // 是纯构造点，不做二次加工（单一职责，方便测试钉住键序与格式）。
+    e.params.emplace_back("row", std::to_string(rowNo));
+    e.params.emplace_back("column", std::to_string(colNo));
+    e.params.emplace_back("snippet", std::string(snippet));
+    e.detail = std::move(detail);
+    return e;
+}
+
 } // namespace sdurws::ird::io

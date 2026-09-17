@@ -7,8 +7,8 @@
  * 设计依据：
  *   - units/io.md §3.1（公共头表 IoDiagnostics.hpp 行："IO-* 码表（建议
  *     值）、诊断构造助手（比较型预算三要素、逐行列定位、脱敏接入）"——
- *     本头落位前两项；逐行列定位助手随首个消费者（CSV 通道 IO-T03）落
- *     位，不预建无消费者能力）、§9.12（IoErrorCode 码汇总——建议值，随
+ *     前两项随 IO-T02 落位；逐行列定位助手随首个消费者（CSV 通道
+ *     IO-T03）落位）、§9.12（IoErrorCode 码汇总——建议值，随
  *     IO-T02 注册冻结）、§10.3（与 diagnostics：io→diagnostics 产出
  *     IO-\* CodeDescriptor；"码未注册→IO-FORMAT-INTERNAL 拒绝构造"）
  *   - units/diagnostics.md §8.6（io 路径与预算错误→诊断：SafePath 违规
@@ -144,6 +144,35 @@ void registerIoCodeTable(diagnostics::IDiagnosticRegistry& registry);
  */
 IoError makeComparativeError(IoErrorCode code, std::uint64_t actual, std::uint64_t limit,
                              std::string_view unit, std::string detail = {});
+
+// =====================================================================
+// 逐行列定位构造助手（§3.1"诊断构造助手（……逐行列定位……）"——头注
+// 承诺"随首个消费者（CSV 通道 IO-T03）落位"，本任务兑现）
+// =====================================================================
+
+/**
+ * @brief 以行/列定位＋原文片段构造 IoError（CSV 逐行错误与格式定位错误的
+ *        标准承载——ioCodeDescriptors 对 CSV 族的 paramSchema
+ *        ["row","column","snippet"] 与此三键对齐）。
+ *
+ * params 固定键序：row（物理行号 1 起，含标识行偏移——§5.6 口径；0＝无
+ * 行定位）、column（列号 1 起；0＝行级问题无单列定位）、snippet（触发处
+ * 原文片段——**仅开发级保留**，成为用户可见文案前必须经 diagnostics 脱
+ * 敏设施；AT-02 定位口径"用户级仅定位"）。数值文本化不经 locale（与
+ * makeComparativeError 同款确定性纪律）。
+ *
+ * 纯函数；线程安全；同输入同错误同 params 序（NFR-COR-02）。
+ *
+ * @param code    [in] 稳定码（CSV 族 IO-FORMAT-CSV-*；资源/预算定位错误亦可）
+ * @param rowNo   [in] 物理行号（1 起；0＝无行定位——§5.6 colNo 同款约定）
+ * @param colNo   [in] 列号（1 起；0＝行级问题）
+ * @param snippet [in] 原文片段（调用方负责截断——CsvRowError::rawSnippet
+ *                截断至 120 字节 UTF-8 边界；本函数原样收编不做二次截断）
+ * @param detail  [in] 开发级细节（规则出处/策略说明；不进用户文案）
+ * @return IoError（code＋row/column/snippet 三键＋detail）
+ */
+IoError makeRowColError(IoErrorCode code, std::uint64_t rowNo, std::uint64_t colNo,
+                        std::string_view snippet, std::string detail = {});
 
 } // namespace sdurws::ird::io
 

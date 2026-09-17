@@ -26,6 +26,9 @@
 #      提前于 IO-T06 落位为"已含真实用例的目标"，不是骨架期禁止的
 #      "预建空测试目标"（§12 IO-T01 禁止项语义＝无内容的占位目标；
 #      IO-T06/T07 届时增列资源/包/契约面用例与 _contract_test 目标）。
+#   3. IO-T03（≙WP-11-T04）：src/ 增列 Csv.cpp；公共头增列 Csv.hpp
+#      （§3.1 表 Csv.hpp 行）；测试目标增列 test/CsvTest.cpp（V01~V05
+#      ＋方言封闭集/预算接线/数据-only 用例——契约 acceptance 1~5）。
 # =====================================================================
 
 # ---- gtest 接入（DTB §5.5 定稿，唯一机制；随 IO-T02 首个测试目标引入）----
@@ -38,15 +41,17 @@ find_package(GTest CONFIG REQUIRED)
 # src/Io.cpp＝IO-T01 锚点翻译单元（先例：core/src/Core.cpp 等）；
 # IO-T02 增列 SafePath.cpp（路径安全核——§4.2/§4.3/§9.1）、Budget.cpp
 # （预算守卫——§4.5/§9.2）、IoDiagnostics.cpp（IO-* 码表注册＋比较型
-# 三要素助手——§9.12/P-IO-6）。IO-T03 起按 §3.4 布局增列：Csv.cpp
-# （IO-T03）、Json.cpp/ZipChannel.cpp（IO-T04）、ResourceIo.cpp（IO-T05）、
-# Package.cpp/TempArea.cpp/AtomicFile.cpp（IO-T06）——同名任务文件按
-# §12 行增列。
+# 三要素助手——§9.12/P-IO-6）。IO-T03 增列 Csv.cpp（§5/§9.3/§9.4——
+# 方言标识行＋可逆转义＋流式读取/逐行错误定位＋canonical 写出，任务卡
+# §12 IO-T03 行同名任务文件）。IO-T04 起按 §3.4 布局继续增列：
+# Json.cpp/ZipChannel.cpp（IO-T04）、ResourceIo.cpp（IO-T05）、
+# Package.cpp/TempArea.cpp/AtomicFile.cpp（IO-T06）。
 add_library(sdurws_ird_io STATIC
     src/Io.cpp
     src/SafePath.cpp
     src/Budget.cpp
-    src/IoDiagnostics.cpp)
+    src/IoDiagnostics.cpp
+    src/Csv.cpp)
 
 # C++17（单元卡 §1.4／core.md D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：io 公共头使用 C++17 设施（std::string_view/inline constexpr
@@ -108,7 +113,8 @@ enable_testing()
 add_executable(sdurws_ird_io_test
     test/SafePathTest.cpp
     test/BudgetTest.cpp
-    test/IoDiagnosticsTest.cpp)
+    test/IoDiagnosticsTest.cpp
+    test/CsvTest.cpp)
 
 target_compile_features(sdurws_ird_io_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_io_test PROPERTIES
