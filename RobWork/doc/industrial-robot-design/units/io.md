@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.3（IO-T01 落位同步；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
-| 日期 | 2026-09-10 |
+| 文档版本 | v0.4（IO-T02 落位同步；v0.3＝IO-T01 落位同步；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
+| 日期 | 2026-09-17 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试通过或正式验收） |
 | 文档代号 | UNIT-IO |
 | 单元 | io（平台服务，L3；ARCHITECTURE §2.3/§3.1：CSV/JSON 读写〔转义 roundtrip〕、目录包导入校验、资源导入服务、SafePath/BudgetGuard） |
@@ -195,7 +195,7 @@ io 的诊断与状态语义建立在四类错误的正交性上（ERR-01"执行�
 | --- | --- | --- |
 | `IoFwd.hpp` | 前向声明与公共别名（`IoResult<T>`、`IoCancelToken`、版本常量） | §9.0 |
 | `IoError.hpp` | `IoErrorCode`（稳定 token 枚举）、`IoError`（码＋上下文参数＋原始细节） | §9.0、§15.1 |
-| `SafePath.hpp` | `PathRole`、`NormalizedPath`、`ISafePathResolver`、`SafePathRuleSet` | §4、§9.1 |
+| `SafePath.hpp` | `PathRole`、`NormalizedPath`、`ISafePathResolver`、`SafePathRuleSet`、`EquivKeyMutex`（TempArea 会话互斥经等价键的原语——§4.2.4/§9.10） | §4、§9.1 |
 | `Budget.hpp` | `BudgetDimension`、`BudgetSpec`（默认＋硬上限）、`IBudgetGuard`、`BudgetLedger` | §4.5、§9.2 |
 | `Csv.hpp` | `CsvDialect`、`CsvCell`、`RawTable`、`CsvParseReport`、`ICsvReader`、`ICsvWriter` | §5、§9.3/§9.4 |
 | `Json.hpp` | `JsonDocument`（受限 DOM）、`JsonProfile`、`JsonParseReport`、`IStructuredDataReader`、`IJsonWriter` | §6、§9.5 |
@@ -1729,7 +1729,7 @@ Xacro 展开机制实现（护栏已定）；`ResourceKind` 扩展（DAE 完整/
 | v0.1 | 2026-09-10 | 首版草案：承接 REQUIREMENTS v1.16／ARCHITECTURE v0.11 与九份兄弟单元卡（v0.1 Draft）的 io 行义务；冻结路径安全/预算模型、CSV/JSON 可逆编码、资源读取与三段边界固化协作、`.rwpack` 导入导出协议、公共接口与线程/取消契约、验证矩阵与阶段 A 任务拆分；裁决关闭 P-RT-6；登记 P-IO-1~P-IO-7。状态 `Draft`。 |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：§1.2"units/modeling.md 等 10 个业务/编报单元不存在"过期表述更正——reporting.md 已产出（v0.1 Draft）并与本文双向交接（reporting §10.10/§13.2 ↔ io §13.1），拆分为"reporting 已产出"与"9 个业务域单元待产出"两行 |
 | v0.3 | 2026-09-17 | IO-T01（≙WP-11-T02）落位同步：§1.2"io 构建骨架"行更新——`sdurws_ird_io` 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 core＋diagnostics——§3.3 两条登记边），`io/CMakeLists.txt` 新建、`IoFwd.hpp`/`IoError.hpp` 公共头就位（§3.1 表前两行）、`src/Io.cpp` 锚点翻译单元（零接口实现预建）；P-IO-3 候选库 vcpkg 可用性验证完成并留痕（`traceability/io-pio3-dependency-probe.md`——R-IO-1 前置处置；选型冻结权仍归 WP-11 评审，L1 文件/XML 目标冻结后随 IO-T04 登记）；测试目标不预建（§12 IO-T01 禁止项，随 IO-T06/T07）。双模式构建零错误＋红线扫描零新增命中（留痕 `traceability/builds/wp11-t01/`）。设计正文（§2~§14）零变更。 |
-| v0.4 | 2026-09-17 | IO-T02（≙WP-11-T03）落位同步：①§4/§9.1/§9.2/§9.12 的实现落位——`SafePath.hpp/.cpp`（PathRole/NormalizedPath/SafePathRuleSet/ISafePathResolver＋EquivKeyMutex，§4.2.4/§9.10"会话互斥经等价键"的原语随 SafePath 头承载，§3.1 头内容表按此增记）、`Budget.hpp/.cpp`（BudgetDimension/BudgetSpec/IBudgetGuard/BudgetLedgerSnapshot；§9.2 建议签名两处等价调整：openScope 增带默认 parent 参数〔§4.5.2 多阶段累计 scope 成树所需〕、增补 chargeArchive 承载 ArchiveRatio 双侧记账〔压缩/展开分别记录后比较〕）、`IoDiagnostics.hpp/.cpp`（IO-\* 码表 55 值向 StableCodeRegistry 注册——P-IO-6 执行面；码值＝§9.12 建议值逐字〔含连字符展开的 IO-SEC-PATH-SYMLINK，正文简写 IO-SEC-SYMLINK 同指〕；与 diagnostics 所有者的内置表收编确认随验收请求提请，不在实现侧扩编 diagnostics 单元）；②P-IO-4 处置——§4.5.1 建议默认/硬上限数值逐维落位为 Draft 档位常量并测试钉住（TempAreaBytes 硬上限取编译期项"展开预算×2"，磁盘项由临时区会话运行时收紧）；③`sdurws_ird_io_test` 提前随 IO-T02 以真实用例登记（契约 verify 命令指向该目标；§12 IO-T01 禁止项语义＝无内容占位目标——本落位非预建空目标；`_contract_test` 仍随 IO-T06/T07）；④`IoFwd.hpp` 增补 IoResult\<void\> 特化（§9.1/§9.2 动作型接口的返回形态——IO-T01 类型契约头的补全）。设计正文语义零变更。双模式构建零错误＋测试 20/20 双模式通过（IO-V09/V10/V11/V06＋三要素/双保险/账本/码表/头红线——留痕 `traceability/builds/wp11-t02/`）；ird_gates 零 io 命中（基线例外集与 wp09-t09 登记口径同源）。 |
+| v0.4 | 2026-09-17 | IO-T02（≙WP-11-T03）落位同步：①§4/§9.1/§9.2/§9.12 的实现落位——`SafePath.hpp/.cpp`（PathRole/NormalizedPath/SafePathRuleSet/ISafePathResolver＋EquivKeyMutex，§4.2.4/§9.10"会话互斥经等价键"的原语随 SafePath 头承载，§3.1 头内容表按此增记）、`Budget.hpp/.cpp`（BudgetDimension/BudgetSpec/IBudgetGuard/BudgetLedgerSnapshot——§3.1 表名 `BudgetLedger` 与实现名 `BudgetLedgerSnapshot` 的命名等价依 §9.0 条款在此补记〔IO-T02 返工补正，命名等价此前未登记〕；§9.2 建议签名两处等价调整：openScope 增带默认 parent 参数〔§4.5.2 多阶段累计 scope 成树所需〕、增补 chargeArchive 承载 ArchiveRatio 双侧记账〔压缩/展开分别记录后比较〕）、`IoDiagnostics.hpp/.cpp`（IO-\* 码表 55 值向 StableCodeRegistry 注册——P-IO-6 执行面；码值＝§9.12 建议值逐字〔含连字符展开的 IO-SEC-PATH-SYMLINK，正文简写 IO-SEC-SYMLINK 同指〕；与 diagnostics 所有者的内置表收编确认随验收请求提请，不在实现侧扩编 diagnostics 单元）；②P-IO-4 处置——§4.5.1 建议默认/硬上限数值逐维落位为 Draft 档位常量并测试钉住（TempAreaBytes 硬上限取编译期项"展开预算×2"，磁盘项由临时区会话运行时收紧）；③`sdurws_ird_io_test` 提前随 IO-T02 以真实用例登记（契约 verify 命令指向该目标；§12 IO-T01 禁止项语义＝无内容占位目标——本落位非预建空目标；`_contract_test` 仍随 IO-T06/T07）；④`IoFwd.hpp` 增补 IoResult\<void\> 特化（§9.1/§9.2 动作型接口的返回形态——IO-T01 类型契约头的补全）。设计正文语义零变更。双模式构建零错误＋测试 20/20 双模式通过（IO-V09/V10/V11/V06＋三要素/双保险/账本/码表/头红线——留痕 `traceability/builds/wp11-t02/`）；ird_gates 零 io 命中（基线例外集与 wp09-t09 登记口径同源）。 |
 
 ---
 
