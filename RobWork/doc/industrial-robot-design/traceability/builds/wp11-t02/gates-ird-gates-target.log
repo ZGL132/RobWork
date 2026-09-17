@@ -1,0 +1,3 @@
+    搂3.2 SA-10 鍒ゆ瀯寤哄け璐ワ紱渚嬪鍙粡 DTB 搂4.5 鐧昏鍐?
+  
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: “D:\10_Source_Repos\21_robot\RobWork\build\CMakeFiles\e40f33939983c9e6b16d79306cec3367\ird_gates.rule”的自定义生成已退出，代码为 1。 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ird_gates.vcxproj]
