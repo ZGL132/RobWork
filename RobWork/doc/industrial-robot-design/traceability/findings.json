@@ -2155,6 +2155,36 @@
       "title": "F-012 家族同型再现（先例 F-012/F-023/F-024/F-026/F-027/F-030/F-205/F-208/F-210/F-211）：EX-T06 文档提交 22044b77 标题『[WP-08-T07] EX-T06 文档同步与验证留痕（单元卡 v0.8 登记＋双模式证据）』前缀后以任务号名词『EX-T06』开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求——同任务另一提交 d19839d0『实现…』动词开头合规；正文四段齐备、验证段 validate-docs PASS（20 units, 12 trace entries, 150 task files）与两模式 113/113＋27/27 数字经验收者亲手复跑逐项一致，纯风格瑕疵不构成阻断",
       "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
       "resolution": "与 F-012 家族合并处置（提交模板补动词开头示例，句式如『同步 EX-T06 文档与验证留痕（…）』）；对已推送历史（22044b77）不追溯改写（AGENTS §6.3）。编号顺延自 F-213，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T06 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
+    },
+    {
+      "id": "F-215",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "traceability/acceptance/EX-T07-20260919.md#4.9（attempt 1，送验对象 b2b384b590bd9f4138a682570005103a8882fe60，提交 b2b384b5）",
+      "title": "F-012 家族同型再现（先例 F-012/F-023/F-024/F-026/F-027/F-030/F-205/F-208/F-210/F-211/F-214）：EX-T07 文档提交 b2b384b5 标题「[WP-08-T08] EX-T07 文档同步与验证留痕（单元卡 v0.9 登记＋双模式证据）」前缀后以任务号名词「EX-T07」开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求——同任务另一提交 c560d6b3「实现…」动词开头合规；正文四段齐备、验证段 validate-docs PASS（20 units, 12 trace entries, 150 task files）与两模式 122/122＋28/28、ird_gates 命中集零新增结论经验收者亲手复跑逐项一致，纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012 家族合并处置（提交模板补动词开头示例，句式如「同步 EX-T07 文档与验证留痕（…）」）；对已推送历史（b2b384b5）不追溯改写（AGENTS §6.3）。编号顺延自 F-214，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T07 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
+    },
+    {
+      "id": "F-216",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "traceability/acceptance/EX-T07-20260919.md#4.5（attempt 1，送验对象 b2b384b590bd9f4138a682570005103a8882fe60）——验收者变异注入实验 M2",
+      "title": "EX-T07 资源闸「停派发」执行面测试敏感度缺口：验收者向 TaskScheduler::tick 的资源闸注入变异（decision.pauseDispatch 短路 return 失效）后全套件 122/122 仍绿——EX_RES_2 主场景节流段「派发暂停」观测点（t3 保持 Queued）被并发额度闸（maxConcurrentTasks=2 已被 t1/t2 占满）完全遮蔽，套件内无「额度未满＋节流段」组合用例；实现本体经代码审查确认正确（闸位于额度检查之前且短路返回——Scheduler.cpp tick 段 c），属测试强度缺口非实现缺陷，与 F-213（同单元进度节流终态断言不可区分两实现）、F-043/F-123/F-146 敏感度缺口家族同型",
+      "owner": "execution 单元所有者（随 EX-T09 或后续冻结 diff 增量同步窗口顺手消账）",
+      "resolution": "补「额度未满＋节流段」用例（如 maxConcurrentTasks=4、在途 1，读数推至 66% 后 tick 断言下一拍无新出队、读数回落恢复出队），使 pauseDispatch 闸失效变异可被检出；不阻塞合入。编号顺延自 F-215，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T07 attempt 1 verdict=pass——变异 M1（≥ 边界）与 M3（回收空转）均如期变红，判定本体与降并行半区有检出力。"
+    },
+    {
+      "id": "F-217",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "traceability/acceptance/EX-T07-20260919.md#4.2（attempt 1，送验对象 b2b384b590bd9f4138a682570005103a8882fe60）——验收者全新集成树全量构建警告面逐一定位",
+      "title": "新增 test/ResourceGovernanceTest.cpp L77-78 的 #define NOMINMAX/WIN32_LEAN_AND_MEAN 与主树缓存全局 CMAKE_CXX_FLAGS（-DNOMINMAX -DWIN32_LEAN_AND_MEAN，F-098 登记）冲突，产生 2 处 MSVC C4005 宏重定义警告（零行为影响，值相同）——同单元既有 6 个测试文件同型模式（RunRegistryAdmissionTest/SchedulerEventBusTest/ArchiveCollaborationContractTest/WorkerProcessContractTest 等），本任务延续既有风格；同任务新增的 src/win32/MemProbe.hpp 以 #ifndef 包裹即零警告，范式现成",
+      "owner": "execution 单元所有者（F-046/F-063/F-093/F-160/F-169/F-174 零行为影响微瑕家族同辖域——随后续 diff 顺手统一即可）",
+      "resolution": "后续测试文件统一以 #ifndef/#endif 包裹两宏（MemProbe.hpp L55-60 即范例）；不阻塞合入。编号顺延自 F-216，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T07 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
     }
   ]
 }
