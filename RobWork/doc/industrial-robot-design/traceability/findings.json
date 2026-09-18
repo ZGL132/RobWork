@@ -2115,6 +2115,16 @@
       "title": "F-012 家族同型再现（[units] 前缀形态，先例 F-037/F-039/F-044/F-076/F-079/F-208）：EX-T03 文档提交 b8cf368d 标题『[units] execution.md v0.5：EX-T03 落位同步——卡头落位行＋§15.4 变更记录＋evaluationTimeout/appendDiagnostic 增量与两处归置登记』前缀后以名词短语（'execution.md v0.5'）开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求——同任务另两份提交（4cc49435『实现…』、3fdc7efa『留痕入库…』）动词开头合规；正文四段齐备、验证段 validate-docs PASS（20 units, 12 trace entries, 150 task files）经验收者在冻结 worktree 复跑逐字一致，纯风格瑕疵不构成阻断",
       "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
       "resolution": "与 F-012 家族合并处置（提交模板补动词开头示例，句式如『登记 execution.md v0.5 落位同步（…）』）；对已推送历史（b8cf368d）不追溯改写（AGENTS §6.3）。编号顺延自 F-209，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T03 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
+    },
+    {
+      "id": "F-211",
+      "source": "traceability/acceptance/EX-T04-20260918.md#4.9（attempt 1，送验对象 4adc54f2b3e7ed37dae14552cdfda5fab9f7c04c，提交 4adc54f2）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "F-012 家族同型再现（[units] 前缀形态，先例 F-037/F-039/F-044/F-076/F-079/F-208/F-210）：EX-T04 文档提交 4adc54f2 标题『[units] execution.md v0.6：EX-T04 落位同步——卡头落位行＋§15.4 变更记录＋RejectReason 追加/AdmissionOutcome 成形/IEvaluationOutputDecoder 接缝登记』前缀后以名词短语（\"execution.md v0.6\"）开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求——同任务另两份提交（743cefc4『实现…』、bc646c24『留痕入库…』）动词开头合规；正文四段齐备、验证段 validate-docs PASS（20 units, 12 trace entries, 150 task files）经验收者在冻结 worktree 复跑逐字一致，纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012 家族合并处置（提交模板补动词开头示例，句式如『登记 execution.md v0.6 落位同步（…）』）；对已推送历史（4adc54f2）不追溯改写（AGENTS §6.3）。编号顺延自 F-210，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T04 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
     }
   ]
 }
