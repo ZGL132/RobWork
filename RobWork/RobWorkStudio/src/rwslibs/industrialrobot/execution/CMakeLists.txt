@@ -88,8 +88,7 @@ find_package(GTest CONFIG REQUIRED)
 # （§3.5：ChannelPair 命名管道对/JobScope 作业 RAII/ProcessLauncher 进程
 # 启动——kernel32 隔离于 src/win32/）、worker 宿主入口 worker/main.cpp
 # （目标 sdurws_ird_execution_worker，§3.4——阶段 A 内置脚本驱动测试替身
-# 评估器）。后续：Checkpoint/CacheCoordinator（T08）——以单元任务卡当前
-# 正文为准。
+# 评估器）。
 # EX-T07（≙WP-08-T08，任务契约 tasks/foundation/EX-T07.json）增列：
 # win32/MemProbe 私有实现两件（§3.5：主进程＋worker 内存汇总——
 # GlobalMemoryStatusEx＋GetProcessMemoryInfo 工作集＋QueryInformationJobObject
@@ -99,6 +98,14 @@ find_package(GTest CONFIG REQUIRED)
 # §15.4，Scheduler.hpp 组成行先例同 EX-T03 DrainCoordinator）＋WorkerSupervisor
 # 增量两法（aggregateJobMemoryBytes/reclaimIdleWorkers——§10.3 具体类
 # 治理/观测面，登记单元卡 §15.4）。
+# EX-T08（≙WP-08-T09，任务契约 tasks/foundation/EX-T08.json）增列：
+# Checkpoint 公共头＋实现（§8.1/§10.6——CheckpointRecord 契约字段面/
+# 复合摘要单点/归档端口三段写出/恢复期摘要校验＋evidence 兼容判定转译）
+# 与 CacheCoordinator 公共头＋实现（§8.2/§10.7——结果/模型/诊断三分账
+# 存储＋LRU 预算淘汰＋D-10 同键在途合并；ICompileCacheJudge 注入消费
+# ——§3.3 原文形态落位，evidence judgeCacheHit 直接调用；判定逻辑零复制
+# ——兼容性结论全部来自两个判定单点）。后续：EX-T09 契约套件落地——
+# 以单元任务卡当前正文为准。
 add_library(sdurws_ird_execution STATIC
     src/Execution.cpp
     src/Errors.cpp
@@ -111,6 +118,8 @@ add_library(sdurws_ird_execution STATIC
     src/EventBus.cpp
     src/ChannelProtocol.cpp
     src/WorkerSupervisor.cpp
+    src/Checkpoint.cpp
+    src/CacheCoordinator.cpp
     src/win32/ChannelPair.cpp
     src/win32/JobScope.cpp
     src/win32/MemProbe.cpp
@@ -235,7 +244,8 @@ add_executable(sdurws_ird_execution_test
     test/RunRegistryAdmissionTest.cpp
     test/SchedulerEventBusTest.cpp
     test/ChannelProtocolTest.cpp
-    test/ResourceGovernanceTest.cpp)
+    test/ResourceGovernanceTest.cpp
+    test/CheckpointCacheTest.cpp)
 
 target_compile_features(sdurws_ird_execution_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_test PROPERTIES
@@ -297,7 +307,8 @@ add_executable(sdurws_ird_execution_contract_test
     contract_test/IdentityVocabularyContractTest.cpp
     contract_test/ArchiveCollaborationContractTest.cpp
     contract_test/EventBusDeliveryContractTest.cpp
-    contract_test/WorkerProcessContractTest.cpp)
+    contract_test/WorkerProcessContractTest.cpp
+    contract_test/CacheJudgeContractTest.cpp)
 
 # 契约测试须在 worker exe 构建之后（真进程场景消费其产物）。
 add_dependencies(sdurws_ird_execution_contract_test sdurws_ird_execution_worker)
