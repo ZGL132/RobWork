@@ -1,0 +1,77 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 28 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ExecutionLinkage
+[ RUN      ] ExecutionLinkage.UnitEdgesRegisteredOnly_DT_BUILD_R1_T1
+[       OK ] ExecutionLinkage.UnitEdgesRegisteredOnly_DT_BUILD_R1_T1 (0 ms)
+[ RUN      ] ExecutionLinkage.NoTestkitEdge_DT_BUILD_T1
+[       OK ] ExecutionLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+[ RUN      ] ExecutionLinkage.RegisteredEdgesPresent_DT_BUILD
+[       OK ] ExecutionLinkage.RegisteredEdgesPresent_DT_BUILD (0 ms)
+[ RUN      ] ExecutionLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD_PEX8
+[       OK ] ExecutionLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD_PEX8 (0 ms)
+[ RUN      ] ExecutionLinkage.RuntimePolicyInjectionNotLink_DT_BUILD_PEX3
+[       OK ] ExecutionLinkage.RuntimePolicyInjectionNotLink_DT_BUILD_PEX3 (19 ms)
+[----------] 5 tests from ExecutionLinkage (20 ms total)
+
+[----------] 4 tests from IdentityVocabularyContract
+[ RUN      ] IdentityVocabularyContract.NoRedefinitionOfCoreTypesInExecution_AC2
+[       OK ] IdentityVocabularyContract.NoRedefinitionOfCoreTypesInExecution_AC2 (10 ms)
+[ RUN      ] IdentityVocabularyContract.ScannerDetectsCoreDefinitionsSanity_AC2
+[       OK ] IdentityVocabularyContract.ScannerDetectsCoreDefinitionsSanity_AC2 (0 ms)
+[ RUN      ] IdentityVocabularyContract.TaskIdIsExecutionOwnedPerSection41_AC2
+[       OK ] IdentityVocabularyContract.TaskIdIsExecutionOwnedPerSection41_AC2 (0 ms)
+[ RUN      ] IdentityVocabularyContract.CoreValueTypesUsableFromExecution_AC2
+[       OK ] IdentityVocabularyContract.CoreValueTypesUsableFromExecution_AC2 (1 ms)
+[----------] 4 tests from IdentityVocabularyContract (12 ms total)
+
+[----------] 3 tests from ArchiveCollaborationContractTest
+[ RUN      ] ArchiveCollaborationContractTest.LateResultArchivesToRegisteredRunDirAfterProjectSwitch_EX_REG_4
+[       OK ] ArchiveCollaborationContractTest.LateResultArchivesToRegisteredRunDirAfterProjectSwitch_EX_REG_4 (84 ms)
+[ RUN      ] ArchiveCollaborationContractTest.BatchContentConflictViaProjectPort_EX_REG_8
+[       OK ] ArchiveCollaborationContractTest.BatchContentConflictViaProjectPort_EX_REG_8 (50 ms)
+[ RUN      ] ArchiveCollaborationContractTest.EnvelopeAssemblyReusesEvidenceValidators
+[       OK ] ArchiveCollaborationContractTest.EnvelopeAssemblyReusesEvidenceValidators (57 ms)
+[----------] 3 tests from ArchiveCollaborationContractTest (192 ms total)
+
+[----------] 7 tests from EventBusDeliveryContractTest
+[ RUN      ] EventBusDeliveryContractTest.SamePublisherFifoPreservesPublishOrder
+[       OK ] EventBusDeliveryContractTest.SamePublisherFifoPreservesPublishOrder (0 ms)
+[ RUN      ] EventBusDeliveryContractTest.NineStateStreamAndResultArchivedDeliveredInOrder
+[       OK ] EventBusDeliveryContractTest.NineStateStreamAndResultArchivedDeliveredInOrder (0 ms)
+[ RUN      ] EventBusDeliveryContractTest.ConcurrentPublishLosesNothing
+[       OK ] EventBusDeliveryContractTest.ConcurrentPublishLosesNothing (0 ms)
+[ RUN      ] EventBusDeliveryContractTest.RaiiUnsubscribeIdempotentAndStopsDelivery
+[       OK ] EventBusDeliveryContractTest.RaiiUnsubscribeIdempotentAndStopsDelivery (0 ms)
+[ RUN      ] EventBusDeliveryContractTest.UnsubscribeDuringDeliveryDoesNotDeadlock
+[       OK ] EventBusDeliveryContractTest.UnsubscribeDuringDeliveryDoesNotDeadlock (0 ms)
+[ RUN      ] EventBusDeliveryContractTest.SubscribersReceiveFullStreamInSubscriptionOrder
+[       OK ] EventBusDeliveryContractTest.SubscribersReceiveFullStreamInSubscriptionOrder (0 ms)
+[ RUN      ] EventBusDeliveryContractTest.WaitForIdleSyncsDeliveryDeterministically
+[       OK ] EventBusDeliveryContractTest.WaitForIdleSyncsDeliveryDeterministically (0 ms)
+[----------] 7 tests from EventBusDeliveryContractTest (1 ms total)
+
+[----------] 9 tests from WorkerProcessContractTest
+[ RUN      ] WorkerProcessContractTest.WorkerCompletesViaHandshakeAndNineStepAdmission_EX_WKR_1
+[       OK ] WorkerProcessContractTest.WorkerCompletesViaHandshakeAndNineStepAdmission_EX_WKR_1 (209 ms)
+[ RUN      ] WorkerProcessContractTest.HandshakeManifestMismatchRejectsDispatch
+[       OK ] WorkerProcessContractTest.HandshakeManifestMismatchRejectsDispatch (61 ms)
+[ RUN      ] WorkerProcessContractTest.WorkerCrashFailsOnlyItsOwnTask_EX_WKR_2
+[       OK ] WorkerProcessContractTest.WorkerCrashFailsOnlyItsOwnTask_EX_WKR_2 (281 ms)
+[ RUN      ] WorkerProcessContractTest.HeartbeatLossTriggersHungAndForceKill_EX_WKR_3
+[       OK ] WorkerProcessContractTest.HeartbeatLossTriggersHungAndForceKill_EX_WKR_3 (124 ms)
+[ RUN      ] WorkerProcessContractTest.SequenceGapBreaksChannelAndFailsTask_EX_CHN_1
+[       OK ] WorkerProcessContractTest.SequenceGapBreaksChannelAndFailsTask_EX_CHN_1 (550 ms)
+[ RUN      ] WorkerProcessContractTest.ResultBatchesStreamInOrderBeforeFinal
+[       OK ] WorkerProcessContractTest.ResultBatchesStreamInOrderBeforeFinal (110 ms)
+[ RUN      ] WorkerProcessContractTest.WorkerTempDirIsolatedAndCleanedUp
+[       OK ] WorkerProcessContractTest.WorkerTempDirIsolatedAndCleanedUp (183 ms)
+[ RUN      ] WorkerProcessContractTest.LauncherClosesInheritedHandleDuplicates_R3
+[       OK ] WorkerProcessContractTest.LauncherClosesInheritedHandleDuplicates_R3 (123 ms)
+[ RUN      ] WorkerProcessContractTest.AggregateJobMemoryCoversRealWorkerAndReclaimShrinksIdlePool
+[       OK ] WorkerProcessContractTest.AggregateJobMemoryCoversRealWorkerAndReclaimShrinksIdlePool (170 ms)
+[----------] 9 tests from WorkerProcessContractTest (1816 ms total)
+
+[----------] Global test environment tear-down
+[==========] 28 tests from 5 test suites ran. (2067 ms total)
+[  PASSED  ] 28 tests.

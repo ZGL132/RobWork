@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EX-T07",
+  "masterWp": "WP-08-T08",
+  "branch": "wp08-t07",
+  "base": "02c3025fe63a4277a5e1d0f661710e57e80192a4",
+  "date": "2026-09-18",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持＝GTest::gtest_main，testkit RecordListener 报告设施随 EX-T09 接入）",
+  "targets": [
+    {
+      "target": "sdurws_ird_execution",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EX-T07 增列一个产品翻译单元＋既有头扩展（依赖边零变更——仍为 core/evidence/project 三条登记边）：①src/win32/MemProbe.hpp/.cpp（新增）——§3.5/§6.6 内存采样行：querySystemMemory（GlobalMemoryStatusEx）、queryCurrentProcessWorkingSetBytes（GetProcessMemoryInfo→WorkingSetSize，PSAPI_VERSION=2 即 kernel32 K32 入口）、queryJobPeakCommittedBytes（QueryInformationJobObject→PeakJobMemoryUsed——作业创建以来提交内存峰值，单调不回落，与 §6.1'合计峰值'预算行对齐的保守口径；不超诺声明见头注）；②Scheduler.hpp/.cpp 扩展（归置登记单元卡 §15.4 v0.9，Scheduler.hpp 组成行先例同 EX-T03 DrainCoordinator）：MemoryReading（主进程＋全部 worker＋物理总量三元读数与占比）、IMemorySampler（采样接缝——EX-RES-2'内存采样 fake'的注入面＋§6.2 采样/决策可分线程的结构前提）、ResourceController（ARCH §4.6 命名的治理本体：三段判定 D-05〔65% 实现参数→70% 上游值〕＋滞回即层次回落重判＋进入 Exhausted 边沿恰一次的 EX-RESOURCE-INSUFFICIENT 诊断〔比较型三要素 actual/expected/unit'1'——core DiagnosticRecord::comparison 契约，经 §3.3 IExecutionDiagnosticsSink 注入外报〕＋采样失败保持不猜值＋reportDev 开发通道边沿一次）、SupervisorMemorySampler（生产采样件＝MemProbe 三探针＋监督器作业内存聚合；任一半区失败整体失败 fail-to-no-data）；③WorkerSupervisor.hpp/.cpp 增量两法（§10.3 具体类治理/观测面，登记单元卡 §15.4 v0.9）：aggregateJobMemoryBytes（全部活 worker 作业提交内存峰值求和——§6.6 JobMemory 半区的监督器侧聚合，仅调度线程）、reclaimIdleWorkers（§6.1'降低并行度（回收空闲 worker）'池侧执行面——按 Idle 记录进程存亡分流：阶段 A worker 每任务退出模型＝直接出清池槽〔join→关资源→双表 erase，对死进程走 Shutdown 协议永远等不到第二次退出确认〕、保活模型＝Draining＋Shutdown 协作退出同 checkIdleRecycle 路径）；④TaskScheduler 集成：setResourceController 注入（可空＝无资源闸合法装配）、setResourceBudget 转发预算（maxMemoryRatio/throttleRatio 单一用户入口仍是 ITaskScheduler——EX-T05 登记的'ResourceController 消费'归属兑现）、tick 段 c 出队前资源闸（pauseDispatch→本拍不出队——闸只挡出队段不触碰任务状态机，'已排队/运行任务不失败'由结构保证）"
+    },
+    {
+      "target": "sdurws_ird_execution_test",
+      "kind": "gtest 可执行（GTest::gtest_main）",
+      "result": "122/122 PASS（两模式各一轮：integrated＋smoke XML 与 run.log 留痕）",
+      "casesTotal": 122,
+      "casesNewThisTask": 9,
+      "notes": "新增 test/ResourceGovernanceTest.cpp（EX-RES-2 载体）九用例：ThreeStageThresholdBoundaries_D05（64.9/65.0/69.9/70.0% 边界＝≥语义＋两标志面＋回落即时重判——65% 为实现参数非需求阈值的判定面实证）、ExhaustedEdgeDiagnosticOncePerEpisodeWithComparativeFields（进入 Exhausted 边沿恰一次／持续超限不重复／回落再进入新边沿＋比较型三要素断言：actual=0.71、expected=0.70、unit='1'〔Dimensionless 冻结 token〕＋DerivedReadOnly/memprobe 来源＋subject 恒空不伪造）、ProbeFailureKeepsLastLevelAndReportsDevOnce（采样失败保持最近层级不猜值＋reportDev('execution/resource') 每失败 episode 恰一次）、SampleIntervalLimitsProbeCallsAndReplaysDecision（§6.2 周期采样的显式驱动参数化——间隔内复用最近决策不重采样、999ms<1000ms 边界）、ThrottleStopsDispatchThenExhaustDiagnostics_EX_RES_2（主场景：持续提交三任务→50% 两任务正常派发→66% 先节流〔第三任务保持 Queued＝派发暂停观测点；节流段无诊断〕→71% 仍超限〔EX-RESOURCE-INSUFFICIENT 恰一次＋三要素〕→已排队/运行任务全程不失败〔事件流零 Failed/Interrupted〕→回落 50% 自动恢复〔取消一个在途腾出额度后 t3 出队——节流段同等条件不出队/Normal 段出队的对照闭环〕）、BudgetUpdateForwardsToResourceController（ITaskScheduler::setResourceBudget 单一入口转发——阈值收紧后同读数即节流/耗尽）、MemProbeRealApiTest 两用例（系统/主进程真实探针冒烟＋空作业峰值 0/空句柄失败——QueryInformationJobObject 路径可达性）、SupervisorSamplerTest（生产采样件真实半区自洽：total>0、main>0 且 ≤total、worker 半区空池为 0、占比 ∈(0,1]）"
+    },
+    {
+      "target": "sdurws_ird_execution_contract_test",
+      "kind": "gtest 可执行（GTest::gtest_main；真进程场景）",
+      "result": "28/28 PASS（两模式各一轮：integrated＋smoke XML 与 run.log 留痕）",
+      "casesTotal": 28,
+      "casesNewThisTask": 1,
+      "notes": "新增 WorkerProcessContractTest.AggregateJobMemoryCoversRealWorkerAndReclaimShrinksIdlePool——真进程实证：worker exe 跑完 final 脚本正常退出回池 Idle→aggregateJobMemoryBytes 读到非零作业内存（该 worker 作业内确实运行过进程——§6.6 JobMemory 半区'内存汇总覆盖全部工作进程'的真值面，acceptance 2）→reclaimIdleWorkers 即时出清池槽（返回 1、workerCount 归 0、聚合归零）＋二次回收幂等空转返回 0。既有 27 用例（EX-WKR/EX-CHN/EX-REG 归档协作/EventBus 投递契约/构建图边界）全绿无回归"
+    },
+    {
+      "target": "sdurws_ird_execution_worker",
+      "kind": "WIN32_EXECUTABLE",
+      "result": "build-pass（两模式）",
+      "notes": "零变更（EX-T06 产物；本任务经其真进程验证作业内存聚合与回收路径）"
+    }
+  ],
+  "acceptanceMapping": {
+    "acc1": "EX-RES-2 全绿＋三段治理就位（acceptance 1）——ThrottleStopsDispatchThenExhaustDiagnostics_EX_RES_2（观测点＝派发暂停＋诊断：66% 节流段排队任务保持 Queued 且无诊断、71% 耗尽段 EX-RESOURCE-INSUFFICIENT 恰一次、事件流全程零 Failed/Interrupted、回落自动恢复）＋ThreeStageThresholdBoundaries_D05（65%→70% 两阈值边界与标志面）。NFR-PERF-04 上游值 70% 不改动（ResourceBudget::maxMemoryRatio 默认 0.70；断言 expected=0.70）；65% 节流阈值为实现参数非需求阈值——§15.1 D-05 既有登记，本任务落位其执行面并登记 §15.4 v0.9，不冒充需求值",
+    "acc2": "内存汇总覆盖主进程＋全部工作进程＋比较型三要素（acceptance 2）——汇总口径：SupervisorMemorySampler 三半区（GlobalMemoryStatusEx 系统／GetProcessMemoryInfo 主进程工作集／aggregateJobMemoryBytes 全部活 worker 作业峰值求和——§6.6 内存采样行逐半区），worker 半区真值面＝契约测试真进程用例（非零作业内存）、主进程/系统半区真值面＝MemProbeRealApiTest＋SupervisorSamplerTest 真实探针；资源不足诊断携带比较型三要素＝DiagnosticRecord::comparison{actual=当前占比, expected=上限, unit='1'}，经 §3.3 IExecutionDiagnosticsSink 注入外报（RecordingSink 替身捕获断言——消费契约载体）",
+    "acc3": "基础形态交付＋P-EX-1/P-EX-2 处置（acceptance 3）——规模化验收（大任务分批/流式/检查点下的峰值 ≤70% 基准）归 WP-23-T06，本任务未提前实现：无分批/流式/检查点峰值治理逻辑（§2.2 NFR-PERF-04 行不可越界列对照；迟滞带/停留时间等防抖也只在采样间隔的低通面），登记 §15.4 v0.9；P-EX-2：三段治理语义逐条锚定 ARCH §4.6/卡 §6.1 明文（ARCH v0.11 Draft 待评审——评审 A9+ 变更按影响面增量同步，影响面集中 Scheduler/WorkerSupervisor 两头）；P-EX-1：消费 core 公共头现状签名（DiagData/Units/Provenance/Identity——DiagnosticRecord/ComparativeFields/ComparativeValue/SourcedValue/UnitToken/ValueProvenance 零重定义零私改）＋evidence/project 公共头消费面零扩展，冻结 diff 后按影响面增量同步（影响面：Scheduler 两件＋WorkerSupervisor 两件＋新测试文件）"
+  },
+  "gates": {
+    "ird_gates": "cmake --build build --config Release --target ird_gates（gates-ird-gates-target.log）——IRD-GATE 行与 base 留痕（builds/wp08-t06/gates-ird-gates-target.log）排序比对（gates-base-t06-hits-sorted.txt vs gates-t07-hits-sorted.txt，diff 见 gates-hit-set-diff.txt）：18＝18 命中、零差异零新增命中（gate 目标因既有登记例外按设计退出非零——命中全部为 diagnostics/evidence/io/policy/project/runtime/testdata 等其他单元的 DTB §4.5 登记例外，零处涉及 execution 本任务变更面，与 base 行为一致）",
+    "validateTask": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/EX-T07.json（validate-task.log）——PASS (1 tasks)"
+  },
+  "builds": {
+    "integration": "cmake --build build --config Release（build-integrated-full.log，全仓默认目标）——exit 0 零错误；verify 命令 cmake --build build --config Release --target sdurws_ird_execution_test 与 --target sdurws_ird_execution_contract_test 均在内",
+    "smoke": "独立冒烟模式（vcpkg toolchain 绝对路径——AGENTS §4.1）：build-smoke-config.log＋build-smoke-full.log——配置与构建 exit 0 零错误；两测试目标冒烟运行 122/122＋28/28"
+  },
+  "evidenceFiles": [
+    "build-integrated-full.log",
+    "build-smoke-config.log",
+    "build-smoke-full.log",
+    "gates-ird-gates-target.log",
+    "gates-base-t06-hits-sorted.txt",
+    "gates-t07-hits-sorted.txt",
+    "gates-hit-set-diff.txt",
+    "validate-task.log",
+    "ird-execution-test-integrated.xml",
+    "ird-execution-test-integrated-run.log",
+    "ird-execution-contract-test-integrated.xml",
+    "ird-execution-contract-test-integrated-run.log",
+    "ird-execution-test-smoke.xml",
+    "ird-execution-test-smoke-run.log",
+    "ird-execution-contract-test-smoke.xml",
+    "ird-execution-contract-test-smoke-run.log"
+  ],
+  "honestyNotes": "全部 150 用例（122 单元＋28 契约＝131 既有＋9+1 新增）两模式真实执行通过，零跳过零失败零伪造；ird_gates 因其他单元既有登记例外退出非零与 base 行为一致（排序比对零新增），未执行任何'静默跳过'；两处实现登记（非偏差 hiding，均按 DTB §5.4 登记单元卡 §15.4 v0.9）：①ResourceController 四件落位 Scheduler.hpp 而非新公共头（§3.1 十二模块清单不变的归置选择，DrainCoordinator 先例）；②reclaimIdleWorkers 按进程存亡分流（阶段 A worker 每任务退出模型下 Idle 记录进程已不在，对死进程走 Shutdown 协议永远等不到第二次退出确认——直接出清池槽与 poll 尾部销毁同序；保活模型分支与 checkIdleRecycle 同路径）；maxWorkers 字段仍无编译期消费者（池规模治理归编排装配 EX-T09/L5——EX-T05 登记的延续，如实陈述）；降并行的派发闸半区（pauseDispatch）与池回收半区（reclaimIdleWorkers 建议＋监督器方法）在本任务均真实实现并测试，无 stub/空实现/恒等返回"
+}
