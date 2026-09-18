@@ -4,10 +4,18 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "任务身份与状态机（TaskTypes/StateMachine）",
-  "status": "ready",
-  "dependsOn": ["EX-T01"],
-  "requirements": ["TASK-01", "NFR-REL-03"],
-  "designRefs": ["units/execution.md#4", "units/execution.md#5"],
+  "status": "done",
+  "dependsOn": [
+    "EX-T01"
+  ],
+  "requirements": [
+    "TASK-01",
+    "NFR-REL-03"
+  ],
+  "designRefs": [
+    "units/execution.md#4",
+    "units/execution.md#5"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
     "RobWork/doc/industrial-robot-design/units/execution.md",
@@ -17,11 +25,22 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_execution_test"
+  ],
   "branch": "wp08-t02",
   "interUnit": true,
-  "knownPitfalls": ["P-EX-1", "P-EX-4", "P-EX-6", "P-EX-7"],
+  "knownPitfalls": [
+    "P-EX-1",
+    "P-EX-4",
+    "P-EX-6",
+    "P-EX-7"
+  ],
   "acceptance": [
     "EX-SM-1~7 全绿：九态逐转移矩阵用例通过（§5.2 状态机图＋§5.3 逐转移表——触发/守卫/事件/清理逐行断言）；矩阵外非法转换拒绝（EX-SM-6 InvalidState、状态不变——TASK-01；提交受理前的拒绝发生在状态机之外，不产生 TaskRecord 不占状态）",
     "EX-SUB-1 通过：任务/运行/尝试三级身份并发分配唯一、无重复、同任务事件 FIFO（§4.1~§4.3）；TaskId/RunId/AttemptId 值类型归 core，execution 只分配与携带不重定义（TASK-03 五元组承接——§2.2 不可越界列）",

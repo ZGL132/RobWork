@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 201,
+  "tickCount": 202,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -13,11 +13,11 @@
   "run": null,
   "attempts": {
     "implement": 0,
-    "fix": 1,
-    "accept": 2
+    "fix": 0,
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-18T07:00:57+08:00",
+    "updatedAt": "2026-09-18T08:57:16+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1147,6 +1147,18 @@
       "acceptanceRecord": "traceability/acceptance/EX-T01-20260918-r2.md",
       "mergedAt": "2026-09-18",
       "failReason": "attempt1 fail（4.9/4.10：九件验证日志被 .gitignore *.log 规则吞且未 add -f，留痕声称与在库不符）——返工 a83a5ce4 补交九件日志后 attempt2 pass；实施期检出窗口事故另见 F-205（治理提交一度误落本地主线，所有者治理会话 840688a9 实录并确认完整补救；任务侧最终以 b0861ec2 承载实现）"
+    },
+    {
+      "task": "EX-T02",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "c1ee4c6c18a96d7b3d602e7e659163413ec0a3dd",
+        "9d12b6107b97ac51bb1ed9bb842652fb063f7c4d",
+        "2777bc0a7aba0b4e31c0d7e22c83b7ee605476fe"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T02-20260918.md",
+      "mergedAt": "2026-09-18"
     }
   ],
   "policy": {
@@ -1172,11 +1184,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "EX-T02",
-      "contractPath": "tasks/foundation/EX-T02.json",
-      "branch": "wp08-t02"
-    },
     {
       "taskId": "EX-T03",
       "contractPath": "tasks/foundation/EX-T03.json",
@@ -1231,5 +1238,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "dc0bb160-c5e6-4cc5-a6c6-d8bf0c9ae708"
+  "tickToken": "02377f1d-a3c9-4522-898b-920697a78731"
 }
