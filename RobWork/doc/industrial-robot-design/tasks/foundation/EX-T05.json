@@ -4,7 +4,7 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "调度线程与事件/进度分发（Scheduler/EventBus）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["EX-T02", "CORE-T08"],
   "requirements": ["TASK-01", "TASK-03", "UX-10", "NFR-PERF-01"],
   "designRefs": ["units/execution.md#6.1", "units/execution.md#6.2", "units/execution.md#6.3", "units/execution.md#10.4"],
