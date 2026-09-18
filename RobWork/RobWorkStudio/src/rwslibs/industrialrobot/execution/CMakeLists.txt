@@ -63,17 +63,22 @@ find_package(GTest CONFIG REQUIRED)
 # src/Execution.cpp＝EX-T01 锚点翻译单元（§12 EX-T01 行"src/（空起步）"）。
 # EX-T02 按本卡 §3.5/§12 增列同名任务文件：Errors（§3.4 错误面——EX-SM-6
 # 观测点 ExecutionError.code）、TaskTypes（§4 三级身份＋§5.5 能力声明）、
-# StateMachine（§5 逐转移表＋守卫＋事件发布接缝）；锚点文件保留（文件头
-# 登记后续任务落位安排，届时或承载共享工具或拆除）。后续：Controller/
-# 取消路径（T03）、RunRegistry/Admission（T04）、Scheduler/EventBus（T05）、
-# win32/ProcessLauncher/ChannelPair/JobScope＋worker/main＋ChannelProtocol
-# （T06）、win32/MemProbe（T07）、Checkpoint/CacheCoordinator（T08）——
-# 以单元任务卡当前正文为准。
+# StateMachine（§5 逐转移表＋守卫＋事件发布接缝）；EX-T03（≙WP-08-T04，
+# 任务契约 tasks/foundation/EX-T03.json）增列 Controller（§7.1 取消命令
+# 通道＋协作窗 2 s/10 s＋强杀编排＋运行超时——§3.1 Controller.hpp 行）
+# 与 Scheduler（§7.5 DrainPolicy 排空编排——DrainPolicy 枚举按 §3.1 登记
+# 于 Scheduler.hpp 行）；锚点文件保留（文件头登记后续任务落位安排，届时
+# 或承载共享工具或拆除）。后续：RunRegistry/Admission（T04）、
+# Scheduler 调度器本体/EventBus（T05）、win32/ProcessLauncher/ChannelPair/
+# JobScope＋worker/main＋ChannelProtocol（T06）、win32/MemProbe（T07）、
+# Checkpoint/CacheCoordinator（T08）——以单元任务卡当前正文为准。
 add_library(sdurws_ird_execution STATIC
     src/Execution.cpp
     src/Errors.cpp
     src/TaskTypes.cpp
-    src/StateMachine.cpp)
+    src/StateMachine.cpp
+    src/Controller.cpp
+    src/Scheduler.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 同口径复证）：逐目标显式
 # 设定，不设全局标准。target_compile_features PUBLIC 传播——execution
@@ -132,12 +137,17 @@ endif()
 # EX-T01 首批用例＝最小构建冒烟用例（落位期红线扫描）；EX-T02 增列
 # TaskStateMachineTest.cpp（§11 EX-SUB-1/EX-SM-1~7＋强制终止矩阵＋恢复
 # 期指断＋词表 P-EX-4/P-EX-6 行为钉子——纯逻辑替身，零进程/磁盘断言，
-# 后两者归 EX-T03/T04/T06/T09 对应用例）。
+# 后两者归 EX-T03/T04/T06/T09 对应用例）；EX-T03 增列
+# CancelProtocolTest.cpp（§11 EX-SM-1/3/4、EX-WKR-4/5 的协议编排时序用例
+# ——ManualClock 可注入时钟虚拟推进断言、不 sleep〔testkit §6.5/§6.6〕；
+# EX-SM-4 的检查点保留为 TempDir 磁盘断言；worker/派发闸门为替身接缝，
+# 真实进程场景归 EX-T06/T09）。
 enable_testing()
 
 add_executable(sdurws_ird_execution_test
     test/BuildRedLineTest.cpp
-    test/TaskStateMachineTest.cpp)
+    test/TaskStateMachineTest.cpp
+    test/CancelProtocolTest.cpp)
 
 target_compile_features(sdurws_ird_execution_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_test PROPERTIES

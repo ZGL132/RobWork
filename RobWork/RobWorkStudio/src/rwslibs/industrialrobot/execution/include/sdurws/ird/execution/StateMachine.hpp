@@ -267,6 +267,25 @@ public:
     /// 只读访问任务记录（调度线程内使用——不跨线程共享可变实例）。
     const TaskRecord& record() const noexcept { return m_record; }
 
+    /**
+     * @brief 追加一条任务级诊断（§4.2 diagnostics 行可变性"追加"的入口）。
+     *
+     * 背景（EX-T03 编排层需要）：转移类诊断（如 T13 的 EX-FORCE-TERMINATED）
+     * 由状态机在转移时写入；而**判定类**诊断（如运行超时判定的
+     * EX-WORKER-HUNG——EX-WKR-5"诊断区分 timeout"）发生在两次转移之间，
+     * 由协议编排层（TaskController，EX-T03）在强杀动作前写入，随后才触发
+     * 转移——诊断序（判定原因在前、终结标记在后）由此保证。提交验证拒绝
+     * 等状态机之外的场景**不经**本方法（不产生 TaskRecord——§5.1 注）。
+     *
+     * @param record [in] 已按 core::DiagnosticRecord::make 校验的记录
+     *                     （ERR-01 字段完整；码值须为 diagnostics
+     *                     StableCodeRegistry 已收编的稳定码——码值分配
+     *                     权威归 diagnostics，execution 不私定）
+     *
+     * 线程约束：仅调度线程（状态机唯一写者纪律——§4.2 通用约定）。
+     */
+    void appendDiagnostic(core::DiagnosticRecord record);
+
     /// 当前状态（record().state 的便捷读）。
     core::TaskState state() const noexcept { return m_record.state; }
 

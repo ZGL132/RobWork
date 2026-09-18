@@ -52,6 +52,7 @@
 #define SDURWS_IRD_EXECUTION_TASKTYPES_HPP
 
 #include <array>
+#include <chrono>       // std::chrono::milliseconds（运行时限声明——evaluationTimeout）
 #include <cstdint>
 #include <functional>   // std::hash 特化
 #include <mutex>
@@ -218,11 +219,38 @@ struct TaskCapability {
     CheckpointGranularity checkpointGranularity = CheckpointGranularity::None;  ///< 检查点粒度（暂停确认边界单位）
     ForceTerminateCost forceTerminateCost = ForceTerminateCost::Moderate;       ///< 强杀代价（仅声明与呈现——§5.5）
 
+    /**
+     * @brief 评估器声明的单次运行时限（EX-WKR-5 的"能力声明字段"承载位）。
+     *
+     * 背景（§11 EX-WKR-5 行"评估器超过声明时限（能力声明字段）"）：运行
+     * 超时监视需要每个评估器各自的时限声明（批量 IK 与长优化的合理时限
+     * 相差数量级，不能全局一刀切），而执行期能力的声明位置按 §5.5/P-EX-7
+     * 归 execution 侧注册表扩展声明（evidence EvaluatorDescriptor 七字段
+     * 不含执行能力）——本字段即该声明的承载位，随 TaskCapability 一并经
+     * EvaluatorRuntimeCapabilities 注册、派发时写入 TaskRecord 后不可变。
+     *
+     * 语义：nullopt＝未声明→**不启用**运行超时监视（超时判定缺上游依据，
+     * 宁可不监视也不误杀长任务——§11 EX-WKR-5 前置列"评估器超过声明时限"
+     * 的反义即"无声明无超时"）；声明值＝单次尝试（Running 相）的最长时长，
+     * 超过→走卡死强杀路径（§7.1；编排见 Controller——EX-T03），诊断以
+     * EX-WORKER-HUNG＋运行超时标记与心跳失联区分（EX-WKR-5"诊断区分
+     * timeout"）。单位 ms（steady 时钟量程）；取值须 >0（0 视为未声明——
+     * 语义上"零时限"等于立即超时，无业务意义，按未声明处理并归入未声明
+     * 同一分支，不另设错误路径）。
+     *
+     * 登记说明：本字段是 §5.5 三件套（supportsPause/checkpointGranularity/
+     * forceTerminateCost）之外的执行期声明扩展——依据即 §11 EX-WKR-5 行
+     * 明文"（能力声明字段）"，增量偏差随单元卡 §15.4 变更记录登记
+     * （DTB §5.4 单元卡增量修订）。
+     */
+    std::optional<std::chrono::milliseconds> evaluationTimeout;
+
     bool operator==(const TaskCapability& o) const noexcept
     {
         return supportsPause == o.supportsPause
             && checkpointGranularity == o.checkpointGranularity
-            && forceTerminateCost == o.forceTerminateCost;
+            && forceTerminateCost == o.forceTerminateCost
+            && evaluationTimeout == o.evaluationTimeout;
     }
     bool operator!=(const TaskCapability& o) const noexcept { return !(*this == o); }
 };
