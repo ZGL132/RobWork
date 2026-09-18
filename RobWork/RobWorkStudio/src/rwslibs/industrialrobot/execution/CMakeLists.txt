@@ -67,18 +67,26 @@ find_package(GTest CONFIG REQUIRED)
 # 任务契约 tasks/foundation/EX-T03.json）增列 Controller（§7.1 取消命令
 # 通道＋协作窗 2 s/10 s＋强杀编排＋运行超时——§3.1 Controller.hpp 行）
 # 与 Scheduler（§7.5 DrainPolicy 排空编排——DrainPolicy 枚举按 §3.1 登记
-# 于 Scheduler.hpp 行）；锚点文件保留（文件头登记后续任务落位安排，届时
-# 或承载共享工具或拆除）。后续：RunRegistry/Admission（T04）、
-# Scheduler 调度器本体/EventBus（T05）、win32/ProcessLauncher/ChannelPair/
-# JobScope＋worker/main＋ChannelProtocol（T06）、win32/MemProbe（T07）、
-# Checkpoint/CacheCoordinator（T08）——以单元任务卡当前正文为准。
+# 于 Scheduler.hpp 行）；EX-T04（≙WP-08-T05，任务契约
+# tasks/foundation/EX-T04.json）增列 Ports 公共头（§3.3 注入接口——接纳
+# 路径消费的三件：诊断 sink/名称反解/产出解码；IExecutionModelService/
+# ICompileCacheJudge 随其消费任务 EX-T05/T08 落位——归置登记单元卡
+# §15.4）、RunRegistry 公共头＋实现（§9.1 登记记录/§10.5 接口/一次性
+# 判定）与 Admission 实现（§9.2 步 8~9＋§9.3 重投递/冲突/重试＋§9.5 归
+# 档事务）；锚点文件保留（文件头登记后续任务落位安排，届时或承载共享
+# 工具或拆除）。后续：Scheduler 调度器本体/EventBus（T05）、
+# win32/ProcessLauncher/ChannelPair/JobScope＋worker/main＋ChannelProtocol
+# （T06）、win32/MemProbe（T07）、Checkpoint/CacheCoordinator（T08）——
+# 以单元任务卡当前正文为准。
 add_library(sdurws_ird_execution STATIC
     src/Execution.cpp
     src/Errors.cpp
     src/TaskTypes.cpp
     src/StateMachine.cpp
     src/Controller.cpp
-    src/Scheduler.cpp)
+    src/Scheduler.cpp
+    src/RunRegistry.cpp
+    src/Admission.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 同口径复证）：逐目标显式
 # 设定，不设全局标准。target_compile_features PUBLIC 传播——execution
@@ -141,13 +149,17 @@ endif()
 # CancelProtocolTest.cpp（§11 EX-SM-1/3/4、EX-WKR-4/5 的协议编排时序用例
 # ——ManualClock 可注入时钟虚拟推进断言、不 sleep〔testkit §6.5/§6.6〕；
 # EX-SM-4 的检查点保留为 TempDir 磁盘断言；worker/派发闸门为替身接缝，
-# 真实进程场景归 EX-T06/T09）。
+# 真实进程场景归 EX-T06/T09）；EX-T04 增列 RunRegistryAdmissionTest.cpp
+# （§11 EX-REG-1/2/3/6/7/8＋EX-ORT-1 单元内面——登记判定矩阵/接纳编排/
+# 归档事务；归档写面用真实 ProjectStore〔PRJ-T14——本任务验证与 project
+# 的协作语义〕＋故障注入转发器，退避经 DelayFn 虚拟推进不 sleep）。
 enable_testing()
 
 add_executable(sdurws_ird_execution_test
     test/BuildRedLineTest.cpp
     test/TaskStateMachineTest.cpp
-    test/CancelProtocolTest.cpp)
+    test/CancelProtocolTest.cpp
+    test/RunRegistryAdmissionTest.cpp)
 
 target_compile_features(sdurws_ird_execution_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_test PROPERTIES
@@ -192,10 +204,15 @@ add_custom_command(TARGET sdurws_ird_execution_test POST_BUILD
 # 边界契约；EX-T02 增列 IdentityVocabularyContractTest.cpp（acceptance 2：
 # 五元组值类型/九态词表归 core、execution 零重定义——§2.2 不可越界列的
 # 定义形态扫描＋core 类型链接半区实证；TaskId 为 execution 自有数据模型
-# 的正反两面核对——§4.1）。
+# 的正反两面核对——§4.1）；EX-T04 增列
+# ArchiveCollaborationContractTest.cpp（acceptance 1/3：与 project 真实
+# 存储的归档协作——EX-REG-4 切换场景/D-13 完整性可见性/D-14 冲突全链路；
+# 与 evidence 校验器的单点复用——接纳产物全字段等于 evidence API 直接
+# 组装产物）。
 add_executable(sdurws_ird_execution_contract_test
     contract_test/LinkageContractTest.cpp
-    contract_test/IdentityVocabularyContractTest.cpp)
+    contract_test/IdentityVocabularyContractTest.cpp
+    contract_test/ArchiveCollaborationContractTest.cpp)
 
 target_compile_features(sdurws_ird_execution_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_contract_test PROPERTIES
