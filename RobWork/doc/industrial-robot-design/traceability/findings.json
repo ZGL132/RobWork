@@ -2085,6 +2085,16 @@
       "title": "gates 留痕日志系统性含双重编码乱码（UTF-8 中文输出被按 GBK 误读后再编为 UTF-8，如『命中 17 项』呈『鍛戒腑 17 椤?』），影响 gates-ird-gates-target.log 人读质量；实测 wp02-t08/wp02-t10/wp02-t11/wp04-t01/wp04-t12/wp05-t02/wp05-t03/wp05-t04/wp11-t07 等全基线同型日志均带同一缺陷——捕获侧环境特征，非本任务引入（本任务 integration/smoke-build.log 为干净 UTF-8 零乱码；日志内 ASCII 门禁码 IRD-GATE-* 可正常 grep，机器可读性不受损）",
       "owner": "构建留痕规范（DTB §5 留痕口径所有者）",
       "resolution": "建议在留痕口径层面统一捕获管道编码（msbuild/cmake 捕获前切控制台 UTF-8：chcp 65001 或 PowerShell [Console]::OutputEncoding=UTF-8），向后修复新留痕；既有基线日志不追溯改写。不构成任何在飞任务的返工项"
+    },
+    {
+      "id": "F-208",
+      "source": "traceability/acceptance/EX-T02-20260918.md#4.9（attempt 1，送验对象 2777bc0a7aba0b4e31c0d7e22c83b7ee605476fe，提交 2777bc0a）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "F-012 家族同型再现（[units] 前缀形态，先例 F-037/F-039/F-044/F-076/F-079）：EX-T02 文档提交 2777bc0a 标题『[units] execution.md v0.4：EX-T02 落位同步——卡头落位行＋§15.4 变更记录＋ArchivePhase 归置登记』前缀后以名词短语（'execution.md v0.4'）开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求——同任务另两份提交（c1ee4c6c『实现…』、9d12b610『留痕入库…』）动词开头合规；正文四段齐备、验证段 validate-docs PASS（20 units, 12 trace entries, 150 task files）经验收者亲手复跑逐字一致，纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012 家族合并处置（提交模板补动词开头示例，句式如『登记 execution.md v0.4 落位同步（…）』）；对已推送历史（2777bc0a）不追溯改写（AGENTS §6.3）。编号顺延自 F-207，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T02 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
     }
   ]
 }
