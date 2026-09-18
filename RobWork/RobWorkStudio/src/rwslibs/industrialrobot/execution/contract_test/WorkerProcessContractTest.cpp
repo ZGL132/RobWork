@@ -29,6 +29,13 @@
  *     （PA-1 不伪造第二持久化路径——本套件验证通道面与崩溃隔离，
  *     EX-WKR-2"最近检查点保留"断言到"崩溃前收到的检查点字节完好可用"）。
  *
+ * EX-T09 增量（任务契约 tasks/foundation/EX-T09.json——§11 矩阵补齐）：
+ *   TempDirCleanupFailureKeepsTerminalStateAndReportsDev_EX_ARC_3（worker
+ *   临时目录清理失败注入——真进程 OS 句柄锁注入，§6.6 EX-ARC-3 行）与
+ *   DoubleDispatchSameTaskRejectedSingleActiveWorker_EX_RES_1（同任务双
+ *   派发注入——登记互斥与单活动 worker 观测）。两用例沿用本文件夹具，
+ *   设施与故障点标识登记见 ../test/ContractSuiteFacilities.hpp。
+ *
  * 时钟纪律（testkit §6.5）：EX-WKR-3 的失联判定经注入 ManualClock 虚拟
  *   推进（不 sleep 断言）；泵循环的真实 Sleep 只用于 I/O 到达，不是时序
  *   判据。EX-CHN-1 的缺口超时以 400 ms 实现参数注入（有界实证，非需求值）。
@@ -47,6 +54,8 @@
 #include <sdurws/ird/execution/TaskTypes.hpp>
 #include <sdurws/ird/execution/WorkerSupervisor.hpp>
 #include <sdurws/ird/project/ProjectStore.hpp>
+
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
 #include <gtest/gtest.h>
 
@@ -377,6 +386,15 @@ protected:
         id.run = core::RunId::generate();
         id.attempt = core::AttemptId{1};
 
+        m_registry.registerRun(TaskId::generate(), makeRegistrationInput(id, mode));
+        return id;
+    }
+
+    /// 构造一份登记输入（registerRun 的内容面；EX-RES-1 复刻同 run 输入
+    /// 作重复登记的注入载体）。
+    RegistrationInput makeRegistrationInput(const core::TaskIdentity& id,
+                                            core::EvaluationMode mode = core::EvaluationMode::Verified) const
+    {
         RegistrationInput in;
         in.identity = id;
         in.evaluatorKey = "kin-batch-ik";
@@ -406,9 +424,7 @@ protected:
         materials->manifestProfile.contentIdentity = standardKinProfile().contentIdentity;
         in.resources.evaluation = std::move(materials);
         in.resources.archive = std::make_shared<StoreGateway>(*m_store);
-
-        m_registry.registerRun(TaskId::generate(), in);
-        return id;
+        return in;
     }
 
     /// 构造一次派发绑定（脚本承载于"快照字节"——阶段 A 替身评估器约定）。
@@ -1165,6 +1181,192 @@ TEST_F(WorkerProcessContractTest, AggregateJobMemoryCoversRealWorkerAndReclaimSh
         << "出清后聚合归零（无活 worker＝无 worker 内存占用）";
     // 第二次回收：无可回收空闲（幂等空转——返回 0 不报错）。
     EXPECT_EQ(supervisor->reclaimIdleWorkers(), 0u);
+}
+
+// =====================================================================
+// EX-T09 EX-ARC-3：worker 临时目录清理失败——任务终态不受影响＋开发诊断
+// ＋目录残留记录（真进程 OS 句柄锁注入——§6.6"清理失败→开发诊断"行）
+// =====================================================================
+
+TEST_F(WorkerProcessContractTest, TempDirCleanupFailureKeepsTerminalStateAndReportsDev_EX_ARC_3)
+{
+    // 注入原理：父进程对 worker 临时目录打开一个不带 FILE_SHARE_DELETE
+    // 的目录句柄——Windows 上目录存在无共享删除位的打开句柄时
+    // RemoveDirectory 必然失败（真 OS 注入，非脚本叙述）。脚本在 write-temp
+    // 之后排 20000 批次帧＝给父进程留出"看到产物→锁目录"的有界窗口
+    // （毫秒级）；锁死后 worker 走 final→清理失败→deverror→退出 0。
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-REL-01"}, std::vector<std::string>{"AT-10"});
+
+    const core::TaskIdentity id = registerRun();
+    TaskStateMachine machine =
+        TaskStateMachine::forAcceptedSubmission(makeQueuedRecord(), nullptr);
+    ASSERT_TRUE(machine.request(TransitionTrigger::DispatchDequeued).accepted);  // T2
+    machine.bindRun(id.run);
+
+    auto supervisor = makeSupervisor();
+    const WorkerLaunchResult launched = supervisor->launch(makeAssignment(
+        id,
+        "stage-a-script:v1\n"
+        "checkpoint 1\n"        // 已提交检查点（清理失败前——"检查点不动"断言面）
+        "write-temp gate.bin\n" // 锁定窗口的门控产物（EventWatch 同源判据：文件出现）
+        "batches 20000\n"       // 锁定窗口的时宽（毫秒级，非时序判据——窗口余量）
+        "final\n"));
+    ASSERT_TRUE(launched.ok);
+
+    // 握手完成（拿到 pid——临时目录名成分）＋编排侧 T5。
+    ASSERT_TRUE(pumpUntil(*supervisor, [this] {
+        return m_events.firstOf(WorkerEvent::Kind::DispatchAccepted) != nullptr;
+    }));
+    EXPECT_TRUE(machine.request(TransitionTrigger::PrepareSucceeded).accepted);
+    const WorkerStatus running = supervisor->status(launched.worker);
+    ASSERT_NE(running.pid, 0u);
+
+    // 已提交检查点字节的锁定基准（清理失败前捕获——事后比对不变）。
+    const WorkerEvent* checkpoint = m_events.firstOf(WorkerEvent::Kind::CheckpointBatch);
+    ASSERT_NE(checkpoint, nullptr);
+    const std::vector<std::uint8_t> checkpointBefore = checkpoint->bytes;
+
+    // 构造临时目录路径（§6.6 命名：%TEMP%\ird-worker-<pid>-<run>-<attempt>）
+    // 并等待门控产物出现（有界轮询——观测"清理窗口已开启"，非时序判据）。
+    std::vector<wchar_t> tempRoot(MAX_PATH + 1);
+    const DWORD n = ::GetTempPathW(MAX_PATH + 1, tempRoot.data());
+    ASSERT_GT(n, 0u);
+    const std::string runCanonNarrow = id.run.toCanonical();
+    const std::string attCanonNarrow = id.attempt.toCanonical();
+    const std::wstring runCanon(runCanonNarrow.begin(), runCanonNarrow.end());
+    const std::wstring attCanon(attCanonNarrow.begin(), attCanonNarrow.end());
+    const fs::path workerTemp = fs::path(std::wstring(tempRoot.data()))
+                                / (L"ird-worker-" + std::to_wstring(running.pid) + L"-"
+                                   + runCanon + L"-" + attCanon);
+    const fs::path gate = workerTemp / "gate.bin";
+    const auto gateDeadline = std::chrono::steady_clock::now() + std::chrono::milliseconds{30000};
+    while (!fs::exists(gate) && std::chrono::steady_clock::now() < gateDeadline) {
+        ::Sleep(2);  // 有界轮询（EventWatch 同机制——观测窗口开启，非判据）
+    }
+    ASSERT_TRUE(fs::exists(gate)) << "门控产物应在有界时间内出现（锁定窗口前提）";
+
+    // OS 注入：打开目录句柄（无 FILE_SHARE_DELETE）——阻塞 RemoveDirectory。
+    // （ directory 语义访问需 FILE_FLAG_BACKUP_SEMANTICS；共享位不含 DELETE
+    //   ＝删除必然撞共享违例——清理失败的注入面。）
+    const HANDLE lock = ::CreateFileW(workerTemp.c_str(), GENERIC_READ,
+                                      FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr,
+                                      OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, nullptr);
+    ASSERT_NE(lock, INVALID_HANDLE_VALUE)
+        << "目录锁定句柄应成功（真进程注入的前提）";
+
+    // worker 走完 final→清理（失败）→deverror→退出 0——全程真进程。
+    ASSERT_TRUE(pumpUntil(*supervisor, [this, &launched] {
+        for (const WorkerEvent& e : m_events.events) {
+            if (e.kind == WorkerEvent::Kind::WorkerExited && e.worker == launched.worker) {
+                return true;
+            }
+        }
+        return false;
+    }, 60000));
+
+    // 开发诊断：清理失败经通道回传（dev=true→stableCode 空、detail 携带
+    // 通道名——§6.4 诊断边界规则；通道名 execution/worker-temp＝worker 宿主
+    // 实现的登记口径）。目录残留信息随 detail 记录（"目录残留记录"观测点）。
+    bool sawCleanupDevReport = false;
+    for (const WorkerEvent& e : m_events.events) {
+        if (e.kind == WorkerEvent::Kind::ErrorReport && e.stableCode.empty()
+            && e.detail.rfind("execution/worker-temp", 0) == 0) {
+            sawCleanupDevReport = true;
+            EXPECT_NE(e.detail.find("cleanup failed"), std::string::npos);
+        }
+    }
+    EXPECT_TRUE(sawCleanupDevReport) << "清理失败应产生开发诊断（EX-ARC-3 行）";
+
+    // 任务终态不受影响：退出码 0（NormalCompletion）→T8 Completed——
+    // "临时目录清理失败不波及任务终态"（§7.6 矩阵行）。
+    const WorkerEvent* exited = nullptr;
+    for (const WorkerEvent& e : m_events.events) {
+        if (e.kind == WorkerEvent::Kind::WorkerExited && e.worker == launched.worker) {
+            exited = &e;
+        }
+    }
+    ASSERT_NE(exited, nullptr);
+    EXPECT_EQ(exited->exit, ExitClassification::NormalCompletion);
+    EXPECT_EQ(exited->exitCode, 0u);
+    EXPECT_TRUE(machine.request(TransitionTrigger::RunCompleted).accepted);  // T8
+    EXPECT_EQ(machine.state(), core::TaskState::Completed);
+
+    // 已提交检查点不动：清理失败前后字节逐位一致（§7.6"已提交检查点不动"）。
+    const WorkerEvent* checkpointAfter = m_events.firstOf(WorkerEvent::Kind::CheckpointBatch);
+    ASSERT_NE(checkpointAfter, nullptr);
+    EXPECT_EQ(checkpointAfter->bytes, checkpointBefore);
+
+    // 目录残留记录：删除失败＝目录仍在盘（best-effort 语义——残留可观测，
+    // 清理责任在环境恢复流程，worker 不重试不阻塞）。
+    EXPECT_TRUE(fs::exists(workerTemp)) << "清理失败后临时目录应残留（EX-ARC-3 观测点）";
+
+    // 测试现场恢复：释放锁定句柄并清残留（环境卫生——不影响断言）。
+    ::CloseHandle(lock);
+    std::error_code cleanupEc;
+    fs::remove_all(workerTemp, cleanupEc);
+}
+
+// =====================================================================
+// EX-T09 EX-RES-1：双 worker 竞争同一任务——登记互斥（状态机 T2 守卫＋
+// 登记表 run 唯一）下仅一个活动 worker，第二次派发被拒绝
+// =====================================================================
+
+TEST_F(WorkerProcessContractTest, DoubleDispatchSameTaskRejectedSingleActiveWorker_EX_RES_1)
+{
+    // 排布：合法派发一次（真 worker 运行中）→注入"同任务第二次派发"→
+    // 两道登记互斥守卫拒绝（状态机矩阵外／登记表 run 重复）→监督器观测
+    // 面＝该 run 恰一个 Running worker、无第二个进程绑定同一 run。
+    IRD_TEST_INFO(std::vector<std::string>{"TASK-03"}, std::vector<std::string>{"AT-10"});
+
+    const core::TaskIdentity id = registerRun();
+    TaskStateMachine machine =
+        TaskStateMachine::forAcceptedSubmission(makeQueuedRecord(), nullptr);
+    ASSERT_TRUE(machine.request(TransitionTrigger::DispatchDequeued).accepted);  // T2（唯一合法派发）
+    machine.bindRun(id.run);
+
+    auto supervisor = makeSupervisor();
+    const WorkerLaunchResult launched = supervisor->launch(
+        makeAssignment(id, "stage-a-script:v1\nheartbeat-off\nhang\n"));
+    ASSERT_TRUE(launched.ok);
+    ASSERT_TRUE(pumpUntil(*supervisor, [this] {
+        return m_events.firstOf(WorkerEvent::Kind::DispatchAccepted) != nullptr;
+    }));
+    EXPECT_TRUE(machine.request(TransitionTrigger::PrepareSucceeded).accepted);  // T5
+
+    // 注入①：同任务再次进入派发（调度互斥的状态机半区）——Preparing 态
+    // 无 T2 出边＝矩阵外请求，fail-fast 拒绝且状态不变。
+    EXPECT_THROW(machine.request(TransitionTrigger::DispatchDequeued), ExecutionError);
+    EXPECT_EQ(machine.state(), core::TaskState::Running);
+
+    // 注入②：同一 run 重复登记（调度互斥的登记表半区）——run 全局唯一
+    // （registerRun 契约：run 重复登记抛 ExecutionError）。
+    EXPECT_THROW(m_registry.registerRun(TaskId::generate(), makeRegistrationInput(id)),
+                 ExecutionError);
+
+    // 观测点（§11 行"WorkerSupervisor 状态"）：该 run 恰一个活动 worker
+    // （Running 相、绑定 id.run）；池中不存在第二个绑定同一 run 的记录。
+    std::size_t activeForRun = 0;
+    std::size_t total = 0;
+    for (const WorkerStatus& status : supervisor->list()) {
+        ++total;
+        if (status.currentRun == id.run && status.phase == WorkerStatus::Phase::Running) {
+            ++activeForRun;
+        }
+    }
+    EXPECT_EQ(activeForRun, 1u) << "同任务仅允许一个活动 worker（登记互斥）";
+    EXPECT_EQ(total, 1u) << "竞争注入不得产生第二个 worker 记录";
+
+    // 收尾：挂起 worker 强杀（不留孤儿进程过用例边界——R-3 纪律）。
+    supervisor->terminateForce(launched.worker, TerminationCause::Failed);
+    (void)pumpUntil(*supervisor, [this, &launched] {
+        for (const WorkerEvent& e : m_events.events) {
+            if (e.kind == WorkerEvent::Kind::WorkerExited && e.worker == launched.worker) {
+                return true;
+            }
+        }
+        return false;
+    }, 15000);
+    EXPECT_EQ(supervisor->status(launched.worker).phase, WorkerStatus::Phase::Dead);
 }
 
 }  // namespace
