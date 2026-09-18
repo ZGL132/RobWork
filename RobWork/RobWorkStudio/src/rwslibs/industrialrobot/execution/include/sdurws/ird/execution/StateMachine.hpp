@@ -268,6 +268,28 @@ public:
     const TaskRecord& record() const noexcept { return m_record; }
 
     /**
+     * @brief 更新任务进度（§4.2 progress 行"流式更新"的受控写入口——EX-T05
+     *        落位；归置增量登记单元卡 §15.4）。
+     *
+     * 背景：进度由通道读取线程（§6.2）经调度器节流（同任务对外发布
+     *   ≤10 Hz，实现参数 D-07）后到达本方法——节流在调度器侧完成，本方法
+     *   只承载"节流后的合法帧"。进度**不入**领域事件（core.md D-09），本
+     *   方法不发事件、只写记录；对外可见面＝TaskSnapshot/查询投影。
+     *
+     * @param report [in] 已按 ProgressReport::make 校验的进度帧
+     *                     （percent≤100、phaseToken 非空——phaseToken 是
+     *                     worker 域的进度阶段 token，原样透传不解读：
+     *                     UX-10 七态状态词与映射归 ui，execution 零新增
+     *                     状态词——§2.2/§13 ui 行）
+     *
+     * @throws ExecutionError(InvalidState) 任务已终态（终态后无流式更新——
+     *         进度帧晚到属通道与调度失步，调用方契约违约 fail-fast）
+     *
+     * 线程约束：仅调度线程（状态机唯一写者纪律——§4.2 通用约定）。
+     */
+    void updateProgress(ProgressReport report);
+
+    /**
      * @brief 追加一条任务级诊断（§4.2 diagnostics 行可变性"追加"的入口）。
      *
      * 背景（EX-T03 编排层需要）：转移类诊断（如 T13 的 EX-FORCE-TERMINATED）

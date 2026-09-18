@@ -73,8 +73,14 @@ find_package(GTest CONFIG REQUIRED)
 # ICompileCacheJudge 随其消费任务 EX-T05/T08 落位——归置登记单元卡
 # §15.4）、RunRegistry 公共头＋实现（§9.1 登记记录/§10.5 接口/一次性
 # 判定）与 Admission 实现（§9.2 步 8~9＋§9.3 重投递/冲突/重试＋§9.5 归
-# 档事务）；锚点文件保留（文件头登记后续任务落位安排，届时或承载共享
-# 工具或拆除）。后续：Scheduler 调度器本体/EventBus（T05）、
+# 档事务）；EX-T05（≙WP-08-T06，任务契约 tasks/foundation/EX-T05.json）
+# 增列 EventBus 公共头＋实现（§3.1 EventBus.hpp 行/§10.4——core
+# IDomainEventBus 的进程内参考实现：专用投递线程/同发布者 FIFO/RAII 退订）
+# 并扩展 Scheduler 公共头＋实现（§3.1 Scheduler.hpp 行/§10.1——ITaskScheduler
+# 契约面＋TaskScheduler 调度本体：提交验证 V1~V4/双优先级队列/预算闸/
+# 内联门槛/进度节流；StateMachine 增 updateProgress 受控进度写面——
+# §4.2 progress 行）；锚点文件保留（文件头登记后续任务落位安排，届时或
+# 承载共享工具或拆除）。后续：
 # win32/ProcessLauncher/ChannelPair/JobScope＋worker/main＋ChannelProtocol
 # （T06）、win32/MemProbe（T07）、Checkpoint/CacheCoordinator（T08）——
 # 以单元任务卡当前正文为准。
@@ -86,7 +92,8 @@ add_library(sdurws_ird_execution STATIC
     src/Controller.cpp
     src/Scheduler.cpp
     src/RunRegistry.cpp
-    src/Admission.cpp)
+    src/Admission.cpp
+    src/EventBus.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 同口径复证）：逐目标显式
 # 设定，不设全局标准。target_compile_features PUBLIC 传播——execution
@@ -152,14 +159,18 @@ endif()
 # 真实进程场景归 EX-T06/T09）；EX-T04 增列 RunRegistryAdmissionTest.cpp
 # （§11 EX-REG-1/2/3/6/7/8＋EX-ORT-1 单元内面——登记判定矩阵/接纳编排/
 # 归档事务；归档写面用真实 ProjectStore〔PRJ-T14——本任务验证与 project
-# 的协作语义〕＋故障注入转发器，退避经 DelayFn 虚拟推进不 sleep）。
+# 的协作语义〕＋故障注入转发器，退避经 DelayFn 虚拟推进不 sleep）；EX-T05
+# 增列 SchedulerEventBusTest.cpp（§11 EX-SUB-1/2 调度面＋PM-07/预算/
+# 优先级/进度节流 D-07/UX-10 透传边界/NFR-PERF-01 非阻塞结构断言/§7.5
+# 关闭排空——校验面与执行体为替身接缝，存储写权限面用真实 ProjectStore）。
 enable_testing()
 
 add_executable(sdurws_ird_execution_test
     test/BuildRedLineTest.cpp
     test/TaskStateMachineTest.cpp
     test/CancelProtocolTest.cpp
-    test/RunRegistryAdmissionTest.cpp)
+    test/RunRegistryAdmissionTest.cpp
+    test/SchedulerEventBusTest.cpp)
 
 target_compile_features(sdurws_ird_execution_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_test PROPERTIES
@@ -208,11 +219,15 @@ add_custom_command(TARGET sdurws_ird_execution_test POST_BUILD
 # ArchiveCollaborationContractTest.cpp（acceptance 1/3：与 project 真实
 # 存储的归档协作——EX-REG-4 切换场景/D-13 完整性可见性/D-14 冲突全链路；
 # 与 evidence 校验器的单点复用——接纳产物全字段等于 evidence API 直接
-# 组装产物）。
+# 组装产物）；EX-T05 增列 EventBusDeliveryContractTest.cpp（acceptance 2：
+# core IDomainEventBus 接口的 execution 参考实现契约——同发布者 FIFO/
+# 九态事件流＋ResultArchived 家族按序投递/并发发布零丢失/RAII 退订幂等/
+# 退订不与投递死锁/waitForIdle 确定性同步——§10.4/§6.2）。
 add_executable(sdurws_ird_execution_contract_test
     contract_test/LinkageContractTest.cpp
     contract_test/IdentityVocabularyContractTest.cpp
-    contract_test/ArchiveCollaborationContractTest.cpp)
+    contract_test/ArchiveCollaborationContractTest.cpp
+    contract_test/EventBusDeliveryContractTest.cpp)
 
 target_compile_features(sdurws_ird_execution_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_contract_test PROPERTIES

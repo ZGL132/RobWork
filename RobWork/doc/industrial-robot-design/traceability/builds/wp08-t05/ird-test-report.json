@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EX-T05",
+  "masterWp": "WP-08-T06",
+  "branch": "wp08-t05",
+  "base": "d8253f2d8ec9b0496108e5ceb1e015539b0266db",
+  "date": "2026-09-18",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持＝GTest::gtest_main，testkit RecordListener 报告设施随 EX-T09 接入）",
+  "targets": [
+    {
+      "target": "sdurws_ird_execution",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EX-T05 增列一个产品翻译单元并扩展两件既有文件（依赖红线与链接边零变更——core/evidence/project 三条登记边内的合法 include 面）：①include/sdurws/ird/execution/EventBus.hpp＋src/EventBus.cpp（新增）——§10.4 DomainEventBusImpl＝core IDomainEventBus 的 execution 侧进程内参考实现：专用投递线程（§6.2 事件总线投递线程行——每总线一条，构造启动/析构 drain on close）、publish 线程安全即返（锁内仅簿记入队，回调绝不在发布线程执行）、同发布者 FIFO（全局单队列按入队序投递——调度线程发布的 TaskStatusChanged 序＝状态机转移序）、RAII 订阅句柄 DeliverySubscription（析构即退订、二次退订幂等置空回指）、退订不与投递死锁（锁结构保证：投递线程每帧锁内取帧＋订阅表快照→锁外逐订阅方回调——回调期间零内部锁持有）、waitForIdle 确定性同步面（队列空∧在投归零——断言不 sleep 的替代设施）、事件不持久化（core D-09）；②include/sdurws/ird/execution/Scheduler.hpp＋src/Scheduler.cpp（扩展）——§10.1 ITaskScheduler/ResourceBudget/SubmitResult 契约面＋TaskScheduler 调度本体：提交验证 V1~V4（V1 形式＝ISubmissionGuard 上下文注入半区＋快照三元组/冻结/CON-06 非空/mode 值域/评估器注册与契约版本；V2 内容＝evidence IRevisionClosureSource 同源形态修订闭包含性→EX-SNAPSHOT-STALE；V3 权限＝Quick/Verified 消费真实 store.writable()→EX-STORE-READ-ONLY〔PM-07，写权限判定归 project 不私判〕，Preview 跳过；V4 预算＝等待队列容量→EX-TASK-REJECTED；校验面缺失 fail-closed 拒绝不静默放行）、§4.3 受理段（互斥临界区内验证→TaskId::generate 分配〔acceptance 1：五元组 TaskId 部分在提交受理时完成〕→TaskRecord{Queued}→状态机 T1 发布 Queued 事件→capability 经 EvaluatorRuntimeCapabilities 受理时推导〔注册期早于一切提交，与派发时推导等效且不可变纪律更早成立——归置登记 §15.4〕→双优先级等待队列入队）、§6.1 队列治理（Interactive 全序先于 Background、同级 FIFO 提交序号单调〔D-04 排序键〕；不抢占——出队只在额度空位；maxConcurrentTasks 0＝自动 min(4,核/2) 下限 1；maxTasksPerProject 同项目正式任务上限〔Preview 不计〕；队头阻塞语义登记——严格序可预测性优先于吞吐）、§6.3 内联门槛（谓词注入〔可预测 <1 s——ARCH §4.1〕＋IInlineRunExecutor 执行体接缝＋Preview 三者齐备→锁外执行〔锁只保护簿记不覆盖计算——NFR-PERF-01 结构表达〕→T5→T8/T9 同一转移表；登记段依赖派发装配面随 EX-T06 放开——归置登记 §15.4）、§6.1 进度节流（reportProgress 任意线程入口→主锁内按每任务 100 ms 窗过滤〔≤10 Hz，实现参数 D-07 非上游值〕→tick 段 a 经 StateMachine::updateProgress 应用；窗内帧丢弃；UX-10 phaseToken 透传零解读——七态状态词归 ui）、tick 显式驱动（段 a 进度应用→关闭期 drain.poll 排空复合拍／非关闭期 controller.poll＋单拍单出派发——Controller/DrainCoordinator 同款阶段 A 形态，主锁域＝调度串行域登记 §15.4）、shutdown 组合 DrainCoordinator（§10.1 注兑现：关闭后 submit 抛 ExecutionError(ContextClosed)）、tryTask/tasksByProject 主锁内深拷贝投影（noexcept 契约）；③StateMachine.hpp/cpp 既有头增量一处——TaskStateMachine::updateProgress（§4.2 progress 行流式更新的受控写面：终态拒绝 fail-fast、phaseToken 透传、非事件通道〔core D-09〕）。"
+    },
+    {
+      "target": "sdurws_ird_execution_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 89/89）",
+      "casesTotal": 89,
+      "casesNewThisTask": 19,
+      "notes": "EX-T01~T04 既有 70 用例保留全绿。EX-T05 新增 19 用例（test/SchedulerEventBusTest.cpp），acceptance 逐条对应：①EX-SUB-1（acceptance 1）＝ConcurrentSubmitAssignsUniqueTaskIds_EX_SUB_1（6 线程×12 并发提交→72/72 受理、TaskId 规范文本集合等势零重复〔checkStableIdsUnique 同型〕、每任务恰一个 Queued 事件、事件载荷 project/revision＝快照锚定三元组〔§4.3 受理段五元组前缀绑定——TASK-03〕、run 全部为同一保留空值〔§4.2 Queued 期可空〕）＋SameTaskEventFifoFollowsTransitionOrder_EX_SUB_1（内联走链事件流 Queued→Preparing→Running→Completed 严格四帧＝状态机转移序〔§4.3 同任务事件 FIFO/§10.4〕＋终态投影 Completed＋archivePhase NotApplicable）；②EX-SUB-2（acceptance 1）＝StaleSnapshotRejectedWithNoRecord_EX_SUB_2（修订闭包整体过期→SubmitResult.rejected＋EX-SNAPSHOT-STALE 稳定码诊断＋task 空＋零事件＋查询为空〔无 TaskRecord——§5.1 注〕）＋MissingClosureObjectRejected_EX_SUB_2（闭包内单对象缺失同码）＋FormalValidationRejectsInvalidSubmissions（V1 四变体：未注册评估器/契约版本 8≠7/未冻结快照/守卫注入半区诊断原样透传——全部 EX-TASK-REJECTED 结构化拒绝不抛）；③节流（acceptance 2 的 D-07 半区）＝ProgressThrottledToTenHz_D07（ManualClock 虚拟推进：t0 放行/t+50ms 丢弃/t+100ms 放行/t+150ms 丢弃/t+200ms 放行——对外可见最近帧恒为窗外帧，≤10 Hz；窗内帧不排队不发布）＋ProgressThrottleDisabledPassesAllFrames（间隔 0＝逐帧透传对照面）＋ProgressRejectsUnknownAndTerminalTasks（未知任务/终态任务帧＝ExecutionError(InvalidState) fail-fast）；④UI 零计算（acceptance 3）＝SubmitAndQueryNonBlockingDuringComputation_NFR_PERF_01（阻塞执行体在调度域 tick 内计算中：第二任务的 submit 经 future 2 s 有界等待就绪且受理成功、tryTask 返回 Queued——锁只保护簿记不覆盖计算的结构断言〔NFR-PERF-01 提交/控制非阻塞〕；放行后任务 Completed）；⑤队列/预算/PM-07（acceptance 4）＝PriorityAndFifoDispatchOrder_D04（逐拍状态观测：Interactive 队头先于先提交 Background 出队、同级 FIFO I1→I2、Background B1→B3、在途任务不受后续优先级到达影响〔D-04 不抢占〕）＋InlineDispatchFollowsPriorityThenFifo（单额度下内联执行体调用序＝I1→I2→B1→B3——出队序行为可观测面）＋PerProjectFormalCapQueuesThirdTask（上限 1：正式 Quick 出队后第二个同项目 Quick 排队；两帧 Preview 同项目先后出队证明 Preview 不占正式额度；受限队头阻塞后续 Background——队头阻塞语义登记 §15.4）＋QueueCapacityRejectsOverflow_V4（容量 2 溢出→EX-TASK-REJECTED＋cause 携带队列满；已排队任务不受波及正常出队）＋ReadOnlyStoreRejectsFormalSubmit_PM_07（真实 ProjectStore ReadOnly 打开〔writable()==false 前置断言〕：Verified/Quick 均拒绝启动＋EX-STORE-READ-ONLY；Preview 跳过 V3 照常受理——消费真实 store.writable() 写权限判定归 project 不私判）；⑥UX-10/关闭/查询面（acceptance 5＋§7.5）＝PhaseTokenPassedThroughVerbatim_UX_10（worker 域 token 逐字符透传零映射零改写；事件流只含 TaskStatusChanged——进度不入领域事件 core D-09）＋ShutdownCancelQueuedAndWaitDrains（shutdown 后排队任务经排空复合拍直达 Canceled、drained()==true 无永久等待轮询面、关闭后提交抛 ExecutionError(ContextClosed)）＋ShutdownIsIdempotent（二次关闭策略漂移不破坏首次 KeepQueued 保留语义；幂等关闭仍是关闭——ContextClosed）＋TasksByProjectFiltersByAnchoredProject（本项目命中/异项目为空）＋ResourceBudgetAdjustableWithoutIdentityChange（运行期放宽预算、已受理任务 TaskId/状态零影响——§6.1 预算不影响身份）。替身边界声明：评估器注册查询/修订闭包为接口替身（验证调度器消费契约，非 evidence 实现证明）；内联执行体即时/阻塞两种脚本替身（真实评估计算归业务域）；存储写权限面用真实 ProjectStore（PRJ-T14——PM-07 验证的就是对真实 writable() 的消费）。断言不 sleep：节流经 ManualClock 虚拟推进、非阻塞经 future 有界等待、事件经 waitForIdle 确定性同步。"
+    },
+    {
+      "target": "sdurws_ird_execution_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 19/19）",
+      "casesTotal": 19,
+      "casesNewThisTask": 7,
+      "notes": "EX-T01~T04 既有 12 用例保留全绿。EX-T05 新增 7 用例（contract_test/EventBusDeliveryContractTest.cpp——core IDomainEventBus 接口的 execution 参考实现契约面，acceptance 2）：①SamePublisherFifoPreservesPublishOrder（1000 帧发布→投递零丢失＋事件 id 唯一性零重投）；②NineStateStreamAndResultArchivedDeliveredInOrder（九态生命周期事件流〔Queued→Preparing→Running→Canceling→Paused→Running→Canceling→Completed〕＋ResultArchived 家族混投——投递序与发布序逐帧 operator== 全等〔DomainEvent 四元组含 id/emittedAt/kind/payload〕，末帧 ResultArchived、前一帧 Completed 的家族序语义锚——§10.4 括注）；③ConcurrentPublishLosesNothing（4 线程×250 并发发布→恰 1000 帧零丢失零重复——publish 线程安全契约）；④RaiiUnsubscribeIdempotentAndStopsDelivery（显式二次退订幂等、退订后不再投递、句柄析构即退订 RAII 半区——subscriberCount 观测面）；⑤UnsubscribeDuringDeliveryDoesNotDeadlock（慢消费者阻塞在首帧回调中：另一线程退订经 future 2 s 有界等待完成——退订不与投递死锁的锁结构证明〔§10.4〕；放行后总线可 drain、快速订阅者不受影响）；⑥SubscribersReceiveFullStreamInSubscriptionOrder（双订阅方各自收全量且互为全序相等拷贝——core R1 无事件过滤）；⑦WaitForIdleSyncsDeliveryDeterministically（空队列立即 idle、发布后 idle 返回即全部可见——确定性同步设施自身的契约用例）。"
+    }
+  ],
+  "acceptanceMapping": {
+    "acc1": "EX-SUB-1/2 全绿（acceptance 1）——①并发提交：ConcurrentSubmitAssignsUniqueTaskIds_EX_SUB_1（72 任务唯一 TaskId/无重复/受理即 Queued 事件/五元组前缀＝受理时绑定的快照锚定三元组——TASK-03 分配经 §4.3 身份分配协议在提交受理时完成〔TaskId 受理段分配、run/attempt Queued 期保留空值〕；TASK-01 状态机受理入口＝TaskStateMachine::forAcceptedSubmission T1）＋SameTaskEventFifoFollowsTransitionOrder_EX_SUB_1（同任务事件 FIFO＝转移序）；②过期快照拒绝：StaleSnapshotRejectedWithNoRecord_EX_SUB_2＋MissingClosureObjectRejected_EX_SUB_2（SubmissionRejected 结构化＋EX-SNAPSHOT-STALE＋无 TaskRecord＋查询为空——CON-01 派发前快照完整性经 §6.3 V2 修订闭包含性（evidence IRevisionClosureSource 同源形态注入）消费）；V1 形式校验四变体＝FormalValidationRejectsInvalidSubmissions",
+    "acc2": "事件 FIFO 与投递线程契约用例通过（acceptance 2）——EventBus 为 core IDomainEventBus 参考实现（§10.4）：SamePublisherFifoPreservesPublishOrder/NineStateStreamAndResultArchivedDeliveredInOrder（TaskState 九态事件流＋ResultArchived 等事件家族按序投递——逐帧全等）/ConcurrentPublishLosesNothing/RaiiUnsubscribeIdempotentAndStopsDelivery/UnsubscribeDuringDeliveryDoesNotDeadlock/SubscribersReceiveFullStreamInSubscriptionOrder/WaitForIdleSyncsDeliveryDeterministically（contract_test 7 用例——专用投递线程契约：publish 线程安全/同发布者 FIFO/RAII 退订/不死锁）；TaskScheduler 内联走链事件流（SameTaskEventFifo...）为状态机侧发布接线的行为半区；进度对外节流 ≤10 Hz＝ProgressThrottledToTenHz_D07＋ProgressThrottleDisabledPassesAllFrames（100 ms 窗实现参数 D-07——非需求值，§6.1；ManualClock 虚拟推进不 sleep）；进度违约面＝ProgressRejectsUnknownAndTerminalTasks",
+    "acc3": "UI 线程零计算结构断言就位（acceptance 3）——SubmitAndQueryNonBlockingDuringComputation_NFR_PERF_01（NFR-PERF-01：>1 s 转后台——内联门槛＝可预测 <1 s 调度线程内联〔ARCH §4.1，谓词注入＋IInlineRunExecutor 接缝＋锁外执行段〕；§11 EX-BLD-1/T05 完成条件的结构断言承载：计算本体阻塞在调度域时第二任务 submit 经 future 2 s 有界等待就绪且受理、tryTask 即返——提交/控制非阻塞的结构证明；EX-BLD-1 零 Qt 红线由既有 BuildRedLineTest 源扫描常驻承载〔本任务新增文件无 Qt include——同一扫描面覆盖〕）",
+    "acc4": "队列/优先级/预算/提交验证就位（acceptance 4）——双优先级 FIFO 不抢占＝PriorityAndFifoDispatchOrder_D04（逐拍观测 Interactive 先于先提交 Background/同级 FIFO/在途不受后续优先级影响——D-04：需求未定义抢占，用户干预由取消/暂停覆盖）＋InlineDispatchFollowsPriorityThenFifo（执行体调用序行为面）；同项目正式上限＋Preview 不计＋队头阻塞＝PerProjectFormalCapQueuesThirdTask；队列容量 V4＝QueueCapacityRejectsOverflow_V4（溢出＝SubmissionRejected＋诊断、不失败已排队）；预算运行期可调不影响身份＝ResourceBudgetAdjustableWithoutIdentityChange；PM-07 只读拒绝启动＝ReadOnlyStoreRejectsFormalSubmit_PM_07（§6.3 V3——真实 ProjectStore ReadOnly 打开消费 store.writable() 的路径、Verified/Quick 拒绝 EX-STORE-READ-ONLY、Preview 跳过；写权限判定归 project 不私判）",
+    "acc5": "UX-10 只承载进度阶段投影＋P-EX-1 处置（acceptance 5）——PhaseTokenPassedThroughVerbatim_UX_10（phaseToken 逐字符透传零解读零映射；进度不入领域事件 core D-09；execution 不新增状态词——七态状态词与映射归 ui〔§2.2/§13 ui 行〕，StateMachine::updateProgress 透传注释钉住；TaskState 九态词表仍零重定义〔EX-T02 contract 钉子保持全绿〕）；P-EX-1 处置：EventBus 事件家族与身份类型消费 core v0.1 Draft 未冻结（core/Events.hpp＋core/Identity.hpp 现状签名——DomainEvent 四类家族/IDomainEventBus/IEventSubscription/TaskIdentity/TaskState 零重定义零私改），冻结 diff 后按影响面增量同步留痕（影响面：EventBus.hpp/cpp＋Scheduler/StateMachine 消费点）；内联登记段随 EX-T06 放开的归置边界与校验面缺失 fail-closed 语义登记单元卡 §15.4 v0.7"
+  },
+  "gates": {
+    "ird_gates": "cmake --build build --config Release --target ird_gates（gates-ird-gates-target.log）——IRD-GATE 行与 base 留痕（builds/wp08-t04/gates-ird-gates-target.log）排序 diff 为空：零新增命中（gate 目标因既有登记例外按设计退出非零——17 处命中全部为 diagnostics/evidence/io/policy/project/runtime/testdata 等其他单元的 DTB §4.5 登记例外，零处涉及 execution 本任务变更面，与 base 行为一致）",
+    "validateTask": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/EX-T05.json（validate-task.log）——PASS"
+  },
+  "builds": {
+    "integration": "cmake --build build --config Release --target sdurws_ird_execution sdurws_ird_execution_test sdurws_ird_execution_contract_test（integration-build.log）——零错误（仅既有测试文件的 WIN32 宏重定义警告，与 base 同源）；verify 命令 cmake --build build --config Release --target sdurws_ird_execution_test 在内",
+    "smoke": "独立冒烟模式（vcpkg toolchain 绝对路径）：smoke-configure.log＋smoke-build.log——两目标零错误；契约验收 verify 面以集成模式为准"
+  },
+  "evidenceFiles": [
+    "sdurws_ird_execution_test-integration.xml",
+    "sdurws_ird_execution_contract_test-integration.xml",
+    "sdurws_ird_execution_test-smoke.xml",
+    "sdurws_ird_execution_contract_test-smoke.xml",
+    "gtest_reports/sdurws_ird_execution_test-integration.xml",
+    "gtest_reports/sdurws_ird_execution_contract_test-integration.xml",
+    "integration-build.log",
+    "smoke-build.log",
+    "smoke-configure.log",
+    "gates-ird-gates-target.log",
+    "validate-task.log"
+  ],
+  "honestyNotes": "全部 108 用例（70+12 既有＋19+7 新增）两模式真实执行通过，零跳过零失败零伪造；ird_gates 因其他单元既有登记例外退出非零与 base 行为一致（diff 为空），未执行任何'静默放行'；本任务未实现 EX-T06+ 范围的 worker 派发链/内联登记段（归置边界登记单元卡 §15.4 v0.7），未标注任何未执行项为通过"
+}
