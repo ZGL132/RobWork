@@ -1,0 +1,19 @@
+=== wp08-t09 ird_gates 命中集合 diff（基线＝wp08-t08 回补归一化，当前＝wp08-t09）===
+
+基线行数: 16  当前行数: 18
+新增(+): 2  移除(-): 0
+
+--- 新增命中（均为本任务契约 acceptance 1/2/3 明文的 testkit 设施消费链接边，
+     T-1 允许形态＝仅测试目标；产品目标零 testkit 边由 NoTestkitEdge 收窄断言钉住——
+     F-173（PRJ-T15 同型）处置先例：DTB §4.5 既有例外行同型实例，实例行增补归 WP-01-T03，
+     本任务已转登 F-221）---
++ IRD-GATE-SUB: sdurws_ird_execution_contract_test
++ IRD-GATE-SUB: sdurws_ird_execution_test
+
+--- 移除命中 ---
+
+--- 结论 ---
+除上述 2 条契约明文依据的新增命中外，命中集合与 wp08-t08 基线逐项一致（零移除、
+零其他新增）。基线回补说明：wp08-t08 归一化文件缺『IRD-GATE-SUB: sdurws_ird_testdata_lint』
+（GBK 吞字致首 token 缺 s——其原始日志可见该命中），本任务按同口径回补入基线副本
+gates-base-t08-normalized.txt，不改变基线语义。
