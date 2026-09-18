@@ -88,8 +88,17 @@ find_package(GTest CONFIG REQUIRED)
 # （§3.5：ChannelPair 命名管道对/JobScope 作业 RAII/ProcessLauncher 进程
 # 启动——kernel32 隔离于 src/win32/）、worker 宿主入口 worker/main.cpp
 # （目标 sdurws_ird_execution_worker，§3.4——阶段 A 内置脚本驱动测试替身
-# 评估器）。后续：win32/MemProbe（T07）、Checkpoint/CacheCoordinator
-# （T08）——以单元任务卡当前正文为准。
+# 评估器）。后续：Checkpoint/CacheCoordinator（T08）——以单元任务卡当前
+# 正文为准。
+# EX-T07（≙WP-08-T08，任务契约 tasks/foundation/EX-T07.json）增列：
+# win32/MemProbe 私有实现两件（§3.5：主进程＋worker 内存汇总——
+# GlobalMemoryStatusEx＋GetProcessMemoryInfo 工作集＋QueryInformationJobObject
+# 作业内存；kernel32/psapi 调用隔离于 src/win32/——§3.2 依赖图）；汇总＋
+# 节流决策＋资源不足诊断落位为 Scheduler 公共头扩展（ResourceController/
+# IMemorySampler/MemoryReading/SupervisorMemorySampler——归置登记单元卡
+# §15.4，Scheduler.hpp 组成行先例同 EX-T03 DrainCoordinator）＋WorkerSupervisor
+# 增量两法（aggregateJobMemoryBytes/reclaimIdleWorkers——§10.3 具体类
+# 治理/观测面，登记单元卡 §15.4）。
 add_library(sdurws_ird_execution STATIC
     src/Execution.cpp
     src/Errors.cpp
@@ -104,6 +113,7 @@ add_library(sdurws_ird_execution STATIC
     src/WorkerSupervisor.cpp
     src/win32/ChannelPair.cpp
     src/win32/JobScope.cpp
+    src/win32/MemProbe.cpp
     src/win32/ProcessLauncher.cpp)
 
 # worker 宿主可执行（§3.4：WIN32 可执行；阶段 A 评估器＝内置脚本替身
@@ -210,7 +220,12 @@ endif()
 # 关闭排空——校验面与执行体为替身接缝，存储写权限面用真实 ProjectStore）；
 # EX-T06 增列 ChannelProtocolTest.cpp（§11 EX-CHN-1 的协议逻辑面＋§6.5
 # 帧/seq/分帧/载荷编解码＋§6.4 退出码分类表＋HeartbeatPolicy D-06 默认值
-# ——纯逻辑零进程/管道，真进程面归 contract_test）。
+# ——纯逻辑零进程/管道，真进程面归 contract_test）；EX-T07 增列
+# ResourceGovernanceTest.cpp（§11 EX-RES-2：内存采样 fake 推至 >70%——
+# 先节流〔停派发/降并行〕→仍超限→EX-RESOURCE-INSUFFICIENT 诊断、已排队/
+# 运行任务不失败〔观测点＝派发暂停＋诊断〕＋三段阈值边界＋采样失败保持
+# ＋MemProbe 真实探针冒烟——私有头经 src/ 私有包含根，R-2 纪律下测试
+# 与实现同单元边界内）。
 enable_testing()
 
 add_executable(sdurws_ird_execution_test
@@ -219,7 +234,8 @@ add_executable(sdurws_ird_execution_test
     test/CancelProtocolTest.cpp
     test/RunRegistryAdmissionTest.cpp
     test/SchedulerEventBusTest.cpp
-    test/ChannelProtocolTest.cpp)
+    test/ChannelProtocolTest.cpp
+    test/ResourceGovernanceTest.cpp)
 
 target_compile_features(sdurws_ird_execution_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_test PROPERTIES
@@ -245,7 +261,11 @@ target_link_libraries(sdurws_ird_execution_test PRIVATE
 
 # 源码树位置注入：EX-BLD-1 用例在运行期扫描 execution 源码核对红线。经
 # 编译定义传 industrialrobot 根（project/diagnostics/evidence/runtime 同款
-# ——值内以单元名作子目录前缀，扫描面随单元自包含）。
+# ——值内以单元名作子目录前缀，扫描面随单元自包含）。另开 src/ 私有包含
+# 根（EX-T07：ResourceGovernanceTest 直测 win32/MemProbe 真实探针——私有
+# 头仅本单元测试目标可见，不进 include/ 公共根，R-2 纪律不受影响）。
+target_include_directories(sdurws_ird_execution_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_compile_definitions(sdurws_ird_execution_test PRIVATE
     IRD_EXECUTION_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 

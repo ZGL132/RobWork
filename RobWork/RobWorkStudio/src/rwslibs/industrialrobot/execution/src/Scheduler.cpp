@@ -1,11 +1,14 @@
 /**
  * @file   Scheduler.cpp
- * @brief  两段实现——TaskScheduler 调度本体（EX-T05：提交验证 V1~V4/
- *         双优先级队列/预算闸/内联门槛/进度节流）与 DrainPolicy 排空
- *         编排（EX-T03：§7.5 关闭二选的执行侧）。
+ * @brief  三段实现——TaskScheduler 调度本体（EX-T05：提交验证 V1~V4/
+ *         双优先级队列/预算闸/内联门槛/进度节流；EX-T07 增：tick 资源闸）、
+ *         DrainPolicy 排空编排（EX-T03：§7.5 关闭二选的执行侧）与资源
+ *         治理控制器（EX-T07：内存采样接缝生产件＋三段节流决策＋资源
+ *         不足诊断）。
  *
- * 设计依据：见 Scheduler.hpp 文件头（§4.3/§6.1~§6.3/§7.4~§7.5/§10.1/
- * §10.8、ARCH §4.1/§4.4、acceptance 1~5——此处不重复）。
+ * 设计依据：见 Scheduler.hpp 文件头（§4.3/§6.1~§6.3/§6.2/§6.6/§7.4~§7.5/
+ * §10.1/§10.8、ARCH §4.1/§4.4/§4.6、NFR-PERF-04、acceptance 1~5——此处
+ * 不重复）。
  *
  * 实现说明（本文件的关键结构决策，评审重点）：
  *   - **主锁即调度串行域**（阶段 A 显式驱动形态——头注"调度线程模型"）：
@@ -18,7 +21,11 @@
  *   - DrainCoordinator 编排是 TaskController 之上的策略层——所有任务级
  *     动作（取消/强杀/协议推进）都经 TaskController 的公共面执行，本
  *     文件不触碰 worker 句柄（职责分层：协议时序归 Controller，关闭
- *     策略归 DrainCoordinator，受理/排队/派发/验证归 TaskScheduler）。
+ *     策略归 DrainCoordinator，受理/排队/派发/验证归 TaskScheduler，
+ *     内存治理判定归 ResourceController——闸的执行面只在 tick 出队段）；
+ *   - **EX-T07 资源闸的失败包容**：采样失败保持最近治理层级（不猜值），
+ *     诊断 sink 未装配只丢上报不丢决策（治理动作不依赖上报通道）——
+ *     两处都是"安全面（停派发）与观测面（诊断）解耦"的结构表达。
  */
 
 #include <sdurws/ird/execution/Scheduler.hpp>
@@ -26,10 +33,15 @@
 #include <sdurws/ird/core/Evaluation.hpp>
 #include <sdurws/ird/evidence/Evaluator.hpp>   // IProducerRegistryView（V1 评估器注册查询——登记边）
 #include <sdurws/ird/evidence/Snapshot.hpp>    // AnalysisSnapshot/IRevisionClosureSource（V1/V2）
+#include <sdurws/ird/execution/Ports.hpp>      // IExecutionDiagnosticsSink（ResourceController 诊断出口——§3.3 注入）
 #include <sdurws/ird/execution/StateMachine.hpp>
+#include <sdurws/ird/execution/WorkerSupervisor.hpp>  // WorkerSupervisor::aggregateJobMemoryBytes（SupervisorMemorySampler worker 半区）
 #include <sdurws/ird/project/ProjectStore.hpp> // ProjectStore::writable（V3——PM-07，登记边）
 
+#include "win32/MemProbe.hpp"                  // SupervisorMemorySampler 的真实探针（win32 隔离——§3.5）
+
 #include <algorithm>
+#include <cstdio>
 #include <stdexcept>
 #include <thread>
 #include <utility>
@@ -100,6 +112,14 @@ void TaskScheduler::setInlineExecutor(IInlineRunExecutor* executor) noexcept
 {
     // 同 setEventBus——装配期一次；空＝无内联能力（全部排队）。
     m_inlineExecutor = executor;
+}
+
+void TaskScheduler::setResourceController(ResourceController* controller) noexcept
+{
+    // 同 setEventBus——装配期一次；空＝无资源闸（无内存治理，合法装配：
+    // 提交/派发语义不因缺装配而改变——EX-T07 资源治理是可选增强）。
+    // 不取主锁：装配期单线程约定（L5 装配序），与 submit/tick 无并发窗。
+    m_resourceController = controller;
 }
 
 std::chrono::steady_clock::time_point TaskScheduler::steadyClock() noexcept
@@ -351,6 +371,13 @@ void TaskScheduler::setResourceBudget(const ResourceBudget& budget)
     // 时机"）——仅换值，无任务面动作。
     std::lock_guard<std::mutex> lock(m_mutex);
     m_budget = budget;
+    // EX-T07：预算同步转发给已装配的资源控制器（maxMemoryRatio/throttleRatio
+    // 的单一用户入口仍是 ITaskScheduler::setResourceBudget——ResourceBudget
+    // 注的"ResourceController 消费"归属兑现；控制器无锁、其调度线程约束
+    // 由本调用域〔主锁内〕满足）。
+    if (m_resourceController != nullptr) {
+        m_resourceController->setBudget(budget);
+    }
 }
 
 // =====================================================================
@@ -455,6 +482,19 @@ void TaskScheduler::tick()
         // 协议优先（§7.1 步 1"取消命令插队于派发之前"——poll 命令段在
         // 出队之前执行，取消响应延迟上界＝tick 周期，Controller 注）。
         m_controller.poll();
+        // 资源闸（EX-T07——§6.1 内存预算行/NFR-PERF-04）：已装配控制器
+        // 时先评估治理决策；Throttled/Exhausted 本拍不出队（"暂停派发
+        // 新任务"）。排队任务保持 Queued、在途任务不受影响——闸只挡出
+        // 队段、不触碰任何任务状态机，"已排队/运行任务不失败"由该结构
+        // 保证（§6.1 括注；D-04 不抢占的同一纪律）。决策内的边沿诊断
+        // （EX-RESOURCE-INSUFFICIENT）已由控制器在本调用内经 §3.3 sink
+        // 外报——此处只消费闸位。未装配控制器＝无资源闸（合法装配）。
+        if (m_resourceController != nullptr) {
+            const ResourceController::Decision decision = m_resourceController->evaluate();
+            if (decision.pauseDispatch) {
+                return;   // 节流/耗尽——本拍停派发（下一拍读数回落后自然恢复）
+            }
+        }
         // 出队派发（额度/优先级闸＋T2＋内联走链——每拍至多一个任务：
         // 出队节奏由调度周期承载，单拍单出使"取消命令下一拍即见"的
         // 响应上界不被长派发段吞没）。
@@ -780,6 +820,200 @@ void DrainCoordinator::poll()
         (void)abandonAllForced();
         m_autoAbandonDone = true;
     }
+}
+
+// =====================================================================
+// ResourceController——三段节流决策＋资源不足诊断（EX-T07）
+// =====================================================================
+
+namespace {
+
+/// EX-RESOURCE-INSUFFICIENT 的比较型诊断构造（acceptance 2：实际值/上限/
+/// 单位三要素——core DiagnosticRecord::comparison 契约，UX-03 语义复用）。
+///
+/// 两侧值都用"合计占用 ÷ 物理总量"的无量纲占比（单位 token "1"——core
+/// Units 注册表 Dimensionless 的冻结 token）：上限 0.70 是占比语义
+/// （ResourceBudget::maxMemoryRatio），两侧同量纲才可比较；字节绝对值
+/// 进入 cause 明细供开发定位。SourcedValue 来源标注 DerivedReadOnly
+/// （系统查询的派生只读读数——core ProvenanceKind 五类中最贴近的一类；
+/// methodTag "memprobe" 标识采样件）。subject 恒空：资源压力不属于任何
+/// 业务对象（ObjectId 是对象身份，伪造项目/模型主体＝谎报——同
+/// rejectionDiag 的"不伪造"纪律）。
+core::DiagnosticRecord resourceInsufficientDiag(double actualRatio, double limitRatio,
+                                                std::uint64_t aggregateBytes,
+                                                std::uint64_t totalBytes)
+{
+    // 来源记录（Provided 态必带 provenance——core SourcedValue 契约）。
+    const core::ValueProvenance measured =
+        core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly, {},
+                                    {}, std::string{"memprobe"});
+    // 单位 token "1"（Dimensionless——core Units R1 冻结表；find 失败不
+    // 可达：注册表编译期冻结含该 token，防御性检查后按断言面处理）。
+    const std::optional<core::UnitToken> unit = core::UnitToken::find("1");
+
+    core::ComparativeFields comparison;
+    comparison.actual.quantity = core::SourcedValue<double>::provided(actualRatio, measured);
+    comparison.expected.quantity = core::SourcedValue<double>::provided(limitRatio, measured);
+    if (unit.has_value()) {
+        comparison.actual.unit = *unit;
+        comparison.expected.unit = *unit;
+    }
+
+    // cause 携带字节绝对值与两比值（开发定位面）；recommendedAction 给
+    // 用户可读动作（等待释放/减并发——§6.1"用户可见『等待资源』"）。
+    // 浮点格式化用固定精度（% 面向人读，不参与机器判定——机器判定面是
+    // comparison 的 double 原值）。
+    char cause[160];
+    std::snprintf(cause, sizeof(cause),
+                  "主进程＋全部工作进程内存合计 %llu 字节，达物理内存 %llu 字节的 %.1f%%，"
+                  "超过上限 %.0f%%——已暂停派发并请求回收空闲 worker",
+                  static_cast<unsigned long long>(aggregateBytes),
+                  static_cast<unsigned long long>(totalBytes),
+                  actualRatio * 100.0, limitRatio * 100.0);
+
+    return core::DiagnosticRecord::make(
+        "EX-RESOURCE-INSUFFICIENT", std::nullopt, std::nullopt, std::nullopt,
+        "execution/resource", cause,
+        "等待在途任务释放内存（新任务保持排队，自动恢复）；或取消部分任务降低内存压力",
+        comparison);
+}
+
+}  // namespace
+
+ResourceController::ResourceController(IMemorySampler& sampler, Config config, ClockFn clock)
+    : m_sampler(sampler)
+    , m_config(config)
+    , m_clock(std::move(clock))
+{
+}
+
+void ResourceController::setDiagnosticsSink(IExecutionDiagnosticsSink* sink) noexcept
+{
+    // 装配期一次（与 TaskScheduler::setEventBus 同纪律）；可空＝诊断不
+    // 外报（EventBus"无消费者是合法装配"先例——Decision.diagnostic 仍
+    // 携带记录，治理动作不依赖上报）。
+    m_sink = sink;
+}
+
+void ResourceController::setBudget(const ResourceBudget& budget) noexcept
+{
+    // 只消费内存治理两字段（maxWorkers 的池规模消费归编排装配——
+    // ResourceBudget 注）。值语义拷贝；运行期可调（§6.1 预算可调同款）。
+    m_budget = budget;
+}
+
+std::chrono::steady_clock::time_point ResourceController::steadyClock() noexcept
+{
+    return TaskController::steadyClock();
+}
+
+ResourceController::Decision ResourceController::evaluate()
+{
+    // 采样间隔判定（§6.2"周期内存采样"的显式驱动参数化）：间隔内复用
+    // 最近决策（重放拍 diagnostic 恒空——边沿诊断只在真实采样迁移层级
+    // 的那一拍出具恰一次），省系统调用＋对读数抖动低通。
+    const std::chrono::steady_clock::time_point now =
+        m_clock ? m_clock() : steadyClock();
+    const bool intervalElapsed = m_config.sampleInterval.count() <= 0
+        || !m_lastSampleAt.has_value()
+        || now - *m_lastSampleAt >= m_config.sampleInterval;
+    if (!intervalElapsed) {
+        Decision replay;
+        replay.level = m_level;
+        replay.pauseDispatch = m_level != Level::Normal;
+        replay.reclaimIdleWorkers = m_level != Level::Normal;
+        replay.reading = m_lastReading;
+        return replay;
+    }
+
+    // 真实采样（失败→保持现状＋边沿去抖的开发诊断——不猜值不迁移层级，
+    // 见类注释"采样失败"）。
+    std::optional<MemoryReading> reading = m_sampler.sample();
+    if (!reading.has_value()) {
+        if (!m_probeFailureReported && m_sink != nullptr) {
+            // 开发级自由文本通道（NFR-REL-05：不进用户界面文案）。连续
+            // 失败只报首次（m_probeFailureReported 边沿标志；恢复成功后
+            // 清零——下轮失败再报）。
+            m_sink->reportDev("execution/resource",
+                              "内存采样失败（IMemorySampler 返回空）——保持最近治理层级 "
+                              "不猜值（EX-T07 基础形态；连续失败请检查系统内存查询可用性）");
+        }
+        m_probeFailureReported = true;
+        Decision kept;
+        kept.level = m_level;
+        kept.pauseDispatch = m_level != Level::Normal;
+        kept.reclaimIdleWorkers = m_level != Level::Normal;
+        kept.reading = m_lastReading;
+        return kept;
+    }
+    m_probeFailureReported = false;   // 采样恢复——失败诊断的边沿标志清零
+    m_lastSampleAt = now;
+    m_lastReading = *reading;
+    return decide(*reading);
+}
+
+ResourceController::Decision ResourceController::decide(const MemoryReading& reading)
+{
+    // 三段判定（D-05：65% 节流阈值〔实现参数，§15.1 登记非需求值〕→
+    // 70% 诊断〔NFR-PERF-04 上游值不改动〕）——判定是当前读数的纯函数
+    // ＋m_level 边沿记忆：层级迁移确定性（同读数同预算同上层级→同决策）。
+    const double ratio = reading.ratioOfPhysical();
+    const Level next = ratio >= m_budget.maxMemoryRatio
+        ? Level::Exhausted                       // ≥70%：仍超限（第一段节流未能压回）
+        : (ratio >= m_budget.throttleRatio
+               ? Level::Throttled                // ≥65% 且 <70%：先节流（§6.1"接近上限先节流"）
+               : Level::Normal);                 // <65%：不干预
+
+    Decision decision;
+    decision.level = next;
+    decision.reading = reading;
+    // 节流段与耗尽段共用的两标志（§6.1"暂停派发新任务＋降低并行度
+    // （回收空闲 worker）"——派发闸半区由 tick 消费 pauseDispatch，
+    // 池回收半区由池所有者消费 reclaimIdleWorkers）。
+    decision.pauseDispatch = next != Level::Normal;
+    decision.reclaimIdleWorkers = next != Level::Normal;
+
+    // 边沿诊断：进入 Exhausted 的第一拍恰一次（同一持续超限期间不重复
+    // 刷诊断——§6.1"仍超限→诊断"是进入事件非持续状态广播；退出后再次
+    // 进入＝新一轮边沿，再次出具）。
+    if (next == Level::Exhausted && m_level != Level::Exhausted) {
+        decision.diagnostic = resourceInsufficientDiag(
+            ratio, m_budget.maxMemoryRatio,
+            reading.aggregateBytes(), reading.totalPhysicalBytes);
+        if (m_sink != nullptr) {
+            m_sink->report(*decision.diagnostic);   // §3.3 注入 sink（结构化上报）
+        }
+    }
+    m_level = next;
+    return decision;
+}
+
+// =====================================================================
+// SupervisorMemorySampler——生产采样件（MemProbe＋监督器聚合的装配）
+// =====================================================================
+
+SupervisorMemorySampler::SupervisorMemorySampler(const WorkerSupervisor* supervisor) noexcept
+    : m_supervisor(supervisor)
+{
+}
+
+std::optional<MemoryReading> SupervisorMemorySampler::sample()
+{
+    // 三半区顺序采集，任一失败＝整体失败（fail-to-no-data——半读数会把
+    // "worker 超限"误判为"主进程无压力"，比无读数更危险，见类注释）。
+    // worker 半区经监督器聚合（其作业句柄属调度线程域——本采样器的
+    // sample 因此同样仅调度线程，头注线程约束的来源）。
+    MemoryReading reading;
+    win32::SystemMemoryInfo sys;
+    if (!win32::querySystemMemory(sys)) {
+        return std::nullopt;
+    }
+    reading.totalPhysicalBytes = sys.totalPhysicalBytes;
+    if (!win32::queryCurrentProcessWorkingSetBytes(reading.mainProcessBytes)) {
+        return std::nullopt;
+    }
+    reading.workerBytes = m_supervisor != nullptr ? m_supervisor->aggregateJobMemoryBytes() : 0;
+    return reading;
 }
 
 }  // namespace sdurws::ird::execution
