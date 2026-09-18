@@ -2125,6 +2125,26 @@
       "title": "F-012 家族同型再现（[units] 前缀形态，先例 F-037/F-039/F-044/F-076/F-079/F-208/F-210）：EX-T04 文档提交 4adc54f2 标题『[units] execution.md v0.6：EX-T04 落位同步——卡头落位行＋§15.4 变更记录＋RejectReason 追加/AdmissionOutcome 成形/IEvaluationOutputDecoder 接缝登记』前缀后以名词短语（\"execution.md v0.6\"）开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求——同任务另两份提交（743cefc4『实现…』、bc646c24『留痕入库…』）动词开头合规；正文四段齐备、验证段 validate-docs PASS（20 units, 12 trace entries, 150 task files）经验收者在冻结 worktree 复跑逐字一致，纯风格瑕疵不构成阻断",
       "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
       "resolution": "与 F-012 家族合并处置（提交模板补动词开头示例，句式如『登记 execution.md v0.6 落位同步（…）』）；对已推送历史（4adc54f2）不追溯改写（AGENTS §6.3）。编号顺延自 F-210，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T04 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
+    },
+    {
+      "id": "F-212",
+      "source": "traceability/acceptance/EX-T05-20260918.md#发现的问题清单（attempt 1，送验对象 e28dc691696334083deb97e73c09e8bbd69c7e2c）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "contract_test/EventBusDeliveryContractTest.cpp 的 SamePublisherFifoPreservesPublishOrder 用 1000 帧同值事件，断言面为『零丢失＋事件 id 唯一』而未直接断言投递序与发布序的对应（文件内注释自证：序由 NineStateStreamAndResultArchivedDeliveredInOrder 的异值流逐帧全等钉住）——用例标题承诺 FIFO 而序断言承载在另一用例；EX-T05 验收 4.5 探针（publish 的 push_back→push_front 失效注入）实证异值流会红、序语义整体有检出力",
+      "owner": "execution 单元所有者（随 EX-T09 或后续冻结 diff 增量同步窗口顺手消账）",
+      "resolution": "后续给该用例逐帧可区分载荷（如 attempt 序号递增或 runOrdinal 变化）使序断言自持；不阻塞合入。编号顺延自 F-211，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T05 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
+    },
+    {
+      "id": "F-213",
+      "source": "traceability/acceptance/EX-T05-20260918.md#发现的问题清单（attempt 1，送验对象 e28dc691696334083deb97e73c09e8bbd69c7e2c）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "test/SchedulerEventBusTest.cpp 的 ProgressThrottledToTenHz_D07 只断言终态可见帧为 t200，无法区分『窗内帧丢弃』与『窗内帧延迟到窗外应用』两种实现（两者终态帧相同）——丢弃语义现由实现审阅承载（reportProgress 只把放行帧入 m_pendingProgress，Scheduler.cpp reportProgress 段）；契约要求（§6.1 对外发布 ≤10 Hz）的可见面已被现断言覆盖，仅『窗内帧不可见』半区缺独立断言",
+      "owner": "execution 单元所有者（随 EX-T09 或后续冻结 diff 增量同步窗口顺手消账）",
+      "resolution": "补一条中间时刻断言（如 t+50ms report＋tick 后 tryTask 可见帧仍为 t0）钉住『窗内帧不可见』；不阻塞合入。编号顺延自 F-212，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T05 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
     }
   ]
 }
