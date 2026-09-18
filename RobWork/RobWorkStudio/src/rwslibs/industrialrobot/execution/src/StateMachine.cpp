@@ -328,6 +328,21 @@ StateMachineAck TaskStateMachine::request(TransitionTrigger trigger)
     return StateMachineAck{true, m_record.state, std::nullopt};
 }
 
+// ---------------------------------------------------------------------
+// 诊断追加（§4.2 diagnostics 行"追加"可变性的入口——EX-T03 编排层写入
+// 判定类诊断，如运行超时 EX-WORKER-HUNG；转移类诊断仍在 request() 内写）
+// ---------------------------------------------------------------------
+
+void TaskStateMachine::appendDiagnostic(core::DiagnosticRecord record)
+{
+    // 追加语义（§4.2 diagnostics 行）：诊断是任务级累积面，只增不改；
+    // 记录的合法性（ERR-01 字段完整＋稳定码）由 core::DiagnosticRecord::
+    // make 工厂前置校验——本方法信任已构造记录，不重复校验（单一校验点）。
+    // 线程约束：仅调度线程调用（唯一写者纪律）——由类注释与调用方契约
+    // 保证，不设锁（与 request() 同域）。
+    m_record.diagnostics.push_back(std::move(record));
+}
+
 core::TaskIdentity TaskStateMachine::currentIdentity() const
 {
     // 五元组组装（§4.1 混用防线 1：TaskId 不进五元组）。project/branch/
