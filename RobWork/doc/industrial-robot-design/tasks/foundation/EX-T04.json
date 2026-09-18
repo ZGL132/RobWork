@@ -4,7 +4,7 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "RunRegistry 与迟到结果两段式接纳（RunRegistry/Admission）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["EX-T02", "EV-T07", "PRJ-T14"],
   "requirements": ["TASK-03", "PM-13", "CON-02", "CON-05"],
   "designRefs": ["units/execution.md#9", "ARCHITECTURE.md#4.5"],
