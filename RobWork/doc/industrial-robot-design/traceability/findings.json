@@ -2105,6 +2105,16 @@
       "title": "F-205 同族事故再现（主体换成编排者自身）：tick#202（EX-T02）实施子代理结束时工作树停留在 wp08-t02 未切回 redesign-main，编排者 §4.7② 执行 git merge 前未核验当前分支——验收记录 merge commit（59972794，父=2777bc0a+28e0dd16）落错在任务分支 wp08-t02 上，主线零合入；§4.7③ 随即被 \"Already up to date\" 显式异常信号暴露。险情：若未察觉继续 §4.7④ push，验收记录 merge 将被推上任务分支（远端任务分支污染）而主线缺合入——本次零外溢：异常信号触发核查（reflog/父链定位），全部在 push 前发现",
       "owner": "PIPE 文档所有者（T-ORCH 收尾步骤与 T-IMPL 模板的分支防线条款裁决）",
       "resolution": "本 tick 已完整机械补救（push 前发现，远端零污染）：丢弃未推送的错位 merge（git branch -f wp08-t02 回 2777bc0a=acceptedHead=origin/wp08-t02）、切回 redesign-main、按同两个不可变 SHA（28e0dd16、2777bc0a）重放 §4.7②③（e8c28447、92416fab，均零冲突），reflog 留证 59972794 可追溯。处置建议（待所有者裁决，不自动生效，与 F-205 建议合并处置）：①F-205 建议的『提交/合并前强制核对 git branch --show-current==redesign-main』最小防线扩展为 T-ORCH 收尾步骤①的前置守卫（编排者侧）；②T-IMPL 模板工程流程末尾增补『结束前切回 redesign-main 或声明分支留守为预期』条款（实施者侧）；③『Already up to date』在 §4.7③ 正常时序下不可能出现（acceptedHead 必不在主线上），建议登记为收尾异常信号。不构成 EX-T02 送验对象/验收结论的任何返工项——送验 SHA 与验收记录均未受影响"
+    },
+    {
+      "id": "F-210",
+      "source": "traceability/acceptance/EX-T03-20260918.md#4.9（attempt 1，送验对象 b8cf368d2622b59c7852ff5138d15bb6c7073abc，提交 b8cf368d）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "F-012 家族同型再现（[units] 前缀形态，先例 F-037/F-039/F-044/F-076/F-079/F-208）：EX-T03 文档提交 b8cf368d 标题『[units] execution.md v0.5：EX-T03 落位同步——卡头落位行＋§15.4 变更记录＋evaluationTimeout/appendDiagnostic 增量与两处归置登记』前缀后以名词短语（'execution.md v0.5'）开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求——同任务另两份提交（4cc49435『实现…』、3fdc7efa『留痕入库…』）动词开头合规；正文四段齐备、验证段 validate-docs PASS（20 units, 12 trace entries, 150 task files）经验收者在冻结 worktree 复跑逐字一致，纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012 家族合并处置（提交模板补动词开头示例，句式如『登记 execution.md v0.5 落位同步（…）』）；对已推送历史（b8cf368d）不追溯改写（AGENTS §6.3）。编号顺延自 F-209，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T03 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
     }
   ]
 }
