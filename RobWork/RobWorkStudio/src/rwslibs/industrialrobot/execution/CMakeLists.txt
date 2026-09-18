@@ -25,7 +25,11 @@
 #     T-1（产品目标不链 testkit）
 #
 # 本文件随 EX-T01（≙WP-08-T02，任务契约 tasks/foundation/EX-T01.json）
-# 落地，先例：project/CMakeLists.txt（PRJ-T01 同款落位形态）：
+# 落地，先例：project/CMakeLists.txt（PRJ-T01 同款落位形态）；EX-T02
+# （≙WP-08-T03，任务契约 tasks/foundation/EX-T02.json）增列产品源
+# Errors/TaskTypes/StateMachine 三翻译单元与两组业务用例（依赖红线与
+# 链接边零变更——本任务消费 core/evidence 公共头属于已登记边的合法
+# include 面，P-EX-1 处置：冻结 diff 后按影响面增量同步）：
 #   1. 骨架期 INTERFACE 占位升级为 STATIC 库（目标名 sdurws_ird_execution
 #      不变，别名 RWS::ird::execution 不变，公共 include 根不变——DTB
 #      §5.1"INTERFACE→真实库升级时目标名不变"）；
@@ -56,17 +60,20 @@
 find_package(GTest CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
-# src/Execution.cpp＝落位期锚点翻译单元（§12 EX-T01 行"src/（空起步）"；
-# STATIC 库至少一个翻译单元纪律——core/src/Core.cpp、policy/src/Policy.cpp、
-# diagnostics/src/Diagnostics.cpp、project/src/Project.cpp 同先例，零源码
-# STATIC 在 CMake 生成期即报"No SOURCES given to target"，实测）。EX-T02+
-# 按本卡 §3.5 布局增列同名任务文件：TaskTypes/StateMachine（T02）、
-# Controller/取消路径（T03）、RunRegistry/Admission（T04）、Scheduler/
-# EventBus（T05）、win32/ProcessLauncher/ChannelPair/JobScope＋worker/main
-# ＋ChannelProtocol（T06）、win32/MemProbe（T07）、Checkpoint/
-# CacheCoordinator（T08）——以单元任务卡当前正文为准。
+# src/Execution.cpp＝EX-T01 锚点翻译单元（§12 EX-T01 行"src/（空起步）"）。
+# EX-T02 按本卡 §3.5/§12 增列同名任务文件：Errors（§3.4 错误面——EX-SM-6
+# 观测点 ExecutionError.code）、TaskTypes（§4 三级身份＋§5.5 能力声明）、
+# StateMachine（§5 逐转移表＋守卫＋事件发布接缝）；锚点文件保留（文件头
+# 登记后续任务落位安排，届时或承载共享工具或拆除）。后续：Controller/
+# 取消路径（T03）、RunRegistry/Admission（T04）、Scheduler/EventBus（T05）、
+# win32/ProcessLauncher/ChannelPair/JobScope＋worker/main＋ChannelProtocol
+# （T06）、win32/MemProbe（T07）、Checkpoint/CacheCoordinator（T08）——
+# 以单元任务卡当前正文为准。
 add_library(sdurws_ird_execution STATIC
-    src/Execution.cpp)
+    src/Execution.cpp
+    src/Errors.cpp
+    src/TaskTypes.cpp
+    src/StateMachine.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 同口径复证）：逐目标显式
 # 设定，不设全局标准。target_compile_features PUBLIC 传播——execution
@@ -121,20 +128,16 @@ if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     add_library(RWS::ird::execution ALIAS sdurws_ird_execution)
 endif()
 
-# ---- 测试目标 sdurws_ird_execution_test（随 EX-T01 登记，不预建于骨架）----
-# 首批用例＝最小构建冒烟用例（契约 acceptance 3 明文允许：实现任务未落地
-# 前允许最小构建冒烟用例，业务用例随 EX-T02~T09 落地——不在骨架预建占位
-# 实现）：EX-BLD-1 前两项的源码 include 面扫描（零 Qt 含 Core〔NFR-MNT-01/
-# D-01〕、无私有头出 include〔R-2〕；另含零 Eigen/rw::math 直含与 include
-# 面 sdurws/ird/* 白名单 {core, evidence, project, execution}——三条登记
-# 编译链接边，P-EX-3 处置的 runtime/policy 表外单元零命中）＋P-EX-3 具名
-# 自证用例。运行期源码扫描与文件末尾配置期守卫互为两道防线（project 落位
-# 同款）。EX-T02+ 用例按 §11 各 EX-* 组增列（状态机/登记表/调度/缓存治理
-# ——纯逻辑＋替身）。
+# ---- 测试目标 sdurws_ird_execution_test（随 EX-T01 登记）----
+# EX-T01 首批用例＝最小构建冒烟用例（落位期红线扫描）；EX-T02 增列
+# TaskStateMachineTest.cpp（§11 EX-SUB-1/EX-SM-1~7＋强制终止矩阵＋恢复
+# 期指断＋词表 P-EX-4/P-EX-6 行为钉子——纯逻辑替身，零进程/磁盘断言，
+# 后两者归 EX-T03/T04/T06/T09 对应用例）。
 enable_testing()
 
 add_executable(sdurws_ird_execution_test
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/TaskStateMachineTest.cpp)
 
 target_compile_features(sdurws_ird_execution_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_test PROPERTIES
@@ -175,17 +178,14 @@ add_custom_command(TARGET sdurws_ird_execution_test POST_BUILD
     COMMAND_EXPAND_LISTS)
 
 # ---- 跨单元契约测试目标 sdurws_ird_execution_contract_test（随 EX-T01 登记）----
-# §3.4 测试目标分工：`_contract_test`＝跨单元契约面（与 evidence 校验器、
-# 与 project 归档端口、真实 worker 进程场景——随 EX-T04/T06/T09 展开）。
-# 落位期首批用例＝构建图边界契约（EX-BLD-1 后两项＋契约 acceptance 2 逐项
-# 具名自证）：仅 core/evidence/project 三条登记产品单元边〔R-1〕、零
-# testkit 边〔T-1〕、登记边存在性、diagnostics 边注入不落链接〔P-EX-8〕、
-# runtime/policy 注入零编译依赖〔P-EX-3——include 面与构建图面双向扫描〕。
-# 目录取 contract_test/（本卡 §3.5 布局"test/ contract_test/"；与 test/
-# 的分工＝跨单元契约用例独立成目录——io 单元同款）。EX-T04+ 契约用例
-# （RunRegistry 五元组核对、归档端口协作、真进程 worker）增列本目标。
+# §3.4 测试目标分工：`_contract_test`＝跨单元契约面。EX-T01 首批＝构建图
+# 边界契约；EX-T02 增列 IdentityVocabularyContractTest.cpp（acceptance 2：
+# 五元组值类型/九态词表归 core、execution 零重定义——§2.2 不可越界列的
+# 定义形态扫描＋core 类型链接半区实证；TaskId 为 execution 自有数据模型
+# 的正反两面核对——§4.1）。
 add_executable(sdurws_ird_execution_contract_test
-    contract_test/LinkageContractTest.cpp)
+    contract_test/LinkageContractTest.cpp
+    contract_test/IdentityVocabularyContractTest.cpp)
 
 target_compile_features(sdurws_ird_execution_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_contract_test PROPERTIES

@@ -1,0 +1,22 @@
+=== 故障探针（EX-T02 实施期，2026-09-18）===
+注入：StateMachine.cpp 逐转移表 T4 行目标态由 Canceled 改为 Failed（表数据损坏）
+预期：TaskStateMachineTable.TableAndMatrixMatchSection53_EX_SM_Matrix_TASK01 红（矩阵断言检出）
+
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+[----------] Global test environment tear-down
+[==========] 6 tests from 2 test suites ran. (2 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 6 tests, listed below:
+[  FAILED  ] TaskStateMachineTable.TableAndMatrixMatchSection53_EX_SM_Matrix_TASK01
+[  FAILED  ] TaskStateMachineCancel.QueuedCancelDirectNoCooperativeWindow_EX_SM_1
+[  FAILED  ] TaskStateMachineCancel.PreparingCancelDiscardsAssembly_EX_SM_2
+[  FAILED  ] TaskStateMachineCancel.RunningCancelCooperativePath_EX_SM_3_NFR_PERF_02
+[  FAILED  ] TaskStateMachineCancel.PausedCancelRetainsCheckpoint_EX_SM_4_ARCH_11_2_6
+[  FAILED  ] TaskStateMachineCancel.FourStateCancelExits_ARCH_11_2_6
+
+ 6 FAILED TESTS
+
+=== 回退注入（还原 T4 目标态＝Canceled）后复跑 ===
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+[==========] 31 tests from 17 test suites ran. (14 ms total)
+[  PASSED  ] 31 tests.

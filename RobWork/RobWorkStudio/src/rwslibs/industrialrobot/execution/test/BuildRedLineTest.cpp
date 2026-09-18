@@ -117,32 +117,55 @@ TEST(ExecutionBuild, SourceTreeReachable_DT_BUILD)
 }
 
 /**
- * O-24 处置自证（acceptance 4）：落位期公共头面零产出——execution 侧零
- * 词表重定义。
+ * O-24 处置自证（常驻守卫；EX-T02 起转正形态）：execution 侧零词表
+ * 重定义。
  *
- * TaskState/TaskOutcome/EvaluationMode/EngineeringStatus 四词表按 core 词表
- * 现状承接（sdurws/ird/core/Evaluation.hpp，九态词表归 core——本卡 §2.2
- * 不可越界列）；execution 侧唯一合法形态＝消费 core 公共头（随 EX-T02+
- * 经冻结后的 core 签名进入 include 面），禁止在 sdurws/ird/execution/
- * 下自行定义同名枚举。落位期该目录仅有 README.md（不参与编译的保留位
- * 说明）——头文件面非空即存在未登记的契约头，属偏差（EX-T02 才开始按
- * §3.1 组成表落头）。O-24 本体在 DTB §4 仍为登记未决态，本用例只钉住
- * "core 现状承接"的代码面口径，不构成消账（消账权在 DTB §4 登记流程/
- * 所有者）。
+ * TaskState/TaskOutcome/EvaluationMode/EngineeringStatus 四词表按 core
+ * 词表现状承接（sdurws/ird/core/Evaluation.hpp，九态词表归 core——本卡
+ * §2.2 不可越界列）。EX-T01 落位期本检查钉住"公共头面仅 README 保留位"
+ * （头未产出的过渡形态）；EX-T02 按 §3.1 组成表开始落契约头后，本检查
+ * 转正为词表重定义扫描：四词表的任何定义形态（enum class ＋词表名）在
+ * execution include 面零命中——消费一律经 core 公共头 include 行。
+ * 五元组身份类型（RunId/AttemptId/TaskIdentity）的同类扫描在
+ * _contract_test（IdentityVocabularyContractTest——跨单元契约面分工）。
+ * O-24 本体在 DTB §4 仍为登记未决态，本用例只钉住"core 现状承接"的
+ * 代码面口径，不构成消账（消账权在 DTB §4 登记流程/所有者）。
  */
 TEST(ExecutionBuild, NoVocabularyRedefinition_O24_DT_BUILD)
 {
     const auto incDir = unitRoot() / "execution" / "include" / "sdurws" / "ird"
                         / "execution";
-    std::vector<fs::path> entries;
+    // 词表定义形态模式（enum class ＋词表名）——注释散文中的词表名提及
+    // （设计追溯要求）不带 "enum class " 前缀，不误报。
+    const std::vector<std::string> kVocabularyEnums = {
+        "enum class TaskState", "enum class TaskOutcome",
+        "enum class EvaluationMode", "enum class EngineeringStatus",
+    };
+    bool sawTaskTypesHeader = false;   // 消费面锚点：词表消费头应在位
     for (const auto& item : fs::directory_iterator(incDir)) {
-        entries.push_back(fs::relative(item.path(), incDir));
+        if (!item.is_regular_file()) { continue; }
+        const auto rel = item.path().filename().string();
+        if (rel == "TaskTypes.hpp") { sawTaskTypesHeader = true; }
+        std::ifstream in(item.path(), std::ios::binary);
+        ASSERT_TRUE(in.is_open()) << "无法读取公共头: " << rel;
+        const std::string text{std::istreambuf_iterator<char>(in),
+                               std::istreambuf_iterator<char>()};
+        for (const auto& pattern : kVocabularyEnums) {
+            EXPECT_EQ(text.find(pattern), std::string::npos)
+                << "execution 禁止重定义 core 词表（O-24/§2.2 不可越界列）: "
+                << rel << " → " << pattern;
+        }
+        // 消费形态核对：TaskTypes.hpp 必须以 include 行承接 core 词表头
+        // （EX-T01 落位期"零跨单元头消费"随 EX-T02 消费任务按计划解禁
+        // ——P-EX-1 处置：按冻结后签名消费，diff 后增量同步）。
+        if (rel == "TaskTypes.hpp") {
+            EXPECT_NE(text.find("#include <sdurws/ird/core/Evaluation.hpp>"),
+                      std::string::npos)
+                << "词表承接应以 core 公共头 include 行表达";
+        }
     }
-    std::sort(entries.begin(), entries.end());
-    ASSERT_EQ(entries.size(), 1u)
-        << "落位期公共头面应仅有 README.md 保留位（契约头随 EX-T02+ 落地；"
-           "提前出现即未登记偏差，四词表承接约束随之失去检查锚点）";
-    EXPECT_EQ(entries.front().generic_string(), "README.md");
+    EXPECT_TRUE(sawTaskTypesHeader)
+        << "TaskTypes.hpp 应在位（EX-T02 §3.1 组成表产物——本扫描的锚点）";
 }
 
 /** 零 Qt（含 Core——单元卡 D-01 比 L3 上限更严）：产品面零 Q 头（NFR-MNT-01；
