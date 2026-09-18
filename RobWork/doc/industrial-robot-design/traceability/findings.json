@@ -2145,6 +2145,16 @@
       "title": "test/SchedulerEventBusTest.cpp 的 ProgressThrottledToTenHz_D07 只断言终态可见帧为 t200，无法区分『窗内帧丢弃』与『窗内帧延迟到窗外应用』两种实现（两者终态帧相同）——丢弃语义现由实现审阅承载（reportProgress 只把放行帧入 m_pendingProgress，Scheduler.cpp reportProgress 段）；契约要求（§6.1 对外发布 ≤10 Hz）的可见面已被现断言覆盖，仅『窗内帧不可见』半区缺独立断言",
       "owner": "execution 单元所有者（随 EX-T09 或后续冻结 diff 增量同步窗口顺手消账）",
       "resolution": "补一条中间时刻断言（如 t+50ms report＋tick 后 tryTask 可见帧仍为 t0）钉住『窗内帧不可见』；不阻塞合入。编号顺延自 F-212，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T05 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
+    },
+    {
+      "id": "F-214",
+      "source": "traceability/acceptance/EX-T06-20260918.md#4.9（attempt 1，送验对象 22044b7778d007289ba9eb1d9c6199808bdde200，提交 22044b77）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-18",
+      "title": "F-012 家族同型再现（先例 F-012/F-023/F-024/F-026/F-027/F-030/F-205/F-208/F-210/F-211）：EX-T06 文档提交 22044b77 标题『[WP-08-T07] EX-T06 文档同步与验证留痕（单元卡 v0.8 登记＋双模式证据）』前缀后以任务号名词『EX-T06』开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题字面要求——同任务另一提交 d19839d0『实现…』动词开头合规；正文四段齐备、验证段 validate-docs PASS（20 units, 12 trace entries, 150 task files）与两模式 113/113＋27/27 数字经验收者亲手复跑逐项一致，纯风格瑕疵不构成阻断",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 系同辖域）",
+      "resolution": "与 F-012 家族合并处置（提交模板补动词开头示例，句式如『同步 EX-T06 文档与验证留痕（…）』）；对已推送历史（22044b77）不追溯改写（AGENTS §6.3）。编号顺延自 F-213，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T06 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
     }
   ]
 }
