@@ -4,7 +4,7 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "检查点与缓存存储治理（Checkpoint/CacheCoordinator）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["EX-T04", "EV-T09", "RT-T10"],
   "requirements": ["CON-04", "OPT-06"],
   "designRefs": ["units/execution.md#8"],
