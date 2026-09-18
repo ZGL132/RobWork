@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EX-T03",
+  "masterWp": "WP-08-T04",
+  "branch": "wp08-t03",
+  "base": "b35d50f55c35143155479c039bb101da7a4eb763",
+  "date": "2026-09-18",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持＝GTest::gtest_main，testkit RecordListener 报告设施随 EX-T09 接入）",
+  "targets": [
+    {
+      "target": "sdurws_ird_execution",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EX-T03 增列两个产品翻译单元（依赖红线与链接边零变更——core/evidence/project 三条登记边内的合法 include 面，P-EX-1 处置：按各卡 v0.1 现状签名消费、冻结 diff 后按影响面增量同步；P-EX-2 处置：协议语义锚定 ARCH §4.4 明文，2 s/10 s 以 constexpr 冻结为公开常量、无运行期修改点，A9+ 评审变更按影响面增量同步）：①src/Controller.cpp＋include/sdurws/ird/execution/Controller.hpp——§3.1 Controller.hpp 组成行（CancelAck/StatusAck §10.2 形态、ICancelSignal 取消令牌最小接口〔§7.1 信号传递链查询端〕）＋TaskController 取消与终止协议编排（§7.1 逐步协议：命令通道任意线程入队＋poll 命令优先段〔取消命令插队于派发之前〕、协作窗 2 s 生效/10 s 收敛〔窗起点＝进入 Canceling 时刻〕、超时强杀序列〔terminateForce 恰一次→T13→Failed(EX-FORCE-TERMINATED)〕、运行超时监视〔EX-WKR-5 同卡死路径＋EX-WORKER-HUNG 判定诊断 cause 携带 evaluationTimeout 标记区分心跳失联，判定诊断先于终结标记的因果序〕、无 worker 任务取消直达〔T3/T6/T12＋T4 两步连发〕、requestForceTerminate 幂等 no-op/无 worker 任务取消等效、releaseResources 保留窗守卫 D-07）；显式驱动模型——poll() 由调度线程周期调用（EX-T05 接入），测试侧 ManualClock 虚拟推进断言、不 sleep（testkit §6.5/§6.6）；编排接缝 IWorkerHandle（§10.3 requestCooperativeCancel/cancelSettled/terminateForce〔KILL_ON_JOB_CLOSE 语义锚定〕/isAlive——EX-T06 supervisor 适配）与 IDispatchGate（§7.1 步 1 停止派发回调——EX-T05 适配）随头登记；ITaskController 完整接口（§10.2 requestPause/requestResume）随 EX-T05 调度器组合落位（归置偏差随单元卡 §15.4 v0.5 登记——ArchivePhase 先例）。②src/Scheduler.cpp＋include/sdurws/ird/execution/Scheduler.hpp——§3.1 Scheduler.hpp 组成行的 DrainPolicy（§10.1 冻结值域 CancelQueuedAndWait/KeepQueuedTerminate）＋DrainCoordinator 排空编排（§7.5 关闭二选执行侧：等待排空〔排队取消/保留两策略＋在途等待自然终态＋drained() 无阻塞快照查询＝无在途运行判定〕与协作取消〔requestCancelAll 批量入口——PM-03 协作取消分支〕两路径；超阈值 abandonAllForced 兜底〔§7.5'L5 关闭控制器强制 abandonAll(ForceTerminated)'的执行侧承载——自动触发经 poll、恰一次；手动入口暴露 L5；排队任务不在兜底处置面——KeepQueued 保留语义〕；abandonThreshold 默认 15 s＝10 s 协议窗＋5 s 余量为实现参数、0＝禁用自动兜底）。既有头增量：TaskCapability 增 evaluationTimeout 字段（§11 EX-WKR-5 行'能力声明字段'明文的承载位——nullopt＝不启用监视；偏差随 §15.4 v0.5 登记）；TaskStateMachine 增 appendDiagnostic（§4.2 diagnostics 行'追加'可变性入口——编排层写判定类诊断）。"
+    },
+    {
+      "target": "sdurws_ird_execution_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 45/45）",
+      "notes": "EX-T01/T02 既有 31 用例保留全绿（含 static_assert 协议常量钉子——EX-T03 探针 1 实证其在编译期拦截常量篡改）。EX-T03 新增 14 用例（CancelProtocolTest.cpp），acceptance 逐条对应：①EX-SM-3（acceptance 1）＝RunningCancelEntersCancelingWithin2sAndSettlesWithin10s_EX_SM_3_NFR_PERF_02（t0+1.9 s poll 内入 Canceling＋stopDispatch 派发停止回调＋CancelRequest 恰一次；信号置位后 8 s 收敛→Canceled，窗内不提前转移；事件序 Canceling→Canceled；全程诊断空 UX-03——ManualClock 虚拟推进、不 sleep）；②EX-SM-3 超时臂（acceptance 2）＝CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2（永不收敛→窗内 9.9 s 不强杀→窗满强杀→Failed＋termination=ForceTerminated＋EX-FORCE-TERMINATED；终态后推进 10 h 状态稳定、不重复强杀——无永久等待自证）；③EX-SM-4（acceptance 1）＝PausedCancelRetainsCheckpointFilesOnDisk_EX_SM_4_ARCH_11_2_6（TempDir 布置检查点批次文件＋manifest→取消直达 Canceled→两文件仍在且逐字节一致——磁盘断言可续跑；编排零磁盘动作；诊断空）；④EX-SM-1（acceptance 4）＝QueuedCancelDirectIdempotentZeroDiagnostics_EX_SM_1_UX03（直达 Canceled 不经协作窗；终态重复取消 accepted=false＋EX-INVALID-STATE 反馈不入任务诊断；诊断空）；⑤EX-WKR-4（acceptance 2）＝RequestForceTerminateKillsProcessTreeAndMarksExplicitly_EX_WKR_4（terminateForce 恰一次＋cause=ForceTerminated＋句柄关闭＋存活探测翻转＋stopDispatch；Failed＋ForceTerminated＋EX-FORCE-TERMINATED＋无 EX-WORKER-CRASHED；终态重复强杀幂等 no-op）＋ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4（强杀 EX-FORCE-TERMINATED/ForceTerminated 与普通失败 T9 Failed/无强杀码两码互斥——'显式区别'的机器判读面）；⑥EX-WKR-5（acceptance 2）＝RunTimeoutTakesHungPathWithTimeoutDistinguishedDiag_EX_WKR_5（声明 5 s 时限：4.9 s 不杀→5 s 强杀序列；EX-WORKER-HUNG 判定诊断 cause 携带 evaluationTimeout 标记区分心跳失联＋因果序先于 EX-FORCE-TERMINATED；对照臂：未声明时限推进 1 h 不误杀）；⑦DrainPolicy（acceptance 3）＝ShutdownCancelQueuedAndWaitDrainsInflightUntouched_acceptance3（排队取消直达零诊断＋在途不强杀＋自然终态后 drained）＋ShutdownKeepQueuedTerminateRetainsQueued_acceptance3（排队保留不阻塞 drained）＋RequestCancelAllCooperativeShutdownPath_acceptance3（关闭态批量协作取消：排队直达＋在途走完整协议窗）＋DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3（阈值前不兜底→阈值到自动 abandonAll→下一拍强杀序列→drained→恰一次）＋ManualAbandonAllForcedWhenAutoDisabled_acceptance3（阈值 0 禁用自动兜底＋L5 手动入口）；⑧ICancelSignal 接缝＝SignalObservedAtCooperationPoint_ICancelSignal（无请求不收敛的协议次序钉子＋置位不回退＋信号＋边界双条件收敛）；⑨§10.2 完整面＝ReleaseResourcesGuardsRetentionWindow_S102_D07（未过窗/非终态/未知任务三重 InvalidState 违约＋过窗释放后查询转空）。"
+    },
+    {
+      "target": "sdurws_ird_execution_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 9/9）",
+      "notes": "既有 9 用例保留全绿（构建图边界契约＋词表契约——本任务零新增跨单元消费面：新增产品源仅 include core 公共头与 execution 自有头，P-EX-1 消费状态不变）。"
+    }
+  ],
+  "runs": [
+    {
+      "mode": "integration（仓库根 build/ 构建树，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已 grep 确认——AGENTS.md §4.1）",
+      "configure": "增量（CMakeLists 变更自动重配置）＋全量 Release 构建 exit 0、零 error（integration-build.log——grep ': error' 计数 0）",
+      "tests": "sdurws_ird_execution_test 45/45 PASSED＋sdurws_ird_execution_contract_test 9/9 PASSED（gtest XML＝sdurws_ird_execution_test-integration.xml tests=45 failures=0、sdurws_ird_execution_contract_test-integration.xml tests=9 failures=0）"
+    },
+    {
+      "mode": "smoke（独立冒烟 build-smoke-wp08-t03/，-DCMAKE_TOOLCHAIN_FILE=<仓库根>/vcpkg/scripts/buildsystems/vcpkg.cmake 绝对路径——CORE-T01 验收 G-2 教训）",
+      "configure": "cmake -S industrialrobot -B build-smoke-wp08-t03 exit 0（smoke-configure.log）；cmake --build --config Release exit 0 零 error（smoke-build.log——'error' 命中均为 Errors.cpp/ErrorsTest.cpp 文件名编译行误报）",
+      "tests": "sdurws_ird_execution_test 45/45 PASSED＋sdurws_ird_execution_contract_test 9/9 PASSED（gtest XML＝sdurws_ird_execution_test-smoke.xml tests=45 failures=0、sdurws_ird_execution_contract_test-smoke.xml tests=9 failures=0）"
+    },
+    {
+      "mode": "门禁与自查",
+      "validate-task": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile tasks/foundation/EX-T03.json → PASS（1 tasks）",
+      "ird_gates": "cmake --build build --config Release --target ird_gates（gates-ird-gates-target.log）——命中集合与 base 留痕（builds/wp08-t02/gates-ird-gates-target.log）逐项一致（IRD-GATE 行排序 diff 为空）：17 项全部为其他单元已登记例外（diagnostics/evidence/io/policy/project/runtime 各 test 目标直链 testkit 形态、io 第三方 libzip/expat、testdata_lint、project R4 字面量），零 execution 命中＝零新增命中（gate 目标因既有登记例外按设计退出非零，与 base 行为一致）",
+      "verify": "契约 verify 命令 cmake --build build --config Release --target sdurws_ird_execution_test exit 0（verify-target-build.log）",
+      "fault-probe": "测试真实失败能力探针（test-fault-probe.log）：①注入 kCancelCooperativeWindow 10000→1200000——static_assert 协议常量钉子在编译期拦截（构建失败＝检出，2 s/10 s 上游值不可篡改实证）；②注入收敛窗判定恒不满足（>= 1h）——CancelWindowTimeoutForceKillsNoPermanentWait 与 ForceKillDiagnosticsDifferFromOrdinaryFailure 两项运行期 FAILED 精确检出；还原后复跑 45/45 全绿"
+    }
+  ],
+  "acceptanceCoverage": [
+    {
+      "item": 1,
+      "text": "EX-SM-3/4 全绿：Running 取消 2 s 内入 Canceling＋停止派发批次、批次 10 s 收敛→Canceled（NFR-PERF-02 协议值 2 s/10 s 为上游需求值不改动；时序经 ManualClock 可注入时钟虚拟推进断言、不 sleep——testkit §6.5 同步纪律）；暂停中取消保检查点（EX-SM-4——检查点文件/manifest 仍在、磁盘断言，可续跑）",
+      "evidence": "RunningCancelEntersCancelingWithin2sAndSettlesWithin10s_EX_SM_3_NFR_PERF_02（1.9 s 入 Canceling＋gate.stopped＋CancelRequest 恰一次＋9.9 s 收敛 Canceled；kCancelAcceptWindow/kCancelCooperativeWindow static_assert 钉上游值＋探针 1 实证编译期拦截）＋PausedCancelRetainsCheckpointFilesOnDisk_EX_SM_4_ARCH_11_2_6（TempDir 检查点批次＋manifest 取消前后逐字节一致；直达 Canceled）；两模式 45/45 XML"
+    },
+    {
+      "item": 2,
+      "text": "EX-WKR-4/5 通过：强杀编排就位（Job 进程树终止——KILL_ON_JOB_CLOSE；EX-FORCE-TERMINATED 显式区别于普通失败）；运行超时走同卡死路径并以诊断区分 timeout（§7.1）；取消协议无永久等待路径（10 s 收敛＋强杀兜底——自审「无永久等待」项）",
+      "evidence": "RequestForceTerminateKillsProcessTreeAndMarksExplicitly_EX_WKR_4（terminateForce 恰一次＋句柄关闭＋存活翻转＋EX-FORCE-TERMINATED——KILL_ON_JOB_CLOSE 语义锚定于 IWorkerHandle::terminateForce 契约注，真进程兑现归 EX-T06/T09）＋ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4（两码互斥）＋RunTimeoutTakesHungPathWithTimeoutDistinguishedDiag_EX_WKR_5（evaluationTimeout 声明→同卡死路径；EX-WORKER-HUNG cause 携带 evaluationTimeout 标记＋因果序；未声明对照不误杀）＋CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2（窗满强杀＋终态推进 10 h 稳定）＋DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3（超阈值 abandonAll 兜底恰一次）"
+    },
+    {
+      "item": 3,
+      "text": "DrainPolicy 排空语义实现就位（§7.5 关闭二选的执行侧：等待排空与协作取消两路径——其行为用例 EX-ARC-4「无永久等待＋超阈值 abandon 兜底」归 §11 契约测试套件 EX-T09 承载）",
+      "evidence": "DrainPolicy 枚举（§10.1 冻结值域）＋DrainCoordinator（Scheduler.hpp/cpp）实现本体：ShutdownCancelQueuedAndWaitDrainsInflightUntouched_acceptance3（等待排空：排队取消＋在途不强杀＋drained 判定）＋ShutdownKeepQueuedTerminateRetainsQueued_acceptance3（保留变体）＋RequestCancelAllCooperativeShutdownPath_acceptance3（协作取消路径批量入口）＋DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3＋ManualAbandonAllForcedWhenAutoDisabled_acceptance3（兜底执行侧本体——EX-ARC-4 全场景行为用例按契约归 EX-T09，本任务交付语义与基础自证）"
+    },
+    {
+      "item": 4,
+      "text": "正常用户取消零错误诊断（UX-03——EX-SM-1~3 观测点诊断空断言：取消不是失败，不产生错误级诊断）；P-EX-2 处置：协议语义锚定 ARCH §4.4（v0.11 Draft 待评审），评审 A9+ 变更按影响面增量同步（影响面集中 §7）；P-EX-1 处置：消费契约（core 词表/诊断契约）v0.1 Draft 未冻结，冻结 diff 后按影响面增量同步",
+      "evidence": "QueuedCancelDirectIdempotentZeroDiagnostics_EX_SM_1_UX03＋EX-SM-3/4 用例内 noDiagnostics 全程空断言＋取消应答 feedback 空断言（终态拒绝反馈仅应答携带不入任务诊断）；P-EX-2 处置＝2 s/10 s 以 constexpr 公开常量冻结（static_assert 钉值＋探针实证）、协议语义逐条锚定 ARCH §4.4 明文（Controller.hpp 文件头逐条对照）、A9+ 变更按影响面增量同步承诺登记于单元卡 §15.4 v0.5；P-EX-1 处置＝新增产品源仅消费 core 公共头（Evaluation/DiagData/Identity 词表现状签名），契约测试 9/9 全绿（消费面零扩展——NoRedefinition 扫描常驻），冻结 diff 后增量同步承诺随 §15.4 v0.5 登记；两陷阱均为'按处置约束实现'的形态，登记语义消账权仍在所有者"
+    }
+  ]
+}

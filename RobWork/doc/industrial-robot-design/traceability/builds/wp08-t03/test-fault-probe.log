@@ -1,0 +1,323 @@
+=== 故障探针（EX-T03）：验证测试真实失败能力——§4.2 留痕纪律 ===
+
+[探针 1] 注入：Controller.hpp kCancelCooperativeWindow 10000→1200000（收敛窗永不满足）
+--- 预期：取消超时强杀用例 FAILED（EX-SM-3 超时臂红）；还原后复跑全绿 ---
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  Controller.cpp
+  Scheduler.cpp
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_execution_test
+  CancelProtocolTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CancelProtocolTest.cpp(317,56): error C2338: static_assert failed: '10 s 协作收敛窗为 NFR-PERF-02 上游需求值，不得改动' [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+PROBE1_EXIT=1 (非零=按预期检出)
+0
+
+[探针 1 结论] 协议常量钉子 static_assert 于编译期拦截注入（构建失败＝检出）——2 s/10 s 上游值不可篡改被实证
+
+[探针 2] 注入：Controller.cpp 协作窗判定 'nowTp - *entry.cancelEnteredAt >= kCancelCooperativeWindow' → 恒不满足（改为 >= 1h 量级常量）
+--- 预期：EX-SM-3 超时臂＋直接强杀用例运行期 FAILED；还原后复跑全绿 ---
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  Controller.cpp
+  Scheduler.cpp
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_execution_test
+  CancelProtocolTest.cpp
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = CancelProtocol.*:DrainPolicyTest.*
+[==========] Running 12 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from CancelProtocol
+[ RUN      ] CancelProtocol.RunningCancelEntersCancelingWithin2sAndSettlesWithin10s_EX_SM_3_NFR_PERF_02
+[       OK ] CancelProtocol.RunningCancelEntersCancelingWithin2sAndSettlesWithin10s_EX_SM_3_NFR_PERF_02 (1 ms)
+[ RUN      ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CancelProtocolTest.cpp(423): error: Expected equality of these values:
+  controller.tryState(id)
+    Which is: (4-byte object <04-00 00-00>)
+  TaskState::Failed
+    Which is: 4-byte object <07-00 00-00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CancelProtocolTest.cpp(424): error: Expected equality of these values:
+  worker.terminateCalls()
+    Which is: 0
+  1
+进程树终止恰一次（KILL_ON_JOB_CLOSE 编排面）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CancelProtocolTest.cpp(425): error: Expected equality of these values:
+  worker.lastCause()
+    Which is: 4-byte object <B5-02 00-00>
+  TerminationCause::ForceTerminated
+    Which is: 4-byte object <04-00 00-00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CancelProtocolTest.cpp(429): error: Expected equality of these values:
+  m.record().termination
+    Which is: (nullopt)
+  TerminationCause::ForceTerminated
+    Which is: 4-byte object <04-00 00-00>
+T13 显式标记：强杀不伪装普通失败（§5.3 T13）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CancelProtocolTest.cpp(431): error: Value of: hasDiagCode(m, "EX-FORCE-TERMINATED")
+  Actual: false
+Expected: true
+取消超时强杀须携带 EX-FORCE-TERMINATED（EX-WKR-4 观测点'诊断标记'）
+
+[  FAILED  ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2 (0 ms)
+[ RUN      ] CancelProtocol.PausedCancelRetainsCheckpointFilesOnDisk_EX_SM_4_ARCH_11_2_6
+[       OK ] CancelProtocol.PausedCancelRetainsCheckpointFilesOnDisk_EX_SM_4_ARCH_11_2_6 (3 ms)
+[ RUN      ] CancelProtocol.QueuedCancelDirectIdempotentZeroDiagnostics_EX_SM_1_UX03
+[       OK ] CancelProtocol.QueuedCancelDirectIdempotentZeroDiagnostics_EX_SM_1_UX03 (0 ms)
+[ RUN      ] CancelProtocol.RequestForceTerminateKillsProcessTreeAndMarksExplicitly_EX_WKR_4
+[       OK ] CancelProtocol.RequestForceTerminateKillsProcessTreeAndMarksExplicitly_EX_WKR_4 (0 ms)
+[ RUN      ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CancelProtocolTest.cpp(653): error: Expected equality of these values:
+  m.record().termination
+    Which is: (nullopt)
+  TerminationCause::ForceTerminated
+    Which is: 4-byte object <04-00 00-00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CancelProtocolTest.cpp(654): error: Value of: hasDiagCode(m, "EX-FORCE-TERMINATED")
+  Actual: false
+Expected: true
+
+[  FAILED  ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4 (0 ms)
+[ RUN      ] CancelProtocol.RunTimeoutTakesHungPathWithTimeoutDistinguishedDiag_EX_WKR_5
+[       OK ] CancelProtocol.RunTimeoutTakesHungPathWithTimeoutDistinguishedDiag_EX_WKR_5 (0 ms)
+[----------] 7 tests from CancelProtocol (6 ms total)
+
+[----------] 5 tests from DrainPolicyTest
+[ RUN      ] DrainPolicyTest.ShutdownCancelQueuedAndWaitDrainsInflightUntouched_acceptance3
+[       OK ] DrainPolicyTest.ShutdownCancelQueuedAndWaitDrainsInflightUntouched_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.ShutdownKeepQueuedTerminateRetainsQueued_acceptance3
+[       OK ] DrainPolicyTest.ShutdownKeepQueuedTerminateRetainsQueued_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.RequestCancelAllCooperativeShutdownPath_acceptance3
+[       OK ] DrainPolicyTest.RequestCancelAllCooperativeShutdownPath_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3
+[       OK ] DrainPolicyTest.DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3 (0 ms)
+[ RUN      ] DrainPolicyTest.ManualAbandonAllForcedWhenAutoDisabled_acceptance3
+[       OK ] DrainPolicyTest.ManualAbandonAllForcedWhenAutoDisabled_acceptance3 (0 ms)
+[----------] 5 tests from DrainPolicyTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 2 test suites ran. (6 ms total)
+[  PASSED  ] 10 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2
+[  FAILED  ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4
+
+ 2 FAILED TESTS
+PROBE2_EXIT=1 (非零=按预期检出)
+[  FAILED  ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2 (0 ms)
+[  FAILED  ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4 (0 ms)
+[  FAILED  ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2
+[  FAILED  ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4
+
+[探针 2 结论] 收敛窗判定损坏 → 2 项窗语义用例精确 FAILED（超时强杀臂＋强杀/普通失败区分）——运行期检出实证
+
+[还原复跑] 损坏还原后全量复跑：
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  Controller.cpp
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_execution_test
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 45 tests from 21 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from ExecutionBuild
+[ RUN      ] ExecutionBuild.SourceTreeReachable_DT_BUILD
+[       OK ] ExecutionBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] ExecutionBuild.NoVocabularyRedefinition_O24_DT_BUILD
+[       OK ] ExecutionBuild.NoVocabularyRedefinition_O24_DT_BUILD (0 ms)
+[ RUN      ] ExecutionBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] ExecutionBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (2 ms)
+[ RUN      ] ExecutionBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] ExecutionBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (2 ms)
+[ RUN      ] ExecutionBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] ExecutionBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (3 ms)
+[ RUN      ] ExecutionBuild.RuntimePolicyZeroCompileFace_DT_BUILD_PEX3
+[       OK ] ExecutionBuild.RuntimePolicyZeroCompileFace_DT_BUILD_PEX3 (3 ms)
+[ RUN      ] ExecutionBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] ExecutionBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 7 tests from ExecutionBuild (13 ms total)
+
+[----------] 2 tests from TaskIdentityConcurrency
+[ RUN      ] TaskIdentityConcurrency.TaskIdGenerateUniqueUnderConcurrency_EX_SUB_1_TASK03
+[       OK ] TaskIdentityConcurrency.TaskIdGenerateUniqueUnderConcurrency_EX_SUB_1_TASK03 (4 ms)
+[ RUN      ] TaskIdentityConcurrency.RunIdCoreGenerateUniqueUnderConcurrency_EX_SUB_1
+[       OK ] TaskIdentityConcurrency.RunIdCoreGenerateUniqueUnderConcurrency_EX_SUB_1 (1 ms)
+[----------] 2 tests from TaskIdentityConcurrency (5 ms total)
+
+[----------] 1 test from TaskIdentityProtocol
+[ RUN      ] TaskIdentityProtocol.BindRunSetsAttemptOneAndGuards_EX_SUB_1_PEX6
+[       OK ] TaskIdentityProtocol.BindRunSetsAttemptOneAndGuards_EX_SUB_1_PEX6 (0 ms)
+[----------] 1 test from TaskIdentityProtocol (0 ms total)
+
+[----------] 1 test from TaskStateMachineTable
+[ RUN      ] TaskStateMachineTable.TableAndMatrixMatchSection53_EX_SM_Matrix_TASK01
+[       OK ] TaskStateMachineTable.TableAndMatrixMatchSection53_EX_SM_Matrix_TASK01 (0 ms)
+[----------] 1 test from TaskStateMachineTable (0 ms total)
+
+[----------] 5 tests from TaskStateMachineCancel
+[ RUN      ] TaskStateMachineCancel.QueuedCancelDirectNoCooperativeWindow_EX_SM_1
+[       OK ] TaskStateMachineCancel.QueuedCancelDirectNoCooperativeWindow_EX_SM_1 (0 ms)
+[ RUN      ] TaskStateMachineCancel.PreparingCancelDiscardsAssembly_EX_SM_2
+[       OK ] TaskStateMachineCancel.PreparingCancelDiscardsAssembly_EX_SM_2 (0 ms)
+[ RUN      ] TaskStateMachineCancel.RunningCancelCooperativePath_EX_SM_3_NFR_PERF_02
+[       OK ] TaskStateMachineCancel.RunningCancelCooperativePath_EX_SM_3_NFR_PERF_02 (0 ms)
+[ RUN      ] TaskStateMachineCancel.PausedCancelRetainsCheckpoint_EX_SM_4_ARCH_11_2_6
+[       OK ] TaskStateMachineCancel.PausedCancelRetainsCheckpoint_EX_SM_4_ARCH_11_2_6 (0 ms)
+[ RUN      ] TaskStateMachineCancel.FourStateCancelExits_ARCH_11_2_6
+[       OK ] TaskStateMachineCancel.FourStateCancelExits_ARCH_11_2_6 (0 ms)
+[----------] 5 tests from TaskStateMachineCancel (0 ms total)
+
+[----------] 1 test from TaskStateMachineResume
+[ RUN      ] TaskStateMachineResume.ResumeCreatesNewAttempt_EX_SM_5_AT35
+[       OK ] TaskStateMachineResume.ResumeCreatesNewAttempt_EX_SM_5_AT35 (0 ms)
+[----------] 1 test from TaskStateMachineResume (0 ms total)
+
+[----------] 2 tests from TaskStateMachineIllegal
+[ RUN      ] TaskStateMachineIllegal.MatrixOutsideRequestsRejected_EX_SM_6_TASK01
+[       OK ] TaskStateMachineIllegal.MatrixOutsideRequestsRejected_EX_SM_6_TASK01 (0 ms)
+[ RUN      ] TaskStateMachineIllegal.FactoryPreconditions_EX_SM_6_PEX6
+[       OK ] TaskStateMachineIllegal.FactoryPreconditions_EX_SM_6_PEX6 (0 ms)
+[----------] 2 tests from TaskStateMachineIllegal (0 ms total)
+
+[----------] 1 test from TaskStateMachineCapability
+[ RUN      ] TaskStateMachineCapability.PauseUnsupportedExplicitFeedback_EX_SM_7_TASK01
+[       OK ] TaskStateMachineCapability.PauseUnsupportedExplicitFeedback_EX_SM_7_TASK01 (0 ms)
+[----------] 1 test from TaskStateMachineCapability (0 ms total)
+
+[----------] 2 tests from TaskStateMachineForceTerminate
+[ RUN      ] TaskStateMachineForceTerminate.ForceKillMarksExplicitly_T13_EX_WKR_4
+[       OK ] TaskStateMachineForceTerminate.ForceKillMarksExplicitly_T13_EX_WKR_4 (0 ms)
+[ RUN      ] TaskStateMachineForceTerminate.ForceTerminateCostDoesNotAffectProtocol_acceptance3
+[       OK ] TaskStateMachineForceTerminate.ForceTerminateCostDoesNotAffectProtocol_acceptance3 (0 ms)
+[----------] 2 tests from TaskStateMachineForceTerminate (0 ms total)
+
+[----------] 1 test from TaskStateMachineRecovery
+[ RUN      ] TaskStateMachineRecovery.RecoveryScanAssignsInterrupted_T14_NFR_REL_03
+[       OK ] TaskStateMachineRecovery.RecoveryScanAssignsInterrupted_T14_NFR_REL_03 (0 ms)
+[----------] 1 test from TaskStateMachineRecovery (0 ms total)
+
+[----------] 1 test from TaskStateMachineEvents
+[ RUN      ] TaskStateMachineEvents.SameTaskEventFifo_EX_SUB_1
+[       OK ] TaskStateMachineEvents.SameTaskEventFifo_EX_SUB_1 (0 ms)
+[----------] 1 test from TaskStateMachineEvents (0 ms total)
+
+[----------] 2 tests from TaskVocabulary
+[ RUN      ] TaskVocabulary.NineStatesNoAddition_PEX4_TASK01
+[       OK ] TaskVocabulary.NineStatesNoAddition_PEX4_TASK01 (0 ms)
+[ RUN      ] TaskVocabulary.QueuedRecordHasNoDiskIdentity_PEX6
+[       OK ] TaskVocabulary.QueuedRecordHasNoDiskIdentity_PEX6 (0 ms)
+[----------] 2 tests from TaskVocabulary (0 ms total)
+
+[----------] 1 test from TaskOutcomeMapping
+[ RUN      ] TaskOutcomeMapping.TerminalOutcomeFrozenTable_S56
+[       OK ] TaskOutcomeMapping.TerminalOutcomeFrozenTable_S56 (0 ms)
+[----------] 1 test from TaskOutcomeMapping (0 ms total)
+
+[----------] 1 test from TaskCapabilityRegistry
+[ RUN      ] TaskCapabilityRegistry.DeclareLookupMinimalFallback_PEX7_S55
+[       OK ] TaskCapabilityRegistry.DeclareLookupMinimalFallback_PEX7_S55 (0 ms)
+[----------] 1 test from TaskCapabilityRegistry (0 ms total)
+
+[----------] 1 test from TaskIdDiscipline
+[ RUN      ] TaskIdDiscipline.ParseFormatRoundTripStrict
+[       OK ] TaskIdDiscipline.ParseFormatRoundTripStrict (0 ms)
+[----------] 1 test from TaskIdDiscipline (0 ms total)
+
+[----------] 1 test from ProgressReportDiscipline
+[ RUN      ] ProgressReportDiscipline.FactoryBoundaries
+[       OK ] ProgressReportDiscipline.FactoryBoundaries (0 ms)
+[----------] 1 test from ProgressReportDiscipline (0 ms total)
+
+[----------] 1 test from ExecutionErrorFace
+[ RUN      ] ExecutionErrorFace.TokensAndExceptionCarryCode
+[       OK ] ExecutionErrorFace.TokensAndExceptionCarryCode (0 ms)
+[----------] 1 test from ExecutionErrorFace (0 ms total)
+
+[----------] 7 tests from CancelProtocol
+[ RUN      ] CancelProtocol.RunningCancelEntersCancelingWithin2sAndSettlesWithin10s_EX_SM_3_NFR_PERF_02
+[       OK ] CancelProtocol.RunningCancelEntersCancelingWithin2sAndSettlesWithin10s_EX_SM_3_NFR_PERF_02 (0 ms)
+[ RUN      ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2
+[       OK ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2 (0 ms)
+[ RUN      ] CancelProtocol.PausedCancelRetainsCheckpointFilesOnDisk_EX_SM_4_ARCH_11_2_6
+[       OK ] CancelProtocol.PausedCancelRetainsCheckpointFilesOnDisk_EX_SM_4_ARCH_11_2_6 (3 ms)
+[ RUN      ] CancelProtocol.QueuedCancelDirectIdempotentZeroDiagnostics_EX_SM_1_UX03
+[       OK ] CancelProtocol.QueuedCancelDirectIdempotentZeroDiagnostics_EX_SM_1_UX03 (0 ms)
+[ RUN      ] CancelProtocol.RequestForceTerminateKillsProcessTreeAndMarksExplicitly_EX_WKR_4
+[       OK ] CancelProtocol.RequestForceTerminateKillsProcessTreeAndMarksExplicitly_EX_WKR_4 (0 ms)
+[ RUN      ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4
+[       OK ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4 (0 ms)
+[ RUN      ] CancelProtocol.RunTimeoutTakesHungPathWithTimeoutDistinguishedDiag_EX_WKR_5
+[       OK ] CancelProtocol.RunTimeoutTakesHungPathWithTimeoutDistinguishedDiag_EX_WKR_5 (0 ms)
+[----------] 7 tests from CancelProtocol (3 ms total)
+
+[----------] 5 tests from DrainPolicyTest
+[ RUN      ] DrainPolicyTest.ShutdownCancelQueuedAndWaitDrainsInflightUntouched_acceptance3
+[       OK ] DrainPolicyTest.ShutdownCancelQueuedAndWaitDrainsInflightUntouched_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.ShutdownKeepQueuedTerminateRetainsQueued_acceptance3
+[       OK ] DrainPolicyTest.ShutdownKeepQueuedTerminateRetainsQueued_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.RequestCancelAllCooperativeShutdownPath_acceptance3
+[       OK ] DrainPolicyTest.RequestCancelAllCooperativeShutdownPath_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3
+[       OK ] DrainPolicyTest.DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3 (0 ms)
+[ RUN      ] DrainPolicyTest.ManualAbandonAllForcedWhenAutoDisabled_acceptance3
+[       OK ] DrainPolicyTest.ManualAbandonAllForcedWhenAutoDisabled_acceptance3 (0 ms)
+[----------] 5 tests from DrainPolicyTest (0 ms total)
+
+[----------] 1 test from CancelSignalTest
+[ RUN      ] CancelSignalTest.SignalObservedAtCooperationPoint_ICancelSignal
+[       OK ] CancelSignalTest.SignalObservedAtCooperationPoint_ICancelSignal (0 ms)
+[----------] 1 test from CancelSignalTest (0 ms total)
+
+[----------] 1 test from TerminalRetentionTest
+[ RUN      ] TerminalRetentionTest.ReleaseResourcesGuardsRetentionWindow_S102_D07
+[       OK ] TerminalRetentionTest.ReleaseResourcesGuardsRetentionWindow_S102_D07 (0 ms)
+[----------] 1 test from TerminalRetentionTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 45 tests from 21 test suites ran. (23 ms total)
+[  PASSED  ] 45 tests.
+RESTORE_RERUN_EXIT=0
