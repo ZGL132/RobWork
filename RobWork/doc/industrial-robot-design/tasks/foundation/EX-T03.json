@@ -4,7 +4,7 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "取消与终止协议（协作窗/强杀/DrainPolicy）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["EX-T02"],
   "requirements": ["NFR-PERF-02", "UX-03"],
   "designRefs": ["units/execution.md#7", "ARCHITECTURE.md#4.4"],
