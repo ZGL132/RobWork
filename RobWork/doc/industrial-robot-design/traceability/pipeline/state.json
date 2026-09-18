@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 206,
+  "tickCount": 207,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-18T21:53:05+08:00",
+    "updatedAt": "2026-09-19T01:26:25+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1205,6 +1205,17 @@
       "acceptanceRecord": "traceability/acceptance/EX-T06-20260918.md",
       "mergedAt": "2026-09-18",
       "failReason": "验收 attempt1 即 pass（非验收失败）；编排者收尾时 §4.7② 首次合并误落于被实施工作树检出的 wp08-t06（未推送），当即重置回冻结尖端 22044b77 并切回 redesign-main 重做，零残留（tick#206 报告有实录）"
+    },
+    {
+      "task": "EX-T07",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "c560d6b3ee1c50dbb4a0034200911b9febaffce3",
+        "b2b384b590bd9f4138a682570005103a8882fe60"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T07-20260919.md",
+      "mergedAt": "2026-09-19"
     }
   ],
   "policy": {
@@ -1230,11 +1241,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "EX-T07",
-      "contractPath": "tasks/foundation/EX-T07.json",
-      "branch": "wp08-t07"
-    },
     {
       "taskId": "EX-T08",
       "contractPath": "tasks/foundation/EX-T08.json",
@@ -1264,5 +1270,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "8f3d2646-01a2-4142-9ac5-091bd16aa801"
+  "tickToken": "40baffc8-9292-4a9e-8eb3-2d9b5e79c770"
 }

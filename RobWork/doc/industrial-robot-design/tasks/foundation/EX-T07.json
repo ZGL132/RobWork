@@ -4,10 +4,17 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "ResourceController 基础节流（MemProbe/汇总/先节流后诊断）",
-  "status": "ready",
-  "dependsOn": ["EX-T06"],
-  "requirements": ["NFR-PERF-04"],
-  "designRefs": ["units/execution.md#6.1", "units/execution.md#6.6"],
+  "status": "done",
+  "dependsOn": [
+    "EX-T06"
+  ],
+  "requirements": [
+    "NFR-PERF-04"
+  ],
+  "designRefs": [
+    "units/execution.md#6.1",
+    "units/execution.md#6.6"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
     "RobWork/doc/industrial-robot-design/units/execution.md",
@@ -17,11 +24,20 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_execution_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_execution_test"
+  ],
   "branch": "wp08-t07",
   "interUnit": true,
-  "knownPitfalls": ["P-EX-1", "P-EX-2"],
+  "knownPitfalls": [
+    "P-EX-1",
+    "P-EX-2"
+  ],
   "acceptance": [
     "EX-RES-2 全绿：内存采样推至阈值先节流（停派发/降并行）→仍超限→资源不足诊断，已排队/运行任务不失败（NFR-PERF-04 上游值 70% 不改动；观测点＝派发暂停＋诊断）；三段治理就位——65% 节流阈值→停派发/降并行→70% 诊断（§6.1/D-05：65% 为实现参数非需求阈值，登记于 §15.1 不冒充需求值）",
     "内存汇总覆盖主进程＋全部工作进程（§6.6 MemProbe）；资源不足诊断携带比较型三要素（实际值/上限/单位——core DiagnosticRecord 比较型字段契约，经 §3.3 注入 sink）",
