@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EX-T02",
+  "masterWp": "WP-08-T03",
+  "branch": "wp08-t02",
+  "base": "d11f20a25152cbec7937f736d3d3a7b6075aa143",
+  "date": "2026-09-18",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持＝GTest::gtest_main，testkit RecordListener 报告设施随 EX-T09 接入）",
+  "targets": [
+    {
+      "target": "sdurws_ird_execution",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EX-T02 增列三个产品翻译单元（依赖红线与链接边零变更——core/evidence/project 三条登记边内的合法 include 面，P-EX-1 处置：按各卡 v0.1 现状签名消费、冻结 diff 后按影响面增量同步）：①src/Errors.cpp＋include/sdurws/ird/execution/Errors.hpp——§3.4 错误面（ExecutionErrorCode 19 值＋稳定 token toToken＋ExecutionError；ContextClosed/InvalidState 按 v0.2 对齐说明为 fail-fast token 不发稳定码）；②src/TaskTypes.cpp＋TaskTypes.hpp——§4 三级身份（TaskId 强类型 tag 'tsk-' 按 core §4.1 同纪律单元内自持实现、TaskSubmission/TaskRecord/TaskSnapshot/ProgressReport/TerminationCause/ArchivePhase/CheckpointId）、§5.5 能力声明承载（TaskCapability＋EvaluatorRuntimeCapabilities 注册表扩展声明——P-EX-7 处置：evidence EvaluatorDescriptor 字段面不私改）、§5.6 终态映射 terminalOutcome/isTerminalTaskState（core.md §10.3 交接承接）；③src/StateMachine.cpp＋StateMachine.hpp——§5.2/§5.3 九态逐转移表（T1~T14＋Running→Canceling 共 15 行、单一事实源驱动矩阵查询与查表推进）＋守卫（矩阵外 InvalidState fail-fast、T10 能力门控 EX-CAPABILITY-UNSUPPORTED 结构化反馈、T3 重复取消幂等 ack）＋事件发布接缝 ITaskEventSink（TaskStatusChanged 每次转移、同任务 FIFO 由单写者保证）＋bindRun（§4.3 派发登记绑定 AttemptId=1）。头内布局一处归置：ArchivePhase 随消费字段 TaskRecord.archivePhase 落 TaskTypes.hpp（卡 §3.1 登记于 RunRegistry.hpp 行——EX-T04 反向依赖 TaskId，防头循环；偏差随 §15.4 v0.4 登记）。锚点翻译单元 Execution.cpp 保留（EX-T03+ 落位安排登记于其文件头）。"
+    },
+    {
+      "target": "sdurws_ird_execution_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 31/31）",
+      "notes": "EX-T01 首批 7 用例保留（其中 NoVocabularyRedefinition_O24 由落位期'仅 README'钉子转正为词表重定义常驻扫描——EX-T02 落头后的 standing guard，另钉 TaskTypes.hpp 对 core/Evaluation.hpp 的 include 承接行）。EX-T02 新增 24 用例（TaskStateMachineTest.cpp），acceptance 逐条对应：①EX-SUB-1（acceptance 2）＝TaskIdGenerateUniqueUnderConcurrency（8×400 并发生成唯一）＋RunIdCoreGenerateUniqueUnderConcurrency＋BindRunSetsAttemptOneAndGuards（§4.3 三级分配协议次序）＋SameTaskEventFifo（同任务事件序＝转移序＋五元组随派发绑定完整化）；②EX-SM 矩阵（acceptance 1）＝TableAndMatrixMatchSection53（15 行表＋(触发,源态) 唯一性＋9×9 全矩阵逐格 13 对合法边＋§5.2 禁止转换示例点名＋T4/T9/T12/T13/T14 检查点保留语义逐行）＋各转移行为用例；③EX-SM-1~4 四态取消出口（acceptance 1/3、ARCH §11.2-6）＝QueuedCancelDirectNoCooperativeWindow（含重复取消幂等 ack 不发事件、正常取消零错误诊断 UX-03）＋PreparingCancelDiscardsAssembly＋RunningCancelCooperativePath＋PausedCancelRetainsCheckpoint＋FourStateCancelExits 全路径收敛；④EX-SM-5＝ResumeCreatesNewAttempt（同 RunId AttemptId+1、事件携带新尝试号——AT-35）；⑤EX-SM-6＝MatrixOutsideRequestsRejected（InvalidState fail-fast＋状态不变＋稳定 detail 前缀；终态无出边/跳步/越权直达/工厂触发误用全覆盖）＋FactoryPreconditions（受理记录仅 Queued 零运行绑定、恢复重建必须带运行绑定——提交拒绝在状态机之外不产生 TaskRecord）；⑥EX-SM-7＝PauseUnsupportedExplicitFeedback（EX-CAPABILITY-UNSUPPORTED 显式反馈不静默、状态不变、不发事件；supportsPause=true 对照半区进 Paused）；⑦强制终止矩阵（acceptance 3）＝ForceKillMarksExplicitly（T13→Failed＋termination=ForceTerminated＋EX-FORCE-TERMINATED 显式诊断＋检查点保留声明）＋ForceTerminateCostDoesNotAffectProtocol（Cheap/Expensive 两档协议结果逐字段一致——仅声明与呈现）；⑧T14 恢复期指派＝RecoveryScanAssignsInterrupted（EX-TASK-INTERRUPTED 状态标注＋运行期矩阵到 Interrupted 零出边——P-EX-6）；⑨P-EX-4＝NineStatesNoAddition（九 token 往返＋created/cancel-requested/rejected 拒绝＋受理即 Queued）；⑩P-EX-6＝QueuedRecordHasNoDiskIdentity；⑪§5.6＝TerminalOutcomeFrozenTable；⑫acceptance 4＝DeclareLookupMinimalFallback（注册表声明/同键重复拒绝/最小能力回退）；⑬值类型边界＝ParseFormatRoundTripStrict＋FactoryBoundaries＋TokensAndExceptionCarryCode。边界声明：协作窗 2 s/10 s 时序（ManualClock）、worker 进程、归档端口磁盘断言归 EX-T03/T04/T06/T09 对应用例（本组为纯状态机本体替身驱动——§11 边界声明同源）。"
+    },
+    {
+      "target": "sdurws_ird_execution_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 9/9）",
+      "notes": "EX-T01 首批 5 用例保留（构建图边界契约）。EX-T02 新增 4 用例（IdentityVocabularyContractTest.cpp——acceptance 2 的跨单元契约面）：NoRedefinitionOfCoreTypesInExecution（execution 全源码面零重定义 core 四词表＋RunId/AttemptId/TaskIdentity 五元组类型——§2.2 不可越界列定义形态扫描）、ScannerDetectsCoreDefinitionsSanity（扫描器锚点自证——core 树内定义真实存在，扫描失效先红）、TaskIdIsExecutionOwnedPerSection41（TaskId 定义于 execution/TaskTypes.hpp 且 core 零定义——§4.1 'core 未定义此类型'的正反两面；模式带词边界防 TaskIdentity 子串误报）、CoreValueTypesUsableFromExecution（core 五元组类型链接半区实证＋TaskStatusChangedPayload 值语义）。"
+    }
+  ],
+  "runs": [
+    {
+      "mode": "integration（仓库根 build/ 构建树，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已 grep 确认——AGENTS.md §4.1）",
+      "configure": "增量（CMakeLists 变更自动重配置）＋全量 Release 构建 exit 0、零 error 零 warning（integration-build.log）",
+      "tests": "sdurws_ird_execution_test 31/31 PASSED＋sdurws_ird_execution_contract_test 9/9 PASSED（test-run.log；gtest XML＝sdurws_ird_execution_test-integration.xml、sdurws_ird_execution_contract_test-integration.xml——tests 31/9、failures 0）"
+    },
+    {
+      "mode": "smoke（独立冒烟 build-smoke-wp08-t02/，-DCMAKE_TOOLCHAIN_FILE=<仓库根>/vcpkg/scripts/buildsystems/vcpkg.cmake 绝对路径——CORE-T01 验收 G-2 教训）",
+      "configure": "cmake -S industrialrobot -B build-smoke-wp08-t02 exit 0（smoke-configure.log）；cmake --build --config Release exit 0 零 error（smoke-build.log）",
+      "tests": "sdurws_ird_execution_test 31/31 PASSED＋sdurws_ird_execution_contract_test 9/9 PASSED（test-run.log；gtest XML＝sdurws_ird_execution_test-smoke.xml、sdurws_ird_execution_contract_test-smoke.xml——tests 31/9、failures 0）"
+    },
+    {
+      "mode": "门禁与自查",
+      "validate-task": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile tasks/foundation/EX-T02.json → PASS（1 tasks）",
+      "ird_gates": "cmake --build build --config Release --target ird_gates（gates-ird-gates-target.log）——命中集合与 base 留痕（builds/wp08-t01/gates-ird-gates-target.log）逐项一致：17 项全部为其他单元已登记例外（diagnostics/evidence/io/policy/project/runtime 各 test 目标直链 testkit 形态、io 第三方 libzip/expat、testdata_lint、project R4 字面量），零 execution 命中＝零新增命中（gate 目标因既有登记例外按设计退出非零，与 base 行为一致）",
+      "verify": "契约 verify 命令 cmake --build build --config Release --target sdurws_ird_execution_test exit 0（verify-target-build.log）",
+      "fault-probe": "测试真实失败能力探针：向 StateMachine.cpp 逐转移表注入 T4 目标态损坏——矩阵用例与四条取消用例 6 项 FAILED 精确检出；还原后复跑 31/31 全绿（test-fault-probe.log）"
+    }
+  ],
+  "acceptanceCoverage": [
+    {
+      "item": 1,
+      "text": "EX-SM-1~7 全绿：九态逐转移矩阵用例通过（§5.2＋§5.3 逐行断言）；矩阵外非法转换拒绝（EX-SM-6 InvalidState、状态不变；提交受理前的拒绝发生在状态机之外）",
+      "evidence": "TableAndMatrixMatchSection53（表/矩阵逐格）＋QueuedCancel/PreparingCancel/RunningCancel/PausedCancel/FourStateCancelExits（EX-SM-1~4）＋ResumeCreatesNewAttempt（EX-SM-5）＋MatrixOutsideRequestsRejected/FactoryPreconditions（EX-SM-6）＋PauseUnsupportedExplicitFeedback（EX-SM-7）；两模式 31/31 XML"
+    },
+    {
+      "item": 2,
+      "text": "EX-SUB-1：三级身份并发分配唯一、无重复、同任务事件 FIFO；TaskId/RunId/AttemptId 值类型承接纪律（execution 只分配与携带不重定义）",
+      "evidence": "TaskIdGenerateUniqueUnderConcurrency＋RunIdCoreGenerateUniqueUnderConcurrency＋BindRunSetsAttemptOneAndGuards＋SameTaskEventFifo（_test）；NoRedefinitionOfCoreTypesInExecution＋ScannerDetectsCoreDefinitionsSanity＋TaskIdIsExecutionOwnedPerSection41＋CoreValueTypesUsableFromExecution（_contract_test）"
+    },
+    {
+      "item": 3,
+      "text": "强制终止矩阵用例通过（forceTerminateCost 仅声明与呈现、不影响协议——§5.5）；Queued/Preparing/Running/Paused 四态取消出口覆盖（ARCH §11.2-6）",
+      "evidence": "ForceKillMarksExplicitly（T13→Failed＋ForceTerminated＋EX-FORCE-TERMINATED）＋ForceTerminateCostDoesNotAffectProtocol（Cheap/Expensive 结果一致）＋FourStateCancelExits（四态经 Canceling 收敛 Canceled）＋PausedCancelRetainsCheckpoint（RetainLatest 声明面——磁盘断言归 EX-T03/T04）"
+    },
+    {
+      "item": 4,
+      "text": "能力声明承载就位（TASK-01）：supportsPause/checkpointGranularity/forceTerminateCost 经 EvaluatorRuntimeCapabilities 注册表扩展声明（§5.5，P-EX-7 处置）；不支持暂停收到暂停须显式反馈不静默（EX-SM-7 卡行禁止项）",
+      "evidence": "DeclareLookupMinimalFallback（声明/同键重复拒绝/最小能力回退；evidence EvaluatorDescriptor 字段面零改动——头文件仅消费 EvaluationKey）＋PauseUnsupportedExplicitFeedback（EX-CAPABILITY-UNSUPPORTED 结构化反馈、状态不变、不发事件）"
+    },
+    {
+      "item": 5,
+      "text": "P-EX-4 处置（九态零新增）；P-EX-6 处置（任务态/登记表会话内存态，Queued 崩溃即消失）；P-EX-1 处置（消费 core 词表/身份类型卡 v0.1 Draft 未冻结，冻结 diff 后增量同步）",
+      "evidence": "NineStatesNoAddition（九 token 往返＋三态名拒绝＋受理即 Queued）＋QueuedRecordHasNoDiskIdentity（Queued 零运行绑定/NotApplicable；运行期矩阵到 Interrupted 零出边＝RecoveryScanAssignsInterrupted 内断言）＋产品源 include 面仅 core/evidence 公共头（NoCrossUnitInclude/RuntimePolicyZeroCompileFace 常驻扫描通过）；三陷阱均为'按处置约束实现'的消账形态，登记语义消账权仍在所有者（单元卡 §15.4 v0.4 同步留痕）"
+    }
+  ]
+}
