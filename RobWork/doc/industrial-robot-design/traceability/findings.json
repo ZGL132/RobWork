@@ -2185,6 +2185,36 @@
       "title": "新增 test/ResourceGovernanceTest.cpp L77-78 的 #define NOMINMAX/WIN32_LEAN_AND_MEAN 与主树缓存全局 CMAKE_CXX_FLAGS（-DNOMINMAX -DWIN32_LEAN_AND_MEAN，F-098 登记）冲突，产生 2 处 MSVC C4005 宏重定义警告（零行为影响，值相同）——同单元既有 6 个测试文件同型模式（RunRegistryAdmissionTest/SchedulerEventBusTest/ArchiveCollaborationContractTest/WorkerProcessContractTest 等），本任务延续既有风格；同任务新增的 src/win32/MemProbe.hpp 以 #ifndef 包裹即零警告，范式现成",
       "owner": "execution 单元所有者（F-046/F-063/F-093/F-160/F-169/F-174 零行为影响微瑕家族同辖域——随后续 diff 顺手统一即可）",
       "resolution": "后续测试文件统一以 #ifndef/#endif 包裹两宏（MemProbe.hpp L55-60 即范例）；不阻塞合入。编号顺延自 F-216，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T07 attempt 1 verdict=pass（4.1~4.11 全过、零阻断）。"
+    },
+    {
+      "id": "F-218",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "traceability/acceptance/EX-T08-20260919.md#4.9（attempt 1，送验对象 1cc1c796aa6851624cb20b0fa2fb684b98b45bc2）",
+      "title": "F-012 家族同型再现：EX-T08 两件辅助提交 3cfcf13a（[WP-08-T09] EX-T08 文档同步与验证留痕…）与 1cc1c796（[WP-08-T09] EX-T08 补全验证留痕…）标题以任务 ID 名词开头非动词开头，不合 ACC §4.9／AGENTS §6.3 标题字面；主实现提交 f9db4c3a（实现 EX-T08 …）合规。EX-T07 同型标题 b2b384b5 昨日验收未登记，判例继续不一；正文四段齐备、验证结论与留痕一致（验收者逐项复现一致），纯风格瑕疵不构成阻断",
+      "owner": "execution 单元所有者（F-012 家族治理归 DTB §5.1/PIPE 附录 C 模板补救责任方）",
+      "resolution": "后续提交标题一律动词开头（实现/落位/登记/补全…）；模板补救落地前随每例登记。不阻塞合入。编号顺延自 F-217，合入时由所有者确认与并行 evidence 分支无撞车。验收判定不受影响：EX-T08 attempt 1 verdict=pass。"
+    },
+    {
+      "id": "F-219",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "traceability/acceptance/EX-T08-20260919.md#4.5（attempt 1，送验对象 1cc1c796aa6851624cb20b0fa2fb684b98b45bc2）——验收者变异试验 B",
+      "title": "EX_CCH_2_StoreGateOnlyFinalizedCompleted 用例对 storeResult 双门槛的 archivePhase==Archived 半边无红能力：用例②（Completed＋Archiving 不登记面）与①正例共用同一 ResultCacheKey（Verified/kSlice/7/kProfile），验收者摘除该半边门槛（保留 Completed 判定）后重建实测用例仍绿——被 storeResult 同键冲突保留既有规则掩蔽（②的非法登记落为冲突保留，resultEntries 断言不变），dev 通道断言亦两路皆真；Archived 半边的拒绝行为在当前套件中无任何用例钉住（实现本身正确，门槛代码在位：CacheCoordinator.cpp storeResult 双门槛）。F-216（EX-T07 资源闸停派发敏感度缺口）同家族",
+      "owner": "execution 单元所有者",
+      "resolution": "用例②改用独立键（异 slice 或异契约版本）隔离冲突路径，或对②增断言开发通道消息内容区分拒绝原因（门槛拒绝 vs 冲突保留）；随后续 diff 顺手补钉。不阻塞合入（实现行为经代码审读＋契约测试正例确认）。编号顺延自 F-218。验收判定不受影响：EX-T08 attempt 1 verdict=pass（变异 A 篡改检测面如期变红，红能力已证）。"
+    },
+    {
+      "id": "F-220",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "traceability/acceptance/EX-T08-20260919.md#4.4/4.10（attempt 1，送验对象 1cc1c796aa6851624cb20b0fa2fb684b98b45bc2）",
+      "title": "ird_gates 命中清单留痕格式跨任务漂移：wp08-t08 的 gates-t08-hits-sorted.txt 自 wp08-t07 的原始日志行排序改为（门禁类×目标）规范化 token（17 原始命中→15 token），ird-test-report.json 的 gates.hitsTotal=15 与门禁原始输出 17 计数口径不一；两份在库清单格式不同致 gates-hit-set-diff.txt（空 diff）无法从提交物字节级复算。验收者亲手重跑 ird_gates（exit 1、命中 17 项与 base 同集）独立证实零新增命中，结论成立，仅留痕可比性受损",
+      "owner": "execution 单元所有者（口径统一归 scripts/gate-all.ps1 维护方）",
+      "resolution": "后续任务固定一种清单格式（建议规范化 token 形态）并在 ird-test-report.json 注明计数口径（原始命中数 vs 规范化 token 数）；跨任务比对用同一规范化函数处理两侧。不阻塞合入。编号顺延自 F-219。验收判定不受影响：EX-T08 attempt 1 verdict=pass。"
     }
   ]
 }
