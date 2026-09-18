@@ -1,24 +1,33 @@
 /**
  * @file   Scheduler.hpp
- * @brief  DrainPolicy 排空语义与关闭编排（EX-T03）——§7.5"UI 关闭二选"
- *         的执行侧：等待排空（CancelQueuedAndWait/KeepQueuedTerminate）
- *         与协作取消（requestCancelAll）两路径，含无永久等待的超阈值
- *         abandonAll 兜底。
+ * @brief  任务调度器（EX-T05：ITaskScheduler 契约面＋TaskScheduler 调度
+ *         本体——队列/优先级/预算/提交验证 V1~V4/内联门槛/进度节流）与
+ *         DrainPolicy 排空编排（EX-T03：§7.5"UI 关闭二选"的执行侧）。
  *
  * 设计依据：
- *   - units/execution.md §3.1（Scheduler.hpp 组成行含 DrainPolicy）、
- *     §7.5（UI 关闭与应用崩溃——关闭二选、排空有界、超阈值强制
- *     abandonAll(ForceTerminated) 兜底）、§7.4（UI 关闭行："等待"分支＝
- *     排空；"协作取消"分支＝逐/批量 requestCancel；关闭确认对话框不提供
- *     强杀选项——强杀仅作超阈值兜底而非用户选项）、§10.1（DrainPolicy
- *     枚举值域冻结＋shutdown 幂等＋drained"无永久等待"注）
- *   - ARCHITECTURE.md §4.4（协议锚点；P-EX-2 处置同 Controller.hpp）
- *   - 需求 UX-03（关闭触发的排队取消同样零错误诊断）、PM-03（关闭确认
- *     对话框——workflow/ui 侧消费本头的排空语义）
- *   - 任务契约 tasks/foundation/EX-T03.json acceptance 3（DrainPolicy
- *     排空语义实现就位：等待排空与协作取消两路径；其行为用例 EX-ARC-4
- *     "无永久等待＋超阈值 abandon 兜底"归 §11 契约测试套件 EX-T09 承载
- *     ——本头交付语义本体与基础自证用例）
+ *   - units/execution.md §6.1（队列/优先级与并发治理：双优先级＋同级 FIFO
+ *     不抢占〔D-04〕、并发上限、UI 线程不阻塞〔NFR-PERF-01〕、进度报告
+ *     与节流 ≤10 Hz〔实现参数——§6.1 表"进度报告与节流"行〕）、§6.3
+ *     （提交验证清单 V1~V4 与内联门槛——可预测 <1 s 调度线程内联，
+ *     ARCH §4.1）、§10.1（ITaskScheduler/ResourceBudget/SubmitResult/
+ *     DrainPolicy 接口原文）、§10.8（接口共性约束：提交/查询任意线程、
+ *     状态写调度串行；调用方违约抛 ExecutionError）、§4.3（身份分配协议
+ *     ——提交受理段）、§7.5（UI 关闭与应用崩溃——关闭二选、排空有界、
+ *     超阈值强制 abandonAll(ForceTerminated) 兜底）、§7.4（UI 关闭行）、
+ *     §3.1（Scheduler.hpp 组成行：ITaskScheduler、SchedulerConfig、
+ *     ResourceBudget、DrainPolicy、ISubmissionGuard〔提交前验证注入点〕）
+ *   - ARCHITECTURE.md §4.1（可预测 <1 s 轻任务调度线程内联——内联门槛
+ *     语义锚）、§4.4（协议锚点；P-EX-2 处置同 Controller.hpp）
+ *   - 需求 TASK-01（状态机受理入口）、TASK-03（五元组分配在提交受理
+ *     路径——§4.3/EX-SUB-1）、UX-10（进度阶段投影边界——execution 零
+ *     新增状态词）、NFR-PERF-01（>1 s 转后台——提交/控制非阻塞）、
+ *     UX-03（关闭触发的排队取消同样零错误诊断）、PM-03（关闭确认对话
+ *     框——workflow/ui 侧消费本头的排空语义）、PM-07（只读拒绝启动
+ *     ——V3 消费 store.writable()，写权限判定归 project 不私判）
+ *   - 任务契约 tasks/foundation/EX-T05.json acceptance 1~5（EX-SUB-1/2、
+ *     事件 FIFO 与进度节流、UI 零计算结构断言、队列/优先级/预算/提交
+ *     验证/PM-07、UX-10 边界＋P-EX-1 处置）；EX-T03 acceptance 3
+ *     （DrainPolicy 排空编排）
  *
  * 背景说明（两路径与策略值的对应——§7.5 原文展开）：
  *   - **等待排空**＝workflow 调 shutdown(DrainPolicy::CancelQueuedAndWait)：
@@ -27,25 +36,32 @@
  *     保留变体：排队任务**不**取消（随会话终结消失——P-EX-6：Queued
  *     任务纯内存，主进程退出即无痕）、在途运行同样等待自然终态；
  *   - **协作取消**＝PM-03 对话框另一选项：对任务清单逐/批量 requestCancel
- *     （本头 requestCancelAll）——在途任务走 §7.1 完整取消协议（2 s 生效
- *     ＋10 s 收敛＋超时强杀兜底），排队任务直达 Canceled；
+ *     （DrainCoordinator::requestCancelAll）——在途任务走 §7.1 完整取消
+ *     协议（2 s 生效＋10 s 收敛＋超时强杀兜底），排队任务直达 Canceled；
  *   - **无永久等待**（§7.5"排空有界"）：关闭后超阈值（实现参数）仍有
  *     在途运行→强制 abandonAll(ForceTerminated) 兜底（L5 关闭控制器同
- *     口径——project §9.7；本头提供执行侧承载：自动兜底经 poll 触发，
- *     手动兜底经 abandonAllForced 暴露给 L5）。兜底对排队任务不生效
- *     （KeepQueued 保留语义不被破坏；CancelQueuedAndWait 的排队已在
- *     shutdown 时清空）。
+ *     口径——project §9.7；DrainCoordinator 提供执行侧承载：自动兜底经
+ *     poll 触发，手动兜底经 abandonAllForced 暴露给 L5）。兜底对排队任务
+ *     不生效（KeepQueued 保留语义不被破坏；CancelQueuedAndWait 的排队
+ *     已在 shutdown 时清空）。
  *
- * ITaskScheduler 归属说明：§10.1 的调度器完整接口（submit/tryTask/
- * setResourceBudget/shutdown/drained）随 EX-T05 调度线程落位——本头先
- * 落 DrainPolicy 枚举（§3.1 组成行登记于本头）与排空编排（EX-T03 卡行
- * 产物"DrainPolicy"），EX-T05 的 ITaskScheduler::shutdown 以本编排器
- * 组合实现（归置登记于单元卡 §15.4）。
+ * 调度线程模型（阶段 A 形态，与 Controller/DrainCoordinator 同一显式
+ * 驱动决策——归置登记单元卡 §15.4）：
+ *   §6.2"调度线程（每调度器 1 条）"在阶段 A 以**显式驱动**表达：TaskScheduler
+ *   不内建真实线程，tick() 即调度线程的推进原语（生产由 L5 装配以固定
+ *   周期在其自有线程调用；测试显式调用逐拍断言）。"调度线程串行域"的
+ *   实质＝主互斥临界区：submit（任意线程进入）/tryTask/tasksByProject/
+ *   tick 在主锁内串行，状态机与队列的全部写动作因此互斥（§10.8"内部转
+ *   调度串行"的实施形态）。例外只有内联执行段（§6.3 内联门槛）：执行体
+ *   回调可能耗时至 <1 s 量级，在锁外执行——锁只保护簿记不覆盖计算，
+ *   这正是"UI 线程零计算"的结构表达（NFR-PERF-01：计算发生在调度域，
+ *   提交/查询调用方永不等计算）。
  *
- * 线程约束：DrainCoordinator 全部方法**仅调度线程**（状态机唯一写者域；
- * closed()/drained() 的跨线程查询面随 EX-T05 调度器的任意线程投影——
- * §10.8；阶段 A 装配中关闭编排由 workflow 在调度线程外调用的形态经
- * EX-T05 的命令管线转串）。
+ * 线程约束：submit/tryTask/tasksByProject/setResourceBudget/reportProgress/
+ *   shutdown/drained 任意线程（内部经主锁转串行）；tick 仅调度域单线程
+ *   （不可重入——内联段会暂时释放主锁，重入将撕裂调度序）；DrainCoordinator
+ *   全部方法仅调度线程。TaskScheduler::stopDispatch 是 Controller 在
+ *   poll()（主锁内）的回调——同域同线程，不取锁（见其注释）。
  */
 
 #ifndef SDURWS_IRD_EXECUTION_SCHEDULER_HPP
@@ -53,10 +69,30 @@
 
 #include <chrono>
 #include <cstddef>
+#include <cstdint>
+#include <deque>
+#include <functional>
+#include <mutex>
 #include <optional>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
+#include <sdurws/ird/core/DiagData.hpp>     // DiagnosticRecord（提交拒绝诊断承载）
+#include <sdurws/ird/core/Events.hpp>       // IDomainEventBus（TaskStatusChanged 发布面——指针注入）
+#include <sdurws/ird/core/Identity.hpp>     // ProjectId（tasksByProject 过滤键）
 #include <sdurws/ird/execution/Controller.hpp>
+#include <sdurws/ird/execution/StateMachine.hpp>  // TaskStateMachine/ITaskEventSink（受理段构造＋事件接缝——本头 TaskScheduler 消费）
 #include <sdurws/ird/execution/TaskTypes.hpp>
+
+namespace sdurws::ird::evidence {
+class IProducerRegistryView;    ///< V1 评估器注册查询面（isRegistered/contractVersionMatches——前向声明，实现在 .cpp include）
+class IRevisionClosureSource;   ///< V2 修订闭包含性查询（evidence §3.3 同源形态）
+}  // namespace sdurws::ird::evidence
+
+namespace sdurws::ird::project {
+class ProjectStore;             ///< V3 写权限查询面（writable()——前向声明，实现在 .cpp include）
+}  // namespace sdurws::ird::project
 
 namespace sdurws::ird::execution {
 
@@ -186,6 +222,420 @@ private:
     std::optional<DrainPolicy> m_policy;  ///< 关闭策略（未关闭为空）
     std::optional<std::chrono::steady_clock::time_point> m_shutdownAt;  ///< 关闭时刻（兜底阈值起点）
     bool m_autoAbandonDone = false; ///< 自动兜底已触发（恰一次——重复 poll 不重复强杀）
+};
+
+// =====================================================================
+// ITaskScheduler 契约面（§10.1——EX-T05 落位）
+// =====================================================================
+
+/**
+ * @brief 资源预算（§10.1 原文结构——字段与默认值逐行对照）。
+ *
+ * 值语义；经 setResourceBudget 运行期可调且**不影响任务身份**（§6.1
+ * "验证不改变任务身份：预算变化只影响排队与派发时机"）。各字段的消费
+ * 归属（本任务 EX-T05 与后续任务的分工——归置登记单元卡 §15.4）：
+ *   - queueCapacity / maxConcurrentTasks / maxTasksPerProject：调度面
+ *     消费（EX-T05——V4 提交容量与出队闸）；
+ *   - maxWorkers / maxMemoryRatio / throttleRatio：ResourceController
+ *     消费（EX-T07——worker 池规模与内存节流；本结构按 §10.1 原文承载
+ *     字段，调度器保存值但不消费——消费任务未到不预建行为）。
+ */
+struct ResourceBudget {
+    double maxMemoryRatio = 0.70;        ///< 物理内存占比上限（NFR-PERF-04 上游值；EX-T07 消费）
+    double throttleRatio  = 0.65;        ///< 节流阈值（实现参数 D-05；EX-T07 消费）
+    std::uint32_t maxWorkers = 0;        ///< worker 池上限；0＝自动（逻辑核-1，下限 1；EX-T06/T07 消费）
+    std::uint32_t maxConcurrentTasks = 0;///< 同时在途（Preparing/Running/Canceling）任务上限；
+                                         ///  0＝自动 min(4, 逻辑核/2)（§6.1 并发上限行——EX-T05 出队闸）
+    std::uint32_t maxTasksPerProject = 2;///< 同项目并发**正式**任务上限（§6.1 防单项目独占；Preview
+                                         ///  不计入——不写 results/ 的轻任务不占正式额度；EX-T05 出队闸）
+    std::size_t   queueCapacity = 256;   ///< 等待队列容量（§6.1/§6.3 V4：提交期预算检查仅拒绝对列容量溢出
+                                         ///  ——溢出＝SubmissionRejected＋诊断，不失败已排队任务）
+};
+
+/**
+ * @brief 提交结果（§10.1 原文结构——结构化拒绝的承载面）。
+ *
+ * 错误语义（§10.1 注）：结构化拒绝优先经 diagnostics（不抛）——V1~V4
+ * 任一失败都返回 accepted=false＋携带稳定码诊断的 diagnostics；抛出仅限
+ * 调用方违约（如关闭后 submit 的 ContextClosed）。拒绝**不产生 TaskRecord**
+ * （§5.1 注——提交边界验证失败发生在状态机之外，不占用任何状态）。
+ */
+struct SubmitResult {
+    bool accepted = false;                             ///< 受理＝true（task 非空）；拒绝＝false（task 空）
+    std::optional<TaskId> task;                        ///< 受理时分配的任务身份（拒绝时空——§4.3 受理段）
+    std::vector<core::DiagnosticRecord> diagnostics;   ///< 拒绝原因（稳定码 EX-TASK-REJECTED/EX-SNAPSHOT-STALE/
+                                                       ///  EX-STORE-READ-ONLY——ERR-01 字段完整；受理时为空）
+};
+
+/**
+ * @brief 提交前验证注入点（§3.1 Scheduler.hpp 组成行原文名 ISubmissionGuard）。
+ *
+ * 背景：§6.3 V1 形式校验含"五元组身份前缀合法（project/branch/revision
+ *   **属当前存储上下文**）"——"属当前上下文"是存储侧知识（PA-1：项目
+ *   身份/修订闭包的权威在 project，execution 不私判），经本注入点由 L5
+ *   装配期提供（适配 store 的上下文查询），调度器只消费结论。
+ *
+ * 错误语义：返回空 optional＝通过；返回诊断＝拒绝（调度器把该诊断原样
+ *   放入 SubmitResult.diagnostics，整体按 SubmissionRejected 处置——
+ *   不抛异常，结构化拒绝面）。
+ *
+ * 线程约束：任意线程（submit 调用线程，主锁内）——实现方保证并发只读
+ * 安全（典型实现转发 store 只读查询）。
+ */
+class ISubmissionGuard {
+public:
+    virtual ~ISubmissionGuard() = default;
+
+    /**
+     * @brief 对一份提交做上下文侧校验（V1 的注入半区）。
+     *
+     * @param submission [in] 待验提交（只读）
+     * @return nullopt＝通过；非空＝拒绝诊断（稳定码＋ERR-01 完整字段——
+     *         原样进入 SubmitResult.diagnostics）
+     */
+    virtual std::optional<core::DiagnosticRecord> checkSubmission(
+        const TaskSubmission& submission) const = 0;
+};
+
+/**
+ * @brief 内联运行结果（§6.3 内联门槛的执行体应答面）。
+ *
+ * cause 仅允许 Completed / Failed 两值（内联走链的终点只有 T8/T9 两个
+ * 合法出口；其他值＝执行体违约，调度器 fail-fast——见 TaskScheduler 注）。
+ */
+struct InlineRunOutcome {
+    TerminationCause cause;                            ///< 终结原因（Completed→T8；Failed→T9）
+    std::vector<core::DiagnosticRecord> diagnostics;   ///< 执行期诊断（失败原因等——追加到任务记录）
+};
+
+/**
+ * @brief 内联运行执行体接缝（§6.3 内联门槛的"计算本体"注入点）。
+ *
+ * 背景：内联＝可预测 <1 s 的轻任务在调度线程（串行域）内直接执行，
+ *   不经 worker 派发（§6.3"无 worker 派发；同一转移表"）。**评估计算
+ *   本体不属于 execution**（N-3：业务算法归各域单元）——阶段 A 的执行
+ *   体由 L5 装配注入（正式）或测试替身（§11 ScriptedEvaluator 同精神）。
+ *   未注入（nullptr）＝无内联能力：满足内联谓词的任务退化为普通排队
+ *   （等待 EX-T06 worker 派发链），不报错——装配缺失的显式降级语义
+ *   （同 setEventBus 空指针先例：ResultAdmission 侧"总线未装配"）。
+ *
+ * 归置边界（登记单元卡 §15.4）：内联门槛的**登记段**（registerRun＋归档
+ *   预留——§6.3 括注"仍登记 RunRegistry"）依赖派发装配面（Materials/
+ *   归档网关/runDir 布局），随 EX-T06 派发链就绪统一放开；本任务的
+ *   内联走链完整支持 Preview 任务（表 1：Preview 不登记不归档——零登记
+ *   语义自洽），非 Preview 任务即使满足谓词也不内联（排队等待普通派发
+ *   ——登记完整性优先于派发开销，装配缺失不静默放行）。
+ *
+ * 线程约束：run 在调度域（tick 内联段）被调用——锁外单线程串行；实现方
+ *   无须为并发付费，但回调必须有限时长（可预测 <1 s 是其存在前提）。
+ */
+class IInlineRunExecutor {
+public:
+    virtual ~IInlineRunExecutor() = default;
+
+    /**
+     * @brief 执行一次内联评估（调度线程，锁外——计算本体所在）。
+     *
+     * @param record [in] 任务记录只读快照（提交内容＋能力——执行体据此
+     *                自行取用评估输入；execution 不解析快照内容）
+     * @return 终结结论（cause∈{Completed, Failed}＋执行期诊断——调度器
+     *         据此走 T8/T9 并把诊断追加到任务记录）
+     */
+    virtual InlineRunOutcome run(const TaskRecord& record) = 0;
+};
+
+/**
+ * @brief 调度器契约（§10.1 原文接口——提交/查询/预算/排空）。
+ *
+ * 前置/后置/错误/副作用逐条见 TaskScheduler 实现类注释（契约权威在本
+ * 头的注释与 §10.1/§6.3 原文）。
+ */
+class ITaskScheduler {
+public:
+    virtual ~ITaskScheduler() = default;
+
+    /// 前置：快照已冻结（evidence builder 产物）；评估器已注册；调度器未
+    /// shutdown。后置：受理→TaskId 分配→Queued＋TaskStatusChanged(Queued)
+    /// 事件（§4.3 受理段）；拒绝→无 TaskRecord（§5.1 注）。
+    /// 错误：结构化拒绝经 SubmitResult.diagnostics（不抛）；抛出仅限
+    /// 调用方违约（关闭后提交→ExecutionError(ContextClosed)）。
+    virtual SubmitResult submit(TaskSubmission&& submission) = 0;
+
+    /// 并发只读快照（未登记→nullopt；深拷贝投影——§4.2 通用约定）。
+    virtual std::optional<TaskSnapshot> tryTask(TaskId task) const noexcept = 0;
+
+    /// PM-03 任务清单数据（按提交快照锚定项目过滤——§10.1 原文签名）。
+    virtual std::vector<TaskSnapshot> tasksByProject(core::ProjectId project) const = 0;
+
+    /// 运行期可调；不影响任务身份（§6.1——预算变化只影响排队与派发时机）。
+    virtual void setResourceBudget(const ResourceBudget& budget) = 0;
+
+    /// §7.5 排空；幂等。关闭后 submit→ExecutionError(ContextClosed)。
+    virtual void shutdown(DrainPolicy policy) = 0;
+
+    /// shutdown 完成查询（无永久等待——轮询面，无阻塞原语）。
+    virtual bool drained() const noexcept = 0;
+};
+
+// =====================================================================
+// TaskScheduler——调度器本体（§6.1~§6.3/§4.3 的可执行体）
+// =====================================================================
+
+/**
+ * @brief 任务调度器（ITaskScheduler 实现——EX-T05 卡行产物：
+ *         队列/优先级/预算/内联门槛/提交验证＋进度节流）。
+ *
+ * 组合结构：TaskController（EX-T03 取消/终止协议引擎）与 DrainCoordinator
+ *   （EX-T03 排空编排）的非所有权组合——调度器拥有"受理/排队/派发"面，
+ *   协议时序与关闭编排经既有公共面复用，零重实现（§10.1 注：shutdown
+ *   以 DrainCoordinator 组合实现）。
+ *
+ * 提交受理序（§6.3 V1~V4＋§4.3 受理段——逐条对应，首错即停）：
+ *   [V1] 形式校验：ISubmissionGuard 上下文校验（注入半区）→快照身份三元组
+ *        isValid→快照冻结（snapshotId 非保留值）→策略/名称映射内容身份
+ *        非空（CON-06）→mode 值域→评估器已注册且 contractVersion 相符
+ *        （evidence 注册查询面）；失败→EX-TASK-REJECTED 结构化拒绝；
+ *   [V2] 内容校验：修订闭包含性（evidence IRevisionClosureSource 形态
+ *        注入——objectClosure 每条 (oid,cv) 均属锚定修订；任一失配→
+ *        EX-SNAPSHOT-STALE——CON-01 派发前快照完整性；载荷摘要抽查在
+ *        物化时全量校验，归物化链路非提交面）；
+ *   [V3] 权限校验（Quick/Verified）：store.writable()（project 权威——
+ *        execution 不私判写权限，PM-07 只读拒绝启动→EX-STORE-READ-ONLY；
+ *        Preview 跳过——不写 results/）；
+ *   [V4] 预算校验：等待队列容量（§6.1：提交期预算检查**仅**拒绝对列容量
+ *        溢出→EX-TASK-REJECTED＋队列满诊断；资源余量不足不拒绝——排队）。
+ *   全通过→TaskId::generate()→TaskRecord{Queued, capability 经注册表推导}
+ *   →状态机 T1（发布 TaskStatusChanged(Queued)）→入等待队列（双优先级
+ *   FIFO）。**TaskId 分配在提交受理时完成**（acceptance 1 括注——§4.3
+ *   分配协议第一段的落点；RunId/Attempt 延迟到派发登记段，§4.3）。
+ *
+ * 校验面缺失语义（fail-closed，登记单元卡 §15.4）：V1/V2/V3 的协作指针
+ *   （评估器注册查询/修订闭包/存储写权限）任一为空→对应校验按**失败**
+ *   处置（拒绝提交＋开发诊断说明装配缺失），不静默放行——缺校验面的
+ *   受理等于绕过 CON-01/PM-07 门禁。ISubmissionGuard 为空＝无注入半区
+ *   （可选增强，跳过不拒绝）。
+ *
+ * 出队与派发（tick 段，§6.1）：关闭态不出队；并发额度（在途计数 <
+ *   maxConcurrentTasks，0=自动）与同项目正式任务上限（maxTasksPerProject）
+ *   满足时按 Interactive→Background、同级 FIFO（提交序号单调）出队头
+ *   任务走 T2（Queued→Preparing）。队头阻塞语义：队头任务受项目上限
+ *   约束时整个队列等待（严格 FIFO/优先级序——可预测性优先于吞吐，
+ *   D-04 排序键精神，登记 §15.4）。不抢占（D-04）：已 Running 任务不因
+ *   更高优先级到达被打断——出队只发生在额度空位时。普通（非内联）任务
+ *   停在 Preparing 等待 EX-T06 派发链（worker 启动/登记段）。
+ *
+ * 内联门槛（tick 段，§6.3）：出队任务若满足注入谓词（可预测 <1 s——
+ *   ARCH §4.1）且为 Preview 且执行体已注入→锁外执行（计算本体）→
+ *   T5（PrepareSucceeded——无 worker 派发段）→T8/T9（按执行体结论）。
+ *   谓词未注入或执行体缺失→普通排队（不内联）。同任务事件序＝转移序
+ *   （Queued→Preparing→Running→终态——同发布者 FIFO 的状态机侧保证，
+ *   §4.3/§10.4）。
+ *
+ * 进度节流（§6.1"进度报告与节流"）：reportProgress（任意线程——§6.2
+ *   通道读取线程入口）在主锁内按每任务节流窗（默认 100 ms＝≤10 Hz，实现
+ *   参数 D-07——非上游需求值）过滤，超窗帧经 tick 应用到任务记录
+ *   （StateMachine::updateProgress），窗内帧丢弃（worker 进度高频连续，
+ *   最新值由后续帧携带）。UX-10 边界：phaseToken 原样透传，execution
+ *   零新增状态词（七态状态词与映射归 ui——§2.2/§13 ui 行）。
+ *
+ * 错误语义（§10.8 两分法）：结构化拒绝（V1~V4）经 SubmitResult 不抛；
+ *   调用方违约 fail-fast——关闭后 submit→ExecutionError(ContextClosed)、
+ *   未知任务的进度上报→ExecutionError(InvalidState)、终态任务的进度帧→
+ *   同左（StateMachine::updateProgress 防御）、内联执行体返回非法 cause→
+ *   ExecutionError(InvalidState)（装配违约，不带病终结）。
+ *
+ * 线程约束：见文件头"调度线程模型"。主锁即调度串行域的阶段 A 表达；
+ *   Controller 全部方法调用点都在主锁内（满足其"仅调度线程"约束的
+ *   实质——与 poll 互斥的串行域）。
+ */
+class TaskScheduler final : public ITaskScheduler,
+                            public IDispatchGate,
+                            private ITaskEventSink {
+public:
+    /// 注入时钟（与 Controller/DrainCoordinator 同形——同一 ManualClock
+    /// 源注入三者，节流窗与协议窗的度量基准才一致）。
+    using ClockFn = TaskController::ClockFn;
+
+    /// 实现参数（非上游值——登记单元卡 §15.1/§15.4）。
+    struct Config {
+        /**
+         * 进度节流最小间隔（默认 100 ms＝同任务对外发布 ≤10 Hz 上限——
+         * §6.1 表"进度报告与节流"行的实现参数化表达；非上游需求值）。
+         * 置 0＝不节流（逐帧透传——测试对照面）。
+         */
+        std::chrono::milliseconds progressMinInterval{100};
+
+        /**
+         * 内联资格谓词（§6.3 内联门槛"请求标记 inline-eligible 且可预测
+         * <1 s"的判定注入——"可预测"是评估器/装配侧知识，execution 不
+         * 私猜时长）。空＝无任务内联（全部排队——缺省保守形态）。
+         */
+        std::function<bool(const TaskSubmission&)> inlineEligible;
+    };
+
+    /// 提交验证协作面（V1~V3 的查询指针——全部非所有权、装配期注入；
+    /// 失败语义见类注释"校验面缺失语义"）。
+    struct Collaboration {
+        const evidence::IProducerRegistryView* evaluators = nullptr;  ///< V1 评估器注册查询（isRegistered/contractVersionMatches）
+        const evidence::IRevisionClosureSource* closure = nullptr;    ///< V2 修订闭包含性（evidence §3.3 同源形态）
+        project::ProjectStore* store = nullptr;                       ///< V3 写权限（writable()——PM-07，Quick/Verified 消费）
+        ISubmissionGuard* guard = nullptr;                            ///< V1 上下文注入半区（可空＝跳过该半区）
+        const EvaluatorRuntimeCapabilities* capabilities = nullptr;   ///< 能力声明注册表（§5.5——受理时推导 TaskCapability；空＝最小能力）
+    };
+
+    /**
+     * @brief 构造（协议引擎与排空编排为非所有权组合——调用方保证存活期
+     *        覆盖调度器；两者通常与调度器同域装配）。
+     *
+     * @param controller [in] 取消/终止协议引擎（EX-T03）
+     * @param drain      [in] 排空编排（EX-T03——shutdown 组合实现，§10.1 注）
+     * @param collab     [in] 提交验证协作面（指针集——可全空，见 fail-closed）
+     * @param config     [in] 实现参数（节流窗/内联谓词）
+     * @param clock      [in] 注入时钟（空＝steady_clock——三编排须同源）
+     */
+    TaskScheduler(TaskController& controller, DrainCoordinator& drain,
+                  Collaboration collab, Config config = {}, ClockFn clock = nullptr);
+
+    ~TaskScheduler() override;
+
+    TaskScheduler(const TaskScheduler&) = delete;             ///< 主锁域不可拷贝
+    TaskScheduler& operator=(const TaskScheduler&) = delete;  ///< 同上
+
+    // ---- 事件接线（装配期一次；任意线程但须先于首个 submit） ----
+
+    /**
+     * @brief 注入领域事件总线（TaskStatusChanged 发布面——§10.4：状态机
+     *        每次转移发布；ResultArchived 由接纳路径经同一总线发布，
+     *        EX-T04 已有独立注入面）。空＝不发布（总线未装配——合法，
+     *        事件不持久化 core D-09；此后受理的任务以空 sink 构造状态机，
+     *        转移不发事件——StateMachine"无消费者是合法装配"先例）。
+     */
+    void setEventBus(core::IDomainEventBus* bus) noexcept;
+
+    /// 注入内联执行体（可空＝无内联能力——全部排队，见 IInlineRunExecutor 注）。
+    void setInlineExecutor(IInlineRunExecutor* executor) noexcept;
+
+    // ---- ITaskScheduler（§10.1——任意线程，主锁转串行） ----
+
+    SubmitResult submit(TaskSubmission&& submission) override;
+    std::optional<TaskSnapshot> tryTask(TaskId task) const noexcept override;
+    std::vector<TaskSnapshot> tasksByProject(core::ProjectId project) const override;
+    void setResourceBudget(const ResourceBudget& budget) override;
+    void shutdown(DrainPolicy policy) override;
+    bool drained() const noexcept override;
+
+    // ---- 进度接收（§6.2 通道读取线程入口——任意线程） ----
+
+    /**
+     * @brief 上报一帧进度（节流窗过滤后经 tick 应用——见类注释"进度节流"）。
+     *
+     * @param task    [in] 目标任务（未登记→ExecutionError(InvalidState)——
+     *                调用方违约：通道帧携带的任务必经 submit 受理）
+     * @param report  [in] 进度帧（ProgressReport::make 已校验字段）
+     *
+     * @throws ExecutionError(InvalidState) 任务未登记；任务已终态
+     *         （updateProgress 防御——终态后无流式更新）
+     */
+    void reportProgress(TaskId task, const ProgressReport& report);
+
+    // ---- 调度推进（仅调度域单线程——不可重入） ----
+
+    /**
+     * @brief 推进调度一拍（§6.2 调度线程职责的显式驱动形态）。
+     *
+     * 处理序（每段语义见类注释）：
+     *   a. 应用待投递进度帧（节流窗放行的帧——updateProgress）；
+     *   b. 关闭期：DrainCoordinator::poll()（controller.poll＋超时兜底）
+     *      替代裸协议推进，且不再出队新任务（关闭即停止派发——§7.5）；
+     *   c. 非关闭期：协议推进（controller.poll——取消命令优先，§7.1）
+     *      ＋出队派发（额度/优先级闸→T2→内联走链或停留 Preparing）。
+     *
+     * 内联执行段在主锁外运行（锁只保护簿记不覆盖计算——文件头调度
+     * 线程模型）；其余段全程持锁。
+     */
+    void tick();
+
+    /// 生产默认时钟（透传 TaskController::steadyClock——同一基准）。
+    static std::chrono::steady_clock::time_point steadyClock() noexcept;
+
+    // ---- IDispatchGate（Controller 在主锁内的回调——同域不取锁） ----
+
+    /**
+     * @brief 任务进入 Canceling 时把其移出等待队列（§7.1 步 1"停止派发"
+     *        的排队半区；T3 直达取消不再出队）。
+     *
+     * 线程约束：**仅 Controller::poll() 在主锁内回调**（同域同线程）——
+     * 不取主锁（重入死锁）；主锁在 tick 全程持有，回调链的数据竞争因此
+     * 被 tick 的锁覆盖。非等待队列任务（在途/终态）到达此回调＝无害
+     * no-op（出队面只对等待态有意义）。
+     */
+    void stopDispatch(TaskId task) override;
+
+private:
+    /// 单任务簿记（等待队列条目＋投影缓存——主锁域内私有）。
+    struct ScheduledTask {
+        TaskStateMachine* machine = nullptr;  ///< 状态机（非所有权——本体在 Controller 表）
+        TaskPriority priority = TaskPriority::Background;  ///< 队列优先级（提交属性，不可变）
+        std::uint64_t submitSeq = 0;          ///< 提交序号（同级 FIFO 排序键——单调递增，D-04）
+    };
+
+    // ---- ITaskEventSink（状态机事件接缝→总线——私有实现） ----
+
+    /// 每次转移后由状态机同步回调（主锁域内）；适配为 core DomainEvent
+    /// 发布（§10.4：TaskStatusChanged{task:五元组, newState}；进度不入
+    /// 事件——core D-09）。仅当总线已装配时状态机才接到本接缝
+    /// （受理段判空——见 setEventBus 注），故回调内总线必非空。
+    void onTaskStatusChanged(const core::TaskStatusChangedPayload& payload) override;
+
+    // ---- 提交验证（V1~V4——主锁内，受理线程执行） ----
+
+    /// V1~V3 校验（形式/内容/权限）；通过返回空，失败返回稳定码拒绝诊断。
+    /// 前置：主锁已持有（受理段调用）。
+    std::optional<core::DiagnosticRecord> validateSubmission(const TaskSubmission& submission) const;
+    /// V4 预算（等待队列容量）——独立成段以对应 §6.3 清单行序。前置：主锁。
+    bool queueHasCapacity() const;
+
+    /// 出队一段（额度/优先级闸＋T2＋内联走链——tick 段 c 的派发半区）。
+    /// 前置：主锁已由 lock 持有；内联执行段会临时解锁并在返回前重锁
+    /// （锁只保护簿记不覆盖计算——文件头"调度线程模型"）。
+    void dispatchOne(std::unique_lock<std::mutex>& lock);
+
+    /// 在途任务计数（Preparing/Running/Canceling——并发额度判据；主锁内）。
+    std::size_t inFlightCount() const;
+
+    /// 同项目在途正式任务计数（Quick/Verified——maxTasksPerProject 判据）。
+    /// 前置：主锁已持有。
+    std::size_t inFlightFormalFor(core::ProjectId project) const;
+
+    /// 等待队列线性移除（stopDispatch 的两队列共用体；未命中＝no-op）。
+    /// 前置：主锁已持有（stopDispatch 同域回调——不重复取锁）。
+    static void removeFromQueue(std::deque<TaskId>& queue, TaskId task);
+
+    TaskController& m_controller;      ///< 协议引擎（非所有权——EX-T03）
+    DrainCoordinator& m_drain;         ///< 排空编排（非所有权——EX-T03；shutdown 组合实现）
+    Collaboration m_collab;            ///< 提交验证协作面（指针集）
+    Config m_config;                   ///< 实现参数（节流窗/内联谓词）
+    ClockFn m_clock;                   ///< 注入时钟（空＝steady_clock）
+    ResourceBudget m_budget;           ///< 资源预算（运行期可调——setResourceBudget）
+
+    /// 调度主锁（调度串行域的阶段 A 表达——文件头"调度线程模型"）。
+    /// mutable：const 查询面（tryTask/tasksByProject/drained）也在锁内。
+    mutable std::mutex m_mutex;
+
+    std::unordered_map<TaskId, ScheduledTask> m_tasks;  ///< 任务簿记（受理到查询终期；TaskId 哈希——TaskTypes 特化）
+    std::deque<TaskId> m_interactive;   ///< Interactive 等待队列（同级 FIFO——push_back/pop_front）
+    std::deque<TaskId> m_background;    ///< Background 等待队列（同上；Interactive 全序先于本队列）
+    std::uint64_t m_nextSubmitSeq = 1;  ///< 提交序号发生器（同级 FIFO 排序键——单调）
+
+    core::IDomainEventBus* m_eventBus = nullptr;    ///< 事件总线（可空——未装配时状态机直接以空 sink 构造，
+                                                    ///  转移不发事件〔StateMachine"无消费者是合法装配"先例〕）
+    IInlineRunExecutor* m_inlineExecutor = nullptr; ///< 内联执行体（可空——无内联能力）
+
+    /// 待应用进度帧（reportProgress 节流放行→tick 段 a 应用——任意线程
+    /// 入队、调度域消费的交接队列；随主锁互斥）。
+    std::deque<std::pair<TaskId, ProgressReport>> m_pendingProgress;
+    /// 每任务最近一次放行帧的时钟戳（节流判定基准——主锁内读写）。
+    std::unordered_map<TaskId, std::chrono::steady_clock::time_point> m_lastProgressAt;
 };
 
 }  // namespace sdurws::ird::execution

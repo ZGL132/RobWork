@@ -343,6 +343,26 @@ void TaskStateMachine::appendDiagnostic(core::DiagnosticRecord record)
     m_record.diagnostics.push_back(std::move(record));
 }
 
+// ---------------------------------------------------------------------
+// 进度更新（§4.2 progress 行"流式更新"——EX-T05 调度器节流后的写面）
+// ---------------------------------------------------------------------
+
+void TaskStateMachine::updateProgress(ProgressReport report)
+{
+    // 终态防御（头注错误语义）：进度帧晚到（通道与调度失步的边缘序列）
+    // 不允许改写终态记录——调用方契约违约 fail-fast。非终态（含 Canceling
+    // ——在途批次收敛中仍可能报出最后进度）一律接受，不按状态加限制：
+    // §4.2 progress 行只约定流式更新，没有"仅 Running"的词法依据。
+    if (isTerminalTaskState(m_record.state)) {
+        throw ExecutionError(ExecutionErrorCode::InvalidState,
+                             "execution/scheduler: progress frame arrived after terminal state");
+    }
+    // 透传纪律（UX-10 边界）：phaseToken 是 worker 域进度阶段 token，本层
+    // 不解读、不改写、不映射七态状态词（映射归 ui——§2.2/§13 ui 行）；
+    // 字段合法性已由 ProgressReport::make 前置校验（单一校验点）。
+    m_record.progress = std::move(report);
+}
+
 core::TaskIdentity TaskStateMachine::currentIdentity() const
 {
     // 五元组组装（§4.1 混用防线 1：TaskId 不进五元组）。project/branch/
