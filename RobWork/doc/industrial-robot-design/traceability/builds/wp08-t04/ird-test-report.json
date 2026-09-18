@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EX-T04",
+  "masterWp": "WP-08-T05",
+  "branch": "wp08-t04",
+  "base": "dbc741799d7bb5f946d265ed463abd0c126c5aea",
+  "date": "2026-09-18",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持＝GTest::gtest_main，testkit RecordListener 报告设施随 EX-T09 接入）",
+  "targets": [
+    {
+      "target": "sdurws_ird_execution",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EX-T04 增列两个产品翻译单元与两件公共头（依赖红线与链接边零变更——core/evidence/project 三条登记边内的合法 include 面）：①include/sdurws/ird/execution/RunRegistry.hpp＋src/RunRegistry.cpp——§9.1 RunRegistration 登记记录全字段（identity 五元组核对基准、runDir 归档位置取登记原值〔A8〕、allowedResultKinds、supersededAttempts、resourceContext 引用持有〔A7〕；增量两字段 mode/archivePhase 镜像）＋§10.5 IRunRegistry（registerRun 契约校验 fail-fast/appendAttempt 单调取代/classifyArrival 九步 1~7 纯查表一次性判定〔步 2/步 4 attemptId 三分支细则：＝现役通过、∈superseded 出 StaleAttempt、其余出 IdentityMismatch〕/tryRun 拷贝快照/markTerminated 一次写入＋状态镜像）＋编排镜像维护面（noteAdmissionCompleted/noteArchivePhase/noteArchiveSession）；②src/Admission.cpp——§9.2 步 8~9（名称反解经 INameResolverAdapter 以登记 nameMapIdentity 绑定〔CON-06 先反解后接纳、任一名称不可解即拒绝 fail-closed〕→aggregateVerdict→validateCombination 快照绑定重载→ResultEnvelope::make 单点复用零复制〔SA-13；失败→T9 markTerminated(Failed)〕）＋§9.3 重投递幂等（载荷指纹、完成事件重复投递无次数上限——P-PR-4 冻结义务之二）/内容冲突拒绝（D-14——接纳侧指纹与真实端口比对双道）/有界重试（默认 2 次退避 1 s→4 s——D-11 实现参数；冲突不重试）/重试耗尽 abandon(Failed)＋EX-ARCHIVE-FAILED＋任务终态不变＋§10.5 archivePhase 查询；③include/sdurws/ird/execution/Ports.hpp——§3.3 注入接口：IExecutionDiagnosticsSink/INameResolverAdapter（P-EX-3 处置：runtime⑥端口经注入、零编译依赖零表外边 SA-10）＋IEvaluationOutputDecoder（payloadCanon 字节级契约归 EX-T06 通道协议，execution 不私造第二编码——归置增量登记 §15.4 v0.6）。归档协作经 IRunArchiveGateway（写面端口＋A7 重新取得写权限两动作的最小消费口）；P-PR-4 单侧冻结兑现：全部归档端口调用仅调度线程、不另持项目写锁（project §9.8 writer 互斥对端——PRJ-T14）。"
+    },
+    {
+      "target": "sdurws_ird_execution_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 70/70）",
+      "notes": "EX-T01~T03 既有 45 用例保留全绿。EX-T04 新增 25 用例（RunRegistryAdmissionTest.cpp），acceptance 逐条对应：①EX-REG-1（acceptance 1）＝UnknownRunRejectedWithNoArchiveWrite_EX_REG_1（无登记到达→Rejected(UnknownRun)＋EX-REGISTRY-UNKNOWN-RUN 稳定码诊断＋丢弃计数 1＋beginCalls==0＋results 目录不存在——零归档写入）；②EX-REG-2（acceptance 1）＝FiveTupleFieldMismatchRejectedPerField_EX_REG_2（project/branch/revision/attempt 四字段逐一变异独立断言 IdentityMismatch＋诊断 cause 携带字段名；runId 失配＝查表未命中归 EX-REG-1 承载——ARCH §4.5 单列，合成五元组全字段覆盖）；③EX-REG-3（acceptance 1）＝StaleAttemptsAllRejected_EX_REG_3（被取代尝试 1/2 逐一 StaleAttempt＋EX-STALE-ATTEMPT 码＋现役 attempt 对照通过）；④步 5/6/7＝BindingMismatchAtSecondCheck（六个扩展绑定字段逐一变异）＋KindOutsideAllowedSetRejected＋TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1（取消/失败/强杀三种终结因→AlreadyTerminated＋envelope 为空＋零端口调用＋零落盘——TASK-02 执行侧）＋InterruptedTerminationNotInStepSevenRejectSet（§9.2 步 7 三值边界对照）；⑤EX-REG-7（acceptance 1）＝FinalEnvelopeRedeliveryIdempotent_EX_REG_7（首投 Admitted＋Archived＋ResultArchived 恰一次；同内容三连重投递均 DuplicateIgnored＋manifest 逐字节不变＋零端口调用＋事件仍恰一次——完成事件幂等无上限）；⑥EX-REG-8（acceptance 1）＝FinalEnvelopeContentConflictRejected_EX_REG_8＋ResultBatchAdmissionAndConflict_EX_REG_8（不同内容重投递→ContentConflict＋既有文件逐字节不变——不覆盖）；⑦EX-ORT-1（acceptance 2）＝CompletedWithDataInsufficientIsAdmitted_EX_ORT_1（②级漏验→判定轴 DataInsufficient 与执行轴 Completed 同体共存互不推导）＋HeadChangeNotInvolvedInAdmission_EX_REG_6（接纳无 HEAD 输入、无 SNAPSHOT-STALE 类拒绝、归档绑定原修订）＋SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1（归档域载荷字节与 make 重算摘要一致——历史不回写 CON-02）＋ConstructionFailureFailsTask_EX_ORT_1（组装校验拒绝→ConstructionFailed＋T9 markTerminated(Failed)＋不构造不归档）；⑧步 8（acceptance 3）＝RuntimeNameResolutionGatesAdmission（反解成功放行/映射漂移拒绝/反解器缺失 fail-closed 三分支——先反解后接纳）；⑨步 9 前置＝UndecodablePayloadRejected（解码失败/解码器缺失→PayloadUndecodable）；⑩归档事务＝ArchiveRetriesBoundedThenSucceeds（注入 disk-full×2→有界重试成功＋退避序列恰为 1 s/4 s〔DelayFn 虚拟推进不 sleep——D-11〕）＋ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5（耗尽→abandon(Failed)＋EX-ARCHIVE-FAILED＋Completed 保持 ArchiveFailed——完成≠归档完成正交观测＋无 manifest 残留）；⑪A7 防御＝AuthorityLostRejectedWithDiagnostics_EX_REG_5（真实 requestClose 后迟到归档→重取失败→EX-ARCHIVE-AUTHORITY-LOST＋Admitted 保持＋结果不落盘）＋AuthorityReacquiredArchivesNormally_EX_REG_5（工厂真实重开 writable→照常归档至登记 runDir）；⑫边界＝NonArchivedKindsPassClassificationOnly（CheckpointBatch/Progress/PartialDataOnTerminate 登记核对面放行、持久化归各自组件——PA-1 边界登记）＋RegisterRejectsCallerContractViolations/AppendAttemptSupersedesOldAttempts/MarkTerminatedWritesOnceAndMirrorsState/InvalidArrivalIdentityFailsFast（调用方契约 fail-fast 面）。替身边界声明：评估产出解码器/名称反解器为接口替身；归档写面用真实 ProjectStore（PRJ-T14）＋故障注入转发器（begin 会话面转发真实端口取得——ArchiveSessionRef 只能由 project 内部构造的防伪设计）。"
+    },
+    {
+      "target": "sdurws_ird_execution_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 12/12）",
+      "notes": "EX-T01~T03 既有 9 用例保留全绿。EX-T04 新增 3 用例（ArchiveCollaborationContractTest.cpp，跨单元契约面）：①EX-REG-4（acceptance 1/5——AT-10 场景载体）＝LateResultArchivesToRegisteredRunDirAfterProjectSwitch_EX_REG_4（真实双项目 A/B：A 运行中登记 r1→切换打开 B→完成事件迟到→接纳归档至 A 原 runDir〔登记记录原值——A8〕→B 的 results 无 r1〔AT-10 反例〕→A 查询端口 listRuns 按原修订可见且 manifest 五元组＝登记原五元组〔D-13 完整性可见性〕→A 上下文存活〔A7 引用持有〕）；②EX-REG-8（acceptance 1）＝BatchContentConflictViaProjectPort_EX_REG_8（双接收窗口→同 relPath 不同内容直达真实 project writeBatch→D-14 ArchiveConflict→ContentConflict 拒绝＋既有批次逐字节不变＋批次未 finalize 查询不可见）；③acceptance 3＝EnvelopeAssemblyReusesEvidenceValidators（接纳编排产物 envelope 全字段等于以同一素材走 evidence 公共 API〔aggregateVerdict→validateCombination→make〕直接组装的产物——execution 无第二份判定/校验逻辑的结构性证明〔TASK-02/D-03 接纳唯一权威点〕＋载荷摘要 make 重算一致 CR-02）。"
+    }
+  ],
+  "runs": [
+    {
+      "mode": "integration（仓库根 build/ 构建树，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已 grep 确认——AGENTS.md §4.1）",
+      "configure": "增量（CMakeLists 变更自动重配置）＋全量 Release 构建 exit 0、零 error（integration-build.log——grep ': error' 计数 0）",
+      "tests": "sdurws_ird_execution_test 70/70 PASSED＋sdurws_ird_execution_contract_test 12/12 PASSED（gtest XML＝sdurws_ird_execution_test-integration.xml tests=70 failures=0、sdurws_ird_execution_contract_test-integration.xml tests=12 failures=0）"
+    },
+    {
+      "mode": "smoke（独立冒烟 build-smoke-wp08-t04/，-DCMAKE_TOOLCHAIN_FILE=<仓库根>/vcpkg/scripts/buildsystems/vcpkg.cmake 绝对路径——CORE-T01 验收 G-2 教训）",
+      "configure": "cmake -S industrialrobot -B build-smoke-wp08-t04 exit 0（smoke-configure.log）；cmake --build --config Release exit 0 零 error（smoke-build.log——grep ': error' 计数 0）",
+      "tests": "sdurws_ird_execution_test 70/70 PASSED＋sdurws_ird_execution_contract_test 12/12 PASSED（gtest XML＝sdurws_ird_execution_test-smoke.xml tests=70 failures=0、sdurws_ird_execution_contract_test-smoke.xml tests=12 failures=0）"
+    },
+    {
+      "mode": "门禁与自查",
+      "validate-task": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile tasks/foundation/EX-T04.json → PASS（1 tasks）（validate-task.log）",
+      "ird_gates": "cmake --build build --config Release --target ird_gates（gates-ird-gates-target.log）——IRD-GATE 行与 base 留痕（builds/wp08-t03/gates-ird-gates-target.log）排序 diff 为空：零新增命中（gate 目标因既有登记例外按设计退出非零，与 base 行为一致）",
+      "verify": "契约 verify 命令 cmake --build build --config Release --target sdurws_ird_execution_test 与 --target sdurws_ird_execution_contract_test 均 exit 0（verify-target-build.log）",
+      "fault-probe": "测试真实失败能力探针（test-fault-probe.log）：①移除九步步 7（已终结登记拒绝 FinalEnvelope 条件置恒 false）→TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1 运行期 FAILED 精确检出；②批次重投递内容冲突误判为幂等（指纹比对追加恒真）→ResultBatchAdmissionAndConflict_EX_REG_8 运行期 FAILED 精确检出；两处还原后复跑 70/70＋12/12 全绿"
+    }
+  ],
+  "acceptanceCoverage": [
+    {
+      "item": 1,
+      "text": "EX-REG-1~8 全绿：未知 RunId（Rejected(UnknownRun)＋不写任何项目 results/）、五元组任一字段失配（逐字段独立断言）、陈旧 AttemptId 全部拒绝（九步接纳 1~6 五重拒绝——§9.2/ARCH §11.2-7）；归档位置取登记记录（EX-REG-4 项目切换后合法迟到结果归档至 A 原 runDir、不进 B 会话）；同 (run,attempt) 重投递幂等（EX-REG-7）；内容冲突拒绝（EX-REG-8）；不按当前会话丢弃合法迟到结果（卡行禁止项）",
+      "evidence": "UnknownRunRejectedWithNoArchiveWrite_EX_REG_1（UnknownRun＋稳定码诊断＋零归档写入）＋FiveTupleFieldMismatchRejectedPerField_EX_REG_2（逐字段＋cause 字段名；runId 失配＝UnknownRun 归 EX-REG-1——ARCH §4.5 单列合成全字段覆盖）＋StaleAttemptsAllRejected_EX_REG_3＋BindingMismatchAtSecondCheck＋KindOutsideAllowedSetRejected＋FinalEnvelopeRedeliveryIdempotent_EX_REG_7（三连重投递幂等＋manifest 逐字节不变＋零端口调用）＋FinalEnvelopeContentConflictRejected_EX_REG_8＋ResultBatchAdmissionAndConflict_EX_REG_8＋contract_test.LateResultArchivesToRegisteredRunDirAfterProjectSwitch_EX_REG_4（真实双项目：A 原 runDir 归档＋B 零写入＋D-13 可见性）＋contract_test.BatchContentConflictViaProjectPort_EX_REG_8（真实端口 D-14 全链路）；两模式 70/70＋12/12 XML"
+    },
+    {
+      "item": 2,
+      "text": "EX-ORT-1 通过：CON-02 三态正交强制（§5.6 四轴互不推导逐行断言——Completed+DataInsufficient、Failed、Canceled、Superseded-Current 组合）；HEAD 不参与接纳判定（EX-REG-6——CON-02/05，当前性由 evidence 另判）；取消/失败/中断结果不入正式（TASK-02 执行侧保证——§9.2 步 7/9：已终结登记拒绝 FinalEnvelope，不构造不归档为正式结果）",
+      "evidence": "CompletedWithDataInsufficientIsAdmitted_EX_ORT_1（Completed＋DataInsufficient 同体合法——判定轴独立）＋TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1（三种终结因拒绝 FinalEnvelope＋envelope 为空＋零落盘）＋HeadChangeNotInvolvedInAdmission_EX_REG_6（无 HEAD 输入、无 STALE 类拒绝、归档绑定原修订）＋SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1（历史 payload 不回写）＋ConstructionFailureFailsTask_EX_ORT_1（组装失败→T9 不入正式）；故障探针 1 实证步 7 防线的真实检出能力"
+    },
+    {
+      "item": 3,
+      "text": "九步接纳＋名称反解编排就位（§9.2 步 8——先反解后接纳，CON-06）：名称反解经⑥端口注入解析器 INameResolverAdapter——P-EX-3 处置：runtime 零编译依赖不私建边（ARCH §3.5 白名单，SA-10 表外边＝构建失败）；envelope 组装复用 evidence 校验器（aggregateVerdict→make→validateCombination 单点复用不复制——TASK-02/D-03 接纳唯一权威点）",
+      "evidence": "RuntimeNameResolutionGatesAdmission（登记映射反解成功放行/映射漂移 NameUnresolved/反解器缺失 fail-closed——先反解后接纳的编排序）＋UndecodablePayloadRejected＋P-EX-3 处置＝INameResolverAdapter 注入接口（Ports.hpp；CMake 依赖红线守卫零变更——无 runtime 链接边）＋contract_test.EnvelopeAssemblyReusesEvidenceValidators（接纳产物全字段等于 evidence API 直接组装产物——单点复用零复制的结构性证明）＋单元套件全链路用例（Admitted→Archived 的 aggregateVerdict→validateCombination→make 复用链）"
+    },
+    {
+      "item": 4,
+      "text": "P-EX-5/P-PR-4 处置：归档协作线程模型按 §9.5 单侧冻结（调度线程调用＋writer 互斥串行化＋完成事件幂等无上限＋abandon 三时机），project 侧（PRJ-T14）已按 §5.6/§9.8 同款冻结——双方以各自冻结文本为对端起点不私改，偏差走二次对齐不私裁",
+      "evidence": "RunRegistry.hpp/Ports.hpp 文件头＋IRunArchiveGateway/ResultAdmission 注释逐条兑现 §9.5 单侧冻结文本（全部归档端口调用仅调度线程、不并发调用、不另持项目写锁、不以 PID/心跳/UI 状态为权限依据）；完成事件幂等无上限＝FinalEnvelopeRedeliveryIdempotent_EX_REG_7（三连重投递均 DuplicateIgnored＋ResultArchived 恰一次）；abandon 时机＝重试耗尽/冲突/已完成运行迟到批次三路径全部以 abandon 终结（ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5 等——不存在无 abandon 的终结路径）；强杀后/恢复期/关闭超阈值三时机的调度侧接线归 EX-T05/EX-T09（登记于单元卡 §15.4 v0.6）；对端 project 侧冻结文本（PRJ-T14 §5.6/§9.8）零改动——本分支未触碰 project 单元任何文件"
+    },
+    {
+      "item": 5,
+      "text": "AT-10 场景载体就位（PM-13 切换场景——EX-REG-4/§9.4 归档流程图 S7；AT 编号自 DTB WP-08-T05 需求列迁注，不入 requirements）；P-EX-1 处置：消费 evidence 校验器/判定器与 project 归档端口卡 v0.1 Draft 未冻结，冻结 diff 后按影响面增量同步",
+      "evidence": "contract_test.LateResultArchivesToRegisteredRunDirAfterProjectSwitch_EX_REG_4（S7 流程的执行侧载体：登记→切换→迟到→一次性判定→A 原 runDir 归档→不进 B；AT-10 反例「绝不写入新项目 results/」由同用例 B 目录断言＋单元 EX-REG-1 零端口调用断言双面承载）；P-EX-1 处置＝新增产品源仅消费 evidence/project 公共头现状签名（Evaluator/Envelope/Verdict/Snapshot/Evidence＋ArchivePort/ProjectStore/QueryPort/StoreTypes），两卡 v0.1 Draft 未冻结——冻结 diff 后按影响面增量同步承诺登记于单元卡 §15.4 v0.6；契约测试 12/12 全绿（含构建图边界扫描常驻）"
+    }
+  ]
+}

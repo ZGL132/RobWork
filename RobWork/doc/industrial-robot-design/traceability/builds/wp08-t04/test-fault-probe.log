@@ -1,0 +1,32 @@
+故障探针记录（EX-T04，2026-09-18）
+=====================================
+
+目的：验证本任务新增用例具有真实失败检出能力（验收协议"验证测试真实失败
+能力"项；EX-T03 同款做法——注入缺陷→构建/运行→观察 FAILED→还原→复跑全绿）。
+
+探针 1：移除九步步 7（已终结登记拒绝 FinalEnvelope）
+- 注入：RunRegistry.cpp classifyArrival 步 7 条件置为恒 false
+  （if (false && arrival.kind == ResultKind::FinalEnvelope && ...)）；
+- 重建：零错误；
+- 运行：RunRegistryAdmissionTest.TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1
+  → [  FAILED  ]（取消/失败/强杀三种终结因下的拒绝与零归档断言均失守——
+  检出生效）；
+- 还原后该用例复跑 [  PASSED  ]。
+
+探针 2：批次重投递内容冲突误判为幂等
+- 注入：Admission.cpp admitResultBatch 批次指纹比对条件追加恒真（|| true），
+  ContentConflict 拒绝分支不可达；
+- 重建：零错误；
+- 运行：RunRegistryAdmissionTest.ResultBatchAdmissionAndConflict_EX_REG_8
+  → [  FAILED  ]（不同内容重投递被误判 DuplicateIgnored、"不覆盖"断言
+  失守——D-14 冲突检出生效）；
+- 还原后该用例复跑 [  PASSED  ]。
+
+还原确认：两处注入全部还原（git diff 无 FAULT-PROBE 残留）；还原后复跑
+sdurws_ird_execution_test 70/70、sdurws_ird_execution_contract_test 12/12
+全绿（集成模式；XML 见本目录 *-integration.xml），冒烟模式同绿
+（*-smoke.xml）。
+
+说明：EX-ORT-1 的"取消/失败不入正式"与 EX-REG-8 的"内容冲突拒绝"是本
+任务的两条最高危防线，其余用例的检出能力由其断言面（拒绝原因码/端口调
+用计数/文件逐字节比对/事件计数）结构性保证，未逐一注入。
