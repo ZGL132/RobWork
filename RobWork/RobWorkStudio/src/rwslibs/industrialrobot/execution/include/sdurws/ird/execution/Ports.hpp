@@ -26,16 +26,22 @@
  *   接口形状、L5 装配期注入适配器"的形态消费——接口形状即本头全部内容，
  *   实现零在这里（依赖方向隔离，ARC-02 端口精神的实施件）。
  *
- * 头内归置登记（相对 §3.1 组成表的一处增量，登记单元卡 §15.4）：
- *   §3.1 的 Ports.hpp 行还登记 IExecutionModelService/ICompileCacheJudge
- *   两接口（Preparing 段模型准备/编译缓存判定注入）——其唯一消费者是
- *   调度线程的派发路径（EX-T05 调度器＋EX-T08 缓存治理），本头随 EX-T04
- *   先落接纳路径已消费的三接口，那两件随其消费任务落位（EX-T03
- *   Controller.hpp 先落编排接缝的归置先例），届时增量登记。
+ * 头内归置登记（相对 §3.1 组成表的两处增量，登记单元卡 §15.4）：
+ *   ①§3.1 的 Ports.hpp 行登记 IExecutionModelService/ICompileCacheJudge
+ *   两接口（Preparing 段模型准备/编译缓存判定注入）——ICompileCacheJudge
+ *   随其消费任务 EX-T08 落位；IExecutionModelService 已随 EX-T06 落位
+ *   （EX-T05 曾登记"归置修正为随 EX-T06/T08 落位"——真实消费者是
+ *   Preparing 段派发编排：WorkerAssignment.dispatch 的物化字节由其产出）；
+ *   ②随 IExecutionModelService 一并落位 §3.3 原文点名的三件承载类型
+ *   MaterializedDispatch/ModelPrepareResult/PrepareOptions（§3.3 代码段
+ *   原文形态；PrepareOptions 字段面阶段 A 仅最小承载，随 runtime 注入
+ *   适配器装配定形）。
  *
- * 线程约束：三个接口的实现方各自保证线程安全；execution 侧的全部调用都
- *   发生在调度线程（RunRegistry/接纳编排的唯一写者域——§4.2/§9.2），实现
- *   方按"调度线程串行调用"设计即可，无须为并发付费。
+ * 线程约束：各接口的实现方各自保证线程安全；execution 侧的全部调用都
+ *   发生在调度线程（RunRegistry/接纳编排/派发编排的唯一写者域——
+ *   §4.2/§9.2/§6.4），实现方按"调度线程串行调用"设计即可，无须为并发
+ *   付费。ICancelSignal 的实现例外——它被跨线程置位（取消命令任意线程
+ *   受理），见 Controller.hpp 其注。
  */
 
 #ifndef SDURWS_IRD_EXECUTION_PORTS_HPP
@@ -47,10 +53,16 @@
 #include <string_view>
 #include <vector>
 
-#include <sdurws/ird/core/Identity.hpp>      // ContentIdentity（名称映射绑定键）、ObjectId（反解目标）
+#include <sdurws/ird/core/Identity.hpp>      // ContentIdentity（名称映射绑定键、物化身份）、ObjectId（反解目标）
 #include <sdurws/ird/evidence/Evaluator.hpp> // EvaluationOutput（解码产出——已注册边的公共头）
+#include <sdurws/ird/evidence/Snapshot.hpp>  // AnalysisSnapshot（模型准备输入——已注册边的公共头）
 
 namespace sdurws::ird::execution {
+
+// 前置声明：取消信号最小接口（完整定义与契约注释见 Controller.hpp——
+// 引用形参只须声明可见，不拖入整个取消协议头；§3.3 原文 prepare 签名的
+// 第三参数即此类型）。
+class ICancelSignal;
 
 // =====================================================================
 // IExecutionDiagnosticsSink（§3.3 原文形态——诊断注入）
@@ -181,6 +193,113 @@ public:
      */
     virtual std::optional<evidence::EvaluationOutput> tryDecode(
         const std::vector<std::uint8_t>& canonical) const = 0;
+};
+
+// =====================================================================
+// 模型准备注入（§3.3 原文形态——IExecutionModelService 及其三件承载类型；
+// P-EX-3 处置件，EX-T06 落位）
+// =====================================================================
+
+/**
+ * @brief 模型准备选项（§3.3 prepare 签名第二参数的承载——阶段 A 最小形）。
+ *
+ * 归置说明（登记单元卡 §15.4）：§3.3 代码段点名本类型但未给字段面——
+ *   其真实字段（编译选项/缓存偏好等）是 runtime 注入适配器的装配知识，
+ *   阶段 A 无消费者（EX-T08 缓存治理接入时经 ICompileCacheJudge 侧扩展）。
+ *   本结构按"最小承载、拒绝预建"落位（NFR-MNT-04：无消费者的接口字段
+ *   不预建）；唯一语义字段 preferCompileCache 传达"派发允许消费编译缓存"
+ *   的调度侧意愿——判定本身仍归注入侧（execution 不私判，§2.1 N 表）。
+ */
+struct PrepareOptions {
+    /// 派发是否允许消费编译缓存（判定与复用形态归注入侧——execution 只
+    /// 表达意愿，不做兼容性裁决；EX-WKR-1 正常派发取缺省 true）。
+    bool preferCompileCache = true;
+};
+
+/**
+ * @brief 派发物（§3.3 原文形态）——物化载荷的字节对 execution 不透明。
+ *
+ * 背景说明（P-EX-3 处置的核心承载，acceptance 4）：Preparing 段的模型
+ *   编译/物化是 runtime 能力（ARCH §3.5 未登记 execution→runtime 边，
+ *   SA-10 表外边＝构建失败）——经本结构**值传递**跨越注入边界：适配器
+ *   （L5 装配，包装 IRuntimeSnapshotFactory::create＋物化编码）产出字节，
+ *   execution 只透传给 worker（DispatchRequest 载荷——ChannelProtocol.hpp）
+ *   并把两份内容身份用于登记扩展字段与 worker 握手/身份核对（§6.5"worker
+ *   侧身份核对"）；execution 全程不解析字节内容（runtime
+ *   MaterializedSnapshotCodec 的解码在 worker 侧评估器装配——同样经注入）。
+ *
+ * 不可变性：构造后作为 WorkerAssignment.dispatch 携带（派发期事实——
+ *   不可变纪律，§4.2 capability 行同源）；字节可能很大（物化快照）——
+ *   按值持有、移动传递，不深拷贝（R-5 派发延迟缓解：分帧续传在
+ *   ChannelProtocol 层，本结构不感知分片）。
+ */
+struct MaterializedDispatch {
+    /// 物化快照字节（evidence SnapshotCodec(materialized) 产物——身份为
+    /// refs-only 形态；字节对 execution 不透明，只透传与核对身份）。
+    std::vector<std::uint8_t> snapshotBytes;
+    /// 模型派发物字节（runtime MaterializedSnapshotCodec 产出；worker 侧
+    /// 由评估器装配消费——execution 只透传，不解析，§3.3 原文注）。
+    std::vector<std::uint8_t> modelBytes;
+    /// 物化快照的内容身份（供登记扩展字段与 worker 握手核对——§6.4 时序
+    /// 图"registerRun(五元组+runDir+扩展)"的扩展字段来源之一）。
+    core::ContentIdentity snapshotIdentity;
+    /// 模型派发物的内容身份（runtime §9.2 物化核对值的主进程侧副本——
+    /// worker 重算摘要与其比对的参照值）。
+    core::ContentIdentity modelIdentity;
+};
+
+/**
+ * @brief 模型准备结果（§3.3 原文形态）——Preparing 段编排的分流依据。
+ *
+ * 消费语义（§6.4 派发编排）：ok=false→Preparing→Failed（T7——诊断透传
+ *   prepare 的 diagnostics）；ok=true→DispatchRequest 携带 dispatch 字节
+ *   派发（编译缓存三态仅供调度观测/呈现——复用与否的裁决已由注入侧做
+ *   完，execution 不再二判）。
+ */
+struct ModelPrepareResult {
+    bool ok = false;                                     ///< 编译/物化成功
+    bool compileCacheFullReuse = false;                  ///< 编译缓存完整命中（经 ICompileCacheJudge——EX-T08 落位）
+    bool compileCacheWorkCellOnlyReuse = false;          ///< 仅 WC 层可复用（runtime §9.4 三态）
+    MaterializedDispatch dispatch;                       ///< 派发物（ok=true 时有效；ok=false 时为空字节）
+    std::vector<core::DiagnosticRecord> diagnostics;     ///< 准备期诊断（透传——判定义务在注入侧）
+};
+
+/**
+ * @brief 模型准备服务注入口（§3.3 原文名 IExecutionModelService——L5 把
+ *        IRuntimeSnapshotFactory::create＋缓存键＋物化编码适配为本接口）。
+ *
+ * 为什么经注入（P-EX-3 处置，acceptance 4）：任务指令与 ARCH §3.5 白名单
+ *   的出入按架构表执行——runtime/policy 不是 execution 的登记依赖边；
+ *   本接口把"Preparing 段需要的能力"（模型编译/物化/编译缓存判定）与
+ *   "能力的来源"（runtime）解耦。如架构侧将来补登 execution→runtime 边，
+ *   适配器可原样退役为直连（接口形状不变，D-17；契约 acceptance 4"如
+ *   架构补登边可平滑直连"）。
+ *
+ * 消费位置：仅调度线程的 Preparing 派发编排（§6.4——EX-T06 supervisor
+ *   派发链与 EX-T05 调度器的接缝；阶段 A 契约测试以脚本化替身提供）。
+ *
+ * 线程约束：仅调度线程调用；实现方无须保证并发安全。
+ */
+class IExecutionModelService {
+public:
+    virtual ~IExecutionModelService() = default;
+
+    /**
+     * @brief 对一份冻结快照执行模型编译/物化，产出派发物（§3.3 原文签名）。
+     *
+     * @param snapshot [in] 被评估的冻结快照（evidence builder 产物——非空、
+     *                     snapshotId 非保留值；调用方＝派发编排）
+     * @param options  [in] 准备选项（编译缓存偏好等——见结构注释）
+     * @param cancel   [in] 取消信号（编译是长操作——实现方应在协作点轮询；
+     *                     置位后尽快返回 ok=false＋取消诊断，不抛）
+     * @return 准备结果（ok=false＝准备失败〔含取消〕——诊断在 result 内
+     *         透传；本接口不抛环境类异常，AGENTS §3 错误二分的可预期侧）
+     *
+     * 线程约束：仅调度线程调用。
+     */
+    virtual ModelPrepareResult prepare(const evidence::AnalysisSnapshot& snapshot,
+                                       const PrepareOptions& options,
+                                       const ICancelSignal& cancel) = 0;
 };
 
 }  // namespace sdurws::ird::execution

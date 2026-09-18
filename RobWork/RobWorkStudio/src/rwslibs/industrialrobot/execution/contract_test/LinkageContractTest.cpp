@@ -151,14 +151,19 @@ TEST(ExecutionLinkage, UnitEdgesRegisteredOnly_DT_BUILD_R1_T1)
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
     // 白名单：core/evidence/project（三条允许的产品单元边）＋ execution
-    // 本单元三目标（产品/测试/契约测试——单元内部引用不构成跨单元边）。
+    // 本单元四目标（产品/测试/契约测试/worker——单元内部引用不构成跨单元
+    // 边；worker 目标随 EX-T06 注册，§3.4"worker 目标"行——其链接面为
+    // core/evidence 两条白名单边〔见单元 CMakeLists worker 段链接形态
+    // 说明：共享源直接编入 worker，ird_gates 单元级边粒度下同单元产品
+    // 目标互链不经 §3.5 词表〕）。
     const std::set<std::string> allowed = {
         "sdurws_ird_core",
         "sdurws_ird_evidence",
         "sdurws_ird_project",
         "sdurws_ird_execution",
         "sdurws_ird_execution_test",
-        "sdurws_ird_execution_contract_test"};
+        "sdurws_ird_execution_contract_test",
+        "sdurws_ird_execution_worker"};
     for (const auto& ref : refs) {
         EXPECT_NE(allowed.find(ref), allowed.end())
             << "execution 构建图出现白名单外目标引用（产品单元边仅 "

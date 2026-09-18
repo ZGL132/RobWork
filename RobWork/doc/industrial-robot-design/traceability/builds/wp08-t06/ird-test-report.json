@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "EX-T06",
+  "masterWp": "WP-08-T07",
+  "branch": "wp08-t06",
+  "base": "b727e50d426f44dfb84dce43ffb70360b815caa6",
+  "date": "2026-09-18",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持＝GTest::gtest_main，testkit RecordListener 报告设施随 EX-T09 接入）",
+  "targets": [
+    {
+      "target": "sdurws_ird_execution",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "EX-T06 增列四个产品翻译单元＋两件公共头（新增依赖边零变更——仍为 core/evidence/project 三条登记边，worker 目标链接面见其条目）：①include/sdurws/ird/execution/ChannelProtocol.hpp＋src/ChannelProtocol.cpp（新增）——§3.1 组成行/§6.5 IRDCHN/1 通道协议：帧编解码（magic 7B＋protoVersion u16＋msgType u8＋flags u8＋seq u64＋payloadLen u32＋五元组身份块 168B 定长域＋载荷——自定界）、FrameAssembler 字节流增量装配（vector＋消费位，协议错误闩）、FrameSequencer seq 序控（基线/重排窗口〔有界〕/重复回退丢弃＋开发诊断面/窗口溢出＋缺口超时→断裂协议错误面——EX-CHN-1 判定本体，注入时钟）、分帧续传（fragmentMessage＋MessageReassembler——DispatchRequest/FinalOutput 恒分片布局，NFR-PERF-03 不整体装载）、各消息载荷编解码（Hello/HelloAck/DispatchRequest/Progress/ResultBatch/CheckpointBatch/FinalOutput/ErrorReport——解码校验失败＝nullopt 协议错误面不抛）、manifestDigestHex＋computeContentIdentity＋contentIdentityMatches（CON-05 同源 SHA-256，worker 侧身份核对的参照值生成/重算共用函数）；②include/sdurws/ird/execution/WorkerSupervisor.hpp＋src/WorkerSupervisor.cpp（新增）——§3.1 组成行/§10.3 IWorkerSupervisor＋WorkerSupervisor 实现：WorkerId/HeartbeatPolicy（D-06 默认 5 s×3 实现参数非需求值）/WorkerStatus/WorkerAssignment（＋manifestDigest 增量字段——§6.4 握手比对值载体）/WorkerLaunchResult/WorkerEvent＋IWorkerEventSink（通道消息→结构化事件唯一出口）/classifyWorkerExitCode（§6.4 退出码约定集表纯函数化：0/10/11/12/20/21＋约定集外含 0xC0000005 一律 Crashed＋监督方强杀优先）/WorkerSupervisor 本体（launch 池取或新建＋握手协议推进〔Hello 比对→HelloAck→DispatchRequest 分帧派发〕＋poll 显式驱动〔收件箱消化→seq 序控→重组→按类型出事件→失联判定〔hungWindow〕→自动强杀→退出分类→池纪律〕＋requestCooperativeCancel/terminateForce〔TerminateJobObject 恰一次〕＋status/list 并发只读＋HandleAdapter〔IWorkerHandle 适配——EX-T03 TaskController 绑定面〕；每 worker 一条读线程〔§6.2 通道读线程——有界等待读＋进程句柄双源 WaitForMultipleObjects〕）；③src/win32/ChannelPair.hpp/.cpp＋JobScope.hpp/.cpp＋ProcessLauncher.hpp/.cpp（新增，私有实现——R-2 纪律私有头不出 include/）：命名管道对（CreateNamedPipeW BYTE 模式＋客户端端点主进程预开＋可继承副本经命令行传递＋启动后关闭继承副本〔§6.6 防泄漏〕＋OVERLAPPED 有界等待读写——不无限阻塞，EX-WKR-3 检测基础）、作业对象 RAII（CreateJobObjectW＋JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE＋AssignProcessToJobObject——每 worker 独立 Job Scope，不存在孤儿 worker）、启动器（CreateProcessW CREATE_SUSPENDED|CREATE_NO_WINDOW＋挂起→Job assign→Resume 时序消除竞态＋IProcessOps 故障注入接缝——§3.5）；④Ports.hpp（扩展）——IExecutionModelService/ModelPrepareResult/MaterializedDispatch/PrepareOptions 落位（§3.3 原文形态——P-EX-3 处置件，EX-T05 归置登记'随 EX-T06/T08 落位'的兑现；值传递零编译依赖）。"
+    },
+    {
+      "target": "sdurws_ird_execution_worker",
+      "kind": "WIN32 executable（新增——§3.4 worker 目标）",
+      "result": "build-pass（两模式）",
+      "notes": "worker/main.cpp 宿主入口（§6.4 worker 循环）：启动参数解析（继承句柄值＋绑定五元组——主/worker 私有启动约定）→握手（Hello〔协议版本＋manifest 摘要——阶段 A 装配清单文本 stage-a-double|1|7 的 SHA-256〕→有界等待 HelloAck）→心跳线程（HelloAck 下发间隔——两侧同源 D-06）→等 DispatchRequest（分帧重组横跨轮询——握手期到达的非 HelloAck 帧保留不丢弃〔主进程背靠背写 HelloAck＋DispatchRequest 是常态而非错乱〕）→物化身份核对（重算 SHA-256 与声明比对，不等拒绝执行——§6.5/runtime §9.2 同源纪律）→临时目录（%TEMP%\\ird-worker-<pid>-<run>-<attempt> 每尝试独立——§6.6）→DispatchAccept→替身评估器脚本执行（阶段 A 测试替身：progress/batches/checkpoint/final/heartbeat-off/write-temp/crash〔0xC0000005 真异常码〕/error/deverror/exit/misorder/duplicate/gap/hang 动作集）→尝试终结（线程收尾 stopThreads：心跳停止标志＋CancelIoEx 解阻塞读线程＋join——防 std::thread joinable 析构 std::terminate 污染退出码分类）＋临时目录 best-effort 清理（失败→开发诊断经通道 ErrorReport——EX-ARC-3 边界）→退出码（0/10/11/20/21 约定集内）。链接形态：共享源（ChannelProtocol/Errors/TaskTypes 三个翻译单元）直接编入 worker（同单元双二进制合法编译形态、协议单点实现）；链接 core/evidence 两条 §3.5 白名单边（ird_gates 以单元级边为粒度，同单元产品目标互链不经 §3.5 词表且白名单文件不在本任务 allowedFiles——登记单元卡 §15.4 v0.8）。诊断一律经通道 ErrorReport 回传（§6.4 边界规则：无窗口无控制台输出——WIN32_EXECUTABLE）。"
+    },
+    {
+      "target": "sdurws_ird_execution_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 113/113）",
+      "casesTotal": 113,
+      "casesNewThisTask": 24,
+      "notes": "EX-T01~T05 既有 89 用例保留全绿。EX-T06 新增 24 用例（test/ChannelProtocolTest.cpp——§6.5 协议逻辑面，纯逻辑零进程零管道），acceptance 对应：①帧编解码与流装配（acceptance 2 的自定界半区）＝EncodeDecodeRoundtripPreservesAllFields＋AssemblerSplitsFramesAcrossChunkBoundaries（字节流无消息边界——增量凑帧）＋AssemblerRejectsBadMagicAndVersion（主版本失配即拒——§6.5 消息版本行）＋AssemblerRejectsOversizePayloadLength（长度域防御——帧级长度校验）＋EncodeRejectsReservedSeqAndInvalidIdentity（发送侧拼装违约 fail-fast：seq 保留值 0/无效五元组不可上线）；②seq 序控（acceptance 2＝EX-CHN-1 判定本体）＝InOrderFramesDeliverDirectly＋OutOfOrderFramesReorderBySeq_EX_CHN_1（基线帧＋seq3 缓冲＋seq2 补齐缺口连吐 2,3）＋DuplicatesAndBackwardsAreDroppedForDevDiagnostic_EX_CHN_1（重复/回退→DuplicateDropped 开发诊断面非致命，通道继续）＋WindowOverflowIsProtocolError_EX_CHN_1（越前超窗口→WindowOverflow 协议错误闩）＋GapTimeoutIsProtocolError_EX_CHN_1（ManualClock 虚拟推进 999ms 不判/1000ms 判裂——不 sleep）＋GapClosesOnFillWithoutTimeout（缺口闭合后超时不回溯）；③分帧续传（acceptance 3 的机制面——NFR-PERF-03）＝FragmentRoundtripLargeMessage（1000B/256B→4 片→重组逐字节一致＋seq 帧级推进）＋SingleFragmentAndPassthroughTypes＋EmptyMessageStillProducesOneFragment（空消息至少 1 片——收侧末片判据无歧义）＋RejectsNonFragmentableTypeAndOversize；④载荷编解码（acceptance 2/3 的字节级契约）＝HelloAndHelloAckRoundtrip＋DispatchRequestRoundtripAndIdentityCheck（物化身份核对参照值——CON-05）＋ProgressPayloadRoundtripAndValueGuard（percent>100→解码失败协议错误面）＋BatchAndFinalAndErrorPayloadsRoundtrip（含截断载荷拒绝）；⑤握手与策略＝ManifestDigestIsDeterministicAndHex64（同文本同摘要 NFR-COR-02＋空装配拒绝）＋HeartbeatPolicyDefaultsAreD06Parameters（5 s×3 实现参数钉值——acceptance 1 明文'非需求值'）；⑥退出码分类（acceptance 1 真进程用例的判定本体）＝ConventionSetMapsPerContractTable（§6.4 表逐行 0/10/11/12/20/21）＋OutsideConventionSetIsCrashedIncludingAccessExceptions（0xC0000005/3/0xFFFFFFFF→Crashed）＋SupervisorForceKillTakesPrecedence（监督方强杀优先于退出码表——EX-WKR-3 分类面）。"
+    },
+    {
+      "target": "sdurws_ird_execution_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）；run-pass（两模式 27/27）",
+      "casesTotal": 27,
+      "casesNewThisTask": 8,
+      "notes": "EX-T01~T05 既有 19 用例保留全绿（LinkageContractTest 白名单随 worker 目标注册同步扩一项——单元内部引用不构成跨单元边）。EX-T06 新增 8 用例（contract_test/WorkerProcessContractTest.cpp——§3.4 _contract_test 分工'真实 worker 进程场景'：worker 进程为真实进程〔sdurws_ird_execution_worker exe 经 ProcessLauncher 真实启动〕，进程/管道/作业/退出码行为全部真实）：①EX-WKR-1（acceptance 1）＝WorkerCompletesViaHandshakeAndNineStepAdmission_EX_WKR_1（真进程握手〔manifest 摘要比对通过→DispatchAccept 事件〕→Running 状态→progress/检查点/批次流式回传→FinalOutput 分帧重组到达→九步接纳走真实 ResultAdmission＋真实 ProjectStore〔Admitted＋taskStateAfter Completed＋archivePhaseAfter Archived＋manifest.json 落盘〕→状态机 T5/T8→worker 正常退出 0→回池 Idle；含 R-3 观测面断言〔启动后无可继承句柄副本〕）；HandshakeManifestMismatchRejectsDispatch（manifest 失配→HandshakeRejected 事件＋零 DispatchAccept＋编排侧 T7 Preparing→Failed＋worker Dead＋主进程存活面 list 可服务——§6.4 握手拒绝路径）；②EX-WKR-2（acceptance 1）＝WorkerCrashFailsOnlyItsOwnTask_EX_WKR_2（真进程 0xC0000005 真实异常码退出：仅当前任务 T9→Failed＋EX-WORKER-CRASHED 判定诊断、检查点字节崩溃前后完好〔最近检查点保留的通道面——磁盘持久化编排归 EX-T08，PA-1 不伪造第二持久化路径〕、并存的 B 任务崩溃后照常完成并接纳〔T8 Completed〕、主进程存活、崩溃 worker Dead 永不回池〔后续任务拿到的进程 pid 必不等于崩溃 worker 的 pid〕）；③EX-WKR-3（acceptance 1）＝HeartbeatLossTriggersHungAndForceKill_EX_WKR_3（真进程 heartbeat-off＋hang 注入——判定经 ManualClock 虚拟推进 350ms 越过 3×100ms 判定窗〔D-06 实现参数非需求值——不 sleep 断言〕→WorkerHung 判定〔EX-WORKER-HUNG＋heartbeat-loss 标记，与运行超时 evaluationTimeout 标记互斥——诊断码区分〕→自动强杀〔真实 TerminateJobObject 作用于真实存活进程——isAlive 探测 false〕→WorkerExited ForceTerminatedBySupervisor→T9→Failed＋EX-FORCE-TERMINATED 判定＋EX-WORKER-HUNG 判定诊断先于终结标记〔因果序与 Controller 同构〕＋永不回池）；④EX-CHN-1 真进程半区（acceptance 2）＝SequenceGapBreaksChannelAndFailsTask_EX_CHN_1（真进程 duplicate 注入→去重＋非致命开发诊断〔通道继续〕、gap 注入→缺口缓冲→400ms 实现参数注入的超时→断裂 fatal 协议错误〔EX-CHANNEL-PROTOCOL-ERROR〕→编排侧 T9→Failed＋诊断→监督器就地终结不可信通道的 worker）；⑤流式回传（acceptance 3——NFR-PERF-03）＝ResultBatchesStreamInOrderBeforeFinal（三批独立帧序到达〔逐批非整体〕、索引 1,2,3 按序、全部先于 FinalOutput、每批载荷独立完整）；⑥临时目录隔离（acceptance 3——§6.4 边界规则）＝WorkerTempDirIsolatedAndCleanedUp（运行中产物只出现在 %TEMP%\\ird-worker-<pid>-<run>-<attempt>\\、项目 results/ 树零 worker 产物〔一切正式落点经主进程登记核对〕、正常退出后临时目录清理）；⑦R-3 实证（acceptance 4）＝LauncherClosesInheritedHandleDuplicates_R3（真进程 launch 完成即无可继承句柄副本残留〔§6.6 防泄漏——CreateProcessW 抓取继承面的窗口在 launchWorkerProcess 内闭合〕＋强杀收尾不留挂起进程）。替身边界声明（§11 同源纪律）：worker 内评估器为阶段 A 脚本替身（§3.4'阶段 A 仅测试替身'——替身输出不构成业务算法正确性证明 R-7）；接纳侧解码器/名称反解器为接口替身（EX-T04 套件同款）；接纳编排本体与 project 存储为真实件。时钟纪律：EX-WKR-3 失联判定 ManualClock 虚拟推进；泵循环真实 Sleep 只用于 I/O 到达，非时序判据。"
+    }
+  ],
+  "acceptanceMapping": {
+    "acc1": "EX-WKR-1~3 全绿（acceptance 1）——①EX-WKR-2 崩溃隔离（NFR-REL-02/D-02 Job Scope 进程侧闭环）：WorkerCrashFailsOnlyItsOwnTask_EX_WKR_2——真进程 0xC0000005 退出→仅当前任务 Failed＋EX-WORKER-CRASHED、主进程存活（list 可服务）、其他任务不受影响（并存 B 任务崩溃后照常完成并接纳）、最近检查点保留（崩溃前收到的检查点字节崩溃后完好——磁盘持久化编排归 EX-T08〔PA-1 边界〕）、崩溃 worker 永不回池（Dead 记录＋后续任务 pid 必不相同——§6.4 池纪律结构保证）；②EX-WKR-3 心跳失联强杀：HeartbeatLossTriggersHungAndForceKill_EX_WKR_3——5 s×3 判定窗为 D-06 实现参数非需求值（HeartbeatPolicyDefaultsAreD06Parameters 钉值＋用例 100ms×3 参数可配实证）、ManualClock 虚拟推进不 sleep、诊断码区分（EX-WORKER-HUNG＋heartbeat-loss 标记与 EX-WKR-5 的 evaluationTimeout 标记互斥）→真实 TerminateJobObject 强杀→EX-FORCE-TERMINATED；③EX-WKR-1 正常完成走九步接纳：WorkerCompletesViaHandshakeAndNineStepAdmission_EX_WKR_1——握手 manifest 比对（CON-06/AT-19 装配侧：Hello 摘要≠期望→HandshakeRejected→T7 Failed，HandshakeManifestMismatchRejectsDispatch 用例；一致→HelloAck→派发）→FinalOutput 分帧重组→真实 ResultAdmission 九步（Admitted→Completed→Archived→manifest.json 落盘）",
+    "acc2": "EX-CHN-1 通过（acceptance 2）——通道消息全携五元组（帧身份块 168B 定长域逐帧校验〔AssembleRejectsBadMagic/Identity——五元组随行 ARCH §4.1 的帧级核对〕＋worker 帧身份与绑定核对〔handleCompleteFrame〕）；IRDCHN/1 帧自定界（EncodeDecodeRoundtrip/SplitsAcrossChunkBoundaries/RejectsBadMagicAndVersion/OversizePayload）；seq 序控（EX-CHN-1：乱序重排 OutOfOrderFramesReorderBySeq、重复去重 DuplicatesAndBackwardsAreDroppedForDevDiagnostic、断裂→协议错误 WindowOverflowIsProtocolError＋GapTimeoutIsProtocolError〔ManualClock〕）；真进程断裂链路：SequenceGapBreaksChannelAndFailsTask_EX_CHN_1（duplicate→去重非致命继续、gap→400ms 实现参数超时→fatal EX-CHANNEL-PROTOCOL-ERROR→任务 T9 Failed＋诊断→监督器就地终结不可信通道 worker）",
+    "acc3": "流式分批回传＋worker 临时目录隔离（acceptance 3）——①ResultBatch 分批流式（NFR-PERF-03 不整体装载）：ResultBatchesStreamInOrderBeforeFinal（三批独立帧序到达、索引 1,2,3 按序、先于 FinalOutput、逐批载荷独立）＋入向分帧续传 FragmentRoundtripLargeMessage（DispatchRequest 大载荷分片＋重组）＋EX-WKR-1 中 FinalOutput 分帧重组到达；②临时目录隔离（§6.4——worker 不写项目正式目录、不与 UI 交互〔WIN32_EXECUTABLE 无控制台、诊断一律经通道 ErrorReport〕、一切结果经主进程登记核对）：WorkerTempDirIsolatedAndCleanedUp（产物只落 %TEMP%\\ird-worker-<pid>-<run>-<attempt>、项目 results/ 树零 worker 产物、退出后清理）",
+    "acc4": "R-3 处置＋P-EX-3 处置（acceptance 4）——①R-3：句柄继承/强杀时序等 Windows 行为逐项对照 §6.6 Microsoft Learn 口径并以真进程实证不超诺：句柄继承副本防泄漏（LauncherClosesInheritedHandleDuplicates_R3——启动完成即零副本残留，ChannelPair 只把两份管道端副本标为可继承并在 CreateProcessW 后立即关闭）、强杀时序（EX-WKR-3 真实 TerminateJobObject 作用于真实存活进程＋isAlive 探测 false＋异步语义以进程句柄等待为准不凭时序断言）、退出码分类（ExitClassificationTest 三用例——§6.4 约定集表真进程观测同型）、管道行为（有界等待读写不无限阻塞——§6.6 管道行口径；挂起读 OVERLAPPED＋事件双源等待）、KILL_ON_JOB_CLOSE（每 worker 独立 Job Scope——析构兜杀不留孤儿；断电中间态不作超出文档承诺〔§6.6 声明〕）；②P-EX-3：快照物化经 IExecutionModelService 注入消费（Ports.hpp 落位 IExecutionModelService/ModelPrepareResult/MaterializedDispatch/PrepareOptions——§3.3 原文形态；WorkerAssignment.dispatch 值传递、execution 全程不解析物化字节、worker 侧身份核对经 contentIdentityMatches 重算），零编译依赖不私建 execution→runtime 边（SA-10：ird_gates 零新增命中实证；如架构补登边可平滑直连——接口形状不变 D-17；ICompileCacheJudge 随 EX-T08 落位——EX-T05 归置登记兑现）"
+  },
+  "gates": {
+    "ird_gates": "cmake --build build --config Release --target ird_gates（gates-ird-gates-target.log）——IRD-GATE 行与 base 留痕（builds/wp08-t05/gates-ird-gates-target.log）编码归一排序比对：8＝8 命中、new-in-t06=0 零新增命中（gate 目标因既有登记例外按设计退出非零——8 处命中全部为 diagnostics/evidence/io/policy/project/runtime/testdata 等其他单元的 DTB §4.5 登记例外，零处涉及 execution 本任务变更面，与 base 行为一致）",
+    "validateTask": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/EX-T06.json（validate-task.log）——PASS (1 tasks)"
+  },
+  "builds": {
+    "integration": "cmake --build build --config Release（build-integrated-full.log，全仓默认目标）——exit 0 零错误；verify 命令 cmake --build build --config Release --target sdurws_ird_execution_test 与 --target sdurws_ird_execution_contract_test 均在内",
+    "smoke": "独立冒烟模式（vcpkg toolchain 绝对路径）：build-smoke-config.log＋build-smoke-full.log——配置与构建 exit 0 零错误；两测试目标冒烟运行 113/113＋27/27"
+  },
+  "evidenceFiles": [
+    "build-integrated-full.log",
+    "build-smoke-config.log",
+    "build-smoke-full.log",
+    "gates-ird-gates-target.log",
+    "validate-task.log",
+    "ird-execution-test-integrated.xml",
+    "ird-execution-test-integrated-run.log",
+    "ird-execution-contract-test-integrated.xml",
+    "ird-execution-contract-test-integrated-run.log",
+    "ird-execution-test-smoke.xml",
+    "ird-execution-test-smoke-run.log",
+    "ird-execution-contract-test-smoke.xml",
+    "ird-execution-contract-test-smoke-run.log"
+  ],
+  "honestyNotes": "全部 140 用例（89+19 既有＋24+8 新增）两模式真实执行通过，零跳过零失败零伪造（契约测试 8 用例真进程稳定复跑 3 次 8/8 后方记录）；ird_gates 因其他单元既有登记例外退出非零与 base 行为一致（编码归一比对 new-in-t06=0），未执行任何'静默跳过'；worker 目标链接形态一处实现登记（共享源直接编入 worker＋core/evidence 白名单边——ird_gates 单元级边粒度与白名单文件权限约束，登记单元卡 §15.4 v0.8）；检查点磁盘持久化编排归 EX-T08（PA-1 不伪造第二持久化路径——EX-WKR-2 的'最近检查点保留'断言到通道面字节完好）；§10.3 launch 后置注'握手完成'的实现读法＝握手为异步协议由 poll 驱动达成（launch 的 ok 面＝进程启动＋Job 绑定＋通道建立——同步握手会阻塞调度线程于外部进程），登记单元卡 §15.4 v0.8"
+}

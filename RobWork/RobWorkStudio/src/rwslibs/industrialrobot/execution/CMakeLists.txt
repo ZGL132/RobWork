@@ -80,10 +80,16 @@ find_package(GTest CONFIG REQUIRED)
 # 契约面＋TaskScheduler 调度本体：提交验证 V1~V4/双优先级队列/预算闸/
 # 内联门槛/进度节流；StateMachine 增 updateProgress 受控进度写面——
 # §4.2 progress 行）；锚点文件保留（文件头登记后续任务落位安排，届时或
-# 承载共享工具或拆除）。后续：
-# win32/ProcessLauncher/ChannelPair/JobScope＋worker/main＋ChannelProtocol
-# （T06）、win32/MemProbe（T07）、Checkpoint/CacheCoordinator（T08）——
-# 以单元任务卡当前正文为准。
+# 承载共享工具或拆除）。EX-T06（≙WP-08-T07，任务契约
+# tasks/foundation/EX-T06.json）增列：ChannelProtocol 公共头＋实现（§3.1
+# 组成行/§6.5——IRDCHN/1 帧编解码/seq 序控/分帧续传/载荷编解码，主/worker
+# 共用）、WorkerSupervisor 公共头＋实现（§3.1 组成行/§10.3——worker 池
+# 监督：launch/握手/心跳失联/退出码分类/池纪律）、win32 三件私有实现
+# （§3.5：ChannelPair 命名管道对/JobScope 作业 RAII/ProcessLauncher 进程
+# 启动——kernel32 隔离于 src/win32/）、worker 宿主入口 worker/main.cpp
+# （目标 sdurws_ird_execution_worker，§3.4——阶段 A 内置脚本驱动测试替身
+# 评估器）。后续：win32/MemProbe（T07）、Checkpoint/CacheCoordinator
+# （T08）——以单元任务卡当前正文为准。
 add_library(sdurws_ird_execution STATIC
     src/Execution.cpp
     src/Errors.cpp
@@ -93,7 +99,46 @@ add_library(sdurws_ird_execution STATIC
     src/Scheduler.cpp
     src/RunRegistry.cpp
     src/Admission.cpp
-    src/EventBus.cpp)
+    src/EventBus.cpp
+    src/ChannelProtocol.cpp
+    src/WorkerSupervisor.cpp
+    src/win32/ChannelPair.cpp
+    src/win32/JobScope.cpp
+    src/win32/ProcessLauncher.cpp)
+
+# worker 宿主可执行（§3.4：WIN32 可执行；阶段 A 评估器＝内置脚本替身
+# 〔见 worker/main.cpp 文件头〕，正式评估器链接属 L5 装配决策——登记为
+# 装配目标，业务互链红线 R-1 不因此失效；零 Qt、零 Widgets、零 _plugin
+# ——§6.4 边界规则"无窗口、无控制台输出到 UI"）。
+# 链接形态说明：协议与宿主的单点实现＝**同一批源文件**（ChannelProtocol/
+# Errors/TaskTypes 三个翻译单元同时编入产品库与 worker 可执行——同单元
+# 双二进制的合法编译形态，无 ODR 问题）。不采用 worker→sdurws_ird_execution
+# 直链：ird_gates 以"单元级边"为粒度，同单元产品目标互链不在 §3.5 白名单
+# 词表内（白名单登记归 cmake/ird_gates_whitelist.cmake——不在本任务
+# allowedFiles）；worker 只链 core/evidence 两条 §3.5 白名单边
+# （execution->core / execution->evidence），实现文件仍单点（杜绝主/worker
+# 各写一份协议的漂移——§3.1 ChannelProtocol 组成行"主/worker 共用"）。
+add_executable(sdurws_ird_execution_worker
+    worker/main.cpp
+    src/ChannelProtocol.cpp
+    src/Errors.cpp
+    src/TaskTypes.cpp)
+target_compile_features(sdurws_ird_execution_worker PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_execution_worker PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    WIN32_EXECUTABLE ON)   # WIN32 子系统——无控制台（§6.4 诊断一律经通道）
+if(MSVC)
+    target_compile_options(sdurws_ird_execution_worker PRIVATE /utf-8)
+endif()
+# worker 消费本单元公共头（ChannelProtocol/Errors/TaskTypes——include 根
+# 与产品库同源）与 core/evidence 两条白名单边（公共头传染链的链接器半区）。
+target_include_directories(sdurws_ird_execution_worker PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(sdurws_ird_execution_worker PRIVATE
+    sdurws_ird_core
+    sdurws_ird_evidence)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 同口径复证）：逐目标显式
 # 设定，不设全局标准。target_compile_features PUBLIC 传播——execution
@@ -162,7 +207,10 @@ endif()
 # 的协作语义〕＋故障注入转发器，退避经 DelayFn 虚拟推进不 sleep）；EX-T05
 # 增列 SchedulerEventBusTest.cpp（§11 EX-SUB-1/2 调度面＋PM-07/预算/
 # 优先级/进度节流 D-07/UX-10 透传边界/NFR-PERF-01 非阻塞结构断言/§7.5
-# 关闭排空——校验面与执行体为替身接缝，存储写权限面用真实 ProjectStore）。
+# 关闭排空——校验面与执行体为替身接缝，存储写权限面用真实 ProjectStore）；
+# EX-T06 增列 ChannelProtocolTest.cpp（§11 EX-CHN-1 的协议逻辑面＋§6.5
+# 帧/seq/分帧/载荷编解码＋§6.4 退出码分类表＋HeartbeatPolicy D-06 默认值
+# ——纯逻辑零进程/管道，真进程面归 contract_test）。
 enable_testing()
 
 add_executable(sdurws_ird_execution_test
@@ -170,7 +218,8 @@ add_executable(sdurws_ird_execution_test
     test/TaskStateMachineTest.cpp
     test/CancelProtocolTest.cpp
     test/RunRegistryAdmissionTest.cpp
-    test/SchedulerEventBusTest.cpp)
+    test/SchedulerEventBusTest.cpp
+    test/ChannelProtocolTest.cpp)
 
 target_compile_features(sdurws_ird_execution_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_test PROPERTIES
@@ -227,7 +276,11 @@ add_executable(sdurws_ird_execution_contract_test
     contract_test/LinkageContractTest.cpp
     contract_test/IdentityVocabularyContractTest.cpp
     contract_test/ArchiveCollaborationContractTest.cpp
-    contract_test/EventBusDeliveryContractTest.cpp)
+    contract_test/EventBusDeliveryContractTest.cpp
+    contract_test/WorkerProcessContractTest.cpp)
+
+# 契约测试须在 worker exe 构建之后（真进程场景消费其产物）。
+add_dependencies(sdurws_ird_execution_contract_test sdurws_ird_execution_worker)
 
 target_compile_features(sdurws_ird_execution_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_contract_test PROPERTIES
@@ -244,9 +297,17 @@ target_link_libraries(sdurws_ird_execution_contract_test PRIVATE
     sdurws_ird_execution
     GTest::gtest_main)
 
-# 源码树位置注入（构建图边扫描用例输入——与 _test 目标同源）。
+# 源码树位置注入（构建图边扫描用例输入——与 _test 目标同源）。另注入
+# worker exe 路径（EX-T06 契约测试的真进程场景输入——测试进程以该路径
+# 启动 sdurws_ird_execution_worker，EX-WKR-1~3 真进程实证面）。
 target_compile_definitions(sdurws_ird_execution_contract_test PRIVATE
-    IRD_EXECUTION_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+    IRD_EXECUTION_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/.."
+    IRD_EXECUTION_WORKER_EXE="$<TARGET_FILE:sdurws_ird_execution_worker>")
+
+# EX-T06 增列 WorkerProcessContractTest.cpp（acceptance 1：EX-WKR-1~3 真进程
+# ——崩溃只失败当前任务/心跳失联强杀/正常完成走九步接纳；acceptance 3：
+# 分批流式回传＋临时目录隔离；acceptance 4：R-3 句柄纪律实证——真进程
+# 场景按 §3.4 `_contract_test` 分工落位）。
 
 add_custom_command(TARGET sdurws_ird_execution_contract_test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
