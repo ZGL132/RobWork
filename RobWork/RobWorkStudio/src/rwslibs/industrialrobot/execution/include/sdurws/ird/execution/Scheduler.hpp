@@ -1,33 +1,49 @@
 /**
  * @file   Scheduler.hpp
  * @brief  任务调度器（EX-T05：ITaskScheduler 契约面＋TaskScheduler 调度
- *         本体——队列/优先级/预算/提交验证 V1~V4/内联门槛/进度节流）与
- *         DrainPolicy 排空编排（EX-T03：§7.5"UI 关闭二选"的执行侧）。
+ *         本体——队列/优先级/预算/提交验证 V1~V4/内联门槛/进度节流）、
+ *         DrainPolicy 排空编排（EX-T03：§7.5"UI 关闭二选"的执行侧）与
+ *         资源治理（EX-T07：IMemorySampler 采样接缝＋ResourceController
+ *         三段节流决策＋资源不足诊断——§6.1 内存预算/§6.6 内存采样）。
  *
  * 设计依据：
  *   - units/execution.md §6.1（队列/优先级与并发治理：双优先级＋同级 FIFO
  *     不抢占〔D-04〕、并发上限、UI 线程不阻塞〔NFR-PERF-01〕、进度报告
- *     与节流 ≤10 Hz〔实现参数——§6.1 表"进度报告与节流"行〕）、§6.3
+ *     与节流 ≤10 Hz〔实现参数——§6.1 表"进度报告与节流"行〕；内存预算
+ *     行：主进程＋全部 worker 合计峰值 ≤ 物理内存 70%，接近上限〔默认
+ *     阈值 65%，实现参数〕先节流〔暂停派发＋降低并行度〕→仍超限→
+ *     EX-RESOURCE-INSUFFICIENT 诊断，已排队/运行任务不失败〔NFR-PERF-04；
+ *     D-05 三段治理：65% 节流阈值→停派发/降并行→70% 诊断〕）、§6.3
  *     （提交验证清单 V1~V4 与内联门槛——可预测 <1 s 调度线程内联，
  *     ARCH §4.1）、§10.1（ITaskScheduler/ResourceBudget/SubmitResult/
  *     DrainPolicy 接口原文）、§10.8（接口共性约束：提交/查询任意线程、
  *     状态写调度串行；调用方违约抛 ExecutionError）、§4.3（身份分配协议
  *     ——提交受理段）、§7.5（UI 关闭与应用崩溃——关闭二选、排空有界、
  *     超阈值强制 abandonAll(ForceTerminated) 兜底）、§7.4（UI 关闭行）、
- *     §3.1（Scheduler.hpp 组成行：ITaskScheduler、SchedulerConfig、
- *     ResourceBudget、DrainPolicy、ISubmissionGuard〔提交前验证注入点〕）
+ *     §6.2（资源监控线程：周期内存采样＋节流决策建议——决策仍由调度
+ *     线程执行）、§6.6（内存采样行：GlobalMemoryStatusEx＋作业内存——
+ *     MemProbe 汇总"主进程＋全部工作进程"）、§3.3（IExecutionDiagnosticsSink
+ *     注入——资源不足诊断的出口）
  *   - ARCHITECTURE.md §4.1（可预测 <1 s 轻任务调度线程内联——内联门槛
- *     语义锚）、§4.4（协议锚点；P-EX-2 处置同 Controller.hpp）
+ *     语义锚）、§4.4（协议锚点；P-EX-2 处置同 Controller.hpp）、§4.6
+ *     （资源治理：ResourceController 汇总主进程＋全部工作进程内存，默认
+ *     上限物理内存 70%；接近上限先节流〔降低并行度/暂停派发〕→仍超限
+ *     给"资源不足"诊断——v0.11 Draft 待评审，评审 A9+ 变更按影响面
+ *     增量同步，P-EX-2）
  *   - 需求 TASK-01（状态机受理入口）、TASK-03（五元组分配在提交受理
  *     路径——§4.3/EX-SUB-1）、UX-10（进度阶段投影边界——execution 零
  *     新增状态词）、NFR-PERF-01（>1 s 转后台——提交/控制非阻塞）、
+ *     NFR-PERF-04（70% 内存、先节流后诊断——本头的 ResourceController
+ *     承载其执行侧基础形态；规模化验收归 WP-23-T06，§2.2 不可越界列）、
  *     UX-03（关闭触发的排队取消同样零错误诊断）、PM-03（关闭确认对话
  *     框——workflow/ui 侧消费本头的排空语义）、PM-07（只读拒绝启动
  *     ——V3 消费 store.writable()，写权限判定归 project 不私判）
  *   - 任务契约 tasks/foundation/EX-T05.json acceptance 1~5（EX-SUB-1/2、
  *     事件 FIFO 与进度节流、UI 零计算结构断言、队列/优先级/预算/提交
  *     验证/PM-07、UX-10 边界＋P-EX-1 处置）；EX-T03 acceptance 3
- *     （DrainPolicy 排空编排）
+ *     （DrainPolicy 排空编排）；EX-T07 acceptance 1~3（EX-RES-2 全绿＋
+ *     三段治理就位、内存汇总覆盖主进程＋全部 worker＋比较型三要素诊断
+ *     经 §3.3 sink、规模化不越界＋P-EX-1/P-EX-2 处置）
  *
  * 背景说明（两路径与策略值的对应——§7.5 原文展开）：
  *   - **等待排空**＝workflow 调 shutdown(DrainPolicy::CancelQueuedAndWait)：
@@ -62,6 +78,13 @@
  *   （不可重入——内联段会暂时释放主锁，重入将撕裂调度序）；DrainCoordinator
  *   全部方法仅调度线程。TaskScheduler::stopDispatch 是 Controller 在
  *   poll()（主锁内）的回调——同域同线程，不取锁（见其注释）。
+ *   ResourceController::evaluate 仅调度线程（tick 在主锁内调用——§6.2
+ *   "决策仍由调度线程执行"；其注入的 IMemorySampler 实现随之承担同一
+ *   线程约束，生产件 SupervisorMemorySampler 消费监督器的调度线程域聚合）。
+ *   EX-T07 资源闸集成说明：tick 段 c 在出队前评估资源决策，pauseDispatch
+ *   ＝true 时本拍不出队（§6.1 内存预算行"暂停派发新任务"——排队任务
+ *   保持排队、在途任务不受影响〔D-04 不抢占〕，"已排队/运行任务不失败"
+ *   由"闸只挡出队、不触碰状态机"的结构保证）。
  */
 
 #ifndef SDURWS_IRD_EXECUTION_SCHEDULER_HPP
@@ -95,6 +118,10 @@ class ProjectStore;             ///< V3 写权限查询面（writable()——前
 }  // namespace sdurws::ird::project
 
 namespace sdurws::ird::execution {
+
+class IExecutionDiagnosticsSink;  ///< §3.3 诊断注入（Ports.hpp——ResourceController 诊断出口；指针成员，前向声明免拖入 evidence 头链）
+class WorkerSupervisor;           ///< worker 池监督器（WorkerSupervisor.hpp——SupervisorMemorySampler 的作业内存合计源；指针成员）
+
 
 // =====================================================================
 // DrainPolicy（§10.1 枚举值域冻结——两值，不新增）
@@ -233,16 +260,20 @@ private:
  *
  * 值语义；经 setResourceBudget 运行期可调且**不影响任务身份**（§6.1
  * "验证不改变任务身份：预算变化只影响排队与派发时机"）。各字段的消费
- * 归属（本任务 EX-T05 与后续任务的分工——归置登记单元卡 §15.4）：
+ * 归属（EX-T05 与 EX-T07 的分工——归置登记单元卡 §15.4）：
  *   - queueCapacity / maxConcurrentTasks / maxTasksPerProject：调度面
  *     消费（EX-T05——V4 提交容量与出队闸）；
- *   - maxWorkers / maxMemoryRatio / throttleRatio：ResourceController
- *     消费（EX-T07——worker 池规模与内存节流；本结构按 §10.1 原文承载
- *     字段，调度器保存值但不消费——消费任务未到不预建行为）。
+ *   - maxMemoryRatio / throttleRatio：ResourceController 消费（EX-T07
+ *     兑现——TaskScheduler::setResourceBudget 把本结构转发给已装配的
+ *     ResourceController，控制器据两比值做三段节流判定；EX-T05 期
+ *     "调度器保存值但不消费"的登记到本任务消账）；
+ *   - maxWorkers：worker 池规模——§10.1 原文承载字段，阶段 A 仍无编译
+ *     期消费者（池规模治理随编排装配 EX-T09/L5 落位），调度器保存值但
+ *     不消费（不预建行为，登记单元卡 §15.4）。
  */
 struct ResourceBudget {
-    double maxMemoryRatio = 0.70;        ///< 物理内存占比上限（NFR-PERF-04 上游值；EX-T07 消费）
-    double throttleRatio  = 0.65;        ///< 节流阈值（实现参数 D-05；EX-T07 消费）
+    double maxMemoryRatio = 0.70;        ///< 物理内存占比上限（NFR-PERF-04 上游值——不改动；EX-T07 消费）
+    double throttleRatio  = 0.65;        ///< 节流阈值（实现参数 D-05——非需求阈值，§15.1 登记；EX-T07 消费）
     std::uint32_t maxWorkers = 0;        ///< worker 池上限；0＝自动（逻辑核-1，下限 1；EX-T06/T07 消费）
     std::uint32_t maxConcurrentTasks = 0;///< 同时在途（Preparing/Running/Canceling）任务上限；
                                          ///  0＝自动 min(4, 逻辑核/2)（§6.1 并发上限行——EX-T05 出队闸）
@@ -250,6 +281,247 @@ struct ResourceBudget {
                                          ///  不计入——不写 results/ 的轻任务不占正式额度；EX-T05 出队闸）
     std::size_t   queueCapacity = 256;   ///< 等待队列容量（§6.1/§6.3 V4：提交期预算检查仅拒绝对列容量溢出
                                          ///  ——溢出＝SubmissionRejected＋诊断，不失败已排队任务）
+};
+
+// =====================================================================
+// 内存采样接缝与 ResourceController（§6.1 内存预算行/§6.6 内存采样行/
+// ARCH §4.6——EX-T07 落位）
+// =====================================================================
+
+/**
+ * @brief 一次内存采样读数（NFR-PERF-04 汇总口径——§6.1 内存预算行
+ *        "主进程＋全部 worker 合计"的三元数据）。
+ *
+ * 值类型；字段的产生方式（而非数值本身）是契约：totalPhysicalBytes 来自
+ *   系统查询（GlobalMemoryStatusEx——分母），mainProcessBytes 来自主进程
+ *   工作集（§6.6"主进程经自身 Job 或工作集查询"），workerBytes 来自全部
+ *   worker 作业内存合计（§6.6 QueryInformationJobObject——生产装配由
+ *   SupervisorMemorySampler 从监督器聚合，见其注）。单位一律字节。
+ */
+struct MemoryReading {
+    std::uint64_t totalPhysicalBytes = 0;  ///< 物理内存总量（占比分母；单位字节）
+    std::uint64_t mainProcessBytes = 0;    ///< 主进程占用（工作集——§6.6 口径；单位字节）
+    std::uint64_t workerBytes = 0;         ///< 全部 worker 作业内存合计（§6.6 JobMemory 口径；单位字节）
+
+    /// 合计占用（分子）＝主进程＋全部 worker（§6.1 内存预算行的汇总口径）。
+    std::uint64_t aggregateBytes() const noexcept { return mainProcessBytes + workerBytes; }
+
+    /**
+     * @brief 合计占用占物理内存的比例（ResourceController 判定基准）。
+     *
+     * @return aggregateBytes / totalPhysicalBytes；totalPhysicalBytes==0
+     *         （未装配的读数）返回 0.0 防除零——零读数按"无压力"处置是
+     *         保守方向的对称面：判定层对无效读数另有 nullopt 通道（见
+     *         IMemorySampler 注），到达本函数的读数视为有效。
+     */
+    double ratioOfPhysical() const noexcept
+    {
+        return totalPhysicalBytes == 0
+            ? 0.0
+            : static_cast<double>(aggregateBytes())
+                  / static_cast<double>(totalPhysicalBytes);
+    }
+};
+
+/**
+ * @brief 内存采样注入接缝（EX-T07——ResourceController 的数据源边界）。
+ *
+ * 为什么是接缝而非直调：§6.1 的治理判定必须可被 EX-RES-2 用"内存采样
+ *   fake 推至 >70%"驱动（§11 用例行——观测点＝派发暂停＋诊断），且生产
+ *   装配（L5）与测试装配注入不同实现；采样这一面被隔离成单方法接口后，
+ *   判定本体（ResourceController）与采样来源（Windows 探针/测试脚本）
+ *   彻底解耦——也是 §6.2"资源监控线程〔采样〕……决策仍由调度线程执行"
+ *   中采样/决策可分线程的结构前提（阶段 A 同域采样，见 ResourceController 注）。
+ *
+ * 失败语义：返回 nullopt＝本次采样失败（系统查询不可用等环境错误——
+ *   AGENTS §3 错误二分的"可预期失败"侧）；ResourceController 保持最近
+ *   一次成功采样的治理状态并经 reportDev 出开发诊断，不猜值、不静默降级。
+ *
+ * 线程约束：sample 仅在调度线程被调用（evaluate 的调用域——§6.2 决策
+ *   线程约束的传染）；实现方无须为并发付费。
+ */
+class IMemorySampler {
+public:
+    virtual ~IMemorySampler() = default;
+
+    /**
+     * @brief 执行一次内存采样（主进程＋全部 worker＋物理总量）。
+     *
+     * @return 读数；采样失败返回 nullopt（控制器保持原状态＋开发诊断）
+     */
+    virtual std::optional<MemoryReading> sample() = 0;
+};
+
+/**
+ * @brief 生产内存采样器——MemProbe 真实探针＋监督器作业内存合计的装配
+ *        件（EX-T07；L5 装配期注入 ResourceController）。
+ *
+ * 汇总口径（acceptance 2："内存汇总覆盖主进程＋全部工作进程"）：
+ *   - totalPhysicalBytes ← win32 MemProbe::querySystemMemory
+ *     （GlobalMemoryStatusEx——§6.6"系统"半区）；
+ *   - mainProcessBytes ← win32 MemProbe::queryCurrentProcessWorkingSetBytes
+ *     （主进程工作集——§6.6"主进程经自身 Job 或工作集查询"）；
+ *   - workerBytes ← WorkerSupervisor::aggregateJobMemoryBytes（全部活
+ *     worker 作业提交内存峰值求和——§6.6 JobMemory 半区；聚合本体在
+ *     监督器，因其作业句柄属调度线程域私有记录）。
+ *
+ * 任一半区查询失败＝整体采样失败（返回 nullopt）——半读数比无读数更
+ *   危险（会把"worker 超限"误判为"主进程无压力"），fail-to-no-data 而非
+ *   fail-to-partial。
+ */
+class SupervisorMemorySampler final : public IMemorySampler {
+public:
+    /**
+     * @brief 构造。
+     *
+     * @param supervisor [in] worker 池监督器（非所有权；可空＝无 worker
+     *                   池装配——workerBytes 恒 0，主进程/系统半区照常采样）
+     */
+    explicit SupervisorMemorySampler(const WorkerSupervisor* supervisor) noexcept;
+
+    /// 见 IMemorySampler 注（失败语义：任一半区失败→nullopt）。
+    std::optional<MemoryReading> sample() override;
+
+private:
+    const WorkerSupervisor* m_supervisor;  ///< 作业内存合计源（非所有权；可空）
+};
+
+/**
+ * @brief 资源治理控制器（ARCH §4.6 命名的 ResourceController——§6.1
+ *        内存预算行的三段节流决策本体＋资源不足诊断出具，EX-T07）。
+ *
+ * 三段治理（D-05：65% 节流阈值→停派发/降并行→70% 诊断——**65% 为实现
+ *   参数非需求阈值**（§15.1 D-05 登记），70% 为 NFR-PERF-04 上游值不改动）：
+ *   - 合计占比 < throttleRatio（默认 0.65）→ Normal：不干预；
+ *   - throttleRatio ≤ 占比 < maxMemoryRatio → Throttled：停派发＋降并行
+ *     建议（Decision 两标志）——§6.1"先节流：暂停派发新任务＋降低并行度
+ *     （回收空闲 worker）"；
+ *   - 占比 ≥ maxMemoryRatio（默认 0.70）→ Exhausted：维持停派发/降并行，
+ *     且**进入该层级的第一拍**出具 EX-RESOURCE-INSUFFICIENT 诊断（边沿
+ *     触发恰一次——同一持续超限期间不重复刷诊断；退出后再次进入＝新一
+ *     轮边沿）。§6.1"仍超限→『资源不足』诊断（EX-RESOURCE-INSUFFICIENT）"
+ *     的"仍"字即两段递进的语义：诊断只在节流未能压回占比时出现。
+ *
+ * "已排队/运行任务不失败"（§6.1 括注/NFR-PERF-04）：本控制器只产出
+ *   派发闸建议与诊断，不触碰任何任务状态——闸的执行面在
+ *   TaskScheduler::tick（跳过出队段），排队任务保持 Queued、在途任务
+ *   自然运行至终态（D-04 不抢占）。
+ *
+ * 判定函数（decide）是当前读数的纯函数＋一个边沿记忆（上一层级）；判定
+ *   结果确定性（同读数同预算同上层级→同决策，NFR-COR-02 同源精神）。
+ *   恢复语义＝层级随读数回落即时重判（≤65% 回 Normal，65%~70% 回
+ *   Throttled）——无迟滞带（防抖依赖采样间隔的天然低通，实现参数
+ *   Config::sampleInterval；规模化形态的迟滞/停留时间归 WP-23-T06，
+ *   本任务不提前实现——acceptance 3 边界）。
+ *
+ * 阶段 A 驱动形态（§6.2 的显式驱动表达，登记单元卡 §15.4）：采样与
+ *   决策同在调度域（TaskScheduler::tick 在主锁内调用 evaluate）；
+ *   §6.2"资源监控线程"的生产形态（采样与决策分线程、建议面交接）由
+ *   编排装配（EX-T09/L5）消费同一 IMemorySampler 接缝实现——判定本体
+ *   不因驱动形态而变。真实采样按 Config::sampleInterval 节流（系统查询
+ *   不必逐拍执行），间隔内的 evaluate 返回最近决策。
+ *
+ * 诊断出口：IExecutionDiagnosticsSink（§3.3 注入——P-EX-8：sink 名称/
+ *   归属统一归 diagnostics 裁决，裁决前按本单元注入形状消费）；未装配
+ *   ＝诊断不外报（EventBus"无消费者是合法装配"同款），Decision.diagnostic
+ *   仍携带记录（观测/测试面）——治理动作（停派发）不依赖诊断上报。
+ *   采样失败的开发诊断走 reportDev（通道约定 "execution/resource"——
+ *   Ports.hpp 的通道约定行）。
+ *
+ * 线程约束：全部方法仅调度线程（tick 调用域——§6.2"决策仍由调度线程
+ *   执行"；无内部锁）。
+ */
+class ResourceController {
+public:
+    /// 注入时钟（与 TaskController/DrainCoordinator/TaskScheduler 同形
+    /// ——四者须同一 ManualClock 源，采样间隔度量基准才一致）。
+    using ClockFn = TaskController::ClockFn;
+
+    /// 实现参数（非上游值——登记单元卡 §15.4）。
+    struct Config {
+        /**
+         * 真实采样最小间隔（§6.2"周期内存采样"的显式驱动参数化：evaluate
+         * 逐拍被调用，系统查询按本间隔节流，间隔内复用最近决策——低通
+         * 防抖＋省系统调用）。默认 1000 ms；置 0＝逐拍采样（测试对照面）。
+         */
+        std::chrono::milliseconds sampleInterval{1000};
+    };
+
+    /// 治理层级（三段——D-05；两阈值的消费见类注释）。
+    enum class Level {
+        Normal,     ///< 占比 < throttleRatio——不干预
+        Throttled,  ///< throttleRatio ≤ 占比 < maxMemoryRatio——先节流（停派发＋降并行建议）
+        Exhausted,  ///< 占比 ≥ maxMemoryRatio——仍超限（维持节流＋EX-RESOURCE-INSUFFICIENT 诊断）
+    };
+
+    /// 一次评估的决策（调度域消费的只读投影）。
+    struct Decision {
+        Level level = Level::Normal;             ///< 本次治理层级
+        bool pauseDispatch = false;              ///< 停派发（Throttled/Exhausted 为 true——tick 据此跳过出队段）
+        bool reclaimIdleWorkers = false;         ///< 降并行建议面（§6.1"回收空闲 worker"——池所有者据其调用
+                                                 ///  WorkerSupervisor::reclaimIdleWorkers；本控制器不持池引用，
+                                                 ///  决策与执行分离——§6.2"决策仍由调度线程执行"的编排半区）
+        std::optional<core::DiagnosticRecord> diagnostic;  ///< EX-RESOURCE-INSUFFICIENT（进入 Exhausted 的边沿恰一次；
+                                                           ///  比较型三要素＝实际占比/上限/单位"1"——acceptance 2）
+        MemoryReading reading;                   ///< 决策所依据的读数（间隔内复用时＝最近一次成功采样；观测面）
+    };
+
+    /**
+     * @brief 构造。
+     *
+     * @param sampler [in] 内存采样源（非所有权引用——空采样源＝治理无
+     *                观测面，属装配错误，引用形参在类型层排除 nullptr）
+     * @param config  [in] 实现参数（采样间隔）
+     * @param clock   [in] 注入时钟（空＝steady_clock——与调度器同源注入）
+     */
+    explicit ResourceController(IMemorySampler& sampler, Config config = {},
+                                ClockFn clock = nullptr);
+
+    /// 注入诊断 sink（§3.3——装配期一次；可空＝诊断不外报，见类注释）。
+    void setDiagnosticsSink(IExecutionDiagnosticsSink* sink) noexcept;
+
+    /**
+     * @brief 应用资源预算中的内存治理参数（TaskScheduler::setResourceBudget
+     *        转发——单一用户入口不变，EX-T05 登记的"ResourceController 消费"
+     *        归属就此兑现）。
+     *
+     * @param budget [in] 预算（只消费 maxMemoryRatio/throttleRatio 两字段；
+     *               maxWorkers 的池规模消费仍归编排装配——见 ResourceBudget 注）
+     */
+    void setBudget(const ResourceBudget& budget) noexcept;
+
+    /**
+     * @brief 评估一拍：按采样间隔取读数→三段判定→边沿诊断（调度域调用）。
+     *
+     * 采样失败（sampler 返回 nullopt）：保持最近层级与读数，边沿记忆
+     *   不变（失败不构成层级迁移——不猜值），并出一次 reportDev 开发
+     *   诊断（连续失败只报首次——边沿去抖；恢复成功后清标志）。
+     *
+     * @return 本次决策（间隔内＝最近决策的重放；diagnostic 在重放拍为空
+     *         ——边沿诊断只在真实采样迁移层级的那一拍出具恰一次）
+     */
+    Decision evaluate();
+
+    /// 最近治理层级（观测面——未评估过＝Normal）。
+    Level level() const noexcept { return m_level; }
+
+    /// 生产默认时钟（透传 TaskController::steadyClock——同一基准）。
+    static std::chrono::steady_clock::time_point steadyClock() noexcept;
+
+private:
+    /// 三段判定＋边沿诊断构造（读数的纯函数＋m_level 边沿记忆；前置：
+    /// reading 有效）。Exhausted 进入边沿产出比较型诊断并经 sink 外报。
+    Decision decide(const MemoryReading& reading);
+
+    IMemorySampler& m_sampler;        ///< 采样源（非所有权——构造引用注入）
+    IExecutionDiagnosticsSink* m_sink = nullptr;  ///< 诊断出口（可空——合法装配）
+    Config m_config;                  ///< 实现参数（采样间隔）
+    ClockFn m_clock;                  ///< 注入时钟（空＝steady_clock）
+    ResourceBudget m_budget{};        ///< 内存治理参数来源（默认 0.65/0.70——D-05/上游值）
+    Level m_level = Level::Normal;    ///< 最近治理层级（边沿判定记忆）
+    MemoryReading m_lastReading{};    ///< 最近一次成功采样读数（间隔内重放与采样失败保持的依据）
+    std::optional<std::chrono::steady_clock::time_point> m_lastSampleAt;  ///< 最近真实采样时刻（间隔节流基准）
+    bool m_probeFailureReported = false;  ///< 采样失败开发诊断的边沿标志（恢复成功清零）
 };
 
 /**
@@ -415,14 +687,17 @@ public:
  *   受理等于绕过 CON-01/PM-07 门禁。ISubmissionGuard 为空＝无注入半区
  *   （可选增强，跳过不拒绝）。
  *
- * 出队与派发（tick 段，§6.1）：关闭态不出队；并发额度（在途计数 <
- *   maxConcurrentTasks，0=自动）与同项目正式任务上限（maxTasksPerProject）
- *   满足时按 Interactive→Background、同级 FIFO（提交序号单调）出队头
- *   任务走 T2（Queued→Preparing）。队头阻塞语义：队头任务受项目上限
- *   约束时整个队列等待（严格 FIFO/优先级序——可预测性优先于吞吐，
- *   D-04 排序键精神，登记 §15.4）。不抢占（D-04）：已 Running 任务不因
- *   更高优先级到达被打断——出队只发生在额度空位时。普通（非内联）任务
- *   停在 Preparing 等待 EX-T06 派发链（worker 启动/登记段）。
+ * 出队与派发（tick 段，§6.1）：关闭态不出队；资源闸（EX-T07——已装配
+ *   ResourceController 时先评估：Throttled/Exhausted 本拍不出队，§6.1
+ *   内存预算行"暂停派发新任务"，排队任务保持排队、在途任务不受影响）
+ *   通过后，并发额度（在途计数 < maxConcurrentTasks，0=自动）与同项目
+ *   正式任务上限（maxTasksPerProject）满足时按 Interactive→Background、
+ *   同级 FIFO（提交序号单调）出队头任务走 T2（Queued→Preparing）。队头
+ *   阻塞语义：队头任务受项目上限约束时整个队列等待（严格 FIFO/优先级
+ *   序——可预测性优先于吞吐，D-04 排序键精神，登记 §15.4）。不抢占
+ *   （D-04）：已 Running 任务不因更高优先级到达被打断——出队只发生在
+ *   额度空位时。普通（非内联）任务停在 Preparing 等待 EX-T06 派发链
+ *   （worker 启动/登记段）。
  *
  * 内联门槛（tick 段，§6.3）：出队任务若满足注入谓词（可预测 <1 s——
  *   ARCH §4.1）且为 Preview 且执行体已注入→锁外执行（计算本体）→
@@ -515,6 +790,18 @@ public:
     /// 注入内联执行体（可空＝无内联能力——全部排队，见 IInlineRunExecutor 注）。
     void setInlineExecutor(IInlineRunExecutor* executor) noexcept;
 
+    /**
+     * @brief 注入资源治理控制器（EX-T07——可空＝无资源闸〔无内存治理，
+     *        合法装配：治理是可选增强，提交/派发语义不因缺装配而改变〕）。
+     *
+     * 装配后本调度器：①tick 出队段前评估决策（pauseDispatch→跳过出队
+     *   ——§6.1"暂停派发新任务"）；②setResourceBudget 同步转发预算
+     *   （maxMemoryRatio/throttleRatio 的单一用户入口仍是 ITaskScheduler，
+     *   见 ResourceBudget 注）。非所有权；调用方保证存活期覆盖调度器；
+     *   装配期一次（与 setEventBus 同纪律——先于首个 submit/tick）。
+     */
+    void setResourceController(ResourceController* controller) noexcept;
+
     // ---- ITaskScheduler（§10.1——任意线程，主锁转串行） ----
 
     SubmitResult submit(TaskSubmission&& submission) override;
@@ -548,7 +835,10 @@ public:
      *   b. 关闭期：DrainCoordinator::poll()（controller.poll＋超时兜底）
      *      替代裸协议推进，且不再出队新任务（关闭即停止派发——§7.5）；
      *   c. 非关闭期：协议推进（controller.poll——取消命令优先，§7.1）
-     *      ＋出队派发（额度/优先级闸→T2→内联走链或停留 Preparing）。
+     *      ＋资源闸评估（EX-T07——已装配 ResourceController 时先决策：
+     *      pauseDispatch＝true 本拍不出队，§6.1 内存预算行"暂停派发新
+     *      任务"；排队任务保持排队、在途任务不受影响）＋出队派发
+     *      （额度/优先级闸→T2→内联走链或停留 Preparing）。
      *
      * 内联执行段在主锁外运行（锁只保护簿记不覆盖计算——文件头调度
      * 线程模型）；其余段全程持锁。
@@ -630,6 +920,7 @@ private:
     core::IDomainEventBus* m_eventBus = nullptr;    ///< 事件总线（可空——未装配时状态机直接以空 sink 构造，
                                                     ///  转移不发事件〔StateMachine"无消费者是合法装配"先例〕）
     IInlineRunExecutor* m_inlineExecutor = nullptr; ///< 内联执行体（可空——无内联能力）
+    ResourceController* m_resourceController = nullptr;  ///< 资源治理控制器（EX-T07——可空＝无资源闸；tick 出队段前评估）
 
     /// 待应用进度帧（reportProgress 节流放行→tick 段 a 应用——任意线程
     /// 入队、调度域消费的交接队列；随主锁互斥）。

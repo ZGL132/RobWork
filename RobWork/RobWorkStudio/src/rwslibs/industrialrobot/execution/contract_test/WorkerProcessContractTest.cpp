@@ -1113,4 +1113,58 @@ TEST_F(WorkerProcessContractTest, LauncherClosesInheritedHandleDuplicates_R3)
     EXPECT_EQ(supervisor->status(launched.worker).phase, WorkerStatus::Phase::Dead);
 }
 
+// =====================================================================
+// EX-T07：作业内存聚合覆盖真 worker＋空闲回收即时缩池（§6.6 JobMemory
+// 半区＋§6.1"降低并行度（回收空闲 worker）"的真进程实证面）
+// =====================================================================
+
+TEST_F(WorkerProcessContractTest, AggregateJobMemoryCoversRealWorkerAndReclaimShrinksIdlePool)
+{
+    // 排布：launch 一个真 worker 跑完 final 脚本（正常退出→回池 Idle）→
+    // aggregateJobMemoryBytes 读到非零作业内存（该 worker 的作业里确实
+    // 跑过进程——§6.6 QueryInformationJobObject 峰值口径的真值面）→
+    // reclaimIdleWorkers 即时回收空闲 worker（Draining→自然退出→记录
+    // 出清），聚合读数归零。登记面不参与本用例（监督器不查登记——
+    // 进程层与接纳层的边界，EX-T06 头注"不越权声明"）。
+    core::TaskIdentity id;
+    id.project = m_store->projectId();
+    id.branch = core::BranchId::generate();
+    id.revision = core::RevisionId::generate();
+    id.run = core::RunId::generate();
+    id.attempt = core::AttemptId{1};
+
+    auto supervisor = makeSupervisor();
+    const WorkerAssignment assignment =
+        makeAssignment(id, "stage-a-script:v1\nprogress 10 kin.batch 1 1\nfinal\n");
+    const WorkerLaunchResult launched = supervisor->launch(assignment);
+    ASSERT_TRUE(launched.ok) << "worker 进程启动＋Job Scope 绑定应成功";
+
+    // 空池基线：launch 前聚合为 0（未启动任何 worker——对照真读数）。
+    // 正常完成：FinalOutput 已收＋进程退出码 0→回池 Idle（§6.4 池化）。
+    ASSERT_TRUE(pumpUntil(*supervisor, [this, &supervisor, &launched] {
+        return supervisor->status(launched.worker).phase == WorkerStatus::Phase::Idle
+            && m_events.countOf(WorkerEvent::Kind::WorkerExited) >= 1;
+    })) << "worker 应正常退出并回池（Idle）";
+
+    // 真值面：worker 的作业提交内存峰值合计 >0（任何进程都提交内存——
+    // 峰值单调不回落，进程退出后仍可读，§6.6 JobMemory 口径）。
+    const std::uint64_t aggregate = supervisor->aggregateJobMemoryBytes();
+    EXPECT_GT(aggregate, 0u)
+        << "§6.6 内存汇总的 worker 半区：真 worker 作业内存峰值应被覆盖（EX-T07 acceptance 2）";
+
+    // 即时缩池（§6.1"降低并行度（回收空闲 worker）"——EX-T07 增量方法）：
+    // 唯一 Idle worker 的进程已随任务终结退出（阶段 A worker 模型）——
+    // 回收直接出清该池槽（join→关资源→双表 erase），聚合读数归零。
+    const std::size_t reclaimed = supervisor->reclaimIdleWorkers();
+    EXPECT_EQ(reclaimed, 1u);
+    ASSERT_TRUE(pumpUntil(*supervisor, [&supervisor, &launched] {
+        return supervisor->workerCount() == 0
+            && supervisor->status(launched.worker).id.value == 0;
+    })) << "回收后池槽立即出清（记录域与状态投影双清）";
+    EXPECT_EQ(supervisor->aggregateJobMemoryBytes(), 0u)
+        << "出清后聚合归零（无活 worker＝无 worker 内存占用）";
+    // 第二次回收：无可回收空闲（幂等空转——返回 0 不报错）。
+    EXPECT_EQ(supervisor->reclaimIdleWorkers(), 0u);
+}
+
 }  // namespace

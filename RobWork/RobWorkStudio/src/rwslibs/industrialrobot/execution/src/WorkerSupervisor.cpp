@@ -23,6 +23,7 @@
 
 #include "win32/ChannelPair.hpp"
 #include "win32/JobScope.hpp"
+#include "win32/MemProbe.hpp"
 #include "win32/ProcessLauncher.hpp"
 
 namespace sdurws::ird::execution {
@@ -498,6 +499,82 @@ std::vector<WorkerStatus> WorkerSupervisor::list() const
 std::size_t WorkerSupervisor::workerCount() const noexcept
 {
     return m_workers.size();  // 仅调度线程（头注——任意线程观测走 list()）
+}
+
+std::uint64_t WorkerSupervisor::aggregateJobMemoryBytes() const
+{
+    // EX-T07（§6.6 内存采样行 JobMemory 半区）：全部活 worker 的作业提交
+    // 内存峰值求和——ResourceController 生产采样源（SupervisorMemorySampler）
+    // 的 worker 半区消费口。仅调度线程（遍历 m_workers 记录域——头注）。
+    std::uint64_t total = 0;
+    for (const auto& [id, record] : m_workers) {
+        // 参与聚合的资格＝作业对象有效且主进程未终结（processHandle 非空
+        // ——Dead/已出清记录的作业句柄已随 RAII 关闭，job.valid() 为假或
+        // 查询必失败）。查询失败的条目计 0：尽力求和不毒化整体读数——
+        // "半读数"的防混淆语义由采样器层的整体失败通道承担（其注）。
+        if (record->job.valid() && record->processHandle != nullptr) {
+            std::uint64_t jobBytes = 0;
+            if (win32::queryJobPeakCommittedBytes(record->job.handle(), jobBytes)) {
+                total += jobBytes;
+            }
+        }
+    }
+    return total;
+}
+
+std::size_t WorkerSupervisor::reclaimIdleWorkers()
+{
+    // EX-T07（§6.1 内存预算行"降低并行度（回收空闲 worker）"的池侧执行
+    // 面）：对全部 Idle 相位记录发起回收，按进程存亡分两支——仅调度线程
+    // （记录域遍历——头注）。
+    //
+    // 支 1（阶段 A worker 模型——worker 宿主每任务终结即退出，约定码 0）：
+    //   Idle 记录的进程已不存在（读线程已收 Exited→processExit→回池），
+    //   "回收"＝直接出清记录（与 poll 尾部销毁完全同序：join 读线程→关
+    //   进程资源→双表 erase）。对死进程走 Shutdown 协议是死路：写静默
+    //   失败且永远等不到第二次 Exited，记录会滞留——因此按存亡分流。
+    // 支 2（§6.4"进程保活"模型——Idle 记录进程仍在）：协作退出协议，
+    //   与 checkIdleRecycle 完全同路径（置 Draining＋状态镜像＋Shutdown
+    //   请求→自然退出→poll 收割）。
+    //
+    // 处置面仅 Idle（在途 worker 是"并行度"本身——其新增已被调度侧资源
+    // 闸停派发承载，两侧合起来才是 §6.1"停派发＋降并行"的完整执行面）。
+    std::vector<std::uint64_t> reapedIds;   // 支 1 的出清清单（循环后统一 erase——遍历中擦除会失效迭代器）
+    std::size_t reclaimed = 0;
+    for (auto& [id, record] : m_workers) {
+        if (record->phase != WorkerStatus::Phase::Idle) {
+            continue;
+        }
+        if (record->exitProcessed) {
+            // 支 1：进程已终结的池槽——直接出清（join→关资源→erase）。
+            if (record->reader.joinable()) {
+                record->reader.join();
+            }
+            record->closeProcessResources();
+            reapedIds.push_back(id);
+        } else {
+            // 支 2：进程仍存活的空闲 worker——协作退出（同 checkIdleRecycle；
+            // worker 以 0 退出→processExit（Draining 分支）→pendingDestroy→
+            // poll 尾部出清）。
+            record->phase = WorkerStatus::Phase::Draining;
+            {
+                std::lock_guard<std::mutex> lock(m_statusMutex);
+                m_statusView[record->id.value].phase = WorkerStatus::Phase::Draining;
+            }
+            sendShutdown(*record);
+        }
+        ++reclaimed;
+    }
+    if (!reapedIds.empty()) {
+        for (const std::uint64_t reapedId : reapedIds) {
+            m_workers.erase(reapedId);
+        }
+        std::lock_guard<std::mutex> lock(m_statusMutex);
+        for (const std::uint64_t reapedId : reapedIds) {
+            m_statusView.erase(reapedId);
+        }
+    }
+    return reclaimed;
 }
 
 bool WorkerSupervisor::hasOpenChildHandleDuplicates(WorkerId worker) const

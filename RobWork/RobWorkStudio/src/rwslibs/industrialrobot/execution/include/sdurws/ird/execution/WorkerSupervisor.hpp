@@ -382,6 +382,55 @@ public:
     std::size_t workerCount() const noexcept;
 
     /**
+     * @brief 全部活 worker 的作业提交内存峰值合计（EX-T07 增量——§6.6
+     *        内存采样行 JobMemory 半区的监督器侧聚合；ResourceController
+     *        生产采样源 SupervisorMemorySampler 的 worker 半区消费口）。
+     *
+     * 聚合口径：对每条**作业有效且进程未终结**的 worker 记录调
+     *   MemProbe::queryJobPeakCommittedBytes（QueryInformationJobObject→
+     *   PeakJobMemoryUsed——作业创建以来的提交内存峰值，单调不回落，
+     *   见 MemProbe.hpp 不超诺声明）后求和；单条查询失败＝该条计 0
+     *   （部分失败不毒化整体读数——"半读数比无读数危险"的关切由采样
+     *   器层的整体失败通道承担，本聚合只做尽力求和）。Dead 记录（作业
+     *   已随进程终结关闭）与空记录不参与。空池返回 0。
+     *
+     * 峰值口径与 §6.1"主进程＋全部 worker 合计峰值 ≤ 物理内存 70%"
+     *   预算行对齐：池化复用的 worker 其峰值覆盖整个生命周期（不随任务
+     *   结束回落）——治理侧按保守值判定，不会低估存量压力。
+     *
+     * 线程约束：**仅调度线程**（遍历 m_workers 记录域——与 launch/poll
+     *   同域；ResourceController::evaluate 在 tick 主锁内调用本方法，
+     *   域一致）。
+     */
+    std::uint64_t aggregateJobMemoryBytes() const;
+
+    /**
+     * @brief 立即回收全部空闲 worker（EX-T07 增量——§6.1 内存预算行
+     *        "降低并行度（回收空闲 worker）"的池侧执行面；与既有空闲
+     *        超时回收〔idleRecycleAfter——§6.4 实现参数〕同一触发语义，
+     *        区别仅在触发源：内存压力即时触发 vs 超时触发）。
+     *
+     * 动作按 Idle 记录的进程存亡分流（阶段 A worker 宿主每任务终结即
+     *   退出——约定码 0，回池记录的进程已不存在）：
+     *   - 进程已终结（exitProcessed）的池槽：直接出清记录（与 poll 尾部
+     *     销毁同序：join 读线程→关进程资源→双表 erase）——对死进程走
+     *     Shutdown 协议永远等不到第二次退出确认，记录会滞留；
+     *   - 进程仍存活的空闲 worker（§6.4"进程保活"模型）：置 Draining＋
+     *     发 Shutdown（协作退出→自然退出→poll 收割——与 checkIdleRecycle
+     *     同路径）。
+     * 返回发起回收的条数。Boot/Running/Draining/Dead 记录不在处置面
+     *   （在途 worker 是"并行度"本身，不由池侧回收——并行度的新增已被
+     *   调度侧资源闸的停派发承载，两侧合起来才是 §6.1"停派发＋降并行"
+     *   的完整执行面）。
+     *
+     * 线程约束：仅调度线程（记录域遍历＋状态锁内镜像更新——与 poll 同域；
+     *   ResourceController 决策的消费方〔编排/L5/测试〕在调度域调用）。
+     *
+     * @return 本次发起回收的空闲 worker 数（0＝无可回收空闲）
+     */
+    std::size_t reclaimIdleWorkers();
+
+    /**
      * @brief R-3 观测面：该 worker 的通道是否仍持有可继承句柄副本（§6.6
      *        进程创建行"句柄在主进程侧于启动后关闭继承副本（防泄漏）"
      *        的实证口——正常路径启动完成即恒 false；acceptance 4）。
