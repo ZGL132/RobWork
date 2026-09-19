@@ -2215,6 +2215,26 @@
       "title": "ird_gates 命中清单留痕格式跨任务漂移：wp08-t08 的 gates-t08-hits-sorted.txt 自 wp08-t07 的原始日志行排序改为（门禁类×目标）规范化 token（17 原始命中→15 token），ird-test-report.json 的 gates.hitsTotal=15 与门禁原始输出 17 计数口径不一；两份在库清单格式不同致 gates-hit-set-diff.txt（空 diff）无法从提交物字节级复算。验收者亲手重跑 ird_gates（exit 1、命中 17 项与 base 同集）独立证实零新增命中，结论成立，仅留痕可比性受损",
       "owner": "execution 单元所有者（口径统一归 scripts/gate-all.ps1 维护方）",
       "resolution": "后续任务固定一种清单格式（建议规范化 token 形态）并在 ird-test-report.json 注明计数口径（原始命中数 vs 规范化 token 数）；跨任务比对用同一规范化函数处理两侧。不阻塞合入。编号顺延自 F-219。验收判定不受影响：EX-T08 attempt 1 verdict=pass。"
+    },
+    {
+      "id": "F-222",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "traceability/acceptance/EX-T09-20260919.md#4.9（attempt 1，送验对象 293ef150589497da9635700830d828496c9b736a，G-1）",
+      "title": "F-012 家族同型再现（先例 F-012/F-023/F-024/F-026/F-027/F-030/F-205/F-208/F-210/F-211/F-214/F-215/F-218）：EX-T09 文档提交 293ef150 标题「[WP-08-T09] 单元卡 v0.11 落位登记＋门禁/测试证据留痕」前缀后以名词「单元卡」开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 提交标题要求。主实现提交 353b3362（「落地…」动词开头）合规；正文四段齐备、验证结论逐项复跑一致，纯风格瑕疵",
+      "owner": "实施纪律（DTB §5 会话流程所有者，与 F-012 家族同辖域）",
+      "resolution": "与 F-012 家族合并处置（文档类提交模板补动词开头示例，句式如「登记单元卡 v0.11 落位（…）」）；对已推送历史不追溯改写（AGENTS §6.3）。编号顺延自 F-221（任务分支 wp08-t09@293ef150 侧登记，收尾并集时按编号序并存——IO-T07 先例）。验收判定不受影响：EX-T09 attempt 1 verdict=fail 由 B-1（4.10 留痕缺失）独立构成，非本条。"
+    },
+    {
+      "id": "F-223",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "traceability/acceptance/EX-T09-20260919.md#4.10（attempt 1，送验对象 293ef150589497da9635700830d828496c9b736a，G-3）",
+      "title": "`.gitignore` 全局 `*.log` 规则（第 87 行）与 AGENTS §4.2 验证留痕要求结构性冲突，已四次导致同族验收 fail：CORE-T02 attempt1、IO-T02 attempt1、EX-T01 attempt1、EX-T09 attempt1（EX-T09 实例＝9 件 .log 留痕——构建日志×3/门禁原始日志×1/运行日志×4/validate-task.log×1——磁盘齐全而未入库，提交正文声称清单与在库不符）。逐次人工 git add -f 补证属重复成本，该家族存在继续重演的土壤",
+      "owner": "构建/治理基础设施所有者（scripts/industrialrobot 维护方＋.gitignore 归属）",
+      "resolution": "择一处置：①对 traceability/ 目录增加 .gitignore 负向豁免（`!*.log` 形态的目录级例外），使留痕目录天然免疫全局规则；②在留痕产出口径（如 gate-all.ps1/verify-task.ps1 的产物清单）末尾固化 `git add -f` 步骤，把补证从人工记忆变为机械动作；③最低限度在 DTB §5.7 实施者检查单把「.log 留痕 add -f 核对」列为显式条目。不阻塞已发验收（EX-T09 返工按其验收记录 B-1 执行）；编号顺延自 F-222。"
     }
   ]
 }
