@@ -4,9 +4,14 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现章节契约与注册表（Sections/SectionProvider）",
-  "status": "ready",
-  "dependsOn": ["RPT-T03"],
-  "requirements": ["RPT-01-B", "RPT-01-C"],
+  "status": "done",
+  "dependsOn": [
+    "RPT-T03"
+  ],
+  "requirements": [
+    "RPT-01-B",
+    "RPT-01-C"
+  ],
   "designRefs": [
     "units/reporting.md#11",
     "units/reporting.md#5",
@@ -21,14 +26,21 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_reporting_test",
     "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
   ],
   "branch": "wp12-t04",
   "interUnit": true,
-  "knownPitfalls": ["P-RPT-5", "P-RPT-9"],
+  "knownPitfalls": [
+    "P-RPT-5",
+    "P-RPT-9"
+  ],
   "acceptance": [
     "章节词表冻结落地（卡行完成条件『词表/级别校验/注册边界用例过』）：SectionId 词表 14 项与 §5.1 一致（8 个 B 章节＋6 个 C 专属章节；框架章节 6 个/域章节 8 个的级别归属逐项锁定）——token 只增不改名、新增章节＝sectionModelVersion 升版（§5.1 词表规则）；ird-report-section-model/1 版本 token 就位",
     "级别校验与注册边界（同上完成条件）：B 级注册 C 专属章节＝注册拒绝（minimumLevel 与词表一致——§9.2 前置行）；重复 sectionId 注册拒绝；未注册域章节呈现为『章节不可用（提供方未注册）』缺项而非空壳（TRJ-08 同精神——§5.1 词表规则）；B 级∧C 章节＝LevelConflict 判定原语就位（端到端拒绝随 RPT-T05）",

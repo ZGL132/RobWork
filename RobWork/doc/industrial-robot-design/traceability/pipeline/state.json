@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 220,
+  "tickCount": 221,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-19T20:11:57+08:00",
+    "updatedAt": "2026-09-19T22:03:39+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1302,6 +1302,19 @@
       "acceptanceRecord": "traceability/acceptance/RPT-T03-20260919.md",
       "mergedAt": "2026-09-19",
       "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因环境并发额度中断（约 50 分钟、零提交、零消账），attempts.implement=1 重启续作完成"
+    },
+    {
+      "task": "RPT-T04",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "b848ac204c0e69b7e9789682e79a1c257fe52ee5",
+        "0d8203a9672c0e61363a260bd6e40c704978b8d9",
+        "0310e31c8af70d0e85978047a3ec635ce3b4b500"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T04-20260919.md",
+      "mergedAt": "2026-09-19",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因环境人机验证超时中断（零提交、零消账），当即重派成功，attempts.implement 保持 0"
     }
   ],
   "policy": {
@@ -1327,28 +1340,111 @@
     }
   },
   "queue": [
-    { "taskId": "RPT-T04", "contractPath": "tasks/foundation/RPT-T04.json", "branch": "wp12-t04" },
-    { "taskId": "RPT-T05", "contractPath": "tasks/foundation/RPT-T05.json", "branch": "wp12-t05" },
-    { "taskId": "RPT-T06", "contractPath": "tasks/foundation/RPT-T06.json", "branch": "wp12-t06" },
-    { "taskId": "RPT-T07", "contractPath": "tasks/foundation/RPT-T07.json", "branch": "wp12-t07" },
-    { "taskId": "RPT-T08", "contractPath": "tasks/foundation/RPT-T08.json", "branch": "wp12-t08" },
-    { "taskId": "RPT-T09", "contractPath": "tasks/foundation/RPT-T09.json", "branch": "wp12-t09" },
-    { "taskId": "RPT-T10", "contractPath": "tasks/foundation/RPT-T10.json", "branch": "wp12-t10" },
-    { "taskId": "RPT-T11", "contractPath": "tasks/foundation/RPT-T11.json", "branch": "wp12-t11" },
-    { "taskId": "RPT-T12", "contractPath": "tasks/foundation/RPT-T12.json", "branch": "wp12-t12" },
-    { "taskId": "RPT-T13", "contractPath": "tasks/foundation/RPT-T13.json", "branch": "wp12-t13" },
-    { "taskId": "UI-T03", "contractPath": "tasks/foundation/UI-T03.json", "branch": "wp10-t03" },
-    { "taskId": "UI-T04", "contractPath": "tasks/foundation/UI-T04.json", "branch": "wp10-t04" },
-    { "taskId": "UI-T05", "contractPath": "tasks/foundation/UI-T05.json", "branch": "wp10-t05" },
-    { "taskId": "UI-T06", "contractPath": "tasks/foundation/UI-T06.json", "branch": "wp10-t06" },
-    { "taskId": "UI-T07", "contractPath": "tasks/foundation/UI-T07.json", "branch": "wp10-t07" },
-    { "taskId": "UI-T08", "contractPath": "tasks/foundation/UI-T08.json", "branch": "wp10-t08" },
-    { "taskId": "UI-T09", "contractPath": "tasks/foundation/UI-T09.json", "branch": "wp10-t09" },
-    { "taskId": "UI-T10", "contractPath": "tasks/foundation/UI-T10.json", "branch": "wp10-t10" },
-    { "taskId": "UI-T11", "contractPath": "tasks/foundation/UI-T11.json", "branch": "wp10-t11" },
-    { "taskId": "UI-T12", "contractPath": "tasks/foundation/UI-T12.json", "branch": "wp10-t12" },
-    { "taskId": "UI-T13", "contractPath": "tasks/foundation/UI-T13.json", "branch": "wp10-t13" },
-    { "taskId": "UI-T14", "contractPath": "tasks/foundation/UI-T14.json", "branch": "wp10-t14" }
+    {
+      "taskId": "RPT-T05",
+      "contractPath": "tasks/foundation/RPT-T05.json",
+      "branch": "wp12-t05"
+    },
+    {
+      "taskId": "RPT-T06",
+      "contractPath": "tasks/foundation/RPT-T06.json",
+      "branch": "wp12-t06"
+    },
+    {
+      "taskId": "RPT-T07",
+      "contractPath": "tasks/foundation/RPT-T07.json",
+      "branch": "wp12-t07"
+    },
+    {
+      "taskId": "RPT-T08",
+      "contractPath": "tasks/foundation/RPT-T08.json",
+      "branch": "wp12-t08"
+    },
+    {
+      "taskId": "RPT-T09",
+      "contractPath": "tasks/foundation/RPT-T09.json",
+      "branch": "wp12-t09"
+    },
+    {
+      "taskId": "RPT-T10",
+      "contractPath": "tasks/foundation/RPT-T10.json",
+      "branch": "wp12-t10"
+    },
+    {
+      "taskId": "RPT-T11",
+      "contractPath": "tasks/foundation/RPT-T11.json",
+      "branch": "wp12-t11"
+    },
+    {
+      "taskId": "RPT-T12",
+      "contractPath": "tasks/foundation/RPT-T12.json",
+      "branch": "wp12-t12"
+    },
+    {
+      "taskId": "RPT-T13",
+      "contractPath": "tasks/foundation/RPT-T13.json",
+      "branch": "wp12-t13"
+    },
+    {
+      "taskId": "UI-T03",
+      "contractPath": "tasks/foundation/UI-T03.json",
+      "branch": "wp10-t03"
+    },
+    {
+      "taskId": "UI-T04",
+      "contractPath": "tasks/foundation/UI-T04.json",
+      "branch": "wp10-t04"
+    },
+    {
+      "taskId": "UI-T05",
+      "contractPath": "tasks/foundation/UI-T05.json",
+      "branch": "wp10-t05"
+    },
+    {
+      "taskId": "UI-T06",
+      "contractPath": "tasks/foundation/UI-T06.json",
+      "branch": "wp10-t06"
+    },
+    {
+      "taskId": "UI-T07",
+      "contractPath": "tasks/foundation/UI-T07.json",
+      "branch": "wp10-t07"
+    },
+    {
+      "taskId": "UI-T08",
+      "contractPath": "tasks/foundation/UI-T08.json",
+      "branch": "wp10-t08"
+    },
+    {
+      "taskId": "UI-T09",
+      "contractPath": "tasks/foundation/UI-T09.json",
+      "branch": "wp10-t09"
+    },
+    {
+      "taskId": "UI-T10",
+      "contractPath": "tasks/foundation/UI-T10.json",
+      "branch": "wp10-t10"
+    },
+    {
+      "taskId": "UI-T11",
+      "contractPath": "tasks/foundation/UI-T11.json",
+      "branch": "wp10-t11"
+    },
+    {
+      "taskId": "UI-T12",
+      "contractPath": "tasks/foundation/UI-T12.json",
+      "branch": "wp10-t12"
+    },
+    {
+      "taskId": "UI-T13",
+      "contractPath": "tasks/foundation/UI-T13.json",
+      "branch": "wp10-t13"
+    },
+    {
+      "taskId": "UI-T14",
+      "contractPath": "tasks/foundation/UI-T14.json",
+      "branch": "wp10-t14"
+    }
   ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
@@ -1358,5 +1454,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "c9fd5f48-a120-44c8-8d18-fa3b82aff327"
+  "tickToken": "f912f4f7-4002-4a0a-b95b-622767168400"
 }
