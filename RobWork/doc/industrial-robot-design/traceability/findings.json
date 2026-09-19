@@ -2347,6 +2347,26 @@
       "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-039/F-040/F-042/F-044/F-232 同族再现：RPT-T03 留痕提交 a2522b68 标题『[RPT-T03] 留痕与文档同步：双模式构建/测试证据、ird_gates 零新增、单元卡 v0.6 落位登记』名词短语开头，非动词开头——同任务首提交 2c3d9a1c『实现…』动词开头合规，同任务内口径仍不稳定；正文四段齐备、验证结论与留痕一致（验收者亲手复现：双模式 30/30＋12/12、ird_gates 27 项命中集与 base 同集零新增、validate 双 PASS、双探针即红），纯风格瑕疵不构成阻断",
       "owner": "AGENTS.md/PIPE 文档所有者（提交信息约定维护方；与 F-012 家族、F-230 前缀双轨口径可在治理面合并处置）",
       "resolution": "F-012 建议②（模板补提交标题动词开头示例与负例）落地前预计持续再现；可选根治＝收尾检查提交标题首词词性。不阻塞 RPT-T03 合入（attempt 1 verdict=pass）。编号顺延自 F-232。"
+    },
+    {
+      "id": "F-234",
+      "source": "traceability/acceptance/RPT-T04-20260919.md#4.9／发现的问题-G-1（attempt 1，verdict=pass，2026-09-19；送验对象 0310e31c8af70d0e85978047a3ec635ce3b4b500，分支 wp12-t04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-039/F-040/F-042/F-044/F-232/F-233 同族再现：RPT-T04 两辅助提交 0d8203a9『[RPT-T04] reporting 单元卡 v0.7：RPT-T04 实现落位登记（文档同步）』与 0310e31c『[RPT-T04] 验证留痕：双模式构建/测试执行/门禁/治理自查证据（wp12-t04）』标题均以名词短语开头，非动词开头（实现提交 b848ac20『[RPT-T04] 实现章节词表与注册表…』合规）——家族第 4/5 例（RPT 系连续三任务复踩）；两提交正文四段齐备、验证结论与验收者亲手复现逐项一致（双模式 50/50＋15/15、ird_gates base/branch 命中集行级 diff 为空、validate 双 PASS、双探针即红），纯风格瑕疵不构成阻断",
+      "owner": "AGENTS.md/PIPE 文档所有者（提交信息约定维护方；与 F-012 家族、F-230 前缀双轨口径可在治理面合并处置）",
+      "resolution": "与 F-012/F-232/F-233 合并处置：实施者模板补提交标题动词开头示例与负例（F-012 建议②）落地前预计持续再现；可选根治＝收尾检查提交标题首词词性。对已推送历史不追溯改写（AGENTS §6.3）。不阻塞 RPT-T04 合入（attempt 1 verdict=pass）。编号顺延自 F-233，合入时由所有者确认与并行 evidence 分支无撞车。"
+    },
+    {
+      "id": "F-235",
+      "source": "traceability/acceptance/RPT-T04-20260919.md#4.2／发现的问题-G-2（attempt 1，verdict=pass，2026-09-19；验收者全新 detached worktree@0310e31c 亲历）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "title": "验收者全新 worktree 全量集成构建中框架 RobWorkSim 的 RWSimulatorPlugin 目标出现 73 条编译错误（VelocityScrew6D.hpp 的 rw::rw::math 双重命名空间＋RW__message 宏污染形态），整体 exit 1——三重归因＝环境性、非送验对象引入：①该头文件 base(c22cef67) 与 head(0310e31c) 的 blob SHA 完全相同（5b9f1714…，git ls-tree 实证）；②送验 diff 零框架文件触碰；③主构建树（同机同参数同源码）构建 --target RWSimulatorPlugin exit 0 成功。两侧 CMakeCache 的 Eigen3/Bullet 解析路径逐字一致（同一 vcpkg installed 树），根因在更深层的全新构建树差异——疑 F-007 同族（全新树构建面环境问题；F-007 的 ini.template 缺件本次同样亲历并按其 resolution 复制样板后配置成功）。送验交付面（industrialrobot 全目标）零错误可复现成立，不阻断 RPT-T04 验收",
+      "owner": "构建约定所有者（DTB §5.1 辖域；与 F-007 可合并调查）",
+      "resolution": "调查『同机同参数下全新集成构建树 vs 既有构建树』的 RobWorkSim/RWSimulatorPlugin 编译差异根因（建议在干净 worktree 复跑并对比 vcxproj 的 AdditionalIncludeDirectories/PreprocessorDefinitions 与 PCH 配置）；如确认全新树环境缺陷，登记进 AGENTS §4.1 或 F-007 的全新树配置口径，避免后续验收环境反复踩中。不阻塞 RPT-T04 合入（attempt 1 verdict=pass）。编号顺延自 F-234。"
     }
   ]
 }
