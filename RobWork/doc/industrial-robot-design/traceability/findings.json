@@ -2307,6 +2307,26 @@
       "owner": "PIPE 文档所有者（附录 A 编排者模板扫描口径）",
       "resolution": "PIPE v1.14：附录 A T-ORCH 步骤 4 增补扫描过滤口径——扫描仅认对象根 JSON 执行契约，数组根聚合索引（tasks/foundation-tasks.json，DTB §8）非执行契约一律跳过；T-ORCH 升 v11。机制语义零变化。【消账 2026-09-19】本修订与登记同批次落地，本条即消账",
       "fixedAt": "2026-09-19"
+    },
+    {
+      "id": "F-230",
+      "source": "traceability/acceptance/RPT-T01-20260919.md#4.9（attempt 1，verdict=pass，2026-09-19；送验对象 636f065ef43180cfa691bb9b802b3b1f8cf405fe，分支 wp12-t01）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "title": "提交标题前缀双轨口径：AGENTS §6.2/§6.3 模板字面为 [WP-nn-Tkk]（如 [WP-03-T02]），而 canonical 任务契约的任务号为 RPT-T01 式单元前缀 ID（≙WP-12-T02），RPT-T01 三提交用 [RPT-T01] 前缀——redesign-main 已有 [IO-T07]×2/[DIAG-T06]/[DIAG-T07] 合入先例，两式前缀均曾通过验收合入；同一任务两套编号（契约 RPT-T01 vs DTB WP-12-T02）并存，验收者对『前缀是否合规』只能逐案裁量（本验收按先例判合规、仅登记口径含糊）",
+      "owner": "AGENTS.md/DTB 文档所有者（提交信息约定维护方；可与 F-012/F-067 提交标题纪律家族在治理面合并处置）",
+      "resolution": "在 AGENTS §6.2/§6.3 或 DTB §5.1 固化『契约任务号前缀与 WP 号前缀等价可用』的映射口径（契约 note 的 ≙ 关系为准）或统一其一；validate-task/CI 提交检查若加标题校验须同时接受两种已登记前缀形态。不阻塞 RPT-T01 合入（attempt 1 verdict=pass）。编号顺延自 F-229。"
+    },
+    {
+      "id": "F-231",
+      "source": "traceability/acceptance/RPT-T01-20260919.md#问题清单 G-2（attempt 1，verdict=pass，2026-09-19；送验对象 636f065ef43180cfa691bb9b802b3b1f8cf405fe）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "title": "留痕日志编码不统一：traceability/builds/wp12-t01/gates-ird-gates-target.log 为 GBK/ANSI 控制台捕获（UTF-8 工具直读为乱码，iconv -f GBK 解码后内容完整可核——MSBuild 自定义命令输出经系统代码页落盘），同目录其余 17 件留痕为 UTF-8；后续读者 grep/核验该证据需额外转码，且同目录两种编码并存易被误判为文件损坏",
+      "owner": "实施纪律（DTB §5 留痕约定维护方；落痕捕获脚本口径随 F-012 家族治理面同批处置可选）",
+      "resolution": "留痕捕获统一 UTF-8（pwsh 重定向显式 -Encoding utf8，或 cmd 下 chcp 65001 后捕获；cmake --build 输出重定向时按调用 shell 的代码页处理）。不阻塞 RPT-T01 合入：本验收已以 iconv＋cmake -P 脚本模式独立复现完成核验（27 命中集与 base 逐行一致为实），记录各节已注明。编号顺延自 F-230。"
     }
   ]
 }
