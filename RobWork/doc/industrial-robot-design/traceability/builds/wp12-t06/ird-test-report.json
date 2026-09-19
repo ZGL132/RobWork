@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T06",
+  "masterWp": "WP-H（卡内 RPT-T06 行——≙WP-12-T04，DTB §2.13 偏移映射；契约 note 原文）",
+  "branch": "wp12-t06",
+  "base": "d74f92194a2e409a95c0be76cd6c8124b0958ca1",
+  "date": "2026-09-20",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01~T05 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，零错误）",
+      "notes": "RPT-T06 增列实现翻译单元：src/Render.cpp（FieldMatrix 提取〔§8.4 单次投影——遍历序＝章节 order＋条目 entryKey 稳定序＋字段存储序；值文本规范形＝显示单位换算经 core tryConvert 唯一入口后 std::to_chars 最短往返；四态呈现词『不适用』『未提供』/Invalid 保留原文 NFR-COR-03；曲线类以 ResultBinding 引用文本呈现不复制 RP-CONS-4；限定语 §6.4 固定推导序去重〕＋HTML 渲染器〔§8.1 HTML5 静态零外部依赖零脚本/样式内联/LF 行尾/无 BOM/data-field 机器可提取锚/资格声明 §8.2① 前置断言门/诊断脱敏双保险 §4.3.3〕＋JSON 渲染器〔§8.3 ird-report-json/1 顶层 schemaVersion/SourcedValue 四态显式 token/限定语数组字段/未知字段拒绝 NFR-DEP-04 执行侧/canonical 写出经注入 io IJsonWriter〕＋CSV 渲染器〔§8.3 主表 11 列冻结序＋诊断/覆盖附表、方言行归 io、值列空值与『不适用』区分〕）。公共头新增 include/sdurws/ird/reporting/Render.hpp（§8.4 FieldCell/FieldMatrix＋extractFieldMatrix＋§9.3 ReportRenderFormat/RenderOptions/RenderArtifact/RenderOutcome/IReportRenderer＋三实现类 HtmlReportRenderer/JsonReportRenderer/CsvReportRenderer＋§9.5 io 注入契约族 IReportIoFactory/IReportCsvWriter/IReportJsonWriter/IReportOutputTarget/ReplacePolicy/ReportCsvCell/ReportJsonDom/MemoryReportOutputTarget——§9.5 原文列于 Export.hpp，渲染器先于导出服务消费，暂载本头，RPT-T09 Export.hpp 消费不重复定义——v0.6 同型偏差先例，§14.4 v0.9 登记 DTB §5.4）。P-RPT-6：零 PDF 专属字段/配置/词位——IReportRenderer 格式无关抽象（新格式＝新实现）。CMakeLists 仅增列源文件，目标名/别名/四条链接边/编译选项零改动"
+    },
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 94/94）",
+      "notes": "RPT-T01~T05 七十八条保持全绿；RPT-T06 新增 test/RenderTest.cpp 十六条（FieldMatrixTest 六条＋HtmlRenderTest 九条＋RenderFormatTokenTest 一条）：矩阵确定性（同报告同矩阵逐单元格全等/遍历序三段锁定——acceptance 4）；值投影（to_chars 最短往返/mm 显示单位换算/文本原样/『不适用』『未提供』/Invalid 保留原文——acceptance 2）；单位冻结集冲突 DataInvalid（unitPreference 冻结入身份的执行侧闸——KIN-12）；限定语推导（estimated/screening-only/historical-superseded/data-insufficient/not-applicable——§6.4 结构性输出）；曲线引用（runId#fieldPath 引用文本非复制）；绑定越界拒绝（make 字段校验 EvidenceRefInvalid——提取器同检为防御面）；HTML 字节确定性（二次渲染字节相同＋digest 一致）；HTML5 静态契约（零脚本/零外链/零 src/无 BOM/LF 行尾/data-field 锚逐单元格在场上）；脱敏双保险（真实 diagnostics::RedactionService 凭证——二级目录与 0x 地址被滤除、RootOnly 一级目录保留）；身份规范文本限追溯区块（正文缩略形）；资格声明门（formalPass 不成立无『正式通过结论（资格成立）』字样＋成立章节双声明独立——§8.2①②）；矩阵/报告不同源双向拒绝且无部分产物外泄；格式词位违约 Usage。夹具声明（RP-STATE-4 同源）：报告对象一律经 ReviewReport::make 构造；确定性身份夹具逐位铺位（禁随机）；脱敏用例消费真实 RedactionService（C-3 登记边）非替身；HTML 渲染器零 io 依赖（§9.3 副作用行），io 注入面用例归契约测试"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 25/25）",
+      "notes": "RPT-T01~T05 十八条保持全绿；RPT-T06 新增 contract_test/RenderCrossUnitContractTest.cpp 七条（RenderValueSingleSourceTest 一条＋JsonRenderContractTest 两条＋CsvRenderContractTest 三条＋RenderHeaderDisciplineTest 一条）：值单源毒化矩阵三格式验证（矩阵值与报告可推导值相异——三格式输出均携带毒化标记且零重算——D-07/AT-22 结构性前提 acceptance 4）；JSON 格式契约（顶层 schemaVersion/四态显式 token/限定语数组字段/二次渲染字节相同）；CSV 格式契约（主表 11 列冻结序/方言行三次在场〔三文档拼接〕/值列规则与空值区分/字节确定性）；诊断附表脱敏双保险（CSV 面）；公共头零 io include 源码扫描（P-RPT-1 纪律运行期常驻自证）＋RenderArtifact.digest 类型恒等 static_assert（core::Digest256——摘要唯一算法）。fake 边界声明：FakeCsvWriter/FakeJsonWriter 为 io canonical 行为的最小确定性替身（RFC4180 引号化＋CRLF＋方言行/2 空格缩进＋to_chars＋LF）——真实行为归 L5 装配的 io 适配器（P-RPT-1 裁决补边后直连、签名零改动）；替身确定性即本任务『同输入同字节』断言面，io 真实 canonical 正确性由 io 单元自身验证矩阵承担（SA-12——reporting 不复验 io 行为）"
+    }
+  ],
+  "testSuites": [
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingBuild／ReportingErrors／ReportingIdentity／ReportModelIdentity／ReportCodecRoundtrip／ReviewReportModel／ReviewReportValidation／ReportCodecSeparation／ReportCodecDeterminism／ReportCodecBinary／ReportModelTokens／ReportingSections／ReportingSectionProvider／ReportBuildSessionTest／ReviewReportBuilderTest",
+      "cases": "78 条（RPT-T01~T05——逐条清单与追踪见 traceability/builds/wp12-t02~t05/ird-test-report.json 既有登记，本报告不复制）",
+      "result": "pass（两模式）——RPT-T06 新增 Render.hpp/.cpp 后红线扫描面自动覆盖新文件（NoQtInclude/NoCrossUnitInclude/PublicHeaderPathLayout 常驻自证仍绿）"
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "FieldMatrixTest",
+      "cases": [
+        { "name": "SameReportSameMatrix_TraversalOrderBySectionEntry_RPT06_ACC4", "result": "pass", "trace": "RPT-T06 acceptance 4（§8.4 矩阵确定性单测锁定：同报告两次提取逐单元格 operator== 全等；遍历序＝章节 order〔project-scheme(1)→kinematics-collision(3)〕＋条目 entryKey 稳定序〔a-reach 先于 b-quick〕＋字段存储序；fieldKey 层级键组合；NoFormalResult 章节无条目不产生单元格）；units/reporting.md §8.4" },
+        { "name": "ValueProjection_FourStateWords_ToChars_AndUnitConversion_RPT06_ACC2", "result": "pass", "trace": "RPT-T06 acceptance 2（§8.3 值列规则＋§8.4 valueRepr：无量纲 to_chars『3』；mm 显示单位换算 1.5 SI→『1500』经 core tryConvert 唯一入口〔KIN-12 纯投影〕；文本原样；NotApplicable→『不适用』；Invalid→保留原文『abc』〔NFR-COR-03〕；status 维度＝绑定结果工程判定 token）；units/reporting.md §8.3/§8.4/§6.6" },
+        { "name": "UnitPreferenceConflict_Rejected_DataInvalid_RPT06_ACC2", "result": "pass", "trace": "RPT-T06 acceptance 2（§4.2 unitPreference 冻结入身份的执行侧一致性闸：字段显示单位与报告级冻结集同量纲条目不一致〔mm vs cm〕→DataInvalid——显示单位投影源唯一性）；units/reporting.md §8.4/KIN-12" },
+        { "name": "QualifierDerivation_Estimated_Screening_Superseded_DataInsufficient_RPT06_ACC5", "result": "pass", "trace": "RPT-T06 acceptance 5（§6.4 限定语结构性推导：estimated〔GeometricEstimate〕/screening-only〔Quick 模式——表 1『不得单独支撑正式通过』〕/historical-superseded〔Superseded〕/data-insufficient〔证据 Missing〕/not-applicable〔四态〕固定序去重；currentness 维度＝superseded token；结果引用 run-…/证据引用 itemId@digest 前 12 hex〔无摘要绑定裸 itemId〕——引用而非复制）；units/reporting.md §6.4/§8.3" },
+        { "name": "CurveRefSection_ValueIsReferenceText_NotCopy_RPT06_ACC2", "result": "pass", "trace": "RPT-T06 acceptance 2（RP-CONS-4/§8.1 复杂结构以引用呈现：CurveRef 提示章节无内联值字段 → 『run-<hex>#<fieldPath>』引用文本——不复制大数组〔模型层不携带曲线数组＝结构性不复制〕、不丢弃指向）；units/reporting.md §8.1 总则" },
+        { "name": "BindingOutOfRange_Rejected_DataInvalid_RPT06_ACC4", "result": "pass", "trace": "RPT-T06 acceptance 4（条目结果绑定越界：ReviewReport::make 字段校验原语拒绝〔EvidenceRefInvalid——§9.2 绑定可解析性〕；extractFieldMatrix 同名检查为防御面——make 产出的报告不可达该态，测试以 make 拒绝语义钉住闸门）；units/reporting.md §4.2/§9.2" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "HtmlRenderTest",
+      "cases": [
+        { "name": "ByteDeterministic_SecondRenderIdentical_RPT06_ACC1", "result": "pass", "trace": "RPT-T06 acceptance 1（RP-CONS-3 确定性：同报告同格式二次渲染字节相同＋SHA-256 摘要一致〔core ContentDigester 唯一算法〕；rendererVersion/templateVersion 入产物）；units/reporting.md §8.1 确定性总则/§9.3" },
+        { "name": "Html5StaticContract_ZeroExternalZeroScript_LfNoBom_RPT06_ACC5", "result": "pass", "trace": "RPT-T06 acceptance 5（D-08/§8.1 HTML5 静态契约：零脚本〔无 <script〕、零外部依赖〔无 http(s)://、无 <link>、无 src=、无 @import〕、样式内联、meta charset=utf-8、UTF-8 无 BOM、行尾 LF〔零 CR 字节〕）；units/reporting.md §8.1" },
+        { "name": "DataFieldAnchors_AndQualifierMarks_MachineExtractable_RPT06_ACC5", "result": "pass", "trace": "RPT-T06 acceptance 5（机器可提取锚：矩阵每单元格 data-field=fieldKey 恰一在场〔值单源 HTML 面〕；data-qualifier 逐 token 标记＋§6.4 呈现义务文案〔估算/输入已变化/数据不足〕；值文本与矩阵同源〔1500/不适用〕；章节锚点/状态徽标/目录）；units/reporting.md §8.1/§6.4" },
+        { "name": "SanitizationDoubleInsurance_NoRawPathNoAddress_RPT06_ACC3", "result": "pass", "trace": "RPT-T06 acceptance 3（§4.3.3/NFR-SEC-07 诊断脱敏双保险渲染侧：真实 diagnostics::RedactionService 凭证——诊断定位名携二级目录『机密』与 0x 地址被滤除，RootOnly 保留盘符＋一级目录＋文件名〔§7.7 可读性折中〕）；units/reporting.md §4.3.3/§8.1" },
+        { "name": "IdentityCanonicalText_ConfinedToTraceBlocks_RPT06_ACC3", "result": "pass", "trace": "RPT-T06 acceptance 3（UX-02：完整身份规范文本〔64 hex〕仅追溯区块/附录在场；data-field 正文数据区零规范身份；正文数据源行缩略形〔前 8 hex＋…〕定位）；units/reporting.md §8.1" },
+        { "name": "FormalPassWordingGate_RPT06_ACC3", "result": "pass", "trace": "RPT-T06 acceptance 3（§8.2①② 两类声明渲染纪律：formalPass 不成立章节零『正式通过结论（资格成立）』字样＋『未达正式通过（资格不成立）』呈现；成立章节双声明独立在场〔与『经验证的不可行结论——正式评审记录』不互换措辞〕——断言用完整声明短语与『筛选级……正式通过结论』限定语文案区分；§8.2① 前置断言＝DataInvalid 硬门槛；RP-STATE-1~3 具名用例体归 RPT-T08——契约 note 两任务共享验证面互引）；units/reporting.md §8.2" },
+        { "name": "MatrixReportMismatch_Rejected_NoPartialArtifact_RPT06_ACC1", "result": "pass", "trace": "RPT-T06 acceptance 1（§9.3 同源前置的双向完整性执行面：矩阵缺报告字段单元格/矩阵多余单元格 → DataInvalid；失败＝error 在场＋artifact 缺席——无部分产物外泄〔§9.3 后置行〕）；units/reporting.md §9.3" },
+        { "name": "WrongFormatRequest_UsageFailFast_RPT06_ACC6", "result": "pass", "trace": "RPT-T06 acceptance 6（P-RPT-6/O-25：HtmlReportRenderer 仅服务 html 词位——他格式请求 Usage fail-fast；IReportRenderer 格式无关抽象、新格式＝新实现，零 PDF 专属字段/配置/词位）；units/reporting.md §9.3/§14.3 P-RPT-6" },
+        { "name": "ReviewSignoffBlock_LevelC_RPT06_ACC5", "result": "pass", "trace": "RPT-T06 acceptance 5（§8.1 C 级评审签署块：signOff/comments 呈现〔签署仅记录事实 §4.5〕＋B 级零 report-review 块〔级别×章节合法组合的呈现面〕）；units/reporting.md §8.1/§4.5" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "RenderFormatTokenTest",
+      "cases": [
+        { "name": "TokensStable_RPT06_ACC1", "result": "pass", "trace": "RPT-T06 acceptance 1（格式 token 稳定字面 html/json/csv——§8.5 提取器/工件清单格式列，NFR-COR-02 同码同串）；units/reporting.md §9.3" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingLinkage／ReportingIdentityContract／EvidenceCrossUnit／ReportingSectionContract／ReportingBuilderContract",
+      "cases": "18 条（RPT-T01~T05——逐条清单与追踪见 traceability/builds/wp12-t02~t05/ird-test-report.json）",
+      "result": "pass（两模式）——四条登记编译链接边与上游值类型基线常驻自证在 RPT-T06 扩面后仍绿"
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "RenderValueSingleSourceTest／JsonRenderContractTest／CsvRenderContractTest／RenderHeaderDisciplineTest",
+      "cases": [
+        { "name": "PoisonedMatrix_ThreeFormats_EmitCellValue_RPT06_ACC4", "result": "pass", "trace": "RPT-T06 acceptance 4（D-07/AT-22 结构性前提——ARCH §10.3『渲染单一数据源』的机制化验证：毒化矩阵〔矩阵值 1500→毒化标记，与报告可推导值相异〕喂三渲染器——HTML data-field 锚单元格/JSON value/CSV 值列均输出毒化标记且零格式输出 1500〔值不可能被渲染器重算〕——任何格式对同一 fieldKey 的输出只能来自同一 FieldCell）；units/reporting.md §8.4" },
+        { "name": "SchemaVersion_FourStateTokens_CanonicalBytes_RPT06_ACC5", "result": "pass", "trace": "RPT-T06 acceptance 5（§8.3 JSON 契约：顶层 schemaVersion=ird-report-json/1〔NFR-DEP-04 schema 自首版携带〕；SourcedValue 四态显式 token〔provided/not-provided〕；限定语数组字段；同 DOM 二次渲染字节相同〔canonical 确定性〕）；units/reporting.md §8.3" },
+        { "name": "WriterViaFactory_SessionSequence_RPT06_ACC6", "result": "pass", "trace": "RPT-T06 acceptance 6（P-RPT-1 注入纪律：JSON 渲染恰一次 makeJsonWriter、零 makeCsvWriter、零 makeAtomicTarget〔渲染零落盘——§9.3 副作用行，落盘归导出链〕——工厂零行为、canonical 行为归 io 适配替身记账面）；units/reporting.md §9.5/§3.3" },
+        { "name": "MainTableElevenColumns_FrozenOrder_ValueColumnRules_RPT06_ACC5", "result": "pass", "trace": "RPT-T06 acceptance 5（§8.3 CSV 契约：主表 11 列冻结序〔field_key…currentness〕＋诊断/覆盖附表列序；方言标识行三次在场〔单一 CSV 工件＝三文档拼接、以方言行定位表边界——§14.4 v0.9 登记〕；值列『未提供』呈现词；空值＝空字段与『不适用』区分；证据引用 itemId@12hex）；units/reporting.md §8.3" },
+        { "name": "ByteDeterministic_SecondRenderIdentical_RPT06_ACC1", "result": "pass", "trace": "RPT-T06 acceptance 1（RP-CONS-3 CSV 面：同报告同格式二次渲染字节相同＋digest 一致＋templateVersion=kCsvTemplateVersion）；units/reporting.md §8.3 确定性行" },
+        { "name": "DiagnosticsAppendix_SanitizedLocalName_RPT06_ACC3", "result": "pass", "trace": "RPT-T06 acceptance 3（诊断脱敏双保险 CSV 面：diagnostics.csv local_name 列零未脱敏路径/0x 地址——与 HTML 同一 RedactionService 口径）；units/reporting.md §4.3.3/§8.3" },
+        { "name": "PublicHeaderZeroIoIncludes_RPT06_ACC6", "result": "pass", "trace": "RPT-T06 acceptance 6（P-RPT-1 公共头零 io 类型纪律运行期常驻自证：Render.hpp 源码扫描零 sdurws/ird/io/ include、零 Qt include〔D-01〕；RenderArtifact.digest 类型恒等 static_assert＝core::Digest256〔摘要唯一算法 CR-02〕）；units/reporting.md §3.3/§9.5" }
+      ]
+    }
+  ],
+  "builds": {
+    "integrated": {
+      "configure": "build/ 构建树（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，构建前 grep 复核缓存原行——AGENTS §4.1 口径）",
+      "build": "契约 verify 两命令逐条 exit 0：cmake --build build --config Release --target sdurws_ird_reporting_test / sdurws_ird_reporting_contract_test（integration-build.log；真实 error 计数 0）",
+      "testRun": "sdurws_ird_reporting_test 94/94＋sdurws_ird_reporting_contract_test 25/25（integration-test-run-*.log＋*-integration.xml，failures=0 errors=0）"
+    },
+    "smoke": {
+      "configure": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp12-t06 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（vcpkg toolchain 必带〔绝对路径——相对路径在 CMake 工具链解析期失败，本任务实测留痕〕＋Qt6 前缀为 ui 落位后冒烟树所需，wp12-t05 同款参数；smoke-configure.log）",
+      "build": "cmake --build build-smoke-wp12-t06 --config Release（全量）→ exit 0，零 error（smoke-build.log）",
+      "testRun": "sdurws_ird_reporting_test 94/94＋sdurws_ird_reporting_contract_test 25/25（smoke-test-run-*.log＋*-smoke.xml，failures=0 errors=0）"
+    },
+    "gates": {
+      "tool": "ird_gates（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake，WP-01-T01 落地）——cmake -DIRD_ROOT=<各树>/industrialrobot -DIRD_ENABLE_GIT=OFF -P ird_gates.cmake",
+      "result": "base（d74f9219 detached worktree 复跑，比对后清理）与 branch（wp12-t06 工作树）归一化 IRDRoot 后命中集逐行 diff 零差异——GATES-HIT-SET-IDENTICAL（gates-hit-set-diff.txt）；两侧各 61 项命中全为既有登记归属，零 reporting 新增命中（Render.hpp/.cpp include 面＝core/diagnostics/evidence/reporting 自有——diagnostics::IRedactionService 为 C-3 登记边只读消费；io 设施经 IReportIoFactory 注入，公共头零 io 类型）"
+    },
+    "governance": {
+      "validateTask": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/RPT-T06.json → PASS (1 tasks)（validate-task.log）",
+      "validateDocs": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1 → PASS（validate-docs.log）"
+    }
+  },
+  "acceptanceCoverage": [
+    { "item": 1, "covered": "RP-CONS-3 确定性：同报告同格式二次渲染字节相同三格式各自锁定（HtmlRenderTest.ByteDeterministic＋JsonRenderContractTest.SchemaVersion_CanonicalBytes＋CsvRenderContractTest.ByteDeterministic——两模式四份 XML）；稳定排序三段（章节 §5 order＋条目 entryKey＋证据 itemId——SameReportSameMatrix 遍历序锁定＋orderedEvidenceRefs/orderedDiagRefs orderKey 实现；诊断按 orderKey＝〔章节 order、码、局部名、来源运行、次数〕组合键实现注释）；数值 std::to_chars 最短往返（toCharsShortest——locale 无关）；HTML/JSON 行尾 LF（Html5StaticContract 零 CR 断言；CSV CRLF 归 io 方言）；二次渲染字节比对为 Verifying 步组成部分（§8.5 步③——导出链 RPT-T09 承载，渲染器侧义务＝同输入同字节纯函数性，两格式 4 用例字节级断言即其前置凭证）；矩阵/报告不同源双向拒绝且失败无部分产物外泄（MatrixReportMismatch）；units/reporting.md §8.1/§8.4/§8.5/§9.3" },
+    { "item": 2, "covered": "RP-CONS-4 Unicode/单位/复杂结构引用：UTF-8 无 BOM（Html5StaticContract 首三字节断言）；单位经 UnitPreference 冻结集——字段显示单位与冻结集同量纲冲突 DataInvalid（UnitPreferenceConflict——KIN-12 显示单位纯投影、§4.2 冻结入身份执行侧）、换算经 core 唯一入口 tryConvert（projectFieldValue/projectComparativeValue——零第二换算实现）；曲线类复杂结构以引用呈现不复制（CurveRefSection_ValueIsReferenceText——runId#fieldPath 引用文本；ResultBinding 三要素；模型层不携带曲线数组＝结构性不复制）；矩阵单元格引用规范文本（resultRef run-…/evidenceRef itemId@12hex）；units/reporting.md §8.1/§8.4" },
+    { "item": 3, "covered": "RP-SAN-1 诊断脱敏双保险：渲染侧再次过脱敏——注入 diagnostics::IRedactionService（C-3 登记边）User 档（SanitizationDoubleInsurance HTML 面＋DiagnosticsAppendix CSV 面——真实 RedactionService 凭证：二级目录/0x 地址滤除）；用户级报告不含调用栈/内存地址/未脱敏本机路径（RedactionService User 档内部 token 模式过滤〔[ADDR]/[HASH]/[FRAME]〕承接）；身份规范文本仅追溯区块/附录（IdentityCanonicalText——正文缩略形＋完整规范文本限 trace-block/appendix/JSON 机器镜像）；资格声明 §8.2①② 前置断言门（FormalPassWordingGate——formalPass 不成立零『正式通过结论』字样＝DataInvalid 硬门槛；RP-STATE-1~3 具名用例体归 RPT-T08——契约 note 互引）；units/reporting.md §4.3.3/§8.1/§8.2" },
+    { "item": 4, "covered": "FieldMatrix 单次投影：三渲染器以同一 FieldMatrix 为值来源——毒化矩阵三格式验证（PoisonedMatrix_ThreeFormats：矩阵值与报告可推导值相异，三格式输出均携带毒化标记、零重算——D-07/AT-22 结构性前提/ARCH §10.3 机制化）；矩阵确定性单测锁定（SameReportSameMatrix——遍历序＝章节 order＋条目 entryKey＋字段存储序、同报告同矩阵逐单元格全等）；同源双向完整性（MatrixReportMismatch——缺单元格/多单元格均 DataInvalid）；值单源查找面 MatrixIndex.consume（HTML/JSON 每字段按 fieldKey 消费、CSV 逐行消费＋assertFullyConsumed）；units/reporting.md §8.4" },
+    { "item": 5, "covered": "三格式格式契约：HTML5 静态零外部依赖零脚本（Html5StaticContract——零 script/外链/src/import、样式内联、data-field 机器可提取锚〔D-08〕＋DataFieldAnchors 逐单元格锚在场）；JSON ird-report-json/1 canonical（SchemaVersion_FourStateTokens——顶层 schemaVersion、SourcedValue 四态显式 token、限定语数组字段、二次渲染字节相同；未知字段拒绝＝kJsonTopLevelKeys 17 键冻结集＋firstUnknownJsonTopLevelKey 装配后自检〔NFR-DEP-04 执行侧——产出物结构上不可携带未知字段，读取侧拒绝随 RPT-T07 回读解析消费同一冻结集〕）；CSV 列序冻结主表 11 列＋诊断/覆盖附表（MainTableElevenColumns——#rwcsv1 方言行归 io 三次在场、值列『不适用』/『未提供』/原文、空值＝空字段区分；覆盖附表逐工况行数据未入 §4 模型＝零数据行如实登记〔单元卡 §14.4 v0.9——ERR-01 不伪造〕）；C 级评审签署块（ReviewSignoffBlock）；units/reporting.md §8.1/§8.3" },
+    { "item": 6, "covered": "陷阱处置：P-RPT-1——公共头零 io 类型（PublicHeaderZeroIoIncludes 源码扫描常驻自证；IReportIoFactory/IReportCsvWriter/IReportJsonWriter/IReportOutputTarget/ReportCsvCell/ReportJsonDom 接口只出现 reporting/core 类型；CSV 方言行/转义/JSON canonical 行为全归 io 适配〔FakeCsvWriter/FakeJsonWriter 为最小确定性替身——边界声明在案，P-RPT-1 裁决补边后直连签名零改动〕；工厂零行为＝WriterViaFactory 记账面；§9.5 契约族暂载 Render.hpp 落位偏差按 DTB §5.4 登记单元卡 §14.4 v0.9——v0.6 同型先例，RPT-T09 Export.hpp 消费不重复定义）；P-RPT-6——O-25 已裁决不留 PDF 接口桩（WrongFormatRequest——IReportRenderer 格式无关抽象、新格式＝新实现；零 PDF 专属字段/配置/词位）；P-RPT-9——core 单位/摘要消费以 v0.1 Draft 为基线（UnitToken/tryConvert/Digest256/ContentDigester 公共面消费；SI 基线缺位＝DataInvalid 显式失败不静默——冻结 diff 后增量同步触发器；digest 类型恒等 static_assert 常驻自证）；units/reporting.md §3.3/§9.5/§14.3" }
+  ]
+}

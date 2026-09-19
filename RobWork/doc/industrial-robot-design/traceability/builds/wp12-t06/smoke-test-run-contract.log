@@ -1,0 +1,83 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 25 tests from 9 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from ReportingLinkage
+[ RUN      ] ReportingLinkage.UnitEdgesFourRegistered_DT_BUILD_R1_R2
+[       OK ] ReportingLinkage.UnitEdgesFourRegistered_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] ReportingLinkage.NoTestkitEdge_DT_BUILD_T1
+[       OK ] ReportingLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+[ RUN      ] ReportingLinkage.RegisteredEdgesPresent_DT_BUILD
+[       OK ] ReportingLinkage.RegisteredEdgesPresent_DT_BUILD (0 ms)
+[ RUN      ] ReportingLinkage.NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2
+[       OK ] ReportingLinkage.NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2 (6 ms)
+[----------] 4 tests from ReportingLinkage (8 ms total)
+
+[----------] 6 tests from ReportingIdentityContract
+[ RUN      ] ReportingIdentityContract.DigestViaCoreDigesterByteEquality_RPT02_ACC4
+[       OK ] ReportingIdentityContract.DigestViaCoreDigesterByteEquality_RPT02_ACC4 (0 ms)
+[ RUN      ] ReportingIdentityContract.PublishedRecordCarriesCoreIdentity_RPT02_ACC4
+[       OK ] ReportingIdentityContract.PublishedRecordCarriesCoreIdentity_RPT02_ACC4 (1 ms)
+[ RUN      ] ReportingIdentityContract.FourConceptTypeBoundary_TagIsolation_RPT02_ACC1
+[       OK ] ReportingIdentityContract.FourConceptTypeBoundary_TagIsolation_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentityContract.IdempotencyKeyIsContentIdentity_RPT02_ACC1
+[       OK ] ReportingIdentityContract.IdempotencyKeyIsContentIdentity_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentityContract.IdentityIndependentOfPathsAndNames_RPT02_ACC1
+[       OK ] ReportingIdentityContract.IdentityIndependentOfPathsAndNames_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentityContract.RptCodesConsistentWithStableCodeRegistry_RPT02_ACC3
+[       OK ] ReportingIdentityContract.RptCodesConsistentWithStableCodeRegistry_RPT02_ACC3 (0 ms)
+[----------] 6 tests from ReportingIdentityContract (2 ms total)
+
+[----------] 2 tests from EvidenceCrossUnit
+[ RUN      ] EvidenceCrossUnit.VocabularyConsumedNotRedefined_O13_O24
+[       OK ] EvidenceCrossUnit.VocabularyConsumedNotRedefined_O13_O24 (0 ms)
+[ RUN      ] EvidenceCrossUnit.EnvelopeTypesConsumedAndRoundtripPreserved_ACC5
+[       OK ] EvidenceCrossUnit.EnvelopeTypesConsumedAndRoundtripPreserved_ACC5 (0 ms)
+[----------] 2 tests from EvidenceCrossUnit (0 ms total)
+
+[----------] 3 tests from ReportingSectionContract
+[ RUN      ] ReportingSectionContract.RequestEmbedsUpstreamValueTypes_RPT04_ACC6
+[       OK ] ReportingSectionContract.RequestEmbedsUpstreamValueTypes_RPT04_ACC6 (0 ms)
+[ RUN      ] ReportingSectionContract.ContentConsumesFrozenViewTypes_RPT04_ACC5
+[       OK ] ReportingSectionContract.ContentConsumesFrozenViewTypes_RPT04_ACC5 (0 ms)
+[ RUN      ] ReportingSectionContract.ScopeInsufficientCodeRegisteredInDiagnostics_RPT04_ACC4
+[       OK ] ReportingSectionContract.ScopeInsufficientCodeRegisteredInDiagnostics_RPT04_ACC4 (0 ms)
+[----------] 3 tests from ReportingSectionContract (0 ms total)
+
+[----------] 3 tests from ReportingBuilderContract
+[ RUN      ] ReportingBuilderContract.InjectedSourcesCarryEvidenceAndProjectTypes_RPT05_ACC6
+[       OK ] ReportingBuilderContract.InjectedSourcesCarryEvidenceAndProjectTypes_RPT05_ACC6 (0 ms)
+[ RUN      ] ReportingBuilderContract.RptPresentationCodesRegisteredInStableCodeRegistry_RPT05_ACC6
+[       OK ] ReportingBuilderContract.RptPresentationCodesRegisteredInStableCodeRegistry_RPT05_ACC6 (0 ms)
+[ RUN      ] ReportingBuilderContract.DecodeIsolatedViaResultSource_NoOwnDecoder_RPT05_ACC6
+[       OK ] ReportingBuilderContract.DecodeIsolatedViaResultSource_NoOwnDecoder_RPT05_ACC6 (0 ms)
+[----------] 3 tests from ReportingBuilderContract (0 ms total)
+
+[----------] 1 test from RenderValueSingleSourceTest
+[ RUN      ] RenderValueSingleSourceTest.PoisonedMatrix_ThreeFormats_EmitCellValue_RPT06_ACC4
+[       OK ] RenderValueSingleSourceTest.PoisonedMatrix_ThreeFormats_EmitCellValue_RPT06_ACC4 (0 ms)
+[----------] 1 test from RenderValueSingleSourceTest (0 ms total)
+
+[----------] 2 tests from JsonRenderContractTest
+[ RUN      ] JsonRenderContractTest.SchemaVersion_FourStateTokens_CanonicalBytes_RPT06_ACC5
+[       OK ] JsonRenderContractTest.SchemaVersion_FourStateTokens_CanonicalBytes_RPT06_ACC5 (0 ms)
+[ RUN      ] JsonRenderContractTest.WriterViaFactory_SessionSequence_RPT06_ACC6
+[       OK ] JsonRenderContractTest.WriterViaFactory_SessionSequence_RPT06_ACC6 (0 ms)
+[----------] 2 tests from JsonRenderContractTest (1 ms total)
+
+[----------] 3 tests from CsvRenderContractTest
+[ RUN      ] CsvRenderContractTest.MainTableElevenColumns_FrozenOrder_ValueColumnRules_RPT06_ACC5
+[       OK ] CsvRenderContractTest.MainTableElevenColumns_FrozenOrder_ValueColumnRules_RPT06_ACC5 (0 ms)
+[ RUN      ] CsvRenderContractTest.ByteDeterministic_SecondRenderIdentical_RPT06_ACC1
+[       OK ] CsvRenderContractTest.ByteDeterministic_SecondRenderIdentical_RPT06_ACC1 (0 ms)
+[ RUN      ] CsvRenderContractTest.DiagnosticsAppendix_SanitizedLocalName_RPT06_ACC3
+[       OK ] CsvRenderContractTest.DiagnosticsAppendix_SanitizedLocalName_RPT06_ACC3 (0 ms)
+[----------] 3 tests from CsvRenderContractTest (0 ms total)
+
+[----------] 1 test from RenderHeaderDisciplineTest
+[ RUN      ] RenderHeaderDisciplineTest.PublicHeaderZeroIoIncludes_RPT06_ACC6
+[       OK ] RenderHeaderDisciplineTest.PublicHeaderZeroIoIncludes_RPT06_ACC6 (0 ms)
+[----------] 1 test from RenderHeaderDisciplineTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 25 tests from 9 test suites ran. (13 ms total)
+[  PASSED  ] 25 tests.

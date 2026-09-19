@@ -108,7 +108,8 @@ add_library(sdurws_ird_reporting STATIC
     src/ReportModel.cpp
     src/ReportCodec.cpp
     src/Sections.cpp
-    src/Builder.cpp)
+    src/Builder.cpp
+    src/Render.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——reporting 公共头将
@@ -184,7 +185,8 @@ add_executable(sdurws_ird_reporting_test
     test/ReportModelTest.cpp
     test/SectionsTest.cpp
     test/SectionProviderTest.cpp
-    test/BuilderTest.cpp)
+    test/BuilderTest.cpp
+    test/RenderTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_test PROPERTIES
@@ -240,7 +242,8 @@ add_executable(sdurws_ird_reporting_contract_test
     contract_test/IdentityCrossUnitContractTest.cpp
     contract_test/EvidenceCrossUnitContractTest.cpp
     contract_test/SectionCrossUnitContractTest.cpp
-    contract_test/BuilderCrossUnitContractTest.cpp)
+    contract_test/BuilderCrossUnitContractTest.cpp
+    contract_test/RenderCrossUnitContractTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_contract_test PROPERTIES
