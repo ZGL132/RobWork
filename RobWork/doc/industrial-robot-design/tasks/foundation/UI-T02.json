@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "构建落位：ui 占位转真实库（R-3 例外登记）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01"],
   "designRefs": [
