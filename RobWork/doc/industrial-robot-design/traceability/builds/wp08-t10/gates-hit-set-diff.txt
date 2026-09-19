@@ -1,0 +1,15 @@
+=== wp08-t10（EX-T10）ird_gates 命中集合 diff（基线＝wp08-t09 验收留痕 gates-t09-hits-sorted.txt）===
+
+采集方式：cmake --build build --config Release --target ird_gates（2026-09-19；命中即退出 1
+为门禁 fail-loud 设计，命中均为 findings.json 已登记项）；归一化口径＝逐命中取「门禁类型＋
+段内最早 sdurws_ird token」，含 F-220 同型 GBK 吞字修复（testdata_lint 行首字符 s 被多字节
+配对吞掉）与 R4 行基线同款标注（ProjectStoreImpl.cpp RobWork 字面量——DTB §4.5 已登记例外）；
+MSBuild 错误回显重复行经 sort -u 去重。
+
+基线行数: 18  当前行数: 18
+新增(+): 0  移除(-): 0
+
+--- 结论 ---
+GATES-IDENTICAL-18：本任务为纯文档任务（execution 源码/CMake/worker 零触碰），
+命中集合与 wp08-t09 验收基线逐项一致、零新增零移除。
+基线文件为 CRLF 行尾、本采集为 LF，diff 在行尾归一后执行（逐字节文本一致）。
