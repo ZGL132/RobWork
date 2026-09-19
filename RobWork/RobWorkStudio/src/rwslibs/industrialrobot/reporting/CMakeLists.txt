@@ -89,12 +89,25 @@ find_package(GTest CONFIG REQUIRED)
 #     SHA-256 经 core ContentDigester 唯一算法）。私有头 src/ReportCodec.hpp
 #     由 ReportModel.cpp 与本单元测试经相对路径消费（单元内消费先例：
 #     runtime DescriptionValidator——跨单元私有头禁止不变〔R-2〕）。
+# RPT-T04 增列（§11 RPT-T04 行产物：Sections.hpp/.cpp〔§5 词表/级别契约〕＋
+#   SectionProvider.hpp〔§9.2 接口＋注册表，header-only——§11 产物列仅列
+#   头文件，注册表小体量 inline 落位〕）：
+#   - src/Sections.cpp——§5.1 词表 14 项查找/级别归属、LevelConflict 与
+#     ScopeInsufficient 判定原语、§5 默认选择规则、RPT-SCOPE-INSUFFICIENT
+#     诊断挂接（P-RPT-5 保守处置——§5.4）；
+#   - include/sdurws/ird/reporting/SectionProvider.hpp——SectionRequest/
+#     SectionContent（消费 ReportModel 冻结视图族——v0.6 偏差登记，零重复
+#     定义）＋IReportSectionProvider 纯投影接口＋SectionRegistry（注册边界
+#     五类拒绝/运行期 find 并发只读/registeredSections 字典序稳定）＋
+#     SectionContent 结构自检原语（§5.3 presence 纪律的上下文无关判定核心，
+#     RPT-T05 构建器复用）。
 add_library(sdurws_ird_reporting STATIC
     src/Reporting.cpp
     src/Errors.cpp
     src/Identity.cpp
     src/ReportModel.cpp
-    src/ReportCodec.cpp)
+    src/ReportCodec.cpp
+    src/Sections.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——reporting 公共头将
@@ -167,7 +180,9 @@ enable_testing()
 add_executable(sdurws_ird_reporting_test
     test/BuildRedLineTest.cpp
     test/ErrorsIdentityTest.cpp
-    test/ReportModelTest.cpp)
+    test/ReportModelTest.cpp
+    test/SectionsTest.cpp
+    test/SectionProviderTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_test PROPERTIES
@@ -221,7 +236,8 @@ add_custom_command(TARGET sdurws_ird_reporting_test POST_BUILD
 add_executable(sdurws_ird_reporting_contract_test
     contract_test/LinkageContractTest.cpp
     contract_test/IdentityCrossUnitContractTest.cpp
-    contract_test/EvidenceCrossUnitContractTest.cpp)
+    contract_test/EvidenceCrossUnitContractTest.cpp
+    contract_test/SectionCrossUnitContractTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_contract_test PROPERTIES

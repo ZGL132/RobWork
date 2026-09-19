@@ -1,0 +1,10 @@
+ird_gates 命中集合 diff（EX-T10/T02 GATES-IDENTICAL 同型口径——RPT-T04 红线扫描零新增证据）
+
+base   = c22cef67f873a7bb7468ace702cead58c5262ef7（detached worktree 直接 cmake -P 复跑）
+branch = wp12-t04 工作树（同口径直接 cmake -P 复跑）
+
+两侧去重命中集各 61 行（IRD-GATE-* 归一化 IRDRoot 后逐行比对；27 项汇总计数为门禁自报去重值——全为既有登记归属：
+testkit 直链形态/io libzip·expat 词表外/ui R-3 Qt 例外等，零 reporting 命中；RPT-T04 新增 include 面 core/evidence/diagnostics 均在白名单四登记边内）；
+归一化 IRDRoot 后逐行 diff 输出为空（GATES-HIT-SET-IDENTICAL——gates-ird-gates-base.log/branch.log 原始留痕）：
+
+(diff 为空)

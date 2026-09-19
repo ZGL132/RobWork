@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T04",
+  "masterWp": "WP-H（卡内 RPT-T04 行——DTB §2.13 无独立 ≙ 行，属 WP-12-T03 章节模型与 WP-12-T04 渲染链的共享前置——契约 note 原文）",
+  "branch": "wp12-t04",
+  "base": "c22cef67f873a7bb7468ace702cead58c5262ef7",
+  "date": "2026-09-19",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01~T03 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，零警告零错误）",
+      "notes": "RPT-T04 增列实现翻译单元：src/Sections.cpp（§5.1 词表 14 项查找/级别归属、LevelConflict 与 ScopeInsufficient 判定原语、§5 默认选择规则、RPT-SCOPE-INSUFFICIENT 诊断挂接——P-RPT-5 保守处置）；公共头新增 include/sdurws/ird/reporting/Sections.hpp（词表权威单点：kAllSectionIds 等 5 组 constexpr 数组＋frozenReportLevelRule 注入面——ReportModel.hpp 结构注释『词表权威归 Sections.hpp（RPT-T04）』的兑现）与 include/sdurws/ird/reporting/SectionProvider.hpp（§9.2 逐字段 SectionRequest/SectionContent——entries 元素类型＝ReportModel 冻结视图 SectionEntryView，v0.6 偏差登记的消费面零重复定义；IReportSectionProvider 纯投影接口＋SectionRegistry 注册表——注册边界五类拒绝/运行期 find 并发只读/registeredSections 字典序稳定，header-only 与 §11 产物列『SectionProvider.hpp（接口＋注册表）』一致；firstSectionContentViolation 结构自检原语＋isValidEntryKey 词形闸门——§5.3 presence 纪律的上下文无关判定核心，RPT-T05 构建器复用）。CMakeLists 仅增列源文件，目标名/别名/四条链接边/编译选项零改动"
+    },
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 50/50）",
+      "notes": "RPT-T01 五条构建红线用例＋RPT-T02 十三条＋RPT-T03 十七条保持全绿；RPT-T04 新增 test/SectionsTest.cpp 十三条（ReportingSections 组）＋test/SectionProviderTest.cpp 七条（ReportingSectionProvider 组）：词表 14 项 token/词表序（order）/级别归属（B 8＋C 专属 6）与框架 6/域 8 归属逐项锁定且分类互斥完备（§5.1 逐行）；ird-report-section-model/1 版本 token 就位＋ReportLevelRule 注入值与 kCExclusiveSectionIds 逐项一致（词表权威单点）；LevelConflict 原语（B∧C 专属六章逐项命中、B∧B/C∧B/C∧C 全扫描合法）；未注册域章节缺项文案逐字（『章节不可用（提供方未注册）』——TRJ-08 同精神）＋级别应有域章节集（B 四项/C 八项——§5.2）；SectionStatus 四态 token 与往返＋§5 默认选择规则（NoFormalResult 默认不选——§16 验收要点契约承载）＋P-EV-8 五词各有其位（EvidenceBinding.status 类型恒等 evidence::EvidenceItemStatus 零重定义、SectionStatus 与证据状态/工程判定轴 static_assert 类型隔离）；ScopeInsufficient 判定全情形矩阵（全缺成立且明细点名六章/部分缺不拒绝/B 级恒不判/空集与仅 B 章节投影判缺/NotApplicable 不触发/词表外 token 忽略）＋RPT-SCOPE-INSUFFICIENT 诊断挂接（码面/subject 缺席/cause 逐项点名/recommendedAction 固定含『显式确认＋B 级重建＋非静默降级』——P-RPT-5 语义落点）＋词表封闭性（六类词表外 token 全接口拒绝）；注册边界五类拒绝（空指针/词表外/框架章节/minimumLevel 与词表不一致双向/重复——全部 Usage fail-fast，拒绝后注册表原状）＋合法注册对照面＋registeredSections 字典序稳定＋注册后 4 线程×200 次并发 find 只读一致性＋纯投影后置（同请求两次同输出）＋请求值拷贝（调用方投影后修改不回溯——『提供方不得持有』结构性体现）＋SectionContent 结构自检固定检查序（Populated 空条目/缺章无缺项清单/DataInsufficient 无清单/NotApplicable 无原因/其余态携带原因/entryKey 语法与节内重复——合法内容逐态通过）＋entryKey 词形边界（[a-z0-9.-]{2,63} 双侧逐点）。夹具声明（RP-STATE-4 同源）：ScriptedSectionProvider 为 §5.1『替身仅供测试』的局部夹具替身，envelope 为默认构造值——仅结构契约验证，不构成业务算法正确性证明；RP-SCOPE-1~4 具名替身用例体随 RPT-T11 契约套件收口（卡行 T11 产物列原文）"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 15/15）",
+      "notes": "RPT-T01 四条构建图契约＋RPT-T02 六条＋RPT-T03 两条保持全绿；RPT-T04 新增 contract_test/SectionCrossUnitContractTest.cpp 三条（ReportingSectionContract 组）：①RequestEmbedsUpstreamValueTypes——SectionRequest.results 元素类型与 evidence::ResultEnvelope 恒等、revision/snapshotId 与 core::RevisionId/ContentIdentity 恒等的 static_assert 常驻自证＋envelope 值置入请求并拷贝比较（P-RPT-9 v0.1 Draft 基线的类型级钉死——上游冻结 diff 时编译失配报警，按 DTB §5.4 增量同步）；②ContentConsumesFrozenViewTypes——SectionContent.entries/missingItems 元素类型与 ReportModel 冻结视图恒等、status/renderHint 与 ReportModel 枚举本身恒等（本头零重复定义——v0.6 偏差登记的类型级兑现）、diagnostics 元素类型与 core::DiagnosticRecord 恒等；③ScopeInsufficientCodeRegisteredInDiagnostics——RPT-SCOPE-INSUFFICIENT 在 diagnostics StableCodeRegistry 收编表可查（ownerUnit=reporting/严重级别 Warning『降级建议而非失败事实』/非 deprecated）＋诊断工厂产出码与登记码闭合（P-RPT-8『引用登记非二次定义』注册表侧交叉自证）"
+    }
+  ],
+  "testSuites": [
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingBuild",
+      "cases": [
+        { "name": "SourceTreeReachable_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 1——RPT-T04 落位后仍全绿（锚点 Reporting.cpp 在位）" },
+        { "name": "NoQtInclude_DT_BUILD_NFR_MNT_01", "result": "pass", "trace": "NFR-MNT-01；D-01——RPT-T04 新增 Sections.hpp/.cpp、SectionProvider.hpp 零 Qt 头（扫描面自动覆盖新文件）" },
+        { "name": "NoEigenOrRwMathDirectInclude_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 2——新增源文件零 Eigen/rw::math 直含" },
+        { "name": "NoCrossUnitInclude_DT_BUILD_R1_R2", "result": "pass", "trace": "R-1/R-2——RPT-T04 include 面：Sections.hpp→core/diagnostics（DiagnosticRecord）+reporting 内族；SectionProvider.hpp→evidence/Envelope.hpp（ResultEnvelope）+core+reporting 内族——全部在白名单四登记边内；io/runtime/execution/testkit 零命中" },
+        { "name": "PublicHeaderPathLayout_DT_BUILD_R2", "result": "pass", "trace": "NFR-MNT-02；R-2——RPT-T04 新增公共头 Sections.hpp/SectionProvider.hpp 位于 sdurws/ird/reporting/；无新增私有头" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingSections",
+      "cases": [
+        { "name": "Vocabulary14TokensFrozenInTableOrder_RPT04_ACC1", "result": "pass", "trace": "RPT-T04 acceptance 1（词表 14 项与 §5.1 表 token 列/表序逐项一致——测试侧权威副本钉死『token 只增不改名』；trySectionOrder＝表行号 1~14，order 冻结依据 §4.3.4）；units/reporting.md §5.1 词表规则" },
+        { "name": "LevelAndOwnershipAttributionFrozen_RPT04_ACC1", "result": "pass", "trace": "RPT-T04 acceptance 1（框架 6/域 8 归属逐项锁定且互斥完备——无第三所有者类别；级别归属 B 8＝行 1~8、C 专属 6＝行 9~14 逐项）；units/reporting.md §5.1 级别列/所有者列" },
+        { "name": "SectionModelVersionTokenAndLevelRuleInjection_RPT04_ACC1", "result": "pass", "trace": "RPT-T04 acceptance 1（ird-report-section-model/1 版本 token 就位——常量定义在 ReportModel.hpp 单一权威，本头消费；frozenReportLevelRule 注入值与 kCExclusiveSectionIds 逐项一致——ReportModel 侧零复制的单点权威纪律）；units/reporting.md §5.1 标题行＋ReportModel.hpp ReportLevelRule 注释" },
+        { "name": "LevelConflictPrimitive_RPT04_ACC2", "result": "pass", "trace": "RPT-T04 acceptance 2（B∧C 专属章节六章逐项 LevelConflict；B∧B/C∧B/C∧C 全扫描 nullopt——§4.6 行 2『不能伪造 C 级章节』；端到端拒绝随 RPT-T05 构建器收口——契约交付口径）；units/reporting.md §4.6/§5.2" },
+        { "name": "UnregisteredDomainSectionMissingItem_RPT04_ACC2", "result": "pass", "trace": "RPT-T04 acceptance 2（未注册域章节缺项文案逐字『章节不可用（提供方未注册）』——非空壳原语的持久化契约文本＋domainSectionsInScope B 四项/C 八项与 §5.2 范围图一致）；units/reporting.md §5.1 词表规则/TRJ-08 同精神" },
+        { "name": "SectionStatusFourStatesTokens_RPT04_ACC3", "result": "pass", "trace": "RPT-T04 acceptance 3（§5.3 四态 token 逐项：populated/no-formal-result/data-insufficient/not-applicable＋try 解析往返、非规范字面拒绝）；units/reporting.md §5.3 token 列" },
+        { "name": "DefaultSelectionRule_RPT04_ACC3", "result": "pass", "trace": "RPT-T04 acceptance 3（§5 默认选择规则：NoFormalResult 默认不选——§16 验收要点『缺正式结果的章节默认不选并显示缺项』的契约承载；其余三态选中＋呈现义务）；units/reporting.md §5.3 呈现列" },
+        { "name": "FiveEvidenceWordsKeepSeparatePlaces_RPT04_ACC3", "result": "pass", "trace": "RPT-T04 acceptance 3（P-EV-8 消费——EvidenceBinding.status 与 evidence::EvidenceItemStatus 类型恒等零重定义〔O-13 五词各有其位〕＋SectionStatus 与证据状态/工程判定轴 static_assert 类型隔离——同名词面不同词表域、互不映射）；units/reporting.md §5.3 区分规则" },
+        { "name": "ScopeInsufficientAllCSectionsMissing_RPT04_ACC4", "result": "pass", "trace": "RPT-T04 acceptance 4（C 级全部 C 专属章节缺正式结果＝ScopeInsufficient 成立＋明细逐项点名六章〔§5.1 行号序〕——§5.4 行 2/RP-SCOPE-3 判定面②）" },
+        { "name": "PartialMissingCSectionsNotScopeInsufficient_RPT04_ACC4", "result": "pass", "trace": "RPT-T04 acceptance 4（部分 C 章节缺正式结果→不整体拒绝——§5.4 行 1 缺项呈现路径/RP-SCOPE-3 判定面①反面）" },
+        { "name": "ScopeInsufficientBoundaries_RPT04_ACC4", "result": "pass", "trace": "RPT-T04 acceptance 4（边界矩阵：B 级恒不判/C 级空投影与仅 B 章节投影判缺〔§5.2 零 C 章节选中同判——宁可拒绝不可虚级〕/C 章节全 NotApplicable 不触发〔§5.4 行 4〕/词表外 token 忽略）" },
+        { "name": "ScopeInsufficientDiagnosticHookup_RPT04_ACC4", "result": "pass", "trace": "RPT-T04 acceptance 4（RPT-SCOPE-INSUFFICIENT 诊断挂接：码面＝diagcodes::kScopeInsufficient/subject 缺席〔范围级诊断〕/cause 逐项点名＋P-RPT-5 保守语义/recommendedAction 固定含『显式确认＋B 级＋非静默降级』三契约词——防静默降级；空集情形文案改述零 C 章节选中）；units/reporting.md §5.4 行 2/§14.3 P-RPT-5" },
+        { "name": "VocabularyClosedToUnknownTokens_RPT04_ACC1", "result": "pass", "trace": "RPT-T04 acceptance 1/2（词表封闭性——空串/大小写变体/未知/带空白 token 在全部查找接口一律否定，非规范输入不归一化）；units/reporting.md §5.1『token 只增不改名』" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingSectionProvider",
+      "cases": [
+        { "name": "RegistrationBoundaryRejections_RPT04_ACC2", "result": "pass", "trace": "RPT-T04 acceptance 2（注册边界五类拒绝全部 ReportError(Usage) fail-fast：空指针/词表外/框架章节『不注册不可覆盖』/minimumLevel 与词表级别不一致——含 B 级注册 C 专属章节〔§9.2 前置行〕与反向/重复 sectionId〔§9.2『重复注册拒绝』〕；拒绝后注册表原状）；units/reporting.md §5.1/§9.2 注册前置行" },
+        { "name": "LegitimateRegistrationsAccepted_RPT04_ACC2", "result": "pass", "trace": "RPT-T04 acceptance 2（对照面：B 章节以 B 级 minimumLevel、C 专属章节以 C 级注册放行）" },
+        { "name": "RegistrySortedLookupAndStableOrder_RPT04_ACC5", "result": "pass", "trace": "RPT-T04 acceptance 5（registeredSections 字典序稳定——注册顺序不影响输出序＋重复调用同输出〔NFR-COR-02〕；find 对未注册/词表外/空 token 返回 nullptr——缺项而非空壳的判定依据）；units/reporting.md §9.2 维度表确定性行" },
+        { "name": "FindConcurrentReadOnlyAfterAssembly_RPT04_ACC5", "result": "pass", "trace": "RPT-T04 acceptance 5（注册完成后 4 线程×200 次 find 并发只读——命中指针稳定、未注册恒 nullptr：§9.2 线程行『注册期单线程/运行期 find 并发只读』的执行证据）" },
+        { "name": "ProjectPureFunctionAndRequestValueCopy_RPT04_ACC5", "result": "pass", "trace": "RPT-T04 acceptance 5（project() 纯投影后置：同请求两次投影逐字段相等〔同请求同输出——NFR-COR-02〕；请求值拷贝——调用方投影后修改原请求，提供方已收请求不变〔§9.2『只读、值拷贝——提供方不得持有』结构性体现〕）" },
+        { "name": "SectionContentStructuralChecks_RPT04_ACC5", "result": "pass", "trace": "RPT-T04 acceptance 5（firstSectionContentViolation 固定检查序：Populated 空条目/NoFormalResult 与 DataInsufficient 无缺项清单〔§9.2『必填（全量）』〕/NotApplicable 无原因与其余态携带原因〔presence 对称〕/entryKey 语法与节内重复〔§9.2 结构违约行〕——合法内容逐态通过 nullopt；绑定越界等需请求上下文面随 RPT-T05 构建器收口）；units/reporting.md §5.3/§9.2" },
+        { "name": "EntryKeySyntaxBoundaries_RPT04_ACC5", "result": "pass", "trace": "RPT-T04 acceptance 5（entryKey 词形 [a-z0-9.-]{2,63} 双侧边界逐点：2/63 合法、1/64/空串/大写/空白/UTF-8 字节/下划线拒绝）；units/reporting.md §9.2 entryKey 注释" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingLinkage",
+      "cases": [
+        { "name": "UnitEdgesFourRegistered_DT_BUILD_R1_R2", "result": "pass", "trace": "RPT-T01 acceptance 2——RPT-T04 落位后 CMakeLists 仅增列源文件、链接边零改动，全绿复证" },
+        { "name": "NoTestkitEdge_DT_BUILD_T1", "result": "pass", "trace": "T-1——RPT-T04 零 testkit 消费复证" },
+        { "name": "RegisteredEdgesPresent_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 1/2 复证" },
+        { "name": "NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2", "result": "pass", "trace": "P-RPT-1/P-RPT-2——RPT-T04 零 io/runtime/execution 编译边复证" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingIdentityContract",
+      "cases": [
+        { "name": "DigestViaCoreDigesterByteEquality_RPT02_ACC4", "result": "pass", "trace": "RPT-T02 acceptance 4 复证" },
+        { "name": "PublishedRecordCarriesCoreIdentity_RPT02_ACC4", "result": "pass", "trace": "RPT-T02 acceptance 4 复证" },
+        { "name": "FourConceptTypeBoundary_TagIsolation_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1 复证" },
+        { "name": "IdempotencyKeyIsContentIdentity_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1 复证" },
+        { "name": "IdentityIndependentOfPathsAndNames_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1 复证" },
+        { "name": "RptCodesConsistentWithStableCodeRegistry_RPT02_ACC3", "result": "pass", "trace": "RPT-T02 acceptance 3 复证——RPT-T04 诊断挂接消费的 kScopeInsufficient 在其全清单交叉面内" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "EvidenceCrossUnit",
+      "cases": [
+        { "name": "VocabularyConsumedNotRedefined_O13_O24", "result": "pass", "trace": "RPT-T03 acceptance 5/6 复证——RPT-T04 SectionProvider 消费同族类型" },
+        { "name": "EnvelopeTypesConsumedAndRoundtripPreserved_ACC5", "result": "pass", "trace": "RPT-T03 acceptance 5 复证" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingSectionContract",
+      "cases": [
+        { "name": "RequestEmbedsUpstreamValueTypes_RPT04_ACC6", "result": "pass", "trace": "RPT-T04 acceptance 6（P-RPT-9 处置：SectionRequest.results 与 evidence::ResultEnvelope、revision/snapshotId 与 core::RevisionId/ContentIdentity 类型恒等 static_assert 常驻自证＋envelope 值置入请求拷贝比较——上游冻结 diff 时编译失配报警，按 DTB §5.4 增量同步留痕，不静默跟随不私改上游）；units/reporting.md §9.2/§3.2 C-1 消费行" },
+        { "name": "ContentConsumesFrozenViewTypes_RPT04_ACC5", "result": "pass", "trace": "RPT-T04 acceptance 5（SectionContent 消费 ReportModel 冻结视图族零重复定义——entries/missingItems 元素类型与 SectionEntryView/MissingItemView 恒等、status/renderHint 与 ReportModel 枚举本身恒等〔双权威排除〕、diagnostics 元素类型与 core::DiagnosticRecord 恒等——v0.6 偏差登记的类型级兑现）；units/reporting.md §3.1/§4.3.4/§14.4 v0.6" },
+        { "name": "ScopeInsufficientCodeRegisteredInDiagnostics_RPT04_ACC4", "result": "pass", "trace": "RPT-T04 acceptance 4（RPT-SCOPE-INSUFFICIENT 在 StableCodeRegistry 收编表可查：ownerUnit=reporting/Warning『降级建议而非失败事实』/非 deprecated＋诊断工厂产出码与登记码闭合——P-RPT-8『引用登记非二次定义』注册表侧交叉自证）；units/reporting.md §5.4 行 2/diagnostics.md §4.5" }
+      ]
+    }
+  ],
+  "builds": {
+    "integrated": {
+      "configure": "build/ 构建树（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，构建前 grep 复核缓存原行——AGENTS §4.1 口径）",
+      "build": "契约 verify 两命令逐条 exit 0：cmake --build build --config Release --target sdurws_ird_reporting_test / sdurws_ird_reporting_contract_test（integration-build.log；真实警告/错误计数 0——C4297 初版告警已以 noexcept 函数显式 terminate 兜底修正后复跑归零）",
+      "testRun": "sdurws_ird_reporting_test 50/50＋sdurws_ird_reporting_contract_test 15/15（integration-test-run-*.log＋*-integration.xml，failures=0 errors=0）"
+    },
+    "smoke": {
+      "configure": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp12-t04 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（vcpkg toolchain 必带——DTB §5.1/CORE-T01 G-2；Qt6 前缀为 ui 落位后冒烟树所需，wp12-t03 同款参数；smoke-configure.log）",
+      "build": "cmake --build build-smoke-wp12-t04 --config Release（全量）→ exit 0，零 error（smoke-build.log；24 条警告全部为 project/execution 既有测试代码命中——ArchiveServiceTest/DraftServiceTest 等，reporting 新文件零警告）",
+      "testRun": "sdurws_ird_reporting_test 50/50＋sdurws_ird_reporting_contract_test 15/15（smoke-test-run-*.log＋*-smoke.xml，failures=0 errors=0）"
+    },
+    "gates": {
+      "tool": "ird_gates（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake，WP-01-T01 落地）——cmake -DIRD_ROOT=<各树>/industrialrobot -DIRD_ENABLE_GIT=OFF -P ird_gates.cmake",
+      "result": "base（c22cef67 detached worktree 复跑）与 branch（wp12-t04 工作树）归一化 IRDRoot 后命中集逐行 diff 零差异——GATES-HIT-SET-IDENTICAL（gates-hit-set-diff.txt）；命中全为既有登记归属（testkit 直链形态/io libzip·expat/ui R-3 Qt 例外等），零 reporting 新增命中"
+    },
+    "governance": {
+      "validateTask": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/RPT-T04.json → PASS (1 tasks)（validate-task.log）",
+      "validateDocs": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1 → PASS (20 units, 12 trace entries, 150 task files)（validate-docs.log）"
+    }
+  },
+  "acceptanceCoverage": [
+    { "item": 1, "covered": "章节词表冻结落地：ReportingSections.Vocabulary14TokensFrozenInTableOrder（14 token/表序/trySectionOrder 行号逐项与 §5.1 一致——测试侧权威副本钉死 token 只增不改名）＋LevelAndOwnershipAttributionFrozen（B 8/C 专属 6 级别归属与框架 6/域 8 归属逐项锁定、分类互斥完备）＋SectionModelVersionTokenAndLevelRuleInjection（ird-report-section-model/1 就位——ReportModel.hpp 常量单一权威；ReportLevelRule 注入值＝kCExclusiveSectionIds 单点权威）＋VocabularyClosedToUnknownTokens（词表封闭性）；units/reporting.md §5.1" },
+    { "item": 2, "covered": "级别校验与注册边界：ReportingSectionProvider.RegistrationBoundaryRejections（五类拒绝全部 Usage fail-fast——空指针/词表外/框架章节不可覆盖/minimumLevel 与词表不一致双向〔B 级注册 C 专属章节＝注册拒绝〕/重复 sectionId）＋LegitimateRegistrationsAccepted（对照面）＋ReportingSections.LevelConflictPrimitive（B∧C 章节 LevelConflict 判定原语——端到端拒绝随 RPT-T05）＋UnregisteredDomainSectionMissingItem（未注册域章节缺项文案与级别应有域章节集——缺项而非空壳）；units/reporting.md §9.2 前置行/§5.1 词表规则" },
+    { "item": 3, "covered": "缺正式结果表达契约：ReportingSections.SectionStatusFourStatesTokens（四态 token 与 try 往返）＋DefaultSelectionRule（NoFormalResult 默认不选——§16 验收要点的契约承载；缺项显示经 missingItems 必填纪律在 firstSectionContentViolation ②锁定）＋FiveEvidenceWordsKeepSeparatePlaces（P-EV-8 五词各有其位——EvidenceBinding.status 类型恒等零重定义＋三词表域 static_assert 隔离）＋SectionContentStructuralChecks（缺项清单必填 presence 序）；units/reporting.md §5.3" },
+    { "item": 4, "covered": "C 级降级/拒绝规则原语：ReportingSections.ScopeInsufficientAllCSectionsMissing（全缺成立＋明细点名）＋PartialMissingCSectionsNotScopeInsufficient（部分缺不拒绝——§5.4 行 1）＋ScopeInsufficientBoundaries（B 级/空集/NotApplicable/词表外四边界）＋ScopeInsufficientDiagnosticHookup（RPT-SCOPE-INSUFFICIENT 挂接——recommendedAction 固定『显式确认＋B 级重建＋非静默降级』，P-RPT-5 保守处置非静默降级）＋契约测试 ScopeInsufficientCodeRegisteredInDiagnostics（码面与收编表闭合）；端到端拒绝随 RPT-T05 构建器收口——契约交付口径；units/reporting.md §5.4" },
+    { "item": 5, "covered": "IReportSectionProvider/SectionRegistry 契约落地：SectionRequest/SectionContent 逐字段与 §9.2 一致（契约测试 ContentConsumesFrozenViewTypes 类型恒等自证）＋project() 纯投影后置（ProjectPureFunctionAndRequestValueCopy——同请求同输出＋值拷贝请求）＋注册期单线程/运行期 find 并发只读（FindConcurrentReadOnlyAfterAssembly——4×200 并发一致）＋registeredSections 字典序稳定（RegistrySortedLookupAndStableOrder）＋firstSectionContentViolation/isValidEntryKey 结构自检原语；本任务以局部夹具（ScriptedSectionProvider）交付词表/级别/注册边界用例，RP-SCOPE-1~4 具名替身用例随 RPT-T11 契约套件收口——卡行 T11 产物列原文；units/reporting.md §9.2" },
+    { "item": 6, "covered": "陷阱处置：P-RPT-5——ScopeInsufficient 保守处置（拒绝＋显式降级建议）按 §5.4 登记设计逐字落位、未放宽为静默降级（ScopeInsufficientDiagnosticHookup 三契约词钉死）；如验收对『全缺仍生成 C 骨架』另有解释走需求变更（§14.3）——代码未自行裁决；P-RPT-9——SectionRequest 消费 evidence::ResultEnvelope 与 core 身份类型以各卡 v0.1（Draft）签名为基线（RequestEmbedsUpstreamValueTypes static_assert 常驻自证＋头文件基线声明），冻结 diff 后按影响面增量同步留痕" }
+  ]
+}
