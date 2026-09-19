@@ -2275,6 +2275,16 @@
       "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-119/F-176/F-205/F-208/F-210/F-211/F-214/F-215/F-218/F-222 家族再现（EX-T10 三个提交中两个标题前缀后名词开头非动词开头）：76590c98「EX-T10 零偏差核对执行留痕：两套件复跑、ird_gates 基线比对、治理脚本证据」以任务 ID 名词开头；0b645259「execution 单元卡 v0.12 文档与门禁同步登记…」以名词短语开头（df619a24「提交…」合规）——正文四段齐备、验证结论经验收者独立复现全部为真，仅标题格式复发",
       "owner": "实施纪律（DTB §5 会话流程所有者）；治理面可在 validate-task/CI 提交检查中加标题动词校验（归 WP-01 治理链裁决，与 F-012 家族既有处置建议同批）",
       "resolution": "后续提交标题前缀后改动词开头（如「登记…」「同步…」「提交…」「落位…」）。不阻塞合入。编号顺延自 F-225。验收判定不受影响：EX-T10 attempt 1 verdict=pass。"
+    },
+    {
+      "id": "F-228",
+      "source": "traceability/acceptance/UI-T02-20260919.md#G-1（UI-T02 验收 attempt 1，verdict=pass，2026-09-19；送验对象 48e614cf19b62bf1ad5859ec1eeea6c286dcf7fd）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "title": "ui.md §3.1 `sdurws_ird_ui_contract_test` 行链接列「被测目标＋core/project/execution/diagnostics＋testkit＋GTest」与 UI-T02 落位形态存在「最终形态 vs 落位形态」措辞差：落位直链面＝sdurws_ird_ui＋sdurws_ird_testkit＋GTest（ui/CMakeLists.txt:252-255），core/diagnostics 经 sdurws_ird_ui 的 PUBLIC 链接传染可达（等效、非直链），project/execution 按 O-31 处置边界（任务契约 acceptance 5 明文「不创建任何指向 project/evidence/execution/policy/runtime 的链接或 include」）延后至形态裁决/UI-T14 契约测试套件。落位本身合法且已在 ui.md v0.3⑤/CMakeLists 注释登记——非实现偏差，仅 §3.1 行措辞未区分「直链」与「传染可达」，后续验收者可能误判为偏差",
+      "owner": "架构所有者（O-31 形态裁决时一并消解）；ui.md 维护方（UI-T14 契约测试套件落地同步 §3.1 行时处置）",
+      "resolution": "O-31 裁决或 UI-T14 落地时同步 ui.md §3.1 该行措辞（如标注「core/diagnostics 经被测目标 PUBLIC 传染可达；project/execution 随 O-31 裁决/UI-T14 增列」）。不阻塞 UI-T02 合入（attempt 1 verdict=pass）。编号顺延：F-227 已由 UI-T02 实施段在分支 wp10-t02（48e614cf）登记（主线 findings.json 截至基线 4d827120 尚未合入），本条在其后顺延避免合入冲突。"
     }
   ]
 }
