@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 211,
+  "tickCount": 218,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-19T12:00:47+08:00",
+    "updatedAt": "2026-09-19T15:58:52+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1266,6 +1266,19 @@
       ],
       "acceptanceRecord": "traceability/acceptance/UI-T02-20260919.md",
       "mergedAt": "2026-09-19"
+    },
+    {
+      "task": "RPT-T01",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "508b3e335e0e66b22ecbce1cca54af4e18bb671c",
+        "e80e05f950be4c9e6fb12d065f6b34faa963392c",
+        "636f065ef43180cfa691bb9b802b3b1f8cf405fe"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T01-20260919.md",
+      "mergedAt": "2026-09-19",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；编排者收尾 §4.7② 首次合并误落于被实施工作树检出的 wp12-t01（tick#206/EX-T09 同型），当即 reset --hard 回冻结尖端 636f065e 零残留、切回 redesign-main 重做（②③ 干净无冲突）——reset --hard 附带清掉本 tick 未提交的编排侧 state.json 簿记（队列 25 条与中间相位写回），已按最终收尾口径重建（事件均已实际完成，主线推送 3c77c716..17c61183）；验收端建议级 F-230/F-231 已随 evidence 提交转登 findings.json"
     }
   ],
   "policy": {
@@ -1290,7 +1303,32 @@
       "acceptance": 60
     }
   },
-  "queue": [],
+  "queue": [
+    { "taskId": "RPT-T02", "contractPath": "tasks/foundation/RPT-T02.json", "branch": "wp12-t02" },
+    { "taskId": "RPT-T03", "contractPath": "tasks/foundation/RPT-T03.json", "branch": "wp12-t03" },
+    { "taskId": "RPT-T04", "contractPath": "tasks/foundation/RPT-T04.json", "branch": "wp12-t04" },
+    { "taskId": "RPT-T05", "contractPath": "tasks/foundation/RPT-T05.json", "branch": "wp12-t05" },
+    { "taskId": "RPT-T06", "contractPath": "tasks/foundation/RPT-T06.json", "branch": "wp12-t06" },
+    { "taskId": "RPT-T07", "contractPath": "tasks/foundation/RPT-T07.json", "branch": "wp12-t07" },
+    { "taskId": "RPT-T08", "contractPath": "tasks/foundation/RPT-T08.json", "branch": "wp12-t08" },
+    { "taskId": "RPT-T09", "contractPath": "tasks/foundation/RPT-T09.json", "branch": "wp12-t09" },
+    { "taskId": "RPT-T10", "contractPath": "tasks/foundation/RPT-T10.json", "branch": "wp12-t10" },
+    { "taskId": "RPT-T11", "contractPath": "tasks/foundation/RPT-T11.json", "branch": "wp12-t11" },
+    { "taskId": "RPT-T12", "contractPath": "tasks/foundation/RPT-T12.json", "branch": "wp12-t12" },
+    { "taskId": "RPT-T13", "contractPath": "tasks/foundation/RPT-T13.json", "branch": "wp12-t13" },
+    { "taskId": "UI-T03", "contractPath": "tasks/foundation/UI-T03.json", "branch": "wp10-t03" },
+    { "taskId": "UI-T04", "contractPath": "tasks/foundation/UI-T04.json", "branch": "wp10-t04" },
+    { "taskId": "UI-T05", "contractPath": "tasks/foundation/UI-T05.json", "branch": "wp10-t05" },
+    { "taskId": "UI-T06", "contractPath": "tasks/foundation/UI-T06.json", "branch": "wp10-t06" },
+    { "taskId": "UI-T07", "contractPath": "tasks/foundation/UI-T07.json", "branch": "wp10-t07" },
+    { "taskId": "UI-T08", "contractPath": "tasks/foundation/UI-T08.json", "branch": "wp10-t08" },
+    { "taskId": "UI-T09", "contractPath": "tasks/foundation/UI-T09.json", "branch": "wp10-t09" },
+    { "taskId": "UI-T10", "contractPath": "tasks/foundation/UI-T10.json", "branch": "wp10-t10" },
+    { "taskId": "UI-T11", "contractPath": "tasks/foundation/UI-T11.json", "branch": "wp10-t11" },
+    { "taskId": "UI-T12", "contractPath": "tasks/foundation/UI-T12.json", "branch": "wp10-t12" },
+    { "taskId": "UI-T13", "contractPath": "tasks/foundation/UI-T13.json", "branch": "wp10-t13" },
+    { "taskId": "UI-T14", "contractPath": "tasks/foundation/UI-T14.json", "branch": "wp10-t14" }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -1299,5 +1337,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "a10e481b-42a8-4661-9b06-92efd44e98a5"
+  "tickToken": "c741907f-60e4-49af-83ea-f7698bdf212a"
 }

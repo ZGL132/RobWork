@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "构建落位：reporting 占位转真实库",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
   "designRefs": [
