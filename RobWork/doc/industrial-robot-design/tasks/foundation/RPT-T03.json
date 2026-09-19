@@ -4,9 +4,17 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现报告模型与编码（ReportModel/ReportCodec 双编码）",
-  "status": "ready",
-  "dependsOn": ["RPT-T02", "EV-T06", "EV-T07"],
-  "requirements": ["RPT-01", "NFR-COR-04", "NFR-COR-02"],
+  "status": "done",
+  "dependsOn": [
+    "RPT-T02",
+    "EV-T06",
+    "EV-T07"
+  ],
+  "requirements": [
+    "RPT-01",
+    "NFR-COR-04",
+    "NFR-COR-02"
+  ],
   "designRefs": [
     "units/reporting.md#11",
     "units/reporting.md#4",
@@ -21,14 +29,23 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_reporting_test",
     "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
   ],
   "branch": "wp12-t03",
   "interUnit": true,
-  "knownPitfalls": ["P-RPT-3", "P-RPT-9", "O-13", "O-24"],
+  "knownPitfalls": [
+    "P-RPT-3",
+    "P-RPT-9",
+    "O-13",
+    "O-24"
+  ],
   "acceptance": [
     "RP-MDL-1 身份确定性（卡行验证方式『RP-MDL-1~3』＋完成条件『不可变/身份/合法组合矩阵用例过』）：同数据源两次构建（替身同脚本）contentIdentity 逐字节相等；ReportCodec 往返 parse(encode(x))==x（编码器版本号入编码——§4.4）；ReportId 不同（新对象）如实断言登记",
     "RP-MDL-3 身份与路径/名称分离（同上卡行验证方式）：构建后重命名显示名再导出——contentIdentity 不变、幂等命中（manifest 摘要比对）；§4.1『重命名/移动不改变任何身份』用例锁定",
