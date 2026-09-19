@@ -77,10 +77,24 @@ find_package(GTest CONFIG REQUIRED)
 #     RPT-* 建议码映射（§3.5）；
 #   - src/Identity.cpp——ReportId 解析/格式化/生成（自建 Id128 实现，
 #     P-RPT-3）＋ReportLevel token 表（§4.1/§4.2）。
+# RPT-T03 增列（§11 RPT-T03 行产物：ReportModel.hpp/.cpp〔全部引用类型/
+#   字段校验〕＋ReportCodec〔Data/Full 双编码〕）：
+#   - src/ReportModel.cpp——SectionStatus/RenderHint/QualifierToken token
+#     表（§5.3/§9.2/§6.4）、§4.2 非法实例字段校验原语
+#     firstFieldViolation（非抛出判定核心）、ReviewReport::make 唯一
+#     生产者（字段校验→ReportCodec 身份计算→冻结构造——调用方不可申报）；
+#   - src/ReportCodec.cpp——确定性二进制双编码（magic IRDRPT1/IRDRPTD1＋
+#     字段按名序/章节按 order＋长度前缀＋大端＋presence 字节＋UTF-8 禁
+#     NUL＋浮点 IEEE754 位模式、NaN/±Inf 编码入口拒绝——§4.4 规则全条；
+#     SHA-256 经 core ContentDigester 唯一算法）。私有头 src/ReportCodec.hpp
+#     由 ReportModel.cpp 与本单元测试经相对路径消费（单元内消费先例：
+#     runtime DescriptionValidator——跨单元私有头禁止不变〔R-2〕）。
 add_library(sdurws_ird_reporting STATIC
     src/Reporting.cpp
     src/Errors.cpp
-    src/Identity.cpp)
+    src/Identity.cpp
+    src/ReportModel.cpp
+    src/ReportCodec.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——reporting 公共头将
@@ -152,7 +166,8 @@ enable_testing()
 
 add_executable(sdurws_ird_reporting_test
     test/BuildRedLineTest.cpp
-    test/ErrorsIdentityTest.cpp)
+    test/ErrorsIdentityTest.cpp
+    test/ReportModelTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_test PROPERTIES
@@ -205,7 +220,8 @@ add_custom_command(TARGET sdurws_ird_reporting_test POST_BUILD
 # 登记 testkit 消费并同步增量修订本文件白名单扫描用例（不可静默越界）。
 add_executable(sdurws_ird_reporting_contract_test
     contract_test/LinkageContractTest.cpp
-    contract_test/IdentityCrossUnitContractTest.cpp)
+    contract_test/IdentityCrossUnitContractTest.cpp
+    contract_test/EvidenceCrossUnitContractTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_contract_test PROPERTIES
