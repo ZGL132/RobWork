@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T05",
+  "masterWp": "WP-H（卡内 RPT-T05 行——≙WP-12-T03 构造部分，DTB §2.13 偏移映射；契约 note 原文）",
+  "branch": "wp12-t05",
+  "base": "02ed302656ff338b362602990a293318aa427b0e",
+  "date": "2026-09-20",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01~T04 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，零错误）",
+      "notes": "RPT-T05 增列实现翻译单元：src/Builder.cpp（§7.2 步①~⑦编排——锚定/结果解析/资格与当前性快照/章节组装与绑定校验/C 级范围判定/冻结；会话状态机实现）。公共头新增 include/sdurws/ird/reporting/Builder.hpp（§7.1 ReportBuildStage/ReportBuildSession＋§9.1 IReviewReportBuilder/ReportBuildRequest/ReportBuildOutcome＋§9 章首 ReportCancelToken/ReportProgress/IReportProgressSink——零 io 类型 P-RPT-1；IReportResultSource 注入源：§9.1 原文 tryEnvelope/currentnessOf＋落位增量 eligibilityOf/tryReproduction——§14.4 v0.8 登记，DTB §5.4 口径，零契约语义变更：§7.2 步③资格纯检查的证据面注入承载与 §4.2 reproduction 必填字段的归档数据源）。构建器对 project 仅消费 IProjectQueryPort 的 head/tryRevision/listRuns 三只读方法——不持有任何写端口引用（零项目写的结构保证，§7.1 逐项明确表）。CMakeLists 仅增列源文件，目标名/别名/四条链接边/编译选项零改动"
+    },
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 78/78）",
+      "notes": "RPT-T01 五条构建红线＋RPT-T02 十条＋RPT-T03 二十条＋RPT-T04 二十条保持全绿；RPT-T05 新增 test/BuilderTest.cpp 二十三条（ReportBuildSessionTest 五条＋ReviewReportBuilderTest 十八条）：会话状态机（七态主链严格逐步/token 稳定字面/跳段回退 Usage fail-fast/三终态不可变/任一非终态可转 Failed/RAII 析构守卫冒烟——acceptance 5）；正例（B 级组装＋快照冻结＋锚定恰一次/内容幂等 contentIdentity 相等 ReportId 不同/结果集顺序规范化 identity 无关——acceptance 3/4/5）；反例矩阵（B∧C 专属覆盖 LevelConflict/C 级全缺 ScopeInsufficient＋RPT-SCOPE-INSUFFICIENT 降级建议诊断〔P-RPT-5 契约词〕/C 级 Populated C 章节/builds 正例/C 级用户全取消选中拒绝/Preview 结果 SourceMissing〔D-16——替身边界例外声明在案〕/Canceled 结果入结论条目 DataInvalid〔TASK-02〕/Canceled 结果未绑定＝仅状态与诊断呈现/证据引用错位三变体 EvidenceRefInvalid/条目工况越界/提供方结构违约 DataInvalid——acceptance 1）；引用不可解析（修订不存在/未 finalize/包络解码失败→SourceMissing——RP-MDL-2 构建器层）＋零项目写（成功与失败两路径调用日志仅三只读方法、失败路径结果源零调用——acceptance 2/4）＋锚定隔离（listRuns 恰一次、迟到结果不入报告——AT-10）；资格与当前性快照（纯检查结果冻结＋每报告重查不缓存/不可判定 status=nullopt＋RPT-CURRENTNESS-UNEVALUABLE 不默认 Current〔P-EV-4〕/Superseded 携失效原因＋章节级当前性必填——acceptance 3）；取消（结果检查点/章节检查点——检查点序＝§5.1 词表序 requirements〔行4〕先于 kinematics-collision〔行5〕，测试观察点按词表序首个已注册章节设置——无报告无错误 UX-03——acceptance 5）；请求面校验（空结果集/重复 runId/词表外覆盖＝Usage、空 revision/快照不一致＝SourceAmbiguous）＋评审演化（一致种子→supersedes/版本+1/dataIdentity 不变；不一致→Usage——acceptance 5）。夹具声明（RP-STATE-4 同源）：ScriptedResultSource/ScriptedSectionProvider/FakeQueryPort 为局部夹具替身——仅验证 reporting 构建器契约，不构成业务正确性证明；合法替身包络经 evidence ResultEnvelope::make 构造（非法组合在 evidence 边界被拒）；Preview 包络聚合初始化为受控越界样本（evidence make() 本就拒绝，被测对象是 reporting 第二道闸）；RP-MDL-2/RP-SCOPE-1~4/RP-CUR-3/RP-STATE-1~3 具名用例体随 RPT-T11 契约套件收口（卡行 T11 产物列原文）"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 18/18）",
+      "notes": "RPT-T01 四条构建图契约＋RPT-T02 七条＋RPT-T03 两条＋RPT-T04 四条保持全绿；RPT-T05 新增 contract_test/BuilderCrossUnitContractTest.cpp 三条（ReportingBuilderContract 组）：①InjectedSourcesCarryEvidenceAndProjectTypes——注入面类型恒等 static_assert 常驻自证（currentnessOf 返回类型恰为 evidence::CurrentnessResult〔EV-T08 交付契约〕、tryEnvelope 返回 evidence::ResultEnvelope 只读值、资格对成员恰为 evidence::EligibilityCheck、IReviewReportBuilder::build 接口面与 ReviewReportBuilder::build 实现面双 static_assert 钉死——成员指针类型携带所属类，final 派生类以两面断言替代单面 is_same）＋运行期装配面（project 端口 PRJ-T09 接口＋evidence 包络经注入面进入构建器，报告 resultRefs 与注入包络身份一致）；②RptPresentationCodesRegisteredInStableCodeRegistry——RPT-CURRENTNESS-UNEVALUABLE/RPT-SOURCE-MISSING/RPT-SCOPE-INSUFFICIENT 与 diagnostics StableCodeRegistry 收编表一致（码值权威 PA-1；不可判定呈现码 reportable=true——P-EV-4 呈现义务）；③DecodeIsolatedViaResultSource_NoOwnDecoder——解码隔离（§3.3/R-3：结果源不可解析→SourceMissing 拒绝，reporting 侧不存在第二解码路径）。契约测试初版 static_assert 以接口成员指针比较 final 派生类成员指针恒假——修正为接口/实现两面断言（override 关键字编译期关联），修正后两模式全绿（实现过程留痕：提交历史）"
+    }
+  ],
+  "testSuites": [
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingBuild／ReportingErrors／ReportingIdentity／ReportModelIdentity／ReportCodecRoundtrip／ReviewReportModel／ReviewReportValidation／ReportCodecSeparation／ReportCodecDeterminism／ReportCodecBinary／ReportModelTokens",
+      "cases": "50 条（RPT-T01 五条/RPT-T02 十条/RPT-T03 三十五条——逐条清单与追踪见 traceability/builds/wp12-t02~t04/ird-test-report.json 既有登记，本报告不复制）",
+      "result": "pass（两模式）——RPT-T05 新增 Builder.hpp/.cpp 后扫描面自动覆盖新文件（NoQtInclude/NoCrossUnitInclude/PublicHeaderPathLayout 三条红线用例对新增文件的常驻自证仍绿）"
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingSections／ReportingSectionProvider",
+      "cases": "13 条（RPT-T04——逐条清单与追踪见 traceability/builds/wp12-t04/ird-test-report.json）",
+      "result": "pass（两模式）——RPT-T05 构建器消费其判定原语（checkSectionScope/makeScopeInsufficientDiagnostic/domainSectionsInScope/defaultSelectionForStatus/firstSectionContentViolation/frozenReportLevelRule）端到端收口"
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportBuildSessionTest",
+      "cases": [
+        { "name": "SevenStateHappyPath_AdvancesStrictly_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（§7.1 主链七态 Requested→Resolving→Building→Rendering→Verifying→Publishing→Completed 严格逐步推进＋token 稳定字面锁定——NFR-COR-02 同码同串）；units/reporting.md §7.1 状态机图" },
+        { "name": "IllegalJumpRejected_UsageFailFast_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（跳段 Requested→Building/回退 Resolving→Requested/跨三段→Completed 全部拒绝；错误码＝Usage——调用方违约 fail-fast）；units/reporting.md §7.1" },
+        { "name": "TerminalStatesImmutable_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（Completed/Failed/Canceled 三终态上推进/二次失败/取消均拒绝——终态后不可变；Failed 会话失败记录可读、Completed 无失败记录）；units/reporting.md §7.1『终态后不可变』" },
+        { "name": "FailFromAnyNonTerminalStage_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（六个非终态逐一 fail→Failed——§7.1『任一步失败』逐边锁定）；units/reporting.md §7.1 状态机图" },
+        { "name": "DestructorGuardSmoke_NonTerminalReleaseAndTerminalSafe_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（RAII 清理守卫冒烟——§7.1『取消→中止→清理本会话临时物（RAII）→Canceled』：非终态未交接析构转 Canceled 收尾〔内部迁移由 cancel() 语义测试与构建器取消路径共同锁定〕、release 后/终态析构零动作）；units/reporting.md §7.1 取消与清理行" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReviewReportBuilderTest",
+      "cases": [
+        { "name": "BuildsBLevelReport_WithSnapshotsAndAnchoring_RPT05_ACC3_ACC4", "result": "pass", "trace": "RPT-T05 acceptance 3/4（正例：B 级组装——身份三元组/revisionSeq＝锚定视图 seq/资格快照＝evidence 纯检查冻结/当前性快照 evaluatedAgainst.headRevision；章节按词表序 order 严格递增、未注册域章节缺项非空壳『章节不可用（提供方未注册）』、Populated 默认选中；证据引用并集携带来源章节；head/tryRevision/listRuns 各恰一次＋调用日志仅三只读方法）；units/reporting.md §7.2 步①~⑥/§4.3.1/§5.1 词表规则/§7.1 锚定纪律行" },
+        { "name": "ContentIdentityStableAcrossRebuilds_ReportIdDiffers_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（§7.1 逐项明确表『同一输入重复生成是否幂等＝是（内容幂等）』：同数据源重建 contentIdentity/dataIdentity 相等、ReportId 不同——§4.1 身份纪律）；units/reporting.md §7.1/§9.1 确定性行" },
+        { "name": "ResultOrderNormalized_IdentityIndependentOfRequestOrder_RPT05_ACC4", "result": "pass", "trace": "RPT-T05 acceptance 4（集合语义规范化：同一结果集以相反请求顺序构建＝同 dataIdentity/contentIdentity；resultRefs 存储序＝runId 规范字典序——§4.4 resultRefs 集）；units/reporting.md §4.4/§9.1 确定性行" },
+        { "name": "BLevelWithCExclusiveOverride_RejectedLevelConflict_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§4.6 行 2：B 级请求携带 C 专属章节覆盖 trajectory-cycle＝LevelConflict——『B 级报告不能伪造 C 级章节』构建期拒绝）；units/reporting.md §4.6 行 2/§9.1 非法调用行" },
+        { "name": "CLevelWithNoCSectionContent_RejectedScopeInsufficient_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§4.6 行 4/§5.4 行 2——P-RPT-5 保守处置：C 级且全部 C 章节缺正式结果＝ScopeInsufficient 拒绝＋RPT-SCOPE-INSUFFICIENT 诊断随交付＋recommendedAction 含『显式确认』『B 级』契约词——用户显式确认后重建，非静默降级）；units/reporting.md §5.4/§14.3 P-RPT-5" },
+        { "name": "CLevelWithPopulatedCSection_Builds_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§4.6 行 3 正例：C 级＋C 专属章节 Populated→生成成功、C 级域范围＝domainSectionsInScope(C) 全量）；units/reporting.md §4.6 行 3/§5.2 范围图" },
+        { "name": "CLevelUserDeselectAllCSections_RejectedScopeInsufficient_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§4.6 行 4 选择路：C 级零 C 章节选中〔用户覆盖全部取消〕＝ScopeInsufficient 拒绝＋降级建议诊断在案——与 ReviewReport::make 同语义的构建器前置拦截）；units/reporting.md §4.6 行 4/§5.4" },
+        { "name": "PreviewResultRejected_SourceMissing_RPT05_ACC1_ACC2", "result": "pass", "trace": "RPT-T05 acceptance 1/2（§4.6 行 5/D-16 构建边界显性化：Preview 结果进入 resultRefs＝SourceMissing 拒绝＋诊断随交付；替身边界例外声明在案——Preview 包络无法经 evidence make() 产出，以聚合初始化构造受控越界样本，被测对象＝reporting 第二道闸）；units/reporting.md §4.6 行 5" },
+        { "name": "CanceledResultBoundIntoEntry_RejectedDataInvalid_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§4.6 行 6/TASK-02 呈现侧强制：Canceled 结果绑入正式结论条目＝构建边界拒绝 DataInvalid——取消/失败/中断仅诊断/状态呈现）；units/reporting.md §4.6 行 6/§6.2" },
+        { "name": "CanceledResultUnbound_PresentAsStatusAndDiagnostics_RPT05_ACC3", "result": "pass", "trace": "RPT-T05 acceptance 3（§6.2/RP-STATE-1 构建器层：Canceled 结果未被绑定时构建成功——resultRefs 三轴如实（Canceled×NotApplicable 不伪造判定 ERR-01）＋诊断照常入报告（diagRefs 携带 sourceRun 可定位））；units/reporting.md §6.2 行 5" },
+        { "name": "EvidenceRefMismatchVariants_Rejected_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§4.6 行 7 防引用错位三变体：itemId 不在包络清单/产物摘要与清单不一致/证据工况范围越界——全部 EvidenceRefInvalid）；units/reporting.md §4.6 行 7" },
+        { "name": "EntryCaseScopeOutsideResult_Rejected_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§4.7 关系约束：条目 caseScope ⊆ 所属结果 caseScope——越界即 EvidenceRefInvalid）；units/reporting.md §4.7" },
+        { "name": "ProviderStructuredViolation_RejectedDataInvalid_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§9.2 结构违约由构建器拒绝：Populated 但 entries 空——firstSectionContentViolation 消费面＝DataInvalid，提供方抛异常同判）；units/reporting.md §9.2 错误行/§5.3" },
+        { "name": "UnresolvableReferences_RejectedSourceMissing_RPT05_ACC2", "result": "pass", "trace": "RPT-T05 acceptance 2（RP-MDL-2 构建器层三反例：修订不存在〔tryRevision nullopt〕/结果未 finalize〔不在 listRuns 清单——仅 finalize 口径 §7.2 步②〕/包络解码失败〔tryEnvelope nullopt〕→全部 SourceMissing＋无报告对象＋诊断在案）；units/reporting.md §7.2 步①②③" },
+        { "name": "ZeroProjectWrites_OnFailureAndSuccess_RPT05_ACC2_ACC4", "result": "pass", "trace": "RPT-T05 acceptance 2/4（零项目写验证——§7.1 逐项明确表『生成失败是否修改原项目＝否』：成功路径调用日志恰三次只读方法；失败路径锚定即中止且结果源零调用〔『查询端口桩/FakeSink 零调用』的报告侧对应面〕；写路径在结构上不存在——构建器不持有任何写端口引用）；units/reporting.md §7.1" },
+        { "name": "AnchoredViewIsolatedFromLateRuns_RPT05_ACC4", "result": "pass", "trace": "RPT-T05 acceptance 4（锚定视图纪律——§7.1『生成期间项目后台写入』行/AT-10：listRuns 恰一次〔第二次查询根本不发生——调用计数即证据〕；构建后到达的迟到结果不入已返回报告）；units/reporting.md §7.1/§7.2 步②" },
+        { "name": "EligibilityFrozenFromPureCheck_QueriedPerBuild_RPT05_ACC3", "result": "pass", "trace": "RPT-T05 acceptance 3（§6.2 资格的取得：资格经 evidence 纯检查〔FormalPass/ReviewRecord〕取得并冻结进 ResultRefSnapshot.eligibility——构建器只冻结 eligible 位不自算；eligibilityOf 每份报告各查一次〔两次构建调用计数 1→2〕——不缓存跨报告复用）；units/reporting.md §6.2" },
+        { "name": "UnevaluableCurrentness_NotDefaultCurrent_RPT05_ACC3", "result": "pass", "trace": "RPT-T05 acceptance 3（RP-CUR-3/P-EV-4：当前性不可判定＝status=nullopt 原样冻结＋unevaluableNote 必填（RPT-CURRENTNESS-UNEVALUABLE）＋报告级诊断并集携带同码面——不得默认 Current）；units/reporting.md §6.3" },
+        { "name": "SupersededCurrentness_CarriesReasonsAndSectionMarker_RPT05_ACC3", "result": "pass", "trace": "RPT-T05 acceptance 3（§6.3：Superseded 结果照常可被引用〔历史证据有效〕——逐结果携带失效原因清单原样冻结；引用 Superseded 结果的章节级 currentness 必填——§4.3.4）；units/reporting.md §6.3/§4.3.4" },
+        { "name": "CancelAtResultCheckpoint_NoReportNoError_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（取消检查点·结果解析粒度：令牌已置位→构建中止——无报告、无错误〔UX-03 正常取消非错误——error 缺席形态〕、结果源零调用〔检查点先于逐结果解析〕）；units/reporting.md §7.1 取消与清理行" },
+        { "name": "CancelBetweenSections_StopsWithoutError_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（取消检查点·章节解析粒度：构建器按 §5.1 词表序推进〔requirements 行 4 先于 kinematics-collision 行 5〕——requirements 投影完成后置位，后续章节〔kinematics-collision〕解析被拦下零投影；无报告无错误）；units/reporting.md §7.1/§5.1 词表序" },
+        { "name": "MalformedRequests_RejectedUsage_RPT05_ACC1", "result": "pass", "trace": "RPT-T05 acceptance 1（§9.1 前置行：空结果集/重复 runId/词表外章节覆盖＝Usage fail-fast；空 revision 占位＝SourceAmbiguous〔明确 ID 纪律〕；报告级快照与逐结果不一致＝SourceAmbiguous〔§7.2 步⑤〕）；units/reporting.md §9.1 前置/非法调用行" },
+        { "name": "ReviewEvolution_SeedValidatedAndChainExtended_RPT05_ACC5", "result": "pass", "trace": "RPT-T05 acceptance 5（§9.1 维度表评审演化：一致种子→supersedes＝旧 ReportId/reportVersion+1/dataIdentity 不变〔同数据基准的评审演化〕＋元数据入 contentIdentity；不一致种子〔申报 dataIdentity 错误〕→Usage——构建器重算比对不采信申报）；units/reporting.md §9.1 维度表/§4.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingLinkage／ReportingIdentityContract／EvidenceCrossUnit／ReportingSectionContract",
+      "cases": "15 条（RPT-T01 四条/RPT-T02 七条/RPT-T03 两条/RPT-T04 三条——逐条清单与追踪见 traceability/builds/wp12-t02~t04/ird-test-report.json）",
+      "result": "pass（两模式）——四条登记编译链接边与上游值类型基线常驻自证在 RPT-T05 扩面后仍绿"
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingBuilderContract",
+      "cases": [
+        { "name": "InjectedSourcesCarryEvidenceAndProjectTypes_RPT05_ACC6", "result": "pass", "trace": "RPT-T05 acceptance 6（跨单元依赖就绪声明：①EV-T08 交付面——currentnessOf 返回类型恰为 evidence::CurrentnessResult〔含 status=optional 不可判定形态 P-EV-4 的类型级承载〕、tryEnvelope 返回 evidence::ResultEnvelope 只读值、资格对成员恰为 evidence::EligibilityCheck〔零重定义——O-13/O-24〕，static_assert 常驻自证〔P-RPT-9 基线：上游冻结 diff 时编译失配即增量同步触发器〕；②PRJ-T09 交付面——IReviewReportBuilder::build 接口面与 ReviewReportBuilder::build 实现面双 static_assert〔final 派生类成员指针携带所属类，两面断言以 override 关键字编译期关联〕；运行期装配面：project 端口＋evidence 包络经注入面进入构建器，报告 resultRefs 与注入包络身份一致）；units/reporting.md §3.2 C-2/C-4/§9.1" },
+        { "name": "RptPresentationCodesRegisteredInStableCodeRegistry_RPT05_ACC6", "result": "pass", "trace": "RPT-T05 acceptance 6（RPT-* 呈现码与 diagnostics StableCodeRegistry 收编表一致：RPT-CURRENTNESS-UNEVALUABLE＝Warning＋reportable〔P-EV-4 呈现义务〕、RPT-SOURCE-MISSING reportable、RPT-SCOPE-INSUFFICIENT＝Warning——码值权威 PA-1）；units/reporting.md §3.5/§14.4 v0.8" },
+        { "name": "DecodeIsolatedViaResultSource_NoOwnDecoder_RPT05_ACC6", "result": "pass", "trace": "RPT-T05 acceptance 6（解码隔离——§3.3/R-3 envelope 归档解码入口缺位的注入隔离：结果源不可解析时构建器以 SourceMissing 拒绝〔先 finalize 口径步②后包络解码步③〕——reporting 侧不存在第二解码路径、不私建编译边，解码归 evidence/execution 适配〔§12.2 交接催办〕）；units/reporting.md §3.3/§9.1" }
+      ]
+    }
+  ],
+  "builds": {
+    "integrated": {
+      "configure": "build/ 构建树（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，构建前 grep 复核缓存原行——AGENTS §4.1 口径）",
+      "build": "契约 verify 两命令逐条 exit 0：cmake --build build --config Release --target sdurws_ird_reporting_test / sdurws_ird_reporting_contract_test（integration-build.log；真实 error 计数 0）",
+      "testRun": "sdurws_ird_reporting_test 78/78＋sdurws_ird_reporting_contract_test 18/18（integration-test-run-*.log＋*-integration.xml，failures=0 errors=0）"
+    },
+    "smoke": {
+      "configure": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp12-t05 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（vcpkg toolchain 必带——DTB §5.1/CORE-T01 G-2；Qt6 前缀为 ui 落位后冒烟树所需，wp12-t03/t04 同款参数；smoke-configure.log）",
+      "build": "cmake --build build-smoke-wp12-t05 --config Release（全量）→ exit 0，零 error（smoke-build.log）",
+      "testRun": "sdurws_ird_reporting_test 78/78＋sdurws_ird_reporting_contract_test 18/18（smoke-test-run-*.log＋*-smoke.xml，failures=0 errors=0）"
+    },
+    "gates": {
+      "tool": "ird_gates（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake，WP-01-T01 落地）——cmake -DIRD_ROOT=<各树>/industrialrobot -DIRD_ENABLE_GIT=OFF -P ird_gates.cmake",
+      "result": "base（02ed3026 detached worktree 复跑，比对后清理）与 branch（wp12-t05 工作树）归一化 IRDRoot 后命中集逐行 diff 零差异——GATES-HIT-SET-IDENTICAL（gates-hit-set-diff.txt）；两侧各 27 项命中全为既有登记归属，零 reporting 新增命中（Builder.hpp/.cpp include 面＝core/diagnostics/evidence/project 四登记边白名单内，且 project 边仅 head/tryRevision/listRuns 三只读方法消费）"
+    },
+    "governance": {
+      "validateTask": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/RPT-T05.json → PASS (1 tasks)（validate-task.log）",
+      "validateDocs": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1 → PASS（validate-docs.log）"
+    }
+  },
+  "acceptanceCoverage": [
+    { "item": 1, "covered": "构建反例矩阵（§4.6 合法组合矩阵逐行）：B 级∧含 C 专属章节＝LevelConflict（BLevelWithCExclusiveOverride_RejectedLevelConflict——§9.1 非法调用行的请求边界落点）；C 级∧零 C 章节选中＝ScopeInsufficient＋RPT-SCOPE-INSUFFICIENT＋建议生成 B 级（CLevelWithNoCSectionContent 内容路与 CLevelUserDeselectAllCSections 选择路两用例——P-RPT-5 保守处置：诊断 recommendedAction 含『显式确认』『B 级』契约词，非静默降级；C 级正例 CLevelWithPopulatedCSection 对照）；Preview 结果进入 resultRefs＝SourceMissing（PreviewResultRejected——D-16 构建边界显性化，替身边界例外声明在案）；Canceled/Failed/Interrupted 结果进入正式结论条目＝构建边界拒绝 DataInvalid（CanceledResultBoundIntoEntry——TASK-02 呈现侧强制；对照面 CanceledResultUnbound＝仅状态与诊断呈现）；章节证据引用与所属结果 envelope 绑定不符＝EvidenceRefInvalid（EvidenceRefMismatchVariants 三变体＋EntryCaseScopeOutsideResult——防引用错位四查）；units/reporting.md §4.6" },
+    { "item": 2, "covered": "RP-MDL-2 引用不可解析拒绝：结果未 finalize（listRuns 仅 finalize 口径——§7.2 步②）/修订不存在（tryRevision 步①）/Preview 与包络解码失败逐项定位 SourceMissing（UnresolvableReferences 三反例＋PreviewResultRejected——诊断随交付可定位）；无报告对象（expectFailure 断言 report==null 贯穿全部失败用例）；查询端口桩零调用/失败路径结果源零调用（ZeroProjectWrites——FakeQueryPort 意外方法调用即抛＋调用日志白名单断言；零项目写断言）；units/reporting.md §7.2" },
+    { "item": 3, "covered": "资格与当前性快照：资格经 evidence FormalPassEligibility/ReviewRecordEligibility 纯检查取得〔经 IReportResultSource::eligibilityOf 注入承载——§14.4 v0.8 落位增量：纯检查需要 VerdictInput/重事实面，reporting 禁止自算〕并冻结进 ResultRefSnapshot.eligibility（EligibilityFrozenFromPureCheck——每报告重查调用计数 1→2，不缓存跨报告复用 §6.2）；当前性不可判定＝status=nullopt 原样冻结＋RPT-CURRENTNESS-UNEVALUABLE 诊断＋unevaluableNote 必填（UnevaluableCurrentness_NotDefaultCurrent——P-EV-4 不默认 Current §6.3）；失败/取消/中断结果仅诊断/状态呈现（CanceledResultUnbound——RP-STATE-1 构建器层映射 §6.2）；具名 RP-* 用例体随 RPT-T11 契约套件收口（本任务交付构建器层用例·局部夹具——契约原文）；units/reporting.md §6.2/§6.3" },
+    { "item": 4, "covered": "零项目写验证：Resolving~Verifying 全程零项目写——结构保证（构建器不持有任何 project 写端口引用，查询端口仅消费 head/tryRevision/listRuns 三只读方法）＋行为证据（ZeroProjectWrites 成功/失败两路径调用日志白名单断言；唯一写点在 Publishing 归 RPT-T09 IReportArtifactSink）；构建失败＝原项目零修改（失败路径锚定即中止＋结果源零调用）；锚定视图纪律（BuildsBLevelReport 各恰一次＋AnchoredViewIsolatedFromLateRuns——构建开始取一次 tryRevision 视图＋构建时刻 listRuns 快照：调用计数证明第二次查询不发生，HEAD 前进/迟到结果〔AT-10〕不影响已锚定视图、不入本报告 §7.1/§7.2 步①②）；units/reporting.md §7.1 逐项明确表" },
+    { "item": 5, "covered": "会话状态机：七态主链＋Failed/Canceled 终态（SevenStateHappyPath 主链严格逐步＋token 稳定字面/IllegalJumpRejected 跳段回退 Usage/TerminalStatesImmutable 终态不可变/FailFromAnyNonTerminalStage 逐阶段失败/DestructorGuardSmoke RAII 清理守卫）；冻结时刻＝build() 返回不可变 ReviewReport（ContentIdentityStableAcrossRebuilds——冻结时刻 §7.1 逐项明确表『报告对象何时冻结』行：Rendering/Verifying 只读消费随 RPT-T06/T07）；取消检查点（章节/结果解析两粒度——CancelAtResultCheckpoint/CancelBetweenSections）与清理（RAII 析构守卫——正常取消非错误 UX-03 error 缺席形态）；报告构建会话单线程（ReportBuildSession 非拷贝＋头文件线程契约段——§9 约定单测锁定）；units/reporting.md §7.1" },
+    { "item": 6, "covered": "跨单元依赖就绪声明（EX-T08 先例）：EV-T08/PRJ-T09 均 done 合入 redesign-main——公共头可用性由契约测试 InjectedSourcesCarryEvidenceAndProjectTypes 编译期（static_assert 类型恒等：evidence::CurrentnessResult/ResultEnvelope/EligibilityCheck——EV-T08 交付契约；project::IProjectQueryPort const 引用构造——PRJ-T09 交付面）＋运行期（装配面构建成功）双向实证；envelope 归档解码入口缺位（reporting.md §14.2 R-3）经 IReportResultSource 注入隔离（DecodeIsolatedViaResultSource——本任务不自建解码器、不私建编译边：解码归 evidence/execution 适配 §12.2 交接催办；四条登记链接边外零编译边由 LinkageContractTest 常驻自证仍绿）；eligibilityOf/tryReproduction 注入承载增量按 DTB §5.4 登记（单元卡 §14.4 v0.8——§7.2 步③注入承载，契约语义零变更）；units/reporting.md §3.2/§3.3/§9.1" }
+  ]
+}
