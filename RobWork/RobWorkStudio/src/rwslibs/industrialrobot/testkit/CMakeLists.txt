@@ -210,6 +210,63 @@ endif()
 # 冒烟/集成验证时 helper 可能缺失，进程用例全数失败。
 add_dependencies(sdurws_ird_testkit_test sdurws_ird_testkit_prochelper)
 
+# ---- Qt 测试辅助目标 sdurws_ird_testkit_qt（UI-T02 启用登记，WP-10-T02）----
+# 启用依据（testkit.md §3.5/§10.1 启用表）：触发＝ui/workflow 出现
+# QCoreApplication/GUI 测试目标——2026-09-19 已成立（UI-T02 创建 ui 三测试
+# 目标：sdurws_ird_ui_test 模型测试/ui_contract_test/ui_gui_test）。单列目标
+# 纪律（§3.5 原文）：
+#   1. 只被 GUI/模型测试目标链接（当前唯一消费者 sdurws_ird_ui_gui_test；
+#      未来 workflow GUI 测试同形态）——禁止进入生产计算库依赖；
+#   2. sdurws_ird_testkit（本体）永不链接它——Qt 不经 testkit 传递进入生产
+#      计算库（R-3 的测试侧延伸；下方守卫对本体"非 core 单元目标"的
+#      FATAL 断言同时拦截本目标名）；
+#   3. 必要性登记：首消费者理由归 UI-T13 契约（ui.md §13 UI-T13 行
+#      "`sdurws_ird_testkit_qt` 首消费者理由登记"——WP-10-T11 需 Qt Test
+#      辅助：事件循环驱动、控件探针；其契约 kept planned，O-31 形态裁决
+#      前置），本落位只建立目标载体，设施头/实现随 UI-T13/T14 消费落地，
+#      不预建占位实现（NFR-MNT-04）。
+# 目标形态说明（INTERFACE，UI-T13 升级 STATIC——DTB §5.1 目标名不变）：
+# 启用落位期的职责是"Qt Core 使用要求的单点载体"——设施本体（事件循环
+# 驱动、控件探针）尚无消费者落地，无源码即无翻译单元；INTERFACE 形态
+# 将 Qt6::Core 的链接接口与公共头根传播给消费测试目标，不引入任何编译
+# 面（也规避锚点翻译单元落在 testkit/src/ 的单元归属问题——testkit
+# 单元目录树属 testkit 本体产品面扫描域，UI-T02 契约 allowedFiles 仅含
+# testkit/CMakeLists.txt）。目标名 sdurws_ird_testkit_qt 为 ird_gates 形态
+# 解析的 other 形态（非 product/worker/test 目标族——testdata_lint/
+# prochelper 先例），Qt 链接因此不落入产品目标 R-3 扫描面。Qt 目标名用
+# 字面书写（ird_gates 文本级解析前提——变量形态会被判"未知目标族"LIB
+# 命中，ui/CMakeLists.txt 同款取舍）。
+find_package(Qt6 COMPONENTS Core REQUIRED)
+add_library(sdurws_ird_testkit_qt INTERFACE)
+# 公共头根与 testkit 本体同源（未来设施头置于 include/sdurws/ird/testkit/
+# 之下、以 qt/ 子目录区分——R-2 纪律同款：私有实现不入 include/）。
+target_include_directories(sdurws_ird_testkit_qt INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+# Qt Core 起（§3.5 原文），按需 Widgets（随首个消费 Widgets 设施的任务
+# 增列——UI-T13 控件探针面）。INTERFACE：设施头将包含 Qt 头，消费者
+# （测试目标）经本目标取得 Qt 使用要求。
+target_link_libraries(sdurws_ird_testkit_qt INTERFACE Qt6::Core)
+# 配置期守卫（§3.5 隔离的代码面自律）：本目标是测试设施、不是依赖节点——
+# 零 ird 单元目标链接边（含 testkit 本体与全部产品单元）；Qt 之外引入任何
+# 新依赖须先经 DTB 增量修订登记。INTERFACE 目标的链接面在
+# INTERFACE_LINK_LIBRARIES（LINK_LIBRARIES 属性为空）；属性未设置时
+# get_target_property 返回 "<var>-NOTFOUND" 字面串，不匹配任何模式。
+get_target_property(_ird_tkqt_link_libs sdurws_ird_testkit_qt LINK_LIBRARIES)
+get_target_property(_ird_tkqt_iface_libs sdurws_ird_testkit_qt INTERFACE_LINK_LIBRARIES)
+foreach(_lib IN LISTS _ird_tkqt_link_libs _ird_tkqt_iface_libs)
+    if(_lib MATCHES "^sdurws_ird_")
+        message(FATAL_ERROR
+            "testkit_qt 依赖红线（testkit.md §3.5/§2.4）：sdurws_ird_testkit_qt "
+            "是测试设施目标，禁止链接任何 ird 单元目标（发现 ${_lib}）——"
+            "Qt 不经 testkit 传递进入生产计算库")
+    endif()
+    if(_lib MATCHES "^GTest::|^gtest$")
+        message(FATAL_ERROR
+            "testkit_qt 依赖红线（D-06）：设施库本体不链接 gtest——断言宏"
+            "仅在消费方测试目标展开，发现 ${_lib}")
+    endif()
+endforeach()
+
 # ---- 依赖红线守卫（T-2/R-3 的 testkit 侧配置期断言；O-21 自律载体）----
 # T-2（testkit.md §2.4）：sdurws_ird_testkit 链接接口只允许 core——出现
 # 任何其他 industrialrobot 单元目标、Qt 目标（R-3/NFR-MNT-01）或 gtest

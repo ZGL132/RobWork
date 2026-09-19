@@ -1,0 +1,12 @@
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from UiGuiPlacement
+[ RUN      ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD
+[       OK ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD (0 ms)
+[ RUN      ] UiGuiPlacement.GuiMainNoGuiStartup_UI_GUIBUILD
+[       OK ] UiGuiPlacement.GuiMainNoGuiStartup_UI_GUIBUILD (0 ms)
+[----------] 2 tests from UiGuiPlacement (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.

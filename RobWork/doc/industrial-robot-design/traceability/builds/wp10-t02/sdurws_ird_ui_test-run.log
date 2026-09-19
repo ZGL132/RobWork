@@ -1,0 +1,20 @@
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from UiBuild
+[ RUN      ] UiBuild.SourceTreeReachable_UI_BUILD
+[       OK ] UiBuild.SourceTreeReachable_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.PlacementStaticRegistration_UI_BUILD
+[       OK ] UiBuild.PlacementStaticRegistration_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD
+[       OK ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD
+[       OK ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD
+[       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD
+[       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (0 ms)
+[----------] 6 tests from UiBuild (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 6 tests.

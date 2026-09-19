@@ -10,8 +10,11 @@
 #       IO-T01（≙WP-11-T02）落地为真实 STATIC 库（见各自 CMakeLists.txt；
 #       io 落位期无测试目标——随 IO-T06/T07 登记）、execution 已随 EX-T01
 #       （≙WP-08-T02）落地为真实 STATIC 库（测试目标 sdurws_ird_execution_
-#       test/_contract_test 随落位登记——见 execution/CMakeLists.txt）；
-#       其余 13 个单元仍为 INTERFACE 占位，源码随各自单元任务卡落地，
+#       test/_contract_test 随落位登记——见 execution/CMakeLists.txt）、ui 已
+#       随 WP-10-T02（≙UI-T02）落地为真实 STATIC 库（R-3 唯一 Qt Widgets
+#       例外目标——链 core/diagnostics/Qt6 三件套，测试目标 sdurws_ird_ui_
+#       test/_contract_test/_gui_test 随落位登记——见 ui/CMakeLists.txt）；
+#       其余 12 个单元仍为 INTERFACE 占位，源码随各自单元任务卡落地，
 #       落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
@@ -28,10 +31,11 @@ endif()
 # core 与 testkit 分别自 WP-03-T01/WP-02-T01 起移出 INTERFACE 占位循环
 # （下方 add_subdirectory 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
 # diagnostics 自 DIAG-T02（≙WP-09-T02）、project 自 PRJ-T01（≙WP-04-T01）、
-# io 自 IO-T01（≙WP-11-T02）、execution 自 EX-T01（≙WP-08-T02）起移出
-# （下方 add_subdirectory）。
+# io 自 IO-T01（≙WP-11-T02）、execution 自 EX-T01（≙WP-08-T02）、ui 自
+# WP-10-T02（≙UI-T02，R-3 唯一 Qt Widgets 例外目标）起移出（下方
+# add_subdirectory）。
 set(IRD_MODULES
-    ui reporting
+    reporting
     modeling requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
 )
@@ -117,6 +121,27 @@ add_subdirectory(io)
 # （PRJ-T01 同款先例，无接口预建——NFR-MNT-04）。次序约束：必须在 core、
 # evidence、project 之后（链接三者目标——ARCH §3.5 登记边）。
 add_subdirectory(execution)
+# ui（WP-10-T02≙UI-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、PUBLIC
+# 链 core＋diagnostics——ARCH §3.5 两条登记边，ird_gates 白名单
+# "ui->core"/"ui->diagnostics" 行；PUBLIC 链 Qt6::Core/Gui/Widgets——R-3 唯一
+# 例外登记目标，NFR-MNT-01，DTB §4.5"预登记（WP-10-T02 生效）"行），并新建
+# ui/CMakeLists.txt（本注册行即其挂载点）；Ui.cpp 锚点翻译单元（空起步＝
+# 无接口预建——NFR-MNT-04，公共头随 UI-T03+ 落地），测试目标
+# sdurws_ird_ui_test（QCoreApplication 级模型测试，LABELS ird）/
+# sdurws_ird_ui_contract_test（构建图边界契约，LABELS ird）/
+# sdurws_ird_ui_gui_test（GUI 测试载体，LABELS ird_gui 串行，链
+# sdurws_ird_testkit_qt——其启用触发面）随本任务登记。O-31 处置：交付面仅
+# 含上述两条表内边与 R-3 例外登记，零指向 project/evidence/execution/policy/
+# runtime 的链接或 include（配置期守卫＋ui_test O-31 扫描用例双面钉住）；
+# P-UI-5 处置：按 ui.md CF-1 结论（命令注册表类型归 ui 自有头），ui→core
+# 边照常建立。本任务不修改 cmake/ird_gates_whitelist.cmake（不在
+# allowedFiles）——sdurws_ird_ui 的 Qt 链接在机器面豁免条目回填（
+# WP-01-T03）前将产生 R3 命中，登记提交件见
+# doc/industrial-robot-design/traceability/wp10-t02-gate-registrations.md。
+# 零 testkit（T-1）、零业务域单元（R-1）、零第三方新依赖（NFR-DEP-03）。
+# 次序约束：必须在 core 与 diagnostics 之后（链接两者目标——ARCH §3.5
+# 登记边，diagnostics 卡 §3.2 已注明 ui 属其消费方）。
+add_subdirectory(ui)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake
