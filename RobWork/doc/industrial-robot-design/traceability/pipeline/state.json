@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 218,
+  "tickCount": 219,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-19T15:58:52+08:00",
+    "updatedAt": "2026-09-19T17:28:49+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1279,6 +1279,17 @@
       "acceptanceRecord": "traceability/acceptance/RPT-T01-20260919.md",
       "mergedAt": "2026-09-19",
       "failReason": "验收 attempt1 即 pass（非验收失败）；编排者收尾 §4.7② 首次合并误落于被实施工作树检出的 wp12-t01（tick#206/EX-T09 同型），当即 reset --hard 回冻结尖端 636f065e 零残留、切回 redesign-main 重做（②③ 干净无冲突）——reset --hard 附带清掉本 tick 未提交的编排侧 state.json 簿记（队列 25 条与中间相位写回），已按最终收尾口径重建（事件均已实际完成，主线推送 3c77c716..17c61183）；验收端建议级 F-230/F-231 已随 evidence 提交转登 findings.json"
+    },
+    {
+      "task": "RPT-T02",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "9677752305ab6449e6fb44ba48f4667f21d437f8",
+        "f77fc436eca1a1cad405931f75d1fee84e39b856"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T02-20260919.md",
+      "mergedAt": "2026-09-19"
     }
   ],
   "policy": {
@@ -1304,7 +1315,6 @@
     }
   },
   "queue": [
-    { "taskId": "RPT-T02", "contractPath": "tasks/foundation/RPT-T02.json", "branch": "wp12-t02" },
     { "taskId": "RPT-T03", "contractPath": "tasks/foundation/RPT-T03.json", "branch": "wp12-t03" },
     { "taskId": "RPT-T04", "contractPath": "tasks/foundation/RPT-T04.json", "branch": "wp12-t04" },
     { "taskId": "RPT-T05", "contractPath": "tasks/foundation/RPT-T05.json", "branch": "wp12-t05" },
@@ -1337,5 +1347,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "c741907f-60e4-49af-83ea-f7698bdf212a"
+  "tickToken": "5c9522cd-828b-483b-ba43-2605122fd060"
 }

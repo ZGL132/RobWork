@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现错误与身份类型（Errors/Identity＋RPT-* 码清单登记）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["RPT-T01"],
   "requirements": ["RPT-01", "ERR-01"],
   "designRefs": [
