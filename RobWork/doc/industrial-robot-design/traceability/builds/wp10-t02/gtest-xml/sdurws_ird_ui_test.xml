@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="6" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-09-19T11:21:20.367" name="AllTests">
+  <testsuite name="UiBuild" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-09-19T11:21:20.367">
+    <testcase name="SourceTreeReachable_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="161" status="run" result="completed" time="0." timestamp="2026-09-19T11:21:20.367" classname="UiBuild" />
+    <testcase name="PlacementStaticRegistration_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="185" status="run" result="completed" time="0." timestamp="2026-09-19T11:21:20.368" classname="UiBuild" />
+    <testcase name="QtLinkageLiteralAndExceptionText_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="223" status="run" result="completed" time="0." timestamp="2026-09-19T11:21:20.368" classname="UiBuild" />
+    <testcase name="NoCrossUnitInclude_O31_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="260" status="run" result="completed" time="0." timestamp="2026-09-19T11:21:20.368" classname="UiBuild" />
+    <testcase name="NoRobWorkPrefixLiteral_R4_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="301" status="run" result="completed" time="0." timestamp="2026-09-19T11:21:20.369" classname="UiBuild" />
+    <testcase name="NoGlobalShortcutPrivatization_SA16_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="325" status="run" result="completed" time="0." timestamp="2026-09-19T11:21:20.369" classname="UiBuild" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,103 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_ui_test
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+  ird: run sdurws_ird_ui_test and write gtest XML report
+  [==========] Running 6 tests from 1 test suite.
+  [----------] Global test environment set-up.
+  [----------] 6 tests from UiBuild
+  [ RUN      ] UiBuild.SourceTreeReachable_UI_BUILD
+  [       OK ] UiBuild.SourceTreeReachable_UI_BUILD (0 ms)
+  [ RUN      ] UiBuild.PlacementStaticRegistration_UI_BUILD
+  [       OK ] UiBuild.PlacementStaticRegistration_UI_BUILD (0 ms)
+  [ RUN      ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD
+  [       OK ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD (0 ms)
+  [ RUN      ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD
+  [       OK ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD (0 ms)
+  [ RUN      ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD
+  [       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (0 ms)
+  [ RUN      ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD
+  [       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (0 ms)
+  [----------] 6 tests from UiBuild (1 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 6 tests from 1 test suite ran. (1 ms total)
+  [  PASSED  ] 6 tests.
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_ui_contract_test
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+  ird: run sdurws_ird_ui_contract_test and write gtest XML report
+  [==========] Running 3 tests from 1 test suite.
+  [----------] Global test environment set-up.
+  [----------] 3 tests from UiLinkage
+  [ RUN      ] UiLinkage.ArchEdgesCoreDiagnosticsOnly_UI_CTR
+  [       OK ] UiLinkage.ArchEdgesCoreDiagnosticsOnly_UI_CTR (0 ms)
+  [ RUN      ] UiLinkage.TestkitOnlyLinkedByTestTargets_UI_CTR
+  [       OK ] UiLinkage.TestkitOnlyLinkedByTestTargets_UI_CTR (0 ms)
+  [ RUN      ] UiLinkage.ThreeTestTargetsAndLabels_UI_CTR
+  [       OK ] UiLinkage.ThreeTestTargetsAndLabels_UI_CTR (0 ms)
+  [----------] 3 tests from UiLinkage (0 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 3 tests from 1 test suite ran. (0 ms total)
+  [  PASSED  ] 3 tests.
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_ui_gui_test
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+  ird: run sdurws_ird_ui_gui_test and write gtest XML report
+  [==========] Running 2 tests from 1 test suite.
+  [----------] Global test environment set-up.
+  [----------] 2 tests from UiGuiPlacement
+  [ RUN      ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD
+  [       OK ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD (0 ms)
+  [ RUN      ] UiGuiPlacement.GuiMainNoGuiStartup_UI_GUIBUILD
+  [       OK ] UiGuiPlacement.GuiMainNoGuiStartup_UI_GUIBUILD (0 ms)
+  [----------] 2 tests from UiGuiPlacement (0 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 2 tests from 1 test suite ran. (0 ms total)
+  [  PASSED  ] 2 tests.
