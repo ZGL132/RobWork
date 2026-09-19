@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 209,
+  "tickCount": 210,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -13,11 +13,11 @@
   "run": null,
   "attempts": {
     "implement": 0,
-    "fix": 1,
-    "accept": 2
+    "fix": 0,
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-19T08:49:32+08:00",
+    "updatedAt": "2026-09-19T09:52:10+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1241,6 +1241,18 @@
       "acceptanceRecord": "traceability/acceptance/EX-T09-20260919-r2.md",
       "mergedAt": "2026-09-19",
       "failReason": "attempt1 fail（B-1：9 件 .log 留痕被 .gitignore *.log 吞且未 add -f，4.10 在库与声称不符——同族第四次）——返工 8a5a05fb 补交后 attempt2 pass；编排者收尾 §4.7② 首次合并误落于实施工作树检出的 wp08-t09（tick#206 同型：② 在任务分支上双端 findings 追加必撞），当即 merge --abort 零残留、切回 redesign-main 重做（② 干净、③ findings.json 冲突经 v1.13 merge-findings-union 并集解算 F-221 自动通过）"
+    },
+    {
+      "task": "EX-T10",
+      "unit": "execution",
+      "result": "pass-merged",
+      "commits": [
+        "76590c980b71abcf614b434fd5fddb6d40214a9a",
+        "df619a24d473249adb9d7f0f1c8323317a24a8a2",
+        "0b64525957e20597a8aca7370d734da54e529e43"
+      ],
+      "acceptanceRecord": "traceability/acceptance/EX-T10-20260919.md",
+      "mergedAt": "2026-09-19"
     }
   ],
   "policy": {
@@ -1267,11 +1279,6 @@
   },
   "queue": [
     {
-      "taskId": "EX-T10",
-      "contractPath": "tasks/foundation/EX-T10.json",
-      "branch": "wp08-t10"
-    },
-    {
       "taskId": "UI-T02",
       "contractPath": "tasks/foundation/UI-T02.json",
       "branch": "wp10-t02"
@@ -1285,5 +1292,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "ad2c5952-f00a-4665-9d6c-c41eff3d085f"
+  "tickToken": "aec26293-0b75-4751-8b54-69631213da6f"
 }
