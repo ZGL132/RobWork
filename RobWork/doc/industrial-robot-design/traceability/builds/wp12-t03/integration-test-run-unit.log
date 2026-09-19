@@ -1,0 +1,99 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 30 tests from 11 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ReportingBuild
+[ RUN      ] ReportingBuild.SourceTreeReachable_DT_BUILD
+[       OK ] ReportingBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] ReportingBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] ReportingBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (3 ms)
+[ RUN      ] ReportingBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] ReportingBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (3 ms)
+[ RUN      ] ReportingBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] ReportingBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (3 ms)
+[ RUN      ] ReportingBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] ReportingBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 5 tests from ReportingBuild (11 ms total)
+
+[----------] 4 tests from ReportingErrors
+[ RUN      ] ReportingErrors.ErrorTokenTable_Full16MatchesDesign_RPT02_ACC2
+[       OK ] ReportingErrors.ErrorTokenTable_Full16MatchesDesign_RPT02_ACC2 (0 ms)
+[ RUN      ] ReportingErrors.ErrorWhatPrefixAndCodeAccess_RPT02_ACC2
+[       OK ] ReportingErrors.ErrorWhatPrefixAndCodeAccess_RPT02_ACC2 (0 ms)
+[ RUN      ] ReportingErrors.RptStableCodeList_EightItemsMatchRegistry_RPT02_ACC3
+[       OK ] ReportingErrors.RptStableCodeList_EightItemsMatchRegistry_RPT02_ACC3 (0 ms)
+[ RUN      ] ReportingErrors.SuggestedDiagCodeMapping_SixOfSixteen_RPT02_ACC3
+[       OK ] ReportingErrors.SuggestedDiagCodeMapping_SixOfSixteen_RPT02_ACC3 (0 ms)
+[----------] 4 tests from ReportingErrors (0 ms total)
+
+[----------] 5 tests from ReportingIdentity
+[ RUN      ] ReportingIdentity.ReportIdRoundtripGenerateParse_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdRoundtripGenerateParse_RPT02_ACC1 (1 ms)
+[ RUN      ] ReportingIdentity.ReportIdParseStrictRejections_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdParseStrictRejections_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportIdReservedZeroValue_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdReservedZeroValue_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportLevelTokenSyntax_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportLevelTokenSyntax_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportIdTypeBoundary_NoContentPayload_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdTypeBoundary_NoContentPayload_RPT02_ACC1 (0 ms)
+[----------] 5 tests from ReportingIdentity (1 ms total)
+
+[----------] 2 tests from ReportModelIdentity
+[ RUN      ] ReportModelIdentity.SameSourceTwoBuildsContentIdentityByteEqual_RP_MDL_1
+[       OK ] ReportModelIdentity.SameSourceTwoBuildsContentIdentityByteEqual_RP_MDL_1 (0 ms)
+[ RUN      ] ReportModelIdentity.IdentitySeparatedFromIdAndGeneration_RP_MDL_3
+[       OK ] ReportModelIdentity.IdentitySeparatedFromIdAndGeneration_RP_MDL_3 (0 ms)
+[----------] 2 tests from ReportModelIdentity (0 ms total)
+
+[----------] 2 tests from ReportCodecRoundtrip
+[ RUN      ] ReportCodecRoundtrip.DataRoundtripParseEncodeEqual_RP_MDL_1
+[       OK ] ReportCodecRoundtrip.DataRoundtripParseEncodeEqual_RP_MDL_1 (0 ms)
+[ RUN      ] ReportCodecRoundtrip.FullRoundtripParseEncodeEqual_RP_MDL_1
+[       OK ] ReportCodecRoundtrip.FullRoundtripParseEncodeEqual_RP_MDL_1 (0 ms)
+[----------] 2 tests from ReportCodecRoundtrip (0 ms total)
+
+[----------] 1 test from ReviewReportModel
+[ RUN      ] ReviewReportModel.ImmutableValueSemantics_RPT03_ACC3
+[       OK ] ReviewReportModel.ImmutableValueSemantics_RPT03_ACC3 (0 ms)
+[----------] 1 test from ReviewReportModel (0 ms total)
+
+[----------] 1 test from ReviewReportValidation
+[ RUN      ] ReviewReportValidation.IllegalInstanceMatrix_RPT03_ACC3
+[       OK ] ReviewReportValidation.IllegalInstanceMatrix_RPT03_ACC3 (0 ms)
+[----------] 1 test from ReviewReportValidation (0 ms total)
+
+[----------] 2 tests from ReportCodecSeparation
+[ RUN      ] ReportCodecSeparation.DataIdentityIncludedExcludedFields_RPT03_ACC4
+[       OK ] ReportCodecSeparation.DataIdentityIncludedExcludedFields_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecSeparation.FullIdentityCoversReviewAndSections_RPT03_ACC4
+[       OK ] ReportCodecSeparation.FullIdentityCoversReviewAndSections_RPT03_ACC4 (0 ms)
+[----------] 2 tests from ReportCodecSeparation (0 ms total)
+
+[----------] 1 test from ReportCodecDeterminism
+[ RUN      ] ReportCodecDeterminism.SameInputSameBytes_NFR_COR_02
+[       OK ] ReportCodecDeterminism.SameInputSameBytes_NFR_COR_02 (0 ms)
+[----------] 1 test from ReportCodecDeterminism (0 ms total)
+
+[----------] 6 tests from ReportCodecBinary
+[ RUN      ] ReportCodecBinary.MagicVersionBigEndianLayout_RPT03_ACC4
+[       OK ] ReportCodecBinary.MagicVersionBigEndianLayout_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.FullMagicAndEmbeddedDataHeader_RPT03_ACC4
+[       OK ] ReportCodecBinary.FullMagicAndEmbeddedDataHeader_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.NulStringRejectedAtEncode_RPT03_ACC4
+[       OK ] ReportCodecBinary.NulStringRejectedAtEncode_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.NonFiniteDoubleRejectedAndFiniteRoundtrips_RPT03_ACC4
+[       OK ] ReportCodecBinary.NonFiniteDoubleRejectedAndFiniteRoundtrips_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.SectionsMustBeOrderIncreasing_RPT03_ACC4
+[       OK ] ReportCodecBinary.SectionsMustBeOrderIncreasing_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.ParseBoundaryFailFast_RPT03_ACC4
+[       OK ] ReportCodecBinary.ParseBoundaryFailFast_RPT03_ACC4 (0 ms)
+[----------] 6 tests from ReportCodecBinary (0 ms total)
+
+[----------] 1 test from ReportModelTokens
+[ RUN      ] ReportModelTokens.TokenTablesMatchDesign_RPT03
+[       OK ] ReportModelTokens.TokenTablesMatchDesign_RPT03 (0 ms)
+[----------] 1 test from ReportModelTokens (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 30 tests from 11 test suites ran. (13 ms total)
+[  PASSED  ] 30 tests.

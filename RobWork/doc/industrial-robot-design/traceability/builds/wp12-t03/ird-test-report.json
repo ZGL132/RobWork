@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T03",
+  "masterWp": "WP-H（卡内 RPT-T03 行 ≙ WP-12-T03『模型部分』——DTB §2.13；构造/幂等部分分别归 RPT-T05/T09）",
+  "branch": "wp12-t03",
+  "base": "ca78efc076daa3d5ffeccbbd70d97fb302ecae11",
+  "date": "2026-09-19",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01/T02 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "RPT-T03 增列实现翻译单元：src/ReportModel.cpp（SectionStatus/RenderHint/QualifierToken 三 token 表〔§5.3/§9.2/§6.4 词面〕＋§4.2 非法实例字段校验原语 firstFieldViolation/validateImpl〔检查序＝字段表行序，首个违例确定——NFR-COR-02〕＋ReviewReport::make 唯一生产者：字段校验→ReportCodec 身份计算→冻结构造，调用方不可申报）＋src/ReportCodec.cpp（确定性二进制双编码：magic IRDRPT1〔Full 7B〕/IRDRPTD1〔Data 8B〕＋编码器版本 u32 大端入编码＋字段按名序/章节按 order＋u32 长度前缀＋大端＋presence 字节 0/1＋UTF-8 禁 NUL 双侧拒绝＋浮点 IEEE754 位模式、NaN/±Inf 编码解码双侧拒绝〔evidence D-06 同源〕＋解码边界 fail-fast：magic/版本不符/截断/尾随/枚举越界/布尔非 0/1/单位 token 未知；SHA-256 经 core ContentDigester 唯一算法）。公共头新增 include/sdurws/ird/reporting/ReportModel.hpp（§4.2 ReviewReport 不可变值对象——成员私有＋只读访问器＋无 setter；§4.3 引用类型全族 ResultRefSnapshot/EvidenceRefEntry/DiagRefEntry/ReviewReportSection＋§4.5 ReviewMetadata 族＋§4.4 ReportSourceSpec）；私有头 src/ReportCodec.hpp（ReportCodec 类＋ReportFullFields——单元内消费，R-2 不出 include/）。CMakeLists 仅增列源文件，目标名/别名/链接边/编译选项零改动"
+    },
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 30/30）",
+      "notes": "RPT-T01 五条构建红线用例（ReportingBuild 组）＋RPT-T02 十三条（ReportingErrors 四＋ReportingIdentity 五＋单元内红线）保持全绿；RPT-T03 新增 test/ReportModelTest.cpp 十七条：ReportModelIdentity 组二（RP-MDL-1 同数据源两次构建 contentIdentity 逐字节相等＋dataIdentity 确定＋ReportId 新对象如实断言；RP-MDL-3 身份与生成信息/对象分离——重命名/移动不改变任何身份的类型级锁定〔显示名称/磁盘路径非 ReviewReport 字段，§4.2 字段表穷举〕）、ReportCodecRoundtrip 组二（Data/Full 双面 parse(encode(x))==x——§4.4 往返契约）、ReviewReportModel 组一（不可变值语义＋身份非零——§4.2 冻结类型系统事实）、ReviewReportValidation 组一（§4.2 非法实例矩阵 22 反例逐项：revision 空/resultRefs 空/Preview 结果 SourceMissing/B 级携 C 章节 LevelConflict/C 级零 C 章节 ScopeInsufficient/字段 NaN DataInvalid/sourceResults 越界与 caseScope 越界 EvidenceRefInvalid/当前性 presence 三态/证据引用 presence 三态/章节结构四态/entryKey 词形/意见 4KiB/签署 presence 双向/reportVersion/sectionModelVersion＋make 抛出轨迹与 firstFieldViolation 码面一致且 detail 携带定位）、ReportCodecSeparation 组二（Data 进入/排除双向逐项锁定＋Full 覆盖面）、ReportCodecDeterminism 组一（同输入同字节）、ReportCodecBinary 组六（Data 布局逐字节钉住/Full magic＋版本＋嵌入 Data 段/NUL 拒绝/非有限拒绝＋有限位模式往返/章节 order 入口把关/解码边界 fail-fast 五族）、ReportModelTokens 组一（三 token 表词面与往返）。夹具确定性声明：数据源身份字段用确定性铺位（fixtureId/fixtureIdentity——同脚本两次调用逐位一致），随机 generate() 仅用于必须互异的场景（ReportId 新对象断言）——RP-MDL-1 断言有效性的前提"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 12/12）",
+      "notes": "RPT-T01 四条构建图契约（ReportingLinkage 组）＋RPT-T02 六条（ReportingIdentityContract 组）保持全绿；RPT-T03 新增 contract_test/EvidenceCrossUnitContractTest.cpp 两条（EvidenceCrossUnit 组）：①VocabularyConsumedNotRedefined_O13_O24——EvidenceItemStatus 五值域编译期钉住（P-EV-8/O-13 五词各有其位不合并）＋ResultRefSnapshot.mode/outcome/engineeringStatus 与 core 词表类型同一性 static_assert（O-24 消费侧零重定义）＋EvaluationKey 别名消费＋EvidenceItemClass/Status 值赋值往返；②EnvelopeTypesConsumedAndRoundtripPreserved_ACC5——evidence 包络类型族（ReproductionBlock/ProducerInfo/CurrentnessStatus/InvalidationReason/BaselineConsistencyResult）作为报告字段值经 firstFieldViolation 校验通过＋经 ReportCodec-Full 往返逐值保值（消费不复制——语义零损失闭环）。P-RPT-9 基线声明：消费 evidence v0.1 Draft（EV-T06/EV-T07 done 合入后的公共头签名）与 core/diagnostics v0.1 Draft，冻结出 diff 后按影响面增量同步留痕"
+    }
+  ],
+  "testSuites": [
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingBuild",
+      "cases": [
+        { "name": "SourceTreeReachable_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 1——RPT-T03 落位后仍全绿（锚点 Reporting.cpp 在位）" },
+        { "name": "NoQtInclude_DT_BUILD_NFR_MNT_01", "result": "pass", "trace": "NFR-MNT-01；D-01——RPT-T03 新增 ReportModel.hpp/.cpp、ReportCodec.hpp/.cpp 零 Qt 头（扫描面自动覆盖新文件）" },
+        { "name": "NoEigenOrRwMathDirectInclude_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 2——新增源文件零 Eigen/rw::math 直含（数值经 SourcedValue 承载）" },
+        { "name": "NoCrossUnitInclude_DT_BUILD_R1_R2", "result": "pass", "trace": "R-1/R-2——RPT-T03 后 include 面白名单内新增 evidence/diagnostics 消费（ReportModel.hpp→core/evidence/diagnostics 登记边内合法；io/runtime/execution/testkit 仍零命中）" },
+        { "name": "PublicHeaderPathLayout_DT_BUILD_R2", "result": "pass", "trace": "NFR-MNT-02；R-2——RPT-T03 新增公共头 ReportModel.hpp 位于 sdurws/ird/reporting/；ReportCodec.hpp 留 src/ 不出 include/" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportModelIdentity",
+      "cases": [
+        { "name": "SameSourceTwoBuildsContentIdentityByteEqual_RP_MDL_1", "result": "pass", "trace": "RPT-T03 acceptance 1/RP-MDL-1（同数据源两次构建〔替身同脚本＝确定性夹具两次 make〕contentIdentity 逐字节相等＋dataIdentity 确定＋ReportId 不同〔新对象〕如实断言登记）；units/reporting.md §10.1 RP-MDL-1 行＋§4.1 身份纪律；NFR-COR-02" },
+        { "name": "IdentitySeparatedFromIdAndGeneration_RP_MDL_3", "result": "pass", "trace": "RPT-T03 acceptance 2/RP-MDL-3（§4.1『重命名/移动不改变任何身份』用例锁定——显示名称/磁盘路径非 ReviewReport 字段〔§4.2 字段表穷举〕，同语义内容在新对象＋新生成信息下重建 contentIdentity 逐字节不变；导出/manifest 全貌随 RPT-T09 收口——契约 note 两阶段口径）；units/reporting.md §4.1/§10.1 RP-MDL-3 行" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportCodecRoundtrip",
+      "cases": [
+        { "name": "DataRoundtripParseEncodeEqual_RP_MDL_1", "result": "pass", "trace": "RPT-T03 acceptance 1（ReportCodec-Data 往返 parse(encode(x))==x——编码器版本号入编码由 ReportCodecBinary 头部用例钉住）；units/reporting.md §4.4 往返契约原文（RPT-T03 单测锁定）" },
+        { "name": "FullRoundtripParseEncodeEqual_RP_MDL_1", "result": "pass", "trace": "RPT-T03 acceptance 1（ReportCodec-Full 往返——含章节完整内容＋ReviewMetadata〔意见〕＋sectionModelVersion）；units/reporting.md §4.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReviewReportModel",
+      "cases": [
+        { "name": "ImmutableValueSemantics_RPT03_ACC3", "result": "pass", "trace": "RPT-T03 acceptance 3（ReviewReport 全部字段构造后不可变——成员私有＋只读访问器＋无 setter＋私有构造仅 make 可达＝冻结是类型系统事实；值语义拷贝全等；身份非零合法实例纪律）；units/reporting.md §4.2『冻结是类型系统事实：无 setter＋值语义』" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReviewReportValidation",
+      "cases": [
+        { "name": "IllegalInstanceMatrix_RPT03_ACC3", "result": "pass", "trace": "RPT-T03 acceptance 3（§4.2 非法实例判定原语 firstFieldViolation 就位——22 反例族：身份保留值/resultRefs 空/Preview SourceMissing/B 级携 C 章节 LevelConflict/C 级零 C 章节 ScopeInsufficient/字段 NaN DataInvalid/sourceResults 与 caseScope 越界 EvidenceRefInvalid/当前性 presence 三态/证据引用 presence 三态/章节结构 order·唯一·状态对应/entryKey 词形/意见 4KiB/签署 presence 双向/reportVersion≥1/sectionModelVersion 冻结常量；make() 抛出轨迹与判定原语码面一致且 detail 携带字段定位）；端到端构建拒绝路径随 RPT-T05 构建器收口——契约 acceptance 3 交付口径；units/reporting.md §4.2/§4.6/§4.7/§6.3" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportCodecSeparation",
+      "cases": [
+        { "name": "DataIdentityIncludedExcludedFields_RPT03_ACC4", "result": "pass", "trace": "RPT-T03 acceptance 4（ReportCodec-Data 进入/排除双向逐项锁定——排除面：评审元数据/entries 内容/诊断变化 dataIdentity 不变〔且评审元数据入 contentIdentity〕；进入面：修订/unitPreference/选中章节集/resultRefs 数据子集变化 dataIdentity 变）；units/reporting.md §4.4 Data 行字段表原文" },
+        { "name": "FullIdentityCoversReviewAndSections_RPT03_ACC4", "result": "pass", "trace": "RPT-T03 acceptance 4（ReportCodec-Full＝dataIdentity 全部字段＋章节完整内容＋ReviewMetadata＋sectionModelVersion——章节状态变化 contentIdentity 变 dataIdentity 不变；sectionModelVersion 入 Full）；units/reporting.md §4.4 Full 行" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportCodecDeterminism",
+      "cases": [
+        { "name": "SameInputSameBytes_NFR_COR_02", "result": "pass", "trace": "RPT-T03 acceptance 4/NFR-COR-02（纯函数同输入同字节——encode 两次逐字节相等＋digestData 两次相等；无时钟/随机/locale 依赖）；units/reporting.md §4.4『纯函数（同输入同字节，NFR-COR-02）』" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportCodecBinary",
+      "cases": [
+        { "name": "MagicVersionBigEndianLayout_RPT03_ACC4", "result": "pass", "trace": "RPT-T03 acceptance 4（确定性二进制规则逐字节钉住——magic 'IRDRPTD1' 8B 字面＋编码器版本 u32 大端＝1＋revisionSeq u64 大端载荷 0x0102030405060708＋u32 长度前缀＋presence 字节缺席 0＋canonical 名序布局＋恰耗尽无尾随）；units/reporting.md §4.4 编码规则 1/4/5/8" },
+        { "name": "FullMagicAndEmbeddedDataHeader_RPT03_ACC4", "result": "pass", "trace": "RPT-T03 acceptance 4（Full magic 'IRDRPT1' 7B 字面＋Full 头版本 u32＝1＋嵌入 Data 段头 'IRDRPTD1' 于 Full 头 7＋4 字节后——复用 Data 编码布局与 parseFull 对称＋往返自洽）；units/reporting.md §4.4" },
+        { "name": "NulStringRejectedAtEncode_RPT03_ACC4", "result": "pass", "trace": "RPT-T03 acceptance 4（字符串 UTF-8 禁 NUL——编码入口拒绝，DataInvalid；测试以（指针,长度）构造真实含 NUL 串防 const char* 截断失真）；units/reporting.md §4.4 规则 6" },
+        { "name": "NonFiniteDoubleRejectedAndFiniteRoundtrips_RPT03_ACC4", "result": "pass", "trace": "RPT-T03 acceptance 4（NaN/±Inf 编码入口拒绝——evidence D-06 同源；有限值 3.14 以 IEEE754 位模式经 Full 编码往返保值）；units/reporting.md §4.4 规则 7" },
+        { "name": "SectionsMustBeOrderIncreasing_RPT03_ACC4", "result": "pass", "trace": "RPT-T03 acceptance 4（章节按 order——未按 order 严格递增的输入在编码入口拒绝，不做静默重排）；units/reporting.md §4.4 规则 3＋§4.7" },
+        { "name": "ParseBoundaryFailFast_RPT03_ACC4", "result": "pass", "trace": "RPT-T03 acceptance 4（解码边界 fail-fast——magic 破坏/版本不符/截断/尾随字节/presence 字节非法五族反例全 DataInvalid，不做宽容归一化）；units/reporting.md §4.4＋AGENTS 错误语义" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportModelTokens",
+      "cases": [
+        { "name": "TokenTablesMatchDesign_RPT03", "result": "pass", "trace": "units/reporting.md §5.3（SectionStatus 四态词面与往返）/§9.2（RenderHint 四值）/§6.4（QualifierToken 十词全量逐值——RPT-05 措辞冻结词面）；NFR-COR-02 同码同串；非规范输入 try 轨 nullopt＋抛出轨 DataInvalid 双轨" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingLinkage",
+      "cases": [
+        { "name": "UnitEdgesFourRegistered_DT_BUILD_R1_R2", "result": "pass", "trace": "RPT-T01 acceptance 2——RPT-T03 落位后 CMakeLists 仅增列源文件、链接边零改动，全绿复证" },
+        { "name": "NoTestkitEdge_DT_BUILD_T1", "result": "pass", "trace": "T-1——RPT-T03 零 testkit 消费复证" },
+        { "name": "RegisteredEdgesPresent_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 1/2——四条登记边存在性复证" },
+        { "name": "NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2", "result": "pass", "trace": "P-RPT-1/P-RPT-2——RPT-T03 零 io/runtime/execution 编译边复证" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingIdentityContract",
+      "cases": [
+        { "name": "DigestViaCoreDigesterByteEquality_RPT02_ACC4", "result": "pass", "trace": "RPT-T02 acceptance 4——RPT-T03 落位后仍全绿（SHA-256 经 core ContentDigester 唯一算法——RPT-T03 ReportCodec.cpp digestBytes 同款消费面复证）" },
+        { "name": "PublishedRecordCarriesCoreIdentity_RPT02_ACC4", "result": "pass", "trace": "RPT-T02 acceptance 4 复证" },
+        { "name": "FourConceptTypeBoundary_TagIsolation_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1 复证（四概念互不替代——ReportModel 消费 ReportId/Core::ContentIdentity 双类型不互转的下游侧证明）" },
+        { "name": "IdempotencyKeyIsContentIdentity_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1 复证" },
+        { "name": "IdentityIndependentOfPathsAndNames_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1 复证（与 RPT-T03 RP-MDL-3 用例同纪律两代际双面）" },
+        { "name": "RptCodesConsistentWithStableCodeRegistry_RPT02_ACC3", "result": "pass", "trace": "RPT-T02 acceptance 3 复证" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "EvidenceCrossUnit",
+      "cases": [
+        { "name": "VocabularyConsumedNotRedefined_O13_O24", "result": "pass", "trace": "RPT-T03 acceptance 5＋6（跨单元依赖就绪声明的机器自证——EvidenceItemStatus 五值域编译期钉住〔P-EV-8/O-13 五词各有其位不合并〕＋mode/outcome/engineeringStatus 与 core 词表类型同一性 static_assert〔O-24 消费侧零重定义〕＋EvaluationKey 别名消费）；units/reporting.md §3.2 C-2 消费行/§6.1 状态词来源纪律" },
+        { "name": "EnvelopeTypesConsumedAndRoundtripPreserved_ACC5", "result": "pass", "trace": "RPT-T03 acceptance 5（evidence 包络类型族〔ReproductionBlock/ProducerInfo/CurrentnessStatus/InvalidationReason/BaselineConsistencyResult——EV-T06/EV-T07 交付面〕作为报告字段值消费＋经 ReportCodec-Full 往返逐值保值——『消费不重定义不复制』值面闭环）；units/reporting.md §4.2/§4.3.1/§6.3；traceability/foundation-contract-review.md §1 reporting 消费行" }
+      ]
+    }
+  ],
+  "builds": {
+    "integrated": {
+      "configure": "build/ 构建树（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，构建前 grep 复核缓存原行——AGENTS §4.1 口径）",
+      "build": "cmake --build build --config Release（全量增量）→ exit 0，真实错误计数 0（integration-build.log）；契约 verify 两命令逐条 exit 0（--target sdurws_ird_reporting_test / sdurws_ird_reporting_contract_test）",
+      "testRun": "sdurws_ird_reporting_test 30/30＋sdurws_ird_reporting_contract_test 12/12（integration-test-run-*.log＋*-integration.xml，failures=0）"
+    },
+    "smoke": {
+      "configure": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp12-t03 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（vcpkg toolchain 必带——DTB §5.1/CORE-T01 G-2；Qt6 前缀为 testkit_qt 配置面所需，wp12-t02 同款参数，smoke-configure.log）",
+      "build": "cmake --build build-smoke-wp12-t03 --config Release（全量）→ exit 0，错误计数 0（smoke-build.log；grep 'error' 命中均为 Errors*.cpp 文件名非编译错误）",
+      "testRun": "sdurws_ird_reporting_test 30/30＋sdurws_ird_reporting_contract_test 12/12（smoke-test-run-*.log＋*-smoke.xml，failures=0）"
+    },
+    "gates": {
+      "tool": "ird_gates（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake，WP-01-T01 落地）——cmake -DIRD_ROOT=<各树>/industrialrobot -DIRD_ENABLE_GIT=OFF -P ird_gates.cmake",
+      "result": "base（ca78efc0 detached worktree 复跑）与 branch（wp12-t03 工作树）命中各 27 项，归一化 IRDRoot 后逐行 diff 零差异——GATES-HIT-SET-IDENTICAL（gates-hit-set-diff.txt）；27 项全为既有登记归属（wp10-t02-gate-registrations.md 等），零 reporting 新增命中"
+    },
+    "governance": {
+      "validateTask": "powershell -File scripts/industrialrobot/validate-task.ps1 -TaskFile doc/industrial-robot-design/tasks/foundation/RPT-T03.json → PASS (1 tasks)（validate-task.log）",
+      "validateDocs": "powershell -File scripts/industrialrobot/validate-docs.ps1 → PASS (20 units, 12 trace entries, 150 task files)（validate-docs.log）"
+    }
+  },
+  "acceptanceCoverage": [
+    { "item": 1, "covered": "RP-MDL-1 身份确定性：ReportModelIdentity.SameSourceTwoBuildsContentIdentityByteEqual_RP_MDL_1（同数据源两次构建 contentIdentity/dataIdentity 逐字节相等＋ReportId 不同如实断言）＋ReportCodecRoundtrip.Data/Full 双面往返（编码器版本号入编码由 MagicVersionBigEndianLayout/FullMagicAndEmbeddedDataHeader 钉住）" },
+    { "item": 2, "covered": "RP-MDL-3 身份与路径/名称分离：ReportModelIdentity.IdentitySeparatedFromIdAndGeneration_RP_MDL_3（显示名称/磁盘路径非 ReviewReport 字段——§4.1『重命名/移动不改变任何身份』类型级锁定＋新对象/新生成信息重建身份不变＋摘要幂等命中本地对偶；导出/manifest 全貌随 RPT-T09 收口——契约 note 两阶段口径）" },
+    { "item": 3, "covered": "不可变与字段校验原语：ReviewReportModel.ImmutableValueSemantics（无 setter＋值语义——冻结是类型系统事实）＋ReviewReportValidation.IllegalInstanceMatrix（§4.2 非法实例 22 反例族 firstFieldViolation/make 双轨——端到端构建拒绝路径随 RPT-T05 收口，本任务字段校验形态交付）" },
+    { "item": 4, "covered": "双编码分离与确定性二进制规则：ReportCodecSeparation.Data/Full（进入/排除双向逐项锁定）＋ReportCodecBinary 六用例（magic/版本/大端/长度前缀/presence/UTF-8 禁 NUL/IEEE754＋NaN±Inf 拒绝/章节 order/解码 fail-fast）＋ReportCodecDeterminism.SameInputSameBytes（NFR-COR-02）" },
+    { "item": 5, "covered": "跨单元依赖就绪声明：EvidenceCrossUnit 两用例（EV-T06/EV-T07 done 合入后的 evidence 公共头类型族消费机器自证＋编码往返保值；消费纪律＝traceability/foundation-contract-review.md §1 reporting 行——零重定义零复制）" },
+    { "item": 6, "covered": "陷阱处置：P-RPT-3（ReportId 消费 reporting/Identity.hpp T02 自建类型——零重复定义，FourConceptTypeBoundary 复证）；O-13/O-24（EvidenceItemStatus 五值/EvaluationMode/TaskOutcome/EngineeringStatus 消费 core/evidence 既有权威词表——VocabularyConsumedNotRedefined static_assert 常驻自证）；P-RPT-9（core/evidence/diagnostics v0.1 Draft 基线——头注释基线声明＋消费面锚定，冻结 diff 后按影响面增量同步留痕）" }
+  ]
+}
