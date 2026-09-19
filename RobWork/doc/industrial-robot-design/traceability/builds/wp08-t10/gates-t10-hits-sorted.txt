@@ -1,0 +1,18 @@
+IRD-GATE-LIB: sdurws_ird_io
+IRD-GATE-LIB: sdurws_ird_io_contract_test
+IRD-GATE-LIB: sdurws_ird_io_test
+IRD-GATE-R4: sdurws_ird_project (ProjectStoreImpl.cpp RobWork literal - DTB 4.5 registered)
+IRD-GATE-SUB: sdurws_ird_diagnostics_contract_test
+IRD-GATE-SUB: sdurws_ird_evidence_contract_test
+IRD-GATE-SUB: sdurws_ird_evidence_test
+IRD-GATE-SUB: sdurws_ird_execution_contract_test
+IRD-GATE-SUB: sdurws_ird_execution_test
+IRD-GATE-SUB: sdurws_ird_io_contract_test
+IRD-GATE-SUB: sdurws_ird_io_test
+IRD-GATE-SUB: sdurws_ird_policy_contract_test
+IRD-GATE-SUB: sdurws_ird_policy_test
+IRD-GATE-SUB: sdurws_ird_project_contract_test
+IRD-GATE-SUB: sdurws_ird_project_test
+IRD-GATE-SUB: sdurws_ird_runtime_test
+IRD-GATE-SUB: sdurws_ird_testdata_lint
+IRD-GATE-T1: sdurws_ird_testdata_lint
