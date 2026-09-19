@@ -1,0 +1,16 @@
+ird_gates 命中集合 diff（RPT-T05 GATES-HIT-SET-IDENTICAL 同型口径——RPT-T06 红线扫描零新增证据）
+
+base   = d74f92194a2e409a95c0be76cd6c8124b0958ca1（detached worktree .gates-base-wp12-t06 直接 cmake -P 复跑，比对后已清理）
+branch = wp12-t06 工作树（同口径直接 cmake -P 复跑）
+
+命令（两树同）：
+  cmake -DIRD_ROOT=<各树>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_ENABLE_GIT=OFF -P cmake/ird_gates.cmake
+
+两侧各命中 61 项（原始输出 72 行含标题/自测行，归一化 IRDRoot 后逐行比对）——全为既有登记归属
+（testkit 直链形态/io libzip·expat 词表外/ui R-3 Qt 例外/testdata_lint T-1/project R-4 字面量例外等，
+与 wp12-t05 基线一致，零 reporting 命中）；RPT-T06 新增 Render.hpp/.cpp 的 include 面＝core/
+diagnostics/evidence/reporting 自有（diagnostics::IRedactionService 为 C-3 登记边只读消费；io 设施
+经 IReportIoFactory 注入——公共头零 io 类型，P-RPT-1）。归一化后逐行 diff 输出为空
+（GATES-HIT-SET-IDENTICAL——gates-ird-gates-base.log/branch.log 原始留痕）：
+
+(diff 为空)
