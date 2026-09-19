@@ -1,0 +1,43 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 14 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ReportingBuild
+[ RUN      ] ReportingBuild.SourceTreeReachable_DT_BUILD
+[       OK ] ReportingBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] ReportingBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] ReportingBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (1 ms)
+[ RUN      ] ReportingBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] ReportingBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (1 ms)
+[ RUN      ] ReportingBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] ReportingBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (1 ms)
+[ RUN      ] ReportingBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] ReportingBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 5 tests from ReportingBuild (5 ms total)
+
+[----------] 4 tests from ReportingErrors
+[ RUN      ] ReportingErrors.ErrorTokenTable_Full16MatchesDesign_RPT02_ACC2
+[       OK ] ReportingErrors.ErrorTokenTable_Full16MatchesDesign_RPT02_ACC2 (0 ms)
+[ RUN      ] ReportingErrors.ErrorWhatPrefixAndCodeAccess_RPT02_ACC2
+[       OK ] ReportingErrors.ErrorWhatPrefixAndCodeAccess_RPT02_ACC2 (0 ms)
+[ RUN      ] ReportingErrors.RptStableCodeList_EightItemsMatchRegistry_RPT02_ACC3
+[       OK ] ReportingErrors.RptStableCodeList_EightItemsMatchRegistry_RPT02_ACC3 (0 ms)
+[ RUN      ] ReportingErrors.SuggestedDiagCodeMapping_SixOfSixteen_RPT02_ACC3
+[       OK ] ReportingErrors.SuggestedDiagCodeMapping_SixOfSixteen_RPT02_ACC3 (0 ms)
+[----------] 4 tests from ReportingErrors (0 ms total)
+
+[----------] 5 tests from ReportingIdentity
+[ RUN      ] ReportingIdentity.ReportIdRoundtripGenerateParse_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdRoundtripGenerateParse_RPT02_ACC1 (1 ms)
+[ RUN      ] ReportingIdentity.ReportIdParseStrictRejections_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdParseStrictRejections_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportIdReservedZeroValue_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdReservedZeroValue_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportLevelTokenSyntax_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportLevelTokenSyntax_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportIdTypeBoundary_NoContentPayload_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdTypeBoundary_NoContentPayload_RPT02_ACC1 (0 ms)
+[----------] 5 tests from ReportingIdentity (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 14 tests from 3 test suites ran. (7 ms total)
+[  PASSED  ] 14 tests.
