@@ -4,7 +4,7 @@
   "unit": "execution",
   "masterWp": "WP-D",
   "title": "契约测试套件落地（FakeWorker/契约与故障注入）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["EX-T01", "EX-T02", "EX-T03", "EX-T04", "EX-T05", "EX-T06", "EX-T07", "EX-T08", "TK-T09"],
   "requirements": ["TASK-01", "TASK-02", "TASK-03"],
   "designRefs": ["units/execution.md#11", "units/testkit.md#6.4", "units/testkit.md#6.5"],
