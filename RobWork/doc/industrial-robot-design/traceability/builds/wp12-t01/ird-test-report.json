@@ -1,0 +1,76 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T01",
+  "masterWp": "WP-12-T02",
+  "branch": "wp12-t01",
+  "base": "3c77c716e74f5e13fd6c8abc546c060ae5752860",
+  "date": "2026-09-19",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制，CR-07：失败即停不回落；测试 main 自持 GTest::gtest_main——落位期最小形态，PRJ-T01 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "RPT-T01 落位：INTERFACE 占位升级 STATIC（目标名/别名 RWS::ird::reporting/include 根不变——DTB §5.1）。新建 reporting/CMakeLists.txt：C++17 双设（target_compile_features PUBLIC cxx_std_17＋CXX_STANDARD 17——P-ENV-1 处置：显式 C++17 不用 C++20，双模式构建即 C++17 与框架 C++11 基线混链复证〔governance-log P-ENV-1 已随 CORE-T01 关闭 F-003〕；vcxproj 实测 stdcpp17 两模式生效，见 smoke-build.log/integration-build.log）、/utf-8 PUBLIC、PUBLIC 链 sdurws_ird_core/evidence/diagnostics/project 统一真名（集成模式 RWS::ird::* 即其 ALIAS——ARCH §3.5 四条登记编译链接边，reporting.md §3.4 原文全链；ird_gates 白名单 'reporting->core'/'reporting->evidence'/'reporting->diagnostics'/'reporting->project' 行预登记）。P-RPT-1 处置：零 io 编译边（CSV/JSON 写出与原子目标经注入的 IReportIoFactory——§9.5，公共头零 io 类型；P-RPT-1/P-IO-1/P-PR-5 合并裁决前维持注入、届时签名零改动直连）；P-RPT-2 同口径：零 runtime/execution 编译边（IModelSummaryProvider/ITaskStatusSource 注入——§3.3）。P-RPT-9 处置：core/evidence/diagnostics/project 各卡 v0.1 仍 Draft 未冻结，本任务仅链接目标零上游公共头消费（产品与测试源码均无 sdurws/ird/<他单元> include——BuildRedLineTest 扫描用例常驻自证），冻结出 diff 后按影响面增量同步留痕。零 Qt 含 Core（D-01：报告渲染为纯字节生成）、零 Eigen/rw::math 直接包含（§1.4）、零 testkit（T-1）、零业务域单元（R-1）。src/ 空起步＝锚点翻译单元 Reporting.cpp（§11 RPT-T01 行'涉及文件 src/（空起步）'的既定先例形态——CORE-T01/POL-T01/DIAG-T02/PRJ-T01/EX-T01 同款：CMake 零源码 STATIC 库生成期即报 No SOURCES given to target〔实测〕，锚点 TU＝库可生成且无任何接口预建〔NFR-MNT-04〕的最小载体；RPT-T02~T12 落位安排见该文件头注释）。配置期红线守卫：仅四条登记边（^sdurws_ird_ 通配同时拦截 testkit/io/runtime/execution/业务域——R-1/T-1/P-RPT-1/P-RPT-2）、零 Qt、产品目标零 gtest（LINK/INTERFACE 两面读取）。顶层 industrialrobot/CMakeLists.txt 同步：reporting 移出 INTERFACE 占位循环、add_subdirectory(reporting) 挂接于 ui 之后（次序约束：core/evidence/diagnostics/project 之后——四条链接边），头注释状态行更新（其余 9 个单元仍为占位）"
+    },
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 5/5）",
+      "notes": "RPT-T01 登记（§3.4/DTB §5.5；契约 verify 命令构建对象——cmake --build build --config Release --target sdurws_ird_reporting_test exit 0，留痕 integration-build.log）。首批用例＝最小构建冒烟用例（契约 acceptance 3 明文允许，PRJ-T01 同款口径）：ReportingBuild.SourceTreeReachable_DT_BUILD（锚点 TU＋公共头保留位 README 存在性——落位形态锚定）、NoQtInclude_DT_BUILD_NFR_MNT_01（零 Qt 含 Core——NFR-MNT-01/D-01）、NoEigenOrRwMathDirectInclude_DT_BUILD（§1.4 直含禁令）、NoCrossUnitInclude_DT_BUILD_R1_R2（include 面 sdurws/ird/* 白名单＝{core, evidence, diagnostics, project, reporting}——P-RPT-9 处置的常驻自证：连上游头也零消费）、PublicHeaderPathLayout_DT_BUILD_R2（无私有头出 include——R-2/NFR-MNT-02）。不链 sdurws_ird_testkit：首批用例以 gtest 原生断言承载（需求/AT 追溯在用例名与本报告 trace 字段）；ScriptedSectionProvider/ScriptedResultSource 替身与 RP-* 用例体随 RPT-T11 落位于 test/（§11 RPT-T11 行替身落位目录），届时按 T-1 允许形态登记 testkit 消费。扫描器语义＝#include 指令行门控（isIncludeDirective）——注释散文中的路径字样（文件头文档追溯）不构成编译期包含（PRJ-T01 落位时曾以任意文本行扫描观察到一次真实误报并修正，先例记录在案）。gtest XML：sdurws_ird_reporting_test-{integration,smoke}.xml（两模式各 5/5，failures=0）"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 4/4）",
+      "notes": "RPT-T01 登记（§3.4 跨单元契约面——与 core/evidence 值类型往返、与 project 工件汇集座〔fake IReportArtifactSink〕、与 io 写出设施〔注入 fake〕协作随 RPT-T09/T11 落地于 contract_test/；落位期＝构建图边界契约，acceptance 2 逐项具名自证）：ReportingLinkage.UnitEdgesFourRegistered_DT_BUILD_R1_R2（CMakeLists 非注释行 sdurws_ird_* 引用⊆{core, evidence, diagnostics, project, 本单元三目标}——仅四条登记单元边，R-1/SA-10）、NoTestkitEdge_DT_BUILD_T1（T-1 具名：落位期零 testkit 引用，RPT-T11 增链须伴随白名单用例显式增量修订）、RegisteredEdgesPresent_DT_BUILD（四条登记边必须真实存在——§3.4 原文 PUBLIC 全链，与 execution 落位期 diagnostics 边注入不落链接的差异点；链接器半区由两模式构建/测试链接成功承载）、NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2（include 面＋构建图面双向扫描——P-RPT-1/P-RPT-2 注入形态具名自证：公共头零对端类型＋CMake 零对端目标引用）。gtest XML：sdurws_ird_reporting_contract_test-{integration,smoke}.xml（两模式各 4/4，failures=0）"
+    }
+  ],
+  "testSuites": [
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingBuild",
+      "cases": [
+        { "name": "SourceTreeReachable_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 1（src/ 空起步锚点形态＋公共头保留位）；units/reporting.md §11 RPT-T01/§3.1" },
+        { "name": "NoQtInclude_DT_BUILD_NFR_MNT_01", "result": "pass", "trace": "NFR-MNT-01；D-01（零 Qt 含 Core）；RPT-T01 acceptance 2；units/reporting.md §3.2/§1.4" },
+        { "name": "NoEigenOrRwMathDirectInclude_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 2；units/reporting.md §1.4（零 Eigen/rw::math 直接包含）" },
+        { "name": "NoCrossUnitInclude_DT_BUILD_R1_R2", "result": "pass", "trace": "R-1/R-2；P-RPT-9（仅链接零消费——include 面白名单常驻自证）；RPT-T01 acceptance 2/5；units/reporting.md §3.2" },
+        { "name": "PublicHeaderPathLayout_DT_BUILD_R2", "result": "pass", "trace": "NFR-MNT-02；R-2（无私有头出 include）；RPT-T01 acceptance 2；units/reporting.md §3.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingLinkage",
+      "cases": [
+        { "name": "UnitEdgesFourRegistered_DT_BUILD_R1_R2", "result": "pass", "trace": "R-1/R-2/SA-10；RPT-T01 acceptance 2（仅四条登记边——构建图面白名单扫描）；units/reporting.md §3.2/§3.4" },
+        { "name": "NoTestkitEdge_DT_BUILD_T1", "result": "pass", "trace": "T-1（产品目标不链 testkit——落位期零 testkit 引用）；RPT-T01 acceptance 2；units/reporting.md §3.4" },
+        { "name": "RegisteredEdgesPresent_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 1/2（四条登记边存在性——§3.4 PUBLIC 全链）；units/reporting.md §3.4；ARCH §3.5" },
+        { "name": "NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2", "result": "pass", "trace": "P-RPT-1/P-RPT-2（io/runtime/execution 注入形态——公共头零对端类型＋构建图零对端引用）；RPT-T01 acceptance 2/5；units/reporting.md §3.3" }
+      ]
+    }
+  ],
+  "builds": {
+    "integrated": {
+      "configure": "build/ 构建树（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，构建前 grep 复核）——增量重配置随构建自动执行",
+      "build": "cmake --build build --config Release（全量）→ exit 0，零 error（integration-build.log）；契约 verify 两命令逐条 exit 0（--target sdurws_ird_reporting_test / sdurws_ird_reporting_contract_test）",
+      "testRun": "sdurws_ird_reporting_test 5/5＋sdurws_ird_reporting_contract_test 4/4（integration-test-run-*.log＋*-integration.xml）"
+    },
+    "smoke": {
+      "configure": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp12-t01 -DCMAKE_TOOLCHAIN_FILE=<repo>/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/QT/6.11.1/msvc2022_64（vcpkg toolchain 必带——DTB §5.1/CORE-T01 G-2；Qt6 前缀为 ui 单元冒烟所需，UI-T02 同款参数，smoke-configure.log）",
+      "build": "cmake --build build-smoke-wp12-t01 --config Release（全量）→ exit 0，零 error（smoke-build.log；日志中 'Errors.cpp' 等文件名不影响 grep error 计数的解释口径）",
+      "testRun": "两测试目标 5/5＋4/4（smoke-test-run-*.log＋*-smoke.xml）"
+    },
+    "gates": {
+      "irdGates": "ird_gates 目标 exit 1＝27 处命中——与 base 3c77c716 detached worktree 直接 cmake -P 复跑的命中集逐行 diff 完全一致（gates-hit-set-diff.txt，GATES-HIT-SET-IDENTICAL）：本任务新增命中＝0；27 处全部为 findings.json F-227 与 wp10-t02-gate-registrations.md 既有归属（基线 19＋UI-T02 登记 8），非本任务引入、不阻塞（EX-T10 F-221/UI-T02 F-227'不阻塞合入'同口径）。ird_gates 对本任务变更的扫描面（reporting 单元/CMakeLists/新目标）零命中"
+    },
+    "governanceScripts": {
+      "validateTask": "pwsh -File scripts/industrialrobot/validate-task.ps1 -TaskFile tasks/foundation/RPT-T01.json → PASS（validate-task.log）",
+      "validateDocs": "pwsh -File scripts/industrialrobot/validate-docs.ps1 → PASS（20 units, 12 trace entries, 150 task files）（validate-docs.log）"
+    }
+  },
+  "notes": [
+    "acceptance 4（README 复核）：include/sdurws/ird/reporting/README.md 现文指向 units/reporting.md §11（任务拆分）——与 project 家族修正后口径同型（project README→§12）。契约 acceptance 4 与单元卡 §1.2/§3.1 所载'现文已指向 §9'与磁盘不符（卡 v0.1 编写时误记）：本任务如实复核并登记核对结论（README 2026-09-19 行＋本报告 notes）；卡文两处记载随本任务文档同步更正（reporting.md v0.4 变更记录），'不参与编译/不表示已实现'声明保留。该核对结论即 RPT-T13 文档同步的前置事实。",
+    "P-ENV-1 留痕：显式 cxx_std_17＋CXX_STANDARD 17（不用 C++20），双模式构建即 C++17 与框架 C++11 基线混链验证——集成模式与 RobWork 全树混链 exit 0（integration-build.log）、独立冒烟与 vcpkg 工具链混链 exit 0（smoke-build.log）；vcxproj 实测 stdcpp17。",
+    "本报告与 4 份 gtest XML、全部构建/门禁/治理脚本日志均随任务提交留痕于 traceability/builds/wp12-t01/。"
+  ]
+}

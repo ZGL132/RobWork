@@ -13,9 +13,12 @@
 #       test/_contract_test 随落位登记——见 execution/CMakeLists.txt）、ui 已
 #       随 WP-10-T02（≙UI-T02）落地为真实 STATIC 库（R-3 唯一 Qt Widgets
 #       例外目标——链 core/diagnostics/Qt6 三件套，测试目标 sdurws_ird_ui_
-#       test/_contract_test/_gui_test 随落位登记——见 ui/CMakeLists.txt）；
-#       其余 12 个单元仍为 INTERFACE 占位，源码随各自单元任务卡落地，
-#       落地时升级为真实库（CMake 目标名不变）
+#       test/_contract_test/_gui_test 随落位登记——见 ui/CMakeLists.txt）、
+#       reporting 已随 RPT-T01（≙WP-12-T02）落地为真实 STATIC 库（PUBLIC 链
+#       core/evidence/diagnostics/project 四条 ARCH §3.5 登记边，测试目标
+#       sdurws_ird_reporting_test/_contract_test 随落位登记——见
+#       reporting/CMakeLists.txt）；其余 9 个单元仍为 INTERFACE 占位，源码
+#       随各自单元任务卡落地，落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
 # 独立冒烟模式：允许脱离 RobWorkStudio 单独配置本目录（验证目标注册、include
@@ -32,10 +35,9 @@ endif()
 # （下方 add_subdirectory 定义真实 STATIC 库）；本列表仅剩尚未落地的单元。
 # diagnostics 自 DIAG-T02（≙WP-09-T02）、project 自 PRJ-T01（≙WP-04-T01）、
 # io 自 IO-T01（≙WP-11-T02）、execution 自 EX-T01（≙WP-08-T02）、ui 自
-# WP-10-T02（≙UI-T02，R-3 唯一 Qt Widgets 例外目标）起移出（下方
-# add_subdirectory）。
+# WP-10-T02（≙UI-T02，R-3 唯一 Qt Widgets 例外目标）、reporting 自
+# RPT-T01（≙WP-12-T02）起移出（下方 add_subdirectory）。
 set(IRD_MODULES
-    reporting
     modeling requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
 )
@@ -142,6 +144,26 @@ add_subdirectory(execution)
 # 次序约束：必须在 core 与 diagnostics 之后（链接两者目标——ARCH §3.5
 # 登记边，diagnostics 卡 §3.2 已注明 ui 属其消费方）。
 add_subdirectory(ui)
+# reporting（RPT-T01≙WP-12-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、
+# PUBLIC 链 core＋evidence＋diagnostics＋project——ARCH §3.5 四条登记编译
+# 链接边，reporting.md §3.4 原文全链，ird_gates 白名单 "reporting->core"/
+# "reporting->evidence"/"reporting->diagnostics"/"reporting->project" 行），
+# 并新建 reporting/CMakeLists.txt（本注册行即其挂载点）；src/ 空起步＝
+# 锚点翻译单元 Reporting.cpp（PRJ-T01/EX-T01 同款先例，无接口预建——
+# NFR-MNT-04），测试目标 sdurws_ird_reporting_test（单元内红线扫描）/
+# sdurws_ird_reporting_contract_test（构建图边界契约——落位期允许的最小
+# 构建冒烟用例，业务用例与 ScriptedSectionProvider/ScriptedResultSource
+# 替身随 RPT-T02~T12 落地，不在骨架预建占位实现）随本任务登记。
+# P-RPT-1 处置：零 io 编译边（CSV/JSON 写出经注入的 IReportIoFactory——
+# §9.5，P-RPT-1/P-IO-1/P-PR-5 合并裁决前维持注入）；P-RPT-2 处置：零
+# runtime/execution 编译边（IModelSummaryProvider/ITaskStatusSource 注入
+# ——§3.3）；P-RPT-9 处置：四条边仅链接目标不消费上游公共头（各卡 v0.1
+# Draft 基线，冻结 diff 后按影响面增量同步留痕）。零 Qt 含 Core（D-01）、
+# 零 Eigen/rw::math 直接包含（§1.4）、零 testkit（T-1）、零业务域单元
+# （R-1）。次序约束：必须在 core、evidence、diagnostics、project 之后
+# （链接四者目标——ARCH §3.5 登记边，diagnostics 卡 §3.2 已注明
+# reporting 属其消费方）。
+add_subdirectory(reporting)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake

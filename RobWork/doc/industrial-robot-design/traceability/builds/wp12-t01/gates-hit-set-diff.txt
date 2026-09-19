@@ -1,0 +1,13 @@
+ird_gates 命中集合 diff（EX-T10 GATES-IDENTICAL 同型口径——RPT-T01 红线扫描零新增证据）
+
+base   = 3c77c716e74f5e13fd6c8abc546c060ae5752860（detached worktree 直接 cmake -P 复跑）
+branch = wp12-t01 工作树（同口径直接 cmake -P 复跑）
+
+两轮命中集均为 27 处（SUB×17＋LIB×4＋R3×3＋R4×1＋T1×2——全部为 findings.json F-227 与
+wp10-t02-gate-registrations.md 既有归属；ui R3×3 为 DTB §4.5 预登记例外、机器面回填前既知命中）。
+
+diff（路径归一化 IRDRoot 后逐行比对）：
+$(diff gates-hit-set-base.txt gates-hit-set-branch.txt)
+→ 无差异行，GATES-HIT-SET-IDENTICAL：本任务新增命中＝0，既有命中零新增零移除。
+
+命中集合详见 gates-ird-gates-base.log（base）与 gates-ird-gates-branch.log（branch）。
