@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T02",
+  "masterWp": "WP-H（卡内 RPT-T02 行——DTB §2.13 无独立 ≙ 行，T02 属 WP-12-T03『模型部分』上游链的原子前置；RPT-T01 契约 note 同口径）",
+  "branch": "wp12-t02",
+  "base": "612070b167d23a46cc5c9c5654cea10b57227915",
+  "date": "2026-09-19",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式）",
+      "notes": "RPT-T02 增列实现翻译单元：src/Errors.cpp（ReportErrorCode 16 值 token 全表 switch 全枚举＋ReportError 消息拼装〔makeWhat——what()=\"<token>[: <detail>]\"，前缀 'reporting/<域>:' 强制点〕＋suggestedDiagCode 6/16 映射）；src/Identity.cpp（ReportId 自建 Id128 解析/格式化/生成——P-RPT-3 处置：句法遵循 core §4.1 U-1 公开约定但自建实现，不调用 core 头内 detail 非公共契约层〔R-2〕；ReportLevel token 表 level-b/level-c）。公共头新增 include/sdurws/ird/reporting/Errors.hpp（§3.5 原文 16 值枚举＋ReportError＋diagcodes 登记清单 8 常量＋kStableCodes 全量数组）与 Identity.hpp（ReportId/ReportLevel/ReportArchiveState/PublishedReportRecord 六字段——§7.3 原文；core::ContentIdentity 消费＝P-RPT-9 基线 core.md v0.1 §4.2 Draft 签名）。CMakeLists 仅增列源文件，目标名/别名/链接边/编译选项零改动"
+    },
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 14/14）",
+      "notes": "RPT-T01 五条构建红线用例（ReportingBuild 组）保持全绿；RPT-T02 新增 test/ErrorsIdentityTest.cpp 九条：ReportingErrors 组四条（token 全表 16 值与 §3.5 逐字一致——期望表为测试内独立字面防恒真自证；what() 前缀口径与 code() 访问器；RPT-* 登记清单 8 项逐值与收编表一致＋句法字符集下限；建议码映射 6/16 正反例）＋ReportingIdentity 组五条（generate/parse/format 往返 rpt-<32hex>；解析严格性 12 反例族含 tag 隔离/大写/长度/空白/前后缀＋抛出轨 DataInvalid；保留值全零纪律——句法面与值面分离；ReportLevel token 句法 14 反例族＋try/抛双轨；强类型结构面 sizeof==16 静态断言）。纯 reporting 单元内用例——零上游单元头 include（core 消费的跨单元半区在 _contract_test）"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋run-pass（两模式 10/10）",
+      "notes": "RPT-T01 四条构建图契约用例（ReportingLinkage 组）保持全绿；RPT-T02 新增 contract_test/IdentityCrossUnitContractTest.cpp 六条（ReportingIdentityContract 组）——首个上游头消费契约（Reporting.cpp 头注释『首个消费任务（RPT-T02）』行的既定解除点）：①摘要唯一算法与字节等值——core::ContentDigester 消费（同载荷同身份/异载荷异身份/cid- 规范文本往返，reporting 零自建 SHA-256）；②PublishedReportRecord 六字段携带 core::ContentIdentity（记录等值由摘要字节等值驱动；isValid 四判据——§4.2 合法实例发布侧对偶）；③四概念类型边界编译期断言（ReportId↔core::ContentIdentity 无互转/无隐式转换/形状 16 vs 32）＋运行期 tag 隔离（rpt-/cid- 互拒）；④幂等判定按内容身份不按 ReportId（同数据源重建＝新 ReportId＋同内容身份）；⑤身份与路径/名称分离（工件路径变化身份不变；归档目录由 ReportId 编址、内容身份无路径角色）；⑥RPT-* 登记清单与 diagnostics StableCodeRegistry 收编表交叉自证（registerBuiltinCodes 装配后逐码 find：码文本/ownerUnit=reporting/severity 收编值/deprecated=false 一致＋registeredCodes(\"reporting\") 全集恰 8 项——『引用登记非二次定义』的注册表侧证明）。P-RPT-9 基线声明：消费 core.md v0.1 §4.2/§5.2 与 diagnostics v0.1 §9.1 Draft 签名，冻结出 diff 后按影响面增量同步留痕"
+    }
+  ],
+  "testSuites": [
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingBuild",
+      "cases": [
+        { "name": "SourceTreeReachable_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 1（锚点 TU＋公共头保留位）；units/reporting.md §11 RPT-T01/§3.1——RPT-T02 落位后仍全绿（锚点 Reporting.cpp 在位）" },
+        { "name": "NoQtInclude_DT_BUILD_NFR_MNT_01", "result": "pass", "trace": "NFR-MNT-01；D-01（零 Qt 含 Core）——RPT-T02 新增 Errors.hpp/.cpp、Identity.hpp/.cpp 零 Qt 头（扫描面自动覆盖新文件）" },
+        { "name": "NoEigenOrRwMathDirectInclude_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 2；units/reporting.md §1.4——新增源文件零 Eigen/rw::math 直含" },
+        { "name": "NoCrossUnitInclude_DT_BUILD_R1_R2", "result": "pass", "trace": "R-1/R-2——RPT-T02 后白名单内新增 core 消费（Identity.hpp→core/Digest.hpp——登记边内合法；io/runtime/execution/testkit 仍零命中）" },
+        { "name": "PublicHeaderPathLayout_DT_BUILD_R2", "result": "pass", "trace": "NFR-MNT-02；R-2——RPT-T02 新增两公共头均位于 sdurws/ird/reporting/ 命名空间根" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingErrors",
+      "cases": [
+        { "name": "ErrorTokenTable_Full16MatchesDesign_RPT02_ACC2", "result": "pass", "trace": "RPT-T02 acceptance 2（16 token 逐值与 §3.5 清单一致）；units/reporting.md §3.5；需求 NFR-COR-02（同码同串）" },
+        { "name": "ErrorWhatPrefixAndCodeAccess_RPT02_ACC2", "result": "pass", "trace": "RPT-T02 acceptance 2（detail 前缀 'reporting/<域>:' 口径＋code() 访问器）；units/reporting.md §3.5 类契约原文" },
+        { "name": "RptStableCodeList_EightItemsMatchRegistry_RPT02_ACC3", "result": "pass", "trace": "RPT-T02 acceptance 3（8 项码清单登记——字面量级逐值与 diagnostics.md §4.6 收编表一致）；P-RPT-8（登记即按收编表）；ERR-01" },
+        { "name": "SuggestedDiagCodeMapping_SixOfSixteen_RPT02_ACC3", "result": "pass", "trace": "RPT-T02 acceptance 3（引用登记映射面——6/16 有对应建议码、10 值 nullopt、2 项呈现类诊断不入映射）；units/reporting.md §3.5" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ReportingIdentity",
+      "cases": [
+        { "name": "ReportIdRoundtripGenerateParse_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1（身份往返用例——generate/parse/format rpt-<32hex>，完成条件『身份往返用例过』）；units/reporting.md §4.1（句法同 core Id128 约定）；NFR-COR-02" },
+        { "name": "ReportIdParseStrictRejections_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1（解析严格性——tag 隔离/长度/字符集/空白反例族；try* 双轨同判据＋抛出轨 DataInvalid 稳定前缀）；units/reporting.md §4.1/§1.4 异常行" },
+        { "name": "ReportIdReservedZeroValue_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1（保留值——全零＝空，isValid 恒 false，generate 保证非零）；core.md §4.1 U-1 同约定" },
+        { "name": "ReportLevelTokenSyntax_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1（ReportLevel B/C token 句法 level-b/level-c——正例往返＋14 反例族大小写敏感拒绝）；units/reporting.md §4.2 字段表" },
+        { "name": "ReportIdTypeBoundary_NoContentPayload_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1（『ReportId 不承载内容信息』结构面——sizeof==16 纯 tag＋无宽构造入口静态断言）；units/reporting.md §4.1" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingLinkage",
+      "cases": [
+        { "name": "UnitEdgesFourRegistered_DT_BUILD_R1_R2", "result": "pass", "trace": "RPT-T01 acceptance 2——RPT-T02 落位后 CMakeLists 仅增列源文件、链接边零改动，全绿复证" },
+        { "name": "NoTestkitEdge_DT_BUILD_T1", "result": "pass", "trace": "T-1——RPT-T02 零 testkit 消费复证" },
+        { "name": "RegisteredEdgesPresent_DT_BUILD", "result": "pass", "trace": "RPT-T01 acceptance 1/2——四条登记边存在性复证" },
+        { "name": "NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2", "result": "pass", "trace": "P-RPT-1/P-RPT-2——RPT-T02 零 io/runtime/execution 编译边复证（include 面＋构建图面）" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingIdentityContract",
+      "cases": [
+        { "name": "DigestViaCoreDigesterByteEquality_RPT02_ACC4", "result": "pass", "trace": "RPT-T02 acceptance 4（摘要一律 SHA-256 经 core ContentDigester 唯一算法，比较用字节等值）；units/reporting.md §4.1 身份纪律＋CR-02；CON-05" },
+        { "name": "PublishedRecordCarriesCoreIdentity_RPT02_ACC4", "result": "pass", "trace": "RPT-T02 acceptance 4（PublishedReportRecord 六字段与 §7.3 一致——core::ContentIdentity 承载 contentIdentity/manifestDigest；isValid 身份字段纪律）；units/reporting.md §7.3/§4.2" },
+        { "name": "FourConceptTypeBoundary_TagIsolation_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1（四概念互不替代类型边界——ReportId↔core::ContentIdentity 无互转编译期断言＋tag 隔离运行期互拒）；units/reporting.md §4.1；core.md §4.1 强类型纪律" },
+        { "name": "IdempotencyKeyIsContentIdentity_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1（幂等判定不用 ReportId 用内容身份——重建＝新 ReportId＋同内容身份；同 ReportId 不同内容＝冲突）；units/reporting.md §4.1/§7.4" },
+        { "name": "IdentityIndependentOfPathsAndNames_RPT02_ACC1", "result": "pass", "trace": "RPT-T02 acceptance 1（内容身份与磁盘路径/显示名称分离——路径变化身份不变；归档目录由 ReportId 编址 reports/<report-id>/）；units/reporting.md §4.1/§7.3" },
+        { "name": "RptCodesConsistentWithStableCodeRegistry_RPT02_ACC3", "result": "pass", "trace": "RPT-T02 acceptance 3（码清单登记与 diagnostics 收编表一致——registerBuiltinCodes 装配后逐码 find/ownerUnit/severity/deprecated 断言＋registeredCodes(\"reporting\") 全集恰 8）；P-RPT-8『引用登记非二次定义』注册表侧自证；units/diagnostics.md §4.6" }
+      ]
+    }
+  ],
+  "builds": {
+    "integrated": {
+      "configure": "build/ 构建树（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，构建前 grep 复核缓存原行——AGENTS §4.1 口径）",
+      "build": "cmake --build build --config Release（全量增量）→ exit 0，': error'/': fatal error' 计数 0（integration-build.log）；契约 verify 两命令逐条 exit 0（--target sdurws_ird_reporting_test / sdurws_ird_reporting_contract_test）",
+      "testRun": "sdurws_ird_reporting_test 14/14＋sdurws_ird_reporting_contract_test 10/10（integration-test-run-*.log＋*-integration.xml，failures=0）"
+    },
+    "smoke": {
+      "configure": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp12-t02 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（vcpkg toolchain 必带——DTB §5.1/CORE-T01 G-2；Qt6 前缀为 testkit_qt 配置面所需，RPT-T01 同款参数，smoke-configure.log）",
+      "build": "cmake --build build-smoke-wp12-t02 --config Release（全量）→ exit 0，错误计数 0（smoke-build.log）",
+      "testRun": "sdurws_ird_reporting_test 14/14＋sdurws_ird_reporting_contract_test 10/10（smoke-test-run-*.log＋*-smoke.xml，failures=0）"
+    },
+    "gates": {
+      "tool": "ird_gates（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake，WP-01-T01 落地）——cmake -DIRD_ROOT=<各树>/industrialrobot -DIRD_ENABLE_GIT=OFF -P ird_gates.cmake",
+      "result": "base（612070b1 detached worktree 复跑）与 branch（wp12-t02 工作树）去重命中集各 27 项、归一化 IRDRoot 后逐行 diff 零差异——GATES-HIT-SET-IDENTICAL（gates-hit-set-diff.txt）；27 项全为 F-227/wp10-t02-gate-registrations.md 既有归属，零 reporting 命中"
+    },
+    "governance": {
+      "validateTask": "pwsh -File scripts/industrialrobot/validate-task.ps1 -TaskFile doc/industrial-robot-design/tasks/foundation/RPT-T02.json → PASS (1 tasks)（validate-task.log）",
+      "validateDocs": "pwsh -File scripts/industrialrobot/validate-docs.ps1 → PASS (20 units, 12 trace entries, 150 task files)（validate-docs.log）"
+    }
+  },
+  "acceptanceCoverage": [
+    { "item": 1, "covered": "身份往返/token/保留值/四概念类型边界：ReportingIdentity 5 用例＋ReportingIdentityContract.FourConceptTypeBoundary_TagIsolation/IdempotencyKeyIsContentIdentity/IdentityIndependentOfPathsAndNames（单测＋契约测试双面）" },
+    { "item": 2, "covered": "16 token 全表＋ReportError 前缀＋try* 约定声明：ReportingErrors.ErrorTokenTable_Full16MatchesDesign/ErrorWhatPrefixAndCodeAccess（头文件契约注释声明 try* 双轨——§1.4 异常行）" },
+    { "item": 3, "covered": "RPT-* 8 项登记：ReportingErrors.RptStableCodeList_EightItemsMatchRegistry/SuggestedDiagCodeMapping（字面量面）＋ReportingIdentityContract.RptCodesConsistentWithStableCodeRegistry（注册表交叉面）" },
+    { "item": 4, "covered": "PublishedReportRecord/ReportLevel 落位 Identity.hpp：ReportingIdentityContract.DigestViaCoreDigesterByteEquality/PublishedRecordCarriesCoreIdentity（§7.3 六字段＋SHA-256 唯一算法＋字节等值）" },
+    { "item": 5, "covered": "陷阱处置：P-RPT-3（自建 tag——Identity.hpp/.cpp 头注释处置声明＋tag 隔离用例；零 core 修改）；P-RPT-8（登记即按收编表——acceptance 3 双面用例）；P-RPT-9（core v0.1 Draft 基线——头注释基线声明＋消费面锚定，冻结 diff 后增量同步）" }
+  ]
+}

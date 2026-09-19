@@ -72,8 +72,15 @@ find_package(GTest CONFIG REQUIRED)
 # 等同先例，零源码 STATIC 在 CMake 生成期即报"No SOURCES given to target"，
 # 实测）。RPT-T02+ 按本卡 §11 逐任务增列同名任务文件（落位安排登记于
 # Reporting.cpp 文件头），锚点文件届时或承载共享工具或拆除。
+# RPT-T02 增列（§11 RPT-T02 行产物：Errors.hpp/.cpp、Identity.hpp＋实现）：
+#   - src/Errors.cpp——ReportErrorCode token 全表＋ReportError 消息拼装＋
+#     RPT-* 建议码映射（§3.5）；
+#   - src/Identity.cpp——ReportId 解析/格式化/生成（自建 Id128 实现，
+#     P-RPT-3）＋ReportLevel token 表（§4.1/§4.2）。
 add_library(sdurws_ird_reporting STATIC
-    src/Reporting.cpp)
+    src/Reporting.cpp
+    src/Errors.cpp
+    src/Identity.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——reporting 公共头将
@@ -144,7 +151,8 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_reporting_test
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/ErrorsIdentityTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_test PROPERTIES
@@ -188,12 +196,16 @@ add_custom_command(TARGET sdurws_ird_reporting_test POST_BUILD
 # §3.4 测试目标分工：`_contract_test`＝跨单元契约面。RPT-T01 首批＝构建图
 # 边界契约（四条登记边必须真实存在＋零表外同层边＋零 testkit 边＋零 io/
 # runtime/execution 编译边——P-RPT-1/P-RPT-2 注入形态的具名自证）；
-# 与 core/evidence 值类型往返、与 project 工件汇集座〔fake IReportArtifactSink〕、
-# 与 io 写出设施〔注入 fake〕协作的行为级契约随 RPT-T09/T11 落地于
-# contract_test/（§11 RPT-T11 行"contract_test/*"），届时按 T-1 允许形态
+# RPT-T02 增列 contract_test/IdentityCrossUnitContractTest.cpp＝首个上游头
+# 消费契约（core::ContentIdentity/ContentDigester 摘要唯一算法与字节等值
+# 消费、diagnostics StableCodeRegistry 的 RPT-* 收编一致性——§3.2 C-1/C-3
+# 消费行，P-RPT-9 基线＝core.md v0.1 Draft）；与 project 工件汇集座
+# 〔fake IReportArtifactSink〕、与 io 写出设施〔注入 fake〕的协作随 RPT-T09/
+# T11 落地于 contract_test/（§11 RPT-T11 行），届时按 T-1 允许形态
 # 登记 testkit 消费并同步增量修订本文件白名单扫描用例（不可静默越界）。
 add_executable(sdurws_ird_reporting_contract_test
-    contract_test/LinkageContractTest.cpp)
+    contract_test/LinkageContractTest.cpp
+    contract_test/IdentityCrossUnitContractTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_contract_test PROPERTIES

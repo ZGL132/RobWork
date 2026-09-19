@@ -1,0 +1,7 @@
+ird_gates 命中集合 diff（EX-T10 GATES-IDENTICAL 同型口径——RPT-T02 红线扫描零新增证据）
+
+base   = 612070b167d23a46cc5c9c5654cea10b57227915（detached worktree 直接 cmake -P 复跑）
+branch = wp12-t02 工作树（同口径直接 cmake -P 复跑）
+
+两侧去重命中集各 27 项（全为 F-227/wp10-t02-gate-registrations.md 既有归属，零 reporting 命中）；
+归一化 IRDRoot 后逐行 diff 输出为空（GATES-HIT-SET-IDENTICAL——下方无任何差异行）：

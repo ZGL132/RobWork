@@ -1,0 +1,32 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 10 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from ReportingLinkage
+[ RUN      ] ReportingLinkage.UnitEdgesFourRegistered_DT_BUILD_R1_R2
+[       OK ] ReportingLinkage.UnitEdgesFourRegistered_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] ReportingLinkage.NoTestkitEdge_DT_BUILD_T1
+[       OK ] ReportingLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+[ RUN      ] ReportingLinkage.RegisteredEdgesPresent_DT_BUILD
+[       OK ] ReportingLinkage.RegisteredEdgesPresent_DT_BUILD (0 ms)
+[ RUN      ] ReportingLinkage.NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2
+[       OK ] ReportingLinkage.NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2 (1 ms)
+[----------] 4 tests from ReportingLinkage (3 ms total)
+
+[----------] 6 tests from ReportingIdentityContract
+[ RUN      ] ReportingIdentityContract.DigestViaCoreDigesterByteEquality_RPT02_ACC4
+[       OK ] ReportingIdentityContract.DigestViaCoreDigesterByteEquality_RPT02_ACC4 (0 ms)
+[ RUN      ] ReportingIdentityContract.PublishedRecordCarriesCoreIdentity_RPT02_ACC4
+[       OK ] ReportingIdentityContract.PublishedRecordCarriesCoreIdentity_RPT02_ACC4 (0 ms)
+[ RUN      ] ReportingIdentityContract.FourConceptTypeBoundary_TagIsolation_RPT02_ACC1
+[       OK ] ReportingIdentityContract.FourConceptTypeBoundary_TagIsolation_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentityContract.IdempotencyKeyIsContentIdentity_RPT02_ACC1
+[       OK ] ReportingIdentityContract.IdempotencyKeyIsContentIdentity_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentityContract.IdentityIndependentOfPathsAndNames_RPT02_ACC1
+[       OK ] ReportingIdentityContract.IdentityIndependentOfPathsAndNames_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentityContract.RptCodesConsistentWithStableCodeRegistry_RPT02_ACC3
+[       OK ] ReportingIdentityContract.RptCodesConsistentWithStableCodeRegistry_RPT02_ACC3 (0 ms)
+[----------] 6 tests from ReportingIdentityContract (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 2 test suites ran. (4 ms total)
+[  PASSED  ] 10 tests.
