@@ -1,0 +1,34 @@
+# WP-10-T02（UI-T02）ird_gates 命中集合 diff（EX-T10 GATES-IDENTICAL 同型口径）
+
+- 基线：base 4d827120c5a28b7cbcec9adf7aa089d66688fb54（detached worktree 复跑
+  `cmake -DIRD_ROOT=<base>/.../industrialrobot -DIRD_ENABLE_GIT=OFF -P cmake/ird_gates.cmake`，
+  2026-09-19 实测）——19 处命中（SUB×13＋LIB×4＋T1×1＋R4×1，全部为
+  findings.json/DTB §4.5 既有归属）。
+- 变更后：本分支工作树（`cmake --build build --config Release --target ird_gates`，
+  2026-09-19 实测）——27 处命中（SUB×17＋LIB×4×T1×2＋R3×3＋R4×1）。
+- 结论：既有 19 处零新增零移除；**新增 8 处，全部为契约明文要求的合法形态、
+  门禁机器面数据滞后所致**，已随任务登记（findings.json F-227＋登记提交件
+  traceability/wp10-t02-gate-registrations.md，机器面回填责任方 WP-01-T03）：
+
+| # | 命中 | 归因 | 依据 |
+| --- | --- | --- | --- |
+| 1 | R3: sdurws_ird_ui → Qt6::Core | 契约 acceptance 1 明文"PUBLIC 链 Qt Core/Gui/Widgets"（ui.md §3.1 R-3 唯一例外目标）；DTB §4.5 人工登记册已预登记该例外"预登记（WP-10-T02 生效）"，机器面 IRD_R3_EXCEPTION_TARGETS 条目待 WP-01-T03 回填 | NFR-MNT-01；tasks/foundation/UI-T02.json acceptance 1/2 |
+| 2 | R3: sdurws_ird_ui → Qt6::Gui | 同上 | 同上 |
+| 3 | R3: sdurws_ird_ui → Qt6::Widgets | 同上（Widgets 即 R-3 例外的本体） | 同上 |
+| 4 | SUB: sdurws_ird_ui_test → testkit | T-1 允许形态（测试目标链 testkit——RecordListener 报告设施），F-221/F-173/F-115 同型；全仓既有 12 个测试目标同形态基线 | testkit.md §2.4；DTB §5.5 测试 main 自持 |
+| 5 | SUB: sdurws_ird_ui_contract_test → testkit | 同上 | 同上 |
+| 6 | SUB: sdurws_ird_ui_gui_test → testkit | 同上 | 同上 |
+| 7 | SUB: ui_gui_test → sdurws_ird_ui | ird_gates 形态解析词表不含 `_gui_test` 后缀（`[a-z]+_` 不匹配下划线），sdurws_ird_ui_gui_test 被判 other 形态、其"被测目标"链接被按产品面表外边检查——目标名为 ui.md §3.1 v0.2 更正后的设计权威名，不可更名；机器面解析规则扩展待 WP-01-T03 | ui.md §3.1/§12.1；acceptance 3 |
+| 8 | T1: sdurws_ird_ui_gui_test → testkit | 同 7（形态误判致 T-1 按产品目标检查；该目标实为测试目标，T-1 允许形态） | 同 4/7 |
+
+## 机器可读骨架（本目录同源文件）
+
+- `gates-hits-base.txt` / `gates-hits-after.txt`：两轮命中的原始行抽取（命中
+  行含中文消息，因 msbuild/console 编码管线不同呈现不同乱码形态——两轮的
+  ASCII 骨架（命中码＋目标名）一致可比）。
+- `gates-hits-base-skel.txt` / `gates-hits-after-skel.txt`：每行仅保留命中码
+  与首个 ird/Qt/三方目标 token 的骨架；diff 结论即上表 8 行
+  （3×R3＋4×SUB＋1×T1；其中 2 行 SUB 的目标 token 因乱码吃字为空，对应
+  上表 #6/#7，与 gates-ird-gates-target.log 原始输出互证）。
+- `gates-ird-gates-target.log`：变更后全量门禁运行日志（构建树目标形态）。
+- `gates-ird-gates-target-base.log`：基线全量门禁运行日志（detached worktree）。

@@ -2275,6 +2275,16 @@
       "title": "F-012/F-023/F-024/F-026/F-027/F-030/F-119/F-176/F-205/F-208/F-210/F-211/F-214/F-215/F-218/F-222 家族再现（EX-T10 三个提交中两个标题前缀后名词开头非动词开头）：76590c98「EX-T10 零偏差核对执行留痕：两套件复跑、ird_gates 基线比对、治理脚本证据」以任务 ID 名词开头；0b645259「execution 单元卡 v0.12 文档与门禁同步登记…」以名词短语开头（df619a24「提交…」合规）——正文四段齐备、验证结论经验收者独立复现全部为真，仅标题格式复发",
       "owner": "实施纪律（DTB §5 会话流程所有者）；治理面可在 validate-task/CI 提交检查中加标题动词校验（归 WP-01 治理链裁决，与 F-012 家族既有处置建议同批）",
       "resolution": "后续提交标题前缀后改动词开头（如「登记…」「同步…」「提交…」「落位…」）。不阻塞合入。编号顺延自 F-225。验收判定不受影响：EX-T10 attempt 1 verdict=pass。"
+    },
+    {
+      "id": "F-227",
+      "source": "UI-T02 实施段 ird_gates 自查（2026-09-19，分支 wp10-t02，base 4d827120；命中集 diff＝traceability/builds/wp10-t02/gates-hit-set-diff.txt，基线经 detached worktree 复跑实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "title": "ird_gates 机器面数据滞后于契约明文交付面，UI-T02 落位新增 8 处命中（既有 19 处零新增零移除，diff 实证）：①3×R3——sdurws_ird_ui PUBLIC 链 Qt6::Core/Gui/Widgets（tasks/foundation/UI-T02.json acceptance 1 明文、units/ui.md §3.1「R-3 唯一例外登记目标」；DTB §4.5 人工登记册已预登记该例外「预登记（WP-10-T02 生效）」，机器面 IRD_R3_EXCEPTION_TARGETS 仍为空册——白名单文件头自述「以 DTB §4.5 为准、机器面随登记同步回填」）；②3×SUB——三个 ui 测试目标（test/contract_test/gui_test）直链 sdurws_ird_testkit（T-1 允许形态：测试目标消费 RecordListener 报告设施，F-173/F-115/F-221 同型，全仓 12 个测试目标基线同形态）；③1×SUB＋1×T1——sdurws_ird_ui_gui_test 被 ird_gates 形态解析判 other（ird_classify_target 的 [a-z]+ 词表不含下划线、无 _gui_test 词），其「被测目标 sdurws_ird_ui」链接被按产品面表外边检查、「testkit」链接被按产品目标 T-1 检查——目标名为 ui.md §3.1 v0.2 更正后的设计权威名不可更名。全部命中为契约明文要求的合法形态，非红线实质违反",
+      "owner": "WP-01-T03（cmake/ird_gates_whitelist.cmake 机器面登记与 ird_gates.cmake 形态解析词表维护方；两文件均不在 UI-T02 allowedFiles，任务侧以登记提交件 traceability/wp10-t02-gate-registrations.md 提交清单，不代行门禁数据改动——EX-T10 提交件先例同口径）",
+      "resolution": "回填清单：①IRD_R3_EXCEPTION_TARGETS 增补 sdurws_ird_ui（登记文本注明「仅 ui」精确范围＝sdurws_ird_ui 与 ui.md §3.3 所列 ui 测试目标，任何其他目标出现 Widgets 头即构建失败）；②ird_gates.cmake ird_classify_target 增补 _gui_test 目标族识别（test 形态；或等价的白名单形态机制）。回填后 gate-all 预期命中回归基线 19（ui 面 8 处全消）；后续 UI-T03+ 引入 Qt 头包含与 workflow GUI 测试目标时同面扩展（含 4b 步单元级扫描的 ui/testkit_qt 例外形态，届时一并登记）。本条不阻塞 UI-T02 验收（命中均为契约明文＋人工登记册已登记/同型既有先例——EX-T10 F-221「不阻塞合入」同口径）。编号顺延自 F-226。"
     }
   ]
 }
