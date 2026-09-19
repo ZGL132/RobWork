@@ -1,0 +1,17 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from ReportingLinkage
+[ RUN      ] ReportingLinkage.UnitEdgesFourRegistered_DT_BUILD_R1_R2
+[       OK ] ReportingLinkage.UnitEdgesFourRegistered_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] ReportingLinkage.NoTestkitEdge_DT_BUILD_T1
+[       OK ] ReportingLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+[ RUN      ] ReportingLinkage.RegisteredEdgesPresent_DT_BUILD
+[       OK ] ReportingLinkage.RegisteredEdgesPresent_DT_BUILD (0 ms)
+[ RUN      ] ReportingLinkage.NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2
+[       OK ] ReportingLinkage.NoIoRuntimeExecutionCompileEdge_DT_BUILD_PRPT1_PRPT2 (0 ms)
+[----------] 4 tests from ReportingLinkage (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 4 tests.

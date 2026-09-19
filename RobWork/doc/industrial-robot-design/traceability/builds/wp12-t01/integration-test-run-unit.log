@@ -1,0 +1,19 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from ReportingBuild
+[ RUN      ] ReportingBuild.SourceTreeReachable_DT_BUILD
+[       OK ] ReportingBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] ReportingBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] ReportingBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (0 ms)
+[ RUN      ] ReportingBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] ReportingBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (0 ms)
+[ RUN      ] ReportingBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] ReportingBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] ReportingBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] ReportingBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 5 tests from ReportingBuild (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (2 ms total)
+[  PASSED  ] 5 tests.
