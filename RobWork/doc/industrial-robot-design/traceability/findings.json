@@ -2387,6 +2387,26 @@
       "title": "F-232/F-233/F-234 同族再现：RPT-T05 两辅助提交 d24adf7d『[RPT-T05] reporting 单元卡 v0.8：RPT-T05 实现落位登记（文档同步）』与 d14eab5c『[RPT-T05] 验证留痕：双模式构建/测试执行/门禁/治理自查证据（wp12-t05）』标题均以名词短语开头（实现提交 6a9aba31『[RPT-T05] 实现报告构建器…』合规）——家族第 6/7 例（RPT 系连续四任务复踩）；两提交正文四段齐备、验证结论与验收者亲测一致，纯风格瑕疵不构成阻断",
       "owner": "AGENTS.md/PIPE 文档所有者（提交信息约定维护方；与 F-012/F-232/F-233/F-234 家族合并处置）",
       "resolution": "与 F-012/F-232/F-233/F-234 合并处置：实施者模板补动词开头示例与负例（F-012 建议②）落地前预计持续再现。对已推送历史不追溯改写（AGENTS §6.3）。不阻塞 RPT-T05 合入（attempt 1 verdict=pass）。编号顺延自 F-236。"
+    },
+    {
+      "id": "F-238",
+      "source": "traceability/acceptance/RPT-T06-20260920.md#4.9／发现的问题-G-1（attempt 1，verdict=pass，2026-09-20；送验对象 6dc1b140ead7b6e100772d4bbac4640a83efed2a，分支 wp12-t06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-041/F-073/F-236 同族再现（散文计数失准）：RPT-T06 留痕提交 6dc1b140 正文汇总短语『新增 traceability/builds/wp12-t06/ 九件留痕』与实际入库 17 件不符（8 个要点组；『九件』在件数/组数任一口径下均不成立）。方向为少报：要点组已完整枚举全部 17 件（ird-test-report.json＋四份 gtest XML＋11 份 .log＋gates-hit-set-diff.txt）且全部实际在库（验收者 git ls-tree 17/17 实证——F-010 幻影家族零复踩），纯汇总计数笔误；本任务其余散文计数（RenderTest 16 条、契约测试 7 条、单元 94＝78＋16、契约 25＝18＋7、新增 23/既有 96）经验收者 grep ^TEST 与双模式亲跑全部准确",
+      "owner": "reporting 单元实施者（后续 RPT-T07+ 提交与报告的散文计数自清点核对——F-236 同 owner 同口径）；F-041/F-073/F-236 家族可在治理面合并处置",
+      "resolution": "随 F-236 家族合并处置：报告/提交散文计数以 ls-tree/XML 顶格实测为准，或以要点组逐件枚举替代汇总基数；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T06 合入（attempt 1 verdict=pass）。编号顺延自 F-237。"
+    },
+    {
+      "id": "F-239",
+      "source": "traceability/acceptance/RPT-T06-20260920.md#4.9／发现的问题-G-2（attempt 1，verdict=pass，2026-09-20；送验对象 6dc1b140ead7b6e100772d4bbac4640a83efed2a，分支 wp12-t06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-012/F-232/F-233/F-234/F-237 同族再现：RPT-T06 两辅助提交 8ebebc41『[RPT-T06] reporting 单元卡 v0.9：RPT-T06 实现落位登记（文档同步）』与 6dc1b140『[RPT-T06] 验证留痕：双模式构建/测试执行/门禁/治理自查证据（wp12-t06）』标题均以名词短语开头（实现提交 a11b6038『[RPT-T06] 实现报告渲染器…』动词开头合规）——家族第 8/9 例（RPT 系连续五任务复踩）；两提交正文四段齐备、验证结论与验收者亲测一致，纯风格瑕疵不构成阻断",
+      "owner": "AGENTS.md/PIPE 文档所有者（提交信息约定维护方；与 F-012/F-232/F-233/F-234/F-237 家族合并处置）",
+      "resolution": "与 F-012/F-232/F-233/F-234/F-237 合并处置：实施者模板补动词开头示例与负例（F-012 建议②）落地前预计持续再现。对已推送历史不追溯改写（AGENTS §6.3）。不阻塞 RPT-T06 合入（attempt 1 verdict=pass）。编号顺延自 F-238。"
     }
   ]
 }
