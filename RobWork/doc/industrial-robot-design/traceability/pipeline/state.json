@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 223,
+  "tickCount": 228,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-20T04:16:03+08:00",
+    "updatedAt": "2026-09-20T06:20:13+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1328,6 +1328,18 @@
       "acceptanceRecord": "traceability/acceptance/RPT-T05-20260920.md",
       "mergedAt": "2026-09-20",
       "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因会话中断租约到期（零提交、零消账、遗留未提交现场 5 件），§4.2 重派续作完成，attempts.implement=1"
+    },
+    {
+      "task": "RPT-T06",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "a11b603824e6702af33b1f229081f4e8766bb1b5",
+        "8ebebc417cf2499a1a77257446be39e87496109d",
+        "6dc1b140ead7b6e100772d4bbac4640a83efed2a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T06-20260920.md",
+      "mergedAt": "2026-09-20"
     }
   ],
   "policy": {
@@ -1353,11 +1365,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "RPT-T06",
-      "contractPath": "tasks/foundation/RPT-T06.json",
-      "branch": "wp12-t06"
-    },
     {
       "taskId": "RPT-T07",
       "contractPath": "tasks/foundation/RPT-T07.json",
@@ -1462,5 +1469,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "b4ff4788-5849-4cfc-bc62-fe2c9e8e248c"
+  "tickToken": "a37cb7af-f72a-4842-9eb8-d6048cc2ca8e"
 }

@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现渲染器（FieldMatrix 提取＋HTML/JSON/CSV 三格式）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["RPT-T05"],
   "requirements": ["RPT-02", "NFR-SEC-07"],
   "designRefs": [
