@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现报告构建器（会话状态机/锚定/资格与当前性快照/冻结）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["RPT-T04", "EV-T08", "PRJ-T09"],
   "requirements": ["RPT-01-B", "NFR-COR-04", "TASK-02", "CON-02"],
   "designRefs": [

@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 221,
+  "tickCount": 223,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -14,10 +14,10 @@
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 1
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-19T22:03:39+08:00",
+    "updatedAt": "2026-09-20T04:16:03+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1315,6 +1315,19 @@
       "acceptanceRecord": "traceability/acceptance/RPT-T04-20260919.md",
       "mergedAt": "2026-09-19",
       "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因环境人机验证超时中断（零提交、零消账），当即重派成功，attempts.implement 保持 0"
+    },
+    {
+      "task": "RPT-T05",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "6a9aba31215435c63f8148e7519f7a21d21526b6",
+        "d24adf7dd30ae93bd79cc2c5f92fe547a7f483df",
+        "d14eab5c595702a41c72815a8ae76b7f299b26c7"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T05-20260920.md",
+      "mergedAt": "2026-09-20",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因会话中断租约到期（零提交、零消账、遗留未提交现场 5 件），§4.2 重派续作完成，attempts.implement=1"
     }
   ],
   "policy": {
@@ -1340,11 +1353,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "RPT-T05",
-      "contractPath": "tasks/foundation/RPT-T05.json",
-      "branch": "wp12-t05"
-    },
     {
       "taskId": "RPT-T06",
       "contractPath": "tasks/foundation/RPT-T06.json",
@@ -1454,5 +1462,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "f912f4f7-4002-4a0a-b95b-622767168400"
+  "tickToken": "b4ff4788-5849-4cfc-bc62-fe2c9e8e248c"
 }
