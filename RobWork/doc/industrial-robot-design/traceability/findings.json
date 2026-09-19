@@ -2367,6 +2367,26 @@
       "title": "验收者全新 worktree 全量集成构建中框架 RobWorkSim 的 RWSimulatorPlugin 目标出现 73 条编译错误（VelocityScrew6D.hpp 的 rw::rw::math 双重命名空间＋RW__message 宏污染形态），整体 exit 1——三重归因＝环境性、非送验对象引入：①该头文件 base(c22cef67) 与 head(0310e31c) 的 blob SHA 完全相同（5b9f1714…，git ls-tree 实证）；②送验 diff 零框架文件触碰；③主构建树（同机同参数同源码）构建 --target RWSimulatorPlugin exit 0 成功。两侧 CMakeCache 的 Eigen3/Bullet 解析路径逐字一致（同一 vcpkg installed 树），根因在更深层的全新构建树差异——疑 F-007 同族（全新树构建面环境问题；F-007 的 ini.template 缺件本次同样亲历并按其 resolution 复制样板后配置成功）。送验交付面（industrialrobot 全目标）零错误可复现成立，不阻断 RPT-T04 验收",
       "owner": "构建约定所有者（DTB §5.1 辖域；与 F-007 可合并调查）",
       "resolution": "调查『同机同参数下全新集成构建树 vs 既有构建树』的 RobWorkSim/RWSimulatorPlugin 编译差异根因（建议在干净 worktree 复跑并对比 vcxproj 的 AdditionalIncludeDirectories/PreprocessorDefinitions 与 PCH 配置）；如确认全新树环境缺陷，登记进 AGENTS §4.1 或 F-007 的全新树配置口径，避免后续验收环境反复踩中。不阻塞 RPT-T04 合入（attempt 1 verdict=pass）。编号顺延自 F-234。"
+    },
+    {
+      "id": "F-236",
+      "source": "traceability/acceptance/RPT-T05-20260920.md#4.10／发现的问题-G-1（attempt 1，verdict=pass，2026-09-20；送验对象 d14eab5c595702a41c72815a8ae76b7f299b26c7，分支 wp12-t05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-041/F-073 同族再现（散文计数失准）：RPT-T05 三处散文测试计数与在库实测不符——提交 6a9aba31 正文与单元卡 v0.8（d24adf7d）均写『test/BuilderTest.cpp 二十三条（ReportBuildSessionTest 五条＋ReviewReportBuilderTest 十八条）』、ird-test-report.json notes 与留痕提交 d14eab5c 正文写『RPT-T05 新增 26 用例』，而验收者实测 grep ^TEST 计 28 条（ReportBuildSessionTest 五条＋ReviewReportBuilderTest 二十三条），XML 顶格 tests=\"78\"＝RPT-T04 交付面 50＋28 自洽（contract 18＝15＋3 一致）。四份 gtest XML 与验收者双模式亲跑（78/78＋18/18 全绿）真实无虚——三处散文计数（23/26）均小于实测 28，新增用例多于声称、无缩水行为，纯计数笔误；同一份产物内执行数据（XML 顶格/report targets.result 段）与散文计数（notes/提交正文/单元卡）不一致",
+      "owner": "reporting 单元实施者（后续 RPT-T06+ 提交与报告的散文计数自清点核对）；F-041/F-073 家族可在治理面合并处置（如收尾脚本增加 grep ^TEST 实测与散文计数核对步骤）",
+      "resolution": "随 RPT-T06+ 的报告与提交修正计数习惯：散文计数以 grep '^TEST' 实测为准，或直接引用 XML 顶格数与既有基线差值；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T05 合入（attempt 1 verdict=pass）。编号顺延自 F-235。"
+    },
+    {
+      "id": "F-237",
+      "source": "traceability/acceptance/RPT-T05-20260920.md#4.9／发现的问题-G-2（attempt 1，verdict=pass，2026-09-20；送验对象 d14eab5c595702a41c72815a8ae76b7f299b26c7，分支 wp12-t05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-232/F-233/F-234 同族再现：RPT-T05 两辅助提交 d24adf7d『[RPT-T05] reporting 单元卡 v0.8：RPT-T05 实现落位登记（文档同步）』与 d14eab5c『[RPT-T05] 验证留痕：双模式构建/测试执行/门禁/治理自查证据（wp12-t05）』标题均以名词短语开头（实现提交 6a9aba31『[RPT-T05] 实现报告构建器…』合规）——家族第 6/7 例（RPT 系连续四任务复踩）；两提交正文四段齐备、验证结论与验收者亲测一致，纯风格瑕疵不构成阻断",
+      "owner": "AGENTS.md/PIPE 文档所有者（提交信息约定维护方；与 F-012/F-232/F-233/F-234 家族合并处置）",
+      "resolution": "与 F-012/F-232/F-233/F-234 合并处置：实施者模板补动词开头示例与负例（F-012 建议②）落地前预计持续再现。对已推送历史不追溯改写（AGENTS §6.3）。不阻塞 RPT-T05 合入（attempt 1 verdict=pass）。编号顺延自 F-236。"
     }
   ]
 }
