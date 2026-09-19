@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.3（RPT 编译批次评审驱动的两处任务号漂移校正；v0.2＝全链一致性审计消账、v0.1＝首版草案） |
+| 文档版本 | v0.4（RPT-T01 构建落位登记——卡头构建落位行更新＋README 指向复核〔"指向 §9"误记更正为 §11〕；v0.3＝RPT 编译批次评审驱动的两处任务号漂移校正、v0.2＝全链一致性审计消账、v0.1＝首版草案） |
 | 日期 | 2026-09-19 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试通过或正式验收） |
 | 文档代号 | UNIT-REPORTING |
@@ -12,7 +12,7 @@
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.11（`Draft`，待评审）** |
 | 协作输入 | `units/core.md`、`units/testkit.md`、`units/project.md`、`units/evidence.md`、`units/runtime.md`、`units/policy.md`、`units/execution.md`、`units/diagnostics.md`、`units/io.md`、`units/ui.md`——均 v0.1（`Draft`，未冻结）；本文消费的 core/evidence 契约以各卡 v0.1 签名为基线逐项登记（§3.2），上游冻结版本变更时按影响面增量同步（待裁决 P-RPT-9） |
 | 上游下游链位置 | ARCHITECTURE §11.1 / DETAILED-DESIGN.md：`units/reporting.md` 为 20 单元任务卡之一；对应 development-task-breakdown **WP-12-T01**（"编写 reporting 单元任务卡"）的产物；主 WP 归属 WP-H、WP-I（DETAILED-DESIGN 20 单元状态表；实施任务 WP-12-T02～T09 见 dtb §2.13） |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/`（骨架已建：目标 `sdurws_ird_reporting`〔INTERFACE 占位〕＋别名 `RWS::ird::reporting`＋公共头保留位 `include/sdurws/ird/reporting/README.md`；README 引用本文 §9〔公共接口〕作为源码落位依据，与本文结构一致——实测核对） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/`（**已随 RPT-T01 落位〔2026-09-19〕**：目标 `sdurws_ird_reporting` 升级 STATIC〔C++17、PUBLIC 链 core＋evidence＋diagnostics＋project——ARCH §3.5 四条登记编译链接边，§3.4 原文全链；P-RPT-1 处置零 io 编译边〔IReportIoFactory 注入〕、零 runtime/execution 编译边；零 Qt 含 Core——D-01；src/ 空起步锚点翻译单元 `Reporting.cpp`——STATIC 库最小翻译单元先例形态，CORE-T01/POL-T01/DIAG-T02/PRJ-T01/EX-T01 同款，无接口预建〕，别名 `RWS::ird::reporting`；测试目标 `sdurws_ird_reporting_test`/`sdurws_ird_reporting_contract_test` 已按 DTB §5.5 注册〔gtest vcpkg 接入；落位期最小构建冒烟用例，替身与 RP-\* 用例体随 RPT-T11〕；配置期红线守卫就位。公共头保留位 `include/sdurws/ird/reporting/README.md` 指向本文 **§11**〔任务拆分〕——卡 v0.1~v0.3 此处与 §3.1 所载"指向 §9"与磁盘不符，RPT-T01 复核更正（PRJ-T01 家族同型偏差），核对结论见 traceability/builds/wp12-t01/；"不参与编译/不表示已实现"声明保留；§3.1 契约头随 RPT-T02+ 落地。见单元 `reporting/CMakeLists.txt` 与上级 `industrialrobot/CMakeLists.txt`） |
 | 任务包 | WP-12（报告；RPT-01～06 主 WP；NFR-COR-04 主 WP〔与 WP-05/23 共同承载〕；REQUIREMENTS §3 阶段 B/C〔首用阶段 B〕） |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释、框架零源码修改、双模式构建与留痕、提交后推送。Windows Qt GUI 测试须在 VS x64 环境设 `QT_QPA_PLATFORM=windows`，逐个绝对路径启动。 |
 | 实现口径 | 从头构建（REQUIREMENTS v1.9/v1.11、ARCHITECTURE 文档头）；`old/` 历史实现仅功能范围对照、不作语义来源（RV-13）——且**当前磁盘不存在**（仓库根实测 2026-09-10，git 亦未跟踪；与 REQUIREMENTS v1.10 声明不符，core.md R-5/io.md §1.2 同源登记）；本文不引用、不复制、不恢复其任何机制（含旧 `StructureOptimizationReportWriter`/`KinematicAnalysisReportJson`——其功能对应关系仅见需求附录 A 台账） |
@@ -181,7 +181,7 @@ reporting 由 12 个公共头模块＋1 个编译实现组成（实现文件随 
 | `Archive.hpp` | IReportArchiveCoordinator、ReportArtifactManifest、IReportArtifactSink（project 实现的注入契约）、ArtifactSessionRef/Status | §7.3、§9.6 |
 | `Bundle.hpp` | EvidenceBundleRequest/Manifest、IEvidenceBundleAssembler、IArchiveWriter（io 适配的注入契约） | §7.6、§9.6 |
 | `ModelSummary.hpp` | IModelSummaryProvider、ModelSummary（runtime 只读摘要 schema——runtime §13.2 交接的承接冻结） | §9.7 |
-| `README.md` | 既有保留位说明（不参与编译；已指向本文 §9，实测一致） | — |
+| `README.md` | 既有保留位说明（不参与编译；指向本文 §11〔任务拆分〕——v0.4 RPT-T01 复核更正：原"已指向本文 §9，实测一致"的 v0.1 记载与磁盘不符，PRJ-T01 家族同型偏差，核对结论见 traceability/builds/wp12-t01/） | — |
 | `src/`（实现，随 RPT-T01 建） | ReportCodec（canonical 编码）、构建器、字段矩阵提取、三渲染器、一致性检查、导出/归档协调、证据包组装等非模板实现 | §4～§9 |
 
 ### 3.2 依赖（含 core/evidence 契约消费状态登记）
@@ -1478,6 +1478,7 @@ B 级真实章节注册前，其域评估器与 Profile 必须已注册（eviden
 | v0.1 | 2026-09-10 | 首版草案：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）、十份兄弟单元卡（v0.1 Draft）完成 14 章详细设计；冻结 ReviewReport 数据模型（双层内容身份/三层状态承载）、B/C 分级章节契约（14 章节词表＋降级拒绝规则）、结果/证据/当前性表达（四轴正交＋限定语词表）、生成冻结与幂等归档协议（D-13/D-14 模式）、HTML/JSON/CSV 渲染与逐字段一致性（FieldMatrix 单次投影）、公共接口六件＋注入契约四件；裁决 O-25（不留 PDF 桩）；验证矩阵 RP-\* 29 组；实现任务 RPT-T01～T16（≙ WP-12-T02~T09）；待裁决 9 项（P-RPT-1~9）。状态 `Draft`。 |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：§3.5 RPT-\* 码清单由"未收编建议值"更新为"已收编全量 8 项（diagnostics.md §4.5/§4.6）"，§14.3 P-RPT-8 与 §13.1 交接行同步销账码值部分；RPT-T01 注册时按收编表登记 |
 | v0.3 | 2026-09-19 | RPT-T01~T13 契约编译批次（CCP §3 七步）独立评审驱动的两处卡内任务号漂移校正（非语义变更）：①§4.4 ReportCodec 往返契约锁定任务号 RPT-T02→RPT-T03（§11 表 ReportCodec 产物归 RPT-T03 行——原正文表述与行级唯一来源矛盾）；②§14.3 P-RPT-8 处置句任务号 RPT-T01→RPT-T02（§11 表『码清单登记』完成条件归 RPT-T02 行）。文档头版本行同步 v0.3 |
+| v0.4 | 2026-09-19 | RPT-T01（≙WP-12-T02）构建落位登记：卡头构建落位行更新（INTERFACE 占位升级 STATIC、四条 ARCH §3.5 登记边 PUBLIC 全链、`_test`/`_contract_test` 注册、src/ 空起步锚点翻译单元 `Reporting.cpp`、P-ENV-1/P-RPT-1/P-RPT-9 处置留痕）＋README 指向复核（磁盘实指 §11；v0.1"已指向 §9，实测一致"记载与磁盘不符——PRJ-T01 家族同型偏差，§3.1 行同步更正；"不参与编译/不表示已实现"声明保留；本核对结论为 RPT-T13 文档同步的前置事实）；§3.4 括注"骨架 INTERFACE → RPT-T01 升级 STATIC"兑现，本文契约语义零变更。证据：traceability/builds/wp12-t01/ |
 
 ### 14.5 交付前自审记录（任务约束§八逐项；自审≠实现测试≠正式验收）
 
