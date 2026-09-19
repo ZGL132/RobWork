@@ -3,21 +3,38 @@
   "taskId": "RPT-T07",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "一致性检查器（多格式逐字段一致）",
-  "status": "planned",
+  "title": "实现一致性检查器（多格式逐字段一致）",
+  "status": "ready",
   "dependsOn": ["RPT-T06"],
-  "requirements": ["RPT-02"],
-  "designRefs": ["units/reporting.md#8.5", "units/reporting.md#9.4"],
+  "requirements": ["RPT-02", "NFR-SEC-03"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#8.5",
+    "units/reporting.md#9.4"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t07",
+  "interUnit": false,
+  "knownPitfalls": ["P-RPT-1"],
   "acceptance": [
-    "RP-CONS-1/2：逐字段一致/坏样本定位用例通过（AT-22）"
-  ]
+    "RP-CONS-1 逐字段一致与坏样本定位（卡行验证方式『RP-CONS-1/2』＋完成条件『逐字段/坏样本定位用例过』）：合法报告＋三格式渲染→consistent；注入坏样本（HTML 删一个 data-field/CSV 改一值/JSON 删限定语）→mismatch 定位到 (format, fieldKey, dimension)——mismatches 全量列出（不短路，§9.4 后置行）；fieldCount 断言",
+    "RP-CONS-2 CSV 转义 roundtrip（AT-22 子项——NFR-SEC-03）：字段含 =、+、-、@、' 前缀/中文/引号/换行/空串样例集导出→io reader 回读→FieldMatrix 重建→与源矩阵逐字符一致；转义形式不得进入报告结构化层（io IO-V01/V02 的报告侧消费——§8.5）",
+    "七元组逐字段比对（§8.5 判定规则）：fieldKey/value/unit/status/qualifier/引用七元组全部比对；缺失字段（某格式未输出该 fieldKey）＝mismatch；限定语丢失＝mismatch（§6.4 硬约束——§9.4 非法调用行『跳过限定语维度』禁止）；数值以 to_chars 文本规范形比对（非浮点再解析——D-09 避免二次舍入假差异）",
+    "纯函数纪律（§9.4 维度表）：同输入同结论、不修改任何输入（并发安全）；单格式工件集（artifacts<2）返回平凡通过＋注记（§9.4 ConsistencyInput 注释）；回读本身失败（格式损坏）→ConsistencyMismatch（dimension=parse-failed）",
+    "P-RPT-1 处置：CSV 回读的 io reader 来源在注入形态下经测试注入/L5 装配（公共头零 io 类型——§3.3 纪律）；P-RPT-1/P-IO-1 合并裁决补边后直连、签名零改动；不私建第二套 CSV 解析器（NFR-SEC-03 转义唯一实现归 io——回读消费 io reader 而非自写解析）"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T07 行（≙ WP-12-T04——DTB §2.13 同行双产物之一）＋§8.5/§9.4 回填。requirements 增补 NFR-SEC-03（RP-CONS-2 的需求依据原文——CSV 转义 roundtrip 是本任务验证面一半），维持 RPT-02（AT-22 为验收观测点非需求 ID，按 §13 追踪矩阵映射入 RPT-02 行验证列——以需求 ID 入 requirements、AT 语境写在 acceptance）。designRefs 补 #11。allowedFiles/verify 口径同前。branch=wp12-t07。interUnit=false 判定＝Consistency.hpp 契约仅引用本单元类型（ReviewReport/FieldMatrix/RenderArtifact 指针与字符串 mismatch 结构——§9.4 字段表逐项核对无对端类型），不新增跨单元公共头消费；CSV 回读的 io reader 为注入形态能力消费（P-RPT-1 同案）非编译边——较卡行预期参考『false』复核一致。knownPitfalls 自愿登记 P-RPT-1（interUnit=false 可自愿——CCP §2；CSV 回读 io reader 来源约束，处置见 acceptance 5）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

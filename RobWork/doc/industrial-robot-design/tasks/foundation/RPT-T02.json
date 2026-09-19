@@ -3,22 +3,38 @@
   "taskId": "RPT-T02",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "错误与身份类型（Errors/Identity＋RPT-* 码建议清单）",
-  "status": "planned",
+  "title": "实现错误与身份类型（Errors/Identity＋RPT-* 码清单登记）",
+  "status": "ready",
   "dependsOn": ["RPT-T01"],
-  "requirements": ["RPT-01"],
-  "designRefs": ["units/reporting.md#3.5", "units/reporting.md#4.1"],
+  "requirements": ["RPT-01", "ERR-01"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#3.5",
+    "units/reporting.md#4.1"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t02",
+  "interUnit": true,
+  "knownPitfalls": ["P-RPT-3", "P-RPT-8", "P-RPT-9"],
   "acceptance": [
-    "token/句法/保留值单测通过；身份往返用例过",
-    "RPT-* 建议码清单登记（交 diagnostics 收编）"
-  ]
+    "身份类型单测通过（卡行验证方式『单测（token/句法/保留值）』＋完成条件『身份往返用例过』）：ReportId 规范文本 rpt-<32hex> 往返（generate/parse/format——句法同 core Id128 约定，reporting.md §4.1）；ReportLevel B/C token（level-b/level-c）句法与保留值；§4.1 身份纪律四概念互不替代的类型边界锁定（ReportId 不承载内容信息、幂等判定不用 ReportId 用内容身份、内容身份与磁盘路径/显示名称分离）",
+    "ReportError/ReportErrorCode 就位（reporting.md §3.5）：16 个 token 稳定错误码（SourceMissing/SourceAmbiguous/ScopeInsufficient/LevelConflict/EvidenceRefInvalid/ConsistencyMismatch/RenderFailed/DataInvalid/ArchiveConflict/ExportFailed/DiskFull/ReadOnlyStore/RoundtripMismatch/BundleIncomplete/TemplateVersion/Usage）逐值与 §3.5 清单一致；detail 前缀『reporting/<域>:』口径；可恢复查询路径 try* 非抛出变体约定在头文件契约注释声明（§1.4 异常行）",
+    "RPT-* 稳定诊断码清单登记（卡行完成条件『码清单登记』）：按 diagnostics.md §4.5/§4.6 已收编全量 8 项登记（RPT-SOURCE-MISSING/RPT-SCOPE-INSUFFICIENT/RPT-CONSISTENCY-MISMATCH/RPT-ARCHIVE-CONFLICT/RPT-EXPORT-FAILED/RPT-ROUNDTRIP-MISMATCH/RPT-CURRENTNESS-UNEVALUABLE/RPT-SECTION-NOT-APPLICABLE）——码值权威归 diagnostics StableCodeRegistry（P-RPT-8 码值部分已消账，reporting.md v0.2 §3.5），本清单为 reporting 侧引用登记非二次定义，与收编表不一致＝实现偏差按 DTB §5.4 登记（占位 acceptance『交 diagnostics 收编』系 v0.2 消账前旧文案，本契约按卡现行正文修正）",
+    "PublishedReportRecord/ReportLevel 落位 Identity.hpp（reporting.md §3.1/§7.3）：PublishedReportRecord 字段（reportId/contentIdentity/archiveState=Finalized/manifestDigest/artifactRelPaths/publishedAtUtc）与 §7.3 一致；摘要一律 SHA-256 经 core ContentDigester（唯一算法——§4.1 身份纪律＋CR-02 同源），比较用字节等值",
+    "陷阱处置：P-RPT-3——ReportId 为 reporting 层自建 tag 类型（Id128 形、遵循 core §4.1 U-1 强类型约定；待 core 收编，P-DIAG-4 FindingId『fnd-』同案），不等待收编、不私改 core 公共头；P-RPT-8——登记即按收编表，不再发起收编申请；P-RPT-9——core 契约消费（ContentIdentity/Digest256）以 core.md v0.1（Draft）签名为基线，冻结 diff 后按影响面增量同步留痕"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T02 行（卡内编号，DTB §2.13 无独立 ≙ 行——T02 属 WP-12-T03『模型部分』上游链的原子前置）＋§3.5/§4.1＋§2.1 O-15 行（RPT-* 码族——ERR-01 支撑）回填。requirements 增补 ERR-01（卡 §2.1 O-15 上游依据原文——稳定诊断码族支撑；REQUIREMENTS.md 现行真实 ID 已核对），维持 RPT-01（报告身份）。title 加『实现』动词前缀满足 CCP §2 动宾门槛，占位 title 其余保留（无占位文案问题）。designRefs 补 #11（卡行所在节，CCP §2）。allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）。verify 展开为双测试目标构建（两目标随 RPT-T01 注册——用例落位其上）。branch=wp12-t02（≙ 口径缺失按卡内序号直映——本批统一口径，wp12 前缀无占用）。interUnit=true 判定＝Identity.hpp 之 PublishedReportRecord 承载 core::ContentIdentity/manifestDigest（§7.3 字段表——core 公共类型消费）；ReportId 虽为 reporting 自建 tag 类型（P-RPT-3）不构成消费，但 ContentIdentity 消费已足置 true。knownPitfalls=P-RPT-3（自建 tag 待收编——不私改 core）/P-RPT-8（按收编表登记，不再申请）/P-RPT-9（core v0.1 Draft 基线）。发现并修正占位缺陷一处：占位 acceptance『RPT-* 建议码清单登记（交 diagnostics 收编）』为 reporting.md v0.2 消账前旧文案（P-RPT-8 已载 2026-09-10 收编全量 8 项），本契约按卡现行正文改为『按收编表登记』并登记于本 note。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

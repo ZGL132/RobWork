@@ -3,22 +3,42 @@
   "taskId": "RPT-T11",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "替身与契约套件（ScriptedResultSource/FakeArtifactSink＋RP-* 用例体）",
-  "status": "planned",
+  "title": "实现测试替身与契约套件（四具名替身＋RP-* 用例体全量收口）",
+  "status": "ready",
   "dependsOn": ["RPT-T02", "RPT-T03", "RPT-T04", "RPT-T05", "RPT-T06", "RPT-T07", "RPT-T08", "RPT-T09", "RPT-T10"],
   "requirements": ["RPT-01", "RPT-05", "NFR-COR-04"],
-  "designRefs": ["units/reporting.md#10"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#10",
+    "units/testkit.md#2.3",
+    "units/testkit.md#3.1",
+    "development-task-breakdown.md#5.5"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test",
+    "ctest --test-dir build -C Release -R \"^sdurws_ird_reporting\" --output-on-failure"
+  ],
+  "branch": "wp12-t11",
+  "interUnit": true,
+  "knownPitfalls": ["P-RPT-9", "O-13"],
   "acceptance": [
-    "§10.1 矩阵逐条执行通过并留痕",
-    "替身边界声明在案（RP-STATE-4：替身不冒充真实证据）"
-  ]
+    "§10.1 用例矩阵逐条执行通过并留痕（卡行验证方式『§10.1 矩阵逐条』＋完成条件『全部用例执行通过并留痕』）：RP-MDL-1~3、RP-SCOPE-1~4、RP-STATE-1~4、RP-CUR-1~3、RP-COV-1、RP-TRACE-1、RP-CONS-1~4、RP-CONC-1、RP-CANC-1、RP-IDEM-1/2、RP-CONF-1、RP-DISK-1、RP-RO-1、RP-SAN-1、RP-REVW-1/2、RP-BUN-1、RP-GATE-1 逐组收口——gtest XML＋ird-test-report.json＋构建日志三面留痕（DTB §5.2 DoD-3）；任何未执行用例不得标注通过，失败如实登记原因",
+    "四具名替身落地（卡行产物列原文）：ScriptedResultSource（按脚本返回 envelope/当前性——替身 envelope 构造一律经 evidence ResultEnvelope::make 合法组合-only）、ScriptedSectionProvider（按脚本返回章节内容/缺项/不适用）、FakeArtifactSink（D-13/D-14 语义 fake：可注入冲突/磁盘满/清理失败）、FakeArchiveWriter——替身与真实提供方同一契约（§9.2 后置行）；本任务将 RPT-T03~T10 各任务局部夹具收敛/替换为四具名替身并统一用例体（各任务 acceptance 的『随 RPT-T11 收口』承诺在本任务兑现）",
+    "替身边界声明在案（卡行完成条件＋RP-STATE-4）：测试文档显式声明替身输出仅验证 reporting 契约（绑定校验/状态呈现/一致性/幂等）、不构成任何运动学/轨迹/动力学/选型结果的业务正确性证明（EV-REG-3 同源——test/README 或替身头注释留痕）；替身 envelope 非法组合在 evidence 构造边界被拒（reporting 不自造非法样本——§10 替身边界声明）",
+    "跨单元依赖就绪声明（EX-T08 先例）：testkit/evidence/core 波次契约均已 done 合入 redesign-main——领取时设施公共头必然可用；卡行依赖列『WP-02 可用』为可用性事实不入 dependsOn（EX-T09/PRJ-T15/UI-T14 同款口径——testkit 设施经 §3.1 公共头模块表与 §2.4 允许依赖形态消费）",
+    "消费纪律：测试报告（TestRecord/ird-test-report.json）与 ReviewReport 数据契约无共享（testkit.md §2.3 对照表 reporting 行冻结口径）；_test/_contract_test 允许依赖形态＝{被测产品目标, sdurws_ird_testkit, gtest}（testkit.md §2.4/DIAG-T10 先例）——产品目标 sdurws_ird_reporting 不链 testkit（T-1 红线）；测试用例命名带需求/AT 追溯字段（DTB §5.5）",
+    "陷阱处置：P-RPT-9——替身消费的 evidence/core 契约以 v0.1 Draft 为基线，冻结 diff 后按影响面同步用例；O-13——EvidenceItemStatus 五值（Missing/Invalid/Unverified/NotApplicable/Satisfied）呈现断言随 RP-STATE-2/RP-CONS 用例锁定（五词各有其位不合并——§5.3），词表实现承载状态随上游裁决同步（DTB §5.4）"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T11 行（≙ WP-12-T09——DTB §2.13）＋§10（验证方案/故障注入矩阵/可控替身与替身边界声明）＋testkit.md §2.3（对照表 reporting 行）/§3.1（设施公共头模块表）＋DTB §5.5 回填。requirements 维持占位 RPT-01/RPT-05/NFR-COR-04（套件为全矩阵收口——覆盖面不止三条，具名 RP-* 用例的需求依据已在各 RPT-T02~T10 契约逐任务登记，本契约不重复展开）。dependsOn 维持卡行『RPT-T02~T10』九项（『WP-02 可用』为可用性事实不入——EX-T09/PRJ-T15/UI-T14 同款口径，acceptance 4 登记）。designRefs 补 #11＋testkit.md 两锚点（卡行输入列『§10、testkit』）＋DTB #5.5（gtest 约定）。allowedFiles/verify 口径同前，verify 增补 ctest 收口命令（卡行验证方式为矩阵逐条执行——构建双目标＋ctest -R 锚定双测试用例集，UI-T14 ctest 先例；结论二元＝全部用例通过）。branch=wp12-t11。interUnit=true 判定＝消费 testkit 设施公共头（IRD_TEST_INFO/IRD_EXPECT_*/TempDir/DeterministicEnv/ContractCheck——testkit.md §2.4 允许依赖形态）＋替身 envelope 经 evidence ResultEnvelope::make 构造（evidence 公共接口消费——测试面跨单元交互，UI-T14 同款口径）。knownPitfalls=P-RPT-9（v0.1 Draft 基线——替身消费面）/O-13（EvidenceItemStatus 五值实现承载）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

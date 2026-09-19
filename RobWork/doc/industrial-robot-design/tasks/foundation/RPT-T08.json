@@ -3,22 +3,39 @@
   "taskId": "RPT-T08",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "措辞冻结规则（限定语映射/两类声明前置断言）",
-  "status": "planned",
+  "title": "实现措辞冻结渲染规则（限定语映射/两类声明前置断言）",
+  "status": "ready",
   "dependsOn": ["RPT-T06"],
-  "requirements": ["RPT-05"],
-  "designRefs": ["units/reporting.md#6.4", "units/reporting.md#8.2"],
+  "requirements": ["RPT-05", "EVI-01", "EVI-02", "KIN-04"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#6.4",
+    "units/reporting.md#8.2"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t08",
+  "interUnit": false,
+  "knownPitfalls": ["P-EV-5"],
   "acceptance": [
-    "RP-STATE-1~3、RP-COV-1：限定语保留/两类声明独立用例过",
-    "估算值/数据不足/外部验证未完成限定语不弱化不省略；未判定不得渲染正式通过"
-  ]
+    "RP-STATE-1 失败/取消/中断不入正式结论（卡行验证方式列）：该类结果仅现于诊断/状态呈现（『已取消/失败/已中断——不构成结论』——§6.2）；正文无『正式通过』字样（HTML 文本扫描计数=0）；渲染器前置断言生效（违反即 DataInvalid 构造失败，不存在『渲染了再说』路径——§8.2①硬编码纪律）",
+    "RP-STATE-2/3 两类声明独立（卡行完成条件『未判定不得渲染正式通过』＋『两类声明独立用例过』）：DataInsufficient＝章节/条目＋缺失项全量清单＋限定语、无结论字样（§8.1 表 2④——RP-STATE-2）；EngineeringInfeasible∧reviewRecord==true＝输出『经验证的不可行结论（正式评审记录）』措辞＋证明呈现、永不输出『通过』，与『正式通过』两声明并存不混淆（RPT-05/RV-07——§8.2②，RP-STATE-3）",
+    "限定语逐 token 结构性输出（卡行完成条件『估算值/数据不足/外部验证未完成限定语不弱化不省略』）：§6.4 词表 8 项（estimated/data-insufficient/external-validation-incomplete/downgraded-reference-value/screening-only/historical-superseded/not-applicable/interrupted·canceled·failed）逐 token 触发数据源与呈现义务锁定；任何格式省略＝ConsistencyMismatch（§6.4——渲染器结构性处理：HTML 标记/CSV qualifier 列/JSON 数组字段）；模板不得移除限定语（模板版本升级删限定语＝TemplateVersion 版本不兼容拒绝——§8.2④）",
+    "screening-only 与 Quick 结果（§6.4 词表）：mode==Quick 结果可进入报告但永远不满足 FormalPass——『筛选级——不得单独支撑正式通过结论』限定语强制呈现（表 1 模式效力呈现侧）",
+    "RP-COV-1 覆盖呈现（卡行验证方式列）：漏验任一启用必验工况→整体 DataInsufficient 缺项呈现（不得输出正式通过——§8.1 表 2② 呈现口径）；全覆盖→coverageSummary『全部启用必验工况已覆盖』；包络合并条目单独呈现并标注『包络合并（呈现方式）』、不替代逐工况条目（§6.5）；downgraded-reference-value 限定语『降级中——不可作为正式覆盖率结论』（KIN-04/P-EV-5——§6.4）",
+    "P-EV-5 处置：覆盖率参考值的降级限定语为消费侧强制呈现（P-EV-5 登记的 evidence 侧限定语义务的报告侧承接）——不得弱化为普通标注、不得省略；上游 P-EV-5 裁决变化时随影响面同步（DTB §5.4）"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T08 行（≙ WP-12-T06——DTB §2.13）＋§6.4/§8.2＋§6.5（RP-COV-1 数据源节）回填。requirements 增补 EVI-01/EVI-02/KIN-04（§6.4 限定语词表触发数据源原文：EVI-01 模式效力呈现不弱化、EVI-02 覆盖呈现、KIN-04 经 P-EV-5 的 downgraded-reference-value——均经 REQUIREMENTS.md 原文核对存在），维持 RPT-05。designRefs 补 #11。allowedFiles/verify 口径同前。branch=wp12-t08。interUnit=false 判定＝卡行涉及文件列原文『Render.cpp 内』——本任务为 RPT-T06 渲染器内的规则增量（消费 T03 资格快照/T06 FieldMatrix 既有本单元接口），零新增跨单元公共头消费；卡行预期参考『false』复核一致。knownPitfalls 自愿登记 P-EV-5（interUnit=false 可自愿——CCP §2；降级限定语呈现义务，处置见 acceptance 6）。与 RPT-T06 的边界：RPT-T06 交付渲染器机制（矩阵/格式/脱敏），本任务交付 §8.2 硬编码纪律与 §6.4 限定语映射（Render.cpp 内规则层）——RP-STATE-1~3 双任务共享验证面、断言口径一致（T06 acceptance 3 与本契约 acceptance 1~2）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

@@ -3,23 +3,37 @@
   "taskId": "RPT-T13",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "文档与门禁同步",
-  "status": "planned",
+  "title": "同步 reporting 文档与门禁（README 核对/待裁决状态更新/裁决申请提交）",
+  "status": "ready",
   "dependsOn": ["RPT-T01", "RPT-T02", "RPT-T03", "RPT-T04", "RPT-T05", "RPT-T06", "RPT-T07", "RPT-T08", "RPT-T09", "RPT-T10", "RPT-T11", "RPT-T12"],
   "requirements": ["NFR-MNT-05"],
-  "designRefs": ["units/reporting.md#14"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#14",
+    "units/reporting.md#3.1"
+  ],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/units/reporting.md",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/include/sdurws/ird/reporting/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["traceability-update"],
-  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "outputs": ["doc-update", "traceability-update"],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp12-t13",
+  "interUnit": false,
+  "knownPitfalls": ["P-RPT-1", "P-RPT-2", "P-RPT-3"],
   "acceptance": [
-    "本文与实现零偏差登记；README 核对",
-    "§14.3 状态更新；P-RPT-1/2/3 裁决申请提交（关联 io P-IO-1）"
-  ]
+    "README 核对（卡行完成条件）：include/sdurws/ird/reporting/README.md 指向与 reporting.md §9 现文一致（RPT-T01 acceptance 4 的核对结论为本条前置事实）——不一致处更正并保留『不参与编译/不表示已实现』声明；核对结论登记留痕",
+    "§14.3 状态更新（卡行完成条件）：P-RPT-1~9 逐项状态与实际一致——P-RPT-6（O-25 PDF 裁决：已裁决消账）、P-RPT-8（RPT-* 码值 2026-09-10 已收编：消账）如实维持，P-RPT-1/2/3/4/5/7/9 依裁决申请与上游冻结进展更新状态行；实现期产生的偏差按 DTB §5.4 并入卡变更记录（§14.4 增量修订行）",
+    "P-RPT-1/2/3 裁决申请提交（卡行完成条件『P-RPT-1/2/3 裁决申请提交（关联 io P-IO-1）』）：按 traceability 裁决申请先例（wp04-t16-adjudication-requests.md 同型）产出申请文件并落 traceability/——P-RPT-1（建议与 P-IO-1/P-PR-5 合并裁决：补登 reporting→io 边或确认注入形态）、P-RPT-2（确认 IModelSummaryProvider 注入为正式形态或补边）、P-RPT-3（core 收编 fnd-/rpt- tag 类型）；裁决者栏按 §14.3 原文（架构所有者/core 详设所有者）；申请≠裁决——不私改 ARCHITECTURE.md/core 公共头（forbiddenFiles 红线），裁决前各任务注入形态维持不变",
+    "零偏差登记（卡行完成条件）：RPT-T01~T12 实现与卡行逐任务零偏差、或偏差已按 DTB §5.4 登记完毕（登记面＝单元卡 §14.4 变更记录＋traceability 留痕，均在 allowedFiles 内）；§14.3 与 §12.1/§12.2 交接状态表同步刷新",
+    "门禁绿（卡行验证方式『评审』的机器承载）：validate-docs.ps1 通过（verify 命令，结论二元）；validate-task.ps1 对本单元 13 份契约三查零失败；本文档链整体无回归"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T13 行（卡内编号——DTB §2.13 无独立 ≙ 行）＋§14（待裁决项与变更记录）＋§3.1（README 保留位行——核对对象定位）回填。requirements 维持占位 NFR-MNT-05（REQUIREMENTS.md 现行 ID：循环依赖/未引用目标/废弃构建选项的审查检查——门禁同步语义对应，已核对原文）。designRefs 补 #11＋#3.1。allowedFiles 调整：卡行涉及文件列原文『本文、README』——移除占位的 reporting/** 整目录授权、改为 README.md 逐文件（最小授权面——本任务为治理收尾无产品代码改动面）；traceability/** 承载裁决申请文件与零偏差登记留痕（CORE-T01 教训）。outputs 由占位 traceability-update 升为 doc-update＋traceability-update（家族收尾任务词表——CORE-T10/EV-T12/POL-T12/RT-T13/EX-T10/PRJ-T16/DIAG-T11 同款）。verify 维持 validate-docs.ps1（卡行验证方式『评审』中可机器执行的门禁面；对抗评审本体归 CCP §3 第 6 步与三段式验收段）。branch=wp12-t13。interUnit=false 判定＝纯文档/门禁同步治理任务，零产品代码与跨单元接口面（EX-T10/DIAG-T11 同款口径）。knownPitfalls 自愿登记 P-RPT-1/P-RPT-2/P-RPT-3（interUnit=false 可自愿——CCP §2；三者即本任务裁决申请主体，处置见 acceptance 3）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

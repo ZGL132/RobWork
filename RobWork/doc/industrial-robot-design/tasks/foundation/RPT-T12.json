@@ -3,21 +3,38 @@
   "taskId": "RPT-T12",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "模型摘要与任务投影接入（ModelSummary/ITaskStatusSource）",
-  "status": "planned",
+  "title": "实现模型摘要与任务投影接入（ModelSummary/ITaskStatusSource）",
+  "status": "ready",
   "dependsOn": ["RPT-T05"],
-  "requirements": ["RPT-01"],
-  "designRefs": ["units/reporting.md#9.7", "units/reporting.md#3.3"],
+  "requirements": ["RPT-01-B", "TASK-02"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#9.7",
+    "units/reporting.md#3.3"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t12",
+  "interUnit": true,
+  "knownPitfalls": ["P-RPT-2", "P-RPT-9"],
   "acceptance": [
-    "投影 schema/空快照注记单测通过；schema 冻结留痕（runtime 交接）"
-  ]
+    "ModelSummary schema 冻结（卡行完成条件『schema 冻结留痕（runtime 交接）』——runtime.md §13.2 交接的承接答复，reporting.md §12.1 已登记『已冻结』）：§9.7 字段全量落地（revision/snapshotIdentity/modelIdentity/nameMapIdentity/policyContentIdentity/jointCount/allRevolute/installPresetToken/capabilities 八布尔/resources{resourceId,state,digest}/configurations{configKindToken,contentIdentity}）——纯值投影不含 RobWork 对象（runtime §10.12 口径）；冻结留痕＝schema 与 §9.7 一致性的核对结论登记 traceability（交接凭据）",
+    "投影单测（卡行验证方式『单测（投影 schema/空快照注记）』）：同修订同投影（值语义确定性）；快照已释放→snapshotIdentity 非空＋其余字段可空＋注记（不伪造——§9.7 后置行『以归档的快照身份元数据呈现』）；trySummary 返回 optional（revision 不存在于权威闭包＝nullopt）",
+    "ITaskStatusSource 最小接口（§3.3 注入形态——卡行产物列）：对齐 execution ITaskScheduler::tryTask/ITaskController::progress 值形态（只读投影——报告章节任务终态/『已中断』呈现数据源）；公共头零 execution 类型（reporting 与 execution 同层、ARCH §3.5 无登记边——表外边＝构建失败 SA-10）；事件 TaskStatusChanged/ResultArchived 仅用于预览刷新提示、不入报告内容（§3.3——报告内容只绑定明确 ID 的冻结事实）",
+    "P-RPT-2 处置：维持注入式（IModelSummaryProvider，§9.7 schema 已冻结）——架构所有者确认注入为正式形态或补边裁决前签名不变；L5 适配建议（IRuntimeModelView→IModelSummaryProvider）随本任务交付（卡行产物列『＋L5 适配建议』——适配代码归 L5 装配，本任务不建 runtime 编译边）",
+    "禁项锁定（§9.7 非法调用行）：经本接口要求编译/读取 WC/DWC 实例＝禁（runtime §10.12——不触发编译、不直接读 WC/DWC）；installPresetToken 为呈现字段不入任何身份判定（§9.7 维度表）；DH/显式权威模式呈现经 model 章节 modeling 提供方、不经本接口（§9.7 前置/后置行）"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T12 行（卡内编号——DTB §2.13 无独立 ≙ 行，ModelSummary 属 WP-12-T03 输入摘要章节的数据源契约）＋§9.7/§3.3 回填。requirements 调整：占位 RPT-01 改为 RPT-01-B（卡 §2.1 C-6 上游依据原文『RPT-01-B 输入摘要章节』——ModelSummary 服务对象）并增补 TASK-02（§2.1 C-7 上游依据原文『TASK-02、NFR-REL-03』的任务投影半边——任务终态/中断呈现），两 ID 均经 REQUIREMENTS.md 原文核对存在。designRefs 维持 #9.7/#3.3 并补 #11（CCP §2 卡行所在节）。allowedFiles/verify 口径同前。branch=wp12-t12（卡内序号直映）。interUnit=true 判定＝产出两件跨单元注入契约（IModelSummaryProvider/ModelSummary——runtime §10.12/§13.2 交接的承接冻结；ITaskStatusSource——execution 投影对齐），CCP §2『产出跨单元公共接口』；公共头零 runtime/execution 类型（注入形态），无编译边。knownPitfalls=P-RPT-2（runtime 注入形态待架构确认或补边——签名冻结不变）/P-RPT-9（runtime §10.12 消费口径以 runtime.md v0.1 Draft-Structured 为基线，冻结 diff 后增量同步）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

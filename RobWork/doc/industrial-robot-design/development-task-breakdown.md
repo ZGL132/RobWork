@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.12（Draft；四轮流水线审查修复已登记；见 §7 变更记录） |
+| 文档版本 | v0.16（Draft；O-31 裁决登记；文档头版本行补同步——v0.13~v0.15 登记时漏改；见 §7 变更记录） |
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft`** |
 | 文档代号 | DTB |
@@ -625,7 +625,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | O-24 | P-D-1：EvaluationMode/TaskOutcome/EngineeringStatus/TaskState 四词表置 core 的跨卡确认 | execution/ui 卡若另作安排则 core 需迁移词表（evidence/runtime/policy 卡已默认承接） | core.md §10.2 P-D-1 | execution/ui 卡（WP-08-T01/WP-10-T01） | 登记 |
 | O-25 | reporting 已裁决不留 PDF 专用接口桩 | RPT-02 仍交付 HTML＋JSON/CSV | reporting.md §14.3 P-RPT-6 | reporting 详设所有者 | 已关闭（设计级） |
 | O-26 | UX-13 工业高频命令"运行碰撞检查"的执行编排（经④端口触发后台任务、结果呈现）需 workflow/ui/execution 三方契约对齐 | 高频命令语义与任务清单呈现 | UX-13（M-13）；ARCH §7.11 | workflow 卡＋ui 卡（WP-22-T12 落地） | 登记 |
-| O-31 | ui.md 依赖声明三方矛盾：§2.1.2 C 表把 project/evidence/execution/policy/runtime 协作（C-3/4/5/7/8/10/11）标为"接口依赖"（ARCH §3.5 定义＝链接库目标），而 §3.1 声明"仅链 core,diagnostics、其余零编译依赖"，ARCH §3.5 白名单亦只有 ui→core,diagnostics 两条；ShellWiring（§11）直接持有 policy::IPolicyProvider、runtime::IRuntimeNameResolver 等对端类型 | 按 §3.1 实现则 ShellWiring 无法编译；按 C 表实现则 5 条边违反 SA-10 门禁（表外边＝构建失败）；WP-10 落位前必须裁决 | 全链一致性审计 2026-09-10；ui.md §2.1.2/§3.1 vs ARCHITECTURE.md §3.5 | 架构所有者（增边或确认 ui 侧最小注入接口模式，对齐其余 10 卡"自定义最小注入接口"惯例）＋ui 卡 | 登记 |
+| O-31 | ui.md 依赖声明三方矛盾：§2.1.2 C 表把 project/evidence/execution/policy/runtime 协作（C-3/4/5/7/8/10/11）标为"接口依赖"（ARCH §3.5 定义＝链接库目标），而 §3.1 声明"仅链 core,diagnostics、其余零编译依赖"，ARCH §3.5 白名单亦只有 ui→core,diagnostics 两条；ShellWiring（§11）直接持有 policy::IPolicyProvider、runtime::IRuntimeNameResolver 等对端类型 | 按 §3.1 实现则 ShellWiring 无法编译；按 C 表实现则 5 条边违反 SA-10 门禁（表外边＝构建失败）；WP-10 落位前必须裁决 | 全链一致性审计 2026-09-10；ui.md §2.1.2/§3.1 vs ARCHITECTURE.md §3.5 | 架构所有者（增边或确认 ui 侧最小注入接口模式，对齐其余 10 卡"自定义最小注入接口"惯例）＋ui 卡 | 已裁决（2026-09-19，所有者）：**确认 ui 侧最小注入接口模式**——①不增边：ARCH §3.5 不动，ui 产品面（sdurws_ird_ui 源集）保持零对 project/evidence/execution/policy/runtime 的链接/include，UI-T02 交付守卫 `NoCrossUnitInclude_O31_UI_BUILD` 即常驻执行面；②协作经 ui 自有最小端口接口（§3.3 UiPorts.hpp）＋值投影（UiProjections.hpp）承载、L5 应用壳装配期适配、ui 测试以可控替身承载（reporting §3.3／evidence §3.3／io IO-D02／EX ICompileCacheJudge 同款 10 卡惯例）；③C 表 C-3/4/5/7/8/10/11 形态改注运行时注入、C-6 方向外翻（L5 适配器实现 project::ICommandInteraction 委托 ui 自有交互回调端口）；④§3.2 重框为投影值形态冻结基准（NFR-MNT-03 单一权威不变——投影≠重定义）；⑤测试目标链接面按各卡 §3.1 测试目标表维持、不属 ARCH §3.5 产品边管辖；⑥需求语义零变化。落地＝units/ui.md v0.4（§2.1.2/§3.1/§3.2/§3.3/§10.1/§16.7；findings F-228 一并消解）＋UI-T03~T14 契约 O-31 处置改写随整链放行（contract-compile-log 2026-09-19 批次行） |
 | O-32 | PILOT-01/02、DEL-01/02 四条 P0/R1 需求在 ARCHITECTURE 无 ID 级落点（仅 §10.1 阶段 E 文字性描述；§3.1 单元表"关键需求族"列未登记） | 阶段 E 交付时需求覆盖矩阵（§3）无法回指承载单元与任务；试点/交付验收追溯断链 | 全链一致性审计 2026-09-10；REQUIREMENTS §（PILOT/DEL 条目）vs ARCHITECTURE §3.1/§10.1 | 架构所有者（WP-22/WP-24 任务细化前补登落点） | 登记 |
 | O-33 | WP-02-T11 原 ≙TK-T11 映射悬空：testkit.md §9 任务表仅 TK-T01~T10，§6.5 冻结的 TestProcessRunner 实现任务约定"届时补登 TK-T11"，映射已从 §2 该行移除以保证 ≙ 计数（73）与"六卡 73 任务"声明一致 | 触发条件满足时 WP-02-T11 无卡内编号可对接 | testkit.md §6.5/§9 vs 本文 §2 WP-02-T11 行 | testkit 卡（触发时补登 TK-T11 并恢复 ≙ 映射） | 已消账（2026-09-11 触发成立：TK-T11 补登 §9＋映射恢复 WP-02-T11 行＋TK-T11.json 放行，≙ 计数 73→74） |
 | O-34 | CI 常驻激活前置（WP-01-T02 登记）：CI 模板已固化于 `scripts/industrialrobot/ci/`（与 eb777e2 逐字节一致），但落位目标路径在框架树/仓库根（`RobWork/gitlab-ci/`、`.github/workflows/`）——SA-02 须先补丁登记；且模板引用的入口脚本为 `scripts/industrial-robot/`（连字符）与现行 `scripts/industrialrobot/` 命名不一致，需裁决统一 | CI 六步门禁（ARCH §11.2-2 常驻）无法实际接入 Runner；本地 gate-all.ps1 为过渡强制门槛 | WP-01-T02 产物 ci/README.md 差异表 | 构建约定所有者＋所有者（扩契约＋补丁登记＋命名裁决后复制落位） | 登记 |
@@ -765,6 +765,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.13 | 2026-09-10 | WP-00-T01 执行（governance-log 建立）：新建 doc/industrial-robot-design/governance-log.md——11 张单元卡全部 93 项 P-\* 待裁决项与本文 §4 O-01~O-33 的集中流转登记（编号/所有者/状态/消账留痕；逐卡零丢失矩阵；与 phase-one-readiness §2 口径核对一致；只登记不裁决）；本文 §4 头部初始化集中流转视图指向。不裁决任何 P-\*/O-\* 项，需求/架构语义零修改。 |
 | v0.14 | 2026-09-10 | WP-01-T02 执行（本地一键门禁＋CI 模板）：①新建 `scripts/industrialrobot/gate-all.ps1`——ird_gates＋双模式构建＋全部 `_test`/`_contract_test` 目标一键执行（CTestTestfile 递归发现；零 Python；CI 建成前为强制门槛），首跑 9/9 全绿；②新建 `scripts/industrialrobot/ci/`——eb777e2 双 CI 文件逐字节固化（缓存回退键/双 ini 模板供给/六条门禁行）＋差异说明 README；③§4.2 登记 O-34（CI 激活前置：框架文件落位须补丁登记＋入口脚本命名裁决，归构建约定所有者）。F-007 的 ini 模板半边已由 CI 模板内嵌供给消解（AGENTS §4.1 文档同步项仍开放）。 |
 | v0.15 | 2026-09-10 | WP-00-T02 执行（P-02/O-30 消账）：①新建 traceability/trace-matrix-format.md——追踪矩阵格式契约 v1.0（schema `ird-trace-matrix/1`＋五不变量＋七类缩写展开规则＋再生成/复核方法）；②新建 traceability/trace-matrix.json——首版机读生成物（194 项＝180 主＋12 分期＋2 分级，全覆盖 uncovered=0，家族计数与 REQUIREMENTS §4 逐家族全等，断言通过）；③§3 头部机读投影指向；§4.3 O-30 翻转为已冻结。REQUIREMENTS 附录 C P-02 行的翻转随需求侧下次增量修订（本任务 forbiddenFiles 不含 REQUIREMENTS——消账证据＝格式契约＋本行）。 |
+| v0.16 | 2026-09-19 | O-31 裁决登记（所有者 2026-09-19；文档头版本行补同步——v0.13~v0.15 登记时漏改，此前仍标 v0.12）：①§4.2 O-31 行翻转为已裁决＝确认 ui 侧最小注入接口模式（不增边＋ui 自有最小端口接口/值投影＋L5 装配适配；ARCH §3.5/SA-10 不动；C 表 C-3/4/5/7/8/10/11 形态改注、C-6 方向外翻；测试目标链接面按各卡测试目标表维持；需求语义零变化）；②落地载体＝units/ui.md v0.4（findings F-228 一并消解）＋tasks/foundation/UI-T03~T14 契约 O-31 处置改写随整链放行（contract-compile-log 2026-09-19 批次行）＋tasks/foundation/RPT-T01~T13 按 CCP §3 编译放行（RPT-T14~T16 阶段 B/C 前置域卡未产出显式排除——F-120 教训；触发＝对应域单元波次合入后的治理批次）；③findings F-229（tasks/ 扫描面数组根过滤——PIPE v1.14 T-ORCH 步骤 4 增补口径）登记即消账。本修订不改变任何需求语义与任务范围 |
 
 
 

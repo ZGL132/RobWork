@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "DraftController（未保存标记/草稿投影/会话状态机界面侧）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["UI-T03", "PRJ-T12"],
   "requirements": ["PM-04"],
   "designRefs": [
@@ -36,7 +36,7 @@
   "acceptance": [
     "UI-DRF-1~4：保存/应用分离呈现（save 只落 drafts/ 不产生修订、应用经 ProjectCommandService 恰好产生一个新修订——PM-04/§8.1 分工红线）、未保存标记（标题 *，DraftProjection.present ∨ 会话脏标记）、跨模块草稿汇总、定时草稿保存（UI 线程零磁盘 IO、落盘线程串行、60 s 默认周期——PM-04-S1 用户可调归 WP-04-T20 不提前实现）、草稿损坏 .bak 恢复与恢复横幅（阶段 A 用桩模块验证控制器协议——§8.3-5）",
     "StaleRevisionRejected 呈现（RV-10/§8.5）：冲突对话框显示当前 tip vs 草稿 baseRevisionId（数据由 CommandResult 附带）、草稿保留（apply-retained）、可继续编辑、不得自动重试提交；草稿局部撤销与项目命令撤销两栈互不越界（§8.7）",
-    "O-31 处置（blocked——kept planned，不得置 ready）：§10.5 IDraftController 接口直接持有 project 对端类型（restoreOnOpen(project::ProjectStore&)——C-3；onCommandResult(project::CommandResult)——C-4；SaveOutcome.firstError(project::StoreError)——C-3/C-4；落盘/汇总经 DraftService/DraftProjection——C-5，§8.2）——project 对 ui 零编译依赖（§3.1）与 C 表「接口依赖」形态矛盾未裁决；且前置 UI-T03 已被 O-31 阻塞。不私裁增边或最小注入模式；裁决后由所有者指派放行（DOC-T13 契约 acceptance 3），处置随放行登记留痕"
+    "O-31 处置（已裁决 2026-09-19——随整链放行）：C-3/C-4/C-5 对端类型（DraftService/ProjectCommandService/IProjectQueryPort）按 ui.md v0.4 裁决经 ui 自有草稿/命令/查询端口＋值投影承载（L5 装配适配，§3.2 冻结基准；§10.5 IDraftController 签名随本任务实现冻结并增量修订登记），产品面零对端链接/include（NoCrossUnitInclude_O31_UI_BUILD 守卫常驻）；RV-10/§8.7 两栈边界语义零变化"
   ],
-  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T12 行＋§2 需求表（PM-04 行）＋DTB §2.11 协作侧映射（≙WP-04-T12 协作侧——DTB WP-10 表无对应行，卡 §13 行为准）复核回填——designRefs 细化 §8.2~§8.6（数据流/恢复/应用冲突/处置表）＋§10.5（接口详设节）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、verify 补 ui_contract_test（DraftService 对接属 §12.1 契约测试面）、acceptance 拆三条并编入 O-31 处置；dependsOn 维持 [UI-T03, PRJ-T12]（DTB 前置列 WP-04-T12≙PRJ-T12 偏移 0——DraftService 公共头提供方，真实技术前置）；branch=wp10-t12（卡内序号——≙ 指向 WP-04-T12 协作侧不可用作分支名，同 UI-T11 口径）；interUnit=true 判定＝C-3/C-4/C-5 三类 project 对端类型直接持有（本任务为 O-31 触发面之一）；**O-31 硬约束：kept planned＋blocked（C-3/C-4/C-5 对端类型持有＋前置 UI-T03 blocked），裁决后由所有者指派放行（DOC-T13 契约 acceptance 3）**；编译留痕见 traceability/contract-compile-log.md"
+  "note": "DOC-T13 编译回填（2026-09-11）：按 ui.md §13 UI-T12 行＋§2 需求表（PM-04 行）＋DTB §2.11 协作侧映射（≙WP-04-T12 协作侧——DTB WP-10 表无对应行，卡 §13 行为准）复核回填——designRefs 细化 §8.2~§8.6（数据流/恢复/应用冲突/处置表）＋§10.5（接口详设节）、allowedFiles 补单元卡＋traceability/**（CORE-T01 教训）、verify 补 ui_contract_test（DraftService 对接属 §12.1 契约测试面）、acceptance 拆三条并编入 O-31 处置；dependsOn 维持 [UI-T03, PRJ-T12]（DTB 前置列 WP-04-T12≙PRJ-T12 偏移 0——DraftService 公共头提供方，真实技术前置）；branch=wp10-t12（卡内序号——≙ 指向 WP-04-T12 协作侧不可用作分支名，同 UI-T11 口径）；interUnit=true 判定＝C-3/C-4/C-5 三类 project 对端类型直接持有（本任务为 O-31 触发面之一）；**O-31 放行登记（2026-09-19）：所有者已裁决（登记 DTB §4 O-31 行＋units/ui.md v0.4 §3.1/§16.7）＝确认 ui 侧最小注入接口模式，本契约按 DOC-T13 登记的『裁决后整链放行』口径随批置 ready；对端协作的注入形态约束见 acceptance O-31 处置条**；编译留痕见 traceability/contract-compile-log.md"
 }

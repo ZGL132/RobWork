@@ -3,22 +3,41 @@
   "taskId": "RPT-T06",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "渲染器（FieldMatrix 提取＋HTML/JSON/CSV 三格式）",
-  "status": "planned",
+  "title": "实现渲染器（FieldMatrix 提取＋HTML/JSON/CSV 三格式）",
+  "status": "ready",
   "dependsOn": ["RPT-T05"],
-  "requirements": ["RPT-02"],
-  "designRefs": ["units/reporting.md#8.1", "units/reporting.md#9.3"],
+  "requirements": ["RPT-02", "NFR-SEC-07"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#8.1",
+    "units/reporting.md#8.3",
+    "units/reporting.md#8.4",
+    "units/reporting.md#9.3"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t06",
+  "interUnit": true,
+  "knownPitfalls": ["P-RPT-1", "P-RPT-6", "P-RPT-9"],
   "acceptance": [
-    "RP-CONS-3/4、RP-STATE-1~3（渲染断言）、RP-SAN-1：措辞断言/确定性/限定语用例过",
-    "多格式单一数据源（注入 io 工厂）"
-  ]
+    "RP-CONS-3 确定性（卡行验证方式列）：同报告同格式二次渲染字节相同（三格式各自——稳定排序：章节按 §5 order、条目按 entryKey、证据按 itemId；数值 std::to_chars 最短往返、行尾 HTML/JSON LF）；二次渲染字节比对为 Verifying 步组成部分（§8.5 步③）",
+    "RP-CONS-4 Unicode/单位/复杂结构引用（卡行验证方式列）：UTF-8 无 BOM；单位经 UnitPreference 冻结集、换算经 core 唯一入口（KIN-12 显示单位纯投影——§4.2 unitPreference 冻结入身份）；曲线类复杂结构以引用呈现不复制（ResultBinding 的 runId＋fieldPath＋JSON 路径——§8.1 总则）",
+    "RP-SAN-1 诊断脱敏（卡行验证方式列）：诊断章节渲染时再次过脱敏（exportSafeSummary 双保险——NFR-SEC-07/§4.3.3）；用户级报告不含调用栈、内存地址、未脱敏本机路径；身份规范文本（哈希/Schema/内部插件名）仅出现在追溯区块/附录（UX-02——§8.1）",
+    "FieldMatrix 单次投影（§8.4——卡行产物列『FieldMatrix 提取』）：三渲染器以同一 FieldMatrix 为值来源（任何格式对同一 fieldKey 的输出只能来自同一 FieldCell——D-07/AT-22 结构性前提，ARCH §10.3『渲染单一数据源』的机制化）；矩阵确定性（遍历序＝章节 order＋条目序、同报告同矩阵）单测锁定",
+    "三格式格式契约（§8.1/§8.3——卡行产物列）：HTML5 静态零外部依赖零脚本（样式内联、data-field/data-qualifier 机器可提取锚——D-08）；JSON ird-report-json/1 canonical（顶层 schemaVersion、SourcedValue 四态显式 token、未知字段拒绝——NFR-DEP-04 执行侧）；CSV 列序冻结主表 11 列＋诊断/覆盖附表（方言行 #rwcsv1、空值与『不适用』区分）",
+    "陷阱处置：P-RPT-1——公共头零 io 类型（IReportIoFactory/IReportCsvWriter/IReportJsonWriter/IReportOutputTarget 接口只出现 reporting/core 类型——§9.5/§3.3 纪律）；CSV 方言行/转义/JSON canonical 行为全归 io 适配实现、工厂零行为（隔离未登记编译边＋约束报告只用 io canonical 路径——非转发包装器 NFR-MNT-04 边界价值）；测试经注入 fake，P-RPT-1 裁决补边后直连签名零改动；P-RPT-6——O-25 已裁决不留 PDF 接口桩：IReportRenderer 为格式无关抽象（新格式＝新实现），不建 PDF 专属字段/配置/空页面（附录 B 裁决＋TRJ-08 同精神，DTB WP-12-T04 禁止项『不设 PDF 需求条目』）；P-RPT-9——core 单位/摘要消费以 v0.1 Draft 为基线，冻结 diff 后增量同步"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T06 行（≙ WP-12-T04——DTB §2.13）＋§8.1~§8.4/§9.3 回填。requirements 增补 NFR-SEC-07（卡行验证方式 RP-SAN-1 的需求依据原文——脱敏双保险渲染侧承载），维持 RPT-02；RP-STATE-1~3 的需求依据（TASK-02/RPT-05）归 RPT-T08 措辞冻结契约承载（其渲染断言落 Render 前置断言——两任务共享验证面在各自 acceptance 互引）。designRefs 补 #11＋#8.3/#8.4（格式契约与字段矩阵直接支撑节）。allowedFiles/verify 口径同前。branch=wp12-t06。interUnit=true 判定＝RenderArtifact 承载 core::Digest256/ContentIdentity（core 公共类型消费——§9.3）＋io 写出设施经 IReportIoFactory 注入消费（跨单元能力消费——公共头零 io 类型，注入形态非编译边）。knownPitfalls=P-RPT-1（io 注入形态）/P-RPT-6（O-25 已裁决——不留 PDF 桩，渲染器架构约束）/P-RPT-9（core v0.1 Draft 基线）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

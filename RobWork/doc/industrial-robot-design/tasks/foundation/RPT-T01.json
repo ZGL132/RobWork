@@ -4,22 +4,40 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "构建落位：reporting 占位转真实库",
-  "status": "planned",
-  "dependsOn": ["CORE-T01"],
+  "status": "ready",
+  "dependsOn": [],
   "requirements": ["NFR-MNT-01", "NFR-MNT-02"],
-  "designRefs": ["units/reporting.md#11", "units/reporting.md#3.4"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#3.4",
+    "units/reporting.md#3.5",
+    "development-task-breakdown.md#5.1",
+    "development-task-breakdown.md#5.5"
+  ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t01",
+  "interUnit": true,
+  "knownPitfalls": ["P-ENV-1", "P-RPT-1", "P-RPT-9"],
   "acceptance": [
-    "独立冒烟＋集成双模式构建零错误（RP-GATE-1）",
-    "红线扫描零命中"
-  ]
+    "双模式构建零错误（独立冒烟＋集成——DTB §5.1，卡行验证方式列＋完成条件『两模式零错误』）：sdurws_ird_reporting 由 INTERFACE 占位升级 STATIC（C++17、PUBLIC 链 RWS::ird::core＋RWS::ird::evidence＋RWS::ird::diagnostics＋RWS::ird::project——reporting.md §3.4），目标名与别名 RWS::ird::reporting 不变（DTB §5.1『INTERFACE→真实库升级时目标名不变』）；新建 reporting/CMakeLists.txt 并在父 CMakeLists 注册（卡行涉及文件列）；src/ 空起步，不在骨架预建占位实现（父 CMakeLists 既有约定，EX-T01 同款口径）",
+    "红线扫描零命中（卡行完成条件＋RP-GATE-1 全项脚本扫描）：编译依赖边仅 reporting→core/evidence/diagnostics/project 四条 ARCH §3.5 登记边（§3.4『不新增任何表外同层编译边——表外边＝构建失败』SA-10）；零 Qt 含 Core（NFR-MNT-01——reporting.md D-01『报告渲染为纯字节生成』）、无私有头出 include（NFR-MNT-02/R-2）、零 io/runtime/execution 编译边（P-RPT-1/P-RPT-2 注入形态——公共头零对端类型）、零 Eigen/rw::math 直接包含（§1.4）、产品目标不链 testkit（T-1 红线）",
+    "测试目标按 reporting.md §3.4/DTB §5.5 注册并可构建（卡行产物列『注册 _test/_contract_test（gtest 按 dtb §5.5）』）：sdurws_ird_reporting_test（单元内，ScriptedSectionProvider/ScriptedResultSource 替身落位目录）＋sdurws_ird_reporting_contract_test（跨单元契约：与 core/evidence 值类型往返、与 project 工件汇集座〔fake IReportArtifactSink〕、与 io 写出设施〔注入 fake〕协作）——googletest 经 vcpkg find_package(GTest CONFIG REQUIRED) 接入，失败即停、不回落（CR-07 定稿机制）；实现任务未落地前允许最小构建冒烟用例（PRJ-T01 同款口径）",
+    "reporting README 复核留痕（DTB §2.13 同族先例——PRJ-T01 acceptance 4）：include/sdurws/ird/reporting/README.md 现文已指向 reporting.md §9（卡头构建落位行『实测一致』）——实现时复核并在留痕中登记核对结论，保留『不参与编译/不表示已实现』声明（该核对结论为 RPT-T13 文档同步的前置事实）",
+    "陷阱处置：P-ENV-1——目标显式 target_compile_features cxx_std_17、不使用 C++20（reporting.md §1.4），双模式构建即 C++17 与框架 C++11 基线混链验证并留痕（DTB §5.1 P-ENV-1 行）；P-RPT-1——本任务只落 ARCH §3.5 四条登记链接边，io 写出能力不落编译边（IReportIoFactory 注入形态，P-RPT-1/P-IO-1/P-PR-5 合并裁决前维持注入、签名零改动预留直连）；P-RPT-9——四条边仅链接目标不消费上游公共头，core/evidence/diagnostics/project 契约以各卡 v0.1（Draft）为基线，冻结 diff 后按影响面增量同步留痕"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 七步第 1~5 步；编译者不担任本契约实施者，第 6 步独立评审另行执行）：按 reporting.md §11 RPT-T01 行（≙ WP-12-T02——DTB §2.13）＋§3.4/§3.5＋DTB §2.13 WP-12-T02 行回填。dependsOn 编码口径：卡行依赖原文『无（CORE-T01 后更佳）』——顺序偏好不入 dependsOn（CCP §2），core 等四目标骨架自流水线建库前已注册、链接不空悬（IO-T01 同款口径），占位 CORE-T01 依赖按卡行语义改编码为空表。requirements 维持 NFR-MNT-01/NFR-MNT-02（DTB WP-12-T02 需求列 NFR-MNT-01＋落位红线两条，PRJ-T01/IO-T01 同款）。designRefs 补 DTB §5.1/§5.5（双模式构建约定与 gtest 接入——测试目标随本任务注册，EX-T01 同款）。allowedFiles 补单元卡＋traceability/**（CORE-T01 教训：留痕面显式列入）。verify 由占位单命令展开为双测试目标构建（两目标均随本任务注册——reporting.md §3.4『随 RPT-T01 登记』；占位 verify 不覆盖 _contract_test 注册面）。masterWp 复核：WP-H 与卡头一致（DTB §0.1 主 WP 映射 WP-H=WP-12；卡头『主 WP 归属 WP-H、WP-I』中阶段 A 基础落 WP-H——无更正）。branch=wp12-t01（单元 WP-12＋卡内序号直映——wp12 前缀经全库 grep 无占用，T02~T13 顺延无冲突）。interUnit=true 判定＝构建层建立 reporting→core/evidence/diagnostics/project 四条 ARCH §3.5 登记边（§3.4 PUBLIC 链，T-2 白名单同款口径）。knownPitfalls=P-ENV-1（混链基线显式 C++17 双模式验证）/P-RPT-1（io 注入形态——四条边外零编译边）/P-RPT-9（上游 v0.1 Draft 基线——仅链接不消费头）；CR 登记册（traceability/foundation-contract-review.md）无 reporting 专属 CR-nn 条目——其 §1 表仅登记 evidence 唯一定义 ResultEnvelope/Currentness、reporting 为消费方，该消费纪律随 RPT-T03/T11 契约 acceptance 承载，本契约如实登记『无适用 CR』。放行＝CCP §3 第 6 步独立评审（结论由所有者登记 traceability/contract-compile-log.md）＋第 7 步所有者确认入队"
 }

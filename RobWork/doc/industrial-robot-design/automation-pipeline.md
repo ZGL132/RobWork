@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.13（2026-09-18 治理修订（所有者授权"需要"）：io 波次 IO-T04/T06/T07 收尾 §4.7③ findings.json 三连冲突 blocked（16b4646a/fa865524/d98be7bc）根因治理——登记簿双端并行追加×②→③固定合并次序＝尾部 hunk 必撞，三次所有者裁决结论一致（条目并集·编号序）＝可机械化确定性冲突；§4.7③ 增补唯一例外：冲突仅为 findings.json 时由 merge-findings-union.ps1 三方集合运算并集解算（撞号/删除/双方异改/顶层差异仍即停），发现闭环 F-204；T-ORCH 升 v10） |
+| 文档版本 | v1.14（2026-09-19 治理修订（所有者授权批次放行随附）：附录 A T-ORCH 步骤 4 增补扫描过滤口径——数组根 JSON 聚合索引非执行契约一律跳过（F-229），T-ORCH 升 v11。前一版 v1.13（2026-09-18 治理修订（所有者授权"需要"）：io 波次 IO-T04/T06/T07 收尾 §4.7③ findings.json 三连冲突 blocked（16b4646a/fa865524/d98be7bc）根因治理——登记簿双端并行追加×②→③固定合并次序＝尾部 hunk 必撞，三次所有者裁决结论一致（条目并集·编号序）＝可机械化确定性冲突；§4.7③ 增补唯一例外：冲突仅为 findings.json 时由 merge-findings-union.ps1 三方集合运算并集解算（撞号/删除/双方异改/顶层差异仍即停），发现闭环 F-204；T-ORCH 升 v10） |
 | 文档代号 | PIPE |
 | 上游 | acceptance-protocol.md（验收段完全复用其清单与独立性要求）、contract-compilation.md（ready 契约的唯一产出通道）、development-task-breakdown.md §5.7/§8（三段式流程与契约家族）、AGENTS.md §6（提交/推送/循环约定） |
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
@@ -167,7 +167,7 @@
 
 > 模板即纪律的载体：派发对应子代理时**逐字使用并仅替换 `<>` 占位符**，不增删条款（v1.9 §0.4：实施者/验收者由 tick 派发全新子代理承载）；模板修订＝PIPE 增量修订（版本行同步）。
 
-### 附录 A · 编排者模板（T-ORCH v10）
+### 附录 A · 编排者模板（T-ORCH v11）
 
 ```text
 你是本仓库自动化流水线的 tick 编排者。输入仅限：automation-pipeline.md、
@@ -188,7 +188,9 @@ traceability/pipeline/state.json（docRefs 给出全部指针）。禁止：读�
    条目与契约的一致性已由 validate-state 真读校验）；不可领（queue-head: claimable=false）
    → 报告等所有者；单元切换按 §6.1 unitCheckpoint 判定。autoDiscovery=true 时（v1.11
    当前配置）在领取前先扫描 tasks/：发现"status=ready 且不在 queue"的契约**追加队尾**
-   并在报告中列出（按目录字母序自然成拓扑序——任务号两位数字；不插队）。
+   并在报告中列出（按目录字母序自然成拓扑序——任务号两位数字；不插队；扫描仅认**对象根**
+   JSON 执行契约——数组根聚合索引如 tasks/foundation-tasks.json 非执行契约（DTB §8），
+   一律跳过，F-229）。
 5. 领取：冻结 base=git rev-parse redesign-main（40 位）；置 currentTask/branch/base、
    attempts 清零（implement/fix）、phase=implementing、run{kind=implement, runId/workerId=GUID,
    startedAt/leaseExpiresAt=now±leaseMinutes.implement}；写回 state（tickToken=你的 token）。
@@ -300,3 +302,4 @@ traceability/findings.json（F-xxx 编号顺延）；你不得合入，不得修
 | v1.11 | 2026-09-11 | 所有者裁决"预授权平台层整链批次序列（B 模式）＋autoDiscovery"：①§6.1 autoDiscovery 语义行登记开启依据——DOC-Txx 编译批次放行的新 ready 契约由 tick 自动追加队尾，消除逐批手工"调整队列"（state 侧翻转随本修订之后执行）；②批次波次固化：DOC-T06 runtime(12)→T07 evidence(11)→T08 policy(11)→T09 diagnostics(10)→T10 project(15)→T11 io(6)→T12 execution(10)→T13 ui(13)，EX/UI 的跨单元依赖由前序波次自然满足；③附录 A T-ORCH 升 v9（步骤 4 增补扫描动作与字母序＝拓扑序说明）；④O 项阻塞（O-09/O-24/O-31）浮出时仍停等所有者，预授权不掩盖真失败 |
 | v1.12 | 2026-09-15 | 所有者处置（"请处置"口令委托治理会话）：①登记 v1.11 波次范围缺陷——T10 project(15)/T11 io(6) 以"主链"口径排除了 PRJ-T01/IO-T01 两个构建落位任务，而队内后续任务依赖它们：DIAG-T11 合入后队首 PRJ-T02 永不可领，无进展熔断转 blocked（tick#133~136；findings F-120）——流水线按 §7 设计安全停等，但例行自动化被批次定义缺陷卡死；②处置＝PRJ-T01/IO-T01 按 CCP §3 七步编译放行（机器校验＋独立评审双 PASS，留痕 compile-log 2026-09-15 两行）＋所有者"调整队列"授权下插入（PRJ-T01 队首、IO-T01 居 IO-T02 前）＋state 置 idle——下一自动 tick 恢复；③本修订不改变任何机制语义与 T-ORCH 模板，仅为波次表历史记录登记缺陷证据；后续单元批次（reporting/modeling 等）范围定义必须含构建落位任务或显式登记排除理由（F-120 教训） |
 | v1.13 | 2026-09-18 | io 波次三连 blocked 根因治理（治理会话奉所有者"需要"授权，根因分析答所有者问询）：①根因登记（F-204）——findings.json 双端并行追加（实施端任务分支自登记＋验收端 evidence 分支基于主线建出、看不见对方编号、按主线尾部顺延取号）×§4.7 ②→③固定合并次序＝第二笔合并尾部 hunk 必撞；单侧登记任务（IO-T01/T02/T03/T05）③ 实测干净、双侧登记（IO-T04/T06/T07）三连冲突即停，每次停滞约 2~2.5 小时且三次所有者裁决结论完全一致（条目并集·编号序）——属可机械化确定性冲突而非真分歧；②§4.7③ 增补唯一例外：冲突文件仅为 findings.json 时由 scripts/industrialrobot/merge-findings-union.ps1 以 merge-base 为参照三方条目块集合运算（双方新增按编号序并存、同号同义取一、对方独改按对方替换；撞号/删除/双方异改/顶层字段不一致/校验失败一律退出非 0 仍即停；写前三重校验）——真分歧与撞号的人工裁决保护全部保留；③附录 A T-ORCH 升 v10（步骤 8 增补例外括注）；④发现闭环 F-204（status=fixed，本修订即消账）；否决替代案：验收端不改 findings.json 改随 ⑤ 统一转登（闭环登记时机推迟失真）、evidence 分支改基任务分支 head（削弱 ACC §2/§3 独立性）。竞态注记：EX-T01（tick#201，base 冻结于本修订合入前）若实施自登记 findings 将取号 F-204 与本条撞号——收尾 ③ 由 v1.13 脚本检出撞号即停，属预期保护非故障 |
+| v1.14 | 2026-09-19 | F-229 消账（tick#211 autoDiscovery 扫描伪影——编排者临时扫描脚本把数组根聚合索引 tasks/foundation-tasks.json 误报为入队候选，编排者人工判定不入队，零状态污染）：附录 A T-ORCH 步骤 4 增补扫描过滤口径——扫描仅认对象根 JSON 执行契约，数组根聚合索引（DTB §8 入口索引）非执行契约一律跳过；validate-state.ps1 契约索引构建已有同名守卫（文件名豁免＋数组根 return），本修订把该口径固化进编排者模板，T-ORCH 升 v11。机制语义零变化 |

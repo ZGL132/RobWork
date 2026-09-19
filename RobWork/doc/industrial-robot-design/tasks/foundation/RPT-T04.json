@@ -3,22 +3,39 @@
   "taskId": "RPT-T04",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "章节契约与注册表（Sections/SectionProvider）",
-  "status": "planned",
+  "title": "实现章节契约与注册表（Sections/SectionProvider）",
+  "status": "ready",
   "dependsOn": ["RPT-T03"],
-  "requirements": ["RPT-01-B"],
-  "designRefs": ["units/reporting.md#5"],
+  "requirements": ["RPT-01-B", "RPT-01-C"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#5",
+    "units/reporting.md#9.2"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-RPT-5", "P-RPT-9"],
   "acceptance": [
-    "RP-SCOPE-1~4（替身）：词表/级别校验/注册边界用例通过",
-    "缺正式结果的章节默认不选并显示缺项（B/C 范围契约）"
-  ]
+    "章节词表冻结落地（卡行完成条件『词表/级别校验/注册边界用例过』）：SectionId 词表 14 项与 §5.1 一致（8 个 B 章节＋6 个 C 专属章节；框架章节 6 个/域章节 8 个的级别归属逐项锁定）——token 只增不改名、新增章节＝sectionModelVersion 升版（§5.1 词表规则）；ird-report-section-model/1 版本 token 就位",
+    "级别校验与注册边界（同上完成条件）：B 级注册 C 专属章节＝注册拒绝（minimumLevel 与词表一致——§9.2 前置行）；重复 sectionId 注册拒绝；未注册域章节呈现为『章节不可用（提供方未注册）』缺项而非空壳（TRJ-08 同精神——§5.1 词表规则）；B 级∧C 章节＝LevelConflict 判定原语就位（端到端拒绝随 RPT-T05）",
+    "缺正式结果表达契约（占位 acceptance 承接——卡行完成条件语境＋§5.3）：SectionStatus 四态（Populated/NoFormalResult/DataInsufficient/NotApplicable）与 token 逐项一致；NoFormalResult＝selected=false＋缺项清单（§16 验收要点『缺正式结果的章节默认不选并显示缺项』的契约承载）；五词各有其位不合并（P-EV-8 消费——§5.3 区分规则）",
+    "C 级降级/拒绝规则原语（§5.4——卡行 §5 输入列）：C 级全部 C 章节缺正式结果＝ScopeInsufficient 判定原语＋RPT-SCOPE-INSUFFICIENT 降级建议（P-RPT-5 保守处置：宁可拒绝不可虚级，非静默降级）——端到端路径随 RPT-T05，本任务交付判定原语与诊断挂接",
+    "IReportSectionProvider/SectionRegistry 契约落地（§9.2——卡行产物列『SectionProvider.hpp（接口＋注册表）』）：SectionRequest/SectionEntry/SectionContent 结构逐字段一致；project() 纯投影后置（同请求同输出、零副作用、请求外数据读取＝评审约束）；注册期单线程/运行期 find 并发只读（§9.2 维度表）；本任务以局部夹具交付词表/级别/注册边界用例，RP-SCOPE-1~4 具名替身用例随 RPT-T11 契约套件收口（卡行 T11 产物列原文）",
+    "陷阱处置：P-RPT-5——ScopeInsufficient 保守处置为本文登记设计（上游未明文），如验收对『全缺仍生成 C 骨架』另有解释走需求变更（§14.3——不私自放宽为静默降级）；P-RPT-9——SectionRequest 消费 evidence::ResultEnvelope 与 core 身份类型以各卡 v0.1（Draft）签名为基线，冻结 diff 后按影响面增量同步留痕"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T04 行（卡内编号——DTB §2.13 无独立 ≙ 行，属 WP-12-T03 章节模型与 WP-12-T04 渲染链的共享前置）＋§5 全节＋§9.2（卡行产物列 SectionProvider.hpp 的接口定义节）回填。requirements 增补 RPT-01-C（§5 词表含 C 专属章节——词表整体冻结是本任务交付面；占位仅 RPT-01-B 覆盖不全），两 ID 均经 REQUIREMENTS.md 原文核对存在。designRefs 补 #11＋#9.2（接口＋注册表直接支撑节）。allowedFiles/verify 口径同前。branch=wp12-t04（卡内序号直映）。interUnit=true 判定＝SectionProvider.hpp 契约内嵌 evidence::ResultEnvelope（SectionRequest.results 只读值——§9.2）与 core 身份/诊断类型，且产出 IReportSectionProvider/SectionRegistry 为各业务域装配期注册的跨单元契约（产出跨单元公共接口——CCP §2）；卡行预期参考的『false』判定经复核修正：本任务头文件即消费对端公共类型，非纯单单元。knownPitfalls=P-RPT-5（C 级全缺保守处置——拒绝非静默降级）/P-RPT-9（evidence/core v0.1 Draft 基线）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

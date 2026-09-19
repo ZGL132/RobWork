@@ -3,22 +3,40 @@
   "taskId": "RPT-T05",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "构建器（会话状态机/锚定/资格与当前性快照/冻结）",
-  "status": "planned",
-  "dependsOn": ["RPT-T04"],
-  "requirements": ["RPT-01-B", "NFR-COR-04"],
-  "designRefs": ["units/reporting.md#7.1", "units/reporting.md#9.1"],
+  "title": "实现报告构建器（会话状态机/锚定/资格与当前性快照/冻结）",
+  "status": "ready",
+  "dependsOn": ["RPT-T04", "EV-T08", "PRJ-T09"],
+  "requirements": ["RPT-01-B", "NFR-COR-04", "TASK-02", "CON-02"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#7.1",
+    "units/reporting.md#7.2",
+    "units/reporting.md#9.1"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-RPT-5", "P-RPT-9", "P-EV-4"],
   "acceptance": [
-    "RP-MDL-2、RP-SCOPE-1~4、RP-CUR-3、RP-STATE-1~3：构建全反例矩阵过",
-    "零项目写验证（构造只读）"
-  ]
+    "构建反例矩阵（卡行完成条件『构建全反例矩阵过』）：§4.6 合法组合矩阵逐行——B 级∧含 C 专属章节＝LevelConflict 拒绝；C 级∧零 C 章节选中＝ScopeInsufficient 拒绝＋RPT-SCOPE-INSUFFICIENT＋建议生成 B 级（用户显式确认后重建，非静默降级——§5.4/P-RPT-5）；Preview 结果进入 resultRefs＝SourceMissing 拒绝（D-16 构建边界显性化）；Canceled/Failed/Interrupted 结果进入正式结论条目＝构建边界拒绝（TASK-02 呈现侧强制——仅诊断/状态呈现）；章节证据引用与所属结果 envelope 绑定不符＝EvidenceRefInvalid（防引用错位）",
+    "RP-MDL-2 引用不可解析拒绝（卡行验证方式列）：结果未 finalize/修订不存在/Preview 结果逐项定位 SourceMissing（listRuns 仅 finalize 口径——§7.2 步②）；无报告对象、查询端口桩/FakeSink 零调用（零项目写断言）",
+    "资格与当前性快照（卡行验证方式列 RP-CUR-3/RP-STATE-1~3 映射）：资格经 evidence FormalPassEligibility/ReviewRecordEligibility 纯检查取得并冻结进 ResultRefSnapshot.eligibility——不自算、不缓存跨报告复用（§6.2）；当前性不可判定＝status=nullopt＋RPT-CURRENTNESS-UNEVALUABLE 诊断、不得默认 Current（P-EV-4——§6.3）；失败/取消/中断结果仅诊断/状态呈现（TASK-02/RP-STATE-1 映射）。具名 RP-* 用例体随 RPT-T11 契约套件收口（卡行 T11 产物列原文），本任务交付构建器层用例（局部夹具）",
+    "零项目写验证（卡行完成条件）：Resolving~Verifying 全程零项目写（§7.1 逐项明确表『生成失败是否修改原项目＝否』）——唯一写点在 Publishing（IReportArtifactSink，随 RPT-T09）；构建失败/取消＝原项目零修改；锚定视图纪律（构建开始取一次 tryRevision 视图＋构建时刻 listRuns 快照——HEAD 前进/迟到结果不影响已锚定视图、不入本报告，§7.1/§7.2 步①②）",
+    "会话状态机（§7.1——卡行产物列）：Requested→Resolving→Building→Rendering→Verifying→Publishing→Completed/Failed/Canceled 七态＋终态后不可变；冻结时刻＝build() 返回不可变 ReviewReport（§7.1 逐项明确表『报告对象何时冻结』）；取消检查点（章节/结果解析）与清理（RAII、正常取消非错误——UX-03）；报告构建会话单线程（§9 约定）单测锁定",
+    "跨单元依赖就绪声明（EX-T08 先例）：EV-T08（ResultCurrentness 当前性纯投影）/PRJ-T09（查询端口 QueryPort：视图/闭包/缓存/隔离）均已 done 合入 redesign-main——领取时公共头必然可用；envelope 归档解码入口缺位（reporting.md §14.2 R-3）经 IReportResultSource 注入隔离（§3.3——解码归 evidence/execution 适配，§12.2 交接催办），本任务不自建解码器、不私建编译边"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T05 行（≙ WP-12-T03『构造部分』——DTB §2.13）＋§7.1/§7.2/§9.1＋§6.2/§6.3（资格与当前性快照语义节）回填。requirements 增补 TASK-02（§4.6 组合矩阵＋RP-STATE-1 需求依据原文『TASK-02、RPT-05』——呈现侧强制属构建器边界）与 CON-02（§6.3 当前性快照冻结/不改写历史——RP-CUR-1/2 设计落点），维持 RPT-01-B/NFR-COR-04，四 ID 均经 REQUIREMENTS.md 原文核对。dependsOn 增补跨单元前置 EV-T08（构建器 currentnessOf 消费 evidence::CurrentnessResult——EV-T08 即其交付契约）＋PRJ-T09（锚定视图经 IProjectQueryPort tryRevision/listRuns——DTB WP-12-T03 前置列 WP-04-T09≙PRJ-T09 偏移 0），均 done（grep 实证）；EV-T06/EV-T07 经 RPT-T03 链内传递不再重复编码。designRefs 补 #11＋#7.2（冻结流程图直接支撑节）。allowedFiles/verify 口径同前。branch=wp12-t05。interUnit=true 判定＝消费 project IProjectQueryPort 公共头（§3.2 C-4 接口依赖）＋evidence 资格纯检查与当前性投影（C-2）＋IReportResultSource 注入契约产出（§9.1）。knownPitfalls=P-RPT-5（ScopeInsufficient 保守处置）/P-RPT-9（evidence/project v0.1 Draft 基线＋R-3 解码入口缺位处置）/P-EV-4（当前性仅两持久态＋不可判定形态——不默认 Current）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

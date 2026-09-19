@@ -2290,11 +2290,23 @@
       "id": "F-228",
       "source": "traceability/acceptance/UI-T02-20260919.md#G-1（UI-T02 验收 attempt 1，verdict=pass，2026-09-19；送验对象 48e614cf19b62bf1ad5859ec1eeea6c286dcf7fd）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-19",
       "title": "ui.md §3.1 `sdurws_ird_ui_contract_test` 行链接列「被测目标＋core/project/execution/diagnostics＋testkit＋GTest」与 UI-T02 落位形态存在「最终形态 vs 落位形态」措辞差：落位直链面＝sdurws_ird_ui＋sdurws_ird_testkit＋GTest（ui/CMakeLists.txt:252-255），core/diagnostics 经 sdurws_ird_ui 的 PUBLIC 链接传染可达（等效、非直链），project/execution 按 O-31 处置边界（任务契约 acceptance 5 明文「不创建任何指向 project/evidence/execution/policy/runtime 的链接或 include」）延后至形态裁决/UI-T14 契约测试套件。落位本身合法且已在 ui.md v0.3⑤/CMakeLists 注释登记——非实现偏差，仅 §3.1 行措辞未区分「直链」与「传染可达」，后续验收者可能误判为偏差",
       "owner": "架构所有者（O-31 形态裁决时一并消解）；ui.md 维护方（UI-T14 契约测试套件落地同步 §3.1 行时处置）",
-      "resolution": "O-31 裁决或 UI-T14 落地时同步 ui.md §3.1 该行措辞（如标注「core/diagnostics 经被测目标 PUBLIC 传染可达；project/execution 随 O-31 裁决/UI-T14 增列」）。不阻塞 UI-T02 合入（attempt 1 verdict=pass）。编号顺延：F-227 已由 UI-T02 实施段在分支 wp10-t02（48e614cf）登记（主线 findings.json 截至基线 4d827120 尚未合入），本条在其后顺延避免合入冲突。"
+      "resolution": "O-31 裁决或 UI-T14 落地时同步 ui.md §3.1 该行措辞（如标注「core/diagnostics 经被测目标 PUBLIC 传染可达；project/execution 随 O-31 裁决/UI-T14 增列」）。不阻塞 UI-T02 合入（attempt 1 verdict=pass）。编号顺延：F-227 已由 UI-T02 实施段在分支 wp10-t02（48e614cf）登记（主线 findings.json 截至基线 4d827120 尚未合入），本条在其后顺延避免合入冲突。【消账 2026-09-19】O-31 已裁决（所有者：确认 ui 侧最小注入接口模式）——ui.md v0.4 §3.1 contract_test 行措辞按本条 resolution 建议同步（落位直链面＋core/diagnostics 传染可达注记＋project/execution 直链随 UI-T14 契约测试套件落地登记），本条随该修订即消账。",
+      "fixedAt": "2026-09-19"
+    },
+    {
+      "id": "F-229",
+      "source": "tick#211 编排者报告（2026-09-19）：UI-T02 收尾队列清空后，autoDiscovery 扫描辅助脚本把聚合文件 tasks/foundation-tasks.json（DTB §8 入口索引——含 5 条历史预编译条目的数组）误报为入队候选，编排者人工判定不入队（taskId/branch 非标量，validate-state 真读校验必拒）；属扫描器过滤缺陷，所有者批次放行治理会话登记并修复",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-19",
+      "title": "tasks/ 目录 JSON 扫描面缺「数组型 JSON 跳过」通用口径：validate-state.ps1 契约索引构建已同时具备文件名豁免与数组根守卫（foundation-tasks.json 单名豁免＋`if ($j -is [array]) { return }`），但 PIPE 附录 A T-ORCH 步骤 4 的扫描动作未固化该过滤口径——编排者按模板自制的扫描辅助若只按 .json 后缀＋taskId 字段存在性筛选，均会把数组根聚合索引误报为候选（tick#211 实录）",
+      "owner": "PIPE 文档所有者（附录 A 编排者模板扫描口径）",
+      "resolution": "PIPE v1.14：附录 A T-ORCH 步骤 4 增补扫描过滤口径——扫描仅认对象根 JSON 执行契约，数组根聚合索引（tasks/foundation-tasks.json，DTB §8）非执行契约一律跳过；T-ORCH 升 v11。机制语义零变化。【消账 2026-09-19】本修订与登记同批次落地，本条即消账",
+      "fixedAt": "2026-09-19"
     }
   ]
 }

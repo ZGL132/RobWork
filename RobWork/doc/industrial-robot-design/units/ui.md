@@ -5,8 +5,8 @@
 | 项目 | 内容 |
 | --- | --- |
 | 文档代号 | UNIT-UI |
-| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
-| 日期 | 2026-09-10 |
+| 文档版本 | v0.4（O-31 裁决落地：ui 侧最小注入接口模式确认；v0.3＝WP-10-T02 落位登记、v0.2＝全链一致性审计消账、v0.1＝首版草案） |
+| 日期 | 2026-09-19 |
 | 状态 | `Draft`（不自行宣布 Accepted） |
 | 单元 / 层 | ui／L3 平台服务（界面支撑）——**全产品唯一允许 Qt Widgets 的平台单元（R-3 唯一例外登记）** |
 | 主任务包 | WP-10（阶段 A 实施；产品化交付主 WP 归 WP-I） |
@@ -92,19 +92,21 @@ ui 是 L3 平台服务中的界面支撑单元，为产品提供**唯一**的工
 | --- | --- | --- | --- | --- |
 | C-1 | core 共享类型与诊断契约 | 接口依赖（链接 core） | 身份类型、四词表、DiagnosticRecord/ConfirmableFinding、单位换算 | core.md §4.1/§4.4/§4.7/§4.8/§4.9 |
 | C-2 | core 事件端口（IDomainEventBus） | 运行时注入（L5 装配） | 订阅 RevisionCommitted/DependencyInvalidated/TaskStatusChanged/ResultArchived | core.md §4.9 |
-| C-3 | project 项目会话与存储上下文（ProjectStore/Factory） | 接口依赖 | 打开/只读判断/锁信息/关闭协议（requestClose/closed/subscribeClose） | project.md §5.1 |
-| C-4 | project 命令服务（ProjectCommandService/UndoRedoService） | 接口依赖 | 一切"应用/撤销/重做"的唯一写路径 | project.md §5.3/§5.5 |
-| C-5 | project 草稿服务（DraftService）与查询端口（IProjectQueryPort） | 接口依赖 | 草稿落盘/恢复/汇总；修订/分支/元数据只读查询 | project.md §5.2/§5.4 |
-| C-6 | project ICommandInteraction（ui 实现该接口） | 运行时注入（ui→project 方向） | SA-15 确认对话回调、principal 采集、Marshal | project.md §5.3.3（P-PR-7） |
-| C-7 | evidence 结果与当前性投影 | 接口依赖 | CurrentnessResult（过期原因）、VerdictTrace（缺项清单）、FormalPassEligibility、EvidenceManifest | evidence.md §6/§7/§8 |
-| C-8 | execution 任务状态、进度与控制 | 接口依赖 | tasksByProject（PM-03 清单）、TaskSnapshot/ProgressReport、requestCancel/Pause/Resume/ForceTerminate、shutdown(DrainPolicy) | execution.md §10.1/§10.2 |
+| C-3 | project 项目会话与存储上下文（ProjectStore/Factory） | 运行时注入（O-31 裁决 2026-09-19：ui 自有最小端口接口＋值投影，L5 装配适配；产品面零对端链接/include） | 打开/只读判断/锁信息/关闭协议（requestClose/closed/subscribeClose） | project.md §5.1 |
+| C-4 | project 命令服务（ProjectCommandService/UndoRedoService） | 运行时注入（O-31 裁决 2026-09-19：ui 自有最小端口接口＋值投影，L5 装配适配；产品面零对端链接/include） | 一切"应用/撤销/重做"的唯一写路径 | project.md §5.3/§5.5 |
+| C-5 | project 草稿服务（DraftService）与查询端口（IProjectQueryPort） | 运行时注入（O-31 裁决 2026-09-19：ui 自有最小端口接口＋值投影，L5 装配适配；产品面零对端链接/include） | 草稿落盘/恢复/汇总；修订/分支/元数据只读查询 | project.md §5.2/§5.4 |
+| C-6 | project ICommandInteraction（ui 实现该接口） | 运行时注入（O-31 裁决方向外翻：L5 适配器实现 project::ICommandInteraction，委托 ui 自有交互回调端口） | SA-15 确认对话回调、principal 采集、Marshal | project.md §5.3.3（P-PR-7） |
+| C-7 | evidence 结果与当前性投影 | 运行时注入（O-31 裁决 2026-09-19：ui 自有最小端口接口＋值投影，L5 装配适配；产品面零对端链接/include） | CurrentnessResult（过期原因）、VerdictTrace（缺项清单）、FormalPassEligibility、EvidenceManifest | evidence.md §6/§7/§8 |
+| C-8 | execution 任务状态、进度与控制 | 运行时注入（O-31 裁决 2026-09-19：ui 自有最小端口接口＋值投影，L5 装配适配；产品面零对端链接/include） | tasksByProject（PM-03 清单）、TaskSnapshot/ProgressReport、requestCancel/Pause/Resume/ForceTerminate、shutdown(DrainPolicy) | execution.md §10.1/§10.2 |
 | C-9 | diagnostics 诊断目录与确认请求 | 接口依赖 | DiagProjectionItem/FindingRecord 投影、订阅刷新、Tier-U 日志面板数据 | diagnostics.md §9.3/§9.7 |
-| C-10 | policy 策略只读投影 | 接口依赖（IPolicyProvider，L5 注入） | UX-08 策略摘要（域启用/阈值/过滤对计数） | policy.md §9.1/§10.6 |
-| C-11 | runtime 只读运行时视图 | 接口依赖（IRuntimeModelView/IRuntimeNameResolver） | 三维渲染共同消费点、ObjectId↔局部名呈现 | runtime.md §7.3/§8.3 |
+| C-10 | policy 策略只读投影 | 运行时注入（O-31 裁决：ui 自有策略摘要端口——不直接 include policy::IPolicyProvider；PolicyResolution/EngineeringPolicySet 语义经 §3.2 冻结基准投影，L5 适配） | UX-08 策略摘要（域启用/阈值/过滤对计数） | policy.md §9.1/§10.6 |
+| C-11 | runtime 只读运行时视图 | 运行时注入（O-31 裁决：ui 自有名称解析端口——resolveObjectId 语义按 runtime.md §7.3 冻结；IRuntimeModelView 共同消费点归阶段 B 随增量修订复核） | 三维渲染共同消费点、ObjectId↔局部名呈现 | runtime.md §7.3/§8.3 |
 | C-12 | workflow 阶段门控与下一步建议 | 接口依赖（**workflow.md 未产出，单侧冻结**） | 七阶段解锁/锁定、下一步建议文案数据 | ARCH §3.4；P-UI-6 |
 | C-13 | 业务插件界面模块与只读业务投影 | 运行时注入（IPluginUiRegistrar，静态白名单） | 阶段面板、域编辑器、业务命令注册 | SA-01；本文 §11 |
 | C-14 | reporting 报告预览接口 | 接口依赖（阶段 B 承接） | 报告导出命令的目标服务 | units/reporting.md 未产出；§14 登记 |
 | C-15 | Qt/RobWorkStudio 基线 | 框架 | Qt Core/Gui/Widgets；RWStudioView3D（三维区，阶段 B 接入） | ARCH §5.1 |
+
+> 注入形态统一细则见 §3.1（O-31 裁决 2026-09-19）：对端类型一律经 ui 自有端口/值投影进入 ui，C 表"消费对象"列自 v0.4 起读作语义协作面对象。
 
 #### 2.1.3 ui 不拥有
 
@@ -175,10 +177,10 @@ ui 是 L3 平台服务中的界面支撑单元，为产品提供**唯一**的工
 | --- | --- | --- | --- |
 | `sdurws_ird_ui` | STATIC（自 UI-T02 起，由 INTERFACE 占位升级，目标名不变） | `RWS::ird::core`、`RWS::ird::diagnostics`、Qt Core/Gui/Widgets | **R-3 唯一例外登记目标**：全产品唯一允许 Qt Widgets 的平台单元；例外范围仅限本目标与 §3.3 所列 ui 测试目标 |
 | `sdurws_ird_ui_test` | 可执行 | 被测目标＋`RWS::ird::testkit`＋GTest | 无界面模型测试（QCoreApplication 级，无需 GUI 平台插件——AGENTS 模型测试豁免） |
-| `sdurws_ird_ui_contract_test` | 可执行 | 被测目标＋core/project/execution/diagnostics＋testkit＋GTest | 跨单元契约测试（无界面；带 Qt 事件循环 headless 用 QCoreApplication） |
+| `sdurws_ird_ui_contract_test` | 可执行 | 被测目标＋sdurws_ird_testkit＋GTest（落位直链面，WP-10-T02；core/diagnostics 经被测目标 PUBLIC 传染可达；project/execution 直链随 UI-T14 契约测试套件落地登记——测试目标链接面按本表承载，不属 ARCH §3.5 产品边管辖，O-31 裁决 2026-09-19 消解 F-228） | 跨单元契约测试（无界面；带 Qt 事件循环 headless 用 QCoreApplication） |
 | `sdurws_ird_ui_gui_test` | 可执行（GUI，单列） | 被测目标＋testkit（＋`sdurws_ird_testkit_qt`，见 P-TK 登记） | Widgets/GUI 契约测试；**ctest LABELS `ird_gui` 串行**；不与模型/Meta 测试合并命令（v0.2 更名：原名 `ird_ui_gui_test` 违反 ARCH §1.4 `sdurws_ird_<unit>_*` 命名约定，本卡内三处同步更正） |
 
-依赖边（对齐 ARCH §3.5，不新增）：`ui → core, diagnostics`（接口依赖）；`project / execution / evidence / policy / runtime` 对 ui **零编译依赖**——与它们的协作一律经运行时注入（C-3～C-12 中的实例由 L5 应用壳装配期注入，ui 持有的是 core 中定义的接口类型或各自公共头中的端口接口）。**禁止 ui 链接或 include 任何业务域单元（modeling/requirements/.../workflow）的私有头**；业务插件界面经 §11 注册端口装配。
+依赖边（对齐 ARCH §3.5，不新增）：`ui → core, diagnostics`（接口依赖）；`project / execution / evidence / policy / runtime` 对 ui **零编译依赖**——与它们的协作一律经运行时注入（C-3～C-12 中的实例由 L5 应用壳装配期注入；ui 持有的是 core/diagnostics 中定义的接口类型，或 **ui 自有公共头定义的最小端口接口与值投影**——O-31 裁决 2026-09-19：对 project/evidence/execution/policy/runtime 不增边，产品面零对端链接/include，`NoCrossUnitInclude_O31_UI_BUILD` 守卫即其常驻执行面；端口/投影值形态以 §3.2 对端锚点为冻结基准，L5 适配器归装配层任务，ui 测试以可控替身承载——reporting.md §3.3／evidence.md §3.3／EX ICompileCacheJudge 同款惯例）。**禁止 ui 链接或 include 任何业务域单元（modeling/requirements/.../workflow）的私有头**；业务插件界面经 §11 注册端口装配。
 
 线程与红线自检（静态扫描承载，UI-T02 门禁）：
 
@@ -186,9 +188,9 @@ ui 是 L3 平台服务中的界面支撑单元，为产品提供**唯一**的工
 - ui 源码禁止出现 RobWork 名称前缀拼接/剥离（R-4）；显示名一律经 `IRuntimeNameResolver::resolveObjectId` 取 `localName`（runtime.md §7.3）。
 - ui 不读取其他插件控件/内存对象/私有文件（ARC-02/NFR-MNT-02：Widget 互读零命中）。
 
-### 3.2 消费的上游类型清单（冻结引用，不重定义）
+### 3.2 消费的上游类型清单（投影值形态冻结基准）
 
-以下类型**只引用不重定义**（重定义即违反 NFR-MNT-03 单一权威）：
+按 §3.1 注入边界（O-31 裁决 2026-09-19），以下类型是 ui 值投影的**语义冻结基准**：ui 产品面不直接 include 对端公共头，对端能力经 ui 自有端口接口以值投影形态进入 ui；投影 schema 逐字段语义以本表对端锚点为唯一权威，**不重定义权威类型、不另立语义**（NFR-MNT-03 单一权威不变——投影≠重定义，reporting ModelSummary／runtime §13.2 同案），对端锚点语义变更时投影随单元卡增量修订同步。
 
 - 身份：`core::ObjectId/ProjectId/BranchId/RevisionId/RunId/AttemptId/EventId`、`core::ContentVersion/ContentIdentity`、`core::TaskIdentity`（五元组）。
 - 词表：`core::EvaluationMode`、`core::TaskOutcome`、`core::EngineeringStatus`、`core::TaskState`（九态）。
@@ -206,6 +208,8 @@ ui 是 L3 平台服务中的界面支撑单元，为产品提供**唯一**的工
 ```
 ui/include/sdurws/ird/ui/          命名空间 sdurws::ird::ui
   UiTypes.hpp            七态词表、StageId、CommandId/TextKey、UiSessionState 等本单元公共值类型
+  UiPorts.hpp           C-3/4/5/7/8/10/11 最小端口接口（O-31 裁决注入面：会话/命令/草稿/查询/任务/当前性/策略摘要/名称解析/交互回调；接口形状随 UI-T03+ 各消费任务在其 §10 对应节实现冻结并增量修订登记，L5 适配）
+  UiProjections.hpp     值投影承载（StatusWordProjection〔§6.3〕及会话/元数据/任务/当前性等投影——§3.2 冻结基准的 ui 侧载体）
   IWorkbenchShell.hpp    §10.1 工作台壳门面
   IStageNavigationModel.hpp  §10.2 阶段导航投影
   ICommandRegistry.hpp   §10.3 命令注册表
@@ -1043,6 +1047,8 @@ FindingRecord 投影字段（diagnostics.md §5.2）→ 对话呈现映射：fin
 
 ## 10. 公共接口详细设计
 
+> O-31 裁决注（2026-09-19）：本节及 §4～§9、§11 行文中出现的对端类型（§3.2 清单）自 v0.4 起一律经 §3.3 UiPorts/UiProjections 承载（ui 自有最小端口接口＋值投影，L5 装配适配）；对应接口签名随首个消费该面的 UI 任务实现冻结并做单元卡增量修订登记（CCP §5 载体），需求语义零变化。
+
 本章九个接口全部位于 `sdurws::ird::ui`（§3.3 头文件）。通用约定：所有接口为抽象类（纯虚），实现类由 ui 库提供并经 `IWorkbenchShell` 装配门面获取；除非单独注明，**方法只允许在 UI 线程调用**（违规＝未定义行为＋DT 断言）；返回值一律值语义/只读引用，接口不交出内部可变状态。
 
 ### 10.1 IWorkbenchShell（工作台壳门面）
@@ -1052,9 +1058,9 @@ struct ShellWiring {                       // L5 应用壳装配期注入（全�
     std::shared_ptr<core::IDomainEventBus> eventBus;
     std::shared_ptr<diagnostics::IDiagnosticSink> diagSink;
     std::shared_ptr<diagnostics::IRedactionService> redaction;
-    std::shared_ptr<policy::IPolicyProvider> policyProvider;
-    std::shared_ptr<runtime::IRuntimeNameResolver> nameResolver;
-    // project/execution 实例随打开流程注入 UiSessionController（§5.2）
+    std::shared_ptr<ui::IPolicySummarySource> policySource;   // O-31 裁决：ui 自有端口（§3.3 UiPorts），L5 适配 policy::IPolicyProvider——§6.7 策略摘要只读面语义不变
+    std::shared_ptr<ui::IUiNameResolver> nameResolver;   // O-31 裁决：ui 自有端口，L5 适配 runtime::IRuntimeNameResolver——resolveObjectId 取 localName 语义不变（§3.1 红线）
+    // project/execution 实例随打开流程注入 UiSessionController（§5.2）——project/execution 实例随打开流程经 ui 自有会话/命令/草稿/查询端口注入（O-31 裁决）
 };
 
 class IWorkbenchShell {
@@ -1705,3 +1711,4 @@ public:
 | v0.1 | 2026-09-10 | 首版草案（阶段 A 范围）：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）及 8 份已产出单元详设（core/testkit/project/evidence/runtime/policy/execution/diagnostics，均 v0.1 Draft）编写；新建 `units/ui.md`（此前不存在）；冻结 §6.3 七态映射、§7 命令/快捷键设施、§8 DraftController、§9 确认与任务契约、§10 九接口；登记待裁决 P-UI-1~10 与上游不一致 CF-1~4 |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：①§3.1/§11 目标 `ird_ui_gui_test` 更名为 `sdurws_ird_ui_gui_test`（ARCH §1.4 命名约定，三处同步）；②P-UI-3/CF-2 销账——execution.md v0.2 已将 DrainPolicy 更正为 `CancelQueuedAndWait`，与本文对接语义一致；③§1.2"io/reporting 未产出"过期表述由文档治理任务同步（reporting.md 已产出并双向交接）。依赖边三方矛盾（C 表"接口依赖"标注 vs ARCH §3.5 白名单）登记 DTB §4.2 O-31，待架构所有者裁决，本文不私裁 |
 | v0.3 | 2026-09-19 | WP-10-T02（≙UI-T02）构建落位登记：①§3.1 目标表逐行落地——`sdurws_ird_ui` INTERFACE→STATIC（目标名不变，C++17，PUBLIC 链 core＋diagnostics＋Qt6::Core/Gui/Widgets），`sdurws_ird_ui_test`/`sdurws_ird_ui_contract_test`/`sdurws_ird_ui_gui_test` 三测试目标按 DTB §5.5 注册（LABELS ird/ird/ird_gui——ctest 精确过滤用 `^ird$`/`^ird_gui$`，-L 为正则匹配）；②R-3 例外登记：目标形态按本表 §3.1 行承载（sdurws_ird_ui 本体即例外目标——DTB §4.5"预登记（WP-10-T02 生效）"行兑现）；ird_gates 机器面数据（IRD_R3_EXCEPTION_TARGETS 条目＋`_gui_test` 形态解析词表）滞后于人工登记册，回填登记提交件 traceability/wp10-t02-gate-registrations.md（责任方 WP-01-T03），门禁命中集 diff＝基线 19＋新增 8（全部契约明文面，findings.json F-227）；③`sdurws_ird_testkit_qt` 启用落位（testkit.md §10.1 触发已成立——本单元 §12.1 消费者定位兑现，设施随 UI-T13/T14）；④落位期源码形态＝锚点翻译单元＋三测试目标最小构建冒烟用例（O-31 include 面边界/R-4/QShortcut/例外登记文本核对的常驻自证），公共头与业务实现随 UI-T03+（不预建占位）；⑤O-31/P-UI-5 处置按契约 acceptance 4/5：仅表内边（ui→core、ui→diagnostics）＋CF-1 口径（注册表类型归 ui 自有头），零对 project/evidence/execution/policy/runtime 的链接或 include，不构成消账 |
+| v0.4 | 2026-09-19 | O-31 裁决落地（裁决来源：DTB §4 O-31，所有者 2026-09-19 裁决）：确认 ui 侧最小注入接口模式——ui.md 依赖声明三方矛盾（§2.1.2 C 表"接口依赖" vs §3.1"仅链 core,diagnostics" vs ARCHITECTURE §3.5 白名单仅 ui→core,diagnostics）以"不增边＋ui 自有最小端口接口＋值投影＋L5 装配适配"消解：ARCH §3.5 不动，ui 产品面（sdurws_ird_ui 目标源集）保持零对 project/evidence/execution/policy/runtime 的链接或 include（UI-T02 已交付的 `NoCrossUnitInclude_O31_UI_BUILD` 守卫即该裁决的常驻执行面）；对端类型不直接进入 ui 头文件（对齐 reporting.md §3.3／evidence.md §3.3／io.md IO-D02／EX ICompileCacheJudge 等 10 卡"消费方自定义最小注入接口＋值传递"惯例）。编辑落点：①文档头版本→v0.4、日期→2026-09-19（并补同步文档头版本行——v0.3 变更行登记时漏改，文档头此前仍标 v0.2）；②§2.1.2 C 表：C-3/C-4/C-5/C-7/C-8 形态列改"运行时注入（O-31 裁决：ui 自有最小端口接口＋值投影，L5 装配适配；产品面零对端链接/include）"，C-6 方向外翻（ui 不再直接实现 project::ICommandInteraction，由 L5 适配器实现并委托 ui 自有交互回调端口），C-10 改 ui 自有策略摘要端口（不直接 include policy::IPolicyProvider）、C-11 改 ui 自有名称解析端口（resolveObjectId 语义按 runtime.md §7.3 冻结；IRuntimeModelView 共同消费点归阶段 B 复核），表后增注入形态统一细则注（C 表"消费对象"列自 v0.4 起读作语义协作面对象）；③§3.1 依赖边括注重写（不增边、`NoCrossUnitInclude_O31_UI_BUILD` 常驻执行面、端口/投影值形态以 §3.2 对端锚点为冻结基准、L5 适配器归装配层任务、ui 测试以可控替身承载）；④§3.1 contract_test 行链接列改"被测目标＋sdurws_ird_testkit＋GTest（落位直链面，WP-10-T02；core/diagnostics 经被测目标 PUBLIC 传染可达；project/execution 直链随 UI-T14 契约测试套件落地登记——测试目标链接面按本表承载，不属 ARCH §3.5 产品边管辖）"；⑤§3.2 重框为"投影值形态冻结基准"（投影≠重定义，NFR-MNT-03 单一权威不变——reporting ModelSummary／runtime §13.2 同案；分组类型清单原样保留即基准本身）；⑥§3.3 公共头布局新增 UiPorts.hpp（C-3/4/5/7/8/10/11 最小端口接口）与 UiProjections.hpp（值投影承载）两行；⑦§10.1 ShellWiring：policyProvider 成员→policySource（ui::IPolicySummarySource）、nameResolver 成员→ui::IUiNameResolver（均为 ui 自有端口，L5 适配对端），project/execution 实例随打开流程经 ui 自有会话/命令/草稿/查询端口注入；⑧§10 章首增 O-31 裁决引导注（§10 及 §4～§9、§11 行文中对端类型自 v0.4 起一律经 UiPorts/UiProjections 承载，对应接口签名随首个消费该面的 UI 任务实现冻结并做单元卡增量修订登记，CCP §5 载体）。findings.json F-228（本文件 §3.1 sdurws_ird_ui_contract_test 行"最终形态 vs 落位形态"措辞差）随④按其 resolution 建议措辞消解。需求语义零变化：UX-*/PM-* 等需求承接与验收语义一律不动（§2.2、§12～§15 零改动），仅改依赖"形态"。后续触发点：UI-T03+ 各消费任务在其 §10 对应节逐任务冻结端口/投影形状并增量修订登记；UI-T14 契约测试套件落地时登记 contract_test 对 project/execution 直链；阶段 B 随增量修订复核 C-11（IRuntimeModelView 共同消费点）与 C-14（reporting 预览接口） |

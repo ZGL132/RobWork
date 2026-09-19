@@ -3,22 +3,41 @@
   "taskId": "RPT-T09",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "导出与归档协调（Export/Archive＋IReportArtifactSink）",
-  "status": "planned",
+  "title": "实现导出与归档协调（Export/Archive＋IReportArtifactSink）",
+  "status": "ready",
   "dependsOn": ["RPT-T07"],
-  "requirements": ["RPT-01", "NFR-COR-04"],
-  "designRefs": ["units/reporting.md#7.3", "units/reporting.md#9.5"],
+  "requirements": ["RPT-01", "PM-07", "PM-08"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#7.3",
+    "units/reporting.md#7.4",
+    "units/reporting.md#9.5",
+    "units/reporting.md#9.6"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t09",
+  "interUnit": true,
+  "knownPitfalls": ["P-RPT-4", "P-RPT-1", "P-RPT-9"],
   "acceptance": [
-    "RP-IDEM-1/2、RP-CONF-1、RP-DISK-1、RP-RO-1、RP-CANC-1：幂等/冲突/磁盘/只读/取消用例过",
-    "报告目录追加幂等、冲突拒绝；导出失败保留选择与路径可重试"
-  ]
+    "RP-IDEM-1/2 幂等导出（卡行验证方式列＋完成条件『报告目录追加幂等』）：项目内同 reportId 已 Finalized 且 manifest 摘要一致＝IdempotentHit 零重写不报错（sink 调用记录＋摘要比对——D-14 同构）；外部目标已存在同字节文件＝幂等成功无操作（文件 mtime/哈希不变）；幂等判定键＝(contentIdentity, format 集, rendererVersion, templateVersion) 的 manifest 内容摘要（D-02——不以 ReportId、不以目标路径）",
+    "RP-CONF-1 冲突拒绝（卡行完成条件『冲突拒绝』＋『导出失败保留选择与路径可重试』）：①项目内同 reportId 不同内容＝ArchiveConflict（差异维度定位：身份/版本维度——不覆盖）②外部目标不同内容＝NeverOverwrite 默认拒绝（IO-PACK-TARGET-EXISTS 族）、用户显式确认后 OverwriteAtomic 原子替换且先前输出在替换前完整保留（RP-DISK-1 同口径：失败/磁盘不足保留选择与路径可重试——§16 验收要点）",
+    "RP-DISK-1/RP-RO-1（卡行验证方式列）：写失败注入＝DiskFull＋abandon＋清理＋可重试成功（比较型诊断：所需/可用——§7.4 表）；只读项目 ProjectArchive＝ReadOnlyStore 拒绝＋诊断说明两条路径、ExternalPath 导出成功（PM-07——ui report.export readOnlyAllowed=是口径）",
+    "RP-CANC-1 取消与未完成工件（卡行验证方式列＋PM-08）：逐格式/逐工件检查点取消＝Canceled（正常取消非错误——UX-03）＋临时文件清理＋目标不变；项目内取消/失败＝abandon→未完成工件不列入已发布清单（『文件存在≠已发布』——任务约束§五.6/PM-08 口径）；abandon＝归档责任终结，已 Finalized 报告零影响（清理失败仅残留诊断）",
+    "IReportArtifactSink 契约与导出编排落地（卡行产物列『Export.hpp/.cpp、Archive.hpp/.cpp（＋IReportArtifactSink 契约与 Fake）』）：begin/writeArtifact/finalize/abandon 四方语义与 §9.6 逐字一致（finalize＝report.json 原子发布＝唯一完整标志 D-13；幂等 IdempotentHit/冲突 Conflict 判定承载）；IReportArchiveCoordinator 编排顺序 begin→write×N→finalize、任一非 Ok→abandon；listPublished 仅 Finalized；FakeArtifactSink 最小实现随本任务交付（可注入冲突/磁盘满/清理失败），具名替身与替身边界声明随 RPT-T11 收口（卡行 T11 产物列原文）",
+    "陷阱处置：P-RPT-4——IReportArtifactSink 为 reporting 单侧冻结契约（project.md 未定义对应公共接口）——以 §9.6 为起点，project 详设修订时交叉核对 D-13/D-14 语义一致性；project 侧实现随其阶段 B 任务对齐，本任务不私改 project 公共头；P-RPT-1——IReportIoFactory 族公共头零 io 类型，导出落盘经 io 原子协议（<target>.<8hex>.tmp）由注入实现承载、测试经注入 fake；P-RPT-9——project 只读端口（IProjectQueryPort 之 runDir/listRuns）与 core 摘要消费以 v0.1 Draft 为基线，冻结 diff 后增量同步"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T09 行（≙ WP-12-T03『幂等部分』/T04——DTB §2.13）＋§7.3/§7.4/§9.5/§9.6（卡行输入列全展开）回填。requirements 调整：占位 NFR-COR-04 移除——其 §13 追踪落点为 §4.3 引用类型/§6.2（RPT-T03/T05 承载），本任务需求语境为 RPT-01（幂等/冲突）＋PM-07（只读项目 RP-RO-1）＋PM-08（未完成工件 RP-CANC-1/CONF-1——卡 §2.2 PM-07/PM-08 行承接列），三 ID 均经 REQUIREMENTS.md 原文核对。designRefs 补 #11＋#7.4/#9.6（幂等协议与汇集座契约直接支撑节）。allowedFiles/verify 口径同前。branch=wp12-t09。interUnit=true 判定＝产出 IReportArtifactSink 跨单元注入契约（reporting 定义、project 实现——D-13/D-14 模式，project.md §13.2 交接的承接答复 §12.1）＋io 能力经 IReportIoFactory 注入消费（P-RPT-1）。knownPitfalls=P-RPT-4（sink 单侧冻结——对齐义务）/P-RPT-1（io 注入）/P-RPT-9（project/core v0.1 Draft 基线）。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }

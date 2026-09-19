@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.2（全链一致性审计消账；v0.1＝首版草案） |
-| 日期 | 2026-09-10 |
+| 文档版本 | v0.3（RPT 编译批次评审驱动的两处任务号漂移校正；v0.2＝全链一致性审计消账、v0.1＝首版草案） |
+| 日期 | 2026-09-19 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试通过或正式验收） |
 | 文档代号 | UNIT-REPORTING |
 | 单元 | reporting（平台服务，L3；ARCHITECTURE §2.3/§3.1：ReviewReport 对象〔B/C 两级〕、HTML/JSON/CSV 渲染、证据包导出、往返复算） |
@@ -370,7 +370,7 @@ RPT-\* 稳定诊断码清单（**码值权威＝diagnostics StableCodeRegistry�
 | `dataIdentity` | ReportCodec-Data | 身份三元组＋revisionSeq＋level＋snapshotId/sliceId＋resultRefs 的 (runId, snapshotId, sliceId, inputBaselineId, caseScope) 集＋unitPreference＋选中章节的 (sectionId, selected) 集 | 评审元数据、entries 内容、诊断、生成时间/者 |
 | `contentIdentity` | ReportCodec-Full | dataIdentity 全部字段＋全部章节完整内容（entries/missingItems/status/diagnostics）＋ReviewMetadata＋sectionModelVersion | —（生成时间/生成者不入：同内容重建身份一致——幂等判定的基础；生成信息记录于工件清单） |
 
-编码规则（evidence §5.2 同源纪律）：确定性二进制（magic `IRDRPT1`/`IRDRPTD1`＋字段按名序/章节按 order＋长度前缀＋大端）；presence 字节显式编码 optional；字符串 UTF-8 禁 NUL；浮点位模式；**编码器版本号入编码**（升版＝全体报告身份变化，走设计变更评审）；纯函数（同输入同字节，NFR-COR-02）。往返契约：`parse(encode(x))==x`（RPT-T02 单测锁定）。
+编码规则（evidence §5.2 同源纪律）：确定性二进制（magic `IRDRPT1`/`IRDRPTD1`＋字段按名序/章节按 order＋长度前缀＋大端）；presence 字节显式编码 optional；字符串 UTF-8 禁 NUL；浮点位模式；**编码器版本号入编码**（升版＝全体报告身份变化，走设计变更评审）；纯函数（同输入同字节，NFR-COR-02）。往返契约：`parse(encode(x))==x`（RPT-T03 单测锁定——ReportCodec 归 RPT-T03 行，§11；v0.3 校正）。
 
 ### 4.5 ReviewMetadata（评审/签署元数据，RPT-01-C/RPT-04）
 
@@ -1468,7 +1468,7 @@ B 级真实章节注册前，其域评估器与 Profile 必须已注册（eviden
 | P-RPT-5 | C 级全部追加章节缺正式结果时的处置（拒绝＋显式降级建议）为本文保守设计，上游未明文 | RPT-01-C/§16 验收要点未覆盖该边界 | 边界场景验收解释 | 维持保守（宁可拒绝不可虚级）；如需"全缺仍生成 C 骨架"语义，走需求变更 | 需求所有者 |
 | P-RPT-6 | **O-25 裁决：渲染层是否预留 PDF 接口** | REQUIREMENTS 附录 B PDF 行（未立项、不设需求条目、**不留接口桩**——待同步消费者＝WP-12 卡）；dtb §4 O-25 | 渲染器架构 | **裁决：不留 PDF 接口桩**——IReportRenderer 是格式无关抽象（新格式＝新实现，天然可扩展，非 PDF 专用预留）；不建 PDF 专属字段/配置/空页面（附录 B 裁决＋TRJ-08"不建占位"同精神）；未来 PDF 走需求变更 | 本文裁决（O-25 消账；需求侧知悉） |
 | P-RPT-7 | 证据包 ZIP 封装的实现通道：io 未暴露通用 ZIP 写出公共接口（ZipChannel 为其 src 内部） | io.md §3.1/§7；RPT-03 | RPT-T10 实现 | IArchiveWriter 注入（io 薄适配）；建议 io 在 P-IO-1 裁决时一并考虑暴露通用 ZIP 写出接口或提供适配器 | io 详设所有者 |
-| P-RPT-8 | RPT-\* 稳定诊断码建议清单收编 | diagnostics.md §4.5（码值权威）；§3.5 建议 | 码表冲突 | **已收编（2026-09-10）**：diagnostics.md v0.2 §4.5 补登 RPT 前缀、§4.6 收编全量 8 项——码值部分消账；RPT-T01 注册时按收编表登记即可 | diagnostics 详设所有者（已处置码值部分） |
+| P-RPT-8 | RPT-\* 稳定诊断码建议清单收编 | diagnostics.md §4.5（码值权威）；§3.5 建议 | 码表冲突 | **已收编（2026-09-10）**：diagnostics.md v0.2 §4.5 补登 RPT 前缀、§4.6 收编全量 8 项——码值部分消账；RPT-T02 注册时按收编表登记即可（『码清单登记』完成条件归 RPT-T02 行，§11——v0.3 校正） | diagnostics 详设所有者（已处置码值部分） |
 | P-RPT-9 | 本文消费的 core/evidence 契约以其 v0.1（Draft）为基线，冻结版可能调整（含 envelope 解码入口缺位——R-3） | 各卡文档头状态行 | RPT-T02 起返工 | 冻结 diff 清单后按影响面增量修订；envelope 解码入口列入 evidence/execution 交接催办 | core/evidence 详设所有者＋本文所有者 |
 
 ### 14.4 变更记录
@@ -1477,6 +1477,7 @@ B 级真实章节注册前，其域评估器与 Profile 必须已注册（eviden
 | --- | --- | --- |
 | v0.1 | 2026-09-10 | 首版草案：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）、十份兄弟单元卡（v0.1 Draft）完成 14 章详细设计；冻结 ReviewReport 数据模型（双层内容身份/三层状态承载）、B/C 分级章节契约（14 章节词表＋降级拒绝规则）、结果/证据/当前性表达（四轴正交＋限定语词表）、生成冻结与幂等归档协议（D-13/D-14 模式）、HTML/JSON/CSV 渲染与逐字段一致性（FieldMatrix 单次投影）、公共接口六件＋注入契约四件；裁决 O-25（不留 PDF 桩）；验证矩阵 RP-\* 29 组；实现任务 RPT-T01～T16（≙ WP-12-T02~T09）；待裁决 9 项（P-RPT-1~9）。状态 `Draft`。 |
 | v0.2 | 2026-09-10 | 全链一致性审计消账：§3.5 RPT-\* 码清单由"未收编建议值"更新为"已收编全量 8 项（diagnostics.md §4.5/§4.6）"，§14.3 P-RPT-8 与 §13.1 交接行同步销账码值部分；RPT-T01 注册时按收编表登记 |
+| v0.3 | 2026-09-19 | RPT-T01~T13 契约编译批次（CCP §3 七步）独立评审驱动的两处卡内任务号漂移校正（非语义变更）：①§4.4 ReportCodec 往返契约锁定任务号 RPT-T02→RPT-T03（§11 表 ReportCodec 产物归 RPT-T03 行——原正文表述与行级唯一来源矛盾）；②§14.3 P-RPT-8 处置句任务号 RPT-T01→RPT-T02（§11 表『码清单登记』完成条件归 RPT-T02 行）。文档头版本行同步 v0.3 |
 
 ### 14.5 交付前自审记录（任务约束§八逐项；自审≠实现测试≠正式验收）
 

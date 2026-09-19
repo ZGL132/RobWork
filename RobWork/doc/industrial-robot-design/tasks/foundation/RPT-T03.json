@@ -3,22 +3,39 @@
   "taskId": "RPT-T03",
   "unit": "reporting",
   "masterWp": "WP-H",
-  "title": "报告模型与编码（ReportModel/ReportCodec 双编码）",
-  "status": "planned",
-  "dependsOn": ["RPT-T02"],
-  "requirements": ["RPT-01", "NFR-COR-04"],
-  "designRefs": ["units/reporting.md#4"],
+  "title": "实现报告模型与编码（ReportModel/ReportCodec 双编码）",
+  "status": "ready",
+  "dependsOn": ["RPT-T02", "EV-T06", "EV-T07"],
+  "requirements": ["RPT-01", "NFR-COR-04", "NFR-COR-02"],
+  "designRefs": [
+    "units/reporting.md#11",
+    "units/reporting.md#4",
+    "units/reporting.md#4.4"
+  ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/doc/industrial-robot-design/units/reporting.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_reporting_test"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_reporting_test",
+    "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
+  ],
+  "branch": "wp12-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-RPT-3", "P-RPT-9", "O-13", "O-24"],
   "acceptance": [
-    "RP-MDL-1~3：不可变/身份/合法组合矩阵用例通过",
-    "全部引用类型与字段校验就位（只读明确 ID 的修订与结果）"
-  ]
+    "RP-MDL-1 身份确定性（卡行验证方式『RP-MDL-1~3』＋完成条件『不可变/身份/合法组合矩阵用例过』）：同数据源两次构建（替身同脚本）contentIdentity 逐字节相等；ReportCodec 往返 parse(encode(x))==x（编码器版本号入编码——§4.4）；ReportId 不同（新对象）如实断言登记",
+    "RP-MDL-3 身份与路径/名称分离（同上卡行验证方式）：构建后重命名显示名再导出——contentIdentity 不变、幂等命中（manifest 摘要比对）；§4.1『重命名/移动不改变任何身份』用例锁定",
+    "不可变与字段校验原语（卡行完成条件『全部引用类型与字段校验就位（只读明确 ID 的修订与结果）』）：ReviewReport 全部字段构造后不可变、无 setter（§4.2——冻结是类型系统事实）；§4.2 非法实例判定原语就位（revision 空/占位、resultRefs 空、B 级携 C 章节、字段值 NaN/非有限 DataInvalid 等）——端到端构建拒绝路径随 RPT-T05 构建器收口，本任务以字段校验形态交付",
+    "双编码分离（reporting.md §4.4）：ReportCodec-Data（dataIdentity——进入编码字段与排除字段表逐项锁定：排除评审元数据/entries 内容/诊断/生成时间者）与 ReportCodec-Full（contentIdentity——dataIdentity 全部字段＋章节完整内容＋ReviewMetadata＋sectionModelVersion）；确定性二进制规则（magic IRDRPT1/IRDRPTD1＋字段按名序/章节按 order＋长度前缀＋大端＋presence 字节＋UTF-8 禁 NUL＋浮点 IEEE754 位模式、NaN/±Inf 编码入口拒绝——evidence D-06 同源）；纯函数同输入同字节（NFR-COR-02）单测锁定",
+    "跨单元依赖就绪声明（EX-T08 先例）：EV-T06（五级汇总判定）/EV-T07（结果包络）均已 done 合入 redesign-main——本契约领取时 evidence 公共头（EvaluationKey/ProducerInfo/ReproductionBlock/EvidenceItemClass/EvidenceItemStatus/CurrentnessStatus）必然可用；消费纪律：evidence 唯一定义（traceability/foundation-contract-review.md §1 reporting 消费行），不重定义不复制",
+    "陷阱处置：P-RPT-3——ReportId 消费随 T02 自建类型，本任务不重复定义；O-13/O-24——EvidenceItemStatus 五值（P-EV-8 实现承载）与 EvaluationMode/TaskOutcome/EngineeringStatus 词表消费 core/evidence 既有权威词表、不本地重定义（上游裁决迁移时随影响面同步）；P-RPT-9——core/evidence 消费以各卡 v0.1（Draft）签名为基线，冻结 diff 后按影响面增量同步留痕"
+  ],
+  "note": "治理会话契约编译（2026-09-19，CCP §3 第 1~5 步）：按 reporting.md §11 RPT-T03 行（≙ WP-12-T03『模型部分』——DTB §2.13）＋§4 全节＋§13 追踪矩阵行回填。requirements 增补 NFR-COR-02（§4.4 编码纯函数『同输入同字节，NFR-COR-02』原文引用——REQUIREMENTS.md 现行 ID 已核对），维持 RPT-01/NFR-COR-04。dependsOn 增补跨单元前置 EV-T06＋EV-T07：DTB WP-12-T03 前置列 WP-05-T06（≙EV-T06 偏移 0——UI-T04 同款映射口径）＋ReportModel 引用类型直接消费 evidence 包络类型族（EV-T07 交付），两契约均已 done（grep 实证 status=done）——UI-T04 EV/EX 引用先例。designRefs 补 #11＋#4.4（编码规则直接支撑节）。allowedFiles/verify 口径同前（单元卡＋traceability/**；双测试目标构建）。branch=wp12-t03（≙WP-12-T03 同序直映）。interUnit=true 判定＝ReportModel.hpp 消费 core 身份/词表类型族（ContentIdentity/Digest256/ProjectId/BranchId/RevisionId/RunId/TaskIdentity/EvaluationMode/TaskOutcome/EngineeringStatus/ObjectId/DiagnosticRecord/ComparativeFields/UnitToken——§3.2 消费清单）＋evidence 类型族（§4.3 引用类型字段表）。knownPitfalls=P-RPT-3（自建 tag 消费不重复定义）/P-RPT-9（v0.1 Draft 基线）/O-13（EvidenceItemStatus 五值实现承载——五词各有其位不合并）/O-24（四词表置 core 跨卡确认未闭合——消费侧不本地重定义）。RP-MDL-2 的用例体归属澄清：具名 RP-* 用例体随 RPT-T11 契约套件整备（卡行 T11 产物列原文），本任务交付其验证面用例（局部夹具），两阶段口径在 RPT-T11 契约 acceptance 收口。放行＝CCP §3 第 6 步独立评审＋第 7 步所有者确认入队"
 }
