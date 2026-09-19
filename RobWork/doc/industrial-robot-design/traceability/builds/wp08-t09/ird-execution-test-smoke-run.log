@@ -1,0 +1,411 @@
+[==========] Running 149 tests from 36 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from ExecutionBuild
+[ RUN      ] ExecutionBuild.SourceTreeReachable_DT_BUILD
+[       OK ] ExecutionBuild.SourceTreeReachable_DT_BUILD (1 ms)
+[ RUN      ] ExecutionBuild.NoVocabularyRedefinition_O24_DT_BUILD
+[       OK ] ExecutionBuild.NoVocabularyRedefinition_O24_DT_BUILD (3 ms)
+[ RUN      ] ExecutionBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] ExecutionBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (14 ms)
+[ RUN      ] ExecutionBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] ExecutionBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (13 ms)
+[ RUN      ] ExecutionBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] ExecutionBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (13 ms)
+[ RUN      ] ExecutionBuild.RuntimePolicyZeroCompileFace_DT_BUILD_PEX3
+[       OK ] ExecutionBuild.RuntimePolicyZeroCompileFace_DT_BUILD_PEX3 (13 ms)
+[ RUN      ] ExecutionBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] ExecutionBuild.PublicHeaderPathLayout_DT_BUILD_R2 (1 ms)
+[----------] 7 tests from ExecutionBuild (62 ms total)
+
+[----------] 2 tests from TaskIdentityConcurrency
+[ RUN      ] TaskIdentityConcurrency.TaskIdGenerateUniqueUnderConcurrency_EX_SUB_1_TASK03
+[       OK ] TaskIdentityConcurrency.TaskIdGenerateUniqueUnderConcurrency_EX_SUB_1_TASK03 (3 ms)
+[ RUN      ] TaskIdentityConcurrency.RunIdCoreGenerateUniqueUnderConcurrency_EX_SUB_1
+[       OK ] TaskIdentityConcurrency.RunIdCoreGenerateUniqueUnderConcurrency_EX_SUB_1 (1 ms)
+[----------] 2 tests from TaskIdentityConcurrency (5 ms total)
+
+[----------] 1 test from TaskIdentityProtocol
+[ RUN      ] TaskIdentityProtocol.BindRunSetsAttemptOneAndGuards_EX_SUB_1_PEX6
+[       OK ] TaskIdentityProtocol.BindRunSetsAttemptOneAndGuards_EX_SUB_1_PEX6 (0 ms)
+[----------] 1 test from TaskIdentityProtocol (0 ms total)
+
+[----------] 1 test from TaskStateMachineTable
+[ RUN      ] TaskStateMachineTable.TableAndMatrixMatchSection53_EX_SM_Matrix_TASK01
+[       OK ] TaskStateMachineTable.TableAndMatrixMatchSection53_EX_SM_Matrix_TASK01 (0 ms)
+[----------] 1 test from TaskStateMachineTable (0 ms total)
+
+[----------] 5 tests from TaskStateMachineCancel
+[ RUN      ] TaskStateMachineCancel.QueuedCancelDirectNoCooperativeWindow_EX_SM_1
+[       OK ] TaskStateMachineCancel.QueuedCancelDirectNoCooperativeWindow_EX_SM_1 (0 ms)
+[ RUN      ] TaskStateMachineCancel.PreparingCancelDiscardsAssembly_EX_SM_2
+[       OK ] TaskStateMachineCancel.PreparingCancelDiscardsAssembly_EX_SM_2 (0 ms)
+[ RUN      ] TaskStateMachineCancel.RunningCancelCooperativePath_EX_SM_3_NFR_PERF_02
+[       OK ] TaskStateMachineCancel.RunningCancelCooperativePath_EX_SM_3_NFR_PERF_02 (0 ms)
+[ RUN      ] TaskStateMachineCancel.PausedCancelRetainsCheckpoint_EX_SM_4_ARCH_11_2_6
+[       OK ] TaskStateMachineCancel.PausedCancelRetainsCheckpoint_EX_SM_4_ARCH_11_2_6 (0 ms)
+[ RUN      ] TaskStateMachineCancel.FourStateCancelExits_ARCH_11_2_6
+[       OK ] TaskStateMachineCancel.FourStateCancelExits_ARCH_11_2_6 (0 ms)
+[----------] 5 tests from TaskStateMachineCancel (0 ms total)
+
+[----------] 1 test from TaskStateMachineResume
+[ RUN      ] TaskStateMachineResume.ResumeCreatesNewAttempt_EX_SM_5_AT35
+[       OK ] TaskStateMachineResume.ResumeCreatesNewAttempt_EX_SM_5_AT35 (0 ms)
+[----------] 1 test from TaskStateMachineResume (0 ms total)
+
+[----------] 2 tests from TaskStateMachineIllegal
+[ RUN      ] TaskStateMachineIllegal.MatrixOutsideRequestsRejected_EX_SM_6_TASK01
+[       OK ] TaskStateMachineIllegal.MatrixOutsideRequestsRejected_EX_SM_6_TASK01 (0 ms)
+[ RUN      ] TaskStateMachineIllegal.FactoryPreconditions_EX_SM_6_PEX6
+[       OK ] TaskStateMachineIllegal.FactoryPreconditions_EX_SM_6_PEX6 (0 ms)
+[----------] 2 tests from TaskStateMachineIllegal (0 ms total)
+
+[----------] 1 test from TaskStateMachineCapability
+[ RUN      ] TaskStateMachineCapability.PauseUnsupportedExplicitFeedback_EX_SM_7_TASK01
+[       OK ] TaskStateMachineCapability.PauseUnsupportedExplicitFeedback_EX_SM_7_TASK01 (0 ms)
+[----------] 1 test from TaskStateMachineCapability (0 ms total)
+
+[----------] 2 tests from TaskStateMachineForceTerminate
+[ RUN      ] TaskStateMachineForceTerminate.ForceKillMarksExplicitly_T13_EX_WKR_4
+[       OK ] TaskStateMachineForceTerminate.ForceKillMarksExplicitly_T13_EX_WKR_4 (0 ms)
+[ RUN      ] TaskStateMachineForceTerminate.ForceTerminateCostDoesNotAffectProtocol_acceptance3
+[       OK ] TaskStateMachineForceTerminate.ForceTerminateCostDoesNotAffectProtocol_acceptance3 (0 ms)
+[----------] 2 tests from TaskStateMachineForceTerminate (0 ms total)
+
+[----------] 1 test from TaskStateMachineRecovery
+[ RUN      ] TaskStateMachineRecovery.RecoveryScanAssignsInterrupted_T14_NFR_REL_03
+[       OK ] TaskStateMachineRecovery.RecoveryScanAssignsInterrupted_T14_NFR_REL_03 (0 ms)
+[----------] 1 test from TaskStateMachineRecovery (0 ms total)
+
+[----------] 1 test from TaskStateMachineEvents
+[ RUN      ] TaskStateMachineEvents.SameTaskEventFifo_EX_SUB_1
+[       OK ] TaskStateMachineEvents.SameTaskEventFifo_EX_SUB_1 (0 ms)
+[----------] 1 test from TaskStateMachineEvents (0 ms total)
+
+[----------] 2 tests from TaskVocabulary
+[ RUN      ] TaskVocabulary.NineStatesNoAddition_PEX4_TASK01
+[       OK ] TaskVocabulary.NineStatesNoAddition_PEX4_TASK01 (0 ms)
+[ RUN      ] TaskVocabulary.QueuedRecordHasNoDiskIdentity_PEX6
+[       OK ] TaskVocabulary.QueuedRecordHasNoDiskIdentity_PEX6 (0 ms)
+[----------] 2 tests from TaskVocabulary (0 ms total)
+
+[----------] 1 test from TaskOutcomeMapping
+[ RUN      ] TaskOutcomeMapping.TerminalOutcomeFrozenTable_S56
+[       OK ] TaskOutcomeMapping.TerminalOutcomeFrozenTable_S56 (0 ms)
+[----------] 1 test from TaskOutcomeMapping (0 ms total)
+
+[----------] 1 test from TaskCapabilityRegistry
+[ RUN      ] TaskCapabilityRegistry.DeclareLookupMinimalFallback_PEX7_S55
+[       OK ] TaskCapabilityRegistry.DeclareLookupMinimalFallback_PEX7_S55 (0 ms)
+[----------] 1 test from TaskCapabilityRegistry (0 ms total)
+
+[----------] 1 test from TaskIdDiscipline
+[ RUN      ] TaskIdDiscipline.ParseFormatRoundTripStrict
+[       OK ] TaskIdDiscipline.ParseFormatRoundTripStrict (0 ms)
+[----------] 1 test from TaskIdDiscipline (0 ms total)
+
+[----------] 1 test from ProgressReportDiscipline
+[ RUN      ] ProgressReportDiscipline.FactoryBoundaries
+[       OK ] ProgressReportDiscipline.FactoryBoundaries (0 ms)
+[----------] 1 test from ProgressReportDiscipline (0 ms total)
+
+[----------] 1 test from ExecutionErrorFace
+[ RUN      ] ExecutionErrorFace.TokensAndExceptionCarryCode
+[       OK ] ExecutionErrorFace.TokensAndExceptionCarryCode (0 ms)
+[----------] 1 test from ExecutionErrorFace (0 ms total)
+
+[----------] 7 tests from CancelProtocol
+[ RUN      ] CancelProtocol.RunningCancelEntersCancelingWithin2sAndSettlesWithin10s_EX_SM_3_NFR_PERF_02
+[       OK ] CancelProtocol.RunningCancelEntersCancelingWithin2sAndSettlesWithin10s_EX_SM_3_NFR_PERF_02 (0 ms)
+[ RUN      ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2
+[       OK ] CancelProtocol.CancelWindowTimeoutForceKillsNoPermanentWait_EX_SM_3_acceptance2 (0 ms)
+[ RUN      ] CancelProtocol.PausedCancelRetainsCheckpointFilesOnDisk_EX_SM_4_ARCH_11_2_6
+[       OK ] CancelProtocol.PausedCancelRetainsCheckpointFilesOnDisk_EX_SM_4_ARCH_11_2_6 (3 ms)
+[ RUN      ] CancelProtocol.QueuedCancelDirectIdempotentZeroDiagnostics_EX_SM_1_UX03
+[       OK ] CancelProtocol.QueuedCancelDirectIdempotentZeroDiagnostics_EX_SM_1_UX03 (0 ms)
+[ RUN      ] CancelProtocol.RequestForceTerminateKillsProcessTreeAndMarksExplicitly_EX_WKR_4
+[       OK ] CancelProtocol.RequestForceTerminateKillsProcessTreeAndMarksExplicitly_EX_WKR_4 (0 ms)
+[ RUN      ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4
+[       OK ] CancelProtocol.ForceKillDiagnosticsDifferFromOrdinaryFailure_EX_WKR_4 (0 ms)
+[ RUN      ] CancelProtocol.RunTimeoutTakesHungPathWithTimeoutDistinguishedDiag_EX_WKR_5
+[       OK ] CancelProtocol.RunTimeoutTakesHungPathWithTimeoutDistinguishedDiag_EX_WKR_5 (0 ms)
+[----------] 7 tests from CancelProtocol (3 ms total)
+
+[----------] 5 tests from DrainPolicyTest
+[ RUN      ] DrainPolicyTest.ShutdownCancelQueuedAndWaitDrainsInflightUntouched_acceptance3
+[       OK ] DrainPolicyTest.ShutdownCancelQueuedAndWaitDrainsInflightUntouched_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.ShutdownKeepQueuedTerminateRetainsQueued_acceptance3
+[       OK ] DrainPolicyTest.ShutdownKeepQueuedTerminateRetainsQueued_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.RequestCancelAllCooperativeShutdownPath_acceptance3
+[       OK ] DrainPolicyTest.RequestCancelAllCooperativeShutdownPath_acceptance3 (0 ms)
+[ RUN      ] DrainPolicyTest.DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3
+[       OK ] DrainPolicyTest.DrainAbandonThresholdForceAbandonsNoPermanentWait_acceptance2_3 (0 ms)
+[ RUN      ] DrainPolicyTest.ManualAbandonAllForcedWhenAutoDisabled_acceptance3
+[       OK ] DrainPolicyTest.ManualAbandonAllForcedWhenAutoDisabled_acceptance3 (0 ms)
+[----------] 5 tests from DrainPolicyTest (0 ms total)
+
+[----------] 1 test from CancelSignalTest
+[ RUN      ] CancelSignalTest.SignalObservedAtCooperationPoint_ICancelSignal
+[       OK ] CancelSignalTest.SignalObservedAtCooperationPoint_ICancelSignal (0 ms)
+[----------] 1 test from CancelSignalTest (0 ms total)
+
+[----------] 1 test from TerminalRetentionTest
+[ RUN      ] TerminalRetentionTest.ReleaseResourcesGuardsRetentionWindow_S102_D07
+[       OK ] TerminalRetentionTest.ReleaseResourcesGuardsRetentionWindow_S102_D07 (0 ms)
+[----------] 1 test from TerminalRetentionTest (0 ms total)
+
+[----------] 25 tests from RunRegistryAdmissionTest
+[ RUN      ] RunRegistryAdmissionTest.RegisterRejectsCallerContractViolations
+[       OK ] RunRegistryAdmissionTest.RegisterRejectsCallerContractViolations (23 ms)
+[ RUN      ] RunRegistryAdmissionTest.AppendAttemptSupersedesOldAttempts
+[       OK ] RunRegistryAdmissionTest.AppendAttemptSupersedesOldAttempts (29 ms)
+[ RUN      ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState
+[       OK ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState (32 ms)
+[ RUN      ] RunRegistryAdmissionTest.UnknownRunRejectedWithNoArchiveWrite_EX_REG_1
+[       OK ] RunRegistryAdmissionTest.UnknownRunRejectedWithNoArchiveWrite_EX_REG_1 (31 ms)
+[ RUN      ] RunRegistryAdmissionTest.FiveTupleFieldMismatchRejectedPerField_EX_REG_2
+[       OK ] RunRegistryAdmissionTest.FiveTupleFieldMismatchRejectedPerField_EX_REG_2 (27 ms)
+[ RUN      ] RunRegistryAdmissionTest.StaleAttemptsAllRejected_EX_REG_3
+[       OK ] RunRegistryAdmissionTest.StaleAttemptsAllRejected_EX_REG_3 (25 ms)
+[ RUN      ] RunRegistryAdmissionTest.BindingMismatchAtSecondCheck
+[       OK ] RunRegistryAdmissionTest.BindingMismatchAtSecondCheck (30 ms)
+[ RUN      ] RunRegistryAdmissionTest.KindOutsideAllowedSetRejected
+[       OK ] RunRegistryAdmissionTest.KindOutsideAllowedSetRejected (24 ms)
+[ RUN      ] RunRegistryAdmissionTest.TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1 (26 ms)
+[ RUN      ] RunRegistryAdmissionTest.InterruptedTerminationNotInStepSevenRejectSet
+[       OK ] RunRegistryAdmissionTest.InterruptedTerminationNotInStepSevenRejectSet (18 ms)
+[ RUN      ] RunRegistryAdmissionTest.FinalEnvelopeRedeliveryIdempotent_EX_REG_7
+[       OK ] RunRegistryAdmissionTest.FinalEnvelopeRedeliveryIdempotent_EX_REG_7 (25 ms)
+[ RUN      ] RunRegistryAdmissionTest.FinalEnvelopeContentConflictRejected_EX_REG_8
+[       OK ] RunRegistryAdmissionTest.FinalEnvelopeContentConflictRejected_EX_REG_8 (25 ms)
+[ RUN      ] RunRegistryAdmissionTest.ResultBatchAdmissionAndConflict_EX_REG_8
+[       OK ] RunRegistryAdmissionTest.ResultBatchAdmissionAndConflict_EX_REG_8 (22 ms)
+[ RUN      ] RunRegistryAdmissionTest.CompletedWithDataInsufficientIsAdmitted_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.CompletedWithDataInsufficientIsAdmitted_EX_ORT_1 (22 ms)
+[ RUN      ] RunRegistryAdmissionTest.HeadChangeNotInvolvedInAdmission_EX_REG_6
+[       OK ] RunRegistryAdmissionTest.HeadChangeNotInvolvedInAdmission_EX_REG_6 (22 ms)
+[ RUN      ] RunRegistryAdmissionTest.SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1 (21 ms)
+[ RUN      ] RunRegistryAdmissionTest.RuntimeNameResolutionGatesAdmission
+[       OK ] RunRegistryAdmissionTest.RuntimeNameResolutionGatesAdmission (21 ms)
+[ RUN      ] RunRegistryAdmissionTest.UndecodablePayloadRejected
+[       OK ] RunRegistryAdmissionTest.UndecodablePayloadRejected (16 ms)
+[ RUN      ] RunRegistryAdmissionTest.ConstructionFailureFailsTask_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.ConstructionFailureFailsTask_EX_ORT_1 (16 ms)
+[ RUN      ] RunRegistryAdmissionTest.ArchiveRetriesBoundedThenSucceeds
+[       OK ] RunRegistryAdmissionTest.ArchiveRetriesBoundedThenSucceeds (43 ms)
+[ RUN      ] RunRegistryAdmissionTest.ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5
+[       OK ] RunRegistryAdmissionTest.ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5 (17 ms)
+[ RUN      ] RunRegistryAdmissionTest.AuthorityLostRejectedWithDiagnostics_EX_REG_5
+[       OK ] RunRegistryAdmissionTest.AuthorityLostRejectedWithDiagnostics_EX_REG_5 (18 ms)
+[ RUN      ] RunRegistryAdmissionTest.AuthorityReacquiredArchivesNormally_EX_REG_5
+[       OK ] RunRegistryAdmissionTest.AuthorityReacquiredArchivesNormally_EX_REG_5 (29 ms)
+[ RUN      ] RunRegistryAdmissionTest.NonArchivedKindsPassClassificationOnly
+[       OK ] RunRegistryAdmissionTest.NonArchivedKindsPassClassificationOnly (17 ms)
+[ RUN      ] RunRegistryAdmissionTest.InvalidArrivalIdentityFailsFast
+[       OK ] RunRegistryAdmissionTest.InvalidArrivalIdentityFailsFast (21 ms)
+[----------] 25 tests from RunRegistryAdmissionTest (615 ms total)
+
+[----------] 19 tests from SchedulerEventBusTest
+[ RUN      ] SchedulerEventBusTest.ConcurrentSubmitAssignsUniqueTaskIds_EX_SUB_1
+[       OK ] SchedulerEventBusTest.ConcurrentSubmitAssignsUniqueTaskIds_EX_SUB_1 (27 ms)
+[ RUN      ] SchedulerEventBusTest.SameTaskEventFifoFollowsTransitionOrder_EX_SUB_1
+[       OK ] SchedulerEventBusTest.SameTaskEventFifoFollowsTransitionOrder_EX_SUB_1 (18 ms)
+[ RUN      ] SchedulerEventBusTest.StaleSnapshotRejectedWithNoRecord_EX_SUB_2
+[       OK ] SchedulerEventBusTest.StaleSnapshotRejectedWithNoRecord_EX_SUB_2 (23 ms)
+[ RUN      ] SchedulerEventBusTest.MissingClosureObjectRejected_EX_SUB_2
+[       OK ] SchedulerEventBusTest.MissingClosureObjectRejected_EX_SUB_2 (25 ms)
+[ RUN      ] SchedulerEventBusTest.FormalValidationRejectsInvalidSubmissions
+[       OK ] SchedulerEventBusTest.FormalValidationRejectsInvalidSubmissions (16 ms)
+[ RUN      ] SchedulerEventBusTest.ReadOnlyStoreRejectsFormalSubmit_PM_07
+[       OK ] SchedulerEventBusTest.ReadOnlyStoreRejectsFormalSubmit_PM_07 (22 ms)
+[ RUN      ] SchedulerEventBusTest.QueueCapacityRejectsOverflow_V4
+[       OK ] SchedulerEventBusTest.QueueCapacityRejectsOverflow_V4 (17 ms)
+[ RUN      ] SchedulerEventBusTest.PriorityAndFifoDispatchOrder_D04
+[       OK ] SchedulerEventBusTest.PriorityAndFifoDispatchOrder_D04 (19 ms)
+[ RUN      ] SchedulerEventBusTest.InlineDispatchFollowsPriorityThenFifo
+[       OK ] SchedulerEventBusTest.InlineDispatchFollowsPriorityThenFifo (18 ms)
+[ RUN      ] SchedulerEventBusTest.PerProjectFormalCapQueuesThirdTask
+[       OK ] SchedulerEventBusTest.PerProjectFormalCapQueuesThirdTask (18 ms)
+[ RUN      ] SchedulerEventBusTest.ProgressThrottledToTenHz_D07
+[       OK ] SchedulerEventBusTest.ProgressThrottledToTenHz_D07 (18 ms)
+[ RUN      ] SchedulerEventBusTest.ProgressThrottleDisabledPassesAllFrames
+[       OK ] SchedulerEventBusTest.ProgressThrottleDisabledPassesAllFrames (18 ms)
+[ RUN      ] SchedulerEventBusTest.ProgressRejectsUnknownAndTerminalTasks
+[       OK ] SchedulerEventBusTest.ProgressRejectsUnknownAndTerminalTasks (18 ms)
+[ RUN      ] SchedulerEventBusTest.PhaseTokenPassedThroughVerbatim_UX_10
+[       OK ] SchedulerEventBusTest.PhaseTokenPassedThroughVerbatim_UX_10 (18 ms)
+[ RUN      ] SchedulerEventBusTest.SubmitAndQueryNonBlockingDuringComputation_NFR_PERF_01
+[       OK ] SchedulerEventBusTest.SubmitAndQueryNonBlockingDuringComputation_NFR_PERF_01 (17 ms)
+[ RUN      ] SchedulerEventBusTest.ShutdownCancelQueuedAndWaitDrains
+[       OK ] SchedulerEventBusTest.ShutdownCancelQueuedAndWaitDrains (17 ms)
+[ RUN      ] SchedulerEventBusTest.ShutdownIsIdempotent
+[       OK ] SchedulerEventBusTest.ShutdownIsIdempotent (18 ms)
+[ RUN      ] SchedulerEventBusTest.TasksByProjectFiltersByAnchoredProject
+[       OK ] SchedulerEventBusTest.TasksByProjectFiltersByAnchoredProject (17 ms)
+[ RUN      ] SchedulerEventBusTest.ResourceBudgetAdjustableWithoutIdentityChange
+[       OK ] SchedulerEventBusTest.ResourceBudgetAdjustableWithoutIdentityChange (18 ms)
+[----------] 19 tests from SchedulerEventBusTest (371 ms total)
+
+[----------] 5 tests from ChannelProtocolFrameTest
+[ RUN      ] ChannelProtocolFrameTest.EncodeDecodeRoundtripPreservesAllFields
+[       OK ] ChannelProtocolFrameTest.EncodeDecodeRoundtripPreservesAllFields (0 ms)
+[ RUN      ] ChannelProtocolFrameTest.AssemblerSplitsFramesAcrossChunkBoundaries
+[       OK ] ChannelProtocolFrameTest.AssemblerSplitsFramesAcrossChunkBoundaries (0 ms)
+[ RUN      ] ChannelProtocolFrameTest.AssemblerRejectsBadMagicAndVersion
+[       OK ] ChannelProtocolFrameTest.AssemblerRejectsBadMagicAndVersion (0 ms)
+[ RUN      ] ChannelProtocolFrameTest.AssemblerRejectsOversizePayloadLength
+[       OK ] ChannelProtocolFrameTest.AssemblerRejectsOversizePayloadLength (0 ms)
+[ RUN      ] ChannelProtocolFrameTest.EncodeRejectsReservedSeqAndInvalidIdentity
+[       OK ] ChannelProtocolFrameTest.EncodeRejectsReservedSeqAndInvalidIdentity (0 ms)
+[----------] 5 tests from ChannelProtocolFrameTest (0 ms total)
+
+[----------] 6 tests from ChannelProtocolSequencerTest
+[ RUN      ] ChannelProtocolSequencerTest.InOrderFramesDeliverDirectly
+[       OK ] ChannelProtocolSequencerTest.InOrderFramesDeliverDirectly (0 ms)
+[ RUN      ] ChannelProtocolSequencerTest.OutOfOrderFramesReorderBySeq_EX_CHN_1
+[       OK ] ChannelProtocolSequencerTest.OutOfOrderFramesReorderBySeq_EX_CHN_1 (0 ms)
+[ RUN      ] ChannelProtocolSequencerTest.DuplicatesAndBackwardsAreDroppedForDevDiagnostic_EX_CHN_1
+[       OK ] ChannelProtocolSequencerTest.DuplicatesAndBackwardsAreDroppedForDevDiagnostic_EX_CHN_1 (0 ms)
+[ RUN      ] ChannelProtocolSequencerTest.WindowOverflowIsProtocolError_EX_CHN_1
+[       OK ] ChannelProtocolSequencerTest.WindowOverflowIsProtocolError_EX_CHN_1 (0 ms)
+[ RUN      ] ChannelProtocolSequencerTest.GapTimeoutIsProtocolError_EX_CHN_1
+[       OK ] ChannelProtocolSequencerTest.GapTimeoutIsProtocolError_EX_CHN_1 (0 ms)
+[ RUN      ] ChannelProtocolSequencerTest.GapClosesOnFillWithoutTimeout
+[       OK ] ChannelProtocolSequencerTest.GapClosesOnFillWithoutTimeout (0 ms)
+[----------] 6 tests from ChannelProtocolSequencerTest (0 ms total)
+
+[----------] 4 tests from ChannelProtocolFragmentTest
+[ RUN      ] ChannelProtocolFragmentTest.FragmentRoundtripLargeMessage
+[       OK ] ChannelProtocolFragmentTest.FragmentRoundtripLargeMessage (0 ms)
+[ RUN      ] ChannelProtocolFragmentTest.SingleFragmentAndPassthroughTypes
+[       OK ] ChannelProtocolFragmentTest.SingleFragmentAndPassthroughTypes (0 ms)
+[ RUN      ] ChannelProtocolFragmentTest.EmptyMessageStillProducesOneFragment
+[       OK ] ChannelProtocolFragmentTest.EmptyMessageStillProducesOneFragment (0 ms)
+[ RUN      ] ChannelProtocolFragmentTest.RejectsNonFragmentableTypeAndOversize
+[       OK ] ChannelProtocolFragmentTest.RejectsNonFragmentableTypeAndOversize (0 ms)
+[----------] 4 tests from ChannelProtocolFragmentTest (0 ms total)
+
+[----------] 4 tests from ChannelProtocolPayloadTest
+[ RUN      ] ChannelProtocolPayloadTest.HelloAndHelloAckRoundtrip
+[       OK ] ChannelProtocolPayloadTest.HelloAndHelloAckRoundtrip (0 ms)
+[ RUN      ] ChannelProtocolPayloadTest.DispatchRequestRoundtripAndIdentityCheck
+[       OK ] ChannelProtocolPayloadTest.DispatchRequestRoundtripAndIdentityCheck (0 ms)
+[ RUN      ] ChannelProtocolPayloadTest.ProgressPayloadRoundtripAndValueGuard
+[       OK ] ChannelProtocolPayloadTest.ProgressPayloadRoundtripAndValueGuard (0 ms)
+[ RUN      ] ChannelProtocolPayloadTest.BatchAndFinalAndErrorPayloadsRoundtrip
+[       OK ] ChannelProtocolPayloadTest.BatchAndFinalAndErrorPayloadsRoundtrip (0 ms)
+[----------] 4 tests from ChannelProtocolPayloadTest (0 ms total)
+
+[----------] 2 tests from ChannelProtocolHandshakeTest
+[ RUN      ] ChannelProtocolHandshakeTest.ManifestDigestIsDeterministicAndHex64
+[       OK ] ChannelProtocolHandshakeTest.ManifestDigestIsDeterministicAndHex64 (0 ms)
+[ RUN      ] ChannelProtocolHandshakeTest.HeartbeatPolicyDefaultsAreD06Parameters
+[       OK ] ChannelProtocolHandshakeTest.HeartbeatPolicyDefaultsAreD06Parameters (0 ms)
+[----------] 2 tests from ChannelProtocolHandshakeTest (0 ms total)
+
+[----------] 3 tests from ExitClassificationTest
+[ RUN      ] ExitClassificationTest.ConventionSetMapsPerContractTable
+[       OK ] ExitClassificationTest.ConventionSetMapsPerContractTable (0 ms)
+[ RUN      ] ExitClassificationTest.OutsideConventionSetIsCrashedIncludingAccessExceptions
+[       OK ] ExitClassificationTest.OutsideConventionSetIsCrashedIncludingAccessExceptions (0 ms)
+[ RUN      ] ExitClassificationTest.SupervisorForceKillTakesPrecedence
+[       OK ] ExitClassificationTest.SupervisorForceKillTakesPrecedence (0 ms)
+[----------] 3 tests from ExitClassificationTest (0 ms total)
+
+[----------] 4 tests from ResourceControllerTest
+[ RUN      ] ResourceControllerTest.ThreeStageThresholdBoundaries_D05
+[       OK ] ResourceControllerTest.ThreeStageThresholdBoundaries_D05 (0 ms)
+[ RUN      ] ResourceControllerTest.ExhaustedEdgeDiagnosticOncePerEpisodeWithComparativeFields
+[       OK ] ResourceControllerTest.ExhaustedEdgeDiagnosticOncePerEpisodeWithComparativeFields (0 ms)
+[ RUN      ] ResourceControllerTest.ProbeFailureKeepsLastLevelAndReportsDevOnce
+[       OK ] ResourceControllerTest.ProbeFailureKeepsLastLevelAndReportsDevOnce (0 ms)
+[ RUN      ] ResourceControllerTest.SampleIntervalLimitsProbeCallsAndReplaysDecision
+[       OK ] ResourceControllerTest.SampleIntervalLimitsProbeCallsAndReplaysDecision (0 ms)
+[----------] 4 tests from ResourceControllerTest (0 ms total)
+
+[----------] 2 tests from ResourceGovernanceSchedulerTest
+[ RUN      ] ResourceGovernanceSchedulerTest.ThrottleStopsDispatchThenExhaustDiagnostics_EX_RES_2
+[       OK ] ResourceGovernanceSchedulerTest.ThrottleStopsDispatchThenExhaustDiagnostics_EX_RES_2 (31 ms)
+[ RUN      ] ResourceGovernanceSchedulerTest.BudgetUpdateForwardsToResourceController
+[       OK ] ResourceGovernanceSchedulerTest.BudgetUpdateForwardsToResourceController (26 ms)
+[----------] 2 tests from ResourceGovernanceSchedulerTest (57 ms total)
+
+[----------] 2 tests from MemProbeRealApiTest
+[ RUN      ] MemProbeRealApiTest.SystemAndProcessProbesReturnPlausibleReadings
+[       OK ] MemProbeRealApiTest.SystemAndProcessProbesReturnPlausibleReadings (0 ms)
+[ RUN      ] MemProbeRealApiTest.JobMemoryProbeOnFreshEmptyJobIsZeroAndNullFails
+[       OK ] MemProbeRealApiTest.JobMemoryProbeOnFreshEmptyJobIsZeroAndNullFails (0 ms)
+[----------] 2 tests from MemProbeRealApiTest (0 ms total)
+
+[----------] 1 test from SupervisorSamplerTest
+[ RUN      ] SupervisorSamplerTest.AggregatesSystemAndMainProcessWithoutWorkerPool
+[       OK ] SupervisorSamplerTest.AggregatesSystemAndMainProcessWithoutWorkerPool (0 ms)
+[----------] 1 test from SupervisorSamplerTest (0 ms total)
+
+[----------] 12 tests from CheckpointCoordinatorTest
+[ RUN      ] CheckpointCoordinatorTest.WritePublishesRecordAndManifest
+[       OK ] CheckpointCoordinatorTest.WritePublishesRecordAndManifest (2 ms)
+[ RUN      ] CheckpointCoordinatorTest.PayloadDigestDeterministicAcrossOrder
+[       OK ] CheckpointCoordinatorTest.PayloadDigestDeterministicAcrossOrder (0 ms)
+[ RUN      ] CheckpointCoordinatorTest.WriteStampsCurrentEnvelopeVersion
+[       OK ] CheckpointCoordinatorTest.WriteStampsCurrentEnvelopeVersion (2 ms)
+[ RUN      ] CheckpointCoordinatorTest.WriteContractViolationsFailFast
+[       OK ] CheckpointCoordinatorTest.WriteContractViolationsFailFast (3 ms)
+[ RUN      ] CheckpointCoordinatorTest.WriteEnvironmentFailuresAreStructured
+[       OK ] CheckpointCoordinatorTest.WriteEnvironmentFailuresAreStructured (4 ms)
+[ RUN      ] CheckpointCoordinatorTest.EX_CKP_1_TamperedByteRejectedAndFilePreserved
+[       OK ] CheckpointCoordinatorTest.EX_CKP_1_TamperedByteRejectedAndFilePreserved (5 ms)
+[ RUN      ] CheckpointCoordinatorTest.MissingBatchFileTreatedAsCorrupt
+[       OK ] CheckpointCoordinatorTest.MissingBatchFileTreatedAsCorrupt (4 ms)
+[ RUN      ] CheckpointCoordinatorTest.EX_CKP_2_VersionMismatchIncompatibleWithReasons
+[       OK ] CheckpointCoordinatorTest.EX_CKP_2_VersionMismatchIncompatibleWithReasons (5 ms)
+[ RUN      ] CheckpointCoordinatorTest.SliceMismatchIncompatible
+[       OK ] CheckpointCoordinatorTest.SliceMismatchIncompatible (4 ms)
+[ RUN      ] CheckpointCoordinatorTest.EX_CKP_3_NotResumableRefusedAndPreserved
+[       OK ] CheckpointCoordinatorTest.EX_CKP_3_NotResumableRefusedAndPreserved (7 ms)
+[ RUN      ] CheckpointCoordinatorTest.ListCompatibleFiltersAndOrders
+[       OK ] CheckpointCoordinatorTest.ListCompatibleFiltersAndOrders (6 ms)
+[ RUN      ] CheckpointCoordinatorTest.UnknownCheckpointAndContractViolations
+[       OK ] CheckpointCoordinatorTest.UnknownCheckpointAndContractViolations (0 ms)
+[----------] 12 tests from CheckpointCoordinatorTest (49 ms total)
+
+[----------] 9 tests from CacheCoordinatorTest
+[ RUN      ] CacheCoordinatorTest.EX_CCH_2_StoreGateOnlyFinalizedCompleted
+[       OK ] CacheCoordinatorTest.EX_CCH_2_StoreGateOnlyFinalizedCompleted (0 ms)
+[ RUN      ] CacheCoordinatorTest.PartialBatchesStayDiagnosticOnly
+[       OK ] CacheCoordinatorTest.PartialBatchesStayDiagnosticOnly (0 ms)
+[ RUN      ] CacheCoordinatorTest.EX_CCH_1_ModeMismatchNeverShortPath
+[       OK ] CacheCoordinatorTest.EX_CCH_1_ModeMismatchNeverShortPath (0 ms)
+[ RUN      ] CacheCoordinatorTest.D10_ConcurrentSameKeyMergedToInFlightRun
+[       OK ] CacheCoordinatorTest.D10_ConcurrentSameKeyMergedToInFlightRun (0 ms)
+[ RUN      ] CacheCoordinatorTest.ModelCacheJudgeInjectionPassthrough
+[       OK ] CacheCoordinatorTest.ModelCacheJudgeInjectionPassthrough (0 ms)
+[ RUN      ] CacheCoordinatorTest.ModelCacheWithoutJudgeFailsClosed
+[       OK ] CacheCoordinatorTest.ModelCacheWithoutJudgeFailsClosed (0 ms)
+[ RUN      ] CacheCoordinatorTest.EvictionByBudgetAndCapWithStats
+[       OK ] CacheCoordinatorTest.EvictionByBudgetAndCapWithStats (0 ms)
+[ RUN      ] CacheCoordinatorTest.ModelCacheConflictKeepsExisting
+[       OK ] CacheCoordinatorTest.ModelCacheConflictKeepsExisting (0 ms)
+[ RUN      ] CacheCoordinatorTest.LookupContractViolationsFailFast
+[       OK ] CacheCoordinatorTest.LookupContractViolationsFailFast (0 ms)
+[----------] 9 tests from CacheCoordinatorTest (0 ms total)
+
+[----------] 6 tests from ContractSuiteFacilities
+[ RUN      ] ContractSuiteFacilities.FaultPointIdRegistryMatchesSection11Handover
+[       OK ] ContractSuiteFacilities.FaultPointIdRegistryMatchesSection11Handover (0 ms)
+[ RUN      ] ContractSuiteFacilities.NullExecutionDiagnosticsSinkIsEmptyPlaceholder_PEX8
+[       OK ] ContractSuiteFacilities.NullExecutionDiagnosticsSinkIsEmptyPlaceholder_PEX8 (0 ms)
+[ RUN      ] ContractSuiteFacilities.RegisteredCodeMirrorHasExactlyTheIncorporatedEighteen_PEX8
+[       OK ] ContractSuiteFacilities.RegisteredCodeMirrorHasExactlyTheIncorporatedEighteen_PEX8 (0 ms)
+[ RUN      ] ContractSuiteFacilities.ManualClockAdvancesVirtuallyWithoutRealTime_Discipline
+[       OK ] ContractSuiteFacilities.ManualClockAdvancesVirtuallyWithoutRealTime_Discipline (0 ms)
+[ RUN      ] ContractSuiteFacilities.ScriptedOutputDecoderReplaysScriptThenFailsClosed
+[       OK ] ContractSuiteFacilities.ScriptedOutputDecoderReplaysScriptThenFailsClosed (0 ms)
+[ RUN      ] ContractSuiteFacilities.TempDirAndDeterministicEnvAreUsableAsDeclared
+[       OK ] ContractSuiteFacilities.TempDirAndDeterministicEnvAreUsableAsDeclared (2 ms)
+[----------] 6 tests from ContractSuiteFacilities (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 149 tests from 36 test suites ran. (1245 ms total)
+[  PASSED  ] 149 tests.

@@ -83,16 +83,6 @@
       "resolution": "全新克隆/CI 全量构建的阻断前置：典型修法为该插件目标加 NOMINMAX 或调整 include 顺序（框架侧改动须先登记 patch）；WP-01-T02（CI 一键门禁）消费本项，ired 范围内任务（含 TK-T01）不受影响——任务目标两模式从零复现零错误。"
     },
     {
-      "id": "F-010",
-      "source": "traceability/acceptance/WP-01-T01-20260910.md#4.9-4.10",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-09-10",
-      "title": ".gitignore 全局 *.log 规则吞没 traceability/** 留痕日志：WP-01-T01 四份门禁/构建日志被忽略，致提交 6674c1b 信息（五件留痕）与实际入库内容（仅 1 件）一度不符，改 .txt 后缀方入库；后续任务留痕仍会踩中",
-      "owner": "构建约定所有者（DTB §5.1 辖域）",
-      "resolution": "为 traceability/** 增加负向豁免（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或明文化『留痕一律 .txt 后缀』约定；留痕提交前以 git status 核对实际入库清单。"
-    },
-    {
       "source": "traceability/acceptance/WP-01-T02-20260910.md#G-1",
       "severity": "suggestion",
       "owner": "构建约定所有者",
@@ -101,6 +91,16 @@
       "status": "open",
       "title": "gate-all.ps1 在非主树检出（worktree/全新克隆）无法全量运行：vcpkg toolchain/Qt 前缀/ini 模板环境前置缺失（F-007 同类链）",
       "resolution": "建议 -Toolchain 参数化＋VCPKG_ROOT 回退；CI 侧供给由 eb777e2 供给链承载（模板已固化于 scripts/industrialrobot/ci/，激活随 O-34）；本地全新树口径随 F-007 一并处置"
+    },
+    {
+      "id": "F-010",
+      "source": "traceability/acceptance/WP-01-T01-20260910.md#4.9-4.10",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-10",
+      "title": ".gitignore 全局 *.log 规则吞没 traceability/** 留痕日志：WP-01-T01 四份门禁/构建日志被忽略，致提交 6674c1b 信息（五件留痕）与实际入库内容（仅 1 件）一度不符，改 .txt 后缀方入库；后续任务留痕仍会踩中",
+      "owner": "构建约定所有者（DTB §5.1 辖域）",
+      "resolution": "为 traceability/** 增加负向豁免（!RobWork/doc/industrial-robot-design/traceability/**/*.log）或明文化『留痕一律 .txt 后缀』约定；留痕提交前以 git status 核对实际入库清单。"
     },
     {
       "id": "F-011",
@@ -2215,6 +2215,16 @@
       "title": "ird_gates 命中清单留痕格式跨任务漂移：wp08-t08 的 gates-t08-hits-sorted.txt 自 wp08-t07 的原始日志行排序改为（门禁类×目标）规范化 token（17 原始命中→15 token），ird-test-report.json 的 gates.hitsTotal=15 与门禁原始输出 17 计数口径不一；两份在库清单格式不同致 gates-hit-set-diff.txt（空 diff）无法从提交物字节级复算。验收者亲手重跑 ird_gates（exit 1、命中 17 项与 base 同集）独立证实零新增命中，结论成立，仅留痕可比性受损",
       "owner": "execution 单元所有者（口径统一归 scripts/gate-all.ps1 维护方）",
       "resolution": "后续任务固定一种清单格式（建议规范化 token 形态）并在 ird-test-report.json 注明计数口径（原始命中数 vs 规范化 token 数）；跨任务比对用同一规范化函数处理两侧。不阻塞合入。编号顺延自 F-219。验收判定不受影响：EX-T08 attempt 1 verdict=pass。"
+    },
+    {
+      "id": "F-221",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-19",
+      "source": "实施侧自查（EX-T09，分支 wp08-t09，实施段）：ird_gates 命中集合 diff（traceability/builds/wp08-t09/gates-hit-set-diff.txt）",
+      "title": "ird_gates 基线新增 2 命中（本任务引入，实施侧自查已如实登记——非缺位）：IRD-GATE-SUB×2＝sdurws_ird_execution_test→sdurws_ird_testkit、sdurws_ird_execution_contract_test→sdurws_ird_testkit，为 EX-T09 契约 interUnit=true＋acceptance 1（ird-test-report.json 与 gtest XML 并存）/acceptance 2（FaultInterceptor/TempDir/DeterministicEnv 设施）/acceptance 3（TestProcessRunner 真进程场景）明文的 testkit 设施消费链接边（T-1 允许形态——产品目标与 worker 目标零 testkit 边由 LinkageContractTest::NoTestkitEdge 收窄断言钉住，门禁 T1 产品面零命中）；F-173（PRJ-T15 同型）／F-115（diagnostics 同型）处置先例复用：DTB §4.5 既有例外行同型实例，实例行增补归 WP-01-T03。另：比对基线回补说明——wp08-t08 归一化清单因 GBK 吞字缺『IRD-GATE-SUB: sdurws_ird_testdata_lint』行（其原始日志可见该命中），本任务按同口径回补（F-220 分辨率的同型处理），不改变基线语义",
+      "owner": "WP-01-T03（ird_gates 白名单登记册维护任务）——随其落地把 execution 两测试目标→testkit 边与 F-173/F-115 各实例行同批纳入 DTB §4.5 例外行登记",
+      "resolution": "处置建议＝WP-01-T03 落地时将 execution 两测试目标→testkit 边与 project/diagnostics 各实例行同批纳入例外行登记（消除门禁红字基线漂移）；登记前各验收以『与基线逐项一致＋新增项有契约明文依据』为核对口径（本任务 diff 证据见 traceability/builds/wp08-t09/gates-hit-set-diff.txt：新增恰 2、移除 0）。编号顺延自 F-220。"
     },
     {
       "id": "F-222",

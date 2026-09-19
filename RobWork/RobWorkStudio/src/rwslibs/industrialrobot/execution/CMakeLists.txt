@@ -104,8 +104,12 @@ find_package(GTest CONFIG REQUIRED)
 # 与 CacheCoordinator 公共头＋实现（§8.2/§10.7——结果/模型/诊断三分账
 # 存储＋LRU 预算淘汰＋D-10 同键在途合并；ICompileCacheJudge 注入消费
 # ——§3.3 原文形态落位，evidence judgeCacheHit 直接调用；判定逻辑零复制
-# ——兼容性结论全部来自两个判定单点）。后续：EX-T09 契约套件落地——
-# 以单元任务卡当前正文为准。
+# ——兼容性结论全部来自两个判定单点）。
+# EX-T09（≙WP-08-T10，任务契约 tasks/foundation/EX-T09.json）落地：
+# 契约测试套件（§11 矩阵补齐 EX-ARC/EX-RCV/EX-RES 缺口用例＋testkit 设施
+# 接入）——两测试目标增列源与链接面变更见下方各目标块注释；产品库与
+# worker 目标零变更（T-1：产品目标零 testkit 边——LinkageContractTest
+# 收窄重述钉住）。
 add_library(sdurws_ird_execution STATIC
     src/Execution.cpp
     src/Errors.cpp
@@ -235,9 +239,18 @@ endif()
 # 运行任务不失败〔观测点＝派发暂停＋诊断〕＋三段阈值边界＋采样失败保持
 # ＋MemProbe 真实探针冒烟——私有头经 src/ 私有包含根，R-2 纪律下测试
 # 与实现同单元边界内）。
+# EX-T09（≙WP-08-T10，任务契约 tasks/foundation/EX-T09.json）增列：
+# ContractSuiteFacilitiesTest.cpp（§11 设施列自证——faultPointId 登记/
+# P-EX-8 空占位 sink/收编 18 项码值镜像/ManualClock/脚本替身边界的具名
+# 断言）与 TestMainReport.cpp（自有 main——安装 testkit RecordListener，
+# IRD_TEST_INFO 追溯聚合为 ird-test-report.json 与 gtest XML 并存，
+# testkit §7.2/§7.3；链接面由 GTest::gtest_main 改为 GTest::gtest＋
+# sdurws_ird_testkit——T-1 允许形态：仅测试目标链 testkit，产品目标
+# 零 testkit 边不变）。
 enable_testing()
 
 add_executable(sdurws_ird_execution_test
+    test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
     test/TaskStateMachineTest.cpp
     test/CancelProtocolTest.cpp
@@ -245,7 +258,8 @@ add_executable(sdurws_ird_execution_test
     test/SchedulerEventBusTest.cpp
     test/ChannelProtocolTest.cpp
     test/ResourceGovernanceTest.cpp
-    test/CheckpointCacheTest.cpp)
+    test/CheckpointCacheTest.cpp
+    test/ContractSuiteFacilitiesTest.cpp)
 
 target_compile_features(sdurws_ird_execution_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_execution_test PROPERTIES
@@ -259,15 +273,16 @@ if(MSVC)
     target_compile_options(sdurws_ird_execution_test PRIVATE /utf-8)
 endif()
 
-# 测试 main 自持（DTB §5.5/P-TK-1 定稿）：GTest::gtest_main 提供入口（落位
-# 期最小形态——testkit RecordListener 报告设施的接入随 EX-T09 契约套件
-# 落地，届时增链 sdurws_ird_testkit 并同步本文件与白名单扫描用例的显式
-# 增量修订，PRJ-T15 同款节奏）；测试链接产品库 sdurws_ird_execution 同时
-# 验证"公共头可被正常 include＋库可链接"（execution→core/evidence/project
-# 的 PUBLIC 传染链随目标自动到达——三条登记边的链接器半区实证）。
-target_link_libraries(sdurws_ird_execution_test PRIVATE
-    sdurws_ird_execution
-    GTest::gtest_main)
+# 测试 main 自持（DTB §5.5/P-TK-1 定稿）：EX-T09 起以自有 main 提供
+# 入口（test/TestMainReport.cpp——安装 testkit RecordListener，IRD_TEST_INFO
+# 追溯聚合为 ird-test-report.json 与 gtest XML 并存）；链接面相应为
+# GTest::gtest（无入口）＋sdurws_ird_testkit（T-1 允许形态——testkit 仅
+# 测试目标可链：RecordListener/TempDir/Fault 等消费；产品目标零 testkit
+# 边不变——LinkageContractTest::NoTestkitEdge 用例钉住）。测试链接产品库
+# sdurws_ird_execution 同时验证"公共头可被正常 include＋库可链接"
+# （execution→core/evidence/project 的 PUBLIC 传染链随目标自动到达——
+# 三条登记边的链接器半区实证）。
+target_link_libraries(sdurws_ird_execution_test PRIVATE sdurws_ird_execution sdurws_ird_testkit GTest::gtest)
 
 # 源码树位置注入：EX-BLD-1 用例在运行期扫描 execution 源码核对红线。经
 # 编译定义传 industrialrobot 根（project/diagnostics/evidence/runtime 同款
@@ -302,13 +317,29 @@ add_custom_command(TARGET sdurws_ird_execution_test POST_BUILD
 # core IDomainEventBus 接口的 execution 参考实现契约——同发布者 FIFO/
 # 九态事件流＋ResultArchived 家族按序投递/并发发布零丢失/RAII 退订幂等/
 # 退订不与投递死锁/waitForIdle 确定性同步——§10.4/§6.2）。
+# EX-T09 增列 ContractTestMain.cpp（自有 main——先于 gtest 拦截子进程
+# 模式再安装 RecordListener，PRJ-T15 同款双形态协议）、
+# ArchiveFaultContractTest.cpp（EX-ARC-1/2/4——归档端口 fake 经 testkit
+# FaultInterceptor 按 execution/archive/* 故障点注入、缓存跳过登记联动、
+# EX-ARC-4 关闭排空两形态）、RecoveryProcessContractTest.cpp＋
+# RecoveryChild.cpp（EX-RCV-1 真进程——TestProcessRunner kill 主进程/
+# 重启恢复重建 Interrupted，子进程半边＝同一 exe 双形态停靠协议）；
+# 另增 EX-ARC-3/EX-RES-1 两用例于 WorkerProcessContractTest.cpp（真进程
+# 注入）。契约目标消费 testkit 设施（Fault/Fixture/ProcessRunner/
+# AssertMacros/RecordListener——T-1 允许形态；test/ 亦入私有包含根供
+# 契约套件设施头 ContractSuiteFacilities.hpp 共享——同单元测试目标
+# 内部共享，非跨单元暴露）。
 add_executable(sdurws_ird_execution_contract_test
+    contract_test/ContractTestMain.cpp
     contract_test/LinkageContractTest.cpp
     contract_test/IdentityVocabularyContractTest.cpp
     contract_test/ArchiveCollaborationContractTest.cpp
     contract_test/EventBusDeliveryContractTest.cpp
     contract_test/WorkerProcessContractTest.cpp
-    contract_test/CacheJudgeContractTest.cpp)
+    contract_test/CacheJudgeContractTest.cpp
+    contract_test/ArchiveFaultContractTest.cpp
+    contract_test/RecoveryProcessContractTest.cpp
+    contract_test/RecoveryChild.cpp)
 
 # 契约测试须在 worker exe 构建之后（真进程场景消费其产物）。
 add_dependencies(sdurws_ird_execution_contract_test sdurws_ird_execution_worker)
@@ -322,15 +353,18 @@ if(MSVC)
     target_compile_options(sdurws_ird_execution_contract_test PRIVATE /utf-8)
 endif()
 
-# 链接面与 sdurws_ird_execution_test 同款（GTest::gtest_main 自持入口；
-# 落位期零 testkit 边——T-1，testkit 消费随 EX-T09 按 T-1 允许形态登记）。
-target_link_libraries(sdurws_ird_execution_contract_test PRIVATE
-    sdurws_ird_execution
-    GTest::gtest_main)
+# 链接面与 sdurws_ird_execution_test 同款（EX-T09 起自有 main——
+# ContractTestMain.cpp 子进程拦截＋RecordListener；GTest::gtest 无入口＋
+# sdurws_ird_testkit——T-1 允许形态仅测试目标，产品目标零 testkit 边）。
+target_link_libraries(sdurws_ird_execution_contract_test PRIVATE sdurws_ird_execution sdurws_ird_testkit GTest::gtest)
 
 # 源码树位置注入（构建图边扫描用例输入——与 _test 目标同源）。另注入
 # worker exe 路径（EX-T06 契约测试的真进程场景输入——测试进程以该路径
 # 启动 sdurws_ird_execution_worker，EX-WKR-1~3 真进程实证面）。
+# EX-T09：test/ 入私有包含根——契约套件共享设施头 ContractSuiteFacilities.hpp
+# （同单元测试目标内部共享；R-2 不受影响——不入 include/ 公共根）。
+target_include_directories(sdurws_ird_execution_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/test)
 target_compile_definitions(sdurws_ird_execution_contract_test PRIVATE
     IRD_EXECUTION_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/.."
     IRD_EXECUTION_WORKER_EXE="$<TARGET_FILE:sdurws_ird_execution_worker>")
