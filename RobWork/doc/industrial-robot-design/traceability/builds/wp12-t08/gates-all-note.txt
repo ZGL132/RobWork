@@ -1,0 +1,7 @@
+gate-all.ps1 一键门禁在本环境因冒烟配置步缺 Qt 前缀（脚本内部 cmake 未传
+-DCMAKE_PREFIX_PATH，本机 Qt 位于 D:/software/Qt/6.11.1/msvc2022_64——集成
+缓存 CMakeCache.txt 同源）未能通过其第 4 步；DoD 门禁口径按 wp12-t07 先例
+以 ird_gates.cmake 双树直跑＋命中集 diff 承担（gates-ird-gates-base.log/
+branch.log/gates-hit-set-diff.txt——GATES-HIT-SET-IDENTICAL 零新增）。冒烟
+模式的 toolchain/Qt 配置与测试执行已按 AGENTS §4.1 以显式参数真实执行并
+留痕（smoke-configure.log/smoke-build.log/smoke-test-run-*.log）。
