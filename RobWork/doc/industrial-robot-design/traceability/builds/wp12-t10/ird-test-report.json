@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T10",
+  "masterWp": "WP-H（卡内 RPT-T10 行——≙WP-12-T05，reporting.md §11 映射；契约 note 原文口径）",
+  "branch": "wp12-t10",
+  "base": "87aceec6ba649b4b344214d50b6d105444f11113",
+  "date": "2026-09-20",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01~T09 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，零错误）",
+      "notes": "RPT-T10 交付证据包组装（契约产物列 Bundle.hpp/.cpp＋IArchiveWriter 契约与 Fake）：①Bundle.hpp——§9.6 IArchiveWriter 三方法契约逐字（open〔同卷临时区〕/addEntry〔纯相对正斜杠——SP-2 口径〕/finish〔原子替换到目标；异常/失败→清理临时、目标不变〕；reporting 定义、io ZIP 薄适配——P-RPT-7；放弃路径＝实现析构 RAII 清理的契约澄清，§9.6 签名零改动）＋§7.6 EvidenceBundleRequest 三字段（runs 空＝缺省取报告 resultRefs）＋BundleStatus/EvidenceBundleOutcome 三形态（取消全空——UX-03）＋IEvidenceBundleSource 归档事实注入缝（tryEnvelopeDigest/tryCaseSetDigest/tryConfigurationRefs——§7.6 输入②『归档工件清单』与快照冻结凭据的投影承载，reporting 不自算）＋IEvidenceBundleAssembler/EvidenceBundleAssembler（§7.6『组装，reporting 所有』）；②src/Bundle.cpp——编排体：请求校验（Usage fail-fast：零 reportId/空 target/runs 越界与重复/解析缝违约）→收集阶段零 IO（先全量收集——要素缺失→BundleIncomplete 全量列出且 writer 从未 open＝不产出半包零临时；复现块两必填字段逐字段完整性核对）→逐条目写出（JSON 经注入 IReportIoFactory canonical 序列化——SA-12 不自建序列化器；逐条目前取消检查点）→totalDigest（IRDRPTB1＋codec 版本＋条目数＋逐条目名＋SHA-256 大端编码，core ContentDigester 唯一算法；排除 bundle.json 自身——generatedAtUtc 不入内容摘要 D-04，同输入同摘要 NFR-COR-02）→finish 原子替换。条目编址（格式面登记 DTB §5.4）：snapshot/<runId>/snapshot.json（refs-only 四列：snapshotId/sliceId/inputBaselineId/caseSetDigest）、results/<runId>/result.json（envelopeDigest＋证据清单 itemId/status/digest＋复现要素 ReproductionBlock 逐字段）、reproduction.json（逐运行 versions＋configurations——种子/线程数/容差的值在配置 canonical 字节内，域 schema 归域，bundle 只承载 configKindToken＋contentIdentity 引用——『数值来自 evidence 复现块与配置 canonical，不自算』纪律）、bundle.json（六字段 schemaVersion=ird-evidence-bundle/1/reportId/contentIdentity/sourceRuns/generatedAtUtc/totalDigest）。③test/FakeArchiveWriter.hpp——IArchiveWriter 最小确定性替身（真实临时文件承载生命周期：open 建 <target>.ird-fake-partial／addEntry SP-2 校验＋只增／finish remove+rename 替身近似／失败注入三类〔open/addEntry/finish〕各自清理临时目标不变／析构 RAII 放弃路径；具名替身收口归 RPT-T11——卡行 T11 产物列原文）。格式分界（D-15/P-RPT-7）：独立格式 ird-evidence-bundle/1、不复用 .rwpack（不含 HEAD/锁/.staging——条目名构造面在 reporting 侧不存在）；ZIP 字节封装只经注入 IArchiveWriter（contract_test 源码扫描常驻自证零第二套 ZIP 实现）。"
+    }
+  ],
+  "tests": [
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "unit",
+      "cases": {
+        "total": 164,
+        "passed": 164,
+        "failed": 0
+      },
+      "modes": {
+        "integration": {
+          "xml": "sdurws_ird_reporting_test-integration.xml",
+          "log": "integration-test-run-unit.log",
+          "result": "164/164 PASS"
+        },
+        "smoke": {
+          "xml": "sdurws_ird_reporting_test-smoke.xml",
+          "log": "smoke-test-run-unit.log",
+          "result": "164/164 PASS"
+        }
+      },
+      "notes": "较 RPT-T09 基线新增 14 用例（BundleTest.cpp——契约 acceptance 1~3 逐条对应，RP-BUN-1 的单元内承载面）：AssemblesCompleteBundleWithAllEntries（acceptance 1：四类条目枚举＋bundle.json 六字段逐项核对〔schemaVersion/reportId/contentIdentity/sourceRuns/generatedAtUtc/totalDigest〕＋snapshot refs-only 四列＋results envelope 摘要/证据清单 itemId·status·digest/复现要素＋reproduction.json versions·configurations＋目标文件存在）；TotalDigestIsDeterministicAcrossAssembles（NFR-COR-02/D-04：同输入两次装配 totalDigest 逐字节相等——generatedAtUtc 变化不入摘要）；EmptyRunsDefaultsToReportResultRefs（acceptance 2 缺省语义：runs 空＝报告 resultRefs 全集，与显式全集同摘要）；MissingEnvelopeRejectsWithBundleIncompleteBeforeAnyWrite（要素缺失→BundleIncomplete 逐项定位；writer 从未 open＝不产出半包零临时零目标）；MissingElementsAreListedExhaustively（五项事实全缺→detail 全量逐项列出——不短路）；IncompleteReproductionBlockIsRejectedFieldByField（复现块必填字段置空→逐字段列出缺失，完整字段不在清单）；EmptyConfigurationListIsLegalButNulloptIsMissing（配置空集合法完成 vs nullopt 缺位拒绝——§5.2『缺失与空值不等价』对偶）；CancelBeforeCollectionReturnsCanceledWithNoSession／CancelDuringCollectionReturnsCanceledBeforeOpen／CancelDuringWriteCleansTempAndLeavesTargetUntouched（acceptance 3：入轨/收集/写出三检查点取消——UX-03 全空形态；写出期取消经 writer 属主析构 RAII 清理临时、目标不变）；WriterFailureAtAddEntryFailsWithTargetUntouched／WriterFailureAtFinishCleansTempAndKeepsTarget（IArchiveWriter 异常/失败→Failed 透传＋临时清理＋目标不变——finish 签名注释原文的观测承载）；RetryAfterWriterFailureSucceeds（故障清除后同请求重装成功——§7.4 可重试精神）；UsageViolationsAreRejectedFast（零 reportId/空 target/runs 越界/runs 重复/reportId 不可解析五路 Usage fail-fast 且零写出）。替身边界声明：报告经 ReviewReport::make 构造、替身包络经 evidence ResultEnvelope::make 构造（合法组合-only）；FakeArchiveWriter 仅验证 reporting 侧契约语义（会话纪律/SP-2/只增/失败与放弃路径清理/目标不变），不构成 ZIP 容器格式正确性证明（容器格式/压缩/原子替换归 io 验证矩阵——P-RPT-7/P-IO-1 合并裁决后的实现面）。"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "contract",
+      "cases": {
+        "total": 58,
+        "passed": 58,
+        "failed": 0
+      },
+      "modes": {
+        "integration": {
+          "xml": "sdurws_ird_reporting_contract_test-integration.xml",
+          "log": "integration-test-run-contract.log",
+          "result": "58/58 PASS"
+        },
+        "smoke": {
+          "xml": "sdurws_ird_reporting_contract_test-smoke.xml",
+          "log": "smoke-test-run-contract.log",
+          "result": "58/58 PASS"
+        }
+      },
+      "notes": "较 RPT-T09 基线新增 7 用例（BundleCrossUnitContractTest.cpp——acceptance 4/5 跨单元契约面）：IArchiveWriter 契约形状四 static_assert（§9.6 open/addEntry/finish 三签名逐参一致——io 薄适配对接凭据；report.reproduction() 恒为 evidence::ReproductionBlock——P-RPT-9 类型恒等；tryEnvelope 返回 evidence::ResultEnvelope——§7.6 输入①）；ItemStatusTokensAreStableAndDistinct（evidence::EvidenceItemStatus 五值包内词面全表非空且两两互异＋逐值钉字——持久化判别面；类型恒等 static_assert 同步钉死）；BundleSchemaVersionIsIndependentFormat（ird-evidence-bundle/1 独立格式标识，不复用 ird-report-json/.rwpack——D-15 格式分界）；EntryNameViolatesSp2IsRejected（绝对路径/盘符/反斜杠/上溯段/空名五形态拒绝＋拒绝零副作用＋重复名拒绝——§9.6 非法调用行）；SessionDisciplineIsEnforced（未 open 使用/终态后使用/活跃会话重复 open——会话纪律）；AbandonWithoutFinishCleansTempAndKeepsTarget（放弃路径 RAII：不 finish 即析构→临时清理目标不变）；EntryAddressingIsRelativeAndProjectMirrorFree（snapshot/results 条目名纯相对正斜杠＋按运行编址＋零 HEAD/lock/.staging 项目镜像要素——D-15/P-RPT-7）；NoSecondZipImplementationInReportingSources（reporting 源码树扫描零 ZIP 实现特征〔zlib/minizip/libzip/deflate 等字符级特征〕——P-RPT-7『不私建第二套 ZIP 实现』常驻自证，第三方依赖唯一渠道经 vcpkg 归 io〔NFR-DEP-03〕）。"
+    }
+  ],
+  "gates": {
+    "ird_gates": "双树直跑（wp12-t07~t09 先例口径——gate-all.ps1 冒烟步缺 Qt 前缀为既有环境项，注记 gates-all-note.txt）：base 87aceec6 detached worktree 与 wp12-t10 工作树各 61 处 IRD-GATE- 命中（全部既有登记归属），路径前缀归一化后逐行 diff 为空（GATES-HIT-SET-IDENTICAL——gates-hit-set-diff.txt）：RPT-T10 改动面零门禁命中、零表外编译边",
+    "validate-task": "PASS（validate-task.log——tasks/foundation/RPT-T10.json）",
+    "validate-docs": "PASS（validate-docs.log——20 units, 12 trace entries, 150 task files）",
+    "build": "集成模式 cmake --build build --config Release（缓存预核 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON——AGENTS §4.1 grep 口径）verify 两目标零错误（integration-build.log——契约 verify 列两条命令逐条执行）；独立冒烟模式配置＋构建全树零错误（smoke-configure.log/smoke-build.log——vcpkg toolchain＋Qt prefix 显式参数，AGENTS §4.1 口径）"
+  }
+}

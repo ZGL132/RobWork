@@ -1,0 +1,21 @@
+gate-all.ps1 一键门禁在本环境因冒烟配置步缺 Qt 前缀（脚本内部 cmake 未传
+-DCMAKE_PREFIX_PATH，本机 Qt 位于 D:/software/Qt/6.11.1/msvc2022_64）未能通过
+其冒烟步；DoD 门禁口径按 wp12-t07~t09 先例以 ird_gates.cmake 双树直跑＋命中集
+diff 承担（gates-ird-gates-base.log/branch.log/gates-hit-set-diff.txt）。
+冒烟模式的 toolchain/Qt 配置与测试执行已按 AGENTS §4.1 以显式参数真实执行并
+留痕（smoke-configure.log/smoke-build.log/smoke-test-run-*.log）。
+
+双树直跑命令（两树同——wp12-t09 留痕原文口径）：
+  cmake -DIRD_ROOT=<各树>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot \
+        -DIRD_ENABLE_GIT=OFF -P cmake/ird_gates.cmake
+
+base   = 87aceec6ba649b4b344214d50b6d105444f11113（detached worktree
+         .gates-base-wp12-t10 直接 cmake -P 复跑，比对后已清理）
+branch = wp12-t10 工作树（同口径直接 cmake -P 复跑）
+
+两侧原始 IRD-GATE- 行各 61 处（既有命中：testkit 直链登记豁免族、io 第三方
+链接词表族、project R-4 字面量等既有登记归属）；路径前缀归一化（剥离树根
+前缀至 industrialrobot/）后逐行 diff 为空（gates-hit-set-diff.txt——
+GATES-HIT-SET-IDENTICAL 零新增）——RPT-T10 新增/改动面（Bundle.hpp/.cpp、
+FakeArchiveWriter.hpp、BundleTest.cpp、BundleCrossUnitContractTest.cpp、
+CMakeLists.txt、单元卡 §14.4）未引入任何门禁新命中。
