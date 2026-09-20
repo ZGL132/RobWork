@@ -60,15 +60,21 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #     线程/布局记忆/§3.5 UI 码描述符表）。
 #   - src/StatusProjection.cpp＝七态公共状态呈现实现（UI-T04——§6.3 词表
 #     token/文案键表与映射求值纯函数；§13 UI-T04 行"七态公共状态呈现"）。
-# 不开启 AUTOMOC（UI-T03 增量登记）：三个源文件与私有头零 Q_OBJECT 声明——
-# 壳的 Qt 交互全部经虚函数覆盖（resizeEvent）与既有信号＋lambda 接线，无
-# 信号槽声明需求（ui.md §10.1 v0.5 登记）；UI-T06+（命令面板/投影管线）引入
-# Q_OBJECT 时再评估开启（父 CMakeLists 既有约定：不预建构建设施）。
+#   - src/View3DPlaceholder.cpp＝三维视图占位实现（UI-T05 阶段 A——§13
+#     UI-T05 行"阶段 A 仅中央区占位与视图契约登记"：View3DContract.hpp
+#     契约数据〔UX-11 清单/KIN-06 语义钉住〕唯一权威定义点＋中央区占位
+#     面板构建；交互实现归阶段 B，届时并入实现 TU 而契约定义点不变）。
+# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05 复核维持）：五个源文件与私有头
+# 零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖（resizeEvent）
+# 与既有信号＋lambda 接线，无信号槽声明需求（ui.md §10.1 v0.5 登记）；
+# UI-T06+（命令面板/投影管线）引入 Q_OBJECT 时再评估开启（父 CMakeLists
+# 既有约定：不预建构建设施）。
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
     src/ShellSupport.cpp
-    src/StatusProjection.cpp)
+    src/StatusProjection.cpp
+    src/View3DPlaceholder.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -198,12 +204,16 @@ endmacro()
 #     R-3 例外登记文本核对——UI-T02）；
 #   - ShellModelTest.cpp＝码表注册契约＋PM-11 格式矩阵（UI-T03）；
 #   - StatusWordModelTest.cpp＝七态映射/优先级/显示纪律/九态标签键
-#     （UI-STG-3——UI-T04，具名追溯字段见各用例 IRD_TEST_INFO）。
+#     （UI-STG-3——UI-T04，具名追溯字段见各用例 IRD_TEST_INFO）；
+#   - View3DContractTest.cpp＝三维视图占位契约钉住：UX-11 九项清单逐项
+#     字面冻结（序/id 唯一性/词法）＋KIN-06/AT-04 会话姿态语义四位钉住
+#     （UI-T05 阶段 A——契约头 View3DContract.hpp 的互证锚）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
     test/ShellModelTest.cpp
-    test/StatusWordModelTest.cpp)
+    test/StatusWordModelTest.cpp
+    test/View3DContractTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES

@@ -4,7 +4,8 @@
  *         UI-WB-1（五区创建与跨会话布局记忆）、UI-WB-2（恢复默认布局）、
  *         UI-WB-3（布局记忆损坏回退＋Dev 诊断＋不阻塞启动）、UI-SES-1
  *         （无项目首页三入口与项目作用域命令禁用、命令面板可达）；另含
- *         最近项目模型（PM-10/PM-14）与状态栏 PM-11 的控件端到端断言。
+ *         最近项目模型（PM-10/PM-14）与状态栏 PM-11 的控件端到端断言、
+ *         UI-V3D-1（UI-T05 阶段 A：中央区三维视图占位与契约登记）。
  *
  * 设计依据：
  *   - 任务契约 tasks/foundation/UI-T03.json acceptance 1~3（§4.1~§4.5 用例
@@ -23,6 +24,7 @@
 
 #include <gtest/gtest.h>
 
+#include <QAbstractButton>
 #include <QApplication>
 #include <QDockWidget>
 #include <QFileInfo>
@@ -40,6 +42,7 @@
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>
 #include <sdurws/ird/ui/UiPorts.hpp>
 #include <sdurws/ird/ui/UiProjections.hpp>
+#include <sdurws/ird/ui/View3DContract.hpp>
 
 #include <algorithm>
 #include <filesystem>
@@ -552,6 +555,101 @@ TEST_F(WorkbenchShellGuiTest, RecentProjects_CapDedupPersist_PM_10_PM_14)
     entries = shell->recentProjects();
     ASSERT_EQ(entries.size(), std::size_t{9});
     EXPECT_EQ(entries.front().canonicalPath, paths[5]);
+
+    shell->shutdown();
+}
+
+// =====================================================================
+// UI-V3D-1：中央区三维视图占位与契约登记（UX-11/KIN-06/AT-04——UI-T05
+// 阶段 A；单元卡 §12.3 UI-V3D-1 行）
+// =====================================================================
+
+/**
+ * §12.3 UI-V3D-1 行：前置（项目打开态）→ 操作（presentProjectContext 切
+ * 中央区到占位面板）→ 预期（占位面板呈现"本阶段将在后续版本提供"说明＋
+ * UX-11 交互清单只读登记；零可交互业务控件；KIN-06 语义钉住值与契约一致；
+ * 上下文往返后面板在页栈中稳定存活）→ 观测点（objectName 定位＋清单行
+ * 属性 view3dId 逐项对照契约清单＋控件类型扫描）。
+ *
+ * 模型层契约冻结在 test/View3DContractTest.cpp（词表/语义逐字断言）——
+ * 本用例验证其"呈现面落地"：面板渲染的就是契约清单本身（同源互证，无第
+ * 二份文案），且不虚构业务能力（§4.2/§11.3 红线——acceptance 1）。
+ */
+TEST_F(WorkbenchShellGuiTest, CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06)
+{
+    IRD_TEST_INFO("UX-11", {"KIN-06", "AT-04"}, std::nullopt);
+    std::unique_ptr<IWorkbenchShell> shell = ui::createWorkbenchShell();
+    ASSERT_TRUE(shell->initialize(makeWiring()));
+    QWidget* window = shell->mainWindow();
+    ASSERT_NE(window, nullptr);
+    window->resize(1600, 900);
+    window->show();
+    pump();
+
+    // ---- 打开（可写）项目：中央区切到三维视图占位面板（页 1）----
+    ProjectContextProjection context;
+    ProjectMetadataProjection metadata;
+    metadata.projectId = core::ProjectId::generate();
+    metadata.projectDisplayName = u8"占位面板项目";
+    metadata.writable = true;
+    context.project = metadata;
+    shell->presentProjectContext(context);
+    pump();
+
+    auto* central = window->findChild<QStackedWidget*>(QString::fromLatin1("ird_central_stack"));
+    ASSERT_NE(central, nullptr);
+    ASSERT_EQ(central->currentIndex(), 1) << "项目态中央区应为占位面板页（§4.1 阶段 A）";
+
+    auto* panel = central->findChild<QWidget*>(QString::fromLatin1("ird_view3d_placeholder"));
+    ASSERT_NE(panel, nullptr) << "三维视图占位面板应已装配进中央区页栈";
+    EXPECT_TRUE(panel->isVisibleTo(central));
+
+    // 占位说明在位（§4.1 原文口径文案——不虚构业务能力的显式声明）。
+    auto* notice = panel->findChild<QLabel*>(QString::fromLatin1("ird_view3d_placeholder_notice"));
+    ASSERT_NE(notice, nullptr);
+    EXPECT_EQ(notice->text(), QString::fromUtf8(u8"本阶段将在后续版本提供"));
+
+    // ---- 清单呈现面＝契约清单本身（同源互证：行序/文案/id 逐项对照）----
+    const std::vector<ui::View3DInteractionItem>& manifest = ui::view3DInteractionManifest();
+    const QList<QLabel*> rows =
+        panel->findChildren<QLabel*>(QString::fromLatin1("ird_view3d_manifest_item"));
+    ASSERT_EQ(rows.size(), static_cast<int>(manifest.size()))
+        << "清单行数与契约清单不一致（呈现面与登记面漂移）";
+    for (int i = 0; i < rows.size(); ++i) {
+        const std::size_t idx = static_cast<std::size_t>(i);
+        // 行序＝清单序（构造序即子对象序）；行文案含契约 label；行属性
+        // view3dId 携带契约 id（阶段 B 锚点——id 不进文案，UX-02）。
+        EXPECT_TRUE(rows[i]->text().contains(QString::fromUtf8(manifest[idx].label)))
+            << "第 " << i << " 行文案与契约 label 不符";
+        EXPECT_EQ(rows[i]->property("view3dId").toString(),
+                  QString::fromLatin1(manifest[idx].id))
+            << "第 " << i << " 行 view3dId 与契约 id 不符";
+    }
+
+    // ---- 不虚构业务能力红线：占位面板零可交互业务控件（§4.2/§11.3）----
+    // 纯 QLabel 呈现——任何按钮/输入/选择控件都构成"能力存在"的可供性。
+    EXPECT_TRUE(panel->findChildren<QAbstractButton*>().isEmpty())
+        << "占位面板不得含按钮类控件（不虚构业务能力）";
+
+    // ---- KIN-06/AT-04 语义钉住值（GUI 侧复核——与模型层逐位断言同源）----
+    const ui::View3DSessionPoseContract pose = ui::view3DSessionPoseContract();
+    EXPECT_TRUE(pose.sessionStateOnly);
+    EXPECT_FALSE(pose.writesDesignModel);
+    EXPECT_FALSE(pose.producesRevision);
+    EXPECT_FALSE(pose.invalidatesResults);
+
+    // ---- 上下文往返：回到无项目再回来，面板稳定存活（页栈复用语义）----
+    context.project.reset();
+    shell->presentProjectContext(context);
+    pump();
+    EXPECT_EQ(central->currentIndex(), 0) << "无项目态应回到首页页（PM-10）";
+    context.project = metadata;
+    shell->presentProjectContext(context);
+    pump();
+    EXPECT_EQ(central->currentIndex(), 1);
+    EXPECT_NE(central->findChild<QWidget*>(QString::fromLatin1("ird_view3d_placeholder")),
+              nullptr)
+        << "上下文往返不得销毁/重建占位面板（装配期一次性装配——§11.1 注册时机）";
 
     shell->shutdown();
 }

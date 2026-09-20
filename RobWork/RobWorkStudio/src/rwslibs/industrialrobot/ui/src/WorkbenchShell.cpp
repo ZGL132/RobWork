@@ -387,16 +387,16 @@ void WorkbenchShellImpl::buildBottomDock()
 
 void WorkbenchShellImpl::buildCentralArea()
 {
-    // 中央区＝页栈：页 0 无项目首页（PM-10）、页 1 阶段占位面板（§4.1
+    // 中央区＝页栈：页 0 无项目首页（PM-10）、页 1 三维视图占位面板（§4.1
     // "阶段 A：占位面板（含'本阶段将在后续版本提供'说明，不虚构业务能力）"
-    // ——该占位为契约显式设计，非未完成实现）。中央区不可隐藏（§4.4）。
+    // ——该占位为契约显式设计，非未完成实现）。UI-T05 阶段 A 起占位面板
+    // 承载三维视图区域身份与 UX-11 交互清单＋KIN-06 会话姿态语义的契约
+    // 登记（View3DContract.hpp——阶段 B 交互实现的承接面）；交互实现归
+    // 阶段 B（WP-10-T05 阶段 B 交付）。中央区不可隐藏（§4.4）。
     m_centralStack = new QStackedWidget(m_window.get());
     m_centralStack->setObjectName("ird_central_stack");
     m_centralStack->addWidget(buildHomePage());
-    auto* stagePage = new QLabel(u8"本阶段将在后续版本提供", m_centralStack);
-    stagePage->setObjectName("ird_stage_placeholder");
-    stagePage->setAlignment(Qt::AlignCenter);
-    m_centralStack->addWidget(stagePage);
+    m_centralStack->addWidget(createView3DPlaceholder(m_centralStack));
 }
 
 QWidget* WorkbenchShellImpl::buildHomePage()
