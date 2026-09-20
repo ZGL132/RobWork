@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 239,
+  "tickCount": 240,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-20T18:19:55+08:00",
+    "updatedAt": "2026-09-20T19:52:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1404,7 +1404,19 @@
       ],
       "acceptanceRecord": "traceability/acceptance/RPT-T11-20260920-r2.md",
       "mergedAt": "2026-09-20",
-      "failReason": "验收 attempt1 fail（B-1 同族第五次：11 件 .log 留痕被 .gitignore *.log 吞且未 add -f，提交声称 19 份实际入库 8 份，F-250）——返工 e9956890 补交 11 件后 attempt2 pass；attempt1 验收建议级 F-251 与 attempt2 建议级 F-252 均随 evidence 分支转登，F-250/F-251 已随 ⑤ 自 acc/RPT-T11/1 逐字转录入主线（F-250 循其 resolution 翻转 fixed，fixedBy=e9956890）"
+      "failReason": "验收 attempt1 fail（B-1 同族第五次：11 件 .log 留痕被 .gitignore *.log 吞且未 add -f，提交声称 21 份实际入库 10 份，F-253）——返工 552c66d1 补交 11 件后 attempt2 pass；attempt1 验收建议级 F-254/F-255 与 attempt2 建议级 F-256/F-257 均随 evidence 分支转登，F-253/F-254/F-255 已随 ⑤ 自 acc/RPT-T12/1 逐字转录入主线（F-253 循其 resolution 翻转 fixed，fixedBy=552c66d1）"
+    },
+    {
+      "task": "RPT-T12",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "36bbac316d89285f6ea6d43bde601fc44e2f6dc8",
+        "92db3656d3440ac775047fb7093e1e2c89cc13a1",
+        "552c66d1ddb39e468899705822b0424da5b0fa70"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T12-20260920-r2.md",
+      "mergedAt": "2026-09-20"
     }
   ],
   "policy": {
@@ -1430,11 +1442,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "RPT-T12",
-      "contractPath": "tasks/foundation/RPT-T12.json",
-      "branch": "wp12-t12"
-    },
     {
       "taskId": "RPT-T13",
       "contractPath": "tasks/foundation/RPT-T13.json",
@@ -1509,5 +1516,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "958bda76-c1ce-4a78-ab28-066ba6ce0a9a"
+  "tickToken": "11e1a83c-8455-41c8-9a4c-ca05f6c66121"
 }

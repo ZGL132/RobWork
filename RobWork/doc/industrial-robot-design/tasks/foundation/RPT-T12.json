@@ -1,10 +1,10 @@
-{
+﻿{
   "schemaVersion": "ird-task/1",
   "taskId": "RPT-T12",
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现模型摘要与任务投影接入（ModelSummary/ITaskStatusSource）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["RPT-T05"],
   "requirements": ["RPT-01-B", "TASK-02"],
   "designRefs": [

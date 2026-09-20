@@ -2540,6 +2540,37 @@
       "resolution": "与 F-251 处置合并：verify 第 3 条按『发现并执行非零个测试』口径修订（叶子目录 ctest 或直接执行口径成文）后，正文/留痕的『ctest 通过』声称方有依据；过渡期以『双测试执行（直接运行）通过』如实措辞。不阻塞 RPT-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-251（acc/RPT-T11/1 在册，待随记录分支合并）。"
     },
     {
+      "id": "F-253",
+      "source": "traceability/acceptance/RPT-T12-20260920.md#4.10／发现的问题清单-G-1（attempt 1，verdict=fail，2026-09-20；送验对象 92db3656d3440ac775047fb7093e1e2c89cc13a1，分支 wp12-t12）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-09-20",
+      "title": "F-010/F-223/F-244/F-248/F-250 根因第 5 次验收可见再现、RPT 系第 2 次 fail 级（RPT-T11 attempt 1 同型阻断后 4 个任务即复踩）：留痕补交提交 92db3656 标题与正文声称『补交验证留痕 21 件（双模式构建/测试/门禁/治理脚本日志）』并逐件列名，实际仅 10 件入库（git show --name-status 实证）——11 件 .log（integration-build、smoke-configure、smoke-build、integration/smoke-test-run×4、gates-ird-gates-base/branch、validate-task、validate-docs）被 .gitignore 第 87 行全局 *.log 规则吞掉未 git add -f。11 件在实施者主树以 ignored 状态在盘且内容经验收者逐份抽查与声称相符（208/61 PASSED、validate-task PASS、双 gates 日志 65 命中与验收者双树直跑同值）——内容真实、归档失实（F-250 同款多报型定性）；冻结对象内三处悬空引用（schema-freeze-note.md §5『见本目录 integration-build.log、smoke-build.log』／gates-all-note.txt『见 validate-task.log 附录』／提交正文清单）——acceptance 1 的 schema 冻结留痕凭据自身携带失实引用，runtime 侧按凭据对接无法回查执行证据；4.10『构建日志落位』在送验对象中缺失，故 attempt 1 verdict=fail",
+      "owner": "构建约定所有者（DTB §5.1 辖域——F-223 系统性处置：traceability/ 目录 .gitignore 负例豁免或留痕产物清单固化 git add -f）＋实施者（wp12-t12 补交提交）",
+      "resolution": "实施者以 git add -f 补交 11 件 .log（内容已在盘、与在库 10 件同批次同源；不 amend 已推送历史）后重新发起全量验收（attempt 2）；过渡期实施者提交留痕后以 git ls-files 对账件数与提交正文一致（F-244 处置同款）。系统性处置并入 F-223。编号顺延自 F-252。",
+      "fixedBy": "552c66d1ddb39e468899705822b0424da5b0fa70"
+    },
+    {
+      "id": "F-254",
+      "source": "traceability/acceptance/RPT-T12-20260920.md#4.2／发现的问题清单-G-2（attempt 1，verdict=fail，2026-09-20；送验对象 92db3656d3440ac775047fb7093e1e2c89cc13a1，分支 wp12-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "AGENTS §4.1 独立冒烟命令缺 Qt 前缀参数（F-002 同族文档口径滞后第 2 例）：industrialrobot 独立配置在仅有 -DCMAKE_TOOLCHAIN_FILE 时于 testkit/CMakeLists.txt:239 find_package(Qt6 COMPONENTS Core REQUIRED) 处配置失败（『Could not find a package configuration file provided by Qt6』——验收者独立冒烟树首配亲历），补 -DCMAKE_PREFIX_PATH 后 exit 0；根因＝testkit 的 sdurws_ird_testkit_qt INTERFACE 目标（RPT-T11 落地）引入 Qt6 配置期依赖，而 AGENTS §4.1 冒烟命令模板未同步；实施者实际冒烟均带 Qt 前缀（wp12-t07~t12 提交正文口径），仅文档滞后、无实际构建受阻",
+      "owner": "构建约定所有者（AGENTS §4.1 辖域）＋testkit 详设所有者（配置期守卫评估——Qt 必要性是否可延后到设施消费任务）",
+      "resolution": "择一：①AGENTS §4.1 冒烟命令补 -DCMAKE_PREFIX_PATH=<Qt> 参数说明（与 F-002 修复同款式）；②testkit/CMakeLists 对 sdurws_ird_testkit_qt 增加找不到 Qt 时的可选降级守卫（warn＋跳过目标——涉配置语义变更随 testkit 卡登记）。不阻塞 RPT-T12 返工。编号顺延自 F-253。"
+    },
+    {
+      "id": "F-255",
+      "source": "traceability/acceptance/RPT-T12-20260920.md#4.5／发现的问题清单-G-3（attempt 1，verdict=fail，2026-09-20；送验对象 92db3656d3440ac775047fb7093e1e2c89cc13a1，分支 wp12-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "ModelSummary 值语义等价算子的测试敏感度缺口（F-043 同族新实例）：验收者变异 M4 将 ModelSummary::operator== 改为恒真后 208 单测＋61 契约测试全绿不可检——该算子在测试面无任何负向断言承载（同修订同投影/全字段往返用例均为正向 EXPECT_EQ，字段级断言不经 operator==）；对照同任务交付的 TaskStatusProjection::operator== 有 SameIdentitySameProjection 的 EXPECT_NE(copy,*first) 负例（同型变异 M3 即红）——两投影算子防护不对称。实现本身正确（逐字段比较亲读证实：19 项合取含 resources/configurations 逐条与 provenanceNote），属测试覆盖面建议非实现缺陷",
+      "owner": "reporting 单元实施者（后续 reporting 测试任务增列负例）",
+      "resolution": "test/ModelSummaryTest.cpp 增列一条不等负例（两投影差于任一字段——至少覆盖 provenanceNote/resources 两维——EXPECT_NE 并断言改回相等），随 reporting 后续触点任务顺带落地；不阻塞 RPT-T12 返工。编号顺延自 F-254。"
+    },
+    {
       "id": "F-256",
       "source": "traceability/acceptance/RPT-T12-20260920-r2.md#4.8／发现的问题清单-G-3（attempt 2，verdict=pass，2026-09-20；送验对象 552c66d1ddb39e468899705822b0424da5b0fa70，分支 wp12-t12）",
       "severity": "suggestion",
