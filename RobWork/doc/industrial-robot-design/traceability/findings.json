@@ -2538,6 +2538,26 @@
       "title": "『ctest 通过』声称与在库留痕证据不对应（F-251 同源面，attempt 2 送验对象内两处）：①提交 ad7e8d1e 正文验证段『ctest 收口通过』——契约 verify 第 3 条 ctest 命令（--test-dir build 根）在尝试 1 与尝试 2 验收者独立复跑中均恒 exit 0＋『No tests were found!!!』（F-251 登记的框架 CTestTestfile 链缺失），在库 19 件留痕中不存在任何 ctest 执行日志；②gates-all-note.txt 收尾句『双目标 ctest 通过（integration/smoke-test-run-*.log）』——所引四件日志实为直接执行双 exe 的 gtest 输出（『Running 196 tests from 31 test suites』形态），非 ctest 运行记录。测试实质执行真实成立（验收者双模式四跑亲证 196＋58 全绿＋叶子目录 ctest 2/2 通过），纯声称-引用标注失准，非执行造假",
       "owner": "reporting 单元实施者（后续 gates-all-note/提交正文措辞以实际执行形态为准）；构建约定所有者（与 F-251 处置②合并——verify 口径修订后此类声称才有落点）",
       "resolution": "与 F-251 处置合并：verify 第 3 条按『发现并执行非零个测试』口径修订（叶子目录 ctest 或直接执行口径成文）后，正文/留痕的『ctest 通过』声称方有依据；过渡期以『双测试执行（直接运行）通过』如实措辞。不阻塞 RPT-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-251（acc/RPT-T11/1 在册，待随记录分支合并）。"
+    },
+    {
+      "id": "F-256",
+      "source": "traceability/acceptance/RPT-T12-20260920-r2.md#4.8／发现的问题清单-G-3（attempt 2，verdict=pass，2026-09-20；送验对象 552c66d1ddb39e468899705822b0424da5b0fa70，分支 wp12-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "留痕计数口径失准（F-041/F-243 同族新实例）：schema-freeze-note.md §5 与实现提交 36bbac31 正文『本任务新增单测 12＋契约 4』——实际新增契约 TEST 函数为 3 个（ModelSummaryTaskStatusHeaderDiscipline.PublicHeadersZeroOffTreeIncludes_RPT12_ACC3／TaskStatusVocabulary.TerminationTokensMatchCoreTerminalStateTokens_RPT12_ACC3／TaskStatusVocabulary.StateAxisHasNoSecondVocabulary_RPT12_ACC3，TEST( 宽窄匹配双口径清点同值），疑将契约测试文件四组 static_assert 断言面（签名冻结/类型恒等/红线扫描/词表一致性）误计为用例；验收者 attempt 2 以 61 总数中 3 个具名新用例 [ RUN ] 在案复核。实质证据完整、四跑全绿，方向多报 1、无粉饰",
+      "owner": "reporting 单元实施者（后续留痕与提交正文的用例计数以 TEST 函数清点为准）",
+      "resolution": "后续 reporting 留痕/提交正文修订用例计数时按 TEST 函数逐一点数（static_assert 编译期自证不计用例数）；本条不要求返工已合入内容。不阻塞 RPT-T12 合入（attempt 2 verdict=pass）。编号顺延自 F-255（acc/RPT-T12/1 在册，待随记录分支合并）。"
+    },
+    {
+      "id": "F-257",
+      "source": "traceability/acceptance/RPT-T12-20260920-r2.md#4.10／发现的问题清单-G-2（attempt 2，verdict=pass，2026-09-20；送验对象 552c66d1ddb39e468899705822b0424da5b0fa70，分支 wp12-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "gates-all-note.txt（builds/wp12-t12）尾句『归一化 diff 复核见 validate-task.log 附录』为悬空指引——validate-task.log 仅含 1 行『validate-task: PASS (1 tasks)』输出、无任何附录内容；GATES-HIT-SET-IDENTICAL 的实质证据由在库 gates-hit-set-diff.txt（差异仅 worktree 路径前缀）与验收者 attempt 2 双树直跑归一化零差异独立成立，纯指引文字失准、非证据缺失（attempt 1 G-1 的三处悬空引用中两处已随 552c66d1 补交闭环，本处为其残余形态）",
+      "owner": "reporting 单元实施者（后续 reporting 留痕修订时顺带更正该句指向）",
+      "resolution": "后续 reporting 留痕修订时将该句改为指向 gates-hit-set-diff.txt，或在 gates-all-note.txt 内直接载归一化比对方法与结论（双树直跑、路径前缀归一、逐行 diff 为空）；不要求单独返工。不阻塞 RPT-T12 合入（attempt 2 verdict=pass）。编号顺延自 F-256。"
     }
   ]
 }
