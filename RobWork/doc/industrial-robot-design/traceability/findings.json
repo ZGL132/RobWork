@@ -2599,6 +2599,36 @@
       "title": "F-012/F-232~F-242/F-247 家族再现（RPT 系连续第十例）：RPT-T13 辅助提交 3396a00c 标题『[RPT-T13] reporting 单元卡 v0.16 文档与门禁同步（§14.3 状态逐条＋§12 交接表刷新＋零偏差登记）』前缀后以名词短语『reporting 单元卡』开头——不合 ACC §4.9/AGENTS §6.3『动词开头』字面；另两提交（9edb2a2c『提交…』、9000bfee『归档…』）动词开头合规。正文四段齐备、验证结论经验收者独立复跑全部证实（双模式 208＋61×2、GATES-HIT-SET-IDENTICAL、validate 双 PASS、22 件留痕清点同值），纯风格瑕疵",
       "owner": "reporting 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
       "resolution": "后续任务提交标题在前缀后使用动词开头（如『同步…』『登记…』『归档…』）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 RPT-T13 合入（attempt 1 verdict=pass）。编号顺延自 F-257。"
+    },
+    {
+      "id": "F-260",
+      "source": "traceability/acceptance/UI-T03-20260920.md#4.5 变异 M2／S-2（attempt 1，verdict=fail，2026-09-20；送验对象 dd9ff626392813f262f68d0d8dacc2cfb22bd4de，分支 wp10-t03）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "UI-SES-1 命令门控断言盲区（验收者变异实证）：变异『无项目分支置死』注入后 gui_test 6/6 仍绿——WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1 对项目作用域命令只断言 enabled=false＋reasonKey 非空，不断言 reasonKey 具体取值（reason.no-project 与 reason.readonly 不可区分），且未覆盖 Project＋readOnlyAllowed=true 命令（workbench.closeProject）在无项目态的禁用——该命令在同类回归下可被错误放行而测试不红",
+      "owner": "ui 单元实施者（首个 UI 门控面增量任务，建议随 UI-T04+ 或 UI-T11 门控消费任务顺手补断言：①项目作用域命令无项目态 EXPECT reasonKey==reason.no-project；②workbench.closeProject 无项目态 enabled=false）",
+      "resolution": "补两组断言后以 4.5 同款变异（M2）复跑确认转红；不阻塞 UI-T03 返工提交（B-1 仅为留痕补交），可与后续任务合并处理。编号顺延自 F-259（该编号在送验提交 dd9ff626 内——随本任务头合入后序列连续）。"
+    },
+    {
+      "id": "F-261",
+      "source": "traceability/acceptance/UI-T03-20260920.md#4.9／S-1（attempt 1，verdict=fail，2026-09-20；送验对象 dd9ff626392813f262f68d0d8dacc2cfb22bd4de，分支 wp10-t03）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-012/F-232~F-242/F-247/F-258 家族再现（连续第十一例）：UI-T03 提交 dd9ff626 标题『[WP-10-T03] ui 单元卡 v0.5 增量修订与门禁登记提交件（文档同步＋留痕）』前缀后以名词短语『ui 单元卡』开头——不合 ACC §4.9/AGENTS §6.3『动词开头』字面；同任务另一提交 d402cfef『实现工作台壳…』动词开头合规。正文四段齐备、验证结论经验收者独立复跑全部为真，纯风格瑕疵",
+      "owner": "ui 单元实施者（后续提交标题动词开头，如『同步…』『登记…』）＋各单元实施者家族性自查（F-247/F-258 同建议）",
+      "resolution": "随 F-247 家族统一跟踪、不单独返工；已推送提交不得 amend 改题（AGENTS §6.3），后续提交注意即可。编号顺延自 F-260。"
+    },
+    {
+      "id": "F-262",
+      "source": "traceability/acceptance/UI-T03-20260920.md#4.4 acceptance 3／S-3（attempt 1，verdict=fail，2026-09-20；送验对象 dd9ff626392813f262f68d0d8dacc2cfb22bd4de，分支 wp10-t03）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "§4.4『低于最小尺寸（1280×720）时侧栏自动折叠』有实现（WorkbenchShell.cpp:551-569 updateCollapseBySize＋resize 钩子 :167＋阈值常量 WorkbenchShell_p.hpp:77-80）但无自动化用例：契约 acceptance 3 该分句仅有实现行号证据，units/ui.md §13 设计矩阵 UI-T03 行（UI-WB-1/2/3、UI-SES-1）亦未含折叠例——行为正确性目前仅由代码评审与人工推演支撑",
+      "owner": "ui 单元所有者（§12.3 设计矩阵补 UI-WB-4 折叠例并按增量修订登记）＋ui 单元实施者（首个含 §4.4 增量的后续任务落地该用例）",
+      "resolution": "建议在 ui.md 下一轮增量修订时为 §12.3 补折叠用例行（低于阈值 resize→Left/Right/Bottom 不可见、Top/Central 恒在、恢复尺寸按用户意愿位还原），用例落地随其归属任务；不阻塞 UI-T03 返工提交（B-1 仅为留痕补交）。编号顺延自 F-261。"
     }
   ]
 }
