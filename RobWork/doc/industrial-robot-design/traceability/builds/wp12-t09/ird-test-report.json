@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T09",
+  "masterWp": "WP-H（卡内 RPT-T09 行——≙WP-12-T03『幂等部分』/T04，reporting.md §11 映射；契约 note 原文口径）",
+  "branch": "wp12-t09",
+  "base": "490ede49322408a4c92f094cc5532ad2d228a25a",
+  "date": "2026-09-20",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01~T08 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，零错误）",
+      "notes": "RPT-T09 交付导出与归档协调（契约产物列 Export.hpp/.cpp、Archive.hpp/.cpp＋IReportArtifactSink 契约与 Fake）：①Archive.hpp——§9.6 汇集座契约四方法逐字（begin/writeArtifact/finalize/abandon）＋§7.3 ReportArtifactManifest 全字段＋manifest 内容摘要 computeManifestDigest（幂等判定键 D-02：contentIdentity＋(relPath,format,sha256,sizeBytes,rendererVersion,templateVersion) 集合 canonical SHA-256——core ContentDigester 唯一算法；排除 ReportId/身份链/生成发布时刻/格式常量，不以目标路径）＋IReportArchiveCoordinator/ReportArchiveCoordinator（编排 begin→write×N→finalize，任一非 Ok→abandon；幂等预检零汇集座调用＝零重写最强形态）＋IReportPublishedIndex 只读清单注入缝；②Export.hpp——§9.5 导出服务逐字段（ExportDestination/ReportExportRequest/ReportExportResult/IReportExportService）＋ReportExportService（§8.5 编排：解析→矩阵单次→逐格式渲染＋二次渲染字节比对→一致性检查→发布/写出；§7.4 四轨：项目内幂等/冲突、外部同字节幂等无操作、NeverOverwrite 拒绝/OverwriteAtomic 原子替换、DiskFull abandon＋比较型诊断可重试、ReadOnlyStore 两路径诊断、逐格式/逐工件取消检查点）。登记偏差见单元卡 §14.4 v0.12（DTB §5.4）：IReportPublishedIndex 读取缝、IReportResolver 解析缝、协调器取消令牌会话注入、manifest 摘要排除 finalizedAtUtc（D-04 同源）、JSON 工件让位命名 report-data.json、withEvidenceBundle 显式 Usage 拒绝（RPT-T10 边界）、DiskFull 比较诊断可用侧 NotProvided（存储侧通道随 project 对齐——P-RPT-4）。"
+    }
+  ],
+  "tests": [
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "unit",
+      "cases": {
+        "total": 150,
+        "passed": 150,
+        "failed": 0
+      },
+      "modes": {
+        "integration": {
+          "xml": "sdurws_ird_reporting_test-integration.xml",
+          "log": "integration-test-run-unit.log",
+          "result": "150/150 PASS"
+        },
+        "smoke": {
+          "xml": "sdurws_ird_reporting_test-smoke.xml",
+          "log": "smoke-test-run-unit.log",
+          "result": "150/150 PASS"
+        }
+      },
+      "notes": "较 RPT-T08 基线新增 30 用例（ArchiveExportTest.cpp——契约 acceptance 1~4 逐条对应）：ManifestDigestTest 七〔D-02 判定键：确定性/身份链与生成发布时刻排除/内容身份与版本维度敏感/工件序无关/空集与重复 relPath Usage——acceptance 1 幂等判定键不以 ReportId 不以目标路径〕；CoordinatorTest 十〔RP-IDEM-1 幂等命中零汇集座调用返回既有记录原文、RP-CONF-1① 身份/版本双维度差异定位诊断、RP-DISK-1 DiskFull abandon＋比较型诊断（所需侧数值在位/可用侧 NotProvided）＋清除注入重试成功、RP-CANC-1 入轨与逐工件写前取消（abandon(Canceled)/UX-03 全空/未完成不入清单）、RP-RO-1 ReadOnlyStore 两路径诊断、清理失败残留不破坏已发布、前置违约 Usage 矩阵零磁盘触碰——acceptance 2/3/4〕；ExportServiceTest 十三〔§9.5 非法调用矩阵（无 Html/重复/零 Id/不可解析/空路径/证据包标志显式拒绝）、外部成功落盘、RP-IDEM-1② 外部同字节幂等（mtime/哈希不变＋零原子目标创建）、RP-CONF-1② NeverOverwrite 保留既有＋io 族码诊断、OverwriteAtomic 替换成功与提交失败先前输出完整保留＋零临时残留、项目内磁盘满可重试、manifest 装配与报告同源、服务级幂等零新增存储、只读两路径、项目内/中途/外部三取消点——acceptance 1/2/3/4〕。FakeArtifactSink（test/FakeArtifactSink.hpp）随任务交付：§10 替身清单三项故障可注入（冲突/磁盘满/清理失败）＋调用日志观测＋替身边界声明在案（具名替身收口归 RPT-T11——卡行 T11 产物列原文）；FileBasedIoFactory 真实文件原子协议替身（<target>.<8hex>.tmp）边界声明在案——io 真实原子性归 io 验证矩阵。一致性不通过不出工件门：所有 ≥2 格式导出用例真实执行 FieldConsistencyChecker（HTML+JSON 回读）——门禁通过路径常驻执行，不通过路径的检查器坏样本面由 RPT-T07 套件承载。"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "contract",
+      "cases": {
+        "total": 51,
+        "passed": 51,
+        "failed": 0
+      },
+      "modes": {
+        "integration": {
+          "xml": "sdurws_ird_reporting_contract_test-integration.xml",
+          "log": "integration-test-run-contract.log",
+          "result": "51/51 PASS"
+        },
+        "smoke": {
+          "xml": "sdurws_ird_reporting_contract_test-smoke.xml",
+          "log": "smoke-test-run-contract.log",
+          "result": "51/51 PASS"
+        }
+      },
+      "notes": "较 RPT-T08 基线新增 13 用例（ArchiveCrossUnitContractTest.cpp——acceptance 5 跨单元契约面：§3.4『与 project 工件汇集座〔fake IReportArtifactSink〕的协作随 RPT-T09 落地』兑现）：ArchiveContractTypes 五〔ArtifactStatus 六值/ReportEndReason 三值声明序钉住（二进制契约面稳定）、会话引用值句柄（trivially_copyable——跨单元值边界）、manifest 与工件相对命名钉住（report.json/§7.3＋report-data.json 登记决策）、manifest 摘要返回类型＝core::ContentIdentity 恒等（P-RPT-9 基线 static_assert）〕；ArchiveContractHeaders 一〔Archive.hpp/Export.hpp include 行扫描——零 io/runtime/execution/业务域/ui 头＋零 Qt（P-RPT-1 公共头零 io 类型常驻自证）〕；SinkContractTest 六〔fake 承载的 project 侧契约投影：begin→Staged/finalize 原子发布入清单（D-13 唯一完整标志）、finalize 同摘要 IdempotentHit 零重写（已发布字节与发布时刻不变——D-14 同构）、异摘要 Conflict 不覆盖、write 只增幂等（同字节跳过/异字节拒绝）、abandon 责任终结＋清理失败残留不破坏已发布（PM-08/PM-03）、只读上下文 ReadOnlyStore 异常轨（§9.9 StoreError 透传投影）〕；CoordinatorContract 一〔sink 状态↔ReportErrorCode 转译面 token 稳定（§9.5 错误行）〕。替身边界声明：FakeArtifactSink 仅验证 reporting 侧契约语义，不构成 project 持久化正确性证明（D-13/D-14 磁盘事实归 project 验证矩阵——P-RPT-4 单侧冻结处置）。"
+    }
+  ],
+  "gates": {
+    "ird_gates": "双树直跑（wp12-t07/t08 先例口径——gate-all.ps1 冒烟步缺 Qt 前缀为既有环境项，注记 gates-all-note.txt）：base 490ede49 detached worktree 与 wp12-t09 工作树各 61 处 IRD-GATE- 命中（全部既有登记归属），路径归一化后逐行 diff 为空（GATES-HIT-SET-IDENTICAL——gates-hit-set-diff.txt）：RPT-T09 改动面零门禁命中、零表外编译边",
+    "validate-task": "PASS（validate-task.log——tasks/foundation/RPT-T09.json）",
+    "validate-docs": "PASS（validate-docs.log——20 units, 12 trace entries, 150 task files）",
+    "build": "集成模式 cmake --build build --config Release 全树零错误（integration-build.log，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 预核）；verify 两目标（sdurws_ird_reporting_test/sdurws_ird_reporting_contract_test）零错误；独立冒烟模式配置＋构建零错误（smoke-configure.log/smoke-build.log——vcpkg toolchain＋Qt prefix 显式参数）"
+  }
+}
