@@ -13,7 +13,9 @@
  *     FAILED 出线口径）、§11.4（不虚构业务能力——占位说明口径）；
  *   - 需求 UX-09/UX-13/PM-07/PM-10/PM-11/PM-14；任务契约 tasks/foundation/
  *     UI-T03.json acceptance 1~4、tasks/foundation/UI-T06.json acceptance
- *     1~3（注册表/快捷键/面板的壳集成——SA-16 唯一入口）；
+ *     1~3（注册表/快捷键/面板的壳集成——SA-16 唯一入口）、tasks/foundation/
+ *     UI-T07.json acceptance 1~3（右栏工程策略摘要只读卡——§6.7，UI-T07；
+ *     数据经 ShellWiring.policySource 自有端口，分组异名 POL-ID-3）；
  *   - §14.1 交接清单（新建/打开向导编排归 workflow 阶段 B——本壳登记入口
  *     并以占位说明触发，不虚构能力）。
  *
@@ -177,6 +179,9 @@ ShellTeardownReport WorkbenchShellImpl::shutdown()
     m_commandActions.clear();
     m_topButtons.clear();
     m_viewToggles.clear();
+    // 策略摘要卡随右栏窗口树销毁（UI-T07）——刷新钩子捕获卡容器指针与
+    // wiring 端口引用，窗口销毁后一并失效：此处清空钩子防悬垂调用。
+    m_refreshPolicyCard = nullptr;
 
     m_initialized = false;
     m_lastTeardown.completed = true;
@@ -384,7 +389,15 @@ void WorkbenchShellImpl::buildSideDocks()
     auto* rightLayout = new QVBoxLayout(rightContent);
     rightLayout->addWidget(new QLabel(u8"属性编辑区（本阶段将在后续版本提供）", rightContent));
     rightLayout->addWidget(new QLabel(u8"诊断与设置区（本阶段将在后续版本提供）", rightContent));
-    rightLayout->addWidget(new QLabel(u8"工程策略摘要入口（本阶段将在后续版本提供）", rightContent));
+    // 工程策略摘要只读卡（UI-T07——§6.7"诊断与设置区"内嵌策略摘要入口）：
+    // 数据源＝ShellWiring.policySource（O-31 ui 自有端口，L5 适配
+    // policy::IPolicyProvider——§6.7 摘要只读面语义不变；initialize 前置
+    // 已校验非空，此处恒可解引用）；行装配与分组异名语义在
+    // PolicySummaryCard 模型层（GUI 只渲染）。右侧既有的"策略摘要入口
+    // 占位"标签由真实卡取代——策略未装载时卡内呈占位行（不虚构数值），
+    // 仍是契约显式设计而非未完成实现。
+    rightLayout->addWidget(createPolicySummaryCard(*m_wiring.policySource,
+                                                   &m_refreshPolicyCard, rightContent));
     rightLayout->addStretch(1);
     rightDock->setWidget(rightContent);
     m_docks[static_cast<std::size_t>(WorkbenchRegion::Right)] = rightDock;
@@ -865,6 +878,18 @@ void WorkbenchShellImpl::presentProjectContext(const ProjectContextProjection& c
     m_centralStack->setCurrentIndex(m_gate.hasActiveProject ? 1 : 0);
     refreshStatusBar();
     refreshCommandStates();
+    // 策略摘要卡随上下文注入重拉端口快照（UI-T07——§6.7；阶段 A 的刷新
+    // 锚点＝本唯一上下文入口，事件驱动刷新随投影管线 §6.1/UI-T09 接入）。
+    refreshPolicySummaryCard();
+}
+
+void WorkbenchShellImpl::refreshPolicySummaryCard()
+{
+    // 卡未装配（initialize 装配序之前的 presentProjectContext 首调——
+    // 与 m_commands 的防御性跳过同口径）或已 shutdown（钩子置空）＝空操作。
+    if (m_refreshPolicyCard) {
+        m_refreshPolicyCard();
+    }
 }
 
 void WorkbenchShellImpl::refreshStatusBar()

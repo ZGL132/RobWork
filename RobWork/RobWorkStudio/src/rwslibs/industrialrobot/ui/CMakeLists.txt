@@ -74,10 +74,15 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 #     UI-HKY-3 静态扫描豁免面）。
 #   - src/CommandPalette.cpp＝命令面板实现（UI-T06——§7.4 键盘导航/投影
 #     渲染；私有头 src/CommandPalette_p.hpp 不进 include/——R-2）。
+#   - src/PolicySummaryCard.cpp＝工程策略摘要只读卡实现（UI-T07——§6.7
+#     呈现数据纯函数装配〔分组异名/单位换算/显式不适用〕＋右栏卡控件构建；
+#     公共契约头 include/sdurws/ird/ui/PolicySummaryCard.hpp 随 §16.7 v0.9
+#     登记，文案/行键单点）。
 # 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：八个源文件与
 # 私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
 # （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
-# 槽声明需求（ui.md §10.1 v0.5 登记；命令面板键盘交互同款——v0.8 复核）。
+# 槽声明需求（ui.md §10.1 v0.5 登记；命令面板键盘交互同款——v0.8 复核；
+# 策略摘要卡同款复核——v0.9：卡控件零 Q_OBJECT，按钮反馈经 lambda 接线）。
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
@@ -86,7 +91,8 @@ add_library(sdurws_ird_ui STATIC
     src/View3DPlaceholder.cpp
     src/CommandRegistry.cpp
     src/GlobalShortcutRegistry.cpp
-    src/CommandPalette.cpp)
+    src/CommandPalette.cpp
+    src/PolicySummaryCard.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -224,7 +230,10 @@ endmacro()
 #   - CommandRegistryModelTest.cpp＝命令注册/未知拒绝/谓词/面板模糊投影
 #     （UI-CMD-1/2/3、§7.4——UI-T06）；
 #   - ShortcutRegistryModelTest.cpp＝快捷键冲突拒绝/改绑解绑/冲突流/持久
-#     化回放（UI-HKY-1/2——UI-T06）。
+#     化回放（UI-HKY-1/2——UI-T06）；
+#   - PolicySummaryCardTest.cpp＝策略摘要卡呈现契约：分组异名/逐字段行/
+#     单位换算/显式不适用/未装载占位/聚合派生/编辑路径说明（UI-POL-1 模型
+#     面——UI-T07）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -232,7 +241,8 @@ add_executable(sdurws_ird_ui_test
     test/StatusWordModelTest.cpp
     test/View3DContractTest.cpp
     test/CommandRegistryModelTest.cpp
-    test/ShortcutRegistryModelTest.cpp)
+    test/ShortcutRegistryModelTest.cpp
+    test/PolicySummaryCardTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -317,7 +327,8 @@ add_executable(sdurws_ird_ui_gui_test
     gui_test/TestMainReport.cpp
     gui_test/BuildPlacementTest.cpp
     gui_test/WorkbenchShellGuiTest.cpp
-    gui_test/CommandPaletteGuiTest.cpp)
+    gui_test/CommandPaletteGuiTest.cpp
+    gui_test/PolicySummaryCardGuiTest.cpp)
 
 target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES
