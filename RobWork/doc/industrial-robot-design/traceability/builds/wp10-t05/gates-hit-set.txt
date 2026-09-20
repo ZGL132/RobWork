@@ -1,0 +1,49 @@
+UI-T05（WP-10-T05 阶段 A）ird_gates 门禁命中集比对记录
+=====================================================
+
+执行方式：cmake --build build --config Release --target ird_gates
+          （集成模式构建树 build/，RWS_BUILD_INDUSTRIALROBOT=ON；
+            与 WP-10-T03/T04 留痕同一执行面——gate-all.ps1 第 2 步同口径）
+原始输出：本目录 gates-branch-run.log（MSBuild 输出为 GBK 行合并形态，
+          本文件为人工归一化结论——逐码比对基线，未做程序化重排）
+
+结论：与 WP-10-T04 合入后基线（32 命中）逐码比对恰增 1 处；本任务新增
+命中全部为下述 1 处 R3 头包含面（F-259 同款机器面滞后——R-3 例外头包含
+半区回填责任方 WP-01-T03，登记提交件 traceability/wp10-t05-gate-
+registrations.md）：
+        - IRD-GATE-R3 ui 产品面疑似包含 Qt 类头：ui/src/View3DPlaceholder.cpp
+          （新实现 TU 含 QLabel/QVBoxLayout 等 Widgets 头——R-3 例外
+          本体的阶段 A 占位实现面，与 ShellSupport/WorkbenchShell 同型；
+          私有头零新增 Qt include——createView3DPlaceholder 仅以
+          QWidget 前置声明出现在 WorkbenchShell_p.hpp，不增命中）。
+
+本任务其余新增/改动文件零命中：
+        - include/sdurws/ird/ui/View3DContract.hpp　公共头不在产品面
+          include 扫描域（ui/src 扫描域之外），且纯标准库头零 Qt；
+        - test/View3DContractTest.cpp　测试面，不在产品面扫描域；
+        - ui/src/WorkbenchShell.cpp　既有命中文件（buildCentralArea 改
+          行不新增命中）；
+        - ui/CMakeLists.txt／gui_test/WorkbenchShellGuiTest.cpp　不在
+          产品面扫描域。
+
+命中集（按码归组，与 wp10-t04/gates-hit-set.txt 同集＋上述 1 处）：
+  - IRD-GATE-SUB：测试目标直链 sdurws_ird_testkit／表外边 ->ui/->testkit
+    （F-221 同型既有登记——机器面回填责任方 WP-01-T03，见
+    traceability/wp10-t02-gate-registrations.md）；
+  - IRD-GATE-LIB：io 单元 libzip::zip／expat::expat 未知目标族（io 落位
+    登记的既有第三方依赖）；
+  - IRD-GATE-R3：sdurws_ird_ui 链接 Qt6::Core/Gui/Widgets（R-3 例外本体，
+    §3.1 预登记）＋ui/src 四文件（ShellSupport.cpp/View3DPlaceholder.cpp/
+    WorkbenchShell.cpp/WorkbenchShell_p.hpp）"疑似包含 Qt 类头"（前者三
+    文件为既有登记，View3DPlaceholder.cpp 为本任务新增——见上）；
+  - IRD-GATE-R4：project/src/ProjectStoreImpl.cpp RobWork 字面量 1 处
+    （project 落位期既有登记例外）；
+  - IRD-GATE-T1：sdurws_ird_testdata_lint／sdurws_ird_ui_gui_test 链接
+    testkit（T-1 允许形态——testdata lint 工具与 GUI 测试目标）；
+  - 引擎自检：pass_clean/pass_r4comment 通过，fail_r1/r3/r4/r5/sub/t1/t2
+    按预期检出（干准夹具自证，全部符合预期）。
+
+UI-T05 变更引入的新命中：1（即上述 R3 头包含面——零实质违反，登记件随
+验收请求送验；F-227"命中均为契约明文＋人工登记册已登记/同型先例，不阻塞"
+同口径）。
+登记滞后（既有例外，非本任务引入）：其余 32 处均在既有登记件内。

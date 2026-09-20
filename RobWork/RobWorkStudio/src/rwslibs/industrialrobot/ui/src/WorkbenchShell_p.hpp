@@ -166,6 +166,14 @@ struct WorkbenchText {
     static constexpr const char* kStagePlaceholder = "本阶段将在后续版本提供";
     static constexpr const char* kEntryDeferredNotice = "该入口将在后续版本提供";
 
+    // ---- 三维视图占位面板（UI-T05 阶段 A——中央区占位契约的呈现面文案）----
+    // 标题：点明中央区在产品形态下的区域身份（三维视图宿主——§4.2 中央
+    // 工作区行），避免占位页被误读为泛化空白。
+    static constexpr const char* kView3dTitle = "三维视图";
+    // 交互清单引导行：显式声明清单内容尚未提供（呈现的是 UX-11 登记的
+    // 阶段 B 交付计划，不是当前可用功能——不虚构业务能力红线）。
+    static constexpr const char* kView3dManifestLead = "计划提供的视图交互（将在后续版本提供）：";
+
     // ---- 禁用原因文案键（ShellCommandAvailability.reasonKey 的稳定键值；
     //      值解析随 UI-T09 UiText 落地——键即契约）----
     static constexpr const char* kReasonNoProject = "reason.no-project";
@@ -369,7 +377,27 @@ struct LayoutMemory {
 };
 
 // =====================================================================
-// WorkbenchShell 实现（门面契约见 IWorkbenchShell.hpp——此处只列实现状态）
+// 中央区三维视图占位面板（UI-T05 阶段 A——src/View3DPlaceholder.cpp）
+// =====================================================================
+
+/**
+ * @brief 构建中央区三维视图占位面板（§4.1 阶段 A 占位——契约显式设计）。
+ *
+ * 面板内容＝标题＋"本阶段将在后续版本提供"说明＋UX-11 交互清单只读呈现
+ * （逐行渲染 View3DContract.hpp 契约清单，每行以只读属性 view3dId 携带
+ * 契约 id）。红线：纯 QLabel 呈现，零按钮/输入等可交互控件——不虚构业务
+ * 能力、不以占位控件推断能力存在（§4.2/§11.3；acceptance 1）。
+ * 交互实现归阶段 B（WP-10-T05 阶段 B 交付——本面板届时被三维视图宿主
+ * 取代，清单与语义契约继续有效）。
+ *
+ * @param parent [in] 父控件（中央区页栈——所有权移交 Qt 对象树，调用方
+ *               不手动释放；QObject 父子析构纪律）
+ * @return 占位面板指针（窗口树子控件——不交出给壳外任何代码，ARC-02）
+ */
+QWidget* createView3DPlaceholder(QWidget* parent);
+
+// =====================================================================
+// WorkbenchShell 实现（门面契约见 IWorkbenchShell.hpp——此处只列实现状态)
 // =====================================================================
 
 /**
