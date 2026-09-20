@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="8" failures="0" disabled="0" errors="0" time="0.009" timestamp="2026-09-20T22:41:09.783" name="AllTests">
+  <testsuite name="UiBuild" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.008" timestamp="2026-09-20T22:41:09.783">
+    <testcase name="SourceTreeReachable_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="161" status="run" result="completed" time="0." timestamp="2026-09-20T22:41:09.783" classname="UiBuild" />
+    <testcase name="PlacementStaticRegistration_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="185" status="run" result="completed" time="0." timestamp="2026-09-20T22:41:09.784" classname="UiBuild" />
+    <testcase name="QtLinkageLiteralAndExceptionText_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="223" status="run" result="completed" time="0." timestamp="2026-09-20T22:41:09.784" classname="UiBuild" />
+    <testcase name="NoCrossUnitInclude_O31_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="260" status="run" result="completed" time="0.002" timestamp="2026-09-20T22:41:09.784" classname="UiBuild" />
+    <testcase name="NoRobWorkPrefixLiteral_R4_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="301" status="run" result="completed" time="0.002" timestamp="2026-09-20T22:41:09.787" classname="UiBuild" />
+    <testcase name="NoGlobalShortcutPrivatization_SA16_UI_BUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\BuildRedLineTest.cpp" line="325" status="run" result="completed" time="0.002" timestamp="2026-09-20T22:41:09.790" classname="UiBuild" />
+  </testsuite>
+  <testsuite name="ShellModel" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-20T22:41:09.792">
+    <testcase name="UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\ShellModelTest.cpp" line="62" status="run" result="completed" time="0." timestamp="2026-09-20T22:41:09.792" classname="ShellModel" />
+    <testcase name="StatusBarFormat_PM11_Matrix_UI_T03_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\ShellModelTest.cpp" line="121" status="run" result="completed" time="0." timestamp="2026-09-20T22:41:09.792" classname="ShellModel" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,27 @@
+[==========] Running 8 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from UiBuild
+[ RUN      ] UiBuild.SourceTreeReachable_UI_BUILD
+[       OK ] UiBuild.SourceTreeReachable_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.PlacementStaticRegistration_UI_BUILD
+[       OK ] UiBuild.PlacementStaticRegistration_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD
+[       OK ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD
+[       OK ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD (2 ms)
+[ RUN      ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD
+[       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (2 ms)
+[ RUN      ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD
+[       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (2 ms)
+[----------] 6 tests from UiBuild (8 ms total)
+
+[----------] 2 tests from ShellModel
+[ RUN      ] ShellModel.UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1
+[       OK ] ShellModel.UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1 (0 ms)
+[ RUN      ] ShellModel.StatusBarFormat_PM11_Matrix_UI_T03_ACC2
+[       OK ] ShellModel.StatusBarFormat_PM11_Matrix_UI_T03_ACC2 (0 ms)
+[----------] 2 tests from ShellModel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 2 test suites ran. (9 ms total)
+[  PASSED  ] 8 tests.

@@ -51,16 +51,21 @@ find_package(GTest CONFIG REQUIRED)
 # 三维视图宿主 RWStudioView3D 由框架目标承载，UI-T05 阶段 B 复核）。
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 
-# ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
-# src/Ui.cpp＝UI-T02 锚点翻译单元（§13 UI-T02 行"构建落位"的既定先例形态
-# ——CORE-T01/POL-T01/DIAG-T02/PRJ-T01/EX-T01 同款：CMake STATIC 库至少
-# 一个翻译单元纪律，无任何接口预建——NFR-MNT-04）。UI-T03（WorkbenchShell
-# 与五区布局）起按 §13 逐任务增列源文件与公共头（§3.3 布局），本文件随之
-# 增量修订；届时需评估开启 AUTOMOC（§7 命令设施/§10 接口含 QObject 派生
-# 时必需）——落位期零 QObject 头，不预开启（不预建占位，父 CMakeLists
-# 既有约定）。
+# ---- 产品库目标：STATIC（UI-T02 落位，目标名不变，DTB §5.1）----
+# 源文件（随 UI-T03 增列——§13 UI-T03 行"工作台壳与五区布局"）：
+#   - src/Ui.cpp＝UI-T02 锚点翻译单元（保留——锚点/共享工具兼用位）；
+#   - src/WorkbenchShell.cpp＝工作台壳实现（IWorkbenchShell §10.1：五区组装/
+#     布局记忆/首页/状态栏/门控）；
+#   - src/ShellSupport.cpp＝壳支撑设施（壳层命令板/最近项目模型/后台落盘
+#     线程/布局记忆/§3.5 UI 码描述符表）。
+# 不开启 AUTOMOC（UI-T03 增量登记）：三个源文件与私有头零 Q_OBJECT 声明——
+# 壳的 Qt 交互全部经虚函数覆盖（resizeEvent）与既有信号＋lambda 接线，无
+# 信号槽声明需求（ui.md §10.1 v0.5 登记）；UI-T06+（命令面板/投影管线）引入
+# Q_OBJECT 时再评估开启（父 CMakeLists 既有约定：不预建构建设施）。
 add_library(sdurws_ird_ui STATIC
-    src/Ui.cpp)
+    src/Ui.cpp
+    src/WorkbenchShell.cpp
+    src/ShellSupport.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -190,7 +195,8 @@ endmacro()
 # 登记文本核对），具名追溯字段见各用例 IRD_TEST_INFO。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/ShellModelTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -264,19 +270,17 @@ add_custom_command(TARGET sdurws_ird_ui_contract_test POST_BUILD
     COMMAND_EXPAND_LISTS)
 
 # ---- GUI 测试目标 sdurws_ird_ui_gui_test（§12.1 第三层，单列）----
-# Widgets/GUI 契约测试的注册载体（五区创建/布局恢复/对话框/面板导航——
-# 随 UI-T03+ 落地）。ctest LABELS ird_gui 串行（不与模型/Meta 测试合并命令
-# ——ui.md §12.2 执行纪律；testkit.md §6.7 单实例启动行）。
-# 落位期形态（两处刻意设计，勿"顺手补齐"）：
-#   1. main 不构造 QApplication——§12.2 第 8 条"本节为流程设计，本版不启动
-#      任何 GUI 程序"（GUI 用例全部"已设计、未执行"）；main 侧自检用例
-#      钉住该形态（BuildPlacementTest::GuiMainNoGuiStartup）。
-#   2. 链接 sdurws_ird_testkit_qt（Qt 测试辅助——本目标即其启用触发面之一，
-#      testkit.md §3.5/§10.1；消费设施随 UI-T13/T14 落地，当前仅承载
-#      "GUI 测试目标链接 _qt 目标"的启用形态）。
+# Widgets/GUI 契约测试的注册载体。ctest LABELS ird_gui 串行（不与模型/Meta
+# 测试合并命令——ui.md §12.2 执行纪律；testkit.md §6.7 单实例启动行）。
+# UI-T03 起本目标承载真实 GUI 用例（WorkbenchShellGuiTest.cpp——UI-WB-1/2/3、
+# UI-SES-1，§12.3）：main 升级为 QApplication 形态（BuildPlacementTest 的
+# 落位期"不启动 GUI"钉子按其用例注释的既定授权同步拆除），执行纪律按
+# §12.2 全文（VS x64 环境＋QT_QPA_PLATFORM=windows＋绝对路径单实例）。
+# 仍链接 sdurws_ird_testkit_qt（Qt 测试辅助消费者形态——testkit.md §3.5）。
 add_executable(sdurws_ird_ui_gui_test
     gui_test/TestMainReport.cpp
-    gui_test/BuildPlacementTest.cpp)
+    gui_test/BuildPlacementTest.cpp
+    gui_test/WorkbenchShellGuiTest.cpp)
 
 target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES
