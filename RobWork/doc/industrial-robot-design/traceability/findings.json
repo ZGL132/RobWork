@@ -2507,6 +2507,16 @@
       "title": "F-041/F-073/F-235/F-236/F-238/F-243/F-025 散文计数失准家族再现（RPT-T10 三处，方向混杂、无证据缺失、实质结论经独立复跑全部成立）：①0c95de0e 正文『留痕目录（17 个文件）』与该提交实入库 7 件不符（7＋被吞 11＝18，『17』与最终在库数亦不合）；②4110786a 正文『十份 .log』实入库 11 件（少报 1）；③ird-test-report.json gates 段与 55e34f9d 正文『base/branch 各 61 处 IRD-GATE- 命中』——61 为原始日志行数（含流式＋摘要两遍重复与自测提及），独立命中实为 27 项（日志自身『命中 27 项』与 gates-all-note.txt『原始 IRD-GATE- 行各 61 处』口径准确在案）——与 F-243 对 wp12-t09 同字段的裁定同型",
       "owner": "reporting 单元实施者（后续提交正文与 ird-test-report 的计数以可机核命令输出为准）；F-012 家族模板补救落地后随模板带计数核对提示",
       "resolution": "与 F-041/F-243 计数家族合并处置：留痕/正文计数逐项以 git show --name-status、grep -c 等可机核输出为源，命中数区分『原始行数』与『独立命中数』两口径。不阻塞 RPT-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-248。"
+    },
+    {
+      "id": "F-252",
+      "source": "traceability/acceptance/RPT-T11-20260920-r2.md#4.9／发现的问题清单-G-1（attempt 2，verdict=pass，2026-09-20；送验对象 e995689021af7a657e647fb728000a10ed03f64e，分支 wp12-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "『ctest 通过』声称与在库留痕证据不对应（F-251 同源面，attempt 2 送验对象内两处）：①提交 ad7e8d1e 正文验证段『ctest 收口通过』——契约 verify 第 3 条 ctest 命令（--test-dir build 根）在尝试 1 与尝试 2 验收者独立复跑中均恒 exit 0＋『No tests were found!!!』（F-251 登记的框架 CTestTestfile 链缺失），在库 19 件留痕中不存在任何 ctest 执行日志；②gates-all-note.txt 收尾句『双目标 ctest 通过（integration/smoke-test-run-*.log）』——所引四件日志实为直接执行双 exe 的 gtest 输出（『Running 196 tests from 31 test suites』形态），非 ctest 运行记录。测试实质执行真实成立（验收者双模式四跑亲证 196＋58 全绿＋叶子目录 ctest 2/2 通过），纯声称-引用标注失准，非执行造假",
+      "owner": "reporting 单元实施者（后续 gates-all-note/提交正文措辞以实际执行形态为准）；构建约定所有者（与 F-251 处置②合并——verify 口径修订后此类声称才有落点）",
+      "resolution": "与 F-251 处置合并：verify 第 3 条按『发现并执行非零个测试』口径修订（叶子目录 ctest 或直接执行口径成文）后，正文/留痕的『ctest 通过』声称方有依据；过渡期以『双测试执行（直接运行）通过』如实措辞。不阻塞 RPT-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-251（acc/RPT-T11/1 在册，待随记录分支合并）。"
     }
   ]
 }
