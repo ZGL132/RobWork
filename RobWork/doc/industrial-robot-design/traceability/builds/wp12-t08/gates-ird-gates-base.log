@@ -1,0 +1,72 @@
+IRD-GATE-SUB: 测试目标 sdurws_ird_diagnostics_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_execution_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_execution_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-LIB: 目标 sdurws_ird_io 链接未知目标族 libzip::zip（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+IRD-GATE-LIB: 目标 sdurws_ird_io 链接未知目标族 expat::expat（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+IRD-GATE-SUB: 测试目标 sdurws_ird_io_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-LIB: 目标 sdurws_ird_io_test 链接未知目标族 libzip::zip（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+IRD-GATE-SUB: 测试目标 sdurws_ird_io_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-LIB: 目标 sdurws_ird_io_contract_test 链接未知目标族 libzip::zip（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+IRD-GATE-SUB: 测试目标 sdurws_ird_policy_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_policy_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_project_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_project_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_runtime_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 表外依赖边 ->testkit（sdurws_ird_testdata_lint → sdurws_ird_testkit）不在 ARCH §3.5 白名单
+IRD-GATE-T1: 产品目标 sdurws_ird_testdata_lint 链接 testkit（testkit.md §2.4 T-1：产品目标不得链接/包含 testkit）
+IRD-GATE-R3: L2 目标 sdurws_ird_ui 链接 Qt 库 Qt6::Core（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+IRD-GATE-R3: L2 目标 sdurws_ird_ui 链接 Qt 库 Qt6::Gui（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+IRD-GATE-R3: L2 目标 sdurws_ird_ui 链接 Qt 库 Qt6::Widgets（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+IRD-GATE-SUB: 测试目标 sdurws_ird_ui_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_ui_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 表外依赖边 ->ui（sdurws_ird_ui_gui_test → sdurws_ird_ui）不在 ARCH §3.5 白名单
+IRD-GATE-SUB: 表外依赖边 ->testkit（sdurws_ird_ui_gui_test → sdurws_ird_testkit）不在 ARCH §3.5 白名单
+IRD-GATE-T1: 产品目标 sdurws_ird_ui_gui_test 链接 testkit（testkit.md §2.4 T-1：产品目标不得链接/包含 testkit）
+IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/RobWork/.gates-base-wp12-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+[ird_gates] 自测 pass_clean：干净夹具通过（无误报）
+[ird_gates] 自测 pass_r4comment：干净夹具通过（无误报）
+[ird_gates] 自测 fail_r1：按预期检出 IRD-GATE-R1
+[ird_gates] 自测 fail_t1：按预期检出 IRD-GATE-T1
+[ird_gates] 自测 fail_r5：按预期检出 IRD-GATE-R5
+[ird_gates] 自测 fail_sub：按预期检出 IRD-GATE-SUB
+[ird_gates] 自测 fail_r3：按预期检出 IRD-GATE-R3
+[ird_gates] 自测 fail_r4：按预期检出 IRD-GATE-R4
+[ird_gates] 自测 fail_t2：按预期检出 IRD-GATE-T2
+==============================================================
+[ird_gates] 扫描根：D:/10_Source_Repos/21_robot/RobWork/.gates-base-wp12-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+[ird_gates] 命中 27 项：
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_diagnostics_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_evidence_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_execution_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_execution_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-LIB: 目标 sdurws_ird_io 链接未知目标族 libzip::zip（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+[ird_gates] IRD-GATE-LIB: 目标 sdurws_ird_io 链接未知目标族 expat::expat（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_io_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-LIB: 目标 sdurws_ird_io_test 链接未知目标族 libzip::zip（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_io_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-LIB: 目标 sdurws_ird_io_contract_test 链接未知目标族 libzip::zip（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_policy_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_policy_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_project_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_project_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_runtime_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ->testkit（sdurws_ird_testdata_lint → sdurws_ird_testkit）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-T1: 产品目标 sdurws_ird_testdata_lint 链接 testkit（testkit.md §2.4 T-1：产品目标不得链接/包含 testkit）
+[ird_gates] IRD-GATE-R3: L2 目标 sdurws_ird_ui 链接 Qt 库 Qt6::Core（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+[ird_gates] IRD-GATE-R3: L2 目标 sdurws_ird_ui 链接 Qt 库 Qt6::Gui（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+[ird_gates] IRD-GATE-R3: L2 目标 sdurws_ird_ui 链接 Qt 库 Qt6::Widgets（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_ui_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 测试目标 sdurws_ird_ui_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ->ui（sdurws_ird_ui_gui_test → sdurws_ird_ui）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ->testkit（sdurws_ird_ui_gui_test → sdurws_ird_testkit）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-T1: 产品目标 sdurws_ird_ui_gui_test 链接 testkit（testkit.md §2.4 T-1：产品目标不得链接/包含 testkit）
+[ird_gates] IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/RobWork/.gates-base-wp12-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+==============================================================
+CMake Error at RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake:767 (message):
+  [ird_gates] 依赖红线/补丁门禁存在 27 处命中——按 ARCH
+  §3.2 SA-10 判构建失败；例外只经 DTB §4.5 登记册
+
+

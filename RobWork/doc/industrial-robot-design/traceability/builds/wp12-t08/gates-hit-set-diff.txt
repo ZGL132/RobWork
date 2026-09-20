@@ -1,0 +1,11 @@
+ird_gates 命中集合 diff（RPT-T07 GATES-HIT-SET-IDENTICAL 同型口径——RPT-T08 红线扫描零新增证据）
+
+base   = a6b17c2d5535737ca8b829cc2feed68f9b38da91（detached worktree .gates-base-wp12-t08 直接 cmake -P 复跑，比对后已清理）
+branch = wp12-t08 工作树（同口径直接 cmake -P 复跑）
+
+命令（两树同）：
+  cmake -DIRD_ROOT=<各树>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_ENABLE_GIT=OFF -P cmake/ird_gates.cmake
+
+两侧原始 IRD-GATE- 行各 61 处（含标记/自测行）；行级 diff 仅 2 组路径前缀差异（.gates-base-wp12-t08 工作树前缀 vs 主工作树前缀）——同一既有命中（project/src/ProjectStoreImpl.cpp R-4 字面量，既有登记归属）；归一化路径后逐行 diff 为空（GATES-HIT-SET-IDENTICAL）——RPT-T08 新增/改动面（Render.cpp 规则层、Render.hpp 注释、RenderTest.cpp、单元卡 §14.4）零门禁命中。
+
+（归一化 diff 为空）

@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T08",
+  "masterWp": "WP-H（卡内 RPT-T08 行——≙WP-12-T06，reporting.md §11 映射；契约 note 原文口径）",
+  "branch": "wp12-t08",
+  "base": "a6b17c2d5535737ca8b829cc2feed68f9b38da91",
+  "date": "2026-09-20",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01~T07 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，零错误）",
+      "notes": "RPT-T08 交付渲染器内规则层（涉及文件 Render.cpp——契约卡行原文口径）：①§8.2① 硬编码纪律规则层 validateDeclarationConsistency（三格式渲染装配前统一执行，五路前置断言：非 Completed 结果无任何声明资格〔RP-STATE-1/TASK-02 表 3〕／formalPass⇒Verified∧Completed∧Feasible〔Quick 永不 FormalPass——表 1〕／reviewRecord⇒Completed∧EngineeringInfeasible〔§6.2 行 2〕／章节声明⇔所引结果资格 AND 聚合〔§8.2①'条目所属结果'复核〕／覆盖漏验⇒无 formalPass 章节〔EVI-02/§8.1 表 2②呈现口径〕——不重算资格只核对已冻结数据内部一致性）；②措辞冻结收口：不可行声明对齐 §8.2② 引号形『经验证的不可行结论（正式评审记录）』、否定声明改『不构成正式结论（资格不成立）』（RP-STATE-1 HTML 扫描'正式通过'计数=0 机械口径——否定表述不含声明短语）、追溯附录资格列名改 'formalPass 资格/reviewRecord 资格'（声明短语唯一合法出源＝资格成立声明行）、状态呈现'已取消/失败/已中断——不构成结论'（§6.2 行 5）；③§6.4 词表锁定：单元格级 8 token 三格式结构性输出具名锁定＋§8.2④模板纪律自检 assertWordingFreezeTemplateDiscipline（词表全 token 文案缺位/模板版本低于强制下限 v1＝TemplateVersion 拒绝——'模板不得移除限定语'机械化）＋报告级 2 token 报告侧承接（external-validation-incomplete＝外部验证边界章 Recorded 态；downgraded-reference-value＝覆盖摘要块，数据源＝diagRefs 携带 EVI-REGION-COVERAGE-DOWNGRADED——P-EV-5 消费侧强制呈现，evidence kDiagRegionCoverageDowngraded 常量同源）；④§6.5 RP-COV-1：coverageIncomplete 呈现侧判定＋覆盖完备性结论三态（'全部启用必验工况已覆盖'/漏验清单计数'整体数据不足（缺项呈现）'/'无启用必验工况'——P-EV-7 呈现侧如实）＋包络合并标注（条目 caseScope 跨多工况结构触发'包络合并（呈现方式）'逐条目一次）。Render.hpp 仅注释同步（FieldCell qualifier 注释的 T08 收口描述——零接口变更）。登记偏差见单元卡 §14.4 v0.11（DTB §5.4）：JSON coverageSummary/externalResourceSummary 条目增补 qualifier 数组嵌套成员（顶层 17 键冻结集不变）；否定声明/附录列名措辞调整；包络合并结构触发。"
+    }
+  ],
+  "tests": [
+    {
+      "target": "sdurws_ird_reporting_test",
+      "kind": "unit",
+      "cases": {
+        "total": 120,
+        "passed": 120,
+        "failed": 0
+      },
+      "modes": {
+        "integration": {
+          "xml": "sdurws_ird_reporting_test-integration.xml",
+          "log": "integration-test-run-unit.log",
+          "result": "120/120 PASS"
+        },
+        "smoke": {
+          "xml": "sdurws_ird_reporting_test-smoke.xml",
+          "log": "smoke-test-run-unit.log",
+          "result": "120/120 PASS"
+        }
+      },
+      "notes": "较 RPT-T07 基线新增 12 用例（WordingFreezeTest 八＋CoveragePresentationTest 四——契约 acceptance 1~6 逐条对应：RP-STATE-1 具名两例〔断言①六路反例 DataInvalid＋状态呈现/正文扫描计数=0〕、RP-STATE-2 具名〔DataInsufficient 缺失全量＋限定语＋无结论字样〕、§8.2② 不可行声明/证明呈现/永不输出'通过'、断言④双反例、断言② Quick 反例＋screening-only 三格式强制、§6.4 词表 8 项三格式逐 token＋报告级 2 token、外部边界限定语、RP-COV-1 全覆盖结论/漏验呈现＋断言⑤/包络合并标注/P-EV-5 降级限定语强制呈现与零伪造）＋FormalPassWordingGate（RPT-T06 ACC3）夹具改资格一致形态（章节声明与所引结果 AND 聚合一致；两声明并存为'各随其结果、不同章节'诚实可达形态——T06 门语义断言不变，措辞断言随 T08 收口更新）。io 写出替身最小形态（FakeCsvWriter/FakeJsonWriter/MinimalIoFactory）边界声明在案——夹具自持，真实 canonical 归 io（SA-12）。"
+    },
+    {
+      "target": "sdurws_ird_reporting_contract_test",
+      "kind": "contract",
+      "cases": {
+        "total": 38,
+        "passed": 38,
+        "failed": 0
+      },
+      "modes": {
+        "integration": {
+          "xml": "sdurws_ird_reporting_contract_test-integration.xml",
+          "log": "integration-test-run-contract.log",
+          "result": "38/38 PASS"
+        },
+        "smoke": {
+          "xml": "sdurws_ird_reporting_contract_test-smoke.xml",
+          "log": "smoke-test-run-contract.log",
+          "result": "38/38 PASS"
+        }
+      },
+      "notes": "零改动回归复证（本任务零新增跨单元面——契约 note 'interUnit=false' 口径）：契约测试 38/38 两模式全绿，含值单源毒化矩阵三格式验证、JSON/CSV 格式契约字节面、工厂会话记账、公共头零 io include 源码扫描。"
+    }
+  ],
+  "builds": [
+    {
+      "mode": "integration",
+      "command": "cmake --build build --config Release（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 构建前 grep 确认——AGENTS §4.1）",
+      "result": "零错误（integration-build.log；EXIT=0）"
+    },
+    {
+      "mode": "smoke",
+      "command": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp12-t08 -DCMAKE_TOOLCHAIN_FILE=<仓库根>/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（AGENTS §4.1——vcpkg toolchain 必带；Qt 前缀同集成缓存 CMakeCache.txt 值，testkit find_package(Qt6 REQUIRED) 需要）＋ cmake --build ... --config Release",
+      "result": "零错误（smoke-configure.log/smoke-build.log；EXIT=0）"
+    }
+  ],
+  "gates": [
+    {
+      "name": "ird_gates（红线/依赖门禁——wp12-t07 先例口径：ird_gates.cmake 双树直跑＋命中集 diff）",
+      "command": "cmake -DIRD_ROOT=<各树>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_ENABLE_GIT=OFF -P cmake/ird_gates.cmake（base=a6b17c2 经 detached worktree .gates-base-wp12-t08，比对后清理）",
+      "result": "两侧原始 IRD-GATE- 行各 61（含既有登记命中）；归一化路径后逐行 diff 为空——GATES-HIT-SET-IDENTICAL，RPT-T08 改动面零新增命中（gates-ird-gates-base.log/gates-ird-gates-branch.log/gates-hit-set-diff.txt）",
+      "note": "gate-all.ps1 一键门禁第 4 步（冒烟树配置）在本环境因脚本内部未传 Qt 前缀失败（环境项，见 gates-all-note.txt）；DoD 门禁口径按 wp12-t07 先例以 ird_gates 双树直跑承担；冒烟模式真实配置/构建/测试已按 AGENTS §4.1 显式参数执行并留痕。"
+    },
+    {
+      "name": "validate-task.ps1",
+      "result": "PASS（validate-task.log）"
+    },
+    {
+      "name": "validate-docs.ps1",
+      "result": "PASS（validate-docs.log）"
+    }
+  ],
+  "acceptanceMapping": [
+    { "acceptance": "1（RP-STATE-1 失败/取消/中断不入正式结论）", "evidence": "WordingFreezeTest.NonCompletedOutcome_DeclarationFlags_Rejected_DataInvalid_RPT08_ACC1（断言①六路反例）＋NonCompletedOutcome_StatusPresentationOnly_BodyScanZero_RPT08_ACC1（扫描计数=0＋'——不构成结论'措辞＋outcome 状态事实限定语）＋Render.cpp validateDeclarationConsistency/appendFormalPassDesignation（DataInvalid 硬门槛——§8.2①）" },
+    { "acceptance": "2（RP-STATE-2/3 两类声明独立）", "evidence": "WordingFreezeTest.DataInsufficient_MissingListFull_Qualifier_NoConclusion_RPT08_ACC2＋InfeasibleReviewRecord_WordingAndProof_NeverPassWording_RPT08_ACC2（§8.2② 措辞＋证明呈现＋块内'通过'零出现）＋SectionFlagBeyondCitedResults_Rejected_DataInvalid_RPT08_ACC2（断言④）＋FormalPassWordingGate（两声明并存不混淆）" },
+    { "acceptance": "3（限定语逐 token 结构性输出＋模板纪律）", "evidence": "WordingFreezeTest.QualifierWordList_PerTokenStructuralOutput_AllFormats_RPT08_ACC3（单元格级 8 token 三格式逐 token）＋ExternalValidationIncomplete_RecordedState_MandatoryBoundary_RPT08_ACC3＋Render.cpp assertWordingFreezeTemplateDiscipline（§8.2④ TemplateVersion 自检）＋既有 RP-CONS-1 维度覆盖（qualifier 三格式比对——T07）" },
+    { "acceptance": "4（screening-only 与 Quick 结果）", "evidence": "WordingFreezeTest.QuickResult_FormalPassFlag_Rejected_ScreeningOnlyMandatory_RPT08_ACC4（断言② 反例＋三格式'筛选级——不得单独支撑正式通过结论'强制呈现）＋validateDeclarationConsistency 断言②" },
+    { "acceptance": "5（RP-COV-1 覆盖呈现）", "evidence": "CoveragePresentationTest.FullCoverage_CompletenessConclusion_RPT08_ACC5／MissedCases_OverallDataInsufficient_PresentationAndGate_RPT08_ACC5（断言⑤）／EnvelopeMergeAnnotation_NotReplacingPerCaseEntries_RPT08_ACC5（包络合并标注恰一次、逐工况零标注）" },
+    { "acceptance": "6（P-EV-5 处置）", "evidence": "CoveragePresentationTest.DowngradedReferenceValue_MandatoryPresentation_RPT08_ACC6（冻结文案全串 data-qualifier 结构性呈现——不弱化；无降级事实零输出——不伪造；JSON coverageSummary.qualifier 镜像）＋Render.cpp hasDowngradedCoverageReference（evidence kDiagRegionCoverageDowngraded 同源）" }
+  ],
+  "honestDeclarations": [
+    "ird_gates 命中为既有登记归属（R-4 字面量等），本任务零新增；gate-all.ps1 冒烟步失败为环境项（Qt 前缀），已如实登记 gates-all-note.txt，DoD 门禁按 wp12-t07 先例以 ird_gates 双树直跑承担。",
+    "external-validation-incomplete 与 downgraded-reference-value 的条目级标注（§6.4 呈现义务'相关条目标注'半区）依赖的条目级关联键未在 §4 报告模型冻结——v0.9 登记的收口安排不变（随框架章节数据源任务落地）；本任务交付其报告级呈现面（外部验证边界章/覆盖摘要块）。",
+    "逐工况漏验名单（§6.5 漏验清单逐行）与 CSV 覆盖附表数据行未入 §4 模型——v0.9 登记不变，本任务以计数呈现漏验规模，不伪造逐工况状态。"
+  ]
+}
