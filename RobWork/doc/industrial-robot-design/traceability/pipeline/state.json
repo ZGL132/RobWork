@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 229,
+  "tickCount": 233,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -14,10 +14,10 @@
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 0
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-20T09:05:06+08:00",
+    "updatedAt": "2026-09-20T10:57:14+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1353,6 +1353,18 @@
       "acceptanceRecord": "traceability/acceptance/RPT-T07-20260920.md",
       "mergedAt": "2026-09-20",
       "failReason": "验收 attempt1 即 pass（非验收失败）；实施首次派发因环境人机验证超时中断（已产出实现与留痕、零提交），重派子代理按 §5 对账协议盘点遗留未提交现场后续作完成，attempts.implement 保持 0；验收建议级 F-240 已随记录转登 findings.json"
+    },
+    {
+      "task": "RPT-T08",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "0c3dd4ee655814be36a971824465262bf513e09a",
+        "8f44f45fe681d5f7c1d9ef6bb7c72244dc2dfa31",
+        "be46cf75f4f5736d2ae840122b04d7e5cd5429b5"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T08-20260920.md",
+      "mergedAt": "2026-09-20"
     }
   ],
   "policy": {
@@ -1378,11 +1390,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "RPT-T08",
-      "contractPath": "tasks/foundation/RPT-T08.json",
-      "branch": "wp12-t08"
-    },
     {
       "taskId": "RPT-T09",
       "contractPath": "tasks/foundation/RPT-T09.json",
@@ -1477,5 +1484,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "dae61409-324a-45bc-bc34-daff32bc5b1b"
+  "tickToken": "9a1f9479-bd07-47cf-859a-f8b533e90e8b"
 }

@@ -4,9 +4,16 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现措辞冻结渲染规则（限定语映射/两类声明前置断言）",
-  "status": "ready",
-  "dependsOn": ["RPT-T06"],
-  "requirements": ["RPT-05", "EVI-01", "EVI-02", "KIN-04"],
+  "status": "done",
+  "dependsOn": [
+    "RPT-T06"
+  ],
+  "requirements": [
+    "RPT-05",
+    "EVI-01",
+    "EVI-02",
+    "KIN-04"
+  ],
   "designRefs": [
     "units/reporting.md#11",
     "units/reporting.md#6.4",
@@ -21,14 +28,20 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_reporting_test",
     "cmake --build build --config Release --target sdurws_ird_reporting_contract_test"
   ],
   "branch": "wp12-t08",
   "interUnit": false,
-  "knownPitfalls": ["P-EV-5"],
+  "knownPitfalls": [
+    "P-EV-5"
+  ],
   "acceptance": [
     "RP-STATE-1 失败/取消/中断不入正式结论（卡行验证方式列）：该类结果仅现于诊断/状态呈现（『已取消/失败/已中断——不构成结论』——§6.2）；正文无『正式通过』字样（HTML 文本扫描计数=0）；渲染器前置断言生效（违反即 DataInvalid 构造失败，不存在『渲染了再说』路径——§8.2①硬编码纪律）",
     "RP-STATE-2/3 两类声明独立（卡行完成条件『未判定不得渲染正式通过』＋『两类声明独立用例过』）：DataInsufficient＝章节/条目＋缺失项全量清单＋限定语、无结论字样（§8.1 表 2④——RP-STATE-2）；EngineeringInfeasible∧reviewRecord==true＝输出『经验证的不可行结论（正式评审记录）』措辞＋证明呈现、永不输出『通过』，与『正式通过』两声明并存不混淆（RPT-05/RV-07——§8.2②，RP-STATE-3）",

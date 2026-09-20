@@ -5,8 +5,21 @@
   "masterWp": "WP-H",
   "title": "实现测试替身与契约套件（四具名替身＋RP-* 用例体全量收口）",
   "status": "ready",
-  "dependsOn": ["RPT-T02", "RPT-T03", "RPT-T04", "RPT-T05", "RPT-T06", "RPT-T07", "RPT-T08", "RPT-T09", "RPT-T10"],
-  "requirements": ["RPT-01", "RPT-05", "NFR-COR-04"],
+  "dependsOn": [
+    "RPT-T02",
+    "RPT-T03",
+    "RPT-T04",
+    "RPT-T05",
+    "RPT-T06",
+    "RPT-T07",
+    "RPT-T09",
+    "RPT-T10"
+  ],
+  "requirements": [
+    "RPT-01",
+    "RPT-05",
+    "NFR-COR-04"
+  ],
   "designRefs": [
     "units/reporting.md#11",
     "units/reporting.md#10",
@@ -23,7 +36,11 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_reporting_test",
     "cmake --build build --config Release --target sdurws_ird_reporting_contract_test",
@@ -31,7 +48,10 @@
   ],
   "branch": "wp12-t11",
   "interUnit": true,
-  "knownPitfalls": ["P-RPT-9", "O-13"],
+  "knownPitfalls": [
+    "P-RPT-9",
+    "O-13"
+  ],
   "acceptance": [
     "§10.1 用例矩阵逐条执行通过并留痕（卡行验证方式『§10.1 矩阵逐条』＋完成条件『全部用例执行通过并留痕』）：RP-MDL-1~3、RP-SCOPE-1~4、RP-STATE-1~4、RP-CUR-1~3、RP-COV-1、RP-TRACE-1、RP-CONS-1~4、RP-CONC-1、RP-CANC-1、RP-IDEM-1/2、RP-CONF-1、RP-DISK-1、RP-RO-1、RP-SAN-1、RP-REVW-1/2、RP-BUN-1、RP-GATE-1 逐组收口——gtest XML＋ird-test-report.json＋构建日志三面留痕（DTB §5.2 DoD-3）；任何未执行用例不得标注通过，失败如实登记原因",
     "四具名替身落地（卡行产物列原文）：ScriptedResultSource（按脚本返回 envelope/当前性——替身 envelope 构造一律经 evidence ResultEnvelope::make 合法组合-only）、ScriptedSectionProvider（按脚本返回章节内容/缺项/不适用）、FakeArtifactSink（D-13/D-14 语义 fake：可注入冲突/磁盘满/清理失败）、FakeArchiveWriter——替身与真实提供方同一契约（§9.2 后置行）；本任务将 RPT-T03~T10 各任务局部夹具收敛/替换为四具名替身并统一用例体（各任务 acceptance 的『随 RPT-T11 收口』承诺在本任务兑现）",

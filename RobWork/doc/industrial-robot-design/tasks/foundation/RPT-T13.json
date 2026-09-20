@@ -5,8 +5,22 @@
   "masterWp": "WP-H",
   "title": "同步 reporting 文档与门禁（README 核对/待裁决状态更新/裁决申请提交）",
   "status": "ready",
-  "dependsOn": ["RPT-T01", "RPT-T02", "RPT-T03", "RPT-T04", "RPT-T05", "RPT-T06", "RPT-T07", "RPT-T08", "RPT-T09", "RPT-T10", "RPT-T11", "RPT-T12"],
-  "requirements": ["NFR-MNT-05"],
+  "dependsOn": [
+    "RPT-T01",
+    "RPT-T02",
+    "RPT-T03",
+    "RPT-T04",
+    "RPT-T05",
+    "RPT-T06",
+    "RPT-T07",
+    "RPT-T09",
+    "RPT-T10",
+    "RPT-T11",
+    "RPT-T12"
+  ],
+  "requirements": [
+    "NFR-MNT-05"
+  ],
   "designRefs": [
     "units/reporting.md#11",
     "units/reporting.md#14",
@@ -21,13 +35,20 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["doc-update", "traceability-update"],
+  "outputs": [
+    "doc-update",
+    "traceability-update"
+  ],
   "verify": [
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
   "branch": "wp12-t13",
   "interUnit": false,
-  "knownPitfalls": ["P-RPT-1", "P-RPT-2", "P-RPT-3"],
+  "knownPitfalls": [
+    "P-RPT-1",
+    "P-RPT-2",
+    "P-RPT-3"
+  ],
   "acceptance": [
     "README 核对（卡行完成条件）：include/sdurws/ird/reporting/README.md 指向与 reporting.md §9 现文一致（RPT-T01 acceptance 4 的核对结论为本条前置事实）——不一致处更正并保留『不参与编译/不表示已实现』声明；核对结论登记留痕",
     "§14.3 状态更新（卡行完成条件）：P-RPT-1~9 逐项状态与实际一致——P-RPT-6（O-25 PDF 裁决：已裁决消账）、P-RPT-8（RPT-* 码值 2026-09-10 已收编：消账）如实维持，P-RPT-1/2/3/4/5/7/9 依裁决申请与上游冻结进展更新状态行；实现期产生的偏差按 DTB §5.4 并入卡变更记录（§14.4 增量修订行）",
