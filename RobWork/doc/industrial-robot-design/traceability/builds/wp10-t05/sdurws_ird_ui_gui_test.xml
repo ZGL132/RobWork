@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="7" failures="0" disabled="0" errors="0" time="1.035" timestamp="2026-09-21T02:51:41.368" name="AllTests">
+  <testsuite name="UiGuiPlacement" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-21T02:51:41.368">
+    <testcase name="GuiTargetRegistration_UI_GUIBUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\BuildPlacementTest.cpp" line="65" status="run" result="completed" time="0." timestamp="2026-09-21T02:51:41.368" classname="UiGuiPlacement" />
+  </testsuite>
+  <testsuite name="WorkbenchShellGuiTest" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="1.034" timestamp="2026-09-21T02:51:41.368">
+    <testcase name="FiveZoneLayout_PersistsAcrossSessions_UI_WB_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="209" status="run" result="completed" time="0.795" timestamp="2026-09-21T02:51:41.368" classname="WorkbenchShellGuiTest" />
+    <testcase name="ResetLayout_RestoresFactory_UI_WB_2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="298" status="run" result="completed" time="0.066" timestamp="2026-09-21T02:51:42.164" classname="WorkbenchShellGuiTest" />
+    <testcase name="CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="343" status="run" result="completed" time="0.04" timestamp="2026-09-21T02:51:42.230" classname="WorkbenchShellGuiTest" />
+    <testcase name="NoProjectHomepage_CommandGating_UI_SES_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="395" status="run" result="completed" time="0.042" timestamp="2026-09-21T02:51:42.270" classname="WorkbenchShellGuiTest" />
+    <testcase name="RecentProjects_CapDedupPersist_PM_10_PM_14" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="494" status="run" result="completed" time="0.044" timestamp="2026-09-21T02:51:42.313" classname="WorkbenchShellGuiTest" />
+    <testcase name="CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="578" status="run" result="completed" time="0.046" timestamp="2026-09-21T02:51:42.357" classname="WorkbenchShellGuiTest" />
+  </testsuite>
+</testsuites>

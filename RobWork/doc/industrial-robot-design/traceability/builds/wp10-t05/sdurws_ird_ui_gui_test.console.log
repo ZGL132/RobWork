@@ -1,0 +1,25 @@
+[==========] Running 7 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from UiGuiPlacement
+[ RUN      ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD
+[       OK ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD (0 ms)
+[----------] 1 test from UiGuiPlacement (0 ms total)
+
+[----------] 6 tests from WorkbenchShellGuiTest
+[ RUN      ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1
+[       OK ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1 (795 ms)
+[ RUN      ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2
+[       OK ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2 (66 ms)
+[ RUN      ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3
+[       OK ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3 (40 ms)
+[ RUN      ] WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1
+[       OK ] WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1 (42 ms)
+[ RUN      ] WorkbenchShellGuiTest.RecentProjects_CapDedupPersist_PM_10_PM_14
+[       OK ] WorkbenchShellGuiTest.RecentProjects_CapDedupPersist_PM_10_PM_14 (44 ms)
+[ RUN      ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06
+[       OK ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06 (46 ms)
+[----------] 6 tests from WorkbenchShellGuiTest (1034 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 2 test suites ran. (1035 ms total)
+[  PASSED  ] 7 tests.
