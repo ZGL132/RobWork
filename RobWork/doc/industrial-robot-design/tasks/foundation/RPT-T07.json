@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现一致性检查器（多格式逐字段一致）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["RPT-T06"],
   "requirements": ["RPT-02", "NFR-SEC-03"],
   "designRefs": [
