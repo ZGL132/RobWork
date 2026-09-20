@@ -1,0 +1,43 @@
+gate-all.ps1 一键门禁在本环境因冒烟配置步缺 Qt 前缀（脚本内部 cmake 未传
+-DCMAKE_PREFIX_PATH，本机 Qt 位于 D:/software/Qt/6.11.1/msvc2022_64）未能通过
+其冒烟步；DoD 门禁口径按 wp12-t07~t10 先例以 ird_gates.cmake 双树直跑＋命中集
+diff 承担（gates-ird-gates-base.log/branch.log/gates-hit-set-diff.txt）。
+冒烟模式的 toolchain/Qt 配置与测试执行已按 AGENTS §4.1 以显式参数真实执行并
+留痕（smoke-configure.log/smoke-build.log/smoke-test-run-*.log）。
+
+双树直跑命令（两树同——wp12-t09/t10 留痕原文口径）：
+  cmake -DIRD_ROOT=<各树>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot \
+        -DIRD_ENABLE_GIT=OFF -P cmake/ird_gates.cmake
+
+base   = 9fbdf3459372a2257ef1141f74caa3af83feed98（detached worktree
+         .gates-base-wp12-t11 直接 cmake -P 复跑，比对后已清理）
+branch = wp12-t11 工作树（同口径直接 cmake -P 复跑）
+
+命中集归一化（剥离树根前缀至 industrialrobot/）后逐行 diff
+（gates-hit-set-diff.txt）＝**恰新增 2 项**（两扫描相位各计一次，故 diff
+显示 4 行）：
+
+  IRD-GATE-SUB: 测试目标 sdurws_ird_reporting_test 直链他单元产品目标
+                sdurws_ird_testkit
+  IRD-GATE-SUB: 测试目标 sdurws_ird_reporting_contract_test 直链他单元
+                产品目标 sdurws_ird_testkit
+
+处置说明（RPT-T11 任务契约 acceptance 5 消费纪律）：
+  该 2 项命中＝testkit.md §2.4 允许依赖形态「sdurws_ird_<unit>_test →
+  { 被测产品目标, sdurws_ird_testkit, gtest }」的本任务登记落地——与本批
+  既有命中同族（diagnostics/evidence/execution/io/policy/runtime/ui 等
+  单元测试目标直链 testkit 的 27 项既有命中，wp12-t10 留痕称"testkit 直链
+  登记豁免族"）。豁免依据＝DTB §4.5 红线例外登记册生效行：「R-5（同上）|
+  各 `_test`/`_contract_test` 经 testkit/policy 替身消费 | §5.3；POL-T11 |
+  生效 | 2026-09-10」（家族级登记，覆盖全部单元测试目标——本任务不新增
+  登记类型，仅该族在 reporting 单元的首次落地）。产品目标
+  sdurws_ird_reporting 零 testkit 边由以下三面钉住：①ird_gates T-1 检查
+  零命中（产品目标链接 testkit 即 IRD-GATE-T1——本双树扫描零 T-1 命中）；
+  ②contract_test/LinkageContractTest.cpp::NoTestkitEdge 收窄重述（testkit
+  引用只落在测试目标链接语句行——RPT-T11 增量修订）；③reporting/
+  CMakeLists.txt 配置期守卫（^sdurws_ird_ 通配即 FATAL）。
+
+其余：集成模式全量构建零错误（integration-build.log）；冒烟模式配置/构建/
+双测试执行真实完成（smoke-*.log）；双目标 ctest 通过（integration/
+smoke-test-run-*.log）；validate-task PASS（validate-task.log）；
+validate-docs PASS（validate-docs.log）。

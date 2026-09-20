@@ -16,9 +16,10 @@
  *   - 任务契约 tasks/foundation/RPT-T04.json acceptance 2/5
  *
  * 夹具说明（替身边界声明——RP-STATE-4 同源）：ScriptedSectionProvider 为
- * §5.1 词表规则"阶段 A 前不存在——替身仅供测试"的局部夹具替身，仅验证
- * 提供方契约（注册/查找/纯投影/结构），不构成任何业务章节内容的正确性
- * 证明；业务替身与 RP-* 具名用例体随 RPT-T11 落位。
+ * §5.1 词表规则"阶段 A 前不存在——替身仅供测试"的具名替身（RPT-T11 收敛
+ * 正本＝test/ScriptedSectionProvider.hpp——本文件原局部夹具类已拆除），
+ * 仅验证提供方契约（注册/查找/纯投影/结构），不构成任何业务章节内容的
+ * 正确性证明。
  *
  * 用例命名约定：`<主题>_<锚点>` 尾缀标注需求/acceptance 追溯字段。
  */
@@ -31,6 +32,8 @@
 #include <sdurws/ird/reporting/SectionProvider.hpp>
 #include <sdurws/ird/reporting/Sections.hpp>
 
+#include "ScriptedSectionProvider.hpp"
+
 #include <memory>
 #include <string>
 #include <thread>
@@ -40,53 +43,15 @@ namespace {
 
 using namespace sdurws::ird::reporting;
 namespace co = sdurws::ird::core;
+// 具名替身（RPT-T11 收敛——原局部类拆除，正本见 test/ScriptedSectionProvider.hpp；
+// 构造签名 (id, minLevel, scripted) 由正本兼容构造承载，projectCalls()/
+// lastRequest() 访问器与本文件观测面同形）。
+using test_fakes::ScriptedSectionProvider;
 
 // =====================================================================
-// 局部夹具：脚本化章节提供方（§5.1 词表规则"替身仅供测试"的承载）
+// （局部夹具类已拆除——具名替身 ScriptedSectionProvider 正本见
+//   test/ScriptedSectionProvider.hpp；RPT-T11 局部夹具收敛）
 // =====================================================================
-
-/**
- * @brief 脚本化提供方——注册边界/纯投影/并发契约的观测夹具。
- *
- * 记录 project() 调用次数与请求副本：projectCalls 观测"纯投影零副作用"
- * （调用本身不改输出），lastRequest 观测"值拷贝请求"（调用方事后修改
- * 请求不得影响已记录副本——提供方不得持有请求的结构性体现）。
- */
-class ScriptedSectionProvider final : public IReportSectionProvider {
-public:
-    ScriptedSectionProvider(std::string id, ReportLevel minLevel, SectionContent scripted)
-        : m_id(std::move(id)), m_minLevel(minLevel), m_scripted(std::move(scripted))
-    {
-    }
-
-    std::string sectionId() const override { return m_id; }
-    ReportLevel minimumLevel() const override { return m_minLevel; }
-    std::vector<std::string> requiredEvaluationKeys() const override
-    {
-        // 夹具统一声明消费 "kin.batch-ik"（§9.2 调用示例键——仅作请求
-        // 过滤声明的形态占位，过滤本身归构建器 RPT-T05）。
-        return {"kin.batch-ik"};
-    }
-
-    SectionContent project(const SectionRequest& request) override
-    {
-        ++m_projectCalls;              // 调用计数（副作用仅观测面——不影响输出）
-        m_lastRequest = request;       // 请求值拷贝（结构性留存——非引用/指针）
-        return m_scripted;             // 固定脚本输出（同请求同输出的夹具形态）
-    }
-
-    /// 观测面（测试线程内单线程读取——注册/调用与断言不同线程并发访问
-    /// 该夹具观测字段的场景在并发用例中不存在：并发用例只用 find()）。
-    long projectCalls() const { return m_projectCalls; }
-    const std::optional<SectionRequest>& lastRequest() const { return m_lastRequest; }
-
-private:
-    std::string m_id;
-    ReportLevel m_minLevel;
-    SectionContent m_scripted;
-    long m_projectCalls = 0;
-    std::optional<SectionRequest> m_lastRequest;
-};
 
 /// 合法域提供方工厂（B 级"model"章节；脚本内容为最小合法 Populated 形态）。
 std::unique_ptr<ScriptedSectionProvider> makeModelProvider(SectionContent scripted = {})

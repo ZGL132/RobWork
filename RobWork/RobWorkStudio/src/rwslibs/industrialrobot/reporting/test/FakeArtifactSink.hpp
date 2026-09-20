@@ -1,8 +1,9 @@
 /**
  * @file   FakeArtifactSink.hpp
  * @brief  FakeArtifactSink——IReportArtifactSink＋IReportPublishedIndex 的
- *         最小确定性替身（RPT-T09 随任务交付；具名替身与替身边界声明的
- *         收口归 RPT-T11——卡行 T11 产物列原文）。
+ *         最小确定性替身（§10 可控替身四具名之一；RPT-T09 随任务交付、
+ *         RPT-T11 起为具名正本——局部夹具收口的唯一登记形态，卡行 T11
+ *         产物列原文）。
  *
  * 设计依据：
  *   - units/reporting.md §7.3（报告工件状态图——Staged→Partial→Finalized、
@@ -12,10 +13,11 @@
  *     project 侧实现的语义投影）、§10（可控替身清单——FakeArtifactSink：
  *     "可注入冲突/磁盘满/清理失败"）
  *   - 任务契约 tasks/foundation/RPT-T09.json acceptance 2~5（冲突/磁盘/
- *     取消注入；sink 契约与 Fake 随本任务交付）
+ *     取消注入；sink 契约与 Fake 随本任务交付）、tasks/foundation/RPT-T11.json
+ *     acceptance 2（四具名替身收口——本头即具名正本，无需再收敛）
  *
- * 替身边界声明（RP-STATE-4 同源纪律——acceptance 5"具名替身与替身边界
- *   声明随 RPT-T11 收口"的本任务先行版）：
+ * 替身边界声明（RP-STATE-4／§10 替身边界声明原文——四具名替身共用，全文
+ *   亦登记于 test/README.md，此处为具名正本之一）：
  *   本替身仅验证 reporting 侧契约（编排顺序/幂等/冲突/取消语义/发布清单
  *   纪律），其内存态"存储"不构成 project 持久化正确性证明（磁盘编址/
  *   原子性/恢复扫描归 project——D-13/D-14 语义在 project 实现矩阵验证）；

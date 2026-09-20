@@ -216,12 +216,28 @@ endif()
 # 路径布局无私有头出 include、零 Eigen/rw::math 直含、include 面
 # sdurws/ird/* 白名单＝{core, evidence, diagnostics, project, reporting}）。
 # 运行期源码扫描与文件末尾配置期守卫互为两道防线（project 落位同款）。
-# RPT-T02+ 用例按 §11 各 RPT-TX 组增列；ScriptedSectionProvider/
-# ScriptedResultSource 替身与 RP-* 用例体随 RPT-T11 落位于 test/
-# （§11 RPT-T11 行"reporting/test/*"——替身落位目录）。
+# RPT-T02~T10 用例按 §11 各 RPT-TX 组增列。
+# RPT-T11 增列（§11 RPT-T11 行产物：四具名替身＋RP-* 用例体；涉及文件
+#   reporting/test/*——§10.1 矩阵逐条的统一用例体）：
+#   - test/ScriptedResultSource.hpp / test/ScriptedSectionProvider.hpp——
+#     具名脚本化替身正本（RPT-T05/T04 各测试文件局部夹具收敛于此；替身
+#     envelope 构造一律经 evidence ResultEnvelope::make 合法组合-only——
+#     §10 替身边界声明）；
+#   - test/FakeArtifactSink.hpp / test/FakeArchiveWriter.hpp——RPT-T09/T10
+#     交付的两具名替身升格正本（RPT-T11 起局部夹具收口的唯一登记形态）；
+#   - test/ReportingScenario.hpp＋test/ReportingContractSuiteTest.cpp——
+#     RP-* 契约套件（§10.1 用例矩阵 32 组统一用例体；testkit 设施消费＝
+#     IRD_TEST_INFO/IRD_EXPECT_*/TempDir/DeterministicEnv/ContractCheck）；
+#   - test/TestMainReport.cpp——自有 main：安装 testkit RecordListener，
+#     IRD_TEST_INFO 追溯聚合为 ird-test-report.json 与 gtest XML 并存
+#     （testkit §7.2/§7.3；EX-T09 同款）；链接面由 GTest::gtest_main 改为
+#     GTest::gtest＋sdurws_ird_testkit（T-1 允许形态：仅测试目标链 testkit，
+#     产品目标零 testkit 边不变——LinkageContractTest::NoTestkitEdge 钉住）；
+#   - test/README.md——替身边界声明正本（RP-STATE-4；不参与编译）。
 enable_testing()
 
 add_executable(sdurws_ird_reporting_test
+    test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
     test/ErrorsIdentityTest.cpp
     test/ReportModelTest.cpp
@@ -231,7 +247,8 @@ add_executable(sdurws_ird_reporting_test
     test/RenderTest.cpp
     test/ConsistencyTest.cpp
     test/ArchiveExportTest.cpp
-    test/BundleTest.cpp)
+    test/BundleTest.cpp
+    test/ReportingContractSuiteTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_test PROPERTIES
@@ -245,15 +262,17 @@ if(MSVC)
     target_compile_options(sdurws_ird_reporting_test PRIVATE /utf-8)
 endif()
 
-# 测试 main 自持（DTB §5.5/P-TK-1 定稿）：落位期以 GTest::gtest_main 提供
-# 入口（PRJ-T01 同款最小形态；自有 main＋testkit RecordListener 的
-# ird-test-report.json 聚合随 RPT-T11 契约套件按 T-1 允许形态登记）。
-# 测试链接产品库 sdurws_ird_reporting 同时验证"公共头可被正常 include＋库
-# 可链接"（reporting→core/evidence/diagnostics/project 四条登记边的 PUBLIC
-# 传染链随目标自动到达——链接器半区实证）。
-target_link_libraries(sdurws_ird_reporting_test PRIVATE
-    sdurws_ird_reporting
-    GTest::gtest_main)
+# 测试 main 自持（DTB §5.5/P-TK-1 定稿）：RPT-T11 起以自有 main 提供
+# 入口（test/TestMainReport.cpp——安装 testkit RecordListener，IRD_TEST_INFO
+# 追溯聚合为 ird-test-report.json 与 gtest XML 并存）；链接面相应为
+# GTest::gtest（无入口）＋sdurws_ird_testkit（T-1 允许形态——testkit 仅
+# 测试目标可链：RecordListener/TempDir/DeterministicEnv/ContractCheck 等
+# 消费——§11 RPT-T11 行"§10、testkit"输入列；产品目标零 testkit 边不变
+# ——LinkageContractTest::NoTestkitEdge 收窄断言钉住）。测试链接产品库
+# sdurws_ird_reporting 同时验证"公共头可被正常 include＋库可链接"（reporting
+# →core/evidence/diagnostics/project 四条登记边的 PUBLIC 传染链随目标自动
+# 到达——链接器半区实证）。
+target_link_libraries(sdurws_ird_reporting_test PRIVATE sdurws_ird_reporting sdurws_ird_testkit GTest::gtest)
 
 # 源码树位置注入：落位期用例在运行期扫描 reporting 源码核对红线。经编译
 # 定义传 industrialrobot 根（project/diagnostics/evidence/runtime/execution
@@ -278,11 +297,16 @@ add_custom_command(TARGET sdurws_ird_reporting_test POST_BUILD
 # RPT-T02 增列 contract_test/IdentityCrossUnitContractTest.cpp＝首个上游头
 # 消费契约（core::ContentIdentity/ContentDigester 摘要唯一算法与字节等值
 # 消费、diagnostics StableCodeRegistry 的 RPT-* 收编一致性——§3.2 C-1/C-3
-# 消费行，P-RPT-9 基线＝core.md v0.1 Draft）；与 project 工件汇集座
-# 〔fake IReportArtifactSink〕、与 io 写出设施〔注入 fake〕的协作随 RPT-T09/
-# T11 落地于 contract_test/（§11 RPT-T11 行），届时按 T-1 允许形态
-# 登记 testkit 消费并同步增量修订本文件白名单扫描用例（不可静默越界）。
+# 消费行，P-RPT-9 基线＝core.md v0.1 Draft）；与 project 工件汇集座〔fake
+# IReportArtifactSink〕、与 io 写出设施〔注入 fake〕的协作随 RPT-T09/T10
+# 落地于 contract_test/。
+# RPT-T11 增列：contract_test/TestMainReport.cpp＝自有 main（安装 testkit
+# RecordListener——ird-test-report.json 与 gtest XML 并存）；链接面由
+# GTest::gtest_main 改为 GTest::gtest＋sdurws_ird_testkit（T-1 允许形态，
+# LinkageContractTest::NoTestkitEdge 收窄断言同步修订——白名单显式增量，
+# 不可静默越界）。
 add_executable(sdurws_ird_reporting_contract_test
+    contract_test/TestMainReport.cpp
     contract_test/LinkageContractTest.cpp
     contract_test/IdentityCrossUnitContractTest.cpp
     contract_test/EvidenceCrossUnitContractTest.cpp
@@ -302,13 +326,11 @@ if(MSVC)
     target_compile_options(sdurws_ird_reporting_contract_test PRIVATE /utf-8)
 endif()
 
-# 链接面与 _test 目标同款（GTest::gtest_main 自持入口——落位期最小形态）。
-# 不显式链 core/evidence/diagnostics/project——PUBLIC 经 sdurws_ird_reporting
-# 传染（四条登记边的链接器半区）；落位期零上游头消费（P-RPT-9），传染链
-# 当前仅为构建图存在性证明。
-target_link_libraries(sdurws_ird_reporting_contract_test PRIVATE
-    sdurws_ird_reporting
-    GTest::gtest_main)
+# 链接面（RPT-T11 起）：GTest::gtest（无入口——自有 main）＋
+# sdurws_ird_testkit（T-1 允许形态——RecordListener 留痕设施；产品目标零
+# testkit 边不变）。不显式链 core/evidence/diagnostics/project——PUBLIC 经
+# sdurws_ird_reporting 传染（四条登记边的链接器半区）。
+target_link_libraries(sdurws_ird_reporting_contract_test PRIVATE sdurws_ird_reporting sdurws_ird_testkit GTest::gtest)
 
 # 源码树位置注入（构建图边扫描用例输入——与 _test 目标同源）。
 target_compile_definitions(sdurws_ird_reporting_contract_test PRIVATE

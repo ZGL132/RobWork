@@ -1,8 +1,8 @@
 /**
  * @file   FakeArchiveWriter.hpp
- * @brief  FakeArchiveWriter——IArchiveWriter 的最小确定性替身（RPT-T10 随
- *         任务交付；具名替身与替身边界声明的收口归 RPT-T11——卡行 T11
- *         产物列原文）。
+ * @brief  FakeArchiveWriter——IArchiveWriter 的最小确定性替身（§10 可控替身
+ *         四具名之一；RPT-T10 随任务交付、RPT-T11 起为具名正本——局部夹具
+ *         收口的唯一登记形态，卡行 T11 产物列原文）。
  *
  * 设计依据：
  *   - units/reporting.md §9.6（IArchiveWriter 三方法契约原文——open 同卷
@@ -12,10 +12,11 @@
  *     FakeArchiveWriter）
  *   - 任务契约 tasks/foundation/RPT-T10.json acceptance 3~5（取消/失败
  *     清理的注入观测面；P-RPT-7——测试经本替身注入，不私建第二套 ZIP
- *     实现）
+ *     实现）、tasks/foundation/RPT-T11.json acceptance 2（四具名替身
+ *     收口——本头即具名正本，无需再收敛）
  *
- * 替身边界声明（RP-STATE-4 同源纪律——acceptance 5"具名替身与替身边界
- *   声明随 RPT-T11 收口"的本任务先行版）：
+ * 替身边界声明（RP-STATE-4／§10 替身边界声明原文——四具名替身共用，全文
+ *   亦登记于 test/README.md，此处为具名正本之一）：
  *   本替身仅验证 reporting 侧契约（会话纪律/条目名 SP-2 拒绝/只增/失败与
  *   放弃路径的临时清理/目标不变语义），**不构成 ZIP 容器格式的正确性证明**
  *   ——本替身不产出 ZIP 字节（临时文件＝条目字节的顺序拼接，仅承载"临时区

@@ -14,15 +14,16 @@
  *   - 任务契约 tasks/foundation/RPT-T05.json acceptance 1~6
  *
  * 替身边界声明（§10.1 RP-STATE-4/任务约束§八——本文件全部用例共用）：
- *   本文件的 ScriptedResultSource/ScriptedSectionProvider/FakeQueryPort
- *   输出仅验证 reporting 构建器的契约（绑定校验/快照冻结/拒绝矩阵/零项目
- *   写/状态机），不构成任何运动学/轨迹/动力学/选型结果的业务正确性证明；
- *   合法组合的替身包络一律经 evidence ResultEnvelope::make 构造（非法组合
- *   在构造边界即被 evidence 拒绝——reporting 不自造非法样本）。唯一例外：
- *   Preview 包络无法经 make() 产出（§8.1 表 1/表 3 行 4——构造边界本就
- *   拒绝），而 Preview 拒绝（D-16/acceptance 1）的被测对象恰是 reporting
- *   构建边界对"越界样本到达注入面"的第二道闸——该用例以聚合初始化构造
- *   Preview 包络并在用例内显式注明，不构成对 evidence 校验器的替代验证。
+ *   本文件的具名替身 ScriptedResultSource/ScriptedSectionProvider（RPT-T11
+ *   收敛正本——test/ 下同名头）与 FakeQueryPort 输出仅验证 reporting 构建
+ *   器的契约（绑定校验/快照冻结/拒绝矩阵/零项目写/状态机），不构成任何
+ *   运动学/轨迹/动力学/选型结果的业务正确性证明；合法组合的替身包络一律
+ *   经 evidence ResultEnvelope::make 构造（非法组合在构造边界即被 evidence
+ *   拒绝——reporting 不自造非法样本）。唯一例外：Preview 包络无法经 make()
+ *   产出（§8.1 表 1/表 3 行 4——构造边界本就拒绝），而 Preview 拒绝
+ *   （D-16/acceptance 1）的被测对象恰是 reporting 构建边界对"越界样本到达
+ *   注入面"的第二道闸——该用例以聚合初始化构造 Preview 包络并在用例内
+ *   显式注明，不构成对 evidence 校验器的替代验证。
  *
  * 线程约束：全部用例单线程（构建会话单线程——§9.1；测试环境即属主线程）。
  */
@@ -44,6 +45,9 @@
 #include <sdurws/ird/reporting/SectionProvider.hpp>
 #include <sdurws/ird/reporting/Sections.hpp>
 
+#include "ScriptedResultSource.hpp"
+#include "ScriptedSectionProvider.hpp"
+
 #include <gtest/gtest.h>
 
 #include <chrono>
@@ -62,6 +66,10 @@ namespace core = sdurws::ird::core;
 namespace evidence = sdurws::ird::evidence;
 namespace project = sdurws::ird::project;
 namespace diagnostics = sdurws::ird::diagnostics;
+// 具名替身（RPT-T11 收口——本文件原局部夹具已拆除，四具名正本见各替身头；
+// ScriptedResultSource/ScriptedSectionProvider 的唯一正本＝test/ 下同名头）。
+using test_fakes::ScriptedResultSource;
+using test_fakes::ScriptedSectionProvider;
 
 // =====================================================================
 // 身份/取值辅助（确定性固定值——与 evidence EnvelopeTest 同款风格，自持
@@ -94,17 +102,20 @@ core::RunId runId(const char* hex32)
 
 core::ProjectId fixedProject()
 {
-    return core::ProjectId::fromCanonical(std::string{"prj-"} + kHex32A);
+    // 具名替身铺位值对齐（RPT-T11 收敛）：身份三元组与具名替身
+    // scriptedTask 的铺位一致（构建器锚定一致性核对包络任务三元组与请求
+    // 三元组——SourceAmbiguous 面），不再使用本文件自有 hex 字面。
+    return test_fakes::scriptedId<core::ProjectId>(0x11);
 }
 
 core::BranchId fixedBranch()
 {
-    return core::BranchId::fromCanonical(std::string{"brn-"} + kHex32B);
+    return test_fakes::scriptedId<core::BranchId>(0x12);
 }
 
 core::RevisionId fixedRevision()
 {
-    return core::RevisionId::fromCanonical(std::string{"rev-"} + kHex32C);
+    return test_fakes::scriptedId<core::RevisionId>(0x13);
 }
 
 /// 合法任务五元组（execution 分配形态；runId 由参数区分多运行场景）。
@@ -132,107 +143,44 @@ project::RevisionView anchoredView()
 }
 
 // =====================================================================
-// 合法替身包络（经 evidence ResultEnvelope::make 构造——§10.1 替身边界）
+// 合法替身包络工厂（RPT-T11 收敛——工厂正本＝具名替身头 ScriptedResultSource.hpp
+// 的脚本值面〔经 evidence ResultEnvelope::make 构造，合法组合-only〕；本处
+// 仅保留原名薄委托，既有用例体零语义漂移）
 // =====================================================================
 
-/// 结构有效的证据清单（三元组与包络同名绑定一致＋一条 Satisfied 项——
-/// presence 纪律合格；itemId/digest 供章节绑定的"一致"比对基准）。
-evidence::EvidenceManifest legalManifest(const core::ContentIdentity& snapshotId,
-                                         const core::ContentIdentity& sliceId)
-{
-    evidence::EvidenceManifest m;
-    m.snapshotId = snapshotId;
-    m.sliceId = sliceId;
-    m.profileId = "kin";
-    m.profileVersion = "1.0.0";
-    m.profileContentIdentity = cid(kHex64B);
-    evidence::EvidenceItem ok;
-    ok.itemId = "kin.reach-per-task-point";
-    ok.status = evidence::EvidenceItemStatus::Satisfied;
-    ok.artifactDigest = cid(kHex64A).bytes;   // Digest256＝ContentIdentity 字节面（同一摘要值）
-    m.items = {ok};
-    return m;
-}
-
 /// 表 3 行 1 合法底座：Completed×Feasible（证据清单＋工况标识齐备）。
+/// 绑定面（快照/切片/基准/清单项 digest）＝具名替身 scriptedCid 铺位值；
+/// 章节条目绑定的"一致"比对基准（populatedKinContent）与铺位值对齐。
 evidence::ResultEnvelope legalFeasibleEnvelope(const core::RunId& run)
 {
-    evidence::ResultEnvelopeDraft d;
-    d.task = taskOf(run);
-    d.evaluationKey = "kin-batch-ik";
-    d.evaluatorContractVersion = 7;
-    d.mode = core::EvaluationMode::Verified;
-    d.snapshotId = cid(kHex64A);
-    d.sliceId = cid(kHex64C);
-    d.inputBaselineId = cid(kHex64B);
-    d.caseScope.caseIds = {oid(kHex32A)};
-    d.profile.profileId = "kin";
-    d.profile.version = "1.0.0";
-    d.profile.contentIdentity = cid(kHex64B);
-    d.outcome = core::TaskOutcome::Completed;
-    d.engineeringStatus = core::EngineeringStatus::Feasible;
-    d.evidence = legalManifest(d.snapshotId, d.sliceId);
-    d.payload = evidence::DomainPayloadDraft{"kin.batch-ik.v1", {0x01, 0x02, 0x03}};
-    d.producer.productVersion = "industrialrobot-designer 0.1.0";
-    return evidence::ResultEnvelope::make(std::move(d));
+    return test_fakes::feasibleEnvelope(run);
 }
 
 /// 表 3 行 3 合法底座：Canceled×NotApplicable（无正式结论字段、保留诊断
 /// ——TASK-02 呈现面用例的被测形态）。
 evidence::ResultEnvelope legalCanceledEnvelope(const core::RunId& run)
 {
-    evidence::ResultEnvelopeDraft d;
-    d.task = taskOf(run);
-    d.evaluationKey = "kin-batch-ik";
-    d.evaluatorContractVersion = 7;
-    d.mode = core::EvaluationMode::Verified;
-    d.snapshotId = cid(kHex64A);
-    d.sliceId = cid(kHex64C);
-    d.inputBaselineId = cid(kHex64B);
-    d.outcome = core::TaskOutcome::Canceled;
-    d.engineeringStatus = core::EngineeringStatus::NotApplicable;
-    d.partialData = evidence::PartialDataRef{"runs/run-x/partial", false};
-    d.diagnostics = {core::DiagnosticRecord::make(
-        std::string{evidence::kDiagOutcomeNotCompleted}, std::nullopt, std::nullopt,
-        std::nullopt, "verdict-aggregate", "运行被用户取消，无工程判定",
-        "查看运行日志确认取消原因")};
-    d.producer.productVersion = "industrialrobot-designer 0.1.0";
-    return evidence::ResultEnvelope::make(std::move(d));
+    return test_fakes::notCompletedEnvelope(run, core::TaskOutcome::Canceled);
 }
 
-/// 合法复现块（§4.1.2——版本族齐备的最小形态）。
+/// 合法复现块（§4.1.2——版本族齐备的最小形态；具名替身正本委托）。
 evidence::ReproductionBlock legalReproduction()
 {
-    evidence::ReproductionBlock r;
-    r.productVersion = "industrialrobot-designer 0.1.0";
-    r.evidenceContractVersion = "evidence-contract/1";
-    r.codecVersions = {"snapshot-codec/1", "slice-codec/1"};
-    return r;
+    return test_fakes::scriptedReproduction();
 }
 
-/// 合法资格检查（五条件成立/未成立的脚本形态——unmetConditions 词表面）。
+/// 合法资格检查（五条件成立/未成立的脚本形态——具名替身正本委托）。
 evidence::EligibilityCheck eligibleCheck(bool eligible)
 {
-    evidence::EligibilityCheck c;
-    c.eligible = eligible;
-    if (!eligible) {
-        c.unmetConditions = {"status-not-feasible"};
-    }
-    return c;
+    return test_fakes::scriptedEligibility(eligible);
 }
 
-/// 当前性投影脚本值（Current/Superseded/不可判定三形态——§6.3）。
+/// 当前性投影脚本值（Current/Superseded/不可判定三形态——具名替身正本委托）。
 evidence::CurrentnessResult currentnessScript(
     std::optional<evidence::CurrentnessStatus> status,
     std::vector<evidence::InvalidationReason> reasons = {})
 {
-    evidence::CurrentnessResult r;
-    r.status = status;
-    if (!status.has_value()) {
-        r.unevaluableCause = evidence::UnevaluableCause::UnresolvedDependency;
-    }
-    r.reasons = std::move(reasons);
-    return r;
+    return test_fakes::scriptedCurrentness(status, std::move(reasons));
 }
 
 // =====================================================================
@@ -333,98 +281,21 @@ private:
 };
 
 // =====================================================================
-// 替身二：归档结果注入源（脚本化 envelope/资格/当前性/复现块——调用计数
-// 供"不缓存跨报告复用"断言）
+// 替身二：归档结果注入源／替身三：章节提供方——RPT-T11 收敛说明
 // =====================================================================
-
-class ScriptedResultSource final : public IReportResultSource {
-public:
-    std::map<std::string, evidence::ResultEnvelope> envelopes;      ///< runId 规范文本→包络
-    std::map<std::string, evidence::CurrentnessResult> currentness; ///< 同上→当前性脚本
-    std::map<std::string, ReportEligibilityChecks> eligibility;     ///< 同上→资格脚本
-    bool reproductionAvailable = true;                              ///< 复现块可解析开关
-
-    // 调用计数（每 runId——"每份报告构建时重查、不缓存跨报告复用"§6.2；
-    // const 接口内记账故为 mutable——测试桩观测面）。
-    mutable std::map<std::string, int> envelopeCalls;
-    mutable std::map<std::string, int> currentnessCalls;
-    mutable std::map<std::string, int> eligibilityCalls;
-
-    std::optional<evidence::ResultEnvelope> tryEnvelope(core::RunId run) const override
-    {
-        ++envelopeCalls[run.toCanonical()];
-        const auto it = envelopes.find(run.toCanonical());
-        if (it == envelopes.end()) {
-            return std::nullopt;   // 解码失败面（§7.2 步③ SourceMissing）
-        }
-        return it->second;
-    }
-
-    evidence::CurrentnessResult currentnessOf(const evidence::ResultEnvelope& envelope,
-                                              core::RevisionId) const override
-    {
-        ++currentnessCalls[envelope.task.run.toCanonical()];
-        const auto it = currentness.find(envelope.task.run.toCanonical());
-        return it != currentness.end() ? it->second : currentnessScript(std::nullopt);
-    }
-
-    ReportEligibilityChecks eligibilityOf(const evidence::ResultEnvelope& envelope) const override
-    {
-        ++eligibilityCalls[envelope.task.run.toCanonical()];
-        const auto it = eligibility.find(envelope.task.run.toCanonical());
-        if (it != eligibility.end()) {
-            return it->second;
-        }
-        ReportEligibilityChecks def;
-        def.formalPass = eligibleCheck(true);
-        def.reviewRecord = eligibleCheck(false);
-        return def;
-    }
-
-    std::optional<evidence::ReproductionBlock> tryReproduction(core::RunId) const override
-    {
-        return reproductionAvailable ? std::optional{legalReproduction()} : std::nullopt;
-    }
-};
+// 局部夹具类 ScriptedResultSource/ScriptedSectionProvider 已拆除；唯一正本
+// ＝test/ScriptedResultSource.hpp、test/ScriptedSectionProvider.hpp（具名
+// 替身，§10 可控替身清单；任务契约 RPT-T11 acceptance 2"局部夹具收敛/替换
+// 为四具名替身"）。语义差异登记（既有用例体零漂移核对）：
+//   - 正本 currentnessOf 缺省＝Current（本文件原局部类缺省＝不可判定）；
+//     本文件全部用例经 StandardScene::withRun 显式登记当前性脚本，未依赖
+//     旧缺省（逐用例核对结论——EligibilityFrozen 用例显式登记 Superseded/
+//     Current，Unevaluable 用例显式登记不可判定）；
+//   - 正本四方法缺省行为与原局部类一致（Feasible 包络/正式通过成立/
+//     复现块可解析），计数面新增 reproductionCalls（超集兼容）。
 
 // =====================================================================
-// 替身三：章节提供方（脚本化 SectionContent——记录请求供过滤断言）
-// =====================================================================
-
-class ScriptedSectionProvider final : public IReportSectionProvider {
-public:
-    ScriptedSectionProvider(std::string id, ReportLevel minLevel,
-                            std::vector<std::string> keys, SectionContent scripted)
-        : m_id(std::move(id))
-        , m_minLevel(minLevel)
-        , m_keys(std::move(keys))
-        , m_scripted(std::move(scripted))
-    {
-    }
-
-    std::string sectionId() const override { return m_id; }
-    ReportLevel minimumLevel() const override { return m_minLevel; }
-    std::vector<std::string> requiredEvaluationKeys() const override { return m_keys; }
-
-    SectionContent project(const SectionRequest& request) override
-    {
-        lastRequest = request;   // 记录最近请求（结果子集过滤的断言面）
-        ++projectCalls;
-        return m_scripted;
-    }
-
-    mutable SectionRequest lastRequest;   ///< 最近一次投影请求（过滤断言）
-    mutable int projectCalls = 0;         ///< 投影调用计数
-
-private:
-    std::string m_id;
-    ReportLevel m_minLevel;
-    std::vector<std::string> m_keys;
-    SectionContent m_scripted;
-};
-
-// =====================================================================
-// 取消令牌替身（手工置位——检查点行为断言）
+// 取消令牌替身（手工置位——检查点行为断言；非 §10 四具名清单成员，保持自持）
 // =====================================================================
 
 class ManualCancelToken final : public ReportCancelToken {
@@ -470,12 +341,12 @@ SectionContent populatedKinContent(const core::RunId& run)
     EvidenceBinding binding;
     binding.itemId = "kin.reach-per-task-point";
     binding.status = evidence::EvidenceItemStatus::Satisfied;
-    binding.digest = cid(kHex64A).bytes;      // 与包络清单一致（绑定校验通过面）
-    binding.caseScope = {oid(kHex32A)};
+    binding.digest = test_fakes::scriptedCid(0x10).bytes;   // 与具名替身包络清单一致（铺位值——绑定校验通过面）
+    binding.caseScope = {test_fakes::scriptedId<core::ObjectId>(0x21)};
     entry.evidence = {binding};
-    entry.caseScope = {oid(kHex32A)};
+    entry.caseScope = {test_fakes::scriptedId<core::ObjectId>(0x21)};
     entry.jump.runId = run;
-    entry.jump.caseId = oid(kHex32A);
+    entry.jump.caseId = test_fakes::scriptedId<core::ObjectId>(0x21);
     content.entries = {entry};
     return content;
 }
@@ -501,7 +372,7 @@ SectionContent contentBindingWrongDigest(const core::RunId& run)
 SectionContent contentBindingOutOfScopeEvidence(const core::RunId& run)
 {
     SectionContent content = populatedKinContent(run);
-    content.entries[0].evidence[0].caseScope = {oid(kHex32E)};   // 包络 caseScope＝{kHex32A}
+    content.entries[0].evidence[0].caseScope = {oid(kHex32E)};   // 包络 caseScope＝{铺位 0x21}（越界对照）
     return content;
 }
 
@@ -1034,7 +905,7 @@ TEST(ReviewReportBuilderTest, EntryCaseScopeOutsideResult_Rejected_RPT05_ACC1)
     const core::RunId run = runId(kHex32D);
     StandardScene scene = StandardScene::withRun(run);
     SectionContent content = populatedKinContent(run);
-    content.entries[0].caseScope = {oid(kHex32E)};   // 包络 caseScope＝{kHex32A}
+    content.entries[0].caseScope = {oid(kHex32E)};   // 包络 caseScope＝{铺位 0x21}（越界对照）
     scene.addKinProvider(std::move(content));
     ReviewReportBuilder builder(scene.queryPort, scene.resultSource, scene.registry);
     const ReportBuildOutcome outcome = builder.build(standardRequest(run));
@@ -1285,7 +1156,7 @@ TEST(ReviewReportBuilderTest, CancelBetweenSections_StopsWithoutError_RPT05_ACC5
         bool isCancelled() const override
         {
             // requirements 提供方已被调用（首个已注册章节投影完成）→ 取消。
-            return m_watched->projectCalls >= 1;
+            return m_watched->projectCalls() >= 1;
         }
 
     private:
@@ -1296,8 +1167,8 @@ TEST(ReviewReportBuilderTest, CancelBetweenSections_StopsWithoutError_RPT05_ACC5
 
     const ReportBuildOutcome outcome = builder.build(standardRequest(run), &token);
     expectCanceled(outcome);
-    EXPECT_EQ(reqPtr->projectCalls, 1);   // 首章节已投影
-    EXPECT_EQ(kinPtr->projectCalls, 0);   // 后续章节解析被取消检查点拦下
+    EXPECT_EQ(reqPtr->projectCalls(), 1L);   // 首章节已投影
+    EXPECT_EQ(kinPtr->projectCalls(), 0L);   // 后续章节解析被取消检查点拦下
 }
 
 // =====================================================================

@@ -1,0 +1,13 @@
+3c3
+<   [ird_gates] 依赖红线/补丁门禁存在 27 处命中——按 ARCH
+---
+>   [ird_gates] 依赖红线/补丁门禁存在 29 处命中——按 ARCH
+47a48,51
+> IRD-GATE-SUB: 测试目标 sdurws_ird_reporting_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+> IRD-GATE-SUB: 测试目标 sdurws_ird_reporting_contract_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+> IRD-GATE-SUB: 测试目标 sdurws_ird_reporting_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+> IRD-GATE-SUB: 测试目标 sdurws_ird_reporting_test 直链他单元产品目标 sdurws_ird_testkit（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+70c74
+< 命中 27 项：
+---
+> 命中 29 项：

@@ -45,6 +45,8 @@
 #include <sdurws/ird/reporting/SectionProvider.hpp>
 #include <sdurws/ird/reporting/Sections.hpp>
 
+#include "../test/ScriptedResultSource.hpp"   // 具名替身（RPT-T11 收敛——测试目录头，测试目标内消费）
+
 #include <gtest/gtest.h>
 
 #include <map>
@@ -61,6 +63,7 @@ namespace core = sdurws::ird::core;
 namespace evidence = sdurws::ird::evidence;
 namespace project = sdurws::ird::project;
 namespace diagnostics = sdurws::ird::diagnostics;
+namespace test_fakes = sdurws::ird::reporting::test_fakes;
 
 // =====================================================================
 // 类型恒等断言（acceptance 6①②——跨单元类型零复制/零重定义，O-13/O-24）
@@ -161,36 +164,12 @@ public:
     }
 };
 
-/// 结果源最小实现（唯一 envelope 注入面——解码隔离的自证形态）。
-class MinimalResultSource final : public IReportResultSource {
-public:
-    std::optional<evidence::ResultEnvelope> envelope;
-
-    std::optional<evidence::ResultEnvelope> tryEnvelope(core::RunId) const override
-    {
-        return envelope;
-    }
-    evidence::CurrentnessResult currentnessOf(const evidence::ResultEnvelope&,
-                                              core::RevisionId) const override
-    {
-        evidence::CurrentnessResult result;
-        result.status = evidence::CurrentnessStatus::Current;
-        return result;
-    }
-    ReportEligibilityChecks eligibilityOf(const evidence::ResultEnvelope&) const override
-    {
-        ReportEligibilityChecks checks;
-        checks.formalPass.eligible = true;
-        return checks;
-    }
-    std::optional<evidence::ReproductionBlock> tryReproduction(core::RunId) const override
-    {
-        evidence::ReproductionBlock block;
-        block.productVersion = "contract";
-        block.evidenceContractVersion = "evidence-contract/1";
-        return block;
-    }
-};
+/// 结果源（唯一 envelope 注入面——解码隔离的自证形态）。RPT-T11 收敛：
+/// 局部 MinimalResultSource 拆除，消费具名正本 ScriptedResultSource
+/// （test/ScriptedResultSource.hpp——envelope 脚本表；缺条目＝解码失败，
+/// 与原局部类"envelope 缺席＝解码失败"语义一致；缺省行为＝Current/
+/// 资格成立/复现块可解析，与原最小实现同向）。
+using MinimalResultSource = test_fakes::ScriptedResultSource;
 
 // =====================================================================
 // 用例
@@ -258,7 +237,8 @@ TEST(ReportingBuilderContract, InjectedSourcesCarryEvidenceAndProjectTypes_RPT05
     port.runs = {info};
 
     MinimalResultSource source;
-    source.envelope = evidence::ResultEnvelope::make(std::move(draft));
+    source.envelopes.emplace(task.run.toCanonical(),
+                             evidence::ResultEnvelope::make(std::move(draft)));
 
     SectionRegistry registry;   // 空注册表——全部域章节缺项（B 级无范围拒绝）
     ReviewReportBuilder builder(port, source, registry);
@@ -273,7 +253,8 @@ TEST(ReportingBuilderContract, InjectedSourcesCarryEvidenceAndProjectTypes_RPT05
 
     ASSERT_NE(outcome.report, nullptr);
     ASSERT_EQ(outcome.report->resultRefs().size(), 1u);
-    EXPECT_TRUE(outcome.report->resultRefs()[0].snapshotId == source.envelope->snapshotId);
+    EXPECT_TRUE(outcome.report->resultRefs()[0].snapshotId
+                == source.envelopes.begin()->second.snapshotId);
     EXPECT_TRUE(outcome.report->resultRefs()[0].eligibility.formalPass);
 }
 
@@ -312,8 +293,7 @@ TEST(ReportingBuilderContract, DecodeIsolatedViaResultSource_NoOwnDecoder_RPT05_
         std::string{"rev-"} + "cccccccccccccccccccccccccccccccc");
     port.view.id = revision;
     port.view.seq = 1;
-    MinimalResultSource source;   // envelope 缺席＝解码失败
-    source.envelope = std::nullopt;
+    MinimalResultSource source;   // envelope 缺席＝解码失败（空脚本表——缺条目即 nullopt）
 
     SectionRegistry registry;
     ReviewReportBuilder builder(port, source, registry);
