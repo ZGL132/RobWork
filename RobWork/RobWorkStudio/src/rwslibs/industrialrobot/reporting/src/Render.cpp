@@ -52,6 +52,8 @@
 #include <sdurws/ird/evidence/Evidence.hpp>     // EvidenceItemStatus/Class（O-13 消费不重定义）
 #include <sdurws/ird/reporting/Sections.hpp>    // trySectionOrder（§5.1 词表 order——诊断 orderKey 基准）
 
+#include "RenderText.hpp"   // token↔显示名共享表（RPT-T07 起正向/反向同表——值单源）
+
 namespace sdurws::ird::reporting {
 
 namespace {
@@ -116,13 +118,12 @@ std::string_view engineeringStatusDisplay(core::EngineeringStatus status)
 /// 工程判定 token 反查显示名（HTML 状态列——状态维度取自矩阵单元格
 /// 〔值单源〕，显示名由 core 词表 token 映射；未知 token 回退原样呈现，
 /// 不伪造中文文案）。
+/// RPT-T07 起正向/反向映射共享同一张表（src/RenderText.hpp——一致性
+/// 检查器反查 status token 时与渲染正向不得失步，见该头文件头说明）；
+/// 本包装保持 Render.cpp 内原有调用点拼写不变。
 std::string engineeringStatusDisplayFromToken(std::string_view statusToken)
 {
-    if (statusToken == "feasible")                return std::string(engineeringStatusDisplay(core::EngineeringStatus::Feasible));
-    if (statusToken == "engineering-infeasible")  return std::string(engineeringStatusDisplay(core::EngineeringStatus::EngineeringInfeasible));
-    if (statusToken == "data-insufficient")       return std::string(engineeringStatusDisplay(core::EngineeringStatus::DataInsufficient));
-    if (statusToken == "not-applicable")          return std::string(engineeringStatusDisplay(core::EngineeringStatus::NotApplicable));
-    return std::string(statusToken);
+    return detail::statusTokenToDisplay(statusToken);
 }
 
 /// 结果完整性显示名（core::TaskOutcome 四值——状态事实呈现，非结论）。
