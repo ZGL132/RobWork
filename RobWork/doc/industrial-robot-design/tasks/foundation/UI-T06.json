@@ -1,12 +1,17 @@
-{
+﻿{
   "schemaVersion": "ird-task/1",
   "taskId": "UI-T06",
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "CommandRegistry＋GlobalShortcutRegistry＋命令面板",
-  "status": "ready",
-  "dependsOn": ["UI-T03"],
-  "requirements": ["UX-13", "PM-14"],
+  "status": "done",
+  "dependsOn": [
+    "UI-T03"
+  ],
+  "requirements": [
+    "UX-13",
+    "PM-14"
+  ],
   "designRefs": [
     "units/ui.md#13",
     "units/ui.md#3.5",
@@ -23,11 +28,20 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test"
+  ],
   "branch": "wp10-t06",
   "interUnit": true,
-  "knownPitfalls": ["O-31", "P-UI-10"],
+  "knownPitfalls": [
+    "O-31",
+    "P-UI-10"
+  ],
   "acceptance": [
     "UI-CMD-1/2、UI-HKY-1/2/3：重复命令注册/重复快捷键绑定在注册边界拒绝（DuplicateId/Conflict，不覆盖不静默）并出比较型诊断（UI-CMD-DUPLICATE/UI-HOTKEY-CONFLICT，冲突键＋已占用命令在 context、数值比较字段标「不适用」——SA-16/ARCH §11.2-1）；插件私占全局快捷键（WindowShortcut/ApplicationShortcut 作用域 QShortcut）静态扫描命中即违例（UI-HKY-3，NFR-MNT-07）",
     "命令面板（§7.4/§10.3）：名称/关键字模糊搜索与键盘导航；未绑定命令经面板可达；rebind/解绑为用户级设置持久化（PM-14，§7.3）；实际 QShortcut 对象仅由 GlobalShortcutRegistry 创建（唯一注册点，N-11 无第二套）",
