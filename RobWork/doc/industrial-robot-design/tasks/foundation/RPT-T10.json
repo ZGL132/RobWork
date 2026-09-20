@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现证据包组装（Bundle＋IArchiveWriter）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["RPT-T05"],
   "requirements": ["RPT-03", "NFR-COR-04"],
   "designRefs": [
