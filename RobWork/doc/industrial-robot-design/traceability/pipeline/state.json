@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 242,
+  "tickCount": 243,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-21T00:33:24+08:00",
+    "updatedAt": "2026-09-21T02:11:50+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1442,6 +1442,17 @@
       "acceptanceRecord": "traceability/acceptance/UI-T03-20260920-r2.md",
       "mergedAt": "2026-09-20",
       "failReason": "验收 attempt1 fail（B-1 同族第六次：14 份 .log 留痕被 .gitignore *.log 吞且未 add -f，冻结对象在库 9 件 vs 本地声称 23 件）——返工 e6ac9d11 补交后 attempt2 pass；attempt2 建议级 F-260/F-261 随 evidence 转登；收尾 §4.7③ findings.json 尾部冲突（主线 F-260/F-261 vs 任务分支 F-259，F-204 同型）经 v1.13 merge-findings-union 并集解算通过（F-259 并入共 261 条）；解算脚本对带 BOM 现场退出非 0，编排者当场最小修复（F-262 入册即消账，[governance] b47638b3）；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t03，切回 redesign-main 后方执行合并（EX-T06/EX-T09/RPT-T01 同型风险点，本次零误落）"
+    },
+    {
+      "task": "UI-T04",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "aaea78425445ff421db17c70c70cc05e125b0c1e",
+        "0516f7fbb922e9e90c23f6dcfbcabda7625725d0"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T04-20260921.md",
+      "mergedAt": "2026-09-21"
     }
   ],
   "policy": {
@@ -1467,11 +1478,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "UI-T04",
-      "contractPath": "tasks/foundation/UI-T04.json",
-      "branch": "wp10-t04"
-    },
     {
       "taskId": "UI-T05",
       "contractPath": "tasks/foundation/UI-T05.json",
@@ -1531,5 +1537,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "f37efcb4-af23-4c0f-9b08-24ae42082c98"
+  "tickToken": "a172fb23-e239-49e8-b4cf-3b7ce151c0f9"
 }

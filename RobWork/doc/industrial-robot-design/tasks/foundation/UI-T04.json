@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "七态公共状态呈现（StatusWordProjection＋九态短标签映射）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03", "EV-T08", "EX-T05"],
   "requirements": ["UX-06", "UX-10", "PM-11"],
   "designRefs": [
