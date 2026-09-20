@@ -2689,6 +2689,26 @@
       "title": "F-012/F-232~F-242/F-247/F-258/F-261/F-263/F-264 家族第 14 例：提交 cdeb53e8 标题『[WP-10-T06] ui 单元卡 v0.8 增量修订与验证留痕归档（文档同步＋证据）』前缀后以名词短语『ui 单元卡』开头，不合 ACC §4.9/AGENTS §6.3『动词开头』字面（同提交 3830e164 以动词『实现』开头合规）；正文四段齐备、验证结论经验收者独立复跑证实，纯风格瑕疵",
       "owner": "ui 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
       "resolution": "后续任务提交标题在前缀后使用动词开头（如『修订…』『归档…』）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 UI-T06 合入（attempt 1 verdict=pass）。编号顺延自 F-266。"
+    },
+    {
+      "id": "F-268",
+      "source": "traceability/acceptance/UI-T07-20260921.md §4.10/§4.9（attempt 1，verdict=pass，2026-09-21；送验对象 f918798695e5c9199f042ab8ad9d778d54735611，分支 wp10-t07）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-010/F-077/F-081/F-266 家族复踩：UI-T07 留痕提交 f9187986 正文声称 traceability/builds/wp10-t07/ 归档 13 件 .log（集成构建日志、冒烟配置/构建/三测试控制台日志、validate-task 日志、ird_gates 集成＋脚本模式原始输出等），实际全部被根 .gitignore:87 吞、未按 UI-T05 先例 git add -f——在库仅 7 件（3 gtest XML＋3 ird-test-report.json＋gates-hit-set.txt）；wp10-t07-gate-registrations.md 首节「本目录 ird_gates.log/ird_gates-script.log」为在库悬空引用（F-081 同型）。数值主张全部经验收者亲手复现准确（构建零错误/40＋3＋15 双模式/门禁 40＝39＋1/validate PASS）——证据本体完整，方向为「声称在库而实际未入库」",
+      "owner": "构建约定所有者（F-010 .gitignore 根因修复与留痕回填裁决）＋ ui 单元实施者（回填执行）",
+      "resolution": "回填 13 件 .log（git add -f，UI-T05 先例）或按 F-081/F-266 裁决①/③闭环；gate-registrations.md 悬空引用随回填消解；按 F-266/POL-T06 先例不阻塞 UI-T07 合入（attempt 1 verdict=pass）。编号顺延自 F-267。"
+    },
+    {
+      "id": "F-269",
+      "source": "traceability/acceptance/UI-T07-20260921.md §4.9（attempt 1，verdict=pass，2026-09-21；送验对象 f918798695e5c9199f042ab8ad9d778d54735611，分支 wp10-t07）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-012/F-232~F-242/F-247/F-258/F-261/F-263/F-264/F-267 家族第 15 例：提交 f9187986 标题「[WP-10-T07] ui 单元卡 v0.9 增量修订与验证留痕归档（文档同步＋证据）」前缀后以名词短语「ui 单元卡」开头，不合 ACC §4.9/AGENTS §6.3「动词开头」字面（同提交 7a688a65 以动词「实现」开头合规）；正文四段齐备、验证结论经验收者独立复跑证实，纯风格瑕疵",
+      "owner": "ui 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
+      "resolution": "后续任务提交标题在前缀后使用动词开头（如「修订…」「归档…」）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 UI-T07 合入（attempt 1 verdict=pass）。编号顺延自 F-268。"
     }
   ]
 }
