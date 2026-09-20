@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "工作台壳与五区布局（WorkbenchShell/布局记忆/无项目首页）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T02"],
   "requirements": ["UX-09", "PM-10", "PM-11", "PM-14"],
   "designRefs": [
