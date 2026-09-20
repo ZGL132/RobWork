@@ -236,6 +236,13 @@ endif()
 #   - test/README.md——替身边界声明正本（RP-STATE-4；不参与编译）。
 enable_testing()
 
+# RPT-T12 增列（§11 RPT-T12 行产物：ModelSummary.hpp＋ITaskStatusSource 最小
+#   接口——两契约头 header-only〔§11 产物列仅列头文件，SectionProvider.hpp
+#   v0.7 同款先例〕；验证方式"单测（投影 schema/空快照注记）"）：
+#   - test/ModelSummaryTest.cpp——投影 schema 全量/词表 token/呈现字段零判定
+#     通道/确定性/快照已释放注记/try 轨 nullopt（acceptance 1/2/5）；
+#   - test/TaskStatusSourceTest.cpp——try 轨/已中断呈现（TASK-02/NFR-REL-03）/
+#     终态↔原因对应/进度值形态/确定性/词表冻结（acceptance 3/5）。
 add_executable(sdurws_ird_reporting_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -248,6 +255,8 @@ add_executable(sdurws_ird_reporting_test
     test/ConsistencyTest.cpp
     test/ArchiveExportTest.cpp
     test/BundleTest.cpp
+    test/ModelSummaryTest.cpp
+    test/TaskStatusSourceTest.cpp
     test/ReportingContractSuiteTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
@@ -305,6 +314,11 @@ add_custom_command(TARGET sdurws_ird_reporting_test POST_BUILD
 # GTest::gtest_main 改为 GTest::gtest＋sdurws_ird_testkit（T-1 允许形态，
 # LinkageContractTest::NoTestkitEdge 收窄断言同步修订——白名单显式增量，
 # 不可静默越界）。
+# RPT-T12 增列：contract_test/ModelSummaryTaskStatusCrossUnitContractTest.cpp
+# ＝两件注入契约的跨单元契约面（trySummary/tryStatus 签名冻结 static_assert
+# ——P-RPT-2 裁决前不变；schema 类型恒等——P-RPT-9 基线 core.md v0.1 Draft；
+# 公共头零 runtime/execution/io include 与命名空间限定名字符串扫描——SA-10
+# 表外边红线的具名常驻自证；词表与 core::toToken 一致性——词表单源）。
 add_executable(sdurws_ird_reporting_contract_test
     contract_test/TestMainReport.cpp
     contract_test/LinkageContractTest.cpp
@@ -315,7 +329,8 @@ add_executable(sdurws_ird_reporting_contract_test
     contract_test/RenderCrossUnitContractTest.cpp
     contract_test/ConsistencyCrossUnitContractTest.cpp
     contract_test/ArchiveCrossUnitContractTest.cpp
-    contract_test/BundleCrossUnitContractTest.cpp)
+    contract_test/BundleCrossUnitContractTest.cpp
+    contract_test/ModelSummaryTaskStatusCrossUnitContractTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_contract_test PROPERTIES

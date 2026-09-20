@@ -1,0 +1,18 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\project\Release\sdurws_ird_project.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\reporting\Release\sdurws_ird_reporting_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\project\Release\sdurws_ird_project.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-wp12-t12\reporting\Release\sdurws_ird_reporting_contract_test.exe

@@ -1,0 +1,8 @@
+8c8
+< IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/RobWork/reporting-base-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+---
+> IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+37c37
+< [ird_gates] IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/RobWork/reporting-base-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+---
+> [ird_gates] IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
