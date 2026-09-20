@@ -114,6 +114,19 @@ find_package(GTest CONFIG REQUIRED)
 #     实现归 io）＋矩阵驱动七元组比对（不短路；parse-failed 错误轨）；
 #   - src/RenderText.hpp——token↔显示名共享表（RPT-T06 Render.cpp 的
 #     正向映射抽取为共享私有头，RPT-T07 反查消费同表——值单源）。
+# RPT-T09 增列（§11 RPT-T09 行产物：Export.hpp/.cpp、Archive.hpp/.cpp——
+#   导出服务与归档协调＋IReportArtifactSink 契约）：
+#   - include/sdurws/ird/reporting/Archive.hpp——§9.6 汇集座契约（四方法
+#     逐字：begin/writeArtifact/finalize/abandon）＋§7.3 ReportArtifactManifest
+#     ＋manifest 内容摘要（幂等判定键 D-02）＋只读发布清单注入缝
+#     （IReportPublishedIndex——落位偏差登记 §14.4 v0.12）＋归档协调器
+#     （IReportArchiveCoordinator＋ReportArchiveCoordinator——编排
+#     begin→write×N→finalize，任一非 Ok→abandon）；src/Archive.cpp 为实现；
+#   - include/sdurws/ird/reporting/Export.hpp——§9.5 导出服务（请求/目标/
+#     结果值类型＋IReportExportService＋ReportExportService——§8.5 编排：
+#     渲染→二次渲染确定性→一致性→发布/写出；§7.4 幂等/冲突/取消/只读
+#     四轨）＋报告值解析注入缝（IReportResolver——落位偏差登记）；
+#     src/Export.cpp 为实现。
 add_library(sdurws_ird_reporting STATIC
     src/Reporting.cpp
     src/Errors.cpp
@@ -123,7 +136,9 @@ add_library(sdurws_ird_reporting STATIC
     src/Sections.cpp
     src/Builder.cpp
     src/Render.cpp
-    src/Consistency.cpp)
+    src/Consistency.cpp
+    src/Archive.cpp
+    src/Export.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——reporting 公共头将
@@ -201,7 +216,8 @@ add_executable(sdurws_ird_reporting_test
     test/SectionProviderTest.cpp
     test/BuilderTest.cpp
     test/RenderTest.cpp
-    test/ConsistencyTest.cpp)
+    test/ConsistencyTest.cpp
+    test/ArchiveExportTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_test PROPERTIES
@@ -259,7 +275,8 @@ add_executable(sdurws_ird_reporting_contract_test
     contract_test/SectionCrossUnitContractTest.cpp
     contract_test/BuilderCrossUnitContractTest.cpp
     contract_test/RenderCrossUnitContractTest.cpp
-    contract_test/ConsistencyCrossUnitContractTest.cpp)
+    contract_test/ConsistencyCrossUnitContractTest.cpp
+    contract_test/ArchiveCrossUnitContractTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_contract_test PROPERTIES
