@@ -2599,6 +2599,26 @@
       "title": "F-012/F-232~F-242/F-247 家族再现（RPT 系连续第十例）：RPT-T13 辅助提交 3396a00c 标题『[RPT-T13] reporting 单元卡 v0.16 文档与门禁同步（§14.3 状态逐条＋§12 交接表刷新＋零偏差登记）』前缀后以名词短语『reporting 单元卡』开头——不合 ACC §4.9/AGENTS §6.3『动词开头』字面；另两提交（9edb2a2c『提交…』、9000bfee『归档…』）动词开头合规。正文四段齐备、验证结论经验收者独立复跑全部证实（双模式 208＋61×2、GATES-HIT-SET-IDENTICAL、validate 双 PASS、22 件留痕清点同值），纯风格瑕疵",
       "owner": "reporting 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
       "resolution": "后续任务提交标题在前缀后使用动词开头（如『同步…』『登记…』『归档…』）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 RPT-T13 合入（attempt 1 verdict=pass）。编号顺延自 F-257。"
+    },
+    {
+      "id": "F-260",
+      "source": "traceability/acceptance/UI-T03-20260920-r2.md §4.4 条目 3／§4.11④（attempt 2，verdict=pass，2026-09-20；送验对象 e6ac9d11f51fc9b483d074f3b541f2c2ccbad911，分支 wp10-t03）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "UI-T03 交付测试集存在两处行为面缺口（实现面在位、无行为用例）：①units/ui.md §4.4『低于最小窗口（1280×720）左/右栏自动折叠、底栏折叠』——UI-WB 系用例窗口尺寸均在阈值之上运行，折叠逻辑（WorkbenchShell.cpp updateCollapseBySize）仅有实现面证据、零行为断言；②§10.1 门面违约轨——二次 initialize 返回 false、shutdown 后调用各方法的安全空返回（DT 断言面）未被任何用例触发，仅正向路径（initialize true/shutdown 报告）被断言",
+      "owner": "UI-T11 实施者（UiSessionController 落位时该两行为面随会话状态机用例补齐）＋UI-T14 实施者（契约测试套件兜底）；不阻塞 UI-T03 合入（ui.md §12.3 权威用例行无此两行，交付用例集『§12.3 四例＋2 辅助例』已经单元卡 v0.5 登记为准）",
+      "resolution": "UI-T11/UI-T14 落位时各补一条行为用例：resize 至 <1280×720 断言 Left/Right/Bottom regionVisible=false 且 Top/Central 恒真、回升后按用户意愿位恢复；重复 initialize 断言返回 false、shutdown 后 commandAvailability/mainWindow 断言安全空返回。编号顺延自 F-259（任务分支侧已登记——本条在 evidence 分支侧顺延，合并时两册并集）。"
+    },
+    {
+      "id": "F-261",
+      "source": "traceability/acceptance/UI-T03-20260920-r2.md §4.9（attempt 2，verdict=pass，2026-09-20；送验对象 e6ac9d11f51fc9b483d074f3b541f2c2ccbad911，分支 wp10-t03）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-012/F-232~F-242/F-247/F-258 家族再现（连续第十一例，首例 UI 系）：WP-10-T03 辅助提交 dd9ff626 标题『[WP-10-T03] ui 单元卡 v0.5 增量修订与门禁登记提交件（文档同步＋留痕）』前缀后以名词短语『ui 单元卡』开头——不合 ACC §4.9/AGENTS §6.3『动词开头』字面；另两提交（d402cfef『实现…』、e6ac9d11『返工补交…』）动词开头合规。正文四段齐备、验证结论经验收者独立复跑全部证实（双模式零错误、8/3/6＋ctest 3/3、validate 双 PASS、23 件留痕清点同值），纯风格瑕疵",
+      "owner": "ui 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
+      "resolution": "后续任务提交标题在前缀后使用动词开头（如『登记…』『同步…』『归档…』）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 UI-T03 合入（attempt 2 verdict=pass）。编号顺延自 F-260。"
     }
   ]
 }
