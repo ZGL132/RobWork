@@ -14,6 +14,23 @@
  *   - §8.2：两类声明前置断言（assertFormalPassWordingAllowed——
  *     DataInvalid 硬门槛）；限定语结构性输出（data-qualifier/qualifier
  *     列/qualifier 数组）；
+ *   - §8.2①硬编码纪律的规则层（RPT-T08 交付，validateDeclarationConsistency）：
+ *     渲染器在装配前对报告数据做五路前置断言——①非 Completed 结果永不携带
+ *     任何声明资格（RP-STATE-1：失败/取消/中断不入正式结论——TASK-02）；
+ *     ②formalPass 资格 ⇒ Verified∧Completed∧Feasible（RPT-05 五条件的报告
+ *     可见面——Quick 永不 FormalPass，表 1 模式效力）；③reviewRecord 资格 ⇒
+ *     Completed∧EngineeringInfeasible（§6.2 行 2）；④章节资格声明 ⇔ 所引
+ *     结果资格 AND 聚合（§8.2①"条目所属结果"复核——构建器聚合不变量的
+ *     渲染侧防线）；⑤覆盖漏验 ⇒ 无任何 formalPass 章节（EVI-02/§8.1 表 2②
+ *     呈现口径——漏验任一启用必验工况不得输出正式通过）；
+ *   - §6.4/§6.5 呈现义务锁（RPT-T08）：覆盖完备性结论（"全部启用必验工况
+ *     已覆盖"或"漏验清单——整体数据不足"）、包络合并条目"包络合并（呈现
+ *     方式）"标注（caseScope 跨多工况的结构触发）、downgraded-reference-
+ *     value 覆盖呈现面限定语（P-EV-5 报告侧承接——数据源＝diagRefs 携带
+ *     EVI-REGION-COVERAGE-DOWNGRADED）与 external-validation-incomplete
+ *     外部验证边界章限定语（数据源＝externalResourceSummary Recorded 态）
+ *     的报告级结构性输出；§8.2④模板纪律自检（词表全 token 呈现文案缺位
+ *     ＝TemplateVersion 拒绝——模板不得移除限定语）；
  *   - §4.3.3/NFR-SEC-07：诊断脱敏双保险——渲染侧对机器产源自由文本再过
  *     IRedactionService（User 档）；范围＝诊断定位名/缺项原因/不适用原因/
  *     资格说明/评审元数据人读字段/生成者/版本串等自由文本；**不含**值文本
@@ -50,6 +67,9 @@
 #include <sdurws/ird/diagnostics/DiagCodes.hpp> // severityToken/categoryToken（码表元数据——C-3 只读）
 #include <sdurws/ird/evidence/Currentness.hpp>  // CurrentnessStatus/InvalidationReason（词表消费）
 #include <sdurws/ird/evidence/Evidence.hpp>     // EvidenceItemStatus/Class（O-13 消费不重定义）
+#include <sdurws/ird/evidence/Verdict.hpp>      // kDiagRegionCoverageDowngraded（P-EV-5 降级
+                                                // 事实的报告内数据源码——evidence EV-T06
+                                                // 建议码常量，单一定义不私抄字面）
 #include <sdurws/ird/reporting/Sections.hpp>    // trySectionOrder（§5.1 词表 order——诊断 orderKey 基准）
 
 #include "RenderText.hpp"   // token↔显示名共享表（RPT-T07 起正向/反向同表——值单源）
@@ -127,13 +147,16 @@ std::string engineeringStatusDisplayFromToken(std::string_view statusToken)
 }
 
 /// 结果完整性显示名（core::TaskOutcome 四值——状态事实呈现，非结论）。
+/// RPT-T08 措辞冻结（RP-STATE-1，§6.2 行 5）：取消/失败/中断的结果"仅出现
+/// 在诊断/状态呈现（'已取消/失败/已中断——不构成结论'）"——呈现文案钉住
+/// "——不构成结论"后缀，杜绝该类结果在追溯附录等状态面被读成结论。
 std::string_view taskOutcomeDisplay(core::TaskOutcome outcome)
 {
     switch (outcome) {
     case core::TaskOutcome::Completed:   return "已完成";
-    case core::TaskOutcome::Canceled:    return "已取消";
-    case core::TaskOutcome::Failed:      return "已失败";
-    case core::TaskOutcome::Interrupted: return "已中断";
+    case core::TaskOutcome::Canceled:    return "已取消——不构成结论";
+    case core::TaskOutcome::Failed:      return "已失败——不构成结论";
+    case core::TaskOutcome::Interrupted: return "已中断——不构成结论";
     }
     return "";
 }
@@ -259,8 +282,10 @@ std::string_view fieldStateToken(core::FieldState state)
 }
 
 /// 限定语呈现文案（§6.4 呈现义务列——数据驱动标记的固定文案；词面
-/// 冻结、不可弱化省略〔RPT-05〕。措辞冻结的完整收口与具名用例归
-/// RPT-T08——本表即其渲染侧承载位）。
+/// 冻结、不可弱化省略〔RPT-05〕。RPT-T08 措辞冻结已在此表收口：逐 token
+/// 文案为验收具名断言面，配合 assertWordingFreezeTemplateDiscipline 的
+/// 词表完备性自检——任何 token 文案被删/置空＝模板面与 §6.4 词表不兼容，
+/// 渲染即 TemplateVersion 拒绝〔§8.2④：模板不得移除限定语〕）。
 std::string_view qualifierLabel(QualifierToken qualifier)
 {
     switch (qualifier) {
@@ -579,6 +604,210 @@ std::vector<const ResultRefSnapshot*> orderedResultRefs(const std::vector<Result
 }
 
 // =====================================================================
+// 措辞冻结规则层（§8.2①硬编码纪律＋§6.4/§6.5 呈现义务锁——RPT-T08 交付）
+// =====================================================================
+
+/**
+ * @brief 覆盖完备性判定（EVI-02/§6.5——五态计数的呈现侧推导）。
+ *
+ * "漏验任一启用必验工况"的计数语义（evidence CaseCoverageMatrix 五态的
+ * 呈现投影，§6.5）：未执行/执行无效/执行失败任一非零即为漏验；已执行与
+ * 不适用之和不足必验总数同样判漏（计数间自洽的兜底——正常计数下与前一
+ * 条等价）。覆盖判定的权威在 evidence（汇总门禁②级——PA-1），本函数只
+ * 服务于呈现与渲染器前置断言（不构成第二套资格判定——§2.1 C-2）。
+ *
+ * @param coverage [in] 报告级覆盖摘要（§4.2 coverageSummary——冻结值）
+ * @return true＝存在漏验（呈现"漏验清单"分支——§6.5）；false＝无漏验
+ *         （含 totalRequired==0 的"无启用必验工况"形态——P-EV-7 的呈现
+ *         侧如实表达，判定语义仍归 evidence）
+ */
+bool coverageIncomplete(const CaseCoverageSummary& coverage) noexcept
+{
+    return coverage.notExecuted > 0 || coverage.invalid > 0 || coverage.failed > 0
+           || coverage.executed + coverage.notApplicable != coverage.totalRequired;
+}
+
+/**
+ * @brief 覆盖率参考值是否处于降级状态（P-EV-5 报告侧数据源探测）。
+ *
+ * downgraded-reference-value 限定语（§6.4 行 4）的触发数据源在 evidence
+ * 侧为 RegionCoverageEvidence.downgraded==true（KIN-04）；该事实进入报告
+ * 模型的投影＝diagRefs 携带 evidence 建议码 EVI-REGION-COVERAGE-DOWNGRADED
+ * （EV-T06 ④级降级裁定随诊断出账——Verdict.hpp kDiagRegionCoverageDowngraded，
+ * 常量单一定义不私抄字面）。条目级关联键仍未在 §4 报告模型冻结（v0.9
+ * 登记），故本限定语的呈现义务锁定在**报告级覆盖呈现面**（覆盖摘要块），
+ * 不全局伪标注到条目单元格（ERR-01）。
+ *
+ * @param report [in] 冻结报告（只读）
+ * @return true＝diagRefs 携带降级码——覆盖呈现面必须携带降级限定语
+ */
+bool hasDowngradedCoverageReference(const ReviewReport& report)
+{
+    for (const DiagRefEntry& diag : report.diagRefs()) {
+        if (diag.code == evidence::kDiagRegionCoverageDowngraded) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief 声明资格与报告事实的前置一致性断言（§8.2①硬编码纪律的执行面；
+ *        三格式渲染器在装配前统一调用——数据一致性与格式无关）。
+ *
+ * §8.2①原文："渲染器对字段做前置断言——违反即 DataInvalid 构造失败，
+ * 不存在'渲染了再说'路径"。资格的**权威计算**归 evidence 纯检查（§6.2
+ * 不自算），本断言不重算资格，只核对已冻结数据之间的**内部一致性**——
+ * 构建器产出的报告经 evidence 检查本应自洽，此处的价值是把手造/上游
+ * 异常数据在渲染边界拦下（与单位冻结集闸同性质的防御面，RP-STATE-1
+ * "渲染器前置断言生效"的具名验收面）。五路断言：
+ *
+ * ①非 Completed 结果（Canceled/Failed/Interrupted——TASK-02 表 3 该行
+ *   engineeringStatus==NotApplicable、不得含正式结论字段）永不携带任何
+ *   声明资格——失败/取消/中断不入正式结论（RP-STATE-1）；
+ * ②formalPass 资格 ⇒ Verified ∧ Completed ∧ Feasible（RPT-05 五条件中
+ *   报告可见的三条件；Quick 永不满足 FormalPass——§8.1 表 1 模式效力，
+ *   acceptance 4）；
+ * ③reviewRecord 资格 ⇒ Completed ∧ EngineeringInfeasible（§6.2 行 2——
+ *   评审记录声明只随不可行结果出现）；
+ * ④章节资格声明 ⇔ 所引结果资格的 AND 聚合（§8.2①"字样仅当条目所属结果
+ *   的 eligibility.formalPass==true 才可输出"——构建器聚合不变量的渲染侧
+ *   复核；两类声明独立核对、互不推导）；
+ * ⑤覆盖漏验 ⇒ 任何章节不得声明 formalPass（EVI-02/§8.1 表 2②呈现口径：
+ *   漏验任一启用必验工况整体 DataInsufficient，不得输出正式通过）。
+ *
+ * @throws ReportError DataInvalid 任一断言不成立（detail 含定位与断言号）
+ */
+void validateDeclarationConsistency(const ReviewReport& report)
+{
+    // 断言①②③：逐结果资格快照与结果事实的内部一致性（§4.3.1 三轴字段
+    // ——outcome/engineeringStatus/mode 为冻结事实，资格为 evidence 快照）。
+    for (const ResultRefSnapshot& ref : report.resultRefs()) {
+        const std::string runKey = ref.runId.toCanonical();
+        if (ref.outcome != core::TaskOutcome::Completed
+            && (ref.eligibility.formalPass || ref.eligibility.reviewRecord)) {
+            throw ReportError(ReportErrorCode::DataInvalid,
+                              "§8.2①断言①违约：非 Completed 结果携带声明资格（失败/取消/"
+                              "中断不入正式结论——RP-STATE-1/TASK-02）：" + runKey);
+        }
+        if (ref.eligibility.formalPass
+            && (ref.mode != core::EvaluationMode::Verified
+                || ref.outcome != core::TaskOutcome::Completed
+                || ref.engineeringStatus != core::EngineeringStatus::Feasible)) {
+            throw ReportError(ReportErrorCode::DataInvalid,
+                              "§8.2①断言②违约：formalPass 资格要求 Verified∧Completed∧"
+                              "Feasible（RPT-05 五条件；Quick 永不满足 FormalPass——表 1）"
+                              "：" + runKey);
+        }
+        if (ref.eligibility.reviewRecord
+            && (ref.outcome != core::TaskOutcome::Completed
+                || ref.engineeringStatus != core::EngineeringStatus::EngineeringInfeasible)) {
+            throw ReportError(ReportErrorCode::DataInvalid,
+                              "§8.2①断言③违约：reviewRecord 资格要求 Completed∧"
+                              "EngineeringInfeasible（§6.2 行 2）：" + runKey);
+        }
+    }
+
+    // 断言④：章节声明 ⇔ 所引结果资格 AND 聚合（§4.3.4 EligibilityNote
+    // 聚合语义的渲染侧复核；sourceResults ⊆ resultRefs 由 make 字段校验
+    // 保证，防御面查不到即不同源拒绝）。
+    for (const ReviewReportSection& section : report.sections()) {
+        if (!section.eligibilityNote.has_value()) {
+            continue;   // 无资格说明的章节无声明面——跳过
+        }
+        for (const core::RunId& run : section.sourceResults) {
+            const std::string runKey = run.toCanonical();
+            const ResultRefSnapshot* ref = nullptr;
+            for (const ResultRefSnapshot& candidate : report.resultRefs()) {
+                if (candidate.runId.toCanonical() == runKey) {
+                    ref = &candidate;
+                    break;
+                }
+            }
+            if (ref == nullptr) {
+                throw ReportError(ReportErrorCode::DataInvalid,
+                                  "§8.2①断言④违约：章节所引结果不在 resultRefs（不同源）："
+                                      + section.sectionId + " <- " + runKey);
+            }
+            if (section.eligibilityNote->formalPassAllowed && !ref->eligibility.formalPass) {
+                throw ReportError(ReportErrorCode::DataInvalid,
+                                  "§8.2①断言④违约：章节声明 formalPass 但所引结果资格"
+                                  "不成立（§8.2①'条目所属结果'复核）：" + section.sectionId
+                                      + " <- " + runKey);
+            }
+            if (section.eligibilityNote->reviewRecordAllowed && !ref->eligibility.reviewRecord) {
+                throw ReportError(ReportErrorCode::DataInvalid,
+                                  "§8.2①断言④违约：章节声明评审记录但所引结果资格不成立"
+                                  "（两声明独立核对——§6.2）：" + section.sectionId
+                                      + " <- " + runKey);
+            }
+        }
+    }
+
+    // 断言⑤：覆盖漏验 ⇒ 任何章节不得声明 formalPass（EVI-02——"正式计算
+    // 与正式判定必须覆盖全部启用的必验工况，不得漏验"；报告可见的覆盖
+    // 计数与声明并存即数据矛盾，渲染边界拒绝——§8.1 表 2②呈现口径）。
+    if (coverageIncomplete(report.coverageSummary())) {
+        for (const ReviewReportSection& section : report.sections()) {
+            if (section.eligibilityNote.has_value()
+                && section.eligibilityNote->formalPassAllowed) {
+                throw ReportError(ReportErrorCode::DataInvalid,
+                                  "§8.2①断言⑤违约：漏验启用必验工况时章节声明 formalPass"
+                                  "（EVI-02/§8.1 表 2②——不得输出正式通过）："
+                                      + section.sectionId);
+            }
+        }
+    }
+}
+
+/**
+ * @brief 措辞冻结的模板纪律自检（§8.2④——"模板不得移除限定语"的执行面）。
+ *
+ * §8.2④原文："模板版本升级若删限定语＝版本不兼容拒绝——TemplateVersion
+ * 错误"。本自检把该纪律机械化：迭代 §6.4 词表全 10 个 token，任一呈现
+ * 文案缺位（表项被删/置空）＝模板面与措辞冻结词表不兼容——以 TemplateVersion
+ * 拒绝（不静默输出残缺限定语）；同时钉住三格式模板版本下限（限定语结构性
+ * 输出自模板 v1 起为强制面，kHtmlTemplateVersion/kJsonTemplateVersion/
+ * kCsvTemplateVersion 不允许降到该下限之下）。当前表完整时本检查恒通过
+ * （防御性不变量——词表演化时的失败报警器，与 MatrixIndex 重复键拒绝同
+ * 性质）；逐 token 结构性输出的正向验收面由单元测试具名锁定。
+ *
+ * @throws ReportError TemplateVersion 词表文案缺位或模板版本低于强制下限
+ */
+void assertWordingFreezeTemplateDiscipline()
+{
+    // §6.4 词表全 10 token（ReportModel.hpp QualifierToken 枚举序——表行序）。
+    static constexpr QualifierToken kAllQualifierTokens[] = {
+        QualifierToken::Estimated,
+        QualifierToken::DataInsufficient,
+        QualifierToken::ExternalValidationIncomplete,
+        QualifierToken::DowngradedReferenceValue,
+        QualifierToken::ScreeningOnly,
+        QualifierToken::HistoricalSuperseded,
+        QualifierToken::NotApplicable,
+        QualifierToken::Interrupted,
+        QualifierToken::Canceled,
+        QualifierToken::Failed,
+    };
+    for (const QualifierToken qualifier : kAllQualifierTokens) {
+        if (qualifierLabel(qualifier).empty()) {
+            throw ReportError(ReportErrorCode::TemplateVersion,
+                              "§8.2④模板纪律违约：§6.4 限定语词表存在缺位呈现文案（模板"
+                              "不得移除限定语——版本不兼容拒绝）");
+        }
+    }
+    // 模板版本下限（限定语结构性输出强制面——v1 起；低于下限＝版本不兼容）。
+    constexpr std::uint32_t kQualifierMandatoryTemplateFloor = 1;
+    if (kHtmlTemplateVersion < kQualifierMandatoryTemplateFloor
+        || kJsonTemplateVersion < kQualifierMandatoryTemplateFloor
+        || kCsvTemplateVersion < kQualifierMandatoryTemplateFloor) {
+        throw ReportError(ReportErrorCode::TemplateVersion,
+                          "§8.2④模板纪律违约：模板版本低于限定语强制面下限（版本不兼容"
+                          "拒绝）");
+    }
+}
+
+// =====================================================================
 // 脱敏（§4.3.3 双保险渲染侧——NFR-SEC-07）
 // =====================================================================
 
@@ -724,10 +953,16 @@ void appendQualifier(std::vector<QualifierToken>& out, QualifierToken token)
  * @brief 条目字段限定语推导（§6.4 触发数据源列中已入 §4 报告模型者；
  *        推导序＝§6.4 表行序——确定性组成部分）。
  *
- * external-validation-incomplete 与 downgraded-reference-value 不在此推
- * 导：两者的条目级关联键（外部资源↔条目、RegionCoverageEvidence.downgraded）
- * 未在 §4 报告模型冻结——不虚构关联（ERR-01），登记单元卡 §14.4 v0.9
- * （数据面随框架章节数据源任务落地）。
+ * RPT-T08 词表锁定（acceptance 3——逐 token 触发数据源与呈现义务）：
+ * 本函数承载 §6.4 词表 8 项中可入单元格的 8 个 token（estimated/
+ * data-insufficient/external-validation-incomplete 之外的全部条目级触发
+ * ＋not-applicable＋outcome 三态）；external-validation-incomplete 与
+ * downgraded-reference-value 的**条目级**关联键（外部资源↔条目、
+ * RegionCoverageEvidence.downgraded↔参考值字段）未在 §4 报告模型冻结
+ * ——不在单元格上伪标注（ERR-01），其**报告级**呈现义务由渲染器的
+ * 外部验证边界章（Recorded 态限定语）与覆盖摘要块（EVI-REGION-COVERAGE-
+ * DOWNGRADED 诊断码——P-EV-5 承接）承接（v0.9 登记的条目级关联键收口
+ * 安排不变，随框架章节数据源任务落地）。
  */
 std::vector<QualifierToken> qualifiersFor(const ReviewReportSection& section,
                                           const SectionEntryView& entry,
@@ -1088,6 +1323,8 @@ void beginHtmlDocument(HtmlRenderContext& ctx, const std::string& title)
         "padding:0 .4em;margin-left:.5em;font-size:.85em;}\n"
         ".qualifier{background:#ffec99;border:1px solid #caa53d;border-radius:.2em;"
         "padding:0 .3em;margin-left:.3em;font-size:.85em;}\n"
+        ".merge-note{color:#555;border:1px dotted #999;border-radius:.2em;"
+        "padding:0 .3em;margin-left:.3em;font-size:.85em;}\n"
         ".trace-block{border:1px dashed #999;padding:.5em;margin:.5em 0;}\n"
         ".unit{color:#555;}\n"
         ".currentness{color:#8a6d3b;}\n"
@@ -1152,8 +1389,9 @@ void appendReportHeader(HtmlRenderContext& ctx)
 
 /// "正式通过结论"字样输出门（§8.2① 前置断言——渲染器对字段做前置断言：
 /// 字样仅在 formalPass 资格成立时才可输出，违反即 DataInvalid 构造失败，
-/// 不存在"渲染了再说"路径。RPT-T08 措辞冻结任务在此门上收口两类声明的
-/// 具名用例——RP-STATE-1~3 的渲染断言承载位）。
+/// 不存在"渲染了再说"路径。RPT-T08 措辞冻结收口：本门是全部渲染文本中
+/// "正式通过"短语的唯一合法出源（否定声明措辞已避开该短语——RP-STATE-1
+/// 的"正文无'正式通过'字样〔HTML 文本扫描计数=0〕"机械验收面）。
 void appendFormalPassDesignation(HtmlRenderContext& ctx, bool formalPassAllowed)
 {
     if (!formalPassAllowed) {
@@ -1206,12 +1444,27 @@ void appendSection(HtmlRenderContext& ctx, const ReviewReportSection& section)
         ctx.out += "<tr><th>条目</th><th>字段</th><th>值</th><th>单位</th><th>工程判定</th></tr>\n";
         for (const std::size_t entryIndex : entryOrderIndices(section)) {
             const SectionEntryView& entry = section.entries[entryIndex];
+            // 包络合并标注（§6.5/DYN-07 呈现侧——RPT-T08）：条目 caseScope
+            // 跨多个工况＝多工况合并呈现形态，标注"包络合并（呈现方式）"。
+            // 触发数据源＝条目 caseScope（§4.3.4"该结论覆盖的工况集"——数据
+            // 驱动，非自由标注）；语义仅为呈现方式声明（表 2⑤"多工况包络
+            // 合并仅为呈现方式"），不替代逐工况条目、不参与覆盖核算（覆盖
+            // 核算归 coverageSummary 呈现面与 evidence 门禁）。逐条目标注
+            // 一次（首字段行），不逐字段重复。
+            const bool envelopeMerged = entry.caseScope.size() > 1;
+            bool mergeNoted = false;
             for (const FieldValue& field : entry.fields) {
                 const std::string fieldKey =
                     section.sectionId + "." + entry.entryKey + "." + field.key;
                 const FieldCell& cell = ctx.matrix.consume(fieldKey);
                 ctx.out += "<tr data-entry=\"" + htmlEscape(entry.entryKey) + "\">";
-                ctx.out += "<td>" + htmlEscape(entry.entryKey) + "</td>";
+                ctx.out += "<td>" + htmlEscape(entry.entryKey);
+                if (envelopeMerged && !mergeNoted) {
+                    ctx.out += "<span class=\"merge-note\" data-case-merge=\"envelope\">"
+                               "包络合并（呈现方式）</span>";
+                    mergeNoted = true;
+                }
+                ctx.out += "</td>";
                 ctx.out += "<td>" + htmlEscape(field.key) + "</td>";
                 ctx.out += "<td data-field=\"" + htmlEscape(fieldKey) + "\">"
                            + htmlEscape(cell.valueRepr);
@@ -1247,17 +1500,25 @@ void appendSection(HtmlRenderContext& ctx, const ReviewReportSection& section)
         if (section.eligibilityNote->formalPassAllowed) {
             // §8.2①前置断言的执行点："正式通过结论"字样仅在资格成立时
             // 可输出——门在 appendFormalPassDesignation 内（violation →
-            // DataInvalid，不存在"渲染了再说"路径）。
+            // DataInvalid，不存在"渲染了再说"路径）。资格与事实的五路
+            // 前置一致性已在渲染入口经 validateDeclarationConsistency
+            // 断言（RPT-T08 规则层）。
             appendFormalPassDesignation(ctx, true);
         }
         if (section.eligibilityNote->reviewRecordAllowed) {
-            // §8.2②：不可行结论的独立声明措辞——与"正式通过"绝不互换。
-            ctx.out += "<p class=\"declaration\">经验证的不可行结论——正式评审记录（资格成立）</p>\n";
+            // §8.2②：不可行结论的独立声明措辞——§8.2②原文引号形"经验证
+            // 的不可行结论（正式评审记录）"（RPT-T08 对齐收口），与"正式
+            // 通过"绝不互换；措辞不含"通过"字样（RP-STATE-3"永不输出
+            // '通过'"的机械可断言面）。
+            ctx.out += "<p class=\"declaration\">经验证的不可行结论（正式评审记录）——资格成立</p>\n";
         }
         if (!section.eligibilityNote->formalPassAllowed
             && !section.eligibilityNote->reviewRecordAllowed) {
-            // 未达正式通过（资格不成立）——呈现事实，不渲染任何通过字样。
-            ctx.out += "<p class=\"declaration\">未达正式通过（资格不成立）</p>\n";
+            // 未达任何声明资格——呈现事实，不渲染任何声明字样。措辞钉住
+            // "不构成正式结论"（§6.2"不构成结论"词族）：机械扫描口径下
+            // 不含"正式通过"短语（RP-STATE-1 扫描计数=0 的前提之一——
+            // RPT-T08 措辞调整，原"未达正式通过"表述见单元卡 §14.4 v0.11）。
+            ctx.out += "<p class=\"declaration\">不构成正式结论（资格不成立）</p>\n";
         }
         if (!section.eligibilityNote->note.empty()) {
             ctx.out += "<p>";
@@ -1414,6 +1675,10 @@ void appendDiagnosticsSummary(HtmlRenderContext& ctx)
 }
 
 /// 外部验证边界章（§8.1——外部资源状态〔Recorded＝未固化〕表）。
+/// RPT-T08 限定语呈现义务锁（§6.4 行 3）：Recorded（未固化）/复现要素缺项
+/// ⇒ external-validation-incomplete 限定语强制呈现——本章即其报告级结构
+/// 承载位（data-qualifier 机器锚＋冻结文案"外部验证未完成"，不可弱化为
+/// 普通标注）；条目级关联键未入模型（v0.9 登记），不到单元格上伪标注。
 void appendExternalValidationBoundary(HtmlRenderContext& ctx)
 {
     ctx.out += "<section id=\"report-external\">\n<h2>外部验证边界</h2>\n";
@@ -1424,8 +1689,14 @@ void appendExternalValidationBoundary(HtmlRenderContext& ctx)
     ctx.out += "<table>\n<tr><th>资源</th><th>固化状态</th><th>来源</th></tr>\n";
     for (const ExternalResourceStateEntry& entry : ctx.report.externalResourceSummary()) {
         ctx.out += "<tr><td>" + htmlEscape(entry.resourceId) + "</td><td>"
-                   + (entry.state == ExternalResourceState::Recorded ? "已记录（未固化）" : "已固化")
-                   + "</td><td>";
+                   + (entry.state == ExternalResourceState::Recorded ? "已记录（未固化）" : "已固化");
+        if (entry.state == ExternalResourceState::Recorded) {
+            // §6.4 行 3 呈现义务：限定语随未固化资源出现（结构性标记）。
+            ctx.out += "<span class=\"qualifier\" data-qualifier=\"external-validation-incomplete\">"
+                       + htmlEscape(qualifierLabel(QualifierToken::ExternalValidationIncomplete))
+                       + "</span>";
+        }
+        ctx.out += "</td><td>";
         ctx.appendRedacted(entry.source);
         ctx.out += "</td></tr>\n";
     }
@@ -1513,9 +1784,13 @@ void appendTraceAppendix(HtmlRenderContext& ctx)
     ctx.out += "<section id=\"report-appendix\">\n<h2>追溯附录</h2>\n";
 
     // 结果引用全表（runId 序——§8.1 稳定排序；资格两声明独立呈现）。
+    // 列名以资格 token 词面承载（RPT-T08 措辞收口：附录为追溯域〔UX-02
+    // 允许域〕，且 RP-STATE-1 的"正文无'正式通过'字样"机械扫描口径要求
+    // 声明短语只在资格成立声明中出现——原"正式通过资格"列名见单元卡
+    // §14.4 v0.11 登记调整）。
     ctx.out += "<h3>结果引用</h3>\n<table>\n<tr><th>runId</th><th>任务（prj/brn/rev/run/att）</th>"
                "<th>评估键</th><th>模式</th><th>结果完整性</th><th>工程判定</th>"
-               "<th>正式通过资格</th><th>评审记录资格</th><th>快照身份</th><th>当前性</th></tr>\n";
+               "<th>formalPass 资格</th><th>reviewRecord 资格</th><th>快照身份</th><th>当前性</th></tr>\n";
     for (const ResultRefSnapshot* ref : orderedResultRefs(ctx.report.resultRefs())) {
         ctx.out += "<tr><td>" + htmlEscape(ref->runId.toCanonical()) + "</td><td>"
                    + htmlEscape(abbreviateId(ref->task.project.toCanonical())) + " / "
@@ -1577,7 +1852,7 @@ void appendTraceAppendix(HtmlRenderContext& ctx)
         ctx.out += "</p>\n";
     }
 
-    // 覆盖摘要（§6.5——五态计数聚合）。
+    // 覆盖摘要（§6.5——五态计数聚合＋覆盖完备性结论；RPT-T08 RP-COV-1）。
     const CaseCoverageSummary& coverage = ctx.report.coverageSummary();
     ctx.out += "<h3>必验工况覆盖摘要</h3>\n<p>必验总数 " + std::to_string(coverage.totalRequired)
                + "；已执行 " + std::to_string(coverage.executed) + "；未执行 "
@@ -1585,6 +1860,35 @@ void appendTraceAppendix(HtmlRenderContext& ctx)
                + std::to_string(coverage.invalid) + "；不适用 "
                + std::to_string(coverage.notApplicable) + "；执行失败 "
                + std::to_string(coverage.failed) + "</p>\n";
+    // 覆盖完备性结论（§6.5 原文："全部启用必验工况已覆盖"或"漏验清单"；
+    // EVI-02 呈现口径——漏验即整体数据不足缺项呈现，配合渲染入口断言⑤
+    // 不存在漏验与 formalPass 声明并存的报告）。逐工况漏验名单的逐行数据
+    // 未入 §4 模型（coverage.csv 零数据行——v0.9 登记），此处以计数呈现
+    // 漏验清单规模，不伪造逐工况状态（ERR-01）。
+    if (coverageIncomplete(coverage)) {
+        const std::uint64_t missed =
+            coverage.notExecuted + coverage.invalid + coverage.failed;
+        ctx.out += "<p>覆盖完备性：漏验 " + std::to_string(missed)
+                   + " 项启用必验工况（未执行 " + std::to_string(coverage.notExecuted)
+                   + "、执行无效 " + std::to_string(coverage.invalid) + "、执行失败 "
+                   + std::to_string(coverage.failed) + "）——整体数据不足（缺项呈现）</p>\n";
+    } else if (coverage.totalRequired == 0) {
+        // P-EV-7 的呈现侧如实表达：无启用必验工况（判定语义归 evidence，
+        // 此处不产出"已覆盖"的空真表述）。
+        ctx.out += "<p>覆盖完备性：无启用必验工况</p>\n";
+    } else {
+        ctx.out += "<p>覆盖完备性：全部启用必验工况已覆盖</p>\n";
+    }
+    // P-EV-5 报告侧承接（RPT-T08 acceptance 6）：覆盖率参考值降级限定语为
+    // 消费侧强制呈现——不得弱化为普通标注、不得省略。数据源＝diagRefs 携
+    // 带 EVI-REGION-COVERAGE-DOWNGRADED（evidence 降级裁定的报告内投影，
+    // 见 hasDowngradedCoverageReference）；结构性输出＝data-qualifier 机器
+    // 锚＋§6.4 冻结文案（JSON 镜像面同源，见 buildReportDom coverage 块）。
+    if (hasDowngradedCoverageReference(ctx.report)) {
+        ctx.out += "<p><span class=\"qualifier\" data-qualifier=\"downgraded-reference-value\">"
+                   + htmlEscape(qualifierLabel(QualifierToken::DowngradedReferenceValue))
+                   + "</span></p>\n";
+    }
 
     ctx.out += "</section>\n";
 }
@@ -1609,6 +1913,10 @@ RenderOutcome HtmlReportRenderer::render(const ReviewReport& report, const Field
 
     try {
         validateRenderPreconditions(report);
+        // RPT-T08 规则层（§8.2①硬编码纪律＋§8.2④模板纪律）——装配前的
+        // 数据一致性与模板词表自检，三格式统一执行（与格式无关）。
+        validateDeclarationConsistency(report);
+        assertWordingFreezeTemplateDiscipline();
         MatrixIndex index(matrix);
 
         HtmlRenderContext ctx{report, index, *m_redaction, {}};
@@ -1878,22 +2186,40 @@ ReportJsonDom buildReportDom(const ReviewReport& report, MatrixIndex& matrix,
     // ---- coverageSummary（五态计数——§4.2；逐工况行数据未入模型，
     //      见 CSV 渲染器类注登记）----
     const CaseCoverageSummary& coverage = report.coverageSummary();
+    // P-EV-5 报告侧承接（RPT-T08——§6.4 结构性输出的覆盖呈现面）：降级
+    // 限定语 token 数组（数据源＝hasDowngradedCoverageReference，与 HTML
+    // 覆盖块同源——值单源）。空报告无降级时为空数组（确定性形态）。
+    std::vector<ReportJsonDom> coverageQualifiers;
+    if (hasDowngradedCoverageReference(report)) {
+        coverageQualifiers.push_back(
+            jstr(std::string(token(QualifierToken::DowngradedReferenceValue))));
+    }
     const ReportJsonDom coverageDom =
         jobj({{"totalRequired", jnum(static_cast<double>(coverage.totalRequired))},
               {"executed", jnum(static_cast<double>(coverage.executed))},
               {"notExecuted", jnum(static_cast<double>(coverage.notExecuted))},
               {"invalid", jnum(static_cast<double>(coverage.invalid))},
               {"notApplicable", jnum(static_cast<double>(coverage.notApplicable))},
-              {"failed", jnum(static_cast<double>(coverage.failed))}});
+              {"failed", jnum(static_cast<double>(coverage.failed))},
+              {"qualifier", jarr(std::move(coverageQualifiers))}});
 
     // ---- externalResourceSummary（CON-03——Recorded/Solidified 词表）----
+    // §6.4 行 3 呈现义务（RPT-T08）：Recorded（未固化）条目随 external-
+    // validation-incomplete 限定语 token（与 HTML 边界章 data-qualifier
+    // 同源——值单源）；Solidified 条目恒空数组。
     std::vector<ReportJsonDom> external;
     for (const ExternalResourceStateEntry& entry : report.externalResourceSummary()) {
+        std::vector<ReportJsonDom> externalQualifiers;
+        if (entry.state == ExternalResourceState::Recorded) {
+            externalQualifiers.push_back(
+                jstr(std::string(token(QualifierToken::ExternalValidationIncomplete))));
+        }
         external.push_back(
             jobj({{"resourceId", jstr(entry.resourceId)},
                   {"state", jstr(entry.state == ExternalResourceState::Recorded ? "recorded"
                                                                                : "solidified")},
-                  {"source", jstr(redactText(redaction, entry.source))}}));
+                  {"source", jstr(redactText(redaction, entry.source))},
+                  {"qualifier", jarr(std::move(externalQualifiers))}}));
     }
     const ReportJsonDom externalDom = jarr(std::move(external));
 
@@ -2146,6 +2472,9 @@ RenderOutcome JsonReportRenderer::render(const ReviewReport& report, const Field
 
     try {
         validateRenderPreconditions(report);
+        // RPT-T08 规则层（§8.2①/§8.2④——三格式统一，见 HTML 渲染器同位注）。
+        validateDeclarationConsistency(report);
+        assertWordingFreezeTemplateDiscipline();
         MatrixIndex index(matrix);
 
         ReportJsonDom dom = buildReportDom(report, index, *m_redaction);
@@ -2244,6 +2573,9 @@ RenderOutcome CsvReportRenderer::render(const ReviewReport& report, const FieldM
 
     try {
         validateRenderPreconditions(report);
+        // RPT-T08 规则层（§8.2①/§8.2④——三格式统一，见 HTML 渲染器同位注）。
+        validateDeclarationConsistency(report);
+        assertWordingFreezeTemplateDiscipline();
         MatrixIndex index(matrix);
 
         // 单一 CSV 工件＝三份 CSV 文档顺序拼接（见 Render.hpp 类注）——

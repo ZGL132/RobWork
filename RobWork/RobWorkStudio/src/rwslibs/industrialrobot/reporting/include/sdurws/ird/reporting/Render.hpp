@@ -188,15 +188,20 @@ struct RenderOptions {
  * 未列出本成员，属实现补强，零语义增删）。
  *
  * qualifier 为限定语 token 集（§6.4 词表——提取期按固定推导序去重生成，
- * §6.4 映射的结构性输出；RPT-T08 措辞冻结任务在此词面集合上收口呈现
- * 措辞）。推导数据源当前面（§6.4 触发数据源列中已入 §4 报告模型者）：
- * estimated（字段来源 GeometricEstimate）/data-insufficient（工程判定/
- * 证据状态/章节状态）/screening-only（Quick 模式）/historical-superseded
- * （当前性 Superseded）/not-applicable（四态）/interrupted·canceled·
- * failed（outcome）；external-validation-incomplete 与
- * downgraded-reference-value 的条目级关联键未在 §4 报告模型冻结（外部
- * 资源与条目的关联结构、RegionCoverageEvidence.downgraded 标志随框架
- * 章节数据源任务落地）——不虚构关联（ERR-01），不全局伪标注。
+ * §6.4 映射的结构性输出；RPT-T08 措辞冻结已收口：单元格级 8 token 的
+ * 触发数据源与呈现文案逐项锁定，任何格式省略＝ConsistencyMismatch〔§8.5〕，
+ * 模板不得移除限定语〔§8.2④——渲染器词表完备性自检〕）。推导数据源当前
+ * 面（§6.4 触发数据源列中已入 §4 报告模型者）：estimated（字段来源
+ * GeometricEstimate）/data-insufficient（工程判定/证据状态/章节状态）/
+ * screening-only（Quick 模式）/historical-superseded（当前性 Superseded）/
+ * not-applicable（四态）/interrupted·canceled·failed（outcome）；
+ * external-validation-incomplete 与 downgraded-reference-value 的**条目级**
+ * 关联键未在 §4 报告模型冻结（外部资源与条目的关联结构、
+ * RegionCoverageEvidence.downgraded 标志随框架章节数据源任务落地）——不在
+ * 单元格上虚构关联（ERR-01）；两者的**报告级**呈现义务由 RPT-T08 在渲染器
+ * 承接：外部验证边界章（Recorded 态）与覆盖摘要块（EVI-REGION-COVERAGE-
+ * DOWNGRADED 诊断码——P-EV-5 报告侧承接）的结构性限定语输出，见 Render.cpp
+ * 规则层。
  *
  * 值语义；线程安全：纯值。
  */
