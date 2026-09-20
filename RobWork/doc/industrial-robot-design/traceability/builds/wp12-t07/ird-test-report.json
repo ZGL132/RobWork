@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RPT-T07",
+  "masterWp": "WP-H（卡内 RPT-T07 行——≙WP-12-T04，DTB §2.13 同行双产物之二；契约 note 原文）",
+  "branch": "wp12-t07",
+  "base": "a0a8b99dd5382fcdd90a41d05c478f76b98e0c9c",
+  "date": "2026-09-20",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows，find_package(GTest CONFIG REQUIRED)——DTB §5.5 定稿机制；测试 main 自持 GTest::gtest_main，RPT-T01~T06 同款口径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_reporting",
+      "kind": "STATIC",
+      "result": "build-pass（两模式，零错误）",
+      "notes": "RPT-T07 增列实现翻译单元：src/Consistency.cpp（三格式回读提取〔HTML data-field 严格文法扫描器/JSON 严格解析器——ird-report-json/1 回读面、顶层键消费 kJsonTopLevelKeys 冻结集拒绝外来未知字段 NFR-DEP-04 读取侧/CSV 经注入 IReportCsvReader 按列名映射——零 CSV 字节解析，NFR-SEC-03 转义唯一实现归 io〕＋矩阵驱动七元组比对〔value/unit/status/qualifier/ref/missing 维度——不短路全量列出；parse-failed 错误轨抛 ConsistencyMismatch〕＋§9.4 纯函数纪律）。公共头新增 include/sdurws/ird/reporting/Consistency.hpp（§9.4 契约值类型 ConsistencyInput/FieldMismatch/ConsistencyResult＋mismatch 维度词表＋CSV 回读注入缝 IReportCsvReader/IReportCsvReaderFactory〔io ICsvReader 投影，公共头零 io 类型——P-RPT-1〕＋IReportConsistencyChecker 接口与 FieldConsistencyChecker 实现）。私有头新增 src/RenderText.hpp（工程判定 token↔中文显示名共享表——Render.cpp 正向映射等价重构为共享单表，RPT-T07 HTML status 反查消费同表——值单源，两方向互逆）。偏差登记：ConsistencyResult 增补 notes 成员（§9.4 原文无注记位而 acceptance 4 明文『平凡通过＋注记』——DTB §5.4/单元卡 §14.4 v0.10）；三格式维度覆盖矩阵按 §8.1/§8.3 冻结格式面登记于 Consistency.hpp 文件头（JSON 字段镜像不携带 field 对齐 status、HTML/JSON 不携带字段对齐引用列——结构上不输出的维度无回读值可比，与『跳过限定语维度』禁止项〔携带却不查〕不同质）"
+    }
+  ],
+  "cases": [
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ConsistencyTrivialPassTest",
+      "cases": [
+        { "name": "ZeroArtifacts_TrivialPassWithNote_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（§9.4 ConsistencyInput 注释行：artifacts<2 平凡通过——零工件场景 consistent=true、mismatches 空、fieldCount=矩阵大小、notes 恰一条含 artifacts=0——注记承载位＝ConsistencyResult.notes〔§14.4 v0.10 偏差登记〕）；units/reporting.md §9.4" },
+        { "name": "SingleArtifact_TrivialPassWithNote_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（单格式工件集：平凡通过＋注记携带格式 token（html）——多格式一致性无判定对象，未执行逐字段比对如实注记）；units/reporting.md §9.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ConsistencyUsageTest",
+      "cases": [
+        { "name": "NullReportOrNullMatrix_Usage_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（调用方违约 fail-fast——§3.5 错误语义：report/matrix 空指针 → Usage，不产结果）；units/reporting.md §9.4/§3.5" },
+        { "name": "NullArtifactPointer_Usage_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（工件集含空指针 → Usage fail-fast）；units/reporting.md §9.4" },
+        { "name": "DuplicateArtifactFormat_Usage_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（§9.4 合法调用行『2~3 格式工件集』——格式互异前置：两个 html 工件 → Usage；在字节解析前 fail-fast）；units/reporting.md §9.4" },
+        { "name": "ArtifactSourceIdentityMismatch_Usage_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（§9.4 前置行『artifacts 与 report/matrix 同源』的可验证面：RenderArtifact.sourceReportIdentity 与 report.contentIdentity() 不符 → Usage——同源锚由 RPT-T06 落位的工件身份字段廉价验证；矩阵↔报告同源按前置信任〔矩阵无身份字段〕）；units/reporting.md §9.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ConsistencyCheckTest",
+      "cases": [
+        { "name": "HtmlPlusJsonMirror_Consistent_FieldCount_RPT07_ACC1", "result": "pass", "trace": "RPT-T07 acceptance 1 前半（合法报告两格式→consistent：HTML 真渲染＋手写 ird-report-json/1 JSON 镜像〔schema 逐成员对齐 buildReportDom 冻结面〕→ consistent=true、mismatches 空、fieldCount=5＝矩阵单元格数——fieldCount 断言；本用例同时锁定 JSON 回读解析器对 canonical 文档〔2 空格缩进/中文 UTF-8/限定语数组/null 单位〕的全路径接受）；units/reporting.md §8.5/§9.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ConsistencyHtmlBadSampleTest",
+      "cases": [
+        { "name": "DeleteDataFieldAttribute_MissingLocated_RPT07_ACC1", "result": "pass", "trace": "RPT-T07 acceptance 1（HTML 删一个 data-field——形态一删属性：提取器以行内序位单元格〔data-section＋data-entry＋字段键尾段〕重建 fieldKey，mismatch 恰一条定位到 (html, kinematics-collision.a-reach.kin.note, missing)，expected=源单元格值、actual=<absent> 标记）；units/reporting.md §8.5/§9.4" },
+        { "name": "DeleteWholeValueCell_MissingLocated_RPT07_ACC1", "result": "pass", "trace": "RPT-T07 acceptance 1（HTML 删 data-field——形态二删整格：行结构完好仅缺值列 → missing 轨而非 parse-failed〔结构层/内容层失败语义分立——提取器只对进入的结构负责〕）；units/reporting.md §8.5/§9.4" },
+        { "name": "ChangeUnitCell_UnitLocated_RPT07_ACC3", "result": "pass", "trace": "RPT-T07 acceptance 3（unit 维度：mm→cm 篡改 → (html, …kin.reach, unit, expected mm, actual cm)——unit 三格式全携带全比对）；units/reporting.md §8.5" },
+        { "name": "ChangeStatusDisplay_StatusLocated_RPT07_ACC3", "result": "pass", "trace": "RPT-T07 acceptance 3（status 维度 HTML 面：HTML 携带中文显示名〔§6.6 呈现列〕——检查器经共享映射表 src/RenderText.hpp 反查 token 后与矩阵 token 比对：『可行』→『工程不可行』篡改 → (html, …kin.reach, status, expected feasible, actual engineering-infeasible)——正向渲染与反向回读同表〔值单源〕，RPT-T08 措辞调整不失步）；units/reporting.md §8.5/§6.6/§9.4" },
+        { "name": "DeleteQualifierSpan_QualifierLocated_RPT07_ACC3", "result": "pass", "trace": "RPT-T07 acceptance 3（§6.4 硬约束——任何格式省略限定语＝ConsistencyMismatch：HTML data-qualifier 标记删除 → (html, …kin.estimate, qualifier, expected estimated, actual 空串)——§9.4 非法调用行『跳过限定语维度』禁令的反面：qualifier 全格式比对）；units/reporting.md §8.5/§6.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ConsistencyParseFailedTest",
+      "cases": [
+        { "name": "HtmlTruncatedInsideEntryRow_ParseFailedThrown_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（§9.4 错误行：回读本身失败〔格式损坏——条目行内截断，行/单元格/表未闭合〕→ ConsistencyMismatch 抛出〔错误轨，非入列〕，detail 含 dimension=parse-failed 与格式 token；结构层损坏时『哪个字段不一致』无从谈起——整体拒绝）；units/reporting.md §9.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_test",
+      "suite": "ConsistencyPurityTest",
+      "cases": [
+        { "name": "SameInputSameResult_InputsUnmodified_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（§9.4 纯函数纪律：坏样本输入〔unit 篡改〕两次 check——consistent/fieldCount/mismatches 逐项相等〔同输入同结论〕；工件字节逐位不变〔不修改任何输入〕；mismatches 非空自证区分度）；units/reporting.md §9.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ReportingLinkage／ReportingIdentityContract／EvidenceCrossUnit／ReportingSectionContract／ReportingBuilderContract",
+      "cases": "18 条（RPT-T01~T05——逐条清单与追踪见 traceability/builds/wp12-t02~t05/ird-test-report.json）",
+      "result": "pass（两模式）——四条登记编译链接边与上游值类型基线常驻自证在 RPT-T07 扩面后仍绿"
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "RenderValueSingleSourceTest／JsonRenderContractTest／CsvRenderContractTest／RenderHeaderDisciplineTest",
+      "cases": "7 条（RPT-T06——逐条清单与追踪见 traceability/builds/wp12-t06/ird-test-report.json；Render.cpp 正向 token↔显示名映射等价重构为 src/RenderText.hpp 共享表后 RPT-T06 全部用例仍绿——行为零变化的回归凭证）",
+      "result": "pass（两模式）"
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ConsistencyThreeFormatTest",
+      "cases": [
+        { "name": "LegalReport_Consistent_FieldCount_RPT07_ACC1", "result": "pass", "trace": "RPT-T07 acceptance 1 前半（RP-CONS-1 全路径：合法报告〔含 =+−@' 前缀/中文/引号/换行文本字段族〕＋三格式真渲染〔HTML 真渲染器＋JSON canonical 经注入 io 工厂替身＋CSV 方言经注入 io 工厂替身〕→ check 一致、fieldCount=13＝矩阵单元格数、零注记；注入缝消费观测——CSV 工件恰经工厂取一个独立 reader）；units/reporting.md §8.5/§9.4/§3.3" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ConsistencyBadSampleTest",
+      "cases": [
+        { "name": "CsvChangeOneValue_ValueLocated_RPT07_ACC1", "result": "pass", "trace": "RPT-T07 acceptance 1（CSV 改一值 → mismatch 恰一条定位到 (csv, kinematics-collision.a-reach.kin.note, value, expected 拐点校验通过, actual 被篡改值)——CSV 回读经注入 reader 后按列名映射比对）；units/reporting.md §8.5" },
+        { "name": "JsonDeleteQualifier_QualifierLocated_RPT07_ACC1", "result": "pass", "trace": "RPT-T07 acceptance 1（JSON 删限定语〔canonical 字节手术去除 token 字面〕→ (json, …kin.estimate, qualifier, expected estimated, actual 空串)——§6.4 硬约束 JSON 面）；units/reporting.md §8.5/§6.4" },
+        { "name": "MismatchesListedExhaustively_NotShortCircuit_RPT07_ACC1", "result": "pass", "trace": "RPT-T07 acceptance 1（§9.4 后置行『mismatches 全量列出（不短路）』：CSV/JSON 两格式各注入一处坏样本 → 恰两条 mismatch 全量列出〔一条 Csv value＋一条 Json qualifier〕——单格式短路即漏报）；units/reporting.md §9.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ConsistencySevenTupleTest",
+      "cases": [
+        { "name": "CsvStatusColumnChange_StatusLocated_RPT07_ACC3", "result": "pass", "trace": "RPT-T07 acceptance 3（七元组 status 维度 CSV 面：status 列 token 篡改 → (csv, 矩阵序首字段行, status, expected feasible, actual engineering-infeasible)——CSV 携带原生 token 列直接比对）；units/reporting.md §8.5/§8.3" },
+        { "name": "CsvResultRefColumnChange_RefLocated_RPT07_ACC3", "result": "pass", "trace": "RPT-T07 acceptance 3（七元组引用维度：result_ref 列 runId 规范文本篡改 → (csv, 矩阵序首字段行, ref, expected run-<hex>, actual run-ff…)——resultRef/evidenceRef 仅 CSV 字段对齐携带故 CSV 面比对〔维度覆盖矩阵登记于 Consistency.hpp 文件头〕）；units/reporting.md §8.5/§8.3" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ConsistencyCsvRoundtripTest",
+      "cases": [
+        { "name": "NastyValueSamples_RoundtripIdentical_NoEscapeIntoStructLayer_RPT07_ACC2", "result": "pass", "trace": "RPT-T07 acceptance 2（RP-CONS-2/NFR-SEC-03——io IO-V01/V02 的报告侧消费：=、+、-、@、' 前缀＋中文＋引号＋换行样例集经 FieldValue.text 合法通道导出→注入 io reader 回读→FieldMatrix 重建比对→与源矩阵逐字符一致〔consistent、零 mismatch〕；文件层/结构化层分离自证——字节含 '=command、''引号前缀、\"line1\\nline2\" 转义形而源矩阵 valueRepr 为原文；空值列〔文本字段 unit/qualifier 空字段〕roundtrip 保持缺席——§8.3 空值≠『不适用』区分；『空串样例』以缺席列承载——SourcedValue::invalid 拒绝空串属 core 契约，测试注释在案）；units/reporting.md §8.5/§8.3/NFR-SEC-03" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ConsistencyParseFailedTest",
+      "cases": [
+        { "name": "JsonTruncated_ParseFailedThrown_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（JSON 半截截断 → ConsistencyMismatch 抛出，detail 含 dimension=parse-failed/format=json）；units/reporting.md §9.4" },
+        { "name": "CsvGarbageWithoutMarker_ParseFailedThrown_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（CSV 无方言标识行数据 → 注入 reader 判失败 → parse-failed 轨——reader 失败不静默当一致）；units/reporting.md §9.4/§8.3" },
+        { "name": "CsvUnclosedQuoteStructure_ParseFailedThrown_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（含换行字段引号对被去除→行字段数与表头不符 → parse-failed——io reader 行校验/检查器行列数防御双闸）；units/reporting.md §9.4" },
+        { "name": "CsvReaderFactoryMissing_ParseFailedThrown_RPT07_ACC5", "result": "pass", "trace": "RPT-T07 acceptance 5（P-RPT-1 注入缝缺位注入〔工厂产出空 reader〕→ parse-failed——CSV 回读能力缺位不静默当一致，『以格式存在当内容一致』禁令的对偶面）；units/reporting.md §9.4/§3.3" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ConsistencyPurityContractTest",
+      "cases": [
+        { "name": "SameInputSameResult_ThreeFormats_RPT07_ACC4", "result": "pass", "trace": "RPT-T07 acceptance 4（全路径纯函数：三格式坏样本输入两次 check——mismatches 逐项相等、consistent/fieldCount 相等；CSV/JSON 工件字节逐位不变）；units/reporting.md §9.4" }
+      ]
+    },
+    {
+      "executable": "sdurws_ird_reporting_contract_test",
+      "suite": "ConsistencyHeaderDisciplineTest",
+      "cases": [
+        { "name": "PublicHeaderZeroIoIncludes_RPT07_ACC5", "result": "pass", "trace": "RPT-T07 acceptance 5（P-RPT-1 公共头零 io 类型纪律常驻自证：Consistency.hpp 源码扫描零 sdurws/ird/io/ include、零 Qt include〔D-01〕——CSV 回读缝只出现 reporting 自有类型〔io ICsvReader 的投影〕，P-RPT-1/P-IO-1 合并裁决补边后直连、签名零改动；本单元不私建 CSV 解析器——检查器对 CSV 字节零文法处理〔NFR-SEC-03 转义唯一实现归 io〕）；units/reporting.md §3.3/§9.4" }
+      ]
+    }
+  ],
+  "builds": {
+    "integrated": {
+      "configure": "build/ 构建树（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON，构建前 grep 复核缓存原行——AGENTS §4.1 口径）",
+      "build": "契约 verify 两命令逐条 exit 0：cmake --build build --config Release --target sdurws_ird_reporting_test / sdurws_ird_reporting_contract_test（integration-build.log；error 计数 0）",
+      "testRun": "sdurws_ird_reporting_test 108/108＋sdurws_ird_reporting_contract_test 38/38（integration-test-run-*.log＋*-integration.xml，failures=0 errors=0；RPT-T06 存量 94+25 全数仍绿＝Render.cpp 等价重构回归凭证，RPT-T07 新增 14+13）"
+    },
+    "smoke": {
+      "configure": "cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke-wp12-t07 -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（vcpkg toolchain 必带〔绝对路径——相对路径在 CMake 工具链解析期失败，wp12-t06 同款实测留痕〕＋Qt6 前缀为 ui 落位后冒烟树所需；smoke-configure.log）",
+      "build": "cmake --build build-smoke-wp12-t07 --config Release（全量）→ exit 0，零 error（smoke-build.log）",
+      "testRun": "sdurws_ird_reporting_test 108/108＋sdurws_ird_reporting_contract_test 38/38（smoke-test-run-*.log＋*-smoke.xml，failures=0 errors=0）"
+    },
+    "gates": {
+      "tool": "ird_gates（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake，WP-01-T01 落地）——cmake -DIRD_ROOT=<各树>/industrialrobot -DIRD_ENABLE_GIT=OFF -P ird_gates.cmake",
+      "result": "base（a0a8b99d detached worktree 复跑，比对后清理）与 branch（wp12-t07 工作树）归一化 IRDRoot 后命中集逐行 diff 零差异——GATES-HIT-SET-IDENTICAL（gates-hit-set-diff.txt）；两侧各 54 项命中全为既有登记归属，零 reporting 命中、零 RPT-T07 新增命中（Consistency.hpp/.cpp include 面＝reporting 自有；io 零编译边——CSV 回读经 IReportCsvReader 注入缝，公共头零 io 类型）"
+    },
+    "governance": {
+      "validateTask": "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/RPT-T07.json → PASS (1 tasks)（validate-task.log）",
+      "validateDocs": "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1 → PASS（20 units, 12 trace entries, 150 task files）（validate-docs.log）"
+    }
+  },
+  "acceptanceCoverage": [
+    { "item": 1, "covered": "RP-CONS-1 逐字段一致与坏样本定位：合法报告三格式渲染→consistent＋fieldCount 断言（ContractTest.LegalReport_Consistent_FieldCount——13 单元格；UnitTest.HtmlPlusJsonMirror——5 单元格两格式全路径）；坏样本三形态具名注入→mismatch 恰一/恰二条定位到 (format, fieldKey, dimension, expected/actual)：HTML 删 data-field〔删属性/删整格两形态→missing〕、CSV 改一值〔→value〕、JSON 删限定语〔→qualifier〕（DeleteDataFieldAttribute/DeleteWholeValueCell/CsvChangeOneValue/JsonDeleteQualifier）；mismatches 全量列出不短路（MismatchesListedExhaustively_NotShortCircuit——两格式各一处→恰两条）；units/reporting.md §8.5/§9.4" },
+    { "item": 2, "covered": "RP-CONS-2 CSV 转义 roundtrip（NFR-SEC-03——io IO-V01/V02 的报告侧消费）：=、+、-、@、' 前缀＋中文＋引号＋换行样例集经 FieldValue.text 合法通道导出→注入 io reader 回读→FieldMatrix 重建比对→逐字符一致（NastyValueSamples_RoundtripIdentical_NoEscapeIntoStructLayer）；转义形式不进入结构化层——文件层字节含转义形〔'=command、''引号前缀、引号化换行字段〕而源矩阵值恒原文，consistent 判定即还原发生且无残留；空值列 roundtrip 保持缺席〔§8.3 空值≠『不适用』；『空串样例』以缺席列承载——SourcedValue::invalid 拒绝空串属 core 契约，替身边界声明在案〕；CSV 回读消费 io reader 非自写解析〔acceptance 5 同条〕；units/reporting.md §8.5/§8.3" },
+    { "item": 3, "covered": "七元组逐字段比对：fieldKey＝对齐键（join key）＋value/unit/status/qualifier/ref 五维度词表〔§9.4 dimension 注释原文〕；缺失字段（某格式未输出该 fieldKey）＝mismatch（missing 维度——expected=源值/actual=<absent> 标记，DeleteDataFieldAttribute 两形态）；限定语丢失＝mismatch 全格式面（§6.4 硬约束——『跳过限定语维度』禁令的反面：qualifier 三格式全携带全比对，DeleteQualifierSpan/JsonDeleteQualifier）；数值以 to_chars 文本规范形比对（value 维度恒字符串逐字符——非浮点再解析，D-09；status 维度：CSV 原生 token 列直比〔CsvStatusColumnChange〕＋HTML 显示名经 src/RenderText.hpp 共享表反查 token 比对〔ChangeStatusDisplay——正反同表值单源〕；ref 维度 CSV 面独立比对 resultRef/evidenceRef〔CsvResultRefColumnChange〕）；各格式维度覆盖矩阵按 §8.1/§8.3 冻结格式面登记于 Consistency.hpp 文件头——JSON 字段镜像不携带 field 对齐 status、HTML/JSON 不携带字段对齐引用列＝结构上不输出的维度无回读值可比（与『携带却不查』的禁止项不同质），单元卡 §14.4 v0.10 同步登记；units/reporting.md §8.5/§9.4/§6.4" },
+    { "item": 4, "covered": "纯函数纪律：同输入同结论（PurityTest/PurityContractTest——unit 与全路径两面，consistent/fieldCount/mismatches 逐项相等）＋不修改任何输入（工件字节逐位不变）＋并发安全（无共享可变状态、注入工厂每次产出独立 reader）；单格式工件集（artifacts<2）平凡通过＋注记（TrivialPassTest 零工件/单工件两形态——notes 承载位为 §9.4 形状偏差，DTB §5.4/单元卡 §14.4 v0.10 登记）；回读本身失败（格式损坏）→ ConsistencyMismatch（dimension=parse-failed）错误轨抛出：JSON 截断/CSV 无标识行/CSV 引号结构破坏/HTML 条目行内截断/CsvReaderFactoryMissing 五用例；结构层损坏（parse-failed 轨）与内容层差异（mismatch 轨）语义分立——失败语义边界登记于 Consistency.cpp 文件头；units/reporting.md §9.4" },
+    { "item": 5, "covered": "P-RPT-1 处置：CSV 回读的 io reader 来源在注入形态下经测试注入（IReportCsvReaderFactory 构造注入——FakeCsvReader 为 io ICsvReader 投影的最小确定性替身，边界声明在案；P-RPT-1/P-IO-1 合并裁决补边后直连、签名零改动）；公共头零 io 类型（ConsistencyHeaderDisciplineTest——Consistency.hpp 源码扫描零 sdurws/ird/io/ include 常驻自证＋LinkageContractTest 构建图零 io 边仍绿）；不私建第二套 CSV 解析器（NFR-SEC-03 转义唯一实现归 io——检查器对 CSV 字节零文法处理：回读消费注入 reader 的还原产物、只做列名→维度映射〔extractCsv 注释与 CsvGarbageWithoutMarker/ReaderFactoryMissing 用例即其消费面证据〕；JSON 解析为 reporting 自有 schema 回读面〔§8.5『JSON：parse→字段遍历』——契约注记 io reader 注入仅 CSV，与 P-RPT-1 同案口径一致〕）；units/reporting.md §3.3/§8.5/§9.4" }
+  ]
+}
