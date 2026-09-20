@@ -2427,6 +2427,46 @@
       "title": "F-012/F-232/F-233/F-234/F-237/F-239/F-240 同族再现：RPT-T08 两辅助提交 8f44f45f『[RPT-T08] reporting 单元卡 v0.11：RPT-T08 实现落位登记（文档同步）』与 be46cf75『[RPT-T08] 验证留痕：双模式构建/测试执行/门禁/治理自查证据（wp12-t08）』标题前缀后均以名词短语开头（实现提交 0c3dd4ee『[RPT-T08] 实现措辞冻结渲染规则（限定语映射/两类声明前置断言）』动词开头合规）——家族第 12/13 例（RPT 系连续七任务复踩）；两提交正文四段齐备、验证结论（十八件留痕、120＋38 双模式全绿、新增 12 用例、gates 双树命中集一致、validate 双 PASS）经验收者逐项独立复跑全部证实（零粉饰），纯风格瑕疵不构成阻断",
       "owner": "AGENTS.md/PIPE 文档所有者（提交信息约定维护方；与 F-012/F-232/F-233/F-234/F-237/F-239/F-240 家族合并处置）",
       "resolution": "与 F-012/F-232/F-233/F-234/F-237/F-239/F-240 合并处置：实施者模板补动词开头示例与负例（F-012 建议②）落地前预计持续再现。对已推送历史不追溯改写（AGENTS §6.3）。不阻塞 RPT-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-240。"
+    },
+    {
+      "id": "F-242",
+      "source": "traceability/acceptance/RPT-T09-20260920.md#4.9／发现的问题清单-G-1（attempt 1，verdict=pass，2026-09-20；送验对象 35d2ece4442af8ede6a7f788d8b4112d83cac3cc，分支 wp12-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-012/F-232/F-233/F-234/F-237/F-239/F-240/F-241 同族再现：RPT-T09 三辅助提交 e0836c5b『[RPT-T09] reporting 单元卡 v0.12：RPT-T09 实现落位登记（文档同步）』、ec021752『[RPT-T09] 验证留痕：双模式构建/测试执行/门禁/治理自查证据（wp12-t09）』与 35d2ece4『[RPT-T09] 验证留痕补交：门禁/构建/测试运行/治理自查日志 -f 入库（wp12-t09）』标题前缀后均以名词短语开头（实现提交 8a6004cc『[RPT-T09] 实现导出与归档协调（Export/Archive＋IReportArtifactSink 契约与 Fake）』动词开头合规）——家族新增第 14/15/16 例（RPT 系连续八任务复踩，单任务三例为家族首次）；四提交正文四段齐备、验证结论（留痕分次 7＋11＝18 件、150＋51 双模式全绿、新增 30＋13 用例、gates 命中集三日志比对一致、validate 双 PASS）经验收者逐项独立复跑全部证实（零粉饰），纯风格瑕疵不构成阻断",
+      "owner": "AGENTS.md/PIPE 文档所有者（提交信息约定维护方；与 F-012/F-232/F-233/F-234/F-237/F-239/F-240/F-241 家族合并处置）",
+      "resolution": "与 F-012/F-232/F-233/F-234/F-237/F-239/F-240/F-241 合并处置：实施者模板补动词开头示例与负例（F-012 建议②）落地前预计持续再现。对已推送历史不追溯改写（AGENTS §6.3）。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-241。"
+    },
+    {
+      "id": "F-243",
+      "source": "traceability/acceptance/RPT-T09-20260920.md#4.9／发现的问题清单-G-2（attempt 1，verdict=pass，2026-09-20；送验对象 35d2ece4442af8ede6a7f788d8b4112d83cac3cc，分支 wp12-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-041/F-073/F-235/F-236/F-238 同族再现（散文计数口径失准）：ird-test-report.json（builds/wp12-t09）gates 段『base/branch 各 61 处 IRD-GATE- 命中』的 61 为原始日志行计数（独立命中 27×流式＋摘要两遍重复＋自测提及 7——验收者全新 head 树直跑同构 61/27 复现），独立命中实为 27 项；方向为多报命中数（对交付面不利方向的夸大），命中集实质结论『零新增、reporting 相关命中 0』经验收者三日志归一化比对独立成立——纯计数口径措辞失准，非结论失实；同报告其余散文计数（留痕 7＋11＝18 件、新增 30＋13 用例、单元 150＝120＋30、契约 51＝38＋13）经验收者逐项实测全部准确",
+      "owner": "reporting 单元实施者（后续 RPT-T10+ 报告的 gates 计数以『命中 N 项』独立口径为准——日志自身『命中 27 项』即正确表述）；F-041/F-073/F-235/F-236/F-238/F-243 家族可在治理面合并处置",
+      "resolution": "gates 计数统一采用 ird_gates 摘要段的『命中 N 项』独立口径（或标注『原始行 M＝独立 N×2＋自测 K』换算），不以 grep 行数为『命中』基数；不追溯改写已推送提交（AGENTS §6.3）。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-242。"
+    },
+    {
+      "id": "F-244",
+      "source": "traceability/acceptance/RPT-T09-20260920.md#4.9／发现的问题清单-G-3（attempt 1，verdict=pass，2026-09-20；送验对象 35d2ece4442af8ede6a7f788d8b4112d83cac3cc，分支 wp12-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-010/F-077/F-081/F-083/F-085/F-087/F-088/F-090 根因（.gitignore 第 87 行全局 *.log 与 AGENTS §4.2 留痕要求结构性冲突，F-223 已登记系统性处置）RPT 系首例再现且为自纠型：RPT-T09 留痕提交 ec021752 按目录 git add 时 11 件日志被忽略规则吞掉（该提交实入 7 件——git show --name-status 实证），随后 35d2ece4 以 git add -f 补交并在提交正文如实说明根因与先例（不 amend 已推送历史合规）；与 F-223 所记『四次导致同族验收 fail』不同，本例在验收请求发出前已自闭环（18/18 件在库零缺失、零证据缺口）——根因未除，后续任务仍将依赖实施者自觉 -f",
+      "owner": "仓库治理所有者（.gitignore 规则与留痕路径的结构性修正——F-223 同 owner 同处置面；实施者侧以 git add 后 git status 复核件数为过渡动作）",
+      "resolution": "并入 F-223 系统性处置（traceability/ 路径豁免 *.log 忽略或显式 negation 规则）；过渡期实施者提交留痕后须以 git ls-files 对账件数与提交正文一致。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-243。"
+    },
+    {
+      "id": "F-245",
+      "source": "traceability/acceptance/RPT-T09-20260920.md#4.9／发现的问题清单-G-4（attempt 1，verdict=pass，2026-09-20；送验对象 35d2ece4442af8ede6a7f788d8b4112d83cac3cc，分支 wp12-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-036/F-038 同型再现（全树口径强度表述缺树 scope 标注）：ird-test-report.json（builds/wp12-t09）gates.build 段『集成模式 cmake --build build --config Release 全树零错误（integration-build.log）』未标注构建树——该日志产自主仓库根 build/ 树（日志内产物路径 D:/10_Source_Repos/21_robot/RobWork/build/... 实证；AGENTS §4.1 唯一交付口径树、增量缓存，其中 RWSimulatorPlugin.dll 构建成功），而全新 worktree 树的全树构建被 F-008/F-235 基线缺陷阻断（RPT-T09 验收者复现 73 错——RWSimulatorPlugin 的框架 Math.hpp min/max 宏污染簇＋bt_plugin 的 Eigen Parallelizer.h 同族宏污染；涉事 Math.hpp blob 在 base/head/HEAD 三处同值 7357cd31，零任务触碰，industrialrobot 全目标零错误）。主树口径结论为真，但『全树零错误』可达范围以树而定，报告未区分",
+      "owner": "reporting 单元实施者（后续 RPT-T10+ 报告与提交的全树口径标注『主树/全新树』scope）；F-008/F-235 框架基线缺陷归框架所有者（patches 登记面）",
+      "resolution": "全树口径表述统一标注构建树 scope（『主树增量全树零错误』或『全新树全树零错误』）；全新树全树口径在 F-008/F-235 修复前以『不可达（基线缺陷，与任务无关）』如实标注。与 F-036/F-038 家族合并处置。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-244。"
     }
   ]
 }
