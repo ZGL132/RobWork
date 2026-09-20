@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "同步 reporting 文档与门禁（README 核对/待裁决状态更新/裁决申请提交）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RPT-T01",
     "RPT-T02",
