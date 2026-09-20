@@ -1,8 +1,8 @@
-{
+﻿{
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 238,
+  "tickCount": 239,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -14,10 +14,10 @@
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 1
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-20T14:51:04+08:00",
+    "updatedAt": "2026-09-20T18:19:55+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1390,6 +1390,21 @@
       ],
       "acceptanceRecord": "traceability/acceptance/RPT-T10-20260920.md",
       "mergedAt": "2026-09-20"
+    },
+    {
+      "task": "RPT-T11",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "69d23968353877e2bd07024f3ca192c370418e9a",
+        "ad7e8d1ef05790cdd11dc333d80958b7b0ce7fbd",
+        "08766bd28f9bdd1e87fec97614d4852833a0d8dc",
+        "e412eea23c36a9caec76624ba2830b41730f9ddb",
+        "e995689021af7a657e647fb728000a10ed03f64e"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T11-20260920-r2.md",
+      "mergedAt": "2026-09-20",
+      "failReason": "验收 attempt1 fail（B-1 同族第五次：11 件 .log 留痕被 .gitignore *.log 吞且未 add -f，提交声称 19 份实际入库 8 份，F-250）——返工 e9956890 补交 11 件后 attempt2 pass；attempt1 验收建议级 F-251 与 attempt2 建议级 F-252 均随 evidence 分支转登，F-250/F-251 已随 ⑤ 自 acc/RPT-T11/1 逐字转录入主线（F-250 循其 resolution 翻转 fixed，fixedBy=e9956890）"
     }
   ],
   "policy": {
@@ -1415,11 +1430,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "RPT-T11",
-      "contractPath": "tasks/foundation/RPT-T11.json",
-      "branch": "wp12-t11"
-    },
     {
       "taskId": "RPT-T12",
       "contractPath": "tasks/foundation/RPT-T12.json",
@@ -1499,5 +1509,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "667da858-b9be-4223-aabb-8717691f44db"
+  "tickToken": "958bda76-c1ce-4a78-ab28-066ba6ce0a9a"
 }

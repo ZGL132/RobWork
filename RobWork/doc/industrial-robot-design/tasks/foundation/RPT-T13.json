@@ -1,4 +1,4 @@
-{
+﻿{
   "schemaVersion": "ird-task/1",
   "taskId": "RPT-T13",
   "unit": "reporting",
@@ -13,7 +13,6 @@
     "RPT-T05",
     "RPT-T06",
     "RPT-T07",
-    "RPT-T11",
     "RPT-T12"
   ],
   "requirements": [

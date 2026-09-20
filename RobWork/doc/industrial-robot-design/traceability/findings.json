@@ -1,4 +1,4 @@
-{
+﻿{
   "schemaVersion": "ird-findings/1",
   "note": "验收与治理发现跟踪登记册（PIPE v1.3 §7 / ACC v1.2 §5）：验收建议级问题必须逐条转登于此，只写进验收记录'留档'不构成闭环；每份验收记录的 4.8 核对未关闭条目。状态 open/fixed；severity 暂分 blocking/suggestion。",
   "findings": [
@@ -2507,6 +2507,27 @@
       "title": "F-041/F-073/F-235/F-236/F-238/F-243/F-025 散文计数失准家族再现（RPT-T10 三处，方向混杂、无证据缺失、实质结论经独立复跑全部成立）：①0c95de0e 正文『留痕目录（17 个文件）』与该提交实入库 7 件不符（7＋被吞 11＝18，『17』与最终在库数亦不合）；②4110786a 正文『十份 .log』实入库 11 件（少报 1）；③ird-test-report.json gates 段与 55e34f9d 正文『base/branch 各 61 处 IRD-GATE- 命中』——61 为原始日志行数（含流式＋摘要两遍重复与自测提及），独立命中实为 27 项（日志自身『命中 27 项』与 gates-all-note.txt『原始 IRD-GATE- 行各 61 处』口径准确在案）——与 F-243 对 wp12-t09 同字段的裁定同型",
       "owner": "reporting 单元实施者（后续提交正文与 ird-test-report 的计数以可机核命令输出为准）；F-012 家族模板补救落地后随模板带计数核对提示",
       "resolution": "与 F-041/F-243 计数家族合并处置：留痕/正文计数逐项以 git show --name-status、grep -c 等可机核输出为源，命中数区分『原始行数』与『独立命中数』两口径。不阻塞 RPT-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-248。"
+    },
+    {
+      "id": "F-250",
+      "source": "traceability/acceptance/RPT-T11-20260920.md#4.9/4.10-问题清单-G-1（attempt 1，verdict=fail，2026-09-20；送验对象 e412eea23c36a9caec76624ba2830b41730f9ddb，分支 wp12-t11）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-09-20",
+      "title": "F-010/F-223/F-244/F-248 根因第 3 次连续再现且本次无自纠（本条为 RPT-T11 验收 fail 的阻断主因）：提交 e412eea2 正文声称『traceability/builds/wp12-t11/ 新增 19 份验证留痕』且 validate-task/validate-docs 日志『均随本提交归档』，实际仅 8 份入库（git show --stat 与 head 树 ls 实证）——11 件 .log（gates base/branch、integration-build、integration/smoke-test-run ×4、smoke-build、smoke-configure、validate-docs、validate-task）被 .gitignore 第 87 行全局 *.log 规则吞掉，未 git add -f 补交。11 件在实施者主树以 ignored 状态存在且内容经验收者逐份核验与声称相符（196/196/58/58、PASS 同数字、29 处命中）——内容真实、归档失实（多报型，别于 F-028/F-030 少报型）；DoD-3『构建日志』腿在送验对象中缺失",
+      "owner": "构建约定所有者（DTB §5.1 辖域——.gitignore 负例规则/留痕后缀惯例成文）＋实施者（wp12-t11 补交提交）",
+      "resolution": "系统性处置（并入 F-223/F-248 既有方案二选一成文）：.gitignore 负例规则 !RobWork/doc/industrial-robot-design/traceability/**/*.log，或留痕一律 .txt 后缀惯例入实施者模板（PIPE 附录 C）并在 add 后 git status 核验入库件数；本任务返工：wp12-t11 追加提交 git add -f 补交 11 件（或 .txt 化），正文如实登记，随后重新全量验收（attempt 2）",
+      "fixedBy": "e995689021af7a657e647fb728000a10ed03f64e"
+    },
+    {
+      "id": "F-251",
+      "source": "traceability/acceptance/RPT-T11-20260920.md#4.3-问题清单-G-2（attempt 1，verdict=fail，2026-09-20；送验对象 e412eea23c36a9caec76624ba2830b41730f9ddb，分支 wp12-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "契约 verify 第 3 条 ctest 命令在任何树上空转：ctest --test-dir build -C Release -R \"^sdurws_ird_reporting\" 恒 exit 0＋『No tests were found!!!』——框架顶层至 RobWorkStudio/src 各级 CTestTestfile.cmake 全部缺失（框架未在顶层调用 enable_testing，worktree 全新树与主树逐级 ls 双实证），ctest 自 build/ 根无法递归发现任何测试；RPT-T11 契约 note 援引的『UI-T14 ctest 先例』（UI-T14 契约 verify 同款 --test-dir build 口径）将同族踩中。测试实质执行真实成立（修正路径 --test-dir 指到 reporting 叶子目录 2/2 通过＋直接执行双 exe 196＋58 双模式全绿），故为建议级口径缺陷非执行造假",
+      "owner": "构建约定所有者（DTB §5.1 辖域）",
+      "resolution": "二选一：①框架接线修复（RobWork 顶层或 RobWorkStudio 级按 BUILD_TESTING 调 enable_testing 使 CTestTestfile 链贯通——涉框架 CMake 按 SA-02 先登记 patch）；②契约 verify 口径修订（--test-dir 指向单元叶子构建目录，或改直接执行/target 口径）并同步 UI-T14 契约同款命令；PIPE 附录 C 实施者模板提示 verify 命令须以『发现并执行非零个测试』为准验收"
     },
     {
       "id": "F-252",

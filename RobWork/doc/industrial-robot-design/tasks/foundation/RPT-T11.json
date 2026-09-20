@@ -1,10 +1,10 @@
-{
+﻿{
   "schemaVersion": "ird-task/1",
   "taskId": "RPT-T11",
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现测试替身与契约套件（四具名替身＋RP-* 用例体全量收口）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RPT-T02",
     "RPT-T03",
