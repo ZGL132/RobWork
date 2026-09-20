@@ -2599,6 +2599,16 @@
       "title": "F-012/F-232~F-242/F-247 家族再现（RPT 系连续第十例）：RPT-T13 辅助提交 3396a00c 标题『[RPT-T13] reporting 单元卡 v0.16 文档与门禁同步（§14.3 状态逐条＋§12 交接表刷新＋零偏差登记）』前缀后以名词短语『reporting 单元卡』开头——不合 ACC §4.9/AGENTS §6.3『动词开头』字面；另两提交（9edb2a2c『提交…』、9000bfee『归档…』）动词开头合规。正文四段齐备、验证结论经验收者独立复跑全部证实（双模式 208＋61×2、GATES-HIT-SET-IDENTICAL、validate 双 PASS、22 件留痕清点同值），纯风格瑕疵",
       "owner": "reporting 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
       "resolution": "后续任务提交标题在前缀后使用动词开头（如『同步…』『登记…』『归档…』）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 RPT-T13 合入（attempt 1 verdict=pass）。编号顺延自 F-257。"
+    },
+    {
+      "id": "F-259",
+      "source": "traceability/builds/wp10-t03/gates-hit-set-diff.txt＋traceability/wp10-t03-gate-registrations.md §1（UI-T03 实施端自登记，2026-09-20；base efed7256 detached worktree 脚本模式复跑 29 处 vs 本分支 32 处，diff 恰为本条 3 处）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "ird_gates 第 4b 步 ui 产品面 Qt 类头扫描命中 3 处（WorkbenchShell.cpp/WorkbenchShell_p.hpp/ShellSupport.cpp 各 1）——UI-T03 按 ui.md §13 交付工作台壳实现后 ui 产品面首次引入 Qt 头包含，R-3 例外的头包含半区机器面滞后：DTB §4.5 人工登记册 R-3 行（『预登记（WP-10-T02 生效）』，例外范围『仅 sdurws_ird_ui 与 ui 测试目标』）已登记 ui 为全产品唯一 Qt 例外单元（NFR-MNT-01），机器面豁免表未同步",
+      "owner": "WP-01-T03（ird_gates_whitelist.cmake/ird_gates.cmake 第 4b 步机器面回填——traceability/wp10-t03-gate-registrations.md §1.2 同文请求：对 ui 单元产品面豁免并按 §3.1 登记原文钉住例外文本）",
+      "resolution": "WP-01-T03 回填后命中集合回归基线 29；回填前该 3 处命中为契约明文＋人工登记册已登记的合法形态（F-227 同口径），不阻塞 UI-T03 验收与合入。骨架 diff＝基线隔离证据（既有 29 处零新增零移除，traceability/builds/wp10-t03/gates-hit-set-diff.txt）。编号顺延自 F-258。"
     }
   ]
 }
