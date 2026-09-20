@@ -47,6 +47,7 @@
 #include <sdurws/ird/reporting/Sections.hpp>
 
 #include "FakeArchiveWriter.hpp"
+#include "ScriptedResultSource.hpp"
 
 namespace {
 
@@ -294,38 +295,14 @@ public:
     }
 };
 
-/// 归档结果注入源（§7.6 输入①——tryEnvelope/tryReproduction 脚本化；
-/// currentnessOf/eligibilityOf 非本任务消费面，越权调用判红）。
-class FakeResultSource final : public IReportResultSource {
-public:
-    std::map<std::string, evidence::ResultEnvelope> envelopes;          ///< 键＝runId 规范文本
-    std::map<std::string, evidence::ReproductionBlock> reproductions;   ///< 同上
-
-    std::optional<evidence::ResultEnvelope> tryEnvelope(core::RunId runId) const override
-    {
-        const auto it = envelopes.find(runId.toCanonical());
-        return it == envelopes.end() ? std::nullopt : std::optional{it->second};
-    }
-
-    evidence::CurrentnessResult currentnessOf(const evidence::ResultEnvelope&,
-                                              core::RevisionId) const override
-    {
-        ADD_FAILURE() << "currentnessOf 不可达（证据包组装不消费当前性投影）";
-        return {};
-    }
-
-    ReportEligibilityChecks eligibilityOf(const evidence::ResultEnvelope&) const override
-    {
-        ADD_FAILURE() << "eligibilityOf 不可达（证据包组装不消费资格纯检查）";
-        return {};
-    }
-
-    std::optional<evidence::ReproductionBlock> tryReproduction(core::RunId runId) const override
-    {
-        const auto it = reproductions.find(runId.toCanonical());
-        return it == reproductions.end() ? std::nullopt : std::optional{it->second};
-    }
-};
+/// 归档结果注入源——RPT-T11 收敛：局部 FakeResultSource 拆除，消费具名
+/// 正本 ScriptedResultSource（test/ScriptedResultSource.hpp）。语义差异登记：
+/// 正本缺省行为＝Feasible/Current/资格成立/复现块可解析，本文件两用例仅
+/// 消费其 envelopes/reproductions 脚本表（显式登记）；原局部类对
+/// currentnessOf/eligibilityOf 的"越权调用判红"（ADD_FAILURE）由正本调用
+/// 计数面承接——本文件断言面保持等强度（addBundleTest 全链不消费当前性/
+/// 资格投影——见 BundleEnv 注入后的计数守卫）。
+using FakeResultSource = test_fakes::ScriptedResultSource;
 
 /// 归档事实注入源（§7.6 输入②——三项事实逐运行脚本化；从表中移除条目＝
 /// 事实缺位（nullopt）——BundleIncomplete 缺失清单的注入路径）。
@@ -551,6 +528,13 @@ TEST(BundleTest, AssemblesCompleteBundleWithAllEntries)
     ASSERT_EQ(out.status, BundleStatus::Completed) << (out.error ? out.error->what() : "");
     ASSERT_TRUE(out.totalDigest.has_value());
 
+    // 具名替身计数守卫（正本承接原局部类"越权调用判红"等强度面）：证据包
+    // 组装全链不消费当前性/资格投影——两计数表保持为空。
+    EXPECT_TRUE(env.resultSource.currentnessCalls.empty())
+        << "证据包组装不消费 currentnessOf（越权调用判红的计数承载）";
+    EXPECT_TRUE(env.resultSource.eligibilityCalls.empty())
+        << "证据包组装不消费 eligibilityOf（越权调用判红的计数承载）";
+
     // 条目枚举（§10.1 RP-BUN-1 观测点"条目枚举"）：恰四条目。写出序＝
     // 字典序（其余条目按条目名字节序——NFR-COR-02）＋bundle.json 殿后
     // （其 totalDigest 依赖其余全部条目——装配顺序的结构约束）。
@@ -724,7 +708,9 @@ TEST(BundleTest, MissingElementsAreListedExhaustively)
     BundleEnv env;
     const core::RunId run = env.report.resultRefs()[0].runId;
     // 注入五项事实全缺（envelope/reproduction/envelope-digest/case-set/
-    // configurations 逐项移除）。
+    // configurations 逐项移除）。具名替身正本的复现块缺省行为＝可解析，
+    // 缺位注入须同时关闭缺省开关（ScriptedResultSource::reproductionAvailable）。
+    env.resultSource.reproductionAvailable = false;
     env.resultSource.envelopes.erase(run.toCanonical());
     env.resultSource.reproductions.erase(run.toCanonical());
     env.bundleSource.envelopeDigests.erase(run.toCanonical());
