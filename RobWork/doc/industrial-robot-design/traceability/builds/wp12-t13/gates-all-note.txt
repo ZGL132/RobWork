@@ -1,0 +1,2 @@
+# ird_gates 双树直跑结论：集成树 build/ 与冒烟树 build-smoke-wp12-t13/ 命中集指纹全等，且与 wp12-t12 验收基线（branch 树）全等——GATES-HIT-SET-IDENTICAL，零新增命中
+# 明细与口径见 gates-hit-set-diff.txt；原始输出（MSBuild 控制台 GBK 捕获，码/目标名 ASCII 面完整）见 gates-ird-gates-integration-tree.log / gates-ird-gates-smoke-tree.log

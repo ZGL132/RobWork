@@ -1,0 +1,51 @@
+# ird_gates 命中集对比（RPT-T13 纯文档任务，2026-09-20）
+# 对比对象：集成树 build/ vs 冒烟树 build-smoke-wp12-t13/ vs wp12-t12 验收基线（gates-ird-gates-branch.log）
+# 口径：IRD-GATE 码出现次数＋目标族出现次数全等（计数按 grep -o 出现次数非行数——本任务日志存在 MSBuild 控制台粘行；文本级 diff 受控制台 GBK 捕获编码干扰，码/目标名/计数均为 ASCII 不受影响；wp12-t12 基线 gates-hit-set-diff.txt 已证其与 base 的差异仅为 worktree 路径前缀）。IRD-GATE 自测行〔自测 pass/fail_*〕为门禁脚本自检，非依赖命中，不参与对比
+
+════ 集成树 build/ ════
+-- IRD-GATE 码分布（次数）--
+      8 IRD-GATE-LIB
+      1 IRD-GATE-R1
+      7 IRD-GATE-R3
+      3 IRD-GATE-R4
+      1 IRD-GATE-R5
+     39 IRD-GATE-SUB
+      5 IRD-GATE-T1
+      1 IRD-GATE-T2
+-- IRD-GATE 行内目标族出现次数 --
+libzip::zip: 6
+expat::expat: 2
+Qt6::Core/Gui/Widgets:       2 Qt6::Core       2 Qt6::Gui       2 Qt6::Widgets 
+ProjectStoreImpl.cpp 命中: 2
+
+════ 冒烟树 build-smoke-wp12-t13/ ════
+-- IRD-GATE 码分布（次数）--
+      8 IRD-GATE-LIB
+      1 IRD-GATE-R1
+      7 IRD-GATE-R3
+      3 IRD-GATE-R4
+      1 IRD-GATE-R5
+     39 IRD-GATE-SUB
+      5 IRD-GATE-T1
+      1 IRD-GATE-T2
+-- IRD-GATE 行内目标族出现次数 --
+libzip::zip: 6
+expat::expat: 2
+Qt6::Core/Gui/Widgets:       2 Qt6::Core       2 Qt6::Gui       2 Qt6::Widgets 
+ProjectStoreImpl.cpp 命中: 2
+
+════ wp12-t12 验收基线 ════
+-- IRD-GATE 码分布（次数）--
+      8 IRD-GATE-LIB
+      1 IRD-GATE-R1
+      7 IRD-GATE-R3
+      3 IRD-GATE-R4
+      1 IRD-GATE-R5
+     39 IRD-GATE-SUB
+      5 IRD-GATE-T1
+      1 IRD-GATE-T2
+-- IRD-GATE 行内目标族出现次数 --
+libzip::zip: 6
+expat::expat: 2
+Qt6::Core/Gui/Widgets:       2 Qt6::Core       2 Qt6::Gui       2 Qt6::Widgets 
+ProjectStoreImpl.cpp 命中: 2

@@ -1,0 +1,50 @@
+# 集成模式构建命令（AGENTS §4.1 集成口径；RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 已 grep 确认 build/CMakeCache.txt）
+# cmake -S RobWork -B build -G "Visual Studio 17 2022" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON
+# cmake --build build --config Release --target sdurws_ird_reporting_test sdurws_ird_reporting_contract_test ird_gates
+閫傜敤浜 .NET Framework MSBuild 鐗堟湰 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_reporting
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_reporting_test
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
+閫傜敤浜 .NET Framework MSBuild 鐗堟湰 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_reporting
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_reporting_contract_test
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_contract_test.exe
+
+# 复跑（干净退出码确认）：cmake --build build --config Release --target sdurws_ird_reporting_test sdurws_ird_reporting_contract_test
+# 退出码 0；grep -c "error" integration-build.log = 0（零错误）；两测试目标 exe 增量生成成功（输出见上）
