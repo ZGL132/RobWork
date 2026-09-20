@@ -1,0 +1,46 @@
+[==========] Running 16 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from UiBuild
+[ RUN      ] UiBuild.SourceTreeReachable_UI_BUILD
+[       OK ] UiBuild.SourceTreeReachable_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.PlacementStaticRegistration_UI_BUILD
+[       OK ] UiBuild.PlacementStaticRegistration_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD
+[       OK ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD
+[       OK ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD (3 ms)
+[ RUN      ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD
+[       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (3 ms)
+[ RUN      ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD
+[       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (3 ms)
+[----------] 6 tests from UiBuild (11 ms total)
+
+[----------] 2 tests from ShellModel
+[ RUN      ] ShellModel.UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1
+[       OK ] ShellModel.UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1 (0 ms)
+[ RUN      ] ShellModel.StatusBarFormat_PM11_Matrix_UI_T03_ACC2
+[       OK ] ShellModel.StatusBarFormat_PM11_Matrix_UI_T03_ACC2 (0 ms)
+[----------] 2 tests from ShellModel (0 ms total)
+
+[----------] 8 tests from StatusWordModel
+[ RUN      ] StatusWordModel.SevenStateMappingTableRows_UISTG3_UI_T04_ACC1
+[       OK ] StatusWordModel.SevenStateMappingTableRows_UISTG3_UI_T04_ACC1 (0 ms)
+[ RUN      ] StatusWordModel.SevenStatePriorityChain_UISTG3_UI_T04_ACC1
+[       OK ] StatusWordModel.SevenStatePriorityChain_UISTG3_UI_T04_ACC1 (0 ms)
+[ RUN      ] StatusWordModel.FrozenVocabularyNoNewWords_UI_T04_ACC1
+[       OK ] StatusWordModel.FrozenVocabularyNoNewWords_UI_T04_ACC1 (0 ms)
+[ RUN      ] StatusWordModel.NotEvaluablePresentedAsStale_UI_T04_ACC1
+[       OK ] StatusWordModel.NotEvaluablePresentedAsStale_UI_T04_ACC1 (0 ms)
+[ RUN      ] StatusWordModel.FormalPassDisplayGate_UI_T04_ACC2
+[       OK ] StatusWordModel.FormalPassDisplayGate_UI_T04_ACC2 (0 ms)
+[ RUN      ] StatusWordModel.DisplayDisciplineCompanions_UI_T04_ACC2
+[       OK ] StatusWordModel.DisplayDisciplineCompanions_UI_T04_ACC2 (0 ms)
+[ RUN      ] StatusWordModel.NineStateLabelKeys_PM03_UI_T04_ACC2
+[       OK ] StatusWordModel.NineStateLabelKeys_PM03_UI_T04_ACC2 (0 ms)
+[ RUN      ] StatusWordModel.CurrentnessPortValueCarriers_O31_UI_T04_ACC3
+[       OK ] StatusWordModel.CurrentnessPortValueCarriers_O31_UI_T04_ACC3 (0 ms)
+[----------] 8 tests from StatusWordModel (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 16 tests from 3 test suites ran. (12 ms total)
+[  PASSED  ] 16 tests.

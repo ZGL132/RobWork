@@ -58,6 +58,8 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #     布局记忆/首页/状态栏/门控）；
 #   - src/ShellSupport.cpp＝壳支撑设施（壳层命令板/最近项目模型/后台落盘
 #     线程/布局记忆/§3.5 UI 码描述符表）。
+#   - src/StatusProjection.cpp＝七态公共状态呈现实现（UI-T04——§6.3 词表
+#     token/文案键表与映射求值纯函数；§13 UI-T04 行"七态公共状态呈现"）。
 # 不开启 AUTOMOC（UI-T03 增量登记）：三个源文件与私有头零 Q_OBJECT 声明——
 # 壳的 Qt 交互全部经虚函数覆盖（resizeEvent）与既有信号＋lambda 接线，无
 # 信号槽声明需求（ui.md §10.1 v0.5 登记）；UI-T06+（命令面板/投影管线）引入
@@ -65,7 +67,8 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
-    src/ShellSupport.cpp)
+    src/ShellSupport.cpp
+    src/StatusProjection.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -190,13 +193,17 @@ endmacro()
 # ---- 测试目标 sdurws_ird_ui_test（§12.1 第一层：无界面模型测试）----
 # QCoreApplication 级（test/TestMainReport.cpp 构造 QCoreApplication——无需
 # GUI 平台插件，AGENTS 模型测试豁免/testkit.md §6.7 模型测试豁免行）；
-# ctest LABELS ird（见下方 set_tests_properties）。首批用例＝落位期红线
-# 扫描（BuildRedLineTest.cpp——O-31 include 面/R-4/QShortcut/R-3 例外
-# 登记文本核对），具名追溯字段见各用例 IRD_TEST_INFO。
+# ctest LABELS ird（见下方 set_tests_properties）。用例面：
+#   - BuildRedLineTest.cpp＝落位期红线扫描（O-31 include 面/R-4/QShortcut/
+#     R-3 例外登记文本核对——UI-T02）；
+#   - ShellModelTest.cpp＝码表注册契约＋PM-11 格式矩阵（UI-T03）；
+#   - StatusWordModelTest.cpp＝七态映射/优先级/显示纪律/九态标签键
+#     （UI-STG-3——UI-T04，具名追溯字段见各用例 IRD_TEST_INFO）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
-    test/ShellModelTest.cpp)
+    test/ShellModelTest.cpp
+    test/StatusWordModelTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES

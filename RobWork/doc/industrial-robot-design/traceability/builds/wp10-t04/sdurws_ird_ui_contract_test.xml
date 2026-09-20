@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="0" disabled="0" errors="0" time="0." timestamp="2026-09-21T01:20:59.307" name="AllTests">
+  <testsuite name="UiLinkage" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-09-21T01:20:59.307">
+    <testcase name="ArchEdgesCoreDiagnosticsOnly_UI_CTR" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\LinkageContractTest.cpp" line="90" status="run" result="completed" time="0." timestamp="2026-09-21T01:20:59.307" classname="UiLinkage" />
+    <testcase name="TestkitOnlyLinkedByTestTargets_UI_CTR" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\LinkageContractTest.cpp" line="129" status="run" result="completed" time="0." timestamp="2026-09-21T01:20:59.308" classname="UiLinkage" />
+    <testcase name="ThreeTestTargetsAndLabels_UI_CTR" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\contract_test\LinkageContractTest.cpp" line="160" status="run" result="completed" time="0." timestamp="2026-09-21T01:20:59.308" classname="UiLinkage" />
+  </testsuite>
+</testsuites>
