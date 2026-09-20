@@ -127,6 +127,18 @@ find_package(GTest CONFIG REQUIRED)
 #     渲染→二次渲染确定性→一致性→发布/写出；§7.4 幂等/冲突/取消/只读
 #     四轨）＋报告值解析注入缝（IReportResolver——落位偏差登记）；
 #     src/Export.cpp 为实现。
+# RPT-T10 增列（§11 RPT-T10 行产物：Bundle.hpp/.cpp——证据包组装＋
+#   IArchiveWriter 契约）：
+#   - include/sdurws/ird/reporting/Bundle.hpp——§9.6 IArchiveWriter 三方法
+#     契约（reporting 定义、io ZIP 薄适配——P-RPT-7；条目名 SP-2/finish
+#     原子替换/放弃路径 RAII）＋§7.6 EvidenceBundleRequest/结果＋归档事实
+#     注入缝（IEvidenceBundleSource——"归档工件清单"投影，reporting 不自算）
+#     ＋IEvidenceBundleAssembler＋EvidenceBundleAssembler（收集→缺失全量
+#     拒绝〔BundleIncomplete 不产出半包〕→逐条目写出→totalDigest〔排除
+#     bundle.json——D-04〕→finish）；src/Bundle.cpp 为实现；
+#   - test/FakeArchiveWriter.hpp——IArchiveWriter 最小确定性替身（真实临时
+#     文件承载生命周期——可注入 open/addEntry/finish 三类故障；具名替身
+#     收口归 RPT-T11）。
 add_library(sdurws_ird_reporting STATIC
     src/Reporting.cpp
     src/Errors.cpp
@@ -138,7 +150,8 @@ add_library(sdurws_ird_reporting STATIC
     src/Render.cpp
     src/Consistency.cpp
     src/Archive.cpp
-    src/Export.cpp)
+    src/Export.cpp
+    src/Bundle.cpp)
 
 # C++17（单元卡 §1.4/core.md D-01 同源；P-ENV-1 处置）：逐目标显式设定，
 # 不设全局标准。target_compile_features PUBLIC 传播——reporting 公共头将
@@ -217,7 +230,8 @@ add_executable(sdurws_ird_reporting_test
     test/BuilderTest.cpp
     test/RenderTest.cpp
     test/ConsistencyTest.cpp
-    test/ArchiveExportTest.cpp)
+    test/ArchiveExportTest.cpp
+    test/BundleTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_test PROPERTIES
@@ -276,7 +290,8 @@ add_executable(sdurws_ird_reporting_contract_test
     contract_test/BuilderCrossUnitContractTest.cpp
     contract_test/RenderCrossUnitContractTest.cpp
     contract_test/ConsistencyCrossUnitContractTest.cpp
-    contract_test/ArchiveCrossUnitContractTest.cpp)
+    contract_test/ArchiveCrossUnitContractTest.cpp
+    contract_test/BundleCrossUnitContractTest.cpp)
 
 target_compile_features(sdurws_ird_reporting_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_reporting_contract_test PROPERTIES
