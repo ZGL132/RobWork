@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 233,
+  "tickCount": 234,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-20T10:57:14+08:00",
+    "updatedAt": "2026-09-20T13:06:22+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1365,6 +1365,19 @@
       ],
       "acceptanceRecord": "traceability/acceptance/RPT-T08-20260920.md",
       "mergedAt": "2026-09-20"
+    },
+    {
+      "task": "RPT-T09",
+      "unit": "reporting",
+      "result": "pass-merged",
+      "commits": [
+        "8a6004cc7ee95e570fb66d8f593330f5b466a148",
+        "e0836c5ba3d1b88dbd6aa2d1f45ebeb3add73905",
+        "ec0217522ca0c7232730f3f7b16cfea8fdba8885",
+        "35d2ece4442af8ede6a7f788d8b4112d83cac3cc"
+      ],
+      "acceptanceRecord": "traceability/acceptance/RPT-T09-20260920.md",
+      "mergedAt": "2026-09-20"
     }
   ],
   "policy": {
@@ -1390,11 +1403,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "RPT-T09",
-      "contractPath": "tasks/foundation/RPT-T09.json",
-      "branch": "wp12-t09"
-    },
     {
       "taskId": "RPT-T10",
       "contractPath": "tasks/foundation/RPT-T10.json",
@@ -1484,5 +1492,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "9a1f9479-bd07-47cf-859a-f8b533e90e8b"
+  "tickToken": "a577699e-0db7-4562-b9bc-18561c82e68b"
 }

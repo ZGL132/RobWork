@@ -4,7 +4,7 @@
   "unit": "reporting",
   "masterWp": "WP-H",
   "title": "实现导出与归档协调（Export/Archive＋IReportArtifactSink）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["RPT-T07"],
   "requirements": ["RPT-01", "PM-07", "PM-08"],
   "designRefs": [
