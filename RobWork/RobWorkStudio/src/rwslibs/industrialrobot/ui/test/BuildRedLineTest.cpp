@@ -315,34 +315,58 @@ TEST(UiBuild, NoRobWorkPrefixLiteral_R4_UI_BUILD)
 }
 
 /**
- * SA-16 QShortcut 作用域扫描（acceptance 2 具名证据；ui.md §12.3 UI-HKY-3
- * 同口径）：ui 产品面零"QShortcut＋全局作用域"创建形态——全局快捷键唯一
- * 注册点归 GlobalShortcutRegistry（§7.3，SA-16），QShortcut 以 Window/
- * ApplicationShortcut 上下文创建即违例（插件不得私占全局快捷键；ui 自身
- * 同口径自律——命令/快捷键设施随 UI-T06 落地时经注册表登记）。
- * 落位期产品面零控件代码，扫描零命中；UI-T03+ 自动转为全量守卫。
+ * SA-16 QShortcut 作用域扫描（UI-T06 acceptance 2"实际 QShortcut 对象仅由
+ * GlobalShortcutRegistry 创建"＋UI-HKY-3 具名自证；ui.md §12.3 UI-HKY-3/
+ * §7.3 同口径）：ui 产品面（进而全产品——其余单元本就不许含 Widgets 控件
+ * 面）的"QShortcut＋全局作用域"创建形态只允许出现在唯一注册点实现文件
+ * src/GlobalShortcutRegistry.cpp（§7.3"实际 Qt 快捷键对象只由本注册点
+ * 创建（QShortcut，WindowShortcut 上下文）"），其余任何文件命中即违例
+ * （插件不得私占全局快捷键；ui 自身同口径自律）。
+ *
+ * 判定口径：注释剥离后扫描（R-4 用例同款——头文件的设计注释大量提及
+ * "QShortcut/WindowShortcut"字样属文档性提及，不是创建行为；ird_gates
+ * 第 4 系列同为注释剥离口径，避免双口径漂移）。正向控制：唯一豁免文件
+ * 必须真实同时携带 QShortcut 与全局作用域字样（豁免面失效＝注册点漂移/
+ * 被移除，同样失败——防止扫描条件被悄然掏空）。
  */
 TEST(UiBuild, NoGlobalShortcutPrivatization_SA16_UI_BUILD)
 {
-    IRD_TEST_INFO("NFR-MNT-01", {}, std::nullopt);
+    IRD_TEST_INFO("NFR-MNT-07", {}, std::nullopt);
+    // 唯一注册点豁免面（§7.3——相对 ui/ 目录的路径字面）。
+    const fs::path kUniqueRegistrationPoint = fs::path{"src"} / "GlobalShortcutRegistry.cpp";
+    bool uniquePointHasQShortcut = false;
+    bool uniquePointHasGlobalScope = false;
+
     const auto files = collectProductFaceFiles();
     for (const auto& rel : files) {
-        const std::string src = readFile(unitRoot() / "ui" / rel);
-        std::istringstream stream(src);
+        // 注释剥离（R-4 同款 stripComments——判定对象是代码行为，注释散文
+        // 中的字样属文档）。
+        const std::string stripped = stripComments(readFile(unitRoot() / "ui" / rel));
+        if (rel == kUniqueRegistrationPoint) {
+            // 唯一创建点：采集正向控制面（两类字样分别登记，文件级核对）。
+            if (stripped.find("QShortcut") != std::string::npos) {
+                uniquePointHasQShortcut = true;
+            }
+            if (stripped.find("Qt::WindowShortcut") != std::string::npos) {
+                uniquePointHasGlobalScope = true;
+            }
+            continue;
+        }
+        std::istringstream stream(stripped);
         std::string line;
-        std::size_t lineNo = 0;
         while (std::getline(stream, line)) {
-            ++lineNo;
-            // UI-HKY-3 违例形态：QShortcut 与全局作用域上下文同现。
-            // （QShortcut 用于对话框局部键序列时使用默认 WidgetWithShortcut
-            // 上下文，不携带下列字样——不误伤未来合法用途。）
             if (line.find("QShortcut") == std::string::npos) { continue; }
             const bool globalScope = line.find("WindowShortcut") != std::string::npos
                                   || line.find("ApplicationShortcut") != std::string::npos;
             EXPECT_FALSE(globalScope)
-                << rel.string() << ":" << lineNo
+                << rel.string()
                 << ": QShortcut 全局作用域创建（SA-16/UI-HKY-3：全局快捷键唯一"
-                   "注册点归 GlobalShortcutRegistry，§7.3）";
+                   "注册点归 GlobalShortcutRegistry——豁免面仅 src/"
+                   "GlobalShortcutRegistry.cpp，§7.3）";
         }
     }
+    // 正向控制：唯一注册点必须真实携带"QShortcut＋全局作用域"创建形态。
+    EXPECT_TRUE(uniquePointHasQShortcut && uniquePointHasGlobalScope)
+        << "唯一创建点豁免面未携带 QShortcut＋全局作用域创建形态（注册点漂移"
+           "或豁免面失效——核对 src/GlobalShortcutRegistry.cpp 的 attach 实现）";
 }

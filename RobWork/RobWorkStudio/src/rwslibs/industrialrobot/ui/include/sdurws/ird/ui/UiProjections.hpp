@@ -19,7 +19,12 @@
  *     StatusWord 词表与 StatusWordProjection（§6.3 冻结稿）、七态触发数据源
  *     值投影（当前性/证据清单/正式通过资格/就绪/任务活动——§3.2 冻结基准的
  *     ui 侧载体，O-31 裁决）、九态短标签文案键（PM-03/PM-11）、§6.3/§6.8
- *     显示纪律数据面。
+ *     显示纪律数据面；
+ *   - UI-T06 增量（登记 ui.md §16.7 v0.8）：C-4 命令信封/命令结果投影
+ *     （CommandEnvelopeProjection/CommandResultProjection——§10.3
+ *     CommandOutcome.revisionResult 的 O-31 承载形态，任务契约 acceptance 3：
+ *     "经 ui 自有命令网关端口＋命令结果值投影承载"，产品面零对端
+ *     include）。
  *
  * 背景说明（为什么状态栏输入是"投影"而不是 project 头文件里的类型）：
  *   ui 产品面对 project 单元零链接零 include（O-31/ARCH §3.5），而状态栏/
@@ -37,6 +42,7 @@
 #define SDURWS_IRD_UI_UIPROJECTIONS_HPP
 
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
@@ -144,6 +150,93 @@ struct RecentProjectEntry {
     std::string canonicalPath;
     /// 位置当前是否可用（false＝失效项——呈现"项目位置不可用"提示，PM-10）。
     bool available = true;
+};
+
+// =====================================================================
+// 命令信封与命令结果投影（C-4 语义承载——冻结基准 project.md §5.3.1；
+// UI-T06 首消费冻结，O-31 裁决载体：ui.md §16.7 v0.4 §10 引导注）
+// =====================================================================
+//
+// 本节背景（O-31 处置——任务契约 UI-T06 acceptance 3）：
+//   ui.md §10.3 CommandOutcome.revisionResult 的原文形态是
+//   project::CommandResult（C-4 对端类型）。按 O-31 裁决（DTB §4，
+//   2026-09-19 所有者裁决"ui 侧最小注入接口模式"），对端类型不直接进入
+//   ui 头文件——本节以**值投影**承载同一语义（投影≠重定义：字段语义逐条
+//   锚定 project.md §5.3.1，NFR-MNT-03 单一权威不变；reporting
+//   ModelSummary／runtime §13.2 同案）。产品面对 project 零链接零 include
+//   （NoCrossUnitInclude_O31_UI_BUILD 守卫常驻自证）；协作经 ui 自有命令
+//   网关端口 IUiCommandGateway（UiPorts.hpp）注入，L5 应用壳装配期以单行
+//   适配器把 project::ProjectCommandService::submit 翻译成本投影。
+
+/**
+ * @brief 命令信封的 ui 侧投影（C-4 提交面——冻结基准 project.md §5.3.1
+ *        CommandEnvelope，O-31 值投影、L5 适配）。
+ *
+ * 字段语义锚点（不改义，NFR-MNT-03；与对端 CommandEnvelope 逐字段对应）：
+ *   - branch＝目标分支（core::BranchId——表内身份类型直用，§3.2）；
+ *   - expectedRevision＝期望基线修订（nullopt＝该分支当前 tip，提交期
+ *     解析——§5.3.1 原文；PM-04 草稿应用时取 draft.baseRevisionId，
+ *     RV-10 StaleRevisionRejected 的判据输入）；
+ *   - commandType＝处理器注册 token（project HandlerRegistry 词形）；
+ *   - payloadFormatVersion/payloadCanonical＝载荷版本与域 canonical 字节
+ *     （不透明——ui 不解析域载荷，只搬运；§5.3.1 原文"处理器不自行申报
+ *     ContentVersion"由对端计算）。
+ *
+ * 值语义；ui 侧组装后只读使用（信封提交后不回写——命令修订语义权威在
+ * project，ui 零业务判定，§7.5 红线）。
+ */
+struct CommandEnvelopeProjection {
+    /// 目标分支（core 表内身份类型——与 core 契约同一，不本地重定义）。
+    core::BranchId branch{};
+    /// 期望基线修订（nullopt＝分支 tip——§5.3.1 缺省语义）。
+    std::optional<core::RevisionId> expectedRevision;
+    /// 处理器注册 token（如建支/元数据命令族 token——project 词表）。
+    std::string commandType;
+    /// 载荷格式版本（处理器受理版本——§5.3.1；失配＝invalid-payload）。
+    std::uint32_t payloadFormatVersion = 0;
+    /// 域 canonical 字节（不透明载荷——ui 只搬运不解析）。
+    std::vector<std::uint8_t> payloadCanonical;
+};
+
+/**
+ * @brief 命令结果的 ui 侧投影（C-4 返回面——冻结基准 project.md §5.3.1
+ *        CommandResult，O-31 值投影、L5 适配）。
+ *
+ * 字段语义锚点（不改义）：
+ *   - status 四值与对端 CommandStatus 词表一一对应（Committed/Rejected/
+ *     Aborted/Failed——§5.3.1 variant 注记）；
+ *   - newRevision＝新修订身份（**Committed 时唯一非空**——§5.3.1 原文；
+ *     失败/拒绝/中止不产生任何修订）；
+ *   - rejectionReason/abortReason＝对端 reason 稳定 token 的投影承载
+ *     （Rejected：hard-assert-failed/confirmations-rejected/stale-revision/
+ *     unknown-command/invalid-payload/not-writable；Aborted：canceled/
+ *     interaction-lost/context-closing——§5.3.1 variant 注记原文；token
+ *     不镜像为 ui 枚举，避免双权威词表 NFR-MNT-03，CurrentnessProjection.
+ *     Reason.kindToken 同案）；
+ *   - findings/diagnostics/error 明细**不在本投影**：确认对话数据面随
+ *     UI-T13（CommandInteractionBridge/确认呈现任务）按"首消费冻结"机制
+ *     增量登记（ui.md v0.4 §10 引导注的既定机制）——本任务（UI-T06）的
+ *     消费面只有"命令完成呈现"（§7.7 ④）所需的 status/newRevision/reason。
+ *
+ * 值语义；投影不可变使用（调用方持有快照，ui 不回写 project）。
+ */
+struct CommandResultProjection {
+    /// 结果四值（与对端 CommandStatus 词表一一对应——§5.3.1）。
+    enum class Status : std::uint8_t {
+        Committed, ///< 已提交（恰好产生一个新修订——newRevision 非空）
+        Rejected,  ///< 被拒绝（rejectionReason 携带 reason token；无修订）
+        Aborted,   ///< 被中止（abortReason 携带 reason token；无修订）
+        Failed,    ///< 执行失败（对端 StoreError 明细归 UI-T13 增量面；无修订）
+    };
+
+    /// 结果状态（默认 Rejected＝"未提交"的安全空值——非 Committed 即无修订）。
+    Status status = Status::Rejected;
+    /// 新修订身份（仅 status==Committed 非空——§5.3.1 后置条件原文）。
+    std::optional<core::RevisionId> newRevision;
+    /// 拒绝原因 token（status==Rejected 时非空；词表见类型注释）。
+    std::string rejectionReason;
+    /// 中止原因 token（status==Aborted 时非空；词表见类型注释）。
+    std::string abortReason;
 };
 
 // =====================================================================

@@ -124,6 +124,13 @@ struct ShellCommandAvailability {
  *     类型，ui→diagnostics 表内边）；允许为空＝无日志测试场景（与 eventBus
  *     同款"须显式声明"），为空时回退默认布局的行为不受影响（恢复不得依赖
  *     日志可用性——§4.5"不得阻塞启动"）；
+ *   - diagFactory 为 UI-T06 首消费增量（登记 ui.md §10.1 v0.8）：命令/快捷
+ *     键注册表的用户级拒绝码（UI-CMD-UNKNOWN/UI-CMD-NOT-EXECUTABLE/
+ *     UI-HOTKEY-CONFLICT）经 IDiagnosticFactory::create 唯一入口产条目
+ *     （§9.2）——工厂绑定的 StableCodeRegistry 句柄不入 wiring（v0.5 裁决
+ *     签名纪律），由 L5 装配序列完成码注册后给出工厂。允许为空＝无目录
+ *     测试场景（与 eventBus 同款"须显式声明"）；为空时拒绝语义由返回值轨
+ *     与状态栏说明承载（不虚构目录条目）；
  *   - policySource/nameResolver 为 O-31 裁决的 ui 自有端口（UiPorts.hpp），
  *     L5 适配对端（policy::IPolicyProvider/runtime::IRuntimeNameResolver）。
  */
@@ -137,6 +144,9 @@ struct ShellWiring {
     /// 开发日志通道（Dev 级码唯一出线——diagnostics §6.2；UI-T03 增量成员，
     /// 允许为空＝无日志测试场景，须显式声明）。
     std::shared_ptr<diagnostics::IDevLogSink> devLog;
+    /// 诊断工厂（用户级码 create 唯一入口——§9.2；UI-T06 增量成员，允许为
+    /// 空＝无目录测试场景，须显式声明）。
+    std::shared_ptr<diagnostics::IDiagnosticFactory> diagFactory;
     /// 策略摘要端口（O-31：ui 自有端口，L5 适配 policy::IPolicyProvider——
     /// §6.7 策略摘要只读面语义不变；UI-T07 消费）。
     std::shared_ptr<ui::IPolicySummarySource> policySource;
