@@ -2467,6 +2467,46 @@
       "title": "F-036/F-038 同型再现（全树口径强度表述缺树 scope 标注）：ird-test-report.json（builds/wp12-t09）gates.build 段『集成模式 cmake --build build --config Release 全树零错误（integration-build.log）』未标注构建树——该日志产自主仓库根 build/ 树（日志内产物路径 D:/10_Source_Repos/21_robot/RobWork/build/... 实证；AGENTS §4.1 唯一交付口径树、增量缓存，其中 RWSimulatorPlugin.dll 构建成功），而全新 worktree 树的全树构建被 F-008/F-235 基线缺陷阻断（RPT-T09 验收者复现 73 错——RWSimulatorPlugin 的框架 Math.hpp min/max 宏污染簇＋bt_plugin 的 Eigen Parallelizer.h 同族宏污染；涉事 Math.hpp blob 在 base/head/HEAD 三处同值 7357cd31，零任务触碰，industrialrobot 全目标零错误）。主树口径结论为真，但『全树零错误』可达范围以树而定，报告未区分",
       "owner": "reporting 单元实施者（后续 RPT-T10+ 报告与提交的全树口径标注『主树/全新树』scope）；F-008/F-235 框架基线缺陷归框架所有者（patches 登记面）",
       "resolution": "全树口径表述统一标注构建树 scope（『主树增量全树零错误』或『全新树全树零错误』）；全新树全树口径在 F-008/F-235 修复前以『不可达（基线缺陷，与任务无关）』如实标注。与 F-036/F-038 家族合并处置。不阻塞 RPT-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-244。"
+    },
+    {
+      "id": "F-246",
+      "source": "traceability/acceptance/RPT-T10-20260920.md#4.5／发现的问题清单-G-1（attempt 1，verdict=pass，2026-09-20；送验对象 4110786ab67144385fe487f5be103f19c9f9eeae，分支 wp12-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "BundleTest 固定临时路径用例无预清理：CancelDuringWriteCleansTempAndLeavesTargetUntouched 等用例使用共享 temp 目录固定名目标路径且用例入口不清理目标——RPT-T10 验收 4.5 变异红运行（取消检查点被移除→目标被发布）遗留 ird-bundle-test-cancel-write.zip 后，实现已还原正确、复跑仍误红一次（BundleTest.cpp:904/910 目标不存在断言被上一轮残留文件触发）；干净环境四跑全绿无此问题。失败自愈能力弱：一次真实红之后即使修复也会因残留继续红，易误导返工判断",
+      "owner": "reporting 单元实施者（RPT-T11 替身与契约套件收口时一并处置）",
+      "resolution": "用例入口对 request.target/std::filesystem 目录做防御性预清理（std::filesystem::remove），或夹具为每用例分配独占子目录（gtest fixture SetUp 内 mkdtemp 形态）。不阻塞 RPT-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-245。"
+    },
+    {
+      "id": "F-247",
+      "source": "traceability/acceptance/RPT-T10-20260920.md#4.9／发现的问题清单-G-2（attempt 1，verdict=pass，2026-09-20；送验对象 4110786ab67144385fe487f5be103f19c9f9eeae，分支 wp12-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-012/F-232~F-242 家族再现（第 17/18 例，RPT 系连续九任务复踩）：RPT-T10 两份辅助提交标题前缀后以名词短语开头——0c95de0e『[RPT-T10] 验证留痕入库：门禁/构建/测试运行/治理自查证据（wp12-t10）』、4110786a『[RPT-T10] 验证留痕补交：构建/测试运行 .log 十份 -f 入库（wp12-t10）』——不合 ACC §4.9/AGENTS §6.3『动词开头』字面；主提交 55e34f9d『[RPT-T10] 实现证据包组装（…）』动词开头合规。两辅助提交正文四段齐备、验证结论经验收者独立复跑全部证实（无粉饰），纯风格瑕疵",
+      "owner": "实施者模板侧（PIPE 附录 C 提交标题动词开头示例补齐——F-012 处置建议②至今未落地）；后续验证留痕类提交自查",
+      "resolution": "与 F-012/F-232~F-242 家族合并处置（模板补救落地为唯一根治路径；不追溯改写已推送历史）。不阻塞 RPT-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-246。"
+    },
+    {
+      "id": "F-248",
+      "source": "traceability/acceptance/RPT-T10-20260920.md#4.8／发现的问题清单-G-4（attempt 1，verdict=pass，2026-09-20；送验对象 4110786ab67144385fe487f5be103f19c9f9eeae，分支 wp12-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-010/F-223/F-244 根因再次踩中（自纠型再现第 2 次连续）：RPT-T10 提交 0c95de0e 目录式 git add 时 11 件 .log 留痕被 .gitignore 第 87 行全局 *.log 规则吞掉（该提交实入库 7 件——git show --name-status 逐件实证），4110786a 以 git add -f 补交并在正文如实说明（不 amend 已推送历史合规）；18/18 件最终全部在库零证据缺失，未构成验收 fail。系统性处置（.gitignore 对 traceability/ 的负例豁免或留痕后缀惯例成文）至今未落地，任务链每任务复踩一次",
+      "owner": "仓库治理所有者（.gitignore 负例规则——与 F-223/F-244 同 owner 同处置面）；实施者侧过渡动作为 git add 后 git ls-files 对账件数",
+      "resolution": "并入 F-223 系统性处置（.gitignore 增加 !RobWork/doc/industrial-robot-design/traceability/**/*.log 负例或统一 .txt 后缀惯例成文）；过渡期逐提交对账。不阻塞 RPT-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-247。"
+    },
+    {
+      "id": "F-249",
+      "source": "traceability/acceptance/RPT-T10-20260920.md#4.9／发现的问题清单-G-3（attempt 1，verdict=pass，2026-09-20；送验对象 4110786ab67144385fe487f5be103f19c9f9eeae，分支 wp12-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-20",
+      "title": "F-041/F-073/F-235/F-236/F-238/F-243/F-025 散文计数失准家族再现（RPT-T10 三处，方向混杂、无证据缺失、实质结论经独立复跑全部成立）：①0c95de0e 正文『留痕目录（17 个文件）』与该提交实入库 7 件不符（7＋被吞 11＝18，『17』与最终在库数亦不合）；②4110786a 正文『十份 .log』实入库 11 件（少报 1）；③ird-test-report.json gates 段与 55e34f9d 正文『base/branch 各 61 处 IRD-GATE- 命中』——61 为原始日志行数（含流式＋摘要两遍重复与自测提及），独立命中实为 27 项（日志自身『命中 27 项』与 gates-all-note.txt『原始 IRD-GATE- 行各 61 处』口径准确在案）——与 F-243 对 wp12-t09 同字段的裁定同型",
+      "owner": "reporting 单元实施者（后续提交正文与 ird-test-report 的计数以可机核命令输出为准）；F-012 家族模板补救落地后随模板带计数核对提示",
+      "resolution": "与 F-041/F-243 计数家族合并处置：留痕/正文计数逐项以 git show --name-status、grep -c 等可机核输出为源，命中数区分『原始行数』与『独立命中数』两口径。不阻塞 RPT-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-248。"
     }
   ]
 }
