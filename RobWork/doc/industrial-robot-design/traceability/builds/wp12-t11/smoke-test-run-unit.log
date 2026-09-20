@@ -1,0 +1,490 @@
+[==========] Running 196 tests from 31 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ReportingBuild
+[ RUN      ] ReportingBuild.SourceTreeReachable_DT_BUILD
+[       OK ] ReportingBuild.SourceTreeReachable_DT_BUILD (1 ms)
+[ RUN      ] ReportingBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] ReportingBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (18 ms)
+[ RUN      ] ReportingBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] ReportingBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (16 ms)
+[ RUN      ] ReportingBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] ReportingBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (17 ms)
+[ RUN      ] ReportingBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] ReportingBuild.PublicHeaderPathLayout_DT_BUILD_R2 (1 ms)
+[----------] 5 tests from ReportingBuild (55 ms total)
+
+[----------] 4 tests from ReportingErrors
+[ RUN      ] ReportingErrors.ErrorTokenTable_Full16MatchesDesign_RPT02_ACC2
+[       OK ] ReportingErrors.ErrorTokenTable_Full16MatchesDesign_RPT02_ACC2 (0 ms)
+[ RUN      ] ReportingErrors.ErrorWhatPrefixAndCodeAccess_RPT02_ACC2
+[       OK ] ReportingErrors.ErrorWhatPrefixAndCodeAccess_RPT02_ACC2 (0 ms)
+[ RUN      ] ReportingErrors.RptStableCodeList_EightItemsMatchRegistry_RPT02_ACC3
+[       OK ] ReportingErrors.RptStableCodeList_EightItemsMatchRegistry_RPT02_ACC3 (0 ms)
+[ RUN      ] ReportingErrors.SuggestedDiagCodeMapping_SixOfSixteen_RPT02_ACC3
+[       OK ] ReportingErrors.SuggestedDiagCodeMapping_SixOfSixteen_RPT02_ACC3 (0 ms)
+[----------] 4 tests from ReportingErrors (0 ms total)
+
+[----------] 5 tests from ReportingIdentity
+[ RUN      ] ReportingIdentity.ReportIdRoundtripGenerateParse_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdRoundtripGenerateParse_RPT02_ACC1 (1 ms)
+[ RUN      ] ReportingIdentity.ReportIdParseStrictRejections_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdParseStrictRejections_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportIdReservedZeroValue_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdReservedZeroValue_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportLevelTokenSyntax_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportLevelTokenSyntax_RPT02_ACC1 (0 ms)
+[ RUN      ] ReportingIdentity.ReportIdTypeBoundary_NoContentPayload_RPT02_ACC1
+[       OK ] ReportingIdentity.ReportIdTypeBoundary_NoContentPayload_RPT02_ACC1 (0 ms)
+[----------] 5 tests from ReportingIdentity (1 ms total)
+
+[----------] 2 tests from ReportModelIdentity
+[ RUN      ] ReportModelIdentity.SameSourceTwoBuildsContentIdentityByteEqual_RP_MDL_1
+[       OK ] ReportModelIdentity.SameSourceTwoBuildsContentIdentityByteEqual_RP_MDL_1 (0 ms)
+[ RUN      ] ReportModelIdentity.IdentitySeparatedFromIdAndGeneration_RP_MDL_3
+[       OK ] ReportModelIdentity.IdentitySeparatedFromIdAndGeneration_RP_MDL_3 (0 ms)
+[----------] 2 tests from ReportModelIdentity (0 ms total)
+
+[----------] 2 tests from ReportCodecRoundtrip
+[ RUN      ] ReportCodecRoundtrip.DataRoundtripParseEncodeEqual_RP_MDL_1
+[       OK ] ReportCodecRoundtrip.DataRoundtripParseEncodeEqual_RP_MDL_1 (0 ms)
+[ RUN      ] ReportCodecRoundtrip.FullRoundtripParseEncodeEqual_RP_MDL_1
+[       OK ] ReportCodecRoundtrip.FullRoundtripParseEncodeEqual_RP_MDL_1 (0 ms)
+[----------] 2 tests from ReportCodecRoundtrip (0 ms total)
+
+[----------] 1 test from ReviewReportModel
+[ RUN      ] ReviewReportModel.ImmutableValueSemantics_RPT03_ACC3
+[       OK ] ReviewReportModel.ImmutableValueSemantics_RPT03_ACC3 (0 ms)
+[----------] 1 test from ReviewReportModel (0 ms total)
+
+[----------] 1 test from ReviewReportValidation
+[ RUN      ] ReviewReportValidation.IllegalInstanceMatrix_RPT03_ACC3
+[       OK ] ReviewReportValidation.IllegalInstanceMatrix_RPT03_ACC3 (0 ms)
+[----------] 1 test from ReviewReportValidation (0 ms total)
+
+[----------] 2 tests from ReportCodecSeparation
+[ RUN      ] ReportCodecSeparation.DataIdentityIncludedExcludedFields_RPT03_ACC4
+[       OK ] ReportCodecSeparation.DataIdentityIncludedExcludedFields_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecSeparation.FullIdentityCoversReviewAndSections_RPT03_ACC4
+[       OK ] ReportCodecSeparation.FullIdentityCoversReviewAndSections_RPT03_ACC4 (0 ms)
+[----------] 2 tests from ReportCodecSeparation (0 ms total)
+
+[----------] 1 test from ReportCodecDeterminism
+[ RUN      ] ReportCodecDeterminism.SameInputSameBytes_NFR_COR_02
+[       OK ] ReportCodecDeterminism.SameInputSameBytes_NFR_COR_02 (0 ms)
+[----------] 1 test from ReportCodecDeterminism (0 ms total)
+
+[----------] 6 tests from ReportCodecBinary
+[ RUN      ] ReportCodecBinary.MagicVersionBigEndianLayout_RPT03_ACC4
+[       OK ] ReportCodecBinary.MagicVersionBigEndianLayout_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.FullMagicAndEmbeddedDataHeader_RPT03_ACC4
+[       OK ] ReportCodecBinary.FullMagicAndEmbeddedDataHeader_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.NulStringRejectedAtEncode_RPT03_ACC4
+[       OK ] ReportCodecBinary.NulStringRejectedAtEncode_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.NonFiniteDoubleRejectedAndFiniteRoundtrips_RPT03_ACC4
+[       OK ] ReportCodecBinary.NonFiniteDoubleRejectedAndFiniteRoundtrips_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.SectionsMustBeOrderIncreasing_RPT03_ACC4
+[       OK ] ReportCodecBinary.SectionsMustBeOrderIncreasing_RPT03_ACC4 (0 ms)
+[ RUN      ] ReportCodecBinary.ParseBoundaryFailFast_RPT03_ACC4
+[       OK ] ReportCodecBinary.ParseBoundaryFailFast_RPT03_ACC4 (0 ms)
+[----------] 6 tests from ReportCodecBinary (0 ms total)
+
+[----------] 1 test from ReportModelTokens
+[ RUN      ] ReportModelTokens.TokenTablesMatchDesign_RPT03
+[       OK ] ReportModelTokens.TokenTablesMatchDesign_RPT03 (0 ms)
+[----------] 1 test from ReportModelTokens (0 ms total)
+
+[----------] 13 tests from ReportingSections
+[ RUN      ] ReportingSections.Vocabulary14TokensFrozenInTableOrder_RPT04_ACC1
+[       OK ] ReportingSections.Vocabulary14TokensFrozenInTableOrder_RPT04_ACC1 (0 ms)
+[ RUN      ] ReportingSections.LevelAndOwnershipAttributionFrozen_RPT04_ACC1
+[       OK ] ReportingSections.LevelAndOwnershipAttributionFrozen_RPT04_ACC1 (0 ms)
+[ RUN      ] ReportingSections.SectionModelVersionTokenAndLevelRuleInjection_RPT04_ACC1
+[       OK ] ReportingSections.SectionModelVersionTokenAndLevelRuleInjection_RPT04_ACC1 (0 ms)
+[ RUN      ] ReportingSections.LevelConflictPrimitive_RPT04_ACC2
+[       OK ] ReportingSections.LevelConflictPrimitive_RPT04_ACC2 (0 ms)
+[ RUN      ] ReportingSections.UnregisteredDomainSectionMissingItem_RPT04_ACC2
+[       OK ] ReportingSections.UnregisteredDomainSectionMissingItem_RPT04_ACC2 (0 ms)
+[ RUN      ] ReportingSections.SectionStatusFourStatesTokens_RPT04_ACC3
+[       OK ] ReportingSections.SectionStatusFourStatesTokens_RPT04_ACC3 (0 ms)
+[ RUN      ] ReportingSections.DefaultSelectionRule_RPT04_ACC3
+[       OK ] ReportingSections.DefaultSelectionRule_RPT04_ACC3 (0 ms)
+[ RUN      ] ReportingSections.FiveEvidenceWordsKeepSeparatePlaces_RPT04_ACC3
+[       OK ] ReportingSections.FiveEvidenceWordsKeepSeparatePlaces_RPT04_ACC3 (0 ms)
+[ RUN      ] ReportingSections.ScopeInsufficientAllCSectionsMissing_RPT04_ACC4
+[       OK ] ReportingSections.ScopeInsufficientAllCSectionsMissing_RPT04_ACC4 (0 ms)
+[ RUN      ] ReportingSections.PartialMissingCSectionsNotScopeInsufficient_RPT04_ACC4
+[       OK ] ReportingSections.PartialMissingCSectionsNotScopeInsufficient_RPT04_ACC4 (0 ms)
+[ RUN      ] ReportingSections.ScopeInsufficientBoundaries_RPT04_ACC4
+[       OK ] ReportingSections.ScopeInsufficientBoundaries_RPT04_ACC4 (0 ms)
+[ RUN      ] ReportingSections.ScopeInsufficientDiagnosticHookup_RPT04_ACC4
+[       OK ] ReportingSections.ScopeInsufficientDiagnosticHookup_RPT04_ACC4 (0 ms)
+[ RUN      ] ReportingSections.VocabularyClosedToUnknownTokens_RPT04_ACC1
+[       OK ] ReportingSections.VocabularyClosedToUnknownTokens_RPT04_ACC1 (0 ms)
+[----------] 13 tests from ReportingSections (0 ms total)
+
+[----------] 7 tests from ReportingSectionProvider
+[ RUN      ] ReportingSectionProvider.RegistrationBoundaryRejections_RPT04_ACC2
+[       OK ] ReportingSectionProvider.RegistrationBoundaryRejections_RPT04_ACC2 (0 ms)
+[ RUN      ] ReportingSectionProvider.LegitimateRegistrationsAccepted_RPT04_ACC2
+[       OK ] ReportingSectionProvider.LegitimateRegistrationsAccepted_RPT04_ACC2 (0 ms)
+[ RUN      ] ReportingSectionProvider.RegistrySortedLookupAndStableOrder_RPT04_ACC5
+[       OK ] ReportingSectionProvider.RegistrySortedLookupAndStableOrder_RPT04_ACC5 (0 ms)
+[ RUN      ] ReportingSectionProvider.FindConcurrentReadOnlyAfterAssembly_RPT04_ACC5
+[       OK ] ReportingSectionProvider.FindConcurrentReadOnlyAfterAssembly_RPT04_ACC5 (0 ms)
+[ RUN      ] ReportingSectionProvider.ProjectPureFunctionAndRequestValueCopy_RPT04_ACC5
+[       OK ] ReportingSectionProvider.ProjectPureFunctionAndRequestValueCopy_RPT04_ACC5 (0 ms)
+[ RUN      ] ReportingSectionProvider.SectionContentStructuralChecks_RPT04_ACC5
+[       OK ] ReportingSectionProvider.SectionContentStructuralChecks_RPT04_ACC5 (0 ms)
+[ RUN      ] ReportingSectionProvider.EntryKeySyntaxBoundaries_RPT04_ACC5
+[       OK ] ReportingSectionProvider.EntryKeySyntaxBoundaries_RPT04_ACC5 (0 ms)
+[----------] 7 tests from ReportingSectionProvider (1 ms total)
+
+[----------] 5 tests from ReportBuildSessionTest
+[ RUN      ] ReportBuildSessionTest.SevenStateHappyPath_AdvancesStrictly_RPT05_ACC5
+[       OK ] ReportBuildSessionTest.SevenStateHappyPath_AdvancesStrictly_RPT05_ACC5 (0 ms)
+[ RUN      ] ReportBuildSessionTest.IllegalJumpRejected_UsageFailFast_RPT05_ACC5
+[       OK ] ReportBuildSessionTest.IllegalJumpRejected_UsageFailFast_RPT05_ACC5 (0 ms)
+[ RUN      ] ReportBuildSessionTest.TerminalStatesImmutable_RPT05_ACC5
+[       OK ] ReportBuildSessionTest.TerminalStatesImmutable_RPT05_ACC5 (0 ms)
+[ RUN      ] ReportBuildSessionTest.FailFromAnyNonTerminalStage_RPT05_ACC5
+[       OK ] ReportBuildSessionTest.FailFromAnyNonTerminalStage_RPT05_ACC5 (0 ms)
+[ RUN      ] ReportBuildSessionTest.DestructorGuardSmoke_NonTerminalReleaseAndTerminalSafe_RPT05_ACC5
+[       OK ] ReportBuildSessionTest.DestructorGuardSmoke_NonTerminalReleaseAndTerminalSafe_RPT05_ACC5 (0 ms)
+[----------] 5 tests from ReportBuildSessionTest (0 ms total)
+
+[----------] 23 tests from ReviewReportBuilderTest
+[ RUN      ] ReviewReportBuilderTest.BuildsBLevelReport_WithSnapshotsAndAnchoring_RPT05_ACC3_ACC4
+[       OK ] ReviewReportBuilderTest.BuildsBLevelReport_WithSnapshotsAndAnchoring_RPT05_ACC3_ACC4 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.ContentIdentityStableAcrossRebuilds_ReportIdDiffers_RPT05_ACC5
+[       OK ] ReviewReportBuilderTest.ContentIdentityStableAcrossRebuilds_ReportIdDiffers_RPT05_ACC5 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.ResultOrderNormalized_IdentityIndependentOfRequestOrder_RPT05_ACC4
+[       OK ] ReviewReportBuilderTest.ResultOrderNormalized_IdentityIndependentOfRequestOrder_RPT05_ACC4 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.BLevelWithCExclusiveOverride_RejectedLevelConflict_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.BLevelWithCExclusiveOverride_RejectedLevelConflict_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.CLevelWithNoCSectionContent_RejectedScopeInsufficient_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.CLevelWithNoCSectionContent_RejectedScopeInsufficient_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.CLevelWithPopulatedCSection_Builds_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.CLevelWithPopulatedCSection_Builds_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.CLevelUserDeselectAllCSections_RejectedScopeInsufficient_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.CLevelUserDeselectAllCSections_RejectedScopeInsufficient_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.PreviewResultRejected_SourceMissing_RPT05_ACC1_ACC2
+[       OK ] ReviewReportBuilderTest.PreviewResultRejected_SourceMissing_RPT05_ACC1_ACC2 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.CanceledResultBoundIntoEntry_RejectedDataInvalid_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.CanceledResultBoundIntoEntry_RejectedDataInvalid_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.CanceledResultUnbound_PresentAsStatusAndDiagnostics_RPT05_ACC3
+[       OK ] ReviewReportBuilderTest.CanceledResultUnbound_PresentAsStatusAndDiagnostics_RPT05_ACC3 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.EvidenceRefMismatchVariants_Rejected_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.EvidenceRefMismatchVariants_Rejected_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.EntryCaseScopeOutsideResult_Rejected_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.EntryCaseScopeOutsideResult_Rejected_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.ProviderStructuredViolation_RejectedDataInvalid_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.ProviderStructuredViolation_RejectedDataInvalid_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.UnresolvableReferences_RejectedSourceMissing_RPT05_ACC2
+[       OK ] ReviewReportBuilderTest.UnresolvableReferences_RejectedSourceMissing_RPT05_ACC2 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.ZeroProjectWrites_OnFailureAndSuccess_RPT05_ACC2_ACC4
+[       OK ] ReviewReportBuilderTest.ZeroProjectWrites_OnFailureAndSuccess_RPT05_ACC2_ACC4 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.AnchoredViewIsolatedFromLateRuns_RPT05_ACC4
+[       OK ] ReviewReportBuilderTest.AnchoredViewIsolatedFromLateRuns_RPT05_ACC4 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.EligibilityFrozenFromPureCheck_QueriedPerBuild_RPT05_ACC3
+[       OK ] ReviewReportBuilderTest.EligibilityFrozenFromPureCheck_QueriedPerBuild_RPT05_ACC3 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.UnevaluableCurrentness_NotDefaultCurrent_RPT05_ACC3
+[       OK ] ReviewReportBuilderTest.UnevaluableCurrentness_NotDefaultCurrent_RPT05_ACC3 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.SupersededCurrentness_CarriesReasonsAndSectionMarker_RPT05_ACC3
+[       OK ] ReviewReportBuilderTest.SupersededCurrentness_CarriesReasonsAndSectionMarker_RPT05_ACC3 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.CancelAtResultCheckpoint_NoReportNoError_RPT05_ACC5
+[       OK ] ReviewReportBuilderTest.CancelAtResultCheckpoint_NoReportNoError_RPT05_ACC5 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.CancelBetweenSections_StopsWithoutError_RPT05_ACC5
+[       OK ] ReviewReportBuilderTest.CancelBetweenSections_StopsWithoutError_RPT05_ACC5 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.MalformedRequests_RejectedUsage_RPT05_ACC1
+[       OK ] ReviewReportBuilderTest.MalformedRequests_RejectedUsage_RPT05_ACC1 (0 ms)
+[ RUN      ] ReviewReportBuilderTest.ReviewEvolution_SeedValidatedAndChainExtended_RPT05_ACC5
+[       OK ] ReviewReportBuilderTest.ReviewEvolution_SeedValidatedAndChainExtended_RPT05_ACC5 (0 ms)
+[----------] 23 tests from ReviewReportBuilderTest (1 ms total)
+
+[----------] 6 tests from FieldMatrixTest
+[ RUN      ] FieldMatrixTest.SameReportSameMatrix_TraversalOrderBySectionEntry_RPT06_ACC4
+[       OK ] FieldMatrixTest.SameReportSameMatrix_TraversalOrderBySectionEntry_RPT06_ACC4 (0 ms)
+[ RUN      ] FieldMatrixTest.ValueProjection_FourStateWords_ToChars_AndUnitConversion_RPT06_ACC2
+[       OK ] FieldMatrixTest.ValueProjection_FourStateWords_ToChars_AndUnitConversion_RPT06_ACC2 (0 ms)
+[ RUN      ] FieldMatrixTest.UnitPreferenceConflict_Rejected_DataInvalid_RPT06_ACC2
+[       OK ] FieldMatrixTest.UnitPreferenceConflict_Rejected_DataInvalid_RPT06_ACC2 (0 ms)
+[ RUN      ] FieldMatrixTest.QualifierDerivation_Estimated_Screening_Superseded_DataInsufficient_RPT06_ACC5
+[       OK ] FieldMatrixTest.QualifierDerivation_Estimated_Screening_Superseded_DataInsufficient_RPT06_ACC5 (0 ms)
+[ RUN      ] FieldMatrixTest.CurveRefSection_ValueIsReferenceText_NotCopy_RPT06_ACC2
+[       OK ] FieldMatrixTest.CurveRefSection_ValueIsReferenceText_NotCopy_RPT06_ACC2 (0 ms)
+[ RUN      ] FieldMatrixTest.BindingOutOfRange_Rejected_DataInvalid_RPT06_ACC4
+[       OK ] FieldMatrixTest.BindingOutOfRange_Rejected_DataInvalid_RPT06_ACC4 (0 ms)
+[----------] 6 tests from FieldMatrixTest (0 ms total)
+
+[----------] 9 tests from HtmlRenderTest
+[ RUN      ] HtmlRenderTest.ByteDeterministic_SecondRenderIdentical_RPT06_ACC1
+[       OK ] HtmlRenderTest.ByteDeterministic_SecondRenderIdentical_RPT06_ACC1 (0 ms)
+[ RUN      ] HtmlRenderTest.Html5StaticContract_ZeroExternalZeroScript_LfNoBom_RPT06_ACC5
+[       OK ] HtmlRenderTest.Html5StaticContract_ZeroExternalZeroScript_LfNoBom_RPT06_ACC5 (0 ms)
+[ RUN      ] HtmlRenderTest.DataFieldAnchors_AndQualifierMarks_MachineExtractable_RPT06_ACC5
+[       OK ] HtmlRenderTest.DataFieldAnchors_AndQualifierMarks_MachineExtractable_RPT06_ACC5 (0 ms)
+[ RUN      ] HtmlRenderTest.SanitizationDoubleInsurance_NoRawPathNoAddress_RPT06_ACC3
+[       OK ] HtmlRenderTest.SanitizationDoubleInsurance_NoRawPathNoAddress_RPT06_ACC3 (0 ms)
+[ RUN      ] HtmlRenderTest.IdentityCanonicalText_ConfinedToTraceBlocks_RPT06_ACC3
+[       OK ] HtmlRenderTest.IdentityCanonicalText_ConfinedToTraceBlocks_RPT06_ACC3 (0 ms)
+[ RUN      ] HtmlRenderTest.FormalPassWordingGate_RPT06_ACC3
+[       OK ] HtmlRenderTest.FormalPassWordingGate_RPT06_ACC3 (0 ms)
+[ RUN      ] HtmlRenderTest.MatrixReportMismatch_Rejected_NoPartialArtifact_RPT06_ACC1
+[       OK ] HtmlRenderTest.MatrixReportMismatch_Rejected_NoPartialArtifact_RPT06_ACC1 (0 ms)
+[ RUN      ] HtmlRenderTest.WrongFormatRequest_UsageFailFast_RPT06_ACC6
+[       OK ] HtmlRenderTest.WrongFormatRequest_UsageFailFast_RPT06_ACC6 (0 ms)
+[ RUN      ] HtmlRenderTest.ReviewSignoffBlock_LevelC_RPT06_ACC5
+[       OK ] HtmlRenderTest.ReviewSignoffBlock_LevelC_RPT06_ACC5 (1 ms)
+[----------] 9 tests from HtmlRenderTest (6 ms total)
+
+[----------] 1 test from RenderFormatTokenTest
+[ RUN      ] RenderFormatTokenTest.TokensStable_RPT06_ACC1
+[       OK ] RenderFormatTokenTest.TokensStable_RPT06_ACC1 (0 ms)
+[----------] 1 test from RenderFormatTokenTest (0 ms total)
+
+[----------] 8 tests from WordingFreezeTest
+[ RUN      ] WordingFreezeTest.NonCompletedOutcome_DeclarationFlags_Rejected_DataInvalid_RPT08_ACC1
+[       OK ] WordingFreezeTest.NonCompletedOutcome_DeclarationFlags_Rejected_DataInvalid_RPT08_ACC1 (0 ms)
+[ RUN      ] WordingFreezeTest.NonCompletedOutcome_StatusPresentationOnly_BodyScanZero_RPT08_ACC1
+[       OK ] WordingFreezeTest.NonCompletedOutcome_StatusPresentationOnly_BodyScanZero_RPT08_ACC1 (0 ms)
+[ RUN      ] WordingFreezeTest.DataInsufficient_MissingListFull_Qualifier_NoConclusion_RPT08_ACC2
+[       OK ] WordingFreezeTest.DataInsufficient_MissingListFull_Qualifier_NoConclusion_RPT08_ACC2 (0 ms)
+[ RUN      ] WordingFreezeTest.InfeasibleReviewRecord_WordingAndProof_NeverPassWording_RPT08_ACC2
+[       OK ] WordingFreezeTest.InfeasibleReviewRecord_WordingAndProof_NeverPassWording_RPT08_ACC2 (0 ms)
+[ RUN      ] WordingFreezeTest.SectionFlagBeyondCitedResults_Rejected_DataInvalid_RPT08_ACC2
+[       OK ] WordingFreezeTest.SectionFlagBeyondCitedResults_Rejected_DataInvalid_RPT08_ACC2 (0 ms)
+[ RUN      ] WordingFreezeTest.QuickResult_FormalPassFlag_Rejected_ScreeningOnlyMandatory_RPT08_ACC4
+[       OK ] WordingFreezeTest.QuickResult_FormalPassFlag_Rejected_ScreeningOnlyMandatory_RPT08_ACC4 (0 ms)
+[ RUN      ] WordingFreezeTest.QualifierWordList_PerTokenStructuralOutput_AllFormats_RPT08_ACC3
+[       OK ] WordingFreezeTest.QualifierWordList_PerTokenStructuralOutput_AllFormats_RPT08_ACC3 (2 ms)
+[ RUN      ] WordingFreezeTest.ExternalValidationIncomplete_RecordedState_MandatoryBoundary_RPT08_ACC3
+[       OK ] WordingFreezeTest.ExternalValidationIncomplete_RecordedState_MandatoryBoundary_RPT08_ACC3 (2 ms)
+[----------] 8 tests from WordingFreezeTest (6 ms total)
+
+[----------] 4 tests from CoveragePresentationTest
+[ RUN      ] CoveragePresentationTest.FullCoverage_CompletenessConclusion_RPT08_ACC5
+[       OK ] CoveragePresentationTest.FullCoverage_CompletenessConclusion_RPT08_ACC5 (0 ms)
+[ RUN      ] CoveragePresentationTest.MissedCases_OverallDataInsufficient_PresentationAndGate_RPT08_ACC5
+[       OK ] CoveragePresentationTest.MissedCases_OverallDataInsufficient_PresentationAndGate_RPT08_ACC5 (0 ms)
+[ RUN      ] CoveragePresentationTest.EnvelopeMergeAnnotation_NotReplacingPerCaseEntries_RPT08_ACC5
+[       OK ] CoveragePresentationTest.EnvelopeMergeAnnotation_NotReplacingPerCaseEntries_RPT08_ACC5 (0 ms)
+[ RUN      ] CoveragePresentationTest.DowngradedReferenceValue_MandatoryPresentation_RPT08_ACC6
+[       OK ] CoveragePresentationTest.DowngradedReferenceValue_MandatoryPresentation_RPT08_ACC6 (2 ms)
+[----------] 4 tests from CoveragePresentationTest (3 ms total)
+
+[----------] 2 tests from ConsistencyTrivialPassTest
+[ RUN      ] ConsistencyTrivialPassTest.ZeroArtifacts_TrivialPassWithNote_RPT07_ACC4
+[       OK ] ConsistencyTrivialPassTest.ZeroArtifacts_TrivialPassWithNote_RPT07_ACC4 (0 ms)
+[ RUN      ] ConsistencyTrivialPassTest.SingleArtifact_TrivialPassWithNote_RPT07_ACC4
+[       OK ] ConsistencyTrivialPassTest.SingleArtifact_TrivialPassWithNote_RPT07_ACC4 (0 ms)
+[----------] 2 tests from ConsistencyTrivialPassTest (0 ms total)
+
+[----------] 4 tests from ConsistencyUsageTest
+[ RUN      ] ConsistencyUsageTest.NullReportOrNullMatrix_Usage_RPT07_ACC4
+[       OK ] ConsistencyUsageTest.NullReportOrNullMatrix_Usage_RPT07_ACC4 (0 ms)
+[ RUN      ] ConsistencyUsageTest.NullArtifactPointer_Usage_RPT07_ACC4
+[       OK ] ConsistencyUsageTest.NullArtifactPointer_Usage_RPT07_ACC4 (0 ms)
+[ RUN      ] ConsistencyUsageTest.DuplicateArtifactFormat_Usage_RPT07_ACC4
+[       OK ] ConsistencyUsageTest.DuplicateArtifactFormat_Usage_RPT07_ACC4 (0 ms)
+[ RUN      ] ConsistencyUsageTest.ArtifactSourceIdentityMismatch_Usage_RPT07_ACC4
+[       OK ] ConsistencyUsageTest.ArtifactSourceIdentityMismatch_Usage_RPT07_ACC4 (0 ms)
+[----------] 4 tests from ConsistencyUsageTest (0 ms total)
+
+[----------] 1 test from ConsistencyCheckTest
+[ RUN      ] ConsistencyCheckTest.HtmlPlusJsonMirror_Consistent_FieldCount_RPT07_ACC1
+[       OK ] ConsistencyCheckTest.HtmlPlusJsonMirror_Consistent_FieldCount_RPT07_ACC1 (0 ms)
+[----------] 1 test from ConsistencyCheckTest (0 ms total)
+
+[----------] 5 tests from ConsistencyHtmlBadSampleTest
+[ RUN      ] ConsistencyHtmlBadSampleTest.DeleteDataFieldAttribute_MissingLocated_RPT07_ACC1
+[       OK ] ConsistencyHtmlBadSampleTest.DeleteDataFieldAttribute_MissingLocated_RPT07_ACC1 (0 ms)
+[ RUN      ] ConsistencyHtmlBadSampleTest.DeleteWholeValueCell_MissingLocated_RPT07_ACC1
+[       OK ] ConsistencyHtmlBadSampleTest.DeleteWholeValueCell_MissingLocated_RPT07_ACC1 (0 ms)
+[ RUN      ] ConsistencyHtmlBadSampleTest.ChangeUnitCell_UnitLocated_RPT07_ACC3
+[       OK ] ConsistencyHtmlBadSampleTest.ChangeUnitCell_UnitLocated_RPT07_ACC3 (0 ms)
+[ RUN      ] ConsistencyHtmlBadSampleTest.ChangeStatusDisplay_StatusLocated_RPT07_ACC3
+[       OK ] ConsistencyHtmlBadSampleTest.ChangeStatusDisplay_StatusLocated_RPT07_ACC3 (0 ms)
+[ RUN      ] ConsistencyHtmlBadSampleTest.DeleteQualifierSpan_QualifierLocated_RPT07_ACC3
+[       OK ] ConsistencyHtmlBadSampleTest.DeleteQualifierSpan_QualifierLocated_RPT07_ACC3 (0 ms)
+[----------] 5 tests from ConsistencyHtmlBadSampleTest (1 ms total)
+
+[----------] 1 test from ConsistencyParseFailedTest
+[ RUN      ] ConsistencyParseFailedTest.HtmlTruncatedInsideEntryRow_ParseFailedThrown_RPT07_ACC4
+[       OK ] ConsistencyParseFailedTest.HtmlTruncatedInsideEntryRow_ParseFailedThrown_RPT07_ACC4 (0 ms)
+[----------] 1 test from ConsistencyParseFailedTest (0 ms total)
+
+[----------] 1 test from ConsistencyPurityTest
+[ RUN      ] ConsistencyPurityTest.SameInputSameResult_InputsUnmodified_RPT07_ACC4
+[       OK ] ConsistencyPurityTest.SameInputSameResult_InputsUnmodified_RPT07_ACC4 (0 ms)
+[----------] 1 test from ConsistencyPurityTest (0 ms total)
+
+[----------] 7 tests from ManifestDigestTest
+[ RUN      ] ManifestDigestTest.DeterministicSameInput
+[       OK ] ManifestDigestTest.DeterministicSameInput (0 ms)
+[ RUN      ] ManifestDigestTest.ReportIdentityExcludedFromKey
+[       OK ] ManifestDigestTest.ReportIdentityExcludedFromKey (0 ms)
+[ RUN      ] ManifestDigestTest.GenerationAndFinalizeTimeExcluded
+[       OK ] ManifestDigestTest.GenerationAndFinalizeTimeExcluded (0 ms)
+[ RUN      ] ManifestDigestTest.ContentIdentityChangesDigest
+[       OK ] ManifestDigestTest.ContentIdentityChangesDigest (0 ms)
+[ RUN      ] ManifestDigestTest.VersionDimensionsChangeDigest
+[       OK ] ManifestDigestTest.VersionDimensionsChangeDigest (0 ms)
+[ RUN      ] ManifestDigestTest.ArtifactOrderInsensitive
+[       OK ] ManifestDigestTest.ArtifactOrderInsensitive (0 ms)
+[ RUN      ] ManifestDigestTest.UsageOnEmptyAndDuplicate
+[       OK ] ManifestDigestTest.UsageOnEmptyAndDuplicate (0 ms)
+[----------] 7 tests from ManifestDigestTest (0 ms total)
+
+[----------] 10 tests from CoordinatorTest
+[ RUN      ] CoordinatorTest.PublishesWithOrchestrationOrder
+[       OK ] CoordinatorTest.PublishesWithOrchestrationOrder (0 ms)
+[ RUN      ] CoordinatorTest.IdempotentHitZeroRewrite
+[       OK ] CoordinatorTest.IdempotentHitZeroRewrite (0 ms)
+[ RUN      ] CoordinatorTest.ConflictIdentityDimension
+[       OK ] CoordinatorTest.ConflictIdentityDimension (0 ms)
+[ RUN      ] CoordinatorTest.ConflictVersionDimension
+[       OK ] CoordinatorTest.ConflictVersionDimension (0 ms)
+[ RUN      ] CoordinatorTest.DiskFullAbandonsThenRetrySucceeds
+[       OK ] CoordinatorTest.DiskFullAbandonsThenRetrySucceeds (0 ms)
+[ RUN      ] CoordinatorTest.CancelBeforeBegin
+[       OK ] CoordinatorTest.CancelBeforeBegin (0 ms)
+[ RUN      ] CoordinatorTest.CancelBetweenWritesAbandons
+[       OK ] CoordinatorTest.CancelBetweenWritesAbandons (0 ms)
+[ RUN      ] CoordinatorTest.ReadOnlyStoreRejectedWithTwoPathDiag
+[       OK ] CoordinatorTest.ReadOnlyStoreRejectedWithTwoPathDiag (0 ms)
+[ RUN      ] CoordinatorTest.CleanupFailureLeavesPublishedUntouched
+[       OK ] CoordinatorTest.CleanupFailureLeavesPublishedUntouched (0 ms)
+[ RUN      ] CoordinatorTest.UsageOnPreconditionViolations
+[       OK ] CoordinatorTest.UsageOnPreconditionViolations (0 ms)
+[----------] 10 tests from CoordinatorTest (0 ms total)
+
+[----------] 13 tests from ExportServiceTest
+[ RUN      ] ExportServiceTest.UsageMatrix
+[       OK ] ExportServiceTest.UsageMatrix (2 ms)
+[ RUN      ] ExportServiceTest.ExternalExportWritesFiles
+[       OK ] ExportServiceTest.ExternalExportWritesFiles (10 ms)
+[ RUN      ] ExportServiceTest.ExternalIdempotentNoOp
+[       OK ] ExportServiceTest.ExternalIdempotentNoOp (7 ms)
+[ RUN      ] ExportServiceTest.ExternalConflictNeverOverwriteKeepsExisting
+[       OK ] ExportServiceTest.ExternalConflictNeverOverwriteKeepsExisting (9 ms)
+[ RUN      ] ExportServiceTest.ExternalOverwriteAtomicReplaces
+[       OK ] ExportServiceTest.ExternalOverwriteAtomicReplaces (12 ms)
+[ RUN      ] ExportServiceTest.ExternalOverwriteFailurePreservesPrevious
+[       OK ] ExportServiceTest.ExternalOverwriteFailurePreservesPrevious (9 ms)
+[ RUN      ] ExportServiceTest.ProjectArchiveDiskFullRetrySucceeds
+[       OK ] ExportServiceTest.ProjectArchiveDiskFullRetrySucceeds (3 ms)
+[ RUN      ] ExportServiceTest.ProjectArchivePublishesWithManifest
+[       OK ] ExportServiceTest.ProjectArchivePublishesWithManifest (2 ms)
+[ RUN      ] ExportServiceTest.ProjectArchiveIdempotentRepeat
+[       OK ] ExportServiceTest.ProjectArchiveIdempotentRepeat (3 ms)
+[ RUN      ] ExportServiceTest.ReadOnlyProjectTwoPaths
+[       OK ] ExportServiceTest.ReadOnlyProjectTwoPaths (7 ms)
+[ RUN      ] ExportServiceTest.CancelProjectArchiveAtEntry
+[       OK ] ExportServiceTest.CancelProjectArchiveAtEntry (0 ms)
+[ RUN      ] ExportServiceTest.CancelProjectArchiveBetweenWrites
+[       OK ] ExportServiceTest.CancelProjectArchiveBetweenWrites (1 ms)
+[ RUN      ] ExportServiceTest.CancelExternalExport
+[       OK ] ExportServiceTest.CancelExternalExport (1 ms)
+[----------] 13 tests from ExportServiceTest (70 ms total)
+
+[----------] 14 tests from BundleTest
+[ RUN      ] BundleTest.AssemblesCompleteBundleWithAllEntries
+[       OK ] BundleTest.AssemblesCompleteBundleWithAllEntries (2 ms)
+[ RUN      ] BundleTest.TotalDigestIsDeterministicAcrossAssembles
+[       OK ] BundleTest.TotalDigestIsDeterministicAcrossAssembles (4 ms)
+[ RUN      ] BundleTest.EmptyRunsDefaultsToReportResultRefs
+[       OK ] BundleTest.EmptyRunsDefaultsToReportResultRefs (4 ms)
+[ RUN      ] BundleTest.MissingEnvelopeRejectsWithBundleIncompleteBeforeAnyWrite
+[       OK ] BundleTest.MissingEnvelopeRejectsWithBundleIncompleteBeforeAnyWrite (0 ms)
+[ RUN      ] BundleTest.MissingElementsAreListedExhaustively
+[       OK ] BundleTest.MissingElementsAreListedExhaustively (0 ms)
+[ RUN      ] BundleTest.IncompleteReproductionBlockIsRejectedFieldByField
+[       OK ] BundleTest.IncompleteReproductionBlockIsRejectedFieldByField (0 ms)
+[ RUN      ] BundleTest.EmptyConfigurationListIsLegalButNulloptIsMissing
+[       OK ] BundleTest.EmptyConfigurationListIsLegalButNulloptIsMissing (2 ms)
+[ RUN      ] BundleTest.CancelBeforeCollectionReturnsCanceledWithNoSession
+[       OK ] BundleTest.CancelBeforeCollectionReturnsCanceledWithNoSession (0 ms)
+[ RUN      ] BundleTest.CancelDuringCollectionReturnsCanceledBeforeOpen
+[       OK ] BundleTest.CancelDuringCollectionReturnsCanceledBeforeOpen (0 ms)
+[ RUN      ] BundleTest.CancelDuringWriteCleansTempAndLeavesTargetUntouched
+[       OK ] BundleTest.CancelDuringWriteCleansTempAndLeavesTargetUntouched (0 ms)
+[ RUN      ] BundleTest.WriterFailureAtAddEntryFailsWithTargetUntouched
+[       OK ] BundleTest.WriterFailureAtAddEntryFailsWithTargetUntouched (0 ms)
+[ RUN      ] BundleTest.WriterFailureAtFinishCleansTempAndKeepsTarget
+[       OK ] BundleTest.WriterFailureAtFinishCleansTempAndKeepsTarget (1 ms)
+[ RUN      ] BundleTest.RetryAfterWriterFailureSucceeds
+[       OK ] BundleTest.RetryAfterWriterFailureSucceeds (2 ms)
+[ RUN      ] BundleTest.UsageViolationsAreRejectedFast
+[       OK ] BundleTest.UsageViolationsAreRejectedFast (0 ms)
+[----------] 14 tests from BundleTest (21 ms total)
+
+[----------] 32 tests from ReportingContractSuite
+[ RUN      ] ReportingContractSuite.RP_MDL_1_ReportIdentityDeterministic
+[       OK ] ReportingContractSuite.RP_MDL_1_ReportIdentityDeterministic (0 ms)
+[ RUN      ] ReportingContractSuite.RP_MDL_2_UnresolvableRefs_Rejected
+[       OK ] ReportingContractSuite.RP_MDL_2_UnresolvableRefs_Rejected (0 ms)
+[ RUN      ] ReportingContractSuite.RP_MDL_3_IdentityIndependentOfPathAndName
+[       OK ] ReportingContractSuite.RP_MDL_3_IdentityIndependentOfPathAndName (20 ms)
+[ RUN      ] ReportingContractSuite.RP_SCOPE_1_BLevelSectionCompleteness
+[       OK ] ReportingContractSuite.RP_SCOPE_1_BLevelSectionCompleteness (0 ms)
+[ RUN      ] ReportingContractSuite.RP_SCOPE_2_CLevelSectionCompleteness
+[       OK ] ReportingContractSuite.RP_SCOPE_2_CLevelSectionCompleteness (0 ms)
+[ RUN      ] ReportingContractSuite.RP_SCOPE_3_CMissingEvidence_DegradeOrReject
+[       OK ] ReportingContractSuite.RP_SCOPE_3_CMissingEvidence_DegradeOrReject (0 ms)
+[ RUN      ] ReportingContractSuite.RP_SCOPE_4_BLevelWithCSection_LevelConflict
+[       OK ] ReportingContractSuite.RP_SCOPE_4_BLevelWithCSection_LevelConflict (0 ms)
+[ RUN      ] ReportingContractSuite.RP_STATE_1_NotCompletedResults_NeverFormalPass
+[       OK ] ReportingContractSuite.RP_STATE_1_NotCompletedResults_NeverFormalPass (0 ms)
+[ RUN      ] ReportingContractSuite.RP_STATE_2_DataInsufficient_Expression
+[       OK ] ReportingContractSuite.RP_STATE_2_DataInsufficient_Expression (0 ms)
+[ RUN      ] ReportingContractSuite.RP_STATE_3_InfeasibleReviewRecord
+[       OK ] ReportingContractSuite.RP_STATE_3_InfeasibleReviewRecord (0 ms)
+[ RUN      ] ReportingContractSuite.RP_STATE_4_DoubleBoundaryDeclarationOnFile
+[       OK ] ReportingContractSuite.RP_STATE_4_DoubleBoundaryDeclarationOnFile (0 ms)
+[ RUN      ] ReportingContractSuite.RP_CUR_1_HeadAdvanceKeepsHistoryImmutable
+[       OK ] ReportingContractSuite.RP_CUR_1_HeadAdvanceKeepsHistoryImmutable (13 ms)
+[ RUN      ] ReportingContractSuite.RP_CUR_2_SupersededHint_DiagnosticNotContent
+[       OK ] ReportingContractSuite.RP_CUR_2_SupersededHint_DiagnosticNotContent (19 ms)
+[ RUN      ] ReportingContractSuite.RP_CUR_3_Unevaluable_NotDefaultCurrent
+[       OK ] ReportingContractSuite.RP_CUR_3_Unevaluable_NotDefaultCurrent (0 ms)
+[ RUN      ] ReportingContractSuite.RP_COV_1_CaseCoverageDisplay
+[       OK ] ReportingContractSuite.RP_COV_1_CaseCoverageDisplay (1 ms)
+[ RUN      ] ReportingContractSuite.RP_TRACE_1_EvidenceTraceabilityChain
+[       OK ] ReportingContractSuite.RP_TRACE_1_EvidenceTraceabilityChain (0 ms)
+[ RUN      ] ReportingContractSuite.RP_CONS_1_MultiFormatConsistency_BadSampleLocation
+[       OK ] ReportingContractSuite.RP_CONS_1_MultiFormatConsistency_BadSampleLocation (3 ms)
+[ RUN      ] ReportingContractSuite.RP_CONS_2_CsvEscapeRoundtrip
+[       OK ] ReportingContractSuite.RP_CONS_2_CsvEscapeRoundtrip (17 ms)
+[ RUN      ] ReportingContractSuite.RP_CONS_3_StableOrdering_ByteDeterminism
+[       OK ] ReportingContractSuite.RP_CONS_3_StableOrdering_ByteDeterminism (26 ms)
+[ RUN      ] ReportingContractSuite.RP_CONS_4_UnicodeUnitsAndCurveRefs
+[       OK ] ReportingContractSuite.RP_CONS_4_UnicodeUnitsAndCurveRefs (0 ms)
+[ RUN      ] ReportingContractSuite.RP_CONC_1_BackgroundWrites_AnchoredView
+[       OK ] ReportingContractSuite.RP_CONC_1_BackgroundWrites_AnchoredView (0 ms)
+[ RUN      ] ReportingContractSuite.RP_CANC_1_CancelAndTempCleanup
+[       OK ] ReportingContractSuite.RP_CANC_1_CancelAndTempCleanup (1 ms)
+[ RUN      ] ReportingContractSuite.RP_IDEM_1_ProjectArchiveIdempotentHit
+[       OK ] ReportingContractSuite.RP_IDEM_1_ProjectArchiveIdempotentHit (7 ms)
+[ RUN      ] ReportingContractSuite.RP_IDEM_2_ExternalIdempotentNoOp
+[       OK ] ReportingContractSuite.RP_IDEM_2_ExternalIdempotentNoOp (13 ms)
+[ RUN      ] ReportingContractSuite.RP_CONF_1_ConflictDetectionAndResolution
+[       OK ] ReportingContractSuite.RP_CONF_1_ConflictDetectionAndResolution (29 ms)
+[ RUN      ] ReportingContractSuite.RP_DISK_1_DiskFull_AbandonAndRetry
+[       OK ] ReportingContractSuite.RP_DISK_1_DiskFull_AbandonAndRetry (5 ms)
+[ RUN      ] ReportingContractSuite.RP_RO_1_ReadOnlyProject_TwoPaths
+[       OK ] ReportingContractSuite.RP_RO_1_ReadOnlyProject_TwoPaths (4 ms)
+[ RUN      ] ReportingContractSuite.RP_SAN_1_DiagnosticRedaction
+[       OK ] ReportingContractSuite.RP_SAN_1_DiagnosticRedaction (1 ms)
+[ RUN      ] ReportingContractSuite.RP_REVW_1_ReviewEvolutionChain
+[       OK ] ReportingContractSuite.RP_REVW_1_ReviewEvolutionChain (13 ms)
+[ RUN      ] ReportingContractSuite.RP_REVW_2_UnsignedExportable
+[       OK ] ReportingContractSuite.RP_REVW_2_UnsignedExportable (22 ms)
+[ RUN      ] ReportingContractSuite.RP_BUN_1_BundleAssemblyAndCollaboration
+[       OK ] ReportingContractSuite.RP_BUN_1_BundleAssemblyAndCollaboration (5 ms)
+[ RUN      ] ReportingContractSuite.RP_GATE_1_BuildRedLines
+[       OK ] ReportingContractSuite.RP_GATE_1_BuildRedLines (10 ms)
+[----------] 32 tests from ReportingContractSuite (225 ms total)
+
+[----------] Global test environment tear-down
+[==========] 196 tests from 31 test suites ran. (399 ms total)
+[  PASSED  ] 196 tests.
