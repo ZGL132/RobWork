@@ -14,7 +14,12 @@
  *     实现冻结并做单元卡增量修订登记（本任务＝UI-T03，登记于 ui.md §10.1）；
  *   - 需求 PM-11（标题/状态栏格式 `<显示名>[*][（只读）]`——formatProject
  *     StatusText 为该格式的唯一权威实现）、PM-07（只读呈现）、PM-10（最近
- *     项目条目）、PM-14（用户级设置承载的值面）。
+ *     项目条目）、PM-14（用户级设置承载的值面）；
+ *   - UI-T04 增量（登记 ui.md §16.7 v0.6）：七态公共状态呈现承载——
+ *     StatusWord 词表与 StatusWordProjection（§6.3 冻结稿）、七态触发数据源
+ *     值投影（当前性/证据清单/正式通过资格/就绪/任务活动——§3.2 冻结基准的
+ *     ui 侧载体，O-31 裁决）、九态短标签文案键（PM-03/PM-11）、§6.3/§6.8
+ *     显示纪律数据面。
  *
  * 背景说明（为什么状态栏输入是"投影"而不是 project 头文件里的类型）：
  *   ui 产品面对 project 单元零链接零 include（O-31/ARCH §3.5），而状态栏/
@@ -34,8 +39,11 @@
 #include <cstddef>
 #include <optional>
 #include <string>
+#include <vector>
 
-#include <sdurws/ird/core/Identity.hpp>  // core::ProjectId（P-PR-1 同案：身份类型与 core 契约同一，不本地重定义）
+#include <sdurws/ird/core/Evaluation.hpp>  // core::TaskState/TaskOutcome/EngineeringStatus（表内登记边：任务轴九态/结局/工程判定词表）
+#include <sdurws/ird/core/Identity.hpp>    // core::ProjectId（P-PR-1 同案：身份类型与 core 契约同一，不本地重定义）
+#include <sdurws/ird/diagnostics/Catalog.hpp>  // diagnostics::DiagProjectionItem（表内登记边：failed 态"附定位与修复建议"的呈现载体）
 
 namespace sdurws::ird {
 namespace ui {
@@ -211,6 +219,439 @@ inline std::string formatProjectStatusText(const ProjectContextProjection& conte
     }
     return text;
 }
+
+// =====================================================================
+// 七态公共状态呈现（UI-T04；UX-06/UX-10/PM-11——ui.md §6.3 冻结稿承载）
+// =====================================================================
+//
+// 本节背景（为什么"状态词"是投影而不是判定）：
+//   UX-10 要求全工作台用统一状态词呈现计算处境；词表唯一所有者是 ui
+//   （NFR-MNT-03，O-11），但 ui 是纯呈现单元（N-5/N-12：不拥有工程判定、
+//   不拥有业务真值）——七态因此只是**呈现投影**：每个触发数据源都来自
+//   权威方（会话态/execution/evidence/diagnostics），ui 只按 §6.3 冻结的
+//   求值优先级选取"该呈现哪个词"，不新增任何状态语义（R-2 红线：禁止
+//   下游拿呈现态反推业务判定）。求值入口是纯函数 evaluateStatusWord
+//   （同输入同输出——NFR-COR-02），供 UiProjectionStore（§10.6）/阶段
+//   投影（UI-T09）在 UI 线程调用。
+
+/**
+ * @brief UX-10 七态状态词表（§6.3 冻结 token——ui 唯一所有者，P-UI-1
+ *        处置：冻结确认闭合前按本稿实现、不改词表）。
+ *
+ * 枚举序＝§6.3 词表行序（**不是**求值优先级序——优先级是另一条冻结规则，
+ * 见 statusWordPriority）。token 为小写连字符（与 core 词表同风格），
+ * 经 statusWordToken 取得；呈现文案键经 statusWordLabelKey 取得。
+ */
+enum class StatusWord : std::uint8_t {
+    EmptyProject,     ///< 空项目（token "empty-project"；§6.3 词表行 1）
+    Incomplete,       ///< 未完成（token "incomplete"；就绪投影无效——输入级）
+    Computing,        ///< 计算中（token "computing"；存在非终态任务）
+    ResultsStale,     ///< 结果过期（token "results-stale"；含 NotEvaluable 呈现归入——P-UI-2）
+    DataInsufficient, ///< 数据不足（token "data-insufficient"；判定级证据/工况缺失）
+    Failed,           ///< 失败（token "failed"；最近任务失败或 Error 级诊断活跃）
+    Computable,       ///< 可计算（token "computable"；就绪有效且无更高优先状态）
+};
+
+/**
+ * @brief 当前性"不可判定"原因词表（§6.3 P-UI-2 呈现承载）。
+ *
+ * 语义锚点（不改义）：evidence 的当前性计算只有 Current/Superseded 两个
+ * **持久语义状态**；"无法判定"（NotEvaluable）是**计算结果形态**（status
+ * ＝空＋原因，evidence.md §8.1 规则表行 2）——本枚举只承载该形态的两种
+ * 成因（与 evidence UnevaluableCause 语义一一对应），供结果过期呈现区的
+ * "无法判定"原因文案选键（P-UI-2 建议口径：归入 results-stale 呈现，
+ * 不显示为 Current、不显示为通过；冻结前不私定其它口径）。
+ */
+enum class NotEvaluableCause : std::uint8_t {
+    CrossContext,         ///< 跨上下文（原项目结果不成为另一项目/会话的当前结果——TASK-03）
+    UnresolvedDependency, ///< 依赖无法解析（对象/资源缺失——不得默认 Current）
+};
+
+// ---------------------------------------------------------------------
+// 七态触发数据源值投影（O-31 裁决载体：§3.2 冻结基准的 ui 侧值形态）
+// ---------------------------------------------------------------------
+
+/**
+ * @brief 就绪投影（incomplete 触发面）。
+ *
+ * 语义锚点（§6.3 incomplete 行）：evidence.md §6.4.1 ①级 ReadinessSummary
+ * （VerdictInput.readiness——{valid, invalidMustItems[]}）：任一启用 Must
+ * 条目非法即 valid==false（REQ-06"输入未完成"——正式评估不派发）。ui 只
+ * 呈现"未完成"，不复算就绪（N-5：就绪校验归请求方/域）。
+ */
+struct ReadinessProjection {
+    /// 就绪校验结论（true＝全部启用 Must 条目合法；false＝输入未完成）。
+    bool valid = true;
+    /// 非法 Must 条目键清单（valid==false 时非空——呈现"未完成"明细的数据源）。
+    std::vector<std::string> invalidMustKeys;
+};
+
+/**
+ * @brief 任务活动投影（computing/failed 触发面）。
+ *
+ * 语义锚点（§3.2 execution 行——O-31 值投影，L5 适配 execution 的
+ * TaskSnapshot/ProgressReport 只读面）：任务九态/结局/工程判定**直接使用
+ * core 词表类型**（ui→core 是表内登记边，无需投影转换——§3.2"词表"行）；
+ * ui 只读不控制（控制面归 ITaskPresentationModel，§10.7/UI-T13）。
+ *
+ * 字段语义（§6.3 触发数据源原文）：
+ *   - activeStates＝当前作用域全部非终态任务状态（∈ {Queued, Preparing,
+ *     Running, Paused, Canceling}；终态任务不入本清单——非空即 computing）；
+ *   - latestOutcome＝最近终态任务的结局（failed 行判定源）；
+ *   - latestEngineeringStatus＝最近正式评估的工程判定（data-insufficient
+ *     行判定源——判定级 DataInsufficient；输入级归 incomplete）；
+ *   - progressStageKey/cancelAvailable＝计算中呈现的伴随数据（acceptance
+ *     显示纪律"计算中附进度阶段与取消"——§9.4 phaseToken 文案键投影与
+ *     UX-10 取消入口可用位）。
+ */
+struct TaskActivityProjection {
+    /// 当前作用域非终态任务状态集合（空＝无在途计算——computing 不成立）。
+    std::vector<core::TaskState> activeStates;
+    /// 最近终态任务结局（nullopt＝本会话尚无终态任务——"可选"语义与 §6.3
+    /// computable 行"Completed（可选）"一致）。
+    std::optional<core::TaskOutcome> latestOutcome;
+    /// 最近正式评估工程判定（nullopt＝尚无正式评估）。
+    std::optional<core::EngineeringStatus> latestEngineeringStatus;
+    /// 进度阶段文案键（§9.4 ProgressReport.phaseToken 的 ui 侧承载；仅在
+    /// computing 呈现中使用，其余七态忽略）。
+    std::string progressStageKey;
+    /// 取消入口是否可用（UX-10"计算中必须最先呈现＋取消"——呈现位，真实
+    /// 取消可行性归 execution Ack）。
+    bool cancelAvailable = false;
+};
+
+/**
+ * @brief 结果当前性投影（results-stale 触发面——C-7 语义承载）。
+ *
+ * 语义锚点（§3.2 evidence 行——冻结基准 evidence.md §8.1 CurrentnessResult，
+ * O-31 值投影、L5 适配；**投影≠重定义**——字段语义逐条对齐对端锚点）：
+ *   - status＝nullopt 表达"不可判定"计算形态（**不是第三持久态**——上游
+ *     词表仅 Current/Superseded 两态，evidence §8.1 规则表行 2）；
+ *   - status==Superseded 时 reasons 携带逐条目失效原因清单（§6.3 过期行
+ *     "附 InvalidationReason 清单"——KIN-13 重算提示的数据源）；
+ *   - 无默认 Current：status==nullopt 时消费者**不得当作 Current 使用**
+ *     （evidence §8.1 规则表行 4；ui 侧呈现归 results-stale——P-UI-2）。
+ */
+struct CurrentnessProjection {
+    /// 持久语义状态（仅两值——与 evidence CurrentnessStatus 一一对应）。
+    enum class Status : std::uint8_t {
+        Current,    ///< 结果切片与目标重建切片内容身份相等
+        Superseded, ///< 结果相对目标上下文过期（reasons 必非空承载原因）
+    };
+
+    /**
+     * @brief 单条失效原因（evidence.md §8.1 步骤 4 {dependencyKey, kind,
+     *        detail} 的 ui 侧承载）。
+     *
+     * kind 不镜像为 ui 枚举：失效类别词表权威在 evidence（§8.1 步骤 4），
+     * ui 仅呈现——适配器以对端稳定 token 字符串传入（kindToken），避免
+     * 双权威词表（NFR-MNT-03）；detail 为对端产出的人读差异摘要
+     * （同差异同文本，NFR-COR-02），呈现层原样显示不二次加工（UX-02）。
+     */
+    struct Reason {
+        /// 涉事依赖键（条目级差异＝语义角色键；契约级/身份级兜底为空串）。
+        std::string dependencyKey;
+        /// 失效类别稳定 token（对端 InvalidationKind 词表的持久化形态）。
+        std::string kindToken;
+        /// 旧→新差异人读摘要（中文＋规范身份文本——呈现层原文显示）。
+        std::string detail;
+    };
+
+    /// 判定状态（nullopt＝不可判定——NotEvaluable 计算形态，非第三持久态）。
+    std::optional<Status> status;
+    /// 不可判定原因（status==nullopt 时必有值；两持久态时必无值——presence
+    /// 纪律与对端 CurrentnessResult.unevaluableCause 一致）。
+    std::optional<NotEvaluableCause> unevaluableCause;
+    /// 逐条目失效原因清单（Superseded 时非空；Current/不可判定恒空）。
+    std::vector<Reason> reasons;
+};
+
+/**
+ * @brief 证据清单条目投影（data-insufficient 呈现面——C-7 语义承载）。
+ *
+ * 语义锚点（§3.2 evidence 行 EvidenceManifest/EvidenceItemStatus——冻结
+ * 基准 evidence.md §6.2）：五值状态与对端 EvidenceItemStatus 一一对应；
+ * note 承载 Invalid/NotApplicable 的必填原因（ERR-01：不伪造、留原因）。
+ */
+struct EvidenceItemProjection {
+    /// 证据项五值状态（语义与 evidence EvidenceItemStatus 一一对应）。
+    enum class Status : std::uint8_t {
+        Satisfied,     ///< 产物存在且绑定校验通过
+        Missing,       ///< 无产物——不满足（缺失项全量列出，不短路）
+        Invalid,       ///< 产物存在但绑定校验失败——不满足（note 必填）
+        Unverified,    ///< 产物存在但未在满足正式要求的条件下验证
+        NotApplicable, ///< 适用条件不满足——不计缺失（note 必填）
+    };
+    /// 证据项 id（对应 Profile 项 itemId——"<域>.<项>" 词形）。
+    std::string itemId;
+    /// 证据项状态。
+    Status status = Status::Missing;
+    /// Invalid/NotApplicable 必填原因（其余状态为空串——ERR-01 不伪造）。
+    std::string note;
+};
+
+/**
+ * @brief 证据清单投影（data-insufficient 呈现"缺失项全量清单"的数据源——
+ *        §6.8 组合呈现行"OpenWritable＋Completed＋DataInsufficient"）。
+ *
+ * 只携带呈现所需最小面（条目清单）；清单是否构成"数据不足"判定**不由 ui
+ * 决定**（N-5——判定权威在 evidence EngineeringStatus），ui 仅在七态求值
+ * 命中 data-insufficient 时把不满足项全量列出（acceptance 显示纪律）。
+ */
+struct EvidenceManifestProjection {
+    /// 逐项证据（对应 Profile 项产出状态；空清单＝无可呈现条目）。
+    std::vector<EvidenceItemProjection> items;
+};
+
+/**
+ * @brief 正式通过资格投影（显示纪律唯一放行数据源——C-7 语义承载）。
+ *
+ * 语义锚点（§3.2 evidence 行 FormalPassEligibility——冻结基准 evidence.md
+ * §7.2 资格表行 1）：五条件同时满足方可 eligible（mode==Verified ∧
+ * outcome==Completed ∧ 覆盖矩阵完备 ∧ 必需证据齐备 ∧ EngineeringStatus
+ * ==Feasible）；unmetConditions 为对端产出的未满足条件稳定 token 清单。
+ *
+ * **显示纪律（§6.3/§6.8，RPT-05 冻结措辞同样适用于界面）**：ui 不得自行
+ * 由 outcome/工程状态组合出"通过"结论；不满足时禁止渲染"正式通过"字样
+ * ——渲染放行见 formalPassRenderable()（本投影是其唯一数据源）。
+ */
+struct FormalPassEligibilityProjection {
+    /// 资格事实面是否可解析（false＝尚无正式评估/资格不可得——呈现层不得
+    /// 显示任何"通过"字样，也不虚构资格）。
+    bool available = false;
+    /// 五条件同时满足（available==false 时必为 false）。
+    bool eligible = false;
+    /// 未满足条件稳定 token 清单（对端 §7.2 词表：mode-not-verified /
+    /// outcome-not-completed / coverage-incomplete / evidence-incomplete /
+    /// status-not-feasible；顺序＝条件表序）。
+    std::vector<std::string> unmetConditions;
+};
+
+// ---------------------------------------------------------------------
+// 七态求值输入与输出
+// ---------------------------------------------------------------------
+
+/**
+ * @brief 七态求值的触发数据源快照（§6.3 映射表"触发数据源（权威方）"列的
+ *        值聚合——一次一致快照，全部字段来自权威方投影/词表）。
+ *
+ * 为什么是单一聚合值而不是逐字段入参：§6.1 投影管线按"修订身份对齐"组装
+ * 快照——七态求值必须消费同一时刻的各权威事实（分次取数会出现"任务轴是
+ * 新事件、当前性轴是旧快照"的拼接态，违反 §6.1 快照一致性纪律）。
+ *
+ * 谁填充：UiProjectionStore/L5 装配层经各查询端口与 C-7/C-8 值投影组装
+ * （pull-on-event——§6.1）；ui 对各轴只读，不复算任何判定（N-5/N-12）。
+ */
+struct StatusFacts {
+    /// 会话是否绑定已打开项目（false＝UiSessionState ∈ {NoProject}——
+    /// §5.2 会话态；Opening/Draining/Closed 的呈现路由归 §6.2/§5.7，
+    /// 不在本投影语义内）。
+    bool projectOpen = false;
+    /// 就绪投影（incomplete 触发面——REQ-06/ReadinessSummary）。
+    ReadinessProjection readiness{};
+    /// 任务活动投影（computing/failed/data-insufficient 触发面——core 词表）。
+    TaskActivityProjection tasks{};
+    /// Error 级诊断是否活跃（failed 触发面之二——§6.3 failed 行触发数据源
+    /// 原文第二分句）。
+    bool errorDiagActive = false;
+    /// 失败相关诊断投影项（failed 呈现"附对象定位与修复建议"的载体——
+    /// §9.1 DiagProjectionItem 原样承载，ui 不改写诊断语义）。
+    std::vector<diagnostics::DiagProjectionItem> failureDiagnostics{};
+    /// 结果当前性投影（results-stale 触发面——C-7）。
+    CurrentnessProjection currentness{};
+    /// 证据清单投影（data-insufficient"缺失项全量清单"数据源——C-7）。
+    EvidenceManifestProjection evidence{};
+    /// 正式通过资格投影（显示纪律唯一放行数据源——C-7）。
+    FormalPassEligibilityProjection formalPass{};
+};
+
+/**
+ * @brief 七态状态投影输出（UI-STG-3 观测点"StatusWordProjection 输出"）。
+ *
+ * word 之外的字段都是**伴随呈现数据**（acceptance 显示纪律：计算中附进度
+ * 阶段与取消、过期附原因、失败附定位、数据不足附缺失清单）——与 word 同
+ * 一次求值原子产出，呈现层不得跨快照拼接。formalPass 恒随行（无论命中
+ * 哪个七态），保证"是否可显示正式通过"永远有同快照的数据源。
+ *
+ * 值语义；ui 不得把本投影当业务真值消费（R-2 红线——呈现态≠判定）。
+ */
+struct StatusWordProjection {
+    /// 命中的七态（§6.3 求值优先级首个命中——呈现词，非新判定）。
+    StatusWord word = StatusWord::EmptyProject;
+    /// 进度阶段文案键（word==Computing 时取自任务轴；其余态为空——
+    /// §9.4 phaseToken 承载，键值解析随 UI-T09 UiText）。
+    std::string progressStageKey;
+    /// 取消入口可用位（word==Computing 时取自任务轴；UX-10）。
+    bool cancelAvailable = false;
+    /// 逐条目失效原因清单（word==ResultsStale 且当前性==Superseded 时非空
+    /// ——§6.3"附 InvalidationReason 清单"）。
+    std::vector<CurrentnessProjection::Reason> staleReasons;
+    /// 「无法判定」原因（word==ResultsStale 且当前性为 NotEvaluable 计算形态
+    /// 时有值——P-UI-2 建议口径；文案键经 currentnessUnevaluableLabelKey）。
+    std::optional<NotEvaluableCause> notEvaluableCause;
+    /// 不满足证据项全量清单（word==DataInsufficient 时非空——§6.8"缺失项
+    /// 全量清单"；Missing/Invalid/Unverified，Satisfied/NotApplicable 不列）。
+    std::vector<EvidenceItemProjection> unsatisfiedEvidence;
+    /// 失败诊断投影项（word==Failed 时原样携带——§6.3"附对象定位与修复
+    /// 建议"；含 subject/localName 定位与 actionKind 处置入口）。
+    std::vector<diagnostics::DiagProjectionItem> failureDiagnostics;
+    /// 正式通过资格投影（恒随行——显示纪律唯一放行数据源，与 word 同快照）。
+    FormalPassEligibilityProjection formalPass;
+};
+
+// ---------------------------------------------------------------------
+// 词表 token 与文案键（键冻结于本头；中文值为 UI-T09 UiText 前的过渡承载
+// ——UI-T03"壳内文案表为 UI-T09 UiText 过渡承载"同案，迁移时键不变）
+// ---------------------------------------------------------------------
+
+/**
+ * @brief 七态冻结 token（§6.3 词表 token 列；小写连字符）。
+ *
+ * @param word [in] 七态值（全七值皆有登记 token——未知值为调用方错误，
+ *             返回空串并不够用，故契约约定只传合法枚举值）
+ * @return 冻结 token（"empty-project"/"incomplete"/"computing"/
+ *         "results-stale"/"data-insufficient"/"failed"/"computable"）
+ */
+const char* statusWordToken(StatusWord word) noexcept;
+
+/**
+ * @brief 七态呈现文案键（键约定 state.<token>.label——§3.5 文案键体系，
+ *        PM-03/PM-11 同族）。
+ *
+ * @param word [in] 七态值
+ * @return 文案键（如 "state.empty-project.label"；值解析归 UiText/UI-T09，
+ *         过渡值见 statusWordTransitionalLabel）
+ */
+std::string statusWordLabelKey(StatusWord word);
+
+/**
+ * @brief 七态中文呈现文本（UI-T09 UiText 文案资源落地前的过渡承载——
+ *        §6.3 词表"中文"列原文，键值分离过渡期值随头文件走）。
+ *
+ * @param word [in] 七态值
+ * @return 中文短词（"空项目"/"未完成"/"计算中"/"结果过期"/"数据不足"/
+ *         "失败"/"可计算"；UI-T09 后本函数退役，键不变）
+ */
+std::string statusWordTransitionalLabel(StatusWord word);
+
+/**
+ * @brief 七态求值优先级（§6.3 冻结优先级：empty-project ＞ computing ＞
+ *        incomplete ＞ failed ＞ data-insufficient ＞ results-stale ＞
+ *        computable）。
+ *
+ * 返回值越小优先级越高（0＝最高）。理由（§6.3 原文）：计算中必须最先呈现
+ * （用户提供取消入口 UX-10）；未完成阻断新正式运行；失败与数据不足次之；
+ * 过期仍可查看历史；全无则可计算。
+ *
+ * @param word [in] 七态值
+ * @return 优先级序号（0~6；工作台总徽标聚合用——§6.3"取各活跃阶段中
+ *         优先级最高者"）
+ */
+int statusWordPriority(StatusWord word) noexcept;
+
+/**
+ * @brief 求值优先级最高的七态（工作台总徽标聚合——§6.3 原文"总徽标＝取
+ *        各活跃阶段中优先级最高者"）。
+ *
+ * @param words [in] 各活跃阶段的七态（阶段七态视图随 UI-T09 产出）
+ * @return 优先级最高者（同优先级不重叠——词表无重复序号）；空输入返回
+ *         nullopt（无活跃阶段，不虚构状态词）
+ */
+std::optional<StatusWord> dominantStatusWord(const std::vector<StatusWord>& words);
+
+/**
+ * @brief core 九态短标签文案键（PM-03/PM-11——acceptance"九态短标签文案键
+ *        state.<token>.label 就位"）。
+ *
+ * 键中的 token 是 core::TaskState 的冻结持久化 token（core.md §4.7 小写
+ * 连字符，经 core toToken 词表对应：queued/preparing/running/paused/
+ * canceling/canceled/completed/failed/interrupted）；键值分离——值（中文
+ * 短标签）归 ui 文案资源（§3.5/P-DIAG-9 交接）。
+ *
+ * @param state [in] 任务九态（core 词表——ui→core 表内边直用）
+ * @return 文案键（如 "state.queued.label"）
+ */
+std::string taskStateLabelKey(core::TaskState state);
+
+/**
+ * @brief core 九态中文短标签（UI-T09 前过渡承载——§6.3 九态短标签行原文：
+ *        排队中/准备中/计算中/已暂停/取消中/已取消/已完成/失败/已中断）。
+ *
+ * @param state [in] 任务九态
+ * @return 中文短标签（与键一一对应；UI-T09 后本函数退役，键不变）
+ */
+std::string taskStateTransitionalLabel(core::TaskState state);
+
+/**
+ * @brief 当前性「无法判定」原因文案键（P-UI-2 呈现承载——结果过期呈现区
+ *        的原因条目键，约定 state.currentness.unevaluable.<cause>.label）。
+ *
+ * @param cause [in] 不可判定成因
+ * @return 文案键（"state.currentness.unevaluable.cross-context.label" /
+ *         "state.currentness.unevaluable.unresolved-dependency.label"）
+ */
+std::string currentnessUnevaluableLabelKey(NotEvaluableCause cause);
+
+/**
+ * @brief 当前性「无法判定」原因中文文本（UI-T09 前过渡承载——§6.3 P-UI-2
+ *        建议口径的原因区文案："当前性无法判定（依赖缺失/上下文变化）"）。
+ *
+ * @param cause [in] 不可判定成因
+ * @return 中文原因文本（UnresolvedDependency→"当前性无法判定（依赖缺失）"；
+ *         CrossContext→"当前性无法判定（上下文变化）"）
+ */
+std::string currentnessUnevaluableTransitionalLabel(NotEvaluableCause cause);
+
+/**
+ * @brief 「正式通过」字样渲染放行门（§6.3/§6.8 显示纪律的唯一实现点）。
+ *
+ * 五条件资格（FormalPassEligibility）是唯一放行数据源：资格事实面不可解析
+ * （available==false，含"尚无正式评估"）或五条件未全满足（eligible==false，
+ * 含任一 unmetCondition）时返回 false——呈现层据此**禁止渲染"正式通过"字
+ * 样**（RPT-05 冻结措辞同样适用于界面；ui 不得自行由 outcome/工程状态组合
+ * 出"通过"结论）。ui 不复算五条件（N-5：资格判定权威在 evidence）。
+ *
+ * @param p [in] 正式通过资格投影（与七态 word 同快照随行）
+ * @return true＝允许渲染"正式通过"；false＝禁止（显示限定语/不显示）
+ */
+inline bool formalPassRenderable(const FormalPassEligibilityProjection& p) noexcept
+{
+    // available==false：无资格事实（未评估/不可得）——按未满足处置（不虚构）。
+    // eligible==false：五条件未全满足——§7.2 表"同时满足方可 true"。
+    return p.available && p.eligible;
+}
+
+/**
+ * @brief 证据清单中的不满足项全量清单（§6.8"缺失项全量清单"数据源）。
+ *
+ * 不满足＝Missing/Invalid/Unverified 三态（evidence §6.2 判定后果原文：
+ * Missing 全量列出、Invalid 附原因、Unverified 区别于 Missing）；Satisfied
+ * 与 NotApplicable（显式不适用、不计缺失——C2/ERR-01）不列。全量不短路
+ * （表 2 ④同口径）。
+ *
+ * @param manifest [in] 证据清单投影
+ * @return 不满足项（保持清单原序——呈现顺序不重排，NFR-COR-02 稳定呈现）
+ */
+std::vector<EvidenceItemProjection>
+unsatisfiedEvidenceItems(const EvidenceManifestProjection& manifest);
+
+/**
+ * @brief 七态求值（§6.3 七态×权威词表映射表＋求值优先级的唯一实现）。
+ *
+ * 自上而下按冻结优先级首个命中（empty-project ＞ computing ＞ incomplete
+ * ＞ failed ＞ data-insufficient ＞ results-stale ＞ computable）——判定
+ * 全部来自权威方数据（呈现映射，不是新判定——R-2 红线）；NotEvaluable
+ * （status==nullopt）按 P-UI-2 建议口径归入 results-stale＋「无法判定」
+ * 原因呈现，不显示为 Current、不显示为通过。纯函数：同输入同输出
+ * （NFR-COR-02），无副作用、不回写任何权威对象（投影只读红线）。
+ *
+ * @param facts [in] 触发数据源快照（一次一致快照——见 StatusFacts 注释）
+ * @return 七态投影（word＋伴随呈现数据＋formalPass 同快照随行）
+ *
+ * @note UI 线程调用（§3.4 M-1 消费点）；实现零分配上限受输入规模约束
+ *       （清单原样拷贝——调用方控制快照规模）。
+ */
+StatusWordProjection evaluateStatusWord(const StatusFacts& facts);
 
 }  // namespace ui
 }  // namespace ird

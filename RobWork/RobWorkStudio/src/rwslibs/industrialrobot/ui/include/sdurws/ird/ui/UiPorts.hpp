@@ -15,6 +15,8 @@
  *   - 本任务（UI-T03）冻结的两个端口：C-10（策略摘要）、C-11（名称解析）——
  *     均 §10.1 ShellWiring 持有；注册表类型归 ui 自有头（P-UI-5/CF-1 结论，
  *     本头不涉及——ICommandRegistry 随 UI-T06 落其自有头 §10.3）。
+ *     UI-T04 增量冻结：C-7（当前性端口 IUiCurrentnessSource——七态求值触发
+ *     数据源与显示纪律放行数据源；登记 ui.md §16.7 v0.6）。
  *
  * 背景说明（为什么不直接 include policy::IPolicyProvider / runtime::
  * IRuntimeNameResolver）：ARCH §3.5 依赖白名单只有 ui→core、ui→diagnostics
@@ -112,6 +114,69 @@ public:
      *       NFR-PERF-01）。
      */
     virtual PolicySummaryProjection summary() const = 0;
+};
+
+// =====================================================================
+// C-7：当前性端口（冻结基准 evidence.md §6/§7/§8——结果与当前性投影面；
+// UI-T04 首消费冻结，登记 ui.md §16.7 v0.6）
+// =====================================================================
+
+/**
+ * @brief 证据当前性与资格事实的 ui 自有最小端口（L5 适配 evidence 只读面）。
+ *
+ * 语义冻结（不改义——ui.md v0.4 C-7 行原文）：evidence 结果与当前性投影
+ * ——CurrentnessResult（过期原因）、EvidenceManifest（证据清单）、
+ * FormalPassEligibility（正式通过资格）。ui 对 evidence 只有**只读**访问：
+ * 当前性/资格判定权威在 evidence（N-5），本端口只回传**已判定的值投影**
+ * （UiProjections.hpp——CurrentnessProjection/EvidenceManifestProjection/
+ * FormalPassEligibilityProjection，字段语义逐条锚定 evidence.md §8.1/§6.2/
+ * §7.2），ui 侧不复算、不缓存改写（evidence"派生投影不可写回"纪律在
+ * 消费侧同样成立）。
+ *
+ * 为什么三个方法而不是一个聚合方法：三个事实面的失效/重算节奏不同（当前
+ * 性随修订事件重算、清单随评估变化、资格随最近评估变化），聚合会让适配器
+ * 被迫每次全量取数；分离方法让装配层按需绑定。调用方（投影管线）负责把
+ * 三者组装进同一次 StatusFacts 快照（§6.1 快照一致性——一致性归组装方，
+ * 不在端口内）。
+ *
+ * UI-T04 消费状态：七态求值的触发数据源（evaluateStatusWord 输入面）与
+ * 显示纪律放行数据源（formalPassRenderable）；端口实现由 L5 注入并适配
+ * evidence 会话态索引/资格检查结果——ui 测试以可控替身承载（§3.1）。
+ */
+class IUiCurrentnessSource {
+public:
+    virtual ~IUiCurrentnessSource() = default;
+
+    /**
+     * @brief 取当前结果当前性投影（§6.3 results-stale 触发面）。
+     *
+     * @return 当前性投影（status==nullopt＝不可判定计算形态——不得当作
+     *         Current 使用，evidence §8.1 规则表行 4；纯查询，不抛——
+     *         实现内部失败以 nullopt＋unevaluableCause 表达，不虚构 Current）
+     *
+     * @note UI 线程调用（§3.4 M-1）；实现应返回快照值（NFR-PERF-01）。
+     */
+    virtual CurrentnessProjection currentness() const = 0;
+
+    /**
+     * @brief 取证据清单投影（§6.8"缺失项全量清单"数据源）。
+     *
+     * @return 证据清单投影（空清单＝无可呈现条目；纯查询，不抛）
+     *
+     * @note UI 线程调用；条目 note 已由 evidence 侧按 ERR-01 保证
+     *       （Invalid/NotApplicable 必填原因），ui 原样呈现不加工。
+     */
+    virtual EvidenceManifestProjection evidenceManifest() const = 0;
+
+    /**
+     * @brief 取正式通过资格投影（§6.3 显示纪律唯一放行数据源）。
+     *
+     * @return 资格投影（available==false＝尚无正式评估/资格不可得——
+     *         禁止渲染"正式通过"字样；纯查询，不抛）
+     *
+     * @note UI 线程调用；五条件判定权威在 evidence（§7.2），ui 只读放行位。
+     */
+    virtual FormalPassEligibilityProjection formalPassEligibility() const = 0;
 };
 
 }  // namespace ui
