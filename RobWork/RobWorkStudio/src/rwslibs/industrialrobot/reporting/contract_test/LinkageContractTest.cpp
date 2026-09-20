@@ -140,17 +140,21 @@ std::set<std::string> collectIncludedUnits()
 }  // namespace
 
 /**
- * 链接图契约：reporting 的 CMake 目标引用集合仅含四条产品单元边
- * （acceptance 2——ARCH §3.5 登记边，零表外同层边，SA-10）。
+ * 链接图契约：reporting 的 CMake 目标引用集合仅含四条产品单元边＋testkit
+ * （RPT-T11 契约套件报告设施——T-1 允许形态，仅测试目标，见 NoTestkitEdge
+ * 用例的收窄断言）。
  *
  * 扫描单元 CMakeLists.txt 文本中出现的全部 sdurws_ird_* 目标引用，与白名单
  * 比对：产品目标链接 core/evidence/diagnostics/project 四条登记边（§3.4
  * 原文 PUBLIC 全链）＋本单元自身三目标（产品/测试/契约测试——同一单元
- * 内部引用不构成跨单元边，R-1 判定范围）。出现任何其他产品单元目标
- * （io/runtime/execution、modeling/requirements/kinematics/trajectory/
- * dynamics/drivetrain/selection/optimization 等业务域，或 testkit）即构建
- * 图越界（R-1：业务域单元互链禁止；P-RPT-1/P-RPT-2：io/runtime/execution
- * 注入形态零编译边；T-1：testkit 由下一用例具名钉住——DTB §5.3③）。
+ * 内部引用不构成跨单元边，R-1 判定范围）＋sdurws_ird_testkit（RPT-T11
+ * 登记：RecordListener/TempDir/DeterministicEnv/ContractCheck/IRD_TEST_INFO
+ * 等测试设施消费——T-1 允许形态＝仅 `_test`/`_contract_test` 目标可链
+ * testkit，产品目标仍禁止）。出现任何其他产品单元目标（io/runtime/
+ * execution、modeling/requirements/kinematics/trajectory/dynamics/
+ * drivetrain/selection/optimization 等业务域）即构建图越界（R-1：业务域
+ * 单元互链禁止；P-RPT-1/P-RPT-2：io/runtime/execution 注入形态零编译边；
+ * T-1：testkit 由下一用例具名钉住——DTB §5.3③）。
  */
 TEST(ReportingLinkage, UnitEdgesFourRegistered_DT_BUILD_R1_R2)
 {
@@ -158,7 +162,9 @@ TEST(ReportingLinkage, UnitEdgesFourRegistered_DT_BUILD_R1_R2)
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
     // 白名单：四条登记边（core/evidence/diagnostics/project）＋ reporting
-    // 本单元三目标（产品/测试/契约测试——单元内部引用不构成跨单元边）。
+    // 本单元三目标（产品/测试/契约测试——单元内部引用不构成跨单元边）＋
+    // sdurws_ird_testkit（RPT-T11 报告设施接入——T-1 允许形态，仅测试目标；
+    // NoTestkitEdge 用例钉住产品目标零 testkit）。
     const std::set<std::string> allowed = {
         "sdurws_ird_core",
         "sdurws_ird_evidence",
@@ -166,7 +172,8 @@ TEST(ReportingLinkage, UnitEdgesFourRegistered_DT_BUILD_R1_R2)
         "sdurws_ird_project",
         "sdurws_ird_reporting",
         "sdurws_ird_reporting_test",
-        "sdurws_ird_reporting_contract_test"};
+        "sdurws_ird_reporting_contract_test",
+        "sdurws_ird_testkit"};
     for (const auto& ref : refs) {
         EXPECT_NE(allowed.find(ref), allowed.end())
             << "reporting 构建图出现白名单外目标引用（产品单元边仅 reporting→"
@@ -176,23 +183,43 @@ TEST(ReportingLinkage, UnitEdgesFourRegistered_DT_BUILD_R1_R2)
 }
 
 /**
- * T-1 红线具名自证：reporting 落位期构建图零 testkit 边（§3.4"产品目标
- * 不链 testkit"）。
+ * T-1 红线具名自证（RPT-T11 收窄重述）：产品目标零 testkit 边——testkit
+ * 只允许出现在**测试目标**的链接语句上（RP-GATE-1 第 4 项的登记后形态）。
  *
- * testkit 是测试侧单元（不随产品分发）；T-1 红线规定产品目标不链 testkit。
- * 落位期更进一步：连 `_test`/`_contract_test` 也不消费 testkit（首批用例
- * 以 gtest 原生断言承载——PRJ-T01 同款口径；ScriptedSectionProvider/
- * ScriptedResultSource 替身与 RP-* 用例体的 testkit 消费随 RPT-T11 按
- * T-1 允许形态 `{被测产品目标, sdurws_ird_testkit, gtest 系}` 登记）——
- * 本断言确保登记 testkit 前本文件白名单扫描先行为零，届时增链必须伴随
- * UnitEdgesFourRegistered 用例白名单的显式增量修订（不可静默越界）。
+ * RPT-T11 按 T-1 允许形态登记测试目标的 testkit 消费（RecordListener/
+ * TempDir/DeterministicEnv/ContractCheck/IRD_TEST_INFO——EX-T09/PRJ-T15
+ * 同款节奏）：本用例由落位期"全文零 testkit"收窄为"testkit 引用只落在以
+ * _test/_contract_test 目标为主语的链接语句行"——产品目标
+ * （sdurws_ird_reporting）的链接面出现 testkit 即 T-1 违约。逐行扫描非
+ * 注释文本：含 sdurws_ird_testkit 的行必须同时含测试目标名与
+ * target_link_libraries（链接语句形态），且产品目标的链接块不出现该行。
  */
 TEST(ReportingLinkage, NoTestkitEdge_DT_BUILD_T1)
 {
-    const auto refs = collectTargetRefs(readCMakeLists());
-    EXPECT_EQ(refs.find("sdurws_ird_testkit"), refs.end())
-        << "reporting 落位期构建图不得出现 testkit 边（T-1：产品目标不链 "
-           "testkit；RPT-T11 契约套件增链须伴随白名单用例显式增量修订）";
+    const std::string text = readCMakeLists();
+    // 剥注释后逐行扫描（注释中的处置说明不是构建图引用——与目标引用
+    // 扫描器同纪律）。
+    int testkitLines = 0;
+    std::istringstream lines(text);
+    std::string line;
+    while (std::getline(lines, line)) {
+        const auto hashPos = line.find('#');
+        if (hashPos != std::string::npos) { line.erase(hashPos); }
+        if (line.find("sdurws_ird_testkit") == std::string::npos) { continue; }
+        ++testkitLines;
+        // T-1 允许形态的唯一落点：测试目标的链接语句（目标名与 testkit
+        // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析）。
+        const bool onTestTargetLine
+            = (line.find("sdurws_ird_reporting_test") != std::string::npos
+               || line.find("sdurws_ird_reporting_contract_test") != std::string::npos)
+              && line.find("target_link_libraries") != std::string::npos;
+        EXPECT_TRUE(onTestTargetLine)
+            << "testkit 引用必须落在测试目标链接语句行（T-1：产品目标零 "
+               "testkit——RPT-T11 收窄重述）: " << line;
+    }
+    ASSERT_GT(testkitLines, 0)
+        << "RPT-T11 已登记测试目标 testkit 消费——链接语句应存在（本断言防"
+           "扫描失效）；产品目标零 testkit 由上行逐行钉住";
 }
 
 /**
