@@ -49,7 +49,10 @@ find_package(GTest CONFIG REQUIRED)
 #      侧如需回落随构建约定任务统一登记，不在本任务私裁。
 # 组件与框架 Qt6 探测同源（Core/Gui/Widgets；不含 OpenGL——ui 落位期
 # 三维视图宿主 RWStudioView3D 由框架目标承载，UI-T05 阶段 B 复核）。
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+# Test 组件（UI-T06 增量）：仅 gui_test 目标消费（QTest::keyClick 键盘
+# 注入——§7.4 键盘导航/§7.3 物理键触发的 GUI 观测面）；测试目标链接面
+# 增量登记 ui.md §3.1/§16.7 v0.8，产品面不变（R-3 例外范围不动）。
+find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 
 # ---- 产品库目标：STATIC（UI-T02 落位，目标名不变，DTB §5.1）----
 # 源文件（随 UI-T03 增列——§13 UI-T03 行"工作台壳与五区布局"）：
@@ -64,17 +67,26 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #     UI-T05 行"阶段 A 仅中央区占位与视图契约登记"：View3DContract.hpp
 #     契约数据〔UX-11 清单/KIN-06 语义钉住〕唯一权威定义点＋中央区占位
 #     面板构建；交互实现归阶段 B，届时并入实现 TU 而契约定义点不变）。
-# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05 复核维持）：五个源文件与私有头
-# 零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖（resizeEvent）
-# 与既有信号＋lambda 接线，无信号槽声明需求（ui.md §10.1 v0.5 登记）；
-# UI-T06+（命令面板/投影管线）引入 Q_OBJECT 时再评估开启（父 CMakeLists
-# 既有约定：不预建构建设施）。
+#   - src/CommandRegistry.cpp＝命令注册表实现（UI-T06——§10.3/§7.2/§7.4
+#     模糊投影/§7.5 谓词；§13 UI-T06 行"CommandRegistry"）。
+#   - src/GlobalShortcutRegistry.cpp＝全局快捷键唯一注册点实现（UI-T06——
+#     §10.4/§7.3；全产品唯一允许"QShortcut＋WindowShortcut"形态的 TU，
+#     UI-HKY-3 静态扫描豁免面）。
+#   - src/CommandPalette.cpp＝命令面板实现（UI-T06——§7.4 键盘导航/投影
+#     渲染；私有头 src/CommandPalette_p.hpp 不进 include/——R-2）。
+# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：八个源文件与
+# 私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
+# （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
+# 槽声明需求（ui.md §10.1 v0.5 登记；命令面板键盘交互同款——v0.8 复核）。
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
     src/ShellSupport.cpp
     src/StatusProjection.cpp
-    src/View3DPlaceholder.cpp)
+    src/View3DPlaceholder.cpp
+    src/CommandRegistry.cpp
+    src/GlobalShortcutRegistry.cpp
+    src/CommandPalette.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -201,19 +213,26 @@ endmacro()
 # GUI 平台插件，AGENTS 模型测试豁免/testkit.md §6.7 模型测试豁免行）；
 # ctest LABELS ird（见下方 set_tests_properties）。用例面：
 #   - BuildRedLineTest.cpp＝落位期红线扫描（O-31 include 面/R-4/QShortcut/
-#     R-3 例外登记文本核对——UI-T02）；
+#     R-3 例外登记文本核对——UI-T02；UI-T06 起 QShortcut 扫描钉住唯一
+#     创建点豁免面 GlobalShortcutRegistry.cpp）；
 #   - ShellModelTest.cpp＝码表注册契约＋PM-11 格式矩阵（UI-T03）；
 #   - StatusWordModelTest.cpp＝七态映射/优先级/显示纪律/九态标签键
 #     （UI-STG-3——UI-T04，具名追溯字段见各用例 IRD_TEST_INFO）；
 #   - View3DContractTest.cpp＝三维视图占位契约钉住：UX-11 九项清单逐项
 #     字面冻结（序/id 唯一性/词法）＋KIN-06/AT-04 会话姿态语义四位钉住
-#     （UI-T05 阶段 A——契约头 View3DContract.hpp 的互证锚）。
+#     （UI-T05 阶段 A——契约头 View3DContract.hpp 的互证锚）；
+#   - CommandRegistryModelTest.cpp＝命令注册/未知拒绝/谓词/面板模糊投影
+#     （UI-CMD-1/2/3、§7.4——UI-T06）；
+#   - ShortcutRegistryModelTest.cpp＝快捷键冲突拒绝/改绑解绑/冲突流/持久
+#     化回放（UI-HKY-1/2——UI-T06）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
     test/ShellModelTest.cpp
     test/StatusWordModelTest.cpp
-    test/View3DContractTest.cpp)
+    test/View3DContractTest.cpp
+    test/CommandRegistryModelTest.cpp
+    test/ShortcutRegistryModelTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -297,7 +316,8 @@ add_custom_command(TARGET sdurws_ird_ui_contract_test POST_BUILD
 add_executable(sdurws_ird_ui_gui_test
     gui_test/TestMainReport.cpp
     gui_test/BuildPlacementTest.cpp
-    gui_test/WorkbenchShellGuiTest.cpp)
+    gui_test/WorkbenchShellGuiTest.cpp
+    gui_test/CommandPaletteGuiTest.cpp)
 
 target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES
@@ -312,6 +332,7 @@ target_link_libraries(sdurws_ird_ui_gui_test PRIVATE
     sdurws_ird_ui
     sdurws_ird_testkit
     sdurws_ird_testkit_qt
+    Qt6::Test
     GTest::gtest)
 
 target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE

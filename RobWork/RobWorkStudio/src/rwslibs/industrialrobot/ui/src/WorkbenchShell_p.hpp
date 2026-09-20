@@ -5,21 +5,26 @@
  * 设计依据：
  *   - units/ui.md §3.3（"私有实现（ui/src/）：WorkbenchShell_p.hpp、五区
  *     DockWidget 组装……不进 include/"）、§4.1~§4.6（五区/最小布局/布局
- *     归属/用户级设置）、§7.1/§7.5（壳层命令子集与可用性口径）；
- *   - 任务契约 tasks/foundation/UI-T03.json acceptance 1~4。
+ *     归属/用户级设置）、§7.1~§7.6（命令注册表/快捷键/面板/谓词/只读）、
+ *     §10.3/§10.4（两注册表接口）；
+ *   - 任务契约 tasks/foundation/UI-T03.json acceptance 1~4＋tasks/foundation/
+ *     UI-T06.json acceptance 1~3（命令注册表/快捷键表/命令面板的壳集成）。
  *
- * 背景说明（本头承载的四个内部设施）：
- *   1. ShellCommandBoard——壳层命令登记与可用性门控（§7.1 壳层子集＋§7.5
- *      求值口径）。完整命令注册表（ICommandRegistry §10.3、冲突处理 §7.2、
- *      面板投影 §7.4）随 UI-T06 落地并取代本板的"登记"职能；本板只保留
- *      壳自身需要的门控事实，不预建注册表能力（NFR-MNT-04）。
- *   2. RecentProjectsModel——最近项目路径表（PM-10：≤10、规范路径去重、
+ * 背景说明（本头承载的内部设施——UI-T06 起命令设施为注册表单点）：
+ *   1. CommandRegistry/GlobalShortcutRegistry（§10.3/§10.4）——壳在
+ *      initialize 装配（登记 §7.1 最小命令集＋默认绑定），菜单/顶栏/首页
+ *      入口与快捷键全部经 registry.submit 统一路径（SA-16 唯一入口；
+ *      UI-T03 的 ShellCommandBoard 登记职能由注册表取代并移除——
+ *      "取代本板的登记职能"既有登记，N-11 无第二套）。
+ *   2. CommandPalettePanel（src/CommandPalette.cpp——§7.4 命令面板，
+ *      workbench.commandPalette 的处理器打开）。
+ *   3. RecentProjectsModel——最近项目路径表（PM-10：≤10、规范路径去重、
  *      失效保留）＋用户级持久化载荷形态（PM-14）。
- *   3. UiSettingsWriter——ui 自有后台落盘线程（§3.4 线程表"ui 后台落盘
+ *   4. UiSettingsWriter——ui 自有后台落盘线程（§3.4 线程表"ui 后台落盘
  *      线程（ui 自有，1 条）：……布局/设置写盘；串行队列；禁止访问任何
  *      Widget"）。UI 线程只提交已序列化的写任务，QSettings 全部操作发生
  *      在工作线程。
- *   4. LayoutMemory——布局记忆读写与损坏判别（§4.5：损坏/版本不识别→
+ *   5. LayoutMemory——布局记忆读写与损坏判别（§4.5：损坏/版本不识别→
  *      回退出厂默认＋UI-LAYOUT-RESTORE-FAILED（Dev）＋损坏段整段丢弃，
  *      不阻塞启动）。
  *
@@ -54,12 +59,16 @@
 #include <utility>
 #include <vector>
 
+#include <sdurws/ird/ui/ICommandRegistry.hpp>
+#include <sdurws/ird/ui/IGlobalShortcutRegistry.hpp>
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>
 #include <sdurws/ird/ui/UiProjections.hpp>
 
 namespace sdurws::ird {
 namespace ui {
 namespace detail {
+
+class CommandPalettePanel;  // 前置声明（面板成员指针——完整定义在 CommandPalette_p.hpp）
 
 // =====================================================================
 // 常量（魔法数字全部在此登记来源——AGENTS.md §2.4）
@@ -102,6 +111,17 @@ inline constexpr const char* kUiDevChannel = "diag/ui";
 /// ——布局损坏整段丢弃不得波及最近项目，§4.5"损坏段整段丢弃"的边界）。
 inline constexpr const char* kRecentGroup = "recentProjects";
 inline constexpr const char* kRecentKey = "paths";
+
+/// 快捷键用户改绑的用户级设置键（PM-14/§7.3——User 绑定集持久化；格式：
+/// 每条 "commandId\\t键 PortableText" 一行入 QStringList——键/命令两个
+/// 事实一个键组分两条线承载，防拆半条）。与 layout 组物理分离同理。
+inline constexpr const char* kShortcutGroup = "shortcuts";
+inline constexpr const char* kShortcutKey = "userBindings";
+
+/// 命令面板近期使用的用户级设置键（§7.4"用户级持久化最近 20 条"——
+/// QStringList 载荷，最新在前；PM-14）。
+inline constexpr const char* kPaletteRecentGroup = "palette";
+inline constexpr const char* kPaletteRecentKey = "recentCommands";
 
 // =====================================================================
 // 工作台壳文案表（UX-02 的 UI-T03 过渡形态）
@@ -188,55 +208,14 @@ struct WorkbenchText {
 };
 
 // =====================================================================
-// 壳层命令板（§7.1 子集＋§7.5 求值口径）
+// 壳门控事实（§7.5 UiContextSnapshot 直用——UI-T06 起命令可用性求值
+// 的上下文载体；UI-T03 的 WorkbenchGateState 子集结构由该投影取代）
 // =====================================================================
 
-/**
- * @brief 工作台上下文的门控事实（§7.5 UiContextSnapshot 的 UI-T03 子集：
- *        hasActiveProject/writable/草稿存在性——本壳可用性谓词的全部输入；
- *        完整快照的其余轴随其所有者任务并入）。
- */
-struct WorkbenchGateState {
-    bool hasProject = false;                 ///< 是否有打开的项目（PM-10 门控主轴）
-    bool writable = false;                   ///< 当前会话可写性（§7.6 只读条件输入）
-    DraftPresenceProjection drafts{};        ///< 草稿存在性（状态栏 * 标记输入）
-};
-
-/**
- * @brief 壳层命令登记与可用性求值（§7.1 壳层子集）。
- *
- * 登记集（构造时固定，运行期无增删——SA-01 同款静态口径）：project.new/
- * project.open（Session、只读可用）、workbench.commandPalette（Session、
- * 只读可用）、workbench.closeProject（Project、只读可用）、view.resetLayout
- * （View、只读可用）、draft.save/draft.apply/project.undo/project.redo
- * （Project、只读不可用）。§7.1 最小命令集的其余行（scheme.switch、包导出、
- * 报告、帮助等）随其归属任务登记——不预建（NFR-MNT-04）。
- *
- * 非线程安全：仅 UI 线程访问（§3.4）。
- */
-class ShellCommandBoard {
-public:
-    ShellCommandBoard();
-
-    /**
-     * @brief 求值一条命令的可用性（§7.5：只消费快照、纯内存、无端口查询）。
-     *
-     * 规则（§7.4/§7.6/PM-10）：登记命令恒可见（"禁用＋说明"保留发现性）；
-     * Session/View 作用域恒可用；Project 作用域须 hasProject，且
-     * readOnlyAllowed=false 的命令还须 writable。未登记 id 返回
-     * registered=false（UI-T06 注册表的未知命令诊断随其落地）。
-     */
-    ShellCommandAvailability availability(const std::string& commandId,
-                                          const WorkbenchGateState& gate) const;
-
-    /// @brief 已登记命令 id 清单（点分小写，登记序＝§7.1 表行序——稳定排序）。
-    const std::vector<std::string>& registeredIds() const { return m_ids; }
-
-private:
-    std::vector<std::string> m_ids;    ///< 登记序（菜单/面板稳定排序锚）
-    std::vector<ShellCommandScope> m_scopes;      ///< 与 m_ids 同序的作用域
-    std::vector<bool> m_readOnlyAllowed;          ///< 与 m_ids 同序的只读可用位
-};
+// 说明：§7.5 谓词求值消费 UiContextSnapshot（ICommandRegistry.hpp——
+// UI-T06 冻结的阶段 A 子集：hasActiveProject/writable/草稿存在性）。壳的
+// 门控事实不再是独立结构——presentProjectContext 直接构建该快照推送注册
+// 表（presentContext），状态栏/徽标刷新消费同一份（单一口径，NFR-MNT-03）。
 
 // =====================================================================
 // 最近项目模型（PM-10/PM-14）
@@ -439,26 +418,40 @@ private:
     void buildBottomDock();                   ///< 底部页签区（阶段 A 占位页签）
     void buildCentralArea();                  ///< 中央区：首页页＋阶段占位页
     QWidget* buildHomePage();                 ///< 无项目首页（PM-10 三入口＋摘要）
+    void assembleCommandSystem();             ///< 命令设施装配（§7.1 登记＋seal＋快捷键默认集）
+    void applyShortcutAndPaletteState();      ///< 用户改绑回放＋QShortcut attach＋面板创建
+    void openCommandPalette();                ///< 命令面板打开（workbench.commandPalette 处理器）
+    static std::vector<HotkeyBinding> loadUserShortcutBindings(QSettings& settings); ///< 快捷键历史读取
+    static std::vector<CommandId> loadPaletteRecent(QSettings& settings);            ///< 面板近期使用读取
     void applyFactoryLayout();                ///< 出厂位形（§4.5 回退基准）
     bool restorePersistedLayout();            ///< 布局记忆装载（含损坏回退＋Dev 诊断）
     void refreshCommandStates();              ///< 命令可用性 → 动作/按钮/徽标
     void refreshStatusBar();                  ///< PM-11 状态栏文本刷新
     void refreshRecentList();                 ///< 最近项目列表控件重建（PM-10）
     void updateCollapseBySize();              ///< §4.4 尺寸折叠（resize 钩子入口）
-    void submitShellCommand(const std::string& commandId);  ///< 壳层提交路径
+    void submitShellCommand(const std::string& commandId);  ///< 壳层提交路径（经注册表统一入口）
     void persistLayoutAsync();                ///< 布局落盘任务提交（后台线程执行）
     void persistRecentAsync();                ///< 最近项目落盘任务提交
+    void persistShortcutsAsync();             ///< 快捷键用户改绑落盘任务提交（PM-14）
+    void persistPaletteRecentAsync();         ///< 面板近期使用落盘任务提交（§7.4/PM-14）
     void emitDev(const std::string& message); ///< Dev 日志出线（devLog 为空时静默——已显式声明语义）
     QDockWidget* dockFor(WorkbenchRegion region) const;     ///< 五区 → Dock 控件
     bool* userVisibilityFlag(WorkbenchRegion region);       ///< 用户可见性存储位（可隐藏三区）
 
     // ---- 注入协作面（所有权在 L5——壳只持引用）----
     ShellWiring m_wiring;                      ///< 注入包（initialize 校验后持有）
-    WorkbenchGateState m_gate;                 ///< 当前门控事实（presentProjectContext 维护）
-    ShellCommandBoard m_board;                 ///< 壳层命令板（构造期登记）
+    UiContextSnapshot m_gate;                  ///< 当前门控快照（§7.5——presentProjectContext
+                                               ///  维护并推送注册表 presentContext）
     RecentProjectsModel m_recent;              ///< 最近项目模型（PM-10）
     UiSettingsWriter m_settingsWriter;         ///< 用户级设置写盘线程（§3.4）
     ShellTeardownReport m_lastTeardown;        ///< 末次拆卸报告（幂等 shutdown 返回值）
+
+    // ---- 命令设施（UI-T06——SA-16 唯一入口；所有权在壳）----
+    std::unique_ptr<ICommandRegistry> m_commands;              ///< 命令注册表（§10.3）
+    std::unique_ptr<IGlobalShortcutRegistry> m_shortcuts;      ///< 全局快捷键表（§10.4）
+    CommandPalettePanel* m_palette = nullptr;                  ///< 命令面板（Qt 父子树管理——随主窗口销毁）
+    std::vector<HotkeyBinding> m_pendingUserBindings;          ///< 装配期读取的快捷键历史（applyShortcutAndPaletteState 回放）
+    std::vector<CommandId> m_pendingPaletteRecent;             ///< 装配期读取的面板近期使用（同上回放）
 
     // ---- 窗口树（shutdown 时整体销毁——mainWindow 唯一出口的私有侧）----
     class WorkbenchMainWindow : public QMainWindow {  ///< resize 钩子宿主（§4.4 折叠）

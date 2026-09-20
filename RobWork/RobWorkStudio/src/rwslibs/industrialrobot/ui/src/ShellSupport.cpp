@@ -1,17 +1,19 @@
 /**
  * @file   ShellSupport.cpp
- * @brief  工作台壳的支撑设施实现：壳层命令板、最近项目模型、用户级设置
+ * @brief  工作台壳的支撑设施实现：最近项目模型、用户级设置
  *         后台落盘线程、布局记忆与 ui 诊断码描述符表。
  *
  * 设计依据：
- *   - units/ui.md §7.1（最小命令集壳层子集行——scope/readOnlyAllowed 逐行）、
- *     §7.4/§7.5（NoProject"禁用＋说明"口径；可用性谓词＝界面使能态）、
- *     §4.3/PM-10（最近项目上限/去重/失效保留）、§4.5/§4.6/PM-14（布局记忆
- *     用户级、损坏回退、绝不写入 .rwdesign）、§3.4（后台落盘线程纪律）、
- *     §3.5（UI-* 稳定诊断码建议值表——九码逐行）；
+ *   - units/ui.md §4.3/PM-10（最近项目上限/去重/失效保留）、§4.5/§4.6/PM-14
+ *     （布局记忆用户级、损坏回退、绝不写入 .rwdesign）、§3.4（后台落盘线程
+ *     纪律）、§3.5（UI-* 稳定诊断码建议值表——九码逐行）；
  *   - 任务契约 tasks/foundation/UI-T03.json acceptance 1~4；
  *   - diagnostics DiagCodes.hpp（CodeDescriptor 十六字段与注册期验证表——
  *     码描述符必须通过 StableCodeRegistry::registerCode 校验）。
+ *
+ * 实现口径登记（UI-T06）：壳层命令板（ShellCommandBoard）已由命令注册表
+ * （CommandRegistry，src/CommandRegistry.cpp）取代并移除——命令登记/门控/
+ * 提交统一归注册表（§7.2/§10.3，SA-16 唯一入口），本文件不再承载命令面。
  *
  * 线程模型：除 UiSettingsWriter::run（自有工作线程）外，全部实现只在
  * UI 线程执行（§3.4 M-1）；uiDiagnosticCodeDescriptors 为纯函数（无状态）。
@@ -31,88 +33,6 @@ namespace sdurws {
 namespace ird {
 namespace ui {
 namespace detail {
-
-// =====================================================================
-// ShellCommandBoard——壳层命令登记与可用性求值
-// =====================================================================
-
-namespace {
-
-/// 单条壳层命令的登记行（§7.1 表行的编译期形态——构造时逐行展开）。
-struct ShellCommandRow {
-    const char* id;              ///< 命令 id（点分小写——§7.1 语法）
-    ShellCommandScope scope;     ///< 作用域（§7.1 CommandScope 词表）
-    bool readOnlyAllowed;        ///< 只读会话是否可用（§7.6）
-};
-
-/// §7.1 最小命令集中归本壳登记的子集（行序＝§7.1 表行序——菜单/面板稳定
-/// 排序锚，NFR-COR-02 的界面延伸）。scheme.switch、package.export、
-/// report.export、analysis.collisionCheck、view.displayMode、view.resetHome/
-/// resetZero、help.about/contents 不在本任务登记面（归属 workflow/io/
-/// reporting/UI-T06/UI-T10——§7.1"归属"列），不预建（NFR-MNT-04）。
-constexpr ShellCommandRow kShellCommandRows[] = {
-    {"project.new",              ShellCommandScope::Session, true },
-    {"project.open",             ShellCommandScope::Session, true },
-    {"draft.save",               ShellCommandScope::Project, false},
-    {"draft.apply",              ShellCommandScope::Project, false},
-    {"project.undo",             ShellCommandScope::Project, false},
-    {"project.redo",             ShellCommandScope::Project, false},
-    {"workbench.commandPalette", ShellCommandScope::Session, true },
-    {"workbench.closeProject",   ShellCommandScope::Project, true },
-    {"view.resetLayout",         ShellCommandScope::View,    true },
-};
-
-}  // namespace
-
-ShellCommandBoard::ShellCommandBoard()
-{
-    // 登记期固定：运行期无增删（SA-01 静态口径的命令侧延伸——§7.2"不存在
-    // 运行时卸载"；会话级不可用由可用性谓词表达，不靠增删登记项）。
-    for (const auto& row : kShellCommandRows) {
-        m_ids.emplace_back(row.id);
-        m_scopes.push_back(row.scope);
-        m_readOnlyAllowed.push_back(row.readOnlyAllowed);
-    }
-}
-
-ShellCommandAvailability ShellCommandBoard::availability(const std::string& commandId,
-                                                         const WorkbenchGateState& gate) const
-{
-    // 未登记 id：registered=false（UI-T06 注册表落地后未知命令提交走
-    // UI-CMD-UNKNOWN 拒绝＋诊断——§7.2；壳板面只回答"不认识"）。
-    const auto it = std::find(m_ids.begin(), m_ids.end(), commandId);
-    if (it == m_ids.end()) {
-        return ShellCommandAvailability{};
-    }
-    const auto idx = static_cast<std::size_t>(std::distance(m_ids.begin(), it));
-
-    ShellCommandAvailability out;
-    out.registered = true;
-    // 恒可见（§7.4：NoProject 时项目命令按 PM-10 采用"禁用＋说明"以保留
-    // 发现性——可见性不随上下文塌缩）。
-    out.visible = true;
-
-    const auto scope = m_scopes[idx];
-    const bool readOnlyAllowed = m_readOnlyAllowed[idx];
-    if (scope == ShellCommandScope::Project) {
-        // 项目作用域：先看有无项目（PM-10 无项目禁用），再看只读条件
-        // （§7.6：readOnlyAllowed=false 且 writable==false → 禁用）。
-        if (!gate.hasProject) {
-            out.enabled = false;
-            out.reasonKey = WorkbenchText::kReasonNoProject;
-        } else if (!readOnlyAllowed && !gate.writable) {
-            out.enabled = false;
-            out.reasonKey = WorkbenchText::kReasonReadOnly;
-        } else {
-            out.enabled = true;
-        }
-    } else {
-        // Session/View 作用域：无项目也可用（首页三入口/命令面板/视图操作
-        // 正是 PM-10 要求"仍可达"的面）。
-        out.enabled = true;
-    }
-    return out;
-}
 
 // =====================================================================
 // RecentProjectsModel——最近项目（PM-10/PM-14）

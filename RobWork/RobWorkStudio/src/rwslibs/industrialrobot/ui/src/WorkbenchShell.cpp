@@ -6,30 +6,34 @@
  *
  * 设计依据：
  *   - units/ui.md §4.1~§4.6（五区布局总图/区域交互边界/空项目首页/响应式
- *     尺寸与最小可用布局/布局状态归属/用户级设置项）、§7.1/§7.4/§7.5/§7.6
- *     （壳层命令子集/NoProject 禁用口径/可用性谓词/只读条件）、§10.1
- *     （IWorkbenchShell 契约表——前置/后置/错误类型/线程/所有权/副作用）、
- *     §3.4（线程模型与后台落盘线程）、§3.5（UI-LAYOUT-RESTORE-FAILED 出线
- *     口径）、§11.4（不虚构业务能力——占位说明口径）；
- *   - 需求 UX-09/PM-10/PM-11/PM-14；任务契约 tasks/foundation/UI-T03.json
- *     acceptance 1~4（UI-WB-1/2/3、UI-SES-1；状态栏格式；最小可用布局＋
- *     门面契约；O-31/P-UI-5 处置）；
+ *     尺寸与最小可用布局/布局状态归属/用户级设置项）、§7.1~§7.6（命令注册
+ *     表登记协议/快捷键表/命令面板/谓词/只读条件）、§10.1（IWorkbenchShell
+ *     契约表——前置/后置/错误类型/线程/所有权/副作用）、§10.3/§10.4（两
+ *     注册表接口）、§3.4（线程模型与后台落盘线程）、§3.5（UI-LAYOUT-RESTORE-
+ *     FAILED 出线口径）、§11.4（不虚构业务能力——占位说明口径）；
+ *   - 需求 UX-09/UX-13/PM-07/PM-10/PM-11/PM-14；任务契约 tasks/foundation/
+ *     UI-T03.json acceptance 1~4、tasks/foundation/UI-T06.json acceptance
+ *     1~3（注册表/快捷键/面板的壳集成——SA-16 唯一入口）；
  *   - §14.1 交接清单（新建/打开向导编排归 workflow 阶段 B——本壳登记入口
  *     并以占位说明触发，不虚构能力）。
  *
- * 实现期口径登记（随 ui.md §10.1 v0.5 增量修订同步）：
+ * 实现期口径登记（随 ui.md §10.1/§16.7 v0.8 增量修订同步）：
  *   - 视图开关/顶栏按钮/菜单动作的默认快捷键一律不在此安装（§7.3 全局快捷
- *     键唯一注册点归 GlobalShortcutRegistry，UI-T06）——本壳只做可见/使能；
- *   - Dev 级码经 wiring.devLog 出线（§6.2"Dev 走日志"）；用户级诊断经
- *     IDiagnosticSink 需工厂产条目（工厂注入随 UI-T13 呈现模型落地），本壳
- *     当前不产用户级诊断条目——入口触发未接线时以状态栏说明反馈（§11.4
- *     不虚构业务能力）。
+ *     键唯一注册点归 GlobalShortcutRegistry——本壳经其 registerDefault 登
+ *     记 §7.1 默认表，QShortcut 对象由该注册表 attach 创建）；
+ *   - 命令登记/可用性/提交统一归 CommandRegistry（§10.3——UI-T03 的壳层
+ *     命令板已移除，菜单/顶栏/首页/快捷键/面板五入口同走 registry.submit）；
+ *   - Dev 级码经 wiring.devLog 出线（§6.2"Dev 走日志"）；用户级诊断条目
+ *     需工厂产条目（工厂注入随 UI-T13 呈现模型落地），本壳阶段工厂不注入
+ *     ——拒绝语义由返回值与状态栏说明承载（§11.4 不虚构业务能力）。
  */
 
 #include "WorkbenchShell_p.hpp"
+#include "CommandPalette_p.hpp"
 
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QKeySequence>
 #include <QListWidget>
 #include <QMenu>
 #include <QMenuBar>
@@ -38,6 +42,8 @@
 #include <QStatusBar>
 #include <QToolButton>
 #include <QVBoxLayout>
+
+#include <string_view>
 
 #include <sdurws/ird/ui/UiProjections.hpp>
 
@@ -90,27 +96,42 @@ bool WorkbenchShellImpl::initialize(const ShellWiring& wiring)
     m_wiring = wiring;  // 共享引用持有（所有权仍在 L5——§10.1 所有权行）
 
     // 装配序（每步产物是下一步的输入）：
-    //   ①窗口树与出厂快照 → ②最近项目装载 → ③布局记忆装载（损坏回退）
-    //   → ④初始上下文（无项目首页＝PM-10 启动态）→ ⑤写盘线程启动。
+    //   ①窗口树与出厂快照 → ②命令设施装配（§7.1 登记＋seal——必须先于
+    //   任何 refreshCommandStates 触达点：布局恢复/出厂回退都会刷命令态）
+    //   → ③用户级设置同步读（最近项目＋快捷键历史＋面板近期——写线程未
+    //   启动，读写不重叠）→ ④布局记忆装载（损坏回退）→ ⑤初始上下文
+    //   （无项目首页＝PM-10 启动态，快照同步推送注册表）→ ⑥写盘线程启动
+    //   → ⑦快捷键历史回放＋QShortcut attach＋面板创建（持久化回调需要
+    //   写线程就位，故在⑥后）。
     buildWindow();
+    assembleCommandSystem();
 
     {
-        // 读盘（UI 线程、写线程未启动——读写不重叠）：最近项目与布局同源
-        // 用户级设置，但分属两个键组（布局损坏整段丢弃不波及最近项目）。
+        // 读盘（UI 线程、写线程未启动——§3.4 读写不重叠）：最近项目与布局
+        // 同源用户级设置，但分属不同键组（布局损坏整段丢弃不波及相邻组）。
         QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                            kSettingsOrg, kSettingsApp);
         m_recent.load(settings.value(QString(kRecentGroup) + '/' + kRecentKey)
                           .toStringList());
+        m_pendingUserBindings = loadUserShortcutBindings(settings);
+        m_pendingPaletteRecent = loadPaletteRecent(settings);
     }
 
     restorePersistedLayout();
     refreshRecentList();
 
-    // 启动即无项目首页（PM-10：壳启动时无会话，首页三入口就位）。
+    // 启动即无项目首页（PM-10：壳启动时无会话，首页三入口就位；快照同步
+    // 推送注册表——命令可用性求值与状态栏/首页消费同一份）。
     presentProjectContext(ProjectContextProjection{});
 
     // 写线程在读盘完成后启动（§3.4 后台落盘线程；此后所有设置写入经队列）。
     m_settingsWriter.start();
+
+    // 快捷键历史回放（PM-14：User 绑定覆盖默认集；冲突条目丢弃＋Dev 日志
+    // ——不阻塞启动）→ QShortcut attach（唯一创建点，宿主＝主窗口）→
+    // 命令面板创建（workbench.commandPalette 处理器的打开目标）→ 面板近期
+    // 使用回放（§7.4 置顶分组的持久化半区）。
+    applyShortcutAndPaletteState();
 
     m_initialized = true;
     return true;
@@ -131,15 +152,23 @@ ShellTeardownReport WorkbenchShellImpl::shutdown()
         return m_lastTeardown;
     }
 
-    // ①布局落盘：值序列化在 UI 线程（Widget 尚存活），写盘交给后台线程，
-    //   随后有界收口（§10.1"有界拆除"——队列里全是微秒级写任务，join 有界）。
+    // ①布局/快捷键/面板近期落盘：值序列化在 UI 线程（Widget 尚存活），写盘
+    //   交给后台线程，随后有界收口（§10.1"有界拆除"——队列里全是微秒级写
+    //   任务，join 有界）。快捷键 User 绑定与面板近期使用随关停补一次落盘
+    //   （改绑/使用路径已有即时落盘——此处是关停位的兜底快照，PM-14）。
     persistLayoutAsync();
+    persistShortcutsAsync();
+    persistPaletteRecentAsync();
     m_lastTeardown.layoutPersisted = m_settingsWriter.drainAndStop();
 
     // ②窗口销毁（§10.1 后置：shutdown 后 mainWindow 不可再用——唯一出口
     //   返回 nullptr；窗口树子指针随之失效，全部置空防悬垂）。
+    m_shortcuts->detach();  // QShortcut 唯一创建点的对称拆卸（物理键随窗口树销毁——此处清表）
     m_window->close();
     m_window.reset();
+    m_palette = nullptr;    // 面板为窗口树子——随窗口销毁（指针置空防悬垂）
+    m_commands.reset();     // 注册表/快捷键表在窗口销毁后停用（处理器只经壳触发）
+    m_shortcuts.reset();
     m_centralStack = nullptr;
     m_statusText = nullptr;
     m_readonlyBadge = nullptr;
@@ -478,6 +507,248 @@ QWidget* WorkbenchShellImpl::buildHomePage()
 }
 
 // =====================================================================
+// 命令设施装配（UI-T06——§7.1 最小命令集＋§7.3 默认绑定＋§7.4 面板）
+// =====================================================================
+
+namespace {
+
+/// §7.1 最小命令集的登记行（表行的编译期形态——行序＝§7.1 表行序，即
+/// registrationOrder 的稳定排序锚，NFR-COR-02 界面延伸）。
+struct ShellCommandRow {
+    const char* id;              ///< 命令 id（点分小写——§7.1 语法）
+    const char* titleKey;        ///< 标题文案键（cmd.<id>.title——§3.5）
+    const char* keywordKeys[2];  ///< 关键字键（cmd.<id>.kw.<n>——UX-13；不足以 nullptr 填充）
+    CommandCategory category;    ///< 分类（面板分组轴）
+    ShellCommandScope scope;     ///< 作用域（§7.1 CommandScope）
+    bool readOnlyAllowed;        ///< 只读会话是否可用（§7.6）
+    const char* defaultShortcut; ///< 默认键（nullptr＝无默认——面板可达，UX-13 兜底）
+    const char* menuPath;        ///< 菜单与面板分组（"文件/新建"）
+};
+
+/// §7.1 表逐行（readOnlyAllowed/默认键严格按表列；归属列只影响处理器
+/// 语义——阶段 A 全部命令项由壳登记，未接线处理器以占位说明反馈）。
+constexpr ShellCommandRow kMinimalCommandRows[] = {
+    {"project.new",     "cmd.project.new.title",     {"cmd.project.new.kw.0", "cmd.project.new.kw.1"}, CommandCategory::Project,   ShellCommandScope::Session, true,  "Ctrl+N",        "文件/新建"},
+    {"project.open",    "cmd.project.open.title",    {"cmd.project.open.kw.0", nullptr},               CommandCategory::Project,   ShellCommandScope::Session, true,  "Ctrl+O",        "文件/打开"},
+    {"draft.save",      "cmd.draft.save.title",      {"cmd.draft.save.kw.0", nullptr},                 CommandCategory::Edit,      ShellCommandScope::Project, false, "Ctrl+S",        "文件/保存草稿"},
+    {"draft.apply",     "cmd.draft.apply.title",     {"cmd.draft.apply.kw.0", nullptr},                CommandCategory::Edit,      ShellCommandScope::Project, false, "Ctrl+Return",   "文件/应用修改"},
+    {"project.undo",    "cmd.project.undo.title",    {"cmd.project.undo.kw.0", nullptr},               CommandCategory::Edit,      ShellCommandScope::Project, false, "Ctrl+Z",        "编辑/撤销"},
+    {"project.redo",    "cmd.project.redo.title",    {"cmd.project.redo.kw.0", nullptr},               CommandCategory::Edit,      ShellCommandScope::Project, false, "Ctrl+Y",        "编辑/重做"},
+    {"scheme.switch",   "cmd.scheme.switch.title",   {"cmd.scheme.switch.kw.0", nullptr},              CommandCategory::Stage,     ShellCommandScope::Project, false, nullptr,         "阶段/切换方案"},
+    {"project.saveAs",  "cmd.project.saveAs.title",  {"cmd.project.saveAs.kw.0", nullptr},             CommandCategory::Project,   ShellCommandScope::Project, false, nullptr,         "文件/项目另存为"},
+    {"package.export",  "cmd.package.export.title",  {"cmd.package.export.kw.0", nullptr},             CommandCategory::Project,   ShellCommandScope::Project, false, nullptr,         "文件/导出评估包"},
+    {"report.export",   "cmd.report.export.title",   {"cmd.report.export.kw.0", nullptr},              CommandCategory::Report,    ShellCommandScope::Project, true,  nullptr,         "文件/导出报告"},
+    {"analysis.collisionCheck", "cmd.analysis.collisionCheck.title", {"cmd.analysis.collisionCheck.kw.0", "cmd.analysis.collisionCheck.kw.1"}, CommandCategory::Analysis, ShellCommandScope::Project, false, nullptr, "工具/碰撞检查"},
+    {"view.displayMode", "cmd.view.displayMode.title", {"cmd.view.displayMode.kw.0", nullptr},         CommandCategory::View,      ShellCommandScope::View,    true,  nullptr,         "视图/显示模式"},
+    {"view.resetHome",  "cmd.view.resetHome.title",  {"cmd.view.resetHome.kw.0", "cmd.view.resetHome.kw.1"}, CommandCategory::View, ShellCommandScope::View,    true,  nullptr,         "视图/复位到 home 位"},
+    {"view.resetZero",  "cmd.view.resetZero.title",  {"cmd.view.resetZero.kw.0", "cmd.view.resetZero.kw.1"}, CommandCategory::View, ShellCommandScope::View,    true,  nullptr,         "视图/复位到零位"},
+    {"workbench.commandPalette", "cmd.workbench.commandPalette.title", {"cmd.workbench.commandPalette.kw.0", "cmd.workbench.commandPalette.kw.1"}, CommandCategory::Workbench, ShellCommandScope::Session, true, "Ctrl+Shift+P", "工具/命令面板"},
+    {"workbench.closeProject",   "cmd.workbench.closeProject.title",   {"cmd.workbench.closeProject.kw.0", nullptr}, CommandCategory::Workbench, ShellCommandScope::Project, true,  "Ctrl+W",        "文件/关闭项目"},
+    {"view.resetLayout", "cmd.view.resetLayout.title", {"cmd.view.resetLayout.kw.0", nullptr},         CommandCategory::View,      ShellCommandScope::View,    true,  nullptr,         "视图/恢复默认布局"},
+    {"help.about",      "cmd.help.about.title",      {"cmd.help.about.kw.0", nullptr},                 CommandCategory::Help,      ShellCommandScope::Session, true,  nullptr,         "帮助/关于"},
+    {"help.contents",   "cmd.help.contents.title",   {"cmd.help.contents.kw.0", nullptr},              CommandCategory::Help,      ShellCommandScope::Session, true,  "F1",            "帮助/帮助手册"},
+};
+
+}  // namespace
+
+void WorkbenchShellImpl::assembleCommandSystem()
+{
+    // 命令注册表（§10.3）：白名单＝壳层设施（"ui"——SA-01 静态白名单的
+    // 命令侧；插件命令经 IPluginUiRegistrar 随装配任务增量接入）。诊断面
+    // 按可空成员纪律接线：devLog 恒转接（Dev 码出线）；diagFactory/diagSink
+    // 为 UI-T06 wiring 增量（L5 注入工厂时用户级码经 create 唯一入口入目
+    // 录——§9.2；壳期 L5 未注入＝无目录场景，拒绝语义由返回值与状态栏反馈
+    // 承载——登记 ui.md §10.1 v0.8）。
+    CommandRegistryDeps commandDeps;
+    commandDeps.diagFactory = m_wiring.diagFactory;
+    commandDeps.diagSink = m_wiring.diagSink;
+    commandDeps.devLog = m_wiring.devLog;
+    commandDeps.ownerWhitelist = {"ui"};
+    m_commands = createCommandRegistry(std::move(commandDeps));
+
+    // §7.1 最小命令集登记（默认谓词＝作用域/只读规则——与壳门控快照同源，
+    // §7.5/§7.6；默认谓词内零 IO）。处理器按归属接线：
+    //   - 壳自持语义（视图复位/面板打开）＝完整实现；
+    //   - 其余归属 workflow/project/io/reporting 的命令＝占位说明处理器
+    //     （§11.4/§14.1 契约显式的阶段 A 形态——不虚构业务能力，接线随
+    //     归属任务落地；非空实现：触发有状态栏反馈且进入近期使用）。
+    for (const ShellCommandRow& row : kMinimalCommandRows) {
+        CommandDescriptor desc;
+        desc.id = row.id;
+        desc.ownerUnit = "ui";
+        desc.titleKey = row.titleKey;
+        for (const char* keywordKey : row.keywordKeys) {
+            if (keywordKey != nullptr) {
+                desc.keywordKeys.emplace_back(keywordKey);  // 定长数组到投影行（nullptr 填充段跳过）
+            }
+        }
+        desc.category = row.category;
+        desc.scope = row.scope;
+        desc.readOnlyAllowed = row.readOnlyAllowed;
+        desc.bindable = true;
+        if (row.defaultShortcut != nullptr) {
+            desc.defaultShortcut = QKeySequence(QString::fromLatin1(row.defaultShortcut));
+        }
+        desc.menuPath = row.menuPath;
+
+        ICommandRegistry::CommandHandler handler;
+        if (std::string_view(row.id) == "view.resetLayout") {
+            // 壳自持：恢复出厂位形（§4.5）＋即时反馈。
+            handler = [this](const std::vector<CommandParameter>&) {
+                resetLayout();
+                m_window->statusBar()->showMessage(u8"已恢复默认布局", 4000);
+                CommandOutcome out;
+                out.accepted = true;
+                return out;
+            };
+        } else if (std::string_view(row.id) == "workbench.commandPalette") {
+            // 壳自持：打开命令面板（§7.4——UX-13 的键盘可达入口）。
+            handler = [this](const std::vector<CommandParameter>&) {
+                openCommandPalette();
+                CommandOutcome out;
+                out.accepted = true;
+                return out;
+            };
+        } else {
+            // 占位说明处理器（阶段 A 契约显式形态——accepted=true：提交
+            // 链路真实走通，能力面以 §11.4 说明呈现）。
+            handler = [this](const std::vector<CommandParameter>&) {
+                if (m_window) {
+                    m_window->statusBar()->showMessage(
+                        QString::fromUtf8(WorkbenchText::kEntryDeferredNotice), 4000);
+                }
+                CommandOutcome out;
+                out.accepted = true;
+                out.messageKey = std::string{"notice.entry-deferred"};
+                return out;
+            };
+        }
+        const RegistrationResult result = m_commands->registerCommand(desc, handler);
+        Q_ASSERT(result == RegistrationResult::Ok
+                 && "§7.1 最小命令集登记被拒（表内冲突＝装配 bug）");
+        (void)result;
+    }
+
+    // 装配收口（§7.2——运行期只读；此后 registerCommand 拒绝）。
+    m_commands->seal();
+
+    // 全局快捷键表（§10.4/§7.3）：默认集登记（§7.1 默认键列——Default 随
+    // 产品版本冻结）＋用户改绑持久化回调（PM-14——写盘经后台线程）。
+    GlobalShortcutRegistryDeps shortcutDeps;
+    shortcutDeps.commands = m_commands.get();
+    shortcutDeps.diagFactory = m_wiring.diagFactory;
+    shortcutDeps.diagSink = m_wiring.diagSink;
+    shortcutDeps.devLog = m_wiring.devLog;
+    shortcutDeps.onUserBindingsChanged =
+        [this](const std::vector<HotkeyBinding>&) { persistShortcutsAsync(); };
+    m_shortcuts = createGlobalShortcutRegistry(std::move(shortcutDeps));
+    for (const ShellCommandRow& row : kMinimalCommandRows) {
+        if (row.defaultShortcut != nullptr) {
+            const HotkeyResult r = m_shortcuts->registerDefault(
+                row.id, QKeySequence(QString::fromLatin1(row.defaultShortcut)));
+            Q_ASSERT(r.isOk() && "§7.1 默认键注册被拒（表内冲突＝装配 bug）");
+            (void)r;
+        }
+    }
+}
+
+void WorkbenchShellImpl::applyShortcutAndPaletteState()
+{
+    // ①用户改绑回放（PM-14 持久化半区——冲突/失效条目由注册表丢弃＋Dev
+    //   日志，不阻塞启动；§4.5 坏一条丢一条的快捷键侧纪律）。
+    m_shortcuts->restoreUserBindings(m_pendingUserBindings);
+    m_pendingUserBindings.clear();
+    // ②QShortcut attach（§7.3 唯一创建点——宿主＝主窗口，WindowShortcut
+    //   上下文；触发经 registry.submit 统一路径）。
+    m_shortcuts->attach(m_window.get());
+    // ③命令面板（§7.4——面板是注册表的只读投影；父子归主窗口 Qt 树）。
+    m_palette = createCommandPalette(m_commands.get(), m_shortcuts.get(), m_window.get());
+    // ④面板近期使用回放（§7.4 置顶分组的持久化半区——未注册 id 丢弃）。
+    m_commands->restoreRecentUsed(m_pendingPaletteRecent);
+    m_pendingPaletteRecent.clear();
+}
+
+void WorkbenchShellImpl::openCommandPalette()
+{
+    if (m_palette != nullptr) {
+        m_palette->open();  // 打开即构建快照（§7.4"打开时构建快照"）
+    }
+}
+
+std::vector<HotkeyBinding>
+WorkbenchShellImpl::loadUserShortcutBindings(QSettings& settings)
+{
+    // 载荷读取（UI 线程、写线程未启动——读写不重叠）：QStringList 每条
+    // "commandId\\t键 PortableText"；格式不符的条目丢弃（损坏一条不炸整表
+    // ——§4.5 同纪律；来源标记统一 User——载荷只承载 command+key 事实）。
+    std::vector<HotkeyBinding> out;
+    const QStringList stored =
+        settings.value(QString(kShortcutGroup) + '/' + kShortcutKey).toStringList();
+    for (const QString& line : stored) {
+        const int sep = line.indexOf(QLatin1Char('\t'));
+        if (sep <= 0) {
+            continue;  // 缺命令段（损坏条目——丢弃）
+        }
+        HotkeyBinding binding;
+        binding.command = line.left(sep).toStdString();
+        binding.key = QKeySequence(line.mid(sep + 1));
+        binding.origin = BindingOrigin::User;
+        if (!binding.key.isEmpty()) {
+            out.push_back(std::move(binding));  // 空键＝损坏条目（丢弃）
+        }
+    }
+    return out;
+}
+
+std::vector<CommandId> WorkbenchShellImpl::loadPaletteRecent(QSettings& settings)
+{
+    // 近期使用读取（§7.4"用户级持久化最近 20 条"——QStringList 最新在前；
+    // 未注册 id 由 restoreRecentUsed 收敛丢弃）。
+    QStringList stored =
+        settings.value(QString(kPaletteRecentGroup) + '/' + kPaletteRecentKey).toStringList();
+    std::vector<CommandId> out;
+    out.reserve(static_cast<std::size_t>(stored.size()));
+    for (const QString& id : stored) {
+        out.push_back(id.toStdString());
+    }
+    return out;
+}
+
+void WorkbenchShellImpl::persistShortcutsAsync()
+{
+    // 值序列化在 UI 线程（§3.4 纪律）：User 绑定集→"commandId\\t键" 行表。
+    const std::vector<HotkeyBinding> bindings =
+        m_shortcuts ? m_shortcuts->bindings() : std::vector<HotkeyBinding>{};
+    QStringList lines;
+    for (const HotkeyBinding& binding : bindings) {
+        if (binding.origin == BindingOrigin::User) {
+            // Default 集随产品版本冻结（§7.3）——持久化只落 User 集。
+            lines << QString::fromStdString(binding.command) + QLatin1Char('\t')
+                           + binding.key.toString(QKeySequence::PortableText);
+        }
+    }
+    m_settingsWriter.enqueue([lines](QSettings& s) {
+        s.setValue(QString(kShortcutGroup) + '/' + kShortcutKey, lines);
+    });
+}
+
+void WorkbenchShellImpl::persistPaletteRecentAsync()
+{
+    const QStringList snapshot = [this] {
+        QStringList list;
+        if (m_commands) {
+            for (const CommandId& id : m_commands->recentUsed()) {
+                list << QString::fromStdString(id);
+            }
+        }
+        return list;
+    }();
+    m_settingsWriter.enqueue([snapshot](QSettings& s) {
+        s.setValue(QString(kPaletteRecentGroup) + '/' + kPaletteRecentKey, snapshot);
+    });
+}
+
+// =====================================================================
 // 五区可见性与尺寸折叠（§4.1/§4.4）
 // =====================================================================
 
@@ -579,14 +850,19 @@ void WorkbenchShellImpl::presentProjectContext(const ProjectContextProjection& c
         return;
     }
     m_context = context;
-    // 门控事实（§7.5 快照的 UI-T03 子集）一次性刷新——命令可用性求值只看
-    // 这份快照（谓词内零端口查询/IO，NFR-PERF-01）。
-    m_gate.hasProject = context.project.has_value();
+    // 门控快照（§7.5 UiContextSnapshot）一次性刷新并推送注册表——命令可用
+    // 性求值只看这份快照（谓词内零端口查询/IO，NFR-PERF-01）；状态栏/徽标
+    // 消费同一份（单一口径）。注册表未装配（initialize 序中的首次调用先于
+    // assembleCommandSystem 之前不存在——本壳装配序保证）防御性跳过推送。
+    m_gate.hasActiveProject = context.project.has_value();
     m_gate.writable = context.project.has_value() && context.project->writable;
     m_gate.drafts = context.drafts;
+    if (m_commands) {
+        m_commands->presentContext(m_gate);
+    }
 
     // 中央区切换：无项目→首页（PM-10）；有项目→阶段占位面板（§4.1 阶段 A）。
-    m_centralStack->setCurrentIndex(m_gate.hasProject ? 1 : 0);
+    m_centralStack->setCurrentIndex(m_gate.hasActiveProject ? 1 : 0);
     refreshStatusBar();
     refreshCommandStates();
 }
@@ -604,28 +880,28 @@ void WorkbenchShellImpl::refreshStatusBar()
     }
     // 只读徽标（PM-07）：仅项目态且不可写时呈现。
     if (m_readonlyBadge) {
-        m_readonlyBadge->setVisible(m_gate.hasProject && !m_gate.writable);
+        m_readonlyBadge->setVisible(m_gate.hasActiveProject && !m_gate.writable);
     }
 }
 
 void WorkbenchShellImpl::refreshCommandStates()
 {
-    if (!m_window) {
-        return;
+    if (!m_window || !m_commands) {
+        return;  // 窗口未建/命令设施未装配（initialize 装配序保证二者先于本调用）
     }
-    // 菜单/按钮使能态＝命令板求值结果（§7.6"三处一致禁用"——菜单/顶栏/
-    // 面板同源，无第二口径）。
+    // 菜单/按钮使能态＝命令注册表求值结果（§7.6"三处一致禁用"——菜单/
+    // 顶栏/面板同源单一口径，无第二套求值；UI-T06 起由注册表承载）。
     for (auto& [action, commandId] : m_commandActions) {
-        const ShellCommandAvailability a = m_board.availability(commandId, m_gate);
+        const CommandAvailability a = m_commands->availability(commandId);
         action->setEnabled(a.enabled);
     }
     for (auto& [button, commandId] : m_topButtons) {
-        const ShellCommandAvailability a = m_board.availability(commandId, m_gate);
+        const CommandAvailability a = m_commands->availability(commandId);
         button->setEnabled(a.enabled);
         // 禁用原因随按钮 tooltip 呈现（§7.4"禁用＋说明"——发现性保留）。
         button->setToolTip(a.enabled
                                ? QString()
-                               : QString::fromUtf8(a.reasonKey == WorkbenchText::kReasonReadOnly
+                               : QString::fromUtf8(a.disableReasonKey == WorkbenchText::kReasonReadOnly
                                                        ? WorkbenchText::kReasonReadOnlyText
                                                        : WorkbenchText::kReasonNoProjectText));
     }
@@ -637,7 +913,7 @@ void WorkbenchShellImpl::refreshCommandStates()
 }
 
 // =====================================================================
-// 壳层命令提交路径（§4.2 路由红线；§14.1 阶段 A 边界）
+// 壳层命令提交路径（§4.2 路由红线；§7.7 统一提交路径）
 // =====================================================================
 
 void WorkbenchShellImpl::submitShellCommand(const std::string& commandId)
@@ -646,38 +922,27 @@ void WorkbenchShellImpl::submitShellCommand(const std::string& commandId)
         Q_ASSERT(false && "shutdown 后调用 submitShellCommand（§10.1 非法调用）");
         return;
     }
-    const ShellCommandAvailability a = m_board.availability(commandId, m_gate);
+    // 统一提交路径（§7.7/§10.4 副作用行）：菜单/顶栏/首页/快捷键/面板全部
+    // 收口 registry.submit——前置校验（未知/不可执行/只读）与诊断出线在
+    // 注册表内完成（UI-CMD-UNKNOWN/UI-CMD-NOT-EXECUTABLE），处理器在
+    // registerCommand 时绑定。本路径只做拒绝的用户可见反馈（状态栏说明）。
+    const CommandOutcome outcome = m_commands->submit(commandId);
+    if (outcome.accepted) {
+        return;  // 处理器自行反馈（会话命令的状态栏说明/面板打开等）
+    }
+    // 拒绝反馈（§7.4"禁用＋说明"）：未注册与不可执行分别呈现——诊断条目
+    // （工厂注入时）已由注册表出线，此处是即时可见性补偿。
+    const CommandAvailability a = m_commands->availability(commandId);
     if (!a.registered) {
-        // 壳面只路由已登记命令（未登记提交路径＝UI-T06 注册表的
-        // UI-CMD-UNKNOWN 拒绝面——本壳不产生该诊断）。
-        return;
-    }
-    if (!a.enabled) {
-        // 禁用态触发（可用性快照与刷新间隙的竞态等）：状态栏说明反馈
-        // （§7.4"禁用＋说明"），不派发。
         m_window->statusBar()->showMessage(
-            QString::fromUtf8(a.reasonKey == WorkbenchText::kReasonReadOnly
-                                  ? WorkbenchText::kReasonReadOnlyText
-                                  : WorkbenchText::kReasonNoProjectText),
-            4000);
+            QString::fromUtf8(u8"未知命令：") + QString::fromStdString(commandId), 4000);
         return;
     }
-
-    // 壳自持行为：恢复默认布局（本壳唯一在阶段 A 有完整语义的命令）。
-    if (commandId == "view.resetLayout") {
-        resetLayout();
-        m_window->statusBar()->showMessage(u8"已恢复默认布局", 4000);
-        return;
-    }
-
-    // 其余已登记命令（project.new/open、workbench.commandPalette、
-    // draft.*、project.undo/redo、workbench.closeProject）：命令处理器分别
-    // 随 workflow 向导编排（§14.1 阶段 B）、CommandRegistry/面板（UI-T06）、
-    // UiSessionController（UI-T11）、DraftController（UI-T12）落地——本壳
-    // 已完成登记＋门控＋路由收口，触发时以占位说明反馈（§11.4 不虚构业务
-    // 能力；此为契约显式的阶段 A 形态，非空实现）。
     m_window->statusBar()->showMessage(
-        QString::fromUtf8(WorkbenchText::kEntryDeferredNotice), 4000);
+        QString::fromUtf8(a.disableReasonKey == WorkbenchText::kReasonReadOnly
+                              ? WorkbenchText::kReasonReadOnlyText
+                              : WorkbenchText::kReasonNoProjectText),
+        4000);
 }
 
 // =====================================================================
@@ -842,7 +1107,15 @@ QWidget* WorkbenchShellImpl::mainWindow()
 ShellCommandAvailability WorkbenchShellImpl::commandAvailability(
     const std::string& commandId) const
 {
-    return m_board.availability(commandId, m_gate);
+    // 门面映射：注册表可用性快照（§10.3）→ 壳层可用性词表（UI-T03 门面
+    // 形态不变——观测方零迁移；registered 位与注册表同源）。
+    const CommandAvailability a = m_commands->availability(commandId);
+    ShellCommandAvailability out;
+    out.registered = a.registered;
+    out.visible = a.visible;
+    out.enabled = a.enabled;
+    out.reasonKey = a.disableReasonKey;
+    return out;
 }
 
 void WorkbenchShellImpl::emitDev(const std::string& message)

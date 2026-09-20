@@ -17,6 +17,9 @@
  *     本头不涉及——ICommandRegistry 随 UI-T06 落其自有头 §10.3）。
  *     UI-T04 增量冻结：C-7（当前性端口 IUiCurrentnessSource——七态求值触发
  *     数据源与显示纪律放行数据源；登记 ui.md §16.7 v0.6）。
+ *     UI-T06 增量冻结：C-4（命令网关端口 IUiCommandGateway——§10.3
+ *     CommandOutcome.revisionResult 的 O-31 承载面；登记 ui.md §16.7 v0.8：
+ *     任务契约 acceptance 3"经 ui 自有命令网关端口＋命令结果值投影承载"）。
  *
  * 背景说明（为什么不直接 include policy::IPolicyProvider / runtime::
  * IRuntimeNameResolver）：ARCH §3.5 依赖白名单只有 ui→core、ui→diagnostics
@@ -177,6 +180,52 @@ public:
      * @note UI 线程调用；五条件判定权威在 evidence（§7.2），ui 只读放行位。
      */
     virtual FormalPassEligibilityProjection formalPassEligibility() const = 0;
+};
+
+// =====================================================================
+// C-4：命令网关端口（冻结基准 project.md §5.3.1 ProjectCommandService::
+// submit 语义；UI-T06 首消费冻结，登记 ui.md §16.7 v0.8）
+// =====================================================================
+
+/**
+ * @brief 命令提交的 ui 自有最小端口（L5 适配 project::ProjectCommandService）。
+ *
+ * 语义冻结（不改义——ui.md §7.7 时序③原文）：命令执行**唯一写路径经
+ * project**——ProjectCommandService::submit(envelope, interaction)（§5.3.1：
+ * 全局串行、成功恰好产生一个新修订、失败/拒绝/中止不产生任何修订、要求
+ * writable）。ui 对命令执行**零业务判定**（§7.5 红线：界面使能态不是业务
+ * 判定；真正校验在 project 命令边界）——本端口只把信封投影翻译为对端
+ * 提交、把对端 CommandResult 折叠回 ui 值投影（UiProjections.hpp 的
+ * CommandResultProjection），**不改写结论、不吞错误**。
+ *
+ * 为什么确认回调（ICommandInteraction）不在本端口：O-31 v0.4 裁决 C-6
+ * 方向外翻——project::ICommandInteraction 由 L5 适配器实现并委托 ui 自有
+ * 交互回调端口（P-PR-7 Bridge 归 UI-T13）；本端口只承载"提交→结果"同步
+ * 面。适配器在 submit 内部把对端交互回调 Marshal 回 UI 线程确认对话
+ * （§3.4 命令执行线程行）——该时序对 ui 命令处理器不可见。
+ *
+ * UI-T06 消费状态：端口由 L5 注入后交给命令处理器使用（§7.7 ②处理器组装
+ * 信封→③经本端口提交）；注册表本身**不调用**本端口（注册表只派发处理器
+ * ——§10.3 副作用行），ui 测试以可控替身承载（§3.1）。
+ */
+class IUiCommandGateway {
+public:
+    virtual ~IUiCommandGateway() = default;
+
+    /**
+     * @brief 提交命令信封并取回结果投影（§7.7 时序③的 ui 侧入口）。
+     *
+     * @param envelope [in] 命令信封投影（CommandEnvelopeProjection——
+     *                 §5.3.1 CommandEnvelope 的 ui 值形态）
+     * @return 命令结果投影（Committed 时 newRevision 唯一非空；Rejected/
+     *         Aborted/Failed 携带 reason token——§5.3.1 variant 词表；纯值，
+     *         不抛——对端 StoreError 明细折叠为 Failed＋UI-T13 增量面）
+     *
+     * @note 调用线程＝命令处理器所在线程（UI 线程启动、处理器自行转交——
+     *       §10.3 线程行；对端内部转命令执行序列并同步返回，§5.3.1 线程行
+     *       "任意线程调用（内部转命令执行序列）"）。
+     */
+    virtual CommandResultProjection submit(const CommandEnvelopeProjection& envelope) = 0;
 };
 
 }  // namespace ui
