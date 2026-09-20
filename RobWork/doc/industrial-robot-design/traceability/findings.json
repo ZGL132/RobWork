@@ -2669,6 +2669,26 @@
       "title": "WP-10-T05 实现提交 8a0adb92 对 ui/src/WorkbenchShell_p.hpp 第 400 行注释块头行重写时引入顺带标点笔误：行尾全角右括号『）』误为半角『)』（base 树该行为『…此处只列实现状态）』、head 树为『…此处只列实现状态)』——diff＋cat -A 字节级实证；该行本不需改动（改动动因仅为其上方插入 createView3DPlaceholder 声明的节段注释块）。零行为影响，F-063 同型注释级微瑕",
       "owner": "ui 单元实施者（后续 UI 任务顺手还原全角括号，无需单独返工）",
       "resolution": "建议级：随 UI 单元后续任务提交把该行尾括号还原为全角『）』即可，不单独返工、不阻塞 UI-T05 合入（attempt 1 verdict=pass）。编号顺延自 F-264。"
+    },
+    {
+      "id": "F-266",
+      "source": "traceability/acceptance/UI-T06-20260921.md §4.9/§4.10（attempt 1，verdict=pass，2026-09-21；送验对象 cdeb53e8c58445462fb2b8d788e5563a9dee9a26，分支 wp10-t06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-010/F-077/F-081 家族复踩：UI-T06 留痕提交 cdeb53e8 正文声称 traceability/builds/wp10-t06/ 归档 15 件（双模式构建日志×3＋ctest.log＋三测试 console.log×3＋gates-branch-run.log＋validate-task.log＋gtest XML×3＋ird-test-report.json×3），实际入库仅 6 件（双模式 gtest XML×3＋ird-test-report.json×3——git ls-tree 实证）；9 件 .log 因根 .gitignore:87『*.log』规则被 git add 静默跳过且未按 UI-T05 先例 git add -f 强制入册（主工作树该目录 --ignored 实证 9 件在盘未跟踪）；提交件 traceability/wp10-t06-gate-registrations.md 首节『原始输出：本目录 gates-branch-run.log』为在库悬空引用（F-081 同型）。证据本体不缺：XML（model tests=30 failures=0／contract 3/0／gui 10/0）与 ird-test-report.json（decisive=true）在库，且数值主张全部经验收者亲手复现准确（集成全新树重配＋全量构建 0 错、冒烟 0 错、30＋3＋10 全过、ird_gates 39 命中＝wp10-t05 基线 33＋恰增 6 处 R3、validate-task/validate-docs PASS——worktree A 复现）；两提交验证结论（计数/门禁/脚本）无一虚报，唯『归档清单』与在库树不一致（F-081 同向虚报）",
+      "owner": "构建约定所有者（F-010 .gitignore 根因修复与留痕回填裁决）；UI-T06 实施者按返工/后续任务补 git add -f 回填 9 件为辅助",
+      "resolution": "按 F-081 裁决三选一口径处理：①修根 .gitignore 增加 traceability/** 豁免（F-010 一并闭环）后补提交 9 件日志；或②按 POL-T04 F-077 先例以『XML＋报告承载证据本体』口径接受，日志以 UI-T06 验收记录中验收者亲跑证据（集成/冒烟构建日志、三测试 console、ctest、ird_gates 复跑 39 命中、validate-task/validate-docs——存于验收 worktree 与本记录 §4.2/§4.3/§4.6 摘录）替代；或③留痕清单自查强制 git status --porcelain 对账。不影响 UI-T06 验收（verdict=pass——按 POL-T06 F-081 先例证据本体完整且全量复现）。编号顺延自 F-265。"
+    },
+    {
+      "id": "F-267",
+      "source": "traceability/acceptance/UI-T06-20260921.md §4.9（attempt 1，verdict=pass，2026-09-21；送验对象 cdeb53e8c58445462fb2b8d788e5563a9dee9a26，分支 wp10-t06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-012/F-232~F-242/F-247/F-258/F-261/F-263/F-264 家族第 14 例：提交 cdeb53e8 标题『[WP-10-T06] ui 单元卡 v0.8 增量修订与验证留痕归档（文档同步＋证据）』前缀后以名词短语『ui 单元卡』开头，不合 ACC §4.9/AGENTS §6.3『动词开头』字面（同提交 3830e164 以动词『实现』开头合规）；正文四段齐备、验证结论经验收者独立复跑证实，纯风格瑕疵",
+      "owner": "ui 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
+      "resolution": "后续任务提交标题在前缀后使用动词开头（如『修订…』『归档…』）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 UI-T06 合入（attempt 1 verdict=pass）。编号顺延自 F-266。"
     }
   ]
 }
