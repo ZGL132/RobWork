@@ -2629,6 +2629,16 @@
       "title": "F-012/F-232~F-242/F-247/F-258 家族再现（连续第十一例，首例 UI 系）：WP-10-T03 辅助提交 dd9ff626 标题『[WP-10-T03] ui 单元卡 v0.5 增量修订与门禁登记提交件（文档同步＋留痕）』前缀后以名词短语『ui 单元卡』开头——不合 ACC §4.9/AGENTS §6.3『动词开头』字面；另两提交（d402cfef『实现…』、e6ac9d11『返工补交…』）动词开头合规。正文四段齐备、验证结论经验收者独立复跑全部证实（双模式零错误、8/3/6＋ctest 3/3、validate 双 PASS、23 件留痕清点同值），纯风格瑕疵",
       "owner": "ui 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
       "resolution": "后续任务提交标题在前缀后使用动词开头（如『登记…』『同步…』『归档…』）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 UI-T03 合入（attempt 2 verdict=pass）。编号顺延自 F-260。"
+    },
+    {
+      "id": "F-262",
+      "source": "RobWork/scripts/industrialrobot/merge-findings-union.ps1 §③/§⑥（UI-T03 收尾 PIPE §4.7③ 首次触发，2026-09-20；EX-T09 收尾首跑通过系彼时 findings.json 无 BOM——本次双方 stage 均带 EF BB BF）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-20",
+      "title": "merge-findings-union.ps1 对带 UTF-8 BOM 的 findings.json 退出非 0：git show 行流把 U+FEFF 以文本字符附着首行，ConvertFrom-Json 拒绝前导 BOM——v1.13 例外解算失败（冲突文件仅为 findings.json 的确定性并集场景，非撞号/异改等真分歧），按协议字面应即停转 blocked",
+      "owner": "已消账（编排者 tick#242 最小修复：§③ 顶层解析与 §⑥ 写前校验解析前剥前导 BOM；集合运算与防护守卫零改动）",
+      "resolution": "修复＝解析前 -replace 剥 ^\\uFEFF（两处），写盘保持 UTF8Encoding($false)——首行附着的 U+FEFF 字符本身编码为 BOM 字节，输入侧 BOM 状态零漂移；修复后重跑 RESOLVED（并集 F-259，总计 261 条）。修复合规边界如实留痕：T-ORCH 步骤 8 规定脚本退出非 0 即停，编排者以『根因为纯机械适配缺陷、不涉语义取舍、脚本三重写前校验兜底完整』为由选择最小修复后重跑，未越过条目取舍权；所有者如认定越权可整体回退本修复提交并按 blocked 重启。编号顺延自 F-261，随本修复提交即消账（fixedBy＝[governance] 修复提交）。"
     }
   ]
 }

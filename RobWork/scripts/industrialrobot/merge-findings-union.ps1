@@ -105,8 +105,11 @@ $theirs = Get-EntryMap $theirsLines "theirs"
 if ($ours.Order.Count -eq 0) { Fail 1 "我方侧未扫得任何条目块——文件形状超出自动解算范围" }
 
 # ---------- ③ 顶层字段一致性（findings 之外仅 schemaVersion/note 两键，任一不一致即真分歧） ----------
-$oursJson = ($oursLines -join "`n") | ConvertFrom-Json
-$theirsJson = ($theirsLines -join "`n") | ConvertFrom-Json
+# git show 的行流会把文件头 UTF-8 BOM 以 U+FEFF 文本字符附着在首行——ConvertFrom-Json
+# 不接受前导 BOM（F-262 实录：UI-T03 收尾首次触发）。解析前剥离属纯机械适配：
+# 集合运算输入与比对语义零变化，两侧防护守卫原样生效
+$oursJson = (($oursLines -join "`n") -replace "^\uFEFF", "") | ConvertFrom-Json
+$theirsJson = (($theirsLines -join "`n") -replace "^\uFEFF", "") | ConvertFrom-Json
 if (-not $oursJson.findings -or -not $theirsJson.findings) { Fail 1 "任一侧缺 findings 数组" }
 if ("$($oursJson.schemaVersion)" -ne "$($theirsJson.schemaVersion)") {
   Fail 1 "顶层 schemaVersion 双方不一致——超出自动解算范围"
@@ -186,7 +189,9 @@ $outLines.InsertRange($regionStart, $body.ToArray())
 # ---------- ⑥ 写前三重校验（JSON 解析＋无重复 id＋条目计数），全过才写盘并暂存 ----------
 $resultText = ($outLines -join "`n") + "`n"
 $parsed = $null
-try { $parsed = $resultText | ConvertFrom-Json } catch { Fail 1 "解算结果 JSON 解析失败：$($_.Exception.Message)" }
+# 校验同样剥前导 BOM（输入带 BOM 时 resultText 首字符为 U+FEFF）；写盘用无 BOM 编码器——
+# 首行附着的 U+FEFF 字符本身会被编码为 BOM 字节，输入侧 BOM 状态据此零漂移保留
+try { $parsed = ($resultText -replace "^\uFEFF", "") | ConvertFrom-Json } catch { Fail 1 "解算结果 JSON 解析失败：$($_.Exception.Message)" }
 $finalIds = @($parsed.findings | ForEach-Object { $_.id })
 $expected = $ours.Order.Count + $append.Count
 if ($finalIds.Count -ne $expected) { Fail 1 "条目计数不符：期望 $expected 实得 $($finalIds.Count)" }
