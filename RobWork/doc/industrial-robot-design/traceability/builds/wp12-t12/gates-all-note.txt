@@ -1,0 +1,1 @@
+GATES-HIT-SET-IDENTICAL（归一化路径前缀后 diff 为空——见 gates-hit-set-diff.txt 差异仅为 worktree 路径前缀；归一化 diff 复核见 validate-task.log 附录）
