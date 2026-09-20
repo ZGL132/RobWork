@@ -24,7 +24,11 @@
  *     （CommandEnvelopeProjection/CommandResultProjection——§10.3
  *     CommandOutcome.revisionResult 的 O-31 承载形态，任务契约 acceptance 3：
  *     "经 ui 自有命令网关端口＋命令结果值投影承载"，产品面零对端
- *     include）。
+ *     include）；
+ *   - UI-T07 增量（登记 ui.md §16.7 v0.9）：工程策略摘要投影逐字段细化
+ *     （PolicyThresholdProjection＋PolicySummaryProjection 逐阈值字段展开
+ *     ——"首消费细化"机制兑现：UI-T03 计数形态改由逐字段派生，聚合不漂移；
+ *     C-10 端口返回值的呈现面，冻结基准 policy.md §4.3/§4.4/§10.6）。
  *
  * 背景说明（为什么状态栏输入是"投影"而不是 project 头文件里的类型）：
  *   ui 产品面对 project 单元零链接零 include（O-31/ARCH §3.5），而状态栏/
@@ -245,29 +249,116 @@ struct CommandResultProjection {
 // =====================================================================
 
 /**
+ * @brief 单个策略阈值字段的 ui 侧投影（逐字段细化——UI-T07 首消费冻结，
+ *        登记 ui.md §16.7 v0.9）。
+ *
+ * 语义锚点（不改义，NFR-MNT-03）：对端类型为 policy::PolicyThreshold
+ * （policy.md §4.4：SI 真值＋来源，全部字段构造后不可变）。本投影只承载
+ * 呈现所需的"有值/无值＋SI 数值"两要素：
+ *   - present==true：siValue 为该字段的 SI 真值（单位由字段位置固定——
+ *     安全间距 m／行程上限 rad／判定阈值无量纲，policy.md §4.4"单位由
+ *     字段位置固定"原文；显示单位换算属呈现投影，见
+ *     formatPolicyThreshold——KIN-12 同案，不改真值不进身份）；
+ *   - present==false：该字段"显式不适用"（对端 std::optional 空——
+ *     policy.md §4.5 四态承载之"不适用"态＋P-POL-2/O-10"不发明数值"
+ *     保守口径的直读投影；呈现层必须显示「显式不适用」，禁止补默认值）。
+ *
+ * 为什么不带 origin（来源）字段：§4.4 来源词表的编码 token 尚未随 codec
+ * 冻结（对端 PolicyValueOrigin 的持久化形态未定），ui 侧先行投影会制造
+ * 第二词表权威（NFR-MNT-03）；摘要卡面向的呈现问题（"阈值是多少、适用
+ * 与否"）不依赖来源，来源呈现随 codec token 冻结后的增量修订补入。
+ *
+ * 值语义；ui 侧只读使用（投影≠重定义——字段语义权威在 policy.md §4.4）。
+ */
+struct PolicyThresholdProjection {
+    /// 阈值是否显式提供（false＝显式不适用——呈现「显式不适用」，不发明数值）。
+    bool present = false;
+    /// SI 真值（present==true 时有效；单位由字段域固定——m/无量纲/rad）。
+    double siValue = 0.0;
+};
+
+/**
  * @brief 工程策略只读摘要的 ui 侧投影（IPolicySummarySource 的返回值）。
  *
  * 语义锚点（ui.md §6.7）：数据＝EngineeringPolicySet 公开字段投影（碰撞
  * 域启用/安全间距/过滤对计数/行程上限阈值/判定阈值，含"显式不适用"态）；
  * **不改变策略内容身份**（投影≠重定义——权威字段语义在 policy.md，本类型
- * 只承载呈现所需的计数与开关位）。
+ * 只承载呈现所需的开关位、阈值与计数）。
  *
- * UI-T03 形态说明：本投影由 WorkbenchShell 持有端口承载（§10.1 ShellWiring），
- * 首个消费面＝UI-T07（策略摘要只读卡）。计数形态（而非逐阈值字段）是
- * UI-T03 的最小冻结：逐字段展开随 UI-T07 消费时按增量修订登记细化
- * （ui.md v0.4 §10 引导注的既定机制）。
+ * UI-T07 逐字段细化（登记 ui.md §16.7 v0.9——"逐字段展开随 UI-T07 消费
+ * 时按增量修订登记细化"机制的兑现，UI-T03 计数形态由此被取代）：
+ *   - UI-T03 的 thresholdCount/explicitNotApplicableCount 数据成员改为
+ *     由逐字段投影**派生**的同名 const 方法（聚合语义可复现、单一来源
+ *     ——逐字段是唯一事实，聚合不再可能与之漂移）；filterPairCount 保留
+ *     数据形态（对端 excludedPairs 向量规模的直读投影）并补
+ *     mandatoryPairCount（必检对——与过滤对同源对偶，摘要行"必检 n 对
+ *     ·过滤 m 对"的另一半）；
+ *   - enabledDomainTokens 逐项为对端 CollisionDomain 的冻结 token
+ *     （policy.md §4.3：self/environment/tool/scene——词表锚点同
+ *     CurrentnessProjection::Reason::kindToken 的"对端稳定 token 直用、
+ *     不镜像枚举"口径）；
+ *   - 判定阈值＝nearLimitRatio/conditionNumberWarning（policy.md §4.4
+ *     字段行——警告判定阈值族）；行程上限＝finiteRotationTravelLimit
+ *     （已发布集合恒有值——4π 是唯一冻结默认，origin=DefaultAppendixD）。
+ *
+ * 值语义；ui 侧只读使用（ui 不回写策略——§6.7 摘要只读红线，修改一律
+ * 走编辑适配器→①命令端口路径）。
  */
 struct PolicySummaryProjection {
     /// 策略源是否可解析（false＝未装载/不可用——呈现层显示占位，不虚构数值）。
     bool available = false;
-    /// 碰撞域启用位（EngineeringPolicySet 碰撞域开关投影；§6.7）。
+    /// 碰撞域启用位（EngineeringPolicySet.collision.enabled 的直读投影；
+    /// §6.7"碰撞域启用"原文——这是**计算开关**，呈现于"工程策略（计算
+    /// 权威）"组，与会话显示设置严格分组异名，POL-ID-3）。
     bool collisionDomainEnabled = false;
-    /// 阈值类字段计数（行程上限/判定阈值等——呈现"阈值 n 项"汇总用）。
-    std::size_t thresholdCount = 0;
-    /// 过滤对计数（§6.7"过滤对计数"原文）。
+    /// 启用域 token 清单（对端 CollisionDomain 冻结 token：self/environment/
+    /// tool/scene——policy.md §4.3；enabled==false 时适配器置空清单）。
+    std::vector<std::string> enabledDomainTokens;
+    /// 安全间距阈值（collision.safetyClearance 直读投影；SI m，[0,+∞)——
+    /// 碰撞停用时可为显式不适用，policy.md §4.3）。
+    PolicyThresholdProjection safetyClearance;
+    /// 近限位比警告阈值（jointThresholds.nearLimitRatio 直读投影；无量纲，
+    /// (0,1]；nullopt＝该检查显式不适用——P-POL-2 不发明数值）。
+    PolicyThresholdProjection nearLimitRatio;
+    /// 条件数警告阈值（jointThresholds.conditionNumberWarning 直读投影；
+    /// 无量纲，[1,+∞)；nullopt 语义同上）。
+    PolicyThresholdProjection conditionNumberWarning;
+    /// 行程上限阈值（jointThresholds.finiteRotationTravelLimit 直读投影；
+    /// SI rad，(0,+∞)——已发布集合恒有值：4π 是唯一冻结默认）。
+    PolicyThresholdProjection travelLimit;
+    /// 必检对计数（collision.mandatoryPairs 规模——"不可被过滤覆盖"的对，
+    /// policy.md §4.3/§7.2）。
+    std::size_t mandatoryPairCount = 0;
+    /// 过滤对计数（collision.excludedPairs 规模——§6.7"过滤对计数"原文；
+    /// 允许忽略对，理由必填可追溯）。
     std::size_t filterPairCount = 0;
-    /// "显式不适用"态字段计数（§6.7 括注——ERR-01"不适用"呈现的汇总来源）。
-    std::size_t explicitNotApplicableCount = 0;
+
+    /**
+     * @brief 已提供阈值字段计数（四个阈值槽位中 present==true 的个数）。
+     *
+     * UI-T03 聚合语义的派生复现：行程上限在已发布集合恒有值，故
+     * available 集合该值 ≥1；本方法不读 available——聚合只由逐字段事实
+     * 决定（未装载投影各槽位默认 present=false，自然得 0）。
+     */
+    std::size_t thresholdCount() const noexcept
+    {
+        std::size_t count = 0;
+        if (safetyClearance.present) { ++count; }
+        if (nearLimitRatio.present) { ++count; }
+        if (conditionNumberWarning.present) { ++count; }
+        if (travelLimit.present) { ++count; }
+        return count;
+    }
+
+    /**
+     * @brief "显式不适用"阈值字段计数（四个阈值槽位中 present==false 的
+     *        个数——§6.7 括注的汇总呈现源；ERR-01"不适用"逐字段显式化，
+     *        不与"未装载"混淆）。
+     */
+    std::size_t explicitNotApplicableCount() const noexcept
+    {
+        return static_cast<std::size_t>(4) - thresholdCount();
+    }
 };
 
 // =====================================================================

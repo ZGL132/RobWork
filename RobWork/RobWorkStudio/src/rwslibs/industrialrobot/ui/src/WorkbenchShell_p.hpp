@@ -62,6 +62,7 @@
 #include <sdurws/ird/ui/ICommandRegistry.hpp>
 #include <sdurws/ird/ui/IGlobalShortcutRegistry.hpp>
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>
+#include <sdurws/ird/ui/UiPorts.hpp>
 #include <sdurws/ird/ui/UiProjections.hpp>
 
 namespace sdurws::ird {
@@ -375,6 +376,28 @@ struct LayoutMemory {
  */
 QWidget* createView3DPlaceholder(QWidget* parent);
 
+/**
+ * @brief 构建右栏工程策略摘要只读卡（UI-T07 阶段 A——§6.7 策略摘要入口）。
+ *
+ * 卡面＝分组渲染的只读行集（分组异名——POL-ID-3）＋"修改策略…"跳转
+ * 入口（阶段 A 仅延期提示——表单归阶段 B，不虚构编辑能力）。行数据由
+ * 策略摘要端口（ShellWiring.policySource——O-31 ui 自有端口，L5 适配
+ * policy::IPolicyProvider）的快照经 policySummaryRows 纯函数装配，卡
+ * 控件零策略语义（模型层单一权威——PolicySummaryCard.hpp 契约）。
+ * 实现于 src/PolicySummaryCard.cpp（§16.7 v0.9）。
+ *
+ * @param policySource [in] 策略摘要端口引用（壳已校验非空——§10.1 前置；
+ *               引用须在卡存活期内有效——壳持有 wiring 共享引用保证之）
+ * @param refreshOut   [in] 可选出参：接收"重拉端口快照并重建卡内容"的
+ *               刷新钩子（UI 线程调用；钩子生命周期≤卡容器）
+ * @param parent [in] 父控件（右栏内容区——所有权移交 Qt 对象树）
+ * @return 卡容器指针（objectName=ird_policy_summary_card；不交出壳外
+ *         ——ARC-02）
+ */
+QWidget* createPolicySummaryCard(IPolicySummarySource& policySource,
+                                 std::function<void()>* refreshOut,
+                                 QWidget* parent);
+
 // =====================================================================
 // WorkbenchShell 实现（门面契约见 IWorkbenchShell.hpp——此处只列实现状态)
 // =====================================================================
@@ -434,6 +457,7 @@ private:
     void persistRecentAsync();                ///< 最近项目落盘任务提交
     void persistShortcutsAsync();             ///< 快捷键用户改绑落盘任务提交（PM-14）
     void persistPaletteRecentAsync();         ///< 面板近期使用落盘任务提交（§7.4/PM-14）
+    void refreshPolicySummaryCard();          ///< 策略摘要卡重拉端口快照（UI-T07——§6.7）
     void emitDev(const std::string& message); ///< Dev 日志出线（devLog 为空时静默——已显式声明语义）
     QDockWidget* dockFor(WorkbenchRegion region) const;     ///< 五区 → Dock 控件
     bool* userVisibilityFlag(WorkbenchRegion region);       ///< 用户可见性存储位（可隐藏三区）
@@ -452,6 +476,9 @@ private:
     CommandPalettePanel* m_palette = nullptr;                  ///< 命令面板（Qt 父子树管理——随主窗口销毁）
     std::vector<HotkeyBinding> m_pendingUserBindings;          ///< 装配期读取的快捷键历史（applyShortcutAndPaletteState 回放）
     std::vector<CommandId> m_pendingPaletteRecent;             ///< 装配期读取的面板近期使用（同上回放）
+
+    // ---- 策略摘要卡（UI-T07——§6.7；控件随右栏窗口树，钩子为重建闭包）----
+    std::function<void()> m_refreshPolicyCard;  ///< 卡刷新钩子（createPolicySummaryCard 注入；UI 线程调用）
 
     // ---- 窗口树（shutdown 时整体销毁——mainWindow 唯一出口的私有侧）----
     class WorkbenchMainWindow : public QMainWindow {  ///< resize 钩子宿主（§4.4 折叠）
