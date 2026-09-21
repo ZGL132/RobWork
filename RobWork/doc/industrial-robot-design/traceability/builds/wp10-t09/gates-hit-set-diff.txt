@@ -1,0 +1,4 @@
+ird_gates 命中集比对（WP-10-T09 vs WP-10-T08 基线）：
+- 基线：traceability/builds/wp10-t08/gates-hit-set.txt（41 处唯一命中——全部为 DTB §4.5 登记册既有项/F-221·F-259 同型机器面滞后）
+- 本次：ird_gates-integration.log（41 处，与本任务新增文件零关联）
+- 归一化 diff 结果：HIT-SET-IDENTICAL（零新增、零消失）
