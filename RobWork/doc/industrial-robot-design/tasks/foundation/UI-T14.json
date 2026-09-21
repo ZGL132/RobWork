@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "ui 契约测试套件（§12 全用例）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03", "UI-T04", "UI-T05", "UI-T06", "UI-T07", "UI-T08", "UI-T09", "UI-T10", "UI-T12", "UI-T13"],
   "requirements": ["UX-03", "UX-09", "UX-10", "UX-13"],
   "designRefs": [
