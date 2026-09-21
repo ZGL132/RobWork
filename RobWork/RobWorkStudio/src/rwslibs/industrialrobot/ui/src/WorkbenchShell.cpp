@@ -11,11 +11,14 @@
  *     契约表——前置/后置/错误类型/线程/所有权/副作用）、§10.3/§10.4（两
  *     注册表接口）、§3.4（线程模型与后台落盘线程）、§3.5（UI-LAYOUT-RESTORE-
  *     FAILED 出线口径）、§11.4（不虚构业务能力——占位说明口径）；
- *   - 需求 UX-09/UX-13/PM-07/PM-10/PM-11/PM-14；任务契约 tasks/foundation/
- *     UI-T03.json acceptance 1~4、tasks/foundation/UI-T06.json acceptance
- *     1~3（注册表/快捷键/面板的壳集成——SA-16 唯一入口）、tasks/foundation/
- *     UI-T07.json acceptance 1~3（右栏工程策略摘要只读卡——§6.7，UI-T07；
- *     数据经 ShellWiring.policySource 自有端口，分组异名 POL-ID-3）；
+ *   - 需求 UX-09/UX-13/UX-14/PM-07/PM-10/PM-11/PM-14；任务契约 tasks/
+ *     foundation/UI-T03.json acceptance 1~4、tasks/foundation/UI-T06.json
+ *     acceptance 1~3（注册表/快捷键/面板的壳集成——SA-16 唯一入口）、
+ *     tasks/foundation/UI-T07.json acceptance 1~3（右栏工程策略摘要只读
+ *     卡——§6.7，UI-T07；数据经 ShellWiring.policySource 自有端口，分组
+ *     异名 POL-ID-3）、tasks/foundation/UI-T10.json acceptance 1~2（帮助
+ *     入口与关于对话框——§11.4，UI-T10：help.about/help.contents 壳自持
+ *     处理器＋ShellWiring.aboutSource 端口消费；UI-PLG-2/O-31）；
  *   - §14.1 交接清单（新建/打开向导编排归 workflow 阶段 B——本壳登记入口
  *     并以占位说明触发，不虚构能力）。
  *
@@ -33,6 +36,7 @@
 #include "WorkbenchShell_p.hpp"
 #include "CommandPalette_p.hpp"
 
+#include <QDialog>
 #include <QFileInfo>
 #include <QHBoxLayout>
 #include <QKeySequence>
@@ -47,6 +51,7 @@
 
 #include <string_view>
 
+#include <sdurws/ird/ui/AboutDialog.hpp>  // 关于框装配/工厂/手册入口（UI-T10——§11.4）
 #include <sdurws/ird/ui/UiProjections.hpp>
 
 namespace sdurws {
@@ -285,10 +290,12 @@ void WorkbenchShellImpl::buildMenus()
     QMenu* tools = m_window->menuBar()->addMenu(QString::fromUtf8(WorkbenchText::kMenuTools));
     tools->addAction(makeCommandAction(WorkbenchText::kCmdPalette, "workbench.commandPalette"));
 
-    // 帮助（关于/内容随 UI-T10——阶段 A 仅菜单位）。
+    // 帮助（UI-T10 起实条目——§7.1 壳层命令 help.contents/help.about 经
+    // 统一提交路径；F1 默认键已随 §7.3 默认表登记，入口动作不再自带快捷
+    // 键——§4.2 路由红线：菜单只路由命令板）。
     QMenu* help = m_window->menuBar()->addMenu(QString::fromUtf8(WorkbenchText::kMenuHelp));
-    QAction* helpPlaceholder = help->addAction(QString::fromUtf8(WorkbenchText::kStagePlaceholder));
-    helpPlaceholder->setEnabled(false);
+    help->addAction(makeCommandAction(WorkbenchText::kCmdHelpContents, "help.contents"));
+    help->addAction(makeCommandAction(WorkbenchText::kCmdHelpAbout, "help.about"));
 }
 
 void WorkbenchShellImpl::buildTopBar()
@@ -622,6 +629,24 @@ void WorkbenchShellImpl::assembleCommandSystem()
                 out.accepted = true;
                 return out;
             };
+        } else if (std::string_view(row.id) == "help.about") {
+            // 壳自持：打开关于对话框（UI-T10——§11.4 关于页＝白名单∩报告
+            // ＋版本基线，数据经 IUiAboutDataSource 端口现取）。
+            handler = [this](const std::vector<CommandParameter>&) {
+                openAboutDialog();
+                CommandOutcome out;
+                out.accepted = true;
+                return out;
+            };
+        } else if (std::string_view(row.id) == "help.contents") {
+            // 壳自持：打开用户手册（UI-T10——§11.4 帮助入口链接用户手册；
+            // 反馈见 openUserManualEntry——成功/缺失二态均用户可见）。
+            handler = [this](const std::vector<CommandParameter>&) {
+                openUserManualEntry();
+                CommandOutcome out;
+                out.accepted = true;
+                return out;
+            };
         } else {
             // 占位说明处理器（阶段 A 契约显式形态——accepted=true：提交
             // 链路真实走通，能力面以 §11.4 说明呈现）。
@@ -686,6 +711,59 @@ void WorkbenchShellImpl::openCommandPalette()
     if (m_palette != nullptr) {
         m_palette->open();  // 打开即构建快照（§7.4"打开时构建快照"）
     }
+}
+
+// =====================================================================
+// 帮助入口（UI-T10——§11.4 帮助入口与关于对话框）
+// =====================================================================
+
+void WorkbenchShellImpl::openAboutDialog()
+{
+    if (!m_window) {
+        Q_ASSERT(false && "shutdown 后调用 openAboutDialog（§10.1 非法调用）");
+        return;
+    }
+    // 第 1 步：现取端口数据（§11.4 数据＝白名单 ∩ 报告＋版本基线；端口
+    // 为空＝无关于数据测试场景——wiring 显式声明语义，清单/版本双占位，
+    // 零虚构数据）。报告与基线各取一次快照，对话框呈现该快照（打开期间
+    // 不订阅不刷新——关于框是装配期事实的静态呈现面）。
+    const std::vector<PluginAssemblyReport> reports =
+        m_wiring.aboutSource != nullptr ? m_wiring.aboutSource->assemblyReports()
+                                        : std::vector<PluginAssemblyReport>{};
+    const AboutVersionBaseline baseline =
+        m_wiring.aboutSource != nullptr ? m_wiring.aboutSource->versionBaseline()
+                                        : AboutVersionBaseline{};
+
+    // 第 2 步：模型装配＋对话框构建（同源纪律——清单/版本行全部出自
+    // AboutDialog.hpp 的装配函数，本壳零过滤零加工逻辑）。
+    QDialog* dialog = createAboutDialog(baseline, aboutPluginRows(reports),
+                                        m_window.get());
+
+    // 第 3 步：非阻塞打开（QDialog::open＝窗口模态呈现、不进嵌套事件
+    // 循环——§7.7 提交时序不可重入；对话框生命周期交 Qt 父子树，随主
+    // 窗口销毁或用户关闭即回收）。
+    dialog->open();
+}
+
+void WorkbenchShellImpl::openUserManualEntry()
+{
+    if (!m_window) {
+        Q_ASSERT(false && "shutdown 后调用 openUserManualEntry（§10.1 非法调用）");
+        return;
+    }
+    // 打开动作（§11.4"链接用户手册"语义本体在 openUserManual——存在才
+    // 启动系统打开器）；本方法只承载二态的用户可见反馈（入口点了没反应
+    // 属可见性违例）。反馈走状态栏（即时、非阻断）；缺失的解析路径细节
+    // 走 Dev 日志（排障面——§3.5 码表无此事件码，不臆造稳定码；呈现面
+    // 零内部路径）。
+    if (openUserManual()) {
+        m_window->statusBar()->showMessage(
+            QString::fromUtf8(WorkbenchText::kHelpManualOpenedNotice), 4000);
+        return;
+    }
+    emitDev("用户手册入口文件缺失（share 帮助文件未部署）：" + userManualPath());
+    m_window->statusBar()->showMessage(
+        QString::fromUtf8(WorkbenchText::kHelpManualMissingNotice), 6000);
 }
 
 std::vector<HotkeyBinding>

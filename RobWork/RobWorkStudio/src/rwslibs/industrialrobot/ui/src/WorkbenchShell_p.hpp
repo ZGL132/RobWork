@@ -156,6 +156,11 @@ struct WorkbenchText {
     static constexpr const char* kCmdPalette = "命令面板";
     static constexpr const char* kCmdSaveDraft = "保存草稿";
     static constexpr const char* kCmdApplyDraft = "应用修改";
+    // 帮助菜单条目（§7.1 壳层命令 help.contents/help.about 的呈现名——
+    // UI-T10 起帮助菜单从禁用占位升级为实条目；菜单序＝帮助手册在前、
+    // 关于在后，与 §7.1 menuPath"帮助/帮助手册""帮助/关于"一致）。
+    static constexpr const char* kCmdHelpContents = "帮助手册";
+    static constexpr const char* kCmdHelpAbout = "关于";
 
     // ---- 视图菜单五区开关（§4.1"支持隐藏"）----
     static constexpr const char* kToggleLeft = "左栏";
@@ -206,6 +211,13 @@ struct WorkbenchText {
     // ---- Dev 诊断消息模板（UI-LAYOUT-RESTORE-FAILED——§3.5；Dev 级不进
     //      用户目录，消息面向开发排障：码＋损坏原因＋处置结果）----
     static constexpr const char* kLayoutRestoreFailedCode = "UI-LAYOUT-RESTORE-FAILED";
+
+    // ---- 帮助入口反馈（UI-T10——§11.4"帮助入口链接用户手册"的状态栏
+    //      用户可见反馈；成功/缺失二态都不静默：点了没反应属入口可见性
+    //      违例。缺失文案不携带文件路径——呈现面零内部路径，细节走 Dev
+    //      日志通道）----
+    static constexpr const char* kHelpManualOpenedNotice = "用户手册已在系统查看器中打开";
+    static constexpr const char* kHelpManualMissingNotice = "用户手册文件缺失（随部署提供）——详见安装目录 share 帮助文件";
 };
 
 // =====================================================================
@@ -444,6 +456,8 @@ private:
     void assembleCommandSystem();             ///< 命令设施装配（§7.1 登记＋seal＋快捷键默认集）
     void applyShortcutAndPaletteState();      ///< 用户改绑回放＋QShortcut attach＋面板创建
     void openCommandPalette();                ///< 命令面板打开（workbench.commandPalette 处理器）
+    void openAboutDialog();                   ///< 关于对话框打开（help.about 处理器——UI-T10 §11.4）
+    void openUserManualEntry();               ///< 用户手册入口（help.contents 处理器——UI-T10 §11.4）
     static std::vector<HotkeyBinding> loadUserShortcutBindings(QSettings& settings); ///< 快捷键历史读取
     static std::vector<CommandId> loadPaletteRecent(QSettings& settings);            ///< 面板近期使用读取
     void applyFactoryLayout();                ///< 出厂位形（§4.5 回退基准）
