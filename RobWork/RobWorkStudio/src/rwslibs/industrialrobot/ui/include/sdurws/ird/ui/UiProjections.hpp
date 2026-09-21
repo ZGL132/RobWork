@@ -48,6 +48,13 @@
  *     DraftRowProjection 增列 moduleId/stale/baseRevisionCanonical（§8.2
  *     汇总合并与"基线已前进"提示的关联键与判别位——UI-T12 首消费增量，
  *     既有字段零变化）。
+ *   - UI-T13 增量（登记 ui.md §16.7 v1.5）：任务呈现投影族——
+ *     TaskProgressProjection（execution::ProgressReport 语义锚，O-31 值
+ *     投影：percent/阶段文案键/批次计数）、TaskViewProjection（execution::
+ *     TaskSnapshot＋TaskCapability 呈现面锚——§10.7 TaskRow.snap 的 ui
+ *     侧承载）、UiTaskAck（execution::StatusAck/CancelAck 的 Ack 投影
+ *     ——accepted/currentState/feedback 显式反馈）、UserLogEntry（Tier-U
+ *     日志面板条目——§9.1 日志面板行，NFR-REL-05 产出侧已脱敏）。
  *
  * 背景说明（为什么状态栏输入是"投影"而不是 project 头文件里的类型）：
  *   ui 产品面对 project 单元零链接零 include（O-31/ARCH §3.5），而状态栏/
@@ -64,6 +71,7 @@
 #ifndef SDURWS_IRD_UI_UIPROJECTIONS_HPP
 #define SDURWS_IRD_UI_UIPROJECTIONS_HPP
 
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <optional>
@@ -1242,6 +1250,154 @@ struct TaskRowProjection {
     std::string archivePhaseToken;
     /// 九态短标签文案键（PM-03——UiText 解析）。
     TextKey labelKey;
+};
+
+// ---------------------------------------------------------------------
+// 任务呈现投影族（§9.4/§10.7——UI-T13 首消费冻结，登记 ui.md §16.7 v1.5；
+// O-31 值投影：execution::ProgressReport/TaskSnapshot/TaskCapability/
+// StatusAck 语义锚——投影≠重定义，NFR-MNT-03）
+// ---------------------------------------------------------------------
+
+/**
+ * @brief 任务进度投影（§9.4"percent/phaseToken（进度阶段文案键）/
+ *        batchesDone/Total"的 ui 侧承载）。
+ *
+ * 语义锚点（不改义——冻结基准 execution.md §6.1 ProgressReport）：
+ *   - percent ∈ [0,100]（无量纲百分比；回退值由呈现模型丢弃——§9.4
+ *     "同 (taskId, attemptId) 内 percent 单调"，判定归模型不归本类型）；
+ *   - phaseLabelKey＝进度阶段文案键（§9.4 键值分离——对端 phaseToken 是
+ *     机器 token，非文案；适配器以 progressStageKey 文案键形态投影，
+ *     UI-T04 v0.6 登记的同款口径）；空串＝无阶段文案；
+ *   - batchesDone/batchesTotal＝批次计数（≤ 关系由对端 make 校验；
+ *     Total=0＝批次总数未声明——呈现"批次待定"，不伪造进度）。
+ *
+ * 值语义；纯数据（单调性/乱序处置逻辑在 TaskPresentationModel——§9.4
+ * 呈现规则不进投影类型）。
+ */
+struct TaskProgressProjection {
+    /// 完成百分比，[0,100] 整数（无量纲——非物理量，无单位换算）。
+    int percent = 0;
+    /// 进度阶段文案键（空串＝对端未给阶段——呈现只显示百分比）。
+    TextKey phaseLabelKey;
+    /// 已完成批次数（计数，无量纲；≤ batchesTotal）。
+    std::uint64_t batchesDone = 0;
+    /// 批次总数（0＝未声明——呈现"批次待定"）。
+    std::uint64_t batchesTotal = 0;
+
+    bool operator==(const TaskProgressProjection& o) const noexcept
+    {
+        return percent == o.percent && phaseLabelKey == o.phaseLabelKey
+            && batchesDone == o.batchesDone && batchesTotal == o.batchesTotal;
+    }
+    bool operator!=(const TaskProgressProjection& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief 任务行全态投影（§10.7 TaskRow.snap 的 ui 侧承载——execution::
+ *        TaskSnapshot＋TaskCapability 呈现面的 O-31 值投影）。
+ *
+ * 语义锚点（不改义——冻结基准 execution.md §4.2/§5.5）：
+ *   - identity/state/attempt/progress ← TaskSnapshot 同名字段（深拷贝
+ *     快照——§4.2"查询经快照拷贝"；attempt 是进度基线轴：§9.4"新
+ *     attempt 重置"的判别键）；
+ *   - archivePhaseToken ← TaskSnapshot.archivePhase 的持久化 token
+ *     （execution 词表 not-applicable/reserved/archiving/archived/
+ *     archive-failed——§9.4"Completed 徽标附归档子标"数据源）；
+ *   - terminationReasonToken ← TaskSnapshot.termination 的稳定 token
+ *     （execution 词表；空串＝非终态无终结原因；worker 崩溃呈现
+ *     EX-WORKER-CRASHED 场景的判别输入——§9.4"诊断＋重跑入口"）；
+ *   - supportsPause ← TaskRecord.capability.supportsPause 直读（§5.5
+ *     "派发时推导、此后只读"的能力声明——暂停/继续按钮启用的唯一
+ *     数据源，§9.4"按任务能力声明启用"）。
+ *
+ * 值语义；ui 不反写（N-4：任务权威归 execution，ui 只呈现与请求控制）。
+ */
+struct TaskViewProjection {
+    /// 任务身份五元组（core 表内类型——控制请求的寻址键）。
+    core::TaskIdentity identity;
+    /// 任务九态（core 词表直用）。
+    core::TaskState state = core::TaskState::Queued;
+    /// 当前尝试（core::AttemptId；0＝未派发——进度基线轴的初值）。
+    core::AttemptId attempt{0};
+    /// 归档阶段 token（execution 词表；空串＝无归档语义）。
+    std::string archivePhaseToken;
+    /// 终结原因 token（execution 词表；空串＝非终态）。
+    std::string terminationReasonToken;
+    /// 暂停能力声明（TaskCapability.supportsPause 直读——按钮启用面）。
+    bool supportsPause = false;
+    /// 最近进度投影（nullopt＝尚无进度——Queued/Preparing 期常态）。
+    std::optional<TaskProgressProjection> progress;
+
+    bool operator==(const TaskViewProjection& o) const noexcept
+    {
+        return identity == o.identity && state == o.state && attempt == o.attempt
+            && archivePhaseToken == o.archivePhaseToken
+            && terminationReasonToken == o.terminationReasonToken
+            && supportsPause == o.supportsPause && progress == o.progress;
+    }
+    bool operator!=(const TaskViewProjection& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief 任务控制请求应答投影（§9.4"StatusAck.feedback 显式提示不静默"
+ *        的 ui 侧承载——execution::StatusAck/CancelAck 的 O-31 折叠）。
+ *
+ * 语义锚点（不改义）：accepted ← StatusAck/CancelAck.accepted（受理位，
+ * 非"已完成"——收敛经状态事件/轮询回看）；currentState ← StatusAck.
+ * currentState（应答时状态）；feedback 取词表化形态：对端 DiagnosticRecord
+ * 的稳定码折叠为 reasonKey 文案键＋可选 code 透传——呈现层经 UiText 解析
+ * 显示（显式反馈必须可见，不得静默——§9.4 原文）。
+ *
+ * backgroundRejected 位是 **ui 侧自限**（非对端语义）：目标任务不属当前
+ * 会话项目（后台排空清单行）时，模型在转发对端前即拒绝——P-UI-7 建议口径
+ * "保持只读（D-11）"的编程面表达；reasonKey 承载"项目已关闭，后台任务
+ * 只读"文案键。
+ */
+struct UiTaskAck {
+    /// 请求是否被受理（非终态收敛——收敛经事件/轮询回看，NFR-PERF-02）。
+    bool accepted = false;
+    /// 应答时的任务状态（对端 StatusAck.currentState 直读）。
+    core::TaskState currentState = core::TaskState::Queued;
+    /// 显式反馈文案键（空串＝无反馈；accepted=false 的可预期拒绝时非空
+    /// ——呈现层必须显示，§9.4"不静默"）。
+    TextKey reasonKey;
+    /// ui 侧自限拒绝位（true＝模型未转发对端——后台只读自限，P-UI-7）。
+    bool backgroundRejected = false;
+
+    bool operator==(const UiTaskAck& o) const noexcept
+    {
+        return accepted == o.accepted && currentState == o.currentState
+            && reasonKey == o.reasonKey && backgroundRejected == o.backgroundRejected;
+    }
+    bool operator!=(const UiTaskAck& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief Tier-U 用户日志条目投影（§9.1 日志面板行——产出侧已脱敏的
+ *        只读值，ui 不二次脱敏不过滤）。
+ *
+ * 语义锚点（不改义——冻结基准 diagnostics.md §7.1/§7.2）：Tier-U 行
+ * 由日志管线产出（稳定码＋标题键＋脱敏参数＋对象定位；NFR-REL-05
+ * "无调用栈/内部哈希"由管线内建过滤保证）。args 为已渲染参数
+ * （ensureNoInternalIdentity 守卫在产出侧——呈现层经 UiText 解析
+ * titleKey 后原样代入，不加工）。
+ */
+struct UserLogEntry {
+    /// 稳定诊断码（登记表权威；空串＝无码的普通日志行）。
+    std::string code;
+    /// 标题文案键（P-DIAG-9 键值分离——UiText 解析）。
+    TextKey titleKey;
+    /// 已渲染位置参数（产出侧脱敏＋守卫——呈现层原样代入）。
+    std::vector<std::string> args;
+    /// 条目 UTC 时刻（system_clock——排序呈现用，§7.2 emittedAtUtc 锚点）。
+    std::chrono::system_clock::time_point emittedAtUtc{};
+
+    bool operator==(const UserLogEntry& o) const noexcept
+    {
+        return code == o.code && titleKey == o.titleKey && args == o.args
+            && emittedAtUtc == o.emittedAtUtc;
+    }
+    bool operator!=(const UserLogEntry& o) const noexcept { return !(*this == o); }
 };
 
 // ---------------------------------------------------------------------

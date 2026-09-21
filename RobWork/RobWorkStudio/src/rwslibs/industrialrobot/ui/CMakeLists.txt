@@ -111,6 +111,22 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 #     ＋§8.7 草稿局部撤销栈；零 Qt——模型层可测；公共契约头
 #     include/sdurws/ird/ui/IDraftController.hpp 随 §16.7 v1.4 登记，
 #     C-5 写半区端口 IUiDraftStorePort 消费面）。
+#   - src/DiagnosticPresentation.cpp＝诊断呈现模型实现（UI-T13——§9.1/
+#     §10.8：查询转发/原因链上溯/动作映射表/三要素同显〔四态占位不伪造
+#     数值〕/恢复横幅 PM-15/Tier-U 面板/目录订阅 Marshal；公共契约头
+#     include/sdurws/ird/ui/IDiagnosticPresentationModel.hpp 随 §16.7
+#     v1.5 登记，C-9 呈现半区端口消费面）。
+#   - src/CommandInteractionBridge.cpp＝命令确认交互桥实现（UI-T13——
+#     §9.2/§9.3：命令执行线程同步回调→Marshal 至 UI 线程→阻塞等待；
+#     isAlive 探针；principal 会话采集缓存 P-UI-4；C-6 外翻形态——实现
+#     ui 自有 IUiCommandInteraction 端口；公共契约头 include/sdurws/ird/
+#     ui/CommandInteractionBridge.hpp 随 §16.7 v1.5 登记）。
+#   - src/TaskPresentation.cpp＝任务呈现模型实现（UI-T13——§9.4/§9.5/
+#     §10.7：清单双区〔当前置顶/后台只读 P-UI-7〕/进度轮询三规则/
+#     能力启用与反馈不静默/强杀独立确认/归档子标/当前性徽标搬运；零
+#     Qt——模型层可测；公共契约头 include/sdurws/ird/ui/
+#     ITaskPresentationModel.hpp 随 §16.7 v1.5 登记，C-8 呈现面端口
+#     IUiTaskPresentationPort 消费面）。
 # 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十五个源
 # 文件与私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
 # （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
@@ -118,7 +134,9 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 # 策略摘要卡同款复核——v0.9；参数表面板同款复核——v1.0；UiText/阶段导航
 # 同款复核——v1.1；关于对话框同款复核——v1.2：纯 QLabel/QTableWidget
 # 渲染＋工厂函数，零信号槽声明需求；会话控制器同款复核——v1.3：零 Qt
-# 纯模型层，零 Widget 零信号槽需求）。
+# 纯模型层，零 Widget 零信号槽需求；UI-T13 三实现 TU 同款复核——v1.5：
+# Marshal 经 QMetaObject::invokeMethod 函子重载〔不需要 Q_OBJECT 元对象
+# 声明〕，零信号槽需求）。
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
@@ -135,7 +153,10 @@ add_library(sdurws_ird_ui STATIC
     src/StageNavigationModel.cpp
     src/AboutDialog.cpp
     src/UiSessionController.cpp
-    src/DraftController.cpp)
+    src/DraftController.cpp
+    src/DiagnosticPresentation.cpp
+    src/CommandInteractionBridge.cpp
+    src/TaskPresentation.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -296,6 +317,18 @@ endmacro()
 #     Draining 四级防线与 T_force/T_force2 可配阈值（UI-SES-5/6——§5.6
 #     P-UI-8）、迟到写提示不重试（UI-SES-7/UI-LCY-1——§5.3/§5.7）
 #     （UI-T11 模型层）。
+#   - DraftControllerModelTest.cpp＝草稿保存/恢复/冲突呈现/两栈（UI-T12
+#     ——UI-DRF-1~4 模型面）。
+#   - DiagPresentationModelTest.cpp＝诊断呈现模型：过滤/去重折叠/原因链
+#     上溯/动作映射表冻结/呈现映射/三要素同显与四态占位（UI-DIA-1 模型
+#     半区——§9.1/§10.8/UX-03/PM-15，UI-T13）。
+#   - TaskPresentationModelTest.cpp＝任务呈现模型：进度三规则/清单双区
+#     与当前置顶/后台只读自限/强杀独立确认/暂停反馈不静默/归档子标/
+#     崩溃重跑/当前性徽标（UI-TSK-1~5 模型面——§9.4/TASK-01~03/P-UI-7，
+#     UI-T13）。
+#   - CommandInteractionBridgeTest.cpp＝确认交互桥：装配映射/批量决议/
+#     拒绝不放行/拆除唤醒/失效标注/principal 缓存（UI-CMD-4~7 模型面
+#     ——§9.2/§9.3/SA-15/P-UI-4/P-DIAG-6，UI-T13）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -309,7 +342,10 @@ add_executable(sdurws_ird_ui_test
     test/StageNavigationModelTest.cpp
     test/AboutDialogModelTest.cpp
     test/SessionControllerModelTest.cpp
-    test/DraftControllerModelTest.cpp)
+    test/DraftControllerModelTest.cpp
+    test/DiagPresentationModelTest.cpp
+    test/TaskPresentationModelTest.cpp
+    test/CommandInteractionBridgeTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -358,7 +394,8 @@ add_executable(sdurws_ird_ui_contract_test
     contract_test/TestMainReport.cpp
     contract_test/LinkageContractTest.cpp
     contract_test/SessionContractTest.cpp
-    contract_test/DraftContractTest.cpp)
+    contract_test/DraftContractTest.cpp
+    contract_test/InteractionTaskContractTest.cpp)
 
 target_compile_features(sdurws_ird_ui_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_contract_test PROPERTIES
