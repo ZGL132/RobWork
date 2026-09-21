@@ -1,0 +1,3 @@
+基线＝wp10-t11/ird_gates-integration.log（63e30071 合入后＝本任务 base e071a0a 同源）；比对口径＝命中码计数（编码无关）＋目标名集合。
+逐码比对结果：IRD-GATE-LIB×8／R-1×1／R-3×33／R-4×3／R-5×1／SUB×39／T-1×5／T-2×1，两侧完全一致（gates-hit-set.txt vs wp10-t11 基线、及 gates-hit-set-smoke.txt 交叉互证）；diff 为空＝零变化。
+新增产品面文件（IDraftController.hpp／DraftController.cpp）零命中：零 Qt 头包含（R-3 例外面零扩大）、零表外边（O-31）。全部命中均为 DTB §4.5 登记册既有项（ird_gates 目标失败＝机器面滞后既有状态，与 wp10-t11 同型）。

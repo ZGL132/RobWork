@@ -103,6 +103,14 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 #     P-UI-8 默认保守值〕＋§5.3/§5.7 迟到写提示；零 Qt——模型层可测；
 #     公共契约头 include/sdurws/ird/ui/UiSessionController.hpp 随 §16.7
 #     v1.3 登记，C-3/5/8 会话端口消费面）。
+#   - src/DraftController.cpp＝草稿控制器实现（UI-T12——§8 DraftController
+#     与草稿交互：保存/应用分离落盘编排〔PM-04 零修订红线——控制器零
+#     命令通道〕＋§8.2 未保存标记与跨模块汇总合并＋§8.4 定时保存〔UI
+#     线程零磁盘 IO——写轨只经串行落盘执行器；60 s 默认周期〕＋§8.3
+#     打开恢复与 .bak 回退横幅＋§8.5 StaleRevisionRejected 冲突呈现
+#     ＋§8.7 草稿局部撤销栈；零 Qt——模型层可测；公共契约头
+#     include/sdurws/ird/ui/IDraftController.hpp 随 §16.7 v1.4 登记，
+#     C-5 写半区端口 IUiDraftStorePort 消费面）。
 # 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十五个源
 # 文件与私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
 # （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
@@ -126,7 +134,8 @@ add_library(sdurws_ird_ui STATIC
     src/UiText.cpp
     src/StageNavigationModel.cpp
     src/AboutDialog.cpp
-    src/UiSessionController.cpp)
+    src/UiSessionController.cpp
+    src/DraftController.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -299,7 +308,8 @@ add_executable(sdurws_ird_ui_test
     test/FormEditModelTest.cpp
     test/StageNavigationModelTest.cpp
     test/AboutDialogModelTest.cpp
-    test/SessionControllerModelTest.cpp)
+    test/SessionControllerModelTest.cpp
+    test/DraftControllerModelTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -347,7 +357,8 @@ add_custom_command(TARGET sdurws_ird_ui_test POST_BUILD
 add_executable(sdurws_ird_ui_contract_test
     contract_test/TestMainReport.cpp
     contract_test/LinkageContractTest.cpp
-    contract_test/SessionContractTest.cpp)
+    contract_test/SessionContractTest.cpp
+    contract_test/DraftContractTest.cpp)
 
 target_compile_features(sdurws_ird_ui_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_contract_test PROPERTIES

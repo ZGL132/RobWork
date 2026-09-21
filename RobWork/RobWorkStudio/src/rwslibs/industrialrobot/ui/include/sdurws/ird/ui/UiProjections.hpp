@@ -38,6 +38,16 @@
  *     决议/结果值（§5.4 S1/S2 时序：草稿三选＋任务二选）、强制结束确认
  *     数据（§5.6 T_force——P-UI-8 默认保守值，装配期可配）与已释放上下文
  *     提示（UI-SESSION-CONTEXT-INVALID 呈现面，§5.3/§5.7 不重试）。
+ *   - UI-T12 增量（登记 ui.md §16.7 v1.4）：草稿协议投影族——
+ *     DraftDocumentProjection（project::DraftDocument 值承载，O-31）、
+ *     DraftSaveOutcome/DraftLoadOutcome/DraftDiscardOutcome（C-5 写半区
+ *     端口 IUiDraftStorePort 的返回值面——project::SaveResult/
+ *     DiscardResult/tryLoad 语义锚，PM-04"保存不产生修订"红线）、
+ *     StaleRevisionDetailProjection（RV-10 冲突定位数据——§8.5"数据由
+ *     CommandResult 附带"，随 CommandResultProjection.staleDetail 承载）；
+ *     DraftRowProjection 增列 moduleId/stale/baseRevisionCanonical（§8.2
+ *     汇总合并与"基线已前进"提示的关联键与判别位——UI-T12 首消费增量，
+ *     既有字段零变化）。
  *
  * 背景说明（为什么状态栏输入是"投影"而不是 project 头文件里的类型）：
  *   ui 产品面对 project 单元零链接零 include（O-31/ARCH §3.5），而状态栏/
@@ -213,6 +223,36 @@ struct CommandEnvelopeProjection {
 };
 
 /**
+ * @brief StaleRevisionRejected 的冲突定位投影（RV-10/AT-29——§8.5 草稿
+ *        基线冲突对话框的数据面；O-31 值投影，冻结基准 project.md §6.2
+ *        命令拒绝附加数据）。
+ *
+ * 字段语义锚点（不改义）：
+ *   - currentTipRevision＝分支当前 tip 修订（对比"草稿基线"——对话框
+ *     两个对照值的 halves；canonical 文本形态与 core::RevisionId 一致，
+ *     呈现层原样对比显示、零二次加工）；
+ *   - advancedSummary＝前进修订摘要（人读文本——对端 RevisionView 摘要，
+ *     UX-02 工程用语由对端产出，ui 原样呈现不加工）；
+ *   - draftBaseRevision＝草稿落盘时的基线修订（≠currentTipRevision 即
+ *     冲突本体——PM-04 stale 判据的呈现面）；
+ *   - involvedObjectNames＝涉事对象差异（呈现名——L5 适配器经名称端口
+ *     渲染为局部名后填充，UX-02 零哈希；"查看差异对象"选项的数据面）。
+ *
+ * 值语义；ui 只呈现不判定（冲突判定权威在 project 命令端口——ui 零业务
+ * 判定红线，§7.5）。
+ */
+struct StaleRevisionDetailProjection {
+    /// 分支当前 tip 修订（canonical 文本——对照值；适配器自对端快照填写）。
+    std::string currentTipRevision;
+    /// 前进修订摘要（人读——RevisionView 摘要原样，零二次加工）。
+    std::string advancedSummary;
+    /// 草稿基线修订（canonical 文本——对照值；≠currentTipRevision 即冲突）。
+    std::string draftBaseRevision;
+    /// 涉事对象呈现名（[查看差异对象] 数据面——UX-02 局部名）。
+    std::vector<std::string> involvedObjectNames;
+};
+
+/**
  * @brief 命令结果的 ui 侧投影（C-4 返回面——冻结基准 project.md §5.3.1
  *        CommandResult，O-31 值投影、L5 适配）。
  *
@@ -251,7 +291,14 @@ struct CommandResultProjection {
     std::string rejectionReason;
     /// 中止原因 token（status==Aborted 时非空；词表见类型注释）。
     std::string abortReason;
+    /// StaleRevisionRejected 冲突定位投影（status==Rejected 且
+    /// rejectionReason=="stale-revision" 时由适配器填充——§8.5"冲突定位
+    /// 数据由 CommandResult 附带：当前 tip/前进修订摘要/涉事对象差异"
+    /// 原文；RV-10/AT-29。UI-T12 首消费冻结增量，登记 ui.md §16.7 v1.4；
+    /// 其余结果形态必空——presence 纪律）。
+    std::optional<StaleRevisionDetailProjection> staleDetail;
 };
+
 
 // =====================================================================
 // 工程策略摘要投影（C-10 语义承载——冻结基准 policy.md §9.1/§10.6；
@@ -965,6 +1012,181 @@ assembleReadOnlyBanner(ReadOnlyOpenCause cause,
     return banner;
 }
 
+// =====================================================================
+// 草稿文档与写半区结果投影（C-5 写半区语义承载——冻结基准 project.md
+// §5.4 DraftDocument/SaveResult 与 §4.4.5 磁盘格式；UI-T12 首消费冻结，
+// 登记 ui.md §16.7 v1.4，O-31 裁决载体：§10.5 IDraftController 签名随
+// 本任务实现冻结）
+// =====================================================================
+//
+// 本节背景（O-31 处置——任务契约 UI-T12 acceptance 3）：ui.md §10.5 原文
+//   形态的 project::DraftDocument/project::StoreError 属 C-3/C-5 对端
+//   类型，按 O-31 裁决不直接进入 ui 头文件——本节以**值投影**承载同一
+//   语义（投影≠重定义：字段语义逐条锚定 project.md §5.4/§4.4.5，NFR-
+//   MNT-03 单一权威不变）。产品面对 project 零链接零 include
+//   （NoCrossUnitInclude_O31_UI_BUILD 守卫常驻自证）；协作经 ui 自有
+//   草稿写半区端口 IUiDraftStorePort（UiPorts.hpp，UI-T12 冻结）注入，
+//   L5 应用壳装配期以单行适配器把 project::DraftService 翻译成本投影。
+
+/**
+ * @brief 草稿来源词表（§4.4.5 DraftOrigin 冻结三值的 ui 侧承载）。
+ *
+ * 词表锚点（不改义）：autosave＝定时落盘（§8.4 定时器）；manual＝手动
+ * 保存（Ctrl+S/关闭对话框）；apply-retained＝应用被拒后对端保留草稿时
+ * 的回写来源（§8.5"草稿保留（origin=apply-retained，project 侧已处置）"
+ * ——该值由对端写入，ui 只读回显，不主动产出）。
+ */
+enum class DraftOrigin : std::uint8_t {
+    Autosave,     ///< 定时落盘（token "autosave"）
+    Manual,       ///< 手动保存（token "manual"；关闭对话框保存同源）
+    ApplyRetained,///< 应用被拒后保留（token "apply-retained"；对端写入）
+};
+
+/**
+ * @brief 草稿来源 token（§4.4.5 冻结三值的持久化形态——L5 适配器装回
+ *        project::DraftDocument.origin 时的映射依据；词表锚点 project.md
+ *        §4.4.5，ui 不另立拼写）。
+ *
+ * @param origin [in] 草稿来源词表值
+ * @return 稳定 token（"autosave"/"manual"/"apply-retained"）
+ */
+inline const char* draftOriginToken(DraftOrigin origin) noexcept
+{
+    switch (origin) {
+    case DraftOrigin::Manual: return "manual";
+    case DraftOrigin::ApplyRetained: return "apply-retained";
+    case DraftOrigin::Autosave: break;
+    }
+    return "autosave";
+}
+
+/**
+ * @brief 草稿文档的 ui 侧投影（C-5 写半区传输面——冻结基准 project.md
+ *        §5.4 DraftDocument/§4.4.5 磁盘格式，O-31 值投影）。
+ *
+ * 字段语义锚点（不改义，与对端 DraftDocument 逐字段对应）：
+ *   - schemaVersion＝草稿格式版本（随整体 schemaVersion 联动，§8.11 判定
+ *     同源；由域组装方填写——ui 不解释版本语义，只搬运）；
+ *   - projectId/branchId＝归属项目/分支（core 契约类型同一——P-PR-1
+ *     先例）；DraftController 强制其与打开会话绑定一致（防跨项目落盘）；
+ *   - moduleId＝注册的模块 token（§4.1 命名规则；对端白名单校验——
+ *     1~64 个 ASCII 字母/数字/下划线/连字符；DraftController 同口径预检，
+ *     违约 fail-fast——磁盘路径拼装面，提前拦截不产生半途副作用）；
+ *   - baseRevisionId＝草稿基线修订（≠分支 tip 时应用被拒——PM-04）；
+ *   - payload＝域负载（域所有 canonical 字节、UTF-8——ui 只搬运不解析，
+ *     CR-02/D-10 对投影同样成立）；
+ *   - savedAtUtc＝落盘时间（ISO-8601 UTC 文本；DraftController 在落盘
+ *     分派时刻填写——同一次保存的所有模块共用同一时刻值，NFR-COR-02）；
+ *   - origin＝草稿来源（§4.4.5 冻结三值；apply-retained 由对端写入，
+ *     ui 不产出——见 DraftOrigin 注释）。
+ *
+ * externalRefs 不在本投影（阶段 A 登记口径，§16.7 v1.4）：外部引用记录
+ * 的投影形态随域编辑器接入（阶段 B）按"首消费冻结"机制增量登记——阶段 A
+ * 草稿协议以桩模块验证（§8.3-5 原文），桩模块零外部引用，先行投影会制造
+ * 第二词表权威（NFR-MNT-03/NFR-MNT-04 不预建）。
+ *
+ * 值语义；ui 组装后只读使用（落盘后文档归磁盘，ui 不回写——PM-04）。
+ */
+struct DraftDocumentProjection {
+    /// 草稿格式版本（域组装方填写；0＝未填写保留值——适配器不得落盘 0）。
+    std::uint32_t schemaVersion = 0;
+    /// 归属项目（core 契约类型同一；控制器强制与会话绑定一致）。
+    core::ProjectId projectId{};
+    /// 归属分支（core 契约类型同一；控制器强制与会话绑定一致）。
+    core::BranchId branchId{};
+    /// 注册模块 token（§4.1 命名规则——1~64 个 ASCII 字母/数字/下划线/
+    /// 连字符；非空）。
+    std::string moduleId;
+    /// 草稿基线修订（rev- canonical 文本；PM-04 stale 判据输入）。
+    core::RevisionId baseRevisionId{};
+    /// 域负载（canonical 字节，UTF-8——ui 只搬运不解析，CR-02/D-10）。
+    std::string payload;
+    /// 落盘时间（ISO-8601 UTC 文本；控制器在分派时刻填写）。
+    std::string savedAtUtc;
+    /// 草稿来源（§4.4.5 冻结三值；见 DraftOrigin 注释）。
+    DraftOrigin origin = DraftOrigin::Autosave;
+};
+
+/**
+ * @brief 草稿落盘结果投影（C-5 写半区返回面——冻结基准 project.md §5.4
+ *        SaveResult 的返回值错误轨语义，O-31 值投影）。
+ *
+ * 为什么是返回值而不是异常：落盘的主调用方是定时自动保存（§8.4）——
+ * 返回值轨让"落盘失败"成为可轮询的普通状态（异常轨会打断定时链）；ui
+ * 侧同理（autosave 失败→保留脏标记＋UI-DRAFT-AUTOSAVE-FAILED，§8.2
+ * 失败行原文），不抛环境错误。ok=false 时 errorToken 非空（对端
+ * StoreError 稳定 token 直用——context-closed/lock-held-by-other/
+ * media-read-only 等，NFR-MNT-03 不镜像枚举），detail 为对端产出的开发
+ * 诊断明细（透传不加工）。
+ *
+ * 值语义。
+ */
+struct DraftSaveOutcome {
+    /// true＝草稿已落盘（单文件原子替换＋.bak 轮换完成）；false＝失败
+    /// （errorToken 必非空——"失败必带残余错误"显式不变量）。
+    bool ok = false;
+    /// 失败稳定 token（对端 StoreError 词表；ok=true 时为空串）。
+    std::string errorToken;
+    /// 开发诊断明细（对端产出——透传；呈现层不显示给用户，UX-03 脱敏
+    /// 纪律由诊断通道承担）。
+    std::string detail;
+};
+
+/**
+ * @brief 草稿读取结果投影（§8.3 恢复流程的读轨——冻结基准 project.md
+ *        §5.4 tryLoad 契约表，O-31 值投影）。
+ *
+ * 四态词表与对端 tryLoad 行为一一对应：
+ *   - Loaded＝current 可解析且归属校验通过；
+ *   - RecoveredFromBackup＝current 损坏、.bak 可用——内容即 .bak 版本
+ *     （PM-08：损坏检测＋.bak 恢复；**旧损坏文件保留**供人工核查——
+ *     对端语义，投影以 recoveredFromBackup 位表达）；
+ *   - Missing＝无草稿（常态，非错误——present=false 安全空值）；
+ *   - Corrupt＝current 与 .bak 均不可得（诊断明细随 detail 透传——
+ *     PM-08 恢复横幅的"损坏"素材）。
+ *
+ * 值语义；document 仅 Loaded/RecoveredFromBackup 有效（presence 纪律）。
+ */
+struct DraftLoadOutcome {
+    /// 读取结论四态（词表见类型注释）。
+    enum class Status : std::uint8_t {
+        Loaded,              ///< 当前版可用
+        RecoveredFromBackup, ///< 当前版损坏，已回退上一版（.bak）
+        Missing,             ///< 无草稿（常态——默认安全值）
+        Corrupt,             ///< 当前版与 .bak 均不可用（诊断明细随附）
+    };
+    /// 读取结论（默认 Missing＝"无草稿"的安全空值）。
+    Status status = Status::Missing;
+    /// 草稿文档（Loaded/RecoveredFromBackup 时有效——值拷贝）。
+    DraftDocumentProjection document;
+    /// 失败稳定 token（Corrupt 时非空——draft-corrupt 等；其余态空串）。
+    std::string errorToken;
+    /// 开发诊断明细（对端产出——损坏位置/原因等，透传不加工）。
+    std::string detail;
+    /// 本次触达是否丢弃了 .new 崩溃残留（§8.3-3：project 侧丢弃并报告，
+    /// ui 在恢复横幅显示——横幅计数的素材位）。
+    bool newResidueDropped = false;
+};
+
+/**
+ * @brief 草稿放弃结果投影（§8.3-4"放弃＝显式 discard"的执行面返回——
+ *        冻结基准 project.md §5.4 DiscardResult 语义，O-31 值投影）。
+ *
+ * 幂等语义随对端：目标态＝该草稿文件不存在；"本来就没有"也是 ok=true
+ * （ui 侧不做二次区分——横幅[放弃]只关心是否达成目标态）。ok=false 时
+ * errorToken 非空（只读上下文拒绝等——写门卫语义）。
+ *
+ * 值语义。
+ */
+struct DraftDiscardOutcome {
+    /// true＝目标态达成（该草稿已不存在——含幂等形态）；false＝失败。
+    bool ok = false;
+    /// 失败稳定 token（对端 StoreError 词表；ok=true 时为空串）。
+    std::string errorToken;
+    /// 开发诊断明细（对端产出——透传）。
+    std::string detail;
+};
+
 /**
  * @brief 草稿清单行投影（关闭对话框草稿区的行模型——§5.4 S1 数据装配）。
  *
@@ -982,6 +1204,18 @@ struct DraftRowProjection {
     std::string displayName;
     /// 会话脏标记（true＝编辑后未落盘/未应用——§8.5）。
     bool sessionDirty = false;
+    /// 模块 token（drafts/<branch>/<module>.draft.json 的 module 段——
+    /// §8.2 汇总合并的跨源关联键：DraftController 以它把磁盘行与挂接
+    /// 模块配对。UI-T12 首消费增量，登记 ui.md §16.7 v1.4；既有字段
+    /// 零变化，关闭对话框装配面不受影响）。
+    std::string moduleId;
+    /// 基线过期标记（true＝草稿 baseRevision ≠ 分支当前 tip——§8.2
+    /// "stale 标记来自 DraftProjection/DraftInfo，ui 呈现'基线已前进'
+    /// 提示"；判定权威在对端，本位是直读投影）。
+    bool stale = false;
+    /// 草稿基线修订（canonical 文本——呈现与冲突对照用；present=false
+    /// 的损坏条目为空串）。
+    std::string baseRevisionCanonical;
 };
 
 /**
