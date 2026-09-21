@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "UiSessionController＋关闭/切换对话框机制",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03"],
   "requirements": ["PM-03", "PM-07"],
   "designRefs": [

@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 261,
+  "tickCount": 262,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-21T17:39:43+08:00",
+    "updatedAt": "2026-09-21T21:06:03+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1525,6 +1525,18 @@
       "acceptanceRecord": "traceability/acceptance/UI-T10-20260921.md",
       "mergedAt": "2026-09-21",
       "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ② 首次合并误落于被实施工作树遗留检出的 wp10-t10（未推送，EX-T06/EX-T09/RPT-T01/UI-T03 同型风险点首次实际触发），当即切回 redesign-main、wp10-t10 指针复位回冻结尖端 afdfae98 后重做，误落合并 192048e9 零残留；另 state 遗留 attempts.accept=1（UI-T09 收尾未按既有实践清零）已按协议口径修复为 0 后派发本次验收（PIPE §0 以协议为准修复并注明）；验收建议级 F-276（B-1 同族第十次：留痕 .log 0 件入库）／F-277（CMakeLists AUTOMOC 注释计数三袭）／F-278（UiPorts.hpp 尾换行丢失）已随 evidence 转登 findings.json"
+    },
+    {
+      "task": "UI-T11",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "21cba320f0438b50bd1b0971824478eaa16a0b3f",
+        "45baa315ab763cac0395768fd091c12e20fdfb6a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T11-20260921-r2.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt2 pass（attempt1＝验收派发中断：子代理完成记录提交 e328d07a 于 acc/UI-T11/1 后在 evidence push 重试阶段失联未返回 verdict、origin 无该分支——零返工，fix 保持 0；孤儿分支 acc/UI-T11/1 未删留所有者处置）；实施段 push 遭代理中断，编排者后台重试第 4 次补推成功（UI-T07 先例同型）；F-277 循 attempt2 记录 §4.8 消账注记随 ⑤ 置 fixed（fixedBy=45baa315）；收尾 ② 前工作树曾遗留检出 wp10-t11，切回 redesign-main 后方执行合并（EX-T06 系风险点，本次零误落）"
     }
   ],
   "policy": {
@@ -1551,11 +1563,6 @@
   },
   "queue": [
     {
-      "taskId": "UI-T11",
-      "contractPath": "tasks/foundation/UI-T11.json",
-      "branch": "wp10-t11"
-    },
-    {
       "taskId": "UI-T12",
       "contractPath": "tasks/foundation/UI-T12.json",
       "branch": "wp10-t12"
@@ -1579,5 +1586,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "bf49f047-b7fe-4260-b82a-0224a3b58026"
+  "tickToken": "000e140a-3537-432e-bc2d-964848c4563e"
 }

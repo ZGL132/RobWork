@@ -2784,11 +2784,12 @@
       "id": "F-277",
       "source": "traceability/acceptance/UI-T10-20260921.md §4.7（attempt 1，verdict=pass，2026-09-21；送验对象 afdfae98e14bc6b465d1de08fdf1fc69cbb96127，分支 wp10-t10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-21",
       "title": "F-273/F-275 复踩（同一注释行第三次沿袭未校准）：ui/CMakeLists.txt AUTOMOC 复核注释行仍写「十二个源文件与私有头零 Q_OBJECT 声明」，而 add_library 实际 14 个产品 TU（本任务新增 AboutDialog.cpp 后 13→14；本任务在该注释块内增列 AboutDialog.cpp 说明段与 v1.2 复核尾注但计数再次未校准）；实质性主张「零 Q_OBJECT」经验收者 grep 证实为真（新增 TU 零信号槽声明，Qt 交互全经虚函数覆盖与 lambda 接线），AUTOMOC 关闭决策不受影响，零行为影响",
       "owner": "ui 单元实施者（后续触碰该注释块时随手校准为实际 TU 数）",
-      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-276。"
+      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-276。",
+      "fixedBy": "45baa315ab763cac0395768fd091c12e20fdfb6a"
     },
     {
       "id": "F-278",
