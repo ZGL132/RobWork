@@ -2709,6 +2709,46 @@
       "title": "F-012/F-232~F-242/F-247/F-258/F-261/F-263/F-264/F-267 家族第 15 例：提交 f9187986 标题「[WP-10-T07] ui 单元卡 v0.9 增量修订与验证留痕归档（文档同步＋证据）」前缀后以名词短语「ui 单元卡」开头，不合 ACC §4.9/AGENTS §6.3「动词开头」字面（同提交 7a688a65 以动词「实现」开头合规）；正文四段齐备、验证结论经验收者独立复跑证实，纯风格瑕疵",
       "owner": "ui 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
       "resolution": "后续任务提交标题在前缀后使用动词开头（如「修订…」「归档…」）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 UI-T07 合入（attempt 1 verdict=pass）。编号顺延自 F-268。"
+    },
+    {
+      "id": "F-270",
+      "source": "traceability/acceptance/UI-T08-20260921.md §4.9/§4.10（attempt 1，verdict=pass，2026-09-21；送验对象 3bff786a9a02dc72644ac61fcc1b5da88b684269，分支 wp10-t08）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-010/F-077/F-081/F-266/F-268 家族复踩（UI 系连续第 3 例）：提交 3bff786a 正文声称 traceability/builds/wp10-t08/ 归档 11 件 .log（gate-all、ird_gates 双形态、集成全量构建、冒烟配置/构建、三测试控制台、validate-task），实际全部被根 .gitignore 第 87 行全局 *.log 规则吞没、未按 UI-T05 先例 git add -f（在库仅 7 件：3 gtest XML＋3 ird-test-report.json＋gates-hit-set.txt；实施主工作树 git status --ignored 实证 11 件在盘未跟踪）；wp10-t08-gate-registrations.md 首节「原始输出：builds/wp10-t08/ird_gates.log 与 ird_gates-script.log」为在库悬空引用（F-113 同型）。数值主张全部经验收者亲手复现准确（构建零错误/56＋3＋25 双模式/门禁 41＝40＋1/validate PASS/gate-all 20/24 与 4 项既有环境面失败属实）——证据本体完整且全量复现，方向为「声称在库而实际未入库」",
+      "owner": "ui 单元实施者（git add -f 回填 11 件或按 F-081 家族裁决闭环）＋仓库所有者（.gitignore traceability 例外规则根因处置，F-223 同建议）",
+      "resolution": "随 F-266/F-268 家族统一跟踪：①回填路径＝git add -f 11 件 .log 入 traceability/builds/wp10-t08/；②根因修复＝.gitignore 增 traceability/** 留痕例外（F-223/F-244 既有建议）；③按 F-081 家族先例「证据本体完整且全量复现」不影响 UI-T08 合入。编号顺延自 F-269。"
+    },
+    {
+      "id": "F-271",
+      "source": "traceability/acceptance/UI-T08-20260921.md §4.9（attempt 1，verdict=pass，2026-09-21；送验对象 3bff786a9a02dc72644ac61fcc1b5da88b684269，分支 wp10-t08）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-012/F-232~F-242/F-247/F-258/F-261/F-263/F-264/F-267/F-269 家族第 16 例：提交 3bff786a 标题「[WP-10-T08] ui 单元卡 v1.0 增量修订与验证留痕归档（文档同步＋证据）」前缀后以名词短语「ui 单元卡」开头，不合 ACC §4.9/AGENTS §6.3「动词开头」字面（同提交 a660f3c2 以动词「实现」开头合规）；正文四段齐备、验证结论经验收者独立复跑证实，纯风格瑕疵",
+      "owner": "ui 单元实施者（后续提交标题动词开头）＋各单元实施者家族性自查（F-247 同建议）",
+      "resolution": "后续任务提交标题在前缀后使用动词开头（如「修订…」「归档…」）；本条随 F-247 家族统一跟踪、不单独返工，不阻塞 UI-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-270。"
+    },
+    {
+      "id": "F-272",
+      "source": "traceability/acceptance/UI-T08-20260921.md §4.6/§4.10（attempt 1，verdict=pass，2026-09-21；送验对象 3bff786a9a02dc72644ac61fcc1b5da88b684269，分支 wp10-t08）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-220/F-236 家族同型（命中清单留痕格式跨任务漂移＋散文计数失准）：wp10-t08-gate-registrations.md ①称「本任务沿用 wp10-t07 留痕文件形态」且②称「行数 87→89 与门禁退出报告『命中 41 项』〔基线 40〕一致」——实际在库 gates-hit-set.txt 为 82 行（41 命中×2 相位行；wp10-t07 文件 87 行含「[ird_gates] 」行首前缀＋尾部 7 行门禁自测段，本任务文件前缀剥离、自测段略去），两处描述均与在库工件不符；门禁实质结论（基线 40＋恰增 1＝41、新增命中＝ParamTablePanel.cpp R3 头包含面、FormEditCommon.hpp 等其余文件零命中）经验收者脚本模式（cmake -DIRD_ROOT=… -P cmake/ird_gates.cmake）亲跑、去重归一化后与在库文件逐码一致（41/41 IDENTICAL）为真——留痕散文与文件形态描述失准，无实质门禁误差",
+      "owner": "ui 单元实施者（后继基线比对以实际文件形态为准）＋门禁留痕治理（F-220 同责任面：命中集归一化口径统一）",
+      "resolution": "与 F-220 一并跟踪格式归一：后继任务比对命中集前先按「去重＋剥前缀」归一化（验收先例：UI-T08 验收 §4.6 归一化 diff 法）；gate-registrations.md 措辞校准可随收尾顺手修订或随 F-220 裁决统一处置；不影响 UI-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-271。"
+    },
+    {
+      "id": "F-273",
+      "source": "traceability/acceptance/UI-T08-20260921.md §4.7（attempt 1，verdict=pass，2026-09-21；送验对象 3bff786a9a02dc72644ac61fcc1b5da88b684269，分支 wp10-t08）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "CMakeLists 注释枚举计数漂移（偏差先于本任务存在、本任务增量改写时沿袭）：ui/CMakeLists.txt AUTOMOC 复核注释行「十个源文件与私有头零 Q_OBJECT 声明」的源文件计数与 src/ 实际 11 个产品 TU 不符——base（wp10-t07 合入后）同行写「八个源文件」时实际已有 9 TU，本任务 +2 增列时按同口径同步改写（八→十）未校准绝对值；实质性主张「零 Q_OBJECT」经验收者全文件 grep 证实为真，AUTOMOC 关闭决策不受影响，零行为影响（AGENTS §2「注释随代码更新」口径的边缘项）",
+      "owner": "ui 单元实施者（后续触碰该注释块时随手校准为实际 TU 数）",
+      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数（或删去具体数字改为「产品源集与私有头」定性表述）；不单独返工，不阻塞 UI-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-272。"
     }
   ]
 }
