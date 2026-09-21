@@ -129,12 +129,58 @@ constexpr std::array<TextRow, 3> kPluginAssemblyLabelTable{{
     { "plugin.assembly.failed.label",        "装配失败" },
 }};
 
+/// 键族⑧：诊断/确认/任务呈现键（UI-T13 冻结登记，§16.7 v1.5——§9.1
+/// 诊断呈现〔比较型占位/恢复横幅 PM-15/日志面板〕＋§9.2 确认对话〔批量
+/// 决议/失效标注/策略绑定提示——MDL-06④ 确认不豁免校验〕＋§9.4 任务
+/// 呈现〔后台只读 P-UI-7/暂停能力反馈/强杀独立确认/排队文案 UI-EXEC-1/
+/// 归档子标/重跑/历史/当前性徽标——零「正式通过」字样〕）。键值分离：
+/// 值为中文过渡承载，迁资源文件只换值源。
+constexpr std::array<TextRow, 32> kPresentationTable{{
+    // —— §9.1 比较型三要素占位（ERR-01/MDL-06：不伪造数值）——
+    { "ui.diag.comparison.invalid",       "无效（{0}）" },
+    { "ui.diag.comparison.not-provided",  "未提供"       },
+    // —— §9.1 恢复横幅（PM-15：一句话汇总＋三动作）——
+    { "ui.recovery.banner.summary.ignored-saves", "上次会话有未完成的保存，已忽略" },
+    { "ui.recovery.banner.summary.interrupted",   "有任务在上次会话被中断"         },
+    { "ui.recovery.banner.summary.orphan-drafts", "检测到 {0} 份未保存草稿"        },
+    { "ui.recovery.banner.action.details",        "查看详情" },
+    { "ui.recovery.banner.action.restore",        "恢复草稿" },
+    { "ui.recovery.banner.action.discard",        "放弃"     },
+    // —— §9.1 Tier-U 日志面板（Dev 级仅跳转，不内嵌显示）——
+    { "ui.logpanel.empty",    "暂无用户日志"       },
+    { "ui.logpanel.dev.jump", "打开开发日志文件"   },
+    // —— §9.2/§9.3 确认对话（SA-15/MDL-06④/P-DIAG-6）——
+    { "ui.dlg.confirm.title",           "确认计算前提"                                   },
+    { "ui.dlg.confirm.instruction",     "以下项超出策略阈值，需逐项确认后命令才能继续"   },
+    { "ui.dlg.confirm.no-skip",         "确认后仍会执行完整断言与编译（确认不豁免校验）" },
+    { "ui.dlg.confirm.option.confirm",  "确认" },
+    { "ui.dlg.confirm.option.reject",   "拒绝" },
+    { "ui.dlg.confirm.option.confirm-all", "全部确认" },
+    { "ui.dlg.confirm.stale-input",     "输入已变化，本次确认可能失效——建议取消后重新确认" },
+    { "ui.dlg.confirm.policy-bound",    "已随当前策略版本绑定" },
+    // —— §9.4 任务呈现（TASK-01/02/03、P-UI-7、UI-EXEC-1）——
+    { "ui.task.background.readonly",  "项目已关闭，后台任务只读"                   },
+    { "ui.task.pause.unsupported",    "该任务不支持暂停"                           },
+    { "ui.task.force.title",          "强制终止任务"                               },
+    { "ui.task.force.consequence",    "任务将记为失败，最近检查点保留，可从检查点续跑" },
+    { "ui.task.force.needs-confirm",  "强制终止前需在确认对话中确认"               },
+    { "ui.task.queue.waiting-resource", "排队中（等待资源）" },
+    { "ui.task.archive.reserved",     "待归档"   },
+    { "ui.task.archive.archiving",    "归档中"   },
+    { "ui.task.archive.archived",     "已归档"   },
+    { "ui.task.archive.failed",       "归档失败" },
+    { "ui.task.rerun",                "重跑"     },
+    { "ui.task.history.view",         "查看历史结果" },
+    { "ui.task.currentness.current",    "结果当前"   },
+    { "ui.task.currentness.superseded", "结果已过期" },
+}};
+
 /// 全表拼接视图（查找入口——各键族数组顺序拼接，避免维护一份重复大表）。
 /// 注意 state.failed.label 在键族②与③中重复登记（七态与九态同键同值
 /// "失败"——§6.3 两表原文即同文），查找取先命中者，值一致故无歧义。
 const TextRow* findRow(const TextKey& key)
 {
-    // 表小（37 行）且调用频率为呈现路径，线性扫描足够（NFR-PERF-01 预算内）；
+    // 表小（69 行）且调用频率为呈现路径，线性扫描足够（NFR-PERF-01 预算内）；
     // 换哈希表反而引入构建期初始化顺序顾虑——呈现函数必须任何时刻可调用。
     for (const auto& row : kStageTitleTable) {
         if (key == row.key) { return &row; }
@@ -155,6 +201,9 @@ const TextRow* findRow(const TextKey& key)
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kPluginAssemblyLabelTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kPresentationTable) {
         if (key == row.key) { return &row; }
     }
     return nullptr;
@@ -311,7 +360,7 @@ std::vector<TextKey> registeredTextKeys()
     // 按各族登记序拼接；state.failed.label 双族重复登记只输出一次
     // （集合语义——键清单是"已登记键"的盘点，不是物理行清单）。
     std::vector<TextKey> keys;
-    keys.reserve(37);
+    keys.reserve(69);
     for (const auto& row : kStageTitleTable) {
         keys.emplace_back(row.key);
     }
@@ -335,6 +384,9 @@ std::vector<TextKey> registeredTextKeys()
         keys.emplace_back(row.key);
     }
     for (const auto& row : kPluginAssemblyLabelTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kPresentationTable) {
         keys.emplace_back(row.key);
     }
     return keys;

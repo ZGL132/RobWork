@@ -47,6 +47,22 @@
  *     drafts/，不产生修订"（PM-04 分工红线）、tryLoad＝损坏回退 .bak
  *     的读轨（PM-08）、discard＝写门卫下的幂等放弃（§8.3-4"放弃＝显式
  *     discard"）。L5 适配 project::DraftService，ui 测试以可控替身承载。
+ *     UI-T13 增量冻结（登记 ui.md §16.7 v1.5）：①C-6 交互回调端口
+ *     IUiCommandInteraction（O-31 方向外翻的 ui 侧承接——§9.2 确认流：
+ *     L5 适配器实现 project::ICommandInteraction 并委托本端口，
+ *     CommandInteractionBridge 实现本端口；形状逐字镜像 project.md
+ *     §5.3.3 冻结点——P-PR-7"对端单侧冻结互为起点不私改"）；②C-8 任务
+ *     呈现面端口 IUiTaskPresentationPort（§9.4/§10.7 任务呈现模型的
+ *     数据/控制面——tasksByProject 快照/进度查询/暂停继续/强杀，L5 适配
+ *     execution ITaskScheduler/ITaskController；v1.3 的 IUiSessionTaskPort
+ *     保持冻结不动——关闭对话框三原语面不变，呈现面另立端口避免触碰
+ *     已冻结形状）；③C-9 确认投影呈现半区 IUiFindingQueryPort（§9.2
+ *     "pendingFor(revision) 投影只读显示——ui 经 project 间接读、不直接调
+ *     diagnostics 服务端接口"原文的注入面，L5 适配 project→diagnostics
+ *     pendingFor）＋Tier-U 日志面板数据源 IUiUserLogSource（§9.1 日志
+ *     面板行）＋脱敏配置端口 IUiRedactionPolicyPort（§9.1 脱敏行"ui 只
+ *     提供配置界面（L5 会话变更 setPolicy）"的注入面，L5 适配
+ *     diagnostics::IRedactionService）。
  *
  * 背景说明（为什么不直接 include policy::IPolicyProvider / runtime::
  * IRuntimeNameResolver）：ARCH §3.5 依赖白名单只有 ui→core、ui→diagnostics
@@ -70,8 +86,11 @@
 
 #include <sdurws/ird/core/Events.hpp>         // core::IEventSubscription（subscribeClose 返回的 RAII 句柄——表内登记边）
 #include <sdurws/ird/core/Identity.hpp>       // core::ObjectId（C-11 端口入参）/ProjectId/TaskIdentity（C-8 会话端口入参——身份类型与 core 契约同一）
+#include <sdurws/ird/diagnostics/Catalog.hpp>     // diagnostics::DiagProjectionItem/DiagQuery（C-9 只读投影值面——表内登记边 ui→diagnostics）
+#include <sdurws/ird/diagnostics/Confirmable.hpp> // diagnostics::FindingRecord（C-9 确认投影呈现半区值面——表内登记边）
+#include <sdurws/ird/diagnostics/Redaction.hpp>   // diagnostics::RedactionPolicy（脱敏配置端口值面——表内登记边）
 #include <sdurws/ird/ui/AboutDialog.hpp>      // PluginAssemblyReport/AboutVersionBaseline（IUiAboutDataSource 值面——§10.9/§11.4）
-#include <sdurws/ird/ui/UiProjections.hpp>    // PolicySummaryProjection（C-10）＋OpenStoreOutcome/TaskRowProjection 等（UI-T11 会话端口值面）
+#include <sdurws/ird/ui/UiProjections.hpp>    // PolicySummaryProjection（C-10）＋OpenStoreOutcome/TaskRowProjection/TaskViewProjection 等（会话/任务端口值面）
 #include <sdurws/ird/ui/UiTypes.hpp>          // StageId/StageViewStatus/DomainReadinessItem/StageReadinessSnapshot/TextKey（C-12 端口值面——§3.3 公共值类型头）＋UiOpenMode（UI-T11）
 
 namespace sdurws::ird {
@@ -757,6 +776,299 @@ public:
      *         原文，呈现于 ForceCloseDialogData）
      */
     virtual bool requestForceTerminate(const core::TaskIdentity& task) = 0;
+};
+
+// =====================================================================
+// C-6 交互回调端口（§9.2 确认流——UI-T13 首消费冻结，登记 ui.md §16.7
+// v1.5；O-31 裁决方向外翻的 ui 侧承接面）
+// =====================================================================
+
+/**
+ * @brief 命令确认交互回调的 ui 自有端口（O-31 v0.4 §2.1.2 C-6 行：
+ *        "L5 适配器实现 project::ICommandInteraction，委托 ui 自有交互
+ *        回调端口"——CommandInteractionBridge 实现本端口，§9.2）。
+ *
+ * 为什么要自有端口而不是 ui 直接实现 project 接口：O-31 裁决下 ui 产品
+ * 面对 project 零链接零 include——若 Bridge 实现 project::ICommandInteraction，
+ * ui 头必须 include project 公共头（增边违红线）。方向外翻后依赖倒转：
+ * L5 装配器同时看见两边，写单行适配器（实现 project 接口、把调用原样
+ * 委托给本端口）；ui 保持零对端知识。**形状逐字镜像** project.md §5.3.3
+ * 冻结点（isAlive＋requestConfirmations 两方法、签名与返回值语义一致）——
+ * P-PR-7 处置："Bridge 线程模型按 project.md §5.3.3 冻结点实现，对端
+ * 单侧冻结互为起点不私改"。适配器不得改义（不得吞错/不得自行放行）。
+ *
+ * 语义冻结（不改义——§9.2 全节）：
+ *   - isAlive：会话存活探针——UI 会话在拆除（窗口关闭/项目切换的
+ *     Draining 之后）时置 false；命令等待期收到关闭请求由 project 主动
+ *     取消（Aborted(interaction-lost)，无修订、无用户诊断——§5.6-5）。
+ *   - requestConfirmations：命令执行线程同步调用（占命令槽、零事务
+ *     资源、无超时自动确认——P-DIAG-6）；实现内 Marshal 至 UI 线程弹
+ *     确认对话并阻塞等待；返回值三态＝全部确认（凭据向量与 findings
+ *     一一对应）/整体拒绝（nullopt——对端按 Rejected(confirmations-
+ *     rejected) 处置，无修订）/会话失效（nullopt——interaction-lost）。
+ *     实现侧（Bridge）只交 credentials：确认判定权、submitConfirmations
+ *     留痕、编译前复核全在 project＋diagnostics（SA-15——ui 不持判定权
+ *     不自行放行）。
+ *
+ * 线程约束：isAlive 任意线程（原子读）；requestConfirmations 仅命令
+ * 执行线程（对端 ProjectCommandService §6.1 线程模型传导）。
+ */
+class IUiCommandInteraction {
+public:
+    virtual ~IUiCommandInteraction() = default;
+
+    /**
+     * @brief 会话存活判定（false＝界面会话已关闭——§5.3.3
+     *        interaction-lost 的探针半区）。
+     *
+     * @return true＝会话在；false＝已拆除（等待方须立即收束）
+     */
+    [[nodiscard]] virtual bool isAlive() const = 0;
+
+    /**
+     * @brief 请求用户确认（§5.3.3 冻结签名的镜像——见类注释三态语义）。
+     *
+     * @param findings [in] 待确认集（比较型可确认诊断——SA-15；
+     *                 空集＝无事可确认，实现直接返回空凭据向量）
+     * @return 与 findings 一一对应的凭据向量（全部确认）；nullopt＝整体
+     *         拒绝或会话失效（对端按拒绝/中止处置——两者对 ui 同为
+     *         "不产生修订"，判别由对端探针时序决定）
+     */
+    virtual std::optional<std::vector<core::ConfirmationCredential>>
+    requestConfirmations(const std::vector<core::ConfirmableFinding>& findings) = 0;
+};
+
+// =====================================================================
+// C-8 任务呈现面端口（§9.4/§10.7——UI-T13 首消费冻结，登记 ui.md
+// §16.7 v1.5；v1.3 冻结的 IUiSessionTaskPort 三原语面保持不动）
+// =====================================================================
+
+/**
+ * @brief 任务查询与控制的 ui 自有最小端口·呈现面（L5 适配 execution::
+ *        ITaskScheduler/ITaskController——C-8，§9.4 任务呈现与 §10.7
+ *        ITaskPresentationModel 的对端执行面）。
+ *
+ * 为什么与 IUiSessionTaskPort 分立：v1.3 冻结的会话任务端口只承载关闭
+ * 对话框的三原语（非终态清单/协作取消/强制终止），本端口承载 §9.4 全量
+ * 呈现面（全态清单＋进度＋暂停/继续＋Ack 反馈）——两者消费者不同（关闭
+ * 对话框 vs 任务面板）、方法集不同。已冻结形状不触碰（增量修订只允许
+ * 表尾追加，改动冻结方法＝契约变更），另立端口是 O-31"首消费冻结"机制
+ * 的标准动作（IUiDraftQueryPort/IUiDraftStorePort 读写分立同案）。
+ *
+ * 语义冻结（不改义——冻结基准 execution.md §10.1/§10.2，O-31 值投影
+ * 承载，TaskViewProjection/UiTaskAck 字段注释逐条锚定对端类型）：
+ *   - tasksByProject ← ITaskScheduler::tasksByProject（§9.4 任务清单
+ *     数据；含终态——近终态窗口行的呈现数据源，§10.7"非终态＋近终态
+ *     窗口"由消费方过滤）；
+ *   - task/progress ← tryTask/progress 查询（深拷贝快照——§4.2"查询经
+ *     快照拷贝"；进度轮询 §9.4"UI 线程 200 ms 轮询"的对端半区）；
+ *   - requestCancel/requestPause/requestResume/requestForceTerminate ←
+ *     ITaskController 同名方法（Ack 结构投影——accepted＋currentState＋
+ *     feedback 显式反馈；不支持暂停的任务收到请求→feedback 非空"显式
+ *     提示不静默"，§9.4 原文；**全部即发即忘**——ui 不阻塞等待收敛，
+ *     NFR-PERF-02"ui 侧只发请求"）。
+ *
+ * 线程约束：ui 侧仅 UI 线程调用（§3.4 M-1）；实现须线程安全（对端
+ * execution 接口线程安全——§10.7 线程行"内部转发到 execution 任意线程
+ * 入口"）；应返回快照值（NFR-PERF-01——UI 线程零长查询）。
+ */
+class IUiTaskPresentationPort {
+public:
+    virtual ~IUiTaskPresentationPort() = default;
+
+    /**
+     * @brief 取指定项目的任务快照清单（§9.4 任务清单数据装配）。
+     *
+     * @param project [in] 项目身份（tasksByProject 的等值过滤键）
+     * @return 任务行快照（含终态近窗口行——§10.7"近终态任务保留窗口
+     *         （默认 30 min，对齐 execution D-07）"的呈现数据由对端
+     *         会话内存态决定；空＝无任务；纯查询，不抛）
+     *
+     * @note UI 线程调用；应返回快照值（§4.2"查询永不被状态写阻塞"）。
+     */
+    virtual std::vector<TaskViewProjection>
+    tasksByProject(const core::ProjectId& project) const = 0;
+
+    /**
+     * @brief 按身份取单个任务快照（§10.7 task 的对端半区）。
+     *
+     * @param task [in] 任务身份五元组（寻址键——RunRegistry 核对面）
+     * @return 任务行快照；不存在（终态回收/他项目任务）→nullopt（不虚构）
+     */
+    virtual std::optional<TaskViewProjection>
+    task(const core::TaskIdentity& task) const = 0;
+
+    /**
+     * @brief 查询任务最近进度（§9.4"200 ms 轮询 progress(taskId)"的
+     *        对端半区——调度器节流 ≤10 Hz 的查询式投影）。
+     *
+     * @param task [in] 任务身份五元组
+     * @return 最近进度投影（nullopt＝尚无进度〔Queued/Preparing 期〕或
+     *         任务不存在——两态对呈现同为"无进度可显示"，不区分不虚构）
+     */
+    virtual std::optional<TaskProgressProjection>
+    progress(const core::TaskIdentity& task) const = 0;
+
+    /**
+     * @brief 请求协作取消（§9.4"取消＝协作"——正常取消无错误诊断
+     *        UX-03；2 s 进入 Canceling/10 s 收敛由 execution 保证，
+     *        ui 只发请求不等收敛）。
+     *
+     * @param task [in] 任务身份五元组
+     * @return Ack 投影（accepted=false 时 feedback 承载对端显式反馈）
+     */
+    virtual UiTaskAck requestCancel(const core::TaskIdentity& task) = 0;
+
+    /**
+     * @brief 请求暂停（§9.4"暂停/继续按任务能力声明启用；不支持暂停的
+     *        任务收到请求→StatusAck.feedback 显式提示不静默"原文）。
+     *
+     * @param task [in] 任务身份五元组
+     * @return Ack 投影（不支持暂停→accepted=false＋feedback 非空——
+     *         呈现层必须显示该反馈，不得静默吞掉）
+     */
+    virtual UiTaskAck requestPause(const core::TaskIdentity& task) = 0;
+
+    /**
+     * @brief 请求继续（§9.4 Paused⇄Running——新 attemptId，继续不重复
+     *        统计；进度基线随新 attempt 重置的呈现半区）。
+     *
+     * @param task [in] 任务身份五元组
+     * @return Ack 投影
+     */
+    virtual UiTaskAck requestResume(const core::TaskIdentity& task) = 0;
+
+    /**
+     * @brief 请求强制终止（§9.4"强杀＝独立高级操作（带确认＋后果说明：
+     *        任务记 Failed、检查点保留）"的对端执行面——调用前置＝用户
+     *        已在独立确认对话中明确确认，§10.7"高级操作＋确认"）。
+     *
+     * @param task [in] 任务身份五元组
+     * @return Ack 投影（后果＝任务记 Failed＋EX-FORCE-TERMINATED＋
+     *         最近检查点保留可续——§9.4 后果说明原文）
+     */
+    virtual UiTaskAck requestForceTerminate(const core::TaskIdentity& task) = 0;
+};
+
+// =====================================================================
+// C-9 确认投影呈现半区端口（§9.2"非命令期 pending 查看"行——UI-T13
+// 首消费冻结，登记 ui.md §16.7 v1.5）
+// =====================================================================
+
+/**
+ * @brief 待确认项只读查询的 ui 自有最小端口（L5 适配 project→
+ *        diagnostics::IConfirmableFindingService::pendingFor——§9.2
+ *        "pendingFor(revision) 投影只读显示（ui 经 project 间接读——
+ *        不直接调 diagnostics 服务端接口）"原文的注入面）。
+ *
+ * 为什么经端口而不是直接持有 IConfirmableFindingService：§9.2 规则表
+ * 明文"ui 经 project 间接读"——确认记录的服务端归属是 project 命令编排
+ * （§5.3.3/§6.7），ui 直接调服务端接口会绕过该归属（且 diagnostics
+ * 服务接口对 ui 的合法调用面不含"列待确认项"——§9.3 合法调用面行）。
+ * L5 适配器持有 project 会话上下文，能按"当前修订"取 pendingFor；
+ * ui 只见只读值拷贝（呈现用，不改状态——FindingRecord 值语义）。
+ *
+ * 线程约束：UI 线程调用（§3.4 M-1；确认对话数据装配路径）；实现应短小
+ * （快照值拷贝——NFR-PERF-01）。未注入（空指针）＝无确认呈现面——
+ * pendingConfirmations 返回空集，不虚构（§11.4 零虚构同案）。
+ */
+class IUiFindingQueryPort {
+public:
+    virtual ~IUiFindingQueryPort() = default;
+
+    /**
+     * @brief 取当前会话全部待确认项（§10.8 pendingConfirmations 的
+     *        对端半区——非命令期 pending 只读查看的数据源）。
+     *
+     * @return 服务端记录值拷贝清单（Pending 态；空＝无待确认项；纯
+     *         查询，不抛——内部不可得以空集表达）
+     */
+    virtual std::vector<diagnostics::FindingRecord> pendingConfirmations() const = 0;
+};
+
+// =====================================================================
+// Tier-U 日志面板数据源端口（§9.1 日志面板行——UI-T13 首消费冻结，
+// 登记 ui.md §16.7 v1.5）
+// =====================================================================
+
+/**
+ * @brief Tier-U 用户日志只读快照的 ui 自有最小端口（L5 适配 diagnostics
+ *        日志设施——§9.1"日志面板 Tier-U（用户诊断：无调用栈/内部哈希）"
+ *        的数据面）。
+ *
+ * 为什么需要端口：ILogger（Logging.hpp §9.6）是只写接口（无读回/订阅
+ * 面——日志写文件管线，§7.3）；面板"回看最近用户日志"需要读已写行，
+ * 读回能力归持有日志文件的 L5 侧。ui 只消费脱敏后的 Tier-U 快照
+ * （Tier-U 行在管线内已过内部模式过滤——NFR-REL-05"无调用栈/内部
+ * 哈希"由产出侧保证，ui 不二次脱敏——§9.1 脱敏行"呈现层不自行脱敏"）。
+ *
+ * flush 纪律（§3.4 线程表"禁止等待 flush（ILogger flush 仅关闭路径）"）：
+ * 本端口**不提供** flush/写面——日志面板是纯只读呈现；flush 只发生在
+ * L5 关闭路径直接调 diagnostics 设施（ui 头不存在该调用点＝结构性保证）。
+ *
+ * 线程约束：UI 线程调用；实现应返回快照值（短临界区——NFR-PERF-01）。
+ * 未注入（空指针）＝无日志面板数据——面板呈现占位，不虚构条目。
+ */
+class IUiUserLogSource {
+public:
+    virtual ~IUiUserLogSource() = default;
+
+    /**
+     * @brief 取 Tier-U 日志快照（面板回看数据，最新在后）。
+     *
+     * @return 用户级日志条目快照（空＝无日志；纯查询，不抛）
+     */
+    virtual std::vector<UserLogEntry> snapshot() const = 0;
+
+    /**
+     * @brief 开发日志文件是否可跳转（§9.1"Dev 级仅'打开开发日志文件'
+     *        跳转（不内嵌显示）"的可用位——文件路径归 L5，ui 不解析）。
+     *
+     * @return true＝L5 侧可提供开发日志文件入口（呈现"打开开发日志"
+     *         动作）；false＝不可得（动作隐藏，不虚构路径）
+     */
+    virtual bool devLogFileAvailable() const = 0;
+};
+
+// =====================================================================
+// 脱敏配置端口（§9.1 脱敏行——UI-T13 首消费冻结，登记 ui.md §16.7 v1.5）
+// =====================================================================
+
+/**
+ * @brief 脱敏策略配置的 ui 自有最小端口（L5 适配 diagnostics::
+ *        IRedactionService——§9.1"ui 只提供配置界面（L5 会话变更
+ *        setPolicy）"的注入面）。
+ *
+ * 分工红线（§9.1 脱敏行原文）：呈现层不自行脱敏——显示前文本已由
+ * diagnostics 管线处理（诊断上下文快照/日志行在产出侧脱敏）；ui 只提供
+ * **配置界面**（策略选择值经本端口交给 L5，L5 调 IRedactionService::
+ * setPolicy 写时拷贝切换）。ui 不持有 IRedactionService 引用、不复算
+ * 脱敏结果（§10.8 IDiagnosticPresentationModel.redactedPath 的转发面
+ * 由装配把服务只读引用注入模型——配置**写**路径只经本端口）。
+ *
+ * 线程约束：UI 线程调用（配置界面交互路径；对端 setPolicy 并发安全
+ * ——Redaction.hpp 契约表"策略快照读/写时拷贝切换"）。
+ */
+class IUiRedactionPolicyPort {
+public:
+    virtual ~IUiRedactionPolicyPort() = default;
+
+    /**
+     * @brief 取当前脱敏策略快照（配置界面回显当前值）。
+     *
+     * @return 当前策略（nullopt＝服务未挂接——界面呈现"未配置"占位，
+     *         不虚构默认值）；纯查询，不抛
+     */
+    virtual std::optional<diagnostics::RedactionPolicy> currentPolicy() const = 0;
+
+    /**
+     * @brief 应用新脱敏策略（配置界面[确定]的执行半区——L5 转调
+     *        IRedactionService::setPolicy，写时拷贝切换：变更后新调用
+     *        生效，已写行不回溯——§9.5 配置行原文）。
+     *
+     * @param policy [in] 新策略（值拷贝）
+     */
+    virtual void applyPolicy(const diagnostics::RedactionPolicy& policy) = 0;
 };
 
 }  // namespace ui
