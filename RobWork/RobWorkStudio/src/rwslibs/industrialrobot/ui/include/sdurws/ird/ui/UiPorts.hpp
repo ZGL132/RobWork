@@ -41,6 +41,12 @@
  *     SessionPortBundle 随打开结果注入（"实例随打开流程注入"原文）；
  *     L5 适配 project::ProjectStoreFactory/ProjectStore/DraftService/
  *     ITaskScheduler/ITaskController，ui 测试以可控替身承载（§3.1）。
+ *     UI-T12 增量冻结：C-5 草稿写半区端口 IUiDraftStorePort（§8 草稿
+ *     控制器——save/tryLoad/discard 三原语，登记 ui.md §16.7 v1.4）。
+ *     语义冻结基准＝project.md §5.4 DraftService：save＝"保存仅落
+ *     drafts/，不产生修订"（PM-04 分工红线）、tryLoad＝损坏回退 .bak
+ *     的读轨（PM-08）、discard＝写门卫下的幂等放弃（§8.3-4"放弃＝显式
+ *     discard"）。L5 适配 project::DraftService，ui 测试以可控替身承载。
  *
  * 背景说明（为什么不直接 include policy::IPolicyProvider / runtime::
  * IRuntimeNameResolver）：ARCH §3.5 依赖白名单只有 ui→core、ui→diagnostics
@@ -635,6 +641,67 @@ public:
      * @note UI 线程调用；应返回快照值（NFR-PERF-01）。
      */
     virtual std::vector<DraftRowProjection> listDrafts() const = 0;
+};
+
+/**
+ * @brief 草稿写半区的 ui 自有最小端口（L5 适配 project::DraftService::
+ *        save/tryLoad/discard——C-5 写半区，UI-T12 首消费冻结，登记
+ *        ui.md §16.7 v1.4；§8 DraftController 的对端执行面）。
+ *
+ * 为什么读写在两个端口：C-5 读半区（IUiDraftQueryPort）随 UI-T11 冻结为
+ * 关闭对话框的呈现面；写半区（本端口）的消费面是 §8 DraftController——
+ * 两者调用线程纪律不同（读＝UI 线程短查询；写＝一律经 ui 后台落盘线程
+ * 串行执行，§3.4 线程表"草稿 save 调用"行）。分端口让两种线程契约各自
+ * 单一，适配器不必在同一类型内同时满足两类纪律。
+ *
+ * 语义冻结（不改义——冻结基准 project.md §5.4，O-31 值投影承载）：
+ *   - save：仅落 drafts/ 目录（单文件原子替换＋.bak 轮换），**不产生任何
+ *     修订**（PM-04 保存/应用分离红线）；只读/关闭/失权拒绝走返回值轨
+ *     （DraftSaveOutcome.ok=false＋稳定 token），不抛环境错误；
+ *   - tryLoad：无草稿＝Missing（常态，非错误）；current 损坏→对端自动
+ *     回退 .bak（RecoveredFromBackup，旧损坏文件保留供人工核查——PM-08）；
+ *     两者皆不可得＝Corrupt（稳定 token＋明细透传）；.new 崩溃残留由对端
+ *     触达即丢弃并置 newResidueDropped（§8.3-3 恢复横幅素材）；
+ *   - discard：目标态＝该草稿文件不存在（幂等——本来就没有也是 ok）；
+ *     写操作（§8.3-4"放弃＝显式 discard"），只读上下文被对端拒绝。
+ *
+ * 线程约束：实现须线程安全（L5 适配对端"任意线程可调（内部串行）"语义
+ * ——project.md §9.8）；ui 侧仅从 §3.4"ui 后台落盘线程"经 DraftController
+ * 的串行执行器调用本端口（UI 线程零磁盘 IO 红线的执行面——产品代码把
+ * 端口调用封闭在执行器任务内，测试以线程标记替身自证）。
+ */
+class IUiDraftStorePort {
+public:
+    virtual ~IUiDraftStorePort() = default;
+
+    /**
+     * @brief 落盘一份草稿文档（§8.2 数据流"转投 ui 后台落盘线程→save"）。
+     *
+     * @param document [in] 草稿文档投影（DraftDocumentProjection——归属
+     *                 三元组/baseRevisionId/payload/origin 值拷贝；ui 不
+     *                 解析 payload，L5 适配器原样装回 project::DraftDocument）
+     * @return 落盘结果（ok=false 时 errorToken 非空——对端 StoreError
+     *         稳定 token 直用，不镜像枚举，NFR-MNT-03）
+     */
+    virtual DraftSaveOutcome save(const DraftDocumentProjection& document) = 0;
+
+    /**
+     * @brief 读取一份草稿（§8.3 恢复流程第 1~2 步的对端执行面）。
+     *
+     * @param moduleId [in] 模块 token（drafts/&lt;branch&gt;/&lt;module&gt;.draft.json
+     *                 的 module 段；白名单校验归对端）
+     * @return 读取结果（四态词表见 DraftLoadOutcome；损坏回退 .bak 的
+     *         事实经 status==RecoveredFromBackup 表达，诊断明细随附）
+     */
+    virtual DraftLoadOutcome tryLoad(const std::string& moduleId) = 0;
+
+    /**
+     * @brief 放弃一份草稿（§8.3-4 恢复横幅[放弃]的执行面——显式 discard）。
+     *
+     * @param moduleId [in] 模块 token
+     * @return 放弃结果（ok=false 时 errorToken 非空——只读上下文拒绝等）
+     */
+    virtual DraftDiscardOutcome discard(const std::string& moduleId) = 0;
 };
 
 /**

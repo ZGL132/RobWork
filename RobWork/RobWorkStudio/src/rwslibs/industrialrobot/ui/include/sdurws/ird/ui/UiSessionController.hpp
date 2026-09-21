@@ -336,6 +336,25 @@ public:
      */
     const ProjectContextProjection& context() const noexcept { return m_context; }
 
+    /**
+     * @brief 会话脏标记的生产者接线点（UI-T12 增量——§16.7 v1.4）。
+     *
+     * 生产者＝DraftController（§10.5/UI-T12：编辑会话的 anyDirty 事实
+     * 源，经 DraftControllerDeps.onSessionDirtyChanged 翻转回调到达）；
+     * 本方法是该事实的**唯一注入面**——m_sessionDirty 的其余写点仍是
+     * 关闭对话框处置（[放弃]/[保存]清除）与绑定重置，语义零变化。
+     *
+     * 为什么需要它：标题 `*` 判定位＝DraftProjection.present ∨ 会话脏
+     * 标记（PM-11/§4.2 状态栏行），上下文投影在 presentContext 组装时
+     * 读 m_sessionDirty——没有生产者接线，"编辑后未首次落盘"的脏态无
+     * 从进入投影（UI-T11 落位登记的既定缺口："生产者接线随 UI-T12
+     * 契约头落地复核"）。
+     *
+     * @param dirty [in] true＝存在未应用修改（任一挂接模块会话脏或磁盘
+     *              草稿 present）；false＝全部消费/清除
+     */
+    void reportSessionDirty(bool dirty);
+
     // ---- 打开（§5.2 NoProject→Opening→Open*）----
 
     /**

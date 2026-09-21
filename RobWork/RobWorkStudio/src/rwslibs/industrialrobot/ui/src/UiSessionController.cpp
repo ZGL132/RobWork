@@ -641,6 +641,18 @@ void UiSessionController::resetToNoProject()
     m_drainInFlightReferences = 0;
 }
 
+void UiSessionController::reportSessionDirty(const bool dirty)
+{
+    // 生产者接线（UI-T12——§16.7 v1.4）：DraftController 的 anyDirty 翻转
+    // 回调到此落位。写点纪律不变——m_sessionDirty 的全部变更仍收敛在
+    // 本方法、关闭对话框处置（[放弃]/[保存]清除）与 bindSession 重置
+    // 三处；本方法只覆盖"编辑会话→界面"的生产半区。
+    m_sessionDirty = dirty;
+    // 上下文重呈现（标题 `*` 的判定位随本次注入生效——presentContext
+    // 组装读 m_sessionDirty；快照一次组装，元数据与草稿位同刻）。
+    presentContextLocked();
+}
+
 void UiSessionController::presentContextLocked()
 {
     // 上下文快照一次组装（ProjectContextProjection 的原子性要求——元数据
