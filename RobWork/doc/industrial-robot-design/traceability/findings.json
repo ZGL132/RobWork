@@ -2794,11 +2794,23 @@
       "id": "F-278",
       "source": "traceability/acceptance/UI-T10-20260921.md §4.8（attempt 1，verdict=pass，2026-09-21；送验对象 afdfae98e14bc6b465d1de08fdf1fc69cbb96127，分支 wp10-t10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-21",
       "title": "ui/include/sdurws/ird/ui/UiPorts.hpp 文件尾换行符在 UI-T10 增量中丢失（diff 实证 \\ No newline at end of file——此前版本有尾换行）：POSIX 文本文件惯例破坏，跨工具链/编辑器后续触碰该文件时产生尾行噪声 diff",
       "owner": "ui 单元实施者（下次触碰 UiPorts.hpp 时恢复文件尾换行）",
-      "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-277。"
+      "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-277。",
+      "fixedAt": "2026-09-21",
+      "fixedBy": "UI-T11（送验对象 45baa315ab763cac0395768fd091c12e20fdfb6a）：本任务触碰 UiPorts.hpp 并恢复文件尾换行——UI-T11 验收（acc/UI-T11/1）对 45baa315 全部 7 个改动源文件逐一 `git cat-file -p <sha>:<file> | tail -c 1` 实证均含 \\n（含 UiPorts.hpp），resolution 条件满足"
+    },
+    {
+      "id": "F-279",
+      "source": "traceability/acceptance/UI-T11-20260921.md §4.8/§4.9/§4.10/发现清单（attempt 1，verdict=pass，2026-09-21；送验对象 45baa315ab763cac0395768fd091c12e20fdfb6a，分支 wp10-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "留痕 .log 家族第 6 次复踩（F-010/F-081/F-266/F-268/F-270/F-274/F-276 同族）：UI-T11 送验提交 45baa315 与 README-evidence.md 所引 integrated-build.log/smoke-configure.log/smoke-build.log/ird_gates-integration.log/ird_gates-base.log/ird_gates-smoke.log/validate-task.log/测试 console 日志共 9 类未入库——`git ls-tree 45baa315 -- <builds/wp10-t11/>` 实证 15 件中 0 件 .log，`git check-ignore -v` 命中 .gitignore:87 `*.log`；提交信息 What 段文件清单与实际入库内容不一致（验证结论本身经验收者双模式亲跑全部复现属实，不构成粉饰）",
+      "owner": "ui 单元实施者（随下批留痕补交或改 .txt 后缀/add -f；根因治理归 F-010 责任方 WP-01-T03）",
+      "resolution": "实施者后续任务提交留痕时对 .log 件显式 git add -f（或产出即用 .txt 后缀），消除'声称与在库不符'的复核成本；本条不阻塞 UI-T11 合入（attempt 1 verdict=pass，在库 XML/JSON/gates 证据链完整且验收者亲手复现）。编号顺延自 F-278。"
     }
   ]
 }
