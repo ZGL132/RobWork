@@ -2850,6 +2850,36 @@
       "title": "F-010/F-077/F-081/F-266/F-268/F-270/F-274/F-276/F-279 家族复踩（UI 系连续第 7 例）：UI-T12 留痕提交 417cfa5a 的 traceability/builds/wp10-t12/README-evidence.md 索引引用多类 .log（各测试 .console.log／ird_gates-integration.log／ird_gates-smoke.log／validate-task.log／batchpaste-rerun*.console.log），实际入库仅 16 件（README＋gates-hit-set 3＋ird-test-report 6＋gtest XML 6），.log 零入库（.gitignore 全局 *.log 规则 F-010 根因未除）；验证结论本身（双模式构建零 error、119＋12＋27/28、ird_gates 命中集 base vs head 逐码零变化、validate-task PASS）经本验收独立复现全部属实，不构成粉饰",
       "owner": "治理（.gitignore 对 traceability/** 挂 !*.log 白名单豁免——F-010 根因一次性处置）＋ui 单元实施者（后续任务提交前按 .gitignore 实际效果核对 README 索引与入库清单一致）",
       "resolution": "与 F-274/F-276/F-279 同口径：不单独返工、不阻塞 UI-T12 合入（attempt 1 verdict=pass）；建议治理任务一次性解决 F-010 根因后本家族自动消账。编号顺延自 F-282。"
+    },
+    {
+      "id": "F-284",
+      "source": "traceability/acceptance/UI-T13-20260922.md §4.8/§4.9/§4.10（attempt 1，verdict=pass，2026-09-22；送验对象 6b7ffbc33e9c5bc597d2d68b252548f386925212，分支 wp10-t13）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "F-010/F-283 家族复踩（UI 系连续第 8 例）：UI-T13 留痕提交 6b7ffbc3 的提交信息与 traceability/wp10-t13-gate-registrations.md 引用 builds/wp10-t13/ 下原始日志（ird_gates-integration.log／ird_gates-base.log／ird_gates-smoke.log、控制台日志×5、validate-task.log），实际入库仅 11 件（gtest XML×3＋ird-test-report.json×5＋gates-hit-set×3），.log 零入库（.gitignore 全局 *.log 规则 F-010 根因未除）；验证结论本身（双模式构建零 error、151＋17＋27/28、ird_gates 命中集恰增 4 处 R3、validate-task PASS）经本验收独立复现全部属实，不构成粉饰",
+      "owner": "治理（.gitignore 对 traceability/** 挂 !*.log 白名单豁免——F-010 根因一次性处置）＋ui 单元实施者（后续任务提交前按 .gitignore 实际效果核对提交信息留痕清单与入库清单一致）",
+      "resolution": "与 F-274/F-276/F-279/F-283 同口径：不单独返工、不阻塞 UI-T13 合入（attempt 1 verdict=pass）；建议治理任务一次性解决 F-010 根因后本家族自动消账。编号顺延自 F-283。"
+    },
+    {
+      "id": "F-285",
+      "source": "traceability/acceptance/UI-T13-20260922.md §4.8（attempt 1，verdict=pass，2026-09-22；送验对象 6b7ffbc33e9c5bc597d2d68b252548f386925212，分支 wp10-t13）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "F-278/F-280/F-281 家族复踩：UiPorts.hpp 于 UI-T13 增量修改（C-6/C-8/C-9 五端口首消费冻结增注）后文件尾换行仍未恢复（验收者实测 head 尾字节 0x50 'P'，与 F-278/F-280/F-281 登记时同态）——POSIX 文本文件惯例持续破坏，后续触碰产生尾行噪声 diff；本任务 6 个新增文件（三公共头＋三实现 TU）尾换行全部正常（0x0a 实证），既有同族 UiTypes.hpp/UiProjections.hpp 正常",
+      "owner": "ui 单元实施者（增量触碰 UiPorts.hpp 时顺手补尾换行——diff 噪声一行且属 allowedFiles 内自愈）",
+      "resolution": "与 F-278 家族同口径：不单独返工、不阻塞 UI-T13 合入（attempt 1 verdict=pass）；随 F-278 家族一次性处置消账。编号顺延自 F-284。"
+    },
+    {
+      "id": "F-286",
+      "source": "traceability/acceptance/UI-T13-20260922.md §4.11④/问题清单（attempt 1，verdict=pass，2026-09-22；送验对象 6b7ffbc33e9c5bc597d2d68b252548f386925212，分支 wp10-t13）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "TaskPresentation.cpp refresh() 注释与实现不一致：注释声称「进度基线并入：已展示值按三规则守恒（refresh 不回退显示——乱序快照不得倒退进度条，与 pollOnce 同纪律）」，但同 attempt 内较低 percent 的新快照会无条件覆盖展示值（mergeProgressDecision 以 nullopt 基线调用恒 Accept〔:374~377 死调用〕，既有展示进度仅在「新快照无进度」时回填 :381~386）；§9.4 单调规则的契约句写的是 200 ms 轮询合并路径（pollOnce 实现正确且 ProgressMonotonicDropRegressionAndIdempotent_UI_TSK_5 钉住），刷新路径不受契约句约束，但注释声明强于实现，后续维护者可能据注释依赖该守恒",
+      "owner": "ui 单元实施者（下一增量触碰 TaskPresentation.cpp 时二选一：refresh 并入时以既有展示值为基线调 mergeProgressDecision〔AttemptReset 仍重置〕，或修正注释收窄声明范围）",
+      "resolution": "注释准确性问题、非行为缺陷（无契约句违反、无测试失败）：不阻塞 UI-T13 合入（attempt 1 verdict=pass）；随下次 ui 单元任务增量修订顺手处置并同步 §16.7 登记。编号顺延自 F-285。"
     }
   ]
 }
