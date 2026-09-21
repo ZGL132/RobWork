@@ -2820,6 +2820,36 @@
       "title": "F-278 同族新例：UI-T11 新增公共头 ui/include/sdurws/ird/ui/UiSessionController.hpp 文件尾无换行符（验收者实测尾字节 0x50 'P'——#endif 注释行即文件末尾）；且 F-278 在案的 UiPorts.hpp 于本任务增量修改后尾换行仍未恢复（head 尾字节 0x50 与 base 同态）——同族两处在案未闭合，同族既有 UiTypes.hpp/UiProjections.hpp 尾换行正常",
       "owner": "ui 单元实施者（下次触碰两文件时一并恢复尾换行）",
       "resolution": "UiSessionController.hpp 与 UiPorts.hpp 各一行尾换行修复（可随任一下次 ui 任务顺手完成并同步消账 F-278）；不阻塞 UI-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-279。"
+    },
+    {
+      "id": "F-281",
+      "source": "traceability/acceptance/UI-T12-20260921.md §4.7/§4.8（attempt 1，verdict=pass，2026-09-21；送验对象 417cfa5ab3200a28d5d6fdcb19e77c25fd1a7f23，分支 wp10-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-278 复踩：UiPorts.hpp 于 UI-T12 增量修改（IUiDraftStorePort 首消费冻结增注）后文件尾换行仍未恢复（验收者实测 head 尾字节 0x50 'P'，与 F-278 登记时同态）——POSIX 文本文件惯例持续破坏，后续触碰产生尾行噪声 diff",
+      "owner": "ui 单元实施者（下次触碰 UiPorts.hpp 时恢复尾换行）",
+      "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T12 合入（attempt 1 verdict=pass）。编号顺延自 F-280。"
+    },
+    {
+      "id": "F-282",
+      "source": "traceability/acceptance/UI-T12-20260921.md §4.7/§4.8（attempt 1，verdict=pass，2026-09-21；送验对象 417cfa5ab3200a28d5d6fdcb19e77c25fd1a7f23，分支 wp10-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-280 同族复踩：UiSessionController.hpp 于 UI-T12 增量修改（reportSessionDirty 生产者接线点）后文件尾换行仍未恢复（验收者实测 head 尾字节 0x50 'P'）——同族三处在案未闭合（F-278/F-280/F-282 同文件两处＋同族），本任务新增文件 IDraftController.hpp/DraftController.cpp 尾换行正常（0x0a 实证），同族既有 UiTypes.hpp/UiProjections.hpp 正常",
+      "owner": "ui 单元实施者（下次触碰两文件时一并恢复尾换行并同步消账 F-278/F-280）",
+      "resolution": "UiSessionController.hpp 与 UiPorts.hpp 各一行尾换行修复（随任一下次 ui 任务顺手完成）；不阻塞 UI-T12 合入（attempt 1 verdict=pass）。编号顺延自 F-281。"
+    },
+    {
+      "id": "F-283",
+      "source": "traceability/acceptance/UI-T12-20260921.md §4.8/§4.9/§4.10（attempt 1，verdict=pass，2026-09-21；送验对象 417cfa5ab3200a28d5d6fdcb19e77c25fd1a7f23，分支 wp10-t12）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-010/F-077/F-081/F-266/F-268/F-270/F-274/F-276/F-279 家族复踩（UI 系连续第 7 例）：UI-T12 留痕提交 417cfa5a 的 traceability/builds/wp10-t12/README-evidence.md 索引引用多类 .log（各测试 .console.log／ird_gates-integration.log／ird_gates-smoke.log／validate-task.log／batchpaste-rerun*.console.log），实际入库仅 16 件（README＋gates-hit-set 3＋ird-test-report 6＋gtest XML 6），.log 零入库（.gitignore 全局 *.log 规则 F-010 根因未除）；验证结论本身（双模式构建零 error、119＋12＋27/28、ird_gates 命中集 base vs head 逐码零变化、validate-task PASS）经本验收独立复现全部属实，不构成粉饰",
+      "owner": "治理（.gitignore 对 traceability/** 挂 !*.log 白名单豁免——F-010 根因一次性处置）＋ui 单元实施者（后续任务提交前按 .gitignore 实际效果核对 README 索引与入库清单一致）",
+      "resolution": "与 F-274/F-276/F-279 同口径：不单独返工、不阻塞 UI-T12 合入（attempt 1 verdict=pass）；建议治理任务一次性解决 F-010 根因后本家族自动消账。编号顺延自 F-282。"
     }
   ]
 }
