@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "帮助入口与关于对话框（插件清单）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03"],
   "requirements": ["UX-14", "NFR-DEP-05"],
   "designRefs": ["units/ui.md#13", "units/ui.md#11.1", "units/ui.md#11.4"],
