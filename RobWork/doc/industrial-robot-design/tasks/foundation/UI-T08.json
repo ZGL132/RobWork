@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "参数表与表单公共件（阶段 B 交付，本文仅登记）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03", "CORE-T04"],
   "requirements": ["UX-04", "UX-05", "UX-07", "KIN-12"],
   "designRefs": ["units/ui.md#13", "units/ui.md#6.6", "units/ui.md#14"],
