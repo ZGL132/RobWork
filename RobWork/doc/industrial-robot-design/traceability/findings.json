@@ -2799,6 +2799,26 @@
       "title": "ui/include/sdurws/ird/ui/UiPorts.hpp 文件尾换行符在 UI-T10 增量中丢失（diff 实证 \\ No newline at end of file——此前版本有尾换行）：POSIX 文本文件惯例破坏，跨工具链/编辑器后续触碰该文件时产生尾行噪声 diff",
       "owner": "ui 单元实施者（下次触碰 UiPorts.hpp 时恢复文件尾换行）",
       "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-277。"
+    },
+    {
+      "id": "F-279",
+      "source": "traceability/acceptance/UI-T11-20260921-r2.md §4.8/§4.10（attempt 2，verdict=pass，2026-09-21；送验对象 45baa315ab763cac0395768fd091c12e20fdfb6a，分支 wp10-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-010/F-077/F-081/F-266/F-268/F-270/F-274/F-276 家族复踩（UI 系连续第 6 例）：UI-T11 留痕提交 45baa315 的 traceability/builds/wp10-t11/README-evidence.md 索引引用 9 类 .log 留痕（integrated-build.log/smoke-configure.log/smoke-build.log/ird_gates-integration|base|smoke.log/validate-task.log 及各测试 .console.log），实际入库仅 xml×6＋json×6＋txt×2＋md×1，.log 零入库（.gitignore 全局 *.log 规则 F-010 根因未除）；验证结论本身（双模式构建零 error、106＋9＋28 全绿、ird_gates 命中集 base vs head 零变化、validate-task PASS）经本验收独立复现全部属实，不构成粉饰",
+      "owner": "治理（.gitignore 对 traceability/** 挂 !*.log 白名单豁免——F-010 根因一次性处置）＋ui 单元实施者（后续任务提交前按 .gitignore 实际效果核对 README 索引与入库清单一致）",
+      "resolution": "与 F-081/F-266/F-268/F-270/F-274/F-276 同口径：不单独返工、不阻塞 UI-T11 合入（attempt 2 verdict=pass）；建议治理任务一次性解决 F-010 根因后本家族自动消账。编号顺延自 F-278。"
+    },
+    {
+      "id": "F-280",
+      "source": "traceability/acceptance/UI-T11-20260921-r2.md §4.7/§4.8（attempt 2，verdict=pass，2026-09-21；送验对象 45baa315ab763cac0395768fd091c12e20fdfb6a，分支 wp10-t11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-278 同族新例：UI-T11 新增公共头 ui/include/sdurws/ird/ui/UiSessionController.hpp 文件尾无换行符（验收者实测尾字节 0x50 'P'——#endif 注释行即文件末尾）；且 F-278 在案的 UiPorts.hpp 于本任务增量修改后尾换行仍未恢复（head 尾字节 0x50 与 base 同态）——同族两处在案未闭合，同族既有 UiTypes.hpp/UiProjections.hpp 尾换行正常",
+      "owner": "ui 单元实施者（下次触碰两文件时一并恢复尾换行）",
+      "resolution": "UiSessionController.hpp 与 UiPorts.hpp 各一行尾换行修复（可随任一下次 ui 任务顺手完成并同步消账 F-278）；不阻塞 UI-T11 合入（attempt 2 verdict=pass）。编号顺延自 F-279。"
     }
   ]
 }
