@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "诊断/确认/任务呈现模型与 CommandInteractionBridge",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03", "DIAG-T03", "DIAG-T04", "DIAG-T05", "EX-T05", "PRJ-T11"],
   "requirements": ["UX-03", "UX-10", "ERR-01", "PM-15", "TASK-01", "TASK-02", "TASK-03"],
   "designRefs": [
