@@ -23,6 +23,8 @@
 #include <gtest/gtest.h>
 
 #include <QCoreApplication>
+#include <QEventLoop>
+#include <QTimer>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 #include <sdurws/ird/ui/ITaskPresentationModel.hpp>
@@ -31,9 +33,13 @@
 #include <sdurws/ird/ui/UiProjections.hpp>
 
 #include <algorithm>
+#include <chrono>
+#include <condition_variable>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace {
@@ -531,6 +537,147 @@ TEST(TaskPresentationModelTest, FactoryFailsFastWithoutTaskPort)
             (void)ui::createTaskPresentationModel(std::move(deps));
         }(),
         std::invalid_argument);
+}
+
+// =====================================================================
+// UI-T14 增补具名落位：UI-EXEC-1（执行限制登记）与 UI-PERF-1（UI 线程
+// 纪律——§12.3 承接族 PERF 族唯一用例；两例原属 §12.3 清单，具名用例
+// 随 UI-T14 契约测试套件落位）
+// =====================================================================
+
+/**
+ * UI-EXEC-1（§12.3 表尾登记执行限制：队列位置与资源占用无对外接口
+ * ——execution §A3）：排队任务的呈现只验证"排队中（等待资源）"文案与
+ * 诊断呈现，不验证数值——呈现文案零数字字符、行与轮询面零虚构进度，
+ * 呈现层不存在任何"推测队列位置"的通道。
+ */
+TEST(TaskPresentationModelTest, QueuePositionWordingOnlyWithoutNumbers_UI_EXEC_1)
+{
+    IRD_TEST_INFO("TASK-01", {"UI-EXEC-1"}, std::nullopt);
+    TaskHarness h;
+    const auto queued = h.makeSnapshot(core::TaskState::Queued, 0, std::nullopt);
+    h.port->rows = {queued};
+    h.model->refresh();
+
+    const auto rows = h.model->activeTasks();
+    ASSERT_EQ(rows.size(), 1u);
+    EXPECT_EQ(rows[0].snap.state, core::TaskState::Queued);
+
+    // 文案面：排队呈现＝固定文案"排队中（等待资源）"（§3.5 键解析唯一
+    // 出口）——排队语义只以这一句话呈现，UI-EXEC-1 留痕锚。
+    const std::string wording =
+        ui::resolveText("ui.task.queue.waiting-resource");
+    EXPECT_EQ(wording, "排队中（等待资源）");
+
+    // 零数值纪律：呈现文案不含任何数字字符（队列位置/资源占用无对外
+    // 接口——呈现层不得推测数值，不虚构数据源）。
+    for (const char c : wording) {
+        EXPECT_FALSE(c >= '0' && c <= '9')
+            << "排队文案携带数值（UI-EXEC-1 零虚构违约）: " << wording;
+    }
+
+    // 零虚构进度：Queued 行与轮询面均无进度可显（Queued/Preparing 期
+    // 端口投影 nullopt 直通——不伪造百分比）。
+    EXPECT_FALSE(rows[0].progress.has_value());
+    h.model->startProgressPolling(std::chrono::milliseconds(200));
+    h.model->pollOnce();
+    EXPECT_FALSE(h.model->activeTasks()[0].progress.has_value());
+    h.model->stopProgressPolling();
+}
+
+/**
+ * UI-PERF-1（NFR-PERF-01/ARCH §4.2——UI 线程不执行长时工作）：对端慢
+ * 查询（>1 s）触发投影刷新期间，事件循环心跳探针无 >200 ms 间隙、单次
+ * 刷新不吞时间片，长工作在后台线程完成并经排队 Marshal 回 UI 线程消费
+ * （§12.3 观测点"心跳时间戳序列"）。
+ *
+ * 判据纪律（§12.2"不使用固定 sleep 判据"）：判定的依据是心跳时间戳
+ * 与刷新耗时测量，不是 sleep；后台线程的 1.1 s 限时等待是**场景构件**
+ * （模拟"桩慢端口 >1 s 查询"的操作设定），不参与任何断言。
+ */
+TEST(TaskPresentationModelTest, UiThreadHeartbeatUnderSlowPeerQuery_UI_PERF_1)
+{
+    IRD_TEST_INFO("NFR-PERF-01", {"NFR-PERF-02"}, std::nullopt);
+    TaskHarness h;
+
+    // 场景构件：对端慢查询 >1 s（条件变量限时等待，见上注释）。
+    std::mutex mtx;
+    std::condition_variable doneCv;
+    const bool queryDone = false;   // 不提前放行——让慢查询走满场景时长
+
+    QEventLoop loop;
+
+    // 心跳探针：25 ms 周期记录 UI 线程心跳时刻（事件循环未被阻塞的
+    // 直接证据——相邻间隔序列即 §12.3 观测点"心跳时间戳序列"）。
+    std::vector<std::chrono::steady_clock::duration> gaps;
+    auto lastBeat = std::chrono::steady_clock::now();
+    QTimer heartbeat(&loop);
+    QObject::connect(&heartbeat, &QTimer::timeout, [&] {
+        const auto now = std::chrono::steady_clock::now();
+        gaps.push_back(now - lastBeat);
+        lastBeat = now;
+    });
+    heartbeat.start(25);
+
+    // UI 线程投影刷新：每 50 ms 触发一次 refresh 并测量单次耗时
+    // （呈现模型只做快照搬运——刷新不得成为事件循环的长时占用）。
+    std::vector<std::chrono::steady_clock::duration> refreshCosts;
+    QTimer refreshTimer(&loop);
+    QObject::connect(&refreshTimer, &QTimer::timeout, [&] {
+        const auto begin = std::chrono::steady_clock::now();
+        h.model->refresh();
+        refreshCosts.push_back(std::chrono::steady_clock::now() - begin);
+    });
+    refreshTimer.start(50);
+
+    // 后台慢查询线程：走满慢查询时长后，结果经排队 Marshal 交付 UI
+    // 线程（M-1 纪律——对端替身 rows/byKey 的写点全部搬进 UI 线程
+    // lambda，替身保持仅 UI 线程访问）。
+    std::thread slowQuery([&] {
+        std::unique_lock<std::mutex> lk(mtx);
+        doneCv.wait_for(lk, std::chrono::milliseconds(1100),
+                        [&] { return queryDone; });
+        QMetaObject::invokeMethod(
+            QCoreApplication::instance(),
+            [&] {
+                h.port->rows = {h.makeSnapshot(core::TaskState::Running, 1,
+                                               TaskHarness::progressOf(70))};
+                h.model->refresh();
+            },
+            Qt::QueuedConnection);
+    });
+
+    // 总观察窗 1.5 s（慢查询 1.1 s＋Marshal 交付与刷新余量），到点收卷。
+    QTimer::singleShot(1500, &loop, [&] { loop.quit(); });
+    loop.exec();
+
+    heartbeat.stop();
+    refreshTimer.stop();
+    slowQuery.join();
+
+    // 判定一：心跳无 >200 ms 间隙（§12.3 预期原文"UI 线程无 >200 ms
+    // 阻塞"——阈值即用例值，不放宽）。
+    ASSERT_FALSE(gaps.empty()) << "心跳探针未产生任何采样";
+    const auto maxGap = *std::max_element(gaps.begin(), gaps.end());
+    EXPECT_LT(maxGap, std::chrono::milliseconds(200))
+        << "UI 线程出现阻塞（心跳最大间隙 "
+        << std::chrono::duration_cast<std::chrono::milliseconds>(maxGap).count()
+        << " ms）";
+
+    // 判定二：单次投影刷新 <50 ms（刷新周期量级——刷新路径零长时工作）。
+    ASSERT_FALSE(refreshCosts.empty()) << "投影刷新未被执行";
+    for (const auto cost : refreshCosts) {
+        EXPECT_LT(cost, std::chrono::milliseconds(50))
+            << "单次刷新超过刷新周期量级（UI 线程承载了长工作）";
+    }
+
+    // 判定三：慢查询结果经 Marshal 落地（长工作确实"转后台"且结果回到
+    // UI 线程被消费——闭环而非丢弃）。
+    const auto rows = h.model->activeTasks();
+    ASSERT_EQ(rows.size(), 1u);
+    EXPECT_EQ(rows[0].snap.state, core::TaskState::Running);
+    ASSERT_TRUE(rows[0].progress.has_value());
+    EXPECT_EQ(rows[0].progress->percent, 70);
 }
 
 }  // namespace

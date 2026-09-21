@@ -1,0 +1,10 @@
+# 与 base（11534184449b295252f346e460ced8306d935d0a＝UI-T13 合入收尾）同引擎
+# （cmake -P cmake/ird_gates.cmake 脚本模式直跑）逐码比对：七码零变化，
+# SUB 39→45 原始命中（引擎两遍扫描使每条命中出现两次；去重后恰增 3 条
+# 唯一命中、零消失，见下——O-31 裁决测试面直链，ui.md §3.1 行 v0.4 原文
+# "project/execution 直链随 UI-T14 契约测试套件落地登记"，F-228 消解面；
+# 登记提交件 traceability/wp10-t14-gate-registrations.md，责任方 WP-01-T03）。
+IRD-GATE-SUB: 测试目标 sdurws_ird_ui_contract_test 直链他单元产品目标 sdurws_ird_project（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_ui_contract_test 直链他单元产品目标 sdurws_ird_execution（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+IRD-GATE-SUB: 测试目标 sdurws_ird_ui_contract_test 直链他单元产品目标 sdurws_ird_diagnostics（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）
+# R3 命中文件级 diff：空（零新增文件命中、零既有文件变化）。
