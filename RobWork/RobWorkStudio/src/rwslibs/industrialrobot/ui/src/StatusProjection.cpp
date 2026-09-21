@@ -28,6 +28,7 @@
  */
 
 #include <sdurws/ird/ui/UiProjections.hpp>
+#include <sdurws/ird/ui/UiText.hpp>
 
 #include <array>
 #include <utility>
@@ -44,12 +45,14 @@ namespace {
 /// 词表行数（§6.3 七态——编译期自检下界；少一行即漏登记）。
 constexpr std::size_t kStatusWordCount = 7;
 
-/// 七态词表行（token＋中文——§6.3 表前两列原文；中文列为 UI-T09 过渡值）。
+/// 七态词表行（token＋中文——§6.3 表前两列原文；中文列自 UI-T09 起的
+/// 解析值源在 UiText 内建过渡文案表，本表保留中文列作词表完整性对照，
+/// token 列是 statusWordToken 的唯一数据源）。
 struct StatusWordRow
 {
     StatusWord word;        ///< 枚举值（表序）
     const char* token;      ///< 冻结 token（小写连字符——持久化/日志用）
-    const char* label;      ///< 中文呈现词（§6.3"中文"列——过渡承载）
+    const char* label;      ///< 中文呈现词（§6.3"中文"列——对照用，解析经 UiText）
 };
 
 /// 词表全表（行序＝枚举序；增删行必须同步 StatusWord 枚举与单元卡 §6.3）。
@@ -71,26 +74,9 @@ static_assert(kStatusWordTable[0].word == StatusWord::EmptyProject,
 // ---------------------------------------------------------------------
 // 九态短标签静态数据（§6.3"九态短标签"行——PM-03/PM-11）
 // ---------------------------------------------------------------------
-
-/// 九态标签行（core token 经 core::toToken 词表对应；中文为 §6.3 原文）。
-struct TaskStateLabelRow
-{
-    core::TaskState state;  ///< 九态值
-    const char* label;      ///< 中文短标签（过渡承载；键经 taskStateLabelKey）
-};
-
-/// 九态全表（枚举序无关——查找按值；行序＝§6.3 九态短标签行的呈现语序）。
-constexpr std::array<TaskStateLabelRow, 9> kTaskStateLabelTable{{
-    { core::TaskState::Queued,      "排队中" },
-    { core::TaskState::Preparing,   "准备中" },
-    { core::TaskState::Running,     "计算中" },
-    { core::TaskState::Paused,      "已暂停" },
-    { core::TaskState::Canceling,   "取消中" },
-    { core::TaskState::Canceled,    "已取消" },
-    { core::TaskState::Completed,   "已完成" },
-    { core::TaskState::Failed,      "失败"   },
-    { core::TaskState::Interrupted, "已中断" },
-}};
+// （九态中文短标签值已随 UI-T09 迁入 UiText 内建过渡文案表——键
+// state.<token>.label 的 token 半区仍由本表与 core::toToken 词表逐字
+// 对应；本翻译单元只保留键所需的 token 表。）
 
 /// 九态 token（与 core::toToken(TaskState) 词表逐字一致——core.md §4.7
 /// 持久化契约；此处独立成表是因为 toToken 定义于 core 翻译单元，键构造
@@ -107,17 +93,6 @@ constexpr std::array<std::pair<core::TaskState, const char*>, 9> kTaskStateToken
     { core::TaskState::Failed,      "failed"      },
     { core::TaskState::Interrupted, "interrupted" },
 }};
-
-/// 九态标签/Token 表按值查找（表小，线性即可——UI 线程预算内）。
-const TaskStateLabelRow* findTaskStateLabelRow(core::TaskState state) noexcept
-{
-    for (const auto& row : kTaskStateLabelTable) {
-        if (row.state == state) {
-            return &row;
-        }
-    }
-    return nullptr;  // 不可达——九态全表覆盖（调用方若传非法枚举属违约）
-}
 
 const char* findTaskStateToken(core::TaskState state) noexcept
 {
@@ -155,12 +130,12 @@ std::string statusWordLabelKey(StatusWord word)
 
 std::string statusWordTransitionalLabel(StatusWord word)
 {
-    for (const auto& row : kStatusWordTable) {
-        if (row.word == word) {
-            return row.label;  // §6.3"中文"列原文——过渡承载（UI-T09 迁资源）
-        }
-    }
-    return "";  // 不可达（同 statusWordToken 防御）
+    // 值源已随 UI-T09 切换至 UiText 内建过渡文案表（§3.5 唯一解析出口——
+    // "一切文本经 UiText::resolve"；键 statusWordLabelKey(word) 不变，值
+    // 逐字同源＝§6.3"中文"列原文。过渡函数保留至资源文件交接后退役，
+    // 届时键不变）。非法枚举的防御行为从"返回空串"收紧为"缺键 fail-fast"
+    // （枚举封闭、正常路径不可达——调用方违约显性暴露优于静默空串）。
+    return resolveText(statusWordLabelKey(word));
 }
 
 int statusWordPriority(StatusWord word) noexcept
@@ -205,8 +180,10 @@ std::string taskStateLabelKey(core::TaskState state)
 
 std::string taskStateTransitionalLabel(core::TaskState state)
 {
-    const TaskStateLabelRow* row = findTaskStateLabelRow(state);
-    return row != nullptr ? row->label : std::string();  // 不可达——九态全表
+    // 值源已随 UI-T09 切换至 UiText 内建过渡文案表（键 taskStateLabelKey
+    // (state) 不变——token 段与 core toToken 词表一致；值逐字同源＝§6.3
+    // 九态短标签行原文）。非法枚举经缺键 fail-fast（同上——显性暴露）。
+    return resolveText(taskStateLabelKey(state));
 }
 
 std::string currentnessUnevaluableLabelKey(NotEvaluableCause cause)
@@ -224,14 +201,10 @@ std::string currentnessUnevaluableLabelKey(NotEvaluableCause cause)
 
 std::string currentnessUnevaluableTransitionalLabel(NotEvaluableCause cause)
 {
-    // §6.3 P-UI-2 建议口径的原因区文案（D-12 同稿）——冻结前不私定其它措辞。
-    switch (cause) {
-        case NotEvaluableCause::UnresolvedDependency:
-            return "当前性无法判定（依赖缺失）";
-        case NotEvaluableCause::CrossContext:
-            return "当前性无法判定（上下文变化）";
-    }
-    return "";  // 不可达
+    // 值源已随 UI-T09 切换至 UiText 内建过渡文案表（键
+    // currentnessUnevaluableLabelKey(cause) 不变；值逐字同源＝P-UI-2
+    // 建议口径原文——冻结前不私定其它措辞）。非法枚举经缺键 fail-fast。
+    return resolveText(currentnessUnevaluableLabelKey(cause));
 }
 
 // =====================================================================

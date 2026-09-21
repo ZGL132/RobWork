@@ -20,6 +20,11 @@
  *     UI-T06 增量冻结：C-4（命令网关端口 IUiCommandGateway——§10.3
  *     CommandOutcome.revisionResult 的 O-31 承载面；登记 ui.md §16.7 v0.8：
  *     任务契约 acceptance 3"经 ui 自有命令网关端口＋命令结果值投影承载"）。
+ *     UI-T09 增量冻结：C-12（阶段门控端口 IUiStageGate——§6.4 呈现输出与
+ *     导航评估；workflow.md 未产出，P-UI-6 单侧冻结）与域就绪只读投影源
+ *     IUiDomainReadinessSource（§6.5 StageStatusModel 汇聚输入——域插件经
+ *     注册端口上报的只读投影；登记 ui.md §16.7 v1.1）。两端口在 WP-22-T03
+ *     产出前以桩承载（契约卡行"未产出→桩"口径；ui 测试以可控替身注入）。
  *
  * 背景说明（为什么不直接 include policy::IPolicyProvider / runtime::
  * IRuntimeNameResolver）：ARCH §3.5 依赖白名单只有 ui→core、ui→diagnostics
@@ -38,9 +43,11 @@
 
 #include <optional>
 #include <string>
+#include <vector>
 
 #include <sdurws/ird/core/Identity.hpp>        // core::ObjectId（C-11 端口入参——身份类型与 core 契约同一）
 #include <sdurws/ird/ui/UiProjections.hpp>     // PolicySummaryProjection（C-10 端口返回的值投影）
+#include <sdurws/ird/ui/UiTypes.hpp>           // StageId/StageViewStatus/DomainReadinessItem/StageReadinessSnapshot/TextKey（C-12 端口值面——§3.3 公共值类型头）
 
 namespace sdurws::ird {
 namespace ui {
@@ -226,6 +233,149 @@ public:
      *       "任意线程调用（内部转命令执行序列）"）。
      */
     virtual CommandResultProjection submit(const CommandEnvelopeProjection& envelope) = 0;
+};
+
+// =====================================================================
+// C-12：阶段门控端口（冻结基准 ui.md §6.4 阶段导航与门控——workflow.md
+// 未产出，P-UI-6 单侧冻结；UI-T09 首消费冻结，登记 ui.md §16.7 v1.1）
+// =====================================================================
+
+/**
+ * @brief 单阶段门控呈现输出的 ui 侧承载（§6.4 阶段呈现状态表的数据源投影）。
+ *
+ * P-UI-6 处置（契约 acceptance 3）：workflow 门控三方契约未定稿前按本形状
+ * 实现（单侧冻结——谈判起点；workflow.md 产出后核对，不兼容时按影响面
+ * 增量同步，不私改对端）。字段语义（§6.4 表"数据源"列原文）：
+ *   - status 为门控可判定的四态之一（completed/blocked/unavailable/
+ *     not-started——表中各行数据源"workflow 门控输出"）；in-progress
+ *     （会话态）与 view-only（writable=false）**不是门控输出**，由导航
+ *     模型按会话事实合成（§6.4 表行 2/6 数据源原文——门控适配器若输出
+ *     这两态属实现违约，模型按 not-started 兜底防御）；
+ *   - blockingReasonKeys＝blocked 行"附原因＋下一步建议"的原因/缺项文案键
+ *     （失败定位经诊断/缺项列表——缺项明细归域/VerdictTrace，门控只回键）；
+ *   - nextStepKey＝下一步建议文案键（UX-01：建议文本由 workflow 提供，
+ *     ui 只呈现与跳转，不生成建议文本）。
+ *
+ * 值语义；门控判定权威在 workflow（N-11 无第二套状态机）——模型与呈现层
+ * 均不得由本输出反推门控规则。
+ */
+struct StageGateView {
+    /// 门控呈现态（默认 NotStarted＝"尚无门控数据"的安全空值——不虚构
+    /// completed/unavailable 语义）。
+    StageViewStatus status = StageViewStatus::NotStarted;
+    /// 阻塞原因/缺项文案键（blocked 时非空；其余态可为空——透传不加工）。
+    std::vector<TextKey> blockingReasonKeys;
+    /// 下一步建议文案键（nullopt＝门控未提供建议——呈现层不虚构，UX-01）。
+    std::optional<TextKey> nextStepKey;
+};
+
+/**
+ * @brief 导航门控判定结果（§6.4 阶段切换时序"允许｜拒绝(原因/解锁条件)"
+ *        的值承载）。
+ *
+ * reasonKeys 的内容契约：包含**原因键**与**缺项键**两类——门控评估时消费
+ * StageReadinessSnapshot（§6.4 时序图"门控评估（消费 ui 的 StageStatusModel
+ * 汇聚投影）"框内原文），把其中的 missingItemKeys 折叠进拒绝数据，就地
+ * 提示才有"原因＋缺项＋下一步建议"三要素（契约 acceptance 1：拒绝时
+ * 就地提示原因＋缺项＋下一步建议）。
+ */
+struct StageGateDecision {
+    /// 是否放行（false＝拒绝——拒绝不携带 stage，导航模型不改变 currentStage）。
+    bool allowed = false;
+    /// 拒绝原因＋缺项文案键（allowed==false 时呈现"就地提示"的数据源；
+    /// allowed==true 时应为空——放行无提示语义）。
+    std::vector<TextKey> reasonKeys;
+    /// 解锁条件/下一步建议文案键（§6.4 时序"拒绝(原因/解锁条件)"的
+    /// 解锁半区；nullopt＝门控未提供）。
+    std::optional<TextKey> unlockHintKey;
+};
+
+/**
+ * @brief 阶段门控的 ui 自有最小端口（L5 适配 workflow 阶段门控——
+ *        WP-22-T03 未产出前以桩承载，契约卡行"未产出→桩"口径）。
+ *
+ * 语义冻结（不改义——ui.md §6.4 原文）：进入条件的业务判定归 workflow
+ * 门控，ui 不复制（§6.4 表头）；门控评估消费 ui 的 StageStatusModel 汇聚
+ * 投影（§6.4 时序图）——evaluate 的入参即该快照，门控从快照读域就绪
+ * 事实、输出允许/拒绝。ui 侧对判定结果零加工：模型只透传 decision 组装
+ * NavigateResult（投影只消费、不拥有门控规则——契约 acceptance 2/N-11）。
+ *
+ * 为什么是两个方法而不是一个：呈现输出（stageViews 全量七阶段需要的
+ * 素材）与导航评估（requestNavigate 单阶段按需评估）节奏不同——前者纯
+ * 读高频、后者携带汇聚快照构建成本。分离让适配器按需取数
+ * （IUiCurrentnessSource 三方法同款取舍）。
+ *
+ * 线程约束：调用一律发生在 UI 线程（§3.4 M-1 消费点——presentStage 由
+ * stageViews 调用、evaluate 由 requestNavigate 调用，均 UI 线程）。
+ */
+class IUiStageGate {
+public:
+    virtual ~IUiStageGate() = default;
+
+    /**
+     * @brief 取单阶段门控呈现输出（§6.4 阶段呈现状态表数据源）。
+     *
+     * @param stage [in] 目标阶段（七阶段词表值）
+     * @return 门控呈现投影（status 为门控可判定四态；见 StageGateView 注释）
+     *
+     * @note 纯查询，不抛（实现内部数据源不可得时按 §10.2 错误类型行以
+     *       blocked＋"stage.gate.unavailable.reason"表达"门控数据不可用"，
+     *       文案经 UiText 解析——不虚构 completed/unavailable 语义）。
+     */
+    virtual StageGateView presentStage(StageId stage) const = 0;
+
+    /**
+     * @brief 评估导航请求（§6.4 时序"门控评估"步——消费 StageStatusModel）。
+     *
+     * @param snapshot [in] 目标阶段的域就绪汇聚快照（导航模型现取现传——
+     *                 epoch 标注构建时刻；门控不得缓存改写，N-5/N-11）
+     * @return 允许/拒绝判定（拒绝时 reasonKeys 含原因＋缺项键、unlockHintKey
+     *         含解锁条件——就地提示三要素的数据面）
+     *
+     * @note UI 线程调用；判定权威在 workflow（本端口实现侧）——ui 对
+     *       返回值零加工（透传组装 NavigateResult，不重判不补判）。
+     */
+    virtual StageGateDecision evaluate(const StageReadinessSnapshot& snapshot) const = 0;
+};
+
+// =====================================================================
+// §6.5 域就绪只读投影源端口（StageStatusModel 汇聚输入——域插件经注册
+// 端口上报的只读投影；UI-T09 首消费冻结，登记 ui.md §16.7 v1.1）
+// =====================================================================
+
+/**
+ * @brief 域就绪只读投影的 ui 自有最小端口（§6.5 "StageStatusModel 只汇聚
+ *        域插件经注册端口上报的只读投影"的注册面）。
+ *
+ * 谁实现：域插件/装配层（L5 适配）——每个域插件注册一个源实例上报其
+ * 只读投影；多个域以 StageNavigationModelDeps.domainSources 的注册序进入
+ * 汇聚（快照 domains 按该序稳定排列——NFR-COR-02）。数据语义权威在域
+ * 侧（verdict＝最近正式判定、inputComplete＝域就绪校验结论）——汇聚只
+ * 搬运，不计算门控、不判定就绪（§6.5 红线原文；N-11 无第二套）。
+ *
+ * UI-T09 消费状态：StageNavigationModel::readinessSnapshot 现取现拷贝
+ * （§10.2 线程行"任意线程拉取（值拷贝）"）；WP-22-T03 门控数据源未产出
+ * 前以桩注入（契约卡行"未产出→桩"）。
+ */
+class IUiDomainReadinessSource {
+public:
+    virtual ~IUiDomainReadinessSource() = default;
+
+    /**
+     * @brief 取该源承载的域就绪投影（§6.5 DomainReadinessItem 形状）。
+     *
+     * @param stage [in] 目标阶段（域按阶段上报——同一域在不同阶段可有
+     *              不同就绪事实）
+     * @return 域就绪项清单（可含多个域项——复合适配器场景；空清单＝该
+     *         阶段无本源投影，不计入快照）
+     *
+     * @note 线程契约：readinessSnapshot 供 workflow 任意线程拉取（§10.2），
+     *       实现须自行保证本方法可与其 UI 线程调用并发（快照值拷贝、
+     *       短临界区——NFR-PERF-01）；纯查询，不抛（内部不可得以空清单
+     *       表达，不虚构就绪事实）。
+     */
+    virtual std::vector<DomainReadinessItem>
+    domainReadiness(StageId stage) const = 0;
 };
 
 }  // namespace ui

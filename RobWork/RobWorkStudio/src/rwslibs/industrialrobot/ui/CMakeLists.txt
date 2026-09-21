@@ -86,12 +86,19 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 #   - src/ParamTablePanel.cpp＝参数表面板实现（UI-T08——表单公共件的第一
 #     渲染面：筛选行＋四列表格〔值｜单位同显＋状态列就地错误〕＋非模态
 #     确认区＋剪贴板批量粘贴＋可选开发诊断开关；GUI 只渲染不持语义）。
-# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十个源文件
-# 与私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
+#   - src/UiText.cpp＝工程用语文案体系实现（UI-T09——§3.5 键解析唯一出口
+#     ＋§6.6 数值带单位/不适用占位/零哈希守卫＋内建中文过渡文案表；公共
+#     契约头 include/sdurws/ird/ui/UiText.hpp 随 §16.7 v1.1 登记）。
+#   - src/StageNavigationModel.cpp＝阶段导航投影实现（UI-T09——§10.2
+#     IStageNavigationModel＋§6.4 呈现合成与导航时序＋§6.5 StageStatusModel
+#     汇聚＋观察者分发；公共契约头 include/sdurws/ird/ui/
+#     IStageNavigationModel.hpp 随 §16.7 v1.1 登记；零 Qt——模型层可测）。
+# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十二个源
+# 文件与私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
 # （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
 # 槽声明需求（ui.md §10.1 v0.5 登记；命令面板键盘交互同款——v0.8 复核；
-# 策略摘要卡同款复核——v0.9；参数表面板同款复核——v1.0：就地编辑经
-# itemChanged＋lambda 接线、确认区按钮经 clicked＋lambda，零子类化）。
+# 策略摘要卡同款复核——v0.9；参数表面板同款复核——v1.0；UiText/阶段导航
+# 同款复核——v1.1：纯模型 TU，零 Qt include——L2 红线自查）。
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
@@ -103,7 +110,9 @@ add_library(sdurws_ird_ui STATIC
     src/CommandPalette.cpp
     src/PolicySummaryCard.cpp
     src/FormEditCommon.cpp
-    src/ParamTablePanel.cpp)
+    src/ParamTablePanel.cpp
+    src/UiText.cpp
+    src/StageNavigationModel.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -249,6 +258,10 @@ endmacro()
 #     仅投影（KIN-12）/非法输入就地原因保留原值/表单级确认应用与错误
 #     阻断（UX-07）/批量粘贴影响明细/筛选/错误定位/取消恢复/非模态
 #     静态红线/高级面板字段集（UX-04）/装配契约 fail-fast（UI-T08）。
+#   - StageNavigationModelTest.cpp＝七阶段状态投影矩阵与门控注入/导航
+#     允许拒绝时序与就地提示/只读查看路径/StageStatusModel 单侧冻结汇聚/
+#     装配 fail-fast/UiText 键解析与替换纪律与零内部名断言（UI-STG-1/2、
+#     §6.5、N-11、UX-02——UI-T09）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -258,7 +271,8 @@ add_executable(sdurws_ird_ui_test
     test/CommandRegistryModelTest.cpp
     test/ShortcutRegistryModelTest.cpp
     test/PolicySummaryCardTest.cpp
-    test/FormEditModelTest.cpp)
+    test/FormEditModelTest.cpp
+    test/StageNavigationModelTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
