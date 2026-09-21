@@ -2880,6 +2880,16 @@
       "title": "TaskPresentation.cpp refresh() 注释与实现不一致：注释声称「进度基线并入：已展示值按三规则守恒（refresh 不回退显示——乱序快照不得倒退进度条，与 pollOnce 同纪律）」，但同 attempt 内较低 percent 的新快照会无条件覆盖展示值（mergeProgressDecision 以 nullopt 基线调用恒 Accept〔:374~377 死调用〕，既有展示进度仅在「新快照无进度」时回填 :381~386）；§9.4 单调规则的契约句写的是 200 ms 轮询合并路径（pollOnce 实现正确且 ProgressMonotonicDropRegressionAndIdempotent_UI_TSK_5 钉住），刷新路径不受契约句约束，但注释声明强于实现，后续维护者可能据注释依赖该守恒",
       "owner": "ui 单元实施者（下一增量触碰 TaskPresentation.cpp 时二选一：refresh 并入时以既有展示值为基线调 mergeProgressDecision〔AttemptReset 仍重置〕，或修正注释收窄声明范围）",
       "resolution": "注释准确性问题、非行为缺陷（无契约句违反、无测试失败）：不阻塞 UI-T13 合入（attempt 1 verdict=pass）；随下次 ui 单元任务增量修订顺手处置并同步 §16.7 登记。编号顺延自 F-285。"
+    },
+    {
+      "id": "F-287",
+      "source": "traceability/acceptance/UI-T14-20260922.md §4.10/问题清单（attempt 1，verdict=pass，2026-09-22；送验对象 4f74ec22a200565c74da81b7aa679d8228f4c7d8，分支 wp10-t14）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "F-010/F-283/F-284 家族复踩（UI 系连续第 9 例）：UI-T14 留痕提交 4f74ec22 正文声称归档 traceability/builds/wp10-t14/ 下原始日志（ird_gates-integration/base/smoke.log×3、ctest 双标签日志、控制台日志、构建日志两件、validate-task.log），实际 .log 零入库（.gitignore:87 全局 *.log 规则 F-010 根因未除，未 add -f）；同声称面另有两处清单失准——『ird-test-report.json 五件』实际在库 6 件（集成＋冒烟×model/contract/gui），『三目标 gtest XML（双模式）』实际在库 5/6（集成 sdurws_ird_ui_test.xml 缺席，仅冒烟件在库）；实际入库 15 件（ird-test-report×6＋gtest XML×5＋gates-hit-set×3＋gate-registrations.md）。验证结论本身（双模式构建零 error、154＋22＋27/28、ird_gates 恰增 3 条唯一 SUB、validate-task PASS）经本验收独立复现全部属实，不构成粉饰",
+      "owner": "治理（.gitignore 对 traceability/** 挂 !*.log 白名单豁免——F-010 根因一次性处置）＋ui 单元实施者（后续任务提交前按 .gitignore 实际效果核对提交信息留痕清单与入库清单一致）",
+      "resolution": "与 F-274/F-276/F-279/F-283/F-284 同口径：不单独返工、不阻塞 UI-T14 合入（attempt 1 verdict=pass）；建议治理任务一次性解决 F-010 根因后本家族自动消账。编号顺延自 F-286。"
     }
   ]
 }
