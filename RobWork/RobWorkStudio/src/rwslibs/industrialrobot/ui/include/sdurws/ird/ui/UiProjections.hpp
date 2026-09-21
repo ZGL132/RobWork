@@ -29,6 +29,15 @@
  *     （PolicyThresholdProjection＋PolicySummaryProjection 逐阈值字段展开
  *     ——"首消费细化"机制兑现：UI-T03 计数形态改由逐字段派生，聚合不漂移；
  *     C-10 端口返回值的呈现面，冻结基准 policy.md §4.3/§4.4/§10.6）。
+ *   - UI-T11 增量（登记 ui.md §16.7 v1.3）：会话生命周期投影族——锁持有者
+ *     投影（project::LockInfo 语义锚）、只读打开成因词表与横幅投影
+ *     （PM-07/§5.3 显示差异：actionKind 逐场景区分）、打开结果投影
+ *     （OpenStoreResult 语义锚，INV-SES-1 writable 唯一数据源）、草稿行/
+ *     任务行投影（关闭对话框数据装配的行模型——project DraftInfo／
+ *     execution TaskSnapshot 语义锚，PM-03 清单）、统一确认对话框数据/
+ *     决议/结果值（§5.4 S1/S2 时序：草稿三选＋任务二选）、强制结束确认
+ *     数据（§5.6 T_force——P-UI-8 默认保守值，装配期可配）与已释放上下文
+ *     提示（UI-SESSION-CONTEXT-INVALID 呈现面，§5.3/§5.7 不重试）。
  *
  * 背景说明（为什么状态栏输入是"投影"而不是 project 头文件里的类型）：
  *   ui 产品面对 project 单元零链接零 include（O-31/ARCH §3.5），而状态栏/
@@ -54,6 +63,7 @@
 #include <sdurws/ird/core/Evaluation.hpp>  // core::TaskState/TaskOutcome/EngineeringStatus（表内登记边：任务轴九态/结局/工程判定词表）
 #include <sdurws/ird/core/Identity.hpp>    // core::ProjectId（P-PR-1 同案：身份类型与 core 契约同一，不本地重定义）
 #include <sdurws/ird/diagnostics/Catalog.hpp>  // diagnostics::DiagProjectionItem（表内登记边：failed 态"附定位与修复建议"的呈现载体）
+#include <sdurws/ird/ui/UiTypes.hpp>       // TextKey（§3.5 文案键别名唯一定义点——本头键族字段取用，UI-T11 增量）
 
 namespace sdurws::ird {
 namespace ui {
@@ -836,6 +846,379 @@ unsatisfiedEvidenceItems(const EvidenceManifestProjection& manifest);
  *       （清单原样拷贝——调用方控制快照规模）。
  */
 StatusWordProjection evaluateStatusWord(const StatusFacts& facts);
+
+// =====================================================================
+// 会话生命周期投影族（UI-T11——§5 会话/项目/存储上下文生命周期）
+// =====================================================================
+//
+// 本节背景（O-31 裁决载体——为什么"打开结果/锁信息/任务行"是投影）：
+//   §5 会话状态机的数据源是对端类型：project::OpenStoreResult/LockInfo/
+//   DraftInfo 与 execution::TaskSnapshot（§3.2 冻结基准）。按 O-31 裁决
+//   （DTB §4，2026-09-19），对端类型不直接进入 ui 头文件——本节以**值投影**
+//   承载同一语义（投影≠重定义：字段语义逐条锚定对端卡原文，NFR-MNT-03
+//   单一权威不变），L5 应用壳装配期把对端打开流程的产出翻译成本投影后经
+//   ui 自有会话端口（UiPorts.hpp 的 IUiStoreFactoryPort/IUiProjectStorePort
+//   /IUiDraftQueryPort/IUiSessionTaskPort）注入 UiSessionController。
+//   对端锚点语义变更时投影随单元卡增量修订同步。
+
+/**
+ * @brief 锁持有者记录的 ui 侧投影（§5.3 锁竞争横幅的数据源——冻结基准
+ *        project.md §5.1 LockInfo.holder/LockHolderRecord，O-31 值投影）。
+ *
+ * 字段语义锚点（不改义）：pid/host＝持有写锁进程的进程号与主机名
+ * （LockHolderRecord 的呈现字段）——UI-SES-2 观测点"横幅含 PID"的数据面；
+ * 诊断 PRJ-LOCK-HELD（category permission-or-lock，project 产出）与本投影
+ * 同源（OpenStoreResult.lockInfo），ui 只呈现不判定（写权限判定权威在
+ * project 排他锁，INV-SES-1）。
+ */
+struct LockHolderProjection {
+    /// 持锁进程号（OS PID；0＝不可得——呈现"未知进程"，不虚构数值）。
+    std::uint64_t pid = 0;
+    /// 持锁主机名（UTF-8；本机持锁时为本地主机名——LockHolderRecord 原样）。
+    std::string host;
+};
+
+/**
+ * @brief 只读打开成因词表（§5.3 打开期错误表前三行的 ui 侧判别——PM-07）。
+ *
+ * 三值与 §5.3 表行一一对应（诊断码/StoreError token 为对端权威，本词表
+ * 只承载**呈现判别**——横幅文案与处置动作随成因区分，UI-SES-3 的
+ * "显示差异"观测点）。触发条件＝打开结果 writable=false（INV-SES-1），
+ * 成因由 L5 适配器从对端 StoreError/lockInfo 翻译，ui 不反推。
+ */
+enum class ReadOnlyOpenCause : std::uint8_t {
+    LockHeld,     ///< 锁被持（第二实例）——PRJ-LOCK-HELD＋横幅含 PID（§5.3 行 1）
+    MediaReadOnly,///< 介质只读——StoreError media-read-only（§5.3 行 2）
+    AccessDenied, ///< 权限不足——StoreError access-denied（§5.3 行 3）
+};
+
+/**
+ * @brief 只读打开提示横幅投影（§5.3 显示差异的值承载——UI-SES-2/3）。
+ *
+ * actionKindTokens 语义锚点（§5.3 表"显示"列原文，逐场景冻结）：
+ *   - LockHeld → {"contact-holder"}（联系持有者/以只读继续）；
+ *   - MediaReadOnly → {"retry-readonly"}（以只读重试/继续）；
+ *   - AccessDenied → {"contact-holder","inspect-resource"}（§5.3 行 3
+ *     双动作原文）。
+ * token 词表＝diagnostics §4.4 动作族（actionKindToken 机器锚点同族——
+ * PermissionOrLock 行首动作 retry-readonly＋呈现层细分 contact-holder/
+ * inspect-resource 的同表拆分），字符串直用不镜像枚举（避免双权威，
+ * CurrentnessProjection::Reason::kindToken 同案）。
+ *
+ * messageKey/messageParams：横幅主文案键与位置参数（UX-02 文案键体系——
+ * 键冻结、值归文案资源；锁竞争场景的参数含 PID/host 文本，锁横幅含 PID
+ * 是 UI-SES-2 的观测点）。键值经 UiText::resolve 解析（§3.5 唯一出口）。
+ */
+struct ReadOnlyBannerProjection {
+    /// 只读成因（判别轴——三值词表见类型注释）。
+    ReadOnlyOpenCause cause = ReadOnlyOpenCause::MediaReadOnly;
+    /// 处置动作族 token（§5.3 逐场景词表；序＝表列原文序）。
+    std::vector<std::string> actionKindTokens;
+    /// 锁持有者（cause==LockHeld 时非空——横幅含 PID 的数据面；其余成因空）。
+    std::optional<LockHolderProjection> lockHolder;
+    /// 横幅主文案键（§3.5 键体系；解析经 UiText）。
+    TextKey messageKey;
+    /// 主文案位置参数（先渲染后传入——数值/主机名参数由装配方渲染为文本）。
+    std::vector<std::string> messageParams;
+};
+
+/**
+ * @brief 只读横幅装配（§5.3 显示差异表的唯一实现点——纯函数）。
+ *
+ * 为什么是纯函数而不是控制器私有逻辑：§5.3 表是逐场景冻结的映射
+ * （成因→文案键＋动作族），单一权威实现便于模型层直接断言（UI-SES-2/3
+ * 观测点"诊断 category/文案键"），且打开成功路径与后续横幅重放共用
+ * （同输入同输出——NFR-COR-02）。
+ *
+ * @param cause      [in] 只读成因（writable=false 时的判别值——INV-SES-1
+ *                   保证调用前已有打开结果事实，本函数不复判写权限）
+ * @param lockHolder [in] 锁持有者（LockHeld 时必填——缺省＝不可得，横幅
+ *                   PID 段按"未知进程"呈现；其余成因传 nullopt）
+ * @return 横幅投影（文案键/动作族随成因查 §5.3 表——见类型注释词表）
+ */
+inline ReadOnlyBannerProjection
+assembleReadOnlyBanner(ReadOnlyOpenCause cause,
+                       std::optional<LockHolderProjection> lockHolder)
+{
+    ReadOnlyBannerProjection banner;
+    banner.cause = cause;
+    banner.lockHolder = std::move(lockHolder);
+    // 逐场景映射（§5.3 表行 1~3 原文——文案键与动作族成对冻结）。
+    switch (cause) {
+    case ReadOnlyOpenCause::LockHeld:
+        // "项目正被进程 PID=<pid>（<host>）编辑，已以只读打开"——参数由
+        // 调用方渲染后置入（UX-02：数值先经 formatQuantityText/文本化）。
+        banner.messageKey = "ui.session.readonly.lock-held.banner";
+        banner.actionKindTokens = {"contact-holder"};
+        break;
+    case ReadOnlyOpenCause::MediaReadOnly:
+        // "存储介质为只读"＋(只读)徽标（§5.3 行 2；徽标随 writable 投影）。
+        banner.messageKey = "ui.session.readonly.media-readonly.banner";
+        banner.actionKindTokens = {"retry-readonly"};
+        break;
+    case ReadOnlyOpenCause::AccessDenied:
+        // "无访问权限"（§5.3 行 3——双动作族原文序）。
+        banner.messageKey = "ui.session.readonly.access-denied.banner";
+        banner.actionKindTokens = {"contact-holder", "inspect-resource"};
+        break;
+    }
+    return banner;
+}
+
+/**
+ * @brief 草稿清单行投影（关闭对话框草稿区的行模型——§5.4 S1 数据装配）。
+ *
+ * 语义锚点（不改义，O-31 值投影）：documentKey＝草稿文档标识（project.md
+ * §5.4 DraftInfo 的文档键）；displayName＝呈现名（UX-02 工程用语，域模块
+ * 显示名——禁哈希/内部名）；sessionDirty＝该模块会话脏标记（§8.5 会话级
+ * "未应用修改"位——行级展开）。[保存]/[放弃]的磁盘后果（saveAll(Manual)
+ * 落盘、磁盘草稿保留）归 DraftController（§8.6/UI-T12），本投影只装配
+ * **呈现事实**。
+ */
+struct DraftRowProjection {
+    /// 草稿文档键（project 词表——装配面不解析内容）。
+    std::string documentKey;
+    /// 呈现名（域模块显示名；UX-02 零哈希）。
+    std::string displayName;
+    /// 会话脏标记（true＝编辑后未落盘/未应用——§8.5）。
+    bool sessionDirty = false;
+};
+
+/**
+ * @brief 任务清单行投影（关闭对话框任务区的行模型——§5.4/§9.5）。
+ *
+ * 语义锚点（不改义，O-31 值投影）：
+ *   - identity＝core::TaskIdentity 五元组（表内登记边直用——TASK-03
+ *     请求/完成事件同一身份组，取消/强制终止请求按五元组寻址）；
+ *   - state＝core::TaskState 九态（§6.3 词表直用；关闭对话框任务区只装
+ *     非终态行——§9.5"过滤非终态"原文，装配方过滤）；
+ *   - archivePhaseToken＝归档阶段稳定 token（execution.md §9 词表
+ *     not-applicable/reserved/archiving/archived/archive-failed——对端
+ *     TaskSnapshot.archivePhase 的持久化形态，"已完成≠已归档"子标呈现，
+ *     §9.4；token 直用不镜像枚举，NFR-MNT-03）；
+ *   - labelKey＝九态短标签文案键（PM-03——state.<token>.label，经
+ *     taskStateLabelKey 取得）。
+ */
+struct TaskRowProjection {
+    /// 任务身份五元组（core 表内类型——取消/强杀请求的寻址键）。
+    core::TaskIdentity identity;
+    /// 任务九态（core 词表直用）。
+    core::TaskState state = core::TaskState::Queued;
+    /// 归档阶段 token（execution 词表；空串＝无归档语义——非正式评估任务）。
+    std::string archivePhaseToken;
+    /// 九态短标签文案键（PM-03——UiText 解析）。
+    TextKey labelKey;
+};
+
+// ---------------------------------------------------------------------
+// 打开结果投影（INV-SES-1 的唯一数据源——§5.2 Opening→Open* 迁移的输入）
+// ---------------------------------------------------------------------
+
+/**
+ * @brief 成功打开的项目事实（§5.3 打开期显示差异的判别输入）。
+ *
+ * 字段语义锚点（不改义——冻结基准 project.md §5.1 OpenStoreResult）：
+ *   - metadata.writable＝OpenStoreResult.writable 直读——**只读判定的唯一
+ *     数据源**（INV-SES-1 原文：ui 不以心跳、控件状态或"上次结果"推断
+ *     写权限；本字段是控制器 isReadOnlySession 的唯一输入，结构上不存在
+ *     第二来源）；
+ *   - readOnlyCause＝writable=false 时的成因判别（§5.3 行 1~3——锁竞争/
+ *     介质只读/权限不足，横幅与 actionKind 随之区分，UI-SES-2/3）；
+ *     writable=true 时必空（presence 纪律）；
+ *   - lockHolder＝LockHeld 成因时的持有者记录（§5.3 行 1"横幅含 PID"的
+ *     数据面；其余成因空）。
+ */
+struct OpenedProjectFacts {
+    /// 项目元数据（projectId/displayName/writable——ProjectMetadataView
+    /// 语义锚点，writable 即 INV-SES-1 唯一数据源）。
+    ProjectMetadataProjection metadata;
+    /// 只读成因（writable=false 时非空——§5.3 行 1~3 判别；true 时必空）。
+    std::optional<ReadOnlyOpenCause> readOnlyCause;
+    /// 锁持有者（readOnlyCause==LockHeld 时非空——PID/host 呈现面）。
+    std::optional<LockHolderProjection> lockHolder;
+};
+
+/**
+ * @brief 打开失败的事实（§5.3 行 6"打开校验失败"的错误页数据）。
+ *
+ * 语义锚点：errorCodeToken＝对端 StoreError 稳定 token（media-read-only/
+ * access-denied/format-legacy/schema-future/…——project.md StoreError
+ * 词表，token 直用不镜像枚举，NFR-MNT-03）；detail＝对端产出的人读摘要
+ * （呈现层原样显示，UX-02）；projectPath＝定位具体文件的路径（§5.3 行 6
+ * "错误页定位具体文件"原文）。失败时"当前项目不动"（PM-03）由控制器
+ * 状态机保证（Opening 失败→回原状态/NoProject，§5.2 图）。
+ */
+struct OpenStoreFailureFacts {
+    /// 对端错误稳定 token（StoreError 词表——错误页/诊断判别输入）。
+    std::string errorCodeToken;
+    /// 人读失败摘要（对端产出——呈现层原文显示不加工）。
+    std::string detail;
+    /// 项目路径（打开请求原样——错误页定位）。
+    std::string projectPath;
+};
+
+/**
+ * @brief 打开五步协议的结果投影（IUiStoreFactoryPort::open 的返回值——
+ *        OpenStoreResult 的 ui 侧承载，O-31）。
+ *
+ * ok==true 时 opened 有值且 failure 必空；ok==false 反之（presence 纪律
+ * 与对端 OpenStoreResult 的 store 空/非空二态一一对应）。值语义。
+ */
+struct OpenStoreOutcome {
+    /// 是否打开成功（false＝五步协议失败——错误页；true＝成功，含降级
+    /// 只读——PM-07 降级不是失败）。
+    bool ok = false;
+    /// 成功事实（INV-SES-1 数据源——ok 时有效）。
+    OpenedProjectFacts opened;
+    /// 失败事实（错误页数据——!ok 时有效）。
+    OpenStoreFailureFacts failure;
+};
+
+// =====================================================================
+// 统一确认对话框数据与决议（§5.4 S1/S2 时序——PM-03 草稿三选＋任务二选）
+// =====================================================================
+
+/**
+ * @brief 草稿处置二选（三选中的执行半区——取消是决议级，见 CloseDecision）。
+ *
+ * §5.4 S1 按钮语义（原文）：
+ *   - Save → DraftController.saveAll(Manual)（可写会话）→ 继续；
+ *   - Discard → 会话脏数据丢弃（磁盘草稿保留策略见 §8.6）→ 继续。
+ * 只读会话（writable=false）Save 不可选（§5.5：draft.save 为写操作禁用
+ * ——对话框数据装配时 saveDraftsAvailable=false 承载）。
+ */
+enum class DraftDisposition : std::uint8_t {
+    Save,    ///< 保存草稿（saveAll(Manual)——仅可写会话可选，§5.4/§5.5）
+    Discard, ///< 放弃会话脏数据（磁盘草稿保留——§8.6）
+};
+
+/**
+ * @brief 任务处置二选（§5.4 S1 任务区按钮——PM-03 内嵌清单的处置半区）。
+ *
+ * 语义锚点（§5.4 S1 原文）：
+ *   - Wait → 保持进度可见直到 store.closed()（§5.6 有界面反馈＋归档不
+ *     被催促——SA-17/A7：UI 会话结束≠存储上下文结束）；
+ *   - CooperativeCancel → 对每个非终态任务 ITaskController::requestCancel
+ *     （2 s 进入 Canceling/10 s 收敛由 execution 保证——NFR-PERF-02；
+ *     ui 只发请求，不等待收敛，收敛观察归 Draining 轮询）。
+ * 关闭对话框**不提供强杀选项**（§9.4"关闭对话框不提供强杀选项"原文——
+ * 强杀只在 §5.6 T_force 强制结束路径，带独立确认）。
+ */
+enum class TaskDisposition : std::uint8_t {
+    Wait,             ///< 等待归档完成（进度可见——§5.6 防线 1）
+    CooperativeCancel,///< 协作取消全部非终态任务（NFR-PERF-02 有界协议）
+};
+
+/**
+ * @brief 统一确认对话框的数据装配（§5.4 S1/S2"数据装配"框的值承载）。
+ *
+ * 装配来源（§5.4 S1 原文两行）：草稿区＝DraftService::list(branch)＋会话
+ * 脏模块；任务区＝ITaskScheduler::tasksByProject(pid) 过滤非终态（9 态
+ * 短标签）。三个可用位承载 §5.5/§9.4 的按钮可用性：只读会话保存不可选、
+ * 无非终态任务时取消入口可选但空转（列表空＝无可取消对象）。
+ *
+ * 值语义；对话框呈现层只渲染本数据（控件不反向读会话——ARC-02 同口径）。
+ */
+struct CloseDialogData {
+    /// 关联项目显示名（对话框标题区——UX-02 工程用语）。
+    std::string projectDisplayName;
+    /// 草稿行集（DraftService::list＋会话脏模块——可空＝无未应用草稿）。
+    std::vector<DraftRowProjection> draftRows;
+    /// 非终态任务行集（tasksByProject 过滤非终态——可空＝无在途任务）。
+    std::vector<TaskRowProjection> taskRows;
+    /// 会话脏标记（§8.5 会话级"未应用修改"——与磁盘草稿行集并列的独立
+    /// 事实位，放弃处置的清除对象；不并入行集——不虚构磁盘草稿行）。
+    bool sessionDirty = false;
+    /// [保存草稿]是否可选（writable 会话才可选——§5.4"[保存草稿]（可写
+    /// 会话）"原文；只读会话＝false，§5.5 draft.save 禁用）。
+    bool saveDraftsAvailable = false;
+    /// 任务区是否为空（true＝无在途任务——"等待"直接进入 Draining）。
+    bool noActiveTasks = false;
+};
+
+/**
+ * @brief 统一确认对话框的用户决议（§5.4 S1 按钮分支的输入值）。
+ *
+ * confirmed=false＝[取消]→ 回到原状态（中止——§5.4 S1 原文；此时其余
+ * 字段被忽略）。confirmed=true 时 draft/task 处置各取其一；字段合法性由
+ * UiSessionController::resolveCloseDialog 校验（只读会话选保存＝调用方
+ * 契约违约——fail-fast）。
+ */
+struct CloseDecision {
+    /// 是否确认（false＝[取消]——回到原状态，不执行任何处置）。
+    bool confirmed = false;
+    /// 草稿处置（confirmed 时有效；无草稿时取值无效果——幂等）。
+    DraftDisposition draft = DraftDisposition::Discard;
+    /// 任务处置（confirmed 时有效；无在途任务时取值无效果——幂等）。
+    TaskDisposition task = TaskDisposition::Wait;
+};
+
+/**
+ * @brief 关闭对话框决议的执行结果（§5.4 S1 各分支出口的值承载）。
+ *
+ * - Confirmed：处置执行完毕，会话已进入 Draining（或同步完成直达
+ *   Closed→NoProject——store 零在途时 subscribeClose 可能同步回调）；
+ * - Cancelled：[取消]——回到原状态（§5.4 S1"[取消]→回到原状态"原文）；
+ * - SaveFailed：saveAll(Manual) 报告失败——关闭中止、回到原状态（草稿
+ *   落盘失败的会话不允许静默丢草稿继续关闭——§5.4"保存→继续"的失败侧
+ *   保守出口；不虚构"已保存"）；
+ * - CandidateRejected：（仅切换流）候选项目五步协议验证失败——错误页，
+ *   A 界面会话不变（§5.4 S2"失败→错误页，A 界面会话不变"原文／PM-03
+ *   "候选验证成功才切"）。
+ */
+struct CloseDialogResolution {
+    /// 决议执行结果（四值词表见类型注释）。
+    enum class Status : std::uint8_t {
+        Confirmed,        ///< 处置执行完毕（会话已切换/已进入关闭流程）
+        Cancelled,        ///< 用户取消——回到原状态
+        SaveFailed,       ///< 草稿保存失败——关闭中止，回到原状态
+        CandidateRejected,///< 候选验证失败（仅切换流）——A 会话不变
+    };
+    /// 结果状态（默认 Cancelled＝"未决议"的安全空值）。
+    Status status = Status::Cancelled;
+    /// 候选验证失败信息（status==CandidateRejected 时非空——错误页数据：
+    /// 对端错误稳定 token＋项目路径，§5.3"错误页定位具体文件"）。
+    std::string candidateErrorCodeToken;
+    /// 候选项目路径（status==CandidateRejected 时非空——错误页定位）。
+    std::string candidatePath;
+};
+
+/**
+ * @brief 强制结束确认对话框数据（§5.6 防线 3——T_force 超时的转换确认）。
+ *
+ * §5.6 原文：等待超过阈值 T_force（默认 120 s，装配期可配；**具体值待
+ * 裁决 P-UI-8**）：对话框转为"强制结束并关闭"确认——执行 requestForce
+ * Terminate（任务记 Failed＋EX-FORCE-TERMINATED，最近检查点保留可续）＋
+ * L5 关闭控制器 abandonAll(ForceTerminated) 兜底。后果说明文案键告知
+ * "任务记 Failed、检查点保留"（§9.4 强杀后果行同源）。
+ */
+struct ForceCloseDialogData {
+    /// 关联项目显示名（确认框标题区——UX-02）。
+    std::string projectDisplayName;
+    /// 已等待时长文本（先渲染后传入——防线的界面反馈半区，§5.6 防线 1）。
+    std::string waitedText;
+    /// 仍处非终态的任务数（确认框影响面说明——渲染后传入）。
+    std::size_t activeTaskCount = 0;
+    /// 确认框主文案键（"强制结束并关闭"语义；解析经 UiText）。
+    TextKey messageKey;
+};
+
+/**
+ * @brief 已释放上下文的写请求提示（UI-SESSION-CONTEXT-INVALID 呈现面——
+ *        §5.3 行 4/§5.7/UI-SES-7/UI-LCY-1）。
+ *
+ * §5.3 行 4 原文：UI-SESSION-CONTEXT-INVALID 对话框："项目上下文已释放，
+ * 操作未执行"；建议重新打开；**不重试写**。"不重试"由结构保证：本提示
+ * 数据不携带任何可执行动作（无"重试"位——唯一建议是重新打开，编排归
+ * workflow，§5.3 行 4"入口编排归 workflow"同款分工），不缓存待写
+ * （§5.7"不重试、不缓存待写"原文）。
+ */
+struct ContextInvalidNotice {
+    /// 主文案键（"项目上下文已释放，操作未执行"——解析经 UiText）。
+    TextKey messageKey;
+    /// 建议文案键（"建议重新打开"——入口编排归 workflow）。
+    TextKey adviceKey;
+};
 
 }  // namespace ui
 }  // namespace ird

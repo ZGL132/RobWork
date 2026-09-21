@@ -19,6 +19,14 @@
  *     （UiPorts.hpp 的 IUiStageGate）与导航接口（IStageNavigationModel.hpp）
  *     双方都要消费这些值类型，公共值类型必须有双方都能 include 的第三头，
  *     否则两接口头互相 include 成环（§3.3 布局红线——UiTypes 即该第三头）；
+ *   - UI-T11 增量（§16.7 v1.3）：UI 会话状态机词表落位本头（§3.3
+ *     "UiSessionState 等本单元公共值类型"行的首消费兑现）——
+ *     UiSessionState（§5.2 七态状态机）/UiOpenMode（§5.2 打开请求模式，
+ *     project::OpenMode 的 ui 侧语义锚）/UiCloseIntent（§5.1 "UI 关闭
+ *     请求"行的两类触发：关项目/退应用）。落位于此而非
+ *     UiSessionController.hpp 的原因同上：C-3/C-8 会话端口（UiPorts.hpp）
+ *     与控制器接口双方都要消费这些词表，UiTypes 是双方都能 include 的
+ *     第三头（两接口头互相 include 成环的防线路径不变）；
  *   - NFR-MNT-03（词表唯一权威：本头是这些别名的唯一定义点，各公共头
  *     include 本头取用，禁止第二处重复定义）。
  *
@@ -174,6 +182,72 @@ struct StageReadinessSnapshot {
     std::vector<DomainReadinessItem> domains;
     /// 构建纪元（§6.2 会话纪元——单调 uint64，§6.5 原文注释"构建纪元"）。
     std::uint64_t epoch = 0;
+};
+
+// =====================================================================
+// UI 会话状态机词表（UI-T11 首消费落位——§5.2 七态状态机）
+// =====================================================================
+
+/**
+ * @brief UI 会话状态（§5.2 冻结七态——状态表行序即枚举序）。
+ *
+ * 语义锚点（不改义，NFR-MNT-03；逐态权威＝§5.2 状态表"进入条件/期间
+ * 允许/期间禁止"三列）：
+ *   - NoProject：启动/关闭完成——无项目首页（PM-10），项目作用域命令全禁；
+ *   - Opening：收到打开请求——五步协议①~④在 ProjectStoreFactory 内
+ *     （project.md §5.1），失败→错误页、不动当前项目（PM-03）；
+ *   - OpenWritable：打开成功且 writable=true——全部命令按可执行条件；
+ *   - OpenReadOnly：打开结果 writable=false（含请求可写被降级）——写命令
+ *     全禁（§7.6/§5.5），只读判定唯一数据源＝writable（INV-SES-1）；
+ *   - CloseConfirmed：统一确认对话框确认通过、对旧项目执行所选处置——
+ *     新任务/新命令提交禁止（Draining 前窗口内 project 亦拒绝新写）；
+ *   - Draining：requestClose() 已调用——只读显示旧项目，后台持有点保活
+ *     （INV-SES-3），销毁 ProjectStore 引用禁止；
+ *   - Closed：closed()==true——瞬态，立即转 NoProject/Opening（状态表
+ *     "期间允许：—（立即转 NoProject/Opening）"原文）。
+ *
+ * 状态迁移的唯一执行者是 UiSessionController（§5.2 状态机图）——词表本身
+ * 不携带迁移规则；呈现层禁止由本枚举反推业务判定（R-2 红线同案）。
+ */
+enum class UiSessionState : std::uint8_t {
+    NoProject,     ///< 无项目（首页 PM-10——§5.2 状态表行 1）
+    Opening,       ///< 打开中（五步协议执行期——行 2）
+    OpenWritable,  ///< 已打开/可写（writable=true——行 3）
+    OpenReadOnly,  ///< 已打开/只读（writable=false——行 4；INV-SES-1 唯一判定源）
+    CloseConfirmed,///< 关闭请求确认通过（对话框执行所选处置——行 5）
+    Draining,      ///< 等待归档/释放（requestClose 后 subscribeClose 前——行 6）
+    Closed,        ///< 已关闭（closed()==true；瞬态——行 7）
+};
+
+/**
+ * @brief 打开请求模式（§5.2 "openProject(path)" 的请求半区语义锚——
+ *        project::OpenMode 的 ui 侧承载，O-31 值投影词表）。
+ *
+ * 语义锚点（不改义，project.md §5.1 OpenMode 原文）：
+ *   - Writable＝请求写权限；锁竞争/介质只读/权限不足时**失败降级只读、
+ *     不阻塞等待**（PM-07）——降级事实由打开结果的 writable=false 表达，
+ *     ui 不预判（INV-SES-1：OpenStoreResult.writable 是唯一数据源）；
+ *   - ReadOnly＝显式只读打开（可查看、禁编辑与应用提交——project.md
+ *     §9.2③）。
+ */
+enum class UiOpenMode : std::uint8_t {
+    Writable, ///< 请求写权限（失败降级只读——PM-07 不阻塞等待）
+    ReadOnly, ///< 显式只读打开（§5.5 写入口全禁的会话）
+};
+
+/**
+ * @brief 关闭/退出请求意图（§5.1 "UI 关闭请求"行＋§5.4 S1 时序的两类
+ *        触发：关项目与退应用）。
+ *
+ * 两者走同一条统一确认对话框（草稿三选＋任务二选，PM-03）与同一条
+ * Draining 协议（§5.6）；差异只在关闭完成后的去向：CloseProject 回
+ * NoProject 首页，ExitApplication 置退出就绪位——scheduler.shutdown(
+ * DrainPolicy) 由 L5/workflow 在退出路径调用（§9.5"应用退出时由
+ * L5/workflow 调"原文；ui 不持有调度器端口，§11.5 分工表）。
+ */
+enum class UiCloseIntent : std::uint8_t {
+    CloseProject,   ///< 关闭当前项目（§5.4 S1——完成后回 NoProject）
+    ExitApplication,///< 退出应用（§5.4 S1 附加行——完成后果置退出就绪位）
 };
 
 }  // namespace ui
