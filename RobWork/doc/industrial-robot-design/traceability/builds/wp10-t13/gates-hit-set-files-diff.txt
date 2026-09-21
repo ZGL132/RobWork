@@ -1,0 +1,4 @@
+3a4
+> ui/src/CommandInteractionBridge.cpp
+6a8
+> ui/src/DiagnosticPresentation.cpp
