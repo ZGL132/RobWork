@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "统一工程策略入口与策略编辑适配器（阶段 A：摘要只读卡）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03", "POL-T05", "PRJ-T10", "PRJ-T11"],
   "requirements": ["UX-08", "ARC-05"],
   "designRefs": ["units/ui.md#13", "units/ui.md#4.6", "units/ui.md#6.7", "units/policy.md#10.6"],
