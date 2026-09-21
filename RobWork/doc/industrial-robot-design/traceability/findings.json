@@ -2749,6 +2749,26 @@
       "title": "CMakeLists 注释枚举计数漂移（偏差先于本任务存在、本任务增量改写时沿袭）：ui/CMakeLists.txt AUTOMOC 复核注释行「十个源文件与私有头零 Q_OBJECT 声明」的源文件计数与 src/ 实际 11 个产品 TU 不符——base（wp10-t07 合入后）同行写「八个源文件」时实际已有 9 TU，本任务 +2 增列时按同口径同步改写（八→十）未校准绝对值；实质性主张「零 Q_OBJECT」经验收者全文件 grep 证实为真，AUTOMOC 关闭决策不受影响，零行为影响（AGENTS §2「注释随代码更新」口径的边缘项）",
       "owner": "ui 单元实施者（后续触碰该注释块时随手校准为实际 TU 数）",
       "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数（或删去具体数字改为「产品源集与私有头」定性表述）；不单独返工，不阻塞 UI-T08 合入（attempt 1 verdict=pass）。编号顺延自 F-272。"
+    },
+    {
+      "id": "F-274",
+      "source": "traceability/acceptance/UI-T09-20260921.md §4.10（attempt 1，verdict=pass，2026-09-21；送验对象 e4b30c7778ed2d000077b95ce12ceea5a09ffba4，分支 wp10-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-010/F-077/F-081/F-266/F-268/F-270 家族复踩（UI 系连续第 4 例）：留痕提交 e4b30c77 正文与 traceability/builds/wp10-t09/README-evidence.md 索引声称归档集成构建/冒烟配置/冒烟构建三件 .log、ird_gates 双形态 .log、validate-task.log 及三测试 console.log 等，实际入库仅 13 件（README＋gates-hit-set 2＋ird-test-report 5＋gtest XML 5）——.log 文件因 F-010 .gitignore 全局 *.log 规则零件入库；验证结论本身（双模式构建 exit=0 零 error、77＋3＋25 双模式全绿、ird_gates 命中集 HIT-SET-IDENTICAL 41=41、validate-task/doc PASS）经本验收独立复现全部属实，不构成粉饰",
+      "owner": "实施者（后续任务提交前按 .gitignore 实际效果核对 README/提交正文与入库清单一致，或登记 .gitignore 例外将关键 .log 纳入版本控制——F-010 根因处置归治理任务）",
+      "resolution": "与 F-081/F-266/F-268/F-270 同口径：不单独返工、不阻塞合入；建议治理任务一次性解决 F-010 根因（traceability/** 下 .log 例外规则）后本家族自动消账。编号顺延自 F-273。"
+    },
+    {
+      "id": "F-275",
+      "source": "traceability/acceptance/UI-T09-20260921.md §4.7（attempt 1，verdict=pass，2026-09-21；送验对象 e4b30c7778ed2d000077b95ce12ceea5a09ffba4，分支 wp10-t09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-273 复踩（同一注释行第二次沿袭未校准）：ui/CMakeLists.txt AUTOMOC 复核注释行随本任务 +2 增列改写为「十二个源文件与私有头零 Q_OBJECT 声明」，而 src/ 实际 13 个产品 TU（本任务新增 UiText.cpp/StageNavigationModel.cpp 后 11→13，计数沿袭上一次的差一漂移：十 vs 11→十二 vs 13）；实质性主张「零 Q_OBJECT」经验收者全文件 grep 证实为真（两新 TU 零 Qt include、零 Q_OBJECT），AUTOMOC 关闭决策不受影响，零行为影响",
+      "owner": "ui 单元实施者（后续触碰该注释块时随手校准为实际 TU 数）",
+      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-274。"
     }
   ]
 }
