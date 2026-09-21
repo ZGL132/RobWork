@@ -2769,6 +2769,36 @@
       "title": "F-273 复踩（同一注释行第二次沿袭未校准）：ui/CMakeLists.txt AUTOMOC 复核注释行随本任务 +2 增列改写为「十二个源文件与私有头零 Q_OBJECT 声明」，而 src/ 实际 13 个产品 TU（本任务新增 UiText.cpp/StageNavigationModel.cpp 后 11→13，计数沿袭上一次的差一漂移：十 vs 11→十二 vs 13）；实质性主张「零 Q_OBJECT」经验收者全文件 grep 证实为真（两新 TU 零 Qt include、零 Q_OBJECT），AUTOMOC 关闭决策不受影响，零行为影响",
       "owner": "ui 单元实施者（后续触碰该注释块时随手校准为实际 TU 数）",
       "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T09 合入（attempt 1 verdict=pass）。编号顺延自 F-274。"
+    },
+    {
+      "id": "F-276",
+      "source": "traceability/acceptance/UI-T10-20260921.md §4.9/§4.10（attempt 1，verdict=pass，2026-09-21；送验对象 afdfae98e14bc6b465d1de08fdf1fc69cbb96127，分支 wp10-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-010/F-077/F-081/F-266/F-268/F-270/F-274 家族复踩（UI 系连续第 5 例）：留痕提交 afdfae98 正文与 traceability/builds/wp10-t10/README-evidence.md 索引声称归档集成构建/冒烟配置/冒烟构建三件 .log、ird_gates-integration/base/smoke 三件 .log、validate-task.log 及三测试 console.log 等，实际入库仅 16 件（README＋gates-hit-set 2＋gate-registrations 1＋ird-test-report 5＋gtest XML 5＋ui.md 属实现提交）——.log 文件因 F-010 .gitignore:87 全局 *.log 规则零件入库（验收者 git check-ignore -v 实证）；验证结论本身（双模式构建 exit=0 零 error、86＋3＋28 双模式全绿、ird_gates 双态亲跑 42=41＋1 恰增 1 处逐码一致、validate-task/doc PASS）经本验收独立复现全部属实，不构成粉饰",
+      "owner": "实施者（后续任务提交前按 .gitignore 实际效果核对 README/提交正文与入库清单一致，或登记 .gitignore 例外将关键 .log 纳入版本控制——F-010 根因处置归治理任务）",
+      "resolution": "与 F-081/F-266/F-268/F-270/F-274 同口径：不单独返工、不阻塞合入；建议治理任务一次性解决 F-010 根因（traceability/** 下 .log 例外规则）后本家族自动消账。编号顺延自 F-275。"
+    },
+    {
+      "id": "F-277",
+      "source": "traceability/acceptance/UI-T10-20260921.md §4.7（attempt 1，verdict=pass，2026-09-21；送验对象 afdfae98e14bc6b465d1de08fdf1fc69cbb96127，分支 wp10-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "F-273/F-275 复踩（同一注释行第三次沿袭未校准）：ui/CMakeLists.txt AUTOMOC 复核注释行仍写「十二个源文件与私有头零 Q_OBJECT 声明」，而 add_library 实际 14 个产品 TU（本任务新增 AboutDialog.cpp 后 13→14；本任务在该注释块内增列 AboutDialog.cpp 说明段与 v1.2 复核尾注但计数再次未校准）；实质性主张「零 Q_OBJECT」经验收者 grep 证实为真（新增 TU 零信号槽声明，Qt 交互全经虚函数覆盖与 lambda 接线），AUTOMOC 关闭决策不受影响，零行为影响",
+      "owner": "ui 单元实施者（后续触碰该注释块时随手校准为实际 TU 数）",
+      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-276。"
+    },
+    {
+      "id": "F-278",
+      "source": "traceability/acceptance/UI-T10-20260921.md §4.8（attempt 1，verdict=pass，2026-09-21；送验对象 afdfae98e14bc6b465d1de08fdf1fc69cbb96127，分支 wp10-t10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-21",
+      "title": "ui/include/sdurws/ird/ui/UiPorts.hpp 文件尾换行符在 UI-T10 增量中丢失（diff 实证 \\ No newline at end of file——此前版本有尾换行）：POSIX 文本文件惯例破坏，跨工具链/编辑器后续触碰该文件时产生尾行噪声 diff",
+      "owner": "ui 单元实施者（下次触碰 UiPorts.hpp 时恢复文件尾换行）",
+      "resolution": "随该文件下次增量修订恢复尾换行（一行修复）；不单独返工，不阻塞 UI-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-277。"
     }
   ]
 }
