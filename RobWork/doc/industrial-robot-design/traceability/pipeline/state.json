@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 262,
+  "tickCount": 263,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-21T21:06:03+08:00",
+    "updatedAt": "2026-09-21T23:36:03+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1537,6 +1537,18 @@
       "acceptanceRecord": "traceability/acceptance/UI-T11-20260921-r2.md",
       "mergedAt": "2026-09-21",
       "failReason": "验收 attempt2 pass（attempt1＝验收派发中断：子代理完成记录提交 e328d07a 于 acc/UI-T11/1 后在 evidence push 重试阶段失联未返回 verdict、origin 无该分支——零返工，fix 保持 0；孤儿分支 acc/UI-T11/1 未删留所有者处置）；实施段 push 遭代理中断，编排者后台重试第 4 次补推成功（UI-T07 先例同型）；F-277 循 attempt2 记录 §4.8 消账注记随 ⑤ 置 fixed（fixedBy=45baa315）；收尾 ② 前工作树曾遗留检出 wp10-t11，切回 redesign-main 后方执行合并（EX-T06 系风险点，本次零误落）"
+    },
+    {
+      "task": "UI-T12",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3c51a1c5fa27cf9119c4544bfffaf850d73fed45",
+        "417cfa5ab3200a28d5d6fdcb19e77c25fd1a7f23"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T12-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ① 前工作树曾被实施子代理遗留检出 wp10-t12，切回 redesign-main 后方执行收尾（EX-T06 系风险点，本次零误落）；②③ 合并零冲突，findings.json 并集例外未触发；验收建议级 F-281/F-282（UiPorts.hpp／UiSessionController.hpp 尾换行未恢复，F-278 同族复踩）／F-283（README-evidence 索引引用 .log 未入库，F-010 家族第 7 例）已随 evidence 转登 findings.json，无 §4.8 消账指令"
     }
   ],
   "policy": {
@@ -1563,11 +1575,6 @@
   },
   "queue": [
     {
-      "taskId": "UI-T12",
-      "contractPath": "tasks/foundation/UI-T12.json",
-      "branch": "wp10-t12"
-    },
-    {
       "taskId": "UI-T13",
       "contractPath": "tasks/foundation/UI-T13.json",
       "branch": "wp10-t13"
@@ -1586,5 +1593,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "000e140a-3537-432e-bc2d-964848c4563e"
+  "tickToken": "ae497a0f-096b-4668-a78f-69dcb063fefc"
 }

@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "DraftController（未保存标记/草稿投影/会话状态机界面侧）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03", "PRJ-T12"],
   "requirements": ["PM-04"],
   "designRefs": [
