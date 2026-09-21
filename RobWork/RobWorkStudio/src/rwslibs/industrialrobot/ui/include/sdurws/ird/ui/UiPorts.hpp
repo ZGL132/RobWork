@@ -25,6 +25,11 @@
  *     IUiDomainReadinessSource（§6.5 StageStatusModel 汇聚输入——域插件经
  *     注册端口上报的只读投影；登记 ui.md §16.7 v1.1）。两端口在 WP-22-T03
  *     产出前以桩承载（契约卡行"未产出→桩"口径；ui 测试以可控替身注入）。
+ *     UI-T10 增量冻结：关于框数据源端口 IUiAboutDataSource（§11.4 关于
+ *     对话框的装配报告半区＋冻结版本基线半区——版本数据由 L5 提供、ui 呈
+ *     现，NFR-DEP-05；登记 ui.md §16.7 v1.2）。WP-24-T01 版本基线产出前
+ *     available=false 承载（版本值零虚构）；装配器落地前报告为空集
+ *     （清单＝白名单占位行）。
  *
  * 背景说明（为什么不直接 include policy::IPolicyProvider / runtime::
  * IRuntimeNameResolver）：ARCH §3.5 依赖白名单只有 ui→core、ui→diagnostics
@@ -46,6 +51,7 @@
 #include <vector>
 
 #include <sdurws/ird/core/Identity.hpp>        // core::ObjectId（C-11 端口入参——身份类型与 core 契约同一）
+#include <sdurws/ird/ui/AboutDialog.hpp>       // PluginAssemblyReport/AboutVersionBaseline（IUiAboutDataSource 值面——§10.9/§11.4）
 #include <sdurws/ird/ui/UiProjections.hpp>     // PolicySummaryProjection（C-10 端口返回的值投影）
 #include <sdurws/ird/ui/UiTypes.hpp>           // StageId/StageViewStatus/DomainReadinessItem/StageReadinessSnapshot/TextKey（C-12 端口值面——§3.3 公共值类型头）
 
@@ -376,6 +382,60 @@ public:
      */
     virtual std::vector<DomainReadinessItem>
     domainReadiness(StageId stage) const = 0;
+};
+
+// =====================================================================
+// §11.4 关于框数据源端口（装配报告半区＋冻结版本基线半区；UI-T10 首消费
+// 冻结，登记 ui.md §16.7 v1.2）
+// =====================================================================
+
+/**
+ * @brief 关于对话框数据的 ui 自有最小端口（L5 适配装配器与冻结版本基线
+ *        ——§11.4"版本数据由 L5 提供、ui 呈现"的注入面）。
+ *
+ * 语义冻结（不改义——ui.md §11.4/§10.9 原文）：
+ *   - assemblyReports：装配报告查询（§10.9 IPluginUiRegistrar::
+ *     assemblyReports() 同名同义——装配期累积、每插件恰好一条）。端口
+ *     返回值形状＝PluginAssemblyReport（AboutDialog.hpp 承载的 §10.9 冻结
+ *     形状），适配器从装配器报告直拷，不改字段语义；真实注册端口
+ *     IPluginUiRegistrar 随装配任务落位后，L5 适配器改绑其查询（适配点
+ *     单一，ui 侧零改动）。
+ *   - versionBaseline：冻结版本基线投影（NFR-DEP-05——基线权威记录在
+ *     L5/部署侧，本端口只回传已登记的呈现值）。WP-24-T01 基线产出前以
+ *     available=false 承载（版本区呈现「未装载」占位——版本值零虚构）。
+ *
+ * 为什么两个方法在一个端口：两者的唯一消费者都是关于对话框（§11.4 单一
+ * 呈现面），装配期一次性注入即可；变更节奏差异（报告随装配累积、基线
+ * 冻结不变）不影响关于框"打开时现取现用"的消费形态（不缓存、不订阅）。
+ *
+ * 线程约束：调用一律发生在 UI 线程（§3.4 M-1 消费点——help.about 命令
+ * 处理器打开关于框时现取）；实现应返回快照值（短临界区——NFR-PERF-01）。
+ */
+class IUiAboutDataSource {
+public:
+    virtual ~IUiAboutDataSource() = default;
+
+    /**
+     * @brief 取装配报告集（§10.9 assemblyReports 语义的 ui 侧投影）。
+     *
+     * @return 报告集（阶段 A 装配器未落地＝空集——关于框清单退化为白名
+     *         单占位行，UI-PLG-2 的合法形态之一；纯查询，不抛——内部不
+     *         可得以空集表达，不虚构装配事实）
+     *
+     * @note UI 线程调用；白名单外条目由消费侧装配函数丢弃（§11.4 交集）。
+     */
+    virtual std::vector<PluginAssemblyReport> assemblyReports() const = 0;
+
+    /**
+     * @brief 取冻结版本基线投影（NFR-DEP-05 的呈现值面）。
+     *
+     * @return 基线投影（available==false＝基线未装载——版本区占位呈现，
+     *         不逐项伪造；纯查询，不抛）
+     *
+     * @note UI 线程调用；组件版本值为注入原样（ui 不改写、不补默认——
+     *       "与冻结基线一致"的呈现半区语义）。
+     */
+    virtual AboutVersionBaseline versionBaseline() const = 0;
 };
 
 }  // namespace ui

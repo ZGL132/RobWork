@@ -132,7 +132,12 @@ struct ShellCommandAvailability {
  *     测试场景（与 eventBus 同款"须显式声明"）；为空时拒绝语义由返回值轨
  *     与状态栏说明承载（不虚构目录条目）；
  *   - policySource/nameResolver 为 O-31 裁决的 ui 自有端口（UiPorts.hpp），
- *     L5 适配对端（policy::IPolicyProvider/runtime::IRuntimeNameResolver）。
+ *     L5 适配对端（policy::IPolicyProvider/runtime::IRuntimeNameResolver）；
+ *   - aboutSource 为 UI-T10 首消费增量（登记 ui.md §10.1 v1.2）：关于框
+ *     数据源端口 IUiAboutDataSource（UiPorts.hpp——§11.4 装配报告＋冻结
+ *     版本基线的注入面），help.about 处理器打开关于框时现取。允许为空＝
+ *     无关于数据测试场景（须显式声明——与 eventBus 同款纪律）；为空时
+ *     关于框照常打开：清单＝白名单占位行、版本区「未装载」占位（零虚构）。
  */
 struct ShellWiring {
     /// 领域事件总线（core 表内边；允许为空＝无事件测试场景，须显式声明）。
@@ -153,6 +158,10 @@ struct ShellWiring {
     /// 名称解析端口（O-31：ui 自有端口，L5 适配 runtime::IRuntimeNameResolver
     /// ——resolveObjectId 取 localName 语义不变；左栏对象树消费）。
     std::shared_ptr<ui::IUiNameResolver> nameResolver;
+    /// 关于框数据源端口（UI-T10 增量：ui 自有端口 IUiAboutDataSource——
+    /// §11.4 装配报告＋冻结版本基线；允许为空＝无关于数据测试场景，须
+    /// 显式声明，为空时关于框以占位呈现不虚构数据）。
+    std::shared_ptr<ui::IUiAboutDataSource> aboutSource;
 };
 
 // =====================================================================

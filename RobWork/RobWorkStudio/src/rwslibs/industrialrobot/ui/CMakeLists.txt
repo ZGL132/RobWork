@@ -93,12 +93,17 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 #     IStageNavigationModel＋§6.4 呈现合成与导航时序＋§6.5 StageStatusModel
 #     汇聚＋观察者分发；公共契约头 include/sdurws/ird/ui/
 #     IStageNavigationModel.hpp 随 §16.7 v1.1 登记；零 Qt——模型层可测）。
+#   - src/AboutDialog.cpp＝帮助入口与关于对话框实现（UI-T10——§11.4 静态
+#     白名单 ∩ 装配报告的清单装配＋版本基线呈现行＋用户手册入口＋关于
+#     对话框 Widget；公共契约头 include/sdurws/ird/ui/AboutDialog.hpp 随
+#     §16.7 v1.2 登记，白名单词表/行模型/文案常量单点）。
 # 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十二个源
 # 文件与私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
 # （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
 # 槽声明需求（ui.md §10.1 v0.5 登记；命令面板键盘交互同款——v0.8 复核；
 # 策略摘要卡同款复核——v0.9；参数表面板同款复核——v1.0；UiText/阶段导航
-# 同款复核——v1.1：纯模型 TU，零 Qt include——L2 红线自查）。
+# 同款复核——v1.1；关于对话框同款复核——v1.2：纯 QLabel/QTableWidget
+# 渲染＋工厂函数，零信号槽声明需求）。
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
@@ -112,7 +117,8 @@ add_library(sdurws_ird_ui STATIC
     src/FormEditCommon.cpp
     src/ParamTablePanel.cpp
     src/UiText.cpp
-    src/StageNavigationModel.cpp)
+    src/StageNavigationModel.cpp
+    src/AboutDialog.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -262,6 +268,10 @@ endmacro()
 #     允许拒绝时序与就地提示/只读查看路径/StageStatusModel 单侧冻结汇聚/
 #     装配 fail-fast/UiText 键解析与替换纪律与零内部名断言（UI-STG-1/2、
 #     §6.5、N-11、UX-02——UI-T09）。
+#   - AboutDialogModelTest.cpp＝静态白名单词表冻结（§11.1）/清单＝白名单∩
+#     报告与交集丢弃/重复报告确定性防御/标题键族 UX-02 零 token 泄漏/
+#     版本行与注入基线一致（NFR-DEP-05）/未装载占位/占位与 fail-fast 面/
+#     手册入口路径部署布局（UI-PLG-2 模型半区——UI-T10）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -272,7 +282,8 @@ add_executable(sdurws_ird_ui_test
     test/ShortcutRegistryModelTest.cpp
     test/PolicySummaryCardTest.cpp
     test/FormEditModelTest.cpp
-    test/StageNavigationModelTest.cpp)
+    test/StageNavigationModelTest.cpp
+    test/AboutDialogModelTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -359,7 +370,8 @@ add_executable(sdurws_ird_ui_gui_test
     gui_test/WorkbenchShellGuiTest.cpp
     gui_test/CommandPaletteGuiTest.cpp
     gui_test/PolicySummaryCardGuiTest.cpp
-    gui_test/ParamTablePanelGuiTest.cpp)
+    gui_test/ParamTablePanelGuiTest.cpp
+    gui_test/AboutDialogGuiTest.cpp)
 
 target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES

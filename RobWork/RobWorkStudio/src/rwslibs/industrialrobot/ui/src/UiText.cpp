@@ -17,8 +17,11 @@
  * 的值源切换，键与值逐字不变，P-UI-1 词表未改一字）；③core 九态短标签
  * （PM-03/PM-11——同上过渡迁移）；④当前性「无法判定」原因两键（P-UI-2
  * 建议口径原文）；⑤门控数据不可用呈现键（§10.2 错误类型行"门控数据
- * 缺失→Blocked＋'门控数据不可用'"的呈现面）。值迁移到资源文件时仅替换
- * 本表的值源，键不变——调用方与测试零改动（UI-T03 文案表同案）。
+ * 缺失→Blocked＋'门控数据不可用'"的呈现面）；⑥⑦插件标题与装配状态标签
+ * （plugin.<id>.title 八键＋plugin.assembly.<state>.label 三键——UI-T10
+ * 关于框清单的呈现值，§11.4/UX-02：token 不进用户文本，用户见中文名）。
+ * 值迁移到资源文件时仅替换本表的值源，键不变——调用方与测试零改动
+ * （UI-T03 文案表同案）。
  *
  * 线程安全：表为编译期固定的静态只读数组，全部函数可重入。
  */
@@ -101,12 +104,37 @@ constexpr std::array<TextRow, 2> kStagePresentationTable{{
     { "stage.gate.unavailable.reason", "门控数据不可用" },
 }};
 
+/// 键族⑥：插件标题（plugin.<id>.title——UI-T10 冻结登记，§3.5 键族增量；
+/// token 与 units/ui.md §11.1 静态白名单词表逐字一一对应。中文名是关于框
+/// 插件清单"标题"列的呈现值——UX-02"界面禁止出现内部插件名"：token 本身
+/// 只作键词根，用户只见此处登记的中文名）。
+constexpr std::array<TextRow, 8> kPluginTitleTable{{
+    { "plugin.modeling.title",      "建模"   },
+    { "plugin.requirements.title",  "需求"   },
+    { "plugin.kinematics.title",    "运动学" },
+    { "plugin.trajectory.title",    "轨迹"   },
+    { "plugin.dynamics.title",      "动力学" },
+    { "plugin.selection.title",     "选型"   },
+    { "plugin.optimization.title",  "优化"   },
+    { "plugin.workflow.title",      "工作流" },
+}};
+
+/// 键族⑦：插件装配状态标签（plugin.assembly.<state>.label——UI-T10 冻结
+/// 登记；三态与 ui::PluginAssemblyStatus 枚举一一对应。关于框清单"装配
+/// 状态"列的呈现值——"未装配"是白名单占位常态的如实呈现，不虚构"已
+/// 装配"；"装配失败"对应 §11.3 装配失败降级态）。
+constexpr std::array<TextRow, 3> kPluginAssemblyLabelTable{{
+    { "plugin.assembly.not-assembled.label", "未装配"   },
+    { "plugin.assembly.ok.label",            "已装配"   },
+    { "plugin.assembly.failed.label",        "装配失败" },
+}};
+
 /// 全表拼接视图（查找入口——各键族数组顺序拼接，避免维护一份重复大表）。
 /// 注意 state.failed.label 在键族②与③中重复登记（七态与九态同键同值
 /// "失败"——§6.3 两表原文即同文），查找取先命中者，值一致故无歧义。
 const TextRow* findRow(const TextKey& key)
 {
-    // 表小（26 行）且调用频率为呈现路径，线性扫描足够（NFR-PERF-01 预算内）；
+    // 表小（37 行）且调用频率为呈现路径，线性扫描足够（NFR-PERF-01 预算内）；
     // 换哈希表反而引入构建期初始化顺序顾虑——呈现函数必须任何时刻可调用。
     for (const auto& row : kStageTitleTable) {
         if (key == row.key) { return &row; }
@@ -121,6 +149,12 @@ const TextRow* findRow(const TextKey& key)
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kStagePresentationTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kPluginTitleTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kPluginAssemblyLabelTable) {
         if (key == row.key) { return &row; }
     }
     return nullptr;
@@ -277,7 +311,7 @@ std::vector<TextKey> registeredTextKeys()
     // 按各族登记序拼接；state.failed.label 双族重复登记只输出一次
     // （集合语义——键清单是"已登记键"的盘点，不是物理行清单）。
     std::vector<TextKey> keys;
-    keys.reserve(26);
+    keys.reserve(37);
     for (const auto& row : kStageTitleTable) {
         keys.emplace_back(row.key);
     }
@@ -295,6 +329,12 @@ std::vector<TextKey> registeredTextKeys()
         keys.emplace_back(row.key);
     }
     for (const auto& row : kStagePresentationTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kPluginTitleTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kPluginAssemblyLabelTable) {
         keys.emplace_back(row.key);
     }
     return keys;
