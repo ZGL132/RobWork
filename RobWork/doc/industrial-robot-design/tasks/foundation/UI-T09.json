@@ -1,12 +1,18 @@
-{
+﻿{
   "schemaVersion": "ird-task/1",
   "taskId": "UI-T09",
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "阶段状态投影与工程用语（StageNavigationModel/UiText 体系）",
-  "status": "ready",
-  "dependsOn": ["UI-T04"],
-  "requirements": ["UX-01", "UX-02", "UX-12"],
+  "status": "done",
+  "dependsOn": [
+    "UI-T04"
+  ],
+  "requirements": [
+    "UX-01",
+    "UX-02",
+    "UX-12"
+  ],
   "designRefs": [
     "units/ui.md#13",
     "units/ui.md#3.5",
@@ -24,11 +30,21 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update"],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_ui_test"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_test"
+  ],
   "branch": "wp10-t09",
   "interUnit": true,
-  "knownPitfalls": ["O-31", "P-UI-1", "P-UI-6"],
+  "knownPitfalls": [
+    "O-31",
+    "P-UI-1",
+    "P-UI-6"
+  ],
   "acceptance": [
     "UI-STG-1/2：七阶段就绪/锁定投影与级联失效提示数据用例通过（§6.4 阶段呈现状态表——completed/in-progress/blocked/unavailable/not-started/view-only；门控数据源 WP-22-T03 未产出前用桩注入）；requestNavigate 允许/拒绝时序符合 §6.4 时序图（拒绝不改变 currentStage、就地提示原因＋缺项＋下一步建议）",
     "StageStatusModel 汇聚投影（§6.5）按单侧冻结数据形状实现（StageReadinessSnapshot/DomainReadinessItem，epoch 标注）；投影只消费、不拥有门控规则（门控状态机唯一归 workflow——N-11 无第二套）；界面零哈希/Schema/插件名（UX-02）：一切文本经 UiText::resolve 文案键解析（§3.5/§6.6，数值带单位显示、对象定位经名称端口局部名）",

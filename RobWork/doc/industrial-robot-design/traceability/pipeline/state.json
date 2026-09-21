@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 255,
+  "tickCount": 260,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -14,10 +14,10 @@
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 0
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-21T13:38:10+08:00",
+    "updatedAt": "2026-09-21T15:40:28+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1501,6 +1501,18 @@
       "acceptanceRecord": "traceability/acceptance/UI-T08-20260921.md",
       "mergedAt": "2026-09-21",
       "failReason": "验收 attempt1 即 pass（非验收失败）；pass 落盘后收尾前会话中断，本 tick 以 awaiting_merge 自愈锚点续完 §4.7 七步；验收子代理 evidence 回传推送遭 github.com 网络中断（约 61 分钟，33 次重试后恢复）未完成——origin/acc/UI-T08/1 缺失，网络恢复后编排者按冻结 SHA f9bbdae9 补推（UI-T07 补推先例同型），补推后双漂移检测零漂移"
+    },
+    {
+      "task": "UI-T09",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "ea3489e71a4c0e2b066e5207f8f906d550cedcb7",
+        "e4b30c7778ed2d000077b95ce12ceea5a09ffba4"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T09-20260921.md",
+      "mergedAt": "2026-09-21",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t09，切回 redesign-main 后方执行合并（EX-T06/EX-T09/RPT-T01/UI-T03/UI-T05/UI-T06/UI-T07 同型风险点，本次零误落）；验收建议级 F-274（B-1 同族第九次：构建/门禁等 .log 留痕未入库）／F-275（CMakeLists AUTOMOC 注释计数漂移沿袭）已随 evidence 转登 findings.json"
     }
   ],
   "policy": {
@@ -1526,11 +1538,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "UI-T09",
-      "contractPath": "tasks/foundation/UI-T09.json",
-      "branch": "wp10-t09"
-    },
     {
       "taskId": "UI-T10",
       "contractPath": "tasks/foundation/UI-T10.json",
@@ -1565,5 +1572,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "60aad77b-24e2-4329-b63c-857497d084b8"
+  "tickToken": "5107f7b4-ddbb-4f3a-b60c-f2061dff685a"
 }
