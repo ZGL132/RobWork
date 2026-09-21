@@ -383,19 +383,31 @@ add_custom_command(TARGET sdurws_ird_ui_test POST_BUILD
 
 # ---- 契约测试目标 sdurws_ird_ui_contract_test（§12.1 第二层）----
 # 跨单元契约面（§3.4 测试目标分工同 execution：_test＝红线扫描，
-# _contract_test＝构建图边界契约）。落位期首批＝构建图边界契约
+# _contract_test＝跨单元契约）。首批＝构建图边界契约
 # （LinkageContractTest.cpp——O-31 链接面零表外边/T-1 测试侧/三目标与
 # LABELS 登记）；UI-T11 增列 SessionContractTest.cpp＝§5 生命周期与
 # project/execution 对接契约（契约 verify 行"ui_contract_test"的承接面：
 # 会话端口协议〔requestClose 在途计数/closed 时序/subscribeClose 回调〕、
 # 任务端口协作取消/强制终止逐任务可达、INV-SES 不变量、T_force/T_force2
 # 默认保守值 120 s/300 s 冻结——全部以可控替身承载，O-31 测试侧惯例）。
+# UI-T14 增列（本任务＝ui 契约测试套件）：
+#   - PeerBridgeContractTest.cpp＝对端公共头桥接契约（§12.1 第二层行
+#     "对接 project/execution/diagnostics 公共头与桩实现"）——L5 适配器
+#     形态的测试侧镜像：adapter 实现对端接口/委托 ui 自有端口，以
+#     testkit FaultInterceptor 注入故障（ITaskScheduler/ICommandInteraction
+#     两缝——§12.1 行具名面）；对端类型形状漂移由本 TU 编译期捕获
+#     （字段访问＋override＋成员函数指针 static_assert 三重钉）。
+#   - Section12RegistryTest.cpp＝§12.3 用例清单逐例注册审计（11 个验收
+#     承接族 WB/SES/DRF/CMD/HKY/STG/TSK/PLG/DIA/PERF/LCY 全用例编号
+#     ＋UI-EXEC-1 执行限制登记——契约 acceptance 1 的具名自证面）。
 add_executable(sdurws_ird_ui_contract_test
     contract_test/TestMainReport.cpp
     contract_test/LinkageContractTest.cpp
     contract_test/SessionContractTest.cpp
     contract_test/DraftContractTest.cpp
-    contract_test/InteractionTaskContractTest.cpp)
+    contract_test/InteractionTaskContractTest.cpp
+    contract_test/PeerBridgeContractTest.cpp
+    contract_test/Section12RegistryTest.cpp)
 
 target_compile_features(sdurws_ird_ui_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_contract_test PROPERTIES
@@ -406,10 +418,29 @@ if(MSVC)
     target_compile_options(sdurws_ird_ui_contract_test PRIVATE /utf-8)
 endif()
 
-# 链接面与 sdurws_ird_ui_test 同款（QCoreApplication 级 headless——ui.md
-# §3.1 "带 Qt 事件循环 headless 用 QCoreApplication"）。
+# 链接面：被测产品目标＋对端三单元公共头直链（O-31 裁决 2026-09-19 的
+# 测试面承载——units/ui.md §3.1 该目标行 v0.4 原文"落位直链面；core/
+# diagnostics 经被测目标 PUBLIC 传染可达；project/execution 直链随
+# UI-T14 契约测试套件落地登记；测试目标链接面按本表承载，不属 ARCH
+# §3.5 产品边管辖"，F-228 随之消解）：
+#   - sdurws_ird_project：C-6 ICommandInteraction 对端形状（P-PR-7 冻结
+#     点镜像的编译期承载）；
+#   - sdurws_ird_execution：ITaskScheduler/TaskSnapshot 对端形状（§12.1
+#     第二层行"testkit FaultInterceptor 伪造 ITaskScheduler"的对端半区）；
+#   - sdurws_ird_diagnostics：RedactionPolicy/FindingRecord 值面（表内
+#     登记边 ui→diagnostics 的测试侧直链——经被测目标 PUBLIC 传染亦可达，
+#     直链为显式自证）；
+#   - sdurws_ird_testkit：FaultInterceptor＋RecordListener（T-1 允许形态：
+#     仅测试目标链 testkit）；GTest::gtest：main 自持。
+# ★ 产品面守卫不变（O-31 常驻红线）：本链接面仅属本测试目标——产品库
+#   sdurws_ird_ui 的链接块仍仅 core/diagnostics＋Qt 三件套（上方"依赖
+#   红线守卫"块硬断言＋BuildRedLineTest 的 include 面扫描互为两道防线，
+#   LinkageContractTest.ArchEdgesCoreDiagnosticsOnly 钉住产品链接块文本）。
 target_link_libraries(sdurws_ird_ui_contract_test PRIVATE
     sdurws_ird_ui
+    sdurws_ird_project
+    sdurws_ird_execution
+    sdurws_ird_diagnostics
     sdurws_ird_testkit
     GTest::gtest)
 

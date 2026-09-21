@@ -395,4 +395,71 @@ TEST(AboutModel, ManualPathFollowsShareDeploymentLayout_UX14_UI_T10_ACC1)
         << "手册入口路径偏离部署布局: " << path;
 }
 
+/**
+ * UI-PLG-1 模型半区（UI-T14 具名落位——§12.3 行"白名单插件工厂抛出→
+ * 错误占位＋UI-PLUGIN-ASSEMBLY-FAILED；其余插件正常"）：装配失败的插件
+ * 以"装配失败"占位行如实呈现＋失败诊断码保留（§11.3 失败隔离——不伪装
+ * 成功也不吞证据），同一装配中成功插件行照常充实、未命中白名单项照常
+ * 占位——失败只影响失败者自身，行集仍与白名单一致。
+ *
+ * 与 UI-PLG-2 用例（IntersectionEnrichesAndDropsForeignReports）的分工：
+ * 那例钉"交集装配与外来条目防御"的装配规则，本例钉"失败降级"的呈现
+ * 语义（SA-01 静态注册红线下的失败隔离面）——工厂抛出本身发生在 L5
+ * 装配期（§11.3，IPluginUiRegistrar 归装配任务），ui 侧可观测的合同面
+ * 即 PluginAssemblyReport.ok=false 的行投影，本用例以编程报告承载。
+ */
+TEST(AboutModel, PluginAssemblyFailureDegradationIsolatesRow_UI_PLG_1)
+{
+    IRD_TEST_INFO("SA-01", {"UX-14"}, std::nullopt);
+
+    // 报告集：一插件装配失败（工厂抛出后的报告形态——ok=false＋稳定码），
+    // 一插件装配成功（其余插件正常的对照组），其余白名单项无报告。
+    std::vector<PluginAssemblyReport> reports;
+    PluginAssemblyReport failed;
+    failed.pluginId = "dynamics";
+    failed.ok = false;
+    failed.failureDiagnostics = {"UI-PLUGIN-ASSEMBLY-FAILED"};
+    reports.push_back(failed);
+    PluginAssemblyReport healthy;
+    healthy.pluginId = "kinematics";
+    healthy.ok = true;
+    healthy.panelsLoaded = 2;
+    healthy.commandsRegistered = 3;
+    reports.push_back(healthy);
+
+    const std::vector<AboutPluginRow> rows = aboutPluginRows(reports);
+    // 失败隔离：行集仍＝白名单全集（失败不增删行——清单一致性不受损）。
+    ASSERT_EQ(rows.size(), pluginUiWhitelist().size())
+        << "装配失败改变了清单行集规模";
+
+    // 失败行：错误占位呈现（"装配失败"）＋失败码保留（证据不丢弃）＋
+    // 计数如实为零（报告未登记任何已装配能力——零虚构）。
+    const AboutPluginRow* dynamics = findRow(rows, "dynamics");
+    ASSERT_NE(dynamics, nullptr);
+    EXPECT_EQ(dynamics->status, PluginAssemblyStatus::Failed);
+    EXPECT_EQ(dynamics->statusText, u8"装配失败");
+    ASSERT_FALSE(dynamics->failureDiagnostics.empty())
+        << "失败行丢失了失败诊断码（§11.3 失败证据必须保留）";
+    EXPECT_EQ(dynamics->failureDiagnostics[0], "UI-PLUGIN-ASSEMBLY-FAILED");
+    EXPECT_EQ(dynamics->panelCount, 0u);
+    EXPECT_EQ(dynamics->commandCount, 0u);
+
+    // 成功行：其余插件正常——状态/计数照常充实（失败隔离的另一半）。
+    const AboutPluginRow* kinematics = findRow(rows, "kinematics");
+    ASSERT_NE(kinematics, nullptr);
+    EXPECT_EQ(kinematics->status, PluginAssemblyStatus::Ok);
+    EXPECT_EQ(kinematics->statusText, u8"已装配");
+    EXPECT_EQ(kinematics->panelCount, 2u);
+    EXPECT_EQ(kinematics->commandCount, 3u);
+    EXPECT_TRUE(kinematics->failureDiagnostics.empty());
+
+    // 未命中行：照常"未装配"占位（同一装配内的第三种合法形态——占位
+    // ≠失败态，两词不混用）。
+    const AboutPluginRow* modeling = findRow(rows, "modeling");
+    ASSERT_NE(modeling, nullptr);
+    EXPECT_EQ(modeling->status, PluginAssemblyStatus::NotAssembled);
+    EXPECT_EQ(modeling->statusText, u8"未装配");
+    EXPECT_TRUE(modeling->failureDiagnostics.empty());
+}
+
 }  // namespace
