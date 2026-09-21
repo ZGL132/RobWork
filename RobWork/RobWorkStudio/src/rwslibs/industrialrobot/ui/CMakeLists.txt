@@ -97,13 +97,20 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 #     白名单 ∩ 装配报告的清单装配＋版本基线呈现行＋用户手册入口＋关于
 #     对话框 Widget；公共契约头 include/sdurws/ird/ui/AboutDialog.hpp 随
 #     §16.7 v1.2 登记，白名单词表/行模型/文案常量单点）。
-# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十二个源
+#   - src/UiSessionController.cpp＝UI 会话控制器实现（UI-T11——§5.2 七态
+#     状态机＋§5.4 关闭/切换统一确认对话框机制〔数据装配/决议解析/处置
+#     执行〕＋§5.6 Draining 四级防线〔T_force/T_force2 装配期可配——
+#     P-UI-8 默认保守值〕＋§5.3/§5.7 迟到写提示；零 Qt——模型层可测；
+#     公共契约头 include/sdurws/ird/ui/UiSessionController.hpp 随 §16.7
+#     v1.3 登记，C-3/5/8 会话端口消费面）。
+# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十五个源
 # 文件与私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
 # （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
 # 槽声明需求（ui.md §10.1 v0.5 登记；命令面板键盘交互同款——v0.8 复核；
 # 策略摘要卡同款复核——v0.9；参数表面板同款复核——v1.0；UiText/阶段导航
 # 同款复核——v1.1；关于对话框同款复核——v1.2：纯 QLabel/QTableWidget
-# 渲染＋工厂函数，零信号槽声明需求）。
+# 渲染＋工厂函数，零信号槽声明需求；会话控制器同款复核——v1.3：零 Qt
+# 纯模型层，零 Widget 零信号槽需求）。
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
@@ -118,7 +125,8 @@ add_library(sdurws_ird_ui STATIC
     src/ParamTablePanel.cpp
     src/UiText.cpp
     src/StageNavigationModel.cpp
-    src/AboutDialog.cpp)
+    src/AboutDialog.cpp
+    src/UiSessionController.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -272,6 +280,13 @@ endmacro()
 #     报告与交集丢弃/重复报告确定性防御/标题键族 UX-02 零 token 泄漏/
 #     版本行与注入基线一致（NFR-DEP-05）/未装载占位/占位与 fail-fast 面/
 #     手册入口路径部署布局（UI-PLG-2 模型半区——UI-T10）。
+#   - SessionControllerModelTest.cpp＝会话状态机与关闭/切换对话框机制：
+#     对话框数据装配与确认/取消/等待分支（UI-SES 系列机制面——§5.4 S1/
+#     S2）、只读打开横幅含 PID 与 actionKind 逐场景区分（UI-SES-2/3——
+#     PM-07/§5.3）、状态机迁移矩阵与 INV-SES-1/2/3 不变量（§5.2）、
+#     Draining 四级防线与 T_force/T_force2 可配阈值（UI-SES-5/6——§5.6
+#     P-UI-8）、迟到写提示不重试（UI-SES-7/UI-LCY-1——§5.3/§5.7）
+#     （UI-T11 模型层）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -283,7 +298,8 @@ add_executable(sdurws_ird_ui_test
     test/PolicySummaryCardTest.cpp
     test/FormEditModelTest.cpp
     test/StageNavigationModelTest.cpp
-    test/AboutDialogModelTest.cpp)
+    test/AboutDialogModelTest.cpp
+    test/SessionControllerModelTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -323,13 +339,15 @@ add_custom_command(TARGET sdurws_ird_ui_test POST_BUILD
 # 跨单元契约面（§3.4 测试目标分工同 execution：_test＝红线扫描，
 # _contract_test＝构建图边界契约）。落位期首批＝构建图边界契约
 # （LinkageContractTest.cpp——O-31 链接面零表外边/T-1 测试侧/三目标与
-# LABELS 登记）；与 project/execution 的真实协作契约（§12.1 表"对接
-# project/execution/diagnostics 公共头与桩实现"）属 O-31 形态裁决范围
-# （UI-T14 契约测试套件kept planned——DOC-T13 契约 acceptance 3），本任务
-# 不私裁落链接。
+# LABELS 登记）；UI-T11 增列 SessionContractTest.cpp＝§5 生命周期与
+# project/execution 对接契约（契约 verify 行"ui_contract_test"的承接面：
+# 会话端口协议〔requestClose 在途计数/closed 时序/subscribeClose 回调〕、
+# 任务端口协作取消/强制终止逐任务可达、INV-SES 不变量、T_force/T_force2
+# 默认保守值 120 s/300 s 冻结——全部以可控替身承载，O-31 测试侧惯例）。
 add_executable(sdurws_ird_ui_contract_test
     contract_test/TestMainReport.cpp
-    contract_test/LinkageContractTest.cpp)
+    contract_test/LinkageContractTest.cpp
+    contract_test/SessionContractTest.cpp)
 
 target_compile_features(sdurws_ird_ui_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_contract_test PROPERTIES

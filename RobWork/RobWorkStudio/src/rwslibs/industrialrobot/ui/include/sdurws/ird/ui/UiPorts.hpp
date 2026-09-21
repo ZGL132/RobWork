@@ -30,6 +30,17 @@
  *     现，NFR-DEP-05；登记 ui.md §16.7 v1.2）。WP-24-T01 版本基线产出前
  *     available=false 承载（版本值零虚构）；装配器落地前报告为空集
  *     （清单＝白名单占位行）。
+ *     UI-T11 增量冻结：C-3/C-5/C-8 会话生命周期端口（§5.2 状态机的数据
+ *     面，登记 ui.md §16.7 v1.3）——IUiStoreFactoryPort（打开五步协议的
+ *     ui 侧入口，§10.1 注释行"project/execution 实例随打开流程注入
+ *     UiSessionController"的落地面）、IUiProjectStorePort＋
+ *     IUiStoreCloseObserver（C-3 关闭协议：requestClose/closed/
+ *     subscribeClose）、IUiDraftQueryPort（C-5 草稿清单——关闭对话框
+ *     草稿区数据装配）、IUiSessionTaskPort（C-8 任务查询/协作取消/强制
+ *     终止——关闭对话框任务区＋§5.6 防线）。四端口的会话绑定集
+ *     SessionPortBundle 随打开结果注入（"实例随打开流程注入"原文）；
+ *     L5 适配 project::ProjectStoreFactory/ProjectStore/DraftService/
+ *     ITaskScheduler/ITaskController，ui 测试以可控替身承载（§3.1）。
  *
  * 背景说明（为什么不直接 include policy::IPolicyProvider / runtime::
  * IRuntimeNameResolver）：ARCH §3.5 依赖白名单只有 ui→core、ui→diagnostics
@@ -46,14 +57,16 @@
 #ifndef SDURWS_IRD_UI_UIPORTS_HPP
 #define SDURWS_IRD_UI_UIPORTS_HPP
 
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
-#include <sdurws/ird/core/Identity.hpp>        // core::ObjectId（C-11 端口入参——身份类型与 core 契约同一）
-#include <sdurws/ird/ui/AboutDialog.hpp>       // PluginAssemblyReport/AboutVersionBaseline（IUiAboutDataSource 值面——§10.9/§11.4）
-#include <sdurws/ird/ui/UiProjections.hpp>     // PolicySummaryProjection（C-10 端口返回的值投影）
-#include <sdurws/ird/ui/UiTypes.hpp>           // StageId/StageViewStatus/DomainReadinessItem/StageReadinessSnapshot/TextKey（C-12 端口值面——§3.3 公共值类型头）
+#include <sdurws/ird/core/Events.hpp>         // core::IEventSubscription（subscribeClose 返回的 RAII 句柄——表内登记边）
+#include <sdurws/ird/core/Identity.hpp>       // core::ObjectId（C-11 端口入参）/ProjectId/TaskIdentity（C-8 会话端口入参——身份类型与 core 契约同一）
+#include <sdurws/ird/ui/AboutDialog.hpp>      // PluginAssemblyReport/AboutVersionBaseline（IUiAboutDataSource 值面——§10.9/§11.4）
+#include <sdurws/ird/ui/UiProjections.hpp>    // PolicySummaryProjection（C-10）＋OpenStoreOutcome/TaskRowProjection 等（UI-T11 会话端口值面）
+#include <sdurws/ird/ui/UiTypes.hpp>          // StageId/StageViewStatus/DomainReadinessItem/StageReadinessSnapshot/TextKey（C-12 端口值面——§3.3 公共值类型头）＋UiOpenMode（UI-T11）
 
 namespace sdurws::ird {
 namespace ui {
@@ -436,6 +449,247 @@ public:
      *       "与冻结基线一致"的呈现半区语义）。
      */
     virtual AboutVersionBaseline versionBaseline() const = 0;
+};
+
+// =====================================================================
+// C-3/C-5/C-8 会话生命周期端口（§5.2 状态机数据面——UI-T11 首消费冻结，
+// 登记 ui.md §16.7 v1.3；O-31 裁决注入面："project/execution 实例随打开
+// 流程注入 UiSessionController"的 ui 自有端口承载）
+// =====================================================================
+
+// 前置声明（SessionPortBundle 的 shared_ptr 成员只需不完整类型；完整
+// 定义在各端口节——头内声明序：绑定集→工厂端口→回调面→三端口）。
+class IUiProjectStorePort;
+class IUiDraftQueryPort;
+class IUiSessionTaskPort;
+
+/**
+ * @brief 会话端口绑定集（一次成功打开的协作面打包——§10.1 注释行
+ *        "project/execution 实例随打开流程注入 UiSessionController"的
+ *        ui 侧值承载，O-31 裁决）。
+ *
+ * 三端口与 C 表的对应：store＝C-3 关闭协议面、drafts＝C-5 只读清单面、
+ * tasks＝C-8 查询/控制面。全部共享引用（所有权在 L5/装配层——§10.1
+ * 所有权行原文）；控制器对旧项目保持 store 引用直到 subscribeClose
+ * 回调（INV-SES-3——shared 持有即保活，§5.1 分离原则）。
+ */
+struct SessionPortBundle {
+    /// 存储上下文端口（C-3——requestClose/closed/subscribeClose）。
+    std::shared_ptr<IUiProjectStorePort> store;
+    /// 草稿清单端口（C-5 只读半区——关闭对话框草稿区）。
+    std::shared_ptr<IUiDraftQueryPort> drafts;
+    /// 会话任务端口（C-8——任务区＋协作取消＋强制终止）。
+    std::shared_ptr<IUiSessionTaskPort> tasks;
+};
+
+/**
+ * @brief 打开五步协议的 ui 自有最小端口（L5 适配 project::ProjectStore
+ *        Factory——§5.2 Opening 态"五步协议①~④在 ProjectStoreFactory 内"
+ *        原文的 ui 侧入口）。
+ *
+ * 语义冻结（不改义——冻结基准 project.md §5.1 打开协议）：open 执行完整
+ * 五步协议（定位/校验/锁获取/恢复/上下文构建），**成功才返回 ok=true**；
+ * 降级只读（请求 Writable 而锁竞争/介质只读/权限不足）也是成功（PM-07
+ * 不阻塞等待——降级事实以 writable=false＋readOnlyCause 表达）。失败
+ * （校验失败/格式不识别等）返回 ok=false——"错误页定位具体文件；当前
+ * 项目不动"（§5.3 行 6）。
+ *
+ * 为什么绑定集经出参而不是返回值成员：SessionPortBundle 的三个端口是
+ * **由对端实例派生的适配器对象**（store 端口包装 ProjectStore 实例、
+ * drafts 端口包装 DraftService、tasks 端口包装 ITaskScheduler/
+ * ITaskController——§10.1 注释行"实例随打开流程注入"原文），其生命周期
+ * 从属于本次打开；出参形态让"打开失败＝无绑定泄漏"在签名上自明（失败时
+ * 装配层不写 outBindings）。
+ *
+ * UI-T11 消费状态：UiSessionController::openProject/beginSwitch 的候选
+ * 验证调用面；ui 测试以可控替身承载（§3.1——替身同时充当"桩 Project
+ * StoreFactory"角色）。
+ */
+class IUiStoreFactoryPort {
+public:
+    virtual ~IUiStoreFactoryPort() = default;
+
+    /**
+     * @brief 执行打开五步协议并产出会话端口绑定（§5.2 Opening 态入口）。
+     *
+     * @param canonicalPath [in] 项目规范路径（weakly_canonical 形态——
+     *                      失败错误页"定位具体文件"的数据源，§5.3 行 6）
+     * @param mode          [in] 请求模式（Writable＝失败降级只读不阻塞——
+     *                      PM-07；ReadOnly＝显式只读，§5.5）
+     * @param outBindings   [out] 成功时写入会话端口绑定集（store/drafts/
+     *                      tasks 三端口由 L5 适配器从对端实例派生——
+     *                      失败时不写入，保持调用方原值）
+     * @return 打开结果投影（ok==true 时 opened 携带 writable 等 INV-SES-1
+     *         唯一数据源；ok==false 时 failure 携带对端错误稳定 token——
+     *         media-read-only/access-denied/format-legacy/schema-future
+     *         等 StoreError 词表，§5.3 显示差异的判别输入）
+     *
+     * @note UI 线程调用（§5.2 时序——openProject 由 workflow 编排入口在
+     *       UI 线程发起；五步协议内部的文件 IO 由对端 ProjectStoreFactory
+     *       自行承担线程纪律，project.md §5.1——ui 不感知不复制）。
+     */
+    virtual OpenStoreOutcome open(const std::string& canonicalPath,
+                                  UiOpenMode mode,
+                                  SessionPortBundle& outBindings) = 0;
+};
+
+/**
+ * @brief 存储上下文关闭完成回调面（subscribeClose 的观察者——§5.2
+ *        Draining 态"订阅 subscribeClose（归档完成＋草稿 flush＋锁释放后
+ *        回调）"原文的 ui 侧承载）。
+ *
+ * 回调语义（不改义）：存储上下文释放的前置＝本实例全部在途运行接纳归档
+ * 完成＋草稿落盘完成（§5.7——requestClose 只是进入 Draining 的信号，不
+ * 催促、不跳过归档），回调到达即 closed()==true。线程约束：回调可能在
+ * 对端线程到达（project 归档路径），实现方（UiSessionController）负责
+ * 按自身线程纪律消费（§3.4 M-1 同款自限——控制器状态仅在 UI 线程变更，
+ * 迟到回调经有界轮询收敛，见控制器 pollDrain 注释）。
+ */
+class IUiStoreCloseObserver {
+public:
+    virtual ~IUiStoreCloseObserver() = default;
+
+    /**
+     * @brief 存储上下文已释放通知（closed()==true——§5.2 Draining→Closed
+     *        迁移的触发面）。
+     *
+     * @param project [in] 已释放的项目身份（后台多持有点场景下区分是哪个
+     *                旧项目——INV-SES-3 持有点按此释放）
+     */
+    virtual void onStoreClosed(const core::ProjectId& project) = 0;
+};
+
+/**
+ * @brief 项目存储上下文的 ui 自有最小端口（L5 适配 project::ProjectStore
+ *        ——C-3 关闭协议面：requestClose/closed/subscribeClose 三原语，
+ *        §5.2 状态机图 Draining 框原文）。
+ *
+ * 语义冻结（不改义——project.md §5.1 关闭协议）：
+ *   - requestClose()：拒绝新写；返回在途引用数（归档会话/在途事务/草稿
+ *     落盘——§5.7 引用计数族）。**不催促、不跳过归档**（§5.7 原文——
+ *     SA-17/A7 分离原则：UI 会话结束≠存储上下文结束）。
+ *   - isClosed()：closed()==true 语义——在途引用清零且锁句柄已显式释放；
+ *     兜底轮询面（§5.6 防线 4：subscribeClose 回调丢失时轮询 closed()）。
+ *   - subscribeClose()：归档完成＋草稿 flush＋锁释放后回调一次。
+ *
+ * 所有权语义（INV-SES-3 的代码面）：ui 经 shared_ptr 持有本端口＝持有
+ * 旧项目存储上下文的保活引用——"ui 不得提前销毁 ProjectStore 引用（保持
+ * shared 持有直到 subscribeClose 回调）"（§5.1 分离原则原文）。端口实例
+ * 的真实生命周期归 L5 装配层（ui 释放引用后由装配层决定对端实例去向）。
+ */
+class IUiProjectStorePort {
+public:
+    virtual ~IUiProjectStorePort() = default;
+
+    /**
+     * @brief 请求关闭存储上下文（§5.2 Draining 进入动作）。
+     *
+     * @return 在途引用数（归档会话/在途事务/草稿落盘——§5.7；>0 表示
+     *         Draining 将持续到引用清零；0 表示无在途，上下文可即刻释放）
+     *
+     * @note UI 线程调用；重复调用语义（取消等待后再次关闭）由对端保证
+     *       幂等（project.md §5.1 关闭协议——信号语义，非命令队列）。
+     */
+    virtual std::uint32_t requestClose() = 0;
+
+    /**
+     * @brief 查询上下文是否已释放（§5.6 防线 4 的兜底轮询面）。
+     *
+     * @return true＝在途引用清零且锁句柄已释放（closed()==true 语义）
+     */
+    virtual bool isClosed() const = 0;
+
+    /**
+     * @brief 订阅关闭完成回调（§5.2 Draining 态订阅动作）。
+     *
+     * @param observer [in] 回调观察者（弱引用语义——观察者析构前调用方
+     *                 须先退订；UiSessionController 以成员身份持有订阅
+     *                 句柄，句柄析构即退订）
+     * @return RAII 订阅句柄（unique_ptr——析构即退订，重复退订幂等）
+     */
+    virtual std::unique_ptr<core::IEventSubscription>
+    subscribeClose(IUiStoreCloseObserver& observer) = 0;
+};
+
+/**
+ * @brief 草稿清单查询的 ui 自有最小端口（L5 适配 project::DraftService::
+ *        list——C-5 只读半区，§5.4 S1"DraftService::list(branch)＋会话脏
+ *        模块→草稿区"的数据面）。
+ *
+ * 为什么只有读方法：关闭对话框对草稿只有**呈现**与**处置决议**两个动作
+ * ——保存/放弃的执行归 DraftController（§8.1 分工红线/UI-T12），本端口
+ * 不承载写语义（§5.5 只读禁用清单在写侧另有双层防线）。会话脏模块由
+ * UiSessionController 以会话态补入装配（DraftPresenceProjection.
+ * sessionDirty 同源的行级展开）。
+ */
+class IUiDraftQueryPort {
+public:
+    virtual ~IUiDraftQueryPort() = default;
+
+    /**
+     * @brief 取草稿清单投影（§5.4 S1 草稿区行集）。
+     *
+     * @return 草稿行集（磁盘存在未应用草稿的模块清单；空＝无磁盘草稿；
+     *         纯查询，不抛——内部不可得以空清单表达，不虚构草稿事实）
+     *
+     * @note UI 线程调用；应返回快照值（NFR-PERF-01）。
+     */
+    virtual std::vector<DraftRowProjection> listDrafts() const = 0;
+};
+
+/**
+ * @brief 会话任务查询与控制的 ui 自有最小端口（L5 适配 execution::
+ *        ITaskScheduler/ITaskController——C-8，§5.4 任务区与 §5.6 防线
+ *        的数据/控制面）。
+ *
+ * 语义冻结（不改义）：
+ *   - nonTerminalTasks ← ITaskScheduler::tasksByProject(pid) 过滤非终态
+ *     （§9.5"对话框任务清单"原文；非终态词表＝core::TaskState ∈
+ *     {Queued, Preparing, Running, Paused, Canceling}，§6.3）；
+ *   - requestCancel ← ITaskController::requestCancel（协作取消——2 s 进入
+ *     Canceling/10 s 收敛由 execution 保证，NFR-PERF-02；ui 只发请求，
+ *     不等待收敛；"正常取消无错误诊断"UX-03）；
+ *   - requestForceTerminate ← ITaskController::requestForceTerminate
+ *     （强杀——任务记 Failed＋EX-FORCE-TERMINATED，最近检查点保留可续，
+ *     §5.6 防线 3/§9.4；独立高级操作带确认，关闭对话框常规路径不提供）。
+ */
+class IUiSessionTaskPort {
+public:
+    virtual ~IUiSessionTaskPort() = default;
+
+    /**
+     * @brief 取指定项目的非终态任务行集（§5.4 S1 任务区数据装配）。
+     *
+     * @param project [in] 项目身份（tasksByProject 的等值过滤键）
+     * @return 非终态任务行（§9.5 过滤语义；空＝无在途任务；纯查询，不抛）
+     *
+     * @note UI 线程调用；应返回快照值（NFR-PERF-01——§9.4 任务清单行
+     *       "UI 不阻塞等待任务"原文）。
+     */
+    virtual std::vector<TaskRowProjection>
+    nonTerminalTasks(const core::ProjectId& project) const = 0;
+
+    /**
+     * @brief 请求协作取消一个任务（§5.4 S1[协作取消] 的逐任务执行面）。
+     *
+     * @param task [in] 任务身份五元组（RunRegistry 核对面——execution
+     *             §7 接纳判定权威在对端，ui 透传身份不加工）
+     * @return 请求受理位（对端 Ack 的折叠——true＝已受理进入取消协议；
+     *         false＝对端拒绝/任务已终态；受理后收敛时序归 NFR-PERF-02，
+     *         ui 经 Draining 轮询观察，不阻塞等待）
+     */
+    virtual bool requestCancel(const core::TaskIdentity& task) = 0;
+
+    /**
+     * @brief 请求强制终止一个任务（§5.6 防线 3 的执行面——仅 T_force
+     *        确认后调用）。
+     *
+     * @param task [in] 任务身份五元组
+     * @return 请求受理位（对端 Ack 折叠；强杀后果＝任务记 Failed＋
+     *         EX-FORCE-TERMINATED＋最近检查点保留可续——§9.4 后果说明
+     *         原文，呈现于 ForceCloseDialogData）
+     */
+    virtual bool requestForceTerminate(const core::TaskIdentity& task) = 0;
 };
 
 }  // namespace ui
