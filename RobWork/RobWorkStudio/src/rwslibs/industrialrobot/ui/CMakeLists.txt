@@ -78,11 +78,20 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 #     呈现数据纯函数装配〔分组异名/单位换算/显式不适用〕＋右栏卡控件构建；
 #     公共契约头 include/sdurws/ird/ui/PolicySummaryCard.hpp 随 §16.7 v0.9
 #     登记，文案/行键单点）。
-# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：八个源文件与
-# 私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
+#   - src/FormEditCommon.cpp＝表单公共件模型层实现（UI-T08——公共编辑
+#     规则的唯一规则承载：显示投影解析/格式化〔core Units 唯一换算入口〕、
+#     就地错误、筛选、批量粘贴、表单级确认应用、取消恢复；零 Qt——模型
+#     层无 GUI 可测；公共契约头 include/sdurws/ird/ui/FormEditCommon.hpp
+#     随 §16.7 v1.0 登记）。
+#   - src/ParamTablePanel.cpp＝参数表面板实现（UI-T08——表单公共件的第一
+#     渲染面：筛选行＋四列表格〔值｜单位同显＋状态列就地错误〕＋非模态
+#     确认区＋剪贴板批量粘贴＋可选开发诊断开关；GUI 只渲染不持语义）。
+# 不开启 AUTOMOC（UI-T03 增量登记，UI-T05/UI-T06 复核维持）：十个源文件
+# 与私有头零 Q_OBJECT 声明——壳与占位面板的 Qt 交互全部经虚函数覆盖
 # （resizeEvent/keyPressEvent/eventFilter）与既有信号＋lambda 接线，无信号
 # 槽声明需求（ui.md §10.1 v0.5 登记；命令面板键盘交互同款——v0.8 复核；
-# 策略摘要卡同款复核——v0.9：卡控件零 Q_OBJECT，按钮反馈经 lambda 接线）。
+# 策略摘要卡同款复核——v0.9；参数表面板同款复核——v1.0：就地编辑经
+# itemChanged＋lambda 接线、确认区按钮经 clicked＋lambda，零子类化）。
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
@@ -92,7 +101,9 @@ add_library(sdurws_ird_ui STATIC
     src/CommandRegistry.cpp
     src/GlobalShortcutRegistry.cpp
     src/CommandPalette.cpp
-    src/PolicySummaryCard.cpp)
+    src/PolicySummaryCard.cpp
+    src/FormEditCommon.cpp
+    src/ParamTablePanel.cpp)
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -233,7 +244,11 @@ endmacro()
 #     化回放（UI-HKY-1/2——UI-T06）；
 #   - PolicySummaryCardTest.cpp＝策略摘要卡呈现契约：分组异名/逐字段行/
 #     单位换算/显式不适用/未装载占位/聚合派生/编辑路径说明（UI-POL-1 模型
-#     面——UI-T07）。
+#     面——UI-T07）；
+#   - FormEditModelTest.cpp＝表单公共件编辑规则：数值＋单位同显与切换
+#     仅投影（KIN-12）/非法输入就地原因保留原值/表单级确认应用与错误
+#     阻断（UX-07）/批量粘贴影响明细/筛选/错误定位/取消恢复/非模态
+#     静态红线/高级面板字段集（UX-04）/装配契约 fail-fast（UI-T08）。
 add_executable(sdurws_ird_ui_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -242,7 +257,8 @@ add_executable(sdurws_ird_ui_test
     test/View3DContractTest.cpp
     test/CommandRegistryModelTest.cpp
     test/ShortcutRegistryModelTest.cpp
-    test/PolicySummaryCardTest.cpp)
+    test/PolicySummaryCardTest.cpp
+    test/FormEditModelTest.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -328,7 +344,8 @@ add_executable(sdurws_ird_ui_gui_test
     gui_test/BuildPlacementTest.cpp
     gui_test/WorkbenchShellGuiTest.cpp
     gui_test/CommandPaletteGuiTest.cpp
-    gui_test/PolicySummaryCardGuiTest.cpp)
+    gui_test/PolicySummaryCardGuiTest.cpp
+    gui_test/ParamTablePanelGuiTest.cpp)
 
 target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES
