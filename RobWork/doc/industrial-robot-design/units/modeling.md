@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.2（2026-09-22：新增 §2.5 旧代码功能范围对照、§9.7 插件界面设计与界面逻辑、§5.2 几何生成辅助——响应评审两问；v0.1＝2026-09-22 首版草案，WP-13-T01 交付物） |
+| 文档版本 | v0.3（2026-09-22：WP-13-T02 构建落位登记——§1.2 构建落位行同步、§3.2 六边登记完成注记、§14.6 变更记录；v0.2＝2026-09-22 评审响应；v0.1＝2026-09-22 首版草案，WP-13-T01 交付物） |
 | 日期 | 2026-09-22 |
 | 状态 | **`Draft`**（待评审；DETAILED-DESIGN.md 单元状态表中的"modeling｜待产出"以本卡落盘为准，索引行同步由治理侧执行，本卡不代改） |
 | 文档代号 | UNIT-MODELING |
@@ -12,7 +12,7 @@
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.12（`Draft`，2026-09-10）** |
 | 协作输入 | `units/core.md` v0.11、`units/runtime.md` v0.15、`units/project.md` v0.18、`units/policy.md` v0.14、`units/io.md` 卡头 v0.9（§15.5 变更链至 v1.0）、`units/diagnostics.md` v0.12、`units/evidence.md` v1.3、`units/ui.md` v1.5（文末登记 v1.6）、`units/testkit.md` v0.9——均为 **Draft/Draft-Structured（未冻结）**；本卡消费的签名以各卡当前文本为基线，冻结后按影响面增量同步（§14.3 P-MDL-8） |
 | 上游下游链位置 | ARCHITECTURE §11.1：`DETAILED-DESIGN.md`（已建立）→ `units/*.md`（单元任务卡）。本文即 `units/modeling.md`，按任务卡深度编写 |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/`（**现状：上级 `industrialrobot/CMakeLists.txt` 以 INTERFACE 占位注册 `sdurws_ird_modeling`＋别名 `RWS::ird::modeling`；单元级 CMakeLists.txt 不存在；`include/sdurws/ird/modeling/` 仅 README.md 保留位——由 WP-13-T02 转真实目标**，见 §3.2、§11） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/`（**WP-13-T02 已落位**：单元级 `CMakeLists.txt`——`sdurws_ird_modeling` STATIC（零 Qt、C++17、PUBLIC 链 §3.2 六边）＋`sdurws_ird_modeling_test`/`sdurws_ird_modeling_contract_test`（ird_add_gtest 宏＋ctest LABELS "ird"）＋配置期红线守卫；公共面 `ObjectTypes/Errors/DiagCodes.hpp`（§3.3 表 T02 行）＋对应 src 翻译单元；门禁白名单 `modeling→core/diagnostics/project/runtime/policy/io` 六边已登记（ird_gates_whitelist.cmake `IRD_ALLOWED_UNIT_EDGES`＋`IRD_EXTRA_EDGE_REFS` 成对登记）；`_plugin` 随 WP-13-T15——见 §3.2、§11） |
 | 任务归属 | `development-task-breakdown.md`（v0.16）WP-E／WP-13（T01～T19）；本文 §11 只做单元内部任务拆分与排序，不重排 WP 编号 |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释、框架零源码修改、双模式构建与留痕、提交后推送；Windows Qt GUI 测试须在 VS x64 环境设 `QT_QPA_PLATFORM=windows`、逐个绝对路径启动 |
 | 实现口径 | **从头构建**（REQUIREMENTS v1.9/v1.11 确立）：一切实现按需求与本文新建，不继承、不恢复任何历史实现源码。旧代码位置（用户提供 `D:\10_Source_Repos\old\src`；需求登记为仓库根 `./old/`）**本卡编写全程未读取**，仅按需求附录 A 功能级台账做范围对照，不构成任何设计或实现的语义来源 |
@@ -70,7 +70,7 @@ modeling 是七阶段工作流的第一阶段（`ui` StageId 序列 `modeling �
 | `units/reporting.md` | 存在（未消费） | — | modeling 不直接依赖 reporting（报告消费对象库与证据，不经 modeling） |
 | `DETAILED-DESIGN.md` | 索引（70 行） | — | modeling 行登记"待产出／WP-E"；本卡落盘后该行更新归治理侧 |
 | `development-task-breakdown.md` | v0.16 | `Draft` | WP-13-T01～T19 任务包、§5 构建约定、§4 待裁决（O-16/P-RT-4、O-27/P-03）、§3 追踪矩阵 MDL 行 |
-| 代码落位 | `industrialrobot/modeling/`：仅 `include/sdurws/ird/modeling/README.md` 保留位 | — | 无单元级 CMakeLists.txt、无产品源码、无 `_plugin/_test` 目标（WP-13-T02 建）；上级 `cmake/ird_gates_whitelist.cmake` 中 modeling 列于 `IRD_BUSINESS_UNITS`（R-1 禁互链集合）、**无任何已登记依赖边**（§3.4 登记本单元应增边） |
+| 代码落位 | `industrialrobot/modeling/`：**WP-13-T02 已落位**——单元级 `CMakeLists.txt`（STATIC＋两测试目标＋配置期守卫）、公共头 `ObjectTypes/Errors/DiagCodes.hpp`＋src 三翻译单元、`test/`＋`contract_test/` 用例；`_plugin` 目标随 WP-13-T15 建 | — | 上级 `cmake/ird_gates_whitelist.cmake` 中 modeling 列于 `IRD_BUSINESS_UNITS`（R-1 禁互链集合）、`IRD_ALLOWED_UNIT_EDGES` 已增 modeling→core/diagnostics/project/runtime/policy/io 六条登记边（WP-13-T02，§3.2 边表；`IRD_EXTRA_EDGE_REFS` 成对登记出处） |
 
 缺失文件登记：用户清单所列输入文件**全部存在**，无缺失；`units/modeling.md` 本身此前不存在，即本卡（新建 v0.1）。
 
@@ -233,7 +233,7 @@ sdurws_ird_modeling_contract_test  跨单元契约测试（project/runtime/io/po
 
 - `modeling/CMakeLists.txt` 新建：`sdurws_ird_modeling` 由上级 INTERFACE 占位升级为 **STATIC**（目标名与别名不变，DTB §5.1）；同文件注册 `_test`/`_contract_test`（沿用 core/io 自持 `ird_add_gtest` 宏形态：add_test＋`<target>_report` XML）；`_plugin` 目标随 WP-13-T15 落位（Widgets，`AUTOMOC`，仅插件目标链接 Qt）。
 - 配置期红线守卫随文件自持（参照 core/CMakeLists.txt 末尾 foreach：链接到任何 `^sdurws_ird_<非本单元>` 业务目标→FATAL_ERROR；任何 Qt→FATAL_ERROR——R-1/R-3）。
-- `ird_gates` 白名单（`cmake/ird_gates_whitelist.cmake` 的 `IRD_ALLOWED_UNIT_EDGES`）**当前无任何 modeling 出边**；本卡声明建模所需依赖边如下，由 WP-13-T02 随构建落位登记（属 §3.5"各业务域单元→L2/L3 公共接口"既有许可方向的实例化，非新增架构边）：
+- `ird_gates` 白名单（`cmake/ird_gates_whitelist.cmake` 的 `IRD_ALLOWED_UNIT_EDGES`）原无任何 modeling 出边；本卡声明建模所需依赖边如下，**已随 WP-13-T02 构建落位登记**（`IRD_ALLOWED_UNIT_EDGES` 增六行；因 `traceability/dependency-graph.json` 的机器镜像刷新归 traceability 维护任务，六边经 `IRD_EXTRA_EDGE_REFS` 成对登记出处——门禁第 6 步一致性核对通过；属 §3.5"各业务域单元→L2/L3 公共接口"既有许可方向的实例化，非新增架构边）：
 
 | 边（modeling →） | 形态 | 用途 |
 | --- | --- | --- |
@@ -1492,6 +1492,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 | --- | --- | --- |
 | v0.1 | 2026-09-22 | 首版草案（WP-13-T01 承接）：14 章全量——上游基线登记（REQUIREMENTS v1.16／ARCHITECTURE v0.12／九单元卡 Draft 系）、拥有/消费/不拥有边界、五对象类型数据模型、模板/参数化/物性估算、URDF/Xacro/WorkCell 导入映射、双权威与 DH 五状态转换、传动耦合与分层就绪校验、CanonicalModel 交接（含 P-RT-5 reader 决议）与 8+9 公共接口契约、19 个稳定诊断码登记表、30 行故障注入矩阵、WP-13-T01～T19 任务排序、阶段 C/D 承接与双向交接清单、追踪矩阵、11 项设计决策/6 项风险/8 项待裁决＋6 项引用裁决、12 项交付前自审。状态 `Draft`，待评审 |
 | v0.2 | 2026-09-22 | 响应评审两问：①新增 §2.5 旧代码（`old/src/rwslibs/robotmodelbuilder`，28 文件约 1.84 万行）功能范围对照表（23 行逐项映射，按附录 A 口径仅作范围对照不继承实现）——确认需求级功能全覆盖；4 项架构重定位（策略草稿输入、导出预览/发布、DHJoint 导出、指纹/侧车取代）与 2 项有意不承接（编辑态即时 XML 预览、场景层级挂载/DAF）注明理由与替代语义；②新增 §9.7 插件界面设计与界面逻辑（五区面板信息架构、十条控件↔计算库数据流、域命令登记清单、线程/刷新约束）——消除 v0.1 仅登记插件目标与任务行、未展开界面设计的缺口；③§5.2 增补几何生成辅助（占位圆柱/碰撞引用复制），§14.4 登记项 +1；同步更新 §3.1/§11/§13/V-30/§14.5；文档头版本升 v0.2 |
+| v0.3 | 2026-09-22 | WP-13-T02 构建落位登记（文档同步）：①§1.2 构建落位行同步——`modeling/CMakeLists.txt` 新建（`sdurws_ird_modeling` INTERFACE 占位→STATIC、目标名/别名不变、C++17、零 Qt、配置期红线守卫随文件自持）＋`_test`/`_contract_test` 两测试目标（自持 ird_add_gtest 宏：add_test＋`<target>_report` XML、ctest LABELS "ird"——core/io 同款）；`_plugin` 不随本任务（本卡 §3.2 原文"随 WP-13-T15 落位"——DTB §2.14 T02 产出列含"_plugin 注册"与本卡的偏差按本卡执行，DTB §5.4 增量修订消账归治理侧）；②门禁白名单六边登记完成（`IRD_ALLOWED_UNIT_EDGES` 增 modeling→core/diagnostics/project/runtime/policy/io 六行＋`IRD_EXTRA_EDGE_REFS` 成对登记出处——dependency-graph.json 机器镜像刷新归 traceability 维护任务）；③公共头三件落位（§3.3 表 T02 行）：`ObjectTypes.hpp`（五对象 objectTypeToken——robot-design 以 using 引入 runtime::kRobotDesignObjectType 同一实体、不另设第二常量；SceneObjectRole 词表五值建模侧正式登记，token 串与 policy 消费侧镜像逐值同串）＋`Errors.hpp`（ModelingErrorCode 全表 12 值＝§9.4 已登记域错误名收编、ModelingError 值类型、域错误→稳定码映射数据——当前仅 SchemaVersionUnsupported→MDL-READINESS-SCHEMA-UNSUPPORTED 已登记行，其余随生产者任务登记不私定）＋`DiagCodes.hpp`（MDL-* 码描述符工厂——按 §9.5 分批纪律只登记 T02 行 MDL-READINESS-SCHEMA-UNSUPPORTED，其余 18 行随各自任务表尾追加不预建；真实 StableCodeRegistry 注册验证通过）；④对象 schema 版本常量不在本任务（§3.3 该行 T02/T03 双承载，消费者随 T03 codec 落位——无消费者不预建）；⑤测试目标门禁命中登记：`sdurws_ird_modeling_test`/`sdurws_ird_modeling_contract_test`→`sdurws_ird_testkit` 两处 IRD-GATE-SUB 与 F-051/F-072 同根因（引擎 SUB 形态一对测试目标→testkit 边未豁免），已按 EV-T11 先例自登记 findings；产品目标零 testkit 边、modeling 产品面零命中（GATE 命中集 base..branch diff 仅此 2 条新增，留痕 traceability/builds/wp13-t02/）。文档头版本升 v0.3 |
 
 > 自审声明：本文档自审仅覆盖设计一致性、边界与上游对齐，不等同于实现测试通过或正式验收（acceptance-protocol.md 流程另行执行）。
 

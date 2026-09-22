@@ -1,0 +1,51 @@
+[==========] Running 17 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from MdlObjTypes
+[ RUN      ] MdlObjTypes.RobotDesignTokenIsRuntimeConstantEntity_WP13T02_ACC4
+[       OK ] MdlObjTypes.RobotDesignTokenIsRuntimeConstantEntity_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlObjTypes.FiveObjectTypeTokensMatchCardSection42_WP13T02_ACC4
+[       OK ] MdlObjTypes.FiveObjectTypeTokensMatchCardSection42_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlObjTypes.SceneObjectRoleVocabularyFiveValues_WP13T02_ACC4
+[       OK ] MdlObjTypes.SceneObjectRoleVocabularyFiveValues_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlObjTypes.RoleTokensAgreeWithPolicyConsumerMirror_WP13T02_ACC4
+[       OK ] MdlObjTypes.RoleTokensAgreeWithPolicyConsumerMirror_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlObjTypes.RoleTokenRoundTripAndUnknownRejected_WP13T02_ACC4
+[       OK ] MdlObjTypes.RoleTokenRoundTripAndUnknownRejected_WP13T02_ACC4 (0 ms)
+[----------] 5 tests from MdlObjTypes (0 ms total)
+
+[----------] 4 tests from MdlErrors
+[ RUN      ] MdlErrors.TokenTableCompleteAndDistinct_WP13T02_ACC4
+[       OK ] MdlErrors.TokenTableCompleteAndDistinct_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlErrors.TokenDeterministicAndAnchoredToCard_WP13T02_ACC4
+[       OK ] MdlErrors.TokenDeterministicAndAnchoredToCard_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlErrors.ErrorValueSemanticsOrderedParams_WP13T02_ACC4
+[       OK ] MdlErrors.ErrorValueSemanticsOrderedParams_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlErrors.DiagCodeMappingStagedRows_WP13T02_ACC4
+[       OK ] MdlErrors.DiagCodeMappingStagedRows_WP13T02_ACC4 (0 ms)
+[----------] 4 tests from MdlErrors (0 ms total)
+
+[----------] 4 tests from MdlDiagCodes
+[ RUN      ] MdlDiagCodes.FactoryScopeIsStagedT02Rows_WP13T02_ACC4
+[       OK ] MdlDiagCodes.FactoryScopeIsStagedT02Rows_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlDiagCodes.DescriptorFieldsMatchSection95Row_WP13T02_ACC4
+[       OK ] MdlDiagCodes.DescriptorFieldsMatchSection95Row_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlDiagCodes.RegistersIntoStableCodeRegistry_WP13T02_ACC4
+[       OK ] MdlDiagCodes.RegistersIntoStableCodeRegistry_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlDiagCodes.DuplicateRegistrationRejected_WP13T02_ACC4
+[       OK ] MdlDiagCodes.DuplicateRegistrationRejected_WP13T02_ACC4 (0 ms)
+[----------] 4 tests from MdlDiagCodes (0 ms total)
+
+[----------] 4 tests from MdlBuildRedLine
+[ RUN      ] MdlBuildRedLine.ProductFaceHasZeroQtIncludes_WP13T02_ACC1
+[       OK ] MdlBuildRedLine.ProductFaceHasZeroQtIncludes_WP13T02_ACC1 (0 ms)
+[ RUN      ] MdlBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP13T02_ACC2
+[       OK ] MdlBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP13T02_ACC2 (0 ms)
+[ RUN      ] MdlBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP13T02_ACC2
+[       OK ] MdlBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP13T02_ACC2 (0 ms)
+[ RUN      ] MdlBuildRedLine.ProductFaceFilesNonEmpty_WP13T02_ACC1
+[       OK ] MdlBuildRedLine.ProductFaceFilesNonEmpty_WP13T02_ACC1 (0 ms)
+[----------] 4 tests from MdlBuildRedLine (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 17 tests from 4 test suites ran. (3 ms total)
+[  PASSED  ] 17 tests.

@@ -17,7 +17,11 @@
 #       reporting 已随 RPT-T01（≙WP-12-T02）落地为真实 STATIC 库（PUBLIC 链
 #       core/evidence/diagnostics/project 四条 ARCH §3.5 登记边，测试目标
 #       sdurws_ird_reporting_test/_contract_test 随落位登记——见
-#       reporting/CMakeLists.txt）；其余 9 个单元仍为 INTERFACE 占位，源码
+#       reporting/CMakeLists.txt）、modeling 已随 WP-13-T02 落地为真实
+#       STATIC 库（PUBLIC 链 core/diagnostics/project/runtime/policy/io
+#       六条卡 §3.2 登记边，测试目标 sdurws_ird_modeling_test/
+#       _contract_test 随落位登记——见 modeling/CMakeLists.txt；_plugin
+#       随 WP-13-T15）；其余 8 个单元仍为 INTERFACE 占位，源码
 #       随各自单元任务卡落地，落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
@@ -36,9 +40,10 @@ endif()
 # diagnostics 自 DIAG-T02（≙WP-09-T02）、project 自 PRJ-T01（≙WP-04-T01）、
 # io 自 IO-T01（≙WP-11-T02）、execution 自 EX-T01（≙WP-08-T02）、ui 自
 # WP-10-T02（≙UI-T02，R-3 唯一 Qt Widgets 例外目标）、reporting 自
-# RPT-T01（≙WP-12-T02）起移出（下方 add_subdirectory）。
+# RPT-T01（≙WP-12-T02）、modeling 自 WP-13-T02 起移出（下方
+# add_subdirectory）。
 set(IRD_MODULES
-    modeling requirements kinematics trajectory dynamics drivetrain
+    requirements kinematics trajectory dynamics drivetrain
     selection optimization workflow
 )
 
@@ -164,6 +169,20 @@ add_subdirectory(ui)
 # （链接四者目标——ARCH §3.5 登记边，diagnostics 卡 §3.2 已注明
 # reporting 属其消费方）。
 add_subdirectory(reporting)
+# modeling（WP-13-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、PUBLIC
+# 链 core＋diagnostics＋project＋runtime＋policy＋io——modeling.md §3.2
+# 六条登记接口依赖边，属 ARCH §3.5"各业务域单元→L2/L3 公共接口"许可方向
+# 的实例化，ird_gates 白名单 "modeling->…" 六行随本任务登记；零 Qt 含
+# Core——D-01/NFR-MNT-01，插件目标 sdurws_ird_modeling_plugin 随
+# WP-13-T15 落位时方为 Qt 例外载体），并新建 modeling/CMakeLists.txt
+# （本注册行即其挂载点）；T02 公共面＝ObjectTypes/Errors/DiagCodes 三头
+# （卡 §3.3 表 T02 行），测试目标 sdurws_ird_modeling_test（模型层用例，
+# LABELS ird）/sdurws_ird_modeling_contract_test（落位期构建图边界契约，
+# LABELS ird）随本任务登记。零其他业务域单元（R-1）、零 testkit（T-1）。
+# 次序约束：必须在 core、diagnostics、project、runtime、policy、io 之后
+# （链接六者目标——modeling.md §3.2 边表；各被链单元均已在上方
+# add_subdirectory）。
+add_subdirectory(modeling)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake
