@@ -2980,6 +2980,36 @@
       "title": "流水线簿记被实施子代理工作区清理吞没：编排者 tick#278 领取写回（phase=implementing＋run 簿记＋tick#277 追加的 35 条队列）未提交即派发，实施者按「从 base 建分支」纪律建 wp13-t02 并将工作区清理干净（state.json 改动以 stash@{0} 暂存留证后随 checkout 还原），state.json 被还原回 491767e1 已提交版本（phase=blocked、tickCount=276、空队列、tick#276 token 1b0cf982）——若编排者未在完成事件处理前核对 state，完成事件将以过期状态为基准（队列丢失会使收尾后下一 tick 需重新 autoDiscovery）",
       "owner": "治理（两选一经 PIPE 增量修订落地：①附录 A 编排者模板步骤 5 增补「领取写回后即治理提交落盘」；②附录 B 实施者模板增补「stash/checkout/restore 不得触碰 traceability/pipeline/**」）",
       "resolution": "tick#278 当场修复：编排者持锁下按 PIPE §0 以协议为准重建全部簿记（implementing＋run＋35 条队列＋fencing token），validate-state 复检 PASS 后续行验收与收尾；本次零损失（队列完整恢复）。编号顺延自 F-293。"
+    },
+    {
+      "id": "F-295",
+      "source": "traceability/acceptance/WP-10-T15-20260922-r2.md §4.7/4.11（attempt 2，verdict=pass，2026-09-22；送验对象 101a8d4aabb9ca892cde61defae201a88ac5b860，分支 wp10-t15）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "ProjectDiagnosticsBridge::report 桥纪律 switch 收尾注释「工厂错误码全表 11 值在上方两个分组穷举」与代码形态不符：switch 显式列出 7 值（上抛组 CodeUnknown/Usage＋降级组 CodeDeprecated/SubjectMissing/ComparisonMissing/ParamSchemaMismatch/ContextMissing），其余 4 值（DuplicateCode/CategoryMismatch/InvalidState/BindingMismatch）落入兜底 throw；且「编译期由 -Wswitch 提示补行」在 MSVC 下不成立（-Wswitch 为 GCC/Clang 语义，MSVC 等价 C4061/C4062 默认关闭）。行为语义自洽（4 值在 create() 路径不可达，兜底上抛＝装配缺陷组语义；新增值误入时经 HarnessMain 兜底转可观测错误页非静默——M3 变异实证）",
+      "owner": "ui 单元实施者（下个触碰 ui/app/ 的任务顺手校准注释：改写为「11 值按语义二分、降级组显式列出、其余归上抛组」或显式列全 11 case；工具链声明改按 MSVC 口径）",
+      "resolution": "验收 attempt 2 行为面核可为真（M3 因果性试验通过），仅注释精度问题；编号顺延自 F-294。"
+    },
+    {
+      "id": "F-296",
+      "source": "traceability/acceptance/WP-10-T15-20260922-r2.md §4.9（attempt 2，verdict=pass，2026-09-22）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "F-025/F-041/F-243/F-249/F-256 散文计数失准家族新例（送验提交 101a8d4a 正文两处）：①「ird-test-report.json 五件（集成 model/contract/gui＋冒烟 model/contract/gui）」——括注列 6 件、在库实为 6 件（ird-test-report.json/-contract/-gui/-smoke/-contract-smoke/-gui-smoke，全部 decisive=true 经验收亲验）；②「冒烟模式测试六件（-smoke 后缀 XML/JSON/console）」——-smoke 后缀文件实为 3 XML＋3 console 共 6 件（JSON 三件名属 ird-test-report-*-smoke 系，括注三类型与六件数不自洽）。方向均为少报/枚举口径含混、无粉饰，实质结论（154＋22＋28 全过）经亲测全真",
+      "owner": "ui 单元实施者（留痕类提交正文的件数枚举与实际入库件数提交前核对；家族纪律与 F-249 处置建议同源）",
+      "resolution": "随下次触碰留痕登记的任务顺手在提交模板执行「正文件数＝git diff --name-status 实数」自查；编号顺延自 F-295。"
+    },
+    {
+      "id": "F-297",
+      "source": "traceability/acceptance/WP-10-T15-20260922-r2.md §4.5/验收环境注记（attempt 2，verdict=pass，2026-09-22；F-068/F-075 验收环境陷阱家族新形态）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "验收变异场景陷阱（根因未深查）：cmake --build --target sdurws_ird_ui_test --clean-first 的 Clean 阶段波及共享 bin/Release 下未参与该目标的兄弟测试 exe——sdurws_ird_ui_contract_test.exe/sdurws_ird_ui_gui_test.exe 消失，随后 ctest -L \"^ird$\" 报 contract_test Not Run（Unable to find executable）；重建两目标后复绿。疑似 MSBuild Clean 范围与共享输出目录交互所致（三个 ui 测试目标同产 bin/Release）",
+      "owner": "构建/治理（如复现：考虑各测试目标独立输出目录或在验收口径登记 clean-first 后须重建全部同目标集测试 exe；后续验收会话先规避——clean-first 后重建三个 ui 测试目标再跑 ctest）",
+      "resolution": "attempt 2 已按上述口径规避并复绿（V2/V3 ctest 重跑 2/2＋1/1 exit 0）；编号顺延自 F-296。"
     }
   ]
 }
