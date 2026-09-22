@@ -2910,6 +2910,46 @@
       "owner": "治理（.gitignore 对 traceability/** 挂 !*.log 白名单豁免——F-010 根因一次性处置）＋ui 单元实施者（后续任务提交前按 .gitignore 实际效果核对提交信息留痕清单与入库清单一致）",
       "resolution": "与 F-274/F-276/F-279/F-283/F-284 同口径：不单独返工、不阻塞 UI-T14 合入（attempt 1 verdict=pass）；建议治理任务一次性解决 F-010 根因后本家族自动消账。编号顺延自 F-286。；2026-09-22 治理消账：根因已除——根 .gitignore 增设负向豁免 !RobWork/doc/industrial-robot-design/traceability/**/*.log（F-223 处置选项①落地），留痕日志不再被全局 *.log 规则吞没，实施侧无需 add -f 补证；磁盘存量 356 份原始留痕日志（40 个任务目录，含 wp10-t14 全部 14 份）已随治理提交 e6dea301 补交入库。fixedAt=2026-09-22，fixedBy=e6dea301",
       "fixedAt": "2026-09-22"
+    },
+    {
+      "id": "F-288",
+      "source": "traceability/acceptance/WP-10-T15-20260922.md §4.10（attempt 1，verdict=fail，2026-09-22；送验对象 a75bdabba06bce1218b618fdeebaacce809d2975，分支 wp10-t15）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "F-010 家族第 10 例（形态变异）：wp10-t15 留痕的 .log 文件已入库（gitignore 负向豁免生效），但 gtest XML／ird-test-report.json／集成构建日志／validate-task.log 四类证据零件在库为零；且 ctest 日志命名漂移（ctest-ui-ird.log vs 契约登记 ctest-ui-ird 名实基本符、另件缺标准名）",
+      "owner": "ui 单元实施者（WP-10-T15 返工时按 §4.10 清单补齐四类零件；后续任务按 .gitignore 豁免后的实际入库效果核对留痕清单）",
+      "resolution": "随 WP-10-T15 返工（B-1 同批）补齐；家族根因（.gitignore 吞 .log）已由 e6dea301 根治，本例为零件类别缺口非规则复发。编号顺延自 F-287。"
+    },
+    {
+      "id": "F-289",
+      "source": "traceability/acceptance/WP-10-T15-20260922.md §4.8（attempt 1，verdict=fail，2026-09-22）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "契约文件由实施者随实现提交入库且 status 自翻 done：UI-T15.json 由实施分支自行创建并预置 status=done——既往 73 份契约均由治理侧编译/收尾管理状态（CCP §3 第 7 步：done 必须以补验收 pass 为前提，预置 done 使对抗式验收失去裁决位）",
+      "owner": "治理（本补验收流程已处置：评审 PASS 附状态异常注记；fail 不合并、返工时改回 ready，pass 后 done 名副其实）＋后续所有者直接指派任务的实施会话（契约创建/状态翻转统一归治理，实施分支不自带契约状态变更）",
+      "resolution": "流程纪律登记：所有者直接指派任务亦应遵循『契约由治理编译、实施者只消费』分工；本例以本登记＋评审注记收口。编号顺延自 F-288。"
+    },
+    {
+      "id": "F-290",
+      "source": "traceability/acceptance/WP-10-T15-20260922.md §4.4③-B-1 根因链（attempt 1，verdict=fail，2026-09-22；三无头探针实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "project 发出的 PRJ-LOCK-HELD 用户级诊断记录缺 ERR-01 subject 字段：经 diagnostics IDiagnosticFactory.create 时按契约抛 subject-missing（Factory.hpp:123-131）——project 自身路径对该记录未走工厂校验面，首个经工厂消费的新消费者（UI-T15 ProjectDiagnosticsBridge）即触发契约异常；属跨单元契约缺口（ERR-01『用户级码 subject 合法』的发射侧义务未落实），非 harness 单方缺陷",
+      "owner": "所有者裁决（二选一：project 卡增量修订——PRJ-LOCK-HELD 等用户级记录补 subject=锁对象/项目对象；或 diagnostics 卡增量——该类记录登记豁免口径）＋project 单元实施者（裁决后增量修订）",
+      "resolution": "登记为 DTB §4 O-41 裁决项；harness 返工不得以吞异常掩盖本缺口（返工处置＝桥接器对契约内异常显式降级路由 Dev 日志＋用户可见『可写：否』，真实原因保留）。编号顺延自 F-289。"
+    },
+    {
+      "id": "F-291",
+      "source": "traceability/acceptance/WP-10-T15-20260922.md §4.7（attempt 1，verdict=fail，2026-09-22）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "F-273 家族第 4 例：ui/CMakeLists.txt AUTOMOC 注释『十五个源文件』与 src/ 实际 19 个 TU 漂移（base 既有漂移，非本任务引入）",
+      "owner": "ui 单元实施者（下一增量触碰 ui/CMakeLists.txt 时修正注释计数或改为不写死数字）",
+      "resolution": "注释准确性、非行为缺陷：随下次增量顺手处置。编号顺延自 F-290。"
     }
   ]
 }

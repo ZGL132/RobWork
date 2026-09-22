@@ -262,3 +262,7 @@
 | WP-15-T13 | wp15-t13 | True | P-KIN-7 | 契约测试＋四套黄金＋容差档案 | 过；评审 PASS | ready |
 
 连带登记（非阻塞，随各契约下次增量消账）：①WP-15-T05 note 的 EX 依赖依据文字订正（已随上表行内登记）；②WP-15-T06 的 execution 消费面（提交/检查点/2s 取消）无 EX dependsOn 的非对称未在 note 说明；③WP-15-T02 与 DTB 行"_plugin"输出偏差未按 §5.4 单元卡增量登记（内容按卡推迟 T12 正确）；④T05/T12 各一处 acceptance 引用节未入 designRefs（§8.4/§3.2）；⑤T08/T12"§9.8 七条命令"实为 7 行 8 IDs（set-default-tcp/device 同行）——实施时按 8 条注册。
+
+### 补编译登记：UI-T15（所有者直接指派任务，2026-09-22）
+
+| UI-T15 | wp10-t15 | True | O-31 | 契约由实施分支自带（F-289 流程异常已登记 findings）——治理会话补走 CCP §3 第 5~6 步：validate-task PASS＋validate-docs PASS；独立评审＝**PASS**（逐字段核对表＋P3 口径瑕疵；status 预置 done 异常注记：done 应以补验收 pass 为前提，fail 则返工改回 ready）。补验收 attempt1 verdict=**fail**（B-1：PM-07 双写者场景进程崩溃——ProjectDiagnosticsBridge 对契约内异常零处理；根因链含 F-290 跨单元缺口）→ 按纪律不合并，转返工（acc/WP-10-T15/1 @ 7ccc1fad 为 lastFailureRecord 载体）；通过项：双模式构建/gates 恰增 2 SUB/ctest 154+22+28/变异测试/四段式提交均独立复现属实 | validate-task 过；独立评审＝PASS（契约面）；补验收 attempt1＝fail | ready（fail 返工中；pass 后置 done） |
