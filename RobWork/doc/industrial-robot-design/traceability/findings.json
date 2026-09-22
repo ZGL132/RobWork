@@ -3051,6 +3051,56 @@
       "title": "全新集成树全量构建失败簇扩展观测：除 F-008 已登记的 RWSimulatorPlugin（rw/math/Math.hpp C2059/C2334/C2143 min/max 宏污染簇，WP-13-T04 验收在 9e24b410 集成树从零构建再次原样复现）外，新观测 bt_plugin.rwplugin.vcxproj 同簇失败（vcpkg eigen3 Parallelizer.h C2589/C2059——同 min/max 宏污染根，RobWorkSim bullet 插件）。送验 diff 零框架文件、无因果路径；industrialrobot 全部目标（含全部依赖链）从零构建零错误，任务目标两模式零错误不受影响（F-008 处置口径「ired 任务不受影响」维持）",
       "owner": "构建所有者（框架侧 NOMINMAX/include 顺序修正——RobWorkSim 插件目标族统一处置，须先登记 patch；随 WP-01-T02 CI 一键门禁消费）",
       "resolution": "处置建议＝并入 F-008 同一修正动作（RobWorkSim 插件目标族加 NOMINMAX 或调 include 顺序，patch 登记），本条作为复现证据扩展记录，不单独立项修复。编号顺延自 F-300。"
+    },
+    {
+      "id": "F-303",
+      "source": "traceability/acceptance/WP-13-T05-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；送验对象 5e5f04f90df8340328722e4923bd5d63b8ef6dde，分支 wp13-t05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-012/F-293/F-298 家族同型再现（在册先例链见 F-293）：WP-13-T05 送验第三提交 5e5f04f 标题「[WP-13-T05] 双模式验证留痕＋文档同步：卡 v0.6（T05 落位登记＋§9.5 增登行）＋门禁比对证据＋F-302」前缀后以名词短语「双模式验证留痕＋文档同步」开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 标题字面要求——正文四段（What/Why/How/影响面）齐备，验证段结论与验收者独立复现逐项吻合（双模式构建零错误、集成 91/91＋5/5、ctest 2/2、validate-task/validate-docs PASS、门禁建模面恰 +1 已登记命中 F-302），无粉饰、零行为影响；同送验主提交 827e0e55/eb417a1e 标题「实现…」动词开头合规，仅本提交违例",
+      "owner": "实施者侧提交信息规范（后续送验提交标题前缀后动词开头）；家族性口径统一处置归治理侧（F-012 处置建议①同源）",
+      "resolution": "处置建议＝随 F-012 家族统一处置，后续提交标题采用前缀＋动词开头形态（本例对应形态如「[WP-13-T05] 登记 双模式验证留痕与卡 v0.6 文档同步」）；不追溯改写已推送提交历史（AGENTS §6.3 禁止改写已推送提交）。编号顺延自 F-302。"
+    },
+    {
+      "id": "F-304",
+      "source": "traceability/acceptance/WP-13-T05-20260923.md §4.3（attempt 1，verdict=pass，2026-09-23；F-300 同型 T05 实例）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "契约 verify 清单缺测试目标构建行（F-300 同型再现）：tasks/foundation/WP-13-T05.json verify 数组只列 sdurws_ird_modeling 与 sdurws_ird_modeling_test 两构建目标，不含 sdurws_ird_modeling_contract_test——全新构建树按清单逐条字面执行时，ctest（第 3 条）首跑 contract_test 将报 Not Run（exe 未被任何清单命令构建），验收者补跑 --target sdurws_ird_modeling_contract_test（退出码 0）后 ctest 2/2 复绿。实施侧未受影响（留痕表明其完整构建三目标），仅验收/CI 全新树口径存在清单缺口",
+      "owner": "治理/编排（DTB §5.1 与契约模板 verify 数组口径补全——与 F-300 同一修正动作覆盖：ctest 前先构建单元全部 *_test/_contract_test 目标，或 verify 清单逐目标列全；后续同族单元任务契约同查）",
+      "resolution": "处置建议＝与 F-300 合并处置（DTB §5.1 一处通用修订覆盖既有与后续契约，或按任务在 verify 数组补目标行）；验收者实测补建后 2/2 复绿，无行为影响。编号顺延自 F-303。"
+    },
+    {
+      "id": "F-305",
+      "source": "traceability/acceptance/WP-13-T05-20260923.md §4.6/§4.7（attempt 1，verdict=pass，2026-09-23；Import.cpp:1046-1092 结构校验段）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "Import.cpp 结构违例错误项复用 kind \"name-conflict\"：URDF 语义层结构破坏（parent/child link 悬空引用/连杆多父/多根森林/环状引用）产生的 ImportErrorItem kind 均写作 \"name-conflict\"，而 Import.hpp:352 的 kind 词表将 \"name-conflict\" 定义为「净化后 localName 重复——I-MDL-2」，两语义混用——问题仍可观察（ImportErrorCode 正确置 SourceInconsistent、detail 文本准确区分），但报告消费方按 kind 判别时无法机器区分「名称冲突」与「结构违例」两类失败面，且与头文件词表注释构成文档失实",
+      "owner": "实施者侧后续任务（增量修订：为结构违例引入独立 kind 如 \"structure-broken\" 并同步 Import.hpp 词表注释，或由 requirements/单元卡所有者澄清 §6.3 错误项词表口径——按 R-MDL-1 增量同步流程）",
+      "resolution": "处置建议＝后续 modeling 触碰 Import.cpp 的任务顺手修订（独立 kind＋词表注释同步），或登记 DTB §4 由所有者裁决词表口径；现行为可观察、无阻断，不构成返工。编号顺延自 F-304。"
+    },
+    {
+      "id": "F-306",
+      "source": "traceability/acceptance/WP-13-T05-20260923.md §4.4/§4.8（attempt 1，verdict=pass，2026-09-23；units/modeling.md §6.3 mesh 行对照 Import.cpp:1824-1834）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "§6.3 mesh 行「package:// 等 ROS URI 不支持→定位诊断引导改相对路径」的承载形态解释未按 DTB §5.4 登记：实现将「定位诊断」落为导入报告 unsupported 条目（span 行列定位＋guidance 引导文本，测试断言 span.line>0 与 guidance 含「相对路径」）而不产出注册诊断码（§9.5 无对应行，实现注释自辩「不私定码」）——但同任务对 TEMPLATE-RANGE（同为 §9.5 原表缺行）选择了实现期增登（卡 v0.6 登记），两种处置并存且 ros-uri 的解释面（报告条目即「定位诊断」）未在卡 §14.6 十项偏差澄清中列名，属语义解释面未登记",
+      "owner": "modeling 单元卡所有者（裁决 §6.3「定位诊断」措辞的报告面/诊断码面口径：维持报告条目承载则在 §14.6 增补一条偏差澄清，或增登专用码行归后续任务领取）",
+      "resolution": "处置建议＝所有者澄清卡面措辞或补一条 §14.6 澄清（一句话即可闭环）；定位与引导两要素验收实测可观察、非阻断，不构成返工。编号顺延自 F-305。"
+    },
+    {
+      "id": "F-307",
+      "source": "traceability/acceptance/WP-13-T05-20260923.md §4.7（attempt 1，verdict=pass，2026-09-23；Import.cpp 文件头阅读地图对照正文步骤标签）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "Import.cpp 文件头「实现结构（阅读地图）」声明十步（①～⑩，其中⑦＝主链外元素登记），但正文对应代码块标签为「第八步前注：链解析已在第六步的选链行走中完成」，第七步编号标签缺失——注释步骤序与代码结构轻微漂移（链型判定提交 eb417a1e 重构第六步后未同步段前标签），不影响可读性的主体（每步业务依据注释仍完整）",
+      "owner": "实施者侧后续任务（modeling 后续触碰 Import.cpp 时顺手把该块标签改为「第七步」或删除文件头阅读地图中的⑦编号——AGENTS §2.1.5 注释随代码更新）",
+      "resolution": "处置建议＝后续 modeling 任务顺手修订一行注释，不单独返工。编号顺延自 F-306。"
     }
   ]
 }
