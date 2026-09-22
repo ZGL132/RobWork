@@ -75,6 +75,12 @@ find_package(pugixml CONFIG REQUIRED)
 #                        参数声明式替换；护栏复核与 IO-* 码透传，§6.5/
 #                        §9.4.9；pugixml 复用 T05 已登记依赖——O-40 不二
 #                        次引入渠道）
+# T07 增列（tasks/foundation/WP-13-T07.json，§3.3 表 T07 行）：
+#   src/Template.cpp     模板创建与参数化编辑（IRobotDesignTemplateFactory
+#                        ＋T-MDL-1 六轴默认参数表＋ModelingWorkingSet v1
+#                        ＋创建入口守卫〔§6.4 判定复用〕＋逐轴编辑流＋
+#                        几何生成辅助——§5.1/§5.2/§9.4.2；七轴模板仅登记
+#                        不启用——P-03/O-27）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -84,7 +90,8 @@ add_library(sdurws_ird_modeling STATIC
     src/Codec.cpp
     src/PropertyEstimation.cpp
     src/Import.cpp
-    src/XacroExpand.cpp)
+    src/XacroExpand.cpp
+    src/Template.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -192,6 +199,15 @@ endif()
 #                          Refs 来源留痕＋失败无草稿（ACC3）＋确定性/可
 #                          重入（ACC5，NFR-COR-02）——inline fixture
 #                          （Xacro 黄金样例随 WP-13-T16 收口）
+# T07 增列（任务契约 acceptance 1~5 具名自证）：
+#   test/TemplateTest.cpp  接口落位/三模板清单/createDraft 满足 I-MDL-1~
+#                          12（ACC1）＋七轴登记不启用 TemplateDisabled＋
+#                          MDL-TEMPLATE-DISABLED（ACC2，V-02/O-27/P-03）＋
+#                          T-MDL-1 表值逐格/J6 行程 4π 边界（ACC3，D-MDL-7）
+#                          ＋创建→编辑链路（字段级/批量单条摘要/
+#                          buildChangeSummary/4·5 轴与 prismatic 创建入口
+#                          阻止）（ACC4，MDL-01/AT-20）＋几何辅助两条
+#                          确定性/来源标记（ACC5，§5.2 v0.2）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -208,7 +224,8 @@ add_executable(sdurws_ird_modeling_test
     test/CodecTest.cpp
     test/PropertyEstimationTest.cpp
     test/ImportTest.cpp
-    test/XacroExpandTest.cpp)
+    test/XacroExpandTest.cpp
+    test/TemplateTest.cpp)
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_modeling_test PROPERTIES
