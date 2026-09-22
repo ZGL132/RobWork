@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 279,
+  "tickCount": 280,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-22T22:45:12+08:00",
+    "updatedAt": "2026-09-23T00:40:02+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1596,6 +1596,18 @@
       "acceptanceRecord": "traceability/acceptance/WP-13-T03-20260922.md",
       "mergedAt": "2026-09-22",
       "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；实施段环境注记（非本任务缺陷，验收记录 §环境说明同载）：全树冒烟配置需补 Qt 前缀——testkit_qt/ui 单元后置任务引入无条件 find_package(Qt6 REQUIRED)，与 F-007/F-254 在册环境前置缺口叠加；落位偏差七项（a~g）已按 DTB §5.4 登记于 modeling.md §14.6 v0.4；验收建议级 F-298（F-012/F-293 家族：送验留痕提交标题名词开头）随 acc/WP-13-T03/1 转登"
+    },
+    {
+      "task": "WP-13-T04",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "7326ccb6a3f009b25857123358820f063e4a39c5",
+        "9e24b4104d1af423c1fb40ba0d1442bb73990469"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T04-20260923.md",
+      "mergedAt": "2026-09-23",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；落位偏差三项已按 DTB §5.4 登记于 modeling.md §14.6 v0.5（长方体 Iyy 列头澄清经解析验证一致）；验收建议级 F-299（F-012 家族：留痕提交标题名词开头）／F-300（verify 清单缺 contract_test 构建行）／F-301（F-008 失败簇扩展观测 bt_plugin）随 acc/WP-13-T04/1 转登；门禁零新增命中经验收者 detached base 对照独立证实"
     }
   ],
   "policy": {
@@ -1621,11 +1633,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "WP-13-T04",
-      "branch": "wp13-t04",
-      "contractPath": "tasks/foundation/WP-13-T04.json"
-    },
     {
       "taskId": "WP-13-T05",
       "branch": "wp13-t05",
@@ -1795,5 +1802,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "95abdae5-f895-4196-9ac5-4b84a0ffdf11"
+  "tickToken": "67504e53-c9ac-4354-9f7a-c2d494dd6673"
 }

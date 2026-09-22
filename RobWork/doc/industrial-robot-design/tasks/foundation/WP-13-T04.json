@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现物性估算唯一公式表与动力学参数层",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T03"
   ],
