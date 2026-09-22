@@ -3151,6 +3151,46 @@
       "title": "F-041/F-080/F-236/F-249/F-256 散文计数失准家族再现：提交 803b435a 正文称「归档 traceability/builds/wp13-t06/ 十八件验证留痕」，实际该提交入库 21 件（13 日志＋4 gtest XML＋4 ird-test-report JSON——git diff --name-only 清点）；方向＝少报、无粉饰（在库文件多于声明），正文枚举「＋ird_gates 比对三件」句式与 18 的拆算亦不自洽",
       "owner": "实施者侧提交信息规范（归档前以 git diff --name-only | wc -l 实测计数再落笔）",
       "resolution": "处置建议＝随散文计数家族统一处置（归档类提交正文计数以实测命令输出为准）；不追溯改写已推送提交历史。编号顺延自 F-310。"
+    },
+    {
+      "id": "F-312",
+      "source": "traceability/acceptance/WP-13-T07-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；验收者 --gtest_list_tests 实测＋TEST 宏清点）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-041/F-080/F-236/F-249/F-256/F-311 散文计数失准家族再现：单元卡 §14.6 v0.8 行与送验两提交（abde6724/7156ff13）均称「新增 13 条 MdlTemplate 用例」，实测 TemplateTest.cpp 含 15 个 TEST（gtest_list_tests MdlTemplate 段 15 条；119 全量＝base 104＋新增 15），方向＝少报、无粉饰（在库测试多于声明）",
+      "owner": "实施者侧提交信息与单元卡登记规范（登记前以 --gtest_list_tests 或 TEST 宏计数实测落笔）",
+      "resolution": "随散文计数家族统一处置（实测计数再落笔）；不追溯改写已推送提交历史与已推送单元卡行（增量修订时校正口径）。编号顺延自 F-311。"
+    },
+    {
+      "id": "F-313",
+      "source": "traceability/acceptance/WP-13-T07-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；验收者 git log --format 逐字审读）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-012/F-293/F-298/F-299/F-303/F-308 家族同型再现：WP-13-T07 送验第三提交 7156ff13 标题「[WP-13-T07] 单元卡 v0.8 文档同步与任务验证留痕」前缀后以名词「单元卡」开头，非动词开头——不合 ACC §4.9/AGENTS §6.3 标题字面要求；正文四段齐备、验证结论与验收者独立复现吻合（同 F-308 处置口径：建议级不阻塞）",
+      "owner": "实施者侧提交信息规范（标题用动词开头，如「同步/登记/归档」）",
+      "resolution": "随 F-012 家族统一处置（提交模板/自查项强制动词开头校验）；不追溯改写已推送提交历史。编号顺延自 F-312。"
+    },
+    {
+      "id": "F-314",
+      "source": "traceability/acceptance/WP-13-T07-20260923.md §4.3（attempt 1，verdict=pass，2026-09-23；验收者逐条执行契约 verify 数组）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-300/F-304/F-310 家族第四例：tasks/foundation/WP-13-T07.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行——只列 sdurws_ird_modeling 与 sdurws_ird_modeling_test 两个 --target；全新树按清单字面执行时 ctest 首跑 contract_test 将 Not Run（本单元契约测试目标实际存在并交付 5/5，验收者已亲补构建验证——非实现缺陷，属契约编译面口径缺口）",
+      "owner": "CCP 契约编译会话（编译 verify 数组时对含 _contract_test 目标的任务统一补该构建行）；存量契约可随收尾批量增补",
+      "resolution": "治理侧统一处置：对本单元后续契约（T08+）编译时补齐 contract_test 构建行，并对存量 ready/done 契约择机批量勘误。编号顺延自 F-313。"
+    },
+    {
+      "id": "F-315",
+      "source": "traceability/acceptance/WP-13-T07-20260923.md §4.10（attempt 1，verdict=pass，2026-09-23；验收者对在库留痕逐文件抽查编码）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-207/F-231/F-309 家族再现：在库 traceability/builds/wp13-t07/gates-ird-gates-branch.log 含双重编码乱码（UTF-8 中文输出被按 GBK 误读后再编为 UTF-8——首行「适用于 .NET Framework MSBuild」呈「閫傜敤浜� .NET Framework…」型，约 40 行不可直读）；门禁零新增结论经验收者绕开该载体（configure-free 直跑脚本＋sort/diff 归一比对）独立复现成立，属留痕载体编码问题非数据问题",
+      "owner": "治理/实施侧留痕管线（MSBuild 自定义目标输出捕获统一设 UTF-8 code page 或改文件捕获通道——F-207 原处置建议沿用）",
+      "resolution": "随 F-207 家族统一处置（留痕捕获通道编码修复后本家族自然消账）。编号顺延自 F-314。"
     }
   ]
 }
