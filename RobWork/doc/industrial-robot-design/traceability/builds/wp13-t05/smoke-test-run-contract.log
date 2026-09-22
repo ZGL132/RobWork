@@ -1,0 +1,18 @@
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from MdlBuildGraph
+[ RUN      ] MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3
+[       OK ] MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3 (0 ms)
+[ RUN      ] MdlBuildGraph.SixRegisteredEdgesPresent_WP13T02_ACC3
+[       OK ] MdlBuildGraph.SixRegisteredEdgesPresent_WP13T02_ACC3 (0 ms)
+[ RUN      ] MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2
+[       OK ] MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2 (0 ms)
+[ RUN      ] MdlBuildGraph.NoTestkitEdgeOnProductTarget_WP13T02_ACC2
+[       OK ] MdlBuildGraph.NoTestkitEdgeOnProductTarget_WP13T02_ACC2 (0 ms)
+[ RUN      ] MdlBuildGraph.IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3
+[       OK ] MdlBuildGraph.IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3 (5 ms)
+[----------] 5 tests from MdlBuildGraph (8 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (8 ms total)
+[  PASSED  ] 5 tests.
