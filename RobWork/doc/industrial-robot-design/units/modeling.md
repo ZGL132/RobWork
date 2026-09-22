@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案，2026-09-22；对应 development-task-breakdown.md WP-13-T01 交付物） |
+| 文档版本 | v0.2（2026-09-22：新增 §2.5 旧代码功能范围对照、§9.7 插件界面设计与界面逻辑、§5.2 几何生成辅助——响应评审两问；v0.1＝2026-09-22 首版草案，WP-13-T01 交付物） |
 | 日期 | 2026-09-22 |
 | 状态 | **`Draft`**（待评审；DETAILED-DESIGN.md 单元状态表中的"modeling｜待产出"以本卡落盘为准，索引行同步由治理侧执行，本卡不代改） |
 | 文档代号 | UNIT-MODELING |
@@ -174,6 +174,36 @@ modeling 是七阶段工作流的第一阶段（`ui` StageId 序列 `modeling �
 | 双权威冲突全部定义 | §7.2/§7.3（来源表＋冲突矩阵＋非法组合） |
 | 不引入未经上游批准的新状态/阈值/语义 | §14.4（新增语义逐项登记：六轴模板默认值、位姿集对象、场景角色词表等均为 modeling 所有权的登记而非上游扩张）；§14.3 待裁决 |
 
+### 2.5 旧代码（`old/src/rwslibs/robotmodelbuilder`）功能范围对照
+
+口径声明（REQUIREMENTS 附录 A）：从头构建口径下旧代码**仅作功能范围对照**——本表把旧实现（28 个文件、约 1.84 万行：多页签建模 UI〔RobotModelBuilderWidget〕、RobotModelSpec 纯数据模型、URDF 导入器、XML 五件套写出器、WorkCell 反向转换器、发布/指纹/项目路径设施）逐项映射到需求 ID 与本卡设计落点；**不构成实现继承或正确性背书**，承接语义一律以需求条目与本卡章节为准，与旧行为不一致处均为需求驱动的架构演进并逐行注明。承接状态图例：✅＝等价/增强承接；♻＝架构重定位承接（能力保留、所有权或介质按新架构重新落位）；⏸＝分期承接（R2）；❌＝按上游裁决或需求范围不承接。
+
+| 旧功能（来源） | 需求/处置（附录 A） | 本卡落点 | 承接状态 |
+| --- | --- | --- | --- |
+| 多页签建模 UI（Kinematics/Drawables/Limits/Poses/Dynamics/Scene/Preview） | MDL-01~07/15~17、AT-01｜等价承接 | §9.7（面板与界面逻辑）、§11 T15 | ✅ 功能承接（信息架构重组：页签→对象树＋属性投影＋阶段面板；v0.2 增补设计） |
+| 位姿/DH 双模式切换（DH 为投影视图） | MDL-02/09/10、AT-16｜等价承接 | §7.1～§7.6 | ✅ 增强（旧简化投影公式＋lossy 标志→两阶段五状态＋编译链等价验证；旧"DH 反写真值"工具→仅 Exact/ExactNonUnique 经验证可切换权威） |
+| 关节表编辑（增删/上移下移/六轴重置） | MDL-01、AT-01｜等价承接 | §5.1/§5.2、§9.4.1 | ✅ |
+| 连杆几何 Drawables＋自动连杆圆柱（autoLink/regenerateLinkHelpers/computeLinkPose） | MDL-04、AT-01｜等价承接 | §4.3-B、§5.2 几何生成辅助（v0.2 增补） | ✅（辅助＝确定性占位原语生成，产物为普通几何引用） |
+| 外部几何文件导入（stl/obj/dae/wrl/iv 选择） | MDL-04/PM-09、AT-15｜等价承接 | §6.7 资源三段边界＋io 格式族 | ✅（文件读取/识别/预算归 io，modeling 只持引用） |
+| 独立碰撞模型表＋从 Drawables 生成碰撞模型 | MDL-04/ARC-05、AT-19｜等价承接 | §4.3-B `shape.collision`、§5.2 引用复制式辅助（v0.2 增补） | ✅（碰撞**几何**引用归 modeling；碰撞**判定**仍唯一归 policy） |
+| CollisionSetup 排除对（基座-首关节/相邻/静态三开关＋手动对＋Manual/Auto/Imported 来源标记） | MDL-04/ARC-05、AT-19｜等价承接 | §6.3（SelfCollisionHints→策略草稿候选输入）、P-MDL-3 | ♻（策略权威归 policy：modeling 产建议清单，自动排除规则在策略解析入口应用） |
+| ProximitySetup（includeAll/静态排除/通配规则表） | 上游未设对应需求条目 | — | ❌ 不承接（判定规则归 policy 工程策略；如需走需求变更立项） |
+| 场景帧/场景几何（层级 refFrame、Fixed/Movable/DAF、RPY/4×4 双位姿模式） | MDL-15、AT-28｜等价承接 | §4.5 | ✅/➖（世界系固连＋role 词表承接；**层级挂载与 DAF 不承接**——首版静态场景需求未要求，需则走需求变更；RPY/4×4 由统一 Transform3D 表示＋显示投影取代） |
+| 限位/力限值/质量/材料估算（含 RobWork EstimateInertia 开关） | MDL-05/16、AT-01｜等价承接 | §5.3/§5.4 | ✅ 增强（唯一公式表＋来源标记＋断言分域；估算收归建模公式表，不再调用 RobWork 估算——DTB §4.6 基线库使用原则） |
+| URDF 导入（仅单链＋fixed frame；package 根解析；缺失网格策略 Fail） | MDL-03/11、AT-15｜等价承接 | §6.1～§6.3 | ✅ 大幅增强（io 安全边界＋维度一/二链型判定＋分支报告＋待确认草稿取代"仅单链"限制；缺失网格 Fail→Recorded 引用＋告警＋转正式固化门禁） |
+| WorkCell 反向同步提取（设备/关节/限位/Q 构型/场景/碰撞提取＋侧车融合＋目标设备选择） | MDL-18、AT-33（R2）｜分期承接 | §6.6（边界设计） | ⏸ R2（目标设备选择对应分支报告＋显式选链；侧车融合对应 MDL-20 自有工件识别） |
+| 生成预览/保存 XML 五件套＋保存并加载（失败回滚） | MDL-06/20、AT-28｜等价承接 | §6.8、§9.1、§9.7 预览页 | ♻（XML 由 runtime 编译产生，导出为外供副本；**编辑态即时 XML 预览有意不承接**——草稿不编译（D-MDL-10），对应物＝基于已应用修订的导出预览；"保存并加载"由修订事件→快照刷新取代） |
+| DWC 生成开关 | MDL-06、AT-01｜等价承接 | §9.1（`CompileOptions.requestDynamicWorkCell`＋能力门控 SkippedNoPhysics） | ✅ |
+| 导出 DHJoint XML（Advanced，无损条件检查） | MDL-02、AT-16｜等价承接 | §6.8（规范包保留 DH 权威语义）；WC/DWC XML 内容形态归 runtime 适配层 | ♻ |
+| .rmb.json 侧车＋项目路径可移植化（makePortable/resolveManaged） | 附录 B 裁决排除（侧车格式）；PM/CON | §4.2 对象库、§4.8（路径不作身份） | ❌→✅ 按上游裁决以对象库＋ObjectId＋内容摘要取代 |
+| 发布服务（publishAndLoad） | PM/CON、AT-20｜等价承接 | §9.3 命令＋修订事件 | ♻（"发布并加载"→应用命令＋双编译＋修订事件驱动视图刷新） |
+| 模型指纹 Current/Stale（canonicalSha256） | CON-02/05、AT-05｜附录 B 裁决排除（哈希链→修订＋当前性） | §4.8（ContentVersion 由 project 计算） | ❌→✅ 按上游裁决 |
+| 项目文档集成（加载/保存/脏快照比对/恢复/清理上下文） | PM-04/08、AT-21｜等价承接 | §4.9、§9.3（DraftService＋ui DraftController） | ✅ |
+| 三维选择联动（Drawable 高亮/打开场景同步） | MDL-07、AT-01｜等价承接 | §9.7.2 L-1 选中联动数据流 | ✅（拾取契约归 ui View3D，建模侧供 ObjectId 投影与高亮目标） |
+| 插件动态加载元数据（Q_PLUGIN_METADATA/动态卸载） | NFR-SEC-04｜附录 B 裁决排除 | §3.1/§3.2（静态白名单＋IPluginUiRegistrar） | ❌→✅ 按上游裁决 |
+
+**对照结论**：需求级功能**全覆盖**——等价/增强承接 14 项、架构重定位 4 项、分期（R2）2 项、按上游裁决或需求范围不承接 4 项，与附录 A 处置三分类一致；两项有意不承接（编辑态即时 XML 预览、场景层级挂载/DAF）均注明理由与替代语义/需求变更通道；实现层面旧代码零拷贝（从头构建口径不变）。
+
 ---
 
 ## 3. 单元组成、依赖与公共头文件布局
@@ -189,7 +219,7 @@ sdurws_ird_modeling            计算库（L2 等效，零 Qt，STATIC）：
 sdurws_ird_modeling_plugin     插件界面（L4，Qt Widgets）：
                                关节树/参数表/三维选择联动（MDL-07）、编辑器面板、导入向导域侧页、
                                就绪诊断呈现；只消费计算库公共接口＋ui 端口＋只读投影，
-                               不持有计算逻辑与业务判定（MDL-07 联动与 WD 面板归 WP-13-T15）
+                               不持有计算逻辑与业务判定（面板信息架构与界面逻辑见 §9.7）
 sdurws_ird_modeling_test       单元测试（googletest，经 find_package(GTest CONFIG REQUIRED)）
 sdurws_ird_modeling_contract_test  跨单元契约测试（project/runtime/io/policy/diagnostics 对端面）
 ```
@@ -444,6 +474,7 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 - **改名**：`localName` 改名＝设计变更（新内容版本、失效下游，§4.8）；编辑器就地提示"该修改将使运动学及下游结果需要重算"（MDL-09）。
 - **引用保护**：RemoveObjectRefEdit 对被本域引用对象（defaultTcp、被其他连杆/工具引用的几何资源）拒绝并给比较型定位诊断（I-MDL-9）；对可能被跨域引用对象给出迁移提示（§4.8）。
 - **草稿隔离**：未应用编辑只存在于编辑器工作集与草稿载荷；任何其他消费者（评估器、报告、其他插件面板）读到的是已应用修订状态——"未应用草稿中的编辑如何隔离"由 PA-3 保证（草稿不是快照、无对象身份）。
+- **几何生成辅助**（v0.2 增补；承接旧 autoLink/碰撞生成辅助，见 §2.5）：①`生成连杆占位几何`——确定性纯函数，按相邻关节原点连线生成圆柱占位原语（视觉用，参数可在属性区改写）；②`碰撞引用复制辅助`——把视觉几何引用复制为同资源碰撞引用（不引入网格重画/凸包简化算法，如需简化代理走需求变更）。两者产物均为普通 `GeometryRef`，与手编几何同权、同校验，来源标记 `GeometricEstimate`（methodTag 区分辅助类型）。
 
 ### 5.3 物性估算（MDL-05，唯一公式表版本 `mdl-property-formula/1`）
 
@@ -1163,9 +1194,59 @@ protected:
  ├─ (oid₆,cv₆) resource-object(Solidified) ◄─ resourceManifest ┘
  └─ ExternalResourceRecord{absPath+digest}(Recorded──只在外部引用记录层，非对象)
 
-身份规则：ObjectId=稳定身份（arc-04）；ContentVersion=project 对字节 SHA-256；
+身份规则：ObjectId=稳定身份（ARC-04）；ContentVersion=project 对字节 SHA-256；
          路径≠身份；"删除"=移除引用（对象字节永久保留，PA-2）。
 ```
+
+### 9.7 插件界面设计与界面逻辑（`sdurws_ird_modeling_plugin`；MDL-07、UX-05/06/07）
+
+**定位与分工**：插件界面是建模计算库的唯一交互前端——只消费 §9 公共接口与 ui 平台契约，不持有计算逻辑与业务判定（ARCH §3.3）；工作台壳、五区布局、命令注册表/快捷键权威、确认对话桥、三维视图契约归 ui 单元（ui.md），本节只设计 modeling 域面板的信息架构、控件接线与交互流。旧多页签 UI 的功能映射见 §2.5（v0.2 增补，回应"本卡缺 UI 设计"的评审意见——此前 v0.1 仅在 §3.1/§11 T15 登记插件目标与任务行，未展开界面设计）。
+
+#### 9.7.1 域面板组成与信息架构（挂接 UX-09 五区布局）
+
+| 面板区 | 内容 | 消费契约 |
+| --- | --- | --- |
+| 建模结构树（左栏对象树的建模节点） | 模型根→基座安装→关节链（串联序）→连杆→工具/场景/位姿集/传动分组；节点锚＝ObjectId，显示 localName 与工程用语标签（UX-02：不显示哈希/内部 token） | ②查询端口基线闭包＋ui SelectionModel（选中只写会话态） |
+| 属性编辑区（右栏） | **选中对象只显示相关属性**（MDL-07）：关节→类型/轴/零位/限位/速度/加速度（DH 权威下轴/原点灰显只读，§7.2）；连杆→物性（来源徽标：用户/估算/导入——ValueProvenance 投影）＋几何引用；工具→安装接口/TCP 列表；场景→世界位姿/角色；传动→比率/摩擦/力矩 | §9.4.1 `workingSet()`＋ui FormEditCommon（数值＋单位同显、非法就地原因并保留原值、批量粘贴——UX-05） |
+| 域工具区（阶段面板，StageId=`modeling`） | 模板新建、URDF/Xacro 导入向导域侧页、权威模式切换、物性估算、几何生成辅助、Model Diff、规范包导出/导入、（R2）WorkCell 导入入口 | ui ICommandRegistry（命令经 `PluginUiDescriptor.commands` 装配登记，§9.7.3） |
+| 就绪与诊断条 | L0～L11 分层结果（Blocking/Warning/Confirmable 计数＋逐项定位跳转到树节点）；建模域七态投影数据源 | §8.2 `ModelReadinessReport`＋`IPluginUiModule::readonlyProjections()`＋IDiagnosticSink |
+| 预览页 | **仅基于已应用修订**的只读预览：WC/DWC XML 导出预览（MDL-20 外供内容）、模型几何查看（消费 RuntimeSnapshot 只读视图）。编辑态即时 XML 预览不提供（§2.5/D-MDL-10——草稿不编译） | runtime `IRuntimeModelView`（经 ui/View3D 契约） |
+
+#### 9.7.2 界面逻辑（控件↔计算库接线，十条数据流）
+
+| # | 交互 | 数据流（→＝调用方向） | 契约锚 |
+| --- | --- | --- | --- |
+| L-1 | 选中联动（三维拾取↔树↔属性区） | 树点击/View3D ray-cast 拾取→ui SelectionModel（写会话态，零修订）→属性区只读投影刷新；反向"定位"：属性区/诊断条跳转→树滚动＋三维高亮目标（ObjectId→名称端口取显示名） | ui §4.2/View3DContract；MDL-07；KIN-06 |
+| L-2 | 字段编辑流 | 控件提交→`applyEdit(ModelingEdit)`→接受：树/属性区/就绪条增量刷新＋`notifySessionDirty`（脏标记→标题 `*`，PM-04/PM-11）；拒绝：就地错误（比较型三要素）＋保留原值，不弹模态 | §9.4.1；UX-03/05/07 |
+| L-3 | 应用（提交）流 | `draft.apply`（ui 既有命令）→`IPluginUiModule.buildDraftCommand("modeling")`→①端口 submit；有 ConfirmableFinding 时 project 经 `ICommandInteraction` 回调→ui CommandInteractionBridge marshal 到 UI 线程呈现确认对话（行程上限：实际行程/阈值/单位 rad——UX-03 三要素）→凭据回传→修订产生或拒绝 | §9.3；SA-15；ui CommandInteractionBridge |
+| L-4 | 修订事件刷新 | 订阅⑤事件（修订产生/失效通知）→重载基线闭包→工作集按"基线＋未应用编辑"保序重演（重演失败提示手工处置，不静默丢弃编辑）→全面板刷新 | §9.4.1；⑤事件端口 |
+| L-5 | 撤销/重做（两级并存） | 项目级：命令面板/快捷键→UndoRedoService（逆命令新修订）；草稿级：编辑器工具条 undoLocal/redoLocal（零修订零落盘）；两级入口同屏且文案明确区分（PM-18/REQ-11） | §9.3；ui IDraftController |
+| L-6 | Stale 冲突对话 | Rejected(stale-revision)→ui"草稿基线冲突"对话（[基于当前版本重新编辑]/[查看差异对象]/[取消]）；建模侧经 ModelDiffService 供给 baseRevision vs tip 差异定位数据 | §9.4.9；ui §8.5；PM-04 |
+| L-7 | 只读模式 | writable=false→编辑控件禁用、域命令 `readOnlyAllowed=false`；浏览/选中/单位切换/预览可用 | ui §7.6；PM-07 |
+| L-8 | 平行轴确认 | 质心编辑→`CentroidEditUnresolved`→面板**内联**二选一（平行轴迁移/覆盖完整张量，附迁移预览数值）→带选择重提 applyEdit（内联非模态优先，表单级确认 UX-07） | §5.3 规则 2 |
+| L-9 | 权威模式切换流 | 面板发起→显式→DH 先行五状态判定→结果页（逐关节逐项偏差表＋E 度量＋收敛状态）→Exact/ExactNonUnique 才允许发起切换命令（等价验证在 prepare 内执行）→Approximate/NotExpressible 阻断呈现并说明 | §7.5/§7.6；AT-16 |
+| L-10 | 导入向导域侧页 | 选择文件（io 预检）→映射报告页（分组：字段映射/默认补全/忽略项/不支持项/分支报告＋显式选链/待确认项逐条决议/资源状态表）→确认→草稿落盘→draft.apply | §6.1/§6.4；PM-01 |
+
+#### 9.7.3 域命令登记清单（装配期经 `IPluginUiRegistrar`；CommandId 点分小写＝ui CommandId 词表，与 project commandType 无点词表是两套命名空间，不混用）
+
+| CommandId | 类别/作用域 | 语义 | readOnlyAllowed |
+| --- | --- | --- | --- |
+| `modeling.new-from-template` | Stage/Project | 模板新建（TemplateFactory→草稿） | false |
+| `modeling.import-urdf` / `modeling.import-xacro` | Stage/Project | 导入向导（io 预检→§6.1 管线） | false |
+| `modeling.switch-authority` | Stage/Project | DH↔显式权威切换流（L-9） | false |
+| `modeling.estimate-properties` | Stage/Project | 选中连杆批量物性估算 | false |
+| `modeling.generate-placeholder-geometry` | Stage/Project | 连杆占位几何生成辅助（§5.2） | false |
+| `modeling.diff-baseline` | Stage/Project | 与基线 Model Diff 查看 | true |
+| `modeling.export-package` / `modeling.import-package` | Stage/Project | MDL-20 规范包导出/导入 | true / false |
+| `modeling.reset-home-zero` | Session | 复位 Home/Zero（会话姿态，KIN-06 语义，零修订） | true |
+
+（`draft.apply`/`draft.save` 等项目级命令由 ui 既有注册承载，modeling 只供给 `buildDraftCommand`；快捷键绑定一律经 ui HotkeyBindingTable，插件不私占全局快捷键——SA-16。）
+
+#### 9.7.4 线程与刷新约束
+
+- 编辑器/工作集仅 UI 线程访问（§3.4）；命令提交后 UI 不阻塞（命令执行槽全局串行），完成经修订事件回sync；确认回调由桥接器 marshal 至 UI 线程（project P-PR-7）。
+- 刷新一律事件驱动（修订/失效/任务事件），禁止轮询；三维视图消费 RuntimeSnapshot 只读视图，**插件不直接调用 RobWork**（ARC-03）。
+- 面板不得缓存模型权威数据——每次投影从 `workingSet()`/查询端口取值，防止 UI 副本成为第二真值（§2.4）。
 
 ## 10. 验证方案及故障注入矩阵
 
@@ -1208,7 +1289,7 @@ protected:
 | V-27 | S | AT-04 会话预览无修订 | KIN-06、AT-04 | 打开模型面板 | 三维点选/双击/复位 Home/Zero（会话命令） | 零修订、零失效；位姿集参考数据读取不产生写 | 修订计数；会话态归 ui 观测 |
 | V-28 | S | AT-30 选型回填输入面 | SEL-10、AT-30 | （阶段 C 联合） | selection 回填命令写 robot-drivetrain | schema 字段接受回填（目录版本/安装关系/壳体-转子分离）；modeling 侧只校验 I-MDL-11 | 回填后对象 cv；复算提示事件（联合观测） |
 | V-29 | I/G | MDL-20 包 roundtrip | MDL-20、AT-28 | 已应用模型（含命名位姿/资源） | 导出包→重导入→逐项比对 | 权威参数化/物性/资源引用/碰撞规则/命名位姿逐项一致；导出失败时旧输出文件完好、项目状态不变 | 逐项清单 diff=空；AtomicFile 回滚观测 |
-| V-30 | G | GUI 主流程（设计登记） | MDL-07、UX-05/07 | Windows GUI 环境 | 关节树选择→属性表联动→批量粘贴→表单应用确认 | 只显示选中对象相关属性；非法输入就地显示原因并保留原值；会话操作无保存提示 | 面板截图＋诊断呈现；按 AGENTS GUI 规程执行（本次不启动） |
+| V-30 | G | GUI 主流程（设计登记） | MDL-07、UX-05/07、§9.7 | Windows GUI 环境 | 关节树选择→属性表联动→批量粘贴→表单应用确认；两条界面数据流抽测（L-2/L-3） | 只显示选中对象相关属性；非法输入就地显示原因并保留原值；会话操作无保存提示；确认对话三要素齐全 | 面板截图＋诊断呈现；按 AGENTS GUI 规程执行（本次不启动） |
 
 **AT 承接声明**：AT-01（V-01/03/15/16）、AT-04（V-27）、AT-05（V-25）、AT-15/17（V-06/07/10）、AT-16（V-11）、AT-18（V-26 联合）、AT-27（V-24）、AT-28（V-29 及场景/位姿行）、AT-29（V-03/22）、AT-30（V-28 联合）、AT-31（V-09 及 Xacro 黄金样例）、AT-33（R2，mapWorkCellXml 启用时补行）、AT-37（V-12/13 联合）、AT-38（V-18，R2）。凡"联合观测"行，本卡测试只负责 modeling 侧输入/输出面，跨域断言归对应域契约测试——不把未执行测试写为通过。
 
@@ -1234,7 +1315,7 @@ DTB WP-13 任务包（v0.16 §2.14）为权威拆分，本卡不重排编号；�
 | WP-13-T12 | `CanonicalBridge.hpp/.cpp`（reader＋builder；P-RT-5 决议落地）＋契约测试（与 runtime RT-T12 协作） | T03、WP-06-T05/T07/T11 | ⑥ |
 | WP-13-T13 | `Package.hpp/.cpp`（MDL-20 roundtrip）＋UT（AT-28） | T03、WP-11 | ⑥ |
 | WP-13-T14 | `ModelDiff.hpp/.cpp`（MDL-08）＋UT（AT-12 数据实体面） | T03 | ⑥ |
-| WP-13-T15 | `sdurws_ird_modeling_plugin`（关节树/参数表/三维选择联动；ui 接入） | T03~T11、WP-10-T08 | ⑦ |
+| WP-13-T15 | `sdurws_ird_modeling_plugin`（面板信息架构/接线/命令清单按 §9.7 实现；ui 接入） | T03~T11、WP-10-T08 | ⑦ |
 | WP-13-T16 | 契约测试套件＋三套黄金模型数据集（§10.1 清单；容差档案；边角样例） | T05~T14、WP-02 | ⑧（收口） |
 | WP-13-T17 | WorkCell 反向导入（R2/阶段 D 启用时领取） | T05、WP-11-T06、阶段 D | R2 |
 | WP-13-T18 | 传动耦合矩阵建模（R2/阶段 D；含 R1 阻断反例——阻断码已在 T08 注册） | T03、WP-18-T05、阶段 D | R2 |
@@ -1291,7 +1372,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 | MDL-04 | §4.4～§4.6、§6.3 | V-06/29 | T07/T10 |
 | MDL-05 | §5.3 | V-17 | T04 |
 | MDL-06 | §8.2、§9.3 | V-15/16/19/20 | T08 |
-| MDL-07 | §9.4.1、§11 T15 | V-30 | T15 |
+| MDL-07 | §9.4.1、§9.7、§11 T15 | V-30 | T15 |
 | MDL-08 | §9.4.9 | V-29 联动（AT-12 数据面） | T14 |
 | MDL-09 | §7.2/§7.3 | V-03/14 | T03 |
 | MDL-10 | §7.4～§7.6 | V-11 | T09 |
@@ -1384,6 +1465,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 3. 六轴模板默认参数表、材料密度默认表（设计默认值，黄金数据集锁定，D-MDL-7）。
 4. `MDL-*` 稳定码清单（§9.5，diagnostics 注册纪律内，随任务注册不预建）。
 5. 物性估算唯一公式表 `mdl-property-formula/1`（MDL-05 授权范围内）。
+6. 几何生成辅助两条（连杆占位圆柱生成、碰撞引用复制式辅助——§5.2，v0.2）：编辑辅助确定性纯函数，产物为普通 GeometryRef；**不引入网格重画/凸包简化算法**（上游未授权，如需走需求变更）。
 
 ### 14.5 交付前自审结论（2026-09-22，文档级自审——不等同实现测试或正式验收）
 
@@ -1401,6 +1483,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 | 双权威参数冲突是否全部定义 | 是——§7.2/§7.3 来源表＋冲突矩阵 C-1～C-7＋非法组合 |
 | 是否引入未经上游批准的新状态/阈值/语义 | 已审计——§14.4 全部登记于 modeling 所有权内；阈值（行程/条件数/容差）均引上游来源；模板默认值登记为设计默认＋黄金锁定 |
 | 是否越权修改需求、架构或其他单元机制 | 否——本卡仅新建 units/modeling.md；全部上游张力进 §14.3 待裁决；未改任何其他文件 |
+| 旧代码功能覆盖与 UI 设计完整性（v0.2 增审） | 已闭环——§2.5 对 old/src/rwslibs/robotmodelbuilder 23 项功能逐项对照（需求级全覆盖；4 项架构重定位、2 项有意不承接均注明理由与替代语义）；UI 界面设计与界面逻辑由 §9.7 承接（面板信息架构/十条数据流/域命令清单/线程约束），消除 v0.1 仅登记插件目标与任务行、未展开界面设计的缺口 |
 | 遗留 | DETAILED-DESIGN.md 索引行（modeling 待产出→Draft）与 `traceability/unit-status.json`、`requirements-to-units.json` 的机器索引同步未由本卡代改——按"不修改其他文档"约束留给治理侧（建议随 DOC 系列任务消账） |
 
 ### 14.6 变更记录
@@ -1408,6 +1491,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-09-22 | 首版草案（WP-13-T01 承接）：14 章全量——上游基线登记（REQUIREMENTS v1.16／ARCHITECTURE v0.12／九单元卡 Draft 系）、拥有/消费/不拥有边界、五对象类型数据模型、模板/参数化/物性估算、URDF/Xacro/WorkCell 导入映射、双权威与 DH 五状态转换、传动耦合与分层就绪校验、CanonicalModel 交接（含 P-RT-5 reader 决议）与 8+9 公共接口契约、19 个稳定诊断码登记表、30 行故障注入矩阵、WP-13-T01～T19 任务排序、阶段 C/D 承接与双向交接清单、追踪矩阵、11 项设计决策/6 项风险/8 项待裁决＋6 项引用裁决、12 项交付前自审。状态 `Draft`，待评审 |
+| v0.2 | 2026-09-22 | 响应评审两问：①新增 §2.5 旧代码（`old/src/rwslibs/robotmodelbuilder`，28 文件约 1.84 万行）功能范围对照表（23 行逐项映射，按附录 A 口径仅作范围对照不继承实现）——确认需求级功能全覆盖；4 项架构重定位（策略草稿输入、导出预览/发布、DHJoint 导出、指纹/侧车取代）与 2 项有意不承接（编辑态即时 XML 预览、场景层级挂载/DAF）注明理由与替代语义；②新增 §9.7 插件界面设计与界面逻辑（五区面板信息架构、十条控件↔计算库数据流、域命令登记清单、线程/刷新约束）——消除 v0.1 仅登记插件目标与任务行、未展开界面设计的缺口；③§5.2 增补几何生成辅助（占位圆柱/碰撞引用复制），§14.4 登记项 +1；同步更新 §3.1/§11/§13/V-30/§14.5；文档头版本升 v0.2 |
 
 > 自审声明：本文档自审仅覆盖设计一致性、边界与上游对齐，不等同于实现测试通过或正式验收（acceptance-protocol.md 流程另行执行）。
 
