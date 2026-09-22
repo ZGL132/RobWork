@@ -54,6 +54,8 @@ std::string_view modelingErrorCodeToken(ModelingErrorCode code) noexcept
         return "DhExpandFailed";
     case ModelingErrorCode::SchemaVersionUnsupported:
         return "SchemaVersionUnsupported";
+    case ModelingErrorCode::MalformedPayload:
+        return "MalformedPayload";
     }
     // 全枚举已覆盖，不达此处（ARC-04：不猜测——漏表项由编译器拦截，
     // 不设静默兜底串）。
@@ -86,8 +88,10 @@ std::optional<std::string_view> modelingDiagCode(ModelingErrorCode code) noexcep
     case ModelingErrorCode::IllegalName:
     case ModelingErrorCode::RefMissing:
     case ModelingErrorCode::DhExpandFailed:
+    case ModelingErrorCode::MalformedPayload:
         // 暂无已登记映射码（文件头/Errors.hpp 注：阶段纪律——不私定、
-        // 不预建；错误经值面返回，不落诊断）。
+        // 不预建；错误经值面返回，不落诊断）。MalformedPayload 属解码
+        // 数据错误面，语义随 §9.5 对应码行（如有）注册时登记映射。
         return std::nullopt;
     }
     // 全枚举已覆盖，不达此处。

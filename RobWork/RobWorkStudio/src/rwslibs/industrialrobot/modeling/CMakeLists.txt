@@ -42,10 +42,23 @@ find_package(GTest CONFIG REQUIRED)
 #   src/ObjectTypes.cpp  SceneObjectRole 词表转发表（§4.5）
 #   src/Errors.cpp       错误码 token 表＋域错误→稳定码映射数据（§9.5 尾段）
 #   src/DiagCodes.cpp    MDL-* 码描述符清单＋注册函数（§9.5 T02 行）
+# T03 增列（tasks/foundation/WP-13-T03.json，§3.3 表 T03 行）：
+#   src/RobotDesign.cpp  根对象值模型实现：枚举 token 表/值相等/双权威
+#                        编辑守卫（C-1/C-2）/不变量核查 I-MDL-1～10
+#   src/Parts.cpp        四部件值模型实现＋部件级不变量（工具 I-MDL-5、
+#                        传动 I-MDL-11/12）
+#   src/Codec.cpp        IRobotDesignCodec canonical 编解码（§4.8 序列化
+#                        登记——小端/UTF-8/无填充/集合字典序；D-MDL-5
+#                        派生字段排除的编码侧声明点）
+#   src/InertiaMath.hpp  单元私有头（R-2：不入 include/——惯量 SPD＋三角
+#                        不等式单一实现，连杆/工具两处共用）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/RobotDesign.cpp
+    src/Parts.cpp
+    src/Codec.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -115,6 +128,17 @@ endif()
 #   test/BuildRedLineTest.cpp      产品面源码红线运行期扫描（零 Qt＋
 #                                  include 面限于六边——acceptance 1/2，
 #                                  与文件末尾配置期守卫互为两道防线）
+# T03 增列（任务契约 acceptance 3/4/5 具名自证）：
+#   test/RobotDesignTest.cpp       不变量 I-MDL-1～10 逐条注册（用例名绑定
+#                                  编号）＋双权威守卫 C-1/C-2（V-14 场景）
+#                                  ＋Axis 编辑权限随权威模式（MDL-09）
+#   test/PartsTest.cpp             工具物性断言①②③（§4.4 同连杆）＋传动
+#                                  I-MDL-11/12（R1 coupling 拒绝——§4.7）
+#   test/CodecTest.cpp             canonical 确定性（NFR-COR-02 同对象同
+#                                  字节）＋encode/decode 往返逐字段一致＋
+#                                  D-MDL-5 派生字段不入编码身份＋未知主
+#                                  版本 SchemaVersionUnsupported（NFR-
+#                                  DEP-04）＋MalformedPayload 破损面
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -125,7 +149,10 @@ add_executable(sdurws_ird_modeling_test
     test/ObjectTypesTest.cpp
     test/ErrorsTest.cpp
     test/DiagCodesTest.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/RobotDesignTest.cpp
+    test/PartsTest.cpp
+    test/CodecTest.cpp)
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_modeling_test PROPERTIES

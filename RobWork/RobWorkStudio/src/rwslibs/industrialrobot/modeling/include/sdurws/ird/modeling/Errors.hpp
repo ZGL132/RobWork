@@ -65,8 +65,8 @@ namespace sdurws::ird::modeling {
 // =====================================================================
 
 /**
- * @brief modeling 域稳定错误码全表（12 值——§9.4 已登记域错误名的全集，
- *        逐值注释给出其产生接口与落位任务）。
+ * @brief modeling 域稳定错误码全表（13 值——§9.4 已登记域错误名收编＋
+ *        编解码族表尾追加 1 值，逐值注释给出其产生接口与落位任务）。
  *
  * 底型 std::uint8_t：域错误面按 §9.4 既有登记收编，后续任务表尾追加
  * （16 位以内充足且枚举体积恒定——IoErrorCode 同款取舍）。注意与本表
@@ -118,6 +118,16 @@ enum class ModelingErrorCode : std::uint8_t {
     /// （§9.5 MDL-READINESS-SCHEMA-UNSUPPORTED 同义事件——升程序/重新
     /// 编辑；本值是当前唯一已有已登记映射码的枚举值，见 modelingDiagCode）。
     SchemaVersionUnsupported,
+
+    // ---- 编解码族（§9.4.9 IRobotDesignCodec——T03；表尾追加登记见下）----
+    /// "MalformedPayload"——canonical 编码字节破损（decode 校验链失败：
+    /// magic 不符/截断/越界/尾随字节/非法枚举或 presence 值/非有限
+    /// double/UTF-8 不成形/集合未规范化/解码产物不变量违例——Codec.hpp
+    /// 校验链全文）。表尾追加登记（枚举数值进入二进制契约，只增不插）：
+    /// §9.4.9 codec 行明文列举的错误仅 SchemaVersionUnsupported，本值
+    /// 承载"其余解码失败"（Expected 值面需要可判别的失败侧——外部字节
+    /// 属可恢复数据错误，不走异常轨）；单元卡 §15 增量同步登记。
+    MalformedPayload,
 };
 
 /**
