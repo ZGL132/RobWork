@@ -36,6 +36,16 @@
 # RW::gtest（从未生成），也不源码 vendor——两份 gtest 混用会破坏 ODR。
 find_package(GTest CONFIG REQUIRED)
 
+# ---- pugixml 接入（O-40——DTB §4 依赖登记，2026-09-22 所有者批次授权）----
+# URDF/Xacro DOM 解析（io 不产出 DOM、expat 为其 PRIVATE——P-MDL-5）：经
+# vcpkg 经典模式安装 pugixml 1.15→1.16/x64-windows（版本以安装时 vcpkg
+# ports 清单为准，登记于任务契约 note 与单元卡 §14.6 实施记录）。
+# PRIVATE 链接＝仅 sdurws_ird_modeling 自身编译消费（Import.cpp 内 include
+# <pugixml.hpp>，公共头不暴露 DOM 类型——消费者零感知）；DOM 有界性由 io
+# BudgetGuard 前置保证（进入 modeling 的字节已经预算入账——O-40 登记语）。
+# REQUIRED 语义同 gtest：找不到即配置失败（不静默跳过）。
+find_package(pugixml CONFIG REQUIRED)
+
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 # T02 源码集＝三公共头的实现翻译单元（头内 token 常量零运行时成本，
 # 无需 TU；函数面按头分文件——io 同款布局）：
@@ -56,6 +66,10 @@ find_package(GTest CONFIG REQUIRED)
 #   src/PropertyEstimation.cpp  物性估算唯一公式表 mdl-property-formula/1
 #                        （段元闭式公式/平行轴合成/输出自检/密度默认表/
 #                        质心确认流域级判定——§5.3/§9.4.6）
+# T05 增列（tasks/foundation/WP-13-T05.json，§3.3 表 T05 行）：
+#   src/Import.cpp       URDF 导入字段映射与链型判定（IModelImportMapper；
+#                        pugixml DOM 解析——O-40 PRIVATE 依赖，§6.1～§6.7/
+#                        §9.4.3；mapWorkCellXml R1 边界响应）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -63,7 +77,8 @@ add_library(sdurws_ird_modeling STATIC
     src/RobotDesign.cpp
     src/Parts.cpp
     src/Codec.cpp
-    src/PropertyEstimation.cpp)
+    src/PropertyEstimation.cpp
+    src/Import.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -111,6 +126,12 @@ target_link_libraries(sdurws_ird_modeling PUBLIC
     sdurws_ird_policy
     sdurws_ird_io)
 
+# pugixml：O-40 登记的 PRIVATE 第三方依赖（单独语句——不混入六条登记边的
+# PUBLIC 语句，保持登记形态可扫描；PRIVATE＝不向消费者传播，公共头零
+# pugixml 类型暴露）。本语句不在六边白名单守卫的 sdurws_ird_* 拦截范围
+# （pugixml::pugixml 不匹配 ^sdurws_ird_/Qt/GTest 模式——配置期守卫不受影响）。
+target_link_libraries(sdurws_ird_modeling PRIVATE pugixml::pugixml)
+
 # 别名（集成模式）：供其余单元以 RWS::ird::modeling 消费；冒烟模式无别名
 # （与骨架期行为一致，DTB §5.1）。
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -150,6 +171,13 @@ endif()
 #                                  确认流三分支（V-17）＋密度默认表/
 #                                  NotProvided 不断言（DYN-06/M-8）＋
 #                                  传动 schema 字段约束与来源标记（MDL-16）
+# T05 增列（任务契约 acceptance 1~5 具名自证）：
+#   test/ImportTest.cpp    接口落位/R1 边界（ACC1）＋§6.3 字段映射表逐行
+#                          四清单/包 URI/缺失资源（ACC2，AT-15）＋MDL-11
+#                          轴语义三分支（ACC3）＋链型判定两维度（ACC4，
+#                          AT-17，随链型判定提交）＋确定性/诊断行序稳定
+#                          排序（ACC5，NFR-COR-02）——inline fixture
+#                          （V-06 全链黄金数据集随 WP-13-T16 收口）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -164,7 +192,8 @@ add_executable(sdurws_ird_modeling_test
     test/RobotDesignTest.cpp
     test/PartsTest.cpp
     test/CodecTest.cpp
-    test/PropertyEstimationTest.cpp)
+    test/PropertyEstimationTest.cpp
+    test/ImportTest.cpp)
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_modeling_test PROPERTIES

@@ -46,20 +46,28 @@ using sdurws::ird::modeling::registerModelingCodes;
 namespace {
 
 /// §9.5 任务列含 T02 的行的**应登记码面**（测试内自持字面清单——与实现
-/// 清单机械比对，任一侧漂移即失败：失同步防线）。当前恰 1 行；T03+ 任务
-/// 落位时在实现清单与本清单表尾同步追加（分批纪律——其余 18 行不得提前
-/// 出现，见 StagedScope 用例）。
+/// 清单机械比对，任一侧漂移即失败：失同步防线）。T03+ 任务落位时在实现
+/// 清单与本清单表尾同步追加（分批纪律——其余行不得提前出现）。
 const char* kT02Section95Codes[] = {
     "MDL-READINESS-SCHEMA-UNSUPPORTED",
+};
+
+/// §9.5 任务列含 T05 的行的应登记码面（WP-13-T05 登记——表行序＝工厂
+/// 清单序；MDL-IMPORT-TEMPLATE-RANGE 随链型判定提交增列，此处不预登）。
+const char* kT05Section95Codes[] = {
+    "MDL-IMPORT-UNSUPPORTED-JOINT",
+    "MDL-IMPORT-ZERO-AXIS",
+    "MDL-IMPORT-PENDING-CONFIRM",
 };
 
 }  // namespace
 
 /**
  * 工厂清单分批封闭性（acceptance 4——"按 §9.5 注册纪律只登记有消费者
- * 条目，不预建"）：清单恰含 §9.5 任务列含 T02 的行（当前 1 行）——
- * 其余 18 行（T05/T08/T09/T13/T18 任务列）提前出现即"预建"违约；逐码
- * 等于卡面字面清单（不私定码值）。
+ * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05 的行（4 行）——
+ * 其余行（T08/T09/T13/T18 任务列与本提交未到的 BRANCH-SELECTION 等）
+ * 提前出现即"预建"违约；逐码等于卡面字面清单（不私定码值），清单序＝
+ * §9.5 表行序。
  */
 TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
 {
@@ -67,20 +75,29 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
                   std::vector<std::string>{});
 
     const auto descriptors = modelingCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), std::size(kT02Section95Codes))
-        << "工厂清单应恰含 §9.5 T02 任务行（分批纪律：其余行随各自任务"
+    const std::size_t expectedCount =
+        std::size(kT02Section95Codes) + std::size(kT05Section95Codes);
+    ASSERT_EQ(descriptors.size(), expectedCount)
+        << "工厂清单应恰含 §9.5 T02/T05 任务行（分批纪律：其余行随各自任务"
            "登记——不预建）";
-    for (std::size_t i = 0; i < descriptors.size(); ++i) {
+    // 清单序＝§9.5 表行序：T02 行在前，T05 行按表行序随后。
+    for (std::size_t i = 0; i < std::size(kT02Section95Codes); ++i) {
         EXPECT_EQ(descriptors[i].code, std::string(kT02Section95Codes[i]))
             << "清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
+    }
+    for (std::size_t i = 0; i < std::size(kT05Section95Codes); ++i) {
+        EXPECT_EQ(descriptors[std::size(kT02Section95Codes) + i].code,
+                  std::string(kT05Section95Codes[i]))
+            << "T05 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
 }
 
 /**
- * 描述符登记值逐字段锚定（§9.5 行＋diagnostics §4.5 字段约束）：码句法、
- * 前缀-所有权（MDL→modeling）、分类/严重、文案键命名约定、paramSchema
- * 三键、confirmable=false、retryable=UserRetry、非 Dev 码三项、版本/废弃
- * 状态。
+ * 描述符登记值逐字段锚定（§9.5 行＋diagnostics §4.5 字段约束）：公共面
+ * （句法/前缀-所有权/文案键命名约定/非 Dev 三项/版本状态）逐码核查；
+ * 卡面差异面（分类/级别/paramSchema/可重试性）逐码断言——T02 行
+ * "校验/error→FormatOrVersion＋三键"，T05 行"导入/error|warning→
+ * InputInvalid＋各自键集"（§9.5 行文逐列对照）。
  */
 TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
 {
@@ -89,6 +106,13 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
 
     const auto descriptors = modelingCodeDescriptors();
     ASSERT_FALSE(descriptors.empty());
+    const auto lowerOf = [](const std::string& code) {
+        std::string lower;
+        lower.reserve(code.size());
+        std::transform(code.begin(), code.end(), std::back_inserter(lower),
+                       [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+        return lower;
+    };
     for (const auto& d : descriptors) {
         // 句法（§4.5：^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64）。
         EXPECT_TRUE(isValidDiagCodeSyntax(d.code)) << "码句法非法: " << d.code;
@@ -96,36 +120,57 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
         EXPECT_EQ(d.ownerUnit, "modeling");
         EXPECT_EQ(d.code.rfind("MDL-", 0), 0U)
             << "首段前缀必须与 ownerUnit 声明域一致（MDL→modeling）";
-        // §9.5 行"类别/级别"列："校验/error"→FormatOrVersion/Error
-        // （对象 schema 主版本超版＝diagnostics §4.3 format-or-version 族）。
-        EXPECT_EQ(d.category, DiagnosticCategory::FormatOrVersion);
-        EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
         // 文案键命名约定（P-DIAG-9：diag.<code-lower>.title/.detail）。
-        std::string lower;
-        lower.reserve(d.code.size());
-        std::transform(d.code.begin(), d.code.end(), std::back_inserter(lower),
-                       [](unsigned char ch) { return static_cast<char>(std::tolower(ch)); });
+        const std::string lower = lowerOf(d.code);
         EXPECT_EQ(d.titleKey, "diag." + lower + ".title");
         EXPECT_EQ(d.detailKey, "diag." + lower + ".detail");
-        // paramSchema 必填三键（object-type/schema-version/supported-major
-        // ——§4.5 受限 JSON 形命名参数清单，词形 ^[a-z0-9]+(-[a-z0-9]+)*$；
-        // 与 Errors.hpp 映射行同源）。
-        EXPECT_NE(d.paramSchema.find("\"object-type\""), std::string::npos);
-        EXPECT_NE(d.paramSchema.find("\"schema-version\""), std::string::npos);
-        EXPECT_NE(d.paramSchema.find("\"supported-major\""), std::string::npos);
-        // §9.5 行"confirmable"列 false（超版无放行分支）；非比较型。
-        EXPECT_FALSE(d.confirmable);
-        EXPECT_FALSE(d.requiresComparison);
-        // 建议动作"升级程序/重新编辑"＝fix-input 族→UserRetry。
-        EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         // 非 Dev 码：可见/可报告/可入历史三项全 true（§4.5 Dev 强制 false
-        // 的逆面）；首次登记版本、未废弃、无迁移目标。
+        // 的逆面）；首次登记版本、未废弃、无迁移目标、非比较型。
         EXPECT_TRUE(d.userVisible);
         EXPECT_TRUE(d.reportable);
         EXPECT_TRUE(d.historical);
         EXPECT_EQ(d.registryVersion, 1U);
         EXPECT_FALSE(d.deprecated);
         EXPECT_FALSE(d.supersededBy.has_value());
+        EXPECT_FALSE(d.requiresComparison);
+        // ---- 卡面差异面（§9.5 行逐列）----
+        if (d.code == "MDL-READINESS-SCHEMA-UNSUPPORTED") {
+            // "校验/error"→FormatOrVersion/Error；paramSchema 三键；UserRetry。
+            EXPECT_EQ(d.category, DiagnosticCategory::FormatOrVersion);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_NE(d.paramSchema.find("\"object-type\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"schema-version\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"supported-major\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-IMPORT-UNSUPPORTED-JOINT") {
+            // "导入/error"→InputInvalid/Error（源文件关节类型不可表达——
+            // 输入非法族）；paramSchema [joint-name, source-type]；UserRetry。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_NE(d.paramSchema.find("\"joint-name\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"source-type\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-IMPORT-ZERO-AXIS") {
+            // "导入/error"→InputInvalid/Error（零轴/非有限轴）；paramSchema
+            // [joint-name, axis-raw]；UserRetry（"修正源文件"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_NE(d.paramSchema.find("\"joint-name\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"axis-raw\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-IMPORT-PENDING-CONFIRM") {
+            // "导入/Warning"→InputInvalid/Warning（输入不完整待逐条确认）；
+            // paramSchema [item-kind, subject]；UserRetry（"逐条确认"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Warning);
+            EXPECT_NE(d.paramSchema.find("\"item-kind\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"subject\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else {
+            FAIL() << "未登记的码面出现（分批纪律——不预建）: " << d.code;
+        }
+        // confirmable=false（§9.5 全部已登记行均 false）。
+        EXPECT_FALSE(d.confirmable);
     }
 }
 

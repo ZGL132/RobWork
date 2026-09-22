@@ -58,12 +58,36 @@
 namespace sdurws::ird::modeling {
 
 // =====================================================================
+// MDL-* 码值常量（唯一书写点——DiagCodes.cpp 描述符工厂与 Import.cpp
+// 产码共用同一常量，禁字符串拼码/第二处字面量，§9.5 尾段产码纪律）
+// =====================================================================
+
+/// §9.5 T02/T03 行：MDL-READINESS-SCHEMA-UNSUPPORTED（校验/error——对象
+/// schema 主版本超出本程序支持→升级程序/重新编辑；Errors.hpp 映射码
+/// modelingDiagCode 与此同源同串）。
+inline constexpr std::string_view kMdlReadinessSchemaUnsupported = "MDL-READINESS-SCHEMA-UNSUPPORTED";
+
+/// §9.5 T05 行：MDL-IMPORT-UNSUPPORTED-JOINT（导入/error——mimic/planar/
+/// floating/闭环在所选主链→移除或改拓扑，不得绕过；V-10）。
+inline constexpr std::string_view kMdlImportUnsupportedJoint = "MDL-IMPORT-UNSUPPORTED-JOINT";
+
+/// §9.5 T05 行：MDL-IMPORT-ZERO-AXIS（导入/error——零轴/非有限轴关节→
+/// 修正源文件；该草稿不得提交，MDL-11）。
+inline constexpr std::string_view kMdlImportZeroAxis = "MDL-IMPORT-ZERO-AXIS";
+
+/// §9.5 T05/T06 行：MDL-IMPORT-PENDING-CONFIRM（导入/Warning——待确认项
+/// 未决（缺 axis 默认 +X/缺限位/工作范围）→逐条确认）。
+inline constexpr std::string_view kMdlImportPendingConfirm = "MDL-IMPORT-PENDING-CONFIRM";
+
+// =====================================================================
 // MDL-* 稳定诊断码描述符清单（§9.5 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 modeling 已到注册任务行的 MDL-* 稳定码描述符全集（当前
- *        恰 1 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行）。
+ *        4 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
+ *        WP-13-T05 登记的 T05 行 MDL-IMPORT-{UNSUPPORTED-JOINT,
+ *        ZERO-AXIS,PENDING-CONFIRM} 三码——清单序＝§9.5 表行序）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，io ioCodeDescriptors
  * 同款自证结构）：
