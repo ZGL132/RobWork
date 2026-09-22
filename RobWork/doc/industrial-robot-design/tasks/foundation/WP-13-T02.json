@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "modeling 构建落位：占位库转真实目标＋门禁边登记",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "CORE-T01"
   ],

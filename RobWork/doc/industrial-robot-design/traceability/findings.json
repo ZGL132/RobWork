@@ -2970,6 +2970,16 @@
       "title": "F-012 家族同型再现（先例 F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-039/F-040/F-042/F-044/F-045/F-047/F-048/F-059/F-076/F-079/F-082/F-084/F-086/F-210/F-211/F-214/F-215/F-218/F-222/F-226/F-232~F-242/F-247/F-258/F-261/F-263/F-264/F-267/F-269/F-271 等在册链）：WP-13-T02 送验提交 7fdfe8cf 标题「[WP-13-T02] modeling 构建落位：占位库转 STATIC 真实目标＋门禁六边登记＋T02 公共头三件」前缀后以名词短语「modeling 构建落位」开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 标题字面要求——正文四段（What/Why/How/影响面）齐备，验证段结论与验收者独立复跑结果逐项吻合（双模式构建零错误、集成 17/17＋5/5、ctest 2/2、validate-task/validate-docs PASS、门禁命中集与 F-292 登记一致），无粉饰、零行为影响",
       "owner": "实施者侧提交信息规范（后续送验提交标题前缀后动词开头）；家族性口径统一处置归治理侧（F-012 处置建议①同源）",
       "resolution": "处置建议＝随 F-012 家族统一处置，后续提交标题采用前缀＋动词开头形态（本例对应形态如「[WP-13-T02] 实现 modeling 构建落位…」）；不追溯改写已推送提交历史（AGENTS §6.3 禁止改写已推送提交）。编号顺延自 F-292。"
+    },
+    {
+      "id": "F-294",
+      "source": "tick#278 编排实录（2026-09-22，WP-13-T02 实施段；编排者完成事件处理前核对 state 时检出）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "流水线簿记被实施子代理工作区清理吞没：编排者 tick#278 领取写回（phase=implementing＋run 簿记＋tick#277 追加的 35 条队列）未提交即派发，实施者按「从 base 建分支」纪律建 wp13-t02 并将工作区清理干净（state.json 改动以 stash@{0} 暂存留证后随 checkout 还原），state.json 被还原回 491767e1 已提交版本（phase=blocked、tickCount=276、空队列、tick#276 token 1b0cf982）——若编排者未在完成事件处理前核对 state，完成事件将以过期状态为基准（队列丢失会使收尾后下一 tick 需重新 autoDiscovery）",
+      "owner": "治理（两选一经 PIPE 增量修订落地：①附录 A 编排者模板步骤 5 增补「领取写回后即治理提交落盘」；②附录 B 实施者模板增补「stash/checkout/restore 不得触碰 traceability/pipeline/**」）",
+      "resolution": "tick#278 当场修复：编排者持锁下按 PIPE §0 以协议为准重建全部簿记（implementing＋run＋35 条队列＋fencing token），validate-state 复检 PASS 后续行验收与收尾；本次零损失（队列完整恢复）。编号顺延自 F-293。"
     }
   ]
 }

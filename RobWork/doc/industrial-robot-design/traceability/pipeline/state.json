@@ -1,8 +1,8 @@
 ﻿{
   "schemaVersion": "ird-pipeline/1",
-  "phase": "blocked",
+  "phase": "idle",
   "pausedReason": null,
-  "tickCount": 276,
+  "tickCount": 278,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,8 +17,8 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-22T07:21:59+08:00",
-    "ticksNoProgress": 3
+    "updatedAt": "2026-09-22T18:39:14+08:00",
+    "ticksNoProgress": 0
   },
   "history": [
     {
@@ -1573,6 +1573,17 @@
       "acceptanceRecord": "traceability/acceptance/UI-T14-20260922.md",
       "mergedAt": "2026-09-22",
       "failReason": "验收 attempt1 即 pass（非验收失败）；收尾 ② 前工作树曾被实施子代理遗留检出 wp10-t14，切回 redesign-main 后方执行合并（EX-T06 系风险点，本次零误落）；②③ 合并零冲突，findings.json 并集例外未触发；验收建议级 F-287（F-010/F-283/F-284 家族第 9 例：留痕原始 .log 未入库与清单失准）已随 evidence 转登 findings.json，无 §4.8 消账指令；本 tick 领取时修复上轮收尾遗留 attempts.accept=1（UI-T10 先例同型，PIPE §0 注明），acceptanceRecord.path 初写为仓库根相对形式被 validate-state 拒绝，已按机器校验改一文档根相对形式"
+    },
+    {
+      "task": "WP-13-T02",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "7fdfe8cfffba61e7bba188532afaa2f3479a4f28"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T02-20260922.md",
+      "mergedAt": "2026-09-22",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；实施段事件：①实施者建分支时将编排者未提交的领取簿记（含 tick#277 追加的 35 条队列）stash 还原，编排者按 PIPE §0 锁保护重建簿记后续行（F-294 登记，零损失）；②ird_gates 命中集 44→46（两测试目标→testkit 边，F-051 同根因既有模式）由实施者 F-292 自登、验收复核一致；③DTB 产出列 _plugin 偏差已按 modeling.md §14.6 v0.3 登记（DTB §5.4 口径，随 WP-13-T15 落位）；编排者 O-41 裁决落地提交 a99bd14c 与本任务实施并行落主线（文件面零交集）；收尾 ③ findings.json 尾部冲突（主线 F-293 vs 分支 F-292）经 v1.13 merge-findings-union 并集解算自动通过（F-292/F-293 编号序并存）；验收建议级 F-293（提交标题风格 F-012 家族）随 acc/WP-13-T02/1 转登"
     }
   ],
   "policy": {
@@ -1597,7 +1608,178 @@
       "acceptance": 60
     }
   },
-  "queue": [],
+  "queue": [
+    {
+      "taskId": "WP-13-T03",
+      "branch": "wp13-t03",
+      "contractPath": "tasks/foundation/WP-13-T03.json"
+    },
+    {
+      "taskId": "WP-13-T04",
+      "branch": "wp13-t04",
+      "contractPath": "tasks/foundation/WP-13-T04.json"
+    },
+    {
+      "taskId": "WP-13-T05",
+      "branch": "wp13-t05",
+      "contractPath": "tasks/foundation/WP-13-T05.json"
+    },
+    {
+      "taskId": "WP-13-T06",
+      "branch": "wp13-t06",
+      "contractPath": "tasks/foundation/WP-13-T06.json"
+    },
+    {
+      "taskId": "WP-13-T07",
+      "branch": "wp13-t07",
+      "contractPath": "tasks/foundation/WP-13-T07.json"
+    },
+    {
+      "taskId": "WP-13-T08",
+      "branch": "wp13-t08",
+      "contractPath": "tasks/foundation/WP-13-T08.json"
+    },
+    {
+      "taskId": "WP-13-T09",
+      "branch": "wp13-t09",
+      "contractPath": "tasks/foundation/WP-13-T09.json"
+    },
+    {
+      "taskId": "WP-13-T10",
+      "branch": "wp13-t10",
+      "contractPath": "tasks/foundation/WP-13-T10.json"
+    },
+    {
+      "taskId": "WP-13-T11",
+      "branch": "wp13-t11",
+      "contractPath": "tasks/foundation/WP-13-T11.json"
+    },
+    {
+      "taskId": "WP-13-T12",
+      "branch": "wp13-t12",
+      "contractPath": "tasks/foundation/WP-13-T12.json"
+    },
+    {
+      "taskId": "WP-13-T13",
+      "branch": "wp13-t13",
+      "contractPath": "tasks/foundation/WP-13-T13.json"
+    },
+    {
+      "taskId": "WP-13-T14",
+      "branch": "wp13-t14",
+      "contractPath": "tasks/foundation/WP-13-T14.json"
+    },
+    {
+      "taskId": "WP-13-T15",
+      "branch": "wp13-t15",
+      "contractPath": "tasks/foundation/WP-13-T15.json"
+    },
+    {
+      "taskId": "WP-13-T16",
+      "branch": "wp13-t16",
+      "contractPath": "tasks/foundation/WP-13-T16.json"
+    },
+    {
+      "taskId": "WP-14-T02",
+      "branch": "wp14-t02",
+      "contractPath": "tasks/foundation/WP-14-T02.json"
+    },
+    {
+      "taskId": "WP-14-T03",
+      "branch": "wp14-t03",
+      "contractPath": "tasks/foundation/WP-14-T03.json"
+    },
+    {
+      "taskId": "WP-14-T04",
+      "branch": "wp14-t04",
+      "contractPath": "tasks/foundation/WP-14-T04.json"
+    },
+    {
+      "taskId": "WP-14-T05",
+      "branch": "wp14-t05",
+      "contractPath": "tasks/foundation/WP-14-T05.json"
+    },
+    {
+      "taskId": "WP-14-T06",
+      "branch": "wp14-t06",
+      "contractPath": "tasks/foundation/WP-14-T06.json"
+    },
+    {
+      "taskId": "WP-14-T07",
+      "branch": "wp14-t07",
+      "contractPath": "tasks/foundation/WP-14-T07.json"
+    },
+    {
+      "taskId": "WP-14-T08",
+      "branch": "wp14-t08",
+      "contractPath": "tasks/foundation/WP-14-T08.json"
+    },
+    {
+      "taskId": "WP-14-T09",
+      "branch": "wp14-t09",
+      "contractPath": "tasks/foundation/WP-14-T09.json"
+    },
+    {
+      "taskId": "WP-15-T02",
+      "branch": "wp15-t02",
+      "contractPath": "tasks/foundation/WP-15-T02.json"
+    },
+    {
+      "taskId": "WP-15-T03",
+      "branch": "wp15-t03",
+      "contractPath": "tasks/foundation/WP-15-T03.json"
+    },
+    {
+      "taskId": "WP-15-T04",
+      "branch": "wp15-t04",
+      "contractPath": "tasks/foundation/WP-15-T04.json"
+    },
+    {
+      "taskId": "WP-15-T05",
+      "branch": "wp15-t05",
+      "contractPath": "tasks/foundation/WP-15-T05.json"
+    },
+    {
+      "taskId": "WP-15-T06",
+      "branch": "wp15-t06",
+      "contractPath": "tasks/foundation/WP-15-T06.json"
+    },
+    {
+      "taskId": "WP-15-T07",
+      "branch": "wp15-t07",
+      "contractPath": "tasks/foundation/WP-15-T07.json"
+    },
+    {
+      "taskId": "WP-15-T08",
+      "branch": "wp15-t08",
+      "contractPath": "tasks/foundation/WP-15-T08.json"
+    },
+    {
+      "taskId": "WP-15-T09",
+      "branch": "wp15-t09",
+      "contractPath": "tasks/foundation/WP-15-T09.json"
+    },
+    {
+      "taskId": "WP-15-T10",
+      "branch": "wp15-t10",
+      "contractPath": "tasks/foundation/WP-15-T10.json"
+    },
+    {
+      "taskId": "WP-15-T11",
+      "branch": "wp15-t11",
+      "contractPath": "tasks/foundation/WP-15-T11.json"
+    },
+    {
+      "taskId": "WP-15-T12",
+      "branch": "wp15-t12",
+      "contractPath": "tasks/foundation/WP-15-T12.json"
+    },
+    {
+      "taskId": "WP-15-T13",
+      "branch": "wp15-t13",
+      "contractPath": "tasks/foundation/WP-15-T13.json"
+    }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -1606,5 +1788,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "1b0cf982-e899-4ac5-9c12-3ebc63238354"
+  "tickToken": "bab6554c-609d-4fb3-b92e-08bc666698e7"
 }
