@@ -1,0 +1,28 @@
+ird_gates base..branch 命中集比对（WP-13-T06）
+
+比对对象：
+  base   ＝6707f447581b4fc7bd859134064801427560071c（任务契约 base——wp13-t05
+           合入收尾提交，即 redesign-main @ 本任务开工点）
+  branch ＝本任务 wp13-t06 工作树 @ 实现提交（XacroExpand 三文件＋DiagCodes
+           增登＋CMake/测试注册）
+
+比对方法（wp13-t05 同款口径）：
+  ird_gates 是纯 cmake -P 脚本（ird_gates.cmake），不经配置即可直跑。base/
+  branch 两侧均在各自源树上以同一脚本直跑（cmake -DIRD_ROOT=<源树的
+  industrialrobot 目录> -DIRD_SELFTEST_DIR=<临时> -P cmake/ird_gates.cmake），
+  取输出中全部 IRD-GATE- 行做多重集比对；base 侧经临时 worktree @ 6707f447
+  取得（比对后已删除 worktree，未触碰 pipeline 自持路径）。留痕：
+    gates-direct-base.log   ＝base 直跑全输出（111 行 IRD-GATE-）
+    gates-direct-branch.log ＝branch 直跑全输出（111 行 IRD-GATE-）
+    gates-ird-gates-branch.log ＝集成树 MSBuild ird_gates 目标构建输出
+      （构建退出码 1＝存在存量命中，与 base 同态——wp13-t05 同口径）
+
+结果（路径归一化后多重集 diff——把两侧扫描根前缀归一为 <ROOT> 后 sort+diff）：
+  新增命中：零（base 111 行＝branch 111 行，归一后逐条一致；含 SUB/LIB/R3/
+  T1/SELF 全族。其中 sdurws_ird_modeling 链接 pugixml::pugixml 的 LIB 命中
+  为 wp13-t05 已登记存量——F-302，O-40 词表暴露面，非本任务新增）。
+  本任务未改动 io 单元任何文件（P-MDL-4"io 公共面零改动"的提交面证据——
+  git diff 6707f447..wp13-t06 -- */io/ 为空，由提交内容自证）。
+
+处置登记：
+  无新增命中、无新增例外——本任务不需要 §4.5 登记册变更。

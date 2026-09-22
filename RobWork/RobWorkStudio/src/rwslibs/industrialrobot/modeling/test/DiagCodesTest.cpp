@@ -62,14 +62,20 @@ const char* kT05Section95Codes[] = {
     "MDL-IMPORT-TEMPLATE-RANGE",
 };
 
+/// §9.5 任务列含 T06 的行的应登记码面（WP-13-T06 实现期增登——单元卡
+/// §14.6 v0.7 登记；Xacro 受控展开失败的语义定位面，io 护栏码透传面
+/// 之外）。
+const char* kT06Section95Codes[] = {
+    "MDL-IMPORT-XACRO-UNRESOLVED",
+};
+
 }  // namespace
 
 /**
  * 工厂清单分批封闭性（acceptance 4——"按 §9.5 注册纪律只登记有消费者
- * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05 的行（4 行）——
- * 其余行（T08/T09/T13/T18 任务列与本提交未到的 BRANCH-SELECTION 等）
- * 提前出现即"预建"违约；逐码等于卡面字面清单（不私定码值），清单序＝
- * §9.5 表行序。
+ * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06 的行——
+ * 其余行（T08/T09/T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
+ * 字面清单（不私定码值），清单序＝§9.5 表行序。
  */
 TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
 {
@@ -77,20 +83,28 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
                   std::vector<std::string>{});
 
     const auto descriptors = modelingCodeDescriptors();
-    const std::size_t expectedCount =
-        std::size(kT02Section95Codes) + std::size(kT05Section95Codes);
+    const std::size_t expectedCount = std::size(kT02Section95Codes)
+                                      + std::size(kT05Section95Codes)
+                                      + std::size(kT06Section95Codes);
     ASSERT_EQ(descriptors.size(), expectedCount)
-        << "工厂清单应恰含 §9.5 T02/T05 任务行（分批纪律：其余行随各自任务"
-           "登记——不预建）";
-    // 清单序＝§9.5 表行序：T02 行在前，T05 行按表行序随后。
+        << "工厂清单应恰含 §9.5 T02/T05/T06 任务行（分批纪律：其余行随各自"
+           "任务登记——不预建）";
+    // 清单序＝§9.5 表行序：T02 行在前，T05/T06 行按表行序随后。
     for (std::size_t i = 0; i < std::size(kT02Section95Codes); ++i) {
         EXPECT_EQ(descriptors[i].code, std::string(kT02Section95Codes[i]))
             << "清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
+    std::size_t offset = std::size(kT02Section95Codes);
     for (std::size_t i = 0; i < std::size(kT05Section95Codes); ++i) {
-        EXPECT_EQ(descriptors[std::size(kT02Section95Codes) + i].code,
+        EXPECT_EQ(descriptors[offset + i].code,
                   std::string(kT05Section95Codes[i]))
             << "T05 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
+    }
+    offset += std::size(kT05Section95Codes);
+    for (std::size_t i = 0; i < std::size(kT06Section95Codes); ++i) {
+        EXPECT_EQ(descriptors[offset + i].code,
+                  std::string(kT06Section95Codes[i]))
+            << "T06 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
 }
 
@@ -185,6 +199,15 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_NE(d.paramSchema.find("\"movable-axes\""), std::string::npos);
             EXPECT_NE(d.paramSchema.find("\"prismatic-present\""), std::string::npos);
             EXPECT_EQ(d.retryable, RetryKind::Never);
+        } else if (d.code == "MDL-IMPORT-XACRO-UNRESOLVED") {
+            // 增登行"导入/error"→InputInvalid/Error（Xacro 受控展开语义
+            // 失败——未定义宏/参数等，源输入非法族）；paramSchema
+            // [item-kind, symbol]；UserRetry（"改写源文件"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_NE(d.paramSchema.find("\"item-kind\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"symbol\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         } else {
             FAIL() << "未登记的码面出现（分批纪律——不预建）: " << d.code;
         }
