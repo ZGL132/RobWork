@@ -425,6 +425,31 @@ struct ChainCapability {
 };
 
 /**
+ * @brief 维度二链型能力判定（§6.4 能力矩阵的**单一纯函数实现**——卡 §6.4
+ *        尾段原文"判定实现为导入映射的纯函数部分（Import.hpp），同一判定
+ *        被模板创建入口复用（§2.1 创建列）"的函数面；WP-13-T07 从
+ *        mapUrdf 第九步内联逻辑提取，Import 与 Template 共用同一实现，
+ *        不存在第二份判定）。
+ *
+ * 判定口径（与提取前 mapUrdf 第九步逐字一致——ImportTest 既有断言钉住）：
+ * 可动关节数（revolute+continuous+prismatic；fixed 不计）∈{6,7} 且不含
+ * prismatic→FullTemplateRange；其余（4/5 轴、含 prismatic、或不在六/七
+ * 轴表述内的其它轴数——1~3 轴无模板语义同归范围外）→BeyondTemplateRange
+ * （草稿兼容编辑通过，模板创建与正式计算/报告阻断；类型保留不降级
+ * ——V12-01）。mimic/planar/floating 不进入本判定（阻断型失败在导入
+ * 映射更早的步骤处理——它们根本产生不了合法 JointType 序列）。
+ *
+ * @param chainTypes [in] 所选主链的逐轴类型序列（链序——下标即链序）；
+ *                    空序列＝无可动链（movableAxes=0→BeyondTemplateRange，
+ *                    reason 携带轴数表述）
+ * @return 能力结论（kind/movableAxes/containsPrismatic/reason 四字段全量；
+ *         reason 为卡 §6.4 行语义的依据串，呈现归文案层）
+ *
+ * 纯函数；线程安全；确定性（NFR-COR-02：同序列同结论同 reason）。
+ */
+ChainCapability judgeChainCapability(const std::vector<JointType>& chainTypes);
+
+/**
  * @brief 导入报告（§9.4.3 @post 全集——四清单＋待确认＋关节状态＋资源
  *        状态表＋两类候选＋错误项＋分支报告＋主链能力结论）。
  *

@@ -69,11 +69,18 @@ const char* kT06Section95Codes[] = {
     "MDL-IMPORT-XACRO-UNRESOLVED",
 };
 
+/// §9.5 任务列含 T07 的行的应登记码面（WP-13-T07 实现期增登——单元卡
+/// §14.6 v0.8 登记；§9.4.2"TemplateDisabled 附定位诊断"的码面落位；
+/// 表行序追加于表尾——登记簿纪律不重排既有行）。
+const char* kT07Section95Codes[] = {
+    "MDL-TEMPLATE-DISABLED",
+};
+
 }  // namespace
 
 /**
  * 工厂清单分批封闭性（acceptance 4——"按 §9.5 注册纪律只登记有消费者
- * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06 的行——
+ * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07 的行——
  * 其余行（T08/T09/T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
  * 字面清单（不私定码值），清单序＝§9.5 表行序。
  */
@@ -85,11 +92,12 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
     const auto descriptors = modelingCodeDescriptors();
     const std::size_t expectedCount = std::size(kT02Section95Codes)
                                       + std::size(kT05Section95Codes)
-                                      + std::size(kT06Section95Codes);
+                                      + std::size(kT06Section95Codes)
+                                      + std::size(kT07Section95Codes);
     ASSERT_EQ(descriptors.size(), expectedCount)
-        << "工厂清单应恰含 §9.5 T02/T05/T06 任务行（分批纪律：其余行随各自"
-           "任务登记——不预建）";
-    // 清单序＝§9.5 表行序：T02 行在前，T05/T06 行按表行序随后。
+        << "工厂清单应恰含 §9.5 T02/T05/T06/T07 任务行（分批纪律：其余行随"
+           "各自任务登记——不预建）";
+    // 清单序＝§9.5 表行序：T02 行在前，T05/T06/T07 行按表行序随后。
     for (std::size_t i = 0; i < std::size(kT02Section95Codes); ++i) {
         EXPECT_EQ(descriptors[i].code, std::string(kT02Section95Codes[i]))
             << "清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
@@ -105,6 +113,12 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
         EXPECT_EQ(descriptors[offset + i].code,
                   std::string(kT06Section95Codes[i]))
             << "T06 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
+    }
+    offset += std::size(kT06Section95Codes);
+    for (std::size_t i = 0; i < std::size(kT07Section95Codes); ++i) {
+        EXPECT_EQ(descriptors[offset + i].code,
+                  std::string(kT07Section95Codes[i]))
+            << "T07 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
 }
 
@@ -207,6 +221,15 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
             EXPECT_NE(d.paramSchema.find("\"item-kind\""), std::string::npos);
             EXPECT_NE(d.paramSchema.find("\"symbol\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-TEMPLATE-DISABLED") {
+            // 增登行"模板/info"→InfeasibilityProof/Info（模板存在且已登记，
+            // 仅 P-03 冻结门未过——有效工程结论而非错误）；paramSchema
+            // [template-id, freeze-gate]；UserRetry（"选择已启用模板"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InfeasibilityProof);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Info);
+            EXPECT_NE(d.paramSchema.find("\"template-id\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"freeze-gate\""), std::string::npos);
             EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         } else {
             FAIL() << "未登记的码面出现（分批纪律——不预建）: " << d.code;

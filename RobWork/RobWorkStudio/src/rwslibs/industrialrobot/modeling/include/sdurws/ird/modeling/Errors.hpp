@@ -36,11 +36,13 @@
  * 进入二进制契约，不重排既有值——diagnostics::DiagnosticsErrorCode 同款）。
  *
  * 映射数据的阶段纪律（与 DiagCodes.hpp §9.5 注册纪律对齐）：映射行只
- * 登记到 §9.5 已分配任务行的码——当前仅 SchemaVersionUnsupported→
+ * 登记到 §9.5 已分配任务行的码——当前两行：SchemaVersionUnsupported→
  * MDL-READINESS-SCHEMA-UNSUPPORTED（§9.5 T02/T03 行，DiagCodes.hpp 工厂
- * 同批登记）。其余值的映射随其生产者接口落位任务在 §9.5 纪律内登记
- * （映射函数返回 nullopt＝"暂无已登记映射码"——调用方此时不得产诊断，
- * 错误经值面返回；禁止私定新码值凑数）。
+ * 同批登记）＋TemplateDisabled→MDL-TEMPLATE-DISABLED（§9.5 T07 行，
+ * WP-13-T07 实现期增登随生产者接口 createDraft 落位同批登记）。其余值
+ * 的映射随其生产者接口落位任务在 §9.5 纪律内登记（映射函数返回
+ * nullopt＝"暂无已登记映射码"——调用方此时不得产诊断，错误经值面返回；
+ * 禁止私定新码值凑数）。
  *
  * 线程安全：本头全部实体为纯值/纯函数（无共享可变状态），并发只读安全。
  * 确定性：token 为编译期固定表（switch 全枚举），同码同串、跨进程逐字节

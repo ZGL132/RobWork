@@ -12,11 +12,11 @@
  *   - 先例：io/src/IoDiagnostics.cpp（ioCodeDescriptors 逐字段登记口径）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 4
  *
- * 背景说明：清单当前 7 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
- * T05 行五码＋WP-13-T06 实现期增登的 T06 行一码）——分批注册纪律
- * （"不预建无消费者条目"）的执行口径见头文件 DiagCodes.hpp 文件头注；
- * 其余行随各自任务在**本清单表尾追加**（表尾追加＝登记簿纪律，不重排
- * 既有项）。
+ * 背景说明：清单当前 8 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
+ * T05 行五码＋WP-13-T06 实现期增登的 T06 行一码＋WP-13-T07 实现期增登
+ * 的 T07 行一码）——分批注册纪律（"不预建无消费者条目"）的执行口径见
+ * 头文件 DiagCodes.hpp 文件头注；其余行随各自任务在**本清单表尾追加**
+ * （表尾追加＝登记簿纪律，不重排既有项）。
  *
  * 确定性（NFR-COR-02）：清单序＝§9.5 表行序；每次调用返回同序同值
  * 新清单（描述符为纯值聚合）。
@@ -218,8 +218,38 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     xacroUnresolved.deprecated = false;
     // supersededBy 保持 nullopt。
 
+    // ---- §9.5 T07 行：MDL-TEMPLATE-DISABLED（WP-13-T07 实现期增登，
+    // §14.6 v0.8 登记——卡 §9.4.2"@错误 TemplateDisabled|IllegalName（附
+    // 定位诊断）"的码面落位；表行序追加于表尾——登记簿纪律不重排既有行）----
+    // 模板登记未启用：P-03 七轴模板工程数值未冻结（DTB §4.3 O-27 处置
+    // 口径"仅登记不启用；模板启用前冻结"），listTemplates 返回
+    // enabled=false、createDraft 拒绝并附本码提示诊断（不静默替换为六轴
+    // ——V-02/AT-20 向导语义建模侧）。分类 InfeasibilityProof＝diagnostics
+    // §4.3 词表"有效工程结论而非错误"族：模板存在且已登记，仅冻结门未过
+    // （工程结论，非输入错误）；级别 info（§9.5 增登行"模板/info"——提示
+    // 而非错误）。
+    diagnostics::CodeDescriptor templateDisabled;
+    templateDisabled.code = std::string(kMdlTemplateDisabled);
+    templateDisabled.ownerUnit = "modeling";
+    templateDisabled.category = diagnostics::DiagnosticCategory::InfeasibilityProof;
+    templateDisabled.severity = diagnostics::DiagnosticSeverity::Info;   // 增登行"模板/info"
+    templateDisabled.titleKey = "diag.mdl-template-disabled.title";
+    templateDisabled.detailKey = "diag.mdl-template-disabled.detail";
+    templateDisabled.paramSchema = R"(["template-id","freeze-gate"])";
+    //        （template-id＝模板登记 id（如 generic-7r）；freeze-gate＝冻结
+    //          前置编号（P-03）——启用条件可定位到 DTB §4.3 待冻结前置行）
+    templateDisabled.confirmable = false;          // §9.5 行：false（数值冻结非会话内可放行——无确认分支）
+    templateDisabled.requiresComparison = false;   // 非比较型
+    templateDisabled.retryable = diagnostics::RetryKind::UserRetry;  // "选择已启用模板"＝fix-input 族
+    templateDisabled.userVisible = true;           // 向导创建入口提示（AT-20 建模侧）
+    templateDisabled.reportable = true;
+    templateDisabled.historical = true;
+    templateDisabled.registryVersion = 1;          // 首次登记
+    templateDisabled.deprecated = false;
+    // supersededBy 保持 nullopt。
+
     return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
-            templateRange, xacroUnresolved};
+            templateRange, xacroUnresolved, templateDisabled};
 }
 
 void registerModelingCodes(diagnostics::IDiagnosticRegistry& registry)

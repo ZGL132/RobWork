@@ -97,18 +97,27 @@ inline constexpr std::string_view kMdlImportPendingConfirm = "MDL-IMPORT-PENDING
 /// modeling），§14.6 v0.7 登记）。
 inline constexpr std::string_view kMdlImportXacroUnresolved = "MDL-IMPORT-XACRO-UNRESOLVED";
 
+/// §9.5 T07 行：MDL-TEMPLATE-DISABLED（模板/info——模板登记未启用
+/// （P-03 七轴模板工程数值未冻结）→选择已启用模板；启用前须冻结数值并
+/// 登记。§9.4.2"@错误 TemplateDisabled|IllegalName（附定位诊断）"的码面
+/// 落位——TemplateDisabled 的提示诊断唯一携带码。本行为 WP-13-T07 实现
+/// 期增登（表行序追加于表尾，登记簿纪律不重排既有行），§14.6 v0.8
+/// 登记）。
+inline constexpr std::string_view kMdlTemplateDisabled = "MDL-TEMPLATE-DISABLED";
+
 // =====================================================================
 // MDL-* 稳定诊断码描述符清单（§9.5 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 modeling 已到注册任务行的 MDL-* 稳定码描述符全集（当前
- *        7 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
+ *        8 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
  *        WP-13-T05 登记的 T05 行 MDL-IMPORT-{UNSUPPORTED-JOINT,
  *        BRANCH-SELECTION,ZERO-AXIS,PENDING-CONFIRM,TEMPLATE-RANGE}
  *        五码；外加 WP-13-T06 实现期增登的 T06 行 MDL-IMPORT-XACRO-
- *        UNRESOLVED——清单序＝§9.5 表行序；TEMPLATE-RANGE 与 XACRO-
- *        UNRESOLVED 为实现期增登行，§14.6 v0.6/v0.7 登记）。
+ *        UNRESOLVED；外加 WP-13-T07 实现期增登的 T07 行 MDL-TEMPLATE-
+ *        DISABLED——清单序＝§9.5 表行序；TEMPLATE-RANGE/XACRO-UNRESOLVED/
+ *        TEMPLATE-DISABLED 为实现期增登行，§14.6 v0.6/v0.7/v0.8 登记）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，io ioCodeDescriptors
  * 同款自证结构）：
