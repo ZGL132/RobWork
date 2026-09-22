@@ -3053,6 +3053,16 @@
       "resolution": "处置建议＝并入 F-008 同一修正动作（RobWorkSim 插件目标族加 NOMINMAX 或调 include 顺序，patch 登记），本条作为复现证据扩展记录，不单独立项修复。编号顺延自 F-300。"
     },
     {
+      "id": "F-302",
+      "source": "traceability/builds/wp13-t05/gates-hit-set-diff.txt（WP-13-T05 实施段，2026-09-22；ird_gates base..branch 命中集多重集比对，base 侧经临时 worktree @ dd97c920 直跑 cmake -P 同脚本取得干净命中面）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "ird_gates 词汇表外第三方依赖命中 +1：IRD-GATE-LIB「目标 sdurws_ird_modeling 链接未知目标族 pugixml::pugixml」——O-40（DTB §4，2026-09-22 所有者批次授权）已登记 pugixml 为 modeling 计算库 PRIVATE 依赖（URDF/Xacro DOM 解析，P-MDL-5 决议路径），但 cmake/ird_gates.cmake 的框架基线词表未随登记扩充；路径归一化后 base..branch 多重集比对恰此一条新增（base 109 vs branch 111 原始行，其中 2 行为同一命中的正文＋汇总双计），modeling 面其余零新增",
+      "owner": "构建约定所有者（cmake/ird_gates.cmake 词表随 O-40 登记补 pugixml::pugixml——治理侧动作，实现任务不越权改门禁脚本；消账前该命中为已知存量同态，与 io 的 libzip::zip/expat::expat 既有命中同款口径）",
+      "resolution": "处置建议＝门禁词表补 pugixml::pugixml 一行（登记在先、词表扩充随治理任务）；WP-13-T05 送验对象与该命中无行为因果（PRIVATE 链接、公共头零 DOM 类型暴露、消费者零感知）。编号顺延自 F-301。"
+    },
+    {
       "id": "F-303",
       "source": "traceability/acceptance/WP-13-T05-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；送验对象 5e5f04f90df8340328722e4923bd5d63b8ef6dde，分支 wp13-t05）",
       "severity": "suggestion",
