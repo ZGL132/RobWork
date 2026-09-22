@@ -1,8 +1,8 @@
 ﻿{
   "schemaVersion": "ird-pipeline/1",
-  "phase": "idle",
+  "phase": "blocked",
   "pausedReason": null,
-  "tickCount": 265,
+  "tickCount": 276,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,8 +17,8 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-22T03:44:26+08:00",
-    "ticksNoProgress": 0
+    "updatedAt": "2026-09-22T07:21:59+08:00",
+    "ticksNoProgress": 3
   },
   "history": [
     {
@@ -1606,5 +1606,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "fc4c480f-3743-4754-b5c3-c901d3caae0a"
+  "tickToken": "1b0cf982-e899-4ac5-9c12-3ebc63238354"
 }
