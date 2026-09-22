@@ -1,0 +1,1 @@
+GATE-HIT-SET-DIFF: EMPTY（base 5e9719aa..branch wp13-t07 命中集一致，各 52 条存量命中——零新增）
