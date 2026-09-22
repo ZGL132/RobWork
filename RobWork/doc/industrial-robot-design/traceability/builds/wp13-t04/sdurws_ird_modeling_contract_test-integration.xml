@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" time="0.005" timestamp="2026-09-22T23:57:56.047" name="AllTests">
+  <testsuite name="MdlBuildGraph" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.005" timestamp="2026-09-22T23:57:56.048">
+    <testcase name="UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="145" status="run" result="completed" time="0." timestamp="2026-09-22T23:57:56.048" classname="MdlBuildGraph" />
+    <testcase name="SixRegisteredEdgesPresent_WP13T02_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="185" status="run" result="completed" time="0." timestamp="2026-09-22T23:57:56.048" classname="MdlBuildGraph" />
+    <testcase name="NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="207" status="run" result="completed" time="0." timestamp="2026-09-22T23:57:56.048" classname="MdlBuildGraph" />
+    <testcase name="NoTestkitEdgeOnProductTarget_WP13T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="233" status="run" result="completed" time="0." timestamp="2026-09-22T23:57:56.049" classname="MdlBuildGraph" />
+    <testcase name="IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\contract_test\BuildGraphContractTest.cpp" line="271" status="run" result="completed" time="0.003" timestamp="2026-09-22T23:57:56.050" classname="MdlBuildGraph" />
+  </testsuite>
+</testsuites>

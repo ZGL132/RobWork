@@ -1,0 +1,27 @@
+ird_gates base..branch 命中集比对（WP-13-T04）
+
+比对对象：
+  base   ＝7f1dc8a60b48691e26528802cc2d2aa4e386ae61（＝wp13-t03 合入收尾提交，
+           门禁扫描面〔industrialrobot 源树〕与 wp13-t03 acceptedHead 源码一致——
+           收尾提交仅含 doc/ 治理文件；故 wp13-t03 的 base/branch 两份留痕日志
+           即本任务 base 时代的门禁命中集留痕）
+  branch ＝本任务 wp13-t04 工作树（gates-ird-gates-branch.log）
+
+比对方法（控制台原始输出存在 MSBuild 对长 GBK 行的截断/折行，逐字节 diff
+不可靠，故采用对截断稳健的两级比对）：
+  ①门禁码计数多重集：对三份日志分别提取 "IRD-GATE-<码>" 全部出现次数计数
+    （grep -oE | sort | uniq -c）——base(T03)/branch(T03)/branch(T04) 三方逐码
+    计数完全一致（SAME）；
+  ②命中总量：本任务门禁自报"命中 51 项"，与 wp13-t03 branch 留痕的
+    "命中 51 项"一致（R3 类文件级命中的中文文案在原始控制台被 MSBuild
+    按 51 行截断，故以码计数＋总量为权威口径）；
+  ③新文件引用扫描：本任务门禁输出中 "PropertyEstimation"/"InertiaMath"
+    token 出现 0 次——无任何命中指向本任务新增/修改文件；命中主体全部为
+    存量面（SUB：各单元测试目标→testkit；LIB：io 的 libzip/expat；
+    R3：ui 的 Qt；R4：project 的 RobWork 字面量；T1：testdata_lint/
+    ui_gui_test），modeling 面仅存量两条 sdurws_ird_modeling_test/
+    sdurws_ird_modeling_contract_test→testkit SUB（F-292，major/open——
+    引擎修正归 WP-01 所有者，无法由本任务消账）。
+
+结论：ird_gates base..branch 命中集 diff 为空（本任务零新增命中）；
+门禁因存量命中按 SA-10 判构建失败的行为与 base 时代一致。
