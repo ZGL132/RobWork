@@ -1,0 +1,177 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 54 tests from 11 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from DiagnosticsBuild
+[ RUN      ] DiagnosticsBuild.SourceTreeReachable_DT_BUILD
+[       OK ] DiagnosticsBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] DiagnosticsBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (4 ms)
+[ RUN      ] DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] DiagnosticsBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (4 ms)
+[ RUN      ] DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] DiagnosticsBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (4 ms)
+[ RUN      ] DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] DiagnosticsBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 5 tests from DiagnosticsBuild (14 ms total)
+
+[----------] 12 tests from DiagCodesRegistry
+[ RUN      ] DiagCodesRegistry.DtReg1_BuiltinTableRegistersFullyAndManifestStable
+[       OK ] DiagCodesRegistry.DtReg1_BuiltinTableRegistersFullyAndManifestStable (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg1_BuiltinTableValuesMatchDesignVerbatim
+[       OK ] DiagCodesRegistry.DtReg1_BuiltinTableValuesMatchDesignVerbatim (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg1_ManifestIndependentOfRegistrationOrder
+[       OK ] DiagCodesRegistry.DtReg1_ManifestIndependentOfRegistrationOrder (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg2_DuplicateRegistrationRejectedNotOverwritten
+[       OK ] DiagCodesRegistry.DtReg2_DuplicateRegistrationRejectedNotOverwritten (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_VersionConflictIsDuplicateRejection
+[       OK ] DiagCodesRegistry.DtReg5_VersionConflictIsDuplicateRejection (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg2_TextKeyCollisionRejected
+[       OK ] DiagCodesRegistry.DtReg2_TextKeyCollisionRejected (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg3_UnknownCodeFindNullptrAndOwnershipConflictRejected
+[       OK ] DiagCodesRegistry.DtReg3_UnknownCodeFindNullptrAndOwnershipConflictRejected (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg4_ExceptionTextIsNotACode
+[       OK ] DiagCodesRegistry.DtReg4_ExceptionTextIsNotACode (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_ParamSchemaValidation
+[       OK ] DiagCodesRegistry.DtReg5_ParamSchemaValidation (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_DeprecateTombstoneKeptAndNavigable
+[       OK ] DiagCodesRegistry.DtReg5_DeprecateTombstoneKeptAndNavigable (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_TombstoneDescriptorRegistrableAndManifestConsistent
+[       OK ] DiagCodesRegistry.DtReg5_TombstoneDescriptorRegistrableAndManifestConsistent (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_RuntimeMutationRejectedAfterSeal
+[       OK ] DiagCodesRegistry.DtReg5_RuntimeMutationRejectedAfterSeal (0 ms)
+[----------] 12 tests from DiagCodesRegistry (2 ms total)
+
+[----------] 2 tests from DiagCodesVocabulary
+[ RUN      ] DiagCodesVocabulary.DtPdiag3_Category15Severity4TokensFrozen
+[       OK ] DiagCodesVocabulary.DtPdiag3_Category15Severity4TokensFrozen (0 ms)
+[ RUN      ] DiagCodesVocabulary.DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata
+[       OK ] DiagCodesVocabulary.DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata (0 ms)
+[----------] 2 tests from DiagCodesVocabulary (0 ms total)
+
+[----------] 1 test from DiagCodesCoreBaseline
+[ RUN      ] DiagCodesCoreBaseline.DtPdiag1_CodeFieldIsCoreDiagCode
+[       OK ] DiagCodesCoreBaseline.DtPdiag1_CodeFieldIsCoreDiagCode (0 ms)
+[----------] 1 test from DiagCodesCoreBaseline (0 ms total)
+
+[----------] 1 test from DiagCodesTextKeys
+[ RUN      ] DiagCodesTextKeys.DtPdiag9_TextKeysFollowConventionAndAreUnique
+[       OK ] DiagCodesTextKeys.DtPdiag9_TextKeysFollowConventionAndAreUnique (0 ms)
+[----------] 1 test from DiagCodesTextKeys (0 ms total)
+
+[----------] 1 test from DiagnosticsErrors
+[ RUN      ] DiagnosticsErrors.DtReg_TokenTableComplete
+[       OK ] DiagnosticsErrors.DtReg_TokenTableComplete (0 ms)
+[----------] 1 test from DiagnosticsErrors (0 ms total)
+
+[----------] 11 tests from DiagCatalogFactory
+[ RUN      ] DiagCatalogFactory.DtDiag1_EntryFieldsCompleteFromRegistry
+[       OK ] DiagCatalogFactory.DtDiag1_EntryFieldsCompleteFromRegistry (1 ms)
+[ RUN      ] DiagCatalogFactory.DtDiag1_ComparisonRequiredAndNotApplicableMarker
+[       OK ] DiagCatalogFactory.DtDiag1_ComparisonRequiredAndNotApplicableMarker (0 ms)
+[ RUN      ] DiagCatalogFactory.DtDiag2_SubjectBoundary
+[       OK ] DiagCatalogFactory.DtDiag2_SubjectBoundary (0 ms)
+[ RUN      ] DiagCatalogFactory.DtDiag2_CategoryFromRegistryAndCodeGuards
+[       OK ] DiagCatalogFactory.DtDiag2_CategoryFromRegistryAndCodeGuards (0 ms)
+[ RUN      ] DiagCatalogFactory.DtDiag2_ParamSchemaPlaceholderConsistency
+[       OK ] DiagCatalogFactory.DtDiag2_ParamSchemaPlaceholderConsistency (0 ms)
+[ RUN      ] DiagCatalogFactory.DtDiag2_ExecutionContextRequired
+[       OK ] DiagCatalogFactory.DtDiag2_ExecutionContextRequired (0 ms)
+[ RUN      ] DiagCatalogFactory.DtDup1_SameKeyOccurrencesCounted
+[       OK ] DiagCatalogFactory.DtDup1_SameKeyOccurrencesCounted (0 ms)
+[ RUN      ] DiagCatalogFactory.DtDup2_DifferentSubjectsNeverMerged
+[       OK ] DiagCatalogFactory.DtDup2_DifferentSubjectsNeverMerged (0 ms)
+[ RUN      ] DiagCatalogFactory.DtDup2_DifferentTaskScopeNotMerged
+[       OK ] DiagCatalogFactory.DtDup2_DifferentTaskScopeNotMerged (0 ms)
+[ RUN      ] DiagCatalogFactory.DtCat1_InputInvalidVsExecutionFailed
+[       OK ] DiagCatalogFactory.DtCat1_InputInvalidVsExecutionFailed (0 ms)
+[ RUN      ] DiagCatalogFactory.DtCat2_TerminalKindsDistinct
+[       OK ] DiagCatalogFactory.DtCat2_TerminalKindsDistinct (0 ms)
+[----------] 11 tests from DiagCatalogFactory (3 ms total)
+
+[----------] 5 tests from ErrorCodeTranslatorTest
+[ RUN      ] ErrorCodeTranslatorTest.DtCr08_RegisteredTypeTranslatesToStableCode
+[       OK ] ErrorCodeTranslatorTest.DtCr08_RegisteredTypeTranslatesToStableCode (0 ms)
+[ RUN      ] ErrorCodeTranslatorTest.DtCr08_UnregisteredTypeFallsBackNoThrow
+[       OK ] ErrorCodeTranslatorTest.DtCr08_UnregisteredTypeFallsBackNoThrow (0 ms)
+[ RUN      ] ErrorCodeTranslatorTest.DtCr08_UnknownExceptionMessageTruncatedAndRootLinked
+[       OK ] ErrorCodeTranslatorTest.DtCr08_UnknownExceptionMessageTruncatedAndRootLinked (0 ms)
+[ RUN      ] ErrorCodeTranslatorTest.DtCr08_RegistrationGuardsAndStageAAudit
+[       OK ] ErrorCodeTranslatorTest.DtCr08_RegistrationGuardsAndStageAAudit (0 ms)
+[ RUN      ] ErrorCodeTranslatorTest.DtCr08_RootlessUserLevelTranslationRejected
+[       OK ] ErrorCodeTranslatorTest.DtCr08_RootlessUserLevelTranslationRejected (0 ms)
+[----------] 5 tests from ErrorCodeTranslatorTest (0 ms total)
+
+[----------] 2 tests from DiagnosticsSinkShape
+[ RUN      ] DiagnosticsSinkShape.DtPdiag5_ReportReportDevShapeCompatible
+[       OK ] DiagnosticsSinkShape.DtPdiag5_ReportReportDevShapeCompatible (0 ms)
+[ RUN      ] DiagnosticsSinkShape.DtPdiag5_CatalogGuardsSubscribeAndSafeSummary
+[       OK ] DiagnosticsSinkShape.DtPdiag5_CatalogGuardsSubscribeAndSafeSummary (0 ms)
+[----------] 2 tests from DiagnosticsSinkShape (0 ms total)
+
+[----------] 1 test from DiagnosticsEnvelopeBaseline
+[ RUN      ] DiagnosticsEnvelopeBaseline.DtPdiag1_EntryEmbedsCoreRecordBaseline
+[       OK ] DiagnosticsEnvelopeBaseline.DtPdiag1_EntryEmbedsCoreRecordBaseline (0 ms)
+[----------] 1 test from DiagnosticsEnvelopeBaseline (0 ms total)
+
+[----------] 13 tests from ConfirmableTest
+[ RUN      ] ConfirmableTest.DtCfm1_CreateThenConfirmTransitionsToConfirmed
+[       OK ] ConfirmableTest.DtCfm1_CreateThenConfirmTransitionsToConfirmed (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm1_CreatePreconditionViolationsFailFast
+[       OK ] ConfirmableTest.DtCfm1_CreatePreconditionViolationsFailFast (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm2_RejectionInvalidatesWithCoreRejectedProjection
+[       OK ] ConfirmableTest.DtCfm2_RejectionInvalidatesWithCoreRejectedProjection (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm3_ExpirationOnlyWhenExplicitlyArmed
+[       OK ] ConfirmableTest.DtCfm3_ExpirationOnlyWhenExplicitlyArmed (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm4_RevisionChangeYieldsBindingMismatchInvalidation
+[       OK ] ConfirmableTest.DtCfm4_RevisionChangeYieldsBindingMismatchInvalidation (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm4_CommandDigestMismatchYieldsBindingMismatch
+[       OK ] ConfirmableTest.DtCfm4_CommandDigestMismatchYieldsBindingMismatch (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm5_PolicyChangeYieldsBindingMismatchInvalidation
+[       OK ] ConfirmableTest.DtCfm5_PolicyChangeYieldsBindingMismatchInvalidation (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm6_InvalidateTransitionsAndTerminalGuards
+[       OK ] ConfirmableTest.DtCfm6_InvalidateTransitionsAndTerminalGuards (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm1_PendingForFiltersByRevisionAndState
+[       OK ] ConfirmableTest.DtCfm1_PendingForFiltersByRevisionAndState (0 ms)
+[ RUN      ] ConfirmableTest.DtPdiag4_FindingIdCanonicalSyntaxMatchesCoreId128Rules
+[       OK ] ConfirmableTest.DtPdiag4_FindingIdCanonicalSyntaxMatchesCoreId128Rules (0 ms)
+[ RUN      ] ConfirmableTest.DtPdiag6_NonRejectInvalidationAndExpiryProjectToCorePending
+[       OK ] ConfirmableTest.DtPdiag6_NonRejectInvalidationAndExpiryProjectToCorePending (0 ms)
+[ RUN      ] ConfirmableTest.DtCr02_FindingDigestDeterministicAndSensitive
+[       OK ] ConfirmableTest.DtCr02_FindingDigestDeterministicAndSensitive (0 ms)
+[ RUN      ] ConfirmableTest.DtCfm6_StateTransitionsWriteDevLog
+[       OK ] ConfirmableTest.DtCfm6_StateTransitionsWriteDevLog (0 ms)
+[----------] 13 tests from ConfirmableTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 54 tests from 11 test suites ran. (23 ms total)
+[  PASSED  ] 54 tests.
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 9 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from DiagnosticsLinkage
+[ RUN      ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD
+[       OK ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+[       OK ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8
+[       OK ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8 (0 ms)
+[----------] 3 tests from DiagnosticsLinkage (0 ms total)
+
+[----------] 6 tests from ConfirmableProjectStubTest
+[ RUN      ] ConfirmableProjectStubTest.DtCfm7_NonInteractiveSubmitRejectedUnresolved
+[       OK ] ConfirmableProjectStubTest.DtCfm7_NonInteractiveSubmitRejectedUnresolved (1 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm6_UiCloseInvalidatesFindingWithoutWaiting
+[       OK ] ConfirmableProjectStubTest.DtCfm6_UiCloseInvalidatesFindingWithoutWaiting (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm8_WorkerAssemblyExposesNoConfirmableSurface
+[       OK ] ConfirmableProjectStubTest.DtCfm8_WorkerAssemblyExposesNoConfirmableSurface (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm9_ConfirmedButCompileFailureCommitsNothing
+[       OK ] ConfirmableProjectStubTest.DtCfm9_ConfirmedButCompileFailureCommitsNothing (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm10_ConfirmationRecordShapeEntersCommandSummary
+[       OK ] ConfirmableProjectStubTest.DtCfm10_ConfirmationRecordShapeEntersCommandSummary (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm7_PreCompileRebindRejectsStaleConfirmation
+[       OK ] ConfirmableProjectStubTest.DtCfm7_PreCompileRebindRejectsStaleConfirmation (0 ms)
+[----------] 6 tests from ConfirmableProjectStubTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 2 test suites ran. (2 ms total)
+[  PASSED  ] 9 tests.

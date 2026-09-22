@@ -1,0 +1,9 @@
+# 契约 verify 命令（PRJ-T10.json verify 列两条）重跑留痕 2026-09-16
+$ cmake --build build --config Release --target sdurws_ird_project_test
+  Automatic MOC for target sdurws_ird_project_test
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+exit=0
+$ cmake --build build --config Release --target sdurws_ird_project_contract_test
+  Automatic MOC for target sdurws_ird_project_contract_test
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+exit=0

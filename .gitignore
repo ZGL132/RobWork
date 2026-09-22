@@ -135,3 +135,22 @@ build-acc-smoke/
 # it at the root (root-anchored ignore only — evidence copies under traceability/**/
 # are explicitly tracked, see AGENTS §4.2 / PIPE §5 留痕纪律).
 /ird-test-report.json
+
+# -------------------------------------------------------------
+# 留痕日志负向豁免（F-010/F-223 家族根治，治理提交 2026-09-22）
+# -------------------------------------------------------------
+# AGENTS §4.2 要求验证留痕（构建/门禁/测试运行日志）入库于 traceability/**，
+# 而上方第 87 行全局 `*.log` 规则会把它们吞掉——实施侧未察觉即造成
+# "提交正文声称有日志、实际未入库"（该根因已九连踩：F-010→F-081→…→F-287，
+# 其中四次升级为验收 fail 阻断项，见 findings.json F-223 结构性冲突登记）。
+# 本负向豁免＝F-223 处置选项①落地：留痕目录天然免疫全局规则，
+# 实施侧不再依赖 git add -f 人工补证。规则置于 `*.log` 之后（git 后规则覆盖前规则）。
+!RobWork/doc/industrial-robot-design/traceability/**/*.log
+
+# -------------------------------------------------------------
+# 冒烟模式临时构建树（补齐 `*-smoke/` 未盖住的形态）
+# -------------------------------------------------------------
+# 独立冒烟验证（AGENTS §4.1）按 build-smoke-wp<nn>-t<kk> 命名临时构建目录，
+# 属可随时重建的纯构建产物（PIPE §3.1 构建产物豁免口径期待其被 .gitignore 覆盖）；
+# 既有 `*-smoke/` 规则只匹配以 -smoke 结尾的目录，此处补齐 build-smoke- 前缀形态。
+build-smoke-*/

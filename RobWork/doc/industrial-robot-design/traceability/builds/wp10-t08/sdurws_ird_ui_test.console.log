@@ -1,0 +1,141 @@
+[==========] Running 56 tests from 8 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from UiBuild
+[ RUN      ] UiBuild.SourceTreeReachable_UI_BUILD
+[       OK ] UiBuild.SourceTreeReachable_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.PlacementStaticRegistration_UI_BUILD
+[       OK ] UiBuild.PlacementStaticRegistration_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD
+[       OK ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD (0 ms)
+[ RUN      ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD
+[       OK ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD (6 ms)
+[ RUN      ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD
+[       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (13 ms)
+[ RUN      ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD
+[       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (9 ms)
+[----------] 6 tests from UiBuild (31 ms total)
+
+[----------] 2 tests from ShellModel
+[ RUN      ] ShellModel.UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1
+[       OK ] ShellModel.UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1 (0 ms)
+[ RUN      ] ShellModel.StatusBarFormat_PM11_Matrix_UI_T03_ACC2
+[       OK ] ShellModel.StatusBarFormat_PM11_Matrix_UI_T03_ACC2 (0 ms)
+[----------] 2 tests from ShellModel (0 ms total)
+
+[----------] 8 tests from StatusWordModel
+[ RUN      ] StatusWordModel.SevenStateMappingTableRows_UISTG3_UI_T04_ACC1
+[       OK ] StatusWordModel.SevenStateMappingTableRows_UISTG3_UI_T04_ACC1 (0 ms)
+[ RUN      ] StatusWordModel.SevenStatePriorityChain_UISTG3_UI_T04_ACC1
+[       OK ] StatusWordModel.SevenStatePriorityChain_UISTG3_UI_T04_ACC1 (0 ms)
+[ RUN      ] StatusWordModel.FrozenVocabularyNoNewWords_UI_T04_ACC1
+[       OK ] StatusWordModel.FrozenVocabularyNoNewWords_UI_T04_ACC1 (0 ms)
+[ RUN      ] StatusWordModel.NotEvaluablePresentedAsStale_UI_T04_ACC1
+[       OK ] StatusWordModel.NotEvaluablePresentedAsStale_UI_T04_ACC1 (0 ms)
+[ RUN      ] StatusWordModel.FormalPassDisplayGate_UI_T04_ACC2
+[       OK ] StatusWordModel.FormalPassDisplayGate_UI_T04_ACC2 (0 ms)
+[ RUN      ] StatusWordModel.DisplayDisciplineCompanions_UI_T04_ACC2
+[       OK ] StatusWordModel.DisplayDisciplineCompanions_UI_T04_ACC2 (0 ms)
+[ RUN      ] StatusWordModel.NineStateLabelKeys_PM03_UI_T04_ACC2
+[       OK ] StatusWordModel.NineStateLabelKeys_PM03_UI_T04_ACC2 (0 ms)
+[ RUN      ] StatusWordModel.CurrentnessPortValueCarriers_O31_UI_T04_ACC3
+[       OK ] StatusWordModel.CurrentnessPortValueCarriers_O31_UI_T04_ACC3 (0 ms)
+[----------] 8 tests from StatusWordModel (0 ms total)
+
+[----------] 3 tests from View3DContract
+[ RUN      ] View3DContract.ManifestFreezesNineItemsInRequirementOrder_UX11
+[       OK ] View3DContract.ManifestFreezesNineItemsInRequirementOrder_UX11 (0 ms)
+[ RUN      ] View3DContract.ManifestIdsWellFormedAndUnique_UX11
+[       OK ] View3DContract.ManifestIdsWellFormedAndUnique_UX11 (0 ms)
+[ RUN      ] View3DContract.SessionPoseContractPinned_KIN06_AT04
+[       OK ] View3DContract.SessionPoseContractPinned_KIN06_AT04 (0 ms)
+[----------] 3 tests from View3DContract (0 ms total)
+
+[----------] 7 tests from CommandRegistryModel
+[ RUN      ] CommandRegistryModel.DuplicateAndInvalidRegistrationRejected_UI_CMD_1
+[       OK ] CommandRegistryModel.DuplicateAndInvalidRegistrationRejected_UI_CMD_1 (0 ms)
+[ RUN      ] CommandRegistryModel.UnknownSubmitRejectedWithDiagnostic_UI_CMD_2
+[       OK ] CommandRegistryModel.UnknownSubmitRejectedWithDiagnostic_UI_CMD_2 (0 ms)
+[ RUN      ] CommandRegistryModel.ReadonlyAndPredicateRejection_UI_CMD_3
+[       OK ] CommandRegistryModel.ReadonlyAndPredicateRejection_UI_CMD_3 (0 ms)
+[ RUN      ] CommandRegistryModel.SubmitSemanticsParamsExceptionProjection_UI_T06_ACC3
+[       OK ] CommandRegistryModel.SubmitSemanticsParamsExceptionProjection_UI_T06_ACC3 (0 ms)
+[ RUN      ] CommandRegistryModel.PaletteFuzzyMatchingRules_UX13
+[       OK ] CommandRegistryModel.PaletteFuzzyMatchingRules_UX13 (0 ms)
+[ RUN      ] CommandRegistryModel.PaletteStableOrderLimitAndRecents_UX13_PM14
+[       OK ] CommandRegistryModel.PaletteStableOrderLimitAndRecents_UX13_PM14 (0 ms)
+[ RUN      ] CommandRegistryModel.SealRejectsRuntimeRegistration_UI_T06
+[       OK ] CommandRegistryModel.SealRejectsRuntimeRegistration_UI_T06 (0 ms)
+[----------] 7 tests from CommandRegistryModel (1 ms total)
+
+[----------] 4 tests from ShortcutRegistryModel
+[ RUN      ] ShortcutRegistryModel.ConflictRejectedWithDiagnostic_UI_HKY_1
+[       OK ] ShortcutRegistryModel.ConflictRejectedWithDiagnostic_UI_HKY_1 (0 ms)
+[ RUN      ] ShortcutRegistryModel.PreconditionsUnknownAndNotBindable_UI_HKY_1b
+[       OK ] ShortcutRegistryModel.PreconditionsUnknownAndNotBindable_UI_HKY_1b (0 ms)
+[ RUN      ] ShortcutRegistryModel.RebindUnbindPersistence_UI_HKY_2
+[       OK ] ShortcutRegistryModel.RebindUnbindPersistence_UI_HKY_2 (0 ms)
+[ RUN      ] ShortcutRegistryModel.RestoreUserBindingsDropsInvalidEntries_PM14
+[       OK ] ShortcutRegistryModel.RestoreUserBindingsDropsInvalidEntries_PM14 (0 ms)
+[----------] 4 tests from ShortcutRegistryModel (1 ms total)
+
+[----------] 10 tests from PolicyCardModel
+[ RUN      ] PolicyCardModel.GroupTitlesDistinctAndScoped_POLID3_UI_T07_ACC1
+[       OK ] PolicyCardModel.GroupTitlesDistinctAndScoped_POLID3_UI_T07_ACC1 (0 ms)
+[ RUN      ] PolicyCardModel.LoadedProjectionRows_FiveFieldFamilies_UI_T07_ACC1
+[       OK ] PolicyCardModel.LoadedProjectionRows_FiveFieldFamilies_UI_T07_ACC1 (0 ms)
+[ RUN      ] PolicyCardModel.SiDefaultsIdentityDisplay_KIN12_UI_T07_ACC1
+[       OK ] PolicyCardModel.SiDefaultsIdentityDisplay_KIN12_UI_T07_ACC1 (0 ms)
+[ RUN      ] PolicyCardModel.ThresholdConversionViaCoreUnits_UI_T07_ACC1
+[       OK ] PolicyCardModel.ThresholdConversionViaCoreUnits_UI_T07_ACC1 (0 ms)
+[ RUN      ] PolicyCardModel.ExplicitNotApplicable_NoInventedNumbers_UI_T07_ACC1
+[       OK ] PolicyCardModel.ExplicitNotApplicable_NoInventedNumbers_UI_T07_ACC1 (0 ms)
+[ RUN      ] PolicyCardModel.UnavailablePlaceholder_NoFabrication_UI_T07_ACC1
+[       OK ] PolicyCardModel.UnavailablePlaceholder_NoFabrication_UI_T07_ACC1 (0 ms)
+[ RUN      ] PolicyCardModel.AggregatesDerivedFromPerFieldFacts_UI_T07_ACC1
+[       OK ] PolicyCardModel.AggregatesDerivedFromPerFieldFacts_UI_T07_ACC1 (0 ms)
+[ RUN      ] PolicyCardModel.EditPathNote_CommandPort_UI_T07_ACC2
+[       OK ] PolicyCardModel.EditPathNote_CommandPort_UI_T07_ACC2 (0 ms)
+[ RUN      ] PolicyCardModel.DisplaySeparationNotes_POLID3_UI_T07_ACC1
+[       OK ] PolicyCardModel.DisplaySeparationNotes_POLID3_UI_T07_ACC1 (0 ms)
+[ RUN      ] PolicyCardModel.RowKeysUniqueAndStable_UI_T07_ACC1
+[       OK ] PolicyCardModel.RowKeysUniqueAndStable_UI_T07_ACC1 (0 ms)
+[----------] 10 tests from PolicyCardModel (0 ms total)
+
+[----------] 16 tests from FormEditModel
+[ RUN      ] FormEditModel.UnitDisplaySwitchIsProjectionOnly_KIN12_UI_T08_ACC1
+[       OK ] FormEditModel.UnitDisplaySwitchIsProjectionOnly_KIN12_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.UnsetValueShowsPlaceholderNotZero_UI_T08_ACC1
+[       OK ] FormEditModel.UnsetValueShowsPlaceholderNotZero_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.IllegalInputInPlaceReasonKeepsValue_UI_T08_ACC1
+[       OK ] FormEditModel.IllegalInputInPlaceReasonKeepsValue_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.ParseSyntaxAndDisplayUnitSemantics_UI_T08_ACC1
+[       OK ] FormEditModel.ParseSyntaxAndDisplayUnitSemantics_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.FormLevelConfirmApplyHandsOffEditSet_UX07_UI_T08_ACC1
+[       OK ] FormEditModel.FormLevelConfirmApplyHandsOffEditSet_UX07_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.ApplyBlockedUntilErrorsResolved_UI_T08_ACC1
+[       OK ] FormEditModel.ApplyBlockedUntilErrorsResolved_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.BatchPasteIndependentLinesWithImpact_UI_T08_ACC1
+[       OK ] FormEditModel.BatchPasteIndependentLinesWithImpact_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.BatchPasteToleratesBlankLinesAndComma_UI_T08_ACC1
+[       OK ] FormEditModel.BatchPasteToleratesBlankLinesAndComma_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.FilterByKeyOrLabelKeepsOrder_UI_T08_ACC1
+[       OK ] FormEditModel.FilterByKeyOrLabelKeepsOrder_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.FirstErrorIsRegistrationOrderStable_UI_T08_ACC1
+[       OK ] FormEditModel.FirstErrorIsRegistrationOrderStable_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.CancelRestoreDropsStagedKeepsDisplaySettings_UI_T08_ACC1
+[       OK ] FormEditModel.CancelRestoreDropsStagedKeepsDisplaySettings_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.NoModalDialogInFormCommon_UX05_UI_T08_ACC1
+[       OK ] FormEditModel.NoModalDialogInFormCommon_UX05_UI_T08_ACC1 (1 ms)
+[ RUN      ] FormEditModel.AdvancedPanelDefaultFields_UX04_UI_T08_ACC1
+[       OK ] FormEditModel.AdvancedPanelDefaultFields_UX04_UI_T08_ACC1 (0 ms)
+[ RUN      ] FormEditModel.SpecFactoryAndModelRejectCallerErrors_UI_T08_ACC2
+[       OK ] FormEditModel.SpecFactoryAndModelRejectCallerErrors_UI_T08_ACC2 (0 ms)
+[ RUN      ] FormEditModel.BaselineInjectionClearsStaleStagedState_UI_T08_ACC2
+[       OK ] FormEditModel.BaselineInjectionClearsStaleStagedState_UI_T08_ACC2 (0 ms)
+[ RUN      ] FormEditModel.FormatValueTextUnitSuffixAndDimensionless_UI_T08_ACC1
+[       OK ] FormEditModel.FormatValueTextUnitSuffixAndDimensionless_UI_T08_ACC1 (0 ms)
+[----------] 16 tests from FormEditModel (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 56 tests from 8 test suites ran. (37 ms total)
+[  PASSED  ] 56 tests.

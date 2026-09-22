@@ -1,0 +1,48 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 18 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ProjectBuild
+[ RUN      ] ProjectBuild.SourceTreeReachable_DT_BUILD
+[       OK ] ProjectBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (0 ms)
+[ RUN      ] ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (0 ms)
+[ RUN      ] ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 5 tests from ProjectBuild (3 ms total)
+
+[----------] 13 tests from AtomicFileTest
+[ RUN      ] AtomicFileTest.WriteThrough_WritesExactBytes_NFR_REL_01
+[       OK ] AtomicFileTest.WriteThrough_WritesExactBytes_NFR_REL_01 (2 ms)
+[ RUN      ] AtomicFileTest.WriteThrough_TruncatesExistingContent
+[       OK ] AtomicFileTest.WriteThrough_TruncatesExistingContent (10 ms)
+[ RUN      ] AtomicFileTest.WriteThrough_EmptyBytes_CreatesEmptyFile
+[       OK ] AtomicFileTest.WriteThrough_EmptyBytes_CreatesEmptyFile (1 ms)
+[ RUN      ] AtomicFileTest.WriteThrough_OpenFailure_CreatesNothing
+[       OK ] AtomicFileTest.WriteThrough_OpenFailure_CreatesNothing (0 ms)
+[ RUN      ] AtomicFileTest.WriteChunk_FailureMidway_ResidueConfined_NFR_REL_01
+[       OK ] AtomicFileTest.WriteChunk_FailureMidway_ResidueConfined_NFR_REL_01 (10 ms)
+[ RUN      ] AtomicFileTest.Flush_FailureFailsDurabilityGate_NeverPublishes
+[       OK ] AtomicFileTest.Flush_FailureFailsDurabilityGate_NeverPublishes (1 ms)
+[ RUN      ] AtomicFileTest.PublishNew_MovesTempToAbsentTarget
+[       OK ] AtomicFileTest.PublishNew_MovesTempToAbsentTarget (12 ms)
+[ RUN      ] AtomicFileTest.PublishNew_TargetExists_FailsAndKeepsBothSides
+[       OK ] AtomicFileTest.PublishNew_TargetExists_FailsAndKeepsBothSides (8 ms)
+[ RUN      ] AtomicFileTest.ReplaceFile_SwapsTargetToNewContent
+[       OK ] AtomicFileTest.ReplaceFile_SwapsTargetToNewContent (3 ms)
+[ RUN      ] AtomicFileTest.ReplaceFile_BeforeCommitPoint_OldBytesStable
+[       OK ] AtomicFileTest.ReplaceFile_BeforeCommitPoint_OldBytesStable (3 ms)
+[ RUN      ] AtomicFileTest.ReplaceFile_FailureKeepsOldTargetIntact_NFR_REL_01
+[       OK ] AtomicFileTest.ReplaceFile_FailureKeepsOldTargetIntact_NFR_REL_01 (10 ms)
+[ RUN      ] AtomicFileTest.PublishNew_FailureCreatesNoTarget_NFR_REL_01
+[       OK ] AtomicFileTest.PublishNew_FailureCreatesNoTarget_NFR_REL_01 (2 ms)
+[ RUN      ] AtomicFileTest.DefaultCtor_RealChain_StagingThenPublish
+[       OK ] AtomicFileTest.DefaultCtor_RealChain_StagingThenPublish (2 ms)
+[----------] 13 tests from AtomicFileTest (71 ms total)
+
+[----------] Global test environment tear-down
+[==========] 18 tests from 2 test suites ran. (77 ms total)
+[  PASSED  ] 18 tests.

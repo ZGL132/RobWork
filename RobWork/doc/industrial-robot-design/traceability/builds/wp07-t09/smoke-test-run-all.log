@@ -1,0 +1,6 @@
+build-smoke-wp07-t09/core/Release/sdurws_ird_core_test.exe => [----------] Global test environment tear-down [==========] 61 tests from 38 test suites ran. (256 ms total) [  PASSED  ] 61 tests. 
+build-smoke-wp07-t09/evidence/Release/sdurws_ird_evidence_contract_test.exe => [----------] Global test environment tear-down [==========] 14 tests from 3 test suites ran. (13 ms total) [  PASSED  ] 14 tests. 
+build-smoke-wp07-t09/evidence/Release/sdurws_ird_evidence_test.exe => [----------] Global test environment tear-down [==========] 205 tests from 59 test suites ran. (35 ms total) [  PASSED  ] 205 tests. 
+build-smoke-wp07-t09/policy/Release/sdurws_ird_policy_test.exe => [----------] Global test environment tear-down [==========] 112 tests from 21 test suites ran. (22 ms total) [  PASSED  ] 112 tests. 
+build-smoke-wp07-t09/runtime/Release/sdurws_ird_runtime_test.exe => [----------] Global test environment tear-down [==========] 176 tests from 47 test suites ran. (46 ms total) [  PASSED  ] 176 tests. 
+build-smoke-wp07-t09/testkit/Release/sdurws_ird_testkit_test.exe => [----------] Global test environment tear-down [==========] 97 tests from 52 test suites ran. (8804 ms total) [  PASSED  ] 97 tests. 

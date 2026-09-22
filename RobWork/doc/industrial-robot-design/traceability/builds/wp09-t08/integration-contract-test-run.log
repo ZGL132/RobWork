@@ -1,0 +1,30 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 9 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from DiagnosticsLinkage
+[ RUN      ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD
+[       OK ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+[       OK ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8
+[       OK ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8 (0 ms)
+[----------] 3 tests from DiagnosticsLinkage (0 ms total)
+
+[----------] 6 tests from ConfirmableProjectStubTest
+[ RUN      ] ConfirmableProjectStubTest.DtCfm7_NonInteractiveSubmitRejectedUnresolved
+[       OK ] ConfirmableProjectStubTest.DtCfm7_NonInteractiveSubmitRejectedUnresolved (1 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm6_UiCloseInvalidatesFindingWithoutWaiting
+[       OK ] ConfirmableProjectStubTest.DtCfm6_UiCloseInvalidatesFindingWithoutWaiting (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm8_WorkerAssemblyExposesNoConfirmableSurface
+[       OK ] ConfirmableProjectStubTest.DtCfm8_WorkerAssemblyExposesNoConfirmableSurface (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm9_ConfirmedButCompileFailureCommitsNothing
+[       OK ] ConfirmableProjectStubTest.DtCfm9_ConfirmedButCompileFailureCommitsNothing (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm10_ConfirmationRecordShapeEntersCommandSummary
+[       OK ] ConfirmableProjectStubTest.DtCfm10_ConfirmationRecordShapeEntersCommandSummary (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm7_PreCompileRebindRejectsStaleConfirmation
+[       OK ] ConfirmableProjectStubTest.DtCfm7_PreCompileRebindRejectsStaleConfirmation (0 ms)
+[----------] 6 tests from ConfirmableProjectStubTest (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 2 test suites ran. (2 ms total)
+[  PASSED  ] 9 tests.

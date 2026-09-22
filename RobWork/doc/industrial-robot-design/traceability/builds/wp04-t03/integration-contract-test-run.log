@@ -1,0 +1,31 @@
+[==========] Running 10 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ProjectLinkage
+[ RUN      ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+[       OK ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1
+[       OK ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+[ RUN      ] ProjectLinkage.CoreEdgePresent_DT_BUILD
+[       OK ] ProjectLinkage.CoreEdgePresent_DT_BUILD (0 ms)
+[ RUN      ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD
+[       OK ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD (0 ms)
+[ RUN      ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09
+[       OK ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09 (1 ms)
+[----------] 5 tests from ProjectLinkage (2 ms total)
+
+[----------] 5 tests from LockContractTest
+[ RUN      ] LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07
+[       OK ] LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07 (4032 ms)
+[ RUN      ] LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03
+[       OK ] LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03 (391 ms)
+[ RUN      ] LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02
+[       OK ] LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02 (597 ms)
+[ RUN      ] LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03
+[       OK ] LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03 (92 ms)
+[ RUN      ] LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused
+[       OK ] LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused (80 ms)
+[----------] 5 tests from LockContractTest (5194 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 2 test suites ran. (5197 ms total)
+[  PASSED  ] 10 tests.

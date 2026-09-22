@@ -1,0 +1,76 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 26 tests from 6 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from DiagnosticsLinkage
+[ RUN      ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD
+[       OK ] DiagnosticsLinkage.PublicCoreExposure_DT_BUILD (0 ms)
+[ RUN      ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+[       OK ] DiagnosticsLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8
+[       OK ] DiagnosticsLinkage.ConsumerStubCoreFindingContracts_P_DIAG_8 (0 ms)
+[----------] 3 tests from DiagnosticsLinkage (0 ms total)
+
+[----------] 6 tests from ConfirmableProjectStubTest
+[ RUN      ] ConfirmableProjectStubTest.DtCfm7_NonInteractiveSubmitRejectedUnresolved
+[       OK ] ConfirmableProjectStubTest.DtCfm7_NonInteractiveSubmitRejectedUnresolved (1 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm6_UiCloseInvalidatesFindingWithoutWaiting
+[       OK ] ConfirmableProjectStubTest.DtCfm6_UiCloseInvalidatesFindingWithoutWaiting (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm8_WorkerAssemblyExposesNoConfirmableSurface
+[       OK ] ConfirmableProjectStubTest.DtCfm8_WorkerAssemblyExposesNoConfirmableSurface (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm9_ConfirmedButCompileFailureCommitsNothing
+[       OK ] ConfirmableProjectStubTest.DtCfm9_ConfirmedButCompileFailureCommitsNothing (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm10_ConfirmationRecordShapeEntersCommandSummary
+[       OK ] ConfirmableProjectStubTest.DtCfm10_ConfirmationRecordShapeEntersCommandSummary (0 ms)
+[ RUN      ] ConfirmableProjectStubTest.DtCfm7_PreCompileRebindRejectsStaleConfirmation
+[       OK ] ConfirmableProjectStubTest.DtCfm7_PreCompileRebindRejectsStaleConfirmation (0 ms)
+[----------] 6 tests from ConfirmableProjectStubTest (1 ms total)
+
+[----------] 5 tests from DiagHostTraceStub
+[ RUN      ] DiagHostTraceStub.DtLife5_PersistedBytesInvariantUnderCurrentnessProjection
+[       OK ] DiagHostTraceStub.DtLife5_PersistedBytesInvariantUnderCurrentnessProjection (0 ms)
+[ RUN      ] DiagHostTraceStub.DtLife5_UpdateIsSupersedingEntryAndOldEntryUntouched
+[       OK ] DiagHostTraceStub.DtLife5_UpdateIsSupersedingEntryAndOldEntryUntouched (0 ms)
+[ RUN      ] DiagHostTraceStub.HostTrace_EnvelopeShapeIsRecordValuesWithoutSessionIdentity
+[       OK ] DiagHostTraceStub.HostTrace_EnvelopeShapeIsRecordValuesWithoutSessionIdentity (0 ms)
+[ RUN      ] DiagHostTraceStub.HostTrace_CommandRecordBindsRevisionNotEntryId
+[       OK ] DiagHostTraceStub.HostTrace_CommandRecordBindsRevisionNotEntryId (0 ms)
+[ RUN      ] DiagHostTraceStub.HostTrace_DevCodesNeverEnterHostPersistence
+[       OK ] DiagHostTraceStub.HostTrace_DevCodesNeverEnterHostPersistence (0 ms)
+[----------] 5 tests from DiagHostTraceStub (0 ms total)
+
+[----------] 3 tests from ScriptedDiagSourceSuite
+[ RUN      ] ScriptedDiagSourceSuite.EntriesFindingsLogsProducedInScriptOrder
+[       OK ] ScriptedDiagSourceSuite.EntriesFindingsLogsProducedInScriptOrder (27 ms)
+[ RUN      ] ScriptedDiagSourceSuite.ExhaustedScriptIsBoundedNoOp
+[       OK ] ScriptedDiagSourceSuite.ExhaustedScriptIsBoundedNoOp (0 ms)
+[ RUN      ] ScriptedDiagSourceSuite.EmptyScriptReplaysNothing
+[       OK ] ScriptedDiagSourceSuite.EmptyScriptReplaysNothing (0 ms)
+[----------] 3 tests from ScriptedDiagSourceSuite (29 ms total)
+
+[----------] 3 tests from ScriptedDoubleBoundary
+[ RUN      ] ScriptedDoubleBoundary.ProductSourcesFreeOfDoubleSymbols
+[       OK ] ScriptedDoubleBoundary.ProductSourcesFreeOfDoubleSymbols (3 ms)
+[ RUN      ] ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme
+[       OK ] ScriptedDoubleBoundary.BoundaryDeclarationDocumentedInReadme (0 ms)
+[ RUN      ] ScriptedDoubleBoundary.HeaderCarriesBoundaryDeclaration
+[       OK ] ScriptedDoubleBoundary.HeaderCarriesBoundaryDeclaration (0 ms)
+[----------] 3 tests from ScriptedDoubleBoundary (3 ms total)
+
+[----------] 6 tests from DiagContractCheck
+[ RUN      ] DiagContractCheck.FactoryUserRecordPassesCheckDiagnosticRecord
+[       OK ] DiagContractCheck.FactoryUserRecordPassesCheckDiagnosticRecord (0 ms)
+[ RUN      ] DiagContractCheck.FactoryComparisonRecordPassesBothChecks
+[       OK ] DiagContractCheck.FactoryComparisonRecordPassesBothChecks (0 ms)
+[ RUN      ] DiagContractCheck.TransientRecordGatedByAllowTransientOption
+[       OK ] DiagContractCheck.TransientRecordGatedByAllowTransientOption (0 ms)
+[ RUN      ] DiagContractCheck.PlaceholderDefaultRecordFailsWithFieldPaths
+[       OK ] DiagContractCheck.PlaceholderDefaultRecordFailsWithFieldPaths (0 ms)
+[ RUN      ] DiagContractCheck.ComparativeFieldsSameQuantityKindPass
+[       OK ] DiagContractCheck.ComparativeFieldsSameQuantityKindPass (0 ms)
+[ RUN      ] DiagContractCheck.ComparativeFieldsMismatchedQuantityKindFails
+[       OK ] DiagContractCheck.ComparativeFieldsMismatchedQuantityKindFails (0 ms)
+[----------] 6 tests from DiagContractCheck (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 26 tests from 6 test suites ran. (37 ms total)
+[  PASSED  ] 26 tests.

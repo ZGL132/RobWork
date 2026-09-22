@@ -1,0 +1,94 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 38 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ProjectBuild
+[ RUN      ] ProjectBuild.SourceTreeReachable_DT_BUILD
+[       OK ] ProjectBuild.SourceTreeReachable_DT_BUILD (0 ms)
+[ RUN      ] ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01
+[       OK ] ProjectBuild.NoQtInclude_DT_BUILD_NFR_MNT_01 (3 ms)
+[ RUN      ] ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD
+[       OK ] ProjectBuild.NoEigenOrRwMathDirectInclude_DT_BUILD (2 ms)
+[ RUN      ] ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2
+[       OK ] ProjectBuild.NoCrossUnitInclude_DT_BUILD_R1_R2 (3 ms)
+[ RUN      ] ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2
+[       OK ] ProjectBuild.PublicHeaderPathLayout_DT_BUILD_R2 (0 ms)
+[----------] 5 tests from ProjectBuild (11 ms total)
+
+[----------] 13 tests from AtomicFileTest
+[ RUN      ] AtomicFileTest.WriteThrough_WritesExactBytes_NFR_REL_01
+[       OK ] AtomicFileTest.WriteThrough_WritesExactBytes_NFR_REL_01 (12 ms)
+[ RUN      ] AtomicFileTest.WriteThrough_TruncatesExistingContent
+[       OK ] AtomicFileTest.WriteThrough_TruncatesExistingContent (3 ms)
+[ RUN      ] AtomicFileTest.WriteThrough_EmptyBytes_CreatesEmptyFile
+[       OK ] AtomicFileTest.WriteThrough_EmptyBytes_CreatesEmptyFile (1 ms)
+[ RUN      ] AtomicFileTest.WriteThrough_OpenFailure_CreatesNothing
+[       OK ] AtomicFileTest.WriteThrough_OpenFailure_CreatesNothing (0 ms)
+[ RUN      ] AtomicFileTest.WriteChunk_FailureMidway_ResidueConfined_NFR_REL_01
+[       OK ] AtomicFileTest.WriteChunk_FailureMidway_ResidueConfined_NFR_REL_01 (1 ms)
+[ RUN      ] AtomicFileTest.Flush_FailureFailsDurabilityGate_NeverPublishes
+[       OK ] AtomicFileTest.Flush_FailureFailsDurabilityGate_NeverPublishes (1 ms)
+[ RUN      ] AtomicFileTest.PublishNew_MovesTempToAbsentTarget
+[       OK ] AtomicFileTest.PublishNew_MovesTempToAbsentTarget (3 ms)
+[ RUN      ] AtomicFileTest.PublishNew_TargetExists_FailsAndKeepsBothSides
+[       OK ] AtomicFileTest.PublishNew_TargetExists_FailsAndKeepsBothSides (3 ms)
+[ RUN      ] AtomicFileTest.ReplaceFile_SwapsTargetToNewContent
+[       OK ] AtomicFileTest.ReplaceFile_SwapsTargetToNewContent (3 ms)
+[ RUN      ] AtomicFileTest.ReplaceFile_BeforeCommitPoint_OldBytesStable
+[       OK ] AtomicFileTest.ReplaceFile_BeforeCommitPoint_OldBytesStable (3 ms)
+[ RUN      ] AtomicFileTest.ReplaceFile_FailureKeepsOldTargetIntact_NFR_REL_01
+[       OK ] AtomicFileTest.ReplaceFile_FailureKeepsOldTargetIntact_NFR_REL_01 (2 ms)
+[ RUN      ] AtomicFileTest.PublishNew_FailureCreatesNoTarget_NFR_REL_01
+[       OK ] AtomicFileTest.PublishNew_FailureCreatesNoTarget_NFR_REL_01 (2 ms)
+[ RUN      ] AtomicFileTest.DefaultCtor_RealChain_StagingThenPublish
+[       OK ] AtomicFileTest.DefaultCtor_RealChain_StagingThenPublish (3 ms)
+[----------] 13 tests from AtomicFileTest (43 ms total)
+
+[----------] 13 tests from StoreLockTest
+[ RUN      ] StoreLockTest.Acquire_WritesPidRecord_FixedWidth
+[       OK ] StoreLockTest.Acquire_WritesPidRecord_FixedWidth (10 ms)
+[ RUN      ] StoreLockTest.Constructor_ContractViolations_FailFast
+[       OK ] StoreLockTest.Constructor_ContractViolations_FailFast (2 ms)
+[ RUN      ] StoreLockTest.Heartbeat_RewritesInPlace_FileIdentityStable_D03
+[       OK ] StoreLockTest.Heartbeat_RewritesInPlace_FileIdentityStable_D03 (61 ms)
+[ RUN      ] StoreLockTest.StaleHeartbeat_IsNeverWriteAuthorityCriterion_SA17_D03
+[       OK ] StoreLockTest.StaleHeartbeat_IsNeverWriteAuthorityCriterion_SA17_D03 (4 ms)
+[ RUN      ] StoreLockTest.SecondInstance_WriteEntries_UniformlyRejected_TX13
+[       OK ] StoreLockTest.SecondInstance_WriteEntries_UniformlyRejected_TX13 (11 ms)
+[ RUN      ] StoreLockTest.Diagnostics_ProducedThroughCoreRecordFactory_PPR6
+[       OK ] StoreLockTest.Diagnostics_ProducedThroughCoreRecordFactory_PPR6 (17 ms)
+[ RUN      ] StoreLockTest.Release_RejectsWrites_AuthorityLost_ThenReacquirable
+[       OK ] StoreLockTest.Release_RejectsWrites_AuthorityLost_ThenReacquirable (12 ms)
+[ RUN      ] StoreLockTest.ProbeFailure_LatchesLostWrite_SecondLine
+[       OK ] StoreLockTest.ProbeFailure_LatchesLostWrite_SecondLine (3 ms)
+[ RUN      ] StoreLockTest.IoErrorClassification_ThreeCodesLatch_OthersNot
+[       OK ] StoreLockTest.IoErrorClassification_ThreeCodesLatch_OthersNot (33 ms)
+[ RUN      ] StoreLockTest.HeartbeatWriteFailure_ClassifiedAsAuthorityLoss
+[       OK ] StoreLockTest.HeartbeatWriteFailure_ClassifiedAsAuthorityLoss (3 ms)
+[ RUN      ] StoreLockTest.Takeover_ReadsResidual_RecoveryDevDiagnostic_PM08
+[       OK ] StoreLockTest.Takeover_ReadsResidual_RecoveryDevDiagnostic_PM08 (11 ms)
+[ RUN      ] StoreLockTest.ReadHolderRecord_TornContent_Tolerated
+[       OK ] StoreLockTest.ReadHolderRecord_TornContent_Tolerated (4 ms)
+[ RUN      ] StoreLockTest.StalledHolder_NotTakenOver_OverTime_D03
+[       OK ] StoreLockTest.StalledHolder_NotTakenOver_OverTime_D03 (130 ms)
+[----------] 13 tests from StoreLockTest (308 ms total)
+
+[----------] 7 tests from PathCanonicalTest
+[ RUN      ] PathCanonicalTest.Canonicalize_ExistingDir_FinalPathForm
+[       OK ] PathCanonicalTest.Canonicalize_ExistingDir_FinalPathForm (2 ms)
+[ RUN      ] PathCanonicalTest.SameProject_DifferentSpellings_CanonicalizeEqual
+[       OK ] PathCanonicalTest.SameProject_DifferentSpellings_CanonicalizeEqual (2 ms)
+[ RUN      ] PathCanonicalTest.RelativeSpelling_CanonicalizesToSameStore
+[       OK ] PathCanonicalTest.RelativeSpelling_CanonicalizesToSameStore (2 ms)
+[ RUN      ] PathCanonicalTest.ShortPathSpelling_ResolvedWhenAvailable
+[       OK ] PathCanonicalTest.ShortPathSpelling_ResolvedWhenAvailable (2 ms)
+[ RUN      ] PathCanonicalTest.DifferentDirectories_Differ
+[       OK ] PathCanonicalTest.DifferentDirectories_Differ (2 ms)
+[ RUN      ] PathCanonicalTest.NonexistentAndEmpty_FailWithOsError
+[       OK ] PathCanonicalTest.NonexistentAndEmpty_FailWithOsError (1 ms)
+[ RUN      ] PathCanonicalTest.SameProjectMultiPathOpen_SecondWritableRefused
+[       OK ] PathCanonicalTest.SameProjectMultiPathOpen_SecondWritableRefused (14 ms)
+[----------] 7 tests from PathCanonicalTest (28 ms total)
+
+[----------] Global test environment tear-down
+[==========] 38 tests from 4 test suites ran. (395 ms total)
+[  PASSED  ] 38 tests.

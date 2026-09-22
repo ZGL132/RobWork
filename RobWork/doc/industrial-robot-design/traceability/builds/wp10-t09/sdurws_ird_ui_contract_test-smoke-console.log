@@ -1,0 +1,14 @@
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from UiLinkage
+[ RUN      ] UiLinkage.ArchEdgesCoreDiagnosticsOnly_UI_CTR
+[       OK ] UiLinkage.ArchEdgesCoreDiagnosticsOnly_UI_CTR (0 ms)
+[ RUN      ] UiLinkage.TestkitOnlyLinkedByTestTargets_UI_CTR
+[       OK ] UiLinkage.TestkitOnlyLinkedByTestTargets_UI_CTR (0 ms)
+[ RUN      ] UiLinkage.ThreeTestTargetsAndLabels_UI_CTR
+[       OK ] UiLinkage.ThreeTestTargetsAndLabels_UI_CTR (0 ms)
+[----------] 3 tests from UiLinkage (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 3 tests.

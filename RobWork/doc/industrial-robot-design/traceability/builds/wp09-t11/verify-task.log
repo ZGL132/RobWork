@@ -1,0 +1,5 @@
+verify-task: RepoRoot=D:\10_Source_Repos\21_robot\RobWork
+validate-task: PASS (1 tasks)
+> pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
+validate-docs: PASS (20 units, 12 trace entries, 150 task files)
+verify-task: PASS DIAG-T11

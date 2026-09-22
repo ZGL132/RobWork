@@ -1,0 +1,47 @@
+[==========] Running 15 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ProjectLinkage
+[ RUN      ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+[       OK ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1
+[       OK ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+[ RUN      ] ProjectLinkage.CoreEdgePresent_DT_BUILD
+[       OK ] ProjectLinkage.CoreEdgePresent_DT_BUILD (0 ms)
+[ RUN      ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD
+[       OK ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD (0 ms)
+[ RUN      ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09
+[       OK ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09 (5 ms)
+[----------] 5 tests from ProjectLinkage (7 ms total)
+
+[----------] 5 tests from LockContractTest
+[ RUN      ] LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07
+[       OK ] LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07 (4026 ms)
+[ RUN      ] LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03
+[       OK ] LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03 (397 ms)
+[ RUN      ] LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02
+[       OK ] LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02 (607 ms)
+[ RUN      ] LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03
+[       OK ] LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03 (96 ms)
+[ RUN      ] LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused
+[       OK ] LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused (73 ms)
+[----------] 5 tests from LockContractTest (5201 ms total)
+
+[----------] 2 tests from CommandContractTx1
+[ RUN      ] CommandContractTx1.TwoConcurrentSubmits_SerializedExactlyOneRevisionEach
+[       OK ] CommandContractTx1.TwoConcurrentSubmits_SerializedExactlyOneRevisionEach (185 ms)
+[ RUN      ] CommandContractTx1.StaleBaseline_RejectedStaleRevisionNoRevision
+[       OK ] CommandContractTx1.StaleBaseline_RejectedStaleRevisionNoRevision (154 ms)
+[----------] 2 tests from CommandContractTx1 (339 ms total)
+
+[----------] 3 tests from CommandContractTx3
+[ RUN      ] CommandContractTx3.WcFail_NoRevisionNoPublishTmpCleaned
+[       OK ] CommandContractTx3.WcFail_NoRevisionNoPublishTmpCleaned (45 ms)
+[ RUN      ] CommandContractTx3.DwcFail_NoRevisionNoPublishTmpCleaned
+[       OK ] CommandContractTx3.DwcFail_NoRevisionNoPublishTmpCleaned (39 ms)
+[ RUN      ] CommandContractTx3.BothOk_ExactlyOneRevision
+[       OK ] CommandContractTx3.BothOk_ExactlyOneRevision (84 ms)
+[----------] 3 tests from CommandContractTx3 (170 ms total)
+
+[----------] Global test environment tear-down
+[==========] 15 tests from 4 test suites ran. (5718 ms total)
+[  PASSED  ] 15 tests.

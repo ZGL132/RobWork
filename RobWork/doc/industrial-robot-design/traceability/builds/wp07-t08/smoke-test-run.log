@@ -1,0 +1,293 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 112 tests from 21 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from PolicyBuild
+[ RUN      ] PolicyBuild.SourceTreeReachable_POL_BUILD
+[       OK ] PolicyBuild.SourceTreeReachable_POL_BUILD (0 ms)
+[ RUN      ] PolicyBuild.NoQtInclude_POL_BUILD_NFR_MNT_01
+[       OK ] PolicyBuild.NoQtInclude_POL_BUILD_NFR_MNT_01 (7 ms)
+[ RUN      ] PolicyBuild.NoCrossUnitInclude_POL_BUILD_R1_R2
+[       OK ] PolicyBuild.NoCrossUnitInclude_POL_BUILD_R1_R2 (6 ms)
+[ RUN      ] PolicyBuild.BaselineLibsPinned_POL_BUILD_R5
+[       OK ] PolicyBuild.BaselineLibsPinned_POL_BUILD_R5 (0 ms)
+[----------] 4 tests from PolicyBuild (14 ms total)
+
+[----------] 3 tests from PolicyErrors
+[ RUN      ] PolicyErrors.TokenTableFullEnumeration_NFR_COR_02
+[       OK ] PolicyErrors.TokenTableFullEnumeration_NFR_COR_02 (0 ms)
+[ RUN      ] PolicyErrors.RegistryCodeTableFullEnumeration_NFR_COR_02
+[       OK ] PolicyErrors.RegistryCodeTableFullEnumeration_NFR_COR_02 (0 ms)
+[ RUN      ] PolicyErrors.ErrorMessagePrefixConvention_AGENTS_ErrorSemantics
+[       OK ] PolicyErrors.ErrorMessagePrefixConvention_AGENTS_ErrorSemantics (0 ms)
+[----------] 3 tests from PolicyErrors (0 ms total)
+
+[----------] 9 tests from PolicyThresholdField
+[ RUN      ] PolicyThresholdField.SafetyClearanceZeroIsLegal_D08_Boundary
+[       OK ] PolicyThresholdField.SafetyClearanceZeroIsLegal_D08_Boundary (0 ms)
+[ RUN      ] PolicyThresholdField.SafetyClearanceNegativeRejected_POL_PARSE_2
+[       OK ] PolicyThresholdField.SafetyClearanceNegativeRejected_POL_PARSE_2 (0 ms)
+[ RUN      ] PolicyThresholdField.NearLimitRatio1_5OutOfRange_POL_PARSE_2
+[       OK ] PolicyThresholdField.NearLimitRatio1_5OutOfRange_POL_PARSE_2 (0 ms)
+[ RUN      ] PolicyThresholdField.NearLimitRatioBoundaries_D08_POL_PARSE_2
+[       OK ] PolicyThresholdField.NearLimitRatioBoundaries_D08_POL_PARSE_2 (0 ms)
+[ RUN      ] PolicyThresholdField.ConditionNumberDomainWindows_POL_PARSE_2
+[       OK ] PolicyThresholdField.ConditionNumberDomainWindows_POL_PARSE_2 (0 ms)
+[ RUN      ] PolicyThresholdField.TravelLimitDomain_AT01_MultiTurn
+[       OK ] PolicyThresholdField.TravelLimitDomain_AT01_MultiTurn (0 ms)
+[ RUN      ] PolicyThresholdField.NonFiniteRejectedForAllDomains_POL_PARSE_2
+[       OK ] PolicyThresholdField.NonFiniteRejectedForAllDomains_POL_PARSE_2 (0 ms)
+[ RUN      ] PolicyThresholdField.ThresholdImmutability_StaticTraits
+[       OK ] PolicyThresholdField.ThresholdImmutability_StaticTraits (0 ms)
+[ RUN      ] PolicyThresholdField.SameValueDifferentDomainNotEqual
+[       OK ] PolicyThresholdField.SameValueDifferentDomainNotEqual (0 ms)
+[----------] 9 tests from PolicyThresholdField (0 ms total)
+
+[----------] 4 tests from PolicyJointThresholds
+[ RUN      ] PolicyJointThresholds.ConservativeDefaultsNoInventedValues_P_POL_2_O10
+[       OK ] PolicyJointThresholds.ConservativeDefaultsNoInventedValues_P_POL_2_O10 (0 ms)
+[ RUN      ] PolicyJointThresholds.MakeCarriesValuesAndOrigins
+[       OK ] PolicyJointThresholds.MakeCarriesValuesAndOrigins (0 ms)
+[ RUN      ] PolicyJointThresholds.NoInertiaRatioField_O11_P_POL_3
+[       OK ] PolicyJointThresholds.NoInertiaRatioField_O11_P_POL_3 (0 ms)
+[ RUN      ] PolicyJointThresholds.NoCouplingThresholdField_O18_P_RT_7
+[       OK ] PolicyJointThresholds.NoCouplingThresholdField_O18_P_RT_7 (0 ms)
+[----------] 4 tests from PolicyJointThresholds (0 ms total)
+
+[----------] 6 tests from PolicyCollisionRules
+[ RUN      ] PolicyCollisionRules.FieldDefaultsPerCard
+[       OK ] PolicyCollisionRules.FieldDefaultsPerCard (0 ms)
+[ RUN      ] PolicyCollisionRules.EnabledWithoutClearanceRejected_POLICY_THRESHOLD_REQUIRED_MISSING
+[       OK ] PolicyCollisionRules.EnabledWithoutClearanceRejected_POLICY_THRESHOLD_REQUIRED_MISSING (0 ms)
+[ RUN      ] PolicyCollisionRules.DisabledWithoutClearanceAllowed
+[       OK ] PolicyCollisionRules.DisabledWithoutClearanceAllowed (0 ms)
+[ RUN      ] PolicyCollisionRules.EnabledEmptyDomainsRejected_APPLICABILITY_INVALID
+[       OK ] PolicyCollisionRules.EnabledEmptyDomainsRejected_APPLICABILITY_INVALID (0 ms)
+[ RUN      ] PolicyCollisionRules.WrongDomainThresholdRejected_PolicyObjectInvalid
+[       OK ] PolicyCollisionRules.WrongDomainThresholdRejected_PolicyObjectInvalid (0 ms)
+[ RUN      ] PolicyCollisionRules.PairRuleStructureValidation
+[       OK ] PolicyCollisionRules.PairRuleStructureValidation (0 ms)
+[----------] 6 tests from PolicyCollisionRules (0 ms total)
+
+[----------] 4 tests from PolicySetGate
+[ RUN      ] PolicySetGate.ValidInstanceRoundTripAndEquality
+[       OK ] PolicySetGate.ValidInstanceRoundTripAndEquality (0 ms)
+[ RUN      ] PolicySetGate.GateRejectsInvalidIdentityStateAnchor_PolicyObjectInvalid
+[       OK ] PolicySetGate.GateRejectsInvalidIdentityStateAnchor_PolicyObjectInvalid (0 ms)
+[ RUN      ] PolicySetGate.GateRejectsFutureAndUnknownSchemaVersions_PM06
+[       OK ] PolicySetGate.GateRejectsFutureAndUnknownSchemaVersions_PM06 (0 ms)
+[ RUN      ] PolicySetGate.ReleasedInstanceImmutability_StaticTraits
+[       OK ] PolicySetGate.ReleasedInstanceImmutability_StaticTraits (0 ms)
+[----------] 4 tests from PolicySetGate (0 ms total)
+
+[----------] 9 tests from PolicyCodecId
+[ RUN      ] PolicyCodecId.RoundTripFullFieldsPreservesAll_POL_ID_1
+[       OK ] PolicyCodecId.RoundTripFullFieldsPreservesAll_POL_ID_1 (0 ms)
+[ RUN      ] PolicyCodecId.RoundTripMinimalFieldsPreservesAbsence_POL_ID_1
+[       OK ] PolicyCodecId.RoundTripMinimalFieldsPreservesAbsence_POL_ID_1 (0 ms)
+[ RUN      ] PolicyCodecId.DeterministicEncodingAndIdentity_NFR_COR_02
+[       OK ] PolicyCodecId.DeterministicEncodingAndIdentity_NFR_COR_02 (0 ms)
+[ RUN      ] PolicyCodecId.RuleListOrderInvariance_YieldsIdenticalBytesAndIdentity_POL_ID_2
+[       OK ] PolicyCodecId.RuleListOrderInvariance_YieldsIdenticalBytesAndIdentity_POL_ID_2 (0 ms)
+[ RUN      ] PolicyCodecId.UnorderedPairEndsInvariance_POL_ID_2
+[       OK ] PolicyCodecId.UnorderedPairEndsInvariance_POL_ID_2 (0 ms)
+[ RUN      ] PolicyCodecId.SetOrderAndDuplicateInvariance_POL_ID_2
+[       OK ] PolicyCodecId.SetOrderAndDuplicateInvariance_POL_ID_2 (0 ms)
+[ RUN      ] PolicyCodecId.DisplayUnitNotInIdentity_POL_ID_3
+[       OK ] PolicyCodecId.DisplayUnitNotInIdentity_POL_ID_3 (0 ms)
+[ RUN      ] PolicyCodecId.ThresholdChangeYieldsNewIdentity_POL_ID_4
+[       OK ] PolicyCodecId.ThresholdChangeYieldsNewIdentity_POL_ID_4 (0 ms)
+[ RUN      ] PolicyCodecId.NearEqualThresholdsDistinctIdentities_POL_ID_5
+[       OK ] PolicyCodecId.NearEqualThresholdsDistinctIdentities_POL_ID_5 (0 ms)
+[----------] 9 tests from PolicyCodecId (0 ms total)
+
+[----------] 4 tests from PolicyCodecFloat
+[ RUN      ] PolicyCodecFloat.CanonicalF64RoundTripPreservesExactBits
+[       OK ] PolicyCodecFloat.CanonicalF64RoundTripPreservesExactBits (0 ms)
+[ RUN      ] PolicyCodecFloat.CanonicalF64RejectsNonFiniteAtEncodeEntry
+[       OK ] PolicyCodecFloat.CanonicalF64RejectsNonFiniteAtEncodeEntry (0 ms)
+[ RUN      ] PolicyCodecFloat.ParseCanonicalF64RejectsNonFiniteBitPatterns
+[       OK ] PolicyCodecFloat.ParseCanonicalF64RejectsNonFiniteBitPatterns (0 ms)
+[ RUN      ] PolicyCodecFloat.OneUlpThresholdDifferenceChangesBytesAndIdentity_Acceptance2
+[       OK ] PolicyCodecFloat.OneUlpThresholdDifferenceChangesBytesAndIdentity_Acceptance2 (0 ms)
+[----------] 4 tests from PolicyCodecFloat (0 ms total)
+
+[----------] 3 tests from PolicyCodecCr02
+[ RUN      ] PolicyCodecCr02.DigestViaCoreContentDigesterOnly_CR_02
+[       OK ] PolicyCodecCr02.DigestViaCoreContentDigesterOnly_CR_02 (0 ms)
+[ RUN      ] PolicyCodecCr02.ExcludedFieldsPinned_CR_02
+[       OK ] PolicyCodecCr02.ExcludedFieldsPinned_CR_02 (0 ms)
+[ RUN      ] PolicyCodecCr02.ThresholdValueOriginNotInIdentity
+[       OK ] PolicyCodecCr02.ThresholdValueOriginNotInIdentity (0 ms)
+[----------] 3 tests from PolicyCodecCr02 (0 ms total)
+
+[----------] 7 tests from PolicyCodecErrors
+[ RUN      ] PolicyCodecErrors.EncodeRejectsNonFiniteThresholds
+[       OK ] PolicyCodecErrors.EncodeRejectsNonFiniteThresholds (0 ms)
+[ RUN      ] PolicyCodecErrors.EncodeRejectsContractViolations
+[       OK ] PolicyCodecErrors.EncodeRejectsContractViolations (0 ms)
+[ RUN      ] PolicyCodecErrors.DecodeRejectsWrongMagicFormAndVersions
+[       OK ] PolicyCodecErrors.DecodeRejectsWrongMagicFormAndVersions (0 ms)
+[ RUN      ] PolicyCodecErrors.DecodeRejectsTruncatedAndPaddedBytes
+[       OK ] PolicyCodecErrors.DecodeRejectsTruncatedAndPaddedBytes (0 ms)
+[ RUN      ] PolicyCodecErrors.DecodeRejectsUnknownEnumAndBadPresence
+[       OK ] PolicyCodecErrors.DecodeRejectsUnknownEnumAndBadPresence (0 ms)
+[ RUN      ] PolicyCodecErrors.DecodeRejectsNonFiniteBitPatternAndEmptyReason
+[       OK ] PolicyCodecErrors.DecodeRejectsNonFiniteBitPatternAndEmptyReason (0 ms)
+[ RUN      ] PolicyCodecErrors.RoundTripPreservesUtf8AndUnitTokens
+[       OK ] PolicyCodecErrors.RoundTripPreservesUtf8AndUnitTokens (0 ms)
+[----------] 7 tests from PolicyCodecErrors (0 ms total)
+
+[----------] 5 tests from PolicyParseSchema
+[ RUN      ] PolicyParseSchema.FutureVersionRejectedWithComparativeAndUpgradeGuide_POL_PARSE_1
+[       OK ] PolicyParseSchema.FutureVersionRejectedWithComparativeAndUpgradeGuide_POL_PARSE_1 (0 ms)
+[ RUN      ] PolicyParseSchema.UnknownOlderVersionRejected
+[       OK ] PolicyParseSchema.UnknownOlderVersionRejected (0 ms)
+[ RUN      ] PolicyParseSchema.FutureVersionDoesNotInterpretFields
+[       OK ] PolicyParseSchema.FutureVersionDoesNotInterpretFields (0 ms)
+[ RUN      ] PolicyParseSchema.RoleVocabularyTypoRejectedAsUnknownField
+[       OK ] PolicyParseSchema.RoleVocabularyTypoRejectedAsUnknownField (0 ms)
+[ RUN      ] PolicyParseSchema.SceneObjectRoleTokensFrozenVocabulary
+[       OK ] PolicyParseSchema.SceneObjectRoleTokensFrozenVocabulary (0 ms)
+[----------] 5 tests from PolicyParseSchema (0 ms total)
+
+[----------] 8 tests from PolicyParseThresholds
+[ RUN      ] PolicyParseThresholds.NonFiniteSafetyClearanceRejectedKeepsRaw_POL_PARSE_2
+[       OK ] PolicyParseThresholds.NonFiniteSafetyClearanceRejectedKeepsRaw_POL_PARSE_2 (0 ms)
+[ RUN      ] PolicyParseThresholds.InfiniteTravelLimitRejected
+[       OK ] PolicyParseThresholds.InfiniteTravelLimitRejected (0 ms)
+[ RUN      ] PolicyParseThresholds.NegativeSafetyClearanceCarriesComparative
+[       OK ] PolicyParseThresholds.NegativeSafetyClearanceCarriesComparative (0 ms)
+[ RUN      ] PolicyParseThresholds.NearLimitRatioOutOfRangeComparative_POL_PARSE_2
+[       OK ] PolicyParseThresholds.NearLimitRatioOutOfRangeComparative_POL_PARSE_2 (0 ms)
+[ RUN      ] PolicyParseThresholds.ZeroTravelLimitRejected
+[       OK ] PolicyParseThresholds.ZeroTravelLimitRejected (0 ms)
+[ RUN      ] PolicyParseThresholds.ConditionNumberBelowOneRejected
+[       OK ] PolicyParseThresholds.ConditionNumberBelowOneRejected (0 ms)
+[ RUN      ] PolicyParseThresholds.MultipleThresholdErrorsCollectedWithoutShortCircuit
+[       OK ] PolicyParseThresholds.MultipleThresholdErrorsCollectedWithoutShortCircuit (0 ms)
+[ RUN      ] PolicyParseThresholds.ValidThresholdsPublishedWithExplicitOrigin
+[       OK ] PolicyParseThresholds.ValidThresholdsPublishedWithExplicitOrigin (0 ms)
+[----------] 8 tests from PolicyParseThresholds (0 ms total)
+
+[----------] 5 tests from PolicyParseUnits
+[ RUN      ] PolicyParseUnits.ForceUnitForLengthRejectedForwardsCoreError_POL_PARSE_3
+[       OK ] PolicyParseUnits.ForceUnitForLengthRejectedForwardsCoreError_POL_PARSE_3 (0 ms)
+[ RUN      ] PolicyParseUnits.UnregisteredUnitTokenRejected
+[       OK ] PolicyParseUnits.UnregisteredUnitTokenRejected (0 ms)
+[ RUN      ] PolicyParseUnits.MillimeterNormalizedToSi_UnitsNotInIdentity
+[       OK ] PolicyParseUnits.MillimeterNormalizedToSi_UnitsNotInIdentity (0 ms)
+[ RUN      ] PolicyParseUnits.DegreeTravelLimitNormalizedToRadian
+[       OK ] PolicyParseUnits.DegreeTravelLimitNormalizedToRadian (0 ms)
+[ RUN      ] PolicyParseUnits.EmptyUnitTokenMeansFieldSiUnit
+[       OK ] PolicyParseUnits.EmptyUnitTokenMeansFieldSiUnit (0 ms)
+[----------] 5 tests from PolicyParseUnits (0 ms total)
+
+[----------] 8 tests from PolicyParseRules
+[ RUN      ] PolicyParseRules.DirectCrossListConflictRejected_POL_PARSE_4
+[       OK ] PolicyParseRules.DirectCrossListConflictRejected_POL_PARSE_4 (0 ms)
+[ RUN      ] PolicyParseRules.RoleExpansionConflictRejected_POL_PARSE_4
+[       OK ] PolicyParseRules.RoleExpansionConflictRejected_POL_PARSE_4 (0 ms)
+[ RUN      ] PolicyParseRules.GroupNameConflictRejected_POL_PARSE_4
+[       OK ] PolicyParseRules.GroupNameConflictRejected_POL_PARSE_4 (0 ms)
+[ RUN      ] PolicyParseRules.RoleExpansionDuplicateWithinListRejected
+[       OK ] PolicyParseRules.RoleExpansionDuplicateWithinListRejected (0 ms)
+[ RUN      ] PolicyParseRules.ExactDuplicateListsBothEntries_POL_PARSE_5
+[       OK ] PolicyParseRules.ExactDuplicateListsBothEntries_POL_PARSE_5 (0 ms)
+[ RUN      ] PolicyParseRules.PairEndsNormalizedToLexicographicOrderInOutput
+[       OK ] PolicyParseRules.PairEndsNormalizedToLexicographicOrderInOutput (0 ms)
+[ RUN      ] PolicyParseRules.UndefinedGroupReferenceRejected_POL_PARSE_5
+[       OK ] PolicyParseRules.UndefinedGroupReferenceRejected_POL_PARSE_5 (0 ms)
+[ RUN      ] PolicyParseRules.DefinedGroupReferencePublishes
+[       OK ] PolicyParseRules.DefinedGroupReferencePublishes (0 ms)
+[----------] 8 tests from PolicyParseRules (0 ms total)
+
+[----------] 3 tests from PolicyParseScope
+[ RUN      ] PolicyParseScope.MissingRuleObjectRejectedBindsSubject_POL_PARSE_6
+[       OK ] PolicyParseScope.MissingRuleObjectRejectedBindsSubject_POL_PARSE_6 (0 ms)
+[ RUN      ] PolicyParseScope.MissingApplicabilityObjectRejected
+[       OK ] PolicyParseScope.MissingApplicabilityObjectRejected (0 ms)
+[ RUN      ] PolicyParseScope.MultipleMissingObjectsAllReported
+[       OK ] PolicyParseScope.MultipleMissingObjectsAllReported (0 ms)
+[----------] 3 tests from PolicyParseScope (0 ms total)
+
+[----------] 3 tests from PolicyParseApplicability
+[ RUN      ] PolicyParseApplicability.EmptyDomainsWithEnabledRejected
+[       OK ] PolicyParseApplicability.EmptyDomainsWithEnabledRejected (0 ms)
+[ RUN      ] PolicyParseApplicability.EmptyDomainsWithDisabledPublishes
+[       OK ] PolicyParseApplicability.EmptyDomainsWithDisabledPublishes (0 ms)
+[ RUN      ] PolicyParseApplicability.DuplicateDomainsNormalizedInOutput
+[       OK ] PolicyParseApplicability.DuplicateDomainsNormalizedInOutput (0 ms)
+[----------] 3 tests from PolicyParseApplicability (0 ms total)
+
+[----------] 5 tests from PolicyParseDefaults
+[ RUN      ] PolicyParseDefaults.TravelLimitDefaultFilledFromAppendixD_Acceptance2
+[       OK ] PolicyParseDefaults.TravelLimitDefaultFilledFromAppendixD_Acceptance2 (0 ms)
+[ RUN      ] PolicyParseDefaults.UnfrozenDefaultsStayAbsent_Acceptance2
+[       OK ] PolicyParseDefaults.UnfrozenDefaultsStayAbsent_Acceptance2 (0 ms)
+[ RUN      ] PolicyParseDefaults.ExplicitTravelLimitKeepsExplicitOriginWithoutInfo
+[       OK ] PolicyParseDefaults.ExplicitTravelLimitKeepsExplicitOriginWithoutInfo (0 ms)
+[ RUN      ] PolicyParseDefaults.DefaultAppliedAndExplicitValueShareIdentity
+[       OK ] PolicyParseDefaults.DefaultAppliedAndExplicitValueShareIdentity (0 ms)
+[ RUN      ] PolicyParseDefaults.RequiredMissingWhenEnabledWithoutClearance_Acceptance2
+[       OK ] PolicyParseDefaults.RequiredMissingWhenEnabledWithoutClearance_Acceptance2 (0 ms)
+[----------] 5 tests from PolicyParseDefaults (0 ms total)
+
+[----------] 7 tests from PolicyParsePipeline
+[ RUN      ] PolicyParsePipeline.DeterministicParseTwiceSameResult_POL_ID_1
+[       OK ] PolicyParsePipeline.DeterministicParseTwiceSameResult_POL_ID_1 (0 ms)
+[ RUN      ] PolicyParsePipeline.PublishedIdentityMatchesCodecRecompute
+[       OK ] PolicyParsePipeline.PublishedIdentityMatchesCodecRecompute (0 ms)
+[ RUN      ] PolicyParsePipeline.ParseOfDecodedBytesYieldsSamePolicy
+[       OK ] PolicyParsePipeline.ParseOfDecodedBytesYieldsSamePolicy (0 ms)
+[ RUN      ] PolicyParsePipeline.ValidatorMatchesResolveDiagnostics
+[       OK ] PolicyParsePipeline.ValidatorMatchesResolveDiagnostics (0 ms)
+[ RUN      ] PolicyParsePipeline.CallerContractViolationsFailFast
+[       OK ] PolicyParsePipeline.CallerContractViolationsFailFast (0 ms)
+[ RUN      ] PolicyParsePipeline.AllStageErrorsCollectedInDeterministicOrder
+[       OK ] PolicyParsePipeline.AllStageErrorsCollectedInDeterministicOrder (0 ms)
+[ RUN      ] PolicyParsePipeline.PublishedPolicyCarriesPolicyObjectAndAuditFields
+[       OK ] PolicyParsePipeline.PublishedPolicyCarriesPolicyObjectAndAuditFields (0 ms)
+[----------] 7 tests from PolicyParsePipeline (0 ms total)
+
+[----------] 2 tests from PolicyPortContexts
+[ RUN      ] PolicyPortContexts.NameContextExpectedErrorYieldsNulloptIdempotent_CR_04
+[       OK ] PolicyPortContexts.NameContextExpectedErrorYieldsNulloptIdempotent_CR_04 (0 ms)
+[ RUN      ] PolicyPortContexts.CallContextReflectsHostState
+[       OK ] PolicyPortContexts.CallContextReflectsHostState (0 ms)
+[----------] 2 tests from PolicyPortContexts (0 ms total)
+
+[----------] 10 tests from PolicyPort
+[ RUN      ] PolicyPort.ResolvePublishesPipelineEqualPolicy_PortContract
+[       OK ] PolicyPort.ResolvePublishesPipelineEqualPolicy_PortContract (0 ms)
+[ RUN      ] PolicyPort.MissingObjectBytesYieldsDiagnosticNoThrow_PortContract
+[       OK ] PolicyPort.MissingObjectBytesYieldsDiagnosticNoThrow_PortContract (0 ms)
+[ RUN      ] PolicyPort.AbsentExpectedVersionYieldsDiagnosticNoThrow_PortContract
+[       OK ] PolicyPort.AbsentExpectedVersionYieldsDiagnosticNoThrow_PortContract (0 ms)
+[ RUN      ] PolicyPort.CallerContractViolationsFailFast_PortContract
+[       OK ] PolicyPort.CallerContractViolationsFailFast_PortContract (0 ms)
+[ RUN      ] PolicyPort.CorruptBytesForwardedAsDiagnosticNoThrow_PortContract
+[       OK ] PolicyPort.CorruptBytesForwardedAsDiagnosticNoThrow_PortContract (0 ms)
+[ RUN      ] PolicyPort.FutureSchemaBytesForwardSchemaDiagnosticNoThrow_PortContract
+[       OK ] PolicyPort.FutureSchemaBytesForwardSchemaDiagnosticNoThrow_PortContract (0 ms)
+[ RUN      ] PolicyPort.InvalidPolicyContentForwardsPipelineDiagnosticsNoThrow_PortContract
+[       OK ] PolicyPort.InvalidPolicyContentForwardsPipelineDiagnosticsNoThrow_PortContract (0 ms)
+[ RUN      ] PolicyPort.CollisionBackendReturnsInjectedDescriptor_PortContract
+[       OK ] PolicyPort.CollisionBackendReturnsInjectedDescriptor_PortContract (0 ms)
+[ RUN      ] PolicyPort.CollisionEvaluatorBeforeAssemblyFailsFast_PortContract
+[       OK ] PolicyPort.CollisionEvaluatorBeforeAssemblyFailsFast_PortContract (0 ms)
+[ RUN      ] PolicyPort.ConcurrentResolveReadOnlySafety_PortContract_NFR_COR_02
+[       OK ] PolicyPort.ConcurrentResolveReadOnlySafety_PortContract_NFR_COR_02 (0 ms)
+[----------] 10 tests from PolicyPort (0 ms total)
+
+[----------] 3 tests from PolicyPortCache
+[ RUN      ] PolicyPortCache.RepeatedResolveReturnsFieldEqualResult_POL_ID_1
+[       OK ] PolicyPortCache.RepeatedResolveReturnsFieldEqualResult_POL_ID_1 (0 ms)
+[ RUN      ] PolicyPortCache.CacheKeyIncludesContentVersionSeparatesEntries_POL_ID_1
+[       OK ] PolicyPortCache.CacheKeyIncludesContentVersionSeparatesEntries_POL_ID_1 (0 ms)
+[ RUN      ] PolicyPortCache.FailureOutcomeMemoizedFieldEqual_POL_ID_1
+[       OK ] PolicyPortCache.FailureOutcomeMemoizedFieldEqual_POL_ID_1 (0 ms)
+[----------] 3 tests from PolicyPortCache (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 112 tests from 21 test suites ran. (17 ms total)
+[  PASSED  ] 112 tests.

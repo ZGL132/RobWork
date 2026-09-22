@@ -1,0 +1,43 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 14 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from EvidenceVocabularyContract
+[ RUN      ] EvidenceVocabularyContract.TokenLiteralsEqualCoreToTokenOutputs_CR_01
+[       OK ] EvidenceVocabularyContract.TokenLiteralsEqualCoreToTokenOutputs_CR_01 (0 ms)
+[ RUN      ] EvidenceVocabularyContract.TokenRoundTripThroughCoreParsers_CR_01
+[       OK ] EvidenceVocabularyContract.TokenRoundTripThroughCoreParsers_CR_01 (0 ms)
+[ RUN      ] EvidenceVocabularyContract.EnvelopeTokensFlowThroughCoreVocabulary_CR_01
+[       OK ] EvidenceVocabularyContract.EnvelopeTokensFlowThroughCoreVocabulary_CR_01 (0 ms)
+[ RUN      ] EvidenceVocabularyContract.NoLocalVocabularyEnumDefinitionInProductSources_CR_01
+[       OK ] EvidenceVocabularyContract.NoLocalVocabularyEnumDefinitionInProductSources_CR_01 (10 ms)
+[ RUN      ] EvidenceVocabularyContract.EnvelopeHeaderConsumesCoreEvaluationHeader_CR_01
+[       OK ] EvidenceVocabularyContract.EnvelopeHeaderConsumesCoreEvaluationHeader_CR_01 (0 ms)
+[----------] 5 tests from EvidenceVocabularyContract (11 ms total)
+
+[----------] 4 tests from EnvelopeAccessorContract
+[ RUN      ] EnvelopeAccessorContract.LegalCombinationsPassGenericPredicate
+[       OK ] EnvelopeAccessorContract.LegalCombinationsPassGenericPredicate (0 ms)
+[ RUN      ] EnvelopeAccessorContract.DataInsufficientWithoutMissingListRejectedBothFaces
+[       OK ] EnvelopeAccessorContract.DataInsufficientWithoutMissingListRejectedBothFaces (0 ms)
+[ RUN      ] EnvelopeAccessorContract.CanceledFeasibleRejectedBothFaces
+[       OK ] EnvelopeAccessorContract.CanceledFeasibleRejectedBothFaces (0 ms)
+[ RUN      ] EnvelopeAccessorContract.CompletedWithEmptyEvidenceListFlaggedByPredicate
+[       OK ] EnvelopeAccessorContract.CompletedWithEmptyEvidenceListFlaggedByPredicate (0 ms)
+[----------] 4 tests from EnvelopeAccessorContract (0 ms total)
+
+[----------] 5 tests from SliceFixtureContract
+[ RUN      ] SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4
+[       OK ] SliceFixtureContract.DatasetLoadsAndPassesManifest_EV_T11_ACC4 (0 ms)
+[ RUN      ] SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance
+[       OK ] SliceFixtureContract.ToleranceProfileEvSliceLoadsAndResolvesZeroTolerance (0 ms)
+[ RUN      ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1
+[       OK ] SliceFixtureContract.RebuiltSliceMatchesExpectedIdentityAndEncoding_EV_ID_1 (0 ms)
+[ RUN      ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1
+[       OK ] SliceFixtureContract.RebuildTwiceGivesIdenticalIdentity_EV_ID_1 (0 ms)
+[ RUN      ] SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest
+[       OK ] SliceFixtureContract.ConfigPayloadIdentityMatchesContentDigest (0 ms)
+[----------] 5 tests from SliceFixtureContract (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 14 tests from 3 test suites ran. (13 ms total)
+[  PASSED  ] 14 tests.
