@@ -2939,7 +2939,7 @@
       "registeredAt": "2026-09-22",
       "title": "project 发出的 PRJ-LOCK-HELD 用户级诊断记录缺 ERR-01 subject 字段：经 diagnostics IDiagnosticFactory.create 时按契约抛 subject-missing（Factory.hpp:123-131）——project 自身路径对该记录未走工厂校验面，首个经工厂消费的新消费者（UI-T15 ProjectDiagnosticsBridge）即触发契约异常；属跨单元契约缺口（ERR-01『用户级码 subject 合法』的发射侧义务未落实），非 harness 单方缺陷",
       "owner": "所有者裁决（二选一：project 卡增量修订——PRJ-LOCK-HELD 等用户级记录补 subject=锁对象/项目对象；或 diagnostics 卡增量——该类记录登记豁免口径）＋project 单元实施者（裁决后增量修订）",
-      "resolution": "登记为 DTB §4 O-41 裁决项；harness 返工不得以吞异常掩盖本缺口（返工处置＝桥接器对契约内异常显式降级路由 Dev 日志＋用户可见『可写：否』，真实原因保留）。编号顺延自 F-289。"
+      "resolution": "登记为 DTB §4 O-41 裁决项；harness 返工不得以吞异常掩盖本缺口（返工处置＝桥接器对契约内异常显式降级路由 Dev 日志＋用户可见『可写：否』，真实原因保留）。编号顺延自 F-289。2026-09-22 所有者裁决：方案①——project 卡增量修订（units/project.md v0.19：§9.5 补 subject=项目对象 ProjectId 必填规范＋§5 码清单/factory.open 行标注）＋diagnostics §8.2 映射表该码 subject=∅ 格同步对齐（units/diagnostics.md v0.13——该格与工厂 subject-missing 边界相悖即本条根因）；DTB O-41 翻转已裁决。状态维持 open：余留 project 发射侧代码补 subject 的实现修正任务，其契约编译入队并合入后本条转 fixed（fixedBy=该修正提交）。"
     },
     {
       "id": "F-291",
