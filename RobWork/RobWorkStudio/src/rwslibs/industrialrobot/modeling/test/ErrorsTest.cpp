@@ -128,10 +128,12 @@ TEST(MdlErrors, ErrorValueSemanticsOrderedParams_WP13T02_ACC4)
 }
 
 /**
- * 域错误→稳定诊断码映射数据（§9.5 尾段）：当前唯一已登记行
- * SchemaVersionUnsupported→"MDL-READINESS-SCHEMA-UNSUPPORTED"——映射串
+ * 域错误→稳定诊断码映射数据（§9.5 尾段）：当前已登记两行
+ * SchemaVersionUnsupported→"MDL-READINESS-SCHEMA-UNSUPPORTED"（§9.5
+ * T02/T03 行）＋TemplateDisabled→"MDL-TEMPLATE-DISABLED"（§9.5 T07 行，
+ * WP-13-T07 实现期增登随生产者接口 createDraft 落位同批登记）——映射串
  * 与 DiagCodes.hpp 注册清单逐字节同源（交叉核对，禁两处各写各的字面量
- * 而无对账）；其余 11 值 nullopt＝暂无已登记映射（阶段纪律：不私定码值，
+ * 而无对账）；其余 10 值 nullopt＝暂无已登记映射（阶段纪律：不私定码值，
  * 映射随生产者任务在 §9.5 纪律内登记；nullopt 时调用方不得产诊断——
  * 错误经值面返回）。
  */
@@ -141,25 +143,37 @@ TEST(MdlErrors, DiagCodeMappingStagedRows_WP13T02_ACC4)
                   std::vector<std::string>{});
 
     // 已登记行：映射串与注册清单同源（从 modelingCodeDescriptors 取该码
-    // 比对——两处字面量失同步即刻暴露）。
-    const auto mapped = modelingDiagCode(ModelingErrorCode::SchemaVersionUnsupported);
-    ASSERT_TRUE(mapped.has_value())
-        << "SchemaVersionUnsupported 的映射码是 §9.5 T02/T03 行的登记义务";
+    // 比对——两处字面量失同步即刻暴露）。T07 行同口径（WP-13-T07 同批
+    // 追加——Errors.cpp 映射与 DiagCodes.hpp kMdlTemplateDisabled 同源）。
     const auto descriptors = sdurws::ird::modeling::modelingCodeDescriptors();
-    bool foundInRegistryList = false;
-    for (const auto& d : descriptors) {
-        if (d.code == *mapped) {
-            foundInRegistryList = true;
+    const auto assertMappedAndRegistered = [&](const ModelingErrorCode code,
+                                               const char* expected) {
+        const auto mapped = modelingDiagCode(code);
+        ASSERT_TRUE(mapped.has_value())
+            << modelingErrorCodeToken(code) << " 的映射码是 §9.5 已登记行的"
+                                       "登记义务";
+        EXPECT_EQ(*mapped, expected) << "映射串漂移（同源纪律）";
+        bool foundInRegistryList = false;
+        for (const auto& d : descriptors) {
+            if (d.code == *mapped) {
+                foundInRegistryList = true;
+            }
         }
-    }
-    EXPECT_TRUE(foundInRegistryList)
-        << "映射码 " << *mapped
-        << " 必须同时出现在 DiagCodes.hpp 注册清单（同源对账——禁字符串拼码面）";
+        EXPECT_TRUE(foundInRegistryList)
+            << "映射码 " << *mapped
+            << " 必须同时出现在 DiagCodes.hpp 注册清单（同源对账——禁字符串拼码面）";
+    };
+    assertMappedAndRegistered(ModelingErrorCode::SchemaVersionUnsupported,
+                              "MDL-READINESS-SCHEMA-UNSUPPORTED");
+    assertMappedAndRegistered(ModelingErrorCode::TemplateDisabled,
+                              "MDL-TEMPLATE-DISABLED");
 
-    // 暂缓行：其余 11 值 nullopt（阶段纪律的封闭性——多登记了未到任务
-    // 行的映射也在此暴露）。
+    // 暂缓行：其余 10 值 nullopt（阶段纪律的封闭性——多登记了未到任务
+    // 行的映射也在此暴露；IllegalName 的生产者 createDraft 已落位但 §9.5
+    // 尚无其独立码行——维持 nullopt，不私定码值凑数）。
     for (const ModelingErrorCode code : kAllCodes) {
-        if (code == ModelingErrorCode::SchemaVersionUnsupported) {
+        if (code == ModelingErrorCode::SchemaVersionUnsupported
+            || code == ModelingErrorCode::TemplateDisabled) {
             continue;
         }
         EXPECT_FALSE(modelingDiagCode(code).has_value())

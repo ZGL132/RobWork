@@ -491,6 +491,59 @@ void collectDisableCollisions(const pugi::xml_node& node,
 }  // namespace
 
 // =====================================================================
+// 维度二链型能力判定——单一纯函数实现（§6.4；WP-13-T07 从 mapUrdf 第九步
+// 内联逻辑提取：导入报告与模板创建入口共用同一判定，卡 §6.4 尾段原文
+// "同一判定被模板创建入口复用（§2.1 创建列）"的落地面。判定口径与提取前
+// 逐字一致——reason 串被 ImportTest 既有断言（"4/5"/"prismatic"子串）
+// 钉住，本函数只做搬移不改语义）。
+// =====================================================================
+
+ChainCapability judgeChainCapability(const std::vector<JointType>& chainTypes)
+{
+    // 判定口径（§6.4 能力矩阵）：可动关节数（revolute+continuous+prismatic；
+    // fixed 不计——fixed 连接不构成可动轴）∈{6,7} 且不含 prismatic→全能力；
+    // 其余（4/5 轴、含 prismatic、1~3 轴等其它表述）→超出首版产品模板范围
+    // （类型保留不降级——V12-01；R1；MDL-12-S1 启用后仅六/七轴含 prismatic
+    // 放开）。
+    std::uint32_t movableAxes = 0;
+    bool prismaticPresent = false;
+    for (const JointType type : chainTypes) {
+        if (type == JointType::Revolute
+            || type == JointType::Continuous
+            || type == JointType::Prismatic) {
+            ++movableAxes;
+        }
+        if (type == JointType::Prismatic) { prismaticPresent = true; }
+    }
+    const bool fullRange = (movableAxes == 6 || movableAxes == 7) && !prismaticPresent;
+
+    ChainCapability capability;
+    capability.movableAxes = movableAxes;
+    capability.containsPrismatic = prismaticPresent;
+    if (fullRange) {
+        capability.kind = ChainCapabilityKind::FullTemplateRange;
+        capability.reason =
+            "六/七轴全旋转（含经确认工程工作范围的 continuous，类型保留）"
+            "——模板/识别/编辑/正式计算全通（§6.4 能力矩阵第一行）";
+    } else {
+        capability.kind = ChainCapabilityKind::BeyondTemplateRange;
+        if (prismaticPresent) {
+            capability.reason =
+                "目标链含 prismatic——超出首版产品模板范围（R1；"
+                "MDL-12-S1 启用后仅六/七轴含 prismatic 放开）";
+        } else if (movableAxes == 4 || movableAxes == 5) {
+            capability.reason =
+                "4/5 轴——超出首版产品模板范围（仅导入识别与草稿兼容编辑）";
+        } else {
+            capability.reason =
+                "可动轴数 " + std::to_string(movableAxes)
+                + " 不在六/七轴模板范围（1~3 轴无模板语义，同归范围外）";
+        }
+    }
+    return capability;
+}
+
+// =====================================================================
 // 主体：mapUrdf（解析映射切片）
 // =====================================================================
 
@@ -2114,48 +2167,21 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
     report.resources = std::move(resourceRows);
 
     // -----------------------------------------------------------------
-    // 第九步：维度二链型能力判定（§6.4 能力矩阵——所选主链；纯函数，
-    // 同一判定被模板创建入口复用）＋阻断面汇总＋出口（诊断稳定排序）。
-    // 判定口径：可动关节数（revolute+continuous+prismatic；fixed 不计）
-    // ∈{6,7} 且不含 prismatic→全能力；其余（4/5 轴、含 prismatic、或
-    // 不在六/七轴表述内的其它轴数——1~3 轴无模板语义，同归范围外）→
-    // 超出首版产品模板范围（草稿兼容编辑通过，模板创建与正式计算/报告
-    // 阻断＋诊断；类型保留不降级——V12-01）。mimic/planar/floating 不
-    // 产生能力结论（阻断型失败在前——见 outcome.error）。
+    // 第九步：维度二链型能力判定（§6.4 能力矩阵——所选主链）＋阻断面汇总
+    // ＋出口（诊断稳定排序）。判定本体已提取为公共纯函数
+    // judgeChainCapability（§6.4 尾段"同一判定被模板创建入口复用"——
+    // WP-13-T07 提取，Import/Template 单一实现；口径与提取前逐字一致）。
+    // mimic/planar/floating 不产生能力结论（阻断型失败在前——见
+    // outcome.error）。
     // -----------------------------------------------------------------
     {
-        std::uint32_t movableAxes = 0;
-        bool prismaticPresent = false;
+        std::vector<JointType> chainTypes;
+        chainTypes.reserve(draft.joints.size());
         for (const JointEntry& joint : draft.joints) {
-            if (joint.type == JointType::Revolute
-                || joint.type == JointType::Continuous
-                || joint.type == JointType::Prismatic) {
-                ++movableAxes;
-            }
-            if (joint.type == JointType::Prismatic) { prismaticPresent = true; }
+            chainTypes.push_back(joint.type);
         }
-        const bool fullRange = (movableAxes == 6 || movableAxes == 7) && !prismaticPresent;
-        report.chainCapability.movableAxes = movableAxes;
-        report.chainCapability.containsPrismatic = prismaticPresent;
-        if (fullRange) {
-            report.chainCapability.kind = ChainCapabilityKind::FullTemplateRange;
-            report.chainCapability.reason =
-                "六/七轴全旋转（含经确认工程工作范围的 continuous，类型保留）"
-                "——模板/识别/编辑/正式计算全通（§6.4 能力矩阵第一行）";
-        } else {
-            report.chainCapability.kind = ChainCapabilityKind::BeyondTemplateRange;
-            if (prismaticPresent) {
-                report.chainCapability.reason =
-                    "目标链含 prismatic——超出首版产品模板范围（R1；"
-                    "MDL-12-S1 启用后仅六/七轴含 prismatic 放开）";
-            } else if (movableAxes == 4 || movableAxes == 5) {
-                report.chainCapability.reason =
-                    "4/5 轴——超出首版产品模板范围（仅导入识别与草稿兼容编辑）";
-            } else {
-                report.chainCapability.reason =
-                    "可动轴数 " + std::to_string(movableAxes)
-                    + " 不在六/七轴模板范围（1~3 轴无模板语义，同归范围外）";
-            }
+        report.chainCapability = judgeChainCapability(chainTypes);
+        if (report.chainCapability.kind == ChainCapabilityKind::BeyondTemplateRange) {
             // TEMPLATE-RANGE info 诊断（能力边界结论——InfeasibilityProof
             // 族；reportability 保证范围外链的导入留痕可追溯）。
             pushImportDiag(diagEntries, diagSeq++, kMdlImportTemplateRange,
@@ -2164,9 +2190,10 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                                : draft.joints.front().objectId,
                            draft.joints.empty() ? std::string()
                                                 : draft.joints.front().localName,
-                           "movable-axes=" + std::to_string(movableAxes)
+                           "movable-axes="
+                               + std::to_string(report.chainCapability.movableAxes)
                                + " prismatic-present="
-                               + (prismaticPresent ? "true" : "false"),
+                               + (report.chainCapability.containsPrismatic ? "true" : "false"),
                            "草稿兼容编辑可用；模板创建与正式计算/报告将被阻断"
                            "（类型保留，不静默降级——V12-01）",
                            scan.robotSpan);

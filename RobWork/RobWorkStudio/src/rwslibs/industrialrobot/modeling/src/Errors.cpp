@@ -64,19 +64,28 @@ std::string_view modelingErrorCodeToken(ModelingErrorCode code) noexcept
 
 std::optional<std::string_view> modelingDiagCode(ModelingErrorCode code) noexcept
 {
-    // 映射数据（§9.5 尾段"每值登记映射码"的当前已登记行）。仅一行：
-    // SchemaVersionUnsupported→MDL-READINESS-SCHEMA-UNSUPPORTED（§9.5
-    // T02/T03 行——码串与 DiagCodes.hpp 工厂登记同源；该域错误的语义
-    // 与码行语义逐字对应"对象 schema 主版本超出本程序支持"）。
+    // 映射数据（§9.5 尾段"每值登记映射码"的当前已登记行）。两行：
+    //   ①SchemaVersionUnsupported→MDL-READINESS-SCHEMA-UNSUPPORTED（§9.5
+    //     T02/T03 行——码串与 DiagCodes.hpp 工厂登记同源；该域错误的语义
+    //     与码行语义逐字对应"对象 schema 主版本超出本程序支持"）；
+    //   ②TemplateDisabled→MDL-TEMPLATE-DISABLED（§9.5 T07 行——WP-13-T07
+    //     实现期增登；§9.4.2"TemplateDisabled（附定位诊断）"的映射落地：
+    //     生产者接口 createDraft 落位，映射随 §9.5 码行注册同批落地——
+    //     Errors.hpp 阶段纪律原文口径；码串与 DiagCodes.hpp
+    //     kMdlTemplateDisabled 同源，DiagCodesTest 交叉核对）。
     //
     // 其余 11 值显式 nullopt（不是遗漏）：①"无独立码时复用校验码族"
     // （§9.5 括注——如 AuthorityViolation）的具体复用属产出点语义裁决，
-    // 随生产者任务登记；②生产者接口未落位（T03+）的值，映射随 §9.5
-    // 对应码行注册同批落地。nullopt 时调用方不得产诊断（产码唯一经
-    // IDiagnosticFactory::create 且码须已注册——禁字符串拼码）。
+    // 随生产者任务登记；②生产者接口未落位的值，映射随 §9.5 对应码行
+    // 注册同批落地（IllegalName 的生产者 createDraft 已落位但 §9.5 尚无
+    // 其独立码行——按"不私定码值凑数"纪律维持 nullopt，错误经值面返回，
+    // 待卡面增登码行后同批登记）。nullopt 时调用方不得产诊断（产码唯一
+    // 经 IDiagnosticFactory::create 且码须已注册——禁字符串拼码）。
     switch (code) {
     case ModelingErrorCode::SchemaVersionUnsupported:
         return std::optional<std::string_view>{"MDL-READINESS-SCHEMA-UNSUPPORTED"};
+    case ModelingErrorCode::TemplateDisabled:
+        return std::optional<std::string_view>{"MDL-TEMPLATE-DISABLED"};
     case ModelingErrorCode::DuplicateObjectId:
     case ModelingErrorCode::RefProtected:
     case ModelingErrorCode::AuthorityViolation:
@@ -84,7 +93,6 @@ std::optional<std::string_view> modelingDiagCode(ModelingErrorCode code) noexcep
     case ModelingErrorCode::NotFinite:
     case ModelingErrorCode::CentroidEditUnresolved:
     case ModelingErrorCode::BatchPartial:
-    case ModelingErrorCode::TemplateDisabled:
     case ModelingErrorCode::IllegalName:
     case ModelingErrorCode::RefMissing:
     case ModelingErrorCode::DhExpandFailed:
