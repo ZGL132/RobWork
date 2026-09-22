@@ -64,9 +64,24 @@ namespace app {
  * 而 project 零链接 diagnostics（架构红线——SA 同款注入纪律）；两套接口的
  * 对接只能在同时看见两边的装配层完成。翻译规则（不改义）：
  *   - report(record)：经 diagnostics::IDiagnosticFactory::create 唯一入口
- *     产条目入目录（§9.2）——码表由 HarnessMain 装配期注册（87 码全量收编
- *     ＋ui 码），未注册码会抛 CodeUnknown（fail-fast，不静默吞——装配清单
- *     缺漏属装配错误，AGENTS"禁止吞错"）；
+ *     产条目入目录（§9.2），上下文＝对端宿主标识（sourceUnit="project"——
+ *     DiagnosticsSinkImpl §9.7"无上下文时 sourceUnit 取注入的宿主标识"
+ *     同款；params 保持空——record 无参数字段，见实现注释）。create 拒绝
+ *     分两类纪律（WP-10-T15 验收 attempt 1 阻断项 B-1 返工落定）：
+ *       · 装配/桥自身缺陷（CodeUnknown＝码表缺对端在用码——87 码收编缺漏；
+ *         Usage＝本桥构造的上下文 token 越界）：异常原样上抛 fail-fast
+ *         （AGENTS"禁止吞错"；装配清单缺漏属装配错误，HarnessMain 的打开
+ *         编排兜底把它转为可观测错误页而非进程死亡）；
+ *       · 对端记录契约拒绝（SubjectMissing/ComparisonMissing/ParamSchema
+ *         Mismatch/ContextMissing/CodeDeprecated——对端按 §9.7 快捷 sink
+ *         形态发射的记录与工厂校验链的差距；已知面：PRJ-LOCK-HELD 等
+ *         项目级事件 subject=∅ 而用户级码要求 subject〔core §4.8〕，
+ *         paramSchema 占位无法经快捷形态携带）：Dev 通道具名上报后**协议
+ *         继续**——PM-07 降级只读是打开协议的成功形态（UiPorts.hpp C-3
+ *         "降级只读也是成功"），不得因诊断侧拒绝而进程死亡或打开失败；
+ *         该缺口的裁决权在 project/diagnostics 所有者（验收记录 F-290
+ *         候选登记：发射面补 subject 或工厂校验豁免面），本桥不代修补
+ *         （代补 subject/params＝虚构绑定）——具名上报即不吞错。
  *   - reportDev(channel, message)：直转 IDevLogSink::logDev（diagnostics
  *     §6.2——Dev 级事实不入目录，走开发日志）。
  *
@@ -89,7 +104,9 @@ public:
                              std::shared_ptr<diagnostics::IDiagnosticFactory> factory,
                              std::shared_ptr<diagnostics::IDevLogSink> devLog);
 
-    /// @brief 用户级记录：经工厂 create 入目录（码未注册＝异常中止，不吞）。
+    /// @brief 用户级记录：经工厂 create 入目录；拒绝分装配缺陷（上抛
+    ///        fail-fast）与对端记录契约缺口（Dev 具名上报后协议继续——
+    ///        显式纪律见类注释，两路都不静默）。
     void report(const core::DiagnosticRecord& record) override;
 
     /// @brief 开发级事实：直转 Dev 日志通道（不入目录——diagnostics §6.2）。
@@ -176,8 +193,10 @@ private:
  *     显示差异的判别输入）＋detail 原样透传（面向开发诊断）——不吞错。
  *
  * 诊断注入：OpenStoreRequest.diagnostics＝ProjectDiagnosticsBridge（打开
- * 协议产出的 PRJ-* 用户级诊断经桥入目录——锁竞争降级时 PRJ-LOCK-HELD 与
- * 只读横幅同源可见）。
+ * 协议产出的 PRJ-* 用户级诊断经桥上报——工厂接受的条目入目录，被工厂拒绝
+ * 的按桥类注释的显式纪律具名落 Dev 日志，打开协议不受阻）。PM-07 只读横幅
+ * 的数据源是打开结果自带的锁事实（readOnlyCause/lockHolder），不依赖目录
+ * 条目在位——横幅呈现与诊断出线是两条独立通道。
  */
 class StoreFactoryPortAdapter final : public IUiStoreFactoryPort {
 public:

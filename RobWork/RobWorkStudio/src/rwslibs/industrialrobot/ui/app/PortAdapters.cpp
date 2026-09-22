@@ -18,6 +18,7 @@
 
 #include "PortAdapters.hpp"
 
+#include <sdurws/ird/diagnostics/Errors.hpp>      // DiagnosticsError/token（report 拒绝纪律的异常面与稳定 token）
 #include <sdurws/ird/project/QueryPort.hpp>       // project::IProjectQueryPort/ProjectMetadataView（query() 完整定义——权威元数据读取）
 
 #include <filesystem>
@@ -105,9 +106,66 @@ ProjectDiagnosticsBridge::ProjectDiagnosticsBridge(
 void ProjectDiagnosticsBridge::report(const core::DiagnosticRecord& record)
 {
     // 经 create 唯一入口产条目（§9.2）：码表校验、entryId 分配、dedupKey
-    // 计算全在工厂内。未注册码抛 DiagnosticsError(CodeUnknown)——打开协议
-    // 的码均为 §4.6 收编表成员，命中即装配清单缺漏，异常上抛（fail-fast）。
-    m_sink->append(m_factory->create(record, diagnostics::DiagContext{}));
+    // 计算全在工厂内。上下文＝对端宿主标识（DiagnosticsSinkImpl §9.7 同款
+    // 形态——本桥是 project 打开协议的 sink，记录来源单元即 project；
+    // sourceInterface 用其默认报告通道名）。params 保持空：core::
+    // DiagnosticRecord 无参数字段（载荷由对端写入上下文文本——StoreLock
+    // 的 PRJ-LOCK-HELD 构造注释即该口径），本桥不做"从文本反解结构化参数"
+    // 的加工——反解既是脆弱的字面匹配又是数值虚构，两样都在纪律红线外。
+    diagnostics::DiagContext context;
+    context.sourceUnit = "project";
+    context.sourceInterface = "sink.report";
+
+    try {
+        m_sink->append(m_factory->create(record, context));
+        return;
+    } catch (const diagnostics::DiagnosticsError& error) {
+        // 拒绝分两类（显式纪律——PortAdapters.hpp 桥类注释；WP-10-T15 验收
+        // attempt 1 阻断项 B-1 的返工落定点）。switch 全枚举语义分组：装配/
+        // 桥自身缺陷上抛 fail-fast，对端记录契约缺口具名上报后协议继续。
+        switch (error.code()) {
+        case diagnostics::DiagnosticsErrorCode::CodeUnknown:
+            // 码表缺对端在用码＝HarnessMain 装配期收编清单缺漏（装配错误）
+            // ——必须 fail-fast，不允减带病装配继续跑。
+        case diagnostics::DiagnosticsErrorCode::Usage:
+            // 上下文 token 越界＝本桥构造的 context 违约（桥自身缺陷）——
+            // 同为 fail-fast。两路异常由 HarnessMain 打开编排兜底转为
+            // 可观测错误页＋非零退出（不落 std::terminate 进程死亡）。
+            throw;
+        case diagnostics::DiagnosticsErrorCode::CodeDeprecated:
+        case diagnostics::DiagnosticsErrorCode::SubjectMissing:
+        case diagnostics::DiagnosticsErrorCode::ComparisonMissing:
+        case diagnostics::DiagnosticsErrorCode::ParamSchemaMismatch:
+        case diagnostics::DiagnosticsErrorCode::ContextMissing:
+            // 对端记录内容 vs 工厂校验链的契约缺口：记录是对端按其契约发射
+            // 的事实（如 PRJ-LOCK-HELD 项目级事件 subject=∅——project 侧
+            // 注释引 diagnostics §7.7 映射表"lock-held-by-other，subject=∅"
+            // ），harness 修不了也不许虚构修补（补 subject＝伪造绑定对象，
+            // 补 params＝伪造参数值）；但更不许让它杀死打开协议——PM-07
+            // 第二写者降级只读是 open 的成功形态，attempt 1 的进程死亡
+            // （std::terminate）正是缺失本纪律所致。处置＝Dev 通道具名
+            // 落盘（消息含码/拒绝 token/工厂 detail/缺口归属）后返回——
+            // 条目未入目录的事实可观测、可审计，不是静默吞。
+            {
+                std::string message;
+                message += "对端用户级诊断未入目录（diagnostics 工厂拒绝）：code=";
+                message += record.code;
+                message += " rejection=";
+                message += diagnostics::token(error.code());
+                message += " detail=\"";
+                message += error.what();
+                message += "\"——跨单元契约缺口（发射面补 subject 或工厂校验"
+                           "豁免面，裁决归 project/diagnostics 所有者——"
+                           "WP-10-T15 验收 F-290 登记）；打开协议继续，"
+                           "PM-07 降级语义不受阻";
+                m_devLog->logDev("ird.harness.diagbridge", message);
+            }
+            return;
+        }
+        // 工厂错误码全表 11 值在上方两个分组穷举——不可达兜底仍按装配缺陷
+        // 上抛（新增枚举值时在此显式归组，编译期由 -Wswitch 提示补行）。
+        throw;
+    }
 }
 
 void ProjectDiagnosticsBridge::reportDev(const std::string& channel,
@@ -219,7 +277,9 @@ OpenStoreOutcome StoreFactoryPortAdapter::open(const std::string& canonicalPath,
     }
 
     // 第二步：执行打开五步协议（①兜底校验→②形态/版本/锁→③读校验→⑤孤儿
-    // 草稿扫描全在对端）。诊断桥注入——协议内 PRJ-* 用户级诊断经桥入目录。
+    // 草稿扫描全在对端）。诊断桥注入——协议内 PRJ-* 用户级诊断经桥上报
+    // （工厂接受的条目入目录；被工厂拒绝的按桥的显式纪律具名落 Dev 日志，
+    // 打开协议不受阻——PortAdapters.hpp 桥类注释）。
     project::OpenStoreRequest request;
     request.path = path;
     request.mode = (mode == UiOpenMode::Writable) ? project::OpenMode::Writable

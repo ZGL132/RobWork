@@ -301,7 +301,14 @@ int main(int argc, char** argv)
 
     // ---- 打开编排（--new/--open；§5.2 打开五步的触发——触发时机编排
     //      归装配层〔§11.5 分工表〕，状态机推进归控制器）----
+    // 编排段兜底（WP-10-T15 验收 attempt 1 阻断项 B-1 的第二道防线）：段内
+    // 残存异常（典型＝诊断桥上抛的装配类缺陷 CodeUnknown/Usage——对端记录
+    // 的契约缺口已在桥内具名降级，装配缺陷按纪律继续上抛）在此转换为消息框
+    // ＋控制台双通道留痕＋非零退出码（5），绝不让异常穿透 main 触发
+    // std::terminate（0xC0000409 fast-fail＝不可观测的进程死亡）；也绝不
+    // 静默吞——退出码与消息框都是失败事实的承载（AGENTS"禁止吞错"）。
     if (opts.openRequested || opts.newRequested) {
+      try {
         // 路径规范化（§9.3 口径——与适配器内打开请求同源；最近项目登记
         // 也用此规范形态去重）。
         std::string canonical;
@@ -375,6 +382,22 @@ int main(int argc, char** argv)
                     + QString::fromUtf8("\n详情：")
                     + QString::fromStdString(report.failure.detail));
         }
+      } catch (const std::exception& error) {
+          // 兜底错误页：业务失败（StoreError/打开失败投影）已在上方按各自
+          // 契约处理并 return——走到这里的是装配类缺陷或未预期异常，属
+          // harness 自身错误（对端记录契约缺口不会到达——桥内已降级）。
+          // 可观测失败＋受控退出（exit 5），留给开发者可读的失败事实。
+          reportLine(std::string("打开编排异常终止（harness 装配类缺陷）：")
+                     + error.what());
+          QMessageBox::critical(
+              shell->mainWindow(), QString::fromUtf8("工作台打开失败"),
+              QString::fromUtf8("打开编排遇到未预期异常（harness 装配类缺陷，"
+                                "非对端业务失败）：\n")
+                  + QString::fromUtf8(error.what())
+                  + QString::fromUtf8("\n（对端记录的契约缺口由诊断桥具名落 Dev "
+                                      "日志，不会走到这里）"));
+          return 5;
+      }
     }
 
     // ---- 事件循环（交互验证主体；关窗即退出）----
