@@ -2915,11 +2915,12 @@
       "id": "F-288",
       "source": "traceability/acceptance/WP-10-T15-20260922.md §4.10（attempt 1，verdict=fail，2026-09-22；送验对象 a75bdabba06bce1218b618fdeebaacce809d2975，分支 wp10-t15）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-22",
       "title": "F-010 家族第 10 例（形态变异）：wp10-t15 留痕的 .log 文件已入库（gitignore 负向豁免生效），但 gtest XML／ird-test-report.json／集成构建日志／validate-task.log 四类证据零件在库为零；且 ctest 日志命名漂移（ctest-ui-ird.log vs 契约登记 ctest-ui-ird 名实基本符、另件缺标准名）",
       "owner": "ui 单元实施者（WP-10-T15 返工时按 §4.10 清单补齐四类零件；后续任务按 .gitignore 豁免后的实际入库效果核对留痕清单）",
-      "resolution": "随 WP-10-T15 返工（B-1 同批）补齐；家族根因（.gitignore 吞 .log）已由 e6dea301 根治，本例为零件类别缺口非规则复发。编号顺延自 F-287。"
+      "resolution": "随 WP-10-T15 返工（B-1 同批）补齐；家族根因（.gitignore 吞 .log）已由 e6dea301 根治，本例为零件类别缺口非规则复发。编号顺延自 F-287。2026-09-22 消账：返工提交 101a8d4a 四类零件全部补齐（gtest XML＋ird-test-report 集成与冒烟双模式＋integrated-build.log＋validate-task.log），ctest 日志命名对齐契约登记；attempt 2 验收 §4.8/§4.10 逐件验真在库。fixedAt=2026-09-22，fixedBy=101a8d4aabb9ca892cde61defae201a88ac5b860",
+      "fixedAt": "2026-09-22"
     },
     {
       "id": "F-289",
