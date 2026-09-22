@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "工作台验证 harness（开发期 L5 装配雏形＋可视化验证入口，sdurws_ird_ui_app）",
-  "status": "done",
+  "status": "ready",
   "dependsOn": ["UI-T03", "UI-T06", "UI-T07", "UI-T10", "UI-T11"],
   "requirements": ["UX-09", "PM-07", "PM-10", "PM-11"],
   "designRefs": [
