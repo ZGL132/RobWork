@@ -1,0 +1,128 @@
+[==========] Running 51 tests from 7 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from MdlObjTypes
+[ RUN      ] MdlObjTypes.RobotDesignTokenIsRuntimeConstantEntity_WP13T02_ACC4
+[       OK ] MdlObjTypes.RobotDesignTokenIsRuntimeConstantEntity_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlObjTypes.FiveObjectTypeTokensMatchCardSection42_WP13T02_ACC4
+[       OK ] MdlObjTypes.FiveObjectTypeTokensMatchCardSection42_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlObjTypes.SceneObjectRoleVocabularyFiveValues_WP13T02_ACC4
+[       OK ] MdlObjTypes.SceneObjectRoleVocabularyFiveValues_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlObjTypes.RoleTokensAgreeWithPolicyConsumerMirror_WP13T02_ACC4
+[       OK ] MdlObjTypes.RoleTokensAgreeWithPolicyConsumerMirror_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlObjTypes.RoleTokenRoundTripAndUnknownRejected_WP13T02_ACC4
+[       OK ] MdlObjTypes.RoleTokenRoundTripAndUnknownRejected_WP13T02_ACC4 (0 ms)
+[----------] 5 tests from MdlObjTypes (0 ms total)
+
+[----------] 4 tests from MdlErrors
+[ RUN      ] MdlErrors.TokenTableCompleteAndDistinct_WP13T02_ACC4
+[       OK ] MdlErrors.TokenTableCompleteAndDistinct_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlErrors.TokenDeterministicAndAnchoredToCard_WP13T02_ACC4
+[       OK ] MdlErrors.TokenDeterministicAndAnchoredToCard_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlErrors.ErrorValueSemanticsOrderedParams_WP13T02_ACC4
+[       OK ] MdlErrors.ErrorValueSemanticsOrderedParams_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlErrors.DiagCodeMappingStagedRows_WP13T02_ACC4
+[       OK ] MdlErrors.DiagCodeMappingStagedRows_WP13T02_ACC4 (0 ms)
+[----------] 4 tests from MdlErrors (0 ms total)
+
+[----------] 4 tests from MdlDiagCodes
+[ RUN      ] MdlDiagCodes.FactoryScopeIsStagedT02Rows_WP13T02_ACC4
+[       OK ] MdlDiagCodes.FactoryScopeIsStagedT02Rows_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlDiagCodes.DescriptorFieldsMatchSection95Row_WP13T02_ACC4
+[       OK ] MdlDiagCodes.DescriptorFieldsMatchSection95Row_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlDiagCodes.RegistersIntoStableCodeRegistry_WP13T02_ACC4
+[       OK ] MdlDiagCodes.RegistersIntoStableCodeRegistry_WP13T02_ACC4 (0 ms)
+[ RUN      ] MdlDiagCodes.DuplicateRegistrationRejected_WP13T02_ACC4
+[       OK ] MdlDiagCodes.DuplicateRegistrationRejected_WP13T02_ACC4 (0 ms)
+[----------] 4 tests from MdlDiagCodes (0 ms total)
+
+[----------] 4 tests from MdlBuildRedLine
+[ RUN      ] MdlBuildRedLine.ProductFaceHasZeroQtIncludes_WP13T02_ACC1
+[       OK ] MdlBuildRedLine.ProductFaceHasZeroQtIncludes_WP13T02_ACC1 (2 ms)
+[ RUN      ] MdlBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP13T02_ACC2
+[       OK ] MdlBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP13T02_ACC2 (2 ms)
+[ RUN      ] MdlBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP13T02_ACC2
+[       OK ] MdlBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP13T02_ACC2 (1 ms)
+[ RUN      ] MdlBuildRedLine.ProductFaceFilesNonEmpty_WP13T02_ACC1
+[       OK ] MdlBuildRedLine.ProductFaceFilesNonEmpty_WP13T02_ACC1 (1 ms)
+[----------] 4 tests from MdlBuildRedLine (8 ms total)
+
+[----------] 16 tests from MdlRobotDesign
+[ RUN      ] MdlRobotDesign.ValidExplicitDesignPassesAllInvariants_WP13T03_ACC3
+[       OK ] MdlRobotDesign.ValidExplicitDesignPassesAllInvariants_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl1_StructureSizes_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl1_StructureSizes_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl2_IdentityUniqueness_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl2_IdentityUniqueness_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl3_ProvidedValuesFinite_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl3_ProvidedValuesFinite_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl4_LimitOrderAndIllegalCombinations_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl4_LimitOrderAndIllegalCombinations_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl6_AxisValidity_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl6_AxisValidity_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl7_BasePlacementCustom_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl7_BasePlacementCustom_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl8_AuthorityExclusivity_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl8_AuthorityExclusivity_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl9_ReferenceIntegrity_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl9_ReferenceIntegrity_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl10_ResourceStateMachine_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl10_ResourceStateMachine_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl11_DrivetrainRatios_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl11_DrivetrainRatios_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl12_CouplingR1Locked_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl12_CouplingR1Locked_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.V14_DhAuthorityAxisEditRejectedBytesUnchanged_WP13T03_ACC5
+[       OK ] MdlRobotDesign.V14_DhAuthorityAxisEditRejectedBytesUnchanged_WP13T03_ACC5 (0 ms)
+[ RUN      ] MdlRobotDesign.Mdl09_AuthorityFieldPermissionMatrix_WP13T03_ACC5
+[       OK ] MdlRobotDesign.Mdl09_AuthorityFieldPermissionMatrix_WP13T03_ACC5 (0 ms)
+[ RUN      ] MdlRobotDesign.SchemaVersionDefaultsToRegisteredConstant_WP13T03_ACC1
+[       OK ] MdlRobotDesign.SchemaVersionDefaultsToRegisteredConstant_WP13T03_ACC1 (0 ms)
+[----------] 16 tests from MdlRobotDesign (0 ms total)
+
+[----------] 3 tests from MdlParts
+[ RUN      ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3
+[       OK ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlParts.DrivetrainCouplingR1Locked_WP13T03_ACC3
+[       OK ] MdlParts.DrivetrainCouplingR1Locked_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlParts.DrivetrainRatioValidity_WP13T03_ACC3
+[       OK ] MdlParts.DrivetrainRatioValidity_WP13T03_ACC3 (0 ms)
+[----------] 3 tests from MdlParts (0 ms total)
+
+[----------] 15 tests from MdlCodec
+[ RUN      ] MdlCodec.EncodeIsDeterministicPerObject_WP13T03_ACC4
+[       OK ] MdlCodec.EncodeIsDeterministicPerObject_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.ReferenceSetNormalization_WP13T03_ACC4
+[       OK ] MdlCodec.ReferenceSetNormalization_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.AuthoritativeFieldChangeChangesBytes_WP13T03_ACC4
+[       OK ] MdlCodec.AuthoritativeFieldChangeChangesBytes_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.DMdl5_ExplicitDhDerivedCacheNotEncoded_WP13T03_ACC3
+[       OK ] MdlCodec.DMdl5_ExplicitDhDerivedCacheNotEncoded_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlCodec.DMdl5_DhDerivedAxisOriginCacheNotEncoded_WP13T03_ACC3
+[       OK ] MdlCodec.DMdl5_DhDerivedAxisOriginCacheNotEncoded_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlCodec.SelfCollisionHintsExcludedFromEncoding_WP13T03_ACC1
+[       OK ] MdlCodec.SelfCollisionHintsExcludedFromEncoding_WP13T03_ACC1 (0 ms)
+[ RUN      ] MdlCodec.RoundtripPreservesAllFields_WP13T03_ACC4
+[       OK ] MdlCodec.RoundtripPreservesAllFields_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.DhModeRoundtripDerivedStateDefinition_WP13T03_ACC4
+[       OK ] MdlCodec.DhModeRoundtripDerivedStateDefinition_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.EncodeRejectsUnsupportedVersion_WP13T03_ACC4
+[       OK ] MdlCodec.EncodeRejectsUnsupportedVersion_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.DecodeRejectsUnknownMajorVersion_WP13T03_ACC4
+[       OK ] MdlCodec.DecodeRejectsUnknownMajorVersion_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.DecodeRejectsBadMagic_WP13T03_ACC4
+[       OK ] MdlCodec.DecodeRejectsBadMagic_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.DecodeRejectsTruncatedBytes_WP13T03_ACC4
+[       OK ] MdlCodec.DecodeRejectsTruncatedBytes_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.DecodeRejectsTrailingBytes_WP13T03_ACC4
+[       OK ] MdlCodec.DecodeRejectsTrailingBytes_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.DecodeRejectsUnsortedReferenceSet_WP13T03_ACC4
+[       OK ] MdlCodec.DecodeRejectsUnsortedReferenceSet_WP13T03_ACC4 (0 ms)
+[ RUN      ] MdlCodec.DecodeRejectsBytesViolatingInvariants_WP13T03_ACC4
+[       OK ] MdlCodec.DecodeRejectsBytesViolatingInvariants_WP13T03_ACC4 (0 ms)
+[----------] 15 tests from MdlCodec (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 51 tests from 7 test suites ran. (10 ms total)
+[  PASSED  ] 51 tests.

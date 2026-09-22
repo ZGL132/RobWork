@@ -29,10 +29,9 @@
  *   - 其余四对象 token 由 modeling 登记（§14.4 新增语义登记第 1 项——
  *     modeling 对象所有权，ARC-04/CON-01 框架内）。
  *
- * 对象 schema 版本常量**不在本任务落位**：§3.3 把该内容行登记为 T02/T03
- * 双任务承载，其消费者（codec 的 schema 主版本检查）随 WP-13-T03 落地，
- * 按"无消费者不预建"纪律（§9.5 同款）留给 T03——本头只登记 token 与
- * 角色词表（契约 acceptance 4 明示范围）。
+ * 对象 schema 版本常量随 WP-13-T03 增补（§3.3 该行 T02/T03 双承载：其
+ * 消费者 codec 的 schema 主版本检查随 WP-13-T03 落地，按"无消费者不预建"
+ * 纪律（§9.5 同款）在 T02 只登记 token 与角色词表——常量见文末版本常量节）。
  *
  * 线程安全：本头全部实体为 constexpr 常量/纯值类型/纯函数，并发只读安全。
  * 确定性（NFR-COR-02）：token 与词表串均为编译期固定字面量，同值同串、
@@ -42,6 +41,7 @@
 #ifndef IRD_MODELING_OBJECTTYPES_HPP
 #define IRD_MODELING_OBJECTTYPES_HPP
 
+#include <cstdint>
 #include <optional>
 #include <string_view>
 
@@ -81,6 +81,37 @@ inline constexpr std::string_view kNamedPoseSetObjectType = "named-pose-set";
 ///        每模型一份；selection 回填与 OPT StageB 传动比编辑的独立写对象
 ///        MDL-16/21、SEL-10 目标）。
 inline constexpr std::string_view kRobotDrivetrainObjectType = "robot-drivetrain";
+
+// =====================================================================
+// 对象 schema 版本常量（§3.3 表 ObjectTypes.hpp 行的 T02/T03 双承载半段——
+// T02 登记五 token 时按"无消费者不预建"纪律留给 T03；其消费者＝Codec.hpp
+// 的 schema 主版本检查，随 WP-13-T03 同批落位）。
+//
+// 版本语义（project.md §4.8 canonical 编码契约同口径）：
+//   - 主版本变更＝破坏性变更（旧字节须走升级器——modeling 目前不提供，
+//     未知主版本一律 SchemaVersionUnsupported 拒绝，NFR-DEP-04 同口径）；
+//   - 表尾追加可选字段＝次版本兼容（编解码格式版本 FormatVersion 的 minor
+//     承载，见 Codec.hpp）。
+//
+// 单一权威：每个对象的 schemaVersion 字段只允许经本表取值，禁止在结构体
+// 初始化处写字面量（与五 token 同款"登记簿"纪律——拼写/数值漂移在源头
+// 被切断，NFR-COR-02）。
+// =====================================================================
+
+/// @brief robot-design 对象 schema 主版本（§4.3 字段表 schemaVersion 行"≥1"）。
+inline constexpr std::uint32_t kRobotDesignSchemaVersion = 1;
+
+/// @brief tool-definition 对象 schema 主版本（§4.4 字段表）。
+inline constexpr std::uint32_t kToolDefinitionSchemaVersion = 1;
+
+/// @brief scene-object 对象 schema 主版本（§4.5 字段表）。
+inline constexpr std::uint32_t kSceneObjectSchemaVersion = 1;
+
+/// @brief named-pose-set 对象 schema 主版本（§4.6 值模型）。
+inline constexpr std::uint32_t kNamedPoseSetSchemaVersion = 1;
+
+/// @brief robot-drivetrain 对象 schema 主版本（§4.7 字段表）。
+inline constexpr std::uint32_t kRobotDrivetrainSchemaVersion = 1;
 
 // =====================================================================
 // SceneObjectRole——场景对象角色词表（§4.5 role 字段；词表所有者＝modeling，
