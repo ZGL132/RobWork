@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 282,
+  "tickCount": 283,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-23T05:22:05+08:00",
+    "updatedAt": "2026-09-23T07:06:48+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1633,6 +1633,19 @@
       "acceptanceRecord": "traceability/acceptance/WP-13-T06-20260923.md",
       "mergedAt": "2026-09-23",
       "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；实现期增登稳定码 MDL-IMPORT-XACRO-UNRESOLVED（卡 §9.5 原表缺行，T05 增登先例，随卡 v0.7 消账）；2 GiB 产物护栏不触发于单元测试已如实声明（深度护栏＋代码走查覆盖）；验收建议级 F-308（F-012 家族提交标题）／F-309（gates 留痕双重编码乱码，F-207/F-231 家族）／F-310（verify 清单缺 contract_test 构建行，F-300/F-304 家族第三例）／F-311（留痕散文计数少报，F-041 系）随 acc/WP-13-T06/1 转登"
+    },
+    {
+      "task": "WP-13-T07",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "a1c13dcccc0a2fa59e00ac5bcb34d33ce80b1a44",
+        "abde67244a45275e072d4c266478f93a34fd9220",
+        "7156ff13f7fc49f076663c6716a53c27252d677d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T07-20260923.md",
+      "mergedAt": "2026-09-23",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；O-27 处置按 acceptance 2 落地（七轴 createDraft→TemplateDisabled＋MDL-TEMPLATE-DISABLED 提示诊断，仅登记不启用）；偏差七项（含 TemplateOutcome/runtime::Expected 形态、ModelingWorkingSet v1 落位、custom-chain 1 轴种子等）已按 DTB §5.4 登记于 modeling.md §14.6 v0.8；验收建议级 F-312（用例计数少报 13/15，F-041 家族）／F-313（F-012 家族提交标题）／F-314（verify 清单缺 contract_test 构建行，家族第四例）／F-315（gates 留痕乱码，F-207/F-231/F-309 家族）随 acc/WP-13-T07/1 转登"
     }
   ],
   "policy": {
@@ -1658,11 +1671,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "WP-13-T07",
-      "branch": "wp13-t07",
-      "contractPath": "tasks/foundation/WP-13-T07.json"
-    },
     {
       "taskId": "WP-13-T08",
       "branch": "wp13-t08",
@@ -1817,5 +1825,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "1f28e72a-ad2d-4bb5-9c88-f5c74ba60f60"
+  "tickToken": "811099b1-afd6-449c-9e7b-70a910eff4f3"
 }

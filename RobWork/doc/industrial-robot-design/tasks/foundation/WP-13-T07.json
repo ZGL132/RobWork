@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现六轴模板创建与参数化编辑",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T03"
   ],
