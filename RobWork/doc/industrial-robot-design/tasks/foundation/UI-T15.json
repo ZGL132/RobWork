@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T15",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "工作台验证 harness（开发期 L5 装配雏形＋可视化验证入口，sdurws_ird_ui_app）",
+  "status": "ready",
+  "dependsOn": ["UI-T03", "UI-T06", "UI-T07", "UI-T10", "UI-T11"],
+  "requirements": ["UX-09", "PM-07", "PM-10", "PM-11"],
+  "designRefs": [
+    "units/ui.md#10.1",
+    "units/ui.md#10.5",
+    "units/ui.md#5.2",
+    "units/ui.md#3.1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_app",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird_gui$\"",
+    "sdurws_ird_ui_app.exe --help（装配外冒烟）；启动日志＋截图留痕 traceability/builds/wp10-t15/"
+  ],
+  "branch": "wp10-t15",
+  "interUnit": true,
+  "knownPitfalls": ["O-31"],
+  "acceptance": [
+    "目标与装配面落位：sdurws_ird_ui_app 可执行目标注册（_app 后缀形态首次启用——ird_gates 分类面既有词，Qt 链接合法）；app/PortAdapters 端口适配器族（StoreFactoryPortAdapter/StorePortAdapter/ProjectDiagnosticsBridge——对端契约原样翻译零吞错）＋v0.1 诚实桩（UnloadedPolicySource/NullUiNameResolver/DraftQueryPortStub/SessionTaskPortStub/HarnessAboutSource——零虚构）＋HarnessMain 装配序列（诊断栈两段式 seal＋ShellWiring 必填四端口＋UiSessionController 打开编排）；双模式构建零错误",
+    "ird_gates 命中集归一化比对恰增 2 条唯一 SUB 命中（ui->project＝装配层特权边——ui 库产品面仍零对 project 链接、链接块零改动；ui->ui＝app 目标自边——同型于 ui_gui_test 既有 ->ui 登记形态），DTB §4.5 登记行随本任务落位；R-1/R-3/R-4/R-5/T-1/T-2/GRAPH/LIB/SA02 命中集零变化；ui 叶子目录 ctest 回归 ^ird$ 2/2、^ird_gui$ 28/28 通过（ird-test-report.xml 级留痕 traceability/builds/wp10-t15/）",
+    "harness 交互验证留痕：无参启动＝无项目首页态（PM-10）；--new 创建真实项目（HEAD/objects/revisions/project.json 落盘）后经标准打开协议进入会话（PM-11 状态栏/命令门控翻转）；--open 打开既有项目；双开同名项目第二实例降级只读（PM-07——可写：否）；启动日志＋项目态/首页态截图＋双开日志存 traceability/builds/wp10-t15/；v0.1 诚实边界如实登记（关闭链路不可达＝壳层占位处理器＋接线缺失 fail-fast；强杀进程不落盘＝后台写线程预期行为）"
+  ],
+  "note": "任务来源：所有者于流水线熔断停等期间直接指派（2026-09-22 会话指令——建模 WP-13 开发前要求具备可视化验证手段； PIPE blocked 状态与本任务无冲突——本任务为所有者直接授权的开发工具交付，不占用队列）。定位：开发工具（非产品交付路径）——开发期 L5 应用壳雏形，产品装配层（插件装配任务）落位时按同一契约替换本入口，ui 库产品面零改动；建模单元插件界面（WP-13-T15）开发期间以本 harness 为交互验证宿主。关键登记：①_app 后缀首次启用（ird_gates 分类面 plugin/worker/app 既有词，DTB §5.3 命名行之外的新形态——以本契约与 ui.md §13 UI-T15 行为登记载体）；②ui->project SUB 边为装配层特权（ui 库产品面守卫不变——NoCrossUnitInclude_O31_UI_BUILD 与链接块文本钉继续约束 sdurws_ird_ui 本体）；③v0.1 诚实桩清单与替换路径（真实策略装配需 policy.md §6.5 完整装配线；草稿/任务链路随 §8/§9 消费任务接入）。分支 wp10-t15；编译与交互留痕 traceability/builds/wp10-t15/（ird_gates-base.txt/ird_gates-wp10-t15.txt/ctest-ui-ird.log/ctest-ui-gui.log/harness-open.log/harness-lock2.log/harness-homepage.png/harness-project-state.png）"
+}

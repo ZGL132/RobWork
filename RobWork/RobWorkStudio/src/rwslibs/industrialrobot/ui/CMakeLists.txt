@@ -509,3 +509,60 @@ set_tests_properties(sdurws_ird_ui_test sdurws_ird_ui_contract_test
     PROPERTIES LABELS "ird")
 set_tests_properties(sdurws_ird_ui_gui_test
     PROPERTIES LABELS "ird_gui")
+
+# ---- 开发验证工作台 harness：sdurws_ird_ui_app（UI-T15）----------------
+# 建模开发期间的可视化验证手段：开发期 L5 应用壳雏形——真实诊断栈＋真实
+# 工作台壳（createWorkbenchShell）＋真实项目打开协议（经 ui 自有端口适配
+# project::ProjectStoreFactory，O-31 装配层特权边）。目标名启用引擎预留的
+# _app 后缀形态（ird_gates 分类面 plugin/worker/app——Qt 链接合法）；harness
+# 源码在 app/ 子目录（非 include/、src/ 产品面——产品扫描域零触碰）。
+# 链接面＝装配层特权（R-1/R-3 表不适用；ui->project 表外边经 DTB §4.5
+# 例外登记——UI-T15 契约与 traceability/wp10-t15-gate-registrations.md）。
+# 本目标非测试（不入 ctest 标签）、非产品交付路径（产品装配层落位时按同
+# 一契约替换；ui 库产品面零改动）。
+add_executable(sdurws_ird_ui_app
+    app/HarnessMain.cpp
+    app/PortAdapters.cpp)
+
+target_compile_features(sdurws_ird_ui_app PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_ui_app PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_ui_app PRIVATE /utf-8)
+endif()
+
+# sdurws_ird_project＝ui->project 表外边（DTB §4.5 登记的装配层例外——
+# 打开五步协议适配的链接面；ui 库产品面仍零对 project 链接）。
+target_link_libraries(sdurws_ird_ui_app PRIVATE
+    sdurws_ird_ui
+    sdurws_ird_project
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets)
+
+add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_ui_app>
+            $<TARGET_FILE_DIR:sdurws_ird_ui_app>
+    COMMAND_EXPAND_LISTS)
+
+# ---- Qt 平台插件定位：生成 qt.conf（UI-T15 修复）----
+# 背景：上面 TARGET_RUNTIME_DLLS 把 Qt6Core/Gui/Widgets 复制到 exe 旁——
+# Qt 6 官方发行版的 DLL 是"可重定位前缀"形态，从副本位置自行推导的插件
+# 目录不再成立，平台插件 qwindows 找不到即启动失败（"Could not find the
+# Qt platform plugin \"windows\" in \"\""——VS 启动项/双击场景必现；实施段
+# 手工验证时以 QT_QPA_PLATFORM_PLUGIN_PATH 环境变量绕过，未暴露此问题）。
+# 修复：configure 期从 Qt6_DIR 推导真实 Qt 安装前缀并生成 qt.conf 复制到
+# exe 旁，把前缀钉回真实安装（plugins/imageformats/styles 全部按真实前缀
+# 解析）。前缀是机器相关路径，但本文件为构建期生成物（不入库），与复制的
+# 运行时 DLL 同一来源口径。
+set(_ird_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_qt_prefix "${_ird_qt_prefix}/../../.." ABSOLUTE)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/harness-qt.conf"
+     "[Paths]\nPrefix=${_ird_qt_prefix}\n")
+add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/harness-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_ui_app>/qt.conf")

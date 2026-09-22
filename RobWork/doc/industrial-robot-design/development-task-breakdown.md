@@ -311,6 +311,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-10-T09 | 实现阶段状态投影与工程用语 | ui | WP-10-T04、WP-22-T03（门控数据源） | ui.md（卡）；ARCH §3.4（StageStatusModel 汇聚） | StageStatusModel＋统一用语呈现 | UX-01/02/12（投影侧） | 七阶段就绪/锁定投影与级联失效提示数据用例通过；界面零哈希/Schema/插件名 | 投影只消费，不拥有门控规则（归 workflow） | M |
 | WP-10-T10 | 实现帮助入口与关于对话框 | ui | WP-10-T03、WP-24-T01 | ui.md（卡） | 帮助入口＋About（产品/组件版本＋插件清单） | UX-14、NFR-DEP-05（与基线一致） | 版本显示与冻结基线一致；插件清单与白名单一致 | — | S |
 | WP-10-T11 | ui 契约测试套件 | ui | WP-10-T03~T10、WP-02（testkit_qt 按需） | ui.md 验证章（卡） | `ui/test/*` | UX 家族、SA-16 | 快捷键冲突拒绝/状态词映射/布局记忆用例通过并留痕 | — | M |
+| WP-10-T15 | 工作台验证 harness（开发期 L5 装配雏形＋可视化验证入口） | ui | WP-10-T03、T06、T07、T10、T11 | ui.md §10.1/§10.5（卡）；UiPorts.hpp O-31 注入面 | `sdurws_ird_ui_app` 可执行目标（`_app` 后缀首次启用，随本行登记）＋`ui/app/PortAdapters.*` 端口适配器族＋`ui/app/HarnessMain.cpp` 装配序列 | UX-09、PM-07/PM-10/PM-11（交互验证观测面） | 双模式构建零错误；ird_gates 命中集恰增 2 处已登记（ui->project＋ui->ui，§4.5 行）；ui ctest 回归 ird＋ird_gui 全通过；harness 启动/打开协议/PM-07 双开降级交互验证留痕（traceability/builds/wp10-t15/） | 开发工具不入产品交付路径；ui 库产品面与链接块零改动；桩端口零虚构语义 | S |
 
 ### 2.12 WP-11 io（单元卡已产出 v0.1）
 
@@ -666,6 +667,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | R-5（proximity 直链禁止） | policy 产品实现（碰撞唯一实现） | policy.md §3.4；AT-19 | 生效（WP-07-T01 起） | 2026-09-10 |
 | R-5（同上） | 各 `_test`/`_contract_test` 经 testkit/policy 替身消费 | §5.3；POL-T11 | 生效 | 2026-09-10 |
 | T-1/T-2（testkit 分发/依赖） | 无例外 | testkit.md §2.4 | — | 2026-09-10 |
+| SUB（ARCH §3.5 表外边） | `sdurws_ird_ui_app`（开发验证 harness，装配层目标）：ui->project（打开五步协议适配链接面）＋ui->ui（app 目标自边，同型于 ui_gui_test 既有 `->ui` 形态） | O-31 裁决（装配层同时看见两边写适配器）；DTB §2.11 WP-10-T15 行 | 生效（WP-10-T15 起；`sdurws_ird_ui` 产品库链接块仍仅 core/diagnostics＋Qt） | 2026-09-22 |
 
 ### 4.6 L1 基线库目标名实测表（各单元落位任务核对后回登；零 Qt 库方可被 L2 引用）
 
