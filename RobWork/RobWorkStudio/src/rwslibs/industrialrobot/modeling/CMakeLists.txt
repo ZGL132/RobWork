@@ -51,14 +51,19 @@ find_package(GTest CONFIG REQUIRED)
 #                        登记——小端/UTF-8/无填充/集合字典序；D-MDL-5
 #                        派生字段排除的编码侧声明点）
 #   src/InertiaMath.hpp  单元私有头（R-2：不入 include/——惯量 SPD＋三角
-#                        不等式单一实现，连杆/工具两处共用）
+#                        不等式单一实现，连杆/工具共用）
+# T04 增列（tasks/foundation/WP-13-T04.json，§3.3 表 T04 行）：
+#   src/PropertyEstimation.cpp  物性估算唯一公式表 mdl-property-formula/1
+#                        （段元闭式公式/平行轴合成/输出自检/密度默认表/
+#                        质心确认流域级判定——§5.3/§9.4.6）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
     src/DiagCodes.cpp
     src/RobotDesign.cpp
     src/Parts.cpp
-    src/Codec.cpp)
+    src/Codec.cpp
+    src/PropertyEstimation.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -139,6 +144,12 @@ endif()
 #                                  D-MDL-5 派生字段不入编码身份＋未知主
 #                                  版本 SchemaVersionUnsupported（NFR-
 #                                  DEP-04）＋MalformedPayload 破损面
+# T04 增列（任务契约 acceptance 1~5 具名自证）：
+#   test/PropertyEstimationTest.cpp  三段元闭式公式手算对照＋多段平行轴
+#                                  合成（M-2）＋输出自检反例拒收＋质心
+#                                  确认流三分支（V-17）＋密度默认表/
+#                                  NotProvided 不断言（DYN-06/M-8）＋
+#                                  传动 schema 字段约束与来源标记（MDL-16）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -152,7 +163,8 @@ add_executable(sdurws_ird_modeling_test
     test/BuildRedLineTest.cpp
     test/RobotDesignTest.cpp
     test/PartsTest.cpp
-    test/CodecTest.cpp)
+    test/CodecTest.cpp
+    test/PropertyEstimationTest.cpp)
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_modeling_test PROPERTIES
