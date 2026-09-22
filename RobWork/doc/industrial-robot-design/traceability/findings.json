@@ -3021,6 +3021,36 @@
       "title": "F-012/F-293 家族同型再现（在册先例链见 F-293）：WP-13-T03 送验第二提交 ff6c77d9 标题「[WP-13-T03] modeling 单元卡 v0.4 同步与任务验证留痕」前缀后以名词短语「modeling 单元卡 v0.4 同步…」开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 标题字面要求——正文四段（What/Why/How/影响面）齐备，验证段结论与验收者独立复跑逐项吻合（双模式构建零错误、集成 51/51＋5/5、ctest 2/2、validate-task/validate-docs PASS、门禁命中集 base==branch==验收者新鲜运行逐类一致零新增），无粉饰、零行为影响；同送验主提交 859d5955 标题「实现…」动词开头合规，仅本提交违例",
       "owner": "实施者侧提交信息规范（后续送验提交标题前缀后动词开头）；家族性口径统一处置归治理侧（F-012 处置建议①同源）",
       "resolution": "处置建议＝随 F-012 家族统一处置，后续提交标题采用前缀＋动词开头形态（本例对应形态如「[WP-13-T03] 登记 modeling 单元卡 v0.4 同步与任务验证留痕」）；不追溯改写已推送提交历史（AGENTS §6.3 禁止改写已推送提交）。编号顺延自 F-297。"
+    },
+    {
+      "id": "F-299",
+      "source": "traceability/acceptance/WP-13-T04-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；送验对象 9e24b4104d1af423c1fb40ba0d1442bb73990469，分支 wp13-t04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-012/F-293/F-298 家族同型再现（在册先例链见 F-293）：WP-13-T04 送验第二提交 9e24b410 标题「[WP-13-T04] 双模式验证留痕与门禁命中集比对证据」前缀后以名词短语「双模式验证留痕…」开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 标题字面要求——正文四段（What/Why/How/影响面）齐备，验证段结论与验收者独立复现逐项吻合（双模式构建零错误、集成 68/68＋5/5、ctest 2/2、validate-task/validate-docs PASS、门禁命中集 base==branch==验收者亲建 base 对照运行逐码多重集一致零新增），无粉饰、零行为影响；同送验主提交 7326ccb6 标题「实现…」动词开头合规，仅本提交违例",
+      "owner": "实施者侧提交信息规范（后续送验提交标题前缀后动词开头）；家族性口径统一处置归治理侧（F-012 处置建议①同源）",
+      "resolution": "处置建议＝随 F-012 家族统一处置，后续提交标题采用前缀＋动词开头形态（本例对应形态如「[WP-13-T04] 登记 双模式验证留痕与门禁命中集比对证据」）；不追溯改写已推送提交历史（AGENTS §6.3 禁止改写已推送提交）。编号顺延自 F-298。"
+    },
+    {
+      "id": "F-300",
+      "source": "traceability/acceptance/WP-13-T04-20260923.md §4.3（attempt 1，verdict=pass，2026-09-23；F-297 验收环境陷阱家族同族新根因）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "契约 verify 清单缺测试目标构建行：tasks/foundation/WP-13-T04.json verify 数组只列 sdurws_ird_modeling 与 sdurws_ird_modeling_test 两构建目标，不含 sdurws_ird_modeling_contract_test——全新构建树按清单逐条字面执行时，ctest（第 3 条）首跑报 contract_test Not Run（Unable to find executable，exe 未被任何清单命令构建），验收者补跑 --target sdurws_ird_modeling_contract_test 后复绿 2/2。实施侧未受影响（其完整构建三目标，留痕为证），仅验收/CI 全新树口径存在清单缺口",
+      "owner": "治理/编排（DTB §5.1 与契约模板 verify 数组口径补全：ctest 前先构建单元全部 *_test/_contract_test 目标，或 verify 清单逐目标列全；后续同族单元任务契约同查）",
+      "resolution": "处置建议＝DTB §5.1 增补「ctest 前构建该单元全部测试目标」通用口径（一处修订覆盖既有与后续契约），或按任务在 verify 数组补目标行；验收者实测补建后 ctest 2/2 复绿，无行为影响。编号顺延自 F-299。"
+    },
+    {
+      "id": "F-301",
+      "source": "traceability/acceptance/WP-13-T04-20260923.md §4.2（attempt 1，verdict=pass，2026-09-23；F-008 同根因扩展观测）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "全新集成树全量构建失败簇扩展观测：除 F-008 已登记的 RWSimulatorPlugin（rw/math/Math.hpp C2059/C2334/C2143 min/max 宏污染簇，WP-13-T04 验收在 9e24b410 集成树从零构建再次原样复现）外，新观测 bt_plugin.rwplugin.vcxproj 同簇失败（vcpkg eigen3 Parallelizer.h C2589/C2059——同 min/max 宏污染根，RobWorkSim bullet 插件）。送验 diff 零框架文件、无因果路径；industrialrobot 全部目标（含全部依赖链）从零构建零错误，任务目标两模式零错误不受影响（F-008 处置口径「ired 任务不受影响」维持）",
+      "owner": "构建所有者（框架侧 NOMINMAX/include 顺序修正——RobWorkSim 插件目标族统一处置，须先登记 patch；随 WP-01-T02 CI 一键门禁消费）",
+      "resolution": "处置建议＝并入 F-008 同一修正动作（RobWorkSim 插件目标族加 NOMINMAX 或调 include 顺序，patch 登记），本条作为复现证据扩展记录，不单独立项修复。编号顺延自 F-300。"
     }
   ]
 }
