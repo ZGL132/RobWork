@@ -3111,6 +3111,46 @@
       "title": "Import.cpp 文件头「实现结构（阅读地图）」声明十步（①～⑩，其中⑦＝主链外元素登记），但正文对应代码块标签为「第八步前注：链解析已在第六步的选链行走中完成」，第七步编号标签缺失——注释步骤序与代码结构轻微漂移（链型判定提交 eb417a1e 重构第六步后未同步段前标签），不影响可读性的主体（每步业务依据注释仍完整）",
       "owner": "实施者侧后续任务（modeling 后续触碰 Import.cpp 时顺手把该块标签改为「第七步」或删除文件头阅读地图中的⑦编号——AGENTS §2.1.5 注释随代码更新）",
       "resolution": "处置建议＝后续 modeling 任务顺手修订一行注释，不单独返工。编号顺延自 F-306。"
+    },
+    {
+      "id": "F-308",
+      "source": "traceability/acceptance/WP-13-T06-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；送验对象 803b435a549a3579834f724aec612c874fc5fd79，分支 wp13-t06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-012/F-293/F-298/F-299/F-303 家族同型再现（在册先例链见 F-303——T05 留痕提交标题逐字符同型）：WP-13-T06 送验留痕提交 803b435a 标题「[WP-13-T06] 双模式验证留痕＋文档同步：卡 v0.7（T06 落位登记＋§9.5 增登行）＋门禁比对证据」前缀后以名词短语「双模式验证留痕＋文档同步」开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 标题字面要求——正文四段（What/Why/How/影响面）齐备，验证段结论与验收者独立复现逐项吻合（validate-task/validate-docs 双 PASS、留痕计数与实现提交输出一致），无粉饰、零行为影响；同送验主提交 3aa4f096 标题「实现…」动词开头合规，仅本提交违例",
+      "owner": "实施者侧提交信息规范（后续送验提交标题前缀后动词开头）；家族性口径统一处置归治理侧（F-012 处置建议①同源）",
+      "resolution": "处置建议＝随 F-012 家族统一处置，后续提交标题采用前缀＋动词开头形态（本例对应形态如「[WP-13-T06] 归档 双模式验证留痕与卡 v0.7 文档同步」）；不追溯改写已推送提交历史（AGENTS §6.3 禁止改写已推送提交）。编号顺延自 F-307。"
+    },
+    {
+      "id": "F-309",
+      "source": "traceability/acceptance/WP-13-T06-20260923.md §4.8/§4.10（attempt 1，verdict=pass，2026-09-23；验收者逐件扫描 builds/wp13-t06/ 留痕乱码行数）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-207/F-231 家族再现：WP-13-T06 留痕 gates-ird-gates-branch.log（集成树 MSBuild ird_gates 目标输出捕获）含双重编码乱码 40 行（UTF-8 中文经 GBK 误读后再编，如「产品面疑似包含 Qt 类头」呈「浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご」）；同批 direct 直跑三件（gates-direct-base/branch.log）与构建/测试/校验日志十件均零乱码——乱码仅限 MSBuild 管道输出形态，结论可读性不受影响（命中行可经目标名/码面辨认）",
+      "owner": "构建约定/门禁脚本所有者（ird_gates MSBuild 输出捕获编码统一——与 F-207/F-231 同根因，建议 -NoProfile chcp 65001 或 CMake 输出重定向 UTF-8）",
+      "resolution": "处置建议＝随 F-207/F-231 家族统一处置（脚本侧编码修复后存量乱码留痕不回写重录）；验收记录已按 direct 直跑日志交叉证实命中结论，不构成证据缺口。编号顺延自 F-308。"
+    },
+    {
+      "id": "F-310",
+      "source": "traceability/acceptance/WP-13-T06-20260923.md §4.3（attempt 1，verdict=pass，2026-09-23；验收者在全新集成树按契约 verify 清单逐条亲手执行时实测）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-300/F-304 家族第三例：tasks/foundation/WP-13-T06.json verify 数组缺测试目标构建行——只列 sdurws_ird_modeling_test 未列 sdurws_ird_modeling_contract_test，第 3 条 ctest -L \"^ird$\" 需两个测试 exe 均在位；全新树按清单字面执行（第 1/2 条只构建产品目标与单元测试目标）时 ctest 首跑 contract_test 将 Not Run/失败——验收者补跑 --target sdurws_ird_modeling_contract_test（退出码 0）后 ctest 2/2 通过，非实现缺陷（实施留痕表明完整构建三目标）；契约编译先例（T04/T05 已同型登记）未回灌到 T06 契约编译面",
+      "owner": "契约编译所有者（CCP——后续任务契约 verify 数组补齐测试目标构建行；已发契约是否回灌由治理侧裁决）",
+      "resolution": "处置建议＝CCP 后续编译任务在 verify 数组 ctest 行之前为每个被测目标补构建行（单元＋契约测试目标各一行）；不单独返工 T06（验收已按完整口径执行并留痕）。编号顺延自 F-309。"
+    },
+    {
+      "id": "F-311",
+      "source": "traceability/acceptance/WP-13-T06-20260923.md §4.9（attempt 1，verdict=pass，2026-09-23；验收者 git diff --name-only 逐件清点对照提交正文）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "F-041/F-080/F-236/F-249/F-256 散文计数失准家族再现：提交 803b435a 正文称「归档 traceability/builds/wp13-t06/ 十八件验证留痕」，实际该提交入库 21 件（13 日志＋4 gtest XML＋4 ird-test-report JSON——git diff --name-only 清点）；方向＝少报、无粉饰（在库文件多于声明），正文枚举「＋ird_gates 比对三件」句式与 18 的拆算亦不自洽",
+      "owner": "实施者侧提交信息规范（归档前以 git diff --name-only | wc -l 实测计数再落笔）",
+      "resolution": "处置建议＝随散文计数家族统一处置（归档类提交正文计数以实测命令输出为准）；不追溯改写已推送提交历史。编号顺延自 F-310。"
     }
   ]
 }
