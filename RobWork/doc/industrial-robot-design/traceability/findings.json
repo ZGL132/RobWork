@@ -3011,6 +3011,16 @@
       "title": "验收变异场景陷阱（根因未深查）：cmake --build --target sdurws_ird_ui_test --clean-first 的 Clean 阶段波及共享 bin/Release 下未参与该目标的兄弟测试 exe——sdurws_ird_ui_contract_test.exe/sdurws_ird_ui_gui_test.exe 消失，随后 ctest -L \"^ird$\" 报 contract_test Not Run（Unable to find executable）；重建两目标后复绿。疑似 MSBuild Clean 范围与共享输出目录交互所致（三个 ui 测试目标同产 bin/Release）",
       "owner": "构建/治理（如复现：考虑各测试目标独立输出目录或在验收口径登记 clean-first 后须重建全部同目标集测试 exe；后续验收会话先规避——clean-first 后重建三个 ui 测试目标再跑 ctest）",
       "resolution": "attempt 2 已按上述口径规避并复绿（V2/V3 ctest 重跑 2/2＋1/1 exit 0）；编号顺延自 F-296。"
+    },
+    {
+      "id": "F-298",
+      "source": "traceability/acceptance/WP-13-T03-20260922.md §4.9（attempt 1，verdict=pass，2026-09-22；送验对象 ff6c77d9326fb1b03ffee4e2269a86bf7da484c4，分支 wp13-t03）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "F-012/F-293 家族同型再现（在册先例链见 F-293）：WP-13-T03 送验第二提交 ff6c77d9 标题「[WP-13-T03] modeling 单元卡 v0.4 同步与任务验证留痕」前缀后以名词短语「modeling 单元卡 v0.4 同步…」开头，非动词开头，不合 ACC §4.9／AGENTS §6.3 标题字面要求——正文四段（What/Why/How/影响面）齐备，验证段结论与验收者独立复跑逐项吻合（双模式构建零错误、集成 51/51＋5/5、ctest 2/2、validate-task/validate-docs PASS、门禁命中集 base==branch==验收者新鲜运行逐类一致零新增），无粉饰、零行为影响；同送验主提交 859d5955 标题「实现…」动词开头合规，仅本提交违例",
+      "owner": "实施者侧提交信息规范（后续送验提交标题前缀后动词开头）；家族性口径统一处置归治理侧（F-012 处置建议①同源）",
+      "resolution": "处置建议＝随 F-012 家族统一处置，后续提交标题采用前缀＋动词开头形态（本例对应形态如「[WP-13-T03] 登记 modeling 单元卡 v0.4 同步与任务验证留痕」）；不追溯改写已推送提交历史（AGENTS §6.3 禁止改写已推送提交）。编号顺延自 F-297。"
     }
   ]
 }
