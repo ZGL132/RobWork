@@ -1,3 +1,25 @@
-[ird-harness] 诊断栈就绪（开发日志目录：D:\10_Source_Repos\21_robot\RobWork\build\ird-ui-verify-tmp\ird-harness-logs）
+==================================================================
+WP-10-T15 返工（attempt 2）PM-07 复测：双可写意图实例双开同名项目
+场景＝两实例均为普通可写意图（实例 2 无 --readonly）；attempt 1 的
+harness-lock2.log 曾误配 --readonly 场景，本文件为修正场景的重测留痕。
+==================================================================
+
+[实例 1] sdurws_ird_ui_app --new <scratch>/demo-project 演示工程A（持锁存活）
+启动 14 秒后存活校验=yes；stdout 如下：
+[ird-harness] 诊断栈就绪（开发日志目录：C:/Users/zgl18/AppData/Local/Temp/wp10t15-interact/devlog-new）
 [ird-harness] 工作台壳已就位（五区布局＋命令门控；Ctrl+Shift+P 命令面板）
-[ird-harness] 项目已打开：D:\10_Source_Repos\21_robot\RobWork\build\ird-ui-verify-tmp\demo-project（可写：否（降级只读——见横幅））
+[ird-harness] 项目已创建（C:\Users\zgl18\AppData\Local\Temp\wp10t15-interact\demo-project，显示名：演示工程A）——释放创建锁后经打开协议进入
+[ird-harness] 项目已打开：C:\Users\zgl18\AppData\Local\Temp\wp10t15-interact\demo-project（可写：是）
+
+[实例 2] sdurws_ird_ui_app --open <scratch>/demo-project（可写意图，无 --readonly）
+启动 15 秒后存活校验=yes（无 0xC0000409/std::terminate——attempt 1 阻断项已修复）；stdout 如下：
+[ird-harness] 诊断栈就绪（开发日志目录：C:/Users/zgl18/AppData/Local/Temp/wp10t15-interact/devlog-open2）
+[ird-harness] 工作台壳已就位（五区布局＋命令门控；Ctrl+Shift+P 命令面板）
+[ird-harness] 项目已打开：C:\Users\zgl18\AppData\Local\Temp\wp10t15-interact\demo-project（可写：否（降级只读——见横幅））
+
+[实例 2 开发日志具名拒绝记录]（dev-diagnostics.log，通道 ird.harness.diagbridge）
+C:/Users/zgl18/AppData/Local/Temp/wp10t15-interact/devlog-open2/\dev-diagnostics.log:1 1790076194748 D DEBUG ird.harness.diagbridge msg=对端用户级诊断未入目录（diagnostics 工厂拒绝）：code=PRJ-LOCK-HELD rejection=diagnostics/subject-missing detail="diagnostics/subject-missing: 用户级码缺 subject（PRJ-LOCK-HELD）——ERR-01 稳定诊断项绑定对象（core §4.8 交接）"——跨单元契约缺口（发射面补 subject 或工厂校验豁免面，裁决归 project/diagnostics 所有者——WP-10-T15 验收 F-290 登记）；打开协议继续，PM-07 降级语义不受阻
+
+[结论] 实例 2 存活进入会话＋「可写：否（降级只读——见横幅）」＋窗口标题/状态栏
+「演示工程A（只读）」＋工具条只读标示＋四个写按钮禁用（截图 harness-lock2-banner.png）。
+PM-07「双实例第二写者不阻塞等待」在本需求语义场景（第二写者）下成立。

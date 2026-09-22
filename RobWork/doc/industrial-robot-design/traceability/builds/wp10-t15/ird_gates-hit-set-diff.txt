@@ -1,0 +1,6 @@
+# ird_gates 命中集归一化比对（WP-10-T15 返工树 vs base 95dd9323）——亲跑归一化（剥 [ird_gates] 前缀＋去重）
+# base＝47 条唯一命中；返工树＝49 条唯一命中；恰增 2 条 SUB（DTB §4.5 已登记的装配层特权边＋app 自边）；其余各码零变化
+---- diff（< base / > 返工树）----
+45a46,47
+> IRD-GATE-SUB: 表外依赖边 ui->project（sdurws_ird_ui_app → sdurws_ird_project）不在 ARCH §3.5 白名单
+> IRD-GATE-SUB: 表外依赖边 ui->ui（sdurws_ird_ui_app → sdurws_ird_ui）不在 ARCH §3.5 白名单
