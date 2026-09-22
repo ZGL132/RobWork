@@ -547,3 +547,22 @@ add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
             $<TARGET_RUNTIME_DLLS:sdurws_ird_ui_app>
             $<TARGET_FILE_DIR:sdurws_ird_ui_app>
     COMMAND_EXPAND_LISTS)
+
+# ---- Qt 平台插件定位：生成 qt.conf（UI-T15 修复）----
+# 背景：上面 TARGET_RUNTIME_DLLS 把 Qt6Core/Gui/Widgets 复制到 exe 旁——
+# Qt 6 官方发行版的 DLL 是"可重定位前缀"形态，从副本位置自行推导的插件
+# 目录不再成立，平台插件 qwindows 找不到即启动失败（"Could not find the
+# Qt platform plugin \"windows\" in \"\""——VS 启动项/双击场景必现；实施段
+# 手工验证时以 QT_QPA_PLATFORM_PLUGIN_PATH 环境变量绕过，未暴露此问题）。
+# 修复：configure 期从 Qt6_DIR 推导真实 Qt 安装前缀并生成 qt.conf 复制到
+# exe 旁，把前缀钉回真实安装（plugins/imageformats/styles 全部按真实前缀
+# 解析）。前缀是机器相关路径，但本文件为构建期生成物（不入库），与复制的
+# 运行时 DLL 同一来源口径。
+set(_ird_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_qt_prefix "${_ird_qt_prefix}/../../.." ABSOLUTE)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/harness-qt.conf"
+     "[Paths]\nPrefix=${_ird_qt_prefix}\n")
+add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/harness-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_ui_app>/qt.conf")
