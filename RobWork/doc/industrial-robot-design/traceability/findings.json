@@ -2950,6 +2950,16 @@
       "title": "F-273 家族第 4 例：ui/CMakeLists.txt AUTOMOC 注释『十五个源文件』与 src/ 实际 19 个 TU 漂移（base 既有漂移，非本任务引入）",
       "owner": "ui 单元实施者（下一增量触碰 ui/CMakeLists.txt 时修正注释计数或改为不写死数字）",
       "resolution": "注释准确性、非行为缺陷：随下次增量顺手处置。编号顺延自 F-290。"
+    },
+    {
+      "id": "F-292",
+      "source": "WP-13-T02 实施段（2026-09-22，分支 wp13-t02）：ird_gates 自查检出——modeling 测试目标按 testkit 报告设施接入（RecordListener/IRD_TEST_INFO——io IO-T07/PRJ-T15/EV-T11 同款先例）链接 sdurws_ird_testkit 后，ird_gates 命中集 base..branch diff 新增恰 2 项（gates-hit-set-diff.txt 留痕 traceability/builds/wp13-t02/）：sdurws_ird_modeling_test→sdurws_ird_testkit、sdurws_ird_modeling_contract_test→sdurws_ird_testkit",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-09-22",
+      "title": "IRD-GATE-SUB 对测试目标→sdurws_ird_testkit 边的命中再增两处（sdurws_ird_modeling_test、sdurws_ird_modeling_contract_test）——与 F-051/F-072 同根因：ird_gates_whitelist.cmake T-1 段明文允许测试目标链接 sdurws_ird_testkit（{同单元产品目标, sdurws_ird_testkit, gtest 系}），但 ird_gates.cmake 的 IRD-GATE-SUB 形态一判定未对『测试目标→sdurws_ird_testkit』边豁免。链接为任务交付面所必需：两测试目标的 ird-test-report.json 用例级明细（AGENTS §4.2 留痕面）依赖 testkit RecordListener 安装（test/TestMainReport.cpp 与 contract_test/ContractTestMain.cpp 自有 main——gtest_main 固定入口无监听器安装点），去除则留痕要求空转；产品目标 sdurws_ird_modeling 零 testkit 边（配置期守卫＋BuildGraphContractTest NoTestkitEdge 用例双面钉住）。modeling 产品面其余门禁项零命中（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02——base..branch diff 零 modeling 产品面引用），六边登记后 IRD-GATE-GRAPH 零命中",
+      "owner": "WP-01 构建所有者（门禁引擎/白名单一致性处置——与 F-051 同一处置动作一并裁决；cmake/ird_gates.cmake 不在本任务 allowedFiles，实施者不得私改引擎）",
+      "resolution": "处置建议＝与 F-051 合并处置：ird_gates.cmake SUB 形态一对『测试目标→sdurws_ird_testkit』的测试侧边按白名单 T-1 段豁免（一处引擎修正同时消账 F-051 及本项与在册各实例的命中，testdata_lint 产品目标命中仍归 F-019）；登记前 ird_gates 维持红（既有基线 44 项＋本项 2 项），任务目标面构建与测试不受影响（WP-13-T02 双模式构建零错误、集成 17/17＋5/5、冒烟 17/17＋5/5 留痕 traceability/builds/wp13-t02/）。编号顺延自 F-291。"
     }
   ]
 }

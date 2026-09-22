@@ -1,0 +1,18 @@
+ird_gates 命中集合 diff（wp12-t02 GATES-HIT-SET 同型口径）
+
+base   = 010a263ca40988c0a66770759615af827fefa7ec（detached worktree 直接 cmake -P 复跑）
+branch = wp13-t02 工作树（同口径直接 cmake -P 复跑）
+
+归一化（命中码＋sdurws_ird 目标名＋源文件相对路径）后逐条比对：
+  base 命中 44 项；branch 命中 46 项；新增恰 2 项、移除 0 项：
+
+  [branch 新增]
+  + IRD-GATE-SUB sdurws_ird_modeling_contract_test sdurws_ird_testkit
+  + IRD-GATE-SUB sdurws_ird_modeling_test sdurws_ird_testkit
+    （F-051 同根因既有模式：ird_gates 引擎 SUB 形态一对『测试目标→sdurws_ird_testkit』
+     未按白名单 T-1 段豁免——其余 19 个单元测试目标同形态命中在册；
+     本任务按 EV-T11/IO-T07 先例随 findings 自登记，产品目标零 testkit 边）
+
+  [base 独有（移除）]：无
+  [modeling 产品面命中]：零（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零引用 modeling 面）
+  [GRAPH 一致性]：六边登记后 IRD-GATE-GRAPH 零命中（IRD_EXTRA_EDGE_REFS 成对登记通过）

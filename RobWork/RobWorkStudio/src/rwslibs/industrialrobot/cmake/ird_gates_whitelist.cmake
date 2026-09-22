@@ -17,7 +17,12 @@
 #
 # 全量来源：ARCHITECTURE.md §3.5（2026-09-10 实测 20 条接口依赖边），
 # 另含 2026-09-10 补登的 testkit→core（O-21 消账——此前 §3.5 未列 testkit，
-# WP-01-T01 按 DTB §2.2 验收第 3 条在 §3.5 表内补登该行，本表随之增补）。
+# WP-01-T01 按 DTB §2.2 验收第 3 条在 §3.5 表内补登该行，本表随之增补）；
+# 另含 2026-09-22 增登的 modeling→core/diagnostics/project/runtime/policy/
+# io 六条（WP-13-T02——units/modeling.md §3.2 边表，属 ARCH §3.5"各业务域
+# 单元→L2/L3 公共接口"既有许可方向的实例化，非新增架构边；dependency-
+# graph.json 的刷新归 traceability 维护任务，故六边经 IRD_EXTRA_EDGE_REFS
+# 登记出处——见下方第 6 步一致性核对口径）。
 # 书写格式："依赖方->被依赖方"（与 traceability/dependency-graph.json 同序）。
 # ---------------------------------------------------------------------
 set(IRD_ALLOWED_UNIT_EDGES
@@ -42,6 +47,12 @@ set(IRD_ALLOWED_UNIT_EDGES
     "ui->core"
     "ui->diagnostics"
     "testkit->core"   # O-21 补登（2026-09-10，ARCH §3.5；testkit.md §2.4 T-2）
+    "modeling->core"        # WP-13-T02 六边（modeling.md §3.2 边表——身份/SourcedValue/单位/比较/诊断契约/事件）
+    "modeling->diagnostics" # WP-13-T02（稳定码注册、IDiagnosticFactory/IDiagnosticSink）
+    "modeling->project"     # WP-13-T02（ICommandHandler/CommandPlan/HandlerContext/DraftService/查询端口）
+    "modeling->runtime"     # WP-13-T02（RobotDesignDescription/IRobotDesignReader/资源引用类型）
+    "modeling->policy"      # WP-13-T02（EngineeringPolicySet 只读解析、IJointLimitEvaluator）
+    "modeling->io"          # WP-13-T02（SafePath/BudgetGuard/IResourceReader/ResourceSnapshot/AtomicFile 值与服务类型）
 )
 
 # ---------------------------------------------------------------------
@@ -52,11 +63,27 @@ set(IRD_ALLOWED_UNIT_EDGES
 # 否则视为"数据源不一致"失败（DTB §2.2 验收第 3 条）。
 # 注：dependency-graph.json 的补登行刷新（追加 testkit->core 并更正说明）
 # 不在本任务 allowedFiles 内，转 traceability 维护任务承接（DTB §4 O-21 行）。
+# WP-13-T02 增登的 modeling 六边同形态：dependency-graph.json 刷新不在该
+# 任务 allowedFiles 的机器镜像维护责任内（traceability 机器索引同步归
+# 治理侧——modeling.md §14.5 遗留行同口径），故经本表登记出处。
 # 格式：边 与 出处成对书写（各一个条目，数量必须相等）。
 # ---------------------------------------------------------------------
-set(IRD_EXTRA_EDGE_REFS_EDGES "testkit->core")
+set(IRD_EXTRA_EDGE_REFS_EDGES
+    "testkit->core"
+    "modeling->core"
+    "modeling->diagnostics"
+    "modeling->project"
+    "modeling->runtime"
+    "modeling->policy"
+    "modeling->io")
 set(IRD_EXTRA_EDGE_REFS_NOTES
-    "ARCH §3.5 补登（O-21 消账，2026-09-10）；testkit.md §2.4 T-2 允许形态")
+    "ARCH §3.5 补登（O-21 消账，2026-09-10）；testkit.md §2.4 T-2 允许形态"
+    "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/SourcedValue/单位/比较/诊断契约/事件）"
+    "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——稳定码注册、IDiagnosticFactory/IDiagnosticSink"
+    "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——ICommandHandler/CommandPlan/HandlerContext/DraftService/查询端口"
+    "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——RobotDesignDescription/IRobotDesignReader/资源引用类型"
+    "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——EngineeringPolicySet 只读解析、IJointLimitEvaluator"
+    "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——SafePath/BudgetGuard/IResourceReader/ResourceSnapshot/AtomicFile 值与服务类型")
 
 # ---------------------------------------------------------------------
 # 业务域单元清单（R-1 的判定范围；来源 AGENTS.md §5 架构红线 2）

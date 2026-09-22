@@ -1,0 +1,274 @@
+# =====================================================================
+# modeling 单元（业务域：机器人方案业务建模）构建脚本
+#
+# 设计依据：
+#   - units/modeling.md §3.1（单元组成——计算库 STATIC 零 Qt＋两测试目标）、
+#     §3.2（目标升级与门禁边登记——WP-13-T02 执行清单：六条接口依赖边/
+#     配置期红线守卫/_plugin 随 WP-13-T15 落位）、§3.3（公共头布局——
+#     T02 行：ObjectTypes/Errors/DiagCodes 三头）、§3.4（纯函数服务确定性
+#     与 SI 总约定）
+#   - development-task-breakdown.md §5.1（双模式/目标命名/C++17 不用
+#     C++20）、§5.3（全局禁止项）、§5.5（gtest 接入定稿）
+#   - ARCHITECTURE.md §3.3（业务域单元二分结构）、§3.5（依赖表——
+#     各业务域单元→L2/L3 公共接口的许可方向；六边为其实例化，登记于
+#     cmake/ird_gates_whitelist.cmake 的 IRD_ALLOWED_UNIT_EDGES）
+#   - 需求 NFR-MNT-01（计算内核零 Qt）、ARC-02（架构可维护）
+#   - 任务契约 tasks/foundation/WP-13-T02.json（本文件即其 acceptance 1/2
+#     的落地面；acceptance 3 的白名单数据面同批登记）
+#
+# 本文件随 WP-13-T02 落地（modeling 由上级 INTERFACE 占位升级为真实库）：
+#   1. sdurws_ird_modeling STATIC（目标名与别名 RWS::ird::modeling 不变，
+#      DTB §5.1）；T02 公共面＝ObjectTypes/Errors/DiagCodes 三头＋对应
+#      实现翻译单元（§3.3 表 T02 行；RobotDesign/Codec 等随 T03+ 增列）；
+#   2. 测试目标 sdurws_ird_modeling_test 与 sdurws_ird_modeling_contract_
+#      test（自持 ird_add_gtest 宏：add_test＋<target>_report XML——
+#      core/io 同款；ctest LABELS "ird"）；
+#   3. 配置期依赖红线守卫（R-1/R-3 的 modeling 侧断言——卡 §3.2；全仓
+#      正式门禁归 ird_gates/WP-01-T01，本守卫不替代它）。
+#   _plugin 目标（Qt Widgets）不在本任务：卡 §3.2 明文"随 WP-13-T15 落位"
+#   （DTB §2.14 T02 产出列"_plugin 注册"与卡的偏差按单元卡执行，偏差
+#   登记见契约 note ②——DTB §5.4 增量修订消账归治理侧）。
+# =====================================================================
+
+# ---- gtest 接入（DTB §5.5 定稿，唯一机制）----
+# gtest 经 vcpkg 安装（gtest:x64-windows，经典模式）；REQUIRED 意味着找不到
+# 即配置失败（失败即停，不静默跳过测试目标）。不消费框架的 USE_gtest/
+# RW::gtest（从未生成），也不源码 vendor——两份 gtest 混用会破坏 ODR。
+find_package(GTest CONFIG REQUIRED)
+
+# ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
+# T02 源码集＝三公共头的实现翻译单元（头内 token 常量零运行时成本，
+# 无需 TU；函数面按头分文件——io 同款布局）：
+#   src/ObjectTypes.cpp  SceneObjectRole 词表转发表（§4.5）
+#   src/Errors.cpp       错误码 token 表＋域错误→稳定码映射数据（§9.5 尾段）
+#   src/DiagCodes.cpp    MDL-* 码描述符清单＋注册函数（§9.5 T02 行）
+add_library(sdurws_ird_modeling STATIC
+    src/ObjectTypes.cpp
+    src/Errors.cpp
+    src/DiagCodes.cpp)
+
+# C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
+# PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
+# C++17 设施，消费者编译 modeling 头也必须至少 C++17。
+target_compile_features(sdurws_ird_modeling PUBLIC cxx_std_17)
+set_target_properties(sdurws_ird_modeling PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+
+# 源码编码：本单元源文件全部为 UTF-8（无 BOM）且含中文注释（AGENTS.md §2
+# 注释规范）。MSVC 默认按系统代码页（GBK）解读无 BOM 源文件，会把 UTF-8
+# 中文误读成乱码 token（core 落位时曾出现 C2001"常量中有换行符"），必须
+# 显式 /utf-8。PUBLIC 传播：公共头同为 UTF-8，消费者编译含 modeling 头的
+# 翻译单元也需要。
+if(MSVC)
+    target_compile_options(sdurws_ird_modeling PUBLIC /utf-8)
+endif()
+
+# 公共头根：仅 modeling/include（内部含 sdurws/ird/modeling/）。
+# R-2 红线：私有实现头不得置于 include/——本目录是 modeling 唯一对外的
+# 头暴露位，实现细节头（若有）只能放 src/ 并以相对路径被实现文件包含。
+target_include_directories(sdurws_ird_modeling PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+# 编译依赖：core＋diagnostics＋project＋runtime＋policy＋io（卡 §3.2 边表
+# 六条接口依赖边——ARCH §3.5"各业务域单元→L2/L3 公共接口"许可方向的
+# 实例化，ird_gates_whitelist.cmake 的 "modeling->…" 六行同批登记）。
+# PUBLIC 形态：ObjectTypes.hpp 内嵌 runtime::kRobotDesignObjectType 常量、
+# DiagCodes.hpp 内嵌 diagnostics::CodeDescriptor/IDiagnosticRegistry 契约
+# 类型（其头又内嵌 core::DiagCode），消费方必须随链到达；project/policy/io
+# 三边本任务"仅链接目标不消费上游公共头"（P-RPT-9 同款先例——边随落位
+# 登记，消费随 T03+ 任务回填），六边统一 PUBLIC 保持形态一致。用统一真名
+# sdurws_ird_<unit>：集成与独立冒烟两种模式下都可解析（别名 RWS::ird::*
+# 仅集成模式存在——core/io 落位时同款取舍）。零 Qt（R-3/NFR-MNT-01——
+# 插件目标随 T15 落位时方为 Qt 例外载体）、零其他业务域单元（R-1——
+# modeling 不直链 requirements/kinematics/trajectory/dynamics/drivetrain/
+# selection/optimization，跨单元协作走六类端口）、零 testkit（T-1——
+# testkit 仅随测试目标消费）。
+target_link_libraries(sdurws_ird_modeling PUBLIC
+    sdurws_ird_core
+    sdurws_ird_diagnostics
+    sdurws_ird_project
+    sdurws_ird_runtime
+    sdurws_ird_policy
+    sdurws_ird_io)
+
+# 别名（集成模式）：供其余单元以 RWS::ird::modeling 消费；冒烟模式无别名
+# （与骨架期行为一致，DTB §5.1）。
+if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    add_library(RWS::ird::modeling ALIAS sdurws_ird_modeling)
+endif()
+
+# ---- 测试目标 sdurws_ird_modeling_test（随 WP-13-T02 登记）----
+# 用例面（任务契约 acceptance 逐条具名自证）：
+#   test/ObjectTypesTest.cpp       五对象 token＋SceneObjectRole 词表
+#                                  （acceptance 4——robot-design 实体同一
+#                                  性/四 token 字面/角色五值与 policy 侧
+#                                  token 一致性/往返）
+#   test/ErrorsTest.cpp            ModelingErrorCode 全表 token＋
+#                                  ModelingError 值语义＋映射数据
+#                                  （acceptance 4——Errors.hpp 行）
+#   test/DiagCodesTest.cpp         MDL-* 工厂登记值＋真实注册表行为
+#                                  （acceptance 4——DiagCodes.hpp 行，
+#                                  P-MDL-8 处置：以真实 StableCodeRegistry
+#                                  验证全部通过）
+#   test/BuildRedLineTest.cpp      产品面源码红线运行期扫描（零 Qt＋
+#                                  include 面限于六边——acceptance 1/2，
+#                                  与文件末尾配置期守卫互为两道防线）
+# 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
+# Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
+# PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
+enable_testing()
+
+add_executable(sdurws_ird_modeling_test
+    test/TestMainReport.cpp
+    test/ObjectTypesTest.cpp
+    test/ErrorsTest.cpp
+    test/DiagCodesTest.cpp
+    test/BuildRedLineTest.cpp)
+
+target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_modeling_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+# 测试源文件同为 UTF-8＋中文注释（/utf-8 说明见产品目标处；gtest 头为
+# ASCII 不受影响）。显式再设一次以自洽——测试目标应独立可读，不依赖
+# 被测目标的编译选项细节。
+if(MSVC)
+    target_compile_options(sdurws_ird_modeling_test PRIVATE /utf-8)
+endif()
+
+# 测试链接产品库 sdurws_ird_modeling 同时验证"公共头可被正常 include＋库
+# 可链接"（六边 PUBLIC 传染链随目标自动到达）。sdurws_ird_testkit＝报告/
+# 追溯设施消费面（RecordListener/IRD_TEST_INFO——T-1 允许形态：仅测试
+# 目标链 testkit，产品目标不链）。单行链接语句＝契约测试 T-1 扫描的
+# 登记形态约束（testkit 与测试目标名同行可见——reporting 同款）。
+target_link_libraries(sdurws_ird_modeling_test PRIVATE sdurws_ird_modeling sdurws_ird_testkit GTest::gtest)
+
+# 源码树位置注入：红线扫描用例在运行期扫描 modeling 源码核对红线（零
+# Qt/零表外 include——§3.2/§14.5）。经编译定义传 industrialrobot 根
+# （io 同款——值内以单元名作子目录前缀，扫描面随单元自包含）。
+target_compile_definitions(sdurws_ird_modeling_test PRIVATE
+    IRD_MODELING_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+# vcpkg 的 gtest:x64-windows 是动态库（gtest.dll/gtest_main.dll）：把测试
+# 可执行文件的运行期 DLL 拷到其输出目录，保证不经 PATH 配置即可直接运行
+# （留痕与验收都要直接执行该可执行文件）。TARGET_RUNTIME_DLLS 需 CMake
+# ≥3.21，本仓库工具链为 VS2022 自带的更新版本，满足。
+add_custom_command(TARGET sdurws_ird_modeling_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_modeling_test>
+            $<TARGET_FILE_DIR:sdurws_ird_modeling_test>
+    COMMAND_EXPAND_LISTS)
+
+# ---- ird_add_gtest：add_test＋XML 报告目标（DTB §5.5，宏各单元自持）----
+# 框架原宏见 RobWork/RobWork/gtest/CMakeLists.txt：add_test ＋ <target>_
+# report（运行测试并落 gtest XML）。本宏按 DTB §5.5 在本单元 CMake 内
+# 定义（定义先于全部调用——CMake 顺序解析；core/io 同款形态，不做跨
+# 单元共享——modeling 是业务域单元，不提供构建工具设施，NFR-MNT-04）。
+# 报告输出于构建树本目录 gtest_reports/<target>.xml；任务留痕时拷贝入
+# doc/industrial-robot-design/traceability/（AGENTS.md §4.2 验证留痕）。
+# 报告目标不进默认构建（EXCLUDE_FROM_ALL）：跑测试是显式动作，与框架
+# "不随 ordinary build 执行测试"的约定一致。
+macro(ird_add_gtest target)
+    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+    add_custom_target(
+        ${target}_report
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+                ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+        COMMAND $<TARGET_FILE:${target}>
+                --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+        DEPENDS ${target}
+        COMMENT "ird: run ${target} and write gtest XML report")
+    set_target_properties(${target}_report PROPERTIES
+        EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+endmacro()
+
+ird_add_gtest(sdurws_ird_modeling_test)
+
+# ---- 契约测试目标 sdurws_ird_modeling_contract_test（随 WP-13-T02 登记）----
+# 落位期契约面＝构建图边界契约（reporting LinkageContractTest 同款扫描
+# 形态——六条登记边的存在性/封闭性/无业务域互链/testkit 仅测试目标；
+# 跨单元行为级契约测试随 T03+ 消费任务展开，不在骨架预建占位用例——
+# NFR-MNT-04）。自有 main 同 _test 目标（报告设施接入）。
+add_executable(sdurws_ird_modeling_contract_test
+    contract_test/ContractTestMain.cpp
+    contract_test/BuildGraphContractTest.cpp)
+
+target_compile_features(sdurws_ird_modeling_contract_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_modeling_contract_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+# 测试源文件同为 UTF-8＋中文注释（同 _test 目标口径）。
+if(MSVC)
+    target_compile_options(sdurws_ird_modeling_contract_test PRIVATE /utf-8)
+endif()
+
+# 链接面与 _test 同款（testkit＝报告设施——T-1 允许形态；单行链接语句
+# ＝契约测试 T-1 扫描的登记形态约束，同 _test 目标口径）。
+target_link_libraries(sdurws_ird_modeling_contract_test PRIVATE sdurws_ird_modeling sdurws_ird_testkit GTest::gtest)
+
+# 源码树位置注入（红线/构建图扫描用例同 _test 口径）。
+target_compile_definitions(sdurws_ird_modeling_contract_test PRIVATE
+    IRD_MODELING_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+# 运行期 DLL 拷贝（vcpkg gtest 动态库——同 _test 目标的 POST_BUILD 口径）。
+add_custom_command(TARGET sdurws_ird_modeling_contract_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_modeling_contract_test>
+            $<TARGET_FILE_DIR:sdurws_ird_modeling_contract_test>
+    COMMAND_EXPAND_LISTS)
+
+ird_add_gtest(sdurws_ird_modeling_contract_test)
+
+# ---- ctest LABELS "ird"（ui 落位同款 set_tests_properties）----
+# 验收过滤口径：ctest -L "^ird$"（任务契约 verify 第 4 条）——两测试
+# （模型层、进程内、确定性）同标签；_gui_test 形态本单元无（GUI 呈现随
+# T15 插件目标另登记）。
+set_tests_properties(sdurws_ird_modeling_test sdurws_ird_modeling_contract_test
+    PROPERTIES LABELS "ird")
+
+# ---- 依赖红线守卫（配置期断言——卡 §3.2，core/io foreach 同款）----
+# modeling 的 industrialrobot 单元依赖仅限六条登记边：core＋diagnostics＋
+# project＋runtime＋policy＋io（卡 §3.2 边表——ARCH §3.5 业务域→L2/L3
+# 公共接口许可方向的实例化，白名单 "modeling->…" 六行同源）；链接到任何
+# 其他 sdurws_ird_* 目标（业务域单元＝R-1 命中面；表外平台单元＝SUB
+# 命中面）即配置失败。零 Qt（R-3/NFR-MNT-01）。产品库本体零 gtest/testkit
+# （D-06/T-1——断言宏只在消费方测试目标展开；本守卫遍历的是产品目标
+# sdurws_ird_modeling 的链接面，测试目标的 gtest/testkit 边不在其内）。
+# 两面读取（LINK_LIBRARIES 含 PRIVATE 边＋INTERFACE_LINK_LIBRARIES 含
+# PUBLIC 边）防漏。属性未设置时 get_target_property 返回 "<var>-NOTFOUND"
+# 字面串，不匹配任何模式，不会误报。testkit 不在第三条模式中逐字列出
+# （reporting 同款先例）：sdurws_ird_testkit 落在第一条通配 "^sdurws_ird_"
+# 的拦截范围（≠六条登记边即 FATAL），避免守卫正则字样干扰契约测试的
+# T-1 链接语句扫描（BuildGraphContractTest 的 NoTestkitEdge 用例以"逐行
+# 只认测试目标链接语句"钉住产品目标零 testkit）。正式全仓门禁（依赖图
+# 白名单）归 ird_gates（WP-01-T01），本守卫不替代它。
+get_target_property(_ird_modeling_link_libs sdurws_ird_modeling LINK_LIBRARIES)
+get_target_property(_ird_modeling_iface_libs sdurws_ird_modeling INTERFACE_LINK_LIBRARIES)
+foreach(_lib IN LISTS _ird_modeling_link_libs _ird_modeling_iface_libs)
+    if(_lib MATCHES "^sdurws_ird_"
+       AND NOT _lib STREQUAL "sdurws_ird_core"
+       AND NOT _lib STREQUAL "sdurws_ird_diagnostics"
+       AND NOT _lib STREQUAL "sdurws_ird_project"
+       AND NOT _lib STREQUAL "sdurws_ird_runtime"
+       AND NOT _lib STREQUAL "sdurws_ird_policy"
+       AND NOT _lib STREQUAL "sdurws_ird_io")
+        message(FATAL_ERROR
+            "modeling 依赖红线（R-1/卡 §3.2）：sdurws_ird_modeling 仅可链接"
+            "六条登记边 core/diagnostics/project/runtime/policy/io"
+            "（units/modeling.md §3.2、ARCH §3.5；含 testkit——T-1 产品目标"
+            "禁链），发现 ${_lib}")
+    endif()
+    if(_lib MATCHES "^Qt[0-9]?::|^Qt::|Qt5::|Qt6::")
+        message(FATAL_ERROR
+            "modeling 依赖红线（R-3/NFR-MNT-01，计算库零 Qt——卡 §3.1）："
+            "发现 ${_lib}")
+    endif()
+    if(_lib MATCHES "^GTest::|^gtest$")
+        message(FATAL_ERROR
+            "modeling 依赖红线（D-06）：产品库本体不链接 gtest，发现 ${_lib}")
+    endif()
+endforeach()
