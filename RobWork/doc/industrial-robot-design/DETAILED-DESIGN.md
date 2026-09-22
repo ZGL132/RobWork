@@ -17,7 +17,7 @@
 
 ## 20 单元状态
 
-2026-09-10：第一批 11 份详设已编写，剩余 9 份待产出。五基础单元保持 contract-review，其余六单元保持 Draft；无单元因文档完成而自动 frozen。第一批包含 reporting，属于设计批次，不改变 REQUIREMENTS 阶段 A～E 的功能启用范围。编码准入与待办见 [phase-one-readiness.md](traceability/phase-one-readiness.md)。
+2026-09-10：第一批 11 份详设已编写，剩余 9 份待产出。五基础单元保持 contract-review，其余六单元保持 Draft；无单元因文档完成而自动 frozen。第一批包含 reporting，属于设计批次，不改变 REQUIREMENTS 阶段 A～E 的功能启用范围。编码准入与待办见 [phase-one-readiness.md](traceability/phase-one-readiness.md)。2026-09-22：modeling／requirements／kinematics 三卡产出（14/20 已编写，剩余 6 份待产出：trajectory/dynamics/drivetrain/selection/optimization/workflow）。
 
 | 类别 | 单元 | 详设状态 | 主 WP |
 |---|---|---|---|
@@ -32,9 +32,9 @@
 | 平台服务 | io | Draft / 已有任务卡 | WP-E、WP-I |
 | 平台服务 | ui | Draft / 已有任务卡 | WP-I |
 | 平台服务 | reporting | Draft / 已有任务卡 | WP-H、WP-I |
-| 业务域 | modeling | 待产出 | WP-E |
-| 业务域 | requirements | 待产出 | WP-E |
-| 业务域 | kinematics | 待产出 | WP-F |
+| 业务域 | modeling | Draft / 已有任务卡（v0.2，2026-09-22） | WP-E |
+| 业务域 | requirements | Draft / 已有任务卡（v0.1，2026-09-22） | WP-E |
+| 业务域 | kinematics | Draft / 已有任务卡（v0.1，2026-09-22） | WP-F |
 | 业务域 | trajectory | 待产出 | WP-F |
 | 业务域 | dynamics | 待产出 | WP-G |
 | 共享计算服务 | drivetrain | 待产出 | WP-G |

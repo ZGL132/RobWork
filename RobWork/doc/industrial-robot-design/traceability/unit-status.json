@@ -104,31 +104,31 @@
     {
       "id": "modeling",
       "design": "units/modeling.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-E"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     },
     {
       "id": "requirements",
       "design": "units/requirements.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-E"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     },
     {
       "id": "kinematics",
       "design": "units/kinematics.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-F"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     },
     {

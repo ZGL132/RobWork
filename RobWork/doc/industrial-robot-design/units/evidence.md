@@ -251,7 +251,7 @@ public:
 
 | 字段 | 类型 | 必填 | 约束 |
 | --- | --- | --- | --- |
-| `entries[]` | {caseId(core::ObjectId), label, enabled, mandatory(必验标记)} | 是 | caseId 唯一（重复→builder 拒绝）；工况对象 schema 归 requirements（REQ-04，P-EV-7）；enabled＋mandatory 由需求对象在快照冻结时解析 |
+| `entries[]` | {caseId(core::ObjectId), label, enabled, mandatory(必验标记)} | 是 | caseId 唯一（重复→builder 拒绝）；工况对象 schema 归 requirements（REQ-04，P-EV-7）；enabled＋mandatory 由需求对象在快照冻结时解析（**schema 权威＝units/requirements.md §6.2**：mandatory≡(level==Must)，P-EV-9 已消账 2026-09-22） |
 | `requiredCaseSetId` | core::ContentIdentity | 是 | entries 规范编码摘要（冻结凭据：覆盖矩阵与此核对，§6.6） |
 
 #### 4.1.4 SamplingPlanRef（冻结采样计划与样本集表达）
@@ -1075,7 +1075,7 @@ class BatchIkFactory final : public IEvaluatorFactory { /* descriptor: key="kin.
 | P-EV-6 | **已消账（2026-09-13，EV-T12 就地翻转；runtime.md P-RT-9 同源请求对账关闭）**。原登记（2026-09-09 编写时点，已过时）：project.md 磁盘版本不完整（实测仅 §1～§7，`__PART3__` 占位，其引用的 §8～§15 缺失）：归档协作协议 §10.1、锁 §9、任务拆分 §12、待裁决 P-PR-1～8 不可查证 | 本文 §1.2 实测；**〔EV-T12 状态同步 2026-09-13〕磁盘复核**：project.md 磁盘完整——§1～§15 章标题全在（实测 1386 行，`__PART3__` 零命中），§8～§15（草稿与项目生命周期/写锁 §9/归档协作协议 §10.1/验证方案/任务拆分 §12/交接清单/追踪矩阵/待裁决）均可查证 | 原影响面（适配器/归档细节随其补全调整）已消除；残余＝接口联合复核（IResultArchivePort/RunManifest/IProjectQueryPort 与本文 §3.3/§7.2/§13 一致性）仍按 phase-one-readiness §2 登记，不因正文齐备自动通过 | 联合复核执行后按增量修订同步；不阻塞本文其余设计 | project 详设所有者 |
 | P-EV-7 | 空必验工况集合与全不适用工况的正式判定口径上游未定义；本文保守处置（覆盖平凡完备但判定项不满足→DataInsufficient，不得输出正式通过） | EVI-02、KIN-04 零样本类比 | 边界场景验收 | 保守处置维持至需求侧明文；如需"空集合法通过"语义，走需求变更。**〔EV-T12 状态同步 2026-09-13〕仍 open（需求所有者未裁决，O-13 同源）**：保守处置已实现落地——无 enabled∧mandatory 工况→④级 DataInsufficient＋"无启用必验工况"诊断，绝不输出正式通过（EV-T06 落位登记 §15.4 v0.7） | 需求所有者 |
 | P-EV-8 | EvidenceItemStatus 词表（Satisfied/Missing/Invalid/Unverified/NotApplicable）为实现承载：上游明文定义缺失（④"缺失"）、不适用（ERR-01/C2）与不可用口径，Unverified（Quick 产物用于 Verified 判定等）为本文最小必要扩展，**不作为需求级冻结契约** | §8.1 表 1/表 2、ERR-01 | 下游（reporting/ui）呈现词表 | 维持五值实现词表并锚定上游语义；若需求侧未来定义证据状态枚举，以增量修订对齐。**〔EV-T12 状态同步 2026-09-13〕仍 open（需求侧未定义枚举）**：reporting/ui 详设均已产出并按五值实现词表消费（reporting.md §2.1 消费登记点名 P-EV-8）——增量对齐路径不变；实现承载（EV-T05 落位，§15.4 v0.6）维持 | 需求所有者＋reporting/ui 详设 |
-| P-EV-9 | EVI-02"必验工况"标记的权威 schema（负载工况对象的 enabled/mandatory 字段定义）归 requirements，其详设未产出 | REQ-04、本文 §4.1.3 | RequiredCaseSet 解析口径 | requirements 详设产出时冻结字段并回接本文 §4.1.3；当前以 {caseId, enabled, mandatory} 最小承载。**〔EV-T12 状态同步 2026-09-13〕仍 open（requirements 详设未产出——units/ 目录实测无 requirements.md）**：WP-14-T01 冻结后回接的路径不变；最小承载已实现落地（EV-T05 校验面＋EV-T06 汇总分母，O-14 保守字面） | requirements 详设所有者 |
+| P-EV-9 | EVI-02"必验工况"标记的权威 schema（负载工况对象的 enabled/mandatory 字段定义）归 requirements，其详设未产出 | REQ-04、本文 §4.1.3 | RequiredCaseSet 解析口径 | requirements 详设产出时冻结字段并回接本文 §4.1.3；当前以 {caseId, enabled, mandatory} 最小承载。**已消账（2026-09-22，WP-14-T01）**：units/requirements.md v0.1 §6.2 冻结 enabled/mandatory schema（mandatory≡(level==Must)，I-REQ-9 唯一解析规则＋resolveRequiredCases 唯一实现点）＋§12 交接；本文 §4.1.3 已回接权威锚点；最小承载 {caseId, enabled, mandatory} 与冻结解析结果一致，EV-T05/EV-T06 实现零改动（O-14 同步消账） | requirements 详设所有者 |
 
 ### 15.4 变更记录
 
