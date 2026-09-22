@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T10",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现显示单位投影与求解配置编解码（KIN-12/13）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T03",
+    "EV-T04"
+  ],
+  "requirements": [
+    "KIN-12",
+    "KIN-13",
+    "AT-27"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#4.4",
+    "units/kinematics.md#4.5",
+    "units/kinematics.md#9.5",
+    "units/kinematics.md#9.6"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t10",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-KIN-4",
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "显示单位纯投影（m/cm/mm、deg/rad）：切换零重算/零修订、结果不动，sliceId/configDigest 不变（V-17，身份摘要比对；KIN-12/AT-27）；换算唯一经 core Units 入口（§4.5 身份外元素清单——显示单位不入计算依赖；inch/grad/turn 为 R2 token 不提前实现，KIN-12-S1 归 WP-15-T17）",
+    "AnalysisConfiguration schema＋canonical 编码（§4.4/schemaVersion=1）：定宽小端＋字段定序＋集合字典序；configDigest=SHA-256 入快照 configurationRefs{configKindToken=\"config.ik\"} 与 sliceId、不入 inputBaselineId（D-04 双层身份——求解配置改变不改样本基准）；非法配置 fail-fast：seed=0 拒绝不静默替换、容差≤0/计数负→KIN-CONFIG-ILLEGAL（I-KIN-4/V-03；NFR-COR-03）",
+    "配置修改→按依赖提示受影响结果需重算、不自动重算（L-K7；AT-27『高级参数折叠并提示新旧结果不可直接比较』）；种子不同→不同 configDigest→各自结果不静默复用（V-20）；线程数入 canonical→改线程数=新身份=重算（V-21 身份面；KIN-13 明文线程数入身份）",
+    "碰撞启用只读引用策略（DTB 禁止项『配置不得覆盖策略』）：AnalysisConfiguration 无碰撞开关、无判定阈值字段（近限位比/条件数警告等归 policy JointThresholds——§4.4 schema 负向断言＋§6.3 阈值分离）；预览缺碰撞证据按评估模式/证据规则（EVI-01）表达而非开关（V13-01/KIN-13）",
+    "用户级持久化接线：AnalysisConfiguration 经 PM-14 用户设置通道独立持久化（不入 .rwdesign 修订）——kinematics 只交付 schema/编解码与装载出口，存储载体接线按 P-KIN-4（ui 侧通道冻结后对接）"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T10 行＋units/kinematics.md §11 T10 行。dependsOn 换算：WP-05-T04≙EV-T04（AnalysisSnapshot/configurationRefs 承载与快照组装对端——configDigest 入快照的接收面）；WP-15-T03 同波次（FK/指标——投影与配置消费面）。requirements=KIN-12/KIN-13/AT-27（DTB 行原文；AT-27 映射 V-17/V-20）。knownPitfalls：P-KIN-4（持久化通道载体/键未在 ui/project 卡冻结——kinematics 只定 schema＋canonical，接口待 ui 卡冻结后对接）、P-KIN-7。interUnit=true 判定＝configurationRefs 入 evidence 快照身份（EV-T04 对端）＋PM-14 用户级持久化通道（ui 侧）。allowedFiles 无 io 面（持久化走用户级设置通道而非 io 导入导出——『T10 无 io』编译约定）。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

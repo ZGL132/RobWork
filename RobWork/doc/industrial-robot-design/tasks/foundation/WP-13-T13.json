@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T13",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现规范模型包导出/导入 roundtrip",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03",
+    "IO-T04",
+    "IO-T06"
+  ],
+  "requirements": [
+    "MDL-20"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#6.8",
+    "units/modeling.md#9.4.9",
+    "units/io.md#7.1",
+    "units/io.md#9.10"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/io -C Release -R sdurws_ird_io_test",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T13.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t13",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "Package.hpp/.cpp 落位（卡 §3.3 表 T13 行）：IModelPackagePort 按卡 §9.4.9 签名（exportPackage/importPackage）；导出包形态（卡 §6.8）：ZIP 封装（io IZipChannel——IO-T04 落位面）＋manifest.json（producer=ird-modeling、schemaVersion、对象清单与 digest）＋根/部件对象 canonical 字节＋Solidified 资源副本＋命名位姿（语义保留范围含命名位姿——MDL-20）",
+    "导出原子性 UT（MDL-20「导出失败恢复先前输出」文件层语义）：原子写出经 io AtomicFile（IO-T06 落位面——临时区→校验→替换）；导出失败（目标路径不可写/预算超限/中途失败）→MDL-EXPORT-FAILED 诊断、项目状态不变且旧输出文件完好（V-29 文件层观测）；导出为会话级文件操作——不产生修订",
+    "导入回读 UT：仅识别本软件导出的规范工件（manifest 来源标识＋schema 校验）；非本软件工件→MDL-IMPORT-PACKAGE-UNKNOWN 稳定诊断引导 MDL-18/R2 通道——不与 MDL-18 WorkCell 反向导入通道混淆（DTB 禁止项；mapWorkCellXml R1 NotImplemented 边界不受影响）",
+    "roundtrip 逐项一致 UT（V-29，MDL-20、AT-28）：导出→重导入→逐项比对清单 diff=空——权威参数化（DH/显式）、物性、资源引用（Recorded/Solidified 状态与 digest）、碰撞规则、命名位姿五组逐项一致；导入报告承载逐项清单（对照 §10 行 V-20 的核对形态）",
+    "WC/DWC XML 外供导出 UT（卡 §6.8）：数据源＝RuntimeSnapshot 只读视图（runtime WorkCellConstView）——modeling 仅编排写出（io AtomicWriter）、不改造内容；零修订、零失效（消费已应用修订，不私设第二编译路径）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①DTB §2.14 T13 前置列「WP-13-T03、WP-11」——WP-11 为单元级泛指，按真实消费面换算为 IO-T04（ZipChannel——ZIP 封装）＋IO-T06（AtomicFile/TempArea——原子写出，io.md §15.5 v0.9 落位登记）；②interUnit=true 判定＝io 对端（IZipChannel/IAtomicFileWriter 值与服务类型消费）；③knownPitfalls=P-MDL-8（io Package/AtomicFile 面按 io.md v0.9 现状消费——io 已大部落位、冻结后按 R-MDL-1 增量同步）；④verify 含 io 既有测试目标回归（ctest -R sdurws_ird_io_test——AtomicFile/Zip 通道既有用例，消费面对端回归保证）；⑤包格式为 modeling 自有工件（MDL-20），与 io .rwpack 项目传输封装（io.md §7）不同物——不混用其格式契约"
+}

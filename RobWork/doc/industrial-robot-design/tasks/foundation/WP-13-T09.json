@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T09",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现 DH↔显式转换五状态判定与等价验证",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03",
+    "RT-T04",
+    "RT-T07"
+  ],
+  "requirements": [
+    "MDL-10",
+    "MDL-02"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#7.4",
+    "units/modeling.md#7.5",
+    "units/modeling.md#7.6",
+    "units/modeling.md#9.4.7",
+    "units/runtime.md#5.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T09.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t09",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "DhConvert.hpp/.cpp 落位（卡 §3.3 表 T09 行）：IDhExplicitConverter 按卡 §9.4.7 签名（dhToExplicit/explicitToDh/verifyEquivalent）；DH→显式无损展开 UT（标准 DH 约定 T_{i-1,i}=Rot_z(θᵢ+qᵢ)·Trans_z(dᵢ)·Trans_x(aᵢ)·Rot_x(αᵢ)）：逐级累乘得 origin=T_parent_joint、axis=z_i 归一化单位向量；零位对齐——q=0 时显式位姿==DH 派生位姿（θ_offset 与 zeroOffset 显式分离）；基座变换混入→DegenerateBase 拒绝（§7.6 隔离声明：转换只作用于关节链）",
+    "五状态各含样例 UT（V-11，MDL-10、AT-16）：Exact/ExactNonUnique/Approximate/NotExpressible/AnalysisFailed 五态互斥；结构适用性检查先行（解析、先于数值求解）——prismatic/分支/多自由度→NotExpressible 终判不进求解（MDL-DH-NOT-EXPRESSIBLE）；Exact 判定按逐关节逐项上界：轴线方向角偏差 ≤1×10⁻⁹ rad 且原点位置偏差 ≤1×10⁻⁹ m（附录 D 第 5 项 C3——诊断携带逐关节逐项偏差明细三要素）",
+    "退化族与确定性 UT（NFR-COR-02）：平行相邻轴/相交轴/重合轴退化族自由参数按字典序规则定值（ExactNonUnique 解集报告＋稳定选解、禁止随机挑选）；确定性求解（固定初值=单位参数、固定迭代上限与收敛判据、不读时钟/环境）；Approximate→MDL-DH-APPROXIMATE 附误差度量 E 与收敛状态、不得成为权威 DH（DTB 禁止项；C-4 拒绝切换）；求解器数值失败→MDL-DH-ANALYSIS-FAILED 不构成语义结论",
+    "等价验证 UT（§7.6，仅 Exact/ExactNonUnique 且验证通过方可置 authority=StandardDH）：verifyEquivalent 对双权威参数化（同链）各构 Description→经注入 CompileProbe 走 runtime buildCanonicalModel S1–S5 只读分段入口（runtime.md §5.2；不发布快照、不产生修订）→FK 对照位置 ≤1×10⁻⁹ m、姿态 ≤1×10⁻⁹ rad（附录 D 第 4 项）；roundtrip 双重一致（DH→展开显式→再求 DH：参数级 ≤第 5 项容差＋FK 级 ≤第 4 项容差）——黄金样本随 WP-13-T16 mdl-dh-equivalence 收口",
+    "权威切换为独立领域命令 UT（§7.6/C-6）：SetAuthorityModeEdit 先决断既有编辑（提交或撤销）；切换判定与验证在命令 prepare 内执行（T08 处理器协作面）；验证失败不产生修订；C-3 链结构不满足→NotExpressible 拒绝切换＋终判诊断"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①dependsOn 按 DTB §2.14 T09 前置列换算：WP-06-T04/T07→RT-T04/RT-T07（runtime 编译链分段入口与 FK 对照设施——verifyEquivalent 的 CompileProbe 注入面）；②interUnit=true 判定＝runtime 编译分段入口消费（等价验证只读对照）；③knownPitfalls=P-MDL-8（runtime 契约 Draft——blocked 触发＝buildCanonicalModel 分段入口签名变更致探针不可注入，按 R-MDL-1 增量同步）；④数值求解容差唯一来自附录 D 第 4/5 项（不私设阈值）；黄金数据集三套承载归 WP-13-T16（DTB T16 行），本任务 UT 用程序化构造样本"
+}

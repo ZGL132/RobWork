@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T10",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现工具/场景/命名位姿对象编辑与命令",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03",
+    "WP-13-T08"
+  ],
+  "requirements": [
+    "MDL-13",
+    "MDL-15",
+    "MDL-17"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#4.4",
+    "units/modeling.md#4.5",
+    "units/modeling.md#4.6",
+    "units/modeling.md#4.10",
+    "units/modeling.md#9.3"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T10.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t10",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-35"
+  ],
+  "acceptance": [
+    "ToolDefinition/SceneObject/PoseSet 值模型与编辑流落位（卡 §3.3 Parts.hpp T03/T10 行＋§4.4/§4.5/§4.6）：工具安装接口 T_flange_tool（m/rad）、tcpList≥1、几何/物性断言同连杆（①②③）；工具经 ObjectId 引用使用、不复制几何（MDL-13）；defaultTcp=(toolOid,tcpKey) 引用校验——toolOid∈toolRefs 且 tcpKey 存在（I-MDL-9/KIN-14）",
+    "引用保护 UT（V-04/V-05，I-MDL-9/CON-02/PA-2）：删除被 defaultTcp 引用的工具→拒绝＋RefProtected 比较型定位诊断（subject=oid）；删除未引用对象＝引用移除——新修订不再含该引用、对象库旧字节与历史修订闭包完整保留（「删除」永不物理删除）；跨域引用无法直检→移除命令摘要附「可能存在外部引用」提示＋⑤事件（悬空检测归 requirements 就绪校验）",
+    "SceneObject 约束 UT（MDL-15）：worldPose 世界坐标系固连（m/rad）——不得预乘安装旋转（M-11/runtime §4.3.4 同口径）；SceneObjectRole 五值词表（RobotLink/Tool/Payload/EnvironmentObject/Workpiece——词表所有者 modeling、policy 消费）；collisionProfileHint 仅报告用途不改变策略",
+    "命名位姿 UT（MDL-17、D-MDL-3）：apply-named-poses requiresDualCompile=false（纯参考数据、无物性断言）；named-pose-set 不进 Description、不进任何评估器依赖键——位姿集修订不触发重算（V-27 建模侧：复位 Home/Zero 走会话命令零修订，参考键 homeConfiguration/zeroConfiguration 保留）；条目 jointConfiguration 与关节序一一对应（rad/m）",
+    "三命令处理器 UT（卡 §9.3 表行，O-35 无点 token）：apply-tool-definition（requiresDualCompile=true——工具几何/物性入 WC/DWC；断言＝工具物性＋defaultTcp 引用校验）、apply-scene-objects（批量增/改/移除引用；场景引用校验）、apply-named-poses——prepare 管线（T08 基类复用）差异面逐命令 UT；AT-28 场景/位姿行建模侧断言（golden roundtrip 面随 WP-13-T13/T16）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①requirements 取 DTB §2.14 T10 需求追溯列 MDL-13/15/17（AT-28 入 acceptance 不入 requirements——按 UI-T14 先例 AT 为观测编号）；②interUnit=true 判定＝本任务产出三个 project ICommandHandler 实现（apply-tool-definition/apply-scene-objects/apply-named-poses——①端口命令族消费面，Handler 复用 T08 基类）；③knownPitfalls=O-35（命令 token 无点形态——DTB §4 已裁决，三命令 token 即最终形态）；④dependsOn 修订（2026-09-22 独立评审不通过项定稿）：acceptance 第 5 条明文复用 T08 的 ICommandHandler 基类与断言套件（公共头可用＝真实技术前置，CCP §2；UI-T14/EX-T09/RPT-T09 同波代码前置先例）——WP-13-T08 编入 dependsOn，原「同波内部顺序由 queue 次序承载、不构成悬空前置」论证经评审否决作废"
+}

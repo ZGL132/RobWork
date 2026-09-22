@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T03",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "实现任务点/区域/工况领域对象与 canonical 编解码（含采样计划定义）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-14-T02"
+  ],
+  "requirements": [
+    "REQ-01",
+    "REQ-02",
+    "REQ-03",
+    "REQ-04"
+  ],
+  "designRefs": [
+    "units/requirements.md#11",
+    "units/requirements.md#4",
+    "units/requirements.md#4.3",
+    "units/requirements.md#4.7",
+    "units/requirements.md#5",
+    "units/requirements.md#5.1",
+    "units/requirements.md#5.2",
+    "units/requirements.md#5.3",
+    "units/requirements.md#6.1",
+    "units/requirements.md#6.2",
+    "units/requirements.md#8.4",
+    "units/requirements.md#9.3",
+    "units/requirements.md#9.4",
+    "units/requirements.md#9.5"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_requirements",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t03",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-36",
+    "O-38",
+    "P-REQ-1",
+    "P-REQ-2",
+    "P-REQ-8"
+  ],
+  "acceptance": [
+    "I-REQ-1~10 不变量用例逐条通过（具名 I-REQ-x 逐条正反例；构造边界拒绝、不静默改写/加后缀——NFR-COR-03）：字典序稳定存放（I-REQ-1）、身份不混用（I-REQ-2）、名称集合内唯一（I-REQ-3）、引用 kind 与目标 token 匹配（I-REQ-4）、constrainedDof 非空＋容差>0 有限（I-REQ-5）、Box 非退化＋覆盖率∈[0,1]＋计数≥0（I-REQ-6）、顺序无环无重复（I-REQ-7）、路径不入身份（I-REQ-8）、mandatory≡(level==Must)（I-REQ-9）、派生零回写（I-REQ-10）",
+    "canonical 编码登记用例通过（供 evidence 切片——DTB 完成条件原文）：IRequirementCodec encode/decode roundtrip 逐字段一致；同输入字节→同编码（确定性 NFR-COR-01）；schema 主版本不识别→RequirementError(REQ-SCHEMA-UNSUPPORTED)＋升级指引；RequirementProfile 派生档不入 canonical 编码（§4.8）；编码登记落位并同步卡 §12 evidence 交接行（req.* 角色键四键＋planContentIdentity canonical 输入——§8.4 登记义务）",
+    "采样计划确定性用例通过（KIN-04 冻结前提——DTB 风险列原文）：GridBySpacing→counts 规范化确定性（counts[i]=floor(size[i]/spacing[i])+1，规范化后计数即 planContentIdentity 输入——D-REQ-2）；counts 乘积=0 合法存储（V-02，零样本判定归评估、本单元不判）；ISamplingPlanBuilder 绝不生成样本（接口面无枚举出口——§5.2 边界）",
+    "领域服务构造校验用例通过：createPoint/createRegion/createCondition 错误语义逐项（DuplicateName/IllegalTolerance/ZeroVectorTarget/AllDofFree/DegenerateRegion）；resolveRequiredCases 必验解析与卡 §6.2 冻结 schema 逐条一致（enabled∧Must，P-EV-9 唯一实现点——V-05 requirements 侧断言，evidence EV-CASET 对端断言属联合观测不写为通过）；五规则姿态字段模型非法参数构造边界拒绝（零向量/rollRange 逆序/缺 feature/非有限角——V-03 构造侧）",
+    "O-36 处置：子条目 ObjectId 为模型内标识（经 HandlerContext.objectId() 分配、跨修订稳定、内嵌于集合对象字节），不入 objectRefs——objectRefs 复核范围仅五个真实存储对象（req-set/req-point-set/req-region-set/req-condition-set/req-plan-set）；诊断 subjectObjectId 锚与该口径一致性用例通过（P-REQ-2 已由 O-36 裁决消解，2026-09-22）",
+    "双模式构建零错误＋ctest ^ird$ 全绿＋ird-test-report.json/gtest XML 留痕（未执行项如实标注）；ird_gates 零命中"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.15 WP-14-T03 行＋卡 §11 T03 行（branch=wp14-t03；前置 WP-14-T02 同波次直引）。需求列按 DTB 行 REQ-01~04（grep REQUIREMENTS.md 验证存在）；canonical 编码登记/KIN-04 确定性风险为 DTB 行原文落 acceptance 2/3。编译决策：①O-36/P-REQ-2 为同一事项的裁决与卡登记两侧，双双登记防实施者只读其一时漏判；②O-38（sampleSetIdentity canonical 格式）与本任务相关面＝planContentIdentity 的 canonical 输入（规范化计数），冻结凭据与预算/种子编码归 evidence/kinematics 侧——T03 只保证「同义计划同身份」输入确定性，若 evidence 侧冻结格式要求本单元编码字节变更即转 blocked 登记三方对账；③P-REQ-1（P-EV-9 回接 evidence §4.1.3）的文档面义务已随 WP-14-T01 交付，T03 承接其实现面（resolveRequiredCases 唯一实现点）；④designRefs 覆盖 §4 数据模型/§5 点区域姿态/§6.1-6.2 工况与冻结/§8.4 角色键/§9.3-9.5 接口契约。status 保持 planned，放行归治理会话"
+}

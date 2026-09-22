@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T11",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "产出失败点/薄弱区三维渲染数据（KIN-07）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T05",
+    "UI-T05"
+  ],
+  "requirements": [
+    "KIN-07"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#4.5",
+    "units/kinematics.md#6.2",
+    "units/kinematics.md#9.8"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t11",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "渲染数据结构产出（KIN-07——数据本单元产、呈现归 ui View3D，§9.8 分工）：失败点/薄弱区（近限位/近奇异——阈值读 policy）/碰撞对象对/最差关节裕量四类数据结构与组装 UT；最差项来源=IKinematicSolutionSet.worstBy（T09 设施复用，不另设排序）；对象标注一律 ObjectId（经 nameResolver 解析显示名——R-4）",
+    "渲染状态与统一状态词一致：渲染数据携带的状态标识使用 core TaskState/TaskOutcome 词表投影（不自造状态词——ui 七态投影消费同一词表，§9.8 L-K12；KIN-07/UX-10 边界）",
+    "回写仅会话姿态（KIN-06）：可视化点回写只写 ui 会话态——零修订、零失效、不入缓存身份（V-18 同源断言；§4.5 身份外清单）；NotApplicable/NotRun 工作项不渲染为失败（如实区分——T05 per-item 状态消费）",
+    "入口与选中联动数据（L-K1）：失败点选中→检查器/三维高亮联动数据由本单元提供（SelectionModel 消费面——呈现归 ui）；KIN-09 完整点云/投影/PNG 为 R2（WP-15-T14）不提前实现（§7.3 边界）"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T11 行＋units/kinematics.md §11 T11 行。dependsOn 换算：WP-10-T05≙UI-T05（三维视图交互/View3D 渲染数据契约对端——卡 §12 交接行『渲染数据（KIN-07）』的 ui 消费方）；WP-15-T05 同波次（失败点集合源自批量 per-item 状态）。requirements=KIN-07（DTB 行原文；卡 §13 矩阵行『KIN-07→§9.8 渲染数据→V-26（GUI 登记）』——本任务交付数据面 UT，GUI 链路呈现验证归 T12/V-26 登记面）。knownPitfalls=P-KIN-7（ui View3D 契约 ui.md v1.5 Draft 未冻结——渲染数据形状以卡 §9.8 为基线、冻结后增量同步）。interUnit=true 判定＝向 ui View3D 产出渲染数据（跨单元数据交付）＋消费 T05 批量结果与统一状态词。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

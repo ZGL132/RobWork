@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T11",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现基座安装姿态编辑（预设＋任意欧拉角）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03",
+    "RT-T06"
+  ],
+  "requirements": [
+    "MDL-22"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#4.3",
+    "units/modeling.md#7.6",
+    "units/modeling.md#9.1",
+    "units/runtime.md#6.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T11.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t11",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-16",
+    "O-35"
+  ],
+  "acceptance": [
+    "BasePlacement 编辑 UT（V-13，MDL-22、AT-37 建模侧）：ground/inverted/wall 三预设＋custom（customEaa 必填，单位 rad）＋basePosition（m）；编辑经 apply-robot-design 原子持久化——单命令单修订（DTB 完成条件「原子持久化」）；预设 token InstallationPresetToken 词表与 runtime 一致",
+    "未配置默认地面 UT（V15-04）：模板路径（来源 UserProvided/Template）与导入路径（来源 ImportMapped）均在映射层填入 ground 并入默认补全清单——零值语义显式带来源、不静默；I-MDL-7 非法组合拒绝：custom 缺 customEaa、preset≠ground 而 R=I、customEaa 旋转矩阵正交容差 1×10⁻¹²（runtime InputInvalid 同口径）",
+    "P-RT-4 交叉核对留痕（O-16 已裁决 2026-09-22）：预设轴向唯一权威产出点＝runtime BaseWorldTransform.hpp::installationPresetRotation()（倒挂=R_x(π)、壁装=R_y(π/2)——runtime.md §6.2）——modeling 只存参数不存矩阵（Description.base 只含 preset/customEaa/basePosition，无任何预乘旋转矩阵——V-12 建模侧输入面断言）；交叉核对结论写入 traceability/ 留痕（卡 §7.6 隔离要点兑现行）",
+    "编译单一字段 UT（MDL-22/M-11）：编辑值经 reader 进 Description.base、由 runtime 唯一编译进 R_world_base——modeling 不计算/缓存/二次叠加基座—世界旋转（不在基座系参数化 g——DTB 禁止项；四消费方读同一编译产物的联合观测归 runtime/policy 侧，本任务交付输入面断言与 T12 reader 衔接）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①requirements 取 DTB §2.14 T11 需求追溯列 MDL-22（AT-37 入 acceptance）；②dependsOn 按 DTB 前置列换算 WP-06-T06→RT-T06（基座—世界变换编译——runtime 侧对齐面）；③interUnit=true 判定＝命令类（apply-robot-design 编辑变体经①端口）＋runtime P-RT-4 预设轴向对齐消费；④knownPitfalls：O-16（P-RT-4 预设轴向——DTB §4 已裁决采纳 runtime 锚点，交叉核对留痕随本任务完成——处置编入 acceptance 第 3 条）、O-35（命令类任务无点 token 口径同 T08/T10）；⑤designRefs 锚点失真遗留：卡内多处引用「§7.7（隔离声明）」但 units/modeling.md 无 §7.7 独立节——该内容实为 §7.6 末「基座—世界变换隔离」要点（本契约按真实锚点 #7.6 引用；建议单元卡下次增量修订补 §7.7 节标题或改引用，登记为编译发现的卡缺陷）"
+}

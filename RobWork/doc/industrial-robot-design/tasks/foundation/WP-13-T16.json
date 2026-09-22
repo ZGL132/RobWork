@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T16",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "建模契约测试套件与黄金模型数据集落位",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T05",
+    "WP-13-T06",
+    "WP-13-T07",
+    "WP-13-T08",
+    "WP-13-T09",
+    "WP-13-T10",
+    "WP-13-T11",
+    "WP-13-T12",
+    "WP-13-T13",
+    "WP-13-T14",
+    "TK-T03",
+    "TK-T04",
+    "TK-T05"
+  ],
+  "requirements": [
+    "AT-01",
+    "AT-15",
+    "AT-16",
+    "AT-17",
+    "AT-28",
+    "AT-31",
+    "AT-37"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#10",
+    "units/modeling.md#10.1",
+    "units/modeling.md#10.2",
+    "units/testkit.md#4.2",
+    "units/testkit.md#4.3"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-template-6r/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-dh-equivalence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-not-expressible/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/tolerance/mdl-dh/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "contract-tests",
+    "testdata",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "cmake --build build --config Release --target sdurws_ird_modeling_contract_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T16.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t16",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "契约测试套件落位（modeling/test/*——卡 §10.1）：sdurws_ird_modeling_test/_contract_test 全用例注册（V-T/V-I/V-C/V-S 四组按 §10.2 矩阵行组织，用例名绑定需求/AT 编号）；按 AT 分组提交（DTB 规模列）；执行留痕 gtest XML＋ird-test-report.json＋构建日志——未执行的测试不得标注通过（AGENTS §4.2，GUI 行 V-30 按规程登记不冒充）",
+    "黄金数据集落位并经 testkit 装载校验（ird-golden-manifest/1——testkit.md §4.2 DatasetManifest，TK-T03；容差档案 §4.3 ToleranceProfile，TK-T04）：mdl-template-6r（六轴模板参数锁定——D-MDL-7/AT-20 基线）、mdl-dh-equivalence（DH/显式等价——AT-16）、mdl-not-expressible（不可表达终判样本——AT-16）、mdl-urdf-import（导入映射——AT-15/17）四数据集各含 manifest.json＋版本目录（inputs/expected/generate 脚本同置可追溯）；容差档案 testdata/tolerance/mdl-dh/ 锚定附录 D 第 4/5/6/7 项、固定类不放宽",
+    "黄金等价与导入全链用例通过（卡 §10.2）：V-11（mdl-dh-equivalence 三态样本——DH↔显式 roundtrip 参数级＋FK 级双一致、五状态各含样例）；V-06（mdl-urdf-import——映射/默认补全/忽略/不支持报告逐项计数与数据集期望一致，AT-15 断言）；V-02（七轴登记不启用）与 V-01（六轴模板→应用全链）随模板黄金参数收口",
+    "边角样例强制项（testkit §4.2 C4）：数据集含零值/近零值/正负抵消样本且有用例消费（TK-T05 数值断言 Check 比较详情承载）；确定性断言全绿（NFR-COR-01/02——同输入＋版本→等价结果、稳定排序，跨 T03~T14 回归面）",
+    "跨单元契约测试面（_contract_test）：与 runtime（reader/Description——T12 协作面）、project（命令 prepare/双编译失败零修订——T08 的 V-19/V-20）、io（导入管线/包 roundtrip——T05/T13）对端契约逐条注册并通过；AT-37 建模侧（V-12/V-13 输入面）与 AT-31（V-09 Xacro 黄金样例）落位——联合观测行只断言 modeling 侧输入/输出面，跨域断言归对应域契约测试"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①requirements＝DTB §2.14 T16 需求追溯列 AT-01/15/16/17/28/31/37（建模侧）——七条均在 REQUIREMENTS.md grep 验证存在；AT 为本任务直接交付物（黄金数据集即 AT 承载），与 UI-T14「UX 家族取承接行」情形不同；②dependsOn 按 DTB 前置列「WP-13-T05~T14、WP-02」：同波十项＋WP-02 换算为 TK-T03（Dataset 清单模型——manifest 装载）、TK-T04（ToleranceProfile——容差档案解析）、TK-T05（Check 数值断言——黄金比对）三个真实消费目标；③interUnit=true 判定＝契约测试消费 testkit 设施并链接 runtime/project/io 公共头（UI-T14 contract_test 同款先例）；④knownPitfalls=P-MDL-8（对端契约 Draft——契约测试以 testkit FaultInterceptor/可控替身承载对端漂移，UI-T14 同款口径）；⑤DTB「三套黄金模型」与卡 §10.1 四数据集清单（含 mdl-template-6r/mdl-urdf-import）偏差——按单元卡 §10.1 执行（卡为数据集设计权威），DTB 计数表述随下次增量修订消账；⑥allowedFiles 含容差档案目录（卡 §10.1 明确归本任务，数据根布局按 testkit.md §3.4）"
+}

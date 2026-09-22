@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T04",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现物性估算唯一公式表与动力学参数层",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03"
+  ],
+  "requirements": [
+    "MDL-05",
+    "MDL-16",
+    "DYN-06"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#5.3",
+    "units/modeling.md#5.4",
+    "units/modeling.md#4.7",
+    "units/modeling.md#9.4.6"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T04.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t04",
+  "interUnit": false,
+  "knownPitfalls": [
+    "P-MDL-2"
+  ],
+  "acceptance": [
+    "PropertyEstimation.hpp/.cpp 落位（卡 §3.3 表 T04 行）：IPropertyEstimator 按卡 §9.4.6 签名（estimateLink/migrateByParallelAxis/formulaVersion）；唯一公式表 mdl-property-formula/1 三段元公式（实心圆柱/空心圆柱/长方体）解析算例对照 UT——手算闭式值逐项双精度比对（m/Ixx/Iyy/Izz，§5.3 公式表），估算结果来源标记 GeometricEstimate＋methodTag",
+    "多段合成 UT（平行轴定理 I_C=Σ[Rᵢ·Iᵢ·Rᵢᵀ+mᵢ((dᵢ·dᵢ)E−dᵢdᵢᵀ)]）：合成质心 C、结果张量定义在连杆合成质心且参考姿态＝连杆坐标系（M-2）；全 SI、双精度、不舍入；输出自检（对称相对 1×10⁻¹²、SPD 严格>0、惯性椭球三角不等式）反例拒收——自检失败输出内部错误码而非非法张量",
+    "质心修改确认流三分支 UT（V-17，MDL-05/M-2）：(a) 惯量按平行轴迁移、(b) 强制覆盖完整张量——两者接受并随编辑差值留痕；(c) 既不迁移也不覆盖→CentroidEditUnresolved 调用方错误拒绝——质心与惯量基准不静默脱钩（DTB 禁止项）",
+    "材料密度默认表（钢 7850/铝 2700/铸铁 7200/钛 4430/工程塑料 1200 kg/m³——设计默认值）查询 UT；物性缺失 NotProvided 不触发断言、登记 Warning 并作 DataInsufficient 降级预告（DYN-06/M-8 闭环 modeling 侧——V-15 第④例建模面），可信等级判定不归 modeling（DYN-06 归 dynamics/evidence）",
+    "DrivetrainDesign schema 落位（§4.7，MDL-16）：ratioPerJoint（>0 且有限）/frictionPerJoint（fv/fc/bias 全 SourcedValue）/torqueLimitsPerJoint（rated/peak N·m 或 N）/catalogBackfill 字段——schema 本卡登记，回填命令归属阶段 C（卡 §12.1）；UT 覆盖字段约束与来源标记"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①requirements 取 DTB §2.14 T04 需求追溯列 MDL-05/MDL-16/DYN-06（降级闭环）；②interUnit=false 判定＝纯域内估算公式与参数 schema，消费 core SourcedValue/单位换算为单元既有公共前提（边随 WP-13-T02 登记），无新跨单元接口面；③knownPitfalls=P-MDL-2 系自愿登记（interUnit=false 允许——CCP §2）：估算写入根对象 LinkEntry，几何/物性任一变更更换根 cv 保守失效（D-MDL-2），P-MDL-2 evidence 侧措辞确认前行为按卡执行；④估算精度不做统计声明（RPT-05 限定语归 reporting），黄金数值锁定随 WP-13-T16"
+}

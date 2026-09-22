@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T08",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "实现 requirements 插件界面（四面板与编辑→草稿→应用链路）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-14-T03",
+    "WP-14-T04",
+    "WP-14-T05",
+    "WP-14-T06",
+    "WP-14-T07",
+    "UI-T08"
+  ],
+  "requirements": [
+    "UX-05"
+  ],
+  "designRefs": [
+    "units/requirements.md#11",
+    "units/requirements.md#4.6",
+    "units/requirements.md#8.1",
+    "units/requirements.md#9.8",
+    "units/requirements.md#10.2",
+    "units/ui.md#10.5",
+    "units/ui.md#10.9",
+    "units/ui.md#11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_requirements_plugin",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t08",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-REQ-4",
+    "P-REQ-6",
+    "P-REQ-8"
+  ],
+  "acceptance": [
+    "四面板落位并挂接（卡 §9.8 面板表）：需求对象树（req-set→四分组→条目，节点锚 ObjectId、显示 name 工程用语）＋工位面板（位姿分量约束/容差/三段/五规则联动表单按 kind 显隐参数/等级启用/来源徽标）＋区域面板（计数/间距双模式采样定义＋覆盖率目标＋区域轮廓与采样格几何三维预览——结果着色归 KIN-07 不实现）＋工况面板（负载/事件/节拍/适用范围＋必验清单预览）＋校验面板（R0~R9 分层结果计数与逐项定位跳转、预览/正式语义说明）；经 IPluginUiRegistrar 装配期一次注册（ui.md §10.9），面板不互读控件、不缓存权威数据（ARC-02/防第二真值）",
+    "编辑→草稿→应用链路用例通过（DTB 完成条件原文；L-R2/L-R3）：控件提交→applyEdit 接受＝工作集刷新＋脏标记、拒绝＝就地原因保留原值（UX-03/05/07）；draft.apply→buildDraftCommand(\"requirements\")→①命令端口；就绪 Blocking 在 prepare 现场重估（ui 侧仅呈现拒绝诊断，不本地复判——P-REQ-6 边界）；字段编辑零计算逻辑落插件",
+    "插件零计算逻辑（DTB 约束列原文——review 直接打回项）：插件目标无任何单位换算/校验判定/编码解码算法，全部经 sdurws_ird_requirements 公共接口；插件目标链接面＝本单元计算库＋sdurws_ird_ui＋Qt Widgets，禁止链接其他业务域单元（R-1，§3.2）——ird_gates 构建图零越界",
+    "两级撤销/重做与辅助链路数据流贯通（L-R4/L-R10/L-R11/L-R12）：草稿级编辑器 undoLocal 与项目级 UndoRedoService 分离呈现；导入向导域侧页（io 预检→表头映射＋单位预览→逐行错误清单→确认→草稿）；JSON 副本导出（exportCopy，成功提示路径/失败旧文件完好提示）；只读模式（writable=false→编辑禁用、域命令 readOnlyAllowed=false、浏览/预览/副本导出可用）",
+    "域命令清单登记（卡 §9.8 命令表九条 CommandId＋readOnlyAllowed 逐条一致：import-csv/import-json/export-copy/capture-tcp/pick-feature/mirror-stations/create-array/apply-template/regenerate-linked），快捷键经 HotkeyBindingTable 无冲突登记；GUI 用例仅登记执行流程（V-22——本次不启动 GUI，按 AGENTS Windows 规程 QT_QPA_PLATFORM=windows 逐个绝对路径启动的规程写入留痕，envUnavailable 不得记绿灯）",
+    "双模式构建零错误：sdurws_ird_requirements_plugin 目标零错误＋ctest ^ird$ 全绿＋留痕；ird_gates 零命中"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.15 WP-14-T08 行＋卡 §11 T08 行（branch=wp14-t08；前置 WP-14-T03~T07 同波次直引＋WP-10-T08→UI-T08 ≙换算——FormEditCommon 参数表公共件，ls 验证存在）。requirements 列按 DTB 行 UX-05（参数表消费；「REQ 家族呈现」为族级表述不入 requirements 字段——UI-T14 先例，REQ 承接由 T03~T07 契约承载）。allowedFiles 无需单列插件 Widgets：sdurws_ird_requirements_plugin 落位 requirements/**（卡 §3.1 单元目录内），Qt Widgets 仅插件目标可用（L2 计算库零 Qt 红线由门禁守卫）。knownPitfalls：P-REQ-4（IModuleDraftSource 方法级签名未定义——ui.md §10.5，与 modeling 共用接入面；处置：按 ui 现行 DraftController 契约消费，ui 卡冻结签名若变更即转 blocked 同步）、P-REQ-6（Blocking 门控拦截归 workflow/ui——本插件只呈现）、P-REQ-8（ui 端口未冻结）。status 保持 planned，放行归治理会话"
+}

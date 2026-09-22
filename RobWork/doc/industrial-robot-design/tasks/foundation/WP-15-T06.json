@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T06",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现区域采样与覆盖率评估器（kin.region-coverage）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T04"
+  ],
+  "requirements": [
+    "KIN-04",
+    "EVI-01"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#4.3",
+    "units/kinematics.md#4.4",
+    "units/kinematics.md#7.2",
+    "units/kinematics.md#9.2",
+    "units/kinematics.md#9.6"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t06",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-37",
+    "O-38",
+    "P-KIN-3",
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "固定计数样例：计划 100 可达 60→60%（位置覆盖率＝存在性口径、姿态覆盖率＝全局口径分别统计，整数计数无浮点容差）（V-14，黄金数据集 kin-coverage 用例；KIN-04 R3/R8 分母＝计划样本总数）",
+    "降级与零样本：数据不足样本保留分母、不计分子、单独计数列入报告＋结论整体降级 DataInsufficient（V-14 数据不足变体；EVI-01 降级路径）；零样本（计划计数乘积=0）→覆盖率不定义→DataInsufficient＋KIN-COVERAGE-ZERO-SAMPLES，绝不输出 0% 或 100%（V-13）",
+    "样本集冻结与身份对账：sampleSetIdentity=SHA-256(planContentIdentity‖预算/种子 canonical) 按 evidence §4.1.4 公式实现（D-KIN-8）；评估器重算与快照 SamplingPlanRef.sampleSetIdentity 比对不一致→KIN-SAMPLE-IDENTITY-MISMATCH→证据缺失，绝不沿用未冻结/不一致样本集（V-15；O-38——canonical 格式冻结义务在 evidence 卡，冻结前以快照 SamplingPlanRef 对账为准、不一致即 DataInsufficient）",
+    "复评不得增删更换样本：generateSamples 同 (plan,budget,seed) 同样本集同序（Grid 体心规则/斐波那契螺旋方向集/roll 均分黄金锁定——D-KIN-6）；样本按 sampleIndex 对齐计划（分母完整性核查键）；取消/崩溃 partial→NotRun 保留、不产正式覆盖率、重跑同一样本集（§7.2；V-22/23 检查点面）",
+    "逐样本评估接线：IK（位置样本；姿态样本=完整位姿）＋碰撞（策略启用时；缺检测器→该样本 DataInsufficient——KIN-05 语义承接）；镜像/分层按 requirements 定义展开、镜像样本独立计数；条件依赖 collision-models 键按策略启用进切片（§4.3/V13-01——不设碰撞布尔开关）"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T06 行＋units/kinematics.md §11 T06 行。dependsOn：同波次 WP-15-T04（复用 IIkSolver/解集设施——DTB 行原文）。requirements：KIN-04 按指示原样写 'KIN-04'（R3/R8 口径细化为 acceptance 条目）；DTB 行『EVI-01（降级）』保留。knownPitfalls：O-38（sampleSetIdentity canonical 格式冻结义务＝evidence 卡增量义务——本任务为实现方＋对账用例方，冻结前以对账为准设计上安全；P-KIN-3 同源登记——三方 canonical 字节一致义务）、O-37（宿主注入视图——未冻结即 blocked）、P-KIN-7。interUnit=true 判定＝消费 req.sampling-plans/req.regions 切片（无编译依赖）＋产出 evidence SamplingPlanRef 对账面（§12 交接：requirements 对偶义务『采样执行与 sampleSetIdentity 实现』）。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

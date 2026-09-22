@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T07",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "接入 policy 碰撞证据并落实 KIN-05 语义（④端口）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T04",
+    "POL-T07"
+  ],
+  "requirements": [
+    "KIN-05",
+    "NFR-COR-05",
+    "AT-19"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#4.3",
+    "units/kinematics.md#8.1",
+    "units/kinematics.md#8.2",
+    "units/kinematics.md#9.2",
+    "units/kinematics.md#9.6"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t07",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-37",
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "④端口消费形态：CollisionScene 由本单元按快照组装（workCell 只读视图＋scene objects＋device＋相邻连杆对——policy.md §6.1『请求方』装配者语义；对象一律 ObjectId，禁名称拼串 R-4）；构型级碰撞=该解被过滤/标记（KIN-COLLISION-FILTERED）——一构型碰撞另一构型有效→任务可行素材不受影响（V-08，替身碰撞用例；§8.1 边界图 C8）",
+    "缺检测器/策略未启用→证据缺失素材→DataInsufficient，绝不视为无碰撞（KIN-COLLISION-UNAVAILABLE；KIN-05）；碰撞设施异常→该样本/解标记 DataInsufficient＋诊断、不中断整批（§8.1 取消/失败行）",
+    "三入口一致（AT-19/V-25）：同一 resolved policy＋同一评估器实例语义经④端口保证——本单元无本地碰撞副本、不做二次缓存判定（静态扫描＋运行断言）；不传阈值/模式参数（R-POL-5）、禁直链 sdurw_proximity（R-POL-2）；策略版本经 policy.resolved 依赖键＋快照 policyRef 入输入身份（CON-06——策略变更→切片失效）",
+    "碰撞证据明细交付：{subjectPair(ObjectId×ObjectId), configurationRef, verdict} 随 EvaluationOutput.evidence 交付（IKinematicEvidenceBuilder——§8.2/T05 设施复用）；评估作用域=构型级（Self/Tool/Environment 按 policy 作用域矩阵），路径级碰撞不产（属 trajectory TRJ-03/04）",
+    "不另存碰撞布尔开关（DTB 禁止项）：碰撞启用状态只读自 policy——Conditional 依赖 collision-models 键（策略未启用不进切片，§4.3/V13-01）；域值模型与配置 schema 均无开关字段（结构性检查）"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T07 行＋units/kinematics.md §11 T07 行。dependsOn 换算：WP-07-T07≙POL-T07（policy 碰撞硬过滤/会话——与 T04 同源对端；本任务为④端口消费的专项接线与语义落实）；WP-15-T04 同波次。requirements=DTB 行追溯列原文（KIN-05/NFR-COR-05/AT-19，AT-19 映射 V-08/V-25——三入口一致本单元侧输入/输出面，trajectory/optimization 侧联合观测不代验）。knownPitfalls：O-37（碰撞会话与运行时视图同经宿主注入面——未冻结即 blocked）、P-KIN-7（policy 对端 Draft：ICollisionEvaluator/IPolicyProvider 签名以 policy.md v0.14 现行文本为基线）。interUnit=true 判定＝消费 policy ④端口（唯一碰撞实现）＋证据明细交 evidence（任务级不可行裁定权留 evidence——§8.1 边界图）。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

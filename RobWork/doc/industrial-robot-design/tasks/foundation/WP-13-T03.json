@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T03",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现 RobotDesign 领域对象与双权威参数化模型",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T02"
+  ],
+  "requirements": [
+    "MDL-01",
+    "MDL-02",
+    "MDL-09"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#4",
+    "units/modeling.md#4.2",
+    "units/modeling.md#4.3",
+    "units/modeling.md#4.8",
+    "units/modeling.md#4.10",
+    "units/modeling.md#7.1",
+    "units/modeling.md#7.2",
+    "units/modeling.md#7.3",
+    "units/modeling.md#9.5",
+    "units/project.md#4.8"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T03.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t03",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-36",
+    "P-MDL-1",
+    "P-MDL-2"
+  ],
+  "acceptance": [
+    "RobotDesign/Parts/Codec 公共头与实现落位（卡 §3.3 表 T03 行）：RobotDesign 根对象字段表（§4.3，全 SourcedValue、SI、T_ab 位姿约定）、五部件对象 schema（tool-definition/scene-object/named-pose-set/robot-drivetrain——Parts.hpp）、IRobotDesignCodec 确定性编解码；robot-design token 复用 runtime kRobotDesignObjectType 字面、不另设第二常量",
+    "对象分解按 O-36 已裁决口径：objectRefs/CM-0 复核范围＝真实存储对象（根/工具/场景/位姿集/传动/资源），关节/连杆子 ObjectId 为模型内标识（诊断 subject 与名称映射锚）、内嵌根对象字节且跨修订稳定（I-MDL 身份唯一）——不逐连杆拆对象（D-MDL-1/D-MDL-2，P-MDL-1 建议已被裁决采纳）",
+    "不变量 UT 逐条注册并通过（用例名绑定 I-MDL-1～I-MDL-12 编号）：含 StandardDH 态编辑 axis/origin 拒绝（C-1 AuthorityViolation）、Explicit 态 dhDerived 不参与编码身份（D-MDL-5——派生缓存读取时确定性重算）、非法组合拒绝（continuous 带有限 bounds、prismatic 带 workingRange、R1 下 coupling 配置拒绝）",
+    "Codec canonical 编码确定性 UT（NFR-COR-02）：同对象→同字节（字段定序、小端、UTF-8、集合按 ObjectId 规范文本字典序、无填充）；encode/decode 往返逐字段一致；未知主版本→SchemaVersionUnsupported（NFR-DEP-04 同口径——ContentVersion 由 project 对字节摘要计算，modeling 不自行申报，project.md §4.8 口径）",
+    "V-14 双权威冲突拒绝场景（MDL-02/09）与 Axis 编辑权限随权威模式（MDL-09：显式可编辑权威/DH 派生只读）用例通过并留痕（gtest XML＋ird-test-report.json）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①requirements 取 DTB §2.14 T03 需求追溯列 MDL-01/02/09 三条（grep REQUIREMENTS.md 逐一存在性验证）；②interUnit=true 判定＝消费 core 身份/SourcedValue 公共契约＋canonical 编码登记供 evidence/core §6.3 分工消费（卡 §12.3 core 行「对象 canonical 编码登记」交出义务）、objectId 语义对齐 project HandlerContext；③knownPitfalls：O-36（对象分解——DTB §4 已裁决 2026-09-22，处置编入 acceptance 第 2 条）、P-MDL-1（同题 modeling 侧登记，裁决后状态随实现留痕）、P-MDL-2（连杆物性字段级分层＋保守失效 vs evidence.md §5.3 对象级措辞——粗粒度 Superseded 行为本任务实现的直接后果，evidence 侧确认前按卡 D-MDL-2 执行）；④任务为③核心卡内序号，阻塞 T04~T14 全部同波任务"
+}

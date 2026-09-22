@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T04",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现多初值 IK 与解集去重排序（kin.task-point-ik）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T03",
+    "POL-T07"
+  ],
+  "requirements": [
+    "KIN-02",
+    "EVI-01",
+    "EVI-02",
+    "AT-03"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#5.3",
+    "units/kinematics.md#5.4",
+    "units/kinematics.md#5.5",
+    "units/kinematics.md#5.6",
+    "units/kinematics.md#6.1",
+    "units/kinematics.md#6.2",
+    "units/kinematics.md#6.3",
+    "units/kinematics.md#9.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t04",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-37",
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "多初值 IK：同末端位姿不同构型均保留（去重对象＝构型而非位姿；关节空间逐轴阈值默认 1e-6、continuous 按工作范围直接比较无跨周取模——附录 D 第 3 项/C1；硬过滤顺序固定①残差复验②限位③碰撞未启用跳过并标记 collisionNotEvaluated）（V-04，黄金数据集 kin-ik-dedup 用例；AT-03 去重反例）",
+    "五类结局铁律（§5.4/D-KIN-7，枚举无任务级不可行值）：MultiInitNoConvergence（V-06）与 AllCandidatesFiltered（V-09，含全部解因碰撞被过滤）必附 SearchExhaustedRecord（预算/初值数/迭代统计/逐解过滤记录）→DataInsufficient 素材；换初值/扩预算后按同一冻结输入复评可翻转（V-07，黄金数据集 kin-search-outcomes 用例；§8.1 搜索未果口径 C5/C8——不得输出不可行结论）",
+    "稳定排序四键逐位可复现：minimumJointMargin 降序→manipulability 降序→‖q−referenceQ‖₂ 升序→sourceInitIndex 兜底；referenceQ 显式入请求身份（默认 Home）、禁止隐式读会话姿态（V-04 两次输出逐位比对；D-KIN-3/D-KIN-4；去重=成对容差比较而 ConfigurationSignature 精确编码仅作记录键——I-KIN-3 语义在此实现）",
+    "解析工作半径界限（Bounds.hpp，§3.3 布局表 T04 行）：目标超界产 AnalyticBoundExceeded 证明素材（附推导输入、expectedSliceId 绑定）——仅素材不裁定，成立与否归 evidence validateProof（V-10 前半，联合观测）；非法目标/容差 fail-fast（KIN-TARGET-ILLEGAL）；结果绑定五元组＋要求值分离（§5.5/§5.6 诊断映射）",
+    "按卡 §11 规模列『求解/过滤去重排序两提交』拆分实施提交，验收一次全量执行（gtest XML＋ird-test-report.json 留痕）"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T04 行＋units/kinematics.md §11 T04 行。dependsOn 换算：WP-07-T07≙POL-T07（碰撞硬过滤——④端口 ICollisionEvaluator 会话消费面）；WP-15-T03 同波次。requirements 换算：DTB 行『§8.1 搜索未果口径（C5/C8）』以 EVI-01/EVI-02 表达（§8.1 归属 evidence 承载行），AT-03 保留验收追溯编号并映射 V-04/06/07（卡 §10.2 AT 承接声明）。落点偏差登记：卡 §11 T03 行提及『Bounds 解析素材』与 §3.3 布局表『Bounds.hpp→T04』不一致——按 §3.3 归本任务（Bounds 被五类结局第 5 类消费），实施时随单元卡增量修订消歧。knownPitfalls：O-37（碰撞会话与视图注入同一宿主面——未冻结即 blocked）、P-KIN-7。interUnit=true 判定＝消费 policy ④端口会话句柄＋实现 evidence ③端口 IEngineeringEvaluator（kin.task-point-ik——trajectory WP-16-T05 对端消费）。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

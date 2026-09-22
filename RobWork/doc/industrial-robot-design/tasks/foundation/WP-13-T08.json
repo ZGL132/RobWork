@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T08",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现建模命令处理器族与物理合法性断言分域",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T04",
+    "PRJ-T10",
+    "PRJ-T11",
+    "RT-T11",
+    "POL-T08"
+  ],
+  "requirements": [
+    "MDL-06",
+    "MDL-12"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#8.2",
+    "units/modeling.md#9.3",
+    "units/modeling.md#9.4.4",
+    "units/modeling.md#9.4.8",
+    "units/modeling.md#9.5",
+    "units/project.md#5.3",
+    "units/project.md#6.5",
+    "units/policy.md#9.4"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "cmake --build build --config Release --target sdurws_ird_modeling_contract_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T08.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t08",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-35",
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "Readiness/CommandHandlers 落位（卡 §3.3 表 T08 行）：IModelReadinessChecker 按卡 §9.4.4 签名（check 纯函数、L0→L11 分层、结果 blockers/warnings/confirmables 三组稳定排序——按层号→对象 id 字典序）；分层表逐层 UT（§8.2：高层依赖低层通过的短路优先级；L11 策略不可解析报 Blocking 不静默跳过行程校验）；就绪校验与 prepare 断言共用同一 AssertionSuite（D-MDL-11，NFR-MNT-04 无重复判定）——两套判定不得出现",
+    "断言分域反例 UT（V-15，MDL-06、AT-01）：①已提供 m≤0（MDL-ASSERT-MASS-NONPOSITIVE）②惯量非对称/非 SPD（MDL-ASSERT-INERTIA-NOT-SPD）③qmin≥qmax（MDL-ASSERT-LIMIT-INTERVAL）——就地阻断＋精确定位（subject=ObjectId＋localName＋比较型三要素，DTB 禁止项）；④物性全缺失＋含已确认有限范围 continuous→可应用（缺失走 DataInsufficient 预告、continuous 豁免限位断言——MDL-ASSERT-RANGE-NOT-FINITE 只拦未确认/非有限）",
+    "行程上限确认放行 UT（V-16，MDL-06④/M-10、SA-15）：±1080° 多圈关节模型→IJointLimitEvaluator.evaluate（policy ④端口 resolvePolicy——阈值唯一来源 policy JointThresholds 默认 4π，本地无第二常量 ARC-05/NFR-MNT-07）→MDL-06-TRAVEL-LIMIT ConfirmableFinding（实际行程/阈值/单位 rad 三要素）→确认放行（凭据＋绑定四元组入命令摘要留痕）／拒绝无修订；policy 配置阈值后正常放行",
+    "五命令处理器族注册与 prepare 管线 UT（卡 §9.3）：commandType 无点形态（apply-robot-design/apply-tool-definition/apply-scene-objects/apply-named-poses/apply-drivetrain-design——O-35 已裁决采用无点，点分裁决则破坏性迁移随 schemaVersion）；requiresDualCompile 逐命令按 §9.3 表（apply-named-poses=false）；prepare：decode 失败→RejectedInvalidInput、基线防御性复核、新对象 ObjectId 经 ctx.objectId() 分配、inverse 快照式逆命令载荷（受影响对象前一 (oid,cv) canonical 字节集——D-MDL-9）、中文命令摘要（对象/字段/确认留痕/资源状态）",
+    "双编译失败零修订与未就绪不编译 UT（契约测试，AT-01）：V-19 含 Blocking 项→prepare RejectedHardAssert 且 IModelCompilePort 未被调用（mock 观测）；V-20 故障注入编译失败→Failed(compile-failed)、HEAD 不变、修订计数不变、RT-*＋MDL-* 诊断一并入目录；StaleRevisionRejected→草稿 apply-retained 保留（V-22 建模侧）；稳定码注册 UT（§9.5 T08 行九码随本任务经 IDiagnosticRegistry 注册、不预建他行）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①dependsOn 按 DTB §2.14 T08 前置列换算：WP-04-T10/T11→PRJ-T10/PRJ-T11（命令端口/HandlerContext 与草稿服务——①端口提交协议消费面）、WP-06-T11→RT-T11（编译端口协作）、WP-07-T08→POL-T08（IJointLimitEvaluator/策略解析——④端口）；②interUnit=true 判定＝project ICommandHandler 实现＋policy 只读策略＋runtime 双编译触发三对端面；③knownPitfalls：O-35（命令 token 语法矛盾——DTB §4 已裁决 2026-09-22 采用无点形态，处置编入 acceptance 第 4 条）、P-MDL-8（project/policy/runtime 契约均 Draft——blocked 触发＝对端签名变更致 HandlerContext/IJointLimitEvaluator 编译面不可用，按 R-MDL-1 增量同步）；④MDL-21-COUPLING-STAGE-LOCKED 码登记行随 T18（R2）不预建，R1 耦合阻断经 I-MDL-12 断言承载"
+}

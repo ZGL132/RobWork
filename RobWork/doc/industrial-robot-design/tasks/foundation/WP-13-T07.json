@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T07",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现六轴模板创建与参数化编辑",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03"
+  ],
+  "requirements": [
+    "MDL-01",
+    "MDL-04"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#5.1",
+    "units/modeling.md#5.2",
+    "units/modeling.md#4.4",
+    "units/modeling.md#9.4.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T07.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t07",
+  "interUnit": false,
+  "knownPitfalls": [
+    "O-27"
+  ],
+  "acceptance": [
+    "Template.hpp/.cpp 落位（卡 §3.3 表 T07 行）：IRobotDesignTemplateFactory 按卡 §9.4.2 签名（listTemplates/createDraft）；模板清单三行——generic-6r（6×Revolute、Explicit、R1 可用）/generic-7r（enabled=false，P-03 七轴数值未冻结仅登记不启用）/custom-chain（逐轴定义）；createDraft 产出满足 I-MDL-1～12 的工作集、不触达 project、不产生修订",
+    "七轴登记不启用 UT（V-02，O-27/P-03）：listTemplates 返回 enabled=false；createDraft(generic-7r)→TemplateDisabled 错误码＋提示诊断，不静默替换为六轴、无半成品（创建入口阻止——AT-20 向导语义建模侧）",
+    "六轴默认参数表 T-MDL-1 UT（设计默认值——D-MDL-7，非上游冻结需求值）：逐轴 axis/zeroOffset/bounds/workingRange/maxVel/maxAcc 按卡 §5.1 表值（单位 m/rad/rad·s⁻¹/rad·s⁻²）；J6 行程 [−2π,+2π] 恰在 4π 阈值边界（附录 D 第 11 项）默认通过行程校验兼作边界用例；数值锁定随 WP-13-T16 mdl-template-6r 黄金数据集",
+    "创建→编辑链路 UT（MDL-01、AT-20/AT-01 建模侧）：generic-6r→createDraft（BasePlacement 预设＋来源标记 Template）→逐轴编辑（类型/轴线/零位/限位/速度/加速度——§5.2 字段级/批量变体、批量产出单条变更摘要）→buildChangeSummary；4/5 轴与含 prismatic 链创建入口阻止＋提示（§6.4 维度二判定复用、§2.1 创建列 ❌）；应用链路经 apply-robot-design 随 WP-13-T08 集成、V-01 全链随 WP-13-T16 收口",
+    "几何生成辅助两条 UT（§5.2 v0.2）：连杆占位圆柱生成（相邻关节原点连线、确定性纯函数）与碰撞引用复制辅助（视觉引用→同资源碰撞引用）——产物均为普通 GeometryRef 同权同校验、来源 GeometricEstimate（methodTag 区分）；不引入网格重画/凸包简化算法（上游未授权）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①requirements 取 DTB §2.14 T07 需求追溯列 MDL-01/MDL-04（自碰撞配置承接行落 §6.3 报告面随 T05、工具/法兰/TCP 编辑随 T10——本任务范围按卡 §11 T07 行＝Template.hpp＋编辑流）；②interUnit=false 判定＝模板工厂与编辑为纯域内纯函数服务（§5.1/§5.2），消费 core SourcedValue 为单元既有前提；③knownPitfalls=O-27 系自愿登记（interUnit=false 允许——CCP §2）：DTB §4.3 待冻结前置 P-03 七轴模板工程数值（承载任务即本任务——仅登记不启用，启用前须冻结；处置编入 acceptance 第 2 条），六轴 T-MDL-1 为设计默认值不属 P-03 范围（D-MDL-7）"
+}

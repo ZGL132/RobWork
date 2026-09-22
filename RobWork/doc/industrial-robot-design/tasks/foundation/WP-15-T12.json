@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T12",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现 kinematics 插件界面（四面板与域命令注册）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T03",
+    "WP-15-T04",
+    "WP-15-T05",
+    "WP-15-T06",
+    "WP-15-T07",
+    "WP-15-T08",
+    "WP-15-T09",
+    "WP-15-T10",
+    "WP-15-T11",
+    "UI-T08"
+  ],
+  "requirements": [
+    "UX-04",
+    "UX-05"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#3.1",
+    "units/kinematics.md#9.8"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "cmake --build build --config Release --target sdurws_ird_kinematics_plugin",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t12",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-KIN-7",
+    "P-UI-6"
+  ],
+  "acceptance": [
+    "四面板落位（位姿指标/任务点验证/区域覆盖/结果与可视化＋求解配置高级面板——§9.8 面板表）：界面链路用例通过（L-K1~L-K12 主链覆盖：选中联动/单点求解/批量验证提交-进度-取消/覆盖运行/配置修改提示/单位切换重投影/设默认/导出/只读拒绝/任务状态投影）；GUI 环境不满足的用例如实记 envUnavailable 不得绿灯（AGENTS §4.2）",
+    "插件零计算逻辑（DTB 禁止项）：UI 线程零计算（>1 s 全部转 execution——NFR-PERF-01；会话级 FK/IK 内联门槛 <1 s 超界自动转后台）；面板不缓存权威结果、阈值/排序/筛选全部消费域设施（IKinematicSolutionSet/评估器/results 投影）——静态扫描＋用例断言",
+    "域命令注册（§9.8 清单七条 kinematics.*，readOnlyAllowed 按表）：经 ui CommandRegistry 唯一注册点（不私占全局快捷键——SA-16）；只读模式拒绝写类命令（validate-task-points/evaluate-coverage/set-default-* readOnlyAllowed=false）；命令确认交互经 ui 表单公共件（UI-T08 对端）",
+    "消费面核验：任务点表为只读消费视图（真值归 requirements——§2.5 重定位结论）；单位/配置对话框复用 T10 投影与 AnalysisConfiguration 编辑（KIN-12/KIN-13/AT-27 提示语）；插件目标链接面=本计算库＋sdurws_ird_ui（§3.2——禁止链接其他业务域单元 R-1，ird_gates 零命中）"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T12 行＋units/kinematics.md §11 T12 行。dependsOn 换算：同波次 WP-15-T03~T11（DTB 行原文九项）；WP-10-T08≙UI-T08（参数表/表单公共件——UX-04/05 消费面）。requirements=UX-04/UX-05（DTB 行『UX-04/05（高级面板/参数表消费）』；KIN 家族由各域任务承载，面板为消费侧）。knownPitfalls：P-KIN-7（ui IPluginUiRegistrar/View3D/任务投影对端 Draft）、P-UI-6（门控三方契约——DomainReadinessItem 供给属间接影响，服从 ui 卡原登记裁决）。interUnit=true 判定＝sdurws_ird_kinematics_plugin 链接 sdurws_ird_ui＋域命令注册入 ui CommandRegistry（构建层＋接口消费双跨单元）。verify 含 _plugin 目标构建（本任务创建该目标——§3.2『_plugin 随 WP-15-T12』）。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

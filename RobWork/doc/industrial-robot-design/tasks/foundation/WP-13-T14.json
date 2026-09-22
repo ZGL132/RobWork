@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T14",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现 Model Diff 差异增量表数据实体",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03"
+  ],
+  "requirements": [
+    "MDL-08"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#9.4.9",
+    "units/modeling.md#4",
+    "units/modeling.md#4.9"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T14.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t14",
+  "interUnit": false,
+  "acceptance": [
+    "ModelDiff.hpp/.cpp 落位（卡 §3.3 表 T14 行）：IModelDiffService 按卡 §9.4.9 签名（diff(baseline, candidate)→ModelDiffReport——两 ModelingWorkingSet 输入）；差异增量表数据实体（MDL-08）：分组＝结构/参数（DH、轴线、限位）/物性，条目含对象定位（ObjectId——供 UX-13 点击定位消费）",
+    "差异输出 UT：两 RobotDesign 差异逐项输出（增/删/改三态、逐字段——权威字段变更与来源标记变更均入表）；派生只读字段（DH 态 axis/origin、Explicit 态 dhDerived）不作为独立差异项（与 D-MDL-5 身份口径一致）；同输入→同报告字节（NFR-COR-02 稳定排序——分组内按对象 id→字段序）",
+    "不覆盖基线 UT（DTB 完成条件）：diff 纯函数、输入工作集只读（post 不修改输入）；baseline 与 candidate 交换方向语义明确（报告方向字段）；空差集→空报告非 null",
+    "M-5 分工红线（DTB 禁止项「只拥有数据实体与语义」）：本任务不做任何呈现（呈现归 WP-22-T11/UX-13）——接口无 UI 类型依赖、L2 计算内核零 Qt（ird_gates 复核）；AT-12 数据侧断言（比较型差异逐项可观察，AT-12 呈现面归 workflow/ui 不在本任务）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①requirements 取 DTB §2.14 T14 需求追溯列 MDL-08（AT-12 数据侧入 acceptance）；②interUnit=false 判定＝纯域内数据实体与比较语义（DTB 禁止项同款口径——消费基线/候选均为本单元 ModelingWorkingSet；对 WP-22-T11 的消费协作经其自身任务排队，非本任务接口面）；③knownPitfalls 未登记（interUnit=false 且无已登记语义陷阱命中本任务——比较容差如需 core Compare 档案，随消费面按 core 公共契约使用，无单元卡 §14.3 条目）；④与 UX-13 呈现的对接约束（WP-22-T11 前置「WP-13-T14（Model Diff）」）由消费方任务承载，本任务只保证数据实体稳定"
+}

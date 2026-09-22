@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T02",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "modeling 构建落位：占位库转真实目标＋门禁边登记",
+  "status": "ready",
+  "dependsOn": [
+    "CORE-T01"
+  ],
+  "requirements": [
+    "NFR-MNT-01"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#3",
+    "units/modeling.md#3.2",
+    "units/modeling.md#3.3",
+    "units/modeling.md#9.5",
+    "ARCHITECTURE.md#3.3"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "build-infra",
+    "implementation",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "cmake --build build --config Release --target sdurws_ird_modeling_contract_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T02.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t02",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "目标落位与形态：modeling/CMakeLists.txt 新建，sdurws_ird_modeling 由上级 INTERFACE 占位升级为 STATIC（目标名与别名 RWS::ird::modeling 不变）、CXX_STANDARD 17、零 Qt；_test/_contract_test 两测试目标经自持 ird_add_gtest 宏注册（add_test＋<target>_report XML、ctest LABELS \"ird\"，core/io 同款）；双模式构建零错误（集成模式 grep build/CMakeCache.txt 确认 RWS_BUILD_INDUSTRIALROBOT=ON 后构建；独立冒烟模式带 vcpkg toolchain 配置构建通过）",
+    "配置期红线守卫随文件自持（卡 §3.2，core/CMakeLists.txt foreach 同款）：链接任何 ^sdurws_ird_<非本单元> 业务目标→FATAL_ERROR；任何 Qt→FATAL_ERROR；ird_gates 目标构建通过零命中",
+    "门禁白名单六边登记：cmake/ird_gates_whitelist.cmake 的 IRD_ALLOWED_UNIT_EDGES 增 modeling→core/diagnostics/project/runtime/policy/io 六条接口依赖边（卡 §3.2 边表——属 ARCH §3.5「业务域单元→L2/L3 公共接口」既有许可方向的实例化，非新增架构边）；构建期 ird_gates 对 modeling 源集扫描零命中（零 Qt、无表外边）",
+    "公共头落位（卡 §3.3 表 T02 行）：ObjectTypes.hpp（五对象 objectTypeToken——robot-design token 与 runtime kRobotDesignObjectType 字面一致、不另设第二常量；SceneObjectRole 词表）、Errors.hpp（ModelingErrorCode 与域错误→码映射数据）、DiagCodes.hpp（MDL-* CodeDescriptor 工厂数据——按 §9.5 注册纪律只登记有消费者条目，不预建）；三头进 include/sdurws/ird/modeling/ 公共面，零实现依赖即可被下游解析"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①DTB §2.14 T02 前置列「WP-13-T01、WP-03-T01」——WP-13-T01（编写单元卡）无契约 ID 可解析（tasks/ 无 WP-13-T01.json），且卡已落盘（units/modeling.md v0.2）事实前置已满足，按 CCP §2「dependsOn 只编码真实技术前置且引用必须可解析」仅编码 CORE-T01（core 公共契约/目标可用——六边登记与 ObjectTypes 消费的真实前置）；②DTB T02 产出列含「_plugin 注册」与卡 §3.2「_plugin 目标随 WP-13-T15 落位」偏差——按单元卡执行（卡 v0.2 后出且为单元内权威；本契约仅登记 _test/_contract_test，DTB §5.4 偏差随下次 DTB 增量修订消账）；③interUnit=true 判定＝构建层建立六条单元间依赖白名单边（CCP §2 interUnit 定义明示含构建层边登记）；knownPitfalls=P-MDL-8（消费的 core/project/diagnostics 公共契约均 Draft 未冻结——本任务为边登记，签名漂移影响随后续任务消化，六边形态不变）"
+}

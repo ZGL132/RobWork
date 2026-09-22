@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T05",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现 URDF 导入字段映射与链型判定",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03",
+    "IO-T02",
+    "IO-T05"
+  ],
+  "requirements": [
+    "MDL-03",
+    "MDL-11",
+    "MDL-12"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#6.1",
+    "units/modeling.md#6.2",
+    "units/modeling.md#6.3",
+    "units/modeling.md#6.4",
+    "units/modeling.md#6.7",
+    "units/modeling.md#9.4.3",
+    "units/io.md#9.6",
+    "units/io.md#10.5"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T05.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t05",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-40",
+    "P-MDL-3",
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "Import.hpp/.cpp 落位（卡 §3.3 表 T05 行）：IModelImportMapper 按卡 §9.4.3 签名（mapUrdf/mapXacroExpanded/mapWorkCellXml——后者 R1 返回 NotImplemented 稳定诊断，MDL-18 R2 边界不留桩实现）；输入全部为 io IResourceReader 四方法产物（open/snapshot/dependencyTree——io.md §9.6/§10.5），modeling 绝不自行读文件（SA-14）；按 DTB 规模列拆解析映射/链型判定两提交",
+    "URDF 字段映射表（卡 §6.3）逐行 UT（inline fixture）：字段映射/默认补全/忽略/不支持四清单逐项可观察（MDL-03、AT-15）；一切默认补全必入导入报告清单、不静默（NFR-COR-03——缺 inertial→NotProvided 走降级、无安装语义→basePlacement=ground 且来源 ImportMapped 入清单）；package:// ROS URI 不支持→定位诊断引导改相对路径；文件缺失→IO-RES-MISSING＋ExternalResourceRecord（Recorded）草稿可携带（§6.7）",
+    "轴语义 UT（MDL-11）：任意有限非零轴可接受（不要求 Z）；缺失 axis→按 URDF 语义取局部 +X 并入待确认草稿清单（MDL-IMPORT-PENDING-CONFIRM）；零轴/非有限轴→仅报告＋该关节标记 Invalid＋包含该类关节的草稿不得提交修订（prepare 断言兜底口径）——零轴仅报告不提交修订（DTB 完成条件）",
+    "链型判定两维度 UT（卡 §6.4，MDL-12、AT-17）：维度一多可动分支→分支报告（对象与原因可观察）＋用户显式选择主链——未经用户显式选择不排除可动分支（DTB 禁止项；辅助分支转场景/环境候选或忽略项、不构成拒绝，MDL-IMPORT-BRANCH-SELECTION）；维度二 mimic/planar/floating/耦合→阻断＋MDL-IMPORT-UNSUPPORTED-JOINT、不得转 FixedFrame、不得经选择绕过（V-10、M-6）；4/5 轴与含 prismatic 主链→正式计算/报告阻断＋诊断（草稿兼容编辑可），不得静默降级关节类型（类型保留 V12-01）",
+    "pugixml 依赖引入与确定性 UT（O-40 已登记 2026-09-22）：经 vcpkg 经典模式安装（modeling PRIVATE，版本登记于实施 note），DOM 解析有界（io BudgetGuard 前置）；同输入字节＋同 options→同输出字节、诊断按源文件行序稳定排序（NFR-COR-02）；SelfCollisionHints 仅作导入报告的策略草稿候选输入、不写策略对象（P-MDL-3——交接 API 待 policy 卡冻结前不得自行定义跨单元写入面）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①DTB §2.14 T05 前置列「WP-13-T03、WP-11-T03」——≙ 映射按 io.md §15.5 落位登记换算为 IO-T02（WP-11-T03≙IO-T02，SafePath/BudgetGuard 防护栈；IO-T05 契约 note 明记 DTB WP-11-T06≙IO-T05 同系偏移），并补卡 §6.1/§6.2 声明的真实消费面 IO-T05（IResourceReader 四方法——mapUrdf 输入类型来源）；任务书辅助映射表 WP-11-T03→IO-T03 与 io 卡登记不符（IO-T03＝CSV 读写器，与 URDF 导入无消费关系），按仓库权威登记纠偏采用 IO-T02＋IO-T05；②interUnit=true 判定＝io 对端消费（ValidatedSource/依赖树/快照值类型）；③knownPitfalls：O-40（pugixml——DTB §4 已登记，allowedFiles 不含 vcpkg：安装属环境准备、版本登记归实施 note）、P-MDL-3（自碰撞→策略草稿输入交接 API 未定义——处置约束＝不写策略对象、只出报告候选清单）、P-MDL-8（io/runtime 契约 Draft——io 已大部落位、签名漂移按卡 R-MDL-1 增量同步）；④黄金数据集驱动的 V-06 全链用例随 WP-13-T16 收口，本任务 UT 用 inline fixture"
+}

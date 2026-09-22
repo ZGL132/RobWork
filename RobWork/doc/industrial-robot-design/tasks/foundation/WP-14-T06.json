@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T06",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "实现五种姿态规则解析与三维拾取/TCP 捕获域侧",
+  "status": "ready",
+  "dependsOn": [
+    "WP-14-T03",
+    "UI-T05"
+  ],
+  "requirements": [
+    "REQ-08",
+    "REQ-09",
+    "REQ-10",
+    "AT-23"
+  ],
+  "designRefs": [
+    "units/requirements.md#11",
+    "units/requirements.md#5.1",
+    "units/requirements.md#5.3",
+    "units/requirements.md#8.1",
+    "units/requirements.md#9.6",
+    "units/requirements.md#9.8",
+    "units/requirements.md#10.2",
+    "units/ui.md#9.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_requirements",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t06",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-REQ-8"
+  ],
+  "acceptance": [
+    "五种姿态规则解析成功用例通过（V-03，AT-23——DTB 完成条件「规则解析成功……可定位」）：Fixed（Z-Y-X 欧拉 rad）/AlignFrame/AlignGeometryNormal/PointAtTarget/ToolRollFree 各建样例，解析产出确定性参考姿态/方向并记录 resolution 来源（kind＋目标 ObjectId＋解析值留痕）；规则应用时解析语义落地（深度解析归评估侧——§5.3 隔离声明，本单元不重定义坐标变换/姿态求解）",
+    "规则解析失败可定位用例通过（DTB 完成条件原文）：目标悬空等引用/参数失败→可定位诊断回指需求条目（objectId＋name）；浅校验边界用例（仅查闭包 objectRefs 元数据、不解码 modeling 对象字节——§8.1 专项声明）；非法参数（零向量目标/rollRange 逆序/缺 feature/非有限角）构造边界拒绝＋REQ-READY-POSE-ILLEGAL",
+    "几何特征拾取与 TCP 捕获域侧用例通过（L-R6/L-R7，REQ-10，AT-23）：拾取结果（Frame/几何 ObjectId）与捕获 TCP 位姿经 ui View3D 契约/会话只读视图进入域侧——写回前必须确认（确认前不落草稿）；入草稿条目带来源标记（methodTag=captured-tcp）；会话状态与草稿基线错位→REQ-CAPTURE-STATE-STALE（warning）；未应用不失效用例（草稿丢弃/放弃后源数据与修订零变化——DTB 完成条件「未应用不失效」）",
+    "三维编辑事务不绕过确认（DTB 约束列原文）：确认流经 ui §9.2 确认对话桥（三要素），域侧接口不存在任何绕过确认直接写草稿的入口——接口面审查＋负向用例（取消/关闭拾取态＝零数据变更）",
+    "双模式构建零错误＋ctest ^ird$ 全绿＋留痕；ird_gates 零命中"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.15 WP-14-T06 行＋卡 §11 T06 行（branch=wp14-t06）。跨单元前置≙：WP-10-T05→UI-T05（三维视图交互阶段 A——View3D 契约登记/View3DContract.hpp 锚），ls 验证存在；拾取交互实现归 ui 阶段 B，本任务只落域侧消费面（拾取结果→确认→草稿）。P-REQ-8 处置：ui View3D 拾取契约/会话态语义（KIN-06 钉住）未冻结——按卡 §1.2 基线（ui.md v1.5）消费，ui 侧冻结修订触及拾取结果形状或确认桥签名即转 blocked 增量同步；R-REQ-5（会话状态与草稿基线错位）以 REQ-CAPTURE-STATE-STALE＋确认流缓解（用例 3 承载）。GUI 呈现（V-22）归 WP-14-T08/T09 登记口径，本任务不含界面。status 保持 planned，放行归治理会话"
+}

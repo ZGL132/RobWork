@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T09",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "requirements 契约测试套件与四套黄金数据集收口",
+  "status": "ready",
+  "dependsOn": [
+    "WP-14-T03",
+    "WP-14-T04",
+    "WP-14-T05",
+    "WP-14-T06",
+    "WP-14-T07",
+    "WP-14-T08",
+    "TK-T03",
+    "TK-T04",
+    "TK-T08",
+    "TK-T09"
+  ],
+  "requirements": [
+    "AT-02",
+    "AT-23",
+    "AT-24",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "units/requirements.md#11",
+    "units/requirements.md#10.1",
+    "units/requirements.md#10.2",
+    "units/requirements.md#13",
+    "units/testkit.md#4",
+    "units/testkit.md#10.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/req-*/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/tolerance/req-*/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_requirements_test",
+    "cmake --build build --config Release --target sdurws_ird_requirements_contract_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t09",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-REQ-8"
+  ],
+  "acceptance": [
+    "全部用例通过并留痕（DTB 完成条件原文）：卡 §10.2 矩阵 requirements 侧可执行行全部落位执行——V-01~V-10/V-12/V-13/V-17/V-18/V-20 requirements 侧断言与 V-11（空集合法＋R5 Warning 投影）；联合观测行（V-04 漏验拦截/V-14 Stale 全链/V-15 快照绑定/V-16 切片失效/V-19 下游消费/V-21 回填）仅登记并执行 requirements 侧输入输出面断言，不把联合行整体写为通过；V-22 GUI 仅登记流程不执行（envUnavailable 如实登记不得绿灯）；ird-test-report.json＋gtest XML＋构建日志三件留痕（AGENTS §4.2——未执行的测试不得标注通过，失败如实登记）",
+    "四套黄金数据集交付并 lint 通过（卡 §10.1——DTB 产出列原文：搬运任务/部分位姿约束/区域/负载事件）：testdata/golden/req-transport-task/、req-partial-pose/、req-region-sampling/、req-payload-events/ 按 ird-golden-manifest/1 契约登记（TK-T03 manifest 模型＋lint 工具消费）；容差档案 testdata/tolerance/req-*（锚 REQUIREMENTS 附录 D 通用比较公式——TK-T04 ToleranceProfile 承载，档案不得放宽附录 D 固定值）；含零值/近零/正负抵消边角样例；数据集经 GoldenFixture（TK-T08）随 CI 跑通",
+    "T-1/T-2 测试侧红线用例通过（testkit §2.4）：产品目标（sdurws_ird_requirements/_plugin）零 testkit 链接零 testkit 头（ird_gates 依赖图断言）；测试目标形态 sdurws_ird_requirements_test/contract_test → {被测目标, sdurws_ird_testkit, gtest} 无环；testdata/ 与 testkit 目标不入安装树（§3.6 排除——扫描断言登记交 WP-24 侧）",
+    "contract_test 对端面套件（卡 §3.1 contract_test 定位）：以 testkit FaultInterceptor（TK-T09）伪造 project/io/evidence/diagnostics 对端接口——codec/命令 payload 对 project 契约形状、mapCsv 对 io RawTable/CsvParseReport 形状、readinessSummary 对 evidence ReadinessSummary 形状、REQ- 稳定码对 diagnostics 契约夹具逐项断言（对端类型形状漂移由测试面捕获，不构造产品边）",
+    "确定性断言（NFR-COR-01/02/03——requirements 追踪矩阵 §13 T09 行）：黄金数据集同输入→同编码字节；集合条目 ObjectId 字典序稳定排序复验；非有限数/非法单位/缺失引用不静默转 0 或默认通过（负样例逐条）",
+    "双模式构建零错误＋ctest ^ird$ 全绿＋ird_gates 零命中；单元追踪矩阵（卡 §13）需求侧验证列状态刷新并同步 traceability"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.15 WP-14-T09 行＋卡 §11 T09 行（branch=wp14-t09；前置 WP-14-T03~T08 同波次直引）。WP-02≙ 换算取 TK 消费面对应号：TK-T03（manifest/lint——黄金清单模型）、TK-T04（容差档案）、TK-T08（GoldenFixture 夹具）、TK-T09（FaultInterceptor——contract_test 伪造对端，EX-T09/PRJ-T15 同款口径）；TK-T01 经四者传递可达不重复登记（UI-T14「按需不入 dependsOn」先例的反面：本行 DTB 明列 WP-02 为前置而非按需）。requirements 列按 DTB 行 AT-02/23/24，NFR-COR-01/02/03 依卡 §13 追踪矩阵 T09 行补登（黄金数据集/确定性/非静默三语义的本任务锚——编译评审可对照卡 §13 核）。allowedFiles 数据集面用 req-* 精确 glob（golden 与 tolerance 两处——容差档案为卡 §10.1 明列交付物），不开放 testdata/** 全树（POL-T11 从宽先例不沿用，收窄防越域）。P-REQ-8 处置：对端契约未冻结——黄金数据集锁定的是本单元 canonical 输出与设计默认值，对端形状漂移由 contract_test 捕获即转 blocked 对账，不改产品边绕过。status 保持 planned，放行归治理会话"
+}

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T07",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "实现工艺模板、工位镜像、四类阵列与需求集批量撤销",
+  "status": "ready",
+  "dependsOn": [
+    "WP-14-T03"
+  ],
+  "requirements": [
+    "REQ-07",
+    "REQ-11",
+    "AT-24"
+  ],
+  "designRefs": [
+    "units/requirements.md#11",
+    "units/requirements.md#4.7",
+    "units/requirements.md#7.1",
+    "units/requirements.md#7.2",
+    "units/requirements.md#9.3",
+    "units/requirements.md#9.5",
+    "units/requirements.md#9.8",
+    "units/requirements.md#10.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_requirements",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t07",
+  "interUnit": false,
+  "acceptance": [
+    "镜像坐标/姿态正确用例通过（V-06 黄金断言——DTB 完成条件「镜像坐标正确」）：过参考系镜像面（refFrame＋镜像轴法向）的反射变换为确定性纯函数，位置/姿态镜像结果黄金比对逐字段断言；Fixed/PointAtTarget 规则正常镜像；不可镜像规则（AlignGeometryNormal/AlignFrame 目标镜像侧不存在）→派生条目保留规则＋PendingManualResolution＋REQ-DERIVE-MIRROR-PENDING（warning），不静默猜、不静默降级为 Fixed（V-07）",
+    "四类阵列生成用例通过（DTB 完成条件「四类阵列生成」）：Linear/Rectangular/Circular/Polyline（方向/数量/间距/角度/半径/折线可配）数量、间距、角度逐一断言；派生条目独立 ObjectId＋generation={generatorId,instanceId,linked=true,parameters} 溯源完整；对源条目零引用零回写（I-REQ-10）",
+    "六类工艺模板用例通过（TemplateKind 词表 BinPicking/MachineTending/Palletizing/Inspection/ToolChange/Handover）：applyTemplate 产出编辑批次（新条目数组＋溯源）；linked 条目一键重生成＝替换 linked∧未手改条目，手改过→REQ-DERIVE-REGENERATE-CONFLICT 冲突诊断不静默覆盖；解除关联＝linked=false；模板产物可继续手改（D-REQ-4——非 DerivedReadOnly）",
+    "需求集撤销/重做批量整体回滚用例通过（V-06 批次面）：单条 applyEdit 携带模板/镜像/阵列批次→一次入栈、一次整体回滚（不逐条散开）；对派生条目再派生按构造无环（溯源为一次性参数快照、非活性链接）；删除被 linked 批次引用的源条目→允许＋诊断提示「仍有 N 条 linked 派生」",
+    "局部撤销与项目级撤销分离用例通过（DTB 完成条件原文）：编辑器 undoLocal/redoLocal（UI 线程、零修订——局部撤销）与项目级逆命令（新修订、PA-2 历史不变）两条路径互不串扰；模板/镜像/阵列不绕过命令（草稿生成辅助——应用仍走 apply-requirement-set，§7.1）",
+    "双模式构建零错误＋ctest ^ird$ 全绿＋留痕；ird_gates 零命中"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.15 WP-14-T07 行＋卡 §11 T07 行（branch=wp14-t07；前置仅 WP-14-T03——DTB 行原文）。interUnit=false 判定：纯域内模板/镜像/阵列演算（ITemplateArrayService 纯函数＋编辑器批次），不消费、不产出任何跨单元公共接口，产物面仅 requirements/**（CCP §2「纯单单元任务为 false」；ui 侧发起入口 L-R9 的面板接线归 WP-14-T08 契约）。interUnit=false 故 knownPitfalls 免强制（自愿登记不适用——卡 §14.3 无本任务专属待裁决项；REQ-DERIVE-* 两稳定码为本单元所有权内登记、非跨单元陷阱）。镜像反射为需求数据变换、非机器人坐标变换语义（卡 §7.2 隔离声明）——用例 1 注释须承载该边界。status 保持 planned，放行归治理会话"
+}

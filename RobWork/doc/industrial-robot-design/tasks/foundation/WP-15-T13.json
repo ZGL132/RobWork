@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T13",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "编写契约测试套件与运动学黄金数据集",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T03",
+    "WP-15-T04",
+    "WP-15-T05",
+    "WP-15-T06",
+    "WP-15-T07",
+    "WP-15-T08",
+    "WP-15-T09",
+    "WP-15-T10",
+    "WP-15-T11",
+    "WP-15-T12",
+    "TK-T03",
+    "TK-T04",
+    "TK-T05",
+    "TK-T06",
+    "TK-T07",
+    "TK-T08"
+  ],
+  "requirements": [
+    "AT-03",
+    "AT-04",
+    "AT-27"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#10.1",
+    "units/kinematics.md#10.2",
+    "units/kinematics.md#13"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/kin-*",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/tolerance/kin-*",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "unit-tests",
+    "golden-datasets",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t13",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "四套黄金数据集落位并通过 lint（TK-T03 清单模型）：kin-fk-analytic（二连杆/六轴解析 FK＋正反变换）/kin-ik-dedup（去重/排序/同位姿异构型）/kin-search-outcomes（五类结局各含样例＋换初值反例）/kin-coverage（固定计数 100/60＋数据不足保留分母＋零样本）——ird-golden-manifest/1 登记＋容差档案 tolerance/kin-*（锚附录 D 第 1/2/3/8 项；解析对照第 9 项黄金算例自带更严值声明；不放宽附录 D 固定值——TK-T04 档案纪律）＋零值/近零/正负抵消边角样例（§10.1；V-01/04/06/07/13/14 数据载体）",
+    "故障注入矩阵 kinematics 侧用例逐条落位（§10.2 V-01~V-25 本单元侧；『联合观测』行只验本单元输入/输出面——AT-05/09/10/11/19/27/34/37 承接声明，不把未执行测试写为通过；AT-03 反例全部映射 V-04/06/07/08/13/14）",
+    "契约测试：确定性替身求解器（预设收敛序列）＋替身碰撞评估器（脚本化判定）驱动评估器管线/证据组装/取消路径用例通过（T03~T07 依赖的测试替身——§10.1）；I-KIN-3『数值容差≠哈希等价』契约测试锁定；替身仅测试面（产品目标零 testkit 链接——T-1，ird_gates 断言）",
+    "全部用例通过并留痕：gtest XML＋ird-test-report.json＋构建日志（DTB 规模列『按 AT 反例分组提交』——AT-03/04/27 分组；V-26 为 GUI 设计登记不属本套件断言面）；未执行用例如实登记原因",
+    "确定性终验：同输入重复运行两次输出逐位一致（V-04）；1/8 线程双配置等价集合＋稳定排序一致（V-21）；黄金断言全部经 TK-T05/TK-T06 数值与集合断言设施执行"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T13 行＋units/kinematics.md §11 T13 行＋§10 验证方案。dependsOn 换算：同波次 WP-15-T03~T12（DTB 行原文十项）；DTB 前置『WP-02』泛指→testkit 设施逐号对应≙TK-T03（黄金清单模型＋lint）/TK-T04（容差档案——kin-fk 示例档案已在盘，本任务扩充 kin-*）/TK-T05（数值断言）/TK-T06（集合顺序断言）/TK-T07（契约断言）/TK-T08（Fixture/GoldenFixture 确定性环境）——六者均为本套件直接消费面（UI-T14 先例：testkit 按需项不入 dependsOn 仅限『启用登记类』，本六项为直接数据/断言设施故列入）。requirements=AT-03（全部反例）/AT-04/AT-27（DTB 行原文）。knownPitfalls=P-KIN-7（对端冻结后黄金值/容差档案如受影响按增量同步——testkit.md v0.9 ird-golden-manifest/1 基线）。interUnit=true 判定＝消费 testkit 六项公共测试设施＋交付跨单元消费的黄金数据集（trajectory/optimization 后续复用）。allowedFiles 的 kin-* 数据面仅限 golden/tolerance 两根（kins 单元源码面另列）。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

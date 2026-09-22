@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T15",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现 modeling 插件界面面板与命令接入",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03",
+    "WP-13-T04",
+    "WP-13-T05",
+    "WP-13-T06",
+    "WP-13-T07",
+    "WP-13-T08",
+    "WP-13-T09",
+    "WP-13-T10",
+    "WP-13-T11",
+    "UI-T08"
+  ],
+  "requirements": [
+    "MDL-07"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#9.7",
+    "units/modeling.md#9.7.1",
+    "units/modeling.md#9.7.2",
+    "units/modeling.md#9.7.3",
+    "units/modeling.md#9.7.4",
+    "units/ui.md#10.9",
+    "units/ui.md#11.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_plugin",
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T15.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t15",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "sdurws_ird_modeling_plugin 目标落位（卡 §3.2——T02 预留的插件行兑现）：Qt Widgets、AUTOMOC、仅插件目标链接 Qt；链接面＝sdurws_ird_modeling＋sdurws_ird_ui（＋平台库按需），不得链接任何其他业务域单元目标（R-1）、不得 include 其他单元私有头（R-2）；插件零计算逻辑（DTB 禁止项——业务判定唯一在计算库，ird_gates 扫描零命中）",
+    "五区面板信息架构 UT（卡 §9.7.1，MDL-07）：建模结构树（节点锚=ObjectId、显示 localName＋工程用语标签——零哈希/Schema/插件名 UX-02）；属性编辑区选中只显示相关属性（关节→类型/轴/零位/限位/速度/加速度，DH 权威下轴/原点灰显只读 §7.2；连杆→物性＋ValueProvenance 来源徽标；工具/场景/传动各按 §4.4/§4.5/§4.7 投影）；域工具区（StageId=modeling）；就绪诊断条（L0～L11 三组计数＋逐项定位跳转）；预览页仅基于已应用修订（编辑态即时 XML 预览不提供——D-MDL-10）",
+    "界面数据流抽测 UT（卡 §9.7.2，模型层可测三条）：L-1 选中联动（树/View3D 拾取→ui SelectionModel 会话态零修订；反向定位→滚动＋高亮目标）；L-2 字段编辑流（applyEdit 接受→树/属性区/就绪条增量刷新＋notifySessionDirty；拒绝→就地比较型错误＋保留原值不弹模态——UX-03/05/07）；L-3 应用确认流（ConfirmableFinding 三要素经 ui CommandInteractionBridge marshal 至 UI 线程——SA-15/P-PR-7）；L-8 平行轴内联二选一与 L-9 权威切换流结果页登记为 GUI 用例（V-30 按 AGENTS Windows 规程执行、本任务不启动 GUI 程序——流程登记不标通过）",
+    "域命令登记 UT（卡 §9.7.3 清单经 ui IPluginUiRegistrar/IPluginUiModule——ui.md §10.9/§11.2）：十条 CommandId 点分小写（modeling.new-from-template / modeling.import-urdf / modeling.import-xacro / modeling.switch-authority / modeling.estimate-properties / modeling.generate-placeholder-geometry / modeling.diff-baseline / modeling.export-package / modeling.import-package / modeling.reset-home-zero——卡 §9.7.3 表逐行，export-package 与 import-package 为两条独立命令不得合并）——CommandId 词表与 project commandType 无点词表两套命名空间不混用；readOnlyAllowed 按 §9.7.3 表；快捷键一律经 ui HotkeyBindingTable 不私占全局（SA-16）；只读模式 writable=false 编辑控件禁用（L-7）",
+    "刷新与真值纪律 UT（卡 §9.7.4）：刷新一律事件驱动（⑤修订/失效事件→重载基线闭包→工作集保序重演——L-4，重演失败提示手工处置不静默丢弃）；面板不缓存模型权威数据（每次投影从 workingSet()/②查询端口取值——防 UI 副本成为第二真值）；编辑器仅 UI 线程访问（§3.4 非线程安全）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①dependsOn 按 DTB §2.14 T15 前置列「WP-13-T03~T11、WP-10-T08」逐项换算（同波九项＋WP-10-T08→UI-T08 参数表/表单公共件——FormEditCommon 数值＋单位同显/批量粘贴消费面）；T02（构建落位）经同波闭包隐含；②interUnit=true 判定＝ui 对端接入（IPluginUiRegistrar/IPluginUiModule/SelectionModel/HotkeyBindingTable 消费）；③knownPitfalls=P-MDL-8（ui.md Draft 系未冻结——blocked 触发＝IPluginUiRegistrar/IDraftController 签名变更致面板不可装配，按 R-MDL-1 增量同步）；④GUI 用例（V-30）按 AGENTS §Windows 规程登记流程、执行归实现任务——本契约 verify 仅模型层 ctest（^ird$），GUI 呈现留痕不冒充已执行"
+}

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T05",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "实现就绪校验（R0~R9）与预览/正式分离及需求命令族",
+  "status": "ready",
+  "dependsOn": [
+    "WP-14-T03",
+    "EV-T06"
+  ],
+  "requirements": [
+    "REQ-06",
+    "EVI-01"
+  ],
+  "designRefs": [
+    "units/requirements.md#11",
+    "units/requirements.md#7.5",
+    "units/requirements.md#8",
+    "units/requirements.md#8.1",
+    "units/requirements.md#8.3",
+    "units/requirements.md#9.1",
+    "units/requirements.md#9.5",
+    "units/requirements.md#9.6",
+    "units/evidence.md#6.4"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_requirements",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t05",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-35",
+    "O-39",
+    "P-REQ-3",
+    "P-REQ-5",
+    "P-REQ-6"
+  ],
+  "acceptance": [
+    "R0~R9 分层就绪校验用例逐层通过（卡 §8.1 表逐层正反例，短路优先；Blocking/Warning/NotApplicable 分级断言）：R0 结构完整/R1 引用完整（浅校验——仅查闭包 objectRefs 元数据、不解码 modeling 对象）/R2 坐标系/R3 位姿/R4 工况绑定/R5 必验范围（空集 Warning 不阻断编辑）/R6 采样计划（退化 Blocking、零计划 Warning）/R7 顺序无环/R8 工具模型引用/R9 可生成切片；具名稳定码断言：REQ-READY-REF-MISSING、REQ-READY-SEQ-CYCLE、REQ-READY-POSE-ILLEGAL、REQ-READY-NO-REQUIRED-CASE、REQ-READY-PLAN-DEGENERATE、REQ-READY-INPUT-INCOMPLETE（§9.6 T05 行全数注册）",
+    "ReadinessSummary 数据源用例通过（evidence ①级输入门禁）：任一启用 Must 条目非法→valid=false＋invalidMustItems 全量清单（不抽样）；readinessSummary 投影与 evidence §6.4① 数据形状逐字段一致（跨单元对端值类型消费）",
+    "Must/Should 分级判定用例通过（DTB 完成条件原文）：启用 Must 非法→输入未完成（valid=false）；有效 Should 未满足→警告；enabled=false 条目不进入判定（「任一启用的 Must 条目」口径）；需求未就绪不产生任何工程判定结论（V-12——§8.3 四轴正交，本单元无 EngineeringStatus 输出面）",
+    "预览不产生正式证据与结果对象用例通过（DTB 完成条件原文；V-20，EVI-01 表 1）：预览/即时校验零修订、零正式证据对象、预览输入无内容身份承诺（evidence §4.1.1 未应用草稿预览行口径）",
+    "O-39 处置（已裁决 2026-09-22——消解 P-REQ-3）：ReadinessSummary 在评估组装时现场重算（与命令 prepare 同源断言套件，NFR-MNT-04 无重复判定）、修订内不持久化就绪结论——本任务实现纯函数投影面（readinessSummary(check(ws,ctx)) 可重入无副作用），不写入任何持久化就绪记录；evidence 侧组装消费形态若冻结为其他形状即转 blocked 对账",
+    "命令族用例通过（O-35 处置——已裁决 2026-09-22 采用无点形态＝服从 project.md §4.4.4 冻结语法，P-REQ-5 消解）：commandType 恒为 apply-requirement-set/apply-requirement-import（无点，与 modeling 卡同批形态）；prepare 管线 decode→基线重建→就绪断言（Blocking 拒绝＋逐项定位诊断）→CommandPlan{objectWrites,inverse,summary}；inverse＝快照式逆命令（受影响对象前版字节）；confirmableFindings 恒空（无策略校验类放行场景——SA-15 流不私设）；apply-requirement-import 附加导入溯源完整性断言；就绪 R0~R9 现场重估（防基线漂移——与 O-39 同源语义）",
+    "P-REQ-6 边界声明用例：Blocking 的阶段门控拦截规则归 workflow/ui（本单元只供 DomainReadinessItem 数据）——用例断言就绪报告不含任何门控动作语义（校验面板仅呈现）",
+    "双模式构建零错误＋ctest ^ird$ 全绿＋留痕；ird_gates 零命中"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.15 WP-14-T05 行＋卡 §11 T05 行（branch=wp14-t05）。跨单元前置≙：WP-05-T06→EV-T06（五级汇总判定——①级输入门禁消费侧契约已落位），ls 验证存在；DTB 行未列 WP-04，故 PRJ-T10/T11 换算在本任务不适用（IRequirementCommandHandler 依 project::ICommandHandler 公共头——其可用性随 WP-14-T02 白名单六边经 project 头解析，若实现期发现 project 公共头未就绪即转 blocked 补登前置，不静默自建）。knownPitfalls 四源：O-35（命令 token 无点形态终局——两卡 token 即最终形态）、O-39（现场重算裁决）、P-REQ-3/P-REQ-5（同源卡侧登记，随裁决消解、保留条目供实施者对账）、P-REQ-6（门控拦截点归 workflow/ui）。designRefs 增 units/evidence.md#6.4（ReadinessSummary ①级数据形状对端锚——EV-T06 同款口径）。status 保持 planned，放行归治理会话"
+}

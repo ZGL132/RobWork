@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T12",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现 RobotDesignReader 与 Description 构造（编译协作）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T03",
+    "RT-T05",
+    "RT-T07",
+    "RT-T11"
+  ],
+  "requirements": [
+    "MDL-14",
+    "MDL-06",
+    "ARC-03"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#9.1",
+    "units/modeling.md#9.2",
+    "units/modeling.md#9.4.5",
+    "units/runtime.md#4.2",
+    "units/runtime.md#3.3"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "contract-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "cmake --build build --config Release --target sdurws_ird_modeling_contract_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T12.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t12",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-36",
+    "P-MDL-1",
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "CanonicalBridge.hpp/.cpp 落位（卡 §3.3 表 T12 行）：ICanonicalModelInputBuilder 按卡 §9.4.5 签名（build——闭包→runtime::RobotDesignDescription）；字段映射表（卡 §9.1）逐行 UT：joints/links/tools/scene/base/drivetrain/friction/resourceRefs 十类来源映射（DH 权威先经 §7.4 展开；tools/scene 经引用表解引用；scene worldPose 世界系固连不预乘安装旋转；base 不在此计算 R_world_base）；全 SI——单位 SI 化唯一经 core Units 换算入口（I-MDL-3/runtime §4.4 单位纪律 modeling 侧履行点）",
+    "确定性 UT（ARC-03：同修订→同 Description→同 CanonicalModel 的输入确定性建模侧保证）：同闭包→同 Description 字节（reader 纯函数、闭包域字节源装配期与 CompileRequest.objects 同源绑定——§9.2 注入形态）；不重复计算任何内容身份（ContentVersion/builtFrom/contentIdentity 归 project/runtime）",
+    "RobotDesignReader 注入形态落地（P-RT-5/O-36 已裁决 2026-09-22）：read(objectBytes, formatVersion) 单根字节输入＋部件对象经闭包域字节源解析；objectRefs 复核范围＝真实存储对象、关节/连杆子 ObjectId 为模型内标识（O-36 裁决口径——P-MDL-1 关闭面）；与 runtime RT-T12 协作的契约测试（sdurws_ird_modeling_contract_test）：Description 契约面字段集与 runtime.md §4.2 RobotDesignDescription 对齐、schemaVersion↔descriptionContractVersion 同源（初值 1）",
+    "编译诊断定位 UT（MDL-06/DTB 完成条件）：RefMissing（闭包缺对象/token 不匹配→runtime InputInvalid 预演）、UnitIllegal、DhExpandFailed、SchemaVersionUnsupported→诊断定位到对象 ObjectId/字段；不完整模型三层防线边界 UT（编辑边界 I-MDL fail-fast＋prepare 断言归 modeling、runtime S3/S5 InputInvalid/StructureInvalid 兜底不归——modeling 不假设 runtime 修复输入）",
+    "R-4 红线断言（DTB 禁止项「名称生成归 runtime」）：reader 不做名称解析/前缀拼接/消歧（RuntimeNameMap 唯一归 runtime）；localName 输入质量面断言（合法字符集、同作用域无重复——V-26 建模侧，AT-18 联合观测输入面）；ResourceChanged/资源状态行为：Recorded 重读＋digest 复核、Solidified 免复查的建模侧声明口径与 runtime §9.1 一致"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①dependsOn 按 DTB §2.14 T12 前置列换算：WP-06-T05/T07/T11→RT-T05/RT-T07/RT-T11（RobotDesignDescription 契约、编译链设施、编译端口协作）；卡 §11 另记「与 runtime RT-T12 协作」——协作面编入 acceptance 第 3 条契约测试，RT-T12 不入 dependsOn（runtime 侧任务由其自身契约排程，本任务仅消费已冻结形态的 Description 公共契约）；②interUnit=true 判定＝runtime reader 注入（L5 装配注入 IRobotDesignReader 实现——卡 §9.2 决议）；③knownPitfalls：O-36（对象分解/复核范围——已裁决，处置编入 acceptance 第 3 条）、P-MDL-1（同题登记——裁决后如 runtime 侧注记收窄未落地按 O-36 裁决执行）、P-MDL-8（runtime Description 契约 Draft——blocked 触发＝§4.2 字段集变更致映射表失配，按 R-MDL-1/R-MDL-3 单点演进同步）"
+}

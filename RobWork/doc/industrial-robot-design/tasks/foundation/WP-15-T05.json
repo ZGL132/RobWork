@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T05",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现批量任务点验证评估器（kin.task-points-batch）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T04",
+    "EX-T05"
+  ],
+  "requirements": [
+    "KIN-03",
+    "EVI-01",
+    "EVI-02"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#7.1",
+    "units/kinematics.md#8.2",
+    "units/kinematics.md#8.3",
+    "units/kinematics.md#9.2",
+    "units/kinematics.md#9.6"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t05",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-37",
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "批量展开与三态素材：切片内启用点集×caseSubset 展开 (point,condition) 工作项（appliesTo 过滤、disabled/None→NotApplicable 显式标记、重复项按集合语义去重、悬空引用→InputInvalid 素材——V-12）；per-item 计算状态（CandidateFound/NoConvergence/AllFiltered/InputInvalid/NotApplicable）独立——可行/工程不可行/数据不足三态报告素材完备，最终判定归 evidence aggregateVerdict（只算不判，§7.1；KIN-03）",
+    "必验工况覆盖：caseSubset 逐工况完成并标记（完成矩阵素材齐备）；分批取消/失败批如实 NotRun、输出带 incomplete 标记（组装前自检：工作项总数=Σ批项数+NotRun 数）——漏验最终拦截在 evidence 覆盖矩阵（V-11；EVI-02；无伪完成）",
+    "证据组装：IKinematicEvidenceBuilder 产出 EvidenceItem（结局/最佳解指标/硬过滤记录/要求值对比实际-要求-单位）＋SearchExhaustedRecord＋DomainVerdictInputs（REQ-06 口径填报启用 Must 条目计算结局）＋payload（canonical、五元组绑定 §5.6）——符合 evidence §9.3 EvaluationOutput 形状（§8.2）",
+    "execution 通道消费（§8.3）：任务提交 kin.task-points-batch＋能力声明（支持取消/检查点=批 watermark/暂停不支持如实声明/强制终止代价低）；协作取消周期查询——每批至少一次，2 s 停止派发新批（V-22 本单元侧；NFR-PERF-02）；分批进度 reportProgress(批粒度)；黄金锁定默认批大小 256（D-KIN-6）",
+    "确定性：批内工作项按 (pointOid,conditionId) 字典序全序确定、并行分片连续区间、合并按全序归并非到达序——同线程数逐位一致、异线程数等价集合＋稳定排序一致（§8.4；V-21 断言面）"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T05 行＋units/kinematics.md §11 T05 行。dependsOn 换算：DTB 前置『WP-08（后台运行通道）』为单元级泛指——按号对应≙EX-T05（execution 通道消费面：任务注册/取消/检查点/归档协议，卡 §8.3/§12 交接行）；WP-15-T04 同波次。requirements 换算：DTB 行『EVI-01/02』保留；三态『报告』语义按卡 §7.1 落为素材完备＋判定归 evidence（DTB 行『三态报告』不得实现为域内工程判定——红线 §2.3 不拥有表）。knownPitfalls：O-37（批量评估器同样经宿主注入视图——未冻结即 blocked）、P-KIN-7（execution/evidence 对端 Draft 未冻结）。interUnit=true 判定＝消费 execution 任务/取消/检查点/归档通道＋产出 evidence EvaluationOutput（§12 交接：optimization/trajectory 消费本评估器）。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

@@ -204,3 +204,61 @@
 | RPT-T13 | wp12-t13 | False | P-RPT-1、P-RPT-2、P-RPT-3（自愿） | 治理会话编译（2026-09-19）：reporting.md §11 行＋§14＋§3.1——allowedFiles 按卡行『本文、README』收窄（移除占位 reporting/** 整目录授权→README.md 逐文件，最小授权面）；outputs 升 doc-update＋traceability-update（家族收尾词表——CORE-T10/EV-T12/POL-T12/RT-T13/EX-T10/PRJ-T16/DIAG-T11 同款）；interUnit=false＝纯文档/门禁同步治理（EX-T10/DIAG-T11 同款）；裁决申请≠裁决——forbiddenFiles 红线明示（不私改 ARCHITECTURE/core 公共头） | validate-task 三查过；独立评审＝PASS（同 RPT-T01 行口径） | ready |
 
 **批次排除登记（F-120 教训：范围排除必须显式登记理由）**：RPT-T14（B 级真实章节接入，阶段 B）、RPT-T15（C 级扩展与变体，阶段 C）、RPT-T16（往返复算，阶段 C）三份保持 planned——其真实技术前置含 modeling/requirements/kinematics/optimization 等域单元（单元卡未产出、契约不存在，dependsOn 不可编码）与阶段 B/C 域结果对象；放行触发＝对应域单元波次合入后的治理批次（届时按 CCP §3 全步编译）。DTB §2.13 表头『RPT-T01～T13 为基础设施，T14～T16 按 B/C 前置实施』即本登记的卡级依据。**批次口径**：branch＝wp12-t01~t13 卡内序号直映（reporting 卡 ≙ 为多对一部分映射不可直映——RPT-T03/T05/T09 共享 WP-12-T03、RPT-T06/T07/T09 共享 WP-12-T04；wp12 前缀经查全库无占用，EX-T10/UI-T11『t 序号取卡内编号』同款口径）；RPT-T06/T07 的 DTB 上级行前置 WP-11-T04（io）按注入形态（P-RPT-1，公共头零 io 类型）不编入 dependsOn。**批次连带登记**：reporting.md v0.3 两处卡内任务号漂移校正（§4.4 ReportCodec 锁定 RPT-T02→T03；§14.3 P-RPT-8 处置句 RPT-T01→T02——独立评审观察项，DTB §5.4 增量修订）；入队＝无需手工调整，下一 tick autoDiscovery 按目录字母序自动追加队尾（RPT 波次先于 UI 波次，两链内部拓扑自洽）。
+
+## 阶段 B 三波次批次（2026-09-22，WP-13/14/15 单元卡产出后的实现契约整链放行）
+
+**批次口径（三波共用）**：起草＝契约编译会话（CCP §3 第 1~4 步），独立评审＝三个全新会话（第 6 步，逐份 verdict）；机器校验 validate-task 35/35 PASS＋validate-docs PASS（185 契约文件）；status 经评审通过后由治理会话统一翻转 ready（第 7 步），入队＝下一 tick autoDiscovery 按目录字母序自动追加（不插队）。R2/D 项不编译：WP-13-T17~T19、WP-15-T14~T17（阶段 D 启用前置，沿 RPT 批次排除登记先例）。前置 ≙ 映射权威＝io.md §12/§15.5（IO-T02≙WP-11-T03、IO-T03≙WP-11-T04、IO-T04≙WP-11-T05、IO-T05≙WP-11-T06；AtomicFile.hpp 实随 IO-T06 落位）——modeling 波起草者纠偏成立、requirements 波 WP-14-T04 初版错位经评审退回修订。批次级裁决随 DTB §4 O-35~O-40（2026-09-22 治理提交 d79551e2）。
+
+### modeling 波（WP-13-T02~T16，15 份；评审 13 PASS＋2 FAIL→修订复验 PASS）
+
+| ID | branch | interUnit | knownPitfalls | 编译说明（要点） | 机器校验＋独立评审 | status |
+| --- | --- | --- | --- | --- | --- | --- |
+| WP-13-T02 | wp13-t02 | True | P-MDL-8 | 构建落位＋门禁六边登记；_plugin 随 T15（DTB 行偏差随本任务同批落地，不得悬置）；WP-13-T01 无契约载体不入 dependsOn（note 登记） | validate-task 过；评审 PASS | ready |
+| WP-13-T03 | wp13-t03 | True | O-36、P-MDL-1、P-MDL-2 | RobotDesign 双权威对象＋canonical 编码登记；O-36 复核范围裁决落 acceptance | 过；评审 PASS | ready |
+| WP-13-T04 | wp13-t04 | False | P-MDL-2（自愿） | 物性估算唯一公式表＋平行轴；密度表逐项核验一致 | 过；评审 PASS | ready |
+| WP-13-T05 | wp13-t05 | True | O-40、P-MDL-3、P-MDL-8 | URDF 映射＋链型判定；前置 IO-T02＋IO-T05（≙ 纠偏后） | 过；评审 PASS | ready |
+| WP-13-T06 | wp13-t06 | True | O-40、P-MDL-4、P-MDL-8 | Xacro 受控展开；P-MDL-4 护栏 io/语义 modeling 消解 | 过；评审 PASS | ready |
+| WP-13-T07 | wp13-t07 | False | O-27（自愿） | 六轴模板＋编辑；七轴 P-03 登记不启用入 acceptance | 过；评审 PASS | ready |
+| WP-13-T08 | wp13-t08 | True | O-35、P-MDL-8 | 命令处理器族＋断言分域＋确认放行＋双编译零修订 | 过；评审 PASS | ready |
+| WP-13-T09 | wp13-t09 | True | P-MDL-8 | DH↔显式五状态（runtime#5.2 S1~S5 分段入口等价验证） | 过；评审 PASS | ready |
+| WP-13-T10 | wp13-t10 | True | O-35 | 工具/场景/命名位姿命令；初版漏 WP-13-T08 dependsOn→评审 FAIL→修订补入（复验 PASS） | 过（修订后）；评审 PASS（修订后） | ready |
+| WP-13-T11 | wp13-t11 | True | O-16、O-35 | 基座安装姿态；卡 §7.7 悬空锚点改引 #7.6（诚实登记） | 过；评审 PASS | ready |
+| WP-13-T12 | wp13-t12 | True | O-36、P-MDL-1、P-MDL-8 | Reader/Description（P-RT-5 注入形态采纳） | 过；评审 PASS | ready |
+| WP-13-T13 | wp13-t13 | True | P-MDL-8 | 规范包 roundtrip；前置 IO-T04＋IO-T06（ZipChannel/AtomicFile 消费面） | 过；评审 PASS | ready |
+| WP-13-T14 | wp13-t14 | False | — | Model Diff 数据实体（纯域内） | 过；评审 PASS | ready |
+| WP-13-T15 | wp13-t15 | True | P-MDL-8 | 插件界面；初版 CommandId 九 token＋杜撰合并→评审 FAIL→按卡 §9.7.3 十条修订（复验 PASS） | 过（修订后）；评审 PASS（修订后） | ready |
+| WP-13-T16 | wp13-t16 | True | P-MDL-8 | 契约测试＋四数据集（卡 §10.1 权威；卡 §7.6"三套"自相矛盾随卡增量消账） | 过；评审 PASS | ready |
+
+连带登记：①units/modeling.md §7.7 为悬空锚点（正文 8 处引用无节标题，DTB O-16 引文同指）——随卡下次增量补节标题；②DTB §2.14 T02 行（_plugin）与 T16 行（"三套黄金模型"）与卡偏差——随治理增量消账。
+
+### requirements 波（WP-14-T02~T09，8 份；评审 7 PASS＋1 FAIL→修订复验 PASS）
+
+| ID | branch | interUnit | knownPitfalls | 编译说明（要点） | 机器校验＋独立评审 | status |
+| --- | --- | --- | --- | --- | --- | --- |
+| WP-14-T02 | wp14-t02 | True | P-REQ-8 | 构建落位＋门禁六边；REQ-SCHEMA-UNSUPPORTED 先注册合"不预建"纪律 | 过；评审 PASS | ready |
+| WP-14-T03 | wp14-t03 | True | O-36、O-38、P-REQ-1、P-REQ-2、P-REQ-8 | 领域对象＋canonical 编码；I-REQ-1~10/五规则拒绝逐字对齐 | 过；评审 PASS | ready |
+| WP-14-T04 | wp14-t04 | True | P-REQ-8 | CSV/JSON 导入＋副本导出；初版 ≙ 错位（误 IO-T04/T05、漏 IO-T03）→评审 FAIL→修订为 IO-T03/IO-T04/IO-T06（复验 PASS） | 过（修订后）；评审 PASS（修订后） | ready |
+| WP-14-T05 | wp14-t05 | True | O-35、O-39、P-REQ-3、P-REQ-5、P-REQ-6 | 就绪校验 R0~R9＋命令族；O-35/O-39 裁决落点正确 | 过；评审 PASS | ready |
+| WP-14-T06 | wp14-t06 | True | P-REQ-8 | 姿态规则＋拾取/TCP 捕获域侧；四条完成条件逐条对齐 | 过；评审 PASS | ready |
+| WP-14-T07 | wp14-t07 | False | — | 模板/镜像/阵列/批量撤销（纯域内，判定依据入 note） | 过；评审 PASS | ready |
+| WP-14-T08 | wp14-t08 | True | P-REQ-4、P-REQ-6、P-REQ-8 | 插件四面板；九条 CommandId 与卡 §9.8 逐条一致 | 过；评审 PASS | ready |
+| WP-14-T09 | wp14-t09 | True | P-REQ-8 | 契约套件＋四套黄金＋容差档案；TK ≙ 与 DTB §2.3 吻合 | 过；评审 PASS | ready |
+
+### kinematics 波（WP-15-T02~T13，12 份；评审 12 PASS，4 项非阻塞建议随本登记消账）
+
+| ID | branch | interUnit | knownPitfalls | 编译说明（要点） | 机器校验＋独立评审 | status |
+| --- | --- | --- | --- | --- | --- | --- |
+| WP-15-T02 | wp15-t02 | True | P-KIN-7 | 构建落位＋门禁六边；15 个 KIN- 码登记 | 过；评审 PASS | ready |
+| WP-15-T03 | wp15-t03 | True | O-37、O-40、P-KIN-1、P-KIN-7 | FK/指标评估器；O-37 blocked 触发逐字携带；Eigen PRIVATE | 过；评审 PASS | ready |
+| WP-15-T04 | wp15-t04 | True | O-37、P-KIN-7 | 多初值 IK＋去重排序＋五类结局；不得输出不可行断言齐 | 过；评审 PASS | ready |
+| WP-15-T05 | wp15-t05 | True | O-37、P-KIN-7 | 批量任务点验证；EX 依赖依据文字订正（"任务提交/调度/进度面"——原"注册/取消/检查点/归档协议"表述失准，随本登记消账） | 过；评审 PASS（附订正建议） | ready |
+| WP-15-T06 | wp15-t06 | True | O-37、O-38、P-KIN-3、P-KIN-7 | 区域覆盖率（100/60、降级保分母、零样本、复评不增删样本） | 过；评审 PASS | ready |
+| WP-15-T07 | wp15-t07 | True | O-37、P-KIN-7 | 碰撞证据接入（缺检测器→DataInsufficient；三入口一致） | 过；评审 PASS | ready |
+| WP-15-T08 | wp15-t08 | True | O-35、P-KIN-5、P-KIN-7 | 会话姿态＋设默认门面（O-35 不适用性登记） | 过；评审 PASS | ready |
+| WP-15-T09 | wp15-t09 | False | — | 结果筛选/导出/批量复算（纯域内） | 过；评审 PASS | ready |
+| WP-15-T10 | wp15-t10 | True | O-38?、P-KIN-4、P-KIN-7 → 实登 P-KIN-4/P-KIN-7 | 显示单位＋求解配置（EV-T04 精确对端；配置不覆盖策略） | 过；评审 PASS | ready |
+| WP-15-T11 | wp15-t11 | True | P-KIN-7 | 失败点/薄弱区渲染数据（KIN-07） | 过；评审 PASS | ready |
+| WP-15-T12 | wp15-t12 | True | P-KIN-7、P-UI-6 | kinematics 插件界面 | 过；评审 PASS | ready |
+| WP-15-T13 | wp15-t13 | True | P-KIN-7 | 契约测试＋四套黄金＋容差档案 | 过；评审 PASS | ready |
+
+连带登记（非阻塞，随各契约下次增量消账）：①WP-15-T05 note 的 EX 依赖依据文字订正（已随上表行内登记）；②WP-15-T06 的 execution 消费面（提交/检查点/2s 取消）无 EX dependsOn 的非对称未在 note 说明；③WP-15-T02 与 DTB 行"_plugin"输出偏差未按 §5.4 单元卡增量登记（内容按卡推迟 T12 正确）；④T05/T12 各一处 acceptance 引用节未入 designRefs（§8.4/§3.2）；⑤T08/T12"§9.8 七条命令"实为 7 行 8 IDs（set-default-tcp/device 同行）——实施时按 8 条注册。

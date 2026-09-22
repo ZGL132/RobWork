@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T06",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "实现 Xacro 受控展开语义",
+  "status": "ready",
+  "dependsOn": [
+    "WP-13-T05",
+    "IO-T02",
+    "IO-T05"
+  ],
+  "requirements": [
+    "MDL-19"
+  ],
+  "designRefs": [
+    "units/modeling.md#11",
+    "units/modeling.md#6.5",
+    "units/modeling.md#9.4.9",
+    "units/io.md#6.2",
+    "units/io.md#9.6"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T06.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t06",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-40",
+    "P-MDL-4",
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "XacroExpand.hpp/.cpp 落位（卡 §3.3 表 T06 行）：IXacroExpandService 按卡 §9.4.9 签名（expand——宏/参数/属性替换语义引擎）；输入为 io 已验证字节＋依赖树（IResourceReader 产物），护栏原语（递归深度 IncludeDepth/TotalBytes/循环检测/未定义宏定位）由 io 机制承载（io.md §6.2），modeling 在护栏内解析——绝不执行任意代码",
+    "展开失败/依赖缺失可定位诊断 UT（MDL-19、AT-31）：未定义宏/参数→行列定位诊断（宏名＋源行列）；io 护栏码透传（IO-FORMAT-XML-CYCLE/IO-RES-MISSING——V-09）：无草稿、无修订、无对象写入；参数列表展示数据＋substitutions 清单随导入报告留痕",
+    "展开产物进 URDF 同一映射与安全边界 UT（卡 §6.5）：expand 产物经 mapXacroExpanded 走 mapUrdf 同一校验（§6.3/§6.4 口径不变）；原始 .xacro 的 ResourceSnapshot digest 进草稿 externalRefs（来源记录——MDL-19 来源可追溯）；展开失败不产生草稿",
+    "所有权口径落地（P-MDL-4，建议口径「护栏 io／语义 modeling」）：io 交付护栏原语确认、modeling 交付展开语义引擎——实现按此切分且 io 公共面零改动（io.md §13.3 同名重叠以本条为准，io 卡所有者确认前不实现 io 侧新原语）；pugixml 复用 T05 已登记依赖（O-40，不二次引入渠道）",
+    "确定性 UT（NFR-COR-02）：同输入字节＋同 substitutions→同展开字节、诊断顺序稳定；可重入无共享可变状态（卡 §3.4 纯函数服务约定）"
+  ],
+  "note": "CCP §3 编译起草（2026-09-22，契约编译会话；待独立评审放行）。编译决策：①DTB §2.14 T06 前置列「WP-13-T05、WP-11-T03」——≙ 换算同 T05 注记（WP-11-T03≙IO-T02，防护栈；补真实消费面 IO-T05 IResourceReader），任务书辅助映射表 WP-11-T03→IO-T03 系偏移一位、按 io.md §15.5 权威登记纠偏；②interUnit=true 判定＝io 对端（护栏原语与验证字节消费）；③knownPitfalls：O-40（pugixml 与 T05 同批登记、随 T05 引入本任务复用）、P-MDL-4（展开引擎所有权 io/modeling 重叠——处置约束＝护栏 io、语义 modeling，io 卡所有者确认前不扩 io 公共面）、P-MDL-8（io 契约 Draft——R-MDL-1 增量同步）；④MDL-IMPORT-PENDING-CONFIRM 码（§9.5 T05/T06 共用行）的消费者含本任务待确认项呈现面"
+}

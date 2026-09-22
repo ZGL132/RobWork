@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T08",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现会话姿态承载与设默认命令门面（KIN-06/14）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T03",
+    "PRJ-T10",
+    "UI-T08"
+  ],
+  "requirements": [
+    "KIN-06",
+    "KIN-14",
+    "AT-04",
+    "AT-27"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#4.5",
+    "units/kinematics.md#9.7",
+    "units/kinematics.md#9.8"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t08",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-35",
+    "P-KIN-5",
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "会话姿态（L-K4 数据流）：双击任务/候选/可视化点回写/复位 Home 只写 ui 会话态——零修订、零失效、不入缓存身份；后续求解 requestIdentity 不变（referenceQ 未变）（V-18；KIN-06/AT-04；ARCH §7.7 会话态承载归 ui——本单元提供写入口与身份外保证 §4.5）",
+    "设默认 TCP/设备（L-K9）：IKinematicsCommandHandler 组装 modeling `apply-robot-design` 增量载荷经①端口提交（命令处理器/断言/inverse 归 modeling——D-KIN-5/P-KIN-5 知会义务随验收登记）；成功=新修订且不破坏既有引用（modeling 命令断言保证）、失败=零修订＋诊断（KIN-14/AT-27 命令面 UT；V-26 登记面数据侧）",
+    "只读会话 writable=false：写类提交拒绝＋诊断（L-K11；PM-07）；『以当前 TCP 为目标』回填仅为显示默认值（L-K5）——排序身份禁隐式读会话姿态（D-KIN-4）；Commands.hpp 门面（§3.3 布局表 T08 行）不新增自有项目对象 schema",
+    "O-35 处置（不适用性登记）：kinematics 无自有领域命令（D-KIN-5）——不设 project commandType，O-35 命令 token 无点形态裁决对本单元无直接约束面；门面提交的是 modeling 命令（`apply-robot-design` 无点 token，服从 2026-09-22 已裁决形态）；§9.8 `kinematics.*` 七条仅为 ui CommandId 词表登记（ui 命名空间约定），非 project 命令语法"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T08 行＋units/kinematics.md §11 T08 行。dependsOn 换算：WP-04-T10≙PRJ-T10（①端口命令提交/结果回显对端）；DTB 前置『WP-10』泛指→UI-T08（参数表/表单公共件＋命令确认交互——门面提交与目标编辑消费面，按指示映射表 WP-10-T08→UI-T08）；WP-15-T03 同波次（FK 指标——会话姿态承载的指标读取面）。requirements=KIN-06/KIN-14/AT-04/AT-27（DTB 行原文，AT-04 映射 V-18、AT-27 映射命令面 UT/V-26）。knownPitfalls：O-35（按指示携带并登记不适用性——kinematics 无领域命令，见 acceptance 第 4 条）、P-KIN-5（命令归宿 modeling——知会登记义务）、P-KIN-7（project①端口/modeling 命令 payload 对端 Draft）。interUnit=true 判定＝经①端口提交 modeling 命令（跨单元命令门面）＋消费 ui 会话态承载。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T04",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "实现 CSV/JSON 需求导入与副本导出（字段字典/单位预览/逐行错误）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-14-T03",
+    "IO-T03",
+    "IO-T04",
+    "IO-T06"
+  ],
+  "requirements": [
+    "REQ-05",
+    "REQ-12",
+    "NFR-SEC-03",
+    "AT-02"
+  ],
+  "designRefs": [
+    "units/requirements.md#11",
+    "units/requirements.md#7.3",
+    "units/requirements.md#7.4",
+    "units/requirements.md#7.5",
+    "units/requirements.md#9.5",
+    "units/requirements.md#10.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_requirements",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t04",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-REQ-8"
+  ],
+  "acceptance": [
+    "CSV 行级部分成功用例通过（V-08，AT-02——DTB 完成条件「错误行保留正确行、错误定位到列与原文」）：含错行文件导入→条目数＝正确行数（正确行保留）；错误行逐条携带行号＋列名＋原文＋原因（REQ-IMPORT-ROW-ERROR 三要素）；重复 id/name→REQ-IMPORT-DUPLICATE-ID；必填列缺失（id/name/位置三分量）→结构级拒绝（该文件不可导入）；可选列缺失→默认值＋报告；未映射/多余列→忽略项清单（不静默丢弃）",
+    "字段字典自动识别用例通过（卡 §7.3 冻结表）：canonical 名＋中英别名表头自动识别＋手动改映射；字段字典经 fieldDictionary() 暴露供向导单位预览（WP-14-T01 交付的冻结表零改动承接）",
+    "单位预览与归一用例通过（V-09，NFR-COR-03）：mm/deg 声明列换算预览正确、落库前经 core 唯一换算归一 SI（SI 值断言）；单位声明无法换算→REQ-IMPORT-UNIT-ILLEGAL；Frame 引用悬空→REQ-IMPORT-FRAME-UNKNOWN（warning，可保留待解析）",
+    "JSON roundtrip 副本语义用例通过（V-10，AT-24——DTB 完成条件原文）：JSON 导入→exportCopy 副本导出→重导入逐字段一致；同一字段字典与安全规则（REQ-12）；exportCopy 经 io AtomicFile 原子写出、失败时旧文件完好、零修订、项目状态不变；草稿导出带 draft:true 标记防误当正式数据；导入溯源 importProvenance={sourceDigest,recordNumber}、路径不入身份（I-REQ-8）",
+    "CSV 按数据解析不执行公式（DTB 约束列原文）：公式样式单元格作为字面数据/行级错误处理，任何路径不执行、不求值——用例显式覆盖",
+    "导入仅产草稿（预览/正式分离承接）：mapCsv/mapJson 纯函数确定性（同输入同输出）、不读文件（io RawTable/JSON 为唯一输入）、任何取消/失败＝无草稿无修订无半成品（V-20 requirements 侧；PM-01 口径）",
+    "双模式构建零错误＋ctest ^ird$ 全绿＋留痕；ird_gates 零命中"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.15 WP-14-T04 行＋卡 §11 T04 行（branch=wp14-t04）。跨单元前置≙（2026-09-22 独立评审不通过项修订后定稿，权威依据＝io.md §12 映射表）：IO-T03≙WP-11-T04（CSV 读写器——mapCsv @pre 的 io::RawTable/CsvParseReport 产出面）、IO-T04≙WP-11-T05（JSON 读写器/JsonProfile）、IO-T06≙WP-11-T06（AtomicFile 所在——exportCopy 原子写出消费；初版误登 IO-T05 且漏 IO-T03，评审不通过已修订）。P-REQ-8 处置：io Csv.hpp/Json.hpp 签名以卡 §1.2 基线为准，io 侧冻结修订若触及 RawTable/CsvParseReport/JsonProfile 形状即转 blocked 增量同步（R-REQ-4 同源：CSV 方言/编码边界规则归 io，本单元不复制——用例只经 RawTable 构造）。verify ctest 采用单元目录过滤口径（-L \"^ird$\"，结论二元可判）。designRefs 锚定卡 §7.3/§7.4/§7.5/§9.5/§10.2（V-08/09/10 观测点）。status 保持 planned，评审通过后放行归治理会话"
+}

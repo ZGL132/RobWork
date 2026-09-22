@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T03",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现 FK 与位姿指标评估器（kin.pose-metrics）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T02",
+    "RT-T09"
+  ],
+  "requirements": [
+    "KIN-01",
+    "NFR-COR-01"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#4.2",
+    "units/kinematics.md#5.1",
+    "units/kinematics.md#5.2",
+    "units/kinematics.md#9.2",
+    "units/kinematics.md#9.6",
+    "units/kinematics.md#14.1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t03",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-37",
+    "O-40",
+    "P-KIN-1",
+    "P-KIN-7"
+  ],
+  "acceptance": [
+    "FK 指标链路（TCP 位姿/Jacobian/奇异值/条件数/可操作度/关节裕量，统一尺度规则＝D-KIN-2：基础雅可比、w=√det(JJᵀ)、条件数=σmax/σmin 奇异以 isFinite 标记不静默截断）解析对照黄金算例通过——附录 D 第 4/9 项容差（黄金数据集 kin-fk-analytic 用例——本任务先行落解析算例 UT，T13 收口全量数据集；V-01；AT-03/NFR-COR-01）",
+    "基座—世界唯一来源：FK(q)→IK 抽样→FK 复算闭环含于去重容差；tcpInWorld 与快照 worldToBase 复核一致、重力相关量仅经 gravityBase（V-02；AT-37 联合观测——本单元侧输入/输出面）；权威关节角 q_authoritative=q_zeroOffset+q_rw（§5.1）",
+    "非法输入 fail-fast：NaN/维度不符 q 拒绝不钳制不置零（V-03 前半，NFR-COR-03，KinematicsError{IllegalQ}）；无 device/无 TCP→结构化错误素材（KIN-NO-DEVICE/KIN-NO-TCP，§9.6）——FK 失败≠工程不可行、超限位 q 可计算（§5.2 两分语义）",
+    "kin.pose-metrics 评估器形态：descriptor 依赖声明（§4.3 行）、supportedModes 含 Preview/Quick/Verified、stateless；运行时模型视图经宿主注入消费（O-37 已裁决宿主注入形态——evidence §9 增补未登记即注入契约未冻结，任务转 blocked）；确定性＝同 (snapshot,q,tcp) 同字节输出",
+    "O-40/Eigen 处置：Jacobian SVD 经 vcpkg 经典模式引入 Eigen（PRIVATE 仅计算库——rw::math 无 SVD），实施时在本 note 补记安装版本；引入前构建仍须零错误"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T03 行＋units/kinematics.md §11 T03 行。dependsOn 换算：WP-06-T09≙RT-T09（RuntimeSnapshot/IRuntimeModelView 对端——RT-T09 交付快照与工厂，卡 §12 交接行『DeviceView 需求』即 RT-T09 对端）；WP-15-T02 同波次。requirements=KIN-01/NFR-COR-01（DTB 行追溯列原文）。knownPitfalls：O-37（运行时视图注入——已裁决宿主注入形态，2026-09-22；冻结前 blocked 触发逐字携带）、O-40（Eigen 依赖——2026-09-22 已登记，随 allowedFiles/knownPitfalls 携带、版本登记于 note/acceptance）、P-KIN-1（统一尺度规则上游未冻结——本卡 D-KIN-2 定义＋黄金锁定，修改走设计变更）、P-KIN-7（对端契约未冻结）。interUnit=true 判定＝消费 runtime 只读视图＋evidence 评估器契约/注册形态。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

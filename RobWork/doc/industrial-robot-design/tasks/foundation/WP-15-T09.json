@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T09",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "实现结果筛选/导出/批量复算域内设施（KIN-08）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T05"
+  ],
+  "requirements": [
+    "KIN-08",
+    "AT-04"
+  ],
+  "designRefs": [
+    "units/kinematics.md#11",
+    "units/kinematics.md#6.2",
+    "units/kinematics.md#6.3",
+    "units/kinematics.md#7.4"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t09",
+  "interUnit": false,
+  "acceptance": [
+    "筛选/最差排序唯一实现点=IKinematicSolutionSet（§6.2，NFR-MNT-04——UI/报告不各自实现比较）：filtered（可用解/含碰撞诊断解）谓词比较集中实现、worstBy（裕量最小/条件数最大/残差最大）、statistics——不可变视图、并发只读安全、已排序集合上幂等（V-04 排序面复用断言；§6.3 四键）",
+    "导出值行（KIN-08/§7.4）：结果整理为 JSON/CSV 值行（含 snapshotId/对象引用 pointOid/regionOid），导出不产生修订（AT-04）；来源（results/<run-id>/ 归档或会话内存）在导出文件头声明；写出经 io 通道由插件侧触发——本任务只交付值行数据整理与单元面 UT（CSV/JSON 写出器集成随 io 消费面验证）",
+    "批量复算=按原 slice 重新提交 execution 新 run：不复用会话残留、结果当前性重新判定（§7.4；CON-02/05 消费语义——本单元保证重提交请求构造正确性 UT）"
+  ],
+  "note": "契约编译起草（CCP §3 第 1~4 步，2026-09-22）：编译自 DTB §2.16 WP-15-T09 行＋units/kinematics.md §11 T09 行。dependsOn：同波次 WP-15-T05（DTB 行原文——消费批量结果与 T05 交付的解集/证据设施）。interUnit=false 判定（卡 §11 T09 行『SolutionSet 视图消费面＋导出值行』）：筛选/排序/最差项/值行整理均为本单元自有设施（纯域内结果设施）；io 写出与 execution 重提交为通道消费且触发方在插件/编排侧（集成面），本任务不产出、不修改跨单元公共接口——故不强制 knownPitfalls（CCP §2），亦不登记。verify 的 ctest 面向域内 UT（筛选稳定性/导出值行形状/复算请求构造）。status 维持 planned（CCP §3 第 6~7 步待走）。"
+}

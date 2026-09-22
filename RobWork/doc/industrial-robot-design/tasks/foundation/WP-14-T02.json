@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T02",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "requirements 构建落位：占位转真实计算库并登记门禁白名单六边",
+  "status": "ready",
+  "dependsOn": [
+    "CORE-T01"
+  ],
+  "requirements": [
+    "NFR-MNT-01"
+  ],
+  "designRefs": [
+    "units/requirements.md#11",
+    "units/requirements.md#3.1",
+    "units/requirements.md#3.2",
+    "units/requirements.md#3.3",
+    "units/requirements.md#9.6",
+    "ARCHITECTURE.md#3.3"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "build-infrastructure",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake -S RobWork -B build -G \"Visual Studio 17 2022\" -A x64 -DRWS_BUILD_INDUSTRIALROBOT=ON",
+    "cmake --build build --config Release --target sdurws_ird_requirements",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t02",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-REQ-8"
+  ],
+  "acceptance": [
+    "双模式构建零错误并留痕：集成模式 sdurws_ird_requirements 由 INTERFACE 占位转 STATIC（目标名/别名 sdurws_ird_requirements/RWS::ird::requirements 不变，C++17 显式、零 Qt、链 sdurw_math——照抄 core/io 形态）；独立冒烟模式 configure＋build 通过（必须带 -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake——DTB §5.1/CORE-T01 G-2 口径，因单元 CMake 自持 find_package(GTest CONFIG REQUIRED)）；两份构建日志入 tasks/ 留痕",
+    "二分结构扫描通过（ird_gates 零命中）：cmake configure 期门禁对含六边新登记的依赖图零误报零漏报；白名单按卡 §3.2 表登记 requirements→core/diagnostics/project/io/evidence 五边（runtime 边仅在实际 include 其公共值类型时登记，未引用则不登并在提交信息注明）；IRD_EXTRA_EDGE_REFS 按白名单文件头规则登记边与出处（units/requirements.md §3.2），traceability/dependency-graph.json 同步刷新并满足门禁的 ⊆ 核对方向；若判定属 ARCH §3.5 表外新边而白名单头规则要求先补登 §3.5，则本任务转 blocked 登记架构增量，不得静默绕过（SA-02/白名单文件头三条修改前提）",
+    "ObjectTypes.hpp/Errors.hpp/DiagCodes.hpp 落位：五个对象类型 token（req-set/req-point-set/req-region-set/req-condition-set/req-plan-set）、ProcessTag/TemplateKind/ArrayKind 词表、schema 版本常量、RequirementError 与 REQ- 稳定码清单（§9.6 表中 T02 行 REQ-SCHEMA-UNSUPPORTED 先注册，其余码随消费者任务注册、不预建无消费者条目）",
+    "_test/_contract_test 目标随文件注册（ird_add_gtest 自持宏，LABELS ird）；配置期红线守卫自持（R-1/R-3 FATAL_ERROR，照抄 core/io 形态）；_plugin 目标本任务不落位（随 WP-14-T08）",
+    "产品代码中文注释规范自查通过（AGENTS §2——文件头/类/函数/单位/坐标系/错误语义五要素），ird_gates 零命中"
+  ],
+  "note": "契约编译起草（contract-compilation.md §3 第 1~4 步，2026-09-22）：编译自 DTB §2.15 WP-14-T02 行＋卡 §11 T02 行（≙WP-14-T02，branch=wp14-t02）。编译决策：①DTB 前置列 WP-14-T01（单元卡，已完成）无契约 JSON 载体、不入 dependsOn（悬空引用会被 validate-task ①拒绝），实际前置取 WP-03-T01→CORE-T01（≙映射，ls 验证存在）；②allowedFiles 显式列入门禁白名单两文件（ird_gates.cmake/ird_gates_whitelist.cmake——卡 §3.2 应增边义务，CORE-T01 教训：不列入则留痕被迫拆提交）＋上级 CMakeLists.txt（防 add_subdirectory 为条件式时阻塞）；③verify 用 configure＋build 双命令承载 DTB 完成条件「双模式构建零错误；二分结构扫描通过」（门禁在 configure 期执行，结论二元可判），本任务尚无测试文件故无 ctest 行；④designRefs 按卡 §3.1/§3.2/§3.3/§9.6＋ARCH §3.3（二分结构，DTB 行需求列原文）；⑤knownPitfalls=P-REQ-8（对端公共头未冻结——六边指向的 core/diagnostics/project/io/evidence 头签名可能漂移；处置：按卡 §1.2 基线实现，签名漂移且影响面不明即转 blocked 登记增量同步，不在代码中自行解释）。status 保持 planned：放行（§3 第 5~7 步机器校验/独立评审/所有者确认）由治理会话执行"
+}
