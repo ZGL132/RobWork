@@ -62,6 +62,16 @@ namespace sdurws::ird::modeling {
 // 产码共用同一常量，禁字符串拼码/第二处字面量，§9.5 尾段产码纪律）
 // =====================================================================
 
+/// §9.5 T05 行：MDL-IMPORT-BRANCH-SELECTION（导入/info——多可动分支文件
+/// →显式选择主链；辅助分支不构成拒绝）。
+inline constexpr std::string_view kMdlImportBranchSelection = "MDL-IMPORT-BRANCH-SELECTION";
+
+/// §9.5 T05 行：MDL-IMPORT-TEMPLATE-RANGE（导入/info——所选主链 4/5 轴或
+/// 含 prismatic，超出首版产品模板范围→草稿兼容编辑、模板创建与正式计算
+/// 阻断；类型保留不降级。本行为 WP-13-T05 实现期增登——卡 §6.4"诊断
+/// 超出首版产品模板范围"语义的码面落位，§14.6 v0.6 登记）。
+inline constexpr std::string_view kMdlImportTemplateRange = "MDL-IMPORT-TEMPLATE-RANGE";
+
 /// §9.5 T02/T03 行：MDL-READINESS-SCHEMA-UNSUPPORTED（校验/error——对象
 /// schema 主版本超出本程序支持→升级程序/重新编辑；Errors.hpp 映射码
 /// modelingDiagCode 与此同源同串）。
@@ -85,9 +95,11 @@ inline constexpr std::string_view kMdlImportPendingConfirm = "MDL-IMPORT-PENDING
 
 /**
  * @brief 产出 modeling 已到注册任务行的 MDL-* 稳定码描述符全集（当前
- *        4 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
+ *        6 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
  *        WP-13-T05 登记的 T05 行 MDL-IMPORT-{UNSUPPORTED-JOINT,
- *        ZERO-AXIS,PENDING-CONFIRM} 三码——清单序＝§9.5 表行序）。
+ *        BRANCH-SELECTION,ZERO-AXIS,PENDING-CONFIRM,TEMPLATE-RANGE}
+ *        五码——清单序＝§9.5 表行序；TEMPLATE-RANGE 为实现期增登行，
+ *        §14.6 v0.6 登记）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，io ioCodeDescriptors
  * 同款自证结构）：

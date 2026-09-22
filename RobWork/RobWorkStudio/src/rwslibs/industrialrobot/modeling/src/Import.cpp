@@ -22,10 +22,11 @@
  *   符号）/惯量相似变换（inertial 系→连杆系）/名称净化（runtime 消歧
  *   预处理）/确定性临时句柄（双 FNV-1a 64 拼合 128 位）/行索引（字节
  *   偏移→行列，诊断稳定排序键）/自碰撞元素递归收集。
- *   主体 ModelImportMapper::mapUrdf 九步：①DOM 解析 ②元素扫描（收集）
+ *   主体 ModelImportMapper::mapUrdf 十步：①DOM 解析 ②元素扫描（收集）
  *   ③忽略/不支持面登记 ④名称净化与冲突 ⑤结构校验（引用/单父/单根）
- *   ⑥分支检测（多可动分支→拒绝未选链）⑦主链解析 ⑧草稿构造（字段
- *   映射逐行）⑨诊断稳定排序出口。每步的业务依据见段前注释。
+ *   ⑥分支解析与主链行走（选链——§6.4 维度一）⑦主链外元素登记
+ *   ⑧草稿构造（字段映射逐行＋轴语义）⑨维度二能力判定 ⑩阻断面汇总
+ *   ＋诊断稳定排序出口。每步的业务依据见段前注释。
  *
  * 确定性（NFR-COR-01/02）：全部数值路径 locale 无关（from_chars/to_chars）；
  * 浮点运算次序固定；诊断按（相对键，行，列，产出序）字典序稳定排序；
@@ -497,8 +498,6 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                                          const ImportOptions& options,
                                          std::vector<core::DiagnosticRecord>& diags) const
 {
-    (void)options;  // 本提交无选项字段（链型判定提交扩展显式选链后消费）
-
     ImportOutcome outcome;
     ImportReport& report = outcome.report;
     report.sourceLabel = source.dependencyTree.rootRel;
@@ -1174,65 +1173,126 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                && (isMotionBearing(jointTypes[j]) || subtreeHasMovable[c]);
     };
 
-    // 分裂检测：某 link 有 ≥2 个"分支含运动"的子关节→多可动分支。
-    {
-        std::vector<std::string> branchRoots;
-        std::string splitLinkName;
-        for (std::size_t l = 0; l < scan.links.size(); ++l) {
-            std::vector<std::string> movableChildRoots;
-            for (const std::size_t j : childJointsOfLink[l]) {
-                if (branchHasMotion(j)) {
-                    movableChildRoots.push_back(linkNames[childLinkOfJoint[j]]);
-                }
-            }
-            if (movableChildRoots.size() >= 2) {
-                splitLinkName = linkNames[l];
-                branchRoots = std::move(movableChildRoots);
-                break;  // 取最上（先遇到）分裂点——确定性
-            }
-        }
-        if (!branchRoots.empty()) {
-            // 多可动分支＋未选链（本提交切片）：拒绝产出草稿——未经用户
-            // 显式选择不排除可动分支（DTB 禁止项）；分支对象与原因经
-            // error params 可观察（report.branches 条目随链型判定提交增列）。
-            ImportError err;
-            err.code = ImportErrorCode::MultiBranchNeedsSelection;
-            err.params.emplace_back("branch-count", std::to_string(branchRoots.size()));
-            std::string roots;
-            for (std::size_t i = 0; i < branchRoots.size(); ++i) {
-                if (i > 0) { roots += ","; }
-                roots += branchRoots[i];
-            }
-            err.params.emplace_back("branch-roots", roots);
-            err.params.emplace_back("split-link", splitLinkName);
-            err.detail = "多可动分支：须用户显式选择主链后重试（§6.4 维度一；"
-                         "MDL-IMPORT-BRANCH-SELECTION 报告面随链型判定提交）";
-            outcome.error = std::move(err);
-            report.submittable = false;
-            return finalizeFailure(diagEntries, diags, std::move(outcome));
-        }
-    }
-
-    // -----------------------------------------------------------------
-    // 第七步：主链解析（单可动链直通——§6.4 维度一第一行）。
-    // 主链＝根到叶：每步取唯一"子树含可动关节"的子关节；主链外的 fixed
-    // 子树（无可动关节）逐元素进忽略清单（不构成拒绝——候选处置随链型
-    // 判定提交，可观察不静默）。
-    // -----------------------------------------------------------------
+    // 分裂解析与主链行走（§6.4 维度一）：单可动链直通；多可动分支在
+    // options.selectedMainBranch 给出用户显式选择后放行——未经显式选择
+    // 不排除可动分支（DTB 禁止项）。每次调用解析一层分裂：选中分支内部
+    // 再分裂时返回新一轮候选（向导循环——ImportOptions 注）。
     std::vector<std::size_t> chainJoints;   ///< 链序（root→leaf）
     std::vector<std::size_t> chainLinks;    ///< links[0]=root … size=关节+1（I-MDL-1）
     {
         std::size_t cur = rootLink;
         chainLinks.push_back(cur);
         while (true) {
-            std::size_t nextJoint = kNone;
+            // 当前链位的运动承载子关节（候选分支）。
+            std::vector<std::size_t> candidates;
             for (const std::size_t j : childJointsOfLink[cur]) {
-                if (branchHasMotion(j)) {
-                    nextJoint = j;
-                    break;
+                if (branchHasMotion(j)) { candidates.push_back(j); }
+            }
+            if (candidates.empty()) { break; }  // 叶——主链结束
+            std::size_t nextJoint = kNone;
+            if (candidates.size() == 1) {
+                nextJoint = candidates[0];
+            } else {
+                // 多可动分支：按用户显式选链匹配（分支根连杆名）。
+                if (options.selectedMainBranch.empty()) {
+                    // 未选择：分支报告（对象与原因可观察）＋BRANCH-SELECTION
+                    // info 诊断＋拒绝产出草稿——不排除任何可动分支。
+                    std::vector<std::string> roots;
+                    for (const std::size_t j : candidates) {
+                        roots.push_back(linkNames[childLinkOfJoint[j]]);
+                        ImportBranchItem item;
+                        item.branchRoot = linkNames[childLinkOfJoint[j]];
+                        item.splitLink = linkNames[cur];
+                        item.splitJoint = jointNames[j];
+                        item.disposition = "pending-selection";
+                        item.reason = "候选分支（含可动关节——显式选链后决议；"
+                                      "辅助分支可转场景/环境候选或忽略）";
+                        item.span = scan.joints[j].span;
+                        report.branches.push_back(std::move(item));
+                    }
+                    std::string rootsJoined;
+                    for (std::size_t i = 0; i < roots.size(); ++i) {
+                        if (i > 0) { rootsJoined += ","; }
+                        rootsJoined += roots[i];
+                    }
+                    pushImportDiag(diagEntries, diagSeq++, kMdlImportBranchSelection,
+                                   deriveTempObjectId("link", cur,
+                                                      linkNames[cur]),
+                                   linkNames[cur],
+                                   "branch-count=" + std::to_string(candidates.size())
+                                       + " branch-roots=" + rootsJoined,
+                                   "显式选择主链分支（其余分支转场景/环境候选或"
+                                   "忽略——不构成拒绝）",
+                                   scan.joints[candidates[0]].span);
+                    ImportError err;
+                    err.code = ImportErrorCode::MultiBranchNeedsSelection;
+                    err.params.emplace_back("branch-count",
+                                            std::to_string(candidates.size()));
+                    err.params.emplace_back("branch-roots", rootsJoined);
+                    err.params.emplace_back("split-link", linkNames[cur]);
+                    err.detail = "多可动分支未选链——未经用户显式选择不排除可动"
+                                 "分支（§6.4 维度一）";
+                    outcome.error = std::move(err);
+                    report.submittable = false;
+                    return finalizeFailure(diagEntries, diags, std::move(outcome));
+                }
+                bool selectionMatched = false;
+                for (const std::size_t j : candidates) {
+                    if (linkNames[childLinkOfJoint[j]] == options.selectedMainBranch) {
+                        nextJoint = j;
+                        selectionMatched = true;
+                        ImportBranchItem item;
+                        item.branchRoot = linkNames[childLinkOfJoint[j]];
+                        item.splitLink = linkNames[cur];
+                        item.splitJoint = jointNames[j];
+                        item.disposition = "selected";
+                        item.reason = "用户显式选择的主链分支";
+                        item.span = scan.joints[j].span;
+                        report.branches.push_back(std::move(item));
+                        break;
+                    }
+                }
+                if (!selectionMatched) {
+                    // 选链名与本层候选不符：值面拒绝（调用方以过期候选回填
+                    // ——返回当前层候选供向导纠正；确定性值面，不 fail-fast）。
+                    std::vector<std::string> roots;
+                    for (const std::size_t j : candidates) {
+                        roots.push_back(linkNames[childLinkOfJoint[j]]);
+                    }
+                    std::string rootsJoined;
+                    for (std::size_t i = 0; i < roots.size(); ++i) {
+                        if (i > 0) { rootsJoined += ","; }
+                        rootsJoined += roots[i];
+                    }
+                    ImportError err;
+                    err.code = ImportErrorCode::MultiBranchNeedsSelection;
+                    err.params.emplace_back("branch-count",
+                                            std::to_string(candidates.size()));
+                    err.params.emplace_back("branch-roots", rootsJoined);
+                    err.params.emplace_back("split-link", linkNames[cur]);
+                    err.params.emplace_back("rejected-selection",
+                                            options.selectedMainBranch);
+                    err.detail = "选链名与当前分裂层候选不符——请依据分支报告"
+                                 "（report.branches）重新选择";
+                    outcome.error = std::move(err);
+                    report.submittable = false;
+                    return finalizeFailure(diagEntries, diags, std::move(outcome));
+                }
+                // 未被选中的同层候选：辅助分支（场景/环境候选或忽略——用户
+                // 选择），报告登记、不构成拒绝。
+                for (const std::size_t j : candidates) {
+                    if (j == nextJoint) { continue; }
+                    ImportBranchItem item;
+                    item.branchRoot = linkNames[childLinkOfJoint[j]];
+                    item.splitLink = linkNames[cur];
+                    item.splitJoint = jointNames[j];
+                    item.disposition = "aux-candidate";
+                    item.reason = "辅助分支（未选链）——场景/环境候选或忽略"
+                                  "（用户选择）；不构成拒绝（§6.4 维度一）";
+                    item.span = scan.joints[j].span;
+                    report.branches.push_back(std::move(item));
                 }
             }
-            if (nextJoint == kNone) { break; }  // 叶——主链结束
             chainJoints.push_back(nextJoint);
             cur = childLinkOfJoint[nextJoint];
             chainLinks.push_back(cur);
@@ -1248,8 +1308,14 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
             return finalizeFailure(diagEntries, diags, std::move(outcome));
         }
     }
+
+    // -----------------------------------------------------------------
+    // 第八步前注：链解析已在第六步的选链行走中完成（单链直通或显式选链
+    // ——含分支报告与辅助分支候选登记）。主链外元素登记如下。
+    // -----------------------------------------------------------------
     {
-        // 主链外元素登记（fixed 连接子树——§6.4"辅助分支不构成拒绝"）。
+        // 主链外元素登记（§6.4"辅助分支不构成拒绝"——未入主链的分支内容
+        // 以忽略清单承载可观察面；分支对象与原因在 report.branches）。
         std::vector<bool> linkOnChain(scan.links.size(), false);
         for (const std::size_t l : chainLinks) { linkOnChain[l] = true; }
         std::vector<bool> jointOnChain(scan.joints.size(), false);
@@ -1258,8 +1324,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
             if (!linkOnChain[l]) {
                 ImportIgnoredItem item;
                 item.element = "link '" + linkNames[l] + "'";
-                item.reason = "主链外 fixed 连接子树——不构成拒绝；场景/环境候选"
-                              "处置随链型判定提交（§6.4 维度一辅助分支）";
+                item.reason = "主链外分支连杆——不构成拒绝；场景/环境候选或忽略"
+                              "（用户选择，§6.4 维度一辅助分支）";
                 item.span = scan.links[l].span;
                 report.ignored.push_back(std::move(item));
             }
@@ -1274,8 +1340,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                     item.kind = "joint-type";
                     item.subject = "joint '" + jointNames[j] + "'（主链外分支）";
                     item.reason = "关节类型 '" + scan.joints[j].rawType
-                                  + "' 不可表达——分支不映射（候选处置随链型判定"
-                                  "提交）";
+                                  + "' 不可表达——分支不映射（辅助分支，场景/"
+                                    "环境候选或忽略）";
                     item.guidance = "该分支不进入草稿；如需建模请改类型或拆分文件";
                     item.span = scan.joints[j].span;
                     report.unsupported.push_back(std::move(item));
@@ -1283,8 +1349,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                 }
                 ImportIgnoredItem item;
                 item.element = "joint '" + jointNames[j] + "'";
-                item.reason = "主链外分支关节——不构成拒绝；场景/环境候选处置随"
-                              "链型判定提交（§6.4 维度一辅助分支）";
+                item.reason = "主链外分支关节——不构成拒绝；场景/环境候选或忽略"
+                              "（用户选择，§6.4 维度一辅助分支）";
                 item.span = scan.joints[j].span;
                 report.ignored.push_back(std::move(item));
             }
@@ -1617,17 +1683,32 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                                pending.span);
             }
         } else if (type == 1) {
-            // continuous：bounds NotApplicable（类型保留——I-MDL-4；工程
-            // 工作范围确认随链型判定提交）。
+            // continuous：bounds NotApplicable（类型保留——I-MDL-4）；工程
+            // 工作范围未确认→待确认草稿项（§6.4——确认值必须有限区间且
+            // 不回写权威 bounds；未确认不得正式运行——就绪校验 Blocking 项
+            // "工程工作范围未确认"的导入期登记面）。
             entry.bounds = core::SourcedValue<JointLimits>::notApplicable();
             ImportMappedItem mapped;
             mapped.sourcePath = "joint[" + std::to_string(ci) + "]";
             mapped.targetField = "joints[" + std::to_string(ci) + "].bounds";
             mapped.valueText = "not-applicable";
-            mapped.note = "continuous 无限位——类型保留（§6.3；workingRange 确认"
-                          "随链型判定提交）";
+            mapped.note = "continuous 无限位——类型保留（§6.3）；workingRange "
+                          "未确认（待确认清单）";
             mapped.span = src.span;
             report.mapped.push_back(std::move(mapped));
+            ImportPendingItem pending;
+            pending.kind = "working-range-unconfirmed";
+            pending.subject = "joint '" + name + "'";
+            pending.question = "continuous 工程工作范围未确认——请确认有限区间"
+                               "（qmin'<qmax'，rad；确认值不回写权威 bounds）";
+            pending.span = src.span;
+            report.pendingConfirms.push_back(std::move(pending));
+            pushImportDiag(diagEntries, diagSeq++, kMdlImportPendingConfirm,
+                           jointTempId, name,
+                           "item-kind=working-range-unconfirmed subject=joint '"
+                               + name + "'",
+                           "逐条确认——工程工作范围（未确认不得正式运行，§6.4）",
+                           src.span);
         } else if (src.hasLimit) {
             // fixed：无限位语义（出现即忽略面）。
             ImportIgnoredItem item;
@@ -2033,7 +2114,67 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
     report.resources = std::move(resourceRows);
 
     // -----------------------------------------------------------------
-    // 第九步：阻断面汇总＋出口（诊断稳定排序）。
+    // 第九步：维度二链型能力判定（§6.4 能力矩阵——所选主链；纯函数，
+    // 同一判定被模板创建入口复用）＋阻断面汇总＋出口（诊断稳定排序）。
+    // 判定口径：可动关节数（revolute+continuous+prismatic；fixed 不计）
+    // ∈{6,7} 且不含 prismatic→全能力；其余（4/5 轴、含 prismatic、或
+    // 不在六/七轴表述内的其它轴数——1~3 轴无模板语义，同归范围外）→
+    // 超出首版产品模板范围（草稿兼容编辑通过，模板创建与正式计算/报告
+    // 阻断＋诊断；类型保留不降级——V12-01）。mimic/planar/floating 不
+    // 产生能力结论（阻断型失败在前——见 outcome.error）。
+    // -----------------------------------------------------------------
+    {
+        std::uint32_t movableAxes = 0;
+        bool prismaticPresent = false;
+        for (const JointEntry& joint : draft.joints) {
+            if (joint.type == JointType::Revolute
+                || joint.type == JointType::Continuous
+                || joint.type == JointType::Prismatic) {
+                ++movableAxes;
+            }
+            if (joint.type == JointType::Prismatic) { prismaticPresent = true; }
+        }
+        const bool fullRange = (movableAxes == 6 || movableAxes == 7) && !prismaticPresent;
+        report.chainCapability.movableAxes = movableAxes;
+        report.chainCapability.containsPrismatic = prismaticPresent;
+        if (fullRange) {
+            report.chainCapability.kind = ChainCapabilityKind::FullTemplateRange;
+            report.chainCapability.reason =
+                "六/七轴全旋转（含经确认工程工作范围的 continuous，类型保留）"
+                "——模板/识别/编辑/正式计算全通（§6.4 能力矩阵第一行）";
+        } else {
+            report.chainCapability.kind = ChainCapabilityKind::BeyondTemplateRange;
+            if (prismaticPresent) {
+                report.chainCapability.reason =
+                    "目标链含 prismatic——超出首版产品模板范围（R1；"
+                    "MDL-12-S1 启用后仅六/七轴含 prismatic 放开）";
+            } else if (movableAxes == 4 || movableAxes == 5) {
+                report.chainCapability.reason =
+                    "4/5 轴——超出首版产品模板范围（仅导入识别与草稿兼容编辑）";
+            } else {
+                report.chainCapability.reason =
+                    "可动轴数 " + std::to_string(movableAxes)
+                    + " 不在六/七轴模板范围（1~3 轴无模板语义，同归范围外）";
+            }
+            // TEMPLATE-RANGE info 诊断（能力边界结论——InfeasibilityProof
+            // 族；reportability 保证范围外链的导入留痕可追溯）。
+            pushImportDiag(diagEntries, diagSeq++, kMdlImportTemplateRange,
+                           draft.joints.empty()
+                               ? core::ObjectId{}
+                               : draft.joints.front().objectId,
+                           draft.joints.empty() ? std::string()
+                                                : draft.joints.front().localName,
+                           "movable-axes=" + std::to_string(movableAxes)
+                               + " prismatic-present="
+                               + (prismaticPresent ? "true" : "false"),
+                           "草稿兼容编辑可用；模板创建与正式计算/报告将被阻断"
+                           "（类型保留，不静默降级——V12-01）",
+                           scan.robotSpan);
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // 第十步：阻断面汇总＋出口（诊断稳定排序）。
     // outcome.error＝§9.4.3 @错误 行具名阻断条件中**首个**命中者（多阻断
     // 面经报告清单全量可观察）；submittable=false 亦可能仅由 errors 清单
     // 驱动（无具名条件）——两面的判定表见 ImportOutcome 类型注。

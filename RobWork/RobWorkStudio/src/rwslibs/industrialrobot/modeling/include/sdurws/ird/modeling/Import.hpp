@@ -2,9 +2,8 @@
  * @file   Import.hpp
  * @brief  URDF 导入字段映射与链型判定——IModelImportMapper 纯函数服务、
  *         ValidatedSource 输入值类型、ImportOutcome/ImportReport 导入报告
- *         值类型（卡 §6.1～§6.4/§6.7/§9.4.3；本提交＝DTB 规模列第一提交
- *         「解析映射」：字段映射/默认补全/忽略与不支持报告＋轴语义＋资源
- *         映射；链型判定两维度随第二提交落位）。
+ *         值类型（卡 §6.1～§6.4/§6.7/§9.4.3；实现按 DTB 规模列拆两提交：
+ *         解析映射＋链型判定，本头为两提交的完整公共面）。
  *
  * 设计依据：
  *   - units/modeling.md §6.1（导入总管线与三分边界——输入全部为 io 产物、
@@ -114,13 +113,17 @@ struct ValidatedSource {
 /**
  * @brief 导入映射选项（§9.4.3"同输入字节＋同 options→同输出"的 options）。
  *
- * 本提交（解析映射切片）暂无选项字段：字段映射/轴语义/资源映射不依赖
- * 用户决策。链型判定提交将扩展用户显式选链字段（§6.4 维度一——未经用户
- * 显式选择不排除可动分支，DTB 禁止项）；扩展为表尾追加，不改本提交行为。
+ * selectedMainBranch＝用户显式选链（§6.4 维度一）：取**分支根连杆**的
+ * 净化后 localName——向导页依据分支报告（report.branches）由用户点选后
+ * 回填；多可动分支文件在未选择时拒绝产出草稿（未经用户显式选择不排除
+ * 可动分支——DTB 禁止项）。语义细则：每次调用解析**一层**分裂——选中
+ * 分支内部若再分裂，返回新一轮候选清单请求继续选链（向导循环）；单可
+ * 动链文件本字段留空即可。
  *
  * 生命周期/所有权：纯值类型，调用方所有。
  */
 struct ImportOptions {
+    std::string selectedMainBranch;   ///< 用户显式选择的主链分支根连杆名（空＝未选择）
 };
 
 // =====================================================================
@@ -240,8 +243,10 @@ struct ImportUnsupportedItem {
  * @brief 待确认草稿清单条目（§9.4.3 @post"待确认清单"——用户确认后可
  *        应用；确认动作经草稿编辑/确认流，导入期只登记不代决）。
  *
- * kind 词表（本提交）："axis-default-plus-x"（缺 axis 默认局部 +X——
- * MDL-11）、"limit-missing"（revolute/prismatic 缺 lower/upper）。
+ * kind 词表："axis-default-plus-x"（缺 axis 默认局部 +X——MDL-11）、
+ * "limit-missing"（revolute/prismatic 缺 lower/upper）、
+ * "working-range-unconfirmed"（continuous 工程工作范围未确认——§6.4；
+ * 未确认不得正式运行，确认值不回写权威 bounds）。
  */
 struct ImportPendingItem {
     std::string kind;             ///< 待确认类别（上行词表）
@@ -359,9 +364,69 @@ struct ImportErrorItem {
 };
 
 /**
- * @brief 导入报告（§9.4.3 @post 全集的本提交面——四清单＋待确认＋关节
- *        状态＋资源状态表＋两类候选＋物理错误项；分支报告/能力结论随
- *        链型判定提交增列）。
+ * @brief 分支报告条目（§6.4 维度一——"分支报告（对象与原因可观察）"；
+ *        MDL-IMPORT-BRANCH-SELECTION 语义的报告载体）。
+ *
+ * 多可动分支文件的每个候选分支一行（含被选中与未选中两种状态）；辅助
+ * 分支不构成拒绝——处置面为场景/环境候选或忽略（用户选择），本条目是
+ * 该处置的报告承载。
+ */
+struct ImportBranchItem {
+    std::string branchRoot;       ///< 分支根连杆（净化后 localName——选链回填键）
+    std::string splitLink;        ///< 分裂点连杆（该分支自其分歧）
+    std::string splitJoint;       ///< 分裂关节（分歧处的父关节 localName）
+    std::string disposition;      ///< 处置面："selected"（主链）/"aux-candidate"（场景/环境候选或忽略——用户选择）
+    std::string reason;           ///< 可观察原因（含分支可动关节描述）
+    ImportSourceSpan span;        ///< 源位置（分歧关节）
+
+    bool operator==(const ImportBranchItem& o) const
+    {
+        return branchRoot == o.branchRoot && splitLink == o.splitLink
+               && splitJoint == o.splitJoint && disposition == o.disposition
+               && reason == o.reason && span == o.span;
+    }
+    bool operator!=(const ImportBranchItem& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 主链能力结论类别（§6.4 维度二能力矩阵的结论面——判定实现为
+ *        导入映射的纯函数部分，同一判定被模板创建入口复用（卡 §6.4））。
+ *
+ * 词表两值（表尾追加纪律）：FullTemplateRange＝六/七轴全旋转（含经确认
+ * 工程工作范围的 continuous，类型保留）——模板/识别/编辑/正式计算全通；
+ * BeyondTemplateRange＝4/5 轴或目标链含 prismatic（及不在六/七轴表述内
+ * 的其它轴数）——导入识别与草稿兼容编辑通过，模板创建与正式计算/报告
+ * 阻断（诊断"超出首版产品模板范围"；R1；MDL-12-S1 启用后仅六/七轴含
+ * prismatic 放开）。mimic/planar/floating 不产生能力结论（阻断型失败
+ * ——UnsupportedJointType 无草稿／mimic 阻断提交）。
+ */
+enum class ChainCapabilityKind {
+    FullTemplateRange,     ///< 六/七轴全旋转——全能力
+    BeyondTemplateRange,   ///< 超出首版产品模板范围——草稿兼容编辑，模板/正式计算阻断
+};
+
+/**
+ * @brief 主链能力结论（所选主链的维度二判定结果——报告承载；"不静默
+ *        降级关节类型"的类型保留面：prismatic 保持 Prismatic，本结论
+ *        只界定能力边界不改写任何关节类型——V12-01）。
+ */
+struct ChainCapability {
+    ChainCapabilityKind kind = ChainCapabilityKind::BeyondTemplateRange;  ///< 结论类别
+    std::uint32_t movableAxes = 0;  ///< 主链可动关节数（revolute+continuous+prismatic；fixed 不计）
+    bool containsPrismatic = false;  ///< 主链含 prismatic（单位 m 限位）
+    std::string reason;              ///< 结论依据（卡 §6.4 行语义；呈现归文案层）
+
+    bool operator==(const ChainCapability& o) const noexcept
+    {
+        return kind == o.kind && movableAxes == o.movableAxes
+               && containsPrismatic == o.containsPrismatic && reason == o.reason;
+    }
+    bool operator!=(const ChainCapability& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief 导入报告（§9.4.3 @post 全集——四清单＋待确认＋关节状态＋资源
+ *        状态表＋两类候选＋错误项＋分支报告＋主链能力结论）。
  *
  * 确定性（NFR-COR-02）：各清单条目按源文件行序追加（解析遍历即文档序）；
  * 同输入字节＋同 options→逐字段相等的报告。submittable＝草稿是否可提交
@@ -379,7 +444,9 @@ struct ImportReport {
     std::vector<ImportResourceItem> resources;              ///< 资源状态表
     std::vector<ImportSelfCollisionItem> selfCollisionCandidates;  ///< 策略草稿候选输入（P-MDL-3）
     std::vector<ImportDrivetrainItem> drivetrainCandidates; ///< 传动回填候选（effort→Peak）
-    std::vector<ImportErrorItem> errors;                    ///< 物理合法性错误项（应用阻断面）
+    std::vector<ImportErrorItem> errors;                    ///< 错误项（应用阻断面）
+    std::vector<ImportBranchItem> branches;                 ///< 分支报告（维度一——对象与原因可观察）
+    ChainCapability chainCapability{};                      ///< 主链能力结论（维度二——所选主链）
     bool submittable = true;      ///< 草稿可提交修订（false＝存在不可提交面）
 
     bool operator==(const ImportReport& o) const
@@ -390,7 +457,9 @@ struct ImportReport {
             && jointStatuses == o.jointStatuses && resources == o.resources
             && selfCollisionCandidates == o.selfCollisionCandidates
             && drivetrainCandidates == o.drivetrainCandidates
-            && errors == o.errors && submittable == o.submittable;
+            && errors == o.errors && branches == o.branches
+            && chainCapability == o.chainCapability
+            && submittable == o.submittable;
     }
     bool operator!=(const ImportReport& o) const { return !(*this == o); }
 };
@@ -536,8 +605,9 @@ public:
     virtual ~IModelImportMapper() = default;
 
     /**
-     * @brief URDF 业务映射（§6.3/§6.4——本提交落位字段映射/轴语义/资源
-     *        映射与分支检测；选链与能力矩阵随链型判定提交）。
+     * @brief URDF 业务映射（§6.3/§6.4——字段映射/轴语义/资源映射＋链型
+     *        判定两维度：分支报告＋显式选链、能力矩阵、continuous 工程
+     *        工作范围待确认、mimic/planar/floating 阻断）。
      *
      * @param source  [in] io 已验证产物（ValidatedSource 契约见类型注）
      * @param options [in] 导入选项（确定性输入的一部分）

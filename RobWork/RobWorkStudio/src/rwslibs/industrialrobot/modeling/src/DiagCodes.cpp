@@ -12,8 +12,8 @@
  *   - 先例：io/src/IoDiagnostics.cpp（ioCodeDescriptors 逐字段登记口径）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 4
  *
- * 背景说明：清单当前 4 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
- * T05 行三码）——分批注册纪律（"不预建无消费者条目"）的执行口径见
+ * 背景说明：清单当前 6 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
+ * T05 行五码）——分批注册纪律（"不预建无消费者条目"）的执行口径见
  * 头文件 DiagCodes.hpp 文件头注；其余行随各自任务在**本清单表尾追加**
  * （表尾追加＝登记簿纪律，不重排既有项）。
  *
@@ -82,6 +82,30 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     unsupportedJoint.deprecated = false;
     // supersededBy 保持 nullopt。
 
+    // ---- §9.5 T05 行：MDL-IMPORT-BRANCH-SELECTION（WP-13-T05 登记）----
+    // 多可动分支文件→显式选择主链（分支报告可观察——对象与原因；辅助
+    // 分支转场景/环境候选或忽略、不构成拒绝——§6.4 维度一）。分类
+    // InputInvalid（输入不足以唯一定义模型——需用户补全决策；词表无
+    // "待决策"独立类）；级别 info（§9.5"导入/info"——非错误、正常交互面）。
+    diagnostics::CodeDescriptor branchSelection;
+    branchSelection.code = std::string(kMdlImportBranchSelection);
+    branchSelection.ownerUnit = "modeling";
+    branchSelection.category = diagnostics::DiagnosticCategory::InputInvalid;
+    branchSelection.severity = diagnostics::DiagnosticSeverity::Info;   // §9.5"导入/info"
+    branchSelection.titleKey = "diag.mdl-import-branch-selection.title";
+    branchSelection.detailKey = "diag.mdl-import-branch-selection.detail";
+    branchSelection.paramSchema = R"(["branch-count","branch-roots"])";
+    //        （branch-count＝候选分支数；branch-roots＝分支根连杆名逗号清单）
+    branchSelection.confirmable = false;          // §9.5 行：false（选链经向导交互，非确认放行）
+    branchSelection.requiresComparison = false;
+    branchSelection.retryable = diagnostics::RetryKind::UserRetry;  // "显式选择主链"＝fix-input 族
+    branchSelection.userVisible = true;
+    branchSelection.reportable = true;
+    branchSelection.historical = true;
+    branchSelection.registryVersion = 1;
+    branchSelection.deprecated = false;
+    // supersededBy 保持 nullopt。
+
     // ---- §9.5 T05 行：MDL-IMPORT-ZERO-AXIS（WP-13-T05 登记）----
     // 零轴/非有限轴关节→修正源文件（该关节标记 Invalid，含该类关节的
     // 草稿不得提交修订——MDL-11 后半；仅报告不静默修正，NFR-COR-03）。
@@ -132,7 +156,36 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     pendingConfirm.deprecated = false;
     // supersededBy 保持 nullopt。
 
-    return {d, unsupportedJoint, zeroAxis, pendingConfirm};
+    // ---- §9.5 T05 行：MDL-IMPORT-TEMPLATE-RANGE（WP-13-T05 实现期增登，
+    // §14.6 v0.6 登记——卡 §6.4 能力矩阵第二行"诊断'超出首版产品模板
+    // 范围'"的码面落位）----
+    // 所选主链 4/5 轴或含 prismatic→导入识别与草稿兼容编辑通过，模板创建
+    // 入口与正式计算/报告阻断（类型保留不降级——V12-01；R1；MDL-12-S1
+    // 启用后仅六/七轴含 prismatic 放开）。分类 InfeasibilityProof＝
+    // diagnostics §4.3 词表"有效工程结论而非错误"族：能力边界结论（链可
+    // 识别可编辑，仅模板/正式计算面阻断）；级别 info（§9.5 增登行
+    // "导入/info"）。
+    diagnostics::CodeDescriptor templateRange;
+    templateRange.code = std::string(kMdlImportTemplateRange);
+    templateRange.ownerUnit = "modeling";
+    templateRange.category = diagnostics::DiagnosticCategory::InfeasibilityProof;
+    templateRange.severity = diagnostics::DiagnosticSeverity::Info;   // 增登行"导入/info"
+    templateRange.titleKey = "diag.mdl-import-template-range.title";
+    templateRange.detailKey = "diag.mdl-import-template-range.detail";
+    templateRange.paramSchema = R"(["movable-axes","prismatic-present"])";
+    //        （movable-axes＝主链可动关节数；prismatic-present＝true/false）
+    templateRange.confirmable = false;          // 结论呈现（无可确认放行语义——阻断面在模板/计算入口）
+    templateRange.requiresComparison = false;
+    templateRange.retryable = diagnostics::RetryKind::Never;  // 结论呈现类（草稿可编辑——无"重试"动作）
+    templateRange.userVisible = true;
+    templateRange.reportable = true;
+    templateRange.historical = true;
+    templateRange.registryVersion = 1;
+    templateRange.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
+            templateRange};
 }
 
 void registerModelingCodes(diagnostics::IDiagnosticRegistry& registry)

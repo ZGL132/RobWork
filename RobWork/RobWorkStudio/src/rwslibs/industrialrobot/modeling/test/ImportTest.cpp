@@ -1,8 +1,7 @@
 /**
  * @file   ImportTest.cpp
- * @brief  URDF 导入字段映射用例组（MdlImport）——契约
- *         tasks/foundation/WP-13-T05.json acceptance 逐条具名自证（本文件
- *         覆盖解析映射切片；链型判定两维度用例随第二提交增列）：
+ * @brief  URDF 导入字段映射与链型判定用例组（MdlImport）——契约
+ *         tasks/foundation/WP-13-T05.json acceptance 逐条具名自证：
  *           ACC1 接口落位/三分边界（mapWorkCellXml R1 边界、可重入无状态、
  *                mapXacroExpanded 来源留痕——§9.4.3/SA-14）
  *           ACC2 §6.3 字段映射表逐行＋四清单可观察（AT-15）＋默认补全不
@@ -10,6 +9,10 @@
  *                IO-RES-MISSING/Recorded 草稿可携带（§6.7/V-08）
  *           ACC3 MDL-11 轴语义三分支（非零非 Z 轴/缺 axis +X 待确认/
  *                零与非有限轴仅报告不提交）
+ *           ACC4 链型判定两维度（§6.4/AT-17）：分支报告＋显式选链＋辅助
+ *                分支候选不构成拒绝／mimic·planar·floating 阻断不转
+ *                FixedFrame／4·5 轴与含 prismatic 主链能力结论＋诊断＋
+ *                类型保留（V12-01）／continuous 工程工作范围待确认
  *           ACC5 确定性（同字节同选项同输出；诊断按源文件行序稳定排序
  *                ——NFR-COR-02）＋非法值原串保留（SourcedValue::invalid）
  *
@@ -56,7 +59,9 @@ using sdurws::ird::modeling::ImportUnsupportedItem;
 using sdurws::ird::modeling::ModelImportMapper;
 using sdurws::ird::modeling::ValidatedSource;
 using sdurws::ird::modeling::XacroProvenance;
+using sdurws::ird::modeling::kMdlImportBranchSelection;
 using sdurws::ird::modeling::kMdlImportPendingConfirm;
+using sdurws::ird::modeling::kMdlImportTemplateRange;
 using sdurws::ird::modeling::kMdlImportUnsupportedJoint;
 using sdurws::ird::modeling::kMdlImportZeroAxis;
 
@@ -881,6 +886,332 @@ TEST(MdlImport, MultiBranch_NoSelectionRejected_WP13T05_ACC4)
     EXPECT_TRUE(countFound);
     EXPECT_TRUE(splitFound);
     EXPECT_FALSE(outcome.report.submittable);
+    // 分支报告（§6.4 维度一——对象与原因可观察）：两候选分支均为
+    // pending-selection 处置＋BRANCH-SELECTION info 诊断。
+    ASSERT_EQ(outcome.report.branches.size(), 2U);
+    EXPECT_EQ(outcome.report.branches[0].branchRoot, "la");
+    EXPECT_EQ(outcome.report.branches[0].disposition, "pending-selection");
+    EXPECT_EQ(outcome.report.branches[0].splitLink, "root");
+    EXPECT_EQ(outcome.report.branches[1].branchRoot, "lb");
+    EXPECT_TRUE(hasDiag(diags, kMdlImportBranchSelection));
+}
+
+// =====================================================================
+// ACC4：链型判定两维度（选链放行/辅助分支候选/能力矩阵/类型保留）
+// =====================================================================
+
+namespace {
+
+/**
+ * 构造 N 轴全旋转串联链 fixture（base→j1..jN→leaf；每关节 revolute＋
+ * 限位＋axis 0 0 1——六/七轴模板形态）。
+ */
+std::string makeRevoluteChainUrdf(int axes)
+{
+    std::string urdf = "<?xml version=\"1.0\"?>\n<robot name=\"chain\">\n";
+    urdf += "  <link name=\"base\"/>\n";
+    for (int i = 0; i < axes; ++i) {
+        urdf += "  <link name=\"l" + std::to_string(i + 1) + "\"/>\n";
+    }
+    for (int i = 0; i < axes; ++i) {
+        const std::string parent = (i == 0) ? "base" : ("l" + std::to_string(i));
+        urdf += "  <joint name=\"j" + std::to_string(i + 1)
+                + "\" type=\"revolute\">\n"
+                  "    <parent link=\"" + parent + "\"/>\n"
+                  "    <child link=\"l" + std::to_string(i + 1) + "\"/>\n"
+                  "    <axis xyz=\"0 0 1\"/>\n"
+                  "    <limit lower=\"-1\" upper=\"1\"/>\n"
+                  "  </joint>\n";
+    }
+    urdf += "</robot>\n";
+    return urdf;
+}
+
+}  // namespace
+
+/**
+ * 六轴全旋转主链（acceptance 4 维度二——能力矩阵第一行）：FullTemplate
+ * Range、可动轴数 6、不含 prismatic、无 TEMPLATE-RANGE 诊断。
+ */
+TEST(MdlImport, SixRevoluteChain_FullTemplateRange_WP13T05_ACC4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},
+                  std::vector<std::string>{"AT-17"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapUrdf(makeSource(makeRevoluteChainUrdf(6)), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+    EXPECT_EQ(outcome.report.chainCapability.kind,
+              sdurws::ird::modeling::ChainCapabilityKind::FullTemplateRange);
+    EXPECT_EQ(outcome.report.chainCapability.movableAxes, 6U);
+    EXPECT_FALSE(outcome.report.chainCapability.containsPrismatic);
+    EXPECT_FALSE(hasDiag(diags, kMdlImportTemplateRange)) << "全能力链无范围诊断";
+    EXPECT_TRUE(outcome.report.submittable);
+    EXPECT_FALSE(outcome.error.has_value());
+}
+
+/**
+ * 七轴全旋转主链（acceptance 4 维度二）：同为 FullTemplateRange（P-03
+ * 七轴模板登记不启用不影响导入识别能力面——能力矩阵行原文"六/七轴"）。
+ */
+TEST(MdlImport, SevenRevoluteChain_FullTemplateRange_WP13T05_ACC4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},
+                  std::vector<std::string>{});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapUrdf(makeSource(makeRevoluteChainUrdf(7)), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+    EXPECT_EQ(outcome.report.chainCapability.kind,
+              sdurws::ird::modeling::ChainCapabilityKind::FullTemplateRange);
+    EXPECT_EQ(outcome.report.chainCapability.movableAxes, 7U);
+}
+
+/**
+ * 4/5 轴主链（acceptance 4——"4/5 轴与含 prismatic 主链→正式计算/报告
+ * 阻断＋诊断（草稿兼容编辑可）"）：BeyondTemplateRange＋TEMPLATE-RANGE
+ * 诊断＋草稿产出可提交（兼容编辑）＋类型保留。
+ */
+TEST(MdlImport, FiveAxes_BeyondRange_DraftEditable_WP13T05_ACC4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},
+                  std::vector<std::string>{"AT-17"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapUrdf(makeSource(makeRevoluteChainUrdf(5)), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value()) << "范围外链仍产草稿（兼容编辑）";
+    EXPECT_EQ(outcome.report.chainCapability.kind,
+              sdurws::ird::modeling::ChainCapabilityKind::BeyondTemplateRange);
+    EXPECT_EQ(outcome.report.chainCapability.movableAxes, 5U);
+    EXPECT_NE(outcome.report.chainCapability.reason.find("4/5"), std::string::npos);
+    EXPECT_TRUE(hasDiag(diags, kMdlImportTemplateRange));
+    EXPECT_TRUE(outcome.report.submittable) << "草稿兼容编辑——不置不可提交";
+    EXPECT_FALSE(outcome.error.has_value());
+    for (const auto& joint : outcome.draft->joints) {
+        EXPECT_EQ(joint.type, sdurws::ird::modeling::JointType::Revolute)
+            << "类型保留（不静默降级——V12-01）";
+    }
+}
+
+/**
+ * 含 prismatic 主链（acceptance 4——"含 prismatic 主链→阻断＋诊断；不得
+ * 静默降级关节类型（类型保留 V12-01）"）：6 关节五转一移→Beyond（原因
+ * 含 prismatic）＋prismatic 类型原样入草稿。
+ */
+TEST(MdlImport, PrismaticInChain_BeyondRange_TypePreserved_WP13T05_ACC4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},
+                  std::vector<std::string>{"AT-17"});
+
+    const ModelImportMapper mapper;
+    // 六关节链：j1..j5 revolute＋j6 prismatic（限位单位 m）——在五转链
+    // 尾部追加（去掉生成器的闭合标签再拼装）。
+    const std::string base = makeRevoluteChainUrdf(5);
+    const std::size_t tail = base.rfind("</robot>");
+    ASSERT_NE(tail, std::string::npos);
+    const std::string urdf =
+        base.substr(0, tail)
+        + "  <link name=\"l6\"/>\n"
+          "  <joint name=\"j6\" type=\"prismatic\">\n"
+          "    <parent link=\"l5\"/>\n    <child link=\"l6\"/>\n"
+          "    <axis xyz=\"0 0 1\"/>\n"
+          "    <limit lower=\"0\" upper=\"0.5\"/>\n"
+          "  </joint>\n</robot>\n";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+    ASSERT_EQ(outcome.draft->joints.size(), 6U);
+    EXPECT_EQ(outcome.draft->joints[5].type,
+              sdurws::ird::modeling::JointType::Prismatic) << "类型保留 V12-01";
+    ASSERT_EQ(outcome.draft->joints[5].bounds.state(), FieldState::Provided);
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[5].bounds.value().second, 0.5)
+        << "prismatic 限位单位 m";
+    EXPECT_EQ(outcome.report.chainCapability.kind,
+              sdurws::ird::modeling::ChainCapabilityKind::BeyondTemplateRange);
+    EXPECT_TRUE(outcome.report.chainCapability.containsPrismatic);
+    EXPECT_NE(outcome.report.chainCapability.reason.find("prismatic"), std::string::npos);
+    EXPECT_TRUE(hasDiag(diags, kMdlImportTemplateRange));
+}
+
+/**
+ * 多可动分支显式选链（acceptance 4 维度一——"辅助分支转场景/环境候选
+ * 或忽略项、不构成拒绝"）：选择含 prismatic 的分支→主链能力按所选链
+ * 判定（prismatic 保留）＋选中/辅助分支报告条目＋辅助分支内容入忽略。
+ */
+TEST(MdlImport, MultiBranch_WithSelection_AuxCandidatesNotRejected_WP13T05_ACC4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},
+                  std::vector<std::string>{"AT-17"});
+
+    const ModelImportMapper mapper;
+    const char* urdf = R"(<?xml version="1.0"?>
+<robot name="mb2">
+  <link name="root"/>
+  <link name="la"/>
+  <link name="lb"/>
+  <joint name="ja" type="revolute">
+    <parent link="root"/>
+    <child link="la"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+  <joint name="jb" type="prismatic">
+    <parent link="root"/>
+    <child link="lb"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="0.4"/>
+  </joint>
+</robot>
+)";
+    ImportOptions options;
+    options.selectedMainBranch = "lb";  // 用户显式选择（含 prismatic 的分支）
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), options, diags);
+    ASSERT_TRUE(outcome.draft.has_value()) << "显式选链后放行（辅助分支不构成拒绝）";
+    ASSERT_EQ(outcome.draft->joints.size(), 1U);
+    EXPECT_EQ(outcome.draft->joints[0].type,
+              sdurws::ird::modeling::JointType::Prismatic) << "所选链类型保留";
+    EXPECT_EQ(outcome.draft->joints[0].localName, "jb");
+    // 分支报告：lb＝selected、la＝aux-candidate。
+    ASSERT_EQ(outcome.report.branches.size(), 2U);
+    bool selectedFound = false;
+    bool auxFound = false;
+    for (const auto& branch : outcome.report.branches) {
+        if (branch.branchRoot == "lb" && branch.disposition == "selected") {
+            selectedFound = true;
+        }
+        if (branch.branchRoot == "la" && branch.disposition == "aux-candidate") {
+            auxFound = true;
+            EXPECT_NE(branch.reason.find("不构成拒绝"), std::string::npos);
+        }
+    }
+    EXPECT_TRUE(selectedFound);
+    EXPECT_TRUE(auxFound);
+    // 能力结论按所选链判定：1 可动轴＋prismatic→范围外。
+    EXPECT_EQ(outcome.report.chainCapability.kind,
+              sdurws::ird::modeling::ChainCapabilityKind::BeyondTemplateRange);
+    EXPECT_TRUE(outcome.report.chainCapability.containsPrismatic);
+    EXPECT_TRUE(hasDiag(diags, kMdlImportTemplateRange));
+    // 辅助分支内容不在草稿（la/ja 不映射——可观察于忽略清单）。
+    EXPECT_NE(outcome.draft->links.size(), 0U);
+    bool auxLinkInDraft = false;
+    for (const auto& link : outcome.draft->links) {
+        if (link.localName == "la") { auxLinkInDraft = true; }
+    }
+    EXPECT_FALSE(auxLinkInDraft) << "辅助分支不进草稿（候选承载）";
+    bool auxLinkIgnored = false;
+    for (const auto& item : outcome.report.ignored) {
+        if (item.element.find("la") != std::string::npos) { auxLinkIgnored = true; }
+    }
+    EXPECT_TRUE(auxLinkIgnored);
+}
+
+/**
+ * 选链残留分裂（ImportOptions 语义——每次调用解析一层分裂）：选中分支
+ * 内部再分裂→返回新一轮候选清单（向导循环），不静默任选。
+ */
+TEST(MdlImport, DeepSplit_SelectionResidualBranches_WP13T05_ACC4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},
+                  std::vector<std::string>{});
+
+    const ModelImportMapper mapper;
+    const char* urdf = R"(<?xml version="1.0"?>
+<robot name="ds">
+  <link name="root"/>
+  <link name="la"/>
+  <link name="mid"/>
+  <link name="lc"/>
+  <link name="ld"/>
+  <joint name="ja" type="revolute">
+    <parent link="root"/>
+    <child link="la"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+  <joint name="jm" type="revolute">
+    <parent link="root"/>
+    <child link="mid"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+  <joint name="jc" type="revolute">
+    <parent link="mid"/>
+    <child link="lc"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+  <joint name="jd" type="revolute">
+    <parent link="mid"/>
+    <child link="ld"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+</robot>
+)";
+    ImportOptions options;
+    options.selectedMainBranch = "mid";  // 第一层分裂选 mid（其内部再分裂）
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), options, diags);
+    EXPECT_FALSE(outcome.draft.has_value()) << "残留分裂未决——不静默任选";
+    ASSERT_TRUE(outcome.error.has_value());
+    EXPECT_EQ(outcome.error->code, ImportErrorCode::MultiBranchNeedsSelection);
+    bool residualRoots = false;
+    for (const auto& param : outcome.error->params) {
+        if (param.first == "branch-roots") {
+            residualRoots = true;
+            EXPECT_EQ(param.second, "lc,ld") << "新一轮候选＝选中分支内部的分裂";
+        }
+        if (param.first == "split-link") {
+            EXPECT_EQ(param.second, "mid");
+        }
+    }
+    EXPECT_TRUE(residualRoots);
+}
+
+/**
+ * continuous 工程工作范围（acceptance 4/§6.4——确认流导入期登记面）：
+ * workingRange 待确认条目＋NotApplicable bounds（类型保留）＋待确认诊断；
+ * 确认值不回写权威 bounds（workingRange 字段由确认流落位——本头只登记
+ * 未决事实）。
+ */
+TEST(MdlImport, Continuous_WorkingRangePendingConfirm_WP13T05_ACC4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12"},
+                  std::vector<std::string>{});
+
+    const ModelImportMapper mapper;
+    const char* urdf = R"(<?xml version="1.0"?>
+<robot name="cw">
+  <link name="a"/>
+  <link name="b"/>
+  <joint name="j" type="continuous">
+    <parent link="a"/>
+    <child link="b"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+</robot>
+)";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+    EXPECT_EQ(outcome.draft->joints[0].bounds.state(), FieldState::NotApplicable);
+    bool pendingRange = false;
+    for (const auto& pending : outcome.report.pendingConfirms) {
+        if (pending.kind == "working-range-unconfirmed") {
+            pendingRange = true;
+            EXPECT_NE(pending.question.find("不回写权威 bounds"), std::string::npos);
+        }
+    }
+    EXPECT_TRUE(pendingRange);
+    EXPECT_TRUE(hasDiag(diags, kMdlImportPendingConfirm));
+    EXPECT_TRUE(outcome.report.submittable) << "待确认项不阻断（逐条确认流）";
 }
 
 // =====================================================================
@@ -956,15 +1287,20 @@ TEST(MdlImport, Diags_SortedBySourceLineOrder_WP13T05_ACC5)
     std::vector<sdurws::ird::core::DiagnosticRecord> diags;
     const ImportOutcome outcome = mapper.mapUrdf(source, ImportOptions{}, diags);
     ASSERT_TRUE(outcome.draft.has_value());
-    ASSERT_EQ(diags.size(), 2U) << "本 fixture 恰两条诊断（缺 mesh＋缺 axis）";
+    ASSERT_EQ(diags.size(), 3U)
+        << "本 fixture 恰三条诊断（能力结论＋缺 mesh＋缺 axis）";
     const std::string missingCode(
         sdurws::ird::io::errorCodeToken(sdurws::ird::io::IoErrorCode::ResMissing));
-    // 行序断言：第 5 行的 IO-RES-MISSING 在缺 axis（第 9 行）之前。
-    EXPECT_EQ(diags[0].code, missingCode) << "行号靠前的诊断应排在前（产出序相反）";
-    EXPECT_EQ(diags[1].code, std::string(kMdlImportPendingConfirm));
-    EXPECT_NE(diags[0].context.find(":5:"), std::string::npos)
+    // 行序断言：第 2 行的能力结论（robot 元素 span）→第 5 行的
+    // IO-RES-MISSING→第 9 行的缺 axis 待确认（产出序与行序不同）。
+    EXPECT_EQ(diags[0].code,
+              std::string(sdurws::ird::modeling::kMdlImportTemplateRange))
+        << "单关节链超出模板范围——能力结论诊断定位在 robot 元素行（第 2 行）";
+    EXPECT_EQ(diags[1].code, missingCode) << "行号靠前的资源事实应排在前";
+    EXPECT_EQ(diags[2].code, std::string(kMdlImportPendingConfirm));
+    EXPECT_NE(diags[1].context.find(":5:"), std::string::npos)
         << "诊断上下文应携带源定位（file:line:col）";
-    EXPECT_NE(diags[1].context.find(":9:"), std::string::npos)
+    EXPECT_NE(diags[2].context.find(":9:"), std::string::npos)
         << "缺 axis 待确认诊断应定位在关节元素行";
 }
 

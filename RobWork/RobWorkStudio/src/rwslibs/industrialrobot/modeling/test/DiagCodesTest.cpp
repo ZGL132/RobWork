@@ -53,11 +53,13 @@ const char* kT02Section95Codes[] = {
 };
 
 /// §9.5 任务列含 T05 的行的应登记码面（WP-13-T05 登记——表行序＝工厂
-/// 清单序；MDL-IMPORT-TEMPLATE-RANGE 随链型判定提交增列，此处不预登）。
+/// 清单序；TEMPLATE-RANGE 为实现期增登行，单元卡 §14.6 v0.6 登记）。
 const char* kT05Section95Codes[] = {
     "MDL-IMPORT-UNSUPPORTED-JOINT",
+    "MDL-IMPORT-BRANCH-SELECTION",
     "MDL-IMPORT-ZERO-AXIS",
     "MDL-IMPORT-PENDING-CONFIRM",
+    "MDL-IMPORT-TEMPLATE-RANGE",
 };
 
 }  // namespace
@@ -150,6 +152,14 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_NE(d.paramSchema.find("\"joint-name\""), std::string::npos);
             EXPECT_NE(d.paramSchema.find("\"source-type\""), std::string::npos);
             EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-IMPORT-BRANCH-SELECTION") {
+            // "导入/info"→InputInvalid/Info（输入不足以唯一定义模型——需
+            // 用户选链）；paramSchema [branch-count, branch-roots]；UserRetry。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Info);
+            EXPECT_NE(d.paramSchema.find("\"branch-count\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"branch-roots\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         } else if (d.code == "MDL-IMPORT-ZERO-AXIS") {
             // "导入/error"→InputInvalid/Error（零轴/非有限轴）；paramSchema
             // [joint-name, axis-raw]；UserRetry（"修正源文件"）。
@@ -166,6 +176,15 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_NE(d.paramSchema.find("\"item-kind\""), std::string::npos);
             EXPECT_NE(d.paramSchema.find("\"subject\""), std::string::npos);
             EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-IMPORT-TEMPLATE-RANGE") {
+            // 增登行"导入/info"→InfeasibilityProof/Info（能力边界结论——
+            // 有效工程结论而非错误）；paramSchema [movable-axes,
+            // prismatic-present]；Never（结论呈现类）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InfeasibilityProof);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Info);
+            EXPECT_NE(d.paramSchema.find("\"movable-axes\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"prismatic-present\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::Never);
         } else {
             FAIL() << "未登记的码面出现（分批纪律——不预建）: " << d.code;
         }
