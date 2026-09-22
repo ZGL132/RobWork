@@ -12,10 +12,11 @@
  *   - 先例：io/src/IoDiagnostics.cpp（ioCodeDescriptors 逐字段登记口径）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 4
  *
- * 背景说明：清单当前 6 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
- * T05 行五码）——分批注册纪律（"不预建无消费者条目"）的执行口径见
- * 头文件 DiagCodes.hpp 文件头注；其余行随各自任务在**本清单表尾追加**
- * （表尾追加＝登记簿纪律，不重排既有项）。
+ * 背景说明：清单当前 7 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
+ * T05 行五码＋WP-13-T06 实现期增登的 T06 行一码）——分批注册纪律
+ * （"不预建无消费者条目"）的执行口径见头文件 DiagCodes.hpp 文件头注；
+ * 其余行随各自任务在**本清单表尾追加**（表尾追加＝登记簿纪律，不重排
+ * 既有项）。
  *
  * 确定性（NFR-COR-02）：清单序＝§9.5 表行序；每次调用返回同序同值
  * 新清单（描述符为纯值聚合）。
@@ -184,8 +185,41 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     templateRange.deprecated = false;
     // supersededBy 保持 nullopt。
 
+    // ---- §9.5 T06 行：MDL-IMPORT-XACRO-UNRESOLVED（WP-13-T06 实现期
+    // 增登，§14.6 v0.7 登记——卡 §6.5"展开失败/依赖缺失→可定位诊断
+    // （宏名/行列）"的语义面码面落位；io 护栏码（IO-FORMAT-XML-CYCLE/
+    // IO-RES-MISSING/IO-SEC-BUDGET-*）透传覆盖循环/缺失/预算三族，未定义
+    // 宏/参数等语义失败按 P-MDL-4"护栏 io／语义 modeling"口径归 modeling
+    // 码面）----
+    // Xacro 受控展开失败：未定义宏/未定义参数/缺参/签名外属性/不支持
+    // 构造/宏重定义，逐条携带宏名或参数名＋源行列（MDL-19/AT-31）。分类
+    // InputInvalid＝diagnostics §4.3 词表"输入非法"族：源文件的展开语义
+    // 在受控子集之外；级别 error（§9.5 增登行"导入/error"——展开失败无
+    // 草稿产出，阻断面）。
+    diagnostics::CodeDescriptor xacroUnresolved;
+    xacroUnresolved.code = std::string(kMdlImportXacroUnresolved);
+    xacroUnresolved.ownerUnit = "modeling";
+    xacroUnresolved.category = diagnostics::DiagnosticCategory::InputInvalid;
+    xacroUnresolved.severity = diagnostics::DiagnosticSeverity::Error;   // 增登行"导入/error"
+    xacroUnresolved.titleKey = "diag.mdl-import-xacro-unresolved.title";
+    xacroUnresolved.detailKey = "diag.mdl-import-xacro-unresolved.detail";
+    xacroUnresolved.paramSchema = R"(["item-kind","symbol"])";
+    //        （item-kind＝undefined-macro|undefined-param|missing-param|
+    //          unknown-attr|unsupported-construct|unsupported-expression|
+    //          missing-attribute|macro-redefinition；symbol＝宏名/参数名/
+    //          构造名——行列由诊断 context 定位段承载，不入 paramSchema）
+    xacroUnresolved.confirmable = false;          // §9.5 行：false（修源文件——无放行分支）
+    xacroUnresolved.requiresComparison = false;
+    xacroUnresolved.retryable = diagnostics::RetryKind::UserRetry;  // "改写源文件"＝fix-input 族
+    xacroUnresolved.userVisible = true;
+    xacroUnresolved.reportable = true;
+    xacroUnresolved.historical = true;
+    xacroUnresolved.registryVersion = 1;
+    xacroUnresolved.deprecated = false;
+    // supersededBy 保持 nullopt。
+
     return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
-            templateRange};
+            templateRange, xacroUnresolved};
 }
 
 void registerModelingCodes(diagnostics::IDiagnosticRegistry& registry)

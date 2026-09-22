@@ -70,6 +70,11 @@ find_package(pugixml CONFIG REQUIRED)
 #   src/Import.cpp       URDF 导入字段映射与链型判定（IModelImportMapper；
 #                        pugixml DOM 解析——O-40 PRIVATE 依赖，§6.1～§6.7/
 #                        §9.4.3；mapWorkCellXml R1 边界响应）
+# T06 增列（tasks/foundation/WP-13-T06.json，§3.3 表 T06 行）：
+#   src/XacroExpand.cpp  Xacro 受控展开语义（IXacroExpandService——属性/宏/
+#                        参数声明式替换；护栏复核与 IO-* 码透传，§6.5/
+#                        §9.4.9；pugixml 复用 T05 已登记依赖——O-40 不二
+#                        次引入渠道）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -78,7 +83,8 @@ add_library(sdurws_ird_modeling STATIC
     src/Parts.cpp
     src/Codec.cpp
     src/PropertyEstimation.cpp
-    src/Import.cpp)
+    src/Import.cpp
+    src/XacroExpand.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -178,6 +184,14 @@ endif()
 #                          AT-17，随链型判定提交）＋确定性/诊断行序稳定
 #                          排序（ACC5，NFR-COR-02）——inline fixture
 #                          （V-06 全链黄金数据集随 WP-13-T16 收口）
+# T06 增列（任务契约 acceptance 1~5 具名自证）：
+#   test/XacroExpandTest.cpp  接口落位/受控子集与绝不执行（ACC1）＋未定义
+#                          宏/参数行列定位＋护栏码透传（循环 V-09/依赖缺失
+#                          /深度护栏）（ACC2，AT-31）＋展开产物经
+#                          mapXacroExpanded 走 mapUrdf 同一映射与 external-
+#                          Refs 来源留痕＋失败无草稿（ACC3）＋确定性/可
+#                          重入（ACC5，NFR-COR-02）——inline fixture
+#                          （Xacro 黄金样例随 WP-13-T16 收口）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -193,7 +207,8 @@ add_executable(sdurws_ird_modeling_test
     test/PartsTest.cpp
     test/CodecTest.cpp
     test/PropertyEstimationTest.cpp
-    test/ImportTest.cpp)
+    test/ImportTest.cpp
+    test/XacroExpandTest.cpp)
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_modeling_test PROPERTIES

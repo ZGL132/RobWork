@@ -89,17 +89,26 @@ inline constexpr std::string_view kMdlImportZeroAxis = "MDL-IMPORT-ZERO-AXIS";
 /// 未决（缺 axis 默认 +X/缺限位/工作范围）→逐条确认）。
 inline constexpr std::string_view kMdlImportPendingConfirm = "MDL-IMPORT-PENDING-CONFIRM";
 
+/// §9.5 T06 行：MDL-IMPORT-XACRO-UNRESOLVED（导入/error——Xacro 受控展开
+/// 失败的语义定位面：未定义宏/未定义参数/缺参/签名外属性/不支持构造/
+/// 宏重定义，逐条携带宏名或参数名＋源行列。本行为 WP-13-T06 实现期增登
+/// ——卡 §6.5"展开失败→可定位诊断（宏名/行列）"的码面落位（io 护栏码
+/// 只覆盖循环/缺失/预算三族，P-MDL-4 口径下 io 公共面不扩，语义面归
+/// modeling），§14.6 v0.7 登记）。
+inline constexpr std::string_view kMdlImportXacroUnresolved = "MDL-IMPORT-XACRO-UNRESOLVED";
+
 // =====================================================================
 // MDL-* 稳定诊断码描述符清单（§9.5 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 modeling 已到注册任务行的 MDL-* 稳定码描述符全集（当前
- *        6 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
+ *        7 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
  *        WP-13-T05 登记的 T05 行 MDL-IMPORT-{UNSUPPORTED-JOINT,
  *        BRANCH-SELECTION,ZERO-AXIS,PENDING-CONFIRM,TEMPLATE-RANGE}
- *        五码——清单序＝§9.5 表行序；TEMPLATE-RANGE 为实现期增登行，
- *        §14.6 v0.6 登记）。
+ *        五码；外加 WP-13-T06 实现期增登的 T06 行 MDL-IMPORT-XACRO-
+ *        UNRESOLVED——清单序＝§9.5 表行序；TEMPLATE-RANGE 与 XACRO-
+ *        UNRESOLVED 为实现期增登行，§14.6 v0.6/v0.7 登记）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，io ioCodeDescriptors
  * 同款自证结构）：
