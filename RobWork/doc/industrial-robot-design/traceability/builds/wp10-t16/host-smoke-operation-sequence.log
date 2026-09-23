@@ -235,3 +235,39 @@ WorkbenchShell.cpp:106 注入故 harness/gui 测试未暴露）；build() 必填
 20b. 宿主已退出（二实例）
 21. 插件 Dev 日志已固化：traceability/builds/wp10-t16/host-smoke-ird-ui-plugin-logs/
 === UI-T16 宿主冒烟 重跑总控 v2 完成（2026-09-24 03:31:45）——DONE2 ===
+=== UI-T16 宿主冒烟 收尾更正登记（2026-09-24 03:50 收尾会话，所有者"解决阻塞"裁决执行）===
+79b3f8da 提交信息中以下宿主交互表述强于实证，逐项更正如实登记（依据＝
+本目录证据逐帧核验＋随登记新增复跑实录；G1 装载门控/菜单工具栏共存/
+面板命令可执行三项维持已实证不变）：
+① "五区工作台嵌入宿主主窗口"——面板在宿主主窗口不可见：对照同一内容
+   装配面的壳模式基线 harness-homepage.png（左"项目"/右"属性与诊断"/
+   底部"任务和状态"与工程工作台首页在壳模式全部可见），宿主模式主窗口
+   仅框架菜单/工具栏＋中央三维视图；Plugins 菜单区域开关勾选态
+   （左栏√右栏√底部√，host-smoke-02b）与实际显示不符——宿主形态集成
+   缺陷，交验收段裁决返工。
+② "PM-11 状态投影"——宿主窗口底部无状态栏条带（host-smoke-06b/09
+   截图放大核验，三维视图直达窗口下缘），投影未出现。
+③ "打开/新建项目协议经壳入口"——命令确经命令面板执行（用户级 ini
+   recentCommands=project.open,project.new，03:31:42 落盘），但完成性
+   未实证：打开协议 proj-demo lock 心跳打开前后同值（G2 观测未刷新）；
+   新建协议目标目录 host-smoke-newproj 自 4s 门控至收尾核查始终为空
+   （G3 "!! 未确认"）。
+④ "布局记忆跨会话生效＋恢复默认布局"——脚本级差一：Plugins 菜单
+   Alt+P 首项预选下 Down×15 实落第 16 可选条目（右栏），左栏开关未获
+   有效演示（ini visibleLeft 恒 true；visibleRight=false 佐证实落右栏）；
+   恢复默认布局未入 recentCommands、无视觉对照。布局旗标跨会话持久化
+   路径本身已证（ini 落盘＋二次装载读取），可见性切换行为未证。
+证据补充（本登记随附）：
+- fix-rebuild-plugin.log：UiPlugin.cpp 修复后插件目标增量重编零错误实录
+  （79b3f8da 仅载 DLL 时序证据，本件为构建输出实录）。
+- ctest-ui-ird-rerun-r2.log / ctest-ui-gui-final-r2.log：收尾会话
+  03:39~03:41 独立复跑——^ird$ 2/2；^ird_gui$ 33/34，唯一失败
+  ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1 为已知
+  环境性剪贴板用例（OleSetClipboard COM 0x800401d0，与
+  gui-clipboard-env-failure-detail.log 前例签名一致）。
+- 79b3f8da 所载 03:31:52 收尾总控复跑实录保持原样未覆盖：^ird$ 2/2、
+  ^ird_gui$ ctest 级 100%（exit 0——该轮用例级 34/34 成立；总控信息
+  插值基于 ctest 控制台流、无用例级行，其 "34/34" 结论与该轮实况相符）。
+处置：①~④随本登记交验收段正式裁决（预期 verdict=fail→返工循环）；
+本登记零代码变化，不影响 562a18b4/79b3f8da 代码修复（hostWidget 注入）
+的有效性——G1 装载门控两实例均过。
