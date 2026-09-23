@@ -670,6 +670,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | R-5（同上） | 各 `_test`/`_contract_test` 经 testkit/policy 替身消费 | §5.3；POL-T11 | 生效 | 2026-09-10 |
 | T-1/T-2（testkit 分发/依赖） | 无例外 | testkit.md §2.4 | — | 2026-09-10 |
 | SUB（ARCH §3.5 表外边） | `sdurws_ird_ui_app`（开发验证 harness，装配层目标）：ui->project（打开五步协议适配链接面）＋ui->ui（app 目标自边，同型于 ui_gui_test 既有 `->ui` 形态） | O-31 裁决（装配层同时看见两边写适配器）；DTB §2.11 WP-10-T15 行 | 生效（WP-10-T15 起；`sdurws_ird_ui` 产品库链接块仍仅 core/diagnostics＋Qt） | 2026-09-22 |
+| SUB（ARCH §3.5 表外边） | `sdurws_ird_ui_plugin`（工作台宿主插件，装配层目标）：ui->project（宿主集成边——插件复用 harness PortAdapters 适配形态，打开五步协议适配编译入插件目标）＋ui->ui（plugin 目标链接本单元产品库自边，同型于 ui_app 既有形态）。两边一行登记，机器消费面＝traceability/wp10-t16-gate-registrations.md | O-38 裁决②（"插件复用 harness PortAdapters 适配形态——O-31 装配层特权边同款登记模式"）；DTB §2.11 WP-10-T16 行；ui 库产品面（`sdurws_ird_ui` 源集）零对 project 链接/include 不变 | 生效（WP-10-T16 起；开发期验证通道——产品交付路径零新增，正式装配归 WP-24-T03） | 2026-09-23 |
 
 ### 4.6 L1 基线库目标名实测表（各单元落位任务核对后回登；零 Qt 库方可被 L2 引用）
 

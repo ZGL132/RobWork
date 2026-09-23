@@ -1,0 +1,7 @@
+21a22,23
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：ui/src/WorkbenchContent.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：ui/src/WorkbenchContent_p.hpp
+49a52
+> IRD-GATE-SUB: 表外依赖边 ui->project（sdurws_ird_ui_plugin → sdurws_ird_project）不在 ARCH §3.5 白名单
+50a54
+> IRD-GATE-SUB: 表外依赖边 ui->ui（sdurws_ird_ui_plugin → sdurws_ird_ui）不在 ARCH §3.5 白名单

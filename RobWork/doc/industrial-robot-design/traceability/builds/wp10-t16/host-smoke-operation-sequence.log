@@ -1,0 +1,14 @@
+=== UI-T16 宿主动态加载冒烟 操作序列（2026-09-23 12:26:08）===
+1. 启动框架 RobWorkStudio.exe（工作目录=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；未预置插件配置——纯手动装载路径）
+!! 主窗口未就绪
+=== UI-T16 宿主动态加载冒烟 操作序列（2026-09-23 12:26:30）===
+1. 启动框架 RobWorkStudio.exe（工作目录=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；未预置插件配置——纯手动装载路径）
+!! 主窗口未就绪
+=== UI-T16 宿主动态加载冒烟 操作序列（2026-09-23 12:27:07）===
+1. 启动框架 RobWorkStudio.exe（工作目录=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；未预置插件配置——纯手动装载路径）
+!! 主窗口未就绪
+=== UI-T16 宿主动态加载冒烟 操作序列（2026-09-23 12:29:51）===
+1. 启动框架 RobWorkStudio.exe（工作目录=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；未预置插件配置——纯手动装载路径）
+2. 主窗口就绪（hwnd=24383054）——发送 Alt+P 打开 Plugins 菜单
+3. 回车激活首项 Load plugin——弹出插件文件选择对话框
+4. 输入插件 DLL 全路径并确认装载
