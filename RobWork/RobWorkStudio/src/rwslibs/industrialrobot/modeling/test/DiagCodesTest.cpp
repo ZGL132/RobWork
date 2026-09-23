@@ -76,15 +76,32 @@ const char* kT07Section95Codes[] = {
     "MDL-TEMPLATE-DISABLED",
 };
 
+/// §9.5 任务列含 T08 的行的应登记码面（WP-13-T08 登记——单元卡 §14.6
+/// v0.9；断言分域＋就绪校验＋行程确认族；含 v0.9 实现期增登行
+/// MDL-READINESS-PHYSICS-MISSING——§9.3"物性缺失转 Warning 诊断随计划
+/// 留痕"的码面落位；表行序追加于表尾——登记簿纪律不重排既有行）。
+const char* kT08Section95Codes[] = {
+    "MDL-06-TRAVEL-LIMIT",
+    "MDL-ASSERT-MASS-NONPOSITIVE",
+    "MDL-ASSERT-INERTIA-NOT-SPD",
+    "MDL-ASSERT-INERTIA-TRIANGLE",
+    "MDL-ASSERT-LIMIT-INTERVAL",
+    "MDL-ASSERT-RANGE-NOT-FINITE",
+    "MDL-READINESS-REF-MISSING",
+    "MDL-READINESS-RESOURCE-STATE",
+    "MDL-READINESS-PHYSICS-MISSING",
+};
+
 }  // namespace
 
 /**
  * 工厂清单分批封闭性（acceptance 4——"按 §9.5 注册纪律只登记有消费者
- * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07 的行——
- * 其余行（T08/T09/T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
- * 字面清单（不私定码值），清单序＝§9.5 表行序。
+ * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07/T08 的行——
+ * 其余行（T09/T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
+ * 字面清单（不私定码值），清单序＝§9.5 表行序。分期登记随任务推进
+ * 表尾追加（T05/T06/T07/T08 历次登记同款推进口径）。
  */
-TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
+TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T08)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01", "MDL-06"},
                   std::vector<std::string>{});
@@ -93,11 +110,13 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
     const std::size_t expectedCount = std::size(kT02Section95Codes)
                                       + std::size(kT05Section95Codes)
                                       + std::size(kT06Section95Codes)
-                                      + std::size(kT07Section95Codes);
+                                      + std::size(kT07Section95Codes)
+                                      + std::size(kT08Section95Codes);
     ASSERT_EQ(descriptors.size(), expectedCount)
-        << "工厂清单应恰含 §9.5 T02/T05/T06/T07 任务行（分批纪律：其余行随"
+        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08 任务行（分批纪律：其余行随"
            "各自任务登记——不预建）";
-    // 清单序＝§9.5 表行序：T02 行在前，T05/T06/T07 行按表行序随后。
+    // 清单序＝§9.5 表行序（实现期增登行表尾追加）：T02 行在前，
+    // T05/T06/T07/T08 行按登记序随后。
     for (std::size_t i = 0; i < std::size(kT02Section95Codes); ++i) {
         EXPECT_EQ(descriptors[i].code, std::string(kT02Section95Codes[i]))
             << "清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
@@ -119,6 +138,12 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedT02Rows_WP13T02_ACC4)
         EXPECT_EQ(descriptors[offset + i].code,
                   std::string(kT07Section95Codes[i]))
             << "T07 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
+    }
+    offset += std::size(kT07Section95Codes);
+    for (std::size_t i = 0; i < std::size(kT08Section95Codes); ++i) {
+        EXPECT_EQ(descriptors[offset + i].code,
+                  std::string(kT08Section95Codes[i]))
+            << "T08 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
 }
 
@@ -162,9 +187,13 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
         EXPECT_EQ(d.registryVersion, 1U);
         EXPECT_FALSE(d.deprecated);
         EXPECT_FALSE(d.supersededBy.has_value());
-        EXPECT_FALSE(d.requiresComparison);
+        // requiresComparison／confirmable 逐码断言（差异面——见各分支：
+        // T08 行 TRAVEL-LIMIT 为 confirmable＋比较型强制；断言族为
+        // 比较型强制但不可确认；其余非比较型）。
         // ---- 卡面差异面（§9.5 行逐列）----
         if (d.code == "MDL-READINESS-SCHEMA-UNSUPPORTED") {
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
             // "校验/error"→FormatOrVersion/Error；paramSchema 三键；UserRetry。
             EXPECT_EQ(d.category, DiagnosticCategory::FormatOrVersion);
             EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
@@ -231,11 +260,67 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_NE(d.paramSchema.find("\"template-id\""), std::string::npos);
             EXPECT_NE(d.paramSchema.find("\"freeze-gate\""), std::string::npos);
             EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-06-TRAVEL-LIMIT") {
+            // T08 行"比较型/Warning"→Confirmable/Warning（策略校验超限待
+            // 显式确认——SA-15/MDL-06④）；paramSchema "[]"（定位走
+            // subject＋comparison）；UserRetry（"确认放行或改行程"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::Confirmable);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Warning);
+            EXPECT_TRUE(d.confirmable);
+            EXPECT_TRUE(d.requiresComparison);   // 可确认必为比较型（C-1 强化）
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-ASSERT-MASS-NONPOSITIVE"
+                   || d.code == "MDL-ASSERT-INERTIA-NOT-SPD"
+                   || d.code == "MDL-ASSERT-INERTIA-TRIANGLE"
+                   || d.code == "MDL-ASSERT-LIMIT-INTERVAL") {
+            // T08 断言族"断言/error"→InputInvalid/Error（MDL-06 硬断言
+            // 就地阻止——无放行分支）；paramSchema "[]"；比较型强制
+            //（三要素齐备——精确定位）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_TRUE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-ASSERT-RANGE-NOT-FINITE") {
+            // 未确认分支无值可比→requiresComparison=false（ERR-01 不伪造
+            // 数值）；paramSchema "[]"；UserRetry（"确认范围"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-READINESS-REF-MISSING") {
+            // T08 行"校验/error"→ResourceMissing/Error（闭包内引用缺失面）。
+            EXPECT_EQ(d.category, DiagnosticCategory::ResourceMissing);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-READINESS-RESOURCE-STATE") {
+            // T08 行"校验/Warning"→ResourceMissing/Warning（未固化提示——
+            // 不阻断应用，CON-03 固化激励）。
+            EXPECT_EQ(d.category, DiagnosticCategory::ResourceMissing);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Warning);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-READINESS-PHYSICS-MISSING") {
+            // 增登行"校验/Warning"→DataInsufficient/Warning（V15-01 缺失
+            // 降级预告——缺失无值可比，不伪造数值）。
+            EXPECT_EQ(d.category, DiagnosticCategory::DataInsufficient);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Warning);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         } else {
             FAIL() << "未登记的码面出现（分批纪律——不预建）: " << d.code;
         }
-        // confirmable=false（§9.5 全部已登记行均 false）。
-        EXPECT_FALSE(d.confirmable);
     }
 }
 

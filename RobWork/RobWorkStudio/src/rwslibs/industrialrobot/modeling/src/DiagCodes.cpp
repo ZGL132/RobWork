@@ -12,9 +12,11 @@
  *   - 先例：io/src/IoDiagnostics.cpp（ioCodeDescriptors 逐字段登记口径）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 4
  *
- * 背景说明：清单当前 8 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
+ * 背景说明：清单当前 17 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
  * T05 行五码＋WP-13-T06 实现期增登的 T06 行一码＋WP-13-T07 实现期增登
- * 的 T07 行一码）——分批注册纪律（"不预建无消费者条目"）的执行口径见
+ * 的 T07 行一码＋WP-13-T08 登记的 T08 行九码——八条卡面行＋一条 v0.9
+ * 实现期增登行 MDL-READINESS-PHYSICS-MISSING）——分批注册纪律（"不预建
+ * 无消费者条目"）的执行口径见
  * 头文件 DiagCodes.hpp 文件头注；其余行随各自任务在**本清单表尾追加**
  * （表尾追加＝登记簿纪律，不重排既有项）。
  *
@@ -248,8 +250,224 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     templateDisabled.deprecated = false;
     // supersededBy 保持 nullopt。
 
+    // ---- §9.5 T08 行八码（WP-13-T08 登记，§14.6 v0.9——断言分域＋就绪
+    // 校验＋行程确认族；表行序追加于表尾——登记簿纪律不重排既有行）----
+    // T08 行码共用口径：category/severity 逐码取 §9.5"类别/级别"列的
+    // diagnostics §4.3 词表投影；paramSchema 统一为"[]"（无参数）——T08
+    // 产码点（AssertionSuite/就绪校验器）的记录把定位放 subject＋localName、
+    // 三要素放 comparison、人读文案放 context/cause/recommendedAction，
+    // 不经 DiagContext params 通道，故按实际数据面登记空参数表。
+
+    // ---- MDL-06-TRAVEL-LIMIT（比较型/Warning，confirmable=true）----
+    // 有限限位旋转关节行程超策略阈值（T＞L 才超限——T＝L 不超限，边界
+    // 含于合规侧；阈值唯一来源 policy JointThresholds.finiteRotationTravelLimit
+    // 默认 4π——本地无第二常量，ARC-05/NFR-MNT-07）→确认放行或改行程
+    // （MDL-06④/SA-15/M-10）。分类 Confirmable＝diagnostics §4.3 词表
+    // "策略校验超限待用户显式确认"族（枚举注释原文即引 MDL-06④——逐字
+    // 对应本码语义）。
+    diagnostics::CodeDescriptor travelLimit;
+    travelLimit.code = std::string(kMdl06TravelLimit);
+    travelLimit.ownerUnit = "modeling";
+    travelLimit.category = diagnostics::DiagnosticCategory::Confirmable;
+    travelLimit.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.5"比较型/Warning"
+    travelLimit.titleKey = "diag.mdl-06-travel-limit.title";
+    travelLimit.detailKey = "diag.mdl-06-travel-limit.detail";
+    travelLimit.paramSchema = "[]";
+    travelLimit.confirmable = true;               // §9.5 行：true（SA-15 确认放行流唯一入口）
+    travelLimit.requiresComparison = true;        // 可确认必为比较型（注册期校验强化）
+    travelLimit.retryable = diagnostics::RetryKind::UserRetry;  // "确认放行或改行程"＝confirm-or-fix 族
+    travelLimit.userVisible = true;
+    travelLimit.reportable = true;
+    travelLimit.historical = true;                // 确认凭据随修订留痕（PM-12-S1 可浏览）
+    travelLimit.registryVersion = 1;
+    travelLimit.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-ASSERT-MASS-NONPOSITIVE（断言/error）----
+    // 已提供质量 m≤0→修正质量或清空为缺失（断言①；缺失 NotProvided 不
+    // 触发——走 DataInsufficient 降级，V15-01）。分类 InputInvalid＝
+    // diagnostics §4.3 词表"输入非法"族（枚举注释原文即引"REQ-06/MDL-06
+    // 硬断言"）。
+    diagnostics::CodeDescriptor massNonpositive;
+    massNonpositive.code = std::string(kMdlAssertMassNonpositive);
+    massNonpositive.ownerUnit = "modeling";
+    massNonpositive.category = diagnostics::DiagnosticCategory::InputInvalid;
+    massNonpositive.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"断言/error"
+    massNonpositive.titleKey = "diag.mdl-assert-mass-nonpositive.title";
+    massNonpositive.detailKey = "diag.mdl-assert-mass-nonpositive.detail";
+    massNonpositive.paramSchema = "[]";
+    massNonpositive.confirmable = false;          // 硬断言无放行分支（就地阻止）
+    massNonpositive.requiresComparison = true;    // actual=m、expected=0（kg）
+    massNonpositive.retryable = diagnostics::RetryKind::UserRetry;  // "修正质量或清空"＝fix-input 族
+    massNonpositive.userVisible = true;
+    massNonpositive.reportable = true;
+    massNonpositive.historical = true;
+    massNonpositive.registryVersion = 1;
+    massNonpositive.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-ASSERT-INERTIA-NOT-SPD（断言/error）----
+    // 惯量非对称正定（对称化后最小特征值≤0）→修正张量（断言②；六分量
+    // 表示结构性对称——对称违例仅可能来自估算合成，其输出自检先行拒收，
+    // 故本码拦 SPD 半段）。分类 InputInvalid（同上——MDL-06 硬断言族）。
+    diagnostics::CodeDescriptor inertiaNotSpd;
+    inertiaNotSpd.code = std::string(kMdlAssertInertiaNotSpd);
+    inertiaNotSpd.ownerUnit = "modeling";
+    inertiaNotSpd.category = diagnostics::DiagnosticCategory::InputInvalid;
+    inertiaNotSpd.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"断言/error"
+    inertiaNotSpd.titleKey = "diag.mdl-assert-inertia-not-spd.title";
+    inertiaNotSpd.detailKey = "diag.mdl-assert-inertia-not-spd.detail";
+    inertiaNotSpd.paramSchema = "[]";
+    inertiaNotSpd.confirmable = false;
+    inertiaNotSpd.requiresComparison = true;      // actual=λmin、expected=0（kg·m²）
+    inertiaNotSpd.retryable = diagnostics::RetryKind::UserRetry;  // "修正张量"＝fix-input 族
+    inertiaNotSpd.userVisible = true;
+    inertiaNotSpd.reportable = true;
+    inertiaNotSpd.historical = true;
+    inertiaNotSpd.registryVersion = 1;
+    inertiaNotSpd.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-ASSERT-INERTIA-TRIANGLE（断言/error）----
+    // 惯性椭球三角不等式不满足（λmax＞λmid＋λmin，严格比较——解析特征值
+    // 无浮点放宽）→修正张量（断言③）。分类 InputInvalid（同上）。
+    diagnostics::CodeDescriptor inertiaTriangle;
+    inertiaTriangle.code = std::string(kMdlAssertInertiaTriangle);
+    inertiaTriangle.ownerUnit = "modeling";
+    inertiaTriangle.category = diagnostics::DiagnosticCategory::InputInvalid;
+    inertiaTriangle.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"断言/error"
+    inertiaTriangle.titleKey = "diag.mdl-assert-inertia-triangle.title";
+    inertiaTriangle.detailKey = "diag.mdl-assert-inertia-triangle.detail";
+    inertiaTriangle.paramSchema = "[]";
+    inertiaTriangle.confirmable = false;
+    inertiaTriangle.requiresComparison = true;    // actual=λmax、expected=λmid＋λmin（kg·m²）
+    inertiaTriangle.retryable = diagnostics::RetryKind::UserRetry;  // "修正张量"＝fix-input 族
+    inertiaTriangle.userVisible = true;
+    inertiaTriangle.reportable = true;
+    inertiaTriangle.historical = true;
+    inertiaTriangle.registryVersion = 1;
+    inertiaTriangle.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-ASSERT-LIMIT-INTERVAL（断言/error）----
+    // qmin≥qmax（有限限位可动关节；单位随类型 rad/m——comparison 逐记录
+    // 携带）→修正限位（断言④前半）。分类 InputInvalid（同上）。
+    diagnostics::CodeDescriptor limitInterval;
+    limitInterval.code = std::string(kMdlAssertLimitInterval);
+    limitInterval.ownerUnit = "modeling";
+    limitInterval.category = diagnostics::DiagnosticCategory::InputInvalid;
+    limitInterval.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"断言/error"
+    limitInterval.titleKey = "diag.mdl-assert-limit-interval.title";
+    limitInterval.detailKey = "diag.mdl-assert-limit-interval.detail";
+    limitInterval.paramSchema = "[]";
+    limitInterval.confirmable = false;
+    limitInterval.requiresComparison = true;      // actual=qmin、expected=qmax（rad/m）
+    limitInterval.retryable = diagnostics::RetryKind::UserRetry;  // "修正限位"＝fix-input 族
+    limitInterval.userVisible = true;
+    limitInterval.reportable = true;
+    limitInterval.historical = true;
+    limitInterval.registryVersion = 1;
+    limitInterval.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-ASSERT-RANGE-NOT-FINITE（断言/error）----
+    // continuous 工程工作范围未确认（NotProvided）或非有限区间（端点非
+    // 有限/min≥max）→确认范围（断言④后半＋MDL-12；已确认有限范围则
+    // 豁免本断言与限位断言——continuous 无 bounds）。requiresComparison=
+    // false：未确认分支无值可比（"不伪造数值"——ERR-01 不适用显式承载），
+    // 已提供非法分支的 comparison 由记录自愿携带。分类 InputInvalid（同上）。
+    diagnostics::CodeDescriptor rangeNotFinite;
+    rangeNotFinite.code = std::string(kMdlAssertRangeNotFinite);
+    rangeNotFinite.ownerUnit = "modeling";
+    rangeNotFinite.category = diagnostics::DiagnosticCategory::InputInvalid;
+    rangeNotFinite.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"断言/error"
+    rangeNotFinite.titleKey = "diag.mdl-assert-range-not-finite.title";
+    rangeNotFinite.detailKey = "diag.mdl-assert-range-not-finite.detail";
+    rangeNotFinite.paramSchema = "[]";
+    rangeNotFinite.confirmable = false;           // 未确认范围须确认（编辑面），非本诊断放行
+    rangeNotFinite.requiresComparison = false;    // 未确认分支无值可比（见上）
+    rangeNotFinite.retryable = diagnostics::RetryKind::UserRetry;  // "确认范围"＝fix-input 族
+    rangeNotFinite.userVisible = true;
+    rangeNotFinite.reportable = true;
+    rangeNotFinite.historical = true;
+    rangeNotFinite.registryVersion = 1;
+    rangeNotFinite.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-READINESS-REF-MISSING（校验/error）----
+    // 引用对象不在闭包/token 不匹配（I-MDL-9 闭包半段——值模型层无闭包
+    // 上下文，§4.10 范围注记归本码承载）→修复引用。分类 ResourceMissing
+    // ＝diagnostics §4.3 词表"外部源 Missing"族的闭包内引用面。
+    diagnostics::CodeDescriptor refMissing;
+    refMissing.code = std::string(kMdlReadinessRefMissing);
+    refMissing.ownerUnit = "modeling";
+    refMissing.category = diagnostics::DiagnosticCategory::ResourceMissing;
+    refMissing.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"校验/error"
+    refMissing.titleKey = "diag.mdl-readiness-ref-missing.title";
+    refMissing.detailKey = "diag.mdl-readiness-ref-missing.detail";
+    refMissing.paramSchema = "[]";
+    refMissing.confirmable = false;
+    refMissing.requiresComparison = false;
+    refMissing.retryable = diagnostics::RetryKind::UserRetry;  // "修复引用"＝fix-input 族
+    refMissing.userVisible = true;
+    refMissing.reportable = true;
+    refMissing.historical = true;
+    refMissing.registryVersion = 1;
+    refMissing.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-READINESS-RESOURCE-STATE（校验/Warning）----
+    // Recorded 资源缺失/变化或未固化→重关联/固化（CON-03 固化激励；缺失/
+    // 变化探测归 io 护栏与 runtime 编译复核——本码在就绪层承载状态面事
+    // 实，不阻断应用）。分类 ResourceMissing（同上族）；级别 Warning。
+    diagnostics::CodeDescriptor resourceState;
+    resourceState.code = std::string(kMdlReadinessResourceState);
+    resourceState.ownerUnit = "modeling";
+    resourceState.category = diagnostics::DiagnosticCategory::ResourceMissing;
+    resourceState.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.5"校验/Warning"
+    resourceState.titleKey = "diag.mdl-readiness-resource-state.title";
+    resourceState.detailKey = "diag.mdl-readiness-resource-state.detail";
+    resourceState.paramSchema = "[]";
+    resourceState.confirmable = false;
+    resourceState.requiresComparison = false;
+    resourceState.retryable = diagnostics::RetryKind::UserRetry;  // "重关联/固化"＝fix-input 族
+    resourceState.userVisible = true;
+    resourceState.reportable = true;
+    resourceState.historical = true;
+    resourceState.registryVersion = 1;
+    resourceState.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-READINESS-PHYSICS-MISSING（校验/Warning，v0.9 实现期增登）----
+    // 物性缺失（质量/惯量 NotProvided）→DataInsufficient 降级预告（V15-01
+    // ——缺失不触发硬断言，不伪造数值）；建议"补全物性或接受降级"。
+    // §9.3"物性缺失→不阻断，转 Warning 诊断随计划留痕"与 §8.2 L5 Warning
+    // 行的码面落位——原表缺行，沿实现期增登先例登记（§14.6 v0.9）。分类
+    // DataInsufficient＝diagnostics §4.3 词表"engineeringStatus=
+    // DataInsufficient 轴"族的就绪层预告面。
+    diagnostics::CodeDescriptor physicsMissing;
+    physicsMissing.code = std::string(kMdlReadinessPhysicsMissing);
+    physicsMissing.ownerUnit = "modeling";
+    physicsMissing.category = diagnostics::DiagnosticCategory::DataInsufficient;
+    physicsMissing.severity = diagnostics::DiagnosticSeverity::Warning;  // §8.2 L5"Warning（缺失）"
+    physicsMissing.titleKey = "diag.mdl-readiness-physics-missing.title";
+    physicsMissing.detailKey = "diag.mdl-readiness-physics-missing.detail";
+    physicsMissing.paramSchema = "[]";
+    physicsMissing.confirmable = false;
+    physicsMissing.requiresComparison = false;    // 缺失无值可比（不伪造数值——ERR-01）
+    physicsMissing.retryable = diagnostics::RetryKind::UserRetry;  // "补全物性或接受降级"＝fix-input 族
+    physicsMissing.userVisible = true;
+    physicsMissing.reportable = true;
+    physicsMissing.historical = true;
+    physicsMissing.registryVersion = 1;
+    physicsMissing.deprecated = false;
+    // supersededBy 保持 nullopt。
+
     return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
-            templateRange, xacroUnresolved, templateDisabled};
+            templateRange, xacroUnresolved, templateDisabled,
+            travelLimit, massNonpositive, inertiaNotSpd, inertiaTriangle,
+            limitInterval, rangeNotFinite, refMissing, resourceState,
+            physicsMissing};
 }
 
 void registerModelingCodes(diagnostics::IDiagnosticRegistry& registry)

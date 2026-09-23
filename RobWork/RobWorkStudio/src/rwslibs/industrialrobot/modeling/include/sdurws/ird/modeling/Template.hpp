@@ -54,9 +54,11 @@
 #include <rw/math/Vector3D.hpp>     // Vector3D<double>——轴线/占位段端点（m；无量纲轴线）
 
 #include <sdurws/ird/core/DiagData.hpp>     // core::DiagnosticRecord（diags 输出参数元素类型）
+#include <sdurws/ird/core/Identity.hpp>    // core::ObjectId（rootObjectId/部件对象身份——v0.9 增量显式引用）
 #include <sdurws/ird/core/Provenance.hpp>   // core::ValueProvenance（来源标记——GeometricEstimate 等）
 #include <sdurws/ird/modeling/Errors.hpp>   // ModelingError/ModelingErrorCode（TemplateDisabled|IllegalName 值面）
 #include <sdurws/ird/modeling/Import.hpp>   // ChainCapability（创建入口守卫的结论承载——§6.4 判定复用）
+#include <sdurws/ird/modeling/Parts.hpp>   // ToolDefinition/SceneObject/PoseSet/DrivetrainDesign（工作集闭包部件视图——v0.9 增量）
 #include <sdurws/ird/modeling/RobotDesign.hpp>  // RobotDesign/JointEntry/JointLimits 等（工作集值模型）
 #include <sdurws/ird/runtime/Errors.hpp>    // runtime::Expected 模板（两态结果载体——登记边 runtime）
 
@@ -231,6 +233,16 @@ struct ModelingChangeRecord {
  * HandlerContext.objectId() 分配回填，PA-1——T05 导入路径 v0.6 ②i 同款
  * 纪律）。消费方不得把临时句柄当持久身份外泄（草稿载荷提交时整体回填）。
  *
+ * v0.9 增量（WP-13-T08 落位，§14.6 登记——闭包部件对象视图，向后兼容的
+ * 表尾追加）：T08 就绪校验（§8.2 L1/L5/L7/L9 层）与命令 prepare 断言需要
+ * 修订闭包内**部件对象**（工具/场景/位姿集/传动）参与判定（引用存在性、
+ * 工具物性、传动合法性、行程上限的关节表装配），而 v1 只有根对象。本增量
+ * 以**类型化值视图**承载（rootObjectId＋partObjects），语义仍是"可移交、
+ * 可比对、可确定性重放的演算结果"：模板创建的初始工作集两新字段为缺省值
+ * （无根身份/无部件——模板阶段尚无 project 对象身份），既有 v1 消费方
+ * （T07 用例与聚合初始化）不受影响；编辑器内部态（undo 栈/编辑差值）仍
+ * 不入本值（§9.4.1 边界不变）。
+ *
  * 线程约束：**非线程安全**——编辑态仅 UI 线程访问（§3.4 总约定 2；本头
  * 的编辑流函数也只在该约束下使用）。确定性：创建/编辑/摘要全部为确定性
  * 纯函数（同输入序列→同工作集字节）。
@@ -241,9 +253,25 @@ struct ModelingWorkingSet {
     /// 变更摘要记录（编辑发生序；批量变体＝一条——见 ModelingChangeRecord 注）。
     std::vector<ModelingChangeRecord> changes;
 
+    /// 根对象在修订闭包中的身份（v0.9 增量；nullopt＝尚无 project 对象
+    /// 身份——模板创建的初始草稿；命令 prepare 回填后恒有值）。
+    std::optional<core::ObjectId> rootObjectId;
+
+    /// 修订闭包内已解码的部件对象值视图（v0.9 增量；§4.2 五对象表的后四
+    /// 行——工具/场景/位姿集/传动；根对象不入本表，其值即 design）。各值
+    /// 自带 objectId（Parts.hpp 值模型字段）；"指向闭包存在对象"的就绪
+    /// 判定（L1）以本表＋rootObjectId 为闭包视图。
+    std::vector<ToolDefinition> toolObjects;
+    std::vector<SceneObject> sceneObjects;
+    std::optional<PoseSet> poseSetObject;          ///< 至多一份（§4.6——与根 poseSetRef 对应）
+    std::optional<DrivetrainDesign> drivetrainObject;  ///< 至多一份（§4.7——与根 drivetrainRef 对应）
+
     bool operator==(const ModelingWorkingSet& o) const
     {
-        return design == o.design && changes == o.changes;
+        return design == o.design && changes == o.changes
+            && rootObjectId == o.rootObjectId
+            && toolObjects == o.toolObjects && sceneObjects == o.sceneObjects
+            && poseSetObject == o.poseSetObject && drivetrainObject == o.drivetrainObject;
     }
     bool operator!=(const ModelingWorkingSet& o) const { return !(*this == o); }
 };
