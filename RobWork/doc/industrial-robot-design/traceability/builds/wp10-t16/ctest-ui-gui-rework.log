@@ -1,0 +1,119 @@
+# UI-T16 返工（attempt 2）全新 ctest 捕获——2026-09-24 05:05:23
+# 运行签名＝本头注捕获时间戳＋ctest 原生输出（UpdateCTestConfiguration/Test project 行、-V 级 Test command、各用例独立耗时）；本文件为 tee 实时捕获原件未删节
+
+UpdateCTestConfiguration  from :D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/ui/DartConfiguration.tcl
+Test project D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/ui
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 3
+    Start 3: sdurws_ird_ui_gui_test
+
+3: Test command: D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+3: Working Directory: D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/ui
+3: Test timeout computed to be: 10000000
+3: [==========] Running 34 tests from 7 test suites.
+3: [----------] Global test environment set-up.
+3: [----------] 1 test from UiGuiPlacement
+3: [ RUN      ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD
+3: [       OK ] UiGuiPlacement.GuiTargetRegistration_UI_GUIBUILD (0 ms)
+3: [----------] 1 test from UiGuiPlacement (0 ms total)
+3: 
+3: [----------] 6 tests from WorkbenchShellGuiTest
+3: [ RUN      ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1
+3: [       OK ] WorkbenchShellGuiTest.FiveZoneLayout_PersistsAcrossSessions_UI_WB_1 (540 ms)
+3: [ RUN      ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2
+3: [       OK ] WorkbenchShellGuiTest.ResetLayout_RestoresFactory_UI_WB_2 (193 ms)
+3: [ RUN      ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3
+3: [       OK ] WorkbenchShellGuiTest.CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3 (129 ms)
+3: [ RUN      ] WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1
+3: [       OK ] WorkbenchShellGuiTest.NoProjectHomepage_CommandGating_UI_SES_1 (175 ms)
+3: [ RUN      ] WorkbenchShellGuiTest.RecentProjects_CapDedupPersist_PM_10_PM_14
+3: [       OK ] WorkbenchShellGuiTest.RecentProjects_CapDedupPersist_PM_10_PM_14 (44 ms)
+3: [ RUN      ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06
+3: [       OK ] WorkbenchShellGuiTest.CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06 (173 ms)
+3: [----------] 6 tests from WorkbenchShellGuiTest (1256 ms total)
+3: 
+3: [----------] 6 tests from WorkbenchContentGuiTest
+3: [ RUN      ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT
+3: [       OK ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT (11 ms)
+3: [ RUN      ] WorkbenchContentGuiTest.BuildValidationRejectsIncompleteDeps_UI_SPLIT
+3: [       OK ] WorkbenchContentGuiTest.BuildValidationRejectsIncompleteDeps_UI_SPLIT (1 ms)
+3: [ RUN      ] WorkbenchContentGuiTest.EmbeddedMemoryFlagsOnlyBoundary_UI_SPLIT
+3: [       OK ] WorkbenchContentGuiTest.EmbeddedMemoryFlagsOnlyBoundary_UI_SPLIT (30 ms)
+3: [ RUN      ] WorkbenchContentGuiTest.EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_UI_SPLIT
+3: [       OK ] WorkbenchContentGuiTest.EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_UI_SPLIT (19 ms)
+3: [ RUN      ] WorkbenchContentGuiTest.SessionEntryOverrideRoutesShellEntries_UI_SPLIT
+3: [       OK ] WorkbenchContentGuiTest.SessionEntryOverrideRoutesShellEntries_UI_SPLIT (8 ms)
+3: [ RUN      ] WorkbenchContentGuiTest.EmbeddedCentralYieldPage_UI_SPLIT
+3: [       OK ] WorkbenchContentGuiTest.EmbeddedCentralYieldPage_UI_SPLIT (8 ms)
+3: [----------] 6 tests from WorkbenchContentGuiTest (79 ms total)
+3: 
+3: [----------] 3 tests from CommandPaletteGuiTest
+3: [ RUN      ] CommandPaletteGuiTest.PaletteOpensViaDefaultShortcut_UI_PALETTE_1
+3: [       OK ] CommandPaletteGuiTest.PaletteOpensViaDefaultShortcut_UI_PALETTE_1 (135 ms)
+3: [ RUN      ] CommandPaletteGuiTest.PaletteFilterNavigateExecute_UI_PALETTE_2
+3: [       OK ] CommandPaletteGuiTest.PaletteFilterNavigateExecute_UI_PALETTE_2 (156 ms)
+3: [ RUN      ] CommandPaletteGuiTest.UserRebindPersistsAcrossSessions_UI_PALETTE_3
+3: [       OK ] CommandPaletteGuiTest.UserRebindPersistsAcrossSessions_UI_PALETTE_3 (349 ms)
+3: [----------] 3 tests from CommandPaletteGuiTest (641 ms total)
+3: 
+3: [----------] 5 tests from PolicySummaryCardGuiTest
+3: [ RUN      ] PolicySummaryCardGuiTest.LoadedProjection_RendersModelRows_UI_T07_ACC1_ACC3
+3: [       OK ] PolicySummaryCardGuiTest.LoadedProjection_RendersModelRows_UI_T07_ACC1_ACC3 (124 ms)
+3: [ RUN      ] PolicySummaryCardGuiTest.Unloaded_RendersPlaceholder_UI_T07_ACC1
+3: [       OK ] PolicySummaryCardGuiTest.Unloaded_RendersPlaceholder_UI_T07_ACC1 (122 ms)
+3: [ RUN      ] PolicySummaryCardGuiTest.CardIsReadOnly_NoEditableControls_UI_T07_ACC1
+3: [       OK ] PolicySummaryCardGuiTest.CardIsReadOnly_NoEditableControls_UI_T07_ACC1 (128 ms)
+3: [ RUN      ] PolicySummaryCardGuiTest.EditEntry_ShowsDeferredNotice_UI_T07_ACC2
+3: [       OK ] PolicySummaryCardGuiTest.EditEntry_ShowsDeferredNotice_UI_T07_ACC2 (142 ms)
+3: [ RUN      ] PolicySummaryCardGuiTest.RefreshOnContextInjection_UI_T07_ACC3
+3: [       OK ] PolicySummaryCardGuiTest.RefreshOnContextInjection_UI_T07_ACC3 (198 ms)
+3: [----------] 5 tests from PolicySummaryCardGuiTest (716 ms total)
+3: 
+3: [----------] 10 tests from ParamTablePanelGuiTest
+3: [ RUN      ] ParamTablePanelGuiTest.StructureAndValueUnitColumns_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.StructureAndValueUnitColumns_UI_T08_ACC1 (125 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.InPlaceErrorKeepsValue_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.InPlaceErrorKeepsValue_UI_T08_ACC1 (98 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1 (120 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1 (128 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.CancelRestore_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.CancelRestore_UI_T08_ACC1 (105 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1 (253 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.NoOutletDisablesApply_UI_T08_ACC2
+3: [       OK ] ParamTablePanelGuiTest.NoOutletDisablesApply_UI_T08_ACC2 (221 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1 (147 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1 (128 ms)
+3: [ RUN      ] ParamTablePanelGuiTest.FilterRowsByKeySubstring_UI_T08_ACC1
+3: [       OK ] ParamTablePanelGuiTest.FilterRowsByKeySubstring_UI_T08_ACC1 (133 ms)
+3: [----------] 10 tests from ParamTablePanelGuiTest (1464 ms total)
+3: 
+3: [----------] 3 tests from AboutDialogGuiTest
+3: [ RUN      ] AboutDialogGuiTest.AboutDialogShowsBaselineAndListSameSource_UI_PLG_2_UI_T10_ACC1
+3: [       OK ] AboutDialogGuiTest.AboutDialogShowsBaselineAndListSameSource_UI_PLG_2_UI_T10_ACC1 (238 ms)
+3: [ RUN      ] AboutDialogGuiTest.AboutDialogWithoutSourceShowsPlaceholders_UI_PLG_2_UI_T10
+3: [       OK ] AboutDialogGuiTest.AboutDialogWithoutSourceShowsPlaceholders_UI_PLG_2_UI_T10 (225 ms)
+3: [ RUN      ] AboutDialogGuiTest.HelpContentsMissingManualGivesVisibleFeedback_UX14_UI_T10
+3: [       OK ] AboutDialogGuiTest.HelpContentsMissingManualGivesVisibleFeedback_UX14_UI_T10 (145 ms)
+3: [----------] 3 tests from AboutDialogGuiTest (610 ms total)
+3: 
+3: [----------] Global test environment tear-down
+3: [==========] 34 tests from 7 test suites ran. (4769 ms total)
+3: [  PASSED  ] 34 tests.
+1/1 Test #3: sdurws_ird_ui_gui_test ...........   Passed    5.19 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Label Time Summary:
+ird_gui    =   5.19 sec*proc (1 test)
+
+Total Test time (real) =   5.19 sec

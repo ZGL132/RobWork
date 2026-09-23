@@ -34,6 +34,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QString>
+#include <QTimer>
 #include <QWidget>
 
 #include <rws/RobWorkStudio.hpp>                 // 宿主注入面：getView()/getWorkCellScene()（共存最小接入）
@@ -195,12 +196,23 @@ void IrdWorkbenchHostPlugin::initialize()
     connectAppQuitDrain();
 
     m_assembled = true;
-    reportLine("工作台已嵌入宿主主窗口（五区面板＋Ctrl+Shift+P 命令面板；"
-               "新建/打开项目经壳入口）");
+    // 装配完成与"呈现"分开表述（验收 attempt 1 的教训——B-1）：此刻 Dock
+    // 尚不可见，框架 addPlugin 尾段（setVisible(PluginVisible_<名>)＋
+    // restoreState(QtMainWindowState)）还没执行，它们会把本 Dock 置为
+    // 隐藏——呈现结论只能由 reassertEmbeddedPresentation 在事件循环
+    // 回归后给出（G1 装载门控的第二判据），此处不得提前声称"已嵌入"。
+    reportLine("工作台装配完成（五区面板＋Ctrl+Shift+P 命令面板；"
+               "装载呈现自证在事件循环稍后执行）");
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
                                 "内容装配面就位（嵌入式 Dock 宿主形态；会话入口覆写已注入）");
     }
+
+    // ---- 装配第五步（时序关键）：装载呈现自证排队 ----
+    // 零等待单发定时器：控制流回到事件循环的第一拍执行重申（此时 addPlugin
+    // 已返回、其尾段 setVisible/restoreState 已完成——队列语义保证严格晚于
+    // 二者，详见 reassertEmbeddedPresentation 内的根因链注释）。
+    QTimer::singleShot(0, this, [this] { reassertEmbeddedPresentation(); });
 }
 
 IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
@@ -368,6 +380,44 @@ void IrdWorkbenchHostPlugin::connectAppQuitDrain()
                                  m_content->shutdown();
                              }
                          });
+    }
+}
+
+void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
+{
+    // 防御守卫：本方法只应由 initialize 末尾排队的零等待定时器调用（正常
+    // 时序下装配早已完成）；未装配即被调用＝装配缺陷，保持无操作不掩盖。
+    if (!m_assembled) {
+        return;
+    }
+
+    // 根因链（验收 attempt 1 阻断项 B-1 的实证修复，登记 ui.md §13 返工
+    // 登记注）：本 initialize() 返回之后，框架 addPlugin 尾段还有两步会
+    // 把本 Dock 置为不可见——
+    //   ① plugin->setVisible(PluginVisible_<插件名> 的保存值，缺省取调用
+    //      实参)：Plugins→Load plugin 对话框路径在框架里硬编码实参
+    //      visible=false（RobWorkStudio.cpp loadPlugin() → setupPlugin(
+    //      pathname, filename, 0, 1)）；
+    //   ② restoreState(QtMainWindowState)：Qt 对主窗口状态 blob 里未登记
+    //      的 Dock 一律按隐藏处理，而该 blob 是本插件装载之前保存的布局
+    //      （宿主退出时 saveState 落盘 ini）——刚 addDockWidget 的本 Dock
+    //      必然不在其中，恢复即被藏。
+    // 两步都在框架侧（SA-02 零框架修改红线），且时序都在 initialize()
+    // 之后——插件侧唯一可落点的位置是"控制流回到事件循环之后"：装载排
+    // 队列的零等待单发定时器恰在 addPlugin 返回后的第一拍执行（事件循环
+    // 语义保证严格晚于②），据此重申嵌入式呈现。
+    //
+    // 语义边界（为什么是"单发重申"而不是持续看护）：开发期验证通道取
+    // "装载即呈现"口径——本方法只在装载后执行一次，不与用户后续的手动
+    // 开关竞争（Plugins 菜单基类显示开关/Dock 关闭钮随时可再隐藏，插件
+    // 不夺回）；跨会话的区域级可见性记忆仍归内容装配面（§4.5 用户级设置
+    // ——PM-14），Dock 级呈现权在宿主装载语义下归本插件的装载自证。
+    setFloating(false);  // 嵌入式形态钉死：非浮动（顶层漂浮窗口＝宿主形态违例）
+    show();              // 恢复 Dock 呈现（仍在 addDockWidget 安放的停靠区内嵌于主窗口）
+    reportLine("工作台 Dock 已呈现（宿主主窗口嵌入式——装载呈现自证完成）");
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "装载呈现自证完成（Dock 嵌入宿主主窗口可见）");
     }
 }
 

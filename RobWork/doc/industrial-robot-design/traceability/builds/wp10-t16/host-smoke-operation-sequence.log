@@ -271,3 +271,42 @@ WorkbenchShell.cpp:106 注入故 harness/gui 测试未暴露）；build() 必填
 处置：①~④随本登记交验收段正式裁决（预期 verdict=fail→返工循环）；
 本登记零代码变化，不影响 562a18b4/79b3f8da 代码修复（hostWidget 注入）
 的有效性——G1 装载门控两实例均过。
+=== UI-T16 返工会话启动（2026-09-24 04:4x，attempt 1 fail 后返工——fix=1）===
+验收记录（acc/UI-T16/1 @ 2558984d，UI-T16-20260924.md）裁决承接：verdict=fail，
+阻断 B-1（宿主嵌入式形态缺陷——五区面板不可见/PM-11 投影未现/G2·G3 未过/左栏
+开关演示落空）与 B-2（6441c136 验证段"独立复跑实录"实为既有日志字节级拷贝且内
+容矛盾）；建议级 S-1（本单元卡 v1.10 注⑤表述勘误）/S-3（装载环境前置未登记）随
+返工消账。
+【B-1 根因定位（实施会话，读框架源码实证）】框架对插件 Dock 可见性的两步处理均
+在插件 initialize() 返回之后执行：
+ ⑴ Plugins→Load plugin 对话框路径：RobWorkStudio.cpp loadPlugin()→setupPlugin(
+   pathname, filename, 0, 1)——visible 实参硬编码 false，addPlugin 尾段
+   plugin->setVisible(PluginVisible_<名> 缺省实参) 即 setHidden；
+ ⑵ addPlugin 尾段 restoreState(QtMainWindowState)：Qt 对主窗口状态 blob 未登记
+   的 Dock 按隐藏处理——该 blob 为装载前会话保存，本 Dock 必不在其中。
+ 五区面板/状态行随 Dock 整体不可见；Plugins 菜单区域开关勾选态是内容装配面内存
+ 态，故与实际显示自相矛盾；打开/新建对话框以隐藏的 Dock 体为父（自动化粘贴确认
+ 不可靠）——G2/G3 未过为同链缺陷。两步均在框架侧（SA-02 零框架修改）。
+【B-1 修复】UiPlugin initialize() 末尾零等待单发定时器→reassertEmbeddedPresentation()
+（setFloating(false)＋show()）：事件循环回归后第一拍执行，队列语义保证严格晚于
+⑴⑵；单发不与用户后续手动开关竞争，区域级可见性记忆仍归内容装配面（§4.5）。
+initialize 收尾控制台行同步改述"工作台装配完成（…装载呈现自证在事件循环稍后执行）"
+（不提前声称已呈现）；新增第二判据行"工作台 Dock 已呈现（宿主主窗口嵌入式——装
+载呈现自证完成）"＋Dev 日志"装载呈现自证完成"（语义登记 ui.md §13 返工登记注）。
+【B-2 更正】失实 -r2 复跑载体两件（ctest-ui-ird-rerun-r2.log／ctest-ui-gui-final-
+r2.log，字节级拷贝）随返工删除；复跑结论一律以全新捕获为准：ctest-ui-ird-rework.log
+（^ird$ 2/2，2026-09-24 05:05:16 捕获）与 ctest-ui-gui-rework.log（^ird_gui$ 1/1，
+用例级 34/34，05:05:23 捕获）——两件均带头注捕获时间戳＋ctest 原生运行签名（-V 级
+Test command/各用例独立耗时），记忆点登记：复用旧日志必须显式标注"同轮留存副本"。
+【S-1/S-3】ui.md v1.11：落位登记注⑤勘误＋返工登记注（根因链/修复/装载环境前置
+PATH 清单＋装载门控客观判据——S-3/F-320）＋§16.7 v1.11 行随落位提交。
+【返工重验证据（attempt 2，修复后全新产出）】integrated-build-rework.log（集成全
+量 exit 0 零 error）；smoke-configure/build-rework.log（独立冒烟 exit 0 零 error，
+STATUS 行"sdurws_ird_ui_plugin not registered"在案）；ird_gates-wp10-t16-rework.txt
+（56 命中）＋ird_gates-hit-set-diff-rework.txt（head 返工捕获与既有 head 参考逐行
+IDENTICAL；与 base 恰增 4 条＝v1.10 已登记 SUB×2＋R3×2，其余各码零变化）；
+ctest-ui-ird-rework.log／ctest-ui-gui-rework.log；sdurws_ird_ui_test-rework.xml
+（154/154）／sdurws_ird_ui_contract_test-rework.xml（22/22）／
+sdurws_ird_ui_gui_test-rework.xml（34/34，windows 平台）＋ird-test-report-{ui,
+contract,gui}-rework.json；validate-task-rework.log（PASS 1 tasks）＋validate-docs
+PASS（20 units, 12 trace entries, 187 task files）。宿主交互证据全量重录见下续记。

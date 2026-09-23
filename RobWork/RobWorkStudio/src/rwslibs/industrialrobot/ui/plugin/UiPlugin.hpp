@@ -112,6 +112,13 @@ private:
     bool buildDockBody();              ///< Dock 体栅格＋内容装配面 build/activate
     void refreshHostMenuActions();     ///< 菜单动作使能同步（内容装配层命令状态观察回调）
     void connectAppQuitDrain();        ///< 宿主退出时的有界落盘收口挂接（aboutToQuit）
+    /// 装载呈现自证（事件循环稍后单发执行）：框架 addPlugin 尾段的两步
+    /// （setVisible(PluginVisible_<名>)——Load plugin 对话框路径硬编码
+    /// visible=false；restoreState(QtMainWindowState)——Qt 对状态 blob 中
+    /// 未登记的 Dock 按隐藏处理）都会把本 Dock 置为不可见，且都发生在
+    /// initialize() 返回之后——插件侧唯一落点是事件循环回归后重申嵌入式
+    /// 呈现（根因链与语义登记见 ui.md §13 WP-10-T16 返工登记注）。
+    void reassertEmbeddedPresentation();
 
     // ---- 会话入口编排（§11.5——触发时机编排归装配层；经命令处理器覆写
     //      注入内容装配面，五处壳入口同路由）----
