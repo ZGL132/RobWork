@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现建模命令处理器族与物理合法性断言分域",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T04",
     "PRJ-T10",
