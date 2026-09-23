@@ -161,6 +161,15 @@ void IrdWorkbenchHostPlugin::initialize()
     contentDeps.wiring.nameResolver = m_nameResolver;
     contentDeps.wiring.aboutSource = m_aboutSource;
     contentDeps.hostKind = WorkbenchHostKind::EmbeddedDock;
+    // 宿主控件＝插件本体（RobWorkStudioPlugin 即 QDockWidget 形态的
+    // QWidget，随宿主主窗口安放）：QShortcut attach、命令面板与对话框
+    // 的父窗口、内容 Widget 的初始父对象都以它为准——build() 必填校验
+    // 之一（缺失＝内容无处安放，装配被拒）。初父在栅格安放时重挂为
+    // Dock 体的区域栅格（buildDockBody）。
+    // 宿主冒烟实证（2026-09-23）：漏注入本项时 build() 返回 false——
+    // 插件装载被框架呈现为失败对话框、五区不出现；壳路径由
+    // WorkbenchShell 注入自身窗口故未暴露。修复见同日提交。
+    contentDeps.hostWidget = this;
     // 会话入口覆写（§11.5）：宿主插件的打开编排注入——首页/菜单/顶栏/
     // 面板/快捷键五处壳入口同走真实打开协议。
     contentDeps.openProjectHandler =
@@ -175,9 +184,12 @@ void IrdWorkbenchHostPlugin::initialize()
 
     // ---- 装配第四步：Dock 体栅格＋内容装配面两段装配＋退出收口挂接 ----
     if (!buildDockBody()) {
-        // 内容装配面校验被拒＝装配缺陷（wiring 必填项在此全非空——不可达
-        // 防御面）：留痕后上抛，不留半装配插件（宿主呈现装载失败）。
-        reportLine("内容装配面构建被拒（装配缺陷——wiring 校验失败）");
+        // 内容装配面校验被拒＝装配缺陷（build() 的必填校验覆盖三组：
+        // wiring 非空项、宿主控件 hostWidget、几何/位形钩子成组——宿主
+        // 冒烟曾实证 hostWidget 漏注入走到此处）：留痕后上抛，不留半
+        // 装配插件（宿主呈现装载失败）。
+        reportLine("内容装配面构建被拒（装配校验失败——wiring 非空项/"
+                   "hostWidget/钩子成组之一不满足）");
         throw std::runtime_error("sdurws_ird_ui_plugin: 内容装配面构建被拒");
     }
     connectAppQuitDrain();

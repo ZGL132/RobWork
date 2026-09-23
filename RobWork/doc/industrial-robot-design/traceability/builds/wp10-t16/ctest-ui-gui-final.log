@@ -1,0 +1,10 @@
+Test project D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/ui
+    Start 3: sdurws_ird_ui_gui_test
+1/1 Test #3: sdurws_ird_ui_gui_test ...........   Passed    3.40 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Label Time Summary:
+ird_gui    =   3.40 sec*proc (1 test)
+
+Total Test time (real) =   3.43 sec
