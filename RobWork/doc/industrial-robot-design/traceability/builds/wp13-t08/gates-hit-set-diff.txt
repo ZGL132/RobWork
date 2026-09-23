@@ -1,0 +1,1 @@
+GATE-HIT-SET-DIFF: EMPTY（base fddf851b..branch wp13-t08 命中集一致，各 39 条唯一存量命中——零新增；52 系重复出现计数口径）
