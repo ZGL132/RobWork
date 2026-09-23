@@ -310,3 +310,267 @@ ctest-ui-ird-rework.log／ctest-ui-gui-rework.log；sdurws_ird_ui_test-rework.xm
 sdurws_ird_ui_gui_test-rework.xml（34/34，windows 平台）＋ird-test-report-{ui,
 contract,gui}-rework.json；validate-task-rework.log（PASS 1 tasks）＋validate-docs
 PASS（20 units, 12 trace entries, 187 task files）。宿主交互证据全量重录见下续记。
+=== UI-T16 宿主冒烟 返工重录总控 v3 启动（2026-09-24 05:22:24）——B-1 修复后全量重录（两判据门控＋对话框消失门控＋Down 计数修正） ===
+0. 预清理完成：残留宿主进程终止；上轮截图/框架残留设置/插件 Dev 日志/用户级 ini 已清；newproj 重建为空目录；proj-demo lock 心跳（打开前）=09/23/2026 12:06:42
+1. 启动框架（工作单元位置参数；CWD=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；stdout/stderr→host-smoke-studio-console.log）
+2. 主窗口就绪并已 TOPMOST 置顶——截图 host-smoke-01-startup.png（框架菜单/工具栏＋中央三维视图基线；无任何 IRD 面板）
+3. Alt+P 打开框架 Plugins 菜单——截图 host-smoke-02-plugins-menu.png（装载前基线：仅框架条目）
+4. Alt+P→回车＝首项 Load plugin——弹出 Open plugin file 对话框——截图 host-smoke-03-plugin-dialog.png
+5. 剪贴板粘贴插件 DLL 全路径并回车：D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+6. 门控 G1 通过（两判据：控制台'诊断栈就绪'＋'工作台 Dock 已呈现'——B-1 修复呈现自证成立）——截图 host-smoke-04-plugin-loaded.png（预期：五区工作台＋框架菜单/工具栏＋三维视图同帧共存）
+6b. Alt+P 再开 Plugins 菜单——截图 host-smoke-02b-menu-after-load.png（装载后：框架条目＋插件注入条目共存；'IRD 工作台'开关应呈勾选态＝Dock 可见的菜单面佐证）
+7. Ctrl+Shift+P 命令面板（宿主窗口快捷键）——截图 host-smoke-05-command-palette.png
+8. 菜单路由复核：Alt+P→Down×10（预高亮第 1 项＋Down×10＝第 11 可选条目＝命令面板）→回车——截图 host-smoke-05b-command-palette-menu.png
+9. 命令面板搜索『打开项目』→回车——截图 host-smoke-06-open-dir-dialog.png（目录选择对话框）
+!! 命令面板 6s 未弹出（打开项目）
+!! 打开项目目录对话框 8s 未出现——止步留痕
+=== UI-T16 宿主冒烟 返工重录总控 v3 启动（2026-09-24 05:29:45）——B-1 修复后全量重录（两判据门控＋对话框消失门控＋Down 计数修正） ===
+0. 预清理完成：残留宿主进程终止；上轮截图/框架残留设置/插件 Dev 日志/用户级 ini 已清；newproj 重建为空目录；proj-demo lock 心跳（打开前）=09/23/2026 12:06:42
+1. 启动框架（工作单元位置参数；CWD=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；stdout/stderr→host-smoke-studio-console.log）
+2. 主窗口就绪并已 TOPMOST 置顶——截图 host-smoke-01-startup.png（框架菜单/工具栏＋中央三维视图基线；无任何 IRD 面板）
+3. Alt+P 打开框架 Plugins 菜单——截图 host-smoke-02-plugins-menu.png（装载前基线：仅框架条目）
+4. Alt+P→回车＝首项 Load plugin——弹出 Open plugin file 对话框——截图 host-smoke-03-plugin-dialog.png
+5. 剪贴板粘贴插件 DLL 全路径并回车：D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+6. 门控 G1 通过（两判据：控制台'诊断栈就绪'＋'工作台 Dock 已呈现'——B-1 修复呈现自证成立）——截图 host-smoke-04-plugin-loaded.png（预期：五区工作台＋框架菜单/工具栏＋三维视图同帧共存）
+6b. Alt+P 再开 Plugins 菜单——截图 host-smoke-02b-menu-after-load.png（装载后：框架条目＋插件注入条目共存；'IRD 工作台'开关应呈勾选态＝Dock 可见的菜单面佐证）
+7. Ctrl+Shift+P 命令面板（宿主窗口快捷键）——截图 host-smoke-05-command-palette.png
+8. 菜单路由复核：Alt+P→Down×10（预高亮第 1 项＋Down×10＝第 11 可选条目＝命令面板）→回车——截图 host-smoke-05b-command-palette-menu.png
+9. 命令面板搜索『打开项目』→回车——截图 host-smoke-06-open-dir-dialog.png（目录选择对话框）
+10. 粘贴项目库路径并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\proj-demo（陈旧锁接管语义）
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+10b. 门控 G2 通过（双门控：控制台'项目已打开'行＋lock 心跳 09/23/2026 12:06:42 → 09/24/2026 05:31:06）——截图 host-smoke-06b-open-pm11-status.png（预期：Dock 内 PM-11 状态投影显示 proj-demo 上下文）
+11. 命令面板搜索『新建项目』→回车——截图 host-smoke-07-newproj-dir-dialog.png（目标目录对话框）
+12. 粘贴目标空目录并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\host-smoke-newproj
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+…… 目录对话框回车第 2 次后仍在（原生导航形态），继续回车
+13. 显示名对话框——截图 host-smoke-08-newproj-name-dialog.png；粘贴『宿主冒烟项目』（PM-03 显示名）并确认
+!! 显示名对话框 8s 未出现（对话框接受=True）——如实留痕
+14. 门控 G3 通过（目标目录落盘 6 项；创建后经打开协议进入——控制台'项目已打开'在案=True）——截图 host-smoke-09-newproj-pm11-status.png（预期：PM-11 状态投影切换为『宿主冒烟项目』）
+15. Alt+P→Down×14（预高亮第 1 项＋Down×14＝第 15 可选条目＝左栏）→回车 隐藏左栏
+15b. 左栏开关后截图 host-smoke-15a-left-highlight.png（回车前高亮态锚点）＋host-smoke-10-left-hidden.png（预期：左栏消失、右/底/顶与三维仍在）
+16. Alt+F4 退出宿主（aboutToQuit→content->shutdown→布局旗标有界落盘）
+16b. 宿主已退出（一实例）
+16c. 门控 G4a：用户级 ini 已存在（C:\Users\zgl18\AppData\Roaming\sdurws\ird-workbench.ini）——布局键：visibleLeft=false | visibleRight=true | visibleBottom=true；visibleLeft=false 判定=True（真→假翻转＝左栏开关实证）
+17. 重启框架（同一工作单元参数；stdout/stderr→host-smoke-studio-console-reload.log）并二次装载插件
+!! 宿主进程消失
+=== UI-T16 宿主冒烟 返工重录总控 v3 启动（2026-09-24 05:38:17）——B-1 修复后全量重录（两判据门控＋对话框消失门控＋Down 计数修正） ===
+0. 预清理完成：残留宿主进程终止；上轮截图/框架残留设置/插件 Dev 日志/用户级 ini 已清；newproj 重建为空目录；proj-demo lock 心跳（打开前）=09/24/2026 05:31:36
+1. 启动框架（工作单元位置参数；CWD=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；stdout/stderr→host-smoke-studio-console.log）
+!! 主窗口 120s 未就绪（尝试 1）
+…… 启动重试（第 1 次进程未能取得主窗口）
+2. 主窗口就绪并已 TOPMOST 置顶——截图 host-smoke-01-startup.png（框架菜单/工具栏＋中央三维视图基线；无任何 IRD 面板）
+3. Alt+P 打开框架 Plugins 菜单——截图 host-smoke-02-plugins-menu.png（装载前基线：仅框架条目）
+4. Alt+P→回车＝首项 Load plugin——弹出 Open plugin file 对话框——截图 host-smoke-03-plugin-dialog.png
+5. 剪贴板粘贴插件 DLL 全路径并回车：D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+6. 门控 G1 通过（两判据：控制台'诊断栈就绪'＋'工作台 Dock 已呈现'——B-1 修复呈现自证成立）——截图 host-smoke-04-plugin-loaded.png（预期：五区工作台＋框架菜单/工具栏＋三维视图同帧共存）
+6b. Alt+P 再开 Plugins 菜单——截图 host-smoke-02b-menu-after-load.png（装载后：框架条目＋插件注入条目共存；'IRD 工作台'开关应呈勾选态＝Dock 可见的菜单面佐证）
+7. Ctrl+Shift+P 命令面板（宿主窗口快捷键）——截图 host-smoke-05-command-palette.png
+8. 菜单路由复核：Alt+P→Down×10（预高亮第 1 项＋Down×10＝第 11 可选条目＝命令面板）→回车——截图 host-smoke-05b-command-palette-menu.png
+9. 命令面板搜索『打开项目』→回车——截图 host-smoke-06-open-dir-dialog.png（目录选择对话框）
+10. 粘贴项目库路径并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\proj-demo（陈旧锁接管语义）
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+10b. 门控 G2 通过（双门控：控制台'项目已打开'行＋lock 心跳 09/24/2026 05:31:36 → 09/24/2026 05:44:35）——截图 host-smoke-06b-open-pm11-status.png（预期：Dock 内 PM-11 状态投影显示 proj-demo 上下文）
+11. 命令面板搜索『新建项目』→回车——截图 host-smoke-07-newproj-dir-dialog.png（目标目录对话框）
+12. 粘贴目标空目录并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\host-smoke-newproj
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+13. 显示名对话框——截图 host-smoke-08-newproj-name-dialog.png；粘贴『宿主冒烟项目』（PM-03 显示名）并确认
+14. 门控 G3 通过（目标目录落盘 6 项；创建后经打开协议进入——控制台'项目已打开'在案=True）——截图 host-smoke-09-newproj-pm11-status.png（预期：PM-11 状态投影切换为『宿主冒烟项目』）
+15. Alt+P→Down×14（预高亮第 1 项＋Down×14＝第 15 可选条目＝左栏）→回车 隐藏左栏
+15b. 左栏开关后截图 host-smoke-15a-left-highlight.png（回车前高亮态锚点）＋host-smoke-10-left-hidden.png（预期：左栏消失、右/底/顶与三维仍在）
+16. Alt+F4 退出宿主（aboutToQuit→content->shutdown→布局旗标有界落盘）
+16b. 宿主已退出（一实例）
+16c. 门控 G4a：用户级 ini 已存在（C:\Users\zgl18\AppData\Roaming\sdurws\ird-workbench.ini）——布局键：visibleLeft=false | visibleRight=true | visibleBottom=true；visibleLeft=false 判定=True（真→假翻转＝左栏开关实证）
+17. 重启框架（同一工作单元参数；stdout/stderr→host-smoke-studio-console-reload.log）并二次装载插件
+!! 宿主进程已退出（主窗口未能取得）
+=== UI-T16 宿主冒烟 返工重录总控 v3 启动（2026-09-24 05:49:20）——B-1 修复后全量重录（两判据门控＋对话框消失门控＋Down 计数修正） ===
+0. 预清理完成：残留宿主进程终止；上轮截图/框架残留设置/插件 Dev 日志/用户级 ini 已清；newproj 重建为空目录；proj-demo lock 心跳（打开前）=09/24/2026 05:45:05
+1. 启动框架（工作单元位置参数；CWD=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；stdout/stderr→host-smoke-studio-console.log）
+2. 主窗口就绪并已 TOPMOST 置顶——截图 host-smoke-01-startup.png（框架菜单/工具栏＋中央三维视图基线；无任何 IRD 面板）
+3. Alt+P 打开框架 Plugins 菜单——截图 host-smoke-02-plugins-menu.png（装载前基线：仅框架条目）
+4. Alt+P→回车＝首项 Load plugin——弹出 Open plugin file 对话框——截图 host-smoke-03-plugin-dialog.png
+5. 剪贴板粘贴插件 DLL 全路径并回车：D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+6. 门控 G1 通过（两判据：控制台'诊断栈就绪'＋'工作台 Dock 已呈现'——B-1 修复呈现自证成立）——截图 host-smoke-04-plugin-loaded.png（预期：五区工作台＋框架菜单/工具栏＋三维视图同帧共存）
+6b. Alt+P 再开 Plugins 菜单——截图 host-smoke-02b-menu-after-load.png（装载后：框架条目＋插件注入条目共存；'IRD 工作台'开关应呈勾选态＝Dock 可见的菜单面佐证）
+7. Ctrl+Shift+P 命令面板（宿主窗口快捷键）——截图 host-smoke-05-command-palette.png
+8. 菜单路由复核：Alt+P→Down×10（预高亮第 1 项＋Down×10＝第 11 可选条目＝命令面板）→回车——截图 host-smoke-05b-command-palette-menu.png
+9. 命令面板搜索『打开项目』→回车——截图 host-smoke-06-open-dir-dialog.png（目录选择对话框）
+10. 粘贴项目库路径并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\proj-demo（陈旧锁接管语义）
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+10b. 门控 G2 通过（双门控：控制台'项目已打开'行＋lock 心跳 09/24/2026 05:45:05 → 09/24/2026 05:50:41）——截图 host-smoke-06b-open-pm11-status.png（预期：Dock 内 PM-11 状态投影显示 proj-demo 上下文）
+11. 命令面板搜索『新建项目』→回车——截图 host-smoke-07-newproj-dir-dialog.png（目标目录对话框）
+12. 粘贴目标空目录并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\host-smoke-newproj
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+13. 显示名对话框——截图 host-smoke-08-newproj-name-dialog.png；粘贴『宿主冒烟项目』（PM-03 显示名）并确认
+14. 门控 G3 通过（目标目录落盘 6 项；创建后经打开协议进入——控制台'项目已打开'在案=True）——截图 host-smoke-09-newproj-pm11-status.png（预期：PM-11 状态投影切换为『宿主冒烟项目』）
+15. Alt+P→Down×14（预高亮第 1 项＋Down×14＝第 15 可选条目＝左栏）→回车 隐藏左栏
+15b. 左栏开关后截图 host-smoke-15a-left-highlight.png（回车前高亮态锚点）＋host-smoke-10-left-hidden.png（预期：左栏消失、右/底/顶与三维仍在）
+16. Alt+F4 退出宿主（aboutToQuit→content->shutdown→布局旗标有界落盘）
+16b. 宿主已退出（一实例）
+16c. 门控 G4a：用户级 ini 已存在（C:\Users\zgl18\AppData\Roaming\sdurws\ird-workbench.ini）——布局键：visibleLeft=false | visibleRight=true | visibleBottom=true；visibleLeft=false 判定=True（真→假翻转＝左栏开关实证）
+17. 重启框架（同一工作单元参数；stdout/stderr→host-smoke-studio-console-reload.log）并二次装载插件
+18. 二次装载门控通过（控制台'工作台 Dock 已呈现'行在案——呈现自证跨会话复现）——截图 host-smoke-11-left-still-hidden.png（预期：左栏保持隐藏＝用户级旗标跨会话生效）
+19. 命令面板搜索『恢复默认布局』→回车——截图 host-smoke-12-restored.png（预期：左栏恢复）
+19b. 恢复默认布局调用=True（截图 12 预期左栏恢复可见；recentCommands 键随收尾核验）
+20. Alt+F4 退出宿主收尾
+20b. 宿主已退出（二实例）
+20c. 收尾核验（G4b）：visibleLeft=true | visibleRight=true | visibleBottom=true | recentCommands=view.resetLayout, workbench.commandPalette, project.open（预期：visibleLeft 恢复 true＝恢复默认布局生效；recentCommands 含 view.resetLayout）
+21. 插件 Dev 日志已固化：traceability/builds/wp10-t16/host-smoke-ird-ui-plugin-logs/
+=== UI-T16 宿主冒烟 返工重录总控 v3 完成（2026-09-24 05:52:19）——DONE3 ===
+=== UI-T16 宿主冒烟 返工重录总控 v3 启动（2026-09-24 05:57:23）——B-1 修复后全量重录（两判据门控＋对话框消失门控＋Down 计数修正） ===
+0. 预清理完成：残留宿主进程终止；上轮截图/框架残留设置/插件 Dev 日志/用户级 ini 已清；newproj 重建为空目录；proj-demo lock 心跳（打开前）=09/24/2026 05:51:11
+1. 启动框架（工作单元位置参数；CWD=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；stdout/stderr→host-smoke-studio-console.log）
+!! 主窗口 120s 未就绪（尝试 1）
+…… 启动重试（第 1 次进程未能取得主窗口）
+2. 主窗口就绪并已 TOPMOST 置顶——截图 host-smoke-01-startup.png（框架菜单/工具栏＋中央三维视图基线；无任何 IRD 面板）
+3. Alt+P 打开框架 Plugins 菜单——截图 host-smoke-02-plugins-menu.png（装载前基线：仅框架条目）
+4. Alt+P→回车＝首项 Load plugin——弹出 Open plugin file 对话框——截图 host-smoke-03-plugin-dialog.png
+5. 剪贴板粘贴插件 DLL 全路径并回车：D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+6. 门控 G1 通过（两判据：控制台'诊断栈就绪'＋'工作台 Dock 已呈现'——B-1 修复呈现自证成立）——截图 host-smoke-04-plugin-loaded.png（预期：五区工作台＋框架菜单/工具栏＋三维视图同帧共存）
+6b. Alt+P 再开 Plugins 菜单——截图 host-smoke-02b-menu-after-load.png（装载后：框架条目＋插件注入条目共存；'IRD 工作台'开关应呈勾选态＝Dock 可见的菜单面佐证）
+7. Ctrl+Shift+P 命令面板（宿主窗口快捷键）——截图 host-smoke-05-command-palette.png
+8. 菜单路由复核：Alt+P→Down×10（预高亮第 1 项＋Down×10＝第 11 可选条目＝命令面板）→回车——截图 host-smoke-05b-command-palette-menu.png
+9. 命令面板搜索『打开项目』→回车——截图 host-smoke-06-open-dir-dialog.png（目录选择对话框）
+10. 粘贴项目库路径并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\proj-demo（陈旧锁接管语义）
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+10b. 门控 G2 通过（双门控：控制台'项目已打开'行＋lock 心跳 09/24/2026 05:51:11 → 09/24/2026 06:03:57）——截图 host-smoke-06b-open-pm11-status.png（预期：Dock 内 PM-11 状态投影显示 proj-demo 上下文）
+11. 命令面板搜索『新建项目』→回车——截图 host-smoke-07-newproj-dir-dialog.png（目标目录对话框）
+12. 粘贴目标空目录并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\host-smoke-newproj
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+13. 显示名对话框——截图 host-smoke-08-newproj-name-dialog.png；粘贴『宿主冒烟项目』（PM-03 显示名）并确认
+14. 门控 G3 通过（目标目录落盘 6 项；创建后经打开协议进入——控制台'项目已打开'在案=True）——截图 host-smoke-09-newproj-pm11-status.png（预期：PM-11 状态投影切换为『宿主冒烟项目』）
+15. Alt+P→Down×14（预高亮第 1 项＋Down×14＝第 15 可选条目＝左栏）→回车 隐藏左栏
+15b. 左栏开关后截图 host-smoke-15a-left-highlight.png（回车前高亮态锚点）＋host-smoke-10-left-hidden.png（预期：左栏消失、右/底/顶与三维仍在）
+16. Alt+F4 退出宿主（aboutToQuit→content->shutdown→布局旗标有界落盘）
+16b. 宿主已退出（一实例）
+16c. 门控 G4a：用户级 ini 已存在（C:\Users\zgl18\AppData\Roaming\sdurws\ird-workbench.ini）——布局键：visibleLeft=false | visibleRight=true | visibleBottom=true；visibleLeft=false 判定=True（真→假翻转＝左栏开关实证）
+17. 重启框架（同一工作单元参数；stdout/stderr→host-smoke-studio-console-reload.log）并二次装载插件
+18. 二次装载门控通过（控制台'工作台 Dock 已呈现'行在案——呈现自证跨会话复现）——截图 host-smoke-11-left-still-hidden.png（预期：左栏保持隐藏＝用户级旗标跨会话生效）
+19. 命令面板搜索『恢复默认布局』→回车——截图 host-smoke-12-restored.png（预期：左栏恢复）
+19b. 恢复默认布局调用=True（截图 12 预期左栏恢复可见；recentCommands 键随收尾核验）
+20. Alt+F4 退出宿主收尾
+20b. 宿主已退出（二实例）
+20c. 收尾核验（G4b）：visibleLeft=true | visibleRight=true | visibleBottom=true | recentCommands=view.resetLayout, workbench.commandPalette, project.open（预期：visibleLeft 恢复 true＝恢复默认布局生效；recentCommands 含 view.resetLayout）
+21. 插件 Dev 日志已固化：traceability/builds/wp10-t16/host-smoke-ird-ui-plugin-logs/
+=== UI-T16 宿主冒烟 返工重录总控 v3 完成（2026-09-24 06:05:36）——DONE3 ===
+=== UI-T16 宿主冒烟 返工重录总控 v3 启动（2026-09-24 06:06:58）——B-1 修复后全量重录（两判据门控＋对话框消失门控＋Down 计数修正） ===
+0. 预清理完成：残留宿主进程终止；上轮截图/框架残留设置/插件 Dev 日志/用户级 ini 已清；newproj 重建为空目录；proj-demo lock 心跳（打开前）=09/24/2026 06:04:27
+1. 启动框架（工作单元位置参数；CWD=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；stdout/stderr→host-smoke-studio-console.log）
+2. 主窗口就绪并已 TOPMOST 置顶——截图 host-smoke-01-startup.png（框架菜单/工具栏＋中央三维视图基线；无任何 IRD 面板）
+3. Alt+P 打开框架 Plugins 菜单——截图 host-smoke-02-plugins-menu.png（装载前基线：仅框架条目）
+4. Alt+P→回车＝首项 Load plugin——弹出 Open plugin file 对话框——截图 host-smoke-03-plugin-dialog.png
+5. 剪贴板粘贴插件 DLL 全路径并回车：D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+6. 门控 G1 通过（两判据：控制台'诊断栈就绪'＋'工作台 Dock 已呈现'——B-1 修复呈现自证成立）——截图 host-smoke-04-plugin-loaded.png（预期：五区工作台＋框架菜单/工具栏＋三维视图同帧共存）
+6b. Alt+P 再开 Plugins 菜单——截图 host-smoke-02b-menu-after-load.png（装载后：框架条目＋插件注入条目共存；'IRD 工作台'开关应呈勾选态＝Dock 可见的菜单面佐证）
+7. Ctrl+Shift+P 命令面板（宿主窗口快捷键）——截图 host-smoke-05-command-palette.png
+8. 菜单路由复核：Alt+P→Down×10（预高亮第 1 项＋Down×10＝第 11 可选条目＝命令面板）→回车——截图 host-smoke-05b-command-palette-menu.png
+9. 命令面板搜索『打开项目』→回车——截图 host-smoke-06-open-dir-dialog.png（目录选择对话框）
+10. 粘贴项目库路径并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\proj-demo（陈旧锁接管语义）
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+10b. 门控 G2 通过（双门控：控制台'项目已打开'行＋lock 心跳 09/24/2026 06:04:27 → 09/24/2026 06:08:21）——截图 host-smoke-06b-open-pm11-status.png（预期：Dock 内 PM-11 状态投影显示 proj-demo 上下文）
+11. 命令面板搜索『新建项目』→回车——截图 host-smoke-07-newproj-dir-dialog.png（目标目录对话框）
+12. 粘贴目标空目录并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\host-smoke-newproj
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+13. 显示名对话框——截图 host-smoke-08-newproj-name-dialog.png；粘贴『宿主冒烟项目』（PM-03 显示名）并确认
+14. 门控 G3 通过（目标目录落盘 6 项；创建后经打开协议进入——控制台'项目已打开'在案=True）——截图 host-smoke-09-newproj-pm11-status.png（预期：PM-11 状态投影切换为『宿主冒烟项目』）
+15. Alt+P→Down×14（预高亮第 1 项＋Down×14＝第 15 可选条目＝左栏）→回车 隐藏左栏
+15b. 左栏开关后截图 host-smoke-15a-left-highlight.png（回车前高亮态锚点）＋host-smoke-10-left-hidden.png（预期：左栏消失、右/底/顶与三维仍在）
+16. Alt+F4 退出宿主（aboutToQuit→content->shutdown→布局旗标有界落盘）
+16b. 宿主已退出（一实例）
+16c. 门控 G4a：用户级 ini 已存在（C:\Users\zgl18\AppData\Roaming\sdurws\ird-workbench.ini）——布局键：visibleLeft=false | visibleRight=true | visibleBottom=true；visibleLeft=false 判定=True（真→假翻转＝左栏开关实证）
+17. 重启框架（同一工作单元参数；stdout/stderr→host-smoke-studio-console-reload.log）并二次装载插件
+18. 二次装载门控通过（控制台'工作台 Dock 已呈现'行在案——呈现自证跨会话复现）——截图 host-smoke-11-left-still-hidden.png（预期：左栏保持隐藏＝用户级旗标跨会话生效）
+19. 命令面板搜索『恢复默认布局』→回车——截图 host-smoke-12-restored.png（预期：左栏恢复）
+19b. 恢复默认布局调用=True（截图 12 预期左栏恢复可见；recentCommands 键随收尾核验）
+20. Alt+F4 退出宿主收尾
+20b. 宿主已退出（二实例）
+20c. 收尾核验（G4b）：visibleLeft=true | visibleRight=true | visibleBottom=true | recentCommands=view.resetLayout, workbench.commandPalette, project.open（预期：visibleLeft 恢复 true＝恢复默认布局生效；recentCommands 含 view.resetLayout）
+21. 插件 Dev 日志已固化：traceability/builds/wp10-t16/host-smoke-ird-ui-plugin-logs/
+=== UI-T16 宿主冒烟 返工重录总控 v3 完成（2026-09-24 06:10:02）——DONE3 ===
+=== UI-T16 宿主冒烟 返工重录总控 v3 启动（2026-09-24 06:29:45）——B-1 修复后全量重录（两判据门控＋对话框消失门控＋Down 计数修正） ===
+0. 预清理完成：残留宿主进程终止；上轮截图/框架残留设置/插件 Dev 日志/用户级 ini 已清；newproj 重建为空目录；proj-demo lock 心跳（打开前）=09/24/2026 06:08:51
+1. 启动框架（工作单元位置参数；CWD=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；stdout/stderr→host-smoke-studio-console.log）
+=== UI-T16 宿主冒烟 返工重录总控 v3 启动（2026-09-24 06:33:12）——B-1 修复后全量重录（两判据门控＋对话框消失门控＋Down 计数修正） ===
+0. 预清理完成：残留宿主进程终止；上轮截图/框架残留设置/插件 Dev 日志/用户级 ini 已清；newproj 重建为空目录；proj-demo lock 心跳（打开前）=09/24/2026 06:08:51
+1. 启动框架（工作单元位置参数；CWD=D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness；stdout/stderr→host-smoke-studio-console.log）
+!! 主窗口 120s 未就绪（尝试 1）
+…… 启动重试（第 1 次进程未能取得主窗口）
+2. 主窗口就绪并已 TOPMOST 置顶——截图 host-smoke-01-startup.png（框架菜单/工具栏＋中央三维视图基线；无任何 IRD 面板）
+3. Alt+P 打开框架 Plugins 菜单——截图 host-smoke-02-plugins-menu.png（装载前基线：仅框架条目）
+4. Alt+P→回车＝首项 Load plugin——弹出 Open plugin file 对话框——截图 host-smoke-03-plugin-dialog.png
+5. 剪贴板粘贴插件 DLL 全路径并回车：D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+6. 门控 G1 通过（两判据：控制台'诊断栈就绪'＋'工作台 Dock 已呈现'——B-1 修复呈现自证成立）——截图 host-smoke-04-plugin-loaded.png（预期：五区工作台＋框架菜单/工具栏＋三维视图同帧共存）
+6b. Alt+P 再开 Plugins 菜单——截图 host-smoke-02b-menu-after-load.png（装载后：框架条目＋插件注入条目共存；'IRD 工作台'开关应呈勾选态＝Dock 可见的菜单面佐证）
+7. Ctrl+Shift+P 命令面板（宿主窗口快捷键）——截图 host-smoke-05-command-palette.png
+8. 菜单路由复核：Alt+P→Down×10（预高亮第 1 项＋Down×10＝第 11 可选条目＝命令面板）→回车——截图 host-smoke-05b-command-palette-menu.png
+9. 命令面板搜索『打开项目』→回车——截图 host-smoke-06-open-dir-dialog.png（目录选择对话框）
+10. 粘贴项目库路径并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\proj-demo（陈旧锁接管语义）
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+10b. 门控 G2 通过（双门控：控制台'项目已打开'行＋lock 心跳 09/24/2026 06:08:51 → 09/24/2026 07:04:57）——截图 host-smoke-06b-open-pm11-status.png（预期：Dock 内 PM-11 状态投影显示 proj-demo 上下文）
+11. 命令面板搜索『新建项目』→回车——截图 host-smoke-07-newproj-dir-dialog.png（目标目录对话框）
+12. 粘贴目标空目录并有界回车确认：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\host-smoke-newproj
+…… 目录对话框回车第 1 次后仍在（原生导航形态），继续回车
+13. 显示名对话框——截图 host-smoke-08-newproj-name-dialog.png；粘贴『宿主冒烟项目』（PM-03 显示名）并确认
+14. 门控 G3 通过（目标目录落盘 6 项；创建后经打开协议进入——控制台'项目已打开'在案=True）——截图 host-smoke-09-newproj-pm11-status.png（预期：PM-11 状态投影切换为『宿主冒烟项目』）
+15. Alt+P→Down×14（预高亮第 1 项＋Down×14＝第 15 可选条目＝左栏）→回车 隐藏左栏
+15b. 左栏开关后截图 host-smoke-15a-left-highlight.png（回车前高亮态锚点）＋host-smoke-10-left-hidden.png（预期：左栏消失、右/底/顶与三维仍在）
+16. Alt+F4 退出宿主（aboutToQuit→content->shutdown→布局旗标有界落盘）
+16b. 宿主已退出（一实例）
+16c. 门控 G4a：用户级 ini 已存在（C:\Users\zgl18\AppData\Roaming\sdurws\ird-workbench.ini）——布局键：visibleLeft=false | visibleRight=true | visibleBottom=true；visibleLeft=false 判定=True（真→假翻转＝左栏开关实证）
+17. 重启框架（同一工作单元参数；stdout/stderr→host-smoke-studio-console-reload.log）并二次装载插件
+18. 二次装载门控通过（控制台'工作台 Dock 已呈现'行在案——呈现自证跨会话复现）——截图 host-smoke-11-left-still-hidden.png（预期：左栏保持隐藏＝用户级旗标跨会话生效）
+19. 命令面板搜索『恢复默认布局』→回车——截图 host-smoke-12-restored.png（预期：左栏恢复）
+19b. 恢复默认布局调用=True（截图 12 预期左栏恢复可见；recentCommands 键随收尾核验）
+20. Alt+F4 退出宿主收尾
+20b. 宿主已退出（二实例）
+20c. 收尾核验（G4b）：visibleLeft=true | visibleRight=true | visibleBottom=true | recentCommands=view.resetLayout, workbench.commandPalette, project.open（预期：visibleLeft 恢复 true＝恢复默认布局生效；recentCommands 含 view.resetLayout）
+21. 插件 Dev 日志已固化：traceability/builds/wp10-t16/host-smoke-ird-ui-plugin-logs/
+=== UI-T16 宿主冒烟 返工重录总控 v3 完成（2026-09-24 07:06:38）——DONE3 ===
+=== UI-T16 返工重录轮次与终版登记（2026-09-24 06:29~07:06，实施会话如实记录）===
+【自动化脚本迭代（全部为取证工具缺陷，非产品缺陷，逐轮如实登记）】
+· v3 首录（~05:15）：G1 双判据通过、五区已可见（B-1 修复本体实证）；止步于步骤
+  9——命令面板门控误判：面板为主窗口内浮动子面板（非顶层窗口、不抢前台，
+  CommandPalette_p.hpp 设计登记"为什么不是 Qt::Popup 顶级窗口"），以"非主前台
+  窗口"判浮现永不成立。修正：面板调用回退 v2 实证技术（^+p→粘贴→回车）。
+· v3 二录（05:28~05:35）：G1~G4a 全过（G2 锁心跳 05:31:06 刷新）；但目录对话框
+  第 3 次溢出回车被随后弹出的显示名输入框吞掉＝默认名"新项目"被接受（显示名
+  演示失真）；步骤 17 重启框架"进程消失"实为总控脚本步骤 17 丢失 Launch-Studio
+  调用（草稿期残留一行 Wait-ConsoleLine 占位）——修复步骤 17＋Accept-
+  FolderDialog 改按对话框句柄判关闭（杜绝溢出回车串窗）。
+· v3 三录（05:57~06:05）：全门控过；但截图 04 判读 Dock 仍占满全宽——首版宽度
+  收束（上限 760 px）未生效。加宽度结果如实落控制台＋[geometry] Dev 日志（判别
+  "竖向裁剪"vs"文本缺失"），上限修至 1024 px＋连续两拍收束。
+· v3 四录（06:06~06:10）：全门控过、三维视图共存达成（目标 768/实际 1054 px＝
+  受五区内容最小宽度钳制，如实留痕）；但状态行文本空白（Dock 底缘只剩空白条
+  带）——宽度收束至内容最小宽时右栏文本换行加高，五区栅格竖向总最小高超过
+  Dock 视口，qGeomCalc"空间不足按最小占比分配"把末行（状态行）整体挤出视口。
+  另：最大化原写在重聚焦分支内、已获焦点时不执行——移入 Launch-Studio 无条件
+  执行（Dock 钳制宽 1054 px 下最大化窗口才给三维视图留位；窗口尺寸属操作面设
+  置，非产品行为）。
+【产品终版修复（两次提交合计；均插件侧，SA-02 框架零修改）】
+①装载呈现自证（提交 d8af3a96）：initialize 末尾零等待单发重申嵌入式呈现＋G1
+  第二判据行；
+②共存形态收口＋状态行钉底（本次）：resizeDocks 宽度收束（420~1024 px，钳制事
+  实如实落控制台/Dev 日志）＋Dock 体改外层纵排（五区栅格持 stretch 先行吸收竖
+  向短缺＋状态行恒高钉底——PM-11 投影恒可见，§4.4"状态行无隐藏入口"的嵌入式
+  保障）＋装载几何事实 [geometry] Dev 日志（排障面）。
+【终录（06:33 启动，07:06 完成——守候解锁后全程自动；本轮即送验证据）】
+0. 预清理（上轮截图/框架残留/Dev 日志/用户级 ini 清零）
+6.  门控 G1 通过（两判据：诊断栈就绪＋工作台 Dock 已呈现）
+10b. 门控 G2 通过（控制台"项目已打开"＋lock 心跳 06:04:27→06:08:21）
+14. 门控 G3 通过（目标目录落盘 6 项＋控制台"项目已打开"）
+16c. 门控 G4a 通过（visibleLeft=true→false 真翻转＝左栏开关实证）
+18. 二次装载门控通过（呈现自证跨会话复现）
+19b. 恢复默认布局调用成功（recentCommands 含 view.resetLayout）
+20c. 门控 G4b 通过（visibleLeft 恢复 true＝恢复默认布局生效）
+21. Dev 日志固化＋DONE3
+【终版证据逐帧要点（验收对照锚点）】04＝五区＋框架菜单/工具栏＋三维视图同帧共
+存＋状态行"未打开项目"；06b＝打开 proj-demo 后让位页＋状态行"IRD演示项目"（PM-11
+投影）＋三维视图仍在；09＝新建『宿主冒烟项目』后状态投影切换＋三维共存；10/11＝
+左栏隐藏＋跨会话保持；12＝恢复默认布局后五区齐全。宽度收束钳制事实（目标
+768/实际 1054 px）如实呈控制台与 [geometry] Dev 日志。
+【最终 head 重出全套验证留痕（终版代码，覆盖此前中间版捕获——均属 attempt 2
+证据集）】integrated-build-rework.log（exit 0 零 error）；smoke-build-rework.log
+（exit 0 零 error）；ird_gates-wp10-t16-rework.txt（56 命中，与既有 head 参考逐行
+IDENTICAL）；ctest-ui-{ird,gui}-rework.log（2/2、1/1）；三件套 -rework.xml/json
+（154/22/34 全过，windows 平台）；validate-task-rework.log（PASS 1 tasks）＋
+validate-docs PASS。

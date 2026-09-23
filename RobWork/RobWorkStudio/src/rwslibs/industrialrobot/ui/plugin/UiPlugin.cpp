@@ -30,11 +30,13 @@
 #include <QIcon>
 #include <QInputDialog>
 #include <QLineEdit>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>
+#include <QVBoxLayout>
 #include <QWidget>
 
 #include <rws/RobWorkStudio.hpp>                 // 宿主注入面：getView()/getWorkCellScene()（共存最小接入）
@@ -263,11 +265,22 @@ void IrdWorkbenchHostPlugin::close()
 bool IrdWorkbenchHostPlugin::buildDockBody()
 {
     // Dock 体：插件本体即框架主窗口的 QDockWidget（addPlugin 的
-    // addDockWidget 目标）——体栅格安放内容装配面的五个区域＋状态行。
-    // 红线：不建任何顶层 QMainWindow（O-38 裁决②——双菜单/双状态栏/
-    // 双 Dock 管理反模式禁止；框架菜单/状态栏能力归宿主）。
+    // addDockWidget 目标）——体栅格安放内容装配面的五个区域，状态行钉在
+    // Dock 体底缘。红线：不建任何顶层 QMainWindow（O-38 裁决②——双菜单/
+    // 双状态栏/双 Dock 管理反模式禁止；框架菜单/状态栏能力归宿主）。
     auto* body = new QWidget(this);
     body->setObjectName("ird_plugin_dock_body");
+    // 外层纵排（两行：五区栅格吃伸展＋状态行恒定高度）——为什么状态行不进
+    // 栅格末行：宽度收束到内容最小宽（约 1054 px）时右栏文本换行加高，栅格
+    // 竖向总最小高会超过 Dock 视口，qGeomCalc 进入"空间不足按最小占比分配"
+    // 形态，末行（状态行）被整体挤出视口（attempt 2 首录截图实证：Dock 底
+    // 缘只剩空白条带、PM-11 投影不可见）。纵排拆分后，竖向短缺由带 stretch
+    // 的五区栅格先行吸收（§4.4 尺寸折叠在嵌入式形态本就关闭，各区域内容
+    // 容忍少量竖向挤压），状态行作为第二行永远保有自身高度——PM-11 投影
+    // 恒可见（§4.4 最小可用布局第三要素"状态行无隐藏入口"的嵌入式保障）。
+    auto* outerLayout = new QVBoxLayout(body);
+    outerLayout->setContentsMargins(0, 0, 0, 0);
+    outerLayout->setSpacing(2);
     auto* grid = new QGridLayout(body);
     grid->setContentsMargins(0, 0, 0, 0);
     grid->setSpacing(2);
@@ -277,17 +290,18 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
     }
 
     // 栅格安放（§4.1 五区在 Dock 体内的并置形态——自上而下：顶栏/三栏/
-    // 底部/状态行；中央区吃伸展空间）：内容 Widget 从宿主控件重挂进栅格
-    // （Qt 对象树托管生命周期）。
+    // 底部；中央区吃伸展空间）：内容 Widget 从宿主控件重挂进栅格（Qt 对象
+    // 树托管生命周期）。状态行不进栅格——由外层纵排钉底（见上注）。
     grid->addWidget(m_content->topBarWidget(), 0, 0, 1, 3);
     grid->addWidget(m_content->leftWidget(), 1, 0);
     grid->addWidget(m_content->centralWidget(), 1, 1);
     grid->addWidget(m_content->rightWidget(), 1, 2);
     grid->addWidget(m_content->bottomWidget(), 2, 0, 1, 3);
-    grid->addWidget(m_content->statusBarWidget(), 3, 0, 1, 3);
     // 中央区伸展（中央工作区吃剩余空间——§4.4）；三栏按内容最小尺寸呈现。
     grid->setColumnStretch(1, 1);
     grid->setRowStretch(1, 1);
+    outerLayout->addLayout(grid, /*stretch=*/1);
+    outerLayout->addWidget(m_content->statusBarWidget(), /*stretch=*/0);
     setWidget(body);
     m_dockBody = body;
 
@@ -414,6 +428,53 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     // ——PM-14），Dock 级呈现权在宿主装载语义下归本插件的装载自证。
     setFloating(false);  // 嵌入式形态钉死：非浮动（顶层漂浮窗口＝宿主形态违例）
     show();              // 恢复 Dock 呈现（仍在 addDockWidget 安放的停靠区内嵌于主窗口）
+
+    // 共存形态收口（O-38 裁决③"三维共存最小接入"的形态保障）：装载序列中
+    // addDockWidget 先按停靠区整幅宽给位、随后 setVisible(false) 隐藏——重显
+    // （上一行 show()）会恢复该整幅宽，宿主中央 RWStudioView3D 被挤压为零
+    // （attempt 2 首录截图实证：五区完整可见但三维视图不可见）。故在 show()
+    // 布局落定后的下一拍用 resizeDocks 显式把 Dock 宽度收束到宿主主窗口客户
+    // 宽的约 2/5——中央三维视图保有其余宽度，两能力同帧共存。连续两拍各发一
+    // 次收束（show 布局与主窗口布局的落定拍序不由插件决定，第二拍兜底）；
+    // 结果宽度如实留痕——若被五区内容最小宽度钳制（该形态下顶栏按钮行很宽），
+    // 收束只能到达钳制宽度，此时宿主窗口越宽三维视图所得越多，如实呈现。
+    auto issueDockWidthShrink = [this] {
+        auto* hostWindow = qobject_cast<QMainWindow*>(parentWidget());
+        if (hostWindow == nullptr) {
+            return;  // 未嵌宿主主窗口＝异常装载形态（防御——不越权假设父型）
+        }
+        const int targetWidth = qBound(420, hostWindow->width() * 2 / 5, 1024);
+        hostWindow->resizeDocks({this}, {targetWidth}, Qt::Horizontal);
+        reportLine("工作台 Dock 宽度收束：目标 " + std::to_string(targetWidth)
+                   + " px，实际 " + std::to_string(width())
+                   + " px（受内容最小宽度钳制时如实留痕）");
+        // 装载几何事实一次性落 Dev 日志（排障面——attempt 2 状态行呈空带时
+        // 用以判别"竖向裁剪"还是"文本缺失"；Dev 通道 §6.2，不进控制台）。
+        if (m_diag.pipeline != nullptr) {
+            const QWidget* bodyW = m_dockBody.data();
+            const QWidget* sb = (m_content != nullptr) ? m_content->statusBarWidget() : nullptr;
+            std::string facts = "[geometry] dock=" + std::to_string(width()) + "x"
+                                + std::to_string(height());
+            if (bodyW != nullptr) {
+                const QSize bodyMin = bodyW->minimumSizeHint();
+                facts += " body=" + std::to_string(bodyW->width()) + "x"
+                         + std::to_string(bodyW->height())
+                         + " bodyMin=" + std::to_string(bodyMin.width()) + "x"
+                         + std::to_string(bodyMin.height());
+            }
+            if (sb != nullptr && bodyW != nullptr) {
+                const QPoint statusPos = sb->mapTo(bodyW, QPoint(0, 0));
+                facts += " status=" + std::to_string(sb->width()) + "x"
+                         + std::to_string(sb->height()) + "@y"
+                         + std::to_string(statusPos.y())
+                         + " visible=" + (sb->isVisible() ? "1" : "0");
+            }
+            m_diag.pipeline->logDev(kPluginDevChannel, facts);
+        }
+    };
+    QTimer::singleShot(0, this, issueDockWidthShrink);
+    QTimer::singleShot(100, this, issueDockWidthShrink);
+
     reportLine("工作台 Dock 已呈现（宿主主窗口嵌入式——装载呈现自证完成）");
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,

@@ -1,4 +1,4 @@
-# UI-T16 返工（attempt 2）全新 ctest 捕获——2026-09-24 05:05:16
+# UI-T16 返工（attempt 2）全新 ctest 捕获——2026-09-24 07:10:48（最终 head：宽度收束＋状态行钉底＋几何日志版）
 # 运行签名＝本头注捕获时间戳＋ctest 原生输出（UpdateCTestConfiguration/Test project 行、-V 级 Test command、各用例独立耗时）；本文件为 tee 实时捕获原件未删节
 
 UpdateCTestConfiguration  from :D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/ui/DartConfiguration.tcl
@@ -19,18 +19,18 @@ test 1
 1: [----------] Global test environment set-up.
 1: [----------] 6 tests from UiBuild
 1: [ RUN      ] UiBuild.SourceTreeReachable_UI_BUILD
-1: [       OK ] UiBuild.SourceTreeReachable_UI_BUILD (1 ms)
+1: [       OK ] UiBuild.SourceTreeReachable_UI_BUILD (2 ms)
 1: [ RUN      ] UiBuild.PlacementStaticRegistration_UI_BUILD
 1: [       OK ] UiBuild.PlacementStaticRegistration_UI_BUILD (0 ms)
 1: [ RUN      ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD
 1: [       OK ] UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD (0 ms)
 1: [ RUN      ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD
-1: [       OK ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD (16 ms)
+1: [       OK ] UiBuild.NoCrossUnitInclude_O31_UI_BUILD (20 ms)
 1: [ RUN      ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD
-1: [       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (20 ms)
+1: [       OK ] UiBuild.NoRobWorkPrefixLiteral_R4_UI_BUILD (24 ms)
 1: [ RUN      ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD
-1: [       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (16 ms)
-1: [----------] 6 tests from UiBuild (55 ms total)
+1: [       OK ] UiBuild.NoGlobalShortcutPrivatization_SA16_UI_BUILD (18 ms)
+1: [----------] 6 tests from UiBuild (66 ms total)
 1: 
 1: [----------] 2 tests from ShellModel
 1: [ RUN      ] ShellModel.UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1
@@ -93,7 +93,7 @@ test 1
 1: [       OK ] ShortcutRegistryModel.RebindUnbindPersistence_UI_HKY_2 (0 ms)
 1: [ RUN      ] ShortcutRegistryModel.RestoreUserBindingsDropsInvalidEntries_PM14
 1: [       OK ] ShortcutRegistryModel.RestoreUserBindingsDropsInvalidEntries_PM14 (0 ms)
-1: [----------] 4 tests from ShortcutRegistryModel (0 ms total)
+1: [----------] 4 tests from ShortcutRegistryModel (1 ms total)
 1: 
 1: [----------] 10 tests from PolicyCardModel
 1: [ RUN      ] PolicyCardModel.GroupTitlesDistinctAndScoped_POLID3_UI_T07_ACC1
@@ -297,7 +297,7 @@ test 1
 1: [       OK ] DraftControllerModelTest.LocalUndoStackBoundToDraftNotRevisions (0 ms)
 1: [ RUN      ] DraftControllerModelTest.SessionLifecycleAndDirtyProducerWiring
 1: [       OK ] DraftControllerModelTest.SessionLifecycleAndDirtyProducerWiring (0 ms)
-1: [----------] 13 tests from DraftControllerModelTest (2 ms total)
+1: [----------] 13 tests from DraftControllerModelTest (3 ms total)
 1: 
 1: [----------] 13 tests from DiagPresentationModelTest
 1: [ RUN      ] DiagPresentationModelTest.QueryForwardsFilterAndStableOrder_UI_DIA_1
@@ -325,8 +325,8 @@ test 1
 1: [ RUN      ] DiagPresentationModelTest.RedactedPathForwardsService_NFR_SEC_07
 1: [       OK ] DiagPresentationModelTest.RedactedPathForwardsService_NFR_SEC_07 (0 ms)
 1: [ RUN      ] DiagPresentationModelTest.SubscribeMarshalToUiThreadAndUnsubscribe_M_1
-1: [       OK ] DiagPresentationModelTest.SubscribeMarshalToUiThreadAndUnsubscribe_M_1 (5 ms)
-1: [----------] 13 tests from DiagPresentationModelTest (7 ms total)
+1: [       OK ] DiagPresentationModelTest.SubscribeMarshalToUiThreadAndUnsubscribe_M_1 (8 ms)
+1: [----------] 13 tests from DiagPresentationModelTest (10 ms total)
 1: 
 1: [----------] 12 tests from TaskPresentationModelTest
 1: [ RUN      ] TaskPresentationModelTest.ProgressMonotonicDropRegressionAndIdempotent_UI_TSK_5
@@ -352,12 +352,12 @@ test 1
 1: [ RUN      ] TaskPresentationModelTest.QueuePositionWordingOnlyWithoutNumbers_UI_EXEC_1
 1: [       OK ] TaskPresentationModelTest.QueuePositionWordingOnlyWithoutNumbers_UI_EXEC_1 (0 ms)
 1: [ RUN      ] TaskPresentationModelTest.UiThreadHeartbeatUnderSlowPeerQuery_UI_PERF_1
-1: [       OK ] TaskPresentationModelTest.UiThreadHeartbeatUnderSlowPeerQuery_UI_PERF_1 (1500 ms)
-1: [----------] 12 tests from TaskPresentationModelTest (1500 ms total)
+1: [       OK ] TaskPresentationModelTest.UiThreadHeartbeatUnderSlowPeerQuery_UI_PERF_1 (1501 ms)
+1: [----------] 12 tests from TaskPresentationModelTest (1501 ms total)
 1: 
 1: [----------] 9 tests from CommandInteractionBridgeTest
 1: [ RUN      ] CommandInteractionBridgeTest.FactoryFailFastAndPrincipalCached_P_UI_4
-1: [       OK ] CommandInteractionBridgeTest.FactoryFailFastAndPrincipalCached_P_UI_4 (0 ms)
+1: [       OK ] CommandInteractionBridgeTest.FactoryFailFastAndPrincipalCached_P_UI_4 (1 ms)
 1: [ RUN      ] CommandInteractionBridgeTest.ConfirmedFlowProducesCredentials_UI_CMD_5
 1: [       OK ] CommandInteractionBridgeTest.ConfirmedFlowProducesCredentials_UI_CMD_5 (1 ms)
 1: [ RUN      ] CommandInteractionBridgeTest.RejectedFlowYieldsNoCredentials_UI_CMD_4
@@ -365,21 +365,21 @@ test 1
 1: [ RUN      ] CommandInteractionBridgeTest.EmptyFindingsShortCircuitWithoutDialog
 1: [       OK ] CommandInteractionBridgeTest.EmptyFindingsShortCircuitWithoutDialog (0 ms)
 1: [ RUN      ] CommandInteractionBridgeTest.DismantleWakesBlockedCommand_UI_CMD_7
-1: [       OK ] CommandInteractionBridgeTest.DismantleWakesBlockedCommand_UI_CMD_7 (1 ms)
+1: [       OK ] CommandInteractionBridgeTest.DismantleWakesBlockedCommand_UI_CMD_7 (0 ms)
 1: [ RUN      ] CommandInteractionBridgeTest.NoAutoTimeoutWhileWaiting_P_DIAG_6
-1: [       OK ] CommandInteractionBridgeTest.NoAutoTimeoutWhileWaiting_P_DIAG_6 (2 ms)
+1: [       OK ] CommandInteractionBridgeTest.NoAutoTimeoutWhileWaiting_P_DIAG_6 (0 ms)
 1: [ RUN      ] CommandInteractionBridgeTest.RevisionCommitAnnotatesStaleInput_UI_CMD_6
-1: [       OK ] CommandInteractionBridgeTest.RevisionCommitAnnotatesStaleInput_UI_CMD_6 (0 ms)
+1: [       OK ] CommandInteractionBridgeTest.RevisionCommitAnnotatesStaleInput_UI_CMD_6 (1 ms)
 1: [ RUN      ] CommandInteractionBridgeTest.EnrichmentFillsRecordFieldsAndDevFold_UI_CMD_5
 1: [       OK ] CommandInteractionBridgeTest.EnrichmentFillsRecordFieldsAndDevFold_UI_CMD_5 (0 ms)
 1: [ RUN      ] CommandInteractionBridgeTest.DefaultAssemblyWithoutEnricherZeroFabrication
 1: [       OK ] CommandInteractionBridgeTest.DefaultAssemblyWithoutEnricherZeroFabrication (0 ms)
-1: [----------] 9 tests from CommandInteractionBridgeTest (8 ms total)
+1: [----------] 9 tests from CommandInteractionBridgeTest (6 ms total)
 1: 
 1: [----------] Global test environment tear-down
-1: [==========] 154 tests from 17 test suites ran. (1584 ms total)
+1: [==========] 154 tests from 17 test suites ran. (1598 ms total)
 1: [  PASSED  ] 154 tests.
-1/2 Test #1: sdurws_ird_ui_test ...............   Passed    1.82 sec
+1/2 Test #1: sdurws_ird_ui_test ...............   Passed    1.77 sec
 test 2
     Start 2: sdurws_ird_ui_contract_test
 
@@ -425,14 +425,14 @@ test 2
 2: [ RUN      ] InteractionTaskContractTest.BridgeImplementsUiInteractionPort_O31
 2: [       OK ] InteractionTaskContractTest.BridgeImplementsUiInteractionPort_O31 (0 ms)
 2: [ RUN      ] InteractionTaskContractTest.PresenterInvokedOnUiThreadOnly_M_1
-2: [       OK ] InteractionTaskContractTest.PresenterInvokedOnUiThreadOnly_M_1 (0 ms)
+2: [       OK ] InteractionTaskContractTest.PresenterInvokedOnUiThreadOnly_M_1 (1 ms)
 2: [ RUN      ] InteractionTaskContractTest.TaskPortControlOrderAndProgressProtocol
 2: [       OK ] InteractionTaskContractTest.TaskPortControlOrderAndProgressProtocol (0 ms)
 2: [ RUN      ] InteractionTaskContractTest.ControlRequestsAreFireAndForget_NFR_PERF_02
 2: [       OK ] InteractionTaskContractTest.ControlRequestsAreFireAndForget_NFR_PERF_02 (0 ms)
 2: [ RUN      ] InteractionTaskContractTest.FindingQueryPortFeedsBridgeEnrichment
-2: [       OK ] InteractionTaskContractTest.FindingQueryPortFeedsBridgeEnrichment (0 ms)
-2: [----------] 5 tests from InteractionTaskContractTest (1 ms total)
+2: [       OK ] InteractionTaskContractTest.FindingQueryPortFeedsBridgeEnrichment (2 ms)
+2: [----------] 5 tests from InteractionTaskContractTest (4 ms total)
 2: 
 2: [----------] 4 tests from PeerBridge
 2: [ RUN      ] PeerBridge.ContractTestDirectLinkFaceRegistered_O31_UI_T14
@@ -447,17 +447,17 @@ test 2
 2: 
 2: [----------] 1 test from Section12Registry
 2: [ RUN      ] Section12Registry.AllAcceptanceFamilyCasesRegistered_UI_T14
-2: [       OK ] Section12Registry.AllAcceptanceFamilyCasesRegistered_UI_T14 (7 ms)
-2: [----------] 1 test from Section12Registry (7 ms total)
+2: [       OK ] Section12Registry.AllAcceptanceFamilyCasesRegistered_UI_T14 (8 ms)
+2: [----------] 1 test from Section12Registry (8 ms total)
 2: 
 2: [----------] Global test environment tear-down
-2: [==========] 22 tests from 6 test suites ran. (11 ms total)
+2: [==========] 22 tests from 6 test suites ran. (15 ms total)
 2: [  PASSED  ] 22 tests.
-2/2 Test #2: sdurws_ird_ui_contract_test ......   Passed    0.18 sec
+2/2 Test #2: sdurws_ird_ui_contract_test ......   Passed    0.29 sec
 
 100% tests passed, 0 tests failed out of 2
 
 Label Time Summary:
-ird    =   2.00 sec*proc (2 tests)
+ird    =   2.06 sec*proc (2 tests)
 
-Total Test time (real) =   2.01 sec
+Total Test time (real) =   2.07 sec

@@ -24,4 +24,5 @@ QObject::disconnect: wildcard call disconnects from destroyed signal of QDoubleS
 QObject::disconnect: wildcard call disconnects from destroyed signal of QSlider::unnamed
 QObject::disconnect: wildcard call disconnects from destroyed signal of QDoubleSpinBox::unnamed
 QObject::disconnect: wildcard call disconnects from destroyed signal of QSlider::unnamed
+QLayout: Attempting to add QLayout "" to QWidget "ird_plugin_dock_body", which already has a layout
 QObject::disconnect: wildcard call disconnects from destroyed signal of QTabWidget::unnamed
