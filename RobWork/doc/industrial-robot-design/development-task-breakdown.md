@@ -2,8 +2,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.17（Draft；O-38 裁决登记＋WP-10-T16 任务行——开发期宿主插件验证通道；见 §7 变更记录） |
-| 日期 | 2026-09-23 |
+| 文档版本 | v0.18（Draft；O-42 裁决登记——UI-T16 实施熔断解除与机械收尾授权；见 §7 变更记录） |
+| 日期 | 2026-09-24 |
 | 状态 | **`Draft`** |
 | 文档代号 | DTB |
 | 上游 | `REQUIREMENTS.md` **v1.16（Accepted）**（需求语义与验收唯一权威，RV-13）；`ARCHITECTURE.md` **v0.11（Draft）**（20 单元组成、分层与依赖红线唯一权威）；`units/*.md` 单元详设现状 **11/20 已编写**（core/testkit/project/evidence/runtime/policy/execution/diagnostics/ui/io/reporting；v0.1，保留各卡评审状态）；`DETAILED-DESIGN.md` 已建立为 20 单元详设总目录；详设正文由 units/*.md 承担，缺失单元仍先出"编写任务卡"任务 |
@@ -639,6 +639,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | O-39 | ReadinessSummary①级输入门禁的组装时点：evidence §6.4①"由请求方/域提供"，修订内是否持久化就绪结论未定（P-REQ-3） | 就绪 TOCTOU（基线漂移窗口） | evidence.md §6.4① vs requirements.md §8/§14.3 | evidence 卡所有者（会签） | 已裁决（2026-09-22，治理会话奉所有者批次授权）：**评估组装时现场重算**（与命令 prepare 同源断言套件，NFR-MNT-04 无重复判定）；修订内不持久化就绪结论；requirements 提供 ReadinessSummary 数据源（IRequirementReadinessChecker.readinessSummary） |
 | O-40 | 阶段 B 两项第三方依赖登记（经 vcpkg 经典模式，DTB §5.3 通道）：①pugixml——modeling 计算库 PRIVATE，URDF/Xacro DOM 解析（io 不产出 DOM、expat 为其 PRIVATE，P-MDL-5）；②Eigen——kinematics 计算库 PRIVATE，Jacobian SVD/线性代数（rw::math 无 SVD，P-KIN-6） | WP-13-T05/T06、WP-15-T03 实现路径 | modeling.md §14.3、kinematics.md §14.3、io.md §6.1 | 构建约定所有者 | 已登记（2026-09-22，所有者批次授权）：两依赖随对应任务契约 allowedFiles/knownPitfalls 携带；引入前 vcpkg 经典模式安装并登记版本于契约 note |
 | O-41 | project 发出的 PRJ-LOCK-HELD 用户级诊断记录缺 ERR-01 subject 字段——经 diagnostics IDiagnosticFactory.create 按契约抛 subject-missing（Factory.hpp:123-131）；project 自身路径未走工厂校验面，首个经工厂消费的新消费者（WP-10-T15 ProjectDiagnosticsBridge）即触发契约异常（findings F-290，WP-10-T15 补验收 B-1 根因链三探针实证） | 任何将 project 记录路由经诊断工厂的新消费者；PM-07 双写者场景的用户可见降级 | findings.json F-290；WP-10-T15 验收记录 acc/WP-10-T15/1 | 所有者裁决（project 卡增量补 subject，或 diagnostics 卡登记豁免口径）＋project 单元实施者 | 已裁决（2026-09-22，所有者）：**方案①——project 卡增量修订**，PRJ-LOCK-HELD 用户级记录补 subject=项目对象（ProjectId）；随裁决消解 diagnostics §8.2 映射表同码"subject=∅"格的自相矛盾（该格与工厂 subject-missing 校验相悖即 F-290 根因）。落地＝units/project.md v0.19（§9.5 字段规范＋§5 两处标注）＋units/diagnostics.md v0.13（§8.2 格对齐）；**余留**：project 发射侧代码补 subject 的实现修正任务（编译入队、随任务合入后 F-290 转 fixed）。harness（WP-10-T15）返工维持桥接器显式降级路由处置、不吞异常掩盖本缺口（原登记要求不变） |
+| O-42 | UI-T16 实施熔断解除口径——attempts.implement=3 超 maxImplementRestarts=2（tick#285~289 blocked 停等）：三次实施派发均因环境中断（并发额度/会话租约到期/桌面锁屏），第三次已产出完整实现（562a18b4）＋宿主装载缺陷修复与冒烟证据链，机械收尾（提交/推送/送验）未完成而流水线停等 | UI-T16 交付推进；队列头阻塞（后随 28 项） | traceability/pipeline/state.json；governance-log O-38；traceability/builds/wp10-t16/ 宿主冒烟证据链 | 所有者（PIPE §6 blocked 解除） | 已裁决（2026-09-24，所有者"解决阻塞"指令）：**选项①——授权直接完成机械收尾，豁免第四次实施重派**（选项②重派判不必要——工作已产出；选项③派发通道排查同步完成——卡点＝实施会话中断＋桌面锁屏阻断 GUI 冒烟，非派发机制缺陷）。收尾会话（所有者委派）执行：桌面解锁后重跑宿主冒烟补录证据→按实际结果提交推送（79b3f8da＋更正提交 6441c136——收尾总控自动提交先于接管发生，其验证表述强于实证，已按 AGENTS §6.3 如实更正登记）→state 按 PIPE §4.4 完成事件口径写回 awaiting_acceptance 送验；宿主冒烟新检出形态缺陷（五区面板不可见/PM-11 投影缺失/打开新建协议完成性未证/布局开关菜单导航差一）随证据登记，交验收段裁决走返工循环 |
 
 ### 4.3 待冻结前置（REQUIREMENTS 附录 C 状态同步）
 
@@ -779,6 +780,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.15 | 2026-09-10 | WP-00-T02 执行（P-02/O-30 消账）：①新建 traceability/trace-matrix-format.md——追踪矩阵格式契约 v1.0（schema `ird-trace-matrix/1`＋五不变量＋七类缩写展开规则＋再生成/复核方法）；②新建 traceability/trace-matrix.json——首版机读生成物（194 项＝180 主＋12 分期＋2 分级，全覆盖 uncovered=0，家族计数与 REQUIREMENTS §4 逐家族全等，断言通过）；③§3 头部机读投影指向；§4.3 O-30 翻转为已冻结。REQUIREMENTS 附录 C P-02 行的翻转随需求侧下次增量修订（本任务 forbiddenFiles 不含 REQUIREMENTS——消账证据＝格式契约＋本行）。 |
 | v0.16 | 2026-09-19 | O-31 裁决登记（所有者 2026-09-19；文档头版本行补同步——v0.13~v0.15 登记时漏改，此前仍标 v0.12）：①§4.2 O-31 行翻转为已裁决＝确认 ui 侧最小注入接口模式（不增边＋ui 自有最小端口接口/值投影＋L5 装配适配；ARCH §3.5/SA-10 不动；C 表 C-3/4/5/7/8/10/11 形态改注、C-6 方向外翻；测试目标链接面按各卡测试目标表维持；需求语义零变化）；②落地载体＝units/ui.md v0.4（findings F-228 一并消解）＋tasks/foundation/UI-T03~T14 契约 O-31 处置改写随整链放行（contract-compile-log 2026-09-19 批次行）＋tasks/foundation/RPT-T01~T13 按 CCP §3 编译放行（RPT-T14~T16 阶段 B/C 前置域卡未产出显式排除——F-120 教训；触发＝对应域单元波次合入后的治理批次）；③findings F-229（tasks/ 扫描面数组根过滤——PIPE v1.14 T-ORCH 步骤 4 增补口径）登记即消账。本修订不改变任何需求语义与任务范围 |
 | v0.17 | 2026-09-23 | O-38 裁决登记（所有者 2026-09-23，融合方案评估）：①§4.2 新增 O-38 行（已裁决）——平台界面与 RobWorkStudio 主窗口融合形态：**开发期宿主插件验证通道**（`sdurws_ird_ui_plugin` 经框架 Plugins→Load plugin 动态加载，仅限开发期）＋壳拆"内容装配层/顶层窗口宿主层"两层（harness 与插件共用内容装配面）＋宿主模式 RWStudioView3D 共存最小接入；SA-01 静态白名单与 WP-24-T03 正式装配口径不变（产品交付路径零新增动态加载入口）；②§2.11 新增 WP-10-T16 任务行（≙UI-T16，规模 M，依赖 T03/T11/T15）；③§5.1 新增"开发期宿主验证通道"行（加载方式与 AUTOMOC 仅插件目标开启口径）。需求语义零变化 |
+| v0.18 | 2026-09-24 | O-42 裁决登记（所有者 2026-09-24"解决阻塞"指令）：①§4.2 新增 O-42 行（已裁决）——UI-T16 实施熔断（attempts.implement=3 超限，三次均环境中断）解除＝选项①授权直接完成机械收尾、豁免第四次实施重派；选项③排查结论＝卡点为实施会话中断＋桌面锁屏阻断 GUI 冒烟，非派发机制缺陷；②收尾会话（所有者委派）执行：宿主冒烟重跑补录证据、提交 79b3f8da 后追更正提交 6441c136（收尾总控自动提交先于接管发生、验证表述强于实证——五区面板可见性/PM-11 投影/打开新建协议完成性/布局开关演示四项未实证，逐项更正登记并附独立复跑实录）、state 按 PIPE §4.4 完成事件口径写回 awaiting_acceptance（attempts.implement 清零、headSha=6441c136 冻结）；③宿主冒烟新检出形态缺陷随证据登记，交验收段正式裁决（预期 fail→返工循环）。需求语义零变化 |
 
 
 
