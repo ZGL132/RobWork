@@ -105,19 +105,75 @@ inline constexpr std::string_view kMdlImportXacroUnresolved = "MDL-IMPORT-XACRO-
 /// 登记）。
 inline constexpr std::string_view kMdlTemplateDisabled = "MDL-TEMPLATE-DISABLED";
 
+/// §9.5 T08 行：MDL-06-TRAVEL-LIMIT（比较型/Warning——有限限位旋转关节
+/// 行程超策略阈值（实际行程/阈值/单位 rad 三要素；阈值唯一归 policy
+/// JointThresholds，本地无第二常量——ARC-05/NFR-MNT-07）→确认放行或改
+/// 行程。本单元唯一 confirmable 码（SA-15 确认放行流的可确认面）。
+/// WP-13-T08 登记，§14.6 v0.9）。
+inline constexpr std::string_view kMdl06TravelLimit = "MDL-06-TRAVEL-LIMIT";
+
+/// §9.5 T08 行：MDL-ASSERT-MASS-NONPOSITIVE（断言/error——已提供质量
+/// m≤0→修正质量或清空为缺失；缺失不触发本断言——NotProvided 走
+/// DataInsufficient 降级，MDL-06/V15-01。WP-13-T08 登记，§14.6 v0.9）。
+inline constexpr std::string_view kMdlAssertMassNonpositive = "MDL-ASSERT-MASS-NONPOSITIVE";
+
+/// §9.5 T08 行：MDL-ASSERT-INERTIA-NOT-SPD（断言/error——惯量非对称正定
+/// （对称化后最小特征值≤0）→修正张量；六分量表示结构性对称，对称违例
+/// 仅可能来自估算合成（其自检先行拒收），本码拦 SPD。WP-13-T08 登记，
+/// §14.6 v0.9）。
+inline constexpr std::string_view kMdlAssertInertiaNotSpd = "MDL-ASSERT-INERTIA-NOT-SPD";
+
+/// §9.5 T08 行：MDL-ASSERT-INERTIA-TRIANGLE（断言/error——惯性椭球三角
+/// 不等式不满足（λmax＞λmid＋λmin）→修正张量。WP-13-T08 登记，
+/// §14.6 v0.9）。
+inline constexpr std::string_view kMdlAssertInertiaTriangle = "MDL-ASSERT-INERTIA-TRIANGLE";
+
+/// §9.5 T08 行：MDL-ASSERT-LIMIT-INTERVAL（断言/error——qmin≥qmax（有限
+/// 限位可动关节，rad/m 随类型）→修正限位。WP-13-T08 登记，§14.6 v0.9）。
+inline constexpr std::string_view kMdlAssertLimitInterval = "MDL-ASSERT-LIMIT-INTERVAL";
+
+/// §9.5 T08 行：MDL-ASSERT-RANGE-NOT-FINITE（断言/error——continuous
+/// 工程工作范围未确认（NotProvided）或非有限区间（端点非有限/min≥max）
+/// →确认范围；已确认有限范围则豁免本断言与限位断言（MDL-12——continuous
+/// 无 bounds，行程上限检查亦豁免）。WP-13-T08 登记，§14.6 v0.9）。
+inline constexpr std::string_view kMdlAssertRangeNotFinite = "MDL-ASSERT-RANGE-NOT-FINITE";
+
+/// §9.5 T08 行：MDL-READINESS-REF-MISSING（校验/error——引用对象不在
+/// 闭包/token 不匹配（I-MDL-9 闭包半段——值模型层无闭包上下文，归本码
+/// 承载）→修复引用。WP-13-T08 登记，§14.6 v0.9）。
+inline constexpr std::string_view kMdlReadinessRefMissing = "MDL-READINESS-REF-MISSING";
+
+/// §9.5 T08 行：MDL-READINESS-RESOURCE-STATE（校验/Warning——Recorded
+/// 资源缺失/变化或未固化→重关联/固化（CON-03）；Solidified 通过。缺失/
+/// 变化探测归 io 护栏与 runtime 编译复核（ResourceChanged），本码在就绪
+/// 层承载状态面事实。WP-13-T08 登记，§14.6 v0.9）。
+inline constexpr std::string_view kMdlReadinessResourceState = "MDL-READINESS-RESOURCE-STATE";
+
+/// §9.5 T08 行（v0.9 实现期增登）：MDL-READINESS-PHYSICS-MISSING（校验/
+/// Warning——物性缺失（质量/惯量 NotProvided）→DataInsufficient 降级预告
+/// （V15-01——缺失不触发硬断言）；补全物性或接受降级。§9.3"物性缺失→
+/// 不阻断，转 Warning 诊断随计划留痕"与 §8.2 L5"Warning（缺失——
+/// DataInsufficient 降级预告）"的码面落位——原表缺行，沿 MDL-IMPORT-
+/// TEMPLATE-RANGE 等实现期增登先例登记。WP-13-T08 登记，§14.6 v0.9）。
+inline constexpr std::string_view kMdlReadinessPhysicsMissing = "MDL-READINESS-PHYSICS-MISSING";
+
 // =====================================================================
 // MDL-* 稳定诊断码描述符清单（§9.5 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 modeling 已到注册任务行的 MDL-* 稳定码描述符全集（当前
- *        8 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
+ *        16 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
  *        WP-13-T05 登记的 T05 行 MDL-IMPORT-{UNSUPPORTED-JOINT,
  *        BRANCH-SELECTION,ZERO-AXIS,PENDING-CONFIRM,TEMPLATE-RANGE}
  *        五码；外加 WP-13-T06 实现期增登的 T06 行 MDL-IMPORT-XACRO-
  *        UNRESOLVED；外加 WP-13-T07 实现期增登的 T07 行 MDL-TEMPLATE-
- *        DISABLED——清单序＝§9.5 表行序；TEMPLATE-RANGE/XACRO-UNRESOLVED/
- *        TEMPLATE-DISABLED 为实现期增登行，§14.6 v0.6/v0.7/v0.8 登记）。
+ *        DISABLED；外加 WP-13-T08 登记的 T08 行八码 MDL-06-TRAVEL-LIMIT/
+ *        MDL-ASSERT-{MASS-NONPOSITIVE,INERTIA-NOT-SPD,INERTIA-TRIANGLE,
+ *        LIMIT-INTERVAL,RANGE-NOT-FINITE}/MDL-READINESS-{REF-MISSING,
+ *        RESOURCE-STATE}——清单序＝§9.5 表行序（实现期增登行表尾追加）；
+ *        TEMPLATE-RANGE/XACRO-UNRESOLVED/TEMPLATE-DISABLED 为实现期增登
+ *        行，§14.6 v0.6/v0.7/v0.8 登记）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，io ioCodeDescriptors
  * 同款自证结构）：
