@@ -3191,6 +3191,26 @@
       "title": "F-207/F-231/F-309 家族再现：在库 traceability/builds/wp13-t07/gates-ird-gates-branch.log 含双重编码乱码（UTF-8 中文输出被按 GBK 误读后再编为 UTF-8——首行「适用于 .NET Framework MSBuild」呈「閫傜敤浜� .NET Framework…」型，约 40 行不可直读）；门禁零新增结论经验收者绕开该载体（configure-free 直跑脚本＋sort/diff 归一比对）独立复现成立，属留痕载体编码问题非数据问题",
       "owner": "治理/实施侧留痕管线（MSBuild 自定义目标输出捕获统一设 UTF-8 code page 或改文件捕获通道——F-207 原处置建议沿用）",
       "resolution": "随 F-207 家族统一处置（留痕捕获通道编码修复后本家族自然消账）。编号顺延自 F-314。"
+    },
+    {
+      "id": "F-316",
+      "source": "traceability/acceptance/WP-13-T08-20260923.md §4.7/§4.9（attempt 1，verdict=pass，2026-09-23；验收者逐行通读 DiagCodes.hpp/.cpp 对照工厂实际条目数）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "DiagCodes.hpp modelingCodeDescriptors 工厂 @brief 计数失实：仍写『当前 16 项……T08 行八码』，实际工厂已含 17 项九码（WP-13-T08 v0.9 实现期增登行 MDL-READINESS-PHYSICS-MISSING 的计数与列举未同步入 @brief；同库 DiagCodes.cpp 文件头注『清单当前 17 项』与 DiagCodesTest 十七码封闭断言均为正确口径，测试通过）——AGENTS §2.5『注释随代码更新』轻微违反，零行为影响",
+      "owner": "实施者侧（modeling 触碰窗口随手勘误 @brief 计数与列举）",
+      "resolution": "随下批 modeling 文件触碰顺带修正 @brief（16→17＋补列 PHYSICS-MISSING 增登行）；不追溯提交。编号顺延自 F-315。"
+    },
+    {
+      "id": "F-317",
+      "source": "traceability/acceptance/WP-13-T08-20260923.md §4.10（attempt 1，verdict=pass，2026-09-23；验收者对四件 gtest XML 与两件 ird-test-report.json 逐件核对用例数）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-23",
+      "title": "traceability/builds/wp13-t08/ird-test-report.json 双模式留痕件不完整：ird-test-report-integration.json summary 仅 1/1（恰为 MdlReadiness.ResultGroupsStableOrderByLayerThenSubject 单条——过滤运行残留物，非全量 139 条）；ird-test-report-smoke.json 仅 5/5（恰为冒烟契约测试 BuildGraph 子集，缺 modeling_test 119 条报告）。同批 gtest XML 四件完整（139/119/9/5、failures=0）且与验收者独立复现逐位一致，故不构成粉饰或证据缺失，但与 AGENTS §4.2『ird-test-report.json』全量留痕口径不符（对照 T07 先例其 integration 件为 119/0 全量）",
+      "owner": "实施者侧留痕管线（全量运行后从构建目录分别收取两 exe 的 ird-test-report.json 再入库，勿以过滤运行残留覆盖）",
+      "resolution": "可随返工窗口或下批 modeling 任务顺手以全量运行报告补正本目录两件；记忆点：报告文件按 exe 运行覆写，gtest XML 才是全量权威载体。编号顺延自 F-316。"
     }
   ]
 }
