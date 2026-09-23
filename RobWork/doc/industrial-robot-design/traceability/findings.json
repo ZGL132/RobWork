@@ -3211,6 +3211,36 @@
       "title": "traceability/builds/wp13-t08/ird-test-report.json 双模式留痕件不完整：ird-test-report-integration.json summary 仅 1/1（恰为 MdlReadiness.ResultGroupsStableOrderByLayerThenSubject 单条——过滤运行残留物，非全量 139 条）；ird-test-report-smoke.json 仅 5/5（恰为冒烟契约测试 BuildGraph 子集，缺 modeling_test 119 条报告）。同批 gtest XML 四件完整（139/119/9/5、failures=0）且与验收者独立复现逐位一致，故不构成粉饰或证据缺失，但与 AGENTS §4.2『ird-test-report.json』全量留痕口径不符（对照 T07 先例其 integration 件为 119/0 全量）",
       "owner": "实施者侧留痕管线（全量运行后从构建目录分别收取两 exe 的 ird-test-report.json 再入库，勿以过滤运行残留覆盖）",
       "resolution": "可随返工窗口或下批 modeling 任务顺手以全量运行报告补正本目录两件；记忆点：报告文件按 exe 运行覆写，gtest XML 才是全量权威载体。编号顺延自 F-316。"
+    },
+    {
+      "id": "F-318",
+      "source": "traceability/acceptance/UI-T16-20260924.md §4.4/§4.8（attempt 1，verdict=fail，2026-09-24；验收者对宿主冒烟留痕逐帧亲验＋ui.md 与更正登记对照）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "units/ui.md §13 UI-T16 落位登记注⑤与 §16.7 v1.10 行的宿主交互表述（五区嵌入/框架菜单共存/打开协议/PM-11 投影/布局记忆/恢复默认布局）强于实证：562a18b4 时点撰写后，6441c136 收尾更正已将四项宿主交互如实降级为未实证（操作序列日志收尾更正登记），但单元卡两处未随更正同步修订——文档表述与证据实况存在张力（登记注明指向操作序列日志，故非虚构，但单读登记注会得出过强结论）",
+      "owner": "实施者侧（随 UI-T16 返工落位同步勘误 ui.md 两处，与更正后证据对齐）",
+      "resolution": "随 B-1（acceptance 3 宿主形态缺陷）返工重录证据时一并勘误；不追溯提交。编号顺延自 F-317。"
+    },
+    {
+      "id": "F-319",
+      "source": "traceability/acceptance/UI-T16-20260924.md §4.9（attempt 1，verdict=fail，2026-09-24；验收者对范围内三提交的验证段声称逐条对照在库载体，含逐字节 diff）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "6441c136（收尾更正提交）验证段声称『新增收尾会话 03:39~03:41 独立复跑实录：ctest-ui-ird-rerun-r2.log（^ird$ 2/2）、ctest-ui-gui-final-r2.log（^ird_gui$ 33/34，唯一失败……）』与留痕载体不符：两件 -r2 文件与 79b3f8da 所载 ctest-ui-ird-rerun.log / ctest-ui-gui-final.log 逐字节一致（时长 1.81/0.16/3.40/3.43 sec 逐位相同、无 ctest Start testing 时间戳头等新运行签名），且 final-r2 实际内容为 ctest 级 100% Passed（与 34/34 一致），与提交信息所称该文件载 33/34 唯一失败自相矛盾——『独立复跑实录』实为既有日志的字节级拷贝（验收者同时独立复跑 ^ird$ 2/2、^ird_gui$ 34/34 全过，故非测试结果问题，纯载体失实）；该提交的主旨（四项宿主交互未实证的更正登记）经验收者逐帧亲验全部成立，诚实性不受影响",
+      "owner": "实施者侧（随 UI-T16 返工提交如实更正：重录带时间戳头的全新 ctest 捕获，或改述为未复跑；同轮留存副本须显式标注）",
+      "resolution": "随 B-2 返工消账；ACC §4.9『验证结论与留痕一致』判据的贯彻点——复跑声称必须以含新运行签名的载体支撑。编号顺延自 F-318。"
+    },
+    {
+      "id": "F-320",
+      "source": "traceability/acceptance/UI-T16-20260924.md §0/§4.3（attempt 1，verdict=fail，2026-09-24；验收者以全新 detached worktree 构建树三次宿主装载尝试）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "宿主装载通道（sdurws_ird_ui_plugin 经框架动态装载）的运行环境前置未登记：插件 DLL 导入表面牵入 python313.dll 与 boost_filesystem-vc143-mt-x64-1_92.dll（strings 实扫——框架 sdurws.lib 静态面传导），验收者全新 worktree 构建树三次装载尝试（--rwsplugin 命令行 / Plugins→Load plugin 对话框 / --ini-file 的 [Plugins] UserPlugin 启动装载）均未达成装载门控（无 [ird-ui-plugin] 控制台输出、无 ird-ui-plugin-logs/ 目录生成；前两次缺 PATH 前置，补 Miniconda/vcpkg bin 后仍 QPluginLoader 静默失败）——该开发期通道在异机/净环境的可复现性受阻，契约 verify 第 4 条与 ui.md §13 均无环境前置说明",
+      "owner": "实施者侧（随 UI-T16 返工在 ui.md §13/契约 note 登记装载环境前置清单与装载门控客观判据——控制台输出＋Dev 日志目录＋DLL 依赖解析，返工重录时逐项自证）；治理侧（通道环境链与 F-007/F-009/F-254 家族同属构建约定辖域，可一并审视）",
+      "resolution": "随 B-1 返工重录宿主交互证据时一并登记与自证。编号顺延自 F-319。"
     }
   ]
 }
