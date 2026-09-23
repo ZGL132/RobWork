@@ -81,6 +81,14 @@ find_package(pugixml CONFIG REQUIRED)
 #                        ＋创建入口守卫〔§6.4 判定复用〕＋逐轴编辑流＋
 #                        几何生成辅助——§5.1/§5.2/§9.4.2；七轴模板仅登记
 #                        不启用——P-03/O-27）
+# T08 增列（tasks/foundation/WP-13-T08.json，§3.3 表 T08 行）：
+#   src/Readiness.cpp        模型就绪校验器（IModelReadinessChecker——
+#                        §8.2 分层检查表 L0→L11 编排＋短路优先级＋结果
+#                        三组稳定排序；判定唯一委托 AssertionSuite 与
+#                        既有不变量层——NFR-MNT-04 无重复判定）
+#   src/CommandHandlers.cpp  建模命令处理器族（AssertionSuite 断言分域
+#                        ＋命令载荷编解码＋prepare 公共管线＋五命令钩子
+#                        ＋L5 装配注册——§9.3/§9.4.4/§9.4.8/§9.5 T08 行）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -91,7 +99,9 @@ add_library(sdurws_ird_modeling STATIC
     src/PropertyEstimation.cpp
     src/Import.cpp
     src/XacroExpand.cpp
-    src/Template.cpp)
+    src/Template.cpp
+    src/Readiness.cpp
+    src/CommandHandlers.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -208,6 +218,18 @@ endif()
 #                          buildChangeSummary/4·5 轴与 prismatic 创建入口
 #                          阻止）（ACC4，MDL-01/AT-20）＋几何辅助两条
 #                          确定性/来源标记（ACC5，§5.2 v0.2）
+# T08 增列（tasks/foundation/WP-13-T08.json，acceptance 1~5 具名自证）：
+#   test/CommandFixtures.hpp        测试域共享夹具（值模型构造＋policy/
+#                          project 替身——project/test/StubHandlers.hpp
+#                          先例：测试域替身不入公共面）
+#   test/ReadinessTest.cpp         就绪校验分层（ACC1：check 纯函数/短路
+#                          优先级/L11 策略不可解析/稳定排序）＋断言分域
+#                          反例 V-15（ACC2，MDL-06/AT-01）＋行程确认
+#                          V-16（ACC3，SA-15）
+#   test/CommandHandlersTest.cpp   五命令 token 表/载荷编解码/注册表
+#                          （ACC4，§9.3/O-35）＋prepare 管线（decode 失败/
+#                          防御性复核/取号回填/inverse 快照/中文摘要/
+#                          RejectedHardAssert/Confirmable——ACC1/3/4）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -226,6 +248,21 @@ add_executable(sdurws_ird_modeling_test
     test/ImportTest.cpp
     test/XacroExpandTest.cpp
     test/TemplateTest.cpp)
+
+# T08 测试 TU（集成模式专属 gating——POL-T06/T07/T08 同款：ReadinessTest/
+# CommandHandlersTest 消费 policy 行程评估器〔makeJointLimitEvaluator〕，
+# 该符号的 TU（policy/JointLimits.cpp）仅在集成模式编译——TARGET
+# sdurw_kinematics 判定同源；冒烟模式两 TU 不编入，"目标注册＋include
+# 路径"冒烟口径不受影响）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_modeling_test PRIVATE
+        test/ReadinessTest.cpp)            # T08 ACC1~3：就绪分层/断言分域
+                                           # 反例 V-15/行程确认 V-16
+    target_sources(sdurws_ird_modeling_test PRIVATE
+        test/CommandHandlersTest.cpp)      # T08 ACC4＋1/3：五命令 token 表/
+                                           # 载荷编解码/prepare 管线/inverse
+                                           # 快照/中文摘要
+endif()
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_modeling_test PROPERTIES
@@ -289,12 +326,22 @@ ird_add_gtest(sdurws_ird_modeling_test)
 
 # ---- 契约测试目标 sdurws_ird_modeling_contract_test（随 WP-13-T02 登记）----
 # 落位期契约面＝构建图边界契约（reporting LinkageContractTest 同款扫描
-# 形态——六条登记边的存在性/封闭性/无业务域互链/testkit 仅测试目标；
-# 跨单元行为级契约测试随 T03+ 消费任务展开，不在骨架预建占位用例——
-# NFR-MNT-04）。自有 main 同 _test 目标（报告设施接入）。
+# 形态——六条登记边的存在性/封闭性/无业务域互链/testkit 仅测试目标）；
+# WP-13-T08 增列 CommandPipelineContractTest.cpp（acceptance 5：V-19 未
+# 就绪不编译＋V-20 双编译失败面〔modeling 侧可执行范围〕＋V-22 stale
+# 防御面＋§9.5 T08 行九码注册不预建——AT-01）。自有 main 同 _test 目标
+# （报告设施接入）。
 add_executable(sdurws_ird_modeling_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp)
+
+# T08 契约测试 TU（集成模式专属 gating——同上：消费 policy 行程评估器与
+# project 命令契约替身，冒烟模式不编入）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_modeling_contract_test PRIVATE
+        contract_test/CommandPipelineContractTest.cpp)  # ACC5：V-19/V-20/V-22
+                                                        # ＋T08 行九码注册
+endif()
 
 target_compile_features(sdurws_ird_modeling_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_modeling_contract_test PROPERTIES
