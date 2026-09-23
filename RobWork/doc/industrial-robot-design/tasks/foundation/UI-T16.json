@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T16",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "工作台宿主插件（RobWorkStudio 集成入口＋开发期动态加载验证通道，sdurws_ird_ui_plugin）",
+  "status": "ready",
+  "dependsOn": ["UI-T03", "UI-T11", "UI-T15"],
+  "requirements": ["UX-09", "PM-07", "PM-10", "PM-11"],
+  "designRefs": [
+    "units/ui.md#10.1",
+    "units/ui.md#5.2",
+    "units/ui.md#3.1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_plugin",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird_gui$\"",
+    "框架 RobWorkStudio.exe 经 Plugins→Load plugin 加载 sdurws_ird_ui_plugin 冒烟（五区工作台嵌入主窗口/命令面板/打开协议/RWStudioView3D 共存）；启动日志＋截图＋操作序列留痕 traceability/builds/wp10-t16/"
+  ],
+  "branch": "wp10-t16",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "O-38"],
+  "acceptance": [
+    "目标与拆分落位：sdurws_ird_ui_plugin 插件目标注册（rws::RobWorkStudioPlugin 派生 DLL——零计算逻辑；Q_OBJECT/插件元数据所需 AUTOMOC 仅该目标开启，ui 库本体与既有目标构建形态零变化）；IWorkbenchShell 拆『内容装配层＋顶层窗口宿主层』两层——harness sdurws_ird_ui_app 经同一内容装配面运行且行为回归零变化（首页态/--open/--new 打开协议/PM-07 双开降级交互复测）；禁止把顶层 QMainWindow 嵌套进宿主 Dock；ui.md §10.1 契约面增量修订登记随落位提交；双模式构建零错误",
+    "门禁：ird_gates 命中集归一化比对——新增命中仅限插件目标登记面（plugin 分类＋宿主集成边），逐条按 DTB §4.5 模式登记提交件；R-1/R-2/R-3/R-4/R-5/T-1/T-2/GRAPH/LIB/SA02 命中集零变化；ui 叶子目录 ctest 回归 ^ird$ 与 ^ird_gui$ 通过（ird-test-report.xml 级留痕 traceability/builds/wp10-t16/）",
+    "宿主交互验证留痕：框架 RobWorkStudio.exe → Plugins→Load plugin 加载插件——五区工作台嵌入宿主主窗口且框架菜单/工具栏共存、RWStudioView3D 三维视图共存（宿主中央三维能力不丢失）；Ctrl+Shift+P 命令面板在宿主窗口可用；新建/打开项目协议经壳入口可用（PM-11 状态栏投影）；布局记忆在宿主窗口生效；启动日志＋宿主页截图＋操作序列留痕 traceability/builds/wp10-t16/；动态加载边界如实登记（仅开发期验证通道，SA-01 产品静态白名单与 WP-24-T03 正式装配口径不变）"
+  ],
+  "note": "任务来源：O-38 裁决（所有者 2026-09-23 融合方案评估——DTB v0.17 §4.2 O-38 行＋§2.11 WP-10-T16 行＋§5.1 开发期宿主验证通道行；ui.md v1.9 §13 UI-T16 行＋立项登记注；governance-log §2 O-38 行同日登记）。背景：阶段 A 平台已基本完成（ui 壳/命令/会话/草稿/诊断呈现链路经 UI-T03~T15 验收），所有者要求每块功能完成即可在真实宿主主窗口操作验证，避免全部插件完成后一次性集成才发现形态偏差（无用功风险前置化解）。定位：开发期验证通道（非产品交付路径）——动态加载仅限开发期（框架 Plugins→Load plugin），SA-01 静态白名单不变，产品装配层（WP-24-T03）落位时本插件按同一契约转正式装配或由其替换。关键登记：①壳拆分＝IWorkbenchShell 契约面增量（§10.1 增量注随落位登记），五区交互/布局记忆/命令门控语义不变，harness 行为回归零变化为硬验收项；②插件复用 harness PortAdapters 适配形态（ui 自有端口→project 对端，O-31 装配层特权边同款登记模式）；③三维视图＝共存最小接入（RobWorkStudio::getView()/getWorkCellScene() 注入面），完整交互归 WP-10-T05 阶段 B；④业务插件（WP-13-T15 起）落位后复用本通道在宿主窗口验证。分支 wp10-t16；留痕 traceability/builds/wp10-t16/"
+}
