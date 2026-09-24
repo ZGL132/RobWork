@@ -140,6 +140,7 @@ find_package(Qt6 COMPONENTS Core Gui Widgets Test REQUIRED)
 add_library(sdurws_ird_ui STATIC
     src/Ui.cpp
     src/WorkbenchShell.cpp
+    src/WorkbenchContent.cpp
     src/ShellSupport.cpp
     src/StatusProjection.cpp
     src/View3DPlaceholder.cpp
@@ -465,6 +466,7 @@ add_executable(sdurws_ird_ui_gui_test
     gui_test/TestMainReport.cpp
     gui_test/BuildPlacementTest.cpp
     gui_test/WorkbenchShellGuiTest.cpp
+    gui_test/WorkbenchContentGuiTest.cpp
     gui_test/CommandPaletteGuiTest.cpp
     gui_test/PolicySummaryCardGuiTest.cpp
     gui_test/ParamTablePanelGuiTest.cpp
@@ -522,7 +524,8 @@ set_tests_properties(sdurws_ird_ui_gui_test
 # 一契约替换；ui 库产品面零改动）。
 add_executable(sdurws_ird_ui_app
     app/HarnessMain.cpp
-    app/PortAdapters.cpp)
+    app/PortAdapters.cpp
+    app/DiagnosticsAssembly.cpp)
 
 target_compile_features(sdurws_ird_ui_app PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_app PROPERTIES
@@ -566,3 +569,71 @@ add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_CURRENT_BINARY_DIR}/harness-qt.conf"
             "$<TARGET_FILE_DIR:sdurws_ird_ui_app>/qt.conf")
+
+# ---- 工作台宿主插件：sdurws_ird_ui_plugin（UI-T16，O-38 裁决承接）----
+# 框架 RobWorkStudio 集成入口＋开发期动态加载验证通道：
+#   - 形态＝rws::RobWorkStudioPlugin 派生薄插件（框架基类本体即 QDockWidget
+#     子类），**零计算逻辑**——五区界面语义全部经内容装配面
+#     WorkbenchContent（§10.1 v1.10：与 harness 共用的同一装配面）承载，
+#     打开协议端口适配复用 harness PortAdapters 形态（O-31 装配层特权边，
+#     app/PortAdapters.* 三 TU 编入本目标——适配序列单一权威，防两份漂移；
+#     诊断栈装配 DiagnosticsAssembly.* 同形态共用）；
+#   - 通道边界＝动态加载仅限开发期验证（框架 Plugins→Load plugin 手动装载；
+#     SA-01 产品静态白名单不变，产品交付路径零新增动态加载入口，正式装配
+#     归 WP-24-T03）；
+#   - AUTOMOC 口径（DTB §5.1 v0.17 行）：插件类 Q_OBJECT/插件元数据
+#     （Q_PLUGIN_METADATA）所需 AUTOMOC **仅本目标显式开启**——集成树
+#     RobWorkStudioSetup 全局 CMAKE_AUTOMOC=ON 对既有目标本就生效（零
+#     Q_OBJECT 声明故无 moc 产物，构建形态零变化），本目录独立冒烟模式
+#     默认 OFF——显式 per-target ON 使两种模式下"仅插件目标携带 moc 面"
+#     的登记口径一致；ui 库本体与既有目标维持不设该属性（零改动）；
+#   - 集成模式专属：插件链接框架库 sdurws（RobWorkStudioPlugin 基类所在
+#     目标），独立冒烟模式（脱离 RobWorkStudio）无该框架目标——以
+#     if(TARGET sdurws) 判别（插件依赖的正是该目标，语义直给；冒烟模式
+#     下 ui 也是 industrialrobot 的子目录，不能用目录比较判别模式）。
+#     插件目标只在集成树注册（其"验证框架集成"的使命本就只能在集成树
+#     达成；冒烟模式的目标注册验证面＝ui 库与既有目标，如实登记
+#     ui.md §13 UI-T16）。
+if(TARGET sdurws)
+    add_library(sdurws_ird_ui_plugin MODULE
+        plugin/UiPlugin.cpp
+        app/PortAdapters.cpp
+        app/DiagnosticsAssembly.cpp)
+
+    target_compile_features(sdurws_ird_ui_plugin PRIVATE cxx_std_17)
+    set_target_properties(sdurws_ird_ui_plugin PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+        AUTOMOC ON)   # Q_OBJECT/插件元数据所需——仅本目标显式开启（上方口径）
+    if(MSVC)
+        target_compile_options(sdurws_ird_ui_plugin PRIVATE /utf-8)
+    endif()
+
+    # 插件私有头（plugin/）经 ui 目录根解析（"app/PortAdapters.hpp" 等
+    # 同单元装配面头——PRIVATE，不外溢消费者）。
+    target_include_directories(sdurws_ird_ui_plugin PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR})
+
+    # 链接面（ird_gates 命中集登记面——traceability/wp10-t16-gate-registrations.md）：
+    #   - sdurws_ird_ui／sdurws_ird_project＝装配层特权边（ui->ui 自边＋
+    #     ui->project 宿主集成边——DTB §4.5 SUB 登记行，UI-T15 同款模式）；
+    #   - sdurws＝框架 RobWorkStudio 库（RobWorkStudioPlugin 基类；DTB §4.6
+    #     框架基线白名单 "sdurw" 前缀族）；
+    #   - Qt 三件套＝plugin 分类面（Qt 链接合法——ird_gates R-3 仅查
+    #     product/worker 形态，_app 同款）。
+    target_link_libraries(sdurws_ird_ui_plugin PRIVATE
+        sdurws_ird_ui
+        sdurws_ird_project
+        sdurws
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets)
+else()
+    # 独立冒烟模式：无框架目标（sdurws）——插件目标不注册（集成树专属，
+    # 登记 ui.md §13 UI-T16 落位登记注；冒烟模式的零错误结论不含本目标）。
+    message(STATUS
+        "industrialrobot.ui: standalone smoke mode——sdurws_ird_ui_plugin "
+        "not registered (framework-hosted plugin target, integrated tree only; "
+        "ui.md §13 UI-T16)")
+endif()

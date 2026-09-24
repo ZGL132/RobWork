@@ -236,6 +236,51 @@ void LayoutMemory::store(QSettings& settings, const QByteArray& geometry,
     settings.setValue(QString(kGroup) + '/' + kKeyVisibleBottom, visibleBottom);
 }
 
+LayoutMemory::FlagsLoadResult LayoutMemory::loadFlags(QSettings& settings)
+{
+    // 嵌入式 Dock 宿主形态的旗标半区读取（ui.md §10.1 v1.10——O-38 裁决②）：
+    // 几何/位形键不在本形态读写范围（它们是顶层窗口事实，属框架主窗口），
+    // 损坏判别只覆盖版本键与三区旗标——判别口径与 load 同源：
+    //   无版本键＝无记忆（出厂首次，静默默认）；版本不识别或旗标类型不符
+    //   ＝Corrupt（§4.5 同路径：整段丢弃＋Dev 诊断＋回退默认）。
+    FlagsLoadResult out;
+    if (!settings.contains(QString(kGroup) + '/' + kKeyVersion)) {
+        out.kind = FlagsLoadResult::Kind::Absent;
+        return out;
+    }
+
+    const int version = settings.value(QString(kGroup) + '/' + kKeyVersion, -1).toInt();
+    // 旗标类型判别：toBool 对非布尔/非可转字符串返回 false 且无法与
+    // "用户真的选了隐藏"区分——以 canConvert 钉住类型面（与 load 的空载荷
+    // 判别同纪律：键在但类型不符＝损坏，不猜默认值）。
+    const QVariant left = settings.value(QString(kGroup) + '/' + kKeyVisibleLeft, true);
+    const QVariant right = settings.value(QString(kGroup) + '/' + kKeyVisibleRight, true);
+    const QVariant bottom = settings.value(QString(kGroup) + '/' + kKeyVisibleBottom, true);
+    if (version != kLayoutFormatVersion || !left.canConvert<bool>()
+        || !right.canConvert<bool>() || !bottom.canConvert<bool>()) {
+        out.kind = FlagsLoadResult::Kind::Corrupt;
+        return out;
+    }
+
+    out.visibleLeft = left.toBool();
+    out.visibleRight = right.toBool();
+    out.visibleBottom = bottom.toBool();
+    out.kind = FlagsLoadResult::Kind::Restored;
+    return out;
+}
+
+void LayoutMemory::storeFlags(QSettings& settings, bool visibleLeft,
+                              bool visibleRight, bool visibleBottom)
+{
+    // 嵌入式宿主的旗标半区写入：只动版本键＋三旗标——顶层形态留下的
+    // 几何/位形键原样保留（QSettings 按键写入保留组内其余键），两种宿主
+    // 形态的记忆面互不覆盖（同组同键共享用户级设置——PM-14）。
+    settings.setValue(QString(kGroup) + '/' + kKeyVersion, kLayoutFormatVersion);
+    settings.setValue(QString(kGroup) + '/' + kKeyVisibleLeft, visibleLeft);
+    settings.setValue(QString(kGroup) + '/' + kKeyVisibleRight, visibleRight);
+    settings.setValue(QString(kGroup) + '/' + kKeyVisibleBottom, visibleBottom);
+}
+
 void LayoutMemory::discard(QSettings& settings)
 {
     // 损坏段整段丢弃（§4.5 原文）：整组移除后下次 store 从干净状态重建，

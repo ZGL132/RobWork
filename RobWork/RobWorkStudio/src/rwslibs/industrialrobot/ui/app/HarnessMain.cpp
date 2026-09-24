@@ -18,7 +18,11 @@
  * 本 harness 与产品装配层（插件装配任务）的关系：
  *   本文件是**开发工具**，不是产品交付路径——它验证的是"平台链路本身"
  *   （布局记忆/命令门控/打开协议/诊断出线），装配形状按产品契约逐行实现；
- *   产品装配层落位时按同一契约替换本入口，ui 库产品面零改动。
+ *   UI-T16 起：壳拆「内容装配层＋顶层窗口宿主层」——本入口经
+ *   IWorkbenchShell 门面消费的内容装配面与宿主插件（sdurws_ird_ui_plugin）
+ *   完全同源（O-38 裁决②）；诊断栈装配序列亦与插件共用
+ *   （DiagnosticsAssembly.*——单一装配序列，防两份漂移）。产品装配层
+ *   落位时按同一契约替换本入口，ui 库产品面零改动。
  *
  * 用法（开发期交互验证）：
  *   sdurws_ird_ui_app                       无项目首页态（PM-10：三入口/
@@ -41,17 +45,13 @@
 #include <QString>
 #include <QWidget>
 
-#include <sdurws/ird/diagnostics/Catalog.hpp>     // DiagCatalog/SystemClock（会话级目录＋产品时钟）
-#include <sdurws/ird/diagnostics/DiagCodes.hpp>   // StableCodeRegistry/registerBuiltinCodes（码表装配）
-#include <sdurws/ird/diagnostics/Factory.hpp>     // DiagnosticsFactory（create 唯一入口）
-#include <sdurws/ird/diagnostics/Logging.hpp>     // LoggingPipeline/FileLogFileOps（日志管线＋文件接缝）
-#include <sdurws/ird/diagnostics/Redaction.hpp>   // RedactionService（脱敏服务）
 #include <sdurws/ird/project/ProjectStore.hpp>    // ProjectStoreFactory（--new 创建协议）
 #include <sdurws/ird/project/StoreTypes.hpp>      // StoreError（创建失败折叠）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>      // createWorkbenchShell/ShellWiring（装配门面）
 #include <sdurws/ird/ui/UiSessionController.hpp>  // UiSessionController（§5 会话状态机）
 #include <sdurws/ird/ui/UiTypes.hpp>              // UiOpenMode（打开模式词表）
 
+#include "DiagnosticsAssembly.hpp"                // 诊断栈一步式装配（UI-T16 起与插件共用——单一装配序列）
 #include "PortAdapters.hpp"
 
 #include <filesystem>
@@ -156,60 +156,9 @@ HarnessOptions parseOptions(int argc, char** argv, bool& ok)
 
 // ---------------------------------------------------------------------
 // 装配段（每步单一职责；任一步抛异常＝装配失败——fail-fast 退出，不留
-// 半装配状态。注意：栈对象经出参填充、填充后不再移动——RedactionService
-// 的 failureSink 裸指针与 LoggingPipeline 的地址绑定依赖这一稳定性）
+// 半装配状态。诊断栈装配自 UI-T16 起为共用实现——DiagnosticsAssembly.*，
+// 与宿主插件同序列；栈对象为静态存储期稳定出参，见其头注稳定性契约）
 // ---------------------------------------------------------------------
-
-/// 诊断栈（装配产物集合——所有权在 main 作用域，壳/控制器只持共享引用）。
-struct DiagnosticsStack {
-    diagnostics::SystemClock clock;                 ///< 产品时钟（时间戳/节流来源）
-    diagnostics::FileLogFileOps fileOps;            ///< 文件接缝（开-写-关单行落盘）
-    std::shared_ptr<diagnostics::LoggingPipeline> pipeline;   ///< 日志管线（ILogger＋IDevLogSink）
-    std::shared_ptr<diagnostics::StableCodeRegistry> registry;///< 稳定码表（87 码全量收编＋ui 码）
-    std::shared_ptr<diagnostics::DiagnosticsFactory> factory; ///< 诊断工厂（create 唯一入口）
-    std::shared_ptr<diagnostics::RedactionService> redaction; ///< 脱敏服务（NFR-SEC-07）
-    std::shared_ptr<diagnostics::DiagCatalog> catalog;        ///< 会话级诊断目录（IDiagnosticSink）
-};
-
-/// 装配诊断栈：日志管线＋码表＋工厂＋目录＋脱敏（diagnostics §4.5/§7.3/§9.2）。
-void assembleDiagnostics(const fs::path& devlogDir, DiagnosticsStack& stack)
-{
-    // ① 日志管线：用户级/开发级双文件（dev-diagnostics.log 是 Dev 码唯一
-    //    出线——§6.2）。目录不存在则创建（开发工具的自我服务）。
-    std::error_code ec;
-    fs::create_directories(devlogDir, ec);
-    stack.pipeline = std::make_shared<diagnostics::LoggingPipeline>(
-        stack.clock, stack.fileOps);
-    diagnostics::LogSinkConfig logConfig;
-    logConfig.enabled = true;
-    logConfig.directory = devlogDir;
-    stack.pipeline->configure(logConfig);
-
-    // ② 稳定码表：内置 87 码全量收编（§4.6——各单元 PRJ-*/EX-*/… 的码值
-    //    权威）＋ui 侧描述符供体（IWorkbenchShell::uiDiagnosticCodeDescriptors
-    //    ——ui.md §3.5 九码），注册全部完成后 seal（装配期单线程约定）。
-    stack.registry = std::make_shared<diagnostics::StableCodeRegistry>();
-    diagnostics::registerBuiltinCodes(*stack.registry);
-    for (const diagnostics::CodeDescriptor& descriptor :
-         ui::uiDiagnosticCodeDescriptors()) {
-        stack.registry->registerCode(descriptor);
-    }
-    stack.registry->seal();
-
-    // ③ 诊断工厂：绑定码表＋时钟后 seal（两段式装配——§9.2 运行期拒绝
-    //    再登记的次序保证）。
-    stack.factory = std::make_shared<diagnostics::DiagnosticsFactory>(
-        *stack.registry, stack.clock);
-    stack.factory->seal();
-
-    // ④ 脱敏服务（默认策略——开发期全量规则即可）；目录导出面挂接脱敏
-    //    双保险（§7.7"输出前强制再过一遍脱敏"）。failureSink＝日志管线
-    //    （非 owning——栈对象填充后不移动，地址稳定）。
-    stack.redaction = std::make_shared<diagnostics::RedactionService>(
-        diagnostics::RedactionPolicy{}, stack.pipeline.get());
-    stack.catalog = std::make_shared<diagnostics::DiagCatalog>();
-    stack.catalog->attachRedactionService(stack.redaction);
-}
 
 /// 控制台报告（开发工具的可见性面——装配/打开事实直接可读）。
 void reportLine(const std::string& text)
@@ -245,9 +194,9 @@ int main(int argc, char** argv)
     QApplication app(argc, argv);
 
     // ---- 装配第一步：诊断栈（后续每步的协作面都从这里取依赖）----
-    DiagnosticsStack diag;
+    ui::app::DiagnosticsStack diag;       // 共用装配序列的产物集合（UI-T16 起与宿主插件同源）
     try {
-        assembleDiagnostics(opts.devlogDir, diag);
+        ui::app::assembleDiagnostics(opts.devlogDir, diag);
     } catch (const std::exception& error) {
         std::cerr << "装配失败：诊断栈（" << error.what() << "）\n";
         return 3;

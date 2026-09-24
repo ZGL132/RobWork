@@ -10,23 +10,19 @@
  *   - 任务契约 tasks/foundation/UI-T03.json acceptance 1~4＋tasks/foundation/
  *     UI-T06.json acceptance 1~3（命令注册表/快捷键表/命令面板的壳集成）。
  *
- * 背景说明（本头承载的内部设施——UI-T06 起命令设施为注册表单点）：
- *   1. CommandRegistry/GlobalShortcutRegistry（§10.3/§10.4）——壳在
- *      initialize 装配（登记 §7.1 最小命令集＋默认绑定），菜单/顶栏/首页
- *      入口与快捷键全部经 registry.submit 统一路径（SA-16 唯一入口；
- *      UI-T03 的 ShellCommandBoard 登记职能由注册表取代并移除——
- *      "取代本板的登记职能"既有登记，N-11 无第二套）。
- *   2. CommandPalettePanel（src/CommandPalette.cpp——§7.4 命令面板，
- *      workbench.commandPalette 的处理器打开）。
- *   3. RecentProjectsModel——最近项目路径表（PM-10：≤10、规范路径去重、
- *      失效保留）＋用户级持久化载荷形态（PM-14）。
- *   4. UiSettingsWriter——ui 自有后台落盘线程（§3.4 线程表"ui 后台落盘
- *      线程（ui 自有，1 条）：……布局/设置写盘；串行队列；禁止访问任何
- *      Widget"）。UI 线程只提交已序列化的写任务，QSettings 全部操作发生
- *      在工作线程。
- *   5. LayoutMemory——布局记忆读写与损坏判别（§4.5：损坏/版本不识别→
- *      回退出厂默认＋UI-LAYOUT-RESTORE-FAILED（Dev）＋损坏段整段丢弃，
- *      不阻塞启动）。
+ * 背景说明（本头承载的内部设施——UI-T16 起＝宿主层与内容装配层共用面）：
+ *   1. WorkbenchText——壳层界面文案的单点登记表（顶层窗口宿主层菜单/Dock
+ *      标题与内容装配层共用——单一权威，禁止散落字面量）。
+ *   2. CommandRegistry/GlobalShortcutRegistry（§10.3/§10.4）的装配语义在
+ *      内容装配层（WorkbenchContent_p.hpp）；本头承载其支撑设施：
+ *      RecentProjectsModel（最近项目）、UiSettingsWriter（后台落盘线程）、
+ *      LayoutMemory（布局记忆读写与损坏判别）。
+ *   3. 占位/卡面板工厂：createView3DPlaceholder（三维视图占位——UI-T05）、
+ *      createPolicySummaryCard（策略摘要卡——UI-T07）；命令面板
+ *      （CommandPalettePanel——§7.4）在 CommandPalette_p.hpp。
+ *   4. WorkbenchShellImpl＝顶层窗口宿主层（chrome），界面语义在
+ *      WorkbenchContentImpl（WorkbenchContent_p.hpp——两种宿主层共用的
+ *      内容装配面，O-38 裁决②）。
  *
  * 线程模型：除 UiSettingsWriter 的工作线程外，全部设施只在 UI 线程使用
  * （§3.4 M-1）；UiSettingsWriter 只接收值任务（std::function 捕获已拷贝
@@ -64,12 +60,11 @@
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>
 #include <sdurws/ird/ui/UiPorts.hpp>
 #include <sdurws/ird/ui/UiProjections.hpp>
+#include <sdurws/ird/ui/WorkbenchContent.hpp>  // 内容装配面（UI-T16——宿主层持有其 unique_ptr）
 
 namespace sdurws::ird {
 namespace ui {
 namespace detail {
-
-class CommandPalettePanel;  // 前置声明（面板成员指针——完整定义在 CommandPalette_p.hpp）
 
 // =====================================================================
 // 常量（魔法数字全部在此登记来源——AGENTS.md §2.4）
@@ -334,6 +329,12 @@ private:
  * （Top/Central 恒在不入载荷——§4.4 最小可用布局）。页签顺序/工具栏可见性
  * 随 QMainWindow::saveState 承载（§4.5"窗口几何、停靠位形、页签顺序、
  * 工具栏可见性"）；命令面板历史随 UI-T06 增列（本头不预建）。
+ *
+ * 宿主形态差异（ui.md §10.1 v1.10——O-38 裁决②的机器面）：load/store 全量
+ * 五键＝顶层窗口宿主形态（harness，UI-T03 以来逐字节不变）；loadFlags/
+ * storeFlags 仅三区可见性键＝嵌入式 Dock 宿主形态（插件无顶层窗口——
+ * 几何/位形属框架主窗口，不读写；同组同键，跨形态共享用户级设置——PM-14，
+ * 且插件写旗标不触碰顶层形态留下的几何/位形键）。
  */
 struct LayoutMemory {
     /// 载荷键名（"layout" 组内；字面集中防拼写漂移）。
@@ -356,6 +357,16 @@ struct LayoutMemory {
         bool visibleBottom = true;  ///< 底区用户可见性（同上）
     };
 
+    /// 旗标读取结果（嵌入式宿主形态）：kind 语义与 LoadResult 一致——
+    /// corrupt＝版本不识别或旗标类型不符（§4.5 同纪律的嵌入式适配面：
+    /// 几何/位形半区不在本形态的读写范围，损坏处置只覆盖旗标半区）。
+    struct FlagsLoadResult {
+        enum class Kind { Absent, Restored, Corrupt } kind = Kind::Absent;
+        bool visibleLeft = true;    ///< 左区用户可见性（Kind::Restored 时有效）
+        bool visibleRight = true;   ///< 右区用户可见性（同上）
+        bool visibleBottom = true;  ///< 底区用户可见性（同上）
+    };
+
     /// @brief 读取布局记忆（无副作用；损坏判别＝版本不匹配或字段类型不符）。
     static LoadResult load(QSettings& settings);
 
@@ -363,6 +374,14 @@ struct LayoutMemory {
     static void store(QSettings& settings, const QByteArray& geometry,
                       const QByteArray& state, bool visibleLeft,
                       bool visibleRight, bool visibleBottom);
+
+    /// @brief 读取三区可见性键（嵌入式宿主；无副作用，判别口径见 FlagsLoadResult）。
+    static FlagsLoadResult loadFlags(QSettings& settings);
+
+    /// @brief 写入三区可见性键＋版本键（嵌入式宿主；不触碰几何/位形键——
+    ///        QSettings 按键写入保留组内其余键）。
+    static void storeFlags(QSettings& settings, bool visibleLeft,
+                           bool visibleRight, bool visibleBottom);
 
     /// @brief 损坏段整段丢弃（§4.5 原文——remove("layout") 整组）。
     static void discard(QSettings& settings);
@@ -411,18 +430,25 @@ QWidget* createPolicySummaryCard(IPolicySummarySource& policySource,
                                  QWidget* parent);
 
 // =====================================================================
-// WorkbenchShell 实现（门面契约见 IWorkbenchShell.hpp——此处只列实现状态)
+// WorkbenchShell 实现（UI-T16 起＝顶层窗口宿主层）
 // =====================================================================
 
 /**
  * @brief 工作台壳实现（IWorkbenchShell 的唯一实现；R-2 私有——L5 经
  *        createWorkbenchShell() 取得门面指针）。
  *
- * 内部结构（§4.1 布局总图）：QMainWindow（WorkbenchMainWindow 派生——
- * resize 折叠钩子）＝菜单栏＋五区（Top/Left/Right 为 QDockWidget，Central
- * 为主视图区 QStackedWidget：首页页/阶段占位页）＋QStatusBar（PM-11 文本
- * 标签）。无 Q_OBJECT 声明（无信号槽/动属性需求——CMake 不开 AUTOMOC 的
- * 依据，登记 ui.md §10.1 v0.5）。
+ * 宿主层定位（ui.md §10.1 v1.10——O-38 裁决②）：UI-T16 起本类收敛为
+ * 「顶层窗口宿主层」——只承载顶层 QMainWindow 的窗口 chrome（菜单栏、五区
+ * Dock 包裹、中央区安放、状态栏安放、出厂几何/位形快照、resize 折叠转发），
+ * 一切界面语义（五区内容/命令设施/布局记忆编排/上下文投影/最近项目）都在
+ * 内容装配层 WorkbenchContentImpl（WorkbenchContent_p.hpp——harness 与宿主
+ * 插件共用的同一装配面）。门面方法把请求逐条转发内容装配层（语义权威——
+ * 本类零界面判定逻辑）。
+ *
+ * 内部结构：QMainWindow（WorkbenchMainWindow 派生——resize 折叠转发钩子）
+ * ＋菜单栏（§4.1 六菜单）＋五区 Dock（包裹内容装配层的五个内容 Widget）＋
+ * 中央区＝内容页栈＋状态栏＝内容状态行。无 Q_OBJECT 声明（无信号槽/动属性
+ * 需求——构建不开 AUTOMOC 的依据，登记 ui.md §10.1 v0.5）。
  *
  * 非线程安全：除 initialize/shutdown（允许 L5 装配线程）外仅 UI 线程。
  */
@@ -431,7 +457,7 @@ public:
     WorkbenchShellImpl() = default;
     ~WorkbenchShellImpl() override;  ///< 兜底收口（未 shutdown 即析构→有界拆卸）
 
-    // ---- IWorkbenchShell（契约注释见公共头——不复制）----
+    // ---- IWorkbenchShell（契约注释见公共头——不复制；语义权威在内容装配层）----
     bool initialize(const ShellWiring& wiring) override;
     bool regionVisible(WorkbenchRegion region) const override;
     void setRegionVisible(WorkbenchRegion region, bool visible) override;
@@ -445,85 +471,37 @@ public:
     ShellTeardownReport shutdown() override;
 
 private:
-    // ---- 装配段（initialize 内部步骤——各函数单一职责）----
-    void buildWindow();                       ///< 菜单栏＋五区＋状态栏组装
-    void buildMenus();                        ///< 六菜单与命令动作（§4.1）
-    void buildTopBar();                       ///< 顶栏内容（§4.1 顶栏行）
-    void buildSideDocks();                    ///< 左/右栏占位内容（阶段 A）
-    void buildBottomDock();                   ///< 底部页签区（阶段 A 占位页签）
-    void buildCentralArea();                  ///< 中央区：首页页＋阶段占位页
-    QWidget* buildHomePage();                 ///< 无项目首页（PM-10 三入口＋摘要）
-    void assembleCommandSystem();             ///< 命令设施装配（§7.1 登记＋seal＋快捷键默认集）
-    void applyShortcutAndPaletteState();      ///< 用户改绑回放＋QShortcut attach＋面板创建
-    void openCommandPalette();                ///< 命令面板打开（workbench.commandPalette 处理器）
-    void openAboutDialog();                   ///< 关于对话框打开（help.about 处理器——UI-T10 §11.4）
-    void openUserManualEntry();               ///< 用户手册入口（help.contents 处理器——UI-T10 §11.4）
-    static std::vector<HotkeyBinding> loadUserShortcutBindings(QSettings& settings); ///< 快捷键历史读取
-    static std::vector<CommandId> loadPaletteRecent(QSettings& settings);            ///< 面板近期使用读取
-    void applyFactoryLayout();                ///< 出厂位形（§4.5 回退基准）
-    bool restorePersistedLayout();            ///< 布局记忆装载（含损坏回退＋Dev 诊断）
-    void refreshCommandStates();              ///< 命令可用性 → 动作/按钮/徽标
-    void refreshStatusBar();                  ///< PM-11 状态栏文本刷新
-    void refreshRecentList();                 ///< 最近项目列表控件重建（PM-10）
-    void updateCollapseBySize();              ///< §4.4 尺寸折叠（resize 钩子入口）
-    void submitShellCommand(const std::string& commandId);  ///< 壳层提交路径（经注册表统一入口）
-    void persistLayoutAsync();                ///< 布局落盘任务提交（后台线程执行）
-    void persistRecentAsync();                ///< 最近项目落盘任务提交
-    void persistShortcutsAsync();             ///< 快捷键用户改绑落盘任务提交（PM-14）
-    void persistPaletteRecentAsync();         ///< 面板近期使用落盘任务提交（§7.4/PM-14）
-    void refreshPolicySummaryCard();          ///< 策略摘要卡重拉端口快照（UI-T07——§6.7）
-    void emitDev(const std::string& message); ///< Dev 日志出线（devLog 为空时静默——已显式声明语义）
-    QDockWidget* dockFor(WorkbenchRegion region) const;     ///< 五区 → Dock 控件
-    bool* userVisibilityFlag(WorkbenchRegion region);       ///< 用户可见性存储位（可隐藏三区）
+    // ---- 宿主层 chrome 安放（initialize 内部步骤）----
+    void buildMenus();                     ///< 六菜单与命令动作（§4.1——动作触发统一转发内容装配层）
+    void buildDocks();                     ///< 五区 Dock 包裹内容 Widget＋中央/状态栏安放＋出厂快照
+    void refreshChromeCommandStates();     ///< 菜单动作/视图开关使能态同步（内容装配层观察回调）
 
-    // ---- 注入协作面（所有权在 L5——壳只持引用）----
-    ShellWiring m_wiring;                      ///< 注入包（initialize 校验后持有）
-    UiContextSnapshot m_gate;                  ///< 当前门控快照（§7.5——presentProjectContext
-                                               ///  维护并推送注册表 presentContext）
-    RecentProjectsModel m_recent;              ///< 最近项目模型（PM-10）
-    UiSettingsWriter m_settingsWriter;         ///< 用户级设置写盘线程（§3.4）
-    ShellTeardownReport m_lastTeardown;        ///< 末次拆卸报告（幂等 shutdown 返回值）
-
-    // ---- 命令设施（UI-T06——SA-16 唯一入口；所有权在壳）----
-    std::unique_ptr<ICommandRegistry> m_commands;              ///< 命令注册表（§10.3）
-    std::unique_ptr<IGlobalShortcutRegistry> m_shortcuts;      ///< 全局快捷键表（§10.4）
-    CommandPalettePanel* m_palette = nullptr;                  ///< 命令面板（Qt 父子树管理——随主窗口销毁）
-    std::vector<HotkeyBinding> m_pendingUserBindings;          ///< 装配期读取的快捷键历史（applyShortcutAndPaletteState 回放）
-    std::vector<CommandId> m_pendingPaletteRecent;             ///< 装配期读取的面板近期使用（同上回放）
-
-    // ---- 策略摘要卡（UI-T07——§6.7；控件随右栏窗口树，钩子为重建闭包）----
-    std::function<void()> m_refreshPolicyCard;  ///< 卡刷新钩子（createPolicySummaryCard 注入；UI 线程调用）
+    // ---- 注入协作面 ----
+    ShellWiring m_wiring;                  ///< 注入包（initialize 校验后持有——透传内容装配层）
+    ShellTeardownReport m_lastTeardown;    ///< 末次拆卸报告（幂等 shutdown 返回值）
+    std::unique_ptr<IWorkbenchContent> m_content;  ///< 内容装配层（同一装配面——语义权威）
 
     // ---- 窗口树（shutdown 时整体销毁——mainWindow 唯一出口的私有侧）----
-    class WorkbenchMainWindow : public QMainWindow {  ///< resize 钩子宿主（§4.4 折叠）
+    class WorkbenchMainWindow : public QMainWindow {  ///< resize 转发钩子宿主（§4.4 折叠）
     public:
         using QMainWindow::QMainWindow;
-        std::function<void(QResizeEvent*)> resizeHook;  ///< 壳注入的折叠回调
+        std::function<void(QResizeEvent*)> resizeHook;  ///< 壳注入的转发回调
     protected:
         void resizeEvent(QResizeEvent* event) override;
     };
     std::unique_ptr<WorkbenchMainWindow> m_window;  ///< 主窗口唯一所有权（shutdown 即销毁——
                                                     ///  "mainWindow 后置不可再用"的实现口径）
-    QStackedWidget* m_centralStack = nullptr;  ///< 中央区页栈（首页/阶段占位——窗口树子）
-    QLabel* m_statusText = nullptr;            ///< 状态栏 PM-11 文本标签（窗口树子）
-    QLabel* m_readonlyBadge = nullptr;         ///< 顶栏只读徽标（窗口树子）
-    QListWidget* m_homeRecentList = nullptr;   ///< 首页最近项目列表（窗口树子）
     std::array<QDockWidget*, 5> m_docks{};     ///< 五区 Dock（WorkbenchRegion 枚举序索引——窗口树子）
+    QByteArray m_factoryGeometry;              ///< 出厂几何快照（resetLayout/损坏回退基准——
+                                               ///  内容装配层经几何钩子回取，窗口事实归宿主层）
+    QByteArray m_factoryState;                 ///< 出厂停靠位形快照（同上——含页签序/工具栏）
+
+    // ---- chrome 命令动作面（使能态消费注册表求值结果——本类零判定逻辑）----
+    std::vector<std::pair<QAction*, std::string>> m_commandActions;  ///< 菜单动作→命令 id
+    std::vector<std::pair<WorkbenchRegion, QAction*>> m_viewToggles; ///< 视图菜单开关（勾选态回写）
 
     // ---- 状态位 ----
     bool m_initialized = false;                ///< initialize 已成功（恰好一次判据）
-    bool m_collapsedBySize = false;            ///< 当前处于尺寸折叠态（§4.4）
-    /// 三区用户可见性意愿位（§4.4 折叠不覆盖用户意愿——折叠/展开只改
-    /// Dock 实际可见性，不改这三位；Top/Central 恒在无此位）。
-    bool m_visibleLeft = true;
-    bool m_visibleRight = true;
-    bool m_visibleBottom = true;
-    QByteArray m_factoryGeometry;              ///< 出厂几何快照（resetLayout/损坏回退基准）
-    QByteArray m_factoryState;                 ///< 出厂停靠位形快照（同上——含页签序/工具栏）
-    ProjectContextProjection m_context{};      ///< 最近一次注入的上下文快照
-    std::vector<std::pair<QAction*, std::string>> m_commandActions;  ///< 动作→命令 id
-    std::vector<std::pair<QPushButton*, std::string>> m_topButtons;  ///< 顶栏按钮→命令 id
-    std::vector<std::pair<WorkbenchRegion, QAction*>> m_viewToggles; ///< 视图菜单开关（勾选态回写）
 };
 
 }  // namespace detail

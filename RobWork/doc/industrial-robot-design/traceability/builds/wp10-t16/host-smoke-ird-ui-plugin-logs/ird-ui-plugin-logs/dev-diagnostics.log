@@ -1,0 +1,5 @@
+1 1790204646935 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\tmp-wp10-t16-harness\\ird-ui-plugin-logs）
+2 1790204697528 D DEBUG project/lock-recovery msg=接管写锁：发现残留锁记录（PM-08 恢复诊断）——残留 PID=27696，心跳=2026-09-23T22:08:51.736Z（原持有者已退出；残留心跳陈旧不参与接管判定——接管唯一途径＝OS 锁可被获取，D-03）
+3 1790204753498 D DEBUG diag/ui msg=[sampled-tail] 宿主已关闭工作单元（工作台面板保持）
+1 1790204780913 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\tmp-wp10-t16-harness\\ird-ui-plugin-logs）
+2 1790204795113 D DEBUG diag/ui msg=[sampled-tail] 宿主已关闭工作单元（工作台面板保持）

@@ -1,0 +1,8 @@
+inifile not found at: C:\Users\zgl18/.RobWorkStudio.ini
+[ird-ui-plugin] 诊断栈就绪（开发日志目录：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\ird-ui-plugin-logs）
+[ird-ui-plugin] 工作台装配完成（五区面板＋Ctrl+Shift+P 命令面板；装载呈现自证在事件循环稍后执行）
+[ird-ui-plugin] 工作台 Dock 已呈现（宿主主窗口嵌入式——装载呈现自证完成）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 768 px，实际 1054 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 768 px，实际 1054 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] 项目已打开：D:\10_Source_Repos\21_robot\RobWork\tmp-wp10-t16-harness\proj-demo（可写：是）
+[ird-ui-plugin] 项目已创建（D:/10_Source_Repos/21_robot/RobWork/tmp-wp10-t16-harness/host-smoke-newproj，显示名：宿主冒烟项目）——释放创建锁后经打开协议进入
