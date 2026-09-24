@@ -3312,6 +3312,26 @@
       "title": "同会话重开已打开项目的 UX 语义：S2 切换流候选验证在 A 仍持锁时打开候选 B，B≡A 时必然撞自锁（lock-held-by-other）被保守拒绝→错误页——数据安全侧零风险、行为与 §5.4『候选验证成功才切』冻结设计一致（非缺陷），但『打开已打开项目』本可短路为无操作/聚焦既有会话；『最近项目』菜单使该路径日常可达",
       "owner": "架构/需求所有者（随 F-321 切换路径状态投影定案同批考量——是否为同项目重开增加短路语义）；不单独排期",
       "resolution": "并入 F-321 定案考量。编号顺延自 F-329。"
+    },
+    {
+      "id": "F-335",
+      "source": "traceability/acceptance/UI-T18-20260924-r2.md §4.8（attempt 2，verdict=pass，2026-09-24；验收者对 acc/UI-T18/1 登记册与送验头返工提交的交叉核对）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "F-331~F-334 的返工消账未回写 findings.json 状态翻转：4 条在本分支（acc/UI-T18/1）登记册中仍全部 status=open，而任务分支 wp10-t18 的 findings.json（继承自 redesign-main）不含该 4 条（编号止于 F-330）——结构上实施提交无法翻转状态；产物面已由 r2 验收核实闭环（F-331 越界 XML 已删 @840375b3、F-332 §16.7 口径已修正 @f00fb104、F-333 三文件头已对齐 @f6d1a235、F-334 死包含已删 @f6d1a235）",
+      "owner": "流水线收尾会话（按 ACC/PIPE 收尾合并 findings.json 时执行状态翻转）",
+      "resolution": "收尾按 SHA 合并 evidence 分支与任务分支时，findings.json 并集须把 F-331/F-332/F-333/F-334 置 fixed（依据 UI-T18-20260924-r2.md §4.8 逐项核实结论）；登记册属 traceability/**，翻转不涉 allowedFiles 扩大。编号顺延自 F-334。"
+    },
+    {
+      "id": "F-336",
+      "source": "traceability/acceptance/UI-T18-20260924-r2.md §4.3/§4（attempt 2，verdict=pass，2026-09-24；验收者以构建目标捕获与引擎直跑双路径复现 ird_gates 时的输出差异实测）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "ird_gates 的 VS 构建目标捕获路径（cmake --build --target ird_gates 经 MSBuild 控制台）输出缩减＋编码污染：同一源码树实测构建目标捕获仅 43 行门禁发射（尾部 sdurws_ird_ui_app/sdurws_ird_ui_plugin 的 4 条 IRD-GATE-SUB 命中丢失），且中文经控制台双重编码有损（F-309/F-315 同域）；引擎文档调用口径 cmake -DIRD_ROOT=<…> -P cmake/ird_gates.cmake 输出完整 119 行。送验 r4 门禁留痕为完整口径，本次比对结论不受影响，但后续取证若走 VS 捕获路径可能产生假差集",
+      "owner": "治理脚本所有者（gate-all.ps1/verify-task.ps1 的门禁捕获口径固化）",
+      "resolution": "门禁取证统一采用引擎文档口径（cmake -P 直跑）或在 gate-all.ps1 中固定该口径并显式声明编码（UTF-8）；两路径差异机理（MSBuild 对 cmake -P FATAL_ERROR 输出的截断/缓冲行为）可随后续治理任务一并勘验。编号顺延自 F-335。"
     }
   ]
 }
