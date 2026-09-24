@@ -68,7 +68,9 @@
 #include "app/PortAdapters.hpp"                  // 端口适配器集（O-31 装配层特权边——复用形态）
 
 class QAction;    // 框架菜单动作（setupMenu 注入面——完整定义在 Qt 头）
+class QDockWidget;  // 同级 Dock（UI-T18 多 Dock 拓扑——完整定义在 Qt 头）
 class QMenu;      // 宿主 Plugins 菜单（setupMenu 回调参数）
+class QStatusBar; // 宿主状态栏（UI-T18 状态投影面——完整定义在 Qt 头）
 class QTimer;     // Draining 轮询驱动（UI 线程周期——完整定义在 Qt 头）
 class QWidget;    // Dock 体控件（前置声明）
 
@@ -197,7 +199,10 @@ private:
     /// 串行落盘执行器（§3.4 落盘线程的开发期宿主——postToDiskThread 接线）。
     std::unique_ptr<app::SerialTaskExecutor> m_diskExecutor;
     std::unique_ptr<IWorkbenchContent> m_content;             ///< 内容装配面（与 harness 同源）
-    QPointer<QWidget> m_dockBody;                             ///< Dock 体控件（Qt 父子树托管）
+    QPointer<QWidget> m_dockBody;                             ///< 主 Dock 体控件（Qt 父子树托管）
+    QDockWidget* m_propsDock = nullptr;    ///< "IRD 属性与诊断"Dock（Right 区——UI-T18 拆分面，窗口树托管）
+    QDockWidget* m_tasksDock = nullptr;    ///< "IRD 任务和状态"Dock（Bottom 区——UI-T18 拆分面，窗口树托管）
+    QStatusBar* m_hostStatusBar = nullptr; ///< 宿主状态栏（UI-T18 状态投影面——PM-11 永久位＋瞬态消息）
     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）
     QMenu* m_recentMenu = nullptr;                            ///< "最近项目"子菜单（aboutToShow 重建）
     std::vector<std::pair<QAction*, std::string>> m_hostMenuCommandIds; ///< 框架菜单动作→命令 id（使能同步）

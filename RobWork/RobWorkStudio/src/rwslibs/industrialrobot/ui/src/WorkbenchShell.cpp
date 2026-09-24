@@ -321,10 +321,23 @@ void WorkbenchShellImpl::buildDocks()
     }
 
     // 中央区（内容页栈：首页/三维视图区域——宿主形态在内容装配层内定页）
-    // 与状态行（PM-11 永久标签已在内；内容装配层持有同一 QStatusBar——
-    // 其 showMessage 瞬态反馈因此与原实现同对象同行为）。
+    // 与状态栏（UI-T18 契约面变更——O-43 ③：内容装配层不再持有 QStatusBar，
+    // 顶层宿主自有状态栏承载 PM-11 永久位＋瞬态消息，双观测钩子接线；
+    // 呈现行为与原"内容装配层持有同一 QStatusBar"逐项等价：永久位同位
+    // stretch、瞬态同 showMessage 语义）。
     m_window->setCentralWidget(m_content->centralWidget());
-    m_window->setStatusBar(m_content->statusBarWidget());
+    QStatusBar* statusBar = m_window->statusBar();
+    m_pm11Label = new QLabel(statusBar);
+    m_pm11Label->setObjectName("ird_status_project_text");
+    statusBar->addWidget(m_pm11Label, /*stretch=*/1);
+    m_content->setStatusTextObserver([this](const QString& text) {
+        if (m_pm11Label != nullptr) {
+            m_pm11Label->setText(text);  // PM-11 永久位（不用 showMessage——瞬态位会超时清空）
+        }
+    });
+    m_content->setStatusMessageObserver([statusBar](const QString& message, int timeoutMs) {
+        statusBar->showMessage(message, timeoutMs);
+    });
 
     // 出厂快照：此后 view.resetLayout / 损坏回退都以这两份字节为基准
     // （§4.4"恢复出厂位形"、§4.5"回退出厂默认布局"——快照在 Dock 全部

@@ -81,7 +81,9 @@ public:
     QWidget* centralWidget() override;
     QWidget* rightWidget() override;
     QWidget* bottomWidget() override;
-    QStatusBar* statusBarWidget() override;
+    void setStatusTextObserver(std::function<void(const QString&)> observer) override;
+    void setStatusMessageObserver(
+        std::function<void(const QString& message, int timeoutMs)> observer) override;
     void setRegionVisibilityTarget(WorkbenchRegion region, QWidget* target) override;
     bool regionVisible(WorkbenchRegion region) const override;
     void setRegionVisible(WorkbenchRegion region, bool visible) override;
@@ -125,6 +127,10 @@ private:
     // ---- 呈现刷新（原 WorkbenchShellImpl 同名拆出）----
     void refreshCommandStates();          ///< 命令可用性 → 顶栏按钮/观察者
     void refreshStatusBar();              ///< PM-11 状态行文本刷新（＋标题观察者）
+    /// 瞬态状态消息唯一出线（UI-T18——原 QStatusBar::showMessage 的路由面：
+    /// 经 setStatusMessageObserver 投影宿主层；未注册观察者＝静默丢弃，
+    /// 与"无宿主测试场景"同纪律）。
+    void showStatusFeedback(const QString& message, int timeoutMs);
     void refreshRecentList();             ///< 最近项目列表控件重建（PM-10）
     void refreshPolicySummaryCard();      ///< 策略摘要卡重拉端口快照（UI-T07——§6.7）
     void updateCollapseBySize();          ///< §4.4 尺寸折叠（仅顶层宿主启用）
@@ -156,11 +162,11 @@ private:
     // ---- 宿主层 chrome 同步观察钩子 ----
     std::function<void()> m_commandStateObserver;                 ///< 命令状态观察（菜单使能同步）
     std::function<void(const QString&)> m_titleTextObserver;      ///< PM-11 标题文本观察
+    std::function<void(const QString&)> m_statusTextObserver;     ///< PM-11 状态文本观察（UI-T18——宿主状态栏永久位）
+    std::function<void(const QString&, int)> m_statusMessageObserver; ///< 瞬态消息观察（UI-T18——宿主状态栏 showMessage）
 
     // ---- 内容 Widget 树（shutdown 后全部置空防悬垂）----
-    QStatusBar* m_statusBar = nullptr;         ///< 状态行（PM-11 永久标签的承载者）
     QStackedWidget* m_centralStack = nullptr;  ///< 中央区页栈（首页/三维视图区域）
-    QLabel* m_statusText = nullptr;            ///< PM-11 文本标签（状态行内永久位）
     QLabel* m_readonlyBadge = nullptr;         ///< 顶栏只读徽标
     QListWidget* m_homeRecentList = nullptr;   ///< 首页最近项目列表
     std::array<QWidget*, 5> m_regionWidgets{}; ///< 五区内容 Widget（WorkbenchRegion 枚举序）

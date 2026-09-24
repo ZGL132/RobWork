@@ -108,17 +108,13 @@ bool WorkbenchContentImpl::build()
     }
 
     // 内容构建序（每步产物是下一步的输入；与原 WorkbenchShellImpl 的
-    // buildWindow 拆分一致——状态行/五区内容先于命令设施，命令设施先于
+    // buildWindow 拆分一致——五区内容先于命令设施，命令设施先于
     // activate 期的任何刷新触达点）：
-    //   ①状态行（PM-11 永久标签）→ ②五区内容 → ③命令设施装配（§7.1
-    //   登记＋seal）。
+    //   五区内容 → 命令设施装配（§7.1 登记＋seal）。
+    //   （UI-T18：①状态行环节移除——QStatusBar* 出口改双观测钩子投影
+    //   宿主层，本层零状态栏 Widget。）
     // 所有内容 Widget 以宿主控件为初始父对象（Qt 父子树托管生命周期——
-    // 宿主层随后的 Dock 包裹/setStatusBar 安放会自动重挂父子）。
-    m_statusBar = new QStatusBar(m_deps.hostWidget);
-    m_statusText = new QLabel(m_statusBar);
-    m_statusText->setObjectName("ird_status_project_text");
-    // PM-11 永久标签承载（不用 showMessage——那是瞬态消息位，会被超时清空）。
-    m_statusBar->addWidget(m_statusText, /*stretch=*/1);
+    // 宿主层随后的 Dock 包裹会自动重挂父子）。
 
     buildTopBar();
     buildSideContents();
@@ -206,9 +202,21 @@ QWidget* WorkbenchContentImpl::bottomWidget()
     return m_regionWidgets[static_cast<std::size_t>(WorkbenchRegion::Bottom)];
 }
 
-QStatusBar* WorkbenchContentImpl::statusBarWidget()
+void WorkbenchContentImpl::setStatusTextObserver(
+    std::function<void(const QString&)> observer)
 {
-    return m_statusBar;
+    // PM-11 永久投影钩子（UI-T18——O-43 ③契约面变更）：文本仍以
+    // formatProjectStatusText 为唯一权威（refreshStatusBar 现取现投），
+    // 本层不再持有任何状态栏 Widget。空回调＝清除（无宿主测试场景）。
+    m_statusTextObserver = std::move(observer);
+}
+
+void WorkbenchContentImpl::setStatusMessageObserver(
+    std::function<void(const QString& message, int timeoutMs)> observer)
+{
+    // 瞬态消息投影钩子（UI-T18 同上）：原 QStatusBar::showMessage 语义
+    // 原样移交宿主层（文本＋超时 ms），本层零加工零排队。
+    m_statusMessageObserver = std::move(observer);
 }
 
 // =====================================================================
@@ -883,7 +891,7 @@ void WorkbenchContentImpl::assembleCommandSystem()
             // 壳自持：恢复出厂位形（§4.5）＋即时反馈。
             handler = [this](const std::vector<CommandParameter>&) {
                 resetLayout();
-                m_statusBar->showMessage(u8"已恢复默认布局", 4000);
+                showStatusFeedback(u8"已恢复默认布局", 4000);
                 CommandOutcome out;
                 out.accepted = true;
                 return out;
@@ -937,10 +945,8 @@ void WorkbenchContentImpl::assembleCommandSystem()
             // 占位说明处理器（阶段 A 契约显式形态——accepted=true：提交
             // 链路真实走通，能力面以 §11.4 说明呈现）。
             handler = [this](const std::vector<CommandParameter>&) {
-                if (m_statusBar != nullptr) {
-                    m_statusBar->showMessage(
-                        QString::fromUtf8(WorkbenchText::kEntryDeferredNotice), 4000);
-                }
+                showStatusFeedback(
+                    QString::fromUtf8(WorkbenchText::kEntryDeferredNotice), 4000);
                 CommandOutcome out;
                 out.accepted = true;
                 out.messageKey = std::string{"notice.entry-deferred"};
@@ -1044,12 +1050,12 @@ void WorkbenchContentImpl::openUserManualEntry()
     // 走 Dev 日志（排障面——§3.5 码表无此事件码，不臆造稳定码；呈现面
     // 零内部路径）。
     if (openUserManual()) {
-        m_statusBar->showMessage(
+        showStatusFeedback(
             QString::fromUtf8(WorkbenchText::kHelpManualOpenedNotice), 4000);
         return;
     }
     emitDev("用户手册入口文件缺失（share 帮助文件未部署）：" + userManualPath());
-    m_statusBar->showMessage(
+    showStatusFeedback(
         QString::fromUtf8(WorkbenchText::kHelpManualMissingNotice), 6000);
 }
 
@@ -1136,12 +1142,12 @@ void WorkbenchContentImpl::refreshPolicySummaryCard()
 void WorkbenchContentImpl::refreshStatusBar()
 {
     // PM-11 唯一权威＝formatProjectStatusText（UiProjections.hpp）——标题
-    // 与状态行同格式（PM-11"标题栏与状态栏"双面）：状态行本层直写；标题
-    // 面经观察者回调宿主层（顶层宿主转发 setWindowTitle；嵌入式宿主可不
-    // 注册——PM-11 投影由状态行承载）。
+    // 与状态行同格式（PM-11"标题栏与状态栏"双面）：UI-T18 起两半都经观察
+    // 者回调宿主层（状态文本→宿主状态栏永久位；标题→顶层宿主 setWindow
+    // Title；不注册＝无投影——无宿主测试场景，本层零 Widget）。
     const QString text = QString::fromStdString(formatProjectStatusText(m_context));
-    if (m_statusText) {
-        m_statusText->setText(text);
+    if (m_statusTextObserver) {
+        m_statusTextObserver(text);
     }
     if (m_titleTextObserver) {
         m_titleTextObserver(text);
@@ -1195,11 +1201,11 @@ void WorkbenchContentImpl::submitCommand(const std::string& commandId)
     // （工厂注入时）已由注册表出线，此处是即时可见性补偿。
     const CommandAvailability a = m_commands->availability(commandId);
     if (!a.registered) {
-        m_statusBar->showMessage(
+        showStatusFeedback(
             QString::fromUtf8(u8"未知命令：") + QString::fromStdString(commandId), 4000);
         return;
     }
-    m_statusBar->showMessage(
+    showStatusFeedback(
         QString::fromUtf8(a.disableReasonKey == WorkbenchText::kReasonReadOnly
                               ? WorkbenchText::kReasonReadOnlyText
                               : WorkbenchText::kReasonNoProjectText),
@@ -1237,6 +1243,17 @@ void WorkbenchContentImpl::removeRecentProject(const std::string& canonicalPath)
     m_recent.remove(RecentProjectsModel::canonicalize(canonicalPath));
     persistRecentAsync();
     refreshRecentList();
+}
+
+void WorkbenchContentImpl::showStatusFeedback(const QString& message, int timeoutMs)
+{
+    // 瞬态消息唯一出线（UI-T18）：原 QStatusBar::showMessage 的语义投影——
+    // 文本与超时 [单位 ms] 原样移交宿主层；未注册观察者＝无宿主呈现面，
+    // 静默丢弃（与 setTitleTextObserver 的"嵌入式可不注册"同纪律；调用方
+    // 不判空——本方法即判空收口点）。
+    if (m_statusMessageObserver) {
+        m_statusMessageObserver(message, timeoutMs);
+    }
 }
 
 void WorkbenchContentImpl::refreshRecentList()
@@ -1330,8 +1347,6 @@ bool WorkbenchContentImpl::shutdown()
     m_commands.reset();     // 注册表/快捷键表在拆卸后停用（处理器只经本层触发）
     m_shortcuts.reset();
     m_centralStack = nullptr;
-    m_statusBar = nullptr;
-    m_statusText = nullptr;
     m_readonlyBadge = nullptr;
     m_homeRecentList = nullptr;
     m_regionWidgets.fill(nullptr);

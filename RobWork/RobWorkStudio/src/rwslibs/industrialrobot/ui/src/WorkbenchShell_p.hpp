@@ -492,6 +492,7 @@ private:
     std::unique_ptr<WorkbenchMainWindow> m_window;  ///< 主窗口唯一所有权（shutdown 即销毁——
                                                     ///  "mainWindow 后置不可再用"的实现口径）
     std::array<QDockWidget*, 5> m_docks{};     ///< 五区 Dock（WorkbenchRegion 枚举序索引——窗口树子）
+    QLabel* m_pm11Label = nullptr;             ///< PM-11 状态栏永久位（UI-T18——宿主自有状态栏承载，窗口树子）
     QByteArray m_factoryGeometry;              ///< 出厂几何快照（resetLayout/损坏回退基准——
                                                ///  内容装配层经几何钩子回取，窗口事实归宿主层）
     QByteArray m_factoryState;                 ///< 出厂停靠位形快照（同上——含页签序/工具栏）
