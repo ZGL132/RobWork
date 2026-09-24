@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 290,
+  "tickCount": 292,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-24T08:07:11+08:00",
+    "updatedAt": "2026-09-24T15:48:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1670,6 +1670,17 @@
       "acceptanceRecord": "traceability/acceptance/UI-T16-20260924-r2.md",
       "mergedAt": "2026-09-24",
       "failReason": "非验收一次通过：attempt 1 fail（B-1 宿主嵌入式面板四项交互未实证＋B-2 复跑载体失实，记录 acc/UI-T16/1@2558984d）→ 返工 fix=1（d8af3a96 根因修复＋02d52937 共存收口与全量重录）→ attempt 2 pass（记录 acc/UI-T16/2@80b8fbba）。实施段时序事件：首轮实施者完成提交后回传被配额限额截断（12:50）；重启派发一次空启动（6h40m 零产出已停）——两次均属环境层事件，验收独立性与冻结链未受影响；attempt 2 验收建议级 F-321（切换路径语义待所有者裁决，不阻塞）／F-322（Dev 日志采样尾段）／F-323（RobWorkSim 框架目标宏冲突为新树 configure 既有问题＋ini 模板不入库）随 acc/UI-T16/2 转登"
+    },
+    {
+      "task": "UI-T17",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3a9c96ebd917ce6218e9ee1adf2a03c305d9d02a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T17-20260924-r2.md",
+      "mergedAt": "2026-09-24",
+      "failReason": "非验收一次通过：attempt 1 fail（阻断唯一项 B-1＝宿主冒烟关闭确认流/Draining 收口/保存链路半区无宿主实证，记录 UI-T17-20260924.md @ acc/UI-T17/1@c216d6c8；实现面零整改要求）→ 返工 fix=1（e917734a：F-326 两文件头注释对齐＋F-327 延期裁决＋r3 全量重验留痕）→ 宿主 GUI 冒烟由所有者本人于 14:32~14:44 人工执行（3a9c96eb -r4 证据：项目库落盘＋锁 pid/心跳＋dev 日志＋所有者确证『都正确可以通过验收』；对话框/状态行过程视觉帧未捕获〔两轮连拍错过＋所有者裁决不重走〕如实登记）→ attempt 2 pass（4f7a814f：B-1 专章裁定＝机制级 dev 日志 S1/S2 双行执行实证＋情节级所有者确证；switch rejected/lock-held-by-other 独立裁定非缺陷＝S2 候选验证保守拒绝）。建议级 F-324~F-330 随 acc/UI-T17/2 findings 入主线：F-328（r4 登记时间线归属勘误——draining 行属同会话更早项目，随下批 ui 触碰窗口更正）／F-329（连拍帧未在盘留痕，所有者裁决删除）／F-330（同项目重开自锁拒绝 UX 语义，并入 F-321 定案考量）"
     }
   ],
   "policy": {
@@ -1695,11 +1706,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "UI-T17",
-      "branch": "wp10-t17",
-      "contractPath": "tasks/foundation/UI-T17.json"
-    },
     {
       "taskId": "WP-13-T09",
       "branch": "wp13-t09",
@@ -1849,5 +1855,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "c03b0dce-4136-4772-ab52-f2de31139d48"
+  "tickToken": "6edb3681-2dae-46be-af41-9e7501595d19"
 }

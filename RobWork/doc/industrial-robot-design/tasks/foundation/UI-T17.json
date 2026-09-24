@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "会话入口处理器补全＋宿主菜单融合（O-43 裁决承接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T11", "UI-T12", "UI-T16"],
   "requirements": ["PM-03", "PM-04", "PM-10", "UX-09"],
   "designRefs": [
