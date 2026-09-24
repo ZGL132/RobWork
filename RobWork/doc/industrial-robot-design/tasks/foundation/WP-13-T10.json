@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现工具/场景/命名位姿对象编辑与命令",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T03",
     "WP-13-T08"

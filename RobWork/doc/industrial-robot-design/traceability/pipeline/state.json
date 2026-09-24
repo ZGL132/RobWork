@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 308,
+  "tickCount": 311,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-25T03:11:46+08:00",
+    "updatedAt": "2026-09-25T05:27:33+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1703,6 +1703,16 @@
       "acceptanceRecord": "traceability/acceptance/WP-13-T09-20260925-r2.md",
       "mergedAt": "2026-09-25",
       "failReason": "非验收一次通过：attempt 1 fail（阻断唯一项 B-1＝集成模式契约测试不可复现全绿——CommandPipelineContractTest.cpp:288 的 T08 时代“T09 行不预建”钉住断言未随本任务在 DiagCodes.cpp 合法登记 §9.5 T09 三码同步更新，全新构建 8/9 FAILED、在库留痕 9/0 不可复现；实现面 4.1/4.4~4.11 全过、零语义缺陷；记录 WP-13-T09-20260925.md @ acc/WP-13-T09/1@05b02655）→ 返工 fix=1（12284f72：钉住断言改在册断言〔三码同源对账＋ownerUnit/confirmable/requiresComparison 逐项〕＋测试更名沿 DiagCodesTest 先例＋F-339 计数 19→20／F-340 报告重收全量 168 条／F-341 调试块清除；F-338 维持 open 归治理侧）→ attempt 2 pass（4.1~4.11 全过、9/9 可复现、gates 411=411 零新增；记录 -r2 @ acc/WP-13-T09/2@bf64f02e）。环境事件：attempt 1 验收记录分支误以任务分支尖端为基（ACC §3 偏差）致收尾 ③ 合并记录即带入代码、④ 空操作——终态经逐笔核验与设计意图一致，偏差已随本条登记；另收尾 push 曾遇不稳定代理路径陈旧协商应答（up-to-date 假象），显式 refspec 重推解决"
+    },
+    {
+      "task": "WP-13-T10",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "0cd85cef9e6114acb4b5a1dfceef24c4aab74334"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T10-20260925.md",
+      "mergedAt": "2026-09-25"
     }
   ],
   "policy": {
@@ -1728,11 +1738,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "WP-13-T10",
-      "branch": "wp13-t10",
-      "contractPath": "tasks/foundation/WP-13-T10.json"
-    },
     {
       "taskId": "WP-13-T11",
       "branch": "wp13-t11",
@@ -1872,5 +1877,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "14946f10-d11b-4744-bc10-77d792875c3d"
+  "tickToken": "7d3e9a12-0374-471d-a268-33cafd36919a"
 }
