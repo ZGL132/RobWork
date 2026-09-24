@@ -3416,6 +3416,36 @@
       "title": "tasks/foundation/WP-13-T10.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行：全新构建树按清单逐条执行至 ctest 条目（-L \"^ird$\" 含 contract_test）时该可执行文件不存在——F-300/F-304/F-310/F-314/F-338 家族（契约 verify 缺目标构建行）在 T10 契约复发（F-338 为 T09 同款、维持 open 属预期）",
       "owner": "契约编译/治理侧（契约文件为 CCP 冻结产物，实施者不得自行改动——按 DTB §5.4 走契约修订把 sdurws_ird_modeling_contract_test 构建行补入 verify 数组）",
       "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1 按此口径取得全量结果：ctest 2/2、契约 9/9）。编号顺延自 F-343。"
+    },
+    {
+      "id": "F-345",
+      "source": "traceability/acceptance/WP-13-T11-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "tasks/foundation/WP-13-T11.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行：全新构建树按清单逐条执行至 ctest 条目（-L \"^ird\" 含 contract_test）时该可执行文件不存在——F-300/F-304/F-310/F-314/F-338/F-344 家族（契约 verify 缺目标构建行）在 T11 契约复发",
+      "owner": "契约编译/治理侧（契约文件为 CCP 冻结产物，实施者不得自行改动——按 DTB §5.4 走契约修订把 sdurws_ird_modeling_contract_test 构建行补入 verify 数组）",
+      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1 按此口径取得全量结果：ctest 2/2、契约 9/9）。编号顺延自 F-344。"
+    },
+    {
+      "id": "F-346",
+      "source": "traceability/acceptance/WP-13-T11-20260925.md §4.9/§4.10（attempt 1，verdict=pass，2026-09-25；验收者对提交物清单 grep \".xml\" 与在库报告逐件对账）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "WP-13-T11 留痕缺 gtest JUnit XML 原件且 commit 表述失实：traceability/builds/wp13-t11/ 提交的是 testkit JSON 报告（ird-test-report/1 逐案明细）＋逐 exe 日志，全量 diff 无任何 .xml（T09/T10 先例均提交 gtest XML 原件），而实现提交 04982873 正文写'集成 gtest XML 两件…留痕'与实际提交物不符——逐案数据在库、自洽（193=184＋9、144=139＋5）且验收者由当前源码亲跑复现（193/193 逐件一致），非数据缺失、非粉饰；已推送提交不可改写——本条即留档",
+      "owner": "实施者侧（后续留痕窗口补录 XML 原件到 traceability/builds/wp13-t11/，或经治理侧把 ird-test-report/1 JSON 报告登记为 XML 的等价留痕载体并同步 ACC §4.10 口径）",
+      "resolution": "编号顺延自 F-345。"
+    },
+    {
+      "id": "F-347",
+      "source": "traceability/acceptance/WP-13-T11-20260925.md §4.8 末（attempt 1，verdict=pass，2026-09-25；验收者门禁直跑操作事故复盘）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "ird_gates.cmake 的 IRD_SELFTEST_DIR 无防呆校验：脚本自述'夹具树动态生成写入 IRD_SELFTEST_DIR，不污染源码树'，但调用方若把该目录指向源树内路径（如 <IRD_ROOT>/testkit/test）时脚本照单执行——生成夹具前清理/写入会删除源树跟踪文件（本次验收事故 1 例：worktree 内 testkit/test 14 个跟踪 .cpp 被清、冒烟构建 C1083 连累；git checkout 还原后以缺省 TEMP 夹具目录重跑，head/base 直方图结论不变、双源树还原纯净——结论未受影响，属操作防呆缺口非门禁判定缺陷）",
+      "owner": "治理脚本所有者（WP-01-T01 ird_gates 辖域）：脚本启动时断言 IRD_SELFTEST_DIR 规范化后不落在 IRD_ROOT 之内（或非任何源树路径），违者 FATAL 并提示缺省 TEMP 用法；文档同步该约束",
+      "resolution": "编号顺延自 F-346。"
     }
   ]
 }
