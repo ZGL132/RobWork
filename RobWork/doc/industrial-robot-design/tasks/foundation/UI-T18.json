@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T18",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "Dock 拓扑拆分＋状态行迁移宿主状态栏（O-43 裁决③承接）",
+  "status": "ready",
+  "dependsOn": ["UI-T16", "UI-T17"],
+  "requirements": ["PM-11", "PM-14"],
+  "designRefs": [
+    "units/ui.md#10.1",
+    "units/ui.md#4.4",
+    "units/ui.md#13"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+  ],
+  "outputs": ["implementation", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui sdurws_ird_ui_plugin sdurws_ird_ui_app sdurws_ird_ui_test sdurws_ird_ui_gui_test sdurws_ird_ui_contract_test",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird_gui$\"",
+    "框架 RobWorkStudio.exe 经 Plugins→Load plugin 加载后呈多 Dock 拓扑（主 Dock＋属性右 Dock＋任务底部 Dock）且宿主状态栏唯一（插件零 QStatusBar——PM-11 投影＋瞬态消息经宿主状态栏呈现）；启动日志＋截图＋操作序列留痕 traceability/builds/wp10-t18/"
+  ],
+  "branch": "wp10-t18",
+  "interUnit": false,
+  "knownPitfalls": ["O-38", "O-43"],
+  "acceptance": [
+    "契约面变更落位：IWorkbenchContent 移除 statusBarWidget()（QStatusBar* 出口），增 setStatusTextObserver（PM-11 永久文本——formatProjectStatusText 唯一权威现取现投）/setStatusMessageObserver（瞬态消息——showMessage 语义原样移交）双观测钩子；内容层 6 处瞬态消息点统一收敛 showStatusFeedback 唯一路由；内容层零状态栏 Widget；§10.1 v1.14 增量注⑦与实现逐字一致",
+    "多 Dock 拓扑落位：插件本体 Dock＝主 Dock（命令条＋项目导航纵排，Left 区）＋『IRD 属性与诊断』右 Dock＋『IRD 任务和状态』底 Dock（装载呈现自证拍 addDockWidget 入宿主——restoreState 隐藏根因链与主 Dock 同链一并重显＋尺寸初值钳制）；中央让位页保持已构建不挂载（宿主中央 RWStudioView3D 唯一所有三维）；三区可见性目标改绑 Dock 本体（区域开关作用面升格）；布局记忆三区键零变化（PM-14 跨会话）；WorkbenchShell 自有状态栏等价迁移（呈现行为逐项等价——harness GUI 套件全量回归为证）；v1.11 状态行钉底修复的语义等价迁移在落位登记注逐项对照",
+    "门禁与留痕：ird_gates 命中集与基线归一化比对零新增（本任务零 CMake/链接面变更）；ui 叶子目录 ctest ^ird$ 与 ^ird_gui$ 通过；gtest XML＋构建/门禁/冒烟日志留痕 traceability/builds/wp10-t18/；宿主 GUI 冒烟（多 Dock 拓扑＋宿主状态栏投影真机序列）如实登记执行状态；双模式构建零错误"
+  ],
+  "note": "任务来源：O-43 裁决③（所有者 2026-09-24 融合方案审核指令——DTB v0.19 §4.2 O-43 行＋§2.11 WP-10-T18 行『高风险重构单独立任务』；ui.md §13 UI-T18 行）。前置＝UI-T17 已验收合入（ea04b580，verdict=pass @ acc/UI-T17/2）。定位：融合形态第三步——单一工作台 Dock 五区栅格拆分为功能分片多 Dock＋宿主状态栏唯一；IWorkbenchContent 契约面变更（statusBarWidget() 出口移除→双状态观测钩子）随落位登记（§10.1 v1.14 增量注⑦⑧）；v1.11 状态行钉底修复的语义等价迁移在 §13 UI-T18 落位登记注④逐项对照。诚实边界：宿主 GUI 冒烟实施段未执行（随验收段补录，UI-T17 先例＝所有者人工操作）。分支 wp10-t18；留痕 traceability/builds/wp10-t18/"
+}
