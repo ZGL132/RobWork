@@ -17,8 +17,11 @@
  *   V-22 stale 面建模侧：expectedRevision 与基线不一致→处理器防御性复核
  *        fail-fast（std::invalid_argument——S2 已拦截过期基线的纵深防线；
  *        草稿 apply-retained 保留语义归 project S2/DraftService 已验契约）
- *   稳定码注册 UT：§9.5 T08 行九码经 IDiagnosticRegistry 注册可查＋未到
- *        任务行不预建（T09/T13/T18 行缺席——注册簿纪律）
+ *   稳定码注册 UT：§9.5 T08 行九码＋T09 行三码经 IDiagnosticRegistry 注册
+ *        可查＋未到任务行不预建（T13/T18 行缺席——注册簿纪律；T09 行三码
+ *        随 WP-13-T09 在 DiagCodes.cpp 合法登记后在册——验收 attempt 1
+ *        B-1 返工同步：原"T09 行不预建"钉住断言随登记过期，分期口径与
+ *        DiagCodesTest FactoryScopeIsStagedRows_WP13T09 对齐）
  *
  * 设计依据：units/modeling.md §9.3/§9.5、units/project.md §5.3.6/§6.6/
  * §6.7、units/policy.md §9.4；shared 夹具＝../test/CommandFixtures.hpp
@@ -245,16 +248,21 @@ TEST(MdlCommandPipelineContract, V22StaleBaselineFailsFastDefensively)
 }
 
 // =====================================================================
-// 稳定码注册 UT（§9.5 T08 行九码——不预建他行）
+// 稳定码注册 UT（§9.5 T08 行九码＋T09 行三码——不预建余行）
 // =====================================================================
 
 /**
- * @brief §9.5 T08 行九码经 IDiagnosticRegistry 注册可查（描述符字段与卡面
- *        登记一致——confirmable/requiresComparison 对账）＋未到任务行不
- *        预建（T09 转换族/T13 包族/T18 耦合族缺席——注册簿纪律）＋重复
+ * @brief §9.5 T08 行九码＋T09 行三码经 IDiagnosticRegistry 注册可查（描述
+ *        符字段与卡面登记一致——confirmable/requiresComparison 对账）＋
+ *        未到任务行不预建（T13 包族/T18 耦合族缺席——注册簿纪律）＋重复
  *        注册边界拒绝（装配期 fail-fast）。
+ *
+ * 分期口径（验收 attempt 1 B-1 返工登记）：已到任务行（T02/T05/T06/T07/
+ * T08/T09）全部在册，缺席断言仅钉未到任务行——与 DiagCodesTest
+ * FactoryScopeIsStagedRows_WP13T09 的分期封闭性同源对齐；后续任务行登记
+ * 时按同款"缺席→在册"推进（T08→T09 本次推进为先例）。
  */
-TEST(MdlCommandPipelineContract, T08StableCodesRegisteredWithoutPrebuilding)
+TEST(MdlCommandPipelineContract, StableCodesRegisteredWithoutPrebuilding_WP13T09)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01"}, std::vector<std::string>{});
 
@@ -284,8 +292,34 @@ TEST(MdlCommandPipelineContract, T08StableCodesRegisteredWithoutPrebuilding)
     ASSERT_NE(mass, nullptr);
     EXPECT_FALSE(mass->confirmable);
 
-    // —— 未到任务行不预建（T09/T13/T18 行缺席）。——
-    EXPECT_EQ(registry.find("MDL-DH-NOT-EXPRESSIBLE"), nullptr);   // T09
+    // —— T09 行三码在册（WP-13-T09 登记 §9.5 转换族——返工 B-1：原
+    //    "T09 行不预建"钉住断言随本任务合法登记过期，改为在册断言）。
+    //    码值＝DiagCodes.hpp 常量同源对账（与 T08 行同款纪律）。——
+    const std::vector<std::string_view> t09Codes = {
+        kMdlDhNotExpressible,
+        kMdlDhApproximate,
+        kMdlDhAnalysisFailed,
+    };
+    for (const std::string_view code : t09Codes) {
+        const diagnostics::CodeDescriptor* d = registry.find(code);
+        ASSERT_NE(d, nullptr) << "T09 行码未注册: " << code;
+        EXPECT_EQ(d->ownerUnit, "modeling");
+    }
+    // 终判码（NOT-EXPRESSIBLE）：不可确认（§9.5 T09 行 confirmable 列
+    // false——结构前提终判无放行分支，C-3 权威切换拒绝面依赖此语义）。
+    const diagnostics::CodeDescriptor* notExpressible =
+        registry.find(kMdlDhNotExpressible);
+    ASSERT_NE(notExpressible, nullptr);
+    EXPECT_FALSE(notExpressible->confirmable);
+    // 近似码（APPROXIMATE）：比较型强制（E 度量 vs 附录 D 第 5 项上界的
+    // 比对面——requiresComparison 与卡面"转换/Warning"比语义一致）。
+    const diagnostics::CodeDescriptor* approximate =
+        registry.find(kMdlDhApproximate);
+    ASSERT_NE(approximate, nullptr);
+    EXPECT_TRUE(approximate->requiresComparison);
+
+    // —— 未到任务行不预建（仅余 T13/T18 行缺席；T09 行已随 WP-13-T09
+    //    登记在册——见上段在册断言）。——
     EXPECT_EQ(registry.find("MDL-EXPORT-FAILED"), nullptr);        // T13
     EXPECT_EQ(registry.find("MDL-21-COUPLING-STAGE-LOCKED"), nullptr);  // T18（R2——契约 note ④）
 

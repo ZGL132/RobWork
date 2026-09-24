@@ -507,12 +507,12 @@ LmResult lmSolve(const SolverTargets& targets, std::vector<double> x0,
 
     std::vector<double> r = residualOf(x0, targets);
     double cost = costOf(r);
-        if (!std::isfinite(cost)) {
-#ifdef IRD_DH_DEBUG
-            std::fprintf(stderr, "[dh-debug] init cost nonfinite\n");
-#endif
-            return {DhConvergenceState::Diverged, x0};  // 初值即溢出——发散
-        }
+    // 初值即非有限（1e200 级溢出样本——AnalysisFailed UT 边界）：LM 迭代
+    // 无法在非有限代价面上进行，直接判发散（不产出参数——执行失败轴
+    // TASK-02，非语义结论）。
+    if (!std::isfinite(cost)) {
+        return {DhConvergenceState::Diverged, x0};  // 初值即溢出——发散
+    }
 
     double lambda = kLambdaInit;
     std::size_t stall = 0;

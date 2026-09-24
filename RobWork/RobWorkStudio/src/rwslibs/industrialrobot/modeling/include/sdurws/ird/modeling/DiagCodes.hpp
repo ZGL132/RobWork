@@ -178,7 +178,7 @@ inline constexpr std::string_view kMdlDhAnalysisFailed = "MDL-DH-ANALYSIS-FAILED
 
 /**
  * @brief 产出 modeling 已到注册任务行的 MDL-* 稳定码描述符全集（当前
- *        19 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
+ *        20 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
  *        WP-13-T05 登记的 T05 行 MDL-IMPORT-{UNSUPPORTED-JOINT,
  *        BRANCH-SELECTION,ZERO-AXIS,PENDING-CONFIRM,TEMPLATE-RANGE}
  *        五码；外加 WP-13-T06 实现期增登的 T06 行 MDL-IMPORT-XACRO-
