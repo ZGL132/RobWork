@@ -3386,6 +3386,36 @@
       "owner": "实施者侧（随 T09 返工窗口清除调试块或补 cstdio 包含并修正缩进）",
       "resolution": "已于 wp13-t09 12284f72 修复（调试块清除，初值非有限分支语义保留＋补业务含义注释）。attempt 2 验收 WP-13-T09-20260925-r2.md §4.11 亲查：IRD_DH_DEBUG/fprintf 零命中。编号顺延自 F-340。",
       "fixedAt": "2026-09-25"
+    },
+    {
+      "id": "F-342",
+      "source": "traceability/acceptance/WP-13-T10-20260925.md §4.7/§4.8（attempt 1，verdict=pass，2026-09-25；验收者抽查实现文件注释时对账工厂计数）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "modeling/include/sdurws/ird/modeling/DiagCodes.hpp modelingCodeDescriptors @brief 计数失实（F-316/F-339 家族再现）：@brief 仍写\"当前 20 项\"且枚举止于 T09 行三码，而工厂经 WP-13-T10 §9.5 表尾追加两码（MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-TCP-INCOMPLETE）后实际返回 22 项——DiagCodes.cpp 文件头注已同步 22 项而 .hpp @brief 漏改；零行为影响（纯注释滞后），DiagCodesTest 22 码分期封闭断言本已正确",
+      "owner": "实施者侧（后续 modeling 任务随 DiagCodes 增登动作同步 .hpp @brief 计数与枚举——与 F-316/F-339 同款顺手消账窗口）",
+      "resolution": "编号顺延自 F-341。"
+    },
+    {
+      "id": "F-343",
+      "source": "traceability/acceptance/WP-13-T10-20260925.md §4.9/§4.8（attempt 1，verdict=pass，2026-09-25；验收者以送验 XML testsuite 计数对账提交散文）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "WP-13-T10 散文计数失准（F-041/F-080/F-236/F-249/F-256/F-311/F-312 家族再现）：实现提交 91b99d48 正文与单元卡 modeling.md §14.6 v0.12 ⑦ 均写\"MdlPartObjectCommands 12 条\"，实际该 testsuite 14 条（送验 integration-modeling-test.xml testsuite tests=\"14\"；总量 175=159＋14＋2 自洽）——权威留痕（XML/ird-test-report.json）数字全对，仅散文低估 2 条，非粉饰",
+      "owner": "实施者侧（后续 modeling 文档同步窗口勘误 §14.6 v0.12 ⑦ 计数；已推送提交不可改写——本条即留档）",
+      "resolution": "编号顺延自 F-342。"
+    },
+    {
+      "id": "F-344",
+      "source": "traceability/acceptance/WP-13-T10-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "tasks/foundation/WP-13-T10.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行：全新构建树按清单逐条执行至 ctest 条目（-L \"^ird$\" 含 contract_test）时该可执行文件不存在——F-300/F-304/F-310/F-314/F-338 家族（契约 verify 缺目标构建行）在 T10 契约复发（F-338 为 T09 同款、维持 open 属预期）",
+      "owner": "契约编译/治理侧（契约文件为 CCP 冻结产物，实施者不得自行改动——按 DTB §5.4 走契约修订把 sdurws_ird_modeling_contract_test 构建行补入 verify 数组）",
+      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（attempt 1 按此口径取得全量结果：ctest 2/2、契约 9/9）。编号顺延自 F-343。"
     }
   ]
 }
