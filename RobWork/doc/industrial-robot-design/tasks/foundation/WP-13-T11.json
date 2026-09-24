@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现基座安装姿态编辑（预设＋任意欧拉角）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T03",
     "RT-T06"
