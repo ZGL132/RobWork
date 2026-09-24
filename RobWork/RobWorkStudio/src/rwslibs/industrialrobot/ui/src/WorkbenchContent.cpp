@@ -43,7 +43,6 @@
 #include <QMenu>
 #include <QPushButton>
 #include <QSettings>
-#include <QStatusBar>
 #include <QToolButton>
 #include <QVBoxLayout>
 

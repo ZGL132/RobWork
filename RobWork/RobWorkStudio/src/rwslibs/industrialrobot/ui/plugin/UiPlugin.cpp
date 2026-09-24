@@ -690,6 +690,16 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
         hostWindow->addDockWidget(Qt::BottomDockWidgetArea, m_tasksDock);
         m_propsDock->show();
         m_tasksDock->show();
+        // 区域旗标重施（UI-T18——PM-14 跨会话记忆不被装载重显夺回）：三区
+        // 可见性目标已改绑 Dock 本体，activate 期恢复的用户旗标若为"隐藏"，
+        // 上面的重显 show() 会把它顶回可见——与跨会话记忆矛盾。此处按内容
+        // 装配面的模型位（regionVisible 返回用户意愿位，非 Widget 实测态）
+        // 重施一次：用户隐藏的区保持隐藏（可经宿主"视图"菜单重新开启），
+        // 无隐藏记忆（缺省）时与重显结果一致。主 Dock（Left 目标）不在此
+        // 重施——其装载呈现维持 v1.11 注册口径（G1 门控判据"装载即呈现"；
+        // 主 Dock 承载命令条，整 Dock 隐藏将无处承载工作台入口）。
+        m_propsDock->setVisible(m_content->regionVisible(WorkbenchRegion::Right));
+        m_tasksDock->setVisible(m_content->regionVisible(WorkbenchRegion::Bottom));
     }
 
     // 共存形态收口（O-38 裁决③"三维共存最小接入"的形态保障）：装载序列中
