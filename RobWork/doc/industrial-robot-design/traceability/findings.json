@@ -3332,6 +3332,56 @@
       "title": "ird_gates 的 VS 构建目标捕获路径（cmake --build --target ird_gates 经 MSBuild 控制台）输出缩减＋编码污染：同一源码树实测构建目标捕获仅 43 行门禁发射（尾部 sdurws_ird_ui_app/sdurws_ird_ui_plugin 的 4 条 IRD-GATE-SUB 命中丢失），且中文经控制台双重编码有损（F-309/F-315 同域）；引擎文档调用口径 cmake -DIRD_ROOT=<…> -P cmake/ird_gates.cmake 输出完整 119 行。送验 r4 门禁留痕为完整口径，本次比对结论不受影响，但后续取证若走 VS 捕获路径可能产生假差集",
       "owner": "治理脚本所有者（gate-all.ps1/verify-task.ps1 的门禁捕获口径固化）",
       "resolution": "门禁取证统一采用引擎文档口径（cmake -P 直跑）或在 gate-all.ps1 中固定该口径并显式声明编码（UTF-8）；两路径差异机理（MSBuild 对 cmake -P FATAL_ERROR 输出的截断/缓冲行为）可随后续治理任务一并勘验。编号顺延自 F-335。"
+    },
+    {
+      "id": "F-337",
+      "source": "traceability/acceptance/WP-13-T09-20260925.md §1/§4.3/§4.10（attempt 1，verdict=fail，2026-09-25；验收者在 detached worktree @7e8d3c36 全新构建后亲跑两测试可执行文件，与在库留痕逐件比对）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "WP-13-T09 送验对象（7e8d3c36）集成模式契约测试不可复现为全绿：contract_test/CommandPipelineContractTest.cpp:288 的 T08 时代『未到任务行不预建』钉住断言（registry.find(\"MDL-DH-NOT-EXPRESSIBLE\")==nullptr）未随本任务在 DiagCodes.cpp 合法登记 §9.5 T09 行三码同步更新——全新构建 sdurws_ird_modeling_contract_test 8/9 FAILED（T08StableCodesRegisteredWithoutPrebuilding）；在库留痕 integration-modeling-contract-test.xml 记 9/0 与冻结源码亲跑结果矛盾（该 XML 无法由送验对象复现；同批 modeling_test 159/0 可复现）。冒烟模式该 TU 不编入（TARGET sdurw_kinematics gating）故未暴露",
+      "owner": "实施者侧（更新 CommandPipelineContractTest.cpp 的不预建钉住为 T13/T18 行缺席＋T09 行在册断言，重跑集成全量并重新收取 contract_test XML 与集成侧 ird-test-report.json 后重新发起全量验收）",
+      "resolution": "验收记录 WP-13-T09-20260925.md §1 返工输入三条；修复前不得合入。编号顺延自 F-336。"
+    },
+    {
+      "id": "F-338",
+      "source": "traceability/acceptance/WP-13-T09-20260925.md §4.3/§3-G-1（attempt 1，verdict=fail，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "WP-13-T09 契约 verify 数组缺 sdurws_ird_modeling_contract_test 构建行：全新构建树按清单执行到 ctest 条目时 contract_test 可执行文件不存在报 Not Run（1/2），须验收者补建目标方可全量执行——F-300/F-304/F-310/F-314 家族（契约 verify 缺目标构建行）在 T09 契约复发（T08 契约曾自愈列全三目标）",
+      "owner": "契约编译/治理侧（契约文件为 CCP 冻结产物，实施者不得自行改动——按 DTB §5.4 走契约修订把 sdurws_ird_modeling_contract_test 构建行补入 verify 数组）",
+      "resolution": "随下批契约修订窗口补行；验收执行侧 interim 口径＝对 modeling 单元任务补建该目标后执行 ctest（本验收已按此口径取得全量结果）。编号顺延自 F-337。"
+    },
+    {
+      "id": "F-339",
+      "source": "traceability/acceptance/WP-13-T09-20260925.md §4.7/§3-G-2（attempt 1，verdict=fail，2026-09-25；验收者对照工厂 return 语句逐项计数并以 DiagCodesTest 封闭断言佐证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "DiagCodes.hpp:181 modelingCodeDescriptors @brief 仍写『当前 19 项』，工厂实际返回 20 项（T09 行三码登记后；DiagCodes.cpp:15 文件头注已正确写 20，DiagCodesTest.cpp:125 的 20 码封闭断言通过）——F-316（T08 验收登记的同文件同模式计数滞后）复发：本次由 16→19 的改数仍未对齐实际 17→20",
+      "owner": "实施者侧（随 T09 返工窗口把 hpp @brief 计数与列举改齐 20 项口径；AGENTS §2.5 注释随代码更新）",
+      "resolution": "纯注释滞后零行为影响；随 T09 返工提交一并修正。编号顺延自 F-338。"
+    },
+    {
+      "id": "F-340",
+      "source": "traceability/acceptance/WP-13-T09-20260925.md §4.10/§3-G-3（attempt 1，verdict=fail，2026-09-25；验收者解析在库 ird-test-report.json 的 summary 与 testId 分布）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "traceability/builds/wp13-t09/ird-test-report.json（集成侧）summary 仅 9/9——恰为契约测试 BuildGraph 5＋CommandPipelineContract 4，缺 sdurws_ird_modeling_test 159 条用例级明细；smoke 侧 ird-test-report.json 完整（128 条含 MdlDhConvert 9）。F-317（T08 验收登记的留痕收取管线不完整）同族复发",
+      "owner": "实施者侧留痕管线（全量运行两 exe 后分别收取 ird-test-report.json 再入库——T09 返工重收留痕时一并修正）",
+      "resolution": "gtest XML 完整可信故不构成证据缺失，但与 AGENTS §4.2 ird-test-report.json 全量留痕口径不符；随 T09 返工窗口重收。编号顺延自 F-339。"
+    },
+    {
+      "id": "F-341",
+      "source": "traceability/acceptance/WP-13-T09-20260925.md §4.11/§3-G-4（attempt 1，verdict=fail，2026-09-25；验收者通读 DhConvert.cpp 全文时的残留物扫描）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "modeling/src/DhConvert.cpp:510-515 残留 IRD_DH_DEBUG 调试块：#ifdef 分支内 std::fprintf 且该翻译单元未包含 <cstdio>（宏一旦被定义即编译失败）；且该 if 语句缩进与上下文错位（提示调试插桩后未清理）——零运行时影响（宏未定义时编译剔除），属实现卫生问题",
+      "owner": "实施者侧（随 T09 返工窗口清除调试块或补 cstdio 包含并修正缩进）",
+      "resolution": "随 T09 返工提交一并清理。编号顺延自 F-340。"
     }
   ]
 }
