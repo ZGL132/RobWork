@@ -3241,6 +3241,77 @@
       "title": "全新工作树集成模式配置后 RobWorkSim 两框架目标（RWSimulatorPlugin/bt_plugin.rwplugin）因 windows.h min/max 宏冲突编译失败（Math.hpp/Eigen 处 C4003→C2059/C2589 共 73 error）：RobWorkSim cmake 现行世代未对该两目标注入 NOMINMAX；主构建树同名 vcxproj 为 2026-09-08 旧世代生成物（含 NOMINMAX）掩盖该问题。基线 e4d70ada 检出同等失败（UI-T16 diff 88 文件不含 RobWorkSim 任何文件——与本任务无关的框架级『干净构建树可复现性』缺口，ACC §3 干净构建树口径的贯彻障碍）",
       "owner": "治理/构建约定辖域（DTB §5.1 登记 RobWorkSim 目标 NOMINMAX 注入口径或修复框架 CMake；F-007/F-009/F-254 构建约定家族同辖域）；另：仓库 .gitignore [Bb]in/ 吞没 RobWorkStudio/bin/ 使 configure 依赖的 RobWorkStudio.ini.template.static 不入库，全新检出需手工补置（同属全新环境可复现性口径，宜一并登记）",
       "resolution": "框架 CMake 修复或构建约定登记（验收环境以 CL 环境变量注入 NOMINMAX 完成全量构建 exit 0，处置过程已在 UI-T16-r2 记录 §1 如实登记）。编号顺延自 F-322。"
+    },
+    {
+      "id": "F-324",
+      "source": "traceability/acceptance/UI-T17-20260924.md §4.3（attempt 1，verdict=fail，2026-09-24；验收者双通道装载探针＋Format error 对话框截图在案 builds/wp10-t17/acc-attempt1/shots/）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "宿主自动装载 ini 通道（--ini-file + host-smoke-autoload.ini.txt，QSettings 节名 [Plugins/IRD] 写法）在本机 Qt 6.11.1 实测不可用：RobWorkStudio 弹『Format error——file not loaded』（QSettings::FormatError），插件不自动装载；去空节变体（仅 [Plugins/IRD] 嵌套节）同样被拒——HOST-SMOKE-HANDOVER.md 第 27~31 行『免对话框自动装载（r2 实测可用）』表述与同文档第 43~46 行 r2 观察段『插件未自动装载——r2 未再深查』自相矛盾且实测不成立；框架 --rwsplugin 直载通道实测可用（PATH 前置补齐后，含交接手册实测增补项 build/RobWork/bin/Release）",
+      "owner": "实施者侧（交接手册『实测可用』表述勘误＋重录时改用 --rwsplugin 通道或修正 ini 写法）；治理侧（Qt 6.11 QSettings IniFormat 对该写法 FormatError 的兼容性核查，F-320 环境链同辖域）",
+      "resolution": "宿主冒烟重录一律以 --rwsplugin 通道执行（UI-T17 验收记录 §2 返工输入②）；手册矛盾表述随下批 ui 触碰窗口勘误。编号顺延自 F-323。"
+    },
+    {
+      "id": "F-325",
+      "source": "traceability/acceptance/UI-T17-20260924.md §4.3/§2-B1（attempt 1，verdict=fail，2026-09-24；验收者 6 次宿主启动、5 版自动化脚本迭代实测）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "宿主 GUI 冒烟自动化取证管线脆弱：①SendKeys 盲驱动对『原生文件夹对话框→输入法中文键入→QInputDialog』链条不可靠（原生对话框自动补全/导航吞键、Enter 语义为进入文件夹而非确认选择，致新建/保存/关闭流反复走偏）；②dev-diagnostics.log 进程存活期仅首行落盘、force-kill 即丢后续条目、优雅退出后亦仅 [sampled-tail] 标注行落盘——以 Dev 日志行作冒烟断言门控不可靠（F-322 采样口径家族；F-321 切换路径定案同受此阻）",
+      "owner": "实施者侧留痕管线（宿主冒烟取证改逐帧截图＋状态行判据；脚本基线见 acc-attempt1/acc-host-smoke-run2.ps1——点击『选择文件夹』坐标法＋--rwsplugin 通道已实测可复用）",
+      "resolution": "随 UI-T17 B-1 补录执行并在下批 ui 触碰窗口把取证管线固化（截图判据＋优雅退出＋日志全量固化），与 F-321/F-322 一并处置。编号顺延自 F-324。"
+    },
+    {
+      "id": "F-326",
+      "source": "traceability/acceptance/UI-T17-20260924.md §4.7（attempt 1，verdict=fail，2026-09-24；验收者文件头逐行通读对照 UI-T17 增量）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-24",
+      "title": "两文件头注释滞后于 UI-T17 增量：UiPlugin.hpp @brief 仍为 UI-T16 任务口径（背景说明『会话入口编排（新建/打开项目…）』未含新增的保存/关闭编排与宿主菜单融合）；PortAdapters.hpp 文件头仍写『所有权在 HarnessMain 装配序列』『harness 未装配 DraftController』——UI-T17 后插件宿主亦装配 DraftController（UiPlugin::assembleDraftChain）与适配器。类/函数级注释完备，零行为影响——AGENTS §2.5『注释随代码更新』轻微违反（F-316 同族）",
+      "owner": "实施者侧（下批 ui 触碰窗口随手勘误两处文件头）",
+      "resolution": "已于 wp10-t17 e917734a 修复（两文件头对齐 UI-T17 增量，纯注释零行为——attempt 2 验收 UI-T17-20260924-r2.md §4.7 逐行核验通过）。编号顺延自 F-325。",
+      "fixedAt": "2026-09-24"
+    },
+    {
+      "id": "F-327",
+      "source": "traceability/acceptance/UI-T17-20260924.md §4.11③（attempt 1，verdict=fail，2026-09-24；验收者 grep 测试面无 StorePortAdapter/SerialTaskExecutor 引用）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "StorePortAdapter 的 C-5 草稿写半区翻译面（save/tryLoad/discard 的值翻译、分支锚语义、StoreError→返回值轨＋稳定 token 折叠）与 SerialTaskExecutor（串行队列/stop 有界排空）无直接单元测试——当前仅能经宿主端到端验证（恰与 UI-T17 B-1 缺口叠加）。契约仅要求 GUI 覆写用例故非违约；DraftController/会话控制器逻辑面已有 154+22 测试覆盖",
+      "owner": "实施者侧（随草稿链路完整装配任务的测试面增量补齐 app 层适配器直测）",
+      "resolution": "延期裁决已登记（ui.md v1.13-r3 ②：直测需测试目标增链 project，抵触本任务『零 CMake/链接面变更』登记）——随完整草稿链路装配任务（草稿清单真实适配/恢复编排）一并补测试；不阻塞当前任务。编号顺延自 F-326。"
+    },
+    {
+      "id": "F-328",
+      "source": "traceability/acceptance/UI-T17-20260924-r2.md §2.1③（attempt 2，verdict=pass，2026-09-24；验收者独立解码 dev 日志毫秒时间戳＋文件出生时间戳交叉验证＋createNew 空目录契约核对）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "UI-T17 宿主冒烟 r4 取证登记的时间线归属错误：host-smoke-r4-README.md §1 与 ui.md v1.13-r4 ③把 dev 日志第 2 行 draining entered（ms 时间戳 1790231499336＝本地 14:31:39.336）归属于冒烟项目r4 的关闭流（『~14:33-14:34』）——该时刻早于 projtarget-r4 库创建（14:32:35.38/.39/.397 三件出生时间戳＋createdAtUtc 四证一致）56 秒，且 ProjectStore::createNew『不存在或空目录』契约排除该路径早先存在库的可能：L2 实为同会话更早另一个项目（库已不在盘上）的关闭流留痕。属登记表述/时间戳未解码的错误（四件入库证据与宿主机现场逐字节一致，非产物造假）；attempt 2 的 B-1 裁定不依赖该归属（UI-T17-20260924-r2.md §2.2/§2.3），机制级证明力因该查证反而增强（L2/L4 代码发射点定位＝统一对话框确认与 S1 Draining 路径在该宿主会话执行的事实）",
+      "owner": "实施者侧（随下批 ui/文档触碰窗口在 ui.md v1.13-r4 注与 host-smoke-r4-README.md 增补勘误注，引用 r2 记录 §2.1）；F-322/F-325 取证管线固化时一并把『毫秒时间戳解码核对』纳入登记程序",
+      "resolution": "文档勘误随下批 ui 触碰窗口执行；不影响 UI-T17 pass 裁定与合入。编号顺延自 F-327。"
+    },
+    {
+      "id": "F-329",
+      "source": "traceability/acceptance/UI-T17-20260924-r2.md §2.1⑧（attempt 2，verdict=pass，2026-09-24；验收者对宿主机活动留痕现场 Temp/wp10-t17-smoke-r3/ 只读核对）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "r4 冒烟取证现场证据卫生：①captureloop 两轮约 1800 帧 loop-*.png 在现场 shots/ 目录不存在（目录 mtime 提示批量清理发生过），ui.md v1.13-r4 ④『两轮连拍错过操作窗口』的登记无可复核的在盘留痕；②shots/ 存在 11 枚未入库帧，其中 r4-06-pass1-endstate.png（14:36）实为所有者桌面其他应用前台画面（宿主窗口不在画面——不构成关闭流证据）且含所有者个人屏幕内容",
+      "owner": "所有者/实施者侧（对『连拍已清理』事实补登记或对可入库帧脱敏归档；个人内容帧建议确认删除）",
+      "resolution": "现场处置方式由所有者裁量；不影响 UI-T17 pass 裁定（未入库帧经核验不改变证据格局）。编号顺延自 F-328。"
+    },
+    {
+      "id": "F-330",
+      "source": "traceability/acceptance/UI-T17-20260924-r2.md §2.4（attempt 2，verdict=pass，2026-09-24；验收者对 dev 日志 switch rejected 行的代码发射点定位与产品语义裁定）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "同会话重开已打开项目的 UX 语义：S2 切换流候选验证在 A 仍持锁时打开候选 B，B≡A 时必然撞自锁（lock-held-by-other）被保守拒绝→错误页——数据安全侧零风险、行为与 §5.4『候选验证成功才切』冻结设计一致（非缺陷），但『打开已打开项目』本可短路为无操作/聚焦既有会话；『最近项目』菜单使该路径日常可达",
+      "owner": "架构/需求所有者（随 F-321 切换路径状态投影定案同批考量——是否为同项目重开增加短路语义）；不单独排期",
+      "resolution": "并入 F-321 定案考量。编号顺延自 F-329。"
     }
   ]
 }

@@ -1,0 +1,76 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\libs\Release\pqp.lib
+  Automatic MOC for target qtpropertybrowser
+  qtpropertybrowser.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_opengl.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC for target sdurws
+  sdurws.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws.lib
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_ui_plugin
+  sdurws_ird_ui_plugin.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_ui_app
+  sdurws_ird_ui_app.vcxproj -> D:\10_Source_Repos\21_robot\acc-t17-r2-repro\build\RobWorkStudio\bin\Release\sdurws_ird_ui_app.exe
