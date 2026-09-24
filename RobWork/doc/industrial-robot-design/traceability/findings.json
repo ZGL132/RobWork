@@ -3211,6 +3211,36 @@
       "title": "traceability/builds/wp13-t08/ird-test-report.json 双模式留痕件不完整：ird-test-report-integration.json summary 仅 1/1（恰为 MdlReadiness.ResultGroupsStableOrderByLayerThenSubject 单条——过滤运行残留物，非全量 139 条）；ird-test-report-smoke.json 仅 5/5（恰为冒烟契约测试 BuildGraph 子集，缺 modeling_test 119 条报告）。同批 gtest XML 四件完整（139/119/9/5、failures=0）且与验收者独立复现逐位一致，故不构成粉饰或证据缺失，但与 AGENTS §4.2『ird-test-report.json』全量留痕口径不符（对照 T07 先例其 integration 件为 119/0 全量）",
       "owner": "实施者侧留痕管线（全量运行后从构建目录分别收取两 exe 的 ird-test-report.json 再入库，勿以过滤运行残留覆盖）",
       "resolution": "可随返工窗口或下批 modeling 任务顺手以全量运行报告补正本目录两件；记忆点：报告文件按 exe 运行覆写，gtest XML 才是全量权威载体。编号顺延自 F-316。"
+    },
+    {
+      "id": "F-321",
+      "source": "traceability/acceptance/UI-T16-20260924-r2.md §4.3/§4.9（attempt 2，verdict=pass，2026-09-24；验收者对宿主冒烟留痕逐帧亲验＋lock 心跳/ini 物证核验）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "宿主冒烟终录『新建「宿主冒烟项目」后状态投影切换』表述与在库证据矛盾：host-smoke-09-newproj-pm11-status.png 状态行仍为『IRD演示项目』（裁切放大核验）；host-smoke-studio-console.log 在『项目已创建』后无第二条『项目已打开』行（亦无打开失败行）；host-smoke-newproj/lock 心跳停于创建时刻 2026-09-23T23:05:23.486Z 未刷新（同进程 proj-demo/lock 心跳 23:05:27.531Z 仍在跳动＝会话从未持有新项目）；G3 门控第二判据『控制台「项目已打开」在案=True』被此前 proj-demo 打开行误满足（门控定义缺陷）。harness 同序列（创建→打开）双行俱全（harness-new-open.log），指向插件场景特有路径——先开 proj-demo 再新建＝带活动会话的切换/二次打开路径（harness 与单元测试均未覆盖）；是产品缺陷还是运行时序偶发未定案（验收会话非交互桌面无法定案）",
+      "owner": "实施者侧（下批 ui 触碰窗口重录该帧或如实降级表述）；产品语义（带活动会话的切换路径）登记 DTB §4 待所有者裁决",
+      "resolution": "重录该帧或如实降级表述；切换路径语义裁决后按裁决承接（不阻塞 UI-T16 合入——acceptance 3 核心判据『新建协议入口可用』由创建协议产物落盘＋显示名入档实证）。编号顺延自 F-320（acc/UI-T16/1 已占 F-318~F-320）。"
+    },
+    {
+      "id": "F-322",
+      "source": "traceability/acceptance/UI-T16-20260924-r2.md §4.10（attempt 2，verdict=pass，2026-09-24；验收者对宿主 Dev 日志固化件逐行核验）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "宿主冒烟插件 Dev 日志固化件（host-smoke-ird-ui-plugin-logs/dev-diagnostics.log）为 [sampled-tail] 采样尾段非全量原件：两实例条目拼接且行号重启（1/2/3→1/2），未标注采样窗口口径——作为『插件 Dev 日志已固化』留痕载体与 F-317 所述 gtest XML 全量权威口径不一致（排除故障时尾段可能恰缺关键条目，本例即无法据其定性 F-321 的切换路径行为）",
+      "owner": "实施者侧留痕管线（自动化收尾固化全量原件或显式标注采样窗口起止与行数）",
+      "resolution": "随留痕管线统一处置（固化全量原件；采样必须显式标注）。编号顺延自 F-321。"
+    },
+    {
+      "id": "F-323",
+      "source": "traceability/acceptance/UI-T16-20260924-r2.md §1/§4.2（attempt 2，verdict=pass，2026-09-24；验收者全新 detached worktree 集成配置实测）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "全新工作树集成模式配置后 RobWorkSim 两框架目标（RWSimulatorPlugin/bt_plugin.rwplugin）因 windows.h min/max 宏冲突编译失败（Math.hpp/Eigen 处 C4003→C2059/C2589 共 73 error）：RobWorkSim cmake 现行世代未对该两目标注入 NOMINMAX；主构建树同名 vcxproj 为 2026-09-08 旧世代生成物（含 NOMINMAX）掩盖该问题。基线 e4d70ada 检出同等失败（UI-T16 diff 88 文件不含 RobWorkSim 任何文件——与本任务无关的框架级『干净构建树可复现性』缺口，ACC §3 干净构建树口径的贯彻障碍）",
+      "owner": "治理/构建约定辖域（DTB §5.1 登记 RobWorkSim 目标 NOMINMAX 注入口径或修复框架 CMake；F-007/F-009/F-254 构建约定家族同辖域）；另：仓库 .gitignore [Bb]in/ 吞没 RobWorkStudio/bin/ 使 configure 依赖的 RobWorkStudio.ini.template.static 不入库，全新检出需手工补置（同属全新环境可复现性口径，宜一并登记）",
+      "resolution": "框架 CMake 修复或构建约定登记（验收环境以 CL 环境变量注入 NOMINMAX 完成全量构建 exit 0，处置过程已在 UI-T16-r2 记录 §1 如实登记）。编号顺延自 F-322。"
     }
   ]
 }
