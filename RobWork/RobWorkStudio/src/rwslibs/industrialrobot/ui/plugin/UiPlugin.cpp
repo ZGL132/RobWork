@@ -7,7 +7,9 @@
  * 设计依据：
  *   - units/ui.md §13 UI-T16 行＋立项登记注（v1.9，O-38 裁决承接）、
  *     §11.5（触发时机编排归装配层——会话入口处理器覆写）、§5.2/§5.3
- *     （打开协议与 PM-07 显示差异——编排面与 HarnessMain 逐行同源）；
+ *     （打开协议与 PM-07 显示差异——编排面与 HarnessMain 逐行同源）、
+ *     §13 UI-T18 行＋落位登记注＋§10.1 v1.14（O-43 裁决③——多 Dock 拓扑
+ *     与宿主状态栏投影，本文件承载 addDockWidget 自证拍与双观测钩子接线）；
  *   - 框架 rws::RobWorkStudioPlugin 机制（零框架修改——SA-02）：本 DLL 由
  *     宿主 Plugins→Load plugin 动态装载（开发期验证通道——动态加载仅限
  *     开发期，SA-01 产品静态白名单不变）；本文件不 include 任何业务域
@@ -711,9 +713,10 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     // 次收束（show 布局与主窗口布局的落定拍序不由插件决定，第二拍兜底）；
     // 结果宽度如实留痕——若被内容最小宽度钳制（该形态下顶栏按钮行很宽），
     // 收束只能到达钳制宽度，此时宿主窗口越宽三维视图所得越多，如实呈现。
-    // 右/底 Dock（UI-T18）同拍给一次合理初值（右＝宿主宽约 1/5 钳制到内容
-    // 最小宽 280 px 以上；底＝宿主高约 1/4 钳制到内容最小高 160 px 以上——
-    // §4.4 各区最小尺寸），此后尺寸归用户拖拽与宿主布局管理。
+    // 右/底 Dock（UI-T18）同拍给一次合理初值（右＝宿主宽约 1/5 钳制到
+    // [300, 480] px、底＝宿主高约 1/4 钳制到 [190, 340] px——下界 300/190 px
+    // 高于 §4.4 各区内容最小尺寸 280/160 px，初值在最小可用之上留余量，
+    // 与主 Dock 收束档位同一取整口径），此后尺寸归用户拖拽与宿主布局管理。
     auto issueDockWidthShrink = [this] {
         auto* hostWindow = qobject_cast<QMainWindow*>(parentWidget());
         if (hostWindow == nullptr) {

@@ -33,7 +33,8 @@
 #include <QSize>
 #include <QStackedWidget>
 #include <QString>
-#include <QStatusBar>
+// 注：UI-T18 后本头不再有任何 QStatusBar 声明使用（状态栏出口与成员已删，
+// 状态投影改经双观测钩子出线）——不留死包含（验收记录 F-334 勘误消账）。
 
 #include <array>
 #include <functional>

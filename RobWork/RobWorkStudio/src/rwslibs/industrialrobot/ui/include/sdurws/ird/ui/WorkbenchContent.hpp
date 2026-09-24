@@ -12,6 +12,10 @@
  *     （五区布局/区域交互边界/最小可用布局/布局状态归属/用户级设置项）、
  *     §7.1~§7.6（命令设施语义不变）、§11.5（分工表：打开协议的触发时机
  *     编排归装配层，状态机推进归 UiSessionController）；
+ *   - units/ui.md §10.1 v1.14 增量注⑦（UI-T18 契约面变更——statusBarWidget()
+ *     QStatusBar* 出口移除，改 setStatusTextObserver/setStatusMessageObserver
+ *     双状态观测钩子把 PM-11 永久文本与瞬态消息投影给宿主层状态栏；内容层
+ *     零状态栏 Widget——本头即该契约面变更的代码落点）；
  *   - O-38 裁决（DTB §4.2，2026-09-23，所有者融合方案评估）：开发期宿主
  *     插件验证通道——sdurws_ird_ui_plugin 经框架 Plugins→Load plugin 动态
  *     加载做界面级操作验证；壳拆两层后五区交互/布局记忆/命令门控语义不变，
