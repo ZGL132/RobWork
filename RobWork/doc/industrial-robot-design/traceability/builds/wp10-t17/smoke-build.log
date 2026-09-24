@@ -1,0 +1,637 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  main.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  sdurws_ird_testkit_prochelper.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\testkit\Release\sdurws_ird_testkit_prochelper.exe
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\core\Release\sdurws_ird_core.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  TestPaths.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Diagnostics.cpp
+  Errors.cpp
+  Runtime.cpp
+  Errors.cpp
+  Project.cpp
+  Codec.cpp
+  Policy.cpp
+  Errors.cpp
+  Evidence.cpp
+  DiagCodes.cpp
+  DescriptionValidator.cpp
+  JsonLite.cpp
+  Diagnostics.cpp
+  ParamSchema.cpp
+  PolicyInput.cpp
+  Catalog.cpp
+  Errors.cpp
+  ObjectStore.cpp
+  Snapshot.cpp
+  Fault.cpp
+  PolicyParsing.cpp
+  CanonicalModel.cpp
+  Slice.cpp
+  Dataset.cpp
+  PolicyPort.cpp
+  Factory.cpp
+  RevisionIndex.cpp
+  Verdict.cpp
+  正在生成代码...
+  ToleranceProfile.cpp
+  Confirmable.cpp
+  Envelope.cpp
+  TxEngine.cpp
+  Codec.cpp
+  Check.cpp
+  Aggregation.cpp
+  Currentness.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  ContractCheck.cpp
+  BuildRedLineTest.cpp
+  Logging.cpp
+  ProjectStoreImpl.cpp
+  Fixture.cpp
+  IdentityTest.cpp
+  NameMap.cpp
+  Compatibility.cpp
+  Redaction.cpp
+  DigestTest.cpp
+  Report.cpp
+  Evaluator.cpp
+  QueryPortImpl.cpp
+  ConventionValueSemanticsTest.cpp
+  CrashReport.cpp
+  ProcessRunner.cpp
+  ProvenanceTest.cpp
+  BaseWorldTransform.cpp
+  正在生成代码...
+  CommandServiceImpl.cpp
+  正在生成代码...
+  正在生成代码...
+  UnitsTest.cpp
+  正在生成代码...
+  ConfirmationFlow.cpp
+  CompareTest.cpp
+  DraftServiceImpl.cpp
+  EvaluationTest.cpp
+  DiagDataTest.cpp
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\policy\Release\sdurws_ird_policy.lib
+  UndoRedoServiceImpl.cpp
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\evidence\Release\sdurws_ird_evidence.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  EventsTest.cpp
+  main.cpp
+  TestPathsTest.cpp
+  main.cpp
+  ArchiveServiceImpl.cpp
+  JsonLiteTest.cpp
+  正在生成代码...
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\sdurws_ird_execution_worker.vcxproj]
+  (编译源文件“../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(299,37):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(299,37):
+              请参阅 "`anonymous-namespace'::parseArgs" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  ChannelProtocol.cpp
+  sdurws_ird_testdata_lint.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\testkit\Release\sdurws_ird_testdata_lint.exe
+  EnvelopeContractTest.cpp
+  FaultTest.cpp
+  AtomicFile.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\runtime\Release\sdurws_ird_runtime.lib
+  BuildRedLineTest.cpp
+  EnvelopeAccessorContractTest.cpp
+  DatasetTest.cpp
+  StoreLock.cpp
+  ErrorsTest.cpp
+  正在生成代码...
+  PathCanonical.cpp
+  SliceFixtureContractTest.cpp
+  DependencyTest.cpp
+  ToleranceProfileTest.cpp
+  正在生成代码...
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\core\Release\sdurws_ird_core_test.exe
+  SnapshotTest.cpp
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\core\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\core\Release\gtest.dll done
+  sdurws_ird_execution_worker.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\Release\sdurws_ird_execution_worker.exe
+  CheckTest.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  正在生成代码...
+  BuildRedLineTest.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  ErrorsTest.cpp
+  Ui.cpp
+  WorkbenchShell.cpp
+  SliceTest.cpp
+  ContractCheckTest.cpp
+  SourcesTest.cpp
+  Io.cpp
+  SafePath.cpp
+  ExpectedTest.cpp
+  SetCheckTest.cpp
+  EvidenceTest.cpp
+  Budget.cpp
+  WorkbenchContent.cpp
+  IoDiagnostics.cpp
+  DescriptionTest.cpp
+  FixtureTest.cpp
+  Csv.cpp
+  VerdictTest.cpp
+  Json.cpp
+  ReportTest.cpp
+  ZipChannel.cpp
+  DescriptionValidatorTest.cpp
+  EnvelopeTest.cpp
+  ResourceIo.cpp
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\Release\sdurws_ird_project.lib
+  ProcessRunnerTest.cpp
+  BuildRedLineTest.cpp
+  ShellSupport.cpp
+  StableCodeRegistryTest.cpp
+  CurrentnessTest.cpp
+  CanonicalModelTest.cpp
+  TempArea.cpp
+  CoreIntegrationExampleTest.cpp
+  CatalogFactoryTest.cpp
+  AtomicFile.cpp
+  TestMain.cpp
+  CatalogLifecycleTest.cpp
+  CompatibilityTest.cpp
+  Package.cpp
+  CodecTest.cpp
+  BuildRedLineTest.cpp
+  ConfirmableTest.cpp
+  StatusProjection.cpp
+  EvaluatorTest.cpp
+  正在生成代码...
+  正在生成代码...
+  View3DPlaceholder.cpp
+  AggregationTest.cpp
+  EvaluatorPortSuiteTest.cpp
+  NameMapTest.cpp
+  LoggingTest.cpp
+  RedactionTest.cpp
+  正在生成代码...
+  CommandRegistry.cpp
+  BaseWorldTransformTest.cpp
+  CollaborationQueryTest.cpp
+  GlobalShortcutRegistry.cpp
+  sdurws_ird_evidence_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\evidence\Release\sdurws_ird_evidence_contract_test.exe
+  正在生成代码...
+  LinkageContractTest.cpp
+  GoldenDataLintTest.cpp
+  ConfirmableProjectStubTest.cpp
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\io\Release\sdurws_ird_io.lib
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\testkit\Release\sdurws_ird_testkit_test.exe
+  CatalogHostTraceStubTest.cpp
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\testkit\Release\gtest.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Reporting.cpp
+  Errors.cpp
+  Identity.cpp
+  ScriptedDiagSourceTest.cpp
+  ReportModel.cpp
+  CommandPalette.cpp
+  正在生成代码...
+  ReportCodec.cpp
+  DiagContractCheckTest.cpp
+  Sections.cpp
+  正在生成代码...
+  Builder.cpp
+  PolicySummaryCard.cpp
+  Execution.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  StateMachine.cpp
+  sdurws_ird_diagnostics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\diagnostics\Release\sdurws_ird_diagnostics_test.exe
+  BuildRedLineTest.cpp
+  Controller.cpp
+  Render.cpp
+  LinkageContractTest.cpp
+  AtomicFileTest.cpp
+  Scheduler.cpp
+  LockContractTest.cpp
+  StoreLockTest.cpp
+  CommandContractTest.cpp
+  PathCanonicalTest.cpp
+  FormEditCommon.cpp
+  Consistency.cpp
+  RunRegistry.cpp
+  ParamTablePanel.cpp
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\runtime\Release\sdurws_ird_runtime_test.exe
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+  (编译源文件“../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PathCanonicalTest.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(150,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(148,9):
+              请参阅 "PathCanonicalTest_SameProject_DifferentSpellings_CanonicalizeEqual_Test::TestBody" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  ArchiveContractTest.cpp
+  PersistenceFormatTest.cpp
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\evidence\Release\sdurws_ird_evidence_test.exe
+  Archive.cpp
+  sdurws_ird_diagnostics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\diagnostics\Release\sdurws_ird_diagnostics_contract_test.exe
+  Admission.cpp
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\diagnostics\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\diagnostics\Release\gtest.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  TestMainReport.cpp
+  ObjectStoreTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveContractTest.cpp(383,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_contract_test.vcxproj]
+  SafePathTest.cpp
+  EventBus.cpp
+  UiText.cpp
+  Export.cpp
+  ProcessCrashContractTest.cpp
+  ChannelProtocol.cpp
+  StageNavigationModel.cpp
+  BudgetTest.cpp
+  RevisionIndexTest.cpp
+  IoDiagnosticsTest.cpp
+  WorkerSupervisor.cpp
+  Bundle.cpp
+  AboutDialog.cpp
+  ProcessLockContractTest.cpp
+  TxEngineTest.cpp
+  CsvTest.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\sdurws_ird_execution.vcxproj]
+  (编译源文件“../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(291,43):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(289,38):
+              请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  Checkpoint.cpp
+  正在生成代码...
+  Tx2DiagnosticRecordContractTest.cpp
+  JsonTest.cpp
+  ProjectStoreTest.cpp
+  CacheCoordinator.cpp
+  UiSessionController.cpp
+  Tx15Child.cpp
+  ZipChannelTest.cpp
+  ChannelPair.cpp
+  QueryPortTest.cpp
+  DraftController.cpp
+  JobScope.cpp
+  MemProbe.cpp
+  ProcessLauncher.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_contract_test.vcxproj]
+  (编译源文件“../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/Tx15Child.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx15Child.cpp(301,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx15Child.cpp(301,27):
+              请参阅 "sdurws::ird::project::tx15::`anonymous-namespace'::runCrashCommitChild" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  StubHandlers.cpp
+  正在生成代码...
+  ResourceIoTest.cpp
+  CommandServiceTest.cpp
+  DiagnosticPresentation.cpp
+  正在生成代码...
+  ResourceSolidifyTest.cpp
+  DraftServiceTest.cpp
+  CommandInteractionBridge.cpp
+  PackageTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(420,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(473,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(799,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1010,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1015,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1017,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1024,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1026,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1028,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1048,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\Release\sdurws_ird_execution.lib
+  ContractTestMain.cpp
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\reporting\Release\sdurws_ird_reporting.lib
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\evidence\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\evidence\Release\gtest.dll done
+  UndoRedoServiceTest.cpp
+  正在生成代码...
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  PackageContractTest.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  TestMainReport.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp(719,63): warning C4129: “ ：: 不可识别的字符转义序列 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\io\sdurws_ird_io_contract_test.vcxproj]
+  TaskPresentation.cpp
+  TestMainReport.cpp
+  LinkageContractTest.cpp
+  正在生成代码...
+  BuildRedLineTest.cpp
+  IdentityCrossUnitContractTest.cpp
+  ArchiveServiceTest.cpp
+  ErrorsIdentityTest.cpp
+  正在生成代码...
+  EvidenceCrossUnitContractTest.cpp
+  ReportModelTest.cpp
+  sdurws_ird_io_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\io\Release\sdurws_ird_io_contract_test.exe
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(416,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(424,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(683,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(835,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(845,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\sdurws_ird_project_test.vcxproj]
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\Release\sdurws_ird_project_contract_test.exe
+  Tx11Tx13SuiteTest.cpp
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\Release\gtest.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\io\Release\gtest.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\zip.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\io\Release\zip.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\bz2.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\io\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\z.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\io\Release\z.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  TestMainReport.cpp
+  SectionCrossUnitContractTest.cpp
+  BuildRedLineTest.cpp
+  SectionsTest.cpp
+  TaskStateMachineTest.cpp
+  StubHandlers.cpp
+  BuilderCrossUnitContractTest.cpp
+  SectionProviderTest.cpp
+  CancelProtocolTest.cpp
+  TestMainReport.cpp
+  sdurws_ird_io_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\io\Release\sdurws_ird_io_test.exe
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  ContractTestMain.cpp
+  RenderCrossUnitContractTest.cpp
+  正在生成代码...
+  LinkageContractTest.cpp
+  BuilderTest.cpp
+  RunRegistryAdmissionTest.cpp
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\ui\Release\sdurws_ird_ui.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  IdentityVocabularyContractTest.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  ArchiveCollaborationContractTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1236,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\sdurws_ird_execution_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1258,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\sdurws_ird_execution_test.vcxproj]
+  LinkageContractTest.cpp
+  ConsistencyCrossUnitContractTest.cpp
+  RenderTest.cpp
+  SchedulerEventBusTest.cpp
+  SessionContractTest.cpp
+  EventBusDeliveryContractTest.cpp
+  ArchiveCrossUnitContractTest.cpp
+  WorkerProcessContractTest.cpp
+  ConsistencyTest.cpp
+  ChannelProtocolTest.cpp
+  DraftContractTest.cpp
+  BundleCrossUnitContractTest.cpp
+  ArchiveExportTest.cpp
+  ResourceGovernanceTest.cpp
+  CacheJudgeContractTest.cpp
+  ModelSummaryTaskStatusCrossUnitContractTest.cpp
+  InteractionTaskContractTest.cpp
+  CheckpointCacheTest.cpp
+  ArchiveFaultContractTest.cpp
+  正在生成代码...
+  BundleTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(718,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\sdurws_ird_execution_contract_test.vcxproj]
+  ContractSuiteFacilitiesTest.cpp
+  RecoveryProcessContractTest.cpp
+  PeerBridgeContractTest.cpp
+  ModelSummaryTest.cpp
+  正在生成代码...
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\project\Release\sdurws_ird_project_test.exe
+  TestMainReport.cpp
+  RecoveryChild.cpp
+  TaskStatusSourceTest.cpp
+  Section12RegistryTest.cpp
+  BuildRedLineTest.cpp
+  ReportingContractSuiteTest.cpp
+  正在生成代码...
+  ShellModelTest.cpp
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\reporting\Release\sdurws_ird_reporting_contract_test.exe
+  正在生成代码...
+  HarnessMain.cpp
+  StatusWordModelTest.cpp
+  PortAdapters.cpp
+  正在生成代码...
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\ui\Release\sdurws_ird_ui_contract_test.exe
+  TestMainReport.cpp
+  View3DContractTest.cpp
+  DiagnosticsAssembly.cpp
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\Release\sdurws_ird_execution_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\Release\gtest.dll done
+  CommandRegistryModelTest.cpp
+  正在生成代码...
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\ui\Release\gtest.dll done
+  sdurws_ird_execution_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\execution\Release\sdurws_ird_execution_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\runtime\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\runtime\Release\gtest.dll done
+  BuildPlacementTest.cpp
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\reporting\Release\gtest.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  PolicyCodecFixtureContractTest.cpp
+  ObjectTypes.cpp
+  BuildRedLineTest.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  RobotDesign.cpp
+  WorkbenchShellGuiTest.cpp
+  ShortcutRegistryModelTest.cpp
+  PolicySetTest.cpp
+  PolicyTestDoubleBoundaryTest.cpp
+  PolicyInputTest.cpp
+  Parts.cpp
+  正在生成代码...
+  PolicyParsingTest.cpp
+  Codec.cpp
+  PolicySummaryCardTest.cpp
+  sdurws_ird_policy_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\policy\Release\sdurws_ird_policy_contract_test.exe
+  WorkbenchContentGuiTest.cpp
+  PolicyPortTest.cpp
+  sdurws_ird_ui_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\ui\Release\sdurws_ird_ui_app.exe
+  FormEditModelTest.cpp
+  PropertyEstimation.cpp
+  DiagnosticsTest.cpp
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\policy\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\policy\Release\gtest.dll done
+  Import.cpp
+  正在生成代码...
+  StageNavigationModelTest.cpp
+  CommandPaletteGuiTest.cpp
+  AboutDialogModelTest.cpp
+  XacroExpand.cpp
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\reporting\Release\sdurws_ird_reporting_test.exe
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(174,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\ui\sdurws_ird_ui_gui_test.vcxproj]
+  sdurws_ird_policy_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\policy\Release\sdurws_ird_policy_test.exe
+  Template.cpp
+  SessionControllerModelTest.cpp
+  PolicySummaryCardGuiTest.cpp
+  Readiness.cpp
+  DraftControllerModelTest.cpp
+  ParamTablePanelGuiTest.cpp
+  CommandHandlers.cpp
+  DiagPresentationModelTest.cpp
+  AboutDialogGuiTest.cpp
+  正在生成代码...
+  TaskPresentationModelTest.cpp
+  正在生成代码...
+  CommandInteractionBridgeTest.cpp
+  正在生成代码...
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\ui\Release\sdurws_ird_ui_gui_test.exe
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\modeling\Release\sdurws_ird_modeling.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  ContractTestMain.cpp
+  TestMainReport.cpp
+  BuildGraphContractTest.cpp
+  ObjectTypesTest.cpp
+  正在生成代码...
+  ErrorsTest.cpp
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\modeling\Release\sdurws_ird_modeling_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\modeling\Release\gtest.dll done
+  DiagCodesTest.cpp
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\ui\Release\sdurws_ird_ui_test.exe
+  BuildRedLineTest.cpp
+  RobotDesignTest.cpp
+  PartsTest.cpp
+  CodecTest.cpp
+  PropertyEstimationTest.cpp
+  ImportTest.cpp
+  XacroExpandTest.cpp
+  TemplateTest.cpp
+  正在生成代码...
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t17\modeling\Release\sdurws_ird_modeling_test.exe
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt

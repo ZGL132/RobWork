@@ -19,9 +19,14 @@
 #include "PortAdapters.hpp"
 
 #include <sdurws/ird/diagnostics/Errors.hpp>      // DiagnosticsError/token（report 拒绝纪律的异常面与稳定 token）
+#include <sdurws/ird/project/DraftService.hpp>    // project::DraftService/SaveResult/DiscardResult（drafts() 完整定义——草稿写半区直转）
+#include <sdurws/ird/project/PersistenceFormat.hpp> // project::DraftDocument/DraftOrigin（草稿文档值翻译——UI-T17 写半区）
 #include <sdurws/ird/project/QueryPort.hpp>       // project::IProjectQueryPort/ProjectMetadataView（query() 完整定义——权威元数据读取）
 
+#include <condition_variable>
+#include <deque>
 #include <filesystem>
+#include <mutex>
 #include <stdexcept>
 #include <utility>
 
@@ -177,6 +182,76 @@ void ProjectDiagnosticsBridge::reportDev(const std::string& channel,
 }
 
 // =====================================================================
+// SerialTaskExecutor（§3.4 落盘线程的开发期宿主——见 PortAdapters.hpp 类注释）
+// =====================================================================
+
+/// 执行器私有状态（互斥＋条件变量＋任务队列＋运行位——隔离平台线程头）。
+struct SerialTaskExecutor::Impl {
+    std::mutex mutex;                          ///< 队列与运行位的互斥（临界区极短）
+    std::condition_variable cv;                ///< 任务到达/停止通知
+    std::deque<std::function<void()>> queue;   ///< 待执行任务（FIFO＝串行语义）
+    bool running = true;                       ///< 运行位（stop 置停；排空后收线程）
+};
+
+SerialTaskExecutor::SerialTaskExecutor()
+    : m_impl(new Impl)
+    , m_thread([this] { run(); })
+{
+}
+
+SerialTaskExecutor::~SerialTaskExecutor()
+{
+    stop();
+    delete m_impl;
+}
+
+void SerialTaskExecutor::post(std::function<void()> task)
+{
+    {
+        std::lock_guard<std::mutex> lock(m_impl->mutex);
+        m_impl->queue.push_back(std::move(task));
+    }
+    m_impl->cv.notify_one();
+}
+
+void SerialTaskExecutor::stop()
+{
+    {
+        std::lock_guard<std::mutex> lock(m_impl->mutex);
+        if (!m_impl->running) {
+            return;  // 幂等（已置停——重复 stop 空操作）
+        }
+        m_impl->running = false;
+    }
+    m_impl->cv.notify_all();
+    if (m_thread.joinable()) {
+        m_thread.join();  // 有界排空：队列余量执行完（run 的取空即退）再收
+    }
+}
+
+void SerialTaskExecutor::run()
+{
+    for (;;) {
+        std::function<void()> task;
+        {
+            std::unique_lock<std::mutex> lock(m_impl->mutex);
+            m_impl->cv.wait(lock, [this] {
+                return !m_impl->queue.empty() || !m_impl->running;
+            });
+            if (m_impl->queue.empty()) {
+                return;  // 已置停且排空——线程收尾（stop 的 join 返回）
+            }
+            task = std::move(m_impl->queue.front());
+            m_impl->queue.pop_front();
+        }
+        // 落盘任务按契约不抛（对端返回值轨——DraftController 的磁盘段收敛
+        // 纪律）；违约＝装配缺陷，fail-fast 不吞错（吞错会制造"以为保存了"
+        // 的假象——AGENTS §3 错误语义）。
+        task();
+    }
+}
+
+// =====================================================================
 // StorePortAdapter
 // =====================================================================
 
@@ -214,8 +289,10 @@ private:
 
 }  // namespace
 
-StorePortAdapter::StorePortAdapter(std::unique_ptr<project::ProjectStore> store)
+StorePortAdapter::StorePortAdapter(std::unique_ptr<project::ProjectStore> store,
+                                   core::BranchId draftBranchAnchor)
     : m_store(std::move(store))
+    , m_draftBranchAnchor(draftBranchAnchor)
 {
 }
 
@@ -245,6 +322,150 @@ StorePortAdapter::subscribeClose(IUiStoreCloseObserver& observer)
     m_store->subscribeClose(forwarder);
     // RAII 句柄按契约返回（v0.1＝无操作实现——NoopSubscription 注释）。
     return std::make_unique<NoopSubscription>();
+}
+
+// ---------------------------------------------------------------------
+// StorePortAdapter——IUiDraftStorePort（C-5 写半区；UI-T17 增量）
+// ---------------------------------------------------------------------
+
+namespace {
+
+/**
+ * @brief ui 草稿来源词表 → project 冻结 token 对应枚举（两词表同为冻结
+ *        三值 autosave/manual/apply-retained——PersistenceFormat.hpp §4.4.5；
+ *        按名直映不按底层序号，防两枚举布局各自演化时静默错位）。
+ */
+project::DraftOrigin draftOriginToProject(ui::DraftOrigin origin)
+{
+    switch (origin) {
+    case ui::DraftOrigin::Manual:        return project::DraftOrigin::Manual;
+    case ui::DraftOrigin::ApplyRetained: return project::DraftOrigin::ApplyRetained;
+    case ui::DraftOrigin::Autosave:      break;
+    }
+    return project::DraftOrigin::Autosave;
+}
+
+/**
+ * @brief project 草稿来源枚举 → ui 词表（token 语义一致——tryLoad 回装的
+ *        逆翻译；与 draftOriginToProject 同款按名直映）。
+ */
+ui::DraftOrigin draftOriginFromProject(project::DraftOrigin origin)
+{
+    switch (origin) {
+    case project::DraftOrigin::Manual:        return ui::DraftOrigin::Manual;
+    case project::DraftOrigin::ApplyRetained: return ui::DraftOrigin::ApplyRetained;
+    case project::DraftOrigin::Autosave:      break;
+    }
+    return ui::DraftOrigin::Autosave;
+}
+
+}  // namespace
+
+DraftSaveOutcome StorePortAdapter::save(const DraftDocumentProjection& document)
+{
+    // 值翻译（零加工）：schemaVersion 0＝"未填写保留值"（投影契约禁止落盘
+    // 0——DraftController 侧保证；此处直传，对端校验链兜底）；payload 为域
+    // canonical 字节原样透传（CR-02/D-10——适配器不解析）。分支由文档自身
+    // 携带（branchId 字段），分支锚不消费。
+    project::DraftDocument doc;
+    doc.schemaVersion = static_cast<int>(document.schemaVersion);
+    doc.projectId = document.projectId;
+    doc.branchId = document.branchId;
+    doc.moduleId = document.moduleId;
+    doc.baseRevisionId = document.baseRevisionId;
+    doc.payload = document.payload;
+    doc.savedAtUtc = document.savedAtUtc;
+    doc.origin = draftOriginToProject(document.origin);
+    try {
+        // 门卫（只读/关闭/失权拒绝）走对端返回值轨；门卫通过后在途票据由
+        // 对端维护（requestClose 排空等待在途保存完成——§5.7 语义由对端
+        // 保证，适配器零加工）。
+        const project::SaveResult result = m_store->drafts().save(doc);
+        DraftSaveOutcome out;
+        out.ok = result.ok;
+        if (!result.ok && result.error.has_value()) {
+            out.errorToken = storeErrorToken(result.error->code());
+            out.detail = result.error->what();
+        }
+        return out;
+    } catch (const project::StoreError& error) {
+        // 对端异常轨（invalid_argument 属控制器侧文档装配违约，不经此——
+        // 调用方违约原样上抛；StoreError＝对端拒绝，折叠返回值轨）。
+        DraftSaveOutcome out;
+        out.ok = false;
+        out.errorToken = storeErrorToken(error.code());
+        out.detail = error.what();
+        return out;
+    }
+}
+
+DraftLoadOutcome StorePortAdapter::tryLoad(const std::string& moduleId)
+{
+    DraftLoadOutcome out;
+    // 分支锚（诚实边界——类注释）：当前缺省值下对端按不存在的分支目录
+    // 寻址＝Missing（"无草稿是常态不是错误"），行为有定义且不虚构。
+    std::vector<core::DiagnosticRecord> diags;
+    try {
+        std::optional<project::DraftDocument> doc =
+            m_store->drafts().tryLoad(m_draftBranchAnchor, moduleId, diags);
+        if (doc.has_value()) {
+            // 值回装（与 save 的翻译互逆——字段一一对应）。
+            out.document.schemaVersion = static_cast<std::uint32_t>(doc->schemaVersion);
+            out.document.projectId = doc->projectId;
+            out.document.branchId = doc->branchId;
+            out.document.moduleId = doc->moduleId;
+            out.document.baseRevisionId = doc->baseRevisionId;
+            out.document.payload = doc->payload;
+            out.document.savedAtUtc = doc->savedAtUtc;
+            out.document.origin = draftOriginFromProject(doc->origin);
+            // 有文档＋伴随诊断＝current 损坏经 .bak 回退（对端把损坏记录
+            // 随 diags 带回——PM-08 的 RecoveredFromBackup 判别锚）。
+            out.status = diags.empty() ? DraftLoadOutcome::Status::Loaded
+                                       : DraftLoadOutcome::Status::RecoveredFromBackup;
+            out.newResidueDropped = false;
+        } else {
+            // 无文档：无诊断＝Missing（常态）；有诊断＝Corrupt（损坏 token
+            // 取 §4.4.8 词表 draft-corrupt——对端 DraftCorrupt 码的稳定串；
+            // 诊断明细计数进 Dev 面 detail，条目转发归草稿链路完整装配任务
+            // ——UI-T17 立项登记注③诚实边界）。
+            if (diags.empty()) {
+                out.status = DraftLoadOutcome::Status::Missing;
+            } else {
+                out.status = DraftLoadOutcome::Status::Corrupt;
+                out.errorToken = "draft-corrupt";
+                out.detail = "project/draft: tryLoad 损坏且 .bak 不可用（伴随诊断 "
+                             + std::to_string(diags.size()) + " 条）";
+            }
+        }
+    } catch (const project::StoreError& error) {
+        // 上下文已关闭等对端拒绝——折叠 Corrupt＋稳定 token（Draining 排空
+        // 期对端可用，Closed 后的迟到读取按拒绝呈现，不虚构 Missing）。
+        out.status = DraftLoadOutcome::Status::Corrupt;
+        out.errorToken = storeErrorToken(error.code());
+        out.detail = error.what();
+    }
+    return out;
+}
+
+DraftDiscardOutcome StorePortAdapter::discard(const std::string& moduleId)
+{
+    DraftDiscardOutcome out;
+    try {
+        // 幂等放弃直转（"本来就没有也是 ok"语义由对端保证）；分支锚语义
+        // 同 tryLoad（类注释诚实边界）。
+        const project::DiscardResult result =
+            m_store->drafts().discard(m_draftBranchAnchor, moduleId);
+        out.ok = result.ok;
+        if (!result.ok && result.error.has_value()) {
+            out.errorToken = storeErrorToken(result.error->code());
+            out.detail = result.error->what();
+        }
+    } catch (const project::StoreError& error) {
+        out.ok = false;
+        out.errorToken = storeErrorToken(error.code());
+        out.detail = error.what();
+    }
+    return out;
 }
 
 // =====================================================================

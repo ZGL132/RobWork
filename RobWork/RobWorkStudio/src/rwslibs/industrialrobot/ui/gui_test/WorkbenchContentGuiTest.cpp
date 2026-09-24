@@ -380,6 +380,63 @@ TEST_F(WorkbenchContentGuiTest, SessionEntryOverrideRoutesShellEntries_UI_SPLIT)
     EXPECT_TRUE(content->shutdown());
 }
 
+/**
+ * UI-T17 覆写面扩展的路由与门控面：注入 saveProjectHandler（draft.save）/
+ * closeProjectHandler（workbench.closeProject）后，壳入口走注入编排而非
+ * §7.1 阶段 A 占位处理器；项目作用域命令的门控语义不变（无项目＝禁用——
+ * §7.5/§7.6 快照同源；项目上下文注入后可用并路由到点）。
+ */
+TEST_F(WorkbenchContentGuiTest, SaveCloseEntryOverrideRoutesShellEntries_UI_SPLIT)
+{
+    IRD_TEST_INFO("PM-04", {"PM-03", "UX-09"}, std::nullopt);
+    bool saveOrchestrationInvoked = false;
+    bool closeOrchestrationInvoked = false;
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    deps.saveProjectHandler =
+        [&saveOrchestrationInvoked](const std::vector<ui::CommandParameter>&) {
+            saveOrchestrationInvoked = true;
+            ui::CommandOutcome out;
+            out.accepted = true;
+            return out;
+        };
+    deps.closeProjectHandler =
+        [&closeOrchestrationInvoked](const std::vector<ui::CommandParameter>&) {
+            closeOrchestrationInvoked = true;
+            ui::CommandOutcome out;
+            out.accepted = true;
+            return out;
+        };
+    auto content = ui::createWorkbenchContent(std::move(deps));
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    // 项目作用域门控（§7.5/§7.6——默认谓词零 IO）：无项目时保存/关闭禁用
+    // （登记面不变——覆写只换处理器，不换谓词）。
+    EXPECT_TRUE(content->commandAvailability("draft.save").registered);
+    EXPECT_TRUE(content->commandAvailability("workbench.closeProject").registered);
+    EXPECT_FALSE(content->commandAvailability("draft.save").enabled);
+    EXPECT_FALSE(content->commandAvailability("workbench.closeProject").enabled);
+
+    // 项目上下文注入后可用（可写会话）→ 提交路由到注入编排。
+    ProjectContextProjection context;
+    ProjectMetadataProjection metadata;
+    metadata.projectId = core::ProjectId::generate();
+    metadata.projectDisplayName = "覆写门控验证";
+    metadata.writable = true;
+    context.project = metadata;
+    content->presentProjectContext(context);
+    EXPECT_TRUE(content->commandAvailability("draft.save").enabled);
+    EXPECT_TRUE(content->commandAvailability("workbench.closeProject").enabled);
+
+    content->submitCommand("draft.save");
+    EXPECT_TRUE(saveOrchestrationInvoked)
+        << "draft.save 未路由到注入的保存编排（UI-T17 覆写面失效）";
+    content->submitCommand("workbench.closeProject");
+    EXPECT_TRUE(closeOrchestrationInvoked)
+        << "workbench.closeProject 未路由到注入的关闭编排（UI-T17 覆写面失效）";
+    EXPECT_TRUE(content->shutdown());
+}
+
 // =====================================================================
 // 三维让位页（O-38 裁决③——嵌入式宿主中央区不冒名三维能力）
 // =====================================================================

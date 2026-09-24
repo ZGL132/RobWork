@@ -1,0 +1,205 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Automatic MOC for target qtpropertybrowser
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\pqp.lib
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_csgjs.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\libs\Release\sdurw_csgjs.lib
+  qtpropertybrowser.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_common.dll
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  Auto build dll exports
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Automatic MOC for target sdurws_ird_diagnostics
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_geometry.dll
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_sensor.dll
+  sdurw_analytic_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_analytic_geometry.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_models.dll
+  sdurw_analytic_geometry.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_analytic_geometry.rwplugin.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_control.dll
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_graphics.dll
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_trajectory.dll
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_invkin.dll
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_csg.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_csg.dll
+  sdurw_proximitystrategies.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_proximitystrategies.rwplugin.dll
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  Automatic MOC for target sdurws
+  Auto build dll exports
+  sdurw_simplefinger.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_simplefinger.dll
+  sdurws.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws.lib
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_plugin.rwplugin
+  sdurw_simplefinger.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_simplefinger.rwplugin.dll
+  sdurws_plugin.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_plugin.rwplugin.dll
+  Automatic MOC for target sdurws_gtask
+  Automatic MOC for target sdurws_ird_ui_plugin
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  sdurws_gtask.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\plugins\Release\sdurws_gtask.dll
+  Auto build dll exports
+  sdurws_ird_ui_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_assembly.dll
+  Automatic MOC for target sdurws_atask
+  Automatic MOC and UIC for target sdurwsim
+  sdurws_atask.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\plugins\Release\sdurws_atask.dll
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC and UIC for target sdurwsim_bullet
+  Automatic MOC and UIC for target RWSimulatorPlugin
+  Auto build dll exports
+  sdurwsim_bullet.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim_bullet.dll
+  RWSimulatorPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\RWSimulatorPlugin.dll
+  Automatic MOC and UIC for target bt_plugin.rwplugin
+  Automatic MOC and UIC for target sdurwsim_gui
+  bt_plugin.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\bt_plugin.rwplugin.dll
+  Auto build dll exports
+  sdurwsim_gui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim_gui.dll
+  Automatic MOC and UIC for target SimUtilityPlugin
+  SimUtilityPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\SimUtilityPlugin.dll
+  Automatic MOC and UIC for target GraspTableGeneratorPlugin
+  GraspTableGeneratorPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\GraspTableGeneratorPlugin.dll
+  Automatic MOC and UIC for target RWSimPlugin
+  RWSimPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\RWSimPlugin.dll
+  Automatic MOC and UIC for target SimTaskPlugin
+  SimTaskPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\SimTaskPlugin.dll
+  Automatic MOC and UIC for target sdurwsim_test
+  Auto build dll exports
+  sdurwsim_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\sdurwsim_test.dll
+  Automatic MOC and UIC for target EngineTestPlugin
+  EngineTestPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\libs\Release\EngineTestPlugin.dll
+  Automatic MOC for target sdurws_ird_diagnostics_test
+  Automatic MOC for target QCodeEditor
+  Automatic MOC for target sdurws_ird_core_test
+  Automatic MOC and UIC for target SimulatorLogViewer
+  Automatic MOC for target sdurws_ird_testkit
+  Auto build dll exports
+  Automatic MOC for target sdurws_jog
+  Auto build dll exports
+  sdurws_ird_diagnostics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_test.exe
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
+  sdurw_calibration.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_calibration.dll
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  QCodeEditor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\QCodeEditor.lib
+  Automatic MOC for target sdurws_ird_diagnostics_contract_test
+  SimulatorLogViewer.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkSim\bin\Release\SimulatorLogViewer.exe
+  sdurw_pathoptimization.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWork\bin\Release\sdurw_pathoptimization.dll
+  sdurws_jog.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_jog.lib
+  Automatic MOC for target sdurws_log
+  Automatic MOC for target sdurws_playback
+  sdurws_ird_diagnostics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_contract_test.exe
+  Automatic MOC for target sdurws_propertyview
+  Automatic MOC for target sdurws_sensors
+  Automatic MOC for target sdurws_workcelleditor
+  Automatic MOC for target sdurws_treeview
+  sdurws_log.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_log.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_playback.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_playback.lib
+  sdurws_propertyview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_propertyview.lib
+  sdurws_sensors.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_sensors.lib
+  Automatic MOC for target sdurws_ird_io
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_workcelleditor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_workcelleditor.lib
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_treeview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_treeview.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project_contract_test
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_project_test
+  Automatic MOC for target sdurws_ird_testdata_lint
+  Automatic MOC for target sdurws_ird_testkit_prochelper
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_workcelleditorplugin
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_ui_app
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+  Automatic MOC for target sdurws_planning
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+  sdurws_ird_testkit_prochelper.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_prochelper.exe
+  sdurws_ird_testdata_lint.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_testdata_lint.exe
+  Automatic MOC for target sdurws_ird_ui_gui_test
+  Automatic MOC for target sdurws_ird_ui_test
+  Automatic MOC for target sdurws_ird_io_contract_test
+  Automatic MOC for target sdurws_ird_testkit_test
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+  sdurws_ird_ui_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_app.exe
+  Automatic MOC for target sdurws_ird_io_test
+  Automatic MOC for target sdurws_ird_policy_test
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
+  sdurws_planning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_planning.lib
+  sdurws_ird_io_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_io_test.exe
+  Automatic MOC for target sdurws_ird_reporting
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  sdurws_ird_io_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_io_contract_test.exe
+  Automatic MOC for target sdurws_ird_reporting_test
+  Automatic MOC for target sdurws_ird_reporting_contract_test
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_execution_worker
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_contract_test.exe
+  Automatic MOC for target sdurws_ird_evidence_contract_test
+  sdurws_ird_execution_worker.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_execution_worker.exe
+  Automatic MOC for target sdurws_ird_policy_contract_test
+  sdurws_ird_evidence_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_contract_test.exe
+  Automatic MOC for target sdurws_ird_ui_contract_test
+  sdurws_ird_policy_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+  sdurws_ird_policy_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+  sdurws_workcelleditorplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_workcelleditorplugin.lib
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+  Automatic MOC for target sdurws_ird_execution_test
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+  Automatic MOC for target sdurws_ird_evidence_test
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
+  Automatic MOC for target sdurws_ird_execution_contract_test
+  sdurws_ird_execution_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_execution_contract_test.exe
+  Automatic MOC for target sdurws_robworkstudioapp
+  Automatic MOC for target sdurws_ird_modeling
+  Automatic MOC for target sdurws_ird_runtime_test
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_modeling_test
+  Automatic MOC for target sdurws_ird_modeling_contract_test
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_test.exe
+  sdurws_robworkstudioapp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_robworkstudioapp.lib
+  Automatic MOC for target RobWorkStudio
+  RobWorkStudio.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\RobWorkStudio.exe
+  	Copying RobWork runtime DLLs next to RobWorkStudio

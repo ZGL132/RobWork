@@ -1,0 +1,10 @@
+C:/Users/zgl18/AppData/Local/Temp/wp10-t17-smoke-r3/projtarget-r4/HEAD 298 bytesC:/Users/zgl18/AppData/Local/Temp/wp10-t17-smoke-r3/projtarget-r4/lock 113 bytesC:/Users/zgl18/AppData/Local/Temp/wp10-t17-smoke-r3/projtarget-r4/objects/obj-f21ab9915a5022874dfa87207a829661/e5dfb796417a493bce58e055d2028bc337c454655ffbbeffbedef70d0b68b5b3 416 bytesC:/Users/zgl18/AppData/Local/Temp/wp10-t17-smoke-r3/projtarget-r4/project.json 193 bytesC:/Users/zgl18/AppData/Local/Temp/wp10-t17-smoke-r3/projtarget-r4/revisions/rev-577cee0843a567e07de3d3def24e6f9e/command.json 146 bytesC:/Users/zgl18/AppData/Local/Temp/wp10-t17-smoke-r3/projtarget-r4/revisions/rev-577cee0843a567e07de3d3def24e6f9e/manifest.json 677 bytes
+total 11
+drwxr-xr-x 1 zgl18 197609   0 Sep 24 14:32 .
+drwxr-xr-x 1 zgl18 197609   0 Sep 24 14:32 ..
+drwxr-xr-x 1 zgl18 197609   0 Sep 24 14:32 .staging
+-rw-r--r-- 1 zgl18 197609 298 Sep 24 14:32 HEAD
+-rw-r--r-- 1 zgl18 197609 113 Sep 24 14:44 lock
+drwxr-xr-x 1 zgl18 197609   0 Sep 24 14:32 objects
+-rw-r--r-- 1 zgl18 197609 193 Sep 24 14:32 project.json
+drwxr-xr-x 1 zgl18 197609   0 Sep 24 14:32 revisions

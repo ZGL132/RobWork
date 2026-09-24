@@ -1,0 +1,9 @@
+head unique hits: 94
+base unique hits: 94
+only-in-head: 0
+only-in-base: 0
+
+结论：归一化命中集逐条比对完全一致——本任务相对 base 零新增零减少。
+基线：ac5d107665d8d080b6f88a176ab7f5060acefbe6（detached worktree 同引擎 ird_gates）。
+归一化规则：GBK（CP936）解码＋行内多命中拆分＋扫描根路径剥离为 <ROOT>＋全排序去重。
+原始日志：ird-gates-head-r2.log（head）/ ird-gates-base-r2.log（base）——同目录留存可复核。

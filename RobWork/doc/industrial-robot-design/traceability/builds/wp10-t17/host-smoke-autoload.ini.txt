@@ -1,0 +1,6 @@
+[Plugins]
+[Plugins/IRD]
+Path=D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release
+Filename=sdurws_ird_ui_plugin
+Visible=true
+DockArea=1

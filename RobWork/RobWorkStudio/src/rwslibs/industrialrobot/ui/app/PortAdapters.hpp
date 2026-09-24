@@ -1,12 +1,15 @@
 /**
  * @file   PortAdapters.hpp
- * @brief  工作台验证 harness（sdurws_ird_ui_app）的端口适配器集——L5 装配层
- *         雏形的"对端适配 ui 自有端口"单行适配面。
+ * @brief  工作台两宿主共用的端口适配器集——L5 装配层雏形的"对端适配 ui 自有
+ *         端口"单行适配面（宿主＝验证 harness sdurws_ird_ui_app 与宿主插件
+ *         sdurws_ird_ui_plugin；UI-T17 起插件宿主经 O-31 同款特权复用本组
+ *         适配器装配完整打开/草稿链路）。
  *
  * 设计依据：
  *   - units/ui.md §10.1（ShellWiring 注入包）/§10.5（UiSessionControllerDeps）
  *     /§3.1（O-31 裁决：对端类型不进 ui 头，L5 装配器同时看见两边并写适配
- *     器）；本文件即该裁决所述"L5 装配器"的开发期载体（任务 UI-T15）；
+ *     器）；本文件即该裁决所述"L5 装配器"的开发期载体（任务 UI-T15 立项，
+ *     UI-T17 增量＝C-5 草稿写半区直转＋SerialTaskExecutor 串行落盘执行器）；
  *   - ui/include/sdurws/ird/ui/UiPorts.hpp 各端口方法注释的"语义冻结（不
  *     改义）"行——每个适配器的职责都是**原样翻译**对端语义，不改写、不吞
  *     错、不虚构（UX-02 零内部名/零虚构纪律在装配侧同样成立）；
@@ -18,24 +21,30 @@
  *   §3.5 白名单只有 ui->core、ui->diagnostics 两条边）；而"打开工程"这条
  *   端到端链路必须有人把 project::ProjectStoreFactory 翻译成
  *   ui::IUiStoreFactoryPort——这个"人"就是 L5 应用壳（装配层）。产品装配
- *   层随插件装配任务落位前，本 harness 是它的开发期替身：开发者在建模
- *   （WP-13+）开发期间用本 harness 以真实端口链路交互验证平台逻辑。
+ *   层最终形态归 WP-24-T03 正式装配任务；当前开发期由两宿主承载同一装配
+ *   序列：harness（开发者在建模 WP-13+ 开发期间的交互验证替身）与插件
+ *   （UI-T16/T17 起随宿主 RobWorkStudio 交付同一链路）。
  *
- *   适配器全部为 harness 私有（app/ 目录，不进 include/ 公共头——R-2）；
- *   生命周期：所有权在 HarnessMain 装配序列，经 shared_ptr 交给 ui 消费方
+ *   适配器全部为宿主私有（app/ 目录，不进 include/ 公共头——R-2）；
+ *   生命周期：所有权在各宿主的装配序列（harness＝HarnessMain；插件宿主＝
+ *   UiPlugin::initialize/assembleDraftChain），经 shared_ptr 交给 ui 消费方
  *   （壳/会话控制器只持共享引用——§10.1 所有权行）。
  *
  * 线程约束（对齐 UiPorts.hpp 头注）：ui 侧对本组端口的调用一律发生在 UI
- *   线程（§3.4 M-1）；IUiDraftStorePort 类的"后台落盘线程"纪律在 v0.1 不
- *   适用（harness 未装配 DraftController，见该桩类注释）。
+ *   线程（§3.4 M-1）；IUiDraftStorePort 的"后台落盘线程"纪律自 UI-T17 起
+ *   由插件宿主真实兑现（SerialTaskExecutor 串行落盘线程承担 postToDiskThread
+ *   接线——assembleDraftChain）；harness 宿主仍未装配 DraftController（形态
+ *   不变——回归保护，见该适配器注释）。
  */
 
 #ifndef SDURWS_IRD_UI_APP_PORT_ADAPTERS_HPP
 #define SDURWS_IRD_UI_APP_PORT_ADAPTERS_HPP
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <sdurws/ird/core/Events.hpp>             // core::IEventSubscription（subscribeClose 句柄）
@@ -122,11 +131,59 @@ private:
 };
 
 // =====================================================================
+// SerialTaskExecutor——§3.4"ui 后台落盘线程（1 条）——串行队列"的开发期宿主
+// =====================================================================
+
+/**
+ * @brief 单工作线程串行任务执行器（DraftControllerDeps.postToDiskThread 的
+ *        装配期接线目标——UI-T17 增量，harness/plugin 两宿主共用）。
+ *
+ * 背景说明（为什么在装配层而不是 DraftController 内）：§8.2 数据流的磁盘段
+ * 全在落盘线程执行（UI 线程零磁盘 IO 红线），控制器只依赖"post 即串行异步"
+ * 的执行面（§10.5 DraftControllerDeps 注入纪律：生产形态＝单工作线程依次
+ * 执行任务）。本类型即该生产形态的开发期承载——零 Qt（线程＋条件变量），
+ * 任务须自备无异常保证（DraftController 的落盘任务按返回值轨收敛）。
+ *
+ * 生命周期：宿主持有 unique_ptr；stop() 有界排空（置停后仍执行完队列余量
+ * 再收线程——"在途草稿落盘完成后上下文才释放"的宿主侧对位）；析构兜底
+ * stop()（幂等）。start 即构造（线程随对象生）。
+ *
+ * 线程约束：post 任意线程；stop 析构/UI 线程；任务在工作线程执行。
+ */
+class SerialTaskExecutor final {
+public:
+    /// @brief 构造即启动工作线程（装配期一次；不可拷贝/移动）。
+    SerialTaskExecutor();
+    /// @brief 析构＝有界排空收线程（幂等——显式 stop 后再析构为空操作）。
+    ~SerialTaskExecutor();
+    SerialTaskExecutor(const SerialTaskExecutor&) = delete;
+    SerialTaskExecutor& operator=(const SerialTaskExecutor&) = delete;
+
+    /// @brief 投递一个任务（串行执行——同一时刻至多一个任务在途的保证面）。
+    /// @param task [in] 可调用体（须不抛——落盘任务按对端返回值轨收敛；
+    ///             违约＝fail-fast terminate，禁吞错）。
+    void post(std::function<void()> task);
+
+    /// @brief 有界停止：不再接纳新任务的语义由调用方保证（装配层在退出路径
+    ///        调用）；已入队任务执行完后收线程（幂等）。
+    void stop();
+
+private:
+    /// 工作线程主循环（排队即取、取空且已置停即退出）。
+    void run();
+
+    /// 实现私有状态（互斥＋条件变量＋任务队列＋运行位——Pimpl 隔离平台头）。
+    struct Impl;
+    Impl* m_impl;     ///< 所有权独占（构造 new、析构 delete——执行器本体无拷贝）
+    std::thread m_thread;  ///< 唯一工作线程（构造即启动、stop/join 收尾）
+};
+
+// =====================================================================
 // StorePortAdapter——project::ProjectStore → ui::IUiProjectStorePort（C-3）
 // =====================================================================
 
 /**
- * @brief 存储上下文关闭协议面适配器（一次成功打开产出一个实例）。
+ * @brief 存储上下文关闭协议面＋草稿写半区适配器（一次成功打开产出一个实例）。
  *
  * 翻译规则（不改义——project.md §5.1 关闭协议 → UiPorts.hpp C-3 行）：
  *   - requestClose() → ProjectStore::requestClose()（幂等信号，返回在途
@@ -135,6 +192,19 @@ private:
  *   - subscribeClose(observer) → 经内部 ForwardingObserver 把 project 的
  *     ICloseObserver::onStoreClosed(store) 翻译为 ui 的
  *     IUiStoreCloseObserver::onStoreClosed(store.projectId())。
+ *
+ * UI-T17 增量（O-43 裁决承接，登记 ui.md §13 UI-T17 立项登记注）：本类
+ * 增实现 **IUiDraftStorePort**（C-5 写半区，UI-T12 冻结面）——一次打开的
+ * 草稿保存/读取/放弃经 store->drafts() 直转（原样翻译 project::DraftDocument
+ * ↔ ui 值投影，不吞错不改义）。双端口单实例＝同一存储上下文的两个冻结面
+ * 由同一适配器承载（装配层单点，SessionPortBundle 冻结三字段形状零变化）。
+ *
+ * 分支锚诚实边界（UI-T17 立项登记注③）：tryLoad/discard 的对端签名携带
+ * 分支（project 侧按 drafts/<branch>/ 寻址），而 ui 冻结端口无分支参数、
+ * SessionPortBundle/C-3 亦无分支查询面——本适配器以构造期给定的分支锚承
+ * 载（当前为缺省值：本阶段无挂接模块，tryLoad/discard 不可达；分支锚端口
+ * 随完整草稿链路装配任务接续）。save 不受此限——分支在文档自身携带
+ * （DraftDocumentProjection.branchId）。
  *
  * 所有权与保活（INV-SES-3 的适配器侧落点）：本适配器**独占持有**
  * ProjectStore（unique_ptr 自 OpenStoreResult 移入）——ui 经 shared_ptr 持
@@ -146,14 +216,23 @@ private:
  * 释放）；转发观察者由本适配器持有到析构（先于 store 析构——悬挂不可能）。
  * 产品装配层落位时按同一形状替换为真实订阅面（适配点单一，ui 侧零改动）。
  */
-class StorePortAdapter final : public IUiProjectStorePort {
+class StorePortAdapter final : public IUiProjectStorePort, public IUiDraftStorePort {
 public:
-    /// @brief 接管打开结果中的存储上下文（unique_ptr 所有权即刻移入）。
-    explicit StorePortAdapter(std::unique_ptr<project::ProjectStore> store);
+    /**
+     * @brief 接管打开结果中的存储上下文（unique_ptr 所有权即刻移入）。
+     *
+     * @param store             [in] 存储上下文（独占所有权即刻移入）
+     * @param draftBranchAnchor [in] 草稿写半区 tryLoad/discard 的分支锚
+     *                          （缺省缺省值——诚实边界见类注释；save 不消费）
+     */
+    explicit StorePortAdapter(std::unique_ptr<project::ProjectStore> store,
+                              core::BranchId draftBranchAnchor = core::BranchId{});
 
     /// @brief 析构：适配器消亡即存储上下文消亡（Active 态析构＝对端隐式
     ///        排空收尾——project.md §5.1 生命周期行）。
     ~StorePortAdapter() override;
+
+    // ---- IUiProjectStorePort（C-3 关闭协议面——语义见类注释）----
 
     /// @brief 请求关闭存储上下文（直转；返回在途引用数）。
     std::uint32_t requestClose() override;
@@ -165,9 +244,24 @@ public:
     std::unique_ptr<core::IEventSubscription>
     subscribeClose(IUiStoreCloseObserver& observer) override;
 
+    // ---- IUiDraftStorePort（C-5 写半区——UI-T17 增量，语义见类注释）----
+
+    /// @brief 落盘草稿（文档投影→对端 DraftDocument 原样翻译；分支由文档
+    ///        自身携带；StoreError 折叠为 ok=false＋稳定 token——不吞错）。
+    DraftSaveOutcome save(const DraftDocumentProjection& document) override;
+
+    /// @brief 读取草稿（分支锚语义见类注释；Missing/RecoveredFromBackup/
+    ///        Corrupt 四态一一映射——对端 tryLoad 契约表不改义）。
+    DraftLoadOutcome tryLoad(const std::string& moduleId) override;
+
+    /// @brief 放弃草稿（分支锚语义见类注释；对端幂等语义原样）。
+    DraftDiscardOutcome discard(const std::string& moduleId) override;
+
 private:
     /// 被适配的存储上下文（独占——本类析构即对端析构）。
     std::unique_ptr<project::ProjectStore> m_store;
+    /// 草稿写半区 tryLoad/discard 的分支锚（诚实边界——见类注释）。
+    core::BranchId m_draftBranchAnchor;
     /// 转发观察者集合（适配器持有＝存活期覆盖 store 的订阅表——v0.1 边界
     /// 的悬挂防御；产品装配层按真实退订句柄替换）。元素基类型＝project 的
     /// 关闭观察者接口（ForwardingCloseObserver 在 .cpp 内实现）。
