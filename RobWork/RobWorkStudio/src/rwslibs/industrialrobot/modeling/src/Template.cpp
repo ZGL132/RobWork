@@ -1,7 +1,8 @@
 /**
  * @file   Template.cpp
  * @brief  模板创建与参数化编辑的实现——清单/草稿创建（§5.1/§9.4.2）、
- *         六轴默认参数表 T-MDL-1、变更摘要、创建入口守卫、逐轴编辑流与
+ *         六轴默认参数表 T-MDL-1、变更摘要、创建入口守卫、逐轴编辑流、
+ *         基座安装姿态编辑流（WP-13-T11——SetBasePlacement 域内核）与
  *         几何生成辅助（§5.2）。
  *
  * 设计依据：units/modeling.md §5.1/§5.2/§6.4/§9.4.2、§4.3/§4.10（值模型
@@ -24,6 +25,7 @@
 #include <sdurws/ird/core/Digest.hpp>  // ContentDigester——确定性临时句柄派生（SHA-256）
 #include <sdurws/ird/modeling/DiagCodes.hpp>  // kMdlTemplateDisabled/kMdlImportTemplateRange——码常量唯一书写点
 #include <sdurws/ird/modeling/PropertyEstimation.hpp>  // defaultMaterialDensity——材料密度默认表（单一权威）
+#include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // rotationFromCustomEaa——EAA→R 唯一权威换算点（I-MDL-7/P-RT-4）
 
 #include <algorithm>
 #include <cmath>
@@ -711,6 +713,165 @@ JointBatchEditOutcome applyJointFieldEditBatch(ModelingWorkingSet& ws,
         ws.changes.push_back(std::move(record));
     }
     return outcome;
+}
+
+// =====================================================================
+// 基座安装姿态编辑流（WP-13-T11——§5.2 SetBasePlacement 域内核）
+// =====================================================================
+
+std::string_view basePlacementEditErrorCodeToken(BasePlacementEditErrorCode code) noexcept
+{
+    // 全枚举 switch 无 default——新增值漏登记时编译器告警暴露（词表登记
+    // 纪律同 jointEditErrorCodeToken）。
+    switch (code) {
+    case BasePlacementEditErrorCode::ValueNotFinite: return "value-not-finite";
+    case BasePlacementEditErrorCode::CustomEaaMissing: return "custom-eaa-missing";
+    case BasePlacementEditErrorCode::PresetIdentityRotation: return "preset-identity-rotation";
+    case BasePlacementEditErrorCode::RotationNotOrthogonal: return "rotation-not-orthogonal";
+    }
+    return "unknown";
+}
+
+std::optional<BasePlacementEditError> applyBasePlacementEdit(
+    ModelingWorkingSet& ws,
+    const BasePlacementEditValue& edit)
+{
+    // ① 契约违约面：非 Custom 预设携带 customEaa——EAA 字段仅对 Custom 有
+    //    语义，静默忽略会掩盖面板状态错误（调用方契约违约 fail-fast，
+    //    AGENTS 错误语义）。
+    if (edit.preset != runtime::InstallationPresetToken::Custom
+        && edit.customEaa.has_value()) {
+        throw std::invalid_argument(
+            "modeling/template/base-placement-edit: preset≠Custom 不允许携带"
+            " customEaa（EAA 仅 Custom 有语义——I-MDL-7）");
+    }
+
+    // ② 有限性（I-MDL-3）：customEaa（Custom 时）与 basePosition 逐分量
+    //    检查——NaN/Inf 非法，不静默置 0、不静默丢弃分量（NFR-COR-03）。
+    //    单位：EAA 分量 rad、位置分量 m（世界系）。
+    if (edit.customEaa.has_value()) {
+        const rw::math::Vector3D<double>& eaa = *edit.customEaa;
+        if (!std::isfinite(eaa[0]) || !std::isfinite(eaa[1])
+            || !std::isfinite(eaa[2])) {
+            return BasePlacementEditError{
+                BasePlacementEditErrorCode::ValueNotFinite,
+                "basePlacement.customEaa：含非有限分量（NaN/Inf）——单位 rad"};
+        }
+    }
+    if (!std::isfinite(edit.basePosition[0]) || !std::isfinite(edit.basePosition[1])
+        || !std::isfinite(edit.basePosition[2])) {
+        return BasePlacementEditError{
+            BasePlacementEditErrorCode::ValueNotFinite,
+            "basePlacement.basePosition：含非有限分量（NaN/Inf）——单位 m"};
+    }
+
+    // ③ I-MDL-7 前半：Custom 无预设矩阵，customEaa 缺失即非法（runtime
+    //    §4.2"Custom 时必填"同口径；fail-fast 属调用方错误、这里是用户
+    //    可输入面——走值面拒绝，编辑器就地提示）。
+    if (edit.preset == runtime::InstallationPresetToken::Custom
+        && !edit.customEaa.has_value()) {
+        return BasePlacementEditError{
+            BasePlacementEditErrorCode::CustomEaaMissing,
+            "basePlacement.customEaa：custom 预设必填旋转矢量（单位 rad）"
+            "——I-MDL-7 前半"};
+    }
+
+    // ④ I-MDL-7 后半的映射层拒绝（T03 §15 增量 f) 登记的 T11 落位点）：
+    //    "preset≠ground 而 R=I"组合拒绝。建模层只有 Custom 的旋转可变
+    //    （Inverted/Wall 的 R 由 runtime 权威点产出、恒非恒等），故本判定
+    //    仅在 Custom 分支触发：零矢量/极小角 EAA 产出 R≈I——与 runtime
+    //    checkPresetConsistency"Custom 而 R=I 校验失败"同口径（runtime
+    //    InputInvalid），编辑边界就地拒绝、不让非法组合流入命令/编译域。
+    //    换算唯一经 runtime::rotationFromCustomEaa（P-RT-4 单一权威换算
+    //    点）——本函数不私设第二套 EAA→R 规则，也不缓存任何矩阵（M-11：
+    //    modeling 只存参数不存矩阵）。
+    if (edit.preset == runtime::InstallationPresetToken::Custom) {
+        const rw::math::Rotation3D<double> rotation = runtime::rotationFromCustomEaa(
+            rw::math::Vector3D<double>((*edit.customEaa)[0], (*edit.customEaa)[1],
+                                       (*edit.customEaa)[2]));
+        // 恒等判定：逐元素与 I 偏差 ≤1×10⁻¹² 即视为恒等——容差与值模型
+        // I-MDL-7 正交容差同源同尺度（§4.10 行；非自设魔数）。
+        constexpr double kIdentityTol = 1e-12;  // 无量纲（旋转矩阵元素）
+        bool identity = true;
+        for (std::size_t r = 0; r < 3 && identity; ++r) {
+            for (std::size_t c = 0; c < 3 && identity; ++c) {
+                const double expected = (r == c) ? 1.0 : 0.0;
+                if (std::abs(rotation(r, c) - expected) > kIdentityTol) {
+                    identity = false;
+                }
+            }
+        }
+        if (identity) {
+            return BasePlacementEditError{
+                BasePlacementEditErrorCode::PresetIdentityRotation,
+                "basePlacement：preset=custom 而 EAA 旋转为恒等（preset≠ground"
+                " 而 R=I——I-MDL-7 映射层拒绝，runtime InputInvalid 同口径）"};
+        }
+    }
+
+    // ⑤ 构造候选值（先校验后提交——拒绝路径零写入）。customEaa 仅 Custom
+    //    态 Provided（UserProvided——用户输入覆盖来源标记，§5.3 规则 1）；
+    //    切离 Custom 时复位 NotProvided——EAA 随预设失效是本编辑的显式
+    //    语义（摘要注明），非静默清除。basePosition 恒 Provided。
+    BasePlacement candidateValue;
+    candidateValue.preset = edit.preset;
+    if (edit.preset == runtime::InstallationPresetToken::Custom) {
+        candidateValue.customEaa =
+            core::SourcedValue<rw::math::Vector3D<double>>::provided(
+                *edit.customEaa,
+                core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    }
+    candidateValue.basePosition =
+        core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            edit.basePosition,
+            core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+
+    // ⑥ 正交性防御闸：判定**复用值模型 I-MDL-7 单一实现**——对"基线＋
+    //    候选基座"跑 checkInvariants 并过滤 IMdl7 违例（NFR-MNT-04 不得
+    //    出现两套判定；其他编号的违例属既有状态、不在本编辑的拒绝面——
+    //    字段级编辑只对自己触碰的字段负责，与 applyJointFieldEdit 同款
+    //    范围口径）。Rodrigues 构造下数学上不可达——本闸在 runtime 换算
+    //    实现被替换/污染时暴露违例（正交容差 1×10⁻¹² 的执行点在值模型）。
+    {
+        RobotDesign candidate = ws.design;
+        candidate.basePlacement = candidateValue;
+        for (const InvariantViolation& violation : checkInvariants(candidate)) {
+            if (violation.id == InvariantId::IMdl7) {
+                return BasePlacementEditError{
+                    BasePlacementEditErrorCode::RotationNotOrthogonal,
+                    "basePlacement.customEaa：旋转矩阵正交性违例（容差 1×10⁻¹²"
+                    "——I-MDL-7，runtime InputInvalid 同口径）"};
+            }
+        }
+    }
+
+    // ⑦ 提交：整体替换 basePlacement＋追加恰好一条变更摘要记录（append-
+    //    only；一次编辑＝一条——UX-05 粒度与逐轴编辑流一致）。摘要含预设
+    //    token 字面（§6.2 冻结词表的呈现文本——词表权威仍是 runtime 枚举
+    //    复用，此处仅为确定性中文摘要），不含数值字面（数值在 design 内
+    //    ——摘要不引入 locale 相关格式化，确定性 NFR-COR-02）。
+    ws.design.basePlacement = candidateValue;
+    ModelingChangeRecord record;
+    record.subject = "basePlacement";
+    switch (edit.preset) {
+    case runtime::InstallationPresetToken::Ground:
+        record.summary = "设置安装预设为 ground（地面）并写入基座位置（m）";
+        break;
+    case runtime::InstallationPresetToken::Inverted:
+        record.summary = "设置安装预设为 inverted（倒挂——轴向矩阵由 runtime"
+                         " 编译产出）并写入基座位置（m）";
+        break;
+    case runtime::InstallationPresetToken::Wall:
+        record.summary = "设置安装预设为 wall（壁装——轴向矩阵由 runtime"
+                         " 编译产出）并写入基座位置（m）";
+        break;
+    case runtime::InstallationPresetToken::Custom:
+        record.summary = "设置安装预设为 custom（EAA 单位 rad）并写入基座位置"
+                         "（m）";
+        break;
+    }
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
 }
 
 // =====================================================================
