@@ -1,0 +1,20 @@
+Note: Google Test filter = WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from WorkbenchContentGuiTest
+[ RUN      ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT
+D:\10_Source_Repos\21_robot\acc-ui-t18\wt-head\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp(244): error: Value of: transientMessage.contains(QString::fromUtf8("未知命令"))
+  Actual: false
+Expected: true
+瞬态消息未经理观察者投影（UI-T18 契约面失效）
+
+[  FAILED  ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT (31 ms)
+[----------] 1 test from WorkbenchContentGuiTest (31 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (31 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] WorkbenchContentGuiTest.TwoPhaseAssemblyContract_UI_SPLIT
+
+ 1 FAILED TEST

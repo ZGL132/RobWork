@@ -3312,6 +3312,46 @@
       "title": "同会话重开已打开项目的 UX 语义：S2 切换流候选验证在 A 仍持锁时打开候选 B，B≡A 时必然撞自锁（lock-held-by-other）被保守拒绝→错误页——数据安全侧零风险、行为与 §5.4『候选验证成功才切』冻结设计一致（非缺陷），但『打开已打开项目』本可短路为无操作/聚焦既有会话；『最近项目』菜单使该路径日常可达",
       "owner": "架构/需求所有者（随 F-321 切换路径状态投影定案同批考量——是否为同项目重开增加短路语义）；不单独排期",
       "resolution": "并入 F-321 定案考量。编号顺延自 F-329。"
+    },
+    {
+      "id": "F-331",
+      "source": "traceability/acceptance/UI-T18-20260924.md §4.1/§2-B1（attempt 1，verdict=fail，2026-09-24；验收者 diff 文件清单逐一对照契约 allowedFiles＋git tree mode 实测＋XML 时间戳比对）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "UI-T18 送验提交（0e54c27b 引入、d7e4a24 在库）含 3 个范围外文件：仓库根 traceability/builds/wp10-t18/gtest-ui-{contract,gui,model}.xml（mode 100644 普通文件，不匹配契约 allowedFiles 任何模式——RobWork/doc/industrial-robot-design/traceability/** 目录前缀不同）；内容为 16:24 r2 代捕获，与在库 19:02 的 -r3 权威件并存构成规范树外过期副本，且与 d7e4a24 提交信息『r2 轮中间件已清理，r3 为准』自相矛盾——units/ui.md §16.7 v1.13-r2 行已登记过同类缺陷（batch 1 留痕误置仓库根 traceability/＝allowedFiles 外，r2 迁入 doc 规范路径），属已知类缺陷复发",
+      "owner": "实施者侧（wp10-t18 返工提交 git rm 三件——纯留痕残留零产品影响；不得以扩大契约 allowedFiles 方式迁就，契约面修订归所有者裁决）",
+      "resolution": "随 UI-T18 返工（验收记录 attempt 1 阻断 B-1）删除三件后重新送验；若所有者有意设立仓库根 traceability/ 为规范留痕位，须先修订契约与治理口径。编号顺延自 F-330。"
+    },
+    {
+      "id": "F-332",
+      "source": "traceability/acceptance/UI-T18-20260924.md §4.8（attempt 1，verdict=fail，2026-09-24；验收者独立复跑 ird_gates 归一化比对＝63↔63 双向差集 0，与在库 gate-hitset-*-r3.txt 逐字节一致）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "units/ui.md §16.7 v1.14 行口径未随落位登记注⑥修正同步：⑦仍写『ird_gates 命中 43 条与基线一致零新增』（实际归一化 63/63）、⑥仍写『集成五目标』（契约 verify[0] 命令面实为六目标）——d7e4a24 提交信息自述『注⑥修正两处（43→63/63、五目标→六目标）』属实但 §16.7 平平行漏改，同文件内两处口径不一致；『零新增』结论本身经验收者独立复跑证实，非粉饰",
+      "owner": "实施者侧（下批 ui/文档触碰窗口把 §16.7 v1.14 行两处改为 63/63＋六目标，引用 gate-hitset-*-r3.txt）",
+      "resolution": "随 UI-T18 返工或下批 ui 触碰窗口勘误。编号顺延自 F-331。"
+    },
+    {
+      "id": "F-333",
+      "source": "traceability/acceptance/UI-T18-20260924.md §4.7（attempt 1，verdict=fail，2026-09-24；验收者全 8 件产品 diff 逐块通读＋文件头对照 UI-T18 增量）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "三文件头注释未随 UI-T18 增量更新：UiPlugin.hpp @brief 仍写『任务 UI-T16 立项，UI-T17 增量扩展』且设计依据缺 §13 UI-T18 行/v1.14（本任务多 Dock 拓扑＋宿主状态栏投影的主要实现文件——该文件恰为 F-326 上轮修复对象，同族复发）；UiPlugin.cpp 设计依据缺 UI-T18 引用；WorkbenchContent.hpp 设计依据缺 v1.14 契约面变更引用（本次 statusBarWidget() 出口移除恰落在该头）。类/函数级注释完备（双钩子 Doxygen 契约、PM-14 重施与多 Dock 拓扑的『为什么』齐备），零行为影响。另：UiPlugin.cpp 尺寸钳制注释写『钳制到内容最小宽 280 px 以上/最小高 160 px 以上』而代码下界实为 qBound(300,…,480)/qBound(190,…,340)（高于 §4.4 最小值，行为无碍，注释数字与代码不同义）",
+      "owner": "实施者侧（下批 ui 触碰窗口随手对齐三处文件头＋尺寸注释表意）",
+      "resolution": "随 UI-T18 返工或下批 ui 触碰窗口执行（F-326 同族处置先例＝e917734a 纯注释对齐）。编号顺延自 F-332。"
+    },
+    {
+      "id": "F-334",
+      "source": "traceability/acceptance/UI-T18-20260924.md §4.7（attempt 1，verdict=fail，2026-09-24；验收者 grep 内容层 QStatusBar 残留时发现）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-24",
+      "title": "ui/src/WorkbenchContent_p.hpp L36 死包含 <QStatusBar>：statusBarWidget() 出口与 m_statusBar 成员删除后该头已无任何 QStatusBar 声明使用——d7e4a24 对 WorkbenchContent.cpp 做了『移除死包含 <QStatusBar>』的字面收口而私有头漏收，acceptance ①『内容层零状态栏 Widget』的字面一致性未贯彻到 p.hpp（死包含非 Widget，不构成契约违约，纯卫生）",
+      "owner": "实施者侧（下批 ui 触碰窗口删除该 include）",
+      "resolution": "随 UI-T18 返工或下批 ui 触碰窗口执行。编号顺延自 F-333。"
     }
   ]
 }
