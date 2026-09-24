@@ -106,6 +106,15 @@ find_package(pugixml CONFIG REQUIRED)
 #                        apply-tool-definition/apply-scene-objects 移除面
 #                        ＋apply-named-poses 合并流（§4.8"删除＝引用移除"
 #                        ＋V-04/V-05）
+# T11 增列（tasks/foundation/WP-13-T11.json——Template.hpp T11 行"编辑流"）：
+#   src/Template.cpp（增量）  基座安装姿态编辑流 applyBasePlacementEdit
+#                        （§5.2 SetBasePlacement 域内核：三预设＋custom
+#                        EAA（rad）＋basePosition（m）整体替换；I-MDL-7
+#                        非法组合映射层拒绝——custom 缺 customEaa/preset≠
+#                        ground 而 R=I（恒等判定 1×10⁻¹²）/正交性复用值
+#                        模型单一判定；P-RT-4——modeling 只存参数不存矩阵，
+#                        EAA→R 唯一经 runtime rotationFromCustomEaa 权威
+#                        换算，MDL-22/M-11）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -253,6 +262,15 @@ endif()
 #                          基座混入拒绝＋ACC2 五状态各含样例/结构检查先行
 #                          ＋ACC3 退化族字典序定值/确定性——NFR-COR-02；
 #                          两模式均编译——被测面零框架符号）
+# T11 增列（tasks/foundation/WP-13-T11.json，acceptance 1~4 具名自证；
+#          两模式均编译——命令路径用例选移动关节设计不消费④端口）：
+#   test/BasePlacementEditTest.cpp  基座安装姿态编辑（ACC1 V-13 三预设＋
+#                          custom＋位置＋词表一致性＋apply-robot-design
+#                          原子持久化单命令单写入；ACC2 V15-04 模板/导入
+#                          默认地面＋I-MDL-7 非法组合映射层拒绝；ACC3
+#                          P-RT-4 权威产出点交叉核对（modeling 只存参数
+#                          不存矩阵——V-12 输入面）；ACC4 编译单一字段
+#                          R_world_base 手算对照＋字节面单字段证据）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -271,6 +289,7 @@ add_executable(sdurws_ird_modeling_test
     test/ImportTest.cpp
     test/XacroExpandTest.cpp
     test/TemplateTest.cpp
+    test/BasePlacementEditTest.cpp
     test/DhConvertTest.cpp)
 
 # T08 测试 TU（集成模式专属 gating——POL-T06/T07/T08 同款：ReadinessTest/

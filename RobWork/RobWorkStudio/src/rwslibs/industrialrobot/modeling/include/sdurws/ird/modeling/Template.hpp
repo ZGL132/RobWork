@@ -3,7 +3,8 @@
  * @brief  模板创建与参数化编辑——IRobotDesignTemplateFactory（模板清单/
  *         草稿创建，§5.1/§9.4.2）、六轴默认参数表 T-MDL-1（设计默认值）、
  *         建模工作集 ModelingWorkingSet（v1 值模型）、创建入口链型守卫
- *         （§6.4 维度二判定复用）、逐轴编辑流（§5.2 字段级/批量变体）与
+ *         （§6.4 维度二判定复用）、逐轴编辑流（§5.2 字段级/批量变体）、
+ *         基座安装姿态编辑流（§5.2 SetBasePlacement——WP-13-T11）与
  *         几何生成辅助两条（§5.2 v0.2 增补）。
  *
  * 设计依据：
@@ -601,6 +602,140 @@ struct JointBatchEditOutcome {
 JointBatchEditOutcome applyJointFieldEditBatch(ModelingWorkingSet& ws,
                                                JointEditField field,
                                                const std::vector<JointBatchEditItem>& items);
+
+// =====================================================================
+// 基座安装姿态编辑流（§5.2 SetBasePlacement 的域内核——WP-13-T11；
+// T08 编辑器在此之上组装 IRobotDesignEditor 的 ModelingEdit 轨道，与
+// 逐轴编辑流同款分层）
+// =====================================================================
+
+/**
+ * @brief 基座安装姿态编辑的局部错误码（T11 局部载体——JointEditErrorCode
+ *        同款"接口局部错误枚举，不进域级错误轨道"先例；T08 编辑器组装
+ *        EditOutcome 时映射到 ModelingErrorCode 校验族）。
+ */
+enum class BasePlacementEditErrorCode {
+    /// "value-not-finite"——customEaa/basePosition 含 NaN/Inf（I-MDL-3：
+    /// 非法值不静默置 0/不静默丢弃）
+    ValueNotFinite,
+    /// "custom-eaa-missing"——custom 预设缺 customEaa（I-MDL-7 前半：
+    /// Custom 无预设矩阵，编辑表示必填——runtime §4.2 同口径）
+    CustomEaaMissing,
+    /// "preset-identity-rotation"——preset≠ground 而旋转为恒等（I-MDL-7
+    /// 后半"preset≠ground 而 R=I"的**映射层拒绝**——T03 §15 增量 f) 登记
+    /// 的 T11 落位点；判定口径与 runtime InputInvalid 同源：customEaa 经
+    /// runtime 唯一换算点产出的 R 逐元素与 I 偏差 ≤1×10⁻¹² 即视为恒等）
+    PresetIdentityRotation,
+    /// "rotation-not-orthogonal"——customEaa 旋转矩阵正交性违例（容差
+    /// 1×10⁻¹²）。判定**复用值模型 I-MDL-7 单一实现**（经 checkInvariants
+    /// 过滤 IMdl7 违例——NFR-MNT-04 不得出现两套判定）；Rodrigues 构造下
+    /// 数学上不可达，本码是换算实现被污染时的防御闸
+    RotationNotOrthogonal,
+};
+
+/**
+ * @brief 局部错误码稳定 token（枚举成员名连字符串——见各值注；UT 判别与
+ *        变更摘要承载）。纯函数；确定性。
+ */
+std::string_view basePlacementEditErrorCodeToken(BasePlacementEditErrorCode code) noexcept;
+
+/**
+ * @brief 基座安装姿态编辑拒绝值（局部错误面：码＋定位细节）。
+ *
+ * detail 面向内部诊断链/日志（字段、预设 token、实测偏差）；呈现文案归
+ * T08 编辑器按码映射（diagnostics/ui 文案层）。
+ */
+struct BasePlacementEditError {
+    /// 稳定错误码（缺省＝ValueNotFinite——首个检查项）。
+    BasePlacementEditErrorCode code = BasePlacementEditErrorCode::ValueNotFinite;
+    std::string detail;  ///< 定位细节（UTF-8；字段/预设/原因）
+
+    bool operator==(const BasePlacementEditError& o) const noexcept
+    {
+        return code == o.code && detail == o.detail;
+    }
+    bool operator!=(const BasePlacementEditError& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief 基座安装姿态编辑值（§5.2 SetBasePlacement 的载荷——**整体替换**
+ *        语义：一次编辑＝一次完整表达目标安装姿态，与属性面板"预设单选＋
+ *        欧拉角输入＋位置输入"一次提交的形态对应）。
+ *
+ * 字段语义（MDL-22；单位纪律见各注）：
+ *   - preset：安装预设（runtime::InstallationPresetToken 四值词表——单一
+ *     权威，直接复用；modeling 不另设词表）；
+ *   - customEaa：custom 预设必填的旋转矢量（EAA：方向＝轴、模长＝角，
+ *     **单位 rad**）；preset≠Custom 时**必须**为 nullopt（携带即调用方
+ *     契约违约——fail-fast；EAA 只对 Custom 有语义，静默忽略会掩盖面板
+ *     状态错误）；
+ *   - basePosition：基座原点世界系位置（**单位 m**；整体替换语义下必填
+ *     ——面板提交时携带当前显示值；由本编辑流以 UserProvided 来源写入）。
+ *
+ * ★ modeling 只存参数不存矩阵（P-RT-4/M-11）：本值与编辑产物
+ *   BasePlacement 内**没有任何旋转矩阵字段**——预设轴向矩阵的唯一权威
+ *   产出点＝runtime BaseWorldTransform.hpp::installationPresetRotation()
+ *   （倒挂=R_x(π)、壁装=R_y(π/2)，runtime.md §6.2 冻结值）；custom 的
+ *   EAA→R 换算唯一经 runtime::rotationFromCustomEaa()（本编辑流只在
+ *   校验时调用该权威换算做拒绝判定，不缓存、不预乘任何矩阵——V-12
+ *   建模侧输入面）。
+ */
+struct BasePlacementEditValue {
+    /// 安装预设（四值词表——runtime::InstallationPresetToken 单一权威）。
+    runtime::InstallationPresetToken preset = runtime::InstallationPresetToken::Ground;
+
+    /// custom 预设的 EAA 旋转矢量（单位 rad；仅 preset==Custom 时允许携带
+    /// ——见结构注的契约违约面）。
+    std::optional<rw::math::Vector3D<double>> customEaa;
+
+    /// 基座原点位置（单位 m，世界坐标系下表示）。
+    rw::math::Vector3D<double> basePosition{0.0, 0.0, 0.0};
+};
+
+/**
+ * @brief 应用一次基座安装姿态编辑（§5.2 SetBasePlacement 域内核；
+ *        WP-13-T11 acceptance 1/2 的编辑面落点）。
+ *
+ * 规则（按检查序；拒绝时工作集**字节不变**——与 applyJointFieldEdit 同款
+ * 强保证）：
+ *   ①preset≠Custom 而携带 customEaa＝调用方契约违约→抛
+ *     std::invalid_argument fail-fast（EAA 字段仅 Custom 有语义）；
+ *   ②customEaa（Custom 时）/basePosition 逐分量有限性→ValueNotFinite
+ *     （I-MDL-3：不静默置 0）；
+ *   ③preset==Custom 且 customEaa 缺失→CustomEaaMissing（I-MDL-7 前半：
+ *     Custom 无预设矩阵，编辑表示必填——runtime §4.2 同口径）；
+ *   ④preset==Custom 且 customEaa 经 runtime::rotationFromCustomEaa()
+ *     （EAA→R 唯一权威换算点——P-RT-4）产出的 R 逐元素与恒等阵偏差
+ *     ≤1×10⁻¹²→PresetIdentityRotation（I-MDL-7 后半"preset≠ground 而
+ *     R=I"的映射层拒绝——T03 §15 增量 f) 登记的 T11 落位点；与 runtime
+ *     checkPresetConsistency 的 Custom≠I 校验同口径，编辑边界就地拒绝、
+ *     不让非法组合流入命令/编译域）；
+ *   ⑤正交性（1×10⁻¹²）→RotationNotOrthogonal——判定经 checkInvariants
+ *     过滤 InvariantId::IMdl7（值模型单一实现复用，NFR-MNT-04）；
+ *   ⑥提交：basePlacement 整体替换（preset 直写；Custom 时 customEaa 以
+ *     UserProvided 来源 Provided；切离 Custom 时 customEaa 复位
+ *     NotProvided——EAA 随预设失效是本编辑的显式语义、记录进变更摘要，
+ *     非静默清除；basePosition 以 UserProvided 来源 Provided）＋追加
+ *     **一条**变更摘要记录（append-only）。
+ *
+ * 持久化路径（原子性——MDL-22/DTB T11 行）：本函数只改编辑态工作集；
+ * 持久化经 apply-robot-design 命令（根对象整体写入）——单命令单修订，
+ * 双编译原子性由 project S5 承担（任一编译段失败→修订不产生）。
+ *
+ * @param ws   [in,out] 目标工作集（拒绝时保证不变——先校验后提交）
+ * @param edit [in] 编辑值（整体替换语义——见 BasePlacementEditValue 注）
+ * @return nullopt＝接受（工作集已更新＋一条变更记录）；非空＝拒绝
+ *         （局部错误面——工作集不变）
+ *
+ * @throws std::invalid_argument preset≠Custom 而携带 customEaa（调用方
+ *               契约违约——fail-fast）
+ *
+ * 非线程安全（编辑态仅 UI 线程——ModelingWorkingSet 注）；确定性（同
+ * 输入同结论；拒绝判定只依赖 runtime 权威换算的纯函数）。
+ */
+std::optional<BasePlacementEditError> applyBasePlacementEdit(
+    ModelingWorkingSet& ws,
+    const BasePlacementEditValue& edit);
 
 // =====================================================================
 // 几何生成辅助（§5.2 v0.2 增补——承接旧 autoLink/碰撞生成辅助，§2.5）
