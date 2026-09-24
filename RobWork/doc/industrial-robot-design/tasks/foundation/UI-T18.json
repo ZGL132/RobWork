@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "Dock 拓扑拆分＋状态行迁移宿主状态栏（O-43 裁决③承接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T16", "UI-T17"],
   "requirements": ["PM-11", "PM-14"],
   "designRefs": [
