@@ -1707,6 +1707,11 @@
   },
   "queue": [
     {
+      "taskId": "UI-T18",
+      "branch": "wp10-t18",
+      "contractPath": "tasks/foundation/UI-T18.json"
+    },
+    {
       "taskId": "WP-13-T09",
       "branch": "wp13-t09",
       "contractPath": "tasks/foundation/WP-13-T09.json"
