@@ -12,6 +12,10 @@
  *     （五区布局/区域交互边界/最小可用布局/布局状态归属/用户级设置项）、
  *     §7.1~§7.6（命令设施语义不变）、§11.5（分工表：打开协议的触发时机
  *     编排归装配层，状态机推进归 UiSessionController）；
+ *   - units/ui.md §10.1 v1.14 增量注⑦（UI-T18 契约面变更——statusBarWidget()
+ *     QStatusBar* 出口移除，改 setStatusTextObserver/setStatusMessageObserver
+ *     双状态观测钩子把 PM-11 永久文本与瞬态消息投影给宿主层状态栏；内容层
+ *     零状态栏 Widget——本头即该契约面变更的代码落点）；
  *   - O-38 裁决（DTB §4.2，2026-09-23，所有者融合方案评估）：开发期宿主
  *     插件验证通道——sdurws_ird_ui_plugin 经框架 Plugins→Load plugin 动态
  *     加载做界面级操作验证；壳拆两层后五区交互/布局记忆/命令门控语义不变，
@@ -50,7 +54,6 @@
 class QSize;      // 前置声明：notifyHostResized 入参（消费者按需自含）
 class QString;    // 前置声明：标题文本观察回调入参
 class QWidget;    // 前置声明：宿主 Widget 与内容出口（头文件不拖入 Widgets）
-class QStatusBar; // 前置声明：状态行出口（PM-11 永久标签已在内）
 
 namespace sdurws {
 namespace ird {
@@ -210,10 +213,29 @@ public:
     virtual QWidget* rightWidget() = 0;
     /// @brief 底部任务和状态区内容（§4.2 底部行五页签——最小内容高 160 px）。
     virtual QWidget* bottomWidget() = 0;
-    /// @brief 状态行（QStatusBar，PM-11 永久标签已在内——顶层宿主经
-    ///        QMainWindow::setStatusBar 承载，嵌入式宿主自行安放；瞬态反馈
-    ///        showMessage 由内容装配层调用，两种宿主行为同源）。
-    virtual QStatusBar* statusBarWidget() = 0;
+
+    // ---- 状态出口观测钩子（UI-T18 契约面变更——O-43 ③：QStatusBar*
+    //      出口移除，状态投影改由宿主层承载；登记 ui.md §10.1 v1.14）----
+
+    /**
+     * @brief 注册 PM-11 永久状态文本观察者（formatProjectStatusText 唯一
+     *        权威的投影面——与 setTitleTextObserver 同源同格式，宿主层据此
+     *        渲染自己的状态栏永久位；不注册＝无投影（无宿主测试场景）。
+     *
+     * @param observer [in] 回调（UI 线程；入参＝PM-11 格式文本；空＝清除；
+     *                  生命周期≤本实例）
+     */
+    virtual void setStatusTextObserver(std::function<void(const QString&)> observer) = 0;
+
+    /**
+     * @brief 注册瞬态状态消息观察者（showMessage 语义的投影面——命令反馈/
+     *        即时可见性补偿等非阻断消息；宿主层转发自身状态栏）。
+     *
+     * @param observer [in] 回调（UI 线程；入参＝消息文本＋超时毫秒
+     *                  [单位 ms，0＝驻留至下一条]；空＝清除）
+     */
+    virtual void setStatusMessageObserver(
+        std::function<void(const QString& message, int timeoutMs)> observer) = 0;
 
     // ---- 五区可见性（§4.1/§4.4；宿主层语义差异见 WorkbenchHostKind）----
 

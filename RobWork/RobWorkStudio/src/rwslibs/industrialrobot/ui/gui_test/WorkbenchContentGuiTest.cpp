@@ -217,11 +217,32 @@ TEST_F(WorkbenchContentGuiTest, TwoPhaseAssemblyContract_UI_SPLIT)
     EXPECT_NE(content->centralWidget(), nullptr);
     EXPECT_NE(content->rightWidget(), nullptr);
     EXPECT_NE(content->bottomWidget(), nullptr);
-    EXPECT_NE(content->statusBarWidget(), nullptr);
-    // 中央区页 0＝无项目首页（PM-10 启动态）。
+
+    // 中央区页 0＝无项目首页（PM-10 启动态——须在注入项目上下文前断言）。
     auto* stack = qobject_cast<QStackedWidget*>(content->centralWidget());
     ASSERT_NE(stack, nullptr);
     EXPECT_EQ(stack->currentIndex(), 0);
+
+    // 状态出口观测（UI-T18 契约面变更——O-43 ③：QStatusBar* 出口移除，
+    // PM-11 永久文本与瞬态消息改经双观测钩子投影宿主层；内容层零状态栏
+    // Widget）。PM-11 投影随上下文注入刷新；瞬态消息经未知命令反馈驱动。
+    QString pm11Text;
+    QString transientMessage;
+    content->setStatusTextObserver([&pm11Text](const QString& text) { pm11Text = text; });
+    content->setStatusMessageObserver(
+        [&transientMessage](const QString& message, int) { transientMessage = message; });
+    ProjectContextProjection statusContext;
+    ProjectMetadataProjection statusMetadata;
+    statusMetadata.projectId = core::ProjectId::generate();
+    statusMetadata.projectDisplayName = "状态投影验证";
+    statusMetadata.writable = true;
+    statusContext.project = statusMetadata;
+    content->presentProjectContext(statusContext);
+    EXPECT_FALSE(pm11Text.isEmpty())
+        << "PM-11 状态文本未经理观察者投影（UI-T18 契约面失效）";
+    content->submitCommand("bogus.command");
+    EXPECT_TRUE(transientMessage.contains(QString::fromUtf8("未知命令")))
+        << "瞬态消息未经理观察者投影（UI-T18 契约面失效）";
 
     EXPECT_TRUE(content->shutdown());
 }

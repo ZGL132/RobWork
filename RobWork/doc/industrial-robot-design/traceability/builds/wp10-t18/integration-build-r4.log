@@ -1,0 +1,1981 @@
+CMake is re-running because D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/src/CMakeFiles/generate.stamp is out-of-date.
+  the file 'D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/bin/RobWorkStudio.ini.template.static'
+  is newer than 'D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/src/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- RobWork: Build configuration: none
+-- RobWork: Version 26.9.24
+-- RobWork: ROOT - D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork
+-- RobWork: Boost version 1.92.0 found!
+-- RobWork: OpenGL and GLUT ENABLED! FOUND!
+-- RobWork: XERCES ENABLED! FOUND!
+-- RobWork: Yaobi ENABLED! NOT FOUND! Using RobWork native Yaobi.
+-- RobWork: PQP ENABLED! Using RobWork native PQP.
+-- Eigen3 version .. found in D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3, but at least version 2.91.0 is required
+-- Eigen3 version .. found in D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3, but at least version 2.91.0 is required
+-- RobWork: EIGEN3 .. Found w. Hunter
+-- RobWork: Qhull Found
+-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+-- USE_FCL ON : FCL not Found
+-- USE_CSGJS ON: Enabled by default
+-- USE_Bullet OFF : Disable Hard Coded
+-- USE_SWIG OFF : Swig not Found
+-- USE_LUA OFF : Swig not found
+-- USE_ASSIMP OFF : Assimp not found and is now DISABLED!
+-- USE_Python ON : Python  Found
+-- USE_numpy OFF : Python Not Found
+-- USE_gtest  OFF : Disabled by default
+-- USE_Mathematica OFF : Disabled by default
+-- USE_RW_ASSERT ON : Enabled by Default
+-- USE_OpenMP ON : OpenMP 2.0 CXX FOUND! - Specification date 200203
+-- RobWork: RW C flags: 
+-- RobWork: RW CXX flags: -EHa -bigobj /MP -openmp
+-- RobWork: RW definitions: -DNOMINMAX;-DBIND_FORTRAN_LOWERCASE_UNDERSCORE;-DWIN32_LEAN_AND_MEAN;-D_WIN32_WINNT=0x0501;-D_SCL_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_DEPRECATE;-DMSVC_AMD64
+-- RobWork: RW linker flags: 
+CMake Warning (dev) at RobWork/cmake/RobWorkMacros.cmake:497 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+Call Stack (most recent call first):
+  RobWork/ext/csgjs/src/CMakeLists.txt:13 (rw_add_includes)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- BUILD_sdurw_core  ON : Enabled by default.
+-- BUILD_sdurw_plugin  ON : Enabled by default.
+-- BUILD_sdurw_common  ON : Enabled by default.
+-- BUILD_sdurw_math  ON : Enabled by default.
+-- BUILD_sdurw_kinematics  ON : Enabled by default.
+-- BUILD_sdurw_geometry  ON : Enabled by default.
+-- BUILD_sdurw_sensor  ON : Enabled by default.
+-- BUILD_sdurw_graspplanning  ON : Enabled by default.
+-- BUILD_sdurw_models  ON : Enabled by default.
+-- BUILD_sdurw_trajectory  ON : Enabled by default.
+-- BUILD_sdurw_proximity  ON : Enabled by default.
+-- BUILD_sdurw_graphics  ON : Enabled by default.
+-- BUILD_sdurw_invkin  ON : Enabled by default.
+-- BUILD_sdurw_pathplanning  ON : Enabled by default.
+-- BUILD_sdurw_loaders  ON : Enabled by default.
+-- BUILD_sdurw  ON : Enabled by default.
+-- BUILD_sdurw_algorithms  ON : Enabled by default.
+-- BUILD_sdurw_task  ON : Enabled by default.
+-- BUILD_sdurw_assembly  ON : Enabled by default.
+-- BUILD_sdurw_calibration  ON : Enabled by default.
+-- BUILD_sdurw_control  ON : Enabled by default.
+-- BUILD_sdurw_opengl  ON : Enabled by default.
+-- BUILD_sdurw_mathematica  OFF : Disabled by default.
+-- BUILD_sdurw_proximitystrategies  ON : Enabled by default.
+-- sdurw_proximitystrategies: Not building Bullet interface since Bullet is disabled!
+-- sdurw_proximitystrategies: Not building FCL interface since FCL is disabled!
+-- BUILD_sdurw_proximitystrategies.rwplugin  ON : Enabled by default.
+-- BUILD_sdurw_pathoptimization  ON : Enabled by default.
+-- BUILD_sdurw_pathplanners  ON : Enabled by default.
+-- BUILD_sdurw_simulation  ON : Enabled by default.
+-- BUILD_sdurw_java  OFF : SWIG not found!
+-- BUILD_sdurw_python  OFF : SWIG not found!
+-- BUILD_sdurw_lua  OFF : Lua not found!
+-- BUILD_sdurw_softbody  OFF : Disabled by default.
+-- BUILD_sdurw_csg  ON : Enabled by default.
+-- BUILD_sdurw_analytic_geometry  ON : Enabled by default.
+-- BUILD_sdurw_simplefinger  ON : Enabled by default.
+-- BUILD_sdurw_sandbox  OFF : Disabled by default.
+-- RobWork: system id= 
+-- RobWork tests ENABLED!
+-- RobWork example DISABLED!
+-- Current Git revision is d7e4a243-dirty
+-- RobWorkStudio: Build configuration: none
+-- RobWorkStudio: Version 26.9.24
+-- RobWorkStudio: ROOT dir: D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkStudio/cmake/RobWorkStudioSetup.cmake:50 (find_package)
+  RobWorkStudio/CMakeLists.txt:89 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkStudio/cmake/RobWorkStudioSetup.cmake:51 (find_package)
+  RobWorkStudio/CMakeLists.txt:89 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- 
+-- Found Python interpreter 3.13.11
+-- Found Python libraries 3.13.11
+-- RobWorkStudio: Using Qt 6.11.1.
+-- RobWork: OpenGL and GLUT ENABLED! FOUND!
+-- RobWorkStudio: SWIG 3+ not found!
+-- RobWorkStudio: Lua DISABLED!
+-- QCodeEditor not found building internal target
+-- RobWorkStudio: Adding RWS CXX flags:  -EHa -bigobj /MP -openmp
+-- RobWorkStudio: Addubg RWS definitions: -DNOMINMAX;-DBIND_FORTRAN_LOWERCASE_UNDERSCORE;-DWIN32_LEAN_AND_MEAN;-D_WIN32_WINNT=0x0501;-D_SCL_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_WARNINGS;-D_CRT_SECURE_NO_DEPRECATE;-DMSVC_AMD64;-DQT_DEBUG
+-- RobWorkStudio: Using static linking of default plugins!
+CMake Warning (dev) at RobWorkStudio/ext/qtpropertybrowser/CMakeLists.txt:66 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Deprecation Warning at RobWorkStudio/ext/QCodeEditor/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- BUILD_sdurws  ON : Enabled by default.
+-- BUILD_sdurws_plugin.rwplugin  ON : Enabled by default.
+-- BUILD_sdurws_atask  ON : Enabled by default.
+-- BUILD_sdurws_gtask  ON : Enabled by default.
+-- BUILD_sdurws_jog  ON : Enabled by default.
+-- BUILD_sdurws_log  ON : Enabled by default.
+-- BUILD_sdurws_playback  ON : Enabled by default.
+-- BUILD_sdurws_propertyview  ON : Enabled by default.
+-- BUILD_sdurws_treeview  ON : Enabled by default.
+-- BUILD_sdurws_planning  ON : Enabled by default.
+-- BUILD_sdurws_pythoneditor  ON : Enabled by default.
+-- BUILD_sdurws_sensors  ON : Enabled by default.
+-- BUILD_sdurws_workcelleditor  ON : Enabled by default.
+-- BUILD_sdurws_workcelleditorplugin  ON : Enabled by default.
+-- USE STATIC PLUGINS
+-- BUILD_sdurws_robworkstudioapp  ON : Enabled by default.
+-- BUILD_sdurws_lua  OFF : SWIG not found!
+-- BUILD_sdurws_java  OFF : SWIG not found!
+-- BUILD_sdurws_python  OFF : SWIG not found!
+-- BUILD_sdurws_luaeditor  OFF : Disabled by default.
+-- BUILD_sdurws_luapl  OFF : Disabled by default.
+-- BUILD_RobWorkStudio  ON : Enabled by default.
+-- RobWorkStudio: platform  
+-- RobWorkStudio: tests DISABLED!
+-- Current Git revision is d7e4a243-dirty
+-- RobWorkSim: Build configuration: none
+-- RobWorkSim: Version 26.9.24
+-- RobWorkSim: ROOT dir: D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:34 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:35 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:41 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- RobWorkSim: Python interpreter 3.13.11 Found
+-- RobWorkSim: Python libraries 3.13.11 Found
+-- RobWorkSim: SWIG 3+ not found!
+-- RobWorkSim: Lua DISABLED!
+-- RobWorkSim: Bullet enabled
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0074 is not set: find_package uses <PackageName>_ROOT variables.
+  Run "cmake --help-policy CMP0074" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+
+  CMake variable ODE_ROOT is set to:
+
+    ODE_DIR-NOTFOUND
+
+  For compatibility, CMake is ignoring the variable.
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:181 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- RobWorkSim: ODE disabled.
+-- RobWorkSim: RobWorkPhysicsEngine enabled.
+-- RobWorkSim: RWPhysics enabled.
+-- RobWorkSim: Adding RWSIM CXX flags: -EHa -bigobj /MP -openmp 
+-- BUILD_sdurwsim  ON : Enabled by default.
+-- BUILD_sdurwsim_gui  ON : Enabled by default.
+-- BUILD_sdurwsim_ode  OFF : Disabled by default.
+-- BUILD_sdurwsim_bullet  ON : Enabled by default.
+-- Bullet will be compiled with single precision.
+-- BUILD_sdurwsim_lua  OFF : SWIG not found!
+-- BUILD_sdurwsim_java  OFF : SWIG not found!
+-- BUILD_sdurwsim_python  OFF : SWIG not found!
+-- BUILD_SimulatorLogViewer  ON : Enabled by default.
+-- BUILD_sdurwsim_test  ON : Enabled by default.
+-- BUILD_RWSimulatorPlugin  ON : Enabled by default.
+-- BUILD_SimUtilityPlugin  ON : Enabled by default.
+-- BUILD_GraspTableGeneratorPlugin  ON : Enabled by default.
+-- BUILD_RWSimPlugin  ON : Enabled by default.
+-- BUILD_SimTaskPlugin  ON : Enabled by default.
+-- BUILD_EngineTestPlugin  ON : Enabled by default.
+-- RobWork tests DISABLED!
+-- Configuring done (8.2s)
+-- Generating done (31.9s)
+-- Build files have been written to: D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\libs\Release\pqp.lib
+  Automatic MOC for target qtpropertybrowser
+  ExtensionRegistry.cpp
+  Log.cpp
+  Plugin.cpp
+  RobWork.cpp
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\libs\Release\yaobi.lib
+  qtpropertybrowser.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/ext/csgjs/src/CMakeLists.txt
+  csgjs.cpp
+  sdurw_csgjs.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\libs\Release\sdurw_csgjs.lib
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_core.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_core.exp
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_core.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rw/plugin/CMakeLists.txt
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_common.dll
+  DynamicLibraryLoader.cpp
+  DynamicLibraryLoaderBase.cpp
+  PluginFactory.cpp
+  PluginFactoryBase.cpp
+  PluginRepository.cpp
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  Auto build dll exports
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_kinematics.dll
+  Automatic MOC for target sdurws_ird_diagnostics
+  Automatic MOC for target sdurws_ird_project
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_geometry.dll
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_plugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_plugin.exp
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/geometry/analytic_geometry/CMakeLists.txt
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_sensor.dll
+  QuadraticTestObjects.cpp
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_ui
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_models.dll
+  PolicySummaryCard.cpp
+  ShellSupport.cpp
+  View3DPlaceholder.cpp
+  WorkbenchContent.cpp
+  WorkbenchShell.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rw/graspplanning/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/control/CMakeLists.txt
+  ApproachMeasure3D.cpp
+  CMDistCCPMeasure3D.cpp
+  CompositeContactFilter.cpp
+  CompositeGraspFilter.cpp
+  ContactDistThresFilter.cpp
+  ContactValidateFilter.cpp
+  Contour2DInfoMap.cpp
+  CurvatureThresFilter.cpp
+  DiceContactG3D.cpp
+  GWSMeasure3D.cpp
+  Grasp2D.cpp
+  Grasp3D.cpp
+  GraspQualityMeasure3D.cpp
+  GraspTable.cpp
+  GraspValidateFilter.cpp
+  PlaneClearanceFilter.cpp
+  SemiForceClosureFilter.cpp
+  WrenchMeasure3D.cpp
+  QualityMeasure2D.cpp
+  Auto build dll exports
+  Auto build dll exports
+  Controller.cpp
+  JointController.cpp
+  SyncVelocityRamp.cpp
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_graphics.dll
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_trajectory.dll
+  DistanceCalculator.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rw\proximity\DistanceCalculator.cpp(229,9): warning C4101: “i”: 未引用的局部变量 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rw\proximity\sdurw_proximity.vcxproj]
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_analytic_geometry.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_analytic_geometry.exp
+  sdurw_analytic_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_analytic_geometry.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/geometry/analytic_geometry/CMakeLists.txt
+  Auto build dll exports
+  AnalyticGeometryPlugin.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_control.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_control.exp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_proximity.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_proximity.exp
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_control.dll
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_proximity.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rw/invkin/CMakeLists.txt
+  AmbiguityResolver.cpp
+  ClosedFormIK.cpp
+  IterativeIK.cpp
+  IterativeMultiIK.cpp
+  CCDSolver.cpp
+  ParallelIKSolver.cpp
+  PieperSolver.cpp
+  IKMetaSolver.cpp
+  JacobianIKSolver.cpp
+  JacobianIKSolverM.cpp
+  ClosedFormIKSolverUR.cpp
+  ClosedFormIKSolverKukaIIWA.cpp
+  QConstraint.cpp
+  QNormalizer.cpp
+  StateConstraint.cpp
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Model3DFactory.cpp
+  XMLRWLoader.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/simulation/CMakeLists.txt
+  FrameGrabber.cpp
+  FrameGrabber25D.cpp
+  GLFrameGrabber.cpp
+  SimulatedCamera.cpp
+  SimulatedKinect.cpp
+  GLFrameGrabber25D.cpp
+  KinematicSimulator.cpp
+  SimulatedController.cpp
+  SimulatedSensor.cpp
+  Simulator.cpp
+  SimulatedScanner25D.cpp
+  SimulatedScanner2D.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/bin/Release/sdurw_analytic_geometry.rwplugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/bin/Release/sdurw_analytic_geometry.rwplugin.exp
+  sdurw_analytic_geometry.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_analytic_geometry.rwplugin.dll
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_graspplanning.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_graspplanning.exp
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_simulation.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_simulation.exp
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_loaders.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_loaders.exp
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_loaders.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/csg/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/task/CMakeLists.txt
+  ProximityStrategyFactory.cpp
+  RenderText.cpp
+  SceneOpenGL.cpp
+  CSGModel.cpp
+  CSGModelFactory.cpp
+  CSGConvert.cpp
+  CSGUtil.cpp
+  Action.cpp
+  Entity.cpp
+  Motion.cpp
+  Target.cpp
+  Task.cpp
+  TaskUtils.cpp
+  TypeRepository.cpp
+  GraspTask.cpp
+  GraspTarget.cpp
+  GraspResult.cpp
+  GraspSubTask.cpp
+  DOMTaskFormat.cpp
+  DOMTaskLoader.cpp
+  DOMTaskSaver.cpp
+  TaskLoader.cpp
+  TaskSaver.cpp
+  XMLTaskFormat.cpp
+  XMLTaskLoader.cpp
+  XMLTaskSaver.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  #include <rwlibs/os/glext_win32.hpp> is deprecated, use #include <rwlibs/opengl/glext_win32.hpp> instead
+  Auto build dll exports
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_csg.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_csg.exp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_invkin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_invkin.exp
+  sdurw_csg.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_csg.dll
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_proximitystrategies.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_proximitystrategies.exp
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_invkin.dll
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/algorithms/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt
+  KDTree.cpp
+  KDTreeQ.cpp
+  IKQPSolver.cpp
+  QPController.cpp
+  QPSolver.cpp
+  XQPController.cpp
+  NullSpaceProjection.cpp
+  BasicGPM.cpp
+  BFGS.cpp
+  PlannerConstraint.cpp
+  MovingAverage.cpp
+  QEdgeConstraint.cpp
+  RANSACModel.cpp
+  QEdgeConstraintIncremental.cpp
+  PointModel.cpp
+  LineModel.cpp
+  StructuredLineModel.cpp
+  PlaneModel.cpp
+  StablePose1DModel.cpp
+  StablePose0DModel.cpp
+  PointPairsRegistration.cpp
+  PathPlanner.cpp
+  QToQPlanner.cpp
+  QToTPlanner.cpp
+  QToQSamplerPlanner.cpp
+  PlannerUtil.cpp
+  StopCriteria.cpp
+  QConstraint.cpp
+  QNormalizer.cpp
+  QIKSampler.cpp
+  QSampler.cpp
+  StateConstraint.cpp
+  PathAnalyzer.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/geometry/simplefinger/CMakeLists.txt
+  Auto build dll exports
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/proximitystrategies/CMakeLists.txt
+  SimpleFinger.cpp
+  ProximityStrategyPlugin.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_opengl.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_opengl.exp
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_opengl.dll
+  Automatic MOC for target sdurws
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_simplefinger.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_simplefinger.exp
+  Auto build dll exports
+  sdurw_simplefinger.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_simplefinger.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/geometry/simplefinger/CMakeLists.txt
+  AboutBox.cpp
+  HelpAssistant.cpp
+  RobWorkStudio.cpp
+  RobWorkStudioPlugin.cpp
+  PyPlugin.cpp
+  PythonRunner.cpp
+  mocs_compilation_Release.cpp
+  SimpleFingerPlugin.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_task.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_task.exp
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_task.dll
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rws\pythonpluginloader\PythonRunner.cpp(105,9): warning C4996: 'Py_SetProgramName': deprecated in 3.11 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/bin/Release/sdurw_proximitystrategies.rwplugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/bin/Release/sdurw_proximitystrategies.rwplugin.exp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_pathplanning.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_pathplanning.exp
+  sdurw_proximitystrategies.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_proximitystrategies.rwplugin.dll
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/assembly/CMakeLists.txt
+  AssemblyControlResponse.cpp
+  AssemblyControlStrategy.cpp
+  AssemblyParameterization.cpp
+  AssemblyRegistry.cpp
+  AssemblyResult.cpp
+  AssemblyState.cpp
+  AssemblyTask.cpp
+  CircularPiHControlStrategy.cpp
+  CircularPiHParameterization.cpp
+  PiHParameterization.cpp
+  PiHStrategy.cpp
+  SpiralParameterization.cpp
+  SpiralStrategy.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/bin/Release/sdurw_simplefinger.rwplugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/bin/Release/sdurw_simplefinger.rwplugin.exp
+  sdurw_simplefinger.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_simplefinger.rwplugin.dll
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_algorithms.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_algorithms.exp
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_algorithms.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/pathplanners/CMakeLists.txt
+  Z3QToQPlanner.cpp
+  Z3Planner.cpp
+  PartialIndexTable.cpp
+  PRMPlanner.cpp
+  RRTQToQPlanner.cpp
+  RRTPlanner.cpp
+  ARWExpand.cpp
+  ARWPlanner.cpp
+  ARWQToQPlanner.cpp
+  SBLExpand.cpp
+  SBLInternal.cpp
+  SBLSetup.cpp
+  SBLOptions.cpp
+  SBLPlanner.cpp
+  Auto build dll exports
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rws\RobWorkStudio.cpp(484,22): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rws\sdurws.vcxproj]
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_assembly.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_assembly.exp
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_assembly.dll
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(189,13): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\src\rwlibs\pathplanners\sdurw_pathplanners.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rwlibs/pathplanners/prm/PRMPlanner.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(189,13):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\pathplanners\prm\PRMPlanner.cpp(208,35):
+          查看对正在编译的 类 模板 实例化“rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+          D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(135,24):
+          在编译 类 模板 成员函数“std::list<ValueType,std::allocator<ValueType>> rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors(const rw::math::Q &) const”时
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\pathplanners\prm\PRMPlanner.cpp(208,33):
+              请参阅 "rwlibs::pathplanners::PRMPlanner::addEdges" 中对 "rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors" 的第一个引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+          D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(138,13):
+          查看对正在编译的函数 模板 实例化“void rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors<std::list<ValueType,std::allocator<ValueType>>>(const rw::math::Q &,Collection &) const”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr,
+              Collection=std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>
+          ]
+          D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(121,13):
+          查看对正在编译的函数 模板 实例化“void rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors<Collection>(int,std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,Collection &) const”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr,
+              Collection=std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>,
+              _Ty=rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>>::Dimension
+          ]
+  
+  sdurws.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws.lib
+  Automatic MOC for target sdurws_atask
+  Automatic MOC for target sdurws_gtask
+  Automatic MOC for target sdurws_plugin.rwplugin
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rws/CMakeLists.txt
+  Generating ui_GTaskVisPlugin.h
+  Generating ui_ATaskVisPlugin.h
+  Generating qrc_gtask_resources.cpp
+  Generating ui_StrategyLibraryDialog.h
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/gtask/CMakeLists.txt
+  Generating ui_TaskSetupDialog.h
+  Generating qrc_atask_resources.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/atask/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_ui_plugin
+  RWSImageLoaderPlugin.cpp
+  mocs_compilation_Release.cpp
+  GTaskVisPlugin.cpp
+  qrc_gtask_resources.cpp
+  mocs_compilation_Release.cpp
+  ATaskVisPlugin.cpp
+  StrategyLibraryDialog.cpp
+  TaskSetupDialog.cpp
+  qrc_atask_resources.cpp
+  mocs_compilation_Release.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_pathplanners.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_pathplanners.exp
+  UiPlugin.cpp
+  mocs_compilation_Release.cpp
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_pathplanners.dll
+  Automatic MOC and UIC for target sdurwsim
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsim/CMakeLists.txt
+  BallBallStrategy.cpp
+  Contact.cpp
+  ContactDetector.cpp
+  ContactDetectorData.cpp
+  ContactDetectorTracking.cpp
+  ContactModelGeometry.cpp
+  ContactStrategy.cpp
+  ContactStrategyData.cpp
+  ContactStrategyGeometry.cpp
+  ContactStrategyTracking.cpp
+  Body.cpp
+  RigidBody.cpp
+  BeamBody.cpp
+  KinematicBody.cpp
+  FixedBody.cpp
+  DynamicDevice.cpp
+  KinematicDevice.cpp
+  RigidDevice.cpp
+  DynamicWorkCell.cpp
+  ContactPoint.cpp
+  ContactCluster.cpp
+  ContactManifold.cpp
+  ContactDataMap.cpp
+  MaterialDataMap.cpp
+  DynamicUtil.cpp
+  SuctionCup.cpp
+  OBRManifold.cpp
+  BodyUtil.cpp
+  Constraint.cpp
+  SimulatedTactileSensor.cpp
+  TactileArraySensor.cpp
+  BodyContactSensor.cpp
+  SimulatedFTSensor.cpp
+  DynamicWorkCellLoader.cpp
+  DynamicWorkCellSaver.cpp
+  ScapePoseFormat.cpp
+  MovingAverage.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/bin/Release/sdurws_plugin.rwplugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/bin/Release/sdurws_plugin.rwplugin.exp
+  PointRANSACFitting.cpp
+  DistModel.cpp
+  PlaneModel.cpp
+  CircleModel.cpp
+  SupportPose.cpp
+  sdurws_plugin.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_plugin.rwplugin.dll
+  PlanarSupportPoseGenerator.cpp
+  HughLineExtractor.cpp
+  RecursiveNewtonEuler.cpp
+  RestingPoseGenerator.cpp
+  CollisionFreeSampler.cpp
+  FiniteStateSampler.cpp
+  SpherePoseSampler.cpp
+  StateSampler.cpp
+  PreshapeSampler.cpp
+  GraspPolicy.cpp
+  GraspStrategy.cpp
+  GraspPolicyFactory.cpp
+  GraspStrategyFactory.cpp
+  TargetConfigGraspPolicy.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsim\loaders\DynamicWorkCellSaver.cpp(239,41): warning C4101: “e”: 未引用的局部变量 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsim\loaders\DynamicWorkCellSaver.cpp(249,45): warning C4101: “e”: 未引用的局部变量 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  PoseSampler.cpp
+  BoxPoseSampler.cpp
+  SurfacePoseSampler.cpp
+  RenderGhost.cpp
+  RenderPoints.cpp
+  RenderPlanes.cpp
+  RenderCircles.cpp
+  PDController.cpp
+  SyncPDController.cpp
+  VelRampController.cpp
+  BeamJointController.cpp
+  SpringJointController.cpp
+  PoseController.cpp
+  SerialDeviceController.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(64,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(66,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(68,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  SimulatorLog.cpp
+  SimulatorLogEntry.cpp
+  LogCollisionResult.cpp
+  LogConstraintForceTorque.cpp
+  LogConstraints.cpp
+  LogContactForceTorque.cpp
+  LogContactSet.cpp
+  LogContactVelocities.cpp
+  LogDistanceResult.cpp
+  LogDistanceMultiResult.cpp
+  LogEquationSystem.cpp
+  LogForceTorque.cpp
+  LogPositions.cpp
+  LogMessage.cpp
+  LogValues.cpp
+  LogVelocities.cpp
+  SimulatorLogScope.cpp
+  SimulatorLogUtil.cpp
+  LogStep.cpp
+  SimulatorStatistics.cpp
+  DynamicSimulator.cpp
+  ThreadSimulator.cpp
+  PhysicsEngine.cpp
+  PhysicsEngineFactory.cpp
+  GraspTaskSimulator.cpp
+  AssemblySimulator.cpp
+  RWSimulator.cpp
+  RWDebugRender.cpp
+  BodyIntegrator.cpp
+  CNodePairMap.cpp
+  CNodePool.cpp
+  ConstantForceManipulator.cpp
+  ConstraintNode.cpp
+  ConstraintEdge.cpp
+  ContactGraph.cpp
+  ContactModelFactory.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsim\rwphysics\ContactModelFactory.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  EulerIntegrator.cpp
+  ConstraintSolver.cpp
+  SequintialImpulseSolver.cpp
+  RWBody.cpp
+  RWBodyPool.cpp
+  ContactStrategyDMS.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/libs/Release/sdurws_atask.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/libs/Release/sdurws_atask.exp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/libs/Release/sdurws_ird_ui_plugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/libs/Release/sdurws_ird_ui_plugin.exp
+  sdurws_atask.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\plugins\Release\sdurws_atask.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_filesystem-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\plugins\Release\boost_filesystem-vc143-mt-x64-1_92.dll done
+  sdurws_ird_ui_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/libs/Release/sdurws_gtask.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/libs/Release/sdurws_gtask.exp
+  sdurws_gtask.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\plugins\Release\sdurws_gtask.dll
+  ContactModel.cpp
+  RenderContacts.cpp
+  RenderContacts.cpp
+  BodyController.cpp
+  ContactModel.cpp
+  BodyController.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/sdurwsim.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/sdurwsim.exp
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\sdurwsim.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_thread-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\boost_thread-vc143-mt-x64-1_92.dll done
+  Automatic MOC and UIC for target RWSimulatorPlugin
+  Automatic MOC and UIC for target sdurwsim_bullet
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/bullet/CMakeLists.txt
+  BtUtil.cpp
+  BtBody.cpp
+  BtDevice.cpp
+  BtPositionDevice.cpp
+  BtVelocityDevice.cpp
+  BtSimulator.cpp
+  BtDebugRender.cpp
+  BtConstraint.cpp
+  BtTactileSensor.cpp
+  BtMaterial.cpp
+  BtContactStrategy.cpp
+  BtRWCollisionAlgorithm.cpp
+  BtRWCollisionConfiguration.cpp
+  mocs_compilation_Release.cpp
+  1>Automatic RCC for resources.qrc
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/plugins/CMakeLists.txt
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,45): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,45): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,45): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,45): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,45): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,36): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,36): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,36): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,36): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,36): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,27): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,27): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,27): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(33,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,64): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,64): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,64): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,64): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,64): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,51): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,51): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,51): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,51): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,51): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,38): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,38): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,38): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,38): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(46,38): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,87): warning C4244: “参数”: 从“T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,87): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,87): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,87): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,87): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,72): warning C4244: “参数”: 从“T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,72): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,72): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,72): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,72): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,57): warning C4244: “参数”: 从“T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,57): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,57): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,57): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,57): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,42): warning C4244: “参数”: 从“T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,42): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,42): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,42): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtUtil.cpp(47,42): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+  RWSimulatorPlugin.cpp
+  mocs_compilation_Release.cpp
+  qrc_resources_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtRWCollisionAlgorithm.cpp(117,31): warning C4244: “初始化”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtRWCollisionAlgorithm.cpp(117,29): warning C4244: “初始化”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(183,9): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(238,78): warning C4244: “参数”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(238,53): warning C4244: “参数”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(242,54): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(246,65): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,57): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,57): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,57): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,57): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,57): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,46): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,46): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,46): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,46): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,46): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,35): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,35): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,35): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,35): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(254,35): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,57): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,57): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,57): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,57): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,57): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,46): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,46): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,46): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,46): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,46): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,35): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,35): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,35): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,35): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(255,35): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,57): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,57): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,57): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,57): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,57): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,46): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,46): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,46): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,46): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,46): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,35): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,35): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,35): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,35): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(256,35): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtBody.cpp(265,30): warning C4305: “参数”: 从“double”到“btScalar”截断 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtVelocityDevice.cpp(46,46): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtVelocityDevice.cpp(51,48): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(222,73): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(303,78): warning C4244: “参数”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(303,53): warning C4244: “参数”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(308,65): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(314,63): warning C4244: “参数”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(313,63): warning C4244: “参数”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(312,63): warning C4244: “参数”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(320,65): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,57): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,57): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,57): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,57): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,57): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,46): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,46): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,46): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,46): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,46): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,35): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,35): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,35): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,35): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(329,35): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,57): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,57): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,57): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,57): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,57): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,46): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,46): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,46): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,46): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,46): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,35): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,35): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,35): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,35): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(330,35): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,57): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,57): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,57): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,57): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,57): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,46): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,46): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,46): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,46): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,46): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,35): warning C4244: “参数”: 从“const T”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,35): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,35): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,35): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtContactStrategy.cpp(331,35): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(134,17): warning C4305: “参数”: 从“double”到“btScalar”截断 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(165,47): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(166,57): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(202,47): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(203,57): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(235,59): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(236,69): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(266,63): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(267,73): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(296,63): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(297,73): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(341,59): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(342,69): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(374,59): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(375,69): warning C4244: “参数”: 从“const double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(405,57): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(417,57): warning C4244: “参数”: 从“T”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(417,57): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(417,57): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(417,57): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtConstraint.cpp(417,57): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtTactileSensor.cpp(116,79): warning C4244: “初始化”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtTactileSensor.cpp(116,50): warning C4244: “初始化”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtTactileSensor.cpp(126,79): warning C4244: “初始化”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtTactileSensor.cpp(126,50): warning C4244: “初始化”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtTactileSensor.cpp(138,79): warning C4244: “初始化”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtTactileSensor.cpp(138,50): warning C4244: “初始化”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtTactileSensor.cpp(147,79): warning C4244: “初始化”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtTactileSensor.cpp(147,50): warning C4244: “初始化”: 从“double”转换到“const btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(135,49): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(135,42): warning C4244: “参数”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(280,56): warning C4244: “=”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(281,59): warning C4244: “=”: 从“double”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(326,82): warning C4244: “=”: 从“const T”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(326,82): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(326,82): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(326,82): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(326,82): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(328,74): warning C4244: “=”: 从“const T”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(328,74): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(328,74): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(328,74): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(328,74): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(331,35): warning C4244: “=”: 从“const T”转换到“btScalar”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(331,35): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(331,35): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(331,35): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\bullet\BtSimulator.cpp(331,35): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\bullet\sdurwsim_bullet.vcxproj]
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/sdurwsim_bullet.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/sdurwsim_bullet.exp
+  sdurwsim_bullet.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\sdurwsim_bullet.dll
+  Automatic MOC and UIC for target bt_plugin.rwplugin
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/bullet/CMakeLists.txt
+  BtPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/bin/Release/bt_plugin.rwplugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/bin/Release/bt_plugin.rwplugin.exp
+  bt_plugin.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\bt_plugin.rwplugin.dll
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/RWSimulatorPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/RWSimulatorPlugin.exp
+  RWSimulatorPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\libs\Release\RWSimulatorPlugin.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_filesystem-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\libs\Release\boost_filesystem-vc143-mt-x64-1_92.dll done
+  Automatic MOC and UIC for target sdurwsim_gui
+  1>Automatic RCC for resources.qrc
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/gui/CMakeLists.txt
+  ContactTableWidget.cpp
+  JointControlDialog.cpp
+  JogGroup.cpp
+  BodyControllerWidget.cpp
+  RestingPoseDialog.cpp
+  GraspSelectionDialog.cpp
+  GraspRestingPoseDialog.cpp
+  SupportPoseAnalyserDialog.cpp
+  GLViewRW.cpp
+  CreateEngineDialog.cpp
+  SimCfgDialog.cpp
+  TactileSensorDialog.cpp
+  SimulatorLogModel.cpp
+  SimulatorLogEntryWidget.cpp
+  SimulatorLogWidget.cpp
+  BodyMotionWidget.cpp
+  CollisionResultWidget.cpp
+  DistanceMultiResultWidget.cpp
+  DistanceResultWidget.cpp
+  ConstraintWidget.cpp
+  ForceTorqueWidget.cpp
+  ContactSetWidget.cpp
+  ContactVelocitiesWidget.cpp
+  EquationSystemWidget.cpp
+  LogValuesWidget.cpp
+  LogMessageWidget.cpp
+  SimulatorStatisticsWidget.cpp
+  MathematicaPlotWidget.cpp
+  mocs_compilation_Release.cpp
+  qrc_resources_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\gui\RestingPoseDialog.cpp(210,17): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkSim\src\rwsimlibs\gui\GraspRestingPoseDialog.cpp(1082,22): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\gui\sdurwsim_gui.vcxproj]
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/sdurwsim_gui.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/sdurwsim_gui.exp
+  sdurwsim_gui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\sdurwsim_gui.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_filesystem-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\boost_filesystem-vc143-mt-x64-1_92.dll done
+  Automatic MOC and UIC for target SimUtilityPlugin
+  1>Automatic RCC for resources.qrc
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/plugins/CMakeLists.txt
+  SimUtilityPlugin.cpp
+  mocs_compilation_Release.cpp
+  qrc_resources_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/SimUtilityPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/SimUtilityPlugin.exp
+  SimUtilityPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\libs\Release\SimUtilityPlugin.dll
+  Automatic MOC and UIC for target GraspTableGeneratorPlugin
+  1>Automatic RCC for resources.qrc
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/plugins/CMakeLists.txt
+  GraspTableGeneratorPlugin.cpp
+  mocs_compilation_Release.cpp
+  qrc_resources_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/GraspTableGeneratorPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/GraspTableGeneratorPlugin.exp
+  GraspTableGeneratorPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\libs\Release\GraspTableGeneratorPlugin.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_thread-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\libs\Release\boost_thread-vc143-mt-x64-1_92.dll done
+  Automatic MOC and UIC for target RWSimPlugin
+  1>Automatic RCC for ../../gfx/RWSimPlugin.qrc
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/plugins/CMakeLists.txt
+  RWSimPlugin.cpp
+  mocs_compilation_Release.cpp
+  qrc_RWSimPlugin_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/RWSimPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/RWSimPlugin.exp
+  RWSimPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\libs\Release\RWSimPlugin.dll
+  Automatic MOC and UIC for target SimTaskPlugin
+  1>Automatic RCC for resources.qrc
+  2>Automatic RCC for ../../gfx/SimTaskPlugin.qrc
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/plugins/CMakeLists.txt
+  SimTaskPlugin.cpp
+  mocs_compilation_Release.cpp
+  qrc_resources_Release.cpp
+  qrc_SimTaskPlugin_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/SimTaskPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/SimTaskPlugin.exp
+  SimTaskPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\libs\Release\SimTaskPlugin.dll
+  Automatic MOC and UIC for target sdurwsim_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/test/CMakeLists.txt
+  DynamicWorkCellBuilder.cpp
+  EngineTest.cpp
+  IntegratorTest.cpp
+  IntegratorGravityTest.cpp
+  IntegratorRotationTest.cpp
+  IntegratorSpringTest.cpp
+  mocs_compilation_Release.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/sdurwsim_test.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/sdurwsim_test.exp
+  sdurwsim_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\sdurwsim_test.dll
+  Automatic MOC and UIC for target EngineTestPlugin
+  1>Automatic RCC for resources.qrc
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/plugins/CMakeLists.txt
+  EngineTestPlugin.cpp
+  mocs_compilation_Release.cpp
+  qrc_resources_Release.cpp
+  Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately. For example:
+  - add -D_WIN32_WINNT=0x0601 to the compiler command line; or
+  - add _WIN32_WINNT=0x0601 to your project's Preprocessor Definitions.
+  Assuming _WIN32_WINNT=0x0601 (i.e. Windows 7 target).
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/EngineTestPlugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkSim/libs/Release/EngineTestPlugin.exp
+  EngineTestPlugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\libs\Release\EngineTestPlugin.dll
+  Automatic MOC for target sdurws_ird_diagnostics_test
+  Automatic MOC for target QCodeEditor
+  Automatic MOC for target sdurws_ird_core_test
+  Automatic MOC and UIC for target SimulatorLogViewer
+  Automatic MOC for target sdurws_ird_testkit
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/calibration/CMakeLists.txt
+  Automatic MOC for target sdurws_jog
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWork/src/rwlibs/pathoptimization/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Automatic MOC for target sdurws_log
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  XmlCalibrationLoader.cpp
+  XmlCalibrationSaver.cpp
+  Calibration.cpp
+  FixedFrameCalibration.cpp
+  WorkCellCalibration.cpp
+  ClearanceOptimizer.cpp
+  ClearanceCalculator.cpp
+  MinimumClearanceCalculator.cpp
+  PathLengthOptimizer.cpp
+  Automatic MOC for target sdurws_ird_diagnostics_contract_test
+  Automatic MOC for target sdurws_playback
+  BuildRedLineTest.cpp
+  StableCodeRegistryTest.cpp
+  CatalogFactoryTest.cpp
+  BuildRedLineTest.cpp
+  IdentityTest.cpp
+  DigestTest.cpp
+  ConventionValueSemanticsTest.cpp
+  ProvenanceTest.cpp
+  CatalogLifecycleTest.cpp
+  ConfirmableTest.cpp
+  AggregationTest.cpp
+  UnitsTest.cpp
+  LoggingTest.cpp
+  RedactionTest.cpp
+  CollaborationQueryTest.cpp
+  CompareTest.cpp
+  EvaluationTest.cpp
+  mocs_compilation_Release.cpp
+  DiagDataTest.cpp
+  EventsTest.cpp
+  mocs_compilation_Release.cpp
+  1>Automatic RCC for resources/qcodeeditor_resources.qrc
+  1>Automatic RCC for resources.qrc
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkSim/src/rwsimlibs/tools/CMakeLists.txt
+  Automatic MOC for target sdurws_propertyview
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/ext/QCodeEditor/CMakeLists.txt
+  Generating qrc_resources.cpp
+  SimulatorLogViewer.cpp
+  mocs_compilation_Release.cpp
+  qrc_resources_Release.cpp
+  QCodeEditor.cpp
+  QLineNumberArea.cpp
+  QCXXHighlighter.cpp
+  QSyntaxStyle.cpp
+  QStyleSyntaxHighlighter.cpp
+  QGLSLCompleter.cpp
+  QGLSLHighlighter.cpp
+  QLanguage.cpp
+  QXMLHighlighter.cpp
+  QJSONHighlighter.cpp
+  QLuaCompleter.cpp
+  QLuaHighlighter.cpp
+  QPythonCompleter.cpp
+  QPythonHighlighter.cpp
+  QFramedTextAttribute.cpp
+  mocs_compilation_Release.cpp
+  qrc_qcodeeditor_resources_Release.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/jog/CMakeLists.txt
+  Generating qrc_resources.cpp
+  Generating qrc_playback_resources.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/log/CMakeLists.txt
+  Generating qrc_resources.cpp
+  Jog.cpp
+  SliderTab.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/playback/CMakeLists.txt
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/propertyview/CMakeLists.txt
+  ShowLog.cpp
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+  PlayBack.cpp
+  Player.cpp
+  StateDraw.cpp
+  PlayBackSettings.cpp
+  qrc_playback_resources.cpp
+  mocs_compilation_Release.cpp
+  PropertyView.cpp
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+  Auto build dll exports
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_calibration.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_calibration.exp
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_pathoptimization.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWork/libs/Release/sdurw_pathoptimization.exp
+  sdurw_calibration.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_calibration.dll
+  sdurw_pathoptimization.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWork\bin\Release\sdurw_pathoptimization.dll
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rw\common\INIArchive.hpp(257,21): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\tools\SimulatorLogViewer.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWorkSim/src/rwsimlibs/tools/SimulatorLogViewer.cpp”)
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWork\src\rw\common\INIArchive.hpp(258,21): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\src\rwsimlibs\tools\SimulatorLogViewer.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWorkSim/src/rwsimlibs/tools/SimulatorLogViewer.cpp”)
+  
+  Automatic MOC for target sdurws_sensors
+  Automatic MOC for target sdurws_treeview
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\gtest_main.dll done
+  Automatic MOC for target sdurws_workcelleditor
+  QCodeEditor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\QCodeEditor.lib
+  Automatic MOC for target sdurws_ird_evidence
+  Generating ui_WorkcellEditorWindow.h
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/workcelleditor/CMakeLists.txt
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Generating qrc_resources.cpp
+  Generating ui_SensorsPlugin.h
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/treeview/CMakeLists.txt
+  Generating qrc_resources.cpp
+  Automatic MOC for target sdurws_ird_evidence_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/sensors/CMakeLists.txt
+  WorkcellEditorWindow.cpp
+  WorkcellHighlighter.cpp
+  WCCodeEditor.cpp
+  WCECompleter.cpp
+  InputFormDialog.cpp
+  SetColorButton.cpp
+  FileDialogButton.cpp
+  mocs_compilation_Release.cpp
+  TreeView.cpp
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Sensors.cpp
+  SensorView.cpp
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+  Automatic MOC for target sdurws_pythoneditor
+  sdurws_ird_diagnostics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_test.exe
+  Automatic MOC for target sdurws_ird_evidence_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_execution_worker
+  Generating qrc_resources_pyeditor.cpp
+  Generating qrc_rwstudio_resources.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  main.cpp
+  ChannelProtocol.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  mocs_compilation_Release.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/pythoneditor/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_execution_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Editor.cpp
+  qrc_resources_pyeditor.cpp
+  qrc_rwstudio_resources.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(54,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_worker.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(54,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(55,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_worker.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(55,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\WCCodeEditor.cpp(263,43): warning C4996: 'QString::count': Use size() or length() instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\InputFormDialog.cpp(281,28): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\InputFormDialog.cpp(286,28): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\InputFormDialog.cpp(291,28): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\InputFormDialog.cpp(296,28): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\InputFormDialog.cpp(301,28): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\InputFormDialog.cpp(315,28): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\InputFormDialog.cpp(348,28): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\InputFormDialog.cpp(355,28): warning C4996: 'QVariant::Type': Use QMetaType::Type instead. [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+      D:\software\QT\6.11.1\msvc2022_64\include\QtCore\qvariant.h(149,70):
+      参见“QVariant::Type”的声明
+  
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_worker.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(299,37):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(299,37):
+              请参阅 "`anonymous-namespace'::parseArgs" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  sdurws_log.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_log.lib
+  Automatic MOC for target sdurws_ird_io
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  sdurws_propertyview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_propertyview.lib
+  Io.cpp
+  SafePath.cpp
+  Budget.cpp
+  IoDiagnostics.cpp
+  Csv.cpp
+  Json.cpp
+  ZipChannel.cpp
+  ResourceIo.cpp
+  TempArea.cpp
+  AtomicFile.cpp
+  Package.cpp
+  mocs_compilation_Release.cpp
+  Automatic MOC for target sdurws_ird_policy
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  Policy.cpp
+  Errors.cpp
+  Diagnostics.cpp
+  PolicyInput.cpp
+  PolicyParsing.cpp
+  PolicyPort.cpp
+  CollisionEvaluator.cpp
+  CollisionQuery.cpp
+  RobWorkCollisionEvaluator.cpp
+  JointLimits.cpp
+  Compatibility.cpp
+  mocs_compilation_Release.cpp
+  sdurws_playback.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_playback.lib
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_execution_worker.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_execution_worker.exe
+  Automatic MOC for target sdurws_planning
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  #include <rw/common/Exception.hpp> is deprecated use #include <rw/core/Exception.hpp> instead
+  Generating qrc_resources.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/planning/CMakeLists.txt
+  Runtime.cpp
+  Errors.cpp
+  DescriptionValidator.cpp
+  CanonicalModel.cpp
+  Codec.cpp
+  NameMap.cpp
+  BaseWorldTransform.cpp
+  WorkCellCompiler.cpp
+  DynamicWorkCellCompiler.cpp
+  Snapshot.cpp
+  CacheKey.cpp
+  CompilerImpl.cpp
+  mocs_compilation_Release.cpp
+  Planning.cpp
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\WorkcellEditorWindow.cpp(394,62): warning C4305: “参数”: 从“double”到“float”截断 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\WorkcellEditorWindow.cpp(394,57): warning C4305: “参数”: 从“double”到“float”截断 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\workcelleditor\WorkcellEditorWindow.cpp(394,52): warning C4305: “参数”: 从“double”到“float”截断 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\workcelleditor\sdurws_workcelleditor.vcxproj]
+  sdurws_jog.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_jog.lib
+  LinkageContractTest.cpp
+  ConfirmableProjectStubTest.cpp
+  CatalogHostTraceStubTest.cpp
+  ScriptedDiagSourceTest.cpp
+  DiagContractCheckTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_sensors.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_sensors.lib
+  SimulatorLogViewer.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\SimulatorLogViewer.exe
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  TaskStateMachineTest.cpp
+  CancelProtocolTest.cpp
+  RunRegistryAdmissionTest.cpp
+  SchedulerEventBusTest.cpp
+  ChannelProtocolTest.cpp
+  ResourceGovernanceTest.cpp
+  CheckpointCacheTest.cpp
+  ContractSuiteFacilitiesTest.cpp
+  mocs_compilation_Release.cpp
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_program_options-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkSim\bin\Release\boost_program_options-vc143-mt-x64-1_92.dll done
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_project_contract_test
+  Automatic MOC for target sdurws_ird_project_test
+  BuildRedLineTest.cpp
+  ErrorsTest.cpp
+  DependencyTest.cpp
+  SnapshotTest.cpp
+  SliceTest.cpp
+  EvidenceTest.cpp
+  VerdictTest.cpp
+  EnvelopeTest.cpp
+  CurrentnessTest.cpp
+  CompatibilityTest.cpp
+  EvaluatorTest.cpp
+  EvaluatorPortSuiteTest.cpp
+  mocs_compilation_Release.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(62,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(62,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(63,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(63,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(52,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(52,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(53,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(53,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\ResourceGovernanceTest.cpp(77,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\ResourceGovernanceTest.cpp(77,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\ResourceGovernanceTest.cpp(78,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\ResourceGovernanceTest.cpp(78,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\SchedulerEventBusTest.cpp(61,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\SchedulerEventBusTest.cpp(61,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\SchedulerEventBusTest.cpp(62,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\SchedulerEventBusTest.cpp(62,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1236,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1258,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  LinkageContractTest.cpp
+  LockContractTest.cpp
+  CommandContractTest.cpp
+  ArchiveContractTest.cpp
+  ProcessCrashContractTest.cpp
+  ProcessLockContractTest.cpp
+  Tx2DiagnosticRecordContractTest.cpp
+  Tx15Child.cpp
+  StubHandlers.cpp
+  mocs_compilation_Release.cpp
+  BuildRedLineTest.cpp
+  AtomicFileTest.cpp
+  StoreLockTest.cpp
+  PathCanonicalTest.cpp
+  PersistenceFormatTest.cpp
+  ObjectStoreTest.cpp
+  RevisionIndexTest.cpp
+  TxEngineTest.cpp
+  ProjectStoreTest.cpp
+  QueryPortTest.cpp
+  CommandServiceTest.cpp
+  DraftServiceTest.cpp
+  UndoRedoServiceTest.cpp
+  ArchiveServiceTest.cpp
+  Tx11Tx13SuiteTest.cpp
+  StubHandlers.cpp
+  TestMainReport.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveContractTest.cpp(383,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_contract_test.vcxproj]
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/Tx15Child.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx15Child.cpp(301,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx15Child.cpp(301,27):
+              请参阅 "sdurws::ird::project::tx15::`anonymous-namespace'::runCrashCommitChild" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  EnvelopeContractTest.cpp
+  EnvelopeAccessorContractTest.cpp
+  SliceFixtureContractTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(416,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(424,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(683,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(835,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(845,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PathCanonicalTest.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(150,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(148,9):
+              请参阅 "PathCanonicalTest_SameProject_DifferentSpellings_CanonicalizeEqual_Test::TestBody" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(420,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(473,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(799,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1010,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1015,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1017,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1024,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1026,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1028,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1048,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  sdurws_pythoneditor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_pythoneditor.lib
+  sdurws_treeview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_treeview.lib
+  Automatic MOC for target sdurws_ird_execution_contract_test
+  sdurws_ird_diagnostics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_contract_test.exe
+  sdurws_workcelleditor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_workcelleditor.lib
+  Automatic MOC for target sdurws_workcelleditorplugin
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_reporting
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_policy_test
+  Generating qrc_resources.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/workcelleditorplugin/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_policy_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  Reporting.cpp
+  Errors.cpp
+  Identity.cpp
+  ReportModel.cpp
+  ReportCodec.cpp
+  Sections.cpp
+  Builder.cpp
+  Render.cpp
+  Consistency.cpp
+  Archive.cpp
+  Export.cpp
+  Bundle.cpp
+  mocs_compilation_Release.cpp
+  BuildRedLineTest.cpp
+  PolicySetTest.cpp
+  PolicyInputTest.cpp
+  PolicyParsingTest.cpp
+  PolicyPortTest.cpp
+  DiagnosticsTest.cpp
+  CollisionSessionTest.cpp
+  CollisionEvaluationTest.cpp
+  JointLimitsTest.cpp
+  CompatibilityTest.cpp
+  mocs_compilation_Release.cpp
+  PolicyCodecFixtureContractTest.cpp
+  PolicyTestDoubleBoundaryTest.cpp
+  PolicyContractDoublesTest.cpp
+  PolicyProofMaterialContractTest.cpp
+  CollisionAnalyticDatasetTest.cpp
+  ContractTestMain.cpp
+  LinkageContractTest.cpp
+  mocs_compilation_Release.cpp
+  IdentityVocabularyContractTest.cpp
+  ArchiveCollaborationContractTest.cpp
+  EventBusDeliveryContractTest.cpp
+  WorkerProcessContractTest.cpp
+  CacheJudgeContractTest.cpp
+  ArchiveFaultContractTest.cpp
+  RecoveryProcessContractTest.cpp
+  RecoveryChild.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp(53,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp(53,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp(54,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp(54,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp(53,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp(53,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp(54,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp(54,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+  Automatic MOC for target sdurws_ird_testdata_lint
+  sdurws_planning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_planning.lib
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+  Automatic MOC for target sdurws_ird_testkit_prochelper
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  sdurws_ird_evidence_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_contract_test.exe
+  #include <rw/common/Exception.hpp> is deprecated use #include <rw/core/Exception.hpp> instead
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\RecoveryProcessContractTest.cpp(61,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\RecoveryProcessContractTest.cpp(61,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\RecoveryProcessContractTest.cpp(62,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\RecoveryProcessContractTest.cpp(62,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  Automatic MOC for target sdurws_ird_runtime_test
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(72,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(72,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(73,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(73,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(70,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(70,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(71,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(71,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+  main.cpp
+  mocs_compilation_Release.cpp
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+  main.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(718,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(232,40):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(237,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(244,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(253,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(258,30):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(264,5):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(269,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(232,40):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(237,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(244,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(253,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(258,30):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(264,5):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(269,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::createModel” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(206,40):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::createModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::destroyModel” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(211,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::destroyModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::addGeometry” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(218,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::addGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::removeGeometry” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(227,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::removeGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::getGeometryIDs” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(232,30):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::getGeometrys” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(238,5):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::getGeometrys”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::clear” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(243,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::clear”的声明
+  
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(232,40):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(237,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(244,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(253,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(258,30):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(264,5):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear” [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(269,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear”的声明
+  
+  BuildRedLineTest.cpp
+  ErrorsTest.cpp
+  SourcesTest.cpp
+  ExpectedTest.cpp
+  DescriptionTest.cpp
+  DescriptionValidatorTest.cpp
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
+  CanonicalModelTest.cpp
+  CodecTest.cpp
+  NameMapTest.cpp
+  BaseWorldTransformTest.cpp
+  WorkCellCompilerTest.cpp
+  DynamicWorkCellCompilerTest.cpp
+  SnapshotTest.cpp
+  CacheKeyTest.cpp
+  CompilerTest.cpp
+  ContractSuiteTest.cpp
+  GoldenDataLintTest.cpp
+  mocs_compilation_Release.cpp
+  Automatic MOC for target sdurws_ird_ui_app
+  Automatic MOC for target sdurws_ird_ui_contract_test
+  sdurws_ird_testkit_prochelper.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_prochelper.exe
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+  Automatic MOC for target sdurws_ird_ui_gui_test
+  sdurws_ird_ui_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_ui_app.exe
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+  WorkcellEditorPlugin.cpp
+  qrc_resources.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(65,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(65,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(66,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(66,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+  sdurws_ird_testdata_lint.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_testdata_lint.exe
+  WorkbenchContentGuiTest.cpp
+  Automatic MOC for target sdurws_ird_io_contract_test
+  Automatic MOC for target sdurws_ird_io_test
+  Automatic MOC for target sdurws_ird_modeling
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  TestMainReport.cpp
+  SafePathTest.cpp
+  BudgetTest.cpp
+  IoDiagnosticsTest.cpp
+  CsvTest.cpp
+  ObjectTypes.cpp
+  JsonTest.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  ZipChannelTest.cpp
+  ResourceIoTest.cpp
+  RobotDesign.cpp
+  Parts.cpp
+  ResourceSolidifyTest.cpp
+  Codec.cpp
+  PropertyEstimation.cpp
+  PackageTest.cpp
+  Import.cpp
+  XacroExpand.cpp
+  Template.cpp
+  Readiness.cpp
+  CommandHandlers.cpp
+  mocs_compilation_Release.cpp
+  mocs_compilation_Release.cpp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  ContractTestMain.cpp
+  PackageContractTest.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp(719,63): warning C4129: “ ：: 不可识别的字符转义序列 [D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\src\rwslibs\industrialrobot\io\sdurws_ird_io_contract_test.vcxproj]
+  sdurws_ird_execution_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_execution_contract_test.exe
+  Automatic MOC for target sdurws_ird_ui_test
+  Automatic MOC for target sdurws_ird_testkit_test
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPathsTest.cpp
+  JsonLiteTest.cpp
+  FaultTest.cpp
+  DatasetTest.cpp
+  ToleranceProfileTest.cpp
+  CheckTest.cpp
+  ContractCheckTest.cpp
+  SetCheckTest.cpp
+  FixtureTest.cpp
+  ReportTest.cpp
+  ProcessRunnerTest.cpp
+  CoreIntegrationExampleTest.cpp
+  TestMain.cpp
+  BuildRedLineTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_policy_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+  sdurws_workcelleditorplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_workcelleditorplugin.lib
+  Automatic MOC for target sdurws_robworkstudioapp
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/rwstudioapp/CMakeLists.txt
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+  sdurws_ird_policy_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  sdurws_ird_io_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_io_test.exe
+  Automatic MOC for target sdurws_ird_reporting_contract_test
+  Automatic MOC for target sdurws_ird_reporting_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\zip.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\zip.dll done
+  RobWorkStudioApp.cpp
+  mocs_compilation_Release.cpp
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\bz2.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\z.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\z.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\libexpat.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\libexpat.dll done
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  TestMainReport.cpp
+  LinkageContractTest.cpp
+  IdentityCrossUnitContractTest.cpp
+  EvidenceCrossUnitContractTest.cpp
+  SectionCrossUnitContractTest.cpp
+  BuilderCrossUnitContractTest.cpp
+  RenderCrossUnitContractTest.cpp
+  ConsistencyCrossUnitContractTest.cpp
+  ArchiveCrossUnitContractTest.cpp
+  BundleCrossUnitContractTest.cpp
+  ErrorsIdentityTest.cpp
+  ReportModelTest.cpp
+  SectionsTest.cpp
+  SectionProviderTest.cpp
+  ModelSummaryTaskStatusCrossUnitContractTest.cpp
+  BuilderTest.cpp
+  RenderTest.cpp
+  ConsistencyTest.cpp
+  ArchiveExportTest.cpp
+  BundleTest.cpp
+  ModelSummaryTest.cpp
+  TaskStatusSourceTest.cpp
+  mocs_compilation_Release.cpp
+  ReportingContractSuiteTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_io_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_io_contract_test.exe
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_modeling_contract_test
+  Automatic MOC for target sdurws_ird_modeling_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  CommandPipelineContractTest.cpp
+  mocs_compilation_Release.cpp
+  TestMainReport.cpp
+  ObjectTypesTest.cpp
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  RobotDesignTest.cpp
+  PartsTest.cpp
+  CodecTest.cpp
+  PropertyEstimationTest.cpp
+  ImportTest.cpp
+  XacroExpandTest.cpp
+  TemplateTest.cpp
+  ReadinessTest.cpp
+  CommandHandlersTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_contract_test.exe
+  sdurws_robworkstudioapp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\libs\Release\sdurws_robworkstudioapp.lib
+  Automatic MOC for target RobWorkStudio
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/RobWorkStudio/src/CMakeLists.txt
+  main.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\pugixml.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\pugixml.dll done
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/libs/Release/RobWorkStudio.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/build/RobWorkStudio/libs/Release/RobWorkStudio.exp
+  RobWorkStudio.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\RobWorkStudio.exe
+  	Copying RobWork runtime DLLs next to RobWorkStudio
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\freeglut.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\freeglut.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\xerces-c_3_3.dll -> D:\10_Source_Repos\21_robot\RobWork\.wt-wp10-t18\build\RobWorkStudio\bin\Release\xerces-c_3_3.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/.wt-wp10-t18/RobWork/CMakeLists.txt
+BUILD_EXIT=0

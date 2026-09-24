@@ -7,7 +7,9 @@
  * 设计依据：
  *   - units/ui.md §13 UI-T16 行＋立项登记注（v1.9，O-38 裁决承接）、
  *     §11.5（触发时机编排归装配层——会话入口处理器覆写）、§5.2/§5.3
- *     （打开协议与 PM-07 显示差异——编排面与 HarnessMain 逐行同源）；
+ *     （打开协议与 PM-07 显示差异——编排面与 HarnessMain 逐行同源）、
+ *     §13 UI-T18 行＋落位登记注＋§10.1 v1.14（O-43 裁决③——多 Dock 拓扑
+ *     与宿主状态栏投影，本文件承载 addDockWidget 自证拍与双观测钩子接线）；
  *   - 框架 rws::RobWorkStudioPlugin 机制（零框架修改——SA-02）：本 DLL 由
  *     宿主 Plugins→Load plugin 动态装载（开发期验证通道——动态加载仅限
  *     开发期，SA-01 产品静态白名单不变）；本文件不 include 任何业务域
@@ -29,6 +31,7 @@
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QGridLayout>
+#include <QDockWidget>
 #include <QIcon>
 #include <QInputDialog>
 #include <QLabel>
@@ -272,7 +275,37 @@ void IrdWorkbenchHostPlugin::initialize()
         };
     m_content = createWorkbenchContent(std::move(contentDeps));
 
-    // ---- 装配第四步：Dock 体栅格＋内容装配面两段装配＋退出收口挂接 ----
+    // ---- 状态投影绑宿主状态栏（UI-T18——O-43 ③：宿主 chrome 唯一）----
+    // PM-11 永久文本与瞬态消息经双观测钩子直投 getRobWorkStudio()->statusBar()
+    // （宿主注入先于 initialize——setRobWorkStudio→setupMenu→initialize 序）；
+    // v1.11"状态行钉底恒可见"的语义等价迁移＝宿主状态栏本身恒可见（强于
+    // Dock 内钉底——任何 Dock 开关都不再影响状态投影）。永久位仅添加一次
+    // （initialize 恰好一次——一次守卫保证）。
+    if (getRobWorkStudio() != nullptr) {
+        m_hostStatusBar = getRobWorkStudio()->statusBar();
+    }
+    if (m_hostStatusBar != nullptr) {
+        auto* pm11 = new QLabel(m_hostStatusBar);
+        pm11->setObjectName("ird_status_project_text");
+        m_hostStatusBar->addWidget(pm11, /*stretch=*/1);
+        m_content->setStatusTextObserver([pm11](const QString& text) {
+            pm11->setText(text);  // PM-11 永久位（不用 showMessage——瞬态位会超时清空）
+        });
+        m_content->setStatusMessageObserver(
+            [this](const QString& message, int timeoutMs) {
+                if (m_hostStatusBar != nullptr) {
+                    m_hostStatusBar->showMessage(message, timeoutMs);
+                }
+            });
+    } else {
+        reportLine("宿主状态栏不可得——状态投影无呈现面（降级形态，如实留痕）");
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel,
+                                    "宿主状态栏不可得——PM-11/瞬态消息无投影面（装配降级）");
+        }
+    }
+
+    // ---- 装配第四步：多 Dock 拓扑＋内容装配面两段装配＋退出收口挂接 ----
     if (!buildDockBody()) {
         // 内容装配面校验被拒＝装配缺陷（build() 的必填校验覆盖三组：
         // wiring 非空项、宿主控件 hostWidget、几何/位形钩子成组——宿主
@@ -290,11 +323,11 @@ void IrdWorkbenchHostPlugin::initialize()
     // restoreState(QtMainWindowState)）还没执行，它们会把本 Dock 置为
     // 隐藏——呈现结论只能由 reassertEmbeddedPresentation 在事件循环
     // 回归后给出（G1 装载门控的第二判据），此处不得提前声称"已嵌入"。
-    reportLine("工作台装配完成（五区面板＋Ctrl+Shift+P 命令面板；"
+    reportLine("工作台装配完成（多 Dock：主 Dock＋属性/任务同级 Dock＋宿主状态栏投影＋Ctrl+Shift+P 命令面板；"
                "装载呈现自证在事件循环稍后执行）");
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
-                                "内容装配面就位（嵌入式 Dock 宿主形态；会话入口覆写已注入）");
+                                "内容装配面就位（多 Dock 嵌入形态；会话入口覆写已注入；状态投影绑宿主状态栏）");
     }
 
     // ---- 装配第五步（时序关键）：装载呈现自证排队 ----
@@ -357,53 +390,57 @@ void IrdWorkbenchHostPlugin::close()
 
 bool IrdWorkbenchHostPlugin::buildDockBody()
 {
-    // Dock 体：插件本体即框架主窗口的 QDockWidget（addPlugin 的
-    // addDockWidget 目标）——体栅格安放内容装配面的五个区域，状态行钉在
-    // Dock 体底缘。红线：不建任何顶层 QMainWindow（O-38 裁决②——双菜单/
-    // 双状态栏/双 Dock 管理反模式禁止；框架菜单/状态栏能力归宿主）。
+    // 多 Dock 拓扑（UI-T18——O-43 裁决③：单一工作台 Dock 五区栅格拆分）：
+    //   ①插件本体 Dock＝主 Dock（Left 停靠区）——命令条（顶栏）＋项目导航
+    //     （左栏）纵排；
+    //   ②IRD 属性与诊断 Dock（Right 停靠区）＝右栏内容（本插件新建、宿主
+    //     addDockWidget 同级注册——addDockWidget 延后到装载呈现自证，彼时
+    //     插件已入宿主主窗口）；
+    //   ③IRD 任务和状态 Dock（Bottom 停靠区）＝底部内容（同上）。
+    // 中央区不安放（宿主中央 RWStudioView3D 唯一所有三维——O-38 裁决③；
+    // 内容装配面的中央让位页保持已构建不挂载，零呈现面）。状态行不进任何
+    // Dock——PM-11 永久投影与瞬态消息经双观测钩子直投宿主状态栏（宿主
+    // chrome 唯一，v1.11"状态行钉底"的语义等价迁移见落位登记注）。
+    // 红线不变：不建任何顶层 QMainWindow（O-38 裁决②）。
     auto* body = new QWidget(this);
     body->setObjectName("ird_plugin_dock_body");
-    // 外层纵排（两行：五区栅格吃伸展＋状态行恒定高度）——为什么状态行不进
-    // 栅格末行：宽度收束到内容最小宽（约 1054 px）时右栏文本换行加高，栅格
-    // 竖向总最小高会超过 Dock 视口，qGeomCalc 进入"空间不足按最小占比分配"
-    // 形态，末行（状态行）被整体挤出视口（attempt 2 首录截图实证：Dock 底
-    // 缘只剩空白条带、PM-11 投影不可见）。纵排拆分后，竖向短缺由带 stretch
-    // 的五区栅格先行吸收（§4.4 尺寸折叠在嵌入式形态本就关闭，各区域内容
-    // 容忍少量竖向挤压），状态行作为第二行永远保有自身高度——PM-11 投影
-    // 恒可见（§4.4 最小可用布局第三要素"状态行无隐藏入口"的嵌入式保障）。
-    auto* outerLayout = new QVBoxLayout(body);
-    outerLayout->setContentsMargins(0, 0, 0, 0);
-    outerLayout->setSpacing(2);
-    auto* grid = new QGridLayout(body);
-    grid->setContentsMargins(0, 0, 0, 0);
-    grid->setSpacing(2);
+    auto* mainLayout = new QVBoxLayout(body);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(2);
 
     if (!m_content->build()) {
         return false;  // wiring 校验被拒（装配缺陷——调用方上抛处理）
     }
 
-    // 栅格安放（§4.1 五区在 Dock 体内的并置形态——自上而下：顶栏/三栏/
-    // 底部；中央区吃伸展空间）：内容 Widget 从宿主控件重挂进栅格（Qt 对象
-    // 树托管生命周期）。状态行不进栅格——由外层纵排钉底（见上注）。
-    grid->addWidget(m_content->topBarWidget(), 0, 0, 1, 3);
-    grid->addWidget(m_content->leftWidget(), 1, 0);
-    grid->addWidget(m_content->centralWidget(), 1, 1);
-    grid->addWidget(m_content->rightWidget(), 1, 2);
-    grid->addWidget(m_content->bottomWidget(), 2, 0, 1, 3);
-    // 中央区伸展（中央工作区吃剩余空间——§4.4）；三栏按内容最小尺寸呈现。
-    grid->setColumnStretch(1, 1);
-    grid->setRowStretch(1, 1);
-    outerLayout->addLayout(grid, /*stretch=*/1);
-    outerLayout->addWidget(m_content->statusBarWidget(), /*stretch=*/0);
+    // 主 Dock 体（内容 Widget 从宿主控件重挂进纵排——Qt 对象树托管）。
+    mainLayout->addWidget(m_content->topBarWidget(), /*stretch=*/0);
+    mainLayout->addWidget(m_content->leftWidget(), /*stretch=*/1);
     setWidget(body);
     m_dockBody = body;
+
+    // 右/底 Dock 创建（父对象＝本插件；装载呈现自证时 addDockWidget 重挂
+    // 进宿主主窗口——插件本体在 addPlugin 尾段才入主窗口，彼时宿主窗口
+    // 才可寻址）。objectName 供宿主状态 blob 与排障日志定位。
+    m_propsDock = new QDockWidget(QString::fromUtf8("IRD 属性与诊断"), this);
+    m_propsDock->setObjectName("ird_props_dock");
+    m_propsDock->setWidget(m_content->rightWidget());
+    m_tasksDock = new QDockWidget(QString::fromUtf8("IRD 任务和状态"), this);
+    m_tasksDock->setObjectName("ird_tasks_dock");
+    m_tasksDock->setWidget(m_content->bottomWidget());
+
+    // 可见性目标登记（chrome 安放在 activate 之前——两段装配时序契约；
+    // 三区开关语义自此作用于 Dock 本体：左＝插件主 Dock、右/底＝同级 Dock。
+    // Top/Central 按契约登记为无操作——顶栏随主 Dock、中央归宿主）。
+    m_content->setRegionVisibilityTarget(WorkbenchRegion::Left, this);
+    m_content->setRegionVisibilityTarget(WorkbenchRegion::Right, m_propsDock);
+    m_content->setRegionVisibilityTarget(WorkbenchRegion::Bottom, m_tasksDock);
 
     // 命令状态观察：内容装配层每次刷新使能态后同步框架菜单动作（§7.6
     // 三处一致禁用的宿主菜单半区——求值结果全在注册表，本插件零判定）。
     m_content->setCommandStateObserver([this] { refreshHostMenuActions(); });
 
-    // 两段装配第二段：布局记忆（嵌入式＝三区可见性键）＋无项目首页＋
-    // 写线程＋快捷键 attach＋命令面板（§10.1 v1.10 时序契约）。
+    // 两段装配第二段：布局记忆（嵌入式＝三区可见性键，此刻施加到三个
+    // Dock）＋无项目首页＋写线程＋快捷键 attach＋命令面板（§10.1 时序）。
     m_content->activate();
     return true;
 }
@@ -643,6 +680,30 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     setFloating(false);  // 嵌入式形态钉死：非浮动（顶层漂浮窗口＝宿主形态违例）
     show();              // 恢复 Dock 呈现（仍在 addDockWidget 安放的停靠区内嵌于主窗口）
 
+    // 多 Dock 拓扑收口（UI-T18——O-43 ③）：右/底两个同级 Dock 在本拍入宿主
+    // 主窗口（此时插件已入主窗口、宿主窗口可寻址——addDockWidget 把 Dock
+    // 从插件父子树重挂进主窗口），与主 Dock 同受宿主装载语义支配（框架尾段
+    // restoreState 对状态 blob 未登记的 Dock 按隐藏处理——与主 Dock 同根因
+    // 链，故一并重显）。单发重申语义与主 Dock 一致：只此一拍，不与用户后续
+    // 手动开关竞争。
+    auto* hostWindow = qobject_cast<QMainWindow*>(parentWidget());
+    if (hostWindow != nullptr && m_propsDock != nullptr && m_tasksDock != nullptr) {
+        hostWindow->addDockWidget(Qt::RightDockWidgetArea, m_propsDock);
+        hostWindow->addDockWidget(Qt::BottomDockWidgetArea, m_tasksDock);
+        m_propsDock->show();
+        m_tasksDock->show();
+        // 区域旗标重施（UI-T18——PM-14 跨会话记忆不被装载重显夺回）：三区
+        // 可见性目标已改绑 Dock 本体，activate 期恢复的用户旗标若为"隐藏"，
+        // 上面的重显 show() 会把它顶回可见——与跨会话记忆矛盾。此处按内容
+        // 装配面的模型位（regionVisible 返回用户意愿位，非 Widget 实测态）
+        // 重施一次：用户隐藏的区保持隐藏（可经宿主"视图"菜单重新开启），
+        // 无隐藏记忆（缺省）时与重显结果一致。主 Dock（Left 目标）不在此
+        // 重施——其装载呈现维持 v1.11 注册口径（G1 门控判据"装载即呈现"；
+        // 主 Dock 承载命令条，整 Dock 隐藏将无处承载工作台入口）。
+        m_propsDock->setVisible(m_content->regionVisible(WorkbenchRegion::Right));
+        m_tasksDock->setVisible(m_content->regionVisible(WorkbenchRegion::Bottom));
+    }
+
     // 共存形态收口（O-38 裁决③"三维共存最小接入"的形态保障）：装载序列中
     // addDockWidget 先按停靠区整幅宽给位、随后 setVisible(false) 隐藏——重显
     // （上一行 show()）会恢复该整幅宽，宿主中央 RWStudioView3D 被挤压为零
@@ -650,8 +711,12 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     // 布局落定后的下一拍用 resizeDocks 显式把 Dock 宽度收束到宿主主窗口客户
     // 宽的约 2/5——中央三维视图保有其余宽度，两能力同帧共存。连续两拍各发一
     // 次收束（show 布局与主窗口布局的落定拍序不由插件决定，第二拍兜底）；
-    // 结果宽度如实留痕——若被五区内容最小宽度钳制（该形态下顶栏按钮行很宽），
+    // 结果宽度如实留痕——若被内容最小宽度钳制（该形态下顶栏按钮行很宽），
     // 收束只能到达钳制宽度，此时宿主窗口越宽三维视图所得越多，如实呈现。
+    // 右/底 Dock（UI-T18）同拍给一次合理初值（右＝宿主宽约 1/5 钳制到
+    // [300, 480] px、底＝宿主高约 1/4 钳制到 [190, 340] px——下界 300/190 px
+    // 高于 §4.4 各区内容最小尺寸 280/160 px，初值在最小可用之上留余量，
+    // 与主 Dock 收束档位同一取整口径），此后尺寸归用户拖拽与宿主布局管理。
     auto issueDockWidthShrink = [this] {
         auto* hostWindow = qobject_cast<QMainWindow*>(parentWidget());
         if (hostWindow == nullptr) {
@@ -659,14 +724,21 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
         }
         const int targetWidth = qBound(420, hostWindow->width() * 2 / 5, 1024);
         hostWindow->resizeDocks({this}, {targetWidth}, Qt::Horizontal);
+        if (m_propsDock != nullptr) {
+            const int propsWidth = qBound(300, hostWindow->width() / 5, 480);
+            hostWindow->resizeDocks({m_propsDock}, {propsWidth}, Qt::Horizontal);
+        }
+        if (m_tasksDock != nullptr) {
+            const int tasksHeight = qBound(190, hostWindow->height() / 4, 340);
+            hostWindow->resizeDocks({m_tasksDock}, {tasksHeight}, Qt::Vertical);
+        }
         reportLine("工作台 Dock 宽度收束：目标 " + std::to_string(targetWidth)
                    + " px，实际 " + std::to_string(width())
                    + " px（受内容最小宽度钳制时如实留痕）");
-        // 装载几何事实一次性落 Dev 日志（排障面——attempt 2 状态行呈空带时
-        // 用以判别"竖向裁剪"还是"文本缺失"；Dev 通道 §6.2，不进控制台）。
+        // 装载几何事实一次性落 Dev 日志（排障面——多 Dock 拓扑下主/右/底
+        // 三 Dock 的尺寸与可见性；Dev 通道 §6.2，不进控制台）。
         if (m_diag.pipeline != nullptr) {
             const QWidget* bodyW = m_dockBody.data();
-            const QWidget* sb = (m_content != nullptr) ? m_content->statusBarWidget() : nullptr;
             std::string facts = "[geometry] dock=" + std::to_string(width()) + "x"
                                 + std::to_string(height());
             if (bodyW != nullptr) {
@@ -676,12 +748,19 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
                          + " bodyMin=" + std::to_string(bodyMin.width()) + "x"
                          + std::to_string(bodyMin.height());
             }
-            if (sb != nullptr && bodyW != nullptr) {
-                const QPoint statusPos = sb->mapTo(bodyW, QPoint(0, 0));
-                facts += " status=" + std::to_string(sb->width()) + "x"
-                         + std::to_string(sb->height()) + "@y"
-                         + std::to_string(statusPos.y())
-                         + " visible=" + (sb->isVisible() ? "1" : "0");
+            if (m_propsDock != nullptr) {
+                facts += " props=" + std::to_string(m_propsDock->width()) + "x"
+                         + std::to_string(m_propsDock->height())
+                         + " visible=" + (m_propsDock->isVisible() ? "1" : "0");
+            }
+            if (m_tasksDock != nullptr) {
+                facts += " tasks=" + std::to_string(m_tasksDock->width()) + "x"
+                         + std::to_string(m_tasksDock->height())
+                         + " visible=" + (m_tasksDock->isVisible() ? "1" : "0");
+            }
+            if (m_hostStatusBar != nullptr) {
+                facts += std::string(" hostStatusBar visible=")
+                         + (m_hostStatusBar->isVisible() ? "1" : "0");
             }
             m_diag.pipeline->logDev(kPluginDevChannel, facts);
         }
@@ -689,10 +768,10 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     QTimer::singleShot(0, this, issueDockWidthShrink);
     QTimer::singleShot(100, this, issueDockWidthShrink);
 
-    reportLine("工作台 Dock 已呈现（宿主主窗口嵌入式——装载呈现自证完成）");
+    reportLine("工作台多 Dock 已呈现（主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）");
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
-                                "装载呈现自证完成（Dock 嵌入宿主主窗口可见）");
+                                "装载呈现自证完成（多 Dock 嵌入宿主主窗口可见；状态投影归宿主状态栏）");
     }
 }
 
@@ -900,7 +979,7 @@ bool IrdWorkbenchHostPlugin::saveDraftsNow()
     // 全量保存挂接的脏模块（§8.2/§8.4——保存/应用分离红线：零修订；当前
     // 无挂接模块＝零脏模块＝平凡成功，属诚实形态而非能力伪造）。
     const SaveOutcome outcome = m_draft->saveAll(SaveTrigger::Manual);
-    QStatusBar* statusBar = m_content ? m_content->statusBarWidget() : nullptr;
+    QStatusBar* statusBar = m_hostStatusBar;  // 状态投影面＝宿主状态栏（UI-T18）
     if (outcome.failedCount == 0) {
         if (statusBar != nullptr) {
             statusBar->showMessage(QString::fromUtf8("草稿已保存（%1 个模块）")
@@ -1128,7 +1207,7 @@ void IrdWorkbenchHostPlugin::startDrainWatch()
         m_drainTimer->setInterval(200);  // §9.4 轮询周期同源（UI 线程零阻塞）
         connect(m_drainTimer, &QTimer::timeout, this, [this] { pollDrainOnce(); });
     }
-    QStatusBar* statusBar = m_content ? m_content->statusBarWidget() : nullptr;
+    QStatusBar* statusBar = m_hostStatusBar;  // 状态投影面＝宿主状态栏（UI-T18）
     if (statusBar != nullptr) {
         statusBar->showMessage(QString::fromUtf8("正在关闭项目……（等待后台任务与草稿落盘收口）"));
     }
@@ -1154,7 +1233,7 @@ void IrdWorkbenchHostPlugin::pollDrainOnce()
         }
         return;
     }
-    QStatusBar* statusBar = m_content ? m_content->statusBarWidget() : nullptr;
+    QStatusBar* statusBar = m_hostStatusBar;  // 状态投影面＝宿主状态栏（UI-T18）
     switch (report.status) {
     case DrainPollReport::Status::Draining:
         break;  // 保持等待（防线 1 的有界反馈已在状态行）

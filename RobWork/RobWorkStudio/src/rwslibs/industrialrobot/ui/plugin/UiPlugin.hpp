@@ -2,8 +2,8 @@
  * @file   UiPlugin.hpp
  * @brief  工作台宿主插件（sdurws_ird_ui_plugin）——框架 RobWorkStudio 的
  *         集成入口＋开发期动态加载验证通道（rws::RobWorkStudioPlugin 派生
- *         薄插件，零计算逻辑；任务 UI-T16 立项，UI-T17 增量扩展——O-38/O-43
- *         裁决承接）。
+ *         薄插件，零计算逻辑；任务 UI-T16 立项，UI-T17/UI-T18 增量扩展
+ *         ——O-38/O-43 裁决承接）。
  *
  * 设计依据：
  *   - units/ui.md §13 UI-T16 行＋UI-T16 立项登记注（v1.9）：①形态＝
@@ -13,8 +13,9 @@
  *     插件零计算逻辑；②壳拆分＝harness 与插件共用同一内容装配面
  *     （WorkbenchContent.hpp——五区交互/布局记忆/命令门控语义不变）；
  *     **禁止把顶层 QMainWindow 嵌套进宿主 Dock**（双菜单/双状态栏/双 Dock
- *     管理反模式——本插件把内容装配面安放进自身 QDockWidget 体栅格，不建
- *     任何顶层窗口）；③三维视图＝共存最小接入（宿主中央视图不丢失）；
+ *     管理反模式——本插件把内容装配面安放进自身 QDockWidget 本体（UI-T18
+ *     起＝主 Dock），不建任何顶层窗口）；③三维视图＝共存最小接入（宿主
+ *     中央视图不丢失）；
  *     ④通道边界＝动态加载仅限开发期验证（SA-01 静态白名单不变，正式
  *     装配归 WP-24-T03——落位时本插件按同一契约转正式装配或被替换）；
  *   - units/ui.md §13 UI-T17 行＋立项/落位登记注（v1.12/v1.13）：O-43 裁决
@@ -23,6 +24,12 @@
  *     确认对话框→Draining 轮询防线）＋草稿链装配（§8 DraftController＋
  *     SerialTaskExecutor 串行落盘线程）＋宿主菜单融合（File『工业机器人
  *     项目』子菜单/Tools 命令面板/自建『视图』菜单，§7.6 插件零判定）；
+ *   - units/ui.md §13 UI-T18 行＋落位登记注＋§10.1 v1.14 增量注⑦⑧：O-43
+ *     裁决③步承接——多 Dock 拓扑（插件本体 Dock＝主 Dock：命令条＋项目
+ *     导航纵排；『IRD 属性与诊断』右 Dock＋『IRD 任务和状态』底 Dock 于装载
+ *     呈现自证拍入宿主，PM-14 旗标重施）＋宿主状态栏唯一（状态投影经
+ *     IWorkbenchContent 的 setStatusTextObserver/setStatusMessageObserver
+ *     双观测钩子接宿主状态栏——本插件零第二状态栏）；
  *   - 框架 rws::RobWorkStudioPlugin 机制（src/rws/RobWorkStudioPlugin.hpp，
  *     零框架修改——SA-02）：宿主经 Plugins→Load plugin 动态装载本 DLL，
  *     addPlugin 流程回调 setRobWorkStudio→setupMenu→initialize，并把插件
@@ -68,7 +75,9 @@
 #include "app/PortAdapters.hpp"                  // 端口适配器集（O-31 装配层特权边——复用形态）
 
 class QAction;    // 框架菜单动作（setupMenu 注入面——完整定义在 Qt 头）
+class QDockWidget;  // 同级 Dock（UI-T18 多 Dock 拓扑——完整定义在 Qt 头）
 class QMenu;      // 宿主 Plugins 菜单（setupMenu 回调参数）
+class QStatusBar; // 宿主状态栏（UI-T18 状态投影面——完整定义在 Qt 头）
 class QTimer;     // Draining 轮询驱动（UI 线程周期——完整定义在 Qt 头）
 class QWidget;    // Dock 体控件（前置声明）
 
@@ -197,7 +206,10 @@ private:
     /// 串行落盘执行器（§3.4 落盘线程的开发期宿主——postToDiskThread 接线）。
     std::unique_ptr<app::SerialTaskExecutor> m_diskExecutor;
     std::unique_ptr<IWorkbenchContent> m_content;             ///< 内容装配面（与 harness 同源）
-    QPointer<QWidget> m_dockBody;                             ///< Dock 体控件（Qt 父子树托管）
+    QPointer<QWidget> m_dockBody;                             ///< 主 Dock 体控件（Qt 父子树托管）
+    QDockWidget* m_propsDock = nullptr;    ///< "IRD 属性与诊断"Dock（Right 区——UI-T18 拆分面，窗口树托管）
+    QDockWidget* m_tasksDock = nullptr;    ///< "IRD 任务和状态"Dock（Bottom 区——UI-T18 拆分面，窗口树托管）
+    QStatusBar* m_hostStatusBar = nullptr; ///< 宿主状态栏（UI-T18 状态投影面——PM-11 永久位＋瞬态消息）
     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）
     QMenu* m_recentMenu = nullptr;                            ///< "最近项目"子菜单（aboutToShow 重建）
     std::vector<std::pair<QAction*, std::string>> m_hostMenuCommandIds; ///< 框架菜单动作→命令 id（使能同步）
