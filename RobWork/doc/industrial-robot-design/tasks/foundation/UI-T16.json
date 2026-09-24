@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "工作台宿主插件（RobWorkStudio 集成入口＋开发期动态加载验证通道，sdurws_ird_ui_plugin）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T03", "UI-T11", "UI-T15"],
   "requirements": ["UX-09", "PM-07", "PM-10", "PM-11"],
   "designRefs": [

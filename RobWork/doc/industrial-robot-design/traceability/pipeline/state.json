@@ -1,12 +1,12 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "awaiting_acceptance",
+  "phase": "idle",
   "pausedReason": null,
-  "tickCount": 289,
-  "currentTask": "UI-T16",
-  "branch": "wp10-t16",
-  "base": "e4d70ada744eb10df9bd203dcc59e3ae517b5f34",
-  "headSha": "6441c13617a4c8701827d2ac8a8cb46e2a7e4e87",
+  "tickCount": 290,
+  "currentTask": null,
+  "branch": null,
+  "base": null,
+  "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-24T02:18:20+08:00",
+    "updatedAt": "2026-09-24T08:07:11+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1659,6 +1659,17 @@
       "acceptanceRecord": "traceability/acceptance/WP-13-T08-20260923.md",
       "mergedAt": "2026-09-23",
       "failReason": "验收 attempt1 即 pass（非验收失败）；②③ 合并零冲突、findings.json 并集例外未触发；实施段时序事件：工作者历时约 148 分钟超 run 租约（09:27:27）29 分钟返回，期间无 tick 接管、锁 fencing 保持、renew 成功后按模板处理完成事件（未触发 §4.2 重派，零双实施者）；O-35 裁决（无点 token）与 V-20 全管线面归 project S5（PRJ-TX-3 在库）均按卡 §14.6 v0.9 口径登记；验收建议级 F-316（DiagCodes 工厂 @brief 计数滞后，纯注释）／F-317（ird-test-report 留痕件为过滤子集，gtest XML 完整可信）随 acc/WP-13-T08/1 转登"
+    },
+    {
+      "task": "UI-T16",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "02d529370978816e8cf45be741d5920463bdbfec"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T16-20260924-r2.md",
+      "mergedAt": "2026-09-24",
+      "failReason": "非验收一次通过：attempt 1 fail（B-1 宿主嵌入式面板四项交互未实证＋B-2 复跑载体失实，记录 acc/UI-T16/1@2558984d）→ 返工 fix=1（d8af3a96 根因修复＋02d52937 共存收口与全量重录）→ attempt 2 pass（记录 acc/UI-T16/2@80b8fbba）。实施段时序事件：首轮实施者完成提交后回传被配额限额截断（12:50）；重启派发一次空启动（6h40m 零产出已停）——两次均属环境层事件，验收独立性与冻结链未受影响；attempt 2 验收建议级 F-321（切换路径语义待所有者裁决，不阻塞）／F-322（Dev 日志采样尾段）／F-323（RobWorkSim 框架目标宏冲突为新树 configure 既有问题＋ini 模板不入库）随 acc/UI-T16/2 转登"
     }
   ],
   "policy": {
@@ -1684,11 +1695,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "UI-T16",
-      "branch": "wp10-t16",
-      "contractPath": "tasks/foundation/UI-T16.json"
-    },
     {
       "taskId": "WP-13-T09",
       "branch": "wp13-t09",
