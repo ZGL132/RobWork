@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T17",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "会话入口处理器补全＋宿主菜单融合（O-43 裁决承接）",
+  "status": "ready",
+  "dependsOn": ["UI-T11", "UI-T12", "UI-T16"],
+  "requirements": ["PM-03", "PM-04", "PM-10", "UX-09"],
+  "designRefs": [
+    "units/ui.md#11.5",
+    "units/ui.md#7.1",
+    "units/ui.md#13"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui sdurws_ird_ui_plugin sdurws_ird_ui_app",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird_gui$\"",
+    "框架 RobWorkStudio.exe 经 Plugins→Load plugin 加载后宿主 File/Tools/视图菜单可见项目命令（关闭项目走统一确认对话框＋Draining 收口；保存草稿真实落盘链路）；启动日志＋截图＋操作序列留痕 traceability/builds/wp10-t17/"
+  ],
+  "branch": "wp10-t17",
+  "interUnit": true,
+  "knownPitfalls": ["O-31", "O-38", "O-43"],
+  "acceptance": [
+    "覆写面扩展落位：WorkbenchContentDeps 增 saveProjectHandler（draft.save）/closeProjectHandler（workbench.closeProject）——§11.5 既有模式同型（覆写只换处理器，描述符/谓词/登记序零变化；未注入＝阶段 A 占位，harness 形态不变）；插件侧真实编排：关闭项目走 beginClose→统一确认对话框（草稿/任务两轴决议的 QDialog 呈现）→resolveCloseDialog→Draining 轮询驱动（QTimer 周期 pollDrain；ForceConfirmDue 呈现强制结束确认→resolveForceCloseDialog；GivenUp/ClosedNow 收口）；saveAllDraftsManual 接线＝DraftController 装配（SerialTaskExecutor 串行落盘线程＋postToUiThread Marshal＋onSessionDirtyChanged→reportSessionDirty 生产者接线＋打开成功 bindSession/上下文清空 unbindSession）；GUI 测试增覆写路由与项目门控用例；双模式构建零错误",
+    "宿主菜单融合落位：setupMenu 经 getRobWorkStudio()->menuBar() 定位宿主 File/Tools——File 内按位插入（Preferences 分隔符锚——规避 updateLastFiles 重排）『工业机器人项目』子菜单（新建/打开/保存草稿/项目另存为/关闭项目＋最近项目 aboutToShow 现取重建）；Tools 追加命令面板；自建『视图』菜单承载三区开关＋恢复默认布局（插入 Plugins 之前）；Plugins 菜单仅留基类显示开关；全部动作使能态经既有 setCommandStateObserver 消费命令可用性快照（插件零判定——§7.6）；菜单只路由命令板（§4.2）；project.saveAs/draft.apply/undo/redo 维持 §11.4 阶段 A 占位（真实接线归 workflow/project 命令网关装配任务）；harness 行为回归零变化",
+    "门禁与留痕：ird_gates 命中集归一化比对零新增（LIB/R1/R3/R4/R5/T1/T2/SUB 与 base 一致——本任务零 CMake/链接面变更）；ui 叶子目录 ctest ^ird$ 与 ^ird_gui$ 通过；gtest XML＋ird-test-report.json＋构建日志留痕 traceability/builds/wp10-t17/；宿主 GUI 冒烟（菜单位置/关闭确认流/保存链路）如实登记执行状态；登记的诚实边界（草稿恢复编排/定时保存心跳/草稿清单真实适配/分支锚端口）与不变项（装载方式 SA-01、生命周期正交 O-38③、框架零修改 SA-02）在落位登记注中逐项可查"
+  ],
+  "note": "任务来源：O-43 裁决（所有者 2026-09-24 融合方案审核指令——DTB v0.19 §4.2 O-43 行＋§2.11 WP-10-T17/WP-10-T18 行；ui.md v1.12 §13 UI-T17 行＋立项登记注）。定位：UI-T16 已合入形态（Plugins 菜单承载命令/单一 Dock 五区）不被追认为缺陷——深度融合按 O-43 三步承接：本任务＝②处理器补全＋菜单融合；③Dock 拆分＋状态行迁移宿主 statusBar 归 UI-T18（已立项未实施）。登记的诚实边界（立项登记注③）：草稿恢复编排（restoreOnOpen/恢复横幅）、定时保存心跳、草稿清单真实适配（DraftQueryPortStub 恒空）、分支锚端口（SessionPortBundle/C-3 冻结面无分支查询——DraftSessionBinding.branchId 缺省值承载且当前不可达）随完整草稿链路装配任务接续。分支 wp10-t17；留痕 traceability/builds/wp10-t17/"
+}
