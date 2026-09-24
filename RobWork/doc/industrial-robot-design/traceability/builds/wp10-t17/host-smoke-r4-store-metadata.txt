@@ -1,0 +1,10 @@
+=== project.json ===
+{"formatId":"rwdesign","schemaVersion":10000,"projectId":"prj-4a3876722527392402cd7749d1eec6b1","createdAtUtc":"2026-09-24T06:32:35.376Z","createdWithToolVersion":"RobWork-IndustrialRobot/0.1"}
+=== HEAD ===
+{"formatId":"rwdesign","schemaVersion":10000,"projectId":"prj-4a3876722527392402cd7749d1eec6b1","revisionId":"rev-577cee0843a567e07de3d3def24e6f9e","revisionSeq":1,"branchId":"brn-8a17c539970579c4fc7ee0f5bc3c3821","manifestDigest":"8cc2adb941d6a64139589fb4c860e127eefb87e2bd99e1c893fcfff3db8fe83c"}
+=== revisions/rev-577cee0843a567e07de3d3def24e6f9e/command.json ===
+{"commandType":"project-init","payloadFormatVersion":1,"payloadCanonical":"{}","summary":"createNew: \u521d\u59cb\u4fee\u8ba2\uff08M0/main\uff09"}
+=== revisions/rev-577cee0843a567e07de3d3def24e6f9e/manifest.json ===
+{"revisionId":"rev-577cee0843a567e07de3d3def24e6f9e","revisionSeq":1,"branchId":"brn-8a17c539970579c4fc7ee0f5bc3c3821","committedAtUtc":"2026-09-24T06:32:35.376Z","metadataRef":{"objectId":"obj-f21ab9915a5022874dfa87207a829661","contentVersion":"cv-e5dfb796417a493bce58e055d2028bc337c454655ffbbeffbedef70d0b68b5b3"},"objectRefs":[{"objectId":"obj-f21ab9915a5022874dfa87207a829661","contentVersion":"cv-e5dfb796417a493bce58e055d2028bc337c454655ffbbeffbedef70d0b68b5b3","objectTypeToken":"ProjectMetadata","digest256":"e5dfb796417a493bce58e055d2028bc337c454655ffbbeffbedef70d0b68b5b3"}],"introducedObjects":["cv-e5dfb796417a493bce58e055d2028bc337c454655ffbbeffbedef70d0b68b5b3"]}
+=== objects/obj-f21ab9915a5022874dfa87207a829661/e5dfb796...b3 (ProjectMetadata, 416 B) ===
+{"schemaVersion":10000,"committedBy":"rev-577cee0843a567e07de3d3def24e6f9e","projectDisplayName":"\u5192\u70df\u9879\u76eer4","primaryBranchId":"brn-8a17c539970579c4fc7ee0f5bc3c3821","branches":[{"branchId":"brn-8a17c539970579c4fc7ee0f5bc3c3821","label":"main","baseRevisionId":"rev-577cee0843a567e07de3d3def24e6f9e","tipRevisionId":"rev-577cee0843a567e07de3d3def24e6f9e","createdAtUtc":"2026-09-24T06:32:35.376Z"}]}

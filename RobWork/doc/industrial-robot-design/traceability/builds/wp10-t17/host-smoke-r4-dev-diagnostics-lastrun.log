@@ -1,0 +1,4 @@
+1 1790229891548 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：C:\\Users\\zgl18\\AppData\\Local\\Temp\\wp10-t17-smoke-r3\\work\\ird-ui-plugin-logs）
+2 1790231499336 D DEBUG diag/ui/session msg=draining entered: in-flight references=0
+3 1790232290511 D DEBUG diag/ui msg=[sampled-tail] 宿主已关闭工作单元（工作台面板保持）
+4 1790232049992 D DEBUG diag/ui/session msg=[sampled-tail] switch rejected (candidate open failed): path=C:\\Users\\zgl18\\AppData\\Local\\Temp\\wp10-t17-smoke-r3\\projtarget-r4 code=lock-held-by-other
