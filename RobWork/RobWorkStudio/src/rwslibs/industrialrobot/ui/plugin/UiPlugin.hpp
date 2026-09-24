@@ -2,7 +2,8 @@
  * @file   UiPlugin.hpp
  * @brief  工作台宿主插件（sdurws_ird_ui_plugin）——框架 RobWorkStudio 的
  *         集成入口＋开发期动态加载验证通道（rws::RobWorkStudioPlugin 派生
- *         薄插件，零计算逻辑；任务 UI-T16，O-38 裁决承接）。
+ *         薄插件，零计算逻辑；任务 UI-T16 立项，UI-T17 增量扩展——O-38/O-43
+ *         裁决承接）。
  *
  * 设计依据：
  *   - units/ui.md §13 UI-T16 行＋UI-T16 立项登记注（v1.9）：①形态＝
@@ -16,6 +17,12 @@
  *     任何顶层窗口）；③三维视图＝共存最小接入（宿主中央视图不丢失）；
  *     ④通道边界＝动态加载仅限开发期验证（SA-01 静态白名单不变，正式
  *     装配归 WP-24-T03——落位时本插件按同一契约转正式装配或被替换）；
+ *   - units/ui.md §13 UI-T17 行＋立项/落位登记注（v1.12/v1.13）：O-43 裁决
+ *     ②步承接——会话入口处理器补全（draft.save/workbench.closeProject 覆写
+ *     面：保存走 DraftController saveAll 真实落盘，关闭走 beginClose→统一
+ *     确认对话框→Draining 轮询防线）＋草稿链装配（§8 DraftController＋
+ *     SerialTaskExecutor 串行落盘线程）＋宿主菜单融合（File『工业机器人
+ *     项目』子菜单/Tools 命令面板/自建『视图』菜单，§7.6 插件零判定）；
  *   - 框架 rws::RobWorkStudioPlugin 机制（src/rws/RobWorkStudioPlugin.hpp，
  *     零框架修改——SA-02）：宿主经 Plugins→Load plugin 动态装载本 DLL，
  *     addPlugin 流程回调 setRobWorkStudio→setupMenu→initialize，并把插件
@@ -25,9 +32,12 @@
  *
  * 背景说明（插件里有什么、没有什么）：
  *   有——装配序列（诊断栈/端口适配/内容装配面/会话控制器）、会话入口编排
- *   （新建/打开项目的文件对话框→UiSessionController 打开协议，§11.5"触发
- *   时机编排归装配层"）、宿主框架菜单动作、让位观测日志；没有什么——
- *   任何业务计算、任何领域对象持有（插件零计算逻辑，登记 ui.md §13）。
+ *   （新建/打开/保存/关闭/最近项目：文件对话框与统一确认对话框的呈现面→
+ *   UiSessionController 打开/切换/关闭协议，§11.5"触发时机编排归装配层"；
+ *   UI-T17 起含草稿链装配——DraftController＋串行落盘执行器，保存链路
+ *   真实）、宿主菜单融合（File 子菜单/Tools/视图——动作只路由命令板）、
+ *   让位观测日志；没有什么——任何业务计算、任何领域对象持有（插件零计算
+ *   逻辑，登记 ui.md §13）。
  *
  * 线程模型：全部回调（initialize/open/close/setupMenu 与命令处理器）由
  *   宿主在 UI 线程调用（框架 addPlugin 流程与 Qt 信号同步触发）；ui 内容

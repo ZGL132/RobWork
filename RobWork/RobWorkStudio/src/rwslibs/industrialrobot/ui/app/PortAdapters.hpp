@@ -1,12 +1,15 @@
 /**
  * @file   PortAdapters.hpp
- * @brief  工作台验证 harness（sdurws_ird_ui_app）的端口适配器集——L5 装配层
- *         雏形的"对端适配 ui 自有端口"单行适配面。
+ * @brief  工作台两宿主共用的端口适配器集——L5 装配层雏形的"对端适配 ui 自有
+ *         端口"单行适配面（宿主＝验证 harness sdurws_ird_ui_app 与宿主插件
+ *         sdurws_ird_ui_plugin；UI-T17 起插件宿主经 O-31 同款特权复用本组
+ *         适配器装配完整打开/草稿链路）。
  *
  * 设计依据：
  *   - units/ui.md §10.1（ShellWiring 注入包）/§10.5（UiSessionControllerDeps）
  *     /§3.1（O-31 裁决：对端类型不进 ui 头，L5 装配器同时看见两边并写适配
- *     器）；本文件即该裁决所述"L5 装配器"的开发期载体（任务 UI-T15）；
+ *     器）；本文件即该裁决所述"L5 装配器"的开发期载体（任务 UI-T15 立项，
+ *     UI-T17 增量＝C-5 草稿写半区直转＋SerialTaskExecutor 串行落盘执行器）；
  *   - ui/include/sdurws/ird/ui/UiPorts.hpp 各端口方法注释的"语义冻结（不
  *     改义）"行——每个适配器的职责都是**原样翻译**对端语义，不改写、不吞
  *     错、不虚构（UX-02 零内部名/零虚构纪律在装配侧同样成立）；
@@ -18,16 +21,20 @@
  *   §3.5 白名单只有 ui->core、ui->diagnostics 两条边）；而"打开工程"这条
  *   端到端链路必须有人把 project::ProjectStoreFactory 翻译成
  *   ui::IUiStoreFactoryPort——这个"人"就是 L5 应用壳（装配层）。产品装配
- *   层随插件装配任务落位前，本 harness 是它的开发期替身：开发者在建模
- *   （WP-13+）开发期间用本 harness 以真实端口链路交互验证平台逻辑。
+ *   层最终形态归 WP-24-T03 正式装配任务；当前开发期由两宿主承载同一装配
+ *   序列：harness（开发者在建模 WP-13+ 开发期间的交互验证替身）与插件
+ *   （UI-T16/T17 起随宿主 RobWorkStudio 交付同一链路）。
  *
- *   适配器全部为 harness 私有（app/ 目录，不进 include/ 公共头——R-2）；
- *   生命周期：所有权在 HarnessMain 装配序列，经 shared_ptr 交给 ui 消费方
+ *   适配器全部为宿主私有（app/ 目录，不进 include/ 公共头——R-2）；
+ *   生命周期：所有权在各宿主的装配序列（harness＝HarnessMain；插件宿主＝
+ *   UiPlugin::initialize/assembleDraftChain），经 shared_ptr 交给 ui 消费方
  *   （壳/会话控制器只持共享引用——§10.1 所有权行）。
  *
  * 线程约束（对齐 UiPorts.hpp 头注）：ui 侧对本组端口的调用一律发生在 UI
- *   线程（§3.4 M-1）；IUiDraftStorePort 类的"后台落盘线程"纪律在 v0.1 不
- *   适用（harness 未装配 DraftController，见该桩类注释）。
+ *   线程（§3.4 M-1）；IUiDraftStorePort 的"后台落盘线程"纪律自 UI-T17 起
+ *   由插件宿主真实兑现（SerialTaskExecutor 串行落盘线程承担 postToDiskThread
+ *   接线——assembleDraftChain）；harness 宿主仍未装配 DraftController（形态
+ *   不变——回归保护，见该适配器注释）。
  */
 
 #ifndef SDURWS_IRD_UI_APP_PORT_ADAPTERS_HPP

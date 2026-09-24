@@ -1,0 +1,15 @@
+# 桌面剪贴板锁定探针（r3，2026-09-24）——GUI 套件 34/35 中 BatchPasteImpactDetail 失败的环境归因证据
+
+背景：返工重验期间桌面剪贴板被某进程持续锁定；UI-T08 既有用例 BatchPasteImpactDetail_UI_T08_ACC1 的批量粘贴到达 0 行（'粘贴 0 行：接受 0 项、拒绝 0 项'）。三重独立探针如下（本返工产品面为纯注释变更，与该用例无包含关系；r2 同二进制 35/35 通过）。所有者裁决：不管它，如实登记。
+
+## 探针 1：PowerShell Set-Clipboard
+命令: Set-Clipboard -Value "probe"
+结果: SET-FAIL: 所请求的剪贴板操作失败。
+复测: SET-FAIL（CLIPBOARD-STILL-LOCKED，间隔约数分钟两次）
+
+## 探针 2：cmd clip.exe
+命令: echo reset | clip
+结果: 错误: 拒绝访问。
+
+## 探针 3：用例内失败内容（gtest-ui-gui-r3-console.log / gtest-ui-gui-r3.xml）
+失败断言期望 "粘贴 2 行：接受 1 项、拒绝 1 项"，实际 "粘贴 0 行：接受 0 项、拒绝 0 项"（剪贴板 setText 后立即回读为空——延迟渲染语义下被外部进程占用时的典型形态）；该用例单独复跑 3/3 稳定失败（与剪贴板锁共存），其余 34 用例（不触剪贴板）全过。

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="35" failures="1" disabled="0" errors="0" time="4.445" timestamp="2026-09-24T11:51:41.174" name="AllTests">
+  <testsuite name="UiGuiPlacement" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.01" timestamp="2026-09-24T11:51:41.174">
+    <testcase name="GuiTargetRegistration_UI_GUIBUILD" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\BuildPlacementTest.cpp" line="65" status="run" result="completed" time="0.01" timestamp="2026-09-24T11:51:41.174" classname="UiGuiPlacement" />
+  </testsuite>
+  <testsuite name="WorkbenchShellGuiTest" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.964" timestamp="2026-09-24T11:51:41.184">
+    <testcase name="FiveZoneLayout_PersistsAcrossSessions_UI_WB_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="209" status="run" result="completed" time="0.529" timestamp="2026-09-24T11:51:41.184" classname="WorkbenchShellGuiTest" />
+    <testcase name="ResetLayout_RestoresFactory_UI_WB_2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="298" status="run" result="completed" time="0.122" timestamp="2026-09-24T11:51:41.714" classname="WorkbenchShellGuiTest" />
+    <testcase name="CorruptLayoutMemory_FallsBackWithDevDiagnostic_UI_WB_3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="343" status="run" result="completed" time="0.077" timestamp="2026-09-24T11:51:41.837" classname="WorkbenchShellGuiTest" />
+    <testcase name="NoProjectHomepage_CommandGating_UI_SES_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="395" status="run" result="completed" time="0.095" timestamp="2026-09-24T11:51:41.915" classname="WorkbenchShellGuiTest" />
+    <testcase name="RecentProjects_CapDedupPersist_PM_10_PM_14" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="494" status="run" result="completed" time="0.038" timestamp="2026-09-24T11:51:42.010" classname="WorkbenchShellGuiTest" />
+    <testcase name="CentralView3DPlaceholder_RegistrationAndRedLines_UX11_KIN06" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchShellGuiTest.cpp" line="578" status="run" result="completed" time="0.098" timestamp="2026-09-24T11:51:42.049" classname="WorkbenchShellGuiTest" />
+  </testsuite>
+  <testsuite name="WorkbenchContentGuiTest" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0.057" timestamp="2026-09-24T11:51:42.148">
+    <testcase name="TwoPhaseAssemblyContract_UI_SPLIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp" line="205" status="run" result="completed" time="0.006" timestamp="2026-09-24T11:51:42.148" classname="WorkbenchContentGuiTest" />
+    <testcase name="BuildValidationRejectsIncompleteDeps_UI_SPLIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp" line="233" status="run" result="completed" time="0." timestamp="2026-09-24T11:51:42.155" classname="WorkbenchContentGuiTest" />
+    <testcase name="EmbeddedMemoryFlagsOnlyBoundary_UI_SPLIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp" line="258" status="run" result="completed" time="0.016" timestamp="2026-09-24T11:51:42.156" classname="WorkbenchContentGuiTest" />
+    <testcase name="EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_UI_SPLIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp" line="312" status="run" result="completed" time="0.011" timestamp="2026-09-24T11:51:42.172" classname="WorkbenchContentGuiTest" />
+    <testcase name="SessionEntryOverrideRoutesShellEntries_UI_SPLIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp" line="347" status="run" result="completed" time="0.007" timestamp="2026-09-24T11:51:42.184" classname="WorkbenchContentGuiTest" />
+    <testcase name="SaveCloseEntryOverrideRoutesShellEntries_UI_SPLIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp" line="389" status="run" result="completed" time="0.007" timestamp="2026-09-24T11:51:42.191" classname="WorkbenchContentGuiTest" />
+    <testcase name="EmbeddedCentralYieldPage_UI_SPLIT" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\WorkbenchContentGuiTest.cpp" line="450" status="run" result="completed" time="0.006" timestamp="2026-09-24T11:51:42.198" classname="WorkbenchContentGuiTest" />
+  </testsuite>
+  <testsuite name="CommandPaletteGuiTest" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.367" timestamp="2026-09-24T11:51:42.205">
+    <testcase name="PaletteOpensViaDefaultShortcut_UI_PALETTE_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp" line="197" status="run" result="completed" time="0.083" timestamp="2026-09-24T11:51:42.205" classname="CommandPaletteGuiTest" />
+    <testcase name="PaletteFilterNavigateExecute_UI_PALETTE_2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp" line="224" status="run" result="completed" time="0.099" timestamp="2026-09-24T11:51:42.289" classname="CommandPaletteGuiTest" />
+    <testcase name="UserRebindPersistsAcrossSessions_UI_PALETTE_3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp" line="287" status="run" result="completed" time="0.184" timestamp="2026-09-24T11:51:42.389" classname="CommandPaletteGuiTest" />
+  </testsuite>
+  <testsuite name="PolicySummaryCardGuiTest" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0.609" timestamp="2026-09-24T11:51:42.573">
+    <testcase name="LoadedProjection_RendersModelRows_UI_T07_ACC1_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\PolicySummaryCardGuiTest.cpp" line="243" status="run" result="completed" time="0.094" timestamp="2026-09-24T11:51:42.573" classname="PolicySummaryCardGuiTest" />
+    <testcase name="Unloaded_RendersPlaceholder_UI_T07_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\PolicySummaryCardGuiTest.cpp" line="294" status="run" result="completed" time="0.122" timestamp="2026-09-24T11:51:42.668" classname="PolicySummaryCardGuiTest" />
+    <testcase name="CardIsReadOnly_NoEditableControls_UI_T07_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\PolicySummaryCardGuiTest.cpp" line="320" status="run" result="completed" time="0.115" timestamp="2026-09-24T11:51:42.791" classname="PolicySummaryCardGuiTest" />
+    <testcase name="EditEntry_ShowsDeferredNotice_UI_T07_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\PolicySummaryCardGuiTest.cpp" line="355" status="run" result="completed" time="0.135" timestamp="2026-09-24T11:51:42.907" classname="PolicySummaryCardGuiTest" />
+    <testcase name="RefreshOnContextInjection_UI_T07_ACC3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\PolicySummaryCardGuiTest.cpp" line="393" status="run" result="completed" time="0.14" timestamp="2026-09-24T11:51:43.042" classname="PolicySummaryCardGuiTest" />
+  </testsuite>
+  <testsuite name="ParamTablePanelGuiTest" tests="10" failures="1" disabled="0" skipped="0" errors="0" time="1.431" timestamp="2026-09-24T11:51:43.183">
+    <testcase name="StructureAndValueUnitColumns_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="159" status="run" result="completed" time="0.079" timestamp="2026-09-24T11:51:43.183" classname="ParamTablePanelGuiTest" />
+    <testcase name="InPlaceErrorKeepsValue_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="197" status="run" result="completed" time="0.09" timestamp="2026-09-24T11:51:43.262" classname="ParamTablePanelGuiTest" />
+    <testcase name="ApplyViaInlineConfirmRegion_UX07_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="228" status="run" result="completed" time="0.086" timestamp="2026-09-24T11:51:43.353" classname="ParamTablePanelGuiTest" />
+    <testcase name="ConfirmRegionDeclineKeepsStaged_UX07_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="263" status="run" result="completed" time="0.105" timestamp="2026-09-24T11:51:43.439" classname="ParamTablePanelGuiTest" />
+    <testcase name="CancelRestore_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="286" status="run" result="completed" time="0.085" timestamp="2026-09-24T11:51:43.544" classname="ParamTablePanelGuiTest" />
+    <testcase name="BatchPasteImpactDetail_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="309" status="run" result="completed" time="0.632" timestamp="2026-09-24T11:51:43.630" classname="ParamTablePanelGuiTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp:320&#x0A;Value of: detail.contains(QString::fromUtf8(&quot;粘贴 2 行：接受 1 项、拒绝 1 项&quot;))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;影响明细摘要缺失: 粘贴 0 行：接受 0 项、拒绝 0 项&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp:320
+Value of: detail.contains(QString::fromUtf8("粘贴 2 行：接受 1 项、拒绝 1 项"))
+  Actual: false
+Expected: true
+影响明细摘要缺失: 粘贴 0 行：接受 0 项、拒绝 0 项
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp:322&#x0A;Value of: detail.contains(QString::fromUtf8(&quot;未知参数：no-such-key&quot;))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;拒绝原因应就地呈现: 粘贴 0 行：接受 0 项、拒绝 0 项&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp:322
+Value of: detail.contains(QString::fromUtf8("未知参数：no-such-key"))
+  Actual: false
+Expected: true
+拒绝原因应就地呈现: 粘贴 0 行：接受 0 项、拒绝 0 项
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp:324&#x0A;Value of: detail.contains(QString::fromUtf8(&quot;影响&quot;))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;影响条目应呈现&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp:324
+Value of: detail.contains(QString::fromUtf8("影响"))
+  Actual: false
+Expected: true
+影响条目应呈现
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp:326&#x0A;Expected equality of these values:&#x0A;  table()-&gt;item(2, 1)-&gt;text()&#x0A;    Which is: { 2-byte object &lt;31-00&gt;, 2-byte object &lt;30-00&gt;, 2-byte object &lt;30-00&gt; }&#x0A;  QString::fromUtf8(&quot;150&quot;)&#x0A;    Which is: { 2-byte object &lt;31-00&gt;, 2-byte object &lt;35-00&gt;, 2-byte object &lt;30-00&gt; }&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp:326
+Expected equality of these values:
+  table()->item(2, 1)->text()
+    Which is: { 2-byte object <31-00>, 2-byte object <30-00>, 2-byte object <30-00> }
+  QString::fromUtf8("150")
+    Which is: { 2-byte object <31-00>, 2-byte object <35-00>, 2-byte object <30-00> }
+]]></failure>
+    </testcase>
+    <testcase name="NoOutletDisablesApply_UI_T08_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="338" status="run" result="completed" time="0.088" timestamp="2026-09-24T11:51:44.262" classname="ParamTablePanelGuiTest" />
+    <testcase name="DevDiagnosticsToggleNeverEntersEditSet_UX04_UX07_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="361" status="run" result="completed" time="0.088" timestamp="2026-09-24T11:51:44.350" classname="ParamTablePanelGuiTest" />
+    <testcase name="UnitSwitchIsDisplayOnly_KIN12_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="399" status="run" result="completed" time="0.073" timestamp="2026-09-24T11:51:44.438" classname="ParamTablePanelGuiTest" />
+    <testcase name="FilterRowsByKeySubstring_UI_T08_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\ParamTablePanelGuiTest.cpp" line="433" status="run" result="completed" time="0.102" timestamp="2026-09-24T11:51:44.512" classname="ParamTablePanelGuiTest" />
+  </testsuite>
+  <testsuite name="AboutDialogGuiTest" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="1.004" timestamp="2026-09-24T11:51:44.614">
+    <testcase name="AboutDialogShowsBaselineAndListSameSource_UI_PLG_2_UI_T10_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\AboutDialogGuiTest.cpp" line="281" status="run" result="completed" time="0.693" timestamp="2026-09-24T11:51:44.614" classname="AboutDialogGuiTest" />
+    <testcase name="AboutDialogWithoutSourceShowsPlaceholders_UI_PLG_2_UI_T10" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\AboutDialogGuiTest.cpp" line="381" status="run" result="completed" time="0.194" timestamp="2026-09-24T11:51:45.308" classname="AboutDialogGuiTest" />
+    <testcase name="HelpContentsMissingManualGivesVisibleFeedback_UX14_UI_T10" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\AboutDialogGuiTest.cpp" line="432" status="run" result="completed" time="0.116" timestamp="2026-09-24T11:51:45.502" classname="AboutDialogGuiTest" />
+  </testsuite>
+</testsuites>
