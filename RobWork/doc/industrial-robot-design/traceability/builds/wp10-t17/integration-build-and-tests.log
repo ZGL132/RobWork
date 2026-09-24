@@ -1,0 +1,11 @@
+== 集成模式构建（本分支 wp10-t17 @ HEAD）
+cmake --build build --config Release --target sdurws_ird_ui sdurws_ird_ui_plugin sdurws_ird_ui_app sdurws_ird_ui_test sdurws_ird_ui_gui_test sdurws_ird_ui_contract_test --parallel 4
+结果：六目标全部零 error（sdurws_ird_ui_plugin.dll/sdurws_ird_ui_app.exe/三测试 exe 产出）
+
+== 模型/契约/GUI gtest 复跑结论
+[==========] 154 tests from 17 test suites ran. (1587 ms total)
+[  PASSED  ] 154 tests.
+[==========] 22 tests from 6 test suites ran. (17 ms total)
+[  PASSED  ] 22 tests.
+[==========] 35 tests from 7 test suites ran. (4590 ms total)
+[  PASSED  ] 35 tests.
