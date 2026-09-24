@@ -1,0 +1,29 @@
+[==========] Running 9 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from MdlBuildGraph
+[ RUN      ] MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3
+[       OK ] MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3 (0 ms)
+[ RUN      ] MdlBuildGraph.SixRegisteredEdgesPresent_WP13T02_ACC3
+[       OK ] MdlBuildGraph.SixRegisteredEdgesPresent_WP13T02_ACC3 (0 ms)
+[ RUN      ] MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2
+[       OK ] MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2 (0 ms)
+[ RUN      ] MdlBuildGraph.NoTestkitEdgeOnProductTarget_WP13T02_ACC2
+[       OK ] MdlBuildGraph.NoTestkitEdgeOnProductTarget_WP13T02_ACC2 (0 ms)
+[ RUN      ] MdlBuildGraph.IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3
+[       OK ] MdlBuildGraph.IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3 (10 ms)
+[----------] 5 tests from MdlBuildGraph (12 ms total)
+
+[----------] 4 tests from MdlCommandPipelineContract
+[ RUN      ] MdlCommandPipelineContract.V19NotReadyDoesNotCompileAndPlanEmptied
+[       OK ] MdlCommandPipelineContract.V19NotReadyDoesNotCompileAndPlanEmptied (0 ms)
+[ RUN      ] MdlCommandPipelineContract.V20CompileFailureInjectsAndDiagnosticsCoexist
+[       OK ] MdlCommandPipelineContract.V20CompileFailureInjectsAndDiagnosticsCoexist (0 ms)
+[ RUN      ] MdlCommandPipelineContract.V22StaleBaselineFailsFastDefensively
+[       OK ] MdlCommandPipelineContract.V22StaleBaselineFailsFastDefensively (0 ms)
+[ RUN      ] MdlCommandPipelineContract.StableCodesRegisteredWithoutPrebuilding_WP13T09
+[       OK ] MdlCommandPipelineContract.StableCodesRegisteredWithoutPrebuilding_WP13T09 (0 ms)
+[----------] 4 tests from MdlCommandPipelineContract (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 2 test suites ran. (13 ms total)
+[  PASSED  ] 9 tests.

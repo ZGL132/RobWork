@@ -1,0 +1,11 @@
+ird_gates 命中集归一化多重集比对（T08/T10 先例口径；WP-13-T11）
+- branch：wp13-t11（源树直跑 cmake -DIRD_ROOT=<industrialrobot 根> -P cmake/ird_gates.cmake）
+- base：bf9c995d3fe41bbe783b245883d74a93941c79de（临时 worktree .wt-base-t11 直跑同脚本，用毕即删）
+- 归一化命中直方图比对（ird-gates-base-hits.txt vs ird-gates-branch-hits.txt）＝完全一致（diff 为空）：
+    57 IRD-GATE-SUB / 41 IRD-GATE-R3 / 10 IRD-GATE-LIB / 5 IRD-GATE-T1 /
+     3 IRD-GATE-R4 /  1 IRD-GATE-T2 /  1 IRD-GATE-R5 /  1 IRD-GATE-R1
+- 结论：本任务零新增门禁命中；全部命中为存量例外（登记归 DTB §4.5 治理
+  通道，不在本任务范围）。本任务对 CMake 的唯一改动＝modeling 测试目标
+  增列 test/BasePlacementEditTest.cpp（无新增链接边）；Template.cpp 新增
+  include 的 runtime/BaseWorldTransform.hpp 走既有 modeling→runtime 登记边。
+- 附件：ird-gates-base-hits.txt / ird-gates-branch-hits.txt
