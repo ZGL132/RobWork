@@ -1,0 +1,10 @@
+ird_gates 命中集归一化多重集比对（T08 先例口径；WP-13-T10）
+- branch：wp13-t10（源树直跑 cmake -DIRD_ROOT=... -P cmake/ird_gates.cmake）
+- base：a2d1ae6cafb87c9ddc6e9b53770d3fdc3e922732（临时 worktree .wt-base-t10 直跑同脚本）
+- base 侧命中总数＝56；branch 侧命中总数＝56
+- 归一化命中直方图比对（ird-gates-base-hits.txt vs ird-gates-branch-hits.txt）＝完全一致（diff 为空）
+- 结论：本任务零新增门禁命中；56 处全部为存量例外（ui Qt 面、各单元测试目标
+  testkit 边、io libzip/expat 与 modeling pugixml〔O-40〕、testdata_lint、
+  project R4 例外等），例外登记归 DTB §4.5 治理通道，不在本任务范围。
+- 附件：ird-gates-base-raw.log / ird-gates-branch-raw.log /
+        ird-gates-base-hits.txt / ird-gates-branch-hits.txt
