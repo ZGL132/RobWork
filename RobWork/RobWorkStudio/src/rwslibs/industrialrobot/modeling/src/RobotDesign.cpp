@@ -92,6 +92,7 @@ std::string_view invariantIdToken(InvariantId id) noexcept
     case InvariantId::IMdl10: return "I-MDL-10";
     case InvariantId::IMdl11: return "I-MDL-11";
     case InvariantId::IMdl12: return "I-MDL-12";
+    case InvariantId::IMdl13: return "I-MDL-13";
     }
     return "unknown";
 }

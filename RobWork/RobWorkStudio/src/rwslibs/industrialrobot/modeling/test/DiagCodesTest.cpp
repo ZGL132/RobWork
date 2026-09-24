@@ -101,16 +101,26 @@ const char* kT09Section95Codes[] = {
     "MDL-DH-ANALYSIS-FAILED",
 };
 
+/// §9.5 任务列含 T10 的行的应登记码面（WP-13-T10 实现期增登——单元卡
+/// §14.6 v0.12；引用保护＋defaultTcp 完整性两码：§4.8"被本域引用时移除
+/// 被拒（I-MDL-9）"与 §4.3 defaultTcp 行"有 tools 时须已设置（KIN-14）"
+/// 的码面落位；表行序追加于表尾——登记簿纪律不重排既有行）。
+const char* kT10Section95Codes[] = {
+    "MDL-REF-PROTECTED",
+    "MDL-READINESS-DEFAULT-TCP-INCOMPLETE",
+};
+
 }  // namespace
 
 /**
  * 工厂清单分批封闭性（acceptance 4——"按 §9.5 注册纪律只登记有消费者
- * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07/T08/T09 的行
- * ——其余行（T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
+ * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07/T08/T09/T10
+ * 的行——其余行（T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
  * 字面清单（不私定码值），清单序＝§9.5 表行序。分期登记随任务推进
- * 表尾追加（T05/T06/T07/T08/T09 历次登记同款推进口径）。
+ * 表尾追加（T05/T06/T07/T08/T09/T10 历次登记同款推进口径；T10 行钉住
+ * 断言随 WP-13-T10 合法登记同步——T09 attempt 1 B-1 返工先例）。
  */
-TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T09)
+TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T10)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01", "MDL-06"},
                   std::vector<std::string>{});
@@ -121,12 +131,13 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T09)
                                       + std::size(kT06Section95Codes)
                                       + std::size(kT07Section95Codes)
                                       + std::size(kT08Section95Codes)
-                                      + std::size(kT09Section95Codes);
+                                      + std::size(kT09Section95Codes)
+                                      + std::size(kT10Section95Codes);
     ASSERT_EQ(descriptors.size(), expectedCount)
-        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08/T09 任务行（分批纪律：其余行随"
+        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08/T09/T10 任务行（分批纪律：其余行随"
            "各自任务登记——不预建）";
     // 清单序＝§9.5 表行序（实现期增登行表尾追加）：T02 行在前，
-    // T05/T06/T07/T08/T09 行按登记序随后。
+    // T05/T06/T07/T08/T09/T10 行按登记序随后。
     for (std::size_t i = 0; i < std::size(kT02Section95Codes); ++i) {
         EXPECT_EQ(descriptors[i].code, std::string(kT02Section95Codes[i]))
             << "清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
@@ -160,6 +171,12 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T09)
         EXPECT_EQ(descriptors[offset + i].code,
                   std::string(kT09Section95Codes[i]))
             << "T09 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
+    }
+    offset += std::size(kT09Section95Codes);
+    for (std::size_t i = 0; i < std::size(kT10Section95Codes); ++i) {
+        EXPECT_EQ(descriptors[offset + i].code,
+                  std::string(kT10Section95Codes[i]))
+            << "T10 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
 }
 
@@ -364,6 +381,31 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_FALSE(d.confirmable);
             EXPECT_FALSE(d.requiresComparison);
             EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-REF-PROTECTED") {
+            // T10 增登行"校验/error"→InputInvalid/Error（移除请求在当前
+            // 引用状态下不可执行——V-04 引用保护，I-MDL-9）；paramSchema
+            // [object-id, reference-holder]；比较型强制（引用计数
+            // actual=1/expected=0——V-04"比较型定位"）；UserRetry
+            //（"先解除引用再移除"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_TRUE(d.requiresComparison);
+            EXPECT_NE(d.paramSchema.find("\"object-id\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"reference-holder\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-READINESS-DEFAULT-TCP-INCOMPLETE") {
+            // T10 增登行"校验/error"→ResourceMissing/Error（defaultTcp
+            // 引用完整性族——REF-MISSING 同分类口径，I-MDL-9/KIN-14/L7）；
+            // paramSchema [tcp-key, tool-id]；非比较型（缺失/悬空无值可比
+            // ——NFR-COR-03）；UserRetry（"修复 defaultTcp 或 TCP 表"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::ResourceMissing);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_NE(d.paramSchema.find("\"tcp-key\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"tool-id\""), std::string::npos);
             EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         } else {
             FAIL() << "未登记的码面出现（分批纪律——不预建）: " << d.code;

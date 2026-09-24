@@ -65,6 +65,22 @@
  * （Planned|RejectedInvalidInput 两态）不变——门在基类，五命令行为
  * 零变化（触发条件对非切换载荷恒假）。
  *
+ * T10 增量（WP-13-T10，§4.8"删除＝引用移除"＋V-04/V-05——单元卡 §14.6
+ * v0.12 登记）：①命令载荷 v2——新增 removals 引用移除段（v1 拒收，
+ * NFR-DEP-04 升级指引＋R-MDL-5 草稿短命数据口径）；②AssertionSuite 新增
+ * assertDefaultTcp（defaultTcp 闭包级引用完整性——I-MDL-9/KIN-14/§8.2
+ * L7，与就绪校验共用单一判定面）与 assertReferenceProtection（V-04 引用
+ * 保护——MDL-REF-PROTECTED 比较型定位诊断）；③prepare 公共段接线：移除
+ * 保护门先于其余断言（保护拒绝面精确定位），defaultTcp 校验随闭包引用
+ * 断言执行；④apply-tool-definition/apply-scene-objects 移除面（引用移除
+ * ＝仅根写入，对象字节与历史修订闭包保留——PA-2/CON-02；摘要附"可能
+ * 存在外部引用"提示，悬空检测归 requirements 就绪校验——P-MDL-6）；
+ * ⑤apply-named-poses 合并流（保留键保留——V-27 建模侧；关节序一一对应
+ * ——§4.6）。钩子契约（Planned|RejectedInvalidInput 两态）不变：移除
+ * 事实经 DecodeOutcome.removedRefs 陈述，保护判定统一归基类断言段。
+ * 两枚 T10 行稳定码（MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-TCP-
+ * INCOMPLETE）随本任务在 §9.5 表尾登记（实现期增登先例——v0.6～v0.9）。
+ *
  * 线程约束（§9.4.8 原文）：处理器由 ProjectCommandService 在命令执行
  * 线程串行调用，内部无需加锁；跨上下文共享实例时处理器状态视为不可变。
  * 合法调用：仅 project 命令服务（装配注册后由 registry 分发）；业务/UI
@@ -304,6 +320,62 @@ public:
                                  const ModelingWorkingSet& closureView,
                                  std::vector<core::DiagnosticRecord>& blockers) const;
 
+    // ---- defaultTcp 引用校验（I-MDL-9/KIN-14——WP-13-T10；§8.2 L7 闭包半段）----
+
+    /**
+     * @brief defaultTcp 的闭包级引用完整性（KIN-14"defaultTcp 必填口径"）。
+     *
+     * 检查面（全部候选状态可判——闭包视图半段；toolOid∈toolRefs 的值
+     * 模型半段由 I-MDL-9 解码门强制，此处为纵深复核）：
+     *   - 有工具引用（toolRefs 非空）而 defaultTcp 未设置→阻断（§4.3
+     *     defaultTcp 行"有 tools 时须已设置"——KIN-14）；
+     *   - defaultTcp.toolOid 不在候选 toolRefs→阻断（I-MDL-9）；
+     *   - defaultTcp.toolOid 不指向闭包视图内的工具对象，或 defaultTcp.
+     *     tcpKey 不在该工具 tcpList 中→阻断（KIN-14/tcpKey 存在性——
+     *     L7"工具与 TCP 完整"）。
+     * 全部产出 MDL-READINESS-DEFAULT-TCP-INCOMPLETE（§9.5 T10 行——
+     * WP-13-T10 实现期增登），subject=defaultTcp 引用的工具身份（未设
+     * 置面 subject 为空、定位经 context）。
+     *
+     * 就绪校验（Readiness.cpp L7）与本断言共用同一实现（§9.4.4——不得
+     * 出现两套判定，NFR-MNT-04）。
+     *
+     * @param design      [in] 候选根对象（只读——引用表与 defaultTcp 来源）
+     * @param closureView [in] 候选闭包视图工作集（只读——工具对象来源）
+     * @param blockers    [out] 违例追加
+     *
+     * 纯函数；线程安全；确定性。
+     */
+    void assertDefaultTcp(const RobotDesign& design,
+                          const ModelingWorkingSet& closureView,
+                          std::vector<core::DiagnosticRecord>& blockers) const;
+
+    // ---- 引用保护（I-MDL-9/V-04——WP-13-T10；"删除"的移除前置门）----
+
+    /**
+     * @brief 移除请求的引用保护（V-04：被 defaultTcp 引用的工具不得移除）。
+     *
+     * 基线根的 defaultTcp 若指向本次移除集内的任一对象→逐对象产出
+     * MDL-REF-PROTECTED 比较型定位诊断（subject=被移除对象 oid；比较三
+     * 要素：actual=该对象被 defaultTcp 引用计数 1、expected=0、单位 1
+     * 无量纲）——移除被拒（I-MDL-9 引用保护；先解除 defaultTcp 引用再
+     * 移除）。对象字节与旧修订闭包不受影响（拒绝零写入——PA-2/CON-02）。
+     *
+     * 未被本域引用的对象（如普通场景对象——defaultTcp 只引用工具）通过
+     * 本门：跨域引用（requirements→工具 ObjectId）无法由 modeling 直检
+     * （R-1 禁互链），由移除命令摘要附"可能存在外部引用"提示＋⑤事件承
+     * 接（悬空检测归 requirements 就绪校验，P-MDL-6——§4.8 原文）。
+     *
+     * @param baselineRoot [in] 基线根对象（只读——defaultTcp 的变更前状态）
+     * @param removedOids  [in] 本次移除引用的对象身份集（载荷 removals 展平）
+     * @param blockers     [out] 保护违例追加（非空＝移除被拒）
+     *
+     * 纯函数；线程安全；确定性。
+     */
+    void assertReferenceProtection(const RobotDesign& baselineRoot,
+                                   const std::vector<core::ObjectId>& removedOids,
+                                   std::vector<core::DiagnosticRecord>& blockers) const;
+
     // ---- 资源状态面（§8.2 L6——Warning 不阻断）----
 
     /**
@@ -352,7 +424,11 @@ private:
 
 /// @brief 命令载荷格式版本（§6.4 版本三元组的处理器自有版本戳；schema
 ///        变更→+1，旧版本 payload 拒绝并给升级指引——NFR-DEP-04）。
-inline constexpr std::uint32_t kCommandPayloadVersion = 1;
+///        v2（WP-13-T10）：新增 removals 引用移除段（§9.3 表行 3"移除
+///        引用"与 V-04/V-05 删除面——卡 §4.8"删除＝引用移除"的命令载体）；
+///        v1 载荷拒收（重新编辑指引——卡 R-MDL-5：草稿属会话短命数据，
+///        版本不兼容损失可接受并如实提示）。
+inline constexpr std::uint32_t kCommandPayloadVersion = 2;
 
 /**
  * @brief 载荷对象槽（§9.3"应用编辑差值"的载体单元——一个待写入对象）。
@@ -384,15 +460,44 @@ struct PayloadObjectSlot {
 };
 
 /**
+ * @brief 引用移除槽（WP-13-T10 增量——§9.3 表行 apply-scene-objects"移除
+ *        引用"与 §4.8"删除＝引用移除"的载荷载体）。
+ *
+ * 语义：从根对象引用表移除该对象引用（toolRefs/sceneRefs），被移除对象
+ * 本身**零写入**——对象库不可变只增不改（PA-2/CON-02），对象字节与历史
+ * 修订闭包完整保留；"删除"永不物理删除。
+ *
+ * 移除被 defaultTcp 引用的工具→拒绝＋MDL-REF-PROTECTED 比较型定位诊断
+ * （I-MDL-9/V-04）；移除命令摘要附"可能存在外部引用"提示＋⑤事件（修订
+ * 提交即触发 DependencyInvalidated——project TxEngine 已验契约；悬空检测
+ * 归 requirements 就绪校验，P-MDL-6）。
+ *
+ * 线程安全：纯值类型。
+ */
+struct PayloadRemovalSlot {
+    core::ObjectId objectId;      ///< 待移除引用的对象身份（须有效且被根引用）
+    std::string objectTypeToken;  ///< 五对象 token 之一（路由与校验）
+
+    bool operator==(const PayloadRemovalSlot& o) const
+    {
+        return objectId == o.objectId && objectTypeToken == o.objectTypeToken;
+    }
+    bool operator!=(const PayloadRemovalSlot& o) const { return !(*this == o); }
+};
+
+/**
  * @brief 建模命令载荷（处理器域内 canonical 形态——CommandEnvelope.
  *        payloadCanonical 的域解释，D-10：project 透传存储不解释）。
  *
  * 模式语义（§6.9 撤销/重做——"以 inverse 载荷提交 restore 型命令（同一
  * commandType，payload=restore 变体）"）：
  *   - Apply：正向应用——槽语义见各处理器注（每命令的槽形状校验不同）；
+ *     removals 段（v2）承载引用移除（Apply 专用——见 PayloadRemovalSlot 注）；
  *   - Restore：快照逆放——全部槽 allocateNew=false 且 objectId 须存在于
  *     基线（恢复历史字节）；槽字节为受影响对象**前一版本的 canonical
- *     字节集**（D-MDL-9——由 prepare 的 inverse 组装产出，往返一致）。
+ *     字节集**（D-MDL-9——由 prepare 的 inverse 组装产出，往返一致）；
+ *     removals 须为空（逆放不表达移除——移除的逆＝根对象字节还原，
+ *     引用随根字节恢复）。
  *
  * 线程安全：纯值类型。
  */
@@ -402,10 +507,11 @@ struct CommandPayload {
 
     Mode mode = Mode::Apply;                  ///< 模式（Apply|Restore）
     std::vector<PayloadObjectSlot> objects;   ///< 对象槽（槽序＝确定性处理序）
+    std::vector<PayloadRemovalSlot> removals; ///< 引用移除槽（v2；Apply 专用——槽序确定性）
 
     bool operator==(const CommandPayload& o) const
     {
-        return mode == o.mode && objects == o.objects;
+        return mode == o.mode && objects == o.objects && removals == o.removals;
     }
     bool operator!=(const CommandPayload& o) const { return !(*this == o); }
 };
@@ -497,6 +603,10 @@ struct DecodeOutcome {
     /// 置 true——行程 Confirmable 属根命令断言域，其余命令不改变关节行程
     /// 事实、不消费④端口）。
     bool travelRelevant = false;
+    /// 本次移除引用的对象身份集（WP-13-T10 增量——引用保护断言的输入；
+    /// 钩子只陈述移除事实，保护判定统一归基类断言段执行（MDL-REF-
+    /// PROTECTED——单一判定面），非空时基类先于其余断言执行保护门）。
+    std::vector<core::ObjectId> removedRefs;
 };
 
 /**
@@ -615,13 +725,24 @@ protected:
 
 /**
  * @brief apply-tool-definition 处理器（§9.3 表行 2；requiresDualCompile=
- *        true——工具几何/物性入 WC/DWC；断言：工具物性①②③＋闭包引用）。
+ *        true——工具几何/物性入 WC/DWC；断言：工具物性①②③＋defaultTcp
+ *        引用校验（WP-13-T10——assertDefaultTcp/assertReferenceProtection
+ *        对候选/基线执行））。
  *
- * 槽形状语义：Apply 模式恰一个 tool-definition 槽；基线须已有根（根引
- * 用表增量挂载点）。allocateNew→取号＋根 toolRefs 追加（根对象一并写
- * 入——"＋根引用表增量"）；显式 oid→基线既有工具字节替换（引用稳定，
- * 不写根）。defaultTcp 的核查（L7）不在此——工具增删不改 defaultTcp
- * 语义，就绪层承载。
+ * 槽形状语义（Apply 模式，写入面与移除面二选一——混载＝无效载荷）：
+ *   - 写入面：恰一个 tool-definition 槽；基线须已有根（根引用表增量挂
+ *     载点）。allocateNew→取号＋根 toolRefs 追加（根对象一并写入——"＋
+ *     根引用表增量"）；显式 oid→基线既有工具字节替换（引用稳定，不写
+ *     根）。空 tcpList 工具在解码门被 I-MDL-13 拒绝（§4.4 ≥1）。
+ *   - 移除面（WP-13-T10/V-04/V-05）：恰一个 tool 槽位移除（removals），
+ *     objects 须为空。被移除对象须存在于基线闭包且被根 toolRefs 引用
+ *     （否则＝无效载荷——无可移除引用）；被 defaultTcp 引用→保护门拒绝
+ *     ＋MDL-REF-PROTECTED（subject=oid，V-04）；移除成功＝仅根对象写入
+ *     （引用表移除——对象字节与历史修订闭包完整保留，PA-2/CON-02），
+ *     摘要附"可能存在外部引用"提示（跨域引用直检归 requirements，R-1/
+ *     P-MDL-6）。
+ * Restore 模式：全部槽显式 oid 且存在于基线——快照逆放（§6.9）；removals
+ * 须为空（移除的逆＝根字节还原，引用随根恢复）。
  */
 class ApplyToolDefinitionHandler final : public IModelingCommandHandler {
 public:
@@ -642,12 +763,18 @@ protected:
 
 /**
  * @brief apply-scene-objects 处理器（§9.3 表行 3；requiresDualCompile=
- *        true——碰撞几何变更；断言：闭包引用）。
+ *        true——碰撞几何变更；断言：闭包引用＋场景引用校验）。
  *
- * 槽形状语义：Apply 模式 1..n 个 scene-object 槽（批量）。allocateNew→
- * 逐槽取号＋根 sceneRefs 追加（批量一次根写入）；显式 oid→基线既有
- * 场景对象字节替换。场景引用校验（§9.3 断言列）＝闭包引用断言的
- * sceneRefs 面。
+ * 槽形状语义（Apply 模式——批量增/改/移除引用可混载）：
+ *   - 对象槽（0..n 个 scene-object 槽）：allocateNew→逐槽取号＋根
+ *     sceneRefs 追加（批量一次根写入）；显式 oid→基线既有场景对象字节
+ *     替换。场景引用校验（§9.3 断言列）＝闭包引用断言的 sceneRefs 面。
+ *   - 移除槽（0..n 个，removals——WP-13-T10/V-05）：从根 sceneRefs 移除
+ *     引用；被移除对象须存在于基线闭包且被引用（否则＝无效载荷）。场景
+ *     对象无 defaultTcp 引用面（defaultTcp 只引用工具）——移除常规放行；
+ *     摘要附"可能存在外部引用"提示（跨域引用悬空检测归 requirements
+ *     就绪校验——R-1/P-MDL-6）。objects 与 removals 全空＝无效载荷。
+ * Restore 模式：全部槽显式 oid 且存在于基线；removals 须为空（§6.9）。
  */
 class ApplySceneObjectsHandler final : public IModelingCommandHandler {
 public:
@@ -670,10 +797,17 @@ protected:
  * @brief apply-named-poses 处理器（§9.3 表行 4；requiresDualCompile=
  *        false——不进 Description；无物性断言（纯参考数据））。
  *
- * 槽形状语义：Apply 模式恰一个 named-pose-set 槽。allocateNew→取号＋根
- * poseSetRef 置入（根内该引用须原为未设置——"至多一份"）；显式 oid→
- * 基线既有位姿集字节替换。位姿集不经名称映射、不进任何评估器依赖键
- * （§4.6）——本命令零编译影响，S5 跳过双编译。
+ * 槽形状语义：Apply 模式恰一个 named-pose-set 槽；基线须已有根。槽内
+ * entries＝用户命名位姿全集——经 mergeNamedPoseEntries 合并流（§4.6/
+ * D-MDL-3/MDL-17，WP-13-T10）：保留键拒绝写入（"除 Home/Zero 外"）、
+ * 键唯一、jointConfiguration 与根关节序一一对应；合并产物＝基线保留键
+ * 条目（homeConfiguration/zeroConfiguration 原样保留——V-27 建模侧，
+ * KIN-06 复位走会话命令零修订）∪ 用户条目（键字典序）。合并失败＝无效
+ * 载荷（域结构校验——值面违例明细见 PoseEditErrorCode）。allocateNew→
+ * 取号＋根 poseSetRef 置入（根内该引用须原为未设置——"至多一份"）；
+ * 显式 oid→基线既有位姿集字节替换。位姿集不经名称映射、不进任何评估器
+ * 依赖键（§4.6/D-MDL-3）——本命令零编译影响，S5 跳过双编译（位姿集修
+ * 订不触发重算）。
  */
 class ApplyNamedPosesHandler final : public IModelingCommandHandler {
 public:

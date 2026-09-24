@@ -172,6 +172,23 @@ inline constexpr std::string_view kMdlDhApproximate = "MDL-DH-APPROXIMATE";
 /// WP-13-T09 登记，§14.6 v0.10）。
 inline constexpr std::string_view kMdlDhAnalysisFailed = "MDL-DH-ANALYSIS-FAILED";
 
+/// §9.5 T10 行（v0.12 实现期增登）：MDL-REF-PROTECTED（校验/error——
+/// 移除被 defaultTcp 引用的工具被拒（I-MDL-9 引用保护/V-04：subject=被
+/// 移除对象 oid；比较型＝引用计数 actual=1/expected=0）→先解除 defaultTcp
+/// 引用再移除；对象字节与旧修订闭包不受影响——PA-2/CON-02。§4.8"被本域
+/// 引用时移除被拒（I-MDL-9）"的码面落位——原表缺行，沿实现期增登先例
+/// （v0.6～v0.9）登记。WP-13-T10 登记，§14.6 v0.12）。
+inline constexpr std::string_view kMdlRefProtected = "MDL-REF-PROTECTED";
+
+/// §9.5 T10 行（v0.12 实现期增登）：MDL-READINESS-DEFAULT-TCP-INCOMPLETE
+/// （校验/error——defaultTcp 引用完整性（I-MDL-9/KIN-14/§8.2 L7"工具与
+/// TCP 完整"）：有工具引用而 defaultTcp 未设置／toolOid 不在 toolRefs／
+/// tcpKey 不在被引工具 tcpList→修复 defaultTcp 或工具 TCP 表。§4.3
+/// defaultTcp 行"有 tools 时须已设置（KIN-14）"与 L7 闭包半段的码面落位
+/// ——原表缺行，实现期增登。WP-13-T10 登记，§14.6 v0.12）。
+inline constexpr std::string_view kMdlReadinessDefaultTcpIncomplete =
+    "MDL-READINESS-DEFAULT-TCP-INCOMPLETE";
+
 // =====================================================================
 // MDL-* 稳定诊断码描述符清单（§9.5 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
