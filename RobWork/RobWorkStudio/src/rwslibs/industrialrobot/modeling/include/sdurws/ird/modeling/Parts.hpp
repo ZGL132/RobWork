@@ -17,7 +17,10 @@
  *     （动力学参数层）、MDL-17（命名位姿）、MDL-21（传动 R2）、SEL-10
  *     （选型回填）、CON-03（资源三段边界）
  *   - 任务契约 tasks/foundation/WP-13-T03.json acceptance 1（五部件对象
- *     schema——Parts.hpp 行）、acceptance 3（R1 下 coupling 配置拒绝）
+ *     schema——Parts.hpp 行）、acceptance 3（R1 下 coupling 配置拒绝）；
+ *     tasks/foundation/WP-13-T10.json acceptance 1/3/4（§3.3 Parts.hpp
+ *     T10 行"编辑流"：工具 tcpList≥1 与 T_flange_tool、场景约束、命名
+ *     位姿合并/保留键/关节序——文末"部件编辑流"节）
  *
  * 背景说明（为什么这四个对象独立成对象而连杆不是——§4.2 表"独立成对象
  * 的理由"列）：工具被任务/负载跨域引用（不复制几何）、场景对象被 REQ-04
@@ -395,6 +398,92 @@ std::vector<InvariantViolation> checkInvariants(const ToolDefinition& tool);
  */
 std::vector<InvariantViolation> checkInvariants(const DrivetrainDesign& drivetrain,
                                                 CouplingStage stage);
+
+// =====================================================================
+// 部件编辑流（§3.3 Parts.hpp T10 行——WP-13-T10；构造/编辑边界的值面
+// 校验与纯函数合并流。处置原则同 §4.10 尾段：编辑边界 fail-fast＝调用
+// 方错误，经值面返回不抛异常——§9.4.1 EditOutcome 轨道同构）
+// =====================================================================
+
+// ---- 命名位姿保留键（§4.6：homeConfiguration/zeroConfiguration 两个
+// 保留键作为编辑器"复位 Home/Zero"会话命令的目标参考——UX-13/KIN-06；
+// 复位只改 ui 会话姿态不产生修订，故保留键的**写入**不属于用户命名位姿
+// 管理面——REQUIREMENTS MDL-17"除 Home/Zero 外保存、命名与恢复姿态"）----
+
+/// @brief Home 复位参考键（§4.6 字面；位姿集条目 key 作用域）。
+inline constexpr std::string_view kHomeConfigurationPoseKey = "homeConfiguration";
+
+/// @brief Zero 复位参考键（§4.6 字面；位姿集条目 key 作用域）。
+inline constexpr std::string_view kZeroConfigurationPoseKey = "zeroConfiguration";
+
+/**
+ * @brief 保留键判定（§4.6 两保留键的字面集合成员测试）。
+ *
+ * @param key [in] 位姿条目键（只读）
+ * @return true＝保留键（用户命名位姿编辑面不得携带——mergeNamedPoseEntries
+ *         拒绝）；false＝普通键
+ *
+ * 纯函数；线程安全；确定性。
+ */
+bool isReservedPoseKey(std::string_view key) noexcept;
+
+/**
+ * @brief 命名位姿编辑流的错误码（编辑流局部错误轨道——EstimateErrorCode/
+ *        DhErrorCode 同款先例：各接口局部载体不并入 ModelingErrorCode 域表）。
+ */
+enum class PoseEditErrorCode {
+    Ok,                  ///< 成功（merged 有效）
+    ReservedKeyInEdit,   ///< 编辑条目携带保留键（MDL-17"除 Home/Zero 外"——越出面拒绝）
+    EmptyKey,            ///< 条目键为空串（引用锚不可为空——codec 键作用域）
+    DuplicateKey,        ///< 编辑条目键重复（I-MDL-2 身份/键唯一性的条目面）
+    JointOrderMismatch,  ///< 条目 jointConfiguration 长度≠根关节表长度（§4.6"与关节序一一对应"）
+};
+
+/**
+ * @brief 命名位姿合并结果（mergeNamedPoseEntries 的两态产出）。
+ *
+ * code==Ok 时 merged 有效＝基线保留键条目 ∪ 用户条目（键字典序——codec
+ * canonical 序）；其余 code 时 merged 为 nullopt、subject＝出错条目键。
+ * 纯值类型。
+ */
+struct PoseEditOutcome {
+    PoseEditErrorCode code = PoseEditErrorCode::Ok;  ///< 结果码（见枚举注）
+    std::string subject;                             ///< 定位（出错条目键；Ok 时为空串）
+    std::optional<PoseSet> merged;                   ///< 合并产物（仅 Ok 时有值）
+};
+
+/**
+ * @brief 命名位姿合并编辑流（§4.6/D-MDL-3/MDL-17——apply-named-poses
+ *        处理器与插件编辑器共用的唯一合并实现）。
+ *
+ * 语义（三段，全部确定性）：
+ *   ① 编辑条目校验（任一失败即整体拒绝，不产出半成品——NFR-COR-03）：
+ *      键非空（EmptyKey）；不含保留键（ReservedKeyInEdit——保留键的写入
+ *      不属用户命名位姿管理面，MDL-17 字面；其**读取**归 ui 会话复位）；
+ *      键在编辑集内唯一（DuplicateKey）；jointConfiguration 长度==根关节
+ *      表长度（JointOrderMismatch——§4.6"与关节序一一对应"；对照 §4.7
+ *      ratioPerJoint 行明写"逐可动关节"，本处无"可动"限定词＝关节表全序，
+ *      含 Fixed 表序位——取卡面字面）；
+ *   ② 保留键保留（V-27 建模侧）：基线位姿集中的保留键条目**原样带入**
+ *      合并产物——用户位姿编辑永不破坏 Home/Zero 参考键（复位走会话命令
+ *      零修订，KIN-06）；基线无位姿集＝尚无保留键，产物只含用户条目；
+ *   ③ 规范化输出：合并条目按 key 字典序排列（codec canonical 序——
+ *      putPoseSet 排序域），用户条目全集**替换**基线非保留条目（编辑提交
+ *      ＝完整用户位姿清单，非增量 upsert——与载荷携带完整对象字节的
+ *      replace 语义一致）。
+ *
+ * @param baseline       [in] 基线位姿集（nullopt＝尚无位姿集——首建）
+ * @param userEntries    [in] 用户命名位姿全集（编辑提交面；按值接收——
+ *                       合并时被移动进产物）
+ * @param rootJointCount [in] 根对象关节表长度（关节序一一对应的比对基准）
+ * @return 合并结果（code==Ok 时 merged 有效；错误时 subject＝首个出错
+ *         条目键——确定性：按编辑序首个违例）
+ *
+ * 纯函数；线程安全；确定性（NFR-COR-02）。
+ */
+PoseEditOutcome mergeNamedPoseEntries(const std::optional<PoseSet>& baseline,
+                                      std::vector<PoseSetEntry> userEntries,
+                                      std::size_t rootJointCount);
 
 }  // namespace sdurws::ird::modeling
 

@@ -131,6 +131,15 @@ DecodeOutcome invalidInput()
     return out;
 }
 
+/// 五对象 token 词表成员判定（载荷槽/移除槽/基线路由共用的单一谓词——
+/// 词表外的 token＝非 modeling 对象）。
+bool isModelingObjectTypeToken(std::string_view token)
+{
+    return token == kRobotDesignObjectType || token == kToolDefinitionObjectType
+        || token == kSceneObjectObjectType || token == kNamedPoseSetObjectType
+        || token == kRobotDrivetrainObjectType;
+}
+
 }  // namespace
 
 // =====================================================================
@@ -405,6 +414,97 @@ void AssertionSuite::assertClosureReferences(const RobotDesign& design,
     }
 }
 
+void AssertionSuite::assertDefaultTcp(const RobotDesign& design,
+                                      const ModelingWorkingSet& closureView,
+                                      std::vector<core::DiagnosticRecord>& blockers) const
+{
+    // ---- "有 tools 则 defaultTcp 已设置"（§4.3 defaultTcp 行/KIN-14）----
+    // 判定基准＝根对象引用表（toolRefs——根视图的"有 tools"口径；空表
+    // ＝无工具，defaultTcp 可缺省——未设且无工具不是违例）。
+    if (design.toolRefs.empty()) {
+        return;  // 无工具——L7 工具面无可查事实（值模型允许 defaultTcp 缺省）
+    }
+    if (!design.defaultTcp.has_value()) {
+        blockers.push_back(makeRecord(
+            kMdlReadinessDefaultTcpIncomplete, core::ObjectId{}, std::string(),
+            std::string("defaultTcp 完整性（KIN-14）"),
+            "已配置工具引用但未设置默认 TCP（有 tools 时须已设置——KIN-14）",
+            "设置 defaultTcp（指向工具引用表内工具的某 TCP 键）"));
+        return;  // 未设置面唯一违例——不再核对键（无引用可核对，不伪造事实）
+    }
+
+    // ---- toolOid∈toolRefs（I-MDL-9 值模型半段的纵深复核——载荷根经解码
+    // 门 I-MDL-9 已强制，此处覆盖内存构造的候选根）----
+    const core::ObjectId& toolOid = design.defaultTcp->toolOid;
+    const bool inToolRefs = std::find(design.toolRefs.begin(), design.toolRefs.end(),
+                                      toolOid) != design.toolRefs.end();
+    if (!inToolRefs) {
+        blockers.push_back(makeRecord(
+            kMdlReadinessDefaultTcpIncomplete, toolOid, std::string(),
+            std::string("defaultTcp 完整性（I-MDL-9）"),
+            "defaultTcp.toolOid 不在根对象工具引用表内（obj-"
+                + toolOid.toCanonical().substr(4) + "）",
+            "修复 defaultTcp（指向 toolRefs 内工具）或把该工具加入引用表"));
+        return;
+    }
+
+    // ---- tcpKey 存在性（闭包视图半段——被引工具的 tcpList 须含该键，
+    // KIN-14/L7"工具与 TCP 完整"）----
+    const ToolDefinition* referenced = nullptr;
+    for (const ToolDefinition& tool : closureView.toolObjects) {
+        if (tool.objectId == toolOid) { referenced = &tool; break; }
+    }
+    if (referenced == nullptr) {
+        // 引用的工具对象不在候选闭包（引用表有锚而对象缺失——闭包断裂面；
+        // 闭包引用断言对 toolRefs 的对象存在性另行产 REF-MISSING，此处按
+        // defaultTcp 视角补位定位——两码主体不同，不构成同事实双报）。
+        blockers.push_back(makeRecord(
+            kMdlReadinessDefaultTcpIncomplete, toolOid, std::string(),
+            std::string("defaultTcp 完整性（闭包）"),
+            "defaultTcp 引用的工具对象不在候选闭包视图内（obj-"
+                + toolOid.toCanonical().substr(4) + "）",
+            "修复引用或恢复被引用的工具对象"));
+        return;
+    }
+    bool keyFound = false;
+    for (const TcpEntry& tcp : referenced->tcpList) {
+        if (tcp.key == design.defaultTcp->tcpKey) { keyFound = true; break; }
+    }
+    if (!keyFound) {
+        blockers.push_back(makeRecord(
+            kMdlReadinessDefaultTcpIncomplete, toolOid, referenced->localName,
+            "defaultTcp 完整性（tcpKey）工具「" + referenced->localName + "」",
+            "defaultTcp.tcpKey「" + design.defaultTcp->tcpKey
+                + "」不在被引工具 tcpList 中（KIN-14）",
+            "修正 defaultTcp 的 tcpKey，或在该工具 tcpList 中补充该键"));
+    }
+}
+
+void AssertionSuite::assertReferenceProtection(
+    const RobotDesign& baselineRoot,
+    const std::vector<core::ObjectId>& removedOids,
+    std::vector<core::DiagnosticRecord>& blockers) const
+{
+    if (removedOids.empty() || !baselineRoot.defaultTcp.has_value()) {
+        return;  // 无移除请求／defaultTcp 未设置＝无引用持有者——门通过
+    }
+    // 逐移除对象核对 defaultTcp 持有（V-04：被引用工具的移除请求被拒）。
+    // 场景对象不可被 defaultTcp 引用（defaultTcp.toolOid 只指向工具——
+    // §4.3/I-MDL-9），其移除常规通过本门；跨域引用由摘要提示＋⑤事件承接。
+    for (const core::ObjectId& oid : removedOids) {
+        if (!(baselineRoot.defaultTcp->toolOid == oid)) { continue; }
+        blockers.push_back(makeRecord(
+            kMdlRefProtected, oid, std::string(),
+            "引用保护（I-MDL-9——defaultTcp 持有）",
+            "待移除对象被 defaultTcp 引用（obj-" + oid.toCanonical().substr(4)
+                + "）——引用计数 1 ≠ 0，移除被拒（V-04）",
+            "先将 defaultTcp 切换到其他工具（或清除），再移除该工具引用",
+            comparison(1.0, "1", 0.0, "1")));
+        // 比较型三要素：actual=被 defaultTcp 引用计数（1）、expected=移除
+        // 前须为 0、单位 "1"（core 注册的无量纲 token——引用计数无量纲）。
+    }
+}
+
 void AssertionSuite::checkResourceStates(const RobotDesign& design,
                                          std::vector<core::DiagnosticRecord>& warnings) const
 {
@@ -470,9 +570,10 @@ void AssertionSuite::assertSchemaVersions(const ModelingWorkingSet& ws,
 
 namespace {
 
-/// 载荷 magic（"IRDMCP1"——modeling command payload v1；版本演进随
-/// kCommandPayloadVersion 与 magic 尾数字同步）。
-constexpr std::uint8_t kPayloadMagic[7] = {'I', 'R', 'D', 'M', 'C', 'P', '1'};
+/// 载荷 magic（"IRDMCP2"——modeling command payload v2；v2＝WP-13-T10
+/// 新增 removals 引用移除段；版本演进随 kCommandPayloadVersion 与 magic
+/// 尾数字同步，v1 载荷拒收——NFR-DEP-04）。
+constexpr std::uint8_t kPayloadMagic[7] = {'I', 'R', 'D', 'M', 'C', 'P', '2'};
 
 void putU32(std::vector<std::uint8_t>& out, std::uint32_t v)
 {
@@ -533,7 +634,7 @@ struct PayloadReader {
 std::vector<std::uint8_t> encodeCommandPayload(const CommandPayload& payload)
 {
     std::vector<std::uint8_t> out;
-    out.reserve(64 + payload.objects.size() * 32);
+    out.reserve(64 + payload.objects.size() * 32 + payload.removals.size() * 32);
     out.insert(out.end(), kPayloadMagic, kPayloadMagic + sizeof(kPayloadMagic));
     putU32(out, kCommandPayloadVersion);
     putU32(out, payload.mode == CommandPayload::Mode::Restore ? 1u : 0u);
@@ -544,6 +645,13 @@ std::vector<std::uint8_t> encodeCommandPayload(const CommandPayload& payload)
         putString(out, oid);
         putString(out, slot.objectTypeToken);
         putBytes(out, slot.objectBytes.data(), slot.objectBytes.size());
+    }
+    // v2 removals 段（WP-13-T10）：引用移除槽集——oid＋token，无字节域
+    //（移除＝引用表操作，被移除对象零写入——PA-2/CON-02）。
+    putU32(out, static_cast<std::uint32_t>(payload.removals.size()));
+    for (const PayloadRemovalSlot& slot : payload.removals) {
+        putString(out, slot.objectId.toCanonical());
+        putString(out, slot.objectTypeToken);
     }
     return out;
 }
@@ -564,7 +672,8 @@ std::optional<CommandPayload> tryDecodeCommandPayload(const std::vector<std::uin
         return std::nullopt;
     }
     // 版本不受理（NFR-DEP-04——旧版本拒绝并给升级指引；升级指引由拒绝
-    // 语义承载：处理器受理集合＝{kCommandPayloadVersion}）。
+    // 语义承载：处理器受理集合＝{kCommandPayloadVersion}；v1→v2 升级无
+    // 自动升级器——重新编辑，R-MDL-5 草稿短命数据口径）。
     if (version != kCommandPayloadVersion) { return std::nullopt; }
     if (mode > 1u) { return std::nullopt; }
     payload.mode = (mode == 1u) ? CommandPayload::Mode::Restore : CommandPayload::Mode::Apply;
@@ -584,15 +693,26 @@ std::optional<CommandPayload> tryDecodeCommandPayload(const std::vector<std::uin
         slot.objectId = *oid;
         if (!reader.readString(&slot.objectTypeToken)) { return std::nullopt; }
         // token 词表核对（五对象之外＝无效载荷——路由失联面）。
-        if (slot.objectTypeToken != kRobotDesignObjectType
-            && slot.objectTypeToken != kToolDefinitionObjectType
-            && slot.objectTypeToken != kSceneObjectObjectType
-            && slot.objectTypeToken != kNamedPoseSetObjectType
-            && slot.objectTypeToken != kRobotDrivetrainObjectType) {
-            return std::nullopt;
-        }
+        if (!isModelingObjectTypeToken(slot.objectTypeToken)) { return std::nullopt; }
         if (!reader.readBytes(&slot.objectBytes)) { return std::nullopt; }
         payload.objects.push_back(std::move(slot));
+    }
+    // v2 removals 段（WP-13-T10）：结构校验同对象槽的 token 词表面；
+    // Restore 模式携带 removals 的语义拒绝归处理器（钩子层——载荷结构
+    // 本身自洽，解码层不越权解释模式语义）。
+    std::uint32_t removalCount = 0;
+    if (!reader.readU32(&removalCount)) { return std::nullopt; }
+    payload.removals.reserve(removalCount);
+    for (std::uint32_t i = 0; i < removalCount; ++i) {
+        PayloadRemovalSlot slot;
+        std::string oidText;
+        if (!reader.readString(&oidText)) { return std::nullopt; }
+        auto oid = core::ObjectId::tryFromCanonical(oidText);
+        if (!oid.has_value()) { return std::nullopt; }
+        slot.objectId = *oid;
+        if (!reader.readString(&slot.objectTypeToken)) { return std::nullopt; }
+        if (!isModelingObjectTypeToken(slot.objectTypeToken)) { return std::nullopt; }
+        payload.removals.push_back(std::move(slot));
     }
     if (!reader.atEnd()) { return std::nullopt; }  // 尾随字节＝破损
     return payload;
@@ -662,11 +782,7 @@ BaselineSnapshot rebuildBaseline(project::HandlerContext& ctx,
     RobotDesignCodec codec;
     for (const project::ObjectRef& ref : baseSnapshot.objectRefs) {
         const std::string_view token = ref.objectTypeToken;
-        const bool isModeling =
-            token == kRobotDesignObjectType || token == kToolDefinitionObjectType
-            || token == kSceneObjectObjectType || token == kNamedPoseSetObjectType
-            || token == kRobotDrivetrainObjectType;
-        if (!isModeling) { continue; }  // 元数据/策略等非 modeling 对象——跳过
+        if (!isModelingObjectTypeToken(token)) { continue; }  // 元数据/策略等非 modeling 对象——跳过
 
         // 强语义取数＋同源解码（reader 同源——§9.3 原文；解码失败＝数据
         // 损坏面，fail-fast——不产出半成品基线）。
@@ -806,22 +922,32 @@ std::string_view commandTitle(std::string_view token)
 }
 
 /// 中文命令摘要（对象/字段/确认留痕/资源状态——§9.3；确定性模板）。
+/// removedCount>0 时追加"可能存在外部引用"提示（§4.8：跨域引用无法由
+/// modeling 直检——R-1 禁互链；悬空检测归 requirements 就绪校验，P-MDL-6；
+/// ⑤事件随修订提交由 project TxEngine 发布——RevisionCommitted→
+/// DependencyInvalidated，§7.1 第 6 步）。
 std::string buildSummary(std::string_view commandToken,
                          std::size_t writeCount,
                          const core::ObjectId* rootOid,
                          std::size_t addedCount,
                          std::size_t replacedCount,
+                         std::size_t removedCount,
                          std::size_t confirmableCount,
                          std::size_t warningCount)
 {
     // 摘要四段（确定性序）：对象（写入计数＋新增/替换拆分＋根锚）→
-    // 确认留痕（待确认计数——凭据与绑定四元组由 project S4/S6 落盘）→
-    // 资源/物性提示（Warning 预告计数）。
+    // 移除面（引用移除计数＋跨域提示）→确认留痕（待确认计数——凭据与
+    // 绑定四元组由 project S4/S6 落盘）→资源/物性提示（Warning 预告计数）。
     std::string summary(commandTitle(commandToken));
     summary += "：写入对象 " + std::to_string(writeCount) + " 项（新增 "
              + std::to_string(addedCount) + "、替换 " + std::to_string(replacedCount) + "）";
     if (rootOid != nullptr) {
         summary += "；根 " + rootOid->toCanonical();
+    }
+    if (removedCount > 0) {
+        summary += "；移除引用 " + std::to_string(removedCount)
+                 + " 项（对象字节与历史修订保留；可能存在外部引用——悬空检测"
+                   "归 requirements 就绪校验）";
     }
     if (confirmableCount > 0) {
         summary += "；行程上限待确认 " + std::to_string(confirmableCount) + " 项";
@@ -941,11 +1067,27 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
         }
     }
 
+    // ---- ③.6 引用保护门（§4.8/V-04——WP-13-T10）：移除请求先于其余断言
+    // 核对 defaultTcp 持有（保护拒绝面精确定位——单一 MDL-REF-PROTECTED
+    // 诊断，不与候选闭包断言的派生违例混报：被拒候选不进入后续断言域）。
+    if (!dec.removedRefs.empty()) {
+        std::vector<core::DiagnosticRecord> protectionBlockers;
+        m_suite.assertReferenceProtection(baseline.ws.design, dec.removedRefs,
+                                          protectionBlockers);
+        if (!protectionBlockers.empty()) {
+            out.objectWrites.clear();  // 拒绝态计划不可消费（project 不消费）
+            diags.insert(diags.end(), protectionBlockers.begin(),
+                         protectionBlockers.end());
+            return project::PrepareOutcome::RejectedHardAssert;
+        }
+    }
+
     // ---- ④ 断言分域（AssertionSuite——与就绪校验共用，NFR-MNT-04）----
     std::vector<core::DiagnosticRecord> blockers;
     std::vector<core::DiagnosticRecord> warnings;
     m_suite.assertSchemaVersions(dec.candidate, blockers);
     m_suite.assertClosureReferences(dec.candidate.design, dec.candidate, blockers);
+    m_suite.assertDefaultTcp(dec.candidate.design, dec.candidate, blockers);
     m_suite.assertJointLimitIntervals(dec.candidate.design, blockers);
     for (const LinkEntry& link : dec.candidate.design.links) {
         m_suite.assertBodyPhysical(link.objectId, link.localName, link.body,
@@ -1039,12 +1181,14 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
     }
     const std::size_t added = dec.affectedOids.size() - replaced;
 
-    // 中文命令摘要（对象/字段/确认留痕/资源状态——随修订持久化）。
+    // 中文命令摘要（对象/字段/确认留痕/资源状态——随修订持久化；移除面
+    // 附跨域引用提示——§4.8/P-MDL-6）。
     out.summary = buildSummary(commandType(), out.objectWrites.size(),
                                dec.candidate.rootObjectId.has_value()
                                    ? &*dec.candidate.rootObjectId
                                    : nullptr,
                                added, replaced,
+                               dec.removedRefs.size(),
                                out.confirmableFindings.size(), warnings.size());
 
     // 物性缺失预告随 diags 留痕（Planned 也产出——§9.3"转 Warning 诊断随
@@ -1068,6 +1212,9 @@ DecodeOutcome decodeRestoreCommon(const CommandPayload& payload,
 {
     DecodeOutcome result;
     if (payload.objects.empty()) { return invalidInput(); }
+    // 逆放不表达移除（移除的逆＝根对象字节还原，引用随根恢复——v2 载荷
+    // 的 removals 段在 Restore 模式恒空；非空＝无效载荷）。
+    if (!payload.removals.empty()) { return invalidInput(); }
     // 候选＝基线底（逆放对象就地替换——未涉及对象保持基线态）。
     result.candidate = baseline;
     result.candidate.rootObjectId = baseline.rootObjectId;
@@ -1293,6 +1440,58 @@ DecodeOutcome ApplyToolDefinitionHandler::decodeAndPlan(project::HandlerContext&
     if (payload.mode == CommandPayload::Mode::Restore) {
         return decodeRestoreCommon(payload, baseline, out);
     }
+
+    // ---- 移除面（WP-13-T10/V-04/V-05）：恰一个工具引用移除，objects 空
+    //（写入面与移除面混载＝无效载荷——§9.3 表行 2 单对象命令形状）----
+    if (!payload.removals.empty()) {
+        DecodeOutcome result;
+        if (!payload.objects.empty() || payload.removals.size() != 1) {
+            return invalidInput();
+        }
+        const PayloadRemovalSlot& removal = payload.removals[0];
+        if (removal.objectTypeToken != kToolDefinitionObjectType) { return invalidInput(); }
+        if (!removal.objectId.isValid()) { return invalidInput(); }
+        if (!baseline.rootObjectId.has_value()) { return invalidInput(); }
+        // 被移除对象须存在于基线闭包（工具对象）且被根 toolRefs 引用
+        //（移除未被引用/不存在的对象＝无可移除引用——无效载荷，不静默
+        // 空转——NFR-COR-03）。
+        bool existsInClosure = false;
+        for (const ToolDefinition& t : baseline.toolObjects) {
+            if (t.objectId == removal.objectId) { existsInClosure = true; break; }
+        }
+        const bool referenced = std::find(baseline.design.toolRefs.begin(),
+                                          baseline.design.toolRefs.end(),
+                                          removal.objectId)
+                             != baseline.design.toolRefs.end();
+        if (!existsInClosure || !referenced) { return invalidInput(); }
+
+        // 候选＝基线减去该引用与对象视图（保护判定归基类 ③.6 门——钩子
+        // 只陈述移除事实；对象库字节不动＝本命令仅写根对象，PA-2/CON-02）。
+        result.candidate = baseline;
+        result.candidate.rootObjectId = baseline.rootObjectId;
+        auto& refs = result.candidate.design.toolRefs;
+        refs.erase(std::remove(refs.begin(), refs.end(), removal.objectId), refs.end());
+        auto& tools = result.candidate.toolObjects;
+        tools.erase(std::remove_if(tools.begin(), tools.end(),
+                                   [&removal](const ToolDefinition& t) {
+                                       return t.objectId == removal.objectId;
+                                   }),
+                    tools.end());
+
+        project::ObjectWrite rootWrite;
+        rootWrite.objectId = baseline.rootObjectId;
+        rootWrite.objectTypeToken = std::string(kRobotDesignObjectType);
+        rootWrite.payloadCanonical = encodeObjectOrThrow(ObjectVariant(result.candidate.design));
+        out.objectWrites.push_back(std::move(rootWrite));
+
+        result.removedRefs.push_back(removal.objectId);
+        result.affectedOids.push_back(*baseline.rootObjectId);  // inverse＝根前一版本字节
+        // 工具引用移除不改变关节行程事实（MDL-06④域不适用）。
+        result.travelRelevant = false;
+        result.outcome = project::PrepareOutcome::Planned;
+        return result;
+    }
+
     DecodeOutcome result;
     // 槽形状：恰一个 tool-definition 槽；基线须已有根（引用增量挂载点）。
     if (payload.objects.size() != 1
@@ -1313,6 +1512,11 @@ DecodeOutcome ApplyToolDefinitionHandler::decodeAndPlan(project::HandlerContext&
     toolWrite.objectTypeToken = std::string(kToolDefinitionObjectType);
     if (isNew) {
         // 新工具：根 toolRefs 追加（"＋根引用表增量"——根对象一并写入）。
+        // 候选＝基线底＋增量（基线既有工具/场景/位姿/传动视图必须随行——
+        // 闭包引用与 defaultTcp 断言以完整候选闭包为输入；WP-13-T10 修复：
+        // 原实现候选未播种基线，基线部件在候选闭包中缺失＝潜伏缺陷，随
+        // T10 defaultTcp/闭包断言的引入显形）。
+        result.candidate = baseline;
         RobotDesign root = baseline.design;
         root.toolRefs.push_back(oid);
         result.candidate.design = std::move(root);
@@ -1350,11 +1554,12 @@ DecodeOutcome ApplySceneObjectsHandler::decodeAndPlan(project::HandlerContext& c
         return decodeRestoreCommon(payload, baseline, out);
     }
     DecodeOutcome result;
-    // 槽形状：1..n 个 scene-object 槽（批量）；基线须已有根。
-    if (payload.objects.empty()) { return invalidInput(); }
+    // 槽形状：对象槽与/或移除槽至少其一（批量增/改/移除引用可混载——
+    // §9.3 表行 3）；全空＝无效载荷；基线须已有根。
+    if (payload.objects.empty() && payload.removals.empty()) { return invalidInput(); }
     if (!baseline.rootObjectId.has_value()) { return invalidInput(); }
 
-    // 候选＝基线底（增量就地累积）；根写入占位（首个新增槽时插入一次，
+    // 候选＝基线底（增量就地累积）；根写入占位（首次变更槽时插入一次，
     // 字节在末尾统一编码——sceneRefs 收集完毕后的确定性单点）。
     result.candidate = baseline;
     result.candidate.rootObjectId = baseline.rootObjectId;
@@ -1369,6 +1574,34 @@ DecodeOutcome ApplySceneObjectsHandler::decodeAndPlan(project::HandlerContext& c
         result.affectedOids.push_back(*baseline.rootObjectId);
         rootWriteInserted = true;
     };
+
+    // ---- 移除槽（WP-13-T10/V-05）：逐个校验并从根 sceneRefs 移除引用
+    //（被移除对象本身零写入——对象字节与历史修订闭包保留，PA-2/CON-02；
+    // 场景对象无 defaultTcp 引用面，保护门对空集恒过，跨域提示由摘要承
+    // 接——P-MDL-6）----
+    for (const PayloadRemovalSlot& removal : payload.removals) {
+        if (removal.objectTypeToken != kSceneObjectObjectType) { return invalidInput(); }
+        if (!removal.objectId.isValid()) { return invalidInput(); }
+        bool existsInClosure = false;
+        for (const SceneObject& sc : baseline.sceneObjects) {
+            if (sc.objectId == removal.objectId) { existsInClosure = true; break; }
+        }
+        const bool referenced = std::find(result.candidate.design.sceneRefs.begin(),
+                                          result.candidate.design.sceneRefs.end(),
+                                          removal.objectId)
+                             != result.candidate.design.sceneRefs.end();
+        if (!existsInClosure || !referenced) { return invalidInput(); }
+        ensureRootWrite();
+        auto& refs = result.candidate.design.sceneRefs;
+        refs.erase(std::remove(refs.begin(), refs.end(), removal.objectId), refs.end());
+        auto& scenes = result.candidate.sceneObjects;
+        scenes.erase(std::remove_if(scenes.begin(), scenes.end(),
+                                    [&removal](const SceneObject& sc) {
+                                        return sc.objectId == removal.objectId;
+                                    }),
+                     scenes.end());
+        result.removedRefs.push_back(removal.objectId);
+    }
 
     for (const PayloadObjectSlot& slot : payload.objects) {
         if (slot.objectTypeToken != kSceneObjectObjectType) { return invalidInput(); }
@@ -1404,6 +1637,8 @@ DecodeOutcome ApplySceneObjectsHandler::decodeAndPlan(project::HandlerContext& c
         out.objectWrites.front().payloadCanonical =
             encodeObjectOrThrow(ObjectVariant(result.candidate.design));
     }
+    // 场景几何变更不改变关节行程事实（MDL-06④域不适用）。
+    result.travelRelevant = false;
     result.outcome = project::PrepareOutcome::Planned;
     return result;
 }
@@ -1430,7 +1665,24 @@ DecodeOutcome ApplyNamedPosesHandler::decodeAndPlan(project::HandlerContext& ctx
     if (!resolvePartSlot(ctx, payload.objects[0], baseline, &value, &oid, &isNew)) {
         return invalidInput();
     }
-    const PoseSet& poseSet = std::get<PoseSet>(value);
+    const PoseSet& submitted = std::get<PoseSet>(value);
+
+    // ---- 合并编辑流（§4.6/D-MDL-3/MDL-17——WP-13-T10，Parts 单一实现）：
+    // 槽内 entries＝用户命名位姿全集——保留键拒绝写入（"除 Home/Zero 外"）、
+    // 键唯一、jointConfiguration 与根关节序一一对应；合并产物＝基线保留键
+    // 条目（homeConfiguration/zeroConfiguration 原样保留——V-27 建模侧）
+    // ∪ 用户条目。失败＝域结构校验不过（RejectedInvalidInput——值面违例
+    // 明细见 PoseEditErrorCode；载荷可解码但语义越界，非物理断言域）。
+    const PoseEditOutcome merged = mergeNamedPoseEntries(
+        baseline.poseSetObject, submitted.entries, baseline.design.joints.size());
+    if (merged.code != PoseEditErrorCode::Ok) { return invalidInput(); }
+    PoseSet poseSet = std::move(*merged.merged);
+    poseSet.schemaVersion = kNamedPoseSetSchemaVersion;  // 新版本＝当前 schema（禁止降/升级猜测）
+    if (isNew) {
+        poseSet.objectId = oid;  // 取号回填（resolvePartSlot 已分配——PA-1）
+    } else {
+        poseSet.objectId = oid;  // 替换——身份跨修订稳定（ARC-04）
+    }
 
     project::ObjectWrite write;
     write.objectId = oid;
@@ -1440,7 +1692,7 @@ DecodeOutcome ApplyNamedPosesHandler::decodeAndPlan(project::HandlerContext& ctx
         if (baseline.design.poseSetRef.has_value()) { return invalidInput(); }
         result.candidate = baseline;
         result.candidate.design.poseSetRef = oid;
-        result.candidate.poseSetObject = poseSet;
+        result.candidate.poseSetObject = std::move(poseSet);
         project::ObjectWrite rootWrite;
         rootWrite.objectId = baseline.rootObjectId;
         rootWrite.objectTypeToken = std::string(kRobotDesignObjectType);
@@ -1449,13 +1701,19 @@ DecodeOutcome ApplyNamedPosesHandler::decodeAndPlan(project::HandlerContext& ctx
         out.objectWrites.push_back(std::move(rootWrite));
         result.affectedOids.push_back(*baseline.rootObjectId);
     } else {
-        // 既有位姿集：字节替换。
+        // 既有位姿集：字节替换（引用稳定）。
         result.candidate = baseline;
-        result.candidate.poseSetObject = poseSet;
+        result.candidate.poseSetObject = std::move(poseSet);
     }
-    write.payloadCanonical = encodeObjectOrThrow(value);
+    // 写入面＝合并产物重编码（保留键保留与关节序校验后的候选——不回写
+    // 载荷原字节：payload entries 语义为"用户位姿全集"而非完整对象）。
+    write.payloadCanonical =
+        encodeObjectOrThrow(ObjectVariant(*result.candidate.poseSetObject));
     out.objectWrites.push_back(std::move(write));
     result.affectedOids.push_back(oid);
+    // 位姿集为纯参考数据（不进 Description/依赖键——D-MDL-3）：关节行程
+    // 事实不随其变化，MDL-06④域不适用（travelRelevant 恒 false）。
+    result.travelRelevant = false;
     result.outcome = project::PrepareOutcome::Planned;
     return result;
 }

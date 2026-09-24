@@ -196,39 +196,18 @@ ModelReadinessReport ModelReadinessChecker::check(const ModelingWorkingSet& ws,
                           "资源状态机违例（Recorded/Solidified 必备字段缺失）", true);
     };
     auto runL7 = [&] {
-        // L7 工具与 TCP 完整（工具物性 coded＋defaultTcp/tcpKey 呈现级）。
+        // L7 工具与 TCP 完整（工具物性 coded＋defaultTcp/tcpKey——coded，
+        // WP-13-T10 起 defaultTcp 闭包级判定唯一委托 AssertionSuite::
+        // assertDefaultTcp——§9.4.4"两处共用同一断言实现，不得出现两套
+        // 判定"（NFR-MNT-04）；原呈现级 addNote 面随 coded 化退役）。
         for (const ToolDefinition& tool : ws.toolObjects) {
             suite.assertBodyPhysical(
                 tool.objectId, tool.localName, tool.body,
                 layerBlockers[layerIndex(ReadinessLayer::L7ToolTcp)],
                 layerWarnings[layerIndex(ReadinessLayer::L7ToolTcp)]);
         }
-        if (!ws.toolObjects.empty()) {
-            // "有 tools 则 defaultTcp 已设"（KIN-14/I-MDL-9 呈现半段）。
-            if (!ws.design.defaultTcp.has_value()) {
-                addNote(ReadinessLayer::L7ToolTcp, "defaultTcp",
-                        "已配置工具但未设置默认 TCP（应用前须设置——KIN-14）", true);
-            } else {
-                // tcpKey 存在性：被引工具的 tcpList 须含 defaultTcp.tcpKey
-                //（闭包视图可判半段——工具对象经 v0.9 工作集字段进入）。
-                bool keyFound = false;
-                for (const ToolDefinition& tool : ws.toolObjects) {
-                    if (!(tool.objectId == ws.design.defaultTcp->toolOid)) { continue; }
-                    for (const TcpEntry& tcp : tool.tcpList) {
-                        if (tcp.key == ws.design.defaultTcp->tcpKey) {
-                            keyFound = true;
-                            break;
-                        }
-                    }
-                    break;
-                }
-                if (!keyFound) {
-                    addNote(ReadinessLayer::L7ToolTcp, "defaultTcp.tcpKey",
-                            "defaultTcp 指向的 tcpKey 不在被引工具 tcpList 中（KIN-14）",
-                            true);
-                }
-            }
-        }
+        suite.assertDefaultTcp(ws.design, ws,
+                               layerBlockers[layerIndex(ReadinessLayer::L7ToolTcp)]);
     };
     auto runL8 = [&] {
         // L8 基座姿态合法（I-MDL-7 防御面；"preset≠ground 而 R=I"在映射层）。

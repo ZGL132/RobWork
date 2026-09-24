@@ -12,6 +12,7 @@
  */
 
 #include <sdurws/ird/modeling/Parts.hpp>
+#include <sdurws/ird/modeling/Codec.hpp>
 #include <sdurws/ird/modeling/RobotDesign.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
@@ -187,4 +188,164 @@ TEST(MdlParts, DrivetrainRatioValidity_WP13T03_ACC3)
     DrivetrainDesign missing = makeValidDrivetrain();
     missing.ratioPerJoint[0] = SourcedValue<double>::notProvided();
     EXPECT_TRUE(checkInvariants(missing, CouplingStage::R1Locked).empty());
+}
+
+// =====================================================================
+// WP-13-T10——工具 TCP 完整（I-MDL-13）与命名位姿合并编辑流（§4.6）
+// =====================================================================
+
+/// 合法工具（TCP 键引用锚完整——I-MDL-13 通过面）。
+ToolDefinition makeValidToolT10()
+{
+    ToolDefinition t;
+    t.objectId = makeOid(200);
+    t.localName = "gripper-b";
+    TcpEntry tcp;
+    tcp.key = "tcp-center";
+    t.tcpList = {tcp};  // ≥1（§4.4 表行——I-MDL-13）
+    return t;
+}
+
+/**
+ * @brief 工具 TCP 完整（I-MDL-13——§4.4 tcpList 行"≥1"的编号化落位，
+ *        WP-13-T10）：空表/空键/重复键逐项违例；合法工具通过；解码门经
+ *        校验链④自动强制（空 TCP 表的工具字节不可入存——命令载荷与存储
+ *        双通道共用同一判定）。
+ *
+ * 验证：acceptance 1（tcpList≥1——值模型与编辑流落位）。
+ */
+TEST(MdlParts, ToolTcpListIntegrity_IMdl13_WP13T10_ACC1)
+{
+    IRD_TEST_INFO("MDL-13", {}, std::nullopt);
+    // 合法工具（恰一条 TCP）：无违例。
+    EXPECT_TRUE(checkInvariants(makeValidToolT10()).empty());
+    // 空 tcpList：违例（defaultTcp 的引用锚悬空——KIN-14 构造侧根源）。
+    ToolDefinition empty = makeValidToolT10();
+    empty.tcpList.clear();
+    EXPECT_TRUE(hasViolation(checkInvariants(empty), InvariantId::IMdl13,
+                             "tcpList.empty"));
+    // TCP 键为空串：违例（键是 defaultTcp.tcpKey 的引用锚）。
+    ToolDefinition emptyKey = makeValidToolT10();
+    emptyKey.tcpList[0].key.clear();
+    EXPECT_TRUE(hasViolation(checkInvariants(emptyKey), InvariantId::IMdl13,
+                             "tcpList[0].key.empty"));
+    // TCP 键重复：违例（同键二义——引用锚不唯一）。
+    ToolDefinition dup = makeValidToolT10();
+    TcpEntry second;
+    second.key = "tcp-center";  // 与首条同键
+    dup.tcpList.push_back(second);
+    EXPECT_TRUE(hasViolation(checkInvariants(dup), InvariantId::IMdl13,
+                             "tcpList[0].key.duplicate"));
+
+    // 解码门自动强制：空表工具可编码（编码侧无校验——与既有编码纪律
+    // 一致），但解码校验链④拒绝（malformed-invariant I-MDL-13）——非法
+    // 对象不可能经载荷/存储进入断言域。
+    sdurws::ird::modeling::RobotDesignCodec codec;
+    auto encoded = codec.encode(
+        sdurws::ird::modeling::ObjectVariant(empty),
+        sdurws::ird::modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(encoded.ok());
+    auto decoded = codec.decode(encoded.get(),
+                                sdurws::ird::modeling::kCurrentFormatVersion);
+    EXPECT_FALSE(decoded.ok()) << "空 TCP 表的工具字节应被解码门拒绝（I-MDL-13）";
+}
+
+/**
+ * @brief 命名位姿保留键与合并编辑流（§4.6/D-MDL-3/MDL-17——WP-13-T10）：
+ *        保留键字面集合、用户条目校验（空键/重复键/保留键越界/关节序
+ *        一一对应）、保留键保留（V-27 建模侧）、键字典序规范化、用户全集
+ *        替换语义。
+ *
+ * 验证：acceptance 4（参考键保留＋条目与关节序一一对应）。
+ */
+TEST(MdlParts, NamedPoseMergeReservedKeysAndJointOrder_WP13T10_ACC4)
+{
+    IRD_TEST_INFO("MDL-17", {}, std::nullopt);
+    using sdurws::ird::modeling::PoseEditErrorCode;
+
+    // 保留键字面集合（§4.6 原文；词表冻结不改拼）。
+    EXPECT_TRUE(sdurws::ird::modeling::isReservedPoseKey("homeConfiguration"));
+    EXPECT_TRUE(sdurws::ird::modeling::isReservedPoseKey("zeroConfiguration"));
+    EXPECT_FALSE(sdurws::ird::modeling::isReservedPoseKey("home"));
+    EXPECT_FALSE(sdurws::ird::modeling::isReservedPoseKey(""));
+
+    auto entry = [](const std::string& key, std::vector<double> q) {
+        sdurws::ird::modeling::PoseSetEntry e;
+        e.key = key;
+        e.jointConfiguration = std::move(q);  // rad（移动关节 m）——与关节序对应
+        return e;
+    };
+
+    // —— 首建（无基线）：用户条目即产物，键字典序规范化——Ok ——
+    {
+        std::vector<sdurws::ird::modeling::PoseSetEntry> user = {
+            entry("pick", {0.5}), entry("cruise", {0.1})};  // 乱序提交
+        const auto out = sdurws::ird::modeling::mergeNamedPoseEntries(
+            std::nullopt, std::move(user), 1);
+        ASSERT_EQ(out.code, PoseEditErrorCode::Ok);
+        ASSERT_TRUE(out.merged.has_value());
+        ASSERT_EQ(out.merged->entries.size(), std::size_t{2});
+        EXPECT_EQ(out.merged->entries[0].key, "cruise");  // 字典序（codec canonical 域）
+        EXPECT_EQ(out.merged->entries[1].key, "pick");
+    }
+
+    // —— 保留键保留（V-27 建模侧）：基线保留键原样带入，用户全集替换
+    //      旧用户条目 ——
+    {
+        sdurws::ird::modeling::PoseSet baseline;
+        baseline.objectId = makeOid(300);
+        baseline.entries = {
+            entry("homeConfiguration", {0.0}),  // 保留键（Home 参考）
+            entry("zeroConfiguration", {0.0}),  // 保留键（Zero 参考）
+            entry("old", {0.9}),
+        };
+        std::vector<sdurws::ird::modeling::PoseSetEntry> user = {entry("new", {0.2})};
+        const auto out = sdurws::ird::modeling::mergeNamedPoseEntries(
+            baseline, std::move(user), 1);
+        ASSERT_EQ(out.code, PoseEditErrorCode::Ok);
+        ASSERT_TRUE(out.merged.has_value());
+        // 产物序＝字典序：homeConfiguration < new < old? 否——old 被替换，
+        // zeroConfiguration 在末尾（h < n < z）。
+        ASSERT_EQ(out.merged->entries.size(), std::size_t{3});
+        EXPECT_EQ(out.merged->entries[0].key, "homeConfiguration");
+        EXPECT_EQ(out.merged->entries[1].key, "new");
+        EXPECT_EQ(out.merged->entries[2].key, "zeroConfiguration");
+        // 保留键条目值逐位保留（复位参考不被编辑破坏——KIN-06）。
+        EXPECT_EQ(out.merged->entries[0].jointConfiguration,
+                  std::vector<double>{0.0});
+        // 身份继承基线（同一对象的新版本——ARC-04 跨修订稳定）。
+        EXPECT_EQ(out.merged->objectId, baseline.objectId);
+    }
+
+    // —— 违例面（按编辑序首个违例即拒绝，不产出半产物——NFR-COR-03）——
+    {
+        std::vector<sdurws::ird::modeling::PoseSetEntry> user = {entry("", {0.0})};
+        const auto out = sdurws::ird::modeling::mergeNamedPoseEntries(
+            std::nullopt, std::move(user), 1);
+        EXPECT_EQ(out.code, PoseEditErrorCode::EmptyKey);
+    }
+    {
+        std::vector<sdurws::ird::modeling::PoseSetEntry> user = {
+            entry("dup", {0.0}), entry("dup", {0.1})};
+        const auto out = sdurws::ird::modeling::mergeNamedPoseEntries(
+            std::nullopt, std::move(user), 1);
+        EXPECT_EQ(out.code, PoseEditErrorCode::DuplicateKey);
+        EXPECT_EQ(out.subject, "dup");
+    }
+    {
+        std::vector<sdurws::ird::modeling::PoseSetEntry> user = {
+            entry("homeConfiguration", {0.0})};
+        const auto out = sdurws::ird::modeling::mergeNamedPoseEntries(
+            std::nullopt, std::move(user), 1);
+        EXPECT_EQ(out.code, PoseEditErrorCode::ReservedKeyInEdit);
+        // 保留键越出面：MDL-17"除 Home/Zero 外保存、命名与恢复"字面。
+    }
+    {
+        std::vector<sdurws::ird::modeling::PoseSetEntry> user = {
+            entry("wrong", {0.1, 0.2})};  // 长度 2 ≠ 关节表 1
+        const auto out = sdurws::ird::modeling::mergeNamedPoseEntries(
+            std::nullopt, std::move(user), 1);
+        EXPECT_EQ(out.code, PoseEditErrorCode::JointOrderMismatch);
+        EXPECT_EQ(out.subject, "wrong");
+    }
 }

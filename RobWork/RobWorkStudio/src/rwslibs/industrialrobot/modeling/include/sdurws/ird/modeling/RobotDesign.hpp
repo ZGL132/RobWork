@@ -623,6 +623,7 @@ enum class InvariantId {
     IMdl10,  ///< 资源状态机：Recorded 带 externalRecord；Solidified 带 solidifiedObject
     IMdl11,  ///< 传动合法：ratio 有限>0；R2 下 C 方阵且条件数 ≤1×10⁸
     IMdl12,  ///< R1 传动耦合阶段锁：coupling 不得配置（I-MDL-11 行括注定义）
+    IMdl13,  ///< 工具 TCP 完整：tcpList ≥1 且键非空唯一（§4.4 tcpList 行"≥1"——WP-13-T10 落位补行）
 };
 
 /**

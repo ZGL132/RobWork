@@ -12,11 +12,13 @@
  *   - 先例：io/src/IoDiagnostics.cpp（ioCodeDescriptors 逐字段登记口径）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 4
  *
- * 背景说明：清单当前 20 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
+ * 背景说明：清单当前 22 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
  * T05 行五码＋WP-13-T06 实现期增登的 T06 行一码＋WP-13-T07 实现期增登
  * 的 T07 行一码＋WP-13-T08 登记的 T08 行九码——八条卡面行＋一条 v0.9
  * 实现期增登行 MDL-READINESS-PHYSICS-MISSING＋WP-13-T09 登记的 T09 行
- * 三码 MDL-DH-{NOT-EXPRESSIBLE,APPROXIMATE,ANALYSIS-FAILED}）——分批注册
+ * 三码 MDL-DH-{NOT-EXPRESSIBLE,APPROXIMATE,ANALYSIS-FAILED}＋WP-13-T10
+ * 实现期增登的 T10 行两码 MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-TCP-
+ * INCOMPLETE）——分批注册
  * 纪律（"不预建无消费者条目"）的执行口径见
  * 头文件 DiagCodes.hpp 文件头注；其余行随各自任务在**本清单表尾追加**
  * （表尾追加＝登记簿纪律，不重排既有项）。
@@ -543,12 +545,61 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     dhAnalysisFailed.deprecated = false;
     // supersededBy 保持 nullopt。
 
+    // ---- §9.5 T10 行：MDL-REF-PROTECTED（校验/error；v0.12 实现期增登）----
+    // 移除被 defaultTcp 引用的工具被拒（I-MDL-9/V-04）：subject=被移除
+    // 对象 oid；比较型＝引用计数 actual=1/expected=0（无量纲，单位 "1"）。
+    diagnostics::CodeDescriptor refProtected;
+    refProtected.code = std::string(kMdlRefProtected);
+    refProtected.ownerUnit = "modeling";
+    refProtected.category = diagnostics::DiagnosticCategory::InputInvalid;
+    //        （移除请求在当前引用状态下不可执行——调用方可修正请求后重试）
+    refProtected.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"级别"列：error
+    refProtected.titleKey = "diag.mdl-ref-protected.title";
+    refProtected.detailKey = "diag.mdl-ref-protected.detail";
+    refProtected.paramSchema = R"(["object-id","reference-holder"])";
+    //        （参数名词形合规：被移除对象身份／引用持有者（defaultTcp））
+    refProtected.confirmable = false;
+    refProtected.requiresComparison = true;   // 比较型定位（V-04——引用计数比对）
+    refProtected.retryable = diagnostics::RetryKind::UserRetry;  // "先解除引用再移除"＝fix-input 族
+    refProtected.userVisible = true;
+    refProtected.reportable = true;
+    refProtected.historical = true;
+    refProtected.registryVersion = 1;
+    refProtected.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- §9.5 T10 行：MDL-READINESS-DEFAULT-TCP-INCOMPLETE（校验/error；
+    //      v0.12 实现期增登）----
+    // defaultTcp 引用完整性（I-MDL-9/KIN-14/L7）：有工具引用而 defaultTcp
+    // 未设置／toolOid 不在 toolRefs／tcpKey 不在被引工具 tcpList。
+    diagnostics::CodeDescriptor defaultTcpIncomplete;
+    defaultTcpIncomplete.code = std::string(kMdlReadinessDefaultTcpIncomplete);
+    defaultTcpIncomplete.ownerUnit = "modeling";
+    defaultTcpIncomplete.category = diagnostics::DiagnosticCategory::ResourceMissing;
+    //        （引用完整性族——同 MDL-READINESS-REF-MISSING 的分类口径）
+    defaultTcpIncomplete.severity = diagnostics::DiagnosticSeverity::Error;  // §9.5"级别"列：error
+    defaultTcpIncomplete.titleKey = "diag.mdl-readiness-default-tcp-incomplete.title";
+    defaultTcpIncomplete.detailKey = "diag.mdl-readiness-default-tcp-incomplete.detail";
+    defaultTcpIncomplete.paramSchema = R"(["tcp-key","tool-id"])";
+    //        （缺失/不匹配的 TCP 键与被引工具身份——修复动作的定位要素；
+    //          未设置面两参数以空串承载——core C-3 允许，定位经 context）
+    defaultTcpIncomplete.confirmable = false;
+    defaultTcpIncomplete.requiresComparison = false;  // 缺失/悬空无值可比（同 REF-MISSING 口径）
+    defaultTcpIncomplete.retryable = diagnostics::RetryKind::UserRetry;  // "修复 defaultTcp 或 TCP 表"＝fix-input 族
+    defaultTcpIncomplete.userVisible = true;
+    defaultTcpIncomplete.reportable = true;
+    defaultTcpIncomplete.historical = true;
+    defaultTcpIncomplete.registryVersion = 1;
+    defaultTcpIncomplete.deprecated = false;
+    // supersededBy 保持 nullopt。
+
     return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
             templateRange, xacroUnresolved, templateDisabled,
             travelLimit, massNonpositive, inertiaNotSpd, inertiaTriangle,
             limitInterval, rangeNotFinite, refMissing, resourceState,
             physicsMissing,
-            dhNotExpressible, dhApproximate, dhAnalysisFailed};
+            dhNotExpressible, dhApproximate, dhAnalysisFailed,
+            refProtected, defaultTcpIncomplete};
 }
 
 void registerModelingCodes(diagnostics::IDiagnosticRegistry& registry)

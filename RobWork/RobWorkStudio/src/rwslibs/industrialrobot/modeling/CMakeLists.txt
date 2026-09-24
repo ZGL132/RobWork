@@ -95,6 +95,17 @@ find_package(pugixml CONFIG REQUIRED)
 #                        第 4/5 项判定阈值分属数值程序参数/工程阈值两类，
 #                        见实现注〕＋§7.6 编译链 FK 对照等价验证＋权威切换
 #                        域门 prepareAuthoritySwitch）
+# T10 增列（tasks/foundation/WP-13-T10.json，§3.3 表 T10 行——Parts.hpp
+#          T10 行"编辑流"）：
+#   src/Parts.cpp（增量）  部件编辑流：工具 I-MDL-13（tcpList≥1——§4.4，
+#                        经解码门校验链④自动强制）＋命名位姿合并流
+#                        mergeNamedPoseEntries（保留键保留——V-27 建模侧；
+#                        关节序一一对应——§4.6）
+#   src/CommandHandlers.cpp（增量）  载荷 v2 removals 段＋AssertionSuite::
+#                        assertDefaultTcp/assertReferenceProtection＋
+#                        apply-tool-definition/apply-scene-objects 移除面
+#                        ＋apply-named-poses 合并流（§4.8"删除＝引用移除"
+#                        ＋V-04/V-05）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -281,6 +292,13 @@ if(TARGET sdurw_kinematics)
                                            # ＋权威切换命令 prepare 协作面
                                            # （消费 runtime 产品编译器与
                                            # policy 评估器——冒烟不编入）
+    target_sources(sdurws_ird_modeling_test PRIVATE
+        test/PartObjectCommandTest.cpp)    # T10 ACC1~5：工具/场景/命名位姿
+                                           # 对象命令（引用保护 V-04/V-05、
+                                           # defaultTcp 校验、worldPose 固
+                                           # 连、保留键合并流、载荷 v2——
+                                           # 消费 policy 评估器与 Command-
+                                           # Fixtures 夹具——冒烟不编入）
 endif()
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)

@@ -157,10 +157,16 @@ TEST(MdlCommandHandlers, PayloadCodecRoundtripAndDamage)
     auto trailing = bytes;
     trailing.push_back(0xFF);
     EXPECT_FALSE(tryDecodeCommandPayload(trailing).has_value());
-    // 版本不受理（改版本字节——NFR-DEP-04 拒绝猜测）。
+    // 版本不受理（改版本字节——NFR-DEP-04 拒绝猜测；v2 魔数同步——
+    // WP-13-T10 载荷 v2 removals 段的合法登记变更）。
     auto wrongVersion = bytes;
-    wrongVersion[sizeof("IRDMCP1")] = 0x63;  // 版本字段低位字节 1→99
+    wrongVersion[sizeof("IRDMCP2")] = 0x63;  // 版本字段低位字节 2→99
     EXPECT_FALSE(tryDecodeCommandPayload(wrongVersion).has_value());
+    // v1 魔数＝旧版本载荷（拒收——NFR-DEP-04；升级无自动升级器＝重新
+    // 编辑，R-MDL-5 草稿短命数据口径）。
+    auto v1Magic = bytes;
+    v1Magic[6] = '1';  // IRDMCP2 → IRDMCP1（尾数字）
+    EXPECT_FALSE(tryDecodeCommandPayload(v1Magic).has_value());
 }
 
 /**
