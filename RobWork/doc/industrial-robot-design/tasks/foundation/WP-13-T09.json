@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现 DH↔显式转换五状态判定与等价验证",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T03",
     "RT-T04",

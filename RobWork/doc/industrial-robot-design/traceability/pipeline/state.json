@@ -2,7 +2,7 @@
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
   "pausedReason": null,
-  "tickCount": 302,
+  "tickCount": 308,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +17,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-24T22:46:59+08:00",
+    "updatedAt": "2026-09-25T03:11:46+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1692,6 +1692,17 @@
       "acceptanceRecord": "traceability/acceptance/UI-T18-20260924-r2.md",
       "mergedAt": "2026-09-24",
       "failReason": "非验收一次通过：attempt 1 fail（B-1 仓库根 3 件 gtest XML 越 allowedFiles＋B-2 宿主 GUI 冒烟未执行；实现面 4.2~4.11 全过、实现面零缺陷检出；记录 UI-T18-20260924.md @ acc/UI-T18/1@d3ee8167——该记录因代理故障推送受阻，网络恢复后由返工者代补推）→ 返工 fix=1（840375b3 B-1 git rm／f6d1a235 F-333/F-334 卫生／f00fb104 B-2 宿主冒烟补录＋-r4 全量重验＋ui.md v1.14-r2）→ attempt 2 pass（4.1~4.11 全过；028a0a8f）。环境事件链：本机代理 17890 两度不可达——acceptor 记录推送受阻（worktree 保全后由返工者代推）、收尾 ① fetch 失败转 blocked（tick#300），网络恢复后按 PIPE §0 修复 state 回 awaiting_merge 续行收尾（tick#301，本条即其完成）。建议级 F-335（findings 消账未回写登记册状态翻转——收尾合并时置 fixed）／F-336（ird_gates 取证口径 43/119 行缩减＋GBK 污染，建议固化 cmake -P 口径）随 acc/UI-T18/2 转登"
+    },
+    {
+      "task": "WP-13-T09",
+      "unit": "modeling",
+      "result": "pass-merged",
+      "commits": [
+        "12284f7280db2ccbdcc692a43583544c4b291984"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-13-T09-20260925-r2.md",
+      "mergedAt": "2026-09-25",
+      "failReason": "非验收一次通过：attempt 1 fail（阻断唯一项 B-1＝集成模式契约测试不可复现全绿——CommandPipelineContractTest.cpp:288 的 T08 时代“T09 行不预建”钉住断言未随本任务在 DiagCodes.cpp 合法登记 §9.5 T09 三码同步更新，全新构建 8/9 FAILED、在库留痕 9/0 不可复现；实现面 4.1/4.4~4.11 全过、零语义缺陷；记录 WP-13-T09-20260925.md @ acc/WP-13-T09/1@05b02655）→ 返工 fix=1（12284f72：钉住断言改在册断言〔三码同源对账＋ownerUnit/confirmable/requiresComparison 逐项〕＋测试更名沿 DiagCodesTest 先例＋F-339 计数 19→20／F-340 报告重收全量 168 条／F-341 调试块清除；F-338 维持 open 归治理侧）→ attempt 2 pass（4.1~4.11 全过、9/9 可复现、gates 411=411 零新增；记录 -r2 @ acc/WP-13-T09/2@bf64f02e）。环境事件：attempt 1 验收记录分支误以任务分支尖端为基（ACC §3 偏差）致收尾 ③ 合并记录即带入代码、④ 空操作——终态经逐笔核验与设计意图一致，偏差已随本条登记；另收尾 push 曾遇不稳定代理路径陈旧协商应答（up-to-date 假象），显式 refspec 重推解决"
     }
   ],
   "policy": {
@@ -1717,11 +1728,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "WP-13-T09",
-      "branch": "wp13-t09",
-      "contractPath": "tasks/foundation/WP-13-T09.json"
-    },
     {
       "taskId": "WP-13-T10",
       "branch": "wp13-t10",
