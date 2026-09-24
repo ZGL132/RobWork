@@ -89,6 +89,12 @@ find_package(pugixml CONFIG REQUIRED)
 #   src/CommandHandlers.cpp  建模命令处理器族（AssertionSuite 断言分域
 #                        ＋命令载荷编解码＋prepare 公共管线＋五命令钩子
 #                        ＋L5 装配注册——§9.3/§9.4.4/§9.4.8/§9.5 T08 行）
+# T09 增列（tasks/foundation/WP-13-T09.json，§3.3 表 T09 行）：
+#   src/DhConvert.cpp     DH↔显式转换器（IDhExplicitConverter——§7.4 无损
+#                        展开＋§7.5 五状态确定性求解〔LM 过程常数与附录 D
+#                        第 4/5 项判定阈值分属数值程序参数/工程阈值两类，
+#                        见实现注〕＋§7.6 编译链 FK 对照等价验证＋权威切换
+#                        域门 prepareAuthoritySwitch）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -101,7 +107,8 @@ add_library(sdurws_ird_modeling STATIC
     src/XacroExpand.cpp
     src/Template.cpp
     src/Readiness.cpp
-    src/CommandHandlers.cpp)
+    src/CommandHandlers.cpp
+    src/DhConvert.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -230,6 +237,11 @@ endif()
 #                          （ACC4，§9.3/O-35）＋prepare 管线（decode 失败/
 #                          防御性复核/取号回填/inverse 快照/中文摘要/
 #                          RejectedHardAssert/Confirmable——ACC1/3/4）
+# T09 增列（tasks/foundation/WP-13-T09.json，acceptance 1~3 具名自证）：
+#   test/DhConvertTest.cpp         DH↔显式转换（ACC1 无损展开/零位对齐/
+#                          基座混入拒绝＋ACC2 五状态各含样例/结构检查先行
+#                          ＋ACC3 退化族字典序定值/确定性——NFR-COR-02；
+#                          两模式均编译——被测面零框架符号）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -247,7 +259,8 @@ add_executable(sdurws_ird_modeling_test
     test/PropertyEstimationTest.cpp
     test/ImportTest.cpp
     test/XacroExpandTest.cpp
-    test/TemplateTest.cpp)
+    test/TemplateTest.cpp
+    test/DhConvertTest.cpp)
 
 # T08 测试 TU（集成模式专属 gating——POL-T06/T07/T08 同款：ReadinessTest/
 # CommandHandlersTest 消费 policy 行程评估器〔makeJointLimitEvaluator〕，
@@ -262,6 +275,12 @@ if(TARGET sdurw_kinematics)
         test/CommandHandlersTest.cpp)      # T08 ACC4＋1/3：五命令 token 表/
                                            # 载荷编解码/prepare 管线/inverse
                                            # 快照/中文摘要
+    target_sources(sdurws_ird_modeling_test PRIVATE
+        test/DhConvertEquivalenceTest.cpp) # T09 ACC4/5：编译链 FK 对照等价
+                                           # 验证（真实 runtime 编译器探针）
+                                           # ＋权威切换命令 prepare 协作面
+                                           # （消费 runtime 产品编译器与
+                                           # policy 评估器——冒烟不编入）
 endif()
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)

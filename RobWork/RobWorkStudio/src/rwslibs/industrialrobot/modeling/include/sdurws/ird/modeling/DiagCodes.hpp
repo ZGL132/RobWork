@@ -157,13 +157,28 @@ inline constexpr std::string_view kMdlReadinessResourceState = "MDL-READINESS-RE
 /// TEMPLATE-RANGE 等实现期增登先例登记。WP-13-T08 登记，§14.6 v0.9）。
 inline constexpr std::string_view kMdlReadinessPhysicsMissing = "MDL-READINESS-PHYSICS-MISSING";
 
+/// §9.5 T09 行：MDL-DH-NOT-EXPRESSIBLE（转换/error——链不满足 DH 结构
+/// 前提（终判，不进入求解）→维持显式权威；MDL-10 第一阶终判与 C-3
+/// 权威切换拒绝面的码面。WP-13-T09 登记，§14.6 v0.10）。
+inline constexpr std::string_view kMdlDhNotExpressible = "MDL-DH-NOT-EXPRESSIBLE";
+
+/// §9.5 T09 行：MDL-DH-APPROXIMATE（转换/Warning——近似解（附 E 度量与
+/// 收敛状态）→不得置权威（C-4/MDL-10）；E 仅为呈现指标、不参与判定
+/// （附录 D 第 5 项 C3 口径）。WP-13-T09 登记，§14.6 v0.10）。
+inline constexpr std::string_view kMdlDhApproximate = "MDL-DH-APPROXIMATE";
+
+/// §9.5 T09 行：MDL-DH-ANALYSIS-FAILED（转换/error——求解器数值失败
+/// （不收敛/发散/资源异常）→调整后重试（不构成语义结论——MDL-10）。
+/// WP-13-T09 登记，§14.6 v0.10）。
+inline constexpr std::string_view kMdlDhAnalysisFailed = "MDL-DH-ANALYSIS-FAILED";
+
 // =====================================================================
 // MDL-* 稳定诊断码描述符清单（§9.5 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 modeling 已到注册任务行的 MDL-* 稳定码描述符全集（当前
- *        16 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
+ *        19 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
  *        WP-13-T05 登记的 T05 行 MDL-IMPORT-{UNSUPPORTED-JOINT,
  *        BRANCH-SELECTION,ZERO-AXIS,PENDING-CONFIRM,TEMPLATE-RANGE}
  *        五码；外加 WP-13-T06 实现期增登的 T06 行 MDL-IMPORT-XACRO-
@@ -171,9 +186,11 @@ inline constexpr std::string_view kMdlReadinessPhysicsMissing = "MDL-READINESS-P
  *        DISABLED；外加 WP-13-T08 登记的 T08 行八码 MDL-06-TRAVEL-LIMIT/
  *        MDL-ASSERT-{MASS-NONPOSITIVE,INERTIA-NOT-SPD,INERTIA-TRIANGLE,
  *        LIMIT-INTERVAL,RANGE-NOT-FINITE}/MDL-READINESS-{REF-MISSING,
- *        RESOURCE-STATE}——清单序＝§9.5 表行序（实现期增登行表尾追加）；
- *        TEMPLATE-RANGE/XACRO-UNRESOLVED/TEMPLATE-DISABLED 为实现期增登
- *        行，§14.6 v0.6/v0.7/v0.8 登记）。
+ *        RESOURCE-STATE}＋v0.9 实现期增登行 MDL-READINESS-PHYSICS-
+ *        MISSING；外加 WP-13-T09 登记的 T09 行三码 MDL-DH-{NOT-
+ *        EXPRESSIBLE,APPROXIMATE,ANALYSIS-FAILED}——清单序＝§9.5 表行序
+ *        （实现期增登行表尾追加）；TEMPLATE-RANGE/XACRO-UNRESOLVED/
+ *        TEMPLATE-DISABLED 为实现期增登行，§14.6 v0.6/v0.7/v0.8 登记）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，io ioCodeDescriptors
  * 同款自证结构）：

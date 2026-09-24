@@ -92,16 +92,25 @@ const char* kT08Section95Codes[] = {
     "MDL-READINESS-PHYSICS-MISSING",
 };
 
+/// §9.5 任务列含 T09 的行的应登记码面（WP-13-T09 登记——单元卡 §14.6
+/// v0.10；DH↔显式转换族三码；表行序追加于表尾——登记簿纪律不重排
+/// 既有行）。
+const char* kT09Section95Codes[] = {
+    "MDL-DH-NOT-EXPRESSIBLE",
+    "MDL-DH-APPROXIMATE",
+    "MDL-DH-ANALYSIS-FAILED",
+};
+
 }  // namespace
 
 /**
  * 工厂清单分批封闭性（acceptance 4——"按 §9.5 注册纪律只登记有消费者
- * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07/T08 的行——
- * 其余行（T09/T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
+ * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07/T08/T09 的行
+ * ——其余行（T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
  * 字面清单（不私定码值），清单序＝§9.5 表行序。分期登记随任务推进
- * 表尾追加（T05/T06/T07/T08 历次登记同款推进口径）。
+ * 表尾追加（T05/T06/T07/T08/T09 历次登记同款推进口径）。
  */
-TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T08)
+TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T09)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01", "MDL-06"},
                   std::vector<std::string>{});
@@ -111,12 +120,13 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T08)
                                       + std::size(kT05Section95Codes)
                                       + std::size(kT06Section95Codes)
                                       + std::size(kT07Section95Codes)
-                                      + std::size(kT08Section95Codes);
+                                      + std::size(kT08Section95Codes)
+                                      + std::size(kT09Section95Codes);
     ASSERT_EQ(descriptors.size(), expectedCount)
-        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08 任务行（分批纪律：其余行随"
+        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08/T09 任务行（分批纪律：其余行随"
            "各自任务登记——不预建）";
     // 清单序＝§9.5 表行序（实现期增登行表尾追加）：T02 行在前，
-    // T05/T06/T07/T08 行按登记序随后。
+    // T05/T06/T07/T08/T09 行按登记序随后。
     for (std::size_t i = 0; i < std::size(kT02Section95Codes); ++i) {
         EXPECT_EQ(descriptors[i].code, std::string(kT02Section95Codes[i]))
             << "清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
@@ -144,6 +154,12 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T08)
         EXPECT_EQ(descriptors[offset + i].code,
                   std::string(kT08Section95Codes[i]))
             << "T08 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
+    }
+    offset += std::size(kT08Section95Codes);
+    for (std::size_t i = 0; i < std::size(kT09Section95Codes); ++i) {
+        EXPECT_EQ(descriptors[offset + i].code,
+                  std::string(kT09Section95Codes[i]))
+            << "T09 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
 }
 
@@ -314,6 +330,37 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             // 降级预告——缺失无值可比，不伪造数值）。
             EXPECT_EQ(d.category, DiagnosticCategory::DataInsufficient);
             EXPECT_EQ(d.severity, DiagnosticSeverity::Warning);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-DH-NOT-EXPRESSIBLE") {
+            // T09 行"转换/error"→InfeasibilityProof/Error（结构前提终判
+            // ——有效工程结论而非输入错误，TEMPLATE-RANGE 同判例）；
+            // paramSchema "[]"；UserRetry（"改链结构后重试"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InfeasibilityProof);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-DH-APPROXIMATE") {
+            // T09 行"转换/Warning"→InfeasibilityProof/Warning（收敛的数值
+            // 事实＋权威资格否定——C-4 不可确认放行）；paramSchema "[]"；
+            // 比较型强制（最坏轴角偏差 vs 第 5 项上界）；UserRetry。
+            EXPECT_EQ(d.category, DiagnosticCategory::InfeasibilityProof);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Warning);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_TRUE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-DH-ANALYSIS-FAILED") {
+            // T09 行"转换/error"→ExecutionFailed/Error（求解器数值失败
+            // ——执行失败轴 TASK-02，不构成语义结论）；paramSchema "[]"；
+            // 非比较型（无数值比对值——NFR-COR-03）；UserRetry（"调整后
+            // 重试"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::ExecutionFailed);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
             EXPECT_FALSE(d.confirmable);
             EXPECT_FALSE(d.requiresComparison);
             EXPECT_EQ(d.paramSchema, "[]");

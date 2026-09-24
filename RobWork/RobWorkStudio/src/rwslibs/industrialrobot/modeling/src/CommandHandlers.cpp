@@ -863,6 +863,84 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
         return dec.outcome;  // RejectedInvalidInput（域口径——槽形状/身份/一致性）
     }
 
+    // ---- ③.5 权威切换门（§7.6/C-3/C-4/C-6——apply-robot-design 的权威
+    // 切换变体；WP-13-T09 协作面，单元卡 §15 v0.10 登记）----
+    // 触发条件：正向载荷 ∧ 基线 Explicit ∧ 候选 StandardDH（权威模式翻转
+    // 即切换意图——其余四命令的候选继承基线根，天然不触发）。切换判定与
+    // 等价验证在 prepare 内执行（转换判定＋FK 对照只读、不发布快照）；
+    // 验证失败不产生修订（拒绝态计划清空——project 不消费）。
+    if (payload->mode == CommandPayload::Mode::Apply
+        && baseline.ws.design.authority == AuthorityMode::Explicit
+        && dec.candidate.design.authority == AuthorityMode::StandardDH) {
+        // C-6 命令面投影①：切换为独立命令（摘要单独留痕）——载荷只允许
+        // 恰一个根槽；混入部件槽＝既有编辑未决断（先提交或撤销）。
+        if (payload->objects.size() != 1) {
+            out.objectWrites.clear();
+            return project::PrepareOutcome::RejectedInvalidInput;
+        }
+        // C-6 命令面投影②：除权威侧字段（authority/dhDerived/axis/origin
+        // ——转换 subject 与产物）外，候选根必须与基线逐字段一致；任何
+        // 其他字段差异＝混入编辑，同样拒绝（独立命令语义）。
+        {
+            const RobotDesign& base = baseline.ws.design;
+            const RobotDesign& cand = dec.candidate.design;
+            bool mixed = cand.displayName != base.displayName
+                         || cand.notes != base.notes
+                         || cand.basePlacement != base.basePlacement
+                         || cand.links != base.links
+                         || cand.defaultTcp != base.defaultTcp
+                         || cand.toolRefs != base.toolRefs
+                         || cand.sceneRefs != base.sceneRefs
+                         || cand.poseSetRef != base.poseSetRef
+                         || cand.drivetrainRef != base.drivetrainRef
+                         || cand.resourceManifest != base.resourceManifest
+                         || cand.joints.size() != base.joints.size();
+            for (std::size_t i = 0; !mixed && i < cand.joints.size(); ++i) {
+                // 受权威模式管辖的字段（axis/origin/dhDerived）随切换重算
+                // ——不比对其载荷内容；两态均权威字段必须一致（C-6）。
+                mixed = cand.joints[i].objectId != base.joints[i].objectId
+                        || cand.joints[i].localName != base.joints[i].localName
+                        || cand.joints[i].type != base.joints[i].type
+                        || cand.joints[i].zeroOffset != base.joints[i].zeroOffset
+                        || cand.joints[i].bounds != base.joints[i].bounds
+                        || cand.joints[i].workingRange != base.joints[i].workingRange;
+            }
+            if (mixed) {
+                out.objectWrites.clear();
+                return project::PrepareOutcome::RejectedInvalidInput;
+            }
+        }
+        // 装配检查：切换服务未装配＝装配缺陷（fail-fast——非切换载荷不受
+        // 影响，空指针仅在本门内解引用）。
+        if (m_services.dhConverter == nullptr || m_services.dhCompileProbe == nullptr) {
+            throw std::logic_error("mdl: DH 转换服务/编译探针未装配（权威切换变体"
+                                   "到达但装配缺失——装配缺陷）");
+        }
+        std::vector<core::DiagnosticRecord> switchDiags;
+        const AuthoritySwitchDecision decision = prepareAuthoritySwitch(
+            baseline.ws, baseline.ws, *m_services.dhConverter,
+            *m_services.dhCompileProbe, switchDiags);
+        if (!decision.allowed) {
+            // 验证失败不产生修订：拒绝态计划清空＋MDL-DH-* 终判/警告诊断
+            // 全量传导（§7.6 原文；硬域门归 RejectedHardAssert 轨——与断言
+            // 分域同一拒绝语义的就地阻止）。
+            out.objectWrites.clear();
+            diags.insert(diags.end(), switchDiags.begin(), switchDiags.end());
+            return project::PrepareOutcome::RejectedHardAssert;
+        }
+        // 切换候选替换：写入面以 prepare 计算的候选根重编码（dhDerived＝
+        // 判定选定解——不信任载荷自带的权威参数声明）。
+        dec.candidate = decision.candidate;
+        for (project::ObjectWrite& write : out.objectWrites) {
+            if (write.objectTypeToken == std::string(kRobotDesignObjectType)
+                && dec.candidate.rootObjectId.has_value()
+                && write.objectId == *dec.candidate.rootObjectId) {
+                write.payloadCanonical = encodeObjectOrThrow(
+                    ObjectVariant(dec.candidate.design));
+            }
+        }
+    }
+
     // ---- ④ 断言分域（AssertionSuite——与就绪校验共用，NFR-MNT-04）----
     std::vector<core::DiagnosticRecord> blockers;
     std::vector<core::DiagnosticRecord> warnings;

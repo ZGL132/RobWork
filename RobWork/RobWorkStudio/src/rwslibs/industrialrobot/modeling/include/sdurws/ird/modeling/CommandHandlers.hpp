@@ -55,6 +55,16 @@
  * "采用无点形态＝服从现行冻结语法"）；点分迁移属破坏性变更须同步
  * schemaVersion，本版不适用。
  *
+ * T09 增量（WP-13-T09，§7.6——单元卡 §15 v0.10 登记）：权威切换为
+ * apply-robot-design 的**权威切换变体**（独立领域命令：prepare 内执行
+ * 转换判定＋等价验证，验证失败不产生修订）。落位＝prepare 公共段的
+ * 权威切换门（③.5 段：正向载荷 ∧ 基线 Explicit ∧ 候选 StandardDH 触发；
+ * C-6 先决断投影＝载荷恰一根槽＋候选除权威侧字段外与基线逐字段一致；
+ * 转换判定与 FK 对照经 HandlerServices 新增的 dhConverter/dhCompileProbe
+ * 注入——未装配时切换变体到达即装配缺陷 fail-fast）。子类钩子契约
+ * （Planned|RejectedInvalidInput 两态）不变——门在基类，五命令行为
+ * 零变化（触发条件对非切换载荷恒假）。
+ *
  * 线程约束（§9.4.8 原文）：处理器由 ProjectCommandService 在命令执行
  * 线程串行调用，内部无需加锁；跨上下文共享实例时处理器状态视为不可变。
  * 合法调用：仅 project 命令服务（装配注册后由 registry 分发）；业务/UI
@@ -75,6 +85,7 @@
 #include <sdurws/ird/core/DiagData.hpp>     // DiagnosticRecord/ConfirmableFinding/ComparativeFields
 #include <sdurws/ird/core/Identity.hpp>     // ObjectId/RevisionId/ContentVersion
 #include <sdurws/ird/modeling/DiagCodes.hpp>  // T08 行码常量（产码唯一书写点——禁字符串拼码）
+#include <sdurws/ird/modeling/DhConvert.hpp>  // IDhExplicitConverter/CompileProbe（T09 权威切换门——§7.6）
 #include <sdurws/ird/modeling/ObjectTypes.hpp>  // 五对象 token（命令对象路由）
 #include <sdurws/ird/modeling/Parts.hpp>    // 四部件值模型（断言域与闭包视图）
 #include <sdurws/ird/modeling/RobotDesign.hpp>  // 根对象值模型（断言域输入）
@@ -450,6 +461,15 @@ struct HandlerServices {
     /// 期望策略内容版本（nullopt＝不可编址取数——resolvePolicy 按错误
     /// 矩阵返回空 policy＋POLICY-OBJECT-MISSING 诊断轨；由装配侧锚定）。
     std::optional<core::ContentVersion> policyVersion;
+
+    // ---- T09 增量（WP-13-T09，§7.6 权威切换门——表尾追加，向后兼容）----
+    /// DH 转换器（§9.4.7——apply-robot-design 权威切换变体在 prepare 内
+    /// 执行转换判定的唯一实现注入点；nullopt＝未装配：切换变体到达即
+    /// 装配缺陷 fail-fast——非切换载荷不受影响。单元卡 §15 v0.10 登记）。
+    const IDhExplicitConverter* dhConverter = nullptr;
+    /// 编译分段探针（§7.6 等价验证注入面——verifyEquivalent 经此走
+    /// runtime buildCanonicalModel S1～S5 只读分段；装配语义同上）。
+    const CompileProbe* dhCompileProbe = nullptr;
 };
 
 /**

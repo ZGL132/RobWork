@@ -12,11 +12,12 @@
  *   - 先例：io/src/IoDiagnostics.cpp（ioCodeDescriptors 逐字段登记口径）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 4
  *
- * 背景说明：清单当前 17 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
+ * 背景说明：清单当前 20 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
  * T05 行五码＋WP-13-T06 实现期增登的 T06 行一码＋WP-13-T07 实现期增登
  * 的 T07 行一码＋WP-13-T08 登记的 T08 行九码——八条卡面行＋一条 v0.9
- * 实现期增登行 MDL-READINESS-PHYSICS-MISSING）——分批注册纪律（"不预建
- * 无消费者条目"）的执行口径见
+ * 实现期增登行 MDL-READINESS-PHYSICS-MISSING＋WP-13-T09 登记的 T09 行
+ * 三码 MDL-DH-{NOT-EXPRESSIBLE,APPROXIMATE,ANALYSIS-FAILED}）——分批注册
+ * 纪律（"不预建无消费者条目"）的执行口径见
  * 头文件 DiagCodes.hpp 文件头注；其余行随各自任务在**本清单表尾追加**
  * （表尾追加＝登记簿纪律，不重排既有项）。
  *
@@ -463,11 +464,91 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     physicsMissing.deprecated = false;
     // supersededBy 保持 nullopt。
 
+    // ---- §9.5 T09 行三码（WP-13-T09 登记，§14.6 v0.10——DH↔显式转换
+    // 族；表行序追加于表尾——登记簿纪律不重排既有行）----
+    // T09 行共用口径：分类/severity 逐码取 §9.5"类别/级别"列的 diagnostics
+    // §4.3 词表投影；NOT-EXPRESSIBLE 为有效工程结论（终判——结构前提的
+    // 不可表达性是确定性结论而非输入错误，InfeasibilityProof 族与
+    // TEMPLATE-RANGE 同判例）；APPROXIMATE 是收敛的数值事实＋权威资格
+    // 否定（Warning——呈现面），归 DataInsufficient 不确（它有收敛解，
+    // 非证据不足）——按"转换/Warning"的结论呈现语义归 InfeasibilityProof
+    // 同族（权威资格被判定程序否定的有效结论）；ANALYSIS-FAILED 是执行
+    // 失败轴（TASK-02——求解器数值失败不构成语义结论）→ExecutionFailed。
+    // paramSchema 统一 "[]"（定位走 subject＋localName、三要素走
+    // comparison、逐关节明细走 cause 文本——T08 行同款数据面）。
+
+    // ---- MDL-DH-NOT-EXPRESSIBLE（转换/error）----
+    // 链不满足 DH 结构前提（纯串联/单自由度旋转/轴可参数化任一不满足——
+    // MDL-10 第一阶终判，不进入求解）→维持显式权威（§7.6 锁定）；C-3
+    // 权威切换拒绝面（切换命令据此拒绝＋终判诊断）。
+    diagnostics::CodeDescriptor dhNotExpressible;
+    dhNotExpressible.code = std::string(kMdlDhNotExpressible);
+    dhNotExpressible.ownerUnit = "modeling";
+    dhNotExpressible.category = diagnostics::DiagnosticCategory::InfeasibilityProof;
+    dhNotExpressible.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"转换/error"
+    dhNotExpressible.titleKey = "diag.mdl-dh-not-expressible.title";
+    dhNotExpressible.detailKey = "diag.mdl-dh-not-expressible.detail";
+    dhNotExpressible.paramSchema = "[]";
+    dhNotExpressible.confirmable = false;         // §9.5 行：false（终判无放行分支）
+    dhNotExpressible.requiresComparison = false;  // 结构前提判定（无比对值）
+    dhNotExpressible.retryable = diagnostics::RetryKind::UserRetry;  // "改链结构后重试"＝fix-input 族
+    dhNotExpressible.userVisible = true;
+    dhNotExpressible.reportable = true;
+    dhNotExpressible.historical = true;
+    dhNotExpressible.registryVersion = 1;
+    dhNotExpressible.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-DH-APPROXIMATE（转换/Warning）----
+    // 收敛但逐项偏差超附录 D 第 5 项上界（C3 逐关节逐项——非总和阈值）→
+    // 近似解附 E 度量与收敛状态；不得置权威（C-4/MDL-10——DTB 禁止项；
+    // C-4 拒绝切换）。E＝Σᵢ(轴线角偏差[rad]＋原点位置偏差[m])仅为呈现
+    // 指标（不参与判定——C3 明文）。
+    diagnostics::CodeDescriptor dhApproximate;
+    dhApproximate.code = std::string(kMdlDhApproximate);
+    dhApproximate.ownerUnit = "modeling";
+    dhApproximate.category = diagnostics::DiagnosticCategory::InfeasibilityProof;
+    dhApproximate.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.5"转换/Warning"
+    dhApproximate.titleKey = "diag.mdl-dh-approximate.title";
+    dhApproximate.detailKey = "diag.mdl-dh-approximate.detail";
+    dhApproximate.paramSchema = "[]";
+    dhApproximate.confirmable = false;           // 权威资格否定不可确认放行（C-4）
+    dhApproximate.requiresComparison = true;     // 比较型：最坏关节轴角偏差 vs 第 5 项上界（rad）
+    dhApproximate.retryable = diagnostics::RetryKind::UserRetry;  // "修正模型或维持显式"＝fix-input 族
+    dhApproximate.userVisible = true;
+    dhApproximate.reportable = true;
+    dhApproximate.historical = true;
+    dhApproximate.registryVersion = 1;
+    dhApproximate.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-DH-ANALYSIS-FAILED（转换/error）----
+    // 求解器数值失败（不收敛/发散/线性求解失败/资源异常）→调整后重试；
+    // 不构成语义结论（MDL-10 原文——执行失败轴 TASK-02，非工程判定轴）。
+    diagnostics::CodeDescriptor dhAnalysisFailed;
+    dhAnalysisFailed.code = std::string(kMdlDhAnalysisFailed);
+    dhAnalysisFailed.ownerUnit = "modeling";
+    dhAnalysisFailed.category = diagnostics::DiagnosticCategory::ExecutionFailed;
+    dhAnalysisFailed.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"转换/error"
+    dhAnalysisFailed.titleKey = "diag.mdl-dh-analysis-failed.title";
+    dhAnalysisFailed.detailKey = "diag.mdl-dh-analysis-failed.detail";
+    dhAnalysisFailed.paramSchema = "[]";
+    dhAnalysisFailed.confirmable = false;
+    dhAnalysisFailed.requiresComparison = false;  // 数值失败无语义比对值（不伪造——NFR-COR-03）
+    dhAnalysisFailed.retryable = diagnostics::RetryKind::UserRetry;  // "调整后重试"＝fix-input 族
+    dhAnalysisFailed.userVisible = true;
+    dhAnalysisFailed.reportable = true;
+    dhAnalysisFailed.historical = true;
+    dhAnalysisFailed.registryVersion = 1;
+    dhAnalysisFailed.deprecated = false;
+    // supersededBy 保持 nullopt。
+
     return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
             templateRange, xacroUnresolved, templateDisabled,
             travelLimit, massNonpositive, inertiaNotSpd, inertiaTriangle,
             limitInterval, rangeNotFinite, refMissing, resourceState,
-            physicsMissing};
+            physicsMissing,
+            dhNotExpressible, dhApproximate, dhAnalysisFailed};
 }
 
 void registerModelingCodes(diagnostics::IDiagnosticRegistry& registry)
