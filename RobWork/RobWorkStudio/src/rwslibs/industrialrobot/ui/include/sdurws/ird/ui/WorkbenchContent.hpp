@@ -135,6 +135,13 @@ struct WorkbenchContentDeps {
     std::optional<ICommandRegistry::CommandHandler> newProjectHandler;
     /// project.open 的装配期处理器覆写（宿主插件的打开编排）。
     std::optional<ICommandRegistry::CommandHandler> openProjectHandler;
+    /// draft.save 的装配期处理器覆写（UI-T17 增量——宿主插件的保存编排：
+    /// DraftController saveAll(Manual) 真实落盘链路；nullopt＝阶段 A 占位）。
+    std::optional<ICommandRegistry::CommandHandler> saveProjectHandler;
+    /// workbench.closeProject 的装配期处理器覆写（UI-T17 增量——宿主插件的
+    /// 关闭编排：beginClose→统一确认对话框→resolveCloseDialog→Draining
+    /// 防线驱动；nullopt＝阶段 A 占位）。
+    std::optional<ICommandRegistry::CommandHandler> closeProjectHandler;
 };
 
 // =====================================================================

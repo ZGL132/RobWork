@@ -852,9 +852,10 @@ void WorkbenchContentImpl::assembleCommandSystem()
     // §7.1 最小命令集登记（默认谓词＝作用域/只读规则——与壳门控快照同源，
     // §7.5/§7.6；默认谓词内零 IO）。处理器按归属接线：
     //   - 壳自持语义（视图复位/面板打开）＝完整实现；
-    //   - project.new/project.open＝装配层覆写面（§11.5 触发时机编排归装配
-    //     层——宿主插件注入真实打开编排后，五处入口同走真实协议；未注入＝
-    //     §7.1 阶段 A 占位说明处理器，harness 形态不变）；
+    //   - project.new/project.open/draft.save/workbench.closeProject＝装配层
+    //     覆写面（§11.5 触发时机编排归装配层——宿主插件注入真实编排后，五处
+    //     入口同走真实协议；未注入＝§7.1 阶段 A 占位说明处理器，harness 形态
+    //     不变）；
     //   - 其余归属 workflow/project/io/reporting 的命令＝占位说明处理器
     //     （§11.4/§14.1 契约显式的阶段 A 形态——不虚构业务能力，接线随
     //     归属任务落地；非空实现：触发有状态行反馈且进入近期使用）。
@@ -922,6 +923,16 @@ void WorkbenchContentImpl::assembleCommandSystem()
                    && m_deps.openProjectHandler.has_value()) {
             // 装配层覆写（§11.5）：宿主插件的打开编排（同上）。
             handler = m_deps.openProjectHandler.value();
+        } else if (std::string_view(row.id) == "draft.save"
+                   && m_deps.saveProjectHandler.has_value()) {
+            // 装配层覆写（§11.5 同型——UI-T17）：宿主插件的保存编排
+            // （DraftController saveAll 真实落盘链路；未注入＝阶段 A 占位）。
+            handler = m_deps.saveProjectHandler.value();
+        } else if (std::string_view(row.id) == "workbench.closeProject"
+                   && m_deps.closeProjectHandler.has_value()) {
+            // 装配层覆写（§11.5 同型——UI-T17）：宿主插件的关闭编排
+            // （§5.4 统一确认对话框＋Draining 防线驱动；未注入＝占位）。
+            handler = m_deps.closeProjectHandler.value();
         } else {
             // 占位说明处理器（阶段 A 契约显式形态——accepted=true：提交
             // 链路真实走通，能力面以 §11.4 说明呈现）。

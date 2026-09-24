@@ -25,21 +25,27 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QIcon>
 #include <QInputDialog>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
+#include <QMenuBar>
 #include <QMenu>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRadioButton>
 #include <QStatusBar>
 #include <QString>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include <rws/RobWorkStudio.hpp>                 // 宿主注入面：getView()/getWorkCellScene()（共存最小接入）
+#include <rws/RobWorkStudio.hpp>                 // 宿主注入面：getView()/getWorkCellScene()/menuBar()（共存接入）
 
 #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
@@ -87,6 +93,57 @@ std::string canonicalizePathOrKeep(const std::string& rawPath)
     }
 }
 
+/// 会话标签常量（宿主菜单/对话框的装配层呈现文案——与 WorkbenchText 键面
+/// 词汇保持一致；插件侧不 include src/ 私有头，按既有 orchestrate 对话框
+/// 先例以字面量承载）。
+constexpr const char* kProjectMenuTitle = "工业机器人项目";
+constexpr const char* kRecentMenuTitle = "最近项目";
+constexpr const char* kViewMenuTitle = "视图";
+constexpr const char* kRecentUnavailableSuffix = "（项目位置不可用）";
+
+/**
+ * @brief 打开五步协议的捕获包装（UI-T17）：转发内层 StoreFactoryPortAdapter
+ *        的 open，并保留每次成功打开的绑定集——草稿写半区端口（IUiDraft
+ *        StorePort）由 StorePortAdapter 双面实现经 dynamic_pointer_cast 取
+ *        得，供打开成功后的 DraftController bindSession（O-31 装配层特权：
+ *        同时看见两边写包装，ui 冻结面 SessionPortBundle 零改动）。
+ *
+ * 生命周期：插件持有 shared_ptr；m_lastStore 与控制器绑定集共享同一端口
+ * 实例（shared 引用），不产生第二份所有权语义。
+ */
+class BundleCapturingStoreFactory final : public IUiStoreFactoryPort {
+public:
+    /// @param inner [in] 内层工厂适配器（共享持有——存活期覆盖本包装）。
+    explicit BundleCapturingStoreFactory(std::shared_ptr<IUiStoreFactoryPort> inner)
+        : m_inner(std::move(inner))
+    {
+    }
+
+    /// @brief 直转 open 并在成功时捕获绑定集（失败不写——"失败＝无绑定泄漏"）。
+    OpenStoreOutcome open(const std::string& canonicalPath,
+                          UiOpenMode mode,
+                          SessionPortBundle& outBindings) override
+    {
+        const OpenStoreOutcome outcome = m_inner->open(canonicalPath, mode, outBindings);
+        if (outcome.ok) {
+            m_lastStore = outBindings.store;  // shared 拷贝＝观察同一实例
+        }
+        return outcome;
+    }
+
+    /// @brief 最近一次成功打开的草稿写半区端口（双面适配器_cast；未打开＝空）。
+    std::shared_ptr<IUiDraftStorePort> lastDraftStore() const
+    {
+        return std::dynamic_pointer_cast<IUiDraftStorePort>(m_lastStore);
+    }
+
+private:
+    /// 内层工厂（StoreFactoryPortAdapter——对端翻译面）。
+    std::shared_ptr<IUiStoreFactoryPort> m_inner;
+    /// 最近一次成功打开的 store 端口（双面适配器——DraftStore 强转源）。
+    std::shared_ptr<IUiProjectStorePort> m_lastStore;
+};
+
 }  // namespace
 
 // =====================================================================
@@ -132,7 +189,10 @@ void IrdWorkbenchHostPlugin::initialize()
     m_aboutSource = std::make_shared<app::HarnessAboutSource>();
     m_bridge = std::make_shared<app::ProjectDiagnosticsBridge>(
         m_diag.catalog, m_diag.factory, m_diag.pipeline);
-    m_storeFactory = std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge);
+    // 打开工厂＝捕获包装（UI-T17）包住对端翻译适配器：包装只透传并捕获
+    // 成功绑定集（草稿写半区端口来源），对端翻译语义零改动。
+    m_storeFactory = std::make_shared<BundleCapturingStoreFactory>(
+        std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge));
 
     // ---- 会话控制器（§5 状态机——依赖就位后延迟构造，一次性注入依赖包；
     //      打开编排的推进面，与 HarnessMain 逐行同源）----
@@ -143,14 +203,33 @@ void IrdWorkbenchHostPlugin::initialize()
     sessionDeps.devLog = m_diag.pipeline;  // Dev 码唯一出线（diagnostics §6.2）
     // 上下文原子快照注入内容装配面（§10.1 v0.5 facets——状态行/首页/命令
     // 门控的单一数据源；控制器在打开成功/关闭完成时回调，UI 线程）。
+    // UI-T17 增量：上下文清空（项目关闭完成）时同步解绑草稿控制器会话
+    // （§8.6 表处置——模块表/局部栈清空，磁盘草稿零触碰）。
     sessionDeps.presentContext = [this](const ui::ProjectContextProjection& context) {
+        if (!context.project.has_value() && m_draft && m_draft->hasSession()) {
+            m_draft->unbindSession();
+        }
         if (m_content) {
             m_content->presentProjectContext(context);
         }
     };
+    // 关闭对话框"保存"决议的执行半区（§5.4/[保存]→saveAll(Manual)）：
+    // UI-T17 起接线（此前与 harness 同口径不接线——关闭链路不可达；本任务
+    // 装配 DraftController 后链路真实可达，未绑定/保存失败经返回值轨反馈）。
+    sessionDeps.saveAllDraftsManual = [this]() -> bool { return saveDraftsNow(); };
+    // T_force 强杀兜底（§11.5 分工：abandonAll 调用权在 L5）：开发期无
+    // execution 引擎装配＝零后台任务可放弃（SessionTaskPortStub 恒空同源
+    // 事实）——显式留痕不静默（resolveForceCloseDialog 要求已接线）。
+    sessionDeps.forceAbandonAll = [this]() {
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel,
+                                    "forceAbandonAll：无执行引擎装配——零任务可放弃（T_force 确认后的空兜底）");
+        }
+    };
     m_controller = std::make_unique<UiSessionController>(std::move(sessionDeps));
-    // saveAllDraftsManual/forceAbandonAll 不接线（与 harness 同口径——关闭
-    // 链路的"保存"决议按控制器契约 fail-fast 而非静默降级）。
+
+    // ---- 草稿链装配（UI-T17——§8：执行器＋控制器；保存链路真实）----
+    assembleDraftChain();
 
     // ---- 装配第三步：内容装配面（与 harness 共用的同一装配面——O-38 ②；
     //      嵌入式 Dock 宿主形态＋会话入口覆写＝本插件的两处宿主差异）----
@@ -173,8 +252,8 @@ void IrdWorkbenchHostPlugin::initialize()
     // 插件装载被框架呈现为失败对话框、五区不出现；壳路径由
     // WorkbenchShell 注入自身窗口故未暴露。修复见同日提交。
     contentDeps.hostWidget = this;
-    // 会话入口覆写（§11.5）：宿主插件的打开编排注入——首页/菜单/顶栏/
-    // 面板/快捷键五处壳入口同走真实打开协议。
+    // 会话入口覆写（§11.5）：宿主插件的打开/新建/保存/关闭编排注入——
+    // 首页/菜单/顶栏/面板/快捷键五处壳入口同走真实协议（UI-T17 扩至四命令）。
     contentDeps.openProjectHandler =
         [this](const std::vector<CommandParameter>& params) {
             return orchestrateOpenProject(params);
@@ -182,6 +261,14 @@ void IrdWorkbenchHostPlugin::initialize()
     contentDeps.newProjectHandler =
         [this](const std::vector<CommandParameter>& params) {
             return orchestrateNewProject(params);
+        };
+    contentDeps.saveProjectHandler =
+        [this](const std::vector<CommandParameter>& params) {
+            return orchestrateSaveProject(params);
+        };
+    contentDeps.closeProjectHandler =
+        [this](const std::vector<CommandParameter>& params) {
+            return orchestrateCloseProject(params);
         };
     m_content = createWorkbenchContent(std::move(contentDeps));
 
@@ -224,6 +311,12 @@ IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
     if (m_content) {
         m_content->shutdown();
         m_content.reset();
+    }
+    // 草稿链收口（UI-T17）：先停执行器（有界排空在途落盘任务）再释放
+    // 控制器——m_draft 析构前其分派的落盘任务必须已执行完（IDraftController
+    // 生命周期契约：L5 保证控制器存活至落盘执行器排空）。
+    if (m_diskExecutor) {
+        m_diskExecutor->stop();
     }
 }
 
@@ -319,40 +412,97 @@ void IrdWorkbenchHostPlugin::setupMenu (QMenu* menu)
 {
     // 框架 Plugins 菜单注入（宿主 addPlugin 流程在 initialize 前回调——
     // 框架注入序保持）：基类先行（本插件面板的显示/隐藏开关——rws::
-    // RobWorkStudioPlugin::setupMenu 原语义），本插件追加工作台命令入口。
-    // 动作触发统一转发内容装配面的提交路径（§4.2 路由红线——菜单只路由
-    // 命令板；使能态随命令可用性刷新——refreshHostMenuActions）。
+    // RobWorkStudioPlugin::setupMenu 原语义）。
+    // UI-T17（O-43 ②）宿主菜单融合：本菜单（Plugins）只保留基类显示/隐藏
+    // 开关，不再承载工作台命令——项目命令迁宿主 File 菜单、命令面板迁
+    // Tools、区域开关与布局复位迁自建"视图"菜单（registerHostMenus）。
     RobWorkStudioPlugin::setupMenu (menu);
-    if (menu == nullptr) {
-        return;  // 防御：框架以空菜单回调＝无注入面（基类动作已自我管理）
+    registerHostMenus();
+}
+
+void IrdWorkbenchHostPlugin::registerHostMenus()
+{
+    // 宿主菜单定位（SA-02 零框架修改——只经公开 menuBar() 读宿主菜单结构；
+    // 找不到目标菜单＝宿主形态异常，留痕后保持 Plugins-only 降级形态）。
+    auto* studio = getRobWorkStudio();
+    QMenuBar* menuBar = studio != nullptr ? studio->menuBar() : nullptr;
+    if (menuBar == nullptr) {
+        reportLine("宿主菜单栏未就位——命令保持 Plugins 菜单承载（降级形态）");
+        return;
     }
-    auto makeCommandAction = [this, menu](const char* title, const char* commandId) {
-        auto* action = menu->addAction(QString::fromUtf8(title));
-        // 动作父对象＝本插件（Qt 树托管——插件销毁随宿主进程收尾）。
-        action->setParent(this);
-        QObject::connect(action, &QAction::triggered, this, [this, commandId] {
-            if (m_content) {
-                m_content->submitCommand(commandId);
+    const auto findHostMenu = [menuBar](const char* title) -> QMenu* {
+        for (QAction* action : menuBar->actions()) {
+            if (QMenu* m = action->menu(); m != nullptr && m->title() == QString::fromLatin1(title)) {
+                return m;
             }
-        });
-        m_hostMenuCommandIds.emplace_back(action, commandId);
+        }
+        return nullptr;
     };
-    menu->addSeparator();
-    makeCommandAction("命令面板", "workbench.commandPalette");
-    makeCommandAction("打开项目", "project.open");
-    makeCommandAction("新建项目", "project.new");
-    makeCommandAction("恢复默认布局", "view.resetLayout");
-    // 五区开关（§4.1"支持隐藏"的宿主菜单承载——顶层壳视图菜单半区在嵌入
-    // 式宿主的对位面；勾选态随内容装配层刷新同步，triggered/toggled 分离
-    // 避免回环）。可隐藏三区（Top/Central 恒在——§4.4）。
-    menu->addSeparator();
+    QMenu* fileMenu = findHostMenu("&File");
+    QMenu* toolsMenu = findHostMenu("&Tools");
+
+    // ---- File：按位插入"工业机器人项目"子菜单 ----
+    // 为什么按位插入而不是尾插：宿主 updateLastFiles 每次 open WorkCell 后
+    // 移除重加"最近文件"条目（追加在菜单尾部）——尾插的项目子菜单会被
+    // 后续重排顶到最近文件之下；锚定 Preferences 前的分隔符保持稳定分组。
+    if (fileMenu != nullptr) {
+        auto* projectMenu = new QMenu(QString::fromUtf8(kProjectMenuTitle), fileMenu);
+        addCommandAction(projectMenu, "新建项目", "project.new");
+        addCommandAction(projectMenu, "打开项目", "project.open");
+        addCommandAction(projectMenu, "保存草稿", "draft.save");
+        addCommandAction(projectMenu, "项目另存为", "project.saveAs");
+        addCommandAction(projectMenu, "关闭项目", "workbench.closeProject");
+        // 最近项目子菜单（PM-10）：内容装配时清空、aboutToShow 现取重建
+        // （去重/上限/失效提示全在内容装配面——本插件只投影）。
+        m_recentMenu = new QMenu(QString::fromUtf8(kRecentMenuTitle), projectMenu);
+        connect(m_recentMenu, &QMenu::aboutToShow, this, [this] { rebuildRecentMenu(); });
+        projectMenu->addSeparator();
+        projectMenu->addMenu(m_recentMenu);
+
+        // 插入锚：Preferences 动作之前最近的分隔符（无则退化为 Preferences
+        // 动作本身、再无则追加尾部）。
+        QAction* anchor = nullptr;
+        const QList<QAction*> fileActions = fileMenu->actions();
+        for (int i = 0; i < fileActions.size(); ++i) {
+            if (fileActions[i]->text() == QString::fromLatin1("&Preferences")) {
+                for (int j = i - 1; j >= 0; --j) {
+                    if (fileActions[j]->isSeparator()) {
+                        anchor = fileActions[j];
+                        break;
+                    }
+                }
+                if (anchor == nullptr) {
+                    anchor = fileActions[i];
+                }
+                break;
+            }
+        }
+        if (anchor != nullptr) {
+            fileMenu->insertMenu(anchor, projectMenu);
+        } else {
+            fileMenu->addMenu(projectMenu);
+        }
+    } else {
+        reportLine("宿主 File 菜单未定位——项目命令未上菜单（降级形态）");
+    }
+
+    // ---- Tools：命令面板入口（UX-13 键盘可达入口的菜单半区）----
+    if (toolsMenu != nullptr) {
+        addCommandAction(toolsMenu, "命令面板", "workbench.commandPalette");
+    }
+
+    // ---- 视图（自建——宿主无 View 菜单）：三区开关＋恢复默认布局 ----
+    // 区域开关语义（§4.1"支持隐藏"的宿主菜单承载；勾选态随内容装配层刷新
+    // 同步，triggered/toggled 分离避免回环）。可隐藏三区（Top/Central 恒在
+    // ——§4.4）。插入位置：Plugins 菜单之前（File/Tools 之后）。
+    auto* viewMenu = new QMenu(QString::fromUtf8(kViewMenuTitle), menuBar);
     const std::pair<WorkbenchRegion, const char*> regionToggles[] = {
         {WorkbenchRegion::Left, "左栏"},
         {WorkbenchRegion::Right, "右栏"},
         {WorkbenchRegion::Bottom, "底部任务和状态区"},
     };
     for (const auto& [region, title] : regionToggles) {
-        auto* action = menu->addAction(QString::fromUtf8(title));
+        auto* action = viewMenu->addAction(QString::fromUtf8(title));
         action->setParent(this);
         action->setCheckable(true);
         QObject::connect(action, &QAction::triggered, this, [this, region] {
@@ -361,6 +511,64 @@ void IrdWorkbenchHostPlugin::setupMenu (QMenu* menu)
             }
         });
         m_hostRegionToggles.emplace_back(region, action);
+    }
+    viewMenu->addSeparator();
+    addCommandAction(viewMenu, "恢复默认布局", "view.resetLayout");
+    QAction* beforeView = nullptr;
+    for (QAction* action : menuBar->actions()) {
+        if (QMenu* m = action->menu(); m != nullptr && m->title() == QString::fromLatin1("&Plugins")) {
+            beforeView = action;
+            break;
+        }
+    }
+    if (beforeView != nullptr) {
+        menuBar->insertMenu(beforeView, viewMenu);
+    } else {
+        menuBar->addMenu(viewMenu);
+    }
+}
+
+QAction* IrdWorkbenchHostPlugin::addCommandAction(QMenu* target,
+                                                  const char* title,
+                                                  const char* commandId)
+{
+    // 菜单只路由命令板（§4.2 路由红线——触发统一转发内容装配面提交路径）；
+    // 使能态随命令可用性快照刷新（refreshHostMenuActions——本插件零判定）。
+    QAction* action = target->addAction(QString::fromUtf8(title));
+    action->setParent(this);  // 动作父对象＝本插件（Qt 树托管——随宿主收尾）
+    QObject::connect(action, &QAction::triggered, this, [this, commandId] {
+        if (m_content) {
+            m_content->submitCommand(commandId);
+        }
+    });
+    m_hostMenuCommandIds.emplace_back(action, commandId);
+    return action;
+}
+
+void IrdWorkbenchHostPlugin::rebuildRecentMenu()
+{
+    if (m_recentMenu == nullptr || !m_content) {
+        return;
+    }
+    m_recentMenu->clear();
+    const std::vector<RecentProjectEntry> entries = m_content->recentProjects();
+    if (entries.empty()) {
+        // 空清单＝占位行（不虚构条目——PM-10 首页语义的菜单对位）。
+        QAction* empty = m_recentMenu->addAction(QString::fromUtf8("（无）"));
+        empty->setEnabled(false);
+        return;
+    }
+    for (const RecentProjectEntry& entry : entries) {
+        QString label = QString::fromStdString(entry.canonicalPath);
+        if (!entry.available) {
+            // 失效项保留并提示（PM-10"失效≠删除"——禁用动作，不删除条目）。
+            label += QString::fromUtf8(kRecentUnavailableSuffix);
+        }
+        QAction* action = m_recentMenu->addAction(label);
+        action->setEnabled(entry.available);
+        const std::string path = entry.canonicalPath;
+        connect(action, &QAction::triggered, this,
+                [this, path] { openRecentProject(path); });
     }
 }
 
@@ -392,6 +600,12 @@ void IrdWorkbenchHostPlugin::connectAppQuitDrain()
                          m_dockBody, [this] {
                              if (m_content) {
                                  m_content->shutdown();
+                             }
+                             // 草稿链退出收口（UI-T17）：落盘执行器有界排空
+                             // （在途保存任务执行完再收线程——§5.7"在途草稿
+                             // 落盘完成后上下文才释放"的宿主侧对位）。
+                             if (m_diskExecutor) {
+                                 m_diskExecutor->stop();
                              }
                          });
     }
@@ -585,6 +799,33 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
         if (m_content) {
             m_content->noteRecentProject(canonicalPath);  // PM-10 最近项目（去重/上限壳内处理）
         }
+        // 草稿会话绑定（UI-T17——§5.2"打开成功→草稿侧编排"）：捕获包装里
+        // 取草稿写半区端口（StorePortAdapter 双面）；分支锚＝缺省值（诚实
+        // 边界——立项登记注③：本阶段无挂接模块，锚不可达）。
+        if (m_draft) {
+            if (m_draft->hasSession()) {
+                m_draft->unbindSession();  // 切换流表处置（§8.6——清空再绑）
+            }
+            auto* capturing = dynamic_cast<BundleCapturingStoreFactory*>(m_storeFactory.get());
+            std::shared_ptr<IUiDraftStorePort> draftStore =
+                capturing != nullptr ? capturing->lastDraftStore() : nullptr;
+            if (report.opened.metadata.writable && draftStore == nullptr) {
+                // 双面适配器缺失＝装配缺陷：留痕并保持未绑定（保存路径经
+                // saveDraftsNow 的未绑定检查走返回值轨，不虚构"已绑定"）。
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(kPluginDevChannel,
+                                            "草稿写半区端口不可得（装配缺陷）——本会话保存链路未绑定");
+                }
+            } else {
+                DraftSessionBinding binding;
+                binding.projectId = report.opened.metadata.projectId;
+                binding.branchId = core::BranchId{};  // 分支锚（诚实边界——见上）
+                binding.writable = report.opened.metadata.writable;
+                binding.drafts = std::make_shared<app::DraftQueryPortStub>();
+                binding.store = std::move(draftStore);
+                m_draft->bindSession(binding);
+            }
+        }
         reportLine("项目已打开：" + canonicalPath + "（可写："
                    + (report.opened.metadata.writable ? "是" : "否（降级只读——见横幅）") + "）");
         return true;
@@ -606,6 +847,357 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
             + QString::fromStdString(report.failure.projectPath)
             + QString::fromUtf8("\n详情：") + QString::fromStdString(report.failure.detail));
     return false;
+}
+
+// =====================================================================
+// 草稿链装配与保存编排（UI-T17——§8；O-43 ②）
+// =====================================================================
+
+void IrdWorkbenchHostPlugin::assembleDraftChain()
+{
+    // 串行落盘执行器（§3.4"ui 后台落盘线程（1 条）——串行队列"的开发期
+    // 宿主）：构造即启动，退出路径有界排空（connectAppQuitDrain/析构）。
+    m_diskExecutor = std::make_unique<app::SerialTaskExecutor>();
+
+    ui::DraftControllerDeps deps;
+    // 磁盘段投递（§8.2 数据流"转投 ui 后台落盘线程"）——串行执行器承接。
+    deps.postToDiskThread = [this](std::function<void()> task) {
+        m_diskExecutor->post(std::move(task));
+    };
+    // 完成回执 Marshal 回 UI 线程（§3.4 M-1）：以 Dock 体为上下文对象——
+    // 其销毁后排队的回执自动作废（Qt 上下文语义），不悬挂。
+    deps.postToUiThread = [this](std::function<void()> task) {
+        if (m_dockBody.data() != nullptr) {
+            QMetaObject::invokeMethod(m_dockBody.data(), std::move(task),
+                                      Qt::QueuedConnection);
+        }
+    };
+    // anyDirty 翻转→会话脏生产者接线（§10.5/UI-T12——标题 `*` 判定位的
+    // 会话半区数据源；UI-T11 登记的"生产者接线随 UI-T12 落地"承诺）。
+    deps.onSessionDirtyChanged = [this](bool dirty) {
+        if (m_controller) {
+            m_controller->reportSessionDirty(dirty);
+        }
+    };
+    deps.diagSink = m_diag.catalog;
+    deps.diagFactory = m_diag.factory;
+    deps.devLog = m_diag.pipeline;
+    m_draft = createDraftController(std::move(deps));
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "草稿控制器就绪（保存链路真实；恢复/autosave/分支锚随完整草稿链路任务接续）");
+    }
+}
+
+bool IrdWorkbenchHostPlugin::saveDraftsNow()
+{
+    // 未绑定会话＝无可保存对象（返回 false——调用方按 SaveFailed/保存反馈
+    // 处置，不虚构"已保存"；只读会话 saveAll 按契约 fail-fast，门控由
+    // 命令可用性快照承担——draft.save readOnlyAllowed=false）。
+    if (!m_draft || !m_draft->hasSession()) {
+        return false;
+    }
+    // 全量保存挂接的脏模块（§8.2/§8.4——保存/应用分离红线：零修订；当前
+    // 无挂接模块＝零脏模块＝平凡成功，属诚实形态而非能力伪造）。
+    const SaveOutcome outcome = m_draft->saveAll(SaveTrigger::Manual);
+    QStatusBar* statusBar = m_content ? m_content->statusBarWidget() : nullptr;
+    if (outcome.failedCount == 0) {
+        if (statusBar != nullptr) {
+            statusBar->showMessage(QString::fromUtf8("草稿已保存（%1 个模块）")
+                                       .arg(static_cast<int>(outcome.savedCount)),
+                                   4000);
+        }
+        return true;
+    }
+    // 失败保留脏标记（§8.2 失败行）——首失败模块 token 入状态行（开发期
+    // 反馈面；用户文案随草稿链路完整任务细化）。
+    const QString failedModule =
+        outcome.failedModules.empty()
+            ? QString()
+            : QString::fromStdString(outcome.failedModules.front());
+    if (statusBar != nullptr) {
+        statusBar->showMessage(QString::fromUtf8("草稿保存失败（%1 个模块；首失败：%2）")
+                                   .arg(static_cast<int>(outcome.failedCount))
+                                   .arg(failedModule),
+                               8000);
+    }
+    return false;
+}
+
+CommandOutcome IrdWorkbenchHostPlugin::orchestrateSaveProject(
+    const std::vector<CommandParameter>& params)
+{
+    (void)params;  // 无参命令（§7.1 最小集——空 schema）
+    CommandOutcome out;
+    // 前置守卫（可用性快照已禁用的兜底面）：无会话＝未发生保存请求。
+    if (!m_controller || !m_controller->hasOpenSession()) {
+        return out;  // accepted=false——命令未派发
+    }
+    out.accepted = true;
+    saveDraftsNow();  // 结局反馈经状态行（保存/应用分离——失败不清脏）
+    return out;
+}
+
+// =====================================================================
+// 关闭编排（UI-T17——workbench.closeProject 覆写面；§5.4/§5.6）
+// =====================================================================
+
+CommandOutcome IrdWorkbenchHostPlugin::orchestrateCloseProject(
+    const std::vector<CommandParameter>& params)
+{
+    (void)params;  // 无参命令
+    CommandOutcome out;
+    if (!m_controller || !m_controller->hasOpenSession()) {
+        return out;  // 无项目态没有"关闭项目"语义（门控兜底）
+    }
+    out.accepted = true;
+    try {
+        // S1 首步（§5.4）：装配对话框数据（不改状态——取消可回原状态）。
+        const CloseDialogData data = m_controller->beginClose(UiCloseIntent::CloseProject);
+        // 呈现（装配层对话框）＋决议回交（机制归控制器——§5 注释分工）。
+        const std::optional<CloseDecision> decision = presentCloseDialog(data);
+        if (!decision.has_value()) {
+            // [取消]→原状态（无处置执行——会话原状）。
+            (void)m_controller->resolveCloseDialog(CloseDecision{});  // confirmed=false＝取消
+            return out;
+        }
+        const CloseDialogResolution resolution = m_controller->resolveCloseDialog(*decision);
+        switch (resolution.status) {
+        case CloseDialogResolution::Status::Confirmed:
+            // 处置执行完毕——进入 Draining（或同步直达 Closed）：启动防线
+            // 轮询（§5.6 四级防线的 UI 线程驱动点）。
+            startDrainWatch();
+            break;
+        case CloseDialogResolution::Status::SaveFailed:
+            // 保存失败＝关闭中止（不虚构"已保存"——§5.4 失败侧保守出口）。
+            QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("关闭已中止"),
+                                 QString::fromUtf8("草稿保存失败，项目保持打开。"));
+            break;
+        case CloseDialogResolution::Status::Cancelled:
+        case CloseDialogResolution::Status::CandidateRejected:
+            break;  // 非切换流不可达（防御——状态机原状，无额外动作）
+        }
+    } catch (const std::logic_error& error) {
+        // 调用次序违约（重复 beginClose 等）＝编排缺陷：留痕＋就地提示，
+        // 不吞错不崩溃（宿主进程内 fail-fast 的可观测形态）。
+        reportLine(std::string("关闭编排状态违约：") + error.what());
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel,
+                                    std::string("关闭编排状态违约：") + error.what());
+        }
+        QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("无法关闭项目"),
+                             QString::fromUtf8("当前状态不接受关闭请求（状态机违约，已留痕）。"));
+    }
+    return out;
+}
+
+void IrdWorkbenchHostPlugin::openRecentProject(const std::string& canonicalPath)
+{
+    if (!m_controller) {
+        return;
+    }
+    // 无会话：标准打开协议（与 project.open 同一路径）。
+    if (!m_controller->hasOpenSession()) {
+        openViaSessionController(canonicalizePathOrKeep(canonicalPath));
+        return;
+    }
+    // 有会话：§5.4 S2 切换流（A 的统一确认对话框→决议确认后候选验证；
+    // "候选验证成功才切"——失败 A 会话不变，PM-03）。
+    try {
+        const CloseDialogData data = m_controller->beginSwitch(canonicalPath, UiOpenMode::Writable);
+        const std::optional<CloseDecision> decision = presentCloseDialog(data);
+        if (!decision.has_value()) {
+            (void)m_controller->resolveCloseDialog(CloseDecision{});  // 取消
+            return;
+        }
+        const CloseDialogResolution resolution = m_controller->resolveCloseDialog(*decision);
+        switch (resolution.status) {
+        case CloseDialogResolution::Status::Confirmed:
+            // A 转入 Draining 背景持有点＋B 已绑定（INV-SES-2/3）——A 排空
+            // 归防线轮询观测；B 记入最近项目。
+            if (m_content) {
+                m_content->noteRecentProject(canonicalPath);
+            }
+            startDrainWatch();
+            break;
+        case CloseDialogResolution::Status::SaveFailed:
+            QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("切换已中止"),
+                                 QString::fromUtf8("草稿保存失败，当前项目保持打开。"));
+            break;
+        case CloseDialogResolution::Status::CandidateRejected:
+            QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("无法切换项目"),
+                                 QString::fromUtf8("候选项目验证失败，当前项目保持打开。"));
+            break;
+        case CloseDialogResolution::Status::Cancelled:
+            break;
+        }
+    } catch (const std::logic_error& error) {
+        reportLine(std::string("切换编排状态违约：") + error.what());
+        QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("无法切换项目"),
+                             QString::fromUtf8("当前状态不接受切换请求（状态机违约，已留痕）。"));
+    }
+}
+
+std::optional<CloseDecision> IrdWorkbenchHostPlugin::presentCloseDialog(
+    const CloseDialogData& data)
+{
+    // §5.4 统一确认对话框的装配层呈现面：机制（数据装配/决议解析/状态迁移
+    // /Draining 防线）全在控制器——本对话框只渲染 CloseDialogData 并把
+    // 用户决议交回 resolveCloseDialog（草稿三选×任务二选的两轴呈现）。
+    QDialog dialog(m_dockBody.data());
+    dialog.setWindowTitle(QString::fromUtf8("关闭项目"));
+    auto* layout = new QVBoxLayout(&dialog);
+
+    // 标题区（UX-02 工程用语——显示名来自权威元数据投影）。
+    layout->addWidget(new QLabel(QString::fromUtf8("项目「%1」即将关闭。")
+                                     .arg(QString::fromStdString(data.projectDisplayName)),
+                                 &dialog));
+
+    // 草稿处置轴（§5.4 草稿区）：无行集且无会话脏＝呈现"无未应用修改"
+    // （零虚构——不渲染不存在的选项）；可写会话才可选"保存"（§5.5）。
+    QRadioButton* saveDrafts = nullptr;
+    QRadioButton* discardDrafts = nullptr;
+    QLabel* draftSummary = new QLabel(
+        QString::fromUtf8("未应用的草稿修改：%1 项%2")
+            .arg(static_cast<int>(data.draftRows.size()))
+            .arg(data.sessionDirty ? QString::fromUtf8("（含未落盘的会话修改）") : QString()),
+        &dialog);
+    layout->addWidget(draftSummary);
+    if (data.draftRows.empty() && !data.sessionDirty) {
+        layout->addWidget(new QLabel(QString::fromUtf8("无未应用修改。"), &dialog));
+    } else {
+        saveDrafts = new QRadioButton(QString::fromUtf8("保存草稿并关闭"), &dialog);
+        saveDrafts->setEnabled(data.saveDraftsAvailable);
+        discardDrafts = new QRadioButton(QString::fromUtf8("放弃未应用修改并关闭"), &dialog);
+        // 缺省决议保守化：可保存时缺省保存（数据安全侧）；不可保存时仅有
+        // "放弃"可选（只读会话——磁盘草稿保留，会话脏数据丢弃）。
+        (data.saveDraftsAvailable ? saveDrafts : discardDrafts)->setChecked(true);
+        layout->addWidget(saveDrafts);
+        layout->addWidget(discardDrafts);
+    }
+
+    // 任务处置轴（§5.4 任务区）：无在途任务＝呈现"无后台任务"（等待轴
+    // 无呈现对象——noActiveTasks 时等待直接进入 Draining）。
+    QRadioButton* waitTasks = nullptr;
+    QRadioButton* cancelTasks = nullptr;
+    if (!data.noActiveTasks) {
+        layout->addWidget(new QLabel(
+            QString::fromUtf8("仍有 %1 个后台任务未完成。")
+                .arg(static_cast<int>(data.taskRows.size())),
+            &dialog));
+        waitTasks = new QRadioButton(QString::fromUtf8("等待后台任务结束后关闭"), &dialog);
+        waitTasks->setChecked(true);
+        cancelTasks = new QRadioButton(QString::fromUtf8("协作取消后台任务并关闭"), &dialog);
+        layout->addWidget(waitTasks);
+        layout->addWidget(cancelTasks);
+    } else {
+        layout->addWidget(new QLabel(QString::fromUtf8("无后台任务。"), &dialog));
+    }
+
+    // 按钮区（取消＝回原状态；确认＝执行两轴决议）。
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                                         &dialog);
+    buttons->button(QDialogButtonBox::Ok)->setText(QString::fromUtf8("继续"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(QString::fromUtf8("取消"));
+    connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    layout->addWidget(buttons);
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return std::nullopt;  // [取消]——会话原状不变
+    }
+    CloseDecision decision;
+    decision.confirmed = true;
+    decision.draft = (saveDrafts != nullptr && saveDrafts->isChecked())
+                         ? DraftDisposition::Save
+                         : DraftDisposition::Discard;
+    decision.task = (cancelTasks != nullptr && cancelTasks->isChecked())
+                        ? TaskDisposition::CooperativeCancel
+                        : TaskDisposition::Wait;
+    return decision;
+}
+
+// =====================================================================
+// Draining 防线轮询驱动（§5.6 四级防线——UI 线程 QTimer 周期）
+// =====================================================================
+
+void IrdWorkbenchHostPlugin::startDrainWatch()
+{
+    if (m_drainTimer == nullptr) {
+        m_drainTimer = new QTimer(this);
+        m_drainTimer->setInterval(200);  // §9.4 轮询周期同源（UI 线程零阻塞）
+        connect(m_drainTimer, &QTimer::timeout, this, [this] { pollDrainOnce(); });
+    }
+    QStatusBar* statusBar = m_content ? m_content->statusBarWidget() : nullptr;
+    if (statusBar != nullptr) {
+        statusBar->showMessage(QString::fromUtf8("正在关闭项目……（等待后台任务与草稿落盘收口）"));
+    }
+    m_drainTimer->start();
+}
+
+void IrdWorkbenchHostPlugin::pollDrainOnce()
+{
+    if (!m_controller) {
+        if (m_drainTimer != nullptr) {
+            m_drainTimer->stop();
+        }
+        return;
+    }
+    DrainPollReport report;
+    try {
+        report = m_controller->pollDrain();
+    } catch (const std::logic_error&) {
+        // "不在 Draining 且无后台持有点"＝关闭已收口（同步完成/切换 B 绑定
+        // 后台持有点已排空）——轮询对象消失，停止驱动（不是错误）。
+        if (m_drainTimer != nullptr) {
+            m_drainTimer->stop();
+        }
+        return;
+    }
+    QStatusBar* statusBar = m_content ? m_content->statusBarWidget() : nullptr;
+    switch (report.status) {
+    case DrainPollReport::Status::Draining:
+        break;  // 保持等待（防线 1 的有界反馈已在状态行）
+    case DrainPollReport::Status::ForceConfirmDue: {
+        // 防线 3（T_force 到点）：强制结束确认——呈现一次，决议交回控制器
+        // （确认＝强杀序列＋abandon 兜底；拒绝＝继续等待，T_force2 仍兜底）。
+        if (m_drainTimer != nullptr) {
+            m_drainTimer->stop();
+        }
+        const ForceCloseDialogData forceData = m_controller->forceCloseDialogData();
+        const QMessageBox::StandardButton choice = QMessageBox::question(
+            m_dockBody.data(), QString::fromUtf8("强制结束后台任务？"),
+            QString::fromUtf8("项目「%1」关闭等待已超过 %2，仍有 %3 个后台任务未结束。\n\n"
+                              "强制结束＝任务记为失败（最近检查点保留可续）。是否强制结束并关闭？")
+                .arg(QString::fromStdString(forceData.projectDisplayName),
+                     QString::fromStdString(forceData.waitedText),
+                     QString::number(static_cast<int>(forceData.activeTaskCount))),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        m_controller->resolveForceCloseDialog(choice == QMessageBox::Yes);
+        if (m_drainTimer != nullptr) {
+            m_drainTimer->start();  // 确认与否都回到轮询收敛（T_force2 兜底）
+        }
+        break;
+    }
+    case DrainPollReport::Status::GivenUp:
+        // 防线 4（T_force2 到点）：放弃等待并完成关闭（绝不无限等待——
+        // INV-SES-4；数据损失限于未归档结果，检查点保留）。
+        if (m_drainTimer != nullptr) {
+            m_drainTimer->stop();
+        }
+        if (statusBar != nullptr) {
+            statusBar->showMessage(QString::fromUtf8("关闭等待超时，已强制完成关闭（未归档结果不保留）。"), 8000);
+        }
+        break;
+    case DrainPollReport::Status::ClosedNow:
+        if (m_drainTimer != nullptr) {
+            m_drainTimer->stop();
+        }
+        if (statusBar != nullptr) {
+            statusBar->showMessage(QString::fromUtf8("项目已关闭。"), 4000);
+        }
+        break;
+    }
 }
 
 }  // namespace ui
