@@ -114,6 +114,9 @@ core::DiagnosticRecord makeReadyDiag(std::string_view code,
 
 /// 闭包引用查找（oid→ObjectRef；线性扫描——闭包规模为对象数级，且保序
 /// 遍历确定性优先于哈希加速，同 RequirementTypes 唯一性扫描同款取舍）。
+/// （闭包浅核对 closureRefViolation 自 WP-14-T06 起为公共自由函数——
+/// 定义移至匿名命名空间外供解析面共用，声明见 Readiness.hpp；本文件
+/// 内各层调用点语义不变。）
 const project::ObjectRef* findClosureRef(const CheckContext& ctx,
                                          const core::ObjectId& oid)
 {
@@ -123,26 +126,6 @@ const project::ObjectRef* findClosureRef(const CheckContext& ctx,
         }
     }
     return nullptr;
-}
-
-/// 闭包浅核对（§8.1 跨闭包半区的单点实现）：目标存在于闭包且登记
-/// token 与期望一致。返回 nullopt＝通过；返回字符串＝违例原因（悬空/
-/// token 失配——供诊断 cause 复用，机器判别以稳定码为准）。
-std::optional<std::string> closureRefViolation(const CheckContext& ctx,
-                                               const core::ObjectId& oid,
-                                               std::string_view expectedToken)
-{
-    const project::ObjectRef* ref = findClosureRef(ctx, oid);
-    if (ref == nullptr) {
-        return std::string("引用目标不在修订闭包中（悬空——") + oid.toCanonical()
-               + "）；语义级有效性归评估时解析（§8.1 浅校验边界）";
-    }
-    if (ref->objectTypeToken != expectedToken) {
-        return std::string("闭包登记类型 token 不匹配（登记 ")
-               + ref->objectTypeToken + "，期望 " + std::string{expectedToken}
-               + "）";
-    }
-    return std::nullopt;
 }
 
 /// 报告追加（items 序＝执行序——短路序，确定性）。
@@ -292,6 +275,27 @@ void assertWorkingSetInvariants(const RequirementWorkingSet& ws)
 }
 
 }  // namespace
+
+// 闭包浅核对（§8.1 跨闭包半区单点实现——WP-14-T06 起为公共自由函数，
+// 就绪各层与姿态规则解析面共用本定义；核对语义与诊断 cause 文本保持
+// 与提升前逐字一致——无行为变化，仅可见性扩展，NFR-MNT-04 单源）。
+std::optional<std::string> closureRefViolation(const CheckContext& ctx,
+                                               const core::ObjectId& oid,
+                                               std::string_view expectedToken)
+{
+    const project::ObjectRef* ref = findClosureRef(ctx, oid);
+    if (ref == nullptr) {
+        return std::string("引用目标不在修订闭包中（悬空——") + oid.toCanonical()
+               + "）；语义级有效性归评估时解析（§8.1 浅校验边界）";
+    }
+    if (ref->objectTypeToken != expectedToken) {
+        return std::string("闭包登记类型 token 不匹配（登记 ")
+               + ref->objectTypeToken + "，期望 " + std::string{expectedToken}
+               + "）";
+    }
+    return std::nullopt;
+}
+
 
 // =====================================================================
 // check——R0→R9 分层短路校验（§8.1 表逐行；层-码映射见 Readiness.hpp）

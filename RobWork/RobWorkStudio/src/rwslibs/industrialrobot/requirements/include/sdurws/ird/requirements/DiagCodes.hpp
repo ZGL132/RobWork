@@ -37,9 +37,11 @@
  * SEQ-CYCLE/POSE-ILLEGAL/NO-REQUIRED-CASE/PLAN-DEGENERATE/
  * INPUT-INCOMPLETE，消费者＝Readiness.cpp/CommandHandlers.cpp；增登
  * PLAN-MISSING 承载 §8.1 R6"Warning（零计划）"分支——modeling
- * WP-13-T10 实现期增登先例）。其余 3 行的登记随各自任务落位（T07 派生
- * 族两码/T06 捕获一码），届时在本头工厂清单**表尾追加**对应描述符并
- * 同步单元卡——不提前预建（modeling §9.5 分批纪律的 REQ 侧同款执行）。
+ * WP-13-T10 实现期增登先例）；WP-14-T06 批登记 T06 行 1 码（捕获族
+ * REQ-CAPTURE-STATE-STALE，消费者＝Capture.cpp STALE 对账步）。其余
+ * 2 行（T07 派生族两码）的登记随各自任务落位，届时在本头工厂清单
+ * **表尾追加**对应描述符并同步单元卡——不提前预建（modeling §9.5
+ * 分批纪律的 REQ 侧同款执行）。
  *
  * P-REQ-8 处置锚点（契约 knownPitfalls）：本头消费的 diagnostics
  * CodeDescriptor/IDiagnosticRegistry 契约为 Draft 未冻结——按当周
@@ -130,16 +132,24 @@ inline constexpr std::string_view kReqReadyInputIncomplete = "REQ-READY-INPUT-IN
 /// Readiness.cpp R6 层。
 inline constexpr std::string_view kReqReadyPlanMissing = "REQ-READY-PLAN-MISSING";
 
+/// §9.6 T06 行（WP-14-T06 落位——捕获族）：REQ-CAPTURE-STATE-STALE
+/// （warning——TCP 捕获时会话状态与当前快照不一致，REQ-10 确认流；
+/// 卡 §9.8 L-R7 行"会话过期→REQ-CAPTURE-STATE-STALE"、§14.2 R-REQ-5
+/// 缓解登记）。消费者＝Capture.cpp STALE 对账步（L-R7 专用——L-R6
+/// 拾取无会话修订键，不扩面）。paramSchema 两键 session-revision/
+/// draft-baseline＝错位两侧值对照。
+inline constexpr std::string_view kReqCaptureStateStale = "REQ-CAPTURE-STATE-STALE";
+
 // =====================================================================
 // REQ-* 稳定诊断码描述符清单（§9.6 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 requirements 已到注册任务行的 REQ-* 稳定码描述符全集
- *        （当前 12 项：§9.6 表 T02/T03 行 1 码＋T04 行 4 码＋T05 行 6 码
- *        ＋表尾增登 PLAN-MISSING 一码——WP-14-T05 就绪族落位时按分批
- *        纪律表尾追加；其余 3 行随各自消费者任务 T06/T07 在本清单表尾
- *        追加——分批注册纪律，不预建无消费者条目）。
+ *        （当前 13 项：§9.6 表 T02/T03 行 1 码＋T04 行 4 码＋T05 行 6 码
+ *        ＋表尾增登 PLAN-MISSING 一码＋T06 行 CAPTURE-STATE-STALE 一码
+ *        ——分批纪律表尾追加；其余 2 行随各自消费者任务 T07 在本清单
+ *        表尾追加——分批注册纪律，不预建无消费者条目）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，modeling
  * modelingCodeDescriptors 同款自证结构）：

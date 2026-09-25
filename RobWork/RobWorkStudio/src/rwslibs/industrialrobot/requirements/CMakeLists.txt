@@ -59,6 +59,11 @@ find_package(GTest CONFIG REQUIRED)
 #   （evidence 边的真实消费面——evidence::ReadinessSummary ①级数据源，
 #   同 P-RPT-9 回填先例）；src/CommandHandlers.cpp——命令处理器族
 #   （project 边的真实消费面——ICommandHandler/CommandPlan/HandlerContext）。
+# T06 增列（tasks/foundation/WP-14-T06.json，卡 §11 T06 行）：
+#   src/OrientationResolution.cpp——姿态规则五规则浅解析（§5.3——
+#   确定性参考姿态/方向＋resolution 留痕，AT-23）；src/Capture.cpp——
+#   三维拾取/TCP 捕获域侧（§9.8 L-R6/L-R7——确认门写回/REQ-CAPTURE-
+#   STATE-STALE 产码消费者/未应用不失效）。
 add_library(sdurws_ird_requirements STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -70,7 +75,9 @@ add_library(sdurws_ird_requirements STATIC
     src/Sampling.cpp
     src/Import.cpp
     src/Readiness.cpp
-    src/CommandHandlers.cpp)
+    src/CommandHandlers.cpp
+    src/OrientationResolution.cpp
+    src/Capture.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：requirements 公共头使用 C++17 设施（std::string_view/
@@ -202,6 +209,12 @@ endif()
 #   test/CommandHandlersTest.cpp  O-35 无点 token＋载荷往返＋prepare 管线
 #                              （首应用/增量逆命令/逆放）＋就绪现场重估
 #                              ＋导入溯源＋防御复核（T05 acceptance 6）
+#   test/OrientationResolutionTest.cpp  五规则解析成功/resolution 留痕/
+#                              引用悬空与参数非法可定位/浅校验边界/
+#                              确定性（T06 acceptance 1/2——V-03、AT-23）
+#   test/CaptureTest.cpp       捕获/拾取确认写回/未确认零变更/STALE 警告/
+#                              methodTag 留痕/未应用不失效/接口面不可绕过
+#                              （T06 acceptance 3/4——REQ-08/10、AT-23）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/modeling 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -220,7 +233,9 @@ add_executable(sdurws_ird_requirements_test
     test/EditorTest.cpp
     test/ImportTest.cpp
     test/ReadinessTest.cpp
-    test/CommandHandlersTest.cpp)
+    test/CommandHandlersTest.cpp
+    test/OrientationResolutionTest.cpp
+    test/CaptureTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_test PROPERTIES

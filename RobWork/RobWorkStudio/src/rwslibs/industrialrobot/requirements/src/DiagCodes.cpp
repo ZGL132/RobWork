@@ -14,11 +14,12 @@
  *     登记面）
  *   - 任务契约 tasks/foundation/WP-14-T02.json acceptance 3
  *
- * 背景说明：清单当前 12 项（§9.6 任务列 T02/T03 行 1 码＋T04 行 4 码
+ * 背景说明：清单当前 13 项（§9.6 任务列 T02/T03 行 1 码＋T04 行 4 码
  * ＋T05 行 6 码＋表尾增登 PLAN-MISSING 一码——WP-14-T05 就绪族落位；
- * 分批注册纪律（"不预建无消费者条目"）的执行口径见头文件 DiagCodes.hpp
- * 文件头注；其余 3 行随各自任务在**本清单表尾追加**（表尾追加＝登记簿
- * 纪律，不重排既有项）。
+ * T06 行 CAPTURE-STATE-STALE 一码——WP-14-T06 捕获族落位；分批注册
+ * 纪律（"不预建无消费者条目"）的执行口径见头文件 DiagCodes.hpp
+ * 文件头注；其余 2 行（T07 派生族）随各自任务在**本清单表尾追加**
+ * （表尾追加＝登记簿纪律，不重排既有项）。
  *
  * 确定性（NFR-COR-02）：清单序＝§9.6 表行序；每次调用返回同序同值
  * 新清单（描述符为纯值聚合）。
@@ -316,10 +317,42 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     planMissing.reportable = true;
     planMissing.historical = true;
 
-    // 清单序＝§9.6 表行序（T02/T03 行→T04 行→T05 行→增登行表尾）——
-    // 确定性序。
+    // =================================================================
+    // 以下 §9.6 T06 行 1 码（捕获族——WP-14-T06 落位时表尾追加；消费者
+    // ＝Capture.cpp STALE 对账步）。登记口径同 T05 行 warning 级：
+    // 分类 ResourceMissing（diagnostics §4.3 词表"外部源 Missing/Changed/
+    // 资源越界"族——会话基线相对草稿基线已 Changed 正是该族实例）；
+    // ownerUnit="requirements"、registryVersion=1、deprecated=false、
+    // supersededBy=nullopt；文案键＝P-DIAG-9 命名约定。
+    // =================================================================
+
+    // ---- §9.6 T06 行：REQ-CAPTURE-STATE-STALE（warning）----
+    // TCP 捕获时会话状态与当前快照不一致（REQ-10 确认流——卡 §9.8
+    // L-R7 行"会话过期→REQ-CAPTURE-STATE-STALE"；§14.2 R-REQ-5 缓解
+    // 登记：确认流＋本码＋捕获值恒带来源方法标记）。warning 级＝登记
+    // 不阻断（确认门已过＝知情写回；重捕可消除——UserRetry）。
+    diagnostics::CodeDescriptor captureStale;
+    captureStale.code = std::string(kReqCaptureStateStale);
+    captureStale.ownerUnit = "requirements";
+    captureStale.category = diagnostics::DiagnosticCategory::ResourceMissing;
+    captureStale.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.6"级别"列：warning
+    captureStale.titleKey = "diag.req-capture-state-stale.title";
+    captureStale.detailKey = "diag.req-capture-state-stale.detail";
+    // paramSchema 两键：捕获时会话基线修订 id/草稿基线修订 id（错位
+    // 两侧值对照——知情确认与重捕的判定面；"<none>"＝空基线哨兵）。
+    captureStale.paramSchema = R"(["session-revision","draft-baseline"])";
+    captureStale.confirmable = false;         // 警告登记面——非 SA-15 确认请求（确认流在草稿写回门）
+    captureStale.requiresComparison = false;  // 非比较型三要素码（两侧值在 paramSchema 对照）
+    captureStale.retryable = diagnostics::RetryKind::UserRetry;  // 重新捕获后可消除
+    captureStale.userVisible = true;
+    captureStale.reportable = true;
+    captureStale.historical = true;
+
+    // 清单序＝§9.6 表行序（T02/T03 行→T04 行→T05 行→增登行→T06 行
+    // 表尾）——确定性序。
     return {d, rowErr, dupId, unitIll, frameUnk, refMissing, seqCycle, poseIllegal,
-            noRequiredCase, planDegenerate, inputIncomplete, planMissing};
+            noRequiredCase, planDegenerate, inputIncomplete, planMissing,
+            captureStale};
 }
 
 void registerRequirementCodes(diagnostics::IDiagnosticRegistry& registry)

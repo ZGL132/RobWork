@@ -37,6 +37,7 @@ using sdurws::ird::diagnostics::DiagnosticSeverity;
 using sdurws::ird::diagnostics::DiagnosticsError;
 using sdurws::ird::diagnostics::RetryKind;
 using sdurws::ird::diagnostics::StableCodeRegistry;
+using sdurws::ird::requirements::kReqCaptureStateStale;
 using sdurws::ird::requirements::kReqImportDuplicateId;
 using sdurws::ird::requirements::kReqImportFrameUnknown;
 using sdurws::ird::requirements::kReqImportRowError;
@@ -59,8 +60,9 @@ namespace {
 /// 4 码（WP-14-T04 落位随附同步，1→5）＋T05 批 6 码＋表尾增登 1 码
 /// （WP-14-T05 就绪族落位随附同步，5→12——合法登记随附同步先例；增登
 /// PLAN-MISSING 承载 §8.1 R6"Warning（零计划）"分支，modeling
-/// WP-13-T10 实现期增登同款）；其余 3 行（T06/T07）不得提前出现，随
-/// 各自任务在本清单表尾追加。
+/// WP-13-T10 实现期增登同款）＋T06 批 1 码（WP-14-T06 捕获族落位随附
+/// 同步，12→13）；其余 2 行（T07）不得提前出现，随各自任务在本清单
+/// 表尾追加。
 const char* kStagedSection96Codes[] = {
     "REQ-SCHEMA-UNSUPPORTED",     // §9.6 T02/T03 行
     "REQ-IMPORT-ROW-ERROR",       // §9.6 T04 行（导入族，WP-14-T04 登记）
@@ -74,6 +76,7 @@ const char* kStagedSection96Codes[] = {
     "REQ-READY-PLAN-DEGENERATE",  // §9.6 T05 行
     "REQ-READY-INPUT-INCOMPLETE", // §9.6 T05 行
     "REQ-READY-PLAN-MISSING",     // §9.6 T05 行表尾增登（实现期增登）
+    "REQ-CAPTURE-STATE-STALE",    // §9.6 T06 行（捕获族，WP-14-T06 登记）
 };
 
 }  // namespace
@@ -115,6 +118,7 @@ TEST(ReqDiagCodes, FactoryScopeIsStagedRows_WP14T02T04T05)
     EXPECT_EQ(kReqReadyPlanDegenerate, "REQ-READY-PLAN-DEGENERATE");
     EXPECT_EQ(kReqReadyInputIncomplete, "REQ-READY-INPUT-INCOMPLETE");
     EXPECT_EQ(kReqReadyPlanMissing, "REQ-READY-PLAN-MISSING");
+    EXPECT_EQ(kReqCaptureStateStale, "REQ-CAPTURE-STATE-STALE");
 }
 
 /**
@@ -128,7 +132,7 @@ TEST(ReqDiagCodes, DescriptorFieldsMatchSection96Row_WP14T02_ACC3)
                   std::vector<std::string>{});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 12U);
+    ASSERT_EQ(descriptors.size(), 13U);
     const CodeDescriptor& d = descriptors[0];
 
     // 码值/所有权：§9.6 表"码"列原文＋前缀-所有权表 REQ→requirements。
@@ -179,9 +183,9 @@ TEST(ReqDiagCodes, RegistersIntoStableCodeRegistry_WP14T02_ACC3)
     EXPECT_EQ(found->category, DiagnosticCategory::FormatOrVersion);
 
     // ownerUnit 反查反映全清单（字典序由注册表侧承担；规模随 T04 批
-    // 1→5、T05 批 5→12）。
+    // 1→5、T05 批 5→12、T06 批 12→13）。
     const auto codes = registry.registeredCodes("requirements");
-    ASSERT_EQ(codes.size(), 12U);
+    ASSERT_EQ(codes.size(), 13U);
 
     // manifest 含该码（跨进程一致性面——同注册集同摘要）。
     const auto manifest = registry.manifest();
@@ -221,7 +225,7 @@ TEST(ReqDiagCodes, T04ImportDescriptorsMatchSection96Rows_WP14T04)
                   std::vector<std::string>{"AT-02"});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 12U);
+    ASSERT_EQ(descriptors.size(), 13U);
 
     // 按码查找（清单序无关的核对入口）。
     const auto findDesc = [&](std::string_view code) -> const CodeDescriptor& {
@@ -270,7 +274,7 @@ TEST(ReqDiagCodes, T05ReadinessDescriptorsMatchSection96Rows_WP14T05)
                   std::vector<std::string>{});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 12U);
+    ASSERT_EQ(descriptors.size(), 13U);
 
     const auto findDesc = [&](std::string_view code) -> const CodeDescriptor& {
         const auto it = std::find_if(descriptors.begin(), descriptors.end(),
@@ -331,4 +335,48 @@ TEST(ReqDiagCodes, T05ReadinessDescriptorsMatchSection96Rows_WP14T05)
     const CodeDescriptor& plm = findDesc("REQ-READY-PLAN-MISSING");
     EXPECT_EQ(plm.titleKey, "diag.req-ready-plan-missing.title");
     EXPECT_EQ(plm.paramSchema, R"(["regions","plans"])");
+}
+
+/**
+ * §9.6 T06 行 1 码（捕获族 REQ-CAPTURE-STATE-STALE）的登记值逐字段核对
+ * （WP-14-T06 落位随附同步——登记值可追溯到卡面：warning 级预告登记面、
+ * 分类 ResourceMissing（会话基线相对草稿基线 Changed——diagnostics §4.3
+ * 词表）、文案键/paramSchema 键面与 Capture.cpp 产码处 context 载荷对齐；
+ * 12→13 随附同步先例＝T04/T05 批同款）。
+ */
+TEST(ReqDiagCodes, T06CaptureDescriptorMatchesSection96Row_WP14T06)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-10", "ERR-01"},
+                  std::vector<std::string>{"AT-23"});
+
+    const auto descriptors = requirementCodeDescriptors();
+    ASSERT_EQ(descriptors.size(), 13U);
+
+    const auto it = std::find_if(descriptors.begin(), descriptors.end(),
+                                 [](const CodeDescriptor& d) {
+                                     return d.code == "REQ-CAPTURE-STATE-STALE";
+                                 });
+    ASSERT_TRUE(it != descriptors.end()) << "缺失登记: REQ-CAPTURE-STATE-STALE";
+    const CodeDescriptor& d = *it;
+
+    // 所有权/分类/级别（§9.6 行原文：warning——登记不阻断，确认流缓解）。
+    EXPECT_EQ(d.ownerUnit, "requirements");
+    EXPECT_EQ(d.category, DiagnosticCategory::ResourceMissing);
+    EXPECT_EQ(d.severity, DiagnosticSeverity::Warning);
+    // 文案键（P-DIAG-9 命名约定）。
+    EXPECT_EQ(d.titleKey, "diag.req-capture-state-stale.title");
+    EXPECT_EQ(d.detailKey, "diag.req-capture-state-stale.detail");
+    // paramSchema 两键（错位两侧基线对照——知情确认与重捕的判定面）。
+    EXPECT_EQ(d.paramSchema, R"(["session-revision","draft-baseline"])");
+    // 确认/比较/重试：警告登记面非 SA-15 确认请求；重捕可消除＝UserRetry。
+    EXPECT_FALSE(d.confirmable);
+    EXPECT_FALSE(d.requiresComparison);
+    EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+    // 可见性三项＋登记版本/废弃状态（同 T05 批 warning 码口径）。
+    EXPECT_TRUE(d.userVisible);
+    EXPECT_TRUE(d.reportable);
+    EXPECT_TRUE(d.historical);
+    EXPECT_EQ(d.registryVersion, 1U);
+    EXPECT_FALSE(d.deprecated);
+    EXPECT_FALSE(d.supersededBy.has_value());
 }
