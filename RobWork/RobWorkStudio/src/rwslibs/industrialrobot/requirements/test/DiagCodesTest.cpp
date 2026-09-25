@@ -41,6 +41,13 @@ using sdurws::ird::requirements::kReqImportDuplicateId;
 using sdurws::ird::requirements::kReqImportFrameUnknown;
 using sdurws::ird::requirements::kReqImportRowError;
 using sdurws::ird::requirements::kReqImportUnitIllegal;
+using sdurws::ird::requirements::kReqReadyInputIncomplete;
+using sdurws::ird::requirements::kReqReadyNoRequiredCase;
+using sdurws::ird::requirements::kReqReadyPlanDegenerate;
+using sdurws::ird::requirements::kReqReadyPlanMissing;
+using sdurws::ird::requirements::kReqReadyPoseIllegal;
+using sdurws::ird::requirements::kReqReadyRefMissing;
+using sdurws::ird::requirements::kReqReadySeqCycle;
 using sdurws::ird::requirements::kReqSchemaUnsupported;
 using sdurws::ird::requirements::registerRequirementCodes;
 using sdurws::ird::requirements::requirementCodeDescriptors;
@@ -49,24 +56,35 @@ namespace {
 
 /// §9.6 已到任务行的**应登记码面**（测试内自持字面清单——与实现清单机械
 /// 比对，任一侧漂移即失败：失同步防线）。分批纪律：T02 批 1 码＋T04 批
-/// 4 码（WP-14-T04 导入族落位随附同步，1→5——合法登记随附同步先例）；
-/// 其余 9 行（T05/T06/T07）不得提前出现，随各自任务在本清单表尾追加。
+/// 4 码（WP-14-T04 落位随附同步，1→5）＋T05 批 6 码＋表尾增登 1 码
+/// （WP-14-T05 就绪族落位随附同步，5→12——合法登记随附同步先例；增登
+/// PLAN-MISSING 承载 §8.1 R6"Warning（零计划）"分支，modeling
+/// WP-13-T10 实现期增登同款）；其余 3 行（T06/T07）不得提前出现，随
+/// 各自任务在本清单表尾追加。
 const char* kStagedSection96Codes[] = {
-    "REQ-SCHEMA-UNSUPPORTED",   // §9.6 T02/T03 行
-    "REQ-IMPORT-ROW-ERROR",     // §9.6 T04 行（导入族，WP-14-T04 登记）
-    "REQ-IMPORT-DUPLICATE-ID",  // §9.6 T04 行
-    "REQ-IMPORT-UNIT-ILLEGAL",  // §9.6 T04 行
-    "REQ-IMPORT-FRAME-UNKNOWN", // §9.6 T04 行
+    "REQ-SCHEMA-UNSUPPORTED",     // §9.6 T02/T03 行
+    "REQ-IMPORT-ROW-ERROR",       // §9.6 T04 行（导入族，WP-14-T04 登记）
+    "REQ-IMPORT-DUPLICATE-ID",    // §9.6 T04 行
+    "REQ-IMPORT-UNIT-ILLEGAL",    // §9.6 T04 行
+    "REQ-IMPORT-FRAME-UNKNOWN",   // §9.6 T04 行
+    "REQ-READY-REF-MISSING",      // §9.6 T05 行（就绪族，WP-14-T05 登记）
+    "REQ-READY-SEQ-CYCLE",        // §9.6 T05 行
+    "REQ-READY-POSE-ILLEGAL",     // §9.6 T05 行
+    "REQ-READY-NO-REQUIRED-CASE", // §9.6 T05 行
+    "REQ-READY-PLAN-DEGENERATE",  // §9.6 T05 行
+    "REQ-READY-INPUT-INCOMPLETE", // §9.6 T05 行
+    "REQ-READY-PLAN-MISSING",     // §9.6 T05 行表尾增登（实现期增登）
 };
 
 }  // namespace
 
 /**
  * 工厂清单范围＝§9.6 已到任务行（acceptance 3——分批注册纪律）：清单
- * 恰含 T02 行 1 码＋T04 行 4 码，多登（预建无消费者条目）或少登（漏登
- * 记）均失败；码值文本与卡面"码"列原文逐字一致。
+ * 恰含 T02 行 1 码＋T04 行 4 码＋T05 行 6 码＋增登 1 码，多登（预建无
+ * 消费者条目）或少登（漏登记）均失败；码值文本与卡面"码"列原文逐字
+ * 一致（T05 批同步：WP-14-T05 acceptance 1 六码具名断言＋增登一码）。
  */
-TEST(ReqDiagCodes, FactoryScopeIsStagedRows_WP14T02T04)
+TEST(ReqDiagCodes, FactoryScopeIsStagedRows_WP14T02T04T05)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01"},
                   std::vector<std::string>{});
@@ -83,13 +101,20 @@ TEST(ReqDiagCodes, FactoryScopeIsStagedRows_WP14T02T04)
         ASSERT_TRUE(it != descriptors.end())
             << "§9.6 已到任务行缺失: " << expected;
     }
-    // 码值常量与卡面原文同串（唯一书写点——Errors.cpp 映射与 Import.cpp
-    // 产码共用）。
+    // 码值常量与卡面原文同串（唯一书写点——Errors.cpp 映射与 Readiness/
+    // Import 产码共用）。
     EXPECT_EQ(kReqSchemaUnsupported, "REQ-SCHEMA-UNSUPPORTED");
     EXPECT_EQ(kReqImportRowError, "REQ-IMPORT-ROW-ERROR");
     EXPECT_EQ(kReqImportDuplicateId, "REQ-IMPORT-DUPLICATE-ID");
     EXPECT_EQ(kReqImportUnitIllegal, "REQ-IMPORT-UNIT-ILLEGAL");
     EXPECT_EQ(kReqImportFrameUnknown, "REQ-IMPORT-FRAME-UNKNOWN");
+    EXPECT_EQ(kReqReadyRefMissing, "REQ-READY-REF-MISSING");
+    EXPECT_EQ(kReqReadySeqCycle, "REQ-READY-SEQ-CYCLE");
+    EXPECT_EQ(kReqReadyPoseIllegal, "REQ-READY-POSE-ILLEGAL");
+    EXPECT_EQ(kReqReadyNoRequiredCase, "REQ-READY-NO-REQUIRED-CASE");
+    EXPECT_EQ(kReqReadyPlanDegenerate, "REQ-READY-PLAN-DEGENERATE");
+    EXPECT_EQ(kReqReadyInputIncomplete, "REQ-READY-INPUT-INCOMPLETE");
+    EXPECT_EQ(kReqReadyPlanMissing, "REQ-READY-PLAN-MISSING");
 }
 
 /**
@@ -103,7 +128,7 @@ TEST(ReqDiagCodes, DescriptorFieldsMatchSection96Row_WP14T02_ACC3)
                   std::vector<std::string>{});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 5U);
+    ASSERT_EQ(descriptors.size(), 12U);
     const CodeDescriptor& d = descriptors[0];
 
     // 码值/所有权：§9.6 表"码"列原文＋前缀-所有权表 REQ→requirements。
@@ -153,9 +178,10 @@ TEST(ReqDiagCodes, RegistersIntoStableCodeRegistry_WP14T02_ACC3)
     EXPECT_EQ(found->ownerUnit, "requirements");
     EXPECT_EQ(found->category, DiagnosticCategory::FormatOrVersion);
 
-    // ownerUnit 反查反映全清单（字典序由注册表侧承担；规模随 T04 批 1→5）。
+    // ownerUnit 反查反映全清单（字典序由注册表侧承担；规模随 T04 批
+    // 1→5、T05 批 5→12）。
     const auto codes = registry.registeredCodes("requirements");
-    ASSERT_EQ(codes.size(), 5U);
+    ASSERT_EQ(codes.size(), 12U);
 
     // manifest 含该码（跨进程一致性面——同注册集同摘要）。
     const auto manifest = registry.manifest();
@@ -195,7 +221,7 @@ TEST(ReqDiagCodes, T04ImportDescriptorsMatchSection96Rows_WP14T04)
                   std::vector<std::string>{"AT-02"});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 5U);
+    ASSERT_EQ(descriptors.size(), 12U);
 
     // 按码查找（清单序无关的核对入口）。
     const auto findDesc = [&](std::string_view code) -> const CodeDescriptor& {
@@ -230,4 +256,79 @@ TEST(ReqDiagCodes, T04ImportDescriptorsMatchSection96Rows_WP14T04)
     EXPECT_EQ(w.paramSchema, R"(["row","column","raw"])");
     EXPECT_FALSE(w.confirmable);
     EXPECT_EQ(w.retryable, RetryKind::UserRetry);
+}
+
+/**
+ * §9.6 T05 行 6 码＋表尾增登 1 码（就绪族）的登记值逐字段核对（WP-14-T05
+ * 落位随附同步——契约 acceptance 1 六码具名断言＋增登码登记依据；级别
+ * 面＝五 error＋两 warning，所有权/文案键/paramSchema 键面与 Readiness.
+ * cpp/CommandHandlers.cpp 产码处的 context 载荷对齐）。
+ */
+TEST(ReqDiagCodes, T05ReadinessDescriptorsMatchSection96Rows_WP14T05)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"ERR-01", "REQ-06"},
+                  std::vector<std::string>{});
+
+    const auto descriptors = requirementCodeDescriptors();
+    ASSERT_EQ(descriptors.size(), 12U);
+
+    const auto findDesc = [&](std::string_view code) -> const CodeDescriptor& {
+        const auto it = std::find_if(descriptors.begin(), descriptors.end(),
+                                     [&](const CodeDescriptor& d) {
+                                         return d.code == code;
+                                     });
+        EXPECT_TRUE(it != descriptors.end()) << "缺失登记: " << code;
+        return it != descriptors.end() ? *it : descriptors.front();
+    };
+
+    // 五 error 码（§9.6"级别"列 error）：REF-MISSING/SEQ-CYCLE/POSE-ILLEGAL
+    // /PLAN-DEGENERATE/INPUT-INCOMPLETE——全量公共面（所有权/分类/可确认/
+    // 重试/可见性/登记版本）逐码核对。
+    for (const auto* code :
+         {"REQ-READY-REF-MISSING", "REQ-READY-SEQ-CYCLE", "REQ-READY-POSE-ILLEGAL",
+          "REQ-READY-PLAN-DEGENERATE", "REQ-READY-INPUT-INCOMPLETE"}) {
+        const CodeDescriptor& d = findDesc(code);
+        EXPECT_EQ(d.ownerUnit, "requirements") << code;
+        EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid) << code;
+        EXPECT_EQ(d.severity, DiagnosticSeverity::Error) << code;
+        EXPECT_FALSE(d.confirmable) << code;
+        EXPECT_FALSE(d.requiresComparison) << code;
+        EXPECT_EQ(d.retryable, RetryKind::UserRetry) << code;
+        EXPECT_TRUE(d.userVisible && d.reportable && d.historical) << code;
+        EXPECT_EQ(d.registryVersion, 1U) << code;
+        EXPECT_FALSE(d.deprecated) << code;
+        EXPECT_FALSE(d.supersededBy.has_value()) << code;
+    }
+    // error 码文案键/参数键面（与产码处 context 载荷对齐——P-DIAG-9）。
+    const CodeDescriptor& ref = findDesc("REQ-READY-REF-MISSING");
+    EXPECT_EQ(ref.titleKey, "diag.req-ready-ref-missing.title");
+    EXPECT_EQ(ref.paramSchema, R"(["field","target","expected-token"])");
+    const CodeDescriptor& seq = findDesc("REQ-READY-SEQ-CYCLE");
+    EXPECT_EQ(seq.paramSchema, R"(["kind","key"])");
+    const CodeDescriptor& pose = findDesc("REQ-READY-POSE-ILLEGAL");
+    EXPECT_EQ(pose.paramSchema, R"(["field"])");
+    const CodeDescriptor& deg = findDesc("REQ-READY-PLAN-DEGENERATE");
+    EXPECT_EQ(deg.paramSchema, R"(["field","target"])");
+    const CodeDescriptor& inc = findDesc("REQ-READY-INPUT-INCOMPLETE");
+    EXPECT_EQ(inc.paramSchema, R"(["invalid-count","invalid-items"])");
+
+    // 两 warning 码（§9.6"级别"列 warning——预告登记面，不阻断应用）：
+    // NO-REQUIRED-CASE（T05 行）与 PLAN-MISSING（表尾增登）。
+    for (const auto* code :
+         {"REQ-READY-NO-REQUIRED-CASE", "REQ-READY-PLAN-MISSING"}) {
+        const CodeDescriptor& d = findDesc(code);
+        EXPECT_EQ(d.ownerUnit, "requirements") << code;
+        EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid) << code;
+        EXPECT_EQ(d.severity, DiagnosticSeverity::Warning) << code;
+        EXPECT_FALSE(d.confirmable) << code;
+        EXPECT_EQ(d.retryable, RetryKind::UserRetry) << code;
+        EXPECT_TRUE(d.userVisible && d.reportable && d.historical) << code;
+        EXPECT_EQ(d.registryVersion, 1U) << code;
+    }
+    const CodeDescriptor& nrc = findDesc("REQ-READY-NO-REQUIRED-CASE");
+    EXPECT_EQ(nrc.titleKey, "diag.req-ready-no-required-case.title");
+    EXPECT_EQ(nrc.paramSchema, R"(["conditions","required"])");
+    const CodeDescriptor& plm = findDesc("REQ-READY-PLAN-MISSING");
+    EXPECT_EQ(plm.titleKey, "diag.req-ready-plan-missing.title");
+    EXPECT_EQ(plm.paramSchema, R"(["regions","plans"])");
 }

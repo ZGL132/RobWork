@@ -14,9 +14,10 @@
  *     登记面）
  *   - 任务契约 tasks/foundation/WP-14-T02.json acceptance 3
  *
- * 背景说明：清单当前 5 项（§9.6 任务列 T02/T03 行 1 码＋T04 行 4 码——
+ * 背景说明：清单当前 12 项（§9.6 任务列 T02/T03 行 1 码＋T04 行 4 码
+ * ＋T05 行 6 码＋表尾增登 PLAN-MISSING 一码——WP-14-T05 就绪族落位；
  * 分批注册纪律（"不预建无消费者条目"）的执行口径见头文件 DiagCodes.hpp
- * 文件头注；其余 9 行随各自任务在**本清单表尾追加**（表尾追加＝登记簿
+ * 文件头注；其余 3 行随各自任务在**本清单表尾追加**（表尾追加＝登记簿
  * 纪律，不重排既有项）。
  *
  * 确定性（NFR-COR-02）：清单序＝§9.6 表行序；每次调用返回同序同值
@@ -155,13 +156,170 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     frameUnk.paramSchema = R"(["row","column","raw"])";
     frameUnk.confirmable = false;
     frameUnk.requiresComparison = false;
-    frameUnk.retryable = diagnostics::RetryKind::UserRetry;  // 用户可改列值后重导
+    frameUnk.retryable = diagnostics::RetryKind::UserRetry;
     frameUnk.userVisible = true;
     frameUnk.reportable = true;
     frameUnk.historical = true;
 
-    // 清单序＝§9.6 表行序（T02/T03 行在前、T04 行四码随后）——确定性序。
-    return {d, rowErr, dupId, unitIll, frameUnk};
+    // =================================================================
+    // 以下 §9.6 T05 行 6 码＋表尾增登 1 码（就绪校验族——WP-14-T05 落位
+    // 时表尾追加；消费者＝Readiness.cpp 分层产码面＋CommandHandlers.cpp
+    // 候选态重估拒绝面）。共同登记口径：
+    //   - error 级分类＝InputInvalid（diagnostics §4.3 词表"输入非法"
+    //     族——需求输入不满足就绪断言正是该族定义的实例；warning 级
+    //     同分类但级别 Warning——预告登记面，不阻断应用）；
+    //   - ownerUnit="requirements"、registryVersion=1、deprecated=false、
+    //     supersededBy=nullopt（同 T02/T04 行口径，不赘述）；
+    //   - 文案键＝P-DIAG-9 命名约定 diag.<code-lower>.title/.detail。
+    // =================================================================
+
+    // ---- §9.6 T05 行：REQ-READY-REF-MISSING（error）----
+    // 引用悬空/token 不匹配（§8.1 R1/R8；R0 根引用表/R2 槽-种类/R4 绑定
+    // 悬空按"引用悬空"语义就近承载同码，层标注区分——Readiness.hpp 文件
+    // 头映射表）。定位三要素：subject=条目/引用目标 ObjectId、localName=
+    // 条目名、context 携 field/target——逐项定位面。
+    diagnostics::CodeDescriptor refMissing;
+    refMissing.code = std::string(kReqReadyRefMissing);
+    refMissing.ownerUnit = "requirements";
+    refMissing.category = diagnostics::DiagnosticCategory::InputInvalid;
+    refMissing.severity = diagnostics::DiagnosticSeverity::Error;  // §9.6"级别"列：error
+    refMissing.titleKey = "diag.req-ready-ref-missing.title";
+    refMissing.detailKey = "diag.req-ready-ref-missing.detail";
+    // paramSchema 三键：引用字段名/引用目标对象（缺省 "-"=结构违约面）/
+    // 期望对象类型 token——悬空/失配两类违例的统一定位面。
+    refMissing.paramSchema = R"(["field","target","expected-token"])";
+    refMissing.confirmable = false;         // 数据错误无"知情放行"分支
+    refMissing.requiresComparison = false;  // 非比较型三要素码
+    refMissing.retryable = diagnostics::RetryKind::UserRetry;  // 修正引用后重新校验
+    refMissing.userVisible = true;
+    refMissing.reportable = true;
+    refMissing.historical = true;
+
+    // ---- §9.6 T05 行：REQ-READY-SEQ-CYCLE（error）----
+    // 任务顺序成环/重复键（§8.1 R7；悬空前驱名按层-码对齐原则以本码
+    // 承载、cause 区分）。定位：localName=涉事条目名/顺序键，context 携
+    // kind（duplicate/dangling/cycle）与 key。
+    diagnostics::CodeDescriptor seqCycle;
+    seqCycle.code = std::string(kReqReadySeqCycle);
+    seqCycle.ownerUnit = "requirements";
+    seqCycle.category = diagnostics::DiagnosticCategory::InputInvalid;
+    seqCycle.severity = diagnostics::DiagnosticSeverity::Error;
+    seqCycle.titleKey = "diag.req-ready-seq-cycle.title";
+    seqCycle.detailKey = "diag.req-ready-seq-cycle.detail";
+    // paramSchema 两键：违例种类（duplicate|dangling|cycle）/涉事顺序键。
+    seqCycle.paramSchema = R"(["kind","key"])";
+    seqCycle.confirmable = false;
+    seqCycle.requiresComparison = false;
+    seqCycle.retryable = diagnostics::RetryKind::UserRetry;
+    seqCycle.userVisible = true;
+    seqCycle.reportable = true;
+    seqCycle.historical = true;
+
+    // ---- §9.6 T05 行：REQ-READY-POSE-ILLEGAL（error）----
+    // 位姿/容差/约束分量非法（§8.1 R3；I-REQ-5 值面的就绪层定位码——
+    // 值面拒绝在构造边界，本码承载"已入工作集的非法位姿事实"的定位）。
+    diagnostics::CodeDescriptor poseIllegal;
+    poseIllegal.code = std::string(kReqReadyPoseIllegal);
+    poseIllegal.ownerUnit = "requirements";
+    poseIllegal.category = diagnostics::DiagnosticCategory::InputInvalid;
+    poseIllegal.severity = diagnostics::DiagnosticSeverity::Error;
+    poseIllegal.titleKey = "diag.req-ready-pose-illegal.title";
+    poseIllegal.detailKey = "diag.req-ready-pose-illegal.detail";
+    // paramSchema 单键：违例字段名（pose/tolerance/<segment>.distanceM——
+    // Errors 值面 params "field" 的就绪侧同键对齐）。
+    poseIllegal.paramSchema = R"(["field"])";
+    poseIllegal.confirmable = false;
+    poseIllegal.requiresComparison = false;
+    poseIllegal.retryable = diagnostics::RetryKind::UserRetry;
+    poseIllegal.userVisible = true;
+    poseIllegal.reportable = true;
+    poseIllegal.historical = true;
+
+    // ---- §9.6 T05 行：REQ-READY-NO-REQUIRED-CASE（warning）----
+    // 无启用必验工况（§8.1 R5——Warning 不阻断应用；正式拦截归 evidence
+    // P-EV-7 ④级，本码为"数据不足预告"登记面）。
+    diagnostics::CodeDescriptor noRequiredCase;
+    noRequiredCase.code = std::string(kReqReadyNoRequiredCase);
+    noRequiredCase.ownerUnit = "requirements";
+    noRequiredCase.category = diagnostics::DiagnosticCategory::InputInvalid;
+    noRequiredCase.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.6"级别"列：warning
+    noRequiredCase.titleKey = "diag.req-ready-no-required-case.title";
+    noRequiredCase.detailKey = "diag.req-ready-no-required-case.detail";
+    // paramSchema 两键：工况总数/必验计数（恒 0——清单形状自描述）。
+    noRequiredCase.paramSchema = R"(["conditions","required"])";
+    noRequiredCase.confirmable = false;
+    noRequiredCase.requiresComparison = false;
+    noRequiredCase.retryable = diagnostics::RetryKind::UserRetry;
+    noRequiredCase.userVisible = true;
+    noRequiredCase.reportable = true;
+    noRequiredCase.historical = true;
+
+    // ---- §9.6 T05 行：REQ-READY-PLAN-DEGENERATE（error）----
+    // 区域退化/计划-区域失配（§8.1 R6 Blocking 分支——I-REQ-6 盒/覆盖率/
+    // 采样参数与计划对应性违例）。
+    diagnostics::CodeDescriptor planDegenerate;
+    planDegenerate.code = std::string(kReqReadyPlanDegenerate);
+    planDegenerate.ownerUnit = "requirements";
+    planDegenerate.category = diagnostics::DiagnosticCategory::InputInvalid;
+    planDegenerate.severity = diagnostics::DiagnosticSeverity::Error;
+    planDegenerate.titleKey = "diag.req-ready-plan-degenerate.title";
+    planDegenerate.detailKey = "diag.req-ready-plan-degenerate.detail";
+    // paramSchema 两键：违例字段（box/coverageTargets/positionSampling/
+    // orientationSampling/regionRef）/关联区域或计划目标（缺省 "-"）。
+    planDegenerate.paramSchema = R"(["field","target"])";
+    planDegenerate.confirmable = false;
+    planDegenerate.requiresComparison = false;
+    planDegenerate.retryable = diagnostics::RetryKind::UserRetry;
+    planDegenerate.userVisible = true;
+    planDegenerate.reportable = true;
+    planDegenerate.historical = true;
+
+    // ---- §9.6 T05 行：REQ-READY-INPUT-INCOMPLETE（error）----
+    // 启用 Must 条目非法汇总（ReadinessSummary.valid=false 投影面）——
+    // 命令 prepare 候选态重估拒绝时随逐项定位诊断附一条汇总诊断
+    // （CommandHandlers.cpp 产码；ReadinessSummary 本体是纯数据投影，
+    // 不携诊断——汇总码是其在人读面的承载）。
+    diagnostics::CodeDescriptor inputIncomplete;
+    inputIncomplete.code = std::string(kReqReadyInputIncomplete);
+    inputIncomplete.ownerUnit = "requirements";
+    inputIncomplete.category = diagnostics::DiagnosticCategory::InputInvalid;
+    inputIncomplete.severity = diagnostics::DiagnosticSeverity::Error;
+    inputIncomplete.titleKey = "diag.req-ready-input-incomplete.title";
+    inputIncomplete.detailKey = "diag.req-ready-input-incomplete.detail";
+    // paramSchema 两键：非法启用 Must 条目计数/清单（ObjectId 规范文本
+    // 分号拼接——全量不抽样，NFR-MNT-04 口径）。
+    inputIncomplete.paramSchema = R"(["invalid-count","invalid-items"])";
+    inputIncomplete.confirmable = false;
+    inputIncomplete.requiresComparison = false;
+    inputIncomplete.retryable = diagnostics::RetryKind::UserRetry;
+    inputIncomplete.userVisible = true;
+    inputIncomplete.reportable = true;
+    inputIncomplete.historical = true;
+
+    // ---- §9.6 T05 行表尾增登：REQ-READY-PLAN-MISSING（warning）----
+    // 区域已定义而计划集为空（§8.1 R6"Warning（零计划）"分支的原六码
+    // 无 warning 级承载面——实现期增登先例，modeling WP-13-T10 同款；
+    // 正式判定归评估/KIN-04 零样本→DataInsufficient，本码为预告登记面）。
+    diagnostics::CodeDescriptor planMissing;
+    planMissing.code = std::string(kReqReadyPlanMissing);
+    planMissing.ownerUnit = "requirements";
+    planMissing.category = diagnostics::DiagnosticCategory::InputInvalid;
+    planMissing.severity = diagnostics::DiagnosticSeverity::Warning;  // 预告级（增登依据见头注）
+    planMissing.titleKey = "diag.req-ready-plan-missing.title";
+    planMissing.detailKey = "diag.req-ready-plan-missing.detail";
+    // paramSchema 两键：区域计数/计划计数（0——预告的形状自描述）。
+    planMissing.paramSchema = R"(["regions","plans"])";
+    planMissing.confirmable = false;
+    planMissing.requiresComparison = false;
+    planMissing.retryable = diagnostics::RetryKind::UserRetry;
+    planMissing.userVisible = true;
+    planMissing.reportable = true;
+    planMissing.historical = true;
+
+    // 清单序＝§9.6 表行序（T02/T03 行→T04 行→T05 行→增登行表尾）——
+    // 确定性序。
+    return {d, rowErr, dupId, unitIll, frameUnk, refMissing, seqCycle, poseIllegal,
+            noRequiredCase, planDegenerate, inputIncomplete, planMissing};
 }
 
 void registerRequirementCodes(diagnostics::IDiagnosticRegistry& registry)

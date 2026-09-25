@@ -31,13 +31,15 @@
  * 不私定任何卡面之外的码值。
  *
  * 阶段纪律（acceptance 3"其余码随消费者任务注册、不预建无消费者条目"的
- * 执行口径）：§9.6 表 14 行按"任务"列分批注册——T02 批登记 1 行
- * （REQ-SCHEMA-UNSUPPORTED）；WP-14-T04 批登记 T04 行 4 码（导入族：
- * ROW-ERROR/DUPLICATE-ID/UNIT-ILLEGAL/FRAME-UNKNOWN，消费者＝Import.cpp
- * 的 mapCsv/mapJson 产码面）。其余 9 行的登记随各自任务落位（T05 就绪族
- * 六码/T07 派生族两码/T06 捕获一码），届时在本头工厂清单**表尾追加**
- * 对应描述符并同步单元卡——不提前预建（modeling §9.5 分批纪律的 REQ 侧
- * 同款执行）。
+ * 执行口径）：§9.6 表 15 行按"任务"列分批注册——T02 批登记 1 行
+ * （REQ-SCHEMA-UNSUPPORTED）；WP-14-T04 批登记 T04 行 4 码（导入族）；
+ * WP-14-T05 批登记 T05 行 6 码＋表尾增登 1 码（就绪族：REF-MISSING/
+ * SEQ-CYCLE/POSE-ILLEGAL/NO-REQUIRED-CASE/PLAN-DEGENERATE/
+ * INPUT-INCOMPLETE，消费者＝Readiness.cpp/CommandHandlers.cpp；增登
+ * PLAN-MISSING 承载 §8.1 R6"Warning（零计划）"分支——modeling
+ * WP-13-T10 实现期增登先例）。其余 3 行的登记随各自任务落位（T07 派生
+ * 族两码/T06 捕获一码），届时在本头工厂清单**表尾追加**对应描述符并
+ * 同步单元卡——不提前预建（modeling §9.5 分批纪律的 REQ 侧同款执行）。
  *
  * P-REQ-8 处置锚点（契约 knownPitfalls）：本头消费的 diagnostics
  * CodeDescriptor/IDiagnosticRegistry 契约为 Draft 未冻结——按当周
@@ -90,14 +92,54 @@ inline constexpr std::string_view kReqImportUnitIllegal = "REQ-IMPORT-UNIT-ILLEG
 inline constexpr std::string_view kReqImportFrameUnknown = "REQ-IMPORT-FRAME-UNKNOWN";
 
 // =====================================================================
+// §9.6 T05 行六码（WP-14-T05 落位——就绪校验族；消费者＝Readiness.cpp
+// 产码面＋CommandHandlers.cpp 候选态重估拒绝面，WP-14-T05 同任务）。
+// 逐码语义＝§9.6 表行原文；层归属映射见 Readiness.hpp 文件头。
+// =====================================================================
+
+/// §9.6 T05 行：REQ-READY-REF-MISSING（error——引用悬空/token 不匹配，
+/// §8.1 R1/R8；R0 根引用表/R2 槽-种类/R4 绑定悬空按"引用悬空"语义就近
+/// 承载同码，层标注区分——Readiness.hpp 文件头映射表）。
+inline constexpr std::string_view kReqReadyRefMissing = "REQ-READY-REF-MISSING";
+
+/// §9.6 T05 行：REQ-READY-SEQ-CYCLE（error——任务顺序成环/重复键，
+/// §8.1 R7；悬空前驱名按层-码对齐原则以本码承载，cause 区分）。
+inline constexpr std::string_view kReqReadySeqCycle = "REQ-READY-SEQ-CYCLE";
+
+/// §9.6 T05 行：REQ-READY-POSE-ILLEGAL（error——位姿/容差/约束分量非法，
+/// §8.1 R3；I-REQ-5 值面的就绪层定位码）。
+inline constexpr std::string_view kReqReadyPoseIllegal = "REQ-READY-POSE-ILLEGAL";
+
+/// §9.6 T05 行：REQ-READY-NO-REQUIRED-CASE（warning——无启用必验工况，
+/// §8.1 R5；正式拦截归 evidence P-EV-7，本码为预告登记面）。
+inline constexpr std::string_view kReqReadyNoRequiredCase = "REQ-READY-NO-REQUIRED-CASE";
+
+/// §9.6 T05 行：REQ-READY-PLAN-DEGENERATE（error——区域退化/计划-区域
+/// 失配，§8.1 R6 Blocking 分支；I-REQ-6 盒/覆盖率/采样参数与计划对应性）。
+inline constexpr std::string_view kReqReadyPlanDegenerate = "REQ-READY-PLAN-DEGENERATE";
+
+/// §9.6 T05 行：REQ-READY-INPUT-INCOMPLETE（error——启用 Must 条目非法
+/// 汇总，ReadinessSummary.valid=false 投影面；命令 prepare 拒绝时随逐项
+/// 定位诊断附一条汇总诊断——CommandHandlers.cpp 产码）。
+inline constexpr std::string_view kReqReadyInputIncomplete = "REQ-READY-INPUT-INCOMPLETE";
+
+/// §9.6 T05 行表尾增登（实现期增登先例——modeling WP-13-T10 同款）：
+/// REQ-READY-PLAN-MISSING（warning——区域已定义而计划集为空，§8.1 R6
+/// "Warning（零计划）"分支的原六码无 warning 级承载面；正式判定归评估
+/// ——KIN-04 零样本→DataInsufficient，本码为预告登记面）。消费者＝
+/// Readiness.cpp R6 层。
+inline constexpr std::string_view kReqReadyPlanMissing = "REQ-READY-PLAN-MISSING";
+
+// =====================================================================
 // REQ-* 稳定诊断码描述符清单（§9.6 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 requirements 已到注册任务行的 REQ-* 稳定码描述符全集
- *        （当前 5 项：§9.6 表 T02/T03 行 1 码＋T04 行 4 码——WP-14-T04
- *        导入族落位时按分批纪律表尾追加；其余 9 行随各自消费者任务
- *        T05~T07 在本清单表尾追加——分批注册纪律，不预建无消费者条目）。
+ *        （当前 12 项：§9.6 表 T02/T03 行 1 码＋T04 行 4 码＋T05 行 6 码
+ *        ＋表尾增登 PLAN-MISSING 一码——WP-14-T05 就绪族落位时按分批
+ *        纪律表尾追加；其余 3 行随各自消费者任务 T06/T07 在本清单表尾
+ *        追加——分批注册纪律，不预建无消费者条目）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，modeling
  * modelingCodeDescriptors 同款自证结构）：
