@@ -28,7 +28,7 @@
  *     工厂构造——本头不产出诊断记录，也禁把枚举值当字符串拼成诊断码
  *     （modeling §9.5"禁字符串拼码"同款纪律，REQ 侧沿用）。
  *
- * 枚举值收编口径（为什么是这 8 值）：全量收编卡面 §9.3~§9.5 接口契约已
+ * 枚举值收编口径（为什么是这 9 值）：全量收编卡面 §9.3~§9.5 接口契约已
  * 登记的域错误名（modeling/Errors.hpp"按卡面原样承载建议值全集，使错误
  * 轨道自落位起即可编译"同款先例——§9 各消费者接口在 T03+ 逐个落地时
  * 直接复用本表，不逐任务重开枚举）。枚举顺序＝卡面首次出现序（§9.3 编辑
@@ -67,7 +67,7 @@ namespace sdurws::ird::requirements {
 // =====================================================================
 
 /**
- * @brief requirements 域稳定错误码全表（8 值——§9.3~§9.5 已登记域错误
+ * @brief requirements 域稳定错误码全表（9 值——§9.3~§9.5 已登记域错误
  *        名收编，逐值注释给出其产生接口与落位任务）。
  *
  * 底型 std::uint8_t：域错误面按卡面既有登记收编，后续任务表尾追加
@@ -112,6 +112,16 @@ enum class RequirementErrorCode : std::uint8_t {
     /// 不是本单元登记的 Box 形态——P-REQ-7：区域几何扩展走需求变更，
     /// 采样计划定义只承接 Box）。
     RegionNotBox,
+
+    // ---- canonical 编解码族（§9.5 IRequirementCodec decode 校验链——T03
+    //      表尾增列：WP-14-T03 落位时按本头"表尾追加纪律"增列的新值；
+    //      units/requirements.md §14.6 v0.3 登记在案）----
+    /// "MalformedPayload"——字节破损（decode 结构校验失败：magic/截断/
+    /// 越界/非法枚举/非法 presence/非有限 double/UTF-8 不成形/集合未规范
+    /// 序/不变量违例——modeling::ModelingErrorCode::MalformedPayload 同义
+    /// 面；params 携 byte-offset/invariant 定位；无 REQ-* 诊断码映射——
+    /// 字节面错误经值面返回，禁止私定映射码凑数）
+    MalformedPayload,
 };
 
 /**
@@ -125,7 +135,7 @@ enum class RequirementErrorCode : std::uint8_t {
  * 注意：本 token 是**域错误面**的判别串，不是 REQ-\* 稳定诊断码（诊断码
  * 的注册权威＝diagnostics StableCodeRegistry——文件头"两个层面"注）。
  *
- * @param code [in] 错误码（全表 8 值均有 token——switch 全枚举、无
+ * @param code [in] 错误码（全表 9 值均有 token——switch 全枚举、无
  *              default，新增枚举值未登记表项时编译器告警暴露遗漏）
  * @return 稳定 token（静态存储期）
  *
@@ -195,7 +205,7 @@ struct RequirementError {
  * ——错误经 RequirementError 值面返回/呈现；产码唯一经 diagnostics 工厂
  * （码已注册校验；P-IO-6/modeling 同款"禁字符串拼码"）。
  *
- * @param code [in] 域错误码（全表 8 值均可入参——switch 全枚举）
+ * @param code [in] 域错误码（全表 9 值均可入参——switch 全枚举）
  * @return 已登记稳定码文本（当前：SchemaVersionUnsupported→
  *         "REQ-SCHEMA-UNSUPPORTED"，§9.6 T02/T03 行，与 DiagCodes.hpp
  *         工厂登记同源同串，测试交叉核对；nullopt＝暂无已登记映射
