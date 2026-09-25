@@ -1,0 +1,14 @@
+﻿ird_gates 命中集归一化多重集比对（T08/T10/T11 先例口径；WP-13-T12）
+- branch：wp13-t12（源树直跑 cmake -DIRD_ROOT=<industrialrobot 根> -P cmake/ird_gates.cmake）
+- base：1752bb853dc96d9f485b3a143e34df45795e1446（临时 worktree .wt-base-t12 直跑同脚本，用毕即删）
+- 引擎直跑口径（F-336/F-347）：IRD_SELFTEST_DIR 用缺省 TEMP；两侧行数一致
+- 归一化命中直方图比对（ird-gates-base-hits.txt vs ird-gates-branch-hits.txt）＝完全一致（diff 为空）：
+     57 IRD-GATE-SUB / 41 IRD-GATE-R3 / 10 IRD-GATE-LIB /  5 IRD-GATE-T1 /
+     3 IRD-GATE-R4 /  1 IRD-GATE-T2 /  1 IRD-GATE-R5 /  1 IRD-GATE-R1（发射 119 次）
+- 结论：本任务零新增门禁命中；全部命中为存量例外（登记归 DTB §4.5 治理
+  通道，不在本任务范围）。本任务对 CMake 的唯一改动＝modeling 库增列
+  src/CanonicalBridge.cpp、测试目标增列 CanonicalBridgeTest.cpp 与两个
+  契约测试 TU（其一 gated）；新增 include 均走既有六条登记边（core/io/
+  runtime/modeling 内部），无新增链接边。
+- 附件：ird-gates-base-hits.txt / ird-gates-branch-hits.txt（直方图）＋
+  ird-gates-base-raw.txt / ird-gates-branch-raw.txt（引擎原始输出）
