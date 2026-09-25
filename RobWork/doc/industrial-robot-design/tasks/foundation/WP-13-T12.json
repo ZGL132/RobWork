@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现 RobotDesignReader 与 Description 构造（编译协作）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T03",
     "RT-T05",
