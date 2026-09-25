@@ -57,8 +57,8 @@ find_package(GTest CONFIG REQUIRED)
 # T05 增列（tasks/foundation/WP-14-T05.json，§3.3 表 T05 行）：
 #   src/Readiness.cpp——R0~R9 分层就绪校验＋ReadinessSummary 投影
 #   （evidence 边的真实消费面——evidence::ReadinessSummary ①级数据源，
-#   同 P-RPT-9 回填先例）。src/CommandHandlers.cpp（命令处理器族——
-#   project 边的真实消费面）随 T05 命令面提交增列。
+#   同 P-RPT-9 回填先例）；src/CommandHandlers.cpp——命令处理器族
+#   （project 边的真实消费面——ICommandHandler/CommandPlan/HandlerContext）。
 add_library(sdurws_ird_requirements STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -69,7 +69,8 @@ add_library(sdurws_ird_requirements STATIC
     src/Services.cpp
     src/Sampling.cpp
     src/Import.cpp
-    src/Readiness.cpp)
+    src/Readiness.cpp
+    src/CommandHandlers.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：requirements 公共头使用 C++17 设施（std::string_view/
@@ -200,8 +201,7 @@ endif()
 #                              界（T05 acceptance 1~5/7）
 #   test/CommandHandlersTest.cpp  O-35 无点 token＋载荷往返＋prepare 管线
 #                              （首应用/增量逆命令/逆放）＋就绪现场重估
-#                              ＋导入溯源＋防御复核（T05 acceptance 6，
-#                              随命令面提交登记）
+#                              ＋导入溯源＋防御复核（T05 acceptance 6）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/modeling 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -219,7 +219,8 @@ add_executable(sdurws_ird_requirements_test
     test/SamplingTest.cpp
     test/EditorTest.cpp
     test/ImportTest.cpp
-    test/ReadinessTest.cpp)
+    test/ReadinessTest.cpp
+    test/CommandHandlersTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_test PROPERTIES
