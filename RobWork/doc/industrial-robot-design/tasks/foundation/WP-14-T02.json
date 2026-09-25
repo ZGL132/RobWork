@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "requirements 构建落位：占位转真实计算库并登记门禁白名单六边",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "CORE-T01"
   ],
