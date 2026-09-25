@@ -3476,6 +3476,16 @@
       "title": "tasks/foundation/WP-13-T13.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行（ctest -L \"^ird$\" 条目含该目标）且缺 sdurws_ird_io_test 构建行（ctest -R sdurws_ird_io_test 条目的前置目标）——F-300/F-304/F-310/F-314/F-338/F-344/F-345 家族（契约 verify 缺目标构建行）在 T13 契约复发；全新构建树按清单逐条执行至 ctest 条目时报目标不存在/Not Run，须验收者补建目标方可全量执行",
       "owner": "契约编译会话（后续契约补齐 contract_test 与对端 io_test 的构建行；T08 契约曾自愈列全三目标，可在下次契约编译批量对齐）",
       "resolution": "编号顺延自 F-349。"
+    },
+    {
+      "id": "F-351",
+      "source": "traceability/acceptance/WP-13-T14-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行并核对目标构建行完备性）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "tasks/foundation/WP-13-T14.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行（第 3 条 ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\" 的用例集含 contract_test）——F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350 家族（契约 verify 缺目标构建行）在 T14 契约复发；本次验收已在构建命令中显式带上该目标故执行未受阻，属契约编译面口径缺口（建议级，非实现缺陷）",
+      "owner": "契约编译会话（后续契约补齐 contract_test 构建行；T08 契约曾自愈列全三目标，可在下次契约编译批量对齐）",
+      "resolution": "编号顺延自 F-350。"
     }
   ]
 }
