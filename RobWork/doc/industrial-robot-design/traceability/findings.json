@@ -3596,6 +3596,36 @@
       "title": "契约 acceptance 1「…零 Qt、链 sdurw_math——照抄 core/io 形态」的执行口径解释仅登记于提交正文「实现决策登记」段，未按 DTB §5.4 落入单元卡：实现为经 sdurws_ird_core 的 PUBLIC sdurw_math 链传染到达（requirements 链接面仅五条 §3.2 登记边——io 同款形态，io 自身亦无直连 sdurw_math 边；卡 §3.2 边表无表外边义务）。T02 三公共头零 rw::math 类型消费、功能面零影响且消费方可达性成立；但 T03 起公共头（RequirementTypes/Sampling 等）将消费 rw::math 类型，「照抄 core/io 形态」的两义性（core=直连/io=传染）应在卡面明示",
       "owner": "requirements 所有者（T03 落位前在 units/requirements.md 增量修订中明示链接形态口径；必要时同步契约维护面消除 acceptance 措辞两义）",
       "resolution": "编号顺延自 F-361。"
+    },
+    {
+      "id": "F-363",
+      "source": "traceability/acceptance/WP-14-T03-20260925.md §1/4.5-M2（attempt 1，verdict=pass，2026-09-25；验收者变异实测 kMagic 'O'→'X' 后单测 52 用例全绿）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "requirements canonical 编码家族魔数 \"IRDREQO\" 字面量未被任何测试钉住：Codec.cpp kMagic 变异（'O'→'X'）后单测 52 用例全部保持绿（encode/decode 同源自洽，roundtrip 不经外部对照不暴露）；魔数属 canonical 格式登记面（units/requirements.md §14.6 v0.3、卡 §12 evidence 交接行），仅跨版本/跨单元字节对账才会检出",
+      "owner": "requirements 实施面（WP-14-T04+ 顺手落：CodecTest 增加编码产物首 7 字节与 \"IRDREQO\" 字面比对的钉子测试）",
+      "resolution": "编号顺延自 F-362。"
+    },
+    {
+      "id": "F-364",
+      "source": "traceability/acceptance/WP-14-T03-20260925.md §1/4.9（attempt 1，verdict=pass，2026-09-25）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "F-012/F-100/F-361 标题家族再现（一次一例）：WP-14-T03 两个送验提交 3b6344b7（「实现需求领域对象值模型、canonical 编解码、领域服务与编辑器」）与 30f80a0b（「登记 WP-14-T03 验证留痕（构建/测试/门禁证据）」）标题均无 [WP-14-T03] 前缀，不合 ACC §4.9／AGENTS §6.3 标题格式「[任务编号] 动词开头」；两提交正文四段齐备、验证结论经验收者独立复算逐项一致（52/52、5/5、2/2、门禁 127/127 零新增），纯风格瑕疵、无粉饰",
+      "owner": "WP-14-T03 实施面（后续提交规避；不追溯改写已推送提交——AGENTS §6.3 禁改写远程历史）",
+      "resolution": "编号顺延自 F-363。"
+    },
+    {
+      "id": "F-365",
+      "source": "traceability/acceptance/WP-14-T03-20260925.md §1/4.8（attempt 1，verdict=pass，2026-09-25；F-362 相关性核对——部分覆盖判定）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "F-362 残余：T03 送验提交已以 requirements/CMakeLists.txt 注释（「集成模式下 sdurw_math 经 sdurws_ird_core 的 PUBLIC 边传递可达」）与 units/requirements.md §14.6 v0.3⑤（rw::math 头依赖随集成/冒烟两模式注入、零新增链接边）部分覆盖链接形态口径，但「core=直连/io=传染」的两义区分仍未在卡 §3.2 边表本体明示",
+      "owner": "requirements 文档所有者（卡 §3.2 补一句明示后可同时关闭 F-362 与本条）",
+      "resolution": "编号顺延自 F-364。"
     }
   ]
 }
