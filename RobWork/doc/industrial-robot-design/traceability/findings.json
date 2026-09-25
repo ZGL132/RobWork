@@ -3646,6 +3646,16 @@
       "title": "F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352/F-358 家族新例：tasks/foundation/WP-14-T04.json verify 数组缺两测试目标（sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test）的显式构建行（仅库名构建＋ctest＋validate-docs 三行）——ctest 行存在故测试二进制有构建口径依赖但无字面构建命令，全新构建树按 verify 清单逐条执行会因测试 exe 未构建而失败；验收者已按家族在案口径在全新构建树自行补建两目标并执行（75/75＋5/5 双模式全绿），属验收者侧正常动作；建议契约模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行",
       "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
       "resolution": "编号顺延自 F-366。"
+    },
+    {
+      "id": "F-368",
+      "source": "traceability/acceptance/WP-14-T05-20260926.md §4.3（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352/F-358/F-367 家族新例：tasks/foundation/WP-14-T05.json verify 数组仅列 sdurws_ird_requirements 一条构建目标行，缺 sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test 两条显式构建行（ctest 行在位，较 F-358 缺口窄）——全新构建树按 verify 清单逐条字面执行时 ctest 将因测试 exe 未被任何清单命令构建而 Not Run；验收者已按家族在案口径在集成/冒烟两条全新构建树自行补建两目标并执行（108/108＋5/5 全绿、ctest 2/2），属验收者侧正常动作；建议契约编译模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行（与 F-367 处置建议合并落地面）",
+      "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
+      "resolution": "编号顺延自 F-367。"
     }
   ]
 }
