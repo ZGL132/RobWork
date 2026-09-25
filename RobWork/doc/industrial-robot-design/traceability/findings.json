@@ -3546,6 +3546,56 @@
       "title": "mdl-dh-equivalence 黄金数据集零样本命中 DhConvert canonicalForm 翻转支（负 d 支）：实施侧按 F-356 处置将 general-3r 原 J3 输入参数（α 符号位）调整避开该支后，七样本的规范代表全部走不翻转路径——V-11 黄金面对 canonicalForm 分支选取语义无变异敏感度（4.5 变异实测零红，作为对照的同函数无条件偏置变异 M2b 则双红）；分支语义本体（翻转恒等式不保位置）已由 F-356 归 T09 所有者裁决，本条仅登记黄金面覆盖缺口",
       "owner": "testkit/modeling 数据集所有者（F-356 裁决落定后补一例命中翻转支的负 d 黄金样本——inputs/expected/generate/manifest integrity 同步刷新，使 V-11 对分支选取具备黄金钉定）",
       "resolution": "编号顺延自 F-356（WP-13-T16 验收者取号基准＝送验分支 findings.json 最大号）。"
+    },
+    {
+      "id": "F-358",
+      "source": "traceability/acceptance/WP-14-T02-20260925.md §1/4.3（attempt 1，verdict=pass，2026-09-25；验收者在全新构建树按 verify 清单执行后自行补建 sdurws_ird_requirements_test/_contract_test 并执行 18+5 全过）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "tasks/foundation/WP-14-T02.json verify 数组缺测试目标构建行与 ctest 行（F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352 家族新例，首个 requirements 单元实例）：verify 仅列 configure＋sdurws_ird_requirements 构建＋validate-docs 三条，而任务自身 acceptance 3/4 即要求 _test/_contract_test 注册——note ③「本任务尚无测试文件故无 ctest 行」在契约编译时点成立、实现后失实。属契约编译期固有滞后形态：建议治理面在契约模板或收尾段吸收「测试目标构建/ctest 行随实现面回填」规则（同族 11 例共用处置）",
+      "owner": "治理会话（WP-01-T03/契约维护面——家族统一处置，非本任务返工项；验收已补执行，结果与送验声称一致）",
+      "resolution": "编号顺延自 F-357（WP-14-T02 验收者取号基准＝worktreeA 检出 findings.json 最大号）。"
+    },
+    {
+      "id": "F-359",
+      "source": "traceability/acceptance/WP-14-T02-20260925.md §1/4.4-2/问题清单（attempt 1，verdict=pass，2026-09-25；验收者 cmake -P 引擎直跑 base(e42de114)..head(07d2f6d6) 归一化比对，独立复测与送验附件一致）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "ird_gates 基线 +2 命中（本任务引入，送验附件如实留痕、无缺位）：IRD-GATE-SUB×2＝sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test 直链他单元产品目标 sdurws_ird_testkit——F-072/F-173/F-221/F-292 同族新实例（各单元测试目标消费 testkit 报告设施时的存量例外模式，testkit.md §2.4 允许形态「<unit>_test → {被测产品目标, sdurws_ird_testkit, gtest}」sanctioned；base 58→head 60，其余命中码全等零消失）。与 F-051/F-202 的引擎判定语义矛盾同源，登记册回填归 WP-01-T03 治理面",
+      "owner": "WP-01-T03 治理面（同族 36+2 处统一登记/引擎语义消解；不阻塞本任务——产品目标零 testkit 由契约测试 NoTestkitEdgeOnProductTarget 与配置期守卫双面钉住）",
+      "resolution": "编号顺延自 F-358。"
+    },
+    {
+      "id": "F-360",
+      "source": "traceability/acceptance/WP-14-T02-20260925.md §1/4.9（attempt 1，verdict=pass，2026-09-25；验收者对提交 07d2f6d6 验证段逐条与留痕及独立直跑实测比对时发现）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "WP-14-T02 提交信息与比对附件散文计数失准（F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343 家族再现）：称「与 base 侧既有 36 处同型」——验收者实测 base(e42de114) 侧 testkit 直链 SUB 去重 23 处（全码含 testkit 字样 25 处、base SUB 全量 29 处、base 命中全量 58 处，均非 36），送验附件 ird_gates_base.log 同为 23。计数方向为多报、无证据缺失、核心增量结论（+2，base 58→head 60）与全部其他验证声称经实测一致，不构成粉饰",
+      "owner": "WP-14-T02 实施面（记录性更正即可，不阻塞合入）；家族根治同 F-041 处置建议",
+      "resolution": "编号顺延自 F-359。"
+    },
+    {
+      "id": "F-361",
+      "source": "traceability/acceptance/WP-14-T02-20260925.md §1/4.9（attempt 1，verdict=pass，2026-09-25）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "F-012 标题家族再现（一次一例）：WP-14-T02 送验提交 07d2f6d6 标题「[WP-14-T02] requirements 构建落位：占位转真实计算库并登记门禁白名单五边」前缀后为「requirements 构建落位」名词短语，非动词开头（ACC §4.9／AGENTS §6.3）——与 F-100 在案的 DIAG-T02 b5c9504e「diagnostics 单元构建落位：…」同字面形态",
+      "owner": "WP-14-T02 实施面（后续提交规避；不追溯改写已推送提交——AGENTS §6.3 禁改写远程历史）",
+      "resolution": "编号顺延自 F-360。"
+    },
+    {
+      "id": "F-362",
+      "source": "traceability/acceptance/WP-14-T02-20260925.md §1/4.4-1（attempt 1，verdict=pass，2026-09-25；验收者实测 core/CMakeLists.txt 直链 sdurw_math PUBLIC、io 无直连边后核对三方口径）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "契约 acceptance 1「…零 Qt、链 sdurw_math——照抄 core/io 形态」的执行口径解释仅登记于提交正文「实现决策登记」段，未按 DTB §5.4 落入单元卡：实现为经 sdurws_ird_core 的 PUBLIC sdurw_math 链传染到达（requirements 链接面仅五条 §3.2 登记边——io 同款形态，io 自身亦无直连 sdurw_math 边；卡 §3.2 边表无表外边义务）。T02 三公共头零 rw::math 类型消费、功能面零影响且消费方可达性成立；但 T03 起公共头（RequirementTypes/Sampling 等）将消费 rw::math 类型，「照抄 core/io 形态」的两义性（core=直连/io=传染）应在卡面明示",
+      "owner": "requirements 所有者（T03 落位前在 units/requirements.md 增量修订中明示链接形态口径；必要时同步契约维护面消除 acceptance 措辞两义）",
+      "resolution": "编号顺延自 F-361。"
     }
   ]
 }
