@@ -1,0 +1,54 @@
+[==========] Running 17 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from MdlBuildGraph
+[ RUN      ] MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3
+[       OK ] MdlBuildGraph.UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3 (0 ms)
+[ RUN      ] MdlBuildGraph.SixRegisteredEdgesPresent_WP13T02_ACC3
+[       OK ] MdlBuildGraph.SixRegisteredEdgesPresent_WP13T02_ACC3 (0 ms)
+[ RUN      ] MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2
+[       OK ] MdlBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2 (1 ms)
+[ RUN      ] MdlBuildGraph.NoTestkitEdgeOnProductTarget_WP13T02_ACC2
+[       OK ] MdlBuildGraph.NoTestkitEdgeOnProductTarget_WP13T02_ACC2 (0 ms)
+[ RUN      ] MdlBuildGraph.IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3
+[       OK ] MdlBuildGraph.IncludeFaceMatchesRegisteredEdges_WP13T02_ACC3 (13 ms)
+[----------] 5 tests from MdlBuildGraph (16 ms total)
+
+[----------] 3 tests from MdlDescriptionBridgeContract
+[ RUN      ] MdlDescriptionBridgeContract.DescriptionFieldSetAlignment_WP13T12_ACC3
+[       OK ] MdlDescriptionBridgeContract.DescriptionFieldSetAlignment_WP13T12_ACC3 (1 ms)
+[ RUN      ] MdlDescriptionBridgeContract.SchemaVersionSameSourceAsContractVersion_WP13T12_ACC3
+[       OK ] MdlDescriptionBridgeContract.SchemaVersionSameSourceAsContractVersion_WP13T12_ACC3 (0 ms)
+[ RUN      ] MdlDescriptionBridgeContract.ReaderFailureTrackIsValueFace_WP13T12_ACC3
+[       OK ] MdlDescriptionBridgeContract.ReaderFailureTrackIsValueFace_WP13T12_ACC3 (0 ms)
+[----------] 3 tests from MdlDescriptionBridgeContract (1 ms total)
+
+[----------] 4 tests from MdlCommandPipelineContract
+[ RUN      ] MdlCommandPipelineContract.V19NotReadyDoesNotCompileAndPlanEmptied
+[       OK ] MdlCommandPipelineContract.V19NotReadyDoesNotCompileAndPlanEmptied (0 ms)
+[ RUN      ] MdlCommandPipelineContract.V20CompileFailureInjectsAndDiagnosticsCoexist
+[       OK ] MdlCommandPipelineContract.V20CompileFailureInjectsAndDiagnosticsCoexist (0 ms)
+[ RUN      ] MdlCommandPipelineContract.V22StaleBaselineFailsFastDefensively
+[       OK ] MdlCommandPipelineContract.V22StaleBaselineFailsFastDefensively (0 ms)
+[ RUN      ] MdlCommandPipelineContract.StableCodesRegisteredWithoutPrebuilding_WP13T09
+[       OK ] MdlCommandPipelineContract.StableCodesRegisteredWithoutPrebuilding_WP13T09 (0 ms)
+[----------] 4 tests from MdlCommandPipelineContract (0 ms total)
+
+[----------] 2 tests from MdlCompileBridgeContract
+[ RUN      ] MdlCompileBridgeContract.ReaderOutputFeedsCanonicalBuilder_WP13T12_ACC3
+[       OK ] MdlCompileBridgeContract.ReaderOutputFeedsCanonicalBuilder_WP13T12_ACC3 (0 ms)
+[ RUN      ] MdlCompileBridgeContract.ReaderFailureNeverReachesS5_WP13T12_ACC3
+[       OK ] MdlCompileBridgeContract.ReaderFailureNeverReachesS5_WP13T12_ACC3 (0 ms)
+[----------] 2 tests from MdlCompileBridgeContract (0 ms total)
+
+[----------] 3 tests from MdlGoldenPeerContract
+[ RUN      ] MdlGoldenPeerContract.IoPeerImportPipelineMissingLeafContract_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.IoPeerImportPipelineMissingLeafContract_WP13T16_ACC5 (0 ms)
+[ RUN      ] MdlGoldenPeerContract.ProjectPeerGoldenTemplateApplyPlan_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.ProjectPeerGoldenTemplateApplyPlan_WP13T16_ACC5 (0 ms)
+[ RUN      ] MdlGoldenPeerContract.At37BasePlacementParameterInputFace_WP13T16_ACC5
+[       OK ] MdlGoldenPeerContract.At37BasePlacementParameterInputFace_WP13T16_ACC5 (0 ms)
+[----------] 3 tests from MdlGoldenPeerContract (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 17 tests from 5 test suites ran. (19 ms total)
+[  PASSED  ] 17 tests.

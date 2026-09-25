@@ -1,0 +1,190 @@
+{
+  "note": "mdl-dh-equivalence 输入样本集（DH 链逐关节四元组＋零位偏置；单位 rad/m——DhParameters 注）。family=exact 的链全部满足 a>0（θ 可由位置唯一钉死——非退化）且参数已处规范形态（d>0、θ/alpha∈(-pi,pi]——§7.5 输出面规范分支的恒等输入）；family=exact-non-unique 为退化族样例（相邻 a=0——绕公共轴旋转不可分辨）。",
+  "conventions": {
+    "step": "T_{i-1,i} = Rot_z(thetaOffset+zeroOffset) * Trans_z(d) * Trans_x(a) * Rot_x(alpha)  (units/modeling.md §7.4)",
+    "origin": "origin_i = T_{i-1,i}（关节系相对父连杆系——core.md §4.6 读法）",
+    "axis": "axis_i = R_{0,i} * (0,0,1)（累计旋转第三列，单位向量）",
+    "angleUnit": "rad",
+    "lengthUnit": "m"
+  },
+  "samples": [
+    {
+      "id": "general-2r",
+      "family": "exact",
+      "joints": [
+        {
+          "name": "J1",
+          "thetaOffset": 0.3,
+          "d": 0.15,
+          "a": 0.4,
+          "alpha": 1.5707963267948966,
+          "zeroOffset": 0.1
+        },
+        {
+          "name": "J2",
+          "thetaOffset": -0.2,
+          "d": 0.25,
+          "a": 0.3,
+          "alpha": -1.0471975511965976,
+          "zeroOffset": -0.05
+        }
+      ]
+    },
+    {
+      "id": "general-3r",
+      "family": "exact",
+      "joints": [
+        {
+          "name": "J1",
+          "thetaOffset": 1.1,
+          "d": 0.25,
+          "a": 0.1,
+          "alpha": -0.7853981633974483,
+          "zeroOffset": 0.2
+        },
+        {
+          "name": "J2",
+          "thetaOffset": -0.4,
+          "d": 0.05,
+          "a": 0.35,
+          "alpha": 1.0471975511965976,
+          "zeroOffset": 0.15
+        },
+        {
+          "name": "J3",
+          "thetaOffset": -0.9,
+          "d": 0.15,
+          "a": 0.2,
+          "alpha": -1.5707963267948966,
+          "zeroOffset": -0.1
+        }
+      ]
+    },
+    {
+      "id": "zero-anchor",
+      "family": "exact",
+      "edgeCase": "zero-value",
+      "edgeNote": "多个参数恰为零（theta/zeroOffset/d/alpha 精确 0）而链非退化（各关节 a>0）——零值样例经 closed-form 期望逐项消费",
+      "joints": [
+        {
+          "name": "J1",
+          "thetaOffset": 0,
+          "d": 0.2,
+          "a": 0.3,
+          "alpha": 0,
+          "zeroOffset": 0
+        },
+        {
+          "name": "J2",
+          "thetaOffset": 0,
+          "d": 0,
+          "a": 0.25,
+          "alpha": 1.5707963267948966,
+          "zeroOffset": 0
+        },
+        {
+          "name": "J3",
+          "thetaOffset": 0,
+          "d": 0.15,
+          "a": 0.2,
+          "alpha": 0,
+          "zeroOffset": 0
+        }
+      ]
+    },
+    {
+      "id": "near-zero",
+      "family": "exact",
+      "edgeCase": "near-zero",
+      "edgeNote": "theta/zeroOffset/alpha 携带 1e-12~1e-13 量级近零值——展开与 roundtrip 期望在附录 D 第 5 项容差内逐项消费（零参考退化为 epsilon_abs）",
+      "joints": [
+        {
+          "name": "J1",
+          "thetaOffset": 1e-12,
+          "d": 0.2,
+          "a": 0.3,
+          "alpha": -1e-13,
+          "zeroOffset": 5e-13
+        },
+        {
+          "name": "J2",
+          "thetaOffset": -2e-12,
+          "d": 0.1,
+          "a": 0.25,
+          "alpha": 1e-12,
+          "zeroOffset": -1e-12
+        }
+      ]
+    },
+    {
+      "id": "sign-cancel",
+      "family": "exact",
+      "edgeCase": "sign-cancellation",
+      "edgeNote": "zeroOffset 与 thetaOffset 等值反号（净旋转为零）、alpha 取 +pi/2 与 -pi/2 成对抵消——逐级累乘中的正负抵消由 closed-form 期望逐分量承载（防差值总和掩盖）",
+      "joints": [
+        {
+          "name": "J1",
+          "thetaOffset": 0.35,
+          "d": 0.15,
+          "a": 0.3,
+          "alpha": 1.5707963267948966,
+          "zeroOffset": -0.35
+        },
+        {
+          "name": "J2",
+          "thetaOffset": -0.5,
+          "d": 0.2,
+          "a": 0.25,
+          "alpha": -1.5707963267948966,
+          "zeroOffset": 0.5
+        }
+      ]
+    },
+    {
+      "id": "coincident-axes",
+      "family": "exact-non-unique",
+      "edgeNote": "重合轴退化族（alpha1=alpha2=0 且 a1=a2=0）——theta1/theta2 均为自由参数（WP-13-T09 DhConvertTest 先例同构）；期望解＝字典序规则定值（自由 theta 钉中性值 0——testkit 合同规则，非几何闭式）",
+      "joints": [
+        {
+          "name": "J1",
+          "thetaOffset": 0.7,
+          "d": 0.3,
+          "a": 0,
+          "alpha": 0,
+          "zeroOffset": 0
+        },
+        {
+          "name": "J2",
+          "thetaOffset": 1.1,
+          "d": 0.25,
+          "a": 0,
+          "alpha": 0,
+          "zeroOffset": 0
+        }
+      ]
+    },
+    {
+      "id": "parallel-axes",
+      "family": "exact-non-unique",
+      "edgeNote": "平行相邻轴退化族（alpha2=0 且第二关节 a=0）——theta2 自由（字典序坐标 4）；theta1 由位置钉死（a1>0）",
+      "joints": [
+        {
+          "name": "J1",
+          "thetaOffset": 0.4,
+          "d": 0.1,
+          "a": 0.3,
+          "alpha": 0,
+          "zeroOffset": 0
+        },
+        {
+          "name": "J2",
+          "thetaOffset": 0.9,
+          "d": 0.2,
+          "a": 0,
+          "alpha": 0,
+          "zeroOffset": 0
+        }
+      ]
+    }
+  ]
+}

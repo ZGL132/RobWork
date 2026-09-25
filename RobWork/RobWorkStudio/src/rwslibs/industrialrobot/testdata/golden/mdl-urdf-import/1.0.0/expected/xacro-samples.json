@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "mdl-urdf-import-xacro/1",
+  "note": "AT-31 Xacro 黄金样例期望（§6.5 受控子集——property/宏/参数声明式替换；V-09 include 循环透传面）",
+  "goldenMacro": {
+    "expansionSucceeds": true,
+    "parameterList": [
+      {
+        "name": "link_lift_m",
+        "valueText": "0.25",
+        "source": "property"
+      }
+    ],
+    "parameterListNote": "无用户 substitutions——参数列表仅文档属性（定义序）",
+    "importJointCount": 3,
+    "importJointNames": [
+      "j1",
+      "j2",
+      "j3"
+    ],
+    "importBoundsRad": [
+      [
+        -1,
+        1
+      ],
+      [
+        -2,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ],
+    "importOriginZM": 0.25,
+    "importOriginNote": "宏体内 ${link_lift_m} 经调用点作用域解析（文档属性）",
+    "chainCapability": {
+      "kind": "BeyondTemplateRange",
+      "movableAxes": 3,
+      "containsPrismatic": false
+    },
+    "chainCapabilityNote": "三轴无模板语义（T05 §6.4 行语义澄清）——TEMPLATE-RANGE 提示在案",
+    "templateRangeDiagnosticPresent": true,
+    "submittable": true,
+    "substitutionMappedNotes": 0,
+    "substitutionNote": "空 substitutions——映射清单零 \"xacro-substitution/\" 前缀条目（确定性）",
+    "provenanceDigestEqualsOriginalXacro": true,
+    "xacroSourceResourceRowRecorded": true
+  },
+  "cycle": {
+    "expansionFails": true,
+    "expectedErrorCode": "IncludeCycle",
+    "expectedDiagnosticCode": "IO-FORMAT-XML-CYCLE",
+    "expandedBytesAbsent": true,
+    "noDraftProduced": true,
+    "note": "include 相互循环（a→b→a）——io 契约本应拦截；本服务防御性复核透传 V-09 码面（无草稿、无对象写入）"
+  }
+}

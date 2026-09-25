@@ -1,0 +1,181 @@
+{
+  "schemaVersion": "mdl-template-6r/1",
+  "generatedBy": "generate/make_template_golden.mjs",
+  "expected": {
+    "note": "mdl-template-6r 黄金参数（T-MDL-1 表值锁定＋草稿面期望；手工构造——contract-fixture）",
+    "descriptor": {
+      "templateId": "generic-6r",
+      "displayName": "六轴通用串联",
+      "axisCount": 6,
+      "authority": "Explicit",
+      "enabled": true
+    },
+    "axisDefaults": [
+      {
+        "joint": "j1",
+        "type": "Revolute",
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "zeroOffset": 0,
+        "bounds": [
+          -3.141592653589793,
+          3.141592653589793
+        ],
+        "maxVelocity": 3.141592653589793,
+        "maxAcceleration": 6.283185307179586
+      },
+      {
+        "joint": "j2",
+        "type": "Revolute",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "zeroOffset": 0,
+        "bounds": [
+          -1.5707963267948966,
+          1.5707963267948966
+        ],
+        "maxVelocity": 3.141592653589793,
+        "maxAcceleration": 6.283185307179586
+      },
+      {
+        "joint": "j3",
+        "type": "Revolute",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "zeroOffset": 0,
+        "bounds": [
+          -3.141592653589793,
+          1.5707963267948966
+        ],
+        "maxVelocity": 3.141592653589793,
+        "maxAcceleration": 6.283185307179586
+      },
+      {
+        "joint": "j4",
+        "type": "Revolute",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "zeroOffset": 0,
+        "bounds": [
+          -3.141592653589793,
+          3.141592653589793
+        ],
+        "maxVelocity": 6.283185307179586,
+        "maxAcceleration": 12.566370614359172
+      },
+      {
+        "joint": "j5",
+        "type": "Revolute",
+        "axis": [
+          0,
+          1,
+          0
+        ],
+        "zeroOffset": 0,
+        "bounds": [
+          -1.5707963267948966,
+          1.5707963267948966
+        ],
+        "maxVelocity": 6.283185307179586,
+        "maxAcceleration": 12.566370614359172
+      },
+      {
+        "joint": "j6",
+        "type": "Revolute",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "zeroOffset": 0,
+        "bounds": [
+          -6.283185307179586,
+          6.283185307179586
+        ],
+        "maxVelocity": 6.283185307179586,
+        "maxAcceleration": 12.566370614359172
+      }
+    ],
+    "draftExpectations": {
+      "displayName": "golden6r",
+      "authority": "Explicit",
+      "jointCount": 6,
+      "linkCount": 7,
+      "jointNames": [
+        "j1",
+        "j2",
+        "j3",
+        "j4",
+        "j5",
+        "j6"
+      ],
+      "linkNames": [
+        "base",
+        "l1",
+        "l2",
+        "l3",
+        "l4",
+        "l5",
+        "l6"
+      ],
+      "jointTypes": [
+        "Revolute",
+        "Revolute",
+        "Revolute",
+        "Revolute",
+        "Revolute",
+        "Revolute"
+      ],
+      "originSeed": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": "identity"
+      },
+      "basePlacement": {
+        "preset": "ground",
+        "basePosition": [
+          0,
+          0,
+          0
+        ],
+        "customEaa": null
+      },
+      "j6TravelRad": 12.566370614359172,
+      "workingRangeState": "not-applicable",
+      "materialSeed": {
+        "materialId": "steel",
+        "densityKgPerM3": 7850
+      }
+    }
+  },
+  "sevenAxisExpectations": {
+    "descriptor": {
+      "templateId": "generic-7r",
+      "displayName": "七轴串联",
+      "axisCount": 7,
+      "enabled": false
+    },
+    "createDraftExpected": {
+      "outcomeError": "TemplateDisabled",
+      "diagnosticCode": "MDL-TEMPLATE-DISABLED",
+      "diagnosticCount": 1,
+      "noDraftProduced": true,
+      "noSilentFallbackTo6r": true
+    }
+  }
+}

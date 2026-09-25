@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "mdl-template-6r",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "mdl/template-6r-parameters",
+  "coveredRequirements": ["MDL-01", "MDL-04", "MDL-22"],
+  "coveredAt": ["AT-01", "AT-20"],
+  "toleranceProfile": { "id": "mdl-dh", "version": "1.0.0" },
+  "inputs": ["inputs/template-request.json"],
+  "expected": ["expected/six-axis-defaults.json"],
+  "parameters": {
+    "comparison": "exact-appendixD-12",
+    "comparisonNote": "T-MDL-1 表值为设计默认值字面（D-MDL-7）——逐格位级比对走第 12 项精确等值（无容差），不消费档案数值条目；档案引用为 modeling 单元数据集统一登记面",
+    "goldenScope": "六轴模板参数锁定（D-MDL-7/AT-20 基线）＋七轴登记不启用面（V-02）"
+  },
+  "units": { "angle": "rad", "angular-velocity": "rad/s", "angular-acceleration": "rad/s^2", "length": "m", "mass": "kg" },
+  "frames": { "base": "robot-base(ground-preset)", "note": "草稿基座系——BasePlacement 预设地面、零位（MDL-22 V15-04）；T_base_world 语义见 core.md §4.6。密度种子单位 kg/m^3 为 §5.3 密度表行文单位（注册表无派生单位 token——期望值面文本声明，不入 units 映射）" },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "mdl-tmdl1-table-transcription",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-25T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/template-request.json",
+      "sha256": "9b01fba76d80c7df2c34f11cc19ef75a3522a631f2333253b6d3952f5ee2f2bb",
+      "sizeBytes": 182
+    },
+    {
+      "path": "expected/six-axis-defaults.json",
+      "sha256": "c494a5495e0c312f0268f67d919344bdb419e54ff5699c04f4cffe9bd10df28e",
+      "sizeBytes": 3882
+    },
+    {
+      "path": "generate/make_template_golden.mjs",
+      "sha256": "b158c07e223e97ee5f0164d26d7367521e7d80fbb0132f20b1bab39c1146a3a0",
+      "sizeBytes": 4907
+    }
+  ],
+  "generator": {
+    "script": "generate/make_template_golden.mjs",
+    "invocation": "node generate/make_template_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-25",
+      "change": "首版：T-MDL-1 六行表值锁定＋草稿面期望（7 连杆/6 关节/地面预设/钢种子）＋七轴登记不启用期望（V-02）——WP-13-T16 §10.1 数据集 1/4（D-MDL-7/AT-20 基线）",
+      "reReviewedBy": "WP-13-T16 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

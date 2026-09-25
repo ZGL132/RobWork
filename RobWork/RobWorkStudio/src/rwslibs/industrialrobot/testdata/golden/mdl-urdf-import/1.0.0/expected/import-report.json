@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "mdl-urdf-import-report/1",
+  "note": "V-06 期望面（contract-fixture 手工构造——§6.3 映射表逐行语义；计数约定见 generate 脚本头注）",
+  "counts": {
+    "jointStatuses": 6,
+    "jointStatusesAllMapped": true,
+    "resources": 2,
+    "resourceStates": {
+      "meshes/l1.stl": "recorded",
+      "meshes/ghost.dae": "missing"
+    },
+    "missingResourceDigestHexEmpty": true,
+    "selfCollisionCandidates": 1,
+    "selfCollisionPair": {
+      "link1": "base",
+      "link2": "l1"
+    },
+    "drivetrainCandidates": 5,
+    "drivetrainCandidateJoints": [
+      "j1",
+      "j2",
+      "j4",
+      "j5",
+      "j6"
+    ],
+    "pendingConfirms": 2,
+    "pendingKinds": [
+      {
+        "kind": "axis-default-plus-x",
+        "subject": "joint 'j2'"
+      },
+      {
+        "kind": "limit-missing",
+        "subject": "joint 'j3'"
+      }
+    ],
+    "ignored": 3,
+    "ignoredElements": [
+      "gazebo",
+      "disable_collisions",
+      "material 'gray'"
+    ],
+    "unsupported": 8,
+    "unsupportedKinds": [
+      {
+        "kind": "transmission",
+        "count": 1
+      },
+      {
+        "kind": "joint-velocity-limit",
+        "count": 5
+      },
+      {
+        "kind": "mesh-scale",
+        "count": 1
+      },
+      {
+        "kind": "ros-uri",
+        "count": 1
+      }
+    ],
+    "mappedCountAtLeast": 6,
+    "defaultsCountAtLeast": 3,
+    "submittable": true,
+    "noNamedBlockingError": true
+  },
+  "draft": {
+    "displayName": "golden arm",
+    "rootLocalNameCandidate": "golden_arm",
+    "jointCount": 6,
+    "linkCount": 7,
+    "jointTypes": [
+      "Revolute",
+      "Revolute",
+      "Revolute",
+      "Revolute",
+      "Revolute",
+      "Revolute"
+    ],
+    "j1AxisNormalized": [
+      0,
+      1,
+      0
+    ],
+    "j1AxisNote": "源 \"0 2 0\" 归一化（MDL-11 任意有限非零轴）",
+    "j1BoundsRad": [
+      -1.57,
+      1.57
+    ],
+    "j1OriginZM": 0.2,
+    "j2AxisDefaultPlusX": [
+      1,
+      0,
+      0
+    ],
+    "j2AxisNote": "缺 axis——默认局部 +X 入待确认草稿（MDL-11）",
+    "l1MassKg": 2,
+    "l1InertiaIxx": 0.01,
+    "l1InertiaIxy": 0.002,
+    "l1MaterialId": "steel_gray",
+    "l1DensityState": "not-provided",
+    "l2BodyState": "not-provided",
+    "basePlacementPreset": "ground",
+    "resourceManifestSize": 2,
+    "resourceManifestStates": {
+      "meshes/l1.stl": "recorded",
+      "meshes/ghost.dae": "recorded"
+    },
+    "missingCarriedAsRecorded": true
+  },
+  "chainCapability": {
+    "kind": "FullTemplateRange",
+    "movableAxes": 6,
+    "containsPrismatic": false
+  },
+  "diagnostics": {
+    "resMissingPresent": true,
+    "resMissingCode": "IO-RES-MISSING",
+    "templateRangeAbsent": true,
+    "templateRangeNote": "六轴全旋转不产 TEMPLATE-RANGE 提示（超出范围才提示）"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "mdl-urdf-import",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "mdl/urdf-import-mapping",
+  "coveredRequirements": [
+    "MDL-03",
+    "MDL-04",
+    "MDL-11",
+    "MDL-12",
+    "MDL-19",
+    "MDL-22"
+  ],
+  "coveredAt": [
+    "AT-15",
+    "AT-17",
+    "AT-31"
+  ],
+  "toleranceProfile": {
+    "id": "mdl-dh",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/golden-6r.urdf",
+    "inputs/meshes/l1.stl",
+    "inputs/xacro/golden-macro.xacro",
+    "inputs/xacro/cycle-a.xacro",
+    "inputs/xacro/cycle-b.xacro"
+  ],
+  "expected": [
+    "expected/import-report.json",
+    "expected/xacro-samples.json"
+  ],
+  "parameters": {
+    "goldenScope": "V-06 导入黄金链（映射/默认补全/忽略/不支持四清单逐项计数——AT-15）＋V-07/V-10 链型判定面（AT-17）＋V-09 Xacro 循环透传（AT-31）＋V-08 缺失网格 Recorded 携带面",
+    "consumedFields": "报告面计数与清单条目（结构断言——无容差消费）；inertia.symmetry／inertia.spd-eigenvalue 档案条目作 l1 惯量数据质量门（相对 1e-12／零余量——附录 D 第 6/7 项口径）；几何值（轴/限位/原点）随 import-report.json 期望面精确承载（导入映射为文本解析——无迭代数值通道，不消费档案数值条目）",
+    "countingConvention": "mapped/defaults 两清单条目粒度属实现细化（每源元素→落点对一条）——期望面以 countAtLeast 下界＋关键条目命中承载；八清单中其余六清单（忽略/不支持/待确认/关节状态/资源状态/自碰撞与传动候选）为精确计数",
+    "selfCollisionNote": "<disable_collisions> 为 PR2 风格自碰撞排除候选——§6.3 末行登记的导入报告承载（P-MDL-3：仅报告候选，不写策略对象）"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad",
+    "mass": "kg",
+    "inertia": "kg*m^2",
+    "force": "N*m"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "导入草稿基座系——BasePlacement 未配置路径默认地面（MDL-22/V15-04，来源 ImportMapped）；关节 origin 为关节系相对父连杆系（core.md §4.6）；axis 为连杆系下单位轴（无量纲）"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "mdl-urdf-import-hand-built",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-25T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/golden-6r.urdf",
+      "sha256": "af4c4563232f3963a11ecf4d0f8afaaa4a80ca80112c3f2f2f3d7e73786ad074",
+      "sizeBytes": 2334
+    },
+    {
+      "path": "inputs/meshes/l1.stl",
+      "sha256": "55abf5684fe87b28dfe197814d0281a4c91911ab6eb65dbf43fa7b992173c379",
+      "sizeBytes": 134
+    },
+    {
+      "path": "inputs/xacro/golden-macro.xacro",
+      "sha256": "da590b86c45d1a06d41aa7787a3e10b7f9419ab53c1d9f09add31081b7d91143",
+      "sizeBytes": 839
+    },
+    {
+      "path": "inputs/xacro/cycle-a.xacro",
+      "sha256": "d62d80396fcd269603707088ec3a263738b4c3dda293ac2b15dd543e4981ff6b",
+      "sizeBytes": 142
+    },
+    {
+      "path": "inputs/xacro/cycle-b.xacro",
+      "sha256": "fda8f5aa5619797e1f7a6281f3f4c0907e9596f1753bda8b816e76d4bf837571",
+      "sizeBytes": 142
+    },
+    {
+      "path": "expected/import-report.json",
+      "sha256": "3d99e004dc2be24f57ec0ff8fd1fff7bdac4a438788a77172d3905957b22043b",
+      "sizeBytes": 2821
+    },
+    {
+      "path": "expected/xacro-samples.json",
+      "sha256": "19825fe9a35a05f21ef502d396b5e5909cc2f7d474efe1d29477cf04e563259d",
+      "sizeBytes": 1758
+    },
+    {
+      "path": "generate/make_import_expectations.mjs",
+      "sha256": "e0e7674bb52c36c3ab40991d14c8df6ab80b46f5456bf4db5ad4e54db5f3ab9a",
+      "sizeBytes": 7012
+    }
+  ],
+  "generator": {
+    "script": "generate/make_import_expectations.mjs",
+    "invocation": "node generate/make_import_expectations.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-25",
+      "change": "首版：golden-6r.urdf 六轴黄金导入样例（四清单精确计数＋缺失网格 Recorded＋自碰撞/传动候选）＋Xacro 黄金样例对（宏属性展开＋include 循环透传——AT-31/V-09）——WP-13-T16 §10.1 数据集 4/4（AT-15/17 载体；V-06/V-08 消费面）",
+      "reReviewedBy": "WP-13-T16 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

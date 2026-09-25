@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "mdl-not-expressible-expected/1",
+  "note": "状态级期望（contract-fixture 手工构造——MDL-10 五状态判定/收敛/诊断纪律；firstViolatingJointIndex 为第一阶结构检查\"首个违规关节\"的样本结构推定值，消费测试据此对账诊断 subject）",
+  "samples": [
+    {
+      "id": "prismatic-chain",
+      "expected": {
+        "determination": "NotExpressible",
+        "convergence": "Converged",
+        "diagnosticCode": "MDL-DH-NOT-EXPRESSIBLE",
+        "parametersEmpty": true,
+        "firstViolatingJointIndex": 1
+      }
+    },
+    {
+      "id": "zero-axis",
+      "expected": {
+        "determination": "NotExpressible",
+        "convergence": "Converged",
+        "diagnosticCode": "MDL-DH-NOT-EXPRESSIBLE",
+        "parametersEmpty": true,
+        "firstViolatingJointIndex": 0
+      }
+    },
+    {
+      "id": "fixed-joint",
+      "expected": {
+        "determination": "NotExpressible",
+        "convergence": "Converged",
+        "diagnosticCode": "MDL-DH-NOT-EXPRESSIBLE",
+        "parametersEmpty": true,
+        "firstViolatingJointIndex": 1
+      }
+    },
+    {
+      "id": "approximate-perturbed",
+      "expected": {
+        "determination": "Approximate",
+        "convergence": "Converged",
+        "diagnosticCode": "MDL-DH-APPROXIMATE",
+        "diagnosticHasComparison": true,
+        "errorMetricEPositive": true,
+        "anyDeviationOverTolerance": true,
+        "tolerance": 1e-9,
+        "parameterCount": 2
+      }
+    },
+    {
+      "id": "overflow-origin",
+      "expected": {
+        "determination": "AnalysisFailed",
+        "convergence": "Diverged",
+        "diagnosticCode": "MDL-DH-ANALYSIS-FAILED",
+        "parametersEmpty": true,
+        "deviationsEmpty": true,
+        "solutionSetEmpty": true
+      }
+    }
+  ]
+}

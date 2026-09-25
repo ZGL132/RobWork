@@ -408,6 +408,20 @@ enable_testing()
 #                          L-7 只读门控/装配描述符形状）＋刷新与真值纪律
 #                          （ACC5：L-4 保序重演＋失败手工处置不静默丢弃/
 #                          零缓存纯函数投影/§3.4 UI 线程守卫）
+# T16 增列（tasks/foundation/WP-13-T16.json，acceptance 2/3/4 具名自证；
+#          三文件均两模式编译——被测面为纯函数服务＋testkit 装载校验，
+#          零命令/策略依赖；黄金数据集装载校验要求两模式口径一致）：
+#   test/GoldenDatasetTest.cpp   四数据集＋容差档案装载全链校验（ACC2：
+#                          manifest schema/integrity SHA-256＋固定类不放宽
+#                          ＋fieldPath 可解析＋coveredRequirements 字典 lint
+#                          ——TK-T03/TK-T04 消费面）
+#   test/GoldenTemplateTest.cpp  六轴模板黄金参数全链（ACC3：T-MDL-1 表值
+#                          逐格锁定＋V-01 草稿面＋V-02 七轴登记不启用
+#                          ——AT-01/AT-20 建模侧，D-MDL-7 基线）
+#   test/GoldenImportTest.cpp    URDF 导入黄金全链（ACC3/4：V-06 报告八
+#                          清单计数＋草稿值面＋惯量数据质量门（档案
+#                          inertia.* 条目消费）＋V-09/AT-31 Xacro 黄金宏
+#                          展开与循环透传——AT-15/17/31）
 add_executable(sdurws_ird_modeling_test
     test/TestMainReport.cpp
     test/ObjectTypesTest.cpp
@@ -426,7 +440,10 @@ add_executable(sdurws_ird_modeling_test
     test/CanonicalBridgeTest.cpp
     test/PackageTest.cpp
     test/ModelDiffTest.cpp
-    test/PluginPanelTest.cpp)
+    test/PluginPanelTest.cpp
+    test/GoldenDatasetTest.cpp
+    test/GoldenTemplateTest.cpp
+    test/GoldenImportTest.cpp)
 
 # T08 测试 TU（集成模式专属 gating——POL-T06/T07/T08 同款：ReadinessTest/
 # CommandHandlersTest 消费 policy 行程评估器〔makeJointLimitEvaluator〕，
@@ -464,6 +481,13 @@ if(TARGET sdurw_kinematics)
                                            # （真实编译快照——S5 替身＋S6~S10
                                            # 工厂；消费 runtime 编译产物——
                                            # 冒烟不编入）
+    target_sources(sdurws_ird_modeling_test PRIVATE
+        test/GoldenDhEquivalenceTest.cpp)  # T16 ACC3/4：V-11 黄金全链
+                                           # （闭式展开/roundtrip 参数级/FK
+                                           # 级双一致＋五状态各含样例；消费
+                                           # runtime 公共构造器探针——
+                                           # DhConvertEquivalenceTest 同款
+                                           # gating，冒烟不编入）
 endif()
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)
@@ -561,6 +585,16 @@ if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_modeling_contract_test PRIVATE
         contract_test/CompileBridgeContractTest.cpp)    # ACC3：reader→S5
                                                         # 端到端对齐＋失败面
+    target_sources(sdurws_ird_modeling_contract_test PRIVATE
+        contract_test/GoldenPeerContractTest.cpp)       # T16 ACC5：黄金数据
+                                                        # 集跨单元对端面（io
+                                                        # 导入管线缺失叶契约
+                                                        # ＋V-09 循环透传＋
+                                                        # project 对端 V-01
+                                                        # 收口＋AT-37 输入面；
+                                                        # 消费 policy 评估器
+                                                        # 与 CommandFixtures
+                                                        # ——冒烟不编入）
 endif()
 
 target_compile_features(sdurws_ird_modeling_contract_test PRIVATE cxx_std_17)
