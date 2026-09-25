@@ -115,6 +115,13 @@ find_package(pugixml CONFIG REQUIRED)
 #                        模型单一判定；P-RT-4——modeling 只存参数不存矩阵，
 #                        EAA→R 唯一经 runtime rotationFromCustomEaa 权威
 #                        换算，MDL-22/M-11）
+# T12 增列（tasks/foundation/WP-13-T12.json，§3.3 表 T12 行）：
+#   src/CanonicalBridge.cpp  编译协作桥（§9.1 字段映射表全量唯一实现＋
+#                        §9.2 reader 注入形态——RobotDesignReader/L5 装配
+#                        注入 runtime S2；ICanonicalModelInputBuilder 纯
+#                        函数内核＋ObjectClosureView 闭包域字节源契约；
+#                        DH 权威经 §7.4 展开单一实现、零位折叠 T09 同规、
+#                        O-36 复核范围裁决落地）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -128,7 +135,8 @@ add_library(sdurws_ird_modeling STATIC
     src/Template.cpp
     src/Readiness.cpp
     src/CommandHandlers.cpp
-    src/DhConvert.cpp)
+    src/DhConvert.cpp
+    src/CanonicalBridge.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -271,6 +279,19 @@ endif()
 #                          P-RT-4 权威产出点交叉核对（modeling 只存参数
 #                          不存矩阵——V-12 输入面）；ACC4 编译单一字段
 #                          R_world_base 手算对照＋字节面单字段证据）
+# T12 增列（tasks/foundation/WP-13-T12.json，acceptance 1/2/3/4/5 具名
+#          自证；两模式均编译——被测面为纯函数服务，自持夹具零命令/策略
+#          依赖；共享夹具 test/BridgeFixtures.hpp 同批登记）：
+#   test/CanonicalBridgeTest.cpp  编译协作桥（ACC1 §9.1 字段映射表逐行——
+#                          契约版本同源/robotLocalName/joints Explicit＋
+#                          DH 展开＋零位折叠/links 物性几何/tools 默认
+#                          TCP 居首与 tcpOffset 合成/scene 世界系固连不
+#                          预乘安装旋转/base 编辑表示/drivetrain＋friction/
+#                          resourceRefs 两态＋Fixed 中性轴；ACC2 确定性＋
+#                          无内容身份重算；ACC3 单根字节输入/闭包域解析/
+#                          O-36 复核范围；ACC4 四族错误定位到对象/字段＋
+#                          三层防线边界；ACC5 R-4 名称透传不消歧＋V-26/
+#                          AT-18 输入质量面）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -290,7 +311,8 @@ add_executable(sdurws_ird_modeling_test
     test/XacroExpandTest.cpp
     test/TemplateTest.cpp
     test/BasePlacementEditTest.cpp
-    test/DhConvertTest.cpp)
+    test/DhConvertTest.cpp
+    test/CanonicalBridgeTest.cpp)
 
 # T08 测试 TU（集成模式专属 gating——POL-T06/T07/T08 同款：ReadinessTest/
 # CommandHandlersTest 消费 policy 行程评估器〔makeJointLimitEvaluator〕，
@@ -385,18 +407,28 @@ ird_add_gtest(sdurws_ird_modeling_test)
 # 形态——六条登记边的存在性/封闭性/无业务域互链/testkit 仅测试目标）；
 # WP-13-T08 增列 CommandPipelineContractTest.cpp（acceptance 5：V-19 未
 # 就绪不编译＋V-20 双编译失败面〔modeling 侧可执行范围〕＋V-22 stale
-# 防御面＋§9.5 T08 行九码注册不预建——AT-01）。自有 main 同 _test 目标
-# （报告设施接入）。
+# 防御面＋§9.5 T08 行九码注册不预建——AT-01）。
+# WP-13-T12 增列 DescriptionBridgeContractTest.cpp（acceptance 3：Description
+# 契约面字段集与 runtime.md §4.2 对齐＋schemaVersion↔
+# descriptionContractVersion 同源〔初值 1〕＋reader 失败轨值面契约——
+# 两模式均编译，被测面零框架符号）。自有 main 同 _test 目标（报告设施
+# 接入）。
 add_executable(sdurws_ird_modeling_contract_test
     contract_test/ContractTestMain.cpp
-    contract_test/BuildGraphContractTest.cpp)
+    contract_test/BuildGraphContractTest.cpp
+    contract_test/DescriptionBridgeContractTest.cpp)
 
-# T08 契约测试 TU（集成模式专属 gating——同上：消费 policy 行程评估器与
-# project 命令契约替身，冒烟模式不编入）。
+# T08/T12 契约测试 TU（集成模式专属 gating——同上：T08 消费 policy 行程
+# 评估器与 project 命令契约替身；T12 CompileBridgeContractTest 消费 runtime
+# 公共 CanonicalModelBuilder 装配 S5（T09 RuntimeCompileProbe 同款装配纪律
+# ——产品编译器私有头 R-2 不跨单元 include），冒烟模式均不编入）。
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_modeling_contract_test PRIVATE
         contract_test/CommandPipelineContractTest.cpp)  # ACC5：V-19/V-20/V-22
                                                         # ＋T08 行九码注册
+    target_sources(sdurws_ird_modeling_contract_test PRIVATE
+        contract_test/CompileBridgeContractTest.cpp)    # ACC3：reader→S5
+                                                        # 端到端对齐＋失败面
 endif()
 
 target_compile_features(sdurws_ird_modeling_contract_test PRIVATE cxx_std_17)
