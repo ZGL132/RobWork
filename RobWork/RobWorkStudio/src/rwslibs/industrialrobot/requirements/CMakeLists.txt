@@ -50,6 +50,10 @@ find_package(GTest CONFIG REQUIRED)
 # T03 增列（tasks/foundation/WP-14-T03.json，§3.3 表 T03 行）：
 #   src/RequirementTypes.cpp / Codec.cpp / Editor.cpp / Services.cpp /
 #   Sampling.cpp——值模型/canonical 编解码/编辑器/领域服务/采样定义。
+# T04 增列（tasks/foundation/WP-14-T04.json，§3.3 表 T04 行）：
+#   src/Import.cpp——CSV/JSON 导入映射＋字段字典＋单位预览＋副本导出
+#   （io 边五条登记边中 io 值类型的真实消费面——T02 期"仅链接不消费"
+#   的回填，P-RPT-9 先例）。
 add_library(sdurws_ird_requirements STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -58,7 +62,8 @@ add_library(sdurws_ird_requirements STATIC
     src/Codec.cpp
     src/Editor.cpp
     src/Services.cpp
-    src/Sampling.cpp)
+    src/Sampling.cpp
+    src/Import.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：requirements 公共头使用 C++17 设施（std::string_view/
@@ -180,6 +185,10 @@ endif()
 #                              KIN-04 冻结前提）
 #   test/EditorTest.cpp        载入/编辑/撤销重做/删除引用保护/O-36 锚
 #                              （T03 acceptance 4/5）
+#   test/ImportTest.cpp        CSV 行级部分成功/字段字典自动识别/单位预览
+#                              与 SI 归一/JSON roundtrip 副本导出/公式按数
+#                              据解析/纯函数确定性（T04 acceptance 1~6——
+#                              V-08/V-09/V-10 观测点，AT-02/AT-24）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/modeling 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -195,7 +204,8 @@ add_executable(sdurws_ird_requirements_test
     test/CodecTest.cpp
     test/ServicesTest.cpp
     test/SamplingTest.cpp
-    test/EditorTest.cpp)
+    test/EditorTest.cpp
+    test/ImportTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_test PROPERTIES
