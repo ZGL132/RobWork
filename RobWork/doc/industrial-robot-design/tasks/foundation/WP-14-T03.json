@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "实现任务点/区域/工况领域对象与 canonical 编解码（含采样计划定义）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-14-T02"
   ],
