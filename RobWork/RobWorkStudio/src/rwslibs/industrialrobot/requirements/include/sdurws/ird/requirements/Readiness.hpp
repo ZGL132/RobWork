@@ -205,6 +205,29 @@ struct CheckContext {
 };
 
 /**
+ * @brief 闭包浅核对（§8.1 跨闭包半区的单点实现——WP-14-T06 起由文件内
+ *        私有辅助提升为公共自由函数，供就绪层与姿态规则解析面共用同一
+ *        份核对语义，NFR-MNT-04 无第二套判定）。
+ *
+ * 核对规则（§8.1 专项声明字面）：目标 ObjectId 存在于 ctx.closureRefs
+ * 且其登记 objectTypeToken 与 expectedToken 一致——**仅读元数据两字段**
+ * （objectId/objectTypeToken），不解码 modeling 对象字节（R-1 红线）。
+ *
+ * @param ctx           [in] 闭包 objectRefs 元数据（只读）
+ * @param oid           [in] 待核对目标对象
+ * @param expectedToken [in] 期望对象类型 token（expectedTargetToken 的
+ *                      产出——RequirementTypes.hpp 匹配表单点）
+ * @return 通过＝nullopt；违例＝人读中文原因（悬空/token 失配——供诊断
+ *         cause 复用；机器判别以稳定码 REQ-READY-REF-MISSING 为准）
+ *
+ * 纯函数；线程安全；确定性（线性扫描＝输入序，保序不依赖哈希——与
+ * Readiness 内部查找同款确定性取舍）。
+ */
+std::optional<std::string> closureRefViolation(const CheckContext& ctx,
+                                               const core::ObjectId& oid,
+                                               std::string_view expectedToken);
+
+/**
  * @brief 单条就绪发现（§12 ui 交接行 DomainReadinessItem 数据的承载）。
  *
  * ★ P-REQ-6 边界（契约 acceptance 7）：本结构只有三个字段——层（哪项
