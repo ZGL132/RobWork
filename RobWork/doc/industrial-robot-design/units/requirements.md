@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.5（2026-09-26，WP-14-T05 落位登记——§14.6；v0.1 首版草案 2026-09-22，WP-14-T01 交付物） |
+| 文档版本 | v0.7（2026-09-26，WP-14-T07 落位登记——§14.6；v0.6 表头行漏同步已随本版补正——F-369；v0.1 首版草案 2026-09-22，WP-14-T01 交付物） |
 | 日期 | 2026-09-26（v0.5）；2026-09-22（v0.1） |
 | 状态 | **`Draft`**（待评审；DETAILED-DESIGN.md 单元状态表中的"requirements｜待产出"以本卡落盘为准，索引行同步由治理侧执行，本卡不代改） |
 | 文档代号 | UNIT-REQ |
@@ -738,16 +738,28 @@ protected:
 };
 
 /// 支撑：模板/镜像/阵列服务（§7.1/§7.2）与 canonical 编解码（core §6.3 分工登记）。
+/// 【WP-14-T07 落位修订（§14.6 v0.7 等价调整登记）】：①applyMirror 源入参
+///   由 ObjectId 列表修订为源条目值列表 `std::vector<TaskPoint>`——纯函数
+///   服务无状态，仅凭 ObjectId 无法解析出源条目值，源值必须随入参给出；
+/// ②ArrayParams 内嵌 `sources`（源条目值数组）同理；③重生成"手改"判定
+///   ＝参数快照确定性重算＋逐名称配对（除 ObjectId/溯源外任一字段差异
+///   即手改）；④"解除关联"落位为同头自由函数 `unlinkGenerator(entries,
+///   instanceId)`（linked→false，其余字节保持）；⑤生成器标识词表：
+///   `template:<小写连字符 kind token>`/`mirror`/`array:<…>`。
 class ITemplateArrayService {
 public:
     virtual EditBatch applyTemplate(TemplateKind kind, const TemplateParams& params) const = 0;
-    virtual EditBatch applyMirror(const std::vector<ObjectId>& sources,
+    virtual EditBatch applyMirror(const std::vector<TaskPoint>& sources,
                                   const MirrorPlaneSpec& plane) const = 0;
     virtual EditBatch applyArray(ArrayKind kind, const ArrayParams& params) const = 0;
     /// @brief 重生成：替换 linked∧未手改 条目；手改条目→冲突诊断清单（不静默覆盖）。
+    ///        （替换面＝newPoints 仅含未手改候选＋replaceNames 同名清单——
+    ///        手改保留条目同名候选不进批次，避免编辑器集合级名称核对整批拒绝。）
     virtual RegenerateOutcome regenerate(const RequirementWorkingSet& ws,
-                                         const ObjectId& generatorInstanceId) const = 0;
+                                         const std::string& generatorInstanceId) const = 0;
 };
+std::vector<TaskPoint> unlinkGenerator(const std::vector<TaskPoint>& entries,
+                                       const std::string& generatorInstanceId);
 class IRequirementCodec {
 public:
     virtual Expected<std::vector<std::uint8_t>, RequirementError> encode(
@@ -774,8 +786,9 @@ public:
 | `REQ-IMPORT-DUPLICATE-ID` | error | 导入重复 id/name | T04 |
 | `REQ-IMPORT-UNIT-ILLEGAL` | error | 单位声明无法换算/列缺失 | T04 |
 | `REQ-IMPORT-FRAME-UNKNOWN` | warning | Frame 引用浅悬空（可保留为待解析） | T04 |
-| `REQ-DERIVE-MIRROR-PENDING` | warning | 姿态规则不可镜像→PendingManualResolution | T07 |
-| `REQ-DERIVE-REGENERATE-CONFLICT` | warning | linked 条目已手改，重生成冲突 | T07 |
+| `REQ-DERIVE-MIRROR-PENDING` | warning | 姿态规则不可镜像→PendingManualResolution | T07〔已落位——WP-14-T07；分类 ResourceMissing，paramSchema `["entry","rule","target"]`〕 |
+| `REQ-DERIVE-REGENERATE-CONFLICT` | warning | linked 条目已手改，重生成冲突 | T07〔已落位——WP-14-T07；分类 ResourceMissing，paramSchema `["entry","instance"]`〕 |
+| `REQ-DERIVE-SOURCE-REMOVED` | warning | 被 linked 批次引用的源条目已删除（允许删除＋提示"仍有 N 条 linked 派生"——§7.2 删除保护行的承载面） | T07 表尾增登〔WP-14-T07 实现期增登先例——PLAN-MISSING 同款；分类 ResourceMissing，paramSchema `["entry","linked-derived"]`〕 |
 | `REQ-SCHEMA-UNSUPPORTED` | error | 对象 schema 主版本超出支持 | T02/T03 |
 | `REQ-CAPTURE-STATE-STALE` | warning | TCP 捕获时会话状态与当前快照不一致（REQ-10 确认流） | T06〔已落位〕 |
 
@@ -1016,6 +1029,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v0.7 | 2026-09-26 | WP-14-T07 落位登记：`TemplateArray.hpp/.cpp` 公共头＋实现 TU 落位（§3.3 表 T07 行）——`ITemplateArrayService`/`TemplateArrayService`（applyTemplate/applyMirror/applyArray/regenerate 四出口＋自由函数 unlinkGenerator）。①六类工艺模板（§7.1）：TemplateKind 词表 6 值逐类黄金默认参数（defaultTemplateParams——网格规模 1×2/1×3/2×2/1×1/1×1/1×2、间距 0.5/0.4/0.3 m、ReferenceZ 进退 0.1 m、Fixed (0,0,0) rad、默认容差、ProcessTag 就近映射 Pick/MachineLoad/Place/Inspect/ToolChange/Handover——黄金锁定，修改即语义变更）；产物 source=UserProvided＋methodTag=template-…（D-REQ-4 非 DerivedReadOnly，可继续手改）。②工位镜像（§7.2）：过参考系镜像面（MirrorPlaneSpec＝refFrame＋法向）反射——位置反射 p−2(n·p)n（等距）、姿态反射共轭 R'=M·R·M 后 Z-Y-X 提取（万向锁 roll'=0 确定约定）——黄金闭式：法向 X→(+roll,−pitch,−yaw)、法向 Y→(−roll,+pitch,−yaw)、法向 Z→(−roll,−pitch,+yaw)（绕法向轴旋转分量与反射对易不变）；Fixed/PointAtTarget/ToolRollFree 正常镜像（滚转区间反手性 [min,max]→[−max,−min]），AlignFrame/AlignGeometryNormal 保留规则原样＋参数快照 orientation-pending 标记＋REQ-DERIVE-MIRROR-PENDING（不静默降级为 Fixed）；派生条目 sequenceKey 不继承（前驱名引用——原样继承即 R7 重复键）、importProvenance 不继承（来源事实不随派生失真）。③四类阵列（§7.2）：Linear（方向/间距/数量）、Rectangular（两向/行×列）、Circular（圆心/半径/起角/步距/数量——refFrame XY 平面）、Polyline（折线顶点/弧长间距——条数 floor(总弧长/间距) 派生）逐一黄金断言。④重生成/解除关联（§7.1/§7.2）：手改判定＝参数快照确定性重算＋逐名称配对（内容等值比较忽略 ObjectId/generation）；REQ-DERIVE-REGENERATE-CONFLICT 逐条 warning、手改条目原样保留不静默覆盖；unlinkGenerator（linked→false，参数快照留痕不失真）。⑤编辑器批次入口（§9.3）：applyEdit(EditBatch) 重载——批量原子性（任一条目/替换名校验失败整批拒绝；接受＝恰一次撤销入栈一次整体回滚）＋替换名核验（appliesTo/events 引用保护 §5.1 同源）＋批次警告诊断经 EditOutcome.diagnostics 透传；删除被 linked 批次引用的源条目＝允许＋REQ-DERIVE-SOURCE-REMOVED 提示"仍有 N 条 linked 派生"（§7.2 删除保护行）。⑥派生无环（§7.2）：溯源为一次性参数快照（源 ObjectId 仅以 "source-id" 字符串键入参数快照——非活性链接），再派生＝以其为源生成新批次（溯源链留痕），零活性传播。⑦§9.6 T07 行 2 码随消费者注册＋表尾增登 1 码 REQ-DERIVE-SOURCE-REMOVED（§7.2 删除保护提示分支原 14 码无承载面——T05 批 PLAN-MISSING 实现期增登同款先例），DiagCodes 工厂清单 13→16 表尾追加、DiagCodesTest 分批封闭断言随附同步（§9.6 表至此全量登记完毕）。⑧增量登记（DTB §5.4 等价调整，§9.5 代码块已随本版修订）：applyMirror 源入参由 ObjectId 列表修订为源条目值列表、ArrayParams 内嵌 sources——纯函数服务无状态无法以 ObjectId 解析源值（基类 T05 钩子"只传工作集"同源取舍）；regenerate 的 instanceId 载体以 std::string 承载（GenerationProvenance.instanceId 即 string——卡面 ObjectId 字面以 string 等价承载）；重生成替换面 newPoints 仅含未手改候选＋replaceNames（保同名候选不进批次，避免编辑器集合级名称核对整批拒绝）。⑨实现决策：批次内名称消歧＝确定性试缀（"-2"、"-3"…）——只保批次内部自洽，与工作集既有名冲突由编辑器 I-REQ-3 集合级核对整批拒绝（服务无工作集视图，越界拒绝归编辑边界）；参数快照数值文本化＝"%.17g"（IEEE754 无损往返）＋strtod 全消费解析。无语义偏差（⑧为签名等价承载登记） |
 | v0.6 | 2026-09-26 | WP-14-T06 落位登记：`OrientationResolution.hpp/.cpp`＋`Capture.hpp/.cpp` 四公共头/实现 TU 落位（§3.3 表 T06 两行）。①姿态规则浅解析 `resolveOrientationRule`（§5.3 隔离声明落位——"规则'解析'＝把规则参数解析为确定性参考姿态/方向并记录来源 resolution"）：五规则各建样例产出确定性解析值（Fixed＝参数字面 rad/Z-Y-X 不归一等效角、PointAtTarget＝refFrame 系单位方向、ToolRollFree＝滚转区间、AlignFrame/AlignGeometryNormal＝闭包浅核对通过的目标 ObjectId＋特征语义——数值姿态/法向归评估时深度解析，本层零坐标变换零姿态求解）；resolution 留痕＝`OrientationResolution{kind＋targetObjectId＋解析值}`（AT-23/V-03 观测点）。②失败可定位（acceptance 2）：参数面复用 `validateOrientationRule` 单点（零向量/rollRange 逆序/缺 feature/非有限角）＋稳定码 REQ-READY-POSE-ILLEGAL；引用面复用闭包浅核对（悬空/token 失配）＋REQ-READY-REF-MISSING——诊断 subject/localName 回指需求条目（objectId＋name）；**§8.1 浅校验边界**：仅读 objectRefs 的 oid/token 元数据、不解码 modeling 对象字节（用例全程无 modeling 对象的结构性自证）。③三维拾取/TCP 捕获域侧 `IRequirementCaptureService`（§9.8 L-R6/L-R7）：两写入口均以 `CaptureConfirmation` 必填参数承接 ui §9.2 确认对话桥**结果**（C-2 同构不变量：Confirmed⇔principal 非空；Pending/Rejected 同走零变更）——确认门先于一切写路径，接口面无绕过确认的入口（acceptance 4：编译期成员形状静态断言＋运行期取消/未决/凭据违约三形态零变更负向用例）；L-R7 产物条目 source=UserProvided＋methodTag=captured-tcp（§5.1 来源标记行，R-REQ-5 缓解第二半）；L-R6 拾取结果装配 AlignFrame/AlignGeometryNormal 更新目标任务点（其余字段原样保留）；未应用不失效＝服务接口面无任何 project 写端口（草稿唯一写目标——结构保证）＋重载基线后工作集/基线对象字节零变化用例。④§9.6 T06 行 `REQ-CAPTURE-STATE-STALE` 随消费者注册（DiagCodes 工厂清单 12→13 表尾追加，DiagCodesTest 分批封闭断言随附同步；分类 ResourceMissing——会话基线相对草稿基线 Changed）；**空基线口径实现决策**：编辑器闭包抽象不携带修订身份（Editor.hpp 载入注），draftStatus().baseRevisionId 为空串——严格相等对账下带会话基线的捕获恒登记 STALE（保守知情：基线未标注即无法证明一致；命令提交面补齐基线 id 后对账自然精确化），warning 不阻断、重捕可消除（UserRetry）。⑤实现决策登记：Readiness.cpp 文件内私有辅助 `closureRefViolation` 提升为公共自由函数（§8.1 浅核对语义单源——就绪层与解析层共用，行为零变化）；STALE 对账仅 L-R7 承载（§9.6 行语义钉在"TCP 捕获时"——L-R6 拾取无会话修订键，不扩面）。§12 ui 交接行落位标记同步。无语义偏差 |
 | v0.5 | 2026-09-26 | WP-14-T05 落位登记：`Readiness.hpp/.cpp`＋`CommandHandlers.hpp/.cpp` 四公共头/实现 TU 落位（§3.3 表 T05 两行）。①`IRequirementReadinessChecker`（§9.5 原文签名）——R0~R9 分层就绪校验（§8.1 表逐行，短路优先；Blocking/Warning/NotApplicable 三级），CheckContext 闭包元数据浅校验（仅读 objectRefs 的 oid/token——§8.1 浅引用边界），`readinessSummary` 两字段投影（evidence §6.4① 值类型直投）；**层-码映射**（Readiness.hpp 文件头登记）：R0 根引用表→REF-MISSING、R1/R2→REF-MISSING、R3→POSE-ILLEGAL、R4 悬空绑定→REF-MISSING（"引用悬空"语义就近承载）、R5→NO-REQUIRED-CASE（Warning）、R6→PLAN-DEGENERATE＋PLAN-MISSING（零计划 Warning）、R7→SEQ-CYCLE、R8→REF-MISSING、R9→SCHEMA-UNSUPPORTED；条目 id/name 不变量违约＝调用方前置 fail-fast（错误二分——不产诊断）；条目级各层仅判启用条目（§4.3 enabled 行——ACC3「任一启用的 Must 条目」口径）。②R7 复用 `TaskPointService::checkSequence`（区域以同名/同键探针复用——零算法复制）、R5/R9 复用 `resolveRequiredCases`（P-EV-9 单点）——NFR-MNT-04。③O-39 处置（acceptance 5，消解 P-REQ-3）：`readinessSummary(check(ws,ctx))` 可重入纯函数投影面，修订内不持久化就绪结论；valid 面＝报告无 Blocking（Should/集合级非法同样使输入不可消费——保守门禁），invalidMustItems＝enabled∧Must 条目全量清单（check 内计算、summary 零重算）。④`IRequirementCommandHandler` 基类＋`apply-requirement-set`/`apply-requirement-import`（O-35 无点 token——P-REQ-5 随裁决消解）：prepare 管线 decode→基线同源重建（防御性复核 fail-fast）→通用槽校验→钩子装配（PA-1 取号）→**就绪 R0~R9 现场重估**（候选闭包后像；Blocking→RejectedHardAssert＋逐项定位＋REQ-READY-INPUT-INCOMPLETE 汇总一条；Warning→随 diags 留痕）→计划最终化（requiresDualCompile=false——需求对象不进 WorkCell 描述；confirmableFindings 恒空——SA-15 不私设）；快照式逆命令＝受影响对象前版字节（首次应用无前版＝nullopt）；import 附加导入溯源完整性断言（I-REQ-8：任务点/区域条目溯源在场＋摘要非全零＋行号≥1——工况/计划条目无溯源字段不适用）。⑤实现决策登记：§9.5 钩子签名只传工作集（值模型无五对象存储 oid），职责切分＝基类持基线条目面做通用校验/inverse、钩子做候选装配；Apply 恒含根槽（修订闭包锚），根字节恒由候选根重编码（挂载增量随根持久化），载荷根字节引用与取号挂载的一致性由就绪 R0 闭包核对兜底。⑥§9.6 T05 行六码随消费者注册＋表尾增登 `REQ-READY-PLAN-MISSING`（§8.1 R6"Warning（零计划）"分支原六码无 warning 级承载——modeling WP-13-T10 实现期增登先例），DiagCodes 工厂清单 5→12、DiagCodesTest 分批封闭断言随附同步。⑦R8"Warning（PendingManualResolution 姿态规则）"分支依赖 T07 派生流状态标记（现值模型无承载字段），随 T07 落位增补——本层不私建状态语义（NFR-COR-03）。P-REQ-6 边界声明：DomainReadinessItem 恰三字段呈现数据，报告不含门控动作语义（用例 ReqReadiness.PReq6ReportCarriesNoGateAction_ACC7 断言）。§12 evidence/workflow 行落位标记同步。无语义偏差 |
 | v0.4 | 2026-09-26 | WP-14-T04 落位登记：`Import.hpp/.cpp` 公共头＋实现 TU 落位（§3.3 表 T04 行）——`IRequirementImporter`/`RequirementImporter`（mapCsv/mapJson/exportCopy/fieldDictionary 四出口）、字段字典冻结表（§7.3 20 字段＋中英别名表＋必备集 {id,name,x,y,z}＋长度/角度/无单位/文本列种类，`FieldDictionary`/`autoDetectMapping`）、单位声明与预览（`ImportUnitOptions`/`previewUnitConversion`——与 mapCsv 同一声明校验/换算入口，落库经 core 唯一换算归一 SI，NFR-COR-03）、行级部分成功（`ImportOutcome{status,entries,rowErrors,ignoredColumns,defaultedFields,sourceDigest,sourceMarkedDraft}`——REQ-IMPORT-ROW-ERROR/DUPLICATE-ID 行级、UNIT-ILLEGAL 列级/结构级、FRAME-UNKNOWN 警告级）、副本导出（CSV 经 io ICsvWriter canonical 写出＋内部原子替换；JSON 经 canonicalizeJson＋IAtomicFileWriter OverwriteAtomic——失败旧文件完好）。增量登记：①§9.6 T04 行 4 码随消费者注册（DiagCodes 工厂清单 1→5 表尾追加，DiagCodesTest 分批封闭断言 1→5 随附同步——T03 期 8→9 ErrorsTest 先例同源）；②卡面 §9.5 `io::ExportTarget` 以 requirements 侧 `ExportTarget{filePath,draft}` 等价承载（io 磁盘基线无该类型——P-REQ-8 处置：io.md §9.0"等价调整、语义不变"；CSV draft 导出无标记通道→值面拒绝 fail-visible）；③CSV 源摘要＝RawTable 规范投影 SHA-256（io 流式契约不回传文件字节——通道内内容寻址自洽）；JSON 源摘要＝输入字节 SHA-256；④行号口径＝RawTable 数据行序/JSON 记录序（1 起——RawTable 不携带物理行号）；⑤导入条目 ObjectId 恒全零待命令 prepare 分配（§7.3 原文＋O-36——纯函数确定性与随机分配解耦）；⑥导出 id 列＝ObjectId 规范文本，草稿（全零）合成占位 "draft-<条目序>"（去重键非空语义保持——确定性合成）；⑦引用文本语法：ref_frame ∈ {World|model:<obj->|scene:<obj->|裸 <obj->→ModelFrame＋FRAME-UNKNOWN}、tcp ∈ {DefaultTcp|tool:<obj->|<tcpKey>}；⑧JSON 通道未知记录键＝行级错误（NFR-DEP-04 不静默吞字段——与 CSV 多余列"忽略清单"分域，顶层未知键经 io profile Reject）；⑨词表可选列空单元格＝字典缺省（不判词表外）；⑩坐标表通道导出仅 Fixed 姿态规则参数字面（非 Fixed 规则条目完整参数不经本通道——正式工件通道承载）。§12 io 交接行同步落位标记（acceptance 2 登记义务）。无语义偏差 |
