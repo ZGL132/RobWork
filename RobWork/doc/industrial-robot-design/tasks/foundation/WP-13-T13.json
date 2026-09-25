@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现规范模型包导出/导入 roundtrip",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T03",
     "IO-T04",
