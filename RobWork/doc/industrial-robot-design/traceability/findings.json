@@ -3626,6 +3626,26 @@
       "title": "F-362 残余：T03 送验提交已以 requirements/CMakeLists.txt 注释（「集成模式下 sdurw_math 经 sdurws_ird_core 的 PUBLIC 边传递可达」）与 units/requirements.md §14.6 v0.3⑤（rw::math 头依赖随集成/冒烟两模式注入、零新增链接边）部分覆盖链接形态口径，但「core=直连/io=传染」的两义区分仍未在卡 §3.2 边表本体明示",
       "owner": "requirements 文档所有者（卡 §3.2 补一句明示后可同时关闭 F-362 与本条）",
       "resolution": "编号顺延自 F-364。"
+    },
+    {
+      "id": "F-366",
+      "source": "traceability/acceptance/WP-14-T04-20260926.md §1/4.9（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-012/F-100/F-361/F-364 标题家族再现（一次一例）：WP-14-T04 两个送验提交 110d8457（「实现需求 CSV/JSON 导入与副本导出（字段字典/单位预览/逐行错误）」）与 e63fba9a（「登记 WP-14-T04 验证留痕（构建/测试/门禁证据）」）标题均无 [WP-14-T04] 前缀，不合 ACC §4.9／AGENTS §6.3 标题格式「[任务编号] 动词开头」；两提交正文四段齐备、验证结论经验收者独立复算逐项一致（75/75、5/5、ctest 2/2、门禁 127=127 零新增），纯风格瑕疵、无粉饰",
+      "owner": "WP-14-T04 实施面（后续提交规避；不追溯改写已推送提交——AGENTS §6.3 禁改写远程历史）",
+      "resolution": "编号顺延自 F-365。"
+    },
+    {
+      "id": "F-367",
+      "source": "traceability/acceptance/WP-14-T04-20260926.md §1/4.3（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352/F-358 家族新例：tasks/foundation/WP-14-T04.json verify 数组缺两测试目标（sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test）的显式构建行（仅库名构建＋ctest＋validate-docs 三行）——ctest 行存在故测试二进制有构建口径依赖但无字面构建命令，全新构建树按 verify 清单逐条执行会因测试 exe 未构建而失败；验收者已按家族在案口径在全新构建树自行补建两目标并执行（75/75＋5/5 双模式全绿），属验收者侧正常动作；建议契约模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行",
+      "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
+      "resolution": "编号顺延自 F-366。"
     }
   ]
 }
