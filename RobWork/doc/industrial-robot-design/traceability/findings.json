@@ -3466,6 +3466,16 @@
       "title": "Fixed 关节轴中性填充的 provenance 标记文实不符（F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343 散文失准家族新增一例）：units/modeling.md v0.14 ②与 modeling/src/CanonicalBridge.cpp 文件头③均称填充带「DerivedReadOnly＋methodTag \"fixed-axis-neutral\"」，但该标记无任何承载面——runtime JointDescription.axis 为裸 Vector3D（runtime/Description.hpp:253，无 SourcedValue/provenance 位）、全库 grep 该 methodTag 仅实现注释一处；实际只有 +Z 确定性填充值面（功能真实、FixedJointAxisNeutralFill_UT 钉住），声明的标记无处落地",
       "owner": "modeling 卡所有者（文档收窄：v0.14 ②与实现文件头③改为「+Z 确定性填充；Description 轴字段无 provenance 承载」）；如需真实标记须先经 runtime Description 契约增量引入轴 provenance 位（P-MDL-8 单点演进通道），不得在 modeling 侧私设",
       "resolution": "编号顺延自 F-348。"
+    },
+    {
+      "id": "F-350",
+      "source": "traceability/acceptance/WP-13-T13-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行并核对目标构建行完备性）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "tasks/foundation/WP-13-T13.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行（ctest -L \"^ird$\" 条目含该目标）且缺 sdurws_ird_io_test 构建行（ctest -R sdurws_ird_io_test 条目的前置目标）——F-300/F-304/F-310/F-314/F-338/F-344/F-345 家族（契约 verify 缺目标构建行）在 T13 契约复发；全新构建树按清单逐条执行至 ctest 条目时报目标不存在/Not Run，须验收者补建目标方可全量执行",
+      "owner": "契约编译会话（后续契约补齐 contract_test 与对端 io_test 的构建行；T08 契约曾自愈列全三目标，可在下次契约编译批量对齐）",
+      "resolution": "编号顺延自 F-349。"
     }
   ]
 }
