@@ -1,0 +1,136 @@
+[==========] Running 52 tests from 9 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from ReqObjTypes
+[ RUN      ] ReqObjTypes.FiveObjectTypeTokensMatchCardSection41_WP14T02_ACC3
+[       OK ] ReqObjTypes.FiveObjectTypeTokensMatchCardSection41_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.SchemaVersionConstantsAreOne_WP14T02_ACC3
+[       OK ] ReqObjTypes.SchemaVersionConstantsAreOne_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.ProcessTagVocabularyElevenValuesRoundTrip_WP14T02_ACC3
+[       OK ] ReqObjTypes.ProcessTagVocabularyElevenValuesRoundTrip_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.ProcessTagUnknownTokenRejected_WP14T02_ACC3
+[       OK ] ReqObjTypes.ProcessTagUnknownTokenRejected_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.TemplateKindVocabularySixValuesRoundTrip_WP14T02_ACC3
+[       OK ] ReqObjTypes.TemplateKindVocabularySixValuesRoundTrip_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.ArrayKindVocabularyFourValuesRoundTrip_WP14T02_ACC3
+[       OK ] ReqObjTypes.ArrayKindVocabularyFourValuesRoundTrip_WP14T02_ACC3 (0 ms)
+[----------] 6 tests from ReqObjTypes (0 ms total)
+
+[----------] 4 tests from ReqErrors
+[ RUN      ] ReqErrors.TokenTableCompleteAndDistinct_WP14T02_ACC3
+[       OK ] ReqErrors.TokenTableCompleteAndDistinct_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqErrors.TokenDeterministicAndAnchoredToCard_WP14T02_ACC3
+[       OK ] ReqErrors.TokenDeterministicAndAnchoredToCard_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqErrors.ErrorValueSemanticsOrderedParams_WP14T02_ACC3
+[       OK ] ReqErrors.ErrorValueSemanticsOrderedParams_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqErrors.DiagCodeMappingStagedRows_WP14T02_ACC3
+[       OK ] ReqErrors.DiagCodeMappingStagedRows_WP14T02_ACC3 (0 ms)
+[----------] 4 tests from ReqErrors (0 ms total)
+
+[----------] 4 tests from ReqDiagCodes
+[ RUN      ] ReqDiagCodes.FactoryScopeIsStagedRows_WP14T02_ACC3
+[       OK ] ReqDiagCodes.FactoryScopeIsStagedRows_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqDiagCodes.DescriptorFieldsMatchSection96Row_WP14T02_ACC3
+[       OK ] ReqDiagCodes.DescriptorFieldsMatchSection96Row_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqDiagCodes.RegistersIntoStableCodeRegistry_WP14T02_ACC3
+[       OK ] ReqDiagCodes.RegistersIntoStableCodeRegistry_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqDiagCodes.DuplicateRegistrationRejected_WP14T02_ACC3
+[       OK ] ReqDiagCodes.DuplicateRegistrationRejected_WP14T02_ACC3 (0 ms)
+[----------] 4 tests from ReqDiagCodes (0 ms total)
+
+[----------] 4 tests from ReqBuildRedLine
+[ RUN      ] ReqBuildRedLine.ProductFaceHasZeroQtIncludes_WP14T02_ACC1
+[       OK ] ReqBuildRedLine.ProductFaceHasZeroQtIncludes_WP14T02_ACC1 (4 ms)
+[ RUN      ] ReqBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP14T02_ACC4
+[       OK ] ReqBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP14T02_ACC4 (3 ms)
+[ RUN      ] ReqBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP14T02_ACC4
+[       OK ] ReqBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP14T02_ACC4 (3 ms)
+[ RUN      ] ReqBuildRedLine.ProductFaceFilesNonEmpty_WP14T02_ACC1
+[       OK ] ReqBuildRedLine.ProductFaceFilesNonEmpty_WP14T02_ACC1 (2 ms)
+[----------] 4 tests from ReqBuildRedLine (12 ms total)
+
+[----------] 12 tests from ReqInvariants
+[ RUN      ] ReqInvariants.IREQ1_SortAndCanonicalOrder_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ1_SortAndCanonicalOrder_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ2_CrossSetIdDuplicateRejected_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ2_CrossSetIdDuplicateRejected_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ3_DuplicateNameRejectedNoSilentRewrite_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ3_DuplicateNameRejectedNoSilentRewrite_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ4_ReferenceKindPayloadMatch_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ4_ReferenceKindPayloadMatch_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ5_ConstrainedDofAndTolerance_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ5_ConstrainedDofAndTolerance_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ6_BoxCoverageCounts_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ6_BoxCoverageCounts_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ7_SequenceContractAnchored_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ7_SequenceContractAnchored_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ8_ImportProvenanceHasNoPathField_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ8_ImportProvenanceHasNoPathField_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ9_MandatoryDerivedOnly_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ9_MandatoryDerivedOnly_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ10_GenerationNoSourceReference_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ10_GenerationNoSourceReference_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.ValidateTaskPointSegmentsShortCircuit_WP14T03_ACC1
+[       OK ] ReqInvariants.ValidateTaskPointSegmentsShortCircuit_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.LevelVocabularyTwoValuesOnly_WP14T03_ACC1
+[       OK ] ReqInvariants.LevelVocabularyTwoValuesOnly_WP14T03_ACC1 (0 ms)
+[----------] 12 tests from ReqInvariants (1 ms total)
+
+[----------] 4 tests from ReqCodec
+[ RUN      ] ReqCodec.RoundtripAllFiveObjectsFieldWise_WP14T03_ACC2
+[       OK ] ReqCodec.RoundtripAllFiveObjectsFieldWise_WP14T03_ACC2 (0 ms)
+[ RUN      ] ReqCodec.DeterministicBytesAndOrderInsensitive_WP14T03_ACC2
+[       OK ] ReqCodec.DeterministicBytesAndOrderInsensitive_WP14T03_ACC2 (0 ms)
+[ RUN      ] ReqCodec.UnsupportedMajorVersionRejectedWithGuidance_WP14T03_ACC2
+[       OK ] ReqCodec.UnsupportedMajorVersionRejectedWithGuidance_WP14T03_ACC2 (0 ms)
+[ RUN      ] ReqCodec.ProfileNeverEncodedVariantClosed_WP14T03_ACC2
+[       OK ] ReqCodec.ProfileNeverEncodedVariantClosed_WP14T03_ACC2 (0 ms)
+[----------] 4 tests from ReqCodec (0 ms total)
+
+[----------] 8 tests from ReqServices
+[ RUN      ] ReqServices.CreatePointErrorSemanticsPerItem_WP14T03_ACC4
+[       OK ] ReqServices.CreatePointErrorSemanticsPerItem_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.CreateRegionErrorSemantics_WP14T03_ACC4
+[       OK ] ReqServices.CreateRegionErrorSemantics_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.CreateConditionErrorSemantics_WP14T03_ACC4
+[       OK ] ReqServices.CreateConditionErrorSemantics_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.ResolveRequiredCasesFrozenSchema_WP14T03_ACC4
+[       OK ] ReqServices.ResolveRequiredCasesFrozenSchema_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.OrientationRuleIllegalParamsRejected_WP14T03_ACC4
+[       OK ] ReqServices.OrientationRuleIllegalParamsRejected_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.IREQ7_SequenceAcyclicPositive_WP14T03_ACC1
+[       OK ] ReqServices.IREQ7_SequenceAcyclicPositive_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqServices.IREQ7_SequenceCycleAndDuplicateAndDangling_WP14T03_ACC1
+[       OK ] ReqServices.IREQ7_SequenceCycleAndDuplicateAndDangling_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqServices.O36_SubEntryObjectIdModelInternalAnchor_WP14T03_ACC5
+[       OK ] ReqServices.O36_SubEntryObjectIdModelInternalAnchor_WP14T03_ACC5 (0 ms)
+[----------] 8 tests from ReqServices (0 ms total)
+
+[----------] 5 tests from ReqSampling
+[ RUN      ] ReqSampling.GridBySpacingNormalizationDeterministic_WP14T03_ACC3
+[       OK ] ReqSampling.GridBySpacingNormalizationDeterministic_WP14T03_ACC3 (0 ms)
+[ RUN      ] ReqSampling.PlanDigestIdentityForSynonymousPlans_WP14T03_ACC3
+[       OK ] ReqSampling.PlanDigestIdentityForSynonymousPlans_WP14T03_ACC3 (0 ms)
+[ RUN      ] ReqSampling.ZeroSamplePlanLegalStorage_WP14T03_ACC3
+[       OK ] ReqSampling.ZeroSamplePlanLegalStorage_WP14T03_ACC3 (0 ms)
+[ RUN      ] ReqSampling.BuilderInterfaceHasNoSampleExit_WP14T03_ACC3
+[       OK ] ReqSampling.BuilderInterfaceHasNoSampleExit_WP14T03_ACC3 (0 ms)
+[ RUN      ] ReqSampling.BuildPlanErrorSemantics_WP14T03_ACC3
+[       OK ] ReqSampling.BuildPlanErrorSemantics_WP14T03_ACC3 (0 ms)
+[----------] 5 tests from ReqSampling (0 ms total)
+
+[----------] 5 tests from ReqEditor
+[ RUN      ] ReqEditor.LoadBaselineFromClosure_WP14T03_ACC4
+[       OK ] ReqEditor.LoadBaselineFromClosure_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqEditor.ApplyEditUndoRedoFlow_WP14T03_ACC4
+[       OK ] ReqEditor.ApplyEditUndoRedoFlow_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqEditor.ApplyEditRejectionsKeepBytesUntouched_WP14T03_ACC4
+[       OK ] ReqEditor.ApplyEditRejectionsKeepBytesUntouched_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqEditor.RemoveReferenceProtection_WP14T03_ACC4
+[       OK ] ReqEditor.RemoveReferenceProtection_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqEditor.O36_AnchorStableAndSchemaRejection_WP14T03_ACC5
+[       OK ] ReqEditor.O36_AnchorStableAndSchemaRejection_WP14T03_ACC5 (0 ms)
+[----------] 5 tests from ReqEditor (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 52 tests from 9 test suites ran. (14 ms total)
+[  PASSED  ] 52 tests.
