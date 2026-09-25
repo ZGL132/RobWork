@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "实现 CSV/JSON 需求导入与副本导出（字段字典/单位预览/逐行错误）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-14-T03",
     "IO-T03",
