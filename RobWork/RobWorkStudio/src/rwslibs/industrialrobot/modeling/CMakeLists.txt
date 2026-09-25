@@ -122,6 +122,17 @@ find_package(pugixml CONFIG REQUIRED)
 #                        函数内核＋ObjectClosureView 闭包域字节源契约；
 #                        DH 权威经 §7.4 展开单一实现、零位折叠 T09 同规、
 #                        O-36 复核范围裁决落地）
+# T13 增列（tasks/foundation/WP-13-T13.json，§3.3 表 T13 行）：
+#   src/Package.cpp          规范模型包导出/导入（IModelPackagePort——MDL-20
+#                        roundtrip：ZIP 容器 STORED 最小写侧〔确定性，实现
+#                        注见头〕＋manifest canonical JSON〔producer/schema
+#                        /清单与 digest〕＋io AtomicFile 原子写出与预提交
+#                        自检〔IZipChannel 读侧权威复算〕＋导入三道校验
+#                        〔来源/schema/清单哈希〕＋五组逐项核对清单唯一
+#                        实现——§6.8/§9.4.9/§9.5 T13 行两码）
+#   src/PackageWorkCell.cpp  WC/DWC XML 外供导出（§6.8 第二条——数据源＝
+#                        runtime 快照只读视图，modeling 仅编排写出；
+#                        PackageWorkCellTest 同因仅集成模式编译）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -136,7 +147,8 @@ add_library(sdurws_ird_modeling STATIC
     src/Readiness.cpp
     src/CommandHandlers.cpp
     src/DhConvert.cpp
-    src/CanonicalBridge.cpp)
+    src/CanonicalBridge.cpp
+    src/Package.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -312,7 +324,8 @@ add_executable(sdurws_ird_modeling_test
     test/TemplateTest.cpp
     test/BasePlacementEditTest.cpp
     test/DhConvertTest.cpp
-    test/CanonicalBridgeTest.cpp)
+    test/CanonicalBridgeTest.cpp
+    test/PackageTest.cpp)
 
 # T08 测试 TU（集成模式专属 gating——POL-T06/T07/T08 同款：ReadinessTest/
 # CommandHandlersTest 消费 policy 行程评估器〔makeJointLimitEvaluator〕，
@@ -320,6 +333,11 @@ add_executable(sdurws_ird_modeling_test
 # sdurw_kinematics 判定同源；冒烟模式两 TU 不编入，"目标注册＋include
 # 路径"冒烟口径不受影响）。
 if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_modeling PRIVATE
+        src/PackageWorkCell.cpp)           # T13 ACC5：WC/DWC XML 外供导出
+                                           # （消费 runtime 编译产物 WorkCell/
+                                           # Device/Joint/Body 非模板类与
+                                           # WorkCellConstView 实现——冒烟不编入）
     target_sources(sdurws_ird_modeling_test PRIVATE
         test/ReadinessTest.cpp)            # T08 ACC1~3：就绪分层/断言分域
                                            # 反例 V-15/行程确认 V-16
@@ -340,6 +358,11 @@ if(TARGET sdurw_kinematics)
                                            # 连、保留键合并流、载荷 v2——
                                            # 消费 policy 评估器与 Command-
                                            # Fixtures 夹具——冒烟不编入）
+    target_sources(sdurws_ird_modeling_test PRIVATE
+        test/PackageWorkCellTest.cpp)      # T13 ACC5：WC/DWC XML 外供导出
+                                           # （真实编译快照——S5 替身＋S6~S10
+                                           # 工厂；消费 runtime 编译产物——
+                                           # 冒烟不编入）
 endif()
 
 target_compile_features(sdurws_ird_modeling_test PRIVATE cxx_std_17)

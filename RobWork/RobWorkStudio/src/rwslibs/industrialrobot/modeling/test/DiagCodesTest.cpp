@@ -110,17 +110,25 @@ const char* kT10Section95Codes[] = {
     "MDL-READINESS-DEFAULT-TCP-INCOMPLETE",
 };
 
+/// §9.5 任务列含 T13 的行的应登记码面（WP-13-T13 登记——单元卡 §14.6
+/// v0.15；规范包导出/导入族两码：MDL-20 导入门引导诊断与导出失败诊断；
+/// 表行序追加于表尾——登记簿纪律不重排既有行）。
+const char* kT13Section95Codes[] = {
+    "MDL-IMPORT-PACKAGE-UNKNOWN",
+    "MDL-EXPORT-FAILED",
+};
+
 }  // namespace
 
 /**
  * 工厂清单分批封闭性（acceptance 4——"按 §9.5 注册纪律只登记有消费者
- * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07/T08/T09/T10
- * 的行——其余行（T13/T18 任务列）提前出现即"预建"违约；逐码等于卡面
+ * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07/T08/T09/T10/
+ * T13 的行——其余行（T14/T18 任务列）提前出现即"预建"违约；逐码等于卡面
  * 字面清单（不私定码值），清单序＝§9.5 表行序。分期登记随任务推进
- * 表尾追加（T05/T06/T07/T08/T09/T10 历次登记同款推进口径；T10 行钉住
- * 断言随 WP-13-T10 合法登记同步——T09 attempt 1 B-1 返工先例）。
+ * 表尾追加（T05/T06/T07/T08/T09/T10/T13 历次登记同款推进口径；T13 行钉住
+ * 断言随 WP-13-T13 合法登记同步——T10 先例/T09 attempt 1 B-1 返工先例）。
  */
-TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T10)
+TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T13)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01", "MDL-06"},
                   std::vector<std::string>{});
@@ -132,9 +140,10 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T10)
                                       + std::size(kT07Section95Codes)
                                       + std::size(kT08Section95Codes)
                                       + std::size(kT09Section95Codes)
-                                      + std::size(kT10Section95Codes);
+                                      + std::size(kT10Section95Codes)
+                                      + std::size(kT13Section95Codes);
     ASSERT_EQ(descriptors.size(), expectedCount)
-        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08/T09/T10 任务行（分批纪律：其余行随"
+        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08/T09/T10/T13 任务行（分批纪律：其余行随"
            "各自任务登记——不预建）";
     // 清单序＝§9.5 表行序（实现期增登行表尾追加）：T02 行在前，
     // T05/T06/T07/T08/T09/T10 行按登记序随后。
@@ -177,6 +186,12 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T10)
         EXPECT_EQ(descriptors[offset + i].code,
                   std::string(kT10Section95Codes[i]))
             << "T10 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
+    }
+    offset += std::size(kT10Section95Codes);
+    for (std::size_t i = 0; i < std::size(kT13Section95Codes); ++i) {
+        EXPECT_EQ(descriptors[offset + i].code,
+                  std::string(kT13Section95Codes[i]))
+            << "T13 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
 }
 
@@ -406,6 +421,30 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_FALSE(d.requiresComparison);
             EXPECT_NE(d.paramSchema.find("\"tcp-key\""), std::string::npos);
             EXPECT_NE(d.paramSchema.find("\"tool-id\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-IMPORT-PACKAGE-UNKNOWN") {
+            // T13 行"导入/error"→InputInvalid/Error（非本软件规范工件——
+            // 输入非法族，MDL-20 导入门 fail-closed）；paramSchema
+            // [check-kind, found-value]；非比较型（事实判定）；UserRetry
+            //（"使用 MDL-18/R2 通道"＝fix-input 引导）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_NE(d.paramSchema.find("\"check-kind\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"found-value\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-EXPORT-FAILED") {
+            // T13 行"导出/error"→ExecutionFailed/Error（文件系统环境失败
+            // ——TASK-02 执行失败轴；MDL-20"恢复先前输出"）；paramSchema
+            // [stage, io-code]；非比较型（执行失败无语义比对值）；UserRetry
+            //（"检查目标路径/预算后重试"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::ExecutionFailed);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_NE(d.paramSchema.find("\"stage\""), std::string::npos);
+            EXPECT_NE(d.paramSchema.find("\"io-code\""), std::string::npos);
             EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         } else {
             FAIL() << "未登记的码面出现（分批纪律——不预建）: " << d.code;

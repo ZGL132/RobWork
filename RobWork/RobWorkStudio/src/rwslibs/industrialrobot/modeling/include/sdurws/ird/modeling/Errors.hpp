@@ -130,6 +130,23 @@ enum class ModelingErrorCode : std::uint8_t {
     /// 承载"其余解码失败"（Expected 值面需要可判别的失败侧——外部字节
     /// 属可恢复数据错误，不走异常轨）；单元卡 §15 增量同步登记。
     MalformedPayload,
+
+    // ---- 规范包族（§9.4.9 IModelPackagePort——T13；表尾追加登记）----
+    /// "ExportFailed"——规范包导出失败（MDL-20"导出失败恢复先前输出"：
+    /// io AtomicFile prepare/写入/自检/commit 任一环的环境或写入失败——
+    /// 目标路径不可写/预算超限/中途失败；项目状态不变且旧输出文件完好，
+    /// V-29 文件层观测）。诊断面＝MDL-EXPORT-FAILED（§9.5 T13 行，映射
+    /// 见 modelingDiagCode）。闭包内容缺陷（缺根/缺被引对象）不走本值
+    /// ——那是调用方数据错误，走 RefMissing 值面。表尾追加登记（枚举
+    /// 数值进入二进制契约，只增不插）；单元卡 §15 增量同步登记。
+    ExportFailed,
+    /// "PackageUnknown"——非本软件导出的规范工件（MDL-20 导入门：manifest
+    /// 缺失/不可读、formatId/producer 不符、容器无法以本格式打开——
+    /// fail-closed，绝不猜测解释外部格式）。诊断面＝
+    /// MDL-IMPORT-PACKAGE-UNKNOWN（§9.5 T13 行：引导用户走 MDL-18/R2
+    /// WorkCell 反向导入通道；不与 mapWorkCellXml 实现混淆——该通道仍为
+    /// R1 NotImplemented 边界）。表尾追加登记；单元卡 §15 增量同步登记。
+    PackageUnknown,
 };
 
 /**
@@ -216,9 +233,11 @@ struct ModelingError {
  * 呈现；产码唯一经 IDiagnosticFactory::create（码已注册校验，§9.5 原文）。
  *
  * @param code [in] 域错误码（全表 12 值均可入参——switch 全枚举）
- * @return 已登记稳定码文本（当前仅 SchemaVersionUnsupported→
+ * @return 已登记稳定码文本（当前：SchemaVersionUnsupported→
  *         "MDL-READINESS-SCHEMA-UNSUPPORTED"，与 DiagCodes.hpp 工厂登记
- *         同源同串，测试交叉核对）；nullopt＝暂无已登记映射（文件头注）
+ *         同源同串，测试交叉核对；ExportFailed→"MDL-EXPORT-FAILED"与
+ *         PackageUnknown→"MDL-IMPORT-PACKAGE-UNKNOWN"——WP-13-T13 随
+ *         Package 落位同批登记；nullopt＝暂无已登记映射（文件头注））
  *
  * 纯函数；线程安全；确定性（NFR-COR-02：同码同映射）。
  */
