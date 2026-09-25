@@ -53,7 +53,12 @@ find_package(GTest CONFIG REQUIRED)
 add_library(sdurws_ird_requirements STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/RequirementTypes.cpp
+    src/Codec.cpp
+    src/Editor.cpp
+    src/Services.cpp
+    src/Sampling.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：requirements 公共头使用 C++17 设施（std::string_view/
@@ -106,6 +111,41 @@ target_link_libraries(sdurws_ird_requirements PUBLIC
     sdurws_ird_io
     sdurws_ird_evidence)
 
+# ---- T03 增列：rw 模板头冒烟 include 路径（runtime RT-T03 同款机制）----
+# 背景：RequirementTypes.hpp 的位姿/盒/采样字段为 rw::math::Vector3D<double>
+# （卡 §4.3 字段表原文）——集成模式下 sdurw_math 经 sdurws_ird_core 的
+# PUBLIC 边传递可达；独立冒烟模式无框架目标，rw math/common 头为模板/
+# 内联为主的自包含闭包（外部依赖仅 Eigen——经 vcpkg Eigen3 提供），冒烟
+# 编译只实例化模板内联代码、不引用框架库符号，故只注入头路径、不链接
+# （ird_gates 的 LIB 门禁按链接清单核对——header-only 头可达不构成库链
+# 接边，runtime 同款口径）。条件＝TARGET sdurw_kinematics 的集成/冒烟判
+# 定惯用式（runtime/core 同源）；实现纪律同 runtime：冒烟可达代码不得调
+# 用 rw 外联符号（构造一律逐元素构造函数——本单元源码遵守）。
+if(NOT TARGET sdurw_kinematics)
+    set(IRD_REQ_RW_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../RobWork/src")
+    if(NOT EXISTS "${IRD_REQ_RW_SRC_DIR}/rw/math/Vector3D.hpp")
+        message(FATAL_ERROR
+            "requirements 冒烟模式：未找到 rw 模板头（期望 ${IRD_REQ_RW_SRC_DIR}"
+            "/rw/math/Vector3D.hpp）——WP-14-T03 起 RequirementTypes.hpp 需要"
+            " rw::math 头（header-only），请勿移动仓库目录结构")
+    endif()
+    target_include_directories(sdurws_ird_requirements PUBLIC "${IRD_REQ_RW_SRC_DIR}")
+    find_package(Eigen3 CONFIG QUIET)
+    if(TARGET Eigen3::Eigen)
+        get_target_property(IRD_REQ_EIGEN_INC Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+        if(NOT IRD_REQ_EIGEN_INC)
+            message(FATAL_ERROR
+                "requirements 冒烟模式：Eigen3::Eigen 无 INTERFACE_INCLUDE_"
+                "DIRECTORIES——vcpkg eigen3 配置包异常（RT-T03 冒烟机制）")
+        endif()
+        target_include_directories(sdurws_ird_requirements PUBLIC ${IRD_REQ_EIGEN_INC})
+    else()
+        message(FATAL_ERROR
+            "requirements 冒烟模式：未找到 Eigen3（vcpkg eigen3）——rw 数学头"
+            "依赖 <Eigen/Core>（RT-T03 冒烟 header-only 机制）")
+    endif()
+endif()
+
 # 别名（集成模式）：供其余单元以 RWS::ird::requirements 消费；冒烟模式无
 # 别名（与骨架期行为一致，DTB §5.1）。
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -127,6 +167,19 @@ endif()
 #   test/BuildRedLineTest.cpp  产品面源码红线运行期扫描（零 Qt＋include
 #                              面限于五边——acceptance 1/5，与文件末尾
 #                              配置期守卫互为两道防线）
+#   test/RequirementTypesTest.cpp  I-REQ-1~10 逐条正反例（T03 acceptance 1
+#                              ——不变量用例逐条通过；具名 I-REQ-x）
+#   test/CodecTest.cpp         canonical roundtrip/确定性/schema 拒绝/
+#                              Profile 不入编码（T03 acceptance 2——编码
+#                              登记供 evidence 切片）
+#   test/ServicesTest.cpp      createXxx 错误语义逐项＋resolveRequiredCases
+#                              §6.2 冻结 schema＋五规则拒绝＋I-REQ-7/9
+#                              （T03 acceptance 4）
+#   test/SamplingTest.cpp      GridBySpacing 规范化确定性/零样本合法/
+#                              builder 零样本出口（T03 acceptance 3——
+#                              KIN-04 冻结前提）
+#   test/EditorTest.cpp        载入/编辑/撤销重做/删除引用保护/O-36 锚
+#                              （T03 acceptance 4/5）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/modeling 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -137,7 +190,12 @@ add_executable(sdurws_ird_requirements_test
     test/ObjectTypesTest.cpp
     test/ErrorsTest.cpp
     test/DiagCodesTest.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/RequirementTypesTest.cpp
+    test/CodecTest.cpp
+    test/ServicesTest.cpp
+    test/SamplingTest.cpp
+    test/EditorTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_test PROPERTIES

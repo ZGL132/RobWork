@@ -6,7 +6,9 @@
  *         自证）。
  *
  * 设计依据：
- *   - units/requirements.md §9.3~§9.5（@错误 行收编面——8 值的出处）、
+ *   - units/requirements.md §9.3~§9.5（@错误 行收编面——8 值的出处；
+ *     第 9 值 MalformedPayload 为 WP-14-T03 表尾增列——canonical decode
+ *     校验链失败码，§14.6 v0.3 登记在案）、
  *     §9.6（映射分批纪律——仅 SchemaVersionUnsupported 有已登记映射码）、
  *     §9.2（非异常出口——值面承载）
  *   - 先例：modeling/test/ErrorsTest.cpp（token 全表机械比对＋值语义＋
@@ -32,8 +34,8 @@ using sdurws::ird::requirements::RequirementErrorCode;
 
 namespace {
 
-/// 全表 8 值清单（§9.3~§9.5 @错误 行原文序——测试内自持，与实现 token 表
-/// 机械比对：任一侧漂移即失败）。
+/// 全表 9 值清单（§9.3~§9.5 @错误 行原文序＋WP-14-T03 表尾增列——测试内
+/// 自持，与实现 token 表机械比对：任一侧漂移即失败）。
 const std::pair<RequirementErrorCode, std::string_view> kErrorCodeTable[] = {
     {RequirementErrorCode::SchemaVersionUnsupported, "SchemaVersionUnsupported"sv},
     {RequirementErrorCode::DuplicateName, "DuplicateName"sv},
@@ -43,22 +45,23 @@ const std::pair<RequirementErrorCode, std::string_view> kErrorCodeTable[] = {
     {RequirementErrorCode::DegenerateRegion, "DegenerateRegion"sv},
     {RequirementErrorCode::NegativeCount, "NegativeCount"sv},
     {RequirementErrorCode::RegionNotBox, "RegionNotBox"sv},
+    {RequirementErrorCode::MalformedPayload, "MalformedPayload"sv},
 };
 
 }  // namespace
 
 /**
  * 错误码全表 token 完整且互异（acceptance 3——token 是错误面的判别串，
- * 与枚举成员一一对应）：全表 8 值逐一核对＋token 两两互异（集合去重
- * 计数＝8）＋表规模哨兵。
+ * 与枚举成员一一对应）：全表 9 值逐一核对（8 收编值＋T03 表尾增列
+ * MalformedPayload）＋token 两两互异（集合去重计数＝9）＋表规模哨兵。
  */
 TEST(ReqErrors, TokenTableCompleteAndDistinct_WP14T02_ACC3)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01"},
                   std::vector<std::string>{});
 
-    ASSERT_EQ(std::size(kErrorCodeTable), 8U)
-        << "RequirementErrorCode 应恰 8 值（§9.3~§9.5 @错误 行收编）";
+    ASSERT_EQ(std::size(kErrorCodeTable), 9U)
+        << "RequirementErrorCode 应恰 9 值（8 收编值＋WP-14-T03 表尾增列）";
 
     std::set<std::string_view> tokens;
     for (const auto& [code, token] : kErrorCodeTable) {
@@ -66,7 +69,7 @@ TEST(ReqErrors, TokenTableCompleteAndDistinct_WP14T02_ACC3)
             << "token 漂移: " << token;
         tokens.insert(token);
     }
-    EXPECT_EQ(tokens.size(), 8U) << "token 必须两两互异（判别串前提）";
+    EXPECT_EQ(tokens.size(), 9U) << "token 必须两两互异（判别串前提）";
 }
 
 /**
@@ -131,7 +134,8 @@ TEST(ReqErrors, ErrorValueSemanticsOrderedParams_WP14T02_ACC3)
 /**
  * 域错误→稳定码映射分批纪律（acceptance 3——§9.6"不预建无消费者条目"）：
  * 仅 SchemaVersionUnsupported 映射到 REQ-SCHEMA-UNSUPPORTED（与 DiagCodes.hpp
- * 常量同源同串）；其余 7 值 nullopt（调用方不得产诊断——值面返回）。
+ * 常量同源同串）；其余 8 值 nullopt（含 WP-14-T03 增列的 MalformedPayload
+ * ——字节面错误不产诊断，调用方不得产码——值面返回）。
  */
 TEST(ReqErrors, DiagCodeMappingStagedRows_WP14T02_ACC3)
 {

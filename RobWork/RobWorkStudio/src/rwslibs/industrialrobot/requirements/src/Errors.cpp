@@ -40,6 +40,9 @@ std::string_view requirementErrorCodeToken(RequirementErrorCode code) noexcept
     case RequirementErrorCode::DegenerateRegion: return "DegenerateRegion";
     case RequirementErrorCode::NegativeCount: return "NegativeCount";
     case RequirementErrorCode::RegionNotBox: return "RegionNotBox";
+    // WP-14-T03 表尾增列（units/requirements.md §14.6 v0.3——canonical
+    // 编解码 decode 校验链的失败码，见 Errors.hpp 枚举注释）。
+    case RequirementErrorCode::MalformedPayload: return "MalformedPayload";
     }
     // switch 已全枚举（无 default）；到达此处仅可能是未定义枚举值
     // （UB 防御面），返回空串不猜测。
@@ -51,9 +54,10 @@ std::optional<std::string_view> requirementDiagCode(RequirementErrorCode code) n
     // 映射阶段纪律（§9.6 分批注册）：只映射已到任务行的 REQ-* 码——
     // 当前仅 SchemaVersionUnsupported（§9.6 T02/T03 行 REQ-SCHEMA-
     // UNSUPPORTED：生产界面＝editor loadBaseline 解码失败＋codec decode，
-    // 本任务同批登记工厂）；其余 7 值的生产者接口随 T03 落地、其 §9.6
-    // 码行属 T04/T05 批次——映射随码行注册同批追加，不预建（nullopt＝
-    // 调用方不得产诊断，错误经值面返回）。
+    // 本任务同批登记工厂）；其余值的生产者接口随 T03/T04/T05 落地、其
+    // §9.6 码行属 T04/T05 批次——映射随码行注册同批追加，不预建（nullopt＝
+    // 调用方不得产诊断，错误经值面返回）。WP-14-T03 表尾增列的
+    // MalformedPayload 无映射码行（字节面错误不产诊断——值面返回）。
     switch (code) {
     case RequirementErrorCode::SchemaVersionUnsupported:
         return kReqSchemaUnsupported;
@@ -64,6 +68,7 @@ std::optional<std::string_view> requirementDiagCode(RequirementErrorCode code) n
     case RequirementErrorCode::DegenerateRegion:
     case RequirementErrorCode::NegativeCount:
     case RequirementErrorCode::RegionNotBox:
+    case RequirementErrorCode::MalformedPayload:
         return std::nullopt;  // 暂无已登记映射码——分批纪律（文件头注）
     }
     return std::nullopt;
