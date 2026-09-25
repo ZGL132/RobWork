@@ -1,0 +1,1 @@
+      1 [ird_gates] IRD-GATE-SA02: 补丁登记册缺失：patches/PATCHES.md（ARCH §5.2 要求集中登记）

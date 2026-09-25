@@ -3516,6 +3516,26 @@
       "title": "提交 be8aa7cd 正文与 units/modeling.md §14.6 v0.17 行⑤的具名用例分组计数漂移：写「23 条（ACC2 六/ACC3 五/ACC4 六/ACC5 四）」，分组和＝21≠23；实测 test/PluginPanelTest.cpp 具名 TEST 为 ACC2 7 条＋ACC3 6 条＋ACC4 6 条＋ACC5 4 条＝23（总数 23 正确，gtest XML 246/246 与 23 条 PluginPanel 记录均实证）——F-342/F-343/F-349 散文计数失准家族新增一例，仅分组叙述失准、总数与实质为零影响",
       "owner": "modeling 卡所有者（下次单元卡增量修订时将⑤分组计数校准为 7/6/6/4；commit 散文随仓库惯例不改写历史，登记即可）",
       "resolution": "编号顺延自 F-353。"
+    },
+    {
+      "id": "F-355",
+      "source": "WP-13-T16 实施会话（2026-09-25；contract_test/GoldenPeerContractTest.cpp 首次构建触发 C2011 ExpandOutcome 重定义，集成构建留痕 traceability/builds/wp13-t16/）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "modeling 公共头同名类型冲突：modeling/include/sdurws/ird/modeling/DhConvert.hpp（WP-13-T09，ExpandOutcome＝DH→显式展开结果）与 XacroExpand.hpp（WP-13-T06，ExpandOutcome＝Xacro 展开产出）在同一命名空间 sdurws::ird::modeling 各定义一个 struct ExpandOutcome——任何同时包含两头的翻译单元编译失败（C2011）；既有 TU 未触雷（DhConvert 系测试不含 XacroExpand.hpp、XacroExpand 系测试不含 DhConvert.hpp），T16 契约测试 GoldenPeerContractTest 经 CommandFixtures→CommandHandlers→DhConvert.hpp 链首次撞线，处置为该 TU 不包含 XacroExpand.hpp（V-09/AT-31 黄金面承载于 GoldenImportTest，两模式可编译不受影响）",
+      "owner": "T06/T09 所有者（修复＝其一改名——Xacro 侧更名 XacroExpandOutcome 为接口级契约变更，须单元卡 §15 增量修订＋消费者同步；登记后由治理面排期，不阻塞 T16）",
+      "resolution": "编号顺延自 F-354。"
+    },
+    {
+      "id": "F-356",
+      "source": "WP-13-T16 实施会话（2026-09-25；golden/mdl-dh-equivalence V-11 黄金对照触发，node 独立数值验证＋gtest 实测，留痕 traceability/builds/wp13-t16/）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "modeling/src/DhConvert.cpp canonicalForm（§7.5 输出面规范分支，T09）登记的翻转恒等式 T(θ,d,a,α)=T(θ+π,−d,−a,α+π) 不保位置：p=Rz(θ)·(a,0,d) 在该变换下 z 分量翻转（node 闭式数值验证：T(0.9,0.15,0.2,π/2) vs T(0.9+π,−0.15,−0.2,3π/2) 原点 z=+0.15→−0.15）；真实保几何的离散等价支为 (θ±π, d, −a, ∓α)（位置/轴线逐项相等、帧相位差 π）——canonicalForm 未把它纳入规范化。触发面实测：general-3r 原 J3 参数（θ=0.9,a=0.2,α=+π/2）求解器收敛到该支（Exact 判定成立——残差≤1e-9），roundtrip 参数级期望＝输入失配、FK 姿态面偏差恰 π；canonicalForm 自身仅在 d<0 或（d≈0∧a<0）触发翻转，已验收测试全为 d>0 链故未暴露。T16 处置：数据集侧调整 general-3r J3 输入参数避开该支（golden 三面全绿），黄金数据集照常交付；产品语义（规范分支定义是否应按保几何恒等式修订）归 T09 所有者裁决",
+      "owner": "T09 所有者（核对 §7.5 输出面规范分支定义与 canonicalForm 恒等式；如需修订为接口/数值行为变更，走单元卡 §15 增量修订＋回归面补 d<0 链用例；不阻塞 T16——黄金数据集按实现现状落位且 NFR-COR-02 确定性成立）",
+      "resolution": "编号顺延自 F-355。"
     }
   ]
 }

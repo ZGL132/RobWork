@@ -1,0 +1,14 @@
+=== 集成构建：cmake --build build --config Release --target sdurws_ird_modeling_test（T16 新增文件编译段摘要）
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_modeling_test
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_test.exe
+
+=== 集成构建：--target sdurws_ird_modeling_contract_test
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_modeling_contract_test
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+
+=== 集成构建：--target sdurws_ird_modeling（0 error 计数行见上）
+=== 冒烟构建：build_smoke_t16 Release 全量（vcpkg toolchain＋Qt prefix；0 error）
