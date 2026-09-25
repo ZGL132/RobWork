@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "实现 modeling 插件界面面板与命令接入",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T03",
     "WP-13-T04",
