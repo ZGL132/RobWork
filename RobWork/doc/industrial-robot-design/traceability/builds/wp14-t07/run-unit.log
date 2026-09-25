@@ -1,0 +1,332 @@
+[==========] Running 141 tests from 15 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from ReqObjTypes
+[ RUN      ] ReqObjTypes.FiveObjectTypeTokensMatchCardSection41_WP14T02_ACC3
+[       OK ] ReqObjTypes.FiveObjectTypeTokensMatchCardSection41_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.SchemaVersionConstantsAreOne_WP14T02_ACC3
+[       OK ] ReqObjTypes.SchemaVersionConstantsAreOne_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.ProcessTagVocabularyElevenValuesRoundTrip_WP14T02_ACC3
+[       OK ] ReqObjTypes.ProcessTagVocabularyElevenValuesRoundTrip_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.ProcessTagUnknownTokenRejected_WP14T02_ACC3
+[       OK ] ReqObjTypes.ProcessTagUnknownTokenRejected_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.TemplateKindVocabularySixValuesRoundTrip_WP14T02_ACC3
+[       OK ] ReqObjTypes.TemplateKindVocabularySixValuesRoundTrip_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqObjTypes.ArrayKindVocabularyFourValuesRoundTrip_WP14T02_ACC3
+[       OK ] ReqObjTypes.ArrayKindVocabularyFourValuesRoundTrip_WP14T02_ACC3 (0 ms)
+[----------] 6 tests from ReqObjTypes (0 ms total)
+
+[----------] 4 tests from ReqErrors
+[ RUN      ] ReqErrors.TokenTableCompleteAndDistinct_WP14T02_ACC3
+[       OK ] ReqErrors.TokenTableCompleteAndDistinct_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqErrors.TokenDeterministicAndAnchoredToCard_WP14T02_ACC3
+[       OK ] ReqErrors.TokenDeterministicAndAnchoredToCard_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqErrors.ErrorValueSemanticsOrderedParams_WP14T02_ACC3
+[       OK ] ReqErrors.ErrorValueSemanticsOrderedParams_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqErrors.DiagCodeMappingStagedRows_WP14T02_ACC3
+[       OK ] ReqErrors.DiagCodeMappingStagedRows_WP14T02_ACC3 (0 ms)
+[----------] 4 tests from ReqErrors (0 ms total)
+
+[----------] 8 tests from ReqDiagCodes
+[ RUN      ] ReqDiagCodes.FactoryScopeIsStagedRows_WP14T02T04T05
+[       OK ] ReqDiagCodes.FactoryScopeIsStagedRows_WP14T02T04T05 (0 ms)
+[ RUN      ] ReqDiagCodes.DescriptorFieldsMatchSection96Row_WP14T02_ACC3
+[       OK ] ReqDiagCodes.DescriptorFieldsMatchSection96Row_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqDiagCodes.RegistersIntoStableCodeRegistry_WP14T02_ACC3
+[       OK ] ReqDiagCodes.RegistersIntoStableCodeRegistry_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqDiagCodes.DuplicateRegistrationRejected_WP14T02_ACC3
+[       OK ] ReqDiagCodes.DuplicateRegistrationRejected_WP14T02_ACC3 (0 ms)
+[ RUN      ] ReqDiagCodes.T04ImportDescriptorsMatchSection96Rows_WP14T04
+[       OK ] ReqDiagCodes.T04ImportDescriptorsMatchSection96Rows_WP14T04 (0 ms)
+[ RUN      ] ReqDiagCodes.T05ReadinessDescriptorsMatchSection96Rows_WP14T05
+[       OK ] ReqDiagCodes.T05ReadinessDescriptorsMatchSection96Rows_WP14T05 (0 ms)
+[ RUN      ] ReqDiagCodes.T06CaptureDescriptorMatchesSection96Row_WP14T06
+[       OK ] ReqDiagCodes.T06CaptureDescriptorMatchesSection96Row_WP14T06 (0 ms)
+[ RUN      ] ReqDiagCodes.T07DeriveDescriptorsMatchSection96Rows_WP14T07
+[       OK ] ReqDiagCodes.T07DeriveDescriptorsMatchSection96Rows_WP14T07 (0 ms)
+[----------] 8 tests from ReqDiagCodes (0 ms total)
+
+[----------] 4 tests from ReqBuildRedLine
+[ RUN      ] ReqBuildRedLine.ProductFaceHasZeroQtIncludes_WP14T02_ACC1
+[       OK ] ReqBuildRedLine.ProductFaceHasZeroQtIncludes_WP14T02_ACC1 (9 ms)
+[ RUN      ] ReqBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP14T02_ACC4
+[       OK ] ReqBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP14T02_ACC4 (9 ms)
+[ RUN      ] ReqBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP14T02_ACC4
+[       OK ] ReqBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP14T02_ACC4 (7 ms)
+[ RUN      ] ReqBuildRedLine.ProductFaceFilesNonEmpty_WP14T02_ACC1
+[       OK ] ReqBuildRedLine.ProductFaceFilesNonEmpty_WP14T02_ACC1 (5 ms)
+[----------] 4 tests from ReqBuildRedLine (31 ms total)
+
+[----------] 12 tests from ReqInvariants
+[ RUN      ] ReqInvariants.IREQ1_SortAndCanonicalOrder_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ1_SortAndCanonicalOrder_WP14T03_ACC1 (1 ms)
+[ RUN      ] ReqInvariants.IREQ2_CrossSetIdDuplicateRejected_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ2_CrossSetIdDuplicateRejected_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ3_DuplicateNameRejectedNoSilentRewrite_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ3_DuplicateNameRejectedNoSilentRewrite_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ4_ReferenceKindPayloadMatch_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ4_ReferenceKindPayloadMatch_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ5_ConstrainedDofAndTolerance_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ5_ConstrainedDofAndTolerance_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ6_BoxCoverageCounts_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ6_BoxCoverageCounts_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ7_SequenceContractAnchored_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ7_SequenceContractAnchored_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ8_ImportProvenanceHasNoPathField_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ8_ImportProvenanceHasNoPathField_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ9_MandatoryDerivedOnly_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ9_MandatoryDerivedOnly_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.IREQ10_GenerationNoSourceReference_WP14T03_ACC1
+[       OK ] ReqInvariants.IREQ10_GenerationNoSourceReference_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.ValidateTaskPointSegmentsShortCircuit_WP14T03_ACC1
+[       OK ] ReqInvariants.ValidateTaskPointSegmentsShortCircuit_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqInvariants.LevelVocabularyTwoValuesOnly_WP14T03_ACC1
+[       OK ] ReqInvariants.LevelVocabularyTwoValuesOnly_WP14T03_ACC1 (0 ms)
+[----------] 12 tests from ReqInvariants (1 ms total)
+
+[----------] 4 tests from ReqCodec
+[ RUN      ] ReqCodec.RoundtripAllFiveObjectsFieldWise_WP14T03_ACC2
+[       OK ] ReqCodec.RoundtripAllFiveObjectsFieldWise_WP14T03_ACC2 (0 ms)
+[ RUN      ] ReqCodec.DeterministicBytesAndOrderInsensitive_WP14T03_ACC2
+[       OK ] ReqCodec.DeterministicBytesAndOrderInsensitive_WP14T03_ACC2 (0 ms)
+[ RUN      ] ReqCodec.UnsupportedMajorVersionRejectedWithGuidance_WP14T03_ACC2
+[       OK ] ReqCodec.UnsupportedMajorVersionRejectedWithGuidance_WP14T03_ACC2 (0 ms)
+[ RUN      ] ReqCodec.ProfileNeverEncodedVariantClosed_WP14T03_ACC2
+[       OK ] ReqCodec.ProfileNeverEncodedVariantClosed_WP14T03_ACC2 (0 ms)
+[----------] 4 tests from ReqCodec (0 ms total)
+
+[----------] 8 tests from ReqServices
+[ RUN      ] ReqServices.CreatePointErrorSemanticsPerItem_WP14T03_ACC4
+[       OK ] ReqServices.CreatePointErrorSemanticsPerItem_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.CreateRegionErrorSemantics_WP14T03_ACC4
+[       OK ] ReqServices.CreateRegionErrorSemantics_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.CreateConditionErrorSemantics_WP14T03_ACC4
+[       OK ] ReqServices.CreateConditionErrorSemantics_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.ResolveRequiredCasesFrozenSchema_WP14T03_ACC4
+[       OK ] ReqServices.ResolveRequiredCasesFrozenSchema_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.OrientationRuleIllegalParamsRejected_WP14T03_ACC4
+[       OK ] ReqServices.OrientationRuleIllegalParamsRejected_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqServices.IREQ7_SequenceAcyclicPositive_WP14T03_ACC1
+[       OK ] ReqServices.IREQ7_SequenceAcyclicPositive_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqServices.IREQ7_SequenceCycleAndDuplicateAndDangling_WP14T03_ACC1
+[       OK ] ReqServices.IREQ7_SequenceCycleAndDuplicateAndDangling_WP14T03_ACC1 (0 ms)
+[ RUN      ] ReqServices.O36_SubEntryObjectIdModelInternalAnchor_WP14T03_ACC5
+[       OK ] ReqServices.O36_SubEntryObjectIdModelInternalAnchor_WP14T03_ACC5 (0 ms)
+[----------] 8 tests from ReqServices (0 ms total)
+
+[----------] 5 tests from ReqSampling
+[ RUN      ] ReqSampling.GridBySpacingNormalizationDeterministic_WP14T03_ACC3
+[       OK ] ReqSampling.GridBySpacingNormalizationDeterministic_WP14T03_ACC3 (0 ms)
+[ RUN      ] ReqSampling.PlanDigestIdentityForSynonymousPlans_WP14T03_ACC3
+[       OK ] ReqSampling.PlanDigestIdentityForSynonymousPlans_WP14T03_ACC3 (0 ms)
+[ RUN      ] ReqSampling.ZeroSamplePlanLegalStorage_WP14T03_ACC3
+[       OK ] ReqSampling.ZeroSamplePlanLegalStorage_WP14T03_ACC3 (0 ms)
+[ RUN      ] ReqSampling.BuilderInterfaceHasNoSampleExit_WP14T03_ACC3
+[       OK ] ReqSampling.BuilderInterfaceHasNoSampleExit_WP14T03_ACC3 (0 ms)
+[ RUN      ] ReqSampling.BuildPlanErrorSemantics_WP14T03_ACC3
+[       OK ] ReqSampling.BuildPlanErrorSemantics_WP14T03_ACC3 (0 ms)
+[----------] 5 tests from ReqSampling (0 ms total)
+
+[----------] 5 tests from ReqEditor
+[ RUN      ] ReqEditor.LoadBaselineFromClosure_WP14T03_ACC4
+[       OK ] ReqEditor.LoadBaselineFromClosure_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqEditor.ApplyEditUndoRedoFlow_WP14T03_ACC4
+[       OK ] ReqEditor.ApplyEditUndoRedoFlow_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqEditor.ApplyEditRejectionsKeepBytesUntouched_WP14T03_ACC4
+[       OK ] ReqEditor.ApplyEditRejectionsKeepBytesUntouched_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqEditor.RemoveReferenceProtection_WP14T03_ACC4
+[       OK ] ReqEditor.RemoveReferenceProtection_WP14T03_ACC4 (0 ms)
+[ RUN      ] ReqEditor.O36_AnchorStableAndSchemaRejection_WP14T03_ACC5
+[       OK ] ReqEditor.O36_AnchorStableAndSchemaRejection_WP14T03_ACC5 (0 ms)
+[----------] 5 tests from ReqEditor (0 ms total)
+
+[----------] 22 tests from ReqImport
+[ RUN      ] ReqImport.CsvPartialSuccess_CorrectRowsRetained_RowErrorsLocated_V08_AT02
+[       OK ] ReqImport.CsvPartialSuccess_CorrectRowsRetained_RowErrorsLocated_V08_AT02 (0 ms)
+[ RUN      ] ReqImport.CsvDuplicateIdAndName_ReqImportDuplicateId_V08
+[       OK ] ReqImport.CsvDuplicateIdAndName_ReqImportDuplicateId_V08 (0 ms)
+[ RUN      ] ReqImport.CsvMissingRequiredColumn_StructuralRejection_V08
+[       OK ] ReqImport.CsvMissingRequiredColumn_StructuralRejection_V08 (0 ms)
+[ RUN      ] ReqImport.CsvMissingOptionalColumn_DefaultValueAndReport_V08
+[       OK ] ReqImport.CsvMissingOptionalColumn_DefaultValueAndReport_V08 (0 ms)
+[ RUN      ] ReqImport.CsvUnmappedColumn_ReportedAsIgnored_V08
+[       OK ] ReqImport.CsvUnmappedColumn_ReportedAsIgnored_V08 (0 ms)
+[ RUN      ] ReqImport.FieldDictionary_FrozenTableExposed_Acc2
+[       OK ] ReqImport.FieldDictionary_FrozenTableExposed_Acc2 (0 ms)
+[ RUN      ] ReqImport.AutoDetect_AliasesAndManualOverride_Acc2
+[       OK ] ReqImport.AutoDetect_AliasesAndManualOverride_Acc2 (0 ms)
+[ RUN      ] ReqImport.UnitPreview_MmDegConversionCorrect_V09
+[       OK ] ReqImport.UnitPreview_MmDegConversionCorrect_V09 (0 ms)
+[ RUN      ] ReqImport.CsvUnitNormalization_SiValuesAsserted_V09_NFR_COR03
+[       OK ] ReqImport.CsvUnitNormalization_SiValuesAsserted_V09_NFR_COR03 (0 ms)
+[ RUN      ] ReqImport.CsvUnitDeclarationIllegal_ReqImportUnitIllegal_V09
+[       OK ] ReqImport.CsvUnitDeclarationIllegal_ReqImportUnitIllegal_V09 (0 ms)
+[ RUN      ] ReqImport.CsvFrameDangling_WarningAndRetained_V09
+[       OK ] ReqImport.CsvFrameDangling_WarningAndRetained_V09 (0 ms)
+[ RUN      ] ReqImport.JsonRoundtrip_ExportCopy_FieldByFieldEqual_V10_AT24
+[       OK ] ReqImport.JsonRoundtrip_ExportCopy_FieldByFieldEqual_V10_AT24 (4 ms)
+[ RUN      ] ReqImport.ExportCopy_AtomicFailure_OldFileIntact_ProjectUntouched_V10
+[       OK ] ReqImport.ExportCopy_AtomicFailure_OldFileIntact_ProjectUntouched_V10 (0 ms)
+[ RUN      ] ReqImport.ExportCopy_OverwriteAtomic_DraftMarker_V10
+[       OK ] ReqImport.ExportCopy_OverwriteAtomic_DraftMarker_V10 (3 ms)
+[ RUN      ] ReqImport.ExportCopy_CsvDraftRejected_FailVisible
+[       OK ] ReqImport.ExportCopy_CsvDraftRejected_FailVisible (0 ms)
+[ RUN      ] ReqImport.JsonImport_ProvenanceDigestAndRecordNumber_I_REQ8_V10
+[       OK ] ReqImport.JsonImport_ProvenanceDigestAndRecordNumber_I_REQ8_V10 (0 ms)
+[ RUN      ] ReqImport.CsvFormulaCellsAsData_NoExecution_Req05_NFR_SEC03
+[       OK ] ReqImport.CsvFormulaCellsAsData_NoExecution_Req05_NFR_SEC03 (0 ms)
+[ RUN      ] ReqImport.MapCsv_Deterministic_SameInputSameOutput_Acc6
+[       OK ] ReqImport.MapCsv_Deterministic_SameInputSameOutput_Acc6 (0 ms)
+[ RUN      ] ReqImport.MapJson_Deterministic_SameInputSameOutput_Acc6
+[       OK ] ReqImport.MapJson_Deterministic_SameInputSameOutput_Acc6 (0 ms)
+[ RUN      ] ReqImport.ImportRejected_NoDraftNoRevisionNoHalfProduct_Acc6_V20
+[       OK ] ReqImport.ImportRejected_NoDraftNoRevisionNoHalfProduct_Acc6_V20 (0 ms)
+[ RUN      ] ReqImport.CsvSourceDigest_ContentAddressed_Acc4_I_REQ8
+[       OK ] ReqImport.CsvSourceDigest_ContentAddressed_Acc4_I_REQ8 (0 ms)
+[ RUN      ] ReqImport.PreconditionViolations_FailFast
+[       OK ] ReqImport.PreconditionViolations_FailFast (0 ms)
+[----------] 22 tests from ReqImport (9 ms total)
+
+[----------] 22 tests from ReqReadiness
+[ RUN      ] ReqReadiness.HealthySetPassesAllLayers_ACC1
+[       OK ] ReqReadiness.HealthySetPassesAllLayers_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R0RootRefDanglingAndTokenMismatch_ACC1
+[       OK ] ReqReadiness.R0RootRefDanglingAndTokenMismatch_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R0DuplicateSlotReference_ACC1
+[       OK ] ReqReadiness.R0DuplicateSlotReference_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R1RefFrameTargetMissing_ACC1
+[       OK ] ReqReadiness.R1RefFrameTargetMissing_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R1OrientationRuleTargetTokenMismatch_ACC1
+[       OK ] ReqReadiness.R1OrientationRuleTargetTokenMismatch_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R2RefFrameKindIllegalInSceneSlot_ACC1
+[       OK ] ReqReadiness.R2RefFrameKindIllegalInSceneSlot_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R3PoseValueViolations_ACC1
+[       OK ] ReqReadiness.R3PoseValueViolations_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R4StationBindingDangling_ACC1
+[       OK ] ReqReadiness.R4StationBindingDangling_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R5EmptyRequiredSetWarning_ACC1
+[       OK ] ReqReadiness.R5EmptyRequiredSetWarning_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R6DegenerateAndPlanMismatch_ACC1
+[       OK ] ReqReadiness.R6DegenerateAndPlanMismatch_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R6ZeroPlanWarningAndNoRegionNotApplicable_ACC1
+[       OK ] ReqReadiness.R6ZeroPlanWarningAndNoRegionNotApplicable_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R7SequenceViolations_ACC1
+[       OK ] ReqReadiness.R7SequenceViolations_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R8ToolAndEnvironmentRefDangling_ACC1
+[       OK ] ReqReadiness.R8ToolAndEnvironmentRefDangling_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.R9SchemaVersionUnsupported_ACC1
+[       OK ] ReqReadiness.R9SchemaVersionUnsupported_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.ShortCircuitStopsAfterFirstBlockingLayer_ACC1
+[       OK ] ReqReadiness.ShortCircuitStopsAfterFirstBlockingLayer_ACC1 (0 ms)
+[ RUN      ] ReqReadiness.SummaryListsAllInvalidMustItems_ACC2
+[       OK ] ReqReadiness.SummaryListsAllInvalidMustItems_ACC2 (0 ms)
+[ RUN      ] ReqReadiness.SummaryProjectionMatchesEvidenceShape_ACC2
+[       OK ] ReqReadiness.SummaryProjectionMatchesEvidenceShape_ACC2 (0 ms)
+[ RUN      ] ReqReadiness.MustShouldGrading_ACC3
+[       OK ] ReqReadiness.MustShouldGrading_ACC3 (0 ms)
+[ RUN      ] ReqReadiness.PreviewIsPureWithoutEvidenceObjects_ACC4
+[       OK ] ReqReadiness.PreviewIsPureWithoutEvidenceObjects_ACC4 (0 ms)
+[ RUN      ] ReqReadiness.O39ReentrantProjectionWithoutPersistence_ACC5
+[       OK ] ReqReadiness.O39ReentrantProjectionWithoutPersistence_ACC5 (0 ms)
+[ RUN      ] ReqReadiness.PReq6ReportCarriesNoGateAction_ACC7
+[       OK ] ReqReadiness.PReq6ReportCarriesNoGateAction_ACC7 (0 ms)
+[ RUN      ] ReqReadiness.InvariantViolationFailsFast_R0Precondition
+[       OK ] ReqReadiness.InvariantViolationFailsFast_R0Precondition (0 ms)
+[----------] 22 tests from ReqReadiness (0 ms total)
+
+[----------] 10 tests from ReqReqCommands
+[ RUN      ] ReqReqCommands.CommandTokensArePointFreeAndRegisterable_ACC6
+[       OK ] ReqReqCommands.CommandTokensArePointFreeAndRegisterable_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.PayloadRoundtripAndDamageRejection_ACC6
+[       OK ] ReqReqCommands.PayloadRoundtripAndDamageRejection_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.FirstApplicationPlanned_ACC6
+[       OK ] ReqReqCommands.FirstApplicationPlanned_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.IncrementalReplaceProducesSnapshotInverse_ACC6
+[       OK ] ReqReqCommands.IncrementalReplaceProducesSnapshotInverse_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.ReadinessBlockingRejectsPrepare_ACC6
+[       OK ] ReqReqCommands.ReadinessBlockingRejectsPrepare_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.ReadinessWarningDoesNotBlock_ACC6
+[       OK ] ReqReqCommands.ReadinessWarningDoesNotBlock_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.ImportRequiresProvenanceCompleteness_ACC6
+[       OK ] ReqReqCommands.ImportRequiresProvenanceCompleteness_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.RestorePathWritesBytesVerbatim_ACC6
+[       OK ] ReqReqCommands.RestorePathWritesBytesVerbatim_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.DefensiveAndShapeRejections_ACC6
+[       OK ] ReqReqCommands.DefensiveAndShapeRejections_ACC6 (0 ms)
+[ RUN      ] ReqReqCommands.CandidateReevaluatedAgainstBaselineDrift_ACC6
+[       OK ] ReqReqCommands.CandidateReevaluatedAgainstBaselineDrift_ACC6 (0 ms)
+[----------] 10 tests from ReqReqCommands (0 ms total)
+
+[----------] 6 tests from ReqOrientationResolution
+[ RUN      ] ReqOrientationResolution.FiveRulesResolveWithResolutionProvenance_WP14T06_ACC1
+[       OK ] ReqOrientationResolution.FiveRulesResolveWithResolutionProvenance_WP14T06_ACC1 (0 ms)
+[ RUN      ] ReqOrientationResolution.FixedLiteralNotNormalized_WP14T06_ACC1
+[       OK ] ReqOrientationResolution.FixedLiteralNotNormalized_WP14T06_ACC1 (0 ms)
+[ RUN      ] ReqOrientationResolution.ResolutionIsDeterministic_WP14T06_ACC1
+[       OK ] ReqOrientationResolution.ResolutionIsDeterministic_WP14T06_ACC1 (0 ms)
+[ RUN      ] ReqOrientationResolution.DanglingOrMismatchedTargetLocatableDiag_WP14T06_ACC2
+[       OK ] ReqOrientationResolution.DanglingOrMismatchedTargetLocatableDiag_WP14T06_ACC2 (0 ms)
+[ RUN      ] ReqOrientationResolution.IllegalParamsRejectedWithPoseIllegalDiag_WP14T06_ACC2
+[       OK ] ReqOrientationResolution.IllegalParamsRejectedWithPoseIllegalDiag_WP14T06_ACC2 (0 ms)
+[ RUN      ] ReqOrientationResolution.ShallowBoundaryMetadataOnly_WP14T06_ACC2
+[       OK ] ReqOrientationResolution.ShallowBoundaryMetadataOnly_WP14T06_ACC2 (0 ms)
+[----------] 6 tests from ReqOrientationResolution (0 ms total)
+
+[----------] 8 tests from ReqCapture
+[ RUN      ] ReqCapture.ConfirmedCaptureWritesFixedPointWithCapturedTag_WP14T06_ACC3
+[       OK ] ReqCapture.ConfirmedCaptureWritesFixedPointWithCapturedTag_WP14T06_ACC3 (0 ms)
+[ RUN      ] ReqCapture.UnconfirmedCaptureZeroDataChange_WP14T06_ACC4
+[       OK ] ReqCapture.UnconfirmedCaptureZeroDataChange_WP14T06_ACC4 (0 ms)
+[ RUN      ] ReqCapture.StaleSessionEmitsWarningButWrites_WP14T06_ACC3
+[       OK ] ReqCapture.StaleSessionEmitsWarningButWrites_WP14T06_ACC3 (0 ms)
+[ RUN      ] ReqCapture.NotAppliedLeavesBaselineAndRevisionsUntouched_WP14T06_ACC3
+[       OK ] ReqCapture.NotAppliedLeavesBaselineAndRevisionsUntouched_WP14T06_ACC3 (0 ms)
+[ RUN      ] ReqCapture.ConfirmedFramePickUpdatesOrientationRule_WP14T06_ACC3
+[       OK ] ReqCapture.ConfirmedFramePickUpdatesOrientationRule_WP14T06_ACC3 (0 ms)
+[ RUN      ] ReqCapture.ConfirmedFeaturePickBuildsAlignGeometryNormal_WP14T06_ACC3
+[       OK ] ReqCapture.ConfirmedFeaturePickBuildsAlignGeometryNormal_WP14T06_ACC3 (0 ms)
+[ RUN      ] ReqCapture.PickUnconfirmedOrDanglingZeroChangeWithDiag_WP14T06_ACC2_ACC4
+[       OK ] ReqCapture.PickUnconfirmedOrDanglingZeroChangeWithDiag_WP14T06_ACC2_ACC4 (0 ms)
+[ RUN      ] ReqCapture.WriteEntriesRequireConfirmationMemberByShape_WP14T06_ACC4
+[       OK ] ReqCapture.WriteEntriesRequireConfirmationMemberByShape_WP14T06_ACC4 (0 ms)
+[----------] 8 tests from ReqCapture (0 ms total)
+
+[----------] 17 tests from ReqTemplateArray
+[ RUN      ] ReqTemplateArray.MirrorGoldenNormalY_WP14T07_ACC1
+[       OK ] ReqTemplateArray.MirrorGoldenNormalY_WP14T07_ACC1 (0 ms)
+[ RUN      ] ReqTemplateArray.MirrorGoldenNormalZ_WP14T07_ACC1
+[       OK ] ReqTemplateArray.MirrorGoldenNormalZ_WP14T07_ACC1 (0 ms)
+[ RUN      ] ReqTemplateArray.MirrorPointAtTargetAndToolRollFree_WP14T07_ACC1
+[       OK ] ReqTemplateArray.MirrorPointAtTargetAndToolRollFree_WP14T07_ACC1 (0 ms)
+[ RUN      ] ReqTemplateArray.MirrorUnmirrorableRulePending_WP14T07_ACC1
+[       OK ] ReqTemplateArray.MirrorUnmirrorableRulePending_WP14T07_ACC1 (0 ms)
+[ RUN      ] ReqTemplateArray.LinearArrayCountAndSpacing_WP14T07_ACC2
+[       OK ] ReqTemplateArray.LinearArrayCountAndSpacing_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.RectangularArrayGrid_WP14T07_ACC2
+[       OK ] ReqTemplateArray.RectangularArrayGrid_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.CircularArrayRadiusAndAngle_WP14T07_ACC2
+[       OK ] ReqTemplateArray.CircularArrayRadiusAndAngle_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.PolylineArrayArcLength_WP14T07_ACC2
+[       OK ] ReqTemplateArray.PolylineArrayArcLength_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.LinearArrayMultiSourceProvenance_WP14T07_ACC2
+[       OK ] ReqTemplateArray.LinearArrayMultiSourceProvenance_WP14T07_ACC2 (0 ms)
+[ RUN      ] ReqTemplateArray.TemplateSixKindsGoldenDefaults_WP14T07_ACC3
+[       OK ] ReqTemplateArray.TemplateSixKindsGoldenDefaults_WP14T07_ACC3 (0 ms)
+[ RUN      ] ReqTemplateArray.TemplateApplyAndRegenerateReplace_WP14T07_ACC3
+[       OK ] ReqTemplateArray.TemplateApplyAndRegenerateReplace_WP14T07_ACC3 (0 ms)
+[ RUN      ] ReqTemplateArray.RegenerateConflictKeepsHandModified_WP14T07_ACC3
+[       OK ] ReqTemplateArray.RegenerateConflictKeepsHandModified_WP14T07_ACC3 (0 ms)
+[ RUN      ] ReqTemplateArray.UnlinkDisablesRegenerationAndAllowsHandEdit_WP14T07_ACC3
+[       OK ] ReqTemplateArray.UnlinkDisablesRegenerationAndAllowsHandEdit_WP14T07_ACC3 (0 ms)
+[ RUN      ] ReqTemplateArray.BatchApplyUndoRedoAtomic_WP14T07_ACC4
+[       OK ] ReqTemplateArray.BatchApplyUndoRedoAtomic_WP14T07_ACC4 (0 ms)
+[ RUN      ] ReqTemplateArray.DeleteSourceWithLinkedDerivedWarns_WP14T07_ACC4
+[       OK ] ReqTemplateArray.DeleteSourceWithLinkedDerivedWarns_WP14T07_ACC4 (0 ms)
+[ RUN      ] ReqTemplateArray.ReDerivationAcyclicNoLivePropagation_WP14T07_ACC4
+[       OK ] ReqTemplateArray.ReDerivationAcyclicNoLivePropagation_WP14T07_ACC4 (0 ms)
+[ RUN      ] ReqTemplateArray.LocalUndoAndCommandPathSeparation_WP14T07_ACC5
+[       OK ] ReqTemplateArray.LocalUndoAndCommandPathSeparation_WP14T07_ACC5 (0 ms)
+[----------] 17 tests from ReqTemplateArray (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 141 tests from 15 test suites ran. (44 ms total)
+[  PASSED  ] 141 tests.

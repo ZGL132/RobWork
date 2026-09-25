@@ -1,17 +1,21 @@
 /**
  * @file   Editor.cpp
  * @brief  IRequirementEditor 的产品实现——基线闭包解码、编辑差值应用
- *         （四段校验链＋删除引用保护）、局部撤销/重做与变更摘要。
+ *         （四段校验链＋删除引用保护）、模板/镜像/阵列批次应用（一次入栈
+ *         一次整体回滚）、局部撤销/重做与变更摘要。
  *
  * 设计依据：units/requirements.md §9.3（接口契约）、§4.6（编辑态三态）、
  * §5.1（删除引用保护）、§4.7（I-REQ-2/3 集合唯一性）、§3.4（编辑器仅
- * UI 线程）；任务契约 tasks/foundation/WP-14-T03.json acceptance 4/5。
+ * UI 线程）；任务契约 tasks/foundation/WP-14-T03.json acceptance 4/5；
+ * tasks/foundation/WP-14-T07.json acceptance 4/5（批量入口＋删除提示）。
  *
  * 线程约束：本 TU 全部状态操作仅限 UI 线程（§3.4 总约定 2——非线程安全
  * 是契约面而非实现缺陷；不做加锁）。
  */
 
 #include <sdurws/ird/requirements/Editor.hpp>
+
+#include <sdurws/ird/requirements/DiagCodes.hpp>  // REQ-DERIVE-SOURCE-REMOVED 稳定码常量（§9.6 表尾增登——删除提示产码）
 
 #include <algorithm>
 #include <memory>
@@ -312,6 +316,35 @@ EditOutcome RequirementEditor::applyEdit(const RequirementEdit& edit)
                     removed = eraseEntry(ws_.points.entries, id);
                     if (removed) {
                         line = "任务点 " + target->name + " 已删除";
+                        // 删除保护提示（§7.2 删除保护行——源删除**允许**，
+                        // 但若仍有 linked 派生条目引用该源（参数快照
+                        // "source-id"），产 REQ-DERIVE-SOURCE-REMOVED
+                        // warning 知情登记：派生条目独立性不受影响，仅
+                        // 提示重生成将不可再解析该源）。
+                        std::size_t linkedDerived = 0;
+                        for (const auto& p : ws_.points.entries) {
+                            if (p.generation.has_value() && p.generation->linked) {
+                                for (const auto& kv : p.generation->parameters) {
+                                    if (kv.first == kGenParamSourceId
+                                        && kv.second == id.toCanonical()) {
+                                        ++linkedDerived;
+                                        break;  // 每条派生条目计一次
+                                    }
+                                }
+                            }
+                        }
+                        if (linkedDerived > 0) {
+                            out.diagnostics.push_back(core::DiagnosticRecord::make(
+                                std::string{kReqDeriveSourceRemoved},
+                                std::nullopt, std::nullopt, std::nullopt,
+                                "entry=" + target->name + "; linked-derived="
+                                    + std::to_string(linkedDerived),
+                                "该源仍有 " + std::to_string(linkedDerived)
+                                    + " 条 linked 派生（派生条目独立性不受影响；"
+                                      "源删除后其批次重生成将不可再解析该源）",
+                                "如需保持批次可再生成为，请先恢复该源或解除相关"
+                                "条目的关联（unlinkGenerator）"));
+                        }
                     }
                     break;
                 }
@@ -372,6 +405,7 @@ EditOutcome RequirementEditor::applyEdit(const RequirementEdit& edit)
         ws_ = std::move(snapshot);  // 违例→回滚快照（拒绝面）
         out.error = std::move(*e);
         out.error.detail = "requirements/editor: " + out.error.detail + "（I-REQ-2 跨集合半区）";
+        out.diagnostics.clear();  // 拒绝＝零产出（删除提示等警告面随编辑作废）
         return out;
     }
     // 接受——@post：撤销入栈＋重做栈清空＋计数/摘要推进。
@@ -384,6 +418,158 @@ EditOutcome RequirementEditor::applyEdit(const RequirementEdit& edit)
     ++editCount_;
     out.accepted = true;
     out.changeSummary = line;
+    return out;
+}
+
+// =====================================================================
+// 批次应用（§9.3 applyEdit 行"批量变体/模板镜像阵列批次"——T07 增列；
+// 一次 applyEdit＝一次入栈＝一次整体回滚，V-06 批次面）
+// =====================================================================
+
+EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
+{
+    EditOutcome out;
+    if (!loaded_) {
+        out.error = loadFailure("编辑器未载入基线（loadBaseline 前置违约——调用方错误）");
+        return out;
+    }
+    // ok=false 的批次传入＝调用方契约违约（服务产出错误批次未检查即
+    // 应用——fail-fast 拒绝，不代为解析 error 字段）。
+    if (!batch.ok) {
+        out.error = batch.error;
+        out.error.detail = "requirements/editor: 批次非 ok 态（服务产出错误未"
+                           "检查即应用——调用方契约违约）: " + out.error.detail;
+        return out;
+    }
+    // 空批次（无新条目且无替换）＝无事可做的调用方错误（避免制造
+    // "空撤销步"污染撤销栈语义）。
+    if (batch.newPoints.empty() && batch.replaceNames.empty()) {
+        out.error = loadFailure("批次为空（无新条目且无替换名——无编辑语义）");
+        return out;
+    }
+
+    // 编辑前快照（批量原子性的回滚底座——任一校验失败即整体丢弃）。
+    RequirementWorkingSet snapshot = ws_;
+
+    // ---- ①替换名核验（重生成批次——先移除后写入的"替换"语义）。
+    //      被工况 appliesTo/events 引用的条目一旦被替换（新 ObjectId）即
+    //      产生悬空引用——§5.1 删除保护同源拒绝（顺序键按名引用且替换
+    //      保名，不受影响，不作保护面）。
+    for (const auto& name : batch.replaceNames) {
+        const auto it = std::find_if(ws_.points.entries.begin(), ws_.points.entries.end(),
+                                     [&name](const TaskPoint& p) { return p.name == name; });
+        if (it == ws_.points.entries.end()) {
+            out.error = loadFailure("替换目标不存在（任务点 " + name
+                                    + "——批次相对工作集已过期）");
+            return out;
+        }
+        const core::ObjectId id = it->objectId;
+        for (const auto& c : ws_.conditions.entries) {
+            for (const auto& s : c.appliesTo.stations) {
+                if (s == id) {
+                    out.error = loadFailure("替换目标 " + name + " 被工况 " + c.name
+                                            + " 的 appliesTo 引用（§5.1 保护——"
+                                              "替换产生新 ObjectId，先解除绑定）");
+                    return out;
+                }
+            }
+            for (const auto& ev : c.events) {
+                if (ev.stationRef == id) {
+                    out.error = loadFailure("替换目标 " + name + " 被工况 " + c.name
+                                            + " 的 event.stationRef 引用（§5.1 保护）");
+                    return out;
+                }
+            }
+        }
+    }
+    // ---- ②新条目逐条校验＋批内互斥名预检（任一失败＝整批拒绝，不落半批）。
+    std::vector<std::string> batchNames;  // 批内新条目名（互斥核对）
+    for (const auto& p : batch.newPoints) {
+        if (auto e = validateTaskPoint(p)) {
+            out.error = std::move(*e);
+            out.error.detail = "requirements/editor: 批次条目 " + p.name
+                             + " 校验失败: " + out.error.detail;
+            return out;
+        }
+        // 名称唯一三面核对：工作集既有名＋替换名（替换先移除——其名会被
+        // 替换条目重新占用，须豁免）＋批内其他新条目名（I-REQ-3）。
+        const bool releasedByReplace =
+            std::find(batch.replaceNames.begin(), batch.replaceNames.end(), p.name)
+            != batch.replaceNames.end();
+        for (const auto& existing : ws_.points.entries) {
+            if (existing.name == p.name && !releasedByReplace) {
+                out.error = RequirementError{};
+                out.error.code = RequirementErrorCode::DuplicateName;
+                out.error.params.emplace_back("name", p.name);
+                out.error.detail = "requirements/editor: 集合内名称重复（I-REQ-3——"
+                                   "批次整批拒绝，不静默改写，NFR-COR-03）";
+                return out;
+            }
+        }
+        for (const auto& prior : batchNames) {
+            if (prior == p.name) {
+                out.error = RequirementError{};
+                out.error.code = RequirementErrorCode::DuplicateName;
+                out.error.params.emplace_back("name", p.name);
+                out.error.detail = "requirements/editor: 批次内名称重复（I-REQ-3）";
+                return out;
+            }
+        }
+        batchNames.push_back(p.name);
+        // 集合内 id 唯一（新条目持临时句柄——与既有条目撞 id 即违约；
+        // 跨集合半区在下方全集核对统一执行）。
+        for (const auto& existing : ws_.points.entries) {
+            if (existing.objectId == p.objectId) {
+                out.error = RequirementError{};
+                out.error.code = RequirementErrorCode::MalformedPayload;
+                out.error.params.emplace_back("object-id", p.objectId.toCanonical());
+                out.error.detail = "requirements/editor: 批次条目 ObjectId 与工作集"
+                                   "既有条目冲突（I-REQ-2——身份不混用）";
+                return out;
+            }
+        }
+    }
+
+    // ---- ③写入（先替换移除、后追加新条目＋排序）——校验全部通过后才
+    //      动工作集（拒绝面不产生部分写入）。
+    for (const auto& name : batch.replaceNames) {
+        auto& entries = ws_.points.entries;
+        entries.erase(std::remove_if(entries.begin(), entries.end(),
+                                     [&name](const TaskPoint& p) { return p.name == name; }),
+                      entries.end());
+    }
+    for (const auto& p : batch.newPoints) {
+        ws_.points.entries.push_back(p);
+    }
+    sortEntriesByObjectId(ws_.points.entries);
+
+    // ---- ④跨集合 id 唯一复核（I-REQ-2 跨集合半区——全集视图核对，
+    //      与单条 applyEdit 同源；违例回滚快照）。
+    if (auto e = checkCrossSetIdUniqueness(ws_.points.entries, ws_.regions.entries,
+                                           ws_.conditions.entries, ws_.plans.entries)) {
+        ws_ = std::move(snapshot);
+        out.error = std::move(*e);
+        out.error.detail = "requirements/editor: " + out.error.detail
+                         + "（I-REQ-2 跨集合半区）";
+        return out;
+    }
+
+    // ---- ⑤接受——恰一次撤销入栈（一次入栈、一次整体回滚的批次面）＋
+    //      批次警告诊断透传（拒绝面已全部返回，此处恒为接受面）。
+    const std::string line =
+        batch.summary.empty() ? ("批次应用 " + std::to_string(batch.newPoints.size())
+                               + " 条")
+                              : batch.summary;
+    undoStack_.push_back(UndoStep{std::move(snapshot), line});
+    redoStack_.clear();
+    if (!summary_.empty()) {
+        summary_ += "\n";
+    }
+    summary_ += line;
+    ++editCount_;
+    out.accepted = true;
+    out.changeSummary = line;
+    out.diagnostics = batch.diagnostics;
     return out;
 }
 

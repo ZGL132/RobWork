@@ -38,10 +38,12 @@
  * INPUT-INCOMPLETE，消费者＝Readiness.cpp/CommandHandlers.cpp；增登
  * PLAN-MISSING 承载 §8.1 R6"Warning（零计划）"分支——modeling
  * WP-13-T10 实现期增登先例）；WP-14-T06 批登记 T06 行 1 码（捕获族
- * REQ-CAPTURE-STATE-STALE，消费者＝Capture.cpp STALE 对账步）。其余
- * 2 行（T07 派生族两码）的登记随各自任务落位，届时在本头工厂清单
- * **表尾追加**对应描述符并同步单元卡——不提前预建（modeling §9.5
- * 分批纪律的 REQ 侧同款执行）。
+ * REQ-CAPTURE-STATE-STALE，消费者＝Capture.cpp STALE 对账步）；
+ * WP-14-T07 批登记 T07 行 2 码（派生族 MIRROR-PENDING/REGENERATE-CONFLICT
+ * ——消费者＝TemplateArray.cpp）＋表尾增登 1 码（SOURCE-REMOVED——§7.2
+ * 删除保护提示的 warning 承载面，消费者＝Editor.cpp 删除步，建模
+ * WP-13-T10/T05 批 PLAN-MISSING 同款实现期增登先例）。§9.6 表至此
+ * 全量登记完毕。
  *
  * P-REQ-8 处置锚点（契约 knownPitfalls）：本头消费的 diagnostics
  * CodeDescriptor/IDiagnosticRegistry 契约为 Draft 未冻结——按当周
@@ -141,15 +143,43 @@ inline constexpr std::string_view kReqReadyPlanMissing = "REQ-READY-PLAN-MISSING
 inline constexpr std::string_view kReqCaptureStateStale = "REQ-CAPTURE-STATE-STALE";
 
 // =====================================================================
+// §9.6 T07 行两码＋表尾增登一码（WP-14-T07 落位——派生族；消费者＝
+// TemplateArray.cpp 镜像/重生成产码面＋Editor.cpp 删除提示产码面，
+// WP-14-T07 同任务）。逐码语义＝§9.6 表行原文；全为 warning 级预告/
+// 知情登记面（不阻断应用）。
+// =====================================================================
+
+/// §9.6 T07 行：REQ-DERIVE-MIRROR-PENDING（warning——姿态规则不可镜像
+/// →PendingManualResolution：AlignFrame/AlignGeometryNormal 引用目标在
+/// 镜像侧不存在，规则保留＋待人工处理标记，不静默降级为 Fixed；§7.2
+/// 处置原文）。消费者＝TemplateArray.cpp applyMirror 产码面。
+inline constexpr std::string_view kReqDeriveMirrorPending = "REQ-DERIVE-MIRROR-PENDING";
+
+/// §9.6 T07 行：REQ-DERIVE-REGENERATE-CONFLICT（warning——linked 条目
+/// 已手改，重生成冲突：与生成器确定性重算不一致的条目保留不覆盖；
+/// §7.2"手改过的 linked 条目→冲突诊断"）。消费者＝TemplateArray.cpp
+/// regenerate 产码面。
+inline constexpr std::string_view kReqDeriveRegenerateConflict =
+    "REQ-DERIVE-REGENERATE-CONFLICT";
+
+/// §9.6 表尾增登（实现期增登先例——T05 批 REQ-READY-PLAN-MISSING 同款）：
+/// REQ-DERIVE-SOURCE-REMOVED（warning——被 linked 批次引用的源条目已删除，
+/// 允许删除但提示"仍有 N 条 linked 派生"（§7.2 删除保护行原文——源删除
+/// 不破坏派生条目独立性，仅知情登记）。消费者＝Editor.cpp 任务点删除步
+/// （applyEdit Remove 分支的删除保护扫描）。
+inline constexpr std::string_view kReqDeriveSourceRemoved = "REQ-DERIVE-SOURCE-REMOVED";
+
+// =====================================================================
 // REQ-* 稳定诊断码描述符清单（§9.6 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 requirements 已到注册任务行的 REQ-* 稳定码描述符全集
- *        （当前 13 项：§9.6 表 T02/T03 行 1 码＋T04 行 4 码＋T05 行 6 码
- *        ＋表尾增登 PLAN-MISSING 一码＋T06 行 CAPTURE-STATE-STALE 一码
- *        ——分批纪律表尾追加；其余 2 行随各自消费者任务 T07 在本清单
- *        表尾追加——分批注册纪律，不预建无消费者条目）。
+ *        （当前 16 项＝§9.6 表全量：T02/T03 行 1 码＋T04 行 4 码＋T05 行
+ *        6 码＋表尾增登 PLAN-MISSING 一码＋T06 行 CAPTURE-STATE-STALE
+ *        一码＋T07 行 DERIVE-MIRROR-PENDING/DERIVE-REGENERATE-CONFLICT
+ *        两码＋表尾增登 DERIVE-SOURCE-REMOVED 一码——分批纪律表尾追加，
+ *        WP-14-T07 批后全表登记完毕）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，modeling
  * modelingCodeDescriptors 同款自证结构）：
