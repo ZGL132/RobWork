@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "建模契约测试套件与黄金模型数据集落位",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T05",
     "WP-13-T06",
