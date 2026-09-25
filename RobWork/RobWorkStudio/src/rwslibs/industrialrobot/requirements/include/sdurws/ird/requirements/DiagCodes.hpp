@@ -31,12 +31,11 @@
  * 不私定任何卡面之外的码值。
  *
  * 阶段纪律（acceptance 3"其余码随消费者任务注册、不预建无消费者条目"的
- * 执行口径）：§9.6 表 14 行按"任务"列分批注册——本任务（WP-14-T02）只
- * 登记任务列含 T02 的行，当前恰为 1 行：REQ-SCHEMA-UNSUPPORTED（T02/T03
- * ——对象 schema 主版本超出支持，与 ObjectTypes.hpp 的对象类型/版本登记
- * 同批消费；生产界面＝editor loadBaseline 解码失败 §9.3 原文＋codec
- * decode §9.5）。其余 13 行的登记随各自任务落位（T05 就绪族六码/T04 导入
- * 族四码/T07 派生族两码/T06 捕获一码），届时在本头工厂清单**表尾追加**
+ * 执行口径）：§9.6 表 14 行按"任务"列分批注册——T02 批登记 1 行
+ * （REQ-SCHEMA-UNSUPPORTED）；WP-14-T04 批登记 T04 行 4 码（导入族：
+ * ROW-ERROR/DUPLICATE-ID/UNIT-ILLEGAL/FRAME-UNKNOWN，消费者＝Import.cpp
+ * 的 mapCsv/mapJson 产码面）。其余 9 行的登记随各自任务落位（T05 就绪族
+ * 六码/T07 派生族两码/T06 捕获一码），届时在本头工厂清单**表尾追加**
  * 对应描述符并同步单元卡——不提前预建（modeling §9.5 分批纪律的 REQ 侧
  * 同款执行）。
  *
@@ -72,15 +71,33 @@ namespace sdurws::ird::requirements {
 /// requirementDiagCode 与此同源同串）。
 inline constexpr std::string_view kReqSchemaUnsupported = "REQ-SCHEMA-UNSUPPORTED";
 
+/// §9.6 T04 行：REQ-IMPORT-ROW-ERROR（error——CSV/JSON 行级错误，定位
+/// 三要素＝行号/列名/原文；§7.3 行级错误与 §9.5 mapCsv/mapJson 的产出面）。
+/// 生产者＝Import.cpp（WP-14-T04 落位）；context 承载三要素文本。
+inline constexpr std::string_view kReqImportRowError = "REQ-IMPORT-ROW-ERROR";
+
+/// §9.6 T04 行：REQ-IMPORT-DUPLICATE-ID（error——导入重复 id/name；
+/// §7.3 行级错误清单"重复 id/重复 name"分支的稳定码）。
+inline constexpr std::string_view kReqImportDuplicateId = "REQ-IMPORT-DUPLICATE-ID";
+
+/// §9.6 T04 行：REQ-IMPORT-UNIT-ILLEGAL（error——单位声明无法换算/列缺失；
+/// §7.3 单位声明校验与必填列结构级拒绝（该文件不可导入）的稳定码）。
+inline constexpr std::string_view kReqImportUnitIllegal = "REQ-IMPORT-UNIT-ILLEGAL";
+
+/// §9.6 T04 行：REQ-IMPORT-FRAME-UNKNOWN（warning——Frame 引用浅悬空，
+/// 可保留为待解析；§7.3"Frame 引用悬空→警告＋条目保留"的稳定码，跨闭包
+/// 半区核对归 T05 就绪层 R2）。
+inline constexpr std::string_view kReqImportFrameUnknown = "REQ-IMPORT-FRAME-UNKNOWN";
+
 // =====================================================================
 // REQ-* 稳定诊断码描述符清单（§9.6 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 requirements 已到注册任务行的 REQ-* 稳定码描述符全集
- *        （当前 1 项：REQ-SCHEMA-UNSUPPORTED——§9.6 表 T02/T03 行；其余
- *        13 行随各自消费者任务 T04~T07 在本清单表尾追加——分批注册纪律，
- *        不预建无消费者条目）。
+ *        （当前 5 项：§9.6 表 T02/T03 行 1 码＋T04 行 4 码——WP-14-T04
+ *        导入族落位时按分批纪律表尾追加；其余 9 行随各自消费者任务
+ *        T05~T07 在本清单表尾追加——分批注册纪律，不预建无消费者条目）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，modeling
  * modelingCodeDescriptors 同款自证结构）：

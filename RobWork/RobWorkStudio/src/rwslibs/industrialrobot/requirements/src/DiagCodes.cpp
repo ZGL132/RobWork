@@ -14,10 +14,10 @@
  *     登记面）
  *   - 任务契约 tasks/foundation/WP-14-T02.json acceptance 3
  *
- * 背景说明：清单当前 1 项（§9.6 任务列含 T02 的行）——分批注册纪律
- * （"不预建无消费者条目"）的执行口径见头文件 DiagCodes.hpp 文件头注；
- * 其余 13 行随各自任务在**本清单表尾追加**（表尾追加＝登记簿纪律，不
- * 重排既有项）。
+ * 背景说明：清单当前 5 项（§9.6 任务列 T02/T03 行 1 码＋T04 行 4 码——
+ * 分批注册纪律（"不预建无消费者条目"）的执行口径见头文件 DiagCodes.hpp
+ * 文件头注；其余 9 行随各自任务在**本清单表尾追加**（表尾追加＝登记簿
+ * 纪律，不重排既有项）。
  *
  * 确定性（NFR-COR-02）：清单序＝§9.6 表行序；每次调用返回同序同值
  * 新清单（描述符为纯值聚合）。
@@ -62,7 +62,106 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     d.deprecated = false;    // 未废弃（tombstone 仅 §4.5.1 废弃流程置位）
     // d.supersededBy 保持 nullopt（无迁移目标——optional 缺省即空）。
 
-    return {d};
+    // =================================================================
+    // 以下 §9.6 T04 行 4 码（导入族——WP-14-T04 落位时表尾追加；消费者
+    // ＝Import.cpp 的 mapCsv/mapJson 产码面）。共同登记口径：
+    //   - 分类＝InputInvalid（diagnostics §4.3 词表"输入非法（REQ-06/
+    //     MDL-06 硬断言）"族——导入源数据非法正是该族定义的实例，与
+    //     schema 超版的 FormatOrVersion 族相区分）；
+    //   - ownerUnit="requirements"、registryVersion=1、deprecated=false、
+    //     supersededBy=nullopt（同 T02 行口径，不赘述）；
+    //   - 文案键＝P-DIAG-9 命名约定 diag.<code-lower>.title/.detail。
+    // =================================================================
+
+    // ---- §9.6 T04 行：REQ-IMPORT-ROW-ERROR（error）----
+    // CSV/JSON 行级错误（数值非法/level 非法/enabled 非法/词表外枚举等
+    // ——§7.3 行级错误清单的兜底码）；定位三要素（行号/列名/原文）经
+    // DiagnosticRecord.context 承载（Import.cpp makeRowError 单点拼装）。
+    // row=0 哨兵＝文档级（非单行）错误（JSON 整档解析失败——io 通道无
+    // 部分成功，§5.9.4 IO-D10）。
+    diagnostics::CodeDescriptor rowErr;
+    rowErr.code = std::string(kReqImportRowError);
+    rowErr.ownerUnit = "requirements";
+    rowErr.category = diagnostics::DiagnosticCategory::InputInvalid;
+    rowErr.severity = diagnostics::DiagnosticSeverity::Error;  // §9.6"级别"列：error
+    rowErr.titleKey = "diag.req-import-row-error.title";
+    rowErr.detailKey = "diag.req-import-row-error.detail";
+    // paramSchema 四键：行号（0＝文档级哨兵）/列名/原文/原因——AT-02
+    // "错误定位到列与原文"的登记面（受限 JSON 形命名参数清单）。
+    rowErr.paramSchema = R"(["row","column","raw","reason"])";
+    rowErr.confirmable = false;          // 数据错误无"知情放行"分支（修正后重导）
+    rowErr.requiresComparison = false;   // 非比较型三要素码
+    rowErr.retryable = diagnostics::RetryKind::UserRetry;  // 修正输入后重试
+    rowErr.userVisible = true;
+    rowErr.reportable = true;
+    rowErr.historical = true;
+
+    // ---- §9.6 T04 行：REQ-IMPORT-DUPLICATE-ID（error）----
+    // 导入重复 id/name（§7.3"重复 id/重复 name→逐行错误"分支；同一码
+    // 承载两去重键——§9.6 行语义"导入重复 id/name"原文口径）。
+    diagnostics::CodeDescriptor dupId;
+    dupId.code = std::string(kReqImportDuplicateId);
+    dupId.ownerUnit = "requirements";
+    dupId.category = diagnostics::DiagnosticCategory::InputInvalid;
+    dupId.severity = diagnostics::DiagnosticSeverity::Error;
+    dupId.titleKey = "diag.req-import-duplicate-id.title";
+    dupId.detailKey = "diag.req-import-duplicate-id.detail";
+    // paramSchema 四键：所在行/重复键的列（id 或 name）/重复值原文/首次
+    // 出现行——去重修正的完整定位面。
+    dupId.paramSchema = R"(["row","column","value","first-row"])";
+    dupId.confirmable = false;
+    dupId.requiresComparison = false;
+    dupId.retryable = diagnostics::RetryKind::UserRetry;
+    dupId.userVisible = true;
+    dupId.reportable = true;
+    dupId.historical = true;
+
+    // ---- §9.6 T04 行：REQ-IMPORT-UNIT-ILLEGAL（error）----
+    // 单位声明无法换算（token 词表外/量纲与列不符——core UnitToken 注册
+    // 表是唯一换算权威，NFR-COR-03 不静默转 0）/必填列缺失（结构级拒绝
+    // ——该文件不可导入，§7.3"必填列缺失"行；§9.6 行语义"单位声明无法
+    // 换算/列缺失"两分支同码承载）。
+    diagnostics::CodeDescriptor unitIll;
+    unitIll.code = std::string(kReqImportUnitIllegal);
+    unitIll.ownerUnit = "requirements";
+    unitIll.category = diagnostics::DiagnosticCategory::InputInvalid;
+    unitIll.severity = diagnostics::DiagnosticSeverity::Error;
+    unitIll.titleKey = "diag.req-import-unit-illegal.title";
+    unitIll.detailKey = "diag.req-import-unit-illegal.detail";
+    // paramSchema 三键：列名/声明单位 token（结构级缺列分支为 "none"）/
+    // 原因（unregistered|dimension-mismatch|missing-required-column）。
+    unitIll.paramSchema = R"(["column","unit","reason"])";
+    unitIll.confirmable = false;
+    unitIll.requiresComparison = false;
+    unitIll.retryable = diagnostics::RetryKind::UserRetry;
+    unitIll.userVisible = true;
+    unitIll.reportable = true;
+    unitIll.historical = true;
+
+    // ---- §9.6 T04 行：REQ-IMPORT-FRAME-UNKNOWN（warning）----
+    // Frame 引用浅悬空（ref_frame 值指向导入方无法核验的模型坐标系/场景
+    // 对象——本单元拿不到修订闭包，§8.1 浅校验边界；条目**保留待解析**，
+    // 跨闭包半区核对归 T05 就绪层 R2。级别 warning＝§9.6 表原文，不阻断
+    // 导入）。
+    diagnostics::CodeDescriptor frameUnk;
+    frameUnk.code = std::string(kReqImportFrameUnknown);
+    frameUnk.ownerUnit = "requirements";
+    frameUnk.category = diagnostics::DiagnosticCategory::InputInvalid;
+    frameUnk.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.6"级别"列：warning
+    frameUnk.titleKey = "diag.req-import-frame-unknown.title";
+    frameUnk.detailKey = "diag.req-import-frame-unknown.detail";
+    // paramSchema 三键：行号/列名/引用原文（待解析目标——闭包核对阶段的
+    // 回查键）。
+    frameUnk.paramSchema = R"(["row","column","raw"])";
+    frameUnk.confirmable = false;
+    frameUnk.requiresComparison = false;
+    frameUnk.retryable = diagnostics::RetryKind::UserRetry;  // 用户可改列值后重导
+    frameUnk.userVisible = true;
+    frameUnk.reportable = true;
+    frameUnk.historical = true;
+
+    // 清单序＝§9.6 表行序（T02/T03 行在前、T04 行四码随后）——确定性序。
+    return {d, rowErr, dupId, unitIll, frameUnk};
 }
 
 void registerRequirementCodes(diagnostics::IDiagnosticRegistry& registry)
