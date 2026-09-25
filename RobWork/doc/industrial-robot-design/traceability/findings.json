@@ -3486,6 +3486,36 @@
       "title": "tasks/foundation/WP-13-T14.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行（第 3 条 ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\" 的用例集含 contract_test）——F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350 家族（契约 verify 缺目标构建行）在 T14 契约复发；本次验收已在构建命令中显式带上该目标故执行未受阻，属契约编译面口径缺口（建议级，非实现缺陷）",
       "owner": "契约编译会话（后续契约补齐 contract_test 构建行；T08 契约曾自愈列全三目标，可在下次契约编译批量对齐）",
       "resolution": "编号顺延自 F-350。"
+    },
+    {
+      "id": "F-352",
+      "source": "traceability/acceptance/WP-13-T15-20260925.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-25；验收者按契约 verify 数组逐条在全新构建树执行并核对目标构建行完备性）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "tasks/foundation/WP-13-T15.json verify 数组缺 sdurws_ird_modeling_contract_test 构建行（第 4 条 ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\" 的用例集含 contract_test）——F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351 家族（契约 verify 缺目标构建行）在 T15 契约复发；本次验收已在构建命令中显式带上该目标故执行未受阻，属契约编译面口径缺口（建议级，非实现缺陷）",
+      "owner": "契约编译会话（后续契约补齐 contract_test 构建行；T08 契约曾自愈列全三目标，可在下次契约编译批量对齐）",
+      "resolution": "编号顺延自 F-351。"
+    },
+    {
+      "id": "F-353",
+      "source": "traceability/acceptance/WP-13-T15-20260925.md §4.8/§4.10（attempt 1，verdict=pass，2026-09-25；验收者以全新冒烟构建树实跑测试可执行文件核对计数）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "units/modeling.md §14.6 v0.17 行⑧的冒烟计数散文与可复现实测不符：写「独立冒烟 Release 全量零错误（build_smoke_t15……QCoreApplication 级 246/246＋契约 8→14/14）」，而验收者全新冒烟树实跑 sdurws_ird_modeling_test＝200/200、sdurws_ird_modeling_contract_test＝8/8（T08 集成专属 gating 的 46 条用例冒烟不编入——T14 行同口径先例写 177/177＋8/8）；246/246＋14/14 为集成模式实测数（验收者复核为真），误置入冒烟括注——F-342/F-343/F-349 散文计数失准家族新增一例；在库冒烟日志 build-smoke-full.log 本身仅证 ctest 2/2，无 246 字样，不构成粉饰（两模式真实全绿），零行为影响",
+      "owner": "modeling 卡所有者（文档收窄：v0.17 行⑧冒烟括注改为 200/200＋8/8，或注明 246/246 为集成口径；随下次单元卡增量修订顺手消账）",
+      "resolution": "编号顺延自 F-352。"
+    },
+    {
+      "id": "F-354",
+      "source": "traceability/acceptance/WP-13-T15-20260925.md §4.9（attempt 1，verdict=pass，2026-09-25；验收者逐条清点 test/PluginPanelTest.cpp 具名 TEST 宏并与提交散文对照）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "提交 be8aa7cd 正文与 units/modeling.md §14.6 v0.17 行⑤的具名用例分组计数漂移：写「23 条（ACC2 六/ACC3 五/ACC4 六/ACC5 四）」，分组和＝21≠23；实测 test/PluginPanelTest.cpp 具名 TEST 为 ACC2 7 条＋ACC3 6 条＋ACC4 6 条＋ACC5 4 条＝23（总数 23 正确，gtest XML 246/246 与 23 条 PluginPanel 记录均实证）——F-342/F-343/F-349 散文计数失准家族新增一例，仅分组叙述失准、总数与实质为零影响",
+      "owner": "modeling 卡所有者（下次单元卡增量修订时将⑤分组计数校准为 7/6/6/4；commit 散文随仓库惯例不改写历史，登记即可）",
+      "resolution": "编号顺延自 F-353。"
     }
   ]
 }
