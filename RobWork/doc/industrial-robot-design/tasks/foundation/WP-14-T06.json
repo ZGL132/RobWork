@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "实现五种姿态规则解析与三维拾取/TCP 捕获域侧",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-14-T03",
     "UI-T05"
