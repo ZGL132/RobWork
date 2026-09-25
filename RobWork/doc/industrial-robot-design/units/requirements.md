@@ -4,8 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.2（2026-09-25，WP-14-T02 落位登记——§14.6；v0.1 首版草案 2026-09-22，WP-14-T01 交付物） |
-| 日期 | 2026-09-25（v0.2）；2026-09-22（v0.1） |
+| 文档版本 | v0.5（2026-09-26，WP-14-T05 落位登记——§14.6；v0.1 首版草案 2026-09-22，WP-14-T01 交付物） |
+| 日期 | 2026-09-26（v0.5）；2026-09-22（v0.1） |
 | 状态 | **`Draft`**（待评审；DETAILED-DESIGN.md 单元状态表中的"requirements｜待产出"以本卡落盘为准，索引行同步由治理侧执行，本卡不代改） |
 | 文档代号 | UNIT-REQ |
 | 单元 | requirements（业务域单元，ARCHITECTURE §3.1：任务点/区域/工况定义、CSV/JSON 导入、姿态规则、镜像阵列、就绪校验；ARCHITECTURE §3.3 二分结构：零 Qt 计算库＋Qt Widgets 插件） |
@@ -761,12 +761,13 @@ public:
 
 | 码 | 级别 | 语义 | 任务 |
 | --- | --- | --- | --- |
-| `REQ-READY-REF-MISSING` | error | 引用悬空/token 不匹配（R1/R8） | T05 |
-| `REQ-READY-SEQ-CYCLE` | error | 任务顺序成环/重复键（R7） | T05 |
-| `REQ-READY-POSE-ILLEGAL` | error | 位姿/容差/约束分量非法（R3） | T05 |
-| `REQ-READY-NO-REQUIRED-CASE` | warning | 无启用必验工况（R5；正式拦截归 evidence） | T05 |
-| `REQ-READY-PLAN-DEGENERATE` | error | 区域退化/计划-区域失配（R6） | T05 |
-| `REQ-READY-INPUT-INCOMPLETE` | error | 启用 Must 条目非法汇总（ReadinessSummary.valid=false 投影面） | T05 |
+| `REQ-READY-REF-MISSING` | error | 引用悬空/token 不匹配（R1/R8；R0 根引用表/R2 槽-种类/R4 绑定悬空按"引用悬空"语义就近承载同码，层标注区分——Readiness.hpp 层-码映射） | T05〔已落位〕 |
+| `REQ-READY-SEQ-CYCLE` | error | 任务顺序成环/重复键（R7；悬空前驱按层-码对齐以本码承载、cause 区分） | T05〔已落位〕 |
+| `REQ-READY-POSE-ILLEGAL` | error | 位姿/容差/约束分量非法（R3） | T05〔已落位〕 |
+| `REQ-READY-NO-REQUIRED-CASE` | warning | 无启用必验工况（R5；正式拦截归 evidence） | T05〔已落位〕 |
+| `REQ-READY-PLAN-DEGENERATE` | error | 区域退化/计划-区域失配（R6） | T05〔已落位〕 |
+| `REQ-READY-INPUT-INCOMPLETE` | error | 启用 Must 条目非法汇总（ReadinessSummary.valid=false 投影面；命令 prepare 拒绝时随逐项诊断附一条汇总） | T05〔已落位〕 |
+| `REQ-READY-PLAN-MISSING` | warning | 区域已定义而计划集为空（R6"Warning（零计划）"分支——原六码无 warning 级承载面，WP-14-T05 实现期表尾增登，modeling WP-13-T10 实现期增登先例；正式判定归评估/KIN-04 零样本） | T05〔已落位〕 |
 | `REQ-IMPORT-ROW-ERROR` | error | CSV/JSON 行级错误（行号/列名/原文） | T04 |
 | `REQ-IMPORT-DUPLICATE-ID` | error | 导入重复 id/name | T04 |
 | `REQ-IMPORT-UNIT-ILLEGAL` | error | 单位声明无法换算/列缺失 | T04 |
@@ -896,7 +897,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 
 | 对端 | requirements 收到 | requirements 交出 |
 | --- | --- | --- |
-| evidence | 快照/切片契约（SnapshotBuilder/RequiredCaseSet/SamplingPlanRef/ReadinessSummary 类型）、角色键登记协议 | 必验 schema 冻结规则（§6.2，回接 §4.1.3）；`req.*` 角色键四键词表（§8.4：req.points/req.regions/req.conditions/req.sampling-plans）；canonical 编码登记〔**已落位——WP-14-T03**：`IRequirementCodec`（Codec.hpp）五对象变体＋`kCurrentRequirementFormatVersion{1,0}`，family magic "IRDREQO"，集合条目按 ObjectId 字典序（I-REQ-1），RequirementProfile 派生档不入编码（§4.8）〕；ReadinessSummary 数据源；planContentIdentity canonical 输入〔**已落位——WP-14-T03**：`ISamplingPlanBuilder`（Sampling.hpp）产出规范化 Grid 计数（D-REQ-2：counts[i]=floor(size[i]/spacing[i])+1），同义计划同身份〕 |
+| evidence | 快照/切片契约（SnapshotBuilder/RequiredCaseSet/SamplingPlanRef/ReadinessSummary 类型）、角色键登记协议 | 必验 schema 冻结规则（§6.2，回接 §4.1.3）；`req.*` 角色键四键词表（§8.4：req.points/req.regions/req.conditions/req.sampling-plans）；canonical 编码登记〔**已落位——WP-14-T03**：`IRequirementCodec`（Codec.hpp）五对象变体＋`kCurrentRequirementFormatVersion{1,0}`，family magic "IRDREQO"，集合条目按 ObjectId 字典序（I-REQ-1），RequirementProfile 派生档不入编码（§4.8）〕；ReadinessSummary 数据源〔**已落位——WP-14-T05**：`IRequirementReadinessChecker`（Readiness.hpp）R0~R9 分层校验＋`readinessSummary` 两字段投影（evidence §6.4① 值类型直投；O-39 现场重算纯函数面——修订内不持久化就绪结论）〕；planContentIdentity canonical 输入〔**已落位——WP-14-T03**：`ISamplingPlanBuilder`（Sampling.hpp）产出规范化 Grid 计数（D-REQ-2：counts[i]=floor(size[i]/spacing[i])+1），同义计划同身份〕 |
 | kinematics | 消费契约确认（点/区域/姿态/工况/Must-Should→硬过滤与覆盖） | 冻结需求只读视图；采样计划定义（非样本）；要求值语义（对齐 policy 阈值的职责边界声明 §6.3） |
 | trajectory | 顺序/三段语义 | sequenceKey 拓扑保证（无环）；TaskSegment 方向/距离约定（§5.1） |
 | optimization | 需求基准一致性机制（快照身份） | Must 集/必验集冻结视图；候选评估与基线同基准的输入承诺 |
@@ -905,7 +906,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 | diagnostics | 注册协议/工厂/目录/日志 | `REQ-*` CodeDescriptor 清单（§9.6）＋文案键＋域错误→码映射 |
 | ui | DraftController/注册器/SelectionModel/View3D 拾取/七态投影 | IPluginUiModule 实现、域命令清单（§9.8）、DomainReadinessItem 数据、缺项文案键 |
 | modeling | 无编译依赖（仅 token 元数据交叉引用） | 跨聚合浅引用规范（ObjectId＋token）；tcpRef/环境引用消费承诺（语义解析归评估侧） |
-| workflow/ui 门控 | 就绪投影 | `requirements` 域 inputComplete/缺项数据（门控判定归 workflow） |
+| workflow/ui 门控 | 就绪投影 | `requirements` 域 inputComplete/缺项数据（门控判定归 workflow）〔**DomainReadinessItem 已落位——WP-14-T05**：恰三字段（层/级别/诊断记录）呈现数据——P-REQ-6 边界：报告不含门控动作语义〕 |
 
 **R2/后续承接**：KIN-12-S1 扩展单位（io 方言版本升级通道，本单元字典单位表随扩展）；MDL-12-S1 prismatic 链启用（点容差角度/长度维度随关节类型——字典已按列类型预留）；OPT-D 全量（需求基准不变）；采样定义新增几何（圆柱/球区域）走需求变更（P-REQ-7）。
 
@@ -1013,6 +1014,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v0.5 | 2026-09-26 | WP-14-T05 落位登记：`Readiness.hpp/.cpp`＋`CommandHandlers.hpp/.cpp` 四公共头/实现 TU 落位（§3.3 表 T05 两行）。①`IRequirementReadinessChecker`（§9.5 原文签名）——R0~R9 分层就绪校验（§8.1 表逐行，短路优先；Blocking/Warning/NotApplicable 三级），CheckContext 闭包元数据浅校验（仅读 objectRefs 的 oid/token——§8.1 浅引用边界），`readinessSummary` 两字段投影（evidence §6.4① 值类型直投）；**层-码映射**（Readiness.hpp 文件头登记）：R0 根引用表→REF-MISSING、R1/R2→REF-MISSING、R3→POSE-ILLEGAL、R4 悬空绑定→REF-MISSING（"引用悬空"语义就近承载）、R5→NO-REQUIRED-CASE（Warning）、R6→PLAN-DEGENERATE＋PLAN-MISSING（零计划 Warning）、R7→SEQ-CYCLE、R8→REF-MISSING、R9→SCHEMA-UNSUPPORTED；条目 id/name 不变量违约＝调用方前置 fail-fast（错误二分——不产诊断）；条目级各层仅判启用条目（§4.3 enabled 行——ACC3「任一启用的 Must 条目」口径）。②R7 复用 `TaskPointService::checkSequence`（区域以同名/同键探针复用——零算法复制）、R5/R9 复用 `resolveRequiredCases`（P-EV-9 单点）——NFR-MNT-04。③O-39 处置（acceptance 5，消解 P-REQ-3）：`readinessSummary(check(ws,ctx))` 可重入纯函数投影面，修订内不持久化就绪结论；valid 面＝报告无 Blocking（Should/集合级非法同样使输入不可消费——保守门禁），invalidMustItems＝enabled∧Must 条目全量清单（check 内计算、summary 零重算）。④`IRequirementCommandHandler` 基类＋`apply-requirement-set`/`apply-requirement-import`（O-35 无点 token——P-REQ-5 随裁决消解）：prepare 管线 decode→基线同源重建（防御性复核 fail-fast）→通用槽校验→钩子装配（PA-1 取号）→**就绪 R0~R9 现场重估**（候选闭包后像；Blocking→RejectedHardAssert＋逐项定位＋REQ-READY-INPUT-INCOMPLETE 汇总一条；Warning→随 diags 留痕）→计划最终化（requiresDualCompile=false——需求对象不进 WorkCell 描述；confirmableFindings 恒空——SA-15 不私设）；快照式逆命令＝受影响对象前版字节（首次应用无前版＝nullopt）；import 附加导入溯源完整性断言（I-REQ-8：任务点/区域条目溯源在场＋摘要非全零＋行号≥1——工况/计划条目无溯源字段不适用）。⑤实现决策登记：§9.5 钩子签名只传工作集（值模型无五对象存储 oid），职责切分＝基类持基线条目面做通用校验/inverse、钩子做候选装配；Apply 恒含根槽（修订闭包锚），根字节恒由候选根重编码（挂载增量随根持久化），载荷根字节引用与取号挂载的一致性由就绪 R0 闭包核对兜底。⑥§9.6 T05 行六码随消费者注册＋表尾增登 `REQ-READY-PLAN-MISSING`（§8.1 R6"Warning（零计划）"分支原六码无 warning 级承载——modeling WP-13-T10 实现期增登先例），DiagCodes 工厂清单 5→12、DiagCodesTest 分批封闭断言随附同步。⑦R8"Warning（PendingManualResolution 姿态规则）"分支依赖 T07 派生流状态标记（现值模型无承载字段），随 T07 落位增补——本层不私建状态语义（NFR-COR-03）。P-REQ-6 边界声明：DomainReadinessItem 恰三字段呈现数据，报告不含门控动作语义（用例 ReqReadiness.PReq6ReportCarriesNoGateAction_ACC7 断言）。§12 evidence/workflow 行落位标记同步。无语义偏差 |
 | v0.4 | 2026-09-26 | WP-14-T04 落位登记：`Import.hpp/.cpp` 公共头＋实现 TU 落位（§3.3 表 T04 行）——`IRequirementImporter`/`RequirementImporter`（mapCsv/mapJson/exportCopy/fieldDictionary 四出口）、字段字典冻结表（§7.3 20 字段＋中英别名表＋必备集 {id,name,x,y,z}＋长度/角度/无单位/文本列种类，`FieldDictionary`/`autoDetectMapping`）、单位声明与预览（`ImportUnitOptions`/`previewUnitConversion`——与 mapCsv 同一声明校验/换算入口，落库经 core 唯一换算归一 SI，NFR-COR-03）、行级部分成功（`ImportOutcome{status,entries,rowErrors,ignoredColumns,defaultedFields,sourceDigest,sourceMarkedDraft}`——REQ-IMPORT-ROW-ERROR/DUPLICATE-ID 行级、UNIT-ILLEGAL 列级/结构级、FRAME-UNKNOWN 警告级）、副本导出（CSV 经 io ICsvWriter canonical 写出＋内部原子替换；JSON 经 canonicalizeJson＋IAtomicFileWriter OverwriteAtomic——失败旧文件完好）。增量登记：①§9.6 T04 行 4 码随消费者注册（DiagCodes 工厂清单 1→5 表尾追加，DiagCodesTest 分批封闭断言 1→5 随附同步——T03 期 8→9 ErrorsTest 先例同源）；②卡面 §9.5 `io::ExportTarget` 以 requirements 侧 `ExportTarget{filePath,draft}` 等价承载（io 磁盘基线无该类型——P-REQ-8 处置：io.md §9.0"等价调整、语义不变"；CSV draft 导出无标记通道→值面拒绝 fail-visible）；③CSV 源摘要＝RawTable 规范投影 SHA-256（io 流式契约不回传文件字节——通道内内容寻址自洽）；JSON 源摘要＝输入字节 SHA-256；④行号口径＝RawTable 数据行序/JSON 记录序（1 起——RawTable 不携带物理行号）；⑤导入条目 ObjectId 恒全零待命令 prepare 分配（§7.3 原文＋O-36——纯函数确定性与随机分配解耦）；⑥导出 id 列＝ObjectId 规范文本，草稿（全零）合成占位 "draft-<条目序>"（去重键非空语义保持——确定性合成）；⑦引用文本语法：ref_frame ∈ {World|model:<obj->|scene:<obj->|裸 <obj->→ModelFrame＋FRAME-UNKNOWN}、tcp ∈ {DefaultTcp|tool:<obj->|<tcpKey>}；⑧JSON 通道未知记录键＝行级错误（NFR-DEP-04 不静默吞字段——与 CSV 多余列"忽略清单"分域，顶层未知键经 io profile Reject）；⑨词表可选列空单元格＝字典缺省（不判词表外）；⑩坐标表通道导出仅 Fixed 姿态规则参数字面（非 Fixed 规则条目完整参数不经本通道——正式工件通道承载）。§12 io 交接行同步落位标记（acceptance 2 登记义务）。无语义偏差 |
 | v0.3 | 2026-09-25 | WP-14-T03 落位登记：`RequirementTypes/Codec/Services/Sampling/Editor` 五公共头＋实现 TU 落位——TaskPoint/WorkRegion/OperatingCondition/SamplingPlan/五对象值模型与 I-REQ-1~10 校验层（§4.7 实现面）；`IRequirementCodec` canonical 编码（family "IRDREQO"、小端定宽、SourcedValue 四态、集合条目规范化副本排序写出——同集合任意输入序必得同字节；decode 四步校验链：版本→结构→规范序→不变量复核；RequirementProfile 派生档不入编码）；三领域服务（createPoint/Region/Condition 构造边界拒绝＋checkSequence 前驱名拓扑〔顺序键＝前驱条目名引用——§5.1"删除被顺序键引用的任务点→拒绝"的语义落实，Kahn 消去无环＋重复/悬空检出〕＋normalizeSampling〔D-REQ-2〕＋resolveRequiredCases〔§6.2 冻结 schema 唯一实现点〕）与 deriveRequirementProfile（§4.8，复用冻结解析单点）；`ISamplingPlanBuilder`（buildPlan 规范化计数/digest 计划分母＋canonical 摘要；接口面零样本出口——§5.2）；`IRequirementEditor`（闭包注入载入/编辑差值四段校验链/删除引用保护 §5.1/局部撤销重做/中文变更摘要——UI 线程）。增量登记：①`RequirementErrorCode` 表尾增列第 9 值 `MalformedPayload`（canonical decode 结构校验失败码——本头 §9.3~§9.5 接口 @错误 行收编口径的自然延伸；无 REQ-* 映射码行，字节面错误经值面返回）；②`ErrorsTest` 全表封闭断言随 8→9 同步（合法登记随附同步）；③canonical 编码"查询轨两态载体"自持 `RequirementExpected`（§9.5 Expected 签名落位形态）——不复用 runtime::Expected：卡 §3.2 边表 runtime 行"无编译依赖"＋T02 红线测试五边封闭＋白名单登记属治理面，本单元内自持同构最小模板（值语义与 runtime 同构，登记决策见 Codec.hpp 头注）；④`ObjectClosureView` 以 requirements 侧 `RequirementObjectClosureView` 注入抽象落位（modeling CanonicalBridge 同构——P-RT-5 注入形态）；⑤rw::math::Vector3D 头依赖随集成/冒烟两模式注入（runtime RT-T03 冒烟 header-only 机制同款，CMakeLists 条件分支——零新增链接边）。§1.2 代码落位行相应事实由本行承载；§12 evidence 交接行同步 canonical 编码登记＋planContentIdentity 输入落位标记（acceptance 2 登记义务）。无语义偏差 |
 | v0.2 | 2026-09-25 | WP-14-T02 落位登记：`requirements/CMakeLists.txt` 新建（`sdurws_ird_requirements` INTERFACE 占位→STATIC，目标名/别名不变；C++17 显式、零 Qt、PUBLIC 链 core/diagnostics/project/io/evidence 五条 §3.2 登记边——runtime 边未登记〔T02 零 runtime 公共值类型引用，实际引用时按 §3.2 增登〕；`_test`/`_contract_test` 随文件注册〔ird_add_gtest 自持宏，LABELS ird〕；配置期红线守卫自持 R-1/R-3）；T02 公共面三头落位——`ObjectTypes.hpp`（五对象 token＋ProcessTag 11/TemplateKind 6/ArrayKind 4 词表＋五 schema 版本常量）、`Errors.hpp`（RequirementErrorCode 8 值＝§9.3~§9.5 @错误 行收编＋RequirementError 值类型＋域错误→稳定码映射）、`DiagCodes.hpp`（REQ-SCHEMA-UNSUPPORTED 先注册——§9.6 T02/T03 行，其余 13 码随消费者任务分批注册、不预建）；project/io/evidence 三边落位期"仅链接不消费"（P-RPT-9 先例，消费随 T04/T05 回填）。§1.2 代码落位行、§3.2 执行清单相应事实由本行承载；无语义偏差 |
