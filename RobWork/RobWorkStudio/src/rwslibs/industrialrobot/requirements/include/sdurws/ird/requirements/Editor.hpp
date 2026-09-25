@@ -18,7 +18,10 @@
  *     ——P-RT-5 注入形态采纳的 requirements 侧同构）
  *   - 任务契约 tasks/foundation/WP-14-T03.json acceptance 4（构造边界
  *     ——编辑器拒绝面复用服务校验）、acceptance 5（O-36：条目经正式
- *     分配后跨修订稳定；编辑器不重分配已有条目 id）
+ *     分配后跨修订稳定；编辑器不重分配已有条目 id）；tasks/foundation/
+ *     WP-14-T07.json acceptance 4/5（批量变体/模板镜像阵列批次入口
+ *     applyEdit(EditBatch) 增列——一次入栈一次整体回滚；删除被 linked
+ *     批次引用的源条目＝允许＋REQ-DERIVE-SOURCE-REMOVED 提示）
  *
  * 背景说明（编辑器的角色——§4.6 三态中的"编辑态"）：编辑器持基线闭包
  * 解码出的工作集＋编辑差值；草稿落盘/命令提交归 DraftService/命令处理
@@ -35,9 +38,11 @@
 #ifndef IRD_REQUIREMENTS_EDITOR_HPP
 #define IRD_REQUIREMENTS_EDITOR_HPP
 
+#include <sdurws/ird/core/DiagData.hpp>               // DiagnosticRecord——批次警告诊断（EditOutcome 承载）
 #include <sdurws/ird/requirements/Codec.hpp>          // 解码闸口＋FormatVersion
 #include <sdurws/ird/requirements/ObjectTypes.hpp>    // 五对象 token
 #include <sdurws/ird/requirements/RequirementTypes.hpp>  // 值模型＋校验层
+#include <sdurws/ird/requirements/TemplateArray.hpp>  // EditBatch——模板/镜像/阵列批次（T07 增列）
 
 #include <string>
 #include <variant>
@@ -154,11 +159,18 @@ inline RequirementEdit rootHeaderEdit(std::string name, std::string note)
  * @brief 编辑应用产出（§9.3 EditOutcome——"接受：工作集本地版本 +1；
  *        拒绝：字节不变＋逐项诊断"的值承载；诊断经 error/detail 值面，
  *        本单元无已登记诊断码——Errors.hpp 阶段纪律）。
+ *
+ * T07 增列：diagnostics 承载编辑过程的**非阻断警告**（批次警告——镜像
+ * 待人工处理 REQ-DERIVE-MIRROR-PENDING、删除源的 linked 提示
+ * REQ-DERIVE-SOURCE-REMOVED、重生成冲突 REQ-DERIVE-REGENERATE-CONFLICT；
+ * 单条目编辑恒空）。与 error 的分工：error 非空＝编辑被拒绝（字节不变）；
+ * accepted=true 时 diagnostics 只携带知情登记面（warning 级，应用照常）。
  */
 struct EditOutcome {
     bool accepted = false;         ///< true＝工作集已更新＋撤销入栈；false＝字节不变
     RequirementError error{};      ///< 拒绝面：首个违例（DuplicateName/MalformedPayload/…）
     std::string changeSummary;     ///< 接受面：本次编辑的人读中文摘要（并入 buildChangeSummary）
+    std::vector<core::DiagnosticRecord> diagnostics;  ///< 接受面：非阻断警告（warning 级稳定码诊断）
 };
 
 /// 载入产出（§9.3 LoadOutcome——基线解码失败携 RequirementError）。
@@ -211,9 +223,9 @@ public:
     virtual const RequirementWorkingSet& workingSet() const noexcept = 0;
 
     /**
-     * @brief 应用一次编辑（§9.3 行原文——字段级/条目增删/批量变体/模板
-     *        镜像阵列批次；T03 落位面＝条目 upsert/删除/根头编辑，模板/
-     *        镜像阵列批次随 T07 EditBatch 落位复用本入口）。
+     * @brief 应用一次编辑（§9.3 行原文——字段级/条目增删的值承载入口；
+     *        T03 落位面＝条目 upsert/删除/根头编辑，模板/镜像阵列批次走
+     *        T07 增列的 applyEdit(EditBatch) 重载——同一编辑入口名）。
      *
      * 校验链（拒绝＝字节不变＋逐项诊断——@post 行原文）：
      *   ①条目级不变量（validateTaskPoint 等——服务/解码同源）；
@@ -232,6 +244,36 @@ public:
      * 线程约束：仅 UI 线程。
      */
     virtual EditOutcome applyEdit(const RequirementEdit& edit) = 0;
+
+    /**
+     * @brief 应用一个模板/镜像/阵列/重生成批次（§9.3 applyEdit 行"批量
+     *        变体/模板镜像阵列批次"的 T07 落位面——§7.1/§7.2"编辑器应用"
+     *        的入口；卡 §9.3"模板/镜像阵列批次随 T07 EditBatch 落位复用
+     *        本入口"）。
+     *
+     * 批量原子性（V-06/需求集撤销的批次面——一次入栈、一次整体回滚）：
+     * @post 接受＝批次全部条目写入＋**恰一次**撤销入栈（undoLocal 一次
+     *       整体回滚，不逐条散开）＋重做栈清空＋编辑计数 +1；拒绝＝工作
+     *       集/栈全部不变（任一条目/替换名校验失败即整批拒绝——不落半批）。
+     *
+     * 校验链（与单条 applyEdit 同源，NFR-MNT-04）：
+     *   ①replaceNames（重生成批次——TemplateArray.hpp EditBatch 类注）：
+     *     每名须为工作集点集内既有条目；被工况 appliesTo/events 引用的
+     *     条目替换即悬空——拒绝（§5.1 删除保护同源；顺序键按名引用且
+     *     替换保名，不作保护面）；
+     *   ②newPoints 逐条：validateTaskPoint＋集合内名称唯一（I-REQ-3——
+     *     与工作集既有名及批内其他新条目名核对）＋集合内/跨集合 id 唯一
+     *     （I-REQ-2）；
+     *   ③空批次（无新条目且无替换名）＝调用方错误拒绝。
+     *
+     * @param batch [in] 编辑批次（值语义——编辑器接管拷贝；ok=false 的
+     *              批次传入＝调用方错误，拒绝）
+     * @return 接受/拒绝＋摘要＋批次警告诊断（diagnostics——镜像待人工
+     *         处理/重生成冲突等 warning 面，拒绝时恒空）
+     *
+     * 线程约束：仅 UI 线程。
+     */
+    virtual EditOutcome applyEdit(const EditBatch& batch) = 0;
 
     /**
      * @brief 局部撤销一步（§9.3 undoLocal——零修订；编辑器工作集回退，
@@ -272,6 +314,7 @@ public:
     RequirementLoadOutcome loadBaseline(const RequirementObjectClosureView& closure) override;
     const RequirementWorkingSet& workingSet() const noexcept override { return ws_; }
     EditOutcome applyEdit(const RequirementEdit& edit) override;
+    EditOutcome applyEdit(const EditBatch& batch) override;
     bool undoLocal() noexcept override;
     bool redoLocal() noexcept override;
     std::string buildChangeSummary() const override { return summary_; }

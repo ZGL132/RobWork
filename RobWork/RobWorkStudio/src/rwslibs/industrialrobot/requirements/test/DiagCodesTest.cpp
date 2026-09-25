@@ -38,6 +38,9 @@ using sdurws::ird::diagnostics::DiagnosticsError;
 using sdurws::ird::diagnostics::RetryKind;
 using sdurws::ird::diagnostics::StableCodeRegistry;
 using sdurws::ird::requirements::kReqCaptureStateStale;
+using sdurws::ird::requirements::kReqDeriveMirrorPending;
+using sdurws::ird::requirements::kReqDeriveRegenerateConflict;
+using sdurws::ird::requirements::kReqDeriveSourceRemoved;
 using sdurws::ird::requirements::kReqImportDuplicateId;
 using sdurws::ird::requirements::kReqImportFrameUnknown;
 using sdurws::ird::requirements::kReqImportRowError;
@@ -61,22 +64,26 @@ namespace {
 /// （WP-14-T05 就绪族落位随附同步，5→12——合法登记随附同步先例；增登
 /// PLAN-MISSING 承载 §8.1 R6"Warning（零计划）"分支，modeling
 /// WP-13-T10 实现期增登同款）＋T06 批 1 码（WP-14-T06 捕获族落位随附
-/// 同步，12→13）；其余 2 行（T07）不得提前出现，随各自任务在本清单
-/// 表尾追加。
+/// 同步，12→13）＋T07 批 2 码＋表尾增登 1 码（WP-14-T07 派生族落位
+/// 随附同步，13→16——§9.6 表至此全量登记完毕；增登 SOURCE-REMOVED
+/// 承载 §7.2 删除保护"仍有 N 条 linked 派生"提示分支）。
 const char* kStagedSection96Codes[] = {
-    "REQ-SCHEMA-UNSUPPORTED",     // §9.6 T02/T03 行
-    "REQ-IMPORT-ROW-ERROR",       // §9.6 T04 行（导入族，WP-14-T04 登记）
-    "REQ-IMPORT-DUPLICATE-ID",    // §9.6 T04 行
-    "REQ-IMPORT-UNIT-ILLEGAL",    // §9.6 T04 行
-    "REQ-IMPORT-FRAME-UNKNOWN",   // §9.6 T04 行
-    "REQ-READY-REF-MISSING",      // §9.6 T05 行（就绪族，WP-14-T05 登记）
-    "REQ-READY-SEQ-CYCLE",        // §9.6 T05 行
-    "REQ-READY-POSE-ILLEGAL",     // §9.6 T05 行
-    "REQ-READY-NO-REQUIRED-CASE", // §9.6 T05 行
-    "REQ-READY-PLAN-DEGENERATE",  // §9.6 T05 行
-    "REQ-READY-INPUT-INCOMPLETE", // §9.6 T05 行
-    "REQ-READY-PLAN-MISSING",     // §9.6 T05 行表尾增登（实现期增登）
-    "REQ-CAPTURE-STATE-STALE",    // §9.6 T06 行（捕获族，WP-14-T06 登记）
+    "REQ-SCHEMA-UNSUPPORTED",       // §9.6 T02/T03 行
+    "REQ-IMPORT-ROW-ERROR",         // §9.6 T04 行（导入族，WP-14-T04 登记）
+    "REQ-IMPORT-DUPLICATE-ID",      // §9.6 T04 行
+    "REQ-IMPORT-UNIT-ILLEGAL",      // §9.6 T04 行
+    "REQ-IMPORT-FRAME-UNKNOWN",     // §9.6 T04 行
+    "REQ-READY-REF-MISSING",        // §9.6 T05 行（就绪族，WP-14-T05 登记）
+    "REQ-READY-SEQ-CYCLE",          // §9.6 T05 行
+    "REQ-READY-POSE-ILLEGAL",       // §9.6 T05 行
+    "REQ-READY-NO-REQUIRED-CASE",   // §9.6 T05 行
+    "REQ-READY-PLAN-DEGENERATE",    // §9.6 T05 行
+    "REQ-READY-INPUT-INCOMPLETE",   // §9.6 T05 行
+    "REQ-READY-PLAN-MISSING",       // §9.6 T05 行表尾增登（实现期增登）
+    "REQ-CAPTURE-STATE-STALE",      // §9.6 T06 行（捕获族，WP-14-T06 登记）
+    "REQ-DERIVE-MIRROR-PENDING",    // §9.6 T07 行（派生族，WP-14-T07 登记）
+    "REQ-DERIVE-REGENERATE-CONFLICT",  // §9.6 T07 行
+    "REQ-DERIVE-SOURCE-REMOVED",    // §9.6 表尾增登（WP-14-T07 实现期增登）
 };
 
 }  // namespace
@@ -105,7 +112,7 @@ TEST(ReqDiagCodes, FactoryScopeIsStagedRows_WP14T02T04T05)
             << "§9.6 已到任务行缺失: " << expected;
     }
     // 码值常量与卡面原文同串（唯一书写点——Errors.cpp 映射与 Readiness/
-    // Import 产码共用）。
+    // Import/TemplateArray/Editor 产码共用）。
     EXPECT_EQ(kReqSchemaUnsupported, "REQ-SCHEMA-UNSUPPORTED");
     EXPECT_EQ(kReqImportRowError, "REQ-IMPORT-ROW-ERROR");
     EXPECT_EQ(kReqImportDuplicateId, "REQ-IMPORT-DUPLICATE-ID");
@@ -119,6 +126,9 @@ TEST(ReqDiagCodes, FactoryScopeIsStagedRows_WP14T02T04T05)
     EXPECT_EQ(kReqReadyInputIncomplete, "REQ-READY-INPUT-INCOMPLETE");
     EXPECT_EQ(kReqReadyPlanMissing, "REQ-READY-PLAN-MISSING");
     EXPECT_EQ(kReqCaptureStateStale, "REQ-CAPTURE-STATE-STALE");
+    EXPECT_EQ(kReqDeriveMirrorPending, "REQ-DERIVE-MIRROR-PENDING");
+    EXPECT_EQ(kReqDeriveRegenerateConflict, "REQ-DERIVE-REGENERATE-CONFLICT");
+    EXPECT_EQ(kReqDeriveSourceRemoved, "REQ-DERIVE-SOURCE-REMOVED");
 }
 
 /**
@@ -132,7 +142,7 @@ TEST(ReqDiagCodes, DescriptorFieldsMatchSection96Row_WP14T02_ACC3)
                   std::vector<std::string>{});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 13U);
+    ASSERT_EQ(descriptors.size(), 16U);
     const CodeDescriptor& d = descriptors[0];
 
     // 码值/所有权：§9.6 表"码"列原文＋前缀-所有权表 REQ→requirements。
@@ -185,7 +195,7 @@ TEST(ReqDiagCodes, RegistersIntoStableCodeRegistry_WP14T02_ACC3)
     // ownerUnit 反查反映全清单（字典序由注册表侧承担；规模随 T04 批
     // 1→5、T05 批 5→12、T06 批 12→13）。
     const auto codes = registry.registeredCodes("requirements");
-    ASSERT_EQ(codes.size(), 13U);
+    ASSERT_EQ(codes.size(), 16U);
 
     // manifest 含该码（跨进程一致性面——同注册集同摘要）。
     const auto manifest = registry.manifest();
@@ -225,7 +235,7 @@ TEST(ReqDiagCodes, T04ImportDescriptorsMatchSection96Rows_WP14T04)
                   std::vector<std::string>{"AT-02"});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 13U);
+    ASSERT_EQ(descriptors.size(), 16U);
 
     // 按码查找（清单序无关的核对入口）。
     const auto findDesc = [&](std::string_view code) -> const CodeDescriptor& {
@@ -274,7 +284,7 @@ TEST(ReqDiagCodes, T05ReadinessDescriptorsMatchSection96Rows_WP14T05)
                   std::vector<std::string>{});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 13U);
+    ASSERT_EQ(descriptors.size(), 16U);
 
     const auto findDesc = [&](std::string_view code) -> const CodeDescriptor& {
         const auto it = std::find_if(descriptors.begin(), descriptors.end(),
@@ -350,7 +360,7 @@ TEST(ReqDiagCodes, T06CaptureDescriptorMatchesSection96Row_WP14T06)
                   std::vector<std::string>{"AT-23"});
 
     const auto descriptors = requirementCodeDescriptors();
-    ASSERT_EQ(descriptors.size(), 13U);
+    ASSERT_EQ(descriptors.size(), 16U);
 
     const auto it = std::find_if(descriptors.begin(), descriptors.end(),
                                  [](const CodeDescriptor& d) {
@@ -379,4 +389,59 @@ TEST(ReqDiagCodes, T06CaptureDescriptorMatchesSection96Row_WP14T06)
     EXPECT_EQ(d.registryVersion, 1U);
     EXPECT_FALSE(d.deprecated);
     EXPECT_FALSE(d.supersededBy.has_value());
+}
+
+/**
+ * §9.6 T07 行 2 码＋表尾增登 1 码（派生族）的登记值逐字段核对（WP-14-T07
+ * 落位随附同步——登记值可追溯到卡面：三码全 warning 级知情登记面、分类
+ * 全 ResourceMissing（镜像侧目标缺席/重算基准 Changed/源条目移除——
+ * diagnostics §4.3 词表）、文案键/paramSchema 键面与 TemplateArray.cpp/
+ * Editor.cpp 产码处 context 载荷对齐；13→16 随附同步先例＝T04/T05/T06
+ * 批同款，§9.6 表至此全量登记完毕）。
+ */
+TEST(ReqDiagCodes, T07DeriveDescriptorsMatchSection96Rows_WP14T07)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-11", "ERR-01"},
+                  std::vector<std::string>{"AT-24"});
+
+    const auto descriptors = requirementCodeDescriptors();
+    ASSERT_EQ(descriptors.size(), 16U);
+
+    const auto findDesc = [&](std::string_view code) -> const CodeDescriptor& {
+        const auto it = std::find_if(descriptors.begin(), descriptors.end(),
+                                     [&](const CodeDescriptor& d) {
+                                         return d.code == code;
+                                     });
+        EXPECT_TRUE(it != descriptors.end()) << "缺失登记: " << code;
+        return it != descriptors.end() ? *it : descriptors.front();
+    };
+
+    // 三码公共面（全 warning 级——知情登记不阻断应用；ResourceMissing
+    // 分类＝镜像侧目标缺席/重算基准已变/源条目移除的词表归属）。
+    for (const auto* code :
+         {"REQ-DERIVE-MIRROR-PENDING", "REQ-DERIVE-REGENERATE-CONFLICT",
+          "REQ-DERIVE-SOURCE-REMOVED"}) {
+        const CodeDescriptor& d = findDesc(code);
+        EXPECT_EQ(d.ownerUnit, "requirements") << code;
+        EXPECT_EQ(d.category, DiagnosticCategory::ResourceMissing) << code;
+        EXPECT_EQ(d.severity, DiagnosticSeverity::Warning) << code;
+        EXPECT_FALSE(d.confirmable) << code;
+        EXPECT_FALSE(d.requiresComparison) << code;
+        EXPECT_EQ(d.retryable, RetryKind::UserRetry) << code;
+        EXPECT_TRUE(d.userVisible && d.reportable && d.historical) << code;
+        EXPECT_EQ(d.registryVersion, 1U) << code;
+        EXPECT_FALSE(d.deprecated) << code;
+        EXPECT_FALSE(d.supersededBy.has_value()) << code;
+    }
+
+    // 逐码键面（与产码处 context 载荷对齐——P-DIAG-9）。
+    const CodeDescriptor& mp = findDesc("REQ-DERIVE-MIRROR-PENDING");
+    EXPECT_EQ(mp.titleKey, "diag.req-derive-mirror-pending.title");
+    EXPECT_EQ(mp.paramSchema, R"(["entry","rule","target"])");
+    const CodeDescriptor& rc = findDesc("REQ-DERIVE-REGENERATE-CONFLICT");
+    EXPECT_EQ(rc.titleKey, "diag.req-derive-regenerate-conflict.title");
+    EXPECT_EQ(rc.paramSchema, R"(["entry","instance"])");
+    const CodeDescriptor& sr = findDesc("REQ-DERIVE-SOURCE-REMOVED");
+    EXPECT_EQ(sr.titleKey, "diag.req-derive-source-removed.title");
+    EXPECT_EQ(sr.paramSchema, R"(["entry","linked-derived"])");
 }

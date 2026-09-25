@@ -14,12 +14,13 @@
  *     登记面）
  *   - 任务契约 tasks/foundation/WP-14-T02.json acceptance 3
  *
- * 背景说明：清单当前 13 项（§9.6 任务列 T02/T03 行 1 码＋T04 行 4 码
+ * 背景说明：清单当前 16 项（§9.6 任务列 T02/T03 行 1 码＋T04 行 4 码
  * ＋T05 行 6 码＋表尾增登 PLAN-MISSING 一码——WP-14-T05 就绪族落位；
- * T06 行 CAPTURE-STATE-STALE 一码——WP-14-T06 捕获族落位；分批注册
- * 纪律（"不预建无消费者条目"）的执行口径见头文件 DiagCodes.hpp
- * 文件头注；其余 2 行（T07 派生族）随各自任务在**本清单表尾追加**
- * （表尾追加＝登记簿纪律，不重排既有项）。
+ * T06 行 CAPTURE-STATE-STALE 一码——WP-14-T06 捕获族落位；T07 行
+ * MIRROR-PENDING/REGENERATE-CONFLICT 两码＋表尾增登 SOURCE-REMOVED
+ * 一码——WP-14-T07 派生族落位。分批注册纪律（"不预建无消费者条目"）
+ * 的执行口径见头文件 DiagCodes.hpp 文件头注；**§9.6 表至此全量登记
+ * 完毕**（表尾追加＝登记簿纪律，不重排既有项）。
  *
  * 确定性（NFR-COR-02）：清单序＝§9.6 表行序；每次调用返回同序同值
  * 新清单（描述符为纯值聚合）。
@@ -348,11 +349,91 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     captureStale.reportable = true;
     captureStale.historical = true;
 
+    // =================================================================
+    // 以下 §9.6 T07 行 2 码＋表尾增登 1 码（派生族——WP-14-T07 落位时
+    // 表尾追加；消费者＝TemplateArray.cpp 镜像/重生成产码面＋Editor.cpp
+    // 删除提示产码面）。共同登记口径：
+    //   - 全为 warning 级（§9.6"级别"列：知情登记/预告面，不阻断应用
+    //     ——不可镜像规则保留待人工处理、手改条目保留不覆盖、源删除
+    //     允许但提示，均非阻断语义）；
+    //   - 分类＝ResourceMissing（diagnostics §4.3 词表"外部源 Missing/
+    //     Changed/资源越界"族——镜像侧目标缺席/源条目移除正是该族实例；
+    //     REGENERATE-CONFLICT 的冲突根因也是"重算基准（生成值）相对手改
+    //     现状已 Changed"）；
+    //   - ownerUnit="requirements"、registryVersion=1、deprecated=false、
+    //     supersededBy=nullopt（同 T02~T06 行口径，不赘述）；
+    //   - 文案键＝P-DIAG-9 命名约定 diag.<code-lower>.title/.detail。
+    // =================================================================
+
+    // ---- §9.6 T07 行：REQ-DERIVE-MIRROR-PENDING（warning）----
+    // 姿态规则不可镜像→PendingManualResolution（§7.2：AlignFrame/
+    // AlignGeometryNormal 引用目标在镜像侧不存在——规则保留＋待人工
+    // 处理标记＋本警告，不静默猜、不静默降级为 Fixed）。context 三要素：
+    // entry=<派生条目名>; rule=<规则 token>; target=<目标 ObjectId 或->。
+    diagnostics::CodeDescriptor mirrorPending;
+    mirrorPending.code = std::string(kReqDeriveMirrorPending);
+    mirrorPending.ownerUnit = "requirements";
+    mirrorPending.category = diagnostics::DiagnosticCategory::ResourceMissing;
+    mirrorPending.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.6"级别"列：warning
+    mirrorPending.titleKey = "diag.req-derive-mirror-pending.title";
+    mirrorPending.detailKey = "diag.req-derive-mirror-pending.detail";
+    // paramSchema 三键：派生条目名/姿态规则种类/缺失目标。
+    mirrorPending.paramSchema = R"(["entry","rule","target"])";
+    mirrorPending.confirmable = false;         // 警告登记面——人工处置后自然消除
+    mirrorPending.requiresComparison = false;  // 非比较型三要素码
+    mirrorPending.retryable = diagnostics::RetryKind::UserRetry;  // 人工指定目标或改规则后消除
+    mirrorPending.userVisible = true;
+    mirrorPending.reportable = true;
+    mirrorPending.historical = true;
+
+    // ---- §9.6 T07 行：REQ-DERIVE-REGENERATE-CONFLICT（warning）----
+    // linked 条目已手改，重生成冲突（§7.2"手改过的 linked 条目→冲突
+    // 诊断"——与生成器确定性重算不一致的条目保留不覆盖，§9.5 行原文
+    // "不静默覆盖"）。context 两要素：entry=<手改条目名>; instance=<批次
+    // 实例标识>。
+    diagnostics::CodeDescriptor regenConflict;
+    regenConflict.code = std::string(kReqDeriveRegenerateConflict);
+    regenConflict.ownerUnit = "requirements";
+    regenConflict.category = diagnostics::DiagnosticCategory::ResourceMissing;
+    regenConflict.severity = diagnostics::DiagnosticSeverity::Warning;
+    regenConflict.titleKey = "diag.req-derive-regenerate-conflict.title";
+    regenConflict.detailKey = "diag.req-derive-regenerate-conflict.detail";
+    // paramSchema 两键：手改条目名/批次实例标识（重生成定位键）。
+    regenConflict.paramSchema = R"(["entry","instance"])";
+    regenConflict.confirmable = false;         // 警告登记面——恢复生成值或解除关联后消除
+    regenConflict.requiresComparison = false;  // 非比较型三要素码（差异在重算面，非数值三要素）
+    regenConflict.retryable = diagnostics::RetryKind::UserRetry;
+    regenConflict.userVisible = true;
+    regenConflict.reportable = true;
+    regenConflict.historical = true;
+
+    // ---- §9.6 表尾增登：REQ-DERIVE-SOURCE-REMOVED（warning）----
+    // 被 linked 批次引用的源条目已删除（§7.2 删除保护行原文"允许＋诊断
+    // 提示'该源仍有 N 条 linked 派生'"——源删除不破坏派生条目独立性，
+    // 仅知情登记；增登依据＝该提示分支在 §9.6 原六码+T07 两码内无承载
+    // 面，T05 批 PLAN-MISSING 同款实现期增登）。context 两要素：entry=
+    // <被删源条目名>; linked-derived=<仍有 linked 关联的派生条目数>。
+    diagnostics::CodeDescriptor sourceRemoved;
+    sourceRemoved.code = std::string(kReqDeriveSourceRemoved);
+    sourceRemoved.ownerUnit = "requirements";
+    sourceRemoved.category = diagnostics::DiagnosticCategory::ResourceMissing;
+    sourceRemoved.severity = diagnostics::DiagnosticSeverity::Warning;
+    sourceRemoved.titleKey = "diag.req-derive-source-removed.title";
+    sourceRemoved.detailKey = "diag.req-derive-source-removed.detail";
+    // paramSchema 两键：被删源条目名/剩余 linked 派生计数。
+    sourceRemoved.paramSchema = R"(["entry","linked-derived"])";
+    sourceRemoved.confirmable = false;         // 知情登记面——派生条目可解除关联或整批删除
+    sourceRemoved.requiresComparison = false;  // 非比较型三要素码
+    sourceRemoved.retryable = diagnostics::RetryKind::UserRetry;
+    sourceRemoved.userVisible = true;
+    sourceRemoved.reportable = true;
+    sourceRemoved.historical = true;
+
     // 清单序＝§9.6 表行序（T02/T03 行→T04 行→T05 行→增登行→T06 行
-    // 表尾）——确定性序。
+    // →T07 行→增登行表尾）——确定性序。
     return {d, rowErr, dupId, unitIll, frameUnk, refMissing, seqCycle, poseIllegal,
             noRequiredCase, planDegenerate, inputIncomplete, planMissing,
-            captureStale};
+            captureStale, mirrorPending, regenConflict, sourceRemoved};
 }
 
 void registerRequirementCodes(diagnostics::IDiagnosticRegistry& registry)

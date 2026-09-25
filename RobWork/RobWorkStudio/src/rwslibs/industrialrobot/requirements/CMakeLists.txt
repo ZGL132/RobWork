@@ -64,6 +64,10 @@ find_package(GTest CONFIG REQUIRED)
 #   确定性参考姿态/方向＋resolution 留痕，AT-23）；src/Capture.cpp——
 #   三维拾取/TCP 捕获域侧（§9.8 L-R6/L-R7——确认门写回/REQ-CAPTURE-
 #   STATE-STALE 产码消费者/未应用不失效）。
+# T07 增列（tasks/foundation/WP-14-T07.json，卡 §11 T07 行）：
+#   src/TemplateArray.cpp——工艺模板/镜像/四类阵列/重生成/解除关联
+#   （§7.1/§7.2 纯函数演算——REQ-DERIVE-* 派生族产码消费者；编辑器
+#   批量入口随 Editor.cpp 同批增列）。
 add_library(sdurws_ird_requirements STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -77,7 +81,8 @@ add_library(sdurws_ird_requirements STATIC
     src/Readiness.cpp
     src/CommandHandlers.cpp
     src/OrientationResolution.cpp
-    src/Capture.cpp)
+    src/Capture.cpp
+    src/TemplateArray.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：requirements 公共头使用 C++17 设施（std::string_view/
@@ -215,6 +220,10 @@ endif()
 #   test/CaptureTest.cpp       捕获/拾取确认写回/未确认零变更/STALE 警告/
 #                              methodTag 留痕/未应用不失效/接口面不可绕过
 #                              （T06 acceptance 3/4——REQ-08/10、AT-23）
+#   test/TemplateArrayTest.cpp 六模板黄金默认/镜像黄金断言/不可镜像规则
+#                              处置/四类阵列几何/溯源完整零回写/重生成冲突
+#                              不静默覆盖/解除关联/批次整体回滚/删除源提示
+#                              （T07 acceptance 1~5——V-06/V-07、AT-24）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/modeling 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -235,7 +244,8 @@ add_executable(sdurws_ird_requirements_test
     test/ReadinessTest.cpp
     test/CommandHandlersTest.cpp
     test/OrientationResolutionTest.cpp
-    test/CaptureTest.cpp)
+    test/CaptureTest.cpp
+    test/TemplateArrayTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_test PROPERTIES
