@@ -22,7 +22,13 @@
 # io 六条（WP-13-T02——units/modeling.md §3.2 边表，属 ARCH §3.5"各业务域
 # 单元→L2/L3 公共接口"既有许可方向的实例化，非新增架构边；dependency-
 # graph.json 的刷新归 traceability 维护任务，故六边经 IRD_EXTRA_EDGE_REFS
-# 登记出处——见下方第 6 步一致性核对口径）。
+# 登记出处——见下方第 6 步一致性核对口径）；另含 2026-09-25 增登的
+# requirements→core/diagnostics/project/io/evidence 五条（WP-14-T02——
+# units/requirements.md §3.2 边表，同属 ARCH §3.5 既有许可方向的实例化；
+# runtime 边未登记——T02 零 runtime 公共值类型引用，实际引用时按卡 §3.2
+# 增登。五边已随本任务同步刷新进 dependency-graph.json〔traceability/ 在
+# allowedFiles 内——与 modeling 六边"图刷新归治理侧"的处置不同〕，并仍
+# 经 IRD_EXTRA_EDGE_REFS 登记出处——出处登记簿与图镜像双面留痕）。
 # 书写格式："依赖方->被依赖方"（与 traceability/dependency-graph.json 同序）。
 # ---------------------------------------------------------------------
 set(IRD_ALLOWED_UNIT_EDGES
@@ -53,6 +59,11 @@ set(IRD_ALLOWED_UNIT_EDGES
     "modeling->runtime"     # WP-13-T02（RobotDesignDescription/IRobotDesignReader/资源引用类型）
     "modeling->policy"      # WP-13-T02（EngineeringPolicySet 只读解析、IJointLimitEvaluator）
     "modeling->io"          # WP-13-T02（SafePath/BudgetGuard/IResourceReader/ResourceSnapshot/AtomicFile 值与服务类型）
+    "requirements->core"        # WP-14-T02 五边（requirements.md §3.2 边表——身份/SourcedValue/单位/比较/诊断契约/事件）
+    "requirements->diagnostics" # WP-14-T02（稳定码注册、IDiagnosticFactory/IDiagnosticSink）
+    "requirements->project"     # WP-14-T02（ICommandHandler/CommandPlan/HandlerContext/DraftService/查询端口）
+    "requirements->io"          # WP-14-T02（Csv/Json 解析值与服务、SafePath/BudgetGuard、AtomicFile）
+    "requirements->evidence"    # WP-14-T02（ReadinessSummary/Snapshot 角色键值类型——请求方角色；无评估器注册）
 )
 
 # ---------------------------------------------------------------------
@@ -66,6 +77,10 @@ set(IRD_ALLOWED_UNIT_EDGES
 # WP-13-T02 增登的 modeling 六边同形态：dependency-graph.json 刷新不在该
 # 任务 allowedFiles 的机器镜像维护责任内（traceability 机器索引同步归
 # 治理侧——modeling.md §14.5 遗留行同口径），故经本表登记出处。
+# WP-14-T02 增登的 requirements 五边：traceability/ 在该任务 allowedFiles
+# 内，dependency-graph.json 已随任务同步刷新（五边入图，⊆ 方向成立）；
+# 仍在本表登记出处——出处登记簿与图镜像双面留痕（契约 acceptance 2 双
+# 义务的执行面）。
 # 格式：边 与 出处成对书写（各一个条目，数量必须相等）。
 # ---------------------------------------------------------------------
 set(IRD_EXTRA_EDGE_REFS_EDGES
@@ -75,7 +90,12 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "modeling->project"
     "modeling->runtime"
     "modeling->policy"
-    "modeling->io")
+    "modeling->io"
+    "requirements->core"
+    "requirements->diagnostics"
+    "requirements->project"
+    "requirements->io"
+    "requirements->evidence")
 set(IRD_EXTRA_EDGE_REFS_NOTES
     "ARCH §3.5 补登（O-21 消账，2026-09-10）；testkit.md §2.4 T-2 允许形态"
     "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/SourcedValue/单位/比较/诊断契约/事件）"
@@ -83,7 +103,12 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——ICommandHandler/CommandPlan/HandlerContext/DraftService/查询端口"
     "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——RobotDesignDescription/IRobotDesignReader/资源引用类型"
     "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——EngineeringPolicySet 只读解析、IJointLimitEvaluator"
-    "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——SafePath/BudgetGuard/IResourceReader/ResourceSnapshot/AtomicFile 值与服务类型")
+    "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——SafePath/BudgetGuard/IResourceReader/ResourceSnapshot/AtomicFile 值与服务类型"
+    "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/SourcedValue/单位/比较/诊断契约/事件）；dependency-graph.json 已随任务同步刷新（双面留痕）"
+    "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——稳定码注册、IDiagnosticFactory/IDiagnosticSink（dependency-graph.json 已随任务同步刷新）"
+    "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——ICommandHandler/CommandPlan/HandlerContext/DraftService/查询端口（dependency-graph.json 已随任务同步刷新）"
+    "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——Csv/Json 解析值与服务、SafePath/BudgetGuard、AtomicFile（dependency-graph.json 已随任务同步刷新）"
+    "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——ReadinessSummary/Snapshot 角色键值类型，请求方角色、无评估器注册（dependency-graph.json 已随任务同步刷新）")
 
 # ---------------------------------------------------------------------
 # 业务域单元清单（R-1 的判定范围；来源 AGENTS.md §5 架构红线 2）

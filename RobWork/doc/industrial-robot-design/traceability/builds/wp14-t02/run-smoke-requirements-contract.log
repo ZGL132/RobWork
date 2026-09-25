@@ -1,0 +1,18 @@
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from ReqBuildGraph
+[ RUN      ] ReqBuildGraph.UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2
+[       OK ] ReqBuildGraph.UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2 (0 ms)
+[ RUN      ] ReqBuildGraph.FiveRegisteredEdgesPresent_WP14T02_ACC2
+[       OK ] ReqBuildGraph.FiveRegisteredEdgesPresent_WP14T02_ACC2 (0 ms)
+[ RUN      ] ReqBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP14T02_ACC2
+[       OK ] ReqBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP14T02_ACC2 (0 ms)
+[ RUN      ] ReqBuildGraph.NoTestkitEdgeOnProductTarget_WP14T02_ACC2
+[       OK ] ReqBuildGraph.NoTestkitEdgeOnProductTarget_WP14T02_ACC2 (0 ms)
+[ RUN      ] ReqBuildGraph.IncludeFaceMatchesRegisteredEdges_WP14T02_ACC2
+[       OK ] ReqBuildGraph.IncludeFaceMatchesRegisteredEdges_WP14T02_ACC2 (0 ms)
+[----------] 5 tests from ReqBuildGraph (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (2 ms total)
+[  PASSED  ] 5 tests.

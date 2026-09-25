@@ -4,15 +4,15 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案，2026-09-22；对应 development-task-breakdown.md WP-14-T01 交付物） |
-| 日期 | 2026-09-22 |
+| 文档版本 | v0.2（2026-09-25，WP-14-T02 落位登记——§14.6；v0.1 首版草案 2026-09-22，WP-14-T01 交付物） |
+| 日期 | 2026-09-25（v0.2）；2026-09-22（v0.1） |
 | 状态 | **`Draft`**（待评审；DETAILED-DESIGN.md 单元状态表中的"requirements｜待产出"以本卡落盘为准，索引行同步由治理侧执行，本卡不代改） |
 | 文档代号 | UNIT-REQ |
 | 单元 | requirements（业务域单元，ARCHITECTURE §3.1：任务点/区域/工况定义、CSV/JSON 导入、姿态规则、镜像阵列、就绪校验；ARCHITECTURE §3.3 二分结构：零 Qt 计算库＋Qt Widgets 插件） |
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.12（`Draft`，2026-09-10）** |
 | 协作输入 | `units/core.md` v0.11、`units/runtime.md` v0.15、`units/project.md` v0.18、`units/policy.md` v0.14、`units/io.md` 卡头 v0.9（§15.5 变更链至 v1.0；`Csv.hpp`/`Json.hpp` 已落位）、`units/diagnostics.md` v0.12、`units/evidence.md` v1.3、`units/ui.md` v1.5（文末登记 v1.6）、`units/modeling.md` v0.2（同批业务卡，对象分解与 P-MDL-1 裁决同源）、`units/testkit.md` v0.9——均为 **Draft/Draft-Structured（未冻结）**；本卡消费的签名以各卡当前文本为基线，冻结后按影响面增量同步（§14.3 P-REQ-8） |
 | 上游下游链位置 | ARCHITECTURE §11.1：`DETAILED-DESIGN.md`（已建立）→ `units/*.md`（单元任务卡）。本文即 `units/requirements.md`，按任务卡深度编写 |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/`（**现状：上级以 INTERFACE 占位注册 `sdurws_ird_requirements`＋别名；单元级 CMakeLists.txt 不存在；`include/sdurws/ird/requirements/` 仅 README.md 保留位——由 WP-14-T02 转真实目标**，见 §3.2、§11） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/`（**WP-14-T02 起为真实目标**：`sdurws_ird_requirements` STATIC（C++17、零 Qt、PUBLIC 链 core/diagnostics/project/io/evidence 五条 §3.2 登记边）＋`_test`/`_contract_test` 两测试目标＋配置期红线守卫；T02 公共面＝ObjectTypes/Errors/DiagCodes 三头；`_plugin` 随 WP-14-T08，见 §3.2、§11） |
 | 任务归属 | `development-task-breakdown.md`（v0.16）WP-E／WP-14（T01～T09）；本文 §11 只做单元内部任务拆分与排序，不重排 WP 编号 |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释、框架零源码修改、双模式构建与留痕、提交后推送；Windows Qt GUI 测试须在 VS x64 环境设 `QT_QPA_PLATFORM=windows`、逐个绝对路径启动 |
 | 实现口径 | **从头构建**（REQUIREMENTS v1.9/v1.11 确立）：一切实现按需求与本文新建，不继承、不恢复任何历史实现源码。旧代码位置（用户提供 `D:\10_Source_Repos\old\src\rwslibs\engineeringrequirements`，实测 35 文件约 1.21 万行）**仅作功能范围对照**（§2.5），不构成实现继承或正确性背书 |
@@ -1013,6 +1013,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v0.2 | 2026-09-25 | WP-14-T02 落位登记：`requirements/CMakeLists.txt` 新建（`sdurws_ird_requirements` INTERFACE 占位→STATIC，目标名/别名不变；C++17 显式、零 Qt、PUBLIC 链 core/diagnostics/project/io/evidence 五条 §3.2 登记边——runtime 边未登记〔T02 零 runtime 公共值类型引用，实际引用时按 §3.2 增登〕；`_test`/`_contract_test` 随文件注册〔ird_add_gtest 自持宏，LABELS ird〕；配置期红线守卫自持 R-1/R-3）；T02 公共面三头落位——`ObjectTypes.hpp`（五对象 token＋ProcessTag 11/TemplateKind 6/ArrayKind 4 词表＋五 schema 版本常量）、`Errors.hpp`（RequirementErrorCode 8 值＝§9.3~§9.5 @错误 行收编＋RequirementError 值类型＋域错误→稳定码映射）、`DiagCodes.hpp`（REQ-SCHEMA-UNSUPPORTED 先注册——§9.6 T02/T03 行，其余 13 码随消费者任务分批注册、不预建）；project/io/evidence 三边落位期"仅链接不消费"（P-RPT-9 先例，消费随 T04/T05 回填）。§1.2 代码落位行、§3.2 执行清单相应事实由本行承载；无语义偏差 |
 | v0.1 | 2026-09-22 | 首版草案（WP-14-T01 承接）：14 章全量——上游基线登记（REQUIREMENTS v1.16/ARCHITECTURE v0.12/十单元卡 Draft 系/旧代码 35 文件实测）；REQ-01~12 承接总表＋拥有/消费/不拥有边界＋§2.5 旧代码功能对照（23 行）；五对象数据模型（I-REQ-1~10）；任务点三段/区域采样定义/五姿态规则；工况与 P-EV-9 必验 schema 冻结（§6.2，含 evidence §4.1.3 回接义务）；镜像阵列与 CSV/JSON 导入管线（字段字典冻结）；R0~R9 就绪分层＋四轴正交表＋角色键约定；8 必需＋2 支撑接口契约；14 个 REQ- 稳定码；22 行故障注入矩阵；WP-14-T01~T09 排序；双向交接清单；追踪矩阵；10 决策/6 风险/8 待裁决；12 项自审。状态 `Draft`，待评审 |
 
 > 自审声明：本文档自审仅覆盖设计一致性、边界与上游对齐，不等同于实现测试通过或正式验收（acceptance-protocol.md 流程另行执行）。
