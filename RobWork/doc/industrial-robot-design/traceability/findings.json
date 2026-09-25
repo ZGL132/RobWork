@@ -3516,6 +3516,16 @@
       "title": "提交 be8aa7cd 正文与 units/modeling.md §14.6 v0.17 行⑤的具名用例分组计数漂移：写「23 条（ACC2 六/ACC3 五/ACC4 六/ACC5 四）」，分组和＝21≠23；实测 test/PluginPanelTest.cpp 具名 TEST 为 ACC2 7 条＋ACC3 6 条＋ACC4 6 条＋ACC5 4 条＝23（总数 23 正确，gtest XML 246/246 与 23 条 PluginPanel 记录均实证）——F-342/F-343/F-349 散文计数失准家族新增一例，仅分组叙述失准、总数与实质为零影响",
       "owner": "modeling 卡所有者（下次单元卡增量修订时将⑤分组计数校准为 7/6/6/4；commit 散文随仓库惯例不改写历史，登记即可）",
       "resolution": "编号顺延自 F-353。"
+    },
+    {
+      "id": "F-357",
+      "source": "traceability/acceptance/WP-13-T16-20260925.md §4.5/问题清单（attempt 1，verdict=pass，2026-09-25；验收者变异测试：对 DhConvert.cpp canonicalForm 翻转支内 a 分量施加 +1e-6 m 偏置〔MUTATION-M2，git restore 还原〕后 MdlGoldenDhEquivalence 四用例实测全绿）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "mdl-dh-equivalence 黄金数据集零样本命中 DhConvert canonicalForm 翻转支（负 d 支）：实施侧按 F-356 处置将 general-3r 原 J3 输入参数（α 符号位）调整避开该支后，七样本的规范代表全部走不翻转路径——V-11 黄金面对 canonicalForm 分支选取语义无变异敏感度（4.5 变异实测零红，作为对照的同函数无条件偏置变异 M2b 则双红）；分支语义本体（翻转恒等式不保位置）已由 F-356 归 T09 所有者裁决，本条仅登记黄金面覆盖缺口",
+      "owner": "testkit/modeling 数据集所有者（F-356 裁决落定后补一例命中翻转支的负 d 黄金样本——inputs/expected/generate/manifest integrity 同步刷新，使 V-11 对分支选取具备黄金钉定）",
+      "resolution": "编号顺延自 F-356（WP-13-T16 验收者取号基准＝送验分支 findings.json 最大号）。"
     }
   ]
 }
