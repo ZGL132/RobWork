@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "实现就绪校验（R0~R9）与预览/正式分离及需求命令族",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-14-T03",
     "EV-T06"
