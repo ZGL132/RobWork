@@ -585,6 +585,16 @@ if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_modeling_contract_test PRIVATE
         contract_test/CompileBridgeContractTest.cpp)    # ACC3：reader→S5
                                                         # 端到端对齐＋失败面
+    target_sources(sdurws_ird_modeling_contract_test PRIVATE
+        contract_test/GoldenPeerContractTest.cpp)       # T16 ACC5：黄金数据
+                                                        # 集跨单元对端面（io
+                                                        # 导入管线缺失叶契约
+                                                        # ＋V-09 循环透传＋
+                                                        # project 对端 V-01
+                                                        # 收口＋AT-37 输入面；
+                                                        # 消费 policy 评估器
+                                                        # 与 CommandFixtures
+                                                        # ——冒烟不编入）
 endif()
 
 target_compile_features(sdurws_ird_modeling_contract_test PRIVATE cxx_std_17)
