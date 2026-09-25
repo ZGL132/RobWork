@@ -8,15 +8,17 @@
  *     {builtin ProximityStrategyRW})——唯一实现的唯一构造入口）、§9.3
  *     （ICollisionEvaluator 契约表与 RobWorkCollisionEvaluator 产出）、
  *     §12 POL-T06 行（检测器初始化——内置后端实例化）、§8.1/P-POL-5
- *     （复现要素取值：backendVersion 暂取 RobWork 构建版本 RW_VERSION）
+ *     （复现要素取值：backendVersion＝kFrozenBuiltinBackendVersion 基线
+ *     冻结常量——WP-24-T01 回填，原 RW_VERSION 暂取口径消账）
  *   - 需求 ARC-05（唯一实现——R-POL-1~5 防旁路）
  *
  * 翻译单元切分说明（policy.md §15.4 v0.7 登记——评审对照点）：
  *   本 TU 与 CollisionEvaluator.cpp 的分工：
  *   - 本 TU 持有全部 RobWork 命名标识符（RobWorkCollisionEvaluator/
  *     makeRobWorkCollisionEvaluator——§9.3 冻结命名）与 RobWork 命名头
- *     包含（RobWorkConfig.hpp——RW_VERSION 取值源），**不含任何字符串
- *     字面量**（源码文本零 ASCII 引号）；
+ *     包含（rw/proximity/*），**不含任何字符串
+ *     字面量**（源码文本零 ASCII 引号；版本冻结值经头内常量标识符取得
+ *     ——WP-24-T01 起 RobWorkConfig.hpp 包含已删除）；
  *   - CollisionEvaluator.cpp 持有会话域错误消息与复现要素冻结值的字面量
  *     （detail::makeBuiltinBackendDescriptor 单点），不含 RobWork 命名
  *     标识符；
@@ -35,12 +37,11 @@
 
 #include <sdurws/ird/policy/CollisionEvaluator.hpp>
 
-#include <RobWorkConfig.hpp>
-
 #include <rw/proximity/CollisionStrategy.hpp>
 #include <rw/proximity/rwstrategy/ProximityStrategyRW.hpp>
 
 #include <memory>
+#include <string>
 #include <utility>
 
 namespace sdurws::ird::policy {
@@ -63,9 +64,11 @@ RobWorkCollisionEvaluator::RobWorkCollisionEvaluator(const BackendConfig& config
     m_queryMutex = std::make_shared<std::mutex>();
     // 复现要素（§8.1/P-POL-5）：冻结值与容差模型登记串由字面量单点
     // （detail::makeBuiltinBackendDescriptor——CollisionEvaluator.cpp）供给；
-    // backendVersion 注入 RW_VERSION（RobWork 构建版本——构建期宏；
-    // P-POL-5 基线冻结 WP-24 后单点回填）。
-    m_descriptor = detail::makeBuiltinBackendDescriptor(RW_VERSION);
+    // backendVersion 注入 kFrozenBuiltinBackendVersion（基线冻结版本常量
+    // ——WP-24-T01 基线 ird/share/baseline.md §3 登记值；头经
+    // CollisionEvaluator.hpp 取得，本 TU 保持零字符串字面量纪律）。
+    m_descriptor = detail::makeBuiltinBackendDescriptor(
+        std::string(kFrozenBuiltinBackendVersion));
 }
 
 CollisionBackendDescriptor RobWorkCollisionEvaluator::backend() const
