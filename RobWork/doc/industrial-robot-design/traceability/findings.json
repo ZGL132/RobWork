@@ -3446,6 +3446,26 @@
       "title": "ird_gates.cmake 的 IRD_SELFTEST_DIR 无防呆校验：脚本自述'夹具树动态生成写入 IRD_SELFTEST_DIR，不污染源码树'，但调用方若把该目录指向源树内路径（如 <IRD_ROOT>/testkit/test）时脚本照单执行——生成夹具前清理/写入会删除源树跟踪文件（本次验收事故 1 例：worktree 内 testkit/test 14 个跟踪 .cpp 被清、冒烟构建 C1083 连累；git checkout 还原后以缺省 TEMP 夹具目录重跑，head/base 直方图结论不变、双源树还原纯净——结论未受影响，属操作防呆缺口非门禁判定缺陷）",
       "owner": "治理脚本所有者（WP-01-T01 ird_gates 辖域）：脚本启动时断言 IRD_SELFTEST_DIR 规范化后不落在 IRD_ROOT 之内（或非任何源树路径），违者 FATAL 并提示缺省 TEMP 用法；文档同步该约束",
       "resolution": "编号顺延自 F-346。"
+    },
+    {
+      "id": "F-348",
+      "source": "traceability/acceptance/WP-13-T12-20260925.md §4.9/§4.10/§4.8（attempt 1，verdict=pass，2026-09-25；验收者对提交物清单 grep .xml 与在库报告逐件对账）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "WP-13-T12 留痕缺 gtest JUnit XML 原件且 commit 表述失实（F-346 同题复发，第二次）：traceability/builds/wp13-t12/ 提交的是 testkit JSON 报告（ird-test-report/1 逐案明细＋合并 222/222、171/171）＋构建/ctest 日志，全量 diff（1752bb85..541f554c）无任何 .xml，而文档同步提交 541f554c 正文写'集成 gtest XML 两件＋冒烟 gtest XML 两件'与实际提交物不符——逐案数据在库、自洽且验收者由送验源码亲跑复现（208/14/163/8 与合并报告逐件一致），非数据缺失、非粉饰；已推送提交不可改写——本条即留档",
+      "owner": "实施者侧（后续留痕窗口把 gtest XML 原件随 traceability/builds/ 落位——--gtest_output=xml: 或 ctest 产出；commit 正文留痕清单与实际文件一致）；治理侧可考虑把 XML 在位核验纳入 verify-task 留痕清单或按 F-346 备选把 ird-test-report/1 JSON 登记为等价留痕载体并同步 ACC §4.10 口径",
+      "resolution": "编号顺延自 F-347。"
+    },
+    {
+      "id": "F-349",
+      "source": "traceability/acceptance/WP-13-T12-20260925.md §4.8（attempt 1，verdict=pass，2026-09-25；验收者按 4.7 注释规范与单元卡 v0.14 登记逐句对账实现）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-25",
+      "title": "Fixed 关节轴中性填充的 provenance 标记文实不符（F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343 散文失准家族新增一例）：units/modeling.md v0.14 ②与 modeling/src/CanonicalBridge.cpp 文件头③均称填充带「DerivedReadOnly＋methodTag \"fixed-axis-neutral\"」，但该标记无任何承载面——runtime JointDescription.axis 为裸 Vector3D（runtime/Description.hpp:253，无 SourcedValue/provenance 位）、全库 grep 该 methodTag 仅实现注释一处；实际只有 +Z 确定性填充值面（功能真实、FixedJointAxisNeutralFill_UT 钉住），声明的标记无处落地",
+      "owner": "modeling 卡所有者（文档收窄：v0.14 ②与实现文件头③改为「+Z 确定性填充；Description 轴字段无 provenance 承载」）；如需真实标记须先经 runtime Description 契约增量引入轴 provenance 位（P-MDL-8 单点演进通道），不得在 modeling 侧私设",
+      "resolution": "编号顺延自 F-348。"
     }
   ]
 }
