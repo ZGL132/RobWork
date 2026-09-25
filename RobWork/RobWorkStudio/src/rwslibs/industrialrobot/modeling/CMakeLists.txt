@@ -133,6 +133,12 @@ find_package(pugixml CONFIG REQUIRED)
 #   src/PackageWorkCell.cpp  WC/DWC XML 外供导出（§6.8 第二条——数据源＝
 #                        runtime 快照只读视图，modeling 仅编排写出；
 #                        PackageWorkCellTest 同因仅集成模式编译）
+# T14 增列（tasks/foundation/WP-13-T14.json，§3.3 表 T14 行）：
+#   src/ModelDiff.cpp     Model Diff 差异增量表数据实体（IModelDiffService
+#                        ——MDL-08：两工作集输入、结构/参数（DH、轴线、
+#                        限位）/物性三组稳定排序增量表、条目含对象定位
+#                        〔供 UX-13 点击〕；派生只读字段豁免同 D-MDL-5；
+#                        §9.4.9）
 add_library(sdurws_ird_modeling STATIC
     src/ObjectTypes.cpp
     src/Errors.cpp
@@ -148,7 +154,8 @@ add_library(sdurws_ird_modeling STATIC
     src/CommandHandlers.cpp
     src/DhConvert.cpp
     src/CanonicalBridge.cpp
-    src/Package.cpp)
+    src/Package.cpp
+    src/ModelDiff.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
@@ -309,6 +316,18 @@ endif()
 # PRJ-T15 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
 enable_testing()
 
+# T13 增列（tasks/foundation/WP-13-T13.json，acceptance 1~5 具名自证）：
+#   test/PackageTest.cpp           包导出/导入 roundtrip（两模式均编译——
+#                          被测面为纯函数服务＋io 公共设施）
+# T14 增列（tasks/foundation/WP-13-T14.json，acceptance 1~4 具名自证；
+#          两模式均编译——被测面为纯函数比较服务，自持夹具零命令/策略依赖）：
+#   test/ModelDiffTest.cpp  接口落位/空差集空报告（ACC1/3）＋逐字段三态与
+#                          来源标记面（ACC2，AT-12 数据侧）＋派生只读字段
+#                          豁免三分支（ACC2，D-MDL-5）＋确定性/字段序稳定
+#                          排序（ACC2，NFR-COR-02）＋纯函数输入只读双证据
+#                          （deep 相等＋canonical 字节前后对照——ACC3）＋
+#                          交换镜像/方向字段（ACC3）＋引用集合/链序位/资源
+#                          清单语义（ACC2 补充面）＋AT-12 逐项可观察（ACC4）
 add_executable(sdurws_ird_modeling_test
     test/TestMainReport.cpp
     test/ObjectTypesTest.cpp
@@ -325,7 +344,8 @@ add_executable(sdurws_ird_modeling_test
     test/BasePlacementEditTest.cpp
     test/DhConvertTest.cpp
     test/CanonicalBridgeTest.cpp
-    test/PackageTest.cpp)
+    test/PackageTest.cpp
+    test/ModelDiffTest.cpp)
 
 # T08 测试 TU（集成模式专属 gating——POL-T06/T07/T08 同款：ReadinessTest/
 # CommandHandlersTest 消费 policy 行程评估器〔makeJointLimitEvaluator〕，
