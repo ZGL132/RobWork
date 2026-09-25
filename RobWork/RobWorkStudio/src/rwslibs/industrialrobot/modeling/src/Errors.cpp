@@ -56,6 +56,10 @@ std::string_view modelingErrorCodeToken(ModelingErrorCode code) noexcept
         return "SchemaVersionUnsupported";
     case ModelingErrorCode::MalformedPayload:
         return "MalformedPayload";
+    case ModelingErrorCode::ExportFailed:
+        return "ExportFailed";
+    case ModelingErrorCode::PackageUnknown:
+        return "PackageUnknown";
     }
     // 全枚举已覆盖，不达此处（ARC-04：不猜测——漏表项由编译器拦截，
     // 不设静默兜底串）。
@@ -72,7 +76,12 @@ std::optional<std::string_view> modelingDiagCode(ModelingErrorCode code) noexcep
     //     实现期增登；§9.4.2"TemplateDisabled（附定位诊断）"的映射落地：
     //     生产者接口 createDraft 落位，映射随 §9.5 码行注册同批落地——
     //     Errors.hpp 阶段纪律原文口径；码串与 DiagCodes.hpp
-    //     kMdlTemplateDisabled 同源，DiagCodesTest 交叉核对）。
+    //     kMdlTemplateDisabled 同源，DiagCodesTest 交叉核对）；
+    //   ③ExportFailed→MDL-EXPORT-FAILED（§9.5 T13 行——WP-13-T13 随
+    //     Package 落位同批登记；MDL-20"导出失败恢复先前输出"失败轨的
+    //     域错误→码映射）；
+    //   ④PackageUnknown→MDL-IMPORT-PACKAGE-UNKNOWN（§9.5 T13 行——同批
+    //     登记；非本软件工件的引导诊断映射）。
     //
     // 其余 11 值显式 nullopt（不是遗漏）：①"无独立码时复用校验码族"
     // （§9.5 括注——如 AuthorityViolation）的具体复用属产出点语义裁决，
@@ -86,6 +95,10 @@ std::optional<std::string_view> modelingDiagCode(ModelingErrorCode code) noexcep
         return std::optional<std::string_view>{"MDL-READINESS-SCHEMA-UNSUPPORTED"};
     case ModelingErrorCode::TemplateDisabled:
         return std::optional<std::string_view>{"MDL-TEMPLATE-DISABLED"};
+    case ModelingErrorCode::ExportFailed:
+        return std::optional<std::string_view>{"MDL-EXPORT-FAILED"};
+    case ModelingErrorCode::PackageUnknown:
+        return std::optional<std::string_view>{"MDL-IMPORT-PACKAGE-UNKNOWN"};
     case ModelingErrorCode::DuplicateObjectId:
     case ModelingErrorCode::RefProtected:
     case ModelingErrorCode::AuthorityViolation:

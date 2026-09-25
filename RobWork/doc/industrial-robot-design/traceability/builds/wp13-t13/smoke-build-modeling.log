@@ -1,0 +1,59 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\project\Release\sdurws_ird_project.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\runtime\Release\sdurws_ird_runtime.lib
+  CanonicalBridge.cpp
+  Codec.cpp
+  CommandHandlers.cpp
+  DhConvert.cpp
+  DiagCodes.cpp
+  Errors.cpp
+  Import.cpp
+  ObjectTypes.cpp
+  Package.cpp
+  Parts.cpp
+  PropertyEstimation.cpp
+  Readiness.cpp
+  RobotDesign.cpp
+  Template.cpp
+  XacroExpand.cpp
+  正在生成代码...
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\modeling\Release\sdurws_ird_modeling.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\testkit\Release\sdurws_ird_testkit.lib
+  BasePlacementEditTest.cpp
+  BuildRedLineTest.cpp
+  CanonicalBridgeTest.cpp
+  CodecTest.cpp
+  DhConvertTest.cpp
+  DiagCodesTest.cpp
+  ErrorsTest.cpp
+  ImportTest.cpp
+  ObjectTypesTest.cpp
+  PackageTest.cpp
+  PartsTest.cpp
+  PropertyEstimationTest.cpp
+  RobotDesignTest.cpp
+  TemplateTest.cpp
+  TestMainReport.cpp
+  XacroExpandTest.cpp
+  正在生成代码...
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\modeling\Release\sdurws_ird_modeling_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\project\Release\sdurws_ird_project.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\modeling\Release\sdurws_ird_modeling.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\testkit\Release\sdurws_ird_testkit.lib
+  BuildGraphContractTest.cpp
+  ContractTestMain.cpp
+  DescriptionBridgeContractTest.cpp
+  正在生成代码...
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t13\modeling\Release\sdurws_ird_modeling_contract_test.exe

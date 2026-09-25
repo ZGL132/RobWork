@@ -12,13 +12,14 @@
  *   - 先例：io/src/IoDiagnostics.cpp（ioCodeDescriptors 逐字段登记口径）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 4
  *
- * 背景说明：清单当前 22 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
+ * 背景说明：清单当前 24 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
  * T05 行五码＋WP-13-T06 实现期增登的 T06 行一码＋WP-13-T07 实现期增登
  * 的 T07 行一码＋WP-13-T08 登记的 T08 行九码——八条卡面行＋一条 v0.9
  * 实现期增登行 MDL-READINESS-PHYSICS-MISSING＋WP-13-T09 登记的 T09 行
  * 三码 MDL-DH-{NOT-EXPRESSIBLE,APPROXIMATE,ANALYSIS-FAILED}＋WP-13-T10
  * 实现期增登的 T10 行两码 MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-TCP-
- * INCOMPLETE）——分批注册
+ * INCOMPLETE＋WP-13-T13 登记的 T13 行两码 MDL-IMPORT-PACKAGE-UNKNOWN/
+ * MDL-EXPORT-FAILED）——分批注册
  * 纪律（"不预建无消费者条目"）的执行口径见
  * 头文件 DiagCodes.hpp 文件头注；其余行随各自任务在**本清单表尾追加**
  * （表尾追加＝登记簿纪律，不重排既有项）。
@@ -593,13 +594,74 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     defaultTcpIncomplete.deprecated = false;
     // supersededBy 保持 nullopt。
 
+    // ---- §9.5 T13 行两码（WP-13-T13 登记，§14.6 v0.15——规范包导出/导入
+    // 族；表行序追加于表尾——登记簿纪律不重排既有行）----
+    // T13 行共用口径：分类/severity 逐码取 §9.5"类别/级别"列的 diagnostics
+    // §4.3 词表投影；paramSchema 以实际产码数据面为准（导出失败定位要素=
+    // 目标文件名与 io 侧错误码、来源不明要素=manifest 检出字段），路径等
+    // 敏感值不入 params（脱敏前纪律——ModelingError 同款约束）。
+
+    // ---- MDL-IMPORT-PACKAGE-UNKNOWN（导入/error）----
+    // 非本软件规范工件（manifest 缺失/不可读、formatId/producer 不符、
+    // 容器无法以本格式打开——MDL-20 导入门 fail-closed）→使用 MDL-18/R2
+    // 通道（R1 引导提示；不代替该通道解析）。分类 InputInvalid＝
+    // diagnostics §4.3 词表"输入非法"族：输入字节不是本格式契约的工件。
+    diagnostics::CodeDescriptor packageUnknown;
+    packageUnknown.code = std::string(kMdlImportPackageUnknown);
+    packageUnknown.ownerUnit = "modeling";
+    packageUnknown.category = diagnostics::DiagnosticCategory::InputInvalid;
+    packageUnknown.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"导入/error"
+    packageUnknown.titleKey = "diag.mdl-import-package-unknown.title";
+    packageUnknown.detailKey = "diag.mdl-import-package-unknown.detail";
+    packageUnknown.paramSchema = R"(["check-kind","found-value"])";
+    //        （check-kind＝manifest-missing|manifest-unreadable|format-id|
+    //          producer|container；found-value＝检出值或缺省占位——工件被
+    //          拒的定位要素；引导动作随 recommendedAction 文案承载）
+    packageUnknown.confirmable = false;          // §9.5 行：false（换通道引导，无放行分支）
+    packageUnknown.requiresComparison = false;   // 事实判定（非比对型）
+    packageUnknown.retryable = diagnostics::RetryKind::UserRetry;  // "改用 MDL-18/R2 通道"＝fix-input 族
+    packageUnknown.userVisible = true;           // 向导导入入口提示（MDL-20 引导语义）
+    packageUnknown.reportable = true;
+    packageUnknown.historical = true;
+    packageUnknown.registryVersion = 1;
+    packageUnknown.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-EXPORT-FAILED（导出/error）----
+    // 规范包导出失败（io AtomicFile prepare/写入/预提交自检/commit 任一环
+    // 失败：目标路径不可写/预算超限/中途失败——MDL-20"导出失败恢复先前
+    // 输出"，V-29 文件层观测）→项目状态不变，检查目标路径/预算后重试。
+    // 分类 ExecutionFailed＝diagnostics §4.3 词表"执行失败"族（TASK-02 轴
+    // ——文件系统环境失败，非建模语义结论）；级别 error（§9.5"导出/error"）。
+    diagnostics::CodeDescriptor exportFailed;
+    exportFailed.code = std::string(kMdlExportFailed);
+    exportFailed.ownerUnit = "modeling";
+    exportFailed.category = diagnostics::DiagnosticCategory::ExecutionFailed;
+    exportFailed.severity = diagnostics::DiagnosticSeverity::Error;   // §9.5"导出/error"
+    exportFailed.titleKey = "diag.mdl-export-failed.title";
+    exportFailed.detailKey = "diag.mdl-export-failed.detail";
+    exportFailed.paramSchema = R"(["stage","io-code"])";
+    //        （stage＝prepare|write|self-check|commit——原子写出链路定位；
+    //          io-code＝io 侧稳定错误码 token（如 IO-RES-ACCESS-DENIED）——
+    //          环境四分类的定位要素；目标路径不入 params（敏感值纪律））
+    exportFailed.confirmable = false;           // §9.5 行：false（环境失败无放行分支）
+    exportFailed.requiresComparison = false;    // 执行失败无语义比对值（不伪造）
+    exportFailed.retryable = diagnostics::RetryKind::UserRetry;  // "检查路径/预算后重试"＝fix-input 族
+    exportFailed.userVisible = true;
+    exportFailed.reportable = true;
+    exportFailed.historical = true;
+    exportFailed.registryVersion = 1;
+    exportFailed.deprecated = false;
+    // supersededBy 保持 nullopt。
+
     return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
             templateRange, xacroUnresolved, templateDisabled,
             travelLimit, massNonpositive, inertiaNotSpd, inertiaTriangle,
             limitInterval, rangeNotFinite, refMissing, resourceState,
             physicsMissing,
             dhNotExpressible, dhApproximate, dhAnalysisFailed,
-            refProtected, defaultTcpIncomplete};
+            refProtected, defaultTcpIncomplete,
+            packageUnknown, exportFailed};
 }
 
 void registerModelingCodes(diagnostics::IDiagnosticRegistry& registry)

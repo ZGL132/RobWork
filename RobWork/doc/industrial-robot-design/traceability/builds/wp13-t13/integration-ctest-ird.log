@@ -1,0 +1,12 @@
+Test project D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/src/rwslibs/industrialrobot/modeling
+    Start 1: sdurws_ird_modeling_test
+1/2 Test #1: sdurws_ird_modeling_test ............   Passed    0.28 sec
+    Start 2: sdurws_ird_modeling_contract_test
+2/2 Test #2: sdurws_ird_modeling_contract_test ...   Passed    0.04 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Label Time Summary:
+ird    =   0.32 sec*proc (2 tests)
+
+Total Test time (real) =   0.32 sec

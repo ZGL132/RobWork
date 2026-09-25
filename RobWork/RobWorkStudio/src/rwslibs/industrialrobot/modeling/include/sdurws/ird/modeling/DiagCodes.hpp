@@ -189,6 +189,17 @@ inline constexpr std::string_view kMdlRefProtected = "MDL-REF-PROTECTED";
 inline constexpr std::string_view kMdlReadinessDefaultTcpIncomplete =
     "MDL-READINESS-DEFAULT-TCP-INCOMPLETE";
 
+/// §9.5 T13 行：MDL-IMPORT-PACKAGE-UNKNOWN（导入/error——非本软件规范工件
+/// →使用 MDL-18/R2 通道（R1 引导提示）；MDL-20 导入门 fail-closed 的引导
+/// 诊断，WP-13-T13 随 Package 落位同批登记，§14.6 v0.15）。
+inline constexpr std::string_view kMdlImportPackageUnknown = "MDL-IMPORT-PACKAGE-UNKNOWN";
+
+/// §9.5 T13 行：MDL-EXPORT-FAILED（导出/error——规范包导出失败→项目状态
+/// 不变，检查目标路径/预算后重试；MDL-20"导出失败恢复先前输出"失败轨的
+/// 码面（V-29 文件层观测配套），WP-13-T13 随 Package 落位同批登记，
+/// §14.6 v0.15）。
+inline constexpr std::string_view kMdlExportFailed = "MDL-EXPORT-FAILED";
+
 // =====================================================================
 // MDL-* 稳定诊断码描述符清单（§9.5 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================

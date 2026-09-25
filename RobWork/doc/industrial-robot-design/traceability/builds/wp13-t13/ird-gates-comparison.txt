@@ -1,0 +1,27 @@
+ird_gates 命中集归一化多重集比对（T08/T10/T11/T12 先例口径；WP-13-T13）
+- branch：wp13-t13（源树直跑 cmake -DIRD_ROOT=<industrialrobot 根> -P cmake/ird_gates.cmake）
+- base：2979e5cd56724f3ee2f1c87c8785a0ddfdee203a（临时 worktree .wt-base-t13 直跑同脚本，用毕即删）
+- 引擎直跑口径（F-336/F-347）：IRD_SELFTEST_DIR 用缺省 TEMP；两侧发射均 119 次
+- 归一化命中直方图比对（ird-gates-base-hits.txt vs ird-gates-branch-hits.txt——以
+  industrialrobot 根为锚归一绝对路径后逐行比对）＝完全一致（diff 为空）：
+         29 IRD-GATE-SUB
+         21 IRD-GATE-R3
+          5 IRD-GATE-LIB
+          3 IRD-GATE-T1
+          2 IRD-GATE-R4
+          1 IRD-GATE-T2
+          1 IRD-GATE-R5
+          1 IRD-GATE-R1
+- 结论：本任务零新增门禁命中；全部命中为存量例外（登记归 DTB §4.5 治理
+  通道，不在本任务范围）。本任务对 CMake 的唯一改动＝modeling 库增列
+  src/Package.cpp（两模式）与 src/PackageWorkCell.cpp（gated）、测试目标增列
+  PackageTest.cpp（两模式）与 PackageWorkCellTest.cpp（gated）；新增 include
+  均走既有六条登记边（io ZipChannel/AtomicFile/TempArea/Json/IoDiagnostics、
+  runtime Snapshot/Adapter/CanonicalModel/Compiler、modeling 内部），无新增
+  链接边（io 链 libzip 为存量 PRIVATE 边——本任务零新框架/第三方链接）。
+- 附注：集成构建树目标  同样报存量
+  命中集（56 处发射——构建树扫描口径行数差异同 T12 期观测），退出码 1 属
+  存量例外未清零的既有状态，非本任务新增（本任务两侧直跑比对零新增）。
+- 附件：ird-gates-base-hits.txt / ird-gates-branch-hits.txt（归一化直方图）＋
+  ird-gates-branch-raw.txt（引擎原始输出；base 原始输出随临时 worktree 删除
+  未留存，直方图为归一化产物——T12 同口径）

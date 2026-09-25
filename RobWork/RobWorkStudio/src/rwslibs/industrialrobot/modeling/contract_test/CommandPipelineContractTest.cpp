@@ -318,9 +318,20 @@ TEST(MdlCommandPipelineContract, StableCodesRegisteredWithoutPrebuilding_WP13T09
     ASSERT_NE(approximate, nullptr);
     EXPECT_TRUE(approximate->requiresComparison);
 
-    // —— 未到任务行不预建（仅余 T13/T18 行缺席；T09 行已随 WP-13-T09
-    //    登记在册——见上段在册断言）。——
-    EXPECT_EQ(registry.find("MDL-EXPORT-FAILED"), nullptr);        // T13
+    // —— T13 行在册断言（"T13 行不预建"钉住断言随 WP-13-T13 合法登记过期
+    //    改为在册断言——T09 行同款推进先例）：两码 ownerUnit=modeling；
+    //    UNKNOWN 不可确认（引导语义）、EXPORT-FAILED 执行失败轴且不可确认。——
+    const diagnostics::CodeDescriptor* packageUnknown =
+        registry.find(kMdlImportPackageUnknown);
+    ASSERT_NE(packageUnknown, nullptr) << "T13 行码未注册: MDL-IMPORT-PACKAGE-UNKNOWN";
+    EXPECT_EQ(packageUnknown->ownerUnit, "modeling");
+    EXPECT_FALSE(packageUnknown->confirmable);
+    const diagnostics::CodeDescriptor* exportFailed = registry.find(kMdlExportFailed);
+    ASSERT_NE(exportFailed, nullptr) << "T13 行码未注册: MDL-EXPORT-FAILED";
+    EXPECT_EQ(exportFailed->ownerUnit, "modeling");
+    EXPECT_FALSE(exportFailed->confirmable);
+    // —— 未到任务行不预建（仅余 T18 行缺席；T09/T13 行已随 WP-13-T09/T13
+    //    登记在册——见上两段在册断言）。——
     EXPECT_EQ(registry.find("MDL-21-COUPLING-STAGE-LOCKED"), nullptr);  // T18（R2——契约 note ④）
 
     // —— 重复注册＝边界拒绝（码唯一键——注册表纪律）。——
