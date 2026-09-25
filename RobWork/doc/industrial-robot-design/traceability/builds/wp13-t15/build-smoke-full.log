@@ -1,0 +1,55 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\core\Release\sdurws_ird_core.lib
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\core\Release\sdurws_ird_core_test.exe
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_diagnostics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\diagnostics\Release\sdurws_ird_diagnostics_contract_test.exe
+  sdurws_ird_diagnostics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\diagnostics\Release\sdurws_ird_diagnostics_test.exe
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_evidence_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\evidence\Release\sdurws_ird_evidence_contract_test.exe
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\evidence\Release\sdurws_ird_evidence_test.exe
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_execution_worker.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\execution\Release\sdurws_ird_execution_worker.exe
+  sdurws_ird_execution_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\execution\Release\sdurws_ird_execution_contract_test.exe
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\execution\Release\sdurws_ird_execution_test.exe
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\io\Release\sdurws_ird_io.lib
+  sdurws_ird_io_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\io\Release\sdurws_ird_io_contract_test.exe
+  sdurws_ird_io_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\io\Release\sdurws_ird_io_test.exe
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\modeling\Release\sdurws_ird_modeling.lib
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\modeling\Release\sdurws_ird_modeling_contract_test.exe
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\modeling\Release\sdurws_ird_modeling_plugin.lib
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\modeling\Release\sdurws_ird_modeling_test.exe
+  sdurws_ird_policy_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\policy\Release\sdurws_ird_policy_contract_test.exe
+  sdurws_ird_policy_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\policy\Release\sdurws_ird_policy_test.exe
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\project\Release\sdurws_ird_project_contract_test.exe
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\project\Release\sdurws_ird_project_test.exe
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\reporting\Release\sdurws_ird_reporting_contract_test.exe
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\reporting\Release\sdurws_ird_reporting_test.exe
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\runtime\Release\sdurws_ird_runtime_test.exe
+  sdurws_ird_testdata_lint.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\testkit\Release\sdurws_ird_testdata_lint.exe
+  sdurws_ird_testkit_prochelper.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\testkit\Release\sdurws_ird_testkit_prochelper.exe
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\testkit\Release\sdurws_ird_testkit_test.exe
+  sdurws_ird_ui_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\ui\Release\sdurws_ird_ui_app.exe
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\ui\Release\sdurws_ird_ui_contract_test.exe
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\ui\Release\sdurws_ird_ui_gui_test.exe
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t15\ui\Release\sdurws_ird_ui_test.exe
+SMOKE_EXIT=0
+Test project D:/10_Source_Repos/21_robot/RobWork/build_smoke_t15/modeling
+    Start 1: sdurws_ird_modeling_test
+1/2 Test #1: sdurws_ird_modeling_test ............   Passed    0.17 sec
+    Start 2: sdurws_ird_modeling_contract_test
+2/2 Test #2: sdurws_ird_modeling_contract_test ...   Passed    0.05 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Label Time Summary:
+ird    =   0.22 sec*proc (2 tests)
+
+Total Test time (real) =   0.22 sec
