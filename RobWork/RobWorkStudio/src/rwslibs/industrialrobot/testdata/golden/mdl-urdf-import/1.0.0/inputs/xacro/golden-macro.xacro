@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="golden xacro">
+  <xacro:property name="link_lift_m" value="0.25"/>
+  <xacro:macro name="rev_joint" params="name lower upper parent child">
+    <joint name="${name}" type="revolute">
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <origin xyz="0 0 ${link_lift_m}" rpy="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit lower="${lower}" upper="${upper}" effort="10" velocity="1.0"/>
+    </joint>
+  </xacro:macro>
+  <link name="base"/>
+  <link name="l1"/>
+  <link name="l2"/>
+  <link name="l3"/>
+  <xacro:rev_joint name="j1" lower="-1.0" upper="1.0" parent="base" child="l1"/>
+  <xacro:rev_joint name="j2" lower="-2.0" upper="2.0" parent="l1" child="l2"/>
+  <xacro:rev_joint name="j3" lower="0.0" upper="3.0" parent="l2" child="l3"/>
+</robot>

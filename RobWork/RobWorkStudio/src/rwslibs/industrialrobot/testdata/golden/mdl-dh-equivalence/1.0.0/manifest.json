@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "mdl-dh-equivalence",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "mdl/dh-explicit-equivalence",
+  "coveredRequirements": [
+    "MDL-02",
+    "MDL-10",
+    "MDL-09",
+    "NFR-COR-01"
+  ],
+  "coveredAt": [
+    "AT-16"
+  ],
+  "toleranceProfile": {
+    "id": "mdl-dh",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/samples.json"
+  ],
+  "expected": [
+    "expected/expansion.json",
+    "expected/roundtrip.json"
+  ],
+  "parameters": {
+    "conventions": "T_{i-1,i}=Rot_z(theta+zeroOffset)*Trans_z(d)*Trans_x(a)*Rot_x(alpha)（§7.4；零位对齐 q_rw=0）",
+    "consumedFields": "dh[*].origin.x/y/z、dh[*].axis.x/y/z（展开闭式期望——第 5 项）、dh-solve[*].thetaOffset/d/a/alpha（roundtrip 参数级——第 5 项）、fk.max-position-deviation、fk.max-orientation-deviation（编译链 FK 对照——第 4 项）",
+    "freeCoordinateRule": "exact-non-unique 的期望解按 §7.5 字典序规则定值（自由 theta 钉中性值 0）——合同规则而非几何闭式，见 generate 脚本注"
+  },
+  "units": {
+    "angle": "rad",
+    "length": "m",
+    "dimensionless": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "DH 链只参数化关节链（§7.4——基座与工具变换不在 DH 参数内）；origin_i 读法＝关节系相对父连杆系（core.md §4.6 T_parent_joint）；axis_i 为连杆系下单位轴（无量纲）"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "DH 链→显式表示的逐级累乘闭式展开（origin/axis 逐关节解析值）与规范链的闭式逆（roundtrip 参数）",
+    "independentOfProductionImpl": true,
+    "description": "闭式推导与实现见 generate/make_dh_equivalence.mjs（Rz/Rx、矩阵乘、累乘全部为脚本内独立实现——零产品代码依赖）。期望值与 C++ 生产实现的核对容差唯一来自档案 mdl-dh（附录 D 第 4/5 项，固定类）；退化族（exact-non-unique）的期望解为 §7.5 字典序定值规则的合同结论，随脚本注登记。脚本零依赖产品代码，与测试内独立参考、生产实现三方互证（rt-fk-equation 同款口径）。"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "mdl-dh-closed-form-expansion",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-25T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/expansion.json#zero-anchor",
+      "expected/expansion.json#near-zero",
+      "expected/expansion.json#sign-cancel"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/samples.json",
+      "sha256": "afb36a3c644bbfb18edf6e7b3200eb44b00e36fff727b7107eed7d78e5fddbe3",
+      "sizeBytes": 5373
+    },
+    {
+      "path": "expected/expansion.json",
+      "sha256": "ae0b36119ff4e96638f7a1e73a4fcf064a607eff38a189a70096d301ec95540a",
+      "sizeBytes": 9810
+    },
+    {
+      "path": "expected/roundtrip.json",
+      "sha256": "be669d87418e9919123b0feef6ba1d205c760a0e30108a7441c08b2508f8b7a8",
+      "sizeBytes": 3623
+    },
+    {
+      "path": "generate/make_dh_equivalence.mjs",
+      "sha256": "8398b0f77fdfa6d779064eb92e36043353b0c1e7cb9ac3b4dc39ba63d48f0ec2",
+      "sizeBytes": 5705
+    }
+  ],
+  "generator": {
+    "script": "generate/make_dh_equivalence.mjs",
+    "invocation": "node generate/make_dh_equivalence.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-25",
+      "change": "首版：七个样本（exact 五族含零值/近零/正负抵消边角样例＋exact-non-unique 退化族两例）的闭式展开与 roundtrip 期望——WP-13-T16 §10.1 数据集 2/4（AT-16 载体；V-11 roundtrip 双一致面）",
+      "reReviewedBy": "WP-13-T16 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

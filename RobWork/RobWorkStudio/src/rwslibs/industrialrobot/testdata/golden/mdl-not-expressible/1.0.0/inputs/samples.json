@@ -1,0 +1,67 @@
+{
+  "note": "mdl-not-expressible 输入样本集（AT-16——五状态覆盖面的终判/非权威半区）。family=not-expressible 的样本为显式关节链（explicitToDh 第一阶结构检查的直接输入——终判不进入求解）；family=approximate 为 DH 链＋不可吸收扰动（扰动在展开后由消费测试施加到指定关节 origin）；family=analysis-failed 为结构合法但数值溢出的显式链。单位：axis 无量纲单位轴、origin.position 单位 m（rotation 行主序 9 元）、bounds 单位 rad。",
+  "samples": [
+    {
+      "id": "prismatic-chain",
+      "family": "not-expressible",
+      "note": "链含 Prismatic（单自由度非旋转）——第一阶结构检查终判（MDL-10：每关节单自由度旋转）",
+      "joints": [
+        { "name": "J1", "type": "Revolute", "axis": [0, 0, 1],
+          "origin": { "position": [0, 0, 0], "rotation": [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+          "zeroOffset": 0.0, "bounds": [-3.141592653589793, 3.141592653589793] },
+        { "name": "J2", "type": "Prismatic", "axis": [0, 0, 1],
+          "origin": { "position": [0, 0, 0.3], "rotation": [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+          "zeroOffset": 0.0, "bounds": [-0.5, 0.5] }
+      ]
+    },
+    {
+      "id": "zero-axis",
+      "family": "not-expressible",
+      "note": "零轴（不可归一化——I-MDL-6 同口径：非零、有限、可归一化）——终判于首关节",
+      "joints": [
+        { "name": "J1", "type": "Revolute", "axis": [0, 0, 0],
+          "origin": { "position": [0, 0, 0], "rotation": [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+          "zeroOffset": 0.0, "bounds": [-3.141592653589793, 3.141592653589793] },
+        { "name": "J2", "type": "Revolute", "axis": [0, 1, 0],
+          "origin": { "position": [0.2, 0, 0], "rotation": [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+          "zeroOffset": 0.0, "bounds": [-3.141592653589793, 3.141592653589793] }
+      ]
+    },
+    {
+      "id": "fixed-joint",
+      "family": "not-expressible",
+      "note": "链含 Fixed（无可动轴）——终判（DH 只参数化可动旋转关节）",
+      "joints": [
+        { "name": "J1", "type": "Revolute", "axis": [0, 0, 1],
+          "origin": { "position": [0, 0, 0.25], "rotation": [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+          "zeroOffset": 0.0, "bounds": [-3.141592653589793, 3.141592653589793] },
+        { "name": "J2", "type": "Fixed", "axis": [0, 0, 1],
+          "origin": { "position": [0.3, 0, 0], "rotation": [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+          "zeroOffset": 0.0 }
+      ]
+    },
+    {
+      "id": "approximate-perturbed",
+      "family": "approximate",
+      "note": "DH 可解链＋J1 原点沿 x 平移 1e-6 m（不可吸收扰动——theta1 被位置钉死后轴目标不可达，残差 ~1e-6 远超第 5 项上界）；收敛但超差→Approximate（不得成为权威 DH——C-4）。扰动由消费测试在展开产物上施加（本文件只声明规格）",
+      "chain": [
+        { "name": "J1", "thetaOffset": 0.3, "d": 0.15, "a": 0.4, "alpha": 1.5707963267948966, "zeroOffset": 0.0 },
+        { "name": "J2", "thetaOffset": 0.8, "d": 0.1, "a": 0.25, "alpha": -1.0471975511965976, "zeroOffset": 0.0 }
+      ],
+      "perturbation": { "jointIndex": 0, "translateM": [1e-6, 0.0, 0.0] }
+    },
+    {
+      "id": "overflow-origin",
+      "family": "analysis-failed",
+      "note": "结构合法（有限、可归一化）但原点量级 1e200 m——正规方程平方溢出 double 值域→求解器数值失败→AnalysisFailed（不构成语义结论；WP-13-T09 DhConvertTest 同构反例）",
+      "joints": [
+        { "name": "J1", "type": "Revolute", "axis": [0, 0, 1],
+          "origin": { "position": [1e200, 0, 0], "rotation": [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+          "zeroOffset": 0.0, "bounds": [-3.141592653589793, 3.141592653589793] },
+        { "name": "J2", "type": "Revolute", "axis": [0, 1, 0],
+          "origin": { "position": [0, 1e200, 0], "rotation": [1, 0, 0, 0, 1, 0, 0, 0, 1] },
+          "zeroOffset": 0.0, "bounds": [-3.141592653589793, 3.141592653589793] }
+      ]
+    }
+  ]
+}

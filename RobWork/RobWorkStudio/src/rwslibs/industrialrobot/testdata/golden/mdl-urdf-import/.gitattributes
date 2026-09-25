@@ -1,0 +1,10 @@
+# 本数据集的二进制资产豁免（testdata/.gitattributes 目录注记的执行点）：
+# 上层 testdata/.gitattributes 以 `* text eol=lf` 钉死文本资产行尾（manifest
+# SHA-256 申报的检出形态），但 text 属性对二进制资产是破坏性的——git 会在
+# 入库方向做 CRLF→LF 归一化，STL 二进制流中偶然出现的 0x0D0A 字节对会被
+# 改写，blob 字节随即偏离 manifest 申报值（sizeBytes/sha256 双失配，数据集
+# 装载抛 dataset-invalid）。按上层注记"未来若需新增二进制资产，须在其子
+# 目录以 *.ext -text 显式豁免并在 manifest 同步申报"的规则执行：
+*.stl -text
+# 已豁免资产：1.0.0/inputs/meshes/l1.stl（最小二面片二进制 STL——80 字节头
+# ＋1 三角形；manifest.json integrity 已申报其 sizeBytes＋SHA-256）。

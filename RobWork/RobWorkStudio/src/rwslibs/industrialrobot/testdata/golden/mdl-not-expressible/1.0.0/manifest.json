@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "mdl-not-expressible",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "mdl/dh-not-expressible",
+  "coveredRequirements": ["MDL-10", "MDL-02"],
+  "coveredAt": ["AT-16"],
+  "toleranceProfile": { "id": "mdl-dh", "version": "1.0.0" },
+  "inputs": ["inputs/samples.json"],
+  "expected": ["expected/samples-expected.json"],
+  "parameters": {
+    "goldenScope": "不可表达终判（NotExpressible——结构检查不进入求解）、近似判定（Approximate——收敛但超第 5 项上界、不得成为权威）、数值失败（AnalysisFailed——不构成语义结论）三类样本；五状态覆盖面与 mdl-dh-equivalence（Exact/ExactNonUnique）合起来完整（V-11 行）",
+    "consumedFields": "状态级断言（determination/convergence/诊断码/参数产出纪律）＋inertia.spd-eigenvalue 档案条目的零余量口径观测（第 7 项）；无数值几何参考——不消费 dh[*] 数值条目"
+  },
+  "units": { "angle": "rad", "length": "m", "dimensionless": "1" },
+  "frames": { "base": "robot-base", "note": "显式关节的 origin.position 单位 m（关节系相对父连杆系——core.md §4.6）；axis 为连杆系下单位轴（无量纲）；rotation 行主序 9 元" },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "mdl-not-expressible-hand-built",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-25T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/samples.json",
+      "sha256": "7b63b7f159ff7747e6937004c885fef53591ea74e54f4736f353657aa1a11535",
+      "sizeBytes": 4094
+    },
+    {
+      "path": "expected/samples-expected.json",
+      "sha256": "b1e8dd2afc5b90b3d9db79261dec0b0b24452676008a8484212ca35d9570b668",
+      "sizeBytes": 1818
+    },
+    {
+      "path": "generate/make_not_expressible.mjs",
+      "sha256": "945c098dd6e191548ec5b4b523926de5ef35e08685b607b90ec2d511a1edd666",
+      "sizeBytes": 3270
+    }
+  ],
+  "generator": {
+    "script": "generate/make_not_expressible.mjs",
+    "invocation": "node generate/make_not_expressible.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-25",
+      "change": "首版：五样本（NotExpressible 三例——prismatic/零轴/Fixed＋Approximate 扰动例＋AnalysisFailed 溢出例）——WP-13-T16 §10.1 数据集 3/4（AT-16 载体；V-11 五状态各含样例的终判/非权威半区）",
+      "reReviewedBy": "WP-13-T16 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

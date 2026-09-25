@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "mdl-dh-equivalence-roundtrip/1",
+  "note": "显式→DH 重解期望（family=exact：输入参数即唯一解——链规范形态下闭式逆；family=exact-non-unique：字典序规则定值——自由 theta 钉 0，d/a/alpha 几何回收＝输入值；比较走档案条目 dh-solve[*].*，附录 D 第 5 项 1e-9）",
+  "samples": [
+    {
+      "id": "general-2r",
+      "family": "exact",
+      "freeCoordinates": [],
+      "parameters": [
+        {
+          "name": "J1",
+          "thetaOffset": 0.3,
+          "d": 0.15,
+          "a": 0.4,
+          "alpha": 1.5707963267948966
+        },
+        {
+          "name": "J2",
+          "thetaOffset": -0.2,
+          "d": 0.25,
+          "a": 0.3,
+          "alpha": -1.0471975511965976
+        }
+      ]
+    },
+    {
+      "id": "general-3r",
+      "family": "exact",
+      "freeCoordinates": [],
+      "parameters": [
+        {
+          "name": "J1",
+          "thetaOffset": 1.1,
+          "d": 0.25,
+          "a": 0.1,
+          "alpha": -0.7853981633974483
+        },
+        {
+          "name": "J2",
+          "thetaOffset": -0.4,
+          "d": 0.05,
+          "a": 0.35,
+          "alpha": 1.0471975511965976
+        },
+        {
+          "name": "J3",
+          "thetaOffset": -0.9,
+          "d": 0.15,
+          "a": 0.2,
+          "alpha": -1.5707963267948966
+        }
+      ]
+    },
+    {
+      "id": "zero-anchor",
+      "family": "exact",
+      "freeCoordinates": [],
+      "parameters": [
+        {
+          "name": "J1",
+          "thetaOffset": 0,
+          "d": 0.2,
+          "a": 0.3,
+          "alpha": 0
+        },
+        {
+          "name": "J2",
+          "thetaOffset": 0,
+          "d": 0,
+          "a": 0.25,
+          "alpha": 1.5707963267948966
+        },
+        {
+          "name": "J3",
+          "thetaOffset": 0,
+          "d": 0.15,
+          "a": 0.2,
+          "alpha": 0
+        }
+      ]
+    },
+    {
+      "id": "near-zero",
+      "family": "exact",
+      "freeCoordinates": [],
+      "parameters": [
+        {
+          "name": "J1",
+          "thetaOffset": 1e-12,
+          "d": 0.2,
+          "a": 0.3,
+          "alpha": -1e-13
+        },
+        {
+          "name": "J2",
+          "thetaOffset": -2e-12,
+          "d": 0.1,
+          "a": 0.25,
+          "alpha": 1e-12
+        }
+      ]
+    },
+    {
+      "id": "sign-cancel",
+      "family": "exact",
+      "freeCoordinates": [],
+      "parameters": [
+        {
+          "name": "J1",
+          "thetaOffset": 0.35,
+          "d": 0.15,
+          "a": 0.3,
+          "alpha": 1.5707963267948966
+        },
+        {
+          "name": "J2",
+          "thetaOffset": -0.5,
+          "d": 0.2,
+          "a": 0.25,
+          "alpha": -1.5707963267948966
+        }
+      ]
+    },
+    {
+      "id": "coincident-axes",
+      "family": "exact-non-unique",
+      "freeCoordinates": [
+        0,
+        4
+      ],
+      "parameters": [
+        {
+          "name": "J1",
+          "thetaOffset": 0,
+          "d": 0.3,
+          "a": 0,
+          "alpha": 0
+        },
+        {
+          "name": "J2",
+          "thetaOffset": 0,
+          "d": 0.25,
+          "a": 0,
+          "alpha": 0
+        }
+      ]
+    },
+    {
+      "id": "parallel-axes",
+      "family": "exact-non-unique",
+      "freeCoordinates": [
+        4
+      ],
+      "parameters": [
+        {
+          "name": "J1",
+          "thetaOffset": 0.4,
+          "d": 0.1,
+          "a": 0.3,
+          "alpha": 0
+        },
+        {
+          "name": "J2",
+          "thetaOffset": 0,
+          "d": 0.2,
+          "a": 0,
+          "alpha": 0
+        }
+      ]
+    }
+  ]
+}

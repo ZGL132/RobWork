@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "mdl-dh",
+  "version": "1.0.0",
+  "basis": "appendixD#4 (FK/编译链等价验证容差：位置 1e-9 m、姿态 1e-9 rad——固定) + appendixD#5 (DH 转换 Exact 判定容差：逐关节逐项上界——轴线方向角偏差 ≤1e-9 rad 且原点位置偏差 ≤1e-9 m，C3 不使用总和阈值；轴线以分量 dimensionless/1 表达同尺度数值——rt-runtime 档案同款口径；roundtrip 参数级四字段 thetaOffset/d/a/alpha 同尺度) + appendixD#6 (惯量张量对称性数值容差：相对 1e-12——黄金参考张量的对称性数据质量门) + appendixD#7 (SPD 判定口径：特征值严格 >0、对称化后判定不设数值余量——档案以零容差条目承载该口径，数据集只准更严、不准放宽)。固定类条目 allowedMax＝附录 D 对应值，本档案全部条目 source=appendixD-fixed 且 tolerance 与 allowedMax 同值（未放宽）。",
+  "entries": [
+    {
+      "fieldPath": "dh[*].origin.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh[*].origin.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh[*].origin.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh[*].axis.x",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh[*].axis.y",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh[*].axis.z",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh-solve[*].thetaOffset",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh-solve[*].d",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh-solve[*].a",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "dh-solve[*].alpha",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk.max-position-deviation",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk.max-orientation-deviation",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "inertia.symmetry",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-12, "absolute": 0.0 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-12, "absolute": 0.0 }
+    },
+    {
+      "fieldPath": "inertia.spd-eigenvalue",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 }
+    }
+  ]
+}
