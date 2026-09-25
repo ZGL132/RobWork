@@ -138,17 +138,22 @@ constexpr const char* kEdgeUnits[] = {
 
 /**
  * 构建图封闭性：modeling 的 CMake 目标引用集合仅含六条登记边＋本单元
- * 四目标（产品/插件/两测试——单元内部引用不构成跨单元边）＋ui（T15 插件
- * 链接面——行级钉住见 NoBusinessUnitOrExtraPlatformEdge）＋testkit（报告
- * 设施——T-1 允许形态，仅测试目标）。出现任何其他目标引用（业务域单元
- * requirements/kinematics/trajectory/dynamics/drivetrain/selection/
- * optimization＝R-1 面；平台单元 evidence/execution/reporting＝SUB 面；
- * _worker 形态＝不存在——二分结构）即构建图越界。
+ * 五目标（产品/插件/两测试/harness app——单元内部引用不构成跨单元边）
+ * ＋ui（T15 插件链接面——行级钉住见 NoBusinessUnitOrExtraPlatformEdge）
+ * ＋testkit（报告设施——T-1 允许形态，仅测试目标）。出现任何其他目标
+ * 引用（业务域单元 requirements/kinematics/trajectory/dynamics/
+ * drivetrain/selection/optimization＝R-1 面；平台单元 evidence/execution/
+ * reporting＝SUB 面；_worker 形态＝不存在——二分结构）即构建图越界。
  *
  * ★ T15 落位随附同步（合法登记——WP-13-T15.json acceptance 1；登记于
  *   modeling.md §14.6）：原"落位期不得出现 _plugin/sdurws_ird_ui"两断言
  *   按 T15 交付翻转/收窄——_plugin 目标本任务落位（卡 §3.2 明文），ui 边
  *   为插件链接面的卡面 sanction（行级钉住保证其只落在插件链接语句）。
+ *
+ * ★ harness 增量（owner 指示 2026-09-26；登记于 modeling.md §14.6）：
+ *   sdurws_ird_modeling_app＝开发验证 harness（ui 单元 sdurws_ird_ui_app
+ *   同款 _app 形态）——"插件完成即可手动 GUI 验证"的载体，链接面仅
+ *   本单元 _plugin 目标（同单元引用，零新跨单元边）。
  */
 TEST(MdlBuildGraph, UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3)
 {
@@ -158,12 +163,15 @@ TEST(MdlBuildGraph, UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：六条登记边＋本单元四目标（产品/插件/测试/契约测试）＋
-    // sdurws_ird_ui（T15 插件链接面——仅插件目标，行级钉住见
+    // 白名单：六条登记边＋本单元五目标（产品/插件/两测试/harness app）
+    // ＋sdurws_ird_ui（T15 插件链接面——仅插件目标，行级钉住见
     // NoBusinessUnitOrExtraPlatformEdge）＋sdurws_ird_testkit（报告设施
     // ——T-1 允许形态＝仅测试目标可链，产品目标由 NoTestkitEdge 钉住）。
+    // _app＝harness 增量（owner 指示 2026-09-26——链接面仅本单元
+    // _plugin 目标，见类注）。
     std::set<std::string> allowed = {"sdurws_ird_modeling",
                                      "sdurws_ird_modeling_plugin",
+                                     "sdurws_ird_modeling_app",
                                      "sdurws_ird_modeling_test",
                                      "sdurws_ird_modeling_contract_test",
                                      "sdurws_ird_ui",
