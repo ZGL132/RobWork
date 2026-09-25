@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "实现工艺模板、工位镜像、四类阵列与需求集批量撤销",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-14-T03"
   ],
