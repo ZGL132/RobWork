@@ -6,16 +6,18 @@
  * 设计依据：
  *   - units/modeling.md §3.2（六条接口依赖边边表——ARCH §3.5"各业务域
  *     单元→L2/L3 公共接口"许可方向的实例化；"_plugin 目标随 WP-13-T15
- *     落位"；"不得链接任何其他业务域单元目标（R-1）"）、§3.1（二分结构
- *     ——落位期只有计算库＋两测试目标，无 _plugin/_worker）
+ *     落位"；"插件目标 → sdurws_ird_modeling＋sdurws_ird_ui（＋平台库按
+ *     需）；不得链接任何其他业务域单元目标（R-1）"）、§3.1（二分结构
+ *     ——无 _worker）
  *   - cmake/ird_gates_whitelist.cmake 的 "modeling->…" 六行（机器面同源
  *     数据——本测试以文本扫描单元 CMakeLists 复核同一事实，双面一致）
  *   - 先例：reporting/contract_test/LinkageContractTest.cpp（RPT-T01 同款
  *     ——落位期跨单元边界证据由 CMakeLists 文本扫描＋配置期守卫＋双模式
- *     构建链接成功三面共同承载；跨单元行为级契约测试随 T03+ 消费任务
- *     展开，不在骨架预建占位用例——NFR-MNT-04）
+ *     构建链接成功三面共同承载）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 2（配置期红线
- *     守卫随文件自持）/acceptance 3（六边登记且构建期扫描零命中）
+ *     守卫随文件自持）/acceptance 3（六边登记且构建期扫描零命中）；
+ *     tasks/foundation/WP-13-T15.json acceptance 1（插件目标落位与链接面
+ *     ——ui 边的行级钉住随 T15 落位同步本文件，登记于 modeling.md §14.6）
  */
 
 #include <gtest/gtest.h>
@@ -136,11 +138,17 @@ constexpr const char* kEdgeUnits[] = {
 
 /**
  * 构建图封闭性：modeling 的 CMake 目标引用集合仅含六条登记边＋本单元
- * 三目标＋testkit（报告设施——T-1 允许形态，仅测试目标，见 NoTestkitEdge
- * 用例收窄断言）。出现任何其他目标引用（业务域单元 requirements/
- * kinematics/trajectory/dynamics/drivetrain/selection/optimization＝R-1
- * 面；平台单元 evidence/execution/ui/reporting＝SUB 面；_plugin/_worker
- * 形态＝落位期不应存在——_plugin 随 T15）即构建图越界。
+ * 四目标（产品/插件/两测试——单元内部引用不构成跨单元边）＋ui（T15 插件
+ * 链接面——行级钉住见 NoBusinessUnitOrExtraPlatformEdge）＋testkit（报告
+ * 设施——T-1 允许形态，仅测试目标）。出现任何其他目标引用（业务域单元
+ * requirements/kinematics/trajectory/dynamics/drivetrain/selection/
+ * optimization＝R-1 面；平台单元 evidence/execution/reporting＝SUB 面；
+ * _worker 形态＝不存在——二分结构）即构建图越界。
+ *
+ * ★ T15 落位随附同步（合法登记——WP-13-T15.json acceptance 1；登记于
+ *   modeling.md §14.6）：原"落位期不得出现 _plugin/sdurws_ird_ui"两断言
+ *   按 T15 交付翻转/收窄——_plugin 目标本任务落位（卡 §3.2 明文），ui 边
+ *   为插件链接面的卡面 sanction（行级钉住保证其只落在插件链接语句）。
  */
 TEST(MdlBuildGraph, UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3)
 {
@@ -150,12 +158,15 @@ TEST(MdlBuildGraph, UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：六条登记边＋本单元三目标（产品/测试/契约测试——单元内部
-    // 引用不构成跨单元边，R-1 判定范围）＋sdurws_ird_testkit（报告设施
+    // 白名单：六条登记边＋本单元四目标（产品/插件/测试/契约测试）＋
+    // sdurws_ird_ui（T15 插件链接面——仅插件目标，行级钉住见
+    // NoBusinessUnitOrExtraPlatformEdge）＋sdurws_ird_testkit（报告设施
     // ——T-1 允许形态＝仅测试目标可链，产品目标由 NoTestkitEdge 钉住）。
     std::set<std::string> allowed = {"sdurws_ird_modeling",
+                                     "sdurws_ird_modeling_plugin",
                                      "sdurws_ird_modeling_test",
                                      "sdurws_ird_modeling_contract_test",
+                                     "sdurws_ird_ui",
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(std::string("sdurws_ird_") + u);
@@ -164,13 +175,15 @@ TEST(MdlBuildGraph, UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3)
         EXPECT_NE(allowed.find(ref), allowed.end())
             << "modeling 构建图出现白名单外目标引用（产品单元边仅 modeling→"
                "core/diagnostics/project/runtime/policy/io 六条——modeling.md "
-               "§3.2、ARCH §3.5；R-1/SUB/T-1）: " << ref;
+               "§3.2、ARCH §3.5；ui 边＝T15 插件链接面〔行级钉住〕；R-1/SUB/"
+               "T-1）: " << ref;
     }
-    // 落位期目标形态封闭（卡 §3.1/§3.2）：无 _plugin/_worker（_plugin 随
-    // WP-13-T15 落位，出现即提前越权；二分结构没有 _worker——建模命令在
-    // 主进程命令执行线程串行执行）。
-    EXPECT_EQ(refs.find("sdurws_ird_modeling_plugin"), refs.end())
-        << "落位期构建图不得出现 _plugin（随 WP-13-T15 落位——卡 §3.2）";
+    // 目标形态（卡 §3.1/§3.2）：_plugin 已随 WP-13-T15 落位（出现即卡面
+    // 兑现——T02 落位期的"不应存在"断言随之翻转）；_worker 恒不存在
+    // （二分结构没有 _worker——建模命令在主进程命令执行线程串行执行）。
+    EXPECT_NE(refs.find("sdurws_ird_modeling_plugin"), refs.end())
+        << "插件目标应已随 WP-13-T15 落位（卡 §3.2'T02 预留的插件行兑现'"
+           "——缺位即插件面回退）";
     EXPECT_EQ(refs.find("sdurws_ird_modeling_worker"), refs.end())
         << "modeling 无 _worker 形态（ARCH §3.3 二分结构；卡 §3.1）";
 }
@@ -200,9 +213,16 @@ TEST(MdlBuildGraph, SixRegisteredEdgesPresent_WP13T02_ACC3)
  * requirements/kinematics/trajectory/dynamics/drivetrain/selection/
  * optimization 七个单元（R-1 判定集合，含 drivetrain——业务域边界见
  * whitelist IRD_BUSINESS_UNITS 及ARCH §3.5）不得出现在 modeling 的构建
- * 图中；平台单元 evidence/execution/ui/reporting（六边之外）同禁（SUB
- * 面）。跨单元协作走六类端口（命令/查询/评估器/策略/事件/名称）——
- * R-1 红线在 modeling 侧的构建面形态。
+ * 图中；平台单元 evidence/execution/reporting（六边之外）同禁（SUB 面）。
+ * 跨单元协作走六类端口（命令/查询/评估器/策略/事件/名称）——R-1 红线在
+ * modeling 侧的构建面形态。
+ *
+ * ★ ui 边收窄（T15 落位随附同步——WP-13-T15.json acceptance 1，登记于
+ *   modeling.md §14.6）：ui 自 T15 起为插件链接面的卡面 sanction（卡
+ *   §3.2"插件目标 → sdurws_ird_modeling＋sdurws_ird_ui"）——本用例把
+ *   ui 从"全禁"收窄为"行级钉住"：ui 目标引用只允许落在插件目标的链接
+ *   语句行（目标名与 sdurws_ird_ui 同行——NoTestkitEdge 同款行扫描口径，
+ *   防扩散到计算库/测试目标/其他语句）。
  */
 TEST(MdlBuildGraph, NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2)
 {
@@ -217,11 +237,31 @@ TEST(MdlBuildGraph, NoBusinessUnitOrExtraPlatformEdge_WP13T02_ACC2)
         EXPECT_EQ(refs.find(std::string("sdurws_ird_") + business), refs.end())
             << "业务域互链禁止（R-1 无例外——SA-10）: modeling→" << business;
     }
-    // SUB 面：六边之外的平台单元。
-    for (const char* platform : {"evidence", "execution", "ui", "reporting"}) {
+    // SUB 面：六边之外的平台单元（ui 例外＝上方收窄说明的行级钉住）。
+    for (const char* platform : {"evidence", "execution", "reporting"}) {
         EXPECT_EQ(refs.find(std::string("sdurws_ird_") + platform), refs.end())
             << "表外平台边（白名单外——构建失败面）: modeling→" << platform;
     }
+
+    // ui 边行级钉住（T15）：剥注释后逐行扫描——每条含 sdurws_ird_ui 的
+    // 语句行必须同时含插件目标名与 target_link_libraries（即插件链接
+    // 语句；单行链接语句的登记形态约束见 CMakeLists 插件链接块注释）。
+    int uiLines = 0;
+    std::istringstream lines(readCMakeLists());
+    std::string line;
+    while (std::getline(lines, line)) {
+        const auto hashPos = line.find('#');
+        if (hashPos != std::string::npos) { line.erase(hashPos); }
+        if (line.find("sdurws_ird_ui") == std::string::npos) { continue; }
+        ++uiLines;
+        EXPECT_TRUE(line.find("sdurws_ird_modeling_plugin") != std::string::npos
+                    && line.find("target_link_libraries") != std::string::npos)
+            << "ui 目标引用只允许落在插件目标链接语句行（T15 卡 §3.2 插件"
+               "链接面——扩散即越权）: " << line;
+    }
+    ASSERT_GT(uiLines, 0)
+        << "插件链接面应已登记 ui 边（T15 卡 §3.2——缺失即插件面回退）；"
+           "计算库/测试目标零 ui 边由上行逐行钉住";
 }
 
 /**
