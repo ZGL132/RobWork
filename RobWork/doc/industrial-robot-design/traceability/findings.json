@@ -3656,6 +3656,46 @@
       "title": "F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352/F-358/F-367 家族新例：tasks/foundation/WP-14-T05.json verify 数组仅列 sdurws_ird_requirements 一条构建目标行，缺 sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test 两条显式构建行（ctest 行在位，较 F-358 缺口窄）——全新构建树按 verify 清单逐条字面执行时 ctest 将因测试 exe 未被任何清单命令构建而 Not Run；验收者已按家族在案口径在集成/冒烟两条全新构建树自行补建两目标并执行（108/108＋5/5 全绿、ctest 2/2），属验收者侧正常动作；建议契约编译模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行（与 F-367 处置建议合并落地面）",
       "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
       "resolution": "编号顺延自 F-367。"
+    },
+    {
+      "id": "F-369",
+      "source": "traceability/acceptance/WP-14-T06-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-123/F-133 家族在 units/requirements.md 再现（卡头『文档版本』行与 §14.6 末行失同步，方向少报）：WP-14-T06 送验提交已向 §14.6 追加 v0.6（2026-09-26）落位登记行且内容完整准确，但卡头『文档版本』行停留 v0.5（2026-09-26，WP-14-T05 落位登记）——T05 验收曾核『卡头 v0.5 与 §14.6 末行同步（F-133 家族无再现）』，本任务触及该文件时未顺手推进卡头行；validate-docs 不校验该维度，机检未红",
+      "owner": "requirements 文档所有者（随下次触及 units/requirements.md 的任务把卡头『文档版本』行推进至 v0.6，与 §14.6 末行一致；与 F-133 处置建议②『显式指定收口载体』合并评估机检维度）",
+      "resolution": "编号顺延自 F-368。"
+    },
+    {
+      "id": "F-370",
+      "source": "traceability/acceptance/WP-14-T06-20260926.md §4.9（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343/F-360 散文计数家族新例（一次一例）：WP-14-T06 提交 54bdceeb 正文与留痕 traceability/builds/wp14-t06/README.md 均称 test/OrientationResolutionTest.cpp『5 用例』——验收者实测该文件 6 个 TEST 宏、送验 gtest XML 套件 ReqOrientationResolution tests=\"6\"、ird-test-report-requirements.json 同套件 6 条明细；且 README 自身算术不自洽（5+8+1=14≠123−108=15）。方向为少报、总数 123/123 与全部核心验证结论经验收者独立复现准确，不构成粉饰",
+      "owner": "WP-14-T06 实施面（记录性更正即可，不阻塞合入；不追溯改写已推送提交——AGENTS §6.3）；家族根治同 F-041 处置建议",
+      "resolution": "编号顺延自 F-369。"
+    },
+    {
+      "id": "F-371",
+      "source": "traceability/acceptance/WP-14-T06-20260926.md §4.3（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-300/F-304/F-310/F-314/F-338/F-344/F-345/F-350/F-351/F-352/F-358/F-367/F-368 家族新例：tasks/foundation/WP-14-T06.json verify 数组仅 3 行（sdurws_ird_requirements 构建行＋ctest 行＋validate-docs 行），缺 sdurws_ird_requirements_test／sdurws_ird_requirements_contract_test 两条显式构建行——全新构建树按 verify 清单逐条字面执行时 ctest 将因测试 exe 未被任何清单命令构建而 Not Run；验收者已按家族在案口径在集成/冒烟两条全新构建树自行补建两目标并执行（123/123＋5/5 全绿、ctest 2/2），属验收者侧正常动作；建议契约编译模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」行（与 F-367/F-368 处置建议合并落地面）",
+      "owner": "契约治理面（CCP 契约编译模板补构建行；既有已 done 契约不追溯）",
+      "resolution": "编号顺延自 F-370。"
+    },
+    {
+      "id": "F-372",
+      "source": "traceability/acceptance/WP-14-T06-20260926.md §4.7（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "requirements/src/Capture.cpp applyPickToOrientation 流内序号导航注释（『---- ③拾取目标浅核对……subject=目标任务点见④之后？不：诊断须回指需求条目……』一段）为起草式自问自答行文：内容真实准确（实际代码序 ②装配→④条目定位→③浅核对→⑤写入 已如实说明，含放序理由），但草稿腔自问句易使首次阅读者误读执行序——AGENTS §2 注释面向第一读者的陈述式建议",
+      "owner": "requirements 实施面（随下次触及 Capture.cpp 的任务把该段改写为陈述式导航注释；信息内容保持不变）",
+      "resolution": "编号顺延自 F-371。"
     }
   ]
 }
