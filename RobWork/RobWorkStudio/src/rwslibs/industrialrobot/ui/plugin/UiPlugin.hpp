@@ -59,6 +59,7 @@
 
 #include <memory>
 #include <optional>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -71,6 +72,7 @@
 #include <sdurws/ird/ui/UiSessionController.hpp>  // ui::UiSessionController（§5 会话状态机）
 #include <sdurws/ird/ui/WorkbenchContent.hpp>     // ui::IWorkbenchContent（内容装配面）
 
+#include "DomainAssembly.hpp"                    // 域插件装配产物（WP-24-T03 首版装配）
 #include "app/DiagnosticsAssembly.hpp"           // 诊断栈装配（与 harness 共用序列）
 #include "app/PortAdapters.hpp"                  // 端口适配器集（O-31 装配层特权边——复用形态）
 
@@ -209,12 +211,14 @@ private:
     QPointer<QWidget> m_dockBody;                             ///< 主 Dock 体控件（Qt 父子树托管）
     QDockWidget* m_propsDock = nullptr;    ///< "IRD 属性与诊断"Dock（Right 区——UI-T18 拆分面，窗口树托管）
     QDockWidget* m_tasksDock = nullptr;    ///< "IRD 任务和状态"Dock（Bottom 区——UI-T18 拆分面，窗口树托管）
+    QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
     QStatusBar* m_hostStatusBar = nullptr; ///< 宿主状态栏（UI-T18 状态投影面——PM-11 永久位＋瞬态消息）
     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）
     QMenu* m_recentMenu = nullptr;                            ///< "最近项目"子菜单（aboutToShow 重建）
     std::vector<std::pair<QAction*, std::string>> m_hostMenuCommandIds; ///< 框架菜单动作→命令 id（使能同步）
     std::vector<std::pair<WorkbenchRegion, QAction*>> m_hostRegionToggles; ///< 框架菜单区域开关（勾选态回写）
     bool m_assembled = false;                                 ///< initialize 已完成（一次守卫）
+    std::unique_ptr<DomainPluginAssembly> m_domains;          ///< 域插件装配产物（首版＝modeling——WP-24-T03）
 };
 
 }  // namespace ui

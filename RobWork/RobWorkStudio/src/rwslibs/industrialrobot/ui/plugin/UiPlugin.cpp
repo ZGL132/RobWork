@@ -306,6 +306,31 @@ void IrdWorkbenchHostPlugin::initialize()
     }
 
     // ---- 装配第四步：多 Dock 拓扑＋内容装配面两段装配＋退出收口挂接 ----
+    // 域插件首版装配（WP-24-T03，owner 指示提前启动）：registrar 登记＋
+    // 建模面板工厂消费——先于 buildDockBody（面板 Dock 在拓扑构建期创建）。
+    {
+        std::vector<std::string> domainReportLines;
+        // 命令受理反馈通道＝宿主状态栏瞬态消息（首版提交出口的可见落点）。
+        std::function<void(const std::string&)> statusFeedback =
+            [this](const std::string& message) {
+                if (m_hostStatusBar != nullptr) {
+                    m_hostStatusBar->showMessage(
+                        QString::fromUtf8(message.c_str()), /*timeoutMs=*/4000);
+                }
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(kPluginDevChannel,
+                                            "domain command: " + message);
+                }
+            };
+        m_domains = assembleDomainPlugins(*this, statusFeedback,
+                                          domainReportLines);
+        for (const std::string& line : domainReportLines) {
+            reportLine(line);
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel, line);
+            }
+        }
+    }
     if (!buildDockBody()) {
         // 内容装配面校验被拒＝装配缺陷（build() 的必填校验覆盖三组：
         // wiring 非空项、宿主控件 hostWidget、几何/位形钩子成组——宿主
@@ -427,6 +452,14 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
     m_tasksDock = new QDockWidget(QString::fromUtf8("IRD 任务和状态"), this);
     m_tasksDock->setObjectName("ird_tasks_dock");
     m_tasksDock->setWidget(m_content->bottomWidget());
+    // 建模 Dock（Left 停靠区——WP-24-T03 首版装配挂位；中央区 StageId
+    // 挂位〔CentralAreaHost〕未落位，宿主侧 Dock 承载为登记过的首版形态，
+    // 收口时迁移）。面板工厂经域装配 bundle 现调（模块内部完成会话接线）。
+    if (m_domains) {
+        m_modelingDock = new QDockWidget(QString::fromUtf8(kModelingDockTitle), this);
+        m_modelingDock->setObjectName("ird_modeling_dock");
+        m_modelingDock->setWidget(modelingPanelWidget(*m_domains));
+    }
 
     // 可见性目标登记（chrome 安放在 activate 之前——两段装配时序契约；
     // 三区开关语义自此作用于 Dock 本体：左＝插件主 Dock、右/底＝同级 Dock。
@@ -690,6 +723,12 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     if (hostWindow != nullptr && m_propsDock != nullptr && m_tasksDock != nullptr) {
         hostWindow->addDockWidget(Qt::RightDockWidgetArea, m_propsDock);
         hostWindow->addDockWidget(Qt::BottomDockWidgetArea, m_tasksDock);
+        // 建模 Dock 入宿主（WP-24-T03 首版装配挂位——Left 区；与属性/任务
+        // Dock 同受宿主装载语义支配，重显同拍执行）。
+        if (m_modelingDock != nullptr) {
+            hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_modelingDock);
+            m_modelingDock->show();
+        }
         m_propsDock->show();
         m_tasksDock->show();
         // 区域旗标重施（UI-T18——PM-14 跨会话记忆不被装载重显夺回）：三区
@@ -903,6 +942,23 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                 binding.drafts = std::make_shared<app::DraftQueryPortStub>();
                 binding.store = std::move(draftStore);
                 m_draft->bindSession(binding);
+                // 建模模块草稿源挂接（T03b-1——§10.5 attachModule；绑定
+                // 成功后恰挂一次，可写会话才接受——只读/已占用异常隔离留
+                // 痕不中断打开协议）。
+                if (m_domains) {
+                    try {
+                        m_draft->attachModule(
+                            modeling::kModuleHandle,
+                            modelingDraftSource(*m_domains));
+                    } catch (const std::exception& attachError) {
+                        if (m_diag.pipeline) {
+                            m_diag.pipeline->logDev(
+                                kPluginDevChannel,
+                                std::string("建模草稿源挂接跳过：")
+                                    + attachError.what());
+                        }
+                    }
+                }
             }
         }
         reportLine("项目已打开：" + canonicalPath + "（可写："

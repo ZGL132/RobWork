@@ -76,6 +76,17 @@ public:
      */
     void setCommandSubmit(CommandSubmitFn submitFn);
 
+    /// 命令标题文案解析器形态（titleKey→工程用语——宿主接 ui::resolveText）。
+    using CommandTitleResolver = std::function<QString(const std::string& titleKey)>;
+
+    /**
+     * @brief 注入命令标题文案解析器（WP-24-T03 首版装配——装配层接
+     *        ui::resolveText 后按钮呈现工程用语中文；不注入＝呈现 titleKey
+     *        键名原文——不虚构文案，UX-02 的解析归宿主文案体系）。绑定
+     *        即时重渲染既有按钮文本（装配序无关）。
+     */
+    void setCommandTitleResolver(CommandTitleResolver resolver);
+
     /// 编辑目标提供器（装配层注入——返回会话权威工作集的指针〔UI 线程单
     /// 例〕；L-2 提交面现取零缓存——面板不持有工作集副本，ACC5）。
     using EditTargetProvider = std::function<ModelingWorkingSet*()>;
@@ -138,6 +149,7 @@ private:
     PanelRefreshCoordinator m_refresh;        ///< L-4 刷新协调器（事件驱动）
     std::vector<ui::CommandDescriptor> m_commands;  ///< 域命令目录（§9.7.3 十条——装配数据）
     CommandSubmitFn m_commandSubmit;          ///< 命令提交出口（装配层注入；空＝按钮禁用）
+    CommandTitleResolver m_titleResolver;     ///< 标题文案解析器（WP-24-T03；空＝呈现键名原文）
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     bool m_writable = true;                   ///< 会话可写性（L-7 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）

@@ -51,6 +51,7 @@
 #include <string>
 #include <vector>
 
+#include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // PluginAssemblyReport（v1.2 预注的形状迁移——NFR-MNT-03 单点：报告形状自此归 IPluginUiRegistrar.hpp，本头经包含保持兼容）
 #include <sdurws/ird/ui/UiTypes.hpp>  // TextKey（插件标题/装配状态文案键——§3.5）
 
 class QDialog;   // 前置声明：createAboutDialog 返回类型；头文件不拖入
@@ -98,31 +99,9 @@ TextKey pluginTitleKey(const std::string& pluginId);
 // 装配报告值形状（§10.9 PluginAssemblyReport——关于框数据源的报告半区）
 // =====================================================================
 
-/**
- * @brief 单插件装配报告（§10.9 冻结形状：{pluginId, ok, panelsLoaded,
- *        commandsRegistered, failureDiagnostics}——逐字段对齐原文）。
- *
- * 数据来源＝装配期累积（IPluginUiRegistrar::assemblyReports() 查询语义，
- * §10.9）；本头只承载值形状供关于框消费，注册端口本体随装配任务落位时
- * 在其自有头定义并迁移此形状（NFR-MNT-03——单点定义，迁移非复制，见
- * 文件头注释）。阶段 A 无装配动作：真实报告为空集，测试以值对象注入。
- *
- * 值语义；诊断码为 diagnostics 稳定码词表值（如 UI-PLUGIN-ASSEMBLY-FAILED
- * ——§3.5），失败明细的呈现键解析归 §9.1 诊断呈现面（UI-T13），本清单
- * 只承载不加工。
- */
-struct PluginAssemblyReport {
-    /// 插件注册标识（白名单 token——§10.9 原文"白名单 token"）。
-    std::string pluginId;
-    /// 装配是否成功（false＝§11.3 装配失败——面板降级占位、失败隔离）。
-    bool ok = false;
-    /// 已装配面板数（PanelRegistration 入列计数——§10.9 后置条件）。
-    std::size_t panelsLoaded = 0;
-    /// 已注册命令数（冲突拒绝的不计——§7.2 第 2 步）。
-    std::size_t commandsRegistered = 0;
-    /// 失败诊断码清单（ok==false 时非空；码值经诊断码表冻结）。
-    std::vector<std::string> failureDiagnostics;
-};
+// 单插件装配报告——形状已迁移至 IPluginUiRegistrar.hpp（本头经包含保持
+// 同名类型可见——NFR-MNT-03 单点；WP-24-T03 首版装配落位时执行迁移，
+// v1.2 预注兑现；形状零变化，源/二进制兼容）。
 
 // =====================================================================
 // 冻结版本基线投影（NFR-DEP-05——L5 注入值，ui 呈现）

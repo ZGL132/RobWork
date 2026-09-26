@@ -157,7 +157,8 @@ add_library(sdurws_ird_ui STATIC
     src/DraftController.cpp
     src/DiagnosticPresentation.cpp
     src/CommandInteractionBridge.cpp
-    src/TaskPresentation.cpp)
+    src/TaskPresentation.cpp
+    src/PluginUiRegistrar.cpp)   # WP-24-T03 首版装配——§10.9 注册端口实现
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -597,6 +598,7 @@ add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
 if(TARGET sdurws)
     add_library(sdurws_ird_ui_plugin MODULE
         plugin/UiPlugin.cpp
+        plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 
@@ -618,6 +620,10 @@ if(TARGET sdurws)
     # 链接面（ird_gates 命中集登记面——traceability/wp10-t16-gate-registrations.md）：
     #   - sdurws_ird_ui／sdurws_ird_project＝装配层特权边（ui->ui 自边＋
     #     ui->project 宿主集成边——DTB §4.5 SUB 登记行，UI-T15 同款模式）；
+    #   - sdurws_ird_modeling_plugin＝WP-24-T03 首版装配边（ui->modeling
+    #     宿主集成边——DTB §4.5 同款 SUB 登记；装配层唯一"同时看见两边"
+    #     特权（O-31），业务域互不依赖（R-1）不因装配边破坏——消费面仅
+    #     建模装配门面 assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp）；
     #   - sdurws＝框架 RobWorkStudio 库（RobWorkStudioPlugin 基类；DTB §4.6
     #     框架基线白名单 "sdurw" 前缀族）；
     #   - Qt 三件套＝plugin 分类面（Qt 链接合法——ird_gates R-3 仅查
@@ -625,6 +631,7 @@ if(TARGET sdurws)
     target_link_libraries(sdurws_ird_ui_plugin PRIVATE
         sdurws_ird_ui
         sdurws_ird_project
+        sdurws_ird_modeling_plugin
         sdurws
         Qt6::Core
         Qt6::Gui

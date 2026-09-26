@@ -187,7 +187,8 @@ add_library(sdurws_ird_modeling_plugin STATIC
     plugin/PanelCommandCatalog.cpp   # 十条域命令登记数据（ACC4——卡 §9.7.3 表值化）
     plugin/ModelingPanelWidget.cpp   # 五区面板 widget（Q_OBJECT——AUTOMOC 载体）
     plugin/ModelingPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
-    plugin/ModelingUiModule.cpp)     # ui.md §11.2 模块实现（buildDraftCommand 域侧组装）
+    plugin/ModelingUiModule.cpp      # ui.md §11.2 模块实现（buildDraftCommand 域侧组装）
+    plugin/ModelingPluginAssembly.cpp)  # WP-24-T03 首版装配门面实现（assembly/ 公共头的私有实现）
 set_target_properties(sdurws_ird_modeling_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -204,6 +205,12 @@ endif()
 # 插件私有头解析（plugin/*.hpp——PRIVATE，不外溢；ui 同款先例）。
 target_include_directories(sdurws_ird_modeling_plugin PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 装配门面公共面（WP-24-T03——assembly/ 目录经插件目标 PUBLIC 暴露，宿主
+# 装配层（ui 插件）消费 <sdurws/ird/modeling/ModelingPluginAssembly.hpp>；
+# 非 include/ 产品扫描域——零 Qt 红线文件域隔离同 plugin/ 口径）。
+target_include_directories(sdurws_ird_modeling_plugin PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/assembly)
 
 # 插件链接面（卡 §3.2 明文"插件目标 → sdurws_ird_modeling＋sdurws_ird_ui
 # （＋平台库按需）；不得链接任何其他业务域单元目标（R-1）；不得 include
