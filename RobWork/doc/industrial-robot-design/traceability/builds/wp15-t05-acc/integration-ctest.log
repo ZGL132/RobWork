@@ -1,0 +1,237 @@
+UpdateCTestConfiguration  from :D:/10_Source_Repos/21_robot/acc_wp15_t05/build_int/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/DartConfiguration.tcl
+Test project D:/10_Source_Repos/21_robot/acc_wp15_t05/build_int/RobWorkStudio/src/rwslibs/industrialrobot/kinematics
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: sdurws_ird_kinematics_test
+
+1: Test command: D:\10_Source_Repos\21_robot\acc_wp15_t05\build_int\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+1: Working Directory: D:/10_Source_Repos/21_robot/acc_wp15_t05/build_int/RobWorkStudio/src/rwslibs/industrialrobot/kinematics
+1: Test timeout computed to be: 10000000
+1: [==========] Running 50 tests from 6 test suites.
+1: [----------] Global test environment set-up.
+1: [----------] 3 tests from KinErrors
+1: [ RUN      ] KinErrors.ErrorCodeTokensMatchSection92Row_WP15T02_ACC4
+1: [       OK ] KinErrors.ErrorCodeTokensMatchSection92Row_WP15T02_ACC4 (0 ms)
+1: [ RUN      ] KinErrors.ErrorValueSemanticsOrderedParams_WP15T02_ACC4
+1: [       OK ] KinErrors.ErrorValueSemanticsOrderedParams_WP15T02_ACC4 (0 ms)
+1: [ RUN      ] KinErrors.DiagCodeMappingRowsStagedWithConsumers_WP15T02ACC4_WP15T03
+1: [       OK ] KinErrors.DiagCodeMappingRowsStagedWithConsumers_WP15T02ACC4_WP15T03 (0 ms)
+1: [----------] 3 tests from KinErrors (0 ms total)
+1: 
+1: [----------] 5 tests from KinDiagCodes
+1: [ RUN      ] KinDiagCodes.FactoryScopeIsFullTable96_WP15T02_ACC4
+1: [       OK ] KinDiagCodes.FactoryScopeIsFullTable96_WP15T02_ACC4 (0 ms)
+1: [ RUN      ] KinDiagCodes.DescriptorFieldsMatchSection96Rows_WP15T02_ACC4
+1: [       OK ] KinDiagCodes.DescriptorFieldsMatchSection96Rows_WP15T02_ACC4 (0 ms)
+1: [ RUN      ] KinDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP15T02_ACC4
+1: [       OK ] KinDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP15T02_ACC4 (0 ms)
+1: [ RUN      ] KinDiagCodes.RegistersIntoStableCodeRegistry_WP15T02_ACC4
+1: [       OK ] KinDiagCodes.RegistersIntoStableCodeRegistry_WP15T02_ACC4 (0 ms)
+1: [ RUN      ] KinDiagCodes.DuplicateRegistrationRejected_WP15T02_ACC4
+1: [       OK ] KinDiagCodes.DuplicateRegistrationRejected_WP15T02_ACC4 (0 ms)
+1: [----------] 5 tests from KinDiagCodes (0 ms total)
+1: 
+1: [----------] 4 tests from KinBuildRedLine
+1: [ RUN      ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1
+1: [       OK ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1 (4 ms)
+1: [ RUN      ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5
+1: [       OK ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5 (3 ms)
+1: [ RUN      ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5
+1: [       OK ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5 (3 ms)
+1: [ RUN      ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1
+1: [       OK ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1 (2 ms)
+1: [----------] 4 tests from KinBuildRedLine (14 ms total)
+1: 
+1: [----------] 15 tests from KinFk
+1: [ RUN      ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1
+1: [       OK ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1 (0 ms)
+1: [ RUN      ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1
+1: [       OK ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1 (0 ms)
+1: [ RUN      ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1
+1: [       OK ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1 (0 ms)
+1: [ RUN      ] KinFk.RevPrismSingularValuesAnalytic_WP15T03_ACC1
+1: [       OK ] KinFk.RevPrismSingularValuesAnalytic_WP15T03_ACC1 (0 ms)
+1: [ RUN      ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1
+1: [       OK ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1 (0 ms)
+1: [ RUN      ] KinFk.AllFixedChainDegenerateMetrics_WP15T03_ACC1
+1: [       OK ] KinFk.AllFixedChainDegenerateMetrics_WP15T03_ACC1 (0 ms)
+1: [ RUN      ] KinFk.BaseWorldInvertedMount_V02_WP15T03_ACC2
+1: [       OK ] KinFk.BaseWorldInvertedMount_V02_WP15T03_ACC2 (0 ms)
+1: [ RUN      ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2
+1: [       OK ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2 (0 ms)
+1: [ RUN      ] KinFk.IllegalQDimensionRejected_WP15T03_ACC3
+1: [       OK ] KinFk.IllegalQDimensionRejected_WP15T03_ACC3 (0 ms)
+1: [ RUN      ] KinFk.IllegalQNonFiniteRejected_WP15T03_ACC3
+1: [       OK ] KinFk.IllegalQNonFiniteRejected_WP15T03_ACC3 (0 ms)
+1: [ RUN      ] KinFk.NoTcpTwoBranches_WP15T03_ACC3
+1: [       OK ] KinFk.NoTcpTwoBranches_WP15T03_ACC3 (0 ms)
+1: [ RUN      ] KinFk.OverLimitQComputableWithNegativeMargin_WP15T03_ACC3
+1: [       OK ] KinFk.OverLimitQComputableWithNegativeMargin_WP15T03_ACC3 (0 ms)
+1: [ RUN      ] KinFk.MarginNormalization_WP15T03_ACC1
+1: [       OK ] KinFk.MarginNormalization_WP15T03_ACC1 (0 ms)
+1: [ RUN      ] KinFk.NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3
+1: [       OK ] KinFk.NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3 (0 ms)
+1: [ RUN      ] KinFk.DeterministicByteOutput_WP15T03_ACC1
+1: [       OK ] KinFk.DeterministicByteOutput_WP15T03_ACC1 (0 ms)
+1: [----------] 15 tests from KinFk (1 ms total)
+1: 
+1: [----------] 18 tests from KinIk
+1: [ RUN      ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2
+1: [       OK ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2 (0 ms)
+1: [ RUN      ] KinIk.SamePoseDistinctConfigurationsRetained_WP15T04_ACC1
+1: [       OK ] KinIk.SamePoseDistinctConfigurationsRetained_WP15T04_ACC1 (0 ms)
+1: [ RUN      ] KinIk.MultiInitNoConvergenceCarriesSearchRecord_WP15T04_ACC2
+1: [       OK ] KinIk.MultiInitNoConvergenceCarriesSearchRecord_WP15T04_ACC2 (1 ms)
+1: [ RUN      ] KinIk.IllegalRequestFailsFast_WP15T04_ACC4
+1: [       OK ] KinIk.IllegalRequestFailsFast_WP15T04_ACC4 (0 ms)
+1: [ RUN      ] KinIk.AnalyticBoundExceededMaterialValidatable_WP15T04_ACC4
+1: [       OK ] KinIk.AnalyticBoundExceededMaterialValidatable_WP15T04_ACC4 (0 ms)
+1: [ RUN      ] KinIk.InitialValueStrategiesDeterministic_WP15T04_ACC2
+1: [       OK ] KinIk.InitialValueStrategiesDeterministic_WP15T04_ACC2 (0 ms)
+1: [ RUN      ] KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2
+1: [       OK ] KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2 (0 ms)
+1: [ RUN      ] KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3
+1: [       OK ] KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3 (0 ms)
+1: [ RUN      ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1
+1: [       OK ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1 (0 ms)
+1: [ RUN      ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3
+1: [       OK ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3 (0 ms)
+1: [ RUN      ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1
+1: [       OK ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1 (0 ms)
+1: [ RUN      ] KinIk.ExpandedInitialValuesFlipOutcome_WP15T04_ACC2
+1: [       OK ] KinIk.ExpandedInitialValuesFlipOutcome_WP15T04_ACC2 (0 ms)
+1: [ RUN      ] KinIk.CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2
+1: [       OK ] KinIk.CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2 (0 ms)
+1: [ RUN      ] KinIk.AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2
+1: [       OK ] KinIk.AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2 (0 ms)
+1: [ RUN      ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1
+1: [       OK ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1 (0 ms)
+1: [ RUN      ] KinIk.ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3
+1: [       OK ] KinIk.ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3 (0 ms)
+1: [ RUN      ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3
+1: [       OK ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3 (0 ms)
+1: [ RUN      ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3
+1: [       OK ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3 (0 ms)
+1: [----------] 18 tests from KinIk (1 ms total)
+1: 
+1: [----------] 5 tests from KinTaskPointsBatch
+1: [ RUN      ] KinTaskPointsBatch.RealSolverOutcomeMapping_WP15T05_ACC1
+1: [       OK ] KinTaskPointsBatch.RealSolverOutcomeMapping_WP15T05_ACC1 (1 ms)
+1: [ RUN      ] KinTaskPointsBatch.DemandChecksMaterial_WP15T05_ACC1
+1: [       OK ] KinTaskPointsBatch.DemandChecksMaterial_WP15T05_ACC1 (0 ms)
+1: [ RUN      ] KinTaskPointsBatch.IncompleteBatchDeliversResultIncompleteDiag_WP15T05_ACC2
+1: [       OK ] KinTaskPointsBatch.IncompleteBatchDeliversResultIncompleteDiag_WP15T05_ACC2 (0 ms)
+1: [ RUN      ] KinTaskPointsBatch.PayloadHeaderBindingLayout_WP15T05_ACC3
+1: [       OK ] KinTaskPointsBatch.PayloadHeaderBindingLayout_WP15T05_ACC3 (0 ms)
+1: [ RUN      ] KinTaskPointsBatch.ZeroApplicableCaseMarksNotApplicable_WP15T05_ACC2
+1: [       OK ] KinTaskPointsBatch.ZeroApplicableCaseMarksNotApplicable_WP15T05_ACC2 (0 ms)
+1: [----------] 5 tests from KinTaskPointsBatch (1 ms total)
+1: 
+1: [----------] Global test environment tear-down
+1: [==========] 50 tests from 6 test suites ran. (18 ms total)
+1: [  PASSED  ] 50 tests.
+1/2 Test #1: sdurws_ird_kinematics_test ............   Passed    0.27 sec
+test 2
+    Start 2: sdurws_ird_kinematics_contract_test
+
+2: Test command: D:\10_Source_Repos\21_robot\acc_wp15_t05\build_int\RobWorkStudio\bin\Release\sdurws_ird_kinematics_contract_test.exe
+2: Working Directory: D:/10_Source_Repos/21_robot/acc_wp15_t05/build_int/RobWorkStudio/src/rwslibs/industrialrobot/kinematics
+2: Test timeout computed to be: 10000000
+2: [==========] Running 34 tests from 4 test suites.
+2: [----------] Global test environment set-up.
+2: [----------] 5 tests from KinBuildGraph
+2: [ RUN      ] KinBuildGraph.UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3
+2: [       OK ] KinBuildGraph.UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3 (0 ms)
+2: [ RUN      ] KinBuildGraph.SixRegisteredEdgesPresent_WP15T02_ACC3
+2: [       OK ] KinBuildGraph.SixRegisteredEdgesPresent_WP15T02_ACC3 (0 ms)
+2: [ RUN      ] KinBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP15T02_ACC5
+2: [       OK ] KinBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP15T02_ACC5 (0 ms)
+2: [ RUN      ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3
+2: [       OK ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3 (0 ms)
+2: [ RUN      ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5
+2: [       OK ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5 (4 ms)
+2: [----------] 5 tests from KinBuildGraph (5 ms total)
+2: 
+2: [----------] 6 tests from KinPoseMetricsEval
+2: [ RUN      ] KinPoseMetricsEval.DescriptorMatchesSection43Row_WP15T03_ACC4
+2: [       OK ] KinPoseMetricsEval.DescriptorMatchesSection43Row_WP15T03_ACC4 (0 ms)
+2: [ RUN      ] KinPoseMetricsEval.KeyWordFormGateCompliant_WP15T03_ACC4
+2: [       OK ] KinPoseMetricsEval.KeyWordFormGateCompliant_WP15T03_ACC4 (0 ms)
+2: [ RUN      ] KinPoseMetricsEval.HostInjectionFactoryProducesEvaluator_WP15T03_ACC4
+2: [       OK ] KinPoseMetricsEval.HostInjectionFactoryProducesEvaluator_WP15T03_ACC4 (0 ms)
+2: [ RUN      ] KinPoseMetricsEval.AssemblyFailFastRejectsIllegalQuery_WP15T03_ACC3
+2: [       OK ] KinPoseMetricsEval.AssemblyFailFastRejectsIllegalQuery_WP15T03_ACC3 (0 ms)
+2: [ RUN      ] KinPoseMetricsEval.StructuredErrorMaterialNoTcp_WP15T03_ACC3
+2: [       OK ] KinPoseMetricsEval.StructuredErrorMaterialNoTcp_WP15T03_ACC3 (0 ms)
+2: [ RUN      ] KinPoseMetricsEval.DeterministicBytesAcrossCallsAndModes_WP15T03_ACC4
+2: [       OK ] KinPoseMetricsEval.DeterministicBytesAcrossCallsAndModes_WP15T03_ACC4 (0 ms)
+2: [----------] 6 tests from KinPoseMetricsEval (0 ms total)
+2: 
+2: [----------] 9 tests from KinTaskPointIkEval
+2: [ RUN      ] KinTaskPointIkEval.DescriptorMatchesSection43Row_WP15T04_ACC5
+2: [       OK ] KinTaskPointIkEval.DescriptorMatchesSection43Row_WP15T04_ACC5 (0 ms)
+2: [ RUN      ] KinTaskPointIkEval.KeyWordFormGateCompliant_WP15T04_ACC5
+2: [       OK ] KinTaskPointIkEval.KeyWordFormGateCompliant_WP15T04_ACC5 (0 ms)
+2: [ RUN      ] KinTaskPointIkEval.HostInjectionFactoryProducesEvaluator_WP15T04_ACC5
+2: [       OK ] KinTaskPointIkEval.HostInjectionFactoryProducesEvaluator_WP15T04_ACC5 (0 ms)
+2: [ RUN      ] KinTaskPointIkEval.AssemblyFailsFastOnIllegalQuery_WP15T04_ACC4
+2: [       OK ] KinTaskPointIkEval.AssemblyFailsFastOnIllegalQuery_WP15T04_ACC4 (0 ms)
+2: [ RUN      ] KinTaskPointIkEval.EvaluateSuccessProducesBoundPayload_WP15T04_ACC4
+2: [       OK ] KinTaskPointIkEval.EvaluateSuccessProducesBoundPayload_WP15T04_ACC4 (0 ms)
+2: [ RUN      ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2
+2: [       OK ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2 (1 ms)
+2: [ RUN      ] KinTaskPointIkEval.AnalyticBoundDeliversProofMaterial_WP15T04_ACC4
+2: [       OK ] KinTaskPointIkEval.AnalyticBoundDeliversProofMaterial_WP15T04_ACC4 (0 ms)
+2: [ RUN      ] KinTaskPointIkEval.CancellationYieldsZeroMaterial_WP15T04_ACC2
+2: [       OK ] KinTaskPointIkEval.CancellationYieldsZeroMaterial_WP15T04_ACC2 (0 ms)
+2: [ RUN      ] KinTaskPointIkEval.DeterministicAndModeSensitivePayload_WP15T04_ACC3
+2: [       OK ] KinTaskPointIkEval.DeterministicAndModeSensitivePayload_WP15T04_ACC3 (0 ms)
+2: [----------] 9 tests from KinTaskPointIkEval (1 ms total)
+2: 
+2: [----------] 14 tests from KinTaskPointsBatchEval
+2: [ RUN      ] KinTaskPointsBatchEval.DescriptorMatchesSection43Row_WP15T05_ACC4
+2: [       OK ] KinTaskPointsBatchEval.DescriptorMatchesSection43Row_WP15T05_ACC4 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.ExpansionAppliesToNotApplicableAndDedup_WP15T05_ACC1
+2: [       OK ] KinTaskPointsBatchEval.ExpansionAppliesToNotApplicableAndDedup_WP15T05_ACC1 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.DanglingStationReferenceYieldsInputInvalid_WP15T05_ACC1
+2: [       OK ] KinTaskPointsBatchEval.DanglingStationReferenceYieldsInputInvalid_WP15T05_ACC1 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.PerItemStatesIndependent_WP15T05_ACC1
+2: [       OK ] KinTaskPointsBatchEval.PerItemStatesIndependent_WP15T05_ACC1 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.CaseCompletionMatrixMaterial_WP15T05_ACC2
+2: [       OK ] KinTaskPointsBatchEval.CaseCompletionMatrixMaterial_WP15T05_ACC2 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.CancellationMarksNotRunAndIncomplete_WP15T05_ACC2
+2: [       OK ] KinTaskPointsBatchEval.CancellationMarksNotRunAndIncomplete_WP15T05_ACC2 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.BuilderOutputShapeAndVerdictInputs_WP15T05_ACC3
+2: [       OK ] KinTaskPointsBatchEval.BuilderOutputShapeAndVerdictInputs_WP15T05_ACC3 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.ProofProducerReboundToBatchKey_WP15T05_ACC3
+2: [       OK ] KinTaskPointsBatchEval.ProofProducerReboundToBatchKey_WP15T05_ACC3 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.PerBatchCancelProbeProgressAndWatermark_WP15T05_ACC4
+2: [       OK ] KinTaskPointsBatchEval.PerBatchCancelProbeProgressAndWatermark_WP15T05_ACC4 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.DefaultBatchSizeIs256_WP15T05_ACC4
+2: [       OK ] KinTaskPointsBatchEval.DefaultBatchSizeIs256_WP15T05_ACC4 (1 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5
+2: [       OK ] KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.ThreadCountEquivalence_WP15T05_ACC5
+2: [       OK ] KinTaskPointsBatchEval.ThreadCountEquivalence_WP15T05_ACC5 (1 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.ShardsAreContiguousRanges_WP15T05_ACC5
+2: [       OK ] KinTaskPointsBatchEval.ShardsAreContiguousRanges_WP15T05_ACC5 (0 ms)
+2: [ RUN      ] KinTaskPointsBatchEval.CapabilityDeclarationValues_WP15T05_ACC4
+2: [       OK ] KinTaskPointsBatchEval.CapabilityDeclarationValues_WP15T05_ACC4 (0 ms)
+2: [----------] 14 tests from KinTaskPointsBatchEval (2 ms total)
+2: 
+2: [----------] Global test environment tear-down
+2: [==========] 34 tests from 4 test suites ran. (10 ms total)
+2: [  PASSED  ] 34 tests.
+2/2 Test #2: sdurws_ird_kinematics_contract_test ...   Passed    0.28 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Label Time Summary:
+ird    =   0.55 sec*proc (2 tests)
+
+Total Test time (real) =   0.57 sec
