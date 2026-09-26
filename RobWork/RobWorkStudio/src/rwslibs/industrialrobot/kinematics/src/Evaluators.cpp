@@ -1870,4 +1870,790 @@ execution::TaskCapability taskPointsBatchCapability()
     return capability;
 }
 
+// =====================================================================
+// 以下为 T06 区域覆盖段（WP-15-T06——§7.2 覆盖率图的评估器落位；既有
+// T03~T05 段不回改。同 TU 匿名命名空间前段工具（makeKinDiag/
+// internalDefaultSolver 等）按声明序可见——复用不重定义）
+// =====================================================================
+
+namespace {
+
+// ---------------------------------------------------------------------
+// 装配期区域覆盖查询校验（调用方错误 fail-fast 轨——WorkspaceSampler
+// 类注错误分轨；NFR-COR-03 拒绝不钳制）
+// ---------------------------------------------------------------------
+
+/// 区域覆盖查询校验（违例抛 std::invalid_argument——评估输出面不承载
+/// 调用方错误）。身份对账随请求到达（构造期不可见），其在 evaluate 期
+/// 结构化诊断轨执行——分轨登记随卡 §14.6 v0.6。
+void validateRegionCoverageQuery(const IKinRuntimeView& view,
+                                 const RegionCoverageQuery& query)
+{
+    // 设备自由度（可动关节链序——T03~T05 同口径）。
+    std::size_t dof = 0;
+    for (const auto& j : view.model().chain().joints) {
+        if (j.type != runtime::JointType::Fixed) {
+            ++dof;
+        }
+    }
+
+    // 排序参考构型（D-KIN-4——显式输入的契约面）。
+    if (query.referenceQ.size() != dof) {
+        throw std::invalid_argument(
+            "kin.region-coverage 查询非法：referenceQ 维度 "
+            + std::to_string(query.referenceQ.size()) + " != 设备自由度 "
+            + std::to_string(dof));
+    }
+    for (std::size_t k = 0; k < query.referenceQ.size(); ++k) {
+        if (!std::isfinite(query.referenceQ[k])) {
+            throw std::invalid_argument(
+                "kin.region-coverage 查询非法：referenceQ[" + std::to_string(k)
+                + "] 非有限（NFR-COR-03：不置零）");
+        }
+    }
+
+    // 求解参数面（计数/容差/阈值——I-KIN-4：seed=0 拒绝不静默替换）。
+    if (query.initialValuesCount == 0U) {
+        throw std::invalid_argument("kin.region-coverage 查询非法：初值数量须 ≥1");
+    }
+    if (query.iterationLimit == 0U) {
+        throw std::invalid_argument("kin.region-coverage 查询非法：迭代上限须 ≥1");
+    }
+    if (!std::isfinite(query.positionTolerance) || query.positionTolerance <= 0.0) {
+        throw std::invalid_argument(
+            "kin.region-coverage 查询非法：位置容差非法（须有限且>0，单位 m）");
+    }
+    if (!std::isfinite(query.orientationTolerance)
+        || query.orientationTolerance <= 0.0) {
+        throw std::invalid_argument(
+            "kin.region-coverage 查询非法：姿态容差非法（须有限且>0，单位 rad）");
+    }
+    if (!std::isfinite(query.dedupThresholdPerAxis)
+        || query.dedupThresholdPerAxis <= 0.0) {
+        throw std::invalid_argument(
+            "kin.region-coverage 查询非法：去重阈值非法（须有限且>0，rad|m 逐轴）");
+    }
+    if (query.initialStrategy == InitialValueStrategy::SeededRandom
+        && query.budget.seed == 0U) {
+        throw std::invalid_argument(
+            "kin.region-coverage 查询非法：SeededRandom 的 seed=0（I-KIN-4："
+            "拒绝，不做 0→1 静默替换——NFR-COR-03）");
+    }
+    // 采样预算种子全域非 0（Random 位置采样的序列源——Grid 不消费但种子
+    // 入 sampleSetIdentity，0 种子的身份面无意义且违反 I-KIN-4 统一口径）。
+    if (query.budget.seed == 0U) {
+        throw std::invalid_argument(
+            "kin.region-coverage 查询非法：budget.seed=0（I-KIN-4：拒绝——"
+            "采样种子是样本集身份的决定输入）");
+    }
+    if (query.budget.threadCount == 0U) {
+        throw std::invalid_argument("kin.region-coverage 查询非法：threadCount 须 ≥1");
+    }
+    if (query.maxBatchSize == 0U) {
+        throw std::invalid_argument("kin.region-coverage 查询非法：maxBatchSize 须 ≥1");
+    }
+
+    // 逐计划投影值（身份/几何/计数——I-REQ-6 非退化与 requirements ≥1
+    // 词表的装配期面；计数 0 合法（零样本场景），此处不拒）。
+    for (const SamplingPlan& plan : query.plans) {
+        if (!plan.regionObjectId.isValid()) {
+            throw std::invalid_argument(
+                "kin.region-coverage 查询非法：区域 objectId 为保留值");
+        }
+        if (!plan.planContentIdentity.isValid()) {
+            throw std::invalid_argument(
+                "kin.region-coverage 查询非法：计划内容身份为零值（区域 "
+                + plan.regionObjectId.toCanonical()
+                + "——计划 canonical 身份是 sampleSetIdentity 的输入，宿主"
+                  "组装违约）");
+        }
+        for (std::size_t i = 0; i < 3; ++i) {
+            if (!std::isfinite(plan.box.size[i]) || plan.box.size[i] <= 0.0) {
+                throw std::invalid_argument(
+                    "kin.region-coverage 查询非法：区域 "
+                    + plan.regionObjectId.toCanonical() + " Box size["
+                    + std::to_string(i) + "] 非正/非有限（I-REQ-6 区域非退化"
+                    "——单位 m）");
+            }
+            if (!std::isfinite(plan.box.center[i])) {
+                throw std::invalid_argument(
+                    "kin.region-coverage 查询非法：区域 "
+                    + plan.regionObjectId.toCanonical() + " Box center["
+                    + std::to_string(i) + "] 非有限（单位 m）");
+            }
+        }
+        if (plan.orientation.directionSamples == 0U || plan.orientation.rollSamples == 0U) {
+            throw std::invalid_argument(
+                "kin.region-coverage 查询非法：区域 "
+                + plan.regionObjectId.toCanonical()
+                + " 姿态采样计数须 ≥1（requirements 字段表原文）");
+        }
+    }
+
+    // 逐工况投影值（身份良构——要求值合并的消费面）。
+    for (const BatchCondition& c : query.conditions) {
+        if (!c.conditionId.isValid()) {
+            throw std::invalid_argument(
+                "kin.region-coverage 查询非法：工况 objectId 为保留值");
+        }
+    }
+
+    // TCP 键预检（defaultTcp——工具可解析时键不命中即装配违约；工具侧
+    // 缺失保留到评估期＝批量级 KIN-NO-TCP 零素材轨，T04/T05 两分口径）。
+    const runtime::CanonicalModel& model = view.model();
+    const TcpRef& tcp = query.defaultTcp;
+    if (!model.tools().empty()) {
+        const auto loc = model.findObject(tcp.toolObject);
+        if (loc.has_value() && loc->kind == runtime::CanonicalModel::ObjectKind::Tool) {
+            const runtime::CanonicalTool& tool = model.tools().at(loc->index);
+            if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName) {
+                throw std::invalid_argument(
+                    "kin.region-coverage：defaultTcp tcpKey '" + tcp.tcpKey
+                    + "' 不命中工具 '" + tool.localName
+                    + "' 的 canonical TCP（帧未解析——装配期 fail-fast）");
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------
+// 碰撞要求合并（KIN-05 承接的判定面——RegionCoverageQuery 结构体注的
+// 合并口径落点）
+// ---------------------------------------------------------------------
+
+/// 区域覆盖的碰撞要求判定（任一计划级要求或任一启用工况要求——覆盖
+/// 评估运行于任务工况语境；V13-01：无布尔开关，会话在场即启用）。
+bool collisionRequiredForPlan(const RegionCoverageQuery& query,
+                              const SamplingPlan& plan)
+{
+    if (plan.demands.collisionFreeRequired) {
+        return true;
+    }
+    for (const BatchCondition& c : query.conditions) {
+        if (c.enabled && c.demands.collisionFreeRequired) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/// 位置样本评估的"姿态无约束"残差容差落值（rad——角度型残差量程 [0,π]，
+/// π 容差接受任意姿态＝存在性口径；收敛判据逐项比较，故收敛⇔位置残差
+/// 入容差——黄金锁定随 T13，登记随卡 §14.6 v0.6）。
+constexpr double kPoseFreeTolerance = 3.14159265358979323846;
+
+}  // namespace
+
+// =====================================================================
+// WorkspaceSampler——构造校验＋评估主流程（§7.2 覆盖率图）
+// =====================================================================
+
+WorkspaceSampler::WorkspaceSampler(const IKinRuntimeView* view,
+                                   RegionCoverageQuery query)
+    : m_view(view), m_query(std::move(query)),
+      m_descriptor(makeRegionCoverageDescriptor())
+{
+    // 装配期 fail-fast（类注错误分轨）：空视图＝装配违约；查询非法＝
+    // 调用方错误——两轨都不进入评估输出面（NFR-COR-03）。
+    if (m_view == nullptr) {
+        throw std::invalid_argument(
+            "kin.region-coverage：注入视图为空指针（宿主注入契约违约——O-37）");
+    }
+    validateRegionCoverageQuery(*m_view, m_query);
+
+    // 工具侧缺失（未配置/悬空）保留到评估期＝批量级 KIN-NO-TCP 零素材
+    // （T05 两分口径同源——键不命中已在 validateRegionCoverageQuery 拒绝）。
+    const runtime::CanonicalModel& model = m_view->model();
+    if (model.tools().empty()) {
+        KinematicsError err;
+        err.code = KinematicsErrorCode::NoTcp;
+        err.detail = "TCP 未配置：快照模型无工具（KIN-NO-TCP 素材——§9.6）";
+        m_setupError = std::move(err);
+    } else {
+        const auto loc = model.findObject(m_query.defaultTcp.toolObject);
+        if (!loc.has_value()
+            || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
+            KinematicsError err;
+            err.code = KinematicsErrorCode::NoTcp;
+            err.detail = "TCP 引用悬空：toolObject 未解析到快照工具"
+                         "（KIN-NO-TCP 素材——§9.6）";
+            m_setupError = std::move(err);
+        }
+    }
+}
+
+const evidence::EvaluatorDescriptor& WorkspaceSampler::descriptor() const
+{
+    // 返回引用指向成员副本（稳定存储——evidence §9.2 契约要求）。
+    return m_descriptor;
+}
+
+runtime::Expected<SampleSet, KinematicsError> WorkspaceSampler::generateSamples(
+    const SamplingPlan& plan, const RegionSamplingBudget& budget) const
+{
+    // §9.2 独立入口（契约测试/检查点续跑核对 sampleSetIdentity 用）——
+    // 单计划面委托多计划计算核（单元素向量＝计划内局部序 0 起，与全局
+    // 序一致）。装配校验的轻量面：计划级良构在此复检（无视图上下文，
+    // 几何/计数即可判定；身份/种子违约同轨拒绝）。
+    try {
+        return runtime::Expected<SampleSet, KinematicsError>::ok(
+            generateSampleSet({plan}, budget));
+    } catch (const std::exception& e) {
+        // 生成核的自检 logic_error＝实现缺陷（fail-fast 语义）；此处转
+        // Expected 错误侧承载——§9.1"非异常出口"的接口契约形态。
+        KinematicsError err;
+        err.code = KinematicsErrorCode::IllegalQ;
+        err.detail = std::string("样本生成失败：") + e.what();
+        return runtime::Expected<SampleSet, KinematicsError>::err(std::move(err));
+    }
+}
+
+CoverageResult WorkspaceSampler::computeCoverage(const SampleSet& set,
+                                                 const SampleResultSet& results) const
+{
+    // 唯一实现点委托（NFR-MNT-04——接口方法零本地副本）。
+    return kinematics::computeCoverage(set, results);
+}
+
+evidence::EvaluationOutput WorkspaceSampler::evaluate(
+    const evidence::EvaluationRequest& request,
+    evidence::IEvaluationContext& context)
+{
+    evidence::EvaluationOutput out;
+
+    // ---- 批量级零素材轨：工具侧缺失（KIN-NO-TCP——T03/T04/T05 两分
+    // 口径：模型侧缺失≠工程不可行，零 payload 零证据，判定留 evidence）。----
+    if (m_setupError.has_value()) {
+        out.diagnostics.push_back(makeKinDiag(
+            kKinNoTcp, std::nullopt,
+            "kin.region-coverage 区域覆盖评估", m_setupError->detail,
+            "配置工具 TCP 或修正 tcpRef 引用后重提区域覆盖评估"));
+        return out;
+    }
+
+    // ---- 步骤 1：身份对账（先于生成——绝不沿用未冻结/不一致样本集，
+    // acceptance 3/O-38：冻结前以快照 SamplingPlanRef 对账为准，不一致即
+    // DataInsufficient＝证据缺失）。----
+    std::vector<PlanIdentityCheck> checks;
+    checks.reserve(m_query.plans.size());
+    std::vector<const SamplingPlan*> mismatched;
+    for (const SamplingPlan& plan : m_query.plans) {
+        PlanIdentityCheck check;
+        check.regionObjectId = plan.regionObjectId;
+        check.planContentIdentity = plan.planContentIdentity;
+        check.plannedPositionSamples = plannedPositionSampleCount(plan);
+        check.plannedPoseSamples = plannedPoseSampleCount(plan);
+        check.computedIdentity =
+            sampleSetIdentity(plan.planContentIdentity, m_query.budget);
+
+        // 快照冻结凭据核对（evidence §4.1.4——SamplingPlanRef 五字段中
+        // 本单元可核对的三元：身份＋分母两值；regionObjectId 为对账键）。
+        const std::vector<evidence::SamplingPlanRef>& refs
+            = request.snapshot.samplingPlans;
+        const auto it = std::find_if(
+            refs.begin(), refs.end(),
+            [&plan](const evidence::SamplingPlanRef& r) {
+                return r.regionObjectId == plan.regionObjectId;
+            });
+        if (it == refs.end()) {
+            // 未冻结：快照无该区域的 SamplingPlanRef——绝不沿用未冻结
+            // 样本集（acceptance 3 原文语义）。
+            check.matched = false;
+        } else {
+            check.matched = it->sampleSetIdentity == check.computedIdentity
+                && it->plannedPositionSamples == check.plannedPositionSamples
+                && it->plannedPoseSamples == check.plannedPoseSamples;
+        }
+        if (!check.matched) {
+            mismatched.push_back(&plan);
+        }
+        checks.push_back(std::move(check));
+    }
+    if (!mismatched.empty()) {
+        // KIN-SAMPLE-IDENTITY-MISMATCH（§9.6 行 13，error）——零素材输出
+        //（无 payload/无证据行＝无覆盖率输出，V-15"错误码；无覆盖率输出"）；
+        // cause 逐计划列举（缺失/不一致分述——可定位诊断）。
+        std::string cause = "样本集身份对账失败（未冻结/不一致样本集绝不沿"
+                            "用——§7.2）：";
+        for (const SamplingPlan* plan : mismatched) {
+            const bool absent = std::none_of(
+                request.snapshot.samplingPlans.begin(),
+                request.snapshot.samplingPlans.end(),
+                [&plan](const evidence::SamplingPlanRef& r) {
+                    return r.regionObjectId == plan->regionObjectId;
+                });
+            cause += absent ? " 快照无 SamplingPlanRef（未冻结）：" : " 身份/分母与快照不一致：";
+            cause += plan->regionObjectId.toCanonical() + "；";
+        }
+        out.diagnostics.push_back(makeKinDiag(
+            kKinSampleIdentityMismatch, mismatched.front()->regionObjectId,
+            "kin.region-coverage 样本集身份对账", cause,
+            "按冻结采样计划重建快照 SamplingPlanRef 或修正采样预算/种子后重评"));
+        return out;
+    }
+
+    // ---- 步骤 2~5：纯计算面（确定性采样→零样本判定→逐样本评估→覆盖
+    // 率计算；取消/检查点/进度在计算核内）。----
+    RegionCoverageComputation computation =
+        runRegionCoverageComputation(*m_view, m_query, request, context);
+    computation.identityChecks = std::move(checks);
+
+    // ---- 零样本判定（V-13）：任一计划乘积=0 → 该计划覆盖率不定义 →
+    // 整体降级 DataInsufficient＋KIN-COVERAGE-ZERO-SAMPLES（绝不输出
+    // 0%/100%——无比率字段；登记随卡 §14.6 v0.6：逐计划零样本即全评估
+    // 降级，聚合分母的存在不恢复该计划的覆盖结论）。----
+    bool anyZeroPlan = false;
+    for (const PlanIdentityCheck& check : computation.identityChecks) {
+        if (check.plannedPositionSamples == 0U || check.plannedPoseSamples == 0U) {
+            anyZeroPlan = true;
+        }
+    }
+    if (anyZeroPlan) {
+        computation.coverage.downgraded = true;
+    }
+
+    // ---- 步骤 6：素材组装（payload canonical＋逐计划证据行＋诊断——
+    // 摘要唯一经 core::ContentDigester，CR-02）。----
+    const std::vector<std::uint8_t> payloadBytes =
+        encodeRegionCoveragePayloadCanonical(computation, request.task);
+    core::ContentDigester digester;
+    digester.update(payloadBytes.data(), payloadBytes.size());
+    core::ContentIdentity payloadDigest;
+    payloadDigest.bytes = digester.finalize();
+    out.payload = evidence::DomainPayload{kRegionCoveragePayloadToken, payloadBytes,
+                                          payloadDigest};
+
+    // 逐计划证据行（itemId=kKinRegionCoverageRowId——表 4 运动学行"区域
+    // 覆盖率"落位；subject=regionObjectId 溯源；artifactDigest＝载荷整体
+    // 摘要——逐计划明细/状态表在载荷内，行以摘要＋对象绑定，T05 批量
+    // 行同款形态；Satisfied＝产物存在——含 partial/零样本素材，漏验
+    // 后果经 diag/incomplete 标记交 evidence 覆盖矩阵）。
+    out.evidence.reserve(computation.identityChecks.size());
+    for (const PlanIdentityCheck& check : computation.identityChecks) {
+        evidence::EvidenceItem row;
+        row.itemId = kKinRegionCoverageRowId;
+        row.status = evidence::EvidenceItemStatus::Satisfied;
+        row.artifactDigest = payloadDigest.bytes;
+        row.subject = check.regionObjectId;
+        out.evidence.push_back(std::move(row));
+    }
+
+    // 诊断面（零样本/不完整——两码均 §9.6 在册行，产码面随本任务）。
+    if (anyZeroPlan) {
+        out.diagnostics.push_back(makeKinDiag(
+            kKinCoverageZeroSamples, std::nullopt,
+            "kin.region-coverage 覆盖率计算",
+            "存在计划样本乘积=0（零样本——覆盖率不定义，判 DataInsufficient；"
+            "绝不输出 0%/100%——§7.2/V-13）",
+            "修正区域采样计数（I-REQ-6 非退化）后按同一冻结样本集语义重建"
+            "计划再评"));
+    }
+    if (computation.coverage.incomplete) {
+        std::uint64_t notRunTotal = computation.coverage.position.notRun
+            + computation.coverage.orientation.notRun;
+        out.diagnostics.push_back(makeKinDiag(
+            kKinResultIncomplete, std::nullopt,
+            "kin.region-coverage 区域覆盖评估",
+            "逐样本评估不完整：NotRun " + std::to_string(notRunTotal)
+                + " 样本（协作取消/失败中止——partial 不产正式覆盖率，"
+                  "重跑同一样本集；§7.2）",
+            "恢复任务（新 attempt 自 watermark 续跑）后按同一冻结样本集复评"));
+    }
+
+    // 携带模式敏感性标记（Quick/Preview 的 screening-only 语义在 mode
+    // 字段——载荷绑定块已携带；效力门禁归汇总/包络层，§8.4）。
+    return out;
+}
+
+// =====================================================================
+// runRegionCoverageComputation——区域覆盖计算核心（步骤 2~5；声明见
+// Evaluators.hpp——测试直调面与评估器形态的分离线）
+// =====================================================================
+
+RegionCoverageComputation runRegionCoverageComputation(
+    const IKinRuntimeView& view, const RegionCoverageQuery& query,
+    const evidence::EvaluationRequest& request, evidence::IEvaluationContext& context)
+{
+    // 装配校验（直调面与评估器构造器同款 fail-fast 面——防御直调绕过
+    // 构造器；NFR-COR-03）。
+    validateRegionCoverageQuery(view, query);
+
+    RegionCoverageComputation out;
+    out.snapshotId = request.snapshot.snapshotId;
+    out.sliceId = request.slice.sliceId;
+    out.configDigest = query.configDigest;
+    out.mode = request.mode;
+    out.seed = query.budget.seed;
+    out.referenceQ = query.referenceQ;
+    out.task = request.task;
+
+    // ---- 步骤 2：确定性采样（D-KIN-6——同 (plans,budget) 同样本集同序；
+    // 复评不得增删更换样本的结构保证；生成核自检违例 logic_error）。----
+    out.samples = generateSampleSet(query.plans, query.budget);
+
+    // ---- 零样本早退（无样本可评估——空双射合法，覆盖率全轴不定义；
+    // 诊断面在评估器组装步产出）。----
+    if (out.samples.samples.empty()) {
+        out.coverage = computeCoverage(out.samples, SampleResultSet{});
+        return out;
+    }
+
+    // ---- 步骤 4 评估环境（逐样本共享——同一快照视图/评价区间/初值集：
+    // 确定性来源全部固定；初值种子与采样种子同源＝budget.seed，§3.4
+    // 单一种子纪律）。----
+    const std::vector<JointInterval> intervals = evaluationIntervals(view);
+    const std::vector<std::vector<double>> initialValues = makeInitialValues(
+        query.initialStrategy, query.initialValuesCount, query.budget.seed,
+        intervals, query.referenceQ);
+    const IIkSolver& solver =
+        query.solver != nullptr ? *query.solver : internalDefaultSolver();
+
+    // 逐计划碰撞要求（合并口径——collisionRequiredForPlan；样本按
+    // regionObjectId 回查所属计划的要求）。
+    std::map<core::ObjectId, bool> planCollisionRequired;
+    for (const SamplingPlan& plan : query.plans) {
+        planCollisionRequired.emplace(plan.regionObjectId,
+                                      collisionRequiredForPlan(query, plan));
+    }
+
+    // ---- 步骤 4：逐样本评估（分批＋协作取消＋检查点＋进度＋并行分片
+    // ——T05 同构：结果槽按全序下标写回，合并＝按全序归并）。----
+    const std::uint64_t sampleTotal = static_cast<std::uint64_t>(out.samples.samples.size());
+    const std::uint64_t batchCount =
+        (sampleTotal + query.maxBatchSize - 1U) / query.maxBatchSize;
+
+    // 结果槽预置（全序槽位——NotRun 初值；并行分片各线程只写各自槽位，
+    // 无交叉写入；取消路径的 NotRun 即此初值的自然保留）。
+    out.results.results.assign(out.samples.samples.size(), SampleResultRecord{});
+    for (std::size_t i = 0; i < out.results.results.size(); ++i) {
+        out.results.results[i].sampleIndex = out.samples.samples[i].sampleIndex;
+    }
+
+    // 取消传播旗标（批内共享——任一样本观测到取消即停止批内派发；原子
+    // 松散序足够：只做"是否停止"的保守判定，T05 同款取舍）。
+    std::atomic<bool> batchCancelled{false};
+    std::uint64_t completedBatches = 0;
+
+    // 单样本求解闭包（批内并行时各线程只写自己的结果槽——§8.4）。
+    auto evaluateAt = [&](std::size_t slot) {
+        // 批内样本起点取消检查（批间"每批至少一次"之外的自适应粒度）。
+        if (batchCancelled.load(std::memory_order_relaxed)
+            || context.cancellationRequested()) {
+            batchCancelled.store(true, std::memory_order_relaxed);
+            return;
+        }
+        const SampleRecord& sample = out.samples.samples[slot];
+        SampleResultRecord result;
+        result.sampleIndex = sample.sampleIndex;
+
+        // 缺检测器轨（KIN-05 语义承接，acceptance 5）：碰撞要求在场而
+        // 会话为空 → 该样本 DataInsufficient——绝不视为无碰撞；稳定诊断
+        // 码 KIN-COLLISION-UNAVAILABLE 的产码面归 T07（§9.6 任务列分工），
+        // 本轨以样本状态＋原因文本承载素材。
+        const auto reqIt = planCollisionRequired.find(sample.regionObjectId);
+        const bool collisionRequired =
+            reqIt != planCollisionRequired.end() && reqIt->second;
+        if (collisionRequired && query.collisionSession == nullptr) {
+            result.state = SampleState::DataInsufficient;
+            result.collisionNotEvaluated = true;
+            result.reason =
+                "碰撞要求在场而碰撞检测器不可用（KIN-05——缺检测器绝不视为"
+                "无碰撞；该样本证据缺失）";
+            out.results.results[slot] = std::move(result);
+            return;
+        }
+
+        // 逐样本 IK 请求（位置样本＝位置存在性 IK：姿态无约束落值 π——
+        // 收敛判据逐项比较故收敛⇔位置入容差；位姿样本＝完整位姿 IK）。
+        IkRequest ikRequest;
+        if (sample.kind == SampleKind::Position) {
+            ikRequest.targetInBase = rw::math::Transform3D<double>(
+                sample.position,
+                rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
+            ikRequest.orientationTolerance = kPoseFreeTolerance;
+        } else {
+            ikRequest.targetInBase = sample.pose;
+            ikRequest.orientationTolerance = query.orientationTolerance;
+        }
+        ikRequest.positionTolerance = query.positionTolerance;
+        ikRequest.modelView = &view;
+        ikRequest.tcp = query.defaultTcp;
+        ikRequest.initialValues = initialValues;
+        ikRequest.iterationLimit = query.iterationLimit;
+        ikRequest.intervals = intervals;
+        ikRequest.dedupThresholdPerAxis = query.dedupThresholdPerAxis;
+        ikRequest.collisionSession = query.collisionSession;
+        ikRequest.referenceQ = query.referenceQ;
+        ikRequest.targetRef.pointOid = sample.regionObjectId;
+        ikRequest.requestIdentity.snapshotId = request.snapshot.snapshotId;
+        ikRequest.requestIdentity.sliceId = request.slice.sliceId;
+        ikRequest.requestIdentity.configDigest = query.configDigest;
+        ikRequest.requestIdentity.mode = request.mode;
+        ikRequest.requestIdentity.seed = query.budget.seed;
+        ikRequest.requestIdentity.referenceQ = query.referenceQ;
+        ikRequest.cancellationProbe = [&context, &batchCancelled]() {
+            if (context.cancellationRequested()) {
+                batchCancelled.store(true, std::memory_order_relaxed);
+                return true;
+            }
+            return false;
+        };
+
+        const IkOutcome outcome = solver.solve(ikRequest);
+        if (outcome.cancelled) {
+            // 取消不是结局（§9.2）——槽保持 NotRun 初值，中止批内后续派发。
+            batchCancelled.store(true, std::memory_order_relaxed);
+            return;
+        }
+
+        // 结局→样本状态映射（文件头"样本状态五值词表的映射口径"）：
+        // 1/4→Reached（存在性凭据）；5→Unreachable（解析界限确定性证明，
+        // 素材随 outcome 但逐样本状态表只载状态——证明素材通道归汇总层
+        // 消费载荷外的搜索/证明面，本通道登记随卡 §14.6 v0.6）；2/3→
+        // DataInsufficient（C5/C8——绝不输出不可行）。
+        switch (outcome.outcomeKind) {
+        case IkOutcomeKind::SolutionsFound:
+        case IkOutcomeKind::PartialCollision:
+            result.state = SampleState::Reached;
+            break;
+        case IkOutcomeKind::AnalyticBoundExceeded:
+            result.state = SampleState::Unreachable;
+            break;
+        case IkOutcomeKind::MultiInitNoConvergence:
+        case IkOutcomeKind::AllCandidatesFiltered:
+            result.state = SampleState::DataInsufficient;
+            break;
+        }
+        result.outcomeKind = outcome.outcomeKind;
+        result.collisionNotEvaluated = outcome.collisionNotEvaluated;
+        out.results.results[slot] = std::move(result);
+    };
+
+    for (std::uint64_t b = 0; b < batchCount; ++b) {
+        // 批间协作取消查询（每批至少一次——V-22 本单元侧；ARCH §4.4 的
+        // 2 s 停止派发界由本查询点＋批内探针承载）。
+        if (context.cancellationRequested()) {
+            batchCancelled.store(true, std::memory_order_relaxed);
+        }
+        if (batchCancelled.load(std::memory_order_relaxed)) {
+            break;  // 停止派发新批——剩余样本保持 NotRun（无伪完成）
+        }
+
+        // 本批的连续槽区间（§8.4——并行分片＝样本全序的连续区间）。
+        const std::size_t begin =
+            static_cast<std::size_t>(b) * query.maxBatchSize;
+        const std::size_t end = std::min<std::size_t>(
+            begin + query.maxBatchSize, out.samples.samples.size());
+
+        // 分片执行（threadCount=1 内联单线程——逐位一致；>1 时 T 个连续
+        // 分片并行，各线程只写各自槽位，join 后按分片序重抛首个异常——
+        // 确定性失败面；T05 同款）。
+        const std::size_t threads =
+            std::min<std::size_t>(query.budget.threadCount, end - begin);
+        if (threads <= 1) {
+            for (std::size_t slot = begin; slot < end; ++slot) {
+                evaluateAt(slot);
+                if (batchCancelled.load(std::memory_order_relaxed)) {
+                    break;  // 批内中止——剩余槽走 NotRun
+                }
+            }
+        } else {
+            std::vector<std::exception_ptr> shardErrors(threads);
+            auto shardWorker = [&](std::size_t t) {
+                try {
+                    // 第 t 片＝[begin + t·n/T, begin + (t+1)·n/T)——连续
+                    // 区间；余数摊入末片。
+                    const std::size_t n = end - begin;
+                    const std::size_t lo = begin + t * n / threads;
+                    const std::size_t hi = begin + (t + 1) * n / threads;
+                    for (std::size_t slot = lo; slot < hi; ++slot) {
+                        if (batchCancelled.load(std::memory_order_relaxed)) {
+                            return;
+                        }
+                        evaluateAt(slot);
+                    }
+                } catch (...) {
+                    shardErrors[t] = std::current_exception();
+                }
+            };
+            std::vector<std::thread> workers;
+            workers.reserve(threads - 1);
+            for (std::size_t t = 1; t < threads; ++t) {
+                workers.emplace_back(shardWorker, t);
+            }
+            shardWorker(0);  // 主线程跑第 0 片——避免空等
+            for (std::thread& w : workers) {
+                w.join();
+            }
+            // 异常按分片序重抛首个（确定性失败面——NFR-COR-02）。
+            for (std::size_t t = 0; t < threads; ++t) {
+                if (shardErrors[t] != nullptr) {
+                    std::rethrow_exception(shardErrors[t]);
+                }
+            }
+        }
+
+        if (batchCancelled.load(std::memory_order_relaxed)) {
+            break;  // 批内取消/失败中断——本批剩余与后续批不推进 watermark
+        }
+
+        // ---- 批完成：检查点 watermark（样本批粒度——§8.3 能力声明
+        // CheckpointGranularity::Sample 的落点；P-KIN-7 最小端口）＋进度
+        // 上报（phase="solve-sample"）。----
+        ++completedBatches;
+        if (query.checkpointSink != nullptr) {
+            query.checkpointSink->batchWatermark(completedBatches, batchCount);
+        }
+        const std::uint64_t percent = sampleTotal == 0U
+            ? 100U
+            : std::min<std::uint64_t>(
+                100U, (end * 100U) / sampleTotal);
+        context.reportProgress(static_cast<std::uint8_t>(percent),
+                               kRegionCoveragePhase);
+    }
+
+    // ---- 取消/中断收尾：未评估样本如实 NotRun（§7.2"取消→partial→
+    // 不产正式覆盖率"；以"槽仍处于 NotRun 初值且无原因文本"判定未派发
+    // ——已评估样本的终态如实保留，不回写）。----
+    std::uint64_t notRunCount = 0;
+    for (SampleResultRecord& r : out.results.results) {
+        if (r.state == SampleState::NotRun && r.reason.empty()) {
+            r.reason =
+                "未运行：协作取消/失败中止后未派发（NotRun 如实标记——已完成"
+                "样本批 " + std::to_string(completedBatches) + "/"
+                + std::to_string(batchCount) + "，watermark 保留可续）";
+            ++notRunCount;
+        }
+    }
+
+    // ---- 步骤 5：覆盖率计算（唯一实现点委托——双射核查/守恒式内置）。----
+    out.coverage = computeCoverage(out.samples, out.results);
+
+    // NotRun 计数自检（NotRun 槽位数与覆盖率轴计数一致——内部不变量，
+    // 违例 logic_error 不静默）。
+    if (out.coverage.position.notRun + out.coverage.orientation.notRun
+        != notRunCount) {
+        throw std::logic_error(
+            "kin.region-coverage：NotRun 计数自检失败（覆盖率轴计数≠收尾"
+            "标记数——内部缺陷，fail-fast）");
+    }
+
+    // 计算核心到此为止（证据组装唯一在评估器 evaluate 步骤 6——测试
+    // 直调本函数断言采样/逐样本/取消语义，NFR-MNT-01）。
+    return out;
+}
+
+// =====================================================================
+// makeRegionCoverageDescriptor——依赖声明与形态（§4.3 行）
+// =====================================================================
+
+evidence::EvaluatorDescriptor makeRegionCoverageDescriptor()
+{
+    evidence::EvaluatorDescriptor d;
+    d.key = kRegionCoverageEvaluationKey;
+    d.contractVersion = kRegionCoverageContractVersion;
+
+    // 依赖声明九条（§4.3 行原样：八条 Required＋collision-models 一条
+    // Conditional——条件依赖语义：碰撞启用状态只读自 policy，策略未启用
+    // 碰撞时该键不进切片（V13-01），resolutionNote 登记条件语义）。
+    d.inputs = {
+        {"model.robot-design", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "规范机器人链对象（Object 闭包内 robot-design——链/关节/限位真值）"},
+        {"tcp", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "工具定义对象（Object→tool-definition——TCP 偏置真值，AT-05① 失效面）"},
+        {"req.regions", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "区域集合对象（req-region-set——Box 几何与采样定义来源）"},
+        {"req.sampling-plans", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "采样计划集合对象（req-plan-set——planContentIdentity 来源，"
+         "计划变更独立失效面）"},
+        {"req.conditions", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "工况集合对象（req-condition-set——碰撞要求的工况侧来源）"},
+        {"policy.resolved", evidence::DependencyKind::Policy,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "已解析工程策略内容身份（CON-06——策略变更全列失效；碰撞启用"
+         "状态的只读源，V13-01）"},
+        {"namemap", evidence::DependencyKind::NameMap,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "运行时名称映射内容身份（CON-06——⑥端口诊断定位/结果标注）"},
+        {"config.ik", evidence::DependencyKind::Configuration,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "分析求解配置（KIN-13 canonical——入 sliceId 不入样本基准，D-04）"},
+        {"collision-models", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Conditional, std::nullopt,
+         "碰撞模型集合对象（策略启用碰撞时进切片——V13-01 条件依赖；"
+         "本单元不设碰撞布尔开关）"},
+    };
+
+    // Profile 声明引用：域 id 词表 "kin"（evidence isDomainProfileId）；
+    // contentIdentity 置零值＝域不可申报（evidence §9.5/R-3）。
+    d.profile.profileId = "kin";
+    d.profile.version = "1";
+    d.profile.contentIdentity = core::ContentIdentity{};
+
+    // 模式集：§4.3 行两值（Quick/Verified——覆盖通道不做 Preview；Quick
+    // 载荷以 mode 字段承载 screening-only 语义，效力门禁在汇总/包络层）。
+    d.supportedModes = {core::EvaluationMode::Quick, core::EvaluationMode::Verified};
+
+    // 无跨调用状态（实例可共享）＋完全线程安全（逐样本并行分片要求
+    // 可重入——§9.2 头注同款）。
+    d.stateless = true;
+    d.threadSafety = evidence::ThreadSafety::FullyThreadSafe;
+    return d;
+}
+
+// =====================================================================
+// WorkspaceSamplerFactory——宿主注入工厂（闭包捕获；create 无参）
+// =====================================================================
+
+WorkspaceSamplerFactory::WorkspaceSamplerFactory(const IKinRuntimeView* view,
+                                                 RegionCoverageQuery query)
+    : m_view(view), m_query(std::move(query)),
+      m_descriptor(makeRegionCoverageDescriptor())
+{
+    // 与评估器同一装配校验面（工厂是宿主的注入入口——违约在装配期
+    // 暴露，不迟至 create()；validateRegionCoverageQuery 为本 TU 匿名
+    // 命名空间的同一校验函数）。
+    if (m_view == nullptr) {
+        throw std::invalid_argument(
+            "kin.region-coverage 工厂：注入视图为空指针（宿主注入契约违约——O-37）");
+    }
+    validateRegionCoverageQuery(*m_view, m_query);
+}
+
+const evidence::EvaluatorDescriptor& WorkspaceSamplerFactory::descriptor() const
+{
+    return m_descriptor;
+}
+
+std::unique_ptr<evidence::IEngineeringEvaluator>
+WorkspaceSamplerFactory::create() const
+{
+    // 无参签名（O-37 裁决——注册表兼容）；视图/求解器/检查点/碰撞会话
+    // 指针经闭包传递——注入语义的唯一通道（生命周期约束见查询值注）。
+    return std::make_unique<WorkspaceSampler>(m_view, m_query);
+}
+
+// =====================================================================
+// regionCoverageCapability——任务类型能力声明（§8.3 提交行值面）
+// =====================================================================
+
+execution::TaskCapability regionCoverageCapability()
+{
+    execution::TaskCapability capability;
+    // 暂停不支持（R1 如实声明——EX-SM-7 口径，与批量通道一致）。
+    capability.supportsPause = false;
+    // 检查点＝样本 watermark（§8.3 能力声明原文"样本 watermark（coverage）"
+    // ——CheckpointGranularity::Sample；watermark 产出面＝IBatchCheckpoint-
+    // Sink 每样本批一次）。
+    capability.checkpointGranularity = execution::CheckpointGranularity::Sample;
+    // 强制终止代价＝低（样本批边界即安全中止点，无跨批不变量）。
+    capability.forceTerminateCost = execution::ForceTerminateCost::Cheap;
+    return capability;
+}
+
 }  // namespace sdurws::ird::kinematics

@@ -81,6 +81,14 @@ find_package(Eigen3 CONFIG REQUIRED)
 #                      主流程（展开/分批/求解/取消/检查点/进度）在
 #                      Evaluators.cpp 的 T05 段——kin.task-points-batch
 #                      评估器族）
+# T06 增列（tasks/foundation/WP-15-T06.json，§3.3 布局表 Sampling.hpp/
+# Coverage.hpp 行 T06）：
+#   src/Sampling.cpp   区域采样与覆盖率（KIN-04——确定性样本生成（Grid
+#                      体心/Random 种子序列/斐波那契螺旋方向集×roll 均分
+#                      ——D-KIN-6）、sampleSetIdentity（evidence §4.1.4
+#                      公式）、覆盖率计算唯一实现点 computeCoverage、区域
+#                      覆盖 canonical 载荷编码；kin.region-coverage 评估
+#                      器族在 Evaluators.cpp 的 T06 段）
 add_library(sdurws_ird_kinematics STATIC
     src/Errors.cpp
     src/DiagCodes.cpp
@@ -90,7 +98,8 @@ add_library(sdurws_ird_kinematics STATIC
     src/KinTypes.cpp
     src/Bounds.cpp
     src/Ik.cpp
-    src/SolutionSet.cpp)
+    src/SolutionSet.cpp
+    src/Sampling.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
@@ -182,7 +191,8 @@ add_executable(sdurws_ird_kinematics_test
     test/BuildRedLineTest.cpp
     test/FkTest.cpp
     test/IkTest.cpp
-    test/TaskPointsBatchTest.cpp)
+    test/TaskPointsBatchTest.cpp
+    test/RegionCoverageTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_test PROPERTIES
@@ -259,7 +269,8 @@ add_executable(sdurws_ird_kinematics_contract_test
     contract_test/BuildGraphContractTest.cpp
     contract_test/PoseMetricsEvaluatorContractTest.cpp
     contract_test/TaskPointIkEvaluatorContractTest.cpp
-    contract_test/TaskPointsBatchEvaluatorContractTest.cpp)
+    contract_test/TaskPointsBatchEvaluatorContractTest.cpp
+    contract_test/RegionCoverageEvaluatorContractTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_contract_test PROPERTIES
