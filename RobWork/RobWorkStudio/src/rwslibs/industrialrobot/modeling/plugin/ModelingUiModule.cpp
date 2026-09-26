@@ -13,6 +13,7 @@
 
 #include <stdexcept>
 
+#include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory/kTemplateIdGeneric6R（首版装配会话种子——真实域路径）
 #include <sdurws/ird/modeling/Codec.hpp>       // RobotDesignCodec/kCurrentFormatVersion（根对象确定性编码——§4.8）
 #include <sdurws/ird/modeling/ObjectTypes.hpp> // kRobotDesignObjectType（根对象 token——runtime 单一权威的 using 重导出）
 
@@ -66,6 +67,67 @@ std::optional<project::CommandEnvelope> ModelingUiModule::buildDraftCommand(
     //   此处显式消费避免"未使用成员"误读）。
     (void)m_panel;
     return envelope;
+}
+
+// =====================================================================
+// 首版装配 API（WP-24-T03——装配门面 ModelingPluginAssembly 转发目标）
+// =====================================================================
+
+void ModelingUiModule::bindCommandSubmit(CommandSubmitFn submitFn)
+{
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        // 面板已创建——即时转发（与面板 setCommandSubmit 同语义）。
+        m_panel->setCommandSubmit(std::move(submitFn));
+        return;
+    }
+    // 面板未创建——暂存，createPanel 时应用（装配序无关的绑定面）。
+    m_pendingSubmit = std::move(submitFn);
+}
+
+void ModelingUiModule::bindTextResolver(std::function<QString(const std::string&)> resolve)
+{
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->setCommandTitleResolver(std::move(resolve));
+        return;
+    }
+    m_textResolver = std::move(resolve);
+}
+
+void ModelingUiModule::seedTemplateSession()
+{
+    m_guard.assertOnUiThread();
+    // 真实域路径：RobotDesignTemplateFactory::createDraft（§9.4.2——纯函数、
+    // 仅内存、不触 project、不产生修订）。安装预设 Ground（MDL-22 缺省）。
+    // 失败 fail-fast（模板目录静态登记 generic-6r 恒在——装配错误面）。
+    const RobotDesignTemplateFactory factory;
+    std::vector<core::DiagnosticRecord> diags;
+    const TemplateOutcome outcome = factory.createDraft(
+        TemplateId{kTemplateIdGeneric6R},
+        runtime::InstallationPresetToken::Ground, "demo", diags);
+    m_session.draft = outcome.get();
+    // baseRevision 留空（nullopt＝提交期解析 tip——§6.2）；readiness 不预置
+    // （投影呈 DataInsufficient 缺省行——判定接线随收口任务，不伪造可行）。
+}
+
+QWidget* ModelingUiModule::createPanel()
+{
+    m_guard.assertOnUiThread();
+    // 面板与接线一次完成：可写初值 true（L-7 门控）；编辑目标提供器现取
+    // 会话权威工作集（ACC5 零缓存——提供器每次经 session() 入口取指针）。
+    auto* panel = new ModelingPanelWidget(true);
+    panel->setEditTargetProvider([this]() -> ModelingWorkingSet* {
+        return &m_session.draft;
+    });
+    if (m_pendingSubmit) {
+        panel->setCommandSubmit(std::move(m_pendingSubmit));
+    }
+    if (m_textResolver) {
+        panel->setCommandTitleResolver(m_textResolver);
+    }
+    m_panel = panel;  // attachPanel 同义（公开方法语义一致，直接落成员）
+    return panel;
 }
 
 }  // namespace sdurws::ird::modeling

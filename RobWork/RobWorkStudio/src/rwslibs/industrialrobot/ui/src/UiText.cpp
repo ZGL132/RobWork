@@ -61,6 +61,21 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
     { "stage.reporting.title",          "报告"         },
 }};
 
+/// 键族①b：域命令标题（cmd.<id>.title——§3.5 键约定；WP-24-T03 首版装配
+/// 登记——建模 §9.7.3 十条的中文工程用语值；后续域命令随各自装配增行）。
+constexpr std::array<TextRow, 10> kDomainCommandTitleTable{{
+    { "cmd.modeling.new-from-template.title",          "从模板新建"       },
+    { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
+    { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
+    { "cmd.modeling.switch-authority.title",           "切换权威参数化"   },
+    { "cmd.modeling.estimate-properties.title",        "物性估算"         },
+    { "cmd.modeling.generate-placeholder-geometry.title", "生成占位几何"  },
+    { "cmd.modeling.diff-baseline.title",              "与基线比较"       },
+    { "cmd.modeling.export-package.title",             "导出规范包"       },
+    { "cmd.modeling.import-package.title",             "导入规范包"       },
+    { "cmd.modeling.reset-home-zero.title",            "复位 Home/Zero"   },
+}};
+
 /// 键族②：七态短标签（state.<token>.label——§6.3 词表 token＋"中文"列；
 /// 与 StatusWordModelTest 钉住的过渡值逐字一致——值源切换零漂移）。
 constexpr std::array<TextRow, 7> kStatusWordLabelTable{{
@@ -183,6 +198,9 @@ const TextRow* findRow(const TextKey& key)
     // 表小（69 行）且调用频率为呈现路径，线性扫描足够（NFR-PERF-01 预算内）；
     // 换哈希表反而引入构建期初始化顺序顾虑——呈现函数必须任何时刻可调用。
     for (const auto& row : kStageTitleTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kDomainCommandTitleTable) {
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kStatusWordLabelTable) {

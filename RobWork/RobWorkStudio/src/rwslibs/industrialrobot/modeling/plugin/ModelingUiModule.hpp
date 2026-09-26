@@ -1,7 +1,7 @@
 /**
  * @file   ModelingUiModule.hpp
- * @brief  建模插件界面模块——ui.md §11.2 IPluginUiModule 的建模侧实现
- *         （装配缝；P-MDL-8 暂持形状）。
+ * @brief  建模插件界面模块——ui::IPluginUiModule（ui.md §11.2）的建模侧
+ *         实现（装配缝；WP-24-T03 首版装配起为正式继承形态）。
  *
  * 设计依据：
  *   - units/ui.md §11.2（IPluginUiModule 三方法：onShellReady／
@@ -12,16 +12,16 @@
  *     buildDraftCommand("modeling")→①端口 submit）、§9.3（命令处理器族
  *     ——commandType token 与载荷编解码的权威）
  *   - 需求 MDL-07、SA-15；任务契约 tasks/foundation/WP-13-T15.json
- *     acceptance 3/4
+ *     acceptance 3/4；装配落位＝WP-24-T03 首版（owner 指示 2026-09-26
+ *     提前启动）
  *
- * ★ P-MDL-8 处置（契约 note ③）：ui 的 IPluginUiRegistrar/IPluginUiModule
- * 头尚未落位（ui.md §3.3 已登记落点、磁盘核对不存在——装配任务后续兑现）。
- * 本类按 §11.2 冻结文本**逐方法同形**实现（方法名/签名/语义对齐卡文；
- * 值面全部用已落位类型——ui::DomainReadinessItem/project::CommandEnvelope），
- * ui 侧头落位后本类改为继承 ui::IPluginUiModule（override 不变，语义零
- * 变化）——R-MDL-1 增量同步，登记于单元卡 §14.6。装配面（registrar 调用
- * 点）随 L5 装配任务（WP-24-T03）接线，本单元不自行装配（PA-1 命令入口
- * 权威归 ui）。
+ * ★ P-MDL-8 消账（WP-24-T03 首版装配）：ui 的 IPluginUiRegistrar/
+ * IPluginUiModule 头已随首版装配落位（ui/include/sdurws/ird/ui/），本类
+ * 自"逐方法同形实现"切换为**继承 ui::IPluginUiModule**（三方法 override，
+ * 签名/语义零变化——R-MDL-1 增量同步预告的兑现，登记于单元卡 §14.6）。
+ * 装配面（registrar 调用点）＝宿主插件装配序列（ui 插件 DomainAssembly）
+ * 经装配门面 assembly/…/ModelingPluginAssembly.hpp 消费本模块——本单元
+ * 不自行装配（PA-1 命令入口权威归 ui）。
  *
  * 线程约束：仅 UI 线程访问（§3.4——模块持会话态与面板引用）。确定性：
  * buildDraftCommand 同会话态→同信封（编码确定性——Codec/CommandHandlers
@@ -31,13 +31,17 @@
 #ifndef IRD_MODELING_PLUGIN_MODELINGUIMODULE_HPP
 #define IRD_MODELING_PLUGIN_MODELINGUIMODULE_HPP
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
+#include <QString>                                // 文案解析器返回值（bindTextResolver——插件目标 Qt 面）
+
 #include <sdurws/ird/core/Identity.hpp>            // core::BranchId/RevisionId（信封身份面）
 #include <sdurws/ird/modeling/CommandHandlers.hpp> // kCmdApplyRobotDesign/kCommandPayloadVersion/encodeCommandPayload（域命令面权威）
+#include <sdurws/ird/ui/IPluginUiModule.hpp>       // ui::IPluginUiModule（§11.2 接口——P-MDL-8 消账后本类正式继承）
 #include "PanelCommandCatalog.hpp"                // modelingReadinessProjection（§11.2 readonlyProjections 数据面——同目录私有头）
 #include "PanelRefresh.hpp"                       // PanelUiThreadGuard（§3.4 线程守卫——零 Qt，同目录私有头）
 #include <sdurws/ird/modeling/Readiness.hpp>       // ModelReadinessReport（就绪投影数据源）
@@ -45,6 +49,8 @@
 #include <sdurws/ird/project/CommandService.hpp>   // project::CommandEnvelope（§8.5 返回值面——登记边）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::DomainReadinessItem（§6.5 汇聚值面）
+
+class QWidget;  // 前置声明：createPanel 返回类型（全局域——插件目标 Widgets 面可用）
 
 namespace sdurws::ird::modeling {
 
@@ -67,13 +73,14 @@ struct ModuleSessionState {
 };
 
 /**
- * @brief 建模插件界面模块（ui.md §11.2 同形实现——三方法逐一对齐卡文）。
+ * @brief 建模插件界面模块（ui::IPluginUiModule 的建模侧实现——WP-24-T03
+ *        首版装配起为正式继承形态；P-MDL-8 同形面消账）。
  *
  * 生命周期：装配期由插件装配点创建（UI 线程），存活至壳拆除（§10.9
  * "IPluginUiModule 存活至壳拆除"——装配层保证）。面板工厂经装配描述符
  * 提供（modelingPanelRegistration——PanelCommandCatalog.hpp）。
  */
-class ModelingUiModule final {
+class ModelingUiModule final : public ui::IPluginUiModule {
 public:
     ModelingUiModule() = default;
     /// 不可拷贝/不可移动（会话态与壳引用绑定生命周期——§10.9）。
@@ -105,7 +112,7 @@ public:
      *
      * @param shell [in] 工作台壳门面（非 owning——存活期由壳侧保证）
      */
-    void onShellReady(ui::IWorkbenchShell& shell) { m_shell = &shell; }
+    void onShellReady(ui::IWorkbenchShell& shell) override { m_shell = &shell; }
 
     /**
      * @brief 只读就绪投影（§11.2 行"§6.5 汇聚源"——StageStatusModel 汇聚
@@ -114,7 +121,7 @@ public:
      * @return 单元素投影（会话就绪报告未载＝输入不完整空态行——不伪造
      *         可行性；判定权威在 IModelReadinessChecker）
      */
-    std::vector<ui::DomainReadinessItem> readonlyProjections() const
+    std::vector<ui::DomainReadinessItem> readonlyProjections() const override
     {
         // 无报告（会话未校验）＝输入不完整缺省行（零判定——默认值面）。
         if (!m_session.readiness.has_value()) {
@@ -148,13 +155,48 @@ public:
  * @throws ui::ensureNoInternalIdentity 透传（displayName 哈希形态
  *               ——非法名不进信封，构造边界已拒的兜底守卫）
  */
-    std::optional<project::CommandEnvelope> buildDraftCommand(const std::string& moduleId);
+    std::optional<project::CommandEnvelope> buildDraftCommand(const std::string& moduleId) override;
+
+    // ---- 首版装配 API（WP-24-T03——装配门面 ModelingPluginAssembly 转发）--
+
+    /// 命令提交出口形态（面板同款——装配层经本转发绑定面板）。
+    using CommandSubmitFn = std::function<void(const ui::CommandId&)>;
+
+    /**
+     * @brief 绑定命令提交出口（面板创建前后皆可——后绑定在面板创建时
+     *        应用，前绑定即时转发面板；与面板 setCommandSubmit 同语义）。
+     */
+    void bindCommandSubmit(CommandSubmitFn submitFn);
+
+    /**
+     * @brief 绑定文案解析器（titleKey→工程用语——宿主接 ui::resolveText；
+     *        面板创建时应用。不绑定＝按钮呈现键名原文——不虚构文案）。
+     */
+    void bindTextResolver(std::function<QString(const std::string&)> resolve);
+
+    /**
+     * @brief 首版装配会话种子（generic-6r 草稿经真实 createDraft 产出——
+     *        会话工作集权威载体；readiness 不预置＝投影呈 DataInsufficient
+     *        缺省行，判定接线随收口任务）。
+     */
+    void seedTemplateSession();
+
+    /**
+     * @brief 创建面板（§10.9 PanelRegistration.factory 的模块半区——内部
+     *        完成会话提供器/提交出口/文案解析接线与 attachPanel；每次调用
+     *        新建，装配层恰调一次）。
+     *
+     * @return 面板 widget（归调用方接管——宿主层持有）
+     */
+    QWidget* createPanel();
 
 private:
     PanelUiThreadGuard m_guard;              ///< §3.4 UI 线程守卫（构造线程绑定）
     ModuleSessionState m_session;            ///< 会话权威态（工作集唯一载体——装配层更新）
     ModelingPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
     ui::IWorkbenchShell* m_shell = nullptr;  ///< 壳门面引用（非 owning——§10.9 生命周期）
+    CommandSubmitFn m_pendingSubmit;         ///< 面板创建前的提交出口暂存（创建时应用）
+    std::function<QString(const std::string&)> m_textResolver;  ///< 文案解析（创建时应用）
 };
 
 }  // namespace sdurws::ird::modeling

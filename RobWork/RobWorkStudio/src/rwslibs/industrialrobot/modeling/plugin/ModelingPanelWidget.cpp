@@ -98,6 +98,20 @@ void ModelingPanelWidget::setCommandSubmit(CommandSubmitFn submitFn)
     m_commandSubmit = std::move(submitFn);
 }
 
+void ModelingPanelWidget::setCommandTitleResolver(CommandTitleResolver resolver)
+{
+    m_titleResolver = std::move(resolver);
+    // 绑定即时重渲染既有按钮（装配序无关——解析器可在面板创建后注入）；
+    // 解析失败（空串）回退键名原文——呈现面不空洞、不伪造文案。
+    for (std::size_t i = 0; i < m_commandButtons.size() && i < m_commands.size(); ++i) {
+        if (!m_titleResolver) { break; }
+        const std::string key = m_commands[i].titleKey;
+        const QString resolved = m_titleResolver(key);
+        m_commandButtons[i]->setText(
+            resolved.isEmpty() ? QString::fromStdString(key) : resolved);
+    }
+}
+
 void ModelingPanelWidget::setEditTargetProvider(EditTargetProvider provider)
 {
     m_editTarget = std::move(provider);
