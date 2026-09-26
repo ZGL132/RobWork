@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现会话姿态承载与设默认命令门面（KIN-06/14）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T03",
     "PRJ-T10",
