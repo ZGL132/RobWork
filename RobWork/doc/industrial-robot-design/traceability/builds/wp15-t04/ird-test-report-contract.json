@@ -1,0 +1,396 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": [
+    {
+      "testId": "KinBuildGraph.UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3",
+      "requirementIds": [
+        "ARC-02",
+        "NFR-MNT-01"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinBuildGraph.SixRegisteredEdgesPresent_WP15T02_ACC3",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP15T02_ACC5",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 2
+    },
+    {
+      "testId": "KinPoseMetricsEval.DescriptorMatchesSection43Row_WP15T03_ACC4",
+      "requirementIds": [
+        "KIN-01"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinPoseMetricsEval.KeyWordFormGateCompliant_WP15T03_ACC4",
+      "requirementIds": [
+        "CON-04"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinPoseMetricsEval.HostInjectionFactoryProducesEvaluator_WP15T03_ACC4",
+      "requirementIds": [
+        "KIN-01"
+      ],
+      "atIds": [
+        "AT-03"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinPoseMetricsEval.AssemblyFailFastRejectsIllegalQuery_WP15T03_ACC3",
+      "requirementIds": [
+        "NFR-COR-03"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinPoseMetricsEval.StructuredErrorMaterialNoTcp_WP15T03_ACC3",
+      "requirementIds": [
+        "KIN-01"
+      ],
+      "atIds": [
+        "AT-03"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "KinPoseMetricsEval.DeterministicBytesAcrossCallsAndModes_WP15T03_ACC4",
+      "requirementIds": [
+        "NFR-COR-01"
+      ],
+      "atIds": [
+        "AT-03"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    }
+  ]
+}

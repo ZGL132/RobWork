@@ -62,13 +62,22 @@ find_package(Eigen3 CONFIG REQUIRED)
 #                      Eigen 消费点——O-40 PRIVATE）
 #   src/Evaluators.cpp kin.pose-metrics 评估器形态（IEngineeringEvaluator
 #                      实现＋宿主注入工厂＋descriptor——§4.3/§9.3）
-#   （KinTypes.hpp 本批为纯类型头无 TU；KinTypes.cpp 随 T04 值模型落位时
-#   按需增列——§3.3 布局表任务列权威）
+# T04 增列（tasks/foundation/WP-15-T04.json，§3.3 布局表 T04 行）：
+#   src/KinTypes.cpp   值模型函数面（ConfigurationSignature 构型签名——
+#                      §6.1/I-KIN-3；KinTypes.cpp 随 T04 值模型落位增列——
+#                      T03 批注释预言的落位）
+#   src/Bounds.cpp     解析工作半径界限（§5.4 结局 5 素材面——连杆长度和
+#                      上界推导＋证明素材组装）
+#   src/Ik.cpp         多初值 IK 求解（KIN-02——初值策略生成/阻尼最小二乘/
+#                      解析界限检查/结局组装；Eigen 消费点之一——O-40 PRIVATE）
 add_library(sdurws_ird_kinematics STATIC
     src/Errors.cpp
     src/DiagCodes.cpp
     src/Fk.cpp
-    src/Evaluators.cpp)
+    src/Evaluators.cpp
+    src/KinTypes.cpp
+    src/Bounds.cpp
+    src/Ik.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
@@ -158,7 +167,8 @@ add_executable(sdurws_ird_kinematics_test
     test/ErrorsTest.cpp
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
-    test/FkTest.cpp)
+    test/FkTest.cpp
+    test/IkTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_test PROPERTIES
