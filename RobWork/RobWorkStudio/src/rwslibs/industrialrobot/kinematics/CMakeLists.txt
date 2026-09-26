@@ -223,7 +223,8 @@ add_executable(sdurws_ird_kinematics_test
     test/IkTest.cpp
     test/TaskPointsBatchTest.cpp
     test/RegionCoverageTest.cpp
-    test/CommandsTest.cpp)
+    test/CommandsTest.cpp
+    test/SolutionSetViewTest.cpp)
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言

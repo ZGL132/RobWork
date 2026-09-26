@@ -125,6 +125,34 @@ std::vector<KinematicSolution> deduplicateSolutions(
 }
 
 // =====================================================================
+// 规范筛选谓词（§6.2"可用解/含碰撞诊断解"——T09；比较集中实现，
+// NFR-MNT-04。语义与 KIN-05 依据见 SolutionSet.hpp 工厂注，登记随卡
+// §14.6 v0.9）
+// =====================================================================
+
+SolutionPredicate usableSolutionPredicate()
+{
+    // 无捕获 lambda→可转换为裸函数指针，纯函数可重入（§3.4 线程总约定）。
+    // 判据两条件缺一不可：evaluated==true（碰撞证据在场——KIN-05"绝不
+    // 解读为无碰撞"的保守面：未评价解可用性未证，不入可用集）且
+    // inCollision==false（正面无碰撞判定）。
+    return [](const KinematicSolution& s) {
+        return s.collisionStatus.evaluated && !s.collisionStatus.inCollision;
+    };
+}
+
+SolutionPredicate collisionDiagnosticPredicate()
+{
+    // 碰撞诊断标记＝inCollision==true（对象对明细随 collisionStatus）。
+    // 求解器直接产出的解集上恒空集（碰撞解在求解期移入 filteredRecords
+    // ——§6.1 生产端不变式）；本谓词服务于合并诊断呈现与语义演进——
+    // 比较式唯一在此，UI/报告不得自写第二份（NFR-MNT-04）。
+    return [](const KinematicSolution& s) {
+        return s.collisionStatus.inCollision;
+    };
+}
+
+// =====================================================================
 // KinematicSolutionSet——构造排序＋四操作（§6.2/§9.2）
 // =====================================================================
 
