@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现批量任务点验证评估器（kin.task-points-batch）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T04",
     "EX-T05"
