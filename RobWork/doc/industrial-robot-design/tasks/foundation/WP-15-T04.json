@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现多初值 IK 与解集去重排序（kin.task-point-ik）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T03",
     "POL-T07"
