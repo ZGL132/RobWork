@@ -54,6 +54,8 @@
 #include <sdurws/ird/kinematics/Fk.hpp>          // FkEvaluator/PoseMetrics（计算委托）
 #include <sdurws/ird/kinematics/Ik.hpp>          // IkSolver/IkOutcome/初值策略/碰撞端口（计算委托）
 #include <sdurws/ird/kinematics/KinTypes.hpp>    // TcpRef/IKinRuntimeView（注入面）
+#include <sdurws/ird/kinematics/Sampling.hpp>    // SamplingPlan/RegionSamplingBudget/样本值面/
+                                                 //   IWorkspaceSampler/kRegionCoverage* 常量（T06）
 
 namespace sdurws::ird::kinematics {
 
@@ -757,6 +759,324 @@ private:
  * 线程安全：可重入纯函数。
  */
 execution::TaskCapability taskPointsBatchCapability();
+
+// =====================================================================
+// 以下为 T06 区域覆盖表尾追加（WP-15-T06——§3.3 布局表 Sampling.hpp/
+// Coverage.hpp 行的 T06 半区＋Evaluators.hpp 行 T03~T07 的 T06 尾：kin.
+// region-coverage 评估器族；既有 T03~T05 声明不重排）。采样值模型/
+// 生成/身份/键常量的唯一书写点在 Sampling.hpp/Coverage.hpp（本头消费
+// 不重定义——键常量放值面侧的理由同 T05）。
+// =====================================================================
+
+// =====================================================================
+// RegionCoverageQuery——区域覆盖评估查询值（工厂闭包注入的计算主体）
+// =====================================================================
+
+/**
+ * @brief kin.region-coverage 的区域覆盖评估查询：计划投影＋工况投影＋
+ *        求解配置＋采样预算＋执行协作通道（§7.2 覆盖率图的查询面投影）。
+ *
+ * 注入面纪律（O-37 裁决同款——BatchQuery 同构）：plans/conditions 为
+ * 宿主解析后的投影值（req 对象 schema 不进本单元——R-1，Sampling.hpp
+ * 文件头注）；solver/checkpointSink/collisionSession 为**非 owning**
+ * 可选指针——
+ *   - solver 为空＝使用内置 IkSolver（生产路径）；测试以替身 IIkSolver
+ *     注入（T05 同款先行口径，§10.1 可控求解器替身）；
+ *   - checkpointSink 为空＝无检查点通道（纯计算合法——样本批 watermark
+ *     经宿主适配器接入 execution 检查点通道，P-KIN-7 最小端口处置）；
+ *   - collisionSession 为空＝碰撞检测器不可用/策略未注入（V13-01：碰撞
+ *     启用状态只读自 policy——**不设碰撞布尔开关**，会话在场即启用）。
+ *
+ * 碰撞要求的合并口径（KIN-05 承接的判定面，登记随卡 §14.6 v0.6）：区域
+ * 覆盖的碰撞要求＝任一 plan.demands.collisionFreeRequired 或任一**启用**
+ * 工况 demands.collisionFreeRequired（覆盖评估运行于任务工况语境——任
+ * 一启用工况要求碰撞证据即任务级要求）；要求在场而会话为空 → 该计划
+ * 全部样本 DataInsufficient（缺检测器——绝不视为无碰撞）；无要求且无
+ * 会话 → 碰撞检查不在范围（collisionNotEvaluated 标记，非降级）。
+ *
+ * 值语义纯结构（指针成员浅拷贝——指向对象须比 evaluate() 调用活得久）；
+ * 线程安全（并发只读）。单位：referenceQ 逐自由度 rad|m；两容差 m/rad；
+ * 去重阈值 rad|m 逐轴；批大小/线程数无量纲计数。
+ */
+struct RegionCoverageQuery {
+    // ---- 注入投影值（宿主解析）----
+    /// 采样计划投影集（req.sampling-plans×req.regions 宿主解析——生成
+    /// 序＝注入序；镜像派生条目逐条独立注入，SamplingPlan 注）。
+    std::vector<SamplingPlan> plans;
+    /// 工况投影集（req.conditions——碰撞要求的工况侧来源；重复
+    /// conditionId 按集合语义去重）。
+    std::vector<BatchCondition> conditions;
+    /// 默认 TCP（区域无独立 TCP 语义——KIN-14 默认 TCP 的查询级承载；
+    /// 解析规则同 KinTypes.hpp TcpRef 注）。
+    TcpRef defaultTcp;
+
+    // ---- 求解配置（config.ik 的 T10 前直传投影——T04/T05 同构）----
+    /// 排序参考构型（rad|m——D-KIN-4 显式输入；维度须＝设备自由度）。
+    std::vector<double> referenceQ;
+    /// 初值策略（§5.3 三值——逐样本 IK 的初值来源）。
+    InitialValueStrategy initialStrategy = InitialValueStrategy::JointGrid;
+    /// 初值数量（≥1）。
+    std::uint32_t initialValuesCount = 1U;
+    /// 单初值迭代上限（≥1）。
+    std::uint32_t iterationLimit = 1U;
+    /// 位置残差容差（m；>0 有限——附录 D 第 1 项）。
+    double positionTolerance = 1e-6;
+    /// 姿态残差容差（rad；>0 有限——附录 D 第 2 项；仅位姿样本消费，
+    /// 位置样本以 π 无约束落值——Sampling.cpp 文件头注）。
+    double orientationTolerance = 1e-6;
+    /// 去重阈值（rad|m 逐轴；>0 有限——附录 D 第 3 项）。
+    double dedupThresholdPerAxis = 1e-6;
+    /// 确定性种子已随 budget 携带（采样预算/种子——身份面一体；IK 初值
+    /// 的 SeededRandom 序列同源消费 budget.seed——§3.4 单一种子纪律）。
+    /// 求解配置摘要（config.ik——T10 落位前允许零值；入结果身份）。
+    core::ContentIdentity configDigest;
+    /// 采样预算/种子（regionBudget——sampleSetIdentity 的预算参数面）。
+    RegionSamplingBudget budget;
+    /// 碰撞会话句柄（非 owning；空＝检测器不可用/策略未注入——V13-01
+    /// 无布尔开关，合并口径见结构体注）。
+    const IKinCollisionSession* collisionSession = nullptr;
+
+    // ---- 执行协作参数（§7.2/§8.3/§8.4——样本批粒度）----
+    /// 样本批大小上限（≥1；默认 kBatchDefaultBatchSize=256——D-KIN-6
+    /// 批量黄金值的覆盖通道复用）。
+    std::uint32_t maxBatchSize = kBatchDefaultBatchSize;
+    /// 并行分片线程数（≥1；§8.4——分片＝样本全序连续区间、合并按全序；
+    /// 执行参数不入 sampleSetIdentity——RegionSamplingBudget 注）。
+    std::uint32_t threadCount = 1U;
+    /// 求解器替身注入口（非 owning；空＝内置 IkSolver——生产路径）。
+    const IIkSolver* solver = nullptr;
+    /// 样本批检查点 watermark 通道（非 owning；空＝无检查点通道——
+    /// §8.3 能力声明 CheckpointGranularity::Sample 的批粒度落点）。
+    IBatchCheckpointSink* checkpointSink = nullptr;
+
+    bool operator==(const RegionCoverageQuery& o) const
+    {
+        return plans == o.plans && conditions == o.conditions
+            && defaultTcp == o.defaultTcp && referenceQ == o.referenceQ
+            && initialStrategy == o.initialStrategy
+            && initialValuesCount == o.initialValuesCount
+            && iterationLimit == o.iterationLimit
+            && positionTolerance == o.positionTolerance
+            && orientationTolerance == o.orientationTolerance
+            && dedupThresholdPerAxis == o.dedupThresholdPerAxis
+            && configDigest == o.configDigest && budget == o.budget
+            && collisionSession == o.collisionSession
+            && maxBatchSize == o.maxBatchSize && threadCount == o.threadCount
+            && solver == o.solver && checkpointSink == o.checkpointSink;
+    }
+    bool operator!=(const RegionCoverageQuery& o) const { return !(*this == o); }
+};
+
+// =====================================================================
+// makeRegionCoverageDescriptor——依赖声明与形态（§4.3 kin.region-coverage 行）
+// =====================================================================
+
+/**
+ * @brief 组装 kin.region-coverage 的评估器描述符（§4.3 行的值面）。
+ *
+ * 与 makeTaskPointsBatchDescriptor 同构（字段落值见其注），差异两处：
+ *   - key＝kRegionCoverageEvaluationKey（Sampling.hpp 唯一书写点——
+ *     kebab 词形，卡面点形键的随附同步偏差同 T03~T05 口径）；
+ *   - inputs＝§4.3 行九条依赖：model.robot-design/tcp/req.regions/
+ *     req.sampling-plans/req.conditions/policy.resolved/namemap/config.ik
+ *     八条 Required＋`collision-models`(Object) 一条 **Conditional**
+ *     （条件依赖语义：碰撞启用状态只读自 policy——策略未启用碰撞时该
+ *     键不进切片，V13-01；resolutionNote 登记该条件语义，登记随卡
+ *     §14.6 v0.6）；supportedModes＝{Quick, Verified}（§4.3 行模式列
+ *     两值）；stateless=true＋threadSafety=FullyThreadSafe（逐样本并行
+ *     分片要求可重入——§9.2 头注同款）。
+ *
+ * @return 描述符值（每次调用返回新值；注册期校验归 EvaluatorRegistry）
+ *
+ * 纯函数；线程安全；确定性（同卡面同值——NFR-COR-02）。
+ */
+evidence::EvaluatorDescriptor makeRegionCoverageDescriptor();
+
+// =====================================================================
+// WorkspaceSampler——IWorkspaceSampler 实现（评估器形态；§9.2 接口的
+// 具体类——T05 TaskPointsBatchEvaluator 同位）
+// =====================================================================
+
+/**
+ * @brief kin.region-coverage 评估器：区域采样与覆盖率（KIN-04——计划
+ *        →确定性样本→逐样本评估→双口径覆盖计数→素材组装；§9.2
+ *        IWorkspaceSampler 的实现形态）。
+ *
+ * 评估主流程（§7.2 覆盖率图逐步；实现细节见 Evaluators.cpp 注）：
+ *   1. 身份对账（先于生成——绝不沿用未冻结/不一致样本集）：逐计划重算
+ *      sampleSetIdentity 与快照 SamplingPlanRef 比对（身份＋分母两值；
+ *      acceptance 3）——任一不一致→KIN-SAMPLE-IDENTITY-MISMATCH 结构化
+ *      诊断＋零素材输出（无覆盖率输出，V-15）；
+ *   2. 确定性采样——generateSampleSet（D-KIN-6：同 (plans,budget) 同
+ *      样本集同序；复评不得增删更换样本）；
+ *   3. 零样本判定——计划样本乘积=0→覆盖率不定义→KIN-COVERAGE-ZERO-
+ *      SAMPLES＋DataInsufficient 素材（绝不输出 0%/100%——无比率字段，
+ *      V-13）；
+ *   4. 逐样本评估——IK（位置样本＝位置存在性 IK〔姿态无约束落值 π〕；
+ *      位姿样本＝完整位姿 IK）＋碰撞（会话在场时随求解硬过滤③；要求在
+ *      场而缺会话→该样本 DataInsufficient——KIN-05 承接）；样本批分批
+ *      ＋协作取消（NotRun 如实保留）＋检查点 watermark＋进度；
+ *   5. 覆盖率计算——computeCoverage 唯一实现点（整数计数＋defined/
+ *      降级/不完整标记）；
+ *   6. 素材组装——payload canonical（逐计划对账＋计数＋状态表）＋证据
+ *      行（逐计划 subject=regionObjectId）＋诊断（零样本/不完整）。
+ *
+ * 错误分轨（域约定，随卡 §14.6 v0.6 登记——evidence §9.3"域自选"）：
+ *   - **装配期 fail-fast**（构造函数，std::invalid_argument）：视图空
+ *     指针、Box 非退化违例（size 分量 ≤0/非有限——I-REQ-6）、方向/roll
+ *     计数 0、budget.seed=0（I-KIN-4）、referenceQ 维度/有限性违例、
+ *     容差/去重阈值非法、求解计数 0、maxBatchSize/threadCount=0、
+ *     tcpKey 不命中（工具可解析时）——调用方错误轨，不进入评估输出面；
+ *   - **评估期结构化诊断**（零/半素材）：TCP 未配置/悬空→KIN-NO-TCP
+ *     （批量级零素材——T03/T04/T05 两分口径同源）；身份对账失败→
+ *     KIN-SAMPLE-IDENTITY-MISMATCH（零素材——绝不沿用）；零样本→
+ *     KIN-COVERAGE-ZERO-SAMPLES（覆盖率素材仍交付——不定义标记面）；
+ *     不完整→KIN-RESULT-INCOMPLETE（NotRun 清单摘要）；
+ *   - **取消**：协作式（批间查询＋批内求解探针）——未评估样本如实
+ *     NotRun、coverage.incomplete=true（不产正式覆盖率——§7.2）。
+ *
+ * 确定性（§8.4；acceptance 4）：同输入同线程数逐位一致；异线程数→
+ * 等价集合＋稳定序一致（结果按全序槽位写回——本实现逐位一致）。线程
+ * 安全：实例无跨调用可变状态（descriptor.stateless=true——可共享）。
+ */
+class WorkspaceSampler final : public IWorkspaceSampler {
+public:
+    /**
+     * @brief 构造绑定 (视图, 查询) 的评估器实例（工厂经闭包调用）。
+     *
+     * @param view  [in] 宿主注入的只读模型视图（非 owning；调用方保证
+     *                   evaluate() 期间存活；空指针→std::invalid_argument）
+     * @param query [in] 区域覆盖评估查询（值持有；装配期非法→
+     *                   std::invalid_argument——类注错误分轨）
+     *
+     * @throws std::invalid_argument 装配期查询非法
+     */
+    WorkspaceSampler(const IKinRuntimeView* view, RegionCoverageQuery query);
+
+    const evidence::EvaluatorDescriptor& descriptor() const override;
+
+    /**
+     * @brief 执行一次区域覆盖评估（§9.3 调用约定；纯计算——不派发任务、
+     *        不写项目、不产生修订；检查点/归档经宿主通道）。
+     *
+     * @param request [in] 评估请求（snapshotId/sliceId/mode/task 五元组
+     *                     经其填充绑定；snapshot.samplingPlans 为身份
+     *                     对账的冻结凭据来源——SamplingPlanRef 逐计划
+     *                     比对；模式对证据效力的门禁在汇总/包络层）
+     * @param context [in] 宿主调用上下文（协作取消：批间查询其
+     *                     cancellationRequested()；批内逐样本求解经
+     *                     IkRequest.cancellationProbe 周期查询；进度
+     *                     reportProgress 样本批粒度上报）
+     *
+     * @return 评估产出（payload/evidence 行/诊断——类注主流程；对账
+     *         失败时零素材；判定与包络构造归调用侧）
+     */
+    evidence::EvaluationOutput evaluate(const evidence::EvaluationRequest& request,
+                                        evidence::IEvaluationContext& context) override;
+
+    /// 单计划样本集生成（§9.2 独立入口——计划内局部序 0 起；确定性）。
+    runtime::Expected<SampleSet, KinematicsError>
+    generateSamples(const SamplingPlan& plan, const RegionSamplingBudget& budget) const override;
+
+    /// 覆盖率计算（委托唯一实现点 computeCoverage——Sampling.hpp）。
+    CoverageResult computeCoverage(const SampleSet& set,
+                                   const SampleResultSet& results) const override;
+
+private:
+    const IKinRuntimeView* m_view;              ///< 宿主注入视图（非 owning——见类注）
+    RegionCoverageQuery m_query;                ///< 评估查询（值持有）
+    evidence::EvaluatorDescriptor m_descriptor; ///< 稳定存储（descriptor() 引用所指）
+    std::optional<KinematicsError> m_setupError; ///< 评估期结构化素材（TCP 缺失——
+                                                 ///  批量级零素材轨，T05 两分口径同源）
+};
+
+// =====================================================================
+// runRegionCoverageComputation——区域覆盖计算核心（纯函数服务——NFR-
+// MNT-01"计算库可被模型测试直调"的覆盖通道落点；评估器形态与计算面的
+// 分离线，runBatchComputation 同构）
+// =====================================================================
+
+/**
+ * @brief 执行一次区域覆盖计算（§7.2 覆盖率图步骤 2~5：确定性采样→
+ *        零样本判定→逐样本评估（取消/检查点/进度）→覆盖率计算；身份
+ *        对账（步骤 1）在评估器 evaluate 面前置——对账失败不进入本函数）。
+ *
+ * 与评估器形态的分工：本函数是**纯计算面**——只产
+ * RegionCoverageComputation（样本/结果/覆盖率），不产证据与诊断素材；
+ * WorkspaceSampler::evaluate ＝"对账轨＋本函数＋payload/证据组装"。
+ * 独立可见性使采样/逐样本评估/取消语义可被单元与契约测试直调断言
+ * （可控求解器替身注入口＝RegionCoverageQuery::solver）。
+ *
+ * @param view    [in] 宿主注入的只读模型视图（非 owning；调用期间存活）
+ * @param query   [in] 区域覆盖评估查询（先经装配校验同款 fail-fast 面；
+ *                     solver/checkpointSink 注入口生效）
+ * @param request [in] 评估请求（snapshotId/sliceId/mode/task——绑定面）
+ * @param context [in] 宿主调用上下文（协作取消批间查询＋进度上报）
+ * @return 覆盖计算结果（identityChecks 留空——由评估器对账轨填充；
+ *         samples/results 双射、coverage 守恒式由 computeCoverage 保证）
+ *
+ * @throws std::invalid_argument 装配契约违约（同构造期校验面）
+ * @throws std::logic_error 内部不变量破坏（双射/守恒——实现缺陷不静默）
+ *
+ * 纯计算（不派发任务/不写项目/不产生修订）；线程安全（无跨调用状态，
+ * 并行分片按 query.threadCount 执行）；确定性（同输入同线程数逐位一致
+ * ——§8.4/D-KIN-6）。
+ */
+RegionCoverageComputation runRegionCoverageComputation(
+    const IKinRuntimeView& view, const RegionCoverageQuery& query,
+    const evidence::EvaluationRequest& request, evidence::IEvaluationContext& context);
+
+// =====================================================================
+// WorkspaceSamplerFactory——宿主注入工厂（O-37 裁决形态落点）
+// =====================================================================
+
+/**
+ * @brief kin.region-coverage 的 IEvaluatorFactory 实现：宿主构建实例时
+ *        把 (视图, 查询) 捕获进闭包，create() 保持**无参签名**（O-37
+ *        裁决原文——注册表路径兼容）。生命周期与线程约束同
+ *        TaskPointsBatchEvaluatorFactory（类注）；查询内投影值随宿主
+ *        组装（每请求新建工厂）。
+ */
+class WorkspaceSamplerFactory final : public evidence::IEvaluatorFactory {
+public:
+    /**
+     * @brief 构造绑定 (视图, 查询) 的工厂（注入点；校验同评估器构造）。
+     *
+     * @throws std::invalid_argument 装配期查询非法（同 WorkspaceSampler）
+     */
+    WorkspaceSamplerFactory(const IKinRuntimeView* view, RegionCoverageQuery query);
+
+    const evidence::EvaluatorDescriptor& descriptor() const override;
+
+    /// 无参签名（O-37 裁决——注册表兼容）；每次调用产出独立实例。
+    std::unique_ptr<evidence::IEngineeringEvaluator> create() const override;
+
+private:
+    const IKinRuntimeView* m_view;              ///< 宿主注入视图（非 owning）
+    RegionCoverageQuery m_query;                ///< 闭包捕获的查询（值）
+    evidence::EvaluatorDescriptor m_descriptor; ///< 稳定存储（descriptor() 引用所指）
+};
+
+// =====================================================================
+// 区域覆盖任务类型能力声明（§8.3/§12 交接行——execution 通道消费面）
+// =====================================================================
+
+/**
+ * @brief kin.region-coverage 任务类型的执行期能力声明（§8.3 提交行
+ *        原文"批 watermark（batch 覆盖任务）/**样本 watermark（coverage）**
+ *        "的值面：检查点粒度＝Sample（样本批 watermark——IBatchCheckpoint-
+ *        Sink 每样本批一次）、支持取消 ✓、暂停不支持（R1 如实声明——
+ *        EX-SM-7 口径）、强制终止代价＝低（样本批边界即安全中止点））。
+ *
+ * 消费方式同 taskPointsBatchCapability（§12 交接——L5 装配经
+ * execution::EvaluatorRuntimeCapabilities::declare 注册；键与评估键同一
+ * 常量）。
+ *
+ * @return 能力声明值（纯函数——每次调用同值，确定性 NFR-COR-02）
+ *
+ * 线程安全：可重入纯函数。
+ */
+execution::TaskCapability regionCoverageCapability();
 
 }  // namespace sdurws::ird::kinematics
 
