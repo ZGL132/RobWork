@@ -1036,6 +1036,11 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                         m_draft->attachModule(
                             modeling::kModuleHandle,
                             modelingDraftSource(*m_domains));
+                        // 草稿恢复（§8.3 restoreOnOpen——list→tryLoad→adopt
+                        // →面板刷新）：demo 项目/历史项目的建模草稿在打开
+                        // 时回填面板；失败隔离留痕不中断打开协议。
+                        m_draft->restoreOnOpen();
+                        m_domains->modeling.refreshFromSession();
                     } catch (const std::exception& attachError) {
                         if (m_diag.pipeline) {
                             m_diag.pipeline->logDev(

@@ -170,6 +170,15 @@ QWidget* ModelingUiModule::createPanel()
     return panel;
 }
 
+void ModelingUiModule::refreshFromSession()
+{
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->refreshPanel(m_session.draft,
+                              m_session.readiness.value_or(ModelReadinessReport{}));
+    }
+}
+
 void ModelingUiModule::recomputeReadiness()
 {
     m_guard.assertOnUiThread();
@@ -218,6 +227,49 @@ void ModelingUiModule::noteAppliedRevision(
 }
 
 // =====================================================================
+// 草稿负载 ASCII 铠装（T03b-1——DraftDocument.payload 契约要求 UTF-8；
+// RobotDesign canonical 字节为二进制，hex 编码满足文本承载。与 demo 工具
+// Demo6R.cpp 使用同一算法——两端一致性由恢复链路互测保证；如需更换铠
+// 装，两处同步修改）。
+// =====================================================================
+
+std::string modelingHexEncode(const modeling::Bytes& bytes)
+{
+    static const char* kDigits = "0123456789abcdef";
+    std::string out;
+    out.reserve(bytes.size() * 2);
+    for (const std::uint8_t b : bytes) {
+        out.push_back(kDigits[b >> 4]);
+        out.push_back(kDigits[b & 0xF]);
+    }
+    return out;
+}
+
+std::optional<modeling::Bytes> modelingHexDecode(const std::string& text)
+{
+    if (text.size() % 2 != 0) {
+        return std::nullopt;
+    }
+    modeling::Bytes out;
+    out.reserve(text.size() / 2);
+    auto nibble = [](char c) -> int {
+        if (c >= '0' && c <= '9') { return c - '0'; }
+        if (c >= 'a' && c <= 'f') { return c - 'a' + 10; }
+        if (c >= 'A' && c <= 'F') { return c - 'A' + 10; }
+        return -1;
+    };
+    for (std::size_t i = 0; i < text.size(); i += 2) {
+        const int hi = nibble(text[i]);
+        const int lo = nibble(text[i + 1]);
+        if (hi < 0 || lo < 0) {
+            return std::nullopt;
+        }
+        out.push_back(static_cast<std::uint8_t>((hi << 4) | lo));
+    }
+    return out;
+}
+
+// =====================================================================
 // 模块草稿源（T03b-1——ui::IModuleDraftSource 四方法；§10.5）
 // =====================================================================
 
@@ -245,7 +297,7 @@ ui::DraftDocumentProjection ModelingUiModule::buildDraftDocument() const
     // 编码失败＝工作集状态违约（合法草稿必可编码——CodecTest 已钉）；取值
     // 违约抛 logic_error fail-fast，不落半截负载。
     const auto& bytes = encoded.get();
-    document.payload.assign(bytes.begin(), bytes.end());
+    document.payload = modelingHexEncode(bytes);  // ASCII 铠装（payload 契约 UTF-8）
     return document;
 }
 
@@ -253,14 +305,16 @@ void ModelingUiModule::adoptRestoredDocument(
     const ui::DraftDocumentProjection& document)
 {
     m_guard.assertOnUiThread();
-    // 恢复语义（§8.3-5）：磁盘草稿内容交回域侧。解码失败（版本不符/字节
-    // 损坏）＝保持当前草稿不中断打开——诚实降级，不渲染半解析状态；恢复
-    // 结果的完整可用性随收口任务的就绪重估呈现。
+    // 恢复语义（§8.3-5）：磁盘草稿内容交回域侧。先解 hex 铠装再解 canonical；
+    // 解码失败（版本不符/字节损坏）＝保持当前草稿不中断打开——诚实降级，
+    // 不渲染半解析状态；恢复结果的完整可用性随收口任务的就绪重估呈现。
+    const auto bytes = modelingHexDecode(document.payload);
+    if (!bytes.has_value() || bytes->empty()) {
+        return;  // 非本铠装形态（空/损坏）——保持现状
+    }
     try {
         const RobotDesignCodec codec;
-        const Bytes bytes(document.payload.begin(), document.payload.end());
-        const auto decoded =
-            codec.decode(bytes, kCurrentFormatVersion);
+        const auto decoded = codec.decode(*bytes, kCurrentFormatVersion);
         const auto* design = std::get_if<RobotDesign>(&decoded.get());
         if (design == nullptr) {
             return;  // 非根对象负载——恢复面约定外，保持现状

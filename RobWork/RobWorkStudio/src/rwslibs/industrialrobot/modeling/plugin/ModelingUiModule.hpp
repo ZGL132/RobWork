@@ -195,6 +195,12 @@ public:
      */
     QWidget* createPanel();
 
+    /**
+     * @brief 会话刷新（restoreOnOpen 等会话事件后的面板同步——现取重投影
+     *        ＋就绪条刷新；面板未创建＝空操作）。
+     */
+    void refreshFromSession();
+
     // ---- 会话锚定与应用回执（T03b-2——apply 网关的模块半区）------------
 
     /**

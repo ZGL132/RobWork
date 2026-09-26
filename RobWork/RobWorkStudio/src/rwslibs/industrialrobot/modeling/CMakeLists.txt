@@ -212,6 +212,26 @@ target_include_directories(sdurws_ird_modeling_plugin PRIVATE
 target_include_directories(sdurws_ird_modeling_plugin PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/assembly)
 
+# ---- 6 自由度机械臂 demo 项目生成器（sdurws_ird_demo6r，owner 演示指令
+# 2026-09-26）----创建 demo 项目并把 generic-6r 模板草稿经 DraftService
+# 持久化——宿主打开即演示建模面板全链。纯控制台工具（零 Qt）：链接面＝
+# modeling＋project（两登记边；demo 工具非产品交付路径）。
+add_executable(sdurws_ird_demo6r
+    demo/Demo6R.cpp)
+
+target_compile_features(sdurws_ird_demo6r PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_demo6r PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_demo6r PRIVATE /utf-8)
+endif()
+
+target_link_libraries(sdurws_ird_demo6r PRIVATE
+    sdurws_ird_modeling
+    sdurws_ird_project)
+
 # 插件链接面（卡 §3.2 明文"插件目标 → sdurws_ird_modeling＋sdurws_ird_ui
 # （＋平台库按需）；不得链接任何其他业务域单元目标（R-1）；不得 include
 # 其他单元私有头（R-2）"）：
@@ -700,6 +720,7 @@ if(NOT TARGET sdurw_kinematics)
             target_include_directories(sdurws_ird_modeling_plugin PRIVATE ${_ird_modeling_boost_inc})
             target_include_directories(sdurws_ird_modeling_app PRIVATE ${_ird_modeling_boost_inc})
             target_include_directories(sdurws_ird_modeling_test PRIVATE ${_ird_modeling_boost_inc})
+            target_include_directories(sdurws_ird_demo6r PRIVATE ${_ird_modeling_boost_inc})
         endif()
     endif()
 endif()
