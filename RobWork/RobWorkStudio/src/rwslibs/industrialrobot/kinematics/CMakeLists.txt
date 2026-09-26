@@ -89,6 +89,14 @@ find_package(Eigen3 CONFIG REQUIRED)
 #                      公式）、覆盖率计算唯一实现点 computeCoverage、区域
 #                      覆盖 canonical 载荷编码；kin.region-coverage 评估
 #                      器族在 Evaluators.cpp 的 T06 段）
+# T07 增列（tasks/foundation/WP-15-T07.json，§3.3 布局表 Collision.hpp 行
+# T07）——集成模式专属（见下方 target_sources 注释）：
+#   src/Collision.cpp  ④端口碰撞接入（KIN-05/AT-19——请求方场景装配
+#                      assembleCollisionScene＋真实会话适配器
+#                      PolicyCollisionSessionAdapter＋会话接线入口
+#                      makeCollisionSession；消费 policy 公共头完整类型
+#                      面——policy 侧同因 TU 同 gating；冒烟模式无任何
+#                      TU include Collision.hpp，冒烟口径不受影响）
 add_library(sdurws_ird_kinematics STATIC
     src/Errors.cpp
     src/DiagCodes.cpp
@@ -100,6 +108,17 @@ add_library(sdurws_ird_kinematics STATIC
     src/Ik.cpp
     src/SolutionSet.cpp
     src/Sampling.cpp)
+
+# ---- T07 增列（仅集成模式）：src/Collision.cpp 消费 policy 公共头的
+# 完整类型面（CollisionEvaluationSession 评估调用点）——冒烟模式无框架
+# 库可链（policy POL-T06 同款 gating 判定：TARGET sdurw_kinematics 只在
+# 集成配置树存在）。R-POL-2 红线不破：碰撞实现唯一在 policy（proximity
+# 直链的唯一许可方仍是 policy——本 TU 只调其冻结入口）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_kinematics PRIVATE
+        src/Collision.cpp)  # ④端口碰撞接入（KIN-05——场景装配/会话适配/
+                            # 接线三态；WP-15-T07）
+endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
@@ -194,6 +213,15 @@ add_executable(sdurws_ird_kinematics_test
     test/TaskPointsBatchTest.cpp
     test/RegionCoverageTest.cpp)
 
+# T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
+# （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言
+# （无二次缓存计数策略/三态映射）；消费 rw 非模板类，冒烟模式不编译
+# （policy CollisionEvaluationTest 同因同 gating）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_kinematics_test PRIVATE
+        test/CollisionPortTest.cpp)  # WP-15-T07：真实④端口接入＋运行断言
+endif()
+
 target_compile_features(sdurws_ird_kinematics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_test PROPERTIES
     CXX_STANDARD 17
@@ -270,7 +298,8 @@ add_executable(sdurws_ird_kinematics_contract_test
     contract_test/PoseMetricsEvaluatorContractTest.cpp
     contract_test/TaskPointIkEvaluatorContractTest.cpp
     contract_test/TaskPointsBatchEvaluatorContractTest.cpp
-    contract_test/RegionCoverageEvaluatorContractTest.cpp)
+    contract_test/RegionCoverageEvaluatorContractTest.cpp
+    contract_test/CollisionConsistencyContractTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_contract_test PROPERTIES

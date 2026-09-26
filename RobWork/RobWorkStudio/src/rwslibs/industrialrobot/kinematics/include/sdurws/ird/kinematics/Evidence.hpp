@@ -98,6 +98,15 @@ inline constexpr char kKinBatchItemOutcomeRowId[] = "kin.task-point-outcome";
 /// 聚合记录经 output.searchRecord 交付，本行以 digest 溯源其存在）。
 inline constexpr char kKinBatchSearchRowId[] = "kin.search-exhausted";
 
+/// 碰撞证据行 id（WP-15-T07 表尾追加——§8.2 行 1"碰撞证据引用"与
+/// acceptance 4"碰撞证据明细交付 {subjectPair(ObjectId×ObjectId)，
+/// configurationRef, verdict}"的批量通道落位行；登记随卡 §14.6 v0.7。
+/// 行状态语义：Satisfied＝碰撞评价在场（明细三元组以行 digest 绑定，
+/// 逐条明细在行内容规范字节内）；Missing＝碰撞要求在场而评价未完成
+/// （缺检测器/设施异常——证据缺失素材，绝不视为无碰撞，KIN-05）；
+/// 无碰撞要求且未评价不出行（碰撞检查不在范围——V13-01 查询面口径）。
+inline constexpr char kKinBatchCollisionRowId[] = "kin.collision-verdict";
+
 // =====================================================================
 // 注入值词表镜像（requirements 权威词表的 kinematics 侧投影——文件头注）
 // =====================================================================
@@ -549,6 +558,13 @@ public:
  *     不产生条目（DomainVerdictInputs 只承载违例清单）。
  *   - **payload**（行 5）：encodeBatchPayloadCanonical（canonical、
  *     五元组绑定 §5.6）＋SHA-256 摘要（CR-02）。
+ *   - **碰撞证据行**（WP-15-T07 表尾追加——acceptance 4）：碰撞评价在场的
+ *     工作项逐项一条 kKinBatchCollisionRowId 行（Satisfied＋行内容规范
+ *     字节摘要——三元组 {subjectPair(ObjectId×ObjectId), configurationRef,
+ *     verdict} 逐条编码于行内容字节）；碰撞要求在场而评价未完成的项一条
+ *     Missing 行（证据缺失素材——绝不视为无碰撞，KIN-05）；无要求且未
+ *     评价不出行（不在范围——V13-01）。诊断面：存在"要求在场＋未评价"
+ *     项时聚合一条 KIN-COLLISION-UNAVAILABLE（§9.6 行 9——T07 产码面）。
  *   - **诊断**：incomplete==true → KIN-RESULT-INCOMPLETE 一条（NotRun
  *     清单摘要进 cause）；InputInvalid 逐项 → KIN-POINT-REF-DANGLING。
  */
@@ -594,6 +610,25 @@ public:
  */
 std::vector<std::uint8_t> encodeBatchPayloadCanonical(const BatchComputation& computation,
                                                       const core::TaskIdentity& task);
+
+/**
+ * @brief 碰撞证据行的行内容编码（WP-15-T07——acceptance 4 明细三元组的
+ *        公开字节面；kKinBatchCollisionRowId 行的 artifactDigest 取值
+ *        源，公开性供测试与下游核对行内容摘要）。
+ *
+ * 布局（定宽小端＋字段定序；确定性——同项同字节，NFR-COR-01）：条目数
+ * u32＋逐条 {configurationRef len(4)+bytes＋objectA 16B＋objectB 16B＋
+ * verdict u8}。三元组映射（§8.2/acceptance 4）：subjectPair＝(objectA,
+ * objectB)（ObjectId 对——policy 会话规范序 A<B；零明细形态以全零保留
+ * 值占位）、configurationRef＝构型签名（I-KIN-3 记录键）、verdict＝
+ * 1 碰撞／0 评价为无碰撞。条目来源与序（确定性）：最佳解（评价在场）
+ * 一条在前，Collision 原因过滤记录按全序逐条在后；条目只在评价在场时
+ * 产生——缺失态不出条目（行状态 Missing 承载，KIN-05 不伪造已检）。
+ *
+ * @param item [in] 单个工作项记录（冻结值）
+ * @return 行内容规范字节（确定性；纯函数不抛）
+ */
+std::vector<std::uint8_t> encodeCollisionVerdictRowCanonical(const BatchWorkItemRecord& item);
 
 }  // namespace sdurws::ird::kinematics
 

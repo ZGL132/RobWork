@@ -983,3 +983,129 @@ TEST(KinTaskPointsBatchEval, CapabilityDeclarationValues_WP15T05_ACC4)
     EXPECT_EQ(capability.checkpointGranularity, again.checkpointGranularity);
     EXPECT_EQ(capability.forceTerminateCost, again.forceTerminateCost);
 }
+
+// =====================================================================
+// 碰撞证据行与证据缺失诊断（WP-15-T07——acceptance 2/4：碰撞评价在场
+// →Satisfied 行（三元组明细摘要绑定）；要求在场而未评价→Missing 行＋
+// KIN-COLLISION-UNAVAILABLE 聚合诊断；无要求且未评价→不出行）
+// =====================================================================
+
+TEST(KinTaskPointsBatchEval, CollisionEvidenceRowsAndUnavailableDiag_WP15T07_ACC2_ACC4)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-05", "EVI-01"},
+                  std::vector<std::string>{"AT-19"});
+
+    TestView view(twoLinkModel());
+    ScriptedSolver solver;
+    const core::ObjectId pEval = pointId("coleval");    // 评价在场（无碰撞）
+    const core::ObjectId pMiss = pointId("colmiss");    // 要求在场＋评价缺失
+    const core::ObjectId pPlain = pointId("colplain");  // 无要求（不出行对照）
+
+    // 点级碰撞要求（REQ-04 投影——"要不要查"的要求值，非启用开关）。
+    BatchTaskPoint evalPoint = makePoint("coleval");
+    evalPoint.demands.collisionFreeRequired = true;
+    BatchTaskPoint missPoint = makePoint("colmiss");
+    missPoint.demands.collisionFreeRequired = true;
+    BatchTaskPoint plainPoint = makePoint("colplain");  // 无碰撞要求（对照）
+
+    BatchQuery q = makeQuery({evalPoint, missPoint, plainPoint},
+                             {makeCondition("c")}, &solver);
+    const evidence::EvaluationRequest req = makeRequest({caseId("c")});
+
+    // pEval：结局 1＋最佳解碰撞评价在场（evaluated=true、无碰撞）。
+    {
+        kin::IkOutcome outcome;
+        outcome.outcomeKind = kin::IkOutcomeKind::SolutionsFound;
+        kin::KinematicSolution s;
+        s.q = {0.1, -0.2};
+        s.positionResidual = 1e-9;      // m（< 容差）
+        s.orientationResidual = 1e-9;   // rad
+        s.minimumJointMargin = 0.5;     // 无量纲（D-KIN-6）
+        s.manipulability = 1.0;
+        s.conditionNumber = 1.0;
+        s.collisionStatus.evaluated = true;
+        s.collisionStatus.inCollision = false;
+        outcome.solutionSet.solutions.push_back(s);
+        solver.outcomes.emplace(std::make_pair(pEval, caseId("c")),
+                                std::move(outcome));
+    }
+    // pMiss：结局 1＋碰撞评价缺失（collisionNotEvaluated——会话不在场
+    // 两臂；证据缺失素材，绝不视为无碰撞，KIN-05）。
+    {
+        kin::IkOutcome outcome;
+        outcome.outcomeKind = kin::IkOutcomeKind::SolutionsFound;
+        outcome.collisionNotEvaluated = true;
+        kin::KinematicSolution s;
+        s.q = {0.1, -0.2};
+        s.positionResidual = 1e-9;
+        s.orientationResidual = 1e-9;
+        s.minimumJointMargin = 0.5;
+        s.manipulability = 1.0;
+        s.conditionNumber = 1.0;
+        s.collisionStatus.evaluated = false;  // 证据缺失（未评价）
+        outcome.solutionSet.solutions.push_back(s);
+        solver.outcomes.emplace(std::make_pair(pMiss, caseId("c")),
+                                std::move(outcome));
+    }
+    // pPlain：默认脚本（SolutionsFound＋最小解、碰撞未评价——无要求）。
+
+    kin::TaskPointsBatchEvaluator evaluator(&view, q);
+    CountingContext context;
+    const evidence::EvaluationOutput out = evaluator.evaluate(req, context);
+
+    // 行面清点：3 项工作项（3 点×1 工况）→ 3 条结局行＋碰撞行恰 2
+    // （pEval Satisfied＋pMiss Missing；pPlain 不出行——V13-01"不在范围"
+    // 口径）；本批无搜索未果项 → 无搜索聚合行。
+    ASSERT_EQ(out.evidence.size(), 5U);
+    std::size_t collisionSatisfied = 0;
+    std::size_t collisionMissing = 0;
+    for (const evidence::EvidenceItem& row : out.evidence) {
+        if (row.itemId != std::string(kin::kKinBatchCollisionRowId)) {
+            continue;
+        }
+        ASSERT_TRUE(row.caseScope.has_value());
+        ASSERT_EQ(row.caseScope->size(), 1U);
+        EXPECT_EQ(row.caseScope->front(), caseId("c"));
+        if (row.status == evidence::EvidenceItemStatus::Satisfied) {
+            ++collisionSatisfied;
+            // Satisfied 行 subject＝评价在场的点；摘要必填且非全零。
+            EXPECT_EQ(row.subject, pEval);
+            ASSERT_TRUE(row.artifactDigest.has_value());
+            // 摘要非全零（保留值摘要＝无凭据——evidence §6.2 门禁同判据）。
+            const bool allZero = std::all_of(row.artifactDigest->begin(),
+                                             row.artifactDigest->end(),
+                                             [](std::uint8_t b) { return b == 0; });
+            EXPECT_FALSE(allZero) << "Satisfied 行摘要必填（非全零）";
+        } else if (row.status == evidence::EvidenceItemStatus::Missing) {
+            ++collisionMissing;
+            // Missing 行 subject＝要求在场而未评价的点（证据缺失素材——
+            // KIN-05：绝不视为无碰撞）。
+            EXPECT_EQ(row.subject, pMiss);
+        }
+    }
+    EXPECT_EQ(collisionSatisfied, 1U) << "评价在场 → Satisfied 碰撞行恰 1";
+    EXPECT_EQ(collisionMissing, 1U) << "要求在场而未评价 → Missing 碰撞行恰 1";
+
+    // 聚合诊断：KIN-COLLISION-UNAVAILABLE 恰 1（计数只覆盖缺失臂）。
+    std::size_t unavailableDiags = 0;
+    for (const core::DiagnosticRecord& d : out.diagnostics) {
+        if (d.code == std::string(kin::kKinCollisionUnavailable)) {
+            ++unavailableDiags;
+        }
+    }
+    EXPECT_EQ(unavailableDiags, 1U)
+        << "KIN-COLLISION-UNAVAILABLE 应聚合恰 1 条（§9.6 行 9 产码面）";
+
+    // 确定性：同输入重复评估 → Satisfied 行摘要逐位一致（行内容规范
+    // 字节的确定性——NFR-COR-01）。
+    kin::TaskPointsBatchEvaluator evaluator2(&view, q);
+    CountingContext context2;
+    const evidence::EvaluationOutput out2 = evaluator2.evaluate(req, context2);
+    ASSERT_EQ(out2.evidence.size(), out.evidence.size());
+    for (std::size_t i = 0; i < out.evidence.size(); ++i) {
+        ASSERT_EQ(out2.evidence[i].itemId, out.evidence[i].itemId);
+        ASSERT_EQ(out2.evidence[i].status, out.evidence[i].status);
+        EXPECT_EQ(out2.evidence[i].artifactDigest, out.evidence[i].artifactDigest)
+            << "碰撞行摘要应逐位一致 @ " << i;
+    }
+}

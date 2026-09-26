@@ -295,7 +295,8 @@ struct TaskPointIkQuery {
     /// 求解配置摘要（config.ik——T10 落位前允许零值；入结果身份）。
     core::ContentIdentity configDigest;
     /// 碰撞会话句柄（非 owning；空＝策略未启用碰撞——硬过滤③跳过并
-    /// 标记 collisionNotEvaluated；真实④端口会话组装归 T07）。
+    /// 标记 collisionNotEvaluated；真实④端口会话组装随 T07 落位——
+    /// Collision.hpp assembleCollisionScene＋makeCollisionSession）。
     const IKinCollisionSession* collisionSession = nullptr;
 
     bool operator==(const TaskPointIkQuery& o) const
@@ -363,8 +364,10 @@ evidence::EvaluatorDescriptor makeTaskPointIkDescriptor();
  *       限位过滤解 → KIN-JOINT-LIMIT-VIOLATED（§9.6 行 5）；
  *       结局 2/3 → KIN-SEARCH-EXHAUSTED（§9.6 行 10——附搜索未果记录
  *       经 output.searchRecord 交付）；
- *       碰撞过滤解的诊断（KIN-COLLISION-FILTERED）归 T07（§9.6 任务列
- *       分工——本任务只产过滤记录，不产该码诊断）；
+ *       碰撞过滤解的诊断 KIN-COLLISION-FILTERED（随 WP-15-T07 落位，
+ *       §9.6 任务列 T07 行——逐过滤记录一条，构型级不下任务结论）；
+ *       碰撞评价缺失的诊断 KIN-COLLISION-UNAVAILABLE（同上——会话在场
+ *       而评价未完成的设施臂）；
  *   - **结局映射**（§5.4 → evidence EvaluationOutput）：1/4 → payload
  *     （canonical 解集字节）；2/3 → searchRecord＋诊断；5 → proof
  *     （仅素材）；cancelled → 零素材输出。
@@ -530,7 +533,8 @@ struct BatchQuery {
     /// 求解配置摘要（config.ik——T10 落位前允许零值；入结果身份）。
     core::ContentIdentity configDigest;
     /// 碰撞会话句柄（非 owning；空＝策略未启用碰撞——硬过滤③跳过并
-    /// 标记 collisionNotEvaluated；真实④端口会话组装归 T07）。
+    /// 标记 collisionNotEvaluated；真实④端口会话组装随 T07 落位——
+    /// Collision.hpp assembleCollisionScene＋makeCollisionSession）。
     const IKinCollisionSession* collisionSession = nullptr;
 
     // ---- 批量执行协作参数（§7.1/§8.3/§8.4）----
