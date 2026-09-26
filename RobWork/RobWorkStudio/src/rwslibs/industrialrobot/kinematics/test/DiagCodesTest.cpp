@@ -7,7 +7,7 @@
  *         自证）。
  *
  * 设计依据：
- *   - units/kinematics.md §9.6（全表 16 行——码/级别/语义/任务列；表头
+ *   - units/kinematics.md §9.6（全表 17 行——码/级别/语义/任务列；表头
  *     "装配期注册，不预建无消费者条目"）、§3.3（DiagCodes.hpp 行——T02）
  *   - units/diagnostics.md §4.3（分类词表）、§4.4（动作族映射）、§4.5
  *     （注册协议——句法/前缀-所有权/键唯一/paramSchema/字段不变量）、
@@ -46,7 +46,8 @@ namespace {
 /// 比对，任一侧漂移即失败：失同步防线）。行序＝§9.6 表行序（实现清单序
 /// ＝确定性序的依据面）；卡面增行（随消费任务）时在实现清单与本清单
 /// 表尾同步追加并走单元卡增量修订（T05 追加行 16——KIN-POINT-REF-
-/// DANGLING，悬空引用 InputInvalid 素材）。
+/// DANGLING，悬空引用 InputInvalid 素材；T08 追加行 17——KIN-ROOT-BYTES-
+/// ILLEGAL，设默认门面根字节补丁失败 FormatOrVersion 素材）。
 const char* kSection96FullTable[] = {
     "KIN-NO-DEVICE",
     "KIN-NO-TCP",
@@ -64,11 +65,12 @@ const char* kSection96FullTable[] = {
     "KIN-COVERAGE-ZERO-SAMPLES",
     "KIN-RESULT-INCOMPLETE",
     "KIN-POINT-REF-DANGLING",
+    "KIN-ROOT-BYTES-ILLEGAL",
 };
 
 /// §9.6"级别"列（与码清单同序——逐码登记值）：T02 原 6 error＋9 warning
 /// （F-380 处置——散文计数多报 error 已纠正），T05 起增行 16 error 码＝
-/// 7 error＋9 warning。
+/// 7 error＋9 warning；T08 起增行 17 error 码＝8 error＋9 warning。
 const bool kSection96IsError[] = {
     true,   // KIN-NO-DEVICE            error
     true,   // KIN-NO-TCP               error
@@ -87,6 +89,8 @@ const bool kSection96IsError[] = {
     false,  // KIN-RESULT-INCOMPLETE    warning
     true,   // KIN-POINT-REF-DANGLING   error（T05——该工作项不可评估，与
             //                          KIN-TARGET-ILLEGAL"目标非法"同族）
+    true,   // KIN-ROOT-BYTES-ILLEGAL   error（T08——本次设默认无法完成，
+            //                          零提交零修订）
 };
 
 /// 逐码分类/重试族登记值（与码清单同序；落值锚点＝DiagCodes.cpp 逐码
@@ -114,12 +118,13 @@ const ExpectedCategoryRow kExpectedCategoryRows[] = {
     {DiagnosticCategory::DataInsufficient,  RetryKind::UserRetry, false},  // COVERAGE-ZERO-SAMPLES（§7.2 零样本）
     {DiagnosticCategory::ExecutionFailed,   RetryKind::UserRetry, false},  // RESULT-INCOMPLETE（批次执行轴）
     {DiagnosticCategory::InputInvalid,      RetryKind::UserRetry, false},  // POINT-REF-DANGLING（T05——悬空引用 fix-input 族）
+    {DiagnosticCategory::FormatOrVersion,   RetryKind::UserRetry, false},  // ROOT-BYTES-ILLEGAL（T08——根字节格式失配 fix-input 族）
 };
 
 }  // namespace
 
 /**
- * 工厂清单范围＝§9.6 全表（T02 时 15 行、T05 起 16 行——acceptance 4 及其表尾追加纪律："全表 KIN- 稳定码
+ * 工厂清单范围＝§9.6 全表（T02 时 15 行、T05 起 16 行、T08 起 17 行——acceptance 4 及其表尾追加纪律："全表 KIN- 稳定码
  * 清单登记"）：清单恰含全表且行序＝§9.6 表行序，多登（登记卡面之外
  * 的码值）或少登（漏登记）均失败；码值文本与卡面"码"列原文逐字一致。
  */
@@ -141,7 +146,7 @@ TEST(KinDiagCodes, FactoryScopeIsFullTable96_WP15T02_ACC4)
 
 /**
  * 描述符逐字段＝§9.6 行登记值（acceptance 4——登记值可追溯到卡面）：
- * 级别列 16 码逐位核对（error×7＋warning×9）；ownerUnit、文案键命名
+ * 级别列 17 码逐位核对（error×8＋warning×9）；ownerUnit、文案键命名
  * 约定（diag.<code-lower>.title/.detail——注册期键形校验的预演核对）、
  * paramSchema 全表"[]"（不私造参数名）、确认/可见性/登记版本全表同值。
  */
@@ -196,7 +201,7 @@ TEST(KinDiagCodes, DescriptorFieldsMatchSection96Rows_WP15T02_ACC4)
  * 期望值/单位"与 diagnostics §4.3/§4.4 落值的机器核对面）：requires-
  * Comparison 恰两码 true（RESIDUAL-EXCEEDED——§9.6"比较型"原文；
  * NEAR-LIMIT——§5.5"裕量比无量纲"点名）；SA-15 不变量（confirmable⇒
- * requiresComparison）全表成立；16 行分类/重试族与 DiagCodes.cpp 逐码
+ * requiresComparison）全表成立；17 行分类/重试族与 DiagCodes.cpp 逐码
  * 注释一一对应。
  */
 TEST(KinDiagCodes, CategoryAndRetryMappingMatchesAnchors_WP15T02_ACC4)
@@ -239,7 +244,7 @@ TEST(KinDiagCodes, CategoryAndRetryMappingMatchesAnchors_WP15T02_ACC4)
 /**
  * 真实注册表注册成功且可查询（acceptance 4——P-KIN-7 处置自证：消费
  * diagnostics Draft 契约按当周现状，以真实 StableCodeRegistry 验证全部
- * 通过）：注册后全表 16 码 find 命中且 ownerUnit 归属正确、
+ * 通过）：注册后全表 17 码 find 命中且 ownerUnit 归属正确、
  * registeredCodes("kinematics") 反映全表、seal 后 manifest 含全表。
  */
 TEST(KinDiagCodes, RegistersIntoStableCodeRegistry_WP15T02_ACC4)
@@ -257,7 +262,7 @@ TEST(KinDiagCodes, RegistersIntoStableCodeRegistry_WP15T02_ACC4)
         EXPECT_EQ(found->ownerUnit, "kinematics") << code;
     }
 
-    // ownerUnit 反查反映全表（字典序由注册表侧承担——16 码无缺漏）。
+    // ownerUnit 反查反映全表（字典序由注册表侧承担——17 码无缺漏）。
     const auto codes = registry.registeredCodes("kinematics");
     ASSERT_EQ(codes.size(), std::size(kSection96FullTable));
     for (const char* code : kSection96FullTable) {

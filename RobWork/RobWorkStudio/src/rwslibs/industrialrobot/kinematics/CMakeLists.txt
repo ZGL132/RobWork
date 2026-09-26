@@ -120,6 +120,17 @@ if(TARGET sdurw_kinematics)
                             # 接线三态；WP-15-T07）
 endif()
 
+# T08 增列（tasks/foundation/WP-15-T08.json，§3.3 布局表 Commands.hpp 行
+# T08；两模式编译——纯 std＋core/runtime 头内模板面，零框架库符号）：
+#   src/Commands.cpp   会话姿态写入口（KinSessionPose——KIN-06/AT-04，§4.5
+#                      身份外元素）＋设默认命令门面（IKinematicsCommand-
+#                      Handler——KIN-14/§9.7 D-KIN-5：组装 modeling
+#                      apply-robot-design 增量载荷经①端口投影提交；载荷
+#                      框架编码＋根字节补丁注入缝＋KIN-ROOT-BYTES-ILLEGAL
+#                      产码面）
+target_sources(sdurws_ird_kinematics PRIVATE
+    src/Commands.cpp)
+
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
 # inline constexpr 变量等），消费者编译 kinematics 头也必须至少 C++17。
@@ -211,7 +222,8 @@ add_executable(sdurws_ird_kinematics_test
     test/FkTest.cpp
     test/IkTest.cpp
     test/TaskPointsBatchTest.cpp
-    test/RegionCoverageTest.cpp)
+    test/RegionCoverageTest.cpp
+    test/CommandsTest.cpp)
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言
@@ -299,7 +311,8 @@ add_executable(sdurws_ird_kinematics_contract_test
     contract_test/TaskPointIkEvaluatorContractTest.cpp
     contract_test/TaskPointsBatchEvaluatorContractTest.cpp
     contract_test/RegionCoverageEvaluatorContractTest.cpp
-    contract_test/CollisionConsistencyContractTest.cpp)
+    contract_test/CollisionConsistencyContractTest.cpp
+    contract_test/CommandFacadeContractTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_contract_test PROPERTIES

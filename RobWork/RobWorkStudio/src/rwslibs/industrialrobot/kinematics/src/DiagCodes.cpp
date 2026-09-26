@@ -1,10 +1,10 @@
 /**
  * @file   DiagCodes.cpp
- * @brief  kinematics 稳定诊断码工厂的实现——§9.6 全表 15 码描述符清单
+ * @brief  kinematics 稳定诊断码工厂的实现——§9.6 全表 17 码描述符清单
  *         （逐码落值依据）与装配注册函数。
  *
  * 设计依据：
- *   - units/kinematics.md §9.6 全表（15 行：码/级别/语义/任务列——逐码
+ *   - units/kinematics.md §9.6 全表（17 行：码/级别/语义/任务列——逐码
  *     登记值与锚点的唯一权威）、§5.4（五类结局——过滤族码的素材走向）、
  *     §5.5（失败分类——错误/评价两级与比较型说明）
  *   - units/diagnostics.md §4.3（分类词表逐值语义锚点）、§4.4（分类—
@@ -25,11 +25,11 @@ namespace sdurws::ird::kinematics {
 namespace {
 
 /**
- * @brief 单码描述符装配辅助：填入 15 码共用不变的字段（ownerUnit/键约定/
+ * @brief 单码描述符装配辅助：填入 17 码共用不变的字段（ownerUnit/键约定/
  * paramSchema/确认与可见性/登记版本），可变面（码值/分类/级别/比较标记/
  * 重试族）由调用点逐码实参给出。
  *
- * 抽取目的：共字段的登记口径只在函数体注释一处陈述，15 个调用点各自只
+ * 抽取目的：共字段的登记口径只在函数体注释一处陈述，17 个调用点各自只
  * 携带差异字段——落值依据可读性与"同码同口径"两得（不引入任何运行期
  * 开销——描述符构造本就是值聚合）。
  *
@@ -40,7 +40,7 @@ namespace {
  *   - paramSchema＝"[]"（无参数显式声明——产码路径落地时按需增量登记
  *     并升 registryVersion，不私造参数名；比较型三要素走实例 comparison
  *     面，不占参数名）；
- *   - confirmable＝false（15 码均无 SA-15 确认流语义）；
+ *   - confirmable＝false（17 码均无 SA-15 确认流语义）；
  *   - userVisible/reportable/historical＝true（全部为用户级码——§4.5
  *     仅对 Dev 码强制三项 false）；
  *   - registryVersion＝1（首次登记）；deprecated=false；
@@ -60,7 +60,7 @@ diagnostics::CodeDescriptor makeDescriptor(std::string_view code,
                                            diagnostics::RetryKind retryable)
 {
     // 小写键派生与注册表 derivedTextKey 同一约定（diag.<code-lower>.段）
-    // ——此处以显式字面量书写，逐码测试断言全表 30 键（15×title/detail）
+    // ——此处以显式字面量书写，逐码测试断言全表 34 键（17×title/detail）
     // 与码值小写逐字一致，失同步即失败（不重复实现派生逻辑防两处漂移）。
     std::string lower{code};
     for (char& ch : lower) {
@@ -93,7 +93,8 @@ diagnostics::CodeDescriptor makeDescriptor(std::string_view code,
 
 std::vector<diagnostics::CodeDescriptor> kinematicsCodeDescriptors()
 {
-    // 清单序＝§9.6 表行序 1~15（确定性序）；逐码注释给出分类/重试族落值
+    // 清单序＝§9.6 表行序 1~17（确定性序；T05/T08 表尾各追加一行——既有
+    // 行不重排）；逐码注释给出分类/重试族落值
     // 锚点（级别直接取 §9.6"级别"列）。比较标记仅两码 true——逐码注明。
     return {
         // ---- 行 1：KIN-NO-DEVICE（error）——无可用设备 ----
@@ -275,6 +276,22 @@ std::vector<diagnostics::CodeDescriptor> kinematicsCodeDescriptors()
         // KIN-TARGET-ILLEGAL"目标非法"同族——不能评估≠评估失败）。
         makeDescriptor(kKinPointRefDangling,
                        diagnostics::DiagnosticCategory::InputInvalid,
+                       diagnostics::DiagnosticSeverity::Error,
+                       false,
+                       diagnostics::RetryKind::UserRetry),
+
+        // ---- 行 17：KIN-ROOT-BYTES-ILLEGAL（error）——设默认门面根对象
+        // 字节补丁失败 ----
+        // 随 WP-15-T08 表尾追加（§9.6 行 17；登记随卡 §14.6 v0.8）：设默
+        // 认 TCP 命令门面（§9.7/D-KIN-5）的根对象字节补丁缝返回失败（基
+        // 线根不可解码或补丁产物编码失败——数据侧错误）→本次提交未发出
+        // （零修订零提交），门面回显携带本码诊断。分类 format-or-version：
+        // §9.6 本行语义命中 §4.3"schema/契约不兼容"族（对象字节与预期
+        // canonical 格式不符——解码面失配，非调用方输入错误）；fix-input
+        // 族（修复项目数据后重试）→UserRetry。级别 error：本次设默认操
+        // 作无法完成（与 KIN-TARGET-ILLEGAL"无法进行"同族——不产半提交）。
+        makeDescriptor(kKinRootBytesIllegal,
+                       diagnostics::DiagnosticCategory::FormatOrVersion,
                        diagnostics::DiagnosticSeverity::Error,
                        false,
                        diagnostics::RetryKind::UserRetry),
