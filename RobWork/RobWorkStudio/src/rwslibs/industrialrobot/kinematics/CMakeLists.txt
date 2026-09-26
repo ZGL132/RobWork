@@ -131,6 +131,15 @@ endif()
 target_sources(sdurws_ird_kinematics PRIVATE
     src/Commands.cpp)
 
+# T09 增列（tasks/foundation/WP-15-T09.json，§3.3 布局表 Export.hpp/
+# Recompute.hpp 行 T09；两模式编译——纯 std＋core 头，零框架库符号、
+# 零 io/project 消费——§7.4"写出经 io 通道、导出不产生修订"的结构面）：
+#   src/Export.cpp     结果导出值行（KIN-08/AT-04——解行/过滤诊断行/区域
+#                      覆盖行整理＋JSON/CSV 文本编码＋导出文件头来源声明；
+#                      纯函数面，写出本身归 io 通道由插件侧触发）
+target_sources(sdurws_ird_kinematics PRIVATE
+    src/Export.cpp)
+
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
 # inline constexpr 变量等），消费者编译 kinematics 头也必须至少 C++17。
@@ -224,7 +233,8 @@ add_executable(sdurws_ird_kinematics_test
     test/TaskPointsBatchTest.cpp
     test/RegionCoverageTest.cpp
     test/CommandsTest.cpp
-    test/SolutionSetViewTest.cpp)
+    test/SolutionSetViewTest.cpp
+    test/ExportTest.cpp)
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言
