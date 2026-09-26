@@ -3996,6 +3996,36 @@
       "title": "ird_gates base..head 比对附件（traceability/builds/wp15-t08/ird-gates-base-head-compare.md）口径②『归一化去重条目 76』的组成含 7 条引擎自测检出裸码 token（IRD-GATE-R1/R3/R4/R5/SUB/T1/T2 各 1——『grep -o \"IRD-GATE-XXX.*\"』无锚定捕获把自测行『[ird_gates] 自测 fail_rX：按预期检出 IRD-GATE-RX』一并计入 sort -u），命中本体去重实为 69（与引擎自计数同值；验收者以 ^IRD-GATE- 锚定捕获实测原始行/去重/自计三值均 69/69/69，路径归一化 diff 零新增零消除）。三套计数各自可复现、附件已注明捕获模式、零增量结论不受影响——非 F-398 误标形态（计数值与自身文件实测一致），属口径语义精炼建议：后续附件口径②排除自测检出行，或注明组成（76＝69 命中＋7 自测 token），避免『去重条目』语义在家族内漂移。",
       "owner": "kinematics 实施会话（下次产出比对附件时按本条精炼口径②）；治理收尾会话（簿记核对时按 69 命中本体口径复核）",
       "resolution": "编号顺延自 F-401。"
+    },
+    {
+      "id": "F-403",
+      "source": "traceability/acceptance/WP-15-T09-20260927.md §4.2/§4.8（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "units/kinematics.md §14.6 v0.9 行『冒烟仅 CommandsTest.cpp 两处 C4834 既有警告——T08 遗留非本任务引入』的『仅』字限定与自身留痕 run-smoke-build.log 的 22 处 C4834 不符（验收者全新冒烟树全量构建同值实测 22 处：kinematics 单元 2 处 CommandsTest.cpp:590,5/611,5 属实〔T08 遗留〕，另 20 处在 execution 单元既有测试 RunRegistryAdmissionTest.cpp:1236,26/1258,26、ArchiveFaultContractTest.cpp:718,26 等；零 error 结论与『非本任务引入』归属判断均不受影响）——按全量冒烟构建口径应写『kinematics 单元 2 处＋execution 单元 20 处既有』，属措辞精度建议。",
+      "owner": "kinematics 实施会话（下次修订 units/kinematics.md §14.6 相关行时顺手修正措辞；可与 F-384/F-387/F-390/F-394 家族『触及即兑现』纪律合并执行）",
+      "resolution": "编号顺延自 F-402。"
+    },
+    {
+      "id": "F-404",
+      "source": "traceability/acceptance/WP-15-T09-20260927.md §4.3（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "tasks/foundation/WP-15-T09.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397/F-399/F-401 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（集成 99/53、冒烟 93/53 两模式实测），不构成验收阻断。建议后续契约治理按家族批量修订时补齐本契约两行。",
+      "owner": "契约编译/治理会话（家族批量修订时补齐本契约两行）",
+      "resolution": "编号顺延自 F-403。"
+    },
+    {
+      "id": "F-405",
+      "source": "traceability/acceptance/WP-15-T09-20260927.md §4.11（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "builds/wp15-t09/ird-gates-base-head-compare.md 口径②仍为『去重条目 76』未按 F-402 owner 指令（『下次产出比对附件时按本条精炼口径②』）注明组成（76＝69 命中本体＋7 条引擎自测检出裸码 token；验收者双侧 worktree 引擎直跑锚定捕获实测命中本体去重 69/69 与引擎自计同值、无锚定口径 145 行/去重 76 与附件声明一致）；三套计数分列本身已遵守（F-398 口径无重犯）、零增量结论不受影响——属 F-402 精炼建议的兑现延迟登记（与 F-394/F-400『触及即兑现』家族同形态：本任务产出新比对附件时未执行 F-402 的精炼动作）。",
+      "owner": "kinematics 实施会话（下次产出比对附件时注明『去重 76＝69 命中＋7 自测 token』组成或改用锚定口径）；治理收尾会话（簿记核对时按 69 命中本体口径复核）",
+      "resolution": "编号顺延自 F-404。"
     }
   ]
 }
