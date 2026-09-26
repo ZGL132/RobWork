@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "实现 requirements 插件界面（四面板与编辑→草稿→应用链路）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-14-T03",
     "WP-14-T04",
