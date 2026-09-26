@@ -31,7 +31,9 @@ const char* const kPluginWhitelist[] = {
 const char* const kModelingDockTitle = "IRD 建模";
 
 std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
-    QDockWidget& /*pluginDock*/, std::vector<std::string>& reportLines)
+    QDockWidget& /*pluginDock*/,
+    std::function<void(const std::string&)> statusFeedback,
+    std::vector<std::string>& reportLines)
 {
     auto bundle = std::make_unique<DomainPluginAssembly>();
 
@@ -50,10 +52,21 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
         return QString::fromStdString(text.empty() ? key : text);
     });
 
-    // ④首版会话种子（generic-6r 真实草稿——L-1/L-2 编辑流可交互）。
+    // ④命令提交出口绑定（首版可见反馈面——宿主状态栏瞬态消息）：域命令
+    //    的执行语义（模板创建/导入向导/权威切换……经处理器族＋project
+    //    管线）随收口任务接线；此处如实呈现"已受理＋待接线"，不虚构执行
+    //    成功（UX-02/ERR-01 同源纪律）。
+    bundle->modeling.bindCommandSubmit(
+        [statusFeedback](const ui::CommandId& id) {
+            if (!statusFeedback) { return; }
+            statusFeedback("已受理域命令 " + id +
+                           "（域执行面随装配收口任务接线）");
+        });
+
+    // ⑤首版会话种子（generic-6r 真实草稿——L-1/L-2 编辑流可交互）。
     bundle->modeling.seedTemplateSession();
 
-    // ⑤登记（§10.9 装配期一次；失败隔离——不抛不中止，报告行留痕）。
+    // ⑥登记（§10.9 装配期一次；失败隔离——不抛不中止，报告行留痕）。
     const RegistrationOutcome outcome = bundle->registrar->registerPluginUi(
         bundle->modeling.descriptor, *bundle->modeling.module);
     for (const PluginAssemblyReport& report : bundle->registrar->assemblyReports()) {

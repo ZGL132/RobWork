@@ -127,6 +127,11 @@ QWidget* ModelingUiModule::createPanel()
         panel->setCommandTitleResolver(m_textResolver);
     }
     m_panel = panel;  // attachPanel 同义（公开方法语义一致，直接落成员）
+    // 首刷（§9.7.2 L-4 同款入口——装配层创建面板后必须立即呈现当前会话）：
+    // 树/属性区投影自会话工作集（种子草稿即刻可见），就绪条取会话已载报告
+    // （未载＝空报告，呈现空态——不伪造判定）。
+    panel->refreshPanel(m_session.draft,
+                        m_session.readiness.value_or(ModelReadinessReport{}));
     return panel;
 }
 

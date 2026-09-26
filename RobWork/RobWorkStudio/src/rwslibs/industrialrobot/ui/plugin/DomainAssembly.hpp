@@ -21,6 +21,7 @@
 #ifndef IRD_UI_PLUGIN_DOMAINASSEMBLY_HPP
 #define IRD_UI_PLUGIN_DOMAINASSEMBLY_HPP
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -45,14 +46,19 @@ struct DomainPluginAssembly {
  * @brief 执行域插件首版装配（initialize 装配期恰调一次）。
  *
  * 步骤：创建注册端口（白名单八 token）→创建建模装配产物（门面）→
- * UiText 文案解析绑定→会话种子→registerPluginUi→报告行输出。
+ * UiText 文案解析绑定→命令提交出口绑定（宿主状态栏反馈）→会话种子→
+ * registerPluginUi→报告行输出。
  *
  * @param pluginDock [in] 宿主插件本体 Dock（面板 Dock 的父对象——窗口树托管）
+ * @param statusFeedback [in] 命令受理反馈通道（宿主状态栏瞬态消息——首版
+ *                        提交出口的可见落点；域执行面随收口任务接线）
  * @param reportLines [out] 装配报告行（宿主日志/状态栏呈现——Dev 通道）
  * @return 装配产物（宿主插件持有；登记失败时 registrar 仍在——报告可查）
  */
 std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
-    QDockWidget& pluginDock, std::vector<std::string>& reportLines);
+    QDockWidget& pluginDock,
+    std::function<void(const std::string&)> statusFeedback,
+    std::vector<std::string>& reportLines);
 
 /**
  * @brief 取建模面板（bundle 内工厂现调——宿主 Dock setWidget 挂位）。

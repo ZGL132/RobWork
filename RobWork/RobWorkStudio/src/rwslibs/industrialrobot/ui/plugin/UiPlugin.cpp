@@ -310,7 +310,20 @@ void IrdWorkbenchHostPlugin::initialize()
     // 建模面板工厂消费——先于 buildDockBody（面板 Dock 在拓扑构建期创建）。
     {
         std::vector<std::string> domainReportLines;
-        m_domains = assembleDomainPlugins(*this, domainReportLines);
+        // 命令受理反馈通道＝宿主状态栏瞬态消息（首版提交出口的可见落点）。
+        std::function<void(const std::string&)> statusFeedback =
+            [this](const std::string& message) {
+                if (m_hostStatusBar != nullptr) {
+                    m_hostStatusBar->showMessage(
+                        QString::fromUtf8(message.c_str()), /*timeoutMs=*/4000);
+                }
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(kPluginDevChannel,
+                                            "domain command: " + message);
+                }
+            };
+        m_domains = assembleDomainPlugins(*this, statusFeedback,
+                                          domainReportLines);
         for (const std::string& line : domainReportLines) {
             reportLine(line);
             if (m_diag.pipeline) {
