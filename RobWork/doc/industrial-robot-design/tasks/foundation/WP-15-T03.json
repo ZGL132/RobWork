@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现 FK 与位姿指标评估器（kin.pose-metrics）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T02",
     "RT-T09"

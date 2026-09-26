@@ -1,8 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "pausedReason": null,
-  "tickCount": 354,
+  "tickCount": 358,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -17,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-26T13:53:54+08:00",
+    "updatedAt": "2026-09-26T17:07:50+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1863,6 +1862,18 @@
       ],
       "acceptanceRecord": "traceability/acceptance/WP-15-T02-20260926.md",
       "mergedAt": "2026-09-26"
+    },
+    {
+      "task": "WP-15-T03",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "0ece5504bf851a23c40853c608bbf757ec2c0230",
+        "5551d4a4f71591975ccccbbfd64ada349e07d0ef"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T03-20260926.md",
+      "mergedAt": "2026-09-26",
+      "failReason": "验收 attempt1 即 pass（非验收失败）；收尾④ findings.json 冲突——v1.13 首跑『条目计数不符：期望 379 实得 380』即停转 blocked（tick#357），根因＝登记簿 F-379 收行空白畸变（3a5e9ec3 转登误改、base 与任务分支双侧同携）致条目块扫描把 F-379/F-380 并块，计数守卫拦截的正是扫描失真（F-388 入册即消账）；所有者明示『解决阻塞』授权后循 F-262 先例最小修复（收行修复＋merge-findings-union 行形状匹配空白容忍＋闭合行规范化，1e221ff4）并临时工作树预验 RESOLVED，重走④⑤：v1.13 重跑 RESOLVED（并集 F-383、总计 381 条）后合并 b8060287。验收建议级 F-384~F-387 随 acc/WP-15-T03/1 转登；实施端自登 F-383（O-37 配套 evidence.md §9 增补悬账）经验收 §4.8 核对质量合格、维持 open；无 §4.8 消账指令"
     }
   ],
   "policy": {
@@ -1888,11 +1899,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "WP-15-T03",
-      "branch": "wp15-t03",
-      "contractPath": "tasks/foundation/WP-15-T03.json"
-    },
     {
       "taskId": "WP-15-T04",
       "branch": "wp15-t04",
@@ -1952,5 +1958,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "33ed2c53-3480-44c2-be11-9f864c57e88f"
+  "tickToken": "d69a2d4b-2221-46d6-ad83-4d397c5762bf"
 }
