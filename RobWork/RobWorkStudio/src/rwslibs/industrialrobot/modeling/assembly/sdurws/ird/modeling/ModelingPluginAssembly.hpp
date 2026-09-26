@@ -87,6 +87,9 @@ struct ModelingPluginAssembly {
     void noteAppliedRevision(const sdurws::ird::core::RevisionId& newBase,
                              const std::optional<sdurws::ird::core::ObjectId>& rootObjectId);
 
+    /// 会话刷新（restoreOnOpen 后由宿主调用——面板同步；T03b-2）。
+    void refreshFromSession();
+
     /// 模块草稿源视图（§10.5 attachModule 第二参数——本对象实现四方法；
     /// 存活期随 module）。const 语义：源接口四方法中两 const 两非 const，
     /// 引用可变性随对象本身，不受本访问器限定。

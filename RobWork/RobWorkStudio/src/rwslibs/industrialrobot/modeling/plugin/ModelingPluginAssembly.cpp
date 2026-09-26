@@ -66,6 +66,13 @@ void ModelingPluginAssembly::noteAppliedRevision(
     }
 }
 
+void ModelingPluginAssembly::refreshFromSession()
+{
+    if (m_impl != nullptr) {
+        m_impl->refreshFromSession();
+    }
+}
+
 ui::IModuleDraftSource& ModelingPluginAssembly::modelingDraftSource() const
 {
     // 多重继承静态转换（IPluginUiModule＋IModuleDraftSource 双基——同一
