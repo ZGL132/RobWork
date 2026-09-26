@@ -23,6 +23,12 @@
 #     顶层字段（schemaVersion、note）不一致 / 文件形状异常 / 解算后校验失败。
 #   解算成功 = 重写工作区文件 + git add，退出 0。
 #
+# F-388（2026-09-26，WP-15-T03 收尾④）：登记簿曾出现收行空白畸变『    }    ,』
+# （3a5e9ec3 转登 F-380~F-382 时误改 F-379 收行），不在下方收行匹配词形内，条目块
+# 扫描把相邻两条并作一块、§⑥ 条目计数守卫即停。自此开块/收行/id 行匹配容忍行内与
+# 行尾空白变体，且比对（Get-NormBlock）与重组输出把闭合行统一规范为规范形——空白
+# 变体不再影响扫描与比对，语义守卫（撞号/删除/双方异改/顶层差异）零改动。
+#
 # 用法（tick 在仓库根执行；PIPE §4.7③ 逐字登记）：
 #   pwsh -File RobWork/scripts/industrialrobot/merge-findings-union.ps1
 # 退出码：0＝已解算并暂存；1＝超出确定性范围，须所有者裁决（blocked）；2＝环境/调用错误。
@@ -67,13 +73,15 @@ function Get-EntryMap([string[]]$lines, [string]$side) {
   $order = @()
   $i = 0
   while ($i -lt $lines.Count) {
-    if ($lines[$i] -ceq '    {') {
+    # 行形状匹配容忍行内/行尾空白变体（F-388：『    }    ,』类收行畸变不得再并块）——
+    # 只影响"哪里是一条目"的识别，条目内容仍按原文逐字保留
+    if ($lines[$i] -cmatch '^    \{\s*$') {
       $j = $i
-      while ($j -lt $lines.Count -and ($lines[$j] -cnotmatch '^    \},?$')) { $j++ }
+      while ($j -lt $lines.Count -and ($lines[$j] -cnotmatch '^    \}\s*,?\s*$')) { $j++ }
       if ($j -ge $lines.Count) { Fail 1 "[$side] 第 $($i + 1) 行起的条目块未闭合——文件形状超出自动解算范围" }
       $idVal = $null
       for ($k = $i; $k -le $j; $k++) {
-        if ($lines[$k] -cmatch '^      "id": "([^"]+)",?$') { $idVal = $Matches[1]; break }
+        if ($lines[$k] -cmatch '^      "id":\s*"([^"]+)"\s*,?\s*$') { $idVal = $Matches[1]; break }
       }
       if ($null -eq $idVal) { Fail 1 "[$side] 第 $($i + 1) 行起的条目块缺 id 字段——文件形状超出自动解算范围" }
       if ($map.Contains($idVal)) { Fail 1 "[$side] 重复条目 id=$idVal" }
@@ -85,11 +93,13 @@ function Get-EntryMap([string[]]$lines, [string]$side) {
   return @{ Map = $map; Order = @($order) }
 }
 
-# 块归一化比较：剥掉末行行尾逗号后按原文比对（大小写敏感——中文与标识符不容 Case 折叠）
+# 块归一化比较：末行恒为条目闭合行，统一规范为『    }』后按原文比对（大小写敏感——
+# 中文与标识符不容 Case 折叠）。规范化使收行空白畸变（F-388 的『    }    ,』类）在
+# 双方比对中零敏感，避免把纯空白差异误判为"双方异改"真分歧
 function Get-NormBlock($block) {
   $ls = [System.Collections.Generic.List[string]]::new()
   $ls.AddRange([string[]]$block.Lines)
-  $ls[$ls.Count - 1] = ($ls[$ls.Count - 1] -creplace ',$', '')
+  $ls[$ls.Count - 1] = '    }'
   return ($ls -join "`n")
 }
 
@@ -173,10 +183,11 @@ for ($m = 0; $m -lt $n; $m++) {
   $src = if ($e.UseTheirs) { $theirs.Map[$e.Id] } else { $ours.Map[$e.Id] }
   $blk = [System.Collections.Generic.List[string]]::new()
   $blk.AddRange([string[]]$src.Lines)
-  # 逗号统一重排：块尾逗号先剥掉，再按"末条目不带逗号、其余带"重建——与登记簿既有排版逐字节同型
+  # 闭合行统一规范重排：末行恒为闭合行，按"末条目不带逗号、其余带"写规范形——
+  # 顺带把输入侧的收行空白畸变（F-388）在输出中根治，登记簿自此不再新增形状漂移
   $suffix = ','
   if ($m -eq ($n - 1)) { $suffix = '' }
-  $blk[$blk.Count - 1] = (($blk[$blk.Count - 1] -creplace ',$', '') + $suffix)
+  $blk[$blk.Count - 1] = '    }' + $suffix
   foreach ($l in $blk) { $body.Add($l) }
 }
 $outLines = [System.Collections.Generic.List[string]]::new()
