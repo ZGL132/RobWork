@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "requirements 契约测试套件与四套黄金数据集收口",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-14-T03",
     "WP-14-T04",
