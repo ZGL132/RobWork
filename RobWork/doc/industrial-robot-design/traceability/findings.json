@@ -3716,6 +3716,26 @@
       "title": "F-123/F-133/F-369 同族邻位残留：units/requirements.md 卡头「文档版本」行已随 WP-14-T07 推进 v0.7（F-369 所指缺陷实测已消除）并显式注明补正，但同表头「日期」行（行 8）仍为「2026-09-26（v0.5）；2026-09-22（v0.1）」——日期值 2026-09-26 对 v0.7 仍准确（同日），仅版本括注停留 v0.5 未随 v0.6/v0.7 推进；纯标注滞后、validate-docs 不校验该维度，机检未红",
       "owner": "requirements 文档所有者（随下次触及 units/requirements.md 的任务把「日期」行括注推进至当前版本；与 F-369 一并收口后本族即清零）",
       "resolution": "编号顺延自 F-373。"
+    },
+    {
+      "id": "F-375",
+      "source": "traceability/acceptance/WP-14-T08-20260926.md §4.3/§4.8（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-300/F-358/F-367/F-368/F-371/F-373 家族新例：tasks/foundation/WP-14-T08.json verify 数组仅 3 行（sdurws_ird_requirements_plugin 构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_requirements_test 与 sdurws_ird_requirements_contract_test 两测试目标构建行——ctest 条目虽按名执行两目标但契约未登记其构建动作；验收者已在全新构建树（D:/acc_t08/build-int）自行补建两目标后执行 ctest（验收者侧正常动作，非缺陷回避），结论不受影响",
+      "owner": "治理面（与家族既往条目同口径：契约收尾/后续治理任务随 WP-14-T08 翻转时在 verify 数组补两行测试目标构建命令；或按 F-300 家族总处置一次收口）",
+      "resolution": "编号顺延自 F-374。"
+    },
+    {
+      "id": "F-376",
+      "source": "traceability/acceptance/WP-14-T08-20260926.md §4.9/§4.8（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343/F-354/F-360/F-370 散文计数家族新例：WP-14-T08 两个送验提交正文、留痕 traceability/builds/wp14-t08/verification-summary.md §2 表、v22-gui-flow-registration.md（两处）与 units/requirements.md §14.6 v0.8 行均称 test/PluginPanelTest.cpp 为『14 用例』——实测（实现提交 42cce92a 版本即如此；验收者全新集成/冒烟两构建树 gtest XML tests=\"20\" failures=\"0\"＋ird-test-report-unit.json PluginPanel 20 条三者一致）为 20 用例；机器产物全部如实且散文为少报方向（14<20，无粉饰），纯起草期计数未随用例扩充更新。unit 卡 v0.8 行的散文在后续触及该卡时以机器产物为准修正",
+      "owner": "requirements 文档所有者（units/requirements.md §14.6 v0.8 行散文修正归下次触及该卡的任务；留痕与提交正文已成历史不改——本条登记即为留证）",
+      "resolution": "编号顺延自 F-375。"
     }
   ]
 }
