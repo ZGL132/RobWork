@@ -1,0 +1,9 @@
+RWS_BUILD_INDUSTRIALROBOT:BOOL=ON
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\wt-wp14-t09\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\wt-wp14-t09\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_testdata_lint
+  Building Custom Rule D:/10_Source_Repos/21_robot/wt-wp14-t09/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  main.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_testdata_lint.vcxproj -> D:\10_Source_Repos\21_robot\wt-wp14-t09\build\RobWorkStudio\bin\Release\sdurws_ird_testdata_lint.exe

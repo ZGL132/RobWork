@@ -1,0 +1,163 @@
+{
+  "schema": "req-payload-events-expected/1",
+  "generatedBy": "generate/make_payload_events_golden.mjs",
+  "note": "负载事件黄金期望（contract-fixture——SourcedValue 四态全谱/事件绑定/适用范围独立转写；零值/近零/正负抵消样例置位）",
+  "payloadProjections": [
+    {
+      "condition": "PE-full",
+      "payloadIndex": 0,
+      "toolRef": {
+        "objectId": "obj-3d000000000000000000000000000001",
+        "tcpKey": "tcp1"
+      },
+      "mass": {
+        "state": "provided",
+        "value": 12.5
+      },
+      "com": {
+        "state": "provided",
+        "value": [
+          0.05,
+          -0.05,
+          1e-18
+        ]
+      },
+      "inertia": {
+        "state": "provided",
+        "value": 0.125
+      }
+    },
+    {
+      "condition": "PE-full",
+      "payloadIndex": 1,
+      "toolRef": {
+        "objectId": "obj-3d000000000000000000000000000001",
+        "tcpKey": "tcp2"
+      },
+      "mass": {
+        "state": "provided",
+        "value": 0
+      },
+      "com": {
+        "state": "not-applicable"
+      },
+      "inertia": {
+        "state": "not-provided"
+      }
+    },
+    {
+      "condition": "PE-partial",
+      "payloadIndex": 0,
+      "toolRef": {
+        "objectId": "obj-3d000000000000000000000000000001",
+        "tcpKey": "tcp1"
+      },
+      "mass": {
+        "state": "not-provided"
+      },
+      "com": {
+        "state": "not-provided"
+      },
+      "inertia": {
+        "state": "invalid",
+        "raw": "12,5"
+      }
+    }
+  ],
+  "eventTable": [
+    {
+      "condition": "PE-full",
+      "seq": 1,
+      "type": "Grasp",
+      "stationRef": "obj-1a000000000000000000000000000001",
+      "durationS": null,
+      "hasDuration": false
+    },
+    {
+      "condition": "PE-full",
+      "seq": 2,
+      "type": "Release",
+      "stationRef": "obj-1a000000000000000000000000000002",
+      "durationS": null,
+      "hasDuration": false
+    },
+    {
+      "condition": "PE-full",
+      "seq": 3,
+      "type": "Dwell",
+      "stationRef": "obj-1a000000000000000000000000000002",
+      "durationS": 0,
+      "hasDuration": true
+    },
+    {
+      "condition": "PE-full",
+      "seq": 4,
+      "type": "Dwell",
+      "stationRef": "obj-1a000000000000000000000000000003",
+      "durationS": 1.5,
+      "hasDuration": true
+    },
+    {
+      "condition": "PE-partial",
+      "seq": 1,
+      "type": "Dwell",
+      "stationRef": "obj-1a000000000000000000000000000003",
+      "durationS": 1.5,
+      "hasDuration": true
+    }
+  ],
+  "appliesToTable": [
+    {
+      "condition": "PE-full",
+      "scope": "Stations",
+      "stations": [
+        "obj-1a000000000000000000000000000001",
+        "obj-1a000000000000000000000000000002"
+      ],
+      "stationCount": 2
+    },
+    {
+      "condition": "PE-partial",
+      "scope": "AllStations",
+      "stations": [],
+      "stationCount": 0
+    },
+    {
+      "condition": "PE-idle",
+      "scope": "None",
+      "stations": [],
+      "stationCount": 0
+    }
+  ],
+  "negativeExpectations": [
+    {
+      "case": "duplicate-name",
+      "expectedErrorCode": "DuplicateName",
+      "expectedEffect": "construction-rejected",
+      "note": "工况名与既有条目重复（I-REQ-3 集合内唯一——构造边界拒绝，不静默加后缀）"
+    },
+    {
+      "case": "stations-empty",
+      "expectedErrorCode": "IllegalTolerance",
+      "expectedEffect": "construction-rejected",
+      "note": "appliesTo scope=Stations 而显式清单为空（§4.7 非法组合）"
+    },
+    {
+      "case": "dangling-station-ref",
+      "expectedErrorCode": null,
+      "expectedEffect": "construction-accepted-readiness-blocking",
+      "note": "事件绑定悬空工位（stationRef 为有效 ObjectId 但不在闭包——构造边界只查结构半区，收下该条目；跨闭包存在性归就绪层 R4 拦截——§8.1 分层语义）"
+    },
+    {
+      "case": "invalid-mass-empty-raw",
+      "expectedEffect": "core-factory-rejected",
+      "note": "invalid 态空原串（core SourcedValue 工厂拒绝——非法态必须保留原串）"
+    }
+  ],
+  "edgeCases": {
+    "zeroValue": "PE-full.payload[1].mass=0.0（零值 provided 合法——空载非缺失）与 Dwell durationS=0.0（零持续字面——与 null 严格区分）",
+    "nearZero": "PE-full.payload[0].com.z=1e-18（近零样本——IEEE754 位模式保真）",
+    "signCancellation": "PE-full.payload[0].com x+y=0（正负抵消——分量级保真）",
+    "invalidRaw": "PE-partial.payload[0].inertia invalid 保留原串 \"12,5\"（NFR-COR-3 不清洗）"
+  }
+}

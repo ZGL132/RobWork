@@ -1,0 +1,157 @@
+{
+  "schema": "req-partial-pose-fixture-input/1",
+  "description": "部分位姿约束契约夹具输入（WP-14-T09；units/requirements.md §10.1 数据集 2/4——constrainedDof 部分掩码＋五姿态规则样例＋构造边界负样例）。正向点经 createPoint 构造边界重建后断言掩码/四态/参数字面保真（NFR-COR-3 不改写输入）；negativeCases 逐条经 validateTaskPoint/validateOrientationRule 断言首个违例码（不静默转默认——负样例逐条）。全部 ObjectId 固定十六进制。",
+  "points": [
+    {
+      "id": "obj-2b000000000000000000000000000001",
+      "name": "PP-z-roll",
+      "level": "Must",
+      "enabled": true,
+      "processTag": "Generic",
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "pose": {
+        "position": { "state": "provided", "value": [0.1, 0.2, 0.3] },
+        "constrainedDof": { "x": false, "y": false, "z": true, "roll": true, "pitch": false, "yaw": false },
+        "orientation": { "kind": "Fixed", "fixedRpy": [3.141592653589793, 0.0, -1.5707963267948966] }
+      },
+      "tolerance": { "positionTolerance": 0.001, "orientationTolerance": 0.017453292519943295 },
+      "segments": {
+        "approach": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 },
+        "work": { "enabled": true, "axis": "ToolZ", "distanceM": 1.0 },
+        "retract": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 }
+      },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "部分掩码：仅 z＋roll 受约束（其余分量自由——解空间解释归下游）；Fixed rpy 含 ±π/−π/2 等效角字面（D-REQ-3 不归一）"
+    },
+    {
+      "id": "obj-2b000000000000000000000000000002",
+      "name": "PP-orientation-only",
+      "level": "Must",
+      "enabled": true,
+      "processTag": "Generic",
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "pose": {
+        "position": { "state": "not-provided" },
+        "constrainedDof": { "x": false, "y": false, "z": false, "roll": true, "pitch": true, "yaw": true },
+        "orientation": { "kind": "ToolRollFree", "rollRange": { "min": -0.5, "max": 0.5 } }
+      },
+      "tolerance": { "positionTolerance": 0.002, "orientationTolerance": 0.03490658503988659 },
+      "segments": {
+        "approach": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 },
+        "work": { "enabled": true, "axis": "ToolZ", "distanceM": 1.0 },
+        "retract": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 }
+      },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "纯姿态约束：position 未提供（四态 not-provided 合法——缺失≠0）；ToolRollFree 区间 [−0.5,0.5] rad 字面"
+    },
+    {
+      "id": "obj-2b000000000000000000000000000003",
+      "name": "PP-align-frame",
+      "level": "Should",
+      "enabled": true,
+      "processTag": "Generic",
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "ModelFrame", "objectId": "obj-3e000000000000000000000000000001" },
+      "pose": {
+        "position": { "state": "provided", "value": [0.15, 0.0, 0.25] },
+        "constrainedDof": { "x": true, "y": false, "z": false, "roll": false, "pitch": false, "yaw": false },
+        "orientation": { "kind": "AlignFrame", "targetFrame": { "kind": "ModelFrame", "objectId": "obj-3e000000000000000000000000000001" } }
+      },
+      "tolerance": { "positionTolerance": 0.001, "orientationTolerance": 0.017453292519943295 },
+      "segments": {
+        "approach": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 },
+        "work": { "enabled": true, "axis": "ToolZ", "distanceM": 1.0 },
+        "retract": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 }
+      },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "AlignFrame 对齐模型参考系（obj-3e…01＝robot-design 承载对象；refFrame 同系）"
+    },
+    {
+      "id": "obj-2b000000000000000000000000000004",
+      "name": "PP-normal",
+      "level": "Should",
+      "enabled": true,
+      "processTag": "Generic",
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "pose": {
+        "position": { "state": "provided", "value": [0.05, 0.05, 0.05] },
+        "constrainedDof": { "x": false, "y": false, "z": true, "roll": false, "pitch": false, "yaw": false },
+        "orientation": { "kind": "AlignGeometryNormal", "targetSceneObject": "obj-3f000000000000000000000000000001", "feature": "FramePlaneNormal", "invertNormal": true }
+      },
+      "tolerance": { "positionTolerance": 0.001, "orientationTolerance": 0.017453292519943295 },
+      "segments": {
+        "approach": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 },
+        "work": { "enabled": true, "axis": "ToolZ", "distanceM": 1.0 },
+        "retract": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 }
+      },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "AlignGeometryNormal 对场景对象面法向（feature 显式给出＋法向取反标志字面）"
+    },
+    {
+      "id": "obj-2b000000000000000000000000000005",
+      "name": "PP-point-at",
+      "level": "Must",
+      "enabled": true,
+      "processTag": "Inspect",
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "pose": {
+        "position": { "state": "provided", "value": [0.0, 0.0, 0.4] },
+        "constrainedDof": { "x": false, "y": false, "z": false, "roll": false, "pitch": true, "yaw": true },
+        "orientation": { "kind": "PointAtTarget", "targetPoint": [0.0, 0.0, 0.4] }
+      },
+      "tolerance": { "positionTolerance": 0.001, "orientationTolerance": 0.017453292519943295 },
+      "segments": {
+        "approach": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 },
+        "work": { "enabled": true, "axis": "ToolZ", "distanceM": 1.0 },
+        "retract": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 }
+      },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "PointAtTarget 轴上目标（0,0,0.4）——参考方向＝目标归一化（0,0,1）；position 含零分量字面（x=y=0 保真非抹零）"
+    }
+  ],
+  "negativeCases": [
+    {
+      "case": "zero-vector-target",
+      "note": "PointAtTarget 零向量目标（§5.3 反例——目标点不退化为零向量）",
+      "orientation": { "kind": "PointAtTarget", "targetPoint": [0.0, 0.0, 0.0] },
+      "expectedErrorCode": "ZeroVectorTarget"
+    },
+    {
+      "case": "roll-range-inverted",
+      "note": "ToolRollFree rollRange 逆序（min≥max——区间为空/倒置）",
+      "orientation": { "kind": "ToolRollFree", "rollRange": { "min": 0.5, "max": -0.5 } },
+      "expectedErrorCode": "IllegalTolerance"
+    },
+    {
+      "case": "missing-feature",
+      "note": "AlignGeometryNormal 缺 feature（特征必须显式给出）",
+      "orientation": { "kind": "AlignGeometryNormal", "targetSceneObject": "obj-3f000000000000000000000000000001" },
+      "expectedErrorCode": "IllegalTolerance"
+    },
+    {
+      "case": "all-dof-free",
+      "note": "constrainedDof 全 false（I-REQ-5——任务点至少约束一个分量）",
+      "pose": {
+        "position": { "state": "provided", "value": [0.1, 0.1, 0.1] },
+        "constrainedDof": { "x": false, "y": false, "z": false, "roll": false, "pitch": false, "yaw": false },
+        "orientation": { "kind": "Fixed", "fixedRpy": [0.0, 0.0, 0.0] }
+      },
+      "expectedErrorCode": "AllDofFree"
+    },
+    {
+      "case": "zero-tolerance",
+      "note": "容差 0（I-REQ-5——两分量 >0 且有限；不静默取默认值）",
+      "tolerance": { "positionTolerance": 0.0, "orientationTolerance": 0.017453292519943295 },
+      "expectedErrorCode": "IllegalTolerance"
+    }
+  ]
+}

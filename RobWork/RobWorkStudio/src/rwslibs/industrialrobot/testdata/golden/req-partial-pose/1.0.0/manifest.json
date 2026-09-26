@@ -1,0 +1,93 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "req-partial-pose",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "req/partial-pose-contract",
+  "coveredRequirements": [
+    "REQ-01",
+    "REQ-09",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-23"
+  ],
+  "toleranceProfile": {
+    "id": "req-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/partial-pose.json"
+  ],
+  "expected": [
+    "expected/partial-pose-expected.json"
+  ],
+  "parameters": {
+    "contract": "requirements 部分位姿约束面（§4.3 PoseConstraint/constrainedDof）＋五姿态规则（§5.3）＋构造边界负样例（§4.7 I-REQ-5）",
+    "entryFaces": {
+      "masks": "expected/pointProjections.constrainedDof——六分量掩码（部分约束＝解空间自由面交下游解释）",
+      "fourStates": "position not-provided 合法态（缺失≠0——NFR-COR-3 类型面承载；PP-orientation-only 纯姿态点）",
+      "literals": "Fixed rpy 参数字面不归一（D-REQ-3）；ToolRollFree 区间字面；AlignGeometryNormal feature/invertNormal 字面",
+      "negative": "expected/negativeExpectations——零向量/逆序区间/缺 feature/全自由/零容差逐条首违例码（不静默转默认）"
+    },
+    "framesNote": "PP-align-frame 的 refFrame 与 AlignFrame 目标同为 ModelFrame（obj-3e…01）——浅引用元数据核对语义（数值姿态解析归评估）"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad"
+  },
+  "frames": {
+    "base": "robot-base"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "req-partial-pose-transcribe",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-26T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/partial-pose-expected.json#pointProjections[1].positionState（not-provided——零值语义的四态承载）",
+      "expected/partial-pose-expected.json#pointProjections[4].positionValue（[0,0,0.4]——零分量保真/近零语义）",
+      "inputs/partial-pose.json#points[4].pose.position（x=y=0 字面不抹零——正负抵消的分量级保真同源）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/partial-pose.json",
+      "sha256": "1477cb3ffaa95f596388a96b21fe48633b6cb18c67f27dbcb8f8c1683088db7a",
+      "sizeBytes": 8112
+    },
+    {
+      "path": "expected/partial-pose-expected.json",
+      "sha256": "90838f46b1e50e6ce03d4bb4b4fd234cb17c11f28d391e5fb5ee7f9c86099782",
+      "sizeBytes": 3890
+    },
+    {
+      "path": "generate/make_partial_pose_golden.mjs",
+      "sha256": "c3a79dd2204186c07837f868f7dc3095357672f6caf51715240671d88f0d4763",
+      "sizeBytes": 4968
+    }
+  ],
+  "generator": {
+    "script": "generate/make_partial_pose_golden.mjs",
+    "invocation": "node generate/make_partial_pose_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-26",
+      "change": "首版：部分位姿约束契约夹具（六分量掩码/四态缺失/五姿态规则字面保真＋五条构造边界负样例）——WP-14-T09 §10.1 数据集 2/4（V-03/AT-23 载体）",
+      "reReviewedBy": "WP-14-T09 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

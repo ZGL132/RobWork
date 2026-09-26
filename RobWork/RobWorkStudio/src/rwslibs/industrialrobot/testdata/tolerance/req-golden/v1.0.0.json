@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "req-golden",
+  "version": "1.0.0",
+  "basis": "appendixD#12（身份/名称/枚举与设计默认值字面精确等值——无容差）＋appendixD#4（零参考退化 ε_abs=0 的字节级等值极限形态）。requirements 单元黄金数据集（req-transport-task/req-partial-pose/req-region-sampling/req-payload-events，WP-14-T09）为设计默认值字面锁定与整数计数/位级保真数据集：全部断言为身份精确等值与 canonical 字节逐字节对照、IEEE754 位级保真（floor 规则的近零位差决定采样计数——0.6/0.2 位级偏差锁定）。本档案不承载任何放宽的数值容差；条目以 absolute 0 的零宽容差登记黄金对照字段的档案通道（语义＝字节级等值），供消费侧以档案通道引用这些字段时解析——直接消费请使用精确等值断言（IRD_EXPECT_IDENTICAL 同口径）。",
+  "entries": [
+    {
+      "fieldPath": "req.tolerance.position",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：§4.3 ToleranceSpec 设计默认 1e-3 m 为黄金字面（第 12 项精确等值）；零宽容差＝字节级等值的档案化表达，宽于零＝允许近似漂移（伪造）"
+    },
+    {
+      "fieldPath": "req.tolerance.orientation",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：π/180 rad 设计默认黄金字面（不归一等效角——D-REQ-3）"
+    },
+    {
+      "fieldPath": "req.sampling.counts[*]",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：D-REQ-2 规范化计数为整数（floor 位级行为锁定——近零位差即换数）"
+    },
+    {
+      "fieldPath": "req.plan.position-samples",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：计划分母 ∏counts（V-19 联合观测的 requirements 侧核算输入——整数精确）"
+    },
+    {
+      "fieldPath": "req.plan.orientation-samples",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：计划分母 directionSamples×rollSamples（整数精确）"
+    },
+    {
+      "fieldPath": "req.payload.mass",
+      "quantityKind": "mass",
+      "unit": "kg",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：负载质量黄金字面（零值 0.0 provided 合法——缺失≠0 的对照面）"
+    },
+    {
+      "fieldPath": "req.coverage.min-position",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：覆盖率目标 0.8 设计默认/0.5 显式字面（∈[0,1] 越界即构造拒绝——不容差）"
+    }
+  ]
+}

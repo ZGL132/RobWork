@@ -1,0 +1,94 @@
+{
+  "schema": "req-region-sampling-expected/1",
+  "generatedBy": "generate/make_region_sampling_golden.mjs",
+  "note": "区域与采样黄金期望（contract-fixture——D-REQ-2 floor 规则/计划分母独立重算；同义计划对计数相等；零样本分母 0 合法）",
+  "plans": [
+    {
+      "planId": "obj-2d000000000000000000000000000001",
+      "region": "RS-grid",
+      "method": "Grid",
+      "changed": false,
+      "counts": [
+        2,
+        3,
+        4
+      ],
+      "positionSamples": 24,
+      "orientationSamples": 12
+    },
+    {
+      "planId": "obj-2d000000000000000000000000000002",
+      "region": "RS-spacing-a",
+      "method": "GridBySpacing",
+      "changed": true,
+      "counts": [
+        3,
+        3,
+        2
+      ],
+      "positionSamples": 18,
+      "orientationSamples": 48
+    },
+    {
+      "planId": "obj-2d000000000000000000000000000003",
+      "region": "RS-spacing-b",
+      "method": "GridBySpacing",
+      "changed": true,
+      "counts": [
+        3,
+        3,
+        2
+      ],
+      "positionSamples": 18,
+      "orientationSamples": 48
+    },
+    {
+      "planId": "obj-2d000000000000000000000000000004",
+      "region": "RS-zero",
+      "method": "Grid",
+      "changed": false,
+      "counts": [
+        0,
+        2,
+        2
+      ],
+      "positionSamples": 0,
+      "orientationSamples": 1
+    }
+  ],
+  "synonymPlanPair": {
+    "regions": [
+      "RS-spacing-a",
+      "RS-spacing-b"
+    ],
+    "countsEqual": true,
+    "rule": "同义计划（不同 spacing 规范化到同 counts）→同一采样内容身份输入（D-REQ-2：planContentIdentity 以规范化计数计算——normalizeSampling 产出相等）；计划条目字节因 regionRef 指向不同区域而不同，采样身份面相同"
+  },
+  "zeroSamplePlan": {
+    "region": "RS-zero",
+    "positionSamples": 0,
+    "legal": true,
+    "note": "零样本判定归评估（KIN-04 R8 DataInsufficient）——本单元存储/编码合法（V-02）"
+  },
+  "negativeExpectations": [
+    {
+      "case": "degenerate-box",
+      "expectedErrorCode": "DegenerateRegion",
+      "note": "区域盒退化（size 含 0——I-REQ-6 三分量 >0 且有限）"
+    },
+    {
+      "case": "zero-spacing",
+      "expectedErrorCode": "IllegalTolerance",
+      "note": "GridBySpacing 间距 0（间距三分量正有限）"
+    },
+    {
+      "case": "coverage-out-of-range",
+      "expectedErrorCode": "DegenerateRegion",
+      "note": "覆盖率越界（∈[0,1]——1.5 非法，不截断不静默）"
+    }
+  ],
+  "coverageDefaults": {
+    "minPositionCoverage": 0.8,
+    "basis": "units/requirements.md §4.4 CoverageTargets 设计默认（黄金锁定）；RS-zero 显式 0.5 字面保真"
+  }
+}
