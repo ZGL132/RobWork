@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现结果筛选/导出/批量复算域内设施（KIN-08）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T05"
   ],
