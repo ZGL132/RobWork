@@ -940,6 +940,11 @@ void WorkbenchContentImpl::assembleCommandSystem()
             // 装配层覆写（§11.5 同型——UI-T17）：宿主插件的关闭编排
             // （§5.4 统一确认对话框＋Draining 防线驱动；未注入＝占位）。
             handler = m_deps.closeProjectHandler.value();
+        } else if (std::string_view(row.id) == "draft.apply"
+                   && m_deps.applyDraftHandler.has_value()) {
+            // 装配层覆写（WP-24-T03b-2 增量——§8.5 应用编排）：宿主的
+            // 域信封组装＋命令网关提交＋回执回写（未注入＝占位说明）。
+            handler = m_deps.applyDraftHandler.value();
         } else {
             // 占位说明处理器（阶段 A 契约显式形态——accepted=true：提交
             // 链路真实走通，能力面以 §11.4 说明呈现）。

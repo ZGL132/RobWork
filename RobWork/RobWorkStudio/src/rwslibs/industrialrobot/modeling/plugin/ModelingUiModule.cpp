@@ -136,6 +136,39 @@ QWidget* ModelingUiModule::createPanel()
 }
 
 // =====================================================================
+// 会话锚定与应用回执（T03b-2——apply 网关的模块半区）
+// =====================================================================
+
+void ModelingUiModule::bindSessionAnchor(const core::BranchId& branch,
+                                         const core::RevisionId& base)
+{
+    m_guard.assertOnUiThread();
+    m_session.branch = branch;
+    m_session.baseRevision = base;
+    if (m_panel != nullptr) {
+        // 锚定后立即重投影（新会话上下文——面板呈现与信封组装同源）。
+        m_panel->refreshPanel(m_session.draft,
+                              m_session.readiness.value_or(ModelReadinessReport{}));
+    }
+}
+
+void ModelingUiModule::noteAppliedRevision(
+    const core::RevisionId& newBase,
+    const std::optional<core::ObjectId>& rootObjectId)
+{
+    m_guard.assertOnUiThread();
+    // 应用成功（§8.5 onCommandResult Committed 的域侧对账）：编辑基线前移
+    // （Stale 判据锚更新）；根对象身份回填（下一轮 apply 走"既有对象替换"
+    // ——allocateNew 不再重复分配）；已应用的编辑记录清零（changes 是
+    // "未应用编辑"的账面——应用即消费）。
+    m_session.baseRevision = newBase;
+    if (rootObjectId.has_value()) {
+        m_session.draft.rootObjectId = rootObjectId;
+    }
+    m_session.draft.changes.clear();
+}
+
+// =====================================================================
 // 模块草稿源（T03b-1——ui::IModuleDraftSource 四方法；§10.5）
 // =====================================================================
 

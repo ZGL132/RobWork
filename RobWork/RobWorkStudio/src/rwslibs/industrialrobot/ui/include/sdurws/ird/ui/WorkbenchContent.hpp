@@ -145,6 +145,11 @@ struct WorkbenchContentDeps {
     /// 关闭编排：beginClose→统一确认对话框→resolveCloseDialog→Draining
     /// 防线驱动；nullopt＝阶段 A 占位）。
     std::optional<ICommandRegistry::CommandHandler> closeProjectHandler;
+    /// draft.apply 的装配期处理器覆写（WP-24-T03b-2 增量——§8.5 应用编排：
+    /// 域信封组装→命令网关提交→回执回写 onCommandResult；未注入＝§7.1
+    /// 占位说明处理器，harness 形态不变。覆写只换处理器，描述符/谓词/
+    /// 门控零变化——同上方三覆写的既有模式）。
+    std::optional<ICommandRegistry::CommandHandler> applyDraftHandler;
 };
 
 // =====================================================================

@@ -48,6 +48,24 @@ void ModelingPluginAssembly::seedTemplateSession()
     }
 }
 
+void ModelingPluginAssembly::bindSessionAnchor(
+    const sdurws::ird::core::BranchId& branch,
+    const sdurws::ird::core::RevisionId& base)
+{
+    if (m_impl != nullptr) {
+        m_impl->bindSessionAnchor(branch, base);
+    }
+}
+
+void ModelingPluginAssembly::noteAppliedRevision(
+    const sdurws::ird::core::RevisionId& newBase,
+    const std::optional<sdurws::ird::core::ObjectId>& rootObjectId)
+{
+    if (m_impl != nullptr) {
+        m_impl->noteAppliedRevision(newBase, rootObjectId);
+    }
+}
+
 ui::IModuleDraftSource& ModelingPluginAssembly::modelingDraftSource() const
 {
     // 多重继承静态转换（IPluginUiModule＋IModuleDraftSource 双基——同一
