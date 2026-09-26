@@ -169,6 +169,61 @@ private:
     std::function<void(std::shared_ptr<app::StorePortAdapter>)> m_onStoreCaptured;
 };
 
+// =====================================================================
+// 确认交互适配器（T03b-2c——project::ICommandInteraction 的宿主实现）
+// =====================================================================
+// 定位：submit 的 Confirmable 集（如行程超限 SA-15）经本适配器呈现确认
+// 对话框；凭据＝"local-owner"＋UTC 时刻（开发通道主体——正式主体采集
+// 归收口增量）。诚实偏差登记：ui.md §7.7 要求确认呈现不重入（QDialog::
+// open 非阻塞），本适配器在 UI 线程同步 submit 路径上使用模态 question
+// 对话框——模态嵌套事件循环在开发通道可接受，收口时迁 CommandInteraction
+// Bridge 的 Marshal 形态（登记 ui.md §16.7 下一行）。
+class HostCommandInteraction final : public project::ICommandInteraction {
+public:
+    HostCommandInteraction(QWidget* parent, std::function<bool()> alive)
+        : m_parent(parent), m_alive(std::move(alive))
+    {
+    }
+
+    bool isAlive() const override { return m_alive(); }
+
+    std::optional<std::vector<core::ConfirmationCredential>>
+    requestConfirmations(const std::vector<core::ConfirmableFinding>& findings) override
+    {
+        if (findings.empty()) {
+            return std::vector<core::ConfirmationCredential>{};
+        }
+        // 逐项三要素汇总（context/cause/recommendedAction——ERR-01 顺序）。
+        QString detail;
+        for (const auto& finding : findings) {
+            detail += QString::fromUtf8("・%1\n  原因：%2\n  建议：%3\n")
+                          .arg(QString::fromStdString(finding.record.context),
+                               QString::fromStdString(finding.record.cause),
+                               QString::fromStdString(finding.record.recommendedAction));
+        }
+        const auto answer = QMessageBox::question(
+            m_parent, QString::fromUtf8("建模修订待确认项"),
+            QString::fromUtf8("存在需人工确认的比较型事项（SA-15，确认将留痕计入修订摘要）：\n\n")
+                + detail,
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        if (answer != QMessageBox::Yes) {
+            return std::nullopt;  // 整体拒绝（§5.3.3）
+        }
+        const auto now = std::chrono::system_clock::now();
+        std::vector<core::ConfirmationCredential> credentials;
+        credentials.reserve(findings.size());
+        for (std::size_t i = 0; i < findings.size(); ++i) {
+            credentials.push_back(core::ConfirmationCredential{
+                std::string("local-owner"), now});
+        }
+        return credentials;
+    }
+
+private:
+    QWidget* m_parent = nullptr;                    ///< 对话框父（宿主控件）
+    std::function<bool()> m_alive;                  ///< 会话存活探针（§5.3.3）
+};
+
 }  // namespace
 
 // =====================================================================
@@ -1151,10 +1206,13 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
         return out;
     }
 
-    // 提交（§5.3.1——submit 唯一写路径；nullptr 交互＝非交互提交，确认
-    // 集存在即 Rejected(confirmations-unresolved)——不虚构放行）。
+    // 提交（§5.3.1——submit 唯一写路径）。确认交互经宿主适配器：Confirmable
+    // 集（如行程超限）弹确认对话框，确认凭据留痕进修订摘要（SA-15）。
+    HostCommandInteraction interaction(
+        m_dockBody.data(),
+        [this] { return m_controller && m_controller->hasOpenSession(); });
     const project::CommandResult result =
-        store.commands().submit(*envelope, nullptr);
+        store.commands().submit(*envelope, &interaction);
 
     // 回执投影＋控制器回写（§10.5 onCommandResult——脏标记清零/撤销栈
     // 清理/Stale 冲突暂存——UI 半区已落位）。
@@ -1208,7 +1266,7 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
         using Rj = project::CommandStatus::Rejection;
         const char* text = "建模修订被拒绝";
         if (result.status.rejection == Rj::StaleRevision) { text = "建模修订被拒：草稿基线已过期（分支有新提交）"; }
-        else if (result.status.rejection == Rj::ConfirmationsUnresolved) { text = "建模修订待确认项需交互确认（确认桥随收口接线）"; }
+        else if (result.status.rejection == Rj::ConfirmationsRejected) { text = "您否决了待确认项——建模修订未提交"; }
         else if (result.status.rejection == Rj::NotWritable) { text = "项目为只读——建模修订被拒"; }
         else if (result.status.rejection == Rj::HardAssertFailed) { text = "建模修订被拒：物理合法性断言未通过（详见诊断）"; }
         if (m_hostStatusBar != nullptr) {
