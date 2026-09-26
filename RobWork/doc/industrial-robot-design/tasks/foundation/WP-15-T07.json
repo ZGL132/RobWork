@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "接入 policy 碰撞证据并落实 KIN-05 语义（④端口）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T04",
     "POL-T07"
