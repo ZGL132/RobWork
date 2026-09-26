@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "落位 kinematics 计算库真实目标并登记门禁白名单六边",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "CORE-T01"
   ],
