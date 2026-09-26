@@ -40,6 +40,16 @@
 # 独立冒烟模式必须带 vcpkg toolchain 参数方可解析（CORE-T01 G-2 口径）。
 find_package(GTest CONFIG REQUIRED)
 
+# ---- Qt6 接入（WP-14-T08——插件目标的 Qt 载体面，R-3 唯一例外面）----
+# 仅插件目标消费 Qt（卡 §3.2"_plugin 落位（Widgets，仅插件目标链接 Qt）"；
+# 计算库 sdurws_ird_requirements 保持零 Qt——R-3/NFR-MNT-01，下方链接块不
+# 含任何 Qt 目标）。组件＝Core/Gui/Widgets（Widgets 是面板本体、Gui 因
+# ui::CommandDescriptor 的 QKeySequence 经头传染、Core 为 Qt 基面；不取
+# Test——本单元无 GUI 测试目标，V-22 GUI 用例仅登记流程，卡 §10.2"本次
+# 不启动"）。REQUIRED 同 gtest：找不到即配置失败（不静默跳过插件目标）。
+# modeling WP-13-T15 同款先例。
+find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 # T02 源码集＝三公共头的实现翻译单元（头内 token 常量零运行时成本，无需
 # TU；函数面按头分文件——modeling/io 同款布局）：
@@ -176,6 +186,69 @@ if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     add_library(RWS::ird::requirements ALIAS sdurws_ird_requirements)
 endif()
 
+# =====================================================================
+# 插件界面目标 sdurws_ird_requirements_plugin（WP-14-T08 落位——卡 §3.2
+# "T02 预留的插件行兑现"；§9.8 面板信息架构与接线）
+# =====================================================================
+# 形态＝STATIC（SA-01 静态白名单装配——业务插件非动态加载面，产品交付
+# 路径由 L5 装配层链接；与 ui 宿主插件的 MODULE 形态区分：后者是框架
+# RobWorkStudioPlugin 派生的开发期验证通道，本目标是正式装配面）。
+# AUTOMOC＝仅本目标显式开启（DTB §5.1 v0.17 行口径——Q_OBJECT 面板类
+# 所需；集成树全局 CMAKE_AUTOMOC 对既有目标生效与否不影响本显式声明，
+# 冒烟模式默认 OFF 下本属性单独生效——两种模式"仅插件目标携带 moc 面"
+# 登记一致；modeling WP-13-T15 同款先例）。
+# 源码布局＝plugin/ 目录（门禁 R-3 产品面扫描域为 include/**＋src/**，
+# 插件面文件不在其中——与计算库零 Qt 红线的文件域隔离；零 Qt 呈现模型
+# TU 同目录承载，仅本目标与测试目标编译消费，不入 include/——R-2：插件
+# 内部面不跨单元暴露）。
+add_library(sdurws_ird_requirements_plugin STATIC
+    plugin/PanelTreeModel.cpp            # 需求对象树投影（ACC1——根→四分组→条目，零 Qt）
+    plugin/PanelStationModel.cpp         # 工位检查器/五规则显隐表/编辑回填（ACC1/2，零 Qt）
+    plugin/PanelRegionModel.cpp          # 区域表/采样双模式/预览几何（ACC1，零 Qt）
+    plugin/PanelConditionModel.cpp       # 工况表/检查器/必验预览（ACC1，零 Qt）
+    plugin/PanelValidationModel.cpp      # R0~R9 分层/逐项/语义说明（ACC1，零 Qt）
+    plugin/PanelCommandCatalog.cpp       # 九条域命令登记/装配描述符/就绪投影/L-R12（ACC4/5）
+    plugin/PanelEditFlow.cpp             # L-R2/L-R9 编辑流编排＋两级撤销呈现（ACC2/4）
+    plugin/ImportWizardFlow.cpp          # L-R10 导入向导域侧五步流（ACC4）
+    plugin/RequirementsPanelWidget.cpp   # 需求域面板 widget（Q_OBJECT——AUTOMOC 载体）
+    plugin/RequirementsPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
+    plugin/RequirementsUiModule.cpp)     # ui.md §11.2 模块实现＋草稿源（P-REQ-4 冻结面）
+set_target_properties(sdurws_ird_requirements_plugin PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    AUTOMOC ON)   # Q_OBJECT 面板类所需——仅插件目标开启（上方口径）
+
+# 插件目标编译特性/编码：C++17 由被测公共头传染（cxx_std_17 PUBLIC 已在
+# 计算库声明——本目标显式再设防自洽）；/utf-8 同款（plugin/ 中文注释源码）。
+target_compile_features(sdurws_ird_requirements_plugin PUBLIC cxx_std_17)
+if(MSVC)
+    target_compile_options(sdurws_ird_requirements_plugin PRIVATE /utf-8)
+endif()
+
+# 插件私有头解析（plugin/*.hpp——PRIVATE，不外溢；ui/modeling 同款先例）。
+target_include_directories(sdurws_ird_requirements_plugin PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 插件链接面（卡 §3.2 明文"插件目标 → 本单元计算库＋sdurws_ird_ui；
+# 禁止链接任何其他业务域单元（R-1）"；acceptance 3 钉死同面）：
+#   - sdurws_ird_requirements＝本单元计算库（业务判定唯一来源——面板零逻辑）；
+#   - sdurws_ird_ui＝ui 平台公共面（CommandDescriptor/UiTypes/IDraftController
+#     ——已落位公共头直用；IPluginUiRegistrar 未落位面按 P-REQ-8 以卡文
+#     本为基线消费，见 plugin/ 各头 P-REQ-8 注）；
+#   - Qt 三件套＝plugin 分类面（ird_gates R-3 仅查产品面形态——plugin 目标
+#     链接 Qt 为卡 §3.2 sanctioned 的例外面）。
+# ★ 门禁登记说明（ird_gates 引擎直跑口径，modeling T15 同款先例）：插件
+#   链接面恰增 2 处既有模式命中——"requirements->requirements"（自边，
+#   R-1 码面）与"requirements->ui"（表外 SUB），均为卡 §3.2 明文链接面的
+#   引擎解析结果，与 modeling 插件 modeling->modeling/modeling->ui 两行
+#   同型；登记册回填归 WP-01-T03 治理面（本任务 allowedFiles 不含
+#   cmake/ird_gates_whitelist.cmake——按编排者口径出具 base..head 归一化
+#   比对附件，裁决权在验收者）。
+# 单行链接语句＝构建图契约测试的登记形态约束（ui 边与插件目标名同行
+# 可见——BuildGraphContractTest 行扫描口径）。
+target_link_libraries(sdurws_ird_requirements_plugin PUBLIC sdurws_ird_requirements sdurws_ird_ui Qt6::Core Qt6::Gui Qt6::Widgets)
+
 # ---- 测试目标 sdurws_ird_requirements_test（随 WP-14-T02 登记）----
 # 用例面（任务契约 acceptance 逐条具名自证）：
 #   test/ObjectTypesTest.cpp   五对象 token 字面＋三词表（ProcessTag 11/
@@ -224,6 +297,22 @@ endif()
 #                              处置/四类阵列几何/溯源完整零回写/重生成冲突
 #                              不静默覆盖/解除关联/批次整体回滚/删除源提示
 #                              （T07 acceptance 1~5——V-06/V-07、AT-24）
+# T08 增列（tasks/foundation/WP-14-T08.json，acceptance 1~5 具名自证；
+#          QCoreApplication 级模型测试——消费插件目标的呈现模型面，Qt 经
+#          插件目标 PUBLIC 传染；modeling T15 PluginPanelTest 同款先例）：
+#   test/PluginPanelTest.cpp  四面板信息架构投影（ACC1：对象树锚/工位五
+#                          规则显隐＋来源徽标/区域双模式采样＋预览几何/
+#                          工况必验预览/校验 R0~R9 计数＋跳转＋语义说明/
+#                          §10.9 装配描述符）＋编辑→草稿→应用链路（ACC2：
+#                          L-R2 接受刷新＋就地拒绝、L-R3 buildDraftCommand
+#                          信封与 P-REQ-6 不本地复判）＋插件零计算逻辑
+#                          （ACC3：源面扫描——零 Qt 呈现模型/零业务域互链
+#                          include；链接面由下方单行链接语句＋配置期守卫
+#                          承载）＋两级撤销与辅助链路（ACC4：L-R4 两级分离
+#                          /L-R10 向导五步/L-R11 副本导出提示/L-R12 只读
+#                          门控）＋域命令登记（ACC5：九条卡表值/SA-16 零
+#                          默认键/HotkeyBindingTable 无冲突登记/两套命名
+#                          空间分离）——V-22 GUI 流程仅登记不启动（卡 §10.2）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/modeling 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -245,7 +334,8 @@ add_executable(sdurws_ird_requirements_test
     test/CommandHandlersTest.cpp
     test/OrientationResolutionTest.cpp
     test/CaptureTest.cpp
-    test/TemplateArrayTest.cpp)
+    test/TemplateArrayTest.cpp
+    test/PluginPanelTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_test PROPERTIES
@@ -260,11 +350,21 @@ if(MSVC)
 endif()
 
 # 测试链接产品库 sdurws_ird_requirements 同时验证"公共头可被正常 include
-# ＋库可链接"（五边 PUBLIC 传染链随目标自动到达）。sdurws_ird_testkit＝
-# 报告/追溯设施消费面（RecordListener/IRD_TEST_INFO——T-1 允许形态：仅
-# 测试目标链 testkit，产品目标不链）。单行链接语句＝契约测试 T-1 扫描的
-# 登记形态约束（testkit 与测试目标名同行可见——modeling/reporting 同款）。
-target_link_libraries(sdurws_ird_requirements_test PRIVATE sdurws_ird_requirements sdurws_ird_testkit GTest::gtest)
+# ＋库可链接"（五边 PUBLIC 传染链随目标自动到达）。T08 增链插件目标（同
+# 单元被测面——面板呈现模型/命令目录/编辑流/向导流的测试消费面；ird_gates
+# 形态一"测试目标仅允许同单元产品目标"：plugin face 亦属同单元许可集，
+# modeling T15 同款先例）。
+# sdurws_ird_testkit＝报告/追溯设施消费面（RecordListener/IRD_TEST_INFO——
+# T-1 允许形态：仅测试目标链 testkit，产品目标不链）。单行链接语句＝契约
+# 测试 T-1 扫描的登记形态约束（testkit 与测试目标名同行可见——modeling/
+# reporting 同款）。
+target_link_libraries(sdurws_ird_requirements_test PRIVATE sdurws_ird_requirements sdurws_ird_requirements_plugin sdurws_ird_testkit GTest::gtest)
+
+# 插件私有头解析（测试消费 plugin/*.hpp 呈现模型头——同单元 PRIVATE 面；
+# 插件目标自身的 include 已 PRIVATE 自持，测试目标另行声明同路径；
+# modeling T15 同款）。
+target_include_directories(sdurws_ird_requirements_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 # 源码树位置注入：红线扫描用例在运行期扫描 requirements 源码核对红线
 # （零 Qt/零表外 include——§3.2/§14.5）。经编译定义传 industrialrobot 根

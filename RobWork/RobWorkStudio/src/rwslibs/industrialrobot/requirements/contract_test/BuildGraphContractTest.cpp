@@ -17,6 +17,13 @@
  *   - 任务契约 tasks/foundation/WP-14-T02.json acceptance 2（配置期红线
  *     守卫随文件自持）/acceptance 4（_test/_contract_test 随文件注册、
  *     _plugin 不落位）
+ *
+ * ★ T08 落位随附同步（合法登记——tasks/foundation/WP-14-T08.json
+ *   acceptance 3；登记于 units/requirements.md §14.6 v0.8；modeling T15
+ *   同款先例）：原"落位期不得出现 _plugin"断言按 T08 交付翻转——_plugin
+ *   目标本任务落位（卡 §3.1/§3.2 明文），其链接面＝本单元计算库＋
+ *   sdurws_ird_ui＋Qt（插件分类面 sanctioned；ui 边的行级钉住见
+ *   NoBusinessUnitOrExtraPlatformEdge）。
  */
 
 #include <gtest/gtest.h>
@@ -154,12 +161,16 @@ TEST(ReqBuildGraph, UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：五条登记边＋本单元三目标（产品/测试/契约测试）＋
-    // sdurws_ird_testkit（报告设施——T-1 允许形态＝仅测试目标可链，产品
-    // 目标由 NoTestkitEdge 钉住）。
+    // 白名单：五条登记边＋本单元四目标（产品/插件/测试/契约测试——
+    // _plugin 随 WP-14-T08 落位，卡 §3.1/§3.2 原文）＋sdurws_ird_ui
+    // （T08 插件链接面——仅插件目标，行级钉住见 NoBusinessUnitOrExtra
+    // PlatformEdge）＋sdurws_ird_testkit（报告设施——T-1 允许形态＝仅
+    // 测试目标可链，产品目标由 NoTestkitEdge 钉住）。
     std::set<std::string> allowed = {"sdurws_ird_requirements",
+                                     "sdurws_ird_requirements_plugin",
                                      "sdurws_ird_requirements_test",
                                      "sdurws_ird_requirements_contract_test",
+                                     "sdurws_ird_ui",
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(std::string("sdurws_ird_") + u);
@@ -167,14 +178,17 @@ TEST(ReqBuildGraph, UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2)
     for (const auto& ref : refs) {
         EXPECT_NE(allowed.find(ref), allowed.end())
             << "requirements 构建图出现白名单外目标引用（产品单元边仅 "
-               "requirements→core/diagnostics/project/io/evidence 五条——"
-               "requirements.md §3.2、ARCH §3.5；R-1/SUB/T-1）: " << ref;
+               "requirements→core/diagnostics/project/io/evidence 五条＋插件面"
+               "本单元计算库/ui——requirements.md §3.2、ARCH §3.5；R-1/SUB/"
+               "T-1）: " << ref;
     }
-    // 目标形态（卡 §3.1/§3.2/契约 acceptance 4）：_plugin 本任务不落位
-    // （随 WP-14-T08）；_worker 恒不存在（二分结构没有 _worker——需求
-    // 命令在主进程命令执行线程串行，卡 §3.1）。
-    EXPECT_EQ(refs.find("sdurws_ird_requirements_plugin"), refs.end())
-        << "_plugin 目标随 WP-14-T08 落位（契约 acceptance 4——T02 不预建）";
+    // 目标形态（卡 §3.1/§3.2）：_plugin 已随 WP-14-T08 落位（出现即卡面
+    // 原文；链接面＝本单元计算库＋sdurws_ird_ui＋Qt——插件分类面 sanctioned，
+    // modeling WP-13-T15 同款断言翻转先例）；_worker 恒不存在（二分结构
+    // 没有 _worker——需求命令在主进程命令执行线程串行，卡 §3.1）。
+    EXPECT_NE(refs.find("sdurws_ird_requirements_plugin"), refs.end())
+        << "_plugin 目标已随 WP-14-T08 落位（卡 §3.2——T02 期不预建约束已由"
+           "本任务兑现翻转，modeling T15 同款随附同步）";
     EXPECT_EQ(refs.find("sdurws_ird_requirements_worker"), refs.end())
         << "requirements 无 _worker 形态（ARCH §3.3 二分结构；卡 §3.1）";
 }
@@ -222,11 +236,33 @@ TEST(ReqBuildGraph, NoBusinessUnitOrExtraPlatformEdge_WP14T02_ACC2)
         EXPECT_EQ(refs.find(std::string("sdurws_ird_") + business), refs.end())
             << "业务域互链禁止（R-1 无例外——SA-10）: requirements→" << business;
     }
-    // SUB 面：五边之外的平台单元（runtime 未登记边——卡 §3.2 注）。
+    // SUB 面：五边之外的平台单元（runtime 未登记边——卡 §3.2 注；ui 例外
+    // ＝下方行级钉住）。
     for (const char* platform : {"runtime", "execution", "reporting"}) {
         EXPECT_EQ(refs.find(std::string("sdurws_ird_") + platform), refs.end())
             << "表外平台边（白名单外——构建失败面）: requirements→" << platform;
     }
+
+    // ui 边行级钉住（T08 落位随附同步——modeling T15 同款）：剥注释后
+    // 逐行扫描——每条含 sdurws_ird_ui 的语句行必须同时含插件目标名与
+    // target_link_libraries（即插件链接语句；单行链接语句的登记形态约束
+    // 见 CMakeLists 插件链接块注释）。
+    int uiLines = 0;
+    std::istringstream lines(readCMakeLists());
+    std::string line;
+    while (std::getline(lines, line)) {
+        const auto hashPos = line.find('#');
+        if (hashPos != std::string::npos) { line.erase(hashPos); }
+        if (line.find("sdurws_ird_ui") == std::string::npos) { continue; }
+        ++uiLines;
+        EXPECT_TRUE(line.find("sdurws_ird_requirements_plugin") != std::string::npos
+                    && line.find("target_link_libraries") != std::string::npos)
+            << "ui 目标引用只允许落在插件目标链接语句行（T08 卡 §3.2 插件"
+               "链接面——扩散即越权）: " << line;
+    }
+    ASSERT_GT(uiLines, 0)
+        << "插件链接面应已登记 ui 边（T08 卡 §3.2——缺失即插件面回退）；"
+           "计算库/测试目标零 ui 边由上行逐行钉住";
 }
 
 /**
