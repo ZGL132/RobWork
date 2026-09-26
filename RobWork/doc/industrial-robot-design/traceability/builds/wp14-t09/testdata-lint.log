@@ -1,0 +1,15 @@
+lint: 字典 192 个需求 ID（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/requirements-ids.json）
+lint-ok: ev-slice-fixture/1.0.0
+lint-ok: mdl-dh-equivalence/1.0.0
+lint-ok: mdl-not-expressible/1.0.0
+lint-ok: mdl-template-6r/1.0.0
+lint-ok: mdl-urdf-import/1.0.0
+lint-ok: pol-collision-analytic/1.0.0
+lint-ok: pol-policy-codec-fixture/1.0.0
+lint-ok: req-partial-pose/1.0.0
+lint-ok: req-payload-events/1.0.0
+lint-ok: req-region-sampling/1.0.0
+lint-ok: req-transport-task/1.0.0
+lint-ok: rt-fk-equation/1.0.0
+lint-ok: rt-namemap-roundtrip/1.0.0
+lint: 扫描 13 个数据集版本，违规 0
