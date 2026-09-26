@@ -1,0 +1,76 @@
+Note: Google Test filter = KinIk.SolutionSetView*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinIk
+[ RUN      ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(874): error: Expected equality of these values:
+  sorted[0].sourceInitIndex
+    Which is: 5
+  1U
+    Which is: 1
+键 1：margin 降序居首
+
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(875): error: Expected equality of these values:
+  sorted[1].sourceInitIndex
+    Which is: 8
+  5U
+    Which is: 5
+键 2/3：manip 0.9 组内距离近者优先，平手键 4 取小 init 序
+
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(877): error: Expected equality of these values:
+  sorted[2].sourceInitIndex
+    Which is: 3
+  8U
+    Which is: 8
+键 4：与上全平 init 8 殿后
+
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(878): error: Expected equality of these values:
+  sorted[3].sourceInitIndex
+    Which is: 1
+  3U
+    Which is: 3
+键 3：距离 1.414 靠后
+
+[  FAILED  ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3 (2 ms)
+[ RUN      ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(913): error: Expected equality of these values:
+  view.sorted()[0].sourceInitIndex
+    Which is: 2
+  0U
+    Which is: 0
+
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(914): error: Expected equality of these values:
+  view.sorted()[1].sourceInitIndex
+    Which is: 0
+  2U
+    Which is: 2
+
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(925): error: Expected equality of these values:
+  worstCond->solutionIndex
+    Which is: 0
+  1U
+    Which is: 1
+
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(934): error: Expected equality of these values:
+  reachable[0].sourceInitIndex
+    Which is: 2
+  0U
+    Which is: 0
+
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(935): error: Expected equality of these values:
+  reachable[1].sourceInitIndex
+    Which is: 0
+  2U
+    Which is: 2
+
+[  FAILED  ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3 (0 ms)
+[----------] 2 tests from KinIk (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (2 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3
+[  FAILED  ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3
+
+ 2 FAILED TESTS

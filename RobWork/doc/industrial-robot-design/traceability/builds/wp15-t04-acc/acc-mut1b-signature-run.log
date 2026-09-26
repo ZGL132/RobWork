@@ -1,0 +1,47 @@
+Note: Google Test filter = KinIk.Dedup*:KinIk.SignaturesDiffer*
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from KinIk
+[ RUN      ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(591): error: Expected equality of these values:
+  out.solutionSet.solutions.size()
+    Which is: 2
+  1U
+    Which is: 1
+去重后保留 1 个代表（§6.1 成对容差比较）
+
+[  FAILED  ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(617): error: Expected equality of these values:
+  out.solutionSet.solutions.size()
+    Which is: 2
+  1U
+    Which is: 1
+
+[  FAILED  ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(631): error: Expected equality of these values:
+  merged.size()
+    Which is: 2
+  1U
+    Which is: 1
+逐轴阈值：全轴 ≤阈值＝同构型（合并）
+
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(642): error: Expected equality of these values:
+  kin::deduplicateSolutions({a, b}, 0.5).size()
+    Which is: 2
+  1U
+    Which is: 1
+
+[  FAILED  ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1 (0 ms)
+[----------] 3 tests from KinIk (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1
+[  FAILED  ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3
+[  FAILED  ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1
+
+ 3 FAILED TESTS

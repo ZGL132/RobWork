@@ -3856,6 +3856,46 @@
       "title": "登记簿行形状缺陷：F-379 条目收行为『    }    ,』（} 与逗号间夹 4 空格），不在 v1.13 收行匹配『^    \\},?$』词形内——条目块扫描把 F-379/F-380 并作一块（我方侧 id 计 378 而实有 379 条），重写输出实际仍含 380 条，§⑥ 写前校验之条目计数守卫『期望 379 实得 380』退出 1，WP-15-T03 收尾④即停转 blocked。守卫语义正确——拦截的是扫描失真（若 F-380 恰为并集/替换对象将被静默吞掉），冲突本体仍为确定性并集（我方 +F-384~F-387、对方 +F-383，无撞号/双方异改/删除）",
       "owner": "已消账（编排者奉所有者『解决阻塞』明示授权最小修复，循 F-262 先例：登记簿收行修复＋脚本行形状匹配空白容忍＋闭合行规范化输出）",
       "resolution": "修复＝①登记簿 F-379 收行就地规范为『    },』（本提交）；②merge-findings-union.ps1 开块/收行/id 行三处匹配放宽行内与行尾空白变体，Get-NormBlock 比对与重组输出把闭合行统一规范为规范形（    }〔,〕）——merge-base 属历史不可改、其内畸变行靠匹配容忍消化，输出侧靠规范化根治杜绝再引入；集合运算语义与撞号/删除/双方异改/顶层差异防护守卫零改动。修复后经临时工作树对同型三方现场复跑 RESOLVED（并集 F-383、总计 381 条）。合规边界如实留痕：T-ORCH 步骤 8 规定脚本退出非 0 即停，本修复较 F-262 的推定授权多一层所有者明示（『解决阻塞』指令），条目取舍仍全部由并集规则机械产出、未越过人工裁决保留权。编号顺延自 F-387，随本修复提交即消账（fixedBy＝[governance] 修复提交）。"
+    },
+    {
+      "id": "F-389",
+      "source": "traceability/acceptance/WP-15-T04-20260926.md §4.11/§4.8（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "KIN-RESIDUAL-EXCEEDED 比较型诊断生产路径已落位但无自然触发用例，且覆盖缺口未随卡登记：Evaluators.cpp appendResidualDiags（L443~468，位置 m／姿态 rad 逐维越限比较型诊断）由硬过滤①ResidualRecheck 过滤记录驱动，而 IkSolver 迭代内收敛判据与阶段①新鲜复验消费同一确定性 FkEvaluator（同 q 同输出），『迭代内收敛而复验失败』在生产与测试注入面均不可达（fkService 于 solve() 内构造、非注入点）——appendResidualDiags 与 SearchFilterReason::Residual 映射为运行零触发面、零直接断言；单元卡 §14.6 v0.4 ⑤ 仅登记『生产面』未按 F-386 家族口径如实登记该覆盖缺口。缓解面在案：实现读码与 evidence §9.6 行 4 requiresComparison 字段面一致、装配正确、无失实声明。F-146（PRJ-T02）/F-043（RT-T06）/F-386（KIN-NO-DEVICE）测试覆盖面建议家族同型。",
+      "owner": "kinematics 实施会话（T07 碰撞接入或 T13 黄金数据集触及硬过滤替身面时，补一条经可控求解器替身注入『收敛后复验超容差』的真红用例，并在卡 §14.6 随版登记缺口）；T13 所有者（黄金数据集 kin-search-outcomes 建立时核对）",
+      "resolution": "编号顺延自 F-388。"
+    },
+    {
+      "id": "F-390",
+      "source": "traceability/acceptance/WP-15-T04-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "units/kinematics.md §14.6 v0.4 ⑥『KinIk 15 新用例』与实测不符：本批新增 test/IkTest.cpp 计 18 个 TEST（提交 1 a7580ddd 时 8＋提交 2 fb67389f 增 10；base 侧 T03 留痕 XML 实证 _test 目标 27 例、无 KinIk 套件；head 45 例＝27＋18），⑥句枚举列 15 项漏列 FilterOrderLimitBeforeCollision_WP15T04_ACC1／InitialValueStrategiesDeterministic_WP15T04_ACC2／DedupMergesWithinPerAxisTolerance_WP15T04_ACC1 三个具名用例——F-025/F-041/F-073/F-387 散文计数家族新例（方向为少报、附件 gtest XML 与提交正文 45/45＋20/20 实测数准确、无粉饰，不构成阻断）。",
+      "owner": "kinematics 实施会话（下次触及 units/kinematics.md 时把⑥句『KinIk 15 新用例』改为『KinIk 18 新用例』并补列三用例名）",
+      "resolution": "编号顺延自 F-389。"
+    },
+    {
+      "id": "F-391",
+      "source": "traceability/acceptance/WP-15-T04-20260926.md §4.5（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "DedupThresholdIsPerAxis_WP15T04_ACC1 的『反范数化』断言数据无效（验收者变异测试实证）：测试注释宣称『两构型逐轴差 (0.5,0.5)、阈值 0.7——若实现误用合模长/范数（0.707>0.7）会误判异构型』，但实际数据 handSolution({0.1,5.0}) 与 handSolution({0.6,5.0}) 第二轴差为 0、范数 0.5≤0.7 与逐轴判定同值——验收者实施『逐轴阈值→欧氏范数』实质变异（SolutionSet.cpp deduplicateSolutions）后该具名测试保持绿（acc-mut1-norm-run.log），注释宣称的区分能力未被数据承载。去重语义的真实失败能力已由变异 M1b（容差→签名精确相等）证实：DedupMergesWithinPerAxisTolerance/DedupThresholdIsPerAxis/SignaturesDifferWhileDedupEquivalent 三用例真红（acc-mut1b-signature-run.log）。建议补一组真双轴差用例（如逐轴差 (0.5,0.5)、阈值 0.7：逐轴判同构型、范数 0.707 判异构型）。",
+      "owner": "kinematics 实施会话（T13 黄金数据集 kin-ik-dedup 建立时随批补强；或下次触及 test/IkTest.cpp 时顺带）",
+      "resolution": "编号顺延自 F-390。"
+    },
+    {
+      "id": "F-392",
+      "source": "traceability/acceptance/WP-15-T04-20260926.md §4.9（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "WP-15-T04 两送验提交标题未用 `[WP-15-T04]` 前缀形态：a7580ddd『实现多初值 IK 求解与解析工作半径界限（WP-15-T04 提交 1「求解」）』与 fb67389f『落位硬过滤去重排序与 kin.task-point-ik 评估器（WP-15-T04 提交 2「过滤去重排序」）』——动词开头合规、任务编号以括注形式出现在标题内（较 F-385 所载 T03 形态可见性更高）、正文四段齐备、验证段结论与验收者亲测逐项一致无粉饰；不合 AGENTS §6.3/ACC §4.9 标题 `[WP-nn-Tkk]` 字面格式——F-012/F-069/F-385 标题家族再现。",
+      "owner": "kinematics 实施会话（后续提交改用 `[WP-15-Txx]` 前缀形态；已推送提交按不改写历史纪律保持原状，以本条与验收记录为凭）",
+      "resolution": "编号顺延自 F-391。"
     }
   ]
 }
