@@ -1,11 +1,11 @@
 /**
  * @file   DiagCodes.hpp
  * @brief  kinematics 稳定诊断码工厂——KIN-* 码的 CodeDescriptor 登记数据
- *         （§9.6 全表 16 码——T02 登记 15 码、T05 随消费任务表尾追加 1 码）
- *         与装配注册函数。
+ *         （§9.6 全表 17 码——T02 登记 15 码、T05/T08 各随消费任务表尾
+ *         追加 1 码）与装配注册函数。
  *
  * 设计依据：
- *   - units/kinematics.md §9.6（KIN- 稳定诊断码登记表——16 码/级别/语义/
+ *   - units/kinematics.md §9.6（KIN- 稳定诊断码登记表——17 码/级别/语义/
  *     任务列；表头注册纪律原文："ownerUnit=kinematics，装配期注册，不预
  *     建无消费者条目"）、§3.3（公共头布局表 Errors.hpp/DiagCodes.hpp 行
  *     ——T02）、§5.5（失败分类与诊断——"比较型诊断带实际值/期望值/单位
@@ -30,13 +30,14 @@
  * CodeDescriptor（逐字段可追溯到卡面与 diagnostics 词表），装配期由 L5
  * 经 registerKinematicsCodes 注册——本实现不改动 diagnostics 单元任何
  * 文件，不私定任何卡面之外的码值。表行随消费任务表尾追加（T05 追加
- * 行 16 KIN-POINT-REF-DANGLING——悬空引用 InputInvalid 素材的产码面），
- * 既有行不重排（枚举/清单序进入确定性契约）。
+ * 行 16 KIN-POINT-REF-DANGLING——悬空引用 InputInvalid 素材的产码面；
+ * T08 追加行 17 KIN-ROOT-BYTES-ILLEGAL——设默认命令门面根字节补丁失败
+ * 的产码面），既有行不重排（枚举/清单序进入确定性契约）。
  *
  * 阶段纪律（T02 acceptance 4 括号内三个短语的执行口径；行序纪律延用于
  * 后续追加行）：
- *   1. "全表 15 个稳定码清单登记"（T02 时点口径；T05 起全表 16 行——
- *      本头工厂清单恒恰含 §9.6 全表当前行数
+ *   1. "全表 15 个稳定码清单登记"（T02 时点口径；T05 起全表 16 行、T08
+ *      起全表 17 行——本头工厂清单恒恰含 §9.6 全表当前行数
  *      （与 requirements T02"仅登记任务列含 T02 的行"的差异来自各自契约
  *      acceptance 的明文差异：kinematics acceptance 4 要求全表清单）。
  *      清单序＝§9.6 表行序（确定性序）。
@@ -120,6 +121,11 @@ inline constexpr std::string_view kKinResultIncomplete = "KIN-RESULT-INCOMPLETE"
 /// 显式清单引用点集外对象→该 (悬空点，工况) 工作项产 InputInvalid 素材
 /// ——V-12；行随 WP-15-T05 消费任务表尾追加，登记随卡 §9.6/§14.6 v0.5）。
 inline constexpr std::string_view kKinPointRefDangling = "KIN-POINT-REF-DANGLING";
+/// §9.6 行 17：KIN-ROOT-BYTES-ILLEGAL（error——设默认命令门面的根对象
+/// 字节补丁失败：基线根不可解码或补丁产物编码失败（数据侧）→本次提交
+/// 未发出、零修订；行随 WP-15-T08 消费任务表尾追加，登记随卡 §9.6/
+/// §14.6 v0.8）。
+inline constexpr std::string_view kKinRootBytesIllegal = "KIN-ROOT-BYTES-ILLEGAL";
 
 // =====================================================================
 // KIN-* 稳定诊断码描述符清单（§9.6 全表的物化——T02 时 15 行、T05 起
@@ -127,9 +133,9 @@ inline constexpr std::string_view kKinPointRefDangling = "KIN-POINT-REF-DANGLING
 // =====================================================================
 
 /**
- * @brief 产出 kinematics §9.6 全表（当前 16 码）的稳定码描述符全集
+ * @brief 产出 kinematics §9.6 全表（当前 17 码）的稳定码描述符全集
  *        （T02 契约 acceptance 4"全表 15 个 KIN- 稳定码清单登记"的执行
- *        面；T05 起随消费任务表尾追加，清单恒与卡面全表同长）。
+ *        面；T05/T08 起随消费任务表尾追加，清单恒与卡面全表同长）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡；逐码分类与动作族的
  * 落值依据在 DiagCodes.cpp 逐码注释——diagnostics 卡"逐码落值依据，实现
@@ -138,7 +144,7 @@ inline constexpr std::string_view kKinPointRefDangling = "KIN-POINT-REF-DANGLING
  *     纪律；上方 16 个常量即唯一书写点）。
  *   - ownerUnit＝"kinematics"（§4.5 前缀-所有权表 KIN→kinematics；首段
  *     "KIN"与所有者声明域一致——注册期校验可通过）。
- *   - severity＝§9.6 表"级别"列逐行原值（T05 起 7 error＋9 warning——注册表
+ *   - severity＝§9.6 表"级别"列逐行原值（T08 起 8 error＋9 warning——注册表
  *     对 Dev 强制三项 false，本表无 Dev 码；用户级两档与 §4.4 默认矩阵
  *     的用户级分界一致）。
  *   - category＝diagnostics §4.3 词表 15 值内落值（P-DIAG-3 不新增词表
@@ -155,7 +161,7 @@ inline constexpr std::string_view kKinPointRefDangling = "KIN-POINT-REF-DANGLING
  *     "各单元产码路径落地时按需增量登记并升 registryVersion，不私造
  *     参数名"；比较型三要素走 requiresComparison/实例 comparison 面，
  *     不占参数名）。
- *   - confirmable＝false（16 码均无"策略校验超限待用户显式确认"语义
+ *   - confirmable＝false（17 码均无"策略校验超限待用户显式确认"语义
  *     ——SA-15 确认流属 policy/modeling 域码；故 requiresComparison 的
  *     强制前件不触发）。requiresComparison 仅两码 true：KIN-RESIDUAL-
  *     EXCEEDED（§9.6"比较型：实际/期望/单位"原文）与 KIN-NEAR-LIMIT
@@ -173,7 +179,7 @@ inline constexpr std::string_view kKinPointRefDangling = "KIN-POINT-REF-DANGLING
 std::vector<diagnostics::CodeDescriptor> kinematicsCodeDescriptors();
 
 /**
- * @brief 将 §9.6 全表（当前 16 码）注册进稳定码注册表（§9.6 表头"装配
+ * @brief 将 §9.6 全表（当前 17 码）注册进稳定码注册表（§9.6 表头"装配
  *        期注册，ownerUnit=kinematics"的执行面——L5 装配清单的调用入口）。
  *
  * 前置：registry 未 seal、不含同码/同文案键冲突登记（重复注册→注册表抛
@@ -187,7 +193,6 @@ std::vector<diagnostics::CodeDescriptor> kinematicsCodeDescriptors();
  *         出现即实现缺陷，fail-fast）
  */
 void registerKinematicsCodes(diagnostics::IDiagnosticRegistry& registry);
-
 }  // namespace sdurws::ird::kinematics
 
 #endif  // IRD_KINEMATICS_DIAGCODES_HPP

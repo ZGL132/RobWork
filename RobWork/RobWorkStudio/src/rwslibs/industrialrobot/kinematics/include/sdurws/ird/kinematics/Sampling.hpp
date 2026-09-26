@@ -448,7 +448,9 @@ struct SampleResultSet {
  * 逐字节比对，不一致即 DataInsufficient，本布局的任何漂移都会被对账
  * 捕获，设计上安全）：
  * @code
- *   "IRDSSID1"（8 字节 ASCII magic）
+ *   "IRDSSID"（7 字节 ASCII magic——字面常量 "IRDSSID1" 的前 7 字节，
+ *     实写口径与实现一致：F-395 督办纠正——原登记"8 字节"系把字面量
+ *     尾数字符误计入 magic 长度，实现只取 7 字节，尾位 '1' 不入字节流）
  *   ‖ u32 codecVersion = 1（小端）
  *   ‖ u32 planIdLength（小端）‖ planContentIdentity.toCanonical()（ASCII，
  *     形如 "cid-<64hex>"——规范文本字节，与 core 规范文本面同源）
@@ -527,7 +529,9 @@ generateRandomPositions(const RegionBox& box, std::uint32_t count, std::uint64_t
  * ＝π(3−√5) rad，常量字面锁定）；方向＝(r_j·cosφ_j, r_j·sinφ_j, z_j)
  * （单位向量，基座系 {B}——区域投影系即基座系，方向不做额外坐标变换）。
  *
- * @param count [in] 方向数（≥1——装配校验面保证；N=1 时退化为 +Z 单方向）
+ * @param count [in] 方向数（≥1——装配校验面保证；N=1 时退化为 +X 单方向
+ *              ——z₀＝1−1/1＝0、φ₀＝0 → 方向 (1,0,0)；F-396 督办纠正——
+ *              原注释"+Z"与实现公式不符，实现 z₀=0 即赤道起点 +X）
  * @return 单位方向列（生成序＝j 序；无量纲，‖d‖=1）
  *
  * 纯函数；线程安全；确定性。
