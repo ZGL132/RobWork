@@ -3946,6 +3946,36 @@
       "title": "tasks/foundation/WP-15-T06.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（62/62＋43/43 两模式实测），不构成验收阻断。建议后续契约治理按家族批量修订时补齐本契约两行。",
       "owner": "契约编译/治理会话（家族批量修订时补齐本契约两行）",
       "resolution": "编号顺延自 F-396。"
+    },
+    {
+      "id": "F-398",
+      "source": "traceability/acceptance/WP-15-T07-20260927.md §4.9/§4.11（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "ird_gates base..head 比对附件（traceability/builds/wp15-t07/ird-gates-base-head-compare.md 及同目录 v0.4/v0.5/v0.6/v0.7 各附件同句式）宣称『去重条目 69』与自身声明口径②（归一化后 sort 去重条目数）不符：验收者对 base_hits.norm/head_hits.norm 实测 `sort -u` 均为 76 条（145 行直方图行数与引擎自计『命中 69 项』两项计数准确），69 实为引擎自计数口径的误标——单元卡 §14.6 v0.4~v0.7 行与 WP-15-T07 提交正文『三套计数…去重条目 69、引擎自计 69』沿用同误。零增量结论不受影响（验收者自建双侧 worktree 独立直跑，归一化后 diff 为空、直方图逐码 145/145 一致）——F-342/F-346 计数口径家族新例（方向为口径标注错误，非粉饰：三套计数中两项实测可复现且增量结论正确）。",
+      "owner": "kinematics 实施会话（下次产出比对附件/卡面登记时把『去重条目』更正为 sort -u 实测值并与引擎自计数分列）；治理收尾会话（簿记核对时按修正口径复核）",
+      "resolution": "编号顺延自 F-397。"
+    },
+    {
+      "id": "F-399",
+      "source": "traceability/acceptance/WP-15-T07-20260927.md §4.3（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "tasks/foundation/WP-15-T07.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（集成 69/69＋50/50、冒烟 63/63＋50/50 实测），不构成验收阻断。建议后续契约治理按家族批量修订时补齐本契约两行。",
+      "owner": "契约编译/治理会话（家族批量修订时补齐本契约两行）",
+      "resolution": "编号顺延自 F-398。"
+    },
+    {
+      "id": "F-400",
+      "source": "traceability/acceptance/WP-15-T07-20260927.md §4.8（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "F-395 与 F-396 的 owner 指令『下次触及 Sampling.hpp 时执行对应纠正』在本任务（WP-15-T07 送验提交 2a9ba53b 实际触及 Sampling.hpp——文件头 DataInsufficient 段注释随 T07 接线同步）再次未兑现：head 侧 Sampling.hpp:450 附近 sampleSetIdentity 登记仍为『\"IRDSSID1\"（8 字节 ASCII magic）』而 Sampling.cpp:148~149 实写 magic+7（7 字节）、:529 附近 generateDirections 注释仍为『N=1 时退化为 +Z 单方向』而实现公式 z₀=0→方向 +X——两站点逐字节原样（验收者 sed 行号实证）；F-394 家族『触及即兑现』纪律再现未消账（本任务触及段与两站点不相邻，非新引入缺陷；两处原判定均为建议级）。与本任务相关的其余未关闭条目相关性结论：F-387/F-390/F-393 卡面散文纠正已随 T06 v0.6 兑现（head 卡面实证），F-394 对本任务无遗留义务；F-386/F-389/F-391 消费面本任务未触及、维持 open。",
+      "owner": "kinematics 实施会话（下次触及 Sampling.hpp 时与 F-395/F-396 合并执行两站点纠正——登记改『7 字节 magic\"IRDSSID\"＋u32 codecVersion』推荐口径与 +X 方向纠正）；evidence 卡冻结会话（canonical 格式冻结对齐前必须消账 F-395）",
+      "resolution": "编号顺延自 F-399。"
     }
   ]
 }
