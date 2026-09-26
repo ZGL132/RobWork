@@ -90,6 +90,11 @@ QWidget* modelingPanelWidget(const DomainPluginAssembly& bundle)
     return panel.factory();
 }
 
+ui::IModuleDraftSource& modelingDraftSource(DomainPluginAssembly& bundle)
+{
+    return bundle.modeling.modelingDraftSource();
+}
+
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws

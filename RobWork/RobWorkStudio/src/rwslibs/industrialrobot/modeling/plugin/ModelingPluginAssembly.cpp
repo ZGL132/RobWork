@@ -48,6 +48,13 @@ void ModelingPluginAssembly::seedTemplateSession()
     }
 }
 
+ui::IModuleDraftSource& ModelingPluginAssembly::modelingDraftSource() const
+{
+    // 多重继承静态转换（IPluginUiModule＋IModuleDraftSource 双基——同一
+    // 对象的两个接口视图）。
+    return *m_impl;
+}
+
 ModelingPluginAssembly createModelingPluginAssembly()
 {
     ModelingPluginAssembly result;

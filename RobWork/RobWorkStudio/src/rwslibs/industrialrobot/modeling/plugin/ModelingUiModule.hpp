@@ -41,6 +41,7 @@
 
 #include <sdurws/ird/core/Identity.hpp>            // core::BranchId/RevisionId（信封身份面）
 #include <sdurws/ird/modeling/CommandHandlers.hpp> // kCmdApplyRobotDesign/kCommandPayloadVersion/encodeCommandPayload（域命令面权威）
+#include <sdurws/ird/ui/IDraftController.hpp>      // ui::IModuleDraftSource（§10.5 模块草稿源——T03b-1 接入）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>       // ui::IPluginUiModule（§11.2 接口——P-MDL-8 消账后本类正式继承）
 #include "PanelCommandCatalog.hpp"                // modelingReadinessProjection（§11.2 readonlyProjections 数据面——同目录私有头）
 #include "PanelRefresh.hpp"                       // PanelUiThreadGuard（§3.4 线程守卫——零 Qt，同目录私有头）
@@ -80,7 +81,8 @@ struct ModuleSessionState {
  * "IPluginUiModule 存活至壳拆除"——装配层保证）。面板工厂经装配描述符
  * 提供（modelingPanelRegistration——PanelCommandCatalog.hpp）。
  */
-class ModelingUiModule final : public ui::IPluginUiModule {
+class ModelingUiModule final : public ui::IPluginUiModule,
+                               public ui::IModuleDraftSource {
 public:
     ModelingUiModule() = default;
     /// 不可拷贝/不可移动（会话态与壳引用绑定生命周期——§10.9）。
@@ -189,6 +191,26 @@ public:
      * @return 面板 widget（归调用方接管——宿主层持有）
      */
     QWidget* createPanel();
+
+    // ---- 模块草稿源（T03b-1——ui::IModuleDraftSource 四方法；§10.5）----
+
+    /// 模块句柄（ModuleDraftHandle 词表——与 descriptor.pluginId 同 token）。
+    static constexpr char kModuleHandle[] = "modeling";
+
+    /// 显示名（UX-02 工程用语——草稿表/横幅/冲突对话框呈现值源）。
+    std::string displayName() const override;
+
+    /// 组装当前草稿文档（落盘分派时控制器取值——payload＝根对象 canonical
+    /// 字节，与命令 payload 同源编码；归属三元组/时刻/origin 由控制器补齐）。
+    ui::DraftDocumentProjection buildDraftDocument() const override;
+
+    /// 承接恢复的草稿文档（打开期 restoreOnOpen——payload 解码回写工作集
+    /// design；解码失败保持现状不中断打开，诚实边界登记于 §15）。
+    void adoptRestoredDocument(const ui::DraftDocumentProjection& document) override;
+
+    /// 以指定修订重建编辑基线（§8.5[基于当前版本重新编辑]——Stale 冲突
+    /// 对话的用户迁移半区；会话基线改写为 tip）。
+    void rebuildOnRevision(const std::string& tipRevisionCanonical) override;
 
 private:
     PanelUiThreadGuard m_guard;              ///< §3.4 UI 线程守卫（构造线程绑定）

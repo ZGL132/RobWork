@@ -35,6 +35,7 @@ namespace ird {
 namespace ui {
 
 class IPluginUiRegistrar;
+class IModuleDraftSource;  // 前向声明（modelingDraftSource 返回类型——§10.5）
 
 /// 域插件装配产物（bundle——宿主插件持有，模块存活至壳拆除＝§10.9 前置）。
 struct DomainPluginAssembly {
@@ -67,6 +68,9 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
  * @return 面板 widget（非 owning——调用方 Dock 接管）
  */
 QWidget* modelingPanelWidget(const DomainPluginAssembly& bundle);
+
+/// 建模模块草稿源（§10.5 attachModule 第二参数——宿主打开成功后挂接）。
+ui::IModuleDraftSource& modelingDraftSource(DomainPluginAssembly& bundle);
 
 /// 建模面板 Dock 的标题（宿主 chrome 文案——resolveText 后由调用方设置）。
 extern const char* const kModelingDockTitle;

@@ -942,6 +942,23 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                 binding.drafts = std::make_shared<app::DraftQueryPortStub>();
                 binding.store = std::move(draftStore);
                 m_draft->bindSession(binding);
+                // 建模模块草稿源挂接（T03b-1——§10.5 attachModule；绑定
+                // 成功后恰挂一次，可写会话才接受——只读/已占用异常隔离留
+                // 痕不中断打开协议）。
+                if (m_domains) {
+                    try {
+                        m_draft->attachModule(
+                            modeling::kModuleHandle,
+                            modelingDraftSource(*m_domains));
+                    } catch (const std::exception& attachError) {
+                        if (m_diag.pipeline) {
+                            m_diag.pipeline->logDev(
+                                kPluginDevChannel,
+                                std::string("建模草稿源挂接跳过：")
+                                    + attachError.what());
+                        }
+                    }
+                }
             }
         }
         reportLine("项目已打开：" + canonicalPath + "（可写："

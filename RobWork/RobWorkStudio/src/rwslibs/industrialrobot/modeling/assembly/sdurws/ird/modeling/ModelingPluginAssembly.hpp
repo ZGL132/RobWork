@@ -33,9 +33,21 @@
 
 namespace sdurws {
 namespace ird {
+namespace ui {
+class IModuleDraftSource;  // 前向声明（§10.5 模块草稿源——draftSource 返回类型）
+}  // namespace ui
+}  // namespace ird
+}  // namespace sdurws
+
+namespace sdurws {
+namespace ird {
 namespace modeling {
 
 class ModelingUiModule;  // 前置声明（内部具体类型——消费方面只见 IPluginUiModule 接口）
+
+/// 模块句柄（ModuleDraftHandle 词表——与 descriptor.pluginId 同 token；
+/// 宿主装配层 attachModule 首参取此值）。
+inline constexpr char kModuleHandle[] = "modeling";
 
 /**
  * @brief 建模插件装配产物（createModelingPluginAssembly 的返回值）。
@@ -64,6 +76,11 @@ struct ModelingPluginAssembly {
 
     /// 首版会话种子（generic-6r 真实草稿；转发模块内部）。
     void seedTemplateSession();
+
+    /// 模块草稿源视图（§10.5 attachModule 第二参数——本对象实现四方法；
+    /// 存活期随 module）。const 语义：源接口四方法中两 const 两非 const，
+    /// 引用可变性随对象本身，不受本访问器限定。
+    ui::IModuleDraftSource& modelingDraftSource() const;
 
     ModelingPluginAssembly();
     ~ModelingPluginAssembly();

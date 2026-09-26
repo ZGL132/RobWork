@@ -135,4 +135,72 @@ QWidget* ModelingUiModule::createPanel()
     return panel;
 }
 
+// =====================================================================
+// 模块草稿源（T03b-1——ui::IModuleDraftSource 四方法；§10.5）
+// =====================================================================
+
+std::string ModelingUiModule::displayName() const
+{
+    // 工程用语（UX-02）——与 UiText 键族 stage.modeling.title 同词的呈现值；
+    // 模块侧显示名注册时刻定格（§10.5），不经文案键二次解析（少一层装配
+    // 依赖，值同源不变）。
+    return "建模";
+}
+
+ui::DraftDocumentProjection ModelingUiModule::buildDraftDocument() const
+{
+    m_guard.assertOnUiThread();
+    // 域负载＝根对象 canonical 字节（与命令 payload 同源同编码——Codec 单
+    // 一权威；归属三元组 projectId/branchId/时刻/origin 由控制器在落盘
+    // 分派时刻补齐，§8.1 分工红线：域侧只产域负载）。
+    ui::DraftDocumentProjection document;
+    document.schemaVersion = kCommandPayloadVersion;
+    document.moduleId = kModuleHandle;
+    document.baseRevisionId = m_session.baseRevision.value_or(core::RevisionId{});
+    RobotDesignCodec codec;
+    const auto encoded =
+        codec.encode(ObjectVariant{m_session.draft.design}, kCurrentFormatVersion);
+    // 编码失败＝工作集状态违约（合法草稿必可编码——CodecTest 已钉）；取值
+    // 违约抛 logic_error fail-fast，不落半截负载。
+    const auto& bytes = encoded.get();
+    document.payload.assign(bytes.begin(), bytes.end());
+    return document;
+}
+
+void ModelingUiModule::adoptRestoredDocument(
+    const ui::DraftDocumentProjection& document)
+{
+    m_guard.assertOnUiThread();
+    // 恢复语义（§8.3-5）：磁盘草稿内容交回域侧。解码失败（版本不符/字节
+    // 损坏）＝保持当前草稿不中断打开——诚实降级，不渲染半解析状态；恢复
+    // 结果的完整可用性随收口任务的就绪重估呈现。
+    try {
+        const RobotDesignCodec codec;
+        const Bytes bytes(document.payload.begin(), document.payload.end());
+        const auto decoded =
+            codec.decode(bytes, kCurrentFormatVersion);
+        const auto* design = std::get_if<RobotDesign>(&decoded.get());
+        if (design == nullptr) {
+            return;  // 非根对象负载——恢复面约定外，保持现状
+        }
+        m_session.draft.design = *design;
+        m_session.draft.changes.clear();  // 恢复的草稿不带编辑史（§8.6 表处置）
+    } catch (const std::exception&) {
+        // 解码失败＝保持现状（文件头诚实边界；打开协议不因域负载损坏中断）
+    }
+}
+
+void ModelingUiModule::rebuildOnRevision(const std::string& tipRevisionCanonical)
+{
+    m_guard.assertOnUiThread();
+    // §8.5[基于当前版本重新编辑]的域侧半区：编辑基线改写为分支 tip。
+    // 非法 canonical＝调用方违约（控制器只传合法 tip）——解析失败忽略
+    // （基线不变，不虚构已重建）。
+    const auto tip =
+        core::RevisionId::tryFromCanonical(tipRevisionCanonical);
+    if (tip.has_value()) {
+        m_session.baseRevision = *tip;
+    }
+}
+
 }  // namespace sdurws::ird::modeling
