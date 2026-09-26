@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现区域采样与覆盖率评估器（kin.region-coverage）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T04"
   ],
