@@ -23,12 +23,15 @@
 #include <sdurws/ird/evidence/Evidence.hpp>   // validateProof/IProducerRegistryView（V-10 前半素材自证）
 #include <sdurws/ird/evidence/Snapshot.hpp>   // AnalysisSnapshot（validateProof 绑定核对面）
 #include <sdurws/ird/kinematics/Bounds.hpp>
+#include <sdurws/ird/kinematics/Evaluators.hpp>  // encodeTaskPointIkPayloadCanonical（payload 字节面）
 #include <sdurws/ird/kinematics/Ik.hpp>
+#include <sdurws/ird/kinematics/SolutionSet.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <functional>
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -36,14 +39,22 @@
 
 using namespace sdurws::ird::kinematics::testfixture;
 namespace evidence = sdurws::ird::evidence;
-using sdurws::ird::kinematics::AnalyticReachBound;
-using sdurws::ird::kinematics::IkOutcome;
-using sdurws::ird::kinematics::IkOutcomeKind;
-using sdurws::ird::kinematics::IkRequest;
-using sdurws::ird::kinematics::IkSolver;
-using sdurws::ird::kinematics::InitialValueStrategy;
-using sdurws::ird::kinematics::kIkSolverContractVersion;
-using sdurws::ird::kinematics::kTaskPointIkEvaluationKey;
+namespace kin = sdurws::ird::kinematics;
+using kin::AnalyticReachBound;
+using kin::FilteredSolutionRecord;
+using kin::IkCollisionVerdict;
+using kin::IkOutcome;
+using kin::IkOutcomeKind;
+using kin::IkRequest;
+using kin::IkSolutionSet;
+using kin::IkSolver;
+using kin::InitialValueStrategy;
+using kin::KinematicSolution;
+using kin::KinematicSolutionSet;
+using kin::SolutionFilterReason;
+using kin::WorstMetric;
+using kin::kIkSolverContractVersion;
+using kin::kTaskPointIkEvaluationKey;
 
 namespace {
 
@@ -73,7 +84,40 @@ std::vector<std::vector<double>> twoLinkClosedForm(double L1, double L2, double 
     return out;
 }
 
+/// 平面三连杆模型（V-04 同位姿异构型的几何载体——平面 3R 臂的全位姿
+/// 逆解有**两个**肘型分支；2R 臂全位姿逆解唯一，不能作该用例的载体）。
+/// 几何：L1=1.0（j1→j2）、L2=0.6（j2→j3）、L3=0.4（j3→TCP），全 z 轴。
+inline rt::CanonicalModel threeLinkModel()
+{
+    std::vector<rt::CanonicalJoint> joints;
+    joints.push_back(revolute("t1", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0, 0, 0), -2.97, 2.97));
+    joints.push_back(revolute("t2", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(1.0, 0, 0), -3.14159265358979323846,
+                              3.14159265358979323846));
+    joints.push_back(revolute("t3", rw::math::Vector3D<double>(0, 0, 1),
+                              trans(0.6, 0, 0), -3.14159265358979323846,
+                              3.14159265358979323846));
+    return makeModel(joints, trans(0.4, 0, 0));
+}
+
+/// 平面三连杆全位姿闭式双支（独立参考）：腕心＝TCP−L3·e(φ)（φ＝末端
+/// 姿态角），对腕心做 2R 位置闭式解得 (q1,q2) 两分支，q3＝φ−q1−q2。
+std::vector<std::vector<double>> threeLinkPoseBranches(double L1, double L2,
+                                                       double L3, double x,
+                                                       double y, double phi)
+{
+    const double wx = x - L3 * std::cos(phi);
+    const double wy = y - L3 * std::sin(phi);
+    std::vector<std::vector<double>> out;
+    for (const std::vector<double>& wrist : twoLinkClosedForm(L1, L2, wx, wy)) {
+        out.push_back({wrist[0], wrist[1], phi - wrist[0] - wrist[1]});
+    }
+    return out;
+}
+
 /// 请求壳（确定性绑定面用固定派生身份——零值亦可，非本组断言对象）。
+/// referenceQ＝零位构型（维度随视图自由度——两用例模型族共用）。
 IkRequest makeRequest(const TestView& view, const rw::math::Transform3D<double>& target,
                       const std::vector<std::vector<double>>& initials)
 {
@@ -84,7 +128,7 @@ IkRequest makeRequest(const TestView& view, const rw::math::Transform3D<double>&
     req.initialValues = initials;
     req.iterationLimit = 200U;
     req.intervals = sdurws::ird::kinematics::evaluationIntervals(view);
-    req.referenceQ = {0.0, 0.0};
+    req.referenceQ.assign(sdurws::ird::kinematics::evaluationIntervals(view).size(), 0.0);
     req.targetRef.pointOid = idFrom<core::ObjectId>("kin-point-1");
     req.requestIdentity.snapshotId.bytes = digestOf("kin-ik-snap");
     req.requestIdentity.sliceId.bytes = digestOf("kin-ik-slice");
@@ -159,21 +203,23 @@ TEST(KinIk, SamePoseDistinctConfigurationsRetained_WP15T04_ACC1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{"AT-03"});
 
-    const rt::CanonicalModel model = twoLinkModel();
+    const rt::CanonicalModel model = threeLinkModel();
     TestView view(model);
-    constexpr double L1 = 1.1;
-    constexpr double L2 = 0.7;
+    constexpr double L1 = 1.0;
+    constexpr double L2 = 0.6;
+    constexpr double L3 = 0.4;
 
-    // 目标＝q*=(0.3, 0.6) 的位姿（肘型二分支——闭式逆解独立推导）。
-    const Mat4 golden = referenceFk(model, {0.3, 0.6}).tcp;
-    const double tx = golden[0][3];
-    const double ty = golden[1][3];
-    const std::vector<std::vector<double>> branches = twoLinkClosedForm(L1, L2, tx, ty);
+    // 目标＝q*=(0.2, 0.4, 0.0) 的全位姿（平面 3R——肘型两分支闭式推导；
+    // 姿态角 φ＝q1+q2+q3=0.6）。
+    const Mat4 golden = referenceFk(model, {0.2, 0.4, 0.0}).tcp;
+    const std::vector<std::vector<double>> branches = threeLinkPoseBranches(
+        L1, L2, L3, golden[0][3], golden[1][3], 0.6);
     ASSERT_EQ(branches.size(), 2U);
     // 两分支构型确异（去重对象＝构型的前提 sanity）。
     EXPECT_GT(std::fabs(branches[0][1] - branches[1][1]), 0.1);
 
-    // 两初值各取一分支——同一位姿的两个构型都须保留。
+    // 两初值各取一分支——同一位姿的两个构型都须保留（V-04：求解＋去重
+    // 全管线后仍在）。
     IkRequest req = makeRequest(view, transformOf(golden), branches);
     const IkOutcome out = IkSolver().solve(req);
 
@@ -470,4 +516,421 @@ TEST(KinIk, RepeatedSolveBitwiseIdentical_WP15T04_ACC3)
         EXPECT_EQ(sa.iterations, sb.iterations);
         EXPECT_EQ(sa.signature, sb.signature);
     }
+}
+
+// =====================================================================
+// 以下为 T04 提交 2「过滤去重排序」用例组（acceptance 1/2/3 全量断言）
+// =====================================================================
+
+namespace {
+
+/// 碰撞会话替身（§10.1"替身碰撞评估器（脚本化判定）"——V-08/V-09 与
+/// 过滤顺序用例的脚本面；真实④端口会话组装归 T07）。
+class StubCollisionSession final : public kin::IKinCollisionSession {
+public:
+    using Predicate = std::function<bool(const std::vector<double>&)>;
+
+    StubCollisionSession(Predicate predicate, std::vector<core::ObjectId> pairs)
+        : m_predicate(std::move(predicate)), m_pairs(std::move(pairs))
+    {
+    }
+
+    IkCollisionVerdict evaluate(const std::vector<double>& q) const override
+    {
+        IkCollisionVerdict v;
+        v.inCollision = m_predicate(q);
+        if (v.inCollision) {
+            v.objectIdPairs = m_pairs;
+        }
+        return v;
+    }
+
+private:
+    Predicate m_predicate;               ///< 脚本化判定（构型级）
+    std::vector<core::ObjectId> m_pairs; ///< 碰撞对象对（成对展平）
+};
+
+/// 解便捷构造（视图级四键用例——手工黄金值，绕过求解管线）。
+KinematicSolution handSolution(std::vector<double> q, double minMargin,
+                               double manipulability, std::uint32_t initIndex)
+{
+    KinematicSolution s;
+    s.q = std::move(q);
+    s.minimumJointMargin = minMargin;
+    s.manipulability = manipulability;
+    s.positionResidual = 0.0;
+    s.orientationResidual = 0.0;
+    s.conditionNumber = 1.0;
+    s.sourceInitIndex = initIndex;
+    s.signature = kin::configurationSignature(s.q);
+    return s;
+}
+
+}  // namespace
+
+// ---------------------------------------------------------------------
+// V-04/AT-03（续）——去重＝构型级成对容差；I-KIN-3 两向语义
+// ---------------------------------------------------------------------
+
+TEST(KinIk, DedupMergesWithinPerAxisTolerance_WP15T04_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{"AT-03"});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+
+    // 两初值逐轴相差 5e-7（≤1e-6 阈值）——去重等价（合并为 1 个解）。
+    IkRequest req = makeRequest(view, transformOf(golden),
+                                {{0.3, -0.5}, {0.3 + 5e-7, -0.5 + 5e-7}});
+    const IkOutcome out = IkSolver().solve(req);
+
+    ASSERT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound);
+    EXPECT_EQ(out.solutionSet.statistics.convergedCount, 2U)
+        << "两个初值都应收敛（阶段①复验通过）";
+    ASSERT_EQ(out.solutionSet.solutions.size(), 1U)
+        << "去重后保留 1 个代表（§6.1 成对容差比较）";
+    EXPECT_EQ(out.solutionSet.statistics.dedupedCount, 1U);
+    EXPECT_EQ(out.solutionSet.statistics.filteredCount, 0U)
+        << "去重合并不产生过滤记录（统计口径分离）";
+    // 组内代表＝sourceInitIndex 最小者（§6.3 键 4 注）。
+    EXPECT_EQ(out.solutionSet.solutions[0].sourceInitIndex, 0U);
+}
+
+TEST(KinIk, SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{});
+
+    // I-KIN-3：相差 1e-9 rad 的两个构型——签名不同（精确编码）但去重
+    // 等价（容差比较）；"哈希等价≠去重等价"的编码面锁定。
+    const std::vector<double> a = {0.3, -0.5};
+    const std::vector<double> b = {0.3 + 1e-9, -0.5};
+    EXPECT_NE(kin::configurationSignature(a), kin::configurationSignature(b));
+
+    // 经求解管线验证去重合并（容差面）。
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, a).tcp;
+    IkRequest req = makeRequest(view, transformOf(golden), {a, b});
+    const IkOutcome out = IkSolver().solve(req);
+    EXPECT_EQ(out.solutionSet.statistics.convergedCount, 2U);
+    EXPECT_EQ(out.solutionSet.solutions.size(), 1U);
+}
+
+TEST(KinIk, DedupThresholdIsPerAxis_WP15T04_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{"AT-03"});
+
+    // 逐轴阈值语义（附录 D 第 3 项/C1）的直接单元面——deduplicateSolutions
+    // 唯一实现点（求解管线内同函数）：
+    //   两构型逐轴差 (0.5, 0.5)、阈值 0.7——逐轴规则判"同构型"（全部轴
+    //   ≤阈值）；若实现误用合模长/范数（0.707>0.7）会误判"异构型"。
+    KinematicSolution a = handSolution({0.1, 5.0}, 1.0, 1.0, 0U);
+    KinematicSolution b = handSolution({0.6, 5.0}, 1.0, 1.0, 1U);
+    auto merged = kin::deduplicateSolutions({a, b}, 0.7);
+    EXPECT_EQ(merged.size(), 1U) << "逐轴阈值：全轴 ≤阈值＝同构型（合并）";
+    EXPECT_EQ(merged[0].sourceInitIndex, 0U) << "组内代表＝先到者（最小 init 序）";
+
+    // 任一轴超阈即不同构型：单轴差 0.8 > 0.7。
+    b.q = {0.9, 5.0};
+    EXPECT_EQ(kin::deduplicateSolutions({a, b}, 0.7).size(), 2U);
+
+    // 阈值边界（≤ 阈值即合并——闭式比较 |Δ| ≤ T；取二进制精确值避免
+    // 浮点表示误差干扰边界语义：0.75−0.25=0.5 精确）。
+    a.q = {0.25, 5.0};
+    b.q = {0.75, 5.0};
+    EXPECT_EQ(kin::deduplicateSolutions({a, b}, 0.5).size(), 1U);
+    b.q = {0.76, 5.0};
+    EXPECT_EQ(kin::deduplicateSolutions({a, b}, 0.5).size(), 2U);
+
+    // 管线级回归：三连杆双分支构型（大间距）经求解管线去重后均保留
+    // （去重对象＝构型——同位姿双构型不被误并）。
+    const rt::CanonicalModel model = threeLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.2, 0.4, 0.0}).tcp;
+    const std::vector<std::vector<double>> branches =
+        threeLinkPoseBranches(1.0, 0.6, 0.4, golden[0][3], golden[1][3], 0.6);
+    IkRequest req = makeRequest(view, transformOf(golden), branches);
+    const IkOutcome out = IkSolver().solve(req);
+    EXPECT_EQ(out.outcomeKind, IkOutcomeKind::SolutionsFound);
+    EXPECT_EQ(out.solutionSet.solutions.size(), 2U);
+}
+
+// ---------------------------------------------------------------------
+// V-07——换初值/扩预算后按同一冻结输入复评可翻转
+// ---------------------------------------------------------------------
+
+TEST(KinIk, ExpandedInitialValuesFlipOutcome_WP15T04_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "EVI-01"},
+                  std::vector<std::string>{"AT-03"});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+    const rw::math::Transform3D<double> target = transformOf(golden);
+
+    // 复评 A：远离解的单一初值＋小预算（迭代上限 1）——未收敛
+    // （搜索未果 C5）。
+    IkRequest reqA = makeRequest(view, target, {{3.0, -2.5}});
+    reqA.iterationLimit = 1U;
+    const IkOutcome outA = IkSolver().solve(reqA);
+    EXPECT_EQ(outA.outcomeKind, IkOutcomeKind::MultiInitNoConvergence);
+    ASSERT_TRUE(outA.solutionSet.searchRecord.has_value());
+    EXPECT_EQ(outA.solutionSet.searchRecord->initialGuessesTried, 1U);
+
+    // 复评 B：同一冻结输入（同目标/容差/上限）扩大初值集——加入靠近
+    // 解的初值后翻转为 SolutionsFound（搜索未果≠不可行）。
+    IkRequest reqB = reqA;
+    reqB.initialValues = {{3.0, -2.5}, {0.3 + 1e-4, -0.5}};
+    const IkOutcome outB = IkSolver().solve(reqB);
+    EXPECT_EQ(outB.outcomeKind, IkOutcomeKind::SolutionsFound);
+    ASSERT_EQ(outB.solutionSet.solutions.size(), 1U);
+    EXPECT_LE(outB.solutionSet.solutions[0].positionResidual,
+              reqB.positionTolerance);
+}
+
+// ---------------------------------------------------------------------
+// V-08——一构型碰撞另一构型有效（构型级碰撞仅过滤该解）
+// ---------------------------------------------------------------------
+
+TEST(KinIk, CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-05"},
+                  std::vector<std::string>{"AT-19"});
+
+    const rt::CanonicalModel model = threeLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.2, 0.4, 0.0}).tcp;
+    const std::vector<std::vector<double>> branches = threeLinkPoseBranches(
+        1.0, 0.6, 0.4, golden[0][3], golden[1][3], 0.6);
+
+    // 替身脚本：第二轴为正的构型碰撞（肘型分支之一——两分支 q2 反号）。
+    const core::ObjectId pairA = idFrom<core::ObjectId>("kin-obs-a");
+    const core::ObjectId pairB = idFrom<core::ObjectId>("kin-obs-b");
+    StubCollisionSession session(
+        [](const std::vector<double>& q) { return q[1] > 0.0; }, {pairA, pairB});
+
+    IkRequest req = makeRequest(view, transformOf(golden), branches);
+    req.collisionSession = &session;
+    const IkOutcome out = IkSolver().solve(req);
+
+    // 结局 4（1 的子形态）：碰撞解被过滤、另一构型在解集。
+    EXPECT_EQ(out.outcomeKind, IkOutcomeKind::PartialCollision);
+    EXPECT_FALSE(out.collisionNotEvaluated);
+    ASSERT_EQ(out.solutionSet.solutions.size(), 1U);
+    EXPECT_EQ(out.solutionSet.solutions[0].collisionStatus.evaluated, true);
+    EXPECT_EQ(out.solutionSet.solutions[0].collisionStatus.inCollision, false);
+
+    // 过滤记录（构型级——KIN-COLLISION-FILTERED 的记录面；诊断码归 T07）。
+    ASSERT_EQ(out.solutionSet.filteredRecords.size(), 1U);
+    EXPECT_EQ(out.solutionSet.filteredRecords[0].reason,
+              SolutionFilterReason::Collision);
+    ASSERT_EQ(out.solutionSet.filteredRecords[0].objectIdPairs.size(), 2U);
+    EXPECT_EQ(out.solutionSet.filteredRecords[0].objectIdPairs[0], pairA);
+    EXPECT_EQ(out.solutionSet.filteredRecords[0].objectIdPairs[1], pairB);
+    // 任务可行素材不受单解影响（C8——不上升为任务不可行）。
+    EXPECT_FALSE(out.proofMaterial.has_value());
+}
+
+// ---------------------------------------------------------------------
+// V-09——全部候选被过滤（含全部因碰撞）→搜索未果记录，不得输出不可行
+// ---------------------------------------------------------------------
+
+TEST(KinIk, AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "EVI-01", "EVI-02"},
+                  std::vector<std::string>{"AT-03"});
+
+    const rt::CanonicalModel model = threeLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.2, 0.4, 0.0}).tcp;
+    const std::vector<std::vector<double>> branches = threeLinkPoseBranches(
+        1.0, 0.6, 0.4, golden[0][3], golden[1][3], 0.6);
+
+    // 替身脚本：全部构型碰撞（C8 反例面）。
+    StubCollisionSession session(
+        [](const std::vector<double>&) { return true; },
+        {idFrom<core::ObjectId>("kin-obs-a"), idFrom<core::ObjectId>("kin-obs-b")});
+
+    IkRequest req = makeRequest(view, transformOf(golden), branches);
+    req.collisionSession = &session;
+    const IkOutcome out = IkSolver().solve(req);
+
+    EXPECT_EQ(out.outcomeKind, IkOutcomeKind::AllCandidatesFiltered);
+    EXPECT_TRUE(out.solutionSet.solutions.empty());
+    ASSERT_TRUE(out.solutionSet.searchRecord.has_value())
+        << "结局 3 必附搜索未果记录（预算/初值数/迭代统计）";
+    EXPECT_EQ(out.solutionSet.searchRecord->initialGuessesTried, 2U);
+    ASSERT_EQ(out.solutionSet.filteredRecords.size(), 2U);
+    for (const auto& r : out.solutionSet.filteredRecords) {
+        EXPECT_EQ(r.reason, SolutionFilterReason::Collision);
+    }
+    // 铁律：不得输出不可行（无证明素材——判定归 evidence DataInsufficient）。
+    EXPECT_FALSE(out.proofMaterial.has_value());
+    EXPECT_EQ(out.solutionSet.statistics.filteredCount, 2U);
+    EXPECT_EQ(out.solutionSet.statistics.dedupedCount, 0U);
+}
+
+// ---------------------------------------------------------------------
+// 硬过滤顺序固定①→②→③（限位先于碰撞——记录取首个命中阶段）
+// ---------------------------------------------------------------------
+
+TEST(KinIk, FilterOrderLimitBeforeCollision_WP15T04_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02"}, std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+
+    // 目标需要 q2≈3.5（> j2 上限 π）——收敛候选必越限；碰撞替身对一切
+    // 构型报碰撞：若顺序错误（③先于②）记录会被标为 Collision。
+    const Mat4 golden = referenceFk(model, {0.2, 3.5}).tcp;
+    StubCollisionSession session(
+        [](const std::vector<double>&) { return true; },
+        {idFrom<core::ObjectId>("kin-obs-a"), idFrom<core::ObjectId>("kin-obs-b")});
+
+    IkRequest req = makeRequest(view, transformOf(golden), {{0.2, 3.4}});
+    req.collisionSession = &session;
+    const IkOutcome out = IkSolver().solve(req);
+
+    EXPECT_EQ(out.outcomeKind, IkOutcomeKind::AllCandidatesFiltered);
+    ASSERT_EQ(out.solutionSet.filteredRecords.size(), 1U);
+    EXPECT_EQ(out.solutionSet.filteredRecords[0].reason,
+              SolutionFilterReason::JointLimit)
+        << "硬过滤顺序固定①②③——限位命中即记录，不再进入碰撞阶段";
+}
+
+// ---------------------------------------------------------------------
+// V-04 逐位可复现（payload 字节面）＋referenceQ 显式入身份（D-KIN-4）
+// ---------------------------------------------------------------------
+
+TEST(KinIk, ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-06"},
+                  std::vector<std::string>{"AT-04"});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+
+    IkRequest req = makeRequest(view, transformOf(golden), {{0.1, 0.1}});
+    req.requestIdentity.snapshotId.bytes = digestOf("kin-id-snap");
+    req.requestIdentity.sliceId.bytes = digestOf("kin-id-slice");
+
+    // 同请求（含 referenceQ）两次求解 → payload 字节逐位一致（V-04）。
+    const IkOutcome outA = IkSolver().solve(req);
+    const IkOutcome outB = IkSolver().solve(req);
+    const core::TaskIdentity task{};  // 绑定面同值——只考察 referenceQ 差异
+    const std::vector<std::uint8_t> bytesA =
+        kin::encodeTaskPointIkPayloadCanonical(outA, task);
+    const std::vector<std::uint8_t> bytesB =
+        kin::encodeTaskPointIkPayloadCanonical(outB, task);
+    ASSERT_EQ(bytesA.size(), bytesB.size());
+    EXPECT_TRUE(bytesA == bytesB) << "两次输出逐位一致（NFR-COR-01）";
+
+    // 仅改显式 referenceQ（同解同构型）→ 身份字节变化（referenceQ 显式
+    // 入请求身份——D-KIN-4；本单元无任何会话姿态读取面，身份只随显式
+    // 输入变化——KIN-06/AT-04 边界）。
+    IkRequest reqC = req;
+    reqC.referenceQ = {0.5, -0.5};
+    reqC.requestIdentity.referenceQ = {0.5, -0.5};
+    const IkOutcome outC = IkSolver().solve(reqC);
+    const std::vector<std::uint8_t> bytesC =
+        kin::encodeTaskPointIkPayloadCanonical(outC, task);
+    EXPECT_FALSE(bytesA == bytesC)
+        << "referenceQ 变化必须反映在结果身份字节中（显式入身份）";
+    // 解本身不受参考构型影响（同构型——排序键未引入容差漂移）。
+    ASSERT_EQ(outA.solutionSet.solutions.size(),
+              outC.solutionSet.solutions.size());
+    EXPECT_EQ(outA.solutionSet.solutions[0].q, outC.solutionSet.solutions[0].q);
+}
+
+// ---------------------------------------------------------------------
+// 视图级四键稳定排序（§6.3 全键覆盖——手工黄金值）
+// ---------------------------------------------------------------------
+
+TEST(KinIk, SolutionSetViewSortsByFourKeys_WP15T04_ACC3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "NFR-COR-02"},
+                  std::vector<std::string>{});
+
+    // 手工四解（构造序故意打乱），覆盖全部四键（期望序＝键序逐级裁决）：
+    //  margin 0.5（init1）→ 键 1 直接居首；
+    //  margin 0.3 组内：manip 0.9 三解先于 manip 0.1 一解（键 2）；
+    //   三解中距离 0.283 的两解先于距离 1.414 的一解（键 3）；
+    //   距离平手的两解按 sourceInitIndex 升序（5 < 8，键 4 兜底）。
+    IkSolutionSet set;
+    set.requestIdentity.referenceQ = {0.0, 0.0};
+    set.solutions.push_back(handSolution({1.0, 1.0}, 0.3, 0.9, 3U));   // 距离 √2
+    set.solutions.push_back(handSolution({0.2, 0.2}, 0.3, 0.9, 8U));   // 距离近
+    set.solutions.push_back(handSolution({0.5, 0.5}, 0.5, 0.1, 1U));   // margin 最高
+    set.solutions.push_back(handSolution({0.4, 0.4}, 0.3, 0.1, 2U));   // manip 低
+    set.solutions.push_back(handSolution({0.2, 0.2}, 0.3, 0.9, 5U));   // 与上全平
+
+    const KinematicSolutionSet view(set);
+    const auto& sorted = view.sorted();
+    ASSERT_EQ(sorted.size(), 5U);
+    EXPECT_EQ(sorted[0].sourceInitIndex, 1U) << "键 1：margin 降序居首";
+    EXPECT_EQ(sorted[1].sourceInitIndex, 5U)
+        << "键 2/3：manip 0.9 组内距离近者优先，平手键 4 取小 init 序";
+    EXPECT_EQ(sorted[2].sourceInitIndex, 8U) << "键 4：与上全平 init 8 殿后";
+    EXPECT_EQ(sorted[3].sourceInitIndex, 3U) << "键 3：距离 1.414 靠后";
+    EXPECT_EQ(sorted[4].sourceInitIndex, 2U) << "键 2：manip 0.1 居末";
+
+    // 幂等：同一集合再次构造视图排序结果逐位一致（V-04 前提）。
+    const KinematicSolutionSet viewAgain(set);
+    ASSERT_EQ(viewAgain.sorted().size(), sorted.size());
+    for (std::size_t i = 0; i < sorted.size(); ++i) {
+        EXPECT_EQ(viewAgain.sorted()[i].q, sorted[i].q);
+        EXPECT_EQ(viewAgain.sorted()[i].sourceInitIndex,
+                  sorted[i].sourceInitIndex);
+    }
+
+    // 统计透传（构造值持有）。
+    EXPECT_EQ(view.statistics().rawCount, 0U);
+}
+
+TEST(KinIk, SolutionSetViewWorstByAndFiltered_WP15T04_ACC3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-02", "KIN-08"},
+                  std::vector<std::string>{});
+
+    IkSolutionSet set;
+    set.requestIdentity.referenceQ = {0.0, 0.0};
+    set.solutions.push_back(handSolution({0.1, 0.1}, 0.8, 2.0, 0U));
+    set.solutions.push_back(handSolution({0.3, 0.3}, 0.2, 1.0, 1U));  // 裕量最小
+    set.solutions.push_back(handSolution({0.5, 0.5}, 0.5, 9.0, 2U));  // 条件数最大
+    set.solutions[2].conditionNumber = 42.0;
+    set.solutions[1].positionResidual = 0.05;                          // 残差最大
+    set.statistics.rawCount = 3U;
+
+    const KinematicSolutionSet view(set);
+
+    // 视图排序序（margin 降序）：[init0(0.8), init2(0.5), init1(0.2)]；
+    // worstBy 返回 sorted() 序上的下标（SolutionRef——非 sourceInitIndex）。
+    ASSERT_EQ(view.sorted().size(), 3U);
+    EXPECT_EQ(view.sorted()[0].sourceInitIndex, 0U);
+    EXPECT_EQ(view.sorted()[1].sourceInitIndex, 2U);
+    EXPECT_EQ(view.sorted()[2].sourceInitIndex, 1U);
+
+    // worstBy 三度量（§6.2——KIN-08 规范来源；同值取 sorted 序先者）。
+    // sorted 序＝[init0(margin0.8), init2(margin0.5/cond42), init1
+    // (margin0.2/residual0.05)]：
+    const auto worstMargin = view.worstBy(WorstMetric::MinimumJointMargin);
+    ASSERT_TRUE(worstMargin.has_value());
+    EXPECT_EQ(worstMargin->solutionIndex, 2U);  // init1 裕量最小（sorted 下标 2）
+    const auto worstCond = view.worstBy(WorstMetric::ConditionNumber);
+    ASSERT_TRUE(worstCond.has_value());
+    EXPECT_EQ(worstCond->solutionIndex, 1U);  // init2 条件数最大（sorted 下标 1）
+    const auto worstResidual = view.worstBy(WorstMetric::PositionResidual);
+    ASSERT_TRUE(worstResidual.has_value());
+    EXPECT_EQ(worstResidual->solutionIndex, 2U);  // init1 残差最大（sorted 下标 2）
+
+    // filtered（谓词由调用方给出——保持 sorted 序的子序列）。
+    const auto reachable = view.filtered(
+        [](const KinematicSolution& s) { return s.minimumJointMargin > 0.3; });
+    ASSERT_EQ(reachable.size(), 2U);
+    EXPECT_EQ(reachable[0].sourceInitIndex, 0U);
+    EXPECT_EQ(reachable[1].sourceInitIndex, 2U);
 }

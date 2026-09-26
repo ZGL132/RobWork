@@ -1,4 +1,4 @@
-[==========] Running 35 tests from 5 test suites.
+[==========] Running 45 tests from 5 test suites.
 [----------] Global test environment set-up.
 [----------] 3 tests from KinErrors
 [ RUN      ] KinErrors.ErrorCodeTokensMatchSection92Row_WP15T02_ACC4
@@ -24,14 +24,14 @@
 
 [----------] 4 tests from KinBuildRedLine
 [ RUN      ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1
-[       OK ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1 (2 ms)
+[       OK ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1 (3 ms)
 [ RUN      ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5
-[       OK ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5 (2 ms)
+[       OK ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5 (3 ms)
 [ RUN      ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5
 [       OK ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5 (2 ms)
 [ RUN      ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1
-[       OK ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1 (1 ms)
-[----------] 4 tests from KinBuildRedLine (9 ms total)
+[       OK ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1 (2 ms)
+[----------] 4 tests from KinBuildRedLine (11 ms total)
 
 [----------] 15 tests from KinFk
 [ RUN      ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1
@@ -66,7 +66,7 @@
 [       OK ] KinFk.DeterministicByteOutput_WP15T03_ACC1 (0 ms)
 [----------] 15 tests from KinFk (0 ms total)
 
-[----------] 8 tests from KinIk
+[----------] 18 tests from KinIk
 [ RUN      ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2
 [       OK ] KinIk.ConvergesOnReachableTarget_WP15T04_ACC2 (0 ms)
 [ RUN      ] KinIk.SamePoseDistinctConfigurationsRetained_WP15T04_ACC1
@@ -83,8 +83,28 @@
 [       OK ] KinIk.CancellationYieldsNoTerminalFields_WP15T04_ACC2 (0 ms)
 [ RUN      ] KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3
 [       OK ] KinIk.RepeatedSolveBitwiseIdentical_WP15T04_ACC3 (0 ms)
-[----------] 8 tests from KinIk (1 ms total)
+[ RUN      ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1
+[       OK ] KinIk.DedupMergesWithinPerAxisTolerance_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3
+[       OK ] KinIk.SignaturesDifferWhileDedupEquivalent_IKIN3_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1
+[       OK ] KinIk.DedupThresholdIsPerAxis_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.ExpandedInitialValuesFlipOutcome_WP15T04_ACC2
+[       OK ] KinIk.ExpandedInitialValuesFlipOutcome_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2
+[       OK ] KinIk.CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2
+[       OK ] KinIk.AllCollisionFilteredYieldsSearchRecordNotInfeasible_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1
+[       OK ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1 (0 ms)
+[ RUN      ] KinIk.ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3
+[       OK ] KinIk.ReferenceQEntersIdentityAndDeterminesBytes_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3
+[       OK ] KinIk.SolutionSetViewSortsByFourKeys_WP15T04_ACC3 (0 ms)
+[ RUN      ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3
+[       OK ] KinIk.SolutionSetViewWorstByAndFiltered_WP15T04_ACC3 (0 ms)
+[----------] 18 tests from KinIk (1 ms total)
 
 [----------] Global test environment tear-down
-[==========] 35 tests from 5 test suites ran. (12 ms total)
-[  PASSED  ] 35 tests.
+[==========] 45 tests from 5 test suites ran. (14 ms total)
+[  PASSED  ] 45 tests.

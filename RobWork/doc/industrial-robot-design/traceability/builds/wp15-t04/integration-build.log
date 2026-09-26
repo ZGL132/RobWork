@@ -244,7 +244,6 @@
   Automatic MOC for target sdurws_ird_kinematics_test
   sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
   Automatic MOC for target sdurws_ird_modeling_app
-  HarnessMain.cpp
   sdurws_ird_modeling_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_app.exe
   Automatic MOC for target sdurws_ird_modeling_contract_test
   sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
@@ -265,57 +264,12 @@
   Automatic MOC for target sdurws_ird_reporting_test
   sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
   Automatic MOC for target sdurws_ird_requirements
-  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
-  Capture.cpp
-  CommandHandlers.cpp
-  DiagCodes.cpp
-  Editor.cpp
-  Errors.cpp
-  Import.cpp
-  OrientationResolution.cpp
-  Readiness.cpp
-  TemplateArray.cpp
   sdurws_ird_requirements.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
   Automatic MOC for target sdurws_ird_requirements_contract_test
-  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
-  BuildGraphContractTest.cpp
-  PeerFaceContractTest.cpp
   sdurws_ird_requirements_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
   Automatic MOC for target sdurws_ird_requirements_plugin
-  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
-  PanelTreeModel.cpp
-  PanelStationModel.cpp
-  PanelRegionModel.cpp
-  PanelConditionModel.cpp
-  PanelValidationModel.cpp
-  PanelCommandCatalog.cpp
-  PanelEditFlow.cpp
-  ImportWizardFlow.cpp
-  RequirementsPanelWidget.cpp
-  RequirementsUiModule.cpp
-  mocs_compilation_Release.cpp
   sdurws_ird_requirements_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
   Automatic MOC for target sdurws_ird_requirements_test
-  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
-  TestMainReport.cpp
-  ObjectTypesTest.cpp
-  ErrorsTest.cpp
-  DiagCodesTest.cpp
-  BuildRedLineTest.cpp
-  RequirementTypesTest.cpp
-  CodecTest.cpp
-  ServicesTest.cpp
-  SamplingTest.cpp
-  EditorTest.cpp
-  ImportTest.cpp
-  ReadinessTest.cpp
-  CommandHandlersTest.cpp
-  OrientationResolutionTest.cpp
-  CaptureTest.cpp
-  TemplateArrayTest.cpp
-  PluginPanelTest.cpp
-  GoldenDatasetsContractTest.cpp
-  mocs_compilation_Release.cpp
   sdurws_ird_requirements_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
   Automatic MOC for target sdurws_ird_runtime_test
   sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
@@ -326,19 +280,10 @@
   Automatic MOC for target sdurws_ird_testkit_test
   sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
   Automatic MOC for target sdurws_ird_ui_app
-  DiagnosticsAssembly.cpp
-  HarnessMain.cpp
-  PortAdapters.cpp
   sdurws_ird_ui_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_app.exe
   Automatic MOC for target sdurws_ird_ui_contract_test
   sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
   Automatic MOC for target sdurws_ird_ui_gui_test
-  AboutDialogGuiTest.cpp
-  CommandPaletteGuiTest.cpp
-  PolicySummaryCardGuiTest.cpp
-  WorkbenchContentGuiTest.cpp
-  WorkbenchShellGuiTest.cpp
-D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(174,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_gui_test.vcxproj]
   sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
   Automatic MOC for target sdurws_ird_ui_test
   sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe

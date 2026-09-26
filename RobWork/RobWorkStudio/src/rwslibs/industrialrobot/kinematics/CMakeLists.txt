@@ -69,7 +69,10 @@ find_package(Eigen3 CONFIG REQUIRED)
 #   src/Bounds.cpp     解析工作半径界限（§5.4 结局 5 素材面——连杆长度和
 #                      上界推导＋证明素材组装）
 #   src/Ik.cpp         多初值 IK 求解（KIN-02——初值策略生成/阻尼最小二乘/
-#                      解析界限检查/结局组装；Eigen 消费点之一——O-40 PRIVATE）
+#                      解析界限检查/硬过滤①②③/去重/结局组装；Eigen 消费点
+#                      之一——O-40 PRIVATE）
+#   src/SolutionSet.cpp 解集视图（§6.2——四键稳定排序唯一实现点
+#                      sortSolutions＋sorted/filtered/statistics/worstBy）
 add_library(sdurws_ird_kinematics STATIC
     src/Errors.cpp
     src/DiagCodes.cpp
@@ -77,7 +80,8 @@ add_library(sdurws_ird_kinematics STATIC
     src/Evaluators.cpp
     src/KinTypes.cpp
     src/Bounds.cpp
-    src/Ik.cpp)
+    src/Ik.cpp
+    src/SolutionSet.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
@@ -243,7 +247,8 @@ ird_add_gtest(sdurws_ird_kinematics_test)
 add_executable(sdurws_ird_kinematics_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/PoseMetricsEvaluatorContractTest.cpp)
+    contract_test/PoseMetricsEvaluatorContractTest.cpp
+    contract_test/TaskPointIkEvaluatorContractTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_contract_test PROPERTIES

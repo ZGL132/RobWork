@@ -1,4 +1,4 @@
-[==========] Running 11 tests from 2 test suites.
+[==========] Running 20 tests from 3 test suites.
 [----------] Global test environment set-up.
 [----------] 5 tests from KinBuildGraph
 [ RUN      ] KinBuildGraph.UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3
@@ -10,7 +10,7 @@
 [ RUN      ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3
 [       OK ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3 (0 ms)
 [ RUN      ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5
-[       OK ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5 (2 ms)
+[       OK ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5 (3 ms)
 [----------] 5 tests from KinBuildGraph (4 ms total)
 
 [----------] 6 tests from KinPoseMetricsEval
@@ -28,6 +28,27 @@
 [       OK ] KinPoseMetricsEval.DeterministicBytesAcrossCallsAndModes_WP15T03_ACC4 (0 ms)
 [----------] 6 tests from KinPoseMetricsEval (0 ms total)
 
+[----------] 9 tests from KinTaskPointIkEval
+[ RUN      ] KinTaskPointIkEval.DescriptorMatchesSection43Row_WP15T04_ACC5
+[       OK ] KinTaskPointIkEval.DescriptorMatchesSection43Row_WP15T04_ACC5 (0 ms)
+[ RUN      ] KinTaskPointIkEval.KeyWordFormGateCompliant_WP15T04_ACC5
+[       OK ] KinTaskPointIkEval.KeyWordFormGateCompliant_WP15T04_ACC5 (0 ms)
+[ RUN      ] KinTaskPointIkEval.HostInjectionFactoryProducesEvaluator_WP15T04_ACC5
+[       OK ] KinTaskPointIkEval.HostInjectionFactoryProducesEvaluator_WP15T04_ACC5 (0 ms)
+[ RUN      ] KinTaskPointIkEval.AssemblyFailsFastOnIllegalQuery_WP15T04_ACC4
+[       OK ] KinTaskPointIkEval.AssemblyFailsFastOnIllegalQuery_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinTaskPointIkEval.EvaluateSuccessProducesBoundPayload_WP15T04_ACC4
+[       OK ] KinTaskPointIkEval.EvaluateSuccessProducesBoundPayload_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2
+[       OK ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2 (1 ms)
+[ RUN      ] KinTaskPointIkEval.AnalyticBoundDeliversProofMaterial_WP15T04_ACC4
+[       OK ] KinTaskPointIkEval.AnalyticBoundDeliversProofMaterial_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinTaskPointIkEval.CancellationYieldsZeroMaterial_WP15T04_ACC2
+[       OK ] KinTaskPointIkEval.CancellationYieldsZeroMaterial_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinTaskPointIkEval.DeterministicAndModeSensitivePayload_WP15T04_ACC3
+[       OK ] KinTaskPointIkEval.DeterministicAndModeSensitivePayload_WP15T04_ACC3 (0 ms)
+[----------] 9 tests from KinTaskPointIkEval (1 ms total)
+
 [----------] Global test environment tear-down
-[==========] 11 tests from 2 test suites ran. (4 ms total)
-[  PASSED  ] 11 tests.
+[==========] 20 tests from 3 test suites ran. (6 ms total)
+[  PASSED  ] 20 tests.

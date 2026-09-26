@@ -21,7 +21,8 @@
 
 #include <sdurws/ird/kinematics/Ik.hpp>
 
-#include <sdurws/ird/kinematics/Fk.hpp>  // FkEvaluator/PoseMetrics——FK 复算唯一实现点
+#include <sdurws/ird/kinematics/Fk.hpp>          // FkEvaluator/PoseMetrics——FK 复算唯一实现点
+#include <sdurws/ird/kinematics/SolutionSet.hpp>  // sortSolutions——§6.3 四键排序唯一实现点
 
 #include <Eigen/Core>
 #include <Eigen/Cholesky>  // LLT——DLS 正规方程 (JJᵀ＋λ²I) 求解（O-40 Eigen PRIVATE）
@@ -182,6 +183,24 @@ bool converged(double posResidual, double oriResidual,
                double posTol, double oriTol)
 {
     return posResidual <= posTol && oriResidual <= oriTol;
+}
+
+/// 硬过滤记录构造（构型级指标照抄解草稿——§6.1"原因、对象对、指标"）。
+FilteredSolutionRecord makeFilteredRecord(const KinematicSolution& s,
+                                          SolutionFilterReason reason,
+                                          double posResidual, double oriResidual)
+{
+    FilteredSolutionRecord r;
+    r.q = s.q;
+    r.reason = reason;
+    r.positionResidual = posResidual;
+    r.orientationResidual = oriResidual;
+    r.minimumJointMargin = s.minimumJointMargin;
+    r.manipulability = s.manipulability;
+    r.sourceInitIndex = s.sourceInitIndex;
+    r.iterations = s.iterations;
+    r.signature = s.signature;
+    return r;
 }
 
 }  // namespace
@@ -444,10 +463,13 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
     // ---- 第 2 步：逐初值阻尼最小二乘迭代（§5.3 时序——纯函数服务委托
     // FkEvaluator 复算 FK；周期查询取消探针）。----
     const FkEvaluator fkService;
-    std::vector<KinematicSolution> candidates;
+    std::vector<KinematicSolution> convergedCandidates;  // 通过全部硬过滤的候选
+    std::uint64_t stage1Survivors = 0;  // 阶段①残差复验通过数（结局 2/3 区分——
+                                        //   独立于②③过滤结果，语义见统计口径）
+    std::vector<FilteredSolutionRecord> filteredRecords;  // 硬过滤逐解记录
     IkSearchRecord search;
     search.initialGuessesTried = request.initialValues.size();
-    candidates.reserve(request.initialValues.size());
+    convergedCandidates.reserve(request.initialValues.size());
     search.iterationsPerInit.reserve(request.initialValues.size());
 
     const TcpRef& tcp = request.tcp;
@@ -522,7 +544,7 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
             continue;  // 未收敛：零候选语义（不做部分解猜测——§5.4）。
         }
 
-        // 2f. 收敛候选 → 解记录（指标取自收敛构型的 FK 全套输出）。
+        // 2f. 收敛候选 → 解记录草稿（指标取自收敛构型的 FK 全套输出）。
         KinematicSolution s;
         s.q = std::move(q);
         s.positionResidual = posResidual;
@@ -535,26 +557,122 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
         s.iterations = iterations;
         s.signature = configurationSignature(s.q);
         s.solverContractVersion = kIkSolverContractVersion;
-        candidates.push_back(std::move(s));
+
+        // ---- 第 3 步：硬过滤（顺序固定①残差复验→②限位→③碰撞——§5.3；
+        // 记录取**首个命中的阶段**，顺序即语义；每个被过滤解记录原因——
+        // 构型级记录，不下结论）。----
+        // 3a. ①残差复验（FK 复算——独立于迭代内收敛判据的一次新鲜复算；
+        // 换求解判据/注入替身时本阶段是残差超容差解的拦截点，比较型量：
+        // 位置 m／姿态 rad）。
+        {
+            Expected<PoseMetrics> recheck =
+                fkService.evaluate(*request.modelView, tcp, s.q);
+            if (!recheck.ok()) {
+                throw std::logic_error(
+                    "IkSolver：残差复验 FK 复算失败（求解器内部错误——"
+                    "KIN-SOLVER-INTERNAL 语义锚，§5.5 fail-fast 轨）");
+            }
+            // 复验残差（比较型量——覆写当次残差变量，供记录承载）。
+            poseError(request.targetInBase, recheck.get().tcpInBase,
+                      posResidual, oriResidual);
+            if (!converged(posResidual, oriResidual, request.positionTolerance,
+                           request.orientationTolerance)) {
+                filteredRecords.push_back(
+                    makeFilteredRecord(s, SolutionFilterReason::ResidualRecheck,
+                                       posResidual, oriResidual));
+                continue;
+            }
+            // 阶段①幸存计数（结局 2/3 区分的判据——②③过滤结果不影响：
+            // "有收敛候选但全被②③过滤"＝结局 3 而非结局 2）。
+            ++stage1Survivors;
+        }
+
+        // 3b. ②限位（有界关节出 bounds／continuous 出工作范围——§6.1
+        // 直接比较、无跨周取模；逐轴检查任一越界即记录）。
+        bool limitViolated = false;
+        for (std::size_t i = 0; i < s.q.size(); ++i) {
+            const JointInterval& itv = request.intervals[i];
+            if (itv.bounded && (s.q[i] < itv.lower || s.q[i] > itv.upper)) {
+                limitViolated = true;
+                break;
+            }
+        }
+        if (limitViolated) {
+            filteredRecords.push_back(
+                makeFilteredRecord(s, SolutionFilterReason::JointLimit,
+                                   posResidual, oriResidual));
+            continue;
+        }
+
+        // 3c. ③碰撞（policy 会话在场时——构型级判定仅过滤该解；未启用
+        // →跳过并标记 collisionNotEvaluated，绝不解读为无碰撞——KIN-05）。
+        if (request.collisionSession != nullptr) {
+            const IkCollisionVerdict verdict =
+                request.collisionSession->evaluate(s.q);
+            if (verdict.inCollision) {
+                FilteredSolutionRecord r =
+                    makeFilteredRecord(s, SolutionFilterReason::Collision,
+                                       posResidual, oriResidual);
+                r.objectIdPairs = verdict.objectIdPairs;
+                filteredRecords.push_back(std::move(r));
+                continue;
+            }
+            s.collisionStatus.evaluated = true;
+            s.collisionStatus.inCollision = false;
+        } else {
+            // 未启用碰撞：解的碰撞状态保持未评价（证据缺失语义）。
+            s.collisionStatus.evaluated = false;
+        }
+
+        convergedCandidates.push_back(std::move(s));
     }
 
-    // ---- 第 3 步：统计与结局判定（§5.4——commit 1 口径：候选即解，
-    // 硬过滤①②③/去重/稳定排序随"过滤去重排序"提交落位）。----
-    outcome.solutionSet.solutions = std::move(candidates);
+    // ---- 第 4 步：去重（§5.3/§6.1——关节空间逐轴容差成对比较，去重
+    // 对象是构型而非位姿（同位姿异构型均保留）；continuous 按工作范围
+    // 直接比较、无跨周取模（附录 D 第 3 项/C1）；ConfigurationSignature
+    // 仅作记录键不参与去重判定（I-KIN-3）。按初值序遍历——组内代表＝
+    // sourceInitIndex 最小者（先到先留，稳定）。被合并的重复构型不产生
+    // 过滤记录（去重≠硬过滤——统计口径分离）。实现＝
+    // deduplicateSolutions 唯一实现点（SolutionSet.cpp——§6.2 视图面
+    // 共享同语义）。----
+    std::vector<KinematicSolution> deduped =
+        deduplicateSolutions(convergedCandidates, request.dedupThresholdPerAxis);
+
+    // ---- 第 5 步：稳定排序（§6.3 四键——sortSolutions 唯一实现点，
+    // 与解集视图共享同一语义）＋统计与结局判定（§5.4）。----
+    sortSolutions(deduped, request.referenceQ);
+
+    outcome.solutionSet.solutions = std::move(deduped);
+    outcome.solutionSet.filteredRecords = std::move(filteredRecords);
     IkSolutionSetStatistics& stats = outcome.solutionSet.statistics;
     stats.rawCount = request.initialValues.size();
-    stats.convergedCount = outcome.solutionSet.solutions.size();
+    stats.convergedCount = stage1Survivors;
     stats.dedupedCount = outcome.solutionSet.solutions.size();
-    stats.filteredCount = 0;
+    stats.filteredCount = outcome.solutionSet.filteredRecords.size();
 
     if (outcome.solutionSet.solutions.empty()) {
-        // 结局 2：全部初值迭代至上限未收敛（零候选）——必附搜索未果
-        // 记录（预算/初值数/迭代统计）→DataInsufficient 素材；**不得
-        // 输出不可行**（无 proofMaterial）。
-        outcome.outcomeKind = IkOutcomeKind::MultiInitNoConvergence;
+        // 结局 2/3：零可行解——搜索未果记录**必附**（预算/初值数/迭代
+        // 统计；逐解过滤记录在 filteredRecords 同批交付）→DataInsufficient
+        // 素材；两者都**不得输出不可行**（无 proofMaterial——§8.1 C5/C8）。
+        // 区分判据＝阶段①幸存数：有收敛候选但全被②③过滤＝结局 3；
+        // 零收敛候选＝结局 2。
+        const bool hadCandidates = stage1Survivors > 0;
+        outcome.outcomeKind = hadCandidates ? IkOutcomeKind::AllCandidatesFiltered
+                                            : IkOutcomeKind::MultiInitNoConvergence;
         outcome.solutionSet.searchRecord = std::move(search);
     } else {
-        outcome.outcomeKind = IkOutcomeKind::SolutionsFound;
+        // 结局 1/4：有可行解——存在碰撞原因的过滤记录＝PartialCollision
+        // （§5.4 行 4"部分解碰撞、其余有效"的判定落值，登记随卡
+        // §14.6 v0.4）；否则 SolutionsFound。
+        bool anyCollisionFiltered = false;
+        for (const FilteredSolutionRecord& r : outcome.solutionSet.filteredRecords) {
+            if (r.reason == SolutionFilterReason::Collision) {
+                anyCollisionFiltered = true;
+                break;
+            }
+        }
+        outcome.outcomeKind = anyCollisionFiltered ? IkOutcomeKind::PartialCollision
+                                                   : IkOutcomeKind::SolutionsFound;
     }
     return outcome;
 }
