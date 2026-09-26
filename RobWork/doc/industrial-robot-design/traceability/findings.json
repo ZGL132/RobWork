@@ -3796,6 +3796,46 @@
       "title": "WP-15-T02 引入同型 +2 门禁 SUB 新实例：sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 直链他单元产品目标 sdurws_ird_testkit（ird_gates 引擎直跑 base bcf22c08→head 8b88d08 归一化比对：直方图 SUB 71→75 行、去重 73→75 条、引擎自计数 66→68 处，三套口径增量一致恰此 2 条）。验收者独立裁决为 sanctioned 已登记允许形态：testkit.md §2.4 T-1（测试目标→{同单元产品目标, sdurws_ird_testkit, gtest 系}）＋DTB §4.5 例外登记册在案行「各 _test/_contract_test 经 testkit/policy 替身消费（生效，2026-09-10）」，与 F-359（WP-14-T02 同型 +2）完全同模式；产品目标零 testkit 由 NoTestkitEdgeOnProductTarget 契约测试＋配置期守卫双面钉住。非缺陷登记，仅为该 sanctioned 模式实例的台账顺延——把 kinematics 两实例并入登记册条目的回填属 WP-01-T03 治理面（与 F-359 同一待办池）。",
       "owner": "WP-01-T03 治理面（例外登记册回填时与 F-359 合并处置）",
       "resolution": "编号顺延自 F-381。"
+    },
+    {
+      "id": "F-384",
+      "source": "traceability/acceptance/WP-15-T03-20260926.md §4.7（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "kinematics include/sdurws/ird/kinematics/Errors.hpp 两处注释未随 WP-15-T03 映射行登记同步更新：①L165-166 段头注『映射阶段纪律见文件头注——本任务零映射行』（『本任务』视角停留在 T02）；②L182-183 kinematicsDiagCode 的 @return『已登记稳定码文本（当前全表 4 值均 nullopt……）』——与同文件已更新的文件头（『WP-15-T03 ……登记两行——NoDevice→KIN-NO-DEVICE、NoTcp→KIN-NO-TCP』）及实现（Errors.cpp switch 对 NoDevice/NoTcp 返回 kKinNoDevice/kKinNoTcp 注册常量）直接矛盾。AGENTS §2.6『过期注释』禁令、F-380『注释随代码更新』同族新例；实现与测试断言均正确（验收者读码核实＋T02 验收变异探针在案），纯注释面失实，后读工程师按 @return 误判映射面为空的风险在。",
+      "owner": "kinematics 实施会话（下次触及 Errors.hpp 时删改两处残留：段头注改为中性转引文件头、@return 改为『已登记映射行见文件头/Errors.cpp——NoDevice/NoTcp 返回注册常量，IllegalQ/FrameUnresolved 为 nullopt』）",
+      "resolution": "编号顺延自 F-383（wp15-t03 送验侧携带的实施端自登条目；本分支基线文件暂缺该行，收尾按 SHA 合并时两序列汇流）。"
+    },
+    {
+      "id": "F-385",
+      "source": "traceability/acceptance/WP-15-T03-20260926.md §4.9（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-069 变体家族再现：WP-15-T03 两份送验提交（0ece5504『实现 FK 与位姿指标评估器（kin.pose-metrics）并落位解析黄金 UT』、5551d4a4『登记 kinematics 单元卡 v0.3 落位与验证留痕并转登 F-383』）标题均缺「[WP-15-T03]」前缀，不合 AGENTS §6.3／ACC §4.9 标题字面格式「[任务编号] 动词开头的中文摘要」。与 F-069（EV-T09）判例同形态：两标题均动词开头合规、任务编号以正文 Acc-Covered/追溯字段可见、正文四段齐备且验证结论与验收者亲测逐项一致（双模式 27/27＋11/11、ctest 2/2、validate-docs 同数字、ird_gates +1 sanctioned——无粉饰）。纯风格瑕疵不构成阻断。",
+      "owner": "kinematics 实施会话（后续提交自查标题格式）；模板补救归治理面（与 F-012/F-069 家族同一待办池）",
+      "resolution": "编号顺延自 F-384。"
+    },
+    {
+      "id": "F-386",
+      "source": "traceability/acceptance/WP-15-T03-20260926.md §4.11（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "KIN-NO-DEVICE 结构化素材路径无直接运行断言，且承载其登记的具名测试为无断言文档化用例：test/FkTest.cpp NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3 函数体仅 SUCCEED()（命名形似行为测试、实为不可达性登记），导致 acceptance 3『无 device→结构化错误素材（KIN-NO-DEVICE）』在运行层面仅由间接证据承载（ErrorsTest 映射行断言＋Fk.cpp 空链守卫读码）。缓解面在案：类型系统不可达（runtime CanonicalModelBuilder 禁空链——替身视图无法持有空链 CanonicalModel，同类型系统保证）、不可达性论证随单元卡 §14.6 v0.3 ④登记、实现侧无失实声明（提交与 ird-test-report 未声称该用例有行为断言）。F-146（PRJ-T02）/F-043（RT-T06）测试覆盖面建议家族同型：实现本身正确（验收者读码核实守卫与映射路径一致），属测试承载方式建议非缺陷；若未来 runtime 放开空链构造或替身面扩展，应补一条经注入视图触发 KIN-NO-DEVICE 结构化诊断的真实断言用例。",
+      "owner": "kinematics 实施会话（T04+ 触及 Fk.cpp/test 时顺带补真实断言用例或把文档化用例改名为不可达性登记说明）；runtime 卡所有者（如放开空链构造则义务升级）",
+      "resolution": "编号顺延自 F-385。"
+    },
+    {
+      "id": "F-387",
+      "source": "traceability/acceptance/WP-15-T03-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "units/kinematics.md §14.6 v0.3 行⑧句尾『ird_gates base..head 归一化比对零新增命中（附件同目录）』与同一登记链的权威口径不一致：同提交的比对附件 ird-gates-base-head-compare.md 与实现提交 0ece5504 正文均明确为『+1 项 sanctioned 命中（Eigen PRIVATE——O-40，IRD-GATE-LIB ×2 行）』，验收者引擎直跑独立复跑同值（143→145 行/条、68→69 项）。卡面句『零新增命中』按字面少报 1 项 sanctioned 命中——F-025/F-041/F-073 散文计数家族新例，方向为少报、附件与提交正文准确、无粉饰，不构成阻断。",
+      "owner": "kinematics 实施会话（下次触及 units/kinematics.md 时把⑧句尾改为『+1 项 sanctioned 命中（Eigen PRIVATE——O-40；附件同目录）』；提交正文已冻结不可改，以本条与验收记录为凭）",
+      "resolution": "编号顺延自 F-386。"
     }
   ]
 }
