@@ -1,0 +1,12 @@
+Test project D:/10_Source_Repos/21_robot/acc-wp15-t02/build-int/RobWorkStudio/src/rwslibs/industrialrobot/kinematics
+    Start 1: sdurws_ird_kinematics_test
+1/2 Test #1: sdurws_ird_kinematics_test ............   Passed    0.01 sec
+    Start 2: sdurws_ird_kinematics_contract_test
+2/2 Test #2: sdurws_ird_kinematics_contract_test ...   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Label Time Summary:
+ird    =   0.03 sec*proc (2 tests)
+
+Total Test time (real) =   0.03 sec

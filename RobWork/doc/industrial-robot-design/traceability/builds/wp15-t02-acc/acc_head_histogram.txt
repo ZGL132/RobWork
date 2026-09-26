@@ -1,0 +1,8 @@
+head 10 IRD-GATE-LIB
+head 7 IRD-GATE-R1
+head 41 IRD-GATE-R3
+head 3 IRD-GATE-R4
+head 1 IRD-GATE-R5
+head 75 IRD-GATE-SUB
+head 5 IRD-GATE-T1
+head 1 IRD-GATE-T2

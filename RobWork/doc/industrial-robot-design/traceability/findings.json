@@ -3766,6 +3766,36 @@
       "title": "requirements/test/GoldenDatasetsContractTest.cpp L1846-1847 注释与断言矛盾：注释「乱序：编码门拒绝（编码器只接受规范化集合——不静默重排）」为早期方案残留，紧随断言 EXPECT_EQ(encodeOk(codec, shuffled), bytes) 实为「编码器按规范化副本排序写出——任意输入序同字节」（I-REQ-1 规范化写出，与卡 §14.6 v0.9② 与 Codec.cpp L1597 实现一致）。断言行为正确且变异测试（验收者 M2：排序改逆序→该用例真变红）证实有效，纯注释失准违反 AGENTS §2.5「注释随代码更新」。",
       "owner": "requirements 实施会话（下次触及该测试文件时同步修正该两行注释为「规范化写出」语义）",
       "resolution": "编号顺延自 F-378。"
+    }    ,
+    {
+      "id": "F-380",
+      "source": "traceability/acceptance/WP-15-T02-20260926.md §4.7/§4.9（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "kinematics DiagCodes.hpp L130 与 test/DiagCodesTest.cpp L67/L137 三处注释及 WP-15-T02 送验提交正文（「级别列 4 error/11 warning 原值」句）均声称 units/kinematics.md §9.6 全表级别列为「4 error＋11 warning」——实为 6 error＋9 warning（error＝KIN-NO-DEVICE/KIN-NO-TCP/KIN-TARGET-ILLEGAL/KIN-SOLVER-INTERNAL/KIN-CONFIG-ILLEGAL/KIN-SAMPLE-IDENTITY-MISMATCH，与卡 §9.6 原表、实现 DiagCodes.cpp、测试数据数组 kSection96IsError 三面一致）。数据与断言正确（验收者变异 M1：SOLVER-INTERNAL Error→Warning → DescriptorFieldsMatchSection96Rows 真变红，证明断言按 6/9 真值锁行），纯散文计数失实、方向为多报 error，非粉饰；违反 AGENTS §2.5「注释随代码更新」。F-379/F-041/F-370/F-376 散文计数家族新例。",
+      "owner": "kinematics 实施会话（下次触及 DiagCodes.hpp/test 文件时把三处「4 error＋11 warning」改为「6 error＋9 warning」；提交正文已冻结不可改，以本条与本验收记录留档为凭）",
+      "resolution": "编号顺延自 F-379。"
+    },
+    {
+      "id": "F-381",
+      "source": "traceability/acceptance/WP-15-T02-20260926.md §4.3（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-300/F-358/F-367/F-368/F-371/F-373/F-375 家族新例：tasks/foundation/WP-15-T02.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ird_gates 构建行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两条显式构建行与 ctest 行——全新构建树按 verify 清单逐条字面执行时测试 exe 不被任何清单命令构建、ctest 亦不在清单。验收者已按家族在案口径在集成/冒烟两棵全新构建树自行补建两目标并执行（12/12＋5/5 全绿、ctest -L \"^ird$\" 2/2 两模式），属验收者侧正常动作；建议契约编译模板为含 _test/_contract_test 的任务统一补「cmake --build … --target <测试目标>」与 ctest 行（与 F-367/F-368/F-371/F-373/F-375 处置建议合并落地面）。",
+      "owner": "契约编译/治理维护者（契约模板统一补行时一并处置）；kinematics 实施会话无独立动作",
+      "resolution": "编号顺延自 F-380。"
+    },
+    {
+      "id": "F-382",
+      "source": "traceability/acceptance/WP-15-T02-20260926.md 门禁专段（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "WP-15-T02 引入同型 +2 门禁 SUB 新实例：sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 直链他单元产品目标 sdurws_ird_testkit（ird_gates 引擎直跑 base bcf22c08→head 8b88d08 归一化比对：直方图 SUB 71→75 行、去重 73→75 条、引擎自计数 66→68 处，三套口径增量一致恰此 2 条）。验收者独立裁决为 sanctioned 已登记允许形态：testkit.md §2.4 T-1（测试目标→{同单元产品目标, sdurws_ird_testkit, gtest 系}）＋DTB §4.5 例外登记册在案行「各 _test/_contract_test 经 testkit/policy 替身消费（生效，2026-09-10）」，与 F-359（WP-14-T02 同型 +2）完全同模式；产品目标零 testkit 由 NoTestkitEdgeOnProductTarget 契约测试＋配置期守卫双面钉住。非缺陷登记，仅为该 sanctioned 模式实例的台账顺延——把 kinematics 两实例并入登记册条目的回填属 WP-01-T03 治理面（与 F-359 同一待办池）。",
+      "owner": "WP-01-T03 治理面（例外登记册回填时与 F-359 合并处置）",
+      "resolution": "编号顺延自 F-381。"
     }
   ]
 }
