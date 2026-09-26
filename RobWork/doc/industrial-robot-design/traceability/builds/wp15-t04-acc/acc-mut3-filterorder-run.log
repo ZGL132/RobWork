@@ -1,0 +1,22 @@
+Note: Google Test filter = KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from KinIk
+[ RUN      ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1
+D:\10_Source_Repos\21_robot\acc-wp15-t04\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp(800): error: Expected equality of these values:
+  out.solutionSet.filteredRecords[0].reason
+    Which is: 1-byte object <02>
+  SolutionFilterReason::JointLimit
+    Which is: 1-byte object <01>
+硬过滤顺序固定①②③——限位命中即记录，不再进入碰撞阶段
+
+[  FAILED  ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1 (0 ms)
+[----------] 1 test from KinIk (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinIk.FilterOrderLimitBeforeCollision_WP15T04_ACC1
+
+ 1 FAILED TEST
