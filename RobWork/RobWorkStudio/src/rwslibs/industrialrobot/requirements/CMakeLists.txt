@@ -313,6 +313,15 @@ target_link_libraries(sdurws_ird_requirements_plugin PUBLIC sdurws_ird_requireme
 #                          门控）＋域命令登记（ACC5：九条卡表值/SA-16 零
 #                          默认键/HotkeyBindingTable 无冲突登记/两套命名
 #                          空间分离）——V-22 GUI 流程仅登记不启动（卡 §10.2）
+# T09 增列（tasks/foundation/WP-14-T09.json，acceptance 1/2/5——黄金
+#          数据集契约套件；GoldenFixture（TK-T08）六步生命周期消费四套
+#          req-* 黄金数据集＋容差档案）：
+#   test/GoldenDatasetsContractTest.cpp  四套黄金数据集全链装载（lint 语
+#                          义）＋容差档案附录 D 锚定不放宽＋卡 §10.2 V 行
+#                          requirements 侧断言（V-01~V-06/V-08~V-11/
+#                          V-15~V-18/V-20/V-21；联合观测行仅登记）＋确定
+#                          性负样例（同输入同字节/I-REQ-1 稳定排序复验/
+#                          非有限与非法不静默）＋V-22 envUnavailable 登记
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/modeling 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
@@ -335,7 +344,8 @@ add_executable(sdurws_ird_requirements_test
     test/OrientationResolutionTest.cpp
     test/CaptureTest.cpp
     test/TemplateArrayTest.cpp
-    test/PluginPanelTest.cpp)
+    test/PluginPanelTest.cpp
+    test/GoldenDatasetsContractTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_test PROPERTIES
@@ -411,12 +421,16 @@ ird_add_gtest(sdurws_ird_requirements_test)
 #      登记——卡 §3.1/§3.3）----
 # 落位期契约面＝构建图边界契约（modeling BuildGraphContractTest 同款扫描
 # 形态——五条登记边的存在性/封闭性/无业务域互链/testkit 仅测试目标）；
-# T04+ 业务用例级跨单元契约（io/project/evidence 对端面）随各任务落地，
-# 不在骨架预建占位实现（总体详设 §1.5 原则）。自有 main 同 _test 目标
-# （报告设施接入）。
+# T09 增列（tasks/foundation/WP-14-T09.json acceptance 3/4）：对端面契约
+# 套件 PeerFaceContractTest.cpp——FaultInterceptor（TK-T09）伪造 project/
+# io/evidence/diagnostics 四对端接口逐项断言形状（命令 payload 对 project/
+# mapCsv 对 io RawTable/ReadinessSummary 对 evidence/REQ- 码对 diagnostics
+# 契约夹具）＋T-1/T-2 测试侧红线具名自证（对端形状漂移由测试面捕获——
+# 不构造产品边）。自有 main 同 _test 目标（报告设施接入）。
 add_executable(sdurws_ird_requirements_contract_test
     contract_test/ContractTestMain.cpp
-    contract_test/BuildGraphContractTest.cpp)
+    contract_test/BuildGraphContractTest.cpp
+    contract_test/PeerFaceContractTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_contract_test PROPERTIES
