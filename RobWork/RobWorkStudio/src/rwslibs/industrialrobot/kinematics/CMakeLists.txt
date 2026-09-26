@@ -41,21 +41,34 @@
 # 独立冒烟模式必须带 vcpkg toolchain 参数方可解析（CORE-T01 G-2 口径）。
 find_package(GTest CONFIG REQUIRED)
 
+# ---- Eigen 接入（治理登记 O-40，DTB §4.2——WP-15-T03 携带）----
+# Jacobian SVD/线性代数经 vcpkg 经典模式引入 eigen3（实测安装版本
+# 5.0.1）；rw::math 无 SVD——该依赖为 kinematics 计算所必需。PRIVATE
+# 仅本计算库实现文件消费（PUBLIC 面零 Eigen 类型——Fk.hpp 契约面纯
+# rw::math/标准库），不向下游传播（业务域依赖面最小化）。
+find_package(Eigen3 CONFIG REQUIRED)
+
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 # T02 源码集＝两公共头的实现翻译单元（头内码值常量为 inline constexpr，
 # 零运行时成本无需 TU；函数面按头分文件——modeling/io/requirements 同款
 # 布局）：
 #   src/Errors.cpp     域错误 token 转发表＋域错误→稳定码映射数据（§9.2/
-#                      §9.6；本任务零映射行——分批纪律见头文件注）
+#                      §9.6；T03 起映射两行——NoDevice/NoTcp 随消费任务）
 #   src/DiagCodes.cpp  KIN-* 15 码描述符清单（§9.6 全表逐码落值）＋注册
 #                      函数（§9.6 表头"装配期注册"的执行面）
-# T03 增列（tasks/foundation/WP-15-T03.json，§3.3 表 T03 行）：
-#   src/KinTypes.cpp / Fk.cpp / Evaluators.cpp / Bounds.cpp 等——值模型/
-#   FK 与位姿指标评估器/解析界限素材（§3.3 布局表任务列权威：KinTypes.hpp
-#   归 T03/T04）。
+# T03 增列（tasks/foundation/WP-15-T03.json，§3.3 布局表 T03 行）：
+#   src/Fk.cpp         FK 与位姿指标实现（KIN-01——链式 FK/基础雅可比/
+#                      Eigen SVD 指标链/canonical 载荷编码；全单元唯一
+#                      Eigen 消费点——O-40 PRIVATE）
+#   src/Evaluators.cpp kin.pose-metrics 评估器形态（IEngineeringEvaluator
+#                      实现＋宿主注入工厂＋descriptor——§4.3/§9.3）
+#   （KinTypes.hpp 本批为纯类型头无 TU；KinTypes.cpp 随 T04 值模型落位时
+#   按需增列——§3.3 布局表任务列权威）
 add_library(sdurws_ird_kinematics STATIC
     src/Errors.cpp
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/Fk.cpp
+    src/Evaluators.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
@@ -110,6 +123,11 @@ target_link_libraries(sdurws_ird_kinematics PUBLIC
     sdurws_ird_evidence
     sdurws_ird_execution)
 
+# Eigen（O-40）：PRIVATE 仅本计算库消费——公共头零 Eigen 类型（Fk.hpp/
+# KinTypes.hpp/Evaluators.hpp 契约面纯 rw::math/标准库），消费面收敛在
+# src/Fk.cpp 的 SVD 计算点；不向下游传播（静态库 PRIVATE 不进接口面）。
+target_link_libraries(sdurws_ird_kinematics PRIVATE Eigen3::Eigen)
+
 # 别名（集成模式）：供其余单元以 RWS::ird::kinematics 消费；冒烟模式无
 # 别名（与骨架期行为一致，DTB §5.1）。
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -139,7 +157,8 @@ add_executable(sdurws_ird_kinematics_test
     test/TestMainReport.cpp
     test/ErrorsTest.cpp
     test/DiagCodesTest.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/FkTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_test PROPERTIES
@@ -213,7 +232,8 @@ ird_add_gtest(sdurws_ird_kinematics_test)
 # 自有 main 同 _test 目标（报告设施接入）。
 add_executable(sdurws_ird_kinematics_contract_test
     contract_test/ContractTestMain.cpp
-    contract_test/BuildGraphContractTest.cpp)
+    contract_test/BuildGraphContractTest.cpp
+    contract_test/PoseMetricsEvaluatorContractTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_contract_test PROPERTIES

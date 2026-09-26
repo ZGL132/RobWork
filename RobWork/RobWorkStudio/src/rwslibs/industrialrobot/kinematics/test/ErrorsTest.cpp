@@ -17,6 +17,8 @@
 
 #include <sdurws/ird/kinematics/Errors.hpp>
 
+#include <sdurws/ird/kinematics/DiagCodes.hpp>  // kKinNoDevice/kKinNoTcp——映射行同串核对（T03）
+
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记（testkit §7.3）
 
 #include <gtest/gtest.h>
@@ -101,20 +103,28 @@ TEST(KinErrors, ErrorValueSemanticsOrderedParams_WP15T02_ACC4)
 }
 
 /**
- * 映射分批纪律（acceptance 4——"注册义务随各消费任务展开"的错误面执行
- * 口径）：§9.6 全表 15 行任务列最早为 T03，本任务零映射行——全表 4 值
- * 均返回 nullopt；nullopt 的调用方契约＝不得产诊断，错误经值面返回
- * （禁字符串拼码、禁私定新码值凑数——头注契约的断言面）。
+ * 映射行随消费任务登记（§9.6 分批纪律的错误面执行口径——本用例随其
+ * 消费者任务同步修订）：T03 落位 IFkEvaluator/KinTypes/Fk 后，NoDevice/
+ * NoTcp 两行到站——映射返回 DiagCodes.hpp 同名注册码常量（码面/映射面
+ * 同串交叉核对）；IllegalQ/FrameUnresolved 无 §9.6 同义码行维持 nullopt
+ * （nullopt 契约＝不得产诊断，错误经值面返回——禁字符串拼码、禁私定
+ * 新码值凑数）。
  */
-TEST(KinErrors, DiagCodeMappingIsStagedToConsumingTasks_WP15T02_ACC4)
+TEST(KinErrors, DiagCodeMappingRowsStagedWithConsumers_WP15T02ACC4_WP15T03)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01"},
                   std::vector<std::string>{});
 
-    // 全表 4 值逐一核对 nullopt——T03 起映射行表尾追加时，本用例随其
-    // 消费者任务同步修订（对应码行改为断言 DiagCodes.hpp 同名常量）。
+    // T03 登记的两行：映射值与 DiagCodes.hpp 注册常量逐字同串
+    // （码值权威＝diagnostics StableCodeRegistry——映射只消费常量）。
+    const auto noDevice = kinematicsDiagCode(KinematicsErrorCode::NoDevice);
+    ASSERT_TRUE(noDevice.has_value()) << "NoDevice 映射行应随 T03 登记在案";
+    EXPECT_EQ(*noDevice, sdurws::ird::kinematics::kKinNoDevice);
+    const auto noTcp = kinematicsDiagCode(KinematicsErrorCode::NoTcp);
+    ASSERT_TRUE(noTcp.has_value()) << "NoTcp 映射行应随 T03 登记在案";
+    EXPECT_EQ(*noTcp, sdurws::ird::kinematics::kKinNoTcp);
+
+    // 无 §9.6 同义码行的两值维持 nullopt（调用方不得产诊断——值面返回）。
     EXPECT_FALSE(kinematicsDiagCode(KinematicsErrorCode::IllegalQ).has_value());
-    EXPECT_FALSE(kinematicsDiagCode(KinematicsErrorCode::NoDevice).has_value());
-    EXPECT_FALSE(kinematicsDiagCode(KinematicsErrorCode::NoTcp).has_value());
     EXPECT_FALSE(kinematicsDiagCode(KinematicsErrorCode::FrameUnresolved).has_value());
 }

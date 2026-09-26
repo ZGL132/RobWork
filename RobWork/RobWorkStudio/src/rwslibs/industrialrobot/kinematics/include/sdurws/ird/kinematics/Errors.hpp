@@ -34,14 +34,16 @@
  * 持久化契约面纪律：只允许表尾追加并走单元卡增量修订（数值进入二进制
  * 契约，不重排既有值）。
  *
- * 映射数据的阶段纪律（与 DiagCodes.hpp §9.6 注册纪律对齐——acceptance 4
- * "注册义务随各消费任务展开"的执行口径）：映射行只登记到 §9.6 已到消费
- * 任务的码——§9.6 全表 15 行的任务列最早为 T03（KIN-NO-DEVICE/KIN-NO-TCP/
- * KIN-NEAR-SINGULAR），本任务（T02）零映射行，kinematicsDiagCode 当前对
- * 全表 4 值均返回 nullopt。nullopt 的调用方契约：不得产诊断——错误经
- * KinematicsError 值面返回；映射行随其生产者接口落位任务（T03 FK 族起）
- * 在 §9.6 纪律内表尾追加（NoDevice→KIN-NO-DEVICE、NoTcp→KIN-NO-TCP 为
- * §9.6 语义列同名锚定的在途行，届时登记），禁止私定新码值凑数。
+ * 映射数据的阶段纪律（与 DiagCodes.hpp §9.6 注册纪律对齐——"注册义务
+ * 随各消费任务展开"的执行口径）：映射行只登记到 §9.6 已到消费任务的码。
+ * WP-15-T02 落位时全表 nullopt（零映射行）；WP-15-T03（FK 与位姿指标）
+ * 落位 IFkEvaluator/KinTypes/Fk 后登记两行——NoDevice→KIN-NO-DEVICE、
+ * NoTcp→KIN-NO-TCP（§9.6 行 1/2，语义列同名锚定的在途行兑现；码值与
+ * DiagCodes.hpp 常量同串，DiagCodesTest/ErrorsTest 交叉核对）。IllegalQ/
+ * FrameUnresolved 维持 nullopt（无 §9.6 同义码行——q 非法属调用方错误
+ * 值面 §5.2，帧未解析属快照名称表语义 PA-3/R-4）：nullopt 的调用方契约
+ * ＝不得产诊断，错误经 KinematicsError 值面返回；后续任务的生产者码行
+ * 在 §9.6 纪律内表尾追加，禁止私定新码值凑数。
  *
  * 线程安全：本头全部实体为纯值/纯函数（无共享可变状态），并发只读安全。
  * 确定性：token 为编译期固定表（switch 全枚举），同码同串、跨进程逐字节
@@ -168,13 +170,13 @@ struct KinematicsError {
  * @brief 域错误码 → 已登记 KIN-* 稳定诊断码的映射（§9.6"注册义务随各
  *        消费任务展开——装配期注册"纪律在错误面的数据落点）。
  *
- * 返回 nullopt 的语义＝该域错误**当前没有已登记的映射码**——§9.6 全表
- * 15 行的任务列最早为 T03，本任务（T02）尚无任何已到消费任务的码行
- * （acceptance 4 分批纪律）。nullopt 的调用方契约：不得产诊断——错误经
- * KinematicsError 值面返回/呈现；产码唯一经 diagnostics 工厂（码已注册
- * 校验；"禁字符串拼码"纪律）。映射行随其生产者接口落位任务（T03 FK 族
- * 起）在 §9.6 纪律内表尾追加，测试交叉核对与 DiagCodes.hpp 工厂登记
- * 同源同串。
+ * 返回 nullopt 的语义＝该域错误**当前没有已登记的映射码**（无 §9.6
+ * 同义码行——IllegalQ/FrameUnresolved 维持 nullopt，语义见文件头"映射
+ * 数据的阶段纪律"）；NoDevice/NoTcp 已随 WP-15-T03 登记映射行。
+ * nullopt 的调用方契约：不得产诊断——错误经 KinematicsError 值面返回/
+ * 呈现；产码唯一经 diagnostics 工厂（码已注册校验；"禁字符串拼码"
+ * 纪律）。映射行随其生产者接口落位任务在 §9.6 纪律内表尾追加，测试
+ * 交叉核对与 DiagCodes.hpp 工厂登记同源同串。
  *
  * @param code [in] 域错误码（全表 4 值均可入参——switch 全枚举）
  * @return 已登记稳定码文本（当前全表 4 值均 nullopt——文件头"映射数据
