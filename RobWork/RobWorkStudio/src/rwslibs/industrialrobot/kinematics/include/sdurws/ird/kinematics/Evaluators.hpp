@@ -49,6 +49,8 @@
 #include <sdurws/ird/evidence/Dependency.hpp>    // DependencyDeclaration（依赖声明值）
 #include <sdurws/ird/evidence/Envelope.hpp>      // EvidenceProfileRef（Profile 声明引用）
 #include <sdurws/ird/evidence/Evaluator.hpp>     // IEngineeringEvaluator/IEvaluatorFactory/descriptor
+#include <sdurws/ird/execution/TaskTypes.hpp>    // execution::TaskCapability（能力声明——§8.3/§12 交接）
+#include <sdurws/ird/kinematics/Evidence.hpp>    // BatchQuery/BatchComputation/证据组装器（T05 批量通道值面）
 #include <sdurws/ird/kinematics/Fk.hpp>          // FkEvaluator/PoseMetrics（计算委托）
 #include <sdurws/ird/kinematics/Ik.hpp>          // IkSolver/IkOutcome/初值策略/碰撞端口（计算委托）
 #include <sdurws/ird/kinematics/KinTypes.hpp>    // TcpRef/IKinRuntimeView（注入面）
@@ -468,6 +470,293 @@ private:
  */
 std::vector<std::uint8_t> encodeTaskPointIkPayloadCanonical(
     const IkOutcome& outcome, const core::TaskIdentity& task);
+
+// =====================================================================
+// 以下为 T05 批量表尾追加（WP-15-T05——§3.3 布局表 Evaluators.hpp 行
+// 任务列 T03~T07 的 T05 半区：kin.task-points-batch 评估器族；既有 T03/
+// T04 声明不重排）。批量值模型/证据组装器/键常量的唯一书写点在
+// Evidence.hpp（本头消费不重定义——键常量放 Value/Builder 侧的理由见
+// 其文件头注）。
+// =====================================================================
+
+// =====================================================================
+// BatchQuery——批量评估查询值（工厂闭包注入的计算主体）
+// =====================================================================
+
+/**
+ * @brief kin.task-points-batch 的批量评估查询：注入点集/工况投影＋求解
+ *        配置＋执行协作通道（§7.1 批量执行图的查询面投影）。
+ *
+ * 注入面纪律（O-37 裁决同款）：points/conditions 为宿主解析后的投影值
+ * （req 对象 schema 不进本单元——R-1，Evidence.hpp 文件头注）；solver
+ * 与 checkpointSink 为**非 owning** 可选指针——
+ *   - solver 为空＝使用内置 IkSolver（生产路径）；测试以替身 IIkSolver
+ *     注入（§10.1"可控求解器测试替身"口径的 T05 提前承载——T13 收口）；
+ *   - checkpointSink 为空＝无检查点通道（纯计算合法——§9.2 @副作用
+ *     "归档/检查点经宿主通道"；生产宿主注入 IBatchCheckpointSink 适配器
+ *     接入 execution 检查点通道——P-KIN-7 最小端口处置）。
+ *
+ * 值语义纯结构（指针成员浅拷贝——指向对象须比 evaluate() 调用活得久，
+ * 生命周期约束同视图）；线程安全（并发只读）。单位：referenceQ 逐自由
+ * 度 rad|m；去重阈值 rad|m 逐轴；批大小/线程数无量纲计数。
+ */
+struct BatchQuery {
+    // ---- 注入投影值（宿主解析）----
+    /// 任务点投影集（启用与停用条目都注入——停用点产 NotApplicable 显式
+    /// 标记，§7.1；重复 pointOid 按集合语义去重）。
+    std::vector<BatchTaskPoint> points;
+    /// 工况投影集（caseSubset 各条目的适用范围/要求值投影；重复
+    /// conditionId 按集合语义去重）。
+    std::vector<BatchCondition> conditions;
+    /// 默认 TCP（点无 tcpOverride 时使用——KIN-14 默认 TCP 的查询级承载；
+    /// 解析规则同 KinTypes.hpp TcpRef 注）。
+    TcpRef defaultTcp;
+
+    // ---- 求解配置（config.ik 的 T10 前直传投影——T04 单点查询同构）----
+    /// 排序参考构型（rad|m——D-KIN-4 显式输入；维度须＝设备自由度）。
+    std::vector<double> referenceQ;
+    /// 初值策略（§5.3 三值）。
+    InitialValueStrategy initialStrategy = InitialValueStrategy::JointGrid;
+    /// 初值数量（≥1）。
+    std::uint32_t initialValuesCount = 1U;
+    /// 单初值迭代上限（≥1）。
+    std::uint32_t iterationLimit = 1U;
+    /// 去重阈值（rad|m 逐轴；>0 有限）。
+    double dedupThresholdPerAxis = 1e-6;
+    /// 确定性种子（SeededRandom 必非 0——I-KIN-4；其余策略可 0）。
+    std::uint64_t seed = 0;
+    /// 求解配置摘要（config.ik——T10 落位前允许零值；入结果身份）。
+    core::ContentIdentity configDigest;
+    /// 碰撞会话句柄（非 owning；空＝策略未启用碰撞——硬过滤③跳过并
+    /// 标记 collisionNotEvaluated；真实④端口会话组装归 T07）。
+    const IKinCollisionSession* collisionSession = nullptr;
+
+    // ---- 批量执行协作参数（§7.1/§8.3/§8.4）----
+    /// 批大小上限（≥1；默认 kBatchDefaultBatchSize=256——D-KIN-6 黄金
+    /// 锁定值，修改走设计变更）。
+    std::uint32_t maxBatchSize = kBatchDefaultBatchSize;
+    /// 并行分片线程数（≥1；§8.4——分片＝全序工作项连续区间、合并按全
+    /// 序归并；线程数是执行参数、**不进结果身份**——同输入异线程数等价
+    /// 集合＋稳定排序一致（本实现逐位一致））。
+    std::uint32_t threadCount = 1U;
+    /// 求解器替身注入口（非 owning；空＝内置 IkSolver——生产路径）。
+    const IIkSolver* solver = nullptr;
+    /// 批检查点 watermark 通道（非 owning；空＝无检查点通道——纯计算）。
+    IBatchCheckpointSink* checkpointSink = nullptr;
+
+    bool operator==(const BatchQuery& o) const
+    {
+        return points == o.points && conditions == o.conditions
+            && defaultTcp == o.defaultTcp && referenceQ == o.referenceQ
+            && initialStrategy == o.initialStrategy
+            && initialValuesCount == o.initialValuesCount
+            && iterationLimit == o.iterationLimit
+            && dedupThresholdPerAxis == o.dedupThresholdPerAxis && seed == o.seed
+            && configDigest == o.configDigest
+            && collisionSession == o.collisionSession
+            && maxBatchSize == o.maxBatchSize && threadCount == o.threadCount
+            && solver == o.solver && checkpointSink == o.checkpointSink;
+    }
+    bool operator!=(const BatchQuery& o) const { return !(*this == o); }
+};
+
+// =====================================================================
+// makeTaskPointsBatchDescriptor——依赖声明与形态（§4.3 行）
+// =====================================================================
+
+/**
+ * @brief 组装 kin.task-points-batch 的评估器描述符（§4.3 行的值面）。
+ *
+ * 与 makeTaskPointIkDescriptor 同构（字段落值见其注），差异三处：
+ *   - key＝kTaskPointsBatchEvaluationKey（Evidence.hpp 唯一书写点——
+ *     kebab 词形，卡面点形键的随附同步偏差同 T03/T04 口径）；
+ *   - inputs＝task-point-ik 六条依赖＋`req.conditions`(Object)（§4.3 行
+ *     原文"上述＋req.conditions(Object)（caseSubset 分批）"）；
+ *   - supportedModes＝{Quick, Verified}（§4.3 行模式列两值——批量通道
+ *     不做 Preview；stateless=true＋threadSafety=FullyThreadSafe（§9.2
+ *     IKinematicBatchEvaluator 头注原文——评估器无跨调用状态且支持
+ *     并行分片）。
+ *
+ * @return 描述符值（每次调用返回新值；注册期校验归 EvaluatorRegistry）
+ *
+ * 纯函数；线程安全；确定性（同卡面同值——NFR-COR-02）。
+ */
+evidence::EvaluatorDescriptor makeTaskPointsBatchDescriptor();
+
+// =====================================================================
+// TaskPointsBatchEvaluator——IEngineeringEvaluator 实现（批量评估器）
+// =====================================================================
+
+/**
+ * @brief kin.task-points-batch 评估器：批量任务点验证（KIN-03——切片内
+ *        启用点集×caseSubset 展开、分批求解、三态素材与完成矩阵素材
+ *        组装；§9.2 IKinematicBatchEvaluator 的实现形态）。
+ *
+ * 评估主流程（§7.1 批量执行图逐步；实现细节见 Evaluators.cpp 注）：
+ *   1. 展开——启用点集×caseSubset 产 (point,condition) 工作项：appliesTo
+ *      过滤（Stations 清单外不产项）、停用点/停用工况/None→NotApplicable
+ *      显式标记、重复项按集合语义去重、悬空引用→InputInvalid 素材
+ *      （V-12，附 KIN-POINT-REF-DANGLING 诊断）；
+ *   2. 全序——工作项按 (pointOid, conditionId) 字典序排序（§8.4，分片
+ *      前全序确定）；
+ *   3. 分批——每批 ≤maxBatchSize（默认 256——D-KIN-6）；
+ *   4. 逐批求解——批前协作取消查询（每批至少一次；观测到取消即停止
+ *      派发新批——V-22 本单元侧，ARCH §4.4 的 2 s 界由批间查询点承载），
+ *      批内逐项 IIkSolver 求解（并行分片＝连续区间、结果按全序槽位写回
+ *      ——异线程数等价集合）；每项要求值对比（实际/要求/单位）；
+ *   5. 批完成——检查点 watermark 上报（批粒度）＋reportProgress（批
+ *      粒度，phase="solve-batch"）；
+ *   6. 组装——完整性自检（工作项总数＝Σ批项数＋NotRun 数；caseSubset
+ *      每项有终态标记）后经 KinematicEvidenceBuilder 产出 EvaluationOutput
+ *      （唯一组装点——本评估器不自拼证据行）。
+ *
+ * 错误分轨（域约定，随卡 §14.6 v0.5 登记——evidence §9.3"域自选"）：
+ *   - **装配期 fail-fast**（构造函数，std::invalid_argument）：视图空
+ *     指针、referenceQ 维度/有限性违例、逐点目标非有限/容差非法
+ *     （KIN-TARGET-ILLEGAL 语义锚）、objectId 保留值、caseSubset 引用
+ *     投影集中不存在的工况、求解参数违例（计数 0/阈值非法/SeededRandom
+ *     seed=0——I-KIN-4）、maxBatchSize/threadCount=0、tcpKey 不命中
+ *     ——调用方错误轨，不进入评估输出面；
+ *   - **评估期结构化素材**：悬空引用→InputInvalid 工作项＋
+ *     KIN-POINT-REF-DANGLING（§9.6 行 16）；批量不完整→incomplete 标记
+ *     ＋KIN-RESULT-INCOMPLETE（§9.6 行 15）——均经组装器落 output；
+ *   - **取消**：协作式（批间查询＋批内求解探针）——未完成批如实 NotRun、
+ *     输出带 incomplete 标记（取消不是结局——不产"取消"状态值）。
+ *
+ * 确定性（§8.4；acceptance 5）：同输入同线程数→逐位一致；异线程数→
+ * 等价集合＋稳定排序一致（本实现结果按全序槽位写回，实际逐位一致）。
+ * 线程安全：实例无跨调用可变状态（descriptor.stateless=true——可共享）。
+ */
+class TaskPointsBatchEvaluator final : public evidence::IEngineeringEvaluator {
+public:
+    /**
+     * @brief 构造绑定 (视图, 批量查询) 的评估器实例（工厂经闭包调用）。
+     *
+     * @param view  [in] 宿主注入的只读模型视图（非 owning；调用方保证
+     *                   evaluate() 期间存活；空指针→std::invalid_argument）
+     * @param query [in] 批量评估查询（值持有；装配期非法→
+     *                   std::invalid_argument——类注错误分轨）
+     *
+     * @throws std::invalid_argument 装配期查询非法
+     */
+    TaskPointsBatchEvaluator(const IKinRuntimeView* view, BatchQuery query);
+
+    const evidence::EvaluatorDescriptor& descriptor() const override;
+
+    /**
+     * @brief 执行一次批量任务点验证评估（§9.3 调用约定；纯计算——不派
+     *        发任务、不写项目、不产生修订；检查点/归档经宿主通道）。
+     *
+     * @param request [in] 评估请求（snapshotId/sliceId/mode/task 五元组/
+     *                     caseSubset 经其填充绑定与展开分母——§5.6/EVI-02）
+     * @param context [in] 宿主调用上下文（协作取消：批前查询其
+     *                     cancellationRequested()——每批至少一次；批内
+     *                     逐项求解经 IkRequest.cancellationProbe 周期查询
+     *                     同一上下文；进度 reportProgress 批粒度上报）
+     *
+     * @return 评估产出（经组装器：逐项证据行/搜索未果聚合/证明素材/
+     *         verdictInputs/payload/诊断；incomplete 时带 KIN-RESULT-
+     *         INCOMPLETE 诊断——调用侧据此不产 Completed envelope，§7.1）
+     */
+    evidence::EvaluationOutput evaluate(const evidence::EvaluationRequest& request,
+                                        evidence::IEvaluationContext& context) override;
+
+private:
+    const IKinRuntimeView* m_view;              ///< 宿主注入视图（非 owning——见类注）
+    BatchQuery m_query;                         ///< 批量评估查询（值持有）
+    evidence::EvaluatorDescriptor m_descriptor; ///< 稳定存储（descriptor() 引用所指）
+    std::optional<KinematicsError> m_setupError; ///< 评估期结构化素材（TCP 缺失——
+                                                 ///  批量级零素材轨，T04 两分口径同源）
+};
+
+// =====================================================================
+// runBatchComputation——批量计算核心（纯函数服务——§3.1"计算库可被模型
+// 测试直调"NFR-MNT-01 的批量落点；评估器形态与计算面的分离线）
+// =====================================================================
+
+/**
+ * @brief 执行一次批量任务点计算（§7.1 批量执行图步骤 1~6：展开→全序→
+ *        分批→逐批求解（取消/检查点/进度）→完成矩阵素材→完整性自检）。
+ *
+ * 与评估器形态的分工：本函数是**纯计算面**——只产 BatchComputation，
+ * 不产证据（证据组装唯一经 KinematicEvidenceBuilder，NFR-MNT-04）；
+ * TaskPointsBatchEvaluator::evaluate 即"装配校验＋本函数＋组装器"。
+ * 独立可见性使批量展开/分批/取消语义可被单元与契约测试直调断言
+ * （可控求解器替身注入口＝BatchQuery::solver）。
+ *
+ * @param view    [in] 宿主注入的只读模型视图（非 owning；调用期间存活）
+ * @param query   [in] 批量评估查询（先经 validateBatchQuery 同款装配校验
+ *                     ——违例 fail-fast；solver/checkpointSink 注入口生效）
+ * @param request [in] 评估请求（snapshotId/sliceId/mode/task/caseSubset
+ *                     ——绑定与展开分母；caseSubset 引用投影集中不存在的
+ *                     工况→std::invalid_argument，请求装配契约违约）
+ * @param context [in] 宿主调用上下文（协作取消批间查询＋进度上报）
+ * @return 批量计算结果（不变式见 BatchComputation 注——违例 logic_error）
+ *
+ * @throws std::invalid_argument 装配/请求契约违约（同构造期校验面）
+ * @throws std::logic_error 内部不变量破坏（排序/计数守恒/完成矩阵）
+ *
+ * 纯计算（不派发任务/不写项目/不产生修订）；线程安全（无跨调用状态，
+ * 并行分片按 query.threadCount 执行）；确定性（§8.4——同输入同线程数
+ * 逐位一致）。
+ */
+BatchComputation runBatchComputation(const IKinRuntimeView& view,
+                                     const BatchQuery& query,
+                                     const evidence::EvaluationRequest& request,
+                                     evidence::IEvaluationContext& context);
+
+// =====================================================================
+// TaskPointsBatchEvaluatorFactory——宿主注入工厂（O-37 裁决形态落点）
+// =====================================================================
+
+/**
+ * @brief kin.task-points-batch 的 IEvaluatorFactory 实现：宿主构建实例时
+ *        把 (视图, 批量查询) 捕获进闭包，create() 保持**无参签名**（O-37
+ *        裁决原文——注册表路径兼容）。生命周期与线程约束同
+ *        TaskPointIkEvaluatorFactory（类注）；批量查询内投影值随宿主
+ *        组装（每请求新建工厂）。
+ */
+class TaskPointsBatchEvaluatorFactory final : public evidence::IEvaluatorFactory {
+public:
+    /**
+     * @brief 构造绑定 (视图, 批量查询) 的工厂（注入点；校验同评估器构造）。
+     *
+     * @throws std::invalid_argument 装配期查询非法（同 TaskPointsBatchEvaluator）
+     */
+    TaskPointsBatchEvaluatorFactory(const IKinRuntimeView* view, BatchQuery query);
+
+    const evidence::EvaluatorDescriptor& descriptor() const override;
+
+    /// 无参签名（O-37 裁决——注册表兼容）；每次调用产出独立实例。
+    std::unique_ptr<evidence::IEngineeringEvaluator> create() const override;
+
+private:
+    const IKinRuntimeView* m_view;              ///< 宿主注入视图（非 owning）
+    BatchQuery m_query;                         ///< 闭包捕获的批量查询（值）
+    evidence::EvaluatorDescriptor m_descriptor; ///< 稳定存储（descriptor() 引用所指）
+};
+
+// =====================================================================
+// 任务类型能力声明（§8.3/§12 交接行——execution 通道消费面）
+// =====================================================================
+
+/**
+ * @brief kin.task-points-batch 任务类型的执行期能力声明（§8.3 提交行
+ *        原文的值面：支持取消 ✓、检查点＝批 watermark（Checkpoint-
+ *        Granularity::Batch）、暂停不支持（R1 如实声明——收到暂停请求
+ *        给明确状态反馈，EX-SM-7 口径）、强制终止代价＝低（Cheap——批
+ *        间边界即安全中止点，无跨批不变量））。
+ *
+ * 消费方式（§12 交接）：L5 装配经 execution::EvaluatorRuntimeCapabilities::
+ * declare(kTaskPointsBatchEvaluationKey, taskPointsBatchCapability()) 注册
+ * （P-EX-7——执行能力归 execution 侧注册表扩展声明，evidence descriptor
+ * 不混装；本单元只产出声明值）。键与评估键同一常量（装配清单一致性）。
+ *
+ * @return 能力声明值（纯函数——每次调用同值，确定性 NFR-COR-02）
+ *
+ * 线程安全：可重入纯函数。
+ */
+execution::TaskCapability taskPointsBatchCapability();
 
 }  // namespace sdurws::ird::kinematics
 

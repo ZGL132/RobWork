@@ -73,11 +73,20 @@ find_package(Eigen3 CONFIG REQUIRED)
 #                      之一——O-40 PRIVATE）
 #   src/SolutionSet.cpp 解集视图（§6.2——四键稳定排序唯一实现点
 #                      sortSolutions＋sorted/filtered/statistics/worstBy）
+# T05 增列（tasks/foundation/WP-15-T05.json，§3.3 布局表 Evidence.hpp 行
+# T05 半区）：
+#   src/Evidence.cpp   批量通道组装面（证据组装器 build——§8.2 表五行产出
+#                      的唯一组装点＋批量 canonical 载荷编码
+#                      encodeBatchPayloadCanonical——§5.6 绑定；批量执行
+#                      主流程（展开/分批/求解/取消/检查点/进度）在
+#                      Evaluators.cpp 的 T05 段——kin.task-points-batch
+#                      评估器族）
 add_library(sdurws_ird_kinematics STATIC
     src/Errors.cpp
     src/DiagCodes.cpp
     src/Fk.cpp
     src/Evaluators.cpp
+    src/Evidence.cpp
     src/KinTypes.cpp
     src/Bounds.cpp
     src/Ik.cpp
@@ -172,7 +181,8 @@ add_executable(sdurws_ird_kinematics_test
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
     test/FkTest.cpp
-    test/IkTest.cpp)
+    test/IkTest.cpp
+    test/TaskPointsBatchTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_test PROPERTIES
@@ -248,7 +258,8 @@ add_executable(sdurws_ird_kinematics_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
     contract_test/PoseMetricsEvaluatorContractTest.cpp
-    contract_test/TaskPointIkEvaluatorContractTest.cpp)
+    contract_test/TaskPointIkEvaluatorContractTest.cpp
+    contract_test/TaskPointsBatchEvaluatorContractTest.cpp)
 
 target_compile_features(sdurws_ird_kinematics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_contract_test PROPERTIES

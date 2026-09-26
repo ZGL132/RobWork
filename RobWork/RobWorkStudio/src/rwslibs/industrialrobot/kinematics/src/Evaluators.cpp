@@ -28,9 +28,17 @@
 
 #include "CanonicalCodec.hpp"  // 私有编码原语（src/ 内共享——R-2 合规）
 
+#include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <cstring>
+#include <exception>
+#include <functional>
+#include <limits>
+#include <map>
+#include <set>
 #include <stdexcept>
+#include <thread>
 #include <utility>
 #include <vector>
 
@@ -860,6 +868,1006 @@ std::vector<std::uint8_t> encodeTaskPointIkPayloadCanonical(
         }
     }
     return out;
+}
+
+// =====================================================================
+// 以下为 T05 批量实现（kin.task-points-batch——Evaluators.hpp 类注列纲，
+// 逐步对号；批量值模型/组装器实现见 src/Evidence.cpp）
+// =====================================================================
+
+namespace {
+
+// ---------------------------------------------------------------------
+// 批量工作项的内部求解状态（展开→全序→分批→写回的中间值——不跨出本
+// 翻译单元；转 BatchWorkItemRecord 在 assembleRecord）
+// ---------------------------------------------------------------------
+
+/// 工作项类别（展开期判定：可解项进批次；预终结项不入批次——终态在
+/// 展开期即确定，与批次执行无关，登记随卡 §14.6 v0.5）。
+enum class WorkKind : std::uint8_t {
+    Solvable,      ///< 可解项（进批次——逐项 IIkSolver 求解）
+    NotApplicable, ///< 不适用（停用/None——显式标记）
+    InputInvalid,  ///< 输入非法素材（悬空引用——V-12）
+};
+
+/// 单工作项的内部状态（结果槽按全序下标写回——§8.4 合并＝按全序归并
+/// 而非到达序的承载结构：并行分片写各自槽位，无交叉写入）。
+struct WorkState {
+    core::ObjectId pointOid;      ///< 任务点身份（§5.6 绑定）
+    core::ObjectId conditionId;   ///< 工况身份（§5.6 绑定）
+    BatchRequirementLevel pointLevel = BatchRequirementLevel::Must; ///< 点等级（verdictInputs 分流）
+    WorkKind kind = WorkKind::Solvable; ///< 展开期类别
+    std::string reason;           ///< 预终结原因（预终结项必填——ERR-01）
+
+    // ---- 求解输入（仅 Solvable 消费；展开期从投影值落定）----
+    rw::math::Transform3D<double> targetInBase = runtime::detail::identityTransform3D();
+    double positionTolerance = 1e-6;  ///< 位置容差（m）
+    double orientationTolerance = 1e-6; ///< 姿态容差（rad）
+    TcpRef tcp;                       ///< 生效 TCP（override 或查询默认）
+    BatchDemands demands;             ///< 合并要求值（点∨工况——合并口径见类注）
+
+    // ---- 结果槽（全序写回；初值＝未运行）----
+    BatchItemStatus status = BatchItemStatus::NotRun;
+    std::optional<IkOutcomeKind> outcomeKind;
+    std::optional<KinematicSolution> bestSolution;
+    std::vector<FilteredSolutionRecord> filteredRecords;
+    std::optional<IkSearchRecord> searchRecord;
+    std::optional<AnalyticBoundMaterial> proofMaterial;
+    std::vector<BatchDemandCheck> demandChecks;
+    bool collisionNotEvaluated = false;
+};
+
+/// 工作项全序比较键（§8.4——(pointOid, conditionId) 字典序；ObjectId
+/// 的 operator<＝字节字典序，core §5.1）。
+bool workOrderLess(const WorkState& a, const WorkState& b)
+{
+    if (a.pointOid != b.pointOid) {
+        return a.pointOid < b.pointOid;
+    }
+    return a.conditionId < b.conditionId;
+}
+
+// ---------------------------------------------------------------------
+// 装配期批量查询校验（调用方错误 fail-fast 轨——TaskPointsBatchEvaluator
+// 类注错误分轨；NFR-COR-03 拒绝不钳制）
+// ---------------------------------------------------------------------
+
+/// 批量查询校验（违例抛 std::invalid_argument——评估输出面不承载调用方
+/// 错误）。caseSubset 随请求到达（构造期不可见），其引用完备性在
+/// evaluate 期校验——登记随卡 §14.6 v0.5。
+void validateBatchQuery(const IKinRuntimeView& view, const BatchQuery& query)
+{
+    // 设备自由度（可动关节链序——T03/T04 同口径）。
+    std::size_t dof = 0;
+    for (const auto& j : view.model().chain().joints) {
+        if (j.type != runtime::JointType::Fixed) {
+            ++dof;
+        }
+    }
+
+    // 排序参考构型（D-KIN-4——显式输入的契约面）。
+    if (query.referenceQ.size() != dof) {
+        throw std::invalid_argument(
+            "kin.task-points-batch 查询非法：referenceQ 维度 "
+            + std::to_string(query.referenceQ.size()) + " != 设备自由度 "
+            + std::to_string(dof));
+    }
+    for (std::size_t k = 0; k < query.referenceQ.size(); ++k) {
+        if (!std::isfinite(query.referenceQ[k])) {
+            throw std::invalid_argument(
+                "kin.task-points-batch 查询非法：referenceQ[" + std::to_string(k)
+                + "] 非有限（NFR-COR-03：不置零）");
+        }
+    }
+
+    // 批量执行参数（批大小/线程数——≥1；批大小默认 256 见头文件常量）。
+    if (query.maxBatchSize == 0U) {
+        throw std::invalid_argument("kin.task-points-batch 查询非法：maxBatchSize 须 ≥1");
+    }
+    if (query.threadCount == 0U) {
+        throw std::invalid_argument("kin.task-points-batch 查询非法：threadCount 须 ≥1");
+    }
+
+    // 求解参数面（计数/阈值/种子——I-KIN-4：seed=0 拒绝不静默替换）。
+    if (query.initialValuesCount == 0U) {
+        throw std::invalid_argument("kin.task-points-batch 查询非法：初值数量须 ≥1");
+    }
+    if (query.iterationLimit == 0U) {
+        throw std::invalid_argument("kin.task-points-batch 查询非法：迭代上限须 ≥1");
+    }
+    if (!std::isfinite(query.dedupThresholdPerAxis)
+        || query.dedupThresholdPerAxis <= 0.0) {
+        throw std::invalid_argument(
+            "kin.task-points-batch 查询非法：去重阈值非法（须有限且>0，rad|m 逐轴）");
+    }
+    if (query.initialStrategy == InitialValueStrategy::SeededRandom
+        && query.seed == 0U) {
+        throw std::invalid_argument(
+            "kin.task-points-batch 查询非法：SeededRandom 的 seed=0（I-KIN-4："
+            "拒绝，不做 0→1 静默替换——NFR-COR-03）");
+    }
+
+    // 目标位姿全有限校验（逐点——KIN-TARGET-ILLEGAL 语义锚）。
+    auto targetAllFinite = [](const rw::math::Transform3D<double>& t) {
+        for (std::size_t i = 0; i < 3; ++i) {
+            for (std::size_t j = 0; j < 3; ++j) {
+                if (!std::isfinite(t.R()(i, j))) {
+                    return false;
+                }
+            }
+            if (!std::isfinite(t.P()[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    // 逐点投影值（目标/容差/身份/要求值——重复 oid 合法（集合语义去重），
+    // 但每个条目自身须良构）。
+    for (const BatchTaskPoint& p : query.points) {
+        if (!p.pointOid.isValid()) {
+            throw std::invalid_argument(
+                "kin.task-points-batch 查询非法：任务点 objectId 为保留值");
+        }
+        if (!targetAllFinite(p.targetInBase)) {
+            throw std::invalid_argument(
+                "kin.task-points-batch 查询非法：任务点 " + p.pointOid.toCanonical()
+                + " 目标位姿含非有限分量（KIN-TARGET-ILLEGAL 语义锚——§5.5）");
+        }
+        if (!std::isfinite(p.positionTolerance) || p.positionTolerance <= 0.0) {
+            throw std::invalid_argument(
+                "kin.task-points-batch 查询非法：任务点 " + p.pointOid.toCanonical()
+                + " 位置容差非法（须有限且>0，单位 m）");
+        }
+        if (!std::isfinite(p.orientationTolerance) || p.orientationTolerance <= 0.0) {
+            throw std::invalid_argument(
+                "kin.task-points-batch 查询非法：任务点 " + p.pointOid.toCanonical()
+                + " 姿态容差非法（须有限且>0，单位 rad）");
+        }
+        if (p.demands.minimumJointMargin.has_value()
+            && !std::isfinite(*p.demands.minimumJointMargin)) {
+            throw std::invalid_argument(
+                "kin.task-points-batch 查询非法：任务点 " + p.pointOid.toCanonical()
+                + " 最小关节裕量要求值非有限");
+        }
+    }
+
+    // 逐工况投影值（身份/悬空清单不在此拒——悬空引用是 InputInvalid
+    // 素材而非装配违约，V-12 语义分轨）。
+    for (const BatchCondition& c : query.conditions) {
+        if (!c.conditionId.isValid()) {
+            throw std::invalid_argument(
+                "kin.task-points-batch 查询非法：工况 objectId 为保留值");
+        }
+        if (c.demands.minimumJointMargin.has_value()
+            && !std::isfinite(*c.demands.minimumJointMargin)) {
+            throw std::invalid_argument(
+                "kin.task-points-batch 查询非法：工况 " + c.conditionId.toCanonical()
+                + " 最小关节裕量要求值非有限");
+        }
+    }
+
+    // TCP 键预检（defaultTcp＋全部 override——工具可解析时键不命中即装配
+    // 违约；工具侧缺失保留到评估期＝批量级 KIN-NO-TCP 零素材轨，T04
+    // 两分口径同源）。
+    const runtime::CanonicalModel& model = view.model();
+    auto precheckTcp = [&](const TcpRef& tcp, const char* role) {
+        if (model.tools().empty()) {
+            return;  // 工具侧缺失——评估期批量级 KIN-NO-TCP（零素材）
+        }
+        const auto loc = model.findObject(tcp.toolObject);
+        if (loc.has_value() && loc->kind == runtime::CanonicalModel::ObjectKind::Tool) {
+            const runtime::CanonicalTool& tool = model.tools().at(loc->index);
+            if (!tcp.tcpKey.empty() && tcp.tcpKey != tool.localName) {
+                throw std::invalid_argument(
+                    std::string("kin.task-points-batch：") + role + " tcpKey '"
+                    + tcp.tcpKey + "' 不命中工具 '" + tool.localName
+                    + "' 的 canonical TCP（帧未解析——装配期 fail-fast）");
+            }
+        }
+    };
+    precheckTcp(query.defaultTcp, "defaultTcp");
+    for (const BatchTaskPoint& p : query.points) {
+        if (p.tcpOverride.has_value()) {
+            precheckTcp(*p.tcpOverride, "任务点 override");
+        }
+    }
+}
+
+// ---------------------------------------------------------------------
+// 要求值对比（实际/要求/单位——§7.1 逐项明细 demandsChecked 的组装）
+// ---------------------------------------------------------------------
+
+/// 合并点级与工况级要求值（合并口径：碰撞取"或"、裕量取"更强"＝可选值
+/// 中的较大者——登记随卡 §14.6 v0.5；比较型单位随检查行记录）。
+BatchDemands mergeDemands(const BatchDemands& point, const BatchDemands& condition)
+{
+    BatchDemands merged;
+    merged.collisionFreeRequired =
+        point.collisionFreeRequired || condition.collisionFreeRequired;
+    if (point.minimumJointMargin.has_value()
+        && condition.minimumJointMargin.has_value()) {
+        merged.minimumJointMargin =
+            std::max(*point.minimumJointMargin, *condition.minimumJointMargin);
+    } else if (point.minimumJointMargin.has_value()) {
+        merged.minimumJointMargin = point.minimumJointMargin;
+    } else {
+        merged.minimumJointMargin = condition.minimumJointMargin;
+    }
+    return merged;
+}
+
+/// 可动关节的单位 token 列（链序，跳过 Fixed——裕量实际值 arg-min 关节
+/// 的天然单位来源；"rad"＝转动/连续、"m"＝移动）。
+std::vector<const char*> movableJointUnits(const IKinRuntimeView& view)
+{
+    std::vector<const char*> units;
+    for (const auto& j : view.model().chain().joints) {
+        if (j.type == runtime::JointType::Fixed) {
+            continue;
+        }
+        units.push_back(j.type == runtime::JointType::Prismatic ? "m" : "rad");
+    }
+    return units;
+}
+
+/// 组装单个求解完成项的要求值对比行（四类——残差两行恒产出（评价自身
+/// 的要求值面）；碰撞/裕量仅声明的要求产出，登记随卡 §14.6 v0.5；
+/// evaluated=false＝无解可查/碰撞未启用——证据缺失口径，绝不解读为满足
+/// （KIN-05 同源））。
+std::vector<BatchDemandCheck> buildDemandChecks(const WorkState& item,
+                                                const std::vector<JointInterval>& intervals,
+                                                const std::vector<const char*>& jointUnits)
+{
+    std::vector<BatchDemandCheck> checks;
+    const KinematicSolution* best =
+        item.bestSolution.has_value() ? &*item.bestSolution : nullptr;
+
+    // 行 1/2：位姿残差 vs 点容差（实际值来自解的收敛复验——§6.1 值模型；
+    // 要求值＝点容差）。
+    {
+        BatchDemandCheck pos;
+        pos.kind = BatchDemandCheck::Kind::PositionResidual;
+        pos.evaluated = best != nullptr;
+        pos.satisfied = pos.evaluated && best->positionResidual <= item.positionTolerance;
+        pos.actual = pos.evaluated ? best->positionResidual : 0.0;
+        pos.required = item.positionTolerance;
+        pos.unit = "m";
+        checks.push_back(std::move(pos));
+    }
+    {
+        BatchDemandCheck ori;
+        ori.kind = BatchDemandCheck::Kind::OrientationResidual;
+        ori.evaluated = best != nullptr;
+        ori.satisfied =
+            ori.evaluated && best->orientationResidual <= item.orientationTolerance;
+        ori.actual = ori.evaluated ? best->orientationResidual : 0.0;
+        ori.required = item.orientationTolerance;
+        ori.unit = "rad";
+        checks.push_back(std::move(ori));
+    }
+
+    // 行 3：无碰撞要求（声明时才产出——布尔要求无量纲；未启用碰撞＝
+    // evaluated=false 证据缺失，绝不解读为满足）。
+    if (item.demands.collisionFreeRequired) {
+        BatchDemandCheck col;
+        col.kind = BatchDemandCheck::Kind::CollisionFree;
+        col.evaluated = best != nullptr && best->collisionStatus.evaluated;
+        col.satisfied = col.evaluated && !best->collisionStatus.inCollision;
+        col.unit = "-";
+        checks.push_back(std::move(col));
+    }
+
+    // 行 4：最小关节裕量（声明时才产出——实际值＝解的归一化裕量（D-KIN-6）
+    // 经评价区间半行程换算回绝对距离，取 arg-min 关节的天然单位）。
+    if (item.demands.minimumJointMargin.has_value()) {
+        BatchDemandCheck marg;
+        marg.kind = BatchDemandCheck::Kind::MinJointMargin;
+        marg.evaluated = best != nullptr;
+        marg.required = *item.demands.minimumJointMargin;
+        marg.unit = "-";
+        if (best != nullptr) {
+            // 逐有界关节换算：绝对距离_i ＝ margin_i × (行程_i / 2)。
+            // continuous 无工作范围关节 margin=+∞、不产生有限距离——
+            // 不参与 arg-min（全无有界关节时 actual=+∞ 恒满足）。
+            double minDistance = std::numeric_limits<double>::infinity();
+            std::size_t argMin = jointUnits.size();
+            for (std::size_t k = 0; k < best->jointMargins.size() && k < intervals.size();
+                 ++k) {
+                if (!intervals[k].bounded
+                    || !std::isfinite(best->jointMargins[k])) {
+                    continue;
+                }
+                const double halfStroke =
+                    (intervals[k].upper - intervals[k].lower) / 2.0;
+                const double distance = best->jointMargins[k] * halfStroke;
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    argMin = k;
+                }
+            }
+            marg.actual = minDistance;
+            if (argMin < jointUnits.size()) {
+                marg.unit = jointUnits[argMin];
+            }
+            marg.satisfied = marg.actual >= marg.required;
+        }
+        checks.push_back(std::move(marg));
+    }
+    return checks;
+}
+
+// ---------------------------------------------------------------------
+// 单项求解与结局映射（IkOutcome→WorkState 结果槽；§5.4 铁律的批量侧
+// 落点——取消不是结局，2/3/4 不得升级为不可行）
+// ---------------------------------------------------------------------
+
+/// 求解单个工作项并把结局写入结果槽（cancelled=true 时槽保持 NotRun——
+/// 调用方据此中止批次；探针接线由调用方传入）。
+void solveItem(WorkState& item, const BatchQuery& query, const IIkSolver& solver,
+               const IKinRuntimeView& view, const std::vector<JointInterval>& intervals,
+               const std::vector<std::vector<double>>& initialValues,
+               const core::ContentIdentity& snapshotId,
+               const core::ContentIdentity& sliceId,
+               core::EvaluationMode mode,
+               const std::function<bool()>& cancellationProbe)
+{
+    // 组装求解请求（§5.3 字段表——T04 单点同构；绑定面随项落定，§5.6）。
+    IkRequest ikRequest;
+    ikRequest.targetInBase = item.targetInBase;
+    ikRequest.positionTolerance = item.positionTolerance;
+    ikRequest.orientationTolerance = item.orientationTolerance;
+    ikRequest.modelView = &view;
+    ikRequest.tcp = item.tcp;
+    ikRequest.iterationLimit = query.iterationLimit;
+    ikRequest.intervals = intervals;
+    ikRequest.initialValues = initialValues;
+    ikRequest.dedupThresholdPerAxis = query.dedupThresholdPerAxis;
+    ikRequest.collisionSession = query.collisionSession;
+    ikRequest.cancellationProbe = cancellationProbe;
+    ikRequest.referenceQ = query.referenceQ;
+    ikRequest.targetRef.pointOid = item.pointOid;
+    ikRequest.targetRef.conditionId = item.conditionId;
+    ikRequest.requestIdentity.snapshotId = snapshotId;
+    ikRequest.requestIdentity.sliceId = sliceId;
+    ikRequest.requestIdentity.configDigest = query.configDigest;
+    ikRequest.requestIdentity.mode = mode;
+    ikRequest.requestIdentity.seed = query.seed;
+    ikRequest.requestIdentity.referenceQ = query.referenceQ;
+
+    const IkOutcome outcome = solver.solve(ikRequest);
+    if (outcome.cancelled) {
+        return;  // 取消不是结局——槽保持 NotRun（无终局字段可解读）
+    }
+
+    item.collisionNotEvaluated = outcome.collisionNotEvaluated;
+    item.outcomeKind = outcome.outcomeKind;
+    switch (outcome.outcomeKind) {
+    case IkOutcomeKind::SolutionsFound:
+    case IkOutcomeKind::PartialCollision:
+        // 结局 1/4→CandidateFound（最佳解＝稳定排序首位——§7.1 bestSolution；
+        // 碰撞解已经过滤/标记，任务结论不受单解影响）。
+        item.status = BatchItemStatus::CandidateFound;
+        item.bestSolution = outcome.solutionSet.solutions.front();
+        item.filteredRecords = outcome.solutionSet.filteredRecords;
+        break;
+    case IkOutcomeKind::MultiInitNoConvergence:
+    case IkOutcomeKind::AllCandidatesFiltered:
+        // 结局 2/3→搜索未果素材（记录必附——不得输出不可行，C5/C8）。
+        item.status = outcome.outcomeKind == IkOutcomeKind::MultiInitNoConvergence
+                          ? BatchItemStatus::NoConvergence
+                          : BatchItemStatus::AllFiltered;
+        item.searchRecord = outcome.solutionSet.searchRecord;
+        item.filteredRecords = outcome.solutionSet.filteredRecords;
+        break;
+    case IkOutcomeKind::AnalyticBoundExceeded:
+        // 结局 5→BoundExceeded（证明素材随槽交付——仅素材不裁定；producer
+        // 重绑在组装器，Evaluators.hpp/Evidence.cpp 口径注）。
+        item.status = BatchItemStatus::BoundExceeded;
+        item.proofMaterial = outcome.proofMaterial;
+        break;
+    }
+}
+
+/// 结果槽→BatchWorkItemRecord（预终结项的 reason 已在展开期落定；可解
+/// 项的 reason 清空——presence 纪律）。
+BatchWorkItemRecord assembleRecord(const WorkState& item)
+{
+    BatchWorkItemRecord record;
+    record.pointOid = item.pointOid;
+    record.conditionId = item.conditionId;
+    record.pointLevel = item.pointLevel;
+    record.status = item.status;
+    record.outcomeKind = item.outcomeKind;
+    record.bestSolution = item.bestSolution;
+    record.filteredRecords = item.filteredRecords;
+    record.searchRecord = item.searchRecord;
+    record.proofMaterial = item.proofMaterial;
+    record.demandChecks = item.demandChecks;
+    record.collisionNotEvaluated = item.collisionNotEvaluated;
+    record.reason = item.reason;
+    return record;
+}
+
+/// 内置默认求解器（生产路径——无替身注入时使用；无状态静态实例，
+/// §9.4"无状态建议共享"）。
+const IkSolver& internalDefaultSolver()
+{
+    static const IkSolver s;
+    return s;
+}
+
+}  // namespace
+
+// =====================================================================
+// TaskPointsBatchEvaluator——构造校验＋批量评估主流程
+// =====================================================================
+
+TaskPointsBatchEvaluator::TaskPointsBatchEvaluator(const IKinRuntimeView* view,
+                                                   BatchQuery query)
+    : m_view(view), m_query(std::move(query)),
+      m_descriptor(makeTaskPointsBatchDescriptor())
+{
+    // 装配期 fail-fast（类注错误分轨）：空视图＝装配违约；查询非法＝
+    // 调用方错误——两轨都不进入评估输出面（NFR-COR-03）。
+    if (m_view == nullptr) {
+        throw std::invalid_argument(
+            "kin.task-points-batch：注入视图为空指针（宿主注入契约违约——O-37）");
+    }
+    validateBatchQuery(*m_view, m_query);
+
+    // 工具侧缺失（未配置/悬空）保留到评估期＝批量级 KIN-NO-TCP 零素材
+    // （T04 两分口径同源——键不命中已在 validateBatchQuery 拒绝）。逐个
+    // 去重 TCP 引用核对：defaultTcp＋全部 override。
+    const runtime::CanonicalModel& model = m_view->model();
+    auto checkToolPresence = [&](const TcpRef& tcp) {
+        if (model.tools().empty()) {
+            KinematicsError err;
+            err.code = KinematicsErrorCode::NoTcp;
+            err.detail = "TCP 未配置：快照模型无工具（KIN-NO-TCP 素材——§9.6）";
+            m_setupError = std::move(err);
+            return;
+        }
+        const auto loc = model.findObject(tcp.toolObject);
+        if (!loc.has_value()
+            || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
+            KinematicsError err;
+            err.code = KinematicsErrorCode::NoTcp;
+            err.detail = "TCP 引用悬空：toolObject 未解析到快照工具"
+                         "（KIN-NO-TCP 素材——§9.6）";
+            m_setupError = std::move(err);
+        }
+    };
+    if (!m_setupError.has_value()) {
+        checkToolPresence(m_query.defaultTcp);
+    }
+    for (const BatchTaskPoint& p : m_query.points) {
+        if (m_setupError.has_value()) {
+            break;
+        }
+        if (p.tcpOverride.has_value()) {
+            checkToolPresence(*p.tcpOverride);
+        }
+    }
+}
+
+const evidence::EvaluatorDescriptor& TaskPointsBatchEvaluator::descriptor() const
+{
+    // 返回引用指向成员副本（稳定存储——evidence §9.2 契约要求）。
+    return m_descriptor;
+}
+
+evidence::EvaluationOutput TaskPointsBatchEvaluator::evaluate(
+    const evidence::EvaluationRequest& request,
+    evidence::IEvaluationContext& context)
+{
+    evidence::EvaluationOutput out;
+
+    // ---- 批量级零素材轨：工具侧缺失（KIN-NO-TCP——T03/T04 两分口径：
+    // 模型侧缺失≠工程不可行，零 payload 零证据，判定留 evidence）。----
+    if (m_setupError.has_value()) {
+        out.diagnostics.push_back(makeKinDiag(
+            kKinNoTcp, std::nullopt,
+            "kin.task-points-batch 批量任务点验证", m_setupError->detail,
+            "配置工具 TCP 或修正 tcpRef 引用后重提批量评估"));
+        return out;
+    }
+
+    // ---- 纯计算面（runBatchComputation——展开/分批/求解/取消/检查点/
+    // 进度/完成矩阵）＋组装器交付（唯一组装点——证据行/搜索未果聚合/
+    // 证明素材/verdictInputs/payload/诊断全部经 KinematicEvidenceBuilder，
+    // NFR-MNT-04）。----
+    const BatchComputation computation =
+        runBatchComputation(*m_view, m_query, request, context);
+    const KinematicEvidenceBuilder builder;
+    const EvidenceContext ctx{&request};
+    return builder.build(computation, ctx);
+}
+
+// =====================================================================
+// runBatchComputation——批量计算核心（§7.1 批量执行图步骤 1~6；声明见
+// Evaluators.hpp——测试直调面与评估器形态的分离线）
+// =====================================================================
+
+BatchComputation runBatchComputation(const IKinRuntimeView& view,
+                                     const BatchQuery& query,
+                                     const evidence::EvaluationRequest& request,
+                                     evidence::IEvaluationContext& context)
+{
+    // 装配校验（直调面与评估器构造器同款 fail-fast 面——防御直调绕过
+    // 构造器；NFR-COR-03）。
+    validateBatchQuery(view, query);
+
+    // ---- 展开前置：工况投影索引（重复 conditionId 集合语义去重——首见
+    // 优先）＋caseSubset 规范化（去重＋字典序——完成矩阵素材对账分母）。----
+    std::map<core::ObjectId, const BatchCondition*> conditionIndex;
+    for (const BatchCondition& c : query.conditions) {
+        conditionIndex.emplace(c.conditionId, &c);  // emplace＝重复键保留首见
+    }
+    std::vector<core::ObjectId> caseSubset = request.caseSubset;
+    std::sort(caseSubset.begin(), caseSubset.end());
+    caseSubset.erase(std::unique(caseSubset.begin(), caseSubset.end()),
+                     caseSubset.end());
+    // 请求装配完备性（调用方契约违约 fail-fast——caseSubset 引用的工况
+    // 必须在投影集中；随请求到达故在评估期校验，登记随卡 §14.6 v0.5）。
+    for (const core::ObjectId& caseId : caseSubset) {
+        if (conditionIndex.find(caseId) == conditionIndex.end()) {
+            throw std::invalid_argument(
+                "kin.task-points-batch：caseSubset 引用投影集中不存在的工况 "
+                + caseId.toCanonical() + "（请求装配契约违约——fail-fast）");
+        }
+    }
+
+    // ---- 步骤 1：展开——启用点集×caseSubset 产 (point,condition) 工作项。
+    // 点索引同样按集合语义去重（首见优先）；点遍历保持查询注入序（去重
+    // 后相对序——确定性展开，排序在步骤 2 统一完成）。----
+    std::map<core::ObjectId, const BatchTaskPoint*> pointIndex;
+    std::vector<const BatchTaskPoint*> pointOrder;
+    for (const BatchTaskPoint& p : query.points) {
+        const bool inserted = pointIndex.emplace(p.pointOid, &p).second;
+        if (inserted) {
+            pointOrder.push_back(&p);
+        }
+    }
+
+    // 悬空引用核对集（逐工况的 Stations 显式清单——不在点集的对象产
+    // InputInvalid 工作项，V-12；集合语义去重防清单内重复登记膨胀）。
+    std::vector<WorkState> workItems;
+    std::set<std::pair<core::ObjectId, core::ObjectId>> seenKeys;
+    auto appendItem = [&](WorkState item) {
+        const auto key = std::make_pair(item.pointOid, item.conditionId);
+        if (seenKeys.insert(key).second) {
+            workItems.push_back(std::move(item));
+        }
+    };
+
+    for (const core::ObjectId& caseId : caseSubset) {
+        const BatchCondition& condition = *conditionIndex[caseId];
+
+        // 悬空引用素材（V-12——先于 enabled/None 判定：数据缺陷必须显性
+        // 化，不因停用被吞，ERR-01）。
+        if (condition.appliesTo == BatchAppliesToScope::Stations) {
+            std::set<core::ObjectId> uniqueStations(condition.stations.begin(),
+                                                    condition.stations.end());
+            for (const core::ObjectId& station : uniqueStations) {
+                if (pointIndex.find(station) == pointIndex.end()) {
+                    WorkState dangling;
+                    dangling.pointOid = station;
+                    dangling.conditionId = caseId;
+                    dangling.kind = WorkKind::InputInvalid;
+                    dangling.status = BatchItemStatus::InputInvalid;
+                    dangling.reason =
+                        "任务点引用悬空：工况适用范围引用点集外对象 "
+                        + station.toCanonical()
+                        + "（InputInvalid 素材——V-12，附 KIN-POINT-REF-DANGLING）";
+                    appendItem(std::move(dangling));
+                }
+            }
+        }
+
+        // 逐点展开（appliesTo 过滤：仅 Stations 清单外不产项——§7.1 过滤
+        // 语义；AllStations/None 都产项——None 在下方显式标记
+        // NotApplicable，ERR-01 不静默丢弃）。
+        for (const BatchTaskPoint* p : pointOrder) {
+            const bool applicable =
+                condition.appliesTo != BatchAppliesToScope::Stations
+                || std::find(condition.stations.begin(), condition.stations.end(),
+                             p->pointOid)
+                    != condition.stations.end();
+            if (!applicable) {
+                continue;  // appliesTo 过滤——不产工作项（§7.1 过滤语义）
+            }
+
+            WorkState item;
+            item.pointOid = p->pointOid;
+            item.conditionId = caseId;
+            item.pointLevel = p->level;
+            item.targetInBase = p->targetInBase;
+            item.positionTolerance = p->positionTolerance;
+            item.orientationTolerance = p->orientationTolerance;
+            item.tcp = p->tcpOverride.has_value() ? *p->tcpOverride
+                                                  : query.defaultTcp;
+            item.demands = mergeDemands(p->demands, condition.demands);
+
+            // 预终结判定（优先级：点停用→工况停用→范围 None——显式标记
+            // 附原因；其余为可解项）。
+            if (!p->enabled) {
+                item.kind = WorkKind::NotApplicable;
+                item.status = BatchItemStatus::NotApplicable;
+                item.reason = "任务点停用（disabled——NotApplicable 显式标记，§7.1）";
+            } else if (!condition.enabled) {
+                item.kind = WorkKind::NotApplicable;
+                item.status = BatchItemStatus::NotApplicable;
+                item.reason = "工况停用（disabled——NotApplicable 显式标记，§7.1）";
+            } else if (condition.appliesTo == BatchAppliesToScope::None) {
+                item.kind = WorkKind::NotApplicable;
+                item.status = BatchItemStatus::NotApplicable;
+                item.reason = "工况适用范围=None（NotApplicable 显式标记，§7.1）";
+            } else {
+                item.kind = WorkKind::Solvable;
+                // 可解项保持 NotRun 初值——求解完成后覆写终态；取消路径
+                // 的 NotRun 即此初值的自然保留（无伪完成）。
+            }
+            appendItem(std::move(item));
+        }
+    }
+
+    // ---- 步骤 2：全序——(pointOid, conditionId) 字典序（§8.4，分片前
+    // 全序确定；去重后严格全序——排序稳定性无观测面）。----
+    std::sort(workItems.begin(), workItems.end(), workOrderLess);
+
+    // 可解项下标集合（预终结项不入批次——终态展开期已定，登记随卡
+    // §14.6 v0.5；acceptance 2 自检公式的"Σ批项数"＝已求解项数＋预终结
+    // 项数的展开期完成部分）。
+    std::vector<std::size_t> solvable;
+    std::uint64_t preTerminalCount = 0;
+    for (std::size_t i = 0; i < workItems.size(); ++i) {
+        if (workItems[i].kind == WorkKind::Solvable) {
+            solvable.push_back(i);
+        } else {
+            ++preTerminalCount;
+        }
+    }
+
+    // 求解环境（逐项共享——同一快照视图/评价区间/初值集：确定性来源
+    // 全部固定，逐项输入仅目标/TCP/绑定不同）。
+    const std::vector<JointInterval> intervals = evaluationIntervals(view);
+    const std::vector<std::vector<double>> initialValues =
+        makeInitialValues(query.initialStrategy, query.initialValuesCount,
+                          query.seed, intervals, query.referenceQ);
+    const std::vector<const char*> jointUnits = movableJointUnits(view);
+    const IIkSolver& solver =
+        query.solver != nullptr ? *query.solver : internalDefaultSolver();
+
+    // ---- 步骤 3：分批（每批 ≤maxBatchSize——默认 256，D-KIN-6）。----
+    const std::uint64_t batchCount =
+        solvable.empty()
+            ? 0U
+            : (static_cast<std::uint64_t>(solvable.size()) + query.maxBatchSize - 1U)
+                  / query.maxBatchSize;
+
+    // 取消传播旗标（批内共享——任一项观测到取消即停止批内派发；原子
+    // 松散序足够：只做"是否停止"的保守判定，false 告警的代价＝多解一项，
+    // 不影响素材正确性）。
+    std::atomic<bool> batchCancelled{false};
+    std::uint64_t completedItemsForProgress = preTerminalCount;  // 进度分母基准
+    std::uint64_t completedBatches = 0;
+
+    // 单项求解闭包（批内并行时各线程只写自己的结果槽——§8.4 合并＝按
+    // 全序槽位归并，与完成顺序无关）。
+    auto solveAt = [&](std::size_t slot) {
+        // 批内项起点取消检查（批间"每批至少一次"之外的自适应粒度——
+        // V-22 本单元侧：观测到取消即不再派发新项/新批）。
+        if (batchCancelled.load(std::memory_order_relaxed)
+            || context.cancellationRequested()) {
+            batchCancelled.store(true, std::memory_order_relaxed);
+            return;
+        }
+        WorkState& item = workItems[solvable[slot]];
+        solveItem(item, query, solver, view, intervals, initialValues,
+                  request.snapshot.snapshotId, request.slice.sliceId,
+                  request.mode,
+                  [&context, &batchCancelled]() {
+                      if (context.cancellationRequested()) {
+                          batchCancelled.store(true, std::memory_order_relaxed);
+                          return true;
+                      }
+                      return false;
+                  });
+        if (item.status == BatchItemStatus::NotRun) {
+            // 求解器报告取消（取消不是结局——槽保持 NotRun，中止批内
+            // 后续项派发）。
+            batchCancelled.store(true, std::memory_order_relaxed);
+            return;
+        }
+        item.demandChecks = buildDemandChecks(item, intervals, jointUnits);
+    };
+
+    for (std::uint64_t b = 0; b < batchCount; ++b) {
+        // ---- 步骤 4 前置：批间协作取消查询（每批至少一次——V-22 本单元
+        // 侧；ARCH §4.4 的 2 s 停止派发界由本查询点＋批内探针承载）。----
+        if (context.cancellationRequested()) {
+            batchCancelled.store(true, std::memory_order_relaxed);
+        }
+        if (batchCancelled.load(std::memory_order_relaxed)) {
+            break;  // 停止派发新批——剩余可解项保持 NotRun（无伪完成）
+        }
+
+        // 本批的连续槽区间（§8.4——并行分片＝全序工作项的连续区间）。
+        const std::size_t begin =
+            static_cast<std::size_t>(b) * query.maxBatchSize;
+        const std::size_t end =
+            std::min<std::size_t>(begin + query.maxBatchSize, solvable.size());
+
+        // 分片执行（threadCount=1 内联单线程——逐位一致；>1 时 T 个连续
+        // 分片并行，各线程只写各自槽位，join 后按分片序重抛首个异常——
+        // 确定性失败面）。
+        const std::size_t threads =
+            std::min<std::size_t>(query.threadCount, end - begin);
+        if (threads <= 1) {
+            for (std::size_t slot = begin; slot < end; ++slot) {
+                solveAt(slot);
+                if (batchCancelled.load(std::memory_order_relaxed)) {
+                    break;  // 批内中止——剩余槽走 NotRun（循环外统一处理）
+                }
+            }
+        } else {
+            std::vector<std::exception_ptr> shardErrors(threads);
+            auto shardWorker = [&](std::size_t t) {
+                try {
+                    // 第 t 片＝[begin + t·n/T, begin + (t+1)·n/T)——连续
+                    // 区间（n＝批内槽数）；区间边界整除余数摊入末片。
+                    const std::size_t n = end - begin;
+                    const std::size_t lo = begin + t * n / threads;
+                    const std::size_t hi = begin + (t + 1) * n / threads;
+                    for (std::size_t slot = lo; slot < hi; ++slot) {
+                        if (batchCancelled.load(std::memory_order_relaxed)) {
+                            return;
+                        }
+                        solveAt(slot);
+                    }
+                } catch (...) {
+                    shardErrors[t] = std::current_exception();
+                }
+            };
+            std::vector<std::thread> workers;
+            workers.reserve(threads - 1);
+            for (std::size_t t = 1; t < threads; ++t) {
+                workers.emplace_back(shardWorker, t);
+            }
+            shardWorker(0);  // 主线程跑第 0 片——避免空等
+            for (std::thread& w : workers) {
+                w.join();
+            }
+            // 异常按分片序重抛首个（确定性失败面——同一坏输入必报同一
+            // 首错，NFR-COR-02；批内取消旗标不是异常）。
+            for (std::size_t t = 0; t < threads; ++t) {
+                if (shardErrors[t] != nullptr) {
+                    std::rethrow_exception(shardErrors[t]);
+                }
+            }
+        }
+
+        if (batchCancelled.load(std::memory_order_relaxed)) {
+            break;  // 批内取消/失败中断——本批剩余与后续批不推进 watermark
+        }
+
+        // ---- 步骤 5：批完成——检查点 watermark（批粒度，P-KIN-7 最小
+        // 端口）＋进度上报（批粒度，percent＝已完成项占比，phase 固定
+        // "solve-batch"——§7.1 reportProgress(percent, phase) 批粒度落值）。----
+        ++completedBatches;
+        if (query.checkpointSink != nullptr) {
+            query.checkpointSink->batchWatermark(completedBatches, batchCount);
+        }
+        completedItemsForProgress += (end - begin);
+        const std::uint64_t percent =
+            workItems.empty()
+                ? 100U
+                : std::min<std::uint64_t>(
+                    100U, completedItemsForProgress * 100U
+                              / static_cast<std::uint64_t>(workItems.size()));
+        context.reportProgress(static_cast<std::uint8_t>(percent), "solve-batch");
+    }
+
+    // ---- 取消/中断收尾：未求解可解项如实 NotRun（§7.1"取消→未完成批
+    // 如实标记 NotRun"；以"槽仍处于 NotRun 初值且无原因文本"判定未派发
+    // ——批内部分完成时已解项的终态如实保留，不回写 NotRun）。----
+    const bool incomplete = batchCancelled.load(std::memory_order_relaxed);
+    std::uint64_t notRunCount = 0;
+    for (const std::size_t slot : solvable) {
+        WorkState& item = workItems[slot];
+        if (item.status == BatchItemStatus::NotRun && item.reason.empty()) {
+            item.reason =
+                "未运行：协作取消/失败中止后未派发（NotRun 如实标记——"
+                "已完成批 " + std::to_string(completedBatches) + "/"
+                + std::to_string(batchCount) + "，watermark 保留可续）";
+            ++notRunCount;
+        }
+    }
+    // 计数守恒（Σ批项数＝预终结项＋已求解项；NotRun＝未派发项——
+    // acceptance 2 自检公式的三个元）。
+    const std::uint64_t processedCount =
+        preTerminalCount + (static_cast<std::uint64_t>(solvable.size()) - notRunCount);
+
+    // ---- 步骤 6：完成矩阵素材＋完整性自检＋组装器交付。----
+    BatchComputation computation;
+    computation.snapshotId = request.snapshot.snapshotId;
+    computation.sliceId = request.slice.sliceId;
+    computation.configDigest = query.configDigest;
+    computation.mode = request.mode;
+    computation.seed = query.seed;
+    computation.referenceQ = query.referenceQ;
+    computation.task = request.task;
+    computation.caseSubset = caseSubset;
+    computation.batchCount = batchCount;
+    computation.completedBatchCount = completedBatches;
+
+    // 逐工况完成标记（acceptance 2——caseSubset 每项有终态标记；口径：
+    // 任一 NotRun→notRun；否则全 NotApplicable 或零项→notApplicable；
+    // 否则 executed（含 InputInvalid——该项评估已完成并留素材））。登记
+    // 随卡 §14.6 v0.5。
+    for (const core::ObjectId& caseId : caseSubset) {
+        BatchCaseCompletion cc;
+        cc.conditionId = caseId;
+        std::uint64_t computed = 0;
+        std::uint64_t notRun = 0;
+        std::uint64_t notApplicable = 0;
+        for (const WorkState& item : workItems) {
+            if (item.conditionId != caseId) {
+                continue;
+            }
+            switch (item.status) {
+            case BatchItemStatus::NotRun:
+                ++notRun;
+                break;
+            case BatchItemStatus::NotApplicable:
+                ++notApplicable;
+                break;
+            default:
+                ++computed;
+                break;  // CandidateFound/NoConvergence/AllFiltered/BoundExceeded/
+                        // InputInvalid——计算/素材终态
+            }
+        }
+        cc.computedItemCount = computed;
+        cc.notRunItemCount = notRun;
+        cc.notRun = notRun > 0;
+        cc.notApplicable = !cc.notRun && computed == 0;  // 全不适用（含零项）
+        cc.executed = !cc.notRun && !cc.notApplicable;
+        computation.caseCompletion.push_back(cc);
+    }
+
+    // 工作项记录（全序——证据序＝工作项序，§8.4）。
+    for (const WorkState& item : workItems) {
+        computation.items.push_back(assembleRecord(item));
+    }
+    computation.totalWorkItems = static_cast<std::uint64_t>(computation.items.size());
+    computation.processedItemCount = processedCount;
+    computation.notRunItemCount = notRunCount;
+    computation.incomplete = incomplete;
+
+    // 组装前自检（acceptance 2——工作项总数＝Σ批项数＋NotRun 数；此处
+    // 为评估器侧主检，组装器复核同式；违例＝内部缺陷 logic_error 不静默）。
+    if (computation.totalWorkItems
+        != computation.processedItemCount + computation.notRunItemCount) {
+        throw std::logic_error(
+            "kin.task-points-batch：完整性自检失败（工作项总数≠Σ批项数＋"
+            "NotRun 数——acceptance 2/§7.1；内部缺陷，fail-fast）");
+    }
+
+
+    // 计算核心到此为止（证据组装唯一经 KinematicEvidenceBuilder——调用方
+    // 侧分工：TaskPointsBatchEvaluator::evaluate ＝ TCP 零素材轨＋本函数＋
+    // builder.build；测试直调本函数断言批量语义，NFR-MNT-01）。
+    return computation;
+}
+
+// =====================================================================
+// TaskPointsBatchEvaluatorFactory——宿主注入工厂（闭包捕获；create 无参）
+// =====================================================================
+
+TaskPointsBatchEvaluatorFactory::TaskPointsBatchEvaluatorFactory(
+    const IKinRuntimeView* view, BatchQuery query)
+    : m_view(view), m_query(std::move(query)),
+      m_descriptor(makeTaskPointsBatchDescriptor())
+{
+    // 与评估器同一装配校验面（工厂是宿主的注入入口——违约在装配期
+    // 暴露，不迟至 create()；validateBatchQuery 为本 TU 匿名命名空间的
+    // 同一校验函数——TaskPointsBatchEvaluator 构造器同款调用）。
+    if (m_view == nullptr) {
+        throw std::invalid_argument(
+            "kin.task-points-batch 工厂：注入视图为空指针（宿主注入契约违约——O-37）");
+    }
+    validateBatchQuery(*m_view, m_query);
+}
+
+const evidence::EvaluatorDescriptor& TaskPointsBatchEvaluatorFactory::descriptor() const
+{
+    return m_descriptor;
+}
+
+std::unique_ptr<evidence::IEngineeringEvaluator>
+TaskPointsBatchEvaluatorFactory::create() const
+{
+    // 无参签名（O-37 裁决——注册表兼容）；视图/求解器/检查点指针经闭包
+    // 传递——注入语义的唯一通道（生命周期约束见 BatchQuery 注）。
+    return std::make_unique<TaskPointsBatchEvaluator>(m_view, m_query);
+}
+
+// =====================================================================
+// makeTaskPointsBatchDescriptor——依赖声明与形态（§4.3 行）
+// =====================================================================
+
+evidence::EvaluatorDescriptor makeTaskPointsBatchDescriptor()
+{
+    evidence::EvaluatorDescriptor d;
+    d.key = kTaskPointsBatchEvaluationKey;
+    d.contractVersion = kTaskPointsBatchContractVersion;
+
+    // 依赖声明七条（§4.3 行原样：pose-metrics 五条＋req.points＋
+    // req.conditions——"上述＋req.conditions(Object)（caseSubset 分批）"；
+    // 全部 Required——批量通道无条件依赖；collision-models 不在行内，
+    // 碰撞声明属 region-coverage/T07）。resolutionNote 供人工评审
+    // （非身份载体，无语法约束）。
+    d.inputs = {
+        {"model.robot-design", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "规范机器人链对象（Object 闭包内 robot-design——链/关节/限位真值）"},
+        {"tcp", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "工具定义对象（Object→tool-definition——TCP 偏置真值，AT-05① 失效面）"},
+        {"policy.resolved", evidence::DependencyKind::Policy,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "已解析工程策略内容身份（CON-06——策略变更全列失效）"},
+        {"namemap", evidence::DependencyKind::NameMap,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "运行时名称映射内容身份（CON-06——⑥端口诊断定位/结果标注）"},
+        {"config.ik", evidence::DependencyKind::Configuration,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "分析求解配置（KIN-13 canonical——入 sliceId 不入基准，D-04）"},
+        {"req.points", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "任务点集合对象（req-point-set——批量展开的启用点集分母）"},
+        {"req.conditions", evidence::DependencyKind::Object,
+         evidence::DependencyRequiredness::Required, std::nullopt,
+         "工况集合对象（req-condition-set——caseSubset 分批的适用范围/"
+         "要求值来源，§4.3 行原文）"},
+    };
+
+    // Profile 声明引用：域 id 词表 "kin"（evidence isDomainProfileId）；
+    // contentIdentity 置零值＝域不可申报（evidence §9.5/R-3）。
+    d.profile.profileId = "kin";
+    d.profile.version = "1";
+    d.profile.contentIdentity = core::ContentIdentity{};
+
+    // 模式集：§4.3 行两值（Quick/Verified——批量通道不做 Preview；Quick
+    // 载荷以 mode 字段承载 screening-only 语义，效力门禁在汇总/包络层）。
+    d.supportedModes = {core::EvaluationMode::Quick, core::EvaluationMode::Verified};
+
+    // 无跨调用状态（实例可共享）＋完全线程安全（§9.2 头注原文——并行
+    // 分片要求可重入）。
+    d.stateless = true;
+    d.threadSafety = evidence::ThreadSafety::FullyThreadSafe;
+    return d;
+}
+
+// =====================================================================
+// taskPointsBatchCapability——任务类型能力声明（§8.3 提交行值面）
+// =====================================================================
+
+execution::TaskCapability taskPointsBatchCapability()
+{
+    execution::TaskCapability capability;
+    // 暂停不支持（R1 如实声明——收到暂停请求给明确状态反馈，EX-SM-7；
+    // 缺省即 false，显式置位以声明语义）。
+    capability.supportsPause = false;
+    // 检查点＝批 watermark（§8.3 能力声明原文——CheckpointGranularity::
+    // Batch；watermark 产出面＝IBatchCheckpointSink 每批一次）。
+    capability.checkpointGranularity = execution::CheckpointGranularity::Batch;
+    // 强制终止代价＝低（批间边界即安全中止点，无跨批不变量——§8.3
+    // "强制终止代价=低"原文；仅呈现语义，不影响协议，TaskTypes 注）。
+    capability.forceTerminateCost = execution::ForceTerminateCost::Cheap;
+    return capability;
 }
 
 }  // namespace sdurws::ird::kinematics
