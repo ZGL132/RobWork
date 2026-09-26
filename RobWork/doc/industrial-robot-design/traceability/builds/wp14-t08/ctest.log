@@ -1,0 +1,12 @@
+Test project D:/wt-wp14-t08/build/RobWorkStudio/src/rwslibs/industrialrobot/requirements
+    Start 1: sdurws_ird_requirements_test
+1/2 Test #1: sdurws_ird_requirements_test ............   Passed    0.08 sec
+    Start 2: sdurws_ird_requirements_contract_test
+2/2 Test #2: sdurws_ird_requirements_contract_test ...   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Label Time Summary:
+ird    =   0.10 sec*proc (2 tests)
+
+Total Test time (real) =   0.10 sec
