@@ -1,0 +1,19 @@
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from KinBuildGraph
+[ RUN      ] KinBuildGraph.UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3
+[       OK ] KinBuildGraph.UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3 (0 ms)
+[ RUN      ] KinBuildGraph.SixRegisteredEdgesPresent_WP15T02_ACC3
+[       OK ] KinBuildGraph.SixRegisteredEdgesPresent_WP15T02_ACC3 (0 ms)
+[ RUN      ] KinBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP15T02_ACC5
+[       OK ] KinBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP15T02_ACC5 (0 ms)
+[ RUN      ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3
+[       OK ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3 (0 ms)
+[ RUN      ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5
+[       OK ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5 (0 ms)
+[----------] 5 tests from KinBuildGraph (11 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (11 ms total)
+[  PASSED  ] 5 tests.
+exit=0

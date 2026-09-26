@@ -1,0 +1,39 @@
+[==========] Running 12 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from KinErrors
+[ RUN      ] KinErrors.ErrorCodeTokensMatchSection92Row_WP15T02_ACC4
+[       OK ] KinErrors.ErrorCodeTokensMatchSection92Row_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinErrors.ErrorValueSemanticsOrderedParams_WP15T02_ACC4
+[       OK ] KinErrors.ErrorValueSemanticsOrderedParams_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinErrors.DiagCodeMappingIsStagedToConsumingTasks_WP15T02_ACC4
+[       OK ] KinErrors.DiagCodeMappingIsStagedToConsumingTasks_WP15T02_ACC4 (0 ms)
+[----------] 3 tests from KinErrors (1 ms total)
+
+[----------] 5 tests from KinDiagCodes
+[ RUN      ] KinDiagCodes.FactoryScopeIsFullTable96_WP15T02_ACC4
+[       OK ] KinDiagCodes.FactoryScopeIsFullTable96_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinDiagCodes.DescriptorFieldsMatchSection96Rows_WP15T02_ACC4
+[       OK ] KinDiagCodes.DescriptorFieldsMatchSection96Rows_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP15T02_ACC4
+[       OK ] KinDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinDiagCodes.RegistersIntoStableCodeRegistry_WP15T02_ACC4
+[       OK ] KinDiagCodes.RegistersIntoStableCodeRegistry_WP15T02_ACC4 (0 ms)
+[ RUN      ] KinDiagCodes.DuplicateRegistrationRejected_WP15T02_ACC4
+[       OK ] KinDiagCodes.DuplicateRegistrationRejected_WP15T02_ACC4 (0 ms)
+[----------] 5 tests from KinDiagCodes (0 ms total)
+
+[----------] 4 tests from KinBuildRedLine
+[ RUN      ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1
+[       OK ] KinBuildRedLine.ProductFaceHasZeroQtIncludes_WP15T02_ACC1 (0 ms)
+[ RUN      ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5
+[       OK ] KinBuildRedLine.IncludeFaceRestrictedToSixRegisteredEdges_WP15T02_ACC5 (0 ms)
+[ RUN      ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5
+[       OK ] KinBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP15T02_ACC5 (0 ms)
+[ RUN      ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1
+[       OK ] KinBuildRedLine.ProductFaceFilesNonEmpty_WP15T02_ACC1 (0 ms)
+[----------] 4 tests from KinBuildRedLine (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 3 test suites ran. (4 ms total)
+[  PASSED  ] 12 tests.
+exit=0

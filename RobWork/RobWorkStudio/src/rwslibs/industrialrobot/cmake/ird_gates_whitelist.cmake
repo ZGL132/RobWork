@@ -28,7 +28,12 @@
 # runtime 边未登记——T02 零 runtime 公共值类型引用，实际引用时按卡 §3.2
 # 增登。五边已随本任务同步刷新进 dependency-graph.json〔traceability/ 在
 # allowedFiles 内——与 modeling 六边"图刷新归治理侧"的处置不同〕，并仍
-# 经 IRD_EXTRA_EDGE_REFS 登记出处——出处登记簿与图镜像双面留痕）。
+# 经 IRD_EXTRA_EDGE_REFS 登记出处——出处登记簿与图镜像双面留痕）；另含
+# 2026-09-26 增登的 kinematics→core/diagnostics/runtime/policy/evidence/
+# execution 六条（WP-15-T02——units/kinematics.md §3.2 边表，同属
+# ARCH §3.5 既有许可方向的实例化。六边已随本任务同步刷新进 dependency-
+# graph.json〔traceability/ 在 allowedFiles 内——WP-14-T02 双面留痕同款〕，
+# 并仍经 IRD_EXTRA_EDGE_REFS 登记出处）。
 # 书写格式："依赖方->被依赖方"（与 traceability/dependency-graph.json 同序）。
 # ---------------------------------------------------------------------
 set(IRD_ALLOWED_UNIT_EDGES
@@ -64,6 +69,12 @@ set(IRD_ALLOWED_UNIT_EDGES
     "requirements->project"     # WP-14-T02（ICommandHandler/CommandPlan/HandlerContext/DraftService/查询端口）
     "requirements->io"          # WP-14-T02（Csv/Json 解析值与服务、SafePath/BudgetGuard、AtomicFile）
     "requirements->evidence"    # WP-14-T02（ReadinessSummary/Snapshot 角色键值类型——请求方角色；无评估器注册）
+    "kinematics->core"          # WP-15-T02 六边（kinematics.md §3.2 边表——身份/单位/比较/EvaluationMode 词表/诊断契约/事件）
+    "kinematics->diagnostics"   # WP-15-T02（稳定码注册、IDiagnosticFactory/IDiagnosticSink）
+    "kinematics->runtime"       # WP-15-T02（IRuntimeModelView/RuntimeSnapshot 只读消费——worker 物化入口）
+    "kinematics->policy"        # WP-15-T02（④端口 ICollisionEvaluator/IPolicyProvider/IJointLimitEvaluator 只读调用）
+    "kinematics->evidence"      # WP-15-T02（IEngineeringEvaluator/EvaluationRequest/IEvaluationContext/EvaluationOutput 契约实现、DependencyDeclaration 值）
+    "kinematics->execution"     # WP-15-T02（任务提交/取消令牌/检查点/结果归档通道——接口消费）
 )
 
 # ---------------------------------------------------------------------
@@ -81,6 +92,9 @@ set(IRD_ALLOWED_UNIT_EDGES
 # 内，dependency-graph.json 已随任务同步刷新（五边入图，⊆ 方向成立）；
 # 仍在本表登记出处——出处登记簿与图镜像双面留痕（契约 acceptance 2 双
 # 义务的执行面）。
+# WP-15-T02 增登的 kinematics 六边：traceability/ 在该任务 allowedFiles
+# 内（WP-14-T02 双面留痕同款），dependency-graph.json 已随任务同步刷新
+# （六边入图，⊆ 方向成立）；仍在本表登记出处。
 # 格式：边 与 出处成对书写（各一个条目，数量必须相等）。
 # ---------------------------------------------------------------------
 set(IRD_EXTRA_EDGE_REFS_EDGES
@@ -95,7 +109,13 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "requirements->diagnostics"
     "requirements->project"
     "requirements->io"
-    "requirements->evidence")
+    "requirements->evidence"
+    "kinematics->core"
+    "kinematics->diagnostics"
+    "kinematics->runtime"
+    "kinematics->policy"
+    "kinematics->evidence"
+    "kinematics->execution")
 set(IRD_EXTRA_EDGE_REFS_NOTES
     "ARCH §3.5 补登（O-21 消账，2026-09-10）；testkit.md §2.4 T-2 允许形态"
     "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/SourcedValue/单位/比较/诊断契约/事件）"
@@ -108,7 +128,13 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——稳定码注册、IDiagnosticFactory/IDiagnosticSink（dependency-graph.json 已随任务同步刷新）"
     "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——ICommandHandler/CommandPlan/HandlerContext/DraftService/查询端口（dependency-graph.json 已随任务同步刷新）"
     "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——Csv/Json 解析值与服务、SafePath/BudgetGuard、AtomicFile（dependency-graph.json 已随任务同步刷新）"
-    "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——ReadinessSummary/Snapshot 角色键值类型，请求方角色、无评估器注册（dependency-graph.json 已随任务同步刷新）")
+    "WP-14-T02 落位登记（2026-09-25）：units/requirements.md §3.2 边表——ReadinessSummary/Snapshot 角色键值类型，请求方角色、无评估器注册（dependency-graph.json 已随任务同步刷新）"
+    "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/单位/比较/EvaluationMode 词表/诊断契约/事件）；dependency-graph.json 已随任务同步刷新（双面留痕）"
+    "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——稳定码注册、IDiagnosticFactory/IDiagnosticSink（dependency-graph.json 已随任务同步刷新）"
+    "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——IRuntimeModelView/RuntimeSnapshot 只读消费、worker 物化入口（dependency-graph.json 已随任务同步刷新）"
+    "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——④端口 ICollisionEvaluator/IPolicyProvider/IJointLimitEvaluator 只读调用（dependency-graph.json 已随任务同步刷新）"
+    "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——IEngineeringEvaluator/EvaluationRequest/IEvaluationContext/EvaluationOutput 契约实现、DependencyDeclaration 值（dependency-graph.json 已随任务同步刷新）"
+    "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——任务提交/取消令牌/检查点/结果归档通道（接口消费；dependency-graph.json 已随任务同步刷新）")
 
 # ---------------------------------------------------------------------
 # 业务域单元清单（R-1 的判定范围；来源 AGENTS.md §5 架构红线 2）
