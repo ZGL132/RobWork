@@ -50,8 +50,11 @@
 
 #include <rws/RobWorkStudio.hpp>                 // 宿主注入面：getView()/getWorkCellScene()/menuBar()（共存接入）
 
+#include <sdurws/ird/modeling/ObjectTypes.hpp>   // modeling::kRobotDesignObjectType（应用回执的根身份回填过滤）
+#include <sdurws/ird/project/CommandService.hpp> // project::CommandResult/CommandStatus（apply 网关提交面——T03b-2）
 #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
+#include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（buildDraftCommand 调用面）
 
 #include <filesystem>
 #include <iostream>
@@ -117,8 +120,13 @@ constexpr const char* kRecentUnavailableSuffix = "（项目位置不可用）";
 class BundleCapturingStoreFactory final : public IUiStoreFactoryPort {
 public:
     /// @param inner [in] 内层工厂适配器（共享持有——存活期覆盖本包装）。
-    explicit BundleCapturingStoreFactory(std::shared_ptr<IUiStoreFactoryPort> inner)
+    /// @param onStoreCaptured [in] 成功打开回调（T03b-2——宿主经此保存
+    ///        强类型适配器引用，apply 网关取命令端口）。
+    explicit BundleCapturingStoreFactory(
+        std::shared_ptr<IUiStoreFactoryPort> inner,
+        std::function<void(std::shared_ptr<app::StorePortAdapter>)> onStoreCaptured)
         : m_inner(std::move(inner))
+        , m_onStoreCaptured(std::move(onStoreCaptured))
     {
     }
 
@@ -130,6 +138,11 @@ public:
         const OpenStoreOutcome outcome = m_inner->open(canonicalPath, mode, outBindings);
         if (outcome.ok) {
             m_lastStore = outBindings.store;  // shared 拷贝＝观察同一实例
+            if (m_onStoreCaptured) {
+                if (auto adapter = std::dynamic_pointer_cast<app::StorePortAdapter>(m_lastStore)) {
+                    m_onStoreCaptured(std::move(adapter));
+                }
+            }
         }
         return outcome;
     }
@@ -140,11 +153,20 @@ public:
         return std::dynamic_pointer_cast<IUiDraftStorePort>(m_lastStore);
     }
 
+    /// @brief 最近一次成功打开的存储适配器（T03b-2——apply 网关经其取
+    ///        project::ProjectStore::commands() 命令端口；未打开＝空）。
+    std::shared_ptr<app::StorePortAdapter> lastStoreAdapter() const
+    {
+        return std::dynamic_pointer_cast<app::StorePortAdapter>(m_lastStore);
+    }
+
 private:
     /// 内层工厂（StoreFactoryPortAdapter——对端翻译面）。
     std::shared_ptr<IUiStoreFactoryPort> m_inner;
     /// 最近一次成功打开的 store 端口（双面适配器——DraftStore 强转源）。
     std::shared_ptr<IUiProjectStorePort> m_lastStore;
+    /// 成功打开回调（T03b-2——宿主保存强类型适配器引用的通道）。
+    std::function<void(std::shared_ptr<app::StorePortAdapter>)> m_onStoreCaptured;
 };
 
 }  // namespace
@@ -194,8 +216,13 @@ void IrdWorkbenchHostPlugin::initialize()
         m_diag.catalog, m_diag.factory, m_diag.pipeline);
     // 打开工厂＝捕获包装（UI-T17）包住对端翻译适配器：包装只透传并捕获
     // 成功绑定集（草稿写半区端口来源），对端翻译语义零改动。
-    m_storeFactory = std::make_shared<BundleCapturingStoreFactory>(
-        std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge));
+    // T03b-2：成功打开回调同步保存强类型适配器（apply 网关取命令端口）。
+    auto storeBundle = std::make_shared<BundleCapturingStoreFactory>(
+        std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge),
+        [this](std::shared_ptr<app::StorePortAdapter> adapter) {
+            m_lastStoreAdapter = std::move(adapter);
+        });
+    m_storeFactory = storeBundle;
 
     // ---- 会话控制器（§5 状态机——依赖就位后延迟构造，一次性注入依赖包；
     //      打开编排的推进面，与 HarnessMain 逐行同源）----
@@ -272,6 +299,10 @@ void IrdWorkbenchHostPlugin::initialize()
     contentDeps.closeProjectHandler =
         [this](const std::vector<CommandParameter>& params) {
             return orchestrateCloseProject(params);
+        };
+    contentDeps.applyDraftHandler =
+        [this](const std::vector<CommandParameter>& params) {
+            return orchestrateApplyDraft(params);
         };
     m_content = createWorkbenchContent(std::move(contentDeps));
 
@@ -1077,6 +1108,129 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateSaveProject(
 // 关闭编排（UI-T17——workbench.closeProject 覆写面；§5.4/§5.6）
 // =====================================================================
 
+/**
+ * @brief 应用编排（T03b-2——draft.apply 覆写面）：域信封组装→命令网关
+ *        提交→回执回写（onCommandResult）→模块会话锚前移。
+ *
+ * 首版交互边界：submit 传 nullptr 交互（非交互提交）——Confirmable 集
+ * 存在时按 Rejected(confirmations-unresolved) 呈现（不虚构放行）；确认
+ * 对话桥接线归收口尾增量。分支锚取权威分支表首条（单默认分支项目行为
+ * 正确；多分支选择器随收口任务）。
+ */
+CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
+    const std::vector<CommandParameter>& params)
+{
+    (void)params;  // 无参命令
+    CommandOutcome out;
+    const auto adapter = m_lastStoreAdapter;
+    if (!m_domains || adapter == nullptr) {
+        // 无项目态没有"应用"语义（门控兜底——可用性快照已禁用的兜底面）。
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("未打开项目——无可应用草稿"), 4000);
+        }
+        return out;  // accepted=false——命令未派发
+    }
+    out.accepted = true;
+    auto& store = adapter->projectStore();
+
+    // 会话锚同步（T03b-2c 半区——buildDraftCommand 前必须锚定：信封
+    // branch/baseRevision 取自会话态）。权威分支表首条 tip（INV-M3）。
+    const auto tips = store.query().branchTips();
+    if (!tips.empty()) {
+        m_domains->modeling.bindSessionAnchor(tips.front().id, tips.front().tip);
+    }
+
+    // 域信封组装（§8.5 域侧半区——建模已落位；nullopt＝无可应用变更）。
+    const auto envelope = m_domains->modeling.module->buildDraftCommand("modeling");
+    if (!envelope.has_value()) {
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("建模：无可应用草稿变更"), 4000);
+        }
+        return out;
+    }
+
+    // 提交（§5.3.1——submit 唯一写路径；nullptr 交互＝非交互提交，确认
+    // 集存在即 Rejected(confirmations-unresolved)——不虚构放行）。
+    const project::CommandResult result =
+        store.commands().submit(*envelope, nullptr);
+
+    // 回执投影＋控制器回写（§10.5 onCommandResult——脏标记清零/撤销栈
+    // 清理/Stale 冲突暂存——UI 半区已落位）。
+    ui::CommandResultProjection projection;
+    if (result.status.committed()) {
+        projection.status = ui::CommandResultProjection::Status::Committed;
+        projection.newRevision = result.newRevision;
+    } else if (result.status.rejected()) {
+        projection.status = ui::CommandResultProjection::Status::Rejected;
+        using Rj = project::CommandStatus::Rejection;
+        switch (result.status.rejection) {
+            case Rj::StaleRevision:           projection.rejectionReason = "stale-revision"; break;
+            case Rj::ConfirmationsRejected:   projection.rejectionReason = "confirmations-rejected"; break;
+            case Rj::ConfirmationsUnresolved: projection.rejectionReason = "confirmations-unresolved"; break;
+            case Rj::HardAssertFailed:        projection.rejectionReason = "hard-assert-failed"; break;
+            case Rj::UnknownCommand:          projection.rejectionReason = "unknown-command"; break;
+            case Rj::InvalidPayload:          projection.rejectionReason = "invalid-payload"; break;
+            case Rj::NotWritable:             projection.rejectionReason = "not-writable"; break;
+        }
+    } else if (result.status.aborted()) {
+        projection.status = ui::CommandResultProjection::Status::Aborted;
+        projection.abortReason = result.status.abort == project::CommandStatus::Abort::Canceled
+                                     ? "canceled" : "interaction-lost";
+    } else {
+        projection.status = ui::CommandResultProjection::Status::Failed;
+    }
+    m_draft->onCommandResult(std::string(modeling::kModuleHandle), projection);
+
+    if (result.committed()) {
+        // 会话锚前移＋根对象身份回填（T03b-2——重复应用走"替换"不重复
+        // 分配；rootId 取自新 HEAD objectRefs 中建模根 token 条目）。
+        std::optional<core::ObjectId> rootId;
+        if (result.newHeadState.has_value()) {
+            for (const auto& ref : result.newHeadState->objectRefs) {
+                if (ref.objectTypeToken == std::string(modeling::kRobotDesignObjectType)) {
+                    rootId = ref.objectId;
+                    break;
+                }
+            }
+        }
+        if (result.newRevision.has_value()) {
+            m_domains->modeling.noteAppliedRevision(*result.newRevision, rootId);
+        }
+        if (m_hostStatusBar != nullptr && result.newRevision.has_value()) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("建模修订已提交：")
+                    + QString::fromStdString(result.newRevision->toCanonical()),
+                5000);
+        }
+    } else if (result.status.rejected()) {
+        using Rj = project::CommandStatus::Rejection;
+        const char* text = "建模修订被拒绝";
+        if (result.status.rejection == Rj::StaleRevision) { text = "建模修订被拒：草稿基线已过期（分支有新提交）"; }
+        else if (result.status.rejection == Rj::ConfirmationsUnresolved) { text = "建模修订待确认项需交互确认（确认桥随收口接线）"; }
+        else if (result.status.rejection == Rj::NotWritable) { text = "项目为只读——建模修订被拒"; }
+        else if (result.status.rejection == Rj::HardAssertFailed) { text = "建模修订被拒：物理合法性断言未通过（详见诊断）"; }
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(QString::fromUtf8(text), 6000);
+        }
+    } else if (!result.status.committed()) {
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("建模修订未提交（中止/失败——详情见诊断）"), 6000);
+        }
+    }
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(
+            kPluginDevChannel,
+            std::string("draft.apply: committed=") + (result.committed() ? "1" : "0")
+                + (result.newRevision.has_value()
+                       ? " rev=" + result.newRevision->toCanonical()
+                       : std::string("")));
+    }
+    return out;
+}
+
 CommandOutcome IrdWorkbenchHostPlugin::orchestrateCloseProject(
     const std::vector<CommandParameter>& params)
 {
@@ -1086,8 +1240,7 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateCloseProject(
         return out;  // 无项目态没有"关闭项目"语义（门控兜底）
     }
     out.accepted = true;
-    try {
-        // S1 首步（§5.4）：装配对话框数据（不改状态——取消可回原状态）。
+    try {        // S1 首步（§5.4）：装配对话框数据（不改状态——取消可回原状态）。
         const CloseDialogData data = m_controller->beginClose(UiCloseIntent::CloseProject);
         // 呈现（装配层对话框）＋决议回交（机制归控制器——§5 注释分工）。
         const std::optional<CloseDecision> decision = presentCloseDialog(data);

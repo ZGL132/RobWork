@@ -171,6 +171,9 @@ private:
     /// 关闭编排（UI-T17——workbench.closeProject 覆写面）：beginClose→
     /// §5.4 统一确认对话框呈现→resolveCloseDialog→Draining 防线驱动。
     CommandOutcome orchestrateCloseProject(const std::vector<CommandParameter>& params);
+    /// 应用编排（WP-24-T03b-2——draft.apply 覆写面）：域信封组装→命令
+    /// 网关 submit→回执回写 onCommandResult＋模块会话锚前移。
+    CommandOutcome orchestrateApplyDraft(const std::vector<CommandParameter>& params);
     /// 最近项目打开编排（宿主 File 子菜单——无会话走标准打开协议；有会话
     /// 走 §5.4 S2 切换流：beginSwitch→同一确认对话框→候选验证）。
     void openRecentProject(const std::string& canonicalPath);
@@ -213,6 +216,7 @@ private:
     QDockWidget* m_tasksDock = nullptr;    ///< "IRD 任务和状态"Dock（Bottom 区——UI-T18 拆分面，窗口树托管）
     QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
     QStatusBar* m_hostStatusBar = nullptr; ///< 宿主状态栏（UI-T18 状态投影面——PM-11 永久位＋瞬态消息）
+    std::shared_ptr<app::StorePortAdapter> m_lastStoreAdapter; ///< 最近打开的存储适配器（T03b-2——apply 网关命令端口来源）
     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）
     QMenu* m_recentMenu = nullptr;                            ///< "最近项目"子菜单（aboutToShow 重建）
     std::vector<std::pair<QAction*, std::string>> m_hostMenuCommandIds; ///< 框架菜单动作→命令 id（使能同步）

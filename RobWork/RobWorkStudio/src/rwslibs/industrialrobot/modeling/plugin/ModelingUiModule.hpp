@@ -192,6 +192,24 @@ public:
      */
     QWidget* createPanel();
 
+    // ---- 会话锚定与应用回执（T03b-2——apply 网关的模块半区）------------
+
+    /**
+     * @brief 绑定会话锚（打开成功后由装配层调用——分支＋当前 tip；此后
+     *        buildDraftCommand 产出的信封携带真实分支，baseRevision 锚定
+     *        该 tip＝Stale 判据有效）。
+     */
+    void bindSessionAnchor(const core::BranchId& branch,
+                           const core::RevisionId& base);
+
+    /**
+     * @brief 应用回执回写（submit Committed 后由装配层调用——编辑基线
+     *        前移到新修订；根对象身份按提交结果回填（替换 allocateNew
+     *        语义——重复应用不再二次分配）；已应用编辑记录清零）。
+     */
+    void noteAppliedRevision(const core::RevisionId& newBase,
+                             const std::optional<core::ObjectId>& rootObjectId);
+
     // ---- 模块草稿源（T03b-1——ui::IModuleDraftSource 四方法；§10.5）----
 
     /// 模块句柄（ModuleDraftHandle 词表——与 descriptor.pluginId 同 token）。

@@ -25,9 +25,11 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include <QString>                                 // 文案解析返回值（bindTextResolver）
+#include <sdurws/ird/core/Identity.hpp>            // core::BranchId/RevisionId/ObjectId（会话锚/回执值面）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>    // ui::PluginUiDescriptor（§10.9 装配描述符）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::CommandId（命令提交出口入参）
 
@@ -76,6 +78,14 @@ struct ModelingPluginAssembly {
 
     /// 首版会话种子（generic-6r 真实草稿；转发模块内部）。
     void seedTemplateSession();
+
+    /// 会话锚绑定（打开成功后——分支＋tip；转发模块内部，T03b-2）。
+    void bindSessionAnchor(const sdurws::ird::core::BranchId& branch,
+                           const sdurws::ird::core::RevisionId& base);
+
+    /// 应用回执回写（submit Committed 后——基线前移＋根身份回填；T03b-2）。
+    void noteAppliedRevision(const sdurws::ird::core::RevisionId& newBase,
+                             const std::optional<sdurws::ird::core::ObjectId>& rootObjectId);
 
     /// 模块草稿源视图（§10.5 attachModule 第二参数——本对象实现四方法；
     /// 存活期随 module）。const 语义：源接口四方法中两 const 两非 const，

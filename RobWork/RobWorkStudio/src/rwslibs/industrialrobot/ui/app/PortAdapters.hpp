@@ -257,6 +257,11 @@ public:
     /// @brief 放弃草稿（分支锚语义见类注释；对端幂等语义原样）。
     DraftDiscardOutcome discard(const std::string& moduleId) override;
 
+    /// @brief 被适配存储上下文的访问器（WP-24-T03b-2——装配层 apply 网关
+    ///        经此取 commands() 命令端口；O-31 装配层特权面——仅宿主插件
+    ///        /harness 装配 TU 消费，ui 库产品面零使用）。
+    project::ProjectStore& projectStore() noexcept { return *m_store; }
+
 private:
     /// 被适配的存储上下文（独占——本类析构即对端析构）。
     std::unique_ptr<project::ProjectStore> m_store;
