@@ -13,22 +13,25 @@
  *   - 需求 CON-04/CON-05/NFR-DEP-05、ERR-01/UX-03（诊断字段——比较型仅
  *     数值判定）、CON-02（不兼容只拒绝新复用——本 TU 无任何历史写通道）
  *   - 任务契约 tasks/foundation/POL-T09.json acceptance 1/2（POL-COMPAT-1/2
- *     全量 reason 用例；O-20/P-POL-5 保守口径——后端版本串暂取构建版本，
- *     本 TU 不私定最终取值）
+ *     全量 reason 用例；O-20/P-POL-5 原保守口径"后端版本串暂取构建版本"
+ *     已由 WP-24-T01 基线冻结回填消账——本 TU 经冻结常量取值）
  *
  * 翻译单元说明（集成模式专属——CMake gating 同 JointLimits.cpp 先例）：
  *   本 TU 为实现"当前注册后端"的复现要素核对（backend-mismatch 臂），include
  *   CollisionEvaluator.hpp（其中 detail::makeBuiltinBackendDescriptor 是后端
- *   冻结值的字面量单点——policy.md §15.4 v0.7 ⑤⑥）并包含框架配置头取构建
- *   版本宏（RW_VERSION——P-POL-5"暂取构建版本"口径的既有注入点，与
- *   RobWorkCollisionEvaluator.cpp 同源同值：同一宏、同一字面量单点函数，
- *   两处推导必得同值——§9.1"复现要素同源"的机械保证）。框架头在独立冒烟
- *   模式不可解析——本 TU 与其测试 TU 仅集成模式编译；判定语义本体（头内
- *   类型面）零框架依赖，冒烟模式经公共头 include 面保持可消费。
+ *   冻结值的字面量单点——policy.md §15.4 v0.7 ⑤⑥）并消费冻结版本常量
+ *   kFrozenBuiltinBackendVersion（WP-24-T01 基线 ird/share/baseline.md §3
+ *   登记值——P-POL-5 冻结口径，与 RobWorkCollisionEvaluator.cpp 同源同值：
+ *   同一常量、同一字面量单点函数，两处推导必得同值——§9.1"复现要素同源"
+ *   的机械保证；原 RobWorkConfig.hpp／RW_VERSION 注入已删除——构建宏为
+ *   配置期动态产物，不满足复现要素跨构建可比）。框架头在独立冒烟
+ *   模式不可解析——本 TU 与其测试 TU 仅集成模式编译〔gating 维持不变，
+ *   冒烟使能归后续任务〕；判定语义本体（头内类型面）零框架依赖，冒烟
+ *   模式经公共头 include 面保持可消费。
  *
  * R-4 门禁自律（policy.md §15.4 v0.7 ⑤ 同款）：本 TU 持有诊断文案字面量，
- * 自身文本不含任何以双引号对携带的名称拼接/剥离形态字面量；版本宏为纯
- * 版本串（无名称子串），后端冻结串经字面量单点函数取得、不经本 TU 重述
+ * 自身文本不含任何以双引号对携带的名称拼接/剥离形态字面量；版本冻结值经
+ * 头内常量标识符取得、不经本 TU 重述
  * ——ird_gates IRD-GATE-R4 零新增命中的结构性前提。
  *
  * 线程安全：全部函数纯/无状态（无共享可变状态），并发只读安全。
@@ -40,8 +43,6 @@
 
 #include <sdurws/ird/policy/CollisionEvaluator.hpp>
 #include <sdurws/ird/policy/Diagnostics.hpp>
-
-#include <RobWorkConfig.hpp>
 
 #include <algorithm>
 #include <cstdio>
@@ -83,17 +84,19 @@ namespace {
  *        ProximityStrategyRW 为默认且唯一注册后端"）。
  *
  * 取值路径：detail::makeBuiltinBackendDescriptor（后端冻结串字面量单点，
- * CollisionEvaluator.cpp）＋ RW_VERSION 注入（构建版本宏——P-POL-5"暂取
- * 构建版本"口径，与 RobWorkCollisionEvaluator 装配线同宏同单点）。本函数
- * **不私定**任何版本/标识取值：WP-24-T01 冻结 NFR-DEP-05 基线后锁定回填
- * 时，改的是字面量单点与注入口径，本判定逻辑零变化（acceptance 2）。
+ * CollisionEvaluator.cpp）＋ kFrozenBuiltinBackendVersion 注入（基线冻结
+ * 版本常量——P-POL-5 冻结口径，WP-24-T01 基线登记；与
+ * RobWorkCollisionEvaluator 装配线同常量同单点）。本函数
+ * **不私定**任何版本/标识取值：取值权威＝ird/share/baseline.md（变更走
+ * 设计变更评审），本判定逻辑零变化（acceptance 2）。
  *
  * 确定性：构建期冻结——同一次构建内恒等（NFR-COR-02）；跨构建可比（版本
  * 串不同即 BackendMismatch——§8.2"碰撞后端版本变化→拒绝"的判定面）。
  */
 CollisionBackendDescriptor currentRegisteredBackend()
 {
-    return detail::makeBuiltinBackendDescriptor(RW_VERSION);
+    return detail::makeBuiltinBackendDescriptor(
+        std::string(kFrozenBuiltinBackendVersion));
 }
 
 // =====================================================================

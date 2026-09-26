@@ -240,15 +240,16 @@ namespace detail {
 CollisionBackendDescriptor makeBuiltinBackendDescriptor(std::string backendVersion)
 {
     // 复现要素冻结值（§6.5/§8.1）：backendId＝§6.5 原文取值；backendVersion
-    // ＝调用方注入的 RobWork 构建版本（P-POL-5——WP-24 基线冻结后单点
-    // 回填）；toleranceModel＝后端固有数值分辨率登记串（复现要素非工程
-    // 阈值——R-7/§7.4 三分；登记事实不发明数值）。
+    // ＝调用方注入的基线冻结值（kFrozenBuiltinBackendVersion——P-POL-5，
+    // WP-24-T01 基线 ird/share/baseline.md §3 登记值；原"暂取 RW_VERSION
+    // 构建版本"临时口径已消账）；toleranceModel＝后端固有数值分辨率登记串
+    // （复现要素非工程阈值——R-7/§7.4 三分；登记事实不发明数值）。
     CollisionBackendDescriptor descriptor;
     descriptor.backendId = "rw.proximity.builtin-rw";
     descriptor.backendVersion = std::move(backendVersion);
     descriptor.toleranceModel =
         "builtin-rw/bvtree;binary-collision+distance;numeric-resolution=backend-internal"
-        "(not-an-engineering-threshold;P-POL-5 待 WP-24 基线冻结回填)";
+        "(not-an-engineering-threshold;P-POL-5 frozen@WP-24-T01:ird/share/baseline.md)";
     return descriptor;
 }
 

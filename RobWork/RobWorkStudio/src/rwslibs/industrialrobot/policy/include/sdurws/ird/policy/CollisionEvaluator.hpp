@@ -110,6 +110,25 @@ namespace sdurws::ird::policy {
 
 // detail——单元内共享实现件（R-2 纪律同 PolicySet.hpp detail；声明于公共头
 // 供产品翻译单元共用——单一事实源）。
+/**
+ * @brief 内置后端的冻结版本串（P-POL-5 回填——WP-24-T01 基线登记值）。
+ *
+ * 取值权威＝`ird/share/baseline.md` §3（NFR-DEP-05 冻结版本基线首版，
+ * 2026-09-26 登记）：框架核心锁定 commit 短哈希前缀＋"rw-" 前缀。取代
+ * 原"暂取 RobWork 构建版本（RW_VERSION 宏）"的临时口径——构建宏为配置
+ * 期动态产物（日期＋分支名），跨构建不可比，不满足"复现要素跨构建可比"
+ * （Compatibility backend-mismatch 臂的判定前提）；冻结后同基线构建恒
+ * 同值，框架基线变更（重导框架 commit）时经设计变更评审更新本值与基线
+ * 文档同批登记（全体切片身份受影响——DTB §2.25 T01 禁止项）。
+ *
+ * 单点纪律：本常量是 backendVersion 冻结值的**唯一字面量**（与
+ * makeBuiltinBackendDescriptor 的 backendId/toleranceModel 字面量同所在
+ * 翻译单元族——头声明＋单点函数）；两处装配调用（Compatibility.cpp／
+ * RobWorkCollisionEvaluator.cpp）必须经本常量取值，禁止第二取值源
+ * （NFR-MNT-04"同一判定不出现两套"的同源纪律）。
+ */
+inline constexpr char kFrozenBuiltinBackendVersion[] = "rw-31b8184";
+
 namespace detail {
 
 /**
@@ -118,15 +137,17 @@ namespace detail {
  *
  * 为什么值与版本分离：本函数所在翻译单元（CollisionEvaluator.cpp）持有
  * 复现要素的字符串字面量单点；后端绑定翻译单元（RobWorkCollisionEvaluator
- * ——含 RobWork 命名的类/工厂定义）以参数注入版本串（RW_VERSION——
- * P-POL-5"暂取 RobWork 构建版本"），两 TU 经本声明衔接。这样字面量
+ * ——含 RobWork 命名的类/工厂定义）以参数注入版本串（原为 RW_VERSION 宏
+ * "暂取构建版本"口径；WP-24-T01 起冻结为 kFrozenBuiltinBackendVersion
+ * ——见上方常量注），两 TU 经本声明衔接。这样字面量
  * （会话域错误消息与描述符冻结值）与 RobWork 命名标识符分处不同翻译
  * 单元，R-4 静态扫描（ird_gates IRD-GATE-R4 启发式：跨引号对匹配
  * "RobWork" 子串）在 policy 产品面保持零误报触发——O-12/P-POL-8 例外
  * 登记裁决前的结构性隔断（登记于 policy.md §15.4 v0.7；裁决后如需可回并）。
  *
- * @param backendVersion [in] 后端版本串（非空——RW_VERSION 宏展开值；
- *                       空串语义由调用方保证不出现）
+ * @param backendVersion [in] 后端版本串（非空——冻结值
+ *                       kFrozenBuiltinBackendVersion；空串语义由调用方
+ *                       保证不出现）
  * @return 内置后端描述符（backendId 冻结 "rw.proximity.builtin-rw"；
  *         toleranceModel 为登记串——复现要素非工程阈值，R-7/§7.4 三分）
  */
