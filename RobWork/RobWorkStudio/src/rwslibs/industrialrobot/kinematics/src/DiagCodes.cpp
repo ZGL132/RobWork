@@ -264,6 +264,20 @@ std::vector<diagnostics::CodeDescriptor> kinematicsCodeDescriptors()
                        diagnostics::DiagnosticSeverity::Warning,
                        false,
                        diagnostics::RetryKind::UserRetry),
+
+        // ---- 行 16：KIN-POINT-REF-DANGLING（error）——任务点引用悬空 ----
+        // 随 WP-15-T05 表尾追加（§9.6 行 16；登记随卡 §14.6 v0.5）：批量
+        // 通道展开期发现 appliesTo 显式清单引用点集外对象（悬空引用——
+        // V-12），对应工作项产 InputInvalid 素材并附本码诊断（该项不参与
+        // 求解、不影响其余工作项）。分类 input-invalid：§9.6 本行语义命中
+        // §4.3"输入/配置非法"族（引用悬空＝数据引用面非法——fix-input
+        // 族→UserRetry）。级别 error：该工作项的评估无法进行（与
+        // KIN-TARGET-ILLEGAL"目标非法"同族——不能评估≠评估失败）。
+        makeDescriptor(kKinPointRefDangling,
+                       diagnostics::DiagnosticCategory::InputInvalid,
+                       diagnostics::DiagnosticSeverity::Error,
+                       false,
+                       diagnostics::RetryKind::UserRetry),
     };
 }
 
