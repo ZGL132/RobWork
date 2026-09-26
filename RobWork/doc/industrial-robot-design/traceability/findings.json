@@ -3736,6 +3736,36 @@
       "title": "F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343/F-354/F-360/F-370 散文计数家族新例：WP-14-T08 两个送验提交正文、留痕 traceability/builds/wp14-t08/verification-summary.md §2 表、v22-gui-flow-registration.md（两处）与 units/requirements.md §14.6 v0.8 行均称 test/PluginPanelTest.cpp 为『14 用例』——实测（实现提交 42cce92a 版本即如此；验收者全新集成/冒烟两构建树 gtest XML tests=\"20\" failures=\"0\"＋ird-test-report-unit.json PluginPanel 20 条三者一致）为 20 用例；机器产物全部如实且散文为少报方向（14<20，无粉饰），纯起草期计数未随用例扩充更新。unit 卡 v0.8 行的散文在后续触及该卡时以机器产物为准修正",
       "owner": "requirements 文档所有者（units/requirements.md §14.6 v0.8 行散文修正归下次触及该卡的任务；留痕与提交正文已成历史不改——本条登记即为留证）",
       "resolution": "编号顺延自 F-375。"
+    },
+    {
+      "id": "F-377",
+      "source": "traceability/acceptance/WP-14-T09-20260926.md §4.9（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-012/F-100/F-361/F-364/F-366 提交标题家族新例：WP-14-T09 四个送验提交 70d8c9d3（「新增 requirements 四套黄金数据集与 req-golden 容差档案」）/d0285f5d（「新增 requirements 黄金数据集契约套件与对端面契约套件」）/7138f7fa（「修订 requirements 单元卡 v0.9：T09 落位登记与矩阵刷新」）/aa463007（「登记 WP-14-T09 验证留痕…」）标题均缺 [WP-14-T09] 前缀，违反 AGENTS §6.3 标题格式；同波次 T07/T08 先例均有前缀。正文四段与 Acc-Covered 齐备、验证结论与机器留痕一致（无粉饰），故仅建议级。",
+      "owner": "实施会话（wp14-t09 分支已冻结不合入新提交——本条登记即为留证；提交标题已成历史不改，后续任务提交恢复 [WP-nn-Tkk] 前缀格式）",
+      "resolution": "编号顺延自 F-376。"
+    },
+    {
+      "id": "F-378",
+      "source": "traceability/acceptance/WP-14-T09-20260926.md 门禁专段（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-041/F-080/F-236/F-249/F-256/F-311/F-312/F-343/F-354/F-360/F-370/F-376 散文计数家族近邻：traceability/builds/wp14-t09/ird_gates_base_head_comparison.md 直方图计数（LIB 5/R1 3/R3 20/R4 1/SUB 33/T1 2，合计 64）与同目录归一化附件 ird_gates_head_hits_normalized.txt 行数（144 行/唯一 143）口径不一致且未注明口径（前者为唯一命中处数、后者为引擎原始输出行含汇总行）。零增量结论本身经验收者独立直跑证实成立（命中行口径 base 135=head 135 逐行全等；分布 LIB 10/R1 7/R3 41/R4 3/R5 1/SUB 67/T1 5/T2 1 两侧一致），无方向性粉饰，纯口径未自洽。",
+      "owner": "requirements 实施会话（后续任务触及门禁留痕时在 comparison 文档注明计数口径；已成历史附件不改——本条登记即为留证）",
+      "resolution": "编号顺延自 F-377。"
+    },
+    {
+      "id": "F-379",
+      "source": "traceability/acceptance/WP-14-T09-20260926.md §4.7（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "requirements/test/GoldenDatasetsContractTest.cpp L1846-1847 注释与断言矛盾：注释「乱序：编码门拒绝（编码器只接受规范化集合——不静默重排）」为早期方案残留，紧随断言 EXPECT_EQ(encodeOk(codec, shuffled), bytes) 实为「编码器按规范化副本排序写出——任意输入序同字节」（I-REQ-1 规范化写出，与卡 §14.6 v0.9② 与 Codec.cpp L1597 实现一致）。断言行为正确且变异测试（验收者 M2：排序改逆序→该用例真变红）证实有效，纯注释失准违反 AGENTS §2.5「注释随代码更新」。",
+      "owner": "requirements 实施会话（下次触及该测试文件时同步修正该两行注释为「规范化写出」语义）",
+      "resolution": "编号顺延自 F-378。"
     }
   ]
 }
