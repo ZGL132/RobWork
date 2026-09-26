@@ -1,0 +1,27 @@
+Note: Google Test filter = KinTaskPointsBatchEval.DefaultBatchSizeIs256_WP15T05_ACC4
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from KinTaskPointsBatchEval
+[ RUN      ] KinTaskPointsBatchEval.DefaultBatchSizeIs256_WP15T05_ACC4
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(795): error: Expected equality of these values:
+  kin::kBatchDefaultBatchSize
+    Which is: 128
+  256U
+    Which is: 256
+
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(806): error: Expected equality of these values:
+  q.maxBatchSize
+    Which is: 128
+  256U
+    Which is: 256
+
+[  FAILED  ] KinTaskPointsBatchEval.DefaultBatchSizeIs256_WP15T05_ACC4 (0 ms)
+[----------] 1 test from KinTaskPointsBatchEval (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinTaskPointsBatchEval.DefaultBatchSizeIs256_WP15T05_ACC4
+
+ 1 FAILED TEST

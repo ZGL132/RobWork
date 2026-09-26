@@ -3896,6 +3896,26 @@
       "title": "WP-15-T04 两送验提交标题未用 `[WP-15-T04]` 前缀形态：a7580ddd『实现多初值 IK 求解与解析工作半径界限（WP-15-T04 提交 1「求解」）』与 fb67389f『落位硬过滤去重排序与 kin.task-point-ik 评估器（WP-15-T04 提交 2「过滤去重排序」）』——动词开头合规、任务编号以括注形式出现在标题内（较 F-385 所载 T03 形态可见性更高）、正文四段齐备、验证段结论与验收者亲测逐项一致无粉饰；不合 AGENTS §6.3/ACC §4.9 标题 `[WP-nn-Tkk]` 字面格式——F-012/F-069/F-385 标题家族再现。",
       "owner": "kinematics 实施会话（后续提交改用 `[WP-15-Txx]` 前缀形态；已推送提交按不改写历史纪律保持原状，以本条与验收记录为凭）",
       "resolution": "编号顺延自 F-391。"
+    },
+    {
+      "id": "F-393",
+      "source": "traceability/acceptance/WP-15-T05-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "units/kinematics.md §14.6 v0.5 ⑤『KinTaskPointsBatchEval 12 新契约用例』与实测不符：本批新增 contract_test/TaskPointsBatchEvaluatorContractTest.cpp 计 14 个 TEST（⑤句枚举亦仅列 13 项——线程数 1↔4 等价与分片连续区间两具名用例并作一项），base 侧契约目标 20 例、head 34 例＝20＋14（验收者源文件 TEST 计数＋head/实测 gtest XML tests=34 双面实证）；同批实现提交 4dee67fc 正文『契约 14 新用例＋既有 20＝34/34』准确——F-025/F-041/F-073/F-387/F-390 散文计数家族新例（方向为少报、XML 与提交正文实测数准确、无粉饰，不构成阻断）。",
+      "owner": "kinematics 实施会话（下次触及 units/kinematics.md 时把⑤句『12 新契约用例』改为『14 新契约用例』并按文件实际 14 用例拆分枚举）",
+      "resolution": "编号顺延自 F-392。"
+    },
+    {
+      "id": "F-394",
+      "source": "traceability/acceptance/WP-15-T05-20260926.md §4.8（attempt 1，verdict=pass，2026-09-26）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-26",
+      "title": "F-387 与 F-390 两条 owner 指令『下次触及 units/kinematics.md 时执行对应散文纠正』在本任务（WP-15-T05 送验提交 70dbaa11 实际触及该卡并新增 v0.5 行）未兑现：卡面 v0.3 ⑧句『零新增命中』与 v0.4 ⑥句『KinIk 15 新用例』两处散文保持原样——4.8 未关闭条目相关性核对发现的消账遗漏（非本任务引入的新缺陷；两处原判定均为建议级、不构成阻断）。与本任务相关的其余未关闭条目相关性结论：F-380（DiagCodes 散文计数）处置已随本任务兑现（代码面『4 error＋11 warning』零残留＋DiagCodesTest 封闭断言 16 码三表同步，验收者以 base/head DiagCodes.cpp 实测 6/9→7/9 复核），状态翻转留待治理收尾；F-386/F-389/F-391 消费面（KIN-NO-DEVICE 守卫／KIN-RESIDUAL-EXCEEDED 自然触发用例／去重反范数数据）本任务未触及、维持 open。",
+      "owner": "kinematics 实施会话（下次触及 units/kinematics.md 时与 F-393 合并执行卡面三处散文纠正）；治理收尾会话（F-380 状态 open→fixed 翻转随收尾簿记执行）",
+      "resolution": "编号顺延自 F-393。"
     }
   ]
 }

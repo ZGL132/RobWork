@@ -1,0 +1,11 @@
+Note: Google Test filter = KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from KinTaskPointsBatchEval
+[ RUN      ] KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5
+[       OK ] KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5 (0 ms)
+[----------] 1 test from KinTaskPointsBatchEval (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.

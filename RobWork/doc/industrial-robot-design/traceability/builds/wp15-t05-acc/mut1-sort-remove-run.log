@@ -1,0 +1,67 @@
+Note: Google Test filter = KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5:KinTaskPointsBatchEval.PerItemStatesIndependent_WP15T05_ACC1
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinTaskPointsBatchEval
+[ RUN      ] KinTaskPointsBatchEval.PerItemStatesIndependent_WP15T05_ACC1
+[       OK ] KinTaskPointsBatchEval.PerItemStatesIndependent_WP15T05_ACC1 (0 ms)
+[ RUN      ] KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(857): error: Expected equality of these values:
+  computationA.items[i].pointOid
+    Which is: 16-byte object <CC-1D 2E-F1 06-E8 84-07 30-BD 71-D8 5E-39 76-B1>
+  computationB.items[i].pointOid
+    Which is: 16-byte object <44-A9 2B-FD 38-6A 5E-3F ED-CB 5F-E6 1C-BB B2-68>
+
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(857): error: Expected equality of these values:
+  computationA.items[i].pointOid
+    Which is: 16-byte object <D0-73 55-43 53-8C C5-CB 11-C9 92-06 FF-58 8D-8C>
+  computationB.items[i].pointOid
+    Which is: 16-byte object <D6-FD 6D-AB C6-A7 37-AD DC-13 8D-01 F3-1E 08-69>
+
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(857): error: Expected equality of these values:
+  computationA.items[i].pointOid
+    Which is: 16-byte object <D6-FD 6D-AB C6-A7 37-AD DC-13 8D-01 F3-1E 08-69>
+  computationB.items[i].pointOid
+    Which is: 16-byte object <D0-73 55-43 53-8C C5-CB 11-C9 92-06 FF-58 8D-8C>
+
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(857): error: Expected equality of these values:
+  computationA.items[i].pointOid
+    Which is: 16-byte object <44-A9 2B-FD 38-6A 5E-3F ED-CB 5F-E6 1C-BB B2-68>
+  computationB.items[i].pointOid
+    Which is: 16-byte object <CC-1D 2E-F1 06-E8 84-07 30-BD 71-D8 5E-39 76-B1>
+
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(857): error: Expected equality of these values:
+  computationA.items[i].pointOid
+    Which is: 16-byte object <CC-1D 2E-F1 06-E8 84-07 30-BD 71-D8 5E-39 76-B1>
+  computationB.items[i].pointOid
+    Which is: 16-byte object <44-A9 2B-FD 38-6A 5E-3F ED-CB 5F-E6 1C-BB B2-68>
+
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(857): error: Expected equality of these values:
+  computationA.items[i].pointOid
+    Which is: 16-byte object <D0-73 55-43 53-8C C5-CB 11-C9 92-06 FF-58 8D-8C>
+  computationB.items[i].pointOid
+    Which is: 16-byte object <D6-FD 6D-AB C6-A7 37-AD DC-13 8D-01 F3-1E 08-69>
+
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(857): error: Expected equality of these values:
+  computationA.items[i].pointOid
+    Which is: 16-byte object <D6-FD 6D-AB C6-A7 37-AD DC-13 8D-01 F3-1E 08-69>
+  computationB.items[i].pointOid
+    Which is: 16-byte object <D0-73 55-43 53-8C C5-CB 11-C9 92-06 FF-58 8D-8C>
+
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(857): error: Expected equality of these values:
+  computationA.items[i].pointOid
+    Which is: 16-byte object <44-A9 2B-FD 38-6A 5E-3F ED-CB 5F-E6 1C-BB B2-68>
+  computationB.items[i].pointOid
+    Which is: 16-byte object <CC-1D 2E-F1 06-E8 84-07 30-BD 71-D8 5E-39 76-B1>
+
+unknown file: error: C++ exception with description "kin.task-points-batch：批量结果工作项违反 (pointOid,conditionId) 字典序全序/唯一性（§8.4——内部组装缺陷，fail-fast）" thrown in the test body.
+
+[  FAILED  ] KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5 (0 ms)
+[----------] 2 tests from KinTaskPointsBatchEval (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinTaskPointsBatchEval.TotalOrderIndependentOfInjectionOrder_WP15T05_ACC5
+
+ 1 FAILED TEST

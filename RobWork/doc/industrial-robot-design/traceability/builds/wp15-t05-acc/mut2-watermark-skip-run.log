@@ -1,0 +1,30 @@
+Note: Google Test filter = KinTaskPointsBatchEval.PerBatchCancelProbeProgressAndWatermark_WP15T05_ACC4:KinTaskPointsBatchEval.CancellationMarksNotRunAndIncomplete_WP15T05_ACC2
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinTaskPointsBatchEval
+[ RUN      ] KinTaskPointsBatchEval.CancellationMarksNotRunAndIncomplete_WP15T05_ACC2
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(588): error: Expected equality of these values:
+  sink.watermarks.size()
+    Which is: 0
+  1U
+    Which is: 1
+
+[  FAILED  ] KinTaskPointsBatchEval.CancellationMarksNotRunAndIncomplete_WP15T05_ACC2 (0 ms)
+[ RUN      ] KinTaskPointsBatchEval.PerBatchCancelProbeProgressAndWatermark_WP15T05_ACC4
+D:\10_Source_Repos\21_robot\acc_wp15_t05\wt_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(778): error: Expected equality of these values:
+  sink.watermarks.size()
+    Which is: 0
+  3U
+    Which is: 3
+
+[  FAILED  ] KinTaskPointsBatchEval.PerBatchCancelProbeProgressAndWatermark_WP15T05_ACC4 (0 ms)
+[----------] 2 tests from KinTaskPointsBatchEval (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] KinTaskPointsBatchEval.CancellationMarksNotRunAndIncomplete_WP15T05_ACC2
+[  FAILED  ] KinTaskPointsBatchEval.PerBatchCancelProbeProgressAndWatermark_WP15T05_ACC4
+
+ 2 FAILED TESTS
