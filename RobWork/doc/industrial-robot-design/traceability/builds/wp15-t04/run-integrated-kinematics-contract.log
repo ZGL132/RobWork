@@ -1,0 +1,54 @@
+[==========] Running 20 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from KinBuildGraph
+[ RUN      ] KinBuildGraph.UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3
+[       OK ] KinBuildGraph.UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3 (0 ms)
+[ RUN      ] KinBuildGraph.SixRegisteredEdgesPresent_WP15T02_ACC3
+[       OK ] KinBuildGraph.SixRegisteredEdgesPresent_WP15T02_ACC3 (0 ms)
+[ RUN      ] KinBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP15T02_ACC5
+[       OK ] KinBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP15T02_ACC5 (0 ms)
+[ RUN      ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3
+[       OK ] KinBuildGraph.NoTestkitEdgeOnProductTarget_WP15T02_ACC3 (0 ms)
+[ RUN      ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5
+[       OK ] KinBuildGraph.IncludeFaceMatchesRegisteredEdges_WP15T02_ACC5 (3 ms)
+[----------] 5 tests from KinBuildGraph (4 ms total)
+
+[----------] 6 tests from KinPoseMetricsEval
+[ RUN      ] KinPoseMetricsEval.DescriptorMatchesSection43Row_WP15T03_ACC4
+[       OK ] KinPoseMetricsEval.DescriptorMatchesSection43Row_WP15T03_ACC4 (0 ms)
+[ RUN      ] KinPoseMetricsEval.KeyWordFormGateCompliant_WP15T03_ACC4
+[       OK ] KinPoseMetricsEval.KeyWordFormGateCompliant_WP15T03_ACC4 (0 ms)
+[ RUN      ] KinPoseMetricsEval.HostInjectionFactoryProducesEvaluator_WP15T03_ACC4
+[       OK ] KinPoseMetricsEval.HostInjectionFactoryProducesEvaluator_WP15T03_ACC4 (0 ms)
+[ RUN      ] KinPoseMetricsEval.AssemblyFailFastRejectsIllegalQuery_WP15T03_ACC3
+[       OK ] KinPoseMetricsEval.AssemblyFailFastRejectsIllegalQuery_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinPoseMetricsEval.StructuredErrorMaterialNoTcp_WP15T03_ACC3
+[       OK ] KinPoseMetricsEval.StructuredErrorMaterialNoTcp_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinPoseMetricsEval.DeterministicBytesAcrossCallsAndModes_WP15T03_ACC4
+[       OK ] KinPoseMetricsEval.DeterministicBytesAcrossCallsAndModes_WP15T03_ACC4 (0 ms)
+[----------] 6 tests from KinPoseMetricsEval (0 ms total)
+
+[----------] 9 tests from KinTaskPointIkEval
+[ RUN      ] KinTaskPointIkEval.DescriptorMatchesSection43Row_WP15T04_ACC5
+[       OK ] KinTaskPointIkEval.DescriptorMatchesSection43Row_WP15T04_ACC5 (0 ms)
+[ RUN      ] KinTaskPointIkEval.KeyWordFormGateCompliant_WP15T04_ACC5
+[       OK ] KinTaskPointIkEval.KeyWordFormGateCompliant_WP15T04_ACC5 (0 ms)
+[ RUN      ] KinTaskPointIkEval.HostInjectionFactoryProducesEvaluator_WP15T04_ACC5
+[       OK ] KinTaskPointIkEval.HostInjectionFactoryProducesEvaluator_WP15T04_ACC5 (0 ms)
+[ RUN      ] KinTaskPointIkEval.AssemblyFailsFastOnIllegalQuery_WP15T04_ACC4
+[       OK ] KinTaskPointIkEval.AssemblyFailsFastOnIllegalQuery_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinTaskPointIkEval.EvaluateSuccessProducesBoundPayload_WP15T04_ACC4
+[       OK ] KinTaskPointIkEval.EvaluateSuccessProducesBoundPayload_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2
+[       OK ] KinTaskPointIkEval.SearchExhaustedDeliversRecordAndDiag_WP15T04_ACC2 (1 ms)
+[ RUN      ] KinTaskPointIkEval.AnalyticBoundDeliversProofMaterial_WP15T04_ACC4
+[       OK ] KinTaskPointIkEval.AnalyticBoundDeliversProofMaterial_WP15T04_ACC4 (0 ms)
+[ RUN      ] KinTaskPointIkEval.CancellationYieldsZeroMaterial_WP15T04_ACC2
+[       OK ] KinTaskPointIkEval.CancellationYieldsZeroMaterial_WP15T04_ACC2 (0 ms)
+[ RUN      ] KinTaskPointIkEval.DeterministicAndModeSensitivePayload_WP15T04_ACC3
+[       OK ] KinTaskPointIkEval.DeterministicAndModeSensitivePayload_WP15T04_ACC3 (0 ms)
+[----------] 9 tests from KinTaskPointIkEval (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 20 tests from 3 test suites ran. (6 ms total)
+[  PASSED  ] 20 tests.

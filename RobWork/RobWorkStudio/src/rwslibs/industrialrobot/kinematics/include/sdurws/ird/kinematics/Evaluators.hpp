@@ -41,13 +41,16 @@
 
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <vector>
 
+#include <sdurws/ird/core/Identity.hpp>          // TaskIdentity（任务五元组——载荷绑定面）
 #include <sdurws/ird/core/Evaluation.hpp>        // EvaluationMode（模式词表）
 #include <sdurws/ird/evidence/Dependency.hpp>    // DependencyDeclaration（依赖声明值）
 #include <sdurws/ird/evidence/Envelope.hpp>      // EvidenceProfileRef（Profile 声明引用）
 #include <sdurws/ird/evidence/Evaluator.hpp>     // IEngineeringEvaluator/IEvaluatorFactory/descriptor
 #include <sdurws/ird/kinematics/Fk.hpp>          // FkEvaluator/PoseMetrics（计算委托）
+#include <sdurws/ird/kinematics/Ik.hpp>          // IkSolver/IkOutcome/初值策略/碰撞端口（计算委托）
 #include <sdurws/ird/kinematics/KinTypes.hpp>    // TcpRef/IKinRuntimeView（注入面）
 
 namespace sdurws::ird::kinematics {
@@ -234,6 +237,237 @@ private:
     PoseMetricsQuery m_query;                   ///< 闭包捕获的查询（值）
     evidence::EvaluatorDescriptor m_descriptor; ///< 稳定存储（descriptor() 引用所指）
 };
+
+// =====================================================================
+// 以下为 T04 批次表尾追加（WP-15-T04——§3.3 布局表 Evaluators.hpp 行
+// 任务列 T03~T07 的 T04 半区：kin.task-point-ik 评估器族；既有 T03
+// 声明不重排）。评估键/契约版本常量的唯一书写点在 Ik.hpp（证明素材
+// producer 绑定共用——禁第二处字面量），本头消费不重定义。
+// =====================================================================
+
+/// 域载荷登记 token（evidence §7.1 域词表——卡面点形保留；v1 随
+/// canonical 布局 codec 版本演进）。
+inline constexpr char kTaskPointIkPayloadToken[] = "kin.task-point-ik.v1";
+
+// =====================================================================
+// TaskPointIkQuery——kin.task-point-ik 的单点评估查询值
+// =====================================================================
+
+/**
+ * @brief kin.task-point-ik 的单次评估查询：目标位姿＋求解配置（§5.3
+ *        IkRequest 的评估查询面投影——求解参数随查询显式携带，本评估器
+ *        不读任何会话/全局状态）。
+ *
+ * 值语义纯结构；线程安全（并发只读）。物理单位：目标位姿平移 m／旋转
+ * rad（基座系 {B}）；容差 m／rad；去重阈值 rad|m 逐轴；referenceQ 逐
+ * 自由度 rad|m。
+ */
+struct TaskPointIkQuery {
+    /// TCP 引用（快照内解析——KinTypes.hpp 解析规则）。
+    TcpRef tcp;
+    /// 任务点对象身份（结果绑定 pointOid——§5.6）。
+    core::ObjectId pointOid;
+    /// 工况对象身份（可空——批量通道 T05 必填）。
+    std::optional<core::ObjectId> conditionId;
+    /// 目标位姿（基座系 {B} 的 TCP 目标——§5.3 字段 1）。
+    rw::math::Transform3D<double> targetInBase = runtime::detail::identityTransform3D();
+    /// 排序参考构型（rad／m——D-KIN-4 显式输入；默认值的落点在请求
+    /// 装配层，本评估器不隐式读会话姿态）。
+    std::vector<double> referenceQ;
+    /// 初值策略（§5.3 三值——makeInitialValues 的策略入参）。
+    InitialValueStrategy initialStrategy = InitialValueStrategy::JointGrid;
+    /// 初值数量（≥1——SeededRandom/JointGrid 消费；ReferenceQ 忽略）。
+    std::uint32_t initialValuesCount = 1U;
+    /// 单初值迭代上限（≥1）。
+    std::uint32_t iterationLimit = 1U;
+    /// 位置残差容差（m；默认 1e-6——附录 D 第 1 项）。
+    double positionTolerance = 1e-6;
+    /// 姿态残差容差（rad；默认 1e-6——附录 D 第 2 项）。
+    double orientationTolerance = 1e-6;
+    /// 去重阈值（rad|m 逐轴；默认 1e-6——附录 D 第 3 项）。
+    double dedupThresholdPerAxis = 1e-6;
+    /// 确定性种子（SeededRandom 必非 0——I-KIN-4；其余策略可 0）。
+    std::uint64_t seed = 0;
+    /// 求解配置摘要（config.ik——T10 落位前允许零值；入结果身份）。
+    core::ContentIdentity configDigest;
+    /// 碰撞会话句柄（非 owning；空＝策略未启用碰撞——硬过滤③跳过并
+    /// 标记 collisionNotEvaluated；真实④端口会话组装归 T07）。
+    const IKinCollisionSession* collisionSession = nullptr;
+
+    bool operator==(const TaskPointIkQuery& o) const
+    {
+        return tcp == o.tcp && pointOid == o.pointOid && conditionId == o.conditionId
+            && referenceQ == o.referenceQ && initialStrategy == o.initialStrategy
+            && initialValuesCount == o.initialValuesCount
+            && iterationLimit == o.iterationLimit
+            && positionTolerance == o.positionTolerance
+            && orientationTolerance == o.orientationTolerance
+            && dedupThresholdPerAxis == o.dedupThresholdPerAxis && seed == o.seed
+            && configDigest == o.configDigest
+            && collisionSession == o.collisionSession;
+    }
+    bool operator!=(const TaskPointIkQuery& o) const { return !(*this == o); }
+};
+
+// =====================================================================
+// makeTaskPointIkDescriptor——依赖声明与形态（§4.3 kin.task-point-ik 行）
+// =====================================================================
+
+/**
+ * @brief 组装 kin.task-point-ik 的评估器描述符（§4.3 行的值面）。
+ *
+ * 与 makePoseMetricsDescriptor 同构（字段落值见其注），差异仅两处：
+ *   - key＝kTaskPointIkEvaluationKey（Ik.hpp 唯一书写点——kebab 词形，
+ *     卡面点形键的随附同步偏差同 T03 口径）；
+ *   - inputs＝pose-metrics 五条依赖＋`req.points`(Object)（§4.3 行原文
+ *     "上述＋req.points(Object)"——任务点闭包为 KIN-02 的消费对象面）。
+ *
+ * @return 描述符值（每次调用返回新值；注册期校验归 EvaluatorRegistry）
+ *
+ * 纯函数；线程安全；确定性（同卡面同值——NFR-COR-02）。
+ */
+evidence::EvaluatorDescriptor makeTaskPointIkDescriptor();
+
+// =====================================================================
+// TaskPointIkEvaluator——IEngineeringEvaluator 实现（评估器形态）
+// =====================================================================
+
+/**
+ * @brief kin.task-point-ik 评估器：把 IIkSolver 纯函数服务包装为
+ *        evidence 评估器契约（descriptor＋evaluate；评估键＝
+ *        "kin-task-point-ik"——trajectory WP-16-T05 对端消费）。
+ *
+ * 形态要点（与 PoseMetricsEvaluator 同轨，差异随注）：
+ *   - 运行时模型视图经宿主注入消费（O-37 裁决形态；非 owning）；
+ *   - 长运算——**必须**周期查询取消（§9.2 IIkSolver @取消 行与 FK 的
+ *     豁免不同）：取消探针经构造时闭包接线到 IEvaluationContext::
+ *     cancellationRequested()，取消返回零素材输出（取消不是结局）；
+ *   - 确定性＝同 (snapshot, query) 同字节输出（payload 由
+ *     encodeTaskPointIkPayloadCanonical 对确定性求解结果编码）。
+ *
+ * 错误分轨（域约定，随卡 §14.6 v0.4 登记——evidence §9.3"域自选"）：
+ *   - **装配期 fail-fast**（构造函数，std::invalid_argument）：视图空
+ *     指针、目标位姿非有限/容差非法（KIN-TARGET-ILLEGAL 语义锚）、
+ *     referenceQ 维度/有限性违例、initialValuesCount/iterationLimit=0、
+ *     去重阈值非法、SeededRandom 且 seed=0（I-KIN-4 拒绝不静默替换）、
+ *     tcpKey 不命中（工具可解析时）——调用方错误轨，不进入评估输出面；
+ *   - **评估期结构化诊断**（零 payload）：
+ *       TCP 未配置/悬空 → KIN-NO-TCP（工具侧缺失保留到评估期——T03
+ *       同款两分口径）；
+ *       残差复验过滤解 → KIN-RESIDUAL-EXCEEDED（比较型：实际 m／期望 m
+ *       与实际 rad／期望 rad——§9.6 行 4 requiresComparison 的生产面）；
+ *       限位过滤解 → KIN-JOINT-LIMIT-VIOLATED（§9.6 行 5）；
+ *       结局 2/3 → KIN-SEARCH-EXHAUSTED（§9.6 行 10——附搜索未果记录
+ *       经 output.searchRecord 交付）；
+ *       碰撞过滤解的诊断（KIN-COLLISION-FILTERED）归 T07（§9.6 任务列
+ *       分工——本任务只产过滤记录，不产该码诊断）；
+ *   - **结局映射**（§5.4 → evidence EvaluationOutput）：1/4 → payload
+ *     （canonical 解集字节）；2/3 → searchRecord＋诊断；5 → proof
+ *     （仅素材）；cancelled → 零素材输出。
+ */
+class TaskPointIkEvaluator final : public evidence::IEngineeringEvaluator {
+public:
+    /**
+     * @brief 构造绑定 (视图, 查询) 的评估器实例（工厂经闭包调用）。
+     *
+     * @param view   [in] 宿主注入的只读模型视图（非 owning；调用方保证
+     *                    evaluate() 期间存活；空指针→std::invalid_argument）
+     * @param query  [in] 评估查询（值持有）；装配期非法→std::invalid_argument
+     *                    （类注错误分轨——KIN-TARGET-ILLEGAL 等语义锚）
+     *
+     * @throws std::invalid_argument 装配期查询非法
+     */
+    TaskPointIkEvaluator(const IKinRuntimeView* view, TaskPointIkQuery query);
+
+    const evidence::EvaluatorDescriptor& descriptor() const override;
+
+    /**
+     * @brief 执行一次任务点 IK 评估（§9.3 调用约定；纯计算——不派发
+     *        任务、不写项目、不产生修订）。
+     *
+     * @param request [in] 评估请求（snapshotId/sliceId/mode/task 五元组
+     *                     经其填充结果绑定——§5.6；模式对证据效力的
+     *                     门禁在汇总/包络层，Quick/Preview 载荷以 mode
+     *                     字段承载 screening-only 语义——§8.4）
+     * @param context [in] 宿主调用上下文（取消探针周期查询其
+     *                     cancellationRequested()——kIkCancellationProbeInterval
+     *                     迭代一次；不读取对象字节——模型经注入视图消费）
+     *
+     * @return 结局映射见类注（payload/proof/searchRecord/诊断的互斥
+     *         组合；判定与包络构造归调用侧）
+     */
+    evidence::EvaluationOutput evaluate(const evidence::EvaluationRequest& request,
+                                        evidence::IEvaluationContext& context) override;
+
+private:
+    const IKinRuntimeView* m_view;              ///< 宿主注入视图（非 owning——见类注）
+    TaskPointIkQuery m_query;                   ///< 评估查询（值持有）
+    evidence::EvaluatorDescriptor m_descriptor; ///< 稳定存储（descriptor() 引用所指）
+    std::optional<KinematicsError> m_setupError; ///< 评估期结构化素材（TCP 缺失——两分口径）
+};
+
+// =====================================================================
+// TaskPointIkEvaluatorFactory——宿主注入工厂（O-37 裁决形态落点）
+// =====================================================================
+
+/**
+ * @brief kin.task-point-ik 的 IEvaluatorFactory 实现：宿主构建实例时把
+ *        (视图, 查询) 捕获进闭包，create() 保持**无参签名**（O-37 裁决
+ *        原文——注册表路径兼容）。生命周期与线程约束同
+ *        PoseMetricsEvaluatorFactory（类注）。
+ */
+class TaskPointIkEvaluatorFactory final : public evidence::IEvaluatorFactory {
+public:
+    /**
+     * @brief 构造绑定 (视图, 查询) 的工厂（注入点；校验同评估器构造）。
+     *
+     * @throws std::invalid_argument 装配期查询非法（同 TaskPointIkEvaluator）
+     */
+    TaskPointIkEvaluatorFactory(const IKinRuntimeView* view, TaskPointIkQuery query);
+
+    const evidence::EvaluatorDescriptor& descriptor() const override;
+
+    /// 无参签名（O-37 裁决——注册表兼容）；每次调用产出独立实例。
+    std::unique_ptr<evidence::IEngineeringEvaluator> create() const override;
+
+private:
+    const IKinRuntimeView* m_view;              ///< 宿主注入视图（非 owning）
+    TaskPointIkQuery m_query;                   ///< 闭包捕获的查询（值）
+    evidence::EvaluatorDescriptor m_descriptor; ///< 稳定存储（descriptor() 引用所指）
+};
+
+// =====================================================================
+// 载荷 canonical 编码（§5.6 结果绑定五元组的字节面）
+// =====================================================================
+
+/**
+ * @brief 将任务点 IK 结果编码为域 canonical 字节（定宽小端＋字段定序）。
+ *
+ * 编码布局（codec 版本 1；magic "IRDIK01"＋版本 u32）：outcomeKind u8＋
+ * cancelled
+ * u8＋collisionNotEvaluated u8＋请求身份块（snapshotId/sliceId/
+ * configDigest 各 32B＋mode u8＋seed u64＋referenceQ u32+f64×n）＋对象
+ * 绑定（pointOid 16B＋conditionId present u8[+16B]）＋任务五元组
+ * 4×16B＋attempt u64＋evaluationKey u32+len＋contractVersion u32（§5.6
+ * 绑定六要素）＋统计 4×u64＋solutions u32×{…}＋filteredRecords u32×{…}＋
+ * searchRecord present u8[{…}]。f64＝IEEE754 位模式小端（含 +∞）。
+ *
+ * 要求值分离（§5.6）：解记录只携带**达成值**（残差/裕量/指标），要求
+ * 值对比（实际/要求/单位）经证据明细面（§8.2 EvidenceItem）交付——
+ * 本编码不把目标位姿混入解记录（目标经绑定面溯源）。
+ *
+ * 证明素材不入本载荷（结局 5 经 EvaluationOutput.proof 交付——evidence
+ * §6.3 校验面，非 opaque 载荷）。
+ *
+ * @param outcome [in] 求解结果（cancelled=true 时产出的字节无消费语义
+ *                     ——调用方在取消轨不产 payload）
+ * @param task    [in] 任务五元组（EvaluationRequest.task——绑定面）
+ * @return canonical 字节（确定性：同输入同字节——NFR-COR-01）
+ *
+ * 纯函数；线程安全；不抛（f64 位模式直写）。
+ */
+std::vector<std::uint8_t> encodeTaskPointIkPayloadCanonical(
+    const IkOutcome& outcome, const core::TaskIdentity& task);
 
 }  // namespace sdurws::ird::kinematics
 

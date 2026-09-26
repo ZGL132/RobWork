@@ -1,0 +1,58 @@
+CMake is re-running because D:/10_Source_Repos/21_robot/RobWork/build_smoke_t04kin/kinematics/CMakeFiles/generate.stamp is out-of-date.
+  the file 'D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt'
+  is newer than 'D:/10_Source_Repos/21_robot/RobWork/build_smoke_t04kin/kinematics/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_ui_plugin not registered (framework-hosted plugin target, integrated tree only; ui.md §13 UI-T16)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (0.9s)
+-- Generating done (3.4s)
+-- Build files have been written to: D:/10_Source_Repos/21_robot/RobWork/build_smoke_t04kin
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\runtime\Release\sdurws_ird_runtime.lib
+  Evaluators.cpp
+  Ik.cpp
+  SolutionSet.cpp
+  正在生成代码...
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\kinematics\Release\sdurws_ird_kinematics.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\kinematics\Release\sdurws_ird_kinematics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\testkit\Release\sdurws_ird_testkit.lib
+  FkTest.cpp
+  IkTest.cpp
+  正在生成代码...
+  sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\kinematics\Release\sdurws_ird_kinematics_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\kinematics\Release\sdurws_ird_kinematics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\testkit\Release\sdurws_ird_testkit.lib
+  PoseMetricsEvaluatorContractTest.cpp
+  TaskPointIkEvaluatorContractTest.cpp
+  正在生成代码...
+  sdurws_ird_kinematics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build_smoke_t04kin\kinematics\Release\sdurws_ird_kinematics_contract_test.exe
