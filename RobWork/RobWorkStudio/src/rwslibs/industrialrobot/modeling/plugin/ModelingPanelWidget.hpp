@@ -76,6 +76,15 @@ public:
      */
     void setCommandSubmit(CommandSubmitFn submitFn);
 
+    /// 编辑后动作钩子形态（T03b-2b——就绪重算由装配层注入）。
+    using PostEditAction = std::function<void()>;
+
+    /**
+     * @brief 注入编辑后动作（每次 L-2 接受后触发——装配层接就绪重算；
+     *        不注入＝无后置动作，行为同前）。
+     */
+    void setPostEditAction(PostEditAction action);
+
     /// 命令标题文案解析器形态（titleKey→工程用语——宿主接 ui::resolveText）。
     using CommandTitleResolver = std::function<QString(const std::string& titleKey)>;
 
@@ -150,6 +159,7 @@ private:
     std::vector<ui::CommandDescriptor> m_commands;  ///< 域命令目录（§9.7.3 十条——装配数据）
     CommandSubmitFn m_commandSubmit;          ///< 命令提交出口（装配层注入；空＝按钮禁用）
     CommandTitleResolver m_titleResolver;     ///< 标题文案解析器（WP-24-T03；空＝呈现键名原文）
+    PostEditAction m_postEditAction;          ///< 编辑后动作（T03b-2b 就绪重算钩子；可空）
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     bool m_writable = true;                   ///< 会话可写性（L-7 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）

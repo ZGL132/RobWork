@@ -14,6 +14,33 @@
 #include <stdexcept>
 
 #include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory/kTemplateIdGeneric6R（首版装配会话种子——真实域路径）
+
+// =====================================================================
+// 草稿阶段名称上下文（T03b-2b 诚实边界）
+// =====================================================================
+// runtime 名在编译前不存在（NameMap 随确定性编译产生——ARC-03），草稿桩
+// 恒 nullopt：行程评估在无已装载策略时本就不进入（L11 如实产出"策略不
+// 可解析"Blocking），桩不被消费即不撒谎。策略装载＋runtime 名称适配随
+// 收口批次接线。
+namespace {
+class DraftStageNameContext final : public sdurws::ird::policy::IPolicyNameContext {
+public:
+    std::optional<sdurws::ird::core::ObjectId> tryObjectId(const std::string&) const override
+    {
+        return std::nullopt;
+    }
+    std::optional<std::string> tryRuntimeName(sdurws::ird::core::ObjectId) const override
+    {
+        return std::nullopt;
+    }
+    sdurws::ird::core::ContentIdentity nameMapContentIdentity() const override
+    {
+        // 全零保留值＝"无名称映射"（草稿阶段 runtime 名不存在——见上注）；
+        // 真身由 runtime ⑥端口计算（CON-06）。
+        return sdurws::ird::core::ContentIdentity{};
+    }
+};
+}  // namespace
 #include <sdurws/ird/modeling/Codec.hpp>       // RobotDesignCodec/kCurrentFormatVersion（根对象确定性编码——§4.8）
 #include <sdurws/ird/modeling/ObjectTypes.hpp> // kRobotDesignObjectType（根对象 token——runtime 单一权威的 using 重导出）
 
@@ -73,6 +100,11 @@ std::optional<project::CommandEnvelope> ModelingUiModule::buildDraftCommand(
 // 首版装配 API（WP-24-T03——装配门面 ModelingPluginAssembly 转发目标）
 // =====================================================================
 
+ModelingUiModule::ModelingUiModule()
+    : m_nameContext(std::make_unique<DraftStageNameContext>())
+{
+}
+
 void ModelingUiModule::bindCommandSubmit(CommandSubmitFn submitFn)
 {
     m_guard.assertOnUiThread();
@@ -107,8 +139,9 @@ void ModelingUiModule::seedTemplateSession()
         TemplateId{kTemplateIdGeneric6R},
         runtime::InstallationPresetToken::Ground, "demo", diags);
     m_session.draft = outcome.get();
-    // baseRevision 留空（nullopt＝提交期解析 tip——§6.2）；readiness 不预置
-    // （投影呈 DataInsufficient 缺省行——判定接线随收口任务，不伪造可行）。
+    // baseRevision 留空（nullopt＝提交期解析 tip——§6.2）；种子后就绪
+    // 真判定即刻重算（T03b-2b——就绪条不再空态，如实呈现阻塞/缺项）。
+    recomputeReadiness();
 }
 
 QWidget* ModelingUiModule::createPanel()
@@ -127,12 +160,30 @@ QWidget* ModelingUiModule::createPanel()
         panel->setCommandTitleResolver(m_textResolver);
     }
     m_panel = panel;  // attachPanel 同义（公开方法语义一致，直接落成员）
+    // 编辑后钩子（T03b-2b）：每次 L-2 接受后重算真就绪并刷新就绪条。
+    panel->setPostEditAction([this] { recomputeReadiness(); });
     // 首刷（§9.7.2 L-4 同款入口——装配层创建面板后必须立即呈现当前会话）：
     // 树/属性区投影自会话工作集（种子草稿即刻可见），就绪条取会话已载报告
     // （未载＝空报告，呈现空态——不伪造判定）。
     panel->refreshPanel(m_session.draft,
                         m_session.readiness.value_or(ModelReadinessReport{}));
     return panel;
+}
+
+void ModelingUiModule::recomputeReadiness()
+{
+    m_guard.assertOnUiThread();
+    // 真判定（T03b-2b）：真实 ModelReadinessChecker＋policy 行程评估器。
+    // 套件/检查器须为具名局部量（checker 持套件指针——临时量悬挂风险）；
+    // CheckContext 缺省＝草稿阶段无已装载策略（L11 如实产出 Blocking——
+    // 携带行程校验未执行的事实），策略装载随收口批次。
+    const AssertionSuite::Ports ports{m_evaluator.get(), m_nameContext.get()};
+    const AssertionSuite suite{ports};
+    const ModelReadinessChecker checker{suite};
+    m_session.readiness = checker.check(m_session.draft, CheckContext{});
+    if (m_panel != nullptr) {
+        m_panel->refreshPanel(m_session.draft, *m_session.readiness);
+    }
 }
 
 // =====================================================================
@@ -145,11 +196,8 @@ void ModelingUiModule::bindSessionAnchor(const core::BranchId& branch,
     m_guard.assertOnUiThread();
     m_session.branch = branch;
     m_session.baseRevision = base;
-    if (m_panel != nullptr) {
-        // 锚定后立即重投影（新会话上下文——面板呈现与信封组装同源）。
-        m_panel->refreshPanel(m_session.draft,
-                              m_session.readiness.value_or(ModelReadinessReport{}));
-    }
+    // 锚定后重算＋重投影（新会话上下文——呈现与信封组装同源）。
+    recomputeReadiness();
 }
 
 void ModelingUiModule::noteAppliedRevision(
@@ -166,6 +214,7 @@ void ModelingUiModule::noteAppliedRevision(
         m_session.draft.rootObjectId = rootObjectId;
     }
     m_session.draft.changes.clear();
+    recomputeReadiness();  // 应用后基线前移——就绪状态同步刷新
 }
 
 // =====================================================================

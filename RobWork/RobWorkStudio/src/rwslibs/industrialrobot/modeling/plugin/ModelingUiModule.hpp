@@ -47,6 +47,9 @@
 #include "PanelRefresh.hpp"                       // PanelUiThreadGuard（§3.4 线程守卫——零 Qt，同目录私有头）
 #include <sdurws/ird/modeling/Readiness.hpp>       // ModelReadinessReport（就绪投影数据源）
 #include <sdurws/ird/modeling/Template.hpp>        // ModelingWorkingSet（草稿态值）
+#include <sdurws/ird/modeling/CommandHandlers.hpp> // AssertionSuite（就绪真判定——T03b-2b）
+#include <sdurws/ird/policy/Contexts.hpp>          // policy::IPolicyNameContext（R-4 注入面——草稿桩）
+#include <sdurws/ird/policy/JointLimits.hpp>       // policy::makeJointLimitEvaluator（行程评估器装配）
 #include <sdurws/ird/project/CommandService.hpp>   // project::CommandEnvelope（§8.5 返回值面——登记边）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::DomainReadinessItem（§6.5 汇聚值面）
@@ -84,7 +87,7 @@ struct ModuleSessionState {
 class ModelingUiModule final : public ui::IPluginUiModule,
                                public ui::IModuleDraftSource {
 public:
-    ModelingUiModule() = default;
+    ModelingUiModule();  // cpp 定义——装配草稿名称桩与行程评估器（T03b-2b）
     /// 不可拷贝/不可移动（会话态与壳引用绑定生命周期——§10.9）。
     ModelingUiModule(const ModelingUiModule&) = delete;
     ModelingUiModule& operator=(const ModelingUiModule&) = delete;
@@ -230,6 +233,19 @@ public:
     /// 对话的用户迁移半区；会话基线改写为 tip）。
     void rebuildOnRevision(const std::string& tipRevisionCanonical) override;
 
+    // ---- 就绪真判定（T03b-2b——真实 ModelReadinessChecker 装配）--------
+
+    /**
+     * @brief 重算就绪报告（真实判定——AssertionSuite＋policy 评估器；
+     *        结果写会话 readiness 并驱动面板就绪条刷新）。编辑落点/
+     *        锚定/种子后调用。
+     *
+     * 诚实边界：草稿阶段 CheckContext 取缺省（无已装载策略）——L11 层
+     * 对"策略不可解析"如实产出 Blocking 行（行程校验未执行的事实随行）
+     * ；名称上下文为草稿桩（runtime 名在编译前不存在，返回 nullopt）。
+     */
+    void recomputeReadiness();
+
 private:
     PanelUiThreadGuard m_guard;              ///< §3.4 UI 线程守卫（构造线程绑定）
     ModuleSessionState m_session;            ///< 会话权威态（工作集唯一载体——装配层更新）
@@ -237,6 +253,9 @@ private:
     ui::IWorkbenchShell* m_shell = nullptr;  ///< 壳门面引用（非 owning——§10.9 生命周期）
     CommandSubmitFn m_pendingSubmit;         ///< 面板创建前的提交出口暂存（创建时应用）
     std::function<QString(const std::string&)> m_textResolver;  ///< 文案解析（创建时应用）
+    std::unique_ptr<policy::IJointLimitEvaluator> m_evaluator{
+        policy::makeJointLimitEvaluator()};  ///< 行程评估器（policy 唯一实现——T03b-2b）
+    std::unique_ptr<policy::IPolicyNameContext> m_nameContext;  ///< 草稿名称桩（见 cpp——nullopt 语义）
 };
 
 }  // namespace sdurws::ird::modeling

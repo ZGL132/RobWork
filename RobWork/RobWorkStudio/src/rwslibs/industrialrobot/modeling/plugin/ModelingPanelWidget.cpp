@@ -98,6 +98,11 @@ void ModelingPanelWidget::setCommandSubmit(CommandSubmitFn submitFn)
     m_commandSubmit = std::move(submitFn);
 }
 
+void ModelingPanelWidget::setPostEditAction(PostEditAction action)
+{
+    m_postEditAction = std::move(action);
+}
+
 void ModelingPanelWidget::setCommandTitleResolver(CommandTitleResolver resolver)
 {
     m_titleResolver = std::move(resolver);
@@ -381,6 +386,9 @@ void ModelingPanelWidget::onEditApplied(const std::string& subjectPath)
     // （事件驱动纪律——本回调只标记脏＋呈现；全面板刷新随⑤/手工触发）。
     notifySessionDirty();
     m_statusLine->setText(QString::fromStdString("已应用：" + subjectPath));
+    if (m_postEditAction) {
+        m_postEditAction();  // T03b-2b——就绪重算钩子（编辑→真判定刷新）
+    }
 }
 
 void ModelingPanelWidget::onEditRejected(const EditRejection& rejection)
