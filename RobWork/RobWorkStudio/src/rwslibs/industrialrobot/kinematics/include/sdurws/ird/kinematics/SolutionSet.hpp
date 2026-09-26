@@ -15,6 +15,11 @@
  *     NFR-COR-01/02（同输入重复排序结果逐位一致——V-04）
  *   - 任务契约 tasks/foundation/WP-15-T04.json acceptance 1/3
  *
+ * T09 增列（tasks/foundation/WP-15-T09.json acceptance 1，登记随卡
+ * §14.6 v0.9）：usableSolutionPredicate/collisionDiagnosticPredicate
+ * 两规范筛选谓词工厂（§6.2"可用解/含碰撞诊断解"——比较集中实现，
+ * NFR-MNT-04；本头既有 T04 声明零改动）。
+ *
  * 背景说明（为什么排序实现是自由函数）：求解器管线（Ik.cpp）与解集视图
  * （构造时排序）消费**同一个**四键排序语义——共享一份实现（sortSolutions）
  * 保证"求解产物次序"与"视图重排次序"永不漂移；视图本身不再暴露改序入口
@@ -123,6 +128,50 @@ enum class WorstMetric : std::uint8_t {
     /// 取先者——稳定语义，登记随卡 §14.6 v0.4）。
     PositionResidual,
 };
+
+// =====================================================================
+// 规范筛选谓词（§6.2"可用解/含碰撞诊断解"——T09 表尾追加）
+// =====================================================================
+
+// WP-15-T09 增列（tasks/foundation/WP-15-T09.json acceptance 1——登记随
+// 单元卡 §14.6 v0.9）：两个规范业务谓词的**比较集中实现**（NFR-MNT-04
+// ——UI/报告不得各自书写 inCollision/evaluated 比较式，一律经本工厂取
+// 谓词；谓词只表达业务条件、排序/统计一致性由视图保证的既有分工不变）。
+
+/**
+ * @brief "可用解"规范谓词（§6.2 筛选面两规范谓词之一——工厂返回新
+ *        谓词实例，无共享状态）。
+ *
+ * 语义（随卡 §14.6 v0.9 登记）：**碰撞证据完备且无碰撞**——
+ * collisionStatus.evaluated==true 且 inCollision==false。
+ *
+ * 为什么要求 evaluated==true（KIN-05 保守读法）：KinTypes.hpp
+ * CollisionStatus 契约原文"调用方不得把 evaluated=false 且
+ * inCollision=false 当作可行凭据"——"可用"是呈现给用户的可行候选面，
+ * 碰撞未评价（策略未启用/缺检测器/会话不可判）的解其可用性**未证**，
+ * 不入可用集；呈现侧应以"碰撞未评价"提示承载这些解（证据缺失≠否定的
+ * 解，它们仍在 sorted() 序中，只是不被本谓词选中）。
+ *
+ * @return 可复用谓词（纯函数形态；线程安全——无捕获无共享状态）
+ */
+SolutionPredicate usableSolutionPredicate();
+
+/**
+ * @brief "含碰撞诊断解"规范谓词（§6.2 筛选面两规范谓词之二）。
+ *
+ * 语义（随卡 §14.6 v0.9 登记）：collisionStatus.inCollision==true——
+ * 解携带碰撞诊断标记（对象对明细在 collisionStatus.objectIdPairs）。
+ *
+ * 生产端不变式说明：求解器把碰撞解移入 filteredRecords（§6.1"不计入
+ * 解集排序序列"），求解器直接产出的视图上本谓词恒空集——谓词仍集中
+ * 在此，供"解∪过滤记录"合并诊断呈现（UI 检查器把 FilteredSolutionRecord
+ * 投影为 KinematicSolution 形态参与混排）与未来生产端语义演进
+ * （§5.4 行 4"碰撞解带标记保留"形态）复用**同一份比较**（NFR-MNT-04
+ * ——禁止第二处 inCollision 比较式）。
+ *
+ * @return 可复用谓词（纯函数形态；线程安全——无捕获无共享状态）
+ */
+SolutionPredicate collisionDiagnosticPredicate();
 
 // =====================================================================
 // IKinematicSolutionSet——解集只读视图接口（§6.2 原文契约）
