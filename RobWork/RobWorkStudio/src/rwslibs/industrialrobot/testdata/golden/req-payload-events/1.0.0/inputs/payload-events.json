@@ -1,0 +1,110 @@
+{
+  "schema": "req-payload-events-fixture-input/1",
+  "description": "负载事件契约夹具输入（WP-14-T09；units/requirements.md §10.1 数据集 4/4——§4.5 工况负载四态＋事件绑定＋适用范围）。工况经 createCondition 构造边界重建；负载物性为 core::SourcedValue 四态全谱（provided/not-provided/not-applicable/invalid 保留原串）；零值/近零/正负抵消边角样例在 provided 值内承载；事件三类型绑定任务点 ObjectId；negativeCases 逐条断言构造边界首违例码。全部 ObjectId 固定十六进制。",
+  "conditions": [
+    {
+      "id": "obj-2e000000000000000000000000000001",
+      "name": "PE-full",
+      "level": "Must",
+      "enabled": true,
+      "environmentRefs": ["obj-3f000000000000000000000000000002"],
+      "toolRefs": [
+        { "kind": "Tool", "objectId": "obj-3d000000000000000000000000000001", "tcpKey": "tcp1" }
+      ],
+      "payloads": [
+        {
+          "toolRef": { "kind": "Tool", "objectId": "obj-3d000000000000000000000000000001", "tcpKey": "tcp1" },
+          "mass": { "state": "provided", "value": 12.5 },
+          "com": { "state": "provided", "value": [0.05, -0.05, 1e-18] },
+          "inertia": { "state": "provided", "value": 0.125 }
+        },
+        {
+          "toolRef": { "kind": "Tool", "objectId": "obj-3d000000000000000000000000000001", "tcpKey": "tcp2" },
+          "mass": { "state": "provided", "value": 0.0 },
+          "com": { "state": "not-applicable" },
+          "inertia": { "state": "not-provided" }
+        }
+      ],
+      "events": [
+        { "type": "Grasp", "stationRef": "obj-1a000000000000000000000000000001", "durationS": null },
+        { "type": "Release", "stationRef": "obj-1a000000000000000000000000000002", "durationS": null },
+        { "type": "Dwell", "stationRef": "obj-1a000000000000000000000000000002", "durationS": 0.0 },
+        { "type": "Dwell", "stationRef": "obj-1a000000000000000000000000000003", "durationS": 1.5 }
+      ],
+      "targetCycleTimeS": 12.5,
+      "demands": { "collisionFreeRequired": true, "minimumJointMargin": 0.05 },
+      "verificationOrderHint": 1,
+      "appliesTo": { "scope": "Stations", "stations": ["obj-1a000000000000000000000000000001", "obj-1a000000000000000000000000000002"] },
+      "note": "全谱工况：负载二 mass=0.0（零值 provided 合法——空载）/com not-applicable（ERR-01 显式标记）；com 一 x+y=0（正负抵消）与 z=1e-18（近零）；Dwell duration 0.0（零值字面）与 1.5"
+    },
+    {
+      "id": "obj-2e000000000000000000000000000002",
+      "name": "PE-partial",
+      "level": "Should",
+      "enabled": true,
+      "environmentRefs": [],
+      "toolRefs": [],
+      "payloads": [
+        {
+          "toolRef": { "kind": "Tool", "objectId": "obj-3d000000000000000000000000000001", "tcpKey": "tcp1" },
+          "mass": { "state": "not-provided" },
+          "com": { "state": "not-provided" },
+          "inertia": { "state": "invalid", "raw": "12,5" }
+        }
+      ],
+      "events": [
+        { "type": "Dwell", "stationRef": "obj-1a000000000000000000000000000003", "durationS": 1.5 }
+      ],
+      "targetCycleTimeS": null,
+      "demands": { "collisionFreeRequired": false },
+      "verificationOrderHint": 2,
+      "appliesTo": { "scope": "AllStations", "stations": [] },
+      "note": "缺失谱：mass/com not-provided（DataInsufficient 降级预告——不断言不转 0）；inertia invalid 保留原串 \"12,5\"（NFR-COR-3 不静默清洗）"
+    },
+    {
+      "id": "obj-2e000000000000000000000000000003",
+      "name": "PE-idle",
+      "level": "Should",
+      "enabled": false,
+      "environmentRefs": [],
+      "toolRefs": [],
+      "payloads": [],
+      "events": [],
+      "targetCycleTimeS": null,
+      "demands": { "collisionFreeRequired": false },
+      "verificationOrderHint": 3,
+      "appliesTo": { "scope": "None", "stations": [] },
+      "note": "空负载/空事件/None 范围（未启用——合法空态）"
+    }
+  ],
+  "negativeCases": [
+    {
+      "case": "duplicate-name",
+      "note": "工况名与既有条目重复（I-REQ-3 集合内唯一——构造边界拒绝，不静默加后缀）",
+      "siblingNames": ["PE-full", "PE-partial"],
+      "name": "PE-full",
+      "expectedErrorCode": "DuplicateName"
+    },
+    {
+      "case": "stations-empty",
+      "note": "appliesTo scope=Stations 而显式清单为空（§4.7 非法组合）",
+      "appliesTo": { "scope": "Stations", "stations": [] },
+      "expectedErrorCode": "IllegalTolerance"
+    },
+    {
+      "case": "dangling-station-ref",
+      "note": "事件绑定悬空工位（stationRef 为有效 ObjectId 但不在闭包——构造边界只查结构半区，收下该条目；跨闭包存在性归就绪层 R4 拦截——§8.1 分层语义）",
+      "events": [
+        { "type": "Grasp", "stationRef": "obj-9900000000000000000000000000ff01", "durationS": null }
+      ],
+      "expectedErrorCode": null,
+      "expectedEffect": "construction-accepted-readiness-blocking"
+    },
+    {
+      "case": "invalid-mass-empty-raw",
+      "note": "invalid 态空原串（core SourcedValue 工厂拒绝——非法态必须保留原串）",
+      "payloadMass": { "state": "invalid", "raw": "" },
+      "expectedEffect": "core-factory-rejected"
+    }
+  ]
+}

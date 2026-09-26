@@ -1,0 +1,154 @@
+{
+  "schema": "req-transport-task-fixture-input/1",
+  "description": "搬运任务需求集契约夹具输入（WP-14-T09；units/requirements.md §10.1 数据集 1/4——五对象全量载体）。C++ 契约测试（GoldenDatasetsContractTest）按本描述经领域服务构造边界（createPoint/createRegion/createCondition/buildPlan）重建需求对象，对照 expected/transport-task-expected.json 的必验冻结解析表（§6.2 规则独立重算）、D-REQ-2 采样规范化计数（floor 规则独立重算）、顺序拓扑（I-REQ-7）与设计默认值字面（§4.3 黄金锁定）逐项核对。全部 ObjectId 为固定 16 字节十六进制（确定性前提——生成与断言双侧不产生随机身份）。边角样例（零值/近零/正负抵消）以 edgeCases 引用条目在负载与位姿字段内承载。",
+  "root": {
+    "name": "搬运任务需求集",
+    "note": "WP-14-T09 黄金数据集 1/4——五对象全量（根＋点/区域/工况/计划）",
+    "refs": {
+      "pointSet": "obj-2a000000000000000000000000000001",
+      "regionSet": "obj-2a000000000000000000000000000002",
+      "conditionSet": "obj-2a000000000000000000000000000003",
+      "planSet": "obj-2a000000000000000000000000000004"
+    }
+  },
+  "points": [
+    {
+      "id": "obj-1a000000000000000000000000000001",
+      "name": "P-pick",
+      "level": "Must",
+      "enabled": true,
+      "processTag": "Pick",
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "pose": {
+        "position": { "state": "provided", "value": [0.5, -0.5, 0.3] },
+        "constrainedDof": { "x": true, "y": true, "z": true, "roll": false, "pitch": false, "yaw": false },
+        "orientation": { "kind": "Fixed", "fixedRpy": [0.0, 0.0, 0.0] }
+      },
+      "tolerance": { "positionTolerance": 0.001, "orientationTolerance": 0.017453292519943295 },
+      "segments": {
+        "approach": { "enabled": true, "axis": "ToolZ", "distanceM": 0.1 },
+        "work": { "enabled": true, "axis": "ToolZ", "distanceM": 1.0 },
+        "retract": { "enabled": true, "axis": "ToolZ", "distanceM": 0.05 }
+      },
+      "demands": { "collisionFreeRequired": true },
+      "sequenceKey": null,
+      "note": "拾取点；position x+y=0（正负抵消边角样例——edgeCases.signCancellation）"
+    },
+    {
+      "id": "obj-1a000000000000000000000000000002",
+      "name": "P-place",
+      "level": "Must",
+      "enabled": true,
+      "processTag": "Place",
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "pose": {
+        "position": { "state": "provided", "value": [0.8, -0.5, 0.3] },
+        "constrainedDof": { "x": true, "y": true, "z": true, "roll": false, "pitch": false, "yaw": false },
+        "orientation": { "kind": "Fixed", "fixedRpy": [0.0, 0.0, 1.5707963267948966] }
+      },
+      "tolerance": { "positionTolerance": 0.001, "orientationTolerance": 0.017453292519943295 },
+      "segments": {
+        "approach": { "enabled": true, "axis": "ToolZ", "distanceM": 0.12 },
+        "work": { "enabled": true, "axis": "ToolZ", "distanceM": 1.0 },
+        "retract": { "enabled": true, "axis": "ToolZ", "distanceM": 0.06 }
+      },
+      "demands": { "collisionFreeRequired": true },
+      "sequenceKey": "P-pick",
+      "note": "放置点；顺序键链 P-pick→P-place→P-inspect（I-REQ-7 拓扑输入）"
+    },
+    {
+      "id": "obj-1a000000000000000000000000000003",
+      "name": "P-inspect",
+      "level": "Should",
+      "enabled": true,
+      "processTag": "Inspect",
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "pose": {
+        "position": { "state": "provided", "value": [0.9, 0.1, 0.35] },
+        "constrainedDof": { "x": false, "y": false, "z": false, "roll": false, "pitch": true, "yaw": true },
+        "orientation": { "kind": "PointAtTarget", "targetPoint": [0.2, 0.1, 0.4] }
+      },
+      "tolerance": { "positionTolerance": 0.001, "orientationTolerance": 0.017453292519943295 },
+      "segments": {
+        "approach": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 },
+        "work": { "enabled": true, "axis": "ToolZ", "distanceM": 1.0 },
+        "retract": { "enabled": false, "axis": "ToolZ", "distanceM": 0.0 }
+      },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": "P-place",
+      "note": "检测点（Should 级）；PointAtTarget 参考方向＝targetPoint 归一化"
+    }
+  ],
+  "regions": [
+    {
+      "id": "obj-1b000000000000000000000000000001",
+      "name": "R-zone",
+      "level": "Must",
+      "enabled": true,
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "box": { "center": [0.4, 0.0, 0.3], "size": [0.6, 0.4, 0.2] },
+      "positionSampling": { "method": "GridBySpacing", "spacing": [0.2, 0.2, 0.2] },
+      "orientationSampling": { "directionSamples": 12, "rollSamples": 4, "methodToken": "equator-uniform" },
+      "coverageTargets": { "minPositionCoverage": 0.8 },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "作业区域；GridBySpacing 编辑态（规范化在 buildPlan——D-REQ-2）"
+    }
+  ],
+  "conditions": [
+    {
+      "id": "obj-1c000000000000000000000000000001",
+      "name": "C-transport",
+      "level": "Must",
+      "enabled": true,
+      "environmentRefs": [],
+      "toolRefs": [],
+      "payloads": [
+        {
+          "toolRef": { "kind": "Tool", "objectId": "obj-3d000000000000000000000000000001", "tcpKey": "tcp1" },
+          "mass": { "state": "provided", "value": 12.5 },
+          "com": { "state": "provided", "value": [0.05, -0.05, 1e-18] },
+          "inertia": { "state": "not-provided" }
+        }
+      ],
+      "events": [
+        { "type": "Grasp", "stationRef": "obj-1a000000000000000000000000000001", "durationS": null },
+        { "type": "Release", "stationRef": "obj-1a000000000000000000000000000002", "durationS": null },
+        { "type": "Dwell", "stationRef": "obj-1a000000000000000000000000000002", "durationS": 2.0 }
+      ],
+      "targetCycleTimeS": 12.0,
+      "demands": { "collisionFreeRequired": true },
+      "verificationOrderHint": 1,
+      "appliesTo": { "scope": "AllStations", "stations": [] },
+      "note": "搬运工况（Must∧enabled＝必验）；com 分量含正负抵消（x+y=0）与近零（z=1e-18）边角样例"
+    },
+    {
+      "id": "obj-1c000000000000000000000000000002",
+      "name": "C-inspect",
+      "level": "Should",
+      "enabled": false,
+      "environmentRefs": [],
+      "toolRefs": [],
+      "payloads": [],
+      "events": [],
+      "targetCycleTimeS": null,
+      "demands": { "collisionFreeRequired": false },
+      "verificationOrderHint": 2,
+      "appliesTo": { "scope": "AllStations", "stations": [] },
+      "note": "检测工况（Should∧未启用——不入必验集合）"
+    }
+  ],
+  "planSpecs": [
+    {
+      "planId": "obj-1d000000000000000000000000000001",
+      "region": "R-zone",
+      "positionSampling": { "method": "GridBySpacing", "spacing": [0.2, 0.2, 0.2] },
+      "orientationSampling": { "directionSamples": 12, "rollSamples": 4, "methodToken": "equator-uniform" },
+      "note": "R-zone 采样计划（buildPlan 规范化——planContentIdentity 的 canonical 输入）"
+    }
+  ]
+}

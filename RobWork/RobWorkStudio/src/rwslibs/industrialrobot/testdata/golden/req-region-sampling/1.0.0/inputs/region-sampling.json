@@ -1,0 +1,116 @@
+{
+  "schema": "req-region-sampling-fixture-input/1",
+  "description": "区域与采样定义契约夹具输入（WP-14-T09；units/requirements.md §10.1 数据集 3/4——§5.2 采样计划定义＋D-REQ-2 规范化＋V-02 零样本合法）。区域经 createRegion 构造边界重建；计划经 buildPlan 规范化（GridBySpacing→Grid 计数）；同义计划对（不同 spacing 规范化到同计数）断言同计划字节/摘要（planContentIdentity 同义同身份）；零样本计划（counts 乘积=0）合法存储可编码。negativeCases 逐条断言构造/构建边界首违例码。",
+  "regions": [
+    {
+      "id": "obj-2c000000000000000000000000000001",
+      "name": "RS-grid",
+      "level": "Must",
+      "enabled": true,
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "box": { "center": [0.3, 0.3, 0.25], "size": [0.4, 0.4, 0.3] },
+      "positionSampling": { "method": "Grid", "counts": [2, 3, 4] },
+      "orientationSampling": { "directionSamples": 6, "rollSamples": 2, "methodToken": "equator-uniform" },
+      "coverageTargets": { "minPositionCoverage": 0.8 },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "Grid 显式计数（counts 即权威——无规范化改写）"
+    },
+    {
+      "id": "obj-2c000000000000000000000000000002",
+      "name": "RS-spacing-a",
+      "level": "Must",
+      "enabled": true,
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "box": { "center": [0.4, 0.0, 0.3], "size": [0.6, 0.4, 0.2] },
+      "positionSampling": { "method": "GridBySpacing", "spacing": [0.2, 0.2, 0.2] },
+      "orientationSampling": { "directionSamples": 12, "rollSamples": 4, "methodToken": "equator-uniform" },
+      "coverageTargets": { "minPositionCoverage": 0.8 },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "间距式编辑态（规范化在 buildPlan——D-REQ-2）；与 RS-spacing-b 同义对"
+    },
+    {
+      "id": "obj-2c000000000000000000000000000003",
+      "name": "RS-spacing-b",
+      "level": "Should",
+      "enabled": true,
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "box": { "center": [0.4, 0.0, 0.3], "size": [0.6, 0.4, 0.2] },
+      "positionSampling": { "method": "GridBySpacing", "spacing": [0.25, 0.2, 0.15] },
+      "orientationSampling": { "directionSamples": 12, "rollSamples": 4, "methodToken": "equator-uniform" },
+      "coverageTargets": { "minPositionCoverage": 0.8 },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "同义计划对 b 侧：不同 spacing 规范化到同 counts（同义计划同身份——D-REQ-2 锚）"
+    },
+    {
+      "id": "obj-2c000000000000000000000000000004",
+      "name": "RS-zero",
+      "level": "Should",
+      "enabled": true,
+      "source": { "kind": "user-provided", "methodTag": "golden-fixture" },
+      "refFrame": { "kind": "World" },
+      "box": { "center": [0.0, 0.0, 0.15], "size": [0.2, 0.2, 0.2] },
+      "positionSampling": { "method": "Grid", "counts": [0, 2, 2] },
+      "orientationSampling": { "directionSamples": 1, "rollSamples": 1, "methodToken": "equator-uniform" },
+      "coverageTargets": { "minPositionCoverage": 0.5 },
+      "demands": { "collisionFreeRequired": false },
+      "sequenceKey": null,
+      "note": "零样本区域：counts 轴 0（乘积=0 合法存储——零样本判定归评估 KIN-04 R8，本单元不判）"
+    }
+  ],
+  "planSpecs": [
+    {
+      "planId": "obj-2d000000000000000000000000000001",
+      "region": "RS-grid",
+      "positionSampling": { "method": "Grid", "counts": [2, 3, 4] },
+      "orientationSampling": { "directionSamples": 6, "rollSamples": 2, "methodToken": "equator-uniform" },
+      "note": "Grid 原样承载（changed=false）"
+    },
+    {
+      "planId": "obj-2d000000000000000000000000000002",
+      "region": "RS-spacing-a",
+      "positionSampling": { "method": "GridBySpacing", "spacing": [0.2, 0.2, 0.2] },
+      "orientationSampling": { "directionSamples": 12, "rollSamples": 4, "methodToken": "equator-uniform" },
+      "note": "规范化载体 a（counts 由 floor 规则独立重算）"
+    },
+    {
+      "planId": "obj-2d000000000000000000000000000003",
+      "region": "RS-spacing-b",
+      "positionSampling": { "method": "GridBySpacing", "spacing": [0.25, 0.2, 0.15] },
+      "orientationSampling": { "directionSamples": 12, "rollSamples": 4, "methodToken": "equator-uniform" },
+      "note": "同义计划对 b——规范化后与 a 同计数（同计划字节/摘要）"
+    },
+    {
+      "planId": "obj-2d000000000000000000000000000004",
+      "region": "RS-zero",
+      "positionSampling": { "method": "Grid", "counts": [0, 2, 2] },
+      "orientationSampling": { "directionSamples": 1, "rollSamples": 1, "methodToken": "equator-uniform" },
+      "note": "零样本计划：分母 0 合法（planContentIdentity=0 计划可编码——V-02 观测点）"
+    }
+  ],
+  "negativeCases": [
+    {
+      "case": "degenerate-box",
+      "note": "区域盒退化（size 含 0——I-REQ-6 三分量 >0 且有限）",
+      "box": { "center": [0.0, 0.0, 0.0], "size": [0.2, 0.0, 0.2] },
+      "expectedErrorCode": "DegenerateRegion"
+    },
+    {
+      "case": "zero-spacing",
+      "note": "GridBySpacing 间距 0（间距三分量正有限）",
+      "positionSampling": { "method": "GridBySpacing", "spacing": [0.2, 0.0, 0.2] },
+      "expectedErrorCode": "IllegalTolerance"
+    },
+    {
+      "case": "coverage-out-of-range",
+      "note": "覆盖率越界（∈[0,1]——1.5 非法，不截断不静默）",
+      "coverageTargets": { "minPositionCoverage": 1.5 },
+      "expectedErrorCode": "DegenerateRegion"
+    }
+  ]
+}

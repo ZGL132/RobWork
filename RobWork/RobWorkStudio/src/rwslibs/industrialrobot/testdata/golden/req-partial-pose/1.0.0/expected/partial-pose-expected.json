@@ -1,0 +1,154 @@
+{
+  "schema": "req-partial-pose-expected/1",
+  "generatedBy": "generate/make_partial_pose_golden.mjs",
+  "note": "部分位姿约束黄金期望（contract-fixture——掩码/四态/五规则载荷字面独立转写＋PointAtTarget 参考方向独立重算；负样例逐条首违例码）",
+  "pointProjections": [
+    {
+      "id": "obj-2b000000000000000000000000000001",
+      "name": "PP-z-roll",
+      "constrainedDof": [
+        false,
+        false,
+        true,
+        true,
+        false,
+        false
+      ],
+      "constrainedCount": 2,
+      "positionState": "provided",
+      "positionValue": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "orientationKind": "Fixed",
+      "fixedRpy": [
+        3.141592653589793,
+        0,
+        -1.5707963267948966
+      ]
+    },
+    {
+      "id": "obj-2b000000000000000000000000000002",
+      "name": "PP-orientation-only",
+      "constrainedDof": [
+        false,
+        false,
+        false,
+        true,
+        true,
+        true
+      ],
+      "constrainedCount": 3,
+      "positionState": "not-provided",
+      "positionValue": null,
+      "orientationKind": "ToolRollFree",
+      "rollRange": {
+        "min": -0.5,
+        "max": 0.5
+      }
+    },
+    {
+      "id": "obj-2b000000000000000000000000000003",
+      "name": "PP-align-frame",
+      "constrainedDof": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "constrainedCount": 1,
+      "positionState": "provided",
+      "positionValue": [
+        0.15,
+        0,
+        0.25
+      ],
+      "orientationKind": "AlignFrame",
+      "targetFrameObjectId": "obj-3e000000000000000000000000000001"
+    },
+    {
+      "id": "obj-2b000000000000000000000000000004",
+      "name": "PP-normal",
+      "constrainedDof": [
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "constrainedCount": 1,
+      "positionState": "provided",
+      "positionValue": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "orientationKind": "AlignGeometryNormal",
+      "targetSceneObject": "obj-3f000000000000000000000000000001",
+      "feature": "FramePlaneNormal",
+      "invertNormal": true
+    },
+    {
+      "id": "obj-2b000000000000000000000000000005",
+      "name": "PP-point-at",
+      "constrainedDof": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ],
+      "constrainedCount": 2,
+      "positionState": "provided",
+      "positionValue": [
+        0,
+        0,
+        0.4
+      ],
+      "orientationKind": "PointAtTarget",
+      "referenceDirection": [
+        0,
+        0,
+        1
+      ],
+      "targetPoint": [
+        0,
+        0,
+        0.4
+      ]
+    }
+  ],
+  "negativeExpectations": [
+    {
+      "case": "zero-vector-target",
+      "expectedErrorCode": "ZeroVectorTarget",
+      "note": "PointAtTarget 零向量目标（§5.3 反例——目标点不退化为零向量）"
+    },
+    {
+      "case": "roll-range-inverted",
+      "expectedErrorCode": "IllegalTolerance",
+      "note": "ToolRollFree rollRange 逆序（min≥max——区间为空/倒置）"
+    },
+    {
+      "case": "missing-feature",
+      "expectedErrorCode": "IllegalTolerance",
+      "note": "AlignGeometryNormal 缺 feature（特征必须显式给出）"
+    },
+    {
+      "case": "all-dof-free",
+      "expectedErrorCode": "AllDofFree",
+      "note": "constrainedDof 全 false（I-REQ-5——任务点至少约束一个分量）"
+    },
+    {
+      "case": "zero-tolerance",
+      "expectedErrorCode": "IllegalTolerance",
+      "note": "容差 0（I-REQ-5——两分量 >0 且有限；不静默取默认值）"
+    }
+  ],
+  "toleranceDefaultsNote": "PP-* 各点容差为输入字面（本数据集容差非全默认：PP-orientation-only 用 0.002 m/0.03490658503988659 rad 显式值——字面保真断言载体）"
+}

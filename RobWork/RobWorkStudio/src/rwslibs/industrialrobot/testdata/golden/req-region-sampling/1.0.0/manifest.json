@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "req-region-sampling",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "req/region-sampling-contract",
+  "coveredRequirements": [
+    "REQ-03",
+    "KIN-04",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-05"
+  ],
+  "toleranceProfile": {
+    "id": "req-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/region-sampling.json"
+  ],
+  "expected": [
+    "expected/region-sampling-expected.json"
+  ],
+  "parameters": {
+    "contract": "requirements 区域与采样计划定义面（§5.2）——D-REQ-2 规范化（GridBySpacing→counts）、计划分母（plannedXxxSamples 核算输入）、同义计划同身份、零样本合法（V-02）",
+    "entryFaces": {
+      "normalization": "expected/plans[].counts——D-REQ-2 floor 规则独立重算（IEEE754 位级：0.6/0.2=2.9999…→3——整数直觉 4 恰是本夹具钉死的位级行为）",
+      "synonym": "expected/synonymPlanPair——RS-spacing-a/spacing-b 不同间距规范化到同计数 [3,3,2]（同义计划同身份——计划字节/摘要相等的黄金判据）",
+      "zeroSamples": "expected/zeroSamplePlan——RS-zero counts [0,2,2] 乘积 0 合法存储（planContentIdentity=0 计划可编码——V-02 观测点；判定归评估 KIN-04 R8）",
+      "denominators": "expected/plans[].positionSamples/orientationSamples——evidence SamplingPlanRef.plannedXxxSamples 的分母核算输入（V-19 联合观测的 requirements 侧）"
+    },
+    "edgeCasesNote": "零值（counts 轴 0）/近零语义由 buildPlan floor 边界（0.2/0.2=1.0 精确整除 vs 0.6/0.2 位级偏差）承载；正负抵消见 req-transport-task（本数据集无符号运算面——三布尔按数据集实际置位）"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad"
+  },
+  "frames": {
+    "base": "robot-base"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "req-region-sampling-rule-rederive",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-26T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": false,
+    "sampleRefs": [
+      "expected/region-sampling-expected.json#zeroSamplePlan（零样本分母 0 合法）",
+      "expected/region-sampling-expected.json#plans[1].counts（floor 位级边界——0.6/0.2 近零偏差决定计数）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/region-sampling.json",
+      "sha256": "40c441b187acb9915f973b54894c538089029a44143a4c2959ac1c6d565a582b",
+      "sizeBytes": 5902
+    },
+    {
+      "path": "expected/region-sampling-expected.json",
+      "sha256": "3bb75a3ce88ab5e873bf935e42760a81f22e1350b875ad95ea0b93bb1418d498",
+      "sizeBytes": 2725
+    },
+    {
+      "path": "generate/make_region_sampling_golden.mjs",
+      "sha256": "67947e02b5a8e87c10172f4d62ba899a96c592ec0f6f5fcd511bb42b5d6d22a2",
+      "sizeBytes": 5802
+    }
+  ],
+  "generator": {
+    "script": "generate/make_region_sampling_golden.mjs",
+    "invocation": "node generate/make_region_sampling_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-26",
+      "change": "首版：区域与采样定义契约夹具（D-REQ-2 规范化独立重算＋同义计划对＋零样本计划＋三条构造/构建边界负样例）——WP-14-T09 §10.1 数据集 3/4（V-02/KIN-04 冻结前提载体）",
+      "reReviewedBy": "WP-14-T09 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

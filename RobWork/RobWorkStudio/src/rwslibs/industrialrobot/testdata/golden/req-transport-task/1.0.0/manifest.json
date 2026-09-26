@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "req-transport-task",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "req/transport-task-contract",
+  "coveredRequirements": [
+    "REQ-01",
+    "REQ-02",
+    "REQ-03",
+    "REQ-04",
+    "REQ-09",
+    "CON-05",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-02",
+    "AT-23",
+    "AT-24"
+  ],
+  "toleranceProfile": {
+    "id": "req-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/transport-task.json"
+  ],
+  "expected": [
+    "expected/transport-task-expected.json"
+  ],
+  "parameters": {
+    "contract": "requirements 五对象值模型＋必验冻结 schema（§6.2）＋采样规范化（D-REQ-2）＋顺序拓扑（I-REQ-7）——搬运任务全量载体",
+    "entryFaces": {
+      "requiredCases": "expected/requiredCasesFrozenSchema——§6.2 冻结规则（mandatory≡level==Must；entries 按 caseId 规范序；必验集合=enabled∧mandatory）由 generate 脚本独立重算，C++ 侧经 resolveRequiredCases（P-EV-9 唯一实现点）对照",
+      "normalization": "expected/normalization——D-REQ-2 floor 规则独立重算（IEEE754 确定运算：0.6/0.2=2.9999999999999996→floor=2→counts=3——整数直觉的 4 恰是本夹具要钉死的位级行为）",
+      "sequence": "expected/sequence——I-REQ-7 Kahn 消去独立重算（链 P-pick→P-place→P-inspect）",
+      "defaults": "expected/toleranceDefaults——§4.3 设计默认值字面（π/180 独立计算非抄写，黄金锁定）"
+    },
+    "edgeCasesNote": "零值（C-transport.inertia=not-provided 四态承载）/近零（com.z=1e-18）/正负抵消（P-pick.position 与 com 的 x+y=0）边角样例置位——edgeCases 三布尔真",
+    "framesNote": "refFrame 恒 World（refFrame 系下表达，m/rad SI）——坐标变换归 runtime/下游（卡 §4.3 头行）"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad",
+    "mass": "kg"
+  },
+  "frames": {
+    "base": "robot-base"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "req-transport-task-rule-rederive",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-26T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/transport-task-expected.json#edgeCases.zeroValue",
+      "expected/transport-task-expected.json#edgeCases.nearZero",
+      "expected/transport-task-expected.json#edgeCases.signCancellation"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/transport-task.json",
+      "sha256": "5fd9280c142f9f133a6f055c0e9d96cab5701847a661acbe17ae8e1f4ce2c1a0",
+      "sizeBytes": 7440
+    },
+    {
+      "path": "expected/transport-task-expected.json",
+      "sha256": "56b5dfd57bd1a58a4c467b62422db39f2d46ef71f947bbaf73a9baca181416e3",
+      "sizeBytes": 2810
+    },
+    {
+      "path": "generate/make_transport_task_golden.mjs",
+      "sha256": "63e3cafa918fd77767152b79eafcb996808fe34ce06dda8db66e4ee06a1aa8de",
+      "sizeBytes": 9383
+    }
+  ],
+  "generator": {
+    "script": "generate/make_transport_task_golden.mjs",
+    "invocation": "node generate/make_transport_task_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-26",
+      "change": "首版：搬运任务五对象全量契约夹具（§6.2 必验冻结解析表＋D-REQ-2 规范化计数＋I-REQ-7 顺序拓扑＋§4.3 设计默认值字面；零值/近零/正负抵消边角样例置位）——WP-14-T09 §10.1 数据集 1/4",
+      "reReviewedBy": "WP-14-T09 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

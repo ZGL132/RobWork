@@ -1,0 +1,105 @@
+{
+  "schema": "req-transport-task-expected/1",
+  "generatedBy": "generate/make_transport_task_golden.mjs",
+  "note": "搬运任务黄金期望（contract-fixture——§6.2/§4.8/I-REQ-7/D-REQ-2 规则独立重算＋§4.3 设计默认值字面转写；手工构造类）",
+  "requiredCasesFrozenSchema": {
+    "rule": "mandatory := (level==Must)；entries 序＝caseId 规范文本字典序；必验集合 = enabled ∧ mandatory",
+    "entries": [
+      {
+        "caseId": "obj-1c000000000000000000000000000001",
+        "label": "C-transport",
+        "enabled": true,
+        "mandatory": true
+      },
+      {
+        "caseId": "obj-1c000000000000000000000000000002",
+        "label": "C-inspect",
+        "enabled": false,
+        "mandatory": false
+      }
+    ],
+    "requiredCount": 1
+  },
+  "profile": {
+    "mustCount": 4,
+    "shouldCount": 2,
+    "minPositionCoverage": 0.8,
+    "requiredCasesCount": 1
+  },
+  "sequence": {
+    "acyclic": true,
+    "chain": [
+      "P-pick",
+      "P-place",
+      "P-inspect"
+    ],
+    "duplicateKeys": [],
+    "danglingKeys": [],
+    "cycleNodes": []
+  },
+  "normalization": [
+    {
+      "region": "R-zone",
+      "size": [
+        0.6,
+        0.4,
+        0.2
+      ],
+      "spacing": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "counts": [
+        3,
+        3,
+        2
+      ],
+      "rule": "counts[i] = floor(size[i]/spacing[i]) + 1"
+    }
+  ],
+  "planDenominators": [
+    {
+      "planId": "obj-1d000000000000000000000000000001",
+      "region": "R-zone",
+      "positionSamples": 18,
+      "orientationSamples": 48
+    }
+  ],
+  "eventTable": [
+    {
+      "condition": "C-transport",
+      "seq": 1,
+      "type": "Grasp",
+      "station": "P-pick",
+      "stationRef": "obj-1a000000000000000000000000000001",
+      "durationS": null
+    },
+    {
+      "condition": "C-transport",
+      "seq": 2,
+      "type": "Release",
+      "station": "P-place",
+      "stationRef": "obj-1a000000000000000000000000000002",
+      "durationS": null
+    },
+    {
+      "condition": "C-transport",
+      "seq": 3,
+      "type": "Dwell",
+      "station": "P-place",
+      "stationRef": "obj-1a000000000000000000000000000002",
+      "durationS": 2
+    }
+  ],
+  "toleranceDefaults": {
+    "positionTolerance": 0.001,
+    "orientationTolerance": 0.017453292519943295,
+    "basis": "units/requirements.md §4.3 ToleranceSpec 设计默认（黄金锁定）"
+  },
+  "edgeCases": {
+    "zeroValue": "expected 引用 inputs：C-transport.inertia=not-provided（零值的四态承载——缺失≠0）",
+    "nearZero": "inputs 引用：C-transport.com.z=1e-18（近零样本——IEEE754 位模式保真，不容差吞并）",
+    "signCancellation": "inputs 引用：P-pick.position x+y=0 与 C-transport.com x+y=0（正负抵消——分量级保真）"
+  }
+}
