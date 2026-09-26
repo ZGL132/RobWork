@@ -1,0 +1,187 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\wt-wp14-t08\build-smoke\core\Release\sdurws_ird_core.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Diagnostics.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  ParamSchema.cpp
+  Catalog.cpp
+  Factory.cpp
+  Confirmable.cpp
+  Aggregation.cpp
+  Logging.cpp
+  Redaction.cpp
+  CrashReport.cpp
+  正在生成代码...
+  sdurws_ird_diagnostics.vcxproj -> D:\wt-wp14-t08\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Evidence.cpp
+  Errors.cpp
+  Snapshot.cpp
+  Slice.cpp
+  Verdict.cpp
+  Envelope.cpp
+  Currentness.cpp
+  Compatibility.cpp
+  Evaluator.cpp
+  正在生成代码...
+  sdurws_ird_evidence.vcxproj -> D:\wt-wp14-t08\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  Io.cpp
+  SafePath.cpp
+  Budget.cpp
+  IoDiagnostics.cpp
+  Csv.cpp
+  Json.cpp
+  ZipChannel.cpp
+  ResourceIo.cpp
+  TempArea.cpp
+  AtomicFile.cpp
+  Package.cpp
+  正在生成代码...
+  sdurws_ird_io.vcxproj -> D:\wt-wp14-t08\build-smoke\io\Release\sdurws_ird_io.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Project.cpp
+  Codec.cpp
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+  正在生成代码...
+  sdurws_ird_project.vcxproj -> D:\wt-wp14-t08\build-smoke\project\Release\sdurws_ird_project.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  ObjectTypes.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  RequirementTypes.cpp
+  Codec.cpp
+  Editor.cpp
+  Services.cpp
+  Sampling.cpp
+  Import.cpp
+  Readiness.cpp
+  CommandHandlers.cpp
+  OrientationResolution.cpp
+  Capture.cpp
+  TemplateArray.cpp
+  正在生成代码...
+  sdurws_ird_requirements.vcxproj -> D:\wt-wp14-t08\build-smoke\requirements\Release\sdurws_ird_requirements.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  Ui.cpp
+  WorkbenchShell.cpp
+  WorkbenchContent.cpp
+  ShellSupport.cpp
+  StatusProjection.cpp
+  View3DPlaceholder.cpp
+  CommandRegistry.cpp
+  GlobalShortcutRegistry.cpp
+  CommandPalette.cpp
+  PolicySummaryCard.cpp
+  FormEditCommon.cpp
+  ParamTablePanel.cpp
+  UiText.cpp
+  StageNavigationModel.cpp
+  AboutDialog.cpp
+  UiSessionController.cpp
+  DraftController.cpp
+  DiagnosticPresentation.cpp
+  CommandInteractionBridge.cpp
+  TaskPresentation.cpp
+  正在生成代码...
+  sdurws_ird_ui.vcxproj -> D:\wt-wp14-t08\build-smoke\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  PanelTreeModel.cpp
+  PanelStationModel.cpp
+  PanelRegionModel.cpp
+  PanelConditionModel.cpp
+  PanelValidationModel.cpp
+  PanelCommandCatalog.cpp
+  PanelEditFlow.cpp
+  ImportWizardFlow.cpp
+  RequirementsPanelWidget.cpp
+  RequirementsUiModule.cpp
+  mocs_compilation_Release.cpp
+  正在生成代码...
+  sdurws_ird_requirements_plugin.vcxproj -> D:\wt-wp14-t08\build-smoke\requirements\Release\sdurws_ird_requirements_plugin.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\wt-wp14-t08\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\wt-wp14-t08\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\wt-wp14-t08\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_io.vcxproj -> D:\wt-wp14-t08\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_project.vcxproj -> D:\wt-wp14-t08\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_requirements.vcxproj -> D:\wt-wp14-t08\build-smoke\requirements\Release\sdurws_ird_requirements.lib
+  sdurws_ird_ui.vcxproj -> D:\wt-wp14-t08\build-smoke\ui\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  sdurws_ird_requirements_plugin.vcxproj -> D:\wt-wp14-t08\build-smoke\requirements\Release\sdurws_ird_requirements_plugin.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> D:\wt-wp14-t08\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  TestMainReport.cpp
+  ObjectTypesTest.cpp
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  RequirementTypesTest.cpp
+  CodecTest.cpp
+  ServicesTest.cpp
+  SamplingTest.cpp
+  EditorTest.cpp
+  ImportTest.cpp
+  ReadinessTest.cpp
+  CommandHandlersTest.cpp
+  OrientationResolutionTest.cpp
+  CaptureTest.cpp
+  TemplateArrayTest.cpp
+  PluginPanelTest.cpp
+  正在生成代码...
+  sdurws_ird_requirements_test.vcxproj -> D:\wt-wp14-t08\build-smoke\requirements\Release\sdurws_ird_requirements_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\wt-wp14-t08\build-smoke\requirements\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\wt-wp14-t08\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\wt-wp14-t08\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\wt-wp14-t08\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_io.vcxproj -> D:\wt-wp14-t08\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_project.vcxproj -> D:\wt-wp14-t08\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_requirements.vcxproj -> D:\wt-wp14-t08\build-smoke\requirements\Release\sdurws_ird_requirements.lib
+  sdurws_ird_testkit.vcxproj -> D:\wt-wp14-t08\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule D:/wt-wp14-t08/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  正在生成代码...
+  sdurws_ird_requirements_contract_test.vcxproj -> D:\wt-wp14-t08\build-smoke\requirements\Release\sdurws_ird_requirements_contract_test.exe
