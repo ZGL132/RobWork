@@ -224,6 +224,56 @@ target_include_directories(sdurws_ird_modeling_plugin PRIVATE
 # BuildGraphContractTest）。
 target_link_libraries(sdurws_ird_modeling_plugin PUBLIC sdurws_ird_modeling sdurws_ird_ui Qt6::Core Qt6::Gui Qt6::Widgets)
 
+# ---- 开发验证 harness：sdurws_ird_modeling_app（owner 指示 2026-09-26）----
+# "插件开发完成即可手动 GUI 验证"的建模侧载体（DTB §5.1 构建约定增补）：
+#   - 先例＝ui 单元 sdurws_ird_ui_app（UI-T15）；_app 后缀＝ird_gates 分类面
+#     预留形态（plugin/worker/app——Qt 链接合法）；源码在 app/ 子目录（非
+#     include/、src/ 产品面——产品扫描域零触碰）；
+#   - 链接面＝仅 sdurws_ird_modeling_plugin（其 PUBLIC 面已携带 modeling＋
+#     ui＋Qt 三件套——与插件目标同源，零新业务边）；本目标非测试（不入
+#     ctest 标签）、非产品交付路径（装配归 WP-24-T03，产品装配层落位时
+#     按同一契约替换本入口，插件面零改动）；
+#   - app/ 需解析本单元插件私有头（plugin/ModelingPanelWidget.hpp 等）——
+#     同单元内消费（R-2 不跨单元），单元根 include 目录 PRIVATE 注入。
+add_executable(sdurws_ird_modeling_app
+    app/HarnessMain.cpp)
+
+target_compile_features(sdurws_ird_modeling_app PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_modeling_app PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_modeling_app PRIVATE /utf-8)
+endif()
+
+target_include_directories(sdurws_ird_modeling_app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 单行链接语句＝构建图契约测试的登记形态约束（同插件目标上方口径）。
+target_link_libraries(sdurws_ird_modeling_app PRIVATE sdurws_ird_modeling_plugin)
+
+# 运行时 DLL 就位（ui_app 同款）：TARGET_RUNTIME_DLLS 复制链接面共享库
+# （Qt 三件套等）到 exe 旁——双击/绝对路径启动免 PATH 依赖。
+add_custom_command(TARGET sdurws_ird_modeling_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_modeling_app>
+            $<TARGET_FILE_DIR:sdurws_ird_modeling_app>
+    COMMAND_EXPAND_LISTS)
+
+# Qt 平台插件定位（ui_app 同款坑位修复）：Qt6 官方发行版 DLL 为可重定位
+# 前缀形态，从副本位置推导的插件目录不成立（qwindows 找不到即启动失败）
+# ——configure 期从 Qt6_DIR 推导真实 Qt 安装前缀生成 qt.conf 复制到 exe
+# 旁，把前缀钉回真实安装（构建期生成物，不入库）。
+set(_ird_mdl_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_mdl_qt_prefix "${_ird_mdl_qt_prefix}/../../.." ABSOLUTE)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/modeling-harness-qt.conf"
+     "[Paths]\nPrefix=${_ird_mdl_qt_prefix}\n")
+add_custom_command(TARGET sdurws_ird_modeling_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/modeling-harness-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_modeling_app>/qt.conf")
+
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：modeling 公共头使用 std::string_view/inline constexpr 等
 # C++17 设施，消费者编译 modeling 头也必须至少 C++17。
@@ -641,6 +691,7 @@ if(NOT TARGET sdurw_kinematics)
                             INTERFACE_INCLUDE_DIRECTORIES)
         if(_ird_modeling_boost_inc)
             target_include_directories(sdurws_ird_modeling_plugin PRIVATE ${_ird_modeling_boost_inc})
+            target_include_directories(sdurws_ird_modeling_app PRIVATE ${_ird_modeling_boost_inc})
             target_include_directories(sdurws_ird_modeling_test PRIVATE ${_ird_modeling_boost_inc})
         endif()
     endif()
