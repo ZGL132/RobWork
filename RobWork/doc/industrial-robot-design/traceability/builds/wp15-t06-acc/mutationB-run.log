@@ -1,0 +1,19 @@
+Note: Google Test filter = KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from KinRegionCoverage
+[ RUN      ] KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\RegionCoverageTest.cpp(530): error: Value of: computed == expected
+  Actual: false
+Expected: true
+
+[  FAILED  ] KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3 (0 ms)
+[----------] 1 test from KinRegionCoverage (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3
+
+ 1 FAILED TEST
