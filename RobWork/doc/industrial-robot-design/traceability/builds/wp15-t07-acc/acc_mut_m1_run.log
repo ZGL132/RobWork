@@ -1,0 +1,20 @@
+Note: Google Test filter = KinTaskPointIkEval.FacilityFailureYieldsEvidenceMissingDiag_WP15T07_ACC2
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from KinTaskPointIkEval
+[ RUN      ] KinTaskPointIkEval.FacilityFailureYieldsEvidenceMissingDiag_WP15T07_ACC2
+D:\10_Source_Repos\21_robot\_accT07\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp(528): error: Value of: hasUnavailableDiag
+  Actual: false
+Expected: true
+碰撞评价未完成（设施异常）应产出 KIN-COLLISION-UNAVAILABLE
+
+[  FAILED  ] KinTaskPointIkEval.FacilityFailureYieldsEvidenceMissingDiag_WP15T07_ACC2 (1 ms)
+[----------] 1 test from KinTaskPointIkEval (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinTaskPointIkEval.FacilityFailureYieldsEvidenceMissingDiag_WP15T07_ACC2
+
+ 1 FAILED TEST

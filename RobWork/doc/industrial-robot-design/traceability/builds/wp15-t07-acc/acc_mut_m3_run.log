@@ -1,0 +1,25 @@
+Note: Google Test filter = KinTaskPointsBatchEval.CollisionEvidenceRowsAndUnavailableDiag_WP15T07_ACC2_ACC4
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from KinTaskPointsBatchEval
+[ RUN      ] KinTaskPointsBatchEval.CollisionEvidenceRowsAndUnavailableDiag_WP15T07_ACC2_ACC4
+D:\10_Source_Repos\21_robot\_accT07\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(1072): error: Expected equality of these values:
+  row.subject
+    Which is: (16-byte object <15-A5 61-76 A9-B1 B1-E4 49-D3 79-7B 2E-CD EA-37>)
+  pEval
+    Which is: 16-byte object <CD-3D 97-19 E1-DA C0-6C 40-21 38-C8 F7-93 4B-EF>
+
+D:\10_Source_Repos\21_robot\_accT07\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp(1073): error: Value of: row.artifactDigest.has_value()
+  Actual: false
+Expected: true
+
+[  FAILED  ] KinTaskPointsBatchEval.CollisionEvidenceRowsAndUnavailableDiag_WP15T07_ACC2_ACC4 (3 ms)
+[----------] 1 test from KinTaskPointsBatchEval (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (4 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinTaskPointsBatchEval.CollisionEvidenceRowsAndUnavailableDiag_WP15T07_ACC2_ACC4
+
+ 1 FAILED TEST

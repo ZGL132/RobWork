@@ -1,0 +1,21 @@
+Note: Google Test filter = KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from KinCollisionPort
+[ RUN      ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2
+D:\10_Source_Repos\21_robot\_accT07\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\CollisionPortTest.cpp(588): error: Expected equality of these values:
+  wiredDisabled.availability
+    Which is: 1-byte object <02>
+  kin::CollisionSessionAvailability::PolicyDisabled
+    Which is: 1-byte object <01>
+
+[  FAILED  ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2 (0 ms)
+[----------] 1 test from KinCollisionPort (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] KinCollisionPort.WiringPolicyDisabledAndDetectorArms_WP15T07_ACC5_ACC2
+
+ 1 FAILED TEST
