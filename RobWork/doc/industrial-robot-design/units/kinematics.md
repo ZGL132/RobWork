@@ -4,15 +4,15 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.1（首版草案，2026-09-22；对应 development-task-breakdown.md WP-15-T01 交付物） |
-| 日期 | 2026-09-22 |
+| 文档版本 | v0.2（2026-09-26，WP-15-T02 落位登记——§14.6；v0.1 首版草案 2026-09-22，WP-15-T01 交付物） |
+| 日期 | 2026-09-26（v0.2）；2026-09-22（v0.1） |
 | 状态 | **`Draft`**（待评审；DETAILED-DESIGN.md 单元状态表中的"kinematics｜待产出"以本卡落盘为准，索引行同步由治理侧执行，本卡不代改） |
 | 文档代号 | UNIT-KIN |
 | 单元 | kinematics（业务域单元，ARCHITECTURE §3.1：FK/IK/批量验证/区域覆盖、显示单位、求解配置；ARCHITECTURE §3.3 二分结构：零 Qt 计算库＋Qt Widgets 插件） |
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.12（`Draft`，2026-09-10）** |
 | 协作输入 | `units/core.md` v0.11、`units/runtime.md` v0.15、`units/project.md` v0.18、`units/policy.md` v0.14、`units/io.md` 卡头 v0.9（§15.5 至 v1.0）、`units/diagnostics.md` v0.12、`units/evidence.md` v1.3（**§9 评估器接口/注册表已冻结为设计基线**：EvaluatorDescriptor/EvaluationRequest/EvaluationOutput/IEvaluationContext/IEngineeringEvaluator/IEvaluatorFactory/EvaluatorRegistry、§4.1.4 SamplingPlanRef、§6.4 五级汇总）、`units/execution.md`（存在，调度/取消/检查点经其公共契约消费）、`units/requirements.md` v0.2（同批业务卡：req.* 角色键、采样计划定义、必经状态语义）、`units/modeling.md` v0.2、`units/ui.md` v1.5（v1.6）、`units/testkit.md` v0.9——均为 **Draft/Draft-Structured（未冻结）**；本卡消费的签名以各卡当前文本为基线，冻结后按影响面增量同步（§14.3 P-KIN-7） |
 | 上游下游链位置 | ARCHITECTURE §11.1：`DETAILED-DESIGN.md`（已建立）→ `units/*.md`（单元任务卡）。本文即 `units/kinematics.md`，按任务卡深度编写 |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/`（**现状：上级以 INTERFACE 占位注册 `sdurws_ird_kinematics`＋别名；单元级 CMakeLists.txt 不存在；`include/sdurws/ird/kinematics/` 仅 README.md 保留位——由 WP-15-T02 转真实目标**，见 §3.2、§11） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/`（**WP-15-T02 起为真实目标**：`sdurws_ird_kinematics` STATIC（C++17、零 Qt、PUBLIC 链 core/diagnostics/runtime/policy/evidence/execution 六条 §3.2 登记边）＋`_test`/`_contract_test` 两测试目标＋配置期红线守卫；T02 公共面＝Errors/DiagCodes 两头；`_plugin` 随 WP-15-T12，见 §3.2、§11） |
 | 任务归属 | `development-task-breakdown.md`（v0.16）WP-F／WP-15（T01～T17；T14～T17 为 R2/D 预留）；本文 §11 只做单元内部任务拆分与排序，不重排 WP 编号 |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释、框架零源码修改、双模式构建与留痕、提交后推送；Windows Qt GUI 测试须在 VS x64 环境设 `QT_QPA_PLATFORM=windows`、逐个绝对路径启动 |
 | 实现口径 | **从头构建**（REQUIREMENTS v1.9/v1.11 确立）：一切实现按需求与本文新建，不继承、不恢复任何历史实现源码。旧代码位置（用户提供 `D:\10_Source_Repos\old\src\rwslibs\kinematicanalysis`，实测 62 个文件、头文件 19 个约 4200 行）**仅作功能范围对照**（§2.5），不构成实现继承或正确性背书 |
@@ -71,7 +71,7 @@ kinematics 是七阶段工作流的第三阶段（StageId 序列 `modeling → r
 | `units/ui.md` | v1.5（文末登记 v1.6） | `Draft` | IPluginUiRegistrar/IPluginUiModule、DomainReadinessItem、七态、View3D 契约、会话态（KIN-06 承载点） |
 | `DETAILED-DESIGN.md` | 索引 | — | kinematics 行登记"待产出／WP-F" |
 | `development-task-breakdown.md` | v0.16 | `Draft` | WP-15-T01～T17、§3 追踪矩阵 KIN 行、§5 构建约定、关键路径（WP-15-T03~T07 → optimization） |
-| 代码落位 | `industrialrobot/kinematics/`：仅 `include/sdurws/ird/kinematics/README.md` 保留位 | — | 无单元级 CMakeLists.txt、无产品源码、无 `_plugin/_test` 目标（WP-15-T02 建）；上级门禁白名单无 kinematics 出边（§3.4 登记应增边） |
+| 代码落位 | `industrialrobot/kinematics/`：WP-15-T02 起为真实目标（`CMakeLists.txt`＋`include/` Errors/DiagCodes 两头＋`src/` 两 TU＋`test/`＋`contract_test/`） | — | `sdurws_ird_kinematics` STATIC＋`_test`/`_contract_test` 已建；`_plugin` 随 WP-15-T12；上级门禁白名单 kinematics 出边六条已随 WP-15-T02 登记（§3.2/§3.4） |
 
 缺失文件登记：用户清单所列输入文件**全部存在**，无缺失；`units/kinematics.md` 本身此前不存在，即本卡（新建 v0.1）。
 
@@ -835,7 +835,7 @@ DTB WP-15 任务包（v0.16 §2.16）为权威拆分；本卡视角内部顺序�
 | 任务 | 产出（本卡落点） | 前置（DTB） | 内部顺序 |
 | --- | --- | --- | --- |
 | WP-15-T01 | 本卡（含五类结局判定表 §5.4、去重口径 §6.1、覆盖率算法 §7.2、AnalysisConfiguration schema §4.4、插件界面 §9.8、任务拆分 §11） | WP-06/07/05/08 各卡 | ①（已完成——本提交） |
-| WP-15-T02 | `kinematics/CMakeLists.txt`（STATIC 零 Qt＋测试目标＋守卫＋白名单六边，§3.2）；KinTypes/Errors/DiagCodes | T01、WP-03-T01 | ② |
+| WP-15-T02 | `kinematics/CMakeLists.txt`（STATIC 零 Qt＋测试目标＋守卫＋白名单六边，§3.2）；Errors/DiagCodes 两头（T02 公共面＝§3.3 布局表 T02 行权威——初版本行"KinTypes"字样与 §3.3 任务列 T03/T04 不一致，随落位对齐登记 §14.6） | T01、WP-03-T01 | ②（已完成——WP-15-T02） |
 | WP-15-T03 | FK 与指标评估器（`kin.pose-metrics`＋IFkEvaluator＋Bounds 解析素材）＋解析黄金 UT（AT-03/NFR-COR-01） | T02、WP-06-T09（DeviceView） | ③（核心阻塞） |
 | WP-15-T04 | 多初值 IK＋去重排序（`kin.task-point-ik`＋IIkSolver＋SolutionSet；搜索未果记录；两提交） | T03、WP-07-T07 | ④ |
 | WP-15-T05 | 批量任务点验证（`kin.task-points-batch`＋EvidenceBuilder＋检查点 watermark） | T04、WP-08 | ⑤ |
@@ -975,6 +975,7 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v0.2 | 2026-09-26 | WP-15-T02 落位登记：`kinematics/CMakeLists.txt` 新建（`sdurws_ird_kinematics` INTERFACE 占位→STATIC，目标名/别名不变；C++17 显式、零 Qt、PUBLIC 链 core/diagnostics/runtime/policy/evidence/execution 六条 §3.2 登记边——ARCH §3.5"业务域→L2/L3 公共接口"许可方向实例化，白名单 "kinematics->…" 六行随任务登记＋dependency-graph.json 同步刷新；`_test`/`_contract_test` 随文件注册〔ird_add_gtest 自持宏，LABELS ird〕；配置期红线守卫自持 R-1/R-3；`_plugin` 随 WP-15-T12、`_worker` 不新建——卡 §3.1）；T02 公共面两头落位——`Errors.hpp`（KinematicsErrorCode 4 值＝§9.2 IFkEvaluator @错误 行收编＋KinematicsError 值类型＋域错误→稳定码映射〔零映射行——§9.6 任务列最早 T03，分批纪律〕）、`DiagCodes.hpp`（§9.6 全表 15 码描述符清单——契约 acceptance 4"全表清单登记"；注册义务随各消费任务装配期展开，不预建无消费者条目）；§11 T02 行"KinTypes"字样对齐 §3.3 布局表任务列（KinTypes.hpp 归 T03/T04——布局表权威，无语义变更）；§1.2 代码落位行、构建落位字段相应事实由本行承载；无语义偏差 |
 | v0.1 | 2026-09-22 | 首版草案（WP-15-T01 承接）：14 章全量——上游基线登记（REQUIREMENTS v1.16/ARCHITECTURE v0.12/十二单元卡 Draft 系/旧代码 62 文件实测）；KIN-01~14 承接总表＋拥有/消费/不拥有边界＋§2.5 旧代码功能对照（26 行）；输入快照与 AnalysisConfiguration schema（含身份外元素与依赖矩阵）；FK/指标契约（统一尺度规则定义）与 IK 契约（**五类结局判定表**——搜索未果铁律）；构型/解集/稳定排序；批量验证与区域覆盖（分母规则/零样本/样本集身份）；策略调用（构型级 vs 任务级边界图）与证据生成（只产不判）；确定性/并行/缓存契约与 execution 协作；7 必需接口契约＋15 个 KIN- 稳定码＋§9.8 插件界面（四面板＋十二条数据流＋命令清单，v0.1 内置）；26 行故障注入矩阵＋四套黄金数据集＋测试替身；WP-15-T01~T17 排序；双向交接清单；追踪矩阵；10 决策/5 风险/7 待裁决（含 P-KIN-2 运行时视图注入点）；13 项自审。状态 `Draft`，待评审 |
 
 > 自审声明：本文档自审仅覆盖设计一致性、边界与上游对齐，不等同于实现测试通过或正式验收（acceptance-protocol.md 流程另行执行）。

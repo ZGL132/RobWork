@@ -1,6 +1,6 @@
 {
   "schemaVersion": "ird-dependency-graph/1",
-  "note": "数据源：ARCHITECTURE.md §3.5 有向边表（全量 20 条接口依赖边）＋业务域落位期实例化边（requirements→core/diagnostics/project/io/evidence 五边，WP-14-T02 随落位同步——units/requirements.md §3.2 边表，属 ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化，出处另登记于 cmake/ird_gates_whitelist.cmake IRD_EXTRA_EDGE_REFS；modeling→…六边同属该许可方向，其图刷新归 traceability 维护任务，暂经 IRD_EXTRA_EDGE_REFS 承接）。testkit→core（仅测试目标可用）未入 ARCH §3.5（P-TK-4 / DTB §4 O-21 登记），故不在此列；事件总线/命令上下文回调节点为运行时注入形态，无编译期边。",
+  "note": "数据源：ARCHITECTURE.md §3.5 有向边表（全量 20 条接口依赖边）＋业务域落位期实例化边（requirements→core/diagnostics/project/io/evidence 五边，WP-14-T02 随落位同步；kinematics→core/diagnostics/runtime/policy/evidence/execution 六边，WP-15-T02 随落位同步——两批均属各自单元卡 §3.2 边表登记的 ARCH §3.5 业务域→L2/L3 公共接口许可方向实例化，出处另登记于 cmake/ird_gates_whitelist.cmake IRD_EXTRA_EDGE_REFS；modeling→…六边同属该许可方向，其图刷新归 traceability 维护任务，暂经 IRD_EXTRA_EDGE_REFS 承接）。testkit→core（仅测试目标可用）未入 ARCH §3.5（P-TK-4 / DTB §4 O-21 登记），故不在此列；事件总线/命令上下文回调节点为运行时注入形态，无编译期边。",
   "edges": [
     {"from":"evidence","to":"core","kind":"interface"},
     {"from":"policy","to":"core","kind":"interface"},
@@ -26,6 +26,12 @@
     {"from":"requirements","to":"diagnostics","kind":"interface"},
     {"from":"requirements","to":"project","kind":"interface"},
     {"from":"requirements","to":"io","kind":"interface"},
-    {"from":"requirements","to":"evidence","kind":"interface"}
+    {"from":"requirements","to":"evidence","kind":"interface"},
+    {"from":"kinematics","to":"core","kind":"interface"},
+    {"from":"kinematics","to":"diagnostics","kind":"interface"},
+    {"from":"kinematics","to":"runtime","kind":"interface"},
+    {"from":"kinematics","to":"policy","kind":"interface"},
+    {"from":"kinematics","to":"evidence","kind":"interface"},
+    {"from":"kinematics","to":"execution","kind":"interface"}
   ]
 }
