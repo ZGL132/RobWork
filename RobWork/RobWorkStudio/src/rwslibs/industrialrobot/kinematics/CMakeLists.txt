@@ -137,8 +137,12 @@ target_sources(sdurws_ird_kinematics PRIVATE
 #   src/Export.cpp     结果导出值行（KIN-08/AT-04——解行/过滤诊断行/区域
 #                      覆盖行整理＋JSON/CSV 文本编码＋导出文件头来源声明；
 #                      纯函数面，写出本身归 io 通道由插件侧触发）
+#   src/Recompute.cpp  批量复算请求构造（KIN-08/§7.4——按原 slice 重新
+#                      提交 execution 新 run 的域侧请求值；字段携带规则
+#                      ＋调用方错误 fail-fast；提交动作归 execution）
 target_sources(sdurws_ird_kinematics PRIVATE
-    src/Export.cpp)
+    src/Export.cpp
+    src/Recompute.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
@@ -234,7 +238,8 @@ add_executable(sdurws_ird_kinematics_test
     test/RegionCoverageTest.cpp
     test/CommandsTest.cpp
     test/SolutionSetViewTest.cpp
-    test/ExportTest.cpp)
+    test/ExportTest.cpp
+    test/RecomputeTest.cpp)
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言
