@@ -382,3 +382,151 @@ TEST(KinTaskPointIkEval, DeterministicAndModeSensitivePayload_WP15T04_ACC3)
     EXPECT_FALSE(verified1.payload->canonicalBytes == quick.payload->canonicalBytes)
         << "mode 必须进入结果身份字节（screening-only 承载面）";
 }
+
+// =====================================================================
+// 碰撞接入（WP-15-T07）——硬过滤③的诊断面与 KIN-05 证据缺失轨
+// =====================================================================
+
+namespace {
+
+/// 碰撞会话替身（谓词＋状态脚本——构型级判定的可控注入；T04
+/// StubCollisionSession 同款形态，本 TU 文件局部）。谓词语义：
+/// q[0] < 0 视为碰撞（分支可分——关节网格初值覆盖两侧符号）。
+class PredicateCollisionSession final : public kin::IKinCollisionSession {
+public:
+    using Predicate = bool (*)(const std::vector<double>&);
+
+    explicit PredicateCollisionSession(
+        kin::IkCollisionEvaluationState state = kin::IkCollisionEvaluationState::Evaluated,
+        Predicate predicate = nullptr)
+        : m_state(state), m_predicate(predicate)
+    {
+    }
+
+    kin::IkCollisionVerdict evaluate(const std::vector<double>& q) const override
+    {
+        kin::IkCollisionVerdict v;
+        v.state = m_state;
+        if (m_state != kin::IkCollisionEvaluationState::Evaluated) {
+            v.statusDetail = m_state == kin::IkCollisionEvaluationState::FacilityFailed
+                                 ? "测试注入：碰撞设施异常"
+                                 : "测试注入：策略侧应答不可判";
+            return v;
+        }
+        v.inCollision = m_predicate != nullptr && m_predicate(q);
+        if (v.inCollision) {
+            core::ObjectId a;
+            core::ObjectId b;
+            a.bytes[0] = 0xA1;
+            b.bytes[0] = 0xA2;
+            v.objectIdPairs = {a, b};
+        }
+        return v;
+    }
+
+private:
+    kin::IkCollisionEvaluationState m_state;
+    Predicate m_predicate;
+};
+
+}  // namespace
+
+/**
+ * KIN-COLLISION-FILTERED 诊断（acceptance 1，§9.6 行 8 产码面）：收敛
+ * 候选因构型级碰撞被过滤——逐过滤记录产出诊断（warning 级，不下任务
+ * 结论）。脚本取"恒碰撞"谓词（全部候选被过滤——结局 3 的确定性形态；
+ * "一构型碰撞另一构型有效→素材不受影响"的双分支面由求解器级替身用例
+ * CollisionFilteredKeepsValidConfiguration_WP15T04_ACC2 承载，其经过
+ * 本任务改造后的硬过滤③三态轨——两用例互补）。
+ */
+TEST(KinTaskPointIkEval, CollisionFilteredDiagEmittedPerRecord_WP15T07_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-05", "NFR-COR-05"},
+                  std::vector<std::string>{"AT-19"});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+
+    // 可达目标（黄金 FK 位姿）＋多初值（保证收敛候选 ≥1）＋恒碰撞替身。
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+    TaskPointIkQuery q = makeQuery(transformOf(golden));
+    q.initialStrategy = kin::InitialValueStrategy::JointGrid;
+    q.initialValuesCount = 4U;
+    q.iterationLimit = 500U;
+    PredicateCollisionSession session(kin::IkCollisionEvaluationState::Evaluated,
+                                      [](const std::vector<double>&) { return true; });
+    q.collisionSession = &session;
+
+    TaskPointIkEvaluator evaluator(&view, q);
+    NoopContext context;
+    const evidence::EvaluationOutput out =
+        evaluator.evaluate(makeRequest(core::EvaluationMode::Verified), context);
+
+    // 全部候选被碰撞过滤（结局 3）：无 payload（零可行解——可行素材与
+    // "全部碰撞"不可共存）＋搜索未果记录在场（C8 素材）。
+    EXPECT_FALSE(out.payload.has_value());
+    EXPECT_TRUE(out.searchRecord.has_value());
+
+    // KIN-COLLISION-FILTERED 诊断在产（逐过滤记录 ≥1 条——被过滤解的
+    // 构型级事实；与 KIN-SEARCH-EXHAUSTED 并存）。
+    std::size_t filteredDiags = 0;
+    bool hasUnavailableDiag = false;
+    for (const core::DiagnosticRecord& d : out.diagnostics) {
+        if (d.code == std::string(kin::kKinCollisionFiltered)) {
+            ++filteredDiags;
+        }
+        if (d.code == std::string(kin::kKinCollisionUnavailable)) {
+            hasUnavailableDiag = true;
+        }
+    }
+    EXPECT_GE(filteredDiags, 1U)
+        << "存在碰撞被过滤解时应产出 KIN-COLLISION-FILTERED 诊断";
+    EXPECT_FALSE(hasUnavailableDiag)
+        << "碰撞评价全部完成时不得产出 KIN-COLLISION-UNAVAILABLE";
+}
+
+/**
+ * KIN-05 设施臂（acceptance 2）：会话在场但构型评价未完成（设施异常）
+ * ——该解标记证据缺失（collisionStatus.evaluated=false 素材）、解保留
+ * （不中断求解）、KIN-COLLISION-UNAVAILABLE 诊断在产（§9.6 行 9——
+ * 产码面随本任务落位），绝不视为无碰撞（无"已评价无碰撞"素材）。
+ */
+TEST(KinTaskPointIkEval, FacilityFailureYieldsEvidenceMissingDiag_WP15T07_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-05"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+
+    TaskPointIkQuery q = makeQuery(transformOf(golden));
+    PredicateCollisionSession session(kin::IkCollisionEvaluationState::FacilityFailed);
+    q.collisionSession = &session;
+
+    TaskPointIkEvaluator evaluator(&view, q);
+    NoopContext context;
+    const evidence::EvaluationOutput out =
+        evaluator.evaluate(makeRequest(core::EvaluationMode::Verified), context);
+
+    // 解保留（设施异常不中断求解——§8.1 取消/失败行）：payload 在场。
+    ASSERT_TRUE(out.payload.has_value())
+        << "碰撞设施异常不得中断求解（解保留、标记证据缺失）";
+
+    // KIN-COLLISION-UNAVAILABLE 诊断在产（证据缺失轨）且无
+    // KIN-COLLISION-FILTERED（评价未发生——无过滤事实）。
+    bool hasUnavailableDiag = false;
+    bool hasFilteredDiag = false;
+    for (const core::DiagnosticRecord& d : out.diagnostics) {
+        if (d.code == std::string(kin::kKinCollisionUnavailable)) {
+            hasUnavailableDiag = true;
+        }
+        if (d.code == std::string(kin::kKinCollisionFiltered)) {
+            hasFilteredDiag = true;
+        }
+    }
+    EXPECT_TRUE(hasUnavailableDiag)
+        << "碰撞评价未完成（设施异常）应产出 KIN-COLLISION-UNAVAILABLE";
+    EXPECT_FALSE(hasFilteredDiag)
+        << "评价未发生时不得产出 KIN-COLLISION-FILTERED（无过滤事实）";
+}

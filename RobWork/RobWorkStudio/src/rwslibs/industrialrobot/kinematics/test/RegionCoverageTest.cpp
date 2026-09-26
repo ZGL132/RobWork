@@ -877,3 +877,95 @@ TEST(KinRegionCoverage, MirrorPlanSamplesIndependent_WP15T06_ACC5)
     EXPECT_EQ(set.samples[0].sampleIndex, 0U);
     EXPECT_EQ(set.samples[4].sampleIndex, 4U);
 }
+
+// =====================================================================
+// 碰撞设施臂（WP-15-T07——acceptance 2）：碰撞要求在场＋构型碰撞评价
+// 未完成（设施异常/策略侧不可判）→ 该样本 DataInsufficient（绝不视为
+// 无碰撞）＋KIN-COLLISION-UNAVAILABLE 诊断在产（§9.6 行 9 产码面随
+// 本任务落位——T06 预留轨的收口）
+// =====================================================================
+
+namespace {
+
+/// 设施异常求解替身（结局 1＋碰撞评价缺失标记——coverage 的逐样本
+/// 通道以 IkOutcome.collisionEvidenceMissing 承载设施臂，T07 表尾追加）。
+class EvidenceMissingSolver final : public kin::IIkSolver {
+public:
+    kin::IkOutcome solve(const kin::IkRequest&) const override
+    {
+        kin::IkOutcome outcome;
+        outcome.outcomeKind = kin::IkOutcomeKind::SolutionsFound;
+        kin::KinematicSolution s;
+        s.q = {0.1, -0.2};              // 自由度 2（二连杆夹具）
+        s.positionResidual = 1e-9;      // m（< 容差）
+        s.orientationResidual = 1e-9;   // rad
+        s.collisionStatus.evaluated = false;  // 评价未完成（证据缺失）
+        outcome.solutionSet.solutions.push_back(s);
+        outcome.collisionEvidenceMissing = true;
+        return outcome;
+    }
+};
+
+}  // namespace
+
+TEST(KinRegionCoverage, CollisionFacilityFailureSampleInsufficient_WP15T07_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-05", "KIN-04"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = twoLinkModel();
+    TestView view(model);
+    NoopContext context;
+
+    // 计划级碰撞要求在场＋会话在场但评价缺失（设施臂）→ 全部样本
+    // DataInsufficient＋整体降级（KIN-05：绝不视为无碰撞）。
+    SamplingPlan plan = makePlan("colfac", {2U, 1U, 1U});
+    plan.demands.collisionFreeRequired = true;
+    EvidenceMissingSolver solver;
+    const RegionCoverageQuery query = makeQuery({plan}, &solver);
+    kin::WorkspaceSampler evaluator(&view, query);
+    const evidence::EvaluationOutput out =
+        evaluator.evaluate(makeRequest({makeRef(plan, query.budget)}), context);
+
+    // 载荷标记面：downgraded=1（设施臂与缺检测器臂同素材面——要求在场
+    // 而评价未完成 → 整体降级 DataInsufficient）。
+    ASSERT_TRUE(out.payload.has_value());
+    ByteReader reader(out.payload->canonicalBytes);
+    EXPECT_EQ(reader.str(7), "IRDCV01");
+    EXPECT_EQ(reader.u32(), 1U);
+    EXPECT_EQ(reader.u8(), 0U);  // incomplete
+    EXPECT_EQ(reader.u8(), 1U);  // downgraded——碰撞证据缺失 → 降级
+
+    // KIN-COLLISION-UNAVAILABLE 诊断在产（样本计数 ≥1——§9.6 行 9）。
+    bool hasUnavailableDiag = false;
+    for (const core::DiagnosticRecord& d : out.diagnostics) {
+        if (d.code == std::string(kin::kKinCollisionUnavailable)) {
+            hasUnavailableDiag = true;
+        }
+    }
+    EXPECT_TRUE(hasUnavailableDiag)
+        << "碰撞要求在场而评价未完成应产出 KIN-COLLISION-UNAVAILABLE";
+
+    // 对照：无碰撞要求且同构型求解（评价缺失标记不在范围语境）——
+    // 样本正常 Reached、无 KIN-COLLISION-UNAVAILABLE（标记面≠缺陷面）。
+    SamplingPlan plain = makePlan("colplain", {2U, 1U, 1U});
+    const RegionCoverageQuery plainQuery = makeQuery({plain}, &solver);
+    kin::WorkspaceSampler plainEvaluator(&view, plainQuery);
+    const evidence::EvaluationOutput plainOut =
+        plainEvaluator.evaluate(makeRequest({makeRef(plain, plainQuery.budget)}),
+                                context);
+    ASSERT_TRUE(plainOut.payload.has_value());
+    ByteReader plainReader(plainOut.payload->canonicalBytes);
+    plainReader.str(7);
+    plainReader.u32();
+    EXPECT_EQ(plainReader.u8(), 0U);  // incomplete
+    EXPECT_EQ(plainReader.u8(), 0U);  // downgraded——无要求≠缺陷
+    bool plainHasUnavailableDiag = false;
+    for (const core::DiagnosticRecord& d : plainOut.diagnostics) {
+        if (d.code == std::string(kin::kKinCollisionUnavailable)) {
+            plainHasUnavailableDiag = true;
+        }
+    }
+    EXPECT_FALSE(plainHasUnavailableDiag)
+        << "无碰撞要求时评价缺失标记不产 KIN-COLLISION-UNAVAILABLE";
+}

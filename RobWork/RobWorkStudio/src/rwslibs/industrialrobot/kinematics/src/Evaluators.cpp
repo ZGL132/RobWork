@@ -409,7 +409,8 @@ void validateTaskPointIkQuery(const IKinRuntimeView& view,
 // ---------------------------------------------------------------------
 // 评估期结构化诊断（KIN-NO-TCP／KIN-RESIDUAL-EXCEEDED／
 // KIN-JOINT-LIMIT-VIOLATED／KIN-SEARCH-EXHAUSTED——码值经 DiagCodes.hpp
-// 注册常量，禁字符串拼码；碰撞过滤诊断归 T07——§9.6 任务列分工）
+// 注册常量，禁字符串拼码；碰撞两码（FILTERED/UNAVAILABLE）已随 WP-15-T07
+// 落位产码——§9.6 任务列 T07 行）
 // ---------------------------------------------------------------------
 
 /// 基础诊断组装（码值经 DiagCodes.hpp 注册常量传入——禁字符串拼码；
@@ -620,7 +621,7 @@ evidence::EvaluationOutput TaskPointIkEvaluator::evaluate(
         return out;
     }
 
-    // ---- 硬过滤逐解诊断（评价/证据级——§5.5；碰撞原因诊断归 T07，
+    // ---- 硬过滤逐解诊断（评价/证据级——§5.5；碰撞原因诊断随 T07 落位，
     // §9.6 任务列分工）。----
     for (const FilteredSolutionRecord& r : outcome.solutionSet.filteredRecords) {
         switch (r.reason) {
@@ -636,8 +637,34 @@ evidence::EvaluationOutput TaskPointIkEvaluator::evaluate(
                 "核对目标可达域或求解配置的关节区间后复评"));
             break;
         case SolutionFilterReason::Collision:
-            break;  // KIN-COLLISION-FILTERED 的产码面归 T07（§9.6）。
+            // 碰撞过滤诊断（KIN-COLLISION-FILTERED——§9.6 行 8，产码面随
+            // WP-15-T07 落位）：构型级事实（该解因碰撞被过滤）——warning
+            // 级，不下任务结论（C8：其余解不受影响）；对象对明细随解记
+            // 录/证据行交付（ID 对——R-4 不拼名称，诊断 cause 以对计数
+            // 概述）。
+            out.diagnostics.push_back(makeKinDiag(
+                kKinCollisionFiltered, m_query.pointOid,
+                "kin.task-point-ik 任务点 IK 硬过滤③碰撞",
+                "该解因构型级碰撞被过滤（构型签名 " + r.signature
+                    + "；碰撞对象对 " + std::to_string(r.objectIdPairs.size() / 2)
+                    + " 对——其余解不受影响，任务可行素材不受影响，V-08/C8）",
+                "改换初值/目标或调整策略碰撞规则后复评（构型级过滤不下任务结论）"));
+            break;
         }
+    }
+
+    // ---- 碰撞评价缺失诊断（KIN-COLLISION-UNAVAILABLE——§9.6 行 9，产码面
+    // 随 WP-15-T07 落位）：会话在场但存在构型级评价未完成（设施异常/策略
+    // 侧应答不可判）——该解证据缺失素材（collisionStatus.evaluated=false，
+    // 绝不解读为无碰撞）；策略未启用（会话不在场）无要求语境不产码
+    // （T06 口径"碰撞检查不在范围，非降级"——登记随卡 §14.6 v0.7）。
+    if (outcome.collisionEvidenceMissing) {
+        out.diagnostics.push_back(makeKinDiag(
+            kKinCollisionUnavailable, m_query.pointOid,
+            "kin.task-point-ik 任务点 IK 碰撞评价",
+            "碰撞评价未完成（设施异常/策略侧应答不可判——涉及解的碰撞证据"
+            "缺失，绝不视为无碰撞；KIN-05）",
+            "核对碰撞设施可用性与策略碰撞规则后按同一冻结输入复评"));
     }
 
     // ---- 结局映射（§5.4 → EvaluationOutput；铁律：2/3/4 不得升级为
@@ -1240,7 +1267,13 @@ void solveItem(WorkState& item, const BatchQuery& query, const IIkSolver& solver
         return;  // 取消不是结局——槽保持 NotRun（无终局字段可解读）
     }
 
-    item.collisionNotEvaluated = outcome.collisionNotEvaluated;
+    // 碰撞未评价标记（WP-15-T07 口径——两臂合并：会话不在场（策略未
+    // 启用/接线不可用）或会话在场而构型评价未完成（设施异常/策略侧
+    // 应答不可判）——都是证据缺失素材，绝不解读为无碰撞，KIN-05；
+    // 诊断面在组装器按"碰撞要求在场＋未评价"统一产 KIN-COLLISION-
+    // UNAVAILABLE，登记随卡 §14.6 v0.7）。
+    item.collisionNotEvaluated =
+        outcome.collisionNotEvaluated || outcome.collisionEvidenceMissing;
     item.outcomeKind = outcome.outcomeKind;
     switch (outcome.outcomeKind) {
     case IkOutcomeKind::SolutionsFound:
@@ -2260,6 +2293,31 @@ evidence::EvaluationOutput WorkspaceSampler::evaluate(
             "恢复任务（新 attempt 自 watermark 续跑）后按同一冻结样本集复评"));
     }
 
+    // 碰撞证据缺失诊断（KIN-COLLISION-UNAVAILABLE——§9.6 行 9，产码面随
+    // WP-15-T07 落位，T06 预留轨的收口）：碰撞要求在场的样本中存在碰撞
+    // 评价未完成（缺检测器/设施异常——两臂同码，cause 按样本计数概述；
+    // 口径登记随卡 §14.6 v0.7）。样本级素材＝DataInsufficient＋
+    // collisionNotEvaluated＋原因文本（runRegionCoverageComputation 两轨
+    // 落值——"不在范围"样本同样有 collisionNotEvaluated 标记但无原因
+    // 文本，不在此计数：标记面≠缺陷面，非降级）。
+    {
+        std::uint64_t collisionMissing = 0;
+        for (const SampleResultRecord& r : computation.results.results) {
+            if (r.collisionNotEvaluated && !r.reason.empty()) {
+                ++collisionMissing;
+            }
+        }
+        if (collisionMissing > 0) {
+            out.diagnostics.push_back(makeKinDiag(
+                kKinCollisionUnavailable, std::nullopt,
+                "kin.region-coverage 区域覆盖评估",
+                "碰撞要求在场的样本中 " + std::to_string(collisionMissing)
+                    + " 个样本碰撞评价未完成（缺检测器/设施异常——证据缺失素材，"
+                      "绝不视为无碰撞；KIN-05）",
+                "接入碰撞检测器或修正策略碰撞规则后按同一冻结样本集复评"));
+        }
+    }
+
     // 携带模式敏感性标记（Quick/Preview 的 screening-only 语义在 mode
     // 字段——载荷绑定块已携带；效力门禁归汇总/包络层，§8.4）。
     return out;
@@ -2348,8 +2406,8 @@ RegionCoverageComputation runRegionCoverageComputation(
 
         // 缺检测器轨（KIN-05 语义承接，acceptance 5）：碰撞要求在场而
         // 会话为空 → 该样本 DataInsufficient——绝不视为无碰撞；稳定诊断
-        // 码 KIN-COLLISION-UNAVAILABLE 的产码面归 T07（§9.6 任务列分工），
-        // 本轨以样本状态＋原因文本承载素材。
+        // 码 KIN-COLLISION-UNAVAILABLE 的产码面已随 T07 落位（评估器诊断面
+        // 按样本计数产码；本轨以样本状态＋原因文本承载素材）。
         const auto reqIt = planCollisionRequired.find(sample.regionObjectId);
         const bool collisionRequired =
             reqIt != planCollisionRequired.end() && reqIt->second;
@@ -2424,8 +2482,26 @@ RegionCoverageComputation runRegionCoverageComputation(
             result.state = SampleState::DataInsufficient;
             break;
         }
+        // 碰撞要求在场而评价缺失（WP-15-T07 设施臂——§8.1 取消/失败行）：
+        // 会话在场但构型级碰撞评价未完成（设施异常/策略侧应答不可判），
+        // 该样本即使有解也不能作"无碰撞可达"凭据（KIN-05）→降为
+        // DataInsufficient＋collisionNotEvaluated 标记（与上方缺检测器轨
+        // 同素材面；诊断在评估器面按样本计数产 KIN-COLLISION-UNAVAILABLE，
+        // 登记随卡 §14.6 v0.7）。
+        const bool collisionEvidenceMissing =
+            outcome.collisionEvidenceMissing && collisionRequired;
+        if (collisionEvidenceMissing) {
+            result.state = SampleState::DataInsufficient;
+            result.collisionNotEvaluated = true;
+            result.reason =
+                "碰撞要求在场而构型碰撞评价未完成（设施异常/策略侧应答不可判"
+                "——KIN-05：该样本证据缺失，绝不视为无碰撞）";
+            out.results.results[slot] = std::move(result);
+            return;
+        }
         result.outcomeKind = outcome.outcomeKind;
-        result.collisionNotEvaluated = outcome.collisionNotEvaluated;
+        result.collisionNotEvaluated =
+            outcome.collisionNotEvaluated || outcome.collisionEvidenceMissing;
         out.results.results[slot] = std::move(result);
     };
 

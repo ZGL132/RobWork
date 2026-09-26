@@ -19,7 +19,8 @@
  *     反例）、§8.1 搜索未果口径 C5/C8（EVI-01/EVI-02 表达）
  *   - 治理裁决 O-37（宿主注入形态——碰撞会话句柄同款消费端口先例：
  *     IKinRuntimeView，见 KinTypes.hpp 文件头）；P-KIN-7（policy 会话
- *     契约 Draft——本头以自有最小端口承载，真实④端口会话组装归 T07）
+ *     契约 Draft——本头以自有最小端口承载，真实④端口会话组装已随 T07
+ *     落位（Collision.hpp））
  *   - 任务契约 tasks/foundation/WP-15-T04.json acceptance 1/2/3/4
  *
  * 背景说明（生产者身份常量为何落在本头）：结局 5 的证明素材必须绑定
@@ -40,6 +41,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <string>
 #include <vector>
 
 #include <rw/math/Transform3D.hpp>
@@ -158,16 +160,47 @@ std::vector<std::vector<double>> makeInitialValues(InitialValueStrategy strategy
 // =====================================================================
 
 /**
+ * @brief 构型碰撞评价状态三值词表（WP-15-T07 表尾追加——§8.1 取消/失败行
+ *        的值承载；登记随卡 §14.6 v0.7）。
+ *
+ * 语义（KIN-05 铁律：三种状态中只有 Evaluated 才允许解读"无碰撞"）：
+ *   - Evaluated：④端口会话完成构型级判定（inCollision/objectIdPairs 有效）；
+ *   - EvidenceMissing：证据缺失——策略侧应答不可判（作用域为空/策略禁用
+ *     被误调用/会话返回取消非终态），绝不解读为无碰撞；
+ *   - FacilityFailed：碰撞设施异常（检测后端异常/上下文失效），该解标记
+ *     DataInsufficient 素材＋诊断、不中断其余候选（§8.1 取消/失败行）。
+ */
+enum class IkCollisionEvaluationState : std::uint8_t {
+    /// ④端口会话完成构型级判定（判定值有效）。
+    Evaluated,
+    /// 证据缺失（策略侧应答不可判——KIN-05：绝不视为无碰撞）。
+    EvidenceMissing,
+    /// 碰撞设施异常（该样本/解 DataInsufficient 素材——不中断整批）。
+    FacilityFailed,
+};
+
+/**
  * @brief 单构型碰撞查询结果（§6.1 collisionStatus 的判定来源）。
  *
  * objectIdPairs 成对展平（[a1,b1,a2,b2,…]——碰撞对象对；仅
  * inCollision=true 时非空）。值语义纯结构；线程安全。
+ *
+ * ★ T07 追加纪律：state/statusDetail 两成员为 WP-15-T07 表尾追加（真实
+ * ④端口会话的失败/缺失语义承载——T04 端口的"仅判定值"形态不足以表达
+ * §8.1"设施异常→该解 DataInsufficient"轨）；聚合初始化只写前两成员的
+ * 既有调用点保持合法（追加成员带默认值——T03/T04 既有测试替身零改动）。
  */
 struct IkCollisionVerdict {
     /// 该构型是否碰撞（构型级判定——仅过滤该解，不下任务结论，C8）。
     bool inCollision = false;
     /// 碰撞对象对（成对展平——ObjectId，来自 policy 会话判定明细）。
     std::vector<core::ObjectId> objectIdPairs;
+    /// 评价状态（T07 追加——仅 Evaluated 态允许"无碰撞"解读，KIN-05）。
+    IkCollisionEvaluationState state = IkCollisionEvaluationState::Evaluated;
+    /// 非评价态的原因素材（EvidenceMissing/FacilityFailed 时非空——进
+    /// 诊断 cause；Evaluated 态为空串）。内部诊断链文本——不得未经
+    /// diagnostics 脱敏直接呈现。
+    std::string statusDetail;
 };
 
 /**
@@ -278,7 +311,10 @@ struct IkRequest {
  *   - outcomeKind=AnalyticBoundExceeded：solutions 为空、proofMaterial
  *     必填（仅素材——裁定归 evidence validateProof）；
  *   - collisionNotEvaluated=true：策略未启用碰撞，硬过滤③跳过——解的
- *     collisionStatus.evaluated=false（证据缺失，不解读为无碰撞）。
+ *     collisionStatus.evaluated=false（证据缺失，不解读为无碰撞）；
+ *   - collisionEvidenceMissing=true（T07 追加）：会话在场但存在构型级
+ *     评价未完成（设施异常/策略侧应答不可判）——同上证据缺失语义；
+ *     诊断面（KIN-COLLISION-UNAVAILABLE）由评估器/组装器据两标记产出。
  */
 struct IkOutcome {
     /// 取消标记（true＝取消返回——无终局字段，§9.2）。
@@ -289,6 +325,13 @@ struct IkOutcome {
     IkSolutionSet solutionSet;
     /// 碰撞未评价标记（硬过滤③跳过——证据缺失语义，KIN-05 口径）。
     bool collisionNotEvaluated = false;
+    /// 碰撞评价缺失标记（WP-15-T07 表尾追加——会话在场但构型评价未完成：
+    /// 设施异常/策略侧应答不可判；该解保留、collisionStatus.evaluated=
+    /// false，绝不解读为无碰撞，KIN-05；不中断其余候选——§8.1 取消/失败
+    /// 行。与 collisionNotEvaluated 的分工：后者＝会话不在场（策略未启用/
+    /// 接线不可用），前者＝会话在场而评价未完成——两者都是证据缺失素材，
+    /// 诊断码同为 KIN-COLLISION-UNAVAILABLE（口径登记随卡 §14.6 v0.7）。
+    bool collisionEvidenceMissing = false;
     /// 解析界限证明素材（仅结局 5 非空——本单元只产素材不裁定）。
     std::optional<AnalyticBoundMaterial> proofMaterial;
     /// 求解器算法契约版本（kIkSolverContractVersion——§8.4）。

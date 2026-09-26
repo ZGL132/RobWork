@@ -468,6 +468,12 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
                                         //   独立于②③过滤结果，语义见统计口径）
     std::vector<FilteredSolutionRecord> filteredRecords;  // 硬过滤逐解记录
     IkSearchRecord search;
+    // 碰撞评价缺失追踪（WP-15-T07——§8.1 取消/失败行）：缺失计数入结局
+    // 标记（outcome.collisionEvidenceMissing），末次原因素材仅作实现侧
+    // 观测（诊断 cause 的逐解素材在评估器面由解记录的 evaluated=false
+    // 承载——本求解器不产诊断，只产素材）。
+    std::uint64_t collisionEvidenceMissingCount = 0;
+    std::string lastEvidenceMissingDetail;
     search.initialGuessesTried = request.initialValues.size();
     convergedCandidates.reserve(request.initialValues.size());
     search.iterationsPerInit.reserve(request.initialValues.size());
@@ -606,19 +612,37 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
 
         // 3c. ③碰撞（policy 会话在场时——构型级判定仅过滤该解；未启用
         // →跳过并标记 collisionNotEvaluated，绝不解读为无碰撞——KIN-05）。
+        // ★ T07 三态（WP-15-T07——§8.1 取消/失败行）：会话应答按评价状态
+        // 分轨——仅 Evaluated 态参与过滤/放行；EvidenceMissing/FacilityFailed
+        // 态该解保留但 collisionStatus.evaluated=false（证据缺失素材，
+        // 诊断由评估器面产 KIN-COLLISION-UNAVAILABLE），**不中断**其余
+        // 候选的循环（整批语义——一解评价失败不污染他解）。
         if (request.collisionSession != nullptr) {
             const IkCollisionVerdict verdict =
                 request.collisionSession->evaluate(s.q);
-            if (verdict.inCollision) {
-                FilteredSolutionRecord r =
-                    makeFilteredRecord(s, SolutionFilterReason::Collision,
-                                       posResidual, oriResidual);
-                r.objectIdPairs = verdict.objectIdPairs;
-                filteredRecords.push_back(std::move(r));
-                continue;
+            switch (verdict.state) {
+            case IkCollisionEvaluationState::Evaluated:
+                if (verdict.inCollision) {
+                    FilteredSolutionRecord r =
+                        makeFilteredRecord(s, SolutionFilterReason::Collision,
+                                           posResidual, oriResidual);
+                    r.objectIdPairs = verdict.objectIdPairs;
+                    filteredRecords.push_back(std::move(r));
+                    continue;
+                }
+                s.collisionStatus.evaluated = true;
+                s.collisionStatus.inCollision = false;
+                break;
+            case IkCollisionEvaluationState::EvidenceMissing:
+            case IkCollisionEvaluationState::FacilityFailed:
+                // 证据缺失/设施异常：解保留入后续去重排序（其碰撞状态
+                // 保持未评价——调用方不得当作可行凭据，KIN-05）；缺失
+                // 计数入结局标记，评估器面据此产诊断。
+                s.collisionStatus.evaluated = false;
+                collisionEvidenceMissingCount += 1;
+                lastEvidenceMissingDetail = verdict.statusDetail;
+                break;
             }
-            s.collisionStatus.evaluated = true;
-            s.collisionStatus.inCollision = false;
         } else {
             // 未启用碰撞：解的碰撞状态保持未评价（证据缺失语义）。
             s.collisionStatus.evaluated = false;
@@ -635,6 +659,9 @@ IkOutcome IkSolver::solve(const IkRequest& request) const
     // 过滤记录（去重≠硬过滤——统计口径分离）。实现＝
     // deduplicateSolutions 唯一实现点（SolutionSet.cpp——§6.2 视图面
     // 共享同语义）。----
+    // 碰撞评价缺失标记（T07——§8.1：设施异常/策略侧不可判→该解证据缺失
+    // 素材；>0 即结局级标记，诊断由评估器面产 KIN-COLLISION-UNAVAILABLE）。
+    outcome.collisionEvidenceMissing = collisionEvidenceMissingCount > 0;
     std::vector<KinematicSolution> deduped =
         deduplicateSolutions(convergedCandidates, request.dedupThresholdPerAxis);
 

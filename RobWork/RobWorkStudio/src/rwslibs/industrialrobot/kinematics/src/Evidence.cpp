@@ -213,6 +213,110 @@ std::vector<std::uint8_t> encodeSearchRowCanonical(
     return out;
 }
 
+/// 碰撞证据行的行内容编码实现（布局与条目序见 Evidence.hpp 公开声明注
+/// ——acceptance 4 的三元组明细载体；编码器公开面供测试/下游核对）。
+std::vector<std::uint8_t> encodeCollisionRowCanonicalImpl(const BatchWorkItemRecord& item)
+{
+    std::vector<std::uint8_t> out;
+
+    // 先收集条目（计数前置需要——条目序＝来源序，确定性）。
+    struct CollisionEntry {
+        std::string configurationRef;      ///< 构型引用（I-KIN-3 签名）
+        const core::ObjectId* objectA;     ///< 对象对 A 端（规范序 A<B——policy 侧）
+        const core::ObjectId* objectB;     ///< 对象对 B 端
+        std::uint8_t verdict;              ///< 1=碰撞／0=评价为无碰撞
+    };
+    std::vector<CollisionEntry> entries;
+
+    // 来源 1：最佳解（评价在场才有条目——KIN-05 不伪造已检）。
+    if (item.status == BatchItemStatus::CandidateFound && item.bestSolution.has_value()
+        && item.bestSolution->collisionStatus.evaluated) {
+        const KinematicSolution& best = *item.bestSolution;
+        if (best.collisionStatus.objectIdPairs.size() % 2U == 0U
+            && !best.collisionStatus.objectIdPairs.empty()) {
+            // 有对象对（理论上最佳解恒无碰撞、对集为空——防御分支：以
+            // 成对展开逐对入条目，不静默丢弃明细）。
+            for (std::size_t i = 0; i + 1 < best.collisionStatus.objectIdPairs.size();
+                 i += 2) {
+                entries.push_back(CollisionEntry{best.signature,
+                                                 &best.collisionStatus.objectIdPairs[i],
+                                                 &best.collisionStatus.objectIdPairs[i + 1],
+                                                 best.collisionStatus.inCollision ? 1U : 0U});
+            }
+        } else {
+            // 无对象对＝评价为无碰撞（二元判定的零明细形态——verdict=0
+            // 单条目，绑定构型引用）。
+            entries.push_back(CollisionEntry{best.signature, nullptr, nullptr,
+                                             best.collisionStatus.inCollision ? 1U : 0U});
+        }
+    }
+
+    // 来源 2：碰撞原因过滤记录（全序逐条——"为什么少了解"的碰撞明细，
+    // verdict 恒 1——被过滤即判碰撞）。
+    for (const FilteredSolutionRecord& r : item.filteredRecords) {
+        if (r.reason != SolutionFilterReason::Collision) {
+            continue;
+        }
+        if (r.objectIdPairs.size() >= 2U) {
+            for (std::size_t i = 0; i + 1 < r.objectIdPairs.size(); i += 2) {
+                entries.push_back(CollisionEntry{r.signature, &r.objectIdPairs[i],
+                                                 &r.objectIdPairs[i + 1], 1U});
+            }
+        } else {
+            entries.push_back(CollisionEntry{r.signature, nullptr, nullptr, 1U});
+        }
+    }
+
+    detail::putU32(out, static_cast<std::uint32_t>(entries.size()));
+    for (const CollisionEntry& e : entries) {
+        const auto len =
+            static_cast<std::uint32_t>(e.configurationRef.size());
+        detail::putU32(out, len);
+        detail::putBytes(out, e.configurationRef.data(), len);
+        // 对象对（ObjectId×ObjectId——R-4：裸 16B 身份字节，无名称）。
+        // 空端（零明细形态）以全零保留值占位——保留值语义与 core Id128
+        // 一致（不指称任何对象；verdict 才是条目的判定载荷）。
+        static const core::ObjectId kReserved{};
+        const core::ObjectId* a = e.objectA != nullptr ? e.objectA : &kReserved;
+        const core::ObjectId* b = e.objectB != nullptr ? e.objectB : &kReserved;
+        detail::putBytes(out, a->bytes.data(), a->bytes.size());
+        detail::putBytes(out, b->bytes.data(), b->bytes.size());
+        out.push_back(e.verdict);
+    }
+    return out;
+}
+
+/// 碰撞评价在场的判据（行发射条件——Satisfied 臂）：最佳解评价在场，
+/// 或存在 Collision 原因过滤记录（被过滤即评价已发生）。
+bool hasCollisionMaterial(const BatchWorkItemRecord& item)
+{
+    if (item.status == BatchItemStatus::CandidateFound && item.bestSolution.has_value()
+        && item.bestSolution->collisionStatus.evaluated) {
+        return true;
+    }
+    for (const FilteredSolutionRecord& r : item.filteredRecords) {
+        if (r.reason == SolutionFilterReason::Collision) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/// 碰撞要求在场而评价未完成的判据（行发射条件——Missing 臂；同时是
+/// KIN-COLLISION-UNAVAILABLE 聚合诊断的计数判据）：CollisionFree 要求
+/// 检查在场（要求声明即产出）且 collisionNotEvaluated（两臂合并标记
+/// ——T07 口径：会话不在场或评价未完成，登记随卡 §14.6 v0.7）。
+bool collisionRequiredButMissing(const BatchWorkItemRecord& item)
+{
+    for (const BatchDemandCheck& check : item.demandChecks) {
+        if (check.kind == BatchDemandCheck::Kind::CollisionFree
+            && item.collisionNotEvaluated) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /// 逐项证据行状态映射（组装口径 1——四计算终态＝产物存在（Satisfied）；
 /// NotApplicable 显式标记；InputInvalid＝Invalid＋悬空引用诊断；NotRun＝
 /// 无产物（Missing——漏验素材交 evidence 覆盖矩阵②级门禁））。
@@ -254,6 +358,18 @@ evidence::EvidenceItem makeItemEvidenceRow(const BatchWorkItemRecord& item,
 }  // namespace
 
 // =====================================================================
+// 碰撞证据行内容编码（公开面——Evidence.hpp 声明；WP-15-T07）
+// =====================================================================
+
+std::vector<std::uint8_t>
+encodeCollisionVerdictRowCanonical(const BatchWorkItemRecord& item)
+{
+    // 委托匿名命名空间实现（布局与条目序单点——公开面仅为可测试与
+    // 下游核对，无第二编码路径，NFR-MNT-04）。
+    return encodeCollisionRowCanonicalImpl(item);
+}
+
+// =====================================================================
 // KinematicEvidenceBuilder——组装主流程（§8.2 表五行逐步对号）
 // =====================================================================
 
@@ -286,6 +402,41 @@ evidence::EvaluationOutput KinematicEvidenceBuilder::build(
     out.evidence.reserve(computation.items.size() + 1U);
     for (const BatchWorkItemRecord& item : computation.items) {
         out.evidence.push_back(makeItemEvidenceRow(item, payloadDigest));
+    }
+
+    // ---- 碰撞证据行（WP-15-T07 表尾追加——acceptance 4 的明细交付面；
+    // 发射三态见 kKinBatchCollisionRowId 注与 makeCollisionEvidenceRow
+    // 判据：在场→Satisfied＋行内容摘要；要求在场而缺失→Missing 素材；
+    // 不在范围→不出行）。聚合计数供诊断面（KIN-COLLISION-UNAVAILABLE）。----
+    std::uint64_t collisionMissingItems = 0;
+    for (const BatchWorkItemRecord& item : computation.items) {
+        if (collisionRequiredButMissing(item)) {
+            ++collisionMissingItems;
+            evidence::EvidenceItem row;
+            row.itemId = kKinBatchCollisionRowId;
+            // 证据缺失素材（Missing——evidence 判 DataInsufficient 的碰撞
+            // 臂；绝不伪造 Satisfied——KIN-05 不视为无碰撞）。
+            row.status = evidence::EvidenceItemStatus::Missing;
+            row.caseScope = std::vector<evidence::CaseId>{item.conditionId};
+            row.subject = item.pointOid;
+            out.evidence.push_back(std::move(row));
+            continue;
+        }
+        if (hasCollisionMaterial(item)) {
+            evidence::EvidenceItem row;
+            row.itemId = kKinBatchCollisionRowId;
+            row.status = evidence::EvidenceItemStatus::Satisfied;
+            // 行内容＝三元组明细规范字节（{subjectPair, configurationRef,
+            // verdict} 逐条——encodeCollisionVerdictRowCanonical），digest
+            // 绑定其存在与内容（溯源面与逐项/搜索行同构）。
+            row.artifactDigest =
+                digestOf(encodeCollisionVerdictRowCanonical(item)).bytes;
+            row.caseScope = std::vector<evidence::CaseId>{item.conditionId};
+            row.subject = item.pointOid;
+            out.evidence.push_back(std::move(row));
+        }
+        // 其余（无要求且未评价）＝碰撞检查不在范围——不出行（V13-01
+        // 查询面口径，非降级非缺失）。
     }
 
     // ---- 行 2：搜索未果记录聚合（组装口径 2——预算/初值数求和、逐解
@@ -364,6 +515,20 @@ evidence::EvaluationOutput KinematicEvidenceBuilder::build(
                 + "/" + std::to_string(computation.batchCount) + "）",
             "按检查点 watermark 续跑（新 attempt，已完成批不重算）或重提"
             "批量评估后归档"));
+    }
+
+    // 碰撞证据缺失诊断（KIN-COLLISION-UNAVAILABLE——§9.6 行 9，产码面随
+    // WP-15-T07 落位）：聚合"要求在场＋未评价"项计数一条（两臂同码——
+    // 缺检测器/策略未启用臂＋设施异常臂，口径登记随卡 §14.6 v0.7）；
+    // 样本级素材＝Missing 碰撞行＋demandCheck evaluated=false。
+    if (collisionMissingItems > 0) {
+        out.diagnostics.push_back(makeBatchDiag(
+            kKinCollisionUnavailable, std::nullopt,
+            "kin.task-points-batch 批量评估碰撞证据",
+            "碰撞要求在场的工作项中 " + std::to_string(collisionMissingItems)
+                + " 项碰撞评价未完成（缺检测器/策略未启用/设施异常——证据缺失"
+                  "素材，绝不视为无碰撞；KIN-05）",
+            "接入碰撞检测器、启用策略碰撞域或修正设施后按同一冻结输入复评"));
     }
     return out;
 }
