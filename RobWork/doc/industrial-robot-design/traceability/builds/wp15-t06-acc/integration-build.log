@@ -1,0 +1,1577 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/core/CMakeLists.txt
+  Extension.cpp
+  ExtensionPoint.cpp
+  ExtensionRegistry.cpp
+  Log.cpp
+  LogStreamWriter.cpp
+  Message.cpp
+  RobWork.cpp
+  Property.cpp
+  PropertyBase.cpp
+  PropertyMap.cpp
+  PropertyValue.cpp
+  PropertyValueBase.cpp
+  AnyPtr.cpp
+  PropertyType.cpp
+  Event.cpp
+  Exception.cpp
+  LogWriter.cpp
+  IOUtil.cpp
+  Plugin.cpp
+  StringUtil.cpp
+  DOMElem.cpp
+  DOMParser.cpp
+  DOMCorePropertyMapLoader.cpp
+  DOMCorePropertyMapSaver.cpp
+  DOMCoreBasisTypes.cpp
+  DOMPropertyMapFormat.cpp
+  BoostXMLParser.cpp
+  os.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_core.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_core.exp
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_core.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_filesystem-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\boost_filesystem-vc143-mt-x64-1_92.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_program_options-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\boost_program_options-vc143-mt-x64-1_92.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/common/CMakeLists.txt
+  Archive.cpp
+  BINArchive.cpp
+  Cache.cpp
+  ConcatVectorIterator.cpp
+  FileCache.cpp
+  INIArchive.cpp
+  InputArchive.cpp
+  LogBufferedChar.cpp
+  LogBufferedMsg.cpp
+  LogFileWriter.cpp
+  LogMultiWriter.cpp
+  OutputArchive.cpp
+  PairMap.cpp
+  ProgramOptions.cpp
+  Serializable.cpp
+  ThreadPool.cpp
+  ThreadSafeQueue.cpp
+  ThreadSafeStack.cpp
+  ThreadSafeVariable.cpp
+  ThreadTask.cpp
+  Timer.cpp
+  TimerUtil.cpp
+  VectorIterator.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_common.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_common.exp
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_common.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_thread-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\boost_thread-vc143-mt-x64-1_92.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/math/CMakeLists.txt
+  CameraMatrix.cpp
+  EAA.cpp
+  EigenDecomposition.cpp
+  InertiaMatrix.cpp
+  Jacobian.cpp
+  Line2D.cpp
+  Line2DPolar.cpp
+  LinearAlgebra.cpp
+  Math.cpp
+  Metric.cpp
+  MetricFactory.cpp
+  MetricUtil.cpp
+  PerspectiveTransform2D.cpp
+  Polynomial.cpp
+  PolynomialND.cpp
+  PolynomialSolver.cpp
+  Pose2D.cpp
+  Pose6D.cpp
+  ProjectionMatrix.cpp
+  Q.cpp
+  Quaternion.cpp
+  RPY.cpp
+  Random.cpp
+  Rotation2D.cpp
+  Rotation3D.cpp
+  Rotation3DVector.cpp
+  Statistics.cpp
+  Transform2D.cpp
+  Transform3D.cpp
+  Transform3DVector.cpp
+  Vector.cpp
+  Vector2D.cpp
+  Vector3D.cpp
+  VectorND.cpp
+  VelocityScrew6D.cpp
+  Wrench6D.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(629,56):
+          查看对正在编译的 类 模板 实例化“rw::math::Quaternion<float>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.cpp(61,1):
+          在编译 类 模板 成员函数“rw::math::Quaternion<float> rw::math::Quaternion<float>::pow(double) const”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244: “初始化”: 从“T”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:             T=double [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         and [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/math/Quaternion.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(540,26):
+          在编译 类 模板 成员函数“rw::math::Quaternion<float> &rw::math::Quaternion<float>::operator =(const rw::math::Rotation3D<double> &)”时
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(542,19):
+          查看对正在编译的函数 模板 实例化“void rw::math::Quaternion<float>::setRotation<double>(const rw::math::Rotation3D<double> &)”的引用
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244: “初始化”: 从“T”转换到“const T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:             T=double [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         and [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/math/Quaternion.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\VectorND.hpp(444,21): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/math/VectorND.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\VectorND.hpp(444,21):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\VectorND.hpp(764,57):
+          查看对正在编译的 类 模板 实例化“rw::math::VectorND<2,float>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\VectorND.hpp(442,27):
+          在编译 类 模板 成员函数“rw::math::VectorND<2,float> &rw::math::VectorND<2,float>::operator /=(double)”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\VectorND.hpp(435,21): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/math/VectorND.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\VectorND.hpp(435,21):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\math\VectorND.hpp(433,27):
+          在编译 类 模板 成员函数“rw::math::VectorND<2,float> &rw::math::VectorND<2,float>::operator *=(double)”时
+  
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_math.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_math.exp
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_math.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/kinematics/CMakeLists.txt
+  FixedFrame.cpp
+  FKRange.cpp
+  FKTable.cpp
+  Frame.cpp
+  FrameType.cpp
+  FrameMap.cpp
+  Kinematics.cpp
+  MovableFrame.cpp
+  State.cpp
+  QState.cpp
+  TreeState.cpp
+  StateCache.cpp
+  StateStructure.cpp
+  StateData.cpp
+  StateSetup.cpp
+  FramePairMap.cpp
+  StatelessData.cpp
+  Stateless.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_kinematics.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_kinematics.exp
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_kinematics.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/geometry/CMakeLists.txt
+  AABB.cpp
+  BSphere.cpp
+  BV.cpp
+  BVCollider.cpp
+  BVDistanceCalc.cpp
+  Box.cpp
+  Cone.cpp
+  Contour2D.cpp
+  ConvexHull2D.cpp
+  ConvexHull3D.cpp
+  ConvexHullND.cpp
+  Covariance.cpp
+  Cylinder.cpp
+  Delaunay.cpp
+  DistanceUtil.cpp
+  Geometry.cpp
+  GeometryData.cpp
+  GeometryUtil.cpp
+  HyperSphere.cpp
+  IndexedArray.cpp
+  IndexedTriArray.cpp
+  IndexedTriMesh.cpp
+  IndexedTriangle.cpp
+  IntersectUtil.cpp
+  Line.cpp
+  Model3D.cpp
+  OBB.cpp
+  OBBCollider.cpp
+  OBBFactory.cpp
+  OBBToleranceCollider.cpp
+  Object3D.cpp
+  PlainTriMesh.cpp
+  Plane.cpp
+  PointCloud.cpp
+  PolygonUtil.cpp
+  Primitive.cpp
+  Pyramid.cpp
+  QHull3D.cpp
+  QHullND.cpp
+  Ray.cpp
+  Sphere.cpp
+  SphereDistanceCalc.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Model3D.cpp(202,59):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint32_t>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint32_t>::scale(double)”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/geometry/Model3D.cpp”)
+  
+  TriMesh.cpp
+  TriMeshSurfaceSampler.cpp
+  TriTriIntersectDeviller.cpp
+  TriTriIntersectMoller.cpp
+  Triangle.cpp
+  TriangleUtil.cpp
+  Triangulate.cpp
+  Tube.cpp
+  AnalyticUtil.cpp
+  BREP.cpp
+  Curve.cpp
+  Face.cpp
+  GenericFace.cpp
+  ImplicitBREP.cpp
+  ImplicitFace.cpp
+  ImplicitShell.cpp
+  ImplicitSurface.cpp
+  ImplicitTorus.cpp
+  IndexedFaceArray.cpp
+  ParametricCurve.cpp
+  Shell.cpp
+  Surface.cpp
+  IndexedQuadraticFaceArray.cpp
+  PlainQuadraticShell.cpp
+  QuadraticBREP.cpp
+  QuadraticCurve.cpp
+  QuadraticFace.cpp
+  QuadraticShell.cpp
+  QuadraticSurface.cpp
+  QuadraticUtil.cpp
+  TriDistanceCalc.cpp
+  TriTriToleranceIntersect.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_geometry.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_geometry.exp
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_geometry.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\qhull_r.dll -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\qhull_r.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/sensor/CMakeLists.txt
+  Camera.cpp
+  CameraFirewire.cpp
+  CameraListener.cpp
+  CameraModel.cpp
+  Contact2D.cpp
+  Contact3D.cpp
+  FTSensor.cpp
+  FTSensorModel.cpp
+  Image.cpp
+  ImageUtil.cpp
+  RGBDCameraModel.cpp
+  Scanner.cpp
+  Scanner1D.cpp
+  Scanner25D.cpp
+  Scanner25DModel.cpp
+  Scanner2D.cpp
+  Scanner2DModel.cpp
+  Sensor.cpp
+  SensorModel.cpp
+  StereoCameraModel.cpp
+  TactileArray.cpp
+  TactileArrayModel.cpp
+  TactileArrayUtil.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_sensor.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_sensor.exp
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_sensor.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/models/CMakeLists.txt
+  CompositeDevice.cpp
+  CompositeJointDevice.cpp
+  ControllerModel.cpp
+  DeformableObject.cpp
+  DependentJoint.cpp
+  DependentPrismaticJoint.cpp
+  DependentRevoluteJoint.cpp
+  Device.cpp
+  DeviceJacobianCalculator.cpp
+  DHParameterSet.cpp
+  JacobianCalculator.cpp
+  JacobianUtil.cpp
+  Joint.cpp
+  JointDevice.cpp
+  JointDeviceJacobianCalculator.cpp
+  MobileDevice.cpp
+  Object.cpp
+  ParallelDevice.cpp
+  ParallelLeg.cpp
+  PrismaticJoint.cpp
+  PrismaticSphericalJoint.cpp
+  PrismaticUniversalJoint.cpp
+  RevoluteJoint.cpp
+  RigidBodyInfo.cpp
+  RigidObject.cpp
+  SE3Device.cpp
+  SerialDevice.cpp
+  SphericalJoint.cpp
+  TreeDevice.cpp
+  UniversalJoint.cpp
+  VirtualJoint.cpp
+  WorkCell.cpp
+  Models.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\models\DeformableObject.cpp(23,36):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint16_t>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint16_t>::scale(double)”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\models\sdurw_models.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/models/DeformableObject.cpp”)
+  
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_models.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_models.exp
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_models.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rwlibs/control/CMakeLists.txt
+  Controller.cpp
+  JointController.cpp
+  SyncVelocityRamp.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_control.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_control.exp
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_control.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/graphics/CMakeLists.txt
+  DrawableGeometryNode.cpp
+  SceneGraph.cpp
+  SceneNode.cpp
+  DrawableNode.cpp
+  DrawableNodeClone.cpp
+  GroupNode.cpp
+  SceneCamera.cpp
+  WorkCellScene.cpp
+  SceneViewer.cpp
+  Render.cpp
+  SceneDescriptor.cpp
+  TextureData.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_graphics.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_graphics.exp
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_graphics.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/proximity/CMakeLists.txt
+  BasicFilterStrategy.cpp
+  CollisionDetector.cpp
+  CollisionSetup.cpp
+  CollisionStrategy.cpp
+  CollisionToleranceStrategy.cpp
+  DistanceCalculator.cpp
+  DistanceMultiStrategy.cpp
+  DistanceStrategy.cpp
+  ProximityCache.cpp
+  ProximityCalculator.cpp
+  ProximityData.cpp
+  ProximityFilter.cpp
+  ProximityFilterStrategy.cpp
+  ProximityModel.cpp
+  ProximitySetup.cpp
+  ProximitySetupRule.cpp
+  ProximityStrategy.cpp
+  ProximityStrategyData.cpp
+  Raycaster.cpp
+  BVTree.cpp
+  BVTreeCollider.cpp
+  BVTreeColliderFactory.cpp
+  BVTreeFactory.cpp
+  BVTreeToleranceCollider.cpp
+  BinaryBVTree.cpp
+  BinaryIdxBVTree.cpp
+  OBVTreeDFSCollider.cpp
+  ProximityStrategyRW.cpp
+  TreeDistanceCalc.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\proximity\DistanceCalculator.cpp(229,9): warning C4101: “i”: 未引用的局部变量 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\proximity\sdurw_proximity.vcxproj]
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_proximity.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_proximity.exp
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_proximity.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rwlibs/simulation/CMakeLists.txt
+  FrameGrabber.cpp
+  FrameGrabber25D.cpp
+  GLFrameGrabber.cpp
+  SimulatedCamera.cpp
+  SimulatedKinect.cpp
+  GLFrameGrabber25D.cpp
+  KinematicSimulator.cpp
+  SimulatedController.cpp
+  SimulatedSensor.cpp
+  Simulator.cpp
+  SimulatedScanner25D.cpp
+  SimulatedScanner2D.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_simulation.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_simulation.exp
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_simulation.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/trajectory/CMakeLists.txt
+  Blend.cpp
+  CircularInterpolator.cpp
+  CubicSplineFactory.cpp
+  CubicSplineInterpolator.cpp
+  Interpolator.cpp
+  InterpolatorUtil.cpp
+  LinearInterpolator.cpp
+  LloydHaywardBlend.cpp
+  ParabolicBlend.cpp
+  Path.cpp
+  Timed.cpp
+  TimedUtil.cpp
+  Trajectory.cpp
+  TrajectoryFactory.cpp
+  TrajectoryIterator.cpp
+  InterpolatorTrajectory.cpp
+  BlendedTrajectory.cpp
+  TimeMetricUtil.cpp
+  RampInterpolator.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,55): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,64): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\trajectory\CubicSplineInterpolator.cpp(81,77): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_trajectory.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_trajectory.exp
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_trajectory.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/loaders/CMakeLists.txt
+  WorkCellLoader.cpp
+  WorkCellFactory.cpp
+  LoaderAC3D.cpp
+  Loader3DS.cpp
+  Model3DS.cpp
+  LoaderOBJ.cpp
+  LoaderTRI.cpp
+  STLFile.cpp
+  Model3DFactory.cpp
+  Model3DLoader.cpp
+  GeometryFactory.cpp
+  PathLoader.cpp
+  PathLoaderCSV.cpp
+  DependencyGraph.cpp
+  MultipleFileIterator.cpp
+  XMLParserUtil.cpp
+  XMLRWPreParser.cpp
+  XMLRWParser.cpp
+  XMLRWLoader.cpp
+  XMLErrorHandler.cpp
+  XMLParser.cpp
+  XML.cpp
+  DOMBasisTypes.cpp
+  DOMPropertyMapFormat.cpp
+  DOMPropertyMapLoader.cpp
+  DOMPropertyMapSaver.cpp
+  DOMPathLoader.cpp
+  DOMPathSaver.cpp
+  DOMTrajectoryLoader.cpp
+  DOMTrajectorySaver.cpp
+  DOMProximitySetupLoader.cpp
+  DOMProximitySetupSaver.cpp
+  DOMWorkCellSaver.cpp
+  CollisionSetupLoader.cpp
+  PGMLoader.cpp
+  PPMLoader.cpp
+  RGBLoader.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\loaders\model3d\LoaderTRI.cpp(43,36):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint16_t>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint16_t>::scale(double)”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderTRI.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\loaders\model3d\Loader3DS.cpp(94,46):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint16_t>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint16_t>::scale(double)”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/Loader3DS.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\loaders\model3d\LoaderAC3D.cpp(123,65):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint16_t>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint16_t>::scale(double)”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderAC3D.cpp”)
+  
+  ImageLoader.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\loaders\model3d\LoaderOBJ.cpp(759,36):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint32_t>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint32_t>::scale(double)”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp”)
+  
+  XercesErrorHandler.cpp
+  XercesUtils.cpp
+  XMLBasisTypes.cpp
+  XMLPathFormat.cpp
+  XMLPathLoader.cpp
+  XMLPathSaver.cpp
+  XMLTrajectoryFormat.cpp
+  XMLTrajectoryLoader.cpp
+  XMLTrajectorySaver.cpp
+  XMLPropertyFormat.cpp
+  XMLPropertyLoader.cpp
+  XMLPropertySaver.cpp
+  XMLProximitySetupLoader.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_loaders.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_loaders.exp
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_loaders.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\xerces-c_3_3.dll -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\xerces-c_3_3.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rwlibs/task/CMakeLists.txt
+  Action.cpp
+  Entity.cpp
+  Motion.cpp
+  Target.cpp
+  Task.cpp
+  TaskUtils.cpp
+  TypeRepository.cpp
+  GraspTask.cpp
+  GraspTarget.cpp
+  GraspResult.cpp
+  GraspSubTask.cpp
+  DOMTaskFormat.cpp
+  DOMTaskLoader.cpp
+  DOMTaskSaver.cpp
+  TaskLoader.cpp
+  TaskSaver.cpp
+  XMLTaskFormat.cpp
+  XMLTaskLoader.cpp
+  XMLTaskSaver.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_task.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_task.exp
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(174,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Length>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Length>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(175,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Angle>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Angle>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(176,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Mass>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Mass>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(177,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Time>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Time>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(178,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Force>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Force>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(179,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Torque>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Torque>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(180,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Inertia>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Inertia>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(181,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Power>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Power>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(182,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearVelocity>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearVelocity>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(183,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularVelocity>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularVelocity>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(184,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearAcceleration>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearAcceleration>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(185,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularAcceleration>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularAcceleration>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(186,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Voltage>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Voltage>”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(187,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Dimensionless>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Dimensionless>”的声明
+  
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Diagnostics.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  ParamSchema.cpp
+  Catalog.cpp
+  Factory.cpp
+  Confirmable.cpp
+  Aggregation.cpp
+  Logging.cpp
+  Redaction.cpp
+  CrashReport.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Evidence.cpp
+  Errors.cpp
+  Snapshot.cpp
+  Slice.cpp
+  Verdict.cpp
+  Envelope.cpp
+  Currentness.cpp
+  Compatibility.cpp
+  Evaluator.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Project.cpp
+  Codec.cpp
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Execution.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  StateMachine.cpp
+  Controller.cpp
+  Scheduler.cpp
+  RunRegistry.cpp
+  Admission.cpp
+  EventBus.cpp
+  ChannelProtocol.cpp
+  WorkerSupervisor.cpp
+  Checkpoint.cpp
+  CacheCoordinator.cpp
+  ChannelPair.cpp
+  JobScope.cpp
+  MemProbe.cpp
+  ProcessLauncher.cpp
+  mocs_compilation_Release.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+  (编译源文件“../../../../../../_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(291,43):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(289,38):
+              请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_policy
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  Policy.cpp
+  Errors.cpp
+  Diagnostics.cpp
+  PolicyInput.cpp
+  PolicyParsing.cpp
+  PolicyPort.cpp
+  CollisionEvaluator.cpp
+  CollisionQuery.cpp
+  RobWorkCollisionEvaluator.cpp
+  JointLimits.cpp
+  Compatibility.cpp
+  mocs_compilation_Release.cpp
+  #include <rw/common/Exception.hpp> is deprecated use #include <rw/core/Exception.hpp> instead
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/ext/rwpqp/PQP/CMakeLists.txt
+  PQP.cpp
+  Build.cpp
+  BV.cpp
+  TriDist.cpp
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\libs\Release\pqp.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/invkin/CMakeLists.txt
+  AmbiguityResolver.cpp
+  ClosedFormIK.cpp
+  IterativeIK.cpp
+  IterativeMultiIK.cpp
+  CCDSolver.cpp
+  ParallelIKSolver.cpp
+  PieperSolver.cpp
+  IKMetaSolver.cpp
+  JacobianIKSolver.cpp
+  JacobianIKSolverM.cpp
+  ClosedFormIKSolverUR.cpp
+  ClosedFormIKSolverKukaIIWA.cpp
+  QConstraint.cpp
+  QNormalizer.cpp
+  StateConstraint.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_invkin.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_invkin.exp
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_invkin.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rwlibs/algorithms/CMakeLists.txt
+  KDTree.cpp
+  KDTreeQ.cpp
+  IKQPSolver.cpp
+  QPController.cpp
+  QPSolver.cpp
+  XQPController.cpp
+  NullSpaceProjection.cpp
+  BasicGPM.cpp
+  BFGS.cpp
+  MovingAverage.cpp
+  RANSACModel.cpp
+  PointModel.cpp
+  LineModel.cpp
+  StructuredLineModel.cpp
+  PlaneModel.cpp
+  StablePose1DModel.cpp
+  StablePose0DModel.cpp
+  PointPairsRegistration.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_algorithms.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_algorithms.exp
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_algorithms.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/graspplanning/CMakeLists.txt
+  ApproachMeasure3D.cpp
+  CMDistCCPMeasure3D.cpp
+  CompositeContactFilter.cpp
+  CompositeGraspFilter.cpp
+  ContactDistThresFilter.cpp
+  ContactValidateFilter.cpp
+  Contour2DInfoMap.cpp
+  CurvatureThresFilter.cpp
+  DiceContactG3D.cpp
+  GWSMeasure3D.cpp
+  Grasp2D.cpp
+  Grasp3D.cpp
+  GraspQualityMeasure3D.cpp
+  GraspTable.cpp
+  GraspValidateFilter.cpp
+  PlaneClearanceFilter.cpp
+  SemiForceClosureFilter.cpp
+  WrenchMeasure3D.cpp
+  QualityMeasure2D.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_graspplanning.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_graspplanning.exp
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_graspplanning.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt
+  PlannerConstraint.cpp
+  QEdgeConstraint.cpp
+  QEdgeConstraintIncremental.cpp
+  PathPlanner.cpp
+  QToQPlanner.cpp
+  QToTPlanner.cpp
+  QToQSamplerPlanner.cpp
+  PlannerUtil.cpp
+  StopCriteria.cpp
+  QConstraint.cpp
+  QNormalizer.cpp
+  QIKSampler.cpp
+  QSampler.cpp
+  StateConstraint.cpp
+  PathAnalyzer.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_pathplanning.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_pathplanning.exp
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_pathplanning.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rw/plugin/CMakeLists.txt
+  DynamicLibraryLoader.cpp
+  DynamicLibraryLoaderBase.cpp
+  PluginFactory.cpp
+  PluginFactoryBase.cpp
+  PluginRepository.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_plugin.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_plugin.exp
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_plugin.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rwlibs/assembly/CMakeLists.txt
+  AssemblyControlResponse.cpp
+  AssemblyControlStrategy.cpp
+  AssemblyParameterization.cpp
+  AssemblyRegistry.cpp
+  AssemblyResult.cpp
+  AssemblyState.cpp
+  AssemblyTask.cpp
+  CircularPiHControlStrategy.cpp
+  CircularPiHParameterization.cpp
+  PiHParameterization.cpp
+  PiHStrategy.cpp
+  SpiralParameterization.cpp
+  SpiralStrategy.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_assembly.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_assembly.exp
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_assembly.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt
+  Drawable.cpp
+  RenderArrow.cpp
+  RWGLFrameBuffer.cpp
+  DrawableFactory.cpp
+  DrawableUtil.cpp
+  RenderFrame.cpp
+  RenderGeometry.cpp
+  RenderLines.cpp
+  RenderMatrix.cpp
+  SceneOpenGL.cpp
+  TactileArrayRender.cpp
+  RWGLTexture.cpp
+  RenderImage.cpp
+  RenderModel3D.cpp
+  RenderUtil.cpp
+  RenderScan.cpp
+  RenderPointCloud.cpp
+  RenderCameraFrustum.cpp
+  DrawableGeometry.cpp
+  RenderSmoothSkin.cpp
+  RenderForceTorque.cpp
+  RenderVelocity.cpp
+  RenderText.cpp
+  #include <rwlibs/os/glext_win32.hpp> is deprecated, use #include <rwlibs/opengl/glext_win32.hpp> instead
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderModel3D.cpp(56,12): warning C4099: “rwlibs::opengl::TPFace”: 类型名称以前使用“class”现在使用的是“struct” [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderModel3D.cpp(56,12):
+      参见“rwlibs::opengl::TPFace”的声明
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(280,22):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderModel3D.cpp(246,59):
+          查看对正在编译的 类 模板 实例化“rw::geometry::Object3D<uint32_t>”的引用
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(277,14):
+          在编译 类 模板 成员函数“void rw::geometry::Object3D<uint32_t>::scale(double)”时
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(284,22): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(286,32): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(287,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+  
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244: “参数”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rw\geometry\Object3D.hpp(288,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rwlibs/opengl/RenderModel3D.cpp”)
+  
+  #include <rwlibs/os/glext_win32.hpp> is deprecated, use #include <rwlibs/opengl/glext_win32.hpp> instead
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:             T=double [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,41): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:             T=double [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,33): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244: “参数”: 从“T”转换到“GLfloat”，可能丢失数据 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         with [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         [ [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:             T=double [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\opengl\RenderText.cpp(163,25): warning C4244:         ] [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_opengl.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_opengl.exp
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_opengl.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\freeglut.dll -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\freeglut.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rwlibs/pathplanners/CMakeLists.txt
+  Z3QToQPlanner.cpp
+  Z3Planner.cpp
+  PartialIndexTable.cpp
+  PRMPlanner.cpp
+  RRTQToQPlanner.cpp
+  RRTPlanner.cpp
+  ARWExpand.cpp
+  ARWPlanner.cpp
+  ARWQToQPlanner.cpp
+  SBLExpand.cpp
+  SBLInternal.cpp
+  SBLSetup.cpp
+  SBLOptions.cpp
+  SBLPlanner.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(189,13): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\src\rwlibs\pathplanners\sdurw_pathplanners.vcxproj]
+  (编译源文件“../../../../../_acc_t06_a/RobWork/RobWork/src/rwlibs/pathplanners/prm/PRMPlanner.cpp”)
+      D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(189,13):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\pathplanners\prm\PRMPlanner.cpp(208,35):
+          查看对正在编译的 类 模板 实例化“rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(135,24):
+          在编译 类 模板 成员函数“std::list<ValueType,std::allocator<ValueType>> rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors(const rw::math::Q &) const”时
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+              D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\pathplanners\prm\PRMPlanner.cpp(208,33):
+              请参阅 "rwlibs::pathplanners::PRMPlanner::addEdges" 中对 "rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors" 的第一个引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr
+          ]
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(138,13):
+          查看对正在编译的函数 模板 实例化“void rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors<std::list<ValueType,std::allocator<ValueType>>>(const rw::math::Q &,Collection &) const”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr,
+              Collection=std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>
+          ]
+          D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWork\src\rwlibs\pathplanners\prm\PartialIndexTable.hpp(121,13):
+          查看对正在编译的函数 模板 实例化“void rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<ValueType,std::allocator<ValueType>>>::searchNeighbors<Collection>(int,std::_Vector_const_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>,Collection &) const”的引用
+          with
+          [
+              ValueType=boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr,
+              Collection=std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>,
+              _Ty=rwlibs::pathplanners::prm::PartialIndexTable<rwlibs::pathplanners::PRMPlanner::Node,std::list<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr ,std::allocator<boost::detail::adj_list_gen<boost::adjacency_list<boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>,boost::listS,boost::listS,boost::undirectedS,rwlibs::pathplanners::PRMPlanner::NodeData,rwlibs::pathplanners::PRMPlanner::EdgeData,boost::no_property,boost::listS>::config::vertex_ptr >>>::Dimension
+          ]
+  
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_pathplanners.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_pathplanners.exp
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_pathplanners.dll
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/ext/rwyaobi/CMakeLists.txt
+  yaobi_mesh_interface.cpp
+  yaobi_moments.cpp
+  yaobi_obb_node.cpp
+  yaobi_tree_builder.cpp
+  yaobi_tri_overlap.cpp
+  yaobi.cpp
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\libs\Release\yaobi.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWork/src/rwlibs/proximitystrategies/CMakeLists.txt
+  ProximityStrategyPQP.cpp
+  ProximityStrategyYaobi.cpp
+  ProximityStrategyFactory.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_proximitystrategies.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWork/libs/Release/sdurw_proximitystrategies.exp
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkSim/src/rwsim/CMakeLists.txt
+  BallBallStrategy.cpp
+  Contact.cpp
+  ContactDetector.cpp
+  ContactDetectorData.cpp
+  ContactDetectorTracking.cpp
+  ContactModelGeometry.cpp
+  ContactStrategy.cpp
+  ContactStrategyData.cpp
+  ContactStrategyGeometry.cpp
+  ContactStrategyTracking.cpp
+  Body.cpp
+  RigidBody.cpp
+  BeamBody.cpp
+  KinematicBody.cpp
+  FixedBody.cpp
+  DynamicDevice.cpp
+  KinematicDevice.cpp
+  RigidDevice.cpp
+  DynamicWorkCell.cpp
+  ContactPoint.cpp
+  ContactCluster.cpp
+  ContactManifold.cpp
+  ContactDataMap.cpp
+  MaterialDataMap.cpp
+  DynamicUtil.cpp
+  SuctionCup.cpp
+  OBRManifold.cpp
+  BodyUtil.cpp
+  Constraint.cpp
+  SimulatedTactileSensor.cpp
+  TactileArraySensor.cpp
+  BodyContactSensor.cpp
+  SimulatedFTSensor.cpp
+  DynamicWorkCellLoader.cpp
+  DynamicWorkCellSaver.cpp
+  ScapePoseFormat.cpp
+  MovingAverage.cpp
+  PointRANSACFitting.cpp
+  DistModel.cpp
+  PlaneModel.cpp
+  CircleModel.cpp
+  SupportPose.cpp
+  PlanarSupportPoseGenerator.cpp
+  HughLineExtractor.cpp
+  RecursiveNewtonEuler.cpp
+  RestingPoseGenerator.cpp
+  CollisionFreeSampler.cpp
+  FiniteStateSampler.cpp
+  SpherePoseSampler.cpp
+  StateSampler.cpp
+  PreshapeSampler.cpp
+  GraspPolicy.cpp
+  GraspStrategy.cpp
+  GraspPolicyFactory.cpp
+  GraspStrategyFactory.cpp
+  TargetConfigGraspPolicy.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkSim\src\rwsim\loaders\DynamicWorkCellSaver.cpp(239,41): warning C4101: “e”: 未引用的局部变量 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkSim\src\rwsim\loaders\DynamicWorkCellSaver.cpp(249,45): warning C4101: “e”: 未引用的局部变量 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  PoseSampler.cpp
+  BoxPoseSampler.cpp
+  SurfacePoseSampler.cpp
+  RenderGhost.cpp
+  RenderPoints.cpp
+  RenderPlanes.cpp
+  RenderCircles.cpp
+  PDController.cpp
+  SyncPDController.cpp
+  VelRampController.cpp
+  BeamJointController.cpp
+  SpringJointController.cpp
+  PoseController.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(64,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(66,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkSim\src\rwsim\util\PlanarSupportPoseGenerator.cpp(68,58): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  SerialDeviceController.cpp
+  SimulatorLog.cpp
+  SimulatorLogEntry.cpp
+  LogCollisionResult.cpp
+  LogConstraintForceTorque.cpp
+  LogConstraints.cpp
+  LogContactForceTorque.cpp
+  LogContactSet.cpp
+  LogContactVelocities.cpp
+  LogDistanceResult.cpp
+  LogDistanceMultiResult.cpp
+  LogEquationSystem.cpp
+  LogForceTorque.cpp
+  LogPositions.cpp
+  LogMessage.cpp
+  LogValues.cpp
+  LogVelocities.cpp
+  SimulatorLogScope.cpp
+  SimulatorLogUtil.cpp
+  LogStep.cpp
+  SimulatorStatistics.cpp
+  DynamicSimulator.cpp
+  ThreadSimulator.cpp
+  PhysicsEngine.cpp
+  PhysicsEngineFactory.cpp
+  GraspTaskSimulator.cpp
+  AssemblySimulator.cpp
+  RWSimulator.cpp
+  RWDebugRender.cpp
+  BodyIntegrator.cpp
+  CNodePairMap.cpp
+  CNodePool.cpp
+  ConstantForceManipulator.cpp
+  ConstraintNode.cpp
+  ConstraintEdge.cpp
+  ContactGraph.cpp
+  ContactModelFactory.cpp
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkSim\src\rwsim\rwphysics\ContactModelFactory.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  EulerIntegrator.cpp
+  ConstraintSolver.cpp
+  SequintialImpulseSolver.cpp
+  RWBody.cpp
+  RWBodyPool.cpp
+  ContactStrategyDMS.cpp
+  mocs_compilation_Release.cpp
+  ContactModel.cpp
+  RenderContacts.cpp
+  RenderContacts.cpp
+  BodyController.cpp
+  ContactModel.cpp
+  BodyController.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWorkSim/libs/Release/sdurwsim.lib 和对象 D:/10_Source_Repos/21_robot/_acc_t06_build_int/RobWorkSim/libs/Release/sdurwsim.exp
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\bin\Release\sdurwsim.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_thread-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\bin\Release\boost_thread-vc143-mt-x64-1_92.dll done
+  Automatic MOC for target sdurws_ird_runtime
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  Runtime.cpp
+  Errors.cpp
+  DescriptionValidator.cpp
+  CanonicalModel.cpp
+  Codec.cpp
+  NameMap.cpp
+  BaseWorldTransform.cpp
+  WorkCellCompiler.cpp
+  DynamicWorkCellCompiler.cpp
+  Snapshot.cpp
+  CacheKey.cpp
+  CompilerImpl.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  Errors.cpp
+  DiagCodes.cpp
+  Fk.cpp
+  Evaluators.cpp
+  Evidence.cpp
+  KinTypes.cpp
+  Bounds.cpp
+  Ik.cpp
+  SolutionSet.cpp
+  Sampling.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_kinematics_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  TestMainReport.cpp
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  FkTest.cpp
+  IkTest.cpp
+  TaskPointsBatchTest.cpp
+  RegionCoverageTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\bin\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_kinematics_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/_acc_t06_a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  PoseMetricsEvaluatorContractTest.cpp
+  TaskPointIkEvaluatorContractTest.cpp
+  TaskPointsBatchEvaluatorContractTest.cpp
+  RegionCoverageEvaluatorContractTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_kinematics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\_acc_t06_build_int\RobWorkStudio\bin\Release\sdurws_ird_kinematics_contract_test.exe

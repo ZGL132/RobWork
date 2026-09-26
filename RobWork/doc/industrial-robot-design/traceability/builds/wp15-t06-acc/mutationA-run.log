@@ -1,0 +1,28 @@
+Note: Google Test filter = KinRegionCoverage.DataInsufficientKeepsDenominatorDowngrades_WP15T06_ACC2:KinRegionCoverage.CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinRegionCoverage
+[ RUN      ] KinRegionCoverage.DataInsufficientKeepsDenominatorDowngrades_WP15T06_ACC2
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\RegionCoverageTest.cpp(442): error: Value of: computation.coverage.downgraded
+  Actual: false
+Expected: true
+
+[  FAILED  ] KinRegionCoverage.DataInsufficientKeepsDenominatorDowngrades_WP15T06_ACC2 (1 ms)
+[ RUN      ] KinRegionCoverage.CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5
+D:\10_Source_Repos\21_robot\_acc_t06_a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\RegionCoverageTest.cpp(829): error: Expected equality of these values:
+  reader.u8()
+    Which is: '\0'
+  1U
+    Which is: 1
+
+[  FAILED  ] KinRegionCoverage.CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5 (0 ms)
+[----------] 2 tests from KinRegionCoverage (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] KinRegionCoverage.DataInsufficientKeepsDenominatorDowngrades_WP15T06_ACC2
+[  FAILED  ] KinRegionCoverage.CollisionDemandWithoutDetectorDataInsufficient_WP15T06_ACC5
+
+ 2 FAILED TESTS

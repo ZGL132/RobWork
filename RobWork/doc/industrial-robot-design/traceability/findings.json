@@ -3916,6 +3916,36 @@
       "title": "F-387 与 F-390 两条 owner 指令『下次触及 units/kinematics.md 时执行对应散文纠正』在本任务（WP-15-T05 送验提交 70dbaa11 实际触及该卡并新增 v0.5 行）未兑现：卡面 v0.3 ⑧句『零新增命中』与 v0.4 ⑥句『KinIk 15 新用例』两处散文保持原样——4.8 未关闭条目相关性核对发现的消账遗漏（非本任务引入的新缺陷；两处原判定均为建议级、不构成阻断）。与本任务相关的其余未关闭条目相关性结论：F-380（DiagCodes 散文计数）处置已随本任务兑现（代码面『4 error＋11 warning』零残留＋DiagCodesTest 封闭断言 16 码三表同步，验收者以 base/head DiagCodes.cpp 实测 6/9→7/9 复核），状态翻转留待治理收尾；F-386/F-389/F-391 消费面（KIN-NO-DEVICE 守卫／KIN-RESIDUAL-EXCEEDED 自然触发用例／去重反范数数据）本任务未触及、维持 open。",
       "owner": "kinematics 实施会话（下次触及 units/kinematics.md 时与 F-393 合并执行卡面三处散文纠正）；治理收尾会话（F-380 状态 open→fixed 翻转随收尾簿记执行）",
       "resolution": "编号顺延自 F-393。"
+    },
+    {
+      "id": "F-395",
+      "source": "traceability/acceptance/WP-15-T06-20260927.md §4.7/§4.8（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "sampleSetIdentity canonical 字节布局的登记面与实现面存在 1 字节偏差：公共头 Sampling.hpp:450 函数注登记『\"IRDSSID1\"（8 字节 ASCII magic）』、单元卡 §14.6 v0.6 行登记『canonical 字节布局＝\"IRDSSID1\"8B＋u32 codec1＋…』，而实现 Sampling.cpp:148-149 为 `const char magic[] = \"IRDSSID1\"` 配 `insert(..., magic + 7)`——实际只写入 7 字节 \"IRDSSID\"（尾字符 '1' 未入字节流，版本语义由紧随的 u32 codecVersion=1 承载）；测试侧黄金复算 RegionCoverageTest.cpp:508-509 以同款 `magic + 7` 镜像实现（故测试通过）而其注释（:504）宣称复算 \"IRDSSID1\"。验收者变异测试实证（magic+7→+8 使 KinRegionCoverage.SampleSetIdentityFormulaAndDeterminism_WP15T06_ACC3 真实变红）——测试钉住的是 7 字节实现布局而非 8 字节登记布局。风险面：该布局登记是 P-KIN-3 三方一致义务的对齐基准（O-38 冻结前对账面＝快照 SamplingPlanRef 值比对的安全网在），evidence 卡冻结 canonical 格式时若按 8 字节登记独立复算将得到不同摘要→运行期对账显性失败；运行期本身自洽、无当前行为缺陷。与 IRDPM01/IRDIK01/IRDBP01/IRDCV01 七字符 magic 惯例对照，推荐口径＝登记改为『7 字节 magic \"IRDSSID\"＋u32 codecVersion』（不改已交付摘要值、只改文档），备选＝实现改 8 字节并同步测试黄金与卡面。",
+      "owner": "kinematics 实施会话（下次触及 Sampling.hpp/单元卡时统一登记与实现口径）；evidence 卡冻结会话（canonical 格式冻结对齐前必须消账本条）",
+      "resolution": "编号顺延自 F-394。"
+    },
+    {
+      "id": "F-396",
+      "source": "traceability/acceptance/WP-15-T06-20260927.md §4.7（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "Sampling.hpp:529 generateDirections 函数注『N=1 时退化为 +Z 单方向』与实现公式不符：z₀＝1−(2·0＋1)/1＝0、r₀＝√(1−0²)＝1、φ₀＝0→方向 (1,0,0)＝+X——Sampling.cpp:229 实现处注释『N=1 退化 z=0、r=1、φ=0＝+X』正确，公共头注释方向写错（AGENTS §2.5/2.6 错误注释反面例；黄金锁定语义以实现公式为准，无行为缺陷）。",
+      "owner": "kinematics 实施会话（下次触及 Sampling.hpp 时把该句纠正为 +X 并与 Sampling.cpp:229 口径对齐）",
+      "resolution": "编号顺延自 F-395。"
+    },
+    {
+      "id": "F-397",
+      "source": "traceability/acceptance/WP-15-T06-20260927.md §4.3（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "tasks/foundation/WP-15-T06.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（62/62＋43/43 两模式实测），不构成验收阻断。建议后续契约治理按家族批量修订时补齐本契约两行。",
+      "owner": "契约编译/治理会话（家族批量修订时补齐本契约两行）",
+      "resolution": "编号顺延自 F-396。"
     }
   ]
 }
