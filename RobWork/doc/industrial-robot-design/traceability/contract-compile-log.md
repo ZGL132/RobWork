@@ -298,3 +298,19 @@
 处置：新增 `traceability/pipeline/b1-host-integration-batch.json`，以 manifest-order 固定 11 阶段；新增 `validate-b1-batch.ps1` 校验连续依赖、契约路径/分支一致性和 `WP-24-T03-COMPLETE` 外部门禁；PIPE v1.16/CCP v1.2/ACC v1.6 同步单会话顺序执行模式（所有者禁止使用子智能体）与合法门控等待规则。机器复验：`validate-b1-batch: PASS (stages=11, openGates=1)`，开放门禁为 `WP-24-T03-COMPLETE`。
 
 裁决：上述增补已消除字母序死锁并把 T03b 前置机器化，但当前会话同时承担编写与评审，按所有者禁止子智能体的现行约束只能登记“单会话顺序复核，独立性降级”。因此 DOC-T14 保持 `design-written`，11 份实现契约保持 `planned`；未执行 CCP 第 7 步，不自动入队。待所有者接受该降级评审，或以后恢复独立会话评审后，方可按 CCP §3.1 原子放行。
+
+### 补强修订登记：DOC-T14 契约补强修订批次（2026-09-27 第二批，未放行）
+
+所有者审核裁定（2026-09-27）对 DOC-T14 评估报告六项建议逐项裁决后，执行"先规格增量冻结、再契约补强"的修订批次（CCP §5 治理增量修订——同一提交内契约本体＋本册登记；全部契约状态保持 planned/design-written 不放行，DOC-T14 评审待走）：
+
+| 修订对象 | 修订内容（要点） | 裁定依据 |
+| --- | --- | --- |
+| B1-SPEC v1.0→v1.1 | ①新增 §2.1 宿主官方组件处置表（区分 SA-01 工业业务白名单与宿主官方组件两类清单；TreeView/Jog/Playback/Log 保留〔Log 定位＝框架与开发日志〕、PropertyView/WorkcellEditor 仅开发验证、动态加载禁止、目标名 sdurws_ird_studio 冻结）；②§4.2 L3 补"仅运行时对象"口径；③§4.3 补三类身份绑定＋反向隔离＋序列化旁路限定禁令；④§7 验收映射同步 | 所有者裁定第 4 项（先冻规格再写契约）＋第 1/2 项细化＋B 类 Log/反解口径 |
+| RT-T14 | acceptance 7→补至 7 条（原 4 条）：＋三类身份绑定具名用例、＋反向隔离断言（呈现副本修改前后快照内容身份不变）、＋禁令审计（const_cast 源码审计＋"呈现→计算"方向序列化旁路禁令——限定口径，既有 Codec/导入导出/worker 传输不受限） | 裁定第 1、2 项 |
+| UI-T20 | acceptance 4→6 条：＋appliedRevisionId 三类身份对账（发布/重编译/切换核对；修订切换后旧呈现身份失效）、＋发布事务失败路径（先完整构造后原子替换；失败保留旧 WorkCell＋"已应用但呈现刷新失败"稳定诊断＋不回滚合法修订） | 裁定第 1 项＋聊天记录 UI-T20 实施要求 3 |
+| WP-15-T18 | acceptance 5→6 条：＋计算/呈现隔离红线（正式评估只消费 RuntimeSnapshot 不消费 HostPresentationView；呈现仅走显示/TreeView/官方插件衔接）＋四类审计证据形态（接口依赖审计/include 审计/替身证明/路径核查） | 裁定第 3 项 |
+| UI-T23 | acceptance 4→7 条：＋动态模块覆盖（draft.apply 遍历全部已登记模块含测试模块、消除 modeling 硬编码）、＋故障隔离（单域装配失败占位其余继续）、＋关闭清理（八类对象清单具名核查） | 裁定第 5 项 |
+| WP-24-T08 | acceptance 重写为 5 条：＋处置表逐项核对（§2.1 先冻后引——两类白名单边界声明）、＋正式菜单语义（原生 WorkCell 文件命令不入正式菜单；WorkCell 仅导入导出格式）、＋sdurws_ird_studio 目标命名冻结 | 裁定第 4 项（条件采纳路径） |
+| WP-24-T09 | ①acceptance 2 重写为 staging 安装树专项审计——修正"只有一个 exe"判据为 ARCH §5.4 部署结构核对（bin/plugins/share 完整、主程序与 worker 来自安装树、无测试交付物、无业务动态插件、排除组件不入安装树、脱离开发 PATH 启动）；②allowedFiles 扩展各单元 CMakeLists.txt＋start_studio.bat（安装规则与启动脚本实际落点；范围外偏差转 blocked 不越界） | 裁定第 6 项（采纳目标修正判据） |
+
+未采纳/留实施指令项（留痕）：TreeView 辅助页签呈现形态（实施细节）；RequirementsUiModule 正式继承 IPluginUiModule（WP-14-T10 实施指令/验收测试承载，不升级架构决策——WP-14-T10 契约本批不动）。机器校验：本批六契约逐份 validate-task PASS＋validate-docs（内嵌 validate-b1-batch）PASS——见批次提交留痕。状态不变：DOC-T14=design-written（评审待走）、11 份=planned；本登记不构成放行。

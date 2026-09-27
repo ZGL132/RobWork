@@ -53,9 +53,10 @@
   ],
   "acceptance": [
     "正式产品装配骨架落位：RobWorkStudio 宿主为唯一主窗口的装配路径（启动→静态白名单装配→宿主 Dock 控制器簇挂载→RWStudioView3D 中央区→About 插件清单）——方案 A 顶层窗口路径在正式装配中不再可达（SA-18 D1；WP-24-T03 T03a/T03b 装配面为基座）",
-    "SA-01 口径不变：白名单在装配期固定、零运行时动态加载/卸载入口；About 清单与白名单一致用例通过（UX-14）",
-    "骨架双模式构建零错误；宿主融合形态启动冒烟留痕 traceability/builds/wp24-t08/（含 GUI 启动步骤截图，DTB §5.2 v0.20 约定）",
-    "ird_gates 命中集增量登记；框架源码零修改（SA-02）；域功能实现不属本任务（骨架＝装配路径与启动面）"
+    "宿主官方组件处置表逐项核对（B1-SPEC §2.1 v1.1）：TreeView/Jog/Playback/Log 四项保留并正式装配（Log 定位注明为框架与开发日志——正式工程诊断权威仍归 diagnostics 稳定码＋诊断目录）；PropertyView/WorkcellEditorPlugin 仅开发验证、正式装配不呈现其入口；运行时动态 Load/Unload Plugin 禁止；正式产品目标名 sdurws_ird_studio 冻结创建",
+    "正式菜单语义：以 .rwdesign 项目生命周期为主（新建/打开/最近项目/保存草稿/应用修改/另存为/导入导出 WorkCell/关闭/退出）；原生 WorkCell New/Open/Save/Reload 不出现在正式产品菜单显示面（WorkCell 文件仅作导入/导出格式与运行时呈现载体）；About 清单与装配一致（UX-14）",
+    "SA-01 口径不变：工业业务插件白名单在装配期固定、零运行时动态加载/卸载入口（与宿主官方组件处置分属两类清单，不得混同——见 B1-SPEC §2.1 清单边界声明）",
+    "骨架双模式构建零错误；宿主融合形态启动冒烟留痕 traceability/builds/wp24-t08/（含 GUI 启动步骤截图，DTB §5.2 v0.20 约定）；ird_gates 命中集增量登记；框架源码零修改（SA-02）；域功能实现不属本任务（骨架＝装配路径与启动面）"
   ],
-  "note": "方案 B.1 迁移链（SA-18 D1；B1-SPEC §5.4）。knownPitfalls：O-38＝融合形态既有裁决（动态加载仅开发期验证通道）；O-43＝宿主深度融合承接（装配形态沿 UI-T16~T18 已验收行为，本任务升格为正式产品路径）。interUnit=true 判定＝消费 ui/runtime 装配面与 WP-24-T03 白名单装配基座（跨单元装配）。dependsOn=RT-T14（呈现契约面，B1-SPEC §6 链序）；WP-24-T03 装配基座（T03b 收口为阶段 E 在制，契约尚未创建）为真实技术前置但无法编码悬空引用——登记为本契约 ready 放行条件：其契约编译放行时由治理评审补入本契约 dependsOn（CCP §5 修订通道），实施领取前必须满足。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+  "note": "方案 B.1 迁移链（SA-18 D1；B1-SPEC §5.4/§2.1）。knownPitfalls：O-38＝融合形态既有裁决（动态加载仅开发期验证通道）；O-43＝宿主深度融合承接（装配形态沿 UI-T16~T18 已验收行为，本任务升格为正式产品路径）。interUnit=true 判定＝消费 ui/runtime 装配面与 WP-24-T03 白名单装配基座（跨单元装配）。dependsOn=RT-T14（呈现契约面，B1-SPEC §6 链序）；WP-24-T03 装配基座（T03b 收口为阶段 E 在制，契约尚未创建）为真实技术前置但无法编码悬空引用——登记为本契约 ready 放行条件：其契约编译放行时由治理评审补入本契约 dependsOn（CCP §5 修订通道），实施领取前必须满足。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 2/3/4：处置表逐项核对（含 sdurws_ird_studio 目标命名冻结）、正式菜单语义（原生 WorkCell 文件命令不入正式菜单）、两类白名单边界声明——产品清单语义先经 B1-SPEC §2.1 冻结再入契约。"
 }
