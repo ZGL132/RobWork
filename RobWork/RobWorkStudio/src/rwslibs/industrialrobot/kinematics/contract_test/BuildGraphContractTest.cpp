@@ -156,12 +156,19 @@ TEST(KinBuildGraph, UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：六条登记边＋本单元三目标（产品/测试/契约测试）＋
-    // sdurws_ird_testkit（报告设施——T-1 允许形态＝仅测试目标可链，产品
-    // 目标由 NoTestkitEdge 钉住）。
+    // 白名单：六条登记边＋本单元五目标（产品/测试/契约测试/插件/harness
+    // ——_plugin 与 _app 随 WP-15-T12 落位：卡 §3.2 明文＋DTB §5.1 v0.20
+    // "插件 GUI 手动验证通道 sdurws_ird_<unit>_app"）＋sdurws_ird_ui
+    // （WP-15-T12 插件装配面边——卡 §3.2"插件目标 → 本计算库＋
+    // sdurws_ird_ui"明文；表外边 kinematics->ui 按 WP-13-T15 modeling->ui
+    // 先例具名登记）＋sdurws_ird_testkit（报告设施——T-1 允许形态＝仅
+    // 测试目标可链，产品目标由 NoTestkitEdge 钉住）。
     std::set<std::string> allowed = {"sdurws_ird_kinematics",
                                      "sdurws_ird_kinematics_test",
                                      "sdurws_ird_kinematics_contract_test",
+                                     "sdurws_ird_kinematics_plugin",
+                                     "sdurws_ird_kinematics_app",
+                                     "sdurws_ird_ui",
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(std::string("sdurws_ird_") + u);
@@ -173,11 +180,14 @@ TEST(KinBuildGraph, UnitEdgesSixRegisteredAndClosed_WP15T02_ACC3)
                "execution 六条——kinematics.md §3.2、ARCH §3.5；R-1/SUB/"
                "T-1）: " << ref;
     }
-    // 目标形态（卡 §3.1/§3.2/契约 acceptance 2）：_plugin 本任务不落位
-    // （随 WP-15-T12）；_worker 恒不存在（卡 §3.1 明文"不新建——worker
-    // 进程复用本计算库"——ARCH §4.1 WorkerLauncher 派发面）。
-    EXPECT_EQ(refs.find("sdurws_ird_kinematics_plugin"), refs.end())
-        << "_plugin 目标随 WP-15-T12 落位（契约 acceptance 2——T02 不预建）";
+    // 目标形态（卡 §3.1/§3.2/契约 acceptance 2）：_plugin 随 WP-15-T12
+    // 落位——T02 期"不出现"断言在 T12 落位时合法翻转（出现性断言；构建
+    // 零错误与引擎直跑比对留痕共同承载）；_worker 恒不存在（卡 §3.1 明文
+    // "不新建——worker 进程复用本计算库"——ARCH §4.1 WorkerLauncher 派发
+    // 面）。
+    EXPECT_NE(refs.find("sdurws_ird_kinematics_plugin"), refs.end())
+        << "_plugin 目标应随 WP-15-T12 落位（卡 §3.2——T02 不预建断言的"
+           "合法翻转）";
     EXPECT_EQ(refs.find("sdurws_ird_kinematics_worker"), refs.end())
         << "kinematics 无 _worker 形态（卡 §3.1——worker 复用计算库）";
 }

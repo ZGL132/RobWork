@@ -228,6 +228,125 @@ target_link_libraries(sdurws_ird_kinematics PUBLIC
 # src/Fk.cpp 的 SVD 计算点；不向下游传播（静态库 PRIVATE 不进接口面）。
 target_link_libraries(sdurws_ird_kinematics PRIVATE Eigen3::Eigen)
 
+# ---- Qt6 接入（WP-15-T12——插件目标的 Qt 载体面，R-3 唯一例外面）----
+# 仅插件目标与 harness 消费 Qt（卡 §3.2"_plugin 落位（Widgets，AUTOMOC，
+# 仅插件目标 Qt 例外——计算库零 Qt 红线不变）"；modeling WP-13-T15 同款
+# 先例）。REQUIRED＝找不到即配置失败（失败即停，不静默降级）；独立冒烟
+# 模式必须带 CMAKE_PREFIX_PATH 指向 Qt 安装（编排口径：Qt6 位于
+# D:/software/Qt/6.11.1/msvc2022_64）。
+find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+
+# ---- 插件界面目标 sdurws_ird_kinematics_plugin（WP-15-T12 落位——卡
+#      §3.1/§3.2 明文"_plugin 随 WP-15-T12"）----
+# 四面板＋域命令注册的插件目标（STATIC——正式装配面；ui 宿主插件经
+# assembly/ 装配契约头消费，WP-24 首版装配先例同构；非 RobWorkStudioPlugin
+# 派生的开发期验证通道——那是 ui 单元 sdurws_ird_ui_plugin 的职责）。
+# 源码布局＝plugin/ 目录（门禁 R-3 产品面扫描域为 include/**＋src/**，
+# plugin/ 不在扫描域——Qt 红线的文件域隔离，modeling 同款先例）；装配
+# 契约头＝assembly/（plugin 目标的 PUBLIC include 面——O-31 装配器单行
+# 适配面，同在扫描域之外）。
+add_library(sdurws_ird_kinematics_plugin STATIC
+    plugin/KinPanelTypes.hpp           # 零 Qt 值类型（行集/会话态/后台缝——呈现模型半区）
+    plugin/KinPanelUnits.hpp           # L-K8 显示单位重投影（零 Qt——KIN-12 唯一出口）
+    plugin/KinPanelUnits.cpp
+    plugin/KinPanelCommandCatalog.hpp  # §9.8 域命令清单/装配登记/就绪投影/只读门控（零 Qt）
+    plugin/KinPanelCommandCatalog.cpp
+    plugin/KinPanelModel.hpp           # 四面板投影行集（零 Qt——域设施消费面）
+    plugin/KinPanelModel.cpp
+    plugin/KinPanelFlows.hpp           # 数据流编排（L-K2~L-K12 模型层可测流——零 Qt）
+    plugin/KinPanelFlows.cpp
+    plugin/KinematicsPanelWidget.hpp   # 四面板主面板＋求解配置高级面板（Q_OBJECT——AUTOMOC 载体）
+    plugin/KinematicsPanelWidget.cpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
+    plugin/KinematicsUiModule.hpp      # ui.md §11.2 模块实现（P-KIN-7 对端冻结——正式继承）
+    plugin/KinematicsUiModule.cpp
+    plugin/KinematicsPluginAssembly.cpp)  # 装配门面实现（assembly/ 公共头的私有实现）
+set_target_properties(sdurws_ird_kinematics_plugin PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    AUTOMOC ON)  # Q_OBJECT 所需——仅本目标显式开启（DTB §5.1 v0.17 行口径；
+                 # 集成树全局 AUTOMOC 对既有目标本就生效，零形态变化）
+if(MSVC)
+    target_compile_options(sdurws_ird_kinematics_plugin PRIVATE /utf-8)
+endif()
+
+# 插件私有头解析（plugin/*.hpp——PRIVATE，不外溢；modeling/ui 同款先例）。
+target_include_directories(sdurws_ird_kinematics_plugin PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+# 装配层（ui 插件）消费 <sdurws/ird/kinematics/KinematicsPluginAssembly.hpp>
+# ——PUBLIC include 面（非 include/ 产品扫描域——零 Qt 红线文件域隔离同
+# plugin/ 口径）。
+target_include_directories(sdurws_ird_kinematics_plugin PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/assembly>)
+
+# 链接面（卡 §3.2 明文"插件目标 → 本计算库＋sdurws_ird_ui；禁止链接任何
+# 其他业务域单元（R-1）"）：
+#   - sdurws_ird_kinematics＝本计算库（面板消费 IFkEvaluator/IIkSolver/
+#     IKinematicSolutionSet/Render/Export/AnalysisConfig/Commands——域设施
+#     唯一来源；自边：ird_gates 引擎按"两端均属业务单元"粗粒度报 R-1，
+#     与 modeling_plugin 同款登记口径——WP-13-T15 比对留痕先例）；
+#   - sdurws_ird_ui＝ui 公共面（IPluginUiModule/IPluginUiRegistrar/
+#     CommandDescriptor/FormEditCommon/ITaskPresentationModel——装配契约
+#     与表单公共件；表外边 kinematics->ui 按 WP-13-T15 modeling->ui 先例
+#     逐条具名登记——allowedFiles 不含白名单/DTB，登记册回填归 WP-01-T03）；
+#   - Qt 三件套＝plugin 分类面（ird_gates R-3 仅查 product/worker 形态）。
+target_link_libraries(sdurws_ird_kinematics_plugin PUBLIC
+    sdurws_ird_kinematics sdurws_ird_ui
+    Qt6::Core Qt6::Gui Qt6::Widgets)
+
+# 别名（集成模式）：供其余单元以 RWS::ird::kinematics_plugin 消费；冒烟
+# 模式无别名（DTB §5.1）。
+if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    add_library(RWS::ird::kinematics_plugin ALIAS sdurws_ird_kinematics_plugin)
+endif()
+
+# ---- 开发验证 harness：sdurws_ird_kinematics_app（DTB §5.1 v0.20——
+#      插件 GUI 手动验证通道；DoD 第 5 条载体）----
+# 先例＝ui_app（UI-T15）/modeling_app（WP-13-T15）；_app 后缀＝ird_gates
+# 分类面 Qt 合法形态；源码在 app/ 子目录（产品扫描域零触碰）；本目标非
+# 测试（不入 ctest 标签）、非产品交付路径（产品装配层落位时按同一契约
+# 替换本入口，插件面零改动）。
+add_executable(sdurws_ird_kinematics_app
+    app/HarnessMain.cpp)
+
+target_compile_features(sdurws_ird_kinematics_app PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_kinematics_app PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_kinematics_app PRIVATE /utf-8)
+endif()
+
+# app/ 需解析本单元插件私有头（plugin/KinPanelTypes.hpp 等）——同单元内
+# 消费（R-2 不跨单元），单元根 include 目录 PRIVATE 注入。
+target_include_directories(sdurws_ird_kinematics_app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 单行链接语句＝构建图契约测试的登记形态约束（modeling_app 同款）。
+target_link_libraries(sdurws_ird_kinematics_app PRIVATE sdurws_ird_kinematics_plugin)
+
+# 运行时 DLL 就位（modeling_app 同款）：TARGET_RUNTIME_DLLS 复制 Qt 三件套
+# 等共享库到 exe 旁——绝对路径启动免 PATH 依赖。
+add_custom_command(TARGET sdurws_ird_kinematics_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_kinematics_app>
+            $<TARGET_FILE_DIR:sdurws_ird_kinematics_app>
+    COMMAND_EXPAND_LISTS)
+
+# ---- Qt 平台插件定位（modeling_app 同款坑位修复）：Qt6 官方发行版 DLL 为可
+# 重定位前缀形态，从副本位置推导的插件目录不成立（qwindows 找不到即启动
+# 失败）——configure 期从 Qt6_DIR 推导真实 Qt 安装前缀生成 qt.conf 复制到
+# exe 旁（构建期生成物，不入库）。
+set(_ird_kin_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_kin_qt_prefix "${_ird_kin_qt_prefix}/../../.." ABSOLUTE)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/kin-harness-qt.conf"
+     "[Paths]\nPrefix=${_ird_kin_qt_prefix}\n")
+add_custom_command(TARGET sdurws_ird_kinematics_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/kin-harness-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_kinematics_app>/qt.conf")
+
 # 别名（集成模式）：供其余单元以 RWS::ird::kinematics 消费；冒烟模式无
 # 别名（与骨架期行为一致，DTB §5.1）。
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
@@ -267,7 +386,8 @@ add_executable(sdurws_ird_kinematics_test
     test/ExportTest.cpp
     test/RecomputeTest.cpp
     test/AnalysisConfigTest.cpp
-    test/RenderTest.cpp)  # T11：KIN-07 渲染数据四类组装/状态投影/回写/选中联动
+    test/RenderTest.cpp
+    test/PluginPanelTest.cpp)  # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言
@@ -292,11 +412,22 @@ endif()
 
 # 测试链接产品库 sdurws_ird_kinematics 同时验证"公共头可被正常 include
 # ＋库可链接"（六边 PUBLIC 传染链随目标自动到达）。
+# sdurws_ird_kinematics_plugin＝同单元插件目标（呈现模型/命令目录/编排
+# 函数——T12 界面链路用例的被测面；"测试目标仅允许同单元产品目标"纪律
+# 下 plugin face 亦属同单元许可集——modeling WP-13-T15 先例同款）。
 # sdurws_ird_testkit＝报告/追溯设施消费面（RecordListener/IRD_TEST_INFO——
 # T-1 允许形态：仅测试目标链 testkit，产品目标不链）。单行链接语句＝契约
 # 测试 T-1 扫描的登记形态约束（testkit 与测试目标名同行可见——modeling/
 # reporting/requirements 同款）。
-target_link_libraries(sdurws_ird_kinematics_test PRIVATE sdurws_ird_kinematics sdurws_ird_testkit GTest::gtest)
+# Qt6::Core/Gui＝PluginPanelTest 的 QCoreApplication 级 GUI 前提＋
+# CommandDescriptor 值面（QKeySequence 在 QtGui——模型层测试不启动 GUI，
+# modeling PluginPanelTest 先例同款）。
+target_link_libraries(sdurws_ird_kinematics_test PRIVATE sdurws_ird_kinematics sdurws_ird_kinematics_plugin sdurws_ird_testkit GTest::gtest Qt6::Core Qt6::Gui)
+
+# 插件私有头解析（测试消费 plugin/*.hpp 呈现模型头——同单元 PRIVATE 面；
+# modeling 先例同款）。
+target_include_directories(sdurws_ird_kinematics_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 # 源码树位置注入：红线扫描用例在运行期扫描 kinematics 源码核对红线
 # （零 Qt/零表外 include——§3.2/§14.5）。经编译定义传 industrialrobot 根
@@ -356,7 +487,8 @@ add_executable(sdurws_ird_kinematics_contract_test
     contract_test/TaskPointsBatchEvaluatorContractTest.cpp
     contract_test/RegionCoverageEvaluatorContractTest.cpp
     contract_test/CollisionConsistencyContractTest.cpp
-    contract_test/CommandFacadeContractTest.cpp)
+    contract_test/CommandFacadeContractTest.cpp
+    contract_test/PluginGraphContractTest.cpp)  # T12：插件链接面/命令目录/零计算扫描
 
 target_compile_features(sdurws_ird_kinematics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_contract_test PROPERTIES
@@ -370,7 +502,11 @@ endif()
 
 # 链接面与 _test 同款（testkit＝报告设施——T-1 允许形态；单行链接语句
 # ＝契约测试 T-1 扫描的登记形态约束，同 _test 目标口径）。
-target_link_libraries(sdurws_ird_kinematics_contract_test PRIVATE sdurws_ird_kinematics sdurws_ird_testkit GTest::gtest)
+target_link_libraries(sdurws_ird_kinematics_contract_test PRIVATE sdurws_ird_kinematics sdurws_ird_kinematics_plugin sdurws_ird_testkit GTest::gtest Qt6::Core)
+
+# 插件私有头解析（契约测试消费 plugin/assembly 头——同单元 PRIVATE 面）。
+target_include_directories(sdurws_ird_kinematics_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 # 源码树位置注入（构建图扫描用例同 _test 口径）。
 target_compile_definitions(sdurws_ird_kinematics_contract_test PRIVATE
