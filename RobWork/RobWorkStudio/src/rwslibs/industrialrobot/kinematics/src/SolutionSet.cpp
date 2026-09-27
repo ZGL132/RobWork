@@ -157,10 +157,13 @@ SolutionPredicate collisionDiagnosticPredicate()
 // =====================================================================
 
 KinematicSolutionSet::KinematicSolutionSet(IkSolutionSet set)
-    : m_statistics(set.statistics), m_sorted(std::move(set.solutions))
+    : m_statistics(set.statistics),
+      m_sorted(std::move(set.solutions)),
+      m_filteredRecords(std::move(set.filteredRecords))
 {
     // 构造时完成一次稳定排序（§9.2 @pre 原文——唯一排序时机；不可变
-    // 视图此后不再改序）。
+    // 视图此后不再改序）。过滤记录随构造值持有（T11 增列的只读消费面
+    // ——不改序不改值，交付原序副本）。
     sortSolutions(m_sorted, set.requestIdentity.referenceQ);
 }
 
@@ -185,6 +188,12 @@ SolutionSetView KinematicSolutionSet::filtered(const SolutionPredicate& p) const
 IkSolutionSetStatistics KinematicSolutionSet::statistics() const
 {
     return m_statistics;
+}
+
+const std::vector<FilteredSolutionRecord>& KinematicSolutionSet::filteredRecords() const
+{
+    // 构造值持有的原序副本（T11 增列——只读消费面；诊断明细不改写）。
+    return m_filteredRecords;
 }
 
 std::optional<SolutionRef> KinematicSolutionSet::worstBy(WorstMetric m) const
