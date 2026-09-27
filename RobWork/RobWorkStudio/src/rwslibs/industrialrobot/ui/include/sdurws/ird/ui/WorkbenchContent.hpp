@@ -72,7 +72,11 @@ class IWorkbenchContent;  // 前置声明（工厂返回类型）
  *   - TopLevelWindow（harness 形态）：宿主层拥有顶层 QMainWindow，布局记忆
  *     为全量五键（窗口几何＋停靠位形＋三区可见性——§4.5 原文），尺寸折叠
  *     （§4.4 1280×720 阈值）随宿主 resize 生效——与 UI-T03 以来的行为逐字节
- *     一致（harness 回归零变化的承载面）；
+ *     一致（harness 回归零变化的承载面）。**UI-T19 起通道地位降格（D13/
+ *     B1-SPEC §2）：顶层窗口装配路径为纯开发验证通道，不入产品交付路径、
+ *     不构成产品形态的第二主窗口（产品形态唯一声明见 IHostController.hpp
+ *     的 ProductMainWindow 单值词表——D1 宿主唯一）；迁移期保留可用，
+ *     禁止顺手删除**；
  *   - EmbeddedDock（宿主插件形态）：宿主层是框架主窗口里的一个 Dock 面板，
  *     内容装配层**不拥有任何顶层窗口**——窗口几何/停靠位形属框架主窗口
  *     （RobWorkStudio 自持久化其 QtMainWindowState），布局记忆只承载三区
@@ -82,7 +86,7 @@ class IWorkbenchContent;  // 前置声明（工厂返回类型）
  *     误配；用户手动开关三区不受影响）。
  */
 enum class WorkbenchHostKind : std::uint8_t {
-    TopLevelWindow,  ///< 顶层窗口宿主（harness sdurws_ird_ui_app——IWorkbenchShell 承载）
+    TopLevelWindow,  ///< 顶层窗口宿主（harness sdurws_ird_ui_app——纯开发验证通道，D13；产品形态声明见 IHostController.hpp）
     EmbeddedDock,    ///< 嵌入式 Dock 宿主（sdurws_ird_ui_plugin——框架主窗口内 Dock 面板）
 };
 
@@ -279,6 +283,23 @@ public:
 
     /// @brief 注入上下文投影（语义同 IWorkbenchShell::presentProjectContext）。
     virtual void presentProjectContext(const ProjectContextProjection& context) = 0;
+
+    // ---- 命令设施访问（UI-T19 增量——IHostController 命令注册族聚合源）----
+
+    /**
+     * @brief 命令注册表访问（内容装配面 build() 期创建的同一实例）。
+     *
+     * UI-T19 首消费增量（宿主控制器簇 IHostController 的命令注册族聚合
+     * 源；登记 ui.md §10.1 v1.17）：SA-16 唯一注册点纪律不变——本访问器
+     * 只交出权威实例的引用供宿主侧路由与使能态查询，**不新增任何登记
+     * 入口**（登记仍走 §7.2 装配期静态白名单协议）。
+     *
+     * 前置：build() 恰好后调用（build 前注册表不存在——违约＝调用方
+     * 错误，DT 断言＋未定义行为，§10.1 通用约定同口径）。
+     *
+     * @return 命令注册表引用（实例存活期≤本内容装配面）
+     */
+    virtual ICommandRegistry& commandRegistry() = 0;
 
     /// @brief 查询壳层命令可用性（语义同 IWorkbenchShell::commandAvailability）。
     virtual ShellCommandAvailability commandAvailability(const std::string& commandId) const = 0;

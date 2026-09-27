@@ -158,7 +158,8 @@ add_library(sdurws_ird_ui STATIC
     src/DiagnosticPresentation.cpp
     src/CommandInteractionBridge.cpp
     src/TaskPresentation.cpp
-    src/PluginUiRegistrar.cpp)   # WP-24-T03 首版装配——§10.9 注册端口实现
+    src/PluginUiRegistrar.cpp
+    src/HostController.cpp)   # UI-T19——宿主控制器簇（B1-SPEC D2；§10.1 v1.17）
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -347,7 +348,8 @@ add_executable(sdurws_ird_ui_test
     test/DraftControllerModelTest.cpp
     test/DiagPresentationModelTest.cpp
     test/TaskPresentationModelTest.cpp
-    test/CommandInteractionBridgeTest.cpp)
+    test/CommandInteractionBridgeTest.cpp
+    test/HostControllerModelTest.cpp)  # UI-T19——宿主控制器簇聚合契约
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
