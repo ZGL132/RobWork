@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "kin-fk-analytic",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "kin/fk-analytic-golden",
+  "coveredRequirements": [
+    "KIN-01",
+    "NFR-COR-01",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-03",
+    "AT-27"
+  ],
+  "toleranceProfile": {
+    "id": "kin-fk-analytic",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/fk-cases.json"
+  ],
+  "expected": [
+    "expected/fk-expected.json"
+  ],
+  "parameters": {
+    "contract": "FK 解析黄金（KIN-01/D-KIN-2 统一尺度规则）——V-01 主数据载体（§10.1 kin-fk-analytic：二连杆/六轴解析 FK＋正反变换）；零值/近零/正负抵消边角样例（附录 D C4）",
+    "entryFaces": {
+      "analytic": "expected/cases[]——planar-2r 全量闭式（位置/旋转/雅可比/奇异值）；six-axis 独立参考实现对照（4×4 齐次直算＋Jacobi 特征值，与产品 Eigen 路径零共享——附录 D 第 9 项）",
+      "roundTrip": "expected/roundTrip——FK(q)→平面 2R 位置闭式逆（双分支）→FK 复算闭环（V-01 正反变换；残差 ≤ 逐轴 1e-6 去重容差）",
+      "scaleRules": "w＝∏σ（n<6 → 0——D-KIN-2 行秩不足解析事实）；条件数 σmax/σmin（六轴零位 σmin=0 → 非有限，JSON 以字符串词形 Infinity 承载）"
+    },
+    "edgeCasesNote": "零值（fk-zero/sx-home 全零 q）、近零（fk-nearzero 1e-9 rad）、正负抵消（fk-cancellation q1+q2=0、sx-pose 正负混合）——sampleRefs 逐项指向"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad"
+  },
+  "frames": {
+    "base": "robot-base"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "FK 位姿/雅可比/奇异值期望值（planar-2r 闭式直算；six-axis 独立 4×4 程序推导）",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（4×4 齐次坐标直算＋几何雅可比定义直算＋Gram 矩阵 Jacobi 特征值）推导，与产品实现（kinematics/src/Fk.cpp，Eigen JacobiSVD 路径）零共享代码——独立性由数学定义层面保证"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "kin-fk-analytic-closed-form",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-24T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/fk-expected.json#cases[0]（fk-zero——零位全零构型）",
+      "expected/fk-expected.json#cases[1]（fk-nearzero——1e-9 rad 近零输入）",
+      "expected/fk-expected.json#cases[2]（fk-cancellation——q1+q2=0 正负抵消）",
+      "expected/fk-expected.json#cases[5]（sx-pose——六轴正负混合）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/fk-cases.json",
+      "sha256": "fbe6356a4aadc1ae47e9ed98f9c16445ce800a72c01c8dbfcaed3c40cec34adc",
+      "sizeBytes": 4906
+    },
+    {
+      "path": "expected/fk-expected.json",
+      "sha256": "fbcdca622dbf79be13c1f9634145fc80aad774b7afba5846711eb94a65fc67fc",
+      "sizeBytes": 7711
+    },
+    {
+      "path": "generate/make_kin_fk_golden.mjs",
+      "sha256": "e2c98204a21de0e99b401d7e4a2ceb3ed5eec956007bdfd3321e812ba2b1e473",
+      "sizeBytes": 13651
+    }
+  ],
+  "generator": {
+    "script": "generate/make_kin_fk_golden.mjs",
+    "invocation": "node generate/make_kin_fk_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-24",
+      "change": "首版：FK 解析黄金（二连杆全量闭式＋六轴独立参考对照＋正反变换闭环＋零值/近零/正负抵消边角）——WP-15-T13 §10.1 数据集 1/4（V-01 主载体；AT-03 FK 对照组）",
+      "reReviewedBy": "WP-15-T13 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

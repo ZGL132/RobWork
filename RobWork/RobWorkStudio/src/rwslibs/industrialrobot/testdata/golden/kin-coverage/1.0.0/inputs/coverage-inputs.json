@@ -1,0 +1,156 @@
+{
+  "schema": "kin-coverage-inputs/1",
+  "datasetId": "kin-coverage",
+  "model": {
+    "id": "planar-3r-centered",
+    "note": "平面 3R 臂——基座原点（j1 origin (0,0,0)）、TCP 偏置为零（TCP＝第二连杆末端，位置与 q3 无关）。位置样本目标姿态恒等（φ=0）由 q3 自由吸收——位置存在性 ⇔ 格心距离 ∈ [|L1−L2|, L1+L2]；解析界限（Σ逐关节 origin 模长＋TCP 偏置模长＝4.4 m）与可达圆一致——超界格心走结局 5（Unreachable 唯一来源），界内格心存在闭式解。j1/j2 限位超 π（±3.2）覆盖全向格心，j3 ±6.5 承载 φ 归零所需行程。",
+    "joints": [
+      {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "lower": -3.2,
+        "upper": 3.2
+      },
+      {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "origin": [
+          2.4,
+          0,
+          0
+        ],
+        "lower": -3.2,
+        "upper": 3.2
+      },
+      {
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "origin": [
+          2,
+          0,
+          0
+        ],
+        "lower": -6.5,
+        "upper": 6.5
+      }
+    ],
+    "tcpOffset": {
+      "xyz": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "reachRadiusM": 4.4,
+  "plans": [
+    {
+      "id": "planA-100",
+      "box": {
+        "min": [
+          -5,
+          -5,
+          -0.5
+        ],
+        "size": [
+          10,
+          10,
+          1
+        ]
+      },
+      "counts": [
+        10,
+        10,
+        1
+      ],
+      "demands": {
+        "collisionFreeRequired": false
+      },
+      "note": "主计划——100 位置样本（相对基座 ±4.5 m 对称网格）"
+    },
+    {
+      "id": "planZero-0",
+      "box": {
+        "min": [
+          -5,
+          -5,
+          -0.5
+        ],
+        "size": [
+          10,
+          10,
+          1
+        ]
+      },
+      "counts": [
+        0,
+        10,
+        1
+      ],
+      "demands": {
+        "collisionFreeRequired": false
+      },
+      "note": "零样本计划——counts 乘积 0 合法存储，评估判 DataInsufficient（R8）"
+    },
+    {
+      "id": "planD-4-collision-demand",
+      "box": {
+        "min": [
+          12,
+          12,
+          -0.5
+        ],
+        "size": [
+          4,
+          4,
+          1
+        ]
+      },
+      "counts": [
+        2,
+        2,
+        1
+      ],
+      "demands": {
+        "collisionFreeRequired": true
+      },
+      "note": "碰撞要求在场（检测器缺失变体用）——4 样本全 DataInsufficient 保留分母"
+    }
+  ],
+  "variants": {
+    "fixedCount": {
+      "plans": [
+        "planA-100"
+      ],
+      "note": "AT-03 固定计数样例：100/60/40 → 60%"
+    },
+    "insufficientDenominator": {
+      "plans": [
+        "planA-100",
+        "planD-4-collision-demand"
+      ],
+      "note": "数据不足保留分母变体：planD 碰撞要求在场＋无检测器 → 4 样本 DataInsufficient、分母 104、整体降级"
+    },
+    "zeroSamples": {
+      "plans": [
+        "planZero-0"
+      ],
+      "note": "零样本反例：DataInsufficient＋KIN-COVERAGE-ZERO-SAMPLES、不输出 0%/100%"
+    }
+  },
+  "note": "样本几何由 (plan, budget, seed) 确定性再生（评估器同源）——本文件为黄金参数权威"
+}

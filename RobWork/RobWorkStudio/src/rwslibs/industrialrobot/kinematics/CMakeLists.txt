@@ -374,6 +374,7 @@ enable_testing()
 
 add_executable(sdurws_ird_kinematics_test
     test/TestMainReport.cpp
+    test/GoldenKinTest.cpp  # T13：黄金数据集契约套件（四套黄金＋V-01~V-21 载体）
     test/ErrorsTest.cpp
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp

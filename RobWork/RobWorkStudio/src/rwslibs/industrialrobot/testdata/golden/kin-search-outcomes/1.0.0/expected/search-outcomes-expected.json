@@ -1,0 +1,71 @@
+{
+  "schema": "kin-search-outcomes-expected/1",
+  "provenance": {
+    "method": "closed-form + judgment-table",
+    "note": "目标/参考解闭式推导；结局期望＝§5.4 判定表（铁律）对场景几何的手工推演——非求解器输出"
+  },
+  "scenarios": {
+    "s1-found": {
+      "outcome": "SolutionsFound",
+      "minSolutions": 1,
+      "hasSearchRecord": false,
+      "hasProof": false,
+      "assertResidualWithinTolerance": true,
+      "note": "首解位置/姿态残差 ≤ 两容差（1e-6 m / 1e-6 rad）"
+    },
+    "s2-noconv": {
+      "outcome": "MultiInitNoConvergence",
+      "solutions": 0,
+      "hasSearchRecord": true,
+      "initialGuessesTried": 4,
+      "hasProof": false,
+      "note": "零候选＋搜索未果记录（预算/初值数/迭代统计）——铁律：不得输出不可行"
+    },
+    "s3-allfilt": {
+      "outcome": "AllCandidatesFiltered",
+      "solutions": 0,
+      "hasSearchRecord": true,
+      "filteredCount": 2,
+      "filterReasons": [
+        "collision",
+        "collision"
+      ],
+      "hasProof": false,
+      "note": "逐解过滤记录（构型级碰撞）→DataInsufficient——不得输出不可行（C8）"
+    },
+    "s4-partial": {
+      "outcome": "PartialCollision",
+      "solutions": 1,
+      "filteredCount": 1,
+      "filterReasons": [
+        "collision"
+      ],
+      "hasSearchRecord": false,
+      "hasProof": false,
+      "note": "有效解保留＋碰撞解入过滤记录——构型级碰撞仅过滤该解（1 的子形态）"
+    },
+    "s5-bound": {
+      "outcome": "AnalyticBoundExceeded",
+      "solutions": 0,
+      "hasSearchRecord": false,
+      "hasProof": true,
+      "note": "解析界限排除先于迭代——证明素材非空（仅素材不裁定）；solutions 空"
+    },
+    "s7a-restart-narrow": {
+      "outcome": "MultiInitNoConvergence",
+      "solutions": 0,
+      "hasSearchRecord": true,
+      "initialGuessesTried": 1,
+      "hasProof": false,
+      "note": "前次 DataInsufficient（搜索未果）——复评语义的对照基线"
+    },
+    "s7b-restart-expanded": {
+      "outcome": "SolutionsFound",
+      "minSolutions": 1,
+      "hasSearchRecord": false,
+      "hasProof": false,
+      "assertResidualWithinTolerance": true,
+      "note": "扩大初值后同冻结输入复评找到有效解——V-07 反例闭环（AT-03）"
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "kin-fk-analytic",
+  "version": "1.0.0",
+  "basis": "appendixD#4 (FK/编译链等价固定容差 1e-9——位置 m/姿态与旋转元素 rad，数据集按第 9 项自带更严值 1e-12 声明) + appendixD#9 (解析对照标量相对 1e-9 + 逐例声明 eps_abs 1e-12)",
+  "entries": [
+    {
+      "fieldPath": "fk[*].tcp.position.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.position.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.position.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.xx",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.yy",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.zz",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.xy",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.xz",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.yx",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.yz",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.zx",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].tcp.rotation.zy",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].jacobian.trans[*]",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].jacobian.rot[*]",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "fk[*].metrics.manipulability",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "fk[*].metrics.conditionNumber",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "fk[*].metrics.singularValues[*]",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    }
+  ]
+}

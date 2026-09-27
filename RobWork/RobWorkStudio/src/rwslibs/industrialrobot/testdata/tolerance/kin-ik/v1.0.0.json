@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "kin-ik",
+  "version": "1.0.0",
+  "basis": "appendixD#1/#2/#3 (IK 残差与去重阈值——分析配置默认 1e-6，档案登记不裁决) + appendixD#4 (目标位姿构造校验固定 1e-9，数据集更严 1e-12) + appendixD#8 (并行归约 1e-12 固定——V-21)",
+  "entries": [
+    {
+      "fieldPath": "ik[*].solution[*].q[*]",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-6 },
+      "source": "analysis-config-default"
+    },
+    {
+      "fieldPath": "ik[*].positionResidual",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-6 },
+      "source": "analysis-config-default"
+    },
+    {
+      "fieldPath": "ik[*].orientationResidual",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-6 },
+      "source": "analysis-config-default"
+    },
+    {
+      "fieldPath": "ik[*].target.position.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "ik[*].target.position.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "ik[*].target.position.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "reduction[*]",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-12, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-12, "absolute": 1e-12 }
+    }
+  ]
+}

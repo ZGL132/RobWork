@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "kin-coverage",
+  "version": "1.0.0",
+  "basis": "appendixD#9 (解析对照——数据集自带更严值声明) : 样本格心由 Grid 体心公式（D-KIN-6）确定性闭式生成，坐标值比较取 1e-12 m 绝对容差（仅防浮点文本往返误差，非求解误差面——覆盖计数本身为整数精确断言，无容差语义，附录 D 第 12 项）",
+  "entries": [
+    {
+      "fieldPath": "coverage[*].sample.position.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "coverage[*].sample.position.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "coverage[*].sample.position.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    }
+  ]
+}
