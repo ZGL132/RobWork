@@ -4086,6 +4086,16 @@
       "title": "tasks/foundation/WP-15-T12.json verify 数组 4 行（sdurws_ird_kinematics 产品库构建行＋sdurws_ird_kinematics_plugin 插件目标构建行＋ctest -L \"^ird$\" 行＋validate-docs 行）仍缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397/F-399/F-401/F-404/F-409 家族新例（本批 WP-15 任务契约逐单复发形态）；与家族前例的差异＝本契约 verify 数组因 _plugin 落位增为 4 行，但两测试目标构建行仍缺。全新构建树复现 verify 第 3 行（ctest）时测试可执行文件不存在报 2×\"Not Run\"（WP-15-T12 验收者亲历实证），补建两测试目标后 ctest 2/2 通过（集成 148/148＋1 envUnavailable＋57/57、冒烟 142/142＋1 envUnavailable＋57/57 实测），不构成验收阻断。",
       "owner": "契约治理会话（后续按家族批量修订时补齐本契约两行）",
       "resolution": "编号顺延自 F-410（WP-15-T12 送验分支登记的框架 RobWorkSim 既有错误条目；本条与该条分别随任务分支与验收 evidence 分支合入，合并后全局编号连续）。"
+    },
+    {
+      "id": "F-412",
+      "source": "traceability/acceptance/WP-15-T13-20260927.md 4.9（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "WP-15-T13 送验第三提交 cf841baf 标题『[WP-15-T13] 单元卡 v0.13 落位登记（§14.6＋§11 T13 行＋卡头版本行补齐）』以名词\"单元卡\"开头，非动词开头——F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-039/F-040/F-042/F-044/F-045/F-047/F-048/F-059/F-076/F-082/F-084 家族同型再现（文档登记类提交标题的家族新例）；AGENTS §6.3 标题口径为\"动词开头的中文摘要\"。验收者对三送验提交的其余质量面（四段正文齐备、验证段计数与留痕逐项一致）实测无粉饰，不构成验收阻断。",
+      "owner": "实施侧会话（后续提交标题以动词开头；家族批量治理时统一登记豁免口径或返修）",
+      "resolution": "编号顺延自 F-411（WP-15-T12 验收 evidence 分支登记；本条随 WP-15-T13 验收 evidence 分支 acc/WP-15-T13/1 合入，合并后全局编号连续）。"
     }
   ]
 }
