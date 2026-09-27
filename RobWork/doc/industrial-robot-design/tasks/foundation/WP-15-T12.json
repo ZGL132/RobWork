@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现 kinematics 插件界面（四面板与域命令注册）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T03",
     "WP-15-T04",
