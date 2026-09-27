@@ -157,6 +157,19 @@ target_sources(sdurws_ird_kinematics PRIVATE
 target_sources(sdurws_ird_kinematics PRIVATE
     src/AnalysisConfig.cpp)
 
+# T11 增列（tasks/foundation/WP-15-T11.json，§3.3 布局表 Render.hpp 行
+# T11；两模式编译——纯 std＋core/policy 头内值面，零框架库符号、零 Qt
+# ——KIN-07 数据本单元产、呈现归 ui View3D，本 TU 无任何绘图设施）：
+#   src/Render.cpp     失败点/薄弱区三维渲染数据组装（四类数据结构＋两
+#                      通道组装点——解集通道 worstBy 最差项（T09 设施
+#                      复用）/批量通道 T05 per-item 状态消费＋统一状态词
+#                      投影（core TaskState/TaskOutcome）＋可视化点会话
+#                      回写值（KIN-06——KinSessionPose 唯一写点）＋选中
+#                      联动数据（L-K1）；阈值唯一来源 policy JointThresholds
+#                      ——P-POL-2 显式不适用不发明数值）
+target_sources(sdurws_ird_kinematics PRIVATE
+    src/Render.cpp)
+
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
 # inline constexpr 变量等），消费者编译 kinematics 头也必须至少 C++17。
@@ -253,7 +266,8 @@ add_executable(sdurws_ird_kinematics_test
     test/SolutionSetViewTest.cpp
     test/ExportTest.cpp
     test/RecomputeTest.cpp
-    test/AnalysisConfigTest.cpp)
+    test/AnalysisConfigTest.cpp
+    test/RenderTest.cpp)  # T11：KIN-07 渲染数据四类组装/状态投影/回写/选中联动
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言

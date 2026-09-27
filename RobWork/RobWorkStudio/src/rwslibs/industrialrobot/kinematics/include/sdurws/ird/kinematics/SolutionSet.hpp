@@ -20,6 +20,12 @@
  * 两规范筛选谓词工厂（§6.2"可用解/含碰撞诊断解"——比较集中实现，
  * NFR-MNT-04；本头既有 T04 声明零改动）。
  *
+ * T11 增列（tasks/foundation/WP-15-T11.json，登记随卡 §14.6 v0.11）：
+ * IKinematicSolutionSet 表尾追加只读访问器 filteredRecords()（§6.1
+ * filteredRecords 的视图消费面——KIN-07 渲染数据组装消费碰撞诊断明细；
+ * 追加纪律见本头 IKinRuntimeView 注同款：不重排既有成员——虚表序进入
+ * 二进制契约；只读访问器不破坏"不可变视图"定性）。
+ *
  * 背景说明（为什么排序实现是自由函数）：求解器管线（Ik.cpp）与解集视图
  * （构造时排序）消费**同一个**四键排序语义——共享一份实现（sortSolutions）
  * 保证"求解产物次序"与"视图重排次序"永不漂移；视图本身不再暴露改序入口
@@ -208,6 +214,21 @@ public:
     virtual IkSolutionSetStatistics statistics() const = 0;
 
     /**
+     * @brief 被硬过滤解记录（§6.1 filteredRecords——诊断价值承载的视图
+     *        消费面；T11 表尾追加，登记随卡 §14.6 v0.11）。
+     *
+     * 语义（KinTypes.hpp FilteredSolutionRecord 结构注原样）："为什么
+     * 少了解"的诊断记录——不计入解集排序序列、不进入可行素材；顺序＝
+     * 求解器产出序（值持有副本，构造后不变）。消费面先例：UI 检查器的
+     * "解∪过滤记录"合并诊断呈现（T09 collisionDiagnosticPredicate 同款
+     * 场景）与 KIN-07 碰撞对象对渲染数据的明细来源。
+     *
+     * @return 记录序列常引用（视图存活期内稳定；可能为空——结局 1 的
+     *         干净解集）
+     */
+    virtual const std::vector<FilteredSolutionRecord>& filteredRecords() const = 0;
+
+    /**
      * @brief 最差项查询（KIN-08 规范来源：裕量最小/条件数最大/残差最大）。
      * @param m [in] 度量词表（三值）
      * @return 最差解的指称（sorted() 序上**第一个**达到最差值的解——稳定
@@ -240,11 +261,13 @@ public:
     const SolutionSetView& sorted() const override;
     SolutionSetView filtered(const SolutionPredicate& p) const override;
     IkSolutionSetStatistics statistics() const override;
+    const std::vector<FilteredSolutionRecord>& filteredRecords() const override;
     std::optional<SolutionRef> worstBy(WorstMetric m) const override;
 
 private:
     IkSolutionSetStatistics m_statistics;  ///< 构造值持有的统计面
     SolutionSetView m_sorted;              ///< 构造时完成的一次稳定排序结果
+    std::vector<FilteredSolutionRecord> m_filteredRecords;  ///< 构造值持有的过滤记录（T11 增列——诊断消费面）
 };
 
 }  // namespace sdurws::ird::kinematics
