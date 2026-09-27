@@ -1,4 +1,4 @@
-﻿{
+{
   "schemaVersion": "ird-findings/1",
   "note": "验收与治理发现跟踪登记册（PIPE v1.3 §7 / ACC v1.2 §5）：验收建议级问题必须逐条转登于此，只写进验收记录'留档'不构成闭环；每份验收记录的 4.8 核对未关闭条目。状态 open/fixed；severity 暂分 blocking/suggestion。",
   "findings": [
@@ -4146,6 +4146,26 @@
       "title": "phase-one-task-index.json 本批增补后文件末尾换行符丢失（git diff 显示 \\ No newline at end of file，此前版本有换行）——纯格式瑕疵，JSON 语义与机器解析（ConvertFrom-Json/validate-state 实测）不受影响。",
       "owner": "治理会话（随放行批次补末尾换行）",
       "resolution": "编号顺延自 F-416（DOC-T14 独立评审会话登记）。〔消账 2026-09-27〕随放行批次补末尾换行符。"
+    },
+    {
+      "id": "F-418",
+      "source": "traceability/acceptance/UI-T19-20260927.md 4.7/发现 S-1（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "IWorkbenchContent 新增纯虚 commandRegistry()（UI-T19，§10.1 v1.17）属公共接口的破坏性面增量——库外实现类升级时必须同步实现该访问器。现状实际零破坏：IWorkbenchContent 实现类封闭在库内（WorkbenchContentImpl 唯一），无外部实现者；登记为长期接口治理建议：后续接口增量可考虑非纯虚＋默认实现或接口版本化措辞，避免消费者升级负担。",
+      "owner": "治理会话（接口治理批次时统一裁决访问器增量形态）",
+      "resolution": "编号顺延自 F-417（UI-T19 验收 evidence 分支 acc/UI-T19/1 登记）。"
+    },
+    {
+      "id": "F-419",
+      "source": "traceability/acceptance/UI-T19-20260927.md 4.2/发现 S-2（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "GUI 测试运行的环境前置未内化：独立构建树的 sdurws_ird_ui_gui_test 启动需要 QT_QPA_PLATFORM=windows＋QT_PLUGIN_PATH=<Qt>/plugins（POST_BUILD 只复制运行时 DLL，不复制 platforms 插件目录）——本任务验收按 F-320 家族既有口径以环境变量手工满足，建议随 gate-all.ps1 的 GUI 步骤统一内化（自动探测 Qt plugins 路径并注入）。",
+      "owner": "WP-01 门禁所有者（gate-all.ps1 GUI 步骤增强时消账）",
+      "resolution": "编号顺延自 F-418（UI-T19 验收 evidence 分支 acc/UI-T19/1 登记）。"
     }
   ]
 }
