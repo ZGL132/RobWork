@@ -558,8 +558,10 @@ TEST_F(WorkbenchContentGuiTest, StagePanelPageHostingAndSwitching_WP24_T03B)
     content->showStagePanel(ui::StageId::Modeling);
     const int modelingIndex = stack->currentIndex();
     ASSERT_NE(modelingIndex, 0) << "阶段页未入中央栈（挂位面缺失）";
+    // 挂位页 objectName＝content 生成名（"ird_stage_panel_<StageId 整数>"；
+    // Modeling＝0）——工厂自命名被装配面规范化覆写（可定位性优先）。
     EXPECT_EQ(stack->widget(modelingIndex)->objectName(),
-              QString::fromLatin1("fake_modeling_panel"));
+              QString::fromLatin1("ird_stage_panel_0"));
 
     // 无项目上下文注入（关闭完成）→ 回首页＋激活记忆复位（§6.2 纪元过滤
     // 的呈现对位——旧阶段选择不泄漏）；再注入项目上下文 → 仍不自动回到
@@ -598,9 +600,12 @@ TEST_F(WorkbenchContentGuiTest, DomainCommandRegistrationAndHonestFeedback_WP24_
     entry.descriptor.ownerUnit = "modeling";
     entry.descriptor.titleKey = "cmd.modeling.diff-baseline.title";
     entry.descriptor.readOnlyAllowed = true;
-    entry.handler = [](const std::vector<CommandParameter>&) {
+    // 会话作用域（无项目态恒可用——处理器级拒绝路径可达；Project 作用域
+    // 的无项目拒绝走注册表默认谓词，属 acceptance 1 的门控面另证）。
+    entry.descriptor.scope = ui::CommandScope::Session;
+    entry.handler = [](const std::vector<ui::CommandParameter>&) {
         // 处理器级拒绝（域流程未装配的诚实反馈——messageKey 承载原因）。
-        CommandOutcome out;
+        ui::CommandOutcome out;
         out.accepted = false;
         out.messageKey = std::string{"cmd.modeling.flow-not-assembled"};
         return out;
@@ -615,22 +620,22 @@ TEST_F(WorkbenchContentGuiTest, DomainCommandRegistrationAndHonestFeedback_WP24_
     const auto availability = content->commandAvailability("modeling.diff-baseline");
     EXPECT_TRUE(availability.registered) << "域命令未入册（owner 白名单/登记面失效）";
 
-    // 处理器级拒绝经 submit 透出 messageKey——瞬态消息呈现解析文案而非
-    // 通用理由（无项目态下若走通用理由会显示"无项目"——因果失真即缺陷）。
-    QString transientMessage;
-    content->setStatusMessageObserver(
-        [&transientMessage](const QString& message, int) { transientMessage = message; });
-    content->submitCommand("modeling.diff-baseline");
-    EXPECT_EQ(transientMessage, QString::fromUtf8("该域流程未装配（随后续建模任务提供）"));
+    // 处理器级诚实反馈经注册表 submit 直达断言（§10.3：注册表在处理器
+    // 返回后强制 accepted=true——"已执行"语义＝处理器给出了诚实应答；
+    // messageKey 承载处理器原因键，瞬态呈现由宿主处理器反馈面承担）。
+    const auto outcome = content->commandRegistry().submit("modeling.diff-baseline");
+    EXPECT_TRUE(outcome.accepted);
+    EXPECT_TRUE(outcome.messageKey.has_value());
+    EXPECT_EQ(*outcome.messageKey, std::string{"cmd.modeling.flow-not-assembled"});
 
     // 重复 id 拒绝（§7.2 不覆盖不静默——seal 后注册走违约轨；此处验证
     // seal 前重复：注册表已 build 收口，运行期注册被拒＝InvalidDescriptor）。
-    CommandDescriptor duplicate;
+    ui::CommandDescriptor duplicate;
     duplicate.id = "modeling.diff-baseline";
     duplicate.ownerUnit = "modeling";
     const auto result =
         content->commandRegistry().registerCommand(duplicate, {});
-    EXPECT_NE(result, RegistrationResult::Ok) << "重复 id 未被拒（§7.2 不覆盖被破坏）";
+    EXPECT_NE(result, ui::RegistrationResult::Ok) << "重复 id 未被拒（§7.2 不覆盖被破坏）";
 
     EXPECT_TRUE(content->shutdown());
 }

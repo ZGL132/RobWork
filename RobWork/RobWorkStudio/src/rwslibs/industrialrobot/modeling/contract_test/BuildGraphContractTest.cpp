@@ -172,6 +172,7 @@ TEST(MdlBuildGraph, UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3)
     std::set<std::string> allowed = {"sdurws_ird_modeling",
                                      "sdurws_ird_modeling_plugin",
                                      "sdurws_ird_modeling_app",
+                                     "sdurws_ird_demo6r",
                                      "sdurws_ird_modeling_test",
                                      "sdurws_ird_modeling_contract_test",
                                      "sdurws_ird_ui",

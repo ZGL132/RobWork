@@ -151,6 +151,7 @@ public:
     ui::ICommandRegistry& commandRegistry() override { return *m_registry; }
     ShellCommandAvailability commandAvailability(const std::string&) const override { return {}; }
     void submitCommand(const std::string&) override {}
+    void showStagePanel(ui::StageId) override {}  ///< WP-24-T03b 增量（替身零语义——本用例不触及阶段页）
 
     std::vector<RecentProjectEntry> recentProjects() const override { return {}; }
     void noteRecentProject(const std::string&) override {}

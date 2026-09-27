@@ -55,6 +55,7 @@
 #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（buildDraftCommand 调用面）
+#include <sdurws/ird/ui/UiText.hpp>              // ui::resolveText（§3.5 唯一文案出口——域命令诚实反馈文案）
 
 #include <filesystem>
 #include <iostream>
@@ -447,19 +448,25 @@ void IrdWorkbenchHostPlugin::initialize()
                 return out;
             };
         } else {
-            // 诚实边界（ERR-01/UX-02）：域流程未装配的命令如实拒绝——
-            // 状态行呈现处理器给出的键文案（不走通用只读/无项目理由），
-            // 不虚构执行成功（T03a"已受理"占位语义自此退役）。
+            // 诚实边界（ERR-01/UX-02）：域流程未装配的命令——处理器给出
+            // 诚实应答（§10.3 注册表在处理器返回后强制 accepted=true 的
+            // "已执行"语义＝处理器应答已发生），状态行经 UiText 唯一出口
+            // 呈现"未装配"文案，不虚构执行成功（T03a"已受理"占位退役）。
             const std::string commandId = desc.id;
             entry.handler = [this, commandId](const std::vector<CommandParameter>&) {
-                CommandOutcome out;
-                out.accepted = false;
-                out.messageKey = std::string{kModelingFlowNotAssembledKey};
+                if (m_hostStatusBar != nullptr) {
+                    m_hostStatusBar->showMessage(
+                        QString::fromStdString(
+                            ui::resolveText(kModelingFlowNotAssembledKey)),
+                        5000);
+                }
                 if (m_diag.pipeline) {
                     m_diag.pipeline->logDev(
                         kPluginDevChannel,
                         "domain command not assembled: " + commandId);
                 }
+                CommandOutcome out;
+                out.messageKey = std::string{kModelingFlowNotAssembledKey};
                 return out;
             };
         }
