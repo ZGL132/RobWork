@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "编写契约测试套件与运动学黄金数据集",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T03",
     "WP-15-T04",
