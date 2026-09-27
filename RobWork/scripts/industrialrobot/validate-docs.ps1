@@ -8,6 +8,17 @@ $acceptanceText = Get-Content (Join-Path $base 'acceptance-protocol.md') -Raw -E
 if ($pipelineText -notmatch 'Windows 命名 mutex') { $errors += 'PIPE missing Windows named mutex critical-section rule (P0)' }
 if ($pipelineText -notmatch 'lastFailureRecord') { $errors += 'PIPE missing retry failure-evidence record rule (P1)' }
 if ($pipelineText -notmatch '阻塞等待返回后再次 renew') { $errors += 'PIPE missing post-wait renew rule (P0)' }
+if ($pipelineText -notmatch 'b1-host-integration-batch.json') { $errors += 'PIPE missing B.1 batch manifest rule' }
+if ($pipelineText -notmatch '禁止使用子智能体') { $errors += 'PIPE missing current single-session execution rule' }
+$b1BatchValidator = Join-Path $RepoRoot 'RobWork/scripts/industrialrobot/validate-b1-batch.ps1'
+if (-not (Test-Path $b1BatchValidator)) { $b1BatchValidator = Join-Path $RepoRoot 'scripts/industrialrobot/validate-b1-batch.ps1' }
+if (-not (Test-Path $b1BatchValidator)) {
+  $errors += 'missing B.1 batch validator'
+} else {
+  $b1Result = $null
+  try { $b1Result = & $b1BatchValidator -RepoRoot $RepoRoot 2>&1 } catch { $b1Result = "ERROR: $_" }
+  if ("$b1Result" -notmatch 'validate-b1-batch: PASS') { $errors += 'B.1 batch manifest validation failed' }
+}
 if ($acceptanceText -match '落在 `acc/<taskId>` 分支') { $errors += 'ACC still contains stale acc/<taskId> evidence-branch wording' }
 if ($acceptanceText -notmatch 'acc/<taskId>/<attempt>') { $errors += 'ACC missing attempt-scoped evidence branch wording' }
 $status = Get-Content (Join-Path $base 'traceability/unit-status.json') -Raw -Encoding UTF8 | ConvertFrom-Json

@@ -285,6 +285,13 @@ foreach ($h in @($s.history)) {
 foreach ($k in @("pipeline","acceptance","contractCompilation","agents","dtbTaskRegistry","taskContracts")) {
   if (-not $s.docRefs -or -not $s.docRefs.$k) { $errors += "docRefs missing key: $k" }
 }
+if ($s.docRefs -and $s.docRefs.b1BatchManifest) {
+  $b1Manifest = Join-Path $RepoRoot "RobWork/doc/industrial-robot-design/$($s.docRefs.b1BatchManifest)"
+  if (-not (Test-Path $b1Manifest)) {
+    $b1Manifest = Join-Path $RepoRoot "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json"
+  }
+  if (-not (Test-Path $b1Manifest)) { $errors += "docRefs.b1BatchManifest target not found" }
+}
 
 # ---------- ⑨ 状态纪律：叙述字段长度上限（豁免走 PIPE 修订，不走自由文本） ----------
 if ($s.pausedReason -and $s.pausedReason.Length -gt 200) { $errors += "pausedReason exceeds 200 chars（PIPE §0.2 状态纪律：长叙述移入 PIPE 增量修订或验收记录）" }

@@ -287,3 +287,14 @@
 | WP-24-T09 | wp24-t09 | True | O-38、O-43 | 方案 A 正式产品路径退役（B1-SPEC §5.4 四条件；harness/_plugin 处置按 D13 登记） | validate-task PASS；独立评审待走 | planned |
 
 连带登记（非阻塞）：①phase-one-task-index.json 本批增 UI-T19~T23/RT-T14 六条（sourceRow 与单元卡行逐字一致；该索引对 UI-T15~T18 的缺登为既有滞后，随下次治理批次补齐——不属本批范围）；②foundation-tasks.json 增 12 条入口条目（轻量指针，canonical 为准）；③DTB §3 人读矩阵已同步本批任务号，机读投影 trace-matrix.json 待下次再生成纳入（格式契约 §4 再生成通道）；④依赖链的完整闭环＝WP-15-T13（done，pass-merged）→DOC-T14（design-written，本任务评审通过后置 done）→UI-T19→RT-T14→WP-24-T08→UI-T20→UI-T21→UI-T22→WP-13-T20→WP-14-T10→WP-15-T18→UI-T23→WP-24-T09；WP-24-T08 的 WP-24-T03 前置悬空引用已按登记册处理（放行条件非 dependsOn）。
+
+### DOC-T14 增补审查与 B.1 自动化编排（2026-09-27，当前仍未放行）
+
+当前会话对 `da4502cb` 做了独立命令复核：25 个改动文件全部在 DOC-T14 allowedFiles；`validate-docs.ps1` PASS（20 units／201 task files）；DOC-T14 与 11 份实现契约逐份 `validate-task.ps1` PASS；`validate-state.ps1` PASS（phase=idle、queue 空）。审查同时发现两个必须先修订的编排问题：
+
+1. 既有 `autoDiscovery` 的目录字母序会先发现 RT-T14，再发现 UI-T19，而 RT-T14 依赖 UI-T19；在 strictQueueOrder=true 下会形成队首永久不可领。
+2. WP-24-T08 的真实前置 WP-24-T03 T03b 尚无 canonical 契约，不能写入 dependsOn；只写 note 无机器执行面，可能在前置未收口时误领。
+
+处置：新增 `traceability/pipeline/b1-host-integration-batch.json`，以 manifest-order 固定 11 阶段；新增 `validate-b1-batch.ps1` 校验连续依赖、契约路径/分支一致性和 `WP-24-T03-COMPLETE` 外部门禁；PIPE v1.16/CCP v1.2/ACC v1.6 同步单会话顺序执行模式（所有者禁止使用子智能体）与合法门控等待规则。机器复验：`validate-b1-batch: PASS (stages=11, openGates=1)`，开放门禁为 `WP-24-T03-COMPLETE`。
+
+裁决：上述增补已消除字母序死锁并把 T03b 前置机器化，但当前会话同时承担编写与评审，按所有者禁止子智能体的现行约束只能登记“单会话顺序复核，独立性降级”。因此 DOC-T14 保持 `design-written`，11 份实现契约保持 `planned`；未执行 CCP 第 7 步，不自动入队。待所有者接受该降级评审，或以后恢复独立会话评审后，方可按 CCP §3.1 原子放行。

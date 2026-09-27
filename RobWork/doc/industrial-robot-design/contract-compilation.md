@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.1（2026-09-10 二轮审查修复：interUnit/branch 必填化、留痕册建册补录） |
+| 文档版本 | v1.2（2026-09-27：补充 B.1 批次原子放行、manifest 顺序与 WP-24-T03 外部门禁；当前禁止使用子智能体，评审与放行由治理会话顺序执行） |
 | 文档代号 | CCP |
 | 上游 | development-task-breakdown.md §2/§8（任务行登记与契约家族归属）、units/&lt;unit&gt;.md 任务拆分表（编译源）、acceptance-protocol.md §2（评审独立性）、automation-pipeline.md §0（阅读阶梯的前提） |
 | 适用范围 | `tasks/` 与 `tasks/foundation/` 下一切执行契约的 planned→ready 编译，及 ready 契约的后续修订 |
@@ -44,6 +44,16 @@
 5. **机器校验**：`validate-task.ps1` 三查全过＋`validate-docs.ps1` 通过。
 6. **独立评审**：另一会话对抗式核对"卡行↔契约"逐字段一致性与可验证性（独立性参照 ACC §2：全新上下文、只比产物、为不通过找证据）；结论追加登记 `traceability/contract-compile-log.md`；不通过→回到第 3 步。
 7. **放行**：status→ready；由所有者确认入队（state.json `queue` 或"调整队列"口令）。
+
+### 3.1 B.1 批次编译放行附加规则
+
+DOC-T14 及其 11 份后续契约属于一个不可拆分的治理批次，但“不可拆分”只表示放行顺序和状态写入原子性，不表示实现必须一次完成。治理会话必须先运行 `validate-b1-batch.ps1`，再依次完成以下动作：
+
+1. 复核 DOC-T14 的设计链、12 份契约和 `b1-host-integration-batch.json`；任何阻断问题先把 DOC-T14 保持 `design-written`，不得放行下游。
+2. 在同一持锁状态写入中，将 DOC-T14 置 `done`，将 11 份实现契约按 manifest 顺序置 `ready`；若无法保证原子写入，则全部保持原状态并登记失败。
+3. queue 只接受 manifest 顺序；不得使用目录字母序、`foundation-tasks.json` 数组顺序或人工预测替代 manifest。
+4. `WP-24-T03-COMPLETE` 未满足时，WP-24-T08 保持 `ready` 但不可领取，或由治理会话保持其前置批次状态；不得将悬空 `dependsOn` 写入契约。门禁满足后重新运行机器校验并追加编译日志。
+5. 当前所有者禁止使用子智能体。独立评审由同一治理会话顺序扮演“评审者”角色完成时，评审记录必须明确独立性降级；若所有者恢复跨会话评审，须先修订 PIPE/CCP 后再放行。
 
 ## 4. 编卡任务（T01）的产物质量标准
 
