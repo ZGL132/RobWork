@@ -1,0 +1,2 @@
+[ird_gates] 命中 72 项：
+  [ird_gates] 依赖红线/补丁门禁存在 72 处命中——按 ARCH

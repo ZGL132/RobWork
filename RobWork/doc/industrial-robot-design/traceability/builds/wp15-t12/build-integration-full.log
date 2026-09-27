@@ -1,0 +1,5 @@
+  Building Custom Rule D:/10_Source_Repos/21_robot/rw-wt-wp15-t12/RobWork/RobWorkStudio/src/rws/CMakeLists.txt
+  RWSImageLoaderPlugin.cpp
+  mocs_compilation_Release.cpp
+    正在创建库 D:/10_Source_Repos/21_robot/rw-wt-wp15-t12/build/RobWorkStudio/bin/Release/sdurws_plugin.rwplugin.lib 和对象 D:/10_Source_Repos/21_robot/rw-wt-wp15-t12/build/RobWorkStudio/bin/Release/sdurws_plugin.rwplugin.exp
+  sdurws_plugin.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\rw-wt-wp15-t12\build\RobWorkStudio\bin\Release\sdurws_plugin.rwplugin.dll
