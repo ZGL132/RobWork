@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "实现显示单位投影与求解配置编解码（KIN-12/13）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T03",
     "EV-T04"
