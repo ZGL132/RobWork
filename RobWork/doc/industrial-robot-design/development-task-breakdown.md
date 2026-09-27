@@ -2,8 +2,8 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.21（Draft；WP-24-T01 冻结版本基线首版登记＋WP-24-T03 拆段〔T03a 首版装配 2026-09-26 提前落位——owner 指示"每完成一个插件进行装配"〕，见 §2.25/§7；版本号承接 wp13-t15-app 分支 v0.20 先推序）；v0.20（Draft；插件 GUI 手动验证通道约定增补——owner 指示 2026-09-26：每个 `_plugin` 交付任务完成时必须可经 VS 集成编译后手动 GUI 验证界面功能，见 §5.1/§5.2/§7）；v0.19（Draft；O-43 裁决登记——宿主深度融合形态承接（WP-10-T17 立项＋WP-10-T18 授权）；见 §7 变更记录） |
-| 日期 | 2026-09-26 |
+| 文档版本 | v0.22（DOC-T14 方案 B.1 宿主融合批次登记——所有者 2026-09-27 批准：SA-18〔ARCHITECTURE v0.13 同批〕冻结宿主融合产品形态与双树边界；设计规格 `RobWork/docs/superpowers/specs/2026-09-27-host-integrated-b1-design.md`；新增 WP-10-T19~T23〔≙UI-T19~T23〕、WP-06-T14〔≙RT-T14〕、WP-13-T20、WP-14-T10、WP-15-T18、WP-24-T08/T09 共 11 任务行〔§2.7/§2.11/§2.14/§2.15/§2.16/§2.25〕＋迁移链依赖与共享 UI 文件互斥编排约束〔PIPE v1.15 同批 §6.2〕＋§3 矩阵同步＋12 份契约起草登记〔tasks/DOC-T14.json＝design-written、tasks/foundation/ 11 份＝planned，待独立评审放行〕；需求语义零变化；见 §7）；v0.21（Draft；WP-24-T01 冻结版本基线首版登记＋WP-24-T03 拆段〔T03a 首版装配 2026-09-26 提前落位——owner 指示"每完成一个插件进行装配"〕，见 §2.25/§7；版本号承接 wp13-t15-app 分支 v0.20 先推序）；v0.20（Draft；插件 GUI 手动验证通道约定增补——owner 指示 2026-09-26：每个 `_plugin` 交付任务完成时必须可经 VS 集成编译后手动 GUI 验证界面功能，见 §5.1/§5.2/§7）；v0.19（Draft；O-43 裁决登记——宿主深度融合形态承接（WP-10-T17 立项＋WP-10-T18 授权）；见 §7 变更记录） |
+| 日期 | 2026-09-27 |
 | 状态 | **`Draft`** |
 | 文档代号 | DTB |
 | 上游 | `REQUIREMENTS.md` **v1.16（Accepted）**（需求语义与验收唯一权威，RV-13）；`ARCHITECTURE.md` **v0.11（Draft）**（20 单元组成、分层与依赖红线唯一权威）；`units/*.md` 单元详设现状 **11/20 已编写**（core/testkit/project/evidence/runtime/policy/execution/diagnostics/ui/io/reporting；v0.1，保留各卡评审状态）；`DETAILED-DESIGN.md` 已建立为 20 单元详设总目录；详设正文由 units/*.md 承担，缺失单元仍先出"编写任务卡"任务 |
@@ -252,6 +252,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-06-T11 | 实现编译器集成与取消〔≙RT-T11〕 | runtime | WP-06-T03~T09 | runtime.md §5.1~§5.7 | `Compiler.*`（十段链/事务/取消/资源复查） | ARC-03、MDL-06（双编译原子性）、TASK-01（取消） | RT-CPX 全组＋RT-RES-1/2＋RT-CONT-1/2 事务状态机全转移用例通过 | 编译器无内部超时（D-11） | L（十段链/事务两提交） |
 | WP-06-T12 | 测试替身与契约套件〔≙RT-T12〕 | runtime | WP-06-T01~T11、WP-02 可用 | runtime.md §11；testkit §10.2 | Scripted\*/Fake\*＋RT-\* 用例体＋`testdata/golden/rt-fk-equation/`、`rt-namemap-roundtrip/` | ARC-03/04、AT-16/18/37 | §11 矩阵逐条通过并留痕；RT-STUB-0 边界声明 | 替身不作 RobWork 算法正确性证明 | M |
 | WP-06-T13 | 文档与门禁同步〔≙RT-T13〕 | runtime | WP-06-T01~T12 | runtime.md 全文 | README 核对；§15.3 状态更新；R-4 例外登记（名称解析器文件清单）提交 WP-01-T03 | NFR-MNT-07 | 零偏差登记；例外清单入登记册 | — | S |
+| WP-06-T14 | 宿主呈现 WorkCell 契约〔≙RT-T14；方案 B.1 迁移链，SA-18〕 | runtime | WP-10-T19（宿主控制器面确定） | B1-SPEC §3.2/§4.3；runtime.md §8/§9（适配层与快照）；ARCH §7.3/§7.4/§7.12 | 呈现视图契约（HostPresentationView：已应用 WorkCell 只读视图＋生命周期隔离声明＋RuntimeNameMap 反解查询面）；与计算 RuntimeSnapshot 复用同一构造规则的契约断言 | ARC-03/04、AT-37 | 隔离断言：呈现视图构建/销毁/重建零修订、零缓存写入、不进运行身份与当前性判定；复用断言：同一 ObjectId↔运行时名互换解析与计算侧一致（RT-NM 断言形态）；D10 双侧构造规则同源用例通过 | 呈现侧私建第二构造路径/名称映射禁止；呈现视图不入缓存身份；不改 RT-T01~T13 既有契约面 | M |
 
 ### 2.8 WP-07 policy（单元卡 units/policy.md §12，已存在）
 
@@ -315,6 +316,11 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-10-T16 | 工作台宿主插件（RobWorkStudio 集成入口＋开发期动态加载验证通道） | ui | WP-10-T03、T11、T15（O-38） | ui.md §10.1/§13 UI-T16 行（卡）；框架 rws::RobWorkStudioPlugin 机制（O-38） | `sdurws_ird_ui_plugin` 插件目标（RobWorkStudioPlugin 派生 DLL、零计算逻辑）＋壳内容装配层/顶层窗口宿主层拆分（harness 与插件共用同一内容装配面）＋宿主模式与 RWStudioView3D 共存最小接入 | UX-09、PM-07/PM-10/PM-11（宿主交互验证观测面） | 框架 RobWorkStudio.exe 经 Plugins→Load plugin 加载后五区工作台嵌入主窗口（命令面板/新建打开项目协议/状态栏投影/布局记忆在宿主窗口可用）；与框架三维视图共存；harness 行为回归零变化；ird_gates 命中集增量登记；留痕 traceability/builds/wp10-t16/ | 插件零计算逻辑；禁止把顶层 QMainWindow 嵌套进宿主 Dock（双菜单/双状态栏/双 Dock 管理反模式）；动态加载仅限开发期验证通道——产品交付路径零新增（SA-01，正式装配归 WP-24-T03） | M |
 | WP-10-T17 | 会话入口处理器补全＋宿主菜单融合（O-43 裁决承接） | ui | WP-10-T11、T12、T16（O-43） | ui.md §7.1/§11.5/§13 UI-T17 行（卡）；O-43 | WorkbenchContentDeps 会话入口覆写面扩展（draft.save/workbench.closeProject 装配层覆写——§11.5 既有模式同型）＋插件侧真实编排（关闭统一确认对话框呈现＋Draining 轮询驱动＋saveAllDraftsManual 接线〔DraftController 装配：保存链路真实、恢复/autosave/分支锚随完整草稿链路任务接续〕）＋宿主菜单融合（File 内按位插入"工业机器人项目"子菜单＋最近项目、Tools 挂命令面板、自建"视图"菜单承载区域开关与恢复布局，Plugins 菜单仅留基类显示开关） | PM-03/PM-04/PM-10/UX-09（宿主菜单承载面） | 宿主 File/Tools 菜单可见项目命令（使能态随命令可用性快照刷新）；关闭项目走 §5.4 统一确认对话框（草稿/任务两轴决议）且 Draining 有界收口；保存项目＝saveAll(Manual) 真实落盘链路；harness 行为回归零变化；ird_gates 命中集增量登记；留痕 traceability/builds/wp10-t17/ | 菜单只路由命令板（§4.2 路由红线——菜单项一律映射已登记命令 id）；project.saveAs/draft.apply/undo/redo 维持 §11.4 阶段 A 占位（真实接线归 workflow/project 命令网关装配任务）；框架零修改（SA-02）；装载方式不变（O-38 ①） | M |
 | WP-10-T18 | Dock 拓扑拆分＋状态行迁移宿主状态栏（O-43 ③授权，已立项未实施——排期随队列） | ui | WP-10-T17（O-43） | ui.md §4.1/§10.1（契约面增量修订随落位登记）；O-43 | 单一工作台 Dock 五区栅格拆分为项目导航左 Dock＋属性右 Dock＋任务底部 Dock（宿主 resizeDocks 同级注册）；statusBarWidget() 状态行迁移宿主 statusBar()（IWorkbenchContent 契约面变更——QStatusBar* 出口改状态文本投影）；布局记忆键与 PM-11"状态行恒可见"语义在多 Dock 形态重设计 | PM-11/PM-14（多 Dock 形态承载） | 宿主主窗口呈多 Dock 拓扑且中央 RWStudioView3D 保持宿主所有；宿主状态栏唯一（插件 Dock 内无第二 QStatusBar）；布局记忆跨会话有效；ird_gates 增量登记 | 高风险重构单独立任务（O-43 ③）；v1.11 状态行钉底修复的语义等价迁移须在落位登记中逐项对照；禁止倒退为双状态栏 | L |
+| WP-10-T19 | 宿主控制器抽取〔≙UI-T19；方案 B.1 迁移链，SA-18 D1/D2/D13〕 | ui | WP-10-T18、DOC-T14 | B1-SPEC §2；ui.md §4.1/§10.1/§13 | WorkbenchShell 控制器化收口：产品形态声明"宿主为唯一主窗口"（顶层窗口路径转纯开发通道）＋宿主 Dock 控制器簇装配面（IHostController 形态：命令/状态投影/会话/Draft 控制器族的宿主内聚合）＋harness/`_plugin` 开发验证通道地位登记 | UX-09、ARC-02（端口面不破坏） | 控制器抽取后插件多 Dock 拓扑＋宿主状态栏行为回归零变化；harness 行为回归零变化；ird_gates 命中集增量登记；留痕 traceability/builds/wp10-t19/ | 框架零修改（SA-02）；不整体重写既有面板（D11）；共享树/属性检查器面不属本任务（归 UI-T21/T22） | M |
+| WP-10-T20 | 宿主运行时发布桥〔≙UI-T20；方案 B.1 迁移链，SA-18 D10〕 | ui | WP-24-T08、WP-06-T14 | B1-SPEC §4.3；RT-T14 呈现契约面；ARCH §7.12 | RuntimePublishBridge：已应用 WorkCell 发布/重编译/项目切换 → 宿主呈现视图与官方 TreeView 刷新编排＋呈现视图生命周期管理（随宿主会话建立/销毁） | ARC-02（⑤事件面）、CON-02（当前性呈现口径） | 重编译/切换后 TreeView 内容与三维场景一致（INV-B4）；呈现刷新零修订零缓存写入；呈现视图与运行任务快照生命周期独立用例通过；ird_gates 增量登记；留痕 traceability/builds/wp10-t20/ | 呈现侧构造旁路禁止（必须消费 RT-T14 契约面）；不改计算侧 RuntimeSnapshot 语义；框架零修改 | M |
+| WP-10-T21 | 工业项目树和选择服务〔≙UI-T21；方案 B.1 迁移链，SA-18 D3/D4〕 | ui | WP-10-T20 | B1-SPEC §3/§4；ARCH §7.12；ui.md §2/§4 | IndustrialProjectTree（§3.1 五分组封闭清单，ObjectId 身份）＋SelectionService（业务选择唯一汇聚点＋来源标记＋⑤事件广播）＋联动 L1~L3 落位（L1 树选→检查器刷新、L2 已应用对象→三维高亮、L3 TreeView Select Frame→NameMap 反解→树定位）＋INV-B1~B4 边界断言 | UX-02（工程用语/对象定位）、ARC-04（反解经 RuntimeNameMap） | L1/L3 逐条可演示核查（含反解失败不动树、未应用对象不高亮反例）；L4"不承诺 TreeView 树行反向选中"登记为防过度交付项；双树边界 INV-B1~B3 断言用例通过；ird_gates 增量登记；留痕 traceability/builds/wp10-t21/ | TreeView 注入业务节点禁止；项目树注入运行时结构节点禁止；名称映射私建禁止（唯一经 SA-05 端口）；共享面变更仅本任务与 UI-T22/T23 允许（§5.3 互斥） | L |
+| WP-10-T22 | 共享属性检查器和复杂编辑区〔≙UI-T22；方案 B.1 迁移链，SA-18 D5/D6〕 | ui | WP-10-T21 | B1-SPEC §2/§5.1；ui.md §4.1（右 Dock 既有面） | PropertyInspector 共享检查器（常用字段呈现面＋PropertyPagesProvider 域注册协议）＋复杂编辑页面宿装（域页面注册/激活协议——DH/物性/区域/导入/求解配置收口页） | UX-04/05（参数表/表单公共件消费） | 项目树选中→检查器字段刷新联动（L1 全域核查基线就位）；复杂编辑不经检查器展开大批量字段的分野断言；域页面注册协议契约测试通过；ird_gates 增量登记；留痕 traceability/builds/wp10-t22/ | 检查器内私藏域判定逻辑禁止（呈现与编排 only，域判定归各域）；共享面变更仅本任务与 UI-T21/T23 允许（§5.3 互斥） | L |
+| WP-10-T23 | 多领域集成收口〔≙UI-T23；方案 B.1 迁移链收口〕 | ui | WP-15-T18（三域迁移完成） | B1-SPEC 全文；三域迁移任务落位登记 | 三域（建模/需求/运动学）经项目树＋检查器＋选择服务的集成回归＋联动契约全量核查＋deprecated 自持导航清单＋退役清单草案（交 WP-24-T09） | UX-12（阶段导航集成呈现）、PM-11（状态行集成回归） | 三域"树导航→属性→三维高亮→复杂编辑"端到端链路用例通过；INV-B1~B4 全量断言；Jog/Playback 呈现衔接集成核查；共享 UI 文件互斥合规复查（§5.3）；ird_gates 增量登记；留痕 traceability/builds/wp10-t23/ | 不在本任务补任何域功能（只集成收口）；退役执行不属本任务（归 WP-24-T09） | L |
 
 ### 2.12 WP-11 io（单元卡已产出 v0.1）
 
@@ -365,6 +371,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-13-T17 | 实现 WorkCell 反向导入通道（R2/D） | modeling | WP-13-T05、WP-11-T06、阶段 D 启用 | modeling.md §13（卡预留） | `WorkCellReverseImport.*`（有损提取＋提取报告） | MDL-18、AT-33 | 不可表达/未保留内容逐项列出；导入为草稿；不可表达按 MDL-10/12 同一判定用例通过 | 草稿不直接形成正式模型 | M |
 | WP-13-T18 | 实现传动耦合矩阵建模（R2/D） | modeling | WP-13-T03、WP-18-T05、阶段 D 启用 | modeling.md（卡）；MDL-21 | 腕部线性耦合矩阵 C 编辑＋R1 阻断反例 | MDL-21、AT-38 | C 常矩阵校验/非常矩阵病态诊断阻止；R1 阻断口径（mimic/闭环维持阻断）用例通过 | 不提前放开 R1 阻断 | M |
 | WP-13-T19 | 实现 MDL-12-S1 混合链启用（R2；前置 SEL-09-S1） | modeling（跨域协作） | WP-19-T12＋WP-15/16/17/19 对应扩展 | modeling.md（卡）；§2.1 交付同步 | 六/七轴含 prismatic 正式计算/报告放开 | MDL-12-S1、AT-36 | 混合链端到端（建模→…→报告）验收；4/5 轴反例仍被阻止；§2.1 支持矩阵同步更新 | 4/5 轴不因本子项放开 | L（跨域端到端） |
+| WP-13-T20 | 建模迁移（方案 B.1 迁移链，SA-18 D11） | modeling | WP-10-T22（共享面就绪） | B1-SPEC §5；modeling.md §9（插件界面）；WP-10-T21/T22 注册协议 | 建模域三接入面：TreeNodesProvider（建模对象入项目树）＋PropertyPagesProvider（常用字段入检查器；DH/物性入复杂编辑页）＋SelectionAdapter（选择联动与三维高亮）＋本域自持导航 deprecated 标记 | MDL-07（联动选择呈现的宿主形态迁移） | 建模对象经项目树导航→检查器常用字段→复杂编辑页（DH/物性分野 D6）→三维高亮全链路用例通过；Provider 增量面验收（无整体重写提交）；迁移期间旧面板可用性零损失；ird_gates 增量登记；留痕 traceability/builds/wp13-t20/ | 修改共享 UI 装配面禁止（只消费 UI-T21/T22 注册协议——§5.3 互斥）；删除未迁移域可用性禁止；插件零计算逻辑红线不变 | M |
 
 ### 2.15 WP-14 requirements（单元卡待产出；REQ-01~12）
 
@@ -379,6 +386,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-14-T07 | 实现工艺模板/镜像/阵列/需求集撤销 | requirements | WP-14-T03 | requirements.md（卡） | 工艺任务模板＋工位镜像＋四类阵列＋需求集撤销/重做（批量整体回滚） | REQ-07/11、AT-24 | 镜像坐标正确、四类阵列生成、批量整体回滚用例通过；局部撤销与项目级撤销分离 | — | M |
 | WP-14-T08 | 实现 requirements 插件界面 | requirements | WP-14-T03~T07、WP-10-T08 | requirements.md（卡） | 定义面板（工位/区域/校验） | UX-05（参数表消费）、REQ 家族呈现 | 编辑→草稿→应用链路用例通过 | 插件零计算逻辑 | M |
 | WP-14-T09 | 契约测试套件 | requirements | WP-14-T03~T08、WP-02 | requirements.md 验证章（卡） | `requirements/test/*`＋黄金数据集（搬运任务/部分位姿约束/区域/负载事件） | AT-02/23/24 | 全部用例通过并留痕 | — | M |
+| WP-14-T10 | 需求迁移（方案 B.1 迁移链，SA-18 D11；接续 WP-13-T20 串行） | requirements | WP-13-T20（串行迁移——§5.3 共享 UI 互斥，不并行） | B1-SPEC §5；requirements.md §9（定义面板）；WP-10-T21/T22 注册协议 | 需求域三接入面：TreeNodesProvider（任务点/区域/工况/需求集入项目树）＋PropertyPagesProvider（常用字段入检查器；区域定义/导入向导入复杂编辑页）＋SelectionAdapter＋本域自持导航 deprecated 标记 | UX-05（参数表消费）、REQ-01（任务点对象呈现迁移） | 需求对象经项目树导航→检查器→复杂编辑页全链路用例通过；CSV/JSON 导入向导入复杂编辑区；Provider 增量面验收；ird_gates 增量登记；留痕 traceability/builds/wp14-t10/ | 修改共享 UI 装配面禁止（§5.3 互斥）；删除未迁移域可用性禁止；插件零计算逻辑红线不变 | M |
 
 ### 2.16 WP-15 kinematics（单元卡待产出；KIN-01~14）
 
@@ -401,6 +409,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-15-T15 | 实现近似外包络估算（R2/D） | kinematics | WP-15-T14 | kinematics.md（卡预留） | 射线边界 Rmax（默认 180 方向、可取消） | KIN-10、AT-26 | 结果标注"近似、非精确"用例通过 | — | S |
 | WP-15-T16 | 实现独立位姿可达性分析（R2/D） | kinematics | WP-15-T14 | kinematics.md（卡预留） | 位置×方向×滚转采样＋计划预览＋方向覆盖率报告 | KIN-11、AT-26 | 计划预览 IK 目标数；协作取消；覆盖率报告用例通过 | — | M |
 | WP-15-T17 | 实现扩展显示单位（R2） | kinematics | WP-15-T10 | §17.1 子项 | inch/grad/turn 换算 | KIN-12-S1 | 换算正确且不影响 SI 真值 | — | S |
+| WP-15-T18 | 运动学迁移（方案 B.1 迁移链，SA-18 D8/D9/D11；接续 WP-14-T10 串行） | kinematics | WP-14-T10（串行迁移——§5.3 共享 UI 互斥，不并行） | B1-SPEC §2/§5；kinematics.md §9.8（插件界面）；WP-10-T21/T22 注册协议 | 运动学域三接入面（任务点/结果/分析配置入项目树；常用字段入检查器；求解配置入复杂编辑页）＋Jog 面板（会话姿态操作入口，零修订）＋Playback 面板运动学衔接（TimedStatePath 播放驱动会话姿态，零修订）＋本域自持导航 deprecated 标记 | KIN-06（会话姿态零修订）、KIN-12（显示单位纯投影呈现）、AT-04 | Jog/Playback 操作后零修订零失效断言（AT-04 口径）；运动学对象经项目树→检查器→复杂编辑页全链路用例通过；失败点/薄弱区渲染数据投放唯一 RWStudioView3D（D7）；ird_gates 增量登记；留痕 traceability/builds/wp15-t18/ | 修改共享 UI 装配面禁止（§5.3 互斥）；删除未迁移域可用性禁止；插件零计算逻辑红线不变；完整轨迹动画仍归 trajectory 域（未立项，本任务只做 Playback 呈现衔接） | M |
 
 ### 2.17 WP-16 trajectory（单元卡待产出；TRJ-01~08）
 
@@ -537,6 +546,8 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | WP-24-T05 | 生成安装包依赖清单 | 横切 | WP-24-T01 | NFR-SEC-05；testkit.md §3.6（排除扫描建议——WP-02-T10 移交） | `share/` 依赖清单（组件/版本/许可证/哈希）＋安装树 testkit 排除复验 | NFR-SEC-05、T-1 红线 | 清单与安装树一致；安装树零 testkit 组件扫描通过 | — | M |
 | WP-24-T06 | 制作离线安装包 | 横切 | WP-24-T03/T05、M7 前 | NFR-DEP-01~03；ARCH §5.4 | Windows x64 离线安装包（bin/plugins/share 结构、版本并存、卸载） | NFR-DEP-01/02/03 | 不依赖开发机路径；离线安装/卸载/版本并存验收通过 | — | L（打包脚本/验证两提交） |
 | WP-24-T07 | 安装包签名与升级完整性校验 | 横切 | WP-24-T06 | NFR-SEC-06（按企业部署策略单独验收） | 签名与升级校验 | NFR-SEC-06 | 按企业策略验收留痕 | — | S |
+| WP-24-T08 | 正式产品程序骨架（方案 B.1 宿主融合形态，SA-18 D1；SA-01 口径不变） | 横切（L5） | WP-24-T03、WP-06-T14（呈现契约面） | B1-SPEC §2/§5.4；ARCH §2.4/§5.4/§7.12 | 正式产品装配骨架：RobWorkStudio 宿主为唯一主窗口的装配路径（启动→静态白名单装配→宿主 Dock 控制器簇挂载→RWStudioView3D 中央区→About 插件清单）——方案 A 顶层窗口路径在正式装配中不再可达 | NFR-SEC-04、UX-14、PM-17（启动流程宿主化） | 骨架双模式构建零错误；白名单装配期固定、无动态加载入口；About 清单与白名单一致；宿主融合形态启动冒烟留痕 traceability/builds/wp24-t08/ | 提供动态加载/卸载入口禁止（SA-01）；框架修改禁止（SA-02）；域功能实现不属本任务（骨架＝装配路径与启动面） | M |
+| WP-24-T09 | 方案 A 正式产品路径退役（方案 B.1 收口，SA-18 D13） | 横切 | WP-24-T08、UI-T23（集成收口 pass） | B1-SPEC §5.4 四条件；UI-T23 退役清单草案；NFR-MNT-06 | 退役执行：方案 A 顶层窗口产品路径移除＋deprecated 自持导航清理＋迁移期临时桥接件清理＋`sdurws_ird_ui_plugin`/各 `_app` 处置登记（保留为开发验证通道则移出产品交付路径声明） | NFR-MNT-06 | §5.4 四条件逐项核对留痕；零未引用目标与废弃构建选项残留（代码审查清单）；处置清单经所有者确认；双模式构建零错误＋ird_gates 零新增命中 | 顺手删除仍被开发验证依赖的 harness 而不留登记禁止；退役范围外重构禁止；已验收历史任务契约不得改写 | M |
 
 ### 2.26 WP-25 试点与交付材料（横切；阶段 E）
 
@@ -559,26 +570,26 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 
 | 需求域 | 需求 ID → 覆盖任务（主责加粗优先） |
 | --- | --- |
-| ARC 架构（5） | ARC-01→**WP-04-T10/T13/T15**；ARC-02→**WP-01-T01**＋WP-04-T01/T15；ARC-03→**WP-06-T04/T07/T11**＋WP-13-T12；ARC-04→**WP-06-T05**＋WP-13-T12；ARC-05→**WP-07-T02~T09**＋WP-10-T07 |
-| CON 快照/一致性（6） | CON-01→**WP-05-T03**＋WP-04-T04/T05；CON-02→**WP-05-T07/T08**；CON-03→**WP-04-T17**＋WP-11-T06＋WP-05-T05；CON-04→**WP-05-T09**＋WP-08-T09＋WP-06-T10；CON-05→**WP-05-T04/T08**；CON-06→**WP-05-T03/T04**＋WP-07-T03＋WP-06-T05 |
+| ARC 架构（5） | ARC-01→**WP-04-T10/T13/T15**；ARC-02→**WP-01-T01**＋WP-04-T01/T15＋WP-10-T19/T20；ARC-03→**WP-06-T04/T07/T11**＋WP-13-T12＋WP-06-T14；ARC-04→**WP-06-T05**＋WP-13-T12＋WP-06-T14/WP-10-T21；ARC-05→**WP-07-T02~T09**＋WP-10-T07 |
+| CON 快照/一致性（6） | CON-01→**WP-05-T03**＋WP-04-T04/T05；CON-02→**WP-05-T07/T08**＋WP-10-T20；CON-03→**WP-04-T17**＋WP-11-T06＋WP-05-T05；CON-04→**WP-05-T09**＋WP-08-T09＋WP-06-T10；CON-05→**WP-05-T04/T08**；CON-06→**WP-05-T03/T04**＋WP-07-T03＋WP-06-T05 |
 | TASK 任务执行（3） | TASK-01→**WP-08-T03**；TASK-02→**WP-05-T07**；TASK-03→**WP-08-T05**＋WP-03-T08 |
 | ERR 诊断（1） | ERR-01→**WP-09-T03/T04**＋WP-03-T07＋各域诊断构造（WP-07-T10 等） |
 | EVI 证据（2） | EVI-01→**WP-05-T05/T06**；EVI-02→**WP-05-T06**＋各域评估器（WP-15-T05/T06、WP-16-T07、WP-17-T07、WP-19-T06、WP-20-T04） |
-| MDL 建模（22） | MDL-01→**WP-13-T03/T07**；02→T03/T09；03→T05；04→T07；05→T04；06→T08；07→T15；08→T14（呈现 WP-22-T11）；09→T03；10→T09；11→T05；12→T05/T08；13→T10；14→**T12＋WP-06-T05**；15→T10；16→T04；17→T10；18→T17（R2/D）；19→T06；20→T13；21→T18（R2/D）；22→**T11＋WP-06-T06** |
-| REQ 需求定义（12） | REQ-01~04→**WP-14-T03**；05→T04；06→T05；07→T07；08→T06；09→T06；10→T06；11→T07；12→T04 |
-| KIN 运动学（14） | KIN-01→**WP-15-T03**；02→T04；03→T05；04→T06；05→T07；06→T08；07→T11；08→T09；09→T14（R2/D）；10→T15（R2/D）；11→T16（R2/D）；12→T10；13→T10；14→T08 |
+| MDL 建模（22） | MDL-01→**WP-13-T03/T07**；02→T03/T09；03→T05；04→T07；05→T04；06→T08；07→T15＋WP-13-T20；08→T14（呈现 WP-22-T11）；09→T03；10→T09；11→T05；12→T05/T08；13→T10；14→**T12＋WP-06-T05**；15→T10；16→T04；17→T10；18→T17（R2/D）；19→T06；20→T13；21→T18（R2/D）；22→**T11＋WP-06-T06** |
+| REQ 需求定义（12） | REQ-01~04→**WP-14-T03**＋WP-14-T10（宿主呈现迁移）；05→T04；06→T05；07→T07；08→T06；09→T06；10→T06；11→T07；12→T04 |
+| KIN 运动学（14） | KIN-01→**WP-15-T03**；02→T04；03→T05；04→T06；05→T07；06→T08＋WP-15-T18；07→T11；08→T09；09→T14（R2/D）；10→T15（R2/D）；11→T16（R2/D）；12→T10＋WP-15-T18；13→T10；14→T08 |
 | TRJ 轨迹（8） | TRJ-01→**WP-16-T04**；02→T05；03→T06；04→T07（P-06 冻结 WP-16-T02）；05→T08；06→T09；07→T10；08→T11 |
 | DYN 动力学/传动（8） | DYN-01→**WP-17-T03**；02→T03；03→T04；04→**WP-18-T03**（消费 WP-17-T03）；05→WP-17-T05；06→WP-17-T06；07→WP-17-T07；08→WP-17-T08 |
 | SEL 选型（10） | SEL-01/02→**WP-19-T03**；03/04→T04；05→T05（阈值归属 P-POL-3/O-13）；06→T06；07→T07；08→T07；09→T08；10→T09 |
 | OPT 优化（12） | OPT-01→**WP-20-T03**；02→T03；03→T04（D 全量 WP-21-T04）；04→T05；05→WP-21-T03；06→T06（D WP-21-T04/T07）；07→T05；08→T07；09→WP-21-T05；10→WP-21-T06；11→T08；12→T09 |
 | RPT 报告（6＋2 子级） | RPT-01-B→**WP-12-T03**；RPT-01-C/RPT-04→WP-12-T07；RPT-02→T04；RPT-03→T05；RPT-05→T06；RPT-06→T08 |
-| PM 项目管理（18） | PM-01→**WP-22-T04**＋WP-11-T06；02→WP-22-T05＋**WP-04-T08**；03→WP-22-T06；04→**WP-04-T12**；05→WP-22-T07＋**WP-04-T18**；06→WP-22-T08；07→WP-22-T08＋**WP-04-T03**；08→**WP-04-T07/T08**；09→WP-22-T08＋**WP-04-T17**；10→WP-22-T05；11→WP-22-T09；12→**WP-04-T06**；13→**WP-08-T05**；14→WP-22-T10；15→WP-22-T09；16→**WP-23-T05**；17→**WP-24-T02/T03**；18→**WP-04-T13** |
-| UX 界面（14） | UX-01→**WP-10-T09**＋WP-22-T03；02→WP-10-T09；03→**WP-09-T04**＋WP-10 消费；04→WP-10-T08；05→WP-10-T08；06→WP-10-T04；07→WP-10-T08；08→**WP-10-T07**＋WP-07-T05；09→WP-10-T03；10→WP-10-T04；11→WP-10-T05；12→WP-10-T09＋**WP-22-T03**；13→**WP-22-T11/T12**＋WP-10-T06；14→WP-10-T10 |
+| PM 项目管理（18） | PM-01→**WP-22-T04**＋WP-11-T06；02→WP-22-T05＋**WP-04-T08**；03→WP-22-T06；04→**WP-04-T12**；05→WP-22-T07＋**WP-04-T18**；06→WP-22-T08；07→WP-22-T08＋**WP-04-T03**；08→**WP-04-T07/T08**；09→WP-22-T08＋**WP-04-T17**；10→WP-22-T05；11→WP-22-T09＋UI-T23；12→**WP-04-T06**；13→**WP-08-T05**；14→WP-22-T10；15→WP-22-T09；16→**WP-23-T05**；17→**WP-24-T02/T03**＋WP-24-T08；18→**WP-04-T13** |
+| UX 界面（14） | UX-01→**WP-10-T09**＋WP-22-T03；02→WP-10-T09＋UI-T21；03→**WP-09-T04**＋WP-10 消费；04→WP-10-T08＋UI-T22；05→WP-10-T08＋UI-T22＋WP-14-T10；06→WP-10-T04；07→WP-10-T08；08→**WP-10-T07**＋WP-07-T05；09→WP-10-T03＋WP-10-T19；10→WP-10-T04；11→WP-10-T05；12→WP-10-T09＋**WP-22-T03**＋UI-T23；13→**WP-22-T11/T12**＋WP-10-T06；14→WP-10-T10 |
 | NFR-COR（5） | 01→**WP-02-T03~T05**＋各域解析算例（WP-15-T13/WP-17-T10/WP-18-T04）；02→**WP-23-T09**＋WP-05-T04；03→**WP-03-T03~T05**；04→**WP-12-T03/T05**；05→**WP-07-T07** |
-| NFR-MNT（7） | 01→**WP-03-T01**＋WP-01-T01（R-3）；02→**WP-01-T01**；03→**WP-03/WP-09**（分域权威）；04/05→**WP-01-T02**；06→**WP-24-T04**；07→**WP-01-T01**（R-4/R-5） |
+| NFR-MNT（7） | 01→**WP-03-T01**＋WP-01-T01（R-3）；02→**WP-01-T01**；03→**WP-03/WP-09**（分域权威）；04/05→**WP-01-T02**；06→**WP-24-T04**＋WP-24-T09；07→**WP-01-T01**（R-4/R-5） |
 | NFR-PERF（6） | 01→**WP-23-T02**；02→WP-23-T03＋**WP-08-T04**；03→WP-23-T04；04→WP-23-T06＋**WP-08-T08**；05→WP-23-T07；06→WP-23-T08 |
 | NFR-REL（5） | 01→**WP-04-T07**；02→**WP-08-T07**；03→**WP-08-T03/T05**；04→**WP-11-T06**；05→**WP-09-T04** |
-| NFR-SEC（7） | 01/02→**WP-11-T03**；03→**WP-11-T04**；04→**WP-24-T03**＋WP-01-T03；05→**WP-24-T05**；06→**WP-24-T07**；07→**WP-09-T05** |
+| NFR-SEC（7） | 01/02→**WP-11-T03**；03→**WP-11-T04**；04→**WP-24-T03**＋WP-01-T03＋WP-24-T08；05→**WP-24-T05**；06→**WP-24-T07**；07→**WP-09-T05** |
 | NFR-DEP（5） | 01/02/03→**WP-24-T06**；04→**WP-04-T04/T08**；05→**WP-24-T01** |
 | PILOT/DEL（4） | PILOT-01→**WP-25-T01**；PILOT-02→WP-25-T02；DEL-01→WP-25-T03；DEL-02→WP-25-T04 |
 | 分期子项（12） | PM-04-S1→WP-04-T20；PM-08-S1/PM-11-S1~S3/PM-12-S1→WP-04-T19；KIN-12-S1→WP-15-T17；SEL-09-S1→WP-19-T12；MDL-12-S1→WP-13-T19；TRJ-08-S1/S2/S3→WP-16-T14/T15/T16 |
@@ -790,6 +801,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | v0.19 | 2026-09-24 | O-43 裁决登记（所有者 2026-09-24，融合方案审核指令）：①§4.2 新增 O-43 行（已裁决）——宿主深度融合形态三步承接：治理先行→WP-10-T17（会话入口处理器补全＋宿主菜单融合：File"工业机器人项目"子菜单按位插入＋最近项目、Tools 命令面板、自建视图菜单、Plugins 仅留显示开关；关闭统一确认对话框呈现＋Draining 轮询驱动＋DraftController 保存链路装配）→WP-10-T18（Dock 拓扑拆分＋状态行迁移宿主状态栏——已立项未实施，高风险单独立任务）；②§2.11 新增 WP-10-T17（规模 M）/WP-10-T18（规模 L）任务行。不变项：装载方式（SA-01/WP-24-T03 口径不变）、生命周期正交边界（O-38 ③）、框架零修改（SA-02）。需求语义零变化 |
 | v0.20 | 2026-09-26 | 插件 GUI 手动验证通道约定增补（owner 指示 2026-09-26"每开发完成一个插件，必须能够通过 VS 编译手动验证界面的功能"）：①§5.1 新增"插件 GUI 手动验证通道"行——每个 `_plugin` 交付任务完成时必须可经 VS 集成编译后启动 GUI 人工点验，默认形态＝单元自持 `sdurws_ird_<unit>_app` harness（`_app`＝ird_gates 分类面 Qt 合法形态；先例 ui_app〔UI-T15〕、modeling_app〔WP-13-T15 增量，本版同批落位〕），装配前过渡通道不改变产品交付路径；②§5.2 DoD 增第 5 条（仅适用 `_plugin` 任务）：harness/宿主启动点验＋步骤截图留痕入 `traceability/builds/<task>/`，无法执行须如实登记。装配任务 WP-24-T03 口径不变，需求语义零变化 |
 | v0.21 | 2026-09-26 | WP-24-T01 首版落位＋WP-24-T03 拆段提前启动（owner 指示 2026-09-26"每完成一个插件进行装配，及时验证效果"）：①WP-24-T01 冻结版本基线首版落位（分支 wp24-t01 @96d5c5be 待验收）——`ird/share/baseline.md` v1.0＋policy P-POL-5 消账（backendVersion 冻结值 rw-31b8184；policy.md v0.15 同批）；②§2.25 WP-24-T03 行拆段注记——T03a 首版装配 2026-09-26 提前落位（分支 wp24-t03 待验收）：ui 侧 IPluginUiRegistrar/IPluginUiModule 头落位（P-MDL-8 消账）＋registrar 白名单装配＋建模插件真宿主挂位（ui.md v1.15/modeling.md v0.20 同批）；收口余量（域命令入注册表/StageStatusModel 汇聚/中央区挂位/draft.apply 域侧挂钩/AssertionSuite 注入/会话同步/About 接线）归 T03b（阶段 E）。M3 判据除本表 WP-24-T01 外全部满足为提前启动依据；需求语义零变化 |
+| v0.22 | 2026-09-27 | DOC-T14 方案 B.1 宿主融合批次登记（所有者 2026-09-27 批准"宿主融合、项目树主导、渐进迁移"；前置 WP-15-T13 已验收合入）：①产品形态冻结——ARCHITECTURE v0.13 同批新增 SA-18＋§7.12（宿主唯一/ui 能力转宿主内部控制器/双树边界/选择联动 L1~L4/呈现与计算隔离复用/Provider 渐进迁移），设计规格 `RobWork/docs/superpowers/specs/2026-09-27-host-integrated-b1-design.md`（B1-SPEC v1.0）；②§2 新增 11 任务行（迁移链，依赖串行）：§2.7 WP-06-T14〔≙RT-T14 宿主呈现 WorkCell〕、§2.11 WP-10-T19~T23〔≙UI-T19~T23：宿主控制器抽取/宿主运行时发布桥/工业项目树和选择服务/共享属性检查器和复杂编辑区/多领域集成收口〕、§2.14 WP-13-T20（建模迁移）、§2.15 WP-14-T10（需求迁移）、§2.16 WP-15-T18（运动学迁移）、§2.25 WP-24-T08（正式产品程序骨架）/WP-24-T09（方案 A 正式产品路径退役）；依赖链 WP-15-T13→DOC-T14→UI-T19→RT-T14→WP-24-T08→UI-T20→UI-T21→UI-T22→WP-13-T20→WP-14-T10→WP-15-T18→UI-T23→WP-24-T09；③PIPE v1.15 同批新增 §6.2 迁移链共享 UI 文件互斥编排约束（WP-13-T20/WP-14-T10/WP-15-T18 在 UI-T22 后可审查串行迁移，不并行修改共享 UI 面）；④§3 矩阵同步（ARC-02/03/04、CON-02、MDL-07、REQ-01~04、KIN-06/12、PM-11/17、UX-02/04/05/09/12、NFR-MNT-06、NFR-SEC-04 行补迁移链任务号；机读投影 trace-matrix.json 待下次再生成纳入）；⑤契约起草：tasks/DOC-T14.json（design-written——本任务自身，产物＝本批次全部文档与契约）＋tasks/foundation/ 11 份（UI-T19/RT-T14/WP-24-T08/UI-T20/UI-T21/UI-T22/WP-13-T20/WP-14-T10/WP-15-T18/UI-T23/WP-24-T09，均 **planned**——CCP §3 第 6~7 步独立评审与放行待走，不得直接置 ready）；⑥phase-one-task-index.json 增 UI-T19~T23/RT-T14 五条目（ui/runtime 两单元在既有一期索引覆盖面内；modeling/requirements/kinematics 三卡与横切族不在该索引覆盖范围——既有口径不变）；foundation-tasks.json 增 12 条入口条目（轻量指针，canonical 为准）。REQUIREMENTS 语义零修改（形态收口不触需求）；不重开任何 done 历史任务 |
 
 
 
@@ -800,7 +812,7 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 
 ## 8. AI 子任务执行约定
 
-AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子目录）状态为 `ready` 的单份执行契约；索引 JSON 不是执行契约。**契约家族与编号归属（v0.7）**：单元任务契约位于 `tasks/foundation/`（taskId＝卡内编号，经 §2 ≙ 映射对应 WPnn-Tkk）；治理/横切任务契约位于 `tasks/` 根目录——治理文档族（DOC-T01~T03、FOUNDATION-CR-01，主 WP-A 的过程任务，无 §2 独立行）与横切任务族（WP-00-T01/T02、WP-01-T01/T02，2026-09-10 补建，taskId 即 §2 登记 WPnn-Tkk 编号）——两族均以本文 §2/§0.1 的登记为唯一编号来源，不双轨。单元任务行与 canonical 的前置必须同时满足。任务必须先通过 `scripts/industrialrobot/validate-task.ps1`，完成后运行 `verify-task.ps1`，并同步 `traceability/` 中的状态和映射。需求或架构语义发生变化时，任务必须转为 `blocked`，不得在代码中自行解释或修改上游文档。**自动化流水线（v0.8）**：三段式流程可经 automation-pipeline.md 编排自动化（定时 tick＋子代理实施/验收，状态载体 `traceability/pipeline/state.json`）——守卫避让进行中会话、返工熔断、合并决策默认所有者门控（预授权须记录于 state.json 的 policy）；流水线不改变本节任何纪律。
+AI 只能领取 `doc/industrial-robot-design/tasks/` 下（含 foundation/ 子目录）状态为 `ready` 的单份执行契约；索引 JSON 不是执行契约。**契约家族与编号归属（v0.7）**：单元任务契约位于 `tasks/foundation/`（taskId＝卡内编号，经 §2 ≙ 映射对应 WPnn-Tkk）；治理/横切任务契约位于 `tasks/` 根目录——治理文档族（DOC-T01~T03、FOUNDATION-CR-01，主 WP-A 的过程任务，无 §2 独立行）与横切任务族（WP-00-T01/T02、WP-01-T01/T02，2026-09-10 补建，taskId 即 §2 登记 WPnn-Tkk 编号）——两族均以本文 §2/§0.1 的登记为唯一编号来源，不双轨。单元任务行与 canonical 的前置必须同时满足。任务必须先通过 `scripts/industrialrobot/validate-task.ps1`，完成后运行 `verify-task.ps1`，并同步 `traceability/` 中的状态和映射。需求或架构语义发生变化时，任务必须转为 `blocked`，不得在代码中自行解释或修改上游文档。**自动化流水线（v0.8）**：三段式流程可经 automation-pipeline.md 编排自动化（定时 tick＋当前所有者明确禁止使用子智能体，实施/验收/合入由同一 tick 会话按角色顺序执行；状态载体 `traceability/pipeline/state.json`）——守卫避让进行中会话、返工熔断、合并决策和证据留痕纪律不变；流水线不改变本节任何纪律。
 
 **契约编译与发现闭环（v0.9）**：ready 契约的唯一产出通道是 `contract-compilation.md`（文档代号 CCP）——单元卡任务行按其 §2 逐字段门槛与 §3 七步编译放行（requirements 非空、designRefs 带真实锚点、acceptance 逐条可验证、`branch`/`interUnit` 必填、跨单元任务 `knownPitfalls` 显式携带已登记陷阱），占位契约不得领取；validate-task.ps1 三查（前置引用/设计锚点/knownPitfalls）是其机器执行面；编译评审留痕于 `traceability/contract-compile-log.md`。验收建议级问题强制转登 `traceability/findings.json`（§4.7），发现必须闭环不得只留档。
 

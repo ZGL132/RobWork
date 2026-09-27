@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "ird-pipeline-batch/1",
+  "batchId": "B1-HOST-INTEGRATION",
+  "title": "方案 B.1 宿主融合、项目树主导、渐进迁移批次",
+  "status": "planned",
+  "sourceTask": "DOC-T14",
+  "releasePolicy": {
+    "mode": "explicit-sequence",
+    "readyTransition": "atomic-after-contract-review",
+    "autoDiscoveryOrder": "manifest-order",
+    "executionMode": "single-session-sequential-roles",
+    "stopOnFailure": true,
+    "strictQueueOrder": true
+  },
+  "externalGates": [
+    {
+      "gateId": "WP-24-T03-COMPLETE",
+      "beforeTask": "WP-24-T08",
+      "status": "open",
+      "condition": "WP-24-T03 T03b 收口已经完成独立验收并合入 redesign-main；验收记录与合入提交均可追溯。",
+      "evidencePatterns": [
+        "traceability/acceptance/WP-24-T03b-*.md",
+        "traceability/pipeline/state.json#history"
+      ],
+      "onUnmet": "remain-idle-without-no-progress-count"
+    }
+  ],
+  "stages": [
+    {
+      "order": 1,
+      "stageId": "B1-01",
+      "name": "宿主控制器抽取",
+      "taskId": "UI-T19",
+      "contractPath": "tasks/foundation/UI-T19.json",
+      "branch": "ui-t19",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 2,
+      "stageId": "B1-02",
+      "name": "宿主呈现 WorkCell 契约",
+      "taskId": "RT-T14",
+      "contractPath": "tasks/foundation/RT-T14.json",
+      "branch": "rt-t14",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 3,
+      "stageId": "B1-03",
+      "name": "正式产品程序骨架",
+      "taskId": "WP-24-T08",
+      "contractPath": "tasks/foundation/WP-24-T08.json",
+      "branch": "wp24-t08",
+      "requiredExternalGates": [
+        "WP-24-T03-COMPLETE"
+      ]
+    },
+    {
+      "order": 4,
+      "stageId": "B1-04",
+      "name": "宿主运行时发布桥",
+      "taskId": "UI-T20",
+      "contractPath": "tasks/foundation/UI-T20.json",
+      "branch": "ui-t20",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 5,
+      "stageId": "B1-05",
+      "name": "工业项目树和选择服务",
+      "taskId": "UI-T21",
+      "contractPath": "tasks/foundation/UI-T21.json",
+      "branch": "ui-t21",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 6,
+      "stageId": "B1-06",
+      "name": "共享属性检查器和复杂编辑区",
+      "taskId": "UI-T22",
+      "contractPath": "tasks/foundation/UI-T22.json",
+      "branch": "ui-t22",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 7,
+      "stageId": "B1-07",
+      "name": "建模迁移",
+      "taskId": "WP-13-T20",
+      "contractPath": "tasks/foundation/WP-13-T20.json",
+      "branch": "wp13-t20",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 8,
+      "stageId": "B1-08",
+      "name": "需求迁移",
+      "taskId": "WP-14-T10",
+      "contractPath": "tasks/foundation/WP-14-T10.json",
+      "branch": "wp14-t10",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 9,
+      "stageId": "B1-09",
+      "name": "运动学迁移",
+      "taskId": "WP-15-T18",
+      "contractPath": "tasks/foundation/WP-15-T18.json",
+      "branch": "wp15-t18",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 10,
+      "stageId": "B1-10",
+      "name": "多领域集成收口",
+      "taskId": "UI-T23",
+      "contractPath": "tasks/foundation/UI-T23.json",
+      "branch": "ui-t23",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 11,
+      "stageId": "B1-11",
+      "name": "方案 A 正式产品路径退役",
+      "taskId": "WP-24-T09",
+      "contractPath": "tasks/foundation/WP-24-T09.json",
+      "branch": "wp24-t09",
+      "requiredExternalGates": []
+    }
+  ],
+  "completion": {
+    "requiredTaskStatus": "done",
+    "requiredFinalTask": "WP-24-T09",
+    "requiredPipelinePhase": "idle",
+    "requiredQueueState": "no-batch-entry"
+  },
+  "note": "本清单只冻结顺序、门禁和自动发现规则，不把 planned 契约提前放行。DOC-T14 通过契约评审后，治理会话才可原子地把十一份契约置 ready；WP-24-T03-COMPLETE 未关闭时，WP-24-T08 保持合法等待，不计无进展熔断。"
+}

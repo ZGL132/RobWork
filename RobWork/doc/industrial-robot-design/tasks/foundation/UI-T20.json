@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T20",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主运行时发布桥（已应用 WorkCell 发布/重建/切换编排）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-24-T08"
+  ],
+  "requirements": [
+    "ARC-02",
+    "CON-02"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/ui.md#13",
+    "units/runtime.md#12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t20",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-RT-4",
+    "O-43"
+  ],
+  "acceptance": [
+    "RuntimePublishBridge 落位：已应用 WorkCell 发布/重编译/项目切换 → 宿主呈现视图（RT-T14 HostPresentationView）与官方 TreeView 刷新编排；呈现视图生命周期随宿主会话建立/销毁",
+    "身份对账（B1-SPEC §4.3 v1.1）：发布、重编译、项目切换时核对呈现对象的三类身份绑定关系（不要求字段值相等）——同一修订发布后验证通过：modelIdentity 对照来源规范模型内容、appliedRevisionId 对照本次发布修订、presentationIdentity 标识本次呈现构造实例；修订切换后旧 presentationIdentity 失效，不得继续冒充当前呈现（具名用例承载）",
+    "发布事务与失败路径（B1-SPEC §4.3）：先完整构造、后原子替换——构造或发布失败时保留旧宿主 WorkCell 与旧三维场景、产出稳定诊断明确呈现『项目已应用但呈现刷新失败』、不回滚已经合法产生的项目修订（具名用例承载）。**稳定码要求**：该诊断使用新增 UI 族稳定码（实施时确定码值并经 diagnostics StableCodeRegistry 登记、随 units/ui.md §3.5 增量登记——登记义务为本条款验收内容之一）；不得以任意文本替代稳定码（PA-1/NFR-MNT-03）",
+    "INV-B4 断言：重编译/项目切换后 TreeView 内容与三维场景一致；呈现视图重建不产生项目修订、不写缓存、不改变业务树选中语义（选中存在性经 ObjectId 校验后保持或置空，不静默换选）",
+    "呈现刷新与运行任务快照生命周期独立用例通过（D10 隔离半区在消费侧的落位）；当前性呈现口径不变（CON-02——Superseded 不被呈现刷新掩盖）",
+    "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json 留痕 traceability/builds/wp10-t20/；框架源码零修改（SA-02）"
+  ],
+  "note": "方案 B.1 迁移链（SA-18 D10 消费侧；B1-SPEC §4.3）。knownPitfalls：P-RT-4＝呈现侧构造复用同一变换（发布桥不得绕过 RT-T14 契约面私建构造旁路）；O-43＝宿主融合边界（TreeView/中央区为宿主既有行为，桥只编排刷新不改宿主交互）。interUnit=true 判定＝消费 runtime 呈现契约面＋⑤事件端口（跨单元运行时注入）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 2/3：appliedRevisionId 三类身份对账与旧呈现身份失效、发布事务失败路径（保留旧模型＋稳定诊断＋不回滚合法修订）。〔v1.2 修正 2026-09-27〕按所有者二次审核：①acceptance 2 措辞修正为绑定关系验证（不要求字段值相等）；②acceptance 3 稳定诊断明确为新增 UI 族稳定码（实施时经 StableCodeRegistry 登记＋单元卡 §3.5 增量登记，登记义务入验收；禁止任意文本替代稳定码）。"
+}

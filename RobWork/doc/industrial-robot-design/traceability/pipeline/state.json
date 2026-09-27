@@ -2007,7 +2007,8 @@
     "contractCompilation": "doc/industrial-robot-design/contract-compilation.md",
     "agents": "AGENTS.md",
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
-    "taskContracts": "doc/industrial-robot-design/tasks/"
+    "taskContracts": "doc/industrial-robot-design/tasks/",
+    "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
   "tickToken": "3407de88-011b-4880-bd3d-f7625d4c145d"
 }

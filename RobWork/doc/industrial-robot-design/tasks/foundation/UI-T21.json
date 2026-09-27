@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T21",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "工业项目树和选择服务（双树业务侧＋选择联动 L1~L3）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T20"
+  ],
+  "requirements": [
+    "UX-02",
+    "ARC-04"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t21",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-43",
+    "O-38"
+  ],
+  "acceptance": [
+    "IndustrialProjectTree 落位（B1-SPEC §3.1 五分组封闭清单：项目/方案/草稿、建模对象、需求对象、分析配置、结果/证据/报告）——节点身份一律 ObjectId，显示名经名称端口解析（UX-02），树自身零第二套命名缓存",
+    "SelectionService 落位：业务选择唯一汇聚点（选中 ObjectId 集合＋来源标记＋事件广播，⑤事件端口形态）；三维拾取名称反解唯一经 RuntimeNameMap 端口（SA-05）",
+    "联动 L1~L3 逐条可演示核查：L1 项目树选择→共享属性检查器刷新（本任务交付联动基线，检查器本体归 UI-T22）；L2 已应用对象→三维高亮（正向映射存在性判定，纯草稿/结果对象不产生三维动作不报错）；L3 TreeView Select Frame→RuntimeNameMap 反解→项目树定位",
+    "L3 反解失败分支具名验收（B1-SPEC §4.2 v1.1 口径）：①反解成功——项目树定位并选中对应业务 ObjectId；②反解失败——项目树不动、不报错，且 SelectionService 保留『仅运行时对象』选择状态（记录运行时对象引用，供状态呈现）；③反解失败不创建、不映射到任何业务 ObjectId，不产生虚假项目树节点——四点各对应具名测试用例",
+    "INV-B1~B3 边界断言用例通过（项目树零运行时结构节点；TreeView 零业务节点——Tree 内容注入面断言；两树互不持有对方选中状态）；L4\"不承诺 TreeView 树行反向选中\"登记为防过度交付项（实现不得引入该联动）",
+    "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp10-t21/；框架源码零修改（SA-02——TreeView 为框架组件只消费其事件）"
+  ],
+  "note": "方案 B.1 迁移链（SA-18 D3/D4；B1-SPEC §3/§4；PIPE §6.2 共享面任务）。knownPitfalls：O-43＝宿主 Dock 拓扑已由 UI-T18 冻结（项目树入既有主 Dock/左区，不再动拓扑）；O-38＝TreeView 为框架组件（零修改，只消费 Select Frame 事件）。interUnit=true 判定＝消费 runtime 名称端口与 project 查询面（经既有注入形态）。域 Provider 注册协议（TreeNodesProvider 等）随本任务冻结形状，供 UI-T22 与三域迁移消费。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.2 修正 2026-09-27〕按所有者二次审核补 L3 反解失败分支具名验收（仅运行时对象状态不伪造业务对象）——该语义为本任务直接职责，不依赖 UI-T23 集成验收。"
+}

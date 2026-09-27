@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-task-index/1",
-  "updatedAt": "2026-09-10",
-  "note": "完整单元任务行索引，不是可交给 verify-task 的执行契约；单元正文为权威。设计批次不改变 A~E 发布范围。",
+  "updatedAt": "2026-09-27",
+  "note": "完整单元任务行索引，不是可交给 verify-task 的执行契约；单元正文为权威。设计批次不改变 A~E 发布范围。DOC-T14 批次（2026-09-27）增补 UI-T19~T23/RT-T14；modeling/requirements/kinematics 三卡与横切族不在本索引覆盖范围（既有口径）。",
   "entries": [
     {
       "taskId": "CORE-T01",
@@ -1181,6 +1181,60 @@
       "status": "planned",
       "readinessNote": "任务行已编写；领取前补齐 canonical 契约、跨单元前置、允许文件与验证命令，不自动置 ready。",
       "canonicalTask": "tasks/foundation/UI-T14.json"
+    },
+    {
+      "taskId": "UI-T19",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T19 | 宿主控制器抽取（方案 B.1 迁移链，SA-18 D1/D2/D13；设计规格 B1-SPEC §2） | UI-T18、DOC-T14 | WorkbenchShell 控制器化收口：产品形态声明\"宿主为唯一主窗口\"（顶层窗口路径转纯开发通道）＋宿主 Dock 控制器簇装配面（命令/状态投影/会话/Draft 控制器族的宿主内聚合）＋harness/`_plugin` 开发验证通道地位登记；行为回归零变化；ird_gates 增量登记；留痕 traceability/builds/wp10-t19/ | 方案 B.1 链首任务；不整体重写既有面板（D11）；共享树/属性检查器面归 UI-T21/T22；框架零修改（SA-02） |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/UI-T19.json",
+      "readinessNote": "方案 B.1 迁移链条目（DOC-T14 批次）；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行置 ready（见编译日志放行块）。"
+    },
+    {
+      "taskId": "UI-T20",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T20 | 宿主运行时发布桥（方案 B.1 迁移链，SA-18 D10；设计规格 B1-SPEC §4.3） | WP-24-T08、RT-T14 | RuntimePublishBridge：已应用 WorkCell 发布/重编译/项目切换→宿主呈现视图与官方 TreeView 刷新编排＋呈现视图生命周期管理；重编译/切换后 TreeView 与三维一致（INV-B4）；呈现刷新零修订零缓存写入；留痕 traceability/builds/wp10-t20/ | 呈现侧构造旁路禁止（只消费 RT-T14 契约面）；不改计算侧 RuntimeSnapshot 语义；呈现视图与运行任务快照生命周期独立 |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/UI-T20.json",
+      "readinessNote": "方案 B.1 迁移链条目（DOC-T14 批次）；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行置 ready（见编译日志放行块）。"
+    },
+    {
+      "taskId": "UI-T21",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T21 | 工业项目树和选择服务（方案 B.1 迁移链，SA-18 D3/D4；设计规格 B1-SPEC §3/§4） | UI-T20 | IndustrialProjectTree（五分组封闭清单，ObjectId 身份）＋SelectionService（业务选择唯一汇聚点＋来源标记＋事件广播）＋联动 L1~L3（树选→检查器刷新；已应用对象→三维高亮；TreeView Select Frame→NameMap 反解→树定位）＋INV-B1~B4 边界断言；L4\"不承诺 TreeView 树行反向选中\"登记为防过度交付项；留痕 traceability/builds/wp10-t21/ | 双树节点清单封闭（规格 §3，增量须 B1-SPEC 修订）；TreeView 注入业务节点/项目树注入运行时节点均禁止；名称反解唯一经 SA-05 端口；共享面变更仅本任务与 UI-T22/T23 允许（PIPE §6.2 互斥） |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/UI-T21.json",
+      "readinessNote": "方案 B.1 迁移链条目（DOC-T14 批次）；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行置 ready（见编译日志放行块）。"
+    },
+    {
+      "taskId": "UI-T22",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T22 | 共享属性检查器和复杂编辑区（方案 B.1 迁移链，SA-18 D5/D6；设计规格 B1-SPEC §2/§5.1） | UI-T21 | PropertyInspector 共享检查器（常用字段呈现面＋PropertyPagesProvider 域注册协议）＋复杂编辑页面宿装（域页面注册/激活协议——DH/物性/区域/导入/求解配置收口页）；L1 全域核查基线就位；ird_gates 增量登记；留痕 traceability/builds/wp10-t22/ | 检查器内私藏域判定逻辑禁止（呈现与编排 only）；共享面变更仅本任务与 UI-T21/T23 允许（PIPE §6.2 互斥） |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/UI-T22.json",
+      "readinessNote": "方案 B.1 迁移链条目（DOC-T14 批次）；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行置 ready（见编译日志放行块）。"
+    },
+    {
+      "taskId": "UI-T23",
+      "unit": "ui",
+      "design": "units/ui.md",
+      "sourceRow": "| UI-T23 | 多领域集成收口（方案 B.1 迁移链收口；设计规格 B1-SPEC 全文） | WP-15-T18（三域迁移完成） | 三域（建模/需求/运动学）经项目树＋检查器＋选择服务集成回归＋联动契约全量核查（INV-B1~B4＋L1~L3）＋Jog/Playback 呈现衔接集成核查＋deprecated 自持导航清单＋退役清单草案（交 WP-24-T09）＋共享 UI 文件互斥合规复查；留痕 traceability/builds/wp10-t23/ | 不在本任务补任何域功能（只集成收口）；退役执行归 WP-24-T09；PIPE §6.2 互斥合规复查为验收对抗项 |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/UI-T23.json",
+      "readinessNote": "方案 B.1 迁移链条目（DOC-T14 批次）；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行置 ready（见编译日志放行块）。"
+    },
+    {
+      "taskId": "RT-T14",
+      "unit": "runtime",
+      "design": "units/runtime.md",
+      "sourceRow": "| RT-T14 宿主呈现 WorkCell 契约（方案 B.1 迁移链，SA-18 D10；设计规格 B1-SPEC §4.3） | §8.2/§8.3（只读视图）、§9.1~§9.3（快照隔离对照）、§7（NameMap 反解面） | `HostPresentationView.hpp`（呈现视图契约：已应用 WorkCell 只读视图＋生命周期隔离声明＋ObjectId↔运行时名反解查询面） | RT-T11、WP-10-T19（宿主控制器面确定） | 同名文件 | RT-PRES-1~n（隔离与复用断言：呈现视图构建/销毁/重建零修订零缓存写入、不进运行身份与当前性判定；同一 ObjectId↔运行时名互换解析与计算侧一致——RT-NM 断言形态复用；D10 双侧构造规则同源） | 全部用例通过并留痕；**未执行不得标注通过** | 呈现侧私建第二构造路径/名称映射禁止；呈现视图不入缓存身份；不改 RT-T01~T13 既有契约面 |",
+      "status": "ready",
+      "canonicalTask": "tasks/foundation/RT-T14.json",
+      "readinessNote": "方案 B.1 迁移链条目（DOC-T14 批次）；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行置 ready（见编译日志放行块）。"
     }
   ]
 }

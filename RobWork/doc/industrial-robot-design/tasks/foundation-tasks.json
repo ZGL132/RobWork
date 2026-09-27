@@ -6,9 +6,16 @@
     "masterWp": "WP-B",
     "title": "构建落位与零依赖门禁",
     "dependsOn": [],
-    "requirements": ["NFR-MNT-01", "ARC-02"],
-    "designRefs": ["units/core.md#9"],
-    "verify": ["cmake --build build --config Release --target sdurws_ird_core_test"],
+    "requirements": [
+      "NFR-MNT-01",
+      "ARC-02"
+    ],
+    "designRefs": [
+      "units/core.md#9"
+    ],
+    "verify": [
+      "cmake --build build --config Release --target sdurws_ird_core_test"
+    ],
     "status": "ready",
     "note": "入口索引；canonical 任务契约见 tasks/foundation/（131 份），冲突时以 canonical 为准。CR-01~CR-08 已设计级关闭（2026-09-10），构建落位类任务允许执行。"
   },
@@ -18,10 +25,20 @@
     "unit": "evidence",
     "masterWp": "WP-C",
     "title": "构建落位（快照/切片单元）",
-    "dependsOn": ["CORE-T01"],
-    "requirements": ["CON-01", "CON-05", "EVI-01"],
-    "designRefs": ["units/evidence.md#12"],
-    "verify": ["cmake --build build --config Release --target sdurws_ird_evidence_test"],
+    "dependsOn": [
+      "CORE-T01"
+    ],
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "EVI-01"
+    ],
+    "designRefs": [
+      "units/evidence.md#12"
+    ],
+    "verify": [
+      "cmake --build build --config Release --target sdurws_ird_evidence_test"
+    ],
     "status": "ready"
   },
   {
@@ -30,10 +47,19 @@
     "unit": "policy",
     "masterWp": "WP-C",
     "title": "构建落位（策略单元）",
-    "dependsOn": ["CORE-T01"],
-    "requirements": ["ARC-05", "CON-06"],
-    "designRefs": ["units/policy.md#12"],
-    "verify": ["cmake --build build --config Release --target sdurws_ird_policy_test"],
+    "dependsOn": [
+      "CORE-T01"
+    ],
+    "requirements": [
+      "ARC-05",
+      "CON-06"
+    ],
+    "designRefs": [
+      "units/policy.md#12"
+    ],
+    "verify": [
+      "cmake --build build --config Release --target sdurws_ird_policy_test"
+    ],
     "status": "ready"
   },
   {
@@ -42,10 +68,19 @@
     "unit": "runtime",
     "masterWp": "WP-C",
     "title": "构建落位（CanonicalModel 编译单元）",
-    "dependsOn": ["CORE-T01"],
-    "requirements": ["ARC-03", "MDL-22"],
-    "designRefs": ["units/runtime.md#12"],
-    "verify": ["cmake --build build --config Release --target sdurws_ird_runtime_test"],
+    "dependsOn": [
+      "CORE-T01"
+    ],
+    "requirements": [
+      "ARC-03",
+      "MDL-22"
+    ],
+    "designRefs": [
+      "units/runtime.md#12"
+    ],
+    "verify": [
+      "cmake --build build --config Release --target sdurws_ird_runtime_test"
+    ],
     "status": "ready"
   },
   {
@@ -54,11 +89,300 @@
     "unit": "testkit",
     "masterWp": "WP-B",
     "title": "构建落位与框架接入",
-    "dependsOn": ["CORE-T01"],
-    "requirements": ["NFR-COR-01", "NFR-MNT-01"],
-    "designRefs": ["units/testkit.md#9"],
-    "verify": ["cmake --build build --config Release --target sdurws_ird_testkit_test"],
+    "dependsOn": [
+      "CORE-T01"
+    ],
+    "requirements": [
+      "NFR-COR-01",
+      "NFR-MNT-01"
+    ],
+    "designRefs": [
+      "units/testkit.md#9"
+    ],
+    "verify": [
+      "cmake --build build --config Release --target sdurws_ird_testkit_test"
+    ],
     "status": "ready",
     "note": "CR-07：vcpkg 安装 gtest:x64-windows 与版本登记随本任务（development-task-breakdown §5.5）；find_package(GTest CONFIG REQUIRED) 失败→本任务转 blocked。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "DOC-T14",
+    "unit": "foundation-governance",
+    "masterWp": "WP-A",
+    "title": "冻结方案 B.1 宿主融合架构与迁移任务链",
+    "dependsOn": [
+      "WP-15-T13"
+    ],
+    "requirements": [
+      "NFR-MNT-05",
+      "UX-09"
+    ],
+    "designRefs": [
+      "ARCHITECTURE.md#7.12",
+      "units/ui.md#13"
+    ],
+    "verify": [
+      "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+    ],
+    "status": "done",
+    "branch": "doc-t14",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "UI-T19",
+    "unit": "ui",
+    "masterWp": "WP-I",
+    "title": "宿主控制器抽取（ui 平台能力转宿主内部控制器）",
+    "dependsOn": [
+      "DOC-T14"
+    ],
+    "requirements": [
+      "UX-09",
+      "ARC-02"
+    ],
+    "designRefs": [
+      "units/ui.md#13",
+      "ARCHITECTURE.md#7.12"
+    ],
+    "verify": [
+      "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\""
+    ],
+    "status": "ready",
+    "branch": "ui-t19",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "RT-T14",
+    "unit": "runtime",
+    "masterWp": "WP-D",
+    "title": "宿主呈现 WorkCell 契约（呈现视图与计算快照隔离、复用同一构造规则）",
+    "dependsOn": [
+      "UI-T19"
+    ],
+    "requirements": [
+      "ARC-03",
+      "ARC-04"
+    ],
+    "designRefs": [
+      "units/runtime.md#12",
+      "ARCHITECTURE.md#7.12"
+    ],
+    "verify": [
+      "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/runtime -C Release -L \"^ird$\""
+    ],
+    "status": "ready",
+    "branch": "rt-t14",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "WP-24-T08",
+    "unit": "delivery",
+    "masterWp": "WP-I",
+    "title": "正式产品程序骨架（宿主融合形态装配路径）",
+    "dependsOn": [
+      "RT-T14"
+    ],
+    "requirements": [
+      "NFR-SEC-04",
+      "UX-14",
+      "PM-17"
+    ],
+    "designRefs": [
+      "development-task-breakdown.md#2.25",
+      "ARCHITECTURE.md#7.12"
+    ],
+    "verify": [
+      "cmake --build build --config Release"
+    ],
+    "status": "ready",
+    "branch": "wp24-t08",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "UI-T20",
+    "unit": "ui",
+    "masterWp": "WP-I",
+    "title": "宿主运行时发布桥（已应用 WorkCell 发布/重建/切换编排）",
+    "dependsOn": [
+      "WP-24-T08"
+    ],
+    "requirements": [
+      "ARC-02",
+      "CON-02"
+    ],
+    "designRefs": [
+      "units/ui.md#13"
+    ],
+    "verify": [
+      "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\""
+    ],
+    "status": "ready",
+    "branch": "ui-t20",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "UI-T21",
+    "unit": "ui",
+    "masterWp": "WP-I",
+    "title": "工业项目树和选择服务（双树业务侧＋选择联动 L1~L3）",
+    "dependsOn": [
+      "UI-T20"
+    ],
+    "requirements": [
+      "UX-02",
+      "ARC-04"
+    ],
+    "designRefs": [
+      "units/ui.md#13"
+    ],
+    "verify": [
+      "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\""
+    ],
+    "status": "ready",
+    "branch": "ui-t21",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "UI-T22",
+    "unit": "ui",
+    "masterWp": "WP-I",
+    "title": "共享属性检查器和复杂编辑区（D5/D6 分野与域页面注册协议）",
+    "dependsOn": [
+      "UI-T21"
+    ],
+    "requirements": [
+      "UX-04",
+      "UX-05"
+    ],
+    "designRefs": [
+      "units/ui.md#13"
+    ],
+    "verify": [
+      "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\""
+    ],
+    "status": "ready",
+    "branch": "ui-t22",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "WP-13-T20",
+    "unit": "modeling",
+    "masterWp": "WP-E",
+    "title": "建模迁移（项目树/属性检查器/选择联动三接入面）",
+    "dependsOn": [
+      "UI-T22"
+    ],
+    "requirements": [
+      "MDL-07"
+    ],
+    "designRefs": [
+      "units/modeling.md#11"
+    ],
+    "verify": [
+      "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\""
+    ],
+    "status": "ready",
+    "branch": "wp13-t20",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "WP-14-T10",
+    "unit": "requirements",
+    "masterWp": "WP-E",
+    "title": "需求迁移（项目树/属性检查器/选择联动三接入面）",
+    "dependsOn": [
+      "WP-13-T20"
+    ],
+    "requirements": [
+      "REQ-01",
+      "UX-05"
+    ],
+    "designRefs": [
+      "units/requirements.md#11"
+    ],
+    "verify": [
+      "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\""
+    ],
+    "status": "ready",
+    "branch": "wp14-t10",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "WP-15-T18",
+    "unit": "kinematics",
+    "masterWp": "WP-F",
+    "title": "运动学迁移（三接入面＋Jog/Playback 呈现衔接）",
+    "dependsOn": [
+      "WP-14-T10"
+    ],
+    "requirements": [
+      "KIN-06",
+      "KIN-12"
+    ],
+    "designRefs": [
+      "units/kinematics.md#11"
+    ],
+    "verify": [
+      "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\""
+    ],
+    "status": "ready",
+    "branch": "wp15-t18",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "UI-T23",
+    "unit": "ui",
+    "masterWp": "WP-I",
+    "title": "多领域集成收口（三域迁移集成回归与联动契约全量核查）",
+    "dependsOn": [
+      "WP-15-T18"
+    ],
+    "requirements": [
+      "UX-12",
+      "PM-11"
+    ],
+    "designRefs": [
+      "units/ui.md#13"
+    ],
+    "verify": [
+      "cmake --build build --config Release"
+    ],
+    "status": "ready",
+    "branch": "ui-t23",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
+  },
+  {
+    "schemaVersion": "ird-task/1",
+    "taskId": "WP-24-T09",
+    "unit": "delivery",
+    "masterWp": "WP-I",
+    "title": "方案 A 正式产品路径退役（宿主融合收口）",
+    "dependsOn": [
+      "UI-T23",
+      "WP-24-T08"
+    ],
+    "requirements": [
+      "NFR-MNT-06"
+    ],
+    "designRefs": [
+      "development-task-breakdown.md#2.25"
+    ],
+    "verify": [
+      "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+    ],
+    "status": "ready",
+    "branch": "wp24-t09",
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   }
 ]

@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.14（2026-09-19 治理修订（所有者授权批次放行随附）：附录 A T-ORCH 步骤 4 增补扫描过滤口径——数组根 JSON 聚合索引非执行契约一律跳过（F-229），T-ORCH 升 v11。前一版 v1.13（2026-09-18 治理修订（所有者授权"需要"）：io 波次 IO-T04/T06/T07 收尾 §4.7③ findings.json 三连冲突 blocked（16b4646a/fa865524/d98be7bc）根因治理——登记簿双端并行追加×②→③固定合并次序＝尾部 hunk 必撞，三次所有者裁决结论一致（条目并集·编号序）＝可机械化确定性冲突；§4.7③ 增补唯一例外：冲突仅为 findings.json 时由 merge-findings-union.ps1 三方集合运算并集解算（撞号/删除/双方异改/顶层差异仍即停），发现闭环 F-204；T-ORCH 升 v10） |
+| 文档版本 | v1.16（2026-09-27 治理修订：所有者明确禁止使用子智能体；新增 B.1 批次 manifest、显式拓扑入队、WP-24-T03 外部门禁与单会话角色顺序执行约束，修复 autoDiscovery 字母序与 B.1 拓扑不一致风险。前一版 v1.15：DOC-T14 方案 B.1 宿主融合迁移链共享 UI 文件互斥约束） |
 | 文档代号 | PIPE |
 | 上游 | acceptance-protocol.md（验收段完全复用其清单与独立性要求）、contract-compilation.md（ready 契约的唯一产出通道）、development-task-breakdown.md §5.7/§8（三段式流程与契约家族）、AGENTS.md §6（提交/推送/循环约定） |
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
@@ -10,7 +10,7 @@
 
 ## 0. 上下文自足性（tick 的全部输入）
 
-任何全新上下文的执行者只需三样东西即可正确执行一个 tick：①本文件；②`state.json`（含 docRefs 指针与完整状态）；③其内嵌引用的契约路径。tick 提示词不携带历史对话；一切长期知识（约定/红线/流程）必须已在文档中——这是 DTB §5.7"持久状态落文档"的延伸。若 tick 发现 state.json 缺字段或与本文件矛盾：以本文件为准修复 state.json 并在汇报中注明。
+任何全新上下文的执行者只需四样东西即可正确执行一个 tick：①本文件；②`state.json`（含 docRefs 指针与完整状态）；③其内嵌引用的契约路径；④ B.1 批次启用时的 `b1-host-integration-batch.json` manifest。tick 提示词不携带历史对话；一切长期知识（约定/红线/流程）必须已在文档中——这是 DTB §5.7"持久状态落文档"的延伸。若 tick 发现 state.json 缺字段或与本文件矛盾：以本文件为准修复 state.json 并在汇报中注明。
 
 ### 0.1 tick 调用约定与原子锁（v1.6：命名 mutex＋fencing token 消除锁操作 TOCTOU）
 
@@ -58,22 +58,20 @@
 
 理由：单元卡是需求＋架构在该单元的消化产物，契约又是卡的编译产物（designRefs 带锚点、acceptance 逐条化）——重读全量等于重做已评审的推导，且挤占留给代码与证据的注意力；两例外（跨切/治理任务）的阅读范围由契约 designRefs 显式列出。**跨单元任务的语义陷阱不靠阅读阶梯覆盖，靠契约 `knownPitfalls` 显式携带**（CCP §2"陷阱随契约走"）。
 
-### 0.4 派发执行模式（v1.9 恢复；v1.7 单会话模式废止）
+### 0.4 单会话顺序执行模式（v1.16；禁止使用子智能体）
 
-2026-09-10 所有者解除"禁止使用子智能体"指令（v1.7 §0.4 预留的解除路径）：实施段与验收段**恢复派发全新子代理**——tick 会话为编排者，按附录 B/C 模板逐字派发实施者/验收者子代理并**阻塞等待**；角色脚本、纪律与检查清单不变。恢复前置与纪律：
+当前所有者明确要求禁止使用子智能体。实施段、验收段和合入段由同一个流水线 tick 会话按角色顺序执行；不得调用 `spawn_agent`、不得创建子代理线程、不得把实施或验收转发给其他智能体。该模式保留完整的实施/验收清单，但独立性降级必须在验收记录中如实声明。
 
-- **能力实证先行**：恢复前以无害子代理调用实证派发可用性（2026-09-10 实测：子代理派发/执行/回报正常）；
-- **独立性回到模型级**：全新子代理＋只给产物（§1 角色映射），§7 独立性声明恢复 v1.6 口径；验收记录不再需要 §0.4 降级声明；
-- **续租纪律不变**：派发前 renew 续租、阻塞等待返回后再次 renew 成功才处理完成事件（v1.6 原语义——fencing 失配即自终止）；
-- **编排者不亲自实施/验收**：tick 会话只读状态、锁与守卫结果＋派发与完成事件处理，不直接执行附录 B/C 的角色脚本（v1.7 的教训固化：承载者混同即独立性丢失）；
-- 再次切换执行模型（任何方向）均须所有者指令＋PIPE 增量修订，禁止静默切回。
+- 不再执行子代理能力实证、派发和阻塞等待；长任务仍须在同一 tick 内按租约续期纪律更新状态。
+- 验收角色必须在实施完成后切换，读取冻结的 `headSha`，不能复用实施阶段口头结论；记录中填写“单会话顺序执行，模型级独立性不可提供”。
+- 如需恢复多会话或子代理，必须取得新的所有者指令并先做 PIPE 增量修订，禁止静默切回。
 
 ## 1. 角色映射
 
 | 协议角色 | 流水线承载 | 独立性保证 |
 | --- | --- | --- |
-| 实施者 | 全新子代理（§0.4 派发模式），仅输入：任务契约路径、分支名、base SHA；返工时另含 `lastFailureRecord` | 首次实施不读验收历史；返工仅读取该不可变失败记录，中断续作先按 §5 对账协议盘点 |
-| 验收者 | 另一个全新子代理，仅输入：契约路径、headSha（冻结送验对象）、验收记录输出路径 | **只给产物不给叙述**——主会话不得向其转述实施过程；验收在**独立 worktree**（detached @ headSha）进行（ACC §3） |
+| 实施者 | 当前 tick 会话的实施角色，仅输入：任务契约路径、分支名、base SHA；返工时另含 `lastFailureRecord` | 首次实施不读验收历史；返工仅读取该不可变失败记录；角色切换前按 §5 对账 |
+| 验收者 | 同一 tick 会话在实施完成后的验收角色，仅输入：契约路径、headSha（冻结送验对象）、验收记录输出路径 | **角色顺序隔离**——不得采信实施口述，必须从冻结 SHA、代码和证据复验；验收在独立 worktree（detached @ headSha）进行（ACC §3）；记录声明单会话降级 |
 | 契约编译者 | 治理会话按 contract-compilation.md §3 七步执行 | 评审者≠编译者；编译者不得担任同契约实施者 |
 | 所有者 | 维护者（人） | 每任务合并决策（默认门控）＋每单元人工审核＋语义裁决＋暂停/恢复＋队列调整 |
 
@@ -89,7 +87,7 @@
 | `awaiting_unit_review` | **单元检查点**（v1.8：unitCheckpoint=false 后不可达，保留枚举仅为状态机兼容与历史状态可读） | idle（v1.8 起无此转换） |
 | `blocked` | 熔断：重试超限/语义分歧/O 项裁决/守卫异常/无进展/分支漂移 | idle（所有者解除）/ paused |
 
-**工作者完成事件（v1.6；v1.9 恢复子代理承载）**：tick 对实施/验收子代理**阻塞等待**；子代理返回后必须再次 `renew -Token <tickId>`，成功才是可处理的完成事件——由派发 tick 负责状态迁移（实施完成→冻结 headSha/清 run/进 awaiting_acceptance；验收完成→写 acceptedHead/acceptanceRecord/清 run）。续租 token 失配表示租约已被接管，旧 tick 必须终止，不能写入任何完成状态。派发会话崩溃时：run 租约未到期 → 后续 tick **只汇报不续派**；租约到期 → 视工作者已死，按重启上限处置。attempts.implement 计重启次数（实施完成即清零），attempts.fix 计验收 fail 后的返工轮次。
+**角色完成事件（v1.16）**：同一 tick 会话按实施→验收→合入顺序推进；每个角色开始和结束前都必须续租并核对 fencing token，成功才允许写入状态。实施完成→冻结 headSha/清 run/进 awaiting_acceptance；验收完成→写 acceptedHead/acceptanceRecord/清 run。token 失配表示租约已被接管，当前会话必须终止，不能写入任何完成状态。会话中断时，租约未到期的后续 tick 只汇报；租约到期后按重启上限重新开始当前角色。attempts.implement 计实施重启，attempts.fix 计验收 fail 后的返工轮次。
 
 单元检查点豁免：`policy.unitCheckpointExemptFirstUnit=true` 时，流水线**首个**完成合并的单元豁免紧随其后的检查点，豁免消费时置 `policy.firstUnitCheckpointExempted=true`（一次性标记，validate-state 强制存在；CORE-T01 手动闭环即首单元审核，标记初始为 true）。
 
@@ -110,11 +108,11 @@
    - implementing：run 未到期 → **只汇报退出**（工作者运行中，禁止续派）；到期 → attempts.implement+1，超 `maxImplementRestarts` 转 blocked，否则重派实施者（新 run，租约重置）；
    - awaiting_acceptance：run=null → 派验收者（置 run.kind=acceptance）；run 未到期 → 只汇报退出；到期 → 重派（计数并入 fix 口径由所有者裁决，默认不自动重派验收、报告等待）；
    - awaiting_merge：**v1.8 自动化**——直接执行 §4.7 七步收尾（双漂移检测仍前置，任何一步失败转 blocked）；awaiting_unit_review：v1.8 不可达态，遗留此态时置 idle 继续选任务；blocked → 汇报等待点（熔断/漂移/语义分歧是真失败，全自动化不掩盖失败，仍停等所有者）。
-3. **选任务**（仅 idle）：读 queue 队首**结构化条目**（taskId/contractPath/branch 即所需全部）；可领取性以 validate-state `queue-head:` 行为准；领取时**冻结 base＝当前 redesign-main HEAD（40 位 SHA）**、置 currentTask/branch、attempts 清零、phase=implementing＋run（kind=implement，租约 policy.leaseMinutes.implement）。
-   - **严格次序**：队首不可领时不跳队——报告等所有者；`autoDiscovery`/`strictQueueOrder`/`unitCheckpoint` 的分支语义见 §6.1；
+3. **选任务**（仅 idle）：读 queue 队首**结构化条目**（taskId/contractPath/branch 即所需全部）；B.1 批次先运行 `validate-b1-batch.ps1` 并按 manifest-order 发现任务，禁止按文件名字母序推导拓扑；可领取性以 validate-state `queue-head:` 行为准；领取时**冻结 base＝当前 redesign-main HEAD（40 位 SHA）**、置 currentTask/branch、attempts 清零、phase=implementing＋run（kind=implement，租约 policy.leaseMinutes.implement）。
+   - **严格次序**：队首不可领时不跳队——报告等所有者；B.1 队首命中 open 外部门禁时保持 idle，输出门禁 ID 与证据要求，且该合法等待不增加 `ticksNoProgress`；`autoDiscovery`/`strictQueueOrder`/`unitCheckpoint` 的分支语义见 §6.1；
    - **单元检查点**：拟领任务 unit 与上一已完成任务不同 → awaiting_unit_review（§2 豁免条款除外）。
-4. **实施段**：派发实施子代理（附录 B 模板；输入含 base SHA）并**阻塞等待**；完成事件处理：`headSha = git rev-parse <branch>`（40 位冻结）、清 run、attempts.implement 清零、phase=awaiting_acceptance。实施子代理内部流程不变（防偷懒纪律 §5、双模式构建、留痕、分步提交、push origin）。
-5. **验收段**：派发验收子代理（附录 C 模板；输入＝契约路径＋headSha＋**attempt 号（＝attempts.accept 递增后的值）**＋记录输出路径）并阻塞等待（先 `renew` 续租，返回后再次 `renew` 成功才处理完成事件）；验收者在独立 worktree（**detached @ headSha**，不用分支名——任务分支可能仍被实施工作树检出）复现核查，验收记录提交到 **evidence 分支 `acc/<taskId>/<attempt>`**（基于 origin/redesign-main；attempt 隔离保证 fail 重试永不复用已存在的分支名）并**推送**（ACC §3——记录不随临时 worktree 消亡）。完成事件：pass → `acceptedHead=headSha`、`acceptanceRecord={branch:acc/<taskId>/<attempt>, path, commit}`（commit＝evidence 分支上的记录提交 **40 位 SHA，不可变合并对象**）、`lastFailureRecord=null`、清 run、phase=awaiting_merge；fail → 先将验收者输出三元组与 attempt 写为 `lastFailureRecord={branch,path,commit,attempt}`，再 attempts.fix+1（超 `maxFixCycles` 转 blocked 且清该字段），未超限则 phase=implementing＋新 run（返工实施者输入＝契约＋lastFailureRecord），headSha/acceptedHead/acceptanceRecord 清 null。
+4. **实施段**：当前会话按附录 B 清单执行实施，不得派发子智能体；完成后冻结 `headSha = git rev-parse <branch>`（40 位）、清 run、attempts.implement 清零、phase=awaiting_acceptance。防偷懒纪律 §5、双模式构建、留痕、分步提交、push origin 不变。
+5. **验收段**：当前会话切换到验收角色，按附录 C 清单读取契约、冻结 `headSha`、attempt 号与记录路径，不得派发子智能体。验收仍在独立 worktree（**detached @ headSha**）复现，记录提交到 **evidence 分支 `acc/<taskId>/<attempt>`** 并推送；记录必须声明单会话顺序执行的独立性降级。pass/fail 的 SHA 冻结、lastFailureRecord、返工上限与状态迁移保持原规则。
 6. **裁决处理**：pass→§4.7 收尾（**v1.8 全自动化**：autoMerge.enabled=true 且类别 ∈ classes〔全词表 doc/build/implementation〕即同 tick 执行，不再驻留 awaiting_merge——所有者预授权登记于 policy；收尾七步的漂移检测与冲突即停转 blocked 的保护不变）；fail→fix 循环。
 7. **收尾**（v1.8 起随 pass 自动执行；原"仅凭所有者'合并 <taskId>'指令"门控按所有者 2026-09-10 全自动化指令移除，七步固化次序不变）：
    ① `git fetch origin`，验证 `git rev-parse origin/<branch>` **== acceptedHead**——不符即转 blocked 报告"验收后分支漂移"（有人绕过流水线推送），不自行取舍；
@@ -127,12 +125,12 @@
 
 ## 5. 防偷懒纪律（实施端与验收端双保险）＋中断对账协议
 
-**实施端（写进每个实施子代理的指令，附录 B 模板已内嵌）**：
+**实施端（附录 B 角色清单）**：
 - 契约 `acceptance` 数组**逐条对应实现**，逐条自证；禁止 `TODO/FIXME/stub/placeholder/未实现/throw "not implemented"`（契约显式标注"触发式延后"的除外，须在提交信息列出豁免依据）；
 - 公共接口函数必须有真实逻辑与错误处理，不允许空函数体/恒等返回/只编译不行为；
 - 测试必须断言行为与边界（对照附录 D 容差与任务卡反例），禁止恒真断言；每个 acceptance 条目至少对应一个具名测试或一条执行证据；
 - 注释按 AGENTS.md §2 全量执行——注释缺失本身即验收 fail 项；
-- **中断对账协议（v1.3）**：每个实现提交正文末尾标注本提交消账的 acceptance 条目序号（`Acc-Covered: 1,3-4` 格式）——实施中断后，续作者（maxImplementRestarts 内的子代理）先 `git log` 盘点分支已消账条目，对账无误再继续；无任何标注的提交按"未消账"从重盘点。
+- **中断对账协议（v1.3）**：每个实现提交正文末尾标注本提交消账的 acceptance 条目序号（`Acc-Covered: 1,3-4` 格式）——实施中断后，当前会话先 `git log` 盘点分支已消账条目，对账无误再继续；无任何标注的提交按"未消账"从重盘点。
 
 **验收端**：acceptance-protocol.md 第 4.11 条（偷懒/缩水扫描）＋第 4.4/4.5 条强化（逐条证据表、测试真实失败能力）——无证据即 fail，不采信"已实现"的口头声明。
 
@@ -154,23 +152,48 @@
 | `noProgressLimit` / `maxImplementRestarts` / `maxFixCycles` | §3.6 / §4.2 / §4.6 | 熔断阈值，语义见对应节 |
 | `leaseMinutes.implement` / `leaseMinutes.acceptance` | §0.1 / §4.2 / §4.5 | 工作者租约时长（分钟）：implement 默认 120（实施耗时长，取宽估值防误杀健康运行）；acceptance 默认 60。租约到期是"允许重派"的必要条件而非充分条件（还需 phase 处于对应状态） |
 
+### 6.2 宿主融合迁移链共享 UI 文件互斥（v1.15，方案 B.1 编排约束）
+
+方案 B.1（SA-18，设计规格 `RobWork/docs/superpowers/specs/2026-09-27-host-integrated-b1-design.md` §5.3）的迁移链任务——**UI-T21、UI-T22、WP-13-T20、WP-14-T10、WP-15-T18、UI-T23**——涉及共享 UI 装配面（SelectionService/工业项目树/共享属性检查器/宿主装配层），编排上追加两条硬约束（与 dependsOn 链序互补，防多会话并行绕过）：
+
+1. **串行领取**：迁移链任务之间不得并行 in-flight——即使某任务依赖已满足，链内仍有任务处于 implementing/awaiting_acceptance/awaiting_merge 时，下一迁移链任务不得派发（strictQueueOrder 之外的额外互斥；编排者派发前核对 state 的 in-flight 任务与 history 尾部是否属迁移链）。
+2. **共享面变更归属**：共享 UI 装配面的修改只允许出现在 UI-T21/UI-T22/UI-T23 三份契约的 allowedFiles 中；WP-13-T20/WP-14-T10/WP-15-T18 三份域迁移契约的 allowedFiles 只含本域目录与域内接缝文件（消费 UI-T21/T22 注册协议，不改协议本体）。实施者越界修改共享面＝范围越界，验收段按 ACC 直接判 fail（不因"构建通过"豁免）。
+
+约束消费点：编排者派发判定（§4.2/§4.5）、实施者契约阅读（allowedFiles 边界）、验收者对抗核查（范围越界项）。
+
+### 6.3 B.1 批次 manifest 与外部门禁（v1.16）
+
+方案 B.1 的执行顺序由 `traceability/pipeline/b1-host-integration-batch.json` 唯一编排。该文件不是业务契约，不复制 acceptance；它只冻结任务顺序、分支、契约路径和外部门禁。每次 tick 在扫描 ready 契约前运行：
+
+```text
+pwsh -File RobWork/scripts/industrialrobot/validate-b1-batch.ps1
+```
+
+脚本必须验证：11 个阶段连续编号；manifest 中的 `taskId/contractPath/branch` 与 canonical 契约一致；每个阶段依赖 manifest 前一项；`WP-24-T08` 必须绑定 `WP-24-T03-COMPLETE` 外部门禁。任何失败均转 `blocked` 或保持 `idle`，不得自行改写契约依赖。
+
+`autoDiscovery=true` 在 B.1 批次内不再按目录字母序追加。治理会话完成 DOC-T14 独立评审后，必须在一个受锁状态写入中把 11 份契约按 manifest 顺序原子置 `ready`；tick 再按相同顺序追加 queue。批次中途不得插入其他 B.1 任务，也不得跳过未满足门禁的阶段。
+
+`WP-24-T03-COMPLETE` 是当前唯一外部前置：在 `WP-24-T03` T03b 收口独立验收并合入 `redesign-main` 前，`WP-24-T08` 即使 `dependsOn` 已满足也不可领取。该等待是合法门控等待，不计入 `heartbeat.ticksNoProgress`；门禁满足后由治理会话把 gate 状态改为 `satisfied`，并运行 `validate-b1-batch.ps1` 留痕。
+
+当前执行模型为单会话顺序角色：同一 tick 先执行实施清单，再切换验收清单，再执行 SHA 冻结合入。验收记录必须写明“禁止子智能体，实施与验收由同一会话按角色顺序执行”，不能宣称跨会话独立性；ACC 的逐项复现、独立 worktree、失败证据和分支漂移保护仍全部适用。
+
 ## 7. 边界与诚实声明
 
-- 验收独立性为**模型级**（全新子代理＋只给产物，v1.9 恢复），弱于跨会话人工分离——以对抗式清单＋复现构建＋偷懒扫描弥补；重要任务（L 类）建议所有者亲自复核验收记录；
-- 单工作树＝单轨道：流水线占用工作区期间请勿并行手动实施；验收子代理使用独立 worktree（detached @ headSha）＋记录分支，不占此工作树；
+- 验收独立性为**单会话角色隔离**（禁止子智能体，不能提供跨会话独立性），弱于跨会话人工分离——以对抗式清单＋复现构建＋偷懒扫描弥补；重要任务（L 类）必须在记录中声明降级并建议所有者复核；
+- 单工作树＝单轨道：流水线占用工作区期间请勿并行手动实施；验收角色使用独立 worktree（detached @ headSha）＋记录分支，不占此工作树；
 - 连续失败熔断后**不自动换任务**（§4 严格次序），blocked 停等所有者——**v1.8 全自动化不改变此条**：自动化的是例行流程，不是失败处置；blocked、语义裁决、漂移检测即停等保护全部保留；
-- **全自动化下的风险声明（v1.8 立项，v1.9 更新）**：自动合入仍在生效——验收与合并不再有所有者门控。v1.9 恢复子代理派发后，实施/验收的独立性回到模型级（原有最大弱点已消除），残余风险为"模型级弱于人工跨会话"（见上条）。所有者应以抽查验收记录、核对 findings.json 开放项、关注 blocked 报告作为监督补偿；任何"suspicious green"（如连续高频 pass）值得人工复盘；
+- **全自动化下的风险声明（v1.8/v1.16）**：自动合入仍在生效；当前禁止子智能体使实施与验收由同一会话顺序执行，独立性弱于跨会话人工分离。所有者应抽查验收记录、核对 findings.json 开放项、关注 blocked 报告；任何"suspicious green"值得人工复盘；
 - **发现闭环（v1.3）**：验收建议级问题必须逐条转登 `traceability/findings.json`（F-xxx 顺延）；验收记录 4.8 核对未关闭条目；治理资产自身缺陷同样入册；
 - **锁的边界（v1.6 诚实声明）**：命名 mutex＋原子锁防的是“两个 tick 并发派工”以及 release/renew 的核对后修改窗口；它防不了持锁会话自身的死亡（靠租约到期自愈）与所有者绕过流水线直接操作 git（靠 §4.7① 分支漂移检测兜底）。
 
 ## 8. 附录：三份标准提示词模板（v1.7 修订）
 
-> 模板即纪律的载体：派发对应子代理时**逐字使用并仅替换 `<>` 占位符**，不增删条款（v1.9 §0.4：实施者/验收者由 tick 派发全新子代理承载）；模板修订＝PIPE 增量修订（版本行同步）。
+> 模板即纪律的载体：单会话按角色顺序执行时**逐字使用并仅替换 `<>` 占位符**，不增删条款；模板修订＝PIPE 增量修订（版本行同步）。当前禁止使用子智能体，附录 B/C 是同一会话的角色清单，不是派发提示词。
 
 ### 附录 A · 编排者模板（T-ORCH v11）
 
 ```text
-你是本仓库自动化流水线的 tick 编排者。输入仅限：automation-pipeline.md、
+你是本仓库自动化流水线的 tick 编排者。当前所有者禁止使用子智能体；实施、验收和合入均由本会话按角色顺序完成。输入仅限：automation-pipeline.md、
 traceability/pipeline/state.json（docRefs 给出全部指针）。禁止：读任务契约正文、
 读产品代码、读上游需求/架构文档——编排者只看状态、锁与守卫结果。
 
@@ -184,7 +207,7 @@ traceability/pipeline/state.json（docRefs 给出全部指针）。禁止：读�
    （工作者运行中，禁止续派）；run 到期 → 按 §4.2 计数与上限处置；awaiting_merge →
    直接执行 §4.7 七步收尾（v1.8 自动化，双漂移检测仍前置，失败转 blocked）；
    awaiting_unit_review → 置 idle 继续（v1.8 不可达态自愈）；blocked → 汇报等待点。
-4. 选任务（仅 idle）：用 queue 队首条目的 taskId/contractPath/branch 三字段（不读契约正文；
+4. 选任务（仅 idle）：先运行 `pwsh -File RobWork/scripts/industrialrobot/validate-b1-batch.ps1`，再用 B.1 manifest-order 与 queue 队首条目的 taskId/contractPath/branch 三字段（不读契约正文；
    条目与契约的一致性已由 validate-state 真读校验）；不可领（queue-head: claimable=false）
    → 报告等所有者；单元切换按 §6.1 unitCheckpoint 判定。autoDiscovery=true 时（v1.11
    当前配置）在领取前先扫描 tasks/：发现"status=ready 且不在 queue"的契约**追加队尾**
@@ -194,14 +217,13 @@ traceability/pipeline/state.json（docRefs 给出全部指针）。禁止：读�
 5. 领取：冻结 base=git rev-parse redesign-main（40 位）；置 currentTask/branch/base、
    attempts 清零（implement/fix）、phase=implementing、run{kind=implement, runId/workerId=GUID,
    startedAt/leaseExpiresAt=now±leaseMinutes.implement}；写回 state（tickToken=你的 token）。
-6. 实施段（§0.4 派发模式）：renew -Token 续租后，逐字使用附录 B 模板派发实施子代理
+6. 实施段（§0.4 单会话模式）：按附录 B 清单执行实施
    （占位符：契约路径=队首条目 contractPath、分支=队首条目 branch、base=刚冻结 SHA；
-   返工时附 lastFailureRecord）并阻塞等待；返回后再次 renew，成功才处理完成事件：
+   返工时附 lastFailureRecord）；完成后冻结 headSha 并写回状态，不创建或派发子代理：
    headSha=git rev-parse <branch>；清 run、attempts.implement=0、
    lastFailureRecord=null、phase=awaiting_acceptance、写回 state。
-7. 验收段（§0.4 派发模式）：attempts.accept+1；renew 续租；逐字附录 C 模板派发验收
-   子代理（输入=契约路径/headSha/attempt 号/记录路径）并阻塞等待；返回后再次 renew，
-   成功才处理完成事件（编排者不得向验收子代理转述实施过程——只传四项输入）。
+7. 验收段（§0.4 单会话模式）：attempts.accept+1；按附录 C 清单切换验收角色
+   （输入=契约路径/headSha/attempt 号/记录路径）。验收角色不得采信实施口述，只消费冻结 SHA、代码和证据；记录必须声明单会话独立性降级。
    pass：acceptedHead=headSha、
    acceptanceRecord={branch:acc/<taskId>/<attempt>, path, commit}（验收者输出解析）、
    lastFailureRecord=null、清 run、**同 tick 续行第 8 步收尾（v1.8 自动合入，不驻留
@@ -297,9 +319,11 @@ traceability/findings.json（F-xxx 编号顺延）；你不得合入，不得修
 | v1.6 | 2026-09-10 | 四轮审查修复（关闭剩余 P0/P1）：①pipeline-lock 全动作置于按仓库路径派生的 Windows 命名 mutex，令 fencing 核对与删除/续租无 TOCTOU 窗口；②阻塞等待返回后必须再次 renew，旧 tick 不得处理完成事件或写 state；③新增 lastFailureRecord{branch,path,commit,attempt}，验收 fail 将不可变证据回传返工实施者，首次实施及非返工阶段强制清 null；④附录 T-ORCH 升 v4、T-IMPL 升 v3，明确上述输入与时序 |
 | v1.7 | 2026-09-10 | 所有者指令"禁止使用子智能体"：新增 §0.4 单会话执行模式——实施/验收角色由 tick 会话顺序扮演，附录 B/C 纪律与清单不变；独立性降级须在验收记录声明；续租纪律保持（角色前后各一次）；T-ORCH 升 v5（步骤 6/7 改会话内执行）；指令解除须增量修订，禁止静默切回 |
 | v1.8 | 2026-09-10 | 所有者指令"流程全自动化，不需要所有者指令"：①state.policy 切换——autoMerge.enabled=true＋classes=全词表 {doc,build,implementation}（预授权按 §6.1 机制登记）；unitCheckpoint=false（单元检查点关闭，awaiting_unit_review 成不可达态）；②§4.6/§4.7 pass 后同 tick 执行七步收尾（漂移检测/冲突即停转 blocked 的保护不变），§4.2 awaiting_merge 变为收尾中断自愈锚点；③§6 所有者触点改监督性（blocked 解除/语义裁决/暂停恢复仍需所有者——诚实边界）；④§7 增双重放宽风险声明（单会话＋自动合入）与监督补偿建议；⑤T-ORCH 升 v6 |
-| v1.9 | 2026-09-10 | 所有者解除子代理禁令（走 §0.4 预留的解除路径）：①恢复 v1.6 派发执行模型——实施/验收由全新子代理承载（§0.4 重写、§1 角色映射、§2 完成事件、附录 A 步骤 6/7 恢复"派发＋阻塞等待＋二次 renew"），附录 T-ORCH 升 v7；②恢复前完成派发能力实证（无害子代理调用成功）；③独立性回到模型级，验收记录不再需要降级声明，§7 风险声明更新（仅余自动合入放宽）；④新增承载者混同禁令：编排者不亲自实施/验收；⑤v1.8 全部自动化语义（autoMerge 全词表、无单元检查点、pass 同 tick 收尾、监督性触点）保留不变 |
+| v1.9 | 2026-09-10 | 历史版本：曾恢复全新子代理派发执行模型；当前所有者指令已由 v1.16 单会话规则覆盖 |
 | v1.10 | 2026-09-11 | F-013 整改（tick#40 报告编造"队首 TK-T03 依赖均已 done"，权威队列实为 CORE-T10 且 TK-T03 尚 planned——报告叙述失实而状态未被污染）：附录 A T-ORCH 步骤 9 增补硬性规定——tick 报告的队列摘要必须逐字引用 validate-state 的 queue-head: 行，禁止叙述性改写、预测性表述或对未入队契约作可领取性判断（队列空按 "(empty)" 原样转述）；T-ORCH 升 v8 |
 | v1.11 | 2026-09-11 | 所有者裁决"预授权平台层整链批次序列（B 模式）＋autoDiscovery"：①§6.1 autoDiscovery 语义行登记开启依据——DOC-Txx 编译批次放行的新 ready 契约由 tick 自动追加队尾，消除逐批手工"调整队列"（state 侧翻转随本修订之后执行）；②批次波次固化：DOC-T06 runtime(12)→T07 evidence(11)→T08 policy(11)→T09 diagnostics(10)→T10 project(15)→T11 io(6)→T12 execution(10)→T13 ui(13)，EX/UI 的跨单元依赖由前序波次自然满足；③附录 A T-ORCH 升 v9（步骤 4 增补扫描动作与字母序＝拓扑序说明）；④O 项阻塞（O-09/O-24/O-31）浮出时仍停等所有者，预授权不掩盖真失败 |
 | v1.12 | 2026-09-15 | 所有者处置（"请处置"口令委托治理会话）：①登记 v1.11 波次范围缺陷——T10 project(15)/T11 io(6) 以"主链"口径排除了 PRJ-T01/IO-T01 两个构建落位任务，而队内后续任务依赖它们：DIAG-T11 合入后队首 PRJ-T02 永不可领，无进展熔断转 blocked（tick#133~136；findings F-120）——流水线按 §7 设计安全停等，但例行自动化被批次定义缺陷卡死；②处置＝PRJ-T01/IO-T01 按 CCP §3 七步编译放行（机器校验＋独立评审双 PASS，留痕 compile-log 2026-09-15 两行）＋所有者"调整队列"授权下插入（PRJ-T01 队首、IO-T01 居 IO-T02 前）＋state 置 idle——下一自动 tick 恢复；③本修订不改变任何机制语义与 T-ORCH 模板，仅为波次表历史记录登记缺陷证据；后续单元批次（reporting/modeling 等）范围定义必须含构建落位任务或显式登记排除理由（F-120 教训） |
 | v1.13 | 2026-09-18 | io 波次三连 blocked 根因治理（治理会话奉所有者"需要"授权，根因分析答所有者问询）：①根因登记（F-204）——findings.json 双端并行追加（实施端任务分支自登记＋验收端 evidence 分支基于主线建出、看不见对方编号、按主线尾部顺延取号）×§4.7 ②→③固定合并次序＝第二笔合并尾部 hunk 必撞；单侧登记任务（IO-T01/T02/T03/T05）③ 实测干净、双侧登记（IO-T04/T06/T07）三连冲突即停，每次停滞约 2~2.5 小时且三次所有者裁决结论完全一致（条目并集·编号序）——属可机械化确定性冲突而非真分歧；②§4.7③ 增补唯一例外：冲突文件仅为 findings.json 时由 scripts/industrialrobot/merge-findings-union.ps1 以 merge-base 为参照三方条目块集合运算（双方新增按编号序并存、同号同义取一、对方独改按对方替换；撞号/删除/双方异改/顶层字段不一致/校验失败一律退出非 0 仍即停；写前三重校验）——真分歧与撞号的人工裁决保护全部保留；③附录 A T-ORCH 升 v10（步骤 8 增补例外括注）；④发现闭环 F-204（status=fixed，本修订即消账）；否决替代案：验收端不改 findings.json 改随 ⑤ 统一转登（闭环登记时机推迟失真）、evidence 分支改基任务分支 head（削弱 ACC §2/§3 独立性）。竞态注记：EX-T01（tick#201，base 冻结于本修订合入前）若实施自登记 findings 将取号 F-204 与本条撞号——收尾 ③ 由 v1.13 脚本检出撞号即停，属预期保护非故障 |
 | v1.14 | 2026-09-19 | F-229 消账（tick#211 autoDiscovery 扫描伪影——编排者临时扫描脚本把数组根聚合索引 tasks/foundation-tasks.json 误报为入队候选，编排者人工判定不入队，零状态污染）：附录 A T-ORCH 步骤 4 增补扫描过滤口径——扫描仅认对象根 JSON 执行契约，数组根聚合索引（DTB §8 入口索引）非执行契约一律跳过；validate-state.ps1 契约索引构建已有同名守卫（文件名豁免＋数组根 return），本修订把该口径固化进编排者模板，T-ORCH 升 v11。机制语义零变化 |
+| v1.15 | 2026-09-27 | 方案 B.1 迁移链共享 UI 文件互斥：UI-T21、UI-T22、WP-13-T20、WP-14-T10、WP-15-T18、UI-T23 串行领取；共享 UI 装配面只归 UI-T21/T22/T23 契约，域迁移任务越界修改按验收 fail 处理 |
+| v1.16 | 2026-09-27 | 所有者禁止使用子智能体：实施/验收/合入由同一 tick 会话按角色顺序执行；新增 B.1 manifest 与 `validate-b1-batch.ps1`，固定拓扑入队顺序、WP-24-T03-COMPLETE 外部门禁、合法门控等待不计无进展；附录 A/B/C 改为单会话角色清单并要求验收记录声明独立性降级 |
