@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "RT-T14",
+  "masterWp": "WP-06-T14",
+  "branch": "rt-t14",
+  "date": "2026-09-27",
+  "attempt": 1,
+  "reworkNote": "首次实施（lastFailureRecord=null），无返工",
+  "taskNature": "实现任务：公共头 HostPresentationView.hpp＋实现 src/HostPresentationView.cpp（gated 块）＋RT-PRES 族 5 例（gated 块）＋CMake gated 增列与 ird 标签补登记；方案 B.1 D10 隔离＋复用（B1-SPEC §4.3）",
+  "framework": "googletest 1.18.0（vcpkg gtest:x64-windows）；测试夹具＝RuntimeTestDoubles ContractHarness＋CanonicalModelCompiler 真实编译链（仅集成）",
+  "targets": [
+    {
+      "target": "sdurws_ird_runtime",
+      "kind": "STATIC",
+      "result": "build-pass（两模式零错误；HostPresentationView.cpp 与 Snapshot.cpp 同因仅集成编列——冒烟 gating 实测不含本任务新增 TU）",
+      "notes": "集成＝仓库根 build/ 存量增量树（CMakeCache 确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON）；冒烟＝全新独立目录 build_smoke_t14-rt/（vcpkg toolchain＋Qt prefix 绝对路径；build_smoke_t14 为历史任务既有树未复用）"
+    },
+    {
+      "target": "sdurws_ird_runtime_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 266 例（265 过＋1 既有设计跳过）＋冒烟 176/176",
+      "notes": "新增 RT-PRES 族 5 例全过（HostPresentationViewTest.*）；gating 实测＝冒烟编列 gtest_list_tests 零命中 RT-PRES（与 RT-T07/T08/T12 同因）；ird 标签随本任务补登记（ctest -L \"^ird$\" 1/1）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "RT-PRES 族（本任务新增——acceptance 具名自证）",
+      "designRef": "units/runtime.md §12 RT-T14 行；B1-SPEC §4.3（D10 三类身份/反向隔离/复用）",
+      "cases": [
+        { "name": "HostPresentationViewTest.IdentityBindingsVerifiable_RT_PRES_1", "status": "passed", "modes": ["integration"], "trace": "三类身份绑定：modelIdentity 对照快照同值/appliedRevisionId 对照工厂入参/presentationIdentity 每构造新生成且双视图互异——绑定关系≠字段值相等（v1.2 口径）" },
+        { "name": "HostPresentationViewTest.ViewLifecycleDoesNotTouchSnapshotIdentity_RT_PRES_2", "status": "passed", "modes": ["integration"], "trace": "构建/销毁/重建零触快照身份（逐位不变）——隔离" },
+        { "name": "HostPresentationViewTest.PresentationStateMutationIsolatedFromSnapshot_RT_PRES_3", "status": "passed", "modes": ["integration"], "trace": "setQ 副本修改零触快照内容身份与视图变换面——反向隔离（ContractSuiteTest setQ 同款语义）" },
+        { "name": "HostPresentationViewTest.ResolutionAndTransformReuseSameSource_RT_PRES_4", "status": "passed", "modes": ["integration"], "trace": "正解/反解双向往返与快照直查逐字节一致（RT-NM 断言形态复用）＋未命中显性化同判＋worldToBase/baseToWorld 同值（P-RT-4/AT-37）——复用" },
+        { "name": "HostPresentationViewTest.FactoryFailsFastOnInvalidInput_RT_PRES_5", "status": "passed", "modes": ["integration"], "trace": "空快照/全零修订均 RuntimeError(InputInvalid) 整体失败——不返回半成品" }
+      ]
+    },
+    {
+      "suite": "既有用例全量复跑（RT-T02～T13 交付面——本任务零增删）",
+      "designRef": "units/runtime.md §11 矩阵全部组——落位全表见 runtime/test/README.md §3",
+      "cases": [
+        { "name": "（汇总）", "status": "passed", "modes": ["integration"], "trace": "266 例＝既有 261＋新增 5；265 过＋1 例 worker 占位按设计跳过（ContractSuite.ChildProcessWorker_RT_ID_1——RT-T12 已验收口径）" },
+        { "name": "（汇总）", "status": "passed", "modes": ["smoke"], "trace": "冒烟 176/176 通过＝既有基线不减（gated 增列不进冒烟编列）" }
+      ]
+    }
+  ],
+  "summary": {
+    "integration": { "total": 266, "passed": 265, "failed": 0, "skipped": 1, "skippedNote": "ChildProcessWorker_RT_ID_1 为父用例派生的 worker 占位——与 RT-T12/T13 已验收口径一致" },
+    "smoke": { "total": 176, "passed": 176, "failed": 0, "skipped": 0 },
+    "exitCodes": { "integrationBuild": 0, "integrationTest": 0, "smokeConfigure": 0, "smokeBuild": 0, "smokeTest": 0, "validateDocs": 0, "irdGates": 1 },
+    "irdGatesNote": "exit=1＝F-019 登记的存量红（base c766807b 端同红）——base..head 归一化直方图 151 行完全一致（ird-gates-hist-base.txt ↔ ird-gates-hist-head.txt），零新增零消除",
+    "acceptanceMapping": {
+      "acc1": "契约头落位＋只读视图/生命周期隔离声明/反解查询面——RT-PRES-1/2/4 承载（头文件注释即契约文档：隔离声明/三类身份绑定关系/旁路禁令限定口径）",
+      "acc2": "三类身份绑定（可验证绑定关系）——RT-PRES-1（modelIdentity 对照快照、appliedRevisionId 对照修订、presentationIdentity 重建即新身份）",
+      "acc3": "隔离断言——RT-PRES-2（构建/销毁/重建零修订零缓存写入零身份影响；视图无 CacheKey/身份输入位）",
+      "acc4": "反向隔离断言——RT-PRES-3（setQ 副本修改前后快照内容身份不变）",
+      "acc5": "复用断言——RT-PRES-4（反解一致 RT-NM 形态＋同一编译链产物＋worldToBase 同源 AT-37）",
+      "acc6": "禁令审计——全 const 面零 const_cast（新增代码零 cast）；零序列化旁路（无编解码出口）；呈现构造失败整体失败＝RT-PRES-5",
+      "acc7": "RT-T01~T13 契约面零修改（diff 核对）＋双模式构建零错误＋gtest XML 留痕本目录＋ird_gates 增量登记（归一化比对零新增）"
+    },
+    "evidence": "traceability/builds/wp06-t14/（README.md、gtest-runtime.xml、ird-gates-head.log、ird-gates-base.log、ird-gates-hist-head.txt、ird-gates-hist-base.txt、validate-docs.log、ird-test-report.json）"
+  }
+}
