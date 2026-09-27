@@ -4066,6 +4066,16 @@
       "title": "tasks/foundation/WP-15-T11.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397/F-399/F-401/F-404 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（集成 130/130＋53/53、冒烟 124/124＋53/53 实测），不构成验收阻断。",
       "owner": "契约治理会话（后续按家族批量修订时补齐本契约两行）",
       "resolution": "编号顺延自 F-408。"
+    },
+    {
+      "id": "F-410",
+      "source": "traceability/builds/wp15-t12/build-integration-full.log（WP-15-T12 实施段集成构建，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "全仓集成构建中框架 RobWorkSim 插件目标（RWSimulatorPlugin 等，BUILD_RWSimPlugin=ON 默认启用）存在既有编译错误：rw/math/Math.hpp、VelocityScrew6D.hpp 等 L1 老代码在该编译环境（VS2022 x64＋当前全局 CMake 配置）下报语法错误（'rw::rw::math' 嵌套解析、语句分号缺失等 73 处 error，全部位于框架源码，industrialrobot 树零涉及）——主检出 build 树无该等目标的 Release 构建成功痕迹（build/RobWorkSim/src/rwsimlibs/plugins 下无 Release 产物目录），判断为框架基线与当前工具链组合的既有不兼容，非 WP-15-T12 引入；SA-02 框架零源码修改，实施未触碰框架文件。本任务集成验证口径按交付面收窄＝industrialrobot 全目标＋依赖链零错误（全部通过），RobWorkSim 插件错误如实登记待治理面裁处（修复需框架 patch 或关闭 BUILD_RWSimPlugin 默认值，均超出任务 allowedFiles）。",
+      "owner": "框架/构建环境所有者（SA-02 patch 登记或 CMake 组件默认值修订）",
+      "resolution": "编号顺延自 F-409。"
     }
   ]
 }
