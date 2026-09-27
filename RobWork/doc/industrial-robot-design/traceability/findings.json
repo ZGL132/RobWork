@@ -4096,6 +4096,56 @@
       "title": "WP-15-T13 送验第三提交 cf841baf 标题『[WP-15-T13] 单元卡 v0.13 落位登记（§14.6＋§11 T13 行＋卡头版本行补齐）』以名词\"单元卡\"开头，非动词开头——F-012/F-023/F-024/F-026/F-027/F-030/F-034/F-037/F-039/F-040/F-042/F-044/F-045/F-047/F-048/F-059/F-076/F-082/F-084 家族同型再现（文档登记类提交标题的家族新例）；AGENTS §6.3 标题口径为\"动词开头的中文摘要\"。验收者对三送验提交的其余质量面（四段正文齐备、验证段计数与留痕逐项一致）实测无粉饰，不构成验收阻断。",
       "owner": "实施侧会话（后续提交标题以动词开头；家族批量治理时统一登记豁免口径或返修）",
       "resolution": "编号顺延自 F-411（WP-15-T12 验收 evidence 分支登记；本条随 WP-15-T13 验收 evidence 分支 acc/WP-15-T13/1 合入，合并后全局编号连续）。"
+    },
+    {
+      "id": "F-413",
+      "source": "traceability/contract-compile-log.md 独立评审登记：DOC-T14 方案 B.1 批次（2026-09-27，跨会话评审 PASS，4.1 改动范围项）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "DOC-T14 批次在契约 allowedFiles 外修改了两份规程文档 acceptance-protocol.md（v1.5→v1.6）与 contract-compilation.md（v1.1→v1.2）（提交 3001cc75）——严格按 ACC 4.1\"每个变更文件都在 allowedFiles 内\"属范围越界。非阻断定性依据：①修改由所有者\"禁止使用子智能体\"指令直接驱动（PIPE v1.16/ACC v1.6/CCP v1.2/DTB §8 四处同步登记，各文档变更记录载明所有者指令与日期）；②提交信息载明指令来源（\"遵守所有者当前禁止使用子智能体的执行约束\"）；③所有者二次审核已见到该提交且未列为阻塞；④内容为流程规则而非产品语义。缺口：未按 DTB §5.4 对契约 allowedFiles 偏差做显式登记（findings/DTB §4 均无条目），且规程文档修订按 AGENTS §6.2 惯例宜用 [docs]/[governance] 前缀独立成提交而非并入 [DOC-T14]。",
+      "owner": "所有者（放行批次时对本偏差作追认或返工裁定；后续治理文档修订独立成提交并预先纳入契约 allowedFiles 或先扩契）",
+      "resolution": "编号顺延自 F-412（DOC-T14 独立评审会话登记）。"
+    },
+    {
+      "id": "F-414",
+      "source": "traceability/contract-compile-log.md 独立评审登记：DOC-T14 方案 B.1 批次（2026-09-27，跨会话评审 PASS，契约逐字段核对项）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "B.1 批次 11 份执行契约 branch 字段采用 ui-t19/rt-t14/wp13-t20 式命名，偏离同单元既有契约先例（UI-T18=wp10-t18、RT-T13=wp06-t13、WP-15-T13=wp15-t13 的 ≙ 映射式）；CCP §2 branch 门槛存在两种句法读法（\"wp<nn>-t<kk>（单元任务按 ≙ 映射）或治理族 doc-t<nn> 等 <前缀>-t<序号> 小写句法\"），新契约命中后者句法但偏离前者惯例。批内一致性完好（manifest/契约同值、validate-b1-batch 同名校验通过），各契约留痕目录仍用 wp 编号（builds/wp10-t19/ 等）不影响追溯。",
+      "owner": "所有者（放行前裁定口径：统一改 wp 映射式分支名，或修订 CCP §2 措辞明确 <前缀>-t<序号> 对单元任务合法；11 份契约均未实施，改名成本为零窗口）",
+      "resolution": "编号顺延自 F-413（DOC-T14 独立评审会话登记）。"
+    },
+    {
+      "id": "F-415",
+      "source": "traceability/contract-compile-log.md 独立评审登记：DOC-T14 方案 B.1 批次（2026-09-27，跨会话评审 PASS，契约逐字段核对项）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "RT-T14 契约 masterWp=WP-D，但 DTB §8 映射表 WP-06（runtime）属 WP-C——沿袭 runtime 家族存量漂移（实测 RT-T05/T10/T12/T13 均 WP-D，仅 RT-T01=WP-C 符合 §8 表），非本批新引入；按 CCP §2\"DTB §8 唯一编号来源，不双轨\"严格口径，runtime 家族 5 份契约（含新 RT-T14）与 §8 表不一致。机器校验不交叉核对该字段，放行不受阻。",
+      "owner": "治理会话（随放行批次或家族批量治理统一校正：改契约 masterWp 为 WP-C 或修订 §8 表归属；需与既有 done 契约的改写红线对照——done 契约不改写，仅登记勘误）",
+      "resolution": "编号顺延自 F-414（DOC-T14 独立评审会话登记）。"
+    },
+    {
+      "id": "F-416",
+      "source": "traceability/contract-compile-log.md 独立评审登记：DOC-T14 方案 B.1 批次（2026-09-27，跨会话评审 PASS，文档同步项）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "DETAILED-DESIGN.md 新增\"宿主融合批次\"节的规格相对链接多一级断链：[...](../../../docs/superpowers/specs/2026-09-27-host-integrated-b1-design.md) 自 RobWork/doc/industrial-robot-design/ 解析到仓库根 docs/（不存在），实际规格位于 RobWork/docs/superpowers/specs/，正确相对路径为 ../../docs/superpowers/specs/...（链接锚文本显示的路径本身正确）。",
+      "owner": "治理会话（随放行批次顺手改为 ../../docs/…，一行修正）",
+      "resolution": "编号顺延自 F-415（DOC-T14 独立评审会话登记）。"
+    },
+    {
+      "id": "F-417",
+      "source": "traceability/contract-compile-log.md 独立评审登记：DOC-T14 方案 B.1 批次（2026-09-27，跨会话评审 PASS，机器索引同步项）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "phase-one-task-index.json 本批增补后文件末尾换行符丢失（git diff 显示 \\ No newline at end of file，此前版本有换行）——纯格式瑕疵，JSON 语义与机器解析（ConvertFrom-Json/validate-state 实测）不受影响。",
+      "owner": "治理会话（随放行批次补末尾换行）",
+      "resolution": "编号顺延自 F-416（DOC-T14 独立评审会话登记）。"
     }
   ]
 }

@@ -329,3 +329,25 @@
 连带修正：WP-24-T09 staging 启动验证明确为安装树绝对路径直启——start_studio.bat 硬编码开发机路径，属开发辅助入口，其运行不构成无路径依赖证据。机器校验：七契约逐份 validate-task PASS＋validate-docs（内嵌批次校验）PASS＋allowedFiles/forbiddenFiles 交叠专项自查零命中——见批次提交留痕。状态不变：DOC-T14=design-written、11 份=planned；本登记不构成放行。
 
 **交叠判定口径登记（配合本批 ①）**：allowedFiles/forbiddenFiles 存在两类几何关系，处置不同——(a) **同名/直接子路径双属**（同一具体文件同时命中允许与禁止，如本批 WP-24-T09 的四单元 CMakeLists.txt）＝阻塞，必须修正；(b) **父目录禁令包含唯一开发区**（如 `RobWork/RobWorkStudio/src/**` 禁令与 `.../industrialrobot/<unit>/**` 允许面的嵌套）＝按仓库既有约定解释：AGENTS §1 规定 industrialrobot/ 为唯一开发区、框架源码零修改（SA-02），此类父目录禁令一律读作 industrialrobot/** 之外，实际越界由 ird_gates 的 SA-02 补丁核对机器化拦截——不构成阻塞，实施者对 industrialrobot 内文件的修改按 allowedFiles 判断。本批全部执行契约的 `RobWork/RobWorkStudio/src/**` 禁令按此口径执行，登记供评审与验收对照。
+
+### 独立评审登记：DOC-T14 方案 B.1 批次（2026-09-27，跨会话评审 PASS；状态翻转待治理会话原子执行）
+
+**独立性声明**：本评审由全新上下文的独立评审会话执行——未参与本批 da4502cb/3001cc75/ced4cc3b/89931690 四个实施提交，只消费产物与证据、不采信实施叙述（CCP §3 第 6 步"另一会话"原始口径成立；**不援引** ACC §2.1/PIPE §0.4 的单会话独立性降级，亦不构成执行模型切换——PIPE §0.4 单会话条款约束的是流水线 tick 的实施/验收承载方式，本评审按 CCP §3 第 6 步原文执行）。送验对象冻结：`doc-t14` @ `8993169099961ea74b0b00e7a1b848b2e5e6dafe`（本地＝origin/doc-t14，无分支漂移）；基线 `redesign-main` @ `7e1421a4`。
+
+**裁决：PASS（0 阻断；5 项发现转登 findings F-413~F-417，均不阻塞放行）**。DOC-T14 八条 acceptance 逐条对抗核查：
+
+| # | acceptance 条目 | 裁决 | 证据要点 |
+| --- | --- | --- | --- |
+| 1 | B1-SPEC 落位 | PASS | v1.2 实测：§2 D1~D13 逐条有机制承载列＋段末"与既有决策的关系"对照（O-43/O-38/UI-T16/ARCH §7.7/§7.3/SA-02，无一条弱化既有 SA）；§2.1 处置表封闭清单＋实现路径闭合条款（v1.2）；§3 双树节点封闭清单＋INV-B1~B4；§4.2 L1/L3"必须"、L2"可以"、**L4 明示不承诺**；§4.3 三类身份绑定/反向隔离/序列化旁路限定禁令 |
+| 2 | ARCH v0.13 | PASS | SA-18 登记册行（正/反例＋§7.12 指针＋需求追溯）＋§7.12 六组条款＋变更记录 v0.13 行；REQUIREMENTS.md 不在 base..head 改动集（零修改实测）；框架源码零触碰（diff 文件清单核对） |
+| 3 | DTB v0.22 | PASS | 六任务表新增 11 行逐一核对（§2.7×1、§2.11×5、§2.14/§2.15/§2.16 各 1、§2.25×2）；声明链 WP-15-T13→DOC-T14→UI-T19→RT-T14→WP-24-T08→UI-T20→UI-T21→UI-T22→WP-13-T20→WP-14-T10→WP-15-T18→UI-T23→WP-24-T09 从行内前置逐链追出（UI-T19 卡行前置 WP-10-T18 已 done 合入，契约 dependsOn 只登记未满足前置 DOC-T14——符合 CCP §2"只编码真实技术前置"）；§3 矩阵 12 行同步无遗漏（ARC-02/03/04、CON-02、MDL-07、REQ-01~04、KIN-06/12、PM-11/17、UX-02/04/05/09/12、NFR-MNT-06、NFR-SEC-04）；§7 v0.22 行登记 |
+| 4 | PIPE v1.15 §6.2 | PASS | 六迁移链任务串行领取＋共享装配面变更仅归 UI-T21/T22/T23（域迁移契约 allowedFiles 实测只含本域目录，与约束一致）；v1.16 同批 §6.3 manifest/外部门禁/单会话模式；变更记录 v1.15/v1.16 行 |
+| 5 | 12 份契约起草 | PASS | 逐字段核对卡行↔契约（taskId/unit/masterWp/dependsOn/requirements/designRefs/allowedFiles/forbiddenFiles/verify/acceptance/knownPitfalls/note）；11 份均 planned＋DOC-T14 design-written；interUnit=true 12/12 带 knownPitfalls；acceptance 无泛化文案、逐条具名可验证；forbiddenFiles 均含 REQUIREMENTS/ARCHITECTURE 正文；WP-24-T08 悬空前置（WP-24-T03 契约未建）按 CCP §3.1.4 以放行条件登记而非写入悬空 dependsOn；validate-task 12/12 PASS（评审者亲跑） |
+| 6 | 机器索引同步 | PASS | phase-one-task-index.json 增 UI-T19~T23/RT-T14 五条目，sourceRow 与单元卡行逐字一致；foundation-tasks.json 增 12 条（新旧语义级对比：既有 5 条零改写、无删除、无 done 历史改写；新条目状态 design-written×1＋planned×11）；contract-compile-log.md 起草/增补/补强/二次修正四块登记在案；trace-matrix.json 未纳入已如实声明"待下次再生成" |
+| 7 | B.1 自动化编排 | PASS | b1-host-integration-batch.json 11 阶段与声明链一致、分支与契约同名同值、WP-24-T03-COMPLETE 门禁挂 WP-24-T08 前（status=open）；validate-b1-batch.ps1 正例 PASS（stages=11, openGates=1）；**对抗负例证实真实失败能力**——篡改阶段拓扑→4 条错误非零退出，删除外部门禁绑定→强制检查报错 exit=1；单会话执行计划 plans/2026-09-27-b1-automation-orchestration.md 落位；当前零份 B.1 契约 ready、queue 空 |
+
+机器校验（评审者亲跑，非采信实施留痕）：validate-docs PASS（20 units, 12 trace, 201 task files）；validate-task 12/12 PASS；validate-state PASS（phase=idle, queue=0, history=180）；validate-b1-batch PASS（stages=11, openGates=1）。补充对抗核查：planned 契约的 designRefs 锚点无机检覆盖（F-032 既有口径），评审者人工核对全部锚点真实存在（ARCH#7.12、五单元卡 §11/§12/§13、DTB §2.7/§2.11/§2.14/§2.15/§2.16/§2.25）；requirements 引用均为 REQUIREMENTS 现行真实 ID。
+
+发现（详见 findings.json F-413~F-417，均建议级/重大非阻断）：F-413＝ACC/CCP 两规程文档在本契约 allowedFiles 外被修改（所有者"禁止子智能体"指令驱动、四文档变更记录与提交留痕在案，但无 DTB §5.4 式显式偏差登记——放行时须所有者追认）；F-414＝11 份契约 branch 用 ui-t19/rt-t14 式命名，偏离 wp10-t18/wp06-t13 ≙ 映射先例（批内 manifest/契约一致、机器门禁不受影响，口径待所有者裁定）；F-415＝RT-T14 masterWp=WP-D 沿袭 runtime 家族存量漂移（DTB §8 表 WP-06→WP-C，RT-T05 起 即漂移，非本批引入）；F-416＝DETAILED-DESIGN.md 宿主融合节相对链接多一级断链（应 `../../docs/…`）；F-417＝phase-one-task-index.json 末尾换行符丢失。
+
+**移交声明**：评审通过即 DOC-T14 具备 CCP §3.1 第 2 步放行条件；按契约 note 与 §3.1 分工，DOC-T14→done、11 份→ready 的原子状态写入由治理会话在持锁下执行（所有者确认），本评审不代行状态翻转。F-416/F-417 两个纯文本微瑕建议随放行批次顺手修正；F-414 口径须在放行前裁定（改分支名或修订 CCP §2 措辞）。
