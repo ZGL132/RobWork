@@ -1,22 +1,29 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "idle",
-  "tickCount": 394,
-  "currentTask": null,
-  "branch": null,
-  "base": null,
+  "phase": "implementing",
+  "tickCount": 395,
+  "currentTask": "RT-T14",
+  "branch": "rt-t14",
+  "base": "c766807b0514fb374fc3b843cee839adea4ffa23",
   "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
-  "run": null,
+  "run": {
+    "kind": "implement",
+    "runId": "84426fa3-f598-405a-9688-f08c6ef808bb",
+    "workerId": "07aaa50e-52ec-4121-bd91-4c1748a70f53",
+    "task": "RT-T14",
+    "startedAt": "2026-09-27T22:50:19+08:00",
+    "leaseExpiresAt": "2026-09-28T00:50:19+08:00"
+  },
   "attempts": {
     "implement": 0,
     "fix": 0,
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-27T21:37:32+08:00",
+    "updatedAt": "2026-09-27T22:50:19+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -2011,7 +2018,13 @@
       "acceptance": 60
     }
   },
-  "queue": [],
+  "queue": [
+    {
+      "taskId": "RT-T14",
+      "contractPath": "tasks/foundation/RT-T14.json",
+      "branch": "rt-t14"
+    }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -2021,5 +2034,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "44d847a5-a431-4204-954b-ae409ecbb927"
+  "tickToken": "96783710-ff28-496f-b45a-2914b3fcb0dc"
 }
