@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "产出失败点/薄弱区三维渲染数据（KIN-07）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T05",
     "UI-T05"

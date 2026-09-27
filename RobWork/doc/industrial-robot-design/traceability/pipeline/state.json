@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 381,
+  "tickCount": 385,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-27T09:02:06+08:00",
+    "updatedAt": "2026-09-27T10:41:52+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1946,6 +1946,16 @@
       ],
       "acceptanceRecord": "traceability/acceptance/WP-15-T10-20260927.md",
       "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-15-T11",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "34950b7be34206f4768b313f5015cf953f0ada95"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T11-20260927.md",
+      "mergedAt": "2026-09-27"
     }
   ],
   "policy": {
@@ -1972,11 +1982,6 @@
   },
   "queue": [
     {
-      "taskId": "WP-15-T11",
-      "branch": "wp15-t11",
-      "contractPath": "tasks/foundation/WP-15-T11.json"
-    },
-    {
       "taskId": "WP-15-T12",
       "branch": "wp15-t12",
       "contractPath": "tasks/foundation/WP-15-T12.json"
@@ -1995,5 +2000,5 @@
     "dtbTaskRegistry": "doc/industrial-robot-design/development-task-breakdown.md#2",
     "taskContracts": "doc/industrial-robot-design/tasks/"
   },
-  "tickToken": "814a4c0d-7605-4fc2-97b6-f274cb46dad9"
+  "tickToken": "2eef3261-0ff7-4ad7-bd89-aaa74888200e"
 }
