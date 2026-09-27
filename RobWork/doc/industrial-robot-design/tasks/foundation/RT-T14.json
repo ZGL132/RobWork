@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-D",
   "title": "宿主呈现 WorkCell 契约（呈现视图与计算快照隔离、复用同一构造规则）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T19"
   ],
@@ -56,5 +56,5 @@
     "禁令审计（B1-SPEC §4.3 v1.1 限定口径）：源码审计零 const_cast 破坏运行时只读视图；零『呈现对象→XML/序列化中转→RuntimeSnapshot 或计算输入』的复制回写旁路（既有正式 Codec、项目导入导出、worker 物化传输协议不受限，审计范围仅限本任务新增代码路径）；呈现构造失败整体失败不返回半成品",
     "既有 RT-T01~T13 契约面与公共头零修改（新增头随本任务首消费落位）；双模式构建零错误；gtest XML＋ird-test-report.json 留痕 traceability/builds/wp06-t14/；ird_gates 增量登记"
   ],
-  "note": "方案 B.1 迁移链（SA-18 D10；B1-SPEC §4.3）。knownPitfalls：P-RT-4＝基座—世界变换单一不变量（呈现视图构造必须复用 installationPresetRotation 单点，禁止呈现侧二次旋转或私建第二构造路径）。interUnit=true 判定＝交付跨单元消费的呈现契约（UI-T20 发布桥与其后的三域迁移均消费本契约面）。dependsOn=UI-T19：宿主控制器装配面确定后本契约的消费形状才冻结（B1-SPEC §6 链序）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 2/4/6：三类身份绑定、反向隔离具名断言、禁令审计（XML 限定为呈现到计算方向的旁路，不泛化禁序列化）。〔v1.2 修正 2026-09-27〕按所有者二次审核修正 acceptance 2 措辞：三类身份为可验证绑定关系而非字段值相等（modelIdentity 对照模型内容、appliedRevisionId 对照修订、presentationIdentity 重建即新身份）。"
+  "note": "方案 B.1 迁移链（SA-18 D10；B1-SPEC §4.3）。knownPitfalls：P-RT-4＝基座—世界变换单一不变量（呈现视图构造必须复用 installationPresetRotation 单点，禁止呈现侧二次旋转或私建第二构造路径）。interUnit=true 判定＝交付跨单元消费的呈现契约（UI-T20 发布桥与其后的三域迁移均消费本契约面）。dependsOn=UI-T19：宿主控制器装配面确定后本契约的消费形状才冻结（B1-SPEC §6 链序）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔完成 2026-09-27〕实施提交 3803dbb3（分支 rt-t14，tick#395）验收 attempt 1 pass（acc/RT-T14/1 @ 62951fb5），随 PIPE §4.7 收尾合入 redesign-main（合并提交 89f460b6）并置 done。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 2/4/6：三类身份绑定、反向隔离具名断言、禁令审计（XML 限定为呈现到计算方向的旁路，不泛化禁序列化）。〔v1.2 修正 2026-09-27〕按所有者二次审核修正 acceptance 2 措辞：三类身份为可验证绑定关系而非字段值相等（modelIdentity 对照模型内容、appliedRevisionId 对照修订、presentationIdentity 重建即新身份）。"
 }
