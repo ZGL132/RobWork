@@ -1,0 +1,76 @@
+52,69c52,69
+< IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ICommandRegistry.hpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/IGlobalShortcutRegistry.hpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/AboutDialog.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandInteractionBridge.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette_p.hpp
+< IRD-GATE-R3: ui 产品面包含 Qt 头：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandRegistry.cpp（NFR-MNT-01：L2 计算内核零 Qt）
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPresentation.cpp
+< IRD-GATE-R3: ui 产品面包含 Qt 头：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/GlobalShortcutRegistry.cpp（NFR-MNT-01：L2 计算内核零 Qt）
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicySummaryCard.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ShellSupport.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/View3DPlaceholder.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent_p.hpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell_p.hpp
+---
+> IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ICommandRegistry.hpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/IGlobalShortcutRegistry.hpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/AboutDialog.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandInteractionBridge.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette_p.hpp
+> IRD-GATE-R3: ui 产品面包含 Qt 头：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandRegistry.cpp（NFR-MNT-01：L2 计算内核零 Qt）
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPresentation.cpp
+> IRD-GATE-R3: ui 产品面包含 Qt 头：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/GlobalShortcutRegistry.cpp（NFR-MNT-01：L2 计算内核零 Qt）
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicySummaryCard.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ShellSupport.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/View3DPlaceholder.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent_p.hpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell_p.hpp
+128,145c128,145
+< IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ICommandRegistry.hpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/IGlobalShortcutRegistry.hpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/AboutDialog.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandInteractionBridge.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette_p.hpp
+< IRD-GATE-R3: ui 产品面包含 Qt 头：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandRegistry.cpp（NFR-MNT-01：L2 计算内核零 Qt）
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPresentation.cpp
+< IRD-GATE-R3: ui 产品面包含 Qt 头：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/GlobalShortcutRegistry.cpp（NFR-MNT-01：L2 计算内核零 Qt）
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicySummaryCard.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ShellSupport.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/View3DPlaceholder.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent_p.hpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell.cpp
+< IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/rw15t11_base_wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell_p.hpp
+---
+> IRD-GATE-R4: project 产品面发现 RobWork 字面量 1 处（疑前缀拼接/剥离）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp（例外须 DTB §4.5 登记）
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ICommandRegistry.hpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/IGlobalShortcutRegistry.hpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/AboutDialog.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandInteractionBridge.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette_p.hpp
+> IRD-GATE-R3: ui 产品面包含 Qt 头：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandRegistry.cpp（NFR-MNT-01：L2 计算内核零 Qt）
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPresentation.cpp
+> IRD-GATE-R3: ui 产品面包含 Qt 头：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/GlobalShortcutRegistry.cpp（NFR-MNT-01：L2 计算内核零 Qt）
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicySummaryCard.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ShellSupport.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/View3DPlaceholder.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent_p.hpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell.cpp
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell_p.hpp
