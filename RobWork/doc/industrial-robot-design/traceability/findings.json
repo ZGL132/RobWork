@@ -4046,6 +4046,26 @@
       "title": "builds/wp15-t10/ird-gates-base-head-compare.md 口径②仍为『去重后的命中条目数：base 76、head 76』未按 F-402 owner 指令注明组成（验收者锚定口径实测 76＝69 命中本体＋7 条引擎自测裸码 token；附件『引擎自测段 token 不计入②』的声明与 76 的实际组成有出入——锚定口径〔原始行排除自测行后捕获去重＋路径归一化〕命中本体去重实测 69/69 与引擎自计同值、base/head 集合 diff 为空，零增量结论两种口径下均成立不受影响）——F-402/F-405 家族新例：本任务产出新比对附件时再次未兑现 F-402 精炼动作。",
       "owner": "kinematics 实施会话（下次产出比对附件时注明『去重 76＝69 命中＋7 自测 token』组成，或改用锚定口径使口径②＝69 命中本体）；治理收尾会话（簿记核对时按 69 命中本体口径复核）",
       "resolution": "编号顺延自 F-406。"
+    },
+    {
+      "id": "F-408",
+      "source": "traceability/acceptance/WP-15-T11-20260927.md 三/建议级（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "units/kinematics.md 卡头版本行 v0.11/v0.10 登记日期为 2026-09-24、T11 比对附件（traceability/builds/wp15-t11/ird-gates-base-head-compare.md）日期同为 2026-09-24，而两送验提交（f8d27b24/34950b7b）作者日期为 2026-09-27 10:12；同卡 v0.9/v0.8 行却登记 2026-09-27——同版本行内日期倒挂（v0.10/v0.11 早于 v0.9/v0.8），追溯时序困惑（F-342/F-346 登记精度家族的日期面变体；不影响任何交付语义与验证结论，验收者按 git 作者日期对账核实）。",
+      "owner": "kinematics 实施会话（下次触及卡头时顺手修正 v0.10/v0.11 行与 T11 附件日期 09-24→09-27，或登记偏差依据）；治理收尾会话（簿记核对）",
+      "resolution": "编号顺延自 F-407。"
+    },
+    {
+      "id": "F-409",
+      "source": "traceability/acceptance/WP-15-T11-20260927.md 三/建议级（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "tasks/foundation/WP-15-T11.json verify 数组仅 3 行（sdurws_ird_kinematics 产品库构建行＋ctest -L \"^ird$\" 行＋validate-docs 行），缺 sdurws_ird_kinematics_test／sdurws_ird_kinematics_contract_test 两测试目标的构建行——F-300/F-358/F-367/F-368/F-371/F-373/F-375/F-381/F-397/F-399/F-401/F-404 家族新例（本批 WP-15 任务契约逐单复发形态）；验收者已在全新构建树自行补建两测试目标并执行（集成 130/130＋53/53、冒烟 124/124＋53/53 实测），不构成验收阻断。",
+      "owner": "契约治理会话（后续按家族批量修订时补齐本契约两行）",
+      "resolution": "编号顺延自 F-408。"
     }
   ]
 }
