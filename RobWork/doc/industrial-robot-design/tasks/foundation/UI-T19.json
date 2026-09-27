@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "宿主控制器抽取（ui 平台能力转宿主内部控制器）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "DOC-T14"
   ],
@@ -56,5 +56,5 @@
     "ird_gates 命中集增量登记（新增产品面文件的 R3 命中按 DTB §4.5 登记册流程）；双模式构建零错误；gtest XML＋ird-test-report.json＋构建日志留痕 traceability/builds/wp10-t19/",
     "共享树/属性检查器/SelectionService 面零改动（归 UI-T21/T22——PIPE §6.2 互斥）；框架源码零修改（SA-02，验收段框架 diff 核查）"
   ],
-  "note": "方案 B.1 迁移链首任务（SA-18 D1/D2/D13；B1-SPEC §2）。knownPitfalls：O-38＝宿主插件/框架融合形态既有裁决（装载方式与插件边界不得因控制器抽取改变）；O-43＝宿主深度融合三步承接（Dock 拓扑与状态行迁移已由 UI-T18 落位，本任务冻结该形态为终态、不再动拓扑）。interUnit=true 判定＝重建 ui 内部装配面并对外声明宿主形态（消费 project/execution/diagnostics 既有端口面不变）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（所有者三项裁定已落实，见编译日志放行块）——本契约为 B.1 批次队首可领取任务。"
+  "note": "方案 B.1 迁移链首任务（SA-18 D1/D2/D13；B1-SPEC §2）。knownPitfalls：O-38＝宿主插件/框架融合形态既有裁决（装载方式与插件边界不得因控制器抽取改变）；O-43＝宿主深度融合三步承接（Dock 拓扑与状态行迁移已由 UI-T18 落位，本任务冻结该形态为终态、不再动拓扑）。interUnit=true 判定＝重建 ui 内部装配面并对外声明宿主形态（消费 project/execution/diagnostics 既有端口面不变）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（所有者三项裁定已落实，见编译日志放行块）——本契约为 B.1 批次队首可领取任务。〔完成 2026-09-27〕实施提交 e9cae348（分支 ui-t19，tick#394）验收 attempt 1 pass（acc/UI-T19/1 @ e0cff0ed），随 PIPE §4.7 收尾合入 redesign-main（合并提交 13aca7c2）并置 done。"
 }

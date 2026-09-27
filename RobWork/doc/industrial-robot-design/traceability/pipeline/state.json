@@ -1,32 +1,36 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "implementing",
+  "phase": "idle",
   "tickCount": 394,
-  "currentTask": "UI-T19",
-  "branch": "ui-t19",
-  "base": "be3bdbbf5526cd53710fe78fbdda4a4bc5e50721",
+  "currentTask": null,
+  "branch": null,
+  "base": null,
   "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
-  "run": {
-    "kind": "implement",
-    "runId": "2f2f0a06-c5c3-45f1-b4e7-4e0dce64ee66",
-    "workerId": "028f4330-6b58-40a8-9fc6-1de92a6c1044",
-    "task": "UI-T19",
-    "startedAt": "2026-09-27T20:52:34+08:00",
-    "leaseExpiresAt": "2026-09-27T22:52:34+08:00"
-  },
+  "run": null,
   "attempts": {
     "implement": 0,
     "fix": 0,
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-27T20:52:34+08:00",
+    "updatedAt": "2026-09-27T23:30:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T19",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "e9cae348c7c7f953d63733b6b33710f36f9d8199",
+        "13aca7c2"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T19-20260927.md",
+      "mergedAt": "2026-09-27"
+    },
     {
       "task": "CORE-T01",
       "unit": "core",
@@ -2007,13 +2011,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T19",
-      "contractPath": "tasks/foundation/UI-T19.json",
-      "branch": "ui-t19"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
