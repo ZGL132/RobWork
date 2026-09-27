@@ -144,6 +144,19 @@ target_sources(sdurws_ird_kinematics PRIVATE
     src/Export.cpp
     src/Recompute.cpp)
 
+# T10 增列（tasks/foundation/WP-15-T10.json，§3.3 布局表 AnalysisConfig.hpp
+# 行 T10；两模式编译——纯 std＋core/evidence 头，零框架库符号、零 io/
+# project 消费——P-KIN-4：用户级持久化只交付 schema/编解码与装载出口，
+# 存储载体归 ui 侧，不入 .rwdesign 修订）：
+#   src/AnalysisConfig.cpp  AnalysisConfiguration canonical v1 编解码＋
+#                           configDigest 摘要（唯一经 core ContentDigester）
+#                           ＋非法配置 fail-fast 校验＋KIN-CONFIG-ILLEGAL
+#                           产码＋配置变更依赖提示（L-K7/AT-27——纯提示
+#                           数据）＋显示单位纯投影（KIN-12——换算唯一经
+#                           core Units，本 TU 零换算算术）
+target_sources(sdurws_ird_kinematics PRIVATE
+    src/AnalysisConfig.cpp)
+
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：kinematics 公共头使用 C++17 设施（std::string_view/
 # inline constexpr 变量等），消费者编译 kinematics 头也必须至少 C++17。
@@ -239,7 +252,8 @@ add_executable(sdurws_ird_kinematics_test
     test/CommandsTest.cpp
     test/SolutionSetViewTest.cpp
     test/ExportTest.cpp
-    test/RecomputeTest.cpp)
+    test/RecomputeTest.cpp
+    test/AnalysisConfigTest.cpp)
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言

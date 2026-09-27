@@ -705,7 +705,7 @@ struct RegionCoverageComputation {
     // ---- 结果绑定（§5.6 六要素——由评估请求填充）----
     core::ContentIdentity snapshotId;   ///< 来源快照内容身份
     core::ContentIdentity sliceId;      ///< 冻结输入切片身份（CON-04）
-    core::ContentIdentity configDigest; ///< 求解配置摘要（T10 落位前可零值）
+    core::ContentIdentity configDigest; ///< 求解配置摘要（计算源见 AnalysisConfig.hpp——WP-15-T10）
     core::EvaluationMode mode = core::EvaluationMode::Verified; ///< 评估模式
     std::uint64_t seed = 0;             ///< 确定性种子（采样预算——身份面）
     std::vector<double> referenceQ;     ///< 排序参考构型（rad|m——D-KIN-4）
