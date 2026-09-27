@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 395,
+  "tickCount": 396,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-27T23:25:17+08:00",
+    "updatedAt": "2026-09-28T02:53:24+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -2021,7 +2021,53 @@
       "acceptance": 60
     }
   },
-  "queue": [],
+  "queue": [
+    {
+      "taskId": "WP-24-T08",
+      "branch": "wp24-t08",
+      "contractPath": "tasks/foundation/WP-24-T08.json"
+    },
+    {
+      "taskId": "UI-T20",
+      "branch": "ui-t20",
+      "contractPath": "tasks/foundation/UI-T20.json"
+    },
+    {
+      "taskId": "UI-T21",
+      "branch": "ui-t21",
+      "contractPath": "tasks/foundation/UI-T21.json"
+    },
+    {
+      "taskId": "UI-T22",
+      "branch": "ui-t22",
+      "contractPath": "tasks/foundation/UI-T22.json"
+    },
+    {
+      "taskId": "WP-13-T20",
+      "branch": "wp13-t20",
+      "contractPath": "tasks/foundation/WP-13-T20.json"
+    },
+    {
+      "taskId": "WP-14-T10",
+      "branch": "wp14-t10",
+      "contractPath": "tasks/foundation/WP-14-T10.json"
+    },
+    {
+      "taskId": "WP-15-T18",
+      "branch": "wp15-t18",
+      "contractPath": "tasks/foundation/WP-15-T18.json"
+    },
+    {
+      "taskId": "UI-T23",
+      "branch": "ui-t23",
+      "contractPath": "tasks/foundation/UI-T23.json"
+    },
+    {
+      "taskId": "WP-24-T09",
+      "branch": "wp24-t09",
+      "contractPath": "tasks/foundation/WP-24-T09.json"
+    }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -2031,5 +2077,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "96783710-ff28-496f-b45a-2914b3fcb0dc"
+  "tickToken": "babdbc1d-10c1-4019-b01a-02fdb04e1ede"
 }
