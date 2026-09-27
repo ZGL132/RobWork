@@ -120,6 +120,20 @@ if(TARGET sdurw_kinematics)
                                         # 冒烟模式不被任何 TU include——§15.4
                                         # v0.10 登记）
 
+    # ---- RT-T14 增列（宿主呈现视图；tasks/foundation/RT-T14.json）----
+    # HostPresentationView.cpp 消费 src/Snapshot.cpp 的 RuntimeSnapshot
+    # （唯一构造输入——B1-SPEC §4.3 D10"复用同一构造规则"的结构性执行面：
+    # 工厂只收已发布快照，呈现侧第二构造路径在调用面不可达），故与
+    # Snapshot.cpp 同因仅集成模式编译；公共头 HostPresentationView.hpp 在
+    # 冒烟模式不被任何 TU include（§15.4 RT-T07 系同款分工）。
+    target_sources(sdurws_ird_runtime PRIVATE
+        src/HostPresentationView.cpp)   # §12 RT-T14：宿主呈现视图——只读转发
+                                        # 包装（workCell/nameMap/makeState/
+                                        # worldToBase 零第二路径）＋三类身份绑定
+                                        # （modelIdentity/appliedRevisionId/
+                                        # presentationIdentity）＋工厂 fail-fast
+                                        # （空快照/全零修订 InputInvalid）
+
     # ---- RT-T10 增列（编译缓存纯判定；tasks/foundation/RT-T10.json）----
     # CacheKey.cpp 消费 src/Snapshot.cpp 的
     # snapshotidentity::computeWorkCellCompileIdentity（v0.10② 公式单点——
@@ -264,6 +278,17 @@ if(TARGET sdurw_kinematics)
                                         # 断言宏/TempDir/档案——被测面为产品
                                         # 编译器/工厂×真实 rw/rwsim，与产品侧
                                         # 增列同因仅集成模式
+
+    # ---- RT-T14 测试增列（仅集成模式——被测面链接真实框架库）----
+    # RT-PRES 族（宿主呈现视图，方案 B.1 D10；tasks/foundation/RT-T14.json）：
+    # 需要真实编译链产物（Published 快照持 WorkCell）——冒烟模式跳过
+    # （无框架库可链——RT-T07/T08/RT-T12 同因）。
+    target_sources(sdurws_ird_runtime_test PRIVATE
+        test/HostPresentationViewTest.cpp)  # RT-PRES-1～5：三类身份绑定/隔离
+                                            # （构建·销毁·重建零身份影响）/
+                                            # 反向隔离（State 副本修改不触快照）/
+                                            # 复用（反解与基座—世界变换同源）/
+                                            # 工厂 fail-fast
 endif()
 
 # ---- RT-T12 测试增列（两模式：数据集 lint；tasks/foundation/RT-T12.json）----
@@ -319,6 +344,12 @@ macro(ird_add_gtest target)
 endmacro()
 
 ird_add_gtest(sdurws_ird_runtime_test)
+
+# ---- RT-T14 增列（ctest 标签登记；DTB §5.1 契约 verify 口径）----
+# sdurws_ird_runtime_test（LABELS ird）随本任务登记——ui/modeling/
+# requirements 等单元同款先例（各单元自持登记）；该标签是契约 verify[1]
+# `ctest -L "^ird$"` 的机器前提（登记前该命令在 runtime 目录零匹配）。
+set_tests_properties(sdurws_ird_runtime_test PROPERTIES LABELS "ird")
 
 # ---- 依赖红线守卫（T 系/R 系的 runtime 侧配置期断言）----
 # runtime 唯一 industrialrobot 编译依赖＝core（ARCH §3.5）；L1 基线库白名单
