@@ -292,7 +292,7 @@ struct TaskPointIkQuery {
     double dedupThresholdPerAxis = 1e-6;
     /// 确定性种子（SeededRandom 必非 0——I-KIN-4；其余策略可 0）。
     std::uint64_t seed = 0;
-    /// 求解配置摘要（config.ik——T10 落位前允许零值；入结果身份）。
+    /// 求解配置摘要（config.ik——计算源见 AnalysisConfig.hpp，WP-15-T10；入结果身份）。
     core::ContentIdentity configDigest;
     /// 碰撞会话句柄（非 owning；空＝策略未启用碰撞——硬过滤③跳过并
     /// 标记 collisionNotEvaluated；真实④端口会话组装随 T07 落位——
@@ -530,7 +530,7 @@ struct BatchQuery {
     double dedupThresholdPerAxis = 1e-6;
     /// 确定性种子（SeededRandom 必非 0——I-KIN-4；其余策略可 0）。
     std::uint64_t seed = 0;
-    /// 求解配置摘要（config.ik——T10 落位前允许零值；入结果身份）。
+    /// 求解配置摘要（config.ik——计算源见 AnalysisConfig.hpp，WP-15-T10；入结果身份）。
     core::ContentIdentity configDigest;
     /// 碰撞会话句柄（非 owning；空＝策略未启用碰撞——硬过滤③跳过并
     /// 标记 collisionNotEvaluated；真实④端口会话组装随 T07 落位——
@@ -832,7 +832,7 @@ struct RegionCoverageQuery {
     double dedupThresholdPerAxis = 1e-6;
     /// 确定性种子已随 budget 携带（采样预算/种子——身份面一体；IK 初值
     /// 的 SeededRandom 序列同源消费 budget.seed——§3.4 单一种子纪律）。
-    /// 求解配置摘要（config.ik——T10 落位前允许零值；入结果身份）。
+    /// 求解配置摘要（config.ik——计算源见 AnalysisConfig.hpp，WP-15-T10；入结果身份）。
     core::ContentIdentity configDigest;
     /// 采样预算/种子（regionBudget——sampleSetIdentity 的预算参数面）。
     RegionSamplingBudget budget;

@@ -324,7 +324,8 @@ struct IkRequestIdentity {
     core::ContentIdentity snapshotId;
     /// 冻结输入切片身份（EvaluationRequest.slice.sliceId——CON-04）。
     core::ContentIdentity sliceId;
-    /// 求解配置摘要（config.ik canonical 摘要——T10 落位前允许零值）。
+    /// 求解配置摘要（config.ik canonical 摘要——计算源见 AnalysisConfig.hpp
+    /// analysisConfigurationDigest／makeConfigurationRefEntry，WP-15-T10）。
     core::ContentIdentity configDigest;
     /// 评估模式（Quick 结果仅筛选/排序依据——EVI-01；入身份）。
     core::EvaluationMode mode = core::EvaluationMode::Verified;
