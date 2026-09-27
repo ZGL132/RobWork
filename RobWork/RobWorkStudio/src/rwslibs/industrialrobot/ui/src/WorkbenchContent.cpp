@@ -210,6 +210,16 @@ void WorkbenchContentImpl::setStatusTextObserver(
     m_statusTextObserver = std::move(observer);
 }
 
+ICommandRegistry& WorkbenchContentImpl::commandRegistry()
+{
+    // UI-T19 增量（IHostController 命令注册族聚合源——§10.1 v1.17）：
+    // 交出 assembleCommandSystem 创建的同一注册表实例（SA-16 唯一注册点
+    // ——只交引用不交所有权，宿主侧无第二登记入口）。前置 build 已执行
+    // （m_commands 为空＝调用方时序违约，DT 断言拦截）。
+    Q_ASSERT(m_commands && "commandRegistry() before build()——build 恰好一次的前置违约");
+    return *m_commands;
+}
+
 void WorkbenchContentImpl::setStatusMessageObserver(
     std::function<void(const QString& message, int timeoutMs)> observer)
 {

@@ -91,6 +91,7 @@ public:
     void resetLayout() override;
     void notifyHostResized(const QSize& hostSize) override;
     void presentProjectContext(const ProjectContextProjection& context) override;
+    ICommandRegistry& commandRegistry() override;  ///< UI-T19 增量（权威实例引用——§10.1 v1.17）
     ShellCommandAvailability commandAvailability(const std::string& commandId) const override;
     void submitCommand(const std::string& commandId) override;
     std::vector<RecentProjectEntry> recentProjects() const override;

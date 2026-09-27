@@ -495,4 +495,31 @@ TEST_F(WorkbenchContentGuiTest, EmbeddedCentralYieldPage_UI_SPLIT)
     EXPECT_TRUE(content->shutdown());
 }
 
+/**
+ * UI-T19 增量（§10.1 v1.17——IWorkbenchContent::commandRegistry()）：访问器
+ * 交出的必须是**在位**注册表——已知壳层命令（§7.1 子集）经该引用的
+ * availability 查询与内容面权威查询逐字段一致（同一实例的两条观测路径；
+ * 若访问器返回副本/代理，聚合恒等在此暴露）。
+ */
+TEST_F(WorkbenchContentGuiTest, ContentCommandRegistryAccessorServesLiveRegistry_B1_UI_T19)
+{
+    IRD_TEST_INFO("UX-09", {}, std::nullopt);
+    auto content = ui::createWorkbenchContent(makeEmbeddedDeps());
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    // 已知壳层命令（§7.1 装配期登记集——project.new 恒在）的两条查询路径
+    // 必须逐字段一致：registered/visible/enabled 同源即证明是同一注册表。
+    const std::string knownShellCommand = "project.new";
+    const auto viaAccessor = content->commandRegistry().availability(knownShellCommand);
+    const auto viaContent = content->commandAvailability(knownShellCommand);
+    EXPECT_EQ(viaContent.registered, viaAccessor.registered);
+    EXPECT_EQ(viaContent.visible, viaAccessor.visible);
+    EXPECT_EQ(viaContent.enabled, viaAccessor.enabled);
+    EXPECT_TRUE(viaAccessor.registered)
+        << "已知壳层命令经访问器查询未登记（访问器未交出在位注册表）";
+
+    EXPECT_TRUE(content->shutdown());
+}
+
 }  // namespace
