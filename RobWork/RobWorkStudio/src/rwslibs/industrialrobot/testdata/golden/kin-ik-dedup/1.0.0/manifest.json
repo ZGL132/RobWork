@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "kin-ik-dedup",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "kin/ik-dedup-stable-order",
+  "coveredRequirements": [
+    "KIN-02",
+    "KIN-13",
+    "NFR-COR-01",
+    "NFR-COR-02"
+  ],
+  "coveredAt": [
+    "AT-03"
+  ],
+  "toleranceProfile": {
+    "id": "kin-ik",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/ik-dedup-inputs.json"
+  ],
+  "expected": [
+    "expected/ik-dedup-expected.json"
+  ],
+  "parameters": {
+    "contract": "IK 去重/稳定排序黄金（V-04 主数据载体——§10.1 kin-ik-dedup：去重/排序/同位姿异构型）；AT-03 去重反例黄金面",
+    "entryFaces": {
+      "dedup": "expected/solutions——同末端位姿两构型均保留（附录 D 第 3 项 C1：去重对象＝关节构型、逐轴 1e-6）；两分支 q2 反号（|Δq2|>0.1）",
+      "stableOrder": "expected/expectedOrder——§6.3 四键（裕量降序/可操作度降序/referenceQ 距离升序/初值序升序）的闭式参考序（生成脚本独立复算）",
+      "statistics": "expected/statistics——四计数黄金（raw=converged=deduped=2、filtered=0）"
+    },
+    "edgeCasesNote": "本数据集为 contract-fixture 类——边角样例由 kin-fk-analytic（analytic-case）与 kin-search-outcomes 承载；本集的数值边界＝两分支 q2 恰反号（去重逐轴阈值的符号敏感面）"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad"
+  },
+  "frames": {
+    "base": "robot-base"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "kin-ik-dedup-closed-form-branches",
+    "solverConfig": {
+      "positionTolerance": 1e-6,
+      "orientationTolerance": 1e-6,
+      "dedupThresholdPerAxis": 1e-6,
+      "iterationLimit": 200
+    },
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-24T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/ik-dedup-inputs.json",
+      "sha256": "77e3e30223d7a93507c95cc690f2e18602b7a78adcaec787d1011d076baa89a9",
+      "sizeBytes": 1719
+    },
+    {
+      "path": "expected/ik-dedup-expected.json",
+      "sha256": "ad110253c867fa01b4a180783b1fefa07f03d40b2b5a4883c7ae104a0b7d9509",
+      "sizeBytes": 1015
+    },
+    {
+      "path": "generate/make_kin_ik_dedup_golden.mjs",
+      "sha256": "240edaabfdc649ceb81941ed977bda8e955e4f96a4a5fb0905534b2d16d91734",
+      "sizeBytes": 6965
+    }
+  ],
+  "generator": {
+    "script": "generate/make_kin_ik_dedup_golden.mjs",
+    "invocation": "node generate/make_kin_ik_dedup_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-24",
+      "change": "首版：IK 去重/排序契约夹具（平面 3R 肘型双分支闭式参考＋四键参考排序＋四计数统计）——WP-15-T13 §10.1 数据集 2/4（V-04 主载体；AT-03 去重反例）",
+      "reReviewedBy": "WP-15-T13 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

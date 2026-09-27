@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "kin-coverage",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "kin/region-coverage-counts",
+  "coveredRequirements": [
+    "KIN-04",
+    "NFR-COR-01",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-03"
+  ],
+  "toleranceProfile": {
+    "id": "kin-coverage",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/coverage-inputs.json"
+  ],
+  "expected": [
+    "expected/coverage-expected.json"
+  ],
+  "parameters": {
+    "contract": "区域覆盖固定计数黄金（§10.1 kin-coverage：固定计数 100/60＋数据不足保留分母＋零样本）——覆盖率计算唯一实现点 computeCoverage 的计数黄金；AT-03 区域覆盖反例载体（V-13/V-14）",
+    "entryFaces": {
+      "fixedCount": "expected/fixedCount——计划 100、可达 60、不可达 40（AT-03 固定计数样例：覆盖率 60% 的计数事实；比率推导归报告层，CoverageResult 零比率字段为结构保证）",
+      "insufficient": "expected/insufficientDenominator——碰撞要求在场＋检测器缺失变体：4 样本 DataInsufficient、分母 104 保留不计分子、整体降级",
+      "zeroSamples": "expected/zeroSamples——counts 乘积 0：DataInsufficient＋KIN-COVERAGE-ZERO-SAMPLES、不输出 0%/100%（R8）",
+      "perSample": "expected/perSampleReach——100 格心的解析可达表（圆盘闭式）——样本级黄金对照面"
+    },
+    "edgeCasesNote": "零值边角＝planZero counts 轴 0（乘积 0 合法存储）；边界样例＝距可达圆 ≥1e-3 m 裕度的格心（防解析边界数值抖动——生成时断言）"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad"
+  },
+  "frames": {
+    "base": "robot-base"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "kin-coverage-disc-closed-form",
+    "solverConfig": {
+      "positionTolerance": 1e-6
+    },
+    "seed": 20260909,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-24T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/coverage-inputs.json",
+      "sha256": "4dcfbd7fbf4b027aabef74780d389a769026f5b3bcecf7d8ac2976266e388608",
+      "sizeBytes": 3412
+    },
+    {
+      "path": "expected/coverage-expected.json",
+      "sha256": "f0f9597fed99e7dcfa58dd27cb60b15f6157ba4f7168f9c15d84de0fe8b7ce71",
+      "sizeBytes": 3079
+    },
+    {
+      "path": "generate/make_kin_coverage_golden.mjs",
+      "sha256": "cc53fc5dade8c96695b524392268aebb74f2f63b7b64562c2a8317678ed726d1",
+      "sizeBytes": 8924
+    }
+  ],
+  "generator": {
+    "script": "generate/make_kin_coverage_golden.mjs",
+    "invocation": "node generate/make_kin_coverage_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-24",
+      "change": "首版：区域覆盖固定计数黄金（100/60/40＋数据不足保留分母变体＋零样本反例＋逐格心解析可达表）——WP-15-T13 §10.1 数据集 4/4（V-13/V-14 主载体；AT-03 覆盖反例组）",
+      "reReviewedBy": "WP-15-T13 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

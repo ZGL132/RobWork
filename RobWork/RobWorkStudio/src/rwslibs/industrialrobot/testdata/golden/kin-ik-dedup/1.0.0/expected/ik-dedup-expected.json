@@ -1,0 +1,44 @@
+{
+  "schema": "kin-ik-dedup-expected/1",
+  "provenance": {
+    "method": "closed-form",
+    "note": "双分支闭式解＋四键参考排序（§6.3 独立复算）——与产品数值求解零共享"
+  },
+  "outcome": "SolutionsFound",
+  "solutions": [
+    {
+      "sourceInitIndex": 0,
+      "q": [
+        0.20000000000000012,
+        0.39999999999999997,
+        0
+      ],
+      "minimumJointMargin": 0.8726760455264837,
+      "manipulability": 0
+    },
+    {
+      "sourceInitIndex": 1,
+      "q": [
+        0.49873161577581365,
+        -0.39999999999999997,
+        0.5012683842241864
+      ],
+      "minimumJointMargin": 0.8320768970451806,
+      "manipulability": 0
+    }
+  ],
+  "expectedOrder": [
+    0,
+    1
+  ],
+  "statistics": {
+    "rawCount": 2,
+    "convergedCount": 2,
+    "dedupedCount": 2,
+    "filteredCount": 0
+  },
+  "asserts": {
+    "distinctConfigurationsRetained": 2,
+    "note": "同末端位姿两构型均保留（AT-03 去重反例——关节空间逐轴去重的黄金面）"
+  }
+}

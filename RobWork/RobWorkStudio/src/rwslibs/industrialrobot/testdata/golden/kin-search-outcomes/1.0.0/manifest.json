@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "kin-search-outcomes",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "kin/ik-search-outcomes",
+  "coveredRequirements": [
+    "KIN-02",
+    "KIN-05",
+    "EVI-01",
+    "EVI-02",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-03",
+    "AT-19"
+  ],
+  "toleranceProfile": {
+    "id": "kin-ik",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/search-outcomes-inputs.json"
+  ],
+  "expected": [
+    "expected/search-outcomes-expected.json"
+  ],
+  "parameters": {
+    "contract": "五类结局黄金（§10.1 kin-search-outcomes：五类结局各含样例＋换初值反例）——结局期望＝§5.4 判定表铁律对场景几何的手工推演；AT-03 反例全部落位面（V-04 结局5/V-06/V-07/V-08/V-09）",
+    "entryFaces": {
+      "outcomes": "expected/scenarios——SolutionsFound/MultiInitNoConvergence/AllCandidatesFiltered/PartialCollision/AnalyticBoundExceeded 五结局各一正面样例",
+      "noInfeasible": "结局 2/3/4 场景 hasProof=false＋枚举无不可行值——『搜索未果≠不可行』（§8.1 C5/C8）的黄金形态面",
+      "restart": "s7a/s7b 反例对——原初值全未收敛（小预算）→扩大初值后同冻结输入复评翻转为有效解（AT-03 换初值反例）",
+      "collisionScript": "替身碰撞评估器脚本三 token（none/collide-all/collide-when-q2-positive）——脚本化判定的黄金声明面"
+    },
+    "edgeCasesNote": "s2 目标位于可达环带内孔（解析界限内数值不可达——搜索未果与解析界限两轨的边界样例）；s5 目标超解析界限（结局 5 唯一入口）"
+  },
+  "units": {
+    "length": "m",
+    "angle": "rad"
+  },
+  "frames": {
+    "base": "robot-base"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "kin-search-outcomes-closed-form",
+    "solverConfig": {
+      "positionTolerance": 1e-6,
+      "orientationTolerance": 1e-6,
+      "dedupThresholdPerAxis": 1e-6
+    },
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-09-24T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/search-outcomes-inputs.json",
+      "sha256": "1c5ec123d14b5164f0e2bfa91e5140d4fad91a8a19c5e47e515ab061b04ffe1d",
+      "sizeBytes": 5586
+    },
+    {
+      "path": "expected/search-outcomes-expected.json",
+      "sha256": "2f3a29004774fb71dd3eb4fb29f409cd514e976f43bb950acca224c5b93844f0",
+      "sizeBytes": 2376
+    },
+    {
+      "path": "generate/make_kin_search_outcomes_golden.mjs",
+      "sha256": "a493e11cc56e48c0170fc5f5954a1245d4a1b79029a27518585f82b0a208fb4c",
+      "sizeBytes": 9873
+    }
+  ],
+  "generator": {
+    "script": "generate/make_kin_search_outcomes_golden.mjs",
+    "invocation": "node generate/make_kin_search_outcomes_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-24",
+      "change": "首版：五类结局契约夹具（五结局正面样例＋s7a/s7b 换初值反例对＋替身碰撞脚本三 token）——WP-15-T13 §10.1 数据集 3/4（V-05/06/07/08/09 主载体；AT-03 反例组）",
+      "reReviewedBy": "WP-15-T13 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

@@ -1,0 +1,255 @@
+{
+  "schema": "kin-search-outcomes-inputs/1",
+  "datasetId": "kin-search-outcomes",
+  "models": {
+    "planar-2r": {
+      "id": "planar-2r",
+      "joints": [
+        {
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "lower": -2.97,
+          "upper": 2.97
+        },
+        {
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            1.1,
+            0,
+            0
+          ],
+          "lower": -3.141592653589793,
+          "upper": 3.141592653589793
+        }
+      ],
+      "tcpOffset": {
+        "xyz": [
+          0.7,
+          0,
+          0
+        ]
+      }
+    },
+    "planar-3r": {
+      "id": "planar-3r",
+      "joints": [
+        {
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "lower": -2.97,
+          "upper": 2.97
+        },
+        {
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            1,
+            0,
+            0
+          ],
+          "lower": -3.141592653589793,
+          "upper": 3.141592653589793
+        },
+        {
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0.6,
+            0,
+            0
+          ],
+          "lower": -3.141592653589793,
+          "upper": 3.141592653589793
+        }
+      ],
+      "tcpOffset": {
+        "xyz": [
+          0.4,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "collisionScripts": {
+    "none": "无碰撞会话（策略未启用——硬过滤③跳过并标记 collisionNotEvaluated）",
+    "collide-all": "替身碰撞评估器脚本：对任意构型返回碰撞（对象对 kin-obs-a/kin-obs-b）",
+    "collide-when-q2-positive": "替身碰撞评估器脚本：仅 q[1]>0 的构型判碰撞（对象对同上）"
+  },
+  "scenarios": [
+    {
+      "id": "s1-found",
+      "model": "planar-2r",
+      "v": "V-05",
+      "target": {
+        "x": 1.7369167425270358,
+        "y": 0.1860036957709307,
+        "phi": -0.2
+      },
+      "initialValues": [
+        [
+          0.3,
+          -0.5
+        ]
+      ],
+      "iterationLimit": 200,
+      "collision": "none",
+      "note": "可达目标单初值——有效解收敛"
+    },
+    {
+      "id": "s2-noconv",
+      "model": "planar-2r",
+      "v": "V-06",
+      "target": {
+        "x": 0.2,
+        "y": 0,
+        "phi": 0
+      },
+      "initialValues": {
+        "strategy": "JointGrid",
+        "count": 4,
+        "seed": 7
+      },
+      "iterationLimit": 200,
+      "collision": "none",
+      "note": "目标位于可达环带内孔（|p|=0.2 < |L1−L2|=0.4）——解析界限内、数值不可收敛（§8.1 C5）"
+    },
+    {
+      "id": "s3-allfilt",
+      "model": "planar-3r",
+      "v": "V-09",
+      "target": {
+        "x": 1.8054021927509196,
+        "y": 0.7633118041900968,
+        "phi": 0.6000000000000001
+      },
+      "initialValues": [
+        [
+          0.20000000000000012,
+          0.39999999999999997,
+          0
+        ],
+        [
+          0.49873161577581365,
+          -0.39999999999999997,
+          0.5012683842241864
+        ]
+      ],
+      "iterationLimit": 200,
+      "collision": "collide-all",
+      "note": "全部候选碰撞被过滤（C8）——DataInsufficient 素材，不得输出不可行"
+    },
+    {
+      "id": "s4-partial",
+      "model": "planar-3r",
+      "v": "V-08",
+      "target": {
+        "x": 1.8054021927509196,
+        "y": 0.7633118041900968,
+        "phi": 0.6000000000000001
+      },
+      "initialValues": [
+        [
+          0.20000000000000012,
+          0.39999999999999997,
+          0
+        ],
+        [
+          0.49873161577581365,
+          -0.39999999999999997,
+          0.5012683842241864
+        ]
+      ],
+      "iterationLimit": 200,
+      "collision": "collide-when-q2-positive",
+      "note": "一构型碰撞（q2>0 分支）另一构型有效——任务可行素材不受影响（AT-19）"
+    },
+    {
+      "id": "s5-bound",
+      "model": "planar-2r",
+      "v": "V-04(结局5载体)",
+      "target": {
+        "x": 3,
+        "y": 0,
+        "phi": 0
+      },
+      "initialValues": [
+        [
+          0,
+          0
+        ]
+      ],
+      "iterationLimit": 200,
+      "collision": "none",
+      "note": "目标 ‖p‖=3.0 > ΣL=1.8——解析界限确定性排除（唯一产证明素材路径）"
+    },
+    {
+      "id": "s7a-restart-narrow",
+      "model": "planar-2r",
+      "v": "V-07(前半)",
+      "target": {
+        "x": 1.7369167425270358,
+        "y": 0.1860036957709307,
+        "phi": -0.2
+      },
+      "initialValues": [
+        [
+          3,
+          -2.5
+        ]
+      ],
+      "iterationLimit": 1,
+      "collision": "none",
+      "note": "远离解的单一初值＋小预算——搜索未找到有效解（DataInsufficient）"
+    },
+    {
+      "id": "s7b-restart-expanded",
+      "model": "planar-2r",
+      "v": "V-07(后半)",
+      "target": {
+        "x": 1.7369167425270358,
+        "y": 0.1860036957709307,
+        "phi": -0.2
+      },
+      "initialValues": [
+        [
+          3,
+          -2.5
+        ],
+        [
+          0.3001,
+          -0.5
+        ]
+      ],
+      "iterationLimit": 1,
+      "collision": "none",
+      "note": "同一冻结输入扩大初值集（加入解邻域初值）——翻转为有效解（搜索未果≠不可行）"
+    }
+  ]
+}

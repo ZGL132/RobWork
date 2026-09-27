@@ -1,0 +1,258 @@
+{
+  "schema": "kin-fk-analytic-inputs/1",
+  "datasetId": "kin-fk-analytic",
+  "models": {
+    "planar-2r": {
+      "id": "planar-2r",
+      "note": "平面二连杆——全量闭式可解析（位置/姿态/雅可比/奇异值）",
+      "joints": [
+        {
+          "type": "revolute",
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "lower": -2.97,
+          "upper": 2.97
+        },
+        {
+          "type": "revolute",
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            1.1,
+            0,
+            0
+          ],
+          "lower": -3.141592653589793,
+          "upper": 3.141592653589793
+        }
+      ],
+      "tcpOffset": {
+        "xyz": [
+          0.7,
+          0,
+          0
+        ],
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "angle": 0
+      }
+    },
+    "six-axis": {
+      "id": "six-axis",
+      "note": "六轴臂——雅可比与奇异值经独立参考实现对照（附录 D 第 9 项）",
+      "joints": [
+        {
+          "type": "revolute",
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "origin": [
+            0,
+            0,
+            0
+          ],
+          "lower": -3.14,
+          "upper": 3.14
+        },
+        {
+          "type": "revolute",
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            0,
+            0,
+            0.4
+          ],
+          "lower": -1.5,
+          "upper": 1.5
+        },
+        {
+          "type": "revolute",
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            0.5,
+            0,
+            0
+          ],
+          "lower": -1.5,
+          "upper": 1.5
+        },
+        {
+          "type": "revolute",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            0.5,
+            0,
+            0
+          ],
+          "lower": -3.14,
+          "upper": 3.14
+        },
+        {
+          "type": "revolute",
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "origin": [
+            0.3,
+            0,
+            0
+          ],
+          "lower": -1.5,
+          "upper": 1.5
+        },
+        {
+          "type": "revolute",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "origin": [
+            0.2,
+            0,
+            0
+          ],
+          "lower": -3.14,
+          "upper": 3.14
+        }
+      ],
+      "tcpOffset": {
+        "xyz": [
+          0.15,
+          0,
+          0.1
+        ],
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "angle": 1.5707963267948966
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "fk-zero",
+      "model": "planar-2r",
+      "q": [
+        0,
+        0
+      ],
+      "edge": "zero-value",
+      "note": "零位构型——全部期望值零或解析常数"
+    },
+    {
+      "id": "fk-nearzero",
+      "model": "planar-2r",
+      "q": [
+        1e-9,
+        -1e-9
+      ],
+      "edge": "near-zero",
+      "note": "近零构型——1e-9 rad 级输入的位级敏感面"
+    },
+    {
+      "id": "fk-cancellation",
+      "model": "planar-2r",
+      "q": [
+        0.8,
+        -0.8
+      ],
+      "edge": "sign-cancellation",
+      "note": "q1+q2=0 正负抵消——姿态恒等、位置非平凡"
+    },
+    {
+      "id": "fk-general",
+      "model": "planar-2r",
+      "q": [
+        0.6,
+        0.9
+      ],
+      "edge": null,
+      "note": "一般位形——正反变换闭环载体"
+    },
+    {
+      "id": "sx-home",
+      "model": "six-axis",
+      "q": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "edge": "zero-value",
+      "note": "六轴零位——TCP 偏置旋转复合路径"
+    },
+    {
+      "id": "sx-pose",
+      "model": "six-axis",
+      "q": [
+        0.3,
+        -0.4,
+        0.5,
+        -0.6,
+        0.7,
+        -0.8
+      ],
+      "edge": "sign-cancellation",
+      "note": "六轴正负混合位形——独立参考对照"
+    }
+  ],
+  "roundTrip": {
+    "caseId": "fk-general",
+    "forwardQ": [
+      0.6,
+      0.9
+    ],
+    "tcpPosition": {
+      "x": 0.9573852175680382,
+      "y": 1.3193532113573772
+    },
+    "inverseBranches": [
+      [
+        0.6000000000000001,
+        0.8999999999999999
+      ],
+      [
+        1.2861278386291746,
+        -0.8999999999999999
+      ]
+    ],
+    "closedLoopToleranceM": 0.000001,
+    "note": "FK(q)→位置闭式逆（双分支）→FK 复算——位置残差 ≤ 去重容差"
+  },
+  "note": "几何常量为黄金权威——测试侧模型构造器消费本文件，不经单元测试夹具常量"
+}
