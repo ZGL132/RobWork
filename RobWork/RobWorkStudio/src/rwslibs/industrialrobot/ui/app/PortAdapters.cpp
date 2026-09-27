@@ -472,8 +472,10 @@ DraftDiscardOutcome StorePortAdapter::discard(const std::string& moduleId)
 // StoreFactoryPortAdapter
 // =====================================================================
 
-StoreFactoryPortAdapter::StoreFactoryPortAdapter(ProjectDiagnosticsBridge& bridge)
+StoreFactoryPortAdapter::StoreFactoryPortAdapter(ProjectDiagnosticsBridge& bridge,
+                                                 core::IDomainEventBus* eventBus)
     : m_bridge(bridge)
+    , m_eventBus(eventBus)
 {
 }
 
@@ -506,6 +508,10 @@ OpenStoreOutcome StoreFactoryPortAdapter::open(const std::string& canonicalPath,
     request.mode = (mode == UiOpenMode::Writable) ? project::OpenMode::Writable
                                                   : project::OpenMode::ReadOnly;
     request.diagnostics = &m_bridge;
+    // 域事件总线（WP-24-T03b 收口——非 owning 转交；打开五步协议的对端在
+    // 修订提交时 publish RevisionCommitted，撤销/重做等非 apply 路径的
+    // 会话同步由此到达域模块。可空＝无事件场景，对端跳过事件步）。
+    request.eventBus = m_eventBus;
 
     try {
         project::OpenStoreResult result = project::ProjectStoreFactory::open(request);

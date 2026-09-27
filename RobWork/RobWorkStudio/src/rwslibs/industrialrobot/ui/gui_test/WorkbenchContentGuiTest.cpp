@@ -522,4 +522,117 @@ TEST_F(WorkbenchContentGuiTest, ContentCommandRegistryAccessorServesLiveRegistry
     EXPECT_TRUE(content->shutdown());
 }
 
+// =====================================================================
+// WP-24-T03b 收口——中央区阶段面板页（§4.1 CentralAreaHost 挂位面）
+// =====================================================================
+
+/**
+ * 阶段面板页挂位与切换（契约 WP-24-T03b acceptance 4 的机制级验证面）：
+ * deps.stagePanelPages 逐项入中央栈（页 objectName 供定位）；showStagePanel
+ * 切换激活页；无项目上下文刷新回首页且激活记忆复位；未登记阶段＝无操作
+ * 不崩溃（§11.3 缺位语义）。测试以替身面板工厂承载（建模面板入中央栈的
+ * 集成面需 ui_app→modeling_plugin 新建链边——落位偏差登记 ui.md §16.7，
+ * 随 UI-T20/21 装配面任务落地）。
+ */
+TEST_F(WorkbenchContentGuiTest, StagePanelPageHostingAndSwitching_WP24_T03B)
+{
+    IRD_TEST_INFO("UX-12", {}, std::nullopt);
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    WorkbenchContentDeps::StagePanelPage modelingPage;
+    modelingPage.stage = ui::StageId::Modeling;
+    modelingPage.titleKey = "stage.modeling.title";
+    modelingPage.factory = [this]() -> QWidget* {
+        auto* page = new QWidget(&m_host);
+        page->setObjectName("fake_modeling_panel");
+        return page;
+    };
+    deps.stagePanelPages.push_back(modelingPage);
+    auto content = ui::createWorkbenchContent(std::move(deps));
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    auto* stack = qobject_cast<QStackedWidget*>(content->centralWidget());
+    ASSERT_NE(stack, nullptr);
+    // 初始（无项目）＝首页；切到建模阶段页后当前页为替身面板页。
+    EXPECT_EQ(stack->currentIndex(), 0);
+    content->showStagePanel(ui::StageId::Modeling);
+    const int modelingIndex = stack->currentIndex();
+    ASSERT_NE(modelingIndex, 0) << "阶段页未入中央栈（挂位面缺失）";
+    EXPECT_EQ(stack->widget(modelingIndex)->objectName(),
+              QString::fromLatin1("fake_modeling_panel"));
+
+    // 无项目上下文注入（关闭完成）→ 回首页＋激活记忆复位（§6.2 纪元过滤
+    // 的呈现对位——旧阶段选择不泄漏）；再注入项目上下文 → 仍不自动回到
+    // 已复位的阶段页（回到视图区域页 1）。
+    ProjectContextProjection closedContext;
+    content->presentProjectContext(closedContext);
+    EXPECT_EQ(stack->currentIndex(), 0);
+    ProjectContextProjection openContext;
+    openContext.project = ProjectMetadataProjection{};
+    content->presentProjectContext(openContext);
+    EXPECT_EQ(stack->currentIndex(), 1);
+    content->showStagePanel(ui::StageId::Modeling);
+    EXPECT_EQ(stack->currentIndex(), modelingIndex);
+
+    // 未登记阶段（Kinematics 无页）＝无操作不崩溃（当前页保持不变）。
+    content->showStagePanel(ui::StageId::Kinematics);
+    EXPECT_EQ(stack->currentIndex(), modelingIndex);
+
+    EXPECT_TRUE(content->shutdown());
+}
+
+/**
+ * 域命令入册（契约 WP-24-T03b acceptance 1/2 的机制级验证面）：owner 白名
+ * 单扩展使 modeling 域命令可登记；重复 id 拒绝（§7.2 不覆盖不静默——注册
+ * 表返回值轨）；处理器级拒绝的 messageKey 文案经瞬态消息观察钩子呈现
+ * （不走通用只读/无项目理由——ERR-01 因果如实）。
+ */
+TEST_F(WorkbenchContentGuiTest, DomainCommandRegistrationAndHonestFeedback_WP24_T03B)
+{
+    IRD_TEST_INFO("SA-16", {}, std::nullopt);
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    deps.extraCommandOwners.push_back("modeling");
+
+    WorkbenchContentDeps::DomainCommandEntry entry;
+    entry.descriptor.id = "modeling.diff-baseline";
+    entry.descriptor.ownerUnit = "modeling";
+    entry.descriptor.titleKey = "cmd.modeling.diff-baseline.title";
+    entry.descriptor.readOnlyAllowed = true;
+    entry.handler = [](const std::vector<CommandParameter>&) {
+        // 处理器级拒绝（域流程未装配的诚实反馈——messageKey 承载原因）。
+        CommandOutcome out;
+        out.accepted = false;
+        out.messageKey = std::string{"cmd.modeling.flow-not-assembled"};
+        return out;
+    };
+    deps.domainCommandEntries.push_back(std::move(entry));
+
+    auto content = ui::createWorkbenchContent(std::move(deps));
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    // 入册成功且 availability 快照可见（§7.2 registrationOrder＝装配序）。
+    const auto availability = content->commandAvailability("modeling.diff-baseline");
+    EXPECT_TRUE(availability.registered) << "域命令未入册（owner 白名单/登记面失效）";
+
+    // 处理器级拒绝经 submit 透出 messageKey——瞬态消息呈现解析文案而非
+    // 通用理由（无项目态下若走通用理由会显示"无项目"——因果失真即缺陷）。
+    QString transientMessage;
+    content->setStatusMessageObserver(
+        [&transientMessage](const QString& message, int) { transientMessage = message; });
+    content->submitCommand("modeling.diff-baseline");
+    EXPECT_EQ(transientMessage, QString::fromUtf8("该域流程未装配（随后续建模任务提供）"));
+
+    // 重复 id 拒绝（§7.2 不覆盖不静默——seal 后注册走违约轨；此处验证
+    // seal 前重复：注册表已 build 收口，运行期注册被拒＝InvalidDescriptor）。
+    CommandDescriptor duplicate;
+    duplicate.id = "modeling.diff-baseline";
+    duplicate.ownerUnit = "modeling";
+    const auto result =
+        content->commandRegistry().registerCommand(duplicate, {});
+    EXPECT_NE(result, RegistrationResult::Ok) << "重复 id 未被拒（§7.2 不覆盖被破坏）";
+
+    EXPECT_TRUE(content->shutdown());
+}
+
 }  // namespace

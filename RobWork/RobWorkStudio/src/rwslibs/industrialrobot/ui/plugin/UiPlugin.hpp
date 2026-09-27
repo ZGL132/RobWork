@@ -66,6 +66,7 @@
 
 #include <rws/RobWorkStudioPlugin.hpp>   // 框架插件基类（QDockWidget 派生＋宿主注入面）
 
+#include <sdurws/ird/core/Events.hpp>             // core::ReferenceEventBus/IDomainEventBus（WP-24-T03b——修订事件总线）
 #include <sdurws/ird/project/ProjectStore.hpp>    // project::OpenStoreResult（创建协议产物）
 #include <sdurws/ird/ui/IDraftController.hpp>     // ui::IDraftController（§8 草稿控制器——UI-T17 装配）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>      // ui::ShellWiring（注入包）
@@ -191,6 +192,11 @@ private:
     void startDrainWatch();
     void pollDrainOnce();
 
+    // ---- 域装配接线（WP-24-T03b 收口——§7.2 域命令入册＋§5.2 会话同步）----
+    /// 域模块会话同步（presentContext 钩子的域半区——项目在位＝锚定当前
+    /// tip；无项目＝会话脱离。§5.2/§5.4/§6.2 的宿主转发面）。
+    void syncDomainModulesToContext(const ProjectContextProjection& context);
+
     // ---- 装配产物（所有权：诊断栈/适配器经 shared_ptr 供壳与控制器共享
     //      引用；控制器/内容装配面为本插件独占成员——析构序＝声明逆序，
     //      控制器与内容装配面先于端口适配器消亡）----
@@ -223,6 +229,13 @@ private:
     std::vector<std::pair<WorkbenchRegion, QAction*>> m_hostRegionToggles; ///< 框架菜单区域开关（勾选态回写）
     bool m_assembled = false;                                 ///< initialize 已完成（一次守卫）
     std::unique_ptr<DomainPluginAssembly> m_domains;          ///< 域插件装配产物（首版＝modeling——WP-24-T03）
+    /// 域事件总线（WP-24-T03b 收口——修订提交事件面：store 打开请求挂接
+    /// ＋宿主订阅转达域模块；进程内恰一次投递，core::ReferenceEventBus）
+    std::shared_ptr<core::ReferenceEventBus> m_eventBus;
+    /// 修订事件桥（订阅目标 sink——插件存活期覆盖订阅期，成员持有）
+    std::unique_ptr<core::IDomainEventSink> m_revisionSink;
+    /// 总线订阅句柄（RAII——修订事件→域模块基线同步；析构即退订）
+    std::unique_ptr<core::IEventSubscription> m_revisionSubscription;
 };
 
 }  // namespace ui

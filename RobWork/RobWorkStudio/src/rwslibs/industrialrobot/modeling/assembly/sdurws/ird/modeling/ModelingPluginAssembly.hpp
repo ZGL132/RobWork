@@ -35,9 +35,21 @@
 
 namespace sdurws {
 namespace ird {
+namespace runtime {
+class RuntimeNameMap;  // 前向声明（bindRuntimeNameMap 入参——⑥端口映射真身）
+}  // namespace runtime
 namespace ui {
-class IModuleDraftSource;  // 前向声明（§10.5 模块草稿源——draftSource 返回类型）
+class IModuleDraftSource;       // 前向声明（§10.5 模块草稿源——draftSource 返回类型）
+class IUiDomainReadinessSource; // 前向声明（§6.5 汇聚源端口——readinessSource 返回类型）
 }  // namespace ui
+}  // namespace ird
+}  // namespace sdurws
+
+namespace sdurws {
+namespace ird {
+namespace policy {
+class EngineeringPolicySet;  // 前向声明（bindPolicyProvider 提供器返回的指针面）
+}  // namespace policy
 }  // namespace ird
 }  // namespace sdurws
 
@@ -89,6 +101,31 @@ struct ModelingPluginAssembly {
 
     /// 会话刷新（restoreOnOpen 后由宿主调用——面板同步；T03b-2）。
     void refreshFromSession();
+
+    // ---- T03b 收口装配面（策略/名称/会话同步/汇聚源）------------------
+
+    /// 绑定运行时名称映射（⑥端口——nullptr＝未绑定如实空值轨；见模块
+    /// 同名方法）。绑定即触发就绪重算。
+    void bindRuntimeNameMap(const sdurws::ird::runtime::RuntimeNameMap* map);
+
+    /// 绑定策略提供器（已装载 EngineeringPolicySet 现取入口；nullptr 返回
+    /// 值＝未装载→L11 如实 Blocking。绑定即触发就绪重算）。
+    void bindPolicyProvider(
+        std::function<const policy::EngineeringPolicySet*()> provider);
+
+    /// 会话脱离（项目关闭/切换——锚清空＋工作集复位＋面板空态；磁盘草稿
+    /// 零触碰。宿主 presentContext 无项目态时调用）。
+    void onSessionDetached();
+
+    /// 修订提交事件（撤销/重做等非 apply 路径——非锚定分支的事件忽略；
+    /// 基线前移到新 tip＋就绪重算；编辑记录不清零，与 noteAppliedRevision
+    /// 语义区分）。
+    void onRevisionCommitted(const sdurws::ird::core::BranchId& branch,
+                             const sdurws::ird::core::RevisionId& newTip);
+
+    /// 域就绪汇聚源视图（§6.5 IUiDomainReadinessSource——宿主装配注册进
+    /// StageNavigationModelDeps.domainSources；存活期随 module）。
+    ui::IUiDomainReadinessSource& readinessSource() const;
 
     /// 模块草稿源视图（§10.5 attachModule 第二参数——本对象实现四方法；
     /// 存活期随 module）。const 语义：源接口四方法中两 const 两非 const，

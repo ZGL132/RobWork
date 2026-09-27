@@ -935,3 +935,110 @@ TEST(PluginPanel, Thread_UiThreadOnlyConstraint_WP13T15_ACC5)
     foreign.join();
     EXPECT_TRUE(threw) << "跨线程访问编辑面＝契约违约（§3.4 fail-fast）";
 }
+
+// =====================================================================
+// WP-24-T03b 收口——域就绪汇聚源/会话同步/策略与名称适配（T03b 六项的
+// 模块级验证面；面板未挂接＝刷新半区空操作，判定面完整可达）
+// =====================================================================
+
+#include "plugin/ModelingUiModule.hpp"  // 模块具体类型（T03b 新面——同单元私有头）
+#include "plugin/PolicyNameContexts.hpp"  // 映射转发形名称上下文（T03b——直接构造验证）
+
+/**
+ * 域就绪汇聚源（契约 WP-24-T03b acceptance 3）：domainReadiness(Modeling)
+ * 与 readonlyProjections 逐字段一致（同一快照同源——ACC5 零缓存）；非建
+ * 模阶段＝空清单；种子后（未锚定）呈 DataInsufficient 输入不完整缺省行
+ * ——零判定，汇聚输入不加工（N-11）。
+ */
+TEST(PluginPanelT03B, DomainReadinessSourceParity_WP24_T03B)
+{
+    IRD_TEST_INFO("UX-12", {}, std::nullopt);
+    ModelingUiModule module;
+    module.seedTemplateSession();
+
+    // 种子后重算过就绪（L11 Blocking 态——策略未装载）：两出口同源。
+    const auto viaPort = module.domainReadiness(ui::StageId::Modeling);
+    const auto viaModule = module.readonlyProjections();
+    ASSERT_EQ(viaPort.size(), viaModule.size());
+    ASSERT_FALSE(viaPort.empty());
+    EXPECT_EQ(viaPort.front().domainKey, viaModule.front().domainKey);
+    EXPECT_EQ(viaPort.front().verdict, viaModule.front().verdict);
+    EXPECT_EQ(viaPort.front().inputComplete, viaModule.front().inputComplete);
+
+    // 非建模阶段＝空清单（§6.5 端口契约"空清单不计入快照"）。
+    EXPECT_TRUE(module.domainReadiness(ui::StageId::Kinematics).empty());
+}
+
+/**
+ * 会话脱离与修订事件（契约 WP-24-T03b acceptance 6 的模块级验证面）：
+ * 锚定后 onRevisionCommitted 前移基线（信封 expectedRevision＝新 tip——
+ * 再应用不误报 Stale）；非锚定分支事件忽略；onSessionDetached 清空会话
+ * 态（此后 buildDraftCommand 恒 nullopt）。
+ */
+TEST(PluginPanelT03B, SessionDetachAndRevisionAdvance_WP24_T03B)
+{
+    IRD_TEST_INFO("PM-17", {}, std::nullopt);
+    ModelingUiModule module;
+    module.seedTemplateSession();
+
+    // 锚定＋制造一条未应用编辑（L-2 接受流——changes 非空才有信封）。
+    const core::BranchId branch = core::BranchId::generate();
+    const core::RevisionId tip = core::RevisionId::generate();
+    module.bindSessionAnchor(branch, tip);
+    auto& workingSet = module.session();
+    const RobotDesignTemplateFactory factory;
+    std::vector<core::DiagnosticRecord> diags;
+    workingSet.draft = factory.createDraft(
+        TemplateId{kTemplateIdGeneric6R},
+        runtime::InstallationPresetToken::Ground, "demo", diags).get();
+    workingSet.draft.changes.push_back(
+        ModelingChangeRecord{"joints[1]", "测试编辑（T03B 会话同步用例）"});
+
+    // 撤销/重做形态的修订提交：基线前移到新 tip；编辑记录保留（与
+    // noteAppliedRevision 的"应用即消费"区分）。
+    const core::RevisionId newTip = core::RevisionId::generate();
+    module.onRevisionCommitted(branch, newTip);
+    const auto envelope = module.buildDraftCommand("modeling");
+    ASSERT_TRUE(envelope.has_value());
+    EXPECT_EQ(envelope->expectedRevision.has_value()
+                  && envelope->expectedRevision->toCanonical() == newTip.toCanonical(),
+              true) << "基线未前移到新 tip（再应用将误报 Stale）";
+    EXPECT_FALSE(workingSet.draft.changes.empty())
+        << "修订事件清零了编辑记录（与应用回执语义混淆）";
+
+    // 非锚定分支事件忽略（基线不被跨分支修订污染——§6.2 对位）。
+    module.onRevisionCommitted(core::BranchId::generate(),
+                               core::RevisionId::generate());
+    const auto envelope2 = module.buildDraftCommand("modeling");
+    ASSERT_TRUE(envelope2.has_value());
+    EXPECT_EQ(envelope2->expectedRevision->toCanonical(), newTip.toCanonical());
+
+    // 会话脱离：锚清空＋changes 清空→buildDraftCommand 恒 nullopt。
+    module.onSessionDetached();
+    EXPECT_FALSE(module.buildDraftCommand("modeling").has_value());
+    EXPECT_FALSE(module.session().baseRevision.has_value());
+}
+
+/**
+ * 策略装载与名称适配（契约 WP-24-T03b acceptance 5 的模块级验证面）：
+ * 未绑定映射的名称上下文如实空值轨（nullopt/全零——与退役桩可观测行为
+ * 一致但已是真端口转发形）；空映射绑定后 tryObjectId 未命中仍 nullopt
+ * （ARC-04 不猜测）。
+ */
+TEST(PluginPanelT03B, PolicyNameContextHonestEmptyPath_WP24_T03B)
+{
+    IRD_TEST_INFO("ARC-03", {}, std::nullopt);
+    // 未绑定映射：三方法如实空值（nullopt/nullopt/全零保留值——CON-06
+    // "空映射与无映射在本类型层同态"）。
+    const RuntimeMapPolicyNameContext unbound(nullptr);
+    EXPECT_FALSE(unbound.tryObjectId("RobotScope.Base").has_value());
+    EXPECT_FALSE(unbound.tryRuntimeName(core::ObjectId::generate()).has_value());
+    EXPECT_TRUE(unbound.nameMapContentIdentity() == core::ContentIdentity{})
+        << "未绑定映射的内容身份非全零保留值（CON-06 口径失真）";
+
+    // 空映射（默认构造真身）：查询全 UnknownObject——未命中如实 nullopt。
+    const runtime::RuntimeNameMap emptyMap;
+    const RuntimeMapPolicyNameContext bound(&emptyMap);
+    EXPECT_FALSE(bound.tryObjectId("RobotScope.Base").has_value());
+    EXPECT_FALSE(bound.tryRuntimeName(core::ObjectId::generate()).has_value());
+}

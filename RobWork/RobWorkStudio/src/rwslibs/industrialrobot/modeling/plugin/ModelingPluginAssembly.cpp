@@ -73,10 +73,49 @@ void ModelingPluginAssembly::refreshFromSession()
     }
 }
 
+void ModelingPluginAssembly::bindRuntimeNameMap(
+    const sdurws::ird::runtime::RuntimeNameMap* map)
+{
+    if (m_impl != nullptr) {
+        m_impl->bindRuntimeNameMap(map);
+    }
+}
+
+void ModelingPluginAssembly::bindPolicyProvider(
+    std::function<const policy::EngineeringPolicySet*()> provider)
+{
+    if (m_impl != nullptr) {
+        m_impl->bindPolicyProvider(std::move(provider));
+    }
+}
+
+void ModelingPluginAssembly::onSessionDetached()
+{
+    if (m_impl != nullptr) {
+        m_impl->onSessionDetached();
+    }
+}
+
+void ModelingPluginAssembly::onRevisionCommitted(
+    const sdurws::ird::core::BranchId& branch,
+    const sdurws::ird::core::RevisionId& newTip)
+{
+    if (m_impl != nullptr) {
+        m_impl->onRevisionCommitted(branch, newTip);
+    }
+}
+
 ui::IModuleDraftSource& ModelingPluginAssembly::modelingDraftSource() const
 {
     // 多重继承静态转换（IPluginUiModule＋IModuleDraftSource 双基——同一
     // 对象的两个接口视图）。
+    return *m_impl;
+}
+
+ui::IUiDomainReadinessSource& ModelingPluginAssembly::readinessSource() const
+{
+    // 多重继承静态转换（T03b 收口新增第三基 IUiDomainReadinessSource——
+    // 同一对象的汇聚源接口视图；§6.5 汇聚输入注册用）。
     return *m_impl;
 }
 

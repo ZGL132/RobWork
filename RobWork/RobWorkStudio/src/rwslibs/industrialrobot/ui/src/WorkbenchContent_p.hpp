@@ -38,6 +38,7 @@
 
 #include <array>
 #include <functional>
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -94,6 +95,7 @@ public:
     ICommandRegistry& commandRegistry() override;  ///< UI-T19 增量（权威实例引用——§10.1 v1.17）
     ShellCommandAvailability commandAvailability(const std::string& commandId) const override;
     void submitCommand(const std::string& commandId) override;
+    void showStagePanel(ui::StageId stage) override;  ///< WP-24-T03b 增量（§4.1 CentralAreaHost 换激活面板）
     std::vector<RecentProjectEntry> recentProjects() const override;
     void noteRecentProject(const std::string& canonicalPath) override;
     void removeRecentProject(const std::string& canonicalPath) override;
@@ -168,7 +170,13 @@ private:
     std::function<void(const QString&, int)> m_statusMessageObserver; ///< 瞬态消息观察（UI-T18——宿主状态栏 showMessage）
 
     // ---- 内容 Widget 树（shutdown 后全部置空防悬垂）----
-    QStackedWidget* m_centralStack = nullptr;  ///< 中央区页栈（首页/三维视图区域）
+    QStackedWidget* m_centralStack = nullptr;  ///< 中央区页栈（首页/三维视图区域/阶段面板页）
+    /// 阶段面板页索引（WP-24-T03b——StageId→中央栈页号；§4.1 CentralAreaHost
+    /// 挂位面。buildCentralArea 按 deps.stagePanelPages 填充）
+    std::map<ui::StageId, int> m_stagePageIndex;
+    /// 当前激活的阶段页（nullopt＝未激活——上下文刷新回首页/视图区域页；
+    /// 项目关闭即复位）
+    std::optional<ui::StageId> m_activeStagePanel;
     QLabel* m_readonlyBadge = nullptr;         ///< 顶栏只读徽标
     QListWidget* m_homeRecentList = nullptr;   ///< 首页最近项目列表
     std::array<QWidget*, 5> m_regionWidgets{}; ///< 五区内容 Widget（WorkbenchRegion 枚举序）
