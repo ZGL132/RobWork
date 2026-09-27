@@ -1,0 +1,5 @@
+6a7,8
+> IRD-GATE-R1: 业务域目标互链：sdurws_ird_kinematics_app → sdurws_ird_kinematics_plugin（ARC-02；R-1 无例外）
+> IRD-GATE-R1: 业务域目标互链：sdurws_ird_kinematics_plugin → sdurws_ird_kinematics（ARC-02；R-1 无例外）
+60a63
+> IRD-GATE-SUB: 表外依赖边 kinematics->ui（sdurws_ird_kinematics_plugin → sdurws_ird_ui）不在 ARCH §3.5 白名单
