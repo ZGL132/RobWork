@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-24-T03",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "实现应用壳装配收口（T03b：域命令入册、汇聚投影、中央区挂位、策略与名称适配、会话全同步、About 接线）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-SEC-04",
+    "UX-14",
+    "UX-12",
+    "PM-17",
+    "ARC-02",
+    "ARC-03",
+    "REQ-06"
+  ],
+  "designRefs": [
+    "development-task-breakdown.md#2.25",
+    "ARCHITECTURE.md#7.12",
+    "units/ui.md#7.2",
+    "units/ui.md#6.5",
+    "units/ui.md#4.1",
+    "units/ui.md#10.9",
+    "units/ui.md#11.1",
+    "units/ui.md#11.2",
+    "units/ui.md#11.3",
+    "units/ui.md#11.4",
+    "units/modeling.md#9.7.3"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/modeling.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**"
+  ],
+  "outputs": [
+    "implementation",
+    "traceability-update",
+    "doc-sync"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "cmake --build build --config Release --target sdurws_ird_ui_test sdurws_ird_modeling_test"
+  ],
+  "branch": "wp24-t03",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-38",
+    "O-43",
+    "O-31",
+    "P-MDL-8"
+  ],
+  "acceptance": [
+    "域命令入 content 注册表（ui.md §7.2 冲突规则）：十条 modeling 域命令（modeling.md §9.7.3 卡表全量）经装配层注册进 WorkbenchContent 的 ICommandRegistry——ownerUnit=modeling 白名单校验、重复 id 一律拒绝（不覆盖不静默）＋UI-CMD-DUPLICATE Dev 诊断＋AssemblyReport 登记失败行、registrationOrder＝白名单装配序；注册后命令面板与建模面板命令按钮均经注册表提交路径（submitCommand）路由，命令面板可搜索到域命令——具名用例：注册后 availability 快照含十条；重复注册反例被拒且报告含失败行；同输入同排序",
+    "域命令可用性门控与执行语义诚实（§7.5/§7.6/ERR-01）：NoProject 态 Project 作用域域命令 enabled=false；只读会话 readOnlyAllowed=false 的命令禁用；有已落位域能力的命令真实执行（modeling.new-from-template→模板草稿重种子＋就绪重算），未装配域流程的命令提交后如实呈现『域流程未装配』（状态行瞬态＋Dev 日志留痕），不得虚构执行成功（T03a『已受理』占位文案退役）——具名用例：无项目态反例、只读态反例、new-from-template 执行后会话草稿重置、未装配流程命令提交留痕不虚构",
+    "只读投影入 StageStatusModel 汇聚（ui.md §6.5/§11.1）：建模模块经 IUiDomainReadinessSource 端口接入 IStageNavigationModel 汇聚源（domainSources 注册）——readinessSnapshot(StageId::Modeling) 返回建模域行（domainKey=modeling；verdict/inputComplete/missingItemKeys 自就绪报告直投零判定——REQ-06 输入完整性结论不加工；epoch 标注构建纪元）；编辑/锚定/应用触发重算后快照随之刷新；红线结构自证：汇聚模型不持门控判定逻辑（N-11 无第二套）——具名用例：域源注册后快照含 modeling 行且与模块 readonlyProjections 逐字段一致；编辑后缺项键集变化反映进快照",
+    "中央区 CentralAreaHost 挂位（ui.md §4.1/§11.1，O-38 ③双形态边界）：内容装配面中央栈承载阶段面板页（StageId 挂位）——壳形态（harness）下建模面板入中央栈并经阶段导航 requestNavigate(Modeling) 激活呈现；嵌入式宿主形态保持 Left Dock 承载不变（宿主 RWStudioView3D 中央区唯一——让位页语义不动），双形态差异如实登记不虚构成——具名用例：壳形态导航后中央栈当前页＝建模面板页；嵌入式形态 Dock 挂位回归零变化；白名单缺位插件的阶段中央区占位面板（§11.3）不因本任务回退",
+    "策略装载与 runtime 名称适配（就绪 L11/L 行程全量）：T03b-2b 草稿名称桩退役——装配层注入真实 IPolicyNameContext 适配器（转发 runtime::RuntimeNameMap 的 resolveObjectId/resolveRuntimeName——整串精确匹配、不拆前缀不猜测，R-4/P-POL-8/ARC-04；无映射绑定时如实 nullopt/全零保留值）与真实策略装载路径（policy::resolvePolicy 装载 EngineeringPolicySet 注入 CheckContext.resolvedPolicy）；已装载策略时行程评估全量执行（L 行真判定），未装载时 L11 如实 Blocking 不伪造可行——具名用例：注入真名映射＋已装载策略后 L 行产出评估结果；空映射适配器反例如实 nullopt；未装载策略保持 L11 Blocking",
+    "会话事件全同步（ui.md §5.2/§5.4/§6.2）：域模块会话同步覆盖全部会话路径——打开（锚定＋草稿恢复＋面板刷新，既有）、关闭/切换（模块会话态清空＋面板复位——不残留旧项目锚点与草稿显示）、非 draft.apply 路径修订提交（撤销/重做产生新修订）后模块基线同步前移（经 wiring.eventBus 域事件总线接通或宿主编排转发达成，不引入第二套事件机制）；迟到事件按会话纪元过滤不污染新会话——具名用例：关闭后面板空态且模块锚清空；撤销/重做后模块基线＝新 tip（再应用不误报 Stale）；切换项目后旧会话事件不触发新会话刷新",
+    "About 接线（ui.md §11.4/UX-14）：IUiAboutDataSource 实装 registrar.assemblyReports() 现取现拼（ACC5 零缓存——对话框每次打开现取），关于框清单 modeling 行呈现真实装配事实（ok/panelsLoaded/commandsRegistered 来自报告），白名单外报告条目交集丢弃、重复报告取首条防御不变；HarnessAboutSource 占位退役——具名用例：装配单插件（ok=1/panels=1/commands=10）后关于框行集与报告逐字段对位一致；空报告时行集＝白名单占位行（不虚构装配事实）",
+    "骨架双模式构建零错误（集成 Release＋独立冒烟）；ird_gates 命中集增量归一化比对登记（零新增或逐条登记依据）；gtest 全绿（ui/modeling 测试目标含新增具名用例）＋ird-test-report.json＋构建/测试留痕 traceability/builds/wp24-t03b/；GUI 冒烟留痕（--rwsplugin 直载：域命令经注册表提交实证＋关于框真实清单）——具名载体：构建日志＋gtest XML＋builds/wp24-t03b/ 截图与日志",
+    "文档同步：units/ui.md 落位登记（收口六项逐项——§16.7 增行＋对应节落位登记注）、units/modeling.md 同步（模块面增量）、development-task-breakdown.md §2.25 行 T03b 收口注记、traceability/contract-compile-log.md 修订行；需求语义零变化——载体：各文档版本行与登记注可核对"
+  ],
+  "note": "方案 B.1 迁移链门禁 WP-24-T03-COMPLETE 的收口段契约（PIPE §6.3）。背景：WP-24-T03 于 v0.21 拆段——T03a 首版装配 2026-09-26 提前落位并验收（traceability/acceptance/WP-24-T03a-20260926.md，verdict=pass；当时契约本体随验收退役），T03b-1/T03b-2/T03b-2b/T03b-2c 增量已合入主线（验收随 T03b 批次）；本契约为该行收口余量的 canonical 编译产物，完成后由治理会话翻门禁 satisfied＋按 WP-24-T08 契约 note 经 CCP §5 修订通道补入其 dependsOn。DTB 拆段七项收口余量与本契约 acceptance 映射：域命令入 content 注册表→acceptance 1/2；StageStatusModel 汇聚→acceptance 3；中央区挂位→acceptance 4；draft.apply 域侧挂钩→已落位（T03b-2，不重复立项）；AssertionSuite 注入→acceptance 5（策略装载即断言套件真数据路径）；会话事件同步→acceptance 6；About 清单接线→acceptance 7。dependsOn 空数组理由：真实技术前置（T03a 验收与 T03b-1/2/2b/2c 合入）均非契约 taskId 不可编码，悬空引用被 CCP 禁止；执行次序由队列严格次序承载（本任务插队首、先于 WP-24-T08）。knownPitfalls：O-38＝融合形态既有裁决（中央区宿主 RWStudioView3D 唯一——嵌入式形态面板不入宿主中央、动态加载仅开发期通道）；O-43＝宿主深度融合承接（装配形态沿已验收行为）；O-31＝装配层特权与零 include 纪律（ui 头零 project/runtime/policy include——适配器实现 TU 自含，模块经注入端口消费）；P-MDL-8＝建模接缝（IUiDomainReadinessSource/IPluginUiModule 消费面按 ui.md 冻结形状，不私改对端）。forbiddenFiles 含 runtime/policy/project/core/diagnostics：本任务零修改消费其公共头（R-2），适配器落位在 ui/app 与 modeling/plugin。分支 wp24-t03 复用登记：旧尖端 075b2f9d（T03b-1）已按 SHA 合入主线（merge e448d47e），指针自当前 redesign-main 重启承载收口段——分支名延续任务号映射（validate-task 句法 -t<数字> 结尾排除 t03b 形态），历史 SHA 冻结不受指针移动影响。诚实边界：①十条域命令中仅 new-from-template 具备已落位域能力（模板工厂），其余九条的域流程（导入向导/物性估算/规范包等）归后续建模任务，本契约交付注册/路由/门控/分派面与诚实不可用反馈——acceptance 2 为准；②runtime 名称映射的运行期来源（确定性编译产物）随 UI-T20 宿主运行时发布桥到位，本契约交付真实端口适配器与注入面，空映射行为如实 nullopt；③嵌入式形态中央区不入宿主（O-38 ③），中央区挂位的可呈现验证面在壳形态 harness。status=planned：待 CCP §3 第 6~7 步（评审/放行）后由治理会话原子置 ready。"
+}

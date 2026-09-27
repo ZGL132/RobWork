@@ -6,7 +6,8 @@
   "title": "正式产品程序骨架（宿主融合形态装配路径）",
   "status": "ready",
   "dependsOn": [
-    "RT-T14"
+    "RT-T14",
+    "WP-24-T03"
   ],
   "requirements": [
     "NFR-SEC-04",
@@ -59,5 +60,5 @@
     "SA-01 口径不变：工业业务插件白名单在装配期固定、零运行时动态加载/卸载入口（与宿主官方组件处置分属两类清单，不得混同——见 B1-SPEC §2.1 清单边界声明）",
     "骨架双模式构建零错误；宿主融合形态启动冒烟留痕 traceability/builds/wp24-t08/（含 GUI 启动步骤截图，DTB §5.2 v0.20 约定）；ird_gates 命中集增量登记；域功能实现不属本任务（骨架＝装配路径与启动面）"
   ],
-  "note": "方案 B.1 迁移链（SA-18 D1；B1-SPEC §5.4/§2.1）。knownPitfalls：O-38＝融合形态既有裁决（动态加载仅开发期验证通道）；O-43＝宿主深度融合承接（装配形态沿 UI-T16~T18 已验收行为，本任务升格为正式产品路径）。新增事实性陷阱（所有者二次审核 2026-09-27 实测）：框架现役正式程序目标为 RobWorkStudio（RobWorkStudioApp），TreeView/Jog/Playback/PropertyView/WorkcellEditor 的条件装配位于框架侧装配代码——本任务不得触碰框架装配文件（不在 allowedFiles），实现路径按 B1-SPEC §2.1 v1.2 独立包装目标执行；若实施中发现该路径不可行（如框架公开 API 不足以完成装配），转 blocked 报告所有者裁决（备选：框架 patch 登记＋契约扩展，或重议目标命名），不得私改框架。interUnit=true 判定＝消费 ui/runtime 装配面与 WP-24-T03 白名单装配基座（跨单元装配）。dependsOn=RT-T14（呈现契约面，B1-SPEC §6 链序）；WP-24-T03 装配基座（T03b 收口为阶段 E 在制，契约尚未创建）为真实技术前置但无法编码悬空引用——登记为本契约 ready 放行条件：其契约编译放行时由治理评审补入本契约 dependsOn（CCP §5 修订通道），实施领取前必须满足。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行；领取另受 WP-24-T03-COMPLETE 外部门禁约束（PIPE §6.3——gate 未 satisfied 前不可领取，合法等待不计无进展熔断）。〔v1.1 补强 2026-09-27〕补处置表逐项核对、正式菜单语义、两类白名单边界声明。〔v1.2 修正 2026-09-27〕按所有者二次审核补 acceptance 2 实现路径闭合＋处置表排除判定口径（装配清单不含＋无独立动态产物两判据）＋框架装配事实性陷阱登记。"
+  "note": "方案 B.1 迁移链（SA-18 D1；B1-SPEC §5.4/§2.1）。knownPitfalls：O-38＝融合形态既有裁决（动态加载仅开发期验证通道）；O-43＝宿主深度融合承接（装配形态沿 UI-T16~T18 已验收行为，本任务升格为正式产品路径）。新增事实性陷阱（所有者二次审核 2026-09-27 实测）：框架现役正式程序目标为 RobWorkStudio（RobWorkStudioApp），TreeView/Jog/Playback/PropertyView/WorkcellEditor 的条件装配位于框架侧装配代码——本任务不得触碰框架装配文件（不在 allowedFiles），实现路径按 B1-SPEC §2.1 v1.2 独立包装目标执行；若实施中发现该路径不可行（如框架公开 API 不足以完成装配），转 blocked 报告所有者裁决（备选：框架 patch 登记＋契约扩展，或重议目标命名），不得私改框架。interUnit=true 判定＝消费 ui/runtime 装配面与 WP-24-T03 白名单装配基座（跨单元装配）。dependsOn=RT-T14（呈现契约面，B1-SPEC §6 链序）；WP-24-T03 装配基座（T03b 收口为阶段 E 在制，契约尚未创建）为真实技术前置但无法编码悬空引用——登记为本契约 ready 放行条件：其契约编译放行时由治理评审补入本契约 dependsOn（CCP §5 修订通道），实施领取前必须满足。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行；领取另受 WP-24-T03-COMPLETE 外部门禁约束（PIPE §6.3——gate 未 satisfied 前不可领取，合法等待不计无进展熔断）。〔v1.3 修订 2026-09-28〕前置契约放行：dependsOn 补入 WP-24-T03（收口段契约 tasks/foundation/WP-24-T03.json 本日 ready——本 note 原承诺"其契约编译放行时由治理评审补入本契约 dependsOn"的兑现，CCP §5 修订通道，登记 contract-compile-log.md 同日块）；WP-24-T03-COMPLETE 门禁仍 open，收口段验收合入前本任务保持不可领取。〔v1.1 补强 2026-09-27〕补处置表逐项核对、正式菜单语义、两类白名单边界声明。〔v1.2 修正 2026-09-27〕按所有者二次审核补 acceptance 2 实现路径闭合＋处置表排除判定口径（装配清单不含＋无独立动态产物两判据）＋框架装配事实性陷阱登记。"
 }

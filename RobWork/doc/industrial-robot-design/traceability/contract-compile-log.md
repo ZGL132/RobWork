@@ -361,3 +361,15 @@
 **门禁提示**：`WP-24-T03-COMPLETE` 外部门禁保持 **open**——WP-24-T08 虽已 ready 但在 gate satisfied 前不可领取（合法等待，不计 heartbeat.ticksNoProgress；PIPE §6.3）。阶段 1~2（UI-T19/RT-T14）无外部门禁，可正常领取。
 
 **放行后机器校验（治理会话亲跑）**：validate-docs PASS；validate-task 12/12 PASS（11 份 ready＋DOC-T14 done）；validate-state PASS；validate-b1-batch PASS（stages=11, openGates=1——批次状态与门禁自洽）。批次 status 变更（planned→running 等）由流水线 tick 按 manifest 推进时承载，本放行不预置。
+
+---
+
+## WP-24-T03 收口段契约编译评审与放行（2026-09-28，治理会话顺序执行）
+
+**背景**：所有者 2026-09-28 裁决"派发"阶段 E（T03b 收口）——门禁 `WP-24-T03-COMPLETE` 的解除路径。WP-24-T03 契约本体于 T03a 验收时随验收退役（30488716），本日按 DTB §2.25 拆段行收口余量重新起草为 canonical 契约（tasks/foundation/WP-24-T03.json，收口段专责；DTB 七项余量→acceptance 映射见契约 note）。
+
+**编译评审（CCP §3 第 6 步）**：validate-task PASS（三查含 designRefs 锚点逐条实存）；validate-docs PASS；requirements 七条逐一核对 REQUIREMENTS.md 现行真实 ID（SA-01/SA-16 为架构决策不入 requirements——正确排除）；branch 句法 `wp24-t03` 合法（-t<数字> 结尾排除 t03b 形态——复用已合并旧尖端 075b2f9d 的分支名，指针重启承载收口段，理由登记于契约 note）。**独立性降级声明**：当前所有者禁止子智能体（CCP v1.3），评审由同一治理会话顺序扮演评审者角色完成——对抗复核检出三处补强（dependsOn 空数组理由显式化／forbiddenFiles 增 runtime、policy、project、core、diagnostics 只消费禁改边界／DTB 七项余量→acceptance 映射显式化），均已修订后复验通过；评审质量受单会话约束，如实降级登记。
+
+**治理修复（同批）**：traceability/phase-one-task-index.json RT-T14 条目 sourceRow 同步 runtime.md v0.17 落位标记——RT-T14 落位登记（7d0df205）改写 §12 行未同步索引，validate-docs 逐字包含校验自该提交起在主线失配（与本契约无关的存量缺陷，按 PIPE §0"以协议为准修复并注明"先例处置）。
+
+**放行（CCP §3 第 7 步，所有者"派发"指令为入队确认）**：WP-24-T03 → **ready**；同批 **CCP §5 修订**：tasks/foundation/WP-24-T08.json dependsOn 增 `WP-24-T03`（RT-T14、WP-24-T03）＋note 追记（其 note"其契约编译放行时由治理评审补入本契约 dependsOn"承诺的兑现）；queue 队首插入 WP-24-T03（先于 WP-24-T08——持锁状态写入）。门禁 `WP-24-T03-COMPLETE` 保持 **open**（收口验收合入前不翻转——PIPE §6.3）；收口段验收记录将按门禁证据形态命名 WP-24-T03b-*.md。

@@ -1231,10 +1231,10 @@
       "taskId": "RT-T14",
       "unit": "runtime",
       "design": "units/runtime.md",
-      "sourceRow": "| RT-T14 宿主呈现 WorkCell 契约（方案 B.1 迁移链，SA-18 D10；设计规格 B1-SPEC §4.3） | §8.2/§8.3（只读视图）、§9.1~§9.3（快照隔离对照）、§7（NameMap 反解面） | `HostPresentationView.hpp`（呈现视图契约：已应用 WorkCell 只读视图＋生命周期隔离声明＋ObjectId↔运行时名反解查询面） | RT-T11、WP-10-T19（宿主控制器面确定） | 同名文件 | RT-PRES-1~n（隔离与复用断言：呈现视图构建/销毁/重建零修订零缓存写入、不进运行身份与当前性判定；同一 ObjectId↔运行时名互换解析与计算侧一致——RT-NM 断言形态复用；D10 双侧构造规则同源） | 全部用例通过并留痕；**未执行不得标注通过** | 呈现侧私建第二构造路径/名称映射禁止；呈现视图不入缓存身份；不改 RT-T01~T13 既有契约面 |",
+      "sourceRow": "| RT-T14 宿主呈现 WorkCell 契约（方案 B.1 迁移链，SA-18 D10；设计规格 B1-SPEC §4.3）〔已落位 v0.17——分支 rt-t14〕 | §8.2/§8.3（只读视图）、§9.1~§9.3（快照隔离对照）、§7（NameMap 反解面） | `HostPresentationView.hpp`（呈现视图契约：已应用 WorkCell 只读视图＋生命周期隔离声明＋ObjectId↔运行时名反解查询面） | RT-T11、WP-10-T19（宿主控制器面确定） | 同名文件 | RT-PRES-1~n（隔离与复用断言：呈现视图构建/销毁/重建零修订零缓存写入、不进运行身份与当前性判定；同一 ObjectId↔运行时名互换解析与计算侧一致——RT-NM 断言形态复用；D10 双侧构造规则同源） | 全部用例通过并留痕；**未执行不得标注通过** | 呈现侧私建第二构造路径/名称映射禁止；呈现视图不入缓存身份；不改 RT-T01~T13 既有契约面 |",
       "status": "ready",
       "canonicalTask": "tasks/foundation/RT-T14.json",
-      "readinessNote": "方案 B.1 迁移链条目（DOC-T14 批次）；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行置 ready（见编译日志放行块）。"
+      "readinessNote": "方案 B.1 迁移链条目（DOC-T14 批次）；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行置 ready（见编译日志放行块）。〔2026-09-28 治理修复〕sourceRow 同步 runtime.md v0.17 落位标记（RT-T14 落位登记 7d0df205 改写 §12 行未同步本索引——validate-docs 逐字包含校验失配；按 PIPE §0 以协议为准修复并注明）。"
     }
   ]
 }
