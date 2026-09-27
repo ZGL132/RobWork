@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "宿主运行时发布桥（已应用 WorkCell 发布/重建/切换编排）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-24-T08"
   ],
@@ -59,5 +59,5 @@
     "呈现刷新与运行任务快照生命周期独立用例通过（D10 隔离半区在消费侧的落位）；当前性呈现口径不变（CON-02——Superseded 不被呈现刷新掩盖）",
     "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json 留痕 traceability/builds/wp10-t20/；框架源码零修改（SA-02）"
   ],
-  "note": "方案 B.1 迁移链（SA-18 D10 消费侧；B1-SPEC §4.3）。knownPitfalls：P-RT-4＝呈现侧构造复用同一变换（发布桥不得绕过 RT-T14 契约面私建构造旁路）；O-43＝宿主融合边界（TreeView/中央区为宿主既有行为，桥只编排刷新不改宿主交互）。interUnit=true 判定＝消费 runtime 呈现契约面＋⑤事件端口（跨单元运行时注入）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 2/3：appliedRevisionId 三类身份对账与旧呈现身份失效、发布事务失败路径（保留旧模型＋稳定诊断＋不回滚合法修订）。〔v1.2 修正 2026-09-27〕按所有者二次审核：①acceptance 2 措辞修正为绑定关系验证（不要求字段值相等）；②acceptance 3 稳定诊断明确为新增 UI 族稳定码（实施时经 StableCodeRegistry 登记＋单元卡 §3.5 增量登记，登记义务入验收；禁止任意文本替代稳定码）。"
+  "note": "方案 B.1 迁移链（SA-18 D10 消费侧；B1-SPEC §4.3）。knownPitfalls：P-RT-4＝呈现侧构造复用同一变换（发布桥不得绕过 RT-T14 契约面私建构造旁路）；O-43＝宿主融合边界（TreeView/中央区为宿主既有行为，桥只编排刷新不改宿主交互）。interUnit=true 判定＝消费 runtime 呈现契约面＋⑤事件端口（跨单元运行时注入）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 2/3：appliedRevisionId 三类身份对账与旧呈现身份失效、发布事务失败路径（保留旧模型＋稳定诊断＋不回滚合法修订）。〔v1.2 修正 2026-09-27〕按所有者二次审核：①acceptance 2 措辞修正为绑定关系验证（不要求字段值相等）；②acceptance 3 稳定诊断明确为新增 UI 族稳定码（实施时经 StableCodeRegistry 登记＋单元卡 §3.5 增量登记，登记义务入验收；禁止任意文本替代稳定码）。"
 }

@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "运动学迁移（三接入面＋Jog/Playback 呈现衔接）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-14-T10"
   ],
@@ -57,5 +57,5 @@
     "计算/呈现隔离红线（B1-SPEC §4.3 v1.1）：正式 FK/IK/批量验证/覆盖评估只消费 RuntimeSnapshot，不得消费 HostPresentationView；HostPresentationView 仅出现在显示、TreeView 与官方插件（Jog/Playback）衔接路径——验收证据含：公共接口依赖审计＋头文件 include 审计＋测试替身证明计算入口接收 RuntimeSnapshot＋消费路径核查（ird_gates 与契约测试双面承载）",
     "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp15-t18/；共享 UI 装配面零改动（PIPE §6.2——只消费注册协议）"
   ],
-  "note": "方案 B.1 迁移链第三域（SA-18 D7/D8/D9/D11；B1-SPEC §2/§5；PIPE §6.2 串行迁移链第三棒）。knownPitfalls：P-KIN-7＝黄金值/容差档案对端同步义务延续（迁移不改计算面，若呈现接线触及黄金断言消费按增量同步）；O-43＝宿主融合边界。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=WP-14-T10（串行迁移）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 5：计算只消费 RuntimeSnapshot／呈现只走显示与官方插件衔接的隔离红线＋四类审计证据形态。"
+  "note": "方案 B.1 迁移链第三域（SA-18 D7/D8/D9/D11；B1-SPEC §2/§5；PIPE §6.2 串行迁移链第三棒）。knownPitfalls：P-KIN-7＝黄金值/容差档案对端同步义务延续（迁移不改计算面，若呈现接线触及黄金断言消费按增量同步）；O-43＝宿主融合边界。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=WP-14-T10（串行迁移）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 5：计算只消费 RuntimeSnapshot／呈现只走显示与官方插件衔接的隔离红线＋四类审计证据形态。"
 }

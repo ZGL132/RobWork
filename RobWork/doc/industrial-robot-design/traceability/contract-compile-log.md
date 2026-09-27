@@ -351,3 +351,13 @@
 发现（详见 findings.json F-413~F-417，均建议级/重大非阻断）：F-413＝ACC/CCP 两规程文档在本契约 allowedFiles 外被修改（所有者"禁止子智能体"指令驱动、四文档变更记录与提交留痕在案，但无 DTB §5.4 式显式偏差登记——放行时须所有者追认）；F-414＝11 份契约 branch 用 ui-t19/rt-t14 式命名，偏离 wp10-t18/wp06-t13 ≙ 映射先例（批内 manifest/契约一致、机器门禁不受影响，口径待所有者裁定）；F-415＝RT-T14 masterWp=WP-D 沿袭 runtime 家族存量漂移（DTB §8 表 WP-06→WP-C，RT-T05 起 即漂移，非本批引入）；F-416＝DETAILED-DESIGN.md 宿主融合节相对链接多一级断链（应 `../../docs/…`）；F-417＝phase-one-task-index.json 末尾换行符丢失。
 
 **移交声明**：评审通过即 DOC-T14 具备 CCP §3.1 第 2 步放行条件；按契约 note 与 §3.1 分工，DOC-T14→done、11 份→ready 的原子状态写入由治理会话在持锁下执行（所有者确认），本评审不代行状态翻转。F-416/F-417 两个纯文本微瑕建议随放行批次顺手修正；F-414 口径须在放行前裁定（改分支名或修订 CCP §2 措辞）。
+
+### 放行登记：DOC-T14 方案 B.1 批次原子放行（2026-09-27，CCP §3.1 第 2 步执行）
+
+**前置裁定（所有者 2026-09-27 放行前置问答，三项全部落地）**：①F-413 追认——ACC/CCP 越面修订系所有者"禁止子智能体"指令的直接落实，追认有效（findings F-413=fixed）；②F-414 口径——保留 B.1 批次 ui-t19 式分支名，CCP §2 branch 措辞同步修订（v1.3，两种小写句法等价任选），11 份契约免改名（findings F-414=fixed）；③F-416/F-417 微瑕随放行前修订提交消账（f163c515）。F-415（runtime 家族 masterWp 存量漂移）维持 open，留家族批量治理。
+
+**放行写入（同一提交原子完成）**：DOC-T14 → **done**；11 份实现契约按 manifest 顺序 → **ready**：UI-T19 → RT-T14 → WP-24-T08 → UI-T20 → UI-T21 → UI-T22 → WP-13-T20 → WP-14-T10 → WP-15-T18 → UI-T23 → WP-24-T09。机器投影同步：foundation-tasks.json 12 条目状态翻转；phase-one-task-index.json 五条目置 ready。queue 不由本写入填充——按 PIPE §6.3，由下一个 tick 的 autoDiscovery 按 manifest 顺序追加。
+
+**门禁提示**：`WP-24-T03-COMPLETE` 外部门禁保持 **open**——WP-24-T08 虽已 ready 但在 gate satisfied 前不可领取（合法等待，不计 heartbeat.ticksNoProgress；PIPE §6.3）。阶段 1~2（UI-T19/RT-T14）无外部门禁，可正常领取。
+
+**放行后机器校验（治理会话亲跑）**：validate-docs PASS；validate-task 12/12 PASS（11 份 ready＋DOC-T14 done）；validate-state PASS；validate-b1-batch PASS（stages=11, openGates=1——批次状态与门禁自洽）。批次 status 变更（planned→running 等）由流水线 tick 按 manifest 推进时承载，本放行不预置。

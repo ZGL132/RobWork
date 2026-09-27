@@ -125,9 +125,9 @@
     "verify": [
       "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
     ],
-    "status": "design-written",
+    "status": "done",
     "branch": "doc-t14",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -149,9 +149,9 @@
     "verify": [
       "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\""
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "ui-t19",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -173,9 +173,9 @@
     "verify": [
       "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/runtime -C Release -L \"^ird$\""
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "rt-t14",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -198,9 +198,9 @@
     "verify": [
       "cmake --build build --config Release"
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "wp24-t08",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -221,9 +221,9 @@
     "verify": [
       "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\""
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "ui-t20",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -244,9 +244,9 @@
     "verify": [
       "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\""
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "ui-t21",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -267,9 +267,9 @@
     "verify": [
       "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\""
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "ui-t22",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -289,9 +289,9 @@
     "verify": [
       "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\""
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "wp13-t20",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -312,9 +312,9 @@
     "verify": [
       "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\""
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "wp14-t10",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -335,9 +335,9 @@
     "verify": [
       "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\""
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "wp15-t18",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -358,9 +358,9 @@
     "verify": [
       "cmake --build build --config Release"
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "ui-t23",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   },
   {
     "schemaVersion": "ird-task/1",
@@ -381,8 +381,8 @@
     "verify": [
       "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
     ],
-    "status": "planned",
+    "status": "ready",
     "branch": "wp24-t09",
-    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；planned/design-written 均不可领取，待独立评审放行。"
+    "note": "DOC-T14 方案 B.1 迁移链入口条目（2026-09-27）；canonical 任务契约见 tasks/foundation/（DOC-T14 在 tasks/ 根），冲突时以 canonical 为准；2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（DOC-T14=done、其余=ready，WP-24-T08 另受 WP-24-T03-COMPLETE 外部门禁约束，见编译日志放行块）。"
   }
 ]

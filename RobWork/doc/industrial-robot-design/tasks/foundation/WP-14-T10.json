@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "需求迁移（项目树/属性检查器/选择联动三接入面）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-13-T20"
   ],
@@ -55,5 +55,5 @@
     "Provider 增量面验收（D11）：无整体重写提交；既有插件面板（WP-14-T08 落位面）可用性零损失（deprecated 标记非删除）；插件零计算逻辑红线不变",
     "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp14-t10/；共享 UI 装配面零改动（PIPE §6.2——只消费注册协议）"
   ],
-  "note": "方案 B.1 迁移链第二域（SA-18 D11；B1-SPEC §5；PIPE §6.2 串行迁移链第二棒）。knownPitfalls：P-REQ-4＝IModuleDraftSource 签名漂移防护（迁移接入沿用 UI-T12 冻结面，签名未冻结部分按增量同步）；O-43＝宿主融合边界。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=WP-13-T20（串行迁移——共享 UI 互斥不并行）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+  "note": "方案 B.1 迁移链第二域（SA-18 D11；B1-SPEC §5；PIPE §6.2 串行迁移链第二棒）。knownPitfalls：P-REQ-4＝IModuleDraftSource 签名漂移防护（迁移接入沿用 UI-T12 冻结面，签名未冻结部分按增量同步）；O-43＝宿主融合边界。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=WP-13-T20（串行迁移——共享 UI 互斥不并行）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。"
 }

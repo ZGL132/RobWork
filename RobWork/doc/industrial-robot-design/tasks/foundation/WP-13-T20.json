@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "建模迁移（项目树/属性检查器/选择联动三接入面）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "UI-T22"
   ],
@@ -54,5 +54,5 @@
     "Provider 增量面验收（D11）：无整体重写提交；迁移期间既有插件面板可用性零损失（deprecated 标记非删除）；插件零计算逻辑红线不变",
     "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp13-t20/；共享 UI 装配面零改动（PIPE §6.2——只消费注册协议）"
   ],
-  "note": "方案 B.1 迁移链第一域（SA-18 D11；B1-SPEC §5；PIPE §6.2 串行迁移链第一棒）。knownPitfalls：P-MDL-8＝对端契约未冻结漂移防护（UI-T21/T22 注册协议冻结形状是本任务消费前提——协议漂移按增量同步不私改对端）；O-43＝宿主融合边界（建模面板已在宿主 Left 区挂位——WP-24-T03a 先例，迁移不改变挂位形态只接入共享设施）。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=UI-T22（共享面就绪）；与 WP-14-T10/WP-15-T18 串行（§5.3 互斥——不并行修改共享 UI 面）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+  "note": "方案 B.1 迁移链第一域（SA-18 D11；B1-SPEC §5；PIPE §6.2 串行迁移链第一棒）。knownPitfalls：P-MDL-8＝对端契约未冻结漂移防护（UI-T21/T22 注册协议冻结形状是本任务消费前提——协议漂移按增量同步不私改对端）；O-43＝宿主融合边界（建模面板已在宿主 Left 区挂位——WP-24-T03a 先例，迁移不改变挂位形态只接入共享设施）。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=UI-T22（共享面就绪）；与 WP-14-T10/WP-15-T18 串行（§5.3 互斥——不并行修改共享 UI 面）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。"
 }

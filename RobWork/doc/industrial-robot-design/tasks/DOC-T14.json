@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "冻结方案 B.1 宿主融合架构与迁移任务链",
-  "status": "design-written",
+  "status": "done",
   "dependsOn": [
     "WP-15-T13"
   ],
@@ -72,5 +72,5 @@
     "机器索引同步：phase-one-task-index.json 增 UI-T19~T23/RT-T14 五条目（sourceRow 与单元卡行逐字一致）；foundation-tasks.json 增 12 条入口条目；contract-compile-log.md 登记 DOC-T14 起草批次（评审与 ready 放行待走，未评审契约不得置 ready）；不重开任何 done 历史任务、不改写验收历史",
     "B.1 自动化编排：新增 b1-host-integration-batch.json，固定 UI-T19→RT-T14→WP-24-T08→UI-T20→UI-T21→UI-T22→WP-13-T20→WP-14-T10→WP-15-T18→UI-T23→WP-24-T09 的 manifest 顺序；新增 validate-b1-batch.ps1 校验契约映射、连续依赖和 WP-24-T03-COMPLETE 外部门禁；新增单会话顺序执行计划；当前不置任何 B.1 契约 ready"
   ],
-  "note": "所有者 2026-09-27 批准方案 B.1（宿主融合、项目树主导、渐进迁移）后下达的治理任务；本契约即该任务自身的登记（产物＝设计规格＋九文档修订＋12 份契约＋B.1 manifest/校验器/单会话计划＋索引同步）。status=design-written：设计已写入、待独立文档与契约评审；评审通过后由治理会话按 CCP §5/§3 第 6~7 步置 done——当前所有者禁止使用子智能体，评审记录须声明单会话独立性降级；实施者不得自行合入 redesign-main。REQUIREMENTS.md 在 forbiddenFiles：若评审或后续实施发现必须改变需求语义，任务转 blocked 并报告所有者，不得自行扩大需求。dependsOn=WP-15-T13 为所有者指定链序起点（其 done/pass-merged 已核实）。"
+  "note": "所有者 2026-09-27 批准方案 B.1（宿主融合、项目树主导、渐进迁移）后下达的治理任务；本契约即该任务自身的登记（产物＝设计规格＋九文档修订＋12 份契约＋B.1 manifest/校验器/单会话计划＋索引同步）。status=design-written：设计已写入、待独立文档与契约评审；评审通过后由治理会话按 CCP §5/§3 第 6~7 步置 done——当前所有者禁止使用子智能体，评审记录须声明单会话独立性降级；实施者不得自行合入 redesign-main。REQUIREMENTS.md 在 forbiddenFiles：若评审或后续实施发现必须改变需求语义，任务转 blocked 并报告所有者，不得自行扩大需求。dependsOn=WP-15-T13 为所有者指定链序起点（其 done/pass-merged 已核实）。〔放行 2026-09-27〕独立评审 PASS（compile-log 独立评审登记块）＋所有者三项裁定（F-413 追认／F-414 分支名保留＋CCP v1.3／F-416/F-417 消账）落实后，本契约按 CCP §3.1 第 2 步置 done；11 份实现契约按 manifest 顺序原子置 ready。"
 }

@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "方案 A 正式产品路径退役（宿主融合收口）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "UI-T23",
     "WP-24-T08"
@@ -58,5 +58,5 @@
     "顺手删除仍被开发验证依赖的 harness 而不留登记＝验收阻断项；退役范围外重构禁止；已验收历史任务契约不得改写；未执行的安装冒烟不得标注通过",
     "留痕 traceability/builds/wp24-t09/（退役清单核对表＋处置登记＋staging 安装树清单与启动冒烟＋构建/门禁日志）"
   ],
-  "note": "方案 B.1 收尾任务（SA-18 D13；B1-SPEC §5.4/§2.1）。knownPitfalls：O-38＝`_plugin` 动态加载通道为开发期验证通道（处置按 D13 由本任务登记而非顺手删除）；O-43＝宿主融合形态承接链终点（退役对象＝方案 A 正式产品路径，开发验证通道的存废单独登记）。interUnit=true 判定＝跨 ui/构建横切面的装配路径收敛。dependsOn=UI-T23（退役清单草案）＋WP-24-T08（正式装配路径就绪）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。〔v1.1 补强 2026-09-27〕acceptance 2 重写为 staging 安装树专项审计（ARCH §5.4 部署结构核对）；allowedFiles 扩展 start_studio.bat（启动脚本，开发辅助定位）。〔v1.2 修正 2026-09-27〕按所有者二次审核：①allowedFiles 撤回 `industrialrobot/*/CMakeLists.txt` 通配——该通配与 forbiddenFiles 的 kinematics/modeling/requirements/runtime 四单元 `/**` 交叠（各自 CMakeLists.txt 双属），改回精确清单；若实施中发现 forbidden 单元内安装规则（如域 `_app` 的 install 规则）需要修改，按 DTB §5.4 转 blocked 报告所有者扩展范围，不得越界；②staging 启动验证明确为安装树绝对路径直启——start_studio.bat 硬编码开发机路径，仅开发辅助入口，不构成无路径依赖证据。"
+  "note": "方案 B.1 收尾任务（SA-18 D13；B1-SPEC §5.4/§2.1）。knownPitfalls：O-38＝`_plugin` 动态加载通道为开发期验证通道（处置按 D13 由本任务登记而非顺手删除）；O-43＝宿主融合形态承接链终点（退役对象＝方案 A 正式产品路径，开发验证通道的存废单独登记）。interUnit=true 判定＝跨 ui/构建横切面的装配路径收敛。dependsOn=UI-T23（退役清单草案）＋WP-24-T08（正式装配路径就绪）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕acceptance 2 重写为 staging 安装树专项审计（ARCH §5.4 部署结构核对）；allowedFiles 扩展 start_studio.bat（启动脚本，开发辅助定位）。〔v1.2 修正 2026-09-27〕按所有者二次审核：①allowedFiles 撤回 `industrialrobot/*/CMakeLists.txt` 通配——该通配与 forbiddenFiles 的 kinematics/modeling/requirements/runtime 四单元 `/**` 交叠（各自 CMakeLists.txt 双属），改回精确清单；若实施中发现 forbidden 单元内安装规则（如域 `_app` 的 install 规则）需要修改，按 DTB §5.4 转 blocked 报告所有者扩展范围，不得越界；②staging 启动验证明确为安装树绝对路径直启——start_studio.bat 硬编码开发机路径，仅开发辅助入口，不构成无路径依赖证据。"
 }

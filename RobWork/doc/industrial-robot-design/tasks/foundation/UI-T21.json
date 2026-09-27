@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "工业项目树和选择服务（双树业务侧＋选择联动 L1~L3）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "UI-T20"
   ],
@@ -58,5 +58,5 @@
     "INV-B1~B3 边界断言用例通过（项目树零运行时结构节点；TreeView 零业务节点——Tree 内容注入面断言；两树互不持有对方选中状态）；L4\"不承诺 TreeView 树行反向选中\"登记为防过度交付项（实现不得引入该联动）",
     "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp10-t21/；框架源码零修改（SA-02——TreeView 为框架组件只消费其事件）"
   ],
-  "note": "方案 B.1 迁移链（SA-18 D3/D4；B1-SPEC §3/§4；PIPE §6.2 共享面任务）。knownPitfalls：O-43＝宿主 Dock 拓扑已由 UI-T18 冻结（项目树入既有主 Dock/左区，不再动拓扑）；O-38＝TreeView 为框架组件（零修改，只消费 Select Frame 事件）。interUnit=true 判定＝消费 runtime 名称端口与 project 查询面（经既有注入形态）。域 Provider 注册协议（TreeNodesProvider 等）随本任务冻结形状，供 UI-T22 与三域迁移消费。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。〔v1.2 修正 2026-09-27〕按所有者二次审核补 L3 反解失败分支具名验收（仅运行时对象状态不伪造业务对象）——该语义为本任务直接职责，不依赖 UI-T23 集成验收。"
+  "note": "方案 B.1 迁移链（SA-18 D3/D4；B1-SPEC §3/§4；PIPE §6.2 共享面任务）。knownPitfalls：O-43＝宿主 Dock 拓扑已由 UI-T18 冻结（项目树入既有主 Dock/左区，不再动拓扑）；O-38＝TreeView 为框架组件（零修改，只消费 Select Frame 事件）。interUnit=true 判定＝消费 runtime 名称端口与 project 查询面（经既有注入形态）。域 Provider 注册协议（TreeNodesProvider 等）随本任务冻结形状，供 UI-T22 与三域迁移消费。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.2 修正 2026-09-27〕按所有者二次审核补 L3 反解失败分支具名验收（仅运行时对象状态不伪造业务对象）——该语义为本任务直接职责，不依赖 UI-T23 集成验收。"
 }
