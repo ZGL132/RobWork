@@ -4026,6 +4026,26 @@
       "title": "builds/wp15-t09/ird-gates-base-head-compare.md 口径②仍为『去重条目 76』未按 F-402 owner 指令（『下次产出比对附件时按本条精炼口径②』）注明组成（76＝69 命中本体＋7 条引擎自测检出裸码 token；验收者双侧 worktree 引擎直跑锚定捕获实测命中本体去重 69/69 与引擎自计同值、无锚定口径 145 行/去重 76 与附件声明一致）；三套计数分列本身已遵守（F-398 口径无重犯）、零增量结论不受影响——属 F-402 精炼建议的兑现延迟登记（与 F-394/F-400『触及即兑现』家族同形态：本任务产出新比对附件时未执行 F-402 的精炼动作）。",
       "owner": "kinematics 实施会话（下次产出比对附件时注明『去重 76＝69 命中＋7 自测 token』组成或改用锚定口径）；治理收尾会话（簿记核对时按 69 命中本体口径复核）",
       "resolution": "编号顺延自 F-404。"
+    },
+    {
+      "id": "F-406",
+      "source": "traceability/acceptance/WP-15-T10-20260927.md §4.8（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "findings.json 的 F-387/F-390/F-393 三条 status=open，但其指涉的 units/kinematics.md 卡面散文纠正已在 WP-15-T06（提交 2df969fb，早于 WP-15-T10 的 base 997b1fa8）兑现——§14.6 对应行含『（F-387 消账）』『（F-390 消账）』『（F-393 消账）』登记文字，验收者对读核实属实；状态未翻转导致后续每份验收的 4.8 未关闭条目核对都需重复甄别这三条（本验收为首次重复甄别并转登）。",
+      "owner": "findings 册所有者（governance 治理会话：核对 §14.6 v0.6 行消账记录后把 F-387/F-390/F-393 翻 fixed 或注明销账依据）",
+      "resolution": "编号顺延自 F-405。"
+    },
+    {
+      "id": "F-407",
+      "source": "traceability/acceptance/WP-15-T10-20260927.md §4.4（attempt 1，verdict=pass，2026-09-27）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-27",
+      "title": "builds/wp15-t10/ird-gates-base-head-compare.md 口径②仍为『去重后的命中条目数：base 76、head 76』未按 F-402 owner 指令注明组成（验收者锚定口径实测 76＝69 命中本体＋7 条引擎自测裸码 token；附件『引擎自测段 token 不计入②』的声明与 76 的实际组成有出入——锚定口径〔原始行排除自测行后捕获去重＋路径归一化〕命中本体去重实测 69/69 与引擎自计同值、base/head 集合 diff 为空，零增量结论两种口径下均成立不受影响）——F-402/F-405 家族新例：本任务产出新比对附件时再次未兑现 F-402 精炼动作。",
+      "owner": "kinematics 实施会话（下次产出比对附件时注明『去重 76＝69 命中＋7 自测 token』组成，或改用锚定口径使口径②＝69 命中本体）；治理收尾会话（簿记核对时按 69 命中本体口径复核）",
+      "resolution": "编号顺延自 F-406。"
     }
   ]
 }
