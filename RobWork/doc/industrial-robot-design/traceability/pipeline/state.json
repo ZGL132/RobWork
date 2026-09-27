@@ -12,6 +12,8 @@
   "run": {
     "kind": "implement",
     "runId": "2f2f0a06-c5c3-45f1-b4e7-4e0dce64ee66",
+    "workerId": "028f4330-6b58-40a8-9fc6-1de92a6c1044",
+    "task": "UI-T19",
     "startedAt": "2026-09-27T20:52:34+08:00",
     "leaseExpiresAt": "2026-09-27T22:52:34+08:00"
   },
@@ -2008,7 +2010,7 @@
   "queue": [
     {
       "taskId": "UI-T19",
-      "contractPath": "doc/industrial-robot-design/tasks/foundation/UI-T19.json",
+      "contractPath": "tasks/foundation/UI-T19.json",
       "branch": "ui-t19"
     }
   ],
