@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RT-T14",
+  "unit": "runtime",
+  "masterWp": "WP-D",
+  "title": "宿主呈现 WorkCell 契约（呈现视图与计算快照隔离、复用同一构造规则）",
+  "status": "planned",
+  "dependsOn": [
+    "UI-T19"
+  ],
+  "requirements": [
+    "ARC-03",
+    "ARC-04"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/runtime.md#12",
+    "development-task-breakdown.md#2.7"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/runtime -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "rt-t14",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-RT-4"
+  ],
+  "acceptance": [
+    "HostPresentationView 契约头落位（runtime.md §12 RT-T14 行）：已应用 WorkCell 只读视图＋生命周期隔离声明（呈现视图不进入运行身份/缓存身份/当前性判定）＋ObjectId↔运行时名反解查询面（消费既有 RuntimeNameMap，不新建映射）",
+    "隔离断言（RT-PRES 族）：呈现视图构建/销毁/重建零项目修订、零缓存写入、不改变执行侧 RuntimeSnapshot 语义——用例逐条通过",
+    "复用断言（D10）：同一 ObjectId↔运行时名互换解析与计算侧一致（RT-NM 断言形态复用）；呈现视图构造经与计算侧同一编译链产物与同一基座—世界变换（AT-37 单一消费口径不破坏）",
+    "既有 RT-T01~T13 契约面与公共头零修改（新增头随本任务首消费落位）；双模式构建零错误；gtest XML＋ird-test-report.json 留痕 traceability/builds/wp06-t14/；ird_gates 增量登记"
+  ],
+  "note": "方案 B.1 迁移链（SA-18 D10；B1-SPEC §4.3）。knownPitfalls：P-RT-4＝基座—世界变换单一不变量（呈现视图构造必须复用 installationPresetRotation 单点，禁止呈现侧二次旋转或私建第二构造路径）。interUnit=true 判定＝交付跨单元消费的呈现契约（UI-T20 发布桥与其后的三域迁移均消费本契约面）。dependsOn=UI-T19：宿主控制器装配面确定后本契约的消费形状才冻结（B1-SPEC §6 链序）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T10",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "需求迁移（项目树/属性检查器/选择联动三接入面）",
+  "status": "planned",
+  "dependsOn": [
+    "WP-13-T20"
+  ],
+  "requirements": [
+    "REQ-01",
+    "UX-05"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/requirements.md#11",
+    "development-task-breakdown.md#2.15"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_requirements",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/requirements -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t10",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-REQ-4",
+    "O-43"
+  ],
+  "acceptance": [
+    "需求域三接入面落位（消费 UI-T21/T22 冻结的注册协议）：TreeNodesProvider（任务点/区域/工况/需求集入工业项目树）＋PropertyPagesProvider（常用字段入共享检查器；区域定义/CSV·JSON 导入向导收口复杂编辑页——D6 分野）＋SelectionAdapter（树选↔面板高亮↔三维拾取上报）",
+    "迁移链路验收：需求对象经项目树导航→检查器→复杂编辑页端到端用例通过；L2 高亮与 L3 反解定位在需求对象上可演示（含未应用草稿不高亮的 L2 反例）",
+    "Provider 增量面验收（D11）：无整体重写提交；既有插件面板（WP-14-T08 落位面）可用性零损失（deprecated 标记非删除）；插件零计算逻辑红线不变",
+    "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp14-t10/；共享 UI 装配面零改动（PIPE §6.2——只消费注册协议）"
+  ],
+  "note": "方案 B.1 迁移链第二域（SA-18 D11；B1-SPEC §5；PIPE §6.2 串行迁移链第二棒）。knownPitfalls：P-REQ-4＝IModuleDraftSource 签名漂移防护（迁移接入沿用 UI-T12 冻结面，签名未冻结部分按增量同步）；O-43＝宿主融合边界。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=WP-13-T20（串行迁移——共享 UI 互斥不并行）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+}

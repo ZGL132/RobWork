@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-24-T09",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "方案 A 正式产品路径退役（宿主融合收口）",
+  "status": "planned",
+  "dependsOn": [
+    "UI-T23",
+    "WP-24-T08"
+  ],
+  "requirements": [
+    "NFR-MNT-06"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "development-task-breakdown.md#2.25",
+    "units/ui.md#13"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "outputs": [
+    "retirement-execution",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp24-t09",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-38",
+    "O-43"
+  ],
+  "acceptance": [
+    "B1-SPEC §5.4 四条件逐项核对留痕：①正式产品装配（WP-24-T08 骨架）以宿主融合形态为唯一装配路径；②三域迁移验收全部 pass 且 UI-T23 集成收口 pass；③退役清单（方案 A 顶层窗口产品路径、deprecated 自持导航、迁移期临时桥接件）逐项登记并经所有者确认；④`sdurws_ird_ui_plugin`/各 `_app` harness 处置按 D13 登记（保留为回归工具则移出产品交付路径声明——DTB §5.1 口径复查）",
+    "退役执行：零未引用目标与废弃构建选项残留（代码审查清单，NFR-MNT-06/DoD）；双模式构建零错误；ird_gates 零新增命中（退役不减登记册义务）",
+    "顺手删除仍被开发验证依赖的 harness 而不留登记＝验收阻断项；退役范围外重构禁止；已验收历史任务契约不得改写",
+    "留痕 traceability/builds/wp24-t09/（退役清单核对表＋处置登记＋构建/门禁日志）"
+  ],
+  "note": "方案 B.1 收尾任务（SA-18 D13；B1-SPEC §5.4）。knownPitfalls：O-38＝`_plugin` 动态加载通道为开发期验证通道（处置按 D13 由本任务登记而非顺手删除）；O-43＝宿主融合形态承接链终点（退役对象＝方案 A 正式产品路径，开发验证通道的存废单独登记）。interUnit=true 判定＝跨 ui/构建横切面的装配路径收敛。dependsOn=UI-T23（退役清单草案）＋WP-24-T08（正式装配路径就绪）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+}

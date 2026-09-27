@@ -266,3 +266,24 @@
 ### 补编译登记：UI-T15（所有者直接指派任务，2026-09-22）
 
 | UI-T15 | wp10-t15 | True | O-31 | 契约由实施分支自带（F-289 流程异常已登记 findings）——治理会话补走 CCP §3 第 5~6 步：validate-task PASS＋validate-docs PASS；独立评审＝**PASS**（逐字段核对表＋P3 口径瑕疵；status 预置 done 异常注记：done 应以补验收 pass 为前提，fail 则返工改回 ready）。补验收 attempt1 verdict=**fail**（B-1：PM-07 双写者场景进程崩溃——ProjectDiagnosticsBridge 对契约内异常零处理；根因链含 F-290 跨单元缺口）→ 按纪律不合并，转返工（acc/WP-10-T15/1 @ 7ccc1fad 为 lastFailureRecord 载体）；**2026-09-22 收行**：契约 status 治理纠正 done→ready（047336c6）→ 返工（571fe4a7 B-1 修复＋101a8d4a 留痕刷新/F-288 补齐）→ 补验收 attempt2（全量重验）verdict=**pass**（acc/WP-10-T15/2 @ fe5a45c4，含 M3 因果性变异实证桥纪律）→ 所有者授权例行化路径合入主线（71a1c62b＋f620ab56）；F-288 消账（fixedBy=101a8d4a）；F-290 维持 open（O-41 已裁决方案①，project 发射侧修正另立任务） | validate-task 过；独立评审＝PASS（契约面）；补验收 attempt1＝fail、attempt2＝pass | done（attempt2 pass 合入，双分支已删） |
+
+### 起草登记：DOC-T14 方案 B.1 迁移链批次（2026-09-27，未放行）
+
+所有者 2026-09-27 批准方案 B.1（宿主融合、项目树主导、渐进迁移；前置 WP-15-T13 已验收合入）后，DOC-T14 治理任务按 CCP §3 第 1~5 步完成起草与机器校验（读源＝B1-SPEC＋DTB §2.7/§2.11/§2.14/§2.15/§2.16/§2.25 新增行＋五单元卡任务表；陷阱汇总见下表 knownPitfalls 列；validate-task 三查逐份 PASS＋validate-docs PASS——见该批次提交留痕）。**第 6~7 步（独立评审＋status→ready 放行）待走：本批全部契约维持 planned/design-written，不得领取；评审通过后由治理会话放行并入队（所有者确认）。**
+
+| ID | branch | interUnit | knownPitfalls | 编译说明（要点） | 机器校验＋独立评审 | status |
+| --- | --- | --- | --- | --- | --- | --- |
+| DOC-T14 | doc-t14 | False | — | 治理任务自身登记：B1-SPEC v1.0＋ARCH v0.13（SA-18/§7.12）＋DTB v0.22＋PIPE v1.15（§6.2）＋五单元卡立项行＋12 份契约起草＋索引同步；requirements/在制验收历史零修改 | validate-task PASS；独立评审待走 | design-written |
+| UI-T19 | ui-t19 | True | O-38、O-43 | 宿主控制器抽取（B1-SPEC §2 D1/D2/D13；链首）；行为回归零变化；共享树/检查器面不在允许面 | validate-task PASS；独立评审待走 | planned |
+| RT-T14 | rt-t14 | True | P-RT-4 | 宿主呈现 WorkCell 契约（D10 隔离＋复用；B1-SPEC §4.3）；呈现侧禁第二构造路径 | validate-task PASS；独立评审待走 | planned |
+| WP-24-T08 | wp24-t08 | True | O-38、O-43 | 正式产品程序骨架（宿主融合装配路径；SA-01 不变）；WP-24-T03 基座为其 ready 放行条件（T03b 在制、契约未建——放行时补 dependsOn） | validate-task PASS；独立评审待走 | planned |
+| UI-T20 | ui-t20 | True | P-RT-4、O-43 | 宿主运行时发布桥（D10 消费侧；INV-B4；呈现刷新零修订零缓存） | validate-task PASS；独立评审待走 | planned |
+| UI-T21 | ui-t21 | True | O-43、O-38 | 工业项目树＋SelectionService＋联动 L1~L3＋INV-B1~B3（双树封闭清单；L4 防过度交付项）；TreeNodesProvider 注册协议随本任务冻结 | validate-task PASS；独立评审待走 | planned |
+| UI-T22 | ui-t22 | True | P-UI-6、O-43 | PropertyInspector＋PropertyPagesProvider/复杂编辑页注册协议（D5/D6 分野；检查器零域判定） | validate-task PASS；独立评审待走 | planned |
+| WP-13-T20 | wp13-t20 | True | P-MDL-8、O-43 | 建模迁移三接入面（PIPE §6.2 串行第一棒；Provider 增量面无整体重写；共享面零改动） | validate-task PASS；独立评审待走 | planned |
+| WP-14-T10 | wp14-t10 | True | P-REQ-4、O-43 | 需求迁移三接入面（串行第二棒；WP-14-T08 既有面板零损失 deprecated） | validate-task PASS；独立评审待走 | planned |
+| WP-15-T18 | wp15-t18 | True | P-KIN-7、O-43 | 运动学迁移＋Jog/Playback 呈现衔接（串行第三棒；KIN-06 零修订断言；渲染投放唯一三维视图） | validate-task PASS；独立评审待走 | planned |
+| UI-T23 | ui-t23 | True | O-43、O-38 | 多领域集成收口（三域集成回归＋INV-B1~B4 全量＋退役清单草案；PIPE §6.2 互斥合规复查为对抗项） | validate-task PASS；独立评审待走 | planned |
+| WP-24-T09 | wp24-t09 | True | O-38、O-43 | 方案 A 正式产品路径退役（B1-SPEC §5.4 四条件；harness/_plugin 处置按 D13 登记） | validate-task PASS；独立评审待走 | planned |
+
+连带登记（非阻塞）：①phase-one-task-index.json 本批增 UI-T19~T23/RT-T14 六条（sourceRow 与单元卡行逐字一致；该索引对 UI-T15~T18 的缺登为既有滞后，随下次治理批次补齐——不属本批范围）；②foundation-tasks.json 增 12 条入口条目（轻量指针，canonical 为准）；③DTB §3 人读矩阵已同步本批任务号，机读投影 trace-matrix.json 待下次再生成纳入（格式契约 §4 再生成通道）；④依赖链的完整闭环＝WP-15-T13（done，pass-merged）→DOC-T14（design-written，本任务评审通过后置 done）→UI-T19→RT-T14→WP-24-T08→UI-T20→UI-T21→UI-T22→WP-13-T20→WP-14-T10→WP-15-T18→UI-T23→WP-24-T09；WP-24-T08 的 WP-24-T03 前置悬空引用已按登记册处理（放行条件非 dependsOn）。

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T22",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "共享属性检查器和复杂编辑区（D5/D6 分野与域页面注册协议）",
+  "status": "planned",
+  "dependsOn": [
+    "UI-T21"
+  ],
+  "requirements": [
+    "UX-04",
+    "UX-05"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t22",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-UI-6",
+    "O-43"
+  ],
+  "acceptance": [
+    "PropertyInspector 共享检查器落位（宿主右 Dock 既有属性区升格）：常用字段呈现面＋PropertyPagesProvider 域注册协议（域供给本域常用字段页的接口形状冻结——三域迁移的消费面）；L1 联动全核查基线就位（选中→字段刷新）",
+    "复杂编辑页面宿装落位：域页面注册/激活协议（DH/物性/区域/导入/求解配置等复杂编辑收口页——D6）；分野断言：复杂编辑不经检查器展开大批量字段（D5/D6 边界用例）",
+    "域判定零入检查器：检查器只做呈现与编排（编辑提交仍走域命令面/①命令端口）；参数表/表单公共件（FormEditCommon，UI-T08 既有）为页面构件复用",
+    "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp10-t22/；框架源码零修改（SA-02）"
+  ],
+  "note": "方案 B.1 迁移链（SA-18 D5/D6；B1-SPEC §2/§5.1；PIPE §6.2 共享面任务）。knownPitfalls：P-UI-6＝workflow 域就绪源单侧冻结（检查器呈现就绪事实但不拥有门控规则——P-UI-6 同款单侧纪律延伸到页面注册协议）；O-43＝宿主右 Dock 既有承载（检查器升格不再动 Dock 拓扑）。interUnit=true 判定＝注册协议为三域迁移（WP-13-T20/WP-14-T10/WP-15-T18）的直接消费面。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+}

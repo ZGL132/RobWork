@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T20",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "建模迁移（项目树/属性检查器/选择联动三接入面）",
+  "status": "planned",
+  "dependsOn": [
+    "UI-T22"
+  ],
+  "requirements": [
+    "MDL-07"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/modeling.md#11",
+    "development-task-breakdown.md#2.14"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/modeling -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t20",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-MDL-8",
+    "O-43"
+  ],
+  "acceptance": [
+    "建模域三接入面落位（消费 UI-T21/T22 冻结的注册协议）：TreeNodesProvider（RobotDesign 及关节/连杆/工具/场景/命名位姿子对象入工业项目树）＋PropertyPagesProvider（常用字段入共享检查器；DH 参数/物性编辑入复杂编辑页——D6 分野）＋SelectionAdapter（选择联动：树选→面板高亮；三维拾取→选择服务上报）",
+    "迁移链路验收：建模对象经项目树导航→检查器常用字段→复杂编辑页（DH/物性）→三维高亮端到端用例通过；L2 高亮与 L3 反解定位在建模对象上可演示",
+    "Provider 增量面验收（D11）：无整体重写提交；迁移期间既有插件面板可用性零损失（deprecated 标记非删除）；插件零计算逻辑红线不变",
+    "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp13-t20/；共享 UI 装配面零改动（PIPE §6.2——只消费注册协议）"
+  ],
+  "note": "方案 B.1 迁移链第一域（SA-18 D11；B1-SPEC §5；PIPE §6.2 串行迁移链第一棒）。knownPitfalls：P-MDL-8＝对端契约未冻结漂移防护（UI-T21/T22 注册协议冻结形状是本任务消费前提——协议漂移按增量同步不私改对端）；O-43＝宿主融合边界（建模面板已在宿主 Left 区挂位——WP-24-T03a 先例，迁移不改变挂位形态只接入共享设施）。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=UI-T22（共享面就绪）；与 WP-14-T10/WP-15-T18 串行（§5.3 互斥——不并行修改共享 UI 面）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+}

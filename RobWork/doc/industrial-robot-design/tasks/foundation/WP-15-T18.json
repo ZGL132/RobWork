@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-15-T18",
+  "unit": "kinematics",
+  "masterWp": "WP-F",
+  "title": "运动学迁移（三接入面＋Jog/Playback 呈现衔接）",
+  "status": "planned",
+  "dependsOn": [
+    "WP-14-T10"
+  ],
+  "requirements": [
+    "KIN-06",
+    "KIN-12"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/kinematics.md#11",
+    "development-task-breakdown.md#2.16"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_kinematics",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/kinematics -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp15-t18",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-KIN-7",
+    "O-43"
+  ],
+  "acceptance": [
+    "运动学域三接入面落位（消费 UI-T21/T22 冻结的注册协议）：TreeNodesProvider（任务点/结果/分析配置入工业项目树）＋PropertyPagesProvider（常用字段入共享检查器；求解配置/初值策略收口复杂编辑页——D6 分野）＋SelectionAdapter（树选↔结果面板高亮↔三维拾取上报）",
+    "Jog 面板落位（D8）：关节/笛卡尔点动为会话姿态第一操作入口——操作后零修订、零失效、零缓存写入断言（KIN-06/AT-04 口径沿用既有会话态设施）；设默认 TCP/设备仍走命令端口（WP-15-T08 语义不变）",
+    "Playback 面板运动学衔接落位（D9）：TimedStatePath 播放驱动运行时状态呈现与会话姿态，零修订；失败点/薄弱区渲染数据投放唯一 RWStudioView3D（D7——KIN-07 既有口径的宿主形态收口）；完整轨迹动画仍归 trajectory 域（不在本任务）",
+    "迁移链路验收：运动学对象经项目树→检查器→复杂编辑页端到端用例通过；显示单位纯投影语义不变（KIN-12）；Provider 增量面验收（无整体重写；WP-15-T12 插件面板可用性零损失，deprecated 标记非删除）",
+    "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp15-t18/；共享 UI 装配面零改动（PIPE §6.2——只消费注册协议）"
+  ],
+  "note": "方案 B.1 迁移链第三域（SA-18 D7/D8/D9/D11；B1-SPEC §2/§5；PIPE §6.2 串行迁移链第三棒）。knownPitfalls：P-KIN-7＝黄金值/容差档案对端同步义务延续（迁移不改计算面，若呈现接线触及黄金断言消费按增量同步）；O-43＝宿主融合边界。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=WP-14-T10（串行迁移）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+}

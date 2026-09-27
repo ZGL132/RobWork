@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T19",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主控制器抽取（ui 平台能力转宿主内部控制器）",
+  "status": "planned",
+  "dependsOn": [
+    "DOC-T14"
+  ],
+  "requirements": [
+    "UX-09",
+    "ARC-02"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t19",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-38",
+    "O-43"
+  ],
+  "acceptance": [
+    "WorkbenchShell 控制器化收口落位：产品形态声明\"宿主（RobWorkStudio）为唯一主窗口\"——顶层窗口装配路径降格为纯开发验证通道（harness `_app` 不入产品交付路径，D13/SA-01 口径不变）；宿主 Dock 控制器簇装配面（IHostController 形态：命令注册/状态投影/会话/Draft 控制器族的宿主内聚合）以公共头契约登记（ui.md §10 首消费冻结机制）",
+    "既有行为回归零变化：UI-T18 落位的多 Dock 拓扑＋宿主状态栏＋宿主菜单行为逐项回归通过（154/22/35 基线不减）；harness 行为回归零变化",
+    "ird_gates 命中集增量登记（新增产品面文件的 R3 命中按 DTB §4.5 登记册流程）；双模式构建零错误；gtest XML＋ird-test-report.json＋构建日志留痕 traceability/builds/wp10-t19/",
+    "共享树/属性检查器/SelectionService 面零改动（归 UI-T21/T22——PIPE §6.2 互斥）；框架源码零修改（SA-02，验收段框架 diff 核查）"
+  ],
+  "note": "方案 B.1 迁移链首任务（SA-18 D1/D2/D13；B1-SPEC §2）。knownPitfalls：O-38＝宿主插件/框架融合形态既有裁决（装载方式与插件边界不得因控制器抽取改变）；O-43＝宿主深度融合三步承接（Dock 拓扑与状态行迁移已由 UI-T18 落位，本任务冻结该形态为终态、不再动拓扑）。interUnit=true 判定＝重建 ui 内部装配面并对外声明宿主形态（消费 project/execution/diagnostics 既有端口面不变）。status=planned：CCP §3 第 1~5 步（读源/汇总陷阱/起草/自检/机器校验）已完成，第 6~7 步独立评审与放行待走——不得直接领取。"
+}

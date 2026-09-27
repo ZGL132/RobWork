@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T20",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主运行时发布桥（已应用 WorkCell 发布/重建/切换编排）",
+  "status": "planned",
+  "dependsOn": [
+    "WP-24-T08"
+  ],
+  "requirements": [
+    "ARC-02",
+    "CON-02"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/ui.md#13",
+    "units/runtime.md#12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t20",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-RT-4",
+    "O-43"
+  ],
+  "acceptance": [
+    "RuntimePublishBridge 落位：已应用 WorkCell 发布/重编译/项目切换 → 宿主呈现视图（RT-T14 HostPresentationView）与官方 TreeView 刷新编排；呈现视图生命周期随宿主会话建立/销毁",
+    "INV-B4 断言：重编译/项目切换后 TreeView 内容与三维场景一致；呈现视图重建不产生项目修订、不写缓存、不改变业务树选中语义（选中存在性经 ObjectId 校验后保持或置空，不静默换选）",
+    "呈现刷新与运行任务快照生命周期独立用例通过（D10 隔离半区在消费侧的落位）；当前性呈现口径不变（CON-02——Superseded 不被呈现刷新掩盖）",
+    "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json 留痕 traceability/builds/wp10-t20/；框架源码零修改（SA-02）"
+  ],
+  "note": "方案 B.1 迁移链（SA-18 D10 消费侧；B1-SPEC §4.3）。knownPitfalls：P-RT-4＝呈现侧构造复用同一变换（发布桥不得绕过 RT-T14 契约面私建构造旁路）；O-43＝宿主融合边界（TreeView/中央区为宿主既有行为，桥只编排刷新不改宿主交互）。interUnit=true 判定＝消费 runtime 呈现契约面＋⑤事件端口（跨单元运行时注入）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。"
+}
