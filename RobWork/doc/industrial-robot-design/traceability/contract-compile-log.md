@@ -314,3 +314,18 @@
 | WP-24-T09 | ①acceptance 2 重写为 staging 安装树专项审计——修正"只有一个 exe"判据为 ARCH §5.4 部署结构核对（bin/plugins/share 完整、主程序与 worker 来自安装树、无测试交付物、无业务动态插件、排除组件不入安装树、脱离开发 PATH 启动）；②allowedFiles 扩展各单元 CMakeLists.txt＋start_studio.bat（安装规则与启动脚本实际落点；范围外偏差转 blocked 不越界） | 裁定第 6 项（采纳目标修正判据） |
 
 未采纳/留实施指令项（留痕）：TreeView 辅助页签呈现形态（实施细节）；RequirementsUiModule 正式继承 IPluginUiModule（WP-14-T10 实施指令/验收测试承载，不升级架构决策——WP-14-T10 契约本批不动）。机器校验：本批六契约逐份 validate-task PASS＋validate-docs（内嵌 validate-b1-batch）PASS——见批次提交留痕。状态不变：DOC-T14=design-written（评审待走）、11 份=planned；本登记不构成放行。
+
+### 二次修正登记：DOC-T14 契约修正批次（2026-09-27 第三批，未放行）
+
+所有者二次审核（对 ced4cc3b 补强批次）指出四项阻塞问题，逐项修正如下（CCP §5 治理增量修订；全部契约状态保持 planned/design-written 不放行）：
+
+| 阻塞项 | 修正内容 |
+| --- | --- |
+| ①WP-24-T09 allowedFiles/forbiddenFiles 交叠 | allowedFiles 撤回 `industrialrobot/*/CMakeLists.txt` 通配（与 kinematics/modeling/requirements/runtime 四单元 `/**` 禁止面交叠——各自 CMakeLists.txt 双属），改回精确清单（ui/**、cmake/**、顶层、start_studio.bat）；note 登记：forbidden 单元内安装规则如需修改按 DTB §5.4 转 blocked 报告所有者，不越界 |
+| ②sdurws_ird_studio 与现有装配范围未闭合 | B1-SPEC §2.1 新增实现路径闭合条款（v1.2）：正式产品为 industrialrobot/ui 内独立宿主包装目标（产品 main 构造 rws::RobWorkStudio），官方组件经框架公开 API 显式装配，框架源码与框架装配文件零修改；PropertyView/WorkcellEditor 排除判定口径＝正式装配清单不含＋框架侧无独立动态插件产物（静态插件机制下不要求代码物理剥离）；WP-24-T08 补 acceptance 实现路径条款＋框架装配事实性陷阱登记（路径不可行即 blocked 报所有者裁决，备选 patch/重议命名） |
+| ③UI-T21 缺"仅运行时对象"验收 | acceptance 补 L3 反解失败分支四点具名验收：反解成功定位 ObjectId／失败树不动不报错／SelectionService 保留仅运行时对象状态／不创建不映射任何业务 ObjectId 不产生虚假节点——本任务直接职责，不依赖 UI-T23 集成验收 |
+| ④引用与语义精确化 | UI-T23 draft.apply 设计引用由"B1-SPEC §4.3"修正为权威落点（units/ui.md §7.7/§8.5＋IPluginUiModule::buildDraftCommand＋IDraftController 模块注册面）；RT-T14/UI-T20 三类身份措辞修正为"可验证绑定关系，不要求字段值相等"（presentationIdentity 重建即新身份）；UI-T20 稳定诊断明确为新增 UI 族稳定码（实施时经 diagnostics StableCodeRegistry 登记＋单元卡 §3.5 增量登记，登记义务入验收；PA-1/NFR-MNT-03 禁止任意文本替代稳定码） |
+
+连带修正：WP-24-T09 staging 启动验证明确为安装树绝对路径直启——start_studio.bat 硬编码开发机路径，属开发辅助入口，其运行不构成无路径依赖证据。机器校验：七契约逐份 validate-task PASS＋validate-docs（内嵌批次校验）PASS＋allowedFiles/forbiddenFiles 交叠专项自查零命中——见批次提交留痕。状态不变：DOC-T14=design-written、11 份=planned；本登记不构成放行。
+
+**交叠判定口径登记（配合本批 ①）**：allowedFiles/forbiddenFiles 存在两类几何关系，处置不同——(a) **同名/直接子路径双属**（同一具体文件同时命中允许与禁止，如本批 WP-24-T09 的四单元 CMakeLists.txt）＝阻塞，必须修正；(b) **父目录禁令包含唯一开发区**（如 `RobWork/RobWorkStudio/src/**` 禁令与 `.../industrialrobot/<unit>/**` 允许面的嵌套）＝按仓库既有约定解释：AGENTS §1 规定 industrialrobot/ 为唯一开发区、框架源码零修改（SA-02），此类父目录禁令一律读作 industrialrobot/** 之外，实际越界由 ird_gates 的 SA-02 补丁核对机器化拦截——不构成阻塞，实施者对 industrialrobot 内文件的修改按 allowedFiles 判断。本批全部执行契约的 `RobWork/RobWorkStudio/src/**` 禁令按此口径执行，登记供评审与验收对照。

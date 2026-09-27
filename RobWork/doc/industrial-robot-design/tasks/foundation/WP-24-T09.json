@@ -21,7 +21,6 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/*/CMakeLists.txt",
     "start_studio.bat",
     "RobWork/doc/industrial-robot-design/traceability/**",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
@@ -54,10 +53,10 @@
   ],
   "acceptance": [
     "B1-SPEC §5.4 四条件逐项核对留痕：①正式产品装配（WP-24-T08 骨架）以宿主融合形态为唯一装配路径；②三域迁移验收全部 pass 且 UI-T23 集成收口 pass；③退役清单（方案 A 顶层窗口产品路径、deprecated 自持导航、迁移期临时桥接件）逐项登记并经所有者确认；④`sdurws_ird_ui_plugin`/各 `_app` 处置按 D13 登记（保留为回归工具则移出产品交付路径声明——DTB §5.1 口径复查）",
-    "staging 安装树专项审计（v1.1 按 ARCH §5.4 部署结构修正判据）：清空独立 staging 目录执行 Release 安装并核对安装树——①正式产品主程序（sdurws_ird_studio）与必要 worker 均来自安装树；②无开发机构建目录 PATH 依赖（脱离开发环境启动）；③无工业业务动态插件目录与 `_plugin` 动态加载产物；④无 `_app`/testkit/testdata 测试交付物；⑤按 B1-SPEC §2.1 处置表，PropertyView/WorkcellEditor 若被排除则安装树不得含其产品入口或专用构建产物；⑥Qt 平台插件、RobWork/RWSim 运行库、share/ 依赖清单按 ARCH §5.4 架构要求保留（安装树非单 exe 形态——bin/plugins/share 结构完整）；⑦从安装树启动并核对 About 清单与静态装配内容",
+    "staging 安装树专项审计（v1.1 按 ARCH §5.4 部署结构修正判据）：清空独立 staging 目录执行 Release 安装并核对安装树——①正式产品主程序（sdurws_ird_studio）与必要 worker 均来自安装树；②无开发机构建目录 PATH 依赖：**以 staging 安装树绝对路径直接启动验证**——start_studio.bat 属开发辅助入口（硬编码开发机路径），其运行不构成无路径依赖证据，如修订该脚本须注明开发辅助定位；③无工业业务动态插件目录与 `_plugin` 动态加载产物；④无 `_app`/testkit/testdata 测试交付物；⑤按 B1-SPEC §2.1 处置表，PropertyView/WorkcellEditor 若被排除则安装树不得含其产品入口或专用动态插件产物（排除判定口径见 B1-SPEC §2.1 实现路径闭合条款）；⑥Qt 平台插件、RobWork/RWSim 运行库、share/ 依赖清单按 ARCH §5.4 架构要求保留（安装树非单 exe 形态——bin/plugins/share 结构完整）；⑦从安装树启动并核对 About 清单与静态装配内容",
     "退役执行：零未引用目标与废弃构建选项残留（代码审查清单，NFR-MNT-06/DoD）；双模式构建零错误；ird_gates 零新增命中（退役不减登记册义务）；启动脚本/安装规则/About/依赖清单同步更新",
     "顺手删除仍被开发验证依赖的 harness 而不留登记＝验收阻断项；退役范围外重构禁止；已验收历史任务契约不得改写；未执行的安装冒烟不得标注通过",
     "留痕 traceability/builds/wp24-t09/（退役清单核对表＋处置登记＋staging 安装树清单与启动冒烟＋构建/门禁日志）"
   ],
-  "note": "方案 B.1 收尾任务（SA-18 D13；B1-SPEC §5.4/§2.1）。knownPitfalls：O-38＝`_plugin` 动态加载通道为开发期验证通道（处置按 D13 由本任务登记而非顺手删除）；O-43＝宿主融合形态承接链终点（退役对象＝方案 A 正式产品路径，开发验证通道的存废单独登记）。interUnit=true 判定＝跨 ui/构建横切面的装配路径收敛。dependsOn=UI-T23（退役清单草案）＋WP-24-T08（正式装配路径就绪）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。〔v1.1 补强 2026-09-27〕按所有者审核裁定：①acceptance 2 重写为 staging 安装树专项审计——修正\"安装树只有一个 exe\"判据为 ARCH §5.4 部署结构核对（bin/plugins/share 完整，主程序与 worker 来自安装树、无测试交付物、无业务动态插件、排除组件不入安装树）；②allowedFiles 扩展各单元 CMakeLists.txt（安装规则实际落点）与仓库根 start_studio.bat（启动脚本）——若实施中发现安装规则仍在范围外，按 DTB §5.4 偏差登记转 blocked，不得越界修改。"
+  "note": "方案 B.1 收尾任务（SA-18 D13；B1-SPEC §5.4/§2.1）。knownPitfalls：O-38＝`_plugin` 动态加载通道为开发期验证通道（处置按 D13 由本任务登记而非顺手删除）；O-43＝宿主融合形态承接链终点（退役对象＝方案 A 正式产品路径，开发验证通道的存废单独登记）。interUnit=true 判定＝跨 ui/构建横切面的装配路径收敛。dependsOn=UI-T23（退役清单草案）＋WP-24-T08（正式装配路径就绪）。status=planned：CCP §3 第 1~5 步完成，独立评审与放行待走。〔v1.1 补强 2026-09-27〕acceptance 2 重写为 staging 安装树专项审计（ARCH §5.4 部署结构核对）；allowedFiles 扩展 start_studio.bat（启动脚本，开发辅助定位）。〔v1.2 修正 2026-09-27〕按所有者二次审核：①allowedFiles 撤回 `industrialrobot/*/CMakeLists.txt` 通配——该通配与 forbiddenFiles 的 kinematics/modeling/requirements/runtime 四单元 `/**` 交叠（各自 CMakeLists.txt 双属），改回精确清单；若实施中发现 forbidden 单元内安装规则（如域 `_app` 的 install 规则）需要修改，按 DTB §5.4 转 blocked 报告所有者扩展范围，不得越界；②staging 启动验证明确为安装树绝对路径直启——start_studio.bat 硬编码开发机路径，仅开发辅助入口，不构成无路径依赖证据。"
 }

@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.1（2026-09-27 二批增量，DOC-T14 契约补强修订批次随附——所有者审核裁定：①新增 §2.1 宿主官方组件处置表（区分 SA-01 工业业务白名单与宿主官方组件两类清单；冻结 sdurws_ird_studio 目标命名与 PropertyView/WorkcellEditor 去留框架）；②§4.2 L3 补"仅运行时对象"口径；③§4.3 补呈现对象三类身份绑定＋反向隔离＋序列化旁路限定禁令。前一版 v1.0＝首版） |
+| 文档版本 | v1.2（2026-09-27 三批增量，所有者审核修正随附——§2.1 处置表补**实现路径闭合**条款：正式产品为 industrialrobot/ui 内独立宿主包装目标，经框架公开 API 装配官方组件，框架源码与框架装配文件零修改；两类排除语义判定口径。前一版 v1.1＝处置表＋身份绑定＋反向隔离＋旁路限定；v1.0＝首版） |
 | 文档代号 | B1-SPEC |
 | 状态 | **`Draft`（待独立评审）** |
 | 上游 | `REQUIREMENTS.md` v1.16（Accepted，本文零修改其语义）；`ARCHITECTURE.md` v0.13（SA-18 承载本文 §2 决策登记）；DTB v0.22（迁移任务链登记，§2.7/§2.11/§2.14/§2.15/§2.16/§2.25）；O-38（宿主插件验证通道裁决）、O-43（宿主深度融合三步裁决——本文为其收口延伸） |
@@ -76,6 +76,13 @@
 | WorkcellEditorPlugin | **仅开发验证** | WorkCell 文件编辑不属 `.rwdesign` 项目工作流——WorkCell 文件仅作导入/导出格式与运行时呈现载体（D1/D4 引申） | WP-24-T08（装配排除）；WP-24-T09（安装树排除） |
 | 运行时动态 Load/Unload Plugin | **禁止** | SA-01；正式产品不显示、不提供该入口（开发期 `_plugin` 通道按 D13 另行保留） | WP-24-T08（装配）；WP-24-T09（安装树审计） |
 | **正式产品目标命名** | **`sdurws_ird_studio`** | 产品主程序持有 rws::RobWorkStudio 为唯一主窗口（D1）；本名为唯一正式产品目标名，冻结 | WP-24-T08（创建） |
+
+**实现路径闭合（v1.2，承上表目标命名行）**：框架现役正式程序目标为 `RobWorkStudio`（RobWorkStudioApp），且 TreeView/Jog/Playback/PropertyView/WorkcellEditor 的条件装配位于框架侧装配代码——`sdurws_ird_studio` 的创建**不修改框架源码与框架装配文件**（SA-02），实现路径冻结为：
+
+1. `sdurws_ird_studio` 是 **industrialrobot/ui 内的独立宿主包装目标**（executable）：产品 main 直接构造 rws::RobWorkStudio 主窗口，链接框架 rws 公共库与 Qt；
+2. 官方组件（TreeView/Jog/Playback/Log）经**框架公开 API**（addPlugin/静态插件对象装配）在该目标内显式装配——框架侧条件装配开关不被触碰；
+3. **PropertyView/WorkcellEditorPlugin 的排除语义判定口径**：正式产品装配清单不含其静态装配调用＋框架侧不生成其独立动态插件产物（框架既有静态插件机制下，"排除"指上述两条同时成立，不要求静态链接代码物理上不进入任何二进制——框架装配结构不由本产品改造）；
+4. 启动入口＝`sdurws_ird_studio` 自身 main；安装规则落点在 industrialrobot/ui 的 CMakeLists（框架 RobWorkStudio 目标与其安装规则保持原状，属开发/框架交付物）。
 
 ---
 
@@ -238,3 +245,4 @@ WP-15-T13（已完成）
 | --- | --- | --- |
 | v1.0 | 2026-09-27 | 首版（DOC-T14 交付物）：所有者批准的方案 B.1 落位——十三条产品形态决策（§2）、双树边界冻结与四条不变量（§3）、第一版选择联动契约 L1~L4（§4）、Provider 渐进迁移策略与共享 UI 互斥（§5）、11 份执行契约依赖链（§6）、验收映射（§7）；REQUIREMENTS 语义零修改 |
 | v1.1 | 2026-09-27 | 契约补强修订批次（所有者审核裁定随附，纯规格增量、契约状态不变）：①§2.1 新增**宿主官方组件处置表**——区分 SA-01 工业业务白名单与宿主官方组件两类清单（框架条件装配面 ShowLog/Jog/TreeView/PlayBack/PropertyView/WorkcellEditorPlugin 实测在案），冻结 TreeView/Jog/Playback/Log 保留（Log 定位＝框架与开发日志，正式诊断权威仍归 diagnostics）、PropertyView/WorkcellEditor 仅开发验证、动态加载禁止、正式产品目标名 `sdurws_ird_studio`；②§4.2 L3 补"反解失败保留仅运行时对象状态、不伪造业务对象"口径；③§4.3 补**呈现对象三类身份绑定**（modelIdentity/appliedRevisionId/presentationIdentity 及对账与失效规则）、**反向隔离**（修改呈现副本不改变 RuntimeSnapshot 内容身份）、**序列化旁路限定禁令**（禁"呈现→XML→快照/计算输入"复制回写与 const_cast 破坏只读视图；既有正式 Codec/导入导出/worker 传输协议不受限）；④§7 验收映射同步。十三条决策本体零变化 |
+| v1.2 | 2026-09-27 | 所有者二次审核修正（ced4cc3b 审核结论四项阻塞的规格侧闭环）：§2.1 处置表新增**实现路径闭合**条款——`sdurws_ird_studio` 为 industrialrobot/ui 内独立宿主包装目标（产品 main 构造 rws::RobWorkStudio），官方组件经框架公开 API 显式装配，框架源码与框架装配文件零修改（SA-02）；PropertyView/WorkcellEditor 排除语义判定口径＝正式装配清单不含＋框架侧无独立动态插件产物（静态插件机制下不要求代码物理剥离）；启动入口与安装规则落点声明。十三条决策与 v1.1 各条款零变化 |
