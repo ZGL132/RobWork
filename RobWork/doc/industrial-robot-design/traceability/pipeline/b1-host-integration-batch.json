@@ -16,7 +16,7 @@
     {
       "gateId": "WP-24-T03-COMPLETE",
       "beforeTask": "WP-24-T08",
-      "status": "open",
+      "status": "satisfied",
       "condition": "WP-24-T03 T03b 收口已经完成独立验收并合入 redesign-main；验收记录与合入提交均可追溯。",
       "evidencePatterns": [
         "traceability/acceptance/WP-24-T03b-*.md",
