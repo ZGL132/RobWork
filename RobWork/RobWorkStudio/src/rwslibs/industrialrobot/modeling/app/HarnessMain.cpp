@@ -39,6 +39,14 @@
  *     启动即见五区面板＋generic-6r 草稿；点树节点验属性过滤（MDL-07），
  *     改属性值验 L-2（非法输入就地报错保留原值），去勾"可写"验 L-7，
  *     点域命令按钮看控制台回显（命令 id 全集见 §9.7.3 目录）。
+ *   迁移演示（WP-13-T20——左 Dock 共享工业项目树＋右 Dock 共享属性
+ *     检查器）：点共享树"建模对象"组节点验检查器常用字段与自持面板
+ *     高亮联动（L1）；单选关节验状态行三维高亮回显（L2 演示出口）；
+ *     关节页"复杂编辑"入口"DH 参数"验域面板定位（D6 自持打开）；改
+ *     检查器零位值验编辑流经域裁决同步双面板；工具条"模拟 TreeView
+ *     选中 J2"验 L3 反解定位、"模拟反解失败"验 runtimeOnly 暂态。
+ *     自持五区面板标题旁的 deprecated 标记＝B1-SPEC §5.2 双形态并存
+ *     （保留可用，删除归 WP-24-T09）。
  *
  * 线程模型：单线程——QApplication/工作集/面板全部 main 线程（§3.4；
  *   面板内部 PanelUiThreadGuard 对跨线程访问 fail-fast，harness 不触探）。
@@ -46,26 +54,37 @@
 
 #include <QApplication>
 #include <QCheckBox>
+#include <QDockWidget>
 #include <QLabel>
 #include <QMainWindow>
+#include <QPushButton>
 #include <QStatusBar>
+#include <QTimer>
 #include <QToolBar>
 
 #include <sdurws/ird/core/Units.hpp>               // core::UnitToken::find（比较型三要素单位）
 #include <sdurws/ird/modeling/DiagCodes.hpp>       // kMdl06TravelLimit 等（已注册码字面——不臆造码）
 #include <sdurws/ird/modeling/Readiness.hpp>       // ModelReadinessReport/ReadinessNote（就绪条数据面）
 #include <sdurws/ird/modeling/Template.hpp>        // RobotDesignTemplateFactory/createDraft（六轴草稿真源）
+#include <sdurws/ird/ui/IndustrialProjectTree.hpp> // 共享项目树（UI-T21 冻结协议——迁移演示消费面）
+#include <sdurws/ird/ui/PropertyInspector.hpp>     // 共享属性检查器（UI-T22 冻结协议——迁移演示消费面）
+#include <sdurws/ird/ui/SelectionService.hpp>      // 选择服务（UI-T21 冻结协议——联动演示消费面）
+#include <sdurws/ird/ui/UiPorts.hpp>               // ui::IUiNameResolver（显示名解析端口——UX-02）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::CommandId（点分小写命令 id——§9.7.3 词表）
 
+#include "plugin/HostMigrationProviders.hpp"       // 迁移三接入面（WP-13-T20 被验证面）
 #include "plugin/ModelingPanelWidget.hpp"          // 被验证的五区面板（本单元插件私有头——同单元可含，R-2 不跨单元）
 
 #include <exception>
 #include <iostream>
 #include <cstdint>
+#include <map>
+#include <memory>
 #include <string>
 
 //using namespace sdurws::ird;
 using sdurws::ird::modeling::ModelingPanelWidget;
+using sdurws::ird::modeling::ModelingSharedSurfaceDeps;
 using sdurws::ird::modeling::ModelingWorkingSet;
 using sdurws::ird::modeling::ModelReadinessReport;
 using sdurws::ird::modeling::ReadinessNote;
@@ -168,6 +187,88 @@ ModelReadinessReport makeSampleReport()
     return report;
 }
 
+// ---- 迁移演示替身族（WP-13-T20 GUI 冒烟——L5 端口的最小演示实现）------
+// 真值边界：名称解析/运行时名映射的权威归 runtime RuntimeNameMap（R-4/
+// SA-05）——本族是端口缝隙的演示绑定（"J1../L1.."演示映射），不复制解析
+// 语义；真实绑定随 UI-T20 宿主运行时发布桥在装配后的宿主中进行。
+
+/// 显示名解析（IUiNameResolver）：树/检查器渲染显示名——演示映射为
+/// 工作集 localName（UX-02 呈现口径；解析失败占位由面板处理）。
+class HarnessNameResolver final : public sdurws::ird::ui::IUiNameResolver {
+public:
+    std::map<std::string, std::string> byId;  ///< ObjectId 规范文本→localName
+
+    std::optional<std::string> resolveObjectId(sdurws::ird::core::ObjectId id) const override
+    {
+        const auto it = byId.find(id.toCanonical());
+        return it != byId.end() ? std::optional<std::string>{it->second}
+                                : std::nullopt;
+    }
+};
+
+/// 运行时名映射（IUiRuntimeNameMapPort）：SA-05 双射的演示绑定——
+/// 关节 "J1..J6"、连杆 "L1..L7"（反解/正向同表——同源纪律）。
+class HarnessNameMap final : public sdurws::ird::ui::IUiRuntimeNameMapPort {
+public:
+    std::map<std::string, sdurws::ird::core::ObjectId> byName;  ///< 反解向
+    std::map<sdurws::ird::core::ObjectId, std::string> byId;    ///< 正向向
+
+    std::optional<sdurws::ird::core::ObjectId> resolveObjectIdFromRuntimeName(
+        const std::string& runtimeName) const override
+    {
+        const auto it = byName.find(runtimeName);
+        return it != byName.end()
+                   ? std::optional<sdurws::ird::core::ObjectId>{it->second}
+                   : std::nullopt;
+    }
+    std::optional<std::string> resolveRuntimeName(
+        const sdurws::ird::core::ObjectId& id) const override
+    {
+        const auto it = byId.find(id);
+        return it != byId.end() ? std::optional<std::string>{it->second}
+                                : std::nullopt;
+    }
+};
+
+/// 三维高亮出口（IUiHighlightOutlet）：harness 无三维视图——高亮动作
+/// 以状态行＋控制台回显（L2 动作出线的可观测演示，不虚构三维呈现）。
+class HarnessHighlightOutlet final : public sdurws::ird::ui::IUiHighlightOutlet {
+public:
+    QStatusBar* status = nullptr;  ///< 回显落点（窗口构造后接线；可空＝仅控制台）
+
+    void highlightRuntimeObject(const std::string& runtimeName) override
+    {
+        std::cout << "[highlight] " << runtimeName << std::endl;
+        if (status != nullptr) {
+            status->showMessage(
+                QString("三维高亮：%1（演示出口——真实呈现归宿主 RWStudioView3D）")
+                    .arg(QString::fromStdString(runtimeName)));
+        }
+    }
+    void clearHighlight() override
+    {
+        std::cout << "[highlight] clear" << std::endl;
+        if (status != nullptr) {
+            status->showMessage(QStringLiteral("三维高亮：清除"));
+        }
+    }
+};
+
+/**
+ * @brief 选中回声观察者（harness 刷新编排面）：检查器协议约定"模型刷新
+ *        后由装配层调用 refresh()（不自动监听——刷新时机归装配层编排）"
+ *        ——本观察者即该装配半区：每次选中变更后驱动检查器面板重渲染。
+ */
+class PanelRefreshEcho final : public sdurws::ird::ui::IUiSelectionObserver {
+public:
+    std::function<void()> refresh;  ///< 面板重渲染动作（面板创建后接线）
+
+    void onSelectionChanged(const sdurws::ird::ui::SelectionChange&) override
+    {
+        if (refresh) { refresh(); }
+    }
+};
+
 }  // namespace
 
 /**
@@ -247,10 +348,157 @@ int main(int argc, char* argv[])
             QStringLiteral("最近命令：（尚未激活）"), &window);
         toolbar->addWidget(lastCommand);
 
+        // ⑥宿主迁移演示装配（WP-13-T20——B1-SPEC §5.1 三接入面的最小
+        // 宿主形态）：共享工业项目树＋共享属性检查器＋选择服务。真值
+        // 边界见上方替身族注释（名称映射为演示绑定；L2 高亮以状态行
+        // 回显；本演示不触 Dock 拓扑的产品装配——宿主挂位归 UI-T23/
+        // WP-24-T08，O-43）。
+        namespace ui = sdurws::ird::ui;
+
+        // ⑥a 域三接入面（Deps 绑定 harness 会话与面板——面板即编辑
+        // 分流出口，focusObject 即高亮/激活执行器）。
+        ModelingSharedSurfaceDeps migrationDeps;
+        migrationDeps.workingSet = [&ws]() -> ModelingWorkingSet* { return &ws; };
+        migrationDeps.editSink = &panel;
+        migrationDeps.panelHighlight = [&panel](
+            const std::optional<sdurws::ird::core::ObjectId>& oid) {
+            panel.focusObject(oid);  // 树选→域面板高亮/定位（下行联动）
+        };
+        migrationDeps.complexPageActivator = [&panel](
+            const sdurws::ird::core::ObjectId& oid) {
+            panel.focusObject(oid);  // D6 域自持打开＝定位目标对象
+        };
+        auto treeProvider =
+            std::make_shared<sdurws::ird::modeling::ModelingTreeNodesProvider>(
+                migrationDeps);
+        auto pagesProvider =
+            std::make_shared<sdurws::ird::modeling::ModelingPropertyPagesProvider>(
+                migrationDeps);
+
+        // ⑥b 共享模型＋选择服务（UI-T21/T22 冻结面；演示映射填充）。
+        ui::ProjectTreeModel treeModel;
+        treeModel.addProvider(treeProvider);
+
+        auto resolver = std::make_shared<HarnessNameResolver>();
+        auto nameMap = std::make_shared<HarnessNameMap>();
+        for (std::size_t i = 0; i < ws.design.joints.size(); ++i) {
+            const std::string runtime = "J" + std::to_string(i + 1);
+            nameMap->byName[runtime] = ws.design.joints[i].objectId;
+            nameMap->byId[ws.design.joints[i].objectId] = runtime;
+            resolver->byId[ws.design.joints[i].objectId.toCanonical()]
+                = ws.design.joints[i].localName;
+        }
+        for (std::size_t i = 0; i < ws.design.links.size(); ++i) {
+            const std::string runtime = "L" + std::to_string(i + 1);
+            nameMap->byName[runtime] = ws.design.links[i].objectId;
+            nameMap->byId[ws.design.links[i].objectId] = runtime;
+            resolver->byId[ws.design.links[i].objectId.toCanonical()]
+                = ws.design.links[i].localName;
+        }
+
+        HarnessHighlightOutlet highlightOutlet;  // 状态行回显（窗口构造后接线）
+        std::function<bool(const sdurws::ird::core::ObjectId&)> locateFn;  // 树定位延迟接线
+        ui::SelectionService::Deps selectionDeps;
+        selectionDeps.nameMap = nameMap;
+        selectionDeps.treeLocator =
+            [&locateFn](const sdurws::ird::core::ObjectId& oid) {
+                return locateFn ? locateFn(oid) : false;  // 面板创建后接线
+            };
+        selectionDeps.highlightOutlet = std::shared_ptr<ui::IUiHighlightOutlet>(
+            &highlightOutlet, [](ui::IUiHighlightOutlet*) {});  // 非 owning 共享
+        ui::SelectionService selection(selectionDeps);
+
+        ui::PropertyInspectorModel inspectorModel;
+        inspectorModel.addProvider(pagesProvider);
+        auto inspectorSubscription = selection.subscribe(inspectorModel);  // L1 刷新
+        // 检查器面板刷新编排半区（订阅序在模型之后——模型先更新、面板
+        // 后重渲染；面板创建后接线 refresh 动作）。
+        PanelRefreshEcho inspectorEcho;
+        auto echoSubscription = selection.subscribe(inspectorEcho);
+
+        sdurws::ird::modeling::ModelingSelectionAdapter selectionAdapter(
+            migrationDeps);
+        selectionAdapter.attach(selection);
+
+        // ⑥c 共享面板（Qt 渲染半区——UI-T21/T22 工厂；挂宿主 Dock）。
+        ui::IndustrialProjectTreePanelDeps treePanelDeps;
+        treePanelDeps.model =
+            std::shared_ptr<ui::ProjectTreeModel>(&treeModel, [](ui::ProjectTreeModel*) {});
+        treePanelDeps.selection = std::shared_ptr<ui::SelectionService>(
+            &selection, [](ui::SelectionService*) {});
+        treePanelDeps.nameResolver = resolver;
+        auto treePanel = ui::createIndustrialProjectTreePanel(treePanelDeps, nullptr);
+
+        ui::PropertyInspectorPanelDeps inspectorPanelDeps;
+        inspectorPanelDeps.model = std::shared_ptr<ui::PropertyInspectorModel>(
+            &inspectorModel, [](ui::PropertyInspectorModel*) {});
+        inspectorPanelDeps.nameResolver = resolver;
+        auto inspectorPanel = ui::createPropertyInspectorPanel(inspectorPanelDeps, nullptr);
+
+        // 树定位延迟接线（L3 反解成功的落点＝共享树面板定位选中）。
+        locateFn = [&treePanel](const sdurws::ird::core::ObjectId& oid) {
+            return treePanel->locateAndHighlight(oid);
+        };
+
+        // 检查器刷新编排第二段接线（面板已创建——每次选中变更后重渲染）。
+        inspectorEcho.refresh = [&inspectorPanel]() { inspectorPanel->refresh(); };
+
+        // 共享树重建＋双面板首刷（编辑后刷新同款入口——装配层编排形）。
+        const auto refreshSharedSurfaces = [&]() {
+            const ui::TreeRebuildReport r = treeModel.rebuild();
+            if (!r.ok) { std::cout << "[tree] rebuild rejected: " << r.reason << std::endl; }
+            treePanel->refresh();
+            // 检查器重组装（选中未变而内容已变——按当前选中重询问，
+            // harness 刷新编排面；生产路径随域修订事件驱动）。
+            ui::SelectionChange current;
+            current.selectedObjectIds = selection.selectedObjectIds();
+            current.source = selection.selectionSource().value_or(
+                ui::SelectionSource::ProjectTree);
+            inspectorModel.onSelectionChanged(current);
+            inspectorPanel->refresh();
+        };
+        refreshSharedSurfaces();
+
+        // 编辑后动作：共享面同步（L-2 接受→树/检查器即见新值——迁移
+        // 双形态并存的刷新闭环）。singleShot(0) 队列化——编辑回调栈内
+        // 不重入检查器面板的确认流（回调返回后再刷新，零重入风险）。
+        panel.setPostEditAction([&panel, &ws, &report, &refreshSharedSurfaces]() {
+            QTimer::singleShot(0, &panel, [&panel, &ws, &report,
+                                            &refreshSharedSurfaces]() {
+                refreshSharedSurfaces();
+                panel.refreshPanel(ws, report);  // 自持面板同步（演示报告不变——判定面归 ReadinessTest）
+            });
+        });
+
+        QDockWidget* treeDock = new QDockWidget(QStringLiteral("工业项目树（共享·WP-13-T20 演示）"), &window);
+        treeDock->setWidget(treePanel->widget());
+        window.addDockWidget(Qt::LeftDockWidgetArea, treeDock);
+        QDockWidget* inspectorDock = new QDockWidget(QStringLiteral("属性检查器（共享·WP-13-T20 演示）"), &window);
+        inspectorDock->setWidget(inspectorPanel->widget());
+        inspectorDock->setMinimumWidth(320);  // 字段呈现宽度下限（防 Dock 挤压成不可读）
+        window.addDockWidget(Qt::RightDockWidgetArea, inspectorDock);
+
+        // L3 反解演示按钮：模拟官方 TreeView Select Frame 事件（J2）——
+        // 反解→树定位选中→检查器刷新全链； World.UnknownFrame 触发反解
+        // 失败分支（树不动＋状态行提示）。
+        QPushButton* l3Button =
+            new QPushButton(QStringLiteral("模拟 TreeView 选中 J2（L3 反解）"), &window);
+        toolbar->addWidget(l3Button);
+        QObject::connect(l3Button, &QPushButton::clicked, &window, [&selection]() {
+            selection.handleTreeViewFrameSelected("J2");
+        });
+        QPushButton* l3MissButton =
+            new QPushButton(QStringLiteral("模拟反解失败"), &window);
+        toolbar->addWidget(l3MissButton);
+        QObject::connect(l3MissButton, &QPushButton::clicked, &window, [&selection]() {
+            selection.handleTreeViewFrameSelected("World.UnknownFrame");
+        });
+
         window.statusBar()->showMessage(QStringLiteral(
-            "开发期 harness：命令仅回显（L-3 提交/确认流待 WP-24-T03 装配）；"
-            "就绪条为演示条目（判定面归 ReadinessTest）"));
+            "开发期 harness：命令仅回显（L-3 提交/确认流待装配）；就绪条为演示条目；"
+            "迁移演示的名称映射/高亮为演示绑定（解析权威归 runtime——R-4）"));
         window.resize(1280, 860);
+        highlightOutlet.status = window.statusBar();  // L2 回显落点接线
         window.show();
 
         return app.exec();

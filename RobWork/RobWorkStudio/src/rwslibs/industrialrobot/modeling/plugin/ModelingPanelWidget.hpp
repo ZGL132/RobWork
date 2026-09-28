@@ -119,6 +119,21 @@ public:
     /// 会话可写性切换（L-7——ui 只读横幅同源事实；触发展开面重投影）。
     void setWritable(bool writable);
 
+    /**
+     * @brief 定位并高亮指定对象（宿主迁移三接入面的域面板执行器——
+     *        WP-13-T20：SelectionAdapter 的"树选→面板高亮"落点与 D6
+     *        复杂编辑页"域自持打开"的激活动作共用本入口）。
+     *
+     * 行为：写会话选中锚（幂等——重复定位同一对象不重复刷新）→自持
+     * 结构树滚动至对应行并置为当前行（触发行选中→属性区重投影——L-1
+     * 既有数据流复用，零新增刷新路径）。
+     *
+     * @param oid [in] 目标对象身份（nullopt＝仅清除选中高亮——多选/
+     *            清空选中时的对称收口；闭包外对象按清除处置——不伪造
+     *            定位）；零修订（KIN-06/AT-04——选中是会话态）
+     */
+    void focusObject(const std::optional<core::ObjectId>& oid);
+
     /// IPanelEditSink（L-2 接受分支）：属性区/就绪条增量刷新＋脏标记呈现。
     void onEditApplied(const std::string& subjectPath) override;
     /// IPanelEditSink（L-2/ L-8 拒绝分支）：就地错误呈现（状态行——非模态）。
@@ -170,6 +185,9 @@ private:
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
     QTreeWidget* m_tree = nullptr;            ///< 区①结构树（隐藏第 1 列＝锚规范文本）
+    QLabel* m_navDeprecationLabel = nullptr;  ///< 区①自持导航 deprecated 标记
+                                              ///< （B1-SPEC §5.2——标记保留可用；
+                                              ///< objectName 锚供验证定位）
     QFormLayout* m_propertyForm = nullptr;    ///< 区②属性表单（行＝PropertyFieldRow）
     std::vector<QLineEdit*> m_propertyEditors;///< 属性编辑行（与投影行序对应——L-2 提交面）
     std::vector<PropertyFieldRow> m_propertyRows;  ///< 当前属性行（含字段键——提交时的域入口参数）

@@ -119,6 +119,47 @@ ui::IUiDomainReadinessSource& ModelingPluginAssembly::readinessSource() const
     return *m_impl;
 }
 
+// =====================================================================
+// WP-13-T20 宿主迁移三接入面（B1-SPEC §5.1——转发模块；消费面零建模
+// 私有头依赖，类型完备性由 ModelingUiModule.hpp 传递的注册协议头保证）
+// =====================================================================
+
+ModelingPluginAssembly::SharedSurfaceHandles
+ModelingPluginAssembly::sharedSurfaceProviders() const
+{
+    SharedSurfaceHandles handles;
+    if (m_impl != nullptr) {
+        // 模块侧与门面侧是两个同名句柄结构（门面消费面只见 ui 接口类型
+        // ——R-2 门面纪律）——逐成员转交（shared_ptr 同址）。
+        const auto fromModule = m_impl->sharedSurfaceProviders();
+        handles.treeNodes = fromModule.treeNodes;
+        handles.propertyPages = fromModule.propertyPages;
+    }
+    return handles;
+}
+
+void ModelingPluginAssembly::attachSelectionService(ui::SelectionService& service)
+{
+    if (m_impl != nullptr) {
+        m_impl->attachSelectionService(service);
+    }
+}
+
+void ModelingPluginAssembly::detachSelectionService()
+{
+    if (m_impl != nullptr) {
+        m_impl->detachSelectionService();
+    }
+}
+
+bool ModelingPluginAssembly::reportView3DPick(const sdurws::ird::core::ObjectId& oid)
+{
+    if (m_impl != nullptr) {
+        return m_impl->reportView3DPick(oid);
+    }
+    return false;
+}
+
 ModelingPluginAssembly createModelingPluginAssembly()
 {
     ModelingPluginAssembly result;

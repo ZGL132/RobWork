@@ -185,6 +185,7 @@ add_library(sdurws_ird_modeling_plugin STATIC
     plugin/PanelModel.cpp            # 五区信息架构投影（ACC2——树/属性/就绪条/预览，零 Qt）
     plugin/PanelEditFlow.cpp         # L-2/L-8 编辑流编排（域裁决唯一，分流即全部逻辑）
     plugin/PanelCommandCatalog.cpp   # 十条域命令登记数据（ACC4——卡 §9.7.3 表值化）
+    plugin/HostMigrationProviders.cpp  # 宿主迁移三接入面（WP-13-T20——B1-SPEC §5.1，零 Qt）
     plugin/ModelingPanelWidget.cpp   # 五区面板 widget（Q_OBJECT——AUTOMOC 载体）
     plugin/ModelingPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
     plugin/ModelingUiModule.cpp      # ui.md §11.2 模块实现（buildDraftCommand 域侧组装）
@@ -518,6 +519,7 @@ add_executable(sdurws_ird_modeling_test
     test/PackageTest.cpp
     test/ModelDiffTest.cpp
     test/PluginPanelTest.cpp
+    test/HostMigrationTest.cpp
     test/GoldenDatasetTest.cpp
     test/GoldenTemplateTest.cpp
     test/GoldenImportTest.cpp)
@@ -545,6 +547,12 @@ if(TARGET sdurw_kinematics)
                                            # 专属 TU），gating 同 ReadinessTest
                                            # 先例；原 PluginPanelTest.cpp 尾段
                                            # 三用例迁入（迁移不改断言语义）
+    target_sources(sdurws_ird_modeling_test PRIVATE
+        test/HostMigrationModuleTest.cpp)  # WP-13-T20：迁移三接入面模块接线
+                                           # 用例（sharedSurfaceProviders 惰性
+                                           # 构造）——同持 policy 评估器符号，
+                                           # gating 同上；三接入面本体九例在
+                                           # HostMigrationTest.cpp（无条件）
     target_sources(sdurws_ird_modeling_test PRIVATE
         test/CommandHandlersTest.cpp)      # T08 ACC4＋1/3：五命令 token 表/
                                            # 载荷编解码/prepare 管线/inverse
