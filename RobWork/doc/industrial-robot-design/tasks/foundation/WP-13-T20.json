@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "建模迁移（项目树/属性检查器/选择联动三接入面）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T22"
   ],

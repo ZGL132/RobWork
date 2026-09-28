@@ -1,0 +1,41 @@
+Note: Google Test filter = HostMigration*
+[==========] Running 10 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from HostMigrationTreeNodesProvider
+[ RUN      ] HostMigrationTreeNodesProvider.SuppliesModelingObjectsWithClosedChildren
+[       OK ] HostMigrationTreeNodesProvider.SuppliesModelingObjectsWithClosedChildren (0 ms)
+[ RUN      ] HostMigrationTreeNodesProvider.FeedsSharedProjectTreeModelRebuild
+[       OK ] HostMigrationTreeNodesProvider.FeedsSharedProjectTreeModelRebuild (0 ms)
+[----------] 2 tests from HostMigrationTreeNodesProvider (0 ms total)
+
+[----------] 5 tests from HostMigrationPropertyPages
+[ RUN      ] HostMigrationPropertyPages.JointCommonFieldsWithEditableOutlet
+[       OK ] HostMigrationPropertyPages.JointCommonFieldsWithEditableOutlet (0 ms)
+[ RUN      ] HostMigrationPropertyPages.LinkReadOnlyMassWithPropertiesEntry
+[       OK ] HostMigrationPropertyPages.LinkReadOnlyMassWithPropertiesEntry (0 ms)
+[ RUN      ] HostMigrationPropertyPages.NonDomainObjectGetsNoAnswer
+[       OK ] HostMigrationPropertyPages.NonDomainObjectGetsNoAnswer (0 ms)
+[ RUN      ] HostMigrationPropertyPages.OutletTranslatesEditsToDomainFlow
+[       OK ] HostMigrationPropertyPages.OutletTranslatesEditsToDomainFlow (0 ms)
+[ RUN      ] HostMigrationPropertyPages.ComplexPageActivationThreeBranches
+[       OK ] HostMigrationPropertyPages.ComplexPageActivationThreeBranches (0 ms)
+[----------] 5 tests from HostMigrationPropertyPages (0 ms total)
+
+[----------] 1 test from HostMigrationSelectionAdapter
+[ RUN      ] HostMigrationSelectionAdapter.DownstreamHighlightAndUpstreamPick
+[       OK ] HostMigrationSelectionAdapter.DownstreamHighlightAndUpstreamPick (0 ms)
+[----------] 1 test from HostMigrationSelectionAdapter (0 ms total)
+
+[----------] 1 test from HostMigrationEndToEnd
+[ RUN      ] HostMigrationEndToEnd.TreeToInspectorToComplexToHighlight
+[       OK ] HostMigrationEndToEnd.TreeToInspectorToComplexToHighlight (0 ms)
+[----------] 1 test from HostMigrationEndToEnd (0 ms total)
+
+[----------] 1 test from HostMigrationModuleWiring
+[ RUN      ] HostMigrationModuleWiring.SharedSurfaceProvidersFeedSharedTree
+[       OK ] HostMigrationModuleWiring.SharedSurfaceProvidersFeedSharedTree (0 ms)
+[----------] 1 test from HostMigrationModuleWiring (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 5 test suites ran. (1 ms total)
+[  PASSED  ] 10 tests.
