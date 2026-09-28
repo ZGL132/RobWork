@@ -1,22 +1,29 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "idle",
+  "phase": "awaiting_acceptance",
   "tickCount": 414,
-  "currentTask": null,
-  "branch": null,
-  "base": null,
-  "headSha": null,
+  "currentTask": "WP-15-T18",
+  "branch": "wp15-t18",
+  "base": "3f7dd0f11d6908099acb8d94f7b581d1a0a396fe",
+  "headSha": "7e015c6f647d53be62cb5e044c0d0524b52c5bcb",
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
-  "run": null,
+  "run": {
+    "kind": "implement",
+    "runId": "b4f1a7c2-3d8e-4a90-9c26-7e5d1f0a8b33",
+    "workerId": "663483d6-6a93-4db8-9a09-5973c4729a0f",
+    "startedAt": "2026-09-29T07:08:30+08:00",
+    "leaseExpiresAt": "2026-09-29T09:08:30+08:00",
+    "task": "WP-15-T18"
+  },
   "attempts": {
     "implement": 0,
     "fix": 0,
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T07:04:22+08:00",
+    "updatedAt": "2026-09-29T07:58:41+08:00",
     "ticksNoProgress": 0
   },
   "history": [
