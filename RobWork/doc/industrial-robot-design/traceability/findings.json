@@ -4238,6 +4238,17 @@
       "owner": "治理会话（PIPE v1.17 §4.7③ 口径④ 红线已立）",
       "resolution": "本次收尾③ 已按主线版本保留（c45ce1b1 暂存 blob 核验 41186200）；PIPE v1.17 固化红线：任务分支不得提交 pipeline/state.json，误提交时收尾③ 一律按主线版本保留。",
       "fixedAt": "2026-09-28"
+    },
+    {
+      "id": "F-427",
+      "source": "B1 方案流水线开启前审核（治理会话奉所有者指令，2026-09-28；实例证据：WP-13-T15-APP-20260926.md、WP-24-T01-20260926.md、WP-24-T03a-20260926.md 三记录 §4.2/§4.10 均声称留痕入库，git status 实证三处目录＋run-ui-t18-view.ps1 共 17 件未跟踪）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-28",
+      "title": "验收记录『入库』主张未经 git ls-files 实证——三份已合入记录（WP-13-T15-APP/WP-24-T01/WP-24-T03a）声称入库的 builds/ 留痕 16 件＋宿主直载脚本 run-ui-t18-view.ps1 实际未入库（F-010 家族验收侧变体：声称载体为验收记录而非实施提交）。",
+      "owner": "治理会话（本次审核补录）",
+      "resolution": "16 件留痕＋run-ui-t18-view.ps1 随本提交补录入库，三条记录主张自此为真；wp24-t03-first 为 WP-24-T03a 验收全新捕获件，与 T03b/T03 正式记录在库留痕（builds/wp24-t03b/、builds/wp24-t03/ 38 件、acc3-host-evidence/ 72 件，git ls-files 实证）不冲突。后续验收端 4.10 核对建议对『入库』字样增 git ls-files 实证步骤。",
+      "fixedAt": "2026-09-28"
     }
   ]
 }
