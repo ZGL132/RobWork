@@ -373,3 +373,9 @@
 **治理修复（同批）**：traceability/phase-one-task-index.json RT-T14 条目 sourceRow 同步 runtime.md v0.17 落位标记——RT-T14 落位登记（7d0df205）改写 §12 行未同步索引，validate-docs 逐字包含校验自该提交起在主线失配（与本契约无关的存量缺陷，按 PIPE §0"以协议为准修复并注明"先例处置）。
 
 **放行（CCP §3 第 7 步，所有者"派发"指令为入队确认）**：WP-24-T03 → **ready**；同批 **CCP §5 修订**：tasks/foundation/WP-24-T08.json dependsOn 增 `WP-24-T03`（RT-T14、WP-24-T03）＋note 追记（其 note"其契约编译放行时由治理评审补入本契约 dependsOn"承诺的兑现）；queue 队首插入 WP-24-T03（先于 WP-24-T08——持锁状态写入）。门禁 `WP-24-T03-COMPLETE` 保持 **open**（收口验收合入前不翻转——PIPE §6.3）；收口段验收记录将按门禁证据形态命名 WP-24-T03b-*.md。
+
+## WP-24-T03 收口段实施登记（2026-09-28，续接实施段 attempt 2 亲验完成）
+
+**续接背景**：首次实施会话中断（租约到期重派，attempt 2）——其分支 wp24-t03 两笔提交（4dbca0d8 收口实施＋90032ede 验证修复/文档同步）已推 origin；续接段按重派指令逐项亲验后续接完成，不盲信、不推倒重做。前次"文档同步"提交声明与实际 diff 存在偏差（modeling.md 同步与 contract-compile-log.md 修订行声明未落盘）——由本段补齐（modeling.md v0.22 行＋本节），并在此如实登记该偏差。
+
+**续接段完成项**：①测试面补强——具名用例缺口消账：ui/gui_test 增 DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B（availability 快照含十条＋同输入同排序＋重复 id 拒绝且 Dev 失败行留痕）与 DomainCommandGatingNoProjectAndReadonly_WP24_T03B（无项目/只读反例）；modeling/test 新增 PluginModuleT03BTest.cpp（gated 集成专属，5 例——原 PluginPanelTest 尾段 3 例迁入不改断言＋新增模板重种子重置/汇聚快照与编辑重算联动两例，汇聚经 StageNavigationModel domainSources 实装配）；②modeling_test 冒烟链接缺陷修复（前次登记的继承缺陷）：T03B 族迁入 gated 文件后冒烟编列恢复 215/215；③验证全程亲跑：集成构建零错误（BUILD_EXIT=0）＋五测试目标全绿（270/158/40/22/17）＋冒烟构建零错误＋四目标全绿（215/158/22/8）＋ird_gates base（3f767d9c，临时 worktree）..head 三套计数归一化比对完全一致（144/144、121/121、72/72；差集空——前次"随验收段补做"的基线比对缺口补全）＋validate-docs/validate-task 双 PASS；④留痕 traceability/builds/wp24-t03b/（README＋ird-test-report.json＋双模式构建/测试/门禁/自查全件）。**未执行项（如实）**：GUI 冒烟（--rwsplugin 直载）未执行——编排者现场约束禁启 RobWorkStudio.exe，归所有者人工通道（UI-T17 先例）。**环境发现**：F-420（框架模拟插件冷构建环境漂移——独立 worktree 冷启需以框架自带配置项排除三模拟插件目标，与 industrialrobot 零依赖零门禁影响）。门禁 `WP-24-T03-COMPLETE` 保持 open（收口验收合入前不翻转——PIPE §6.3）。

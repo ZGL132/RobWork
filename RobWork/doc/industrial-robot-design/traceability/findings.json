@@ -4166,6 +4166,16 @@
       "title": "GUI 测试运行的环境前置未内化：独立构建树的 sdurws_ird_ui_gui_test 启动需要 QT_QPA_PLATFORM=windows＋QT_PLUGIN_PATH=<Qt>/plugins（POST_BUILD 只复制运行时 DLL，不复制 platforms 插件目录）——本任务验收按 F-320 家族既有口径以环境变量手工满足，建议随 gate-all.ps1 的 GUI 步骤统一内化（自动探测 Qt plugins 路径并注入）。",
       "owner": "WP-01 门禁所有者（gate-all.ps1 GUI 步骤增强时消账）",
       "resolution": "编号顺延自 F-418（UI-T19 验收 evidence 分支 acc/UI-T19/1 登记）。"
+    },
+    {
+      "id": "F-420",
+      "source": "WP-24-T03 续接实施段（attempt 2，2026-09-28）：独立 worktree 冷启集成构建实测（traceability/builds/wp24-t03b/ird-gates-comparison.md §四）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "框架模拟插件冷构建环境漂移：主检出 RobWork/RobWork/cmake 下未跟踪（gitignore）的构建支撑文件（RobWorkSetup.cmake 等 75 文件）为旧时代状态，全新配置（冷启树/worktree）下 RobWorkSim 的 RWSimulatorPlugin、bt_plugin〔sdurwsim_bullet 子系统〕、sdurwsim_gui 三目标因 min/max 宏（NOMINMAX 未注入）编译失败；主检出存量 build/ 树的对应 vcxproj 为旧配置产物（含 NOMINMAX）故增量构建不暴露。与本任务 diff 无关（RobWorkSim 子树 base..head 零差异、forbiddenFiles 未触碰）。续接段处置＝框架自带配置项排除三目标（BUILD_RWSimulatorPlugin/BUILD_sdurwsim_bullet/BUILD_sdurwsim_gui=OFF，与 industrialrobot 零依赖零门禁影响，命中集 base..head 三套计数一致为直接证据）。建议治理会话裁决：①刷新主检出的未跟踪 cmake 支撑文件至当前脚本兼容态，或②将三目标的排除口径登记为冷启构建约定。",
+      "owner": "治理会话（构建环境治理批次裁决；CM 所有者协同）",
+      "resolution": "编号顺延自 F-419（UI-T19 验收 evidence 分支登记）。"
     }
   ]
 }

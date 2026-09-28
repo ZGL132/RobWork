@@ -537,6 +537,15 @@ if(TARGET sdurw_kinematics)
         test/ReadinessTest.cpp)            # T08 ACC1~3：就绪分层/断言分域
                                            # 反例 V-15/行程确认 V-16
     target_sources(sdurws_ird_modeling_test PRIVATE
+        test/PluginModuleT03BTest.cpp)     # WP-24-T03b 收口：ModelingUiModule
+                                           # 模块级用例（域就绪汇聚源/会话全
+                                           # 同步/策略与名称适配/模板重种子/
+                                           # 汇聚快照联动）——被测类型持有
+                                           # policy 行程评估器符号（集成模式
+                                           # 专属 TU），gating 同 ReadinessTest
+                                           # 先例；原 PluginPanelTest.cpp 尾段
+                                           # 三用例迁入（迁移不改断言语义）
+    target_sources(sdurws_ird_modeling_test PRIVATE
         test/CommandHandlersTest.cpp)      # T08 ACC4＋1/3：五命令 token 表/
                                            # 载荷编解码/prepare 管线/inverse
                                            # 快照/中文摘要
