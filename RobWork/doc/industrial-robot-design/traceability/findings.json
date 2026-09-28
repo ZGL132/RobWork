@@ -4216,6 +4216,28 @@
       "title": "WP-24-T03 送验冒烟测试矩阵未含 sdurws_ird_ui_gui_test：ird-test-report.json 冒烟面仅 215/158/22/8（GUI 目标只登记集成 40/40，冒烟 GUI 无留痕）——attempt 3 验收已补跑冒烟 GUI 40/40 全绿（QT_QPA_PLATFORM=offscreen 下 5 个窗口类用例环境性失败、windows 平台全绿，复证 F-419 口径），零缺陷引出；建议 DTB §5 或单元卡明确冒烟矩阵是否必含 GUI 目标，避免口径漂移。",
       "owner": "治理会话（构建验证口径批次裁决）",
       "resolution": "编号顺延自 F-423（同分支同批登记）。"
+    },
+    {
+      "id": "F-425",
+      "source": "WP-24-T03 收尾③ blocked 人工解算（PIPE v1.17，2026-09-28；实例证据：57f12aa3 手工转录 F-422~424 时把 F-419 条目闭合行写为零缩进 '},'，v1.13 计数守卫误报『期望 415 实得 416』转 blocked）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-28",
+      "title": "findings.json 手工转录条目可引入非规范收行（零缩进 '},'）——merge-findings-union.ps1 收行正则（'^    \\}'）不匹配致相邻条目并块、条目计数守卫把可机械并集误报为真分歧。v1.13 输出规范（闭合行规范形重排）仅在脚本解算路径生效，手工编辑路径无形状守卫。",
+      "owner": "治理会话（PIPE v1.17 §4.7③ 人工解算口径③ 已立规范）",
+      "resolution": "畸变实例已随 c45ce1b1 解算修复（F-419 收行恢复 4 空格规范形）；PIPE v1.17 固化人工解算输出规范（规范闭合形＋编号序＋三重校验）。后续可选强化：v1.13 脚本收行/开行正则放宽前导空白变体（另开治理批次裁决）。",
+      "fixedAt": "2026-09-28"
+    },
+    {
+      "id": "F-426",
+      "source": "WP-24-T03 收尾③ blocked 人工解算（PIPE v1.17，2026-09-28；实例证据：任务分支 wp24-t03 携带建支点旧快照 state.json〔idle/396，队列含已被 fecdf104 移出的 WP-24-T03 项〕进入收尾合并）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-09-28",
+      "title": "实施端任务分支误提交 traceability/pipeline/state.json——簿记文件归 tick 侧独占写，任务分支携带建支点旧快照在收尾③ 合并时会把主线流水线状态整体回退（phase/tickCount/queue/run 租约字段倒退）。",
+      "owner": "治理会话（PIPE v1.17 §4.7③ 口径④ 红线已立）",
+      "resolution": "本次收尾③ 已按主线版本保留（c45ce1b1 暂存 blob 核验 41186200）；PIPE v1.17 固化红线：任务分支不得提交 pipeline/state.json，误提交时收尾③ 一律按主线版本保留。",
+      "fixedAt": "2026-09-28"
     }
   ]
 }
