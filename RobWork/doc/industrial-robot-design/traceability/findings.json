@@ -4279,6 +4279,26 @@
       "title": "工业项目树面板呈现文案（五分组标题＋未命名占位）以 TU 局部常量承载，未挂 UiText 键系——沿 PolicySummaryCard '卡面文案单点'过渡先例（键冻结值过渡），与 §6.6 载体偏差（非语义偏差，无哈希/内部名泄漏——UX-02 红线未破）。",
       "owner": "ui（随下一 ui 触碰窗口顺带）",
       "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键（与既有过渡文案同批），不单独返工。"
+    },
+    {
+      "id": "F-431",
+      "source": "UI-T22 验收段（acc/UI-T22/1，2026-09-28；证据：ui/CMakeLists.txt AUTOMOC 复核注释块『十五个源文件与私有头零 Q_OBJECT 声明』vs add_library 实际 26 个产品 TU——本任务新增 PropertyInspector.cpp 后 25→26；此前 UI-T19/T20/T21 增列亦未校准）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "F-273/F-275/F-277 家族第四次沿袭（同一注释行计数未校准）：ui/CMakeLists.txt AUTOMOC 复核注释行写「十五个源文件与私有头零 Q_OBJECT 声明」，而 add_library 实际 26 个产品 TU；实质性主张「零 Q_OBJECT」经验收者全文件 grep 证实为真（本任务新增 PropertyInspector.cpp 零 Q_OBJECT、零信号槽声明——Qt 交互全经虚函数与 lambda 接线），AUTOMOC 关闭决策不受影响，零行为影响。",
+      "owner": "ui（随下一 ui 触碰窗口顺带——F-275 既定 resolution 口径）",
+      "resolution": "ui 单元后续任务触碰该注释块时顺手校准计数为实际 TU 数（或删去具体数字改定性表述）；不单独返工，不阻塞 UI-T22 合入（attempt 1 verdict=pass）。编号顺延自 F-430。"
+    },
+    {
+      "id": "F-432",
+      "source": "UI-T22 验收段（acc/UI-T22/1，2026-09-28；证据：PropertyInspector.hpp 六个冻结文案常量〔kInspectorNoSelectionText/kInspectorMultiSelectionText/kInspectorRuntimeOnlyText/kInspectorNoProviderAnswerText/kInspectorPageRejectedText/kInspectorHostedPageMissingText〕＋只读徽标/复杂编辑节标题文案＋TU 局部 kUnnamedObjectTitle——共享检查器呈现面未挂 UiText 键系）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "共享属性检查器呈现文案（六态占位＋只读徽标＋复杂编辑节标题＋宿装缺失占位＋未命名标题占位）以冻结常量承载，未挂 UiText 键系——沿 PolicySummaryCard「卡面文案单点」／F-430（工业项目树面板）过渡先例（键冻结值过渡），与 §6.6 载体偏差（非语义偏差，无哈希/内部名泄漏——UX-02 红线未破）。",
+      "owner": "ui（随 P-DIAG-9 批次统一）",
+      "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键（与 F-430 及既有过渡文案同批），不单独返工。编号顺延自 F-431。"
     }
   ]
 }
