@@ -162,7 +162,8 @@ add_library(sdurws_ird_ui STATIC
     src/HostController.cpp
     src/RuntimePublishBridge.cpp
     src/SelectionService.cpp        # UI-T21——业务选择唯一汇聚点（B1-SPEC §4.1/§4.2；§13 UI-T21 行）
-    src/IndustrialProjectTree.cpp)  # UI-T21——工业项目树模型＋面板（B1-SPEC §3.1/§5.1；§13 UI-T21 行）
+    src/IndustrialProjectTree.cpp   # UI-T21——工业项目树模型＋面板（B1-SPEC §3.1/§5.1；§13 UI-T21 行）
+    src/PropertyInspector.cpp)      # UI-T22——共享属性检查器模型＋面板（B1-SPEC §2 D5/D6/§5.1；§13 UI-T22 行）
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -355,7 +356,8 @@ add_executable(sdurws_ird_ui_test
     test/HostControllerModelTest.cpp
     test/RuntimePublishBridgeTest.cpp
     test/SelectionServiceTest.cpp   # UI-T21——选择服务：写入口/L2/L3 四分支/INV-B4/订阅
-    test/IndustrialProjectTreeModelTest.cpp)  # UI-T21——树模型：五分组封闭/注册协议/重建四拒绝/定位
+    test/IndustrialProjectTreeModelTest.cpp   # UI-T21——树模型：五分组封闭/注册协议/重建四拒绝/定位
+    test/PropertyInspectorModelTest.cpp)      # UI-T22——检查器模型：注册纪律/L1 刷新/D5D6 分野/激活编排
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -497,7 +499,8 @@ add_executable(sdurws_ird_ui_gui_test
     gui_test/PolicySummaryCardGuiTest.cpp
     gui_test/ParamTablePanelGuiTest.cpp
     gui_test/AboutDialogGuiTest.cpp
-    gui_test/IndustrialProjectTreeGuiTest.cpp)  # UI-T21——面板：五分组组行/选中回流/名称现取/L3 落点
+    gui_test/IndustrialProjectTreeGuiTest.cpp   # UI-T21——面板：五分组组行/选中回流/名称现取/L3 落点
+    gui_test/PropertyInspectorGuiTest.cpp)      # UI-T22——检查器面板：分态占位/标题现取/构件复用/入口宿装
 
 target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES

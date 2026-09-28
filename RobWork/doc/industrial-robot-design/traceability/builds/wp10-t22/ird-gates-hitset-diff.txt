@@ -1,0 +1,2 @@
+36a37
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：ui/src/PropertyInspector.cpp
