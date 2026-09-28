@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "实现应用壳装配收口（T03b：域命令入册、汇聚投影、中央区挂位、策略与名称适配、会话全同步、About 接线）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": [
     "NFR-SEC-04",

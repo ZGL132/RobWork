@@ -1,22 +1,22 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "awaiting_merge",
-  "tickCount": 404,
-  "currentTask": "WP-24-T03",
-  "branch": "wp24-t03",
-  "base": "3f767d9cea5f2ed202b579521c48f22a30ad8d0d",
+  "phase": "idle",
+  "tickCount": 405,
+  "currentTask": null,
+  "branch": null,
+  "base": null,
   "headSha": null,
-  "acceptedHead": "16b6b7188c9cec62d8f017c7bf75d0af486c75fe",
-  "acceptanceRecord": { "branch": "acc/WP-24-T03/3", "path": "traceability/acceptance/WP-24-T03-20260928-r2.md", "commit": "57f12aa3b64e95a8a941ddc7eb973a1e978c9db4" },
+  "acceptedHead": null,
+  "acceptanceRecord": null,
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
     "implement": 0,
-    "fix": 1,
-    "accept": 3
+    "fix": 0,
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-28T12:35:29+08:00",
+    "updatedAt": "2026-09-28T14:36:08+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1997,6 +1997,21 @@
       ],
       "acceptanceRecord": "traceability/acceptance/WP-15-T13-20260927.md",
       "mergedAt": "2026-09-27"
+    },
+    {
+      "task": "WP-24-T03",
+      "unit": "delivery",
+      "result": "pass-merged",
+      "commits": [
+        "4dbca0d8b2a0369b6855cae8ad4ebd3f53806344",
+        "90032ede58018f8fa056554decf19aae68d4a045",
+        "9802e83b7df79ba2911a72ec38e5ba00a1da6a82",
+        "0622446f37c77d5e2048097965adf2ff5b04da50",
+        "16b6b7188c9cec62d8f017c7bf75d0af486c75fe"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-24-T03-20260928-r2.md",
+      "mergedAt": "2026-09-28",
+      "failReason": "T03b 验收 attempt1 fail（G1 GUI 冒烟未执行＋G2 三用例未落，记录 WP-24-T03b-20260928.md @ acc/WP-24-T03/1）与 T03 验收 fail（B-1 装配登记恒败——commandIdWellFormed 拒连字符，记录 WP-24-T03-20260928.md @ acc/WP-24-T03/2）→ 返工 fix=1（0622446f 修复＋16b6b718 全链留痕）→ acc/WP-24-T03/3 pass（-r2 记录 @57f12aa3）；收尾③ findings.json 多线登记击穿 v1.13 计数不变量转 blocked（tick#403），所有者人工解算三线并集（c45ce1b1，PIPE v1.17 固化口径：F-425 收行畸变根因／F-426 任务分支误提交 state.json 根因均入册消账）后续完④~⑦（tick#405 幂等续行，acc/1 的 T03b fail 记录随本收尾逐字转录留档主线以保全门禁 evidencePatterns 匹配）"
     }
   ],
   "policy": {
@@ -2022,11 +2037,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "WP-24-T03",
-      "branch": "wp24-t03",
-      "contractPath": "tasks/foundation/WP-24-T03.json"
-    },
     {
       "taskId": "WP-24-T08",
       "branch": "wp24-t08",
