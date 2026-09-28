@@ -646,3 +646,109 @@ else()
         "not registered (framework-hosted plugin target, integrated tree only; "
         "ui.md §13 UI-T16)")
 endif()
+
+# ---- 正式产品主程序：sdurws_ird_studio（WP-24-T08，SA-18 D1/B1-SPEC §2.1）----
+# 宿主融合形态的正式产品装配路径骨架——industrialrobot/ui 内的独立宿主包装
+# 目标（executable，目标名按 B1-SPEC §2.1 处置表冻结）：产品 main 直接构造
+# rws::RobWorkStudio 主窗口，链接框架 rws 公共库与 Qt；官方组件经框架公开
+# API（addPlugin＋静态插件对象装配）在目标内显式装配。装配协议与开发期通道
+# 完全同源（零新装配语义）：
+#   - plugin/UiPlugin.cpp＋plugin/DomainAssembly.cpp＝WP-24-T03 T03a/T03b
+#     装配基座同 TU 复用（静态白名单八 token 登记＋建模插件挂位＋宿主 Dock
+#     控制器簇＋About 接线）；app/PortAdapters.cpp＋app/DiagnosticsAssembly.cpp
+#     ＝装配层适配器与诊断栈（与 harness/插件同一序列，防漂移的单一权威）。
+#     同源复用采用"同源码编入本目标"形态——sdurws_ird_ui_plugin（MODULE）
+#     仍为开发期动态加载验证通道原样保留（D13，退役归 WP-24-T09），两目标
+#     各自独立编译互不链接（CMake 禁止 executable 链接 MODULE；正式装配清
+#     单不含动态装载调用，SA-01 不变）；
+#   - 装配序列与菜单处置（原生 WorkCell 五动作/最近文件、Plugins 动态装载
+#     入口、File 工具栏移出显示面）见 studio/StudioMain.cpp 文件头；
+#   - 集成树专属：链接框架 sdurws 与四个官方组件静态库（RWS::
+#     sdurws_treeview/jog/playback/log——RWS_USE_STATIC_LINK_PLUGINS=ON 下
+#     为 STATIC；排除判据第二半"框架侧不生成其独立动态插件产物"由此保证），
+#     独立冒烟模式无框架目标——以 if(TARGET sdurws) 判别不注册（同插件
+#     目标口径）；
+#   - AUTOMOC：插件类 Q_OBJECT 经本目标编入（同插件目标口径——仅本目标
+#     显式开启，两种模式下登记形态一致）；
+#   - ird_gates 命中集增量登记（契约 acceptance 6；人工登记册＝DTB §4.5
+#     WP-24-T08 行）：新增边 studio->ui、studio->project、studio->modeling
+#     （SUB 装配层特权边——ui->project/ui->modeling 同款登记模式）＋
+#     新增 R-3 命中×3（产品名形态目标链 Qt6::Core/Gui/Widgets——sdurws_ird_ui
+#     同款既有命中模式；NFR-MNT-01"ui 界面目标"例外类）。基线命中集
+#     （收集态）不变式＝base/branch 归一 diff 仅含本登记清单。
+if(TARGET sdurws)
+    add_executable(sdurws_ird_studio WIN32
+        studio/StudioMain.cpp
+        plugin/UiPlugin.cpp
+        plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
+        app/PortAdapters.cpp
+        app/DiagnosticsAssembly.cpp)
+
+    target_compile_features(sdurws_ird_studio PRIVATE cxx_std_17)
+    set_target_properties(sdurws_ird_studio PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+        AUTOMOC ON)   # 插件类 Q_OBJECT 所需——与 sdurws_ird_ui_plugin 同口径
+    if(MSVC)
+        target_compile_options(sdurws_ird_studio PRIVATE /utf-8)
+    endif()
+
+    # 装配面私有头（plugin/、app/）经 ui 目录根解析——与插件目标同款
+    # PRIVATE include（不外溢消费者）。
+    target_include_directories(sdurws_ird_studio PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR})
+
+    # 链接面（ird_gates 命中集登记面——见上方登记注）：
+    #   - sdurws_ird_ui／sdurws_ird_project／sdurws_ird_modeling_plugin＝
+    #     装配层特权边（ui->ui 自边＋ui->project 宿主集成边＋ui->modeling
+    #     宿主集成边——DTB §4.5 登记模式，与 sdurws_ird_ui_plugin 逐一同构）；
+    #   - sdurws＝框架 RobWorkStudio 库（RobWorkStudioPlugin 基类＋宿主
+    #     主窗口本体——B1-SPEC §2.1"链接框架 rws 公共库"）；
+    #   - sdurws_treeview/sdurws_jog/sdurws_playback/sdurws_log＝宿主官方
+    #     组件静态库（B1-SPEC §2.1 处置表保留四项——静态插件对象装配；
+    #     目标名经 rwstudioapp 同款链接形态验证存在）；
+    #   - Qt 三件套＝产品界面目标（NFR-MNT-01 ui 例外类——宿主包装目标
+    #     本体即界面，命中集增量登记随 DTB §4.5）。
+    target_link_libraries(sdurws_ird_studio PRIVATE
+        sdurws_ird_ui
+        sdurws_ird_project
+        sdurws_ird_modeling_plugin
+        sdurws
+        sdurws_treeview
+        sdurws_jog
+        sdurws_playback
+        sdurws_log
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets)
+
+    # 框架运行时 DLL 就位（框架 RobWorkStudio 目标同款——RobWork 共享库
+    # 面 build/RobWork/bin 复制到 exe 旁；Qt 运行时经 TARGET_RUNTIME_DLLS
+    # 复制（_app 同款）；qt.conf 前缀钉回真实 Qt 安装（UI-T15 修复口径）。
+    add_custom_command(TARGET sdurws_ird_studio POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_BINARY_DIR}/RobWork/bin"
+                "$<TARGET_FILE_DIR:sdurws_ird_studio>"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_RUNTIME_DLLS:sdurws_ird_studio>
+                "$<TARGET_FILE_DIR:sdurws_ird_studio>"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_CURRENT_BINARY_DIR}/studio-qt.conf"
+                "$<TARGET_FILE_DIR:sdurws_ird_studio>/qt.conf"
+        COMMAND_EXPAND_LISTS)
+
+    # qt.conf 生成（configure 期从 Qt6_DIR 推导真实安装前缀——UI-T15
+    # 修复口径同款，详见上方 _app 段注释；构建期生成物不入库）。
+    set(_ird_studio_qt_prefix "${Qt6_DIR}")
+    get_filename_component(_ird_studio_qt_prefix "${_ird_studio_qt_prefix}/../../.." ABSOLUTE)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/studio-qt.conf"
+         "[Paths]\nPrefix=${_ird_studio_qt_prefix}\n")
+else()
+    # 独立冒烟模式：无框架目标——产品目标不注册（集成树专属；冒烟模式
+    # 的目标注册验证面＝ui 库与既有目标，如实登记——与插件目标同口径）。
+    message(STATUS
+        "industrialrobot.ui: standalone smoke mode——sdurws_ird_studio "
+        "not registered (framework-hosted product target, integrated tree "
+        "only; WP-24-T08 / B1-SPEC §2.1)")
+endif()
