@@ -1,0 +1,4 @@
+[migration-smoke] tree rebuild ok=1 nodeCount=0（kinematics v1 恒 0——O-44 诚实边界，非缺陷）
+[migration-smoke] domainKey=kinematics（三接入面注册落位证明）
+[migration-smoke] 下行联动：任务点 P1 选中→面板高亮（任务点页）
+[migration-smoke] Jog 承接：applyHostJointState ok=1（会话姿态已写入——零修订）

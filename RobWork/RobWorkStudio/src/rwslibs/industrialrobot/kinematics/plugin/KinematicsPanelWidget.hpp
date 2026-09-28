@@ -103,6 +103,20 @@ public:
     /// 任务区刷新（L-K12——taskRowsProvider 现取；后台受理/完成回执后调用）。
     void refreshTaskArea();
 
+    /**
+     * @brief 任务点定位/高亮（WP-15-T18 下行联动呈现半区——SelectionAdapter
+     *        消费共享选择服务后的执行器落点；acceptance 4 v1 链路"任务点
+     *        选择→结果面板高亮"的落点）。
+     *
+     * 语义：命中本域任务点消费视图的行锚（KinTaskPointRow.pointOid）＝切
+     * 到任务点页并置当前行（零写回——本表只读）；未命中/nullopt＝清除高
+     * 亮不伪造定位（requirements focusObject 同案）。
+     *
+     * @param oid [in] 目标任务点对象身份（requirements 域对象——消费面；
+     *            nullopt＝清除高亮）
+     */
+    void focusTaskPoint(const std::optional<core::ObjectId>& oid);
+
     /// 最近状态行文本（测试/装配层读取面——非模态反馈的模型半区）。
     QString lastStatusText() const;
 
@@ -171,6 +185,9 @@ private:
     // ---- 容器与状态 ----
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器
     QLabel* m_statusLine = nullptr; ///< 状态行（非模态反馈——UX-03/07）
+    QLabel* m_navDeprecationLabel = nullptr; ///< 自持导航迁移状态标记（WP-15-T18
+                                             ///< ——B1-SPEC §5.2；objectName
+                                             ///< kinematicsNavDeprecationLabel）
 };
 
 /**

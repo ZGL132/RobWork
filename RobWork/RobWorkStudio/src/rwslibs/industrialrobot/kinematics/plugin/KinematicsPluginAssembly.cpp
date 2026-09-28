@@ -63,6 +63,31 @@ void KinematicsPluginAssembly::refreshFromSession()
     }
 }
 
+KinematicsSharedSurfaceHandles KinematicsPluginAssembly::sharedSurfaceProviders()
+{
+    // 转发模块句柄（门面自持结构与模块内结构逐字段同形——转换零语义）。
+    const KinematicsUiModule::SharedSurfaceHandles handles =
+        m_impl != nullptr ? m_impl->sharedSurfaceProviders()
+                          : KinematicsUiModule::SharedSurfaceHandles{};
+    KinematicsSharedSurfaceHandles out;
+    out.treeNodes = handles.treeNodes;
+    out.propertyPages = handles.propertyPages;
+    return out;
+}
+
+void KinematicsPluginAssembly::attachSelectionService(ui::SelectionService& service)
+{
+    if (m_impl != nullptr) {
+        m_impl->attachSelectionService(service);  // 适配器接线（RAII 句柄随模块）
+    }
+}
+
+bool KinematicsPluginAssembly::applyHostJointState(const std::vector<double>& q)
+{
+    // D8/D9 会话姿态承接（零修订结构性保证——模块方法注释为权威语义）。
+    return m_impl != nullptr && m_impl->applyHostJointState(q);
+}
+
 KinematicsPluginAssembly createKinematicsPluginAssembly()
 {
     KinematicsPluginAssembly result;

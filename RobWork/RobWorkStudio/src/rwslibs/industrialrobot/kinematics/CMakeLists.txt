@@ -259,6 +259,8 @@ add_library(sdurws_ird_kinematics_plugin STATIC
     plugin/KinematicsPanelWidget.cpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
     plugin/KinematicsUiModule.hpp      # ui.md §11.2 模块实现（P-KIN-7 对端冻结——正式继承）
     plugin/KinematicsUiModule.cpp
+    plugin/KinHostMigrationProviders.hpp  # 宿主迁移三接入面（WP-15-T18——O-44 v1 诚实边界）
+    plugin/KinHostMigrationProviders.cpp
     plugin/KinematicsPluginAssembly.cpp)  # 装配门面实现（assembly/ 公共头的私有实现）
 set_target_properties(sdurws_ird_kinematics_plugin PROPERTIES
     CXX_STANDARD 17
@@ -388,7 +390,8 @@ add_executable(sdurws_ird_kinematics_test
     test/RecomputeTest.cpp
     test/AnalysisConfigTest.cpp
     test/RenderTest.cpp
-    test/PluginPanelTest.cpp)  # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
+    test/PluginPanelTest.cpp   # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
+    test/HostMigrationTest.cpp)  # T18：宿主迁移三接入面用例（O-44 v1 诚实边界——模型层）
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言
