@@ -154,3 +154,9 @@ build-acc-smoke/
 # 属可随时重建的纯构建产物（PIPE §3.1 构建产物豁免口径期待其被 .gitignore 覆盖）；
 # 既有 `*-smoke/` 规则只匹配以 -smoke 结尾的目录，此处补齐 build-smoke- 前缀形态。
 build-smoke-*/
+
+# 独立冒烟验证下划线形态（build_smoke_<tag>，2026-09-28 治理补齐）
+# 与上行 build-smoke-*/（连字符形态）同族：实际会话中出现了下划线连接的
+# build_smoke_tNN / build_smoke_wpNN-tNN 命名变体，未被上述任一规则覆盖，
+# 28 个目录以未跟踪形态残留（PIPE §3.1 构建产物豁免期待其被 .gitignore 覆盖）。
+build_smoke_*/
