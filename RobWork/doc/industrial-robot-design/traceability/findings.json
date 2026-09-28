@@ -4166,6 +4166,36 @@
       "title": "GUI 测试运行的环境前置未内化：独立构建树的 sdurws_ird_ui_gui_test 启动需要 QT_QPA_PLATFORM=windows＋QT_PLUGIN_PATH=<Qt>/plugins（POST_BUILD 只复制运行时 DLL，不复制 platforms 插件目录）——本任务验收按 F-320 家族既有口径以环境变量手工满足，建议随 gate-all.ps1 的 GUI 步骤统一内化（自动探测 Qt plugins 路径并注入）。",
       "owner": "WP-01 门禁所有者（gate-all.ps1 GUI 步骤增强时消账）",
       "resolution": "编号顺延自 F-418（UI-T19 验收 evidence 分支 acc/UI-T19/1 登记）。"
+},
+    {
+      "id": "F-422",
+      "source": "traceability/acceptance/WP-24-T03-20260928-r2.md 4.6/4.11（attempt 3，2026-09-28）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "PluginUiRegistrar::commandIdWellFormed 实现词形（段内 [a-z0-9-]＋'.' 分段、必含点——拒大写）与 ui.md §7.1 v0.8 在册口径『段字符 [A-Za-z0-9-]＋必含点，段内大小写不强制』字面不一致：壳层 CommandRegistry 与插件 PluginUiRegistrar 两套校验面对同一 CommandId 词形取宽窄不同口径。现役契约面零影响——ui.md §7.2 第 1 步首选措辞『点分小写』与 modeling.md §9.7.3 卡表十条 id 全部满足，且大写拒为 T03a 起既有行为、非本任务引入（attempt 3 判非阻断）；建议治理会话对 §7.1 v0.8 已登记的措辞差与 §7.2 的词形权威做一次澄清登记，实现取窄口径的取舍落档。",
+      "owner": "治理会话（ui.md 词形口径澄清批次裁决；ui 单元所有者协同）",
+      "resolution": "编号顺延自 F-421（WP-24-T03 验收 evidence 分支 acc/WP-24-T03/2 登记）；F-420＝WP-24-T03 送验分支 16b6b718 内登记、F-421＝acc/WP-24-T03/2 登记，本条与两者无编号冲突。"
+    },
+    {
+      "id": "F-423",
+      "source": "traceability/acceptance/WP-24-T03-20260928-r2.md 4.9（attempt 3，2026-09-28）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "WP-24-T03 范围内提交 90032ede（T03b 收口验证修复＋文档同步）正文缺独立『改动原因（Why）』段——AGENTS §6.3 要求四段齐备；该提交理由内嵌于 What 条目（如『继承缺陷修复……与本任务 diff 无关』），内容可读但结构不完整，无粉饰（验证结论与留痕一致）。建议后续提交严守四段结构。",
+      "owner": "实施会话（后续任务提交时自觉执行；review 把关）",
+      "resolution": "编号顺延自 F-422（同分支同批登记）。"
+    },
+    {
+      "id": "F-424",
+      "source": "traceability/acceptance/WP-24-T03-20260928-r2.md 4.10（attempt 3，2026-09-28）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "WP-24-T03 送验冒烟测试矩阵未含 sdurws_ird_ui_gui_test：ird-test-report.json 冒烟面仅 215/158/22/8（GUI 目标只登记集成 40/40，冒烟 GUI 无留痕）——attempt 3 验收已补跑冒烟 GUI 40/40 全绿（QT_QPA_PLATFORM=offscreen 下 5 个窗口类用例环境性失败、windows 平台全绿，复证 F-419 口径），零缺陷引出；建议 DTB §5 或单元卡明确冒烟矩阵是否必含 GUI 目标，避免口径漂移。",
+      "owner": "治理会话（构建验证口径批次裁决）",
+      "resolution": "编号顺延自 F-423（同分支同批登记）。"
     }
   ]
 }
