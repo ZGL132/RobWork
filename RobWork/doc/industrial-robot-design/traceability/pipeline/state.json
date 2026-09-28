@@ -1,10 +1,10 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "idle",
-  "tickCount": 412,
-  "currentTask": null,
-  "branch": null,
-  "base": null,
+  "phase": "blocked",
+  "tickCount": 413,
+  "currentTask": "WP-15-T18",
+  "branch": "wp15-t18",
+  "base": "ae26d543eab051baf04ead980e0bd7316846bdee",
   "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
@@ -16,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T06:00:10+08:00",
+    "updatedAt": "2026-09-29T06:27:25+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -2128,5 +2128,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "f9aa1c2d-cb3f-4b89-9438-6d4797fee13e"
+  "tickToken": "a55c5e7c-70c5-432a-9d39-ffbe42f6d8b5"
 }
