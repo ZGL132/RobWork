@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "正式产品程序骨架（宿主融合形态装配路径）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "RT-T14",
     "WP-24-T03"

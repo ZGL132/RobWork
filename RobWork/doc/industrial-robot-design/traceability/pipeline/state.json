@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 405,
+  "tickCount": 406,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-28T14:36:08+08:00",
+    "updatedAt": "2026-09-28T19:02:30+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -1999,6 +1999,17 @@
       "mergedAt": "2026-09-27"
     },
     {
+      "task": "WP-24-T08",
+      "unit": "delivery",
+      "result": "pass-merged",
+      "commits": [
+        "6dcbd6862b9bd0fbf178f219dd3850a7a850806d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-24-T08-20260928.md",
+      "mergedAt": "2026-09-28",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。ird_gates 命中集增量六条随 DTB §4.5 v0.23 登记（SUB studio->ui/project/modeling＋R-3×3——产品宿主包装目标，base 79→head 85 归一 diff 零意外）；验收段冷启复现新检出 F-428（BUILD_sdurws_pythoneditor 默认 ON 的 python313.dll 部署缺口，open 归治理/打包侧）；收尾⑤按 F-427 口径补录验收自产证据 acc-*×10 并更正记录 4.10 声称行（初始『于送验 SHA 实证』对该 10 件不实）"
+    },
+    {
       "task": "WP-24-T03",
       "unit": "delivery",
       "result": "pass-merged",
@@ -2037,11 +2048,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "WP-24-T08",
-      "branch": "wp24-t08",
-      "contractPath": "tasks/foundation/WP-24-T08.json"
-    },
     {
       "taskId": "UI-T20",
       "branch": "ui-t20",
@@ -2092,5 +2098,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "6580beac-3d8c-4fa2-9b89-1804fd6d71ba"
+  "tickToken": "462e6bf8-4f96-4b08-a2f7-e3778dbcddf8"
 }

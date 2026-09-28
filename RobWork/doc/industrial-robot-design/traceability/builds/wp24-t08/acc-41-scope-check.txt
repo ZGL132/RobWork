@@ -1,0 +1,24 @@
+DIFF_FILE_COUNT=20
+OUTSIDE_COUNT=0
+FORBIDDEN_HITS=0
+PATCHES_FILES=0
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/studio/StudioMain.cpp
+FILE: RobWork/doc/industrial-robot-design/development-task-breakdown.md
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/README.md
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/build_release.log
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/build_smoke.log
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/cmake_config_smoke.log
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/gui-smoke-1-main-window.png
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/gui-smoke-2-file-menu.png
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/gui-smoke-3-plugins-menu.png
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/gui-smoke-4-about-dialog.png
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/gui-smoke-5-palette-filtered.png
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/ird-gates-base-norm.txt
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/ird-gates-base.log
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/ird-gates-head-norm.txt
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/ird-gates-head.log
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/ird-gates-lineuniq-base-norm.txt
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/ird-gates-lineuniq-head-norm.txt
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/ird-gates-增量登记.md
+FILE: RobWork/doc/industrial-robot-design/traceability/builds/wp24-t08/smoke-run/ird-ui-plugin-logs/dev-diagnostics.log
