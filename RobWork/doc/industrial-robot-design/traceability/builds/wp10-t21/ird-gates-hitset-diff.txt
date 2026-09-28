@@ -1,0 +1,12 @@
+1c1
+<   [ird_gates] 依赖红线/补丁门禁存在 79 处命中——按 ARCH
+---
+>   [ird_gates] 依赖红线/补丁门禁存在 80 处命中——按 ARCH
+28a29
+> IRD-GATE-R3: ui 产品面疑似包含 Qt 类头（Q+大写约定）：ui/src/IndustrialProjectTree.cpp
+82,83c83,84
+< 命中 79 项：
+< 扫描根：D:/10_Source_Repos/21_robot/RobWork/build/ird-t21-base-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+---
+> 命中 80 项：
+> 扫描根：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
