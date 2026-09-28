@@ -4319,6 +4319,16 @@
       "title": "F-207/F-231/F-309 家族再现（实施与验收两侧留痕同源）：ird_gates 引擎直跑（cmake -P）与构建期自定义命令的中文留痕在 GBK 代码页重定向下乱码——命中计数与 base↔head 归一化比对不受影响（本验收 81↔81 零新增即基于 ASCII 骨架完成），零行为影响。",
       "owner": "治理/构建约定侧（与 F-336 门禁留痕口径固化合并处置）",
       "resolution": "随 F-336 口径固化一并处理（cmake -P 输出 UTF-8 代码页化或命中消息 ASCII 化），不单独返工。编号顺延自 F-433。"
+    },
+    {
+      "id": "F-435",
+      "source": "WP-14-T10 验收段（acc/WP-14-T10/1，2026-09-29；证据：requirements/plugin/HostMigrationProviders.cpp 页面冻结文案常量〔kPointCommonPageTitle『任务点常用参数』/kPointEditorTitle『任务点编辑』/kRegionDefinitionTitle『区域定义』/kConditionEditorTitle『工况编辑』/kPlanEditorTitle『采样计划编辑』/kImportWizardTitle『CSV/JSON 导入向导』〕＋RequirementsPanelWidget.cpp 自持导航 deprecated 标记文案——经共享检查器/工业项目树呈现的域侧文案未挂 UiText 键系）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "F-430/F-432/F-433 同族在需求域三接入面的再现（共享呈现面冻结文案未挂 UiText 键系）：页面标题与复杂页入口标题与 deprecated 标记以 TU 局部冻结常量承载（文件头注明『文案改动＝契约改动，须升单元卡修订』——对端 UI-T22/modeling 同款惯例），沿『卡面文案单点』过渡先例，与 ui.md §6.6 载体偏差（非语义偏差；域文案归 requirements 单元卡管辖——零哈希/内部名泄漏，UX-02 未破）。",
+      "owner": "requirements（随 P-DIAG-9 批次统一——与 ui 侧 F-430/F-432 及 modeling 侧 F-433 同批挂键）",
+      "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键，不单独返工，不阻塞 WP-14-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-434。"
     }
   ]
 }
