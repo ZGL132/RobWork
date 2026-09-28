@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 406,
+  "tickCount": 407,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-28T19:02:30+08:00",
+    "updatedAt": "2026-09-28T21:26:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -2010,6 +2010,17 @@
       "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。ird_gates 命中集增量六条随 DTB §4.5 v0.23 登记（SUB studio->ui/project/modeling＋R-3×3——产品宿主包装目标，base 79→head 85 归一 diff 零意外）；验收段冷启复现新检出 F-428（BUILD_sdurws_pythoneditor 默认 ON 的 python313.dll 部署缺口，open 归治理/打包侧）；收尾⑤按 F-427 口径补录验收自产证据 acc-*×10 并更正记录 4.10 声称行（初始『于送验 SHA 实证』对该 10 件不实）"
     },
     {
+      "task": "UI-T20",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3bbe831472b0786a4fb871579cb1defdf9a682a4"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T20-20260928.md",
+      "mergedAt": "2026-09-28",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——独立性降级已声明）。ird_gates 引擎直跑 base↔head 归一化 78↔79 恰增 1 条 SUB（ui_contract_test 直链 runtime——O-31 测试面既定形态 UI-T14 同型，登记件 wp10-t20-gate-registrations.md 责任方 WP-01-T03）；验收双破坏实验实证（门禁注入表外边即红＋③d 重建即新身份检查弱化即模型用例红）；验收新登 F-429（detached worktree 冷启集成树第三前置件 RobWorkStudio.ini.template.static——[Bb]in/ ignore 吞掉的未跟踪模板件，F-007 口径未覆盖）；收尾前主工作树曾停留 ui-t20（EX-T06 系风险点），切回 redesign-main 后方执行①~③，零误落"
+    },
+    {
       "task": "WP-24-T03",
       "unit": "delivery",
       "result": "pass-merged",
@@ -2048,11 +2059,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "UI-T20",
-      "branch": "ui-t20",
-      "contractPath": "tasks/foundation/UI-T20.json"
-    },
     {
       "taskId": "UI-T21",
       "branch": "ui-t21",
@@ -2098,5 +2104,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "462e6bf8-4f96-4b08-a2f7-e3778dbcddf8"
+  "tickToken": "4387cfec-180b-49f1-ad8f-6da5a525eda0"
 }

@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "宿主运行时发布桥（已应用 WorkCell 发布/重建/切换编排）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-24-T08"
   ],
