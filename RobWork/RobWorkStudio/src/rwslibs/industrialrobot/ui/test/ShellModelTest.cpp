@@ -44,7 +44,7 @@ using sdurws::ird::ui::ProjectMetadataProjection;
 using sdurws::ird::ui::DraftPresenceProjection;
 
 // =====================================================================
-// 用例组一：ui 稳定诊断码描述符表（§3.5 九码——码值权威面的常驻自证）
+// 用例组一：ui 稳定诊断码描述符表（§3.5 十码——码值权威面的常驻自证）
 // =====================================================================
 
 /**
@@ -53,8 +53,10 @@ using sdurws::ird::ui::DraftPresenceProjection;
  * registerBuiltinCodes 同序装配——描述符一旦违约，L5 装配期即抛）。
  *
  * 验证面：
- *   - 九码（ui.md §3.5 表行数）与内置 87 码共存注册无冲突（前缀表 UI→ui
- *     所有权一致；titleKey/detailKey 全表唯一——NFR-MNT-03）；
+ *   - 十码（ui.md §3.5 表行数；第 10 码 UI-PRESENTATION-REFRESH-FAILED
+ *     随 UI-T20 增量登记——v1.19 九码钉住值的合法扩展）与内置 87 码共存
+ *     注册无冲突（前缀表 UI→ui 所有权一致；titleKey/detailKey 全表唯一
+ *     ——NFR-MNT-03）；
  *   - UI-LAYOUT-RESTORE-FAILED（acceptance 1 依赖码）注册后可查且 Dev
  *     强制属性生效（userVisible=false——Dev 码不入用户目录/报告/历史）；
  *   - manifest 摘要两次计算稳定（DT-REG-1——L5 装配自检的观测面）。
@@ -70,16 +72,16 @@ TEST(ShellModel, UiDiagnosticCodeDescriptors_RegisterContract_UI_T03_ACC1)
     const std::vector<diagnostics::CodeDescriptor> uiCodes =
         ui::uiDiagnosticCodeDescriptors();
 
-    // 行数契约：ui.md §3.5 登记九码（少一行＝登记面缺码；多一行＝私扩）。
-    ASSERT_EQ(uiCodes.size(), std::size_t{9});
+    // 行数契约：ui.md §3.5 登记十码（少一行＝登记面缺码；多一行＝私扩）。
+    ASSERT_EQ(uiCodes.size(), std::size_t{10});
     for (const auto& descriptor : uiCodes) {
         ASSERT_NO_THROW(registry.registerCode(descriptor))
             << "ui 码注册被拒（注册期验证违约）: " << descriptor.code;
     }
 
-    // 全部九码归属 ui（前缀-所有权一致——§4.5 前缀表 UI→ui）。
+    // 全部十码归属 ui（前缀-所有权一致——§4.5 前缀表 UI→ui）。
     const std::vector<std::string> owned = registry.registeredCodes("ui");
-    ASSERT_EQ(owned.size(), std::size_t{9});
+    ASSERT_EQ(owned.size(), std::size_t{10});
 
     // acceptance 1 依赖码：注册可查＋Dev 属性强制（§4.5——Dev 码
     // userVisible/reportable/historical 必为 false）。

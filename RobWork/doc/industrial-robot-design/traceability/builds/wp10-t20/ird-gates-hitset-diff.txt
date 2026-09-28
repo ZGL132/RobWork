@@ -1,0 +1,2 @@
+58a59
+> IRD-GATE-SUB: 测试目标 sdurws_ird_ui_contract_test 直链他单元产品目标 sdurws_ird_runtime（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）

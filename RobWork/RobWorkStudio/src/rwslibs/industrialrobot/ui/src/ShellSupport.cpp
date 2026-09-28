@@ -289,7 +289,7 @@ void LayoutMemory::discard(QSettings& settings)
 }
 
 // =====================================================================
-// uiDiagnosticCodeDescriptors——ui 稳定诊断码表（§3.5 九码）
+// uiDiagnosticCodeDescriptors——ui 稳定诊断码表（§3.5 十码）
 // =====================================================================
 
 namespace {
@@ -302,7 +302,7 @@ struct UiCodeRow {
     diagnostics::RetryKind retryable;          ///< 可重试性（§4.4 动作族机器锚）
 };
 
-/// 九码逐行（行序＝ui.md §3.5 表行序）。分类统一 Internal（§3.5"internal"
+/// 十码逐行（行序＝ui.md §3.5 表行序）。分类统一 Internal（§3.5"internal"
 /// 列——防御性/界面内部事实）；可重试性按 §4.4 动作族机械映射：需要用户
 /// 采取措施后可重试的（改绑/重提交/重试落盘）＝UserRetry，结论/报告类
 /// ＝Never（映射规则同 DiagCodes.cpp 内置表表头登记）。
@@ -334,6 +334,10 @@ constexpr UiCodeRow kUiCodeRows[] = {
     // Qt 平台异常：进程级故障面（PM-17 异常诊断路径；Dev 级）。
     {"UI-QT-PLATFORM-FAULT",     diagnostics::DiagnosticCategory::Internal,
      diagnostics::DiagnosticSeverity::Error,    diagnostics::RetryKind::Never},
+    // 呈现刷新失败（UI-T20）：项目修订已合法产生而宿主呈现未刷新——
+    // 旧画面保留可用，用户重触发该操作即可重试（fix-input 族）。
+    {"UI-PRESENTATION-REFRESH-FAILED", diagnostics::DiagnosticCategory::Internal,
+     diagnostics::DiagnosticSeverity::Error,    diagnostics::RetryKind::UserRetry},
 };
 
 }  // namespace

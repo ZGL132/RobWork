@@ -37,7 +37,7 @@ void assembleDiagnostics(const std::filesystem::path& devlogDir, DiagnosticsStac
 
     // ② 稳定码表：内置 87 码全量收编（§4.6——各单元 PRJ-*/EX-*/… 的码值
     //    权威）＋ui 侧描述符供体（IWorkbenchShell::uiDiagnosticCodeDescriptors
-    //    ——ui.md §3.5 九码），注册全部完成后 seal（装配期单线程约定）。
+    //    ——ui.md §3.5 十码），注册全部完成后 seal（装配期单线程约定）。
     stack.registry = std::make_shared<diagnostics::StableCodeRegistry>();
     diagnostics::registerBuiltinCodes(*stack.registry);
     for (const diagnostics::CodeDescriptor& descriptor :
