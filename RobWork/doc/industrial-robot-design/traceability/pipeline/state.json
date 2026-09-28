@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 411,
+  "tickCount": 412,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,10 +16,21 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T04:21:38+08:00",
+    "updatedAt": "2026-09-29T06:00:10+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "WP-14-T10",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "d84008e39ad5c2e951f2df27031a7f132ed0fd3a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T10-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。验收侧 detached worktree 冷启双模式独立复现（集成六目标含宿主 studio 装配闭包零错误＋冒烟全树零错误；冷启前置件链 F-007/F-429 口径全量消费——vcpkg toolchain〔Boost 随链〕＋Qt 前缀＋ini 模板拷入）＋双变异注入实证测试真实失败能力（域键漂移 2 例红＋上行拾取闭包过滤摘除 1 例红，均 git checkout 精确还原后 HostMigration 16/16 复绿、送验 SHA 零触碰）；ird_gates 引擎直跑 head 82 条 vs base 81 恰增 1 条（requirements_app→requirements_plugin R1 自边——modeling_app 同型 harness 先例，比对附件随留痕提交，登记册回填归 WP-01-T03）；单测 199/199＋契约 11/11＋GUI 冒烟 --auto SMOKE_EXIT=0 全链（deprecated 标记在场/树 4 节点/检查器应答 5 字段/D6 激活 ok/L3 反解/L2 草稿反例）；②③合并零冲突，findings.json 并集例外未触发；验收建议级 F-435（F-430/F-432/F-433 同族在需求域三接入面再现——页面标题/复杂页入口标题/deprecated 标记冻结文案未挂 UiText 键系，随 P-DIAG-9 批次）随 acc/WP-14-T10/1 转登"
+    },
     {
       "task": "WP-13-T20",
       "unit": "modeling",
@@ -2093,11 +2104,6 @@
   },
   "queue": [
     {
-      "taskId": "WP-14-T10",
-      "branch": "wp14-t10",
-      "contractPath": "tasks/foundation/WP-14-T10.json"
-    },
-    {
       "taskId": "WP-15-T18",
       "branch": "wp15-t18",
       "contractPath": "tasks/foundation/WP-15-T18.json"
@@ -2122,5 +2128,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "9599857b-8f82-4e2e-8065-fa310c686466"
+  "tickToken": "f9aa1c2d-cb3f-4b89-9438-6d4797fee13e"
 }

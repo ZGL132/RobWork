@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "需求迁移（项目树/属性检查器/选择联动三接入面）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-13-T20"
   ],
