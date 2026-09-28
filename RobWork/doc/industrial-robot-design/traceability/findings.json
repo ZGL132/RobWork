@@ -4299,6 +4299,26 @@
       "title": "共享属性检查器呈现文案（六态占位＋只读徽标＋复杂编辑节标题＋宿装缺失占位＋未命名标题占位）以冻结常量承载，未挂 UiText 键系——沿 PolicySummaryCard「卡面文案单点」／F-430（工业项目树面板）过渡先例（键冻结值过渡），与 §6.6 载体偏差（非语义偏差，无哈希/内部名泄漏——UX-02 红线未破）。",
       "owner": "ui（随 P-DIAG-9 批次统一）",
       "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键（与 F-430 及既有过渡文案同批），不单独返工。编号顺延自 F-431。"
+    },
+    {
+      "id": "F-433",
+      "source": "WP-13-T20 验收段（acc/WP-13-T20/2，2026-09-29；证据：modeling/plugin/HostMigrationProviders.cpp 四个页面冻结文案常量〔kJointCommonPageTitle『关节常用参数』/kLinkCommonPageTitle『连杆物性（只读）』/kDhPageTitle『DH 参数』/kPropertiesPageTitle『物性编辑』〕＋ModelingPanelWidget.cpp 自持导航 deprecated 标记文案——经共享检查器/工业项目树呈现的域侧文案未挂 UiText 键系）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "F-430/F-432 同族在建模域三接入面的再现（共享呈现面冻结文案未挂 UiText 键系）：页面标题与 deprecated 标记以 TU 局部冻结常量承载（文件头注明『文案改动＝契约改动，须升单元卡修订』——对端 UI-T22 同款惯例），沿『卡面文案单点』过渡先例，与 ui.md §6.6 载体偏差（非语义偏差；域文案归 modeling 单元卡管辖——零哈希/内部名泄漏，UX-02 未破）。",
+      "owner": "modeling（随 P-DIAG-9 批次统一——与 ui 侧 F-430/F-432 同批挂键）",
+      "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键，不单独返工，不阻塞 WP-13-T20 合入（attempt 2 verdict=pass）。编号顺延自 F-432。"
+    },
+    {
+      "id": "F-434",
+      "source": "WP-13-T20 验收段（acc/WP-13-T20/2，2026-09-29；证据：traceability/builds/wp13-t20/wp13-t20-gates-raw.log〔实施件〕与验收复现件 acc-gates-base-r2.log/acc-gates-head-r2.log——ird_gates 中文命中消息经 Windows GBK 控制台代码页重定向后双重编码乱码；ASCII 骨架〔IRD-GATE-xxx 码＋目标名/路径〕完好可读）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "F-207/F-231/F-309 家族再现（实施与验收两侧留痕同源）：ird_gates 引擎直跑（cmake -P）与构建期自定义命令的中文留痕在 GBK 代码页重定向下乱码——命中计数与 base↔head 归一化比对不受影响（本验收 81↔81 零新增即基于 ASCII 骨架完成），零行为影响。",
+      "owner": "治理/构建约定侧（与 F-336 门禁留痕口径固化合并处置）",
+      "resolution": "随 F-336 口径固化一并处理（cmake -P 输出 UTF-8 代码页化或命中消息 ASCII 化），不单独返工。编号顺延自 F-433。"
     }
   ]
 }
