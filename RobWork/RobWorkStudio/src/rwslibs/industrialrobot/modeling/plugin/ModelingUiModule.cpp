@@ -119,6 +119,73 @@ void ModelingUiModule::bindRuntimeNameMap(const runtime::RuntimeNameMap* map)
     recomputeReadiness();
 }
 
+// =====================================================================
+// 宿主迁移三接入面（WP-13-T20——B1-SPEC §5.1；只消费 UI-T21/T22 冻结协议）
+// =====================================================================
+
+ModelingUiModule::SharedSurfaceHandles ModelingUiModule::sharedSurfaceProviders()
+{
+    m_guard.assertOnUiThread();  // §3.4——会话态绑定与面板指针读取（UI 线程）
+
+    // 惰性构造＋缓存（shared_ptr 稳定地址——宿主注册进共享模型后模型持
+    // 强引用，本模块缓存同序；Deps 一次性绑定：工作集现取入口指向会话
+    // 权威工作集〔ACC5 零缓存〕，编辑分流出口与高亮/激活执行器绑定面板
+    // 指针——时序契约见头注"须在 createPanel 之后调用"）。
+    if (!m_treeProvider) {
+        ModelingSharedSurfaceDeps deps;
+        deps.workingSet = [this]() -> ModelingWorkingSet* {
+            return &m_session.draft;  // 会话权威工作集（唯一载体——§3.4）
+        };
+        deps.editSink = m_panel;  // 面板即 IPanelEditSink（L-2 三路分流落点）
+        deps.panelHighlight = [this](const std::optional<core::ObjectId>& oid) {
+            if (m_panel != nullptr) { m_panel->focusObject(oid); }  // 树选→面板高亮
+        };
+        deps.complexPageActivator = [this](const core::ObjectId& oid) {
+            if (m_panel != nullptr) { m_panel->focusObject(oid); }  // D6 域自持打开＝定位目标对象
+        };
+        m_treeProvider = std::make_shared<ModelingTreeNodesProvider>(deps);
+        m_pageProvider = std::make_shared<ModelingPropertyPagesProvider>(deps);
+    }
+    SharedSurfaceHandles handles;
+    handles.treeNodes = m_treeProvider;
+    handles.propertyPages = m_pageProvider;
+    return handles;
+}
+
+void ModelingUiModule::attachSelectionService(ui::SelectionService& service)
+{
+    m_guard.assertOnUiThread();  // §3.4——订阅是 UI 线程交互面
+    if (!m_treeProvider) {
+        sharedSurfaceProviders();  // 适配器与三接入面同 deps——惰性齐备
+    }
+    if (!m_adapter) {
+        // 适配器 Deps 与 Provider 同源（工作集现取＋面板执行器——同一
+        // 装配语义，零第二份绑定面）。
+        ModelingSharedSurfaceDeps deps;
+        deps.workingSet = [this]() -> ModelingWorkingSet* {
+            return &m_session.draft;
+        };
+        deps.panelHighlight = [this](const std::optional<core::ObjectId>& oid) {
+            if (m_panel != nullptr) { m_panel->focusObject(oid); }
+        };
+        m_adapter = std::make_unique<ModelingSelectionAdapter>(std::move(deps));
+    }
+    m_adapter->attach(service);
+}
+
+void ModelingUiModule::detachSelectionService()
+{
+    m_guard.assertOnUiThread();
+    if (m_adapter) { m_adapter->detach(); }
+}
+
+bool ModelingUiModule::reportView3DPick(const core::ObjectId& oid)
+{
+    m_guard.assertOnUiThread();  // §3.4——选中写入口只允许 UI 线程
+    if (!m_adapter) { return false; }  // 未接线＝无上报通道（诚实 false）
+    return m_adapter->reportView3DPick(oid);
+}
+
 void ModelingUiModule::bindPolicyProvider(
     std::function<const policy::EngineeringPolicySet*()> provider)
 {

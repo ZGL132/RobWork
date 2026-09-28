@@ -16,6 +16,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QTabWidget>
+#include <QTreeWidgetItemIterator>
 #include <QVBoxLayout>
 
 #include <sdurws/ird/ui/UiTypes.hpp>  // ui::TextKey（命令标题键——呈现层键解析约定）
@@ -126,6 +127,18 @@ void ModelingPanelWidget::setEditTargetProvider(EditTargetProvider provider)
 
 void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
 {
+    // 自持导航 deprecated 标记（B1-SPEC §5.2——方案 B.1 迁移期双形态并存：
+    // 工业项目树已承接建模导航（WP-13-T20 TreeNodesProvider），本自持树
+    // **标记 deprecated 但保留可用**——迁移期间旧面板可用性零损失
+    // （acceptance 3），删除留待 WP-24-T09 退役任务）。
+    m_navDeprecationLabel = new QLabel(
+        QStringLiteral("自持导航（deprecated）——宿主工业项目树已承接建模导航，本树保留可用"),
+        this);
+    m_navDeprecationLabel->setObjectName(QStringLiteral("ird_modeling_nav_deprecated_marker"));
+    m_navDeprecationLabel->setWordWrap(true);
+    m_navDeprecationLabel->setStyleSheet(QStringLiteral("color: #8a6d3b;"));
+    left->addWidget(m_navDeprecationLabel);
+
     left->addWidget(new QLabel(QStringLiteral("建模结构"), this));
     m_tree = new QTreeWidget(this);
     m_tree->setColumnCount(2);
@@ -257,6 +270,46 @@ void ModelingPanelWidget::setWritable(bool writable)
         m_propertyEditors[i]->setText(rowText(m_propertyRows[i]));
     }
     // 命令按钮使能态在下次 refreshPanel 统一重算（事件驱动——无即时轮询面）。
+}
+
+void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——定位触点同样是会话编辑面
+
+    // 无目标/闭包外对象＝清除高亮的对称收口（多选/清空选中时由适配器
+    // 调用）——仅清会话选中锚，树呈现保持原状（不伪造定位）。
+    if (!oid.has_value()) {
+        if (m_selection.select(std::nullopt)) {
+            m_lastSelected.reset();
+            m_tree->clearSelection();
+            refreshPropertiesFromLastWorkingSet();
+        }
+        return;
+    }
+
+    // 会话选中锚（幂等——重复定位同一对象不重复刷新，防聚焦循环：
+    // SelectionAdapter 回调→focusObject→树选中信号→select 同值＝false）。
+    if (!m_selection.select(oid)) { return; }
+    m_lastSelected = oid;
+
+    // 自持树滚动＋置当前行（行选中信号因会话锚已置而幂等短路——属性区
+    // 投影与选中事件在本函数内显式驱动，L-1 数据流复用零新增路径）。
+    const QString anchor = QString::fromStdString(oid->toCanonical());
+    QTreeWidgetItemIterator it(m_tree);
+    while (*it != nullptr) {
+        if ((*it)->text(kAnchorColumn) == anchor) {
+            m_tree->setCurrentItem(*it);   // 树高亮（选中信号幂等——不回环）
+            m_tree->scrollToItem(*it);     // 树滚动（L-1"反向定位→树滚动"）
+            Q_EMIT selectionChanged(anchor);
+            refreshPropertiesFromLastWorkingSet();
+            return;
+        }
+        ++it;
+    }
+    // 树中无该行（内容漂移——如重建间隙）：属性区仍按锚重投影（选中
+    // 是会话态不依赖树行），树呈现等待下次 refreshPanel。
+    Q_EMIT selectionChanged(anchor);
+    refreshPropertiesFromLastWorkingSet();
 }
 
 // =====================================================================

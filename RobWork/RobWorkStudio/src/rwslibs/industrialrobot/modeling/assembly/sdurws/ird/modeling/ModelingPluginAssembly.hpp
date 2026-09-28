@@ -41,6 +41,9 @@ class RuntimeNameMap;  // 前向声明（bindRuntimeNameMap 入参——⑥端�
 namespace ui {
 class IModuleDraftSource;       // 前向声明（§10.5 模块草稿源——draftSource 返回类型）
 class IUiDomainReadinessSource; // 前向声明（§6.5 汇聚源端口——readinessSource 返回类型）
+class IUiTreeNodesProvider;     // 前向声明（WP-13-T20 树接入面——注册原料类型）
+class IUiPropertyPagesProvider; // 前向声明（WP-13-T20 页面接入面——注册原料类型）
+class SelectionService;         // 前向声明（WP-13-T20 选择服务——适配器接线入参）
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
@@ -131,6 +134,34 @@ struct ModelingPluginAssembly {
     /// 存活期随 module）。const 语义：源接口四方法中两 const 两非 const，
     /// 引用可变性随对象本身，不受本访问器限定。
     ui::IModuleDraftSource& modelingDraftSource() const;
+
+    // ---- WP-13-T20 宿主迁移三接入面（B1-SPEC §5.1——共享面只消费；
+    //      UI-T21/T22 冻结协议的注册原料经本门面出线，消费面零建模私有头
+    //      依赖——R-2 门面纪律延伸）----
+
+    /// 三接入面句柄（树节点供给者＋属性页供给者——宿主注册进
+    /// ui::ProjectTreeModel/ui::PropertyInspectorModel 的原料；选择适配器
+    /// 经 attachSelectionService 独立接线）。
+    struct SharedSurfaceHandles {
+        std::shared_ptr<ui::IUiTreeNodesProvider> treeNodes;        ///< 树接入面
+        std::shared_ptr<ui::IUiPropertyPagesProvider> propertyPages; ///< 页面接入面
+    };
+
+    /**
+     * @brief 取迁移三接入面句柄（转发模块惰性构造缓存——见模块头注：
+     *        须在面板工厂执行后调用，编辑出口/联动执行器绑定面板）。
+     */
+    SharedSurfaceHandles sharedSurfaceProviders() const;
+
+    /// @brief 订阅选择服务（下行"树选→面板高亮"启用——转发模块）。
+    void attachSelectionService(ui::SelectionService& service);
+
+    /// @brief 显式退订选择服务（幂等——转发模块）。
+    void detachSelectionService();
+
+    /// @brief 上报一次本域三维拾取（上行 View3DPick——转发模块；
+    ///        false＝未接线/非本域对象，不出诊断）。
+    bool reportView3DPick(const sdurws::ird::core::ObjectId& oid);
 
     ModelingPluginAssembly();
     ~ModelingPluginAssembly();

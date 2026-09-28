@@ -56,12 +56,16 @@
 #include <sdurws/ird/project/CommandService.hpp>   // project::CommandEnvelope（§8.5 返回值面——登记边）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::DomainReadinessItem（§6.5 汇聚值面）
+#include "HostMigrationProviders.hpp"              // 迁移三接入面（WP-13-T20——同目录私有头）
 
 namespace sdurws {
 namespace ird {
 namespace runtime {
 class RuntimeNameMap;  // 前置声明（bindRuntimeNameMap 入参——完整类型仅 cpp 消费；R-4 零拼装转发面）
 }  // namespace runtime
+namespace ui {
+class SelectionService;  // 前置声明（attachSelectionService 入参——完整类型随 HostMigrationProviders 传递）
+}  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
 
@@ -293,6 +297,46 @@ public:
     void bindPolicyProvider(
         std::function<const policy::EngineeringPolicySet*()> provider);
 
+    // ---- 宿主迁移三接入面（WP-13-T20——B1-SPEC §5.1；只消费 UI-T21/T22
+    //      冻结协议，共享 UI 装配面零改动——PIPE §6.2/§6.3 互斥红线）----
+
+    /**
+     * @brief 迁移三接入面句柄（树节点供给者＋属性页供给者——共享模型的
+     *        注册原料；选择适配器经 attachSelectionService 独立接线）。
+     *
+     * 惰性构造（首次调用创建并缓存——shared_ptr 稳定地址，重复调用返回
+     * 同一实例）。**调用时序**：须在 createPanel 之后调用——Deps 的编辑
+     * 分流出口与高亮/激活执行器绑定面板指针；先于面板调用＝编辑出口缺位
+     * （页面退化为纯呈现）与联动静默跳过的诚实降级形态（不崩溃，但功能
+     * 缺位——装配层按序调用即可）。
+     *
+     * @return 句柄对（shared_ptr——宿主注册进 ui::ProjectTreeModel/
+     *         ui::PropertyInspectorModel，模型持强引用；本模块同持缓存，
+         任一持有序均保证存活期覆盖注册期）
+     */
+    struct SharedSurfaceHandles {
+        std::shared_ptr<ui::IUiTreeNodesProvider> treeNodes;        ///< 树接入面
+        std::shared_ptr<ui::IUiPropertyPagesProvider> propertyPages; ///< 页面接入面
+    };
+    SharedSurfaceHandles sharedSurfaceProviders();
+
+    /**
+     * @brief 订阅选择服务（SelectionAdapter 接线——下行"树选→面板高亮"
+     *        的启用；服务存活期须覆盖订阅期且晚于本模块析构，适配器
+     *        RAII 句柄语义见 HostMigrationProviders.hpp 类注）。
+     */
+    void attachSelectionService(ui::SelectionService& service);
+
+    /// @brief 显式退订选择服务（幂等——未订阅时空操作）。
+    void detachSelectionService();
+
+    /**
+     * @brief 上报一次本域三维拾取（上行——View3DPick 来源汇入选择服务
+     *        唯一写入口；闭包外/无效身份拒绝上报返回 false，不出诊断——
+     *        拾取未命中本域是常态）。
+     */
+    bool reportView3DPick(const core::ObjectId& oid);
+
     // ---- 模块草稿源（T03b-1——ui::IModuleDraftSource 四方法；§10.5）----
 
     /// 模块句柄（ModuleDraftHandle 词表——与 descriptor.pluginId 同 token）。
@@ -344,6 +388,11 @@ private:
     /// 跨线程就绪快照（recomputeReadiness 写/domainReadiness 读——值拷贝
     /// 短临界区；与 m_session.readiness 同源同写点）
     std::optional<ModelReadinessReport> m_readinessSnapshot;
+
+    // ---- 宿主迁移三接入面（惰性构造缓存——shared_ptr 稳定地址）--------
+    std::shared_ptr<ModelingTreeNodesProvider> m_treeProvider;      ///< 树接入面
+    std::shared_ptr<ModelingPropertyPagesProvider> m_pageProvider;  ///< 页面接入面
+    std::unique_ptr<ModelingSelectionAdapter> m_adapter;            ///< 选择适配器
 };
 
 }  // namespace sdurws::ird::modeling
