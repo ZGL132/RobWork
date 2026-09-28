@@ -50,12 +50,12 @@
     "O-43"
   ],
   "acceptance": [
-    "运动学域三接入面落位（消费 UI-T21/T22 冻结的注册协议）：TreeNodesProvider（任务点/结果/分析配置入工业项目树）＋PropertyPagesProvider（常用字段入共享检查器；求解配置/初值策略收口复杂编辑页——D6 分野）＋SelectionAdapter（树选↔结果面板高亮↔三维拾取上报）",
+    "运动学域三接入面落位（消费 UI-T21/T22 冻结的注册协议；接入面 v1 诚实边界——DTB §4.2 O-44 裁决：本域当前无可入树 ObjectId 对象，B1-SPEC §3.1 行 4/5 为前瞻形态）：TreeNodesProvider（结构接缝注册 domainKey=kinematics＋v1 恒空集供给——协议\"可空＝合法常态\"语义；不伪造 ObjectId、不跨域代供任务点/工况/区域〔requirements 域对象，WP-14-T10 已供给〕）＋PropertyPagesProvider（结构接缝注册＋v1 无应答面——commonFieldsPage 恒 nullopt、complexPageEntries 恒空集〔协议合法二态〕；求解配置/初值策略维持 D6 收口域面板高级面板〔WP-15-T10/T12 既有落位〕，不经共享检查器展开）＋SelectionAdapter（下行：树选任务点〔requirements 对象，经选择服务消费〕↔结果面板高亮联动；上行三维拾取上报 v1 无本域业务对象＝诚实不上报）",
     "Jog 面板落位（D8）：关节/笛卡尔点动为会话姿态第一操作入口——操作后零修订、零失效、零缓存写入断言（KIN-06/AT-04 口径沿用既有会话态设施）；设默认 TCP/设备仍走命令端口（WP-15-T08 语义不变）",
     "Playback 面板运动学衔接落位（D9）：TimedStatePath 播放驱动运行时状态呈现与会话姿态，零修订；失败点/薄弱区渲染数据投放唯一 RWStudioView3D（D7——KIN-07 既有口径的宿主形态收口）；完整轨迹动画仍归 trajectory 域（不在本任务）",
-    "迁移链路验收：运动学对象经项目树→检查器→复杂编辑页端到端用例通过；显示单位纯投影语义不变（KIN-12）；Provider 增量面验收（无整体重写；WP-15-T12 插件面板可用性零损失，deprecated 标记非删除）",
+    "迁移链路验收（v1 口径——O-44 裁决收窄）：任务点选择→结果面板高亮→D6 求解配置页经面板直达 端到端用例通过（共享检查器对运动学域无应答呈现 NoProviderAnswer 占位＝协议诚实二态，非缺陷）；显示单位纯投影语义不变（KIN-12）；Provider 增量面验收（无整体重写；WP-15-T12 插件面板可用性零损失，deprecated 标记非删除）",
     "计算/呈现隔离红线（B1-SPEC §4.3 v1.1）：正式 FK/IK/批量验证/覆盖评估只消费 RuntimeSnapshot，不得消费 HostPresentationView；HostPresentationView 仅出现在显示、TreeView 与官方插件（Jog/Playback）衔接路径——验收证据含：公共接口依赖审计＋头文件 include 审计＋测试替身证明计算入口接收 RuntimeSnapshot＋消费路径核查（ird_gates 与契约测试双面承载）",
     "ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp15-t18/；共享 UI 装配面零改动（PIPE §6.2——只消费注册协议）"
   ],
-  "note": "方案 B.1 迁移链第三域（SA-18 D7/D8/D9/D11；B1-SPEC §2/§5；PIPE §6.2 串行迁移链第三棒）。knownPitfalls：P-KIN-7＝黄金值/容差档案对端同步义务延续（迁移不改计算面，若呈现接线触及黄金断言消费按增量同步）；O-43＝宿主融合边界。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=WP-14-T10（串行迁移）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 5：计算只消费 RuntimeSnapshot／呈现只走显示与官方插件衔接的隔离红线＋四类审计证据形态。"
+  "note": "方案 B.1 迁移链第三域（SA-18 D7/D8/D9/D11；B1-SPEC §2/§5；PIPE §6.2 串行迁移链第三棒）。knownPitfalls：P-KIN-7＝黄金值/容差档案对端同步义务延续（迁移不改计算面，若呈现接线触及黄金断言消费按增量同步）；O-43＝宿主融合边界。interUnit=true 判定＝消费 ui 注册协议（跨单元公共接口）。dependsOn=WP-14-T10（串行迁移）。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 5：计算只消费 RuntimeSnapshot／呈现只走显示与官方插件衔接的隔离红线＋四类审计证据形态。〔v1.2 补强 2026-09-29〕tick#413 实施段 blocked 停等后，按所有者\"解决阻塞\"口令裁决出路②（DTB §4.2 O-44 登记，2026-09-29——O-42 同款委托先例）：acceptance 1/4 收窄为接入面 v1 诚实边界——运动学域当前无可入树本域 ObjectId 对象（任务点属 requirements 域已由 WP-14-T10 供给；求解配置用户级无项目对象身份〔AnalysisConfig.hpp 冻结红线〕；结果为 runId 归档工件＋会话对象），TreeNodes/PropertyPages 两面按结构接缝注册＋诚实空供给/无应答，端到端链路改为\"任务点选择→结果面板高亮→D6 求解配置页经面板直达\"；三红线（不伪造 ObjectId／不跨域代供／REQUIREMENTS 零修改）不动，前瞻形态接缝复用留 B1-SPEC 增量修订通道。"
 }
