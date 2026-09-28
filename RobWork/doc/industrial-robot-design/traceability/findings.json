@@ -4249,6 +4249,16 @@
       "owner": "治理会话（本次审核补录）",
       "resolution": "16 件留痕＋run-ui-t18-view.ps1 随本提交补录入库，三条记录主张自此为真；wp24-t03-first 为 WP-24-T03a 验收全新捕获件，与 T03b/T03 正式记录在库留痕（builds/wp24-t03b/、builds/wp24-t03/ 38 件、acc3-host-evidence/ 72 件，git ls-files 实证）不冲突。后续验收端 4.10 核对建议对『入库』字样增 git ls-files 实证步骤。",
       "fixedAt": "2026-09-28"
+    },
+    {
+      "id": "F-428",
+      "source": "WP-24-T08 验收段冷启复现（acc/WP-24-T08/1，2026-09-28；实例证据：验收冷启集成树 acc-build-wp24-t08 首配 BUILD_sdurws_pythoneditor 默认 ON〔框架检测到 PYTHON_EXECUTABLE=D:/software/Miniconda3/python.exe 即默认启用，与主树交付缓存 OFF 不同〕→ sdurws 无条件链 ${PYTHON_LIBRARIES} 使 sdurws_ird_studio.exe 导入 python313.dll → 启动 0xC0000135 即死；两 bin 目录 DLL 集合完全一致、任何 POST_BUILD 均不部署 python DLL）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "冷启集成树检测到系统 Python 时框架 sdurws 库向链接者拖入 python313.dll 导入且无部署面——产品 exe 在该形态冷启树构建后启动即 0xC0000135（主树在册交付缓存 BUILD_sdurws_pythoneditor=OFF 不受影响；本验收按部署侧最小修复复制 Miniconda python313/python3.dll 入 bin 后复现全绿，送验产物源码零触碰）。",
+      "owner": "治理/构建约定侧（DTB §5.1 冷启配置口径增补）＋WP-24-T06 打包任务（安装树 DLL 部署面）",
+      "resolution": "建议双管：①DTB §5.1 冷启配置口径增补 BUILD_sdurws_pythoneditor=OFF 为交付钉值（对齐主树在册缓存）；②WP-24-T06 离线安装包任务核对 python313/python3.dll 的部署需求面。"
     }
   ]
 }
