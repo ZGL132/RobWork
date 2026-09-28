@@ -1,11 +1,15 @@
 /**
  * @file   PluginModuleT03BTest.cpp
  * @brief  建模插件界面模块（ModelingUiModule）T03b 收口测试——域就绪汇聚
- *         源/会话全同步/策略与名称适配的模块级具名自证面。
+ *         源/会话全同步/策略与名称适配的模块级具名自证面；另含插件注册
+ *         端口真链路测试（WP-24-T03 验收 attempt 2 阻断 B-1 返工——
+ *         findings F-421）。
  *
- * 设计依据：契约 tasks/foundation/WP-24-T03.json acceptance 2/3/5/6；
+ * 设计依据：契约 tasks/foundation/WP-24-T03.json acceptance 2/3/5/6/7/8；
  * units/ui.md §6.5（汇聚源端口）、§5.2/§5.4/§6.2（会话全路径同步）、
- * §16.7 v1.18（收口落位登记）；units/modeling.md §9.7.3。
+ * §10.9（registerPluginUi 校验序与装配报告）、§16.7 v1.18（收口落位登
+ * 记）；units/modeling.md §9.7.3（卡表十条域命令 id 词表——真链路用例的
+ * 命令计数权威）。
  *
  * ★ gating 说明（为何本文件整体挂 TARGET sdurw_kinematics 条件——与
  *   ReadinessTest/CommandHandlersTest 同款集成模式专属口径）：被测类型
@@ -30,6 +34,9 @@
 #include <sdurws/ird/core/Identity.hpp>       // core::BranchId/RevisionId/ObjectId（值面）
 #include <sdurws/ird/modeling/Parts.hpp>     // DrivetrainDesign/FrictionEntry（传动编辑夹具）
 #include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory/createDraft＋ModelingChangeRecord
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>  // createModelingPluginAssembly（装配门面——真链路 descriptor 源）
+#include <sdurws/ird/ui/ICommandRegistry.hpp>  // ui::CommandDescriptor 完整类型（拷贝 descriptor 改 id 词形——反例用）
+#include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // ui::createPluginUiRegistrar/RegistrationOutcome（F-421 返工真链路被测面）
 #include <sdurws/ird/ui/IStageNavigationModel.hpp>  // ui::StageNavigationModelDeps/createStageNavigationModel（§6.5 汇聚出口）
 #include <sdurws/ird/ui/UiPorts.hpp>          // ui::IUiStageGate（汇聚模型必注入端口——桩实现于本文件）
 #include "plugin/ModelingUiModule.hpp"        // 被测模块（同单元私有头）
@@ -382,4 +389,101 @@ TEST(PluginPanelT03B, StageSnapshotParityAndEditReflection_WP24_T03B)
             EXPECT_EQ(keys[i], directKeys[i]) << "键 " << i << " 不同";
         }
     }
+}
+
+// =====================================================================
+// WP-24-T03 返工（验收 attempt 2 阻断 B-1——findings F-421）：插件注册
+// 端口（IPluginUiRegistrar）真链路验证面。此前 registrar 真链路零测试
+// 覆盖，句法校验字符集缺 '-' 致 modeling 真实描述符（modeling.md §9.7.3
+// 卡表十条 id 全含连字符）装配登记恒 InvalidDescriptor——报告恒空、
+// 关于框恒白名单占位行（acceptance 7 真实装配事实呈现面失效）。本节以
+// 真实装配产物直通 registerPluginUi 钉住 Ok＋报告计数（机制级自证，
+// acceptance 8 的 GUI 实证补强由验收段裁量）。
+// =====================================================================
+
+/**
+ * 真链路正例（F-421 返工清单②，acceptance 7/8）：createPluginUiRegistrar
+ * （白名单八 token）× createModelingPluginAssembly（真实 descriptor，门面
+ * 现产无缓存）→ registerPluginUi 返回 Ok，装配报告恰一行且 ok=1/
+ * panels=1/commands=10（§10.9 后置条件；命令计数权威＝modeling.md
+ * §9.7.3 卡表十条全量）。修复前该链路恒 InvalidDescriptor，本用例即
+ * 回归钉（破坏字符集修复即可观测变红）。
+ */
+TEST(PluginRegistrarT03B, RealChainModelingDescriptorOkTenCommands_WP24_T03B)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-04", "UX-14"}, {}, std::nullopt);
+
+    // 白名单八 token（§11.1 冻结词表——与 ui/plugin/DomainAssembly.cpp
+    // 的 kPluginWhitelist 同值同序；测试自建同值面，登记顺序不受影响——
+    // 单插件登记只依赖"modeling 在白名单内"这一事实）。
+    auto registrar = ui::createPluginUiRegistrar(
+        {"modeling", "requirements", "kinematics", "trajectory",
+         "dynamics", "selection", "optimization", "workflow"});
+
+    // 真实装配产物（每次调用全新实例——与宿主装配层消费同一门面入口，
+    // 零测试特化构造＝"真链路"含义所在）。
+    auto assembly = modeling::createModelingPluginAssembly();
+
+    // 前置①：卡表十条全量在 descriptor（词表权威 modeling.md §9.7.3）。
+    // 计数漂移应在此显式失败，而不是被下游计数断言含混吞掉。
+    ASSERT_EQ(assembly.descriptor.commands.size(), std::size_t{10});
+    // 前置②：十条 id 全含连字符（F-421 缺陷的触发词形）——修复后必须
+    // 全数通过句法校验；逐一显式断言使词形回归一望可知。
+    for (const ui::CommandDescriptor& command : assembly.descriptor.commands) {
+        EXPECT_NE(command.id.find('-'), std::string::npos)
+            << "卡表命令 " << command.id << " 不含连字符（词表漂移？）";
+    }
+
+    // 真链路登记（§10.9 校验序①白名单→②重复→③描述符合法性全过＝Ok）。
+    // 修复前此处恒 InvalidDescriptor（字符集拒连字符）——缺陷回归点。
+    EXPECT_EQ(registrar->registerPluginUi(assembly.descriptor, *assembly.module),
+              ui::RegistrationOutcome::Ok);
+
+    // 装配报告（§10.9 后置条件——关于框 UX-14 的取数面）：恰一行 modeling
+    // 且 ok=1/panels=1/commands=10（验收记录 B-1 返工清单②的具名断言形）。
+    const auto reports = registrar->assemblyReports();
+    ASSERT_EQ(reports.size(), std::size_t{1});
+    EXPECT_EQ(reports.front().pluginId, "modeling");
+    EXPECT_TRUE(reports.front().ok);
+    EXPECT_EQ(reports.front().panelsLoaded, std::size_t{1});
+    EXPECT_EQ(reports.front().commandsRegistered, std::size_t{10});
+}
+
+/**
+ * 句法边界反例（F-421 返工清单①的行为面钉，acceptance 8）：同一真实
+ * descriptor 仅改命令 id 词形——大写违约被拒（InvalidDescriptor）且失败
+ * 不入列（§11.3 失败隔离——报告只累计 Ok 行）、连字符合法词原样放行
+ * （Ok）——拒/收翻转只由词形变化引起，直钉 commandIdWellFormed 字符集
+ * 修复点（段内 [a-z0-9-]＋'.' 分段；词形权威＝ui.md §7.1 冻结表 v0.8
+ * 登记口径"点分段＋段字符 [A-Za-z0-9-]＋必含点"）。
+ */
+TEST(PluginRegistrarT03B, CommandIdSyntaxRejectsUppercaseAcceptsHyphen_WP24_T03B)
+{
+    IRD_TEST_INFO("NFR-SEC-04", {}, std::nullopt);
+
+    auto assembly = modeling::createModelingPluginAssembly();
+    // 单 token 白名单（被测面只是句法校验——白名单收窄到被测插件，排除
+    // 无关 token 的干扰读取）。
+    auto registrar = ui::createPluginUiRegistrar({"modeling"});
+
+    // 反例半区：首条命令 id 改全大写（句法违约——含非 [a-z0-9-] 字符）。
+    // descriptor 为值拷贝（§10.9"拷贝入列——调用方可即弃"语义的正向
+    // 消费），原 descriptor 不被污染（正例半区依赖其原样）。
+    {
+        auto bad = assembly.descriptor;
+        bad.commands.front().id = "MODELING.IMPORT-URDF";
+        EXPECT_EQ(registrar->registerPluginUi(bad, *assembly.module),
+                  ui::RegistrationOutcome::InvalidDescriptor)
+            << "大写 id 未被句法校验拒绝（字符集面失守）";
+        // 失败行不入列（§11.3——报告只累计 Ok 行）：报告保持为空，
+        // 关于框不得因失败登记出现半真半假的装配事实行。
+        EXPECT_TRUE(registrar->assemblyReports().empty())
+            << "失败登记不应产生装配报告行";
+    }
+    // 正例半区：原词（含连字符）原样登记→Ok。同一 registrar 复用——
+    // 反例未入列故"每插件恰好一次"（§11.1）计数未被失败行占用，此处
+    // 不得误判 DuplicatePlugin。
+    EXPECT_EQ(registrar->registerPluginUi(assembly.descriptor, *assembly.module),
+              ui::RegistrationOutcome::Ok);
+    ASSERT_EQ(registrar->assemblyReports().size(), std::size_t{1});
 }

@@ -1283,7 +1283,7 @@ void WorkbenchContentImpl::submitCommand(const std::string& commandId)
     }
     // 拒绝反馈（§7.4"禁用＋说明"）：未注册与不可执行分别呈现——诊断条目
     // （工厂注入时）已由注册表出线，此处是即时可见性补偿。
-    // （WP-24_T03B 注：处理器级"域流程未装配"的诚实反馈由处理器自身经
+    // （WP-24-T03B 注：处理器级"域流程未装配"的诚实反馈由处理器自身经
     //   宿主状态栏出线——§10.3 注册表在处理器返回后强制 accepted=true，
     //   该路径不走本通用拒绝分支，避免原因文案被通用只读/无项目覆盖。）
     const CommandAvailability a = m_commands->availability(commandId);
