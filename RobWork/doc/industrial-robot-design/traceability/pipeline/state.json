@@ -16,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T04:20:30+08:00",
+    "updatedAt": "2026-09-29T04:21:38+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -29,7 +29,7 @@
       ],
       "acceptanceRecord": "traceability/acceptance/WP-13-T20-20260929.md",
       "mergedAt": "2026-09-29",
-      "failReason": "验收 attempt1＝派发会话中断零产出（02:19:32 派发、租约 03:14:32 到期无 verdict、无 evidence 分支、无记录——零返工 fix 保持 0；§2『租约到期按重启上限重新开始当前角色』与 §4.2『默认不自动重派验收』口径张力按 §0 单会话模式最新规则＋IO-T07/UI-T11 先例处置：tick#411 重启验收角色为 attempt 2 并在 tick 报告注明）；attempt2 全量冷启重跑 pass（acc/WP-13-T20/2 @ af4e8a85：冷启双模式独立复现——集成六目标含宿主 studio 装配闭包 exit 0＋冒烟 SMOKE_EXIT=0；gtest 282/282＋contract 17/17＋冒烟 224/224＋ctest 2/2＋validate-docs PASS；双变异注入实证——域键漂移 4 例 9 断言红＋限位单侧语义 1 例红，均 git checkout 精确还原后 HostMigration* 10/10 复绿、送验 SHA 零触碰；ird_gates 引擎直跑 base↔head 归一化 81↔81 双向零新增）；实施会话中断遗留未提交 acc-*.log 九件已作无归属产物删除，收尾③后另检出同源僵尸管线尾段补写五件（03:39~03:40 时间戳、纯日志重定向无 git 操作、零干扰）一并删除；tick#411 开局主工作树曾停留 wp13-t20（EX-T06 系风险点），切回 redesign-main 后方执行守卫与收尾（零误落）；验收建议级 F-433（建模域冻结文案未挂 UiText 键系——F-430/F-432 同族随 P-DIAG-9 批次）／F-434（gates 留痕乱码族再现——F-207/F-231/F-309 家族随 F-336 口径）随 acc/WP-13-T20/2 转登；收尾①双漂移检测零漂移、②③合并零冲突（findings.json 并集例外未触发）、验收自产证据 19 件按 F-427 口径随本治理提交补录（.log/.ps1 计 git add -f）"
+      "failReason": "验收 attempt1＝派发会话中断零产出（02:19:32 派发、租约 03:14:32 到期无 verdict、无 evidence 分支、无记录——零返工 fix 保持 0；§2『租约到期按重启上限重新开始当前角色』与 §4.2『默认不自动重派验收』口径张力按 §0 单会话模式最新规则＋IO-T07/UI-T11 先例处置：tick#411 重启验收角色为 attempt 2 并在 tick 报告注明）；attempt2 全量冷启重跑 pass（acc/WP-13-T20/2 @ af4e8a85：冷启双模式独立复现——集成六目标含宿主 studio 装配闭包 exit 0＋冒烟 SMOKE_EXIT=0；gtest 282/282＋contract 17/17＋冒烟 224/224＋ctest 2/2＋validate-docs PASS；双变异注入实证——域键漂移 4 例 9 断言红＋限位单侧语义 1 例红，均 git checkout 精确还原后 HostMigration* 10/10 复绿、送验 SHA 零触碰；ird_gates 引擎直跑 base↔head 归一化 81↔81 双向零新增）；实施会话中断遗留未提交 acc-*.log 九件已作无归属产物删除，收尾③后另检出同源僵尸管线尾段补写五件（03:39~03:40 时间戳、纯日志重定向无 git 操作、零干扰）一并删除；tick#411 开局主工作树曾停留 wp13-t20（EX-T06 系风险点），切回 redesign-main 后方执行守卫与收尾（零误落）；验收建议级 F-433（建模域冻结文案未挂 UiText 键系——F-430/F-432 同族随 P-DIAG-9 批次）／F-434（gates 留痕乱码族再现——F-207/F-231/F-309 家族随 F-336 口径）随 acc/WP-13-T20/2 转登；收尾①双漂移检测零漂移、②③合并零冲突（findings.json 并集例外未触发）、验收自产证据 19 件按 F-427 口径随本治理提交补录（.log/.ps1 计 git add -f）；收尾⑥补充检出：中断会话的验证管线僵尸进程已于 03:44 自行完成 attempt 1 全套验收并推送孤儿 evidence 分支 acc/WP-13-T20/1（e22bac97，verdict=pass＋F-433 同族同判〔与本 attempt 2 各自独立得出，其 findings 撞号因该分支未合并而未触主线〕）——分支未合并不入主线、留置所有者处置（UI-T11 孤儿分支先例口径），其两个 worktree 已清理"
     },
     {
       "task": "UI-T22",
