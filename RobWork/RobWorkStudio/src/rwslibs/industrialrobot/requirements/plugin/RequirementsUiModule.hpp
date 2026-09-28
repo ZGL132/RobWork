@@ -54,8 +54,17 @@
 #include <sdurws/ird/ui/IDraftController.hpp>      // ui::IModuleDraftSource（P-REQ-4 冻结面——UI-T12）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::DomainReadinessItem（§6.5 汇聚值面）
+#include "HostMigrationProviders.hpp"              // 迁移三接入面（WP-14-T10——同目录私有头）
 #include "PanelCommandCatalog.hpp"                 // requirementsReadinessProjection（§11.2 数据面——同目录私有头）
 #include "PanelRefresh.hpp"                        // PanelUiThreadGuard（§3.4 线程守卫——零 Qt，同目录私有头）
+
+namespace sdurws {
+namespace ird {
+namespace ui {
+class SelectionService;  // 前置声明（attachSelectionService 入参——完整类型随 HostMigrationProviders 传递）
+}  // namespace ui
+}  // namespace ird
+}  // namespace sdurws
 
 namespace sdurws::ird::requirements {
 
@@ -186,12 +195,61 @@ public:
     /// 编辑器访问（草稿源/面板流程共用——非 owning；未注入＝nullopt）。
     IRequirementEditor* editor() const noexcept { return m_editor; }
 
+    // ---- 宿主迁移三接入面（WP-14-T10——B1-SPEC §5.1；只消费 UI-T21/T22
+    //      冻结协议，共享 UI 装配面零改动——PIPE §6.2/§6.3 互斥红线）----
+
+    /**
+     * @brief 迁移三接入面句柄（树节点供给者＋属性页供给者——共享模型的
+     *        注册原料；选择适配器经 attachSelectionService 独立接线）。
+     *
+     * 惰性构造（首次调用创建并缓存——shared_ptr 稳定地址，重复调用返回
+     * 同一实例）。**调用时序**：须在 attachPanel 之后调用——Deps 的编辑
+     * 分流出口与高亮/激活执行器绑定面板指针；先于面板调用＝编辑出口缺位
+     * （页面退化为纯呈现）与联动静默跳过的诚实降级形态（不崩溃，但功能
+     * 缺位——装配层按序调用即可）。
+     *
+     * @return 句柄对（shared_ptr——宿主注册进 ui::ProjectTreeModel/
+     *         ui::PropertyInspectorModel，模型持强引用；本模块同持缓存，
+     *         任一持有序均保证存活期覆盖注册期）
+     */
+    struct SharedSurfaceHandles {
+        std::shared_ptr<ui::IUiTreeNodesProvider> treeNodes;        ///< 树接入面
+        std::shared_ptr<ui::IUiPropertyPagesProvider> propertyPages; ///< 页面接入面
+    };
+    SharedSurfaceHandles sharedSurfaceProviders();
+
+    /**
+     * @brief 订阅选择服务（SelectionAdapter 接线——下行"树选→面板高亮"
+     *        的启用；服务存活期须覆盖订阅期且晚于本模块析构，适配器
+     *        RAII 句柄语义见 HostMigrationProviders.hpp 类注）。
+     */
+    void attachSelectionService(ui::SelectionService& service);
+
+    /// @brief 显式退订选择服务（幂等——未订阅时空操作）。
+    void detachSelectionService();
+
+    /**
+     * @brief 上报一次本域三维拾取（上行——View3DPick 来源汇入选择服务
+     *        唯一写入口；闭包外/无效身份拒绝上报返回 false，不出诊断——
+     *        拾取未命中本域是常态）。
+     *
+     * @param oid [in] 拾取命中的对象身份
+     * @return true＝已上报（服务已广播）；false＝未接线/闭包外/无效身份
+     */
+    bool reportView3DPick(const core::ObjectId& oid);
+
 private:
     PanelUiThreadGuard m_guard;  ///< §3.4 UI 线程守卫（构造线程绑定）
     RequirementsModuleSessionState m_session;  ///< 会话权威态（装配层更新）
     RequirementsPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
     IRequirementEditor* m_editor = nullptr;      ///< 编辑器引用（非 owning——工作集权威）
     ui::IWorkbenchShell* m_shell = nullptr;      ///< 壳门面引用（非 owning——§10.9 生命周期）
+
+    // 迁移三接入面缓存（惰性构造——shared_ptr 稳定地址；适配器 unique_ptr
+    // 随模块生命周期）。
+    std::shared_ptr<ui::IUiTreeNodesProvider> m_treeProvider;        ///< 树接入面缓存
+    std::shared_ptr<ui::IUiPropertyPagesProvider> m_pageProvider;    ///< 页面接入面缓存
+    std::unique_ptr<RequirementsSelectionAdapter> m_adapter;         ///< 选择适配器缓存
 };
 
 // =====================================================================

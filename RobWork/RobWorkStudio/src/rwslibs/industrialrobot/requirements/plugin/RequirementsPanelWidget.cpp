@@ -175,6 +175,17 @@ void RequirementsPanelWidget::buildTreePane(QWidget* left)
 {
     // 左栏需求对象树（卡 §9.8 面板表第 1 行——两列：显示名＋隐藏锚）。
     auto* leftLayout = new QVBoxLayout(left);
+
+    // 自持导航 deprecated 标记（WP-14-T10——B1-SPEC §5.2 迁移期双形态
+    // 并存：共享工业项目树已承载本域导航，自持树标记 deprecated 但保留
+    // 可用，删除归 WP-24-T09；objectName 供 GUI 验证定位）。
+    m_navDeprecationLabel = new QLabel(left);
+    m_navDeprecationLabel->setObjectName("requirementsNavDeprecationLabel");
+    m_navDeprecationLabel->setWordWrap(true);
+    m_navDeprecationLabel->setText(
+        QStringLiteral("本域自持导航已迁移共享工业项目树（deprecated——保留可用，退役归 WP-24-T09）"));
+    leftLayout->addWidget(m_navDeprecationLabel);
+
     m_tree = makeTable(left, QStringList() << "需求对象");
     connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
@@ -288,6 +299,50 @@ void RequirementsPanelWidget::setWritable(bool writable)
         renderRegionPage(ws);
         renderConditionPage(ws);
     }
+}
+
+void RequirementsPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——选中态是会话对象（UI 线程）
+
+    // 无目标（多选/清空选中）或闭包外身份＝仅清除：会话选中锚置空（幂等
+    // ——重复清除不抖动），树清当前行。不伪造定位（闭包外对象在本域
+    // 自持树中无行——renderTree 只承载工作集条目）。
+    if (!oid.has_value()) {
+        if (m_selection.select(std::nullopt)) {
+            m_lastSelected.reset();
+            m_tree->clearSelection();
+            m_tree->setCurrentItem(nullptr);
+        }
+        return;
+    }
+
+    // 自持树滚动定位：线性扫描顶层行锚（renderTree 行序＝投影序——与
+    // treeRowIndexFor 同一线性语义；需求树无嵌套行）。命中＝置当前行
+    // （触发行选中→onTreeSelectionChanged→检查器重投影——L-R1 既有数据
+    // 流复用，零新增刷新路径）；未命中＝清除选中（对象已删除/他路编辑
+    // 后的漂移——不伪造定位）。
+    const QString anchorText = QString::fromStdString(oid.value().toCanonical());
+    QTreeWidgetItem* target = nullptr;
+    for (int i = 0; i < m_tree->topLevelItemCount(); ++i) {
+        if (m_tree->topLevelItem(i)->text(kAnchorColumn) == anchorText) {
+            target = m_tree->topLevelItem(i);
+            break;
+        }
+    }
+    if (target == nullptr) {
+        if (m_selection.select(std::nullopt)) {
+            m_lastSelected.reset();
+            m_tree->clearSelection();
+            m_tree->setCurrentItem(nullptr);
+        }
+        return;
+    }
+    // setCurrentItem 触发 itemSelectionChanged→onTreeSelectionChanged→
+    // select(anchor)——会话态与检查器刷新走既有单一路径；scrollToItem
+    // 保证可视（定位是呈现动作）。
+    m_tree->scrollToItem(target, QAbstractItemView::EnsureVisible);
+    m_tree->setCurrentItem(target);
 }
 
 // =====================================================================

@@ -152,6 +152,11 @@ constexpr const char* kEdgeUnits[] = {
  * dynamics/drivetrain/selection/optimization＝R-1 面；平台单元 runtime/
  * execution/reporting＝SUB 面——runtime 边未登记，卡 §3.2"仅在实际
  * include 其公共值类型时登记"）即构建图越界。
+ *
+ * ★ harness 增量（WP-14-T10；modeling §14.6 登记同款——owner 指示
+ *   2026-09-26 的 _app 形态先例）：sdurws_ird_requirements_app＝开发验证
+ *   harness（modeling sdurws_ird_modeling_app 同款）——迁移链任务 GUI
+ *   冒烟留痕载体，链接面仅本单元 _plugin 目标（同单元引用，零新跨单元边）。
  */
 TEST(ReqBuildGraph, UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2)
 {
@@ -161,13 +166,14 @@ TEST(ReqBuildGraph, UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：五条登记边＋本单元四目标（产品/插件/测试/契约测试——
-    // _plugin 随 WP-14-T08 落位，卡 §3.1/§3.2 原文）＋sdurws_ird_ui
-    // （T08 插件链接面——仅插件目标，行级钉住见 NoBusinessUnitOrExtra
-    // PlatformEdge）＋sdurws_ird_testkit（报告设施——T-1 允许形态＝仅
-    // 测试目标可链，产品目标由 NoTestkitEdge 钉住）。
+    // 白名单：五条登记边＋本单元五目标（产品/插件/两测试/harness app——
+    // _plugin 随 WP-14-T08 落位、_app 随 WP-14-T10 落位，均卡面/约定原文）
+    // ＋sdurws_ird_ui（T08 插件链接面——仅插件目标，行级钉住见
+    // NoBusinessUnitOrExtra PlatformEdge）＋sdurws_ird_testkit（报告设施
+    // ——T-1 允许形态＝仅测试目标可链，产品目标由 NoTestkitEdge 钉住）。
     std::set<std::string> allowed = {"sdurws_ird_requirements",
                                      "sdurws_ird_requirements_plugin",
+                                     "sdurws_ird_requirements_app",
                                      "sdurws_ird_requirements_test",
                                      "sdurws_ird_requirements_contract_test",
                                      "sdurws_ird_ui",
