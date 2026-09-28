@@ -4299,6 +4299,16 @@
       "title": "共享属性检查器呈现文案（六态占位＋只读徽标＋复杂编辑节标题＋宿装缺失占位＋未命名标题占位）以冻结常量承载，未挂 UiText 键系——沿 PolicySummaryCard「卡面文案单点」／F-430（工业项目树面板）过渡先例（键冻结值过渡），与 §6.6 载体偏差（非语义偏差，无哈希/内部名泄漏——UX-02 红线未破）。",
       "owner": "ui（随 P-DIAG-9 批次统一）",
       "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键（与 F-430 及既有过渡文案同批），不单独返工。编号顺延自 F-431。"
+    },
+    {
+      "id": "F-433",
+      "source": "WP-13-T20 验收段（acc/WP-13-T20/1，2026-09-29；证据：modeling/plugin/HostMigrationProviders.hpp/.cpp 页面冻结文案常量〔kJointCommonPageTitle=关节常用参数/kLinkCommonPageTitle=连杆物性（只读）/kDhPageTitle=DH 参数/kPropertiesPageTitle=物性编辑〕＋ModelingPanelWidget deprecated 导航标记文案——建模域检查器页呈现面未挂 UiText 键系）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "建模迁移检查器页冻结文案（关节常用参数／连杆物性（只读）／DH 参数／物性编辑）与自持导航 deprecated 标记文案以 TU 局部常量承载，未挂 UiText 键系——沿 PolicySummaryCard「卡面文案单点」／F-430（工业项目树面板）／F-432（共享属性检查器）同族过渡先例（键冻结值过渡），与 §6.6 载体偏差（非语义偏差，无哈希/内部名泄漏——UX-02 红线未破）。",
+      "owner": "ui（随 P-DIAG-9 批次统一）",
+      "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键（与 F-430/F-432 同批），不单独返工。编号顺延自 F-432。"
     }
   ]
 }
