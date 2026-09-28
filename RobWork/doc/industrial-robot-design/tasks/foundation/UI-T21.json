@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "工业项目树和选择服务（双树业务侧＋选择联动 L1~L3）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T20"
   ],

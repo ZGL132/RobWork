@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 407,
+  "tickCount": 408,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,10 +16,21 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-28T21:26:00+08:00",
+    "updatedAt": "2026-09-28T23:10:10+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T21",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "c34596ce164a3f04a6abc5e98c106e6e32b0a045"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T21-20260928.md",
+      "mergedAt": "2026-09-28",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。验收侧 detached worktree 冷启双模式独立复现（集成七目标零错误＋冒烟全树零错误；F-429 第三前置件模板验收侧独立补拷）＋双变异注入实证测试真实失败能力（INV-B4 Clear 用例红＋重建拒绝词表断言红，均已精确还原）；验收建议级 F-430（项目树面板文案未挂 UiText 键系——过渡先例载体偏差，随 P-DIAG-9 批次）随 acc/UI-T21/1 转登 findings.json；ird_gates base↔head 归一化 92↔93 恰增 1 条 R3（NFR-MNT-01 ui 例外类既定形态，登记件 wp10-t21-gate-registrations.md）；findings 并集例外未触发（②③合并零冲突）"
+    },
     {
       "task": "RT-T14",
       "unit": "runtime",
@@ -2060,11 +2071,6 @@
   },
   "queue": [
     {
-      "taskId": "UI-T21",
-      "branch": "ui-t21",
-      "contractPath": "tasks/foundation/UI-T21.json"
-    },
-    {
       "taskId": "UI-T22",
       "branch": "ui-t22",
       "contractPath": "tasks/foundation/UI-T22.json"
@@ -2104,5 +2110,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "4387cfec-180b-49f1-ad8f-6da5a525eda0"
+  "tickToken": "b8724ca6-b9b8-437f-bb7b-7686f7cefd61"
 }
