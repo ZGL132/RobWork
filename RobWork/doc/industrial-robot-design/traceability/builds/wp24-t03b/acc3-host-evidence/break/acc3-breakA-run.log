@@ -1,0 +1,42 @@
+Note: Google Test filter = PluginRegistrarT03B.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from PluginRegistrarT03B
+[ RUN      ] PluginRegistrarT03B.RealChainModelingDescriptorOkTenCommands_WP24_T03B
+D:\tmp_acc_wp24t03_r2\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(440): error: Expected equality of these values:
+  registrar->registerPluginUi(assembly.descriptor, *assembly.module)
+    Which is: 4-byte object <03-00 00-00>
+  ui::RegistrationOutcome::Ok
+    Which is: 4-byte object <00-00 00-00>
+
+D:\tmp_acc_wp24t03_r2\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(445): error: Expected equality of these values:
+  reports.size()
+    Which is: 0
+  std::size_t{1}
+    Which is: 1
+
+[  FAILED  ] PluginRegistrarT03B.RealChainModelingDescriptorOkTenCommands_WP24_T03B (0 ms)
+[ RUN      ] PluginRegistrarT03B.CommandIdSyntaxRejectsUppercaseAcceptsHyphen_WP24_T03B
+D:\tmp_acc_wp24t03_r2\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(487): error: Expected equality of these values:
+  registrar->registerPluginUi(assembly.descriptor, *assembly.module)
+    Which is: 4-byte object <03-00 00-00>
+  ui::RegistrationOutcome::Ok
+    Which is: 4-byte object <00-00 00-00>
+
+D:\tmp_acc_wp24t03_r2\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(488): error: Expected equality of these values:
+  registrar->assemblyReports().size()
+    Which is: 0
+  std::size_t{1}
+    Which is: 1
+
+[  FAILED  ] PluginRegistrarT03B.CommandIdSyntaxRejectsUppercaseAcceptsHyphen_WP24_T03B (0 ms)
+[----------] 2 tests from PluginRegistrarT03B (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] PluginRegistrarT03B.RealChainModelingDescriptorOkTenCommands_WP24_T03B
+[  FAILED  ] PluginRegistrarT03B.CommandIdSyntaxRejectsUppercaseAcceptsHyphen_WP24_T03B
+
+ 2 FAILED TESTS

@@ -1,0 +1,7 @@
+[31;1mConvertFrom-Json: [0mD:\tmp_acc_wp24t03_r2\wtA\RobWork\scripts\industrialrobot\validate-task.ps1:58[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  58 | [0m   $j = Get-Content $_.FullName -Raw -Encoding UTF8 | [36;1mConvertFrom-Json[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m                                                      ~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1m´Ó JSON ×ª»»Ê§°Ü£¬³öÏÖ´íÎó: After parsing a value an unexpected character was encountered: Æä. Path 'note', line 63,[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m[31;1m[36;1m     | [31;1mposition 903.[0m
+validate-task: PASS (1 tasks)

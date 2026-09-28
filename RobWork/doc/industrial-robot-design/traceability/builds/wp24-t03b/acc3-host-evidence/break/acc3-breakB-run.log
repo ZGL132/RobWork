@@ -1,0 +1,21 @@
+Note: Google Test filter = *DomainReadinessSourceParity*:*StageSnapshotParity*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from PluginPanelT03B
+[ RUN      ] PluginPanelT03B.DomainReadinessSourceParity_WP24_T03B
+D:\tmp_acc_wp24t03_r2\wtA\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp(129): error: Value of: module.domainReadiness(ui::StageId::Kinematics).empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] PluginPanelT03B.DomainReadinessSourceParity_WP24_T03B (0 ms)
+[ RUN      ] PluginPanelT03B.StageSnapshotParityAndEditReflection_WP24_T03B
+[       OK ] PluginPanelT03B.StageSnapshotParityAndEditReflection_WP24_T03B (0 ms)
+[----------] 2 tests from PluginPanelT03B (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] PluginPanelT03B.DomainReadinessSourceParity_WP24_T03B
+
+ 1 FAILED TEST
