@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "共享属性检查器和复杂编辑区（D5/D6 分野与域页面注册协议）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T21"
   ],

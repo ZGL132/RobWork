@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 408,
+  "tickCount": 409,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -9,17 +9,28 @@
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
-  "run": null,
+    "run": null,
   "attempts": {
     "implement": 0,
     "fix": 0,
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-28T23:10:10+08:00",
+    "updatedAt": "2026-09-29T01:09:10+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T22",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "9c33ffd369c2de39e7daccfab328103908550e7c"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T22-20260928.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。验收侧 detached worktree 冷启双模式独立复现（集成七目标零错误＋冒烟全树零错误）＋双变异注入实证测试真实失败能力（分野哨兵 16→17 红＋runtimeOnly 零触碰摘除红，均精确还原后全绿）；ird_gates base↔head 归一化 87↔88 恰增 1 条 R3（NFR-MNT-01 ui 例外类既定形态，登记件 wp10-t22-gate-registrations.md）；验收建议级 F-431（CMakeLists AUTOMOC 注释计数第四次沿袭——F-273/F-275/F-277 家族）／F-432（共享检查器冻结文案未挂 UiText 键系——F-430 同族随 P-DIAG-9 批次）随 acc/UI-T22/1 转登 findings.json；收尾编排事故实录：②首度合并误落于被实施工作树检出的 ui-t22（EX-T06 系风险点再次实际触发——『Switched to redesign-main』确认实为 cwd 停留 evidence worktree 时该 worktree 的分支切换），当即恢复：evidence worktree 脱离 redesign-main 占用、主树切回、ui-t22 指针复位回冻结尖端 9c33ffd3，误落合并提交 ce632655 未推送且复位后不可达零残留，②③ 于 redesign-main 重做干净（23c79431/2e03197f）；另环境注记：pipeline-lock 在 evidence worktree 内因自检根误解析误报 no-lock，真实锁全程健在零接管"
+    },
     {
       "task": "UI-T21",
       "unit": "ui",
@@ -2071,11 +2082,6 @@
   },
   "queue": [
     {
-      "taskId": "UI-T22",
-      "branch": "ui-t22",
-      "contractPath": "tasks/foundation/UI-T22.json"
-    },
-    {
       "taskId": "WP-13-T20",
       "branch": "wp13-t20",
       "contractPath": "tasks/foundation/WP-13-T20.json"
@@ -2110,5 +2116,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "b8724ca6-b9b8-437f-bb7b-7686f7cefd61"
+  "tickToken": "2dfc0f39-14de-4f41-ac96-457254906362"
 }
