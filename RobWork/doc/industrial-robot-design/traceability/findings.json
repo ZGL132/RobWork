@@ -4269,6 +4269,16 @@
       "title": "验收/冷启 detached worktree 的全新集成树配置前置在 F-007 口径（vcpkg toolchain＋Qt prefix）之外还有第三件：RobWorkStudio/bin/RobWorkStudio.ini.template.static——未跟踪＋被 ignore 的 configure 模板件，worktree 检出必缺、缺件即 configure_file 报错终止；主树工作区因手工持有该件而掩盖缺口（F-007/F-323 均未覆盖此件）。",
       "owner": "治理/构建约定侧（acceptance-protocol §3 冷启复现清单或 DTB §5.1 增补该模板件的补拷步骤）",
       "resolution": "建议二选一：①acceptance-protocol §3 冷启复现清单固化『从主树补拷 RobWorkStudio.ini.template.static』步骤（与 F-007 的 toolchain/Qt 前置并列登记）；②评估将该模板件转 git 跟踪（注意其为框架 bin 产物——SA-02 评估归治理侧，倾向清单方案）。"
+    },
+    {
+      "id": "F-430",
+      "source": "UI-T21 验收段（acc/UI-T21/1，2026-09-28；证据：IndustrialProjectTree.cpp groupLabel()/kUnnamedNodeLabel 局部常量 vs units/ui.md §6.6 '界面文本经 UiText::resolve'）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "工业项目树面板呈现文案（五分组标题＋未命名占位）以 TU 局部常量承载，未挂 UiText 键系——沿 PolicySummaryCard '卡面文案单点'过渡先例（键冻结值过渡），与 §6.6 载体偏差（非语义偏差，无哈希/内部名泄漏——UX-02 红线未破）。",
+      "owner": "ui（随下一 ui 触碰窗口顺带）",
+      "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键（与既有过渡文案同批），不单独返工。"
     }
   ]
 }
