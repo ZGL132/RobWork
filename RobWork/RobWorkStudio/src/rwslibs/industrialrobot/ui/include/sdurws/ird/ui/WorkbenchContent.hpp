@@ -50,6 +50,7 @@
 
 #include <sdurws/ird/ui/ICommandRegistry.hpp>   // ui::ICommandRegistry::CommandHandler（会话入口覆写载体）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>    // ui::ShellWiring/WorkbenchRegion/ShellCommandAvailability/RecentProjectEntry（§10.1 冻结词表——本头零新词表）
+#include <sdurws/ird/ui/UiTypes.hpp>            // ui::StageId（§4.1 阶段面板页挂位词表——WP-24-T03b）
 
 class QSize;      // 前置声明：notifyHostResized 入参（消费者按需自含）
 class QString;    // 前置声明：标题文本观察回调入参
@@ -154,6 +155,33 @@ struct WorkbenchContentDeps {
     /// 占位说明处理器，harness 形态不变。覆写只换处理器，描述符/谓词/
     /// 门控零变化——同上方三覆写的既有模式）。
     std::optional<ICommandRegistry::CommandHandler> applyDraftHandler;
+
+    // ---- 域装配面（WP-24-T03b 收口——§7.2 域命令入册＋§4.1 中央区挂位）----
+
+    /// 命令 owner 白名单扩展（§7.2 第 1 步"ui 内部设施名＋各白名单插件 id"
+    /// 的插件 id 半区——域命令经 ICommandRegistry 注册的前置；装配层给出
+    /// 已装配域的 pluginId 词表，空＝无域命令注册场景）。
+    std::vector<std::string> extraCommandOwners;
+
+    /// 域命令登记项（§7.2 第二段——插件命令随装配入册：描述符＋处理器；
+    /// build 的命令设施装配段在 seal 前逐条 registerCommand，冲突规则/
+    /// 可用性门控全在注册表。装配期一次——SA-01 无运行期注册通道）。
+    struct DomainCommandEntry {
+        CommandDescriptor descriptor;              ///< 命令描述符（§10.9 冻结形状）
+        ICommandRegistry::CommandHandler handler;  ///< 处理器（UI 线程启动）
+    };
+    std::vector<DomainCommandEntry> domainCommandEntries;
+
+    /// 阶段面板页（§4.1 中央工作区行——CentralAreaHost 按 StageId 挂位的
+    /// 装配面：每项在中央栈追加一页，经 showStagePanel 切换激活）。工厂
+    /// 在 build 的 UI 线程现调；嵌入式宿主形态可缺省（面板归宿主侧 Dock
+    /// 承载——O-38 ③三维让位，登记 WP-24-T03b 双形态边界）。
+    struct StagePanelPage {
+        ui::StageId stage;                       ///< 挂位阶段（StageId 词表）
+        std::string titleKey;                    ///< 页标题文案键（§3.5 键约定）
+        std::function<QWidget*()> factory;       ///< 面板工厂（build 期 UI 线程现调）
+    };
+    std::vector<StagePanelPage> stagePanelPages;
 };
 
 // =====================================================================
@@ -303,6 +331,15 @@ public:
 
     /// @brief 查询壳层命令可用性（语义同 IWorkbenchShell::commandAvailability）。
     virtual ShellCommandAvailability commandAvailability(const std::string& commandId) const = 0;
+
+    /**
+     * @brief 激活阶段面板页（§4.1 中央工作区行——CentralAreaHost 换激活
+     *        面板；WP-24-T03b 增量）。切换中央栈到 stage 对应的阶段页
+     *        （stagePanelPages 装配面）；未登记该阶段＝Dev 日志留痕无操作
+     *        （不虚构面板存在——§11.3 缺位语义）。项目关闭的上下文刷新
+     *        会自动回到首页（阶段页是项目态呈现面）。
+     */
+    virtual void showStagePanel(ui::StageId stage) = 0;
 
     /**
      * @brief 提交壳层命令（§4.2 路由红线/§7.7 统一提交路径——宿主层菜单/

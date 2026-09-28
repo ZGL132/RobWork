@@ -35,31 +35,46 @@ namespace ird {
 namespace ui {
 
 class IPluginUiRegistrar;
-class IModuleDraftSource;  // 前向声明（modelingDraftSource 返回类型——§10.5）
+class IModuleDraftSource;   // 前向声明（modelingDraftSource 返回类型——§10.5）
+class IUiAboutDataSource;   // 前向声明（bundleAboutSource 返回类型——§11.4）
 
 /// 域插件装配产物（bundle——宿主插件持有，模块存活至壳拆除＝§10.9 前置）。
 struct DomainPluginAssembly {
+    /// 析构（cpp 定义——aboutSource 的删除器实例化需要 IUiAboutDataSource
+    /// 完整类型，out-of-line 让本头保持前置声明即可包含）。
+    ~DomainPluginAssembly();
     std::unique_ptr<class IPluginUiRegistrar> registrar;  ///< 注册端口（登记报告查询面）
     modeling::ModelingPluginAssembly modeling;            ///< 建模装配产物（首版唯一域——按值持有）
+    std::unique_ptr<class IUiAboutDataSource> aboutSource;  ///< 关于框数据源（惰性构造——bundleAboutSource）
 };
 
 /**
- * @brief 执行域插件首版装配（initialize 装配期恰调一次）。
+ * @brief 执行域插件装配（WP-24-T03b 收口形态——initialize 装配期恰调一次）。
  *
  * 步骤：创建注册端口（白名单八 token）→创建建模装配产物（门面）→
- * UiText 文案解析绑定→命令提交出口绑定（宿主状态栏反馈）→会话种子→
- * registerPluginUi→报告行输出。
+ * UiText 文案解析绑定→会话种子→registerPluginUi→报告行输出。
+ * （收口变更：首版的"命令提交出口→状态栏受理反馈"桩退役——域命令的
+ * 提交路由改由宿主接 content 命令注册表 §7.2 完成，见 UiPlugin。）
  *
  * @param pluginDock [in] 宿主插件本体 Dock（面板 Dock 的父对象——窗口树托管）
- * @param statusFeedback [in] 命令受理反馈通道（宿主状态栏瞬态消息——首版
- *                        提交出口的可见落点；域执行面随收口任务接线）
  * @param reportLines [out] 装配报告行（宿主日志/状态栏呈现——Dev 通道）
  * @return 装配产物（宿主插件持有；登记失败时 registrar 仍在——报告可查）
  */
 std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
     QDockWidget& pluginDock,
-    std::function<void(const std::string&)> statusFeedback,
     std::vector<std::string>& reportLines);
+
+/**
+ * @brief 取关于框数据源（§11.4 IUiAboutDataSource 的装配报告半区实装——
+ *        registrar.assemblyReports() 现取现拼〔ACC5 零缓存〕，关于框每次
+ *        打开现取；versionBaseline 半区恒 available=false〔WP-24-T01 基线
+ *        已落盘但呈现值源未接线——版本区保持"未装载"占位，不虚构〕）。
+ *
+ * @param bundle [in,out] 装配产物（适配器惰性构造入 bundle——宿主持有至
+ *                壳拆除，存活期覆盖返回指针的使用期）
+ * @return 数据源指针（非 owning——bundle 内部适配器，随 bundle 存活）
+ */
+ui::IUiAboutDataSource* bundleAboutSource(DomainPluginAssembly& bundle);
 
 /**
  * @brief 取建模面板（bundle 内工厂现调——宿主 Dock setWidget 挂位）。

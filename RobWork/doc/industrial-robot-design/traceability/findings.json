@@ -4166,7 +4166,27 @@
       "title": "GUI 测试运行的环境前置未内化：独立构建树的 sdurws_ird_ui_gui_test 启动需要 QT_QPA_PLATFORM=windows＋QT_PLUGIN_PATH=<Qt>/plugins（POST_BUILD 只复制运行时 DLL，不复制 platforms 插件目录）——本任务验收按 F-320 家族既有口径以环境变量手工满足，建议随 gate-all.ps1 的 GUI 步骤统一内化（自动探测 Qt plugins 路径并注入）。",
       "owner": "WP-01 门禁所有者（gate-all.ps1 GUI 步骤增强时消账）",
       "resolution": "编号顺延自 F-418（UI-T19 验收 evidence 分支 acc/UI-T19/1 登记）。"
-},
+    },
+    {
+      "id": "F-420",
+      "source": "WP-24-T03 续接实施段（attempt 2，2026-09-28）：独立 worktree 冷启集成构建实测（traceability/builds/wp24-t03b/ird-gates-comparison.md §四）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "框架模拟插件冷构建环境漂移：主检出 RobWork/RobWork/cmake 下未跟踪（gitignore）的构建支撑文件（RobWorkSetup.cmake 等 75 文件）为旧时代状态，全新配置（冷启树/worktree）下 RobWorkSim 的 RWSimulatorPlugin、bt_plugin〔sdurwsim_bullet 子系统〕、sdurwsim_gui 三目标因 min/max 宏（NOMINMAX 未注入）编译失败；主检出存量 build/ 树的对应 vcxproj 为旧配置产物（含 NOMINMAX）故增量构建不暴露。与本任务 diff 无关（RobWorkSim 子树 base..head 零差异、forbiddenFiles 未触碰）。续接段处置＝框架自带配置项排除三目标（BUILD_RWSimulatorPlugin/BUILD_sdurwsim_bullet/BUILD_sdurwsim_gui=OFF，与 industrialrobot 零依赖零门禁影响，命中集 base..head 三套计数一致为直接证据）。建议治理会话裁决：①刷新主检出的未跟踪 cmake 支撑文件至当前脚本兼容态，或②将三目标的排除口径登记为冷启构建约定。",
+      "owner": "治理会话（构建环境治理批次裁决；CM 所有者协同）",
+      "resolution": "编号顺延自 F-419（UI-T19 验收 evidence 分支登记）。"
+    },
+    {
+      "id": "F-421",
+      "source": "WP-24-T03 验收 attempt 1（记录 traceability/acceptance/WP-24-T03-20260928.md @ acc/WP-24-T03/2，2026-09-28）——验收者 GUI 冒烟亲手补做实证（真宿主 --rwsplugin 直载 console 留痕 'domain assembly: modeling outcome=3' 在场＋ACC-PROBE 探针逐命令判定 wellFormed=0 ×10；证据 builds/wp24-t03b/acc-host-evidence/acc-run1-console.log、acc-run5-probe-console.log）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-09-28",
+      "title": "PluginUiRegistrar::commandIdWellFormed 句法字符集（[a-z0-9.]）拒绝连字符 '-'，而 modeling.md §9.7.3 卡表十条域命令 id 全部含连字符（modeling.new-from-template / import-urdf / import-xacro / switch-authority / estimate-properties / generate-placeholder-geometry / diff-baseline / export-package / import-package / reset-home-zero——契约明文词表），致真宿主装配 registerPluginUi 对建模描述符恒返回 InvalidDescriptor（§11.3 失败隔离）：PluginAssemblyReport 恒不入列→assemblyReports() 恒空→IRD 关于框真机恒呈现白名单占位行（acceptance 7『关于框清单 modeling 行呈现真实装配事实』的真机呈现面失效）＋§10.9 后置条件（Ok：能力入关于页数据源）真机恒不满足。该缺陷为 T03a 首版装配遗留（base..head 对 PluginUiRegistrar.cpp 零触碰、同输入同输出），T03a/T03b 两轮均漏检——根因＝registrar 真链路（createModelingPluginAssembly→registerPluginUi→Ok 断言）零测试覆盖＋GUI 冒烟 console 留痕无人工判读。修复建议：①commandIdWellFormed 字符集放行 '-'（卡表词表即权威；注释自述『只拦截空/大写/空白』与实现不符一并修正）；②补真链路 gtest 一条（registerPluginUi(真实 modeling descriptor)→EXPECT Ok＋报告 ok=1/panels=1/commands=10——消账零覆盖缺口）；③修复后复录 GUI 冒烟关于框真实清单（WP-24-T03 验收 fail 阻断 B-1 的返工输入）。顺带面：WorkbenchContent.cpp 域命令注册段注释任务号拼写 'WP-24_T03B'（下划线）随手订正。",
+      "owner": "WP-24-T03 实施者（返工批修复）＋WP-13-T15 交付物所有者（卡表 id 词表与句法校验的契约面裁决）",
+      "resolution": "编号顺延自 F-420（编号占用说明：F-420 已由送验分支 wp24-t03 的 findings.json 本次 diff 增行登记〔框架模拟插件冷构建漂移〕；本条基于 redesign-main@fecdf104 现况 max=F-419 顺延登记取 F-421，中位缺号 F-420 随该分支合入补齐——两号唯一不冲突）。"
+    },
     {
       "id": "F-422",
       "source": "traceability/acceptance/WP-24-T03-20260928-r2.md 4.6/4.11（attempt 3，2026-09-28）",

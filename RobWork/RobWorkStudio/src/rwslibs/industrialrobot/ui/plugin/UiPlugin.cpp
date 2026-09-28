@@ -55,6 +55,7 @@
 #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（buildDraftCommand 调用面）
+#include <sdurws/ird/ui/UiText.hpp>              // ui::resolveText（§3.5 唯一文案出口——域命令诚实反馈文案）
 
 #include <filesystem>
 #include <iostream>
@@ -76,6 +77,57 @@ namespace {
 /// 开发日志目录名（相对当前工作目录——开发期通道形态；与 harness 的
 /// ird-harness-logs 同型不同名，两类通道的留痕互不混写）。
 constexpr const char* kPluginLogDirName = "ird-ui-plugin-logs";
+
+/// 域命令处理器级拒绝的诚实反馈键（§3.5 键约定——UiText 键族①b 收口增行；
+/// content submitCommand 对 outcome.messageKey 的呈现值源）。
+constexpr const char* kModelingFlowNotAssembledKey = "cmd.modeling.flow-not-assembled";
+
+/// 真实执行面已落位的域命令（WP-24-T03b 诚实边界—— modeling §9.7.3 十条
+/// 中唯一具备域内已落位能力的命令：模板工厂重种子；其余九条的域流程归
+/// 后续建模任务，提交走"域流程未装配"诚实反馈，不虚构执行成功）。
+constexpr const char* kModelingNewFromTemplateId = "modeling.new-from-template";
+
+/**
+ * @brief 修订事件桥（WP-24-T03b——§5.2/§6.2 会话事件全同步的宿主半区）。
+ *
+ * store 对端在修订提交时向总线 publish RevisionCommitted（撤销/重做/其他
+ * 会话入口与 draft.apply 同源）；本桥把事件转达建模模块（基线前移＋就绪
+ * 重算）。分支过滤在模块侧（非目标分支的事件不触碰锚——跨分支修订不
+ * 污染编辑基线）。publish 发生在命令提交线程（开发通道＝UI 线程），模块
+ * 的 UI 线程断言因此成立；其他线程来源出现时须经 postToUiThread marshal
+ * （登记 ui.md §16.7 收口行的并发边界注）。
+ */
+class DomainRevisionEventBridge final : public core::IDomainEventSink {
+public:
+    /// @param domains [in] 建模装配门面（非 owning——插件存活期覆盖）
+    /// @param devLog [in] Dev 出线通道（可空＝静默）
+    explicit DomainRevisionEventBridge(modeling::ModelingPluginAssembly* domains,
+                                       std::function<void(const std::string&)> devLog)
+        : m_domains(domains)
+        , m_devLog(std::move(devLog))
+    {
+    }
+
+    void onEvent(const core::DomainEvent& event) override
+    {
+        if (event.kind != core::DomainEventKind::RevisionCommitted) {
+            return;  // 只消费修订提交事件（其余三类无模块同步语义）
+        }
+        const core::RevisionCommittedPayload& payload = event.asRevisionCommitted();
+        if (m_domains != nullptr) {
+            m_domains->onRevisionCommitted(payload.branch, payload.revision);
+        }
+        if (m_devLog) {
+            m_devLog("revision-committed -> modeling baseline advance: branch="
+                     + payload.branch.toCanonical()
+                     + " rev=" + payload.revision.toCanonical());
+        }
+    }
+
+private:
+    modeling::ModelingPluginAssembly* m_domains;  ///< 建模门面（非 owning）
+    std::function<void(const std::string&)> m_devLog;  ///< Dev 出线（可空）
+};
 
 /// Dev 日志通道 token（diagnostics.md §7.2 LogChannel ≤48 字符；对齐
 /// "diag/<单元>" 命名族——Dev 级事实的唯一出线通道 §6.2）。
@@ -262,22 +314,53 @@ void IrdWorkbenchHostPlugin::initialize()
     reportLine("诊断栈就绪（开发日志目录：" + devlogDir.u8string() + "）");
 
     // ---- 装配第二步：端口适配器（O-31 装配层特权边——复用 harness 形态）----
-    // 会话生命周期端口占位形态与 harness 逐一同型：策略未装载（C-10）、
-    // 名称不可解析（C-11）、关于框数据占位（§11.4）——零虚构语义。
+    // 会话生命周期端口形态与 harness 逐一同型：策略未装载（C-10）、名称
+    // 不可解析（C-11）——零虚构语义。关于框数据源收口起为装配报告实装
+    // （bundleAboutSource——§11.4，HarnessAboutSource 占位退役）。
     m_policySource = std::make_shared<app::UnloadedPolicySource>();
     m_nameResolver = std::make_shared<app::NullUiNameResolver>();
-    m_aboutSource = std::make_shared<app::HarnessAboutSource>();
     m_bridge = std::make_shared<app::ProjectDiagnosticsBridge>(
         m_diag.catalog, m_diag.factory, m_diag.pipeline);
+    // 域事件总线（WP-24-T03b 收口）：修订提交事件面——store 打开请求挂接
+    // ＋宿主订阅转达域模块（撤销/重做等非 apply 路径的会话同步由此达成，
+    // 不引入第二套事件机制——core 事件总线是唯一机制）。
+    m_eventBus = std::make_shared<core::ReferenceEventBus>();
     // 打开工厂＝捕获包装（UI-T17）包住对端翻译适配器：包装只透传并捕获
     // 成功绑定集（草稿写半区端口来源），对端翻译语义零改动。
     // T03b-2：成功打开回调同步保存强类型适配器（apply 网关取命令端口）。
+    // T03b 收口：适配器挂接事件总线（打开请求转交对端——修订事件出线）。
     auto storeBundle = std::make_shared<BundleCapturingStoreFactory>(
-        std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge),
+        std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge, m_eventBus.get()),
         [this](std::shared_ptr<app::StorePortAdapter> adapter) {
             m_lastStoreAdapter = std::move(adapter);
         });
     m_storeFactory = storeBundle;
+
+    // ---- 装配第三步：域插件装配（WP-24-T03b 前移——content 装配依赖
+    //      域产物：关于框数据源/owner 白名单/域命令登记项均出自 bundle）。
+    //      命令提交路由（面板按钮→content 注册表 §7.2）在 content 就位后
+    //      绑定（initialize 下文）。〕
+    {
+        std::vector<std::string> domainReportLines;
+        m_domains = assembleDomainPlugins(*this, domainReportLines);
+        for (const std::string& line : domainReportLines) {
+            reportLine(line);
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel, line);
+            }
+        }
+        // 修订事件订阅（桥持建模门面指针——插件存活期覆盖订阅期）。
+        if (m_domains != nullptr) {
+            m_revisionSink = std::make_unique<DomainRevisionEventBridge>(
+                &m_domains->modeling,
+                [this](const std::string& message) {
+                    if (m_diag.pipeline) {
+                        m_diag.pipeline->logDev(kPluginDevChannel, message);
+                    }
+                });
+            m_revisionSubscription = m_eventBus->subscribe(*m_revisionSink);
+        }
+    }
 
     // ---- 会话控制器（§5 状态机——依赖就位后延迟构造，一次性注入依赖包；
     //      打开编排的推进面，与 HarnessMain 逐行同源）----
@@ -290,10 +373,13 @@ void IrdWorkbenchHostPlugin::initialize()
     // 门控的单一数据源；控制器在打开成功/关闭完成时回调，UI 线程）。
     // UI-T17 增量：上下文清空（项目关闭完成）时同步解绑草稿控制器会话
     // （§8.6 表处置——模块表/局部栈清空，磁盘草稿零触碰）。
+    // T03b 收口增量：域模块会话同步挂钩（项目在位＝锚定 tip；无项目＝
+    // 会话脱离——§5.2/§5.4/§6.2 全路径的宿主转发面）。
     sessionDeps.presentContext = [this](const ui::ProjectContextProjection& context) {
         if (!context.project.has_value() && m_draft && m_draft->hasSession()) {
             m_draft->unbindSession();
         }
+        syncDomainModulesToContext(context);
         if (m_content) {
             m_content->presentProjectContext(context);
         }
@@ -316,17 +402,76 @@ void IrdWorkbenchHostPlugin::initialize()
     // ---- 草稿链装配（UI-T17——§8：执行器＋控制器；保存链路真实）----
     assembleDraftChain();
 
-    // ---- 装配第三步：内容装配面（与 harness 共用的同一装配面——O-38 ②；
+    // ---- 装配第四步：内容装配面（与 harness 共用的同一装配面——O-38 ②；
     //      嵌入式 Dock 宿主形态＋会话入口覆写＝本插件的两处宿主差异）----
     WorkbenchContentDeps contentDeps;
-    contentDeps.wiring.eventBus = nullptr;  // 显式声明：无事件消费场景（同 harness v0.1 口径）
+    // 域事件总线（WP-24-T03b 收口——非空接通；§10.1 可空成员的显式声明
+    // 纪律改为"已接通"事实声明）。
+    contentDeps.wiring.eventBus = m_eventBus;
     contentDeps.wiring.diagSink = m_diag.catalog;
     contentDeps.wiring.redaction = m_diag.redaction;
     contentDeps.wiring.devLog = m_diag.pipeline;  // Dev 码唯一出线（diagnostics §6.2）
     contentDeps.wiring.diagFactory = m_diag.factory;
     contentDeps.wiring.policySource = m_policySource;
     contentDeps.wiring.nameResolver = m_nameResolver;
-    contentDeps.wiring.aboutSource = m_aboutSource;
+    // 关于框数据源（WP-24-T03b 收口——装配报告实装：registrar 现取现拼，
+    // §11.4；HarnessAboutSource 占位退役）。非持有 shared_ptr（空删除器——
+    // 所有权在 bundle 的 unique_ptr，宿主持有 bundle 至壳拆除，双删除面
+    // 在此切断）。
+    contentDeps.wiring.aboutSource.reset(
+        bundleAboutSource(*m_domains),
+        [](ui::IUiAboutDataSource*) {});
+    // 域装配面（WP-24-T03b——§7.2 域命令入册的 owner 白名单＋登记项）：
+    // owner＝"modeling"（descriptor.pluginId）；十条域命令 seal 前入册，
+    // 冲突规则/可用性门控全在注册表（本插件零判定——PA-1）。
+    contentDeps.extraCommandOwners.push_back(
+        m_domains->modeling.descriptor.pluginId);
+    for (const CommandDescriptor& desc : m_domains->modeling.descriptor.commands) {
+        WorkbenchContentDeps::DomainCommandEntry entry;
+        entry.descriptor = desc;
+        if (desc.id == kModelingNewFromTemplateId) {
+            // 真实执行面（域内已落位能力）：模板草稿重种子＋就绪重算——
+            // 种子内部走真实 RobotDesignTemplateFactory::createDraft。
+            entry.handler = [this](const std::vector<CommandParameter>&) {
+                CommandOutcome out;
+                m_domains->modeling.seedTemplateSession();
+                if (m_hostStatusBar != nullptr) {
+                    m_hostStatusBar->showMessage(
+                        QString::fromUtf8("已从模板重建建模草稿（generic-6r）"),
+                        4000);
+                }
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(kPluginDevChannel,
+                                            "domain command executed: modeling.new-from-template");
+                }
+                out.accepted = true;
+                return out;
+            };
+        } else {
+            // 诚实边界（ERR-01/UX-02）：域流程未装配的命令——处理器给出
+            // 诚实应答（§10.3 注册表在处理器返回后强制 accepted=true 的
+            // "已执行"语义＝处理器应答已发生），状态行经 UiText 唯一出口
+            // 呈现"未装配"文案，不虚构执行成功（T03a"已受理"占位退役）。
+            const std::string commandId = desc.id;
+            entry.handler = [this, commandId](const std::vector<CommandParameter>&) {
+                if (m_hostStatusBar != nullptr) {
+                    m_hostStatusBar->showMessage(
+                        QString::fromStdString(
+                            ui::resolveText(kModelingFlowNotAssembledKey)),
+                        5000);
+                }
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(
+                        kPluginDevChannel,
+                        "domain command not assembled: " + commandId);
+                }
+                CommandOutcome out;
+                out.messageKey = std::string{kModelingFlowNotAssembledKey};
+                return out;
+            };
+        }
+        contentDeps.domainCommandEntries.push_back(std::move(entry));
+    }
     contentDeps.hostKind = WorkbenchHostKind::EmbeddedDock;
     // 宿主控件＝插件本体（RobWorkStudioPlugin 即 QDockWidget 形态的
     // QWidget，随宿主主窗口安放）：QShortcut attach、命令面板与对话框
@@ -391,31 +536,19 @@ void IrdWorkbenchHostPlugin::initialize()
         }
     }
 
-    // ---- 装配第四步：多 Dock 拓扑＋内容装配面两段装配＋退出收口挂接 ----
-    // 域插件首版装配（WP-24-T03，owner 指示提前启动）：registrar 登记＋
-    // 建模面板工厂消费——先于 buildDockBody（面板 Dock 在拓扑构建期创建）。
-    {
-        std::vector<std::string> domainReportLines;
-        // 命令受理反馈通道＝宿主状态栏瞬态消息（首版提交出口的可见落点）。
-        std::function<void(const std::string&)> statusFeedback =
-            [this](const std::string& message) {
-                if (m_hostStatusBar != nullptr) {
-                    m_hostStatusBar->showMessage(
-                        QString::fromUtf8(message.c_str()), /*timeoutMs=*/4000);
+    // ---- 装配第五步：多 Dock 拓扑＋内容装配面两段装配＋退出收口挂接 ----
+    // （域插件装配已前移至第三步——content 装配依赖域产物；面板 Dock 的
+    // 消费仍在 buildDockBody 拓扑构建期，面板工厂经域装配 bundle 现调。）
+    // 面板命令提交路由（WP-24-T03b——§7.2 域命令入册后的执行半区）：面板
+    // 按钮点击→content 注册表提交路径（§7.7 统一路由——可用性门控/冲突
+    // 语义全在注册表，处理器于 domainCommandEntries 登记）。
+    if (m_content != nullptr && m_domains != nullptr) {
+        m_domains->modeling.bindCommandSubmit(
+            [this](const ui::CommandId& id) {
+                if (m_content != nullptr) {
+                    m_content->submitCommand(std::string(id));
                 }
-                if (m_diag.pipeline) {
-                    m_diag.pipeline->logDev(kPluginDevChannel,
-                                            "domain command: " + message);
-                }
-            };
-        m_domains = assembleDomainPlugins(*this, statusFeedback,
-                                          domainReportLines);
-        for (const std::string& line : domainReportLines) {
-            reportLine(line);
-            if (m_diag.pipeline) {
-                m_diag.pipeline->logDev(kPluginDevChannel, line);
-            }
-        }
+            });
     }
     if (!buildDockBody()) {
         // 内容装配面校验被拒＝装配缺陷（build() 的必填校验覆盖三组：
@@ -441,7 +574,7 @@ void IrdWorkbenchHostPlugin::initialize()
                                 "内容装配面就位（多 Dock 嵌入形态；会话入口覆写已注入；状态投影绑宿主状态栏）");
     }
 
-    // ---- 装配第五步（时序关键）：装载呈现自证排队 ----
+    // ---- 装配第六步（时序关键）：装载呈现自证排队 ----
     // 零等待单发定时器：控制流回到事件循环的第一拍执行重申（此时 addPlugin
     // 已返回、其尾段 setVisible/restoreState 已完成——队列语义保证严格晚于
     // 二者，详见 reassertEmbeddedPresentation 内的根因链注释）。
@@ -1549,6 +1682,36 @@ void IrdWorkbenchHostPlugin::pollDrainOnce()
         }
         break;
     }
+}
+
+// =====================================================================
+// 域装配接线（WP-24-T03b 收口）
+// =====================================================================
+
+void IrdWorkbenchHostPlugin::syncDomainModulesToContext(
+    const ProjectContextProjection& context)
+{
+    if (m_domains == nullptr) {
+        return;  // 域装配未就绪（防御——initialize 序保证先于本钩子，恒真）
+    }
+    if (context.project.has_value()) {
+        // 项目在位（打开成功/切换 B 段就位）：分支锚＝权威分支表首条 tip
+        // （INV-M3 单默认分支；多分支选择器随收口任务）。锚定即重算就绪
+        // ＋面板刷新——打开路径的"锚定＋刷新"半区在此统一（T03b-2 只在
+        // apply 时锚定的首版形态升级为全路径同步）。
+        const auto adapter = m_lastStoreAdapter;
+        if (adapter != nullptr) {
+            const auto tips = adapter->projectStore().query().branchTips();
+            if (!tips.empty()) {
+                m_domains->modeling.bindSessionAnchor(tips.front().id,
+                                                      tips.front().tip);
+            }
+        }
+        return;
+    }
+    // 无项目（关闭完成/切换 A 段排空）：会话脱离——模块锚清空＋草稿工作
+    // 集复位＋面板空态（§8.6 表处置的模块半区；磁盘草稿零触碰）。
+    m_domains->modeling.onSessionDetached();
 }
 
 }  // namespace ui

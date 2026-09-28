@@ -1,7 +1,8 @@
 /**
  * @file   DomainAssembly.cpp
- * @brief  域插件首版装配实现（WP-24-T03）——registrar 装配＋建模面板工厂
- *         消费＋UiText 文案接线（消费面＝DomainAssembly.hpp 契约）。
+ * @brief  域插件装配实现（WP-24-T03b 收口形态）——registrar 装配＋建模面板
+ *         工厂消费＋UiText 文案接线＋关于框数据源实装（消费面＝
+ *         DomainAssembly.hpp 契约）。
  */
 
 #include "DomainAssembly.hpp"
@@ -11,6 +12,7 @@
 
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（§11.2）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // createPluginUiRegistrar/RegistrationOutcome（§10.9）
+#include <sdurws/ird/ui/UiPorts.hpp>             // ui::IUiAboutDataSource 完整类型（§11.4 数据源端口）
 #include <sdurws/ird/ui/UiText.hpp>              // ui::resolveText（§3.5 唯一文案出口——UX-02）
 
 namespace sdurws {
@@ -26,13 +28,52 @@ const char* const kPluginWhitelist[] = {
     "dynamics", "selection", "optimization", "workflow",
 };
 
+/**
+ * @brief 关于框数据源（§11.4 IUiAboutDataSource 的装配报告半区实装——
+ *        WP-24-T03b 收口；退役 HarnessAboutSource 占位）。
+ *
+ * 纪律：assemblyReports() 现取现拼（转调 registrar 报告表——ACC5 零缓存，
+ * 关于框每次打开现取装配事实）；versionBaseline 恒 available=false（版本
+ * 呈现值源未接线——"未装载"占位如实，不虚构基线值，NFR-DEP-05 呈现纪律）。
+ * 线程：UI 线程调用（§3.4 M-1 消费点——help.about 处理器）。
+ */
+class RegistrarAboutSource final : public IUiAboutDataSource {
+public:
+    /// @param registrar [in] 注册端口（非 owning——存活期由 bundle 保证）
+    explicit RegistrarAboutSource(const IPluginUiRegistrar* registrar)
+        : m_registrar(registrar)
+    {
+    }
+
+    std::vector<PluginAssemblyReport> assemblyReports() const override
+    {
+        // 现取（不缓存——§11.4"打开时现取现用"消费形态；未登记＝空集，
+        // 关于框退化为白名单占位行——§11.4 合法形态，不虚构装配事实）。
+        if (m_registrar == nullptr) {
+            return {};
+        }
+        return m_registrar->assemblyReports();
+    }
+
+    AboutVersionBaseline versionBaseline() const override
+    {
+        // available=false＝基线呈现值未装载（WP-24-T01 基线文档已落盘，
+        // 呈现值注入面随正式装配任务接线——不虚构版本值）。
+        return AboutVersionBaseline{};
+    }
+
+private:
+    const IPluginUiRegistrar* m_registrar;  ///< 注册端口（非 owning——见类注释）
+};
+
 }  // namespace
+
+DomainPluginAssembly::~DomainPluginAssembly() = default;
 
 const char* const kModelingDockTitle = "IRD 建模";
 
 std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
     QDockWidget& /*pluginDock*/,
-    std::function<void(const std::string&)> statusFeedback,
     std::vector<std::string>& reportLines)
 {
     auto bundle = std::make_unique<DomainPluginAssembly>();
@@ -52,21 +93,12 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
         return QString::fromStdString(text.empty() ? key : text);
     });
 
-    // ④命令提交出口绑定（首版可见反馈面——宿主状态栏瞬态消息）：域命令
-    //    的执行语义（模板创建/导入向导/权威切换……经处理器族＋project
-    //    管线）随收口任务接线；此处如实呈现"已受理＋待接线"，不虚构执行
-    //    成功（UX-02/ERR-01 同源纪律）。
-    bundle->modeling.bindCommandSubmit(
-        [statusFeedback](const ui::CommandId& id) {
-            if (!statusFeedback) { return; }
-            statusFeedback("已受理域命令 " + id +
-                           "（域执行面随装配收口任务接线）");
-        });
-
-    // ⑤首版会话种子（generic-6r 真实草稿——L-1/L-2 编辑流可交互）。
+    // ④首版会话种子（generic-6r 真实草稿——L-1/L-2 编辑流可交互）。
+    //    （收口变更：首版步骤④的"提交出口→状态栏受理反馈"桩退役——域
+    //    命令改经宿主接 content 命令注册表路由执行（§7.2），见 UiPlugin。）
     bundle->modeling.seedTemplateSession();
 
-    // ⑥登记（§10.9 装配期一次；失败隔离——不抛不中止，报告行留痕）。
+    // ⑤登记（§10.9 装配期一次；失败隔离——不抛不中止，报告行留痕）。
     const RegistrationOutcome outcome = bundle->registrar->registerPluginUi(
         bundle->modeling.descriptor, *bundle->modeling.module);
     for (const PluginAssemblyReport& report : bundle->registrar->assemblyReports()) {
@@ -76,12 +108,23 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
                               " commands=" + std::to_string(report.commandsRegistered));
     }
     if (outcome != RegistrationOutcome::Ok) {
-        // §11.3 失败隔离：登记失败不中止启动——面板工厂仍可消费（降级面
-        // 随收口任务接 UI-PLUGIN-ASSEMBLY-FAILED 占位；首版如实留痕）。
+        // §11.3 失败隔离：登记失败不中止启动——报告行留痕（该插件不进
+        // 关于框交集呈现——§11.4 报告对位充实以 ok 行为准）。
         reportLines.push_back("domain assembly: modeling outcome=" +
                               std::to_string(static_cast<int>(outcome)));
     }
     return bundle;
+}
+
+ui::IUiAboutDataSource* bundleAboutSource(DomainPluginAssembly& bundle)
+{
+    // 适配器惰性构造入 bundle（存活期随 bundle——宿主持有至壳拆除；
+    // 只读消费 registrar，装配完成后宿主取用）。
+    if (!bundle.aboutSource) {
+        bundle.aboutSource = std::make_unique<RegistrarAboutSource>(
+            bundle.registrar.get());
+    }
+    return bundle.aboutSource.get();
 }
 
 QWidget* modelingPanelWidget(const DomainPluginAssembly& bundle)

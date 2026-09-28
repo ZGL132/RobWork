@@ -302,9 +302,15 @@ public:
     /**
      * @brief 装配构造（桥必须非空——打开协议的诊断出线通道，装配期拦截）。
      *
+     * @param bridge [in] 诊断桥（引用须覆盖本适配器存活期）
+     * @param eventBus [in] 域事件总线（非 owning，可空＝打开请求不挂总线
+     *                ——修订提交事件不出线；WP-24-T03b 收口起宿主接通，
+     *                撤销/重做等非 apply 路径的修订事件经此到达域模块）
+     *
      * @throws std::invalid_argument bridge 为空
      */
-    explicit StoreFactoryPortAdapter(ProjectDiagnosticsBridge& bridge);
+    explicit StoreFactoryPortAdapter(ProjectDiagnosticsBridge& bridge,
+                                     core::IDomainEventBus* eventBus = nullptr);
 
     /// @brief 执行打开五步协议（翻译规则见类注释；不抛——StoreError 折叠）。
     OpenStoreOutcome open(const std::string& canonicalPath,
@@ -314,6 +320,9 @@ public:
 private:
     /// 打开协议诊断桥（HarnessMain 持有——引用须覆盖本适配器存活期）。
     ProjectDiagnosticsBridge& m_bridge;
+    /// 域事件总线（非 owning，可空——构造注入；open 时随请求转交对端，
+    /// WP-24-T03b 收口：修订提交事件经此到达域模块——§5.2/§6.2）
+    core::IDomainEventBus* m_eventBus = nullptr;
 };
 
 // =====================================================================

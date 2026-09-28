@@ -10,41 +10,42 @@
 #include "ModelingUiModule.hpp"
 
 #include "ModelingPanelWidget.hpp"
+#include "PolicyNameContexts.hpp"             // RuntimeMapPolicyNameContext（T03b——映射转发形名称上下文，退役草稿桩）
 
 #include <stdexcept>
+#include <utility>
 
 #include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory/kTemplateIdGeneric6R（首版装配会话种子——真实域路径）
 
-// =====================================================================
-// 草稿阶段名称上下文（T03b-2b 诚实边界）
-// =====================================================================
-// runtime 名在编译前不存在（NameMap 随确定性编译产生——ARC-03），草稿桩
-// 恒 nullopt：行程评估在无已装载策略时本就不进入（L11 如实产出"策略不
-// 可解析"Blocking），桩不被消费即不撒谎。策略装载＋runtime 名称适配随
-// 收口批次接线。
-namespace {
-class DraftStageNameContext final : public sdurws::ird::policy::IPolicyNameContext {
-public:
-    std::optional<sdurws::ird::core::ObjectId> tryObjectId(const std::string&) const override
-    {
-        return std::nullopt;
-    }
-    std::optional<std::string> tryRuntimeName(sdurws::ird::core::ObjectId) const override
-    {
-        return std::nullopt;
-    }
-    sdurws::ird::core::ContentIdentity nameMapContentIdentity() const override
-    {
-        // 全零保留值＝"无名称映射"（草稿阶段 runtime 名不存在——见上注）；
-        // 真身由 runtime ⑥端口计算（CON-06）。
-        return sdurws::ird::core::ContentIdentity{};
-    }
-};
-}  // namespace
 #include <sdurws/ird/modeling/Codec.hpp>       // RobotDesignCodec/kCurrentFormatVersion（根对象确定性编码——§4.8）
 #include <sdurws/ird/modeling/ObjectTypes.hpp> // kRobotDesignObjectType（根对象 token——runtime 单一权威的 using 重导出）
 
 namespace sdurws::ird::modeling {
+
+// =====================================================================
+// ui::IUiDomainReadinessSource——域就绪汇聚源（T03b 收口；§6.5 端口半区）
+// =====================================================================
+
+std::vector<ui::DomainReadinessItem> ModelingUiModule::domainReadiness(
+    ui::StageId stage) const
+{
+    // 非建模阶段＝该阶段无本源投影（§6.5 端口契约"空清单不计入快照"）。
+    if (stage != ui::StageId::Modeling) {
+        return {};
+    }
+    // 跨线程拉取路径（§6.5 线程契约——readinessSnapshot 供 workflow 任意
+    // 线程调用）：互斥锁保护的快照值拷贝、短临界区；UI 线程的重算写入与
+    // 此并发安全。零判定——投影行自就绪报告直投（N-11 无第二套）。
+    std::lock_guard<std::mutex> lock(m_readinessMutex);
+    if (!m_readinessSnapshot.has_value()) {
+        ui::DomainReadinessItem empty;
+        empty.domainKey = "modeling";
+        empty.verdict = core::EngineeringStatus::DataInsufficient;
+        empty.inputComplete = false;
+        return {empty};
+    }
+    return modelingReadinessProjection(*m_readinessSnapshot);
+}
 
 std::optional<project::CommandEnvelope> ModelingUiModule::buildDraftCommand(
     const std::string& moduleId)
@@ -101,8 +102,31 @@ std::optional<project::CommandEnvelope> ModelingUiModule::buildDraftCommand(
 // =====================================================================
 
 ModelingUiModule::ModelingUiModule()
-    : m_nameContext(std::make_unique<DraftStageNameContext>())
+    : m_nameContext(std::make_unique<RuntimeMapPolicyNameContext>(nullptr))
 {
+    // T03b 收口：名称上下文＝映射转发形适配器（nullptr＝未绑定映射——
+    // 如实 nullopt/全零，可观测行为与退役的草稿桩一致；映射经
+    // bindRuntimeNameMap 绑定后 L 行名称解析全量可用——PA-1 零第二构造）。
+}
+
+void ModelingUiModule::bindRuntimeNameMap(const runtime::RuntimeNameMap* map)
+{
+    m_guard.assertOnUiThread();
+    // 绑定切换＝重建适配器（上下文不可变面——指针构造后不改写；装配期
+    // 一次，SA-01 同纪律。重复绑定仅在显式重装配场景出现）。
+    m_nameContext = std::make_unique<RuntimeMapPolicyNameContext>(map);
+    // 映射在位改变名称解析事实——就绪重算（新映射下的 L 行口径）。
+    recomputeReadiness();
+}
+
+void ModelingUiModule::bindPolicyProvider(
+    std::function<const policy::EngineeringPolicySet*()> provider)
+{
+    m_guard.assertOnUiThread();
+    m_policyProvider = std::move(provider);
+    // 策略装载事实变化——就绪重算（已装载→L 行真判定；卸载→L11 如实
+    // Blocking 回落，不缓存旧判定）。
+    recomputeReadiness();
 }
 
 void ModelingUiModule::bindCommandSubmit(CommandSubmitFn submitFn)
@@ -182,17 +206,67 @@ void ModelingUiModule::refreshFromSession()
 void ModelingUiModule::recomputeReadiness()
 {
     m_guard.assertOnUiThread();
-    // 真判定（T03b-2b）：真实 ModelReadinessChecker＋policy 行程评估器。
-    // 套件/检查器须为具名局部量（checker 持套件指针——临时量悬挂风险）；
-    // CheckContext 缺省＝草稿阶段无已装载策略（L11 如实产出 Blocking——
-    // 携带行程校验未执行的事实），策略装载随收口批次。
+    // 真判定（T03b-2b 起，T03b 收口全量化）：真实 ModelReadinessChecker＋
+    // policy 行程评估器。套件/检查器须为具名局部量（checker 持套件指针——
+    // 临时量悬挂风险）。
+    // 策略来源（T03b 收口）：提供器现取已装载策略——nullptr＝未装载，
+    // CheckContext.resolvedPolicy 置空，L11 层对"策略不可解析"如实产出
+    // Blocking（行程校验未执行的事实随行），不伪造可行（UX-02/ERR-01）。
     const AssertionSuite::Ports ports{m_evaluator.get(), m_nameContext.get()};
     const AssertionSuite suite{ports};
     const ModelReadinessChecker checker{suite};
-    m_session.readiness = checker.check(m_session.draft, CheckContext{});
+    CheckContext context;  // 草稿态预检口径（baseRevision 留空——§8.2 注）
+    if (m_policyProvider) {
+        context.resolvedPolicy = m_policyProvider();
+    }
+    m_session.readiness = checker.check(m_session.draft, context);
+    {
+        // 跨线程快照同步（domainReadiness 任意线程拉取——§6.5 线程契约；
+        // 值拷贝写入，短临界区）。
+        std::lock_guard<std::mutex> lock(m_readinessMutex);
+        m_readinessSnapshot = m_session.readiness;
+    }
     if (m_panel != nullptr) {
         m_panel->refreshPanel(m_session.draft, *m_session.readiness);
     }
+}
+
+void ModelingUiModule::onSessionDetached()
+{
+    m_guard.assertOnUiThread();
+    // §8.6 表"模块表/局部栈清空"的模块状态半区：会话内存态整体复位——
+    // 分支锚清空（Stale 判据随锚消失，旧会话不可能污染新会话——§6.2
+    // 纪元过滤的模块对位）、草稿工作集复位、就绪报告作废。磁盘草稿零
+    // 触碰（落盘/丢弃归 DraftController 处置链——§5.4 决议执行半区）。
+    m_session.branch = core::BranchId{};
+    m_session.baseRevision.reset();
+    m_session.draft = ModelingWorkingSet{};
+    m_session.readiness.reset();
+    {
+        std::lock_guard<std::mutex> lock(m_readinessMutex);
+        m_readinessSnapshot.reset();
+    }
+    if (m_panel != nullptr) {
+        // 面板复位空态（空工作集＋空报告——不虚构任何会话事实）。
+        m_panel->refreshPanel(m_session.draft, ModelReadinessReport{});
+    }
+}
+
+void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
+                                           const core::RevisionId& newTip)
+{
+    m_guard.assertOnUiThread();
+    // 分支过滤（§6.2 纪元过滤的模块对位）：非当前锚定分支的提交不触碰
+    // 编辑基线——未锚定（branch 全零）时同样忽略（无会话无同步对象）。
+    if (!(m_session.branch == branch)) {
+        return;
+    }
+    // 非 draft.apply 路径的修订提交（撤销/重做/其他入口——§8.5 重建基线
+    // 的会话对位）：编辑基线前移到新 tip。与 noteAppliedRevision 的差异：
+    // 编辑记录不清零（撤销/重做消费的是修订历史，未应用的域编辑仍归
+    // 用户处置——草稿继续以新基线编辑，再应用不误报 Stale）。
+    m_session.baseRevision = newTip;
+    recomputeReadiness();
 }
 
 // =====================================================================

@@ -63,7 +63,10 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
 
 /// 键族①b：域命令标题（cmd.<id>.title——§3.5 键约定；WP-24-T03 首版装配
 /// 登记——建模 §9.7.3 十条的中文工程用语值；后续域命令随各自装配增行）。
-constexpr std::array<TextRow, 10> kDomainCommandTitleTable{{
+/// WP-24-T03b 收口增行：域命令处理器级拒绝的诚实反馈文案（非标题键——
+/// content submitCommand 对 outcome.messageKey 的呈现值源，ERR-01 因果
+/// 如实：拒绝原因由处理器给出，不走通用只读/无项目理由）。
+constexpr std::array<TextRow, 11> kDomainCommandTitleTable{{
     { "cmd.modeling.new-from-template.title",          "从模板新建"       },
     { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
     { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
@@ -74,6 +77,7 @@ constexpr std::array<TextRow, 10> kDomainCommandTitleTable{{
     { "cmd.modeling.export-package.title",             "导出规范包"       },
     { "cmd.modeling.import-package.title",             "导入规范包"       },
     { "cmd.modeling.reset-home-zero.title",            "复位 Home/Zero"   },
+    { "cmd.modeling.flow-not-assembled",               "该域流程未装配（随后续建模任务提供）" },
 }};
 
 /// 键族②：七态短标签（state.<token>.label——§6.3 词表 token＋"中文"列；

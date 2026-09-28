@@ -522,4 +522,340 @@ TEST_F(WorkbenchContentGuiTest, ContentCommandRegistryAccessorServesLiveRegistry
     EXPECT_TRUE(content->shutdown());
 }
 
+// =====================================================================
+// WP-24-T03b 收口——中央区阶段面板页（§4.1 CentralAreaHost 挂位面）
+// =====================================================================
+
+/**
+ * 阶段面板页挂位与切换（契约 WP-24-T03b acceptance 4 的机制级验证面）：
+ * deps.stagePanelPages 逐项入中央栈（页 objectName 供定位）；showStagePanel
+ * 切换激活页；无项目上下文刷新回首页且激活记忆复位；未登记阶段＝无操作
+ * 不崩溃（§11.3 缺位语义）。测试以替身面板工厂承载（建模面板入中央栈的
+ * 集成面需 ui_app→modeling_plugin 新建链边——落位偏差登记 ui.md §16.7，
+ * 随 UI-T20/21 装配面任务落地）。
+ */
+TEST_F(WorkbenchContentGuiTest, StagePanelPageHostingAndSwitching_WP24_T03B)
+{
+    IRD_TEST_INFO("UX-12", {}, std::nullopt);
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    WorkbenchContentDeps::StagePanelPage modelingPage;
+    modelingPage.stage = ui::StageId::Modeling;
+    modelingPage.titleKey = "stage.modeling.title";
+    modelingPage.factory = [this]() -> QWidget* {
+        auto* page = new QWidget(&m_host);
+        page->setObjectName("fake_modeling_panel");
+        return page;
+    };
+    deps.stagePanelPages.push_back(modelingPage);
+    auto content = ui::createWorkbenchContent(std::move(deps));
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    auto* stack = qobject_cast<QStackedWidget*>(content->centralWidget());
+    ASSERT_NE(stack, nullptr);
+    // 初始（无项目）＝首页；切到建模阶段页后当前页为替身面板页。
+    EXPECT_EQ(stack->currentIndex(), 0);
+    content->showStagePanel(ui::StageId::Modeling);
+    const int modelingIndex = stack->currentIndex();
+    ASSERT_NE(modelingIndex, 0) << "阶段页未入中央栈（挂位面缺失）";
+    // 挂位页 objectName＝content 生成名（"ird_stage_panel_<StageId 整数>"；
+    // Modeling＝0）——工厂自命名被装配面规范化覆写（可定位性优先）。
+    EXPECT_EQ(stack->widget(modelingIndex)->objectName(),
+              QString::fromLatin1("ird_stage_panel_0"));
+
+    // 无项目上下文注入（关闭完成）→ 回首页＋激活记忆复位（§6.2 纪元过滤
+    // 的呈现对位——旧阶段选择不泄漏）；再注入项目上下文 → 仍不自动回到
+    // 已复位的阶段页（回到视图区域页 1）。
+    ProjectContextProjection closedContext;
+    content->presentProjectContext(closedContext);
+    EXPECT_EQ(stack->currentIndex(), 0);
+    ProjectContextProjection openContext;
+    openContext.project = ProjectMetadataProjection{};
+    content->presentProjectContext(openContext);
+    EXPECT_EQ(stack->currentIndex(), 1);
+    content->showStagePanel(ui::StageId::Modeling);
+    EXPECT_EQ(stack->currentIndex(), modelingIndex);
+
+    // 未登记阶段（Kinematics 无页）＝无操作不崩溃（当前页保持不变）。
+    content->showStagePanel(ui::StageId::Kinematics);
+    EXPECT_EQ(stack->currentIndex(), modelingIndex);
+
+    EXPECT_TRUE(content->shutdown());
+}
+
+/**
+ * 域命令入册（契约 WP-24-T03b acceptance 1/2 的机制级验证面）：owner 白名
+ * 单扩展使 modeling 域命令可登记；重复 id 拒绝（§7.2 不覆盖不静默——注册
+ * 表返回值轨）；处理器级拒绝的 messageKey 文案经瞬态消息观察钩子呈现
+ * （不走通用只读/无项目理由——ERR-01 因果如实）。
+ */
+TEST_F(WorkbenchContentGuiTest, DomainCommandRegistrationAndHonestFeedback_WP24_T03B)
+{
+    IRD_TEST_INFO("SA-16", {}, std::nullopt);
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    deps.extraCommandOwners.push_back("modeling");
+
+    WorkbenchContentDeps::DomainCommandEntry entry;
+    entry.descriptor.id = "modeling.diff-baseline";
+    entry.descriptor.ownerUnit = "modeling";
+    entry.descriptor.titleKey = "cmd.modeling.diff-baseline.title";
+    entry.descriptor.readOnlyAllowed = true;
+    // 会话作用域（无项目态恒可用——处理器级拒绝路径可达；Project 作用域
+    // 的无项目拒绝走注册表默认谓词，属 acceptance 1 的门控面另证）。
+    entry.descriptor.scope = ui::CommandScope::Session;
+    entry.handler = [](const std::vector<ui::CommandParameter>&) {
+        // 处理器级拒绝（域流程未装配的诚实反馈——messageKey 承载原因）。
+        ui::CommandOutcome out;
+        out.accepted = false;
+        out.messageKey = std::string{"cmd.modeling.flow-not-assembled"};
+        return out;
+    };
+    deps.domainCommandEntries.push_back(std::move(entry));
+
+    auto content = ui::createWorkbenchContent(std::move(deps));
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    // 入册成功且 availability 快照可见（§7.2 registrationOrder＝装配序）。
+    const auto availability = content->commandAvailability("modeling.diff-baseline");
+    EXPECT_TRUE(availability.registered) << "域命令未入册（owner 白名单/登记面失效）";
+
+    // 处理器级诚实反馈经注册表 submit 直达断言（§10.3：注册表在处理器
+    // 返回后强制 accepted=true——"已执行"语义＝处理器给出了诚实应答；
+    // messageKey 承载处理器原因键，瞬态呈现由宿主处理器反馈面承担）。
+    const auto outcome = content->commandRegistry().submit("modeling.diff-baseline");
+    EXPECT_TRUE(outcome.accepted);
+    EXPECT_TRUE(outcome.messageKey.has_value());
+    EXPECT_EQ(*outcome.messageKey, std::string{"cmd.modeling.flow-not-assembled"});
+
+    // 重复 id 拒绝（§7.2 不覆盖不静默——seal 后注册走违约轨；此处验证
+    // seal 前重复：注册表已 build 收口，运行期注册被拒＝InvalidDescriptor）。
+    ui::CommandDescriptor duplicate;
+    duplicate.id = "modeling.diff-baseline";
+    duplicate.ownerUnit = "modeling";
+    const auto result =
+        content->commandRegistry().registerCommand(duplicate, {});
+    EXPECT_NE(result, ui::RegistrationResult::Ok) << "重复 id 未被拒（§7.2 不覆盖被破坏）";
+
+    EXPECT_TRUE(content->shutdown());
+}
+
+/**
+ * 域命令卡表全量入册与确定性（契约 WP-24-T03b acceptance 1 的具名用例面）：
+ * ①十条 modeling 域命令（modeling.md §9.7.3 卡表全量——本测试以本地表承载
+ * 卡表值，卡表对位一致性由 modeling 单元 Commands_TenDottedCommandIds 等
+ * 用例钉住；ui 测试不得 include modeling 私有头，R-2）经 domainCommandEntries
+ * 注册后，availability 快照含十条（registered=true 逐条）；②同输入重复装配
+ * 两份内容装配面，面板快照（paletteSnapshot——registrationOrder 稳定排序）
+ * 中十条域命令的相对序完全一致（NFR-COR-02 界面延伸：同输入同排序）；③与
+ * 壳层命令同 id 的域命令登记被拒，且 §11.3 失败隔离通道留下失败行（Dev 日
+ * 志"domain command registration rejected: id=…"——报告面观测点）。
+ */
+TEST_F(WorkbenchContentGuiTest, DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B)
+{
+    IRD_TEST_INFO("SA-16", {}, std::nullopt);
+
+    // 卡 §9.7.3 十条的本地承载（id/scope/readOnlyAllowed 逐行按卡表；行序＝
+    // 卡表行序＝登记序）。handler 全部给诚实空应答（本用例不触执行语义）。
+    struct CatalogRow {
+        const char* id;
+        ui::CommandScope scope;
+        bool readOnlyAllowed;
+    };
+    const CatalogRow catalog[10] = {
+        {"modeling.new-from-template", ui::CommandScope::Project, false},
+        {"modeling.import-urdf", ui::CommandScope::Project, false},
+        {"modeling.import-xacro", ui::CommandScope::Project, false},
+        {"modeling.switch-authority", ui::CommandScope::Project, false},
+        {"modeling.estimate-properties", ui::CommandScope::Project, false},
+        {"modeling.generate-placeholder-geometry", ui::CommandScope::Project, false},
+        {"modeling.diff-baseline", ui::CommandScope::Project, true},
+        {"modeling.export-package", ui::CommandScope::Project, true},
+        {"modeling.import-package", ui::CommandScope::Project, false},
+        {"modeling.reset-home-zero", ui::CommandScope::Session, true},
+    };
+
+    // 装配依赖构造器（两次调用同输入——确定性对照面；第三份携带重复 id
+    // 行专门驱动 §11.3 失败隔离）。
+    auto makeDeps = [this, &catalog](bool withCollidingRow) {
+        WorkbenchContentDeps deps = makeEmbeddedDeps();
+        deps.extraCommandOwners.push_back("modeling");
+        for (const CatalogRow& row : catalog) {
+            WorkbenchContentDeps::DomainCommandEntry entry;
+            entry.descriptor.id = row.id;
+            entry.descriptor.ownerUnit = "modeling";
+            entry.descriptor.titleKey = ui::TextKey(std::string("cmd.") + row.id + ".title");
+            entry.descriptor.scope = row.scope;
+            entry.descriptor.readOnlyAllowed = row.readOnlyAllowed;
+            entry.handler = [](const std::vector<ui::CommandParameter>&) {
+                ui::CommandOutcome out;
+                out.accepted = true;
+                return out;
+            };
+            deps.domainCommandEntries.push_back(std::move(entry));
+        }
+        if (withCollidingRow) {
+            // 重复 id 反例：与壳层命令 draft.save 同 id（§7.2 冲突规则第 2
+            // 条——不同 owner 同 id 同样拒绝）。该行预期不进注册表，其余
+            // 十条照常（§11.3 失败隔离）。
+            WorkbenchContentDeps::DomainCommandEntry collision;
+            collision.descriptor.id = "draft.save";
+            collision.descriptor.ownerUnit = "modeling";
+            collision.descriptor.titleKey = "cmd.draft.save.title";
+            collision.descriptor.scope = ui::CommandScope::Project;
+            collision.handler = [](const std::vector<ui::CommandParameter>&) {
+                ui::CommandOutcome out;
+                out.accepted = true;
+                return out;
+            };
+            deps.domainCommandEntries.push_back(std::move(collision));
+        }
+        return deps;
+    };
+
+    // 取面板快照中 modeling.* 行的 id 序（保序投影——registrationOrder 锚）。
+    auto modelingOrder = [](ui::IWorkbenchContent& content) {
+        std::vector<std::string> ids;
+        for (const auto& view : content.commandRegistry().paletteSnapshot("", 200)) {
+            const std::string id(view.id);
+            if (id.rfind("modeling.", 0) == 0) {
+                ids.push_back(id);
+            }
+        }
+        return ids;
+    };
+
+    auto contentA = ui::createWorkbenchContent(makeDeps(false));
+    ASSERT_TRUE(contentA->build());
+    contentA->activate();
+    auto contentB = ui::createWorkbenchContent(makeDeps(false));
+    ASSERT_TRUE(contentB->build());
+    contentB->activate();
+
+    // ①availability 快照含十条（逐条 registered——卡表全量入册）。
+    for (const CatalogRow& row : catalog) {
+        EXPECT_TRUE(contentA->commandRegistry().availability(row.id).registered)
+            << "域命令未入册: " << row.id;
+    }
+    // ②同输入同排序：两份装配的域命令面板序逐位一致（NFR-COR-02）。
+    {
+        const auto orderA = modelingOrder(*contentA);
+        const auto orderB = modelingOrder(*contentB);
+        ASSERT_EQ(orderA.size(), std::size_t{10})
+            << "面板快照中域命令数非十条（入册面缺口）";
+        ASSERT_EQ(orderA.size(), orderB.size());
+        for (std::size_t i = 0; i < orderA.size(); ++i) {
+            EXPECT_EQ(orderA[i], orderB[i]) << "第 " << i << " 位序不一致";
+        }
+    }
+    contentA->shutdown();
+    contentB->shutdown();
+
+    // ③冲突行：同 id 域命令登记被拒（§11.3 失败隔离——拒绝只作用于冲突
+    // 行本身，其余十条照常入册）＋失败行留痕（Dev 日志观测点）。
+    auto contentC = ui::createWorkbenchContent(makeDeps(true));
+    ASSERT_TRUE(contentC->build());
+    contentC->activate();
+    for (const CatalogRow& row : catalog) {
+        EXPECT_TRUE(contentC->commandRegistry().availability(row.id).registered)
+            << "冲突行殃及卡表命令入册（§11.3 失败隔离被违反）: " << row.id;
+    }
+    // 冲突行本身未进注册表：注册表内 draft.save 保持壳层 owner（唯一——
+    // §7.2 重复 id 不覆盖；owner 仍为壳层设施"ui"）。
+    EXPECT_TRUE(contentC->commandRegistry().availability("draft.save").registered);
+    // 失败行观测：Dev 日志含注册拒绝行（含请求 id——§7.2"重复 id（含不同
+    // owner）→拒绝注册＋诊断 UI-CMD-DUPLICATE"的装配期留痕半区）。
+    EXPECT_TRUE(m_devLog->seen("domain command registration rejected: id=draft.save"))
+        << "冲突登记未留下失败行（§11.3 报告面缺失——不静默被破坏）";
+    contentC->shutdown();
+}
+
+/**
+ * 域命令可用性门控（契约 WP-24-T03b acceptance 2 的具名反例面）：NoProject
+ * 态 Project 作用域域命令 enabled=false（PM-10——一切项目作用域命令禁用，
+ * 注册表作用域谓词统一承载，域命令零特殊路径）；只读会话 readOnlyAllowed=
+ * false 的命令禁用而 readOnlyAllowed=true 的命令保持可用（§7.6 只读条件
+ * ——L-7 的命令半区）。
+ */
+TEST_F(WorkbenchContentGuiTest, DomainCommandGatingNoProjectAndReadonly_WP24_T03B)
+{
+    IRD_TEST_INFO("PM-10", {}, std::nullopt);  // PM-07（只读门控）随断言注释锚定
+
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    deps.extraCommandOwners.push_back("modeling");
+    // 一对卡表反例：写路径 Project 作用域命令（import-package，卡行⑨
+    // readOnlyAllowed=false）＋只读可用 Project 作用域命令（diff-baseline，
+    // 卡行⑦ readOnlyAllowed=true）。handler 诚实空应答（本用例只验门控）。
+    WorkbenchContentDeps::DomainCommandEntry writeCommand;
+    writeCommand.descriptor.id = "modeling.import-package";
+    writeCommand.descriptor.ownerUnit = "modeling";
+    writeCommand.descriptor.titleKey = "cmd.modeling.import-package.title";
+    writeCommand.descriptor.scope = ui::CommandScope::Project;
+    writeCommand.descriptor.readOnlyAllowed = false;
+    writeCommand.handler = [](const std::vector<ui::CommandParameter>&) {
+        ui::CommandOutcome out;
+        out.accepted = true;
+        return out;
+    };
+    deps.domainCommandEntries.push_back(std::move(writeCommand));
+    WorkbenchContentDeps::DomainCommandEntry readCommand;
+    readCommand.descriptor.id = "modeling.diff-baseline";
+    readCommand.descriptor.ownerUnit = "modeling";
+    readCommand.descriptor.titleKey = "cmd.modeling.diff-baseline.title";
+    readCommand.descriptor.scope = ui::CommandScope::Project;
+    readCommand.descriptor.readOnlyAllowed = true;
+    readCommand.handler = [](const std::vector<ui::CommandParameter>&) {
+        ui::CommandOutcome out;
+        out.accepted = true;
+        return out;
+    };
+    deps.domainCommandEntries.push_back(std::move(readCommand));
+
+    auto content = ui::createWorkbenchContent(std::move(deps));
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    // 反例①无项目态（未注入任何上下文＝NoProject——PM-10）：两条 Project
+    // 作用域域命令均 registered 但 enabled=false；只读反例带原因键（§7.5
+    // "禁用＋说明"保留发现性）。
+    {
+        const auto writeGate = content->commandRegistry().availability("modeling.import-package");
+        EXPECT_TRUE(writeGate.registered);
+        EXPECT_FALSE(writeGate.enabled) << "NoProject 态 Project 作用域域命令未被门控禁用";
+        const auto readGate = content->commandRegistry().availability("modeling.diff-baseline");
+        EXPECT_TRUE(readGate.registered);
+        EXPECT_FALSE(readGate.enabled) << "NoProject 态 Project 作用域域命令（只读可用）未被门控禁用";
+    }
+
+    // 反例②只读会话（writable=false——INV-SES-1 判定源唯一）：写路径域
+    // 命令禁用且只读阻断位在案；只读可用域命令不受只读门控牵连。
+    ProjectContextProjection readonlyContext;
+    readonlyContext.project = ProjectMetadataProjection{};  // writable 默认 false＝只读
+    content->presentProjectContext(readonlyContext);
+    {
+        const auto writeGate = content->commandRegistry().availability("modeling.import-package");
+        EXPECT_TRUE(writeGate.registered);
+        EXPECT_FALSE(writeGate.enabled) << "只读会话写路径域命令未被禁用（§5.5/§7.6 门控失效）";
+        EXPECT_TRUE(writeGate.readOnlyBlocked)
+            << "只读阻断位未在案（§7.6 机器观测面缺失）";
+        const auto readGate = content->commandRegistry().availability("modeling.diff-baseline");
+        EXPECT_TRUE(readGate.enabled)
+            << "只读会话 readOnlyAllowed=true 域命令被误禁（L-7 过度门控）";
+    }
+
+    // 可写对照（OpenWritable）：写路径域命令解除禁用——门控随上下文刷新
+    // （§7.5 谓词求值只读消费快照）。
+    ProjectContextProjection writableContext;
+    writableContext.project = ProjectMetadataProjection{};
+    writableContext.project->writable = true;
+    content->presentProjectContext(writableContext);
+    {
+        const auto writeGate = content->commandRegistry().availability("modeling.import-package");
+        EXPECT_TRUE(writeGate.enabled)
+            << "可写会话写路径域命令仍被禁用（上下文刷新未达域命令谓词）";
+    }
+
+    EXPECT_TRUE(content->shutdown());
+}
+
 }  // namespace

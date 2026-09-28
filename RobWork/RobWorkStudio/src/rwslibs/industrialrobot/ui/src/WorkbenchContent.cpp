@@ -50,6 +50,7 @@
 
 #include <sdurws/ird/ui/AboutDialog.hpp>  // 关于框装配/工厂/手册入口（UI-T10——§11.4）
 #include <sdurws/ird/ui/UiProjections.hpp>
+#include <sdurws/ird/ui/UiText.hpp>       // ui::resolveText（§3.5 唯一文案出口——WP-24-T03b 处理器级拒绝文案）
 
 namespace sdurws {
 namespace ird {
@@ -699,6 +700,43 @@ void WorkbenchContentImpl::buildCentralArea()
     m_centralStack->addWidget(m_deps.hostKind == WorkbenchHostKind::EmbeddedDock
                                   ? buildHostYieldPage()
                                   : createView3DPlaceholder(m_centralStack));
+    // 阶段面板页（WP-24-T03b——§4.1 CentralAreaHost 按 StageId 挂位的装配
+    // 面）：deps.stagePanelPages 逐项在 build 的 UI 线程现调工厂建页（页序
+    // ＝装配序；objectName 供测试定位）。未装配＝无阶段页（嵌入式宿主形态
+    // 的登记边界——面板归宿主侧 Dock 承载，O-38 ③三维让位不变）。
+    for (const WorkbenchContentDeps::StagePanelPage& page : m_deps.stagePanelPages) {
+        QWidget* panel = page.factory != nullptr ? page.factory() : nullptr;
+        if (panel == nullptr) {
+            // 工厂未给出/产出空＝装配缺陷：Dev 留痕跳过该页（失败隔离，
+            // 不中止装配——§11.3 同款纪律），不虚构占位面板。
+            emitDev("stage panel page skipped (factory empty): stage="
+                     + std::to_string(static_cast<int>(page.stage)));
+            continue;
+        }
+        panel->setObjectName(QString::fromUtf8("ird_stage_panel_%1")
+                                 .arg(static_cast<int>(page.stage)));
+        const int index = m_centralStack->addWidget(panel);
+        m_stagePageIndex[page.stage] = index;
+    }
+}
+
+void WorkbenchContentImpl::showStagePanel(ui::StageId stage)
+{
+    if (!m_built || m_shutdownDone) {
+        Q_ASSERT(false && "shutdown 后调用 showStagePanel（契约非法调用）");
+        return;
+    }
+    // §4.1"CentralAreaHost 换激活面板"：中央栈切到阶段页。未登记该阶段
+    // ＝Dev 留痕无操作（不虚构面板存在——§11.3 缺位语义；阶段导航 UI 归
+    // 后续任务，本入口即其激活落点）。
+    const auto it = m_stagePageIndex.find(stage);
+    if (it == m_stagePageIndex.end()) {
+        emitDev("showStagePanel: no stage panel page registered for stage="
+                 + std::to_string(static_cast<int>(stage)));
+        return;
+    }
+    m_activeStagePanel = stage;
+    m_centralStack->setCurrentIndex(it->second);
 }
 
 QWidget* WorkbenchContentImpl::buildHomePage()
@@ -863,7 +901,13 @@ void WorkbenchContentImpl::assembleCommandSystem()
     commandDeps.diagFactory = m_deps.wiring.diagFactory;
     commandDeps.diagSink = m_deps.wiring.diagSink;
     commandDeps.devLog = m_deps.wiring.devLog;
+    // owner 白名单（§7.2 第 1 步）＝壳层设施"ui"＋deps.extraCommandOwners
+    // （WP-24-T03b——§7.2"各白名单插件 id"的装配面：已装配域的 pluginId
+    // 词表由宿主给出，域命令注册据此过 owner 校验）。
     commandDeps.ownerWhitelist = {"ui"};
+    commandDeps.ownerWhitelist.insert(commandDeps.ownerWhitelist.end(),
+                                      m_deps.extraCommandOwners.begin(),
+                                      m_deps.extraCommandOwners.end());
     m_commands = createCommandRegistry(std::move(commandDeps));
 
     // §7.1 最小命令集登记（默认谓词＝作用域/只读规则——与壳门控快照同源，
@@ -971,6 +1015,21 @@ void WorkbenchContentImpl::assembleCommandSystem()
         Q_ASSERT(result == RegistrationResult::Ok
                  && "§7.1 最小命令集登记被拒（表内冲突＝装配 bug）");
         (void)result;
+    }
+
+    // 域命令登记（WP-24-T03b——§7.2"L5 装配序列：壳层命令→各业务插件命令"
+    // 的第二段）：deps.domainCommandEntries 逐条 registerCommand——id 句法/
+    // owner 白名单/重复冲突规则全在注册表（拒绝＝返回值轨＋UI-CMD-DUPLICATE
+    // Dev 诊断，不覆盖不静默）。拒绝不中止装配（§11.3 失败隔离——报告面
+    // 归 Dev 日志，宿主注册循环另有 outcome 消费）。
+    for (const auto& entry : m_deps.domainCommandEntries) {
+        const RegistrationResult result =
+            m_commands->registerCommand(entry.descriptor, entry.handler);
+        if (result != RegistrationResult::Ok) {
+            emitDev("domain command registration rejected: id=" +
+                    entry.descriptor.id + " result=" +
+                    std::to_string(static_cast<int>(result)));
+        }
     }
 
     // 装配收口（§7.2——运行期只读；此后 registerCommand 拒绝）。
@@ -1134,9 +1193,20 @@ void WorkbenchContentImpl::presentProjectContext(const ProjectContextProjection&
         m_commands->presentContext(m_gate);
     }
 
-    // 中央区切换：无项目→首页（PM-10）；有项目→三维视图区域页（顶层＝
-    // 占位面板/嵌入式＝让位页——宿主形态在 build 时已定页，此处只切索引）。
-    m_centralStack->setCurrentIndex(m_gate.hasActiveProject ? 1 : 0);
+    // 中央区切换：无项目→首页（PM-10）＋激活阶段页复位（阶段页是项目态
+    // 呈现面——旧项目的阶段选择不得泄漏到新会话，§6.2 纪元过滤对位）；
+    // 有项目→最近激活的阶段面板页（WP-24-T03b），无激活记忆→三维视图
+    // 区域页（顶层＝占位面板/嵌入式＝让位页——宿主形态在 build 时已定页，
+    // 此处只切索引）。
+    if (!m_gate.hasActiveProject) {
+        m_activeStagePanel.reset();
+        m_centralStack->setCurrentIndex(0);
+    } else if (m_activeStagePanel.has_value()) {
+        const auto it = m_stagePageIndex.find(*m_activeStagePanel);
+        m_centralStack->setCurrentIndex(it != m_stagePageIndex.end() ? it->second : 1);
+    } else {
+        m_centralStack->setCurrentIndex(1);
+    }
     refreshStatusBar();
     refreshCommandStates();
     // 策略摘要卡随上下文注入重拉端口快照（UI-T07——§6.7；阶段 A 的刷新
@@ -1213,6 +1283,9 @@ void WorkbenchContentImpl::submitCommand(const std::string& commandId)
     }
     // 拒绝反馈（§7.4"禁用＋说明"）：未注册与不可执行分别呈现——诊断条目
     // （工厂注入时）已由注册表出线，此处是即时可见性补偿。
+    // （WP-24-T03B 注：处理器级"域流程未装配"的诚实反馈由处理器自身经
+    //   宿主状态栏出线——§10.3 注册表在处理器返回后强制 accepted=true，
+    //   该路径不走本通用拒绝分支，避免原因文案被通用只读/无项目覆盖。）
     const CommandAvailability a = m_commands->availability(commandId);
     if (!a.registered) {
         showStatusFeedback(

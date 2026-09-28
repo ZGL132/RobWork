@@ -1,0 +1,9 @@
+[31;1mConvertFrom-Json: [0mD:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\scripts\industrialrobot\validate-docs.ps1:34[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m  34 | [0m   $x = Get-Content $f.FullName -Raw -Encoding UTF8 | [36;1mConvertFrom-Json[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m                                                      ~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1m´Ó JSON ×ª»»Ê§°Ü£¬³öÏÖ´íÎó: After parsing a value an unexpected character was encountered: Æä. Path 'note', line 63,[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m[31;1m[36;1m     | [31;1mposition 903.[0m
+[31;1mWrite-Error: [31;1mB.1 batch manifest validation failed[0m
+[31;1mWrite-Error: [31;1mduplicate task ids[0m
+V3_EXIT=1

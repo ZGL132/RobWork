@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "WP-24-T03",
+  "masterWp": "WP-I",
+  "branch": "wp24-t03",
+  "date": "2026-09-28",
+  "attempt": 3,
+  "reworkNote": "验收返工 fix cycle 1（lastFailureRecord＝attempt 2 fail：traceability/acceptance/WP-24-T03-20260928.md @ acc/WP-24-T03/2，commit 5786af8f，阻断 B-1＝findings F-421 唯一阻断）：①commandIdWellFormed 字符集放行连字符＋注释与实现对齐修正；②真链路 gtest 两用例（PluginRegistrarT03B 族——registrar 真链路此前零测试覆盖的漏检根因补位）；③WorkbenchContent.cpp 注释任务号拼写 WP-24_T03B→WP-24-T03B（验收 4.7 登记小疵顺带面）。全部构建/测试/门禁本段亲手重做，不引用前次留痕",
+  "taskNature": "返工任务：仅修阻断 B-1 及返工清单所列（acceptance 已通过部分零回退零重构扩散）——修复面＝ui/src/PluginUiRegistrar.cpp（字符集＋注释）、modeling/test/PluginModuleT03BTest.cpp（新增两用例）、ui/src/WorkbenchContent.cpp（注释拼写）、units/ui.md（v1.19 返工登记行＋头版本行）、development-task-breakdown.md（§2.25 行返工注记）、本留痕目录",
+  "framework": "googletest（vcpkg gtest:x64-windows）；GUI 测试按 ui.md §12.2 规程（QT_QPA_PLATFORM=windows、单 exe）",
+  "targets": [
+    {
+      "target": "sdurws_ird_ui/sdurws_ird_modeling/sdurws_ird_modeling_plugin（含全部 industrialrobot 目标）",
+      "kind": "STATIC 集群",
+      "result": "build-pass：集成模式全量 Release 零错误（BUILD_EXIT=0）＋独立冒烟全量零错误（SMOKE_EXIT=0，增量重建对齐最终源态 SMOKE_REBUILD_EXIT=0）",
+      "notes": "集成树＝独立 worktree 冷启树（主检出被编排者簿记占用）：vcpkg toolchain＋CMAKE_PREFIX_PATH=Qt/6.11.1/msvc2022_64＋RWS_BUILD_INDUSTRIALROBOT:BOOL=ON（grep CMakeCache 确认）＋以框架自带配置项排除三个与 industrialrobot 零依赖的框架模拟插件目标（BUILD_RWSimulatorPlugin/BUILD_sdurwsim_bullet/BUILD_sdurwsim_gui=OFF——F-420 在册口径，attempt 2 验收同款）；冒烟树 build_smoke_wp24t03fix（vcpkg toolchain＋Qt CMAKE_PREFIX_PATH——AGENTS §4.1 口径）。破坏实验（见 testSuites③）后对冒烟树增量重建零重编＝产物与最终修复源态一致"
+    },
+    {
+      "target": "sdurws_ird_modeling_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 272/272＋冒烟 215/215",
+      "notes": "集成较 attempt 2 的 270→272：恰增返工两用例（PluginRegistrarT03B 族——阻断 B-1 修复的对应具名测试，返工清单②）；其余 270 例零变化全量回归通过。冒烟 215/215 与 attempt 2 基线一致（PluginModuleT03BTest.cpp 为集成模式专属 gated TU——冒烟不编，冒烟面无用例增删）"
+    },
+    {
+      "target": "sdurws_ird_ui_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 158/158＋冒烟 158/158",
+      "notes": "零用例增删——全量回归复跑，与 attempt 2 基线一致"
+    },
+    {
+      "target": "sdurws_ird_ui_gui_test",
+      "kind": "gtest executable（Widgets）",
+      "result": "build-pass＋集成 40/40",
+      "notes": "零增删——全量回归复跑，与 attempt 2 基线一致"
+    },
+    {
+      "target": "sdurws_ird_ui_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 22/22＋冒烟 22/22",
+      "notes": "零增删——全量回归复跑"
+    },
+    {
+      "target": "sdurws_ird_modeling_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 17/17＋冒烟 8/8",
+      "notes": "零增删——全量回归复跑；冒烟 8/8 与 attempt 2 冒烟口径一致"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "①返工修复具名用例（阻断 B-1／findings F-421 对应——本段新增 2 例）",
+      "designRef": "验收记录 attempt 2 阻断 B-1 返工清单①②；units/ui.md §7.1（词形权威）、§10.9（registerPluginUi 校验序与报告后置条件）、§11.1/§11.3；units/modeling.md §9.7.3（卡表十条 id 词表）；tasks/foundation/WP-24-T03.json acceptance 7/8",
+      "cases": [
+        { "name": "PluginRegistrarT03B.RealChainModelingDescriptorOkTenCommands_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "返工清单②真链路正例：createPluginUiRegistrar（白名单八 token 同值同序）× createModelingPluginAssembly（真实 descriptor——与宿主装配层同一门面入口，零测试特化）→ registerPluginUi 返回 Ok＋装配报告恰一行 ok=1/panels=1/commands=10（§10.9 后置条件；命令计数权威＝§9.7.3 卡表十条全量，前置断言钉住计数与连字符词形）。修复前该链路恒 InvalidDescriptor→报告恒空→关于框恒白名单占位行——acceptance 7『真实装配事实』呈现面的机制级自证补位" },
+        { "name": "PluginRegistrarT03B.CommandIdSyntaxRejectsUppercaseAcceptsHyphen_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "返工清单①行为面钉（句法边界）：同一真实 descriptor 仅改命令 id 词形——大写违约拒绝（InvalidDescriptor）且失败不入列（§11.3 失败隔离：报告保持空）；连字符合法词原样放行（Ok）且不误判 DuplicatePlugin（失败行不占『每插件恰好一次』计数）——拒/收翻转只由词形变化引起，直钉字符集修复点（段内 [a-z0-9-]＋'.' 分段，词形权威＝ui.md §7.1 冻结表 v0.8 登记口径）" }
+      ]
+    },
+    {
+      "suite": "②真实失败能力自证（4.5 型破坏实验——本段亲手执行）",
+      "designRef": "验收协议对抗式验收纪律（修复与测试的因果绑定实证）；AGENTS §6.3 提交前自查",
+      "cases": [
+        { "name": "BREAK-EXPERIMENT: 临时禁用连字符放行分支→两用例实测变红→还原复绿", "status": "passed", "modes": ["integration"], "trace": "破坏态（continue 改 (void)0——等价缺陷回潮）增量重编后 --gtest_filter=PluginRegistrarT03B.* 实测 2 FAILED（exit=1，break_run.log）；还原修复后复绿 2 passed（restore_run.log＋registrar-filter-run-restore.xml）。过程如实登记：破坏还原时误用 git checkout 将未提交的修复一并回滚至 HEAD 缺陷版（restore_run.log 的 FAILED 即该缺陷版产物——反向再次实证测试判别力），随即重新施加修复并全量重跑 272/272 复绿（reapply_build.log＋最终态 sdurws_ird_modeling_test.xml）；破坏实验后对冒烟树增量重建零重编＝冒烟产物与最终修复源态一致（build_smoke_rebuild.log）" }
+      ]
+    },
+    {
+      "suite": "③attempt 2 已通过面的回归保障（零回退实证）",
+      "designRef": "返工纪律『acceptance 已通过部分不得回退』；attempt 2 验收记录 §acceptance 九条证据表",
+      "cases": [
+        { "name": "sdurws_ird_modeling_test 272/272（270 存量＋2 返工新增）／sdurws_ird_ui_test 158/158／sdurws_ird_ui_gui_test 40/40／sdurws_ird_ui_contract_test 22/22／sdurws_ird_modeling_contract_test 17/17（集成）；冒烟 215/158/22/8", "status": "passed", "modes": ["integration", "smoke"], "trace": "与 attempt 2 验收者亲跑基线（270/158/40/22/17＋冒烟 215/158/22/8）逐目标比对：唯一增量＝modeling_test +2（返工新增用例），其余全部同值——DomainCommand 族/汇聚源/中央区挂位/策略与名称/会话同步/About 族既有具名用例零回归" }
+      ]
+    }
+  ],
+  "acceptanceMapping": [
+    { "acceptance": "阻断 B-1（返工清单①）字符集放行 '-'", "evidence": "PluginRegistrarT03B.CommandIdSyntaxRejectsUppercaseAcceptsHyphen_WP24_T03B（集成 272 内）＋ui/src/PluginUiRegistrar.cpp 修复文本＋break/restore 破坏实验四件", "result": "passed" },
+    { "acceptance": "阻断 B-1（返工清单②）真链路 gtest", "evidence": "PluginRegistrarT03B.RealChainModelingDescriptorOkTenCommands_WP24_T03B（Ok＋ok=1/panels=1/commands=10）", "result": "passed" },
+    { "acceptance": "阻断 B-1（返工清单③）关于框真实清单 GUI 帧复录", "evidence": "未执行（编排者禁启 Studio——GUI 冒烟禁跑）：机制级自证由返工清单②真链路 gtest 承载（真机呈现面随全量验收裁量）", "result": "not-executed（如实登记）" },
+    { "acceptance": "双模式构建零错误", "evidence": "build_release_fix.log（BUILD_EXIT=0）＋build_smoke_fix.log（SMOKE_EXIT=0）＋build_smoke_rebuild.log", "result": "passed" },
+    { "acceptance": "ird_gates 命中集增量归一化比对", "evidence": "ird-gates-{base,head}-cmakep.log（两端直跑引擎）＋归一化行集 lineuniq-{base,head}-norm.txt（diff=空，151=151）＋四口径 151/8/151/72 两端同值；verify2_gates.log（构建目标口径 exit=1＝存量红，引擎自计 72 处——F-019 在册口径，与 attempt 2 同值零新增）", "result": "passed（零新增）" },
+    { "acceptance": "validate-task 自查", "evidence": "目标契约 WP-24-T03.json PASS (1 tasks)；同目录 WP-24-T08.json 转换报错＝base 继承缺陷（主线 fecdf104 已修、合并即消解；主检出 validate-docs PASS 20 units/12 trace/202 task files 佐证）", "result": "passed（环境项如实标注）" },
+    { "acceptance": "契约 verify 四命令逐条", "evidence": "verify1_build.log（0）／verify2_gates.log（1＝存量红 72，见上门禁行）／verify3_validate_docs_branchtree.log（分支树失败＝T08 base 继承，主检出 PASS 佐证）／verify4_targets.log（0）", "result": "passed（③环境项如实标注）" }
+  ],
+  "summary": {
+    "total": 559,
+    "passed": 559,
+    "failed": 0,
+    "skipped": 0,
+    "byMode": {
+      "integration": "272+158+40+22+17 = 509/509",
+      "smoke": "215+158+22+8 = 403/403（冒烟与集成面有 gated 交集差——各模式内独立全量）"
+    }
+  },
+  "honestBoundary": [
+    "返工清单③『复录关于框真实清单帧（GUI 证据）』未执行：编排者明令禁启 RobWorkStudio.exe（GUI 冒烟禁跑）——机制级自证由真链路 gtest 承载（registerPluginUi(真实 descriptor)=Ok＋报告计数＝关于框取数面同源），真机呈现面证据随全量验收段裁量补录",
+    "破坏实验还原环节曾误将未提交修复一并回滚至 HEAD 缺陷版（restore_run.log FAILED 实录），已重新施加修复并以最终态全量重跑复绿；最终源态＝修复态（break/restore/reapply 三段日志全链留痕，无删改）"
+  ]
+}

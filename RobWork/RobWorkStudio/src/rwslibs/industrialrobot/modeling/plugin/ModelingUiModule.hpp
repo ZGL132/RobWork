@@ -33,6 +33,7 @@
 
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <vector>
@@ -43,16 +44,26 @@
 #include <sdurws/ird/modeling/CommandHandlers.hpp> // kCmdApplyRobotDesign/kCommandPayloadVersion/encodeCommandPayload（域命令面权威）
 #include <sdurws/ird/ui/IDraftController.hpp>      // ui::IModuleDraftSource（§10.5 模块草稿源——T03b-1 接入）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>       // ui::IPluginUiModule（§11.2 接口——P-MDL-8 消账后本类正式继承）
+#include <sdurws/ird/ui/UiPorts.hpp>               // ui::IUiDomainReadinessSource（§6.5 汇聚源端口——T03b 收口）
 #include "PanelCommandCatalog.hpp"                // modelingReadinessProjection（§11.2 readonlyProjections 数据面——同目录私有头）
 #include "PanelRefresh.hpp"                       // PanelUiThreadGuard（§3.4 线程守卫——零 Qt，同目录私有头）
 #include <sdurws/ird/modeling/Readiness.hpp>       // ModelReadinessReport（就绪投影数据源）
 #include <sdurws/ird/modeling/Template.hpp>        // ModelingWorkingSet（草稿态值）
 #include <sdurws/ird/modeling/CommandHandlers.hpp> // AssertionSuite（就绪真判定——T03b-2b）
-#include <sdurws/ird/policy/Contexts.hpp>          // policy::IPolicyNameContext（R-4 注入面——草稿桩）
+#include <sdurws/ird/policy/Contexts.hpp>          // policy::IPolicyNameContext（R-4 注入面——T03b 起为映射适配器）
 #include <sdurws/ird/policy/JointLimits.hpp>       // policy::makeJointLimitEvaluator（行程评估器装配）
+#include <sdurws/ird/policy/PolicySet.hpp>         // policy::EngineeringPolicySet（策略装载注入面——T03b 收口）
 #include <sdurws/ird/project/CommandService.hpp>   // project::CommandEnvelope（§8.5 返回值面——登记边）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::DomainReadinessItem（§6.5 汇聚值面）
+
+namespace sdurws {
+namespace ird {
+namespace runtime {
+class RuntimeNameMap;  // 前置声明（bindRuntimeNameMap 入参——完整类型仅 cpp 消费；R-4 零拼装转发面）
+}  // namespace runtime
+}  // namespace ird
+}  // namespace sdurws
 
 class QWidget;  // 前置声明：createPanel 返回类型（全局域——插件目标 Widgets 面可用）
 
@@ -85,7 +96,8 @@ struct ModuleSessionState {
  * 提供（modelingPanelRegistration——PanelCommandCatalog.hpp）。
  */
 class ModelingUiModule final : public ui::IPluginUiModule,
-                               public ui::IModuleDraftSource {
+                               public ui::IModuleDraftSource,
+                               public ui::IUiDomainReadinessSource {
 public:
     ModelingUiModule();  // cpp 定义——装配草稿名称桩与行程评估器（T03b-2b）
     /// 不可拷贝/不可移动（会话态与壳引用绑定生命周期——§10.9）。
@@ -138,6 +150,21 @@ public:
         }
         return modelingReadinessProjection(*m_session.readiness);
     }
+
+    /**
+     * @brief 域就绪汇聚源（ui::IUiDomainReadinessSource——§6.5
+     *        StageStatusModel 汇聚的端口半区；T03b 收口落位）。
+     *
+     * 线程契约（UiPorts.hpp 端口行）：readinessSnapshot 供 workflow 任意
+     * 线程拉取——本实现经互斥锁保护的就绪快照应答（值拷贝、短临界区），
+     * 与 UI 线程的 recomputeReadiness 写入并发安全；纯查询不抛，零判定
+     * （N-11——汇聚输入不加工，判定权威在 IModelReadinessChecker）。
+     *
+     * @param stage [in] 目标阶段；非建模阶段＝空清单（该阶段无本源投影）
+     * @return 建模域就绪项（域未校验＝DataInsufficient 缺省行——不伪造）
+     */
+    std::vector<ui::DomainReadinessItem> domainReadiness(
+        ui::StageId stage) const override;
 
     /**
      * @brief 草稿应用命令组装（§11.2 行"§8.5 应用时命令组装〔域侧〕"——
@@ -219,6 +246,53 @@ public:
     void noteAppliedRevision(const core::RevisionId& newBase,
                              const std::optional<core::ObjectId>& rootObjectId);
 
+    // ---- 会话事件全同步（T03b 收口——§5.2/§5.4/§6.2 的模块半区）-------
+
+    /**
+     * @brief 会话脱离（项目关闭/切换后由宿主经 presentContext 调用——
+     *        §8.6 表"模块表/局部栈清空"的模块状态半区：分支锚清空、草稿
+     *        工作集复位为空、就绪报告作废＋面板复位空态）。
+     *
+     * 纪律：磁盘草稿零触碰（落盘归 DraftController 处置链——本方法只清
+     * 会话内存态）；此后 buildDraftCommand 恒 nullopt（无锚无变更——
+     * Stale 判据不可能被旧会话污染新会话，§6.2 纪元过滤的模块对位）。
+     */
+    void onSessionDetached();
+
+    /**
+     * @brief 修订提交事件（非 draft.apply 路径——撤销/重做/其他会话入口
+     *        产生新修订时由宿主事件桥调用：编辑基线前移到新 tip＋就绪
+     *        重算＋面板刷新；编辑记录不清零——与 noteAppliedRevision 的
+     *        "应用即消费"语义区分，§8.5 重建基线的会话对位）。
+     *
+     * @param branch [in] 提交所在分支（非当前锚定分支的事件忽略——跨分支
+     *                修订不触碰编辑基线，§6.2 纪元过滤的模块对位）
+     * @param newTip [in] 新 tip 修订
+     */
+    void onRevisionCommitted(const core::BranchId& branch,
+                             const core::RevisionId& newTip);
+
+    // ---- 策略装载与 runtime 名称适配（T03b 收口——就绪 L 行程全量）----
+
+    /**
+     * @brief 绑定运行时名称映射（⑥端口真身——装配期由宿主注入；nullptr
+     *        ＝未绑定，名称上下文如实 nullopt/全零。映射来源＝确定性编译
+     *        产物，随 UI-T20 宿主运行时发布桥到位）。
+     *
+     * @param map [in] 映射（非 owning——调用方保证存活期覆盖模块）
+     */
+    void bindRuntimeNameMap(const runtime::RuntimeNameMap* map);
+
+    /**
+     * @brief 绑定策略提供器（已装载 EngineeringPolicySet 的现取入口——
+     *        装配期由宿主注入；返回 nullptr＝策略未装载，就绪 L11 层如实
+     *        Blocking（行程校验未执行的事实随行），不伪造可行）。
+     *
+     * @param provider [in] 提供器（UI 线程调用；空 function＝卸载绑定）
+     */
+    void bindPolicyProvider(
+        std::function<const policy::EngineeringPolicySet*()> provider);
+
     // ---- 模块草稿源（T03b-1——ui::IModuleDraftSource 四方法；§10.5）----
 
     /// 模块句柄（ModuleDraftHandle 词表——与 descriptor.pluginId 同 token）。
@@ -246,9 +320,10 @@ public:
      *        结果写会话 readiness 并驱动面板就绪条刷新）。编辑落点/
      *        锚定/种子后调用。
      *
-     * 诚实边界：草稿阶段 CheckContext 取缺省（无已装载策略）——L11 层
-     * 对"策略不可解析"如实产出 Blocking 行（行程校验未执行的事实随行）
-     * ；名称上下文为草稿桩（runtime 名在编译前不存在，返回 nullopt）。
+     * 策略与名称来源（T03b 收口——全量行程）：CheckContext.resolvedPolicy
+     * 取自策略提供器现取（未装载＝nullptr→L11 如实 Blocking）；名称上下文
+     * 为 RuntimeMapPolicyNameContext（RuntimeNameMap 转发形——未绑定映射
+     * 时如实 nullopt，绑定后 L 行名称解析全量可用）。
      */
     void recomputeReadiness();
 
@@ -261,7 +336,14 @@ private:
     std::function<QString(const std::string&)> m_textResolver;  ///< 文案解析（创建时应用）
     std::unique_ptr<policy::IJointLimitEvaluator> m_evaluator{
         policy::makeJointLimitEvaluator()};  ///< 行程评估器（policy 唯一实现——T03b-2b）
-    std::unique_ptr<policy::IPolicyNameContext> m_nameContext;  ///< 草稿名称桩（见 cpp——nullopt 语义）
+    std::unique_ptr<policy::IPolicyNameContext> m_nameContext;  ///< 名称上下文（T03b 起＝映射适配器——绑定切换经重建）
+    std::function<const policy::EngineeringPolicySet*()> m_policyProvider;  ///< 策略提供器（现取——bindPolicyProvider 注入）
+    /// 就绪快照互斥锁（domainReadiness 跨线程拉取与 UI 线程重算的并发保护
+    /// ——§6.5 端口线程契约；mutable＝const 拉取路径加锁）
+    mutable std::mutex m_readinessMutex;
+    /// 跨线程就绪快照（recomputeReadiness 写/domainReadiness 读——值拷贝
+    /// 短临界区；与 m_session.readiness 同源同写点）
+    std::optional<ModelReadinessReport> m_readinessSnapshot;
 };
 
 }  // namespace sdurws::ird::modeling

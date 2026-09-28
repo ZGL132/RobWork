@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0.001" timestamp="2026-09-28T11:13:48.934" name="AllTests">
+  <testsuite name="PluginRegistrarT03B" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-09-28T11:13:48.934">
+    <testcase name="RealChainModelingDescriptorOkTenCommands_WP24_T03B" file="D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="412" status="run" result="completed" time="0.001" timestamp="2026-09-28T11:13:48.934" classname="PluginRegistrarT03B">
+      <failure message="D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:440&#x0A;Expected equality of these values:&#x0A;  registrar-&gt;registerPluginUi(assembly.descriptor, *assembly.module)&#x0A;    Which is: 4-byte object &lt;03-00 00-00&gt;&#x0A;  ui::RegistrationOutcome::Ok&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:440
+Expected equality of these values:
+  registrar->registerPluginUi(assembly.descriptor, *assembly.module)
+    Which is: 4-byte object <03-00 00-00>
+  ui::RegistrationOutcome::Ok
+    Which is: 4-byte object <00-00 00-00>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:445&#x0A;Expected equality of these values:&#x0A;  reports.size()&#x0A;    Which is: 0&#x0A;  std::size_t{1}&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:445
+Expected equality of these values:
+  reports.size()
+    Which is: 0
+  std::size_t{1}
+    Which is: 1
+]]></failure>
+    </testcase>
+    <testcase name="CommandIdSyntaxRejectsUppercaseAcceptsHyphen_WP24_T03B" file="D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp" line="460" status="run" result="completed" time="0." timestamp="2026-09-28T11:13:48.935" classname="PluginRegistrarT03B">
+      <failure message="D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:487&#x0A;Expected equality of these values:&#x0A;  registrar-&gt;registerPluginUi(assembly.descriptor, *assembly.module)&#x0A;    Which is: 4-byte object &lt;03-00 00-00&gt;&#x0A;  ui::RegistrationOutcome::Ok&#x0A;    Which is: 4-byte object &lt;00-00 00-00&gt;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:487
+Expected equality of these values:
+  registrar->registerPluginUi(assembly.descriptor, *assembly.module)
+    Which is: 4-byte object <03-00 00-00>
+  ui::RegistrationOutcome::Ok
+    Which is: 4-byte object <00-00 00-00>
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:488&#x0A;Expected equality of these values:&#x0A;  registrar-&gt;assemblyReports().size()&#x0A;    Which is: 0&#x0A;  std::size_t{1}&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\wt_wp24t03_fix\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginModuleT03BTest.cpp:488
+Expected equality of these values:
+  registrar->assemblyReports().size()
+    Which is: 0
+  std::size_t{1}
+    Which is: 1
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

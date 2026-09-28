@@ -35,8 +35,16 @@ namespace ui {
 
 namespace {
 
-/// 命令 id 语法最小校验（§7.2 第 1 步句法形态——点分小写）。完整词表
-/// 校验随收口接线进 content 注册表；此处拦截明显违约（空/大写/空白）。
+/// 命令 id 语法最小校验（§7.2 第 1 步句法形态）。
+///
+/// 合法字符集＝[a-z0-9-]（段内）＋'.'（分段符），且必须含至少一个点。
+/// 连字符是合法段内字符：词形权威＝ui.md §7.1 冻结表原文（v0.8 落位登记
+/// 口径"点分段＋段字符 [A-Za-z0-9-]＋必含点"），modeling.md §9.7.3 卡表
+/// 十条域命令 id 全部含连字符（如 modeling.new-from-template）——此前
+/// 字符集缺 '-' 致真机装配登记恒 InvalidDescriptor（findings F-421，
+/// WP-24-T03 验收 attempt 2 阻断 B-1，返工修复）。
+/// 完整词表校验在 content 注册表登记面（§7.2 owner 白名单等）；此处只
+/// 拦截明显违约：空 id、词表外字符（大写/空白/其他符号）、无点分段。
 bool commandIdWellFormed(const std::string& id)
 {
     if (id.empty()) {
@@ -48,8 +56,12 @@ bool commandIdWellFormed(const std::string& id)
             hasDot = true;
             continue;
         }
+        if (c == '-') {
+            continue;  // 连字符＝合法段内字符（卡表域命令 id 词形，见上）
+        }
         if (c < 'a' || c > 'z') {
-            // 点分小写词表之外的字符（数字/大写/符号/空白）＝违约。
+            // 小写词表之外的字符再放行数字；数字之外（大写/空白/其他
+            // 符号）＝违约。
             if (c < '0' || c > '9') {
                 return false;
             }

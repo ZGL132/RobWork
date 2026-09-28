@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "taskId": "WP-24-T03",
+  "masterWp": "WP-I",
+  "branch": "wp24-t03",
+  "date": "2026-09-28",
+  "attempt": 2,
+  "reworkNote": "租约到期重派续接段（attempt 2，lastFailureRecord=null 非返工）：前次中断会话两笔提交（4dbca0d8 实施＋90032ede 验证修复/文档同步）逐项亲验后续接完成——构建、全部测试、门禁两端比对均本段亲手重做，不引用前次留痕；续接新增测试 4 例＋缺陷修复 1 项（modeling_test 冒烟链接）＋文档同步缺口补齐（modeling.md v0.22＋contract-compile-log 修订节）",
+  "taskNature": "实现任务：ui 域命令入 content 注册表/汇聚投影/中央区挂位/策略与名称适配/会话全同步/About 接线（前次提交承载）＋续接段具名用例补强与冒烟链接修复（本段承载）",
+  "framework": "googletest（vcpkg gtest:x64-windows）；GUI 测试按 ui.md §12.2 规程（QT_QPA_PLATFORM=windows、单 exe、绝对路径）",
+  "targets": [
+    {
+      "target": "sdurws_ird_ui/sdurws_ird_modeling/sdurws_ird_modeling_plugin（含全部 industrialrobot 目标）",
+      "kind": "STATIC 集群",
+      "result": "build-pass：集成模式全量 Release 零错误（BUILD_EXIT=0）＋独立冒烟全量零错误（BUILD_EXIT=0）",
+      "notes": "集成树＝独立 worktree 冷启树（主检出被编排者租约簿记占用）；以框架自带配置项排除三个与 industrialrobot 零依赖的框架模拟插件目标（BUILD_RWSimulatorPlugin/BUILD_sdurwsim_bullet/BUILD_sdurwsim_gui=OFF——冷启编译环境漂移，findings F-420，与本任务 diff 无关：RobWorkSim 子树 base..head 零差异）；冒烟树 build_smoke_wp24t03（vcpkg toolchain＋Qt CMAKE_PREFIX_PATH——AGENTS §4.1 口径）"
+    },
+    {
+      "target": "sdurws_ird_modeling_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 270/270＋冒烟 215/215",
+      "notes": "集成较前次 268→270：T03B 族 3 例自 PluginPanelTest.cpp 迁入 gated 新文件 PluginModuleT03BTest.cpp（迁移不改断言）＋新增 2 例（SeedTemplateResetsDraftSession——acceptance 2 具名用例；StageSnapshotParityAndEditReflection——acceptance 3 具名用例，汇聚经 StageNavigationModel domainSources 实装配）；gated 差 270−215＝集成专属 TU 既有口径（ReadinessTest/CommandHandlersTest/DhConvertEquivalenceTest/Golden* 等）＋本任务 gated 增列。冒烟链接修复实证：迁移前 T03b-2b 继承缺陷致冒烟 modeling_test 链接失败（ui.md v1.18 偏差⑵），迁移后冒烟编列恢复"
+    },
+    {
+      "target": "sdurws_ird_ui_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 158/158＋冒烟 158/158",
+      "notes": "零用例增删——全量回归复跑"
+    },
+    {
+      "target": "sdurws_ird_ui_gui_test",
+      "kind": "gtest executable（Widgets）",
+      "result": "build-pass＋集成 40/40",
+      "notes": "38→40：新增 DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B（acceptance 1 具名用例）＋DomainCommandGatingNoProjectAndReadonly_WP24_T03B（acceptance 2 具名反例）；既有 T03B 族 2 例（StagePanelPageHostingAndSwitching/DomainCommandRegistrationAndHonestFeedback）随全量复跑通过"
+    },
+    {
+      "target": "sdurws_ird_ui_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass＋集成 22/22＋冒烟 22/22",
+      "notes": "零增删——全量回归复跑"
+    },
+    {
+      "target": "sdurws_ird_modeling_contract_test",
+      "kind": "gtest executable",
+      "result": "build-pass（两模式）＋集成 17/17＋冒烟 8/8",
+      "notes": "零增删——全量回归复跑；冒烟 8/8 与 wp13-t15-app 登记的冒烟口径一致（gated 差）"
+    }
+  ],
+  "testSuites": [
+    {
+      "suite": "T03B 族（契约 WP-24-T03 收口段 acceptance 具名自证——本段新增 4 例加前次 5 例）",
+      "designRef": "tasks/foundation/WP-24-T03.json acceptance 1~7；units/ui.md §4.1/§6.5/§7.2/§7.5/§7.6/§11.1~§11.4/§5.2/§5.4/§6.2；units/modeling.md §9.7.3",
+      "cases": [
+        { "name": "WorkbenchContentGuiTest.DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 1 具名用例：①十条域命令（§9.7.3 卡表本地承载——卡表对位由 modeling 单元 Commands_TenDottedCommandIds 族钉住）注册后 availability 快照逐条 registered（快照含十条）；②同输入两份装配 paletteSnapshot 域命令相对序逐位一致（同输入同排序——NFR-COR-02）；③与壳层 draft.save 同 id 的域命令登记被拒、其余十条照常（§11.3 失败隔离）且 Dev 日志留失败行『domain command registration rejected: id=draft.save』（UI-CMD-DUPLICATE 装配期留痕半区——不覆盖不静默）" },
+        { "name": "WorkbenchContentGuiTest.DomainCommandGatingNoProjectAndReadonly_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 2 具名反例：NoProject 态 Project 作用域域命令 registered 但 enabled=false（PM-10 注册表作用域谓词承载）；只读会话（writable=false）readOnlyAllowed=false 命令禁用且 readOnlyBlocked 位置位、readOnlyAllowed=true 命令保持可用（§7.6/L-7）；可写上下文注入后写命令解除禁用（§7.5 谓词随快照刷新）" },
+        { "name": "WorkbenchContentGuiTest.StagePanelPageHostingAndSwitching_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 4 机制级：stagePanelPages 逐项入中央栈、showStagePanel 切换激活页、无项目上下文刷新回首页且激活记忆复位、未登记阶段无操作（§11.3）；建模面板实体入壳形态中央栈的集成面归 UI-T20/21（落位偏差 ui.md v1.18 ⑴如实登记）；嵌入式形态 Dock 挂位回归＝既有 BuildPlacementTest 族全绿零变化" },
+        { "name": "WorkbenchContentGuiTest.DomainCommandRegistrationAndHonestFeedback_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 2：域命令经注册表提交路径（commandRegistry().submit 直查）＋处理器级诚实应答（messageKey=cmd.modeling.flow-not-assembled——未装配域流程不虚构执行成功，T03a『已受理』占位退役）＋重复 id 注册被拒" },
+        { "name": "PluginPanelT03B.DomainReadinessSourceParity_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 3：domainReadiness(Modeling) 与 readonlyProjections 逐字段一致（同快照同源——ACC5 零缓存）；非建模阶段空清单" },
+        { "name": "PluginPanelT03B.StageSnapshotParityAndEditReflection_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 3 具名用例：模块作为 IUiDomainReadinessSource 注册进 StageNavigationModel（domainSources 实装配）——快照含 modeling 行且与直读逐字段一致＋epoch 标注；未装载策略＝L11 策略不可解析 Blocking（不伪造可行）；策略装载触发重算后该阻断消失且行程评估真实执行（空映射名称不可解析→评估 Failed＋NAME-UNRESOLVED 诊断——ARC-04 不猜测的诚实应答，真名映射随 UI-T20）；传动配置/清退两次编辑后汇聚快照缺项键集随缩/增且与直读同拍（ACC5 零缓存）" },
+        { "name": "PluginPanelT03B.SessionDetachAndRevisionAdvance_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 6：onRevisionCommitted 基线前移到新 tip（再应用不误报 Stale）且编辑记录不清零（与应用回执语义区分）；非锚定分支事件过滤（切换项目旧会话事件不污染）；onSessionDetached 锚清空＋buildDraftCommand 恒 nullopt（关闭后面板空态的模块对位；宿主转发半区＝UiPlugin.syncDomainModulesToContext——presentContext 挂钩 §5.2/§5.4/§6.2 全路径）" },
+        { "name": "PluginPanelT03B.PolicyNameContextHonestEmptyPath_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 5：未绑定映射三方法如实 nullopt/全零保留值（CON-06 空映射同态口径）；空映射绑定后查询未命中仍 nullopt（ARC-04 不猜测）" },
+        { "name": "PluginPanelT03B.SeedTemplateResetsDraftSession_WP24_T03B", "status": "passed", "modes": ["integration"], "trace": "acceptance 2 具名用例：new-from-template 执行后会话草稿重置——脏会话（未应用编辑＋负质量阻断）经 seedTemplateSession 后编辑记录清零＋设计与模板工厂新产草稿逐字段一致＋就绪重算不残留旧判定＋锚不被触碰" }
+      ]
+    },
+    {
+      "suite": "既有用例全量复跑（acceptance 1/4/7 的承载面回归——本段零增删）",
+      "designRef": "units/modeling.md §9.7.3（Commands_* 五例卡表对位）；ui.md §11.3/§11.4（AboutDialog 模型/GUI 族——清单装配唯一权威＋白名单∩报告＋交集丢弃＋重复取首条＋空报告白名单占位行）；BuildPlacementTest 族（嵌入式 Dock 挂位回归）",
+      "cases": [
+        { "name": "（汇总）ui_test 158＋ui_gui_test 40（含 AboutDialog/BuildPlacement/CommandPalette 既有族）＋modeling_test 非迁移部分＋两契约目标", "status": "passed", "modes": ["integration"], "trace": "全绿——既有承载面零回退；ReportRegistrar 实装（registrar.assemblyReports() 现取现拼 ACC5 零缓存；装配报告行『domain assembly: plugin=modeling ok=1 panels=1 commands=10』由 DomainAssembly 装配序产出并 Dev 日志留痕）——关于框行集装配语义由 UI-T10 已验 UI-PLG-2 数据源断言承载，本任务零语义变化" },
+        { "name": "（汇总）冒烟 modeling_test 215＋ui_test 158＋ui_contract 22＋modeling_contract 8", "status": "passed", "modes": ["smoke"], "trace": "冒烟全绿；modeling_test 冒烟链接恢复＝本段缺陷修复的实证（前次 90032ede 登记的继承缺陷消账）" }
+      ]
+    }
+  ],
+  "summary": {
+    "integration": { "total": 507, "passed": 507, "failed": 0, "skipped": 0, "perTarget": { "sdurws_ird_modeling_test": 270, "sdurws_ird_ui_test": 158, "sdurws_ird_ui_gui_test": 40, "sdurws_ird_ui_contract_test": 22, "sdurws_ird_modeling_contract_test": 17 } },
+    "smoke": { "total": 403, "passed": 403, "failed": 0, "skipped": 0, "perTarget": { "sdurws_ird_modeling_test": 215, "sdurws_ird_ui_test": 158, "sdurws_ird_ui_contract_test": 22, "sdurws_ird_modeling_contract_test": 8 }, "note": "冒烟 modeling_test XML 已落盘；其余三目标冒烟结果以控制台日志留痕（run-smoke-*.log）" },
+    "exitCodes": { "integrationBuild": 0, "integrationTests": 0, "smokeConfigure": 0, "smokeBuild": 0, "smokeTests": 0, "validateDocs": "PASS（主检出 redesign-main@fecdf104 亲跑——分支树失败＝base 继承的 WP-24-T08.json note 转义缺陷，fecdf104 已修，合并即消解；详见 README §五）", "validateTask": 0, "irdGates": 1 },
+    "irdGatesNote": "exit=1＝存量红（F-019 先例口径）——base（3f767d9c，临时 worktree 亲跑）..head 三套计数归一化比对完全一致：原始命中条目 144=144、去重条目 121=121（引擎自测 token 零出现）、引擎自计数 72=72，去重集 diff 为空＝零新增零消除（ird-gates-comparison.md；前次留痕『比对随验收段补做』缺口由本段补全）",
+    "acceptanceMapping": {
+      "acc1": "域命令入 content 注册表——DomainCommandCatalogTenRegisteredDeterministic_WP24_T03B（快照含十条/同输入同排序/重复拒绝＋Dev 失败行）＋Commands_TenDottedCommandIds 等卡表族＋DomainCommandRegistrationAndHonestFeedback（提交路径 submitCommand）",
+      "acc2": "门控与执行诚实——DomainCommandGatingNoProjectAndReadonly（无项目/只读反例）＋SeedTemplateResetsDraftSession（new-from-template 重置）＋DomainCommandRegistrationAndHonestFeedback（未装配流程 messageKey 不虚构）",
+      "acc3": "汇聚投影——DomainReadinessSourceParity＋StageSnapshotParityAndEditReflection（快照含 modeling 行逐字段一致＋编辑后缺项键集变化反映进快照＋epoch 标注；红线结构自证＝StageNavigationModel 现取现拼零判定，N-11）",
+      "acc4": "中央区挂位——StagePanelPageHostingAndSwitching（壳形态机制＋替身面板；建模面板实体入壳形态中央栈归 UI-T20/21，偏差 ui.md v1.18 ⑴登记）＋嵌入式 Dock 回归零变化（BuildPlacementTest 族全绿）；§11.3 占位面板不回退由既有族全绿承载",
+      "acc5": "策略与名称适配——PolicyNameContextHonestEmptyPath（空映射如实 nullopt/全零）＋StageSnapshotParityAndEditReflection（未装载 L11 Blocking→装载后 L 行真评估：NAME-UNRESOLVED 诚实失败在案；真名映射随 UI-T20——契约 note 诚实边界②）",
+      "acc6": "会话事件全同步——SessionDetachAndRevisionAdvance（修订前移/跨分支过滤/脱离清空）＋宿主半区 syncDomainModulesToContext（presentContext 挂钩——core::ReferenceEventBus 唯一机制，无第二套事件）",
+      "acc7": "About 接线——RegistrarAboutSource 实装（assemblyReports() 现取现拼 ACC5 零缓存；versionBaseline available=false 如实）＋既有 AboutDialog 模型/GUI 族全绿（行集装配唯一权威/白名单∩报告/交集丢弃/重复取首条/空报告占位行——UI-PLG-2 数据源断言承载）；HarnessAboutSource 于宿主插件退役（harness 保留——ui.md v1.18 ⑤如实登记）",
+      "acc8": "双模式构建零错误（集成/冒烟 BUILD_EXIT 均 0）＋ird_gates 三套计数归一化比对零新增＋gtest 全绿（五目标集成 507/507；冒烟 403/403）＋ird-test-report.json＋留痕本目录；GUI 冒烟（--rwsplugin 直载）未执行——编排者约束禁启 RobWorkStudio.exe，如实声明（机制级自证由 DomainCommand* gtest 族承载；截图归所有者人工通道 UI-T17 先例）",
+      "acc9": "文档同步——ui.md v1.18＋DTB §2.25（前次提交）＋modeling.md v0.22＋contract-compile-log.md 修订节（本段补齐——前次提交声明与 diff 的偏差已如实登记）；需求语义零变化"
+    },
+    "evidence": "traceability/builds/wp24-t03b/（README.md、ird-test-report.json、五份 gtest XML＋smoke modeling XML、集成/冒烟构建与配置日志、五测试运行日志、ird-gates-head/base.log＋两份去重集＋ird-gates-comparison.md、validate-docs.log、validate-task.log、前次留痕 ird_gates-run-20260928.log）"
+  }
+}

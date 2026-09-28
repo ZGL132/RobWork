@@ -935,3 +935,12 @@ TEST(PluginPanel, Thread_UiThreadOnlyConstraint_WP13T15_ACC5)
     foreign.join();
     EXPECT_TRUE(threw) << "跨线程访问编辑面＝契约违约（§3.4 fail-fast）";
 }
+
+// ---------------------------------------------------------------------
+// WP-24-T03b 收口的模块级用例迁移登记（WP-24-T03 验证修复）：原在本文件
+// 尾段的 T03B 三用例（DomainReadinessSourceParity/SessionDetachAndRevision
+// Advance/PolicyNameContextHonestEmptyPath——构造 ModelingUiModule，其
+// policy 行程评估器符号仅集成模式可链）迁至 test/PluginModuleT03BTest.cpp
+// （TARGET sdurw_kinematics 集成 gating——与 ReadinessTest/CommandHandlers
+// Test 同款先例）。迁移不改任何断言语义；详见该文件头 gating 说明。
+// ---------------------------------------------------------------------
