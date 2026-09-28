@@ -343,7 +343,7 @@ public:
 std::unique_ptr<IWorkbenchShell> createWorkbenchShell();
 
 /**
- * @brief ui 单元稳定诊断码描述符全表（ui.md §3.5 登记的九码建议值）。
+ * @brief ui 单元稳定诊断码描述符全表（ui.md §3.5 登记的十码建议值）。
  *
  * 码值权威归 diagnostics 码表（§3.5 原文）；本函数是 ui 侧的**描述符供体**
  * ——L5 装配期与 diagnostics::builtinCodeDescriptors() 一并向
@@ -353,7 +353,7 @@ std::unique_ptr<IWorkbenchShell> createWorkbenchShell();
  * 分类/严重/可重试性按 §3.5 表逐行落位；paramSchema 统一 "[]"（无参——
  * §4.5 必填字段的显式空；占位参数随 UI-T13 呈现任务按需增量登记）。
  *
- * @return 九项描述符（§3.5 表行序；纯函数——每次新值，登记值编译期固定）
+ * @return 十项描述符（§3.5 表行序；纯函数——每次新值，登记值编译期固定）
  */
 std::vector<diagnostics::CodeDescriptor> uiDiagnosticCodeDescriptors();
 

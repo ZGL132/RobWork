@@ -159,7 +159,8 @@ add_library(sdurws_ird_ui STATIC
     src/CommandInteractionBridge.cpp
     src/TaskPresentation.cpp
     src/PluginUiRegistrar.cpp
-    src/HostController.cpp)   # UI-T19——宿主控制器簇（B1-SPEC D2；§10.1 v1.17）
+    src/HostController.cpp
+    src/RuntimePublishBridge.cpp)  # UI-T20——宿主运行时发布桥（B1-SPEC D10 消费侧；§13 UI-T20 行）
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -349,7 +350,8 @@ add_executable(sdurws_ird_ui_test
     test/DiagPresentationModelTest.cpp
     test/TaskPresentationModelTest.cpp
     test/CommandInteractionBridgeTest.cpp
-    test/HostControllerModelTest.cpp)  # UI-T19——宿主控制器簇聚合契约
+    test/HostControllerModelTest.cpp
+    test/RuntimePublishBridgeTest.cpp)  # UI-T20——发布桥刷新事务/身份对账/失败路径/INV-B4/隔离
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -456,6 +458,23 @@ add_custom_command(TARGET sdurws_ird_ui_contract_test POST_BUILD
             $<TARGET_RUNTIME_DLLS:sdurws_ird_ui_contract_test>
             $<TARGET_FILE_DIR:sdurws_ird_ui_contract_test>
     COMMAND_EXPAND_LISTS)
+
+# ---- UI-T20 增列（集成模式专属——被测面为真实编译链产物，RT-T14 同因）----
+# PresentationBridgeContractTest.cpp＝ui 自有端口面 ↔ runtime RT-T14 面
+# （HostPresentationView）的对接契约：真实快照（CanonicalModelCompiler
+# 公共链）→工厂唯一入口→投影折叠→桥对账。宿主呈现视图的构造输入持
+# rw::models::WorkCell——冒烟模式无框架库可链，源文件与 runtime 直链
+# 均以 if(TARGET sdurw_kinematics) 判别（单元 HostPresentationViewTest
+# 同款登记口径）；ird_gates SUB 命中（ui_contract_test->runtime）随任务
+# 登记（登记提交件 traceability/wp10-t20-gate-registrations.md——责任方
+# WP-01-T03）。产品面守卫不变：sdurws_ird_ui 链接块仍仅 core/diagnostics
+# ＋Qt 三件套（上方"依赖红线守卫"块硬断言不变）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_ui_contract_test PRIVATE
+        contract_test/PresentationBridgeContractTest.cpp)
+    target_link_libraries(sdurws_ird_ui_contract_test PRIVATE
+        sdurws_ird_runtime)
+endif()
 
 # ---- GUI 测试目标 sdurws_ird_ui_gui_test（§12.1 第三层，单列）----
 # Widgets/GUI 契约测试的注册载体。ctest LABELS ird_gui 串行（不与模型/Meta
