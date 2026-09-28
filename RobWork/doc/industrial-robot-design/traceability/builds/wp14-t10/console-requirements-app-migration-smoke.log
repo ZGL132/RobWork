@@ -1,0 +1,10 @@
+[migration-smoke] deprecated-label=present
+[migration-smoke] tree-nodes=4
+[migration-smoke] L2 highlight: TP-P1
+[migration-smoke] inspector-kind=4 fields=5
+[migration-smoke] d6-activate=ok
+[migration-smoke] l3-selected=1
+[migration-smoke] L2 highlight cleared
+[migration-smoke] l2-draft-no-highlight=expected
+[migration-smoke] DONE
+EXIT=127

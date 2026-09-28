@@ -348,4 +348,78 @@ void RequirementsDraftSource::rebuildOnRevision(const std::string& tipRevisionCa
     session.restoredDraftPending = false;  // 基于当前版本重新编辑——恢复草稿的独立应用资格随之终止
 }
 
+// =====================================================================
+// 宿主迁移三接入面（WP-14-T10——B1-SPEC §5.1；只消费 UI-T21/T22 冻结协议）
+// =====================================================================
+
+RequirementsUiModule::SharedSurfaceHandles RequirementsUiModule::sharedSurfaceProviders()
+{
+    m_guard.assertOnUiThread();  // §3.4——会话态绑定与面板指针读取（UI 线程）
+
+    // 惰性构造＋缓存（shared_ptr 稳定地址——宿主注册进共享模型后模型持
+    // 强引用，本模块缓存同序；Deps 一次性绑定：编辑器现取入口指向模块
+    // attachEditor 注入的权威指针〔PA-1 零缓存〕，根身份指向会话态，
+    // 编辑分流出口与高亮/激活执行器绑定面板指针——时序契约见头注
+    // "须在 attachPanel 之后调用"）。
+    if (!m_treeProvider) {
+        RequirementsSharedSurfaceDeps deps;
+        deps.editor = [this]() -> IRequirementEditor* {
+            return m_editor;  // 会话权威编辑器（工作集唯一载体——§3.4）
+        };
+        deps.rootObjectId = [this]() -> std::optional<core::ObjectId> {
+            return m_session.rootObjectId;  // 会话态权威根身份（修订闭包锚）
+        };
+        deps.editSink = m_panel;  // 面板即 IRequirementEditSink（L-R2 三路分流落点）
+        deps.panelHighlight = [this](const std::optional<core::ObjectId>& oid) {
+            if (m_panel != nullptr) { m_panel->focusObject(oid); }  // 树选→面板高亮
+        };
+        deps.complexPageActivator = [this](const core::ObjectId& oid) {
+            if (m_panel != nullptr) { m_panel->focusObject(oid); }  // D6 域自持打开＝定位目标对象
+        };
+        m_treeProvider = std::make_shared<RequirementsTreeNodesProvider>(deps);
+        m_pageProvider = std::make_shared<RequirementsPropertyPagesProvider>(deps);
+    }
+    SharedSurfaceHandles handles;
+    handles.treeNodes = m_treeProvider;
+    handles.propertyPages = m_pageProvider;
+    return handles;
+}
+
+void RequirementsUiModule::attachSelectionService(ui::SelectionService& service)
+{
+    m_guard.assertOnUiThread();  // §3.4——订阅是 UI 线程交互面
+    if (!m_treeProvider) {
+        sharedSurfaceProviders();  // 适配器与三接入面同 deps——惰性齐备
+    }
+    if (!m_adapter) {
+        // 适配器 Deps 与 Provider 同源（编辑器/根身份现取＋面板执行器——
+        // 同一装配语义，零第二份绑定面）。
+        RequirementsSharedSurfaceDeps deps;
+        deps.editor = [this]() -> IRequirementEditor* {
+            return m_editor;
+        };
+        deps.rootObjectId = [this]() -> std::optional<core::ObjectId> {
+            return m_session.rootObjectId;
+        };
+        deps.panelHighlight = [this](const std::optional<core::ObjectId>& oid) {
+            if (m_panel != nullptr) { m_panel->focusObject(oid); }
+        };
+        m_adapter = std::make_unique<RequirementsSelectionAdapter>(std::move(deps));
+    }
+    m_adapter->attach(service);
+}
+
+void RequirementsUiModule::detachSelectionService()
+{
+    m_guard.assertOnUiThread();
+    if (m_adapter) { m_adapter->detach(); }
+}
+
+bool RequirementsUiModule::reportView3DPick(const core::ObjectId& oid)
+{
+    m_guard.assertOnUiThread();  // §3.4——选中写入口只允许 UI 线程
+    if (!m_adapter) { return false; }  // 未接线＝无上报通道（诚实 false）
+    return m_adapter->reportView3DPick(oid);
+}
+
 }  // namespace sdurws::ird::requirements

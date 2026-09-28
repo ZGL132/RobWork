@@ -210,6 +210,7 @@ add_library(sdurws_ird_requirements_plugin STATIC
     plugin/PanelCommandCatalog.cpp       # 九条域命令登记/装配描述符/就绪投影/L-R12（ACC4/5）
     plugin/PanelEditFlow.cpp             # L-R2/L-R9 编辑流编排＋两级撤销呈现（ACC2/4）
     plugin/ImportWizardFlow.cpp          # L-R10 导入向导域侧五步流（ACC4）
+    plugin/HostMigrationProviders.cpp    # 宿主迁移三接入面（WP-14-T10——B1-SPEC §5.1，零 Qt）
     plugin/RequirementsPanelWidget.cpp   # 需求域面板 widget（Q_OBJECT——AUTOMOC 载体）
     plugin/RequirementsPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
     plugin/RequirementsUiModule.cpp)     # ui.md §11.2 模块实现＋草稿源（P-REQ-4 冻结面）
@@ -248,6 +249,58 @@ target_include_directories(sdurws_ird_requirements_plugin PRIVATE
 # 单行链接语句＝构建图契约测试的登记形态约束（ui 边与插件目标名同行
 # 可见——BuildGraphContractTest 行扫描口径）。
 target_link_libraries(sdurws_ird_requirements_plugin PUBLIC sdurws_ird_requirements sdurws_ird_ui Qt6::Core Qt6::Gui Qt6::Widgets)
+
+# ---- 开发验证 harness：sdurws_ird_requirements_app（WP-14-T10 登记行）----
+# "迁移接入可手动 GUI 验证"的需求侧载体（DTB §5.1 GUI 手动验证通道约定；
+# WP-14-T10 迁移链任务的 GUI 冒烟留痕面——modeling _app 同款先例）：
+#   - 先例＝modeling sdurws_ird_modeling_app（WP-13-T20 迁移演示同构）；
+#     _app 后缀＝ird_gates 分类面预留形态（plugin/worker/app——Qt 链接
+#     合法）；源码在 app/ 子目录（非 include/、src/ 产品面——产品扫描域
+#     零触碰）；
+#   - 链接面＝仅 sdurws_ird_requirements_plugin（其 PUBLIC 面已携带
+#     requirements＋ui＋Qt 三件套——与插件目标同源，零新业务边）；本目标
+#     非测试（不入 ctest 标签）、非产品交付路径（产品装配归 WP-24-T03/
+#     UI-T23 集成收口，装配层落位时按同一契约替换本入口，插件面零改动）；
+#   - app/ 需解析本单元插件私有头（plugin/HostMigrationProviders.hpp 等）
+#     ——同单元内消费（R-2 不跨单元），单元根 include 目录 PRIVATE 注入。
+add_executable(sdurws_ird_requirements_app
+    app/RequirementsHarnessMain.cpp)
+
+target_compile_features(sdurws_ird_requirements_app PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_requirements_app PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_requirements_app PRIVATE /utf-8)
+endif()
+
+target_include_directories(sdurws_ird_requirements_app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 单行链接语句＝构建图契约测试的登记形态约束（同插件目标上方口径）。
+target_link_libraries(sdurws_ird_requirements_app PRIVATE sdurws_ird_requirements_plugin)
+
+# 运行时 DLL 就位（modeling_app 同款）：TARGET_RUNTIME_DLLS 复制链接面共享
+# 库（Qt 三件套等）到 exe 旁——双击/绝对路径启动免 PATH 依赖。
+add_custom_command(TARGET sdurws_ird_requirements_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_requirements_app>
+            $<TARGET_FILE_DIR:sdurws_ird_requirements_app>
+    COMMAND_EXPAND_LISTS)
+
+# Qt 平台插件定位（modeling_app 同款坑位修复）：Qt6 官方发行版 DLL 为可重
+# 定位前缀形态，从副本位置推导的插件目录不成立（qwindows 找不到即启动失败）
+# ——configure 期从 Qt6_DIR 推导真实 Qt 安装前缀生成 qt.conf 复制到 exe
+# 旁，把前缀钉回真实安装（构建期生成物，不入库）。
+set(_ird_req_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_req_qt_prefix "${_ird_req_qt_prefix}/../../.." ABSOLUTE)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/requirements-harness-qt.conf"
+     "[Paths]\nPrefix=${_ird_req_qt_prefix}\n")
+add_custom_command(TARGET sdurws_ird_requirements_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/requirements-harness-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_requirements_app>/qt.conf")
 
 # ---- 测试目标 sdurws_ird_requirements_test（随 WP-14-T02 登记）----
 # 用例面（任务契约 acceptance 逐条具名自证）：
@@ -345,6 +398,7 @@ add_executable(sdurws_ird_requirements_test
     test/CaptureTest.cpp
     test/TemplateArrayTest.cpp
     test/PluginPanelTest.cpp
+    test/HostMigrationTest.cpp
     test/GoldenDatasetsContractTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_test PRIVATE cxx_std_17)
