@@ -213,7 +213,10 @@ add_library(sdurws_ird_requirements_plugin STATIC
     plugin/HostMigrationProviders.cpp    # 宿主迁移三接入面（WP-14-T10——B1-SPEC §5.1，零 Qt）
     plugin/RequirementsPanelWidget.cpp   # 需求域面板 widget（Q_OBJECT——AUTOMOC 载体）
     plugin/RequirementsPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
-    plugin/RequirementsUiModule.cpp)     # ui.md §11.2 模块实现＋草稿源（P-REQ-4 冻结面）
+    plugin/RequirementsUiModule.cpp      # ui.md §11.2 模块实现＋草稿源（P-REQ-4 冻结面）
+    plugin/RequirementsPluginAssembly.cpp)
+    #   ^ 装配门面实现（WP-14-T11——O-45 裁决补建缝；assembly/ 公共头的
+    #     私有实现，kinematics/modeling 同款落位——只出线不重写，零行为变化）
 set_target_properties(sdurws_ird_requirements_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -230,6 +233,14 @@ endif()
 # 插件私有头解析（plugin/*.hpp——PRIVATE，不外溢；ui/modeling 同款先例）。
 target_include_directories(sdurws_ird_requirements_plugin PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 装配门面公共面（WP-14-T11——O-45 裁决补建缝，kinematics/modeling 同款
+# 先例）：assembly/ 目录经插件目标 PUBLIC 暴露，宿主装配层（UI-T23 三域
+# 集成收口）消费 <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>
+# ——O-31 装配器单行适配面；非 include/ 产品扫描域（零 Qt 红线文件域
+# 隔离同 plugin/ 口径）。
+target_include_directories(sdurws_ird_requirements_plugin PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/assembly)
 
 # 插件链接面（卡 §3.2 明文"插件目标 → 本单元计算库＋sdurws_ird_ui；
 # 禁止链接任何其他业务域单元（R-1）"；acceptance 3 钉死同面）：
@@ -480,11 +491,15 @@ ird_add_gtest(sdurws_ird_requirements_test)
 # io/evidence/diagnostics 四对端接口逐项断言形状（命令 payload 对 project/
 # mapCsv 对 io RawTable/ReadinessSummary 对 evidence/REQ- 码对 diagnostics
 # 契约夹具）＋T-1/T-2 测试侧红线具名自证（对端形状漂移由测试面捕获——
-# 不构造产品边）。自有 main 同 _test 目标（报告设施接入）。
+# 不构造产品边）。T11 增列（tasks/foundation/WP-14-T11.json acceptance
+# 1/3）：装配门面契约套件 PluginGraphContractTest.cpp——门面落位形态/
+# 出线面词表/私有头隔离/链接面钉住（kinematics PluginGraphContractTest
+# 同款文本扫描形态）。自有 main 同 _test 目标（报告设施接入）。
 add_executable(sdurws_ird_requirements_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/PeerFaceContractTest.cpp)
+    contract_test/PeerFaceContractTest.cpp
+    contract_test/PluginGraphContractTest.cpp)
 
 target_compile_features(sdurws_ird_requirements_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_contract_test PROPERTIES
