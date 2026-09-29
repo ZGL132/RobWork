@@ -101,6 +101,75 @@ void KinematicsUiModule::refreshFromSession()
     }
 }
 
+// =====================================================================
+// 宿主迁移三接入面（WP-15-T18——requirements 先例 RequirementsUiModule
+// sharedSurfaceProviders/attachSelectionService 同构；v1 语义见头声明）
+// =====================================================================
+
+KinematicsUiModule::SharedSurfaceHandles KinematicsUiModule::sharedSurfaceProviders()
+{
+    // 惰性构造＋缓存（shared_ptr 稳定地址——宿主注册进共享模型后模型持
+    // 强引用，本模块缓存同序；requirements 先例同款时序纪律）。v1 下三
+    // 接入面无数据源依赖（O-44 诚实边界——Deps 只有呈现执行器），绑定
+    // 面板指针的只有下行高亮执行器（面板未创建时执行器静默跳过——可空
+    // 语义，不崩溃但联动缺位；装配层按序调用即可）。
+    if (!m_treeProvider) {
+        KinematicsSharedSurfaceDeps deps;
+        deps.panelHighlight = [this](const std::optional<core::ObjectId>& oid) {
+            if (m_panel != nullptr) {
+                m_panel->focusTaskPoint(oid);  // 树选任务点→结果面板高亮
+            }
+        };
+        m_treeProvider = std::make_shared<KinematicsTreeNodesProvider>(deps);
+        m_pageProvider = std::make_shared<KinematicsPropertyPagesProvider>(deps);
+    }
+    SharedSurfaceHandles handles;
+    handles.treeNodes = m_treeProvider;
+    handles.propertyPages = m_pageProvider;
+    return handles;
+}
+
+void KinematicsUiModule::attachSelectionService(ui::SelectionService& service)
+{
+    if (!m_treeProvider) {
+        sharedSurfaceProviders();  // 适配器与三接入面同 deps——惰性齐备
+    }
+    if (!m_adapter) {
+        // 适配器 Deps 与 Provider 同源（下行高亮执行器同一绑定面——同一
+        // 装配语义，零第二份绑定面；requirements 先例同构）。
+        KinematicsSharedSurfaceDeps deps;
+        deps.panelHighlight = [this](const std::optional<core::ObjectId>& oid) {
+            if (m_panel != nullptr) {
+                m_panel->focusTaskPoint(oid);
+            }
+        };
+        m_adapter = std::make_unique<KinematicsSelectionAdapter>(std::move(deps));
+    }
+    m_adapter->attach(service);
+}
+
+void KinematicsUiModule::detachSelectionService()
+{
+    if (m_adapter != nullptr) {
+        m_adapter->detach();  // 幂等退订（未订阅时空操作）
+    }
+}
+
+bool KinematicsUiModule::applyHostJointState(const std::vector<double>& q)
+{
+    // 会话姿态缝未装配＝诚实降级（宿主 State 桥未接线的环境缺位——返回
+    // 值轨表达，零虚构写入成功；调用方按能力协商语义处理）。
+    if (m_services.sessionPose == nullptr) {
+        return false;
+    }
+    // 唯一写点（KinSessionPose——结构性零修订/零失效/零缓存，KIN-06/
+    // AT-04；非有限分量在容器入口异常 fail-fast 透传——NFR-COR-03）。
+    m_services.sessionPose->setJointConfiguration(q);
+    // 面板现取重投影（零缓存——显示投影刷新；无任何评估/提交调用）。
+    refreshFromSession();
+    return true;
+}
+
 }  // namespace kinematics
 }  // namespace ird
 }  // namespace sdurws

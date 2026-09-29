@@ -63,6 +63,20 @@ KinematicsPanelWidget::KinematicsPanelWidget(KinPanelServices services,
     // 四面板 Tab 容器（§9.8 面板表行 1~4 的落位载体——页序＝表行序，
     // 确定性登记序）。
     auto* layout = new QVBoxLayout(this);
+
+    // 自持导航迁移状态标记（WP-15-T18——B1-SPEC §5.2 迁移期双形态并存；
+    // objectName 供 GUI 验证定位，requirements 先例同款机制）。v1 措辞
+    // 如实（O-44 裁决）：共享工业项目树是业务主导航（D3），本域树/页面
+    // 接入面已注册但 v1 无本域树对象〔恒空集供给〕，本面板自持导航因此
+    // **保留可用**、不作"已迁移"虚标——退役归 WP-24-T09。
+    m_navDeprecationLabel = new QLabel(this);
+    m_navDeprecationLabel->setObjectName("kinematicsNavDeprecationLabel");
+    m_navDeprecationLabel->setWordWrap(true);
+    m_navDeprecationLabel->setText(
+        QStringLiteral("业务主导航：共享工业项目树（本域接入面已注册，v1 暂无本域树对象——DTB O-44）；"
+                       "本面板自持导航保留可用（退役归 WP-24-T09）"));
+    layout->addWidget(m_navDeprecationLabel);
+
     m_tabs = new QTabWidget(this);
     m_tabs->addTab(buildPosePane(), tr("位姿指标"));
     m_tabs->addTab(buildTaskPane(), tr("任务点验证"));
@@ -362,15 +376,20 @@ void KinematicsPanelWidget::refreshTaskArea()
     if (m_taskPointTable == nullptr) {
         return;
     }
-    // 任务点表（只读消费视图——provider 现取零缓存）。
+    // 任务点表（只读消费视图——provider 现取零缓存）。列 0 行锚额外携带
+    // pointOid 规范文本（Qt::UserRole——WP-15-T18 focusTaskPoint 定位键；
+    // 呈现文本仍为工程用语标签，锚对用户不可见）。
     const std::vector<KinTaskPointRow> points =
         m_services.taskPoints ? m_services.taskPoints() : std::vector<KinTaskPointRow>{};
     m_taskPointTable->setRowCount(static_cast<int>(points.size()));
     for (std::size_t i = 0; i < points.size(); ++i) {
         const KinTaskPointRow& p = points[i];
         const auto row = static_cast<int>(i);
-        m_taskPointTable->setItem(row, 0, new QTableWidgetItem(
-                                              QString::fromStdString(p.label)));
+        QTableWidgetItem* labelItem = new QTableWidgetItem(
+            QString::fromStdString(p.label));
+        labelItem->setData(Qt::UserRole,
+                           QString::fromStdString(p.pointOid.toCanonical()));
+        m_taskPointTable->setItem(row, 0, labelItem);
         m_taskPointTable->setItem(row, 1, new QTableWidgetItem(
                                               p.enabled ? tr("启用") : tr("停用")));
         m_taskPointTable->setItem(row, 2, new QTableWidgetItem(
@@ -383,6 +402,45 @@ void KinematicsPanelWidget::refreshTaskArea()
                                                                              : tr("未完成"))
                                                   : tr("—")));
     }
+}
+
+void KinematicsPanelWidget::focusTaskPoint(const std::optional<core::ObjectId>& oid)
+{
+    // 下行联动呈现半区（WP-15-T18——SelectionAdapter 消费选择服务后的
+    // 执行器落点；UI 线程约束同其余会话交互面，§3.4）。
+    if (m_taskPointTable == nullptr) {
+        return;
+    }
+
+    // 无目标（多选/清空选中）＝仅清除高亮：清当前行，不切页不伪造定位
+    // （requirements focusObject 同款幂等清除语义）。
+    if (!oid.has_value()) {
+        m_taskPointTable->clearSelection();
+        m_taskPointTable->setCurrentItem(nullptr);
+        return;
+    }
+
+    // 线性扫描行锚（refreshTaskArea 写入的 Qt::UserRole 规范文本——行序
+    // ＝provider 供给序，扫描即稳定语义）。命中＝切到任务点页并置当前行
+    // （结果面板高亮可见性——acceptance 4 v1 链路"任务点选择→结果面板
+    // 高亮"的呈现落点；任务点定义真值归 requirements，本表是其结果列的
+    // 本域消费视图，高亮动作零写回）；未命中＝清除（该选中对象在本域
+    // 消费视图无结果行——不伪造定位，与 requirements"闭包外对象不清行
+    // 定位"同案）。
+    const QString anchorText = QString::fromStdString(oid.value().toCanonical());
+    for (int i = 0; i < m_taskPointTable->rowCount(); ++i) {
+        if (QTableWidgetItem* it = m_taskPointTable->item(i, 0);
+            it != nullptr && it->data(Qt::UserRole).toString() == anchorText) {
+            if (m_tabs != nullptr) {
+                m_tabs->setCurrentIndex(1);  // 页②任务点验证（构建序固定）
+            }
+            m_taskPointTable->setCurrentItem(it);
+            m_taskPointTable->scrollToItem(it);
+            return;
+        }
+    }
+    m_taskPointTable->clearSelection();
+    m_taskPointTable->setCurrentItem(nullptr);
 }
 
 void KinematicsPanelWidget::onSolveClicked()

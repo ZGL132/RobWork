@@ -37,7 +37,17 @@
 #include <sdurws/ird/ui/IPluginUiModule.hpp> // ui::IPluginUiModule（§11.2 接口）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp> // ui::IWorkbenchShell（onShellReady 入参）
 #include <sdurws/ird/ui/UiTypes.hpp>         // ui::DomainReadinessItem（§6.5 汇聚值）
+#include "KinHostMigrationProviders.hpp"     // 迁移三接入面（WP-15-T18——同目录私有头）
 #include "KinPanelTypes.hpp"                  // 会话态/服务缝（同目录私有头）
+
+namespace sdurws {
+namespace ird {
+namespace ui {
+class SelectionService;  // 前置声明（attachSelectionService 入参——完整类型随
+                         // KinHostMigrationProviders 传递）
+}  // namespace ui
+}  // namespace ird
+}  // namespace sdurws
 
 class QWidget;  // 前置声明：createPanel 返回类型（全局域——插件目标 Widgets 面）
 
@@ -141,6 +151,58 @@ public:
     /// 会话态访问（装配层注入快照绑定/配置基线等会话事实的唯一入口）。
     KinModuleSessionState& session() noexcept { return *m_session; }
 
+    // ---- 宿主迁移三接入面（WP-15-T18——requirements 先例 RequirementsUiModule
+    //      同构暴露面；装配层注册进共享模型的选择面）--------------------
+
+    /**
+     * @brief 迁移三接入面句柄（树节点供给者＋属性页供给者——共享模型的
+     *        注册原料；选择适配器经 attachSelectionService 独立接线）。
+     *
+     * v1 语义（DTB §4.2 O-44 裁决——接入面 v1 诚实边界）：树面＝结构接
+     * 缝注册＋恒空集供给（本域无持有 ObjectId 的对象，协议"可空＝合法常
+     * 态"）；页面＝结构接缝注册＋无应答面（nullopt/空集合法二态）。惰性
+     * 构造并缓存（shared_ptr 稳定地址——requirements 先例同款）。
+     *
+     * @return 句柄对（shared_ptr——宿主注册进 ui::ProjectTreeModel/
+     *         ui::PropertyInspectorModel，模型持强引用；本模块同持缓存，
+     *         任一持有序均保证存活期覆盖注册期）
+     */
+    struct SharedSurfaceHandles {
+        std::shared_ptr<ui::IUiTreeNodesProvider> treeNodes;        ///< 树接入面
+        std::shared_ptr<ui::IUiPropertyPagesProvider> propertyPages; ///< 页面接入面
+    };
+    SharedSurfaceHandles sharedSurfaceProviders();
+
+    /**
+     * @brief 订阅选择服务（SelectionAdapter 接线——下行"树选任务点→结果
+     *        面板高亮"的启用；服务存活期须覆盖订阅期且晚于本模块析构，
+     *        适配器 RAII 句柄语义见 KinHostMigrationProviders.hpp 类注）。
+     */
+    void attachSelectionService(ui::SelectionService& service);
+
+    /// @brief 显式退订选择服务（幂等——未订阅时空操作）。
+    void detachSelectionService();
+
+    /**
+     * @brief 宿主关节状态承接（D8/D9 会话姿态桥的域侧半区——Jog 关节/
+     *        笛卡尔点动与 Playback 播放帧共同的运动学侧入口；宿主 State
+     *        变化经装配层适配后调本方法写入会话姿态）。
+     *
+     * 零修订/零失效/零缓存（KIN-06/AT-04 口径——acceptance 2/3）：本方法
+     * 只写 KinSessionPose（结构化零端口容器——写操作在类型面不存在产生
+     * 修订或失效的通道）并触发面板现取重投影；不触命令出口、不触后台缝、
+     * 不触任何缓存身份（会话姿态身份外——D-KIN-4，求解身份只随显式输入
+     * 变化）。零 Qt 计算（重投影走既有刷新路径——NFR-PERF-01）。
+     *
+     * @param q [in] 权威关节向量（rad／m；链序——宿主 State 桥投影的链
+     *           序值；非有限分量属调用方违约，经 KinSessionPose 异常
+     *           fail-fast 透传——NFR-COR-03 不钳制不置零）
+     * @return true＝已写入会话姿态；false＝会话姿态缝未装配
+     *         （KinPanelServices.sessionPose 为空——宿主桥未接线的诚实
+     *         降级，零虚构写入成功）
+     */
+    bool applyHostJointState(const std::vector<double>& q);
+
 private:
     KinPanelServices m_services;                 ///< 服务缝（面板数据源）
     std::unique_ptr<KinModuleSessionState> m_session; ///< 会话权威态
@@ -149,6 +211,12 @@ private:
     ui::IWorkbenchShell* m_shell = nullptr;      ///< 壳门面引用（非 owning）
     CommandSubmitFn m_pendingSubmit;             ///< 面板创建前暂存（创建时应用）
     TextResolver m_textResolver;                 ///< 文案解析（创建时应用）
+
+    // 迁移三接入面缓存（惰性构造——shared_ptr 稳定地址；适配器 unique_ptr
+    // 随模块生命周期；requirements 先例 RequirementsUiModule 同款）。
+    std::shared_ptr<ui::IUiTreeNodesProvider> m_treeProvider;        ///< 树接入面缓存
+    std::shared_ptr<ui::IUiPropertyPagesProvider> m_pageProvider;    ///< 页面接入面缓存
+    std::unique_ptr<KinematicsSelectionAdapter> m_adapter;           ///< 选择适配器缓存
 };
 
 }  // namespace kinematics

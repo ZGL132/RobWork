@@ -28,10 +28,21 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <QString>                                 // 文案解析返回值（bindTextResolver）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>    // ui::PluginUiDescriptor（§10.9 装配描述符）
+#include <sdurws/ird/ui/SelectionService.hpp>      // ui::SelectionService（attachSelectionService 入参——ui 公共头）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::CommandId（命令提交出口入参）
+
+namespace sdurws {
+namespace ird {
+namespace ui {
+class IUiTreeNodesProvider;       // 前置声明（迁移三接入面句柄成员——完整类型
+class IUiPropertyPagesProvider;   //  在 ui 公共头；本头仅以 shared_ptr 携带）
+}  // namespace ui
+}  // namespace ird
+}  // namespace sdurws
 
 namespace sdurws {
 namespace ird {
@@ -40,6 +51,20 @@ namespace kinematics {
 class KinematicsUiModule;      // 前置声明（内部具体类型——消费方面只见接口）
 class KinModuleSessionState;   // 前置声明（会话态访问面——装配层注入会话事实）
 struct KinPanelServices;       // 前置声明（服务缝聚合——setServices 转发入参）
+
+/**
+ * @brief 迁移三接入面句柄（WP-15-T18——树节点供给者＋属性页供给者的门面
+ *        出口形态；自持结构避免门面头拖入插件私有头——"装配层只见本头与
+ *        ui 公共头"纪律，O-31 同源）。
+ *
+ * v1 语义（DTB §4.2 O-44）：树面＝结构接缝＋恒空集供给；页面＝结构接缝
+ *   ＋无应答面——注册本身即接缝落位（UI-T23 集成收口按 domainKey 消费）。
+ *   shared_ptr 稳定地址（模块侧缓存同序——重复调用返回同一实例）。
+ */
+struct KinematicsSharedSurfaceHandles {
+    std::shared_ptr<ui::IUiTreeNodesProvider> treeNodes;        ///< 树接入面
+    std::shared_ptr<ui::IUiPropertyPagesProvider> propertyPages; ///< 页面接入面
+};
 
 /**
  * @brief kinematics 插件装配产物（createKinematicsPluginAssembly 返回值）。
@@ -73,6 +98,36 @@ struct KinematicsPluginAssembly {
 
     /// 会话刷新（restoreOnOpen 后由宿主调用——面板同步）。
     void refreshFromSession();
+
+    // ---- 宿主迁移三接入面（WP-15-T18——UI-T23 集成收口的消费面）----
+
+    /**
+     * @brief 迁移三接入面句柄（宿主注册进 ui::ProjectTreeModel/
+     *        ui::PropertyInspectorModel 的原料——转发模块同名词柄）。
+     *
+     * @return 句柄对（shared_ptr 稳定地址——模型持强引用后存活期由注册
+     *         关系保证）
+     */
+    KinematicsSharedSurfaceHandles sharedSurfaceProviders();
+
+    /**
+     * @brief 订阅选择服务（下行"树选任务点→结果面板高亮"的启用——转发
+     *        模块 SelectionAdapter 接线；服务存活期契约见适配器类注）。
+     *
+     * @param service [in] 选择服务（引用入参无空态；存活期须覆盖订阅期）
+     */
+    void attachSelectionService(ui::SelectionService& service);
+
+    /**
+     * @brief 宿主关节状态承接（D8/D9 会话姿态桥的域侧半区——Jog/Playback
+     *        的宿主 State 变化经装配适配后调本入口写入会话姿态；零修订/
+     *        零失效/零缓存，KIN-06/AT-04——转发模块同名方法）。
+     *
+     * @param q [in] 权威关节向量（rad／m；链序）；非有限分量属调用方
+     *           违约（异常 fail-fast 透传——NFR-COR-03）
+     * @return true＝已写入；false＝会话姿态缝未装配（诚实降级）
+     */
+    bool applyHostJointState(const std::vector<double>& q);
 
     KinematicsPluginAssembly();
     ~KinematicsPluginAssembly();
