@@ -27,8 +27,10 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDir>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QFile>
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QDockWidget>
@@ -45,6 +47,7 @@
 #include <QStatusBar>
 #include <QString>
 #include <QTemporaryDir>
+#include <QTextStream>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -772,6 +775,11 @@ void IrdWorkbenchHostPlugin::initialize()
     // ---- 集成冒烟通道（UI-T23——GUI 留痕载体）：环境变量触发，随事件
     //      循环稍后执行（呈现自证之后的拍——冒烟序列依赖宿主窗口在位）。
     maybeRunIntegrationSmoke();
+
+    // ---- 布局度量冒烟通道（UI-T24——P2 钳制源定位载体）：同上环境变量
+    //      触发面，度量拍排在呈现自证与两拍宽度收束之后（度量的是"装载
+    //      落定后"的稳定布局态）。
+    maybeRunLayoutSmoke();
 }
 
 IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
@@ -2364,6 +2372,151 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
         std::cout << "[ird-ui-smoke] " << (exitCode == 0 ? "DONE" : "FAILED")
                   << std::endl;
         QCoreApplication::exit(exitCode);
+    });
+}
+
+// =====================================================================
+// 布局度量冒烟通道（UI-T24——P2 钳制源定位载体；环境变量
+// IRD_UI_PLUGIN_SMOKE=layout）
+// =====================================================================
+
+namespace {
+
+/// 度量递归深度上限：Dock 体→分区→控件行→控件，四层足够定位钳制源
+/// （更深的叶子对"谁把最小宽度顶高"没有增量信息，只膨胀报告）。
+constexpr int kLayoutProbeMaxDepth = 4;
+
+/**
+ * @brief 递归收集一个控件子树的几何事实行（UI-T24 度量报告体）。
+ *
+ * 每行输出：缩进＋objectName/className＋当前几何＋minimumSizeHint——
+ * 钳制源定位的判据：QMainWindow 停靠区列宽被列内 Dock 的内容最小宽度
+ * 钳制（resizeDocks 目标低于该值时收不下去），而 Dock 的内容最小宽度
+ * 沿父子树取各层 layout 最小值的最大者——自顶向下第一处出现大数值的
+ * 控件即钳制源。深度受限（见 kLayoutProbeMaxDepth）。
+ *
+ * @param w      [in] 待度量控件（允许空——调用点逐个判空）
+ * @param depth  [in] 当前递归深度（0＝Dock 体本身）
+ * @param lines  [out] 报告行累积器（UTF-8 文本，一行一控件）
+ */
+void probeLayoutTree(const QWidget* w, int depth, std::vector<std::string>& lines)
+{
+    if (w == nullptr || depth > kLayoutProbeMaxDepth) {
+        return;
+    }
+    const QSize minHint = w->minimumSizeHint();
+    const QSize cur = w->size();
+    std::string indent(static_cast<std::size_t>(depth) * 2, ' ');
+    lines.push_back(indent + std::string(w->objectName().isEmpty()
+                                             ? w->metaObject()->className()
+                                             : w->objectName().toStdString())
+                    + " [" + std::string(w->metaObject()->className()) + "]"
+                    + " cur=" + std::to_string(cur.width()) + "x"
+                    + std::to_string(cur.height())
+                    + " minHint=" + std::to_string(minHint.width()) + "x"
+                    + std::to_string(minHint.height()));
+    for (const QObject* child : w->children()) {
+        probeLayoutTree(qobject_cast<const QWidget*>(child), depth + 1, lines);
+    }
+}
+
+}  // namespace
+
+void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
+{
+    // 触发面＝环境变量（与 IRD_UI_PLUGIN_SMOKE=auto 同机制——宿主进程的
+    // 插件无命令行入口）。未设置＝正常交互形态，零开销返回。
+    const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
+    if (smoke != QLatin1String("layout")) {
+        return;
+    }
+
+    // 度量拍：1200 ms——晚于装载呈现自证（0 拍重申）与两拍宽度收束
+    // （0/100 ms），度量的是"宿主装载语义全部落定后"的稳定布局态。
+    QTimer::singleShot(1200, this, [this] {
+        std::cout << "[ird-ui-smoke-layout] started" << std::endl;
+        std::vector<std::string> lines;
+
+        // ---- 宿主窗口层事实：窗口尺寸＋中央区（三维视图）实测宽度 ----
+        // 中央区宽度是 P1/P2 的核心判据（收束后中央三维视图必须非零；
+        // 该值同时是"钳制是否发生"的直接观测量——收束目标被钳制时中央
+        // 区被挤占的宽度＝实际与目标之差）。
+        auto* hostWindow = qobject_cast<QMainWindow*>(parentWidget());
+        if (hostWindow == nullptr) {
+            std::cout << "[ird-ui-smoke-layout] FAILED host-window-missing"
+                      << std::endl;
+            QCoreApplication::exit(1);
+            return;
+        }
+        lines.push_back("host-window cur="
+                        + std::to_string(hostWindow->width()) + "x"
+                        + std::to_string(hostWindow->height()));
+        if (const QWidget* central = hostWindow->centralWidget()) {
+            lines.push_back("central cur=" + std::to_string(central->width())
+                            + "x" + std::to_string(central->height())
+                            + " minHint="
+                            + std::to_string(central->minimumSizeHint().width())
+                            + "x"
+                            + std::to_string(central->minimumSizeHint().height()));
+        }
+        std::cout << "[ird-ui-smoke-layout] host=" << hostWindow->width()
+                  << "x" << hostWindow->height() << std::endl;
+
+        // ---- 各 IRD Dock 度量：可见性＋尺寸＋内容子树最小宽度走查 ----
+        // 每棵子树的报告行首行即 Dock 本体（其 minimumSizeHint 宽＝Qt 停靠
+        // 布局实际采用的该 Dock 最小宽度——与宿主 restoreState 后的列宽
+        // 钳制直接相关）。
+        const std::vector<std::pair<const char*, const QDockWidget*>> docks{
+            {"main-dock", this},
+            {"props-dock", m_propsDock},
+            {"tasks-dock", m_tasksDock},
+            {"modeling-dock", m_modelingDock},
+            {"requirements-dock", m_requirementsDock},
+            {"kinematics-dock", m_kinematicsDock},
+            {"kinematics-advanced-dock", m_kinematicsAdvancedDock},
+        };
+        for (const auto& [name, dock] : docks) {
+            if (dock == nullptr) {
+                lines.push_back(std::string(name) + " <absent>");
+                continue;
+            }
+            const QSize minHint = dock->minimumSizeHint();
+            std::cout << "[ird-ui-smoke-layout] dock=" << name
+                      << " visible=" << (dock->isVisible() ? 1 : 0)
+                      << " cur=" << dock->width() << " minHintW="
+                      << minHint.width() << std::endl;
+            lines.push_back(std::string("=== ") + name
+                            + " visible="
+                            + (dock->isVisible() ? "1" : "0")
+                            + " cur=" + std::to_string(dock->width())
+                            + " minHint=" + std::to_string(minHint.width())
+                            + "x" + std::to_string(minHint.height()));
+            probeLayoutTree(dock->widget(), 1, lines);
+        }
+
+        // ---- 报告落盘（UTF-8 文件——GBK 控制台管道会乱码，F-207/F-231/
+        //      F-309 留痕乱码家族的规避口径；目录取 IRD_UI_PLUGIN_SMOKE_OUT，
+        //      未设置时落当前工作目录）----
+        const QString outDir =
+            qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE_OUT");
+        const QString reportPath =
+            (outDir.isEmpty() ? QDir::currentPath() : outDir)
+            + QLatin1String("/geometry-report.txt");
+        if (!outDir.isEmpty()) {
+            QDir::root().mkpath(outDir);
+        }
+        QFile report(reportPath);
+        if (report.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream stream(&report);
+            stream.setEncoding(QStringConverter::Utf8);
+            for (const std::string& line : lines) {
+                stream << QString::fromStdString(line) << '\n';
+            }
+        }
+        std::cout << "[ird-ui-smoke-layout] report=" << reportPath.toStdString()
+                  << std::endl;
+        std::cout << "[ird-ui-smoke-layout] DONE" << std::endl;
+        QCoreApplication::exit(0);
     });
 }
 
