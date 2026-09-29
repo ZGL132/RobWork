@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 422,
+  "tickCount": 423,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,10 +16,21 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T13:03:33+08:00",
+    "updatedAt": "2026-09-29T15:20:06+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T23",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "da64b3cf507fea1d6426febe85e6b1314de71228"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T23-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。B.1 迁移链链尾收口（O-45 补建缝消费——三域经门面装配，R-2 合规）：draft.apply 多模块遍历（DomainModuleRunner，消除 modeling 硬编码；测试注册模块具名用例）＋三域共享面宿主挂位（项目树入主 Dock／检查器升格右 Dock——UI-T21/T22 预留缝收口）＋L1/L2/L3 联动接线（L3 桥＝frameSelectedEvent 订阅，L2 出口＝WorkCellScene::setHighlighted 框架公开 API，NameMap 端口＝空映射二态适配器）＋§11.3 失败隔离多域形态（域分组占位 setGroupPlaceholder）＋关闭清理八类对象＋集成冒烟通道（IRD_UI_PLUGIN_SMOKE=auto 七步）。验收侧 detached worktree 冷启复现：集成八目标闭包零错误（F-429 模板缺口第三次冷启实录按口径拷入；RWSimulatorPlugin 73 错＝F-323 存量环境隔离，WP-14-T11 同款）＋冒烟全树零错误＋237/32/62＋ctest ird 2/2＋ird_gui 1/1＋GUI 冒烟 SMOKE_EXIT=0 七步（F-320 PATH 实测修正：需补 vcpkg installed/x64-windows/bin——assimp 等传递依赖，缺它 0xC0000135；F-428 python313.dll 同链复证）＋双变异注入实证（Runner 摘 NoDraft 跳过红／树占位渲染摘除红，均 checkout 还原复绿、送验 SHA 零触碰）＋ird_gates 验收树 7 条新 SUB 边在场复核（实施侧 base↔head stash 切换法恰增 7 条 SUB、六码零变化——登记件 wp10-t23-gate-registrations.md 归 WP-01-T03）；验收零新登 findings（F-429/F-428/F-320 家族复证注明）；诚实缺口如实登记＝验收侧未独立重跑 base 态门禁构建（消费实施侧 raw 留痕复核）。实施段既有缺陷顺带修正：IPluginUiModule.hpp 前向声明裸 namespace project→sdurws::ird::project（声明实体归位，语义零变化）。acceptance 6 退役清单草案（retirement-draft.md）与 acceptance 7 互斥合规自查（shared-surface-audit.md——三域迁移触碰面零越界）随留痕移交 WP-24-T09。②③合并零冲突，findings.json 并集例外未触发"
+    },
     {
       "task": "WP-14-T11",
       "unit": "requirements",
@@ -2126,11 +2137,6 @@
   },
   "queue": [
     {
-      "taskId": "UI-T23",
-      "branch": "ui-t23",
-      "contractPath": "tasks/foundation/UI-T23.json"
-    },
-    {
       "taskId": "WP-24-T09",
       "branch": "wp24-t09",
       "contractPath": "tasks/foundation/WP-24-T09.json"
@@ -2145,5 +2151,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "cc26c2da-1b54-4cd2-8940-9b9d54d4f9b1"
+  "tickToken": "17a362d0-2456-4f82-9e18-d600c49e586c"
 }

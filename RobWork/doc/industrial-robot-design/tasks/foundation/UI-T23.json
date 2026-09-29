@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "多领域集成收口（三域迁移集成回归与联动契约全量核查）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T18",
     "WP-14-T11"
