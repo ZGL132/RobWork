@@ -1,0 +1,8 @@
+UI-T24 acc mutation M2 (P1 default-convergence removed) @ 2026-09-29 21:25:41
+21:25:45 exit=1
+21:25:45   [ird-ui-smoke-layout] pass default-hidden:modeling
+21:25:45   [ird-ui-smoke-layout] FAIL default-hidden:requirements
+21:25:45   [ird-ui-smoke-layout] pass default-hidden:kinematics
+21:25:45   [ird-ui-smoke-layout] pass default-hidden:kinematics-advanced
+21:25:45   [ird-ui-smoke-layout] failed-assert: default-hidden:requirements
+21:25:45   [ird-ui-smoke-layout] FAILED

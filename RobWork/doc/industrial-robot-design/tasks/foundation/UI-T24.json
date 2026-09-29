@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "宿主默认布局收敛与域命令文案语义化（体验收口）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": [
     "UX-02（工程用语——界面零内部名泄漏；域命令按钮以 UiText 中文语义名呈现，禁止原始 commandId 直出）",

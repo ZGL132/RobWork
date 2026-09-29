@@ -1,0 +1,10 @@
+Test project D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t24-bld/RobWorkStudio/src/rwslibs/industrialrobot/runtime
+    Start 1: sdurws_ird_runtime_test
+1/1 Test #1: sdurws_ird_runtime_test ..........   Passed    0.56 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Label Time Summary:
+ird    =   0.56 sec*proc (1 test)
+
+Total Test time (real) =   0.57 sec

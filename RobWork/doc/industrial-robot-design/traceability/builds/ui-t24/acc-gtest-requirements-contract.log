@@ -1,0 +1,58 @@
+[==========] Running 16 tests from 7 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ReqBuildGraph
+[ RUN      ] ReqBuildGraph.UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2
+[       OK ] ReqBuildGraph.UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2 (0 ms)
+[ RUN      ] ReqBuildGraph.FiveRegisteredEdgesPresent_WP14T02_ACC2
+[       OK ] ReqBuildGraph.FiveRegisteredEdgesPresent_WP14T02_ACC2 (0 ms)
+[ RUN      ] ReqBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP14T02_ACC2
+[       OK ] ReqBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP14T02_ACC2 (0 ms)
+[ RUN      ] ReqBuildGraph.NoTestkitEdgeOnProductTarget_WP14T02_ACC2
+[       OK ] ReqBuildGraph.NoTestkitEdgeOnProductTarget_WP14T02_ACC2 (0 ms)
+[ RUN      ] ReqBuildGraph.IncludeFaceMatchesRegisteredEdges_WP14T02_ACC2
+[       OK ] ReqBuildGraph.IncludeFaceMatchesRegisteredEdges_WP14T02_ACC2 (10 ms)
+[----------] 5 tests from ReqBuildGraph (13 ms total)
+
+[----------] 1 test from PeerProject
+[ RUN      ] PeerProject.PayloadShapePreparePlanAndQueryFault_ACC4
+[       OK ] PeerProject.PayloadShapePreparePlanAndQueryFault_ACC4 (1 ms)
+[----------] 1 test from PeerProject (1 ms total)
+
+[----------] 1 test from PeerIo
+[ RUN      ] PeerIo.MapCsvRawTableShapeAndAtomicCommitFault_ACC4
+[       OK ] PeerIo.MapCsvRawTableShapeAndAtomicCommitFault_ACC4 (9 ms)
+[----------] 1 test from PeerIo (9 ms total)
+
+[----------] 1 test from PeerEvidence
+[ RUN      ] PeerEvidence.ReadinessSummaryProjectionShapeAndFault_ACC4
+[       OK ] PeerEvidence.ReadinessSummaryProjectionShapeAndFault_ACC4 (0 ms)
+[----------] 1 test from PeerEvidence (0 ms total)
+
+[----------] 1 test from PeerDiagnostics
+[ RUN      ] PeerDiagnostics.StableCodesRegisteredContractFixture_ACC4
+[       OK ] PeerDiagnostics.StableCodesRegisteredContractFixture_ACC4 (0 ms)
+[----------] 1 test from PeerDiagnostics (0 ms total)
+
+[----------] 2 tests from PeerRedLine
+[ RUN      ] PeerRedLine.T1ProductFaceZeroTestkitHeaders_ACC3
+[       OK ] PeerRedLine.T1ProductFaceZeroTestkitHeaders_ACC3 (19 ms)
+[ RUN      ] PeerRedLine.T2TestTargetLinkFormAcyclicAndTestdataExclusion_ACC3
+[       OK ] PeerRedLine.T2TestTargetLinkFormAcyclicAndTestdataExclusion_ACC3 (1 ms)
+[----------] 2 tests from PeerRedLine (20 ms total)
+
+[----------] 5 tests from RequirementsPluginGraph
+[ RUN      ] RequirementsPluginGraph.FacadeHeaderAssemblyLocationZeroPrivateInclude_O45
+[       OK ] RequirementsPluginGraph.FacadeHeaderAssemblyLocationZeroPrivateInclude_O45 (0 ms)
+[ RUN      ] RequirementsPluginGraph.FacadeExposeAcceptanceSurface_O45
+[       OK ] RequirementsPluginGraph.FacadeExposeAcceptanceSurface_O45 (0 ms)
+[ RUN      ] RequirementsPluginGraph.UiModuleInterfaceSwitchRegistered_O45
+[       OK ] RequirementsPluginGraph.UiModuleInterfaceSwitchRegistered_O45 (0 ms)
+[ RUN      ] RequirementsPluginGraph.FacadeImplInPluginTargetAndPublicInclude_O45
+[       OK ] RequirementsPluginGraph.FacadeImplInPluginTargetAndPublicInclude_O45 (0 ms)
+[ RUN      ] RequirementsPluginGraph.PluginTargetLinkFaceUnchanged_O45
+[       OK ] RequirementsPluginGraph.PluginTargetLinkFaceUnchanged_O45 (0 ms)
+[----------] 5 tests from RequirementsPluginGraph (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 16 tests from 7 test suites ran. (48 ms total)
+[  PASSED  ] 16 tests.

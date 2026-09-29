@@ -1,0 +1,22 @@
+Note: Google Test filter = UiText.RequirementsDomainCommandTitlesRegistered*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from UiText
+[ RUN      ] UiText.RequirementsDomainCommandTitlesRegistered_UX02_UI_T24_ACC3
+C:\Users\zgl18\AppData\Local\Temp\ird-t24-acc-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\StageNavigationModelTest.cpp(806): error: Value of: std::find(registered.begin(), registered.end(), key) != registered.end()
+  Actual: false
+Expected: true
+需求域命令标题键未登记（UI-T24 键族①b）: cmd.requirements.import-csv.title
+
+unknown file: error: C++ exception with description "ui/uitext/unknown-key: 未登记文案键 cmd.requirements.import-csv.title" thrown in the test body.
+
+[  FAILED  ] UiText.RequirementsDomainCommandTitlesRegistered_UX02_UI_T24_ACC3 (0 ms)
+[----------] 1 test from UiText (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] UiText.RequirementsDomainCommandTitlesRegistered_UX02_UI_T24_ACC3
+
+ 1 FAILED TEST

@@ -1,0 +1,11 @@
+Note: Google Test filter = UiText.RequirementsDomainCommandTitlesRegistered*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from UiText
+[ RUN      ] UiText.RequirementsDomainCommandTitlesRegistered_UX02_UI_T24_ACC3
+[       OK ] UiText.RequirementsDomainCommandTitlesRegistered_UX02_UI_T24_ACC3 (0 ms)
+[----------] 1 test from UiText (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.

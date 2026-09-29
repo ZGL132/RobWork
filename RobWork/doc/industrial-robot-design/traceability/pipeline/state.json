@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 424,
+  "tickCount": 425,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,10 +16,23 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T17:22:30+08:00",
+    "updatedAt": "2026-09-29T21:29:49+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T24",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "fd4f1c8b",
+        "13f60200",
+        "78d4173d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T24-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。体验收口 S/M（所有者 2026-09-29 界面审查授权）：P1 净室默认布局收敛＝四域自持面板 Dock（建模/需求/运动学/高级）工厂默认不呈现＋「视图」菜单四项勾选呼出＋跨会话辅助记忆半区（IWorkbenchContent 增 setAuxVisibilityTarget/auxVisible/setAuxVisible 三方法＋LayoutMemory aux 键族——域 Dock 晚于宿主 restoreState 挂载故框架 blob 无效，记忆自持；Dock 关闭钮同步记忆、窗口不在屏抖动不记忆）；净室中央三维视图 18px→476px。P2 中央区保护＝钳制源定位前置（clamp-source.md：源 1 需求命令条 12 按钮单行 2074px、源 2 顶栏三占位 QLabel 1054px——tick#424 的 962/2092 复现吻合）→新公共构件 FlowLayout 双源消除（顶栏/命令条流式栅格，主 Dock minHint 1054→240＝§4.4 原文）→装配侧事件观察＋确定性回推保障（中央保留 320px，最小窗口实测 692px；SA-02 框架零修改）。P3＝UiText 键族①b 增 cmd.requirements.* 九键（§9.8 行序）＋按钮经 titleKey→resolveText（消账 F-430 家族需求域按钮一族——UX-02 commandId 直出清零）＋命令条流式栅格宽窄两态零重叠；registeredTextKeys 盘点面勘误补全（域命令族建模十键登记时遗漏）；具名用例 UiText_RequirementsDomainCommandTitlesRegistered 键表完备性。验证＝布局冒烟双场景自动化（IRD_UI_PLUGIN_SMOKE=layout|layout2 净室 30 断言＋记忆 4 断言全绿；7 帧 GUI 截图）；ird_gates 引擎直跑归一 96→97 恰增 1 条 R3（FlowLayout.hpp——ui 例外类既定形态，DTB §4.5 行＋登记件）；ctest ird 9/9＋四域零回归＋validate-docs PASS＋双模式零错误。验收侧 detached worktree 冷启双树独立复现（工业目标集装配闭包＋独立冒烟树；环境链四次消费既有 open 发现口径——F-429 ini 模板拷入／F-008+F-323 RWSimulatorPlugin 失败隔离／F-428+F-440 python313 手动补齐〔pythoneditor=OFF 置换不消除，sdurws 无条件链 PYTHON_LIBRARIES 为根因，与 F-440 诊断一致〕）＋双变异注入实证（UiText 摘键→具名用例红；摘默认收敛→冒烟 default-hidden 红；均 checkout 还原复绿、送验 SHA 零触碰）；ird_gates 命中集零意外增量；②③合并零冲突，findings.json 并集例外未触发；验收建议级 F-441（F-012 家族提交标题名词前缀）随 acc/UI-T24/1 转登；验收自产证据 acc-*＋acc-smoke/ 22 件按 F-427 口径随本治理提交补录（.log 计 git add -f）；实施段三轮冒烟实录两轮缺陷修复链（断言面页签堆叠误报收窄＋FlowLayout 漏 addLayout 子布局收养）随任务分支在库；收尾①前主工作树停留 ui-t24（EX-T06 系风险点），切回 redesign-main 后方执行①~③，零误落"
+    },
     {
       "task": "WP-24-T09",
       "unit": "delivery",
@@ -2146,13 +2159,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T24",
-      "branch": "ui-t24",
-      "contractPath": "tasks/foundation/UI-T24.json"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -2162,5 +2169,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "16e3418b-9c0e-4b6f-b094-0052412b6972"
+  "tickToken": "4dc30983-4316-4235-86a6-145ab26d4b5e"
 }
