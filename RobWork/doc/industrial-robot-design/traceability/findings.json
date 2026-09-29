@@ -4379,6 +4379,16 @@
       "title": "F-428 同族新维度（框架 Python 可选依赖的环境敏感部署缺口）：RobWork CMake 的 Python 检测使同源码冷启/存量构建产物导入面不一致，产品安装树对『构建时是否检出 Python』这一配置环境事实敏感——建议治理/框架侧裁明交付口径（RobWork Python 支持关死或安装规则条件携带 python313.dll），消除交付物对配置环境的隐式依赖。",
       "owner": "治理/构建面（F-428 同域归口；WP-01-T03/交付侧联合）",
       "resolution": "不阻塞 WP-24-T09 合入（attempt 1 verdict=pass；唯一交付口径主构建树产物零 python 导入，staging 直启绿）。编号顺延自 F-439。"
+    },
+    {
+      "id": "F-441",
+      "source": "UI-T24 验收段（acc/UI-T24/1，2026-09-29；证据：git log fd4f1c8b/78d4173d 标题——『[UI-T24] P2 前置：新增…』『[UI-T24] 文档同步：ui.md…』名词前缀开头，动词核心在后半句；13f60200『实现…』合规）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "F-012 家族再现（提交标题非动词开头）：UI-T24 三提交中两件以『前置：』『同步：』名词前缀起头——建议提交标题统一动词开头（AGENTS §6.3 格式原文），与 F-012/F-293/F-298/F-313 同批口径处置。",
+      "owner": "流水线执行侧（提交习惯自纠；随 F-012 家族既有批次统一复核）",
+      "resolution": "不阻塞 UI-T24 合入（attempt 1 verdict=pass；四段式正文与 Acc-Covered 齐备）。编号顺延自 F-440。"
     }
   ]
 }
