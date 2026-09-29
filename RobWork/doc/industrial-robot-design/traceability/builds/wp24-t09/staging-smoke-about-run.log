@@ -1,0 +1,12 @@
+WP-24-T09 staging about-smoke @ 2026-09-29 16:29:45
+16:29:45 SMOKE started pid=65764
+16:30:07 ACTIVATE ok
+16:30:08 SENT ctrl+shift+p
+16:30:09 SENT shift(en)
+16:30:10 SENT about
+16:30:12 SNAP staging-smoke-3-palette-about.png
+16:30:12 SENT enter
+16:30:15 SNAP staging-smoke-4-about-dialog.png
+16:30:15 SENT esc
+16:30:16 SMOKE_EXIT=0
+16:30:16 STAGING_ABOUT_SMOKE_PASS

@@ -808,6 +808,119 @@ if(TARGET sdurws)
     get_filename_component(_ird_studio_qt_prefix "${_ird_studio_qt_prefix}/../../.." ABSOLUTE)
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/studio-qt.conf"
          "[Paths]\nPrefix=${_ird_studio_qt_prefix}\n")
+
+    # ---- 产品安装规则（WP-24-T09：ARCH §5.4 部署结构 bin/plugins/share）----
+    # 背景：方案 B.1 收口任务把"产品交付路径"从开发机构建树收敛到可安装
+    # 的 staging 形态——本段是全产品唯一安装规则（契约 acceptance 2 staging
+    # 安装树专项审计的执行基础）。结构按 ARCH §5.4 部署视图三目录：
+    #   bin\     产品 exe ＋ worker exe ＋ Qt/RobWork/RWSim 运行库（exe 旁
+    #            平铺——与构建树已验证的 POST_BUILD 布局同构，DLL 搜索按
+    #            进程自身目录解析，零开发机路径依赖）；
+    #   plugins\ 框架级插件目录（仅冻结基线框架自身组件——Qt 平台/样式/
+    #            图像格式插件；业务插件全部静态链接进产品二进制，SA-01，
+    #            不落此目录、不经动态加载）；
+    #   share\   依赖清单（ird/share/baseline.md——WP-24-T01 冻结版本基线，
+    #            含框架 commit/Qt/编译器/碰撞后端冻结值/第三方许可证清单）。
+    # 组件化口径：全部规则挂 COMPONENT IRD_PRODUCT——集成构建树内框架
+    # （RobWork/RobWorkSim/RobWorkStudio）自带未分组安装规则（装框架头
+    # 文件/库到开发安装前缀，属框架交付物），cmake --install 全树执行会
+    # 连带它们；产品 staging 交付一律以
+    #   cmake --install build --config Release --component IRD_PRODUCT
+    # 执行，只装本段产品规则（安装树即 ARCH §5.4 的 bin/plugins/share
+    # 三目录形态，无框架开发交付物混入）。
+    # 交付路径边界（WP-24-T09 处置登记，acceptance 1④）：只安装
+    # sdurws_ird_studio（正式产品）与 sdurws_ird_execution_worker（计算
+    # worker，execution 派发链的必要进程）两个可执行目标；开发验证通道
+    # （sdurws_ird_ui_app／sdurws_ird_ui_plugin）与测试/演示目标一律不进
+    # 安装规则——`_plugin` 动态加载产物（MODULE .dll）物理上不在安装树
+    # 中，acceptance 2③ 的"无 _plugin 动态加载产物"由本排除保证。
+    install(TARGETS sdurws_ird_studio
+            RUNTIME DESTINATION bin
+            COMPONENT IRD_PRODUCT)
+    install(TARGETS sdurws_ird_execution_worker
+            RUNTIME DESTINATION bin
+            COMPONENT IRD_PRODUCT)
+
+    # 框架运行库：RobWork 构建输出的全部共享库（sdurw_*.dll 及框架基线
+    # .rwplugin 组件，另含 boost/freeglut/qhull/pugixml 等第三方运行库）。
+    # 来源目录与 POST_BUILD 的 copy_directory 同源（build/RobWork/bin），
+    # 保证"构建树验证形态＝安装树交付形态"。多配置生成器下 DLL 按配置
+    # 分目录（Release/Debug/…）——交付/验证口径为 Release（baseline.md
+    # §4 冻结口径），此处显式钉 Release；其他配置的安装不在交付口径内。
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/RobWork/bin/Release/"
+            DESTINATION bin
+            COMPONENT IRD_PRODUCT
+            FILES_MATCHING
+            PATTERN "*.dll")
+
+    # RWSim 框架运行库（sdurwsim.dll——runtime 编译链 DynamicWorkCell 面
+    # 的传递依赖；RobWorkSim 输出树单独存放，故独立一条 FILES 安装）。
+    # EXISTS 守卫：RobWorkSim 未构建时跳过并 STATUS 提示——安装规则不因
+    # 局部框架组件缺席而使整树安装失败（诚实提示而非静默）。
+    if(EXISTS "${CMAKE_BINARY_DIR}/RobWorkStudio/bin/Release/sdurwsim.dll")
+        install(FILES "${CMAKE_BINARY_DIR}/RobWorkStudio/bin/Release/sdurwsim.dll"
+                DESTINATION bin
+                COMPONENT IRD_PRODUCT)
+    else()
+        message(STATUS
+            "industrialrobot.ui: sdurwsim.dll not found in RobWorkSim output "
+            "— RWSim runtime NOT staged into install tree (WP-24-T09)")
+    endif()
+
+    # Qt 运行库（六个——与构建树 exe 旁经 TARGET_RUNTIME_DLLS 就位的集合
+    # 一致：Core/Gui/Widgets 界面三件套＋OpenGL/OpenGLWidgets 框架渲染链
+    # ＋Test 框架库传递面）。来源＝真实 Qt 安装前缀（_ird_studio_qt_prefix
+    # 同一推导——单一来源，防两处前缀漂移）。
+    install(FILES
+                "${_ird_studio_qt_prefix}/bin/Qt6Core.dll"
+                "${_ird_studio_qt_prefix}/bin/Qt6Gui.dll"
+                "${_ird_studio_qt_prefix}/bin/Qt6Widgets.dll"
+                "${_ird_studio_qt_prefix}/bin/Qt6OpenGL.dll"
+                "${_ird_studio_qt_prefix}/bin/Qt6OpenGLWidgets.dll"
+                "${_ird_studio_qt_prefix}/bin/Qt6Test.dll"
+            DESTINATION bin
+            COMPONENT IRD_PRODUCT)
+
+    # Qt 插件（ARCH §5.4 plugins 目录口径——框架基线组件）：
+    #   platforms\    qwindows.dll——平台插件，缺它 Qt GUI 程序启动即失败
+    #                 ("Could not find the Qt platform plugin")，必装；
+    #   styles\       qwindowsvistastyle——Windows 默认控件样式（缺省回落
+    #                 基础样式不阻塞启动，但为忠实复刻构建树呈现形态而装）；
+    #   imageformats\ 图像编解码插件（ico/jpeg/tiff/webp 等——png 为 Qt
+    #                 内建）。
+    # PATTERN 排除 *d.dll／*pdb：Qt debug 配置插件与调试符号不属 Release
+    # 交付口径（与运行库钉 Release 同理）。
+    install(DIRECTORY
+                "${_ird_studio_qt_prefix}/plugins/platforms"
+                "${_ird_studio_qt_prefix}/plugins/styles"
+                "${_ird_studio_qt_prefix}/plugins/imageformats"
+            DESTINATION plugins
+            COMPONENT IRD_PRODUCT
+            FILES_MATCHING
+            PATTERN "*.dll"
+            PATTERN "*d.dll" EXCLUDE
+            PATTERN "*.pdb" EXCLUDE)
+
+    # 安装树专用 qt.conf（相对前缀——与构建树版本的本质差异）：构建树
+    # qt.conf（上方 studio-qt.conf）把 Qt 前缀钉回开发机安装路径，属开发
+    # 期便利；安装树若沿用即形成对开发机路径的隐式依赖，违反 acceptance
+    # 2② "无开发机构建目录 PATH 依赖"。此处写入相对形态：qt.conf 位于
+    # bin\ 内，Prefix=. 指 bin 自身（Qt6 运行库平铺于此），Plugins=../plugins
+    # 指安装树根的 plugins\——安装树整体可搬迁（绝对路径直启可复现）。
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/install-qt.conf"
+         "[Paths]\nPrefix=.\nPlugins=../plugins\n")
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/install-qt.conf"
+            DESTINATION bin
+            COMPONENT IRD_PRODUCT
+            RENAME qt.conf)
+
+    # 依赖清单（ARCH §5.4 share 目录口径）：ird/share/baseline.md——
+    # 组件/版本/许可证/哈希要点（框架锁定 commit、Qt/编译器/碰撞后端
+    # 冻结值、第三方许可证清单）。只读引用不修改该文件（其修订纪律归
+    # WP-24-T01"基线变更走设计变更评审"）。
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../share/baseline.md"
+            DESTINATION share
+            COMPONENT IRD_PRODUCT)
 else()
     # 独立冒烟模式：无框架目标——产品目标不注册（集成树专属；冒烟模式
     # 的目标注册验证面＝ui 库与既有目标，如实登记——与插件目标同口径）。
