@@ -815,6 +815,47 @@ TEST(UiText, RequirementsDomainCommandTitlesRegistered_UX02_UI_T24_ACC3)
 }
 
 /**
+ * 键族⑨完备性断言（UI-T25 acceptance 1——knownPitfalls F-430 家族处置约束
+ * 同款："resolveText 为 fail-fast 语义（键未登记＝呈现层上抛），故键表完
+ * 备性须有测试断言"）：modeling/requirements/kinematics 三域自持导航迁移
+ * 标记标签的 panel.<domain>.self-nav.note 键全部已在 UiText 键族⑨登记。
+ * 缺键的直接后果＝各域面板构造期 fail-fast 上抛（面板侧禁止第二文案源——
+ * NFR-MNT-03），本用例在模型层先行给出可定位的失败点。解析值断言两轴：
+ * ①非空中文工程用语且不回显键名；②零内部名（WP-nn/DTB/O-nn/deprecated
+ * 词形不出现——UX-02 本任务的核心消账目标：三面板此前字面量直出携带
+ * "WP-24-T09/DTB O-44/deprecated"，键族⑨的值源必须零内部名）。
+ */
+TEST(UiText, PanelSelfNavNotesRegistered_UX02_UI_T25_ACC1)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+    IRD_TEST_INFO("NFR-MNT-03", {}, std::nullopt);
+
+    // 三域键（词形——§3.5 键族⑨约定 panel.<domain>.self-nav.note）。
+    const std::array<const char*, 3> domains{"modeling", "requirements", "kinematics"};
+    const std::vector<ui::TextKey> registered = ui::registeredTextKeys();
+    for (const std::string& domain : domains) {
+        const ui::TextKey key("panel." + domain + ".self-nav.note");
+        // 盘点面：键在登记清单中（漏登记先在此给出可定位失败）。
+        EXPECT_TRUE(std::find(registered.begin(), registered.end(), key)
+                    != registered.end())
+            << "域面板迁移标记键未登记（UI-T25 键族⑨）: " << key;
+        // 解析面：非空、不回显键名（缺值形态）。
+        const std::string text = ui::resolveText(key);
+        EXPECT_FALSE(text.empty()) << "键 " << key << " 解析为空文案";
+        EXPECT_NE(text, std::string(key))
+            << "键 " << key << " 解析值回显键名（缺值形态）";
+        // 零内部名轴：内部任务编号词形（WP-nn / DTB / O-nn）与开发术语
+        // （deprecated）不得出现在解析值（UX-02——本键族的消账目标）。
+        EXPECT_EQ(text.find("WP-"), std::string::npos)
+            << "键 " << key << " 解析值含内部任务编号词形 WP-";
+        EXPECT_EQ(text.find("DTB"), std::string::npos)
+            << "键 " << key << " 解析值含内部文档代号 DTB";
+        EXPECT_EQ(text.find("deprecated"), std::string::npos)
+            << "键 " << key << " 解析值含开发术语 deprecated";
+    }
+}
+
+/**
  * 过渡标签值源切换回归（acceptance 3——P-UI-1 词表未改一字）：三个过渡
  * 标签函数的值经 UiText 解析且与键一一对应（UI-T04 钉住的中文值逐字不变
  * ——键不变、值同源迁移至 UiText 内建表，"一切文本经 UiText::resolve"）。

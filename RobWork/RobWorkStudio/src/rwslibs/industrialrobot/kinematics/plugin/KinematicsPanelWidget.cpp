@@ -20,6 +20,9 @@
 
 #include <sdurws/ird/core/Units.hpp>               // UnitToken::find（字段量纲锚）
 #include <sdurws/ird/ui/FormEditCommon.hpp>        // 表单公共件（UI-T08 对端——参数表面板）
+#include <sdurws/ird/ui/UiText.hpp>                // 文案键解析（UI-T25——迁移标记标签挂键；
+                                                   // 构造期命令标题 resolver 尚未注入，此处直读
+                                                   // UiText 静态表与 requirements 面板先例同款）
 #include "KinPanelCommandCatalog.hpp"              // 命令目录（按钮词形与只读门控）
 
 namespace sdurws {
@@ -69,12 +72,17 @@ KinematicsPanelWidget::KinematicsPanelWidget(KinPanelServices services,
     // 如实（O-44 裁决）：共享工业项目树是业务主导航（D3），本域树/页面
     // 接入面已注册但 v1 无本域树对象〔恒空集供给〕，本面板自持导航因此
     // **保留可用**、不作"已迁移"虚标——退役归 WP-24-T09。
+    // UI-T25 文案治理：呈现文本改经 UiText 键解析（panel.kinematics.
+    // self-nav.note）——原字面量直出携带内部裁决/任务编号（DTB O-44、
+    // WP-24-T09），属 UX-02 内部名泄漏（F-430/F-432 家族标签一族消账）；
+    // 编号与裁决出处只留在本注释与设计文档，用户见工程化中文（两域措辞
+    // 按各自迁移事实区分，本域不作"已迁移"虚标的诚实口径不变）。
     m_navDeprecationLabel = new QLabel(this);
     m_navDeprecationLabel->setObjectName("kinematicsNavDeprecationLabel");
     m_navDeprecationLabel->setWordWrap(true);
     m_navDeprecationLabel->setText(
-        QStringLiteral("业务主导航：共享工业项目树（本域接入面已注册，v1 暂无本域树对象——DTB O-44）；"
-                       "本面板自持导航保留可用（退役归 WP-24-T09）"));
+        QString::fromStdString(
+            ui::resolveText(ui::TextKey("panel.kinematics.self-nav.note"))));
     layout->addWidget(m_navDeprecationLabel);
 
     m_tabs = new QTabWidget(this);

@@ -731,13 +731,15 @@ void WorkbenchContentImpl::buildTopBar()
 
     // 阶段导航条/当前方案工况指示/任务状态指示：§4.1 顶栏行的阶段 A 占位
     // （阶段导航归 UI-T09、方案工况随项目流程任务、任务状态随 UI-T13——
-    // 占位说明不虚构能力，§11.4）。三处共用同一占位说明文本。
-    const QString topPlaceholder =
-        QString::fromUtf8(u8"阶段导航（本阶段将在后续版本提供）");
-    QLabel* stageNav = new QLabel(topPlaceholder, bar);
-    layout->addWidget(stageNav);
-    QLabel* scheme = new QLabel(topPlaceholder, bar);
-    layout->addWidget(scheme);
+    // 占位说明不虚构能力，§11.4）。
+    // UI-T25 占位收敛：三处原各挂一条同名长占位（"阶段导航（本阶段将在
+    // 后续版本提供）"×3——FlowLayout 窄容器下与写命令按钮交错换行成三行
+    // 重复文本，也是 UI-T24 钳制源定位的顶栏 1054 px 双源之一），合并为
+    // 单条弱化说明（kTopBarDeferredNotice）挂任务状态指示位；三能力对应
+    // 任务的落位语义不变（§4.2 顶栏行落位登记随本任务文档同步）。
+    QLabel* taskState =
+        new QLabel(QString::fromUtf8(WorkbenchText::kTopBarDeferredNotice), bar);
+    layout->addWidget(taskState);
 
     // 写命令按钮组（§4.2 顶栏行：保存草稿/应用修改/撤销/重做——全部路由
     // 命令板，可用性随上下文刷新）。
@@ -754,9 +756,6 @@ void WorkbenchContentImpl::buildTopBar()
         m_topButtons.emplace_back(button, commandId);
         layout->addWidget(button);
     }
-
-    QLabel* taskState = new QLabel(topPlaceholder, bar);
-    layout->addWidget(taskState);
 
     // 只读徽标（PM-07/§4.2 顶栏行）：可见性随上下文（refreshCommandStates）。
     m_readonlyBadge = new QLabel(QString::fromUtf8(u8"只读"), bar);
@@ -775,11 +774,14 @@ void WorkbenchContentImpl::buildSideContents()
     // 左栏（§4.2 左栏行：项目对象树＋阶段任务列表——对象树需查询端口＋
     // 名称解析消费（阶段 B）、任务列表由阶段就绪投影驱动（UI-T09）；阶段 A
     // 占位说明，§11.4 不虚构能力）。最小内容宽 240 px（§4.4 原文数值）。
+    // UI-T25 占位收敛：宿主融合形态下主 Dock 第三段已是共享工业项目树
+    // （UI-T23 D3——真实对象树承载于紧邻本占位的下方），"项目对象树"占位
+    // 与真实树同屏语义矛盾，随本任务移除（对象树查询端口的阶段 B 语义仍
+    // 归 UI-T09 不变）；"阶段任务列表"占位保留（该能力确未落地）。
     auto* leftContent = new QWidget(m_deps.hostWidget);
     leftContent->setObjectName("ird_left_content");
     leftContent->setMinimumWidth(kLeftDockMinWidth);
     auto* leftLayout = new QVBoxLayout(leftContent);
-    leftLayout->addWidget(new QLabel(u8"项目对象树（本阶段将在后续版本提供）", leftContent));
     leftLayout->addWidget(new QLabel(u8"阶段任务列表（本阶段将在后续版本提供）", leftContent));
     leftLayout->addStretch(1);
     m_regionWidgets[static_cast<std::size_t>(WorkbenchRegion::Left)] = leftContent;
@@ -810,6 +812,11 @@ void WorkbenchContentImpl::buildBottomContent()
     // 底部任务和状态区（§4.2 底部行：五页签——结果/任务进度/诊断/日志/
     // 下一步建议。呈现模型随 UI-T13、状态词随 UI-T04、下一步建议由
     // workflow 提供（阶段 A 占位——§4.2 底部行明示）。最小内容高 160 px。
+    // UI-T25 空态引导：『下一步建议』页签由空占位升级为静态工作流引导
+    // （kAdviceGuideText——只引用已实装入口，P-UI-2 不虚构能力）；动态
+    // 建议仍由 workflow 供给（§4.2 原文语义不变），本引导是静态兜底而非
+    // 动态建议冒名（PA-1 权威唯一——workflow 判定语义不在 ui 私建）。
+    // 其余四页签占位不动（呈现模型/状态词确未落地）。
     auto* tabs = new QTabWidget(m_deps.hostWidget);
     tabs->setObjectName("ird_bottom_tabs");
     tabs->setMinimumHeight(kBottomDockMinHeight);
@@ -818,8 +825,19 @@ void WorkbenchContentImpl::buildBottomContent()
         WorkbenchText::kTabLog, WorkbenchText::kTabAdvice,
     };
     for (const char* title : tabTitles) {
-        auto* page = new QLabel(u8"本阶段将在后续版本提供", tabs);
-        page->setAlignment(Qt::AlignCenter);
+        QWidget* page = nullptr;
+        if (title == WorkbenchText::kTabAdvice) {
+            auto* guide = new QLabel(QString::fromUtf8(WorkbenchText::kAdviceGuideText), tabs);
+            guide->setObjectName("ird_advice_guide");
+            guide->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+            guide->setWordWrap(true);
+            guide->setMargin(12);  // 引导清单与页签框留白（贴边阅读性差）
+            page = guide;
+        } else {
+            auto* placeholder = new QLabel(u8"本阶段将在后续版本提供", tabs);
+            placeholder->setAlignment(Qt::AlignCenter);
+            page = placeholder;
+        }
         tabs->addTab(page, QString::fromUtf8(title));
     }
     m_regionWidgets[static_cast<std::size_t>(WorkbenchRegion::Bottom)] = tabs;

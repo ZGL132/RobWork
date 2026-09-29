@@ -19,6 +19,9 @@
 #include <QTreeWidgetItemIterator>
 #include <QVBoxLayout>
 
+#include <sdurws/ird/ui/UiText.hpp>   // 文案键解析（UI-T25——迁移标记标签挂键；
+                                      // 构造期命令标题 resolver 尚未注入，此处直读
+                                      // UiText 静态表，requirements 面板先例同款）
 #include <sdurws/ird/ui/UiTypes.hpp>  // ui::TextKey（命令标题键——呈现层键解析约定）
 
 namespace sdurws::ird::modeling {
@@ -131,8 +134,13 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     // 工业项目树已承接建模导航（WP-13-T20 TreeNodesProvider），本自持树
     // **标记 deprecated 但保留可用**——迁移期间旧面板可用性零损失
     // （acceptance 3），删除留待 WP-24-T09 退役任务）。
+    // UI-T25 文案治理：呈现文本改经 UiText 键解析（panel.modeling.
+    // self-nav.note）——原字面量直出携带开发术语（deprecated），属 UX-02
+    // 内部名泄漏（F-430/F-432 家族标签一族消账）；退役编排只留在本注释
+    // 与设计文档，用户见工程化中文。
     m_navDeprecationLabel = new QLabel(
-        QStringLiteral("自持导航（deprecated）——宿主工业项目树已承接建模导航，本树保留可用"),
+        QString::fromStdString(
+            ui::resolveText(ui::TextKey("panel.modeling.self-nav.note"))),
         this);
     m_navDeprecationLabel->setObjectName(QStringLiteral("ird_modeling_nav_deprecated_marker"));
     m_navDeprecationLabel->setWordWrap(true);

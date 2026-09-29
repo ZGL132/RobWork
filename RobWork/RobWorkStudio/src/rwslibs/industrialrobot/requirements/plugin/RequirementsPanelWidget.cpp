@@ -11,6 +11,7 @@
 #include "RequirementsPanelWidget.hpp"
 
 #include <QFormLayout>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -152,7 +153,27 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
     barLayout->setSpacing(2);
     // 无父对象构造（子布局形态——由 addLayout 收养，见下方安装处注释）。
     auto* flow = new ui::FlowLayout(nullptr, /*hSpacing=*/4, /*vSpacing=*/2);
+    // 命令条语义分组分隔（UI-T25——九条目录命令按 §9.8 语义四组呈现：
+    // 导入导出｜几何采集｜模板。分隔符用 QFrame 竖线（非 QPushButton——
+    // 冒烟通道按 findChildren<QPushButton> 枚举九键对照，分隔符不入
+    // 按钮集合、不改按钮挂位与顺序，仅呈现分组）。第四组（编辑——两级
+    // 撤销三按钮）在目录循环后的追加段，组前另起一条分隔符。
+    auto makeGroupSeparator = [bar]() {
+        auto* sep = new QFrame(bar);
+        sep->setFrameShape(QFrame::VLine);
+        sep->setFrameShadow(QFrame::Sunken);
+        sep->setFixedHeight(20);  // 竖线与按钮行等高（≈标准按钮高度）
+        return sep;
+    };
+    // 分组首命令 id（词表——§9.8 命令表行序；命中即在按钮前加分隔）。
+    const char* const groupLeaders[] = {"requirements.capture-tcp",
+                                        "requirements.apply-template"};
     for (const ui::CommandDescriptor& d : m_commands) {
+        for (const char* leader : groupLeaders) {
+            if (d.id == leader) {
+                flow->addWidget(makeGroupSeparator());
+            }
+        }
         auto* btn =
             new QPushButton(QString::fromStdString(ui::resolveText(d.titleKey)),
                             bar);
@@ -161,6 +182,9 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
         flow->addWidget(btn);
         m_commandButtons.push_back(btn);
     }
+    // 编辑组分隔符（目录九命令与两级撤销三按钮之间的强分隔——撤销族是
+    // 编辑会话语义，与录入/模板类命令分属不同操作面向）。
+    flow->addWidget(makeGroupSeparator());
     // 两级撤销三按钮（L-R4——草稿级撤销/重做与项目级撤销三处独立控件，
     // 不合并：草稿级动编辑器局部栈，项目级纯转发 ui 命令——语义不混用）。
     m_draftUndoButton = new QPushButton(QString::fromStdString("撤销本次编辑（草稿级）"), bar);
@@ -201,11 +225,16 @@ void RequirementsPanelWidget::buildTreePane(QWidget* left)
     // 自持导航 deprecated 标记（WP-14-T10——B1-SPEC §5.2 迁移期双形态
     // 并存：共享工业项目树已承载本域导航，自持树标记 deprecated 但保留
     // 可用，删除归 WP-24-T09；objectName 供 GUI 验证定位）。
+    // UI-T25 文案治理：呈现文本改经 UiText 键解析（panel.requirements.
+    // self-nav.note）——原字面量直出携带内部任务编号（WP-24-T09）与开发
+    // 术语（deprecated），属 UX-02 内部名泄漏（F-430/F-432 家族标签一族
+    // 消账）；编号与退役编排只留在本注释与设计文档，用户见工程化中文。
     m_navDeprecationLabel = new QLabel(left);
     m_navDeprecationLabel->setObjectName("requirementsNavDeprecationLabel");
     m_navDeprecationLabel->setWordWrap(true);
     m_navDeprecationLabel->setText(
-        QStringLiteral("本域自持导航已迁移共享工业项目树（deprecated——保留可用，退役归 WP-24-T09）"));
+        QString::fromStdString(
+            ui::resolveText(ui::TextKey("panel.requirements.self-nav.note"))));
     leftLayout->addWidget(m_navDeprecationLabel);
 
     m_tree = makeTable(left, QStringList() << "需求对象");
