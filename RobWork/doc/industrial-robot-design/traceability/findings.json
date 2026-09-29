@@ -4349,6 +4349,16 @@
       "title": "PIPE §5 中断对账标注缺失（实施提交正文末尾无 Acc-Covered: 序号）：消账面无歧义（base..head 恰一提交＝acceptance 1~6 全覆盖，验收 4.4 证据表逐条具名盘点零遗漏），且已推送提交不可 amend（AGENTS §6.3 禁改写已推送历史）——判阻断将产生『修复必然违反更高红线』死锁，故按建议级登记（ACC §5 阻断判据枚举不含本项）。",
       "owner": "治理/流程约定侧（所有者对『主交付提交缺 Acc-Covered 是否阻断』口径做最终裁决；后续任务恢复主交付提交带标注的既有实践）",
       "resolution": "验收侧已代履行从重盘点义务（WP-15-T18 attempt 1 verdict=pass 不受影响）；本条留所有者抽查时裁决口径并确认后续实践。编号顺延自 F-436。"
+    },
+    {
+      "id": "F-438",
+      "source": "WP-14-T11 验收段（acc/WP-14-T11/1，2026-09-29；证据：送验冷启树与基线 worktree〔2865a67f，零本任务改动〕双树 RWSimulatorPlugin/bt_plugin 各 71 处编译错——rw::rw::math 双嵌套命名空间展开〔VelocityScrew6D.hpp/Transform3D.hpp〕＋Eigen Parallelizer.h min/max 宏污染；主树同 SHA 增量全量构建零错误〔build-integration-full.log EXIT=0〕；BUILD_sdurws_pythoneditor=OFF〔主树在册交付缓存口径，F-428〕置换后冲突不消除）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "冷启集成树 RobWorkSim 框架插件宏冲突使全量冷启构建不可达成（F-323『新树 configure 既有问题』的复证与口径细化）：宏冲突为环境/配置层缺陷而非任务 diff 缺陷（基线树同款 71 错实证），但影响＝验收/冷启的集成构建只能以 industrialrobot 目标集口径复现（本验收 4.2/4.3 即该口径，industrialrobot 六目标含宿主 sdurws_ird_studio 冷启全绿）＋主树增量全量零错误佐证送验对象健康。",
+      "owner": "治理/构建面（WP-01-T03 归口）：登记冷启树构建口径（industrialrobot 目标集＋主树增量全量双口径）或定位宏污染根因（疑似 python/SWIG include 链宏泄漏——与 F-323/F-328/F-428 同域）",
+      "resolution": "不阻塞 WP-14-T11 合入（attempt 1 verdict=pass；隔离声明与基线实证齐备）。编号顺延自 F-437。"
     }
   ]
 }
