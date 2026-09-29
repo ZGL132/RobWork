@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.16（2026-09-27 治理修订：所有者明确禁止使用子智能体；新增 B.1 批次 manifest、显式拓扑入队、WP-24-T03 外部门禁与单会话角色顺序执行约束，修复 autoDiscovery 字母序与 B.1 拓扑不一致风险。前一版 v1.15：DOC-T14 方案 B.1 宿主融合迁移链共享 UI 文件互斥约束） |
+| 文档版本 | v1.18（2026-09-29 O-45 裁决登记：§6.3 B.1 批次插入所有者例外条款〔治理微任务 WP-14-T11 经所有者"解决阻塞"口令插入序 10——O-42/O-44 委托先例同款受锁写入〕＋校验阶段数 11→12 同步。前一版 v1.17：§4.7③ 多线 findings 人工解算口径〔仅节内行内登记、头行漏更，本批补记〕。前一版 v1.16：2026-09-27 治理修订：所有者明确禁止使用子智能体；新增 B.1 批次 manifest、显式拓扑入队、WP-24-T03 外部门禁与单会话角色顺序执行约束，修复 autoDiscovery 字母序与 B.1 拓扑不一致风险。前一版 v1.15：DOC-T14 方案 B.1 宿主融合迁移链共享 UI 文件互斥约束） |
 | 文档代号 | PIPE |
 | 上游 | acceptance-protocol.md（验收段完全复用其清单与独立性要求）、contract-compilation.md（ready 契约的唯一产出通道）、development-task-breakdown.md §5.7/§8（三段式流程与契约家族）、AGENTS.md §6（提交/推送/循环约定） |
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
@@ -169,9 +169,9 @@
 pwsh -File RobWork/scripts/industrialrobot/validate-b1-batch.ps1
 ```
 
-脚本必须验证：11 个阶段连续编号；manifest 中的 `taskId/contractPath/branch` 与 canonical 契约一致；每个阶段依赖 manifest 前一项；`WP-24-T08` 必须绑定 `WP-24-T03-COMPLETE` 外部门禁。任何失败均转 `blocked` 或保持 `idle`，不得自行改写契约依赖。
+脚本必须验证：12 个阶段连续编号（v1.18 起——O-45 裁决插入 WP-14-T11 前为 11）；manifest 中的 `taskId/contractPath/branch` 与 canonical 契约一致；每个阶段依赖 manifest 前一项；`WP-24-T08` 必须绑定 `WP-24-T03-COMPLETE` 外部门禁。任何失败均转 `blocked` 或保持 `idle`，不得自行改写契约依赖。
 
-`autoDiscovery=true` 在 B.1 批次内不再按目录字母序追加。治理会话完成 DOC-T14 独立评审后，必须在一个受锁状态写入中把 11 份契约按 manifest 顺序原子置 `ready`；tick 再按相同顺序追加 queue。批次中途不得插入其他 B.1 任务，也不得跳过未满足门禁的阶段。
+`autoDiscovery=true` 在 B.1 批次内不再按目录字母序追加。治理会话完成 DOC-T14 独立评审后，必须在一个受锁状态写入中把 11 份契约按 manifest 顺序原子置 `ready`（已执行）；tick 再按相同顺序追加 queue。批次中途不得插入其他 B.1 任务，也不得跳过未满足门禁的阶段——**例外（v1.18，O-45）**：所有者语义裁决授权的治理微任务可经所有者"解决阻塞／调整队列"口令插入批次（O-42/O-44 同款委托先例、受锁写入；manifest、校验脚本阶段数、后继阶段 dependsOn 链同步修订并留痕；插入不得改变既有阶段相对序，不得用于绕过未满足门禁）。
 
 `WP-24-T03-COMPLETE` 是当前唯一外部前置：在 `WP-24-T03` T03b 收口独立验收并合入 `redesign-main` 前，`WP-24-T08` 即使 `dependsOn` 已满足也不可领取。该等待是合法门控等待，不计入 `heartbeat.ticksNoProgress`；门禁满足后由治理会话把 gate 状态改为 `satisfied`，并运行 `validate-b1-batch.ps1` 留痕。
 

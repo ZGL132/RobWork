@@ -6,7 +6,8 @@
   "title": "多领域集成收口（三域迁移集成回归与联动契约全量核查）",
   "status": "ready",
   "dependsOn": [
-    "WP-15-T18"
+    "WP-15-T18",
+    "WP-14-T11"
   ],
   "requirements": [
     "UX-12",
@@ -62,5 +63,5 @@
     "deprecated 自持导航清单固化＋退役清单草案产出（方案 A 顶层窗口路径、deprecated 导航、临时桥接件逐项登记——交 WP-24-T09 执行）",
     "PIPE §6.2 共享 UI 文件互斥合规复查（三域迁移任务允许面审计）为验收对抗项；ird_gates 增量登记；双模式构建零错误；gtest XML＋ird-test-report.json＋GUI 冒烟留痕 traceability/builds/wp10-t23/"
   ],
-  "note": "方案 B.1 迁移链收口（B1-SPEC §6 链尾执行任务；PIPE §6.2 共享面任务）。knownPitfalls：O-43＝宿主融合边界（集成核查以 UI-T16~T18 已验收行为为基线）；O-38＝框架插件/TreeView 零修改（集成不引入框架补丁）。interUnit=true 判定＝三域集成核查跨 modeling/requirements/kinematics/ui 四单元消费面。本任务只集成收口，不补域功能；退役执行归 WP-24-T09。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 2/3/4 三条独立收口条款：draft.apply 全模块遍历（含测试模块）、单域装配失败隔离、项目关闭八类对象清理。"
+  "note": "方案 B.1 迁移链收口（B1-SPEC §6 链尾执行任务；PIPE §6.2 共享面任务）。knownPitfalls：O-43＝宿主融合边界（集成核查以 UI-T16~T18 已验收行为为基线）；O-38＝框架插件/TreeView 零修改（集成不引入框架补丁）。interUnit=true 判定＝三域集成核查跨 modeling/requirements/kinematics/ui 四单元消费面。本任务只集成收口，不补域功能；退役执行归 WP-24-T09。status=ready：2026-09-27 独立评审 PASS 后经 CCP §3.1 第 2 步原子放行（见编译日志放行块）。〔v1.1 补强 2026-09-27〕按所有者审核裁定补 acceptance 2/3/4 三条独立收口条款：draft.apply 全模块遍历（含测试模块）、单域装配失败隔离、项目关闭八类对象清理。〔v1.2 2026-09-29〕O-45 裁决（tick#416 blocked 解除——需求域宿主装配缝缺位，登记 DTB §4.2）：dependsOn 增 WP-14-T11（需求域装配门面微任务，B.1 批次序 10 插入、PIPE v1.18 例外条款）——三域集成回归的需求域消费缝由该微任务以 RequirementsPluginAssembly.hpp 公共门面补建，本任务经三门面（modeling/kinematics/requirements）消费，R-2 合规、acceptance 条款零收窄。"
 }

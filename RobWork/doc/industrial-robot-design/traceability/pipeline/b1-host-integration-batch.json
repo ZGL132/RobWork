@@ -112,6 +112,15 @@
     {
       "order": 10,
       "stageId": "B1-10",
+      "name": "需求域装配门面补建（O-45 裁决插入）",
+      "taskId": "WP-14-T11",
+      "contractPath": "tasks/foundation/WP-14-T11.json",
+      "branch": "wp14-t11",
+      "requiredExternalGates": []
+    },
+    {
+      "order": 11,
+      "stageId": "B1-11",
       "name": "多领域集成收口",
       "taskId": "UI-T23",
       "contractPath": "tasks/foundation/UI-T23.json",
@@ -119,8 +128,8 @@
       "requiredExternalGates": []
     },
     {
-      "order": 11,
-      "stageId": "B1-11",
+      "order": 12,
+      "stageId": "B1-12",
       "name": "方案 A 正式产品路径退役",
       "taskId": "WP-24-T09",
       "contractPath": "tasks/foundation/WP-24-T09.json",

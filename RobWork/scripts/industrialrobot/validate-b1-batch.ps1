@@ -46,8 +46,10 @@ if ($batch.status -notin @("planned", "ready", "running", "done", "blocked")) {
 }
 
 $stages = @($batch.stages)
-if ($stages.Count -ne 11) {
-  $errors += "B.1 batch must contain exactly 11 implementation stages, got $($stages.Count)"
+# O-45 裁决（2026-09-29，所有者"解决阻塞"口令）授权治理微任务 WP-14-T11 插入批次序 10，
+# 阶段数 11→12（PIPE §6.3 v1.18 批次插入例外条款——插入不改变既有阶段相对序）。
+if ($stages.Count -ne 12) {
+  $errors += "B.1 batch must contain exactly 12 implementation stages, got $($stages.Count)"
 }
 
 $seenTasks = @{}

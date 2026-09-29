@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-14-T11",
+  "unit": "requirements",
+  "masterWp": "WP-E",
+  "title": "需求域装配门面补建（O-45 裁决——宿主消费缝，与 modeling/kinematics 门面同构）",
+  "status": "ready",
+  "dependsOn": [
+    "WP-15-T18"
+  ],
+  "requirements": [
+    "UX-12",
+    "NFR-MNT-01"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#7.12",
+    "units/requirements.md#11",
+    "development-task-breakdown.md#2.15"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp14-t11",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-45",
+    "O-43"
+  ],
+  "acceptance": [
+    "门面出线：requirements/assembly/sdurws/ird/requirements/RequirementsPluginAssembly.hpp 以插件目标 PUBLIC include 面交付（与 ModelingPluginAssembly.hpp/KinematicsPluginAssembly.hpp 同构落位——assembly/ 目录＋实现 plugin/RequirementsPluginAssembly.cpp 编入 sdurws_ird_requirements_plugin），出线 RequirementsUiModule（IPluginUiModule 接口面）与迁移三接入面句柄（树节点/属性页供给者＋选择服务接线＋三维拾取上报——与双先例 SharedSurfaceProviders 形状同构），宿主装配层按 O-31 纪律零 requirements 私有头依赖即可完成装配",
+    "零行为变化：RequirementsUiModule/HostMigrationProviders 已验收语义零修改（门面只出线不重写）；既有 HostMigration 契约用例（16 用例）零修改全绿，requirements 单元全量测试零回退",
+    "ird_gates 零增量（门面在 requirements 单元内自洽、新增零跨单元边——宿主消费边归 UI-T23 随其命中集增量登记）；双模式构建零错误；gtest XML＋ird-test-report.json 留痕 traceability/builds/wp14-t11/；单元卡 §14.6 落位登记"
+  ],
+  "note": "O-45 裁决创设（2026-09-29 所有者\"解决阻塞\"口令——O-42/O-44 同款委托先例；治理会话随裁决落地同款受锁写入直接置 ready，PIPE §6.3 v1.18 批次插入例外条款）。背景：UI-T23 三域集成收口需要 requirements 域公共装配门面——modeling/kinematics 两域均有 assembly/ 门面（WP-24-T03／WP-15-T12/T18 交付），而需求域三接入面（WP-14-T10 交付）全在 plugin/ 私有头无公共出口，UI-T23 allowedFiles 仅 ui/** 无法诚实补建（R-2 禁跨单元私有头消费；tick#416 blocked 登记 d4631246）。本任务只补构建面缝：门面出线已验收的 RequirementsUiModule 与三接入面句柄，零行为变化、零共享 UI 装配面触碰（PIPE §6.2 互斥红线——本契约不在 §6.2 迁移链六任务清单内，但同守其精神）；宿主消费归 UI-T23。knownPitfalls：O-45＝本裁决出处与边界（只补缝不重写）；O-43＝宿主融合边界（框架零修改、SA-18 双树边界不变）。"
+}
