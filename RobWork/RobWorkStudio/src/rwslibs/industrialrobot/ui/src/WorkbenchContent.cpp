@@ -48,6 +48,8 @@
 
 #include <string_view>
 
+#include <sdurws/ird/ui/FlowLayout.hpp>  // 流式栅格（UI-T24 P2——顶栏换行承载，钳制源 2 消除）
+
 #include <sdurws/ird/ui/AboutDialog.hpp>  // 关于框装配/工厂/手册入口（UI-T10——§11.4）
 #include <sdurws/ird/ui/UiProjections.hpp>
 #include <sdurws/ird/ui/UiText.hpp>       // ui::resolveText（§3.5 唯一文案出口——WP-24-T03b 处理器级拒绝文案）
@@ -303,6 +305,114 @@ void WorkbenchContentImpl::setRegionVisible(WorkbenchRegion region, bool visible
     refreshCommandStates();  // 视图开关勾选态同步（经观察者回调宿主层）
 }
 
+// =====================================================================
+// 辅助 Dock 可见性记忆（UI-T24——§10.1 v1.25；域自持面板跨会话半区）
+// =====================================================================
+
+void WorkbenchContentImpl::setAuxVisibilityTarget(const std::string& key,
+                                                  QWidget* target,
+                                                  bool factoryVisible)
+{
+    if (!m_built || target == nullptr) {
+        return;  // 未构建/空目标＝调用方错误（安全轨，同 setRegionVisibilityTarget）
+    }
+    AuxEntry entry;
+    entry.target = target;
+    entry.factory = factoryVisible;
+    // 登记即施加：记忆值优先（activate 装载拍可能晚于本调用——buildDockBody
+    // 登记在前、activate 在后——先按工厂默认/既有记忆施加，装载拍再对齐）。
+    const auto remembered = m_auxRemembered.find(key);
+    entry.current = (remembered != m_auxRemembered.end()) ? remembered->second
+                                                          : factoryVisible;
+    target->setVisible(entry.current);
+    m_auxEntries[key] = entry;
+}
+
+bool WorkbenchContentImpl::auxVisible(const std::string& key) const
+{
+    // 未登记键＝调用方契约违约（拼写错误/未先登记）——fail-fast 而不是
+    // 返回 false 掩盖（与 resolveText 缺键 fail-fast 同纪律）。
+    const auto it = m_auxEntries.find(key);
+    if (it == m_auxEntries.end()) {
+        throw std::out_of_range("ui/workbench/aux-key-unknown: 辅助可见性键未登记 " + key);
+    }
+    return it->second.current;
+}
+
+void WorkbenchContentImpl::setAuxVisible(const std::string& key, bool visible)
+{
+    if (!m_built || m_shutdownDone) {
+        Q_ASSERT(false && "shutdown 后调用 setAuxVisible（契约非法调用）");
+        return;
+    }
+    const auto it = m_auxEntries.find(key);
+    if (it == m_auxEntries.end()) {
+        throw std::out_of_range("ui/workbench/aux-key-unknown: 辅助可见性键未登记 " + key);
+    }
+    // 幂等闸口：同值重设＝无操作。这同时是 Dock visibilityChanged →
+    // setAuxVisible 回环的终止条件（重设会再触发 visibilityChanged）。
+    if (it->second.current == visible) {
+        return;
+    }
+    it->second.current = visible;
+    if (it->second.target != nullptr) {
+        it->second.target->setVisible(visible);
+    }
+    // 单键微写（§3.4 后台线程纪律——与 setRegionVisible 的嵌入式即时落盘
+    // 同口径；辅助旗标写入不分宿主形态——域 Dock 只存在于插件形态，但
+    // 写盘通道统一走本持久化面，不复制分支）。
+    persistAuxFlagAsync(key, visible);
+    refreshCommandStates();  // 视图菜单辅助开关勾选态同步（观察者回调）
+}
+
+void WorkbenchContentImpl::loadAuxVisibilityMemory()
+{
+    // 读盘在 UI 线程（写线程未启动——§3.4 读写不重叠，与 restore* 同拍）。
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       kSettingsOrg, kSettingsApp);
+    const LayoutMemory::AuxFlagsLoadResult loaded = LayoutMemory::loadAuxFlags(settings);
+    if (loaded.kind == LayoutMemory::AuxFlagsLoadResult::Kind::Corrupt) {
+        // §4.5 同纪律：损坏＝整段丢弃＋Dev 诊断＋回退工厂默认（调用方已在
+        // 三区半区 discard 过整组——本分支只在"仅辅助键损坏"的形态出现，
+        // 防御性再 discard 一次保证干净）。
+        LayoutMemory::discard(settings);
+        m_auxRemembered.clear();
+        for (auto& [key, entry] : m_auxEntries) {
+            entry.current = entry.factory;
+            if (entry.target != nullptr) {
+                entry.target->setVisible(entry.factory);
+            }
+        }
+        emitDev(std::string(WorkbenchText::kLayoutRestoreFailedCode)
+                + ": 辅助 Dock 可见性记忆损坏——已整段丢弃并回退工厂默认"
+                  "（不阻塞启动）");
+        return;
+    }
+    // Absent（无记忆）/Restored（可能有空表）都直接采纳 flags（空＝全按
+    // 工厂默认——域面板从未呼出过的正常态，不制造告警）。
+    m_auxRemembered = loaded.flags;
+    for (auto& [key, entry] : m_auxEntries) {
+        const auto remembered = m_auxRemembered.find(key);
+        entry.current = (remembered != m_auxRemembered.end())
+                            ? remembered->second
+                            : entry.factory;
+        if (entry.target != nullptr) {
+            entry.target->setVisible(entry.current);
+        }
+    }
+}
+
+void WorkbenchContentImpl::persistAuxFlagAsync(const std::string& key, bool visible)
+{
+    // 值捕获（§3.4 纪律——落盘任务禁触 Widget）；写线程未运行＝如实留痕。
+    const bool accepted = m_settingsWriter.enqueue([key, visible](QSettings& s) {
+        LayoutMemory::storeAuxFlag(s, key, visible);
+    });
+    if (!accepted) {
+        emitDev("辅助 Dock 旗标落盘任务被拒（写线程未运行）——本次可见性变更未持久化");
+    }
+}
+
 void WorkbenchContentImpl::resetLayout()
 {
     if (!m_built || m_shutdownDone) {
@@ -327,6 +437,15 @@ void WorkbenchContentImpl::resetLayout()
              {WorkbenchRegion::Left, WorkbenchRegion::Right, WorkbenchRegion::Bottom}) {
             visibilityTarget(region)->setVisible(true);
         }
+    }
+    // 辅助 Dock（UI-T24）同拍恢复工厂默认：域自持面板出厂＝不呈现（P1
+    // "默认布局收敛"的复位半区——恢复默认布局命令把呼出的域面板一并收回）。
+    for (auto& [key, entry] : m_auxEntries) {
+        entry.current = entry.factory;
+        if (entry.target != nullptr) {
+            entry.target->setVisible(entry.factory);
+        }
+        persistAuxFlagAsync(key, entry.factory);
     }
     refreshCommandStates();
     persistLayoutAsync();         // 用户级设置同步（PM-14——复位即持久化）
@@ -426,6 +545,9 @@ void WorkbenchContentImpl::restorePersistedLayout()
          {WorkbenchRegion::Left, WorkbenchRegion::Right, WorkbenchRegion::Bottom}) {
         visibilityTarget(region)->setVisible(*userVisibilityFlag(region));
     }
+    // 辅助 Dock 记忆同拍装载（UI-T24——顶层宿主形态下域 Dock 不存在，
+    // 登记表空＝装载无观察效果；通道统一，不按形态分支）。
+    loadAuxVisibilityMemory();
 }
 
 void WorkbenchContentImpl::restoreRegionFlagsEmbedded()
@@ -455,6 +577,9 @@ void WorkbenchContentImpl::restoreRegionFlagsEmbedded()
          {WorkbenchRegion::Left, WorkbenchRegion::Right, WorkbenchRegion::Bottom}) {
         visibilityTarget(region)->setVisible(*userVisibilityFlag(region));
     }
+    // 辅助 Dock 记忆同拍装载（UI-T24——域自持面板跨会话半区；三区旗标同组
+    // 同文件，损坏处置已在各分支收口，此处只做正常/空表采纳）。
+    loadAuxVisibilityMemory();
 }
 
 void WorkbenchContentImpl::applyFactoryLayout()
@@ -473,6 +598,16 @@ void WorkbenchContentImpl::applyFactoryLayout()
         for (const WorkbenchRegion region :
              {WorkbenchRegion::Left, WorkbenchRegion::Right, WorkbenchRegion::Bottom}) {
             visibilityTarget(region)->setVisible(true);
+        }
+    }
+    // 辅助 Dock（UI-T24）回退工厂默认（§4.5 损坏回退半区——记忆已随整组
+    // discard，本地表清空；不主动持久化工厂值——损坏回退不重建设置文件，
+    // 下一次真实变更自然落盘）。
+    m_auxRemembered.clear();
+    for (auto& [key, entry] : m_auxEntries) {
+        entry.current = entry.factory;
+        if (entry.target != nullptr) {
+            entry.target->setVisible(entry.factory);
         }
     }
     refreshCommandStates();
@@ -568,10 +703,16 @@ void WorkbenchContentImpl::buildTopBar()
 {
     // 顶栏内容（§4.1 顶栏行）：宿主层决定容器形态（顶层＝Dock 包裹＋空
     // 标题栏；嵌入式＝栅格行）——本层只构建内容条。
+    // 布局形态（UI-T24 P2——装配侧尺寸策略，钳制源 2 消除）：原 QHBoxLayout
+    // 单行排布把全部子控件最小宽度之和（1054 px，三个占位 QLabel 各 204 px
+    // 是大头）顶成容器最小宽，主 Dock 因此缩不到 §4.4 规定的左栏最小内容
+    // 尺寸 240 px——最小窗口场景中央三维视图被钳至 18 px（钳制源定位记录：
+    // traceability/builds/ui-t24/clamp-source.md）。改流式栅格（行满换行）
+    // 后容器最小宽坍缩为单控件最宽值，主 Dock 恢复可缩性；宽窗口下仍为
+    // 单行靠左（视觉与原形态一致）。
     auto* bar = new QWidget(m_deps.hostWidget);
     bar->setObjectName("ird_top_bar_content");
-    auto* layout = new QHBoxLayout(bar);
-    layout->setContentsMargins(4, 2, 4, 2);
+    auto* layout = new FlowLayout(bar);
 
     // 项目入口▾（下拉：新建/打开/关闭——与文件菜单同命令，§4.2 路由红线
     // 同样适用：只经壳层提交路径）。
@@ -623,7 +764,8 @@ void WorkbenchContentImpl::buildTopBar()
     m_readonlyBadge->setVisible(false);
     layout->addWidget(m_readonlyBadge);
 
-    layout->addStretch(1);  // 其余控件靠左，徽标后弹性收尾
+    // 流式栅格无 stretch 语义（项恒靠左排布）——原 QHBoxLayout 尾部弹性
+    // 收尾的视觉语义即"其余控件靠左"，FlowLayout 天然满足，直接省略。
     bar->setLayout(layout);
     m_regionWidgets[static_cast<std::size_t>(WorkbenchRegion::Top)] = bar;
 }

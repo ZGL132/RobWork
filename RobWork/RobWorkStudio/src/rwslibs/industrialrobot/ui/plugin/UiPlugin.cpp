@@ -30,6 +30,8 @@
 #include <QDir>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QEvent>
+#include <QEventLoop>
 #include <QFile>
 #include <QFileDialog>
 #include <QGridLayout>
@@ -171,6 +173,27 @@ constexpr const char* kProjectMenuTitle = "工业机器人项目";
 constexpr const char* kRecentMenuTitle = "最近项目";
 constexpr const char* kViewMenuTitle = "视图";
 constexpr const char* kRecentUnavailableSuffix = "（项目位置不可用）";
+
+/// 辅助 Dock 可见性记忆键（UI-T24 P1——内容装配面 aux 半区的业务键；词形
+/// 稳定 ASCII，进用户级设置文件 layout/aux.<key>.visible——词形改动＝用户
+/// 记忆迁移，等价契约变更）。四个域自持面板 Dock 各一键。
+constexpr const char* kAuxKeyModelingDock = "domain.modeling";
+constexpr const char* kAuxKeyRequirementsDock = "domain.requirements";
+constexpr const char* kAuxKeyKinematicsDock = "domain.kinematics";
+constexpr const char* kAuxKeyKinematicsAdvancedDock = "domain.kinematicsAdvanced";
+
+/// 中央区最小可见保留宽（UI-T24 P2），单位 px。取值依据：§4.4 最小窗口
+/// 1280 宽下，左栏 240＋右栏 280 两栏取其内容最小尺寸后中央仍应保有约
+/// 1/4 窗宽；320 px 为三维视图可辨认操作的诚实下限（低于此值三维交互
+/// 已不可用，与"归零"无实质差异）。该值是本插件 Dock 回推的目标保留量，
+/// 不触碰框架中央控件属性（SA-02）。
+constexpr int kCentralMinReserveWidth = 320;
+
+/// 本插件 Dock 回推时的收缩下限（UI-T24 P2），单位 px。回推不与内容最小
+/// 宽度对抗（Qt 布局对 minimumSizeHint 以下本就拒收）——本常量只是再垫
+/// 一层"不缩到不可辨认"的插件侧地板：主 Dock 承载命令条与项目树，低于
+/// 160 px 呈现已无意义。
+constexpr int kDockShrinkFloorWidth = 160;
 
 /**
  * @brief 打开五步协议的捕获包装（UI-T17）：转发内层 StoreFactoryPortAdapter
@@ -934,6 +957,29 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
     m_content->setRegionVisibilityTarget(WorkbenchRegion::Right, m_propsDock);
     m_content->setRegionVisibilityTarget(WorkbenchRegion::Bottom, m_tasksDock);
 
+    // 辅助 Dock 可见性登记（UI-T24 P1——域自持面板跨会话记忆半区）：工厂
+    // 默认＝不呈现（净室默认布局收敛）；登记即按记忆/默认施加（此时 Dock
+    // 尚未入宿主主窗口——可见位只是父子树上的标记，呈现落定在装载呈现
+    // 自证拍的 addDockWidget＋setVisible 对齐）。activate 的记忆装载拍会
+    // 再对齐一次（登记在 buildDockBody、装载在 activate——时序覆盖）。
+    if (m_modelingDock != nullptr) {
+        m_content->setAuxVisibilityTarget(kAuxKeyModelingDock, m_modelingDock,
+                                          /*factoryVisible=*/false);
+    }
+    if (m_requirementsDock != nullptr) {
+        m_content->setAuxVisibilityTarget(kAuxKeyRequirementsDock, m_requirementsDock,
+                                          /*factoryVisible=*/false);
+    }
+    if (m_kinematicsDock != nullptr) {
+        m_content->setAuxVisibilityTarget(kAuxKeyKinematicsDock, m_kinematicsDock,
+                                          /*factoryVisible=*/false);
+    }
+    if (m_kinematicsAdvancedDock != nullptr) {
+        m_content->setAuxVisibilityTarget(kAuxKeyKinematicsAdvancedDock,
+                                          m_kinematicsAdvancedDock,
+                                          /*factoryVisible=*/false);
+    }
+
     // 命令状态观察：内容装配层每次刷新使能态后同步框架菜单动作（§7.6
     // 三处一致禁用的宿主菜单半区——求值结果全在注册表，本插件零判定）。
     m_content->setCommandStateObserver([this] { refreshHostMenuActions(); });
@@ -1048,6 +1094,18 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
         });
         m_hostRegionToggles.emplace_back(region, action);
     }
+    // ---- 域自持面板开关（UI-T24 P1——默认不呈现的勾选呼出通道）----
+    // 三域面板＋运动学高级面板各一勾选项：触发＝辅助可见性记忆翻转（内容
+    // 装配面持久化——跨会话记忆优先）；勾选态随 refreshHostMenuActions 回写
+    // （与三区开关同机制，不回环）。Dock 关闭钮关闭同样落记忆（addAuxDock
+    // Toggle 内接线 visibilityChanged——顶层窗口不可见期间的可见性抖动不
+    // 记忆：启动/最小化不是用户意愿）。
+    viewMenu->addSeparator();
+    addAuxDockToggle(viewMenu, "IRD 建模面板", kAuxKeyModelingDock, m_modelingDock);
+    addAuxDockToggle(viewMenu, "IRD 需求面板", kAuxKeyRequirementsDock, m_requirementsDock);
+    addAuxDockToggle(viewMenu, "IRD 运动学面板", kAuxKeyKinematicsDock, m_kinematicsDock);
+    addAuxDockToggle(viewMenu, "IRD 运动学（求解配置）面板", kAuxKeyKinematicsAdvancedDock,
+                     m_kinematicsAdvancedDock);
     viewMenu->addSeparator();
     addCommandAction(viewMenu, "恢复默认布局", "view.resetLayout");
     QAction* beforeView = nullptr;
@@ -1079,6 +1137,43 @@ QAction* IrdWorkbenchHostPlugin::addCommandAction(QMenu* target,
     });
     m_hostMenuCommandIds.emplace_back(action, commandId);
     return action;
+}
+
+void IrdWorkbenchHostPlugin::addAuxDockToggle(QMenu* target, const char* title,
+                                              const char* auxKey, QDockWidget* dock)
+{
+    // 勾选开关（UI-T24 P1）：触发＝辅助可见性记忆翻转（内容装配面施加并
+    // 持久化——PM-14）；菜单构建早于 initialize 装配（框架 setupMenu 时序
+    // ——m_content 可能为空），捕获处判空，初值勾选态由 refreshHostMenu
+    // Actions 装配后统一回写。
+    QAction* action = target->addAction(QString::fromUtf8(title));
+    action->setParent(this);
+    action->setCheckable(true);
+    const std::string key(auxKey);
+    QObject::connect(action, &QAction::triggered, this, [this, key] {
+        if (m_content) {
+            m_content->setAuxVisible(key, !m_content->auxVisible(key));
+        }
+    });
+    // Dock 被用户以标题栏关闭钮/宿主开关关闭时同步记忆与勾选态（用户意愿
+    // 的另一入口——只经菜单翻转会让"X 关闭"在下次启动复活）。守卫：顶层
+    // 窗口不可见期间的可见性抖动（启动过程/最小化/退出拆卸）不记忆——
+    // 那不是用户意愿，误记会把最小化态持久化成"用户隐藏"。
+    if (dock != nullptr) {
+        QDockWidget* watched = dock;
+        QObject::connect(dock, &QDockWidget::visibilityChanged, this,
+                         [this, key, watched](bool visible) {
+                             if (m_content == nullptr) {
+                                 return;  // 未装配/已收口——不记忆
+                             }
+                             if (watched->window() == nullptr
+                                 || !watched->window()->isVisible()) {
+                                 return;  // 顶层窗口不在屏——非用户意愿抖动
+                             }
+                             m_content->setAuxVisible(key, visible);
+                         });
+    }
+    m_hostAuxToggles.emplace_back(key, action);
 }
 
 void IrdWorkbenchHostPlugin::rebuildRecentMenu()
@@ -1122,6 +1217,11 @@ void IrdWorkbenchHostPlugin::refreshHostMenuActions()
     // 五区开关勾选态＝当前有效可见性（不回环：只 setChecked 不触发）。
     for (auto& [region, action] : m_hostRegionToggles) {
         action->setChecked(m_content->regionVisible(region));
+    }
+    // 辅助 Dock 开关勾选态＝当前有效可见性（UI-T24 P1——记忆位非实测位，
+    // 与五区开关同语义；不回环）。
+    for (auto& [key, action] : m_hostAuxToggles) {
+        action->setChecked(m_content->auxVisible(key));
     }
 }
 
@@ -1190,25 +1290,31 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
         hostWindow->addDockWidget(Qt::RightDockWidgetArea, m_propsDock);
         hostWindow->addDockWidget(Qt::BottomDockWidgetArea, m_tasksDock);
         // 建模 Dock 入宿主（WP-24-T03 首版装配挂位——Left 区；与属性/任务
-        // Dock 同受宿主装载语义支配，重显同拍执行）。
+        // Dock 同受宿主装载语义支配）。呈现位（UI-T24 P1——默认布局收敛）：
+        // 三域自持面板工厂默认＝不呈现（净室默认呈现面收敛为"主 Dock＋属性/
+        // 任务 Dock"，中央三维视图非零），可见性由内容装配面的辅助记忆半区
+        // 决定（用户经"视图"菜单呼出后跨会话记忆优先——PM-14；框架
+        // restoreState 先于本拍 addDockWidget，blob 对域 Dock 无效，故记忆
+        // 自持）。缺席域跳过——失败隔离挂位形态。
         if (m_modelingDock != nullptr) {
             hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_modelingDock);
-            m_modelingDock->show();
+            m_modelingDock->setVisible(m_content->auxVisible(kAuxKeyModelingDock));
         }
         // 需求/运动学 Dock 入宿主（UI-T23 三域挂位——Left 区同列；高级
-        // 面板 Dock 入 Right 区。缺席域跳过——失败隔离挂位形态）。
+        // 面板 Dock 入 Right 区。呈现位同上——P1 收敛＋辅助记忆）。
         if (m_requirementsDock != nullptr) {
             hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_requirementsDock);
-            m_requirementsDock->show();
+            m_requirementsDock->setVisible(m_content->auxVisible(kAuxKeyRequirementsDock));
         }
         if (m_kinematicsDock != nullptr) {
             hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_kinematicsDock);
-            m_kinematicsDock->show();
+            m_kinematicsDock->setVisible(m_content->auxVisible(kAuxKeyKinematicsDock));
         }
         if (m_kinematicsAdvancedDock != nullptr) {
             hostWindow->addDockWidget(Qt::RightDockWidgetArea,
                                       m_kinematicsAdvancedDock);
-            m_kinematicsAdvancedDock->show();
+            m_kinematicsAdvancedDock->setVisible(
+                m_content->auxVisible(kAuxKeyKinematicsAdvancedDock));
         }
         m_propsDock->show();
         m_tasksDock->show();
@@ -1288,10 +1394,122 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     QTimer::singleShot(0, this, issueDockWidthShrink);
     QTimer::singleShot(100, this, issueDockWidthShrink);
 
+    // 中央区最小可见宽度保障（UI-T24 P2——装配侧钳制）：呈现与两拍收束
+    // 落定后安装事件观察（宿主主窗口＋中央控件 Resize → 合并抖动 → 回推
+    // 检查）。钳制源已定位并经流式栅格消除（clamp-source.md），本保障是
+    // 极端拖拽与最小窗口下的最后防线（中央三维视图不归零）。
+    installCentralReserveGuard();
+
     reportLine("工作台多 Dock 已呈现（主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）");
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
                                 "装载呈现自证完成（多 Dock 嵌入宿主主窗口可见；状态投影归宿主状态栏）");
+    }
+}
+
+// =====================================================================
+// 中央区最小可见宽度保障（UI-T24 P2——装配侧钳制；SA-02 框架零修改）
+// =====================================================================
+
+void IrdWorkbenchHostPlugin::installCentralReserveGuard()
+{
+    auto* hostWindow = qobject_cast<QMainWindow*>(parentWidget());
+    if (hostWindow == nullptr) {
+        return;  // 未嵌宿主主窗口＝异常装载形态（防御——不越权假设父型）
+    }
+    // 事件观察两处：宿主主窗口（整窗缩放——"主窗口缩至最小"场景）与中央
+    // 控件（分隔条拖拽直接改中央区几何——"极端拖拽"场景）。本方法只观察
+    // 事件与回推 Dock 尺寸，不读写框架控件任何属性（零修改红线）。
+    hostWindow->installEventFilter(this);
+    if (hostWindow->centralWidget() != nullptr) {
+        hostWindow->centralWidget()->installEventFilter(this);
+    }
+    // 合并抖动定时器：Resize 事件流（拖拽中的连续几何变更）每次重启计时，
+    // 静默 80 ms 后执行一次检查——拖拽过程零干扰，停手即校正。
+    m_centralGuardTimer = new QTimer(this);
+    m_centralGuardTimer->setSingleShot(true);
+    connect(m_centralGuardTimer, &QTimer::timeout, this,
+            &IrdWorkbenchHostPlugin::enforceCentralMinWidth);
+}
+
+bool IrdWorkbenchHostPlugin::eventFilter(QObject* watched, QEvent* event)
+{
+    // 只认 Resize 事件（其余全放行基类——零干预面）；宿主窗口与中央控件
+    // 的几何变化都会到这里，合并抖动后排程检查。
+    if (event != nullptr && event->type() == QEvent::Resize
+        && m_centralGuardTimer != nullptr) {
+        m_centralGuardTimer->start(80);  // 重启计时（QTimer::start 重置倒计时）
+    }
+    return RobWorkStudioPlugin::eventFilter(watched, event);
+}
+
+void IrdWorkbenchHostPlugin::enforceCentralMinWidth()
+{
+    auto* hostWindow = qobject_cast<QMainWindow*>(parentWidget());
+    if (hostWindow == nullptr || m_centralGuardTimer == nullptr) {
+        return;
+    }
+    QWidget* central = hostWindow->centralWidget();
+    if (central == nullptr || !hostWindow->isVisible()) {
+        return;  // 无中央控件/窗口不在屏（启动过程、最小化）——不介入
+    }
+    if (central->width() >= kCentralMinReserveWidth) {
+        return;  // 保留量达标——零操作（常态路径）
+    }
+
+    // ---- 回推算法（确定性次序，不与内容最小宽度对抗）------------------
+    // 缺口＝保留量－当前中央宽。回推对象＝本插件创建的 Dock（框架自有
+    // Dock 一律不触碰——SA-02）。次序：先收左列（主 Dock→域 Dock 列），
+    // 再收右列属性 Dock；每个 Dock 的目标宽＝max(内容最小宽提示, 插件侧
+    // 地板 160 px)——Qt 布局对最小提示以下本就拒收，本算法只在提示之上
+    // 收缩，不制造无法满足的请求。
+    const int deficit = kCentralMinReserveWidth - central->width();
+    const auto clampFloor = [](const QWidget* dock) {
+        const int contentMin = dock->minimumSizeHint().width();
+        return contentMin > kDockShrinkFloorWidth ? contentMin : kDockShrinkFloorWidth;
+    };
+    int remaining = deficit;
+    QList<QDockWidget*> leftColumn;
+    if (m_modelingDock != nullptr && m_modelingDock->isVisible()) {
+        leftColumn.append(m_modelingDock);
+    }
+    if (m_requirementsDock != nullptr && m_requirementsDock->isVisible()) {
+        leftColumn.append(m_requirementsDock);
+    }
+    if (m_kinematicsDock != nullptr && m_kinematicsDock->isVisible()) {
+        leftColumn.append(m_kinematicsDock);
+    }
+    // 主 Dock 最后收（承载命令条与项目树——工作台入口，优先保它宽裕）。
+    for (QDockWidget* dock : leftColumn) {
+        const int target = clampFloor(dock);
+        if (dock->width() > target) {
+            remaining -= (dock->width() - target);
+            hostWindow->resizeDocks({dock}, {target}, Qt::Horizontal);
+        }
+    }
+    if (remaining > 0 && width() > clampFloor(this)) {
+        const int target = clampFloor(this);
+        remaining -= (width() - target);
+        hostWindow->resizeDocks({this}, {target}, Qt::Horizontal);
+    }
+    if (remaining > 0 && m_propsDock != nullptr && m_propsDock->isVisible()
+        && m_propsDock->width() > clampFloor(m_propsDock)) {
+        const int target = clampFloor(m_propsDock);
+        hostWindow->resizeDocks({m_propsDock}, {target}, Qt::Horizontal);
+    }
+    // 复核留痕（一次性——防御日志洪水；极端窄窗下物理放不下＝如实声明，
+    // 不无限对抗用户拖拽）。
+    if (central->width() < kCentralMinReserveWidth && !m_centralGuardWarned) {
+        m_centralGuardWarned = true;
+        const std::string facts = "[central-guard] 保留量未达成：中央 "
+                                + std::to_string(central->width()) + " px < "
+                                + std::to_string(kCentralMinReserveWidth)
+                                + " px（本插件 Dock 已收缩到各自下限；窗口"
+                                  "物理宽度不足，不再对抗用户）";
+        reportLine(facts);
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel, facts);
+        }
     }
 }
 
@@ -2376,8 +2594,8 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
 }
 
 // =====================================================================
-// 布局度量冒烟通道（UI-T24——P2 钳制源定位载体；环境变量
-// IRD_UI_PLUGIN_SMOKE=layout）
+// 布局收敛冒烟通道（UI-T24——P1/P2/P3 的自动化 GUI 断言与截图留痕载体；
+// 环境变量 IRD_UI_PLUGIN_SMOKE=layout｜layout2）
 // =====================================================================
 
 namespace {
@@ -2387,7 +2605,7 @@ namespace {
 constexpr int kLayoutProbeMaxDepth = 4;
 
 /**
- * @brief 递归收集一个控件子树的几何事实行（UI-T24 度量报告体）。
+ * @brief 递归收集一个控件子树的几何事实行（度量报告体）。
  *
  * 每行输出：缩进＋objectName/className＋当前几何＋minimumSizeHint——
  * 钳制源定位的判据：QMainWindow 停靠区列宽被列内 Dock 的内容最小宽度
@@ -2420,27 +2638,69 @@ void probeLayoutTree(const QWidget* w, int depth, std::vector<std::string>& line
     }
 }
 
+/// 冒烟事件循环等待拍：处理挂起事件（布局/重绘/定时器）后静置 ms 毫秒
+/// ——截图与断言前让 resizeDocks/中央区保障定时器（80 ms 合并抖动）落定。
+void settleEvents(int ms)
+{
+    QEventLoop loop;
+    QTimer::singleShot(ms, &loop, &QEventLoop::quit);
+    loop.exec();
+}
+
 }  // namespace
 
 void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
 {
     // 触发面＝环境变量（与 IRD_UI_PLUGIN_SMOKE=auto 同机制——宿主进程的
-    // 插件无命令行入口）。未设置＝正常交互形态，零开销返回。
+    // 插件无命令行入口）。两种模式对应布局记忆双场景（契约 acceptance 4）：
+    //   layout  ＝净室首启（无辅助记忆）——P1 默认收敛断言＋截图＋呼出域
+    //             面板（写记忆）后退出；
+    //   layout2 ＝二次启动（同一用户档案，上一轮已呼出）——记忆优先断言
+    //             ＋截图后退出。
+    // 驱动脚本负责双场景的 CWD 与辅助键夹具（见留痕 README）。
     const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
-    if (smoke != QLatin1String("layout")) {
+    const bool firstRun = (smoke == QLatin1String("layout"));
+    const bool secondRun = (smoke == QLatin1String("layout2"));
+    if (!firstRun && !secondRun) {
         return;
     }
 
-    // 度量拍：1200 ms——晚于装载呈现自证（0 拍重申）与两拍宽度收束
-    // （0/100 ms），度量的是"宿主装载语义全部落定后"的稳定布局态。
-    QTimer::singleShot(1200, this, [this] {
-        std::cout << "[ird-ui-smoke-layout] started" << std::endl;
-        std::vector<std::string> lines;
+    // 度量/断言拍：1200 ms——晚于装载呈现自证（0 拍重申）与两拍宽度收束
+    // （0/100 ms），取"宿主装载语义全部落定后"的稳定布局态。
+    QTimer::singleShot(1200, this, [this, firstRun] {
+        std::cout << "[ird-ui-smoke-layout] started mode="
+                  << (firstRun ? "first" : "second") << std::endl;
+        std::vector<std::string> lines;  // UTF-8 报告行（几何走查＋断言结论）
+        std::vector<std::string> failures;  // 断言失败清单（exit 码的依据）
 
-        // ---- 宿主窗口层事实：窗口尺寸＋中央区（三维视图）实测宽度 ----
-        // 中央区宽度是 P1/P2 的核心判据（收束后中央三维视图必须非零；
-        // 该值同时是"钳制是否发生"的直接观测量——收束目标被钳制时中央
-        // 区被挤占的宽度＝实际与目标之差）。
+        // ---- 断言/截图工具（本地闭包——报告行＋失败清单双写）------------
+        auto check = [&](bool ok, const std::string& what) {
+            lines.push_back(std::string(ok ? "[PASS] " : "[FAIL] ") + what);
+            std::cout << "[ird-ui-smoke-layout] " << (ok ? "pass " : "FAIL ")
+                      << what << std::endl;
+            if (!ok) {
+                failures.push_back(what);
+            }
+        };
+        const QString outDir = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE_OUT");
+        if (!outDir.isEmpty()) {
+            QDir::root().mkpath(outDir);
+        }
+        auto snapPng = [&](QWidget* w, const char* name) {
+            if (w == nullptr || outDir.isEmpty()) {
+                return;
+            }
+            const QString path = outDir + QLatin1Char('/') + QString::fromLatin1(name);
+            if (!w->grab().save(path, "PNG")) {
+                failures.push_back(std::string("screenshot-missing:") + name);
+                std::cout << "[ird-ui-smoke-layout] FAIL screenshot " << name
+                          << std::endl;
+            } else {
+                lines.push_back(std::string("[SNAP] ") + name);
+                std::cout << "[ird-ui-smoke-layout] snap " << name << std::endl;
+            }
+        };
+
         auto* hostWindow = qobject_cast<QMainWindow*>(parentWidget());
         if (hostWindow == nullptr) {
             std::cout << "[ird-ui-smoke-layout] FAILED host-window-missing"
@@ -2448,63 +2708,265 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
             QCoreApplication::exit(1);
             return;
         }
-        lines.push_back("host-window cur="
-                        + std::to_string(hostWindow->width()) + "x"
-                        + std::to_string(hostWindow->height()));
-        if (const QWidget* central = hostWindow->centralWidget()) {
-            lines.push_back("central cur=" + std::to_string(central->width())
-                            + "x" + std::to_string(central->height())
-                            + " minHint="
-                            + std::to_string(central->minimumSizeHint().width())
-                            + "x"
-                            + std::to_string(central->minimumSizeHint().height()));
-        }
-        std::cout << "[ird-ui-smoke-layout] host=" << hostWindow->width()
-                  << "x" << hostWindow->height() << std::endl;
+        QWidget* central = hostWindow->centralWidget();
+        lines.push_back("host-window cur=" + std::to_string(hostWindow->width())
+                        + "x" + std::to_string(hostWindow->height()));
 
-        // ---- 各 IRD Dock 度量：可见性＋尺寸＋内容子树最小宽度走查 ----
-        // 每棵子树的报告行首行即 Dock 本体（其 minimumSizeHint 宽＝Qt 停靠
-        // 布局实际采用的该 Dock 最小宽度——与宿主 restoreState 后的列宽
-        // 钳制直接相关）。
-        const std::vector<std::pair<const char*, const QDockWidget*>> docks{
-            {"main-dock", this},
-            {"props-dock", m_propsDock},
-            {"tasks-dock", m_tasksDock},
-            {"modeling-dock", m_modelingDock},
-            {"requirements-dock", m_requirementsDock},
-            {"kinematics-dock", m_kinematicsDock},
-            {"kinematics-advanced-dock", m_kinematicsAdvancedDock},
-        };
-        for (const auto& [name, dock] : docks) {
-            if (dock == nullptr) {
-                lines.push_back(std::string(name) + " <absent>");
+        if (firstRun) {
+            // ---- 首启场景：P1 默认收敛＋P2 中央保护＋P3 按钮语义化 --------
+            // P1 断言（净室＝辅助记忆缺失，驱动夹具保证）：三域自持面板
+            // 默认不呈现；默认呈现面＝主 Dock＋属性/任务 Dock；中央三维
+            // 视图可见且宽度非零（验收原文判据）。
+            const std::vector<std::pair<const char*, const QDockWidget*>> auxDocks{
+                {"modeling", m_modelingDock},
+                {"requirements", m_requirementsDock},
+                {"kinematics", m_kinematicsDock},
+                {"kinematics-advanced", m_kinematicsAdvancedDock},
+            };
+            for (const auto& [name, dock] : auxDocks) {
+                check(dock == nullptr || !dock->isVisible(),
+                      std::string("default-hidden:") + name);
+            }
+            check(isVisible(), "default-visible:main-dock");
+            check(m_propsDock != nullptr && m_propsDock->isVisible(),
+                  "default-visible:props-dock");
+            check(m_tasksDock != nullptr && m_tasksDock->isVisible(),
+                  "default-visible:tasks-dock");
+            if (central != nullptr) {
+                lines.push_back("central cur=" + std::to_string(central->width())
+                                + "x" + std::to_string(central->height()));
+                check(central->isVisible() && central->width() > 0,
+                      "central-view-nonzero (cur="
+                          + std::to_string(central->width()) + "px)");
+            } else {
+                check(false, "central-widget-present");
+            }
+            // 视图菜单呼出通道在册（四个辅助开关动作——P1"经视图菜单可勾选
+            // 呼出"的结构前提）。
+            check(m_hostAuxToggles.size() == std::size_t{4},
+                  "view-menu-aux-toggles=4 (cur="
+                      + std::to_string(m_hostAuxToggles.size()) + ")");
+
+            // 截图①净室默认布局全景（宿主主窗口整窗）。
+            snapPng(hostWindow, "1-default-layout.png");
+
+            // 截图②视图菜单展开面：菜单弹窗 grab（popup 窗口独立于主窗）。
+            QMenu* viewMenu = nullptr;
+            if (QMenuBar* menuBar = hostWindow->menuBar()) {
+                for (QAction* action : menuBar->actions()) {
+                    if (QMenu* m = action->menu();
+                        m != nullptr && m->title() == QString::fromUtf8(kViewMenuTitle)) {
+                        viewMenu = m;
+                        break;
+                    }
+                }
+            }
+            check(viewMenu != nullptr, "view-menu-present");
+            if (viewMenu != nullptr) {
+                viewMenu->popup(QPoint(80, 60));
+                settleEvents(300);
+                snapPng(viewMenu, "2-view-menu.png");
+                viewMenu->hide();
+                settleEvents(100);
+            }
+
+            // 呼出需求面板（端到端走菜单动作——与用户点击同一路径）：
+            // 呼出后呈现正常＋记忆写入（跨会话半区）。
+            QAction* reqToggle = nullptr;
+            for (auto& [key, action] : m_hostAuxToggles) {
+                if (key == kAuxKeyRequirementsDock) {
+                    reqToggle = action;
+                    break;
+                }
+            }
+            check(reqToggle != nullptr, "requirements-toggle-present");
+            if (reqToggle != nullptr) {
+                reqToggle->trigger();
+                settleEvents(300);
+                check(m_requirementsDock != nullptr && m_requirementsDock->isVisible(),
+                      "requirements-summoned-visible");
+                check(m_content != nullptr
+                          && m_content->auxVisible(kAuxKeyRequirementsDock),
+                      "requirements-memory-on");
+                // 截图③域面板呼出态（宿主全景）＋④需求面板按钮行特写
+                // （P3：按钮文案为 UiText 中文语义名——非 commandId 直出）。
+                snapPng(hostWindow, "3-domain-panel-summoned.png");
+                if (m_requirementsDock != nullptr
+                    && m_requirementsDock->widget() != nullptr) {
+                    snapPng(m_requirementsDock->widget(), "4-requirements-buttons.png");
+                }
+                // P3 断言：九个命令按钮文案非空且不等于原始 id（UX-02 零
+                // 内部名泄漏）。命令面从 ui 命令注册表枚举（SA-16 唯一权威
+                // ——R-2：不触碰 requirements 单元私有目录）；titleKey 解析
+                // 值与按钮文本逐一对照。
+                if (m_requirementsDock != nullptr
+                    && m_requirementsDock->widget() != nullptr
+                    && m_content != nullptr) {
+                    // 按钮集合＝命令条自身（面板根布局第 0 项——buildCommandBar
+                    // 的挂位），不含右侧页签容器内的域表单按钮：四个页签页在
+                    // QTabWidget 堆叠栈中几何天然相交（叠加页不可见但
+                    // geometry() 仍相交），混入会把"页签堆叠"误报为流式栅格
+                    // 重叠——重叠断言只对同一可见层的命令条按钮成立。
+                    QWidget* commandBar = nullptr;
+                    if (auto* rootLayout =
+                            qobject_cast<QVBoxLayout*>(m_requirementsDock->widget()
+                                                           ->layout());
+                        rootLayout != nullptr && rootLayout->count() > 0) {
+                        commandBar = rootLayout->itemAt(0)->widget();
+                    }
+                    check(commandBar != nullptr, "requirements-command-bar-present");
+                    const auto buttons =
+                        commandBar != nullptr
+                            ? commandBar->findChildren<QPushButton*>()
+                            : QList<QPushButton*>{};
+                    std::vector<ui::CommandView> reqCommands;
+                    for (const ui::CommandView& view :
+                         m_content->commandRegistry().query(ui::CommandQuery{})) {
+                        if (std::string(view.id).rfind("requirements.", 0) == 0) {
+                            reqCommands.push_back(view);
+                        }
+                    }
+                    check(reqCommands.size() == std::size_t{9},
+                          "registry-requirements-commands=9 (cur="
+                              + std::to_string(reqCommands.size()) + ")");
+                    int resolvedButtons = 0;
+                    for (const ui::CommandView& view : reqCommands) {
+                        bool textOk = false;
+                        for (const QPushButton* btn : buttons) {
+                            if (btn->text().toStdString() == std::string(view.id)) {
+                                textOk = false;  // 文案＝原始 id＝UX-02 泄漏
+                                break;
+                            }
+                            if (btn->text().toStdString()
+                                == ui::resolveText(view.titleKey)) {
+                                textOk = true;
+                            }
+                        }
+                        check(textOk, "button-title-via-uitext:"
+                                          + std::string(view.id));
+                        if (textOk) {
+                            ++resolvedButtons;
+                        }
+                    }
+                    check(resolvedButtons == 9,
+                          "command-buttons-count=9 (cur="
+                              + std::to_string(resolvedButtons) + ")");
+                    // 无重叠断言（两两矩形求交——面积＞0 即重叠；同排/换行
+                    // 两种形态都覆盖——当前宽度即换行形态）。
+                    int overlaps = 0;
+                    for (int i = 0; i < buttons.size(); ++i) {
+                        for (int j = i + 1; j < buttons.size(); ++j) {
+                            if (!buttons[i]->isVisible() || !buttons[j]->isVisible()) {
+                                continue;
+                            }
+                            const QRect intersection = buttons[i]->geometry()
+                                                           .intersected(
+                                                               buttons[j]->geometry());
+                            if (intersection.width() > 0 && intersection.height() > 0) {
+                                ++overlaps;
+                            }
+                        }
+                    }
+                    check(overlaps == 0,
+                          "buttons-no-overlap (cur="
+                              + std::to_string(overlaps) + ")");
+                    // 截图⑤窄窗口特写：把需求 Dock 收窄强制多行换行后再
+                    // 断言无重叠（"任意合理窗口宽度"的最严窄态）。
+                    if (hostWindow != nullptr) {
+                        hostWindow->resizeDocks({m_requirementsDock}, {280},
+                                                Qt::Horizontal);
+                        settleEvents(400);
+                        if (m_requirementsDock->widget() != nullptr) {
+                            snapPng(m_requirementsDock->widget(),
+                                    "5-requirements-narrow.png");
+                        }
+                        overlaps = 0;
+                        for (int i = 0; i < buttons.size(); ++i) {
+                            for (int j = i + 1; j < buttons.size(); ++j) {
+                                if (!buttons[i]->isVisible()
+                                    || !buttons[j]->isVisible()) {
+                                    continue;
+                                }
+                                const QRect intersection =
+                                    buttons[i]->geometry().intersected(
+                                        buttons[j]->geometry());
+                                if (intersection.width() > 0
+                                    && intersection.height() > 0) {
+                                    ++overlaps;
+                                }
+                            }
+                        }
+                        check(overlaps == 0,
+                              "buttons-no-overlap-narrow (cur="
+                                  + std::to_string(overlaps) + ")");
+                    }
+                }
+            }
+
+            // P2 断言：最小窗口（§4.4 1280×720）下中央区不归零（装配侧
+            // 保障生效——事件观察＋回推已在 reassert 安装）。
+            hostWindow->resize(1280, 720);
+            settleEvents(600);  // 中央区保障合并抖动 80 ms＋布局落定裕量
+            if (central != nullptr) {
+                lines.push_back("central@min-window cur="
+                                + std::to_string(central->width()) + "x"
+                                + std::to_string(central->height()));
+                check(central->width() >= kCentralMinReserveWidth,
+                      "central-guard-at-min-window (cur="
+                          + std::to_string(central->width()) + "px)");
+            }
+            snapPng(hostWindow, "6-min-window.png");
+        } else {
+            // ---- 二次启动场景（acceptance 4）：用户布局记忆优先 ------------
+            // 上一轮（layout）呼出的需求面板，本轮恢复可见＝用户布局优先、
+            // 不被默认布局覆盖（辅助记忆半区自持——框架 restoreState 对本
+            // 插件延后挂载的域 Dock 无效，记忆走内容装配面 PM-14 用户级）。
+            // 其余域面板（从未呼出）保持默认隐藏。
+            check(m_requirementsDock != nullptr && m_requirementsDock->isVisible(),
+                  "memory-requirements-visible");
+            check(m_modelingDock == nullptr || !m_modelingDock->isVisible(),
+                  "memory-modeling-still-hidden");
+            check(m_kinematicsDock == nullptr || !m_kinematicsDock->isVisible(),
+                  "memory-kinematics-still-hidden");
+            if (central != nullptr) {
+                lines.push_back("central cur=" + std::to_string(central->width())
+                                + "x" + std::to_string(central->height()));
+                check(central->width() >= kCentralMinReserveWidth,
+                      "central-guard-second-start (cur="
+                          + std::to_string(central->width()) + "px)");
+            }
+            snapPng(hostWindow, "7-second-start-memory.png");
+        }
+
+        // ---- 几何走查报告照常落盘（度量面证据——与首版度量通道同体）----
+        for (const std::pair<const char*, const QDockWidget*>& dockInfo :
+             std::vector<std::pair<const char*, const QDockWidget*>>{
+                 {"main-dock", this},
+                 {"props-dock", m_propsDock},
+                 {"tasks-dock", m_tasksDock},
+                 {"modeling-dock", m_modelingDock},
+                 {"requirements-dock", m_requirementsDock},
+                 {"kinematics-dock", m_kinematicsDock},
+                 {"kinematics-advanced-dock", m_kinematicsAdvancedDock}}) {
+            if (dockInfo.second == nullptr) {
+                lines.push_back(std::string(dockInfo.first) + " <absent>");
                 continue;
             }
-            const QSize minHint = dock->minimumSizeHint();
-            std::cout << "[ird-ui-smoke-layout] dock=" << name
-                      << " visible=" << (dock->isVisible() ? 1 : 0)
-                      << " cur=" << dock->width() << " minHintW="
-                      << minHint.width() << std::endl;
-            lines.push_back(std::string("=== ") + name
+            const QSize minHint = dockInfo.second->minimumSizeHint();
+            lines.push_back(std::string("=== ") + dockInfo.first
                             + " visible="
-                            + (dock->isVisible() ? "1" : "0")
-                            + " cur=" + std::to_string(dock->width())
+                            + (dockInfo.second->isVisible() ? "1" : "0")
+                            + " cur=" + std::to_string(dockInfo.second->width())
                             + " minHint=" + std::to_string(minHint.width())
                             + "x" + std::to_string(minHint.height()));
-            probeLayoutTree(dock->widget(), 1, lines);
+            probeLayoutTree(dockInfo.second->widget(), 1, lines);
         }
 
         // ---- 报告落盘（UTF-8 文件——GBK 控制台管道会乱码，F-207/F-231/
-        //      F-309 留痕乱码家族的规避口径；目录取 IRD_UI_PLUGIN_SMOKE_OUT，
-        //      未设置时落当前工作目录）----
-        const QString outDir =
-            qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE_OUT");
+        //      F-309 留痕乱码家族的规避口径）----
         const QString reportPath =
             (outDir.isEmpty() ? QDir::currentPath() : outDir)
             + QLatin1String("/geometry-report.txt");
-        if (!outDir.isEmpty()) {
-            QDir::root().mkpath(outDir);
-        }
         QFile report(reportPath);
         if (report.open(QIODevice::WriteOnly | QIODevice::Text)) {
             QTextStream stream(&report);
@@ -2515,8 +2977,12 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
         }
         std::cout << "[ird-ui-smoke-layout] report=" << reportPath.toStdString()
                   << std::endl;
-        std::cout << "[ird-ui-smoke-layout] DONE" << std::endl;
-        QCoreApplication::exit(0);
+        for (const std::string& f : failures) {
+            std::cout << "[ird-ui-smoke-layout] failed-assert: " << f << std::endl;
+        }
+        std::cout << "[ird-ui-smoke-layout] "
+                  << (failures.empty() ? "DONE" : "FAILED") << std::endl;
+        QCoreApplication::exit(failures.empty() ? 0 : 1);
     });
 }
 

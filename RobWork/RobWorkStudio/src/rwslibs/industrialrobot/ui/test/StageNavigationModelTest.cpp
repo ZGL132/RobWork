@@ -776,6 +776,45 @@ TEST(UiText, BuiltinTableZeroInternalIdentity_UISTG1_UI_T09_ACC2)
 }
 
 /**
+ * 键表完备性断言（UI-T24 acceptance 3——knownPitfalls F-430 家族处置约束
+ * 原文："resolveText 为 fail-fast 语义（键未登记＝呈现层上抛），故键表
+ * 完备性须有测试断言"）：requirements.md §9.8 命令表九条的 cmd.<id>.title
+ * 键全部已在 UiText 键族①b 登记。缺键的直接后果＝RequirementsPanelWidget
+ * 按钮构造期 fail-fast 上抛（面板侧禁止第二文案源——NFR-MNT-03），本用例
+ * 在模型层先行给出可定位的失败点。键词形与 §9.8 命令表逐字对照（跨单元
+ * 发布面）；解析值＝非空中文工程用语且不回显原始 id（UX-02——按钮以中文
+ * 语义名呈现，禁止 commandId 直出）。
+ */
+TEST(UiText, RequirementsDomainCommandTitlesRegistered_UX02_UI_T24_ACC3)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+    IRD_TEST_INFO("NFR-MNT-03", {}, std::nullopt);
+
+    // §9.8 命令表九条 id（行序＝表行序——PanelCommandCatalog 登记序同源）。
+    const std::array<const char*, 9> ids{
+        "requirements.import-csv",   "requirements.import-json",
+        "requirements.export-copy",  "requirements.capture-tcp",
+        "requirements.pick-feature", "requirements.mirror-stations",
+        "requirements.create-array", "requirements.apply-template",
+        "requirements.regenerate-linked",
+    };
+    const std::vector<ui::TextKey> registered = ui::registeredTextKeys();
+    for (const std::string& id : ids) {
+        const ui::TextKey key("cmd." + id + ".title");  // §3.5 键约定
+        // 盘点面：键在登记清单中（漏登记先在此给出可定位失败）。
+        EXPECT_TRUE(std::find(registered.begin(), registered.end(), key)
+                    != registered.end())
+            << "需求域命令标题键未登记（UI-T24 键族①b）: " << key;
+        // 解析面：非空、不等于原始 id、不等于键名（UX-02 中文语义名）。
+        const std::string text = ui::resolveText(key);
+        EXPECT_FALSE(text.empty()) << "键 " << key << " 解析为空文案";
+        EXPECT_NE(text, id) << "键 " << key << " 解析值回显原始 id（UX-02 泄漏）";
+        EXPECT_NE(text, std::string(key))
+            << "键 " << key << " 解析值回显键名（缺值形态）";
+    }
+}
+
+/**
  * 过渡标签值源切换回归（acceptance 3——P-UI-1 词表未改一字）：三个过渡
  * 标签函数的值经 UiText 解析且与键一一对应（UI-T04 钉住的中文值逐字不变
  * ——键不变、值同源迁移至 UiText 内建表，"一切文本经 UiText::resolve"）。

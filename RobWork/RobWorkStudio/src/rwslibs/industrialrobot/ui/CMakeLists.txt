@@ -163,7 +163,8 @@ add_library(sdurws_ird_ui STATIC
     src/RuntimePublishBridge.cpp
     src/SelectionService.cpp        # UI-T21——业务选择唯一汇聚点（B1-SPEC §4.1/§4.2；§13 UI-T21 行）
     src/IndustrialProjectTree.cpp   # UI-T21——工业项目树模型＋面板（B1-SPEC §3.1/§5.1；§13 UI-T21 行）
-    src/PropertyInspector.cpp)      # UI-T22——共享属性检查器模型＋面板（B1-SPEC §2 D5/D6/§5.1；§13 UI-T22 行）
+    src/PropertyInspector.cpp       # UI-T22——共享属性检查器模型＋面板（B1-SPEC §2 D5/D6/§5.1；§13 UI-T22 行）
+    src/FlowLayout.cpp)             # UI-T24——流式栅格布局（P2 钳制源消除的公共构件；§10.1 v1.25）
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17

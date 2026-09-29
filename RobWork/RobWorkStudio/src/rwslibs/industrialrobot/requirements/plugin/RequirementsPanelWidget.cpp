@@ -21,6 +21,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include <sdurws/ird/ui/FlowLayout.hpp>  // 流式栅格（UI-T24 P3——命令条换行承载，钳制源 1 消除）
+#include <sdurws/ird/ui/UiText.hpp>      // ui::resolveText（§3.5 唯一文案出口——按钮语义化 NFR-MNT-03）
+
 #include <stdexcept>
 #include <utility>
 
@@ -134,17 +137,28 @@ void RequirementsPanelWidget::setRegionPreviewSink(RegionPreviewSink sink)
 
 void RequirementsPanelWidget::buildCommandBar(QWidget* top)
 {
-    // 域命令区：九条命令一列按钮（与 m_commands 序对应——L 转发提交出口）。
+    // 域命令区（UI-T24 P3 重排）：九条命令按钮＋三个两级撤销按钮，流式
+    // 栅格换行排布——原单行 QHBoxLayout 把 12 个按钮的最小宽度之和
+    // （2074 px）顶成整列 Dock 的最小宽，左列收不下去、中央三维视图被挤
+    // 至 18 px（钳制源 1——定位记录 traceability/builds/ui-t24/
+    // clamp-source.md；流式栅格使行最小宽坍缩为单按钮最宽 ≈200 px）。
+    // 文案（UX-02/NFR-MNT-03——F-430 家族需求域一族消账）：按钮标题经
+    // UiText 键族①b 解析（cmd.<id>.title——§3.5 键约定，值在 UiText.cpp
+    // 登记）；resolveText 缺键即 fail-fast 上抛＝键表完备性的构造期保证，
+    // 面板侧零第二文案源（原"按钮暂以 id 呈现"过渡态就此消账）。
     auto* bar = new QWidget(top);
-    auto* barLayout = new QHBoxLayout(bar);
+    auto* barLayout = new QVBoxLayout(bar);
     barLayout->setContentsMargins(0, 0, 0, 0);
+    barLayout->setSpacing(2);
+    // 无父对象构造（子布局形态——由 addLayout 收养，见下方安装处注释）。
+    auto* flow = new ui::FlowLayout(nullptr, /*hSpacing=*/4, /*vSpacing=*/2);
     for (const ui::CommandDescriptor& d : m_commands) {
-        auto* btn = new QPushButton(QString::fromStdString(d.id), bar);
+        auto* btn =
+            new QPushButton(QString::fromStdString(ui::resolveText(d.titleKey)),
+                            bar);
         btn->setToolTip(QString::fromStdString(d.menuPath));
-        // 命令标题过渡文案归 UiText（键即契约——按钮暂以 id 呈现，不虚构
-        // 标题值；UI-T09 文案资源落地后由装配层刷新）。
         connect(btn, &QPushButton::clicked, this, &RequirementsPanelWidget::onCommandButtonClicked);
-        barLayout->addWidget(btn);
+        flow->addWidget(btn);
         m_commandButtons.push_back(btn);
     }
     // 两级撤销三按钮（L-R4——草稿级撤销/重做与项目级撤销三处独立控件，
@@ -155,12 +169,20 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
     connect(m_draftUndoButton, &QPushButton::clicked, this, &RequirementsPanelWidget::onDraftUndo);
     connect(m_draftRedoButton, &QPushButton::clicked, this, &RequirementsPanelWidget::onDraftRedo);
     connect(m_projectUndoButton, &QPushButton::clicked, this, &RequirementsPanelWidget::onProjectUndo);
-    barLayout->addWidget(m_draftUndoButton);
-    barLayout->addWidget(m_draftRedoButton);
-    barLayout->addWidget(m_projectUndoButton);
-    // 状态行（就地错误/警告/摘要——非模态呈现，UX-03/07）。
+    flow->addWidget(m_draftUndoButton);
+    flow->addWidget(m_draftRedoButton);
+    flow->addWidget(m_projectUndoButton);
+    // 以"无父对象构造＋addLayout"的子布局规范形态安装（Qt 布局树纪律：
+    // 带 QWidget 父对象构造的是顶层布局候选、配 setLayout 使用——内容装配
+    // 层 buildTopBar 同款；子布局必须无父构造后经父布局 addLayout 收养，
+    // 收养时控件重挂到布局宿主 bar——漏收养＝布局永不执行、按钮滞留原点
+    // 几何，首轮冒烟实证）。
+    barLayout->addLayout(flow);
+    // 状态行（就地错误/警告/摘要——非模态呈现，UX-03/07）：独立于按钮行
+    // 之下一行占位（流式栅格按控件排布，长摘要文本混入按钮行会挤占换行）。
     m_statusLine = new QLabel(bar);
-    barLayout->addWidget(m_statusLine, 1);
+    m_statusLine->setWordWrap(true);  // 长摘要换行承载（非模态呈现不挤压按钮行）
+    barLayout->addWidget(m_statusLine);
 
     // 挂到根布局顶部（构造序保证：构造函数先建 QVBoxLayout(this) 再调本
     // 函数——layout() 恒为 QVBoxLayout；异常布局形态＝装配缺陷 fail-fast）。

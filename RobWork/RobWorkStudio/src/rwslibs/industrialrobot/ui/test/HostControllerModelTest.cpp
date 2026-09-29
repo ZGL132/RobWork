@@ -145,6 +145,14 @@ public:
     bool regionVisible(WorkbenchRegion) const override { return false; }
     void setRegionVisible(WorkbenchRegion, bool) override {}
     void resetLayout() override {}
+    // 辅助 Dock 可见性记忆（UI-T24 增量——替身零语义：本套件不消费域面板
+    // 记忆；未登记键的查询按真实实现同形 fail-fast，防替身掩盖契约）。
+    void setAuxVisibilityTarget(const std::string&, QWidget*, bool) override {}
+    bool auxVisible(const std::string& key) const override
+    {
+        throw std::out_of_range("ContentDouble: 辅助可见性键未登记 " + key);
+    }
+    void setAuxVisible(const std::string&, bool) override {}
     void notifyHostResized(const QSize&) override {}
     void presentProjectContext(const ProjectContextProjection&) override {}
 
