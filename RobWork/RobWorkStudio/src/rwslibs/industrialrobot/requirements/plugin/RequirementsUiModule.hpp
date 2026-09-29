@@ -18,14 +18,15 @@
  *   - 需求 UX-05、PM-04；任务契约 tasks/foundation/WP-14-T08.json
  *     acceptance 1/2/4（P-REQ-4 处置：按 ui 现行 DraftController 契约消费）
  *
- * ★ P-REQ-8 处置（modeling P-MDL-8 同款先例——ModelingUiModule 对齐）：
- *   ui 的 IPluginUiRegistrar/IPluginUiModule 头尚未落位（ui.md §3.3 已
- *   登记落点、磁盘核对不存在——装配任务后续兑现）。本类按 §11.2 冻结文本
- *   **逐方法同形**实现（方法名/签名/语义对齐卡文；值面全部用已落位类型
- *   ——ui::DomainReadinessItem/project::CommandEnvelope），ui 侧头落位后
- *   本类改为继承 ui::IPluginUiModule（override 不变，语义零变化）——
- *   R-REQ-1 增量同步，登记于单元卡 §14.6。装配面（registrar 调用点）随
- *   L5 装配任务（WP-24-T03）接线，本单元不自行装配（PA-1 命令入口权威
+ * ★ P-REQ-8 消账（WP-14-T11 落位——O-45 装配门面补建的同批前置）：ui 的
+ *   IPluginUiRegistrar/IPluginUiModule 头已随 WP-24-T03 落位（磁盘核对在
+ *   ——modeling/kinematics 两域 UiModule 均已真实继承）。本类按上段预设
+ *   路径切换为**真实继承** ui::IPluginUiModule：三方法（onShellReady/
+ *   readonlyProjections/buildDraftCommand）签名与冻结接口逐一同形，仅加
+ *   override 标注——语义零变化（同形期经门面适配的调用点改直呼接口面，
+ *   行为一致），R-REQ-1 增量同步，登记于单元卡 §14.6。装配面（registrar
+ *   调用点）经 assembly/RequirementsPluginAssembly（O-45 装配门面——
+ *   WP-14-T11）交付宿主装配层，本单元不自行装配（PA-1 命令入口权威
  *   归 ui）。
  *
  * ★ P-REQ-4 处置（契约 note）：IModuleDraftSource 方法级签名已在 ui.md
@@ -52,6 +53,7 @@
 #include <sdurws/ird/requirements/Editor.hpp>      // IRequirementEditor（草稿唯一写目标——工作集权威）
 #include <sdurws/ird/requirements/Readiness.hpp>   // RequirementReadinessReport（就绪投影数据源）
 #include <sdurws/ird/ui/IDraftController.hpp>      // ui::IModuleDraftSource（P-REQ-4 冻结面——UI-T12）
+#include <sdurws/ird/ui/IPluginUiModule.hpp>       // ui::IPluginUiModule（P-REQ-8 消账——WP-24-T03 落位的冻结接口）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::DomainReadinessItem（§6.5 汇聚值面）
 #include "HostMigrationProviders.hpp"              // 迁移三接入面（WP-14-T10——同目录私有头）
@@ -104,13 +106,14 @@ struct RequirementsModuleSessionState {
 // =====================================================================
 
 /**
- * @brief 需求插件界面模块（ui.md §11.2 同形实现——三方法逐一对齐卡文）。
+ * @brief 需求插件界面模块（ui.md §11.2 三方法——P-REQ-8 消账后为
+ *        IPluginUiModule 真实实现；会话接线与迁移三接入面同面承载）。
  *
  * 生命周期：装配期由插件装配点创建（UI 线程），存活至壳拆除（§10.9
  * "IPluginUiModule 存活至壳拆除"——装配层保证）。面板工厂经装配描述符
  * 提供（requirementsPanelRegistration——PanelCommandCatalog.hpp）。
  */
-class RequirementsUiModule final {
+class RequirementsUiModule final : public ui::IPluginUiModule {
 public:
     RequirementsUiModule() = default;
     /// 不可拷贝/不可移动（会话态与壳/编辑器引用绑定生命周期——§10.9）。
@@ -153,7 +156,7 @@ public:
      *
      * @param shell [in] 工作台壳门面（非 owning——存活期由壳侧保证）
      */
-    void onShellReady(ui::IWorkbenchShell& shell) { m_shell = &shell; }
+    void onShellReady(ui::IWorkbenchShell& shell) override { m_shell = &shell; }
 
     /**
      * @brief 只读就绪投影（§11.2 行"§6.5 汇聚源"——StageStatusModel 汇聚
@@ -163,7 +166,7 @@ public:
      *         可行性；判定权威在 IRequirementReadinessChecker；P-REQ-6：
      *         本投影是数据事实，门控动作归 workflow/ui）
      */
-    std::vector<ui::DomainReadinessItem> readonlyProjections() const;
+    std::vector<ui::DomainReadinessItem> readonlyProjections() const override;
 
     /**
      * @brief 草稿应用命令组装（§11.2 行"§8.5 应用时命令组装〔域侧〕"——
@@ -190,7 +193,8 @@ public:
      *
      * 仅 UI 线程（§3.4——读取会话权威态与编辑器工作集）。
      */
-    std::optional<project::CommandEnvelope> buildDraftCommand(const std::string& moduleId);
+    std::optional<project::CommandEnvelope> buildDraftCommand(
+        const std::string& moduleId) override;
 
     /// 编辑器访问（草稿源/面板流程共用——非 owning；未注入＝nullopt）。
     IRequirementEditor* editor() const noexcept { return m_editor; }

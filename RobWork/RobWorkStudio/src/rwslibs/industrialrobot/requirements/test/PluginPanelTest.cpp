@@ -59,8 +59,12 @@ using namespace sdurws::ird::requirements;
 
 /// core 命名空间别名（测试内 ObjectId/SourcedValue 直写面）。
 namespace core = sdurws::ird::core;
-/// project 命名空间别名（信封/载荷类型）。
-namespace project = sdurws::ird::project;
+// project 命名空间**不设全局别名**（WP-14-T11 注：ui IPluginUiModule.hpp
+// 的断环兜底前向块〔"零 project include"包含面纪律的承载〕会向全局作用域
+// 注入 ::project 命名空间——本文件原 `namespace project = sdurws::ird::
+// project;` 全局别名与之重名冲突〔C2386〕，故删除别名，project 域类型改
+// 用全限定名；与 kinematics 先例"声明点解析一致性义务"同源——project::
+// 必须解析到 sdurws::ird::project，不得落全局兜底实体）。
 /// io 命名空间别名（RawTable——导入向导夹具）。
 namespace io = sdurws::ird::io;
 /// ui 命名空间别名（命令/快捷键注册面）。
@@ -671,7 +675,7 @@ TEST(PluginPanel, ValidationPanelLayersCountsJumpAndSemantics_ACC1)
     // makeHealthyContext 同款夹具；子条目锚不入 objectRefs——O-36）。
     CheckContext ctx;
     const auto addRef = [&ctx](const core::ObjectId& oid, std::string_view token) {
-        project::ObjectRef ref;
+        sdurws::ird::project::ObjectRef ref;  // 全限定（全局 project 别名已删——见文件头注）
         core::ContentVersion cv;
         cv.bytes[0] = static_cast<std::uint8_t>(ctx.closureRefs.size() + 1U);
         ref.objectId = oid;
