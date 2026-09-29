@@ -1,0 +1,4 @@
+1 1790670585409 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\builds\\wp24-t09\\staging-smoke\\ird-ui-plugin-logs）
+2 1790670616285 D DEBUG diag/ui msg=[sampled-tail] 宿主已关闭工作单元（工作台面板保持）
+1 1790671169007 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\builds\\wp24-t09\\staging-smoke\\ird-ui-plugin-logs）
+2 1790671191173 D DEBUG diag/ui msg=[sampled-tail] 宿主已关闭工作单元（工作台面板保持）
