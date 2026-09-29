@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "方案 A 正式产品路径退役（宿主融合收口）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T23",
     "WP-24-T08"

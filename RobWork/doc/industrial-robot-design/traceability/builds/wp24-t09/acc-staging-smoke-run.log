@@ -1,0 +1,13 @@
+WP-24-T09 staging smoke @ 2026-09-29 16:57:19
+16:57:19 SMOKE started pid=60144
+16:57:41   MainWindowTitle=[ RobWorkStudio v26.9.29-wp24-t09]
+16:57:42 SNAP staging-smoke-1-main-window.png
+16:57:42 SMOKE_EXIT=0
+16:57:42 --- dev-diagnostics.log:
+16:57:42   1 1790670585409 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\builds\\wp24-t09\\staging-smoke\\ird-ui-plugin-logs）
+16:57:42   2 1790670616285 D DEBUG diag/ui msg=[sampled-tail] 宿主已关闭工作单元（工作台面板保持）
+16:57:42   1 1790671169007 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\builds\\wp24-t09\\staging-smoke\\ird-ui-plugin-logs）
+16:57:42   2 1790671191173 D DEBUG diag/ui msg=[sampled-tail] 宿主已关闭工作单元（工作台面板保持）
+16:57:42   1 1790672240020 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\builds\\wp24-t09\\staging-smoke\\ird-ui-plugin-logs）
+16:57:42   2 1790672262094 D DEBUG diag/ui msg=[sampled-tail] 宿主已关闭工作单元（工作台面板保持）
+16:57:42 STAGING_SMOKE_PASS

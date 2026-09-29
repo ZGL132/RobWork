@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 423,
+  "tickCount": 424,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,10 +16,21 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T15:20:06+08:00",
+    "updatedAt": "2026-09-29T17:22:30+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "WP-24-T09",
+      "unit": "delivery",
+      "result": "pass-merged",
+      "commits": [
+        "4dc5c4e9fbe639cd575cbead0a49f30657449eeb"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-24-T09-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。B.1 批次收尾任务（SA-18 D13）：产品交付路径收敛＝ui/CMakeLists.txt 全产品唯一 install 段（COMPONENT IRD_PRODUCT——ARCH §5.4 bin/plugins/share 三目录：studio＋worker 两可执行＋RobWork/RWSim/Qt 运行库钉 Release＋相对前缀 qt.conf 防开发机路径依赖＋baseline.md 入 share）＋start_studio.bat 启动目标切换正式产品并注明开发辅助定位＋DTB v0.26 产品交付路径声明行；开发验证通道（ui/_plugin 与各域 _app harness）与三域 deprecated 自持导航标记保留＋移出产品交付路径（D13 保留支——标记删除落点在 forbidden 三域 plugin/ 私有面且破坏 --auto 冒烟断言，acceptance 4 反向适用，逐项依据登记 retirement-checklist.md §2.2）。staging 七项判据全过（组件化安装排除框架未分组 install 规则；干净 PATH 绝对路径直启 GREEN exit=0；About 清单与装配日志逐项一致）；ird_gates 双端归一 65↔65 零差异（验收侧 detached worktree 冷启独立取证）；验收双变异注入实证（摘 worker 安装行→审计①红；摘 qwindows.dll→启动即红；qt.conf 摘除非崩溃形态——归因修正如实记录）；验收建议级 F-439（sdurwsim 取件路径单点依赖存量布局）/F-440（RobWork 配置期 Python 检测漂移致冷启 exe 导入 python313——F-428 同族新维度）随 acc/WP-24-T09/1 转登；验收自产证据 acc-* 按F-427 口径随本治理提交补录。B.1 批次十二阶段全部完成（manifest completion 条件达成：requiredFinalTask=WP-24-T09 done＋pipeline idle＋queue 空）"
+    },
     {
       "task": "UI-T23",
       "unit": "ui",
@@ -2135,13 +2146,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "WP-24-T09",
-      "branch": "wp24-t09",
-      "contractPath": "tasks/foundation/WP-24-T09.json"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -2151,5 +2156,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "17a362d0-2456-4f82-9e18-d600c49e586c"
+  "tickToken": "16e3418b-9c0e-4b6f-b094-0052412b6972"
 }
