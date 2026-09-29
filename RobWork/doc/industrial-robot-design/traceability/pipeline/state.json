@@ -131,7 +131,8 @@
       ],
       "acceptanceRecord": "traceability/acceptance/RT-T14-20260927.md",
       "mergedAt": "2026-09-27"
-    },    {
+    },
+    {
       "task": "UI-T19",
       "unit": "ui",
       "result": "pass-merged",
@@ -2159,7 +2160,13 @@
       "acceptance": 60
     }
   },
-  "queue": [],
+  "queue": [
+    {
+      "taskId": "UI-T25",
+      "contractPath": "tasks/foundation/UI-T25.json",
+      "branch": "ui-t25"
+    }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",

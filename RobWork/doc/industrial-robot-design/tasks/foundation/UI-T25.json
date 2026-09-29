@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T25",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "界面文案治理与空态引导（体验优化第二批）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": [
+    "UX-02（工程用语——界面零内部名泄漏：域面板迁移标记等用户可见文案去除 WP-xx/DTB-x/O-xx/deprecated 等内部任务编号与开发术语；呈现名挂 UiText 键解析）",
+    "NFR-MNT-03（单一权威——新增文案键值唯一出口归 UiText 键表，禁止面板侧第二文案源）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#3.5",
+    "units/ui.md#6.6",
+    "units/ui.md#10.1",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t25",
+  "interUnit": false,
+  "knownPitfalls": [
+    "P-UI-2（§11.4 不虚构业务能力红线）：『下一步建议』页签的动态建议由 workflow 供给（§4.2 底部行）——本任务只落静态工作流引导（真实入口清单），不得冒充动态建议或私有实现 workflow 判定语义（PA-1 权威唯一）；处置约束＝静态文案只引用已实装入口（新建/打开项目、需求导入、运动学求解等），未实装能力如实标注『将在后续版本提供』",
+    "UI-T24 冒烟通道兼容（traceability/builds/ui-t24 留痕）：layout 冒烟断言需求命令条＝面板根布局第 0 项 widget 且 findChildren<QPushButton> 九键逐一对照——P2 命令条分组只允许插入 QFrame 分隔符（非 QPushButton 子类），bar 挂位与按钮集合不得变化；处置约束＝分组实现后必须重跑 IRD_UI_PLUGIN_SMOKE=layout 双场景全绿",
+    "F-430 家族处置约束（findings.json 在册）：域面板迁移标记标签挂 UiText 键时 resolveText 为 fail-fast（键未登记＝呈现层上抛）——键族②注册必须先于面板引用，键表完备性须有具名测试用例钉住；处置约束＝禁止在面板侧私设第二文案源（NFR-MNT-03），新键族词形须在 ui.md §3.5 增量登记",
+    "中央区占位文本断言在册（WorkbenchShellGuiTest CentralView3DPlaceholder 断言『本阶段将在后续版本提供』逐字）：View3DPlaceholder 的占位文案与 UX-11 清单不属本任务收敛面——禁止顺手动中央区占位（阶段 B 契约显式设计）；处置约束＝占位收敛只及顶栏/左栏两处（WorkbenchContent）",
+    "Qt 标准对话框翻译可用性随部署面变化：qt_zh_CN.qm 经 QLibraryInfo::TranslationsPath 解析——开发机构建树在位、staging 安装树若未随 windeployqt 携带则缺翻译；处置约束＝加载失败必须静默降级英文（不阻断启动、不上抛），验收断言只在开发机构建树执行并如实登记部署面边界"
+  ],
+  "acceptance": [
+    "P0 文案治理：域面板迁移标记两处（requirements/kinematics NavDeprecationLabel）用户可见文本零内部名（WP-xx/DTB-x/O-xx/deprecated 等词形不出现）且经 UiText 键解析（新键族 panel.<domain>.self-nav.note）——源码 grep 断言＋键表完备性具名测试用例＋呼出态 GUI 截图",
+    "P0 下一步建议引导：底部『下一步建议』页签由空占位升级为静态工作流引导（只引用已实装入口；其余四页签占位不动）——宿主 GUI 截图＋文案与实装命令对照声明",
+    "P1 占位收敛：顶栏三处同名占位合并为单条说明（顶栏行序变化在 ui.md §4.2 落位登记）；左栏『项目对象树（本阶段将在后续版本提供）』占位移除（共享工业项目树已承载——UI-T23 D3），『阶段任务列表』占位保留——宿主 GUI 截图（宽/窄两态）",
+    "P1 对话框中文化：StudioMain 装载 Qt qt_zh_CN 翻译（QLibraryInfo 翻译目录解析，失败静默降级）——新建项目命名对话框按钮中文呈现 GUI 截图；部署面边界如实登记",
+    "P2 需求命令条分组：命令按钮按语义四组分隔（导入导出/几何采集/模板/编辑），FlowLayout 换行与无重叠语义保持——需求面板特写截图＋layout 冒烟双场景重跑全绿（LAYOUT_SMOKE_PASS）",
+    "回归门禁：双模式构建零错误；ird_gates 收集态 base↔head 归一零新增命中（本任务零依赖边变化为预期）；ctest ird 标签全绿＋ui/requirements/kinematics 既有测试不回归；validate-docs PASS；留痕 traceability/builds/ui-t25/（截图＋构建/门禁/测试日志）"
+  ],
+  "note": "立项来源：所有者 2026-09-30 界面评审（本会话实测截图与对比评估）授权『按照上述建议进行优化』。范围＝评估建议的 P0/P1/P2 可落地面四项：①域面板迁移标记文案去内部编号并挂 UiText（F-430 家族部分消账——F-431/F-432 同族两处标签，随本任务消账并在验收记录列举；其余域面板冻结文案仍归 P-DIAG-9 批次）；②『下一步建议』静态工作流引导（UI-T24 曾将『占位文案收敛』划归 P-DIAG-9——本任务经所有者本次授权把『下一步建议页签引导＋顶栏/左栏占位收敛』收回实施，P-DIAG-9 其余范围不变）；③Qt 标准对话框中文化；④需求命令条语义分组。〔范围修正声明〕kinematics/plugin 两件精确文件（KinematicsPanelWidget.{hpp,cpp}）列入 allowedFiles（UI-T24 四件先例同款：迁移标记标签落点在该域插件文件），kinematics/** 其余禁改。〔明确不做〕三维视图工具栏视角按钮/坐标轴指示器（框架工具栏与 RWStudioView3D——SA-02 需 patches 流程，不属本任务）；命令面板浮层化（呈现容器重构，收益/风险比不划算，留后续任务）。"
+}
