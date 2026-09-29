@@ -4359,6 +4359,26 @@
       "title": "冷启集成树 RobWorkSim 框架插件宏冲突使全量冷启构建不可达成（F-323『新树 configure 既有问题』的复证与口径细化）：宏冲突为环境/配置层缺陷而非任务 diff 缺陷（基线树同款 71 错实证），但影响＝验收/冷启的集成构建只能以 industrialrobot 目标集口径复现（本验收 4.2/4.3 即该口径，industrialrobot 六目标含宿主 sdurws_ird_studio 冷启全绿）＋主树增量全量零错误佐证送验对象健康。",
       "owner": "治理/构建面（WP-01-T03 归口）：登记冷启树构建口径（industrialrobot 目标集＋主树增量全量双口径）或定位宏污染根因（疑似 python/SWIG include 链宏泄漏——与 F-323/F-328/F-428 同域）",
       "resolution": "不阻塞 WP-14-T11 合入（attempt 1 verdict=pass；隔离声明与基线实证齐备）。编号顺延自 F-437。"
+    },
+    {
+      "id": "F-439",
+      "source": "WP-24-T09 验收段（acc/WP-24-T09/1，2026-09-29；证据：install 规则 sdurwsim 取件路径写死 RobWorkStudio/bin/Release/sdurwsim.dll——主树该文件为存量构建历史产物；冷启 worktree 树 sdurwsim.dll 原生输出在 RobWorkSim/bin/Release〔本验收补建 --target sdurwsim 实证该库本体构建无碍，F-008 缺陷仅在 RWSimulatorPlugin 插件层〕，EXISTS 守卫走 else 分支 STATUS 诚实降级不装入→冷启口径安装树缺 RWSim 运行库）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "install 规则 sdurwsim 取件路径单点依赖存量构建布局：唯一交付口径（主构建树）下交付物合规〔staging 含 sdurwsim，acceptance 2⑥ 过〕，冷启口径下取件落空——建议取件改双路径 EXISTS（RobWorkSim/bin/Release 原生输出优先、RobWorkStudio/bin/Release 存量兼容），消除对构建历史的隐式依赖。",
+      "owner": "ui/构建面（install 规则维护归 ui 单元卡；随下一 ui/交付触碰窗口最小修订）",
+      "resolution": "不阻塞 WP-24-T09 合入（attempt 1 verdict=pass；验收侧已手动补齐完成直启复现，逐文件清单与实施侧一致）。编号顺延自 F-438。"
+    },
+    {
+      "id": "F-440",
+      "source": "WP-24-T09 验收段（acc/WP-24-T09/1，2026-09-29；证据：同 commit 冷启 exe 导入 python313.dll〔dumpbin /DEPENDENTS 实证〕而主树存量 exe 无该导入——RobWork 配置期 Python 可选检测随配置环境 PATH 漂移〔验收冷启配置在 Git Bash 环境执行，python 可见〕；安装树/install 规则不覆盖该可选依赖→冷启口径直启 0xC0000135；主树口径交付物自足绿）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "F-428 同族新维度（框架 Python 可选依赖的环境敏感部署缺口）：RobWork CMake 的 Python 检测使同源码冷启/存量构建产物导入面不一致，产品安装树对『构建时是否检出 Python』这一配置环境事实敏感——建议治理/框架侧裁明交付口径（RobWork Python 支持关死或安装规则条件携带 python313.dll），消除交付物对配置环境的隐式依赖。",
+      "owner": "治理/构建面（F-428 同域归口；WP-01-T03/交付侧联合）",
+      "resolution": "不阻塞 WP-24-T09 合入（attempt 1 verdict=pass；唯一交付口径主构建树产物零 python 导入，staging 直启绿）。编号顺延自 F-439。"
     }
   ]
 }
