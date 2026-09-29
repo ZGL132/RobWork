@@ -266,6 +266,18 @@ public:
                                      ? static_cast<int>(nodeValue->depth)
                                      : 0);
             }
+            // 装配失败占位行（UI-T23——setGroupPlaceholder 的渲染半区）：
+            // 挂在组行下、无节点身份数据（选中信号按 kNodeIdRole 过滤——
+            // 占位行永不进业务选中）、不可选中（flags 同组行）；渲染时机
+            // ＝每次 refresh 全量重放（登记态零持久于 Qt 控件）。
+            if (g < m_groupPlaceholders.size()
+                && !m_groupPlaceholders[g].empty()) {
+                auto* placeholder = new QTreeWidgetItem(groupItem);
+                placeholder->setText(
+                    0, QString::fromStdString(m_groupPlaceholders[g]));
+                placeholder->setFlags(placeholder->flags()
+                                      & ~Qt::ItemIsSelectable);
+            }
         }
         m_tree->expandAll();
 
@@ -286,6 +298,20 @@ public:
             return false;
         }
         return true;
+    }
+
+    void setGroupPlaceholder(ProjectTreeGroup group,
+                             const std::string& text) override
+    {
+        // 占位登记（UI-T23——§11.3 多域失败隔离的呈现半区）：登记后由
+        // refresh() 重渲染生效；空串＝清除。登记本身不触发渲染（装配层
+        // 在域装配完成后统一 refresh——呈现时机归装配编排，与模型 rebuild
+        // 同一口径）。
+        const std::uint8_t index = projectTreeGroupIndex(group);
+        if (m_groupPlaceholders.size() <= index) {
+            m_groupPlaceholders.resize(kProjectTreeGroupCount);
+        }
+        m_groupPlaceholders[index] = text;
     }
 
 private:
@@ -413,6 +439,9 @@ private:
     /// 程序化选中时的信号回流阻断（refresh 恢复选中场景——防止重复
     /// 广播；真用户交互路径恒为 false）。
     bool m_suppressSelectionWrite = false;
+    /// 分组占位文案登记（UI-T23——setGroupPlaceholder 的状态面；下标＝
+    /// projectTreeGroupIndex，空串＝无占位。渲染层状态，模型零触碰）。
+    std::vector<std::string> m_groupPlaceholders{kProjectTreeGroupCount};
 };
 
 }  // namespace

@@ -41,9 +41,18 @@
 
 #include <sdurws/ird/ui/UiTypes.hpp>           // ui::DomainReadinessItem（§6.5 汇聚值面）
 
+namespace sdurws {
+namespace ird {
 namespace project {
-struct CommandEnvelope;  // 前向声明（buildDraftCommand 返回值元素——见文件头包含面纪律）
+struct CommandEnvelope;  // 前向声明（buildDraftCommand 返回值元素——UI-T23 修正：
+                         // 原裸 `namespace project` 把声明实体落在全局 ::project，
+                         // 与 project 单元实义命名空间 sdurws::ird::project 脱钩——
+                         // ns ui 内限定名 project:: 在部分 include 集下解析到该
+                         // 空壳实体即编译失败。修正后与 CommandService.hpp 实义
+                         // 定义同实体，接口签名解析全 TU 一致；语义零变化）。
 }
+}  // namespace ird
+}  // namespace sdurws
 
 namespace sdurws {
 namespace ird {
