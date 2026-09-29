@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 421,
+  "tickCount": 422,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,10 +16,21 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T11:21:22+08:00",
+    "updatedAt": "2026-09-29T13:03:33+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "WP-14-T11",
+      "unit": "requirements",
+      "result": "pass-merged",
+      "commits": [
+        "48666d25ea49d40993f4469b57c38e0f836f0564"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-14-T11-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。O-45 裁决创设微任务：门面只出线不重写（assembly/RequirementsPluginAssembly.hpp＋plugin 实现编入 sdurws_ird_requirements_plugin，与 modeling/kinematics 双先例同构；RequirementsUiModule P-REQ-8 消账切换 IPluginUiModule 真实继承——三方法同形 override 语义零变化；PluginPanelTest 全局 project 别名删除——ui 接口头断环兜底前向块注入 ::project 与别名 C2386 冲突，域类型改全限定，唯一使用点零语义变化）。验收侧 detached worktree 冷启复现（industrialrobot 六目标含宿主 sdurws_ird_studio 装配闭包零错误＋ctest 2/2 冷启树＋validate-docs PASS；RobWorkSim 框架插件宏冲突 71 错按基线树 2865a67f 同款实证隔离——环境既有 F-323 复证、BUILD_sdurws_pythoneditor=OFF 置换不消除，industrialrobot 目标集口径复现，F-438 建议级随 acc/WP-14-T11/1 转登）＋双变异注入实证测试真实失败能力（域键漂移 2 例红＋buildDraftCommand 摘除 2 例红，均 git checkout 精确还原后复绿、送验 SHA 零触碰）；ird_gates base↔head 82↔82 零增量（验收侧冷启双树独立取证）；②③合并零冲突，findings.json 并集例外未触发。编排事件实录两件：①pass 落盘 heartbeat 误写超前时钟（+6min）被 validate-state 拦截，按实际时钟修正后过——零状态污染；②收尾②evidence 合并首次因主树 builds/wp14-t11 未跟踪验收留痕副本与 evidence 提交同路径挡路 abort（固化次序②③倒置：③代码合并先成、清副本后②按 0643fd0a 重做干净——两合并相互独立，git 层零损害；EX-T06 系『工作区异物挡合并』新变体，副本已 git clean 并随 evidence 合入）"
+    },
     {
       "task": "WP-15-T18",
       "unit": "kinematics",
@@ -2115,11 +2126,6 @@
   },
   "queue": [
     {
-      "taskId": "WP-14-T11",
-      "branch": "wp14-t11",
-      "contractPath": "tasks/foundation/WP-14-T11.json"
-    },
-    {
       "taskId": "UI-T23",
       "branch": "ui-t23",
       "contractPath": "tasks/foundation/UI-T23.json"
@@ -2139,5 +2145,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "2d20ca10-47f4-4d5c-a932-5929f919cba3"
+  "tickToken": "cc26c2da-1b54-4cd2-8940-9b9d54d4f9b1"
 }

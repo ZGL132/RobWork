@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-E",
   "title": "需求域装配门面补建（O-45 裁决——宿主消费缝，与 modeling/kinematics 门面同构）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-15-T18"
   ],
