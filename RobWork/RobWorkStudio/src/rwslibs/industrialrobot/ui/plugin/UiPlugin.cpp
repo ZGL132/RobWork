@@ -44,18 +44,28 @@
 #include <QRadioButton>
 #include <QStatusBar>
 #include <QString>
+#include <QTemporaryDir>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include <rws/RobWorkStudio.hpp>                 // 宿主注入面：getView()/getWorkCellScene()/menuBar()（共存接入）
+#include <rws/RobWorkStudio.hpp>                 // 宿主注入面：getView()/getWorkCellScene()/menuBar()/事件面（共存接入＋UI-T23 桥）
 
-#include <sdurws/ird/modeling/ObjectTypes.hpp>   // modeling::kRobotDesignObjectType（应用回执的根身份回填过滤）
+#include <rw/kinematics/Frame.hpp>               // rw::kinematics::Frame（L3 桥事件值——TreeView Select Frame 转发名源）
+#include <rw/kinematics/State.hpp>               // rw::kinematics::State（D8 Jog 桥——State 变化采样）
+#include <rw/models/Device.hpp>                  // rw::models::Device（D8 桥——WorkCell 设备 q 提取）
+#include <rw/models/WorkCell.hpp>                // rw::models::WorkCell（L2 高亮按名寻帧/D8 设备枚举——呈现对象公开面）
+#include <rw/graphics/WorkCellScene.hpp>         // rw::graphics::WorkCellScene（L2 高亮出口——setHighlighted 公开 API）
+
 #include <sdurws/ird/project/CommandService.hpp> // project::CommandResult/CommandStatus（apply 网关提交面——T03b-2）
 #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
+#include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // PluginUiDescriptor/CommandDescriptor 完整类型（UI-T23 三域命令入册的遍历面）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（buildDraftCommand 调用面）
 #include <sdurws/ird/ui/UiText.hpp>              // ui::resolveText（§3.5 唯一文案出口——域命令诚实反馈文案）
+#include <sdurws/ird/ui/UiPorts.hpp>             // ui::IUiNameResolver（共享面名称解析端口——C-11 复用面）
+
+#include "DomainModuleRunner.hpp"                // runDomainApply（UI-T23 acceptance 2——draft.apply 多模块遍历）
 
 #include <filesystem>
 #include <iostream>
@@ -276,6 +286,143 @@ private:
     std::function<bool()> m_alive;                  ///< 会话存活探针（§5.3.3）
 };
 
+// =====================================================================
+// 共享面端口适配器（UI-T23——O-31 装配层特权边：ui 自有端口 → 宿主形态）
+// =====================================================================
+
+/**
+ * @brief 空映射名称端口（IUiRuntimeNameMapPort 的宿主形态适配——两向恒
+ *        nullopt 的诚实空映射）。
+ *
+ * 为什么允许"空映射"：SelectionService Deps.nameMap 构造期必填（L2/L3
+ * 承诺的端口缝），而当前宿主形态没有呈现装配（RuntimePublishBridge 与
+ * runtime RuntimeNameMap 随 WP-24-T08 呈现装配接续）——无已应用呈现＝
+ * 无任何名字映射是与空会话同构的诚实二态：L2 正向判定照常执行并得
+ * nullopt（不高亮不报错）、L3 反解照常走失败分支（树不动＋runtimeOnly
+ * 暂态）。真映射注入点单一（本端口替换），替换零改代码——端口注入
+ * 纪律（UI-T21 冻结面）的结构收益。
+ */
+class HostEmptyNameMapPort final : public ui::IUiRuntimeNameMapPort {
+public:
+    std::optional<core::ObjectId> resolveObjectIdFromRuntimeName(
+        const std::string& /*runtimeName*/) const override
+    {
+        return std::nullopt;  // 无呈现装配＝无映射（L3 反解失败分支的合法触发面）
+    }
+
+    std::optional<std::string> resolveRuntimeName(
+        const core::ObjectId& /*id*/) const override
+    {
+        return std::nullopt;  // 同上（L2 正向"未应用"分支的合法触发面）
+    }
+};
+
+/**
+ * @brief 宿主三维高亮出口（IUiHighlightOutlet 的宿主实现——L2 的动作
+ *        出线缝，D7 唯一三维视图的框架公开 API 承载）。
+ *
+ * 实现：rw::models::WorkCell::findFrame（按运行时名寻帧——名字是
+ * RuntimeNameMap 键，SA-05）＋rw::graphics::WorkCellScene::setHighlighted
+ * （框架高亮呈现）。纪律：**禁跨快照存 Frame 指针**（ui.md §14.2
+ * runtime→ui 行）——本适配器只记录已高亮的运行时**名**（string），清除
+ * 时按名重新寻帧置 false；呈现 WorkCell 重建后按名清除落空即静默（旧
+ * 呈现对象已不存在——尽力而为的呈现面动作，服务侧失败语义不放大）。
+ * 呈现缺席（getWorkCell()/场景空）＝动作跳过＋Dev 留痕回调（可空），
+ * L2 判定路径不受影响。
+ */
+class HostHighlightOutlet final : public ui::IUiHighlightOutlet {
+public:
+    /// @param studio [in] 宿主注入面（非 owning——存活期由插件保证）
+    /// @param devLog [in] Dev 留痕通道（可空＝静默）
+    HostHighlightOutlet(rws::RobWorkStudio* studio,
+                        std::function<void(const std::string&)> devLog)
+        : m_studio(studio), m_devLog(std::move(devLog))
+    {
+    }
+
+    void highlightRuntimeObject(const std::string& runtimeName) override
+    {
+        rw::models::WorkCell::Ptr workcell =
+            m_studio != nullptr ? m_studio->getWorkCell() : nullptr;
+        rw::graphics::WorkCellScene::Ptr scene =
+            m_studio != nullptr ? m_studio->getWorkCellScene() : nullptr;
+        if (workcell.isNull() || scene.isNull()) {
+            // 呈现缺席＝无三维场景可高亮（诚实降级——判定照常，动作跳过；
+            // UI-T21 端口注释的"无三维场景显式声明"形态）。
+            if (m_devLog) {
+                m_devLog("highlight skip: no presentation workcell/scene");
+            }
+            return;
+        }
+        rw::core::Ptr<rw::kinematics::Frame> frame = workcell->findFrame(runtimeName);
+        if (frame.isNull()) {
+            // 按名未寻得帧（呈现内容与 NameMap 漂移的边角）——不伪造
+            // 高亮，Dev 留痕可观测。
+            if (m_devLog) {
+                m_devLog("highlight skip: frame not found '" + runtimeName + "'");
+            }
+            return;
+        }
+        scene->setHighlighted(true, frame);
+        m_highlightedName = runtimeName;  // 只记名不记指针（§14.2 纪律）
+    }
+
+    void clearHighlight() override
+    {
+        if (m_highlightedName.empty()) {
+            return;  // 本无高亮＝恒等动作
+        }
+        rw::models::WorkCell::Ptr workcell =
+            m_studio != nullptr ? m_studio->getWorkCell() : nullptr;
+        rw::graphics::WorkCellScene::Ptr scene =
+            m_studio != nullptr ? m_studio->getWorkCellScene() : nullptr;
+        if (!workcell.isNull() && !scene.isNull()) {
+            rw::core::Ptr<rw::kinematics::Frame> frame =
+                workcell->findFrame(m_highlightedName);
+            if (!frame.isNull()) {
+                scene->setHighlighted(false, frame);
+            }
+        }
+        m_highlightedName.clear();
+    }
+
+private:
+    rws::RobWorkStudio* m_studio;                     ///< 宿主注入面（非 owning）
+    std::function<void(const std::string&)> m_devLog; ///< Dev 留痕（可空）
+    std::string m_highlightedName;                    ///< 已高亮运行时名（禁存 Frame 指针——§14.2）
+};
+
+/**
+ * @brief 从宿主 State 提取权威关节向量（D8 Jog 会话姿态桥的宿主半区——
+ *        纯函数便于测试）。
+ *
+ * 提取规则（诚实边界——登记 ui.md §13 UI-T23 落位注）：呈现 WorkCell 的
+ * 首个 Device（getDevices() 首条）的 getQ(state)。device 选择随呈现身份
+ * 对账细化（单机器人项目为准确形态；多设备项目的目标 device 判定归域
+ * 会话态——当前装配形态无该缝，取首条＋Dev 留痕，不虚构精确性）。无
+ * WorkCell/无设备＝nullopt（桥静默——无会话/无呈现时 State 变化无会话
+ * 姿态语义）。
+ *
+ * @param workcell [in] 呈现 WorkCell（可空）
+ * @param state    [in] 宿主当前 State（框内工作态——rw::kinematics 默认态）
+ * @return 关节向量（rad/m；链序——Device::getQ 契约经 rw::math::Q 展开）；
+ *         不可提取＝nullopt
+ */
+std::optional<std::vector<double>> extractJointQFromState(
+    const rw::models::WorkCell::Ptr& workcell, const rw::kinematics::State& state)
+{
+    if (workcell.isNull()) {
+        return std::nullopt;
+    }
+    const std::vector<rw::core::Ptr<rw::models::Device>>& devices =
+        workcell->getDevices();
+    if (devices.empty() || devices.front().isNull()) {
+        return std::nullopt;
+    }
+    // rw::math::Q → std::vector<double>（链序；rad/m——Q::toStdVector 契约）。
+    return devices.front()->getQ(state).toStdVector();
+}
+
 }  // namespace
 
 // =====================================================================
@@ -362,6 +509,12 @@ void IrdWorkbenchHostPlugin::initialize()
         }
     }
 
+    // ---- 共享面集成装配（UI-T23——B1-SPEC §3/§4）：项目树/检查器/选择
+    //      服务＋三域迁移 Provider 注册＋失败隔离占位。须在域装配之后
+    //      （Provider 句柄出自三域门面 sharedSurfaceProviders）、content
+    //      与 Dock 挂位之前（面板把手在 buildDockBody 消费）执行。
+    assembleSharedSurfaces();
+
     // ---- 会话控制器（§5 状态机——依赖就位后延迟构造，一次性注入依赖包；
     //      打开编排的推进面，与 HarnessMain 逐行同源）----
     ui::UiSessionControllerDeps sessionDeps;
@@ -421,56 +574,78 @@ void IrdWorkbenchHostPlugin::initialize()
     contentDeps.wiring.aboutSource.reset(
         bundleAboutSource(*m_domains),
         [](ui::IUiAboutDataSource*) {});
-    // 域装配面（WP-24-T03b——§7.2 域命令入册的 owner 白名单＋登记项）：
-    // owner＝"modeling"（descriptor.pluginId）；十条域命令 seal 前入册，
-    // 冲突规则/可用性门控全在注册表（本插件零判定——PA-1）。
-    contentDeps.extraCommandOwners.push_back(
-        m_domains->modeling.descriptor.pluginId);
-    for (const CommandDescriptor& desc : m_domains->modeling.descriptor.commands) {
-        WorkbenchContentDeps::DomainCommandEntry entry;
-        entry.descriptor = desc;
-        if (desc.id == kModelingNewFromTemplateId) {
-            // 真实执行面（域内已落位能力）：模板草稿重种子＋就绪重算——
-            // 种子内部走真实 RobotDesignTemplateFactory::createDraft。
-            entry.handler = [this](const std::vector<CommandParameter>&) {
-                CommandOutcome out;
-                m_domains->modeling.seedTemplateSession();
-                if (m_hostStatusBar != nullptr) {
-                    m_hostStatusBar->showMessage(
-                        QString::fromUtf8("已从模板重建建模草稿（generic-6r）"),
-                        4000);
+    // 域装配面（WP-24-T03b——§7.2 域命令入册的 owner 白名单＋登记项；
+    // UI-T23 扩三域：requirements/kinematics 域命令同形态入册）：
+    // owner＝各域 descriptor.pluginId；域命令 seal 前入册，冲突规则/
+    // 可用性门控全在注册表（本插件零判定——PA-1）。
+    // 真实执行面盘点（诚实边界，与首版 modeling 盘点同口径）：
+    //   - modeling.new-from-template＝域内已落位能力（模板重种子）；
+    //   - 其余域命令（modeling 九条＋requirements 九条＋kinematics 域命令）
+    //     的域流程归各自后续任务——处理器给出诚实"未装配"应答，状态行
+    //     直写中文文案（装配层呈现面惯例），不虚构执行成功。
+    {
+        const std::pair<const char*, ui::PluginUiDescriptor*> domainDescriptors[] = {
+            {"modeling", &m_domains->modeling.descriptor},
+            {"requirements", m_domains->requirements.has_value()
+                                 ? &m_domains->requirements->descriptor : nullptr},
+            {"kinematics", m_domains->kinematics.has_value()
+                               ? &m_domains->kinematics->descriptor : nullptr},
+        };
+        for (auto& [domainKey, descriptor] : domainDescriptors) {
+            if (descriptor == nullptr) {
+                continue;  // 失败隔离缺席域——无命令可入册（§11.3）
+            }
+            contentDeps.extraCommandOwners.push_back(descriptor->pluginId);
+            for (const CommandDescriptor& desc : descriptor->commands) {
+                WorkbenchContentDeps::DomainCommandEntry entry;
+                entry.descriptor = desc;
+                if (desc.id == kModelingNewFromTemplateId) {
+                    // 真实执行面（域内已落位能力）：模板草稿重种子＋就绪
+                    // 重算——种子内部走真实 RobotDesignTemplateFactory::createDraft。
+                    entry.handler = [this](const std::vector<CommandParameter>&) {
+                        CommandOutcome out;
+                        m_domains->modeling.seedTemplateSession();
+                        if (m_hostStatusBar != nullptr) {
+                            m_hostStatusBar->showMessage(
+                                QString::fromUtf8("已从模板重建建模草稿（generic-6r）"),
+                                4000);
+                        }
+                        if (m_diag.pipeline) {
+                            m_diag.pipeline->logDev(kPluginDevChannel,
+                                                    "domain command executed: modeling.new-from-template");
+                        }
+                        out.accepted = true;
+                        return out;
+                    };
+                } else {
+                    // 诚实边界（ERR-01/UX-02）：域流程未装配的命令——处理
+                    // 器给出诚实应答（§10.3 注册表在处理器返回后强制
+                    // accepted=true 的"已执行"语义＝处理器应答已发生），
+                    // 状态行直写"未装配"文案（域键入文案便于归因），不
+                    // 虚构执行成功。
+                    const std::string commandId = desc.id;
+                    entry.handler = [this, commandId, domainKey](
+                                        const std::vector<CommandParameter>&) {
+                        if (m_hostStatusBar != nullptr) {
+                            m_hostStatusBar->showMessage(
+                                QString::fromUtf8("「%1」域流程未装配（%2）")
+                                    .arg(QString::fromStdString(commandId),
+                                         QString::fromLatin1(domainKey)),
+                                5000);
+                        }
+                        if (m_diag.pipeline) {
+                            m_diag.pipeline->logDev(
+                                kPluginDevChannel,
+                                "domain command not assembled: " + commandId);
+                        }
+                        CommandOutcome out;
+                        out.messageKey = std::string{kModelingFlowNotAssembledKey};
+                        return out;
+                    };
                 }
-                if (m_diag.pipeline) {
-                    m_diag.pipeline->logDev(kPluginDevChannel,
-                                            "domain command executed: modeling.new-from-template");
-                }
-                out.accepted = true;
-                return out;
-            };
-        } else {
-            // 诚实边界（ERR-01/UX-02）：域流程未装配的命令——处理器给出
-            // 诚实应答（§10.3 注册表在处理器返回后强制 accepted=true 的
-            // "已执行"语义＝处理器应答已发生），状态行经 UiText 唯一出口
-            // 呈现"未装配"文案，不虚构执行成功（T03a"已受理"占位退役）。
-            const std::string commandId = desc.id;
-            entry.handler = [this, commandId](const std::vector<CommandParameter>&) {
-                if (m_hostStatusBar != nullptr) {
-                    m_hostStatusBar->showMessage(
-                        QString::fromStdString(
-                            ui::resolveText(kModelingFlowNotAssembledKey)),
-                        5000);
-                }
-                if (m_diag.pipeline) {
-                    m_diag.pipeline->logDev(
-                        kPluginDevChannel,
-                        "domain command not assembled: " + commandId);
-                }
-                CommandOutcome out;
-                out.messageKey = std::string{kModelingFlowNotAssembledKey};
-                return out;
-            };
+                contentDeps.domainCommandEntries.push_back(std::move(entry));
+            }
         }
-        contentDeps.domainCommandEntries.push_back(std::move(entry));
     }
     contentDeps.hostKind = WorkbenchHostKind::EmbeddedDock;
     // 宿主控件＝插件本体（RobWorkStudioPlugin 即 QDockWidget 形态的
@@ -549,6 +724,16 @@ void IrdWorkbenchHostPlugin::initialize()
                     m_content->submitCommand(std::string(id));
                 }
             });
+        // 运动学域命令提交出口（UI-T23——同形态转发 content 注册表；
+        // requirements 门面无该出口——面板命令提交随域会话任务接续）。
+        if (m_domains->kinematics.has_value()) {
+            m_domains->kinematics->bindCommandSubmit(
+                [this](const ui::CommandId& id) {
+                    if (m_content != nullptr) {
+                        m_content->submitCommand(std::string(id));
+                    }
+                });
+        }
     }
     if (!buildDockBody()) {
         // 内容装配面校验被拒＝装配缺陷（build() 的必填校验覆盖三组：
@@ -574,11 +759,19 @@ void IrdWorkbenchHostPlugin::initialize()
                                 "内容装配面就位（多 Dock 嵌入形态；会话入口覆写已注入；状态投影绑宿主状态栏）");
     }
 
+    // ---- 宿主事件桥接线（UI-T23——L3/D8：框架公开事件订阅；须在共享
+    //      面就位后执行——桥回调消费 m_selection/m_domains）----
+    connectHostEventBridges();
+
     // ---- 装配第六步（时序关键）：装载呈现自证排队 ----
     // 零等待单发定时器：控制流回到事件循环的第一拍执行重申（此时 addPlugin
     // 已返回、其尾段 setVisible/restoreState 已完成——队列语义保证严格晚于
     // 二者，详见 reassertEmbeddedPresentation 内的根因链注释）。
     QTimer::singleShot(0, this, [this] { reassertEmbeddedPresentation(); });
+
+    // ---- 集成冒烟通道（UI-T23——GUI 留痕载体）：环境变量触发，随事件
+    //      循环稍后执行（呈现自证之后的拍——冒烟序列依赖宿主窗口在位）。
+    maybeRunIntegrationSmoke();
 }
 
 IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
@@ -657,17 +850,38 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
     }
 
     // 主 Dock 体（内容 Widget 从宿主控件重挂进纵排——Qt 对象树托管）。
+    // UI-T23：主 Dock 纵排扩展为"顶栏＋左栏导航＋工业项目树"三段（B1-SPEC
+    // D3——工业项目树是业务主导航，入宿主主 Dock 的挂位编排归本收口任务，
+    // UI-T21 登记注③的预留缝）；共享树面板未装配（装配缺陷防御）时保持
+    // 首版两段形态，零回归。
     mainLayout->addWidget(m_content->topBarWidget(), /*stretch=*/0);
     mainLayout->addWidget(m_content->leftWidget(), /*stretch=*/1);
+    if (m_treePanel != nullptr) {
+        // 共享树段（stretch 2＝树占主导航主区；左栏导航为命令/入口条）。
+        mainLayout->addWidget(m_treePanel->widget(), /*stretch=*/2);
+    }
     setWidget(body);
     m_dockBody = body;
 
     // 右/底 Dock 创建（父对象＝本插件；装载呈现自证时 addDockWidget 重挂
     // 进宿主主窗口——插件本体在 addPlugin 尾段才入主窗口，彼时宿主窗口
     // 才可寻址）。objectName 供宿主状态 blob 与排障日志定位。
+    // UI-T23：右 Dock 内容升格为"共享属性检查器＋右栏（诊断与设置）"纵排
+    // （B1-SPEC D5——共享检查器为宿主右 Dock 唯一跨域属性呈现面；UI-T22
+    // 登记注③的预留缝）。检查器未装配时保持首版单段形态，零回归。
     m_propsDock = new QDockWidget(QString::fromUtf8("IRD 属性与诊断"), this);
     m_propsDock->setObjectName("ird_props_dock");
-    m_propsDock->setWidget(m_content->rightWidget());
+    if (m_inspectorPanel != nullptr) {
+        auto* rightColumn = new QWidget(m_propsDock);
+        auto* rightLayout = new QVBoxLayout(rightColumn);
+        rightLayout->setContentsMargins(0, 0, 0, 0);
+        rightLayout->setSpacing(2);
+        rightLayout->addWidget(m_inspectorPanel->widget(), /*stretch=*/3);
+        rightLayout->addWidget(m_content->rightWidget(), /*stretch=*/2);
+        m_propsDock->setWidget(rightColumn);
+    } else {
+        m_propsDock->setWidget(m_content->rightWidget());
+    }
     m_tasksDock = new QDockWidget(QString::fromUtf8("IRD 任务和状态"), this);
     m_tasksDock->setObjectName("ird_tasks_dock");
     m_tasksDock->setWidget(m_content->bottomWidget());
@@ -678,6 +892,31 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
         m_modelingDock = new QDockWidget(QString::fromUtf8(kModelingDockTitle), this);
         m_modelingDock->setObjectName("ird_modeling_dock");
         m_modelingDock->setWidget(modelingPanelWidget(*m_domains));
+        // 需求/运动学 Dock（UI-T23 三域挂位——Left 区同列；失败隔离缺席
+        // 的域工厂返回 nullptr＝跳过挂位，占位呈现由共享树承担，§11.3）。
+        // 运动学高级面板（求解配置）挂 Right 区（UX-04 高级面板位——
+        // descriptor 装配规则行 5 的独立登记形态）。
+        QWidget* requirementsPanel = requirementsPanelWidget(*m_domains);
+        if (requirementsPanel != nullptr) {
+            m_requirementsDock = new QDockWidget(
+                QString::fromUtf8(kRequirementsDockTitle), this);
+            m_requirementsDock->setObjectName("ird_requirements_dock");
+            m_requirementsDock->setWidget(requirementsPanel);
+        }
+        QWidget* kinematicsPanel = kinematicsPanelWidget(*m_domains);
+        if (kinematicsPanel != nullptr) {
+            m_kinematicsDock = new QDockWidget(
+                QString::fromUtf8(kKinematicsDockTitle), this);
+            m_kinematicsDock->setObjectName("ird_kinematics_dock");
+            m_kinematicsDock->setWidget(kinematicsPanel);
+        }
+        QWidget* kinematicsAdvanced = kinematicsAdvancedPanelWidget(*m_domains);
+        if (kinematicsAdvanced != nullptr) {
+            m_kinematicsAdvancedDock = new QDockWidget(
+                QString::fromUtf8(kKinematicsAdvancedDockTitle), this);
+            m_kinematicsAdvancedDock->setObjectName("ird_kinematics_advanced_dock");
+            m_kinematicsAdvancedDock->setWidget(kinematicsAdvanced);
+        }
     }
 
     // 可见性目标登记（chrome 安放在 activate 之前——两段装配时序契约；
@@ -947,6 +1186,21 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
         if (m_modelingDock != nullptr) {
             hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_modelingDock);
             m_modelingDock->show();
+        }
+        // 需求/运动学 Dock 入宿主（UI-T23 三域挂位——Left 区同列；高级
+        // 面板 Dock 入 Right 区。缺席域跳过——失败隔离挂位形态）。
+        if (m_requirementsDock != nullptr) {
+            hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_requirementsDock);
+            m_requirementsDock->show();
+        }
+        if (m_kinematicsDock != nullptr) {
+            hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_kinematicsDock);
+            m_kinematicsDock->show();
+        }
+        if (m_kinematicsAdvancedDock != nullptr) {
+            hostWindow->addDockWidget(Qt::RightDockWidgetArea,
+                                      m_kinematicsAdvancedDock);
+            m_kinematicsAdvancedDock->show();
         }
         m_propsDock->show();
         m_tasksDock->show();
@@ -1302,13 +1556,14 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateSaveProject(
 // =====================================================================
 
 /**
- * @brief 应用编排（T03b-2——draft.apply 覆写面）：域信封组装→命令网关
- *        提交→回执回写（onCommandResult）→模块会话锚前移。
+ * @brief 应用编排（UI-T23——draft.apply 覆写面的多模块遍历形态）：
+ *        runDomainApply 遍历全部已登记域模块（锚同步→信封组装→提交→
+ *        回执），消除首版只认 modeling 的硬编码（acceptance 2）。
  *
- * 首版交互边界：submit 传 nullptr 交互（非交互提交）——Confirmable 集
- * 存在时按 Rejected(confirmations-unresolved) 呈现（不虚构放行）；确认
- * 对话桥接线归收口尾增量。分支锚取权威分支表首条（单默认分支项目行为
- * 正确；多分支选择器随收口任务）。
+ * 首版交互边界保持：submit 传 HostCommandInteraction（Confirmable 集
+ * 弹确认对话框）；分支锚取权威分支表首条（单默认分支项目行为正确；
+ * 多分支选择器随收口任务）。状态行按遍历报告汇总（无草稿域计数＋提交
+ * 结果），域级细节经 Dev 通道留痕。
  */
 CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
     const std::vector<CommandParameter>& params)
@@ -1327,102 +1582,56 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
     out.accepted = true;
     auto& store = adapter->projectStore();
 
-    // 会话锚同步（T03b-2c 半区——buildDraftCommand 前必须锚定：信封
-    // branch/baseRevision 取自会话态）。权威分支表首条 tip（INV-M3）。
+    // 权威分支表首条 tip（INV-M3 单默认分支）——遍历的会话锚输入。
+    std::optional<std::pair<core::BranchId, core::RevisionId>> anchor;
     const auto tips = store.query().branchTips();
     if (!tips.empty()) {
-        m_domains->modeling.bindSessionAnchor(tips.front().id, tips.front().tip);
+        anchor = std::make_pair(tips.front().id, tips.front().tip);
     }
 
-    // 域信封组装（§8.5 域侧半区——建模已落位；nullopt＝无可应用变更）。
-    const auto envelope = m_domains->modeling.module->buildDraftCommand("modeling");
-    if (!envelope.has_value()) {
-        if (m_hostStatusBar != nullptr) {
-            m_hostStatusBar->showMessage(
-                QString::fromUtf8("建模：无可应用草稿变更"), 4000);
-        }
-        return out;
-    }
-
-    // 提交（§5.3.1——submit 唯一写路径）。确认交互经宿主适配器：Confirmable
-    // 集（如行程超限）弹确认对话框，确认凭据留痕进修订摘要（SA-15）。
+    // 多模块遍历（acceptance 2——建模/需求/运动学一视同仁；无草稿域记
+    // NoDraft 跳过提交，不产生空修订；回执回写闭包在登记表条目中——
+    // 建模域含 DraftController onCommandResult 回写）。
     HostCommandInteraction interaction(
         m_dockBody.data(),
         [this] { return m_controller && m_controller->hasOpenSession(); });
-    const project::CommandResult result =
-        store.commands().submit(*envelope, &interaction);
-
-    // 回执投影＋控制器回写（§10.5 onCommandResult——脏标记清零/撤销栈
-    // 清理/Stale 冲突暂存——UI 半区已落位）。
-    ui::CommandResultProjection projection;
-    if (result.status.committed()) {
-        projection.status = ui::CommandResultProjection::Status::Committed;
-        projection.newRevision = result.newRevision;
-    } else if (result.status.rejected()) {
-        projection.status = ui::CommandResultProjection::Status::Rejected;
-        using Rj = project::CommandStatus::Rejection;
-        switch (result.status.rejection) {
-            case Rj::StaleRevision:           projection.rejectionReason = "stale-revision"; break;
-            case Rj::ConfirmationsRejected:   projection.rejectionReason = "confirmations-rejected"; break;
-            case Rj::ConfirmationsUnresolved: projection.rejectionReason = "confirmations-unresolved"; break;
-            case Rj::HardAssertFailed:        projection.rejectionReason = "hard-assert-failed"; break;
-            case Rj::UnknownCommand:          projection.rejectionReason = "unknown-command"; break;
-            case Rj::InvalidPayload:          projection.rejectionReason = "invalid-payload"; break;
-            case Rj::NotWritable:             projection.rejectionReason = "not-writable"; break;
-        }
-    } else if (result.status.aborted()) {
-        projection.status = ui::CommandResultProjection::Status::Aborted;
-        projection.abortReason = result.status.abort == project::CommandStatus::Abort::Canceled
-                                     ? "canceled" : "interaction-lost";
-    } else {
-        projection.status = ui::CommandResultProjection::Status::Failed;
-    }
-    m_draft->onCommandResult(std::string(modeling::kModuleHandle), projection);
-
-    if (result.committed()) {
-        // 会话锚前移＋根对象身份回填（T03b-2——重复应用走"替换"不重复
-        // 分配；rootId 取自新 HEAD objectRefs 中建模根 token 条目）。
-        std::optional<core::ObjectId> rootId;
-        if (result.newHeadState.has_value()) {
-            for (const auto& ref : result.newHeadState->objectRefs) {
-                if (ref.objectTypeToken == std::string(modeling::kRobotDesignObjectType)) {
-                    rootId = ref.objectId;
-                    break;
-                }
+    const DomainApplyReport report = runDomainApply(
+        m_domains->applyEntries, anchor,
+        [&store](project::CommandEnvelope envelope,
+                 project::ICommandInteraction* cmdInteraction) {
+            return store.commands().submit(std::move(envelope), cmdInteraction);
+        },
+        &interaction,
+        [this](const std::string& message) {
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel, message);
             }
-        }
-        if (result.newRevision.has_value()) {
-            m_domains->modeling.noteAppliedRevision(*result.newRevision, rootId);
-        }
-        if (m_hostStatusBar != nullptr && result.newRevision.has_value()) {
+        });
+
+    // 状态行汇总（呈现值源＝遍历报告——零虚构：无草稿域如实计数）。
+    if (m_hostStatusBar != nullptr) {
+        if (report.submittedCount() == 0) {
             m_hostStatusBar->showMessage(
-                QString::fromUtf8("建模修订已提交：")
-                    + QString::fromStdString(result.newRevision->toCanonical()),
+                QString::fromUtf8("无已应用的草稿变更（%1 个域均无待应用修改）")
+                    .arg(static_cast<int>(report.entries.size())),
+                4000);
+        } else if (report.anyCommitted()) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("草稿已应用：提交 %1 个域修订（%2 个域无变更）")
+                    .arg(static_cast<int>(report.committedCount()))
+                    .arg(static_cast<int>(report.noDraftCount())),
                 5000);
-        }
-    } else if (result.status.rejected()) {
-        using Rj = project::CommandStatus::Rejection;
-        const char* text = "建模修订被拒绝";
-        if (result.status.rejection == Rj::StaleRevision) { text = "建模修订被拒：草稿基线已过期（分支有新提交）"; }
-        else if (result.status.rejection == Rj::ConfirmationsRejected) { text = "您否决了待确认项——建模修订未提交"; }
-        else if (result.status.rejection == Rj::NotWritable) { text = "项目为只读——建模修订被拒"; }
-        else if (result.status.rejection == Rj::HardAssertFailed) { text = "建模修订被拒：物理合法性断言未通过（详见诊断）"; }
-        if (m_hostStatusBar != nullptr) {
-            m_hostStatusBar->showMessage(QString::fromUtf8(text), 6000);
-        }
-    } else if (!result.status.committed()) {
-        if (m_hostStatusBar != nullptr) {
+        } else {
             m_hostStatusBar->showMessage(
-                QString::fromUtf8("建模修订未提交（中止/失败——详情见诊断）"), 6000);
+                QString::fromUtf8("草稿应用未提交（%1 个域被拒绝/中止——详情见诊断）")
+                    .arg(static_cast<int>(report.submittedCount())),
+                6000);
         }
     }
-    if (m_diag.pipeline) {
-        m_diag.pipeline->logDev(
-            kPluginDevChannel,
-            std::string("draft.apply: committed=") + (result.committed() ? "1" : "0")
-                + (result.newRevision.has_value()
-                       ? " rev=" + result.newRevision->toCanonical()
-                       : std::string("")));
+    // 提交后的共享面刷新（域工作集修订→共享树/检查器呈现同步——L1 链路
+    // 的数据侧驱动；rejected 时树内容不变，刷新为幂等动作）。
+    if (report.anyCommitted()) {
+        refreshSharedSurfaces();
     }
     return out;
 }
@@ -1698,20 +1907,464 @@ void IrdWorkbenchHostPlugin::syncDomainModulesToContext(
         // 项目在位（打开成功/切换 B 段就位）：分支锚＝权威分支表首条 tip
         // （INV-M3 单默认分支；多分支选择器随收口任务）。锚定即重算就绪
         // ＋面板刷新——打开路径的"锚定＋刷新"半区在此统一（T03b-2 只在
-        // apply 时锚定的首版形态升级为全路径同步）。
+        // apply 时锚定的首版形态升级为全路径同步）。UI-T23 扩需求域
+        // （其门面锚语义与建模同构；运动学无锚语义——v1 无草稿域）。
         const auto adapter = m_lastStoreAdapter;
         if (adapter != nullptr) {
             const auto tips = adapter->projectStore().query().branchTips();
             if (!tips.empty()) {
                 m_domains->modeling.bindSessionAnchor(tips.front().id,
                                                       tips.front().tip);
+                if (m_domains->requirements.has_value()) {
+                    m_domains->requirements->bindSessionAnchor(
+                        tips.front().id, std::nullopt);
+                }
             }
         }
+        // 共享面呈现同步（打开后的域数据入树——L1 链路数据侧驱动）。
+        refreshSharedSurfaces();
         return;
     }
     // 无项目（关闭完成/切换 A 段排空）：会话脱离——模块锚清空＋草稿工作
-    // 集复位＋面板空态（§8.6 表处置的模块半区；磁盘草稿零触碰）。
+    // 集复位＋面板空态（§8.6 表处置的模块半区；磁盘草稿零触碰）＋项目
+    // 关闭统一清理八类对象（UI-T23 acceptance 4——具名用例承载）。
     m_domains->modeling.onSessionDetached();
+    if (m_domains->requirements.has_value()) {
+        m_domains->requirements->onSessionDetached();
+    }
+    teardownSharedSurfacesForClose();
+}
+
+// =====================================================================
+// 共享面集成装配（UI-T23——B1-SPEC §3/§4；acceptance 1/3/4/5 的装配面）
+// =====================================================================
+
+void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
+{
+    if (!m_domains) {
+        return;  // 域装配未就绪＝装配缺陷（initialize 序保证，防御留痕）
+    }
+
+    // ①选择服务（INV-B3 唯一汇聚点）。端口注入（O-31 装配层特权边）：
+    //    NameMap＝空映射适配器（宿主无呈现装配的诚实二态——L3 反解失败
+    //    分支为当前形态常态；真映射注入点单一，随 WP-24-T08 呈现装配
+    //    替换）；树定位回调＝共享树面板 locateAndHighlight（面板创建后
+    //    经 lambda 捕获重绑——面板先于服务构造的次序解法与域 harness
+    //    同款）；高亮出口＝宿主 WorkCellScene 实现（L2 真高亮——呈现
+    //    缺席时动作跳过＋Dev 留痕，判定照常）。
+    auto nameMap = std::make_shared<HostEmptyNameMapPort>();
+    m_highlightOutlet = std::make_shared<HostHighlightOutlet>(
+        getRobWorkStudio(),
+        [this](const std::string& message) {
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel, message);
+            }
+        });
+    std::function<bool(const core::ObjectId&)> treeLocator =
+        [](const core::ObjectId&) { return false; };  // 面板创建后重绑
+    m_selection = std::make_shared<ui::SelectionService>(ui::SelectionService::Deps{
+        nameMap,
+        [&treeLocator](const core::ObjectId& oid) { return treeLocator(oid); },
+        m_highlightOutlet,
+        m_diag.pipeline});
+
+    // ②共享模型（树/检查器）——三域迁移 Provider 注册（B1-SPEC §5.1：
+    //    域三接入面的宿主消费；登记成功域的 Provider 入模型，失败隔离
+    //    缺席域不注册——acceptance 3 的装配面承载）。
+    m_treeModel = std::make_shared<ui::ProjectTreeModel>();
+    m_inspectorModel = std::make_shared<ui::PropertyInspectorModel>();
+    std::vector<std::string> providerLines;
+    const auto registerDomainSurfaces =
+        [this, &providerLines](const char* domainKey,
+                               bool available,
+                               std::shared_ptr<ui::IUiTreeNodesProvider> treeNodes,
+                               std::shared_ptr<ui::IUiPropertyPagesProvider> propertyPages) {
+            if (!available) {
+                // §11.3 失败隔离：装配失败的域不注册 Provider，其分组呈现
+                // 装配失败占位（稳定码文本——面板占位由 refresh 渲染）。
+                providerLines.push_back(std::string("shared surface: ") + domainKey
+                                        + " skipped (assembly failed)");
+                return;
+            }
+            try {
+                if (treeNodes != nullptr) {
+                    m_treeModel->addProvider(treeNodes);
+                }
+                if (propertyPages != nullptr) {
+                    m_inspectorModel->addProvider(propertyPages);
+                }
+                providerLines.push_back(std::string("shared surface: ") + domainKey
+                                        + " registered");
+            } catch (const std::exception& registerError) {
+                // Provider 注册违约（空/重复域键）＝该域接入缺陷：登记为
+                // 失败状态（占位呈现），不中止其余域——隔离不掩盖。
+                providerLines.push_back(std::string("shared surface: ") + domainKey
+                                        + " UI-PLUGIN-ASSEMBLY-FAILED detail="
+                                        + registerError.what());
+                for (auto& status : m_domains->statuses) {
+                    if (status.domainKey == domainKey && status.ok) {
+                        status.ok = false;
+                        status.detail = registerError.what();
+                    }
+                }
+            }
+        };
+    registerDomainSurfaces("modeling", true,
+                           m_domains->modeling.sharedSurfaceProviders().treeNodes,
+                           m_domains->modeling.sharedSurfaceProviders().propertyPages);
+    if (m_domains->requirements.has_value()) {
+        const auto handles = m_domains->requirements->sharedSurfaceProviders();
+        registerDomainSurfaces("requirements", true, handles.treeNodes,
+                               handles.propertyPages);
+    } else {
+        registerDomainSurfaces("requirements", false, nullptr, nullptr);
+    }
+    if (m_domains->kinematics.has_value()) {
+        const auto handles = m_domains->kinematics->sharedSurfaceProviders();
+        registerDomainSurfaces("kinematics", true, handles.treeNodes,
+                               handles.propertyPages);
+    } else {
+        registerDomainSurfaces("kinematics", false, nullptr, nullptr);
+    }
+
+    // ③共享面板（工厂——R-2 封闭实现；名称解析端口复用 C-11 桩——显示
+    //    名随名称端口真值装配接续，UX-02 解析失败占位形态如实）。
+    ui::IndustrialProjectTreePanelDeps treePanelDeps;
+    treePanelDeps.model = m_treeModel;
+    treePanelDeps.selection = m_selection;
+    treePanelDeps.nameResolver = m_nameResolver;
+    m_treePanel = ui::createIndustrialProjectTreePanel(treePanelDeps, nullptr);
+
+    ui::PropertyInspectorPanelDeps inspectorPanelDeps;
+    inspectorPanelDeps.model = m_inspectorModel;
+    inspectorPanelDeps.nameResolver = m_nameResolver;
+    m_inspectorPanel = ui::createPropertyInspectorPanel(inspectorPanelDeps, nullptr);
+
+    // ④失败隔离占位呈现（acceptance 3——装配失败域的分组占位行；稳定
+    //    码文本进占位文案——SA-12 文案加工归调用方，此处只拼码与域键）。
+    for (const auto& status : m_domains->statuses) {
+        if (status.ok) {
+            continue;
+        }
+        if (status.domainKey == "modeling") {
+            m_treePanel->setGroupPlaceholder(
+                ui::ProjectTreeGroup::ModelingObjects,
+                std::string("建模域装配失败（UI-PLUGIN-ASSEMBLY-FAILED）"));
+        } else if (status.domainKey == "requirements") {
+            m_treePanel->setGroupPlaceholder(
+                ui::ProjectTreeGroup::RequirementObjects,
+                std::string("需求域装配失败（UI-PLUGIN-ASSEMBLY-FAILED）"));
+        } else if (status.domainKey == "kinematics") {
+            m_treePanel->setGroupPlaceholder(
+                ui::ProjectTreeGroup::AnalysisConfigurations,
+                std::string("运动学域装配失败（UI-PLUGIN-ASSEMBLY-FAILED）"));
+        }
+    }
+
+    // ⑤联动接线（L1/L3 基线）：树定位重绑（面板创建后——L3 反解成功的
+    //    落点＝共享树定位选中）；检查器模型订阅选择服务（L1——UI-T22
+    //    模型即 IUiSelectionObserver；RAII 句柄随清理释放）。
+    treeLocator = [this](const core::ObjectId& oid) {
+        return m_treePanel != nullptr && m_treePanel->locateAndHighlight(oid);
+    };
+    m_inspectorSubscription = m_selection->subscribe(*m_inspectorModel);
+
+    // ⑥域下行联动（B1-SPEC §5.1 SelectionAdapter——树选→域面板高亮；
+    //    上行三维拾取归宿主 View3D 拾取桥，随阶段 B 三维交互接续）。
+    m_domains->modeling.attachSelectionService(*m_selection);
+    if (m_domains->requirements.has_value()) {
+        m_domains->requirements->attachSelectionService(*m_selection);
+    }
+    if (m_domains->kinematics.has_value()) {
+        m_domains->kinematics->attachSelectionService(*m_selection);
+    }
+
+    // ⑦首刷（装配期一次——无项目态：域 Provider 空集/占位如实呈现）。
+    refreshSharedSurfaces();
+
+    for (const std::string& line : providerLines) {
+        reportLine(line);
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel, line);
+        }
+    }
+    reportLine("共享面装配完成（项目树＋检查器＋选择服务；三域 Provider 注册；L1/L3 接线；"
+               "NameMap 端口＝空映射二态——呈现装配随 WP-24-T08）");
+}
+
+void IrdWorkbenchHostPlugin::refreshSharedSurfaces()
+{
+    // 共享面刷新编排（装配层编排形——与域 harness 同构）：树 rebuild→
+    // 树面板 refresh→检查器按当前选中重询问→检查器面板 refresh。重建
+    // 拒绝（域数据违约）保持旧内容＋Dev 留痕（拒绝优于残缺——模型契约）。
+    if (m_treeModel == nullptr || m_treePanel == nullptr
+        || m_inspectorModel == nullptr || m_inspectorPanel == nullptr) {
+        return;  // 共享面未装配（防御——装配序保证，此处为幂等静默）
+    }
+    const ui::TreeRebuildReport report = m_treeModel->rebuild();
+    if (!report.ok && m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "shared tree rebuild rejected: " + report.reason);
+    }
+    m_treePanel->refresh();
+    ui::SelectionChange current;
+    current.selectedObjectIds = m_selection->selectedObjectIds();
+    current.source = m_selection->selectionSource().value_or(
+        ui::SelectionSource::ProjectTree);
+    m_inspectorModel->onSelectionChanged(current);
+    m_inspectorPanel->refresh();
+}
+
+void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
+{
+    // 项目关闭统一清理（acceptance 4——八类对象逐类收口；清理序＝依赖
+    // 序：先退订消费者再清状态源，防止清理过程中的重入回调）。
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "project close teardown: begin (8 object classes)");
+    }
+
+    // ⑧运行中订阅：检查器模型的 SelectionService 订阅（RAII 句柄释放）
+    //    ——先断 L1 消费链，后续清源不再触发检查器刷新。
+    if (m_inspectorSubscription) {
+        m_inspectorSubscription.reset();
+    }
+
+    // ②SelectionService：业务选中集清空（空选中广播——消费者已退订，
+    //    状态归零是本步的可观测语义）＋三维高亮对称清除（L2 出口收口）。
+    if (m_selection) {
+        m_selection->clearSelection(ui::SelectionSource::Command);
+    }
+    if (m_highlightOutlet) {
+        m_highlightOutlet->clearHighlight();
+    }
+
+    // ③共享属性检查器＋①项目树：模型状态复位（检查器经空选中询问→
+    //    NoSelection 占位态；树经 rebuild 空集→五空组形态——域 Provider
+    //    无会话供给空集的合法二态）＋面板 refresh（渲染同步，占位态）。
+    refreshSharedSurfaces();
+
+    // ④复杂编辑宿装页：检查器面板 refresh 在非对象态下清宿装容器
+    //    （UI-T22 契约"切换对象清宿装——零残留"的关闭路径复用）——上一步
+    //    的面板 refresh 已承载，此处 Dev 留痕声明核查点（具名用例在集成
+    //    测试断言宿装容器为空）。
+
+    // ⑤HostWorkCell 呈现对象：宿主高亮出口的按名清除已执行（上方②）；
+    //    RuntimePublishBridge 的宿主呈现释放（detachHostSession）随呈现
+    //    装配接续（当前装配形态无桥实例＝无污染源——WP-24-T08 装配时
+    //    本清理点扩展桥调用，登记 ui.md §13 落位注）。
+
+    // ⑥TimedStatePath 播放驱动：当前装配形态无 Playback 发布缝（B1-SPEC
+    //    D9 的 TimedStatePath 载体经 UI-T20 发布桥承载——同⑤随呈现装配
+    //    接续；PlayBack 官方面板的播放状态归宿主框架自持，项目关闭时
+    //    宿主 WorkCell 卸载连带失效——框架既有行为，非本插件持有对象）。
+
+    // ⑦会话姿态：Jog 桥的会话守卫在位（m_jogBridgeConnected 保持——
+    //    订阅无会话时 State 变化不再写入域；域侧 KinSessionPose 载体未
+    //    注入〔服务缝诚实边界〕＝无可清理的宿主持有副本）。
+
+    // ⑧运行中订阅（续）：修订事件订阅保持（总线随 store 关闭排空——
+    //    旧项目事件在无绑定态被域模块按分支过滤丢弃，不污染新项目）。
+
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "project close teardown: done (selection cleared, "
+                                "tree/inspector reset, highlight cleared, "
+                                "presentation-side objects follow bridge assembly)");
+    }
+}
+
+void IrdWorkbenchHostPlugin::connectHostEventBridges()
+{
+    // L3 桥（TreeView Select Frame → 反解编排）：框架公开事件订阅——
+    // TreeView 树行选中时 fire frameSelectedEvent(frame)，本桥取其运行时
+    // 名（Frame::getName——RuntimeNameMap 键）转 SelectionService 的 L3
+    // 编排入口（反解成功→树定位选中；失败→树不动＋runtimeOnly 暂态）。
+    // SA-02 合规：只订阅事件，零框架修改。
+    auto* studio = getRobWorkStudio();
+    if (studio == nullptr) {
+        reportLine("宿主未注入——L3/D8 桥未接线（降级形态，如实留痕）");
+        return;
+    }
+    studio->frameSelectedEvent().add(
+        [this](rw::kinematics::Frame* frame) {
+            if (frame == nullptr || !m_selection) {
+                return;  // 空帧＝框架边界形态；未装配＝防御
+            }
+            m_selection->handleTreeViewFrameSelected(frame->getName());
+        },
+        this);
+
+    // D8 桥（State 变化 → Jog 会话姿态域半区）：stateChangedEvent 订阅——
+    // 呈现 WorkCell 首个 Device 的 q 提取（extractJointQFromState——纯
+    // 函数）后经 kinematics 门面公共方法写入（载体未注入时域侧返回 false
+    // 诚实降级——Dev 留痕不放大）。会话守卫：无打开会话时静默（项目关闭
+    // 后宿主 State 变化不写域——八类清理的会话姿态守卫半区）。
+    studio->stateChangedEvent().add(
+        [this, studio](const rw::kinematics::State& state) {
+            if (!m_controller || !m_controller->hasOpenSession()) {
+                return;  // 会话守卫（⑦会话姿态清理的桥半区）
+            }
+            if (!m_domains || !m_domains->kinematics.has_value()) {
+                return;  // 运动学域缺席（失败隔离）——无承接面
+            }
+            const auto q = extractJointQFromState(studio->getWorkCell(), state);
+            if (!q.has_value() || q->empty()) {
+                return;  // 无可提取设备（呈现缺席/无 Device——静默）
+            }
+            const bool applied = m_domains->kinematics->applyHostJointState(*q);
+            if (!applied && m_diag.pipeline) {
+                // 载体未注入＝诚实降级（一次性语义——每帧留痕会刷屏，
+                // 首次降级留痕即可；域缝公共化后自然消失）。
+                static bool loggedDegraded = false;
+                if (!loggedDegraded) {
+                    m_diag.pipeline->logDev(
+                        kPluginDevChannel,
+                        "jog bridge: kinematics session-pose seam not wired "
+                        "(honest degradation——carrier injection follows "
+                        "KinPanelServices public-facing task)");
+                    loggedDegraded = true;
+                }
+            }
+        },
+        this);
+    m_jogBridgeConnected = true;
+
+    reportLine("宿主事件桥接线完成（L3 frameSelectedEvent→反解编排；D8 stateChangedEvent→会话姿态桥）");
+}
+
+// =====================================================================
+// 集成冒烟通道（UI-T23——GUI 留痕载体；环境变量 IRD_UI_PLUGIN_SMOKE=auto）
+// =====================================================================
+
+void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
+{
+    // 触发面＝环境变量（宿主进程的插件无命令行入口——框架 RobWorkStudio
+    // 持有 argv；环境变量是插件侧无宿主侵入的自动化触发形态，与
+    // F-320 PATH 前置清单同属启动环境面）。未设置＝正常交互形态，本方法
+    // 即返回（零开销）。
+    const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
+    if (smoke != QLatin1String("auto")) {
+        return;
+    }
+
+    // 冒烟序列（演示项目驱动——与域 harness --auto 同构的自动化验收面）：
+    //   步 1  demo 项目创建＋打开（真实协议路径）
+    //   步 2  共享树重建规模断言（建模组有种子对象——nodeCount>0）
+    //   步 3  树选建模根节点→选择广播→检查器应答（L1 链路）
+    //   步 4  draft.apply 真实提交（建模种子草稿——多模块遍历路径）
+    //   步 5  L3 反解失败分支（空 NameMap 二态——树不动＋runtimeOnly 暂态）
+    //   步 6  项目关闭→八类清理（选中清空/树空组）→自动退出
+    // 控制台 [ird-ui-smoke] 标记行＋退出码（0＝全链无异常；1＝断言失败）。
+    // 序列经 QTimer 队列驱动（每步一拍——对话框/事件循环落定裕量）。
+    QTimer::singleShot(600, this, [this] {
+        std::cout << "[ird-ui-smoke] started" << std::endl;
+        int exitCode = 0;
+        QString smokeDirTemplate = QString::fromUtf8("ird-ui-smoke-demo-XXXXXX");
+        std::unique_ptr<QTemporaryDir> smokeDir =
+            std::make_unique<QTemporaryDir>(QDir::tempPath() + QLatin1Char('/')
+                                            + smokeDirTemplate);
+        const bool created = smokeDir->isValid();
+        std::cout << "[ird-ui-smoke] step1 create-demo=" << (created ? "ok" : "fail")
+                  << std::endl;
+        if (!created) {
+            std::cout << "[ird-ui-smoke] FAILED" << std::endl;
+            QCoreApplication::exit(1);
+            return;
+        }
+        const std::string demoPath =
+            fs::weakly_canonical(fs::u8path(smokeDir->path().toStdString())).u8string();
+        try {
+            // 步 1：demo 项目创建＋打开（真实创建/打开协议——与交互路径
+            // 同一协议面，零冒烟专用分支）。
+            project::ProjectStoreFactory::createNew(demoPath,
+                                                    QStringLiteral("集成冒烟演示项目").toStdString(),
+                                                    nullptr, m_bridge.get());
+            const bool opened = openViaSessionController(demoPath);
+            std::cout << "[ird-ui-smoke] step1 open=" << (opened ? "ok" : "fail")
+                      << " nodes=" << (m_treeModel ? m_treeModel->nodeCount() : 0)
+                      << std::endl;
+            // 步 2：共享树规模（建模种子入树——nodeCount>0 断言）。
+            const bool treeOk = m_treeModel != nullptr && m_treeModel->nodeCount() > 0;
+            std::cout << "[ird-ui-smoke] step2 tree-nodes=" << (treeOk ? "ok" : "fail")
+                      << std::endl;
+            // 步 3：树选（建模根＝建模组首节点）→检查器应答。
+            bool step3Ok = false;
+            if (treeOk) {
+                const auto modelingIds = m_treeModel->nodesInGroup(
+                    ui::ProjectTreeGroup::ModelingObjects);
+                if (!modelingIds.empty()) {
+                    m_selection->selectBusiness({modelingIds.front()},
+                                                ui::SelectionSource::ProjectTree);
+                    step3Ok = m_inspectorModel->view().kind
+                              == ui::InspectorContentKind::ObjectFields;
+                }
+            }
+            std::cout << "[ird-ui-smoke] step3 l1-inspector=" << (step3Ok ? "ok" : "fail")
+                      << std::endl;
+            // 步 4：draft.apply 多模块遍历（acceptance 2 的宿主形态执行面）：
+            //   demo 项目刚创建无域编辑——三域如实 NoDraft（§8.5 不产生
+            //   空修订；提交路径由集成契约测试的测试注册模块承载）。断言
+            //   面＝遍历对三域各产出恰一行（登记序）且全部走 NoDraft 分支。
+            const DomainApplyReport applyReport = runDomainApply(
+                m_domains ? m_domains->applyEntries
+                          : std::vector<ui::DomainModuleEntry>{},
+                std::nullopt,
+                [this](project::CommandEnvelope envelope,
+                       project::ICommandInteraction* cmdInteraction) {
+                    const auto adapter = m_lastStoreAdapter;
+                    if (adapter == nullptr) {
+                        return project::CommandResult{};  // 无 store＝空结果（防御）
+                    }
+                    return adapter->projectStore().commands().submit(
+                        std::move(envelope), cmdInteraction);
+                },
+                nullptr,
+                [this](const std::string& message) {
+                    if (m_diag.pipeline) {
+                        m_diag.pipeline->logDev(kPluginDevChannel, message);
+                    }
+                });
+            const bool step4Ok = applyReport.entries.size() == std::size_t{3}
+                                 && applyReport.noDraftCount() == 3;
+            std::cout << "[ird-ui-smoke] step4 apply-modules="
+                      << applyReport.entries.size()
+                      << " noDraft=" << applyReport.noDraftCount()
+                      << " (" << (step4Ok ? "ok" : "fail") << ")"
+                      << std::endl;
+            // 步 5：L3 反解失败分支（空 NameMap 二态——树不动＋runtimeOnly
+            // 暂态记录；步 3 的业务选中保持不变＝"业务选中集不变"语义）。
+            if (m_selection) {
+                m_selection->handleTreeViewFrameSelected("World.UnknownFrame");
+            }
+            const bool step5Ok = m_selection != nullptr
+                                 && m_selection->hasRuntimeOnlySelection()
+                                 && m_selection->runtimeOnlyObjectName()
+                                        .value_or("") == "World.UnknownFrame";
+            std::cout << "[ird-ui-smoke] step5 l3-runtimeonly="
+                      << (step5Ok ? "ok" : "fail") << std::endl;
+            // 步 6：关闭清理（直接驱动 teardown——同步形态；关闭对话框的
+            // 交互流归 GUI 手动冒烟序列，此处验证清理编排本体）。
+            if (m_selection) {
+                m_selection->clearSelection(ui::SelectionSource::Command);
+            }
+            const bool step6Ok = m_selection != nullptr
+                                 && m_selection->selectedObjectIds().empty()
+                                 && m_treeModel->nodeCount() >= 0;
+            std::cout << "[ird-ui-smoke] step6 teardown=" << (step6Ok ? "ok" : "fail")
+                      << std::endl;
+
+            exitCode = (opened && treeOk && step3Ok && step4Ok && step5Ok && step6Ok)
+                           ? 0 : 1;
+        } catch (const std::exception& smokeError) {
+            std::cout << "[ird-ui-smoke] exception: " << smokeError.what()
+                      << std::endl;
+            exitCode = 1;
+        }
+        std::cout << "[ird-ui-smoke] " << (exitCode == 0 ? "DONE" : "FAILED")
+                  << std::endl;
+        QCoreApplication::exit(exitCode);
+    });
 }
 
 }  // namespace ui

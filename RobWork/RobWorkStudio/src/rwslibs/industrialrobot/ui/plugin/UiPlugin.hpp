@@ -70,6 +70,8 @@
 #include <sdurws/ird/project/ProjectStore.hpp>    // project::OpenStoreResult（创建协议产物）
 #include <sdurws/ird/ui/IDraftController.hpp>     // ui::IDraftController（§8 草稿控制器——UI-T17 装配）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>      // ui::ShellWiring（注入包）
+#include <sdurws/ird/ui/IndustrialProjectTree.hpp>  // ui::ProjectTreeModel/SelectionService/树面板（UI-T23 共享面挂位）
+#include <sdurws/ird/ui/PropertyInspector.hpp>    // ui::PropertyInspectorModel/检查器面板（UI-T23 共享面挂位）
 #include <sdurws/ird/ui/UiSessionController.hpp>  // ui::UiSessionController（§5 会话状态机）
 #include <sdurws/ird/ui/WorkbenchContent.hpp>     // ui::IWorkbenchContent（内容装配面）
 
@@ -197,6 +199,27 @@ private:
     /// tip；无项目＝会话脱离。§5.2/§5.4/§6.2 的宿主转发面）。
     void syncDomainModulesToContext(const ProjectContextProjection& context);
 
+    // ---- 共享面集成装配（UI-T23——B1-SPEC §3/§4 双树与选择联动挂位）----
+    /// 共享设施装配（项目树/检查器/选择服务模型＋面板创建＋三域迁移
+    /// Provider 注册＋L3 树定位回调＋L2 高亮出口＋占位呈现——装配期一次；
+    /// 失败隔离的占位登记在此收口，§11.3 多域形态）。
+    void assembleSharedSurfaces();
+    /// 共享面刷新编排（树 rebuild→双面板 refresh→检查器按当前选中重
+    /// 询问——域修订/项目打开后的呈现同步动作）。
+    void refreshSharedSurfaces();
+    /// 项目关闭统一清理（acceptance 4——八类对象的宿主收口：项目树/
+    /// SelectionService/检查器/复杂编辑宿装/HostWorkCell 呈现/会话姿态/
+    /// 播放驱动/运行中订阅；具名用例承载，presentContext 无项目半区调用）。
+    void teardownSharedSurfacesForClose();
+    /// 宿主事件桥接线（L3/D8——框架公开事件面：TreeView Select Frame
+    /// 事件→SelectionService 反解编排；State 变化→Jog 会话姿态桥域半区。
+    /// SA-02 合规——只订阅不修改框架）。
+    void connectHostEventBridges();
+    /// 集成冒烟通道（环境变量 IRD_UI_PLUGIN_SMOKE=auto 触发——GUI 留痕
+    /// 载体：demo 项目打开→共享面核查→draft.apply→关闭清理→自动退出，
+    /// 控制台 [ird-ui-smoke] 标记行）。
+    void maybeRunIntegrationSmoke();
+
     // ---- 装配产物（所有权：诊断栈/适配器经 shared_ptr 供壳与控制器共享
     //      引用；控制器/内容装配面为本插件独占成员——析构序＝声明逆序，
     //      控制器与内容装配面先于端口适配器消亡）----
@@ -221,6 +244,9 @@ private:
     QDockWidget* m_propsDock = nullptr;    ///< "IRD 属性与诊断"Dock（Right 区——UI-T18 拆分面，窗口树托管）
     QDockWidget* m_tasksDock = nullptr;    ///< "IRD 任务和状态"Dock（Bottom 区——UI-T18 拆分面，窗口树托管）
     QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
+    QDockWidget* m_requirementsDock = nullptr;   ///< "IRD 需求"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
+    QDockWidget* m_kinematicsDock = nullptr;     ///< "IRD 运动学"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
+    QDockWidget* m_kinematicsAdvancedDock = nullptr; ///< "IRD 运动学（求解配置）"Dock（Right 区高级面板位——UX-04）
     QStatusBar* m_hostStatusBar = nullptr; ///< 宿主状态栏（UI-T18 状态投影面——PM-11 永久位＋瞬态消息）
     std::shared_ptr<app::StorePortAdapter> m_lastStoreAdapter; ///< 最近打开的存储适配器（T03b-2——apply 网关命令端口来源）
     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）
@@ -236,6 +262,28 @@ private:
     std::unique_ptr<core::IDomainEventSink> m_revisionSink;
     /// 总线订阅句柄（RAII——修订事件→域模块基线同步；析构即退订）
     std::unique_ptr<core::IEventSubscription> m_revisionSubscription;
+
+    // ---- 共享面集成产物（UI-T23——B1-SPEC §3/§4；L5 装配层持有）----
+    /// 业务选中唯一汇聚点（INV-B3——树/检查器/域适配器/L3 反解的共同
+    /// 状态面；Deps 的 NameMap 端口注入空映射适配器——宿主无呈现装配的
+    /// 诚实二态，真映射随 WP-24-T08 呈现装配注入替换）。
+    std::shared_ptr<ui::SelectionService> m_selection;
+    /// 工业项目树模型（三域 TreeNodesProvider 注册——rebuild 唯一写点）。
+    std::shared_ptr<ui::ProjectTreeModel> m_treeModel;
+    /// 共享属性检查器模型（三域 PropertyPagesProvider 注册——L1 呈现末端）。
+    std::shared_ptr<ui::PropertyInspectorModel> m_inspectorModel;
+    /// 工业项目树面板把手（主 Dock 挂位；L3 落点 locateAndHighlight 所在）。
+    std::unique_ptr<ui::IndustrialProjectTreePanel> m_treePanel;
+    /// 共享检查器面板把手（右 Dock 挂位；D6 宿装容器所在）。
+    std::unique_ptr<ui::PropertyInspectorPanel> m_inspectorPanel;
+    /// L2 三维高亮出口（宿主实现——WorkCellScene::setHighlighted 公开面；
+    /// 呈现 WorkCell 缺席时高亮动作跳过＋Dev 留痕，判定照常）。
+    std::shared_ptr<ui::IUiHighlightOutlet> m_highlightOutlet;
+    /// 检查器订阅句柄（RAII——检查器模型消费选择广播；关闭清理显式释放）。
+    std::unique_ptr<core::IEventSubscription> m_inspectorSubscription;
+    /// Jog 会话姿态桥的宿主触发位（D8——stateChangedEvent 订阅在位标记；
+    /// 桥回调内有会话守卫，项目关闭后 State 变化不再写入域）。
+    bool m_jogBridgeConnected = false;
 };
 
 }  // namespace ui

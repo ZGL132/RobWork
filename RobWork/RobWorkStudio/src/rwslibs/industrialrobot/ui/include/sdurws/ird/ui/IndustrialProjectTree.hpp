@@ -400,6 +400,25 @@ public:
      *         选中不动树，Dev 留痕由服务侧完成）
      */
     virtual bool locateAndHighlight(const core::ObjectId& id) = 0;
+
+    /**
+     * @brief 设置某分组的装配失败占位呈现（UI-T23——§11.3 失败降级隔离
+     *        在多域树形态的呈现半区）。
+     *
+     * 语义：装配失败的域不注册 Provider（其分组无节点供给），装配层经本
+     * 方法在该分组组行下呈现一行"装配失败"占位文案——用户能看到该域
+     * 应当存在且当前不可用，其余域照常（隔离不掩盖）。占位行不是树节点：
+     * 不携带 ObjectId（kNodeIdRole 等价数据缺省）、不可选中、不进业务
+     * 选中——INV-B1/B3 的呈现面边界不受影响（占位是呈现装饰，模型零
+     * 污染：ProjectTreeModel 无任何占位知识）。
+     *
+     * @param group [in] 目标分组（五分组封闭词表值）
+     * @param text  [in] 占位文案（UTF-8；空串＝清除该分组占位——域恢复
+     *              后由装配层清除）。文案含稳定码文本由调用方组装（本
+     *              面板不做诊断语义加工——SA-12 呈现/权威分工）
+     */
+    virtual void setGroupPlaceholder(ProjectTreeGroup group,
+                                     const std::string& text) = 0;
 };
 
 /**

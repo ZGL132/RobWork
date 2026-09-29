@@ -482,6 +482,30 @@ if(TARGET sdurw_kinematics)
         sdurws_ird_runtime)
 endif()
 
+# ---- UI-T23 增列（集成模式专属——三域装配门面消费，B1-SPEC §5/§6 链尾）----
+# HostIntegrationContractTest.cpp＝draft.apply 多模块遍历（acceptance 2，
+# 含测试注册模块）＋三域共享面集成回归（L1/L2/L3 联动全量——acceptance
+# 1/5）＋单域失败隔离状态面（acceptance 3）＋项目关闭清理组件级核查
+# （acceptance 4）。三域装配门面（O-45 补建的 requirements 缝与 WP-15-T18
+# 出线的 kinematics 门面——O-31 装配层消费面的测试面同型，域私有头零
+# 触碰）与被测编排（plugin/DomainModuleRunner.*——测试目标同源直编，
+# modeling_test 先例同型）以 if(TARGET sdurws) 判别（集成树专属——三域
+# plugin 链面经框架传递依赖，冒烟树不注册本增列；PresentationBridge
+# 同因先例）。ird_gates SUB 增量（ui_contract_test->三域 plugin 三条
+# 测试面边）随任务登记（traceability/wp10-t23-gate-registrations.md
+# ——责任方 WP-01-T03）。
+if(TARGET sdurws)
+    target_sources(sdurws_ird_ui_contract_test PRIVATE
+        contract_test/HostIntegrationContractTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainModuleRunner.cpp)
+    target_include_directories(sdurws_ird_ui_contract_test PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR})
+    target_link_libraries(sdurws_ird_ui_contract_test PRIVATE
+        sdurws_ird_modeling_plugin
+        sdurws_ird_requirements_plugin
+        sdurws_ird_kinematics_plugin)
+endif()
+
 # ---- GUI 测试目标 sdurws_ird_ui_gui_test（§12.1 第三层，单列）----
 # Widgets/GUI 契约测试的注册载体。ctest LABELS ird_gui 串行（不与模型/Meta
 # 测试合并命令——ui.md §12.2 执行纪律；testkit.md §6.7 单实例启动行）。
@@ -500,7 +524,8 @@ add_executable(sdurws_ird_ui_gui_test
     gui_test/ParamTablePanelGuiTest.cpp
     gui_test/AboutDialogGuiTest.cpp
     gui_test/IndustrialProjectTreeGuiTest.cpp   # UI-T21——面板：五分组组行/选中回流/名称现取/L3 落点
-    gui_test/PropertyInspectorGuiTest.cpp)      # UI-T22——检查器面板：分态占位/标题现取/构件复用/入口宿装
+    gui_test/PropertyInspectorGuiTest.cpp       # UI-T22——检查器面板：分态占位/标题现取/构件复用/入口宿装
+    gui_test/HostIntegrationGuiTest.cpp)        # UI-T23——集成收口：装配失败占位呈现/关闭清理宿装清空
 
 target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_gui_test PROPERTIES
@@ -628,6 +653,7 @@ if(TARGET sdurws)
     add_library(sdurws_ird_ui_plugin MODULE
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
+        plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 
@@ -646,13 +672,19 @@ if(TARGET sdurws)
     target_include_directories(sdurws_ird_ui_plugin PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR})
 
-    # 链接面（ird_gates 命中集登记面——traceability/wp10-t16-gate-registrations.md）：
+    # 链接面（ird_gates 命中集登记面——traceability/wp10-t16-gate-registrations.md；
+    # UI-T23 增量见 traceability/wp10-t23-gate-registrations.md）：
     #   - sdurws_ird_ui／sdurws_ird_project＝装配层特权边（ui->ui 自边＋
     #     ui->project 宿主集成边——DTB §4.5 SUB 登记行，UI-T15 同款模式）；
     #   - sdurws_ird_modeling_plugin＝WP-24-T03 首版装配边（ui->modeling
     #     宿主集成边——DTB §4.5 同款 SUB 登记；装配层唯一"同时看见两边"
     #     特权（O-31），业务域互不依赖（R-1）不因装配边破坏——消费面仅
     #     建模装配门面 assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp）；
+    #   - sdurws_ird_requirements_plugin／sdurws_ird_kinematics_plugin＝
+    #     UI-T23 三域装配边（ui->requirements/ui->kinematics 宿主集成边
+    #     ——消费面仅 O-45 补建的 requirements 装配门面与 kinematics 装配
+    #     门面〔WP-15-T18 出线〕，域私有头零触碰——R-2 门面纪律延伸；
+    #     B1-SPEC §5.1 三接入面与 §6 链尾收口的装配承载）；
     #   - sdurws＝框架 RobWorkStudio 库（RobWorkStudioPlugin 基类；DTB §4.6
     #     框架基线白名单 "sdurw" 前缀族）；
     #   - Qt 三件套＝plugin 分类面（Qt 链接合法——ird_gates R-3 仅查
@@ -661,6 +693,8 @@ if(TARGET sdurws)
         sdurws_ird_ui
         sdurws_ird_project
         sdurws_ird_modeling_plugin
+        sdurws_ird_requirements_plugin
+        sdurws_ird_kinematics_plugin
         sdurws
         Qt6::Core
         Qt6::Gui
@@ -708,6 +742,7 @@ if(TARGET sdurws)
         studio/StudioMain.cpp
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
+        plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历（与插件目标同源）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 
@@ -741,6 +776,8 @@ if(TARGET sdurws)
         sdurws_ird_ui
         sdurws_ird_project
         sdurws_ird_modeling_plugin
+        sdurws_ird_requirements_plugin
+        sdurws_ird_kinematics_plugin
         sdurws
         sdurws_treeview
         sdurws_jog
