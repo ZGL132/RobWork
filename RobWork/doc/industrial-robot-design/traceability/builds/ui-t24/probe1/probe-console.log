@@ -1,0 +1,25 @@
+[ird-ui-plugin] 璇婃柇鏍堝氨缁紙寮€鍙戞棩蹇楃洰褰曪細C:\Users\zgl18\AppData\Local\Temp\ird-t24-cleanroom-de257455\ird-ui-plugin-logs锛?
+[ird-ui-plugin] domain assembly: plugin=modeling ok=1 panels=1 commands=10
+[ird-ui-plugin] domain assembly: plugin=requirements ok=1 panels=1 commands=9
+[ird-ui-plugin] domain assembly: plugin=kinematics ok=1 panels=2 commands=8
+[ird-ui-plugin] shared surface: modeling registered
+[ird-ui-plugin] shared surface: requirements registered
+[ird-ui-plugin] shared surface: kinematics registered
+[ird-ui-plugin] 鍏变韩闈㈣閰嶅畬鎴愶紙椤圭洰鏍戯紜妫€鏌ュ櫒锛嬮€夋嫨鏈嶅姟锛涗笁鍩?Provider 娉ㄥ唽锛汱1/L3 鎺ョ嚎锛汵ameMap 绔彛锛濈┖鏄犲皠浜屾€佲€斺€斿憟鐜拌閰嶉殢 WP-24-T08锛?
+[ird-ui-plugin] 宸ヤ綔鍙拌閰嶅畬鎴愶紙澶?Dock锛氫富 Dock锛嬪睘鎬?浠诲姟鍚岀骇 Dock锛嬪涓荤姸鎬佹爮鎶曞奖锛婥trl+Shift+P 鍛戒护闈㈡澘锛涜杞藉憟鐜拌嚜璇佸湪浜嬩欢寰幆绋嶅悗鎵ц锛?
+[ird-ui-plugin] 瀹夸富浜嬩欢妗ユ帴绾垮畬鎴愶紙L3 frameSelectedEvent鈫掑弽瑙ｇ紪鎺掞紱D8 stateChangedEvent鈫掍細璇濆Э鎬佹ˉ锛?
+[ird-ui-plugin] 宸ヤ綔鍙板 Dock 宸插憟鐜帮紙涓?Dock锛嬪睘鎬?浠诲姟 Dock锛嬪涓荤姸鎬佹爮鎶曞奖鈥斺€旇杞藉憟鐜拌嚜璇佸畬鎴愶級
+[ird-ui-plugin] 宸ヤ綔鍙?Dock 瀹藉害鏀舵潫锛氱洰鏍?962 px锛屽疄闄?2092 px锛堝彈鍐呭鏈€灏忓搴﹂挸鍒舵椂濡傚疄鐣欑棔锛?
+[ird-ui-plugin] 宸ヤ綔鍙?Dock 瀹藉害鏀舵潫锛氱洰鏍?962 px锛屽疄闄?2092 px锛堝彈鍐呭鏈€灏忓搴﹂挸鍒舵椂濡傚疄鐣欑棔锛?
+[ird-ui-smoke-layout] started
+[ird-ui-smoke-layout] host=2406x1510
+[ird-ui-smoke-layout] dock=main-dock visible=1 cur=2092 minHintW=1054
+[ird-ui-smoke-layout] dock=props-dock visible=1 cur=288 minHintW=280
+[ird-ui-smoke-layout] dock=tasks-dock visible=1 cur=2406 minHintW=138
+[ird-ui-smoke-layout] dock=modeling-dock visible=1 cur=2092 minHintW=358
+[ird-ui-smoke-layout] dock=requirements-dock visible=1 cur=2092 minHintW=2092
+[ird-ui-smoke-layout] dock=kinematics-dock visible=1 cur=2092 minHintW=471
+[ird-ui-smoke-layout] dock=kinematics-advanced-dock visible=1 cur=288 minHintW=288
+[ird-ui-smoke-layout] report=D:\10_Source_Repos\21_robot\RobWork\RobWork\doc\industrial-robot-design\traceability\builds\ui-t24\probe1/geometry-report.txt
+[ird-ui-smoke-layout] DONE
+

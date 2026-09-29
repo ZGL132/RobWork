@@ -134,6 +134,11 @@ public:
     /// @brief 宿主关闭工作单元回调：观测留痕（零操作本体）。
     void close() override;
 
+    /// @brief 事件观察（QObject 虚函数——UI-T24 P2 中央区保护的重入点）：
+    ///        观察宿主主窗口与中央控件的 Resize 事件，合并抖动后排程一次
+    ///        中央区最小可见宽度保障（其余事件全部放行基类，零干预）。
+    bool eventFilter(QObject* watched, QEvent* event) override;
+
 private:
     // ---- 装配段（initialize 内部步骤——各函数单一职责）----
     bool buildDockBody();              ///< Dock 体栅格＋内容装配面 build/activate
@@ -158,6 +163,17 @@ private:
     /// 菜单命令动作工厂（宿主菜单半区——动作父对象＝本插件，触发统一转发
     /// 内容装配面提交路径）。
     QAction* addCommandAction(QMenu* target, const char* title, const char* commandId);
+    /// 视图菜单辅助 Dock 开关工厂（UI-T24 P1——域自持面板默认不呈现的呼出
+    /// 通道；勾选态随辅助可见性记忆刷新，Dock 关闭钮同步记忆）。
+    void addAuxDockToggle(QMenu* target, const char* title, const char* auxKey,
+                          QDockWidget* dock);
+    /// 中央区最小可见宽度保障装配（UI-T24 P2——事件观察挂宿主主窗口与
+    /// 中央控件；SA-02 框架零修改——只观察事件＋resizeDocks 回推，不改
+    /// 框架控件任何属性）。
+    void installCentralReserveGuard();
+    /// 中央区最小可见宽度保障执行（合并抖动后的检查拍：中央区宽度低于
+    /// 保留下限时按确定性次序回推本插件的 Dock）。
+    void enforceCentralMinWidth();
     /// 重建"最近项目"子菜单（aboutToShow 现取——PM-10 去重/上限/失效提示
     /// 全在内容装配面，本插件只投影）。
     void rebuildRecentMenu();
@@ -219,6 +235,11 @@ private:
     /// 载体：demo 项目打开→共享面核查→draft.apply→关闭清理→自动退出，
     /// 控制台 [ird-ui-smoke] 标记行）。
     void maybeRunIntegrationSmoke();
+    /// 布局度量冒烟通道（环境变量 IRD_UI_PLUGIN_SMOKE=layout 触发——
+    /// UI-T24 P2 钳制源定位载体：宿主窗口/中央区/各 IRD Dock 的几何与
+    /// 内容最小宽度全量度量，UTF-8 报告落盘＋控制台 [ird-ui-smoke-layout]
+    /// 标记行；只读度量零行为变更）。
+    void maybeRunLayoutSmoke();
 
     // ---- 装配产物（所有权：诊断栈/适配器经 shared_ptr 供壳与控制器共享
     //      引用；控制器/内容装配面为本插件独占成员——析构序＝声明逆序，
@@ -253,6 +274,9 @@ private:
     QMenu* m_recentMenu = nullptr;                            ///< "最近项目"子菜单（aboutToShow 重建）
     std::vector<std::pair<QAction*, std::string>> m_hostMenuCommandIds; ///< 框架菜单动作→命令 id（使能同步）
     std::vector<std::pair<WorkbenchRegion, QAction*>> m_hostRegionToggles; ///< 框架菜单区域开关（勾选态回写）
+    std::vector<std::pair<std::string, QAction*>> m_hostAuxToggles; ///< 视图菜单辅助 Dock 开关→记忆键（UI-T24——勾选态回写）
+    QTimer* m_centralGuardTimer = nullptr;  ///< 中央区保护合并抖动定时器（UI-T24 P2——惰性创建）
+    bool m_centralGuardWarned = false;      ///< 保障无法达成的一次性 Dev 留痕旗标（防日志洪水）
     bool m_assembled = false;                                 ///< initialize 已完成（一次守卫）
     std::unique_ptr<DomainPluginAssembly> m_domains;          ///< 域插件装配产物（首版＝modeling——WP-24-T03）
     /// 域事件总线（WP-24-T03b 收口——修订提交事件面：store 打开请求挂接

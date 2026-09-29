@@ -89,6 +89,10 @@ public:
     void setRegionVisibilityTarget(WorkbenchRegion region, QWidget* target) override;
     bool regionVisible(WorkbenchRegion region) const override;
     void setRegionVisible(WorkbenchRegion region, bool visible) override;
+    void setAuxVisibilityTarget(const std::string& key, QWidget* target,
+                                bool factoryVisible) override;  ///< UI-T24 增量（§10.1 v1.25）
+    bool auxVisible(const std::string& key) const override;     ///< UI-T24 增量
+    void setAuxVisible(const std::string& key, bool visible) override;  ///< UI-T24 增量
     void resetLayout() override;
     void notifyHostResized(const QSize& hostSize) override;
     void presentProjectContext(const ProjectContextProjection& context) override;
@@ -122,8 +126,10 @@ private:
     // ---- 布局记忆（§4.5；宿主形态差异的分派点）----
     void restorePersistedLayout();        ///< 顶层：全量五键装载（原语义逐行保持）
     void restoreRegionFlagsEmbedded();    ///< 嵌入：仅三区可见性键装载（同组同键）
+    void loadAuxVisibilityMemory();       ///< 辅助 Dock 记忆装载＋已登记目标对齐（UI-T24）
     void applyFactoryLayout();            ///< 出厂位形（§4.5 回退基准——顶层带几何/位形）
     void persistLayoutAsync();            ///< 布局落盘任务提交（顶层全量/嵌入式仅键）
+    void persistAuxFlagAsync(const std::string& key, bool visible); ///< 辅助 Dock 单键微写（UI-T24）
     void persistRecentAsync();            ///< 最近项目落盘任务提交
     void persistShortcutsAsync();         ///< 快捷键用户改绑落盘任务提交（PM-14）
     void persistPaletteRecentAsync();     ///< 面板近期使用落盘任务提交（§7.4/PM-14）
@@ -191,6 +197,19 @@ private:
     bool m_visibleLeft = true;
     bool m_visibleRight = true;
     bool m_visibleBottom = true;
+
+    /// 辅助 Dock 可见性记忆（UI-T24——§10.1 v1.25）：目标登记表＋记忆值表。
+    /// target/factory 由 setAuxVisibilityTarget 登记；current 为当前有效位
+    /// （记忆值优先，无记忆＝factory）；remembered 为装载拍的记忆值（键面
+    /// =layout/aux.<key>.visible，与三区旗标同组同文件、键面分区——PM-14）。
+    struct AuxEntry {
+        QWidget* target = nullptr;  ///< 可见性目标 Dock（非 owning——登记方持有）
+        bool factory = false;       ///< 工厂默认（域自持面板＝false——P1）
+        bool current = false;       ///< 当前有效位（登记/装载/设置三处维护）
+    };
+    std::map<std::string, AuxEntry> m_auxEntries;      ///< key→登记项
+    std::map<std::string, bool> m_auxRemembered;       ///< 装载拍记忆值（键存在才写）
+
     ProjectContextProjection m_context{};      ///< 最近一次注入的上下文快照
     std::vector<std::pair<QPushButton*, std::string>> m_topButtons;  ///< 顶栏按钮→命令 id
 };

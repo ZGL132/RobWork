@@ -295,6 +295,57 @@ public:
     /// @brief 设置五区可见性（语义同 IWorkbenchShell::setRegionVisible）。
     virtual void setRegionVisible(WorkbenchRegion region, bool visible) = 0;
 
+    // ---- 辅助 Dock 可见性记忆（§10.1 v1.25 增量——UI-T24 P1）----
+    // 背景说明：五区（Left/Right/Bottom）之外，宿主插件形态还有域自持面板
+    // Dock（IRD 建模/需求/运动学等——UI-T23 三域挂位）。它们在宿主框架
+    // restoreState 之后才 addDockWidget 入主窗口（装载时序根因链——§10.1
+    // v1.14 注⑧），框架状态 blob 对其无效，跨会话记忆必须由内容装配面
+    // 自持（PM-14 用户级设置，与三区旗标同组同文件、键面分区互不干扰）。
+    // P1"域面板默认不呈现"的工厂默认与"用户呼出后二次启动记忆优先"半区
+    // 均落在本组方法（键由调用方定义、词形稳定——插件侧常量）。
+
+    /**
+     * @brief 登记辅助 Dock 可见性目标（UI-T24 增量）。
+     *
+     * 登记即施加当前有效可见性（记忆值优先；无记忆＝factoryVisible），
+     * 语义与 setRegionVisibilityTarget 的"登记即施加"一致。activate() 的
+     * 记忆装载拍会再对齐一次（装载覆盖登记时的工厂默认）。
+     *
+     * @param key            [in] 稳定记忆键（ASCII 字母/数字/点——词形进
+     *                       用户级设置文件，不可随意改名，改＝记忆迁移）
+     * @param target         [in] 可见性目标 Dock（非 owning——调用方持有）
+     * @param factoryVisible [in] 工厂默认可见性（域自持面板＝false——P1
+     *                       "默认不呈现"；三区主面缺省 true 走既有通道）
+     */
+    virtual void setAuxVisibilityTarget(const std::string& key, QWidget* target,
+                                        bool factoryVisible) = 0;
+
+    /**
+     * @brief 查询辅助 Dock 当前有效可见性（记忆值或工厂默认）。
+     *
+     * @param key [in] 已登记的稳定记忆键
+     * @return 当前有效可见性位（模型位——非 Widget 实测态，语义同
+     *         regionVisible）
+     *
+     * @throws std::out_of_range 若 key 未登记（调用方契约违约 fail-fast）
+     */
+    virtual bool auxVisible(const std::string& key) const = 0;
+
+    /**
+     * @brief 设置辅助 Dock 可见性并按宿主形态持久化（UI-T24 增量）。
+     *
+     * 幂等（同值重设＝无操作——同时是 Dock visibilityChanged 回环的终止
+     * 条件）；持久化走既有后台落盘线程（§3.4 纪律），嵌入式宿主即时单键
+     * 微写（与 setRegionVisible 同口径）。resetLayout() 把全部辅助目标
+     * 恢复工厂默认。
+     *
+     * @param key     [in] 已登记的稳定记忆键
+     * @param visible [in] 目标可见性
+     *
+     * @throws std::out_of_range 若 key 未登记（调用方契约违约 fail-fast）
+     */
+    virtual void setAuxVisible(const std::string& key, bool visible) = 0;
+
     /// @brief 恢复出厂布局（顶层＝几何/位形＋三区全可见；嵌入式＝三区全可见
     ///        ＋持久化——§4.5 按宿主形态的适配面）。
     virtual void resetLayout() = 0;

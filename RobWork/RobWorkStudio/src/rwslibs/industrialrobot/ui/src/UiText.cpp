@@ -13,6 +13,8 @@
  *
  * 背景说明（表的构成与过渡语义）：内建表覆盖本单元阶段 A 已产出的全部
  * 键族——①七阶段标题 stage.<id>.title（§3.5 冻结族，§6.4 七阶段中文名）；
+ * ①b 域命令标题 cmd.<id>.title（WP-24-T03 建模十条起步，UI-T24 增需求域
+ * 九条——域命令按钮/菜单的中文语义名，消 F-430 家族面板侧冻结文案）；
  * ②七态短标签 state.<token>.label（§6.3 词表"中文"列——UI-T04 过渡承载
  * 的值源切换，键与值逐字不变，P-UI-1 词表未改一字）；③core 九态短标签
  * （PM-03/PM-11——同上过渡迁移）；④当前性「无法判定」原因两键（P-UI-2
@@ -66,7 +68,11 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
 /// WP-24-T03b 收口增行：域命令处理器级拒绝的诚实反馈文案（非标题键——
 /// content submitCommand 对 outcome.messageKey 的呈现值源，ERR-01 因果
 /// 如实：拒绝原因由处理器给出，不走通用只读/无项目理由）。
-constexpr std::array<TextRow, 11> kDomainCommandTitleTable{{
+/// UI-T24 P3 增行：requirements §9.8 命令表九条的中文语义名（消账 F-430
+/// 家族需求域按钮一族——此前 RequirementsPanelWidget 按钮以原始 commandId
+/// 直出，UX-02 内部名泄漏；键登记后 resolveText 才可解析，键表完备性由
+/// ui/test 具名用例钉住——F-430 处置约束）。
+constexpr std::array<TextRow, 20> kDomainCommandTitleTable{{
     { "cmd.modeling.new-from-template.title",          "从模板新建"       },
     { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
     { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
@@ -78,6 +84,18 @@ constexpr std::array<TextRow, 11> kDomainCommandTitleTable{{
     { "cmd.modeling.import-package.title",             "导入规范包"       },
     { "cmd.modeling.reset-home-zero.title",            "复位 Home/Zero"   },
     { "cmd.modeling.flow-not-assembled",               "该域流程未装配（随后续建模任务提供）" },
+    // —— requirements 域九键（行序＝requirements.md §9.8 命令表行序，
+    // PanelCommandCatalog::requirementsDomainCommands 登记序——两端顺序同源
+    // 该表；值＝工程用语短句，零 id/内部名词形——UX-02）——
+    { "cmd.requirements.import-csv.title",             "导入 CSV"         },
+    { "cmd.requirements.import-json.title",            "导入 JSON"        },
+    { "cmd.requirements.export-copy.title",            "导出副本"         },
+    { "cmd.requirements.capture-tcp.title",            "捕获 TCP"         },
+    { "cmd.requirements.pick-feature.title",           "拾取几何特征"     },
+    { "cmd.requirements.mirror-stations.title",        "镜像工位"         },
+    { "cmd.requirements.create-array.title",           "批量阵列"         },
+    { "cmd.requirements.apply-template.title",         "应用工艺模板"     },
+    { "cmd.requirements.regenerate-linked.title",      "按模板重生成"     },
 }};
 
 /// 键族②：七态短标签（state.<token>.label——§6.3 词表 token＋"中文"列；
@@ -197,6 +215,9 @@ constexpr std::array<TextRow, 32> kPresentationTable{{
 /// 全表拼接视图（查找入口——各键族数组顺序拼接，避免维护一份重复大表）。
 /// 注意 state.failed.label 在键族②与③中重复登记（七态与九态同键同值
 /// "失败"——§6.3 两表原文即同文），查找取先命中者，值一致故无歧义。
+/// UI-T24 勘误：键族①b（域命令标题）此前漏出本盘点面（registeredTextKeys
+/// 未含 kDomainCommandTitleTable——建模十键登记时引入的疏漏），随需求域
+/// 九键增行一并补全——盘点面与查找面必须一致（"登记即盘点"）。
 const TextRow* findRow(const TextKey& key)
 {
     // 表小（69 行）且调用频率为呈现路径，线性扫描足够（NFR-PERF-01 预算内）；
@@ -381,9 +402,14 @@ std::vector<TextKey> registeredTextKeys()
 {
     // 按各族登记序拼接；state.failed.label 双族重复登记只输出一次
     // （集合语义——键清单是"已登记键"的盘点，不是物理行清单）。
+    // 计数：7（阶段标题）＋20（域命令①b——UI-T24 起含需求域九键）＋7（七态）
+    // ＋9（九态，去重后 8）＋2＋2＋8＋3＋32＝89（reserve 供读面参考，非精确）。
     std::vector<TextKey> keys;
-    keys.reserve(69);
+    keys.reserve(89);
     for (const auto& row : kStageTitleTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kDomainCommandTitleTable) {
         keys.emplace_back(row.key);
     }
     for (const auto& row : kStatusWordLabelTable) {

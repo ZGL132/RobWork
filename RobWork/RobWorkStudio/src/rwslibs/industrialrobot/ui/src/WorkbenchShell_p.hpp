@@ -383,6 +383,29 @@ struct LayoutMemory {
     static void storeFlags(QSettings& settings, bool visibleLeft,
                            bool visibleRight, bool visibleBottom);
 
+    // ---- 辅助 Dock 可见性记忆（UI-T24——§10.1 v1.25）----
+    // 键面：layout/aux.<key>.visible（与三区旗标同组同文件、键面分区——
+    // PM-14 用户级设置；<key> 由调用方定义，词形稳定 ASCII）。宿主框架
+    // restoreState 早于域 Dock addDockWidget（装载时序根因链），框架 blob
+    // 对域 Dock 无效——跨会话记忆由本半区自持。
+
+    /// 辅助旗标读取结果：flags＝"键→可见性"（仅列出设置文件中实际存在的
+    /// 辅助键；空表＋Restored＝文件有版本键但无辅助键）。kind 语义与
+    /// FlagsLoadResult 一致——corrupt＝版本不识别、辅助键词形非法或类型
+    /// 不符（§4.5 同纪律：调用方整段丢弃回退默认）。
+    struct AuxFlagsLoadResult {
+        enum class Kind { Absent, Restored, Corrupt } kind = Kind::Absent;
+        std::map<std::string, bool> flags;  ///< 实际存在的辅助键→可见性
+    };
+
+    /// @brief 读取全部辅助 Dock 可见性键（无副作用；判别口径见 AuxFlagsLoadResult）。
+    static AuxFlagsLoadResult loadAuxFlags(QSettings& settings);
+
+    /// @brief 写入单个辅助 Dock 可见性键＋版本键（QSettings 按键写入保留
+    ///        组内其余键——三区旗标/几何/位形不受影响）。
+    static void storeAuxFlag(QSettings& settings, const std::string& key,
+                             bool visible);
+
     /// @brief 损坏段整段丢弃（§4.5 原文——remove("layout") 整组）。
     static void discard(QSettings& settings);
 };

@@ -1,0 +1,77 @@
+UI-T24 layout smoke @ 2026-09-29 20:20:33
+20:20:33 fixture-reset: no aux.domain.* keys present (clean first-start)
+20:20:33 layout started pid=79796
+20:20:39 layout exit=1
+20:20:39   [ird-ui-smoke-layout] started mode=first
+20:20:39   [ird-ui-smoke-layout] pass default-hidden:modeling
+20:20:39   [ird-ui-smoke-layout] pass default-hidden:requirements
+20:20:39   [ird-ui-smoke-layout] pass default-hidden:kinematics
+20:20:39   [ird-ui-smoke-layout] pass default-hidden:kinematics-advanced
+20:20:39   [ird-ui-smoke-layout] pass default-visible:main-dock
+20:20:39   [ird-ui-smoke-layout] pass default-visible:props-dock
+20:20:39   [ird-ui-smoke-layout] pass default-visible:tasks-dock
+20:20:39   [ird-ui-smoke-layout] pass central-view-nonzero (cur=476px)
+20:20:39   [ird-ui-smoke-layout] pass view-menu-aux-toggles=4 (cur=4)
+20:20:39   [ird-ui-smoke-layout] snap 1-default-layout.png
+20:20:39   [ird-ui-smoke-layout] pass view-menu-present
+20:20:39   [ird-ui-smoke-layout] snap 2-view-menu.png
+20:20:39   [ird-ui-smoke-layout] pass requirements-toggle-present
+20:20:39   [ird-ui-smoke-layout] pass requirements-summoned-visible
+20:20:39   [ird-ui-smoke-layout] pass requirements-memory-on
+20:20:39   [ird-ui-smoke-layout] snap 3-domain-panel-summoned.png
+20:20:39   [ird-ui-smoke-layout] snap 4-requirements-buttons.png
+20:20:39   [ird-ui-smoke-layout] pass registry-requirements-commands=9 (cur=9)
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.import-csv
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.import-json
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.export-copy
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.capture-tcp
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.pick-feature
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.mirror-stations
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.create-array
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.apply-template
+20:20:39   [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.regenerate-linked
+20:20:39   [ird-ui-smoke-layout] pass command-buttons-count=9 (cur=9)
+20:20:39   [ird-ui-smoke-layout] FAIL buttons-no-overlap (cur=66)
+20:20:39   [ird-ui-smoke-layout] snap 5-requirements-narrow.png
+20:20:39   [ird-ui-smoke-layout] FAIL buttons-no-overlap-narrow (cur=66)
+20:20:39   [ird-ui-smoke-layout] pass central-guard-at-min-window (cur=692px)
+20:20:39   [ird-ui-smoke-layout] snap 6-min-window.png
+20:20:39   [ird-ui-smoke-layout] report=D:\10_Source_Repos\21_robot\RobWork\RobWork\doc\industrial-robot-design\traceability\builds\ui-t24\smoke/geometry-report.txt
+20:20:39   [ird-ui-smoke-layout] failed-assert: buttons-no-overlap (cur=66)
+20:20:39   [ird-ui-smoke-layout] failed-assert: buttons-no-overlap-narrow (cur=66)
+20:20:39   [ird-ui-smoke-layout] FAILED
+20:20:39 run1(result)=1
+20:20:39 layout2 started pid=78020
+20:20:42 layout2 exit=0
+20:20:42   [ird-ui-smoke-layout] started mode=second
+20:20:42   [ird-ui-smoke-layout] pass memory-requirements-visible
+20:20:42   [ird-ui-smoke-layout] pass memory-modeling-still-hidden
+20:20:42   [ird-ui-smoke-layout] pass memory-kinematics-still-hidden
+20:20:42   [ird-ui-smoke-layout] pass central-guard-second-start (cur=444px)
+20:20:42   [ird-ui-smoke-layout] snap 7-second-start-memory.png
+20:20:42   [ird-ui-smoke-layout] report=D:\10_Source_Repos\21_robot\RobWork\RobWork\doc\industrial-robot-design\traceability\builds\ui-t24\smoke/geometry-report.txt
+20:20:42   [ird-ui-smoke-layout] DONE
+20:20:42 run2(result)=0
+20:20:42 LAYOUT_SMOKE_FAIL
+20:21:58 fixture-reset: own aux.domain.* keys cleared
+20:21:58 layout started pid=60624
+20:22:03 layout exit=1
+20:22:03   [ird-ui-smoke-layout] FAIL buttons-no-overlap (cur=66)
+20:22:03   [ird-ui-smoke-layout] FAIL buttons-no-overlap-narrow (cur=66)
+20:22:03   [ird-ui-smoke-layout] failed-assert: buttons-no-overlap (cur=66)
+20:22:03   [ird-ui-smoke-layout] failed-assert: buttons-no-overlap-narrow (cur=66)
+20:22:03   [ird-ui-smoke-layout] FAILED
+20:22:03 layout2 started pid=4600
+20:22:05 layout2 exit=0
+20:22:05   [ird-ui-smoke-layout] DONE
+20:22:05 run1=1 run2=0
+20:22:05 LAYOUT_SMOKE_FAIL
+20:24:59 fixture-reset: own aux.domain.* keys cleared
+20:24:59 layout started pid=93628
+20:25:03 layout exit=0
+20:25:03   [ird-ui-smoke-layout] DONE
+20:25:03 layout2 started pid=90104
+20:25:05 layout2 exit=0
+20:25:05   [ird-ui-smoke-layout] DONE
+20:25:05 run1=0 run2=0
+20:25:05 LAYOUT_SMOKE_PASS

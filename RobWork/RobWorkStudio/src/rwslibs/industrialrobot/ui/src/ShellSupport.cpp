@@ -288,6 +288,83 @@ void LayoutMemory::discard(QSettings& settings)
     settings.remove(kGroup);
 }
 
+// ---- 辅助 Dock 可见性记忆（UI-T24——§10.1 v1.25）------------------------
+
+LayoutMemory::AuxFlagsLoadResult LayoutMemory::loadAuxFlags(QSettings& settings)
+{
+    AuxFlagsLoadResult out;
+    // 损坏判别与 loadFlags 同源：版本键在但版本不识别＝整组按损坏（调用方
+    // discard 整段丢弃——辅助键与三区旗标同组，一损俱损，§4.5 口径统一）。
+    if (settings.contains(QString(kGroup) + '/' + kKeyVersion)) {
+        const int version = settings.value(QString(kGroup) + '/' + kKeyVersion, -1).toInt();
+        if (version != kLayoutFormatVersion) {
+            out.kind = AuxFlagsLoadResult::Kind::Corrupt;
+            return out;
+        }
+    }
+
+    // 收集辅助键：绝对键形 layout/aux.<key>.visible。前缀/后缀之间为业务键
+    // （调用方登记的稳定词形）；词形校验两道——不得含 '/'（路径式键形＝
+    // 词形外形态）、不得为空；值必须可转 bool（与 loadFlags 的 canConvert
+    // 同纪律：键在但类型不符＝损坏，不猜默认值）。
+    const QString prefix = QString(kGroup) + QLatin1String("/aux.");
+    const QString suffix = QLatin1String(".visible");
+    const QStringList allKeys = settings.allKeys();
+    for (const QString& fullKey : allKeys) {
+        if (!fullKey.startsWith(prefix) || !fullKey.endsWith(suffix)) {
+            continue;
+        }
+        const QString mid = fullKey.mid(prefix.size(),
+                                        fullKey.size() - prefix.size() - suffix.size());
+        if (mid.isEmpty() || mid.contains(QLatin1Char('/'))) {
+            out.kind = AuxFlagsLoadResult::Kind::Corrupt;
+            out.flags.clear();
+            return out;
+        }
+        const QVariant value = settings.value(fullKey);
+        if (!value.canConvert<bool>()) {
+            out.kind = AuxFlagsLoadResult::Kind::Corrupt;
+            out.flags.clear();
+            return out;
+        }
+        out.flags[mid.toStdString()] = value.toBool();
+    }
+
+    // 空表语义：无版本键且无辅助键＝无记忆（Absent）；有版本键但尚无辅助键
+    // ＝记忆组在、辅助半区空（Restored 空表——域面板从未被呼出过的正常态）。
+    out.kind = out.flags.empty()
+                   ? (settings.contains(QString(kGroup) + '/' + kKeyVersion)
+                          ? AuxFlagsLoadResult::Kind::Restored
+                          : AuxFlagsLoadResult::Kind::Absent)
+                   : AuxFlagsLoadResult::Kind::Restored;
+    return out;
+}
+
+void LayoutMemory::storeAuxFlag(QSettings& settings, const std::string& key,
+                                bool visible)
+{
+    // 业务键词形防线（写入侧唯一闸口）：只放行 ASCII 字母/数字/点——含
+    // '/' 或空键会让键形逃出 aux.<key>.visible 的词形约定（读取侧按词形
+    // 过滤，逃逸键将永久不可见且污染设置文件）。
+    if (key.empty()) {
+        return;  // 空键＝调用方契约违约：拒写（不抛——落盘线程值任务内
+                 // 不设异常出口；违约在登记处已由调用方侧测试钉住）
+    }
+    for (const char c : key) {
+        const bool ok = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                        || (c >= '0' && c <= '9') || c == '.';
+        if (!ok) {
+            return;  // 词形外字符＝同上拒写
+        }
+    }
+    // 版本键同拍保证：辅助旗标可能是该组首个写入键（嵌入式首次呼出域面板
+    // ——三区旗标尚未写过），版本键先行使记忆组自描述（load 系判别的依据）。
+    settings.setValue(QString(kGroup) + '/' + kKeyVersion, kLayoutFormatVersion);
+    settings.setValue(QString(kGroup) + QLatin1String("/aux.")
+                          + QString::fromStdString(key) + QLatin1String(".visible"),
+                      visible);
+}
+
 // =====================================================================
 // uiDiagnosticCodeDescriptors——ui 稳定诊断码表（§3.5 十码）
 // =====================================================================
