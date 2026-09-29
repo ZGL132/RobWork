@@ -1,0 +1,41 @@
+Note: Google Test filter = HostMigration.*
+[==========] Running 16 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 16 tests from HostMigration
+[ RUN      ] HostMigration.TreeProvider_DomainKeyAndHonestEmptySupply_ACC1
+[       OK ] HostMigration.TreeProvider_DomainKeyAndHonestEmptySupply_ACC1 (0 ms)
+[ RUN      ] HostMigration.TreeProvider_EmptySupplyPassesSharedRebuild_ACC1
+[       OK ] HostMigration.TreeProvider_EmptySupplyPassesSharedRebuild_ACC1 (0 ms)
+[ RUN      ] HostMigration.TreeProvider_CoexistsWithForeignProvider_ACC1
+[       OK ] HostMigration.TreeProvider_CoexistsWithForeignProvider_ACC1 (0 ms)
+[ RUN      ] HostMigration.PagesProvider_NoAnswerSurface_ACC1
+[       OK ] HostMigration.PagesProvider_NoAnswerSurface_ACC1 (0 ms)
+[ RUN      ] HostMigration.PagesProvider_InspectorShowsHonestNoProviderAnswer_ACC1
+[       OK ] HostMigration.PagesProvider_InspectorShowsHonestNoProviderAnswer_ACC1 (0 ms)
+[ RUN      ] HostMigration.Adapter_DownlinkSingleSelectionHighlights_ACC4
+[       OK ] HostMigration.Adapter_DownlinkSingleSelectionHighlights_ACC4 (0 ms)
+[ RUN      ] HostMigration.Adapter_DownlinkClearAndMultiSymmetric_ACC4
+[       OK ] HostMigration.Adapter_DownlinkClearAndMultiSymmetric_ACC4 (0 ms)
+[ RUN      ] HostMigration.Adapter_RuntimeOnlySelectionLeavesHighlightUntouched_ACC4
+[       OK ] HostMigration.Adapter_RuntimeOnlySelectionLeavesHighlightUntouched_ACC4 (0 ms)
+[ RUN      ] HostMigration.Adapter_UplinkView3DPickHonestNoReport_ACC1
+[       OK ] HostMigration.Adapter_UplinkView3DPickHonestNoReport_ACC1 (0 ms)
+[ RUN      ] HostMigration.Module_SharedSurfaceHandlesStableAndWired_ACC1
+[       OK ] HostMigration.Module_SharedSurfaceHandlesStableAndWired_ACC1 (0 ms)
+[ RUN      ] HostMigration.HostJointState_AppliesWithZeroRevision_ACC2
+[       OK ] HostMigration.HostJointState_AppliesWithZeroRevision_ACC2 (0 ms)
+[ RUN      ] HostMigration.HostJointState_PlaybackFramesDriveSameSeam_ACC3
+[       OK ] HostMigration.HostJointState_PlaybackFramesDriveSameSeam_ACC3 (0 ms)
+[ RUN      ] HostMigration.HostJointState_NonFiniteFailsFast_ACC2
+[       OK ] HostMigration.HostJointState_NonFiniteFailsFast_ACC2 (0 ms)
+[ RUN      ] HostMigration.HostJointState_MissingSeamHonestDegradation_ACC2
+[       OK ] HostMigration.HostJointState_MissingSeamHonestDegradation_ACC2 (0 ms)
+[ RUN      ] HostMigration.SessionPoseContractBitsFrozen_ACC2
+[       OK ] HostMigration.SessionPoseContractBitsFrozen_ACC2 (0 ms)
+[ RUN      ] HostMigration.Facade_ForwardsHostJointStateAndHandles_ACC2
+[       OK ] HostMigration.Facade_ForwardsHostJointStateAndHandles_ACC2 (0 ms)
+[----------] 16 tests from HostMigration (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 16 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 16 tests.

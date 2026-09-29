@@ -4329,6 +4329,26 @@
       "title": "F-430/F-432/F-433 同族在需求域三接入面的再现（共享呈现面冻结文案未挂 UiText 键系）：页面标题与复杂页入口标题与 deprecated 标记以 TU 局部冻结常量承载（文件头注明『文案改动＝契约改动，须升单元卡修订』——对端 UI-T22/modeling 同款惯例），沿『卡面文案单点』过渡先例，与 ui.md §6.6 载体偏差（非语义偏差；域文案归 requirements 单元卡管辖——零哈希/内部名泄漏，UX-02 未破）。",
       "owner": "requirements（随 P-DIAG-9 批次统一——与 ui 侧 F-430/F-432 及 modeling 侧 F-433 同批挂键）",
       "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键，不单独返工，不阻塞 WP-14-T10 合入（attempt 1 verdict=pass）。编号顺延自 F-434。"
+    },
+    {
+      "id": "F-436",
+      "source": "WP-15-T18 验收段（acc/WP-15-T18/1，2026-09-29；证据：kinematics/plugin/KinematicsPanelWidget.cpp 自持导航迁移状态标记文案〔objectName kinematicsNavDeprecationLabel——『业务主导航：共享工业项目树（本域接入面已注册，v1 暂无本域树对象——DTB O-44）；本面板自持导航保留可用（退役归 WP-24-T09）』〕＋app/HarnessMain.cpp 演示 Dock 标题〔『工业项目树（共享·WP-15-T18 演示）』『属性检查器（共享·WP-15-T18 演示）』〕——经共享呈现面/harness 呈现的域侧文案未挂 UiText 键系）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "F-430/F-432/F-433/F-435 同族在运动学域三接入面的再现（共享呈现面冻结文案未挂 UiText 键系）：deprecated 迁移状态标记与 harness 演示 Dock 标题以冻结字面常量承载（WP-15-T18 新增段，B1-SPEC §5.2 迁移期双形态标记——v1 措辞如实非虚标），沿『卡面文案单点』过渡先例，与 ui.md §6.6 载体偏差（非语义偏差；域文案归 kinematics 单元卡管辖——零哈希/内部名泄漏，UX-02 未破）。",
+      "owner": "kinematics（随 P-DIAG-9 批次统一——与 ui 侧 F-430/F-432、modeling 侧 F-433、requirements 侧 F-435 同批挂键）",
+      "resolution": "随 P-DIAG-9 文案资源文件迁移批次统一挂键，不单独返工，不阻塞 WP-15-T18 合入（attempt 1 verdict=pass）。编号顺延自 F-435。"
+    },
+    {
+      "id": "F-437",
+      "source": "WP-15-T18 验收段（acc/WP-15-T18/1，2026-09-29；证据：送验提交 7e015c6f 正文四段齐备但末尾无 Acc-Covered 标注——近期五任务主交付提交〔d84008e3/0cb8d53b/9c33ffd3/6dcbd686/3bbe8314〕均携带；WP-24-T03 辅助提交 4dbca0d8/90032ede 缺失而验收通过的判例在案）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-29",
+      "title": "PIPE §5 中断对账标注缺失（实施提交正文末尾无 Acc-Covered: 序号）：消账面无歧义（base..head 恰一提交＝acceptance 1~6 全覆盖，验收 4.4 证据表逐条具名盘点零遗漏），且已推送提交不可 amend（AGENTS §6.3 禁改写已推送历史）——判阻断将产生『修复必然违反更高红线』死锁，故按建议级登记（ACC §5 阻断判据枚举不含本项）。",
+      "owner": "治理/流程约定侧（所有者对『主交付提交缺 Acc-Covered 是否阻断』口径做最终裁决；后续任务恢复主交付提交带标注的既有实践）",
+      "resolution": "验收侧已代履行从重盘点义务（WP-15-T18 attempt 1 verdict=pass 不受影响）；本条留所有者抽查时裁决口径并确认后续实践。编号顺延自 F-436。"
     }
   ]
 }

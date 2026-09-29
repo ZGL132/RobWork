@@ -1,0 +1,19 @@
+Note: Google Test filter = HostMigration.Adapter_RuntimeOnly*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from HostMigration
+[ RUN      ] HostMigration.Adapter_RuntimeOnlySelectionLeavesHighlightUntouched_ACC4
+D:\10_Source_Repos\21_robot\acc-tmp\wp15-t18-a\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\HostMigrationTest.cpp(310): error: Value of: recorder.calls.empty()
+  Actual: false
+Expected: true
+
+[  FAILED  ] HostMigration.Adapter_RuntimeOnlySelectionLeavesHighlightUntouched_ACC4 (0 ms)
+[----------] 1 test from HostMigration (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] HostMigration.Adapter_RuntimeOnlySelectionLeavesHighlightUntouched_ACC4
+
+ 1 FAILED TEST
