@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T24",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主默认布局收敛与域命令文案语义化（体验收口）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": [
+    "UX-02（工程用语——界面零内部名泄漏；域命令按钮以 UiText 中文语义名呈现，禁止原始 commandId 直出）",
+    "NFR-MNT-03（单一权威——命令标题文案键值唯一出口归 UiText 键表，禁止面板侧第二文案源）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#6.6",
+    "units/ui.md#10.1",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/PanelCommandCatalog.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/PanelCommandCatalog.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t24",
+  "interUnit": false,
+  "knownPitfalls": [
+    "UI-T16 装载时序（v1.11 登记）：框架对插件 Dock 可见性的两步处理均在插件 initialize 返回之后——addPlugin 尾段 restoreState(QtMainWindowState) 对状态 blob 未登记的 Dock 按隐藏处理；默认布局收敛（P1）不得在 initialize 内同步设置可见后假设生效，必须沿用既有 singleShot 装载呈现自证（reassertEmbeddedPresentation）机制并在净室冒烟实证；处置约束＝宿主形态经 addPlugin 直装（无 loadPlugin 对话框路径的 visible=false 硬编码）但 restoreState 后置语义相同",
+    "F-430 家族（findings.json 在册）：域面板冻结文案未挂 UiText 键系——本任务 P3 消账需求域按钮一族，键值登记必须走 UiText.cpp 键族①b（§3.5 键约定 cmd.<id>.title），resolveText 为 fail-fast 语义（键未登记＝呈现层上抛），故键表完备性须有测试断言；处置约束＝禁止在面板侧私设第二文案源（NFR-MNT-03）",
+    "宽度收束钳制根因（WP-24-T09 tick#424 冒烟日志实证）：resizeDocks 目标宽度被某 Dock 内容最小宽度钳制（目标 962 px 实际 2092 px）——P2 修前必须先定位最小宽度来源（疑似需求面板命令按钮行/表格列最小宽），禁止盲调数值；处置约束＝钳制源不清则 P2 转 blocked 报告",
+    "布局记忆优先级：rwsettings.xml 既有记忆优先于默认布局（框架 restoreState 语义）——默认布局仅净室（无记忆）生效；acceptance 4 双场景（净室/二次启动）即此陷阱的验收面；处置约束＝禁止为『让默认布局生效』清除或改写用户记忆文件"
+  ],
+  "acceptance": [
+    "P1 默认布局收敛：净室启动（无 rwsettings.xml 记忆的全新 CWD）默认呈现面＝IRD 工作台主 Dock＋IRD 属性与诊断右 Dock＋IRD 任务和状态底 Dock，中央 RWStudioView3D 可见且宽度非零；三域自持面板（IRD 建模/IRD 需求/IRD 运动学）默认不呈现且经「视图」菜单（或等效既有通道）可勾选呼出、呼出后呈现正常——宿主 GUI 冒烟截图留痕（净室主窗口全景＋视图菜单展开面＋域面板呼出态）",
+    "P2 中央区保护：定位并记录宽度钳制源后实施中央视图最小可见宽度保障（装配侧尺寸策略/钳制），主窗口缩至最小或极端拖拽下中央区不归零——钳制源定位记录＋最小窗口 GUI 截图留痕；钳制源无法定位时本条转 blocked 报告所有者，不得盲调数值",
+    "P3 需求命令按钮语义化：UiText.cpp 键族①b 登记 cmd.requirements.* 九键（中文语义名）；RequirementsPanelWidget 命令按钮文案改经 PanelCommandCatalog 既有 titleKey→resolveText 解析（消账面板内『按钮暂以 id 呈现』过渡注释）；按钮行流式栅格重排，任意合理窗口宽度下无控件重叠——需求面板呼出态 GUI 截图（含窄窗口特写）＋键表完备性测试断言（UiText 侧或 PluginPanelTest 扩展，具名用例）",
+    "布局记忆兼容：二次启动（存在用户布局记忆）场景下用户布局优先、不被默认布局覆盖——净室首启与二次启动双场景 GUI 冒烟对比留痕",
+    "回归门禁：双模式构建零错误；ird_gates 收集态 base↔head 归一零新增命中（本任务零依赖边变化为预期，若命中集有增量须逐条登记）；ctest ird 标签全绿＋ui/modeling/requirements/kinematics 四域既有测试（含契约测试）不回归；validate-docs PASS",
+    "留痕 traceability/builds/ui-t24/（净室默认布局全景＋视图菜单展开＋域面板呼出态＋需求按钮行特写＋最小窗口＋构建/门禁日志＋钳制源定位记录）"
+  ],
+  "note": "立项来源：所有者 2026-09-29 宿主界面体验审查（WP-24-T09 交付后实测截图）授权『按推荐进行』——P1 默认布局收敛＋P2 中央区保护＋P3 需求命令按钮语义化三项一批；P4（占位文案收敛）不属本任务（归 P-DIAG-9 既有批次）；P5（双树视觉去重）经所有者推荐裁剪不立项。〔范围修正声明〕P3 落点实测在 requirements/plugin/RequirementsPanelWidget.cpp:142（按钮文本直用 d.id）与 PanelCommandCatalog.*（titleKey 派生已在、值登记缺）——域文件精确四件列入 allowedFiles（UI-T16 v1.11 先例：修复落点跨单元时按精确文件圈定）；requirements/** 其余仍禁改。〔与 P-DIAG-9 的边界〕本任务只消需求域命令按钮一族（九键），建模域十键已挂（WP-24-T03）、运动学面板标签已中文化（WP-15-T18），不重复覆盖；域面板其余冻结文案（页面标题等）仍归 F-430/F-435 家族 P-DIAG-9 批次。〔过渡态出处〕RequirementsPanelWidget.cpp:144 注释『按钮暂以 id 呈现，不虚构』即本任务 P3 的既登记消账对象（WP-14-T10 迁移时点遗留过渡）。"
+}

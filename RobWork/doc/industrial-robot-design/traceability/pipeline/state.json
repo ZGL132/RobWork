@@ -2146,7 +2146,13 @@
       "acceptance": 60
     }
   },
-  "queue": [],
+  "queue": [
+    {
+      "taskId": "UI-T24",
+      "branch": "ui-t24",
+      "contractPath": "tasks/foundation/UI-T24.json"
+    }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
