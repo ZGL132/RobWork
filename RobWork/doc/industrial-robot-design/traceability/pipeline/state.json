@@ -1,32 +1,36 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "awaiting_acceptance",
+  "phase": "idle",
   "tickCount": 415,
-  "currentTask": "WP-15-T18",
-  "branch": "wp15-t18",
-  "base": "3f7dd0f11d6908099acb8d94f7b581d1a0a396fe",
-  "headSha": "7e015c6f647d53be62cb5e044c0d0524b52c5bcb",
+  "currentTask": null,
+  "branch": null,
+  "base": null,
+  "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
-  "run": {
-    "kind": "acceptance",
-    "runId": "80188cab-5773-425d-afa5-88e8973d8d74",
-    "workerId": "e47e30e5-8f90-47cb-b767-bf43af27a5b5",
-    "startedAt": "2026-09-29T08:11:13+08:00",
-    "leaseExpiresAt": "2026-09-29T09:11:13+08:00",
-    "task": "WP-15-T18"
-  },
+  "run": null,
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 1
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-29T08:11:13+08:00",
+    "updatedAt": "2026-09-29T09:07:47+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "WP-15-T18",
+      "unit": "kinematics",
+      "result": "pass-merged",
+      "commits": [
+        "7e015c6f647d53be62cb5e044c0d0524b52c5bcb"
+      ],
+      "acceptanceRecord": "traceability/acceptance/WP-15-T18-20260929.md",
+      "mergedAt": "2026-09-29",
+      "failReason": "验收 attempt1 即 pass（非验收失败；单会话顺序执行模式——禁止子智能体，独立性降级已在记录声明）。本任务实施段含一次语义 blocked→所有者 O-44 裁决（出路②接入面 v1 诚实边界，契约 v1.2）→恢复实施→送验；tick#415 开局修复 awaiting_acceptance 残留 implement run（2e29b0ad 声明\"run 清待派\"而落盘未清——PIPE §0 可修复矛盾，提交 2cb0727d 注明）后派验收。验收侧 detached worktree 冷启双模式独立复现（集成六目标含宿主 ui_plugin 装配闭包零错误＋冒烟全树零错误；冷启前置件链 F-007/F-429 口径全量消费——vcpkg toolchain＋Qt 前缀＋ini 模板拷入，模板缺失卡点在本验收冷启实录复现）＋三变异注入实证测试真实失败能力（域键漂移 4 例红＋runtimeOnly 早退摘除 1 例红＋零 Qt 门禁 R3 注入咬合，均 git checkout 精确还原后复绿、送验 SHA 零触碰）；ird_gates 引擎直跑 base(3f7dd0f1)↔head 归一化 82↔82 集合零增量（逐条目粒度较实施侧 28 类口径更细，同判）；gtest 181（180 过＋1 envUnavailable 同惯例）＋契约 57/57＋HostMigration 16/16＋ctest 2/2 双树＋GUI 冒烟四序列逐字复现（nodeCount=0＝O-44 诚实空供给非缺陷）；validate-docs PASS（20 units/202 tasks）。②③合并零冲突，findings.json 并集例外未触发；验收建议级 F-436（UiText 冻结文案族运动学域再现——navDeprecationLabel＋harness Dock 标题，随 P-DIAG-9 批次）与 F-437（实施提交 7e015c6f 正文末尾缺 Acc-Covered 标注——近期五任务主交付提交均有；消账面经盘点＝acceptance 1~6 全覆盖零歧义，已推送不可 amend 故按建议级登记、口径裁决留所有者）随 acc/WP-15-T18/1 转登"
+    },
     {
       "task": "WP-14-T10",
       "unit": "requirements",
@@ -2110,11 +2114,6 @@
     }
   },
   "queue": [
-    {
-      "taskId": "WP-15-T18",
-      "branch": "wp15-t18",
-      "contractPath": "tasks/foundation/WP-15-T18.json"
-    },
     {
       "taskId": "UI-T23",
       "branch": "ui-t23",

@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-F",
   "title": "运动学迁移（三接入面＋Jog/Playback 呈现衔接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-14-T10"
   ],
