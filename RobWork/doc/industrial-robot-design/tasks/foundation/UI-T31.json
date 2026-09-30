@@ -4,8 +4,10 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "区域/工况检查器字段编辑提交协议（功能对照批次 B2）",
-  "status": "planned",
-  "dependsOn": ["UI-T30"],
+  "status": "ready",
+  "dependsOn": [
+    "UI-T30"
+  ],
   "requirements": [
     "UX-02（工程用语——就地错误中文呈现，零命令 id 直出）",
     "UX-05（数值＋单位同显——单位归标签侧，可编辑值保持纯数值可解析；区域长度 m/采样间距 m/覆盖率无量纲、工况负载 N/节拍 s）",
@@ -20,7 +22,14 @@
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/BuildGraphContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/PeerFaceContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/units/requirements.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
@@ -34,7 +43,8 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/app/**"
   ],
   "outputs": [
     "implementation",
@@ -64,5 +74,5 @@
     "门控联动：只读门控（setWritable(false)）对区域/工况检查器生效，浏览/预览类不受影响——gui 具名用例",
     "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t31/"
   ],
-  "note": "功能对照批次 B2——规划卡（planned，待独立评审放行）：开工前按 CCP 增量修订细化。立项来源＝所有者 2026-09-30 需求界面功能对照会话；所有者确认 B 拆 B1/B2（字段编辑风险面：控件类型、单位解析、拒绝回填、幻影脏化——与 B1 结构操作分离）。旧版对应功能：区域 15 列表格逐格提交（commitBoxRegionTableEdit）与工位检查器逐字段提交——新版以检查器＋提交协议等价承接（表格直编形态不照搬，四页签布局为已裁决既有形态）。UI-T27 诚实登记的区域/工况只读降级由本批消除。需求语义零变化。"
+  "note": "功能对照批次 B2——规划卡（planned，待独立评审放行）：开工前按 CCP 增量修订细化。立项来源＝所有者 2026-09-30 需求界面功能对照会话；所有者确认 B 拆 B1/B2（字段编辑风险面：控件类型、单位解析、拒绝回填、幻影脏化——与 B1 结构操作分离）。旧版对应功能：区域 15 列表格逐格提交（commitBoxRegionTableEdit）与工位检查器逐字段提交——新版以检查器＋提交协议等价承接（表格直编形态不照搬，四页签布局为已裁决既有形态）。UI-T27 诚实登记的区域/工况只读降级由本批消除。需求语义零变化。〔v1.1 放行评审细化——所有者 2026-10-01『放行』口令，CCP 开工前细化兑现：①allowedFiles 由 requirements/** 收敛为精确文件面（plugin/include/src/test/gui_test/两契约测试/CMakeLists——include+src 为字段编辑原语『缺则补』条件面〔upsert 整条目既有，预计不触发〕，app/** 移入禁止面）；②acceptance 细化锚定既有设施（权威值对照＝irdAuthoritativeValue 既有模式〔T27 落位〕/单位解析＝FormEditCommon.parseFieldValueText 唯一出口/字段编辑接受走 onEditApplied 既有 sink 链——UI-T29 组合子就绪重估复用）；③knownPitfalls 补三条（组合子链路复用/契约扫描面预闭合〔T27/T29/T30 教训〕/F-444 PNG -f 口径）；④gui_test 用例挂既有 sdurws_ird_requirements_gui_test 目标（零新目标——ird_gates 归一零新增为预期）。需求语义零变化。』"
 }
