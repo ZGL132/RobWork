@@ -24,7 +24,10 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPluginAssembly.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/BuildGraphContractTest.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
@@ -36,6 +39,8 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsUiModule.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsUiModule.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/assembly/sdurws/ird/kinematics/KinematicsPluginAssembly.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPluginAssembly.cpp",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/units/modeling.md",
     "RobWork/doc/industrial-robot-design/units/requirements.md",
@@ -85,5 +90,5 @@
     "P1-3 运动学求解门控与输入提示：目标输入标签带单位（m）＋占位示例；refreshAll 同步求解按钮使能（服务缺位禁用）——kinematics 既有测试零回归＋截图",
     "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿（含新建 modeling gui_test 目标）＋layout 冒烟双场景重跑＋validate-docs PASS；留痕 traceability/builds/ui-t27/"
   ],
-  "note": "立项来源：所有者 2026-09-30『开工』指令——本会话 UI 审计（用户三症状：按钮无反应/建模点树输入框持续变动/3D 视图下走）＋外部审计会话交叉复核共同定位的缺陷批次。〔根因映射〕按钮无反应＝①18/19 域命令未装配且反馈不可见＋②需求宿主路径 setCommandSubmit 从未注入（本任务新发现——需求九按钮在宿主被面板层静默吞掉）；输入框持续变动＝ModelingPanelWidget.cpp:356 removeRow(0) 单次无循环（表单行无上限增长——requirements 三处同型代码均带 while 循环的正确模式，全仓唯一漏网）；3D 下走＝高概率同源于面板无界膨胀挤压布局（修复 P0-1 后复测确认，ArcBall 卡拖拽为备选）。〔编号重整〕本任务占用 UI-T27（此前登记的'B1.2 第一批剩余项'顺延为 UI-T28——检查器分组折叠/树状态图标/tabify/尺寸调整）。〔堆叠声明〕dependsOn=UI-T26 且分支基点＝ui-t26 head（3717c308，验收 pass 待合入）——合入序 T25→T26→T27。〔范围〕P0 五项全修＋P1 三项（编辑期重建防护以'未修改短路'承载——原位更新重构留后续）；P1'Dock 高度约束'与 P2 各项不做（P0-1 修复消除高度增长根源）。"
+  "note": "立项来源：所有者 2026-09-30『开工』指令——本会话 UI 审计（用户三症状：按钮无反应/建模点树输入框持续变动/3D 视图下走）＋外部审计会话交叉复核共同定位的缺陷批次。〔根因映射〕按钮无反应＝①18/19 域命令未装配且反馈不可见＋②需求宿主路径 setCommandSubmit 从未注入（本任务新发现——需求九按钮在宿主被面板层静默吞掉）；输入框持续变动＝ModelingPanelWidget.cpp:356 removeRow(0) 单次无循环（表单行无上限增长——requirements 三处同型代码均带 while 循环的正确模式，全仓唯一漏网）；3D 下走＝高概率同源于面板无界膨胀挤压布局（修复 P0-1 后复测确认，ArcBall 卡拖拽为备选）。〔编号重整〕本任务占用 UI-T27（此前登记的'B1.2 第一批剩余项'顺延为 UI-T28——检查器分组折叠/树状态图标/tabify/尺寸调整）。〔堆叠声明〕dependsOn=UI-T26 且分支基点＝ui-t26 head（3717c308，验收 pass 待合入）——合入序 T25→T26→T27。〔范围〕P0 五项全修＋P1 三项（编辑期重建防护以'未修改短路'承载——原位更新重构留后续）；P1'Dock 高度约束'与 P2 各项不做（P0-1 修复消除高度增长根源）。〔v1.1 范围修正——验收 attempt1 阻断 B-1 返工登记，2026-09-30〕allowedFiles 增补五件：①modeling/assembly/.../ModelingPluginAssembly.hpp＋modeling/plugin/ModelingPluginAssembly.cpp＋kinematics/assembly/.../KinematicsPluginAssembly.hpp＋kinematics/plugin/KinematicsPluginAssembly.cpp——P0-4'三域统一注入'的必然落点（面板经各自装配门面创建，availability 出线绑定只经门面 PUBLIC 面——O-45'只出线不重写'门面先例同款，实现提交 dc5e6650 已按此形态落地、登记当时缺位）；②modeling/contract_test/BuildGraphContractTest.cpp——新建 sdurws_ird_modeling_gui_test 目标的单元构建图白名单登记（契约白名单是该单元 CMake 门禁的登记面，新目标必须入册；attempt1 阻断 B-2 补建测试面的连带登记）。同一修订内补齐 attempt1 另两阻断：B-2 测试面（gui_test 目标＋五具名用例＋ui assembled=false 用例——见 CMakeLists/gui_test 增量）＋B-3 留痕（traceability/builds/ui-t27/ 三域截图九帧＋ctest 全量日志＋门禁日志＋冒烟驱动）。"
 }

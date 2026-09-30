@@ -163,8 +163,10 @@ TEST(MdlBuildGraph, UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：六条登记边＋本单元五目标（产品/插件/两测试/harness app）
-    // ＋sdurws_ird_ui（T15 插件链接面——仅插件目标，行级钉住见
+    // 白名单：六条登记边＋本单元六目标（产品/插件/两测试/gui_test/harness
+    // app——gui_test＝UI-T27 返工补建目标〔 Widgets 级面板契约，链接面仅
+    // 本单元 _plugin＋testkit 报告设施，同 _test 形态〕）＋sdurws_ird_ui
+    // （T15 插件链接面——仅插件目标，行级钉住见
     // NoBusinessUnitOrExtraPlatformEdge）＋sdurws_ird_testkit（报告设施
     // ——T-1 允许形态＝仅测试目标可链，产品目标由 NoTestkitEdge 钉住）。
     // _app＝harness 增量（owner 指示 2026-09-26——链接面仅本单元
@@ -174,6 +176,7 @@ TEST(MdlBuildGraph, UnitEdgesSixRegisteredAndClosed_WP13T02_ACC2_ACC3)
                                      "sdurws_ird_modeling_app",
                                      "sdurws_ird_demo6r",
                                      "sdurws_ird_modeling_test",
+                                     "sdurws_ird_modeling_gui_test",
                                      "sdurws_ird_modeling_contract_test",
                                      "sdurws_ird_ui",
                                      "sdurws_ird_testkit"};
@@ -299,7 +302,8 @@ TEST(MdlBuildGraph, NoTestkitEdgeOnProductTarget_WP13T02_ACC2)
         // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析）。
         const bool onTestTargetLine
             = (line.find("sdurws_ird_modeling_test") != std::string::npos
-               || line.find("sdurws_ird_modeling_contract_test") != std::string::npos)
+               || line.find("sdurws_ird_modeling_contract_test") != std::string::npos
+               || line.find("sdurws_ird_modeling_gui_test") != std::string::npos)
               && line.find("target_link_libraries") != std::string::npos;
         EXPECT_TRUE(onTestTargetLine)
             << "testkit 引用必须落在测试目标链接语句行（T-1：产品目标零 "

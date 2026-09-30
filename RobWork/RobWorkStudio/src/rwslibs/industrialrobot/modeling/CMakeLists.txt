@@ -652,6 +652,57 @@ endmacro()
 
 ird_add_gtest(sdurws_ird_modeling_test)
 
+# ---- GUI 测试目标 sdurws_ird_modeling_gui_test（UI-T27 返工补建）----
+# 建模面板 Widgets 级契约测试（P0-1 表单全清/P0-2 单位分离/P0-3 仅
+# zero-offset 可编/P1-1 幻影脏化短路具名用例＋P0-4 provider 禁用呈现
+# ——UI-T27 验收 attempt1 阻断 B-2 的测试面补齐；先例＝
+# sdurws_ird_ui_gui_test 同款形态：QApplication main＋ird_gui 串行标签，
+# testkit §6.7 单实例纪律）。ctest 注册附 ENVIRONMENT 平台插件路径
+# （QT_QPA_PLATFORM_PLUGIN_PATH——由 Qt6_DIR=<Qt>/lib/cmake/Qt6 反推
+# <Qt>/plugins/platforms；ctest 直跑 GUI 用例的平台插件解析口径，消除
+# 对运行方环境变量的隐式依赖）。
+add_executable(sdurws_ird_modeling_gui_test
+    gui_test/TestMainReport.cpp
+    gui_test/ModelingPanelGuiTest.cpp)
+
+target_compile_features(sdurws_ird_modeling_gui_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_modeling_gui_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_modeling_gui_test PRIVATE /utf-8)
+endif()
+
+# 链接面＝sdurws_ird_modeling_plugin（其 PUBLIC 面携带 modeling＋ui＋
+# Qt Widgets——ModelingPanelWidget 被测面）＋testkit（报告监听器）＋
+# gtest（断言面）。单行登记形态＝BuildGraphContractTest 的行级扫描约束
+# （testkit 引用必须与测试目标名/target_link_libraries 同行——避免多行
+# 块解析）。
+target_link_libraries(sdurws_ird_modeling_gui_test PRIVATE sdurws_ird_modeling_plugin sdurws_ird_testkit GTest::gtest)
+
+# 插件私有头解析（测试消费 plugin/ModelingPanelWidget.hpp——同单元
+# PRIVATE 面；sdurws_ird_modeling_test 同款口径）。
+target_include_directories(sdurws_ird_modeling_gui_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 运行期 DLL 就近复制（ui gui_test 同款——TARGET_RUNTIME_DLLS 闭包落
+# bin 目录，ctest 直跑免环境 PATH 依赖）。
+add_custom_command(TARGET sdurws_ird_modeling_gui_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_modeling_gui_test>
+            $<TARGET_FILE_DIR:sdurws_ird_modeling_gui_test>
+    COMMAND_EXPAND_LISTS)
+
+ird_add_gtest(sdurws_ird_modeling_gui_test)
+
+# ctest 标签与环境（ird_gui 串行——testkit §6.7；ENVIRONMENT 平台插件
+# 路径变量展开发生在配置期，机器布局随 Qt 包走）。
+get_filename_component(_ird_modeling_qt_root "${Qt6_DIR}/../../.." ABSOLUTE)
+set_tests_properties(sdurws_ird_modeling_gui_test PROPERTIES
+    LABELS "ird_gui"
+    ENVIRONMENT "QT_QPA_PLATFORM_PLUGIN_PATH=${_ird_modeling_qt_root}/plugins/platforms")
+
 # ---- 契约测试目标 sdurws_ird_modeling_contract_test（随 WP-13-T02 登记）----
 # 落位期契约面＝构建图边界契约（reporting LinkageContractTest 同款扫描
 # 形态——六条登记边的存在性/封闭性/无业务域互链/testkit 仅测试目标）；

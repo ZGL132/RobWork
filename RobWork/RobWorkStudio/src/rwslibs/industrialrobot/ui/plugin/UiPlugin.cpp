@@ -2961,6 +2961,41 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                 }
             }
 
+            // UI-T27 返工补拍：建模/运动学域面板呼出＋特写截图（三域面板
+            // 留痕——验收证据面；机制＝需求面板同款菜单动作触发）。呼出
+            // 截图后随即关闭——首轮落盘的辅助记忆必须保持"仅需求面板可见"
+            // （二次启动场景的 memory-*-still-hidden 断言依赖该初态）。
+            const std::pair<const char*, const char*> domainSnaps[] = {
+                {kAuxKeyModelingDock, "8-modeling-panel.png"},
+                {kAuxKeyKinematicsDock, "9-kinematics-panel.png"},
+            };
+            for (auto& [auxKey, snapName] : domainSnaps) {
+                QAction* domainToggle = nullptr;
+                for (auto& [key, action] : m_hostAuxToggles) {
+                    if (key == auxKey) {
+                        domainToggle = action;
+                        break;
+                    }
+                }
+                check(domainToggle != nullptr,
+                      std::string(auxKey) + "-toggle-present");
+                if (domainToggle == nullptr) {
+                    continue;
+                }
+                domainToggle->trigger();
+                settleEvents(300);
+                const QDockWidget* domainDock =
+                    (auxKey == kAuxKeyModelingDock ? m_modelingDock
+                                                   : m_kinematicsDock);
+                check(domainDock != nullptr && domainDock->isVisible(),
+                      std::string(auxKey) + "-summoned-visible");
+                if (domainDock != nullptr && domainDock->widget() != nullptr) {
+                    snapPng(domainDock->widget(), snapName);
+                }
+                domainToggle->trigger();  // 关闭复位（记忆初态保持——见上）
+                settleEvents(300);
+            }
+
             // P2 断言：最小窗口（§4.4 1280×720）下中央区不归零（装配侧
             // 保障生效——事件观察＋回推已在 reassert 安装）。
             hostWindow->resize(1280, 720);

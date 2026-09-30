@@ -1089,4 +1089,64 @@ TEST_F(WorkbenchContentGuiTest, TopContextBarSelectionResolved_UI_T26)
     EXPECT_TRUE(content->shutdown());
 }
 
+// =====================================================================
+// UI-T27 P0-4 注册期门控（注册表半区）：未装配域命令＝已登记但不可执行
+// （availability 禁用＋统一原因键 cmd.flow-not-assembled.reason——按钮/
+// 命令面板/菜单共享同一快照的来源）；已装配命令不受影响。
+// =====================================================================
+
+TEST_F(WorkbenchContentGuiTest, DomainCommandAssembledFalse_RegisteredDisabledWithReason_UI_T27)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    deps.extraCommandOwners = {"ird.test.domain"};
+
+    // 未装配条目（assembled=false——UiPlugin 三域盘点形态的测试投影：
+    // 占位处理器在册，但注册期进"已登记不可执行"态，不伪装可用）。
+    ui::WorkbenchContentDeps::DomainCommandEntry notAssembled;
+    notAssembled.descriptor.id = "test.domain.flow-not-assembled";
+    notAssembled.descriptor.ownerUnit = "ird.test.domain";
+    notAssembled.descriptor.titleKey = "cmd.test.domain.flow-not-assembled.title";
+    notAssembled.descriptor.menuPath = ui::MenuPath{"工具/测试"};
+    notAssembled.handler = [](const std::vector<ui::CommandParameter>&) {
+        ui::CommandOutcome out;
+        out.accepted = true;
+        return out;
+    };
+    notAssembled.assembled = false;
+
+    // 已装配对照条目（assembled=true——同 owner 真实执行面投影）。
+    ui::WorkbenchContentDeps::DomainCommandEntry assembled = notAssembled;
+    assembled.descriptor.id = "test.domain.assembled";
+    assembled.descriptor.titleKey = "cmd.test.domain.assembled.title";
+    assembled.assembled = true;
+
+    deps.domainCommandEntries.push_back(notAssembled);
+    deps.domainCommandEntries.push_back(assembled);
+
+    auto content = ui::createWorkbenchContent(deps);
+    ASSERT_TRUE(content->build());
+    auto& registry = content->commandRegistry();
+
+    // 未装配：已登记＋不可执行＋统一原因键（UiText 中文解析的键半区）。
+    const ui::CommandAvailability unavailable =
+        registry.availability("test.domain.flow-not-assembled");
+    EXPECT_TRUE(unavailable.registered) << "未装配命令未登记（发现性丢失）";
+    EXPECT_FALSE(unavailable.enabled) << "未装配命令可执行（伪装可用——ERR-01 违约）";
+    EXPECT_EQ(unavailable.disableReasonKey,
+              ui::DisableReason{"cmd.flow-not-assembled.reason"});
+
+    // 已装配：登记且默认谓词全放行（可用性不受本门控拖累）。
+    const ui::CommandAvailability available =
+        registry.availability("test.domain.assembled");
+    EXPECT_TRUE(available.registered);
+    EXPECT_TRUE(available.enabled) << "已装配命令被误禁（门控过宽）";
+    EXPECT_TRUE(available.disableReasonKey.empty());
+
+    // 有界拆卸收口（本用例未触发布局/设置写入——shutdown 返回 false＝
+    // 写队列为空的合法语义，不断言真值；幂等）。
+    content->shutdown();
+}
+
 }  // namespace
