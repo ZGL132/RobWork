@@ -1,29 +1,66 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "awaiting_merge",
+  "phase": "idle",
   "tickCount": 433,
-  "currentTask": "UI-T25",
-  "branch": "ui-t25",
-  "base": "b4f48c5d7d280b0c4324134b9793e68b86e01ab8",
-  "headSha": "b4f48c5d7d280b0c4324134b9793e68b86e01ab8",
-  "acceptedHead": "b4f48c5d7d280b0c4324134b9793e68b86e01ab8",
-  "acceptanceRecord": {
-    "branch": "acc/UI-T25/1",
-    "path": "traceability/acceptance/UI-T25-20260930.md",
-    "commit": "b4f48c5d7d280b0c4324134b9793e68b86e01ab8"
-  },
+  "currentTask": null,
+  "branch": null,
+  "base": null,
+  "headSha": null,
+  "acceptedHead": null,
+  "acceptanceRecord": null,
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 1
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-09-30T03:40:00+08:00",
+    "updatedAt": "2026-10-01T05:10:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T27",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "37ab8102",
+        "dc5e6650",
+        "d63dca9a",
+        "3070b75a"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T27-20260930-r2.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收史＝attempt1 fail（acc/UI-T27/1@74ba3c9a——B-1 四件 assembly 越界未登记／B-2 承诺测试面缺失／B-3 留痕缺失；证据分支保留）→所有者『返工』指令→返工提交 3070b75a（契约 v1.1 范围修正＋sdurws_ird_modeling_gui_test 新目标五具名用例＋ui gui_test assembled=false 用例＋留痕 builds/ui-t27/ 三域截图九帧＋ui.md v1.32/DTB v0.35 落位登记）→attempt2 pass（acc/UI-T27/2@b0fa837c——§4.1~§4.11 全项 PASS，双变异全新实证）。插件面板缺陷修复批次 P0×5＋P1×3：建模表单全清〔removeRow(0) 单次无循环〕/单位分离/仅 zero-offset 可编/未装配命令注册期禁用〔DomainCommandEntry.assembled＋enablement 恒禁〕/幻影脏化消除＋需求宿主提交出口补线〔setCommandSubmit 从未注入——审计新发现〕/需求区域选中保持＋预览随选中/运动学求解门控与输入提示。验证＝双模式零错误〔ird-smoke-t27-rework 独立冒烟树 27 测试目标自包含〕＋ctest 五单元 11 目标 100%〔含新 gui_test〕＋layout 冒烟双场景 LAYOUT_SMOKE_PASS〔三域呼出截图九帧——关闭复位保证二次启动断言初态〕＋ird_gates 90→93 恰增 3 条随登记件〔新测试目标同单元链接——零产品新边〕＋validate-docs PASS。合入口径：PIPE §4.7②③〔evidence SHA b0fa837c＋代码 SHA 3070b75a——漂移检测通过〕；state.json 冲突按 F-426 红线主线版本保留〔两次〕。段内治理提交 d63dca9a（UI-T29~T34 立项六卡——需求界面功能对照批次 A~E，所有者确认批次结构 v2）随本段携带合入；建议级 F-442/F-443 随 3070b75a 转登在册"
+    },
+    {
+      "task": "UI-T26",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "88e14fa9",
+        "eb902e93",
+        "d49bdfaf",
+        "3717c308"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T26-20260930.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（单会话顺序执行模式——独立性降级已在记录声明）。对象上下文栏与项目树检索（B1.2 第一阶段第一批；所有者 2026-09-30 界面评审『认可』立项）：P1 顶栏上下文栏〔三标签＋noteSelectionForContext 契约面增量 §10.1 v1.29 注⑭〕＋P2 项目树检索〔容器化＋applyFilter〕＋P3 建模命令四组分节＋P4 需求页签状态行。验证＝双变异实证＋ird_gates 67 处命中同形态零新增＋ctest 五单元全绿＋layout 冒烟双场景 PASS＋留痕 builds/ui-t26/。合入口径：PIPE §4.7②③〔SHA 3717c308——验收记录随任务段〕；state.json 冲突按 F-426 红线主线版本保留"
+    },
+    {
+      "task": "UI-T25",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "4b36b225",
+        "a032a0c4",
+        "b4f48c5d"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T25-20260930.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（单会话顺序执行模式——独立性降级已在记录声明）。界面文案治理与空态引导：P0 文案治理〔三域迁移标记挂 UiText 键族⑨——F-430/F-432 消账〕＋P0 空态引导〔下一步建议静态页签〕＋P1 占位收敛＋P1 qt_zh_CN 翻译装载＋P2 需求命令条分组。验证＝布局冒烟双场景 LAYOUT_SMOKE_PASS＋ctest 全绿＋ird_gates 同形态零新增＋双变异实证＋留痕 builds/ui-t25/。合入口径：PIPE §4.7②③〔SHA b4f48c5d——验收记录随任务段〕；合入零冲突"
+    },
     {
       "task": "UI-T24",
       "unit": "ui",
@@ -2166,9 +2203,9 @@
   },
   "queue": [
     {
-      "taskId": "UI-T25",
-      "contractPath": "tasks/foundation/UI-T25.json",
-      "branch": "ui-t25"
+      "taskId": "UI-T29",
+      "contractPath": "tasks/foundation/UI-T29.json",
+      "branch": "ui-t29"
     }
   ],
   "docRefs": {

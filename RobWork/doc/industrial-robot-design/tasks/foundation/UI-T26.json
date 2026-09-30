@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "对象上下文栏与项目树检索（B1.2 第一阶段第一批）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T25"],
   "requirements": [
     "UX-02（工程用语——上下文栏/树过滤/页签状态行的呈现文本零内部名，对象名经名称端口解析显示名）",

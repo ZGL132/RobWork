@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "插件面板缺陷修复批次（表单增长/单位混编/死按钮/死输入框）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T26"],
   "requirements": [
     "UX-02（工程用语——未装配命令的禁用原因呈现中文，不出现命令 id 英文直出）",

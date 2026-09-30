@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "界面文案治理与空态引导（体验优化第二批）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": [
     "UX-02（工程用语——界面零内部名泄漏：域面板迁移标记等用户可见文案去除 WP-xx/DTB-x/O-xx/deprecated 等内部任务编号与开发术语；呈现名挂 UiText 键解析）",
