@@ -1,0 +1,9 @@
+== 冷启构建（cmake --build acc-build-ui-t27 --config Release，第二轮续跑）==
+cmake-exit=1（失败目标＝框架 RWSimulatorPlugin.vcxproj + rwplugin.vcxproj——ird 范围零错误）
+     71 RWSimulatorPlugin.vcxproj
+      2 rwplugin.vcxproj
+
+== ird 测试目标显式构建 ==
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\bin\Release\gtest_main.dll done
+exit=0

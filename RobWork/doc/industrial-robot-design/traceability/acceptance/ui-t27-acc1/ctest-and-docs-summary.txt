@@ -1,0 +1,17 @@
+== 五单元 ctest 摘要（冷启树 acc-build-ui-t27，2026-09-30）==
+（初跑 gui_test 因缺 QT_QPA_PLATFORM_PLUGIN_PATH 环境失败——显式注入后 10/10 全绿；环境口径注：T25/T26 同树型跑法）
+ui          : ui_test Passed + ui_contract_test Passed + ui_gui_test Passed（需 QT_QPA_PLATFORM_PLUGIN_PATH）= 3/3
+modeling    : modeling_test Passed + modeling_contract_test Passed = 2/2
+requirements: requirements_test Passed + requirements_contract_test Passed = 2/2
+kinematics  : kinematics_test Passed + kinematics_contract_test Passed = 2/2
+runtime     : runtime_test Passed = 1/1
+
+== 用例级计数（直跑 exe 对账实现提交信息）==
+ui_test          : 239 ran, 239 passed, 0 skipped
+modeling_test    : 282 ran, 282 passed, 0 skipped  ← 提交信息『建模 282/282』吻合
+requirements_test: 199 ran, 198 passed, 1 skipped(V22RegisteredNotExecuted) ← 『198/199』吻合
+kinematics_test  : 181 ran, 180 passed, 1 skipped(KinGuiPresentation) ← 『180/181』吻合
+runtime_test     : 266 ran, 265 passed, 1 skipped(ChildProcessWorker)
+
+== validate-docs ==
+PASS (20 units, 12 trace entries, 213 task files)
