@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求对象生命周期编辑：工位/区域/工况新增、复制、删除（功能对照批次 B1）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["UI-T29"],
   "requirements": [
     "UX-02（工程用语——操作结果与拒绝原因中文呈现）",
@@ -20,7 +20,14 @@
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/BuildGraphContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/PeerFaceContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/units/requirements.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
@@ -34,7 +41,8 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/app/**"
   ],
   "outputs": [
     "implementation",
@@ -50,18 +58,19 @@
   "branch": "ui-t30",
   "interUnit": false,
   "knownPitfalls": [
-    "Editor 结构原语（新增/复制/删除）若域侧缺失先补 requirements include+src（本契约允许面）＋requirements _test 单测：I-REQ-1 集合规范序、I-REQ-2 id 唯一、I-REQ-3 名称唯一在插入/复制时强制——处置约束＝面板零私改集合，一律经 editor.applyEdit",
+    "Editor 结构原语（新增/复制/删除）若域侧缺失先补 requirements include+src（本契约允许面）＋requirements _test 单测：I-REQ-1 集合规范序、I-REQ-2 id 唯一、I-REQ-3 名称唯一在插入/复制时强制——处置约束＝面板零私改集合，一律经 editor.applyEdit；新增源文件需 CMakeLists 源列表同步登记",
     "删除后选中锚与焦点转移：共享树/域面板/检查器三处选中语义经 SelectionService 唯一汇聚点联动，防悬空引用——处置约束＝删除被选中对象时的回落选中规则具名用例钉住",
     "复制产物诚实性：GenerationProvenance 不伪造（复件非模板生成物——source 溯源按域侧词表如实登记）——处置约束＝域侧单测钉住溯源字段",
-    "结构编辑入局部撤销（草稿级）栈：一次结构操作恰一枚快照，撤销/重做完整回滚集合——处置约束＝空变化（幂等操作）不产生快照（UI-T27 幻影脏化语义同源）",
-    "堆叠声明：分支基点＝ui-t29 head（待合入）——合入序 T25→T26→T27→T29→T30"
+    "结构编辑入局部撤销（草稿级）栈：一次结构操作恰一枚快照，撤销/重做完整回滚集合——处置约束＝空变化（幂等操作）不产生快照（UI-T27 幻影脏化语义同源）；结构操作后经 UI-T29 既有组合子链路触发就绪重估（postEditAction 复用——不另开第二刷新路径）",
+    "requirements 契约扫描面预闭合（T27/T29 教训）：若新增测试目标/源文件，BuildGraphContractTest 白名单与 PeerFaceContractTest T-2 行级扫描同步登记；gui_test 用例加挂在既有 sdurws_ird_requirements_gui_test 目标（零新目标——ird_gates 归一零新增为预期）",
+    "堆叠声明：分支基点＝redesign-main HEAD（UI-T29 合入收尾 effbf3bc 之后——领取时冻结；若主线在领取前移动以领取时点为准）"
   ],
   "acceptance": [
-    "新增：工位/区域/工况三类对象新增入口（树/页签）→树/表同步出现新行＋id 自动分配不撞号——gui 具名用例＋域侧 UT（I-REQ-2/3 拒重）",
-    "复制：副本独立可编辑、与源对象字段等值、溯源字段如实登记——gui 具名用例",
-    "删除：删除被选中对象→选中锚回落规则生效、共享树/检查器零悬空——gui 具名用例",
-    "撤销：新增→撤销→集合完整回滚→重做恢复；局部撤销栈语义与 UI-T29 一致——gui 具名用例",
-    "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t30/"
+    "新增：工位/区域/工况三类对象新增入口（树/页签工具行）→树/表同步出现新行＋id 自动分配不撞号（I-REQ-2）＋默认名不撞名（I-REQ-3 拒绝面）——域侧 UT（Editor 插入拒绝重名/重号）＋gui 具名用例（新增后树投影含新行）",
+    "复制：副本独立可编辑、与源对象字段等值、溯源字段如实登记（非伪造模板溯源）——域侧 UT 钉住溯源＋gui 具名用例（复制后条目数＋1 且选中落副本）",
+    "删除：删除被选中对象→选中锚回落规则生效（回落同集合次条或清空——具名断言）、共享树/检查器零悬空——gui 具名用例",
+    "撤销：新增→撤销→集合完整回滚→重做恢复；一次结构操作恰一枚局部快照（幂等操作零快照）——域侧 UT＋gui 具名用例；结构操作后就绪重估经既有 postEditAction 组合子触发（校验页随结构变更刷新）",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿（含 requirements _test 新增 UT＋gui_test 新增用例）＋layout 冒烟双场景＋validate-docs PASS；留痕 traceability/builds/ui-t30/（smoke PNG 按 F-444 口径 git add -f 补录）"
   ],
-  "note": "功能对照批次 B1——规划卡（planned，待独立评审放行）：开工前按 CCP 增量修订细化（allowedFiles 收敛为精确文件面＋验收用例细化）。立项来源＝所有者 2026-09-30 需求界面功能对照会话（对照 main 分支 engineeringrequirements 插件 Add/Duplicate/Remove Station、Add/Duplicate/Remove Region 功能面）；所有者确认 B 拆 B1/B2：对象生命周期主要验证 applyEdit 结构操作，字段编辑另涉控件类型/单位解析/拒绝回填/幻影脏化——拆开易定位问题。B1 先行：B2（UI-T31）需要本批产出的对象作编辑载体。旧版对应功能：Add Station/Duplicate Station/Remove Station、Add/Duplicate/Remove Region。需求语义零变化。"
+  "note": "立项来源：所有者 2026-09-30 需求界面功能对照会话（对照 main 分支 engineeringrequirements 插件 Add/Duplicate/Remove Station、Add/Duplicate/Remove Region 功能面）；所有者确认 B 拆 B1/B2：对象生命周期主要验证 applyEdit 结构操作，字段编辑另涉控件类型/单位解析/拒绝回填/幻影脏化——拆开易定位问题。B1 先行：B2（UI-T31）需要本批产出的对象作编辑载体。旧版对应功能：Add Station/Duplicate Station/Remove Station、Add/Duplicate/Remove Region。〔v1.1 放行评审细化——所有者 2026-10-01『放行 B1』口令，CCP 开工前细化兑现：①allowedFiles 由 requirements/** 收敛为精确文件面（plugin/include/src/test/gui_test/两契约测试/CMakeLists——src+include 为 Editor 结构原语缺则补的域侧落位面，app/** 移入禁止面）；②acceptance 细化为可验证断言（I-REQ-2/3 拒绝面、溯源钉住、锚回落具名断言、恰一枚快照）；③knownPitfalls 增补三条（T29 组合子链路复用/契约扫描面预闭合〔T27/T29 教训〕/F-444 PNG 补录口径）；④堆叠声明改为领取时点冻结（UI-T29 已合入——基点随主线走）。需求语义零变化。"
 }
