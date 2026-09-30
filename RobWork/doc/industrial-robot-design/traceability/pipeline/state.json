@@ -1,23 +1,27 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "blocked",
+  "phase": "awaiting_merge",
   "tickCount": 433,
-  "currentTask": null,
-  "branch": null,
-  "base": null,
-  "headSha": null,
-  "acceptedHead": null,
-  "acceptanceRecord": null,
+  "currentTask": "UI-T25",
+  "branch": "ui-t25",
+  "base": "85918a07e26344e04acbcbdf71b7c8183dea5bc2",
+  "headSha": "b4f48c5d7d280b0c4324134b9793e68b86e01ab8",
+  "acceptedHead": "b4f48c5d7d280b0c4324134b9793e68b86e01ab8",
+  "acceptanceRecord": {
+    "branch": "acc/UI-T25/1",
+    "path": "traceability/acceptance/UI-T25-20260930.md",
+    "commit": "b4f48c5d7d280b0c4324134b9793e68b86e01ab8"
+  },
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 0
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-30T00:32:42+08:00",
-    "ticksNoProgress": 3
+    "updatedAt": "2026-09-30T03:35:00+08:00",
+    "ticksNoProgress": 0
   },
   "history": [
     {
@@ -2165,6 +2169,11 @@
       "taskId": "UI-T25",
       "contractPath": "tasks/foundation/UI-T25.json",
       "branch": "ui-t25"
+    },
+    {
+      "taskId": "UI-T26",
+      "contractPath": "tasks/foundation/UI-T26.json",
+      "branch": "ui-t26"
     }
   ],
   "docRefs": {

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T26",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "对象上下文栏与项目树检索（B1.2 第一阶段第一批）",
+  "status": "ready",
+  "dependsOn": ["UI-T25"],
+  "requirements": [
+    "UX-02（工程用语——上下文栏/树过滤/页签状态行的呈现文本零内部名，对象名经名称端口解析显示名）",
+    "PM-11（项目状态呈现——上下文栏与状态栏同源投影，不建第二套状态判定）",
+    "NFR-MNT-03（单一权威——上下文栏消费 ProjectContextProjection/SelectionChange 既有投影，零新建状态源）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#4.2",
+    "units/ui.md#10.1",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t26",
+  "interUnit": false,
+  "knownPitfalls": [
+    "§4.2 顶栏行与 §4.4 尺寸数值为冻结契约面（UI-T24/T25 先后增量登记过）：P1 撤除顶栏占位说明行（kTopBarDeferredNotice）并以三标签上下文栏（项目/当前对象/草稿）取代＝顶栏行增量修订——落位时 ui.md §4.2 增量登记必须先行于/随同实现提交；处置约束＝不顺手动中央区与底部页签契约面（中央占位断言 WorkbenchShellGuiTest CentralView3DPlaceholder 在册）",
+    "UI-T25 GUI 用例断言面在册（AdviceGuideAndPlaceholderConvergence 断言顶栏合并占位恰一条）：P1 撤除该行＝既有用例断言同步修订，禁止留红；处置约束＝修订后 sdurws_ird_ui_gui_test 全量全绿＋layout 冒烟双场景重跑（冒烟断言涉中央/命令条/记忆——顶栏文本不在其断言面，预期零影响但必须实跑）",
+    "项目树五分组封闭清单（UI-T21/B1-SPEC §3——增量须 B1-SPEC 修订）：P2 搜索/过滤只作用于呈现（隐藏行/组），不增删分组、不改组序、不改 kNodeIdRole 与选中信号语义；占位行（装配失败占位）无节点身份，搜索态一律隐藏（非对象行不参与匹配）；处置约束＝IndustrialProjectTreeGuiTest 既有 INV-B1~B4 用例零回归",
+    "选择转发线程与缺省语义：noteSelectionForContext 消费 SelectionService 广播（UI 交互源同线程）——只做标签文本更新零端口 IO（NFR-PERF-01）；无订阅方/无项目/未选中＝标签回退『未选择』『未打开项目』（缺省回退不虚构，UX-02）；名称解析失败（nameResolver nullopt）同样回退，不显示 ObjectId 规范形；处置约束＝IWorkbenchContent 新增纯虚方法的所有实现方（含测试替身 ContentDouble）同批补齐，漏补＝编译期暴露",
+    "modeling/requirements 两域仅面板两件精确文件可触（UI-T24/T25 先例同款）：P3 分节标题与 P4 页签状态行为纯呈现（不触碰域命令目录/处理器/Provider）；建模按钮集合与目录顺序不变（分组只加分节标题行）；需求命令条按钮集合不变（UI-T24 冒烟按 findChildren<QPushButton> 九键对照）；处置约束＝ctest modeling/requirements 既有测试零回归"
+  ],
+  "acceptance": [
+    "P1 顶栏上下文栏：顶栏撤除占位说明行，呈现『项目：〈显示名|未打开项目〉｜当前对象：〈显示名|未选择〉｜草稿：〈有未应用修改|无未应用修改〉』三标签＋只读徽标（既有 PM-07 语义不变）；IWorkbenchContent 增 noteSelectionForContext(const SelectionChange&)（选择上下文入口——名称经 wiring.nameResolver 解析，失败回退占位）；数据源＝presentProjectContext 既有投影（PM-11 同源）；GUI 具名用例（无项目/有项目可写/只读/草稿脏/选择解析成功〔Fixed 名称解析替身〕/选择清空回退六态）＋宿主 GUI 截图＋ui.md §4.2 顶栏行增量登记",
+    "P2 项目树检索：IndustrialProjectTreePanel widget() 容器化＝搜索框（显示名子串、大小写不敏感）＋分组过滤下拉（全部＋五分组）＋树；过滤/搜索只隐藏行不改分组结构与选中语义；GUI 具名用例（搜索命中与隐藏/分组过滤/清空回退/占位行搜索态隐藏）＋面板截图",
+    "P3 建模命令分节：工具页纵列按目录语义四组分节标题（对象与导入/参数/几何与姿态/校验与导出）——按钮集合、目录顺序、使能态逻辑零变化；面板截图＋源码对照声明",
+    "P4 需求页签状态行：工位/区域/工况三页头呈现『〈页名〉：〈当前对象显示名|未选择对象〉』随树选中刷新；校验页头『校验：尚未执行』（诚实静态——动态校验状态归后续任务）；面板截图（未选态＋选中态）＋requirements 既有测试零回归",
+    "回归门禁：双模式构建零错误（集成＋独立冒烟树）；ird_gates 收集态 base↔head 归一零新增命中（零依赖边变化为预期）；ctest 五单元（ui/modeling/requirements/kinematics/runtime）全绿＋UI-T25 既有用例修订后 gui_test 全量通过；layout 冒烟双场景重跑 LAYOUT_SMOKE_PASS；validate-docs PASS",
+    "留痕 traceability/builds/ui-t26/（上下文栏/树检索/建模分节/需求页签截图＋构建/门禁/测试/冒烟日志）"
+  ],
+  "note": "立项来源：所有者 2026-09-30 界面评审『认可』B1.2 第一阶段方向（评估会话对五张最新截图〔界面ui/操作台·建模·需求·运动学·运动学求解器〕的对比评估结论：四类清单中第二批可立即立项，三项冲突项待裁决）。〔批次边界〕本任务＝第一阶段第一批四项（顶栏上下文栏/树检索/建模分节/需求页签状态行）；第一批剩余项（属性检查器分组折叠/树节点状态图标/tabify 页签化/默认 Dock 尺寸调整）体量独立，随 UI-T27 另行立项；三项与在册设计冲突项（复杂编辑页进中央区〔O-38 裁决③/SA-18 D1 中央区所有权〕/求解配置并入运动学主面板〔UX-04 高级面板登记形态〕/项目树结果·证据·报告拆三分组〔B1-SPEC §3 封闭清单〕）不属本任务——待所有者/B1-SPEC 增量修订裁决后另行立项。〔范围修正声明〕modeling/requirements 各两件精确文件列入 allowedFiles（UI-T24/T25 先例同款：P3/P4 落点在域插件面板文件），两域其余禁改。〔堆叠声明〕dependsOn=UI-T25 且分支基点＝ui-t25 head（b4f48c5d，验收 pass 待所有者合入）——T26 改动面（RequirementsPanelWidget/WorkbenchContent/UI-T25 GUI 用例）与 T25 直接交叠，平铺并行必致语义冲突；合入序 T25→T26。〔明确不做〕『当前阶段』字样不进上下文栏（阶段导航归 UI-T09 未落地——不虚构能力）。"
+}
