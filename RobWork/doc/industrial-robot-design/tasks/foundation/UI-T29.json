@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T29",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求域宿主会话接线＋最小校验（功能对照批次 A）",
+  "status": "ready",
+  "dependsOn": ["UI-T27"],
+  "requirements": [
+    "UX-02（工程用语——校验提示/门禁原因/状态行摘要中文呈现，零命令 id 英文直出）",
+    "ERR-01（诚实呈现——校验页由『尚未执行』静态转为如实实时预检；应用被阻断时原因可见；无会话空态不虚构数据）",
+    "PM-11（同源投影——就绪判定唯一权威＝域侧 Readiness 纯函数，UI 零第二状态源零第二判定）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/requirements.md#4.6",
+    "units/requirements.md#8",
+    "units/ui.md#13",
+    "units/ui.md#4.1",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t29",
+  "interUnit": false,
+  "knownPitfalls": [
+    "PM-11 单一权威：就绪判定只在域侧 Readiness（requirements.md §8 纯函数既有）；本任务 UI 侧只做『编辑接受→重估→投影』刷新编排接线，零判定逻辑入 ui/plugin——处置约束＝校验页保持纯投影（P-REQ-6），判定面单测归 requirements _test 既有目标",
+    "预检时机＝editingFinished 接受粒度（非逐键、非定时轮询）：半输入值不得触发噪声诊断——处置约束＝重估挂在既有 applyStationEditSet 成功路径，具名用例钉住『被拒绝的编辑不触发重估』",
+    "会话接线不得绕过命令网关：草稿应用仍走 buildDraftCommand(\"requirements\")→apply-requirement-set 信封（O-36 取号语义不变：编辑期临时句柄、正式 id 归 project）；项目级撤销仍经 edit.undo ui 命令——处置约束＝零私开写路径，noteAppliedRevision 锚前移沿用 DomainAssembly 既有编排",
+    "基线闭包提供器注入形态＝ui 侧最小端口适配（O-31 惯例）：ui 零对 requirements 私有头的 include——处置约束＝经 RequirementsPluginAssembly 门面出线（O-45 先例；§14.6 v0.13 会话接线五方法 attachEditor/bindSessionAnchor/noteAppliedRevision/bindReadiness/onSessionDetached 即为本批预埋的接缝），装配失败保持占位降级不崩（UI-PLUGIN-ASSEMBLY-FAILED 既有语义）",
+    "新建 requirements 面板 gui_test 目标（sdurws_ird_requirements_gui_test）：ctest 标签 ird_gui 串行（testkit §6.7）；_test 目标同型豁免先例——ird_gates 归一零新增为预期，若有命中逐条登记；本目标同时补建 UI-T27 诚实登记的『requirements 面板级 gui_test 目标缺口』",
+    "堆叠声明：分支基点＝ui-t27 head（dc5e6650，实施已推待验收）——改动面与 T27 直接交叠（RequirementsPanelWidget/UiPlugin/DomainAssembly），平铺并行必致语义冲突；合入序 T25→T26→T27→T29，验收段须核对基点 SHA"
+  ],
+  "acceptance": [
+    "会话接线-数据面：产品装配形态打开含需求对象的工程→需求四集合对象入域面板树/区域表/工况表＋共享工业项目树需求分组——requirements gui_test 具名用例；无会话空态保持既有诚实占位（不虚构数据）",
+    "会话接线-编辑生效：工位检查器编辑经真实编辑器会话生效——接受＝状态行中文摘要＋脏标记；拒绝＝就地错误＋回退权威值（UI-T27 既有语义在宿主路径全量可用）——gui 具名用例",
+    "最小校验-即时预检：编辑接受后校验页刷新 R0~R9 分层计数＋逐项行＋点击定位跳转（校验页『尚未执行』静态退役）——gui 具名用例（预检随编辑刷新；拒绝编辑不触发重估）",
+    "最小校验-应用门控：工作集存在 Blocking→草稿应用命令禁用＋tooltip 指明阻断对象；Blocking 清零→恢复可用——gui 具名用例双态（bindCommandAvailability 同源机制——按钮/命令面板/注册表一处控制）",
+    "最小校验-稳定诊断：校验页/状态行透出 requirements DiagCodes 稳定码＋中文短文案（键登记 UiText，UX-02）——gui 具名用例",
+    "草稿链真实数据面：草稿落盘（60s 定时/手动）→应用→修订前进＋noteAppliedRevision 锚前移；『撤销上次应用（项目级）』可用——gui 具名用例",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿（含新建 requirements gui_test 目标）＋layout 冒烟双场景＋validate-docs PASS；留痕 traceability/builds/ui-t29/"
+  ],
+  "note": "立项来源：所有者 2026-09-30 需求界面功能对照会话——对照 main 分支 engineeringrequirements 插件全功能清单（冻结参考实现，仅作功能范围对照；实现口径仍为从头构建，DTB 实现口径行不变），确认新版三层差距：壳与投影已就位／九条域命令注册期禁用未装配／需求域宿主会话未接线（DomainAssembly attachEditor(nullptr)——面板树恒空、检查器不可编辑、校验页『尚未执行』）。所有者确认批次结构 v2：B 拆 B1/B2（对象生命周期与字段编辑风险面不同）；最小校验并入本批（编辑后即时预检→阻断项显示→应用按钮门控→稳定诊断提示四件——缺此则 UI-T30/T31/T32 开发期无法自证编辑有效性）。〔范围〕本批＝会话接线（基线闭包提供器→四集合入树/表→工位检查器真实生效→草稿链数据面）＋最小校验四件；不含对象生命周期增删复制（UI-T30）、区域/工况字段编辑（UI-T31）、九命令 UI 流程（UI-T32）、三维交互（UI-T33）、校验体验收口（UI-T34）。两项上游待裁决（DTB §4.2 O-46/O-47：冻结工件文件化导出承接与否、Info 级/confidence 承接与否）不阻塞本批。需求语义零变化。"
+}

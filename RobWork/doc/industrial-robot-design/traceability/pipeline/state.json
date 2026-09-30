@@ -20,7 +20,7 @@
     "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-09-30T04:20:00+08:00",
+    "updatedAt": "2026-09-30T20:08:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -2179,6 +2179,11 @@
       "taskId": "UI-T27",
       "contractPath": "tasks/foundation/UI-T27.json",
       "branch": "ui-t27"
+    },
+    {
+      "taskId": "UI-T29",
+      "contractPath": "tasks/foundation/UI-T29.json",
+      "branch": "ui-t29"
     }
   ],
   "docRefs": {

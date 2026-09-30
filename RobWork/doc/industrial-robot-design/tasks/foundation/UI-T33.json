@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T33",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求域三维呈现与拾取（功能对照批次 D）",
+  "status": "planned",
+  "dependsOn": ["UI-T29"],
+  "requirements": [
+    "UX-02（工程用语——三维标记/预览说明中文）",
+    "ERR-01（诚实呈现——参考系缺失等三维预览失败原因可见；View3D 未落位期不虚构三维能力）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/ui.md#13",
+    "units/ui.md#4.1",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t33",
+  "interUnit": false,
+  "knownPitfalls": [
+    "开工前置＝中央区三维视图接管（ui.md UI-T05 其余内容，阶段 B）另行落位——本卡是需求域消费侧：RegionPreviewSink 注入与 reportView3DPick 上行均以 View3DContract.hpp 九项交互契约为范围边界——处置约束＝前置未落位时本卡保持 blocked 不虚行",
+    "三维呈现数据面＝会话投影非第二状态源（PM-11）：工位标记/区域边界框/采样格着色全部从会话工作集投影派生，随编辑刷新——处置约束＝着色判定（Good/Weak/Failed）归域侧采样纯函数，UI 零判定",
+    "拾取收口：Ctrl+双击上行经 reportView3DPick 既有桥（WP-14-T10 出线面）→UI-T32 拾取流程壳解除引导——处置约束＝拾取坐标→工位写回走域侧 applyPickToOrientation 既有纯函数＋确认凭据语义",
+    "宿主 WorkCell 回调保持正交观测（O-38 ③/O-43 生命周期边界）：三维对象挂接不接管宿主场景生命周期——处置约束＝关闭清理走 teardownSharedSurfacesForClose 既有编排语义",
+    "堆叠声明：分支基点＝ui-t32 head 或其前置合入后的 redesign-main（以开工时流水线状态为准，验收段核对基点 SHA）"
+  ],
+  "acceptance": [
+    "工位标记：非禁用工位在三维视图显示坐标轴＋名称标签，随会话编辑/选择刷新，解析失败隐藏——gui/宿主冒烟取证",
+    "区域边界框：选中区域→三维视图边界框预览；参考系缺失→失败原因可见——gui 具名用例＋截图",
+    "采样格着色：评估结果就位时 Good/Weak/Failed 着色预览（判定归域侧）——gui 具名用例＋截图",
+    "三维拾取收口：Ctrl+双击 Frame→reportView3DPick→拾取几何特征命令写回（UI-T32 流程壳解除引导）——gui 具名用例",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t33/"
+  ],
+  "note": "功能对照批次 D——规划卡（planned，待独立评审放行；开工前置＝View3D 阶段 B 落位，落位任务另行立项）。立项来源＝所有者 2026-09-30 需求界面功能对照会话。旧版对应：工位标记（addFrameAxis＋文本标签＋掩码防碰撞）、选中区域蓝色边界框（WorkspaceRegionSceneVisualizer）、采样格 Good/Weak/Failed 着色（上限 2000 单元均匀抽样）、Ctrl+双击几何特征拾取（frameSelectedEvent）——新版以 View3D 契约＋RegionPreviewSink/reportView3DPick 出线面等价承接，不照搬旧实现（实现口径仍为从头构建）。需求语义零变化。"
+}
