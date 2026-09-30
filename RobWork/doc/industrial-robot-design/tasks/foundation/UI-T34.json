@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T34",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求域校验与应用体验收口（功能对照批次 E）",
+  "status": "planned",
+  "dependsOn": ["UI-T29"],
+  "requirements": [
+    "UX-02（工程用语——引导文案/过滤标签全中文）",
+    "ERR-01（诚实呈现——应用被拒时阻断分组＋定位动作可见；修订只增不改语义如实呈现不借用『冻结』心智）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/requirements.md#8",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t34",
+  "interUnit": false,
+  "knownPitfalls": [
+    "本批是呈现与引导层打磨，判定面零新增（R0~R9 域侧既有、UI-T29 已接线即时预检）——处置约束＝本批零 Readiness 语义改动，校验页保持纯投影（P-REQ-6）",
+    "应用被拒引导：prepare 管线 Blocking→RejectedHardAssert 既有语义（O-39 现场重算不持久化）——本批只做拒绝结果的分组呈现＋逐项定位动作，不改 prepare 管线——处置约束＝拒绝路径具名用例（不吞错、原因可见）",
+    "『修订只增不改』语义呈现：应用后编辑走新修订（非旧版冻结锁定）——文案与状态呈现必须按三态模型（requirements.md §4.6）表达，防用户按旧版 Check-and-Publish 冻结心智误读——处置约束＝文案评审对照 §4.6 逐句核对",
+    "evidence 投影核验：readinessSummary 两字段直投 evidence ①级门禁（O-39）端到端核验属验收证据面，不改命令协议（apply-requirement-set/apply-requirement-import 两 token 族 D-REQ-9 不变）",
+    "可与 UI-T32/T33 并行（依赖仅 UI-T29）——共享文件交叠面（RequirementsPanelWidget 校验页）并行时以合入序消解，开工时按流水线状态声明堆叠基点"
+  ],
+  "acceptance": [
+    "校验页过滤：逐项诊断按层级（Blocking/Warning/NotApplicable）与稳定码过滤——gui 具名用例",
+    "应用被拒引导：Blocking 分组呈现＋逐项定位跳转（复用既有 m_selection.locate）——gui 具名用例",
+    "修订语义呈现：应用后状态行/上下文栏文案如实表达『新修订产生、旧修订不变』——gui 具名用例＋文案评审留痕",
+    "顶栏联动：项目/当前对象/草稿三标签随需求会话刷新（noteSelectionForContext 既有契约的消费核验）——gui 具名用例",
+    "evidence 投影核验：readinessSummary→①级门禁端到端留痕（既有语义核验非新能力）——核验记录入验收证据",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t34/"
+  ],
+  "note": "功能对照批次 E——规划卡（planned，待独立评审放行）。立项来源＝所有者 2026-09-30 需求界面功能对照会话；所有者确认最小校验随批次 A（UI-T29）先行交付，本批保留呈现与引导层收口：逐项过滤、应用被拒引导、修订语义呈现、顶栏联动、evidence 投影核验——等价替代 main 分支旧版『校验并发布（Check and Publish）』的门禁体验（未过校验不能发布→应用命令 Blocking 硬断言；发布后锁定编辑→修订只增不改），不承接冻结工件语义（requirements.md §2.5 既有裁决；文件化工件导出与否见 DTB §4.2 O-46 待裁决）。需求语义零变化。"
+}

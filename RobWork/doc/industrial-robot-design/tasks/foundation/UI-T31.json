@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T31",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "区域/工况检查器字段编辑提交协议（功能对照批次 B2）",
+  "status": "planned",
+  "dependsOn": ["UI-T30"],
+  "requirements": [
+    "UX-02（工程用语——就地错误中文呈现，零命令 id 直出）",
+    "UX-05（数值＋单位同显——单位归标签侧，可编辑值保持纯数值可解析；区域长度 m/采样间距 m/覆盖率无量纲、工况负载 N/节拍 s）",
+    "ERR-01（诚实呈现——拒绝回退权威值；未修改不产生未应用标记）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/ui.md#13",
+    "units/ui.md#4.1",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t31",
+  "interUnit": false,
+  "knownPitfalls": [
+    "L-R2 提交协议推广保持五要件不缺：irdAuthoritativeValue 权威值对照（防幻影脏化——UI-T27 未修改短路语义延伸到区域/工况行）、FormEditCommon.parseFieldValueText 单位解析唯一出口、拒绝就地报错＋回退权威值、editingFinished 失焦语义（readOnly 行失焦仍触发信号）、只读门控 setWritable 联动——处置约束＝五要件逐条具名用例",
+    "字段单位制逐类适配不得复用错档：区域（位置/尺寸 m、采样间距 m、覆盖率 0~1 无量纲、采样点数整数钳制）与工况（负载 N、节拍 s）解析器分档——处置约束＝每类字段至少一条正/反用例（含越界与单位错档拒绝）",
+    "派生字段不回写（I-REQ-10）：检查器展示的派生值（如就绪诊断引用的字段）不因编辑回写工作集——处置约束＝权威值对照的基准＝工作集权威值非派生值",
+    "区域/工况若需域侧字段编辑原语增量（Editor set 字段族缺失时）先补 requirements include+src＋UT——处置约束＝面板零私改工作集",
+    "堆叠声明：分支基点＝ui-t30 head（待合入）——合入序 T25→T26→T27→T29→T30→T31"
+  ],
+  "acceptance": [
+    "区域检查器可写：字段编辑四态（接受/拒绝/回退/未修改不脏化）——gui 具名用例；解除 UI-T27 诚实降级的只读态",
+    "工况检查器可写：字段编辑四态同上——gui 具名用例",
+    "单位解析：区域/工况全部可编辑字段经 FormEditCommon 唯一出口解析；单位错档/越界拒绝并就地报错——gui 具名用例",
+    "防幻影脏化：未修改失焦/回车零 PendingEdit 零 sessionDirty；修改后恰一次——gui 具名用例（UI-T27 短路语义跨域一致）",
+    "门控联动：只读门控（setWritable(false)）对区域/工况检查器生效，浏览/预览类不受影响——gui 具名用例",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t31/"
+  ],
+  "note": "功能对照批次 B2——规划卡（planned，待独立评审放行）：开工前按 CCP 增量修订细化。立项来源＝所有者 2026-09-30 需求界面功能对照会话；所有者确认 B 拆 B1/B2（字段编辑风险面：控件类型、单位解析、拒绝回填、幻影脏化——与 B1 结构操作分离）。旧版对应功能：区域 15 列表格逐格提交（commitBoxRegionTableEdit）与工位检查器逐字段提交——新版以检查器＋提交协议等价承接（表格直编形态不照搬，四页签布局为已裁决既有形态）。UI-T27 诚实登记的区域/工况只读降级由本批消除。需求语义零变化。"
+}

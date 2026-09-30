@@ -1186,8 +1186,22 @@ void WorkbenchContentImpl::assembleCommandSystem()
     // Dev 诊断，不覆盖不静默）。拒绝不中止装配（§11.3 失败隔离——报告面
     // 归 Dev 日志，宿主注册循环另有 outcome 消费）。
     for (const auto& entry : m_deps.domainCommandEntries) {
+        // UI-T27 P0-4：未装配的域命令必须在注册期进入“已登记但不可执行”
+        // 状态。这样面板仍可展示命令发现性，但不会把占位处理器伪装成
+        // 可用功能；禁用原因由 UiText 键统一解析，菜单/命令面板/面板按钮
+        // 共享同一 availability 快照。
+        const EnablementPredicate enablement =
+            entry.assembled
+                ? EnablementPredicate{}
+                : EnablementPredicate{[](const UiContextSnapshot&) {
+                      return std::optional<DisableReason>{
+                          DisableReason{"cmd.flow-not-assembled.reason"}};
+                  }};
         const RegistrationResult result =
-            m_commands->registerCommand(entry.descriptor, entry.handler);
+            entry.assembled
+                ? m_commands->registerCommand(entry.descriptor, entry.handler)
+                : m_commands->registerCommandWithPredicates(
+                      entry.descriptor, entry.handler, nullptr, enablement);
         if (result != RegistrationResult::Ok) {
             emitDev("domain command registration rejected: id=" +
                     entry.descriptor.id + " result=" +
@@ -1481,11 +1495,9 @@ void WorkbenchContentImpl::refreshCommandStates()
         const CommandAvailability a = m_commands->availability(commandId);
         button->setEnabled(a.enabled);
         // 禁用原因随按钮 tooltip 呈现（§7.4"禁用＋说明"——发现性保留）。
-        button->setToolTip(a.enabled
-                               ? QString()
-                               : QString::fromUtf8(a.disableReasonKey == WorkbenchText::kReasonReadOnly
-                                                       ? WorkbenchText::kReasonReadOnlyText
-                                                       : WorkbenchText::kReasonNoProjectText));
+        button->setToolTip(
+            a.enabled ? QString()
+                      : QString::fromStdString(resolveText(a.disableReasonKey)));
     }
     // 宿主层 chrome 同步（菜单动作/视图开关勾选态——未注册＝无 chrome，
     // 纯内容场景同样成立）。
@@ -1519,11 +1531,7 @@ void WorkbenchContentImpl::submitCommand(const std::string& commandId)
             QString::fromUtf8(u8"未知命令：") + QString::fromStdString(commandId), 4000);
         return;
     }
-    showStatusFeedback(
-        QString::fromUtf8(a.disableReasonKey == WorkbenchText::kReasonReadOnly
-                              ? WorkbenchText::kReasonReadOnlyText
-                              : WorkbenchText::kReasonNoProjectText),
-        4000);
+    showStatusFeedback(QString::fromStdString(resolveText(a.disableReasonKey)), 4000);
 }
 
 // =====================================================================

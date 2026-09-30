@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T32",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求域九条命令 UI 流程装配（功能对照批次 C）",
+  "status": "planned",
+  "dependsOn": ["UI-T30"],
+  "requirements": [
+    "UX-02（工程用语——对话框/预览/错误列表全中文）",
+    "ERR-01（诚实呈现——导入失败列行级错误不部分写入；未装配依赖缺位如实降级禁用＋说明）",
+    "UX-05（数值＋单位同显——模板/阵列/导入参数表单单位标注；导入单位声明预览）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/ui.md#13",
+    "units/ui.md#4.1",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t32",
+  "interUnit": false,
+  "knownPitfalls": [
+    "九命令全部经既有 submitCommand 路由（UI-T27 补线的 bindCommandSubmit/bindCommandAvailability 出口），assembled 位随本批逐条置 true——处置约束＝注册期禁用→可用→置灰三态与命令面板/注册表同源（bindCommandAvailability 机制）",
+    "域侧纯函数零重写：导入（Import 冻结字段字典/单位归一/行级部分成功）、模板阵列镜像（TemplateArray 六模板/四阵列/镜像/重生成/解除关联＋GenerationProvenance）、导出副本（原子写）、捕获（确认凭据＋STALE 对账）均 requirements 域既有——处置约束＝UI 只装配对话框/表单/预览与提交编排，域逻辑改动须先经 requirements 卡增量修订",
+    "命令只读放行范围按 PanelCommandCatalog 既有 readOnlyAllowed（导出副本/捕获 TCP/拾取几何特征＝true 其余 false）——处置约束＝不扩不放，改动即契约修订",
+    "捕获 TCP 依赖宿主关节状态真实来源（RuntimePublishBridge 数据面从空映射二态变实——runtime 桥侧若缺位，本命令保持禁用＋『数据源未就绪』引导，不伪造当前位姿）——处置约束＝降级路径具名用例",
+    "拾取几何特征依赖三维拾取上行（UI-T33 reportView3DPick 来源）——本批只装配流程壳（按钮引导『待三维视图提供』），随 UI-T33 收口；不在本批私开拾取通道",
+    "批量操作入局部撤销：模板/阵列/镜像/导入一次命令恰一枚快照（与旧版批量语义对齐）——处置约束＝gui 用例钉住单快照回滚",
+    "堆叠声明：分支基点＝ui-t31 head（待合入）——合入序 T25→…→T31→T32"
+  ],
+  "acceptance": [
+    "导出副本：文件对话框→域侧原子写成功/失败呈现；只读态可用（readOnlyAllowed）——gui 具名用例",
+    "模板/生成/镜像/阵列：参数表单对话框（模板六类/阵列 Linear/Rectangular/Circular/Polyline——Polyline 点串解析校验）＋参数校验＋生成计数预览→提交后树/表同步＋溯源字段如实——gui 具名用例（每类至少一条正/反）",
+    "导入向导：CSV/JSON 选择→预览＋单位声明→行级错误列表（原子提交：全成或全不写）→成功后集合同步——gui 具名用例（含行级错误反例）",
+    "捕获 TCP：会话＋关节状态就绪→确认凭据→新工位入集合（methodTag=captured-tcp 溯源）；数据源缺位→禁用＋引导——gui 具名用例（降级路径）",
+    "拾取流程壳：按钮可见＋禁用态引导文案；解除引导的收口登记归 UI-T33——gui 具名用例",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t32/"
+  ],
+  "note": "功能对照批次 C——规划卡（planned，待独立评审放行）：开工前按 CCP 增量修订细化（九命令可按『导出副本→模板/阵列/镜像→导入向导→捕获 TCP→拾取壳』顺序拆子段实施，单契约内顺序执行）。立项来源＝所有者 2026-09-30 需求界面功能对照会话——九条域命令（导入 CSV/导入 JSON/导出副本/捕获 TCP/拾取几何特征/镜像工位/批量阵列/应用工艺模板/按模板重生成）对应 main 分支旧版工具栏全量工具能力；域侧纯函数已全部实现并有测试，本批纯粹是 UI 流程装配（对话框/表单/预览/提交编排）。旧版对应：Import Stations（CSV/JSON 原子导入）、Export/Save Requirements、Capture TCP Pose、Pick Frame（Ctrl+双击）、Templates 菜单（Create/Update/Detach）、Generate 菜单（Array/Mirror）。注意：旧版『导出需求 JSON 副本含冻结工件』涉及 O-46 待裁决——本批导出范围＝草稿副本（不含冻结工件），O-46 裁决后如需扩展另立增量。需求语义零变化。"
+}

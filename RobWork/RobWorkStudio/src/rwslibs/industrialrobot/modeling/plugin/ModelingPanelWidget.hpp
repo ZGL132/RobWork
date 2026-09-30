@@ -61,6 +61,7 @@ class ModelingPanelWidget final : public QWidget, public IPanelEditSink {
 public:
     /// 命令提交出口（装配层注入——绑定 ui ICommandRegistry.submit；非 owning）。
     using CommandSubmitFn = std::function<void(const ui::CommandId&)>;
+    using CommandAvailabilityFn = std::function<ui::CommandAvailability(const ui::CommandId&)>;
 
     /**
      * @brief 构造五区面板（UI 线程——§3.4）。
@@ -75,6 +76,7 @@ public:
      *        ui CommandRegistry；不注入＝命令按钮禁用——不虚构可达性）。
      */
     void setCommandSubmit(CommandSubmitFn submitFn);
+    void setCommandAvailability(CommandAvailabilityFn availability);
 
     /// 编辑后动作钩子形态（T03b-2b——就绪重算由装配层注入）。
     using PostEditAction = std::function<void()>;
@@ -173,6 +175,7 @@ private:
     PanelRefreshCoordinator m_refresh;        ///< L-4 刷新协调器（事件驱动）
     std::vector<ui::CommandDescriptor> m_commands;  ///< 域命令目录（§9.7.3 十条——装配数据）
     CommandSubmitFn m_commandSubmit;          ///< 命令提交出口（装配层注入；空＝按钮禁用）
+    CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询（空＝仅提交出口门控）
     CommandTitleResolver m_titleResolver;     ///< 标题文案解析器（WP-24-T03；空＝呈现键名原文）
     PostEditAction m_postEditAction;          ///< 编辑后动作（T03b-2b 就绪重算钩子；可空）
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T30",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求对象生命周期编辑：工位/区域/工况新增、复制、删除（功能对照批次 B1）",
+  "status": "planned",
+  "dependsOn": ["UI-T29"],
+  "requirements": [
+    "UX-02（工程用语——操作结果与拒绝原因中文呈现）",
+    "ERR-01（诚实呈现——结构操作失败就地报错不静默；撤销快照完整回滚）",
+    "PM-11（同源投影——集合变更唯一权威＝域侧 Editor，树/表/检查器全部为其投影）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/requirements.md#4.6",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t30",
+  "interUnit": false,
+  "knownPitfalls": [
+    "Editor 结构原语（新增/复制/删除）若域侧缺失先补 requirements include+src（本契约允许面）＋requirements _test 单测：I-REQ-1 集合规范序、I-REQ-2 id 唯一、I-REQ-3 名称唯一在插入/复制时强制——处置约束＝面板零私改集合，一律经 editor.applyEdit",
+    "删除后选中锚与焦点转移：共享树/域面板/检查器三处选中语义经 SelectionService 唯一汇聚点联动，防悬空引用——处置约束＝删除被选中对象时的回落选中规则具名用例钉住",
+    "复制产物诚实性：GenerationProvenance 不伪造（复件非模板生成物——source 溯源按域侧词表如实登记）——处置约束＝域侧单测钉住溯源字段",
+    "结构编辑入局部撤销（草稿级）栈：一次结构操作恰一枚快照，撤销/重做完整回滚集合——处置约束＝空变化（幂等操作）不产生快照（UI-T27 幻影脏化语义同源）",
+    "堆叠声明：分支基点＝ui-t29 head（待合入）——合入序 T25→T26→T27→T29→T30"
+  ],
+  "acceptance": [
+    "新增：工位/区域/工况三类对象新增入口（树/页签）→树/表同步出现新行＋id 自动分配不撞号——gui 具名用例＋域侧 UT（I-REQ-2/3 拒重）",
+    "复制：副本独立可编辑、与源对象字段等值、溯源字段如实登记——gui 具名用例",
+    "删除：删除被选中对象→选中锚回落规则生效、共享树/检查器零悬空——gui 具名用例",
+    "撤销：新增→撤销→集合完整回滚→重做恢复；局部撤销栈语义与 UI-T29 一致——gui 具名用例",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t30/"
+  ],
+  "note": "功能对照批次 B1——规划卡（planned，待独立评审放行）：开工前按 CCP 增量修订细化（allowedFiles 收敛为精确文件面＋验收用例细化）。立项来源＝所有者 2026-09-30 需求界面功能对照会话（对照 main 分支 engineeringrequirements 插件 Add/Duplicate/Remove Station、Add/Duplicate/Remove Region 功能面）；所有者确认 B 拆 B1/B2：对象生命周期主要验证 applyEdit 结构操作，字段编辑另涉控件类型/单位解析/拒绝回填/幻影脏化——拆开易定位问题。B1 先行：B2（UI-T31）需要本批产出的对象作编辑载体。旧版对应功能：Add Station/Duplicate Station/Remove Station、Add/Duplicate/Remove Region。需求语义零变化。"
+}

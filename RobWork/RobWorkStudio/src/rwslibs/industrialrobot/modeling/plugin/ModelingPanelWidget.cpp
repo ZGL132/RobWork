@@ -32,15 +32,8 @@ constexpr int kAnchorColumn = 1;
 /// 树标签列（呈现列——localName＋工程用语标签，UX-02）。
 constexpr int kLabelColumn = 0;
 
-/// 逐行呈现文字（行＝PropertyFieldRow——值/单位/使能/徽标的文本化）。
-QString rowText(const PropertyFieldRow& row)
-{
-    QString text = QString::fromStdString(row.valueText);
-    if (!row.unitText.empty()) {
-        text += QStringLiteral(" ") + QString::fromStdString(row.unitText);  // UX-05：数值＋单位同显
-    }
-    return text;
-}
+// （rowText 值/单位拼接辅助已随 UI-T27 P0-2 移除——编辑器文本＝纯值，
+//  单位并入行标签；两处原调用点分别改纯值回显/标签拼接。）
 
 /// 使能三态→控件只读位（灰显＝值可见不可改——§7.2/L-7 共用语义）。
 bool rowReadOnly(FieldEnablement en) noexcept
@@ -125,6 +118,30 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
 void ModelingPanelWidget::setCommandSubmit(CommandSubmitFn submitFn)
 {
     m_commandSubmit = std::move(submitFn);
+    // 提交出口可能在面板创建后才接入；立即重算按钮，避免按钮一直
+    // 保持构造期禁用态（宿主装配顺序不应影响可用性呈现）。
+    for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
+        const bool readonlyBlocked = !m_writable && !m_commands[i].readOnlyAllowed;
+        const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
+                                             : ui::CommandAvailability{};
+        m_commandButtons[i]->setEnabled(
+            m_commandSubmit != nullptr && !readonlyBlocked
+            && (!m_commandAvailability || a.enabled));
+    }
+}
+
+void ModelingPanelWidget::setCommandAvailability(CommandAvailabilityFn availability)
+{
+    m_commandAvailability = std::move(availability);
+    for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
+        const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
+                                             : ui::CommandAvailability{};
+        m_commandButtons[i]->setEnabled(
+            m_commandSubmit != nullptr && (!m_commandAvailability || a.enabled));
+        if (m_commandAvailability && !a.enabled && !a.disableReasonKey.empty()) {
+            m_commandButtons[i]->setToolTip(QString::fromStdString(ui::resolveText(a.disableReasonKey)));
+        }
+    }
 }
 
 void ModelingPanelWidget::setPostEditAction(PostEditAction action)
@@ -289,7 +306,16 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
     //      禁用（L-7 命令半区）；未注入提交出口的命令一律禁用（不虚构可达）。
     for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
         const bool readonlyBlocked = !m_writable && !m_commands[i].readOnlyAllowed;
-        m_commandButtons[i]->setEnabled(m_commandSubmit != nullptr && !readonlyBlocked);
+        const auto availability = m_commandAvailability
+                                      ? m_commandAvailability(m_commands[i].id)
+                                      : ui::CommandAvailability{};
+        m_commandButtons[i]->setEnabled(m_commandSubmit != nullptr && !readonlyBlocked
+                                        && (!m_commandAvailability || availability.enabled));
+        if (m_commandAvailability && !availability.enabled
+            && !availability.disableReasonKey.empty()) {
+            m_commandButtons[i]->setToolTip(
+                QString::fromStdString(ui::resolveText(availability.disableReasonKey)));
+        }
     }
 }
 
@@ -297,10 +323,13 @@ void ModelingPanelWidget::setWritable(bool writable)
 {
     m_writable = writable;
     // L-7 控件半区：现有属性行即时降级/恢复（行序同键——只变使能）。
+    // UI-T27 P0-2：编辑器文本＝纯值（单位在标签——值/单位分离后回显口径）。
     m_propertyRows = applyReadOnlyGate(m_propertyRows, m_writable);
     for (std::size_t i = 0; i < m_propertyEditors.size() && i < m_propertyRows.size(); ++i) {
-        m_propertyEditors[i]->setReadOnly(rowReadOnly(m_propertyRows[i].enablement));
-        m_propertyEditors[i]->setText(rowText(m_propertyRows[i]));
+        m_propertyEditors[i]->setReadOnly(rowReadOnly(m_propertyRows[i].enablement)
+                                              || m_propertyRows[i].fieldKey != "zero-offset");
+        m_propertyEditors[i]->setText(
+            QString::fromStdString(m_propertyRows[i].valueText));
     }
     // 命令按钮使能态在下次 refreshPanel 统一重算（事件驱动——无即时轮询面）。
 }
@@ -353,7 +382,13 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
 {
     // 现取编辑目标（装配层会话工作集——面板零副本）；无会话＝空态。
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
-    m_propertyForm->removeRow(0);  // 清旧行（QFormLayout removeRow 逐行删除其控件）
+    // UI-T27 P0-1 修复：清空必须删尽全部行（此前 removeRow(0) 单次调用
+    // 只删首行——每次刷新净增 N-1 行，属性行无上限累积／重复呈现／最小
+    // 高度无界膨胀；requirements 三处同型代码均为 while 循环的正确模式，
+    // 本处为全仓唯一漏网——对照修复）。
+    while (m_propertyForm->rowCount() > 0) {
+        m_propertyForm->removeRow(0);
+    }
     m_propertyEditors.clear();
     m_propertyRows.clear();
     if (ws == nullptr || !m_lastSelected.has_value()) { return; }
@@ -364,11 +399,27 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
     m_propertyRows = applyReadOnlyGate(propertyFieldsFor(*ws, *target), m_writable);
     for (const PropertyFieldRow& row : m_propertyRows) {
         auto* editor = new QLineEdit(this);
-        editor->setText(rowText(row));
-        editor->setReadOnly(rowReadOnly(row.enablement));  // 灰显＝§7.2 派生只读/L-7 只读会话
+        // UI-T27 P0-2 单位分离：编辑器文本＝纯值（toDouble 全串可解析），
+        // 单位并入行标签（UX-05 数值＋单位同显的呈现位迁移——值/单位分离
+        // 不改变 PanelModel 投影产出，仅呈现拼接位从值文本移到标签）。
+        // UI-T27 P0-3 面板半区：仅 zero-offset 有提交轨（MDL-07 表单最小
+        // 版——面板侧只允许该键可编辑，其余字段只读灰显如实呈现"不支持
+        // 就地提交"，消除"看着可改实际拒绝"的交互语义错误）。
+        const bool panelEditable = (row.fieldKey == "zero-offset");
+        editor->setText(QString::fromStdString(row.valueText));
+        editor->setReadOnly(!panelEditable || rowReadOnly(row.enablement));
+        if (!panelEditable) {
+            editor->setToolTip(
+                QStringLiteral("该字段经批量粘贴或域命令编辑（不支持就地输入）"));
+        }
+        QString label = QString::fromStdString(row.fieldKey);
+        if (!row.unitText.empty()) {
+            label += QStringLiteral("（") + QString::fromStdString(row.unitText)
+                     + QStringLiteral("）");
+        }
         connect(editor, &QLineEdit::editingFinished, this,
                 &ModelingPanelWidget::onPropertyEditingFinished);
-        m_propertyForm->addRow(QString::fromStdString(row.fieldKey), editor);
+        m_propertyForm->addRow(label, editor);
         m_propertyEditors.push_back(editor);
     }
 }
@@ -404,10 +455,16 @@ void ModelingPanelWidget::onPropertyEditingFinished()
     PropertyFieldRow& rowRef = m_propertyRows[row];
     const std::string& key = rowRef.fieldKey;
     const QString text = senderEditor->text();
-
+    // UI-T27 P0-2：权威显示值＝纯值（单位在行标签——编辑器文本不再拼接
+    // 单位后缀，toDouble 全串可解析）。
+    const QString authoritative = QString::fromStdString(rowRef.valueText);
+    // UI-T27 P1-⑤ 未修改短路：Qt editingFinished 语义＝失焦即触发（无论
+    // 是否修改）——文本与权威值一致＝无编辑意图，零提交零脏化（消除
+    // "点击输入框再点出去→会话被误标有未应用修改"的幻影脏化）。
+    if (text == authoritative) { return; }
     // 先回显权威值——拒绝时保持原值（L-2"保留原值"的强顺序保证；接受时
     // 由 refreshPropertiesFromLastWorkingSet 重投影覆盖）。
-    senderEditor->setText(rowText(rowRef));
+    senderEditor->setText(authoritative);
 
     // 编辑面划界（MDL-07 表单最小版）：数值行（zero-offset）走单值编辑轨；
     // 复合行（bounds 双值/axis 向量/type 枚举/物性组）保留只读投影——其

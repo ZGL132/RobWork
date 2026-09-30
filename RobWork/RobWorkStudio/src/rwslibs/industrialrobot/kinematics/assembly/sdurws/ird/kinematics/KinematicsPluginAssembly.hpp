@@ -34,6 +34,7 @@
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>    // ui::PluginUiDescriptor（§10.9 装配描述符）
 #include <sdurws/ird/ui/SelectionService.hpp>      // ui::SelectionService（attachSelectionService 入参——ui 公共头）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::CommandId（命令提交出口入参）
+#include <sdurws/ird/ui/ICommandRegistry.hpp>     // ui::CommandAvailability（按钮门控）
 
 namespace sdurws {
 namespace ird {
@@ -85,6 +86,8 @@ struct KinematicsPluginAssembly {
 
     /// 命令提交出口绑定（转发模块内部——面板创建前后皆可）。
     void bindCommandSubmit(std::function<void(const ui::CommandId&)> submit);
+    void bindCommandAvailability(
+        std::function<ui::CommandAvailability(const std::string&)> availability);
 
     /// 服务缝注入（面板创建前调用生效——真实模型视图/求解器/后台缝的
     /// 装配接线点；转发模块内部）。

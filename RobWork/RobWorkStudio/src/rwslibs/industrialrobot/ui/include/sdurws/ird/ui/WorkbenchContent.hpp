@@ -171,6 +171,8 @@ struct WorkbenchContentDeps {
     struct DomainCommandEntry {
         CommandDescriptor descriptor;              ///< 命令描述符（§10.9 冻结形状）
         ICommandRegistry::CommandHandler handler;  ///< 处理器（UI 线程启动）
+        /// 是否已有真实域流程；未装配命令在注册期禁用（UI-T27 P0-4）。
+        bool assembled = true;
     };
     std::vector<DomainCommandEntry> domainCommandEntries;
 

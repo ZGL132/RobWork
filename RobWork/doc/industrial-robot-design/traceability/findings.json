@@ -4389,6 +4389,26 @@
       "title": "F-012 家族再现（提交标题非动词开头）：UI-T24 三提交中两件以『前置：』『同步：』名词前缀起头——建议提交标题统一动词开头（AGENTS §6.3 格式原文），与 F-012/F-293/F-298/F-313 同批口径处置。",
       "owner": "流水线执行侧（提交习惯自纠；随 F-012 家族既有批次统一复核）",
       "resolution": "不阻塞 UI-T24 合入（attempt 1 verdict=pass；四段式正文与 Acc-Covered 齐备）。编号顺延自 F-440。"
+    },
+    {
+      "id": "F-442",
+      "source": "traceability/acceptance/UI-T27-20260930.md#S-1（UI-T27 验收 attempt 1，2026-09-30；证据：dc5e6650 UiPlugin.cpp 未装配处理器段——out.messageKey 恒取 kModelingFlowNotAssembledKey＋showMessage 直出裸 commandId/domainKey）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-30",
+      "title": "未装配命令的命令面板回退路径文案域错配：requirements/kinematics 命令经面板直呼时状态栏落 modeling 专用键文案（『随后续建模任务提供』）并直出裸命令 id——UX-02 弱泄漏；按钮 tooltip 路径（cmd.flow-not-assembled.reason）已正确，仅处理器回退路径未收敛。",
+      "owner": "后续 UI 文案/门控批次（UI-T29~T32 窗口内顺带收口）",
+      "resolution": "不单独阻塞 UI-T27 返工范围（按钮禁用后仅命令面板可达）；随验收记录 attempt 1 转登。编号顺延自 F-441。"
+    },
+    {
+      "id": "F-443",
+      "source": "traceability/acceptance/UI-T27-20260930.md（UI-T27 验收 attempt 1 冷启复现，2026-09-30；证据：build/acc-build-ui-t27-build2.log——错误 71 处集中于 RWSimulatorPlugin.vcxproj＋2 处 rwplugin.vcxproj；三棵历史冷启树均无该 dll 产物）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-09-30",
+      "title": "冷启构建树基线问题：RobWorkSim 的 RWSimulatorPlugin（及 rwplugin）在全新配置树编译失败（疑似 min/max 宏与框架头未纳 NOMINMAX 的既有环境缺陷）——任何未来冷启验收的全量『零错误』口径都会被该框架目标阻断；industrialrobot 范围目标不受影响。",
+      "owner": "构建约定所有者＋平台环境（基线修复或验收口径显式豁免——二选一登记 DTB §5）",
+      "resolution": "UI-T27 验收按『ird 交付范围可复现构建零错误』判定（框架只读区失败与本任务零关联）；编号顺延自 F-442。"
     }
   ]
 }

@@ -35,6 +35,7 @@
                                             // sdurws::ird::project，否则 override 签名
                                             // 漂移即 C2556）
 #include <sdurws/ird/ui/IPluginUiModule.hpp> // ui::IPluginUiModule（§11.2 接口）
+#include <sdurws/ird/ui/ICommandRegistry.hpp> // ui::CommandAvailability（统一按钮门控）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp> // ui::IWorkbenchShell（onShellReady 入参）
 #include <sdurws/ird/ui/UiTypes.hpp>         // ui::DomainReadinessItem（§6.5 汇聚值）
 #include "KinHostMigrationProviders.hpp"     // 迁移三接入面（WP-15-T18——同目录私有头）
@@ -68,6 +69,7 @@ class KinematicsUiModule final : public ui::IPluginUiModule {
 public:
     /// 命令提交出口形态（面板同款——装配层经本转发绑定面板）。
     using CommandSubmitFn = std::function<void(const std::string& commandId)>;
+    using CommandAvailabilityFn = std::function<ui::CommandAvailability(const std::string&)>;
 
     /// 文案解析器形态（titleKey→工程用语——宿主接 ui::resolveText）。
     using TextResolver = std::function<QString(const std::string& titleKey)>;
@@ -123,6 +125,7 @@ public:
 
     /// 绑定命令提交出口（面板创建前后皆可——后绑定在面板创建时应用）。
     void bindCommandSubmit(CommandSubmitFn submitFn);
+    void bindCommandAvailability(CommandAvailabilityFn availability);
 
     /// 绑定文案解析器（面板创建时应用；不绑定＝按钮呈现键名原文）。
     void bindTextResolver(TextResolver resolve);
@@ -210,6 +213,7 @@ private:
     QWidget* m_configPanel = nullptr;            ///< 高级面板引用（非 owning）
     ui::IWorkbenchShell* m_shell = nullptr;      ///< 壳门面引用（非 owning）
     CommandSubmitFn m_pendingSubmit;             ///< 面板创建前暂存（创建时应用）
+    CommandAvailabilityFn m_commandAvailability;  ///< 注册表命令可用性查询
     TextResolver m_textResolver;                 ///< 文案解析（创建时应用）
 
     // 迁移三接入面缓存（惰性构造——shared_ptr 稳定地址；适配器 unique_ptr

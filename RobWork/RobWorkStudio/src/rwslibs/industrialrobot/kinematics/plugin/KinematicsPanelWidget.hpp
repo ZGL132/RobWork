@@ -35,6 +35,9 @@
 #include <QTableWidget>
 #include <QWidget>
 
+#include <sdurws/ird/ui/UiTypes.hpp> // ui::CommandAvailability/CommandId
+#include <sdurws/ird/ui/ICommandRegistry.hpp> // ui::CommandAvailability 定义
+
 #include "KinPanelFlows.hpp"   // 编排函数（L-K2/3/6/9/10——同目录私有头）
 #include "KinPanelModel.hpp"   // 行集投影（零 Qt 半区）
 #include "KinPanelTypes.hpp"   // 会话态/服务缝
@@ -71,6 +74,7 @@ public:
     /// 命令标题文案解析器（titleKey→工程用语——宿主接 ui::resolveText；
     /// modeling 先例 CommandTitleResolver 同形态）。
     using CommandTitleResolver = std::function<QString(const std::string& titleKey)>;
+    using CommandAvailabilityFn = std::function<ui::CommandAvailability(const std::string&)>;
 
     /**
      * @brief 构造四面板主面板（UI 线程）。
@@ -85,6 +89,7 @@ public:
 
     /// 注入命令标题文案解析器（装配期；不注入＝呈现键名原文——不虚构文案）。
     void setCommandTitleResolver(CommandTitleResolver resolver);
+    void setCommandAvailability(CommandAvailabilityFn availability);
 
     /// 全面板刷新（事件驱动出口——四面板全部现取重投影，零缓存）。
     void refreshAll();
@@ -153,6 +158,7 @@ private:
     KinPanelServices m_services;       ///< 服务缝聚合
     KinModuleSessionState& m_session;  ///< 会话态引用（非 owning）
     CommandTitleResolver m_titleResolver;  ///< 文案解析（可空＝键名原文）
+    CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询
 
     // ---- 页①控件（raw 指针＝Qt 父子所有权）----
     QTableWidget* m_poseTable = nullptr;    ///< 位姿指标行表

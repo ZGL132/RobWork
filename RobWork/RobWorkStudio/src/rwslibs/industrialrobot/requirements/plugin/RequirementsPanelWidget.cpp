@@ -120,6 +120,26 @@ RequirementsPanelWidget::RequirementsPanelWidget(bool writable, QWidget* parent)
 void RequirementsPanelWidget::setCommandSubmit(CommandSubmitFn submitFn)
 {
     m_commandSubmit = std::move(submitFn);
+    for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
+        const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
+                                             : ui::CommandAvailability{};
+        m_commandButtons[i]->setEnabled(
+            m_commandSubmit != nullptr && (!m_commandAvailability || a.enabled));
+    }
+}
+
+void RequirementsPanelWidget::setCommandAvailability(CommandAvailabilityFn availability)
+{
+    m_commandAvailability = std::move(availability);
+    for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
+        const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
+                                             : ui::CommandAvailability{};
+        m_commandButtons[i]->setEnabled(
+            m_commandSubmit != nullptr && (!m_commandAvailability || a.enabled));
+        if (m_commandAvailability && !a.enabled && !a.disableReasonKey.empty()) {
+            m_commandButtons[i]->setToolTip(QString::fromStdString(ui::resolveText(a.disableReasonKey)));
+        }
+    }
 }
 
 void RequirementsPanelWidget::setEditTargetProvider(EditTargetProvider provider)
@@ -351,6 +371,15 @@ void RequirementsPanelWidget::refreshPanel(const RequirementWorkingSet& ws,
         // 项目级撤销是转发面——可达性随命令提交出口（未注入＝禁用）。
         m_projectUndoButton->setEnabled(static_cast<bool>(m_commandSubmit));
     }
+    for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
+        const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
+                                             : ui::CommandAvailability{};
+        m_commandButtons[i]->setEnabled(
+            m_commandSubmit != nullptr && (!m_commandAvailability || a.enabled));
+        if (m_commandAvailability && !a.enabled && !a.disableReasonKey.empty()) {
+            m_commandButtons[i]->setToolTip(QString::fromStdString(ui::resolveText(a.disableReasonKey)));
+        }
+    }
 }
 
 void RequirementsPanelWidget::setWritable(bool writable)
@@ -467,6 +496,13 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         edit->setReadOnly(r.enablement != StationFieldEnablement::Editable
                           || !m_writable);  // 灰显行只读（L-R12 行门控）
         edit->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
+        // 记录本次投影的权威文本。editingFinished 可能由焦点切换触发，
+        // 仅当文本真的改变时才进入编辑流，避免刷新/重投影造成幻影脏化。
+        edit->setProperty("irdAuthoritativeValue",
+                         QString::fromStdString(
+                             r.valueText == "未提供" || r.valueText == "未设"
+                                 ? std::string{}
+                                 : r.valueText));
         connect(edit, &QLineEdit::editingFinished, this,
                 &RequirementsPanelWidget::onInspectorEditingFinished);
         auto* label = new QLabel(QString::fromStdString(r.label), this);
@@ -478,13 +514,18 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
 
 void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
 {
+    const std::optional<core::ObjectId> previousRegion =
+        m_regionTable->currentItem() ? nodeAnchor(m_regionTable->currentItem()) : std::nullopt;
     // 区域表（一区域一行——L-R1 行选中锚）。
     const std::vector<RegionRow> rows = regionRows(ws.regions.entries);
     m_regionTable->clear();
     for (const RegionRow& r : rows) {
-        m_regionTable->addTopLevelItem(makeRow(QString::fromStdString(r.name),
-                                               QString::fromStdString(r.samplingText),
-                                               r.objectId));
+        auto* item = makeRow(QString::fromStdString(r.name),
+                             QString::fromStdString(r.samplingText), r.objectId);
+        m_regionTable->addTopLevelItem(item);
+        if (previousRegion.has_value() && r.objectId == previousRegion.value()) {
+            m_regionTable->setCurrentItem(item);
+        }
     }
     // 区域检查器（选中区域行→regionFieldsFor；未选中＝空表单——不虚构）。
     while (m_regionForm->rowCount() > 0) {
@@ -502,7 +543,10 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
             regionFieldsFor(region, m_regionService, m_writable);
         for (const StationFieldRow& fr : fields) {
             auto* edit = new QLineEdit(QString::fromStdString(fr.valueText), this);
-            edit->setReadOnly(fr.enablement != StationFieldEnablement::Editable || !m_writable);
+            // 区域字段尚无独立编辑提交协议，先保持只读，避免用户输入后
+            // 没有域回写路径却呈现为已修改的假状态。
+            edit->setReadOnly(true);
+            edit->setProperty("irdAuthoritativeValue", QString::fromStdString(fr.valueText));
             m_regionForm->addRow(QString::fromStdString(fr.label), edit);
         }
         break;  // 至多一个选中区域——命中即止（确定性）
@@ -510,8 +554,21 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
     // 区域轮廓与采样格预览（呈现几何——regionPreviewGeometry；结果着色归
     // KIN-07，本预览零结果语义：仅文本摘要＋可选 View3D 投递）。
     if (!ws.regions.entries.empty()) {
-        const WorkRegion& first = ws.regions.entries.front();
-        const RegionPreviewGeometry geo = regionPreviewGeometry(first, m_regionService);
+        const WorkRegion* selected = nullptr;
+        if (m_regionTable->currentItem() != nullptr) {
+            const auto anchor = nodeAnchor(m_regionTable->currentItem());
+            if (anchor.has_value()) {
+                for (const WorkRegion& region : ws.regions.entries) {
+                    if (region.objectId == anchor.value()) {
+                        selected = &region;
+                        break;
+                    }
+                }
+            }
+        }
+        const WorkRegion& previewRegion = selected != nullptr
+                                              ? *selected : ws.regions.entries.front();
+        const RegionPreviewGeometry geo = regionPreviewGeometry(previewRegion, m_regionService);
         m_regionPreviewLabel->setText(QString::fromStdString(geo.summaryText));
         if (m_regionPreview) {
             m_regionPreview(geo);  // View3D 出口注入时投递（装配层接线）
@@ -543,8 +600,11 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
                          conditionFieldsFor(c, m_conditionService, m_writable)) {
                         auto* edit =
                             new QLineEdit(QString::fromStdString(fr.valueText), this);
-                        edit->setReadOnly(fr.enablement != StationFieldEnablement::Editable
-                                          || !m_writable);
+                        // 工况表单同样等待域级字段编辑协议，当前只展示权威
+                        // 工作集值，不提供无效的本地输入假象。
+                        edit->setReadOnly(true);
+                        edit->setProperty("irdAuthoritativeValue",
+                                         QString::fromStdString(fr.valueText));
                         m_conditionForm->addRow(QString::fromStdString(fr.label), edit);
                     }
                     break;
@@ -658,6 +718,9 @@ void RequirementsPanelWidget::onInspectorEditingFinished()
     auto* edit = qobject_cast<QLineEdit*>(QObject::sender());
     if (edit == nullptr) {
         return;
+    }
+    if (edit->text() == edit->property("irdAuthoritativeValue").toString()) {
+        return;  // 焦点切换/刷新回调未改变值，不进入编辑流也不增加脏标记。
     }
     const std::string key = edit->property("irdFieldKey").toString().toStdString();
     // 从工作集定位当前条目（权威值——检查器行的基线）。

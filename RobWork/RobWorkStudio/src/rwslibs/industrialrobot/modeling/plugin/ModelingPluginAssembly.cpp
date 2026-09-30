@@ -33,6 +33,14 @@ void ModelingPluginAssembly::bindCommandSubmit(
     }
 }
 
+void ModelingPluginAssembly::bindCommandAvailability(
+    std::function<ui::CommandAvailability(const ui::CommandId&)> availability)
+{
+    if (m_impl != nullptr) {
+        m_impl->bindCommandAvailability(std::move(availability));
+    }
+}
+
 void ModelingPluginAssembly::bindTextResolver(
     std::function<QString(const std::string& titleKey)> resolve)
 {
