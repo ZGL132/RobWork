@@ -176,6 +176,7 @@ TEST(ReqBuildGraph, UnitEdgesFiveRegisteredAndClosed_WP14T02_ACC2)
                                      "sdurws_ird_requirements_app",
                                      "sdurws_ird_requirements_test",
                                      "sdurws_ird_requirements_contract_test",
+                                     "sdurws_ird_requirements_gui_test",
                                      "sdurws_ird_ui",
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
@@ -297,7 +298,8 @@ TEST(ReqBuildGraph, NoTestkitEdgeOnProductTarget_WP14T02_ACC2)
         // 同行显式可见——CMakeLists 登记形态的共同约束，避免多行块解析）。
         const bool onTestTargetLine
             = (line.find("sdurws_ird_requirements_test") != std::string::npos
-               || line.find("sdurws_ird_requirements_contract_test") != std::string::npos)
+               || line.find("sdurws_ird_requirements_contract_test") != std::string::npos
+               || line.find("sdurws_ird_requirements_gui_test") != std::string::npos)
               && line.find("target_link_libraries") != std::string::npos;
         EXPECT_TRUE(onTestTargetLine)
             << "testkit 引用必须落在测试目标链接语句行（T-1：产品目标零 "

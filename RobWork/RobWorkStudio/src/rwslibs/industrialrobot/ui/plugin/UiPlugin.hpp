@@ -74,6 +74,8 @@
 #include <sdurws/ird/ui/PropertyInspector.hpp>    // ui::PropertyInspectorModel/检查器面板（UI-T23 共享面挂位）
 #include <sdurws/ird/ui/UiSessionController.hpp>  // ui::UiSessionController（§5 会话状态机）
 #include <sdurws/ird/ui/WorkbenchContent.hpp>     // ui::IWorkbenchContent（内容装配面）
+#include <sdurws/ird/requirements/Editor.hpp>     // requirements::RequirementEditor（UI-T29 会话权威——宿主按值持有）
+#include <sdurws/ird/requirements/Readiness.hpp>  // requirements::RequirementReadinessChecker（判定权威直投值）
 
 #include "DomainAssembly.hpp"                    // 域插件装配产物（WP-24-T03 首版装配）
 #include "app/DiagnosticsAssembly.hpp"           // 诊断栈装配（与 harness 共用序列）
@@ -182,6 +184,10 @@ private:
     //      注入内容装配面，五处壳入口同路由）----
     /// 打开编排：目录选择对话框→打开五步协议（PM-07 降级只读是成功形态）。
     CommandOutcome orchestrateOpenProject(const std::vector<CommandParameter>& params);
+    /// 需求域会话接线（UI-T29——存储成功捕获回调）：HEAD 闭包载入基线
+    /// →attachEditor＋bindSessionAnchor＋bindReadiness＋根回填；闭包无
+    /// req-set 根→attachEditor(nullptr) 诚实空态（不虚构会话）。
+    void wireRequirementsSession(app::StorePortAdapter& adapter);
     /// 新建编排：目录＋显示名采集→创建协议（零半成品）→经标准打开协议进入。
     CommandOutcome orchestrateNewProject(const std::vector<CommandParameter>& params);
     /// 保存编排（UI-T17——draft.save 覆写面）：DraftController saveAll
@@ -279,6 +285,15 @@ private:
     bool m_centralGuardWarned = false;      ///< 保障无法达成的一次性 Dev 留痕旗标（防日志洪水）
     bool m_assembled = false;                                 ///< initialize 已完成（一次守卫）
     std::unique_ptr<DomainPluginAssembly> m_domains;          ///< 域插件装配产物（首版＝modeling——WP-24-T03）
+    /// 需求域会话权威编辑器（UI-T29——UI 线程单例；attachEditor 注入的
+    /// 非 owning 目标，宿主持有所有权；存活期覆盖会话）。
+    requirements::RequirementEditor m_requirementsEditor;
+    /// 需求域就绪校验器（判定权威——check 产出经 bindReadiness 直投会话
+    /// 态；本宿主零判定，P-REQ-6 边界不变）。
+    requirements::RequirementReadinessChecker m_requirementsReadinessChecker;
+    /// 需求会话存活旗标（UI-T29——wireRequirementsSession 二态裁决的登记
+    /// 面；draft.apply 门控谓词的启用前提，无会话＝零门控诚实二态）。
+    bool m_requirementsSessionLive = false;
     /// 域事件总线（WP-24-T03b 收口——修订提交事件面：store 打开请求挂接
     /// ＋宿主订阅转达域模块；进程内恰一次投递，core::ReferenceEventBus）
     std::shared_ptr<core::ReferenceEventBus> m_eventBus;

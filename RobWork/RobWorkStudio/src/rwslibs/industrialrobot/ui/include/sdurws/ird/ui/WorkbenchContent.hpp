@@ -176,6 +176,11 @@ struct WorkbenchContentDeps {
     };
     std::vector<DomainCommandEntry> domainCommandEntries;
 
+    /// 应用草稿门控（UI-T29 最小校验——draft.apply 注册期谓词的宿主注入：
+    /// 返回 disable reason＝存在未就绪阻断〔按钮/命令面板共享同一快照〕；
+    /// nullopt/缺省＝零新增门控——诚实二态，注册期谓词按当前快照求值）。
+    std::function<std::optional<ui::DisableReason>()> applyDraftDisablement;
+
     /// 阶段面板页（§4.1 中央工作区行——CentralAreaHost 按 StageId 挂位的
     /// 装配面：每项在中央栈追加一页，经 showStagePanel 切换激活）。工厂
     /// 在 build 的 UI 线程现调；嵌入式宿主形态可缺省（面板归宿主侧 Dock

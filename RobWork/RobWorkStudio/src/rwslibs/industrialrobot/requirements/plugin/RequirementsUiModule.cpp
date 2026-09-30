@@ -93,6 +93,32 @@ void RequirementsUiModule::bindCommandAvailability(CommandAvailabilityFn availab
     m_pendingAvailability = std::move(availability);
 }
 
+void RequirementsUiModule::setPostEditAction(PostEditAction action)
+{
+    m_guard.assertOnUiThread();
+    m_hostPostEdit = std::move(action);
+    wirePanelPostEdit();
+}
+
+void RequirementsUiModule::wirePanelPostEdit()
+{
+    if (m_panel == nullptr) {
+        return;  // 面板未创建——宿主动作已暂存，attachPanel 时组合子补挂
+    }
+    // 组合子（UI-T29 最小校验的模块承载）：宿主重估（bindReadiness→会话
+    // 态刷新）先行，随后以会话最新报告 refreshPanel——校验页由『尚未执行』
+    // 静态实时化为编辑态即时预检的呈现收口（判定权威在域侧 checker——
+    // P-REQ-6 边界不变，本组合子零判定只做编排）。
+    m_panel->setPostEditAction([this]() {
+        if (m_hostPostEdit) {
+            m_hostPostEdit();
+        }
+        if (m_editor != nullptr && m_session.readiness.has_value()) {
+            m_panel->refreshPanel(m_editor->workingSet(), *m_session.readiness);
+        }
+    });
+}
+
 void RequirementsUiModule::attachPanel(RequirementsPanelWidget* panel)
 {
     m_panel = panel;
@@ -102,6 +128,7 @@ void RequirementsUiModule::attachPanel(RequirementsPanelWidget* panel)
     if (m_panel != nullptr && m_pendingAvailability) {
         m_panel->setCommandAvailability(std::move(m_pendingAvailability));
     }
+    wirePanelPostEdit();
 }
 
 // =====================================================================

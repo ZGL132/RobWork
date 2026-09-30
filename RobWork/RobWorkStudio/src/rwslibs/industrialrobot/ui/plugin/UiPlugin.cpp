@@ -63,7 +63,9 @@
 #include <rw/graphics/WorkCellScene.hpp>         // rw::graphics::WorkCellScene（L2 高亮出口——setHighlighted 公开 API）
 
 #include <sdurws/ird/project/CommandService.hpp> // project::CommandResult/CommandStatus（apply 网关提交面——T03b-2）
+#include <sdurws/ird/project/QueryPort.hpp>      // project::IProjectQueryPort/RevisionView（UI-T29 闭包数据源）
 #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
+#include <sdurws/ird/requirements/ObjectTypes.hpp>  // requirements::kReqSetObjectType（根回填 token——公共头常量）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // PluginUiDescriptor/CommandDescriptor 完整类型（UI-T23 三域命令入册的遍历面）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（buildDraftCommand 调用面）
@@ -528,7 +530,14 @@ void IrdWorkbenchHostPlugin::initialize()
     auto storeBundle = std::make_shared<BundleCapturingStoreFactory>(
         std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge, m_eventBus.get()),
         [this](std::shared_ptr<app::StorePortAdapter> adapter) {
+            std::shared_ptr<app::StorePortAdapter> kept = adapter;
             m_lastStoreAdapter = std::move(adapter);
+            // 需求域会话接线（UI-T29）：项目打开成功即尝试 HEAD 闭包载入
+            //（含根→活会话；无根→诚实空态——wireRequirementsSession 内
+            // 二态裁决）。回调在 UI 线程（打开协议同线程）。
+            if (kept != nullptr) {
+                wireRequirementsSession(*kept);
+            }
         });
     m_storeFactory = storeBundle;
 
@@ -729,6 +738,23 @@ void IrdWorkbenchHostPlugin::initialize()
         [this](const std::vector<CommandParameter>& params) {
             return orchestrateApplyDraft(params);
         };
+    // 应用草稿门控（UI-T29 最小校验——draft.apply 注册期谓词的宿主注入）：
+    // 需求会话存活时现算就绪（判定权威＝域侧 checker 直投值，P-REQ-6），
+    // 存在 Blocking→禁用＋统一原因键（注册表谓词按当前快照求值——bind-
+    // Readiness 刷新编辑器工作集后按钮/命令面板随查询刷新）；无会话/无
+    // 阻断＝nullopt（门控放行——诚实二态，不虚构阻断）。
+    contentDeps.applyDraftDisablement = [this]() -> std::optional<ui::DisableReason> {
+        if (!m_requirementsSessionLive) {
+            return std::nullopt;  // 无需求会话＝本域零门控（空态不虚构阻断）
+        }
+        const requirements::RequirementReadinessReport report =
+            m_requirementsReadinessChecker.check(
+                m_requirementsEditor.workingSet(), requirements::CheckContext{});
+        if (report.hasBlocking()) {
+            return ui::DisableReason{"reason.readiness-blocking"};
+        }
+        return std::nullopt;
+    };
     m_content = createWorkbenchContent(std::move(contentDeps));
 
     // ---- 状态投影绑宿主状态栏（UI-T18——O-43 ③：宿主 chrome 唯一）----
@@ -1824,6 +1850,140 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateSaveProject(
 // =====================================================================
 // 关闭编排（UI-T17——workbench.closeProject 覆写面；§5.4/§5.6）
 // =====================================================================
+
+// =====================================================================
+// 需求域会话接线（UI-T29——存储成功捕获回调的数据面）
+// =====================================================================
+
+namespace {
+/**
+ * @brief 需求闭包域字节源的项目适配器（RequirementObjectClosureView 的
+ *        宿主实现——UI-T29 基线闭包提供器）。
+ *
+ * 数据面：项目查询端口的修订视图（objectRefs 逐条 token/id/cv）＋
+ * tryObject 负载取回——映射为 {token, bytes} 闭包对象。实现方约束
+ * （Editor.hpp 闭包纪律）：并发只读安全；同键重复取回同字节；闭包域
+ * 纪律＝只应答冻结修订（构造时固定 HEAD 视图）内的对象。
+ * 生命周期：非 owning——query 端口引用由 ProjectStore 上下文保证存活
+ * （bindAnchor 调用期内有效——loadBaseline 同步完成，无跨期持有）。
+ */
+class ProjectRequirementsClosure final
+    : public requirements::RequirementObjectClosureView {
+public:
+    ProjectRequirementsClosure(project::IProjectQueryPort& query,
+                               project::RevisionView head)
+        : m_query(query), m_head(std::move(head))
+    {
+    }
+
+    std::optional<requirements::RequirementClosureObject> tryObjectByToken(
+        std::string_view objectTypeToken) const override
+    {
+        // 根对象路由（req-set 按唯一 token 取——§9.3 loadBaseline @pre）。
+        for (const auto& ref : m_head.objectRefs) {
+            if (ref.objectTypeToken == objectTypeToken) {
+                return fetch(ref);
+            }
+        }
+        return std::nullopt;
+    }
+
+    std::optional<requirements::RequirementClosureObject> tryObject(
+        const core::ObjectId& objectId) const override
+    {
+        // 四集合解引用（§4.1 根对象引用表——按 id 命中即取）。
+        for (const auto& ref : m_head.objectRefs) {
+            if (ref.objectId == objectId) {
+                return fetch(ref);
+            }
+        }
+        return std::nullopt;
+    }
+
+private:
+    /// 单对象取回（引用→负载字节——内容寻址 cv 键；nullopt 透传＝闭包
+    /// 外/损坏的 try 轨语义，交由 loadBaseline 的校验面裁决）。
+    std::optional<requirements::RequirementClosureObject> fetch(
+        const project::ObjectRef& ref) const
+    {
+        auto bytes = m_query.tryObject(ref.objectId, ref.contentVersion);
+        if (!bytes.has_value()) {
+            return std::nullopt;
+        }
+        return requirements::RequirementClosureObject{ref.objectTypeToken,
+                                                      *std::move(bytes)};
+    }
+
+    project::IProjectQueryPort& m_query;  ///< 查询端口（非 owning——上下文存活期）
+    project::RevisionView m_head;         ///< 冻结的 HEAD 修订视图（闭包域＝该修订）
+};
+}  // namespace
+
+/**
+ * @brief 需求域会话接线（UI-T29——存储成功捕获回调）。
+ *
+ * 会话数据面：HEAD 闭包载入基线——根 req-set 在册→编辑器载入成功→
+ * attachEditor＋bindSessionAnchor＋bindReadiness＋根身份回填（四集合
+ * 入树/表的数据前提）；闭包无根（全新工程）→attachEditor(nullptr)
+ * 诚实空态（树供给空集合法二态——不虚构会话）。
+ *
+ * 线程：存储捕获回调在 UI 线程（打开协议同线程）——模块/面板同约束。
+ */
+void IrdWorkbenchHostPlugin::wireRequirementsSession(
+    app::StorePortAdapter& adapter)
+{
+    if (m_domains == nullptr || !m_domains->requirements.has_value()) {
+        return;  // 需求域装配缺席（§11.3 失败隔离形态）——无接线面
+    }
+    auto& requirements = *m_domains->requirements;
+
+    project::IProjectQueryPort& query = adapter.projectStore().query();
+    const project::RevisionView head = query.head();
+    ProjectRequirementsClosure closure(query, head);
+    const auto load = m_requirementsEditor.loadBaseline(closure);
+    if (!load.ok) {
+        // 闭包无 req-set 根（全新工程/根未应用）——显式无会话（门面契约：
+        // nullptr＝诚实空态，buildDraftCommand 如实 nullopt，树供给空集）。
+        m_requirementsSessionLive = false;
+        requirements.attachEditor(nullptr);
+        requirements.onSessionDetached();
+        if (m_diag.pipeline != nullptr) {
+            m_diag.pipeline->logDev(
+                kPluginDevChannel,
+                "需求域会话：HEAD 无 req-set 根——诚实空态（" + load.error.detail
+                    + "）");
+        }
+        return;
+    }
+    m_requirementsSessionLive = true;
+    requirements.attachEditor(&m_requirementsEditor);
+
+    // 会话锚＋根身份回填（objectRefs 扫描 req-set token——建模 onCommitted
+    // 同款扫描形态；token 常量来自 requirements 公共头，域知识最小面）。
+    requirements.bindSessionAnchor(head.branch, head.id);
+    std::optional<core::ObjectId> rootId;
+    for (const auto& ref : head.objectRefs) {
+        if (ref.objectTypeToken
+            == std::string(requirements::kReqSetObjectType)) {
+            rootId = ref.objectId;
+            break;
+        }
+    }
+    requirements.noteAppliedRevision(head.id, rootId);
+
+    // 最小校验（UI-T29）：首刷就绪报告——判定权威＝域侧 checker，本宿主
+    // 取 check 产出直投会话态（P-REQ-6：呈现数据零判定）。
+    requirements.bindReadiness(m_requirementsReadinessChecker.check(
+        m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+
+    // 编辑后动作：重估就绪→bindReadiness（注册表谓词按当前会话态求值
+    // ——draft.apply 门控随之刷新）＋面板校验页经模块组合子以最新报告
+    // refreshPanel（编辑态即时预检的呈现收口）。
+    requirements.setPostEditAction([this, &requirements]() {
+        requirements.bindReadiness(m_requirementsReadinessChecker.check(
+            m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+    });
+}
 
 /**
  * @brief 应用编排（UI-T23——draft.apply 覆写面的多模块遍历形态）：

@@ -1174,7 +1174,20 @@ void WorkbenchContentImpl::assembleCommandSystem()
                 return out;
             };
         }
-        const RegistrationResult result = m_commands->registerCommand(desc, handler);
+        // UI-T29 最小校验：draft.apply 的宿主门控谓词（applyDraftDisable-
+        // ment 注入形态）——存在未就绪阻断时注册期禁用（按钮/命令面板/
+        // 菜单共享同一 availability 快照，谓词按当前快照求值）；未注入＝
+        // 零新增门控（诚实二态，注册形态与既有壳命令完全一致）。
+        const bool applyGated = (std::string_view(row.id) == "draft.apply"
+                                 && m_deps.applyDraftDisablement != nullptr);
+        const RegistrationResult result =
+            applyGated
+                ? m_commands->registerCommandWithPredicates(
+                      desc, handler, nullptr,
+                      EnablementPredicate{[this](const UiContextSnapshot&) {
+                          return m_deps.applyDraftDisablement();
+                      }})
+                : m_commands->registerCommand(desc, handler);
         Q_ASSERT(result == RegistrationResult::Ok
                  && "§7.1 最小命令集登记被拒（表内冲突＝装配 bug）");
         (void)result;

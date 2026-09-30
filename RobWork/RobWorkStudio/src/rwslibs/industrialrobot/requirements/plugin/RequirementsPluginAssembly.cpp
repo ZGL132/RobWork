@@ -114,6 +114,14 @@ void RequirementsPluginAssembly::bindCommandAvailability(
     }
 }
 
+void RequirementsPluginAssembly::setPostEditAction(
+    std::function<void()> action)
+{
+    if (m_impl != nullptr) {
+        m_impl->setPostEditAction(std::move(action));
+    }
+}
+
 RequirementsModuleSessionState& RequirementsPluginAssembly::session() const
 {
     // 会话权威态访问（装配期调用——m_impl 恒在；modeling/kinematics 门面

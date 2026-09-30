@@ -76,7 +76,7 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
 /// 家族需求域按钮一族——此前 RequirementsPanelWidget 按钮以原始 commandId
 /// 直出，UX-02 内部名泄漏；键登记后 resolveText 才可解析，键表完备性由
 /// ui/test 具名用例钉住——F-430 处置约束）。
-constexpr std::array<TextRow, 23> kDomainCommandTitleTable{{
+constexpr std::array<TextRow, 24> kDomainCommandTitleTable{{
     { "cmd.modeling.new-from-template.title",          "从模板新建"       },
     { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
     { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
@@ -91,6 +91,7 @@ constexpr std::array<TextRow, 23> kDomainCommandTitleTable{{
     { "cmd.flow-not-assembled.reason",                 "该流程将在后续版本提供" },
     { "reason.no-project",                              "请先打开工业机器人项目" },
     { "reason.readonly",                                "当前项目为只读，不能修改" },
+    { "reason.readiness-blocking",                      "存在未就绪阻断项——先处理校验页阻断" },
     // —— requirements 域九键（行序＝requirements.md §9.8 命令表行序，
     // PanelCommandCatalog::requirementsDomainCommands 登记序——两端顺序同源
     // 该表；值＝工程用语短句，零 id/内部名词形——UX-02）——
