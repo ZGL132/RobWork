@@ -22,9 +22,12 @@
 #include <gtest/gtest.h>
 
 #include <QAction>
+#include <QDir>
+#include <QLabel>
 #include <QPushButton>
 #include <QSettings>
 #include <QStackedWidget>
+#include <QTabWidget>
 #include <QTemporaryDir>
 #include <QWidget>
 
@@ -854,6 +857,117 @@ TEST_F(WorkbenchContentGuiTest, DomainCommandGatingNoProjectAndReadonly_WP24_T03
         EXPECT_TRUE(writeGate.enabled)
             << "可写会话写路径域命令仍被禁用（上下文刷新未达域命令谓词）";
     }
+
+    EXPECT_TRUE(content->shutdown());
+}
+
+// =====================================================================
+// UI-T25——文案治理与空态引导（acceptance 1/2/3 的机器断言面）
+// =====================================================================
+
+/**
+ * UI-T25 空态引导＋占位收敛（契约 acceptance 2/3）：底部『下一步建议』
+ * 页签呈现静态工作流引导（ird_advice_guide——非占位文本，只引已实装入口）
+ * ＋其余四页签占位保持；顶栏三占位合并为单条说明；左栏不再有"项目对象树"
+ * 占位（共享工业项目树已承载——UI-T23 D3）。呈现文本断言（呈现形态钉）：
+ * 引导文本不含内部任务编号词形（UX-02——本任务的文案治理红线）。
+ * 截图：IRD_UI_T25_SNAP_DIR 设置时对 advice 页 grab 存 PNG（验收留痕用）；
+ * 未设置时跳过截图只做断言（CI 无桌面留存路径）。
+ */
+TEST_F(WorkbenchContentGuiTest, AdviceGuideAndPlaceholderConvergence_UX02_UI_T25)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+    auto content = ui::createWorkbenchContent(makeEmbeddedDeps());
+    ASSERT_TRUE(content->build());
+    content->activate();
+
+    // ---- 底部任务和状态区：页签结构与引导页呈现 ----
+    // （bottomWidget() 出口即 tabs 本体——WorkbenchContentImpl::buildBottomContent
+    //   直接以 QTabWidget 为分区控件，findChild 不查自身故直接 cast。）
+    auto* tabs = qobject_cast<QTabWidget*>(content->bottomWidget());
+    ASSERT_NE(tabs, nullptr) << "底部任务和状态区页签容器缺失";
+    ASSERT_EQ(tabs->objectName(), QStringLiteral("ird_bottom_tabs"))
+        << "底部页签容器 objectName 漂移";
+    ASSERT_EQ(tabs->count(), 5) << "底部页签数偏离（§4.2 底部行五页签）";
+
+    // 其余四页签保持占位（呈现模型/状态词确未落地——不虚构能力）。
+    for (int i = 0; i < 4; ++i) {
+        tabs->setCurrentIndex(i);
+        auto* placeholder = qobject_cast<QLabel*>(tabs->currentWidget());
+        ASSERT_NE(placeholder, nullptr) << "页签 " << i << " 非占位 QLabel";
+        EXPECT_TRUE(placeholder->text().contains(
+            QString::fromUtf8(u8"本阶段将在后续版本提供")))
+            << "页签占位说明丢失（index=" << i << "）";
+    }
+
+    // 『下一步建议』页＝静态工作流引导（ird_advice_guide）。
+    tabs->setCurrentIndex(4);
+    auto* guide = qobject_cast<QLabel*>(tabs->currentWidget());
+    ASSERT_NE(guide, nullptr) << "下一步建议页非 QLabel";
+    EXPECT_EQ(guide->objectName(), QStringLiteral("ird_advice_guide"));
+    const QString guideText = guide->text();
+    EXPECT_FALSE(guideText.isEmpty()) << "引导文本为空";
+    // 只引已实装入口的关键特征词（新建/打开项目、需求导入、求解 IK）。
+    EXPECT_TRUE(guideText.contains(QString::fromUtf8(u8"新建或打开项目")))
+        << "引导缺项目入口行";
+    EXPECT_TRUE(guideText.contains(QString::fromUtf8(u8"导入 CSV/JSON")))
+        << "引导缺需求导入行";
+    EXPECT_TRUE(guideText.contains(QString::fromUtf8(u8"求解 IK")))
+        << "引导缺运动学求解行";
+    // 零内部名（UX-02——文案治理红线在引导文本上的投影）。
+    EXPECT_EQ(guideText.indexOf(QString::fromLatin1("WP-")), -1)
+        << "引导文本含内部任务编号词形 WP-";
+    EXPECT_EQ(guideText.indexOf(QString::fromLatin1("deprecated")), -1)
+        << "引导文本含开发术语 deprecated";
+
+    // 引导页截图（验收留痕——环境变量指路时才落盘）。
+    // 未显示态 grab 按当前几何裁切（sizeHint 最小宽），先给足尺寸再抓帧。
+    const QString snapDir = qEnvironmentVariable("IRD_UI_T25_SNAP_DIR");
+    if (!snapDir.isEmpty()) {
+        QDir().mkpath(snapDir);
+        guide->resize(720, 360);
+        tabs->resize(760, 420);
+        tabs->grab().save(snapDir + QStringLiteral("/advice-guide.png"), "PNG");
+    }
+    tabs->setCurrentIndex(0);
+
+    // ---- 顶栏：三占位合并单条（收敛前＝三条"阶段导航（本阶段将在后续
+    // 版本提供）"同文 QLabel；收敛后＝一条合并说明）----
+    // （topBarWidget() 出口即 bar 本体——同 bottomWidget，直接 cast。）
+    auto* topBar = qobject_cast<QWidget*>(content->topBarWidget());
+    ASSERT_NE(topBar, nullptr) << "顶栏内容条缺失";
+    ASSERT_EQ(topBar->objectName(), QStringLiteral("ird_top_bar_content"))
+        << "顶栏内容条 objectName 漂移";
+    int topDeferredCount = 0;
+    int legacyStageNavCount = 0;
+    const auto topLabels = topBar->findChildren<QLabel*>();
+    for (const QLabel* label : topLabels) {
+        const QString text = label->text();
+        if (text.contains(QString::fromUtf8(u8"阶段导航、方案工况与任务状态指示"))) {
+            ++topDeferredCount;
+        }
+        if (text == QString::fromUtf8(u8"阶段导航（本阶段将在后续版本提供）")) {
+            ++legacyStageNavCount;
+        }
+    }
+    EXPECT_EQ(topDeferredCount, 1) << "顶栏合并占位应恰一条（实际 "
+                                   << topDeferredCount << "）";
+    EXPECT_EQ(legacyStageNavCount, 0) << "顶栏残留旧形态同名占位（未收敛）";
+
+    // ---- 左栏：项目对象树占位移除（共享树承载）、阶段任务列表占位保留 ----
+    auto* leftWidget = content->leftWidget();
+    ASSERT_NE(leftWidget, nullptr);
+    int leftTaskListCount = 0;
+    const auto leftLabels = leftWidget->findChildren<QLabel*>();
+    for (const QLabel* label : leftLabels) {
+        const QString text = label->text();
+        EXPECT_FALSE(text.contains(QString::fromUtf8(u8"项目对象树")))
+            << "左栏残留项目对象树占位（与共享树同屏冗余）";
+        if (text.contains(QString::fromUtf8(u8"阶段任务列表"))) {
+            ++leftTaskListCount;
+        }
+    }
+    EXPECT_EQ(leftTaskListCount, 1) << "左栏阶段任务列表占位缺失";
 
     EXPECT_TRUE(content->shutdown());
 }

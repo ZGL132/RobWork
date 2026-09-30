@@ -73,11 +73,13 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QLibraryInfo>
 #include <QMenuBar>
 #include <QMenu>
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QToolBar>
+#include <QTranslator>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -228,6 +230,22 @@ int main (int argc, char** argv)
     Q_INIT_RESOURCE (rwstudio_resources);
 
     QApplication app (argc, argv);
+
+    // ②b Qt 标准部件文案本地化（UI-T25——界面全中文口径的补齐面）：
+    //   QFileDialog/QInputDialog/QMessageBox 等标准对话框的内置按钮
+    //   （OK/Cancel/Open/Save…）文案来自 Qt 自带的翻译文件，不装载时
+    //   恒为英文——与产品全中文界面冲突（新建项目命名对话框"OK/Cancel"
+    //   即实测实例）。经 QLibraryInfo 翻译目录解析装载 qt_zh_CN：
+    //   开发机构建树解析到 Qt 安装树 translations/；staging 部署树解析
+    //   到随包 translations/（windeployqt 携带）。装载失败（部署面未携带）
+    //   静默降级英文——文案本地化不是启动契约，不阻断、不上抛、不弹窗
+    //   （降级边界在验收记录如实登记）。
+    QTranslator* qtBaseTranslator = new QTranslator (&app);
+    if (qtBaseTranslator->load (
+            QStringLiteral ("qt_zh_CN.qm"),
+            QLibraryInfo::path (QLibraryInfo::TranslationsPath))) {
+        app.installTranslator (qtBaseTranslator);
+    }
 
     // 异常呈现面（框架 AppRunner 同构）：装配失败 fail-fast 属契约语义
     // （禁止吞错），但正式产品不应无窗崩溃——呈现错误对话框后以非零码

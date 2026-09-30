@@ -24,6 +24,8 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
@@ -66,5 +68,5 @@
     "P2 需求命令条分组：命令按钮按语义四组分隔（导入导出/几何采集/模板/编辑），FlowLayout 换行与无重叠语义保持——需求面板特写截图＋layout 冒烟双场景重跑全绿（LAYOUT_SMOKE_PASS）",
     "回归门禁：双模式构建零错误；ird_gates 收集态 base↔head 归一零新增命中（本任务零依赖边变化为预期）；ctest ird 标签全绿＋ui/requirements/kinematics 既有测试不回归；validate-docs PASS；留痕 traceability/builds/ui-t25/（截图＋构建/门禁/测试日志）"
   ],
-  "note": "立项来源：所有者 2026-09-30 界面评审（本会话实测截图与对比评估）授权『按照上述建议进行优化』。范围＝评估建议的 P0/P1/P2 可落地面四项：①域面板迁移标记文案去内部编号并挂 UiText（F-430 家族部分消账——F-431/F-432 同族两处标签，随本任务消账并在验收记录列举；其余域面板冻结文案仍归 P-DIAG-9 批次）；②『下一步建议』静态工作流引导（UI-T24 曾将『占位文案收敛』划归 P-DIAG-9——本任务经所有者本次授权把『下一步建议页签引导＋顶栏/左栏占位收敛』收回实施，P-DIAG-9 其余范围不变）；③Qt 标准对话框中文化；④需求命令条语义分组。〔范围修正声明〕kinematics/plugin 两件精确文件（KinematicsPanelWidget.{hpp,cpp}）列入 allowedFiles（UI-T24 四件先例同款：迁移标记标签落点在该域插件文件），kinematics/** 其余禁改。〔明确不做〕三维视图工具栏视角按钮/坐标轴指示器（框架工具栏与 RWStudioView3D——SA-02 需 patches 流程，不属本任务）；命令面板浮层化（呈现容器重构，收益/风险比不划算，留后续任务）。"
+  "note": "立项来源：所有者 2026-09-30 界面评审（本会话实测截图与对比评估）授权『按照上述建议进行优化』。范围＝评估建议的 P0/P1/P2 可落地面四项：①域面板迁移标记文案去内部编号并挂 UiText（F-430 家族部分消账——F-431/F-432 同族标签，随本任务消账并在验收记录列举；其余域面板冻结文案仍归 P-DIAG-9 批次）；②『下一步建议』静态工作流引导（UI-T24 曾将『占位文案收敛』划归 P-DIAG-9——本任务经所有者本次授权把『下一步建议页签引导＋顶栏/左栏占位收敛』收回实施，P-DIAG-9 其余范围不变）；③Qt 标准对话框中文化；④需求命令条语义分组。〔范围修正声明 v1.1〕实施段全产品 grep 复扫发现建模域同族第三处泄漏（ModelingPanelWidget.cpp:135 deprecated 直出）——评估首扫仅凭截图未开建模面板而漏检；modeling/plugin/ModelingPanelWidget.{hpp,cpp} 两件精确文件列入 allowedFiles（UI-T24/UI-T16 精确文件先例同款），键族⑨扩为三域三键；modeling/** 其余仍禁改。〔明确不做〕三维视图工具栏视角按钮/坐标轴指示器（框架工具栏与 RWStudioView3D——SA-02 需 patches 流程，不属本任务）；命令面板浮层化（呈现容器重构，收益/风险比不划算，留后续任务）。"
 }
