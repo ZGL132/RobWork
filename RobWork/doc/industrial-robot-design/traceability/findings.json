@@ -4409,6 +4409,16 @@
       "title": "冷启构建树基线问题：RobWorkSim 的 RWSimulatorPlugin（及 rwplugin）在全新配置树编译失败（疑似 min/max 宏与框架头未纳 NOMINMAX 的既有环境缺陷）——任何未来冷启验收的全量『零错误』口径都会被该框架目标阻断；industrialrobot 范围目标不受影响。",
       "owner": "构建约定所有者＋平台环境（基线修复或验收口径显式豁免——二选一登记 DTB §5）",
       "resolution": "UI-T27 验收按『ird 交付范围可复现构建零错误』判定（框架只读区失败与本任务零关联）；编号顺延自 F-442。"
+    },
+    {
+      "id": "F-444",
+      "source": "traceability/acceptance/UI-T29-20261001.md#S-1（UI-T29 验收 attempt1，2026-10-01；证据：990f1263 的 builds/ui-t29/ 仅含 1 件 smoke 文件〔console-layout.log 走 .log 白名单例外〕——九帧 PNG 被 .gitignore 忽略域拦截且未 -f 补录；九帧已随 acc/UI-T29/1 记录提交补全）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "traceability 证据 PNG 落 .gitignore 忽略域：builds/**/smoke/*.png 逐任务被忽略、依赖提交时手工 -f 补录（T25/T26/T27 偶合成功、T29 漏检）——证据面完整性依赖人工记忆，存在逐任务缺帧风险。",
+      "owner": "治理面（.gitignore 增补 traceability/builds/**/smoke/*.png 白名单否定项，或留痕流程固化 -f 口径）",
+      "resolution": "UI-T29 的九帧已随 acc/UI-T29/1@da7790a5 补全并入主线；本条登记防复发。编号顺延自 F-443。"
     }
   ]
 }

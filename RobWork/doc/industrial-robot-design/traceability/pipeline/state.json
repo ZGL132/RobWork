@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 433,
+  "tickCount": 435,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -13,13 +13,24 @@
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 0
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T05:10:00+08:00",
+    "updatedAt": "2026-10-01T06:15:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T29",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "990f1263"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T29-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（tick#434 实施/tick#435 验收——单会话顺序执行模式，独立性降级已在记录声明）。需求域宿主会话接线＋最小校验（批次 A）：wireRequirementsSession 二态接线〔HEAD 闭包载入→attachEditor＋bindSessionAnchor＋bindReadiness＋req-set 根回填；无根→诚实空态〕＋ProjectRequirementsClosure 闭包适配器＋面板 setPostEditAction＋模块组合子（重估→bindReadiness→最新报告 refreshPanel——校验页实时化）＋draft.apply 注册期门控〔applyDraftDisablement 契约增量 ui.md v1.33 注⑯＋UiText 键 reason.readiness-blocking〕＋sdurws_ird_requirements_gui_test 新目标三具名用例＋契约 v1.1 范围修正（gui_test/CMakeLists/两契约白名单）。验证＝双模式零错误＋ctest 五单元 12 目标 100%＋layout 冒烟双场景 LAYOUT_SMOKE_PASS＋ird_gates 93→96 恰增 3 条随登记件＋validate-docs PASS；留痕 builds/ui-t29/＋acc 补全九帧。合入口径 PIPE §4.7②③〔evidence SHA da7790a5＋代码 SHA 990f1263——漂移检测通过〕；state.json 两次冲突按 F-426 红线主线版本保留；建议级 F-444 随收尾转登"
+    },
     {
       "task": "UI-T27",
       "unit": "ui",
@@ -2201,13 +2212,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T29",
-      "contractPath": "tasks/foundation/UI-T29.json",
-      "branch": "ui-t29"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",

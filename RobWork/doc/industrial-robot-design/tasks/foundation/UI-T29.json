@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求域宿主会话接线＋最小校验（功能对照批次 A）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T27"],
   "requirements": [
     "UX-02（工程用语——校验提示/门禁原因/状态行摘要中文呈现，零命令 id 英文直出）",
