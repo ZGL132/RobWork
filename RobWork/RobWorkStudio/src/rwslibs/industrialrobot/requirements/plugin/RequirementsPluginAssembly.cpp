@@ -98,6 +98,22 @@ void RequirementsPluginAssembly::onSessionDetached()
     }
 }
 
+void RequirementsPluginAssembly::bindCommandSubmit(
+    std::function<void(const ui::CommandId&)> submit)
+{
+    if (m_impl != nullptr) {
+        m_impl->bindCommandSubmit(std::move(submit));
+    }
+}
+
+void RequirementsPluginAssembly::bindCommandAvailability(
+    std::function<ui::CommandAvailability(const ui::CommandId&)> availability)
+{
+    if (m_impl != nullptr) {
+        m_impl->bindCommandAvailability(std::move(availability));
+    }
+}
+
 RequirementsModuleSessionState& RequirementsPluginAssembly::session() const
 {
     // 会话权威态访问（装配期调用——m_impl 恒在；modeling/kinematics 门面

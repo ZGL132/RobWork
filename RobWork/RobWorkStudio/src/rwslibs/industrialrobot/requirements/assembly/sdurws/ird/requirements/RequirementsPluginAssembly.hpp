@@ -35,9 +35,11 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <functional>
 
 #include <sdurws/ird/core/Identity.hpp>          // core::BranchId/RevisionId/ObjectId（会话锚/回执值面）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // ui::PluginUiDescriptor（§10.9 装配描述符——值成员需完整类型）
+#include <sdurws/ird/ui/ICommandRegistry.hpp>    // ui::CommandAvailability（按钮门控）
 #include <sdurws/ird/ui/SelectionService.hpp>    // ui::SelectionService（attachSelectionService 入参——ui 公共头，kinematics 先例同款）
 
 namespace sdurws {
@@ -139,6 +141,13 @@ struct RequirementsPluginAssembly {
      *        关闭清理核查的选择服务半区在此收口）。
      */
     void onSessionDetached();
+
+    /// 绑定宿主命令提交出口（面板按钮经此转发到 ui 注册表）。
+    void bindCommandSubmit(std::function<void(const ui::CommandId&)> submit);
+
+    /// 绑定宿主命令可用性查询（按钮与菜单共用注册表快照）。
+    void bindCommandAvailability(
+        std::function<ui::CommandAvailability(const ui::CommandId&)> availability);
 
     /// 会话态访问（装配层注入/排障入口——完整类型在插件私有头，宿主侧
     /// 仅引用传递；仅 UI 线程）。

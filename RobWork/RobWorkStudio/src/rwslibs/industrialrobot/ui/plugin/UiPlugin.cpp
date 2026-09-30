@@ -648,6 +648,7 @@ void IrdWorkbenchHostPlugin::initialize()
             for (const CommandDescriptor& desc : descriptor->commands) {
                 WorkbenchContentDeps::DomainCommandEntry entry;
                 entry.descriptor = desc;
+                entry.assembled = (desc.id == kModelingNewFromTemplateId);
                 if (desc.id == kModelingNewFromTemplateId) {
                     // 真实执行面（域内已落位能力）：模板草稿重种子＋就绪
                     // 重算——种子内部走真实 RobotDesignTemplateFactory::createDraft。
@@ -773,6 +774,22 @@ void IrdWorkbenchHostPlugin::initialize()
                     m_content->submitCommand(std::string(id));
                 }
             });
+        m_domains->modeling.bindCommandAvailability(
+            [this](const ui::CommandId& id) {
+                return m_content->commandRegistry().availability(id);
+            });
+        if (m_domains->requirements.has_value()) {
+            m_domains->requirements->bindCommandSubmit(
+                [this](const ui::CommandId& id) {
+                    if (m_content != nullptr) {
+                        m_content->submitCommand(std::string(id));
+                    }
+                });
+            m_domains->requirements->bindCommandAvailability(
+                [this](const ui::CommandId& id) {
+                    return m_content->commandRegistry().availability(id);
+                });
+        }
         // 运动学域命令提交出口（UI-T23——同形态转发 content 注册表；
         // requirements 门面无该出口——面板命令提交随域会话任务接续）。
         if (m_domains->kinematics.has_value()) {
@@ -781,6 +798,10 @@ void IrdWorkbenchHostPlugin::initialize()
                     if (m_content != nullptr) {
                         m_content->submitCommand(std::string(id));
                     }
+                });
+            m_domains->kinematics->bindCommandAvailability(
+                [this](const std::string& id) {
+                    return m_content->commandRegistry().availability(id);
                 });
         }
     }

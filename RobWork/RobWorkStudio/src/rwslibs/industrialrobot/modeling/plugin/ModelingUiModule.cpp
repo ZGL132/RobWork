@@ -208,6 +208,16 @@ void ModelingUiModule::bindCommandSubmit(CommandSubmitFn submitFn)
     m_pendingSubmit = std::move(submitFn);
 }
 
+void ModelingUiModule::bindCommandAvailability(CommandAvailabilityFn availability)
+{
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->setCommandAvailability(std::move(availability));
+        return;
+    }
+    m_pendingAvailability = std::move(availability);
+}
+
 void ModelingUiModule::bindTextResolver(std::function<QString(const std::string&)> resolve)
 {
     m_guard.assertOnUiThread();
@@ -246,6 +256,9 @@ QWidget* ModelingUiModule::createPanel()
     });
     if (m_pendingSubmit) {
         panel->setCommandSubmit(std::move(m_pendingSubmit));
+    }
+    if (m_pendingAvailability) {
+        panel->setCommandAvailability(std::move(m_pendingAvailability));
     }
     if (m_textResolver) {
         panel->setCommandTitleResolver(m_textResolver);

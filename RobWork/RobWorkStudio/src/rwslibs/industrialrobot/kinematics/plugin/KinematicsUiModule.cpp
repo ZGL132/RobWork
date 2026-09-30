@@ -59,6 +59,14 @@ void KinematicsUiModule::bindCommandSubmit(CommandSubmitFn submitFn)
     // 主面板的命令出口经服务缝注入（构造时拷贝缝——运行期以可变包装承载）。
 }
 
+void KinematicsUiModule::bindCommandAvailability(CommandAvailabilityFn availability)
+{
+    m_commandAvailability = std::move(availability);
+    if (m_panel != nullptr) {
+        m_panel->setCommandAvailability(m_commandAvailability);
+    }
+}
+
 void KinematicsUiModule::bindTextResolver(TextResolver resolve)
 {
     m_textResolver = std::move(resolve);
@@ -78,6 +86,9 @@ QWidget* KinematicsUiModule::createPanel()
         }
     };
     m_panel = new KinematicsPanelWidget(std::move(wired), *m_session);
+    if (m_commandAvailability != nullptr) {
+        m_panel->setCommandAvailability(m_commandAvailability);
+    }
     if (m_textResolver != nullptr) {
         m_panel->setCommandTitleResolver(m_textResolver);
     }

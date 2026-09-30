@@ -45,6 +45,7 @@
 
 #include <memory>
 #include <optional>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -56,6 +57,7 @@
 #include <sdurws/ird/ui/IPluginUiModule.hpp>       // ui::IPluginUiModule（P-REQ-8 消账——WP-24-T03 落位的冻结接口）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::DomainReadinessItem（§6.5 汇聚值面）
+#include <sdurws/ird/ui/ICommandRegistry.hpp>      // ui::CommandAvailability（按钮门控）
 #include "HostMigrationProviders.hpp"              // 迁移三接入面（WP-14-T10——同目录私有头）
 #include "PanelCommandCatalog.hpp"                 // requirementsReadinessProjection（§11.2 数据面——同目录私有头）
 #include "PanelRefresh.hpp"                        // PanelUiThreadGuard（§3.4 线程守卫——零 Qt，同目录私有头）
@@ -128,7 +130,12 @@ public:
      *
      * @param panel [in] 面板 widget（非 owning——调用方保证存活期覆盖模块）
      */
-    void attachPanel(RequirementsPanelWidget* panel) { m_panel = panel; }
+    void attachPanel(RequirementsPanelWidget* panel);
+    using CommandSubmitFn = std::function<void(const ui::CommandId&)>;
+    using CommandAvailabilityFn =
+        std::function<ui::CommandAvailability(const ui::CommandId&)>;
+    void bindCommandSubmit(CommandSubmitFn submitFn);
+    void bindCommandAvailability(CommandAvailabilityFn availability);
 
     /**
      * @brief 注入需求编辑器（草稿唯一写目标与工作集权威——装配层注入；
@@ -246,6 +253,8 @@ private:
     PanelUiThreadGuard m_guard;  ///< §3.4 UI 线程守卫（构造线程绑定）
     RequirementsModuleSessionState m_session;  ///< 会话权威态（装配层更新）
     RequirementsPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
+    CommandSubmitFn m_pendingSubmit;             ///< 面板创建前暂存的宿主出口
+    CommandAvailabilityFn m_pendingAvailability;  ///< 面板创建前暂存的可用性查询
     IRequirementEditor* m_editor = nullptr;      ///< 编辑器引用（非 owning——工作集权威）
     ui::IWorkbenchShell* m_shell = nullptr;      ///< 壳门面引用（非 owning——§10.9 生命周期）
 

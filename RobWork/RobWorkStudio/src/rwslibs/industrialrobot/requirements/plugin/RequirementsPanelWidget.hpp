@@ -75,6 +75,7 @@ class RequirementsPanelWidget final : public QWidget, public IRequirementEditSin
 public:
     /// 命令提交出口（装配层注入——绑定 ui ICommandRegistry.submit；非 owning）。
     using CommandSubmitFn = std::function<void(const ui::CommandId&)>;
+    using CommandAvailabilityFn = std::function<ui::CommandAvailability(const ui::CommandId&)>;
     /// 编辑目标提供器（装配层注入——返回会话权威编辑器指针；L-R2 提交面
     /// 现取零缓存——面板不持有工作集副本）。
     using EditTargetProvider = std::function<IRequirementEditor*()>;
@@ -98,6 +99,7 @@ public:
     /** @brief 注入命令提交出口（装配期一次——面板按钮激活后经此转发到
      *         ui CommandRegistry；不注入＝命令按钮禁用——不虚构可达性）。 */
     void setCommandSubmit(CommandSubmitFn submitFn);
+    void setCommandAvailability(CommandAvailabilityFn availability);
 
     /** @brief 注入编辑目标提供器（装配期一次；不注入＝编辑禁用——不虚构
      *         可编辑性。返回指针所有权在会话层，面板零持有）。 */
@@ -194,6 +196,7 @@ private:
     OperatingConditionService m_conditionService;  ///< 领域服务（必验解析——P-EV-9 单点复用）
     std::vector<ui::CommandDescriptor> m_commands;  ///< 域命令目录（§9.8 九条——装配数据）
     CommandSubmitFn m_commandSubmit;          ///< 命令提交出口（装配层注入；空＝按钮禁用）
+    CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     RegionPreviewSink m_regionPreview;        ///< 区域三维预览出口（装配层注入；空＝文本摘要）
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）

@@ -35,6 +35,14 @@ void KinematicsPluginAssembly::bindCommandSubmit(
     }
 }
 
+void KinematicsPluginAssembly::bindCommandAvailability(
+    std::function<ui::CommandAvailability(const std::string&)> availability)
+{
+    if (m_impl != nullptr) {
+        m_impl->bindCommandAvailability(std::move(availability));
+    }
+}
+
 void KinematicsPluginAssembly::setServices(KinPanelServices services)
 {
     if (m_impl != nullptr) {

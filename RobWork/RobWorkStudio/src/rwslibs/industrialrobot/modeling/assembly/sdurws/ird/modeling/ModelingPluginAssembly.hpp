@@ -32,6 +32,7 @@
 #include <sdurws/ird/core/Identity.hpp>            // core::BranchId/RevisionId/ObjectId（会话锚/回执值面）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>    // ui::PluginUiDescriptor（§10.9 装配描述符）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::CommandId（命令提交出口入参）
+#include <sdurws/ird/ui/ICommandRegistry.hpp>     // ui::CommandAvailability（按钮门控）
 
 namespace sdurws {
 namespace ird {
@@ -87,6 +88,7 @@ struct ModelingPluginAssembly {
 
     /// 命令提交出口绑定（转发模块内部——面板创建前后皆可）。
     void bindCommandSubmit(std::function<void(const ui::CommandId&)> submit);
+    void bindCommandAvailability(std::function<ui::CommandAvailability(const ui::CommandId&)> availability);
 
     /// 文案解析绑定（titleKey→工程用语；转发模块内部）。
     void bindTextResolver(std::function<QString(const std::string& titleKey)> resolve);

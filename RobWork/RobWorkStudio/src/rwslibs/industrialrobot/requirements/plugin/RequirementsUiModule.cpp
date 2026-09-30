@@ -73,6 +73,37 @@ RequirementObjectVariant decodeSlotObject(const RequirementPayloadSlot& slot,
 
 }  // namespace
 
+void RequirementsUiModule::bindCommandSubmit(CommandSubmitFn submitFn)
+{
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->setCommandSubmit(std::move(submitFn));
+        return;
+    }
+    m_pendingSubmit = std::move(submitFn);
+}
+
+void RequirementsUiModule::bindCommandAvailability(CommandAvailabilityFn availability)
+{
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->setCommandAvailability(std::move(availability));
+        return;
+    }
+    m_pendingAvailability = std::move(availability);
+}
+
+void RequirementsUiModule::attachPanel(RequirementsPanelWidget* panel)
+{
+    m_panel = panel;
+    if (m_panel != nullptr && m_pendingSubmit) {
+        m_panel->setCommandSubmit(std::move(m_pendingSubmit));
+    }
+    if (m_panel != nullptr && m_pendingAvailability) {
+        m_panel->setCommandAvailability(std::move(m_pendingAvailability));
+    }
+}
+
 // =====================================================================
 // §11.2 三方法
 // =====================================================================

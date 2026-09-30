@@ -197,12 +197,14 @@ public:
 
     /// 命令提交出口形态（面板同款——装配层经本转发绑定面板）。
     using CommandSubmitFn = std::function<void(const ui::CommandId&)>;
+    using CommandAvailabilityFn = std::function<ui::CommandAvailability(const ui::CommandId&)>;
 
     /**
      * @brief 绑定命令提交出口（面板创建前后皆可——后绑定在面板创建时
      *        应用，前绑定即时转发面板；与面板 setCommandSubmit 同语义）。
      */
     void bindCommandSubmit(CommandSubmitFn submitFn);
+    void bindCommandAvailability(CommandAvailabilityFn availability);
 
     /**
      * @brief 绑定文案解析器（titleKey→工程用语——宿主接 ui::resolveText；
@@ -377,6 +379,7 @@ private:
     ModelingPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
     ui::IWorkbenchShell* m_shell = nullptr;  ///< 壳门面引用（非 owning——§10.9 生命周期）
     CommandSubmitFn m_pendingSubmit;         ///< 面板创建前的提交出口暂存（创建时应用）
+    CommandAvailabilityFn m_pendingAvailability; ///< 面板创建前的可用性查询暂存
     std::function<QString(const std::string&)> m_textResolver;  ///< 文案解析（创建时应用）
     std::unique_ptr<policy::IJointLimitEvaluator> m_evaluator{
         policy::makeJointLimitEvaluator()};  ///< 行程评估器（policy 唯一实现——T03b-2b）

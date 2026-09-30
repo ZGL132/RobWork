@@ -105,6 +105,12 @@ void KinematicsPanelWidget::setCommandTitleResolver(CommandTitleResolver resolve
     m_titleResolver = std::move(resolver);
 }
 
+void KinematicsPanelWidget::setCommandAvailability(CommandAvailabilityFn availability)
+{
+    m_commandAvailability = std::move(availability);
+    refreshAll();
+}
+
 QString KinematicsPanelWidget::lastStatusText() const
 {
     return m_statusLine != nullptr ? m_statusLine->text() : QString();
@@ -138,12 +144,16 @@ QWidget* KinematicsPanelWidget::buildPosePane()
     m_targetX = new QLineEdit(pane);
     m_targetY = new QLineEdit(pane);
     m_targetZ = new QLineEdit(pane);
-    form->addRow(tr("目标 X"), m_targetX);
-    form->addRow(tr("目标 Y"), m_targetY);
-    form->addRow(tr("目标 Z"), m_targetZ);
+    m_targetX->setPlaceholderText(tr("例如 0.400（单位：m）"));
+    m_targetY->setPlaceholderText(tr("例如 0.000（单位：m）"));
+    m_targetZ->setPlaceholderText(tr("例如 0.300（单位：m）"));
+    form->addRow(tr("目标 X（m）"), m_targetX);
+    form->addRow(tr("目标 Y（m）"), m_targetY);
+    form->addRow(tr("目标 Z（m）"), m_targetZ);
     layout->addLayout(form);
 
     m_solveButton = new QPushButton(tr("求解 IK"), pane);
+    m_solveButton->setToolTip(tr("需要模型视图和逆运动学求解服务"));
     connect(m_solveButton, &QPushButton::clicked, this,
             &KinematicsPanelWidget::onSolveClicked);
     right->addWidget(m_solveButton);
@@ -287,18 +297,26 @@ void KinematicsPanelWidget::refreshAll()
     // 覆盖页：结果经 results 投影刷新（事件驱动）——投影数据源由装配层
     // 经 refreshCoverage 携带 CoverageResult 调用；此处仅按钮态。
     const bool writable = m_session.writable;
-    m_batchButton->setEnabled(writable && static_cast<bool>(m_services.backgroundSubmit));
-    m_coverageRunButton->setEnabled(writable
-                                    && static_cast<bool>(m_services.backgroundSubmit));
-    m_setTcpButton->setEnabled(kinCommandEnabledInSession(
-        "kinematics.set-default-tcp", writable)
-        && m_services.commandHandler != nullptr);
-    m_setDeviceButton->setEnabled(kinCommandEnabledInSession(
-        "kinematics.set-default-device", writable)
-        && m_services.commandHandler != nullptr);
-    m_exportJsonButton->setEnabled(static_cast<bool>(m_services.exportWriter)
-                                   && m_session.lastSessionSolutionSetView != nullptr);
-    m_exportCsvButton->setEnabled(m_exportJsonButton->isEnabled());
+    const auto commandEnabled = [this](const std::string& id, bool local) {
+        return local && (!m_commandAvailability || m_commandAvailability(id).enabled);
+    };
+    m_batchButton->setEnabled(commandEnabled("kinematics.validate-task-points",
+                                            writable && static_cast<bool>(m_services.backgroundSubmit)));
+    m_coverageRunButton->setEnabled(commandEnabled("kinematics.evaluate-coverage",
+                                                   writable && static_cast<bool>(m_services.backgroundSubmit)));
+    m_setTcpButton->setEnabled(commandEnabled("kinematics.set-default-tcp",
+                                              kinCommandEnabledInSession("kinematics.set-default-tcp", writable)
+                                              && m_services.commandHandler != nullptr));
+    m_setDeviceButton->setEnabled(commandEnabled("kinematics.set-default-device",
+                                                 kinCommandEnabledInSession("kinematics.set-default-device", writable)
+                                                 && m_services.commandHandler != nullptr));
+    const bool exportReady = static_cast<bool>(m_services.exportWriter)
+                             && m_session.lastSessionSolutionSetView != nullptr;
+    m_exportJsonButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
+    m_exportCsvButton->setEnabled(commandEnabled("kinematics.export-results", exportReady));
+    m_solveButton->setEnabled(commandEnabled("kinematics.solve-ik",
+                                             m_services.ikSolver != nullptr
+                                             && m_services.modelView != nullptr));
 }
 
 void KinematicsPanelWidget::setDisplayUnits(const std::optional<DisplayUnitProjection>& units)
