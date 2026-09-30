@@ -25,6 +25,10 @@
 #include <sdurws/ird/ui/FlowLayout.hpp>  // 流式栅格（UI-T24 P3——命令条换行承载，钳制源 1 消除）
 #include <sdurws/ird/ui/UiText.hpp>      // ui::resolveText（§3.5 唯一文案出口——按钮语义化 NFR-MNT-03）
 
+#include <rw/math/Vector3D.hpp>  // rw::math::Vector3D（UI-T30 新增条目默认几何值）
+
+#include <algorithm>  // std::min（删除锚回落位次钳制）
+#include <set>        // uniqueEntryName 的已占名集合
 #include <stdexcept>
 #include <utility>
 
@@ -278,6 +282,9 @@ void RequirementsPanelWidget::buildStationPage(QTabWidget* pages)
     m_stationHeader = new QLabel(QStringLiteral("工位：未选择对象"), page);
     m_stationHeader->setObjectName("ird_req_tab_station_header");
     lay->addWidget(m_stationHeader);
+    // 对象生命周期工具行（UI-T30 B1——新增/复制/删除三键）。
+    lay->addWidget(makeLifecycleBar(page, "points", WorkingSetMember::Points,
+                                    QStringLiteral("工位")));
     m_stationForm = new QFormLayout;
     lay->addLayout(m_stationForm);
     lay->addStretch(1);
@@ -293,6 +300,9 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
     m_regionHeader = new QLabel(QStringLiteral("区域：未选择对象"), page);
     m_regionHeader->setObjectName("ird_req_tab_region_header");
     lay->addWidget(m_regionHeader);
+    // 对象生命周期工具行（UI-T30 B1）。
+    lay->addWidget(makeLifecycleBar(page, "regions", WorkingSetMember::Regions,
+                                    QStringLiteral("区域")));
     m_regionTable = makeTable(page, QStringList() << "区域" << "采样" << "覆盖目标");
     connect(m_regionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
@@ -313,6 +323,10 @@ void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
     m_conditionHeader = new QLabel(QStringLiteral("工况：未选择对象"), page);
     m_conditionHeader->setObjectName("ird_req_tab_condition_header");
     lay->addWidget(m_conditionHeader);
+    // 对象生命周期工具行（UI-T30 B1）。
+    lay->addWidget(makeLifecycleBar(page, "conditions",
+                                    WorkingSetMember::Conditions,
+                                    QStringLiteral("工况")));
     m_conditionTable = makeTable(page, QStringList() << "工况" << "节拍" << "适用范围");
     connect(m_conditionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
@@ -355,6 +369,246 @@ void RequirementsPanelWidget::buildValidationPage(QTabWidget* pages)
 }
 
 // =====================================================================
+// 对象生命周期（UI-T30 B1——工位/区域/工况新增/复制/删除）
+// =====================================================================
+
+QWidget* RequirementsPanelWidget::makeLifecycleBar(QWidget* parent,
+                                                  const char* key,
+                                                  WorkingSetMember member,
+                                                  const QString& noun)
+{
+    // 三键工具行（页签内局部操作——不进顶部域命令条：九条域命令目录
+    // 为装配数据冻结面，结构操作是面板编排层）。流式栅格（FlowLayout
+    // ——命令条同构件）：窄窗下三键自动换行，不撑大主 Dock 最小宽
+    // （UI-T24 中央区保护的钳制纪律，B1 冒烟实证回归的对照修复）。
+    auto* bar = new QWidget(parent);
+    auto* lay = new ui::FlowLayout(bar, /*hSpacing=*/4, /*vSpacing=*/2);
+    struct Row { const char* action; const char* verb; };
+    const Row rows[] = {
+        {"add", "新增"}, {"duplicate", "复制"}, {"remove", "删除"}};
+    for (const auto& row : rows) {
+        auto* btn = new QPushButton(
+            QStringLiteral("%1%2").arg(QString::fromUtf8(row.verb), noun), bar);
+        // objectName 锚：ird_req_<action>_<key>——gui_test findChild 定位面。
+        btn->setObjectName(QStringLiteral("ird_req_%1_%2")
+                               .arg(QString::fromLatin1(row.action),
+                                    QString::fromLatin1(key)));
+        // 会话可用性标记（refreshPanel 统一刷新——无会话禁用，不虚构可编辑）。
+        btn->setProperty("irdLifecycle", true);
+        const WorkingSetMember m = member;
+        if (std::string_view(row.action) == "add") {
+            connect(btn, &QPushButton::clicked, this,
+                    [this, m] { onAddEntry(m); });
+        } else if (std::string_view(row.action) == "duplicate") {
+            connect(btn, &QPushButton::clicked, this,
+                    [this, m] { onDuplicateEntry(m); });
+        } else {
+            connect(btn, &QPushButton::clicked, this,
+                    [this, m] { onRemoveEntry(m); });
+        }
+        lay->addWidget(btn);
+    }
+    return bar;
+}
+
+std::string RequirementsPanelWidget::uniqueEntryName(
+    const RequirementWorkingSet& ws, WorkingSetMember member,
+    const std::string& base)
+{
+    // 名字集合现取（集合内唯一 I-REQ-3——Editor 拒绝面前的第一道防线；
+    // 撞名仍以域侧裁决为准，双保险）。
+    std::set<std::string> taken;
+    if (member == WorkingSetMember::Points) {
+        for (const TaskPoint& e : ws.points.entries) { taken.insert(e.name); }
+    } else if (member == WorkingSetMember::Regions) {
+        for (const WorkRegion& e : ws.regions.entries) { taken.insert(e.name); }
+    } else {
+        for (const OperatingCondition& e : ws.conditions.entries) {
+            taken.insert(e.name);
+        }
+    }
+    std::string candidate = base;
+    for (int suffix = 2; taken.count(candidate) != 0U; ++suffix) {
+        candidate = base + " " + std::to_string(suffix);
+    }
+    return candidate;
+}
+
+bool RequirementsPanelWidget::submitStructuralEdit(const RequirementEdit& edit)
+{
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr) {
+        m_statusLine->setText(QStringLiteral("未应用：未打开需求会话（不可编辑）"));
+        return false;
+    }
+    const EditOutcome out = editor->applyEdit(edit);
+    if (!out.accepted) {
+        // 拒绝：就地错误（非模态——UX-03/07；工作集字节未动）。
+        m_statusLine->setText(QString::fromStdString(
+            "未应用（" + out.error.detail + "）"));
+        return false;
+    }
+    // 接受：走既有 sink 链（onEditApplied）——脏标记＋全面板重投影＋
+    // UI-T29 组合子就绪重估；结构操作与字段编辑同一条刷新轨。
+    onEditApplied(out.changeSummary);
+    return true;
+}
+
+void RequirementsPanelWidget::onAddEntry(WorkingSetMember member)
+{
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr) {
+        m_statusLine->setText(QStringLiteral("未应用：未打开需求会话（不可编辑）"));
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    // 合法起步条目（域夹具同款默认值——面板只做编排，合法性最终由域侧
+    // applyEdit 裁决；自动名防撞见 uniqueEntryName）。
+    if (member == WorkingSetMember::Points) {
+        TaskPoint p;
+        p.objectId = core::ObjectId::generate();
+        p.name = uniqueEntryName(ws, member, "工位");
+        p.pose.constrainedDof.z = true;
+        p.pose.position =
+            core::SourcedValue<rw::math::Vector3D<double>>::provided(
+                rw::math::Vector3D<double>(0.0, 0.0, 0.0),
+                core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        p.work = TaskSegment{true, SegmentAxis::ToolZ, 1.0};
+        if (submitStructuralEdit(RequirementEdit{p})) { focusObject(p.objectId); }
+    } else if (member == WorkingSetMember::Regions) {
+        WorkRegion r;
+        r.objectId = core::ObjectId::generate();
+        r.name = uniqueEntryName(ws, member, "区域");
+        r.box = BoundingBox{rw::math::Vector3D<double>(1.0, 1.0, 1.0),
+                            rw::math::Vector3D<double>(1.0, 1.0, 1.0)};
+        r.positionSampling = PositionSampling{
+            PositionSamplingMethod::Grid, {2, 2, 2}, {0, 0, 0}, 0};
+        if (submitStructuralEdit(RequirementEdit{r})) { focusObject(r.objectId); }
+    } else {
+        OperatingCondition c;
+        c.objectId = core::ObjectId::generate();
+        c.name = uniqueEntryName(ws, member, "工况");
+        if (submitStructuralEdit(RequirementEdit{c})) { focusObject(c.objectId); }
+    }
+}
+
+void RequirementsPanelWidget::onDuplicateEntry(WorkingSetMember member)
+{
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_lastSelected.has_value()) {
+        m_statusLine->setText(QStringLiteral(
+            "未应用：复制需要先选中一个条目"));
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    if (member == WorkingSetMember::Points) {
+        for (const TaskPoint& src : ws.points.entries) {
+            if (src.objectId != m_lastSelected.value()) { continue; }
+            TaskPoint copy = src;  // 深拷贝（值类型）——溯源字段保持源值
+            copy.objectId = core::ObjectId::generate();
+            copy.name = uniqueEntryName(ws, member, src.name + " 副本");
+            if (submitStructuralEdit(RequirementEdit{copy})) {
+                focusObject(copy.objectId);
+            }
+            return;
+        }
+    } else if (member == WorkingSetMember::Regions) {
+        for (const WorkRegion& src : ws.regions.entries) {
+            if (src.objectId != m_lastSelected.value()) { continue; }
+            WorkRegion copy = src;
+            copy.objectId = core::ObjectId::generate();
+            copy.name = uniqueEntryName(ws, member, src.name + " 副本");
+            if (submitStructuralEdit(RequirementEdit{copy})) {
+                focusObject(copy.objectId);
+            }
+            return;
+        }
+    } else {
+        for (const OperatingCondition& src : ws.conditions.entries) {
+            if (src.objectId != m_lastSelected.value()) { continue; }
+            OperatingCondition copy = src;
+            copy.objectId = core::ObjectId::generate();
+            copy.name = uniqueEntryName(ws, member, src.name + " 副本");
+            if (submitStructuralEdit(RequirementEdit{copy})) {
+                focusObject(copy.objectId);
+            }
+            return;
+        }
+    }
+    m_statusLine->setText(QStringLiteral("未应用：选中对象不属于该集合"));
+}
+
+void RequirementsPanelWidget::onRemoveEntry(WorkingSetMember member)
+{
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_lastSelected.has_value()) {
+        m_statusLine->setText(QStringLiteral(
+            "未应用：删除需要先选中一个条目"));
+        return;
+    }
+    // 删除前记录集合内索引（规范序）——接受后的锚回落取同位次条。
+    std::size_t removedIndex = 0;
+    if (member == WorkingSetMember::Points) {
+        for (std::size_t i = 0; i < editor->workingSet().points.entries.size(); ++i) {
+            if (editor->workingSet().points.entries[i].objectId
+                    == m_lastSelected.value()) {
+                removedIndex = i;
+                break;
+            }
+        }
+    } else if (member == WorkingSetMember::Regions) {
+        for (std::size_t i = 0;
+             i < editor->workingSet().regions.entries.size(); ++i) {
+            if (editor->workingSet().regions.entries[i].objectId
+                    == m_lastSelected.value()) {
+                removedIndex = i;
+                break;
+            }
+        }
+    } else {
+        for (std::size_t i = 0;
+             i < editor->workingSet().conditions.entries.size(); ++i) {
+            if (editor->workingSet().conditions.entries[i].objectId
+                    == m_lastSelected.value()) {
+                removedIndex = i;
+                break;
+            }
+        }
+    }
+    if (!submitStructuralEdit(removeEdit(m_lastSelected.value(), member))) {
+        return;  // 拒绝（如必验引用等域拒绝面）——就地错误已呈现
+    }
+    // 锚回落：删除后同集合取同位次（越界取末条）条目；空集合＝清空选中。
+    const RequirementWorkingSet& after = editor->workingSet();
+    if (member == WorkingSetMember::Points) {
+        if (after.points.entries.empty()) {
+            focusObject(std::nullopt);
+        } else {
+            const std::size_t idx = std::min(removedIndex,
+                                             after.points.entries.size() - 1);
+            focusObject(after.points.entries[idx].objectId);
+        }
+    } else if (member == WorkingSetMember::Regions) {
+        if (after.regions.entries.empty()) {
+            focusObject(std::nullopt);
+        } else {
+            const std::size_t idx = std::min(removedIndex,
+                                             after.regions.entries.size() - 1);
+            focusObject(after.regions.entries[idx].objectId);
+        }
+    } else {
+        if (after.conditions.entries.empty()) {
+            focusObject(std::nullopt);
+        } else {
+            const std::size_t idx = std::min(removedIndex,
+                                             after.conditions.entries.size() - 1);
+            focusObject(after.conditions.entries[idx].objectId);
+        }
+    }
+}
+
+// =====================================================================
 // 全面板刷新（事件驱动出口——零缓存，全部现取重投影）
 // =====================================================================
 
@@ -375,6 +629,13 @@ void RequirementsPanelWidget::refreshPanel(const RequirementWorkingSet& ws,
         m_draftRedoButton->setEnabled(m_writable && undoView.canRedoLocal);
         // 项目级撤销是转发面——可达性随命令提交出口（未注入＝禁用）。
         m_projectUndoButton->setEnabled(static_cast<bool>(m_commandSubmit));
+    }
+    // 生命周期工具行可用性（UI-T30——与撤销键同源事实：无会话/只读＝
+    // 禁用，不虚构可编辑；属性过滤定位，零成员持有）。
+    for (QPushButton* btn : findChildren<QPushButton*>()) {
+        if (btn->property("irdLifecycle").toBool()) {
+            btn->setEnabled(m_editTarget != nullptr && m_writable);
+        }
     }
     for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
         const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
@@ -416,6 +677,10 @@ void RequirementsPanelWidget::focusObject(const std::optional<core::ObjectId>& o
             m_lastSelected.reset();
             m_tree->clearSelection();
             m_tree->setCurrentItem(nullptr);
+            // 页签状态行同步回落（UI-T30——clear() 的选中变更信号在部分
+            // 时序下不触发刷新，此处显式收口：清除后三页头一致回
+            // 『未选择对象』，不残留已删对象名）。
+            updateTabHeaders();
         }
         return;
     }
