@@ -305,6 +305,11 @@ private:
     std::shared_ptr<ui::IUiHighlightOutlet> m_highlightOutlet;
     /// 检查器订阅句柄（RAII——检查器模型消费选择广播；关闭清理显式释放）。
     std::unique_ptr<core::IEventSubscription> m_inspectorSubscription;
+    /// 选择→顶栏上下文栏转发器（UI-T26——L1 广播→noteSelectionForContext；
+    /// 纯值转发零业务语义；以观察者接口指针持有，具体类在 UiPlugin.cpp）。
+    std::unique_ptr<ui::IUiSelectionObserver> m_contextSelectionForwarder;
+    /// 上下文栏转发订阅句柄（RAII——随关闭清理释放，检查器订阅同款）。
+    std::unique_ptr<core::IEventSubscription> m_contextSelectionSubscription;
     /// Jog 会话姿态桥的宿主触发位（D8——stateChangedEvent 订阅在位标记；
     /// 桥回调内有会话守卫，项目关闭后 State 变化不再写入域）。
     bool m_jogBridgeConnected = false;

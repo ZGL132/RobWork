@@ -246,8 +246,13 @@ void RequirementsPanelWidget::buildTreePane(QWidget* left)
 void RequirementsPanelWidget::buildStationPage(QTabWidget* pages)
 {
     // 右栏页①工位（检查器表单——行＝stationFieldsFor 投影）。
+    // UI-T26 页签状态行：页头呈现『工位：〈对象名|未选择对象〉』随树
+    // 选中刷新（updateTabHeaders）——空态不再是无信息空白。
     auto* page = new QWidget(pages);
     auto* lay = new QVBoxLayout(page);
+    m_stationHeader = new QLabel(QStringLiteral("工位：未选择对象"), page);
+    m_stationHeader->setObjectName("ird_req_tab_station_header");
+    lay->addWidget(m_stationHeader);
     m_stationForm = new QFormLayout;
     lay->addLayout(m_stationForm);
     lay->addStretch(1);
@@ -256,9 +261,13 @@ void RequirementsPanelWidget::buildStationPage(QTabWidget* pages)
 
 void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
 {
-    // 右栏页②区域（表＋检查器＋预览摘要——§9.8 面板表第 3 行）。
+    // 右栏页②区域（表＋检查器＋预览摘要——§9.8 面板表第 3 行）＋
+    // UI-T26 页签状态行（同工位页）。
     auto* page = new QWidget(pages);
     auto* lay = new QVBoxLayout(page);
+    m_regionHeader = new QLabel(QStringLiteral("区域：未选择对象"), page);
+    m_regionHeader->setObjectName("ird_req_tab_region_header");
+    lay->addWidget(m_regionHeader);
     m_regionTable = makeTable(page, QStringList() << "区域" << "采样" << "覆盖目标");
     connect(m_regionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
@@ -272,9 +281,13 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
 
 void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
 {
-    // 右栏页③工况（表＋检查器＋必验清单预览——§9.8 面板表第 4 行）。
+    // 右栏页③工况（表＋检查器＋必验清单预览——§9.8 面板表第 4 行）＋
+    // UI-T26 页签状态行（同工位页）。
     auto* page = new QWidget(pages);
     auto* lay = new QVBoxLayout(page);
+    m_conditionHeader = new QLabel(QStringLiteral("工况：未选择对象"), page);
+    m_conditionHeader->setObjectName("ird_req_tab_condition_header");
+    lay->addWidget(m_conditionHeader);
     m_conditionTable = makeTable(page, QStringList() << "工况" << "节拍" << "适用范围");
     connect(m_conditionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
@@ -289,8 +302,13 @@ void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
 void RequirementsPanelWidget::buildValidationPage(QTabWidget* pages)
 {
     // 右栏页④校验（分层计数＋R0~R9 行＋逐项跳转＋语义说明——面板表第 5 行）。
+    // UI-T26 页签状态行：『校验：尚未执行』诚实静态——动态校验状态随
+    // 校验呈现任务接入（计数标签 m_validationCounts 的既有刷新面不动）。
     auto* page = new QWidget(pages);
     auto* lay = new QVBoxLayout(page);
+    m_validationHeader = new QLabel(QStringLiteral("校验：尚未执行"), page);
+    m_validationHeader->setObjectName("ird_req_tab_validation_header");
+    lay->addWidget(m_validationHeader);
     m_validationCounts = new QLabel(page);
     lay->addWidget(m_validationCounts);
     m_validationLayers = makeTable(page, QStringList() << "层" << "检查" << "阻断" << "警告");
@@ -577,6 +595,32 @@ void RequirementsPanelWidget::renderValidationPage(const RequirementReadinessRep
 // 槽：用户事件→模型/域入口转接
 // =====================================================================
 
+void RequirementsPanelWidget::updateTabHeaders()
+{
+    // 页签状态行刷新（UI-T26）：对象名＝当前树选中行的显示文本（与用户
+    // 在树里看到的名字同源——树行文本即 displayLabel 投影，零第二名称
+    // 源）；未选中＝『未选择对象』。校验页头恒『尚未执行』（动态校验
+    // 状态归校验呈现任务——诚实静态，不虚构已执行）。
+    const QString objectName =
+            (m_tree != nullptr && m_tree->currentItem() != nullptr)
+                ? m_tree->currentItem()->text(0)
+                : QString();
+    const QString suffix =
+            objectName.isEmpty() ? QStringLiteral("未选择对象") : objectName;
+    if (m_stationHeader != nullptr) {
+        m_stationHeader->setText(QStringLiteral("工位：") + suffix);
+    }
+    if (m_regionHeader != nullptr) {
+        m_regionHeader->setText(QStringLiteral("区域：") + suffix);
+    }
+    if (m_conditionHeader != nullptr) {
+        m_conditionHeader->setText(QStringLiteral("工况：") + suffix);
+    }
+    if (m_validationHeader != nullptr) {
+        m_validationHeader->setText(QStringLiteral("校验：尚未执行"));
+    }
+}
+
 void RequirementsPanelWidget::onTreeSelectionChanged()
 {
     // L-R1 正向半区：树/区域表/工况表选中→会话态＋检查器重投影（零修订）。
@@ -589,6 +633,7 @@ void RequirementsPanelWidget::onTreeSelectionChanged()
                && m_conditionTable->currentItem() != nullptr) {
         anchor = nodeAnchor(m_conditionTable->currentItem());
     }
+    updateTabHeaders();
     if (m_selection.select(anchor)) {
         m_lastSelected = anchor;
         Q_EMIT selectionChanged(

@@ -23,6 +23,8 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QComboBox>   // 分组过滤下拉（UI-T26 检索用例驱动面）
+#include <QLineEdit>   // 搜索框（UI-T26 检索用例驱动面）
 #include <QTreeWidget>
 #include <QWidget>
 
@@ -189,7 +191,9 @@ protected:
         deps.selection = m_selection;
         deps.nameResolver = m_resolver;
         m_panel = sdurws::ird::ui::createIndustrialProjectTreePanel(deps, nullptr);
-        m_panelWidget = qobject_cast<QTreeWidget*>(m_panel->widget());
+        // UI-T26 容器化：widget() 出口＝检索行＋树的容器（此前直返树本体
+        // ——本行随容器化同步修订，树经 findChild 定位，语义不变）。
+        m_panelWidget = m_panel->widget()->findChild<QTreeWidget*>();
         ASSERT_NE(m_panelWidget, nullptr);
     }
 
@@ -401,6 +405,82 @@ TEST_F(IndustrialProjectTreeGuiTest, UI_TRE_8_FactoryRejectsIncompleteDeps)
             (void)panel;
         }(),
         std::invalid_argument);
+}
+
+// =====================================================================
+// UI-T26——项目树检索（搜索＋分组过滤：呈现层过滤四态）
+// =====================================================================
+
+/**
+ * UI-T26 检索四态（契约 acceptance 2）：①搜索命中（"关节"→建模两行可
+ * 见、需求行隐藏、无命中组组头隐藏）；②搜索无命中组隐藏组头；③分组
+ * 过滤（只看需求对象组——建模组整组隐藏）；④清空回退全量可见。过滤
+ * 只隐藏行：组数/组序/选中语义零触碰（检索后 locateAndHighlight 仍可
+ * 定位隐藏行＝过滤不改变业务语义的边界证据）。
+ */
+TEST_F(IndustrialProjectTreeGuiTest, SearchAndGroupFilter_UI_T26)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+    buildPanelWithTwoDomains();
+
+    QWidget* root = m_panel->widget();
+    auto* search = root->findChild<QLineEdit*>(QStringLiteral("ird_tree_search"));
+    auto* filter =
+            root->findChild<QComboBox*>(QStringLiteral("ird_tree_group_filter"));
+    ASSERT_NE(search, nullptr) << "搜索框缺失（UI-T26 检索行）";
+    ASSERT_NE(filter, nullptr) << "分组过滤下拉缺失";
+    ASSERT_EQ(filter->count(), 6) << "下拉项数＝全部＋五分组";
+
+    QTreeWidgetItem* joint1 = findRowByLabel(QStringLiteral("关节 1"));
+    QTreeWidgetItem* joint2 = findRowByLabel(QStringLiteral("关节 2"));
+    QTreeWidgetItem* taskA = findRowByLabel(QStringLiteral("任务点 A"));
+    ASSERT_NE(joint1, nullptr);
+    ASSERT_NE(joint2, nullptr);
+    ASSERT_NE(taskA, nullptr);
+    // 无过滤基线：全部可见。
+    EXPECT_FALSE(joint1->isHidden());
+    EXPECT_FALSE(taskA->isHidden());
+
+    // ①搜索"关节"：建模两行命中可见、需求行隐藏；需求组组头隐藏
+    //   （搜索态无命中组不呈现空组）。
+    search->setText(QStringLiteral("关节"));
+    EXPECT_FALSE(joint1->isHidden());
+    EXPECT_FALSE(joint2->isHidden());
+    EXPECT_TRUE(taskA->isHidden());
+    QTreeWidgetItem* requirementGroup = taskA->parent();
+    ASSERT_NE(requirementGroup, nullptr);
+    EXPECT_TRUE(requirementGroup->isHidden()) << "无命中组组头应隐藏";
+
+    // ②搜索无命中（全部隐藏）。
+    search->setText(QStringLiteral("不存在的对象"));
+    EXPECT_TRUE(joint1->isHidden());
+    EXPECT_TRUE(joint2->isHidden());
+
+    // ③分组过滤：清空搜索＋只看需求对象组——建模组整组隐藏（组头＋
+    //   子行），需求行恢复可见。
+    search->clear();
+    const int requirementIndex = filter->findText(QStringLiteral("需求对象"));
+    ASSERT_GE(requirementIndex, 1);
+    filter->setCurrentIndex(requirementIndex);
+    QTreeWidgetItem* modelingGroup = joint1->parent();
+    ASSERT_NE(modelingGroup, nullptr);
+    EXPECT_TRUE(modelingGroup->isHidden()) << "被滤分组组头应隐藏";
+    EXPECT_TRUE(joint1->isHidden());
+    EXPECT_FALSE(taskA->isHidden());
+
+    // ④清空回退：全部分组＋空搜索＝全量可见（INV-B1 无过滤态基线）。
+    filter->setCurrentIndex(0);
+    EXPECT_FALSE(joint1->isHidden());
+    EXPECT_FALSE(joint2->isHidden());
+    EXPECT_FALSE(taskA->isHidden());
+    EXPECT_FALSE(modelingGroup->isHidden());
+
+    // 过滤不改变业务语义：搜索态下 L3 定位隐藏行仍成功（隐藏≠移除）。
+    search->setText(QStringLiteral("任务点"));
+    const bool located =
+            m_panel->locateAndHighlight(m_ids.at(2));
+    search->clear();
+    EXPECT_TRUE(located) << "检索过滤不得影响 L3 定位语义";
 }
 
 }  // namespace

@@ -183,14 +183,23 @@ struct WorkbenchText {
     static constexpr const char* kRecentUnavailableSuffix = "（项目位置不可用）";
 
     // ---- 阶段 A 占位说明（§4.1 原文口径："本阶段将在后续版本提供"，
-    //      不虚构业务能力——中央区阶段面板/左/右/底区内容/入口触发提示共用）----
+    //      不虚构业务能力——中央区阶段面板/入口触发提示共用）----
     static constexpr const char* kStagePlaceholder = "本阶段将在后续版本提供";
     static constexpr const char* kEntryDeferredNotice = "该入口将在后续版本提供";
-    // 顶栏占位收敛说明（UI-T25——§4.2 顶栏行三占位〔阶段导航/方案工况/
-    // 任务状态指示〕的合并呈现：三能力归随对应任务落地，合并单条弱化
-    // 呈现替代三处同名长标签——收敛前顶栏在窄容器重复占满三行）。
-    static constexpr const char* kTopBarDeferredNotice =
-        "阶段导航、方案工况与任务状态指示将在后续版本提供";
+
+    // ---- 顶栏上下文栏（UI-T26——§4.2 顶栏行增量：三能力占位行撤除，
+    //      呈现真实上下文；『当前阶段』不进栏——阶段导航归 UI-T09 未落地，
+    //      不虚构能力）----
+    static constexpr const char* kCtxProjectPrefix = "项目：";
+    static constexpr const char* kCtxProjectNone = "未打开项目";
+    static constexpr const char* kCtxObjectPrefix = "当前对象：";
+    static constexpr const char* kCtxObjectNone = "未选择";
+    // 已选中但名称解析失败（resolver nullopt）的诚实回退——不显示
+    // ObjectId 规范形（UX-02 零内部名），不虚构名称。
+    static constexpr const char* kCtxObjectUnnamed = "已选择对象（名称不可用）";
+    static constexpr const char* kCtxDraftPrefix = "草稿：";
+    static constexpr const char* kCtxDraftUnapplied = "有未应用修改";
+    static constexpr const char* kCtxDraftClean = "无未应用修改";
 
     // ---- 底部『下一步建议』静态工作流引导（UI-T25——§4.2 底部行）----
     // 只引用已实装入口（新建/打开项目、视图菜单呼出域面板、需求导入、

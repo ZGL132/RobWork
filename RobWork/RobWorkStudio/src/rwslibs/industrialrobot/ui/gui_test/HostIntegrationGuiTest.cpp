@@ -171,9 +171,9 @@ TEST(HostIntegrationGuiTest, AssemblyFailureGroupPlaceholder_RendersAndNotSelect
     panel->refresh();
 
     // 树控件结构断言：需求组行下恰一行且为占位文本；建模组行下为节点行。
-    // （面板把手 widget() 出口即树控件本体——IndustrialProjectTreePanel
-    // 实现封闭库内，树＝唯一内容控件。）
-    QTreeWidget* tree = qobject_cast<QTreeWidget*>(panel->widget());
+    // （UI-T26 容器化：widget() 出口＝检索行＋树的容器——树经 findChild
+    // 定位〔IndustrialProjectTreePanel 实现封闭库内，语义不变〕。）
+    QTreeWidget* tree = panel->widget()->findChild<QTreeWidget*>();
     ASSERT_NE(tree, nullptr);
     QTreeWidgetItem* reqGroup = tree->topLevelItem(
         ui::projectTreeGroupIndex(ui::ProjectTreeGroup::RequirementObjects));

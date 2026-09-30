@@ -174,6 +174,29 @@ constexpr const char* kRecentMenuTitle = "最近项目";
 constexpr const char* kViewMenuTitle = "视图";
 constexpr const char* kRecentUnavailableSuffix = "（项目位置不可用）";
 
+/**
+ * @brief 选择→顶栏上下文栏转发器（UI-T26——L1 广播的消费半区）。
+ *
+ * IUiSelectionObserver 的最小实现：onSelectionChanged 纯值转发给装配层
+ * 注入的回调（→ IWorkbenchContent::noteSelectionForContext——『当前对象』
+ * 标签唯一数据入口）。零业务语义、零状态——重入纪律（回调内禁调服务写
+ * 入口）由被转发方的只读呈现语义结构性满足。
+ */
+class ContextSelectionForwarder final : public ui::IUiSelectionObserver {
+public:
+    using Forward = std::function<void(const ui::SelectionChange&)>;
+    explicit ContextSelectionForwarder(Forward forward) : m_forward(std::move(forward)) {}
+    void onSelectionChanged(const ui::SelectionChange& change) override
+    {
+        if (m_forward) {
+            m_forward(change);
+        }
+    }
+
+private:
+    Forward m_forward;
+};
+
 /// 辅助 Dock 可见性记忆键（UI-T24 P1——内容装配面 aux 半区的业务键；词形
 /// 稳定 ASCII，进用户级设置文件 layout/aux.<key>.visible——词形改动＝用户
 /// 记忆迁移，等价契约变更）。四个域自持面板 Dock 各一键。
@@ -2294,6 +2317,16 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
         return m_treePanel != nullptr && m_treePanel->locateAndHighlight(oid);
     };
     m_inspectorSubscription = m_selection->subscribe(*m_inspectorModel);
+    // UI-T26 顶栏上下文栏：选择事实转发（L1 汇聚点广播→内容装配面
+    // noteSelectionForContext——『当前对象』标签唯一数据入口；转发器以
+    // 观察者接口指针持有，RAII 句柄随清理释放与检查器订阅同款）。
+    m_contextSelectionForwarder = std::make_unique<ContextSelectionForwarder>(
+            [this](const ui::SelectionChange& change) {
+                if (m_content != nullptr) {
+                    m_content->noteSelectionForContext(change);
+                }
+            });
+    m_contextSelectionSubscription = m_selection->subscribe(*m_contextSelectionForwarder);
 
     // ⑥域下行联动（B1-SPEC §5.1 SelectionAdapter——树选→域面板高亮；
     //    上行三维拾取归宿主 View3D 拾取桥，随阶段 B 三维交互接续）。
@@ -2351,9 +2384,13 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
     }
 
     // ⑧运行中订阅：检查器模型的 SelectionService 订阅（RAII 句柄释放）
-    //    ——先断 L1 消费链，后续清源不再触发检查器刷新。
+    //    ——先断 L1 消费链，后续清源不再触发检查器刷新。上下文栏转发
+    //    订阅（UI-T26）同批释放——顶栏标签不消费关闭期的清空广播。
     if (m_inspectorSubscription) {
         m_inspectorSubscription.reset();
+    }
+    if (m_contextSelectionSubscription) {
+        m_contextSelectionSubscription.reset();
     }
 
     // ②SelectionService：业务选中集清空（空选中广播——消费者已退订，

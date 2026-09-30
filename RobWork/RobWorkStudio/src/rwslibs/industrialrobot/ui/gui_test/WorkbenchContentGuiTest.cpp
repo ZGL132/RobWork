@@ -141,6 +141,17 @@ public:
     }
 };
 
+/// 固定名称解析替身（UI-T26——上下文栏对象标签的解析成功路径驱动）：
+/// 任意身份解析为固定显示名（本用例只驱动"解析成功→标签呈现解析值"
+/// 这一半区；解析失败回退半区由默认 NullNameResolver 驱动）。
+class FixedNameResolver final : public ui::IUiNameResolver {
+public:
+    std::optional<std::string> resolveObjectId(core::ObjectId) const override
+    {
+        return std::string{"关节 6"};
+    }
+};
+
 // =====================================================================
 // 夹具：每用例独立用户级设置目录＋替身集＋嵌入式宿主装配辅助
 // =====================================================================
@@ -931,28 +942,28 @@ TEST_F(WorkbenchContentGuiTest, AdviceGuideAndPlaceholderConvergence_UX02_UI_T25
     }
     tabs->setCurrentIndex(0);
 
-    // ---- 顶栏：三占位合并单条（收敛前＝三条"阶段导航（本阶段将在后续
-    // 版本提供）"同文 QLabel；收敛后＝一条合并说明）----
-    // （topBarWidget() 出口即 bar 本体——同 bottomWidget，直接 cast。）
+    // ---- 顶栏：占位行彻底撤除（UI-T26 增量修订——UI-T25 时代的合并占位
+    // 行已被上下文栏三标签取代，本断言随契约 v1.0 修订同步：占位词形零
+    // 残留；上下文栏三标签在位——呈现细节由 TopContextBarPresentation_
+    // UX02_UI_T26 用例承载，此处只钉"无回退"）----
     auto* topBar = qobject_cast<QWidget*>(content->topBarWidget());
     ASSERT_NE(topBar, nullptr) << "顶栏内容条缺失";
     ASSERT_EQ(topBar->objectName(), QStringLiteral("ird_top_bar_content"))
         << "顶栏内容条 objectName 漂移";
-    int topDeferredCount = 0;
     int legacyStageNavCount = 0;
     const auto topLabels = topBar->findChildren<QLabel*>();
     for (const QLabel* label : topLabels) {
         const QString text = label->text();
-        if (text.contains(QString::fromUtf8(u8"阶段导航、方案工况与任务状态指示"))) {
-            ++topDeferredCount;
-        }
+        EXPECT_FALSE(text.contains(QString::fromUtf8(u8"本阶段将在后续版本提供")))
+            << "顶栏残留阶段 A 占位词形（UI-T26 已撤除）";
         if (text == QString::fromUtf8(u8"阶段导航（本阶段将在后续版本提供）")) {
             ++legacyStageNavCount;
         }
     }
-    EXPECT_EQ(topDeferredCount, 1) << "顶栏合并占位应恰一条（实际 "
-                                   << topDeferredCount << "）";
     EXPECT_EQ(legacyStageNavCount, 0) << "顶栏残留旧形态同名占位（未收敛）";
+    EXPECT_NE(topBar->findChild<QLabel*>(QStringLiteral("ird_ctx_project")),
+              nullptr)
+        << "上下文栏项目标签缺失（UI-T26）";
 
     // ---- 左栏：项目对象树占位移除（共享树承载）、阶段任务列表占位保留 ----
     auto* leftWidget = content->leftWidget();
@@ -969,6 +980,112 @@ TEST_F(WorkbenchContentGuiTest, AdviceGuideAndPlaceholderConvergence_UX02_UI_T25
     }
     EXPECT_EQ(leftTaskListCount, 1) << "左栏阶段任务列表占位缺失";
 
+    EXPECT_TRUE(content->shutdown());
+}
+
+/**
+ * UI-T26 顶栏上下文栏六态（契约 acceptance 1）：①无项目（项目＝未打开
+ * 项目/草稿标签隐藏/对象＝未选择）；②有项目可写＋草稿未应用（三标签
+ * 全值＋只读徽标隐藏）；③草稿干净（无未应用修改）；④只读项目（徽标
+ * 可见——既有 PM-07 语义回归）；⑤选择注入解析成功（Fixed 替身→解析值
+ * 呈现）；⑥选择清空回退未选择＋runtimeOnly 事件不动对象标签。
+ */
+TEST_F(WorkbenchContentGuiTest, TopContextBarPresentation_UX02_UI_T26)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+    IRD_TEST_INFO("PM-11", {}, std::nullopt);
+
+    // ①无项目首态。
+    auto content = ui::createWorkbenchContent(makeEmbeddedDeps());
+    ASSERT_TRUE(content->build());
+    content->activate();
+    content->presentProjectContext(ProjectContextProjection{});
+    auto* bar = qobject_cast<QWidget*>(content->topBarWidget());
+    ASSERT_NE(bar, nullptr);
+    auto* projectLabel = bar->findChild<QLabel*>(QStringLiteral("ird_ctx_project"));
+    auto* objectLabel = bar->findChild<QLabel*>(QStringLiteral("ird_ctx_object"));
+    auto* draftLabel = bar->findChild<QLabel*>(QStringLiteral("ird_ctx_draft"));
+    auto* readonlyBadge = bar->findChild<QLabel*>(QStringLiteral("ird_readonly_badge"));
+    ASSERT_NE(projectLabel, nullptr);
+    ASSERT_NE(objectLabel, nullptr);
+    ASSERT_NE(draftLabel, nullptr);
+    ASSERT_NE(readonlyBadge, nullptr);
+    EXPECT_EQ(projectLabel->text(), QString::fromUtf8(u8"项目：未打开项目"));
+    EXPECT_EQ(objectLabel->text(), QString::fromUtf8(u8"当前对象：未选择"));
+    EXPECT_FALSE(draftLabel->isVisibleTo(bar)) << "无项目态草稿标签应隐藏";
+
+    // ②有项目可写＋未应用修改。
+    ProjectContextProjection writable;
+    ProjectMetadataProjection metadata;
+    metadata.projectDisplayName = "demo";
+    metadata.writable = true;
+    writable.project = metadata;
+    writable.drafts.present = true;
+    content->presentProjectContext(writable);
+    EXPECT_EQ(projectLabel->text(), QString::fromUtf8(u8"项目：demo"));
+    EXPECT_EQ(draftLabel->text(), QString::fromUtf8(u8"草稿：有未应用修改"));
+    EXPECT_TRUE(draftLabel->isVisibleTo(bar));
+    EXPECT_FALSE(readonlyBadge->isVisibleTo(bar)) << "可写会话只读徽标应隐藏";
+
+    // ③草稿干净（present=false 但 sessionDirty=true 同为未应用——干净态
+    // 两位全 false）。
+    writable.drafts.present = false;
+    writable.drafts.sessionDirty = false;
+    content->presentProjectContext(writable);
+    EXPECT_EQ(draftLabel->text(), QString::fromUtf8(u8"草稿：无未应用修改"));
+
+    // ④只读项目（PM-07 徽标回归）。
+    metadata.writable = false;
+    writable.project = metadata;
+    content->presentProjectContext(writable);
+    EXPECT_TRUE(readonlyBadge->isVisibleTo(bar));
+
+    // ⑤选择注入（NullNameResolver 默认替身→解析失败回退占位词形，
+    //   不显示 ObjectId 规范形——UX-02）。
+    ui::SelectionChange change;
+    change.selectedObjectIds.push_back(
+        core::ObjectId::fromCanonical("obj-0123456789abcdef0123456789abcdef"));
+    content->noteSelectionForContext(change);
+    EXPECT_EQ(objectLabel->text(),
+              QString::fromUtf8(u8"当前对象：已选择对象（名称不可用）"))
+        << "解析失败应回退占位词形而非身份规范形";
+
+    // ⑥选择清空回退＋runtimeOnly 事件不动标签。
+    change.selectedObjectIds.clear();
+    content->noteSelectionForContext(change);
+    EXPECT_EQ(objectLabel->text(), QString::fromUtf8(u8"当前对象：未选择"));
+    change.runtimeOnly = true;
+    change.runtimeObjectName = "frame";
+    content->noteSelectionForContext(change);
+    EXPECT_EQ(objectLabel->text(), QString::fromUtf8(u8"当前对象：未选择"))
+        << "runtimeOnly 事件不得改动业务选中标签";
+    EXPECT_TRUE(content->shutdown());
+}
+
+/**
+ * UI-T26 选择解析成功路径（契约 acceptance 1 的 Fixed 替身半区）：
+ * resolver 命中→标签呈现解析显示名。独立用例注入 FixedNameResolver
+ * （makeWiring 的 nameResolver 位——wiring 注入面既有缝）。
+ */
+TEST_F(WorkbenchContentGuiTest, TopContextBarSelectionResolved_UI_T26)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+
+    WorkbenchContentDeps deps = makeEmbeddedDeps();
+    deps.wiring.nameResolver = std::make_shared<FixedNameResolver>();
+    auto content = ui::createWorkbenchContent(deps);
+    ASSERT_TRUE(content->build());
+    content->activate();
+    auto* bar = qobject_cast<QWidget*>(content->topBarWidget());
+    ASSERT_NE(bar, nullptr);
+    auto* objectLabel = bar->findChild<QLabel*>(QStringLiteral("ird_ctx_object"));
+    ASSERT_NE(objectLabel, nullptr);
+
+    ui::SelectionChange change;
+    change.selectedObjectIds.push_back(
+        core::ObjectId::fromCanonical("obj-0123456789abcdef0123456789abcdef"));
+    content->noteSelectionForContext(change);
+    EXPECT_EQ(objectLabel->text(), QString::fromUtf8(u8"当前对象：关节 6"));
     EXPECT_TRUE(content->shutdown());
 }
 

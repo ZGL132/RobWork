@@ -20,8 +20,12 @@
 #include <unordered_map>
 #include <utility>
 
+#include <QComboBox>   // 分组过滤下拉（UI-T26 检索行）
+#include <QHBoxLayout>
+#include <QLineEdit>   // 搜索框（UI-T26 检索行）
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QVBoxLayout>
 
 namespace sdurws {
 namespace ird {
@@ -226,14 +230,45 @@ public:
     IndustrialProjectTreePanelImpl(const IndustrialProjectTreePanelDeps& deps,
                                    QWidget* parent)
         : m_deps(deps),
-          m_tree(new QTreeWidget(parent))
+          m_root(new QWidget(parent)),
+          m_tree(new QTreeWidget(m_root))
     {
+        // 容器化（UI-T26——检索行＋树纵排）：widget() 出口从树本体升格为
+        // 容器；树的父子关系/信号/选中语义零变化（检索只隐藏行——
+        // kNodeIdRole 与选中写入路径不动）。
+        auto* rootLayout = new QVBoxLayout(m_root);
+        rootLayout->setContentsMargins(0, 0, 0, 0);
+        rootLayout->setSpacing(2);
+        auto* searchRow = new QHBoxLayout();
+        searchRow->setSpacing(4);
+        m_searchEdit = new QLineEdit(m_root);
+        m_searchEdit->setObjectName("ird_tree_search");
+        m_searchEdit->setPlaceholderText(
+            QStringLiteral("搜索对象（显示名）"));
+        m_searchEdit->setClearButtonEnabled(true);
+        m_groupFilter = new QComboBox(m_root);
+        m_groupFilter->setObjectName("ird_tree_group_filter");
+        m_groupFilter->addItem(QStringLiteral("全部分组"));
+        for (std::uint8_t g = 0; g < kProjectTreeGroupCount; ++g) {
+            m_groupFilter->addItem(
+                groupLabel(static_cast<ProjectTreeGroup>(g)));
+        }
+        searchRow->addWidget(m_searchEdit, 1);
+        searchRow->addWidget(m_groupFilter, 0);
+        rootLayout->addLayout(searchRow);
+        rootLayout->addWidget(m_tree, 1);
+        // 检索输入 → 呈现过滤（只隐藏行；模型/服务零触碰）。
+        QObject::connect(m_searchEdit, &QLineEdit::textChanged, m_root,
+                         [this] { applyFilter(); });
+        QObject::connect(m_groupFilter, &QComboBox::currentIndexChanged,
+                         m_root, [this](int) { applyFilter(); });
+
         configureTree();
         connectSelectionSignal();
         refresh();
     }
 
-    QWidget* widget() override { return m_tree; }
+    QWidget* widget() override { return m_root; }
 
     void refresh() override
     {
@@ -280,6 +315,9 @@ public:
             }
         }
         m_tree->expandAll();
+        // 检索条件跨 refresh 保持（重建后重放当前过滤——用户检索态不因
+        // 模型刷新丢失）。
+        applyFilter();
 
         // 恢复选中（对象仍在树中才恢复——内容移除后不伪造选中）。
         if (!previousSelection.empty()) {
@@ -410,6 +448,57 @@ private:
         }
     }
 
+    /// @brief 呈现过滤（UI-T26——搜索＋分组过滤的唯一施加点）。
+    ///
+    /// 规则（只隐藏行——五分组封闭清单/组序/kNodeIdRole/选中语义零触碰）：
+    ///   - 分组过滤：下拉 0＝全部；1..5 按枚举序对应分组——被滤分组整组
+    ///     隐藏（组头＋全部子行）；
+    ///   - 搜索：显示名子串匹配（大小写不敏感——含层级缩进前缀，缩进空
+    ///     格不影响 contains 判定）；无命中的组隐藏组头（搜索态不呈现空组
+    ///     ——"组结构存在"的可视不变量以非搜索态为基准，INV-B1 断言在
+    ///     无过滤态验证）；
+    ///   - 占位行（无节点身份）非对象行：搜索态一律隐藏（不参与匹配，
+    ///     不因文本巧合误命中）。
+    void applyFilter()
+    {
+        const QString needle = m_searchEdit->text().trimmed();
+        const int filterIndex =
+                m_groupFilter != nullptr ? m_groupFilter->currentIndex() : 0;
+        for (int g = 0; g < m_tree->topLevelItemCount(); ++g) {
+            QTreeWidgetItem* groupItem = m_tree->topLevelItem(g);
+            const bool groupAllowed = (filterIndex == 0 || filterIndex == g + 1);
+            if (!groupAllowed) {
+                // 整组隐藏（组头＋子行旗标一致置位——被滤组的行是"组级
+                // 过滤"不是"行级不匹配"，旗标一致便于任何消费者按行判定）。
+                for (int i = 0; i < groupItem->childCount(); ++i) {
+                    groupItem->child(i)->setHidden(true);
+                }
+                groupItem->setHidden(true);
+                continue;
+            }
+            int visibleChildren = 0;
+            for (int i = 0; i < groupItem->childCount(); ++i) {
+                QTreeWidgetItem* child = groupItem->child(i);
+                const QVariant idText = child->data(0, kNodeIdRole);
+                if (!idText.isValid() || idText.toString().isEmpty()) {
+                    // 占位行（结构说明非对象）——搜索态隐藏。
+                    child->setHidden(!needle.isEmpty());
+                    continue;
+                }
+                const bool matches =
+                        needle.isEmpty()
+                        || child->text(0).contains(needle, Qt::CaseInsensitive);
+                child->setHidden(!matches);
+                if (matches) {
+                    ++visibleChildren;
+                }
+            }
+            // 组头可见性：无搜索＝非滤分组恒可见（空组也呈现组头——
+            // INV-B1 可视不变量）；有搜索＝无命中组隐藏。
+            groupItem->setHidden(!needle.isEmpty() && visibleChildren == 0);
+        }
+    }
+
     /// @brief 缩进单元（两空格——层级提示的最小可读档）。
     static QString indentUnit() { return QStringLiteral("  "); }
 
@@ -434,7 +523,13 @@ private:
 
     /// 装配依赖（模型/服务/名称端口——构造期工厂已校验非空）。
     IndustrialProjectTreePanelDeps m_deps;
-    /// 树控件（实例存活期＝控件存活期——widget() 出口所有权随实例）。
+    /// 面板容器（UI-T26——检索行＋树纵排；widget() 出口）。
+    QWidget* m_root;
+    /// 搜索框（显示名子串——呈现过滤输入面）。
+    QLineEdit* m_searchEdit = nullptr;
+    /// 分组过滤下拉（0＝全部；1..5 按枚举序）。
+    QComboBox* m_groupFilter = nullptr;
+    /// 树控件（实例存活期＝控件存活期——挂接在容器内）。
     QTreeWidget* m_tree;
     /// 程序化选中时的信号回流阻断（refresh 恢复选中场景——防止重复
     /// 广播；真用户交互路径恒为 false）。

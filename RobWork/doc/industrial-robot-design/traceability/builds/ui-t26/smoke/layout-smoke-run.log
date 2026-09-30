@@ -1,0 +1,48 @@
+UI-T25 layout smoke @ 2026-09-30 11:50:44
+fixture-reset: aux.domain.* keys removed=1
+run(layout) exit=0
+run(layout2) exit=0
+[ird-ui-smoke-layout] started mode=first
+[ird-ui-smoke-layout] pass default-hidden:modeling
+[ird-ui-smoke-layout] pass default-hidden:requirements
+[ird-ui-smoke-layout] pass default-hidden:kinematics
+[ird-ui-smoke-layout] pass default-hidden:kinematics-advanced
+[ird-ui-smoke-layout] pass default-visible:main-dock
+[ird-ui-smoke-layout] pass default-visible:props-dock
+[ird-ui-smoke-layout] pass default-visible:tasks-dock
+[ird-ui-smoke-layout] pass central-view-nonzero (cur=476px)
+[ird-ui-smoke-layout] pass view-menu-aux-toggles=4 (cur=4)
+[ird-ui-smoke-layout] snap 1-default-layout.png
+[ird-ui-smoke-layout] pass view-menu-present
+[ird-ui-smoke-layout] snap 2-view-menu.png
+[ird-ui-smoke-layout] pass requirements-toggle-present
+[ird-ui-smoke-layout] pass requirements-summoned-visible
+[ird-ui-smoke-layout] pass requirements-memory-on
+[ird-ui-smoke-layout] snap 3-domain-panel-summoned.png
+[ird-ui-smoke-layout] snap 4-requirements-buttons.png
+[ird-ui-smoke-layout] pass requirements-command-bar-present
+[ird-ui-smoke-layout] pass registry-requirements-commands=9 (cur=9)
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.import-csv
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.import-json
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.export-copy
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.capture-tcp
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.pick-feature
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.mirror-stations
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.create-array
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.apply-template
+[ird-ui-smoke-layout] pass button-title-via-uitext:requirements.regenerate-linked
+[ird-ui-smoke-layout] pass command-buttons-count=9 (cur=9)
+[ird-ui-smoke-layout] pass buttons-no-overlap (cur=0)
+[ird-ui-smoke-layout] snap 5-requirements-narrow.png
+[ird-ui-smoke-layout] pass buttons-no-overlap-narrow (cur=0)
+[ird-ui-smoke-layout] pass central-guard-at-min-window (cur=692px)
+[ird-ui-smoke-layout] snap 6-min-window.png
+[ird-ui-smoke-layout] DONE
+[ird-ui-smoke-layout] started mode=second
+[ird-ui-smoke-layout] pass memory-requirements-visible
+[ird-ui-smoke-layout] pass memory-modeling-still-hidden
+[ird-ui-smoke-layout] pass memory-kinematics-still-hidden
+[ird-ui-smoke-layout] pass central-guard-second-start (cur=465px)
+[ird-ui-smoke-layout] snap 7-second-start-memory.png
+[ird-ui-smoke-layout] DONE
+LAYOUT_SMOKE_PASS
