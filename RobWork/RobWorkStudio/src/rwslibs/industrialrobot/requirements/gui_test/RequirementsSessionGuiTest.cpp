@@ -157,6 +157,12 @@ protected:
         RegionSet regions;
         regions.entries.push_back(makeRegion("R1"));
         ConditionSet conditions;
+        // 工况起步条目（UI-T30 生命周期的工况集合操作载体——T29 版夹具
+        // 此处为空，B1 用例需要非空集合）。
+        OperatingCondition c1;
+        c1.objectId = core::ObjectId::generate();
+        c1.name = "C1";
+        conditions.entries.push_back(c1);
         const core::ObjectId rootOid = fillBaseline(closure, points, regions, conditions);
         m_rootOid = rootOid;
         const auto load = m_editor.loadBaseline(closure);
@@ -281,4 +287,153 @@ TEST_F(RequirementsSessionGuiTest, GateTruthSource_BlockingDoubleState_UI_T29)
         m_checker.check(brokenEditor.workingSet(), CheckContext{});
     EXPECT_EQ(again.hasBlocking(), brokenReport.hasBlocking())
         << "同输入两次判定结论漂移（gate 快照不可复现）";
+}
+
+// =====================================================================
+// UI-T30 B1 对象生命周期：三集合新增/复制/删除＋锚回落＋撤销＋无会话门控
+// （触发面＝objectName 锚按钮 click——与用户点击同路径；断言面＝集合
+// 规模＋页签状态行呈现〔选中锚的呈现投影〕＋检查器编辑行）。
+// =====================================================================
+
+/// 生命周期按钮现取（objectName 锚——makeLifecycleBar 的定位面）。
+QPushButton* lifecycleButton(const RequirementsPanelWidget& panel, const char* action,
+                             const char* key)
+{
+    return const_cast<RequirementsPanelWidget&>(panel)
+        .findChild<QPushButton*>(
+            QStringLiteral("ird_req_%1_%2")
+                .arg(QString::fromLatin1(action), QString::fromLatin1(key)));
+}
+
+/// 页签状态行文本现取（选中锚的呈现投影——工位/区域/工况页头）。
+QString tabHeaderText(const RequirementsPanelWidget& panel, const char* objectName)
+{
+    const QLabel* label = const_cast<RequirementsPanelWidget&>(panel)
+                              .findChild<QLabel*>(QString::fromLatin1(objectName));
+    return label != nullptr ? label->text() : QString();
+}
+
+TEST_F(RequirementsSessionGuiTest, LifecycleAdd_ThreeCollections_UI_T30)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 工位新增：树投影出现自动名新条目＋选中锚落新条目（页签状态行呈现）。
+    const std::size_t pointsBefore = m_editor.workingSet().points.entries.size();
+    ASSERT_NE(lifecycleButton(*m_panel, "add", "points"), nullptr);
+    lifecycleButton(*m_panel, "add", "points")->click();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), pointsBefore + 1);
+    EXPECT_TRUE(tabHeaderText(*m_panel, "ird_req_tab_station_header")
+                    .contains(QStringLiteral("工位")))
+        << "新增后选中锚未落新条目（页签状态行应显示自动名）";
+
+    // 区域新增＋工况新增（同轨断言——集合规模＋状态行）。
+    const std::size_t regionsBefore = m_editor.workingSet().regions.entries.size();
+    lifecycleButton(*m_panel, "add", "regions")->click();
+    ASSERT_EQ(m_editor.workingSet().regions.entries.size(), regionsBefore + 1);
+    EXPECT_TRUE(tabHeaderText(*m_panel, "ird_req_tab_region_header")
+                    .contains(QStringLiteral("区域")));
+
+    const std::size_t conditionsBefore =
+        m_editor.workingSet().conditions.entries.size();
+    lifecycleButton(*m_panel, "add", "conditions")->click();
+    ASSERT_EQ(m_editor.workingSet().conditions.entries.size(), conditionsBefore + 1);
+    EXPECT_TRUE(tabHeaderText(*m_panel, "ird_req_tab_condition_header")
+                    .contains(QStringLiteral("工况")));
+
+    // 自动名防撞（I-REQ-3 前置）：连续新增两个工位——名字互异。
+    lifecycleButton(*m_panel, "add", "points")->click();
+    const auto& entries = m_editor.workingSet().points.entries;
+    std::set<std::string> names;
+    for (const auto& e : entries) { names.insert(e.name); }
+    EXPECT_EQ(names.size(), entries.size()) << "自动名撞名（uniqueEntryName 失守）";
+}
+
+TEST_F(RequirementsSessionGuiTest, LifecycleDuplicate_CopyFieldsAndSelect_UI_T30)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 选中 P1→复制：规模＋1＋新名『P1 副本』＋选中锚落副本＋字段等值
+    //（位置值与源一致——深拷贝；溯源字段保持源值——非伪造模板物）。
+    const core::ObjectId srcId = m_editor.workingSet().points.entries.front().objectId;
+    const double srcZ =
+        m_editor.workingSet().points.entries.front().pose.position.value()[2];
+    m_panel->focusObject(srcId);
+    const std::size_t before = m_editor.workingSet().points.entries.size();
+    lifecycleButton(*m_panel, "duplicate", "points")->click();
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), before + 1);
+
+    const TaskPoint* copy = nullptr;
+    for (const TaskPoint& e : m_editor.workingSet().points.entries) {
+        if (e.objectId != srcId && e.name == "P1 副本") { copy = &e; }
+    }
+    ASSERT_NE(copy, nullptr) << "副本条目未按『源名 副本』命名";
+    EXPECT_DOUBLE_EQ(copy->pose.position.value()[2], srcZ)
+        << "副本字段与源不等值";
+    EXPECT_TRUE(tabHeaderText(*m_panel, "ird_req_tab_station_header")
+                    .contains(QStringLiteral("P1 副本")))
+        << "复制后选中锚未落副本";
+}
+
+TEST_F(RequirementsSessionGuiTest, LifecycleRemoveAnchorFallbackAndUndo_UI_T30)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 删除唯一区域条目：集合空＋锚清空（状态行回落『未选择对象』）。
+    const core::ObjectId regionId =
+        m_editor.workingSet().regions.entries.front().objectId;
+    m_panel->focusObject(regionId);
+    lifecycleButton(*m_panel, "remove", "regions")->click();
+    EXPECT_TRUE(m_editor.workingSet().regions.entries.empty())
+        << "删除未生效（集合应空）";
+    EXPECT_TRUE(tabHeaderText(*m_panel, "ird_req_tab_region_header")
+                    .contains(QStringLiteral("未选择对象")))
+        << "空集合锚回落未清空";
+
+    // 撤销（域轨 undoLocal——面板结构操作与字段编辑同栈）→ 区域恢复。
+    EXPECT_TRUE(m_editor.undoLocal());
+    ASSERT_EQ(m_editor.workingSet().regions.entries.size(), std::size_t{1});
+    // 重做→再删除。
+    EXPECT_TRUE(m_editor.redoLocal());
+    EXPECT_TRUE(m_editor.workingSet().regions.entries.empty());
+
+    // 工况锚回落（非空集合）：选中唯一工况删除→集合空清空；再 undo 恢复
+    // ＋新增第二个工况后删除首个→锚回落到次条（同位次钳制）。
+    const core::ObjectId condId =
+        m_editor.workingSet().conditions.entries.front().objectId;
+    m_panel->focusObject(condId);
+    lifecycleButton(*m_panel, "remove", "conditions")->click();
+    EXPECT_TRUE(m_editor.workingSet().conditions.entries.empty());
+    EXPECT_TRUE(m_editor.undoLocal());  // 工况恢复（撤销栈跨集合序贯）
+    lifecycleButton(*m_panel, "add", "conditions")->click();
+    ASSERT_EQ(m_editor.workingSet().conditions.entries.size(), std::size_t{2});
+    const core::ObjectId firstId =
+        m_editor.workingSet().conditions.entries.front().objectId;
+    m_panel->focusObject(firstId);
+    lifecycleButton(*m_panel, "remove", "conditions")->click();
+    EXPECT_FALSE(tabHeaderText(*m_panel, "ird_req_tab_condition_header")
+                     .contains(QStringLiteral("未选择对象")))
+        << "非空集合删除后锚被清空（应回落到同位次条目）";
+}
+
+TEST_F(RequirementsSessionGuiTest, LifecycleButtons_DisabledWithoutSession_UI_T30)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+
+    // 独立面板（无编辑目标提供器——无会话形态）：refreshPanel 后生命周期
+    // 三键全禁用（不虚构可编辑）。
+    RequirementsPanelWidget noSessionPanel(true);
+    noSessionPanel.refreshPanel(RequirementWorkingSet{},
+                                RequirementReadinessReport{});
+    for (const char* key : {"points", "regions", "conditions"}) {
+        for (const char* action : {"add", "duplicate", "remove"}) {
+            QPushButton* btn =
+                lifecycleButton(noSessionPanel, action, key);
+            ASSERT_NE(btn, nullptr);
+            EXPECT_FALSE(btn->isEnabled())
+                << "无会话下生命周期按钮可用（" << action << "/" << key << "）";
+        }
+    }
 }

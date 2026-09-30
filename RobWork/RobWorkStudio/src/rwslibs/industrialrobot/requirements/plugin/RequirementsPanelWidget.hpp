@@ -204,6 +204,33 @@ private:
     TaskPointService m_pointService;          ///< 领域服务（顺序键/构造校验——面板模型入口）
     WorkRegionService m_regionService;        ///< 领域服务（采样规范化——D-REQ-2 单点复用）
     OperatingConditionService m_conditionService;  ///< 领域服务（必验解析——P-EV-9 单点复用）
+
+    // ---- 对象生命周期（UI-T30 B1——工位/区域/工况新增/复制/删除）----
+    /**
+     * @brief 生命周期工具行（每页签页头下方一行——新增/复制/删除三键）。
+     *
+     * 按钮经 lambda 捕获集合种类分派到三个结构槽；objectName 锚
+     * `ird_req_<action>_<key>`（action=add|duplicate|remove；key=points|
+     * regions|conditions——gui_test findChild 定位面）。
+     */
+    QWidget* makeLifecycleBar(QWidget* parent, const char* key,
+                              WorkingSetMember member, const QString& noun);
+    /// 新增槽：构造合法起步条目（域夹具同款默认值）＋自动名防撞 →
+    /// applyEdit → 接受＝sink 链刷新＋选中新条目；拒绝＝状态行就地错误。
+    void onAddEntry(WorkingSetMember member);
+    /// 复制槽：当前选中条目深拷贝＋新 id＋『 副本』名防撞 → applyEdit →
+    /// 选中副本；溯源字段保持源值（复件非伪造模板物——诚实登记）。
+    void onDuplicateEntry(WorkingSetMember member);
+    /// 删除槽：选中条目 removeEdit → 接受后锚回落（同集合规范序次条，
+    /// 空集合＝清空选中）；拒绝（含被必验引用等域拒绝面）＝就地错误。
+    void onRemoveEntry(WorkingSetMember member);
+    /// 集合内未占用的条目名（base 后缀递增——I-REQ-3 拒绝面前的第一道
+    /// 防线；撞名仍由域侧裁决，双保险）。
+    std::string uniqueEntryName(const RequirementWorkingSet& ws,
+                                WorkingSetMember member, const std::string& base);
+    /// 结构编辑统一提交轨（applyEdit → 接受走 onEditApplied sink 链——
+    /// UI-T29 组合子随之触发就绪重估；拒绝就地报错。返回接受与否）。
+    bool submitStructuralEdit(const RequirementEdit& edit);
     std::vector<ui::CommandDescriptor> m_commands;  ///< 域命令目录（§9.8 九条——装配数据）
     CommandSubmitFn m_commandSubmit;          ///< 命令提交出口（装配层注入；空＝按钮禁用）
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询
