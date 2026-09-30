@@ -730,7 +730,8 @@ TEST(PeerRedLine, T2TestTargetLinkFormAcyclicAndTestdataExclusion_ACC3)
             << "testkit 引用只允许落在链接语句行（T-1）: " << line;
         const bool onTestTarget
             = line.find("sdurws_ird_requirements_test") != std::string::npos
-              || line.find("sdurws_ird_requirements_contract_test") != std::string::npos;
+              || line.find("sdurws_ird_requirements_contract_test") != std::string::npos
+              || line.find("sdurws_ird_requirements_gui_test") != std::string::npos;
         ASSERT_TRUE(onTestTarget) << "testkit 只可被测试目标链接（T-1）: " << line;
         // 允许形态全集核对：{被测目标〔＋同单元插件面〕, testkit, gtest}
         // ——出现任何第四产品单元目标即形态漂移。

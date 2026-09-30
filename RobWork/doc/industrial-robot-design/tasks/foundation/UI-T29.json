@@ -24,6 +24,10 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/BuildGraphContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/PeerFaceContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/units/requirements.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
@@ -71,5 +75,5 @@
     "草稿链真实数据面：草稿落盘（60s 定时/手动）→应用→修订前进＋noteAppliedRevision 锚前移；『撤销上次应用（项目级）』可用——gui 具名用例",
     "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿（含新建 requirements gui_test 目标）＋layout 冒烟双场景＋validate-docs PASS；留痕 traceability/builds/ui-t29/"
   ],
-  "note": "立项来源：所有者 2026-09-30 需求界面功能对照会话——对照 main 分支 engineeringrequirements 插件全功能清单（冻结参考实现，仅作功能范围对照；实现口径仍为从头构建，DTB 实现口径行不变），确认新版三层差距：壳与投影已就位／九条域命令注册期禁用未装配／需求域宿主会话未接线（DomainAssembly attachEditor(nullptr)——面板树恒空、检查器不可编辑、校验页『尚未执行』）。所有者确认批次结构 v2：B 拆 B1/B2（对象生命周期与字段编辑风险面不同）；最小校验并入本批（编辑后即时预检→阻断项显示→应用按钮门控→稳定诊断提示四件——缺此则 UI-T30/T31/T32 开发期无法自证编辑有效性）。〔范围〕本批＝会话接线（基线闭包提供器→四集合入树/表→工位检查器真实生效→草稿链数据面）＋最小校验四件；不含对象生命周期增删复制（UI-T30）、区域/工况字段编辑（UI-T31）、九命令 UI 流程（UI-T32）、三维交互（UI-T33）、校验体验收口（UI-T34）。两项上游待裁决（DTB §4.2 O-46/O-47：冻结工件文件化导出承接与否、Info 级/confidence 承接与否）不阻塞本批。需求语义零变化。"
+  "note": "立项来源：所有者 2026-09-30 需求界面功能对照会话——对照 main 分支 engineeringrequirements 插件全功能清单（冻结参考实现，仅作功能范围对照；实现口径仍为从头构建，DTB 实现口径行不变），确认新版三层差距：壳与投影已就位／九条域命令注册期禁用未装配／需求域宿主会话未接线（DomainAssembly attachEditor(nullptr)——面板树恒空、检查器不可编辑、校验页『尚未执行』）。所有者确认批次结构 v2：B 拆 B1/B2（对象生命周期与字段编辑风险面不同）；最小校验并入本批（编辑后即时预检→阻断项显示→应用按钮门控→稳定诊断提示四件——缺此则 UI-T30/T31/T32 开发期无法自证编辑有效性）。〔范围〕本批＝会话接线（基线闭包提供器→四集合入树/表→工位检查器真实生效→草稿链数据面）＋最小校验四件；不含对象生命周期增删复制（UI-T30）、区域/工况字段编辑（UI-T31）、九命令 UI 流程（UI-T32）、三维交互（UI-T33）、校验体验收口（UI-T34）。两项上游待裁决（DTB §4.2 O-46/O-47：冻结工件文件化导出承接与否、Info 级/confidence 承接与否）不阻塞本批。需求语义零变化。〔v1.1 范围修正——实施段登记，UI-T25/T27 先例同款，2026-10-01〕allowedFiles 增补三件：requirements/gui_test/**（acceptance 承诺的 requirements 面板 gui_test 具名用例落位面——新目标 sdurws_ird_requirements_gui_test）＋requirements/CMakeLists.txt（目标登记）＋requirements/contract_test/{BuildGraphContractTest,PeerFaceContractTest}.cpp（单元构建图/T-2 契约白名单的新目标连带登记——requirements 契约扫描面为封闭白名单形态，新测试目标必须入册）。"
 }

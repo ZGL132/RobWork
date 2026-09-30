@@ -105,6 +105,16 @@ public:
      *         可编辑性。返回指针所有权在会话层，面板零持有）。 */
     void setEditTargetProvider(EditTargetProvider provider);
 
+    /// 编辑后动作钩子形态（UI-T29 最小校验——装配层接就绪重算＋refreshPanel
+    /// 编排；modeling 面板 setPostEditAction 同款先例）。
+    using PostEditAction = std::function<void()>;
+
+    /**
+     * @brief 注入编辑后动作（每次 L-2 接受后触发——装配层在此重估就绪
+     *        并以新报告 refreshPanel；不注入＝无后置动作，行为同前）。
+     */
+    void setPostEditAction(PostEditAction action);
+
     /** @brief 注入区域三维预览出口（装配期；不注入＝预览仅文本摘要）。 */
     void setRegionPreviewSink(RegionPreviewSink sink);
 
@@ -198,6 +208,7 @@ private:
     CommandSubmitFn m_commandSubmit;          ///< 命令提交出口（装配层注入；空＝按钮禁用）
     CommandAvailabilityFn m_commandAvailability; ///< 注册表可用性查询
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
+    PostEditAction m_postEditAction;          ///< 编辑后动作（UI-T29——就绪重算钩子；可空）
     RegionPreviewSink m_regionPreview;        ///< 区域三维预览出口（装配层注入；空＝文本摘要）
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）

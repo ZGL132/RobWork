@@ -137,6 +137,17 @@ public:
     void bindCommandSubmit(CommandSubmitFn submitFn);
     void bindCommandAvailability(CommandAvailabilityFn availability);
 
+    /// 编辑后动作钩子形态（UI-T29 最小校验——装配层接就绪重算编排；
+    /// modeling 门面 setPostEditAction 同名方法语义同构）。
+    using PostEditAction = std::function<void()>;
+
+    /**
+     * @brief 注入编辑后动作（每次 L-2 接受后触发——宿主动作重估＋bind-
+     *        Readiness 先行，随后本模块以会话最新报告 refreshPanel——
+     *        校验页实时化的组合子归模块，装配层零面板指针依赖）。
+     */
+    void setPostEditAction(PostEditAction action);
+
     /**
      * @brief 注入需求编辑器（草稿唯一写目标与工作集权威——装配层注入；
      *        本模块零工作集副本，一切读取现取）。
@@ -255,6 +266,11 @@ private:
     RequirementsPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
     CommandSubmitFn m_pendingSubmit;             ///< 面板创建前暂存的宿主出口
     CommandAvailabilityFn m_pendingAvailability;  ///< 面板创建前暂存的可用性查询
+    PostEditAction m_hostPostEdit;  ///< 宿主编辑后动作（UI-T29——重估＋bindReadiness；组合子承载）
+
+    /// 编辑后组合子挂面板（UI-T29——宿主重估先行＋最新报告 refreshPanel；
+    /// 面板缺位＝仅暂存，attachPanel 时补挂）。
+    void wirePanelPostEdit();
     IRequirementEditor* m_editor = nullptr;      ///< 编辑器引用（非 owning——工作集权威）
     ui::IWorkbenchShell* m_shell = nullptr;      ///< 壳门面引用（非 owning——§10.9 生命周期）
 

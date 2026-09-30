@@ -147,6 +147,11 @@ void RequirementsPanelWidget::setEditTargetProvider(EditTargetProvider provider)
     m_editTarget = std::move(provider);
 }
 
+void RequirementsPanelWidget::setPostEditAction(PostEditAction action)
+{
+    m_postEditAction = std::move(action);
+}
+
 void RequirementsPanelWidget::setRegionPreviewSink(RegionPreviewSink sink)
 {
     m_regionPreview = std::move(sink);
@@ -842,6 +847,12 @@ void RequirementsPanelWidget::onEditApplied(const std::string& changeSummary)
     }
     m_statusLine->setText(QString::fromStdString(changeSummary));
     Q_EMIT sessionDirtyChanged(true);
+    // UI-T29 最小校验：编辑后动作（装配层在此重估就绪并以新报告
+    // refreshPanel——校验页『尚未执行』静态的实时化编排；本面板零判定，
+    // 判定权威在域侧 Readiness——P-REQ-6 边界不变）。
+    if (m_postEditAction) {
+        m_postEditAction();
+    }
 }
 
 void RequirementsPanelWidget::notifySessionDirty()

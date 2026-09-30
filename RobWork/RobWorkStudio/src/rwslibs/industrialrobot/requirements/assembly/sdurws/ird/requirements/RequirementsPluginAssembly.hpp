@@ -149,6 +149,11 @@ struct RequirementsPluginAssembly {
     void bindCommandAvailability(
         std::function<ui::CommandAvailability(const ui::CommandId&)> availability);
 
+    /// 注入编辑后动作（UI-T29 最小校验——每次 L-2 接受后触发；装配层接
+    /// 就绪重算＋refreshPanel 编排。转发模块 setPostEditAction——O-45
+    /// 『只出线不重写』门面先例同款）。
+    void setPostEditAction(std::function<void()> action);
+
     /// 会话态访问（装配层注入/排障入口——完整类型在插件私有头，宿主侧
     /// 仅引用传递；仅 UI 线程）。
     RequirementsModuleSessionState& session() const;
