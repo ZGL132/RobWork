@@ -96,6 +96,7 @@ public:
     void resetLayout() override;
     void notifyHostResized(const QSize& hostSize) override;
     void presentProjectContext(const ProjectContextProjection& context) override;
+    void noteSelectionForContext(const SelectionChange& change) override;
     ICommandRegistry& commandRegistry() override;  ///< UI-T19 增量（权威实例引用——§10.1 v1.17）
     ShellCommandAvailability commandAvailability(const std::string& commandId) const override;
     void submitCommand(const std::string& commandId) override;
@@ -137,6 +138,7 @@ private:
     // ---- 呈现刷新（原 WorkbenchShellImpl 同名拆出）----
     void refreshCommandStates();          ///< 命令可用性 → 顶栏按钮/观察者
     void refreshStatusBar();              ///< PM-11 状态行文本刷新（＋标题观察者）
+    void refreshContextBar();             ///< 顶栏上下文栏三标签刷新（UI-T26——项目/草稿自 m_context，对象自 m_contextSelectionName）
     /// 瞬态状态消息唯一出线（UI-T18——原 QStatusBar::showMessage 的路由面：
     /// 经 setStatusMessageObserver 投影宿主层；未注册观察者＝静默丢弃，
     /// 与"无宿主测试场景"同纪律）。
@@ -184,6 +186,14 @@ private:
     /// 项目关闭即复位）
     std::optional<ui::StageId> m_activeStagePanel;
     QLabel* m_readonlyBadge = nullptr;         ///< 顶栏只读徽标
+    // 顶栏上下文栏三标签（UI-T26——§4.2 顶栏行增量：项目/当前对象/草稿）。
+    // 草稿标签无项目态隐藏（DraftPresenceProjection 无项目时被忽略——
+    // 投影注释原文口径）；对象标签由 noteSelectionForContext 维护
+    // m_contextSelectionName 后经 refreshContextBar 呈现。
+    QLabel* m_ctxProjectLabel = nullptr;       ///< 『项目：〈显示名|未打开项目〉』
+    QLabel* m_ctxObjectLabel = nullptr;        ///< 『当前对象：〈显示名|未选择〉』
+    QLabel* m_ctxDraftLabel = nullptr;         ///< 『草稿：〈有/无未应用修改〉』（无项目隐藏）
+    QString m_contextSelectionName;            ///< 当前对象显示名（空＝未选择——resolver 失败回退占位词形在刷新时判定）
     QListWidget* m_homeRecentList = nullptr;   ///< 首页最近项目列表
     std::array<QWidget*, 5> m_regionWidgets{}; ///< 五区内容 Widget（WorkbenchRegion 枚举序）
     std::array<QWidget*, 5> m_regionTargets{}; ///< 五区可见性目标（缺省＝内容 Widget 自身）

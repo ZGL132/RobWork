@@ -729,17 +729,20 @@ void WorkbenchContentImpl::buildTopBar()
     projectEntry->setMenu(entryMenu);
     layout->addWidget(projectEntry);
 
-    // 阶段导航条/当前方案工况指示/任务状态指示：§4.1 顶栏行的阶段 A 占位
-    // （阶段导航归 UI-T09、方案工况随项目流程任务、任务状态随 UI-T13——
-    // 占位说明不虚构能力，§11.4）。
-    // UI-T25 占位收敛：三处原各挂一条同名长占位（"阶段导航（本阶段将在
-    // 后续版本提供）"×3——FlowLayout 窄容器下与写命令按钮交错换行成三行
-    // 重复文本，也是 UI-T24 钳制源定位的顶栏 1054 px 双源之一），合并为
-    // 单条弱化说明（kTopBarDeferredNotice）挂任务状态指示位；三能力对应
-    // 任务的落位语义不变（§4.2 顶栏行落位登记随本任务文档同步）。
-    QLabel* taskState =
-        new QLabel(QString::fromUtf8(WorkbenchText::kTopBarDeferredNotice), bar);
-    layout->addWidget(taskState);
+    // 顶栏上下文栏（UI-T26——§4.2 顶栏行增量）：三标签呈现真实上下文
+    // （项目/当前对象/草稿），取代 UI-T25 的合并占位说明行——『当前阶段』
+    // 不进栏（阶段导航归 UI-T09 未落地，不虚构能力）。数据源＝
+    // presentProjectContext 既有投影（PM-11 同源，零第二状态源）＋
+    // noteSelectionForContext 的选择事实（名称经 nameResolver 解析）。
+    m_ctxProjectLabel = new QLabel(bar);
+    m_ctxProjectLabel->setObjectName("ird_ctx_project");
+    layout->addWidget(m_ctxProjectLabel);
+    m_ctxObjectLabel = new QLabel(bar);
+    m_ctxObjectLabel->setObjectName("ird_ctx_object");
+    layout->addWidget(m_ctxObjectLabel);
+    m_ctxDraftLabel = new QLabel(bar);
+    m_ctxDraftLabel->setObjectName("ird_ctx_draft");
+    layout->addWidget(m_ctxDraftLabel);
 
     // 写命令按钮组（§4.2 顶栏行：保存草稿/应用修改/撤销/重做——全部路由
     // 命令板，可用性随上下文刷新）。
@@ -1368,10 +1371,74 @@ void WorkbenchContentImpl::presentProjectContext(const ProjectContextProjection&
         m_centralStack->setCurrentIndex(1);
     }
     refreshStatusBar();
+    refreshContextBar();
     refreshCommandStates();
     // 策略摘要卡随上下文注入重拉端口快照（UI-T07——§6.7；阶段 A 的刷新
     // 锚点＝本唯一上下文入口，事件驱动刷新随投影管线 §6.1/UI-T09 接入）。
     refreshPolicySummaryCard();
+}
+
+void WorkbenchContentImpl::noteSelectionForContext(const SelectionChange& change)
+{
+    if (!m_built || m_shutdownDone) {
+        Q_ASSERT(false && "shutdown 后调用 noteSelectionForContext（契约非法调用）");
+        return;
+    }
+    // runtimeOnly 事件（L3 反解失败——业务选中事实未变）不动对象标签；
+    // 空选中集＝回退『未选择』；有选中＝经名称端口解析显示名（首对象——
+    // 树为单选形态；多选预留取首），解析失败回退占位词形不虚构名称
+    // （UX-02：ObjectId 规范形不进用户文本）。
+    if (change.runtimeOnly) {
+        return;
+    }
+    if (change.selectedObjectIds.empty()) {
+        m_contextSelectionName.clear();
+    } else {
+        const core::ObjectId& id = change.selectedObjectIds.front();
+        const auto resolved =
+                m_deps.wiring.nameResolver != nullptr
+                    ? m_deps.wiring.nameResolver->resolveObjectId(id)
+                    : std::nullopt;
+        m_contextSelectionName =
+                resolved.has_value()
+                    ? QString::fromStdString(*resolved)
+                    : QString::fromUtf8(WorkbenchText::kCtxObjectUnnamed);
+    }
+    refreshContextBar();
+}
+
+void WorkbenchContentImpl::refreshContextBar()
+{
+    // 顶栏上下文栏三标签（UI-T26——§4.2 顶栏行增量）：项目/草稿自
+    // m_context（presentProjectContext 维护的同一份投影——PM-11 同源，
+    // 零第二状态源），对象自 noteSelectionForContext 维护的显示名。
+    // 草稿标签无项目态隐藏（DraftPresenceProjection"无项目时被忽略"
+    // 原文口径）；未 build/已 shutdown＝空操作（标签指针为空防御）。
+    if (m_ctxProjectLabel == nullptr || m_ctxObjectLabel == nullptr
+            || m_ctxDraftLabel == nullptr) {
+        return;
+    }
+    if (m_context.project.has_value()) {
+        m_ctxProjectLabel->setText(
+            QString::fromUtf8(WorkbenchText::kCtxProjectPrefix)
+            + QString::fromStdString(m_context.project->projectDisplayName));
+        m_ctxDraftLabel->setText(
+            QString::fromUtf8(WorkbenchText::kCtxDraftPrefix)
+            + QString::fromUtf8(m_context.drafts.anyUnapplied()
+                                     ? WorkbenchText::kCtxDraftUnapplied
+                                     : WorkbenchText::kCtxDraftClean));
+        m_ctxDraftLabel->setVisible(true);
+    } else {
+        m_ctxProjectLabel->setText(
+            QString::fromUtf8(WorkbenchText::kCtxProjectPrefix)
+            + QString::fromUtf8(WorkbenchText::kCtxProjectNone));
+        m_ctxDraftLabel->setVisible(false);
+    }
+    m_ctxObjectLabel->setText(
+        QString::fromUtf8(WorkbenchText::kCtxObjectPrefix)
+        + (m_contextSelectionName.isEmpty()
+               ? QString::fromUtf8(WorkbenchText::kCtxObjectNone)
+               : m_contextSelectionName));
 }
 
 void WorkbenchContentImpl::refreshPolicySummaryCard()

@@ -155,6 +155,7 @@ public:
     void setAuxVisible(const std::string&, bool) override {}
     void notifyHostResized(const QSize&) override {}
     void presentProjectContext(const ProjectContextProjection&) override {}
+    void noteSelectionForContext(const ui::SelectionChange&) override {}  ///< UI-T26 增量（替身零语义——本用例不触及上下文栏）
 
     ui::ICommandRegistry& commandRegistry() override { return *m_registry; }
     ShellCommandAvailability commandAvailability(const std::string&) const override { return {}; }

@@ -1,0 +1,4 @@
+1 1790739776850 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\build\\ui-t26-smoke-cwd\\ird-ui-plugin-logs）
+2 1790739777687 D DEBUG diag/ui msg=[sampled-tail] [central-guard] 保留量未达成：中央 296 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）
+1 1790739780824 D DEBUG diag/ui msg=插件诊断栈就绪（开发日志目录：D:\\10_Source_Repos\\21_robot\\RobWork\\build\\ui-t26-smoke-cwd\\ird-ui-plugin-logs）
+2 1790739781608 D DEBUG diag/ui msg=[sampled-tail] [central-guard] 保留量未达成：中央 296 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）

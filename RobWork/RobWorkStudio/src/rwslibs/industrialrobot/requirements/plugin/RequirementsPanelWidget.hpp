@@ -181,6 +181,9 @@ private:
     void renderRegionPage(const RequirementWorkingSet& ws);    // 区域页重投影
     void renderConditionPage(const RequirementWorkingSet& ws); // 工况页重投影
     void renderValidationPage(const RequirementReadinessReport& report);  // 校验页重投影
+    /// 页签状态行刷新（UI-T26——工位/区域/工况页头随树选中现取对象显示
+    /// 名，未选中＝『未选择对象』；校验页恒『尚未执行』诚实静态）。
+    void updateTabHeaders();
 
     // ---- 会话态与呈现模型（零 Qt 半区——全部在 plugin/ 呈现层）----
     PanelSelectionState m_selection;          ///< L-R1 会话选中态（零修订）
@@ -216,6 +219,11 @@ private:
     QFormLayout* m_conditionForm = nullptr;     ///< 工况检查器表单
     QTreeWidget* m_mustList = nullptr;          ///< 必验清单预览（RequirementProfile 投影行）
     QLabel* m_validationCounts = nullptr;       ///< 校验分层计数行（Blocking/Warning 汇总）
+    // 页签状态行（UI-T26——页头『〈页名〉：〈对象名|未选择对象〉』）。
+    QLabel* m_stationHeader = nullptr;          ///< 工位页头（随树选中刷新）
+    QLabel* m_regionHeader = nullptr;           ///< 区域页头（随树选中刷新）
+    QLabel* m_conditionHeader = nullptr;        ///< 工况页头（随树选中刷新）
+    QLabel* m_validationHeader = nullptr;       ///< 校验页头（诚实静态『尚未执行』）
     QTreeWidget* m_validationLayers = nullptr;  ///< R0~R9 分层结果行
     QTreeWidget* m_validationItems = nullptr;   ///< 逐项行（可点击——L-R1 反向定位跳转）
     QLabel* m_validationNotes = nullptr;        ///< 预览/正式语义说明（REQ-06 固定文案）

@@ -48,6 +48,8 @@
 #include <string>
 #include <vector>
 
+#include <sdurws/ird/ui/SelectionService.hpp>   // ui::SelectionChange（UI-T26 noteSelectionForContext 入参——L1 汇聚点广播值形，头零 Qt 可安全引入）
+
 #include <sdurws/ird/ui/ICommandRegistry.hpp>   // ui::ICommandRegistry::CommandHandler（会话入口覆写载体）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>    // ui::ShellWiring/WorkbenchRegion/ShellCommandAvailability/RecentProjectEntry（§10.1 冻结词表——本头零新词表）
 #include <sdurws/ird/ui/UiTypes.hpp>            // ui::StageId（§4.1 阶段面板页挂位词表——WP-24-T03b）
@@ -362,6 +364,21 @@ public:
 
     /// @brief 注入上下文投影（语义同 IWorkbenchShell::presentProjectContext）。
     virtual void presentProjectContext(const ProjectContextProjection& context) = 0;
+
+    /**
+     * @brief 注入选择事实供顶栏上下文栏呈现（UI-T26 增量——§4.2 顶栏行
+     *        『当前对象』标签的唯一数据入口）。
+     *
+     * 选择事实＝SelectionService（L1 唯一汇聚点）的广播值形——本方法只
+     * 做标签文本更新（零端口 IO，NFR-PERF-01），名称解析经 wiring.
+     * nameResolver（失败回退占位文案不虚构名称，UX-02）；runtimeOnly
+     * 事件不动业务选中标签（业务选中事实未变）。无订阅方时标签恒为
+     * 『未选择』缺省态（测试/无宿主场景的合法形态）。
+     *
+     * @param change [in] 选择变更事实（值拷贝；UI 线程同步调用——与
+     *               IUiSelectionObserver 回调纪律同款）
+     */
+    virtual void noteSelectionForContext(const SelectionChange& change) = 0;
 
     // ---- 命令设施访问（UI-T19 增量——IHostController 命令注册族聚合源）----
 

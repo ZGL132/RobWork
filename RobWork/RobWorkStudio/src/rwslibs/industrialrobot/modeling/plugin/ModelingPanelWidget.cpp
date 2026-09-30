@@ -86,15 +86,40 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
 
     // 命令目录装载（§9.7.3 十条——装配数据，构造期一次；按钮使能态随
     // writable 与注入出口切换——见 refreshPanel/setWritable）。
+    // UI-T26 流程分节：纵列按目录语义四组分节标题（对象与导入｜参数｜
+    // 几何与姿态｜校验与导出）——只加分节标题行，按钮集合、目录顺序、
+    // 使能逻辑零变化（分组语义＝目录 menuPath/作用域的呈现归纳，非新
+    // 命令语义）。
     m_commands = modelingDomainCommands();
+    auto* toolsLayout = static_cast<QVBoxLayout*>(toolsPage->layout());
+    auto addSectionHeader = [toolsPage, toolsLayout](const char* title) {
+        auto* header = new QLabel(QString::fromUtf8(title), toolsPage);
+        header->setStyleSheet(
+            QStringLiteral("font-weight: 600; color: #555; padding-top: 4px;"));
+        toolsLayout->addWidget(header);
+    };
+    // 组首 id → 组标题（§9.7.3 目录行序内首组"对象与导入"无组首 id——
+    // 循环前先挂；其余三组在组首命令按钮前挂）。
+    const std::pair<const char*, const char*> sectionLeaders[] = {
+        {"modeling.switch-authority", "参数"},
+        {"modeling.generate-placeholder-geometry", "几何与姿态"},
+        {"modeling.diff-baseline", "校验与导出"},
+    };
+    addSectionHeader("对象与导入");
     for (std::size_t i = 0; i < m_commands.size(); ++i) {
+        for (const auto& [leaderId, title] : sectionLeaders) {
+            if (m_commands[i].id == leaderId) {
+                addSectionHeader(title);
+            }
+        }
         auto* btn = new QPushButton(QString::fromStdString(m_commands[i].titleKey), toolsPage);
         btn->setToolTip(QString::fromStdString(m_commands[i].id));  // 悬停显示命令 id（装配对账面）
         connect(btn, &QPushButton::clicked, this, &ModelingPanelWidget::onCommandButtonClicked);
         m_commandButtons.push_back(btn);
         // 命令按 readOnlyAllowed 分组布局（简单纵排——呈现密度非本层关切）。
-        static_cast<QVBoxLayout*>(toolsPage->layout())->addWidget(btn);
+        toolsLayout->addWidget(btn);
     }
+    toolsLayout->addStretch(1);  // 分节后的尾部弹性（纵列顶端对齐）
 }
 
 void ModelingPanelWidget::setCommandSubmit(CommandSubmitFn submitFn)
