@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求对象生命周期编辑：工位/区域/工况新增、复制、删除（功能对照批次 B1）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T29"],
   "requirements": [
     "UX-02（工程用语——操作结果与拒绝原因中文呈现）",

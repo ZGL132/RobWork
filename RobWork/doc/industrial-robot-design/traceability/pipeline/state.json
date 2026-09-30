@@ -13,13 +13,24 @@
   "attempts": {
     "implement": 0,
     "fix": 0,
-    "accept": 1
+    "accept": 0
   },
   "heartbeat": {
     "updatedAt": "2026-10-01T06:24:20+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T30",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "c9b54cfd"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T30-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（tick#437 实施/tick#438 验收）。对象生命周期 B1：三页签生命周期工具行〔FlowLayout 防撑主 Dock——冒烟二次启动中央区 319px 回归的对照修复〕＋结构槽三件〔新增＝合法起步＋uniqueEntryName 防撞／复制＝深拷贝＋新 id＋副本名＋溯源保源值／删除＝removeEdit＋同位次锚回落〕＋submitStructuralEdit 统一轨（UI-T29 组合子就绪重估复用）＋无会话门控＋focusObject(nullopt) 页签头收口＋gui_test 四具名用例＋T29 夹具工况空集合 UB 修复。域侧 upsert/Remove 原语与 I-REQ-2/3 UT 既有在册零新增（契约缺则补分支未触发）。验证＝ctest 五单元 12 目标 100%＋冒烟双场景 LAYOUT_SMOKE_PASS＋ird_gates 96 零新增＋validate-docs PASS；双变异（Readiness 反转 45 红/Editor 重名拒绝面失效 5 红）均恢复绿。合入口径 PIPE §4.7②③〔evidence 8d9da829＋代码 c9b54cfd〕"
+    },
     {
       "task": "UI-T29",
       "unit": "ui",
@@ -2212,13 +2223,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T30",
-      "contractPath": "tasks/foundation/UI-T30.json",
-      "branch": "ui-t30"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
