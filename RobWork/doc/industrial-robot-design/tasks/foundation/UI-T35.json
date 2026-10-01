@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求会话一致性修复批次（R2 审核整改——空项目初始化/根身份回填/撤牌/修订同步）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T34"],
   "requirements": [
     "REQ-11（需求命令与草稿——空项目初始化路径合法化：根槽 allocateNew 既有域语义的首消费）",

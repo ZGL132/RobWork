@@ -1,11 +1,11 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "awaiting_acceptance",
+  "phase": "idle",
   "tickCount": 459,
-  "currentTask": "UI-T35",
-  "branch": "ui-t35",
-  "base": "a869bd545f1a3aae00d829c9ba0d1a82320c12d4",
-  "headSha": "c5549025f77e15deade8c7335d21faec6cfc1351",
+  "currentTask": null,
+  "branch": null,
+  "base": null,
+  "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
@@ -16,10 +16,22 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T12:22:42+08:00",
+    "updatedAt": "2026-10-01T16:28:42+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T35",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "c5549025",
+        "d46762ca"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T35-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（单会话顺序执行——独立性降级已在记录声明）。需求会话一致性修复批次（R2 审核整改 F-446）：①DomainAssembly 需求 onCommitted 根身份回填〔扫描 newHeadState.objectRefs 的 req-set——建模域同构〕②wireRequirementsSession 空项目内存空根初始化〔EmptyRequirementsClosure→loadBaseline→attachEditor——生命周期按钮从零可用，首应用 allocateNew 取号正式身份（O-36 编辑期临时句柄零伪造）〕③捕获/拾取撤牌〔isAssembled 移除两条→注册期禁用——不合格中间态处置〕④需求域修订同步 sink＋sessionBaseRevision 出线＋RevisionSyncPolicy 三分岔判定纯函数（判定/执行分离）；送验后尾款补齐轮（d46762ca）：同步具名用例四条（三分岔真值表×3＋门面基线往返）＋冒烟撤牌断言 16 行（禁用原因键分岔 7/2＝七条 reason.no-project／两条 cmd.flow-not-assembled.reason＋按钮呈现面统一不可达）＋两处过期注释随行为更新。验证＝冷启 detached worktree 双模式零错误（F-429 第 5 次模板拷入/F-323 框架插件 73 错既定口径隔离——均如实登记）＋ctest 五单元 12 目标 100%（主树/acc 树/冷启树三树）＋ird_gates 96 命中集与 UI-T34 验收基线条目切分归一化逐条一致（零新增）＋冒烟双场景 PASS 零 failed-assert＋validate-docs/task/state PASS；双变异〔策略判定恒返 StaleNotice→真值表 2 红/flowCaptureTcp 伪成功→降级用例红〕均还原复绿零残留；验收初稿撤牌断言口径（enabled 位）被冷启冒烟打回后修正为禁用原因键分岔——对抗机制实录。合入口径 PIPE §4.7②③〔evidence a4418336＋代码 d46762ca 按 SHA 合并——state.json 分支簿记按 F-426 留任务分支；findings.json 冲突经 merge-findings-union 并集解算（F-446/F-447/F-448 并存 441 条）〕；F-446 随本收尾转 fixed（fixedBy=d46762ca）并按 F-447 勘误标注，F-447 随之关闭，F-448（主树陈旧二进制防复发）保持 open。R2 中间验收审核整改批次全闭；三维接线（RegionPreviewSink→宿主视图）/TCP 捕获完整实现/宿主 E2E 用例归 UI-T33（D 批次，前置 View3D 阶段 B 立项）。需求语义零变化"
+    },
     {
       "task": "UI-T34",
       "unit": "ui",
@@ -2258,13 +2270,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T35",
-      "contractPath": "tasks/foundation/UI-T35.json",
-      "branch": "ui-t35"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
