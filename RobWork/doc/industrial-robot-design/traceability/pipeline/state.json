@@ -1,11 +1,11 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "idle",
+  "phase": "awaiting_acceptance",
   "tickCount": 436,
-  "currentTask": null,
-  "branch": null,
-  "base": null,
-  "headSha": null,
+  "currentTask": "UI-T32",
+  "branch": "ui-t32",
+  "base": "cdd23a8784c5fe5ef2ecce7e3c7d6299aaebcb17",
+  "headSha": "fc8dfe4b83659df5aa61d5cb7f661b59c1973b87",
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
@@ -16,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T06:24:20+08:00",
+    "updatedAt": "2026-10-01T10:05:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
