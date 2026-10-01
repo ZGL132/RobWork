@@ -5,7 +5,7 @@
   "currentTask": null,
   "branch": null,
   "base": null,
-  "headSha": null,
+  "headSha": "c5549025f77e15deade8c7335d21faec6cfc1351",
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
