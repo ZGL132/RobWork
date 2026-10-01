@@ -22,10 +22,13 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QCheckBox>  // 启用 Switch 断言（UI-T37 R1）
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSlider>  // 覆盖率双联断言（UI-T37 R1）
+#include <QSpinBox>  // 采样计数复合行断言（UI-T37 R1）
 #include <QTabWidget>
 #include <QTreeWidget>
 #include <QWidget>
@@ -1214,4 +1217,139 @@ TEST_F(RequirementsSessionGuiTest, LifecycleButton_NoVerticalClipping_UI_T36)
         << "生命周期按钮实际高小于建议高（FlowLayout 尺寸协商缺边距回归"
            "——按钮底部裁切复现）";
     m_panel->hide();
+}
+
+/// UI-T37 R1 卡片化检查器（acceptance 1）：工位检查器五卡呈现（基础属性/
+/// 空间与公差/自由度约束/动作阶段/姿态规则）、帮助位 Tooltip 非空（去噪
+/// 纪律——成段说明文字收 "?"/Tooltip，不直出面板）。
+TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(m_editor.workingSet().points.entries.front().objectId);
+    QApplication::processEvents();
+    const QList<QFrame*> cards = m_panel->findChildren<QFrame*>(
+        QStringLiteral("ird_card"));
+    ASSERT_GE(cards.size(), 5)
+        << "工位检查器卡片缺失（卡片化 acceptance 1）";
+    QLabel* help = m_panel->findChild<QLabel*>(QStringLiteral("ird_card_help"));
+    ASSERT_NE(help, nullptr);
+    EXPECT_FALSE(help->toolTip().isEmpty())
+        << "卡片帮助位 Tooltip 空（去噪纪律面）";
+
+    // 启用 Switch→布尔提交轨（acceptance 3）：翻开关＝工作集 enabled 翻转。
+    QCheckBox* sw = m_panel->findChild<QCheckBox*>(QStringLiteral("ird_switch"));
+    ASSERT_NE(sw, nullptr);
+    const bool before = sw->isChecked();
+    sw->setChecked(!before);
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().enabled, !before)
+        << "启用 Switch 未接通布尔提交轨（applyStationToggleEdit）";
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 自由度分段矩阵（acceptance 3）：点击"当前态反面"钮＝该轴受约束态
+    // 翻转（基线任意初态→点其反向钮→域 constrainedDof 等价翻转）。
+    const auto& dof = m_editor.workingSet().points.entries.front().pose.constrainedDof;
+    const bool xBefore = dof.x;
+    QPushButton* oppositeX = nullptr;
+    for (QPushButton* b : m_panel->findChildren<QPushButton*>(
+             QStringLiteral("ird_seg"))) {
+        if (b->property("irdDofKey").toString() == QStringLiteral("dof-x")
+            && b->property("irdDofOn").toBool() != xBefore) {
+            oppositeX = b;  // 该钮语义位＝当前态反面（点击即翻转到它）
+            break;
+        }
+    }
+    ASSERT_NE(oppositeX, nullptr)
+        << "自由度矩阵缺 dof-x 反向钮（测试锚面）";
+    oppositeX->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().pose.constrainedDof.x,
+              !xBefore)
+        << "自由度分段钮未接通约束词表布尔轨";
+}
+
+/// UI-T37 R1 区域复合行与实时预览（acceptance 2）：盒中心三编辑器同容器、
+/// 采样计数三值 spin＋『共 N 个离散点』实时联动（改值→预览乘积刷新＋域
+/// 提交等价）、覆盖率滑块↔域值双联（滑块拨动→提交面 0~1 比率）。
+TEST_F(RequirementsSessionGuiTest, RegionCompositeAndLiveCount_UI_T37)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    const core::ObjectId regionId =
+        m_editor.workingSet().regions.entries.front().objectId;
+    m_panel->focusObject(regionId);
+    QApplication::processEvents();
+    // 区域检查器绑定区域表选中行（L-R1 表侧——树选中不驱动区域表；
+    // T31 同款：先点表行再断言检查器投影）。
+    QTreeWidget* regionTable = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_region_table"));
+    ASSERT_NE(regionTable, nullptr);
+    ASSERT_GT(regionTable->topLevelItemCount(), 0);
+    regionTable->setCurrentItem(regionTable->topLevelItem(0));
+    QApplication::processEvents();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    QApplication::processEvents();
+    // 盒中心复合行：三标量编辑器经既有键定位面同现（视觉合并零语义变化）。
+    ASSERT_NE(fieldEditor(*m_panel, "box-center-x"), nullptr);
+    ASSERT_NE(fieldEditor(*m_panel, "box-center-y"), nullptr);
+    ASSERT_NE(fieldEditor(*m_panel, "box-center-z"), nullptr);
+
+    // 采样计数三值＋实时预览：spin 改值→标签乘积刷新→域计数提交等价。
+    // 注意：改值触发同步提交→refreshPanel 重投影（控件树重建）——交互前
+    // 取值、交互后一律重查控件（悬空指针面＝0xC0000005）。
+    const QList<QSpinBox*> spins = m_panel->findChildren<QSpinBox*>(
+        QStringLiteral("ird_region_count_spin"));
+    ASSERT_EQ(spins.size(), 3) << "采样计数复合行缺三轴 spin";
+    const int xBefore = spins[0]->value();
+    const int yKeep = spins[1]->value();
+    const int zKeep = spins[2]->value();
+    spins[0]->setValue(xBefore + 1);
+    QApplication::processEvents();
+    const auto& region = m_editor.workingSet().regions.entries.front();
+    EXPECT_EQ(region.positionSampling.counts[0],
+              static_cast<std::uint32_t>(xBefore + 1))
+        << "采样计数 spin 未接通域提交轨";
+    QLabel* countLabel =
+        m_panel->findChild<QLabel*>(QStringLiteral("ird_region_count_label"));
+    ASSERT_NE(countLabel, nullptr);
+    const std::uint64_t product =
+        static_cast<std::uint64_t>((xBefore + 1) * yKeep * zKeep);
+    EXPECT_TRUE(countLabel->text().contains(QString::number(product)))
+        << "实时点数预览未随改值联动: " << countLabel->text().toStdString();
+
+    // 覆盖率滑块双联：拨滑块→提交面 0~1 比率（域值等价）。
+    QSlider* slider = m_panel->findChild<QSlider*>(
+        QStringLiteral("ird_region_coverage_slider"));
+    ASSERT_NE(slider, nullptr) << "覆盖率滑块缺失（滑块+输入双联面）";
+    slider->setValue(50);
+    QApplication::processEvents();
+    EXPECT_DOUBLE_EQ(
+        m_editor.workingSet().regions.entries.front().coverageTargets
+            .minPositionCoverage,
+        0.5)
+        << "覆盖率滑块未接通双联提交轨";
+}
+
+/// UI-T37 R1 崩溃修复回归（词表外键陷阱）：非数量行（名称/段/顺序键）只读
+/// 灰显——此前呈可编辑态但提交即"词表外键 fail-fast"崩溃；行编辑器权威值
+/// 零变化（不进入编辑流）。
+TEST_F(RequirementsSessionGuiTest, NonQuantityRowsReadOnly_UI_T37)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(m_editor.workingSet().points.entries.front().objectId);
+    QApplication::processEvents();
+    const char* readonlyKeys[] = {"name", "segment-approach", "sequence-key",
+                                  "orientation-kind"};
+    for (const char* key : readonlyKeys) {
+        QLineEdit* edit = fieldEditor(*m_panel, key);
+        ASSERT_NE(edit, nullptr) << "行缺失: " << key;
+        EXPECT_TRUE(edit->isReadOnly())
+            << "非数量行应只读（词表外键崩溃修复）: " << key;
+    }
+    // 权威值零变化（只读行不进入编辑流——域状态不被触碰）。
+    const std::string nameBefore =
+        m_editor.workingSet().points.entries.front().name;
+    EXPECT_EQ(m_editor.workingSet().points.entries.front().name, nameBefore);
 }

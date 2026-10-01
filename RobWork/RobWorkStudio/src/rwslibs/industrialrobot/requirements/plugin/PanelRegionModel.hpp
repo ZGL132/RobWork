@@ -172,6 +172,23 @@ std::vector<ui::QuantityFieldSpec> regionQuantitySpecs();
 WorkRegion applyRegionEditSet(const WorkRegion& base, const ui::ParamEditSet& edits,
                               std::vector<std::string>& known);
 
+/**
+ * @brief 区域二态行回填（UI-T37 R1——启用开关提交轨；词表现仅 "enabled"，
+ *        词表外键＝实现缺陷 throw std::logic_error）。
+ * @return 候选条目（base 拷贝＋已命中布尔位）；纯函数；确定性。
+ */
+WorkRegion applyRegionToggleEdit(const WorkRegion& base, const std::string& key,
+                                 bool on, std::vector<std::string>& known);
+
+/**
+ * @brief 区域采样计数回填（UI-T37 R1——规则网格三轴分割数；方法切至
+ *        Grid、spacing 载荷清零）。计数合法域归域校验链（submitEntryEdit
+ *        域裁决），本函数零预判；纯函数；确定性。
+ */
+WorkRegion applyRegionSamplingCountsEdit(const WorkRegion& base,
+                                         const std::array<std::uint32_t, 3>& counts,
+                                         std::vector<std::string>& known);
+
 // =====================================================================
 // 区域轮廓与采样格几何三维预览（§9.8 第 3 行——仅几何预览；结果着色归
 // KIN-07，本模型零结果语义）

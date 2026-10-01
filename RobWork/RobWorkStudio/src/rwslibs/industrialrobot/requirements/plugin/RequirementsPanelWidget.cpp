@@ -12,8 +12,12 @@
 #include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次）
 
 #include <QBrush>
+#include <QButtonGroup>  // 自由度分段互斥组（UI-T37 R1——约束/自由二态）
+#include <QCheckBox>  // 启用 Switch（UI-T37 R1——QSS 重绘指示器）
 #include <QColor>
 #include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QSpinBox>  // 采样计数三轴分割（UI-T37 R1——实时点数预览）
 #include <QFormLayout>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -22,6 +26,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QScrollArea>  // 属性表单滚动容器（UI-T36——长表单小窗不截断）
+#include <QSlider>      // 覆盖率滑块（UI-T37 R1——滑块+输入双联）
 #include <QTabWidget>
 #include <QTreeWidget>
 #include <QVBoxLayout>
@@ -29,10 +34,12 @@
 
 #include <sdurws/ird/ui/FlowLayout.hpp>  // 流式栅格（UI-T24 P3——命令条换行承载，钳制源 1 消除）
 #include <sdurws/ird/ui/UiText.hpp>      // ui::resolveText（§3.5 唯一文案出口——按钮语义化 NFR-MNT-03）
+#include <sdurws/ird/ui/UiTheme.hpp>     // 工业风主题/卡片容器（UI-T37 R1——契约 acceptance 1）
 
 #include <rw/math/Vector3D.hpp>  // rw::math::Vector3D（UI-T30 新增条目默认几何值）
 
 #include <algorithm>  // std::min（删除锚回落位次钳制）
+#include <charconv>   // std::to_chars（formatSiText——数值确定性文本化）
 #include <functional>  // std::function（UI-T36 层级树递归定位）
 #include <set>        // uniqueEntryName 的已占名集合
 #include <stdexcept>
@@ -143,6 +150,9 @@ RequirementsPanelWidget::RequirementsPanelWidget(bool writable, QWidget* parent)
     buildRegionPage(m_pages);
     buildConditionPage(m_pages);
     buildValidationPage(m_pages);
+    // 工业风主题（UI-T37 R1——面板作用域安装：本面板子树生效，宿主
+    // chrome/其他域面板不受影响；QSS 由 UiTheme 调色板常量单一词表拼装）。
+    ui::applyIndustrialTheme(this);
 
     // 构造完成即可刷新（空工作集态——投影产出空行/占位，不虚构内容；
     // 首次 refreshPanel 由装配层在载入基线后驱动）。
@@ -294,6 +304,10 @@ void RequirementsPanelWidget::buildStationPage(QTabWidget* pages)
     // 右栏页①工位（检查器表单——行＝stationFieldsFor 投影）。
     // UI-T26 页签状态行：页头呈现『工位：〈对象名|未选择对象〉』随树
     // 选中刷新（updateTabHeaders）——空态不再是无信息空白。
+    // UI-T37 R1 卡片化（acceptance 1）：平铺单表单→五卡纵向流（基础属性/
+    // 空间与公差/自由度约束/动作阶段/姿态规则）；标题与"?"帮助位经 UiText
+    // 键族①c（NFR-MNT-03 面板侧禁止第二文案源）。行宿主仍为 QFormLayout
+    // ——renderInspector 按字段键路由到所属卡（stationFormForKey）。
     auto* page = new QWidget(pages);
     auto* lay = new QVBoxLayout(page);
     m_stationHeader = new QLabel(QStringLiteral("工位：未选择对象"), page);
@@ -302,13 +316,55 @@ void RequirementsPanelWidget::buildStationPage(QTabWidget* pages)
     // 对象生命周期工具行（UI-T30 B1——新增/复制/删除三键）。
     lay->addWidget(makeLifecycleBar(page, "points", WorkingSetMember::Points,
                                     QStringLiteral("工位")));
-    // 属性表单滚动容器（UI-T36——工位字段多〔24 行投影〕，小窗/缩放下
-    // 不再截断；表与工具行不进滚动区）。
+    // 属性卡片滚动容器（UI-T36 滚动承载保持——卡不进滚动区的只有页头与
+    // 工具行；卡组在滚动区内小窗不截断）。
     auto* scroll = new QScrollArea(page);
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
     auto* formHost = new QWidget(scroll);
-    m_stationForm = new QFormLayout(formHost);
+    auto* hostLay = new QVBoxLayout(formHost);
+    hostLay->setContentsMargins(0, 0, 0, 0);
+    hostLay->setSpacing(8);
+    QVBoxLayout* content = nullptr;
+    const auto cardText = [](const char* key) {
+        return QString::fromStdString(ui::resolveText(ui::TextKey{key}));
+    };
+    m_stationBasicCard = ui::createCard(
+        formHost, cardText("panel.requirements.card.basic.title"),
+        cardText("panel.requirements.card.basic.help"), &content);
+    m_stationBasicForm = new QFormLayout;
+    m_stationBasicForm->setLabelAlignment(Qt::AlignRight);
+    content->addLayout(m_stationBasicForm);
+    hostLay->addWidget(m_stationBasicCard);
+    m_stationPoseCard = ui::createCard(
+        formHost, cardText("panel.requirements.card.pose.title"),
+        cardText("panel.requirements.card.pose.help"), &content);
+    m_stationPoseForm = new QFormLayout;
+    m_stationPoseForm->setLabelAlignment(Qt::AlignRight);
+    content->addLayout(m_stationPoseForm);
+    hostLay->addWidget(m_stationPoseCard);
+    m_stationDofCard = ui::createCard(
+        formHost, cardText("panel.requirements.card.dof.title"),
+        cardText("panel.requirements.card.dof.help"), &content);
+    m_stationDofForm = new QFormLayout;
+    m_stationDofForm->setLabelAlignment(Qt::AlignRight);
+    content->addLayout(m_stationDofForm);
+    hostLay->addWidget(m_stationDofCard);
+    m_stationSegmentCard = ui::createCard(
+        formHost, cardText("panel.requirements.card.segment.title"),
+        cardText("panel.requirements.card.segment.help"), &content);
+    m_stationSegmentForm = new QFormLayout;
+    m_stationSegmentForm->setLabelAlignment(Qt::AlignRight);
+    content->addLayout(m_stationSegmentForm);
+    hostLay->addWidget(m_stationSegmentCard);
+    m_stationOrientCard = ui::createCard(
+        formHost, cardText("panel.requirements.card.orientation.title"),
+        cardText("panel.requirements.card.orientation.help"), &content);
+    m_stationOrientForm = new QFormLayout;
+    m_stationOrientForm->setLabelAlignment(Qt::AlignRight);
+    content->addLayout(m_stationOrientForm);
+    hostLay->addWidget(m_stationOrientCard);
+    hostLay->addStretch(1);
     scroll->setWidget(formHost);
     lay->addWidget(scroll, /*stretch=*/1);
     pages->addTab(page, "工位");
@@ -339,13 +395,62 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
     regionScroll->setWidgetResizable(true);
     regionScroll->setFrameShape(QFrame::NoFrame);
     auto* regionFormHost = new QWidget(regionScroll);
-    // 表单域帮助（任务书 3——关键参数悬浮说明；字段级 tooltip 归检查器
-    // 行模型，此处给容器级业务释义）。
-    regionFormHost->setToolTip(QStringLiteral(
-        "区域＝三维作业边界包围盒：盒中心/盒尺寸（m）定义边界；空间采样＝"
-        "盒内按方法与步长离散生成的作业点阵；覆盖目标＝采样点需满足的"
-        "可达率/姿态达标下限"));
-    m_regionForm = new QFormLayout(regionFormHost);
+    // UI-T37 R1 卡片化（acceptance 1/2）：区域检查器→四卡（基础属性/空间
+    // 包围盒〔复合行〕/采样与达标〔滑块双联＋计数预览〕/高级参数〔折叠〕）。
+    // 盒卡与采样卡为自定义行宿主（复合控件直挂 VBox）；基础/高级卡仍为
+    // QFormLayout（renderRegionPage 按字段键路由）。
+    auto* regionHostLay = new QVBoxLayout(regionFormHost);
+    regionHostLay->setContentsMargins(0, 0, 0, 0);
+    regionHostLay->setSpacing(8);
+    QVBoxLayout* content = nullptr;
+    const auto regionCardText = [](const char* key) {
+        return QString::fromStdString(ui::resolveText(ui::TextKey{key}));
+    };
+    m_regionBasicCard = ui::createCard(
+        regionFormHost, regionCardText("panel.requirements.card.basic.title"),
+        regionCardText("panel.requirements.card.basic.help"), &content);
+    m_regionBasicForm = new QFormLayout;
+    m_regionBasicForm->setLabelAlignment(Qt::AlignRight);
+    content->addLayout(m_regionBasicForm);
+    regionHostLay->addWidget(m_regionBasicCard);
+    m_regionBoxCard = ui::createCard(
+        regionFormHost, regionCardText("panel.requirements.card.region-box.title"),
+        regionCardText("panel.requirements.card.region-box.help"), &content);
+    m_regionBoxLay = content;  // 复合行（盒中心/盒尺寸）直挂
+    regionHostLay->addWidget(m_regionBoxCard);
+    m_regionSamplingCard = ui::createCard(
+        regionFormHost,
+        regionCardText("panel.requirements.card.region-sampling.title"),
+        regionCardText("panel.requirements.card.region-sampling.help"), &content);
+    m_regionSamplingLay = content;  // 滑块双联/计数复合行直挂
+    regionHostLay->addWidget(m_regionSamplingCard);
+    m_regionAdvancedCard = ui::createCard(
+        regionFormHost,
+        regionCardText("panel.requirements.card.region-advanced.title"),
+        regionCardText("panel.requirements.card.region-advanced.help"), &content);
+    // 折叠体：默认收起（高级参数去噪——设计规格 §4）；标题行尾追加展开钮
+    // （箭头文本随态翻转）。
+    m_regionAdvancedBody = new QWidget(m_regionAdvancedCard);
+    auto* advancedLay = new QVBoxLayout(m_regionAdvancedBody);
+    advancedLay->setContentsMargins(0, 0, 0, 0);
+    m_regionAdvancedForm = new QFormLayout;
+    m_regionAdvancedForm->setLabelAlignment(Qt::AlignRight);
+    advancedLay->addLayout(m_regionAdvancedForm);
+    content->addWidget(m_regionAdvancedBody);
+    m_regionAdvancedBody->setVisible(false);
+    auto* advancedToggle = new QPushButton(QStringLiteral("展开 ▸"), m_regionAdvancedCard);
+    advancedToggle->setObjectName(QStringLiteral("ird_region_advanced_toggle"));
+    advancedToggle->setFlat(true);
+    connect(advancedToggle, &QPushButton::clicked, this, [this, advancedToggle] {
+        // 折叠态翻转（纯呈现会话态——零修订；箭头文案随态同步）。
+        const bool show = !m_regionAdvancedBody->isVisible();
+        m_regionAdvancedBody->setVisible(show);
+        advancedToggle->setText(show ? QStringLiteral("收起 ▾")
+                                     : QStringLiteral("展开 ▸"));
+    });
+    content->addWidget(advancedToggle, 0, Qt::AlignLeft);
+    regionHostLay->addWidget(m_regionAdvancedCard);
+    regionHostLay->addStretch(1);
     regionScroll->setWidget(regionFormHost);
     lay->addWidget(regionScroll, /*stretch=*/1);
     // 表头帮助（UI-T36——列语义悬浮说明）。
@@ -841,6 +946,13 @@ void RequirementsPanelWidget::renderTree(const RequirementWorkingSet& ws)
     // 重构为三级折叠树——需求工程单根→四分组（名称＋计数，分组节点无锚
     // 不可选中定位）→条目（锚＝ObjectId）；默认展开根与分组（条目级折叠）。
     const std::vector<RequirementNode> nodes = buildRequirementTree(ws);
+    // 选中保持＝重建前快照（UI-T37 R1 修复：clear() 同步触发
+    // itemSelectionChanged→onTreeSelectionChanged 以 nullopt 重置
+    // m_lastSelected——树侧"跨刷新保持选中"此前实为失效，表侧 T31 局部
+    // 快照先例同款修复；重建期信号屏蔽防 L-R1 重入）。
+    const std::optional<core::ObjectId> wanted = m_lastSelected;
+    QTreeWidgetItem* restoreItem = nullptr;
+    m_tree->blockSignals(true);
     m_tree->clear();
     auto* root = new QTreeWidgetItem(
         QStringList() << QStringLiteral("需求工程") << QString());
@@ -875,21 +987,71 @@ void RequirementsPanelWidget::renderTree(const RequirementWorkingSet& ws)
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
         (group != nullptr ? group : root)->addChild(item);
         // 恢复选中锚（跨刷新保持——L-R1 会话态；仅条目级锚可恢复）。
-        if (n.objectId.has_value() && m_lastSelected.has_value()
-            && n.objectId.value() == m_lastSelected.value()) {
-            item->setSelected(true);
+        if (n.objectId.has_value() && wanted.has_value()
+            && n.objectId.value() == wanted.value()) {
+            restoreItem = item;
         }
     }
     root->setExpanded(true);
+    m_tree->blockSignals(false);
+    // 选中恢复：命中→setCurrentItem 走一次 L-R1 正向（成员/会话态对齐）；
+    // 锚失效〔对象已删〕→按清除语义对齐（不伪造定位）。
+    if (restoreItem != nullptr) {
+        m_tree->setCurrentItem(restoreItem);
+        restoreItem->setSelected(true);
+    } else if (m_lastSelected.has_value()) {
+        m_selection.select(std::nullopt);
+        m_lastSelected.reset();
+        updateTabHeaders();  // 锚清空的页头即时回落（『未选择对象』语义）
+    }
+}
+
+// ---- UI-T37 R1 本文件局部辅助（卡片化检查器渲染面）---------------------
+
+/// 6 位小数裁尾零文本化（PanelStationModel formatDeterministic 同规则——
+/// 数值显示格式单一词表；此处仅用于复合控件提交词组装，回读一律工作集）。
+QString formatSiText(double v)
+{
+    char buf[32];
+    auto res = std::to_chars(buf, buf + sizeof(buf), v, std::chars_format::fixed, 6);
+    std::string s(buf, res.ptr);
+    if (s.find('.') != std::string::npos) {
+        while (!s.empty() && s.back() == '0') { s.pop_back(); }
+        if (!s.empty() && s.back() == '.') { s.pop_back(); }
+    }
+    return QString::fromStdString(s);
+}
+
+/// 清空 QFormLayout 全部行（卡片重投影前置——removeRow 释放行内控件）。
+void clearFormRows(QFormLayout* form)
+{
+    while (form->rowCount() > 0) {
+        form->removeRow(0);
+    }
+}
+
+/// 清空 VBox 全部子项（矩阵/复合行宿主重排前置——取出的项连同控件删除）。
+void clearBoxRows(QVBoxLayout* lay)
+{
+    while (lay->count() > 0) {
+        QLayoutItem* item = lay->takeAt(0);
+        delete item->widget();
+        delete item->layout();
+        delete item;
+    }
 }
 
 void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
 {
-    // 检查器按当前选中重投影（L-R1 反向半区；无选中＝空表单——不虚构）。
-    while (m_stationForm->rowCount() > 0) {
-        m_stationForm->removeRow(0);
-    }
-    m_stationEditors.clear();
+    // 检查器按当前选中重投影（L-R1 反向半区；无选中＝空卡片——不虚构）。
+    // UI-T37 R1：单表单→五卡路由（基础/空间公差/自由度矩阵/动作阶段/姿态
+    // 规则）；行级升级＝启用 Switch、自由度 2×3 分段矩阵、位置复合行、
+    // 容差 SpinBox。既有提交语义（权威值短路→spec 解析→域裁决）不变。
+    clearFormRows(m_stationBasicForm);
+    clearFormRows(m_stationPoseForm);
+    clearFormRows(m_stationDofForm);
+    clearFormRows(m_stationSegmentForm);
+    clearFormRows(m_stationOrientForm);
     m_stationRows.clear();
     if (!m_lastSelected.has_value()) {
         return;
@@ -907,25 +1069,303 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     }
     // 行投影（writable 门控在模型层——applyReadOnlyGate 同源规则内置）。
     m_stationRows = stationFieldsFor(*point, m_writable);
-    for (const StationFieldRow& r : m_stationRows) {
-        auto* edit = new QLineEdit(QString::fromStdString(
-            r.valueText == "未提供" || r.valueText == "未设" ? "" : r.valueText));
-        edit->setReadOnly(r.enablement != StationFieldEnablement::Editable
-                          || !m_writable);  // 灰显行只读（L-R12 行门控）
+
+    // 数量词表（一次取用——行键可编辑性的裁决面）。UI-T37 崩溃修复：本页
+    // 名称/等级/段/姿态种类等行此前呈可编辑态而词表无键，提交即触发"词表
+    // 外键 fail-fast"崩溃——本批起对齐区域轨 T31 诚实降级（非词表行只读）。
+    const std::vector<ui::QuantityFieldSpec> specs = stationQuantitySpecs();
+    const auto specDriven = [&specs](const std::string& key) {
+        for (const ui::QuantityFieldSpec& s : specs) {
+            if (s.key == key) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    // 文本行（灰显规则＝L-R12 行门控 ∧ 数量词表裁决）。
+    auto renderTextRow = [&](QFormLayout* form, const StationFieldRow& r) {
+        const bool placeholder =
+            r.valueText == "未提供" || r.valueText == "未设";
+        auto* edit = new QLineEdit(
+            placeholder ? QString() : QString::fromStdString(r.valueText), this);
+        const bool editable = r.enablement == StationFieldEnablement::Editable
+                              && specDriven(r.fieldKey) && m_writable;
+        edit->setReadOnly(!editable);
         edit->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
-        // 记录本次投影的权威文本。editingFinished 可能由焦点切换触发，
-        // 仅当文本真的改变时才进入编辑流，避免刷新/重投影造成幻影脏化。
+        // 权威文本（幻影脏化短路基准——提交/刷新双轨同源）。
         edit->setProperty("irdAuthoritativeValue",
-                         QString::fromStdString(
-                             r.valueText == "未提供" || r.valueText == "未设"
-                                 ? std::string{}
-                                 : r.valueText));
-        connect(edit, &QLineEdit::editingFinished, this,
-                &RequirementsPanelWidget::onInspectorEditingFinished);
-        auto* label = new QLabel(QString::fromStdString(r.label), this);
-        const QString unit = QString::fromStdString(r.unitText);
-        m_stationForm->addRow(label, edit);
-        m_stationEditors.push_back(edit);
+                          QString::fromStdString(
+                              placeholder ? std::string{} : r.valueText));
+        if (editable) {
+            connect(edit, &QLineEdit::editingFinished, this,
+                    &RequirementsPanelWidget::onInspectorEditingFinished);
+        }
+        form->addRow(new QLabel(QString::fromStdString(r.label), this), edit);
+    };
+
+    // 容差 SpinBox 行（acceptance 2——步进 0.01/6 位小数；提交词经
+    // formatSiText 组装后仍走 spec 解析轨——SA-12 唯一出口不旁路）。
+    auto renderSpinRow = [&](const StationFieldRow& r) {
+        auto* spin = new QDoubleSpinBox(this);
+        spin->setDecimals(6);
+        spin->setSingleStep(0.01);
+        spin->setRange(-1.0e12, 1.0e12);  // 宽域——合法性由 spec 解析/域链裁决
+        { QSignalBlocker blocker(spin);  // 初始化静默（setValue 触发 valueChanged→提交→重入崩溃——首轮 gui 实证）
+        spin->setValue(QString::fromStdString(r.valueText).toDouble()); }
+        spin->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
+        spin->setProperty("irdAuthoritativeValue",
+                          QString::fromStdString(r.valueText));
+        connect(spin, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
+                [this, key = r.fieldKey, spin](double) {
+                    const QString text = formatSiText(spin->value());
+                    if (text == spin->property("irdAuthoritativeValue").toString()) {
+                        return;  // 幻影脏化短路（与行编辑同轨）
+                    }
+                    submitStationValue(key, text);
+                });
+        auto* cell = new QWidget(this);
+        auto* lay = new QHBoxLayout(cell);
+        lay->setContentsMargins(0, 0, 0, 0);
+        lay->setSpacing(4);
+        lay->addWidget(spin);
+        lay->addWidget(new QLabel(QString::fromStdString(r.unitText), this));
+        lay->addStretch(1);
+        m_stationPoseForm->addRow(new QLabel(QString::fromStdString(r.label), this),
+                                  cell);
+    };
+
+    // 启用 Switch 行（acceptance 3——QCheckBox QSS 重绘；提交轨＝
+    // applyStationToggleEdit 布尔回填＋域裁决）。
+    auto renderSwitchRow = [&](QFormLayout* form, const StationFieldRow& r,
+                               std::function<void(bool)> submit) {
+        auto* sw = new QCheckBox(this);
+        sw->setObjectName(QStringLiteral("ird_switch"));
+        { QSignalBlocker blocker(sw);  // 初始化静默（toggled→提交→重入）
+        sw->setChecked(QString::fromStdString(r.valueText) == QStringLiteral("是")); }
+        const bool enabled =
+            r.enablement == StationFieldEnablement::Editable && m_writable;
+        sw->setEnabled(enabled);
+        if (enabled) {
+            connect(sw, &QCheckBox::toggled, this, std::move(submit));
+        }
+        form->addRow(new QLabel(QString::fromStdString(r.label), this), sw);
+    };
+
+    // 位置复合行（acceptance 2——一行三值＋单位；呈现面：四态守恒，非
+    // Provided 显示占位原文不伪造数值。位置编辑轨随后续批次（本批消除
+    // 其"可编辑即崩"陷阱——灰显对齐区域轨 T31 先例），读面零变化）。
+    auto renderPoseRow = [&](const StationFieldRow& r) {
+        auto* cell = new QWidget(this);
+        auto* lay = new QHBoxLayout(cell);
+        lay->setContentsMargins(0, 0, 0, 0);
+        lay->setSpacing(4);
+        const QString text = QString::fromStdString(r.valueText);
+        std::array<double, 3> vals{0.0, 0.0, 0.0};
+        bool ok = text != QStringLiteral("未提供") && !text.isEmpty();
+        if (ok) {
+            const QStringList parts = text.split(QLatin1Char(','));
+            ok = parts.size() == 3;
+            for (int i = 0; ok && i < 3; ++i) {
+                vals[i] = parts[i].trimmed().toDouble(&ok);
+            }
+        }
+        if (ok) {
+            static const char* kAxes[] = {"X", "Y", "Z"};
+            for (int i = 0; i < 3; ++i) {
+                lay->addWidget(new QLabel(QString::fromLatin1(kAxes[i]), this));
+                auto* e = new QLineEdit(formatSiText(vals[i]), this);
+                e->setReadOnly(true);  // 呈现面（见上注）——灰显读值
+                e->setMaximumWidth(110);
+                if (i == 0) {
+                    e->setProperty("irdFieldKey",
+                                   QString::fromStdString(r.fieldKey));
+                }
+                lay->addWidget(e);
+            }
+            lay->addWidget(new QLabel(QString::fromStdString(r.unitText), this));
+        } else {
+            // 非数值形态（未提供等四态占位）——原文灰显，不伪造。
+            auto* e = new QLineEdit(text, this);
+            e->setReadOnly(true);
+            e->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
+            lay->addWidget(e);
+        }
+        lay->addStretch(1);
+        m_stationPoseForm->addRow(new QLabel(QString::fromStdString(r.label), this),
+                                  cell);
+    };
+
+    // 自由度 2×3 分段矩阵（acceptance 3——受约束/自由二态；提交轨＝
+    // applyStationToggleEdit；已态重击不重复提交——幻影编辑消除）。
+    auto renderDofMatrix = [&](const std::vector<const StationFieldRow*>& rows) {
+        // 逐行形态（与其他卡同构的 QFormLayout 承载——标签＝行标签、字段＝
+        // 两枚分段钮；提交轨＝applyStationToggleEdit；互斥由点击逻辑保证）。
+        for (const StationFieldRow* r : rows) {
+            const QString key = QString::fromStdString(r->fieldKey);
+            const bool constrained =
+                QString::fromStdString(r->valueText) == QStringLiteral("受约束");
+            const bool enabled =
+                r->enablement == StationFieldEnablement::Editable && m_writable;
+            auto* cell = new QWidget(this);
+            auto* lay = new QHBoxLayout(cell);
+            lay->setContentsMargins(0, 0, 0, 0);
+            lay->setSpacing(4);
+            QPushButton* pair[2] = {nullptr, nullptr};  // 互斥由点击逻辑保证
+            for (int i = 0; i < 2; ++i) {  // i=0 约束 / i=1 自由
+                auto* b = new QPushButton(i == 0 ? QStringLiteral("约束")
+                                                 : QStringLiteral("自由"),
+                                          this);
+                b->setObjectName(QStringLiteral("ird_seg"));
+                b->setCheckable(true);
+                b->setFocusPolicy(Qt::NoFocus);
+                // 测试锚（irdDofKey＝行键、irdDofOn＝按钮语义位——gui 用例
+                // 定位面；irdFieldKey 词表锚保留给行编辑器共形）。
+                b->setProperty("irdDofKey", key);
+                b->setProperty("irdDofOn", i == 0);
+                { QSignalBlocker blocker(b);  // 初始化静默（防触发提交重入）
+                b->setChecked((i == 0) == constrained); }
+                b->setEnabled(enabled);
+                pair[i] = b;
+                connect(b, &QPushButton::clicked, this,
+                        [this, key, want = (i == 0), was = constrained, pair](bool checked) {
+                            if (!checked || want == was) {
+                                return;  // 对侧钮松开/已态重击——零提交
+                            }
+                            QPushButton* other = pair[want ? 1 : 0];
+                            if (other != nullptr) {
+                                QSignalBlocker quiet(other);  // 互斥呈现侧静默
+                                other->setChecked(false);
+                            }
+                                    key.toStdString().c_str(),
+                            submitStationToggle(key.toStdString(), want);
+                        });
+                lay->addWidget(b);
+            }
+            lay->addStretch(1);
+            m_stationDofForm->addRow(QString::fromStdString(r->label), cell);
+        }
+    };
+
+    // 行分拣路由（键族集合封闭——未知键＝投影/卡片漂移 fail-fast）。
+    std::vector<const StationFieldRow*> dofRows;
+    for (const StationFieldRow& r : m_stationRows) {
+        if (r.fieldKey.rfind("dof-", 0) == 0) {
+            dofRows.push_back(&r);
+            continue;
+        }
+        if (r.fieldKey == "enabled") {
+            renderSwitchRow(m_stationBasicForm, r,
+                            [this, key = r.fieldKey](bool on) {
+                                submitStationToggle(key, on);
+                            });
+            continue;
+        }
+        if (r.fieldKey == "pose-position") {
+            renderPoseRow(r);
+            continue;
+        }
+        if (r.fieldKey == "tolerance-position"
+            || r.fieldKey == "tolerance-orientation") {
+            renderSpinRow(r);
+            continue;
+        }
+        QFormLayout* form = stationFormForKey(r.fieldKey);
+        if (form == nullptr) {
+            throw std::logic_error("工位面板：投影行键无卡片宿主 " + r.fieldKey);
+        }
+        renderTextRow(form, r);
+    }
+    renderDofMatrix(dofRows);
+}
+
+QFormLayout* RequirementsPanelWidget::stationFormForKey(const std::string& key) const
+{
+    // 词表分派（封闭集合＝stationFieldsFor 全键；dof/enabled/pose/容差在
+    // 分拣层已截获不落此处）。
+    if (key == "name" || key == "level" || key == "source" || key == "process-tag"
+        || key == "sequence-key" || key == "note") {
+        return m_stationBasicForm;
+    }
+    if (key == "segment-approach" || key == "segment-work"
+        || key == "segment-retract") {
+        return m_stationSegmentForm;
+    }
+    if (key == "orientation-kind" || key == "fixed-rpy-r" || key == "fixed-rpy-p"
+        || key == "fixed-rpy-y" || key == "target-frame" || key == "target-point-x"
+        || key == "target-point-y" || key == "target-point-z" || key == "roll-min"
+        || key == "roll-max" || key == "target-scene" || key == "feature"
+        || key == "invert-normal") {
+        return m_stationOrientForm;
+    }
+    return nullptr;  // 词表外键＝投影/卡片漂移（调用方 fail-fast）
+}
+
+void RequirementsPanelWidget::submitStationValue(const std::string& key,
+                                                 const QString& text)
+{
+    // L-R2 提交轨（复合/SpinBox 控件共用——与行编辑槽同语义；显键形供
+    // 非 QLineEdit 控件复用）。权威值短路在控件侧已完成。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    for (const TaskPoint& p : ws.points.entries) {
+        if (p.objectId != m_lastSelected.value()) {
+            continue;
+        }
+        for (const ui::QuantityFieldSpec& spec : stationQuantitySpecs()) {
+            if (spec.key != key) {
+                continue;
+            }
+            const ui::ValueParseResult parsed =
+                parseFieldValueText(text.toStdString(), spec);
+            if (!parsed.ok) {
+                m_statusLine->setText(QString::fromStdString(parsed.reason));
+                renderInspector(ws);  // 回退显示工作集权威值
+                return;
+            }
+            ui::ParamEditSet edits;
+            ui::ParamChange change;
+            change.key = key;
+            change.label = spec.label;
+            change.newSi = parsed.siValue;
+            edits.changes.push_back(change);
+            std::vector<std::string> known;
+            const TaskPoint candidate = applyStationEditSet(p, edits, known);
+            const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
+            if (outcome == EditSubmitOutcome::Applied) {
+                m_undoTracker.recordAppliedEdit();
+            }
+            return;
+        }
+        throw std::logic_error("工位面板：编辑行携带词表外键 " + key);
+    }
+}
+
+void RequirementsPanelWidget::submitStationToggle(const std::string& key, bool on)
+{
+    // 二态提交轨（启用开关/自由度矩阵——applyStationToggleEdit 布尔回填
+    // ＋submitEntryEdit 域裁决；拒绝面与行编辑同链）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    for (const TaskPoint& p : ws.points.entries) {
+        if (p.objectId != m_lastSelected.value()) {
+            continue;
+        }
+        std::vector<std::string> known;
+        const TaskPoint candidate = applyStationToggleEdit(p, key, on, known);
+        const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
+        if (outcome == EditSubmitOutcome::Applied) {
+            m_undoTracker.recordAppliedEdit();
+        }
+        return;
     }
 }
 
@@ -951,10 +1391,14 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
     for (int c = 0; c < 3; ++c) {
         m_regionTable->resizeColumnToContents(c);  // 列宽随内容（长摘要不挤压）
     }
-    // 区域检查器（选中区域行→regionFieldsFor；未选中＝空表单——不虚构）。
-    while (m_regionForm->rowCount() > 0) {
-        m_regionForm->removeRow(0);
-    }
+    // 区域检查器（选中区域行→regionFieldsFor；未选中＝空卡片——不虚构）。
+    // UI-T37 R1：卡片化路由（基础/包围盒复合行/采样达标/高级折叠）。
+    // 盒中心/盒尺寸三标量行视觉合并为复合行——各编辑器保持原 fieldKey/
+    // 权威值/提交槽（irdFieldKey 定位面与提交语义零变化）。
+    clearFormRows(m_regionBasicForm);
+    clearBoxRows(m_regionBoxLay);
+    clearBoxRows(m_regionSamplingLay);
+    clearFormRows(m_regionAdvancedForm);
     std::optional<core::ObjectId> selectedRegion;
     if (m_regionTable->currentItem() != nullptr) {
         selectedRegion = nodeAnchor(m_regionTable->currentItem());
@@ -965,29 +1409,282 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         }
         const std::vector<StationFieldRow> fields =
             regionFieldsFor(region, m_regionService, m_writable);
-        for (const StationFieldRow& fr : fields) {
-            auto* edit = new QLineEdit(QString::fromStdString(
-                fr.valueText == "未提供" || fr.valueText == "未设"
-                    ? std::string{}
-                    : fr.valueText), this);
-            // B2（UI-T31）：数值行按 enablement 可编（specs 词表行——
-            // 编辑提交轨见 onRegionFieldEditingFinished；非词表行〔名称/
-            // 等级等〕保持只读呈现——本批只解除数值字段的诚实降级）。
-            const bool editable = fr.enablement == StationFieldEnablement::Editable;
+
+        // 词表面（可编辑裁决——UI-T37：采样计数/间距/随机数/备注等非词表
+        // 行诚实灰显〔此前可编辑但提交即词表外键 fail-fast〕；覆盖率姿态
+        // 行本批入词表可设值）。
+        const std::vector<ui::QuantityFieldSpec> specs = regionQuantitySpecs();
+        const auto specDriven = [&specs](const std::string& key) {
+            for (const ui::QuantityFieldSpec& s : specs) {
+                if (s.key == key) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        // 普通文本行（含灰显规则与提交槽挂接——原 B2 行为保持）。
+        auto renderRegionTextRow = [&](QFormLayout* form, const StationFieldRow& fr) {
+            const bool placeholder =
+                fr.valueText == "未提供" || fr.valueText == "未设";
+            auto* edit = new QLineEdit(
+                placeholder ? QString() : QString::fromStdString(fr.valueText), this);
+            const bool editable = fr.enablement == StationFieldEnablement::Editable
+                                  && specDriven(fr.fieldKey) && m_writable;
             edit->setReadOnly(!editable);
             edit->setProperty("irdFieldKey", QString::fromStdString(fr.fieldKey));
-            // 权威文本（幻影脏化短路基准——工位轨同款；占位值以空串为
-            // 基准，输入即变更进入编辑流）。
             edit->setProperty("irdAuthoritativeValue",
                               QString::fromStdString(
-                                  fr.valueText == "未提供" || fr.valueText == "未设"
-                                      ? std::string{}
-                                      : fr.valueText));
+                                  placeholder ? std::string{} : fr.valueText));
             if (editable) {
                 connect(edit, &QLineEdit::editingFinished, this,
                         &RequirementsPanelWidget::onRegionFieldEditingFinished);
             }
-            m_regionForm->addRow(QString::fromStdString(fr.label), edit);
+            form->addRow(QString::fromStdString(fr.label), edit);
+        };
+
+        // 盒复合行（acceptance 2——三标量行合并为"一行三值＋单位"；编辑器
+        // 逐个保持既有键/权威值/槽，视觉合并零提交面变化）。
+        auto renderBoxCompositeRow = [&](const char* title, const char* unit,
+                                         const char* kx, const char* ky,
+                                         const char* kz,
+                                         const std::vector<StationFieldRow>& all) {
+            auto* cell = new QWidget(this);
+            auto* lay = new QHBoxLayout(cell);
+            lay->setContentsMargins(0, 0, 0, 0);
+            lay->setSpacing(4);
+            static const char* kAxes[] = {"X", "Y", "Z"};
+            const char* keys[] = {kx, ky, kz};
+            for (int i = 0; i < 3; ++i) {
+                lay->addWidget(new QLabel(QString::fromLatin1(kAxes[i]), this));
+                const StationFieldRow* row = nullptr;
+                for (const StationFieldRow& fr : all) {
+                    if (fr.fieldKey == keys[i]) {
+                        row = &fr;
+                        break;
+                    }
+                }
+                if (row == nullptr) {
+                    throw std::logic_error(std::string("区域面板：盒复合行缺键 ")
+                                           + keys[i]);
+                }
+                auto* edit = new QLineEdit(
+                    QString::fromStdString(row->valueText), this);
+                const bool editable =
+                    row->enablement == StationFieldEnablement::Editable && m_writable;
+                edit->setReadOnly(!editable);
+                edit->setMaximumWidth(110);
+                edit->setProperty("irdFieldKey",
+                                  QString::fromStdString(row->fieldKey));
+                edit->setProperty("irdAuthoritativeValue",
+                                  QString::fromStdString(row->valueText));
+                if (editable) {
+                    connect(edit, &QLineEdit::editingFinished, this,
+                            &RequirementsPanelWidget::onRegionFieldEditingFinished);
+                }
+                lay->addWidget(edit);
+            }
+            lay->addWidget(new QLabel(QString::fromLatin1(unit), this));
+            lay->addStretch(1);
+            m_regionBoxLay->addWidget(new QLabel(QString::fromUtf8(title), this));
+            m_regionBoxLay->addWidget(cell);
+        };
+
+        // 覆盖率滑块＋输入双联（acceptance 2——0~100% 双向联动；行编辑器
+        // 保留原键/权威值/提交槽，滑块为伴生控件：拨动＝组词提交，输入行
+        // 仍走原 editingFinished 轨——双入口一出口）。
+        auto renderCoverageRow = [&](const StationFieldRow& fr) {
+            auto* cell = new QWidget(this);
+            auto* lay = new QHBoxLayout(cell);
+            lay->setContentsMargins(0, 0, 0, 0);
+            lay->setSpacing(4);
+            auto* slider = new QSlider(Qt::Horizontal, this);
+            slider->setObjectName(QStringLiteral("ird_region_coverage_slider"));
+            slider->setRange(0, 100);
+            { QSignalBlocker blocker(slider);  // 初始化静默（valueChanged→提交→重入）
+            slider->setValue(static_cast<int>(
+                QString::fromStdString(fr.valueText).toDouble() * 100.0 + 0.5));
+            }
+            auto* edit = new QLineEdit(QString::fromStdString(fr.valueText), this);
+            edit->setMaximumWidth(90);
+            const bool editable =
+                fr.enablement == StationFieldEnablement::Editable && m_writable;
+            slider->setEnabled(editable);
+            edit->setReadOnly(!editable);
+            const std::string key = fr.fieldKey;
+            edit->setProperty("irdFieldKey", QString::fromStdString(key));
+            edit->setProperty("irdAuthoritativeValue",
+                              QString::fromStdString(fr.valueText));
+            if (editable) {
+                connect(edit, &QLineEdit::editingFinished, this,
+                        &RequirementsPanelWidget::onRegionFieldEditingFinished);
+                connect(slider, &QSlider::valueChanged, this, [this, key, edit](int v) {
+                    // 滑块→输入行组词提交（比率 0~1 六位裁尾——formatSiText
+                    // 与 spec 解析词形一致）；权威值对照防幻影。
+                    const QString text = formatSiText(v / 100.0);
+                    if (text == edit->property("irdAuthoritativeValue").toString()) {
+                        return;
+                    }
+                    edit->setText(text);
+                    submitRegionValue(key, text);
+                });
+            }
+            lay->addWidget(slider, /*stretch=*/1);
+            lay->addWidget(edit);
+            lay->addWidget(new QLabel(QStringLiteral("%"), this));
+            m_regionSamplingLay->addWidget(new QLabel(QString::fromStdString(fr.label), this));
+            m_regionSamplingLay->addWidget(cell);
+        };
+
+        // 采样计数复合行（acceptance 2——三轴分割数＋『共 N 个离散点』实时
+        // 预览；提交轨＝applyRegionSamplingCountsEdit〔formatCounts 逆变换
+        // 整数回填〕，域规范化/裁决仍走 submitEntryEdit）。
+        auto renderCountsRow = [&](const StationFieldRow& fr) {
+            auto* cell = new QWidget(this);
+            auto* lay = new QHBoxLayout(cell);
+            lay->setContentsMargins(0, 0, 0, 0);
+            lay->setSpacing(4);
+            const QString text = QString::fromStdString(fr.valueText);
+            const QStringList parts =
+                text.split(QChar(0x00D7));  // '×'＝U+00D7（formatCounts 词面——窄字面量经执行字符集截断不匹配，首轮 gui 实证）
+            std::array<std::uint32_t, 3> init{1, 1, 1};
+            const bool ok = parts.size() == 3;
+            auto* countLabel = new QLabel(this);
+            countLabel->setObjectName(QStringLiteral("ird_region_count_label"));
+            auto syncCount = [countLabel, lay]() {
+                // 实时预览（纯呈现乘法——乘积即离散点总数）。
+                std::uint64_t product = 1;
+                for (int i = 0; i < lay->count(); ++i) {
+                    if (auto* sp = qobject_cast<QSpinBox*>(lay->itemAt(i)->widget())) {
+                        product *= sp->value();
+                    }
+                }
+                countLabel->setText(QStringLiteral("▸ 共 %1 个离散点").arg(product));
+            };
+            const bool editable = fr.enablement == StationFieldEnablement::Editable
+                                  && m_writable;
+            static const char* kAxes[] = {"X", "Y", "Z"};
+            for (int i = 0; i < 3; ++i) {
+                lay->addWidget(new QLabel(QString::fromLatin1(kAxes[i]), this));
+                auto* sp = new QSpinBox(this);
+                sp->setRange(1, 999);  // ≥1（§5.2——零样本非 Grid 词形）
+                sp->setObjectName(QStringLiteral("ird_region_count_spin"));
+                if (ok) {
+                    { QSignalBlocker blocker(sp);  // 初始化静默（valueChanged→提交→重入）
+                    sp->setValue(parts[i].toInt()); }
+                }
+                sp->setEnabled(editable);
+                lay->addWidget(sp);
+            }
+            if (editable) {
+                const QString authoritative = QString::fromStdString(fr.valueText);
+                for (int i = 0; i < lay->count(); ++i) {
+                    if (auto* sp = qobject_cast<QSpinBox*>(lay->itemAt(i)->widget())) {
+                        connect(sp, qOverload<int>(&QSpinBox::valueChanged), this,
+                                [this, cell, syncCount, authoritative](int) {
+                                    syncCount();
+                                    // 提交词（三 spin 现值）——幻影守卫：与
+                                    // 权威词同形则零提交。
+                                    std::array<std::uint32_t, 3> now{1, 1, 1};
+                                    int idx = 0;
+                                    for (int j = 0; j < cell->layout()->count(); ++j) {
+                                        if (auto* s = qobject_cast<QSpinBox*>(
+                                                cell->layout()->itemAt(j)->widget())) {
+                                            now[idx++] = static_cast<std::uint32_t>(s->value());
+                                        }
+                                    }
+                                    const QString word =
+                                        QString::number(now[0]) + QChar(0x00D7)
+                                        + QString::number(now[1]) + QChar(0x00D7)
+                                        + QString::number(now[2]);
+                                    if (word == authoritative) {
+                                        return;
+                                    }
+                                    submitRegionCounts(now);
+                                });
+                    }
+                }
+            }
+            lay->addWidget(new QLabel(QStringLiteral("×"), this));
+            lay->addWidget(countLabel);
+            lay->addStretch(1);
+            m_regionSamplingLay->addWidget(new QLabel(QString::fromStdString(fr.label), this));
+            m_regionSamplingLay->addWidget(cell);
+            syncCount();
+        };
+
+        // 启用 Switch 行（区域轨——applyRegionToggleEdit）。
+        auto renderRegionSwitchRow = [&](const StationFieldRow& fr) {
+            auto* sw = new QCheckBox(this);
+            sw->setObjectName(QStringLiteral("ird_switch"));
+            { QSignalBlocker blocker(sw);  // 初始化静默（toggled→提交→重入）
+            sw->setChecked(QString::fromStdString(fr.valueText) == QStringLiteral("是")); }
+            const bool enabled =
+                fr.enablement == StationFieldEnablement::Editable && m_writable;
+            sw->setEnabled(enabled);
+            if (enabled) {
+                connect(sw, &QCheckBox::toggled, this,
+                        [this, key = fr.fieldKey](bool on) {
+                            submitRegionToggle(key, on);
+                        });
+            }
+            m_regionBasicForm->addRow(QString::fromStdString(fr.label), sw);
+        };
+
+        // 分拣路由（键族封闭——未知键 fail-fast，区域轨与工位轨同纪律）。
+        std::vector<const StationFieldRow*> boxCenter;
+        std::vector<const StationFieldRow*> boxSize;
+        const StationFieldRow* countsRow = nullptr;
+        for (const StationFieldRow& fr : fields) {
+            const std::string& k = fr.fieldKey;
+            if (k == "box-center-x" || k == "box-center-y" || k == "box-center-z") {
+                boxCenter.push_back(&fr);
+                continue;
+            }
+            if (k == "box-size-x" || k == "box-size-y" || k == "box-size-z") {
+                boxSize.push_back(&fr);
+                continue;
+            }
+            if (k == "sampling-counts") {
+                countsRow = &fr;
+                continue;
+            }
+            if (k == "coverage-position" || k == "coverage-orientation") {
+                // 姿态覆盖率『未设』＝灰显占位（本批已入词表——有值即可滑；
+                // 未设态收进高级卡占位呈现，不伪造零）。
+                if (fr.valueText == "未设") {
+                    renderRegionTextRow(m_regionAdvancedForm, fr);
+                } else {
+                    renderCoverageRow(fr);
+                }
+                continue;
+            }
+            if (k == "sequence-key" || k == "note" || k == "sampling-spacing"
+                || k == "sampling-normalized" || k == "sampling-random"
+                || k == "orientation-sampling") {
+                renderRegionTextRow(m_regionAdvancedForm, fr);
+                continue;
+            }
+            if (k == "enabled") {
+                renderRegionSwitchRow(fr);
+                continue;
+            }
+            if (k == "name" || k == "level" || k == "ref-frame" || k == "mandatory") {
+                renderRegionTextRow(m_regionBasicForm, fr);
+                continue;
+            }
+            throw std::logic_error("区域面板：投影行键无卡片宿主 " + k);
+        }
+        if (boxCenter.size() == 3) {
+            renderBoxCompositeRow("盒中心 (X/Y/Z)", "m", "box-center-x",
+                                  "box-center-y", "box-center-z", fields);
+        }
+        if (boxSize.size() == 3) {
+            renderBoxCompositeRow("盒尺寸 (长/宽/高)", "m", "box-size-x",
+                                  "box-size-y", "box-size-z", fields);
+        }
+        if (countsRow != nullptr) {
+            renderCountsRow(*countsRow);
         }
         break;  // 至多一个选中区域——命中即止（确定性）
     }
@@ -1243,12 +1940,9 @@ void RequirementsPanelWidget::onTreeSelectionChanged()
 
 void RequirementsPanelWidget::onInspectorEditingFinished()
 {
-    // L-R2 入口：控件提交→表单回填→submitEntryEdit 域裁决（分流见 sink 回调）。
+    // L-R2 入口：控件提交→submitStationValue 统一轨（UI-T37 R1 委托形——
+    // 显键/显文本参数供 SpinBox 等非 QLineEdit 控件复用同一提交语义）。
     m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
-        return;  // 编辑禁用（未注入/只读/无选中）——不虚构可编辑性
-    }
     // 定位被编辑行（sender 的 irdFieldKey 属性——提交时的回填参数）。
     auto* edit = qobject_cast<QLineEdit*>(QObject::sender());
     if (edit == nullptr) {
@@ -1257,58 +1951,15 @@ void RequirementsPanelWidget::onInspectorEditingFinished()
     if (edit->text() == edit->property("irdAuthoritativeValue").toString()) {
         return;  // 焦点切换/刷新回调未改变值，不进入编辑流也不增加脏标记。
     }
-    const std::string key = edit->property("irdFieldKey").toString().toStdString();
-    // 从工作集定位当前条目（权威值——检查器行的基线）。
-    const RequirementWorkingSet& ws = editor->workingSet();
-    for (const TaskPoint& p : ws.points.entries) {
-        if (p.objectId != m_lastSelected.value()) {
-            continue;
-        }
-        // 数量字段经 ui FormEditCommon 解析（parseFieldValueText——呈现层
-        // 输入合法性＋单位换算唯一出口，SA-12；业务裁决在 applyEdit 域链）。
-        for (const ui::QuantityFieldSpec& spec : stationQuantitySpecs()) {
-            if (spec.key != key) {
-                continue;
-            }
-            const ui::ValueParseResult parsed = parseFieldValueText(
-                edit->text().toStdString(), spec);
-            if (!parsed.ok) {
-                // 就地错误（非模态——UX-05；值控件回退由失败不写回实现）。
-                m_statusLine->setText(QString::fromStdString(parsed.reason));
-                renderInspector(ws);  // 回退显示工作集权威值
-                return;
-            }
-            // ParamEditSet 装配（SI 真值——回填词表见 applyStationEditSet）。
-            ui::ParamEditSet edits;
-            ui::ParamChange change;
-            change.key = key;
-            change.label = spec.label;
-            change.newSi = parsed.siValue;
-            edits.changes.push_back(change);
-            std::vector<std::string> known;
-            const TaskPoint candidate = applyStationEditSet(p, edits, known);
-            // 域裁决（submitEntryEdit——接受/拒绝分流见 IRequirementEditSink）。
-            const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
-            if (outcome == EditSubmitOutcome::Applied) {
-                m_undoTracker.recordAppliedEdit();  // 撤销记账（L-R4 事实源）
-            }
-            return;
-        }
-        // 词表外键＝实现缺陷（表单/回填词表漂移）——fail-fast。
-        throw std::logic_error("工位面板：编辑行携带词表外键 " + key);
-    }
+    submitStationValue(edit->property("irdFieldKey").toString().toStdString(),
+                       edit->text());
 }
 
 void RequirementsPanelWidget::onRegionFieldEditingFinished()
 {
-    // B2（UI-T31）区域轨——工位槽同构：权威值短路→词表 spec 匹配→
-    // parseFieldValueText（唯一解析出口，SA-12）→applyRegionEditSet→
-    // submitEntryEdit 域裁决（接受/拒绝分流见 sink；四态语义与工位一致）。
+    // B2（UI-T31）区域轨——UI-T37 R1 起委托 submitRegionValue 统一轨
+    // （显键/显文本形供滑块双联等伴生控件复用同一提交语义）。
     m_threadGuard.assertOnUiThread();
-    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
-    if (editor == nullptr || !m_writable) {
-        return;  // 无会话/只读——不虚构可编辑
-    }
     auto* edit = qobject_cast<QLineEdit*>(QObject::sender());
     if (edit == nullptr) {
         return;
@@ -1316,7 +1967,21 @@ void RequirementsPanelWidget::onRegionFieldEditingFinished()
     if (edit->text() == edit->property("irdAuthoritativeValue").toString()) {
         return;  // 未修改短路（幻影脏化消除——T27 语义跨域一致）
     }
-    const std::string key = edit->property("irdFieldKey").toString().toStdString();
+    submitRegionValue(edit->property("irdFieldKey").toString().toStdString(),
+                      edit->text());
+}
+
+void RequirementsPanelWidget::submitRegionValue(const std::string& key,
+                                                const QString& text)
+{
+    // B2（UI-T31）区域轨统一提交：权威值短路（控件侧）→词表 spec 匹配→
+    // parseFieldValueText（唯一解析出口，SA-12）→applyRegionEditSet→
+    // submitEntryEdit 域裁决（接受/拒绝分流见 sink；四态语义与工位一致）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable) {
+        return;  // 无会话/只读——不虚构可编辑
+    }
     const RequirementWorkingSet& ws = editor->workingSet();
     for (const WorkRegion& region : ws.regions.entries) {
         // 区域检查器绑定区域表选中行（renderRegionPage 的投影锚）。
@@ -1332,7 +1997,7 @@ void RequirementsPanelWidget::onRegionFieldEditingFinished()
                 continue;
             }
             const ui::ValueParseResult parsed =
-                parseFieldValueText(edit->text().toStdString(), spec);
+                parseFieldValueText(text.toStdString(), spec);
             if (!parsed.ok) {
                 // 拒绝·解析面：就地错误＋回退权威值（重投影）。
                 m_statusLine->setText(QString::fromStdString(parsed.reason));
@@ -1356,6 +2021,65 @@ void RequirementsPanelWidget::onRegionFieldEditingFinished()
         }
         // 词表外键＝实现缺陷（行模型与 specs 词表漂移）——fail-fast。
         throw std::logic_error("区域面板：编辑行携带词表外键 " + key);
+    }
+}
+
+void RequirementsPanelWidget::submitRegionToggle(const std::string& key, bool on)
+{
+    // 区域二态提交轨（启用开关——applyRegionToggleEdit 布尔回填＋域裁决）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable) {
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    for (const WorkRegion& region : ws.regions.entries) {
+        std::optional<core::ObjectId> selected;
+        if (m_regionTable->currentItem() != nullptr) {
+            selected = nodeAnchor(m_regionTable->currentItem());
+        }
+        if (!selected.has_value() || region.objectId != selected.value()) {
+            continue;
+        }
+        std::vector<std::string> known;
+        const WorkRegion candidate = applyRegionToggleEdit(region, key, on, known);
+        const EditSubmitOutcome outcome =
+            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
+        if (outcome == EditSubmitOutcome::Applied) {
+            m_undoTracker.recordAppliedEdit();
+        }
+        return;
+    }
+}
+
+void RequirementsPanelWidget::submitRegionCounts(
+    const std::array<std::uint32_t, 3>& counts)
+{
+    // 采样计数提交轨（UI-T37 R1——applyRegionSamplingCountsEdit 回填；计数
+    // 合法域归域校验链——拒绝面与行编辑同链，就地错误呈现一致）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable) {
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    for (const WorkRegion& region : ws.regions.entries) {
+        std::optional<core::ObjectId> selected;
+        if (m_regionTable->currentItem() != nullptr) {
+            selected = nodeAnchor(m_regionTable->currentItem());
+        }
+        if (!selected.has_value() || region.objectId != selected.value()) {
+            continue;
+        }
+        std::vector<std::string> known;
+        const WorkRegion candidate =
+            applyRegionSamplingCountsEdit(region, counts, known);
+        const EditSubmitOutcome outcome =
+            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
+        if (outcome == EditSubmitOutcome::Applied) {
+            m_undoTracker.recordAppliedEdit();
+        }
+        return;
     }
 }
 

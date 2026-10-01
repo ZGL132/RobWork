@@ -330,4 +330,34 @@ TaskPoint applyStationEditSet(const TaskPoint& base, const ui::ParamEditSet& edi
     return out;
 }
 
+TaskPoint applyStationToggleEdit(const TaskPoint& base, const std::string& key,
+                                 bool on, std::vector<std::string>& known)
+{
+    known.clear();
+    // 二态词表回填（UI-T37 R1——声明见头文件；一处一布尔位，不做批量）。
+    // 词表外键 fail-fast 同 applyStationEditSet 纪律：面板二态控件与词表
+    // 漂移＝实现缺陷，不静默丢弃。
+    TaskPoint out = base;  // 值拷贝——非命中字段原样保留
+    if (key == "enabled") {
+        out.enabled = on;
+    } else if (key == "dof-x") {
+        out.pose.constrainedDof.x = on;
+    } else if (key == "dof-y") {
+        out.pose.constrainedDof.y = on;
+    } else if (key == "dof-z") {
+        out.pose.constrainedDof.z = on;
+    } else if (key == "dof-roll") {
+        out.pose.constrainedDof.roll = on;
+    } else if (key == "dof-pitch") {
+        out.pose.constrainedDof.pitch = on;
+    } else if (key == "dof-yaw") {
+        out.pose.constrainedDof.yaw = on;
+    } else {
+        throw std::invalid_argument("工位面板：二态回填携带词表外键 " + key
+                                    + "（实现缺陷）");
+    }
+    known.push_back(key);
+    return out;
+}
+
 }  // namespace sdurws::ird::requirements

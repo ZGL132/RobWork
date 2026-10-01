@@ -29,6 +29,7 @@
 #ifndef IRD_REQUIREMENTS_PLUGIN_REQUIREMENTSPANELWIDGET_HPP
 #define IRD_REQUIREMENTS_PLUGIN_REQUIREMENTSPANELWIDGET_HPP
 
+#include <array>
 #include <functional>
 #include <optional>
 
@@ -235,6 +236,45 @@ private:
     WorkRegionService m_regionService;        ///< 领域服务（采样规范化——D-REQ-2 单点复用）
     OperatingConditionService m_conditionService;  ///< 领域服务（必验解析——P-EV-9 单点复用）
 
+    // ---- UI-T37 R1：卡片化检查器（acceptance 1/2/3——卡片标题/帮助位经
+    //      UiText 键族①c；主题经 ui UiTheme::applyIndustrialTheme 面板作用
+    //      域安装）。卡片＝QFrame#card（UiTheme::createCard 工厂）；表单行
+    //      按字段键路由到所属卡片（stationFormForKey/regionFormForKey）----
+    QFrame* m_stationBasicCard = nullptr;     ///< 工位卡①基础属性
+    QFormLayout* m_stationBasicForm = nullptr;   ///< 卡①行宿主
+    QFrame* m_stationPoseCard = nullptr;      ///< 工位卡②空间与公差
+    QFormLayout* m_stationPoseForm = nullptr;    ///< 卡②行宿主
+    QFrame* m_stationDofCard = nullptr;       ///< 工位卡③自由度约束（矩阵）
+    QFormLayout* m_stationDofForm = nullptr;  ///< 卡③行宿主（逐行＝标签＋分段对）
+    QFrame* m_stationSegmentCard = nullptr;   ///< 工位卡④动作阶段（呈现面）
+    QFormLayout* m_stationSegmentForm = nullptr; ///< 卡④行宿主
+    QFrame* m_stationOrientCard = nullptr;    ///< 工位卡⑤姿态规则（词表行）
+    QFormLayout* m_stationOrientForm = nullptr;  ///< 卡⑤行宿主
+    QFrame* m_regionBasicCard = nullptr;      ///< 区域卡①基础属性
+    QFormLayout* m_regionBasicForm = nullptr;    ///< 区域卡①行宿主
+    QFrame* m_regionBoxCard = nullptr;        ///< 区域卡②空间包围盒（复合行）
+    QVBoxLayout* m_regionBoxLay = nullptr;    ///< 卡②复合行宿主
+    QFrame* m_regionSamplingCard = nullptr;   ///< 区域卡③采样与达标
+    QVBoxLayout* m_regionSamplingLay = nullptr;  ///< 卡③宿主（滑块/计数复合行）
+    QFrame* m_regionAdvancedCard = nullptr;   ///< 区域卡④高级参数（默认折叠）
+    QWidget* m_regionAdvancedBody = nullptr;  ///< 折叠体（toggle 切换可见性）
+    QFormLayout* m_regionAdvancedForm = nullptr; ///< 折叠体行宿主
+
+    /// 工位值提交（复合/二态控件共用轨——与行编辑 editingFinished 同语义：
+    /// 权威值短路→stationQuantitySpecs 词表→applyStationEditSet→域裁决）。
+    void submitStationValue(const std::string& key, const QString& text);
+    /// 工位二态提交（applyStationToggleEdit——启用开关/自由度矩阵共用）。
+    void submitStationToggle(const std::string& key, bool on);
+    /// 区域值提交（onRegionFieldEditingFinished 的显键形——滑块/复合行共用）。
+    void submitRegionValue(const std::string& key, const QString& text);
+    /// 区域二态提交（applyRegionToggleEdit）。
+    void submitRegionToggle(const std::string& key, bool on);
+    /// 区域采样计数提交（applyRegionSamplingCountsEdit——counts 三元组整数
+    /// 回填；formatCounts 的逆变换，域规范化/裁决仍走 submitEntryEdit）。
+    void submitRegionCounts(const std::array<std::uint32_t, 3>& counts);
+    /// 工位行键→所属卡片表单路由（词表分派——键族集合封闭）。
+    QFormLayout* stationFormForKey(const std::string& key) const;
+
     // ---- 对象生命周期（UI-T30 B1——工位/区域/工况新增/复制/删除）----
     /**
      * @brief 生命周期工具行（每页签页头下方一行——新增/复制/删除三键）。
@@ -278,11 +318,8 @@ private:
     QTreeWidget* m_tree = nullptr;              ///< 左栏需求树（层级＝需求工程根→
                                                 ///< 四分组→条目；末隐藏列＝锚规范文本）
     QTabWidget* m_pages = nullptr;              ///< 右栏四页面容器（工位/区域/工况/校验）
-    QFormLayout* m_stationForm = nullptr;       ///< 工位检查器表单（行＝StationFieldRow）
-    std::vector<QLineEdit*> m_stationEditors;   ///< 工位编辑行（与投影行序对应——L-R2 提交面）
     std::vector<StationFieldRow> m_stationRows; ///< 当前工位行（含字段键——提交时的回填参数）
     QTreeWidget* m_regionTable = nullptr;       ///< 区域表（L-R1 行选中）
-    QFormLayout* m_regionForm = nullptr;        ///< 区域检查器表单（行＝StationFieldRow）
     QLabel* m_regionPreviewLabel = nullptr;     ///< 区域预览摘要（几何出口注入时同步投递 View3D）
     QTreeWidget* m_conditionTable = nullptr;    ///< 工况表（L-R1 行选中）
     QFormLayout* m_conditionForm = nullptr;     ///< 工况检查器表单

@@ -103,6 +103,34 @@ constexpr std::array<TextRow, 24> kDomainCommandTitleTable{{
     { "cmd.requirements.apply-template.title",         "应用工艺模板"     },
     { "cmd.requirements.regenerate-linked.title",      "按模板重生成"     },
 }};
+/// 键族①c：需求面板卡片文案（UI-T37——卡片标题＋"?"帮助位；值＝设计规格
+/// 2026-10-01 §3/§4 卡片化分组词表；键前缀 panel.requirements.card.*）。
+constexpr std::array<TextRow, 16> kRequirementsPanelCardTable{{
+    { "panel.requirements.card.basic.title",        "基础属性" },
+    { "panel.requirements.card.basic.help",
+      "条目级属性。灰显行＝只读事实（来源/等级等），权威值以工作集为准。" },
+    { "panel.requirements.card.pose.title",         "空间与公差" },
+    { "panel.requirements.card.pose.help",
+      "位置与容差。内部按 SI 单位（m/rad）存储，本面板按词表呈现；缺失态显示『未提供』，不伪造零。" },
+    { "panel.requirements.card.dof.title",          "自由度约束" },
+    { "panel.requirements.card.dof.help",
+      "『约束』＝该方向被夹具固定，评估视为不可动；点击分段钮即时生效并生成一条草稿级撤销记录。" },
+    { "panel.requirements.card.segment.title",      "动作阶段" },
+    { "panel.requirements.card.segment.help",
+      "接近/作业/撤离三段（§5.1）；本卡为呈现面，距离值在空间与公差卡按词表编辑。" },
+    { "panel.requirements.card.orientation.title",  "姿态规则" },
+    { "panel.requirements.card.orientation.help",
+      "姿态规则种类决定参数行显隐（表驱动投影）；参数值单位 rad。" },
+    { "panel.requirements.card.region-box.title",   "空间包围盒" },
+    { "panel.requirements.card.region-box.help",
+      "六面体度量坐标系为浅引用事实（灰显）；中心/尺寸单位 m，尺寸须为正（非退化 I-REQ-6）。" },
+    { "panel.requirements.card.region-sampling.title", "采样与达标" },
+    { "panel.requirements.card.region-sampling.help",
+      "规则网格三轴分割数乘积＝评估离散点总数；覆盖率下限取 0~100%。『未设』＝未配置，不伪造零。" },
+    { "panel.requirements.card.region-advanced.title", "高级参数" },
+    { "panel.requirements.card.region-advanced.help",
+      "顺序键/备注等次要字段——默认折叠，按需展开。" },
+}};
 
 /// 键族②：七态短标签（state.<token>.label——§6.3 词表 token＋"中文"列；
 /// 与 StatusWordModelTest 钉住的过渡值逐字一致——值源切换零漂移）。
@@ -237,6 +265,9 @@ const TextRow* findRow(const TextKey& key)
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kDomainCommandTitleTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kRequirementsPanelCardTable) {
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kStatusWordLabelTable) {
@@ -422,6 +453,9 @@ std::vector<TextKey> registeredTextKeys()
         keys.emplace_back(row.key);
     }
     for (const auto& row : kDomainCommandTitleTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kRequirementsPanelCardTable) {
         keys.emplace_back(row.key);
     }
     for (const auto& row : kStatusWordLabelTable) {
