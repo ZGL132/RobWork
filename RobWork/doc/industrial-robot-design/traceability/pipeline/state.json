@@ -20,16 +20,16 @@
     "kind": "implement",
     "workerId": "8afcafbe-fc49-46f2-8eb6-efbd72c7bf0c",
     "leaseMinutes": 120,
-    "startedAt": "2026-10-01T09:58:00+08:00",
-    "leaseExpiresAt": "2026-10-01T11:58:00+08:00"
+    "startedAt": "2026-10-01T09:47:00+08:00",
+    "leaseExpiresAt": "2026-10-01T11:47:00+08:00"
   },
   "attempts": {
     "implement": 0,
     "fix": 1,
-    "accept": 0
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T09:59:10+08:00",
+    "updatedAt": "2026-10-01T09:47:07+08:00",
     "ticksNoProgress": 0
   },
   "history": [
