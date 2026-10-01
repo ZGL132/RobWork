@@ -21,6 +21,17 @@
   },
   "history": [
     {
+      "task": "UI-T31",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "3938cfe6"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T31-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（tick#439 实施/tick#440 验收）。区域/工况字段编辑 B2：regionQuantitySpecs/applyRegionEditSet＋conditionQuantitySpecs/applyConditionEditSet〔specs 词表＋回填——工位轨同构单一词表两处消费；单位分档 m/无量纲/s/kg＋bounds 预过滤〕＋盒复合行拆三分量＋质量行 Provided 态收窄＋两检查器行按 enablement 可编〔解除 T27 降级〕＋onRegion/ConditionFieldEditingFinished 两槽〔权威值短路→parseFieldValueText 唯一出口→submitEntryEdit〕＋工况表选中锚跨 rebuild 恢复〔区域页同款既有缺陷修复〕＋表 objectName 锚。gui_test 三用例（区域四态＋撤销同栈/工况未设→设值/只读门控）。验证＝ctest 五单元 12 目标 100%＋冒烟双场景 PASS＋ird_gates 96 零新增＋validate-docs PASS；双变异（区域回填错位 3 红〔本批新增面锚〕/Readiness 反转 45 红）均恢复绿。合入口径 PIPE §4.7②③〔evidence 8025cee3＋代码 3938cfe6〕"
+    },
+    {
       "task": "UI-T30",
       "unit": "ui",
       "result": "pass-merged",
@@ -2223,13 +2234,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T31",
-      "contractPath": "tasks/foundation/UI-T31.json",
-      "branch": "ui-t31"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",

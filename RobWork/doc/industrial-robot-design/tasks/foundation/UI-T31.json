@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "区域/工况检查器字段编辑提交协议（功能对照批次 B2）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T30"
   ],
