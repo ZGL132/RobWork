@@ -4429,6 +4429,26 @@
       "title": "批量编辑应用后的树重选异常：renderTree clear() 期间选中信号时序清锚且重挂 setSelected 未回写会话锚——连续两次批量命令的第二次（以选中为源的阵列/镜像连用）取不到源。",
       "owner": "requirements 面板批次（UI-T33 前收口——renderTree 重挂选中行时同步回写会话锚）",
       "resolution": "UI-T32 阵列用例以净夹具承载（选中路径 T29 同型全绿）；本条登记防复发。编号顺延自 F-444。"
+    },
+    {
+      "id": "F-447",
+      "source": "UI-T35 验收 attempt1（2026-10-01——对抗式核查 §4.8 findings 相关性核对）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "F-446 标题注记〔④⑤归 D 批次〕与其④（外部修订事件不同步需求域）实际已由 UI-T35 本批实现相出入——归 D 批次者仅三维接线（RegionPreviewSink→宿主视图）与宿主 E2E 用例。",
+      "owner": "所有者（F-446 随 UI-T35 合入收尾翻转 fixed 时顺带勘误该标注）",
+      "resolution": "F-446 翻转 fixed 时同步修订标题注记。编号顺延自 F-446。"
+    },
+    {
+      "id": "F-448",
+      "source": "UI-T35 实施段核查＋验收 attempt1 复证（2026-10-01——主构建树抽查发现旧测试二进制）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "主构建树（build/）增量局部构建会遗留陈旧测试二进制——实探 requirements_contract_test.exe 滞留 9/29（UI-T29 白名单修订前），在该树直跑对应测试会假失败；验收冷启树不受影响。",
+      "owner": "实施/验收口径（UI-T35 尾款补齐轮主树全量重建已追平——建议性防复发）",
+      "resolution": "送验/自查统一主树全量构建口径，或排查前先全量追平主树。编号顺延自 F-447。"
     }
   ]
 }
