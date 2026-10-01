@@ -21,11 +21,9 @@
  * 建议口径原文）；⑤门控数据不可用呈现键（§10.2 错误类型行"门控数据
  * 缺失→Blocked＋'门控数据不可用'"的呈现面）；⑥⑦插件标题与装配状态标签
  * （plugin.<id>.title 八键＋plugin.assembly.<state>.label 三键——UI-T10
- * 关于框清单的呈现值，§11.4/UX-02：token 不进用户文本，用户见中文名）；
- * ⑨域面板迁移标记说明键（panel.<domain>.self-nav.note 三键——UI-T25：
- * modeling/requirements/kinematics 三域自持导航迁移标记的呈现值，消面板
- * 侧"内部任务编号＋deprecated 术语直出"的 UX-02 泄漏，F-430/F-432 家族
- * 标签一族）。
+ * 关于框清单的呈现值，§11.4/UX-02：token 不进用户文本，用户见中文名）。
+ * 键族⑨（panel.<domain>.self-nav.note 三键）已随 UI-T36 退役：三域自持
+ * 导航 deprecated 横幅移除后无消费方，键表同步删行。
  * 值迁移到资源文件时仅替换本表的值源，键不变——调用方与测试零改动
  * （UI-T03 文案表同案）。
  *
@@ -220,26 +218,10 @@ constexpr std::array<TextRow, 32> kPresentationTable{{
     { "ui.task.currentness.superseded", "结果已过期" },
 }};
 
-/// 键族⑨：域面板迁移标记说明（panel.<domain>.self-nav.note——UI-T25 增量
-/// 登记；modeling/requirements/kinematics 三域自持导航迁移标记标签的呈现
-/// 值〔modeling 一处经契约 v1.1 范围修正补纳——评估首扫漏检，实施段全产
-/// 品 grep 复扫发现同族第三处〕。此前各面板侧以字面量直出且携带内部任务
-/// 编号（WP-24-T09/DTB O-44）与开发术语（deprecated）——UX-02 内部名泄漏，
-/// 本键族消账（F-430/F-432 家族标签一族）：编号与术语只留在代码注释与设
-/// 计文档，用户只见工程化中文说明。三域措辞按各自迁移事实区分（modeling/
-/// requirements＝导航已迁移；kinematics＝业务主导航在共享树、本域导航保
-/// 留），不虚标"已迁移"）。
-constexpr std::array<TextRow, 3> kPanelSelfNavNoteTable{{
-    { "panel.modeling.self-nav.note",
-      "本面板的结构树已由主面板『项目结构』树统一承载；"
-      "此树保留可用，将在后续版本移除" },
-    { "panel.requirements.self-nav.note",
-      "本面板的对象导航已由主面板『项目结构』树统一承载；"
-      "此树保留可用，将在后续版本移除" },
-    { "panel.kinematics.self-nav.note",
-      "业务对象的导航请在主面板『项目结构』树中进行；"
-      "本面板的导航视图保留可用，将在后续版本移除" },
-}};
+// 键族⑨（panel.<domain>.self-nav.note 三键）已随 UI-T36 退役：三域自持
+// 导航 deprecated 横幅移除后无消费方，键表同步删行（查找表缺键＝
+// resolveText 上抛的 fail-fast 语义反向充当退役守卫——回归断言见
+// StageNavigationModelTest 的键退役守卫用例）。
 
 /// 全表拼接视图（查找入口——各键族数组顺序拼接，避免维护一份重复大表）。
 /// 注意 state.failed.label 在键族②与③中重复登记（七态与九态同键同值
@@ -249,7 +231,7 @@ constexpr std::array<TextRow, 3> kPanelSelfNavNoteTable{{
 /// 九键增行一并补全——盘点面与查找面必须一致（"登记即盘点"）。
 const TextRow* findRow(const TextKey& key)
 {
-    // 表小（69 行）且调用频率为呈现路径，线性扫描足够（NFR-PERF-01 预算内）；
+    // 表小（66 行）且调用频率为呈现路径，线性扫描足够（NFR-PERF-01 预算内）；
     // 换哈希表反而引入构建期初始化顺序顾虑——呈现函数必须任何时刻可调用。
     for (const auto& row : kStageTitleTable) {
         if (key == row.key) { return &row; }
@@ -276,9 +258,6 @@ const TextRow* findRow(const TextKey& key)
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kPresentationTable) {
-        if (key == row.key) { return &row; }
-    }
-    for (const auto& row : kPanelSelfNavNoteTable) {
         if (key == row.key) { return &row; }
     }
     return nullptr;
@@ -468,9 +447,6 @@ std::vector<TextKey> registeredTextKeys()
         keys.emplace_back(row.key);
     }
     for (const auto& row : kPresentationTable) {
-        keys.emplace_back(row.key);
-    }
-    for (const auto& row : kPanelSelfNavNoteTable) {
         keys.emplace_back(row.key);
     }
     return keys;

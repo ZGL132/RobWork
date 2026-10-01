@@ -21,8 +21,12 @@
 
 #include <gtest/gtest.h>
 
+#include <QApplication>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QTabWidget>
 #include <QTreeWidget>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
@@ -720,24 +724,21 @@ TEST_F(RequirementsSessionGuiTest, CommandFlows_CreateArray_UI_T32)
     // 的幂等短路分支）。
     {
         const QString want = QString::fromStdString(p1.toCanonical());
+        // UI-T36 层级树：行定位走产品路径 focusObject（递归扫描分组子树
+        // ＝共享树选中联动同款数据流；原顶层行线性扫描假设扁平结构已失效）。
+        m_panel->focusObject(p1);
         QTreeWidget* tree = nullptr;
         for (QTreeWidget* t : m_panel->findChildren<QTreeWidget*>()) {
             if (t->columnCount() >= 2 && t->objectName().isEmpty()
                 && t->topLevelItemCount() > 0) {
-                tree = t;  // 左栏需求对象树（页签表均有 objectName 锚）
+                tree = t;  // 左栏需求树（页签表均有 objectName 锚）
                 break;
             }
         }
         ASSERT_NE(tree, nullptr);
-        bool rowFound = false;
-        for (int i = 0; i < tree->topLevelItemCount(); ++i) {
-            if (tree->topLevelItem(i)->text(1) == want) {
-                tree->setCurrentItem(tree->topLevelItem(i));
-                rowFound = true;
-                break;
-            }
-        }
-        ASSERT_TRUE(rowFound) << "树中无 P1 行（锚不匹配）";
+        ASSERT_TRUE(tree->currentItem() != nullptr
+                    && tree->currentItem()->text(1) == want)
+            << "focusObject 未定位到 P1 行（锚不匹配）";
         ASSERT_TRUE(m_panel->selectedObjectId().has_value())
             << "行点击后选中锚仍空";
     }
@@ -1040,4 +1041,145 @@ TEST_F(RequirementsSessionGuiTest, FacadeSessionBaseRevisionRoundtrip_UI_T35)
     facade.onSessionDetached();
     EXPECT_FALSE(facade.sessionBaseRevision().has_value())
         << "会话脱离后基线应全清";
+}
+
+// =====================================================================
+// UI-T36：可读性与结构治理——锚列泄漏修复（采样/节拍列业务文本）、
+// 层级需求树（根→分组→条目＋页签联动）、截断修复防回归。
+// =====================================================================
+
+/// 定位左栏需求树（表头列 0＝"需求树"——与区域/工况/必验/校验表区分）。
+QTreeWidget* requirementTree(const RequirementsPanelWidget& panel)
+{
+    for (QTreeWidget* t :
+         const_cast<RequirementsPanelWidget&>(panel).findChildren<QTreeWidget*>()) {
+        if (t->headerItem()->text(0) == QStringLiteral("需求树")) {
+            return t;
+        }
+    }
+    return nullptr;
+}
+
+/// 区域/工况表显示列零内部标识断言（锚列泄漏回归守卫——display 列出
+/// 现 obj- 词形即红；锚列退居末隐藏列的机制面）。
+void assertNoInternalIdInDisplayColumns(const QTreeWidget& table, int displayColumns)
+{
+    for (int i = 0; i < table.topLevelItemCount(); ++i) {
+        const QTreeWidgetItem* it = table.topLevelItem(i);
+        for (int c = 0; c < displayColumns; ++c) {
+            EXPECT_FALSE(it->text(c).startsWith(QStringLiteral("obj-")))
+                << "显示列泄漏内部 ObjectId（锚列覆盖回归）: 行 " << i
+                << " 列 " << c << " = " << it->text(c).toStdString();
+        }
+    }
+}
+
+/// 采样/覆盖/节拍/适用范围列的业务文本形态（模型层 regionRows/
+/// conditionRows 既有投影字段的呈现收口——逐列格式断言，不钉具体值）。
+TEST_F(RequirementsSessionGuiTest, RegionConditionRows_BusinessColumns_UI_T36)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 区域表（区域名称|空间采样|覆盖目标）：采样列＝Grid/间距/Random 三
+    // 方法词形之一、覆盖列＝P≥ 前缀、零 obj- 泄漏。
+    QTreeWidget* regionTable =
+        m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_req_region_table"));
+    ASSERT_NE(regionTable, nullptr);
+    ASSERT_GT(regionTable->topLevelItemCount(), 0);
+    const QString sampling =
+        regionTable->topLevelItem(0)->text(1);
+    EXPECT_TRUE(sampling.startsWith(QStringLiteral("Grid"))
+                || sampling.startsWith(QStringLiteral("间距"))
+                || sampling.startsWith(QStringLiteral("Random")))
+        << "空间采样列非业务摘要词形: " << sampling.toStdString();
+    EXPECT_TRUE(regionTable->topLevelItem(0)->text(2)
+                    .startsWith(QStringLiteral("P≥")))
+        << "覆盖目标列非阈值词形: "
+        << regionTable->topLevelItem(0)->text(2).toStdString();
+    assertNoInternalIdInDisplayColumns(*regionTable, 3);
+
+    // 工况表（工况|目标节拍|适用范围）：节拍列＝数值 s/未设、范围列＝
+    // 三值词表、零 obj- 泄漏。
+    QTreeWidget* conditionTable =
+        m_panel->findChild<QTreeWidget*>(QStringLiteral("ird_req_condition_table"));
+    ASSERT_NE(conditionTable, nullptr);
+    ASSERT_GT(conditionTable->topLevelItemCount(), 0);
+    const QString cycle = conditionTable->topLevelItem(0)->text(1);
+    EXPECT_TRUE(cycle == QStringLiteral("未设") || cycle.endsWith(QStringLiteral(" s")))
+        << "目标节拍列非业务值词形: " << cycle.toStdString();
+    const QString applies = conditionTable->topLevelItem(0)->text(2);
+    EXPECT_TRUE(applies == QStringLiteral("全部工位")
+                || applies == QStringLiteral("不适用")
+                || applies.endsWith(QStringLiteral("个工位")))
+        << "适用范围列非三值词表: " << applies.toStdString();
+    assertNoInternalIdInDisplayColumns(*conditionTable, 3);
+}
+
+/// 层级需求树：需求工程单根→四分组（计数）→条目三级；分组点击＝仅页
+/// 签联动不清锚；条目点击＝锚设置＋页签联动；focusObject 递归定位命中
+/// 嵌套条目。
+TEST_F(RequirementsSessionGuiTest, TreeHierarchy_GroupsAndTabLinkage_UI_T36)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    QTreeWidget* tree = requirementTree(*m_panel);
+    ASSERT_NE(tree, nullptr) << "需求树控件缺失";
+    ASSERT_EQ(tree->topLevelItemCount(), 1) << "层级树应恰一业务根";
+    QTreeWidgetItem* root = tree->topLevelItem(0);
+    EXPECT_EQ(root->text(0), QStringLiteral("需求工程"));
+    ASSERT_EQ(root->childCount(), 4) << "业务根下应恰四分组（工位/区域/工况/计划）";
+    EXPECT_TRUE(root->text(0).size() > 0 && root->isExpanded())
+        << "根节点应默认展开";
+    for (int i = 0; i < root->childCount(); ++i) {
+        EXPECT_TRUE(root->child(i)->text(0).contains(QStringLiteral("（")))
+            << "分组节点应带计数标注（全角括号计数面）: "
+            << root->child(i)->text(0).toStdString();
+        EXPECT_TRUE(root->child(i)->text(1).isEmpty())
+            << "分组节点不应携带对象锚";
+    }
+
+    // 条目点击＝页签联动＋检查器投影（工位分组首条目→页签 0）。
+    QTreeWidgetItem* pointsGroup = root->child(0);
+    ASSERT_GT(pointsGroup->childCount(), 0) << "夹具基线应含工位条目";
+    pointsGroup->setExpanded(true);
+    tree->setCurrentItem(pointsGroup->child(0));
+    EXPECT_EQ(m_panel->findChild<QTabWidget*>()->currentIndex(), 0)
+        << "条目点击未联动工位页签";
+
+    // 分组点击＝仅页签联动不清锚（再点条目设锚后点区域分组——页签切 1
+    // 且检查器行仍为工位字段〔选中锚保持的可观测面〕）。
+    QTreeWidgetItem* regionGroup = root->child(1);
+    tree->setCurrentItem(regionGroup);
+    EXPECT_EQ(m_panel->findChild<QTabWidget*>()->currentIndex(), 1)
+        << "分组点击未联动区域页签";
+    EXPECT_FALSE(m_panel->findChild<QScrollArea*>() == nullptr)
+        << "属性表单滚动容器缺失（UI-T36 滚动承载）";
+
+    // focusObject 递归定位：给定点身份→嵌套条目置当前行（层级化后的
+    // 反向半区——递归扫描命中分组子树）。
+    const core::ObjectId pointOid = m_editor.workingSet().points.entries.front().objectId;
+    m_panel->focusObject(pointOid);
+    ASSERT_NE(tree->currentItem(), nullptr);
+    EXPECT_EQ(tree->currentItem()->text(1).toStdString(), pointOid.toCanonical())
+        << "focusObject 未命中嵌套条目（递归定位断链）";
+}
+
+/// 截断修复防回归（FlowLayout 边距对称性）：面板显示后生命周期按钮的
+/// 实际高不得小于其建议高（宿主控件高度系统性偏短的容器裁切形态）。
+TEST_F(RequirementsSessionGuiTest, LifecycleButton_NoVerticalClipping_UI_T36)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->resize(720, 640);
+    m_panel->show();
+    QApplication::processEvents();
+    QPushButton* addBtn =
+        m_panel->findChild<QPushButton*>(QStringLiteral("ird_req_add_points"));
+    ASSERT_NE(addBtn, nullptr);
+    QApplication::processEvents();
+    EXPECT_GE(addBtn->height(), addBtn->sizeHint().height())
+        << "生命周期按钮实际高小于建议高（FlowLayout 尺寸协商缺边距回归"
+           "——按钮底部裁切复现）";
+    m_panel->hide();
 }

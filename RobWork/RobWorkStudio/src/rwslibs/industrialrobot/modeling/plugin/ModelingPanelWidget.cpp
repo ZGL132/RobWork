@@ -172,22 +172,10 @@ void ModelingPanelWidget::setEditTargetProvider(EditTargetProvider provider)
 
 void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
 {
-    // 自持导航 deprecated 标记（B1-SPEC §5.2——方案 B.1 迁移期双形态并存：
-    // 工业项目树已承接建模导航（WP-13-T20 TreeNodesProvider），本自持树
-    // **标记 deprecated 但保留可用**——迁移期间旧面板可用性零损失
-    // （acceptance 3），删除留待 WP-24-T09 退役任务）。
-    // UI-T25 文案治理：呈现文本改经 UiText 键解析（panel.modeling.
-    // self-nav.note）——原字面量直出携带开发术语（deprecated），属 UX-02
-    // 内部名泄漏（F-430/F-432 家族标签一族消账）；退役编排只留在本注释
-    // 与设计文档，用户见工程化中文。
-    m_navDeprecationLabel = new QLabel(
-        QString::fromStdString(
-            ui::resolveText(ui::TextKey("panel.modeling.self-nav.note"))),
-        this);
-    m_navDeprecationLabel->setObjectName(QStringLiteral("ird_modeling_nav_deprecated_marker"));
-    m_navDeprecationLabel->setWordWrap(true);
-    m_navDeprecationLabel->setStyleSheet(QStringLiteral("color: #8a6d3b;"));
-    left->addWidget(m_navDeprecationLabel);
+    // 自持导航 deprecated 横幅已随 UI-T36 退役（原 B1-SPEC §5.2 迁移期
+    // 双形态并存的标记标签与 UiText 键族⑨ modeling 键同步删行——迁移期
+    // 结束，本自持树升格为面板主导航呈现；与共享项目树的 L-R1 双向联动
+    // 语义不变）。
 
     left->addWidget(new QLabel(QStringLiteral("建模结构"), this));
     m_tree = new QTreeWidget(this);

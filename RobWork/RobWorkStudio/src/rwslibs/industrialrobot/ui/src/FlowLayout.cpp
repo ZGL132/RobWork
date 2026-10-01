@@ -90,17 +90,26 @@ bool FlowLayout::hasHeightForWidth() const
 int FlowLayout::heightForWidth(int width) const
 {
     // 探测拍：以给定宽度算内容总高（不落位——尺寸协商不得触碰子控件）。
-    return doLayout(QRect(0, 0, width, 0), /*testOnly=*/true);
+    // UI-T36 修复：叠加 contentsMargins 上下边距——本类 setGeometry 按
+    // contentsRect（扣边距）落位，尺寸协商若不含边距则宿主控件高度系统性
+    // 偏短（差上下边距），流式栅格内按钮底部被容器裁切（lifecycle 三键
+    // 文字底部截断的根因；minimumSize 既有边距叠加先例同源）。
+    const QMargins m = contentsMargins();
+    return doLayout(QRect(0, 0, width, 0), /*testOnly=*/true)
+           + m.top() + m.bottom();
 }
 
 QSize FlowLayout::sizeHint() const
 {
     // 建议尺寸＝按"父控件当前宽"折算的行高（换行形态下高度即最优信息；
     // 宽度交还父布局分配）。minimumSizeHint 为 0 的控件（如 QLabel 弹性位）
-    // 取 sizeHint 计入。
+    // 取 sizeHint 计入。UI-T36 修复：同 heightForWidth 叠加上下边距
+    // （setGeometry 扣边距落位与尺寸协商的对称性——截断根因修复）。
     const int parentWidth =
         parentWidget() != nullptr ? parentWidget()->width() : 0;
-    int height = doLayout(QRect(0, 0, parentWidth, 0), /*testOnly=*/true);
+    const QMargins m = contentsMargins();
+    int height = doLayout(QRect(0, 0, parentWidth, 0), /*testOnly=*/true)
+                 + m.top() + m.bottom();
     if (height <= 0) {
         height = -1;  // 空布局＝无建议（交 Qt 默认处理）
     }

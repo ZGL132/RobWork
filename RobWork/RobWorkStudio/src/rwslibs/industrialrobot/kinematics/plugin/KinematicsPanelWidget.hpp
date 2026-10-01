@@ -191,9 +191,6 @@ private:
     // ---- 容器与状态 ----
     QTabWidget* m_tabs = nullptr;  ///< 四面板 Tab 容器
     QLabel* m_statusLine = nullptr; ///< 状态行（非模态反馈——UX-03/07）
-    QLabel* m_navDeprecationLabel = nullptr; ///< 自持导航迁移状态标记（WP-15-T18
-                                             ///< ——B1-SPEC §5.2；objectName
-                                             ///< kinematicsNavDeprecationLabel）
 };
 
 /**

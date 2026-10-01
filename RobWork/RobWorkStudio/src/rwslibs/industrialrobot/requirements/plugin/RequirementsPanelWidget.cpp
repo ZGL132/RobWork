@@ -21,6 +21,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QScrollArea>  // 属性表单滚动容器（UI-T36——长表单小窗不截断）
 #include <QTabWidget>
 #include <QTreeWidget>
 #include <QVBoxLayout>
@@ -32,6 +33,7 @@
 #include <rw/math/Vector3D.hpp>  // rw::math::Vector3D（UI-T30 新增条目默认几何值）
 
 #include <algorithm>  // std::min（删除锚回落位次钳制）
+#include <functional>  // std::function（UI-T36 层级树递归定位）
 #include <set>        // uniqueEntryName 的已占名集合
 #include <stdexcept>
 #include <utility>
@@ -39,21 +41,31 @@
 namespace sdurws::ird::requirements {
 namespace {
 
-// 树/表节点列上的锚存取（隐藏第 1 列＝ObjectId 规范文本——Qt 项与域身份
-// 的关联通道；空串＝无锚节点〔分组/汇总行〕）。
-constexpr int kAnchorColumn = 1;
+// 树/表节点列上的锚存取（UI-T36 修复：锚列＝行末隐藏列——makeTable 追加
+// 的空标题末列。原 kAnchorColumn=1 为单列树形态遗留：两列以上显示列的
+// 表格（区域/工况/必验）复用行装配时，锚规范文本覆盖第 1 显示列＝采样/
+// 节拍列 obj- 直出的根因；统一改锚列＝行列数-1，各行装配以空串占位末
+// 隐藏列〔makeRow/makeTableRow/renderTree 保证〕）。
+int anchorColumnOf(const QTreeWidgetItem* item)
+{
+    return item->columnCount() - 1;
+}
+
+/// 树节点类别角色（col0 UserRole——UI-T36 层级化后分组/条目/根的判别键；
+/// 值＝PanelTreeModel RequirementNodeKind 枚举 int 投影）。
+constexpr int kNodeKindRole = static_cast<int>(Qt::UserRole);
 
 void setNodeAnchor(QTreeWidgetItem* item, const std::optional<core::ObjectId>& oid)
 {
     // 规范文本承载（toCanonical——"obj-<32hex>"；nullopt→空串）。
-    item->setText(kAnchorColumn, oid.has_value()
+    item->setText(anchorColumnOf(item), oid.has_value()
                                      ? QString::fromStdString(oid.value().toCanonical())
                                      : QString());
 }
 
 std::optional<core::ObjectId> nodeAnchor(QTreeWidgetItem* item)
 {
-    const QString text = item->text(kAnchorColumn);
+    const QString text = item->text(anchorColumnOf(item));
     if (text.isEmpty()) {
         return std::nullopt;  // 无锚节点（分组/汇总行）——nullopt 不伪造
     }
@@ -76,10 +88,21 @@ QTreeWidget* makeTable(QWidget* parent, const QStringList& headers)
     return t;
 }
 
-// 两列行装配（显示列＋锚）。
+// 两列行装配（显示两列＋末隐藏锚列——UI-T36：行构造即含末隐藏列空串
+// 占位，锚写入不再覆盖显示文本列）。
 QTreeWidgetItem* makeRow(const QString& a, const QString& b, const std::optional<core::ObjectId>& anchor)
 {
-    auto* item = new QTreeWidgetItem(QStringList() << a << b);
+    auto* item = new QTreeWidgetItem(QStringList() << a << b << QString());
+    setNodeAnchor(item, anchor);
+    return item;
+}
+
+// 三显示列行装配（区域/工况表——显示三列＋末隐藏锚列；UI-T36 列补全：
+// 覆盖目标/适用范围列此前恒空）。
+QTreeWidgetItem* makeTableRow(const QString& a, const QString& b, const QString& c,
+                              const std::optional<core::ObjectId>& anchor)
+{
+    auto* item = new QTreeWidgetItem(QStringList() << a << b << c << QString());
     setNodeAnchor(item, anchor);
     return item;
 }
@@ -252,25 +275,15 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
 
 void RequirementsPanelWidget::buildTreePane(QWidget* left)
 {
-    // 左栏需求对象树（卡 §9.8 面板表第 1 行——两列：显示名＋隐藏锚）。
+    // 左栏需求树（卡 §9.8 面板表第 1 行）。UI-T36 层级化：需求工程单根
+    // →四分组（名称＋计数）→条目三级折叠形态（原"需求对象/需求集"双
+    // 冗余层级与自持导航 deprecated 横幅一并退役——横幅承载的迁移期
+    // 双形态并存自 WP-14-T10 起，UI-T36 起自持树升格为面板主导航呈现，
+    // 与共享项目树联动语义不变〔L-R1 双向〕）。
     auto* leftLayout = new QVBoxLayout(left);
 
-    // 自持导航 deprecated 标记（WP-14-T10——B1-SPEC §5.2 迁移期双形态
-    // 并存：共享工业项目树已承载本域导航，自持树标记 deprecated 但保留
-    // 可用，删除归 WP-24-T09；objectName 供 GUI 验证定位）。
-    // UI-T25 文案治理：呈现文本改经 UiText 键解析（panel.requirements.
-    // self-nav.note）——原字面量直出携带内部任务编号（WP-24-T09）与开发
-    // 术语（deprecated），属 UX-02 内部名泄漏（F-430/F-432 家族标签一族
-    // 消账）；编号与退役编排只留在本注释与设计文档，用户见工程化中文。
-    m_navDeprecationLabel = new QLabel(left);
-    m_navDeprecationLabel->setObjectName("requirementsNavDeprecationLabel");
-    m_navDeprecationLabel->setWordWrap(true);
-    m_navDeprecationLabel->setText(
-        QString::fromStdString(
-            ui::resolveText(ui::TextKey("panel.requirements.self-nav.note"))));
-    leftLayout->addWidget(m_navDeprecationLabel);
-
-    m_tree = makeTable(left, QStringList() << "需求对象");
+    m_tree = makeTable(left, QStringList() << "需求树");
+    m_tree->setRootIsDecorated(true);  // 层级折叠形态（分组节点的展开指示器）
     connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
     leftLayout->addWidget(m_tree);
@@ -289,9 +302,15 @@ void RequirementsPanelWidget::buildStationPage(QTabWidget* pages)
     // 对象生命周期工具行（UI-T30 B1——新增/复制/删除三键）。
     lay->addWidget(makeLifecycleBar(page, "points", WorkingSetMember::Points,
                                     QStringLiteral("工位")));
-    m_stationForm = new QFormLayout;
-    lay->addLayout(m_stationForm);
-    lay->addStretch(1);
+    // 属性表单滚动容器（UI-T36——工位字段多〔24 行投影〕，小窗/缩放下
+    // 不再截断；表与工具行不进滚动区）。
+    auto* scroll = new QScrollArea(page);
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    auto* formHost = new QWidget(scroll);
+    m_stationForm = new QFormLayout(formHost);
+    scroll->setWidget(formHost);
+    lay->addWidget(scroll, /*stretch=*/1);
     pages->addTab(page, "工位");
 }
 
@@ -307,14 +326,37 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
     // 对象生命周期工具行（UI-T30 B1）。
     lay->addWidget(makeLifecycleBar(page, "regions", WorkingSetMember::Regions,
                                     QStringLiteral("区域")));
-    m_regionTable = makeTable(page, QStringList() << "区域" << "采样" << "覆盖目标");
+    m_regionTable = makeTable(page, QStringList()
+                                      << QStringLiteral("区域名称")
+                                      << QStringLiteral("空间采样")
+                                      << QStringLiteral("覆盖目标"));
     m_regionTable->setObjectName(QStringLiteral("ird_req_region_table"));  // 验证定位锚
     connect(m_regionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
     lay->addWidget(m_regionTable);
-    m_regionForm = new QFormLayout;
-    lay->addLayout(m_regionForm);
+    // 属性表单滚动容器（UI-T36——同工位页；预览摘要留在滚动区外恒可见）。
+    auto* regionScroll = new QScrollArea(page);
+    regionScroll->setWidgetResizable(true);
+    regionScroll->setFrameShape(QFrame::NoFrame);
+    auto* regionFormHost = new QWidget(regionScroll);
+    // 表单域帮助（任务书 3——关键参数悬浮说明；字段级 tooltip 归检查器
+    // 行模型，此处给容器级业务释义）。
+    regionFormHost->setToolTip(QStringLiteral(
+        "区域＝三维作业边界包围盒：盒中心/盒尺寸（m）定义边界；空间采样＝"
+        "盒内按方法与步长离散生成的作业点阵；覆盖目标＝采样点需满足的"
+        "可达率/姿态达标下限"));
+    m_regionForm = new QFormLayout(regionFormHost);
+    regionScroll->setWidget(regionFormHost);
+    lay->addWidget(regionScroll, /*stretch=*/1);
+    // 表头帮助（UI-T36——列语义悬浮说明）。
+    m_regionTable->headerItem()->setToolTip(
+        0, QStringLiteral("区域显示名（业务命名，非内部标识）"));
+    m_regionTable->headerItem()->setToolTip(
+        1, QStringLiteral("包围盒内离散采样摘要（方法＋计数/间距）"));
+    m_regionTable->headerItem()->setToolTip(
+        2, QStringLiteral("位置/姿态覆盖率下限（P≥/O≥）"));
     m_regionPreviewLabel = new QLabel(page);
+    m_regionPreviewLabel->setWordWrap(true);
     lay->addWidget(m_regionPreviewLabel);
     pages->addTab(page, "区域");
 }
@@ -332,13 +374,29 @@ void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
     lay->addWidget(makeLifecycleBar(page, "conditions",
                                     WorkingSetMember::Conditions,
                                     QStringLiteral("工况")));
-    m_conditionTable = makeTable(page, QStringList() << "工况" << "节拍" << "适用范围");
+    m_conditionTable = makeTable(page, QStringList()
+                                        << QStringLiteral("工况")
+                                        << QStringLiteral("目标节拍")
+                                        << QStringLiteral("适用范围"));
     m_conditionTable->setObjectName(QStringLiteral("ird_req_condition_table"));  // 验证定位锚
     connect(m_conditionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
     lay->addWidget(m_conditionTable);
-    m_conditionForm = new QFormLayout;
-    lay->addLayout(m_conditionForm);
+    // 属性表单滚动容器（UI-T36——同工位页；必验清单留在滚动区外）。
+    auto* conditionScroll = new QScrollArea(page);
+    conditionScroll->setWidgetResizable(true);
+    conditionScroll->setFrameShape(QFrame::NoFrame);
+    auto* conditionFormHost = new QWidget(conditionScroll);
+    conditionFormHost->setToolTip(QStringLiteral(
+        "工况＝作业条件：目标节拍（s）、适用工位范围与必验要求——选中上方"
+        "工况行后在此编辑"));
+    m_conditionForm = new QFormLayout(conditionFormHost);
+    conditionScroll->setWidget(conditionFormHost);
+    lay->addWidget(conditionScroll, /*stretch=*/1);
+    m_conditionTable->headerItem()->setToolTip(
+        1, QStringLiteral("目标节拍（s；未设显示『未设』）"));
+    m_conditionTable->headerItem()->setToolTip(
+        2, QStringLiteral("适用的工位范围（全部工位/N 个工位/不适用）"));
     m_mustList = makeTable(page, QStringList() << "必验工况" << "必验");
     lay->addWidget(m_mustList);
     pages->addTab(page, "工况");
@@ -734,19 +792,29 @@ void RequirementsPanelWidget::focusObject(const std::optional<core::ObjectId>& o
         return;
     }
 
-    // 自持树滚动定位：线性扫描顶层行锚（renderTree 行序＝投影序——与
-    // treeRowIndexFor 同一线性语义；需求树无嵌套行）。命中＝置当前行
-    // （触发行选中→onTreeSelectionChanged→检查器重投影——L-R1 既有数据
-    // 流复用，零新增刷新路径）；未命中＝清除选中（对象已删除/他路编辑
-    // 后的漂移——不伪造定位）。
+    // 自持树滚动定位（UI-T36 层级化：递归行扫描——层级化后行序≠投影序，
+    // 深度优先遍历分组子树匹配锚；命中路径逐级展开保证可视）。命中＝置
+    // 当前行（触发行选中→onTreeSelectionChanged→检查器重投影——L-R1 既有
+    // 数据流复用，零新增刷新路径）；未命中＝清除选中（对象已删除/他路
+    // 编辑后的漂移——不伪造定位）。
     const QString anchorText = QString::fromStdString(oid.value().toCanonical());
-    QTreeWidgetItem* target = nullptr;
-    for (int i = 0; i < m_tree->topLevelItemCount(); ++i) {
-        if (m_tree->topLevelItem(i)->text(kAnchorColumn) == anchorText) {
-            target = m_tree->topLevelItem(i);
-            break;
+    const std::function<QTreeWidgetItem*(QTreeWidgetItem*)> findMatched =
+        [&](QTreeWidgetItem* parent) -> QTreeWidgetItem* {
+        for (int i = 0; i < parent->childCount(); ++i) {
+            QTreeWidgetItem* child = parent->child(i);
+            if (child->text(anchorColumnOf(child)) == anchorText) {
+                return child;
+            }
+            if (child->childCount() > 0) {
+                if (QTreeWidgetItem* hit = findMatched(child)) {
+                    child->setExpanded(true);  // 命中路径逐级展开（可视前提）
+                    return hit;
+                }
+            }
         }
-    }
+        return nullptr;
+    };
+    QTreeWidgetItem* target = findMatched(m_tree->invisibleRootItem());
     if (target == nullptr) {
         if (m_selection.select(std::nullopt)) {
             m_lastSelected.reset();
@@ -769,20 +837,50 @@ void RequirementsPanelWidget::focusObject(const std::optional<core::ObjectId>& o
 void RequirementsPanelWidget::renderTree(const RequirementWorkingSet& ws)
 {
     // UX-02 守卫在模型层（ensureNoInternalIdentity）——widget 只渲染行。
+    // UI-T36 层级化：模型层投影仍为平铺序（需求集→分组→条目），widget 层
+    // 重构为三级折叠树——需求工程单根→四分组（名称＋计数，分组节点无锚
+    // 不可选中定位）→条目（锚＝ObjectId）；默认展开根与分组（条目级折叠）。
     const std::vector<RequirementNode> nodes = buildRequirementTree(ws);
     m_tree->clear();
+    auto* root = new QTreeWidgetItem(
+        QStringList() << QStringLiteral("需求工程") << QString());
+    root->setData(0, kNodeKindRole,
+                  static_cast<int>(RequirementNodeKind::RequirementRoot));
+    m_tree->addTopLevelItem(root);
+    QTreeWidgetItem* group = nullptr;
     for (const RequirementNode& n : nodes) {
+        // 需求集根层级由"需求工程"承载（模型层 RequirementRoot 节点跳过）。
+        if (n.kind == RequirementNodeKind::RequirementRoot) {
+            continue;
+        }
+        const bool isGroup =
+            n.kind == RequirementNodeKind::PointsGroup
+            || n.kind == RequirementNodeKind::RegionsGroup
+            || n.kind == RequirementNodeKind::ConditionsGroup
+            || n.kind == RequirementNodeKind::PlansGroup;
+        if (isGroup) {
+            group = new QTreeWidgetItem(
+                QStringList() << QString::fromStdString(n.displayLabel)
+                              << QString());
+            group->setData(0, kNodeKindRole, static_cast<int>(n.kind));
+            group->setFlags(group->flags() & ~Qt::ItemIsEditable);
+            root->addChild(group);
+            group->setExpanded(true);  // 默认展开分组（条目级再折叠）
+            continue;
+        }
         auto* item = new QTreeWidgetItem(
-            QStringList() << QString::fromStdString(n.displayLabel));
+            QStringList() << QString::fromStdString(n.displayLabel) << QString());
         setNodeAnchor(item, n.objectId);
+        item->setData(0, kNodeKindRole, static_cast<int>(n.kind));
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-        m_tree->addTopLevelItem(item);
+        (group != nullptr ? group : root)->addChild(item);
         // 恢复选中锚（跨刷新保持——L-R1 会话态；仅条目级锚可恢复）。
         if (n.objectId.has_value() && m_lastSelected.has_value()
             && n.objectId.value() == m_lastSelected.value()) {
             item->setSelected(true);
         }
     }
+    root->setExpanded(true);
 }
 
 void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
@@ -835,16 +933,23 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
 {
     const std::optional<core::ObjectId> previousRegion =
         m_regionTable->currentItem() ? nodeAnchor(m_regionTable->currentItem()) : std::nullopt;
-    // 区域表（一区域一行——L-R1 行选中锚）。
+    // 区域表（一区域一行——L-R1 行选中锚）。UI-T36：三显示列补全
+    // （空间采样＝方法＋计数摘要、覆盖目标＝P≥/O≥ 阈值摘要——模型层
+    // regionRows 既有投影字段；内部 ObjectId 锚退居末隐藏列）。
     const std::vector<RegionRow> rows = regionRows(ws.regions.entries);
     m_regionTable->clear();
     for (const RegionRow& r : rows) {
-        auto* item = makeRow(QString::fromStdString(r.name),
-                             QString::fromStdString(r.samplingText), r.objectId);
+        auto* item = makeTableRow(QString::fromStdString(r.name),
+                                  QString::fromStdString(r.samplingText),
+                                  QString::fromStdString(r.coverageText),
+                                  r.objectId);
         m_regionTable->addTopLevelItem(item);
         if (previousRegion.has_value() && r.objectId == previousRegion.value()) {
             m_regionTable->setCurrentItem(item);
         }
+    }
+    for (int c = 0; c < 3; ++c) {
+        m_regionTable->resizeColumnToContents(c);  // 列宽随内容（长摘要不挤压）
     }
     // 区域检查器（选中区域行→regionFieldsFor；未选中＝空表单——不虚构）。
     while (m_regionForm->rowCount() > 0) {
@@ -924,13 +1029,19 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
     const std::vector<ConditionRow> rows = conditionRows(ws.conditions.entries);
     m_conditionTable->clear();
     for (const ConditionRow& r : rows) {
-        auto* item = makeRow(QString::fromStdString(r.name),
-                             QString::fromStdString(r.cycleText),
-                             r.objectId);
+        // UI-T36：三显示列补全（目标节拍＝数值 s/未设、适用范围＝三值
+        // 词表摘要——模型层 conditionRows 既有投影字段；锚退居末隐藏列）。
+        auto* item = makeTableRow(QString::fromStdString(r.name),
+                                  QString::fromStdString(r.cycleText),
+                                  QString::fromStdString(r.appliesToText),
+                                  r.objectId);
         m_conditionTable->addTopLevelItem(item);
         if (previousCondition.has_value() && r.objectId == previousCondition.value()) {
             m_conditionTable->setCurrentItem(item);
         }
+    }
+    for (int c = 0; c < 3; ++c) {
+        m_conditionTable->resizeColumnToContents(c);  // 列宽随内容（长摘要不挤压）
     }
     // 工况检查器（选中行→conditionFieldsFor）。
     while (m_conditionForm->rowCount() > 0) {
@@ -1083,9 +1194,34 @@ void RequirementsPanelWidget::updateTabHeaders()
 void RequirementsPanelWidget::onTreeSelectionChanged()
 {
     // L-R1 正向半区：树/区域表/工况表选中→会话态＋检查器重投影（零修订）。
+    // UI-T36：需求树分组/条目点击均联动右侧页签；分组/根节点无锚——仅切
+    // 页签，不清空既有选中锚（点分组＝浏览该类对象，不破坏当前编辑目标）。
     std::optional<core::ObjectId> anchor;
     if (QObject::sender() == m_tree && m_tree->currentItem() != nullptr) {
-        anchor = nodeAnchor(m_tree->currentItem());
+        QTreeWidgetItem* item = m_tree->currentItem();
+        using K = RequirementNodeKind;
+        const K kind = static_cast<K>(item->data(0, kNodeKindRole).toInt());
+        switch (kind) {
+        case K::Point:
+        case K::PointsGroup:
+            m_pages->setCurrentIndex(0);
+            break;
+        case K::Region:
+        case K::RegionsGroup:
+        case K::Plan:  // 计划＝区域采样派生面（联动区域页）
+            m_pages->setCurrentIndex(1);
+            break;
+        case K::Condition:
+        case K::ConditionsGroup:
+            m_pages->setCurrentIndex(2);
+            break;
+        default:  // 需求工程根——无页签语义
+            break;
+        }
+        if (item->text(anchorColumnOf(item)).isEmpty()) {
+            return;  // 分组/根节点（无锚）——页签已联动，选中锚保持
+        }
+        anchor = nodeAnchor(item);
     } else if (QObject::sender() == m_regionTable && m_regionTable->currentItem() != nullptr) {
         anchor = nodeAnchor(m_regionTable->currentItem());
     } else if (QObject::sender() == m_conditionTable

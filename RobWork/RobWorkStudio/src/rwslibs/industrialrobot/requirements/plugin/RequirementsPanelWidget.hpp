@@ -275,10 +275,8 @@ private:
     std::optional<core::ObjectId> m_lastSelected;  ///< 检查器当前选中锚（跨刷新保持）
 
     // ---- 控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
-    QTreeWidget* m_tree = nullptr;              ///< 左栏对象树（隐藏第 1 列＝锚规范文本）
-    QLabel* m_navDeprecationLabel = nullptr;    ///< 左栏自持导航 deprecated 标记
-                                                ///< （B1-SPEC §5.2——标记保留可用；
-                                                ///< objectName 锚供验证定位）
+    QTreeWidget* m_tree = nullptr;              ///< 左栏需求树（层级＝需求工程根→
+                                                ///< 四分组→条目；末隐藏列＝锚规范文本）
     QTabWidget* m_pages = nullptr;              ///< 右栏四页面容器（工位/区域/工况/校验）
     QFormLayout* m_stationForm = nullptr;       ///< 工位检查器表单（行＝StationFieldRow）
     std::vector<QLineEdit*> m_stationEditors;   ///< 工位编辑行（与投影行序对应——L-R2 提交面）
