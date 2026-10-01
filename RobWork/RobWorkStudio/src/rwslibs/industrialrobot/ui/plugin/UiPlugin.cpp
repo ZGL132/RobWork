@@ -66,6 +66,7 @@
 #include <sdurws/ird/project/QueryPort.hpp>      // project::IProjectQueryPort/RevisionView（UI-T29 闭包数据源）
 #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
 #include <sdurws/ird/requirements/ObjectTypes.hpp>  // requirements::kReqSetObjectType（根回填 token——公共头常量）
+#include <sdurws/ird/requirements/RevisionSyncPolicy.hpp>  // planExternalRevisionSync（UI-T35 P2 外部修订同步三分岔判定——纯函数）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // PluginUiDescriptor/CommandDescriptor 完整类型（UI-T23 三域命令入册的遍历面）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（buildDraftCommand 调用面）
@@ -551,8 +552,9 @@ void IrdWorkbenchHostPlugin::initialize()
             std::shared_ptr<app::StorePortAdapter> kept = adapter;
             m_lastStoreAdapter = std::move(adapter);
             // 需求域会话接线（UI-T29）：项目打开成功即尝试 HEAD 闭包载入
-            //（含根→活会话；无根→诚实空态——wireRequirementsSession 内
-            // 二态裁决）。回调在 UI 线程（打开协议同线程）。
+            //（含根→活会话；无根→内存空根初始化〔UI-T35 P1-1——新建项目
+            // 从零可编辑〕——wireRequirementsSession 内三态裁决）。回调在
+            // UI 线程（打开协议同线程）。
             if (kept != nullptr) {
                 wireRequirementsSession(*kept);
             }
@@ -1921,7 +1923,9 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateSaveProject(
 /**
  * @brief 需求域外部修订同步（UI-T35 P2——RevisionCommitted 事件应答）。
  *
- * 语义分岔（编辑器 loadBaseline 无 rebase——STALE 诚实边界）：
+ * 判定与执行分离：三分岔判定归域侧纯函数 planExternalRevisionSync
+ * （RevisionSyncPolicy.hpp——具名 UT 逐分支自证），本方法只做前置守卫与
+ * 动作执行。语义分岔（编辑器 loadBaseline 无 rebase——STALE 诚实边界）：
  *   - 事件修订＝会话当前基线（自身 draft.apply 回执）→跳过（已同步）；
  *   - 零未应用编辑→从新 HEAD 重导线（wireRequirementsSession——锚/根
  *     刷新，草稿零丢失）；外部/他域修订场景的自动跟进；
@@ -1936,11 +1940,16 @@ void IrdWorkbenchHostPlugin::onRequirementExternalRevision(
         return;  // 无会话/装配缺席——无同步面
     }
     auto& requirements = *m_domains->requirements;
-    if (requirements.sessionBaseRevision().has_value()
-        && *requirements.sessionBaseRevision() == revision) {
+    // 三分岔判定（纯函数——判定输入＝门面基线直投值＋事件修订＋未应用
+    // 编辑数；基线 nullopt 的防御形态在策略内与"零编辑"同路径）。
+    const requirements::ExternalRevisionSync action =
+        requirements::planExternalRevisionSync(
+            requirements.sessionBaseRevision(), revision,
+            m_requirementsEditor.draftStatus().edits);
+    if (action == requirements::ExternalRevisionSync::SkipSelfApplied) {
         return;  // 自身应用回执——已同步（noteAppliedRevision 锚前移）
     }
-    if (m_requirementsEditor.draftStatus().edits == 0) {
+    if (action == requirements::ExternalRevisionSync::RewireFromHead) {
         wireRequirementsSession(*m_lastStoreAdapter);  // 零编辑——安全重导线
         if (m_diag.pipeline != nullptr) {
             m_diag.pipeline->logDev(kPluginDevChannel,
@@ -1948,6 +1957,7 @@ void IrdWorkbenchHostPlugin::onRequirementExternalRevision(
         }
         return;
     }
+    // StaleNotice：草稿基于旧基线——不重载（防丢草稿），状态栏提示。
     if (m_hostStatusBar != nullptr) {
         m_hostStatusBar->showMessage(
             QString::fromUtf8("项目出现新修订——需求草稿基于旧修订，"
@@ -2082,10 +2092,13 @@ private:
 /**
  * @brief 需求域会话接线（UI-T29——存储成功捕获回调）。
  *
- * 会话数据面：HEAD 闭包载入基线——根 req-set 在册→编辑器载入成功→
- * attachEditor＋bindSessionAnchor＋bindReadiness＋根身份回填（四集合
- * 入树/表的数据前提）；闭包无根（全新工程）→attachEditor(nullptr)
- * 诚实空态（树供给空集合法二态——不虚构会话）。
+ * 会话数据面三态（UI-T35 P1-1 整改后口径）：HEAD 闭包含根 req-set→
+ * 编辑器载入成功→attachEditor＋bindSessionAnchor＋根身份回填（objectRefs
+ * 扫描）＋bindReadiness——全功能会话；闭包无根（全新工程）→内存空根
+ * 闭包（EmptyRequirementsClosure）初始化编辑器会话——生命周期编辑可用，
+ * 首应用时根/集合槽按 allocateNew 由 project 取号；内存空根载入失败
+ * （域侧缺陷，非用户路径）→attachEditor(nullptr) 诚实空态回退＋Dev
+ * 留痕（不吞错）。
  *
  * 线程：存储捕获回调在 UI 线程（打开协议同线程）——模块/面板同约束。
  */
@@ -3252,6 +3265,51 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                     check(resolvedButtons == 9,
                           "command-buttons-count=9 (cur="
                               + std::to_string(resolvedButtons) + ")");
+                    // UI-T35 P1-3 撤牌断言（契约验收③——"七条可用两条禁
+                    // 用"）：撤牌的可观测面＝禁用原因键分岔。冒烟场景未
+                    // 打开项目，九条 Project 作用域命令统一 disabled——其
+                    // 中已装配七条走缺省使能规则（reason.no-project——
+                    // PM-10"禁用＋说明"，开项目后即可用），撤牌两条走注
+                    // 册期禁用谓词（cmd.flow-not-assembled.reason——任何
+                    // 上下文恒禁用，UI-T27 P0-4 语义）。断言：原因键与装
+                    // 配集合逐一对照（7×no-project＋2×not-assembled）＋命
+                    // 令条按钮呈现面统一不可达（防"可点即败"回归）。
+                    int noProjectCount = 0;
+                    int notAssembledCount = 0;
+                    for (const ui::CommandView& view : reqCommands) {
+                        // 期望原因键＝装配集合（isAssembledRequirementCommand
+                        // ——撤牌后恰七条；与宿主登记 entry.assembled 同一
+                        // 判定源，双面互证）。
+                        const bool assembled =
+                            isAssembledRequirementCommand(std::string(view.id));
+                        const std::string reasonKey(view.disableReasonKey);
+                        if (assembled) {
+                            check(reasonKey == "reason.no-project",
+                                  std::string("button-disable-reason-default:")
+                                      + std::string(view.id) + "=" + reasonKey);
+                            ++noProjectCount;
+                        } else {
+                            check(reasonKey == "cmd.flow-not-assembled.reason",
+                                  std::string("button-disable-reason-not-assembled:")
+                                      + std::string(view.id) + "=" + reasonKey);
+                            ++notAssembledCount;
+                        }
+                        // 呈现面核对：命令条同名按钮（UiText 标题匹配——
+                        // 上一循环已验证文案唯一性）无项目态不可达。
+                        for (const QPushButton* btn : buttons) {
+                            if (btn->text().toStdString()
+                                == ui::resolveText(view.titleKey)) {
+                                check(!btn->isEnabled(),
+                                      std::string("button-widget-disabled-no-project:")
+                                          + std::string(view.id));
+                                break;
+                            }
+                        }
+                    }
+                    check(noProjectCount == 7 && notAssembledCount == 2,
+                          "requirements-assembled-split=7/2 (cur="
+                              + std::to_string(noProjectCount) + "/"
+                              + std::to_string(notAssembledCount) + ")");
                     // 无重叠断言（两两矩形求交——面积＞0 即重叠；同排/换行
                     // 两种形态都覆盖——当前宽度即换行形态）。
                     int overlaps = 0;

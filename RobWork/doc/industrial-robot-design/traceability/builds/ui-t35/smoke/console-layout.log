@@ -42,6 +42,25 @@
 [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.apply-template
 [ird-ui-smoke-layout] pass button-title-via-uitext:requirements.regenerate-linked
 [ird-ui-smoke-layout] pass command-buttons-count=9 (cur=9)
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.import-csv=reason.no-project
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.import-csv
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.import-json=reason.no-project
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.import-json
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.export-copy=reason.no-project
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.export-copy
+[ird-ui-smoke-layout] pass button-disable-reason-not-assembled:requirements.capture-tcp=cmd.flow-not-assembled.reason
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.capture-tcp
+[ird-ui-smoke-layout] pass button-disable-reason-not-assembled:requirements.pick-feature=cmd.flow-not-assembled.reason
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.pick-feature
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.mirror-stations=reason.no-project
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.mirror-stations
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.create-array=reason.no-project
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.create-array
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.apply-template=reason.no-project
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.apply-template
+[ird-ui-smoke-layout] pass button-disable-reason-default:requirements.regenerate-linked=reason.no-project
+[ird-ui-smoke-layout] pass button-widget-disabled-no-project:requirements.regenerate-linked
+[ird-ui-smoke-layout] pass requirements-assembled-split=7/2 (cur=7/2)
 [ird-ui-smoke-layout] pass buttons-no-overlap (cur=0)
 [ird-ui-smoke-layout] snap 5-requirements-narrow.png
 [ird-ui-smoke-layout] pass buttons-no-overlap-narrow (cur=0)
