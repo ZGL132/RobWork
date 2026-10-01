@@ -1,22 +1,35 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "idle",
+  "phase": "implementing",
   "tickCount": 436,
-  "currentTask": null,
-  "branch": null,
-  "base": null,
+  "currentTask": "UI-T32",
+  "branch": "ui-t32",
+  "base": "cdd23a8784c5fe5ef2ecce7e3c7d6299aaebcb17",
   "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
-  "lastFailureRecord": null,
-  "run": null,
+  "lastFailureRecord": {
+    "branch": "acc/UI-T32/1",
+    "path": "traceability/acceptance/UI-T32-20261001.md",
+    "commit": "9566e6f81c2e9a82482b18ab5e74b837fe90fec1",
+    "attempt": 1
+  },
+  "run": {
+    "task": "UI-T32",
+    "runId": "tick-5a3b8735-ui-t32-fix1",
+    "kind": "implement",
+    "workerId": "8afcafbe-fc49-46f2-8eb6-efbd72c7bf0c",
+    "leaseMinutes": 120,
+    "startedAt": "2026-10-01T09:47:00+08:00",
+    "leaseExpiresAt": "2026-10-01T11:47:00+08:00"
+  },
   "attempts": {
     "implement": 0,
-    "fix": 0,
-    "accept": 0
+    "fix": 1,
+    "accept": 1
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T06:24:20+08:00",
+    "updatedAt": "2026-10-01T09:47:07+08:00",
     "ticksNoProgress": 0
   },
   "history": [

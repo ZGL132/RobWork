@@ -9,6 +9,7 @@
  */
 
 #include "RequirementsPanelWidget.hpp"
+#include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次）
 
 #include <QFormLayout>
 #include <QFrame>
@@ -1311,6 +1312,18 @@ void RequirementsPanelWidget::onBatchWarning(const core::DiagnosticRecord& warni
     m_statusLine->setText(QString("批次警告（%1）：")
                               .arg(QString::fromStdString(warning.code))
                           + QString::fromStdString(warning.cause));
+}
+
+bool RequirementsPanelWidget::executeDomainCommand(const std::string& commandId)
+{
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr) {
+        m_statusLine->setText(QStringLiteral("未执行：未打开需求会话（该命令需要项目会话）"));
+        return false;
+    }
+    // flows 装配层（对话框/表单＋域纯函数）；sink＝本面板（L-R2 分流）。
+    return executeRequirementCommand(commandId, *this, *editor, *this);
 }
 
 }  // namespace sdurws::ird::requirements

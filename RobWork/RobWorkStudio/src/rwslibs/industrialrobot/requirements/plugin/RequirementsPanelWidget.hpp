@@ -33,6 +33,7 @@
 #include <optional>
 
 #include <QFrame>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QPushButton>
@@ -145,6 +146,29 @@ public:
      *            定位）；零修订（KIN-06/AT-04——选中是会话态）
      */
     void focusObject(const std::optional<core::ObjectId>& oid);
+
+    /**
+     * @brief 当前会话选中锚（UI-T32 命令流程的源条目定位——镜像/阵列/
+     *        重生成按选中条目取源；无选中＝nullopt）。
+     */
+    std::optional<core::ObjectId> selectedObjectId() const
+    {
+        return m_lastSelected;
+    }
+
+    /// 状态行反馈出口（命令流程的就地中文呈现——UX-02/03）。
+    void showCommandFeedback(const QString& text) { m_statusLine->setText(text); }
+
+    /// 状态行只读回取（gui 用例断言面——降级/错误文案呈现）。
+    QString showCommandFeedbackText() const { return m_statusLine->text(); }
+
+    /**
+     * @brief 执行一条域命令的 UI 流程（UI-T32——命令路由的执行端：经
+     *        RequirementsCommandFlows 装配对话框/表单与域纯函数；无会话
+     *        ＝就地提示不虚构）。
+     * @return 流程是否完成（应用/用户取消＝true；失败/未知命令＝false）
+     */
+    bool executeDomainCommand(const std::string& commandId);
 
     // ---- IRequirementEditSink（L-R2 分流回调——widget 层落点）------------
 

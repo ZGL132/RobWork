@@ -223,6 +223,15 @@ RequirementsPluginAssembly createRequirementsPluginAssembly()
     return result;
 }
 
+bool RequirementsPluginAssembly::executeDomainCommand(const std::string& commandId)
+{
+    if (m_impl != nullptr) {
+        return m_impl->executeDomainCommand(commandId);
+    }
+    return false;
+}
+
 }  // namespace requirements
+
 }  // namespace ird
 }  // namespace sdurws

@@ -595,3 +595,251 @@ TEST_F(RequirementsSessionGuiTest, FieldEditing_ReadOnlyGate_UI_T31)
     }
     m_panel->setWritable(true);  // 夹具复位
 }
+
+// =====================================================================
+// UI-T32 C 批次九命令流程（返工测试缝——CommandDialogHost 预置应答替身；
+// attempt1 fail B-1 的补验面：每命令正/反例经真实 flows 编排＋域裁决）。
+// =====================================================================
+
+#include <QTemporaryDir>
+#include <QDir>
+#include "plugin/RequirementsCommandFlows.hpp"  // executeRequirementCommand/host 注入缝
+
+namespace {
+
+/// 预置应答替身（按 flows 调用序回放应答——非模态）。
+class FakeDialogHost final : public requirements::CommandDialogHost {
+public:
+    std::optional<QString> savePath;             ///< 导出应答
+    std::optional<QString> openPath;             ///< 导入应答
+    std::optional<int> item;                     ///< 条目选择应答
+    bool templateOk = true;                      ///< 模板表单确认
+    bool arrayOk = true;                         ///< 阵列表单确认
+    int arrayCount = 3;                          ///< 阵列数量应答
+    double arraySpacing = 0.5;                   ///< 阵列间距应答
+    bool importConfirmed = true;                 ///< 导入确认应答
+    requirements::CommandDialogHost::RegenerateAction action =
+        requirements::CommandDialogHost::RegenerateAction::Cancel;
+
+    std::optional<QString> saveFilePath(const QString&, const QString&,
+                                        const QString&) override
+    {
+        return savePath;
+    }
+    std::optional<QString> openFilePath(const QString&, const QString&) override
+    {
+        return openPath;
+    }
+    std::optional<int> chooseItem(const QString&, const QString&,
+                                  const QStringList&) override
+    {
+        return item;
+    }
+    bool editTemplateParams(requirements::TemplateParams& params) override
+    {
+        // 预置改动：1×2 网格（黄金默认的确定子集——用例断言可预期）。
+        params.countX = 1;
+        params.countY = 2;
+        return templateOk;
+    }
+    bool editArrayParams(int& count, double& spacing) override
+    {
+        count = arrayCount;
+        spacing = arraySpacing;
+        return arrayOk;
+    }
+    bool confirmImport(const QString&) override { return importConfirmed; }
+    requirements::CommandDialogHost::RegenerateAction chooseRegenerateAction() override
+    {
+        return action;
+    }
+};
+
+}  // namespace
+
+TEST_F(RequirementsSessionGuiTest, CommandFlows_TemplateMirrorArray_UI_T32)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    using namespace requirements;
+
+    // ① 模板：预置 1×2 → 应用后条目 +2 且带生成溯源。
+    FakeDialogHost host;
+    const std::size_t before = m_editor.workingSet().points.entries.size();
+    ASSERT_TRUE(executeRequirementCommand("requirements.apply-template", *m_panel,
+                                          m_editor, *m_panel, host));
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), before + 2);
+    int withGeneration = 0;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.generation.has_value()) { ++withGeneration; }
+    }
+    EXPECT_GE(withGeneration, 2) << "模板生成条目缺溯源（GenerationProvenance）";
+
+    // ② 镜像：选中 P1（1,2,3）→ YZ 面（X=0——法向 X）→ 反射 x 取反。
+    const core::ObjectId p1 = [this] {
+        for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+            if (p.name == "P1") { return p.objectId; }
+        }
+        return m_editor.workingSet().points.entries.front().objectId;
+    }();
+    m_panel->focusObject(p1);
+    host.item = 0;  // YZ 面
+    const std::size_t mid = m_editor.workingSet().points.entries.size();
+    ASSERT_TRUE(executeRequirementCommand("requirements.mirror-stations", *m_panel,
+                                          m_editor, *m_panel, host));
+    ASSERT_EQ(m_editor.workingSet().points.entries.size(), mid + 1);
+    bool mirroredFound = false;
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.generation.has_value()
+            && p.pose.position.value()[0] == -1.0) {
+            mirroredFound = true;  // P1 x=1 → 镜像 -1（YZ 面反射）
+        }
+    }
+    EXPECT_TRUE(mirroredFound) << "镜像条目位置未按面反射";
+    // 注：批量应用后的树重选异常（行点击不落选中锚）另立 F-445 登记——
+    // 阵列用例以净夹具验证（CommandFlows_CreateArray_UI_T32）。
+}
+
+/**
+ * @brief UI-T32 阵列命令（净夹具——选中路径与 T29 focusObject 同型）。
+ */
+TEST_F(RequirementsSessionGuiTest, CommandFlows_CreateArray_UI_T32)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    using namespace requirements;
+
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    FakeDialogHost host;
+    const core::ObjectId p1 = m_editor.workingSet().points.entries.front().objectId;
+    m_panel->focusObject(p1);
+    ASSERT_TRUE(m_panel->selectedObjectId().has_value());
+
+    // ③ 阵列（Linear）：数量 3 → +3。源＝用户路径选中 P1（点击树行——
+    // 与用户交互同路；批量应用后树重建清锚，重选走行点击而非 focusObject
+    // 的幂等短路分支）。
+    {
+        const QString want = QString::fromStdString(p1.toCanonical());
+        QTreeWidget* tree = nullptr;
+        for (QTreeWidget* t : m_panel->findChildren<QTreeWidget*>()) {
+            if (t->columnCount() >= 2 && t->objectName().isEmpty()
+                && t->topLevelItemCount() > 0) {
+                tree = t;  // 左栏需求对象树（页签表均有 objectName 锚）
+                break;
+            }
+        }
+        ASSERT_NE(tree, nullptr);
+        bool rowFound = false;
+        for (int i = 0; i < tree->topLevelItemCount(); ++i) {
+            if (tree->topLevelItem(i)->text(1) == want) {
+                tree->setCurrentItem(tree->topLevelItem(i));
+                rowFound = true;
+                break;
+            }
+        }
+        ASSERT_TRUE(rowFound) << "树中无 P1 行（锚不匹配）";
+        ASSERT_TRUE(m_panel->selectedObjectId().has_value())
+            << "行点击后选中锚仍空";
+    }
+    const std::size_t preArray = m_editor.workingSet().points.entries.size();
+    host.item = 0;  // 线性构型（chooseItem 应答——净夹具默认 nullopt＝取消）
+    const bool arrayOk = executeRequirementCommand("requirements.create-array", *m_panel,
+                                                   m_editor, *m_panel, host);
+    ASSERT_TRUE(arrayOk) << m_panel->showCommandFeedbackText().toStdString();
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), preArray + 3);
+}
+
+TEST_F(RequirementsSessionGuiTest, CommandFlows_ExportCopy_UI_T32)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    using namespace requirements;
+
+    // 导出副本：替身路径＝临时文件 → 应用 → 文件真实存在且非空（域侧
+    // 原子写实证——ExporterCopyView 同语义）。
+    FakeDialogHost host;
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString path = QDir(dir.path()).filePath(QStringLiteral("copy.requirements.json"));
+    host.savePath = path;
+    ASSERT_TRUE(executeRequirementCommand("requirements.export-copy", *m_panel,
+                                          m_editor, *m_panel, host));
+    QFile f(path);
+    ASSERT_TRUE(f.exists()) << "导出文件未落盘";
+    ASSERT_TRUE(f.open(QIODevice::ReadOnly));
+    EXPECT_GT(f.size(), qint64{0}) << "导出文件为空";
+}
+
+TEST_F(RequirementsSessionGuiTest, CommandFlows_ImportCsvPartial_UI_T32)
+{
+    IRD_TEST_INFO("AT-02", {}, std::nullopt);
+    using namespace requirements;
+
+    // 导入 CSV（部分成功）：两行合法＋一行坏数值（x 非 double）→确认→
+    // 正确行 +2、错误行 1 跳过（行级错误 AT-02 语义）。
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString path = QDir(dir.path()).filePath(QStringLiteral("in.csv"));
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly | QIODevice::Text));
+    f.write("id,name,x,y,z\n"
+            "s1,工位一,1.0,2.0,3.0\n"
+            "s2,工位二,4.0,5.0,6.0\n"
+            "s3,坏行,abc,0,0\n");
+    f.close();
+
+    FakeDialogHost host;
+    host.openPath = path;
+    host.importConfirmed = true;
+    const std::size_t before = m_editor.workingSet().points.entries.size();
+    const bool importOk = executeRequirementCommand("requirements.import-csv", *m_panel,
+                                                    m_editor, *m_panel, host);
+    ASSERT_TRUE(importOk) << m_panel->showCommandFeedbackText().toStdString();
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), before + 2)
+        << m_panel->showCommandFeedbackText().toStdString()
+        << "（部分成功语义：正确行应 +2、坏行跳过）";
+
+    // 反例：坏结构（无表头行）——结构级拒绝（false＋就地反馈）。
+    const QString badPath = QDir(dir.path()).filePath(QStringLiteral("bad.csv"));
+    QFile bf(badPath);
+    ASSERT_TRUE(bf.open(QIODevice::WriteOnly | QIODevice::Text));
+    bf.write("不是表头也没数据意义的单列\n1,2\n");
+    bf.close();
+    host.openPath = badPath;
+    const std::size_t mid = m_editor.workingSet().points.entries.size();
+    EXPECT_FALSE(executeRequirementCommand("requirements.import-csv", *m_panel,
+                                           m_editor, *m_panel, host))
+        << "结构级拒绝应返回 false";
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), mid);
+}
+
+TEST_F(RequirementsSessionGuiTest, CommandFlows_JsonAndDegrades_UI_T32)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    using namespace requirements;
+
+    // JSON 结构级反例：坏字节 → false＋零写入。
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString path = QDir(dir.path()).filePath(QStringLiteral("bad.json"));
+    QFile f(path);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.write("{ not json");
+    f.close();
+    FakeDialogHost host;
+    host.openPath = path;
+    const std::size_t before = m_editor.workingSet().points.entries.size();
+    EXPECT_FALSE(executeRequirementCommand("requirements.import-json", *m_panel,
+                                           m_editor, *m_panel, host));
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), before);
+
+    // 捕获/拾取降级：false＋引导文案（不伪造执行——knownPitfalls 4/5）。
+    EXPECT_FALSE(executeRequirementCommand("requirements.capture-tcp", *m_panel,
+                                           m_editor, *m_panel, host));
+    EXPECT_TRUE(m_panel->showCommandFeedbackText().contains(
+        QStringLiteral("后续版本提供")))
+        << "捕获降级引导文案缺失";
+    EXPECT_FALSE(executeRequirementCommand("requirements.pick-feature", *m_panel,
+                                           m_editor, *m_panel, host));
+    EXPECT_TRUE(m_panel->showCommandFeedbackText().contains(
+        QStringLiteral("三维交互")))
+        << "拾取壳引导文案缺失";
+}
+

@@ -149,6 +149,16 @@ public:
     void setPostEditAction(PostEditAction action);
 
     /**
+     * @brief 执行一条域命令的 UI 流程（UI-T32 C 批次——宿主 handler 经
+     *        门面调用；转发面板 executeDomainCommand。命令路由唯一：宿主
+     *        submitCommand→handler→本出口→面板 flows）。
+     *
+     * @param commandId [in] 命令 id（九条词表）
+     * @return 流程完成与否（面板缺位/无会话＝false＋面板状态行不可达时静默）
+     */
+    bool executeDomainCommand(const std::string& commandId);
+
+    /**
      * @brief 注入需求编辑器（草稿唯一写目标与工作集权威——装配层注入；
      *        本模块零工作集副本，一切读取现取）。
      *
