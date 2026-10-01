@@ -1,6 +1,6 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "idle",
+  "phase": "awaiting_acceptance",
   "tickCount": 459,
   "currentTask": null,
   "branch": null,
