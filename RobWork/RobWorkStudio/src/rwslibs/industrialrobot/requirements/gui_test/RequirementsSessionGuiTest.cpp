@@ -28,6 +28,9 @@
 #include <QScrollArea>
 #include <QTabWidget>
 #include <QTreeWidget>
+#include <QWidget>
+
+#include <sdurws/ird/ui/FlowLayout.hpp>  // 边距耦合半区（UI-T36 G-1 守卫重构——公共头 R-2 合规）
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
@@ -1166,11 +1169,40 @@ TEST_F(RequirementsSessionGuiTest, TreeHierarchy_GroupsAndTabLinkage_UI_T36)
         << "focusObject 未命中嵌套条目（递归定位断链）";
 }
 
-/// 截断修复防回归（FlowLayout 边距对称性）：面板显示后生命周期按钮的
-/// 实际高不得小于其建议高（宿主控件高度系统性偏短的容器裁切形态）。
+/// 截断修复防回归（FlowLayout 边距对称性），两半区（UI-T36 验收 attempt1
+/// G-1 守卫重构——原整端到端半区对边距回归变异不敏感：夹具宿主最低高经
+/// 既有 minimumSize 边距叠加保护＋父布局余量，720×640/300×200 双场景均
+/// 恒满高，无法感知协商缺边距的回归）：
+/// ①边距耦合半区（变异敏感面）：裸宿主＋FlowLayout，contentsMargins 从
+///   0 → 上下各 9px 时宿主 sizeHint 高度增量应恰为 18——尺寸协商必须
+///   包含上下边距（与 setGeometry 按 contentsRect 扣边距落位对称；协商
+///   缺边距＝截断根因形态，增量退化为 0，本断言立即翻红）；
+/// ②端到端半区（集成面）：面板显示后生命周期按钮实际高≥建议高（满高
+///   呈现的最终语义锚——保留 attempt1 既有断言）。
 TEST_F(RequirementsSessionGuiTest, LifecycleButton_NoVerticalClipping_UI_T36)
 {
     IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+
+    // 半区①：边距耦合性。9px＝Windows 样式布局边距量级（生产面
+    // FlowLayout 未显式 setContentsMargins——QLayout 默认取样式
+    // PM_Layout*Margin，实测定值 9,9，见 acc/ui-t36/1 验收记录探针）。
+    {
+        QWidget scratchHost;
+        auto* flow =
+            new ui::FlowLayout(&scratchHost, /*hSpacing=*/4, /*vSpacing=*/2);
+        QPushButton probe(QStringLiteral("PROBE"));
+        flow->addWidget(&probe);
+        flow->setContentsMargins(0, 0, 0, 0);
+        const int noMarginHint = scratchHost.sizeHint().height();
+        flow->setContentsMargins(0, 9, 0, 9);
+        const int withMarginHint = scratchHost.sizeHint().height();
+        EXPECT_EQ(withMarginHint - noMarginHint, 18)
+            << "FlowLayout 尺寸协商未耦合 contentsMargins 上下边距（截断"
+               "根因回归——noMargin="
+            << noMarginHint << " withMargin=" << withMarginHint << "）";
+    }
+
+    // 半区②：端到端满高（保留——面板真实宿主链的最终语义锚）。
     m_panel->resize(720, 640);
     m_panel->show();
     QApplication::processEvents();

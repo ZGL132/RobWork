@@ -22,6 +22,10 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.hpp",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/units/requirements.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
@@ -32,8 +36,12 @@
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
     "RobWork/RobWork/**",
     "RobWork/RobWorkSim/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/app/**",
@@ -69,5 +77,5 @@
     "按钮截断修复：根因实测（探针断言按钮实际高≥sizeHint）＋修复＋防回归 gui 断言",
     "回归门禁：双模式构建零错误；ird_gates 归一零新增；ctest 全单元全绿（含新增用例）＋冒烟双场景＋validate-docs；留痕 traceability/builds/ui-t36/"
   ],
-  "note": "立项来源：所有者 2026-10-01 需求界面 UI/UX 任务书（四图实证：采样/节拍列 obj- 直出、左栏扁平树＋废弃横幅、工况页信息闭环、按钮截断/遮挡穿透、长表单无滚动）。任务书第 1②遮挡穿透证据不足静态定位——登记 F-449 观察项待复现；第 4 工况编辑表单主线已有（UI-T31 conditionFieldsFor 页签内投影）本批仅核验＋可读化；三维联动归 UI-T33/D 批次不变。需求语义零变化。"
+  "note": "立项来源：所有者 2026-10-01 需求界面 UI/UX 任务书（四图实证：采样/节拍列 obj- 直出、左栏扁平树＋废弃横幅、工况页信息闭环、按钮截断/遮挡穿透、长表单无滚动）。任务书第 1②遮挡穿透证据不足静态定位——登记 F-449 观察项待复现；第 4 工况编辑表单主线已有（UI-T31 conditionFieldsFor 页签内投影）本批仅核验＋可读化；三维联动归 UI-T33/D 批次不变。需求语义零变化。【契约 v1.1 范围修正（2026-10-01，验收 attempt1 fail B-1 返工——UI-T27 v1.1/UI-T32 v1.2 先例同款）】allowedFiles 增补 modeling/plugin 与 kinematics/plugin 四件精确文件（三域自持导航横幅退役的必然落点——knownPitfalls 已预告波及面但初版 allowedFiles/forbiddenFiles 未同步，立项登记缺口）；forbiddenFiles 两域全域条目收窄为 include/src/test 三面（保住域计算面禁改本意，plugin 呈现面交 allowedFiles 精确放行）。【attempt1 建议级随返工闭环】G-1（4.11④——LifecycleButton_NoVerticalClipping_UI_T36 对边距回归变异存活：夹具宿主最低高含既有 minimumSize 边距叠加＋父布局余量，守卫场景不敏感）→ 守卫补边距耦合断言（setContentsMargins 0→9/9 的 sizeHint 增量恰 18px——协商缺边距即翻红）；G-2（修复前探针数据未留痕）→ findings.json F-451 登记实测方法与数据（attempt1 验收记录 M2 探针：contentsMargins=9,9 实测＋修复后 geometry-report 满高）。记录：traceability/acceptance/UI-T36-20261001.md（acc/ui-t36/1@a0fdc2b4）。"
 }

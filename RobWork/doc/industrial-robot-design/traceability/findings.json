@@ -4469,6 +4469,26 @@
       "title": "疑似界面遮挡穿透：截图显示窗口缩放/切换时左栏与其他浮动面板存在 z-order 错乱/互相遮挡（静态代码审查未定位到绝对坐标定位或布局越权——各面板均走布局管理器；证据不足静态无法复现定位）。",
       "owner": "UI 面板批次（待所有者补充稳定复现步骤〔窗口操作序列/Dock 状态〕后专项处置；UI-T36 契约 knownPitfalls 登记为观察项不阻塞其余各项）",
       "resolution": "稳定复现步骤补齐后立项核查（嫌疑面：QDockWidget 拓扑交互/悬浮 Dock 重绘）；本条为诚实登记防丢失。编号顺延自 F-448。"
+    },
+    {
+      "id": "F-450",
+      "source": "UI-T36 验收 attempt1（acc/ui-t36/1@a0fdc2b4，4.11④ 测试强度——G-1 建议级转登）：LifecycleButton_NoVerticalClipping_UI_T36 对边距回归变异存活。",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "截断防回归守卫对修复点变异不敏感：FlowLayout 边距叠加中和变异（sizeHint/heightForWidth 去 +margins）下，720×640 与 300×200 双场景按钮均满高 25/25——夹具宿主最低高经既有 minimumSize 边距叠加保护＋父布局余量，端到端断言感知不到协商缺边距。",
+      "owner": "UI-T36 返工轮（attempt2 验证关闭：守卫补边距耦合断言——setContentsMargins 0→9/9 的 sizeHint 增量恰 18px，协商缺边距即翻红；冷树 M2 重注变异实测翻红后关闭）",
+      "resolution": "返工提交重构守卫为两半区（耦合半区＋端到端半区）；修复本身实效已证（contentsMargins=9,9 实测非零＋修复后 geometry-report 按钮满高）。编号顺延自 F-449。"
+    },
+    {
+      "id": "F-451",
+      "source": "UI-T36 验收 attempt1（acc/ui-t36/1@a0fdc2b4，4.4 证据留痕——G-2 建议级转登）：契约条目 4『根因实测』修复前探针数据未随批留痕。",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "按钮截断修复的修复前对照数据未落盘：实施留痕 traceability/builds/ui-t36/ 仅含修复后 geometry-report（按钮 cur==minHint 满高），修复前 btnH<hint 的探针实测值未随提交留痕。",
+      "owner": "UI-T36 返工轮（attempt2 验证关闭：以 attempt1 验收记录 M2 探针数据作修复前形态等价实测〔contentsMargins=9,9 实测＋变异态行为即修复前语义〕登记闭环；后续同类修复随批附修复前对照帧）",
+      "resolution": "实测方法与数据补登记（引 acc/ui-t36/1 验收记录 §1 表 4.5 行）；修复前对照帧补拍归口径改进不追溯本批。编号顺延自 F-450。"
     }
   ]
 }
