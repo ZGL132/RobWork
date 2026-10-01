@@ -2275,6 +2275,11 @@
       "taskId": "UI-T36",
       "contractPath": "tasks/foundation/UI-T36.json",
       "branch": "ui-t36"
+    },
+    {
+      "taskId": "UI-T37",
+      "contractPath": "tasks/foundation/UI-T37.json",
+      "branch": "ui-t37"
     }
   ],
   "docRefs": {
