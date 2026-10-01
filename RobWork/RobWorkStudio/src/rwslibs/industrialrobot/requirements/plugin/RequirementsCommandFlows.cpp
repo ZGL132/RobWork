@@ -22,6 +22,8 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QFile>
+#include <QIODevice>
 #include <QSpinBox>
 #include <QVBoxLayout>
 
@@ -29,6 +31,8 @@
 #include <sdurws/ird/requirements/TemplateArray.hpp>  // TemplateArrayService/defaultTemplateParams
 
 #include "PanelEditFlow.hpp"             // submitBatchEdit/IRequirementEditSink
+#include "ImportWizardFlow.hpp"        // L-R10 五步向导域侧流（组2）
+#include <sdurws/ird/io/Csv.hpp>          // makeCsvReader/RawTable（CSV 通道）
 #include "RequirementsPanelWidget.hpp"   // 面板（状态行/选中锚）
 
 namespace sdurws::ird::requirements {
@@ -340,6 +344,151 @@ void note(RequirementsPanelWidget& panel, const QString& text)
     panel.showCommandFeedback(text);
 }
 
+// ---------------------------------------------------------------------
+// 导入向导（组2——CSV 经 ImportWizardFlow 五步；JSON 直映射同预览确认）
+// ---------------------------------------------------------------------
+
+/// 导入产出预览确认（计数＋行级错误清单前 8 条——契约"行级错误列表"
+/// 呈现面；用户确认＝正确行入草稿〔部分成功语义 AT-02〕）。
+bool confirmImportOutcome(RequirementsPanelWidget& panel, IRequirementEditor& editor,
+                          IRequirementEditSink& sink, const ImportOutcome& outcome,
+                          const std::vector<core::DiagnosticRecord>& diags)
+{
+    if (outcome.status == ImportOutcome::Status::Rejected) {
+        QString detail;
+        for (const core::DiagnosticRecord& d : diags) {
+            detail += QString::fromStdString(d.cause) + QStringLiteral("\n");
+        }
+        note(panel, QString::fromUtf8("导入被拒绝（结构级）：") + detail.trimmed());
+        return false;
+    }
+    QString summary = QString::fromUtf8("可导入行：%1；错误行：%2")
+                          .arg(int(outcome.entries.size()))
+                          .arg(int(outcome.rowErrors.size()));
+    if (!outcome.ignoredColumns.empty()) {
+        summary += QString::fromUtf8("\n忽略列（未映射）：%1")
+                       .arg(QString::fromStdString(
+                           [&] { std::string s; for (auto& c : outcome.ignoredColumns) { s += c + ","; } return s; }()));
+    }
+    QString rows;
+    int shown = 0;
+    for (const core::DiagnosticRecord& e : outcome.rowErrors) {
+        if (shown++ >= 8) {
+            rows += QString::fromUtf8("……（共 %1 条）\n").arg(int(outcome.rowErrors.size()));
+            break;
+        }
+        rows += QString::fromUtf8("行错误：%1\n").arg(QString::fromStdString(e.cause));
+    }
+    const QMessageBox::StandardButton choice = QMessageBox::question(
+        &panel, QString::fromUtf8("导入预览确认"),
+        summary + (rows.isEmpty() ? QString() : QStringLiteral("\n") + rows)
+            + QString::fromUtf8("\n\n确认导入正确行到草稿？"),
+        QMessageBox::Ok | QMessageBox::Cancel, QMessageBox::Cancel);
+    if (choice != QMessageBox::Ok) {
+        return true;  // 用户取消——非失败
+    }
+    // 应用：逐条 applyEdit（向导 confirmAndApplyToDraft 同语义——正确行
+    // 入草稿；每条单快照，撤销逐步回退）。
+    int applied = 0;
+    for (const TaskPoint& p : outcome.entries) {
+        if (editor.applyEdit(RequirementEdit{p}).accepted) {
+            ++applied;
+        }
+    }
+    sink.onEditApplied("导入完成：新增 " + std::to_string(applied) + " 个工位（错误行 "
+                       + std::to_string(outcome.rowErrors.size()) + " 条已跳过）");
+    note(panel, QString::fromUtf8("已导入 %1 个工位（%2 条错误行跳过）")
+                    .arg(applied).arg(int(outcome.rowErrors.size())));
+    return applied > 0 || outcome.entries.empty();
+}
+
+bool flowImportCsv(RequirementsPanelWidget& panel, IRequirementEditor& editor,
+                   IRequirementEditSink& sink)
+{
+    const QString file = QFileDialog::getOpenFileName(
+        &panel, QString::fromUtf8("导入工位（CSV）"), QString(),
+        QString::fromUtf8("CSV 坐标表 (*.csv)"));
+    if (file.isEmpty()) {
+        return true;
+    }
+    // io 读取（probe→read retainRows——RawTable 在手）；方言失败＝结构级
+    // 反馈（不猜——io 纪律）。
+    auto reader = io::makeCsvReader();
+    const auto probed = reader->probe(std::filesystem::path(file.toStdWString()),
+                                      /*budget=*/nullptr, /*cancel=*/nullptr);
+    if (!probed) {
+        note(panel, QString::fromUtf8("CSV 方言/编码预检失败：")
+                        + QString::fromStdString(probed.error.detail));
+        return false;
+    }
+    io::CsvReadOptions options;
+    options.headerRow = 1;      // 首行表头（字段字典自动识别前提）
+    options.retainRows = true;  // 向导需要整表（映射/预览）
+    const auto read = reader->read(std::filesystem::path(file.toStdWString()), options,
+                                   [](std::uint64_t, io::CsvRowView&&) { return true; },
+                                   nullptr, nullptr);
+    if (!read) {
+        note(panel, QString::fromUtf8("CSV 读取失败：")
+                        + QString::fromStdString(read.error.detail));
+        return false;
+    }
+    // 域向导五步流：表→自动映射＋单位预览→映射执行→（预览确认在共通面）。
+    try {
+        ImportWizardFlow wizard(importer);
+        wizard.setSourceTable(read.value);
+        const ImportUnitOptions units = ImportUnitOptions::defaults();
+        const ImportMappingView view = wizard.prepareMapping(units);
+        const ImportOutcome outcome = wizard.executeMapping(view.mapping, units);
+        return confirmImportOutcome(panel, editor, sink, outcome,
+                                    wizard.lastDiagnostics());
+    } catch (const std::exception& e) {
+        note(panel, QString::fromUtf8("导入失败：") + QString::fromLocal8Bit(e.what()));
+        return false;
+    }
+}
+
+bool flowImportJson(RequirementsPanelWidget& panel, IRequirementEditor& editor,
+                    IRequirementEditSink& sink)
+{
+    const QString file = QFileDialog::getOpenFileName(
+        &panel, QString::fromUtf8("导入需求（JSON）"), QString(),
+        QString::fromUtf8("JSON 文档 (*.json)"));
+    if (file.isEmpty()) {
+        return true;
+    }
+    QFile f(file);
+    if (!f.open(QIODevice::ReadOnly)) {
+        note(panel, QString::fromUtf8("无法读取文件：") + file);
+        return false;
+    }
+    const QByteArray bytes = f.readAll();
+    std::vector<std::uint8_t> raw(bytes.cbegin(), bytes.cend());
+    std::vector<core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = importer.mapJson(raw, diags);
+    return confirmImportOutcome(panel, editor, sink, outcome, diags);
+}
+
+// ---------------------------------------------------------------------
+// 捕获 TCP / 拾取几何特征（组3——降级与流程壳）
+// ---------------------------------------------------------------------
+
+bool flowCaptureTcp(RequirementsPanelWidget& panel, IRequirementEditor& /*editor*/)
+{
+    // 宿主关节状态来源未接线（RuntimePublishBridge 名称解析当前空映射——
+    // knownPitfalls 4 降级路径）：不伪造当前位姿，就地引导。
+    note(panel, QString::fromUtf8(
+                    "捕获 TCP 需要三维视图关节状态数据源——该数据源将在后续版本提供"));
+    return false;
+}
+
+bool flowPickFeature(RequirementsPanelWidget& panel)
+{
+    // 流程壳（UI-T33 收口——三维拾取上行就绪前保持引导文案，不私开通道）。
+    note(panel, QString::fromUtf8(
+                    "拾取几何特征需要三维视图——三维交互将在后续版本提供"));
+    return false;
+}
+
 }  // namespace
 
 bool executeRequirementCommand(const std::string& commandId,
@@ -362,8 +511,18 @@ bool executeRequirementCommand(const std::string& commandId,
     if (commandId == "requirements.regenerate-linked") {
         return flowRegenerateLinked(panel, editor, sink);
     }
-    // 组2/组3 命令（import-csv/import-json/capture-tcp/pick-feature）随
-    // 后续分步提交装配——此刻仍为诚实"未装配"反馈。
+    if (commandId == "requirements.import-csv") {
+        return flowImportCsv(panel, editor, sink);
+    }
+    if (commandId == "requirements.import-json") {
+        return flowImportJson(panel, editor, sink);
+    }
+    if (commandId == "requirements.capture-tcp") {
+        return flowCaptureTcp(panel, editor);
+    }
+    if (commandId == "requirements.pick-feature") {
+        return flowPickFeature(panel);
+    }
     note(panel, QString::fromUtf8("该流程将在后续版本提供（%1）")
                     .arg(QString::fromStdString(commandId)));
     return false;

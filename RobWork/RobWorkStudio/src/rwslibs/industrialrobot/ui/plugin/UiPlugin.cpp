@@ -109,10 +109,15 @@ constexpr const char* kModelingNewFromTemplateId = "modeling.new-from-template";
 /// 随后续提交逐条入此集合。assembled 逐条置位——未列条目保持注册期禁用）。
 bool isAssembledRequirementCommand(const std::string& id)
 {
+    // 九条全量（组1 五条＋组2 导入两条＋组3 捕获/拾取两条——捕获/拾取
+    // 为降级/流程壳形态：assembled＝按钮可达＋流程反馈〔knownPitfalls 4/5
+    // 的诚实降级语义，非占位处理器〕）。
     static const std::set<std::string> kAssembled{
         "requirements.export-copy",  "requirements.apply-template",
         "requirements.mirror-stations", "requirements.create-array",
-        "requirements.regenerate-linked",
+        "requirements.regenerate-linked", "requirements.import-csv",
+        "requirements.import-json", "requirements.capture-tcp",
+        "requirements.pick-feature",
     };
     return kAssembled.count(id) != 0;
 }
