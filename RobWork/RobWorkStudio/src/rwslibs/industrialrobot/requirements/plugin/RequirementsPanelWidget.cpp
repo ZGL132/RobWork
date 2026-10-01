@@ -16,7 +16,9 @@
 #include <QCheckBox>  // 启用 Switch（UI-T37 R1——QSS 重绘指示器）
 #include <QColor>
 #include <QComboBox>
-#include <QDoubleSpinBox>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QStyledItemDelegate>  // 彩色 Tag 委托基类（UI-T37 R2）
 #include <QSpinBox>  // 采样计数三轴分割（UI-T37 R1——实时点数预览）
 #include <QFormLayout>
 #include <QFrame>
@@ -26,9 +28,11 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QScrollArea>  // 属性表单滚动容器（UI-T36——长表单小窗不截断）
+#include <QStyle>     // 动态属性样式重算（UI-T37 R2——状态卡分色）
 #include <QSlider>      // 覆盖率滑块（UI-T37 R1——滑块+输入双联）
 #include <QTabWidget>
 #include <QTreeWidget>
+#include <QPainter>  // Tag 药丸绘制（UI-T37 R2——彩色标签委托）
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -113,6 +117,54 @@ QTreeWidgetItem* makeTableRow(const QString& a, const QString& b, const QString&
     setNodeAnchor(item, anchor);
     return item;
 }
+
+// 四显示列行装配（工况表 R2——验收 Tag 列；显示四列＋末隐藏锚列）。
+QTreeWidgetItem* makeTableRow4(const QString& a, const QString& b, const QString& c,
+                               const QString& d,
+                               const std::optional<core::ObjectId>& anchor)
+{
+    auto* item = new QTreeWidgetItem(
+        QStringList() << a << b << c << d << QString());
+    setNodeAnchor(item, anchor);
+    return item;
+}
+
+/// 彩色 Tag 委托（UI-T37 R2 acceptance 4——必验红/可选灰圆角标签；纯
+/// 呈现面：文本为唯一数据源，domain 语义归域侧派生）。
+class TagDelegate final : public QStyledItemDelegate {
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override
+    {
+        const QString text = index.data(Qt::DisplayRole).toString();
+        if (text.isEmpty()) {
+            QStyledItemDelegate::paint(painter, option, index);
+            return;
+        }
+        // 圆角药丸（必验＝警示橙/白字；可选＝描边灰）——规格 §8 三件套。
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+        opt.text.clear();
+        QStyledItemDelegate::paint(painter, opt, index);  // 底色/选中面
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing);
+        const QRect r = option.rect.adjusted(6, 3, -6, -3);
+        const QRect pill = QRect(r.left(), r.top() + (r.height() - 18) / 2,
+                                 qMin(r.width(), 44), 18);
+        const QColor fill = text == QStringLiteral("必验")
+                                ? QColor(ui::palette::kWarning)
+                                : QColor(ui::palette::kCardBorder);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(fill);
+        painter->drawRoundedRect(pill, 9, 9);
+        painter->setPen(text == QStringLiteral("必验") ? Qt::white
+                                                       : QColor(ui::palette::kText));
+        painter->drawText(pill, Qt::AlignCenter, text);
+        painter->restore();
+    }
+};
 
 }  // namespace
 
@@ -268,11 +320,30 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
     // 收养时控件重挂到布局宿主 bar——漏收养＝布局永不执行、按钮滞留原点
     // 几何，首轮冒烟实证）。
     barLayout->addLayout(flow);
-    // 状态行（就地错误/警告/摘要——非模态呈现，UX-03/07）：独立于按钮行
-    // 之下一行占位（流式栅格按控件排布，长摘要文本混入按钮行会挤占换行）。
-    m_statusLine = new QLabel(bar);
+    // 警示条（UI-T37 R2 acceptance 6——可关闭轻量横幅：橙底白字＋✕；
+    // 原生代码路径提示退役——文案动作导向）。m_statusLine＝横幅内消息
+    // 标签（showCommandFeedbackText 断言面不变）；可见性随文本
+    // （showStatusLine 统一出口：非空即示、✕/清空即隐）。
+    m_statusBanner = new QFrame(bar);
+    m_statusBanner->setObjectName(QStringLiteral("ird_banner"));
+    auto* bannerLay = new QHBoxLayout(m_statusBanner);
+    bannerLay->setContentsMargins(8, 4, 4, 4);
+    bannerLay->setSpacing(4);
+    auto* bannerIcon = new QLabel(QStringLiteral("⚠"), m_statusBanner);
+    m_statusLine = new QLabel(m_statusBanner);
     m_statusLine->setWordWrap(true);  // 长摘要换行承载（非模态呈现不挤压按钮行）
-    barLayout->addWidget(m_statusLine);
+    auto* bannerClose = new QPushButton(QStringLiteral("✕"), m_statusBanner);
+    bannerClose->setObjectName(QStringLiteral("ird_banner_close"));
+    bannerClose->setFlat(true);
+    bannerClose->setToolTip(QStringLiteral("关闭提示"));
+    connect(bannerClose, &QPushButton::clicked, this, [this] {
+        showStatusLine(QString());  // 用户关闭＝清空文本并隐藏横幅
+    });
+    bannerLay->addWidget(bannerIcon);
+    bannerLay->addWidget(m_statusLine, /*stretch=*/1);
+    bannerLay->addWidget(bannerClose);
+    m_statusBanner->setVisible(false);  // 无消息即隐（错误/警告到达时示）
+    barLayout->addWidget(m_statusBanner);
 
     // 挂到根布局顶部（构造序保证：构造函数先建 QVBoxLayout(this) 再调本
     // 函数——layout() 恒为 QVBoxLayout；异常布局形态＝装配缺陷 fail-fast）。
@@ -482,8 +553,12 @@ void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
     m_conditionTable = makeTable(page, QStringList()
                                         << QStringLiteral("工况")
                                         << QStringLiteral("目标节拍")
-                                        << QStringLiteral("适用范围"));
+                                        << QStringLiteral("适用范围")
+                                        << QStringLiteral("验收"));
     m_conditionTable->setObjectName(QStringLiteral("ird_req_condition_table"));  // 验证定位锚
+    // 验收 Tag 列（UI-T37 R2 acceptance 4——必验红/可选灰彩色标签委托；
+    // 第 3 显示列，对象锚仍居末隐藏列）。
+    m_conditionTable->setItemDelegateForColumn(3, new TagDelegate(m_conditionTable));
     connect(m_conditionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
     lay->addWidget(m_conditionTable);
@@ -502,6 +577,8 @@ void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
         1, QStringLiteral("目标节拍（s；未设显示『未设』）"));
     m_conditionTable->headerItem()->setToolTip(
         2, QStringLiteral("适用的工位范围（全部工位/N 个工位/不适用）"));
+    m_conditionTable->headerItem()->setToolTip(
+        3, QStringLiteral("必验＝应用前必须通过校验（等级 Must 派生——域解析单点）；可选＝告警级"));
     m_mustList = makeTable(page, QStringList() << "必验工况" << "必验");
     lay->addWidget(m_mustList);
     pages->addTab(page, "工况");
@@ -651,13 +728,13 @@ bool RequirementsPanelWidget::submitStructuralEdit(const RequirementEdit& edit)
     m_threadGuard.assertOnUiThread();
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
     if (editor == nullptr) {
-        m_statusLine->setText(QStringLiteral("未应用：未打开需求会话（不可编辑）"));
+        showStatusLine(QStringLiteral("未应用：未打开需求会话（不可编辑）"));
         return false;
     }
     const EditOutcome out = editor->applyEdit(edit);
     if (!out.accepted) {
         // 拒绝：就地错误（非模态——UX-03/07；工作集字节未动）。
-        m_statusLine->setText(QString::fromStdString(
+        showStatusLine(QString::fromStdString(
             "未应用（" + out.error.detail + "）"));
         return false;
     }
@@ -667,11 +744,71 @@ bool RequirementsPanelWidget::submitStructuralEdit(const RequirementEdit& edit)
     return true;
 }
 
+/// 工况新增向导内建面板（UI-T37 R2 acceptance 4——缺省工厂；测试经
+/// setConditionWizardFactory 注入确定字段，本函数不进测试路径）。
+/// 三步一屏：名称（防撞默认）／目标节拍（0＝未设——『未设』占位不伪造）/
+/// 验收要求（必验/可选分段）。确认返回字段；取消返回 nullopt＝零新增。
+std::optional<RequirementsPanelWidget::ConditionWizardFields>
+defaultConditionWizard(QWidget* parent, const QString& suggestedName)
+{
+    QDialog dialog(parent);
+    dialog.setWindowTitle(QStringLiteral("新增工况"));
+    auto* lay = new QVBoxLayout(&dialog);
+    auto* form = new QFormLayout;
+    form->setLabelAlignment(Qt::AlignRight);
+    auto* nameEdit = new QLineEdit(suggestedName, &dialog);
+    form->addRow(QStringLiteral("名称"), nameEdit);
+    auto* cycleSpin = new QDoubleSpinBox(&dialog);
+    cycleSpin->setRange(0.0, 1.0e6);
+    cycleSpin->setDecimals(2);
+    cycleSpin->setSingleStep(0.1);
+    cycleSpin->setValue(0.0);
+    cycleSpin->setSpecialValueText(QStringLiteral("未设"));  // 0＝未设（四态守恒）
+    cycleSpin->setToolTip(QStringLiteral("该工况期望循环时间（s）；未设＝不参与节拍评估"));
+    form->addRow(QStringLiteral("目标节拍 (s)"), cycleSpin);
+    auto* mustButton = new QPushButton(QStringLiteral("必验"), &dialog);
+    auto* optionalButton = new QPushButton(QStringLiteral("可选"), &dialog);
+    for (auto* b : {mustButton, optionalButton}) {
+        b->setObjectName(QStringLiteral("ird_seg"));
+        b->setCheckable(true);
+        b->setFocusPolicy(Qt::NoFocus);
+    }
+    mustButton->setChecked(true);  // 默认必验（§6.2 词表主面）
+    auto* group = new QButtonGroup(&dialog);
+    group->addButton(mustButton);
+    group->addButton(optionalButton);
+    auto* segRow = new QWidget(&dialog);
+    auto* segLay = new QHBoxLayout(segRow);
+    segLay->setContentsMargins(0, 0, 0, 0);
+    segLay->setSpacing(0);
+    segLay->addWidget(mustButton);
+    segLay->addWidget(optionalButton);
+    segLay->addStretch(1);
+    form->addRow(QStringLiteral("验收要求"), segRow);
+    lay->addLayout(form);
+    auto* buttons = new QDialogButtonBox(
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("创建"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("取消"));
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    lay->addWidget(buttons);
+    if (dialog.exec() != QDialog::Accepted) {
+        return std::nullopt;  // 用户取消——调用方零新增
+    }
+    RequirementsPanelWidget::ConditionWizardFields fields;
+    fields.name = nameEdit->text().trimmed().toStdString();
+    fields.hasCycle = cycleSpin->value() > 0.0;
+    fields.cycleSeconds = cycleSpin->value();
+    fields.mustVerify = mustButton->isChecked();
+    return fields;
+}
+
 void RequirementsPanelWidget::onAddEntry(WorkingSetMember member)
 {
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
     if (editor == nullptr) {
-        m_statusLine->setText(QStringLiteral("未应用：未打开需求会话（不可编辑）"));
+        showStatusLine(QStringLiteral("未应用：未打开需求会话（不可编辑）"));
         return;
     }
     const RequirementWorkingSet& ws = editor->workingSet();
@@ -701,6 +838,24 @@ void RequirementsPanelWidget::onAddEntry(WorkingSetMember member)
         OperatingCondition c;
         c.objectId = core::ObjectId::generate();
         c.name = uniqueEntryName(ws, member, "工况");
+        // 工况新增向导（UI-T37 R2 acceptance 4——创建即带完整起步配置，
+        // 禁止无配置空白条目；取消＝零新增）。缝缺省＝内建对话框；测试
+        // 经 setConditionWizardFactory 注入确定字段（FakeDialogHost 同族）。
+        if (m_conditionWizard) {
+            auto fields = m_conditionWizard();
+            if (!fields.has_value()) {
+                return;  // 取消——不产生条目
+            }
+            c.name = uniqueEntryName(ws, member,
+                                     fields->name.empty()
+                                         ? std::string("工况")
+                                         : fields->name);
+            c.level = fields->mustVerify ? RequirementLevel::Must
+                                         : RequirementLevel::Should;
+            if (fields->hasCycle && fields->cycleSeconds > 0.0) {
+                c.targetCycleTimeS = fields->cycleSeconds;
+            }
+        }
         if (submitStructuralEdit(RequirementEdit{c})) { focusObject(c.objectId); }
     }
 }
@@ -709,7 +864,7 @@ void RequirementsPanelWidget::onDuplicateEntry(WorkingSetMember member)
 {
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
     if (editor == nullptr || !m_lastSelected.has_value()) {
-        m_statusLine->setText(QStringLiteral(
+        showStatusLine(QStringLiteral(
             "未应用：复制需要先选中一个条目"));
         return;
     }
@@ -748,14 +903,14 @@ void RequirementsPanelWidget::onDuplicateEntry(WorkingSetMember member)
             return;
         }
     }
-    m_statusLine->setText(QStringLiteral("未应用：选中对象不属于该集合"));
+    showStatusLine(QStringLiteral("未应用：选中对象不属于该集合"));
 }
 
 void RequirementsPanelWidget::onRemoveEntry(WorkingSetMember member)
 {
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
     if (editor == nullptr || !m_lastSelected.has_value()) {
-        m_statusLine->setText(QStringLiteral(
+        showStatusLine(QStringLiteral(
             "未应用：删除需要先选中一个条目"));
         return;
     }
@@ -1030,6 +1185,20 @@ void clearFormRows(QFormLayout* form)
     }
 }
 
+/// 层码→语义类别标签（UI-T37 R2 acceptance 5——去晦涩：显示面用语义
+/// 标签，R 层码转 Tooltip/过滤 UserRole；映射源＝分层投影自带的检查
+/// 标题〔域侧权威语义——面板零私设词表〕，未命中回落原码）。
+QString semanticLayerLabel(
+    const std::vector<ValidationLayerRow>& layers, const std::string& token)
+{
+    for (const ValidationLayerRow& r : layers) {
+        if (r.layerToken == token) {
+            return QString::fromStdString(r.title);
+        }
+    }
+    return QString::fromStdString(token);
+}
+
 /// 清空 VBox 全部子项（矩阵/复合行宿主重排前置——取出的项连同控件删除）。
 void clearBoxRows(QVBoxLayout* lay)
 {
@@ -1245,6 +1414,62 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
             lay->addStretch(1);
             m_stationDofForm->addRow(QString::fromStdString(r->label), cell);
         }
+        // 快捷预设行（契约 acceptance 3——全部约束/全部自由）：逐键走既有
+        // 布尔轨（已态跳过＝零幻影提交；撤销粒度＝单键，批量单快照归
+        // submitBatchEdit 后续接入——ui.md §13 登记口径）。
+        auto* presetBar = new QWidget(this);
+        auto* pl = new QHBoxLayout(presetBar);
+        pl->setContentsMargins(0, 0, 0, 0);
+        pl->setSpacing(4);
+        const struct Preset { const char* label; bool on; const char* anchor; } presets[] = {
+            {u8"全部约束", true, "ird_dof_preset_constrain"},
+            {u8"全部自由", false, "ird_dof_preset_free"},
+        };
+        for (const Preset& p : presets) {
+            auto* b = new QPushButton(QString::fromUtf8(p.label), this);
+            b->setObjectName(QString::fromLatin1(p.anchor));
+            b->setFocusPolicy(Qt::NoFocus);
+            b->setEnabled(m_writable);
+            b->setToolTip(QStringLiteral("六轴按预设批量切换（已态轴跳过）"));
+            // 键名值捕获（rows 向量为渲染期局部——悬空捕获＝词表外键
+            // 崩溃，首轮 gui 实证）；已态判定在点击时读工作集权威值。
+            QStringList keys;
+            for (const StationFieldRow* r : rows) {
+                keys << QString::fromStdString(r->fieldKey);
+            }
+            connect(b, &QPushButton::clicked, this,
+                    [this, keys, on = p.on](bool) {
+                        IRequirementEditor* editor =
+                            m_editTarget ? m_editTarget() : nullptr;
+                        if (editor == nullptr || !m_writable
+                            || !m_lastSelected.has_value()) {
+                            return;
+                        }
+                        const RequirementWorkingSet& ws = editor->workingSet();
+                        for (const TaskPoint& pt : ws.points.entries) {
+                            if (pt.objectId != m_lastSelected.value()) {
+                                continue;
+                            }
+                            const ConstrainedDof& d = pt.pose.constrainedDof;
+                            for (const QString& k : keys) {
+                                bool cur = false;
+                                if (k == QStringLiteral("dof-x")) { cur = d.x; }
+                                else if (k == QStringLiteral("dof-y")) { cur = d.y; }
+                                else if (k == QStringLiteral("dof-z")) { cur = d.z; }
+                                else if (k == QStringLiteral("dof-roll")) { cur = d.roll; }
+                                else if (k == QStringLiteral("dof-pitch")) { cur = d.pitch; }
+                                else if (k == QStringLiteral("dof-yaw")) { cur = d.yaw; }
+                                if (cur != on) {
+                                    submitStationToggle(k.toStdString(), on);
+                                }
+                            }
+                            return;
+                        }
+                    });
+            pl->addWidget(b);
+        }
+        pl->addStretch(1);
+        m_stationDofForm->addRow(QStringLiteral("快捷"), presetBar);
     };
 
     // 行分拣路由（键族集合封闭——未知键＝投影/卡片漂移 fail-fast）。
@@ -1277,6 +1502,17 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         renderTextRow(form, r);
     }
     renderDofMatrix(dofRows);
+}
+
+void RequirementsPanelWidget::showStatusLine(const QString& text)
+{
+    // 状态文本统一出口（R2 警示条——横幅可见性随文本：非空即示、清空即
+    // 隐；m_statusLine＝横幅内消息标签，showCommandFeedbackText 断言面
+    // 不变）。
+    m_statusLine->setText(text);
+    if (m_statusBanner != nullptr) {
+        m_statusBanner->setVisible(!text.isEmpty());
+    }
 }
 
 QFormLayout* RequirementsPanelWidget::stationFormForKey(const std::string& key) const
@@ -1323,7 +1559,7 @@ void RequirementsPanelWidget::submitStationValue(const std::string& key,
             const ui::ValueParseResult parsed =
                 parseFieldValueText(text.toStdString(), spec);
             if (!parsed.ok) {
-                m_statusLine->setText(QString::fromStdString(parsed.reason));
+                showStatusLine(QString::fromStdString(parsed.reason));
                 renderInspector(ws);  // 回退显示工作集权威值
                 return;
             }
@@ -1728,16 +1964,37 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
     for (const ConditionRow& r : rows) {
         // UI-T36：三显示列补全（目标节拍＝数值 s/未设、适用范围＝三值
         // 词表摘要——模型层 conditionRows 既有投影字段；锚退居末隐藏列）。
-        auto* item = makeTableRow(QString::fromStdString(r.name),
-                                  QString::fromStdString(r.cycleText),
-                                  QString::fromStdString(r.appliesToText),
-                                  r.objectId);
+        // UI-T37 R2：第四列『验收』Tag（必验/可选）——派生经域函数
+        // resolveRequiredCases 单条目解析（P-EV-9 单点，面板零复判；
+        // conditionFieldsFor 必验行同源口径）。
+        QString verifyText;
+        for (const OperatingCondition& c : ws.conditions.entries) {
+            if (c.objectId != r.objectId) { continue; }
+            const std::vector<OperatingCondition> single{c};
+            const RequiredCaseResolution resolution =
+                m_conditionService.resolveRequiredCases(single);
+            for (const RequiredCaseEntry& e : resolution.entries) {
+                if (e.caseId == r.objectId && e.enabled && e.mandatory) {
+                    verifyText = QStringLiteral("必验");
+                    break;
+                }
+            }
+            if (verifyText.isEmpty()) {
+                verifyText = QStringLiteral("可选");
+            }
+            break;
+        }
+        auto* item = makeTableRow4(QString::fromStdString(r.name),
+                                   QString::fromStdString(r.cycleText),
+                                   QString::fromStdString(r.appliesToText),
+                                   verifyText,
+                                   r.objectId);
         m_conditionTable->addTopLevelItem(item);
         if (previousCondition.has_value() && r.objectId == previousCondition.value()) {
             m_conditionTable->setCurrentItem(item);
         }
     }
-    for (int c = 0; c < 3; ++c) {
+    for (int c = 0; c < 4; ++c) {
         m_conditionTable->resizeColumnToContents(c);  // 列宽随内容（长摘要不挤压）
     }
     // 工况检查器（选中行→conditionFieldsFor）。
@@ -1808,9 +2065,20 @@ void RequirementsPanelWidget::renderValidationPage(const RequirementReadinessRep
             ? QString("校验：存在 %1 项阻断——先处理校验页阻断项再应用")
                   .arg(proj.blockingCount)
             : QString("校验：就绪（阻断 0 · 警告 %1）").arg(proj.warningCount));
-    m_validationCounts->setText(QString("阻断 %1 · 警告 %2")
-                                    .arg(proj.blockingCount)
-                                    .arg(proj.warningCount));
+    // 状态看板卡（UI-T37 R2 acceptance 5——通过/存在 N 项二态＋阻塞计数；
+    // QSS 动态属性分色：ok＝成功绿描边、warn＝警示橙）。
+    m_validationCounts->setText(
+        proj.blockingCount > 0
+            ? QString("⚠ 存在 %1 项提示（阻塞: %2）")
+                  .arg(proj.blockingCount + proj.warningCount)
+                  .arg(proj.blockingCount)
+            : QString("✔ 结构校验通过（阻断 0 · 提示 %1）").arg(proj.warningCount));
+    m_validationCounts->setObjectName(QStringLiteral("ird_validation_status"));
+    m_validationCounts->setProperty("state",
+                                    proj.blockingCount > 0 ? "warn" : "ok");
+    // 动态属性变更需样式重算（QSS property 选择器面）。
+    m_validationCounts->style()->unpolish(m_validationCounts);
+    m_validationCounts->style()->polish(m_validationCounts);
     m_validationLayers->clear();
     for (const ValidationLayerRow& r : proj.layers) {
         m_validationLayers->addTopLevelItem(new QTreeWidgetItem(QStringList()
@@ -1839,8 +2107,12 @@ void RequirementsPanelWidget::renderValidationPage(const RequirementReadinessRep
             continue;
         }
         auto* item = new QTreeWidgetItem(QStringList()
-            << QString::fromStdString(r.levelToken) << QString::fromStdString(r.layerToken)
+            << QString::fromStdString(r.levelToken)
+            << semanticLayerLabel(proj.layers, r.layerToken)
             << QString::fromStdString(r.code) << QString::fromStdString(r.summary));
+        // 语义标签旁路（UX-02 诚实呈现双轨——显示面用语义类别，原始层码
+        // 入 Tooltip 供日志检索；过滤行仍按层码词表）。
+        item->setToolTip(1, QString::fromStdString(r.layerToken));
         setNodeAnchor(item, r.jumpTarget);  // 跳转锚（无定位行＝空锚——不可点击跳转）
         if (r.levelToken == "Blocking") {
             // 阻断行视觉分组（深红前景——拒绝分组呈现；文案零加工）。
@@ -1849,13 +2121,14 @@ void RequirementsPanelWidget::renderValidationPage(const RequirementReadinessRep
         }
         m_validationItems->addTopLevelItem(item);
     }
-    // 预览/正式语义说明（REQ-06 固定文案——零加工直投）＋修订语义行
-    // （UI-T34 acceptance 3——『修订只增不改』：应用＝产生新修订、旧修订
-    // 不变——防旧版冻结心智误读；编辑在应用前保留在草稿，可撤销）。
+    // 修订语义一行化（UI-T37 R2 acceptance 5——去噪：成段说明文字收
+    // Tooltip，面板面只留一行微文案；『修订只增不改』关键词保留——
+    // UI-T34 acceptance 3 的语义文案不丢）。
     m_validationNotes->setText(
-        QString::fromUtf8("应用＝产生新修订，旧修订保持不变（修订只增不改）；"
-                          "应用前的编辑保留在草稿，可撤销。\n")
-        + QString::fromStdString(proj.previewNote) + "\n"
+        QString::fromUtf8("ⓘ 修订说明：应用＝产生新修订（修订只增不改）；"
+                          "应用前的编辑保留在草稿，可撤销。"));
+    m_validationNotes->setToolTip(
+        QString::fromStdString(proj.previewNote) + "\n\n"
         + QString::fromStdString(proj.formalNote));
 }
 
@@ -2000,7 +2273,7 @@ void RequirementsPanelWidget::submitRegionValue(const std::string& key,
                 parseFieldValueText(text.toStdString(), spec);
             if (!parsed.ok) {
                 // 拒绝·解析面：就地错误＋回退权威值（重投影）。
-                m_statusLine->setText(QString::fromStdString(parsed.reason));
+                showStatusLine(QString::fromStdString(parsed.reason));
                 renderRegionPage(ws);
                 return;
             }
@@ -2118,7 +2391,7 @@ void RequirementsPanelWidget::onConditionFieldEditingFinished()
             const ui::ValueParseResult parsed =
                 parseFieldValueText(edit->text().toStdString(), spec);
             if (!parsed.ok) {
-                m_statusLine->setText(QString::fromStdString(parsed.reason));
+                showStatusLine(QString::fromStdString(parsed.reason));
                 renderConditionPage(ws);
                 return;
             }
@@ -2167,7 +2440,7 @@ void RequirementsPanelWidget::onDraftUndo()
         return;
     }
     if (m_undoTracker.undo(*editor)) {
-        m_statusLine->setText("已撤销一次编辑（草稿级，零修订）");
+        showStatusLine("已撤销一次编辑（草稿级，零修订）");
         if (IRequirementEditor* e2 = m_editTarget()) {
             refreshPanel(e2->workingSet(), RequirementReadinessReport{});
         }
@@ -2183,7 +2456,7 @@ void RequirementsPanelWidget::onDraftRedo()
         return;
     }
     if (m_undoTracker.redo(*editor)) {
-        m_statusLine->setText("已重做一次编辑（草稿级，零修订）");
+        showStatusLine("已重做一次编辑（草稿级，零修订）");
         if (IRequirementEditor* e2 = m_editTarget()) {
             refreshPanel(e2->workingSet(), RequirementReadinessReport{});
         }
@@ -2218,7 +2491,7 @@ void RequirementsPanelWidget::onEditApplied(const std::string& changeSummary)
         renderRegionPage(ws);
         renderConditionPage(ws);
     }
-    m_statusLine->setText(QString::fromStdString(changeSummary));
+    showStatusLine(QString::fromStdString(changeSummary));
     Q_EMIT sessionDirtyChanged(true);
     // UI-T29 最小校验：编辑后动作（装配层在此重估就绪并以新报告
     // refreshPanel——校验页『尚未执行』静态的实时化编排；本面板零判定，
@@ -2241,7 +2514,7 @@ void RequirementsPanelWidget::onEditRejected(const EditRejection& rejection)
     // 拒绝分支：就地错误呈现（状态行——非模态，UX-03/07；值控件回退由
     // 重投影显示工作集权威值实现）。
     m_threadGuard.assertOnUiThread();
-    m_statusLine->setText(QString("编辑被拒绝（%1）：")
+    showStatusLine(QString("编辑被拒绝（%1）：")
                               .arg(QString::fromStdString(rejection.codeToken))
                           + QString::fromStdString(rejection.detail));
     if (IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr) {
@@ -2253,7 +2526,7 @@ void RequirementsPanelWidget::onBatchWarning(const core::DiagnosticRecord& warni
 {
     // 批次警告知情登记（L-R9——warning 不阻断应用；状态行逐条登记）。
     m_threadGuard.assertOnUiThread();
-    m_statusLine->setText(QString("批次警告（%1）：")
+    showStatusLine(QString("批次警告（%1）：")
                               .arg(QString::fromStdString(warning.code))
                           + QString::fromStdString(warning.cause));
 }
@@ -2263,7 +2536,7 @@ bool RequirementsPanelWidget::executeDomainCommand(const std::string& commandId)
     m_threadGuard.assertOnUiThread();
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
     if (editor == nullptr) {
-        m_statusLine->setText(QStringLiteral("未执行：未打开需求会话（该命令需要项目会话）"));
+        showStatusLine(QStringLiteral("未执行：未打开需求会话（该命令需要项目会话）"));
         return false;
     }
     // flows 装配层（对话框/表单＋域纯函数）；sink＝本面板（L-R2 分流）。

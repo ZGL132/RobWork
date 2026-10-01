@@ -1,8 +1,8 @@
-host-window cur=1024x874
+host-window cur=1024x857
 [PASS] memory-requirements-visible
 [PASS] memory-modeling-still-hidden
 [PASS] memory-kinematics-still-hidden
-central cur=361x598
+central cur=361x581
 [PASS] central-guard-second-start (cur=361px)
 [SNAP] 7-second-start-memory.png
 === main-dock visible=1 cur=355 minHint=240x188
@@ -31,8 +31,8 @@ central cur=361x598
       ird_tree_group_filter [QComboBox] cur=145x25 minHint=145x25
         QComboBoxPrivateContainer [QComboBoxPrivateContainer] cur=100x30 minHint=4x4
 === props-dock visible=1 cur=300 minHint=280x229
-  QWidget [QWidget] cur=300x575 minHint=280x206
-    ird_property_inspector [QWidget] cur=300x344 minHint=28x37
+  QWidget [QWidget] cur=300x558 minHint=280x206
+    ird_property_inspector [QWidget] cur=300x329 minHint=28x37
       ird_property_inspector_page_title [QLabel] cur=100x30 minHint=6x15
       ird_property_inspector_placeholder [QLabel] cur=284x15 minHint=12x15
       ird_property_inspector_fields [QWidget] cur=100x30 minHint=0x0
@@ -42,7 +42,7 @@ central cur=361x598
       QWidget [QWidget] cur=284x0 minHint=0x0
         ird_property_inspector_title [QLabel] cur=100x30 minHint=6x15
         ird_property_inspector_readonly [QLabel] cur=100x30 minHint=24x15
-    ird_right_content [QWidget] cur=300x229 minHint=246x167
+    ird_right_content [QWidget] cur=300x227 minHint=246x167
       QLabel [QLabel] cur=282x15 minHint=216x15
       QLabel [QLabel] cur=282x15 minHint=228x15
       ird_policy_summary_card [QWidget] cur=282x167 minHint=57x107
@@ -86,9 +86,9 @@ central cur=361x598
         ScrollLeftButton [QToolButton] cur=20x30 minHint=26x24
         ScrollRightButton [QToolButton] cur=20x30 minHint=26x24
     QLabel [QLabel] cur=243x15 minHint=6x15
-=== requirements-dock visible=1 cur=355 minHint=355x406
-  sdurws::ird::requirements::RequirementsPanelWidget [sdurws::ird::requirements::RequirementsPanelWidget] cur=355x383 minHint=355x383
-    QWidget [QWidget] cur=337x150 minHint=148x42
+=== requirements-dock visible=1 cur=355 minHint=355x389
+  sdurws::ird::requirements::RequirementsPanelWidget [sdurws::ird::requirements::RequirementsPanelWidget] cur=355x366 minHint=355x366
+    QWidget [QWidget] cur=337x133 minHint=148x25
       QPushButton [QPushButton] cur=81x25 minHint=81x25
       QPushButton [QPushButton] cur=81x25 minHint=81x25
       QPushButton [QPushButton] cur=81x25 minHint=81x25
@@ -104,7 +104,10 @@ central cur=361x598
       QPushButton [QPushButton] cur=148x25 minHint=148x25
       QPushButton [QPushButton] cur=148x25 minHint=148x25
       QPushButton [QPushButton] cur=148x25 minHint=148x25
-      QLabel [QLabel] cur=337x15 minHint=6x15
+      ird_banner [QFrame] cur=100x30 minHint=123x33
+        QLabel [QLabel] cur=16x22 minHint=16x16
+        QLabel [QLabel] cur=6x22 minHint=6x15
+        ird_banner_close [QPushButton] cur=58x22 minHint=81x25
     QWidget [QWidget] cur=76x209 minHint=76x76
       QTreeWidget [QTreeWidget] cur=58x191 minHint=58x58
         qt_scrollarea_viewport [QWidget] cur=54x152 minHint=-1x-1

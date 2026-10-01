@@ -75,6 +75,10 @@ void applyIndustrialTheme(QWidget* root)
         "QLabel#ird_tag { border-radius: 9px; padding: 1px 8px; }"
         "QLabel#ird_tag[tag=\"must\"] { background: %WARN%; color: white; }"
         "QLabel#ird_tag[tag=\"opt\"] { background: %BORDER%; color: %TEXT%; }"
+        "QLabel#ird_validation_status { font-weight: 600; border: 1px solid %BORDER%;"
+        "  border-radius: 4px; padding: 6px 10px; background: %CARD%; }"
+        "QLabel#ird_validation_status[state=\"ok\"] { border-color: %SUCCESS%; color: %SUCCESS%; }"
+        "QLabel#ird_validation_status[state=\"warn\"] { border-color: %WARN%; color: %WARN%; }"
         "QFrame#ird_banner { background: %WARN%; border-radius: 4px; }"
         "QFrame#ird_banner QLabel { color: white; }"
         "QLabel#ird_banner_code { color: rgba(255,255,255,180); font-family: Consolas; }"
@@ -105,6 +109,8 @@ void applyIndustrialTheme(QWidget* root)
                                         QString::fromLatin1(palette::kPrimary))
                                .replace(QStringLiteral("%WARN%"),
                                         QString::fromLatin1(palette::kWarning))
+                               .replace(QStringLiteral("%SUCCESS%"),
+                                        QString::fromLatin1(palette::kSuccess))
                                .replace(QStringLiteral("%TEXT%"),
                                         QString::fromLatin1(palette::kText))
                                .replace(QStringLiteral("%MUTED%"),

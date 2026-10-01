@@ -1267,6 +1267,18 @@ TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
     EXPECT_EQ(m_editor.workingSet().points.entries.front().pose.constrainedDof.x,
               !xBefore)
         << "自由度分段钮未接通约束词表布尔轨";
+
+    // 快捷预设（acceptance 3——全部约束）：六轴批量切换（已态跳过）。
+    QPushButton* constrainAll = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_dof_preset_constrain"));
+    ASSERT_NE(constrainAll, nullptr) << "快捷预设行缺失";
+    constrainAll->click();
+    QApplication::processEvents();
+    const auto& dofAll =
+        m_editor.workingSet().points.entries.front().pose.constrainedDof;
+    EXPECT_TRUE(dofAll.x && dofAll.y && dofAll.z && dofAll.roll && dofAll.pitch
+                && dofAll.yaw)
+        << "全部约束预设未批量生效";
 }
 
 /// UI-T37 R1 区域复合行与实时预览（acceptance 2）：盒中心三编辑器同容器、
@@ -1352,4 +1364,113 @@ TEST_F(RequirementsSessionGuiTest, NonQuantityRowsReadOnly_UI_T37)
     const std::string nameBefore =
         m_editor.workingSet().points.entries.front().name;
     EXPECT_EQ(m_editor.workingSet().points.entries.front().name, nameBefore);
+}
+
+/// UI-T37 R2 工况页闭环（acceptance 4）：验收 Tag 列（必验/可选非空）、
+/// 新增向导取消＝零新增、确认＝新条目四字段齐备（名称/节拍/等级——
+/// 注入缝确定字段，FakeDialogHost 同族）。
+TEST_F(RequirementsSessionGuiTest, ConditionTagAndWizard_UI_T37)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    QTreeWidget* table = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_condition_table"));
+    ASSERT_NE(table, nullptr);
+    ASSERT_GT(table->topLevelItemCount(), 0) << "夹具应含工况起步条目";
+    EXPECT_FALSE(table->topLevelItem(0)->text(3).isEmpty())
+        << "验收 Tag 列空（必验/可选派生面缺失）";
+
+    // 向导取消＝零新增（注入缝返回 nullopt——不产生空白条目）。
+    const std::size_t before = m_editor.workingSet().conditions.entries.size();
+    m_panel->setConditionWizardFactory(
+        []() -> std::optional<RequirementsPanelWidget::ConditionWizardFields> {
+            return std::nullopt;
+        });
+    QPushButton* addBtn = lifecycleButton(*m_panel, "add", "conditions");
+    ASSERT_NE(addBtn, nullptr);
+    addBtn->click();
+    QApplication::processEvents();
+    EXPECT_EQ(m_editor.workingSet().conditions.entries.size(), before)
+        << "向导取消仍新增条目（空白条目禁令）";
+
+    // 向导确认＝四字段齐备（名称防撞/节拍 s/等级 Should→可选）。
+    m_panel->setConditionWizardFactory(
+        []() -> std::optional<RequirementsPanelWidget::ConditionWizardFields> {
+            RequirementsPanelWidget::ConditionWizardFields f;
+            f.name = "向导工况样例";
+            f.hasCycle = true;
+            f.cycleSeconds = 12.5;
+            f.mustVerify = false;
+            return f;
+        });
+    addBtn->click();
+    QApplication::processEvents();
+    ASSERT_EQ(m_editor.workingSet().conditions.entries.size(), before + 1);
+    const OperatingCondition* created = nullptr;  // 集合规范序非插入序——按名定位
+    for (const OperatingCondition& c : m_editor.workingSet().conditions.entries) {
+        if (c.name == std::string("向导工况样例")) { created = &c; }
+    }
+    ASSERT_NE(created, nullptr) << "向导确认后未找到新条目";
+    ASSERT_TRUE(created->targetCycleTimeS.has_value()) << "节拍未设置";
+    EXPECT_DOUBLE_EQ(created->targetCycleTimeS.value(), 12.5);
+    EXPECT_EQ(created->level, RequirementLevel::Should) << "可选等级未落条目";
+}
+
+/// UI-T37 R2 校验看板与语义标签（acceptance 5）：状态卡二态（✔/⚠＋阻塞
+/// 计数）、逐项层列语义标签（原始码入 Tooltip）、修订说明一行化（成段
+/// 说明收 Tooltip——『修订只增不改』关键词保留）。
+TEST_F(RequirementsSessionGuiTest, ValidationBoardAndSemanticLayers_UI_T37)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    QLabel* status = m_panel->findChild<QLabel*>(
+        QStringLiteral("ird_validation_status"));
+    ASSERT_NE(status, nullptr) << "校验状态卡缺失（看板化面）";
+    const QString state = status->property("state").toString();
+    EXPECT_TRUE(state == QStringLiteral("ok") || state == QStringLiteral("warn"))
+        << "状态卡二态属性缺失";
+    EXPECT_TRUE(status->text().contains(QStringLiteral("✔"))
+                || status->text().contains(QStringLiteral("⚠")))
+        << "状态卡缺指示符: " << status->text().toStdString();
+
+    // 逐项层列＝语义标签（非 R 码原文），原始码入 Tooltip。
+    QTreeWidget* items = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_validation_items"));
+    if (items == nullptr) {
+        // 兼容未设 objectName 的既有定位（表为页内唯一逐项行宿主）。
+        const QList<QTreeWidget*> tables =
+            m_panel->findChildren<QTreeWidget*>();
+        for (QTreeWidget* t : tables) {
+            if (t->columnCount() == 5
+                && t->headerItem()->text(1) == QStringLiteral("层")) {
+                items = t;
+                break;
+            }
+        }
+    }
+    ASSERT_NE(items, nullptr) << "校验逐项表缺失";
+    if (items->topLevelItemCount() > 0) {
+        QTreeWidgetItem* first = items->topLevelItem(0);
+        EXPECT_FALSE(first->text(1).contains(QStringLiteral("R")))
+            << "层列仍直出层码（语义标签缺失）: "
+            << first->text(1).toStdString();
+        EXPECT_FALSE(first->toolTip(1).isEmpty()) << "原始层码未入 Tooltip";
+    }
+
+    // 修订说明一行化：面板面一行微文案（关键词保留），成段说明收 Tooltip。
+    QLabel* notes = m_panel->findChild<QLabel*>();
+    QLabel* notesLabel = nullptr;
+    for (QLabel* l : m_panel->findChildren<QLabel*>()) {
+        if (l->text().contains(QStringLiteral("修订说明"))) {
+            notesLabel = l;
+            break;
+        }
+    }
+    ASSERT_NE(notesLabel, nullptr) << "修订说明行缺失";
+    EXPECT_FALSE(notesLabel->text().contains(QStringLiteral("\n")))
+        << "修订说明应为一行（成段文字收 Tooltip）";
+    EXPECT_TRUE(notesLabel->text().contains(QStringLiteral("修订只增不改")))
+        << "修订语义关键词丢失（T34 语义面）";
+    EXPECT_FALSE(notesLabel->toolTip().isEmpty()) << "成段说明未收 Tooltip";
+    (void)notes;
 }

@@ -159,7 +159,7 @@ public:
     }
 
     /// 状态行反馈出口（命令流程的就地中文呈现——UX-02/03）。
-    void showCommandFeedback(const QString& text) { m_statusLine->setText(text); }
+    void showCommandFeedback(const QString& text) { showStatusLine(text); }
 
     /// 状态行只读回取（gui 用例断言面——降级/错误文案呈现）。
     QString showCommandFeedbackText() const { return m_statusLine->text(); }
@@ -178,6 +178,25 @@ public:
     void onEditApplied(const std::string& changeSummary) override;
     /// 会话脏通知（标题 `*` 标记呈现半区——PM-04/PM-11；信号上呈装配层）。
     void notifySessionDirty() override;
+
+    // ---- UI-T37 R2：工况新增向导（acceptance 4——创建即带完整起步配置；
+    //      取消＝零新增。注入缝与 UI-T32 CommandDialogHost/FakeDialogHost
+    //      同族：缺省＝内建 QDialog 面板，测试注入确定字段工厂）------------
+    /// 向导确认字段（验收要求 mustVerify→RequirementLevel::Must/Should——
+    /// 必验派生归域侧 resolveRequiredCases，面板不私判 I-REQ-9）。
+    struct ConditionWizardFields {
+        std::string name;           ///< 工况名（空＝面板用防撞默认名）
+        bool hasCycle = false;      ///< 目标节拍是否设置（false＝未设，不伪造）
+        double cycleSeconds = 0.0;  ///< 目标节拍（s；hasCycle 时有效，>0）
+        bool mustVerify = true;     ///< true＝必验（Must）；false＝可选（Should）
+    };
+    using ConditionWizardFn =
+        std::function<std::optional<ConditionWizardFields>()>;
+    /// 注入工况新增向导工厂（装配期一次；缺省＝内建对话框）。
+    void setConditionWizardFactory(ConditionWizardFn factory)
+    {
+        m_conditionWizard = std::move(factory);
+    }
     /// 编辑拒绝分支：就地错误呈现（状态行——非模态，UX-03/07；值控件回退
     /// 显示工作集权威值——由全面板重投影实现）。
     void onEditRejected(const EditRejection& rejection) override;
@@ -274,6 +293,8 @@ private:
     void submitRegionCounts(const std::array<std::uint32_t, 3>& counts);
     /// 工位行键→所属卡片表单路由（词表分派——键族集合封闭）。
     QFormLayout* stationFormForKey(const std::string& key) const;
+    /// 状态文本统一出口（横幅可见性随文本——R2 警示条）。
+    void showStatusLine(const QString& text);
 
     // ---- 对象生命周期（UI-T30 B1——工位/区域/工况新增/复制/删除）----
     /**
@@ -307,6 +328,7 @@ private:
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     PostEditAction m_postEditAction;          ///< 编辑后动作（UI-T29——就绪重算钩子；可空）
     RegionPreviewSink m_regionPreview;        ///< 区域三维预览出口（装配层注入；空＝文本摘要）
+    ConditionWizardFn m_conditionWizard;      ///< 工况向导缝（空＝内建对话框——R2）
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）
 
@@ -342,7 +364,8 @@ private:
     QPushButton* m_draftUndoButton = nullptr;   ///< 草稿级撤销（L-R4 两级之一——独立控件）
     QPushButton* m_draftRedoButton = nullptr;   ///< 草稿级重做（同上）
     QPushButton* m_projectUndoButton = nullptr; ///< 项目级撤销（转发面——与草稿级不混用）
-    QLabel* m_statusLine = nullptr;             ///< 就地错误/警告/摘要行（非模态——UX-03/07）
+    QFrame* m_statusBanner = nullptr;           ///< 警示条容器（UI-T37 R2——可关闭轻量横幅）
+    QLabel* m_statusLine = nullptr;             ///< 就地错误/警告/摘要行（横幅内消息标签——UX-03/07）
 };
 
 }  // namespace sdurws::ird::requirements
