@@ -480,4 +480,13 @@ bool RequirementsUiModule::reportView3DPick(const core::ObjectId& oid)
     return m_adapter->reportView3DPick(oid);
 }
 
+bool RequirementsUiModule::executeDomainCommand(const std::string& commandId)
+{
+    m_guard.assertOnUiThread();
+    if (m_panel == nullptr) {
+        return false;  // 面板缺位（装配间隙）——命令不可达，不虚构执行
+    }
+    return m_panel->executeDomainCommand(commandId);
+}
+
 }  // namespace sdurws::ird::requirements

@@ -104,6 +104,19 @@ constexpr const char* kModelingFlowNotAssembledKey = "cmd.modeling.flow-not-asse
 /// 后续建模任务，提交走"域流程未装配"诚实反馈，不虚构执行成功）。
 constexpr const char* kModelingNewFromTemplateId = "modeling.new-from-template";
 
+/// UI-T32 C 批次已装配的需求域命令（组1：导出副本/模板/镜像/阵列/重生成
+/// ——flows 装配 RequirementsCommandFlows 落位；组2 导入与组3 捕获/拾取
+/// 随后续提交逐条入此集合。assembled 逐条置位——未列条目保持注册期禁用）。
+bool isAssembledRequirementCommand(const std::string& id)
+{
+    static const std::set<std::string> kAssembled{
+        "requirements.export-copy",  "requirements.apply-template",
+        "requirements.mirror-stations", "requirements.create-array",
+        "requirements.regenerate-linked",
+    };
+    return kAssembled.count(id) != 0;
+}
+
 /**
  * @brief 修订事件桥（WP-24-T03b——§5.2/§6.2 会话事件全同步的宿主半区）。
  *
@@ -657,7 +670,9 @@ void IrdWorkbenchHostPlugin::initialize()
             for (const CommandDescriptor& desc : descriptor->commands) {
                 WorkbenchContentDeps::DomainCommandEntry entry;
                 entry.descriptor = desc;
-                entry.assembled = (desc.id == kModelingNewFromTemplateId);
+                entry.assembled = (desc.id == kModelingNewFromTemplateId)
+                                  || (domainKey == std::string("requirements")
+                                          && isAssembledRequirementCommand(desc.id));
                 if (desc.id == kModelingNewFromTemplateId) {
                     // 真实执行面（域内已落位能力）：模板草稿重种子＋就绪
                     // 重算——种子内部走真实 RobotDesignTemplateFactory::createDraft。
@@ -674,6 +689,25 @@ void IrdWorkbenchHostPlugin::initialize()
                                                     "domain command executed: modeling.new-from-template");
                         }
                         out.accepted = true;
+                        return out;
+                    };
+                } else if (domainKey == std::string("requirements")
+                           && isAssembledRequirementCommand(desc.id)) {
+                    // UI-T32 C 批段：已装配的需求域命令——经装配门面执行
+                    // 真实 UI 流程（对话框/表单＋域纯函数；路由唯一）。
+                    const std::string commandId = desc.id;
+                    entry.handler = [this, commandId](
+                                        const std::vector<CommandParameter>&) {
+                        CommandOutcome out;
+                        out.accepted = true;  // 流程已派发（应用/取消/就地
+                                              // 错误均经面板状态行反馈）
+                        if (m_domains == nullptr
+                            || !m_domains->requirements.has_value()
+                            || !m_domains->requirements->executeDomainCommand(
+                                   commandId)) {
+                            // 流程失败/面板缺位——反馈已在面板状态行；
+                            // 此处不覆盖（面板可见时），Dev 留痕归因。
+                        }
                         return out;
                     };
                 } else {

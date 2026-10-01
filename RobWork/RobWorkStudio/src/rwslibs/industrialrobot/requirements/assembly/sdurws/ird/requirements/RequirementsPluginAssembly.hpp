@@ -154,6 +154,15 @@ struct RequirementsPluginAssembly {
     /// 『只出线不重写』门面先例同款）。
     void setPostEditAction(std::function<void()> action);
 
+    /**
+     * @brief 执行一条域命令的 UI 流程（UI-T32 C 批次——宿主命令 handler
+     *        的执行出口；转发模块 executeDomainCommand→面板 flows）。
+     *
+     * @param commandId [in] 命令 id（九条词表）
+     * @return 流程完成与否
+     */
+    bool executeDomainCommand(const std::string& commandId);
+
     /// 会话态访问（装配层注入/排障入口——完整类型在插件私有头，宿主侧
     /// 仅引用传递；仅 UI 线程）。
     RequirementsModuleSessionState& session() const;

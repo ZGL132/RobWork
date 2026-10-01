@@ -210,6 +210,7 @@ add_library(sdurws_ird_requirements_plugin STATIC
     plugin/PanelCommandCatalog.cpp       # 九条域命令登记/装配描述符/就绪投影/L-R12（ACC4/5）
     plugin/PanelEditFlow.cpp             # L-R2/L-R9 编辑流编排＋两级撤销呈现（ACC2/4）
     plugin/ImportWizardFlow.cpp          # L-R10 导入向导域侧五步流（ACC4）
+    plugin/RequirementsCommandFlows.cpp  # 域命令 UI 流程装配（UI-T32 C 批次——对话框族＋域纯函数）
     plugin/HostMigrationProviders.cpp    # 宿主迁移三接入面（WP-14-T10——B1-SPEC §5.1，零 Qt）
     plugin/RequirementsPanelWidget.cpp   # 需求域面板 widget（Q_OBJECT——AUTOMOC 载体）
     plugin/RequirementsPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
