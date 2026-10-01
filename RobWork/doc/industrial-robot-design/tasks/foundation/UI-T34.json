@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求域校验与应用体验收口（功能对照批次 E）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T29"
   ],

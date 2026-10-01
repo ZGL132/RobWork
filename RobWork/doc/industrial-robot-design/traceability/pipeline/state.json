@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-pipeline/1",
   "phase": "idle",
-  "tickCount": 449,
+  "tickCount": 451,
   "currentTask": null,
   "branch": null,
   "base": null,
@@ -16,10 +16,21 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T10:52:49+08:00",
+    "updatedAt": "2026-10-01T11:17:31+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T34",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "d9055c56"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T34-20261001.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收 attempt1 即 pass（tick#450 实施/tick#451 验收——单会话顺序执行，独立性降级已声明）。校验与应用体验收口（E 批次）：校验页①页头实时化〔『尚未执行』静态退役——阻断 N 项引导/就绪二态随报告刷新，UI-T26 既有登记的消费兑现〕②逐项三过滤行〔级别 4 值/层 R0~R9/稳定码子串不区分大小写——纯呈现层重投影＋m_lastReadiness 报告缓存〕③Blocking 行红色前景〔拒绝分组视觉面〕④修订只增不改语义文案〔防旧版冻结心智误读〕；updateTabHeaders 校验头职责移交 renderValidationPage；gui 用例六断言组。纯呈现层零数据面〔include/src/ui 零触碰——契约禁止面执行〕。验证＝ctest 五单元 12 目标 100%〔gui 16/16；首跑 ui gui 闪失败＝HostIntegration 时序敏感，直跑 67/67＋三连绿＋复采集 5/5——T32 attempt3 同型如实登记〕＋冒烟双场景 PASS＋ird_gates 96 零新增＋validate-docs PASS；双变异〔过滤判定失效红〔新面锚〕/Readiness 反转 45 红〕均恢复绿。合入口径 PIPE §4.7②③〔evidence 9d590c30＋代码 d9055c56〕。需求界面功能对照五批次〔A/B1/B2/C/E〕全闭"
+    },
     {
       "task": "UI-T32",
       "unit": "ui",
@@ -2247,13 +2258,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T34",
-      "contractPath": "tasks/foundation/UI-T34.json",
-      "branch": "ui-t34"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
