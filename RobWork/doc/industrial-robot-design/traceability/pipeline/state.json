@@ -1,38 +1,38 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "implementing",
-  "tickCount": 436,
-  "currentTask": "UI-T32",
-  "branch": "ui-t32",
-  "base": "cdd23a8784c5fe5ef2ecce7e3c7d6299aaebcb17",
+  "phase": "idle",
+  "tickCount": 447,
+  "currentTask": null,
+  "branch": null,
+  "base": null,
   "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
-  "lastFailureRecord": {
-    "branch": "acc/UI-T32/1",
-    "path": "traceability/acceptance/UI-T32-20261001.md",
-    "commit": "9566e6f81c2e9a82482b18ab5e74b837fe90fec1",
-    "attempt": 1
-  },
-  "run": {
-    "task": "UI-T32",
-    "runId": "tick-5a3b8735-ui-t32-fix1",
-    "kind": "implement",
-    "workerId": "8afcafbe-fc49-46f2-8eb6-efbd72c7bf0c",
-    "leaseMinutes": 120,
-    "startedAt": "2026-10-01T09:47:00+08:00",
-    "leaseExpiresAt": "2026-10-01T11:47:00+08:00"
-  },
+  "lastFailureRecord": null,
+  "run": null,
   "attempts": {
     "implement": 0,
-    "fix": 1,
-    "accept": 1
+    "fix": 0,
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T09:47:07+08:00",
+    "updatedAt": "2026-10-01T10:38:00+08:00",
     "ticksNoProgress": 0
   },
   "history": [
+    {
+      "task": "UI-T32",
+      "unit": "ui",
+      "result": "pass-merged",
+      "commits": [
+        "60f4cb6a",
+        "fc8dfe4b",
+        "99e14693"
+      ],
+      "acceptanceRecord": "traceability/acceptance/UI-T32-20261001-r3.md",
+      "mergedAt": "2026-10-01",
+      "failReason": "验收史＝attempt1 fail〔B-1 契约承诺 gui 用例缺失——flows 模态对话框无可测缝→CommandDialogHost 注入缝＋FakeDialogHost 七组用例〕→attempt2 fail〔B-1′ 门面出线 executeDomainCommand 未在 allowedFiles——T27 同型登记缺口→契约 v1.2 增补 assembly/**〕→attempt3 pass。九命令 UI 流程装配（C 批次）：RequirementsCommandFlows〔组1 导出/模板/镜像/阵列/重生成＋解除——submitBatchEdit 单快照；组2 导入向导 CSV 五步流＋JSON 直映射＋行级错误预览＋临时句柄修复 O-36；组3 捕获/拾取降级壳〕＋面板/模块/门面出线＋UiPlugin 九条置位；域逻辑零重写。验证＝ctest 五单元 12 目标 100%〔gui 17/17〕＋冒烟双场景 PASS＋ird_gates 96 零新增＋validate-docs PASS；双变异〔导入句柄回退 3 红/Editor 重名面 5 红〕恢复绿。合入口径 PIPE §4.7②③〔evidence 8069617b＋代码 99e14693〕"
+    },
     {
       "task": "UI-T31",
       "unit": "ui",
@@ -2247,13 +2247,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T32",
-      "contractPath": "tasks/foundation/UI-T32.json",
-      "branch": "ui-t32"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",

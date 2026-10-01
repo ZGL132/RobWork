@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求域九条命令 UI 流程装配（功能对照批次 C）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T30"
   ],
