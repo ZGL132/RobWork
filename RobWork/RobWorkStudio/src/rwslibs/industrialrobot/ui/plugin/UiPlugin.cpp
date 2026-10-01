@@ -109,15 +109,15 @@ constexpr const char* kModelingNewFromTemplateId = "modeling.new-from-template";
 /// 随后续提交逐条入此集合。assembled 逐条置位——未列条目保持注册期禁用）。
 bool isAssembledRequirementCommand(const std::string& id)
 {
-    // 九条全量（组1 五条＋组2 导入两条＋组3 捕获/拾取两条——捕获/拾取
-    // 为降级/流程壳形态：assembled＝按钮可达＋流程反馈〔knownPitfalls 4/5
-    // 的诚实降级语义，非占位处理器〕）。
+    // UI-T35 P1-3（R2 审核整改）：捕获/拾取撤牌——此前 assembled 可点但
+    // 流程返回 false＝"按钮可用但执行失败"的不合格中间态；回注册期禁用
+    // （UI-T27 P0-4 语义——按钮不可达＋tooltip 引导），完整实现归
+    // UI-T33/D 批次（前置 View3D 阶段 B）。flows 降级函数保留为底座。
     static const std::set<std::string> kAssembled{
         "requirements.export-copy",  "requirements.apply-template",
         "requirements.mirror-stations", "requirements.create-array",
         "requirements.regenerate-linked", "requirements.import-csv",
-        "requirements.import-json", "requirements.capture-tcp",
-        "requirements.pick-feature",
+        "requirements.import-json",
     };
     return kAssembled.count(id) != 0;
 }
@@ -582,6 +582,34 @@ void IrdWorkbenchHostPlugin::initialize()
                     }
                 });
             m_revisionSubscription = m_eventBus->subscribe(*m_revisionSink);
+
+            // UI-T35 P2：需求域修订同步 sink（第二订阅——外部/他域修订
+            // 事件→需求会话重导线或 STALE 提示；应答体见
+            // onRequirementExternalRevision）。
+            class RequirementsRevisionSyncSink final
+                : public core::IDomainEventSink {
+            public:
+                explicit RequirementsRevisionSyncSink(
+                    IrdWorkbenchHostPlugin* host)
+                    : m_host(host)
+                {
+                }
+                void onEvent(const core::DomainEvent& event) override
+                {
+                    if (event.kind != core::DomainEventKind::RevisionCommitted) {
+                        return;
+                    }
+                    m_host->onRequirementExternalRevision(
+                        event.asRevisionCommitted().revision);
+                }
+
+            private:
+                IrdWorkbenchHostPlugin* m_host;  ///< 宿主（非 owning——插件存活期）
+            };
+            m_requirementsRevisionSink =
+                std::make_unique<RequirementsRevisionSyncSink>(this);
+            m_requirementsRevisionSubscription =
+                m_eventBus->subscribe(*m_requirementsRevisionSink);
         }
     }
 
@@ -1890,6 +1918,51 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateSaveProject(
 // 关闭编排（UI-T17——workbench.closeProject 覆写面；§5.4/§5.6）
 // =====================================================================
 
+/**
+ * @brief 需求域外部修订同步（UI-T35 P2——RevisionCommitted 事件应答）。
+ *
+ * 语义分岔（编辑器 loadBaseline 无 rebase——STALE 诚实边界）：
+ *   - 事件修订＝会话当前基线（自身 draft.apply 回执）→跳过（已同步）；
+ *   - 零未应用编辑→从新 HEAD 重导线（wireRequirementsSession——锚/根
+ *     刷新，草稿零丢失）；外部/他域修订场景的自动跟进；
+ *   - 有未应用编辑→不重载（防丢草稿），状态栏 STALE 提示（建议先应用
+ *     或撤销草稿再继续——应用时 expectedRevision 失配由命令 prepare
+ *     诚实拒绝）。
+ */
+void IrdWorkbenchHostPlugin::onRequirementExternalRevision(
+    const core::RevisionId& revision)
+{
+    if (!m_requirementsSessionLive || m_lastStoreAdapter == nullptr) {
+        return;  // 无会话/装配缺席——无同步面
+    }
+    auto& requirements = *m_domains->requirements;
+    if (requirements.sessionBaseRevision().has_value()
+        && *requirements.sessionBaseRevision() == revision) {
+        return;  // 自身应用回执——已同步（noteAppliedRevision 锚前移）
+    }
+    if (m_requirementsEditor.draftStatus().edits == 0) {
+        wireRequirementsSession(*m_lastStoreAdapter);  // 零编辑——安全重导线
+        if (m_diag.pipeline != nullptr) {
+            m_diag.pipeline->logDev(kPluginDevChannel,
+                                    "需求域会话：外部修订→零编辑重导线");
+        }
+        return;
+    }
+    if (m_hostStatusBar != nullptr) {
+        m_hostStatusBar->showMessage(
+            QString::fromUtf8("项目出现新修订——需求草稿基于旧修订，"
+                              "请先应用或撤销草稿再继续"),
+            6000);
+    }
+    if (m_diag.pipeline != nullptr) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "需求域会话：外部修订＋未应用草稿——STALE 提示");
+    }
+}
+
+// 关闭编排（UI-T17——workbench.closeProject 覆写面；§5.4/§5.6）
+// =====================================================================
+
 // =====================================================================
 // 需求域会话接线（UI-T29——存储成功捕获回调的数据面）
 // =====================================================================
@@ -1956,6 +2029,54 @@ private:
     project::IProjectQueryPort& m_query;  ///< 查询端口（非 owning——上下文存活期）
     project::RevisionView m_head;         ///< 冻结的 HEAD 修订视图（闭包域＝该修订）
 };
+
+/**
+ * @brief 内存空根闭包（UI-T35 P1-1——空项目需求集初始化的编辑期载入源）。
+ *
+ * R2 审核整改：此前 HEAD 无 req-set→attachEditor(nullptr)＝诚实空态但
+ * 无初始化入口（用户从零无法创建任何需求对象）。本闭包提供一个**内存
+ * 空根**（RequirementSet{}＋四集合槽 nullopt）供 loadBaseline 载入——
+ * 编辑器会话即活（生命周期按钮可用），首应用时根/集合槽按 allocateNew
+ * 由 project 取号（正式存储身份，O-36：编辑期临时句柄——本闭包内的
+ * ObjectId 是空根的模型内自洽值，不入存储）。
+ *
+ * 纪律：只应答 req-set token（四集合槽未挂载＝nullopt——编辑器空集
+ * 合合法态）；同键重复取回同字节（纯函数构造）。
+ */
+class EmptyRequirementsClosure final
+    : public requirements::RequirementObjectClosureView {
+public:
+    EmptyRequirementsClosure()
+    {
+        // 空根（四集合槽 nullopt——集合对象随首应用挂载）。
+        requirements::RequirementSet root;
+        root.name = "需求集";
+        requirements::RequirementCodec codec;
+        auto bytes = codec.encode(
+            requirements::RequirementObjectVariant{root},
+            requirements::kCurrentRequirementFormatVersion);
+        m_rootBytes = bytes.ok() ? bytes.get() : requirements::RequirementBytes{};
+    }
+
+    std::optional<requirements::RequirementClosureObject> tryObjectByToken(
+        std::string_view objectTypeToken) const override
+    {
+        if (objectTypeToken == requirements::kReqSetObjectType) {
+            return requirements::RequirementClosureObject{
+                std::string(requirements::kReqSetObjectType), m_rootBytes};
+        }
+        return std::nullopt;  // 四集合未挂载（空项目——首应用 allocateNew）
+    }
+
+    std::optional<requirements::RequirementClosureObject> tryObject(
+        const core::ObjectId&) const override
+    {
+        return std::nullopt;  // 空项目无既有对象可解引用
+    }
+
+private:
+    requirements::RequirementBytes m_rootBytes;  ///< 空根 canonical 字节（构造期编码）
+};
 }  // namespace
 
 /**
@@ -1979,18 +2100,41 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
     project::IProjectQueryPort& query = adapter.projectStore().query();
     const project::RevisionView head = query.head();
     ProjectRequirementsClosure closure(query, head);
-    const auto load = m_requirementsEditor.loadBaseline(closure);
+    auto load = m_requirementsEditor.loadBaseline(closure);
     if (!load.ok) {
-        // 闭包无 req-set 根（全新工程/根未应用）——显式无会话（门面契约：
-        // nullptr＝诚实空态，buildDraftCommand 如实 nullopt，树供给空集）。
-        m_requirementsSessionLive = false;
-        requirements.attachEditor(nullptr);
-        requirements.onSessionDetached();
+        // UI-T35 P1-1（R2 审核整改）：闭包无 req-set 根（全新工程）——
+        // 不再诚实空态挂起（审核 P1：用户从零无法创建任何需求对象），
+        // 改以内存空根闭包初始化编辑器会话：生命周期按钮可用，新增条目
+        // 入草稿，首应用时根/集合槽按 allocateNew 由 project 取号（正式
+        // 存储身份——O-36 编辑期临时句柄纪律，UI 零伪造）。
+        EmptyRequirementsClosure emptyClosure;
+        load = m_requirementsEditor.loadBaseline(emptyClosure);
+        if (!load.ok) {
+            // 内存空根载入失败＝域侧编码/校验缺陷（非用户路径）——回退
+            // 诚实空态并留痕（不吞错）。
+            m_requirementsSessionLive = false;
+            requirements.attachEditor(nullptr);
+            requirements.onSessionDetached();
+            if (m_diag.pipeline != nullptr) {
+                m_diag.pipeline->logDev(
+                    kPluginDevChannel,
+                    "需求域会话：空根初始化失败——诚实空态（" + load.error.detail
+                        + "）");
+            }
+            return;
+        }
+        m_requirementsSessionLive = true;
+        requirements.attachEditor(&m_requirementsEditor);
+        requirements.bindSessionAnchor(head.branch, head.id);
+        // 根未入库＝首应用 allocateNew（noteAppliedRevision 的 nullopt
+        // 语义在"根未挂载"场景是正确态——与提交回执回填衔接）。
+        requirements.noteAppliedRevision(head.id, std::nullopt);
+        requirements.bindReadiness(m_requirementsReadinessChecker.check(
+            m_requirementsEditor.workingSet(), requirements::CheckContext{}));
         if (m_diag.pipeline != nullptr) {
             m_diag.pipeline->logDev(
                 kPluginDevChannel,
-                "需求域会话：HEAD 无 req-set 根——诚实空态（" + load.error.detail
-                    + "）");
+                "需求域会话：空项目初始化（内存空根——首应用 allocateNew 取号）");
         }
         return;
     }

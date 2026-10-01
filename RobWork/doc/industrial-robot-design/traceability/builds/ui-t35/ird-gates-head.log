@@ -1,0 +1,176 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\libs\Release\pqp.lib
+  Automatic MOC for target qtpropertybrowser
+  qtpropertybrowser.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\qtpropertybrowser.lib
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_opengl.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws
+  sdurws.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws.lib
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWork\bin\Release\sdurw_pathplanners.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  sdurws_ird_requirements_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
+  Automatic MOC for target sdurws_jog
+  sdurws_jog.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_jog.lib
+  Automatic MOC for target sdurws_log
+  sdurws_log.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_log.lib
+  Automatic MOC for target sdurws_playback
+  sdurws_playback.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_playback.lib
+  Automatic MOC for target sdurws_treeview
+  sdurws_treeview.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\libs\Release\sdurws_treeview.lib
+  Automatic MOC for target sdurws_ird_studio
+  sdurws_ird_studio.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\bin\Release\sdurws_ird_studio.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
+  IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_diagnostics_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_evidence_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_evidence_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_execution_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_execution_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-LIB: 鐩爣 sdurws_ird_io 閾炬帴鏈煡鐩爣鏃?libzip::zip锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?IRD-GATE-LIB: 鐩爣 sdurws_ird_io 閾炬帴鏈煡鐩爣鏃?expat::expat锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_io_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-LIB: 鐩爣 sdurws_ird_io_test 閾炬帴鏈煡鐩爣鏃?libzip::zip锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_io_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-LIB: 鐩爣 sdurws_ird_io_contract_test 閾炬帴鏈煡鐩爣鏃?libzip::zip锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?IRD-GATE-LIB: 鐩爣 sdurws_ird_kinematics 閾炬帴鏈煡鐩爣鏃?Eigen3::Eigen锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_kinematics_plugin 鈫?sdurws_ird_kinematics锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  IRD-GATE-SUB: 琛ㄥ渚濊禆杈?kinematics->ui锛坰durws_ird_kinematics_plugin 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_kinematics_app 鈫?sdurws_ird_kinematics_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_kinematics_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_kinematics_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->modeling锛坰durws_ird_demo6r 鈫?sdurws_ird_modeling锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->project锛坰durws_ird_demo6r 鈫?sdurws_ird_project锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_modeling_plugin 鈫?sdurws_ird_modeling锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  IRD-GATE-SUB: 琛ㄥ渚濊禆杈?modeling->ui锛坰durws_ird_modeling_plugin 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_modeling_app 鈫?sdurws_ird_modeling_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  IRD-GATE-LIB: 鐩爣 sdurws_ird_modeling 閾炬帴鏈煡鐩爣鏃?pugixml::pugixml锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_modeling_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->modeling锛坰durws_ird_modeling_gui_test 鈫?sdurws_ird_modeling_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_modeling_gui_test 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_modeling_gui_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_modeling_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_policy_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_policy_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_project_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_project_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_reporting_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_reporting_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_requirements_plugin 鈫?sdurws_ird_requirements锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  IRD-GATE-SUB: 琛ㄥ渚濊禆杈?requirements->ui锛坰durws_ird_requirements_plugin 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_requirements_app 鈫?sdurws_ird_requirements_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_requirements_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_requirements_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->requirements锛坰durws_ird_requirements_gui_test 鈫?sdurws_ird_requirements_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_requirements_gui_test 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_requirements_gui_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_runtime_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_testdata_lint 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_testdata_lint 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Core锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Gui锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Widgets锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_project锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_execution锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_diagnostics锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_runtime锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_modeling_plugin锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_requirements_plugin锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_kinematics_plugin锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->ui锛坰durws_ird_ui_gui_test 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_ui_gui_test 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_ui_gui_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->ui锛坰durws_ird_ui_app 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->project锛坰durws_ird_ui_app 鈫?sdurws_ird_project锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->ui锛坰durws_ird_ui_plugin 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->project锛坰durws_ird_ui_plugin 鈫?sdurws_ird_project锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->modeling锛坰durws_ird_ui_plugin 鈫?sdurws_ird_modeling_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->requirements锛坰durws_ird_ui_plugin 鈫?sdurws_ird_requirements_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->kinematics锛坰durws_ird_ui_plugin 鈫?sdurws_ird_kinematics_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->ui锛坰durws_ird_studio 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->project锛坰durws_ird_studio 鈫?sdurws_ird_project锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->modeling锛坰durws_ird_studio 鈫?sdurws_ird_modeling_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->requirements锛坰durws_ird_studio 鈫?sdurws_ird_requirements_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->kinematics锛坰durws_ird_studio 鈫?sdurws_ird_kinematics_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Core锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Gui锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Widgets锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  IRD-GATE-R4: project 浜у搧闈㈠彂鐜?RobWork 瀛楅潰閲?1 澶勶紙鐤戝墠缂€鎷兼帴/鍓ョ锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp锛堜緥澶栭』 DTB 搂4.5 鐧昏锛?IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/FlowLayout.hpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ICommandRegistry.hpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/IGlobalShortcutRegistry.hpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/AboutDialog.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandInteractionBridge.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette_p.hpp
+  IRD-GATE-R3: ui 浜у搧闈㈠寘鍚?Qt 澶达細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandRegistry.cpp锛圢FR-MNT-01锛歀2 璁＄畻鍐呮牳闆?Qt锛?IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPresentation.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈠寘鍚?Qt 澶达細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/GlobalShortcutRegistry.cpp锛圢FR-MNT-01锛歀2 璁＄畻鍐呮牳闆?Qt锛?IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/IndustrialProjectTree.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicySummaryCard.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PropertyInspector.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ShellSupport.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/View3DPlaceholder.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent_p.hpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell.cpp
+  IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell_p.hpp
+  [ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍛戒腑 96 椤癸細
+  [ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_diagnostics_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_evidence_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_evidence_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_execution_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_execution_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-LIB: 鐩爣 sdurws_ird_io 閾炬帴鏈煡鐩爣鏃?libzip::zip锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?[ird_gates] IRD-GATE-LIB: 鐩爣 sdurws_ird_io 閾炬帴鏈煡鐩爣鏃?expat::expat锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_io_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-LIB: 鐩爣 sdurws_ird_io_test 閾炬帴鏈煡鐩爣鏃?libzip::zip锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_io_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-LIB: 鐩爣 sdurws_ird_io_contract_test 閾炬帴鏈煡鐩爣鏃?libzip::zip锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?[ird_gates] IRD-GATE-LIB: 鐩爣 sdurws_ird_kinematics 閾炬帴鏈煡鐩爣鏃?Eigen3::Eigen锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?[ird_gates] IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_kinematics_plugin 鈫?sdurws_ird_kinematics锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  [ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?kinematics->ui锛坰durws_ird_kinematics_plugin 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_kinematics_app 鈫?sdurws_ird_kinematics_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  [ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_kinematics_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_kinematics_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->modeling锛坰durws_ird_demo6r 鈫?sdurws_ird_modeling锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->project锛坰durws_ird_demo6r 鈫?sdurws_ird_project锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_modeling_plugin 鈫?sdurws_ird_modeling锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  [ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?modeling->ui锛坰durws_ird_modeling_plugin 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_modeling_app 鈫?sdurws_ird_modeling_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  [ird_gates] IRD-GATE-LIB: 鐩爣 sdurws_ird_modeling 閾炬帴鏈煡鐩爣鏃?pugixml::pugixml锛堜笉鍦?ird/妗嗘灦鍩虹嚎/gtest 璇嶈〃锛涘灞炵涓夋柟鏂板渚濊禆锛屽厛鐧昏 DTB 鍐嶆墿璇嶈〃锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_modeling_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->modeling锛坰durws_ird_modeling_gui_test 鈫?sdurws_ird_modeling_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_modeling_gui_test 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_modeling_gui_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_modeling_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_policy_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_policy_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_project_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_project_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_reporting_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_reporting_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_requirements_plugin 鈫?sdurws_ird_requirements锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  [ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?requirements->ui锛坰durws_ird_requirements_plugin 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_requirements_app 鈫?sdurws_ird_requirements_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+  [ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_requirements_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_requirements_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->requirements锛坰durws_ird_requirements_gui_test 鈫?sdurws_ird_requirements_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_requirements_gui_test 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_requirements_gui_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_runtime_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_testdata_lint 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_testdata_lint 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?[ird_gates] IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Core锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  [ird_gates] IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Gui锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  [ird_gates] IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Widgets锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  [ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_project锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_execution锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_diagnostics锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_testkit锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_runtime锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_modeling_plugin锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_requirements_plugin锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 娴嬭瘯鐩爣 sdurws_ird_ui_contract_test 鐩撮摼浠栧崟鍏冧骇鍝佺洰鏍?sdurws_ird_kinematics_plugin锛堝厑璁稿舰鎬佷粎鍚屽崟鍏冭娴嬬洰鏍囷紱璺ㄥ崟鍏冮渶姹傜粡 testkit 鏇胯韩鎴?DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->ui锛坰durws_ird_ui_gui_test 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?->testkit锛坰durws_ird_ui_gui_test 鈫?sdurws_ird_testkit锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-T1: 浜у搧鐩爣 sdurws_ird_ui_gui_test 閾炬帴 testkit锛坱estkit.md 搂2.4 T-1锛氫骇鍝佺洰鏍囦笉寰楅摼鎺?鍖呭惈 testkit锛?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->ui锛坰durws_ird_ui_app 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->project锛坰durws_ird_ui_app 鈫?sdurws_ird_project锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->ui锛坰durws_ird_ui_plugin 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->project锛坰durws_ird_ui_plugin 鈫?sdurws_ird_project锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->modeling锛坰durws_ird_ui_plugin 鈫?sdurws_ird_modeling_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->requirements锛坰durws_ird_ui_plugin 鈫?sdurws_ird_requirements_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?ui->kinematics锛坰durws_ird_ui_plugin 鈫?sdurws_ird_kinematics_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->ui锛坰durws_ird_studio 鈫?sdurws_ird_ui锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->project锛坰durws_ird_studio 鈫?sdurws_ird_project锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->modeling锛坰durws_ird_studio 鈫?sdurws_ird_modeling_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->requirements锛坰durws_ird_studio 鈫?sdurws_ird_requirements_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-SUB: 琛ㄥ渚濊禆杈?studio->kinematics锛坰durws_ird_studio 鈫?sdurws_ird_kinematics_plugin锛変笉鍦?ARCH 搂3.5 鐧藉悕鍗?[ird_gates] IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Core锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  [ird_gates] IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Gui锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  [ird_gates] IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Widgets锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+  [ird_gates] IRD-GATE-R4: project 浜у搧闈㈠彂鐜?RobWork 瀛楅潰閲?1 澶勶紙鐤戝墠缂€鎷兼帴/鍓ョ锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp锛堜緥澶栭』 DTB 搂4.5 鐧昏锛?[ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/FlowLayout.hpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ICommandRegistry.hpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/IGlobalShortcutRegistry.hpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/AboutDialog.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandInteractionBridge.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette_p.hpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈠寘鍚?Qt 澶达細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandRegistry.cpp锛圢FR-MNT-01锛歀2 璁＄畻鍐呮牳闆?Qt锛?[ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPresentation.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈠寘鍚?Qt 澶达細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/GlobalShortcutRegistry.cpp锛圢FR-MNT-01锛歀2 璁＄畻鍐呮牳闆?Qt锛?[ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/IndustrialProjectTree.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicySummaryCard.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PropertyInspector.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ShellSupport.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/View3DPlaceholder.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent_p.hpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell.cpp
+  [ird_gates] IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell_p.hpp
+  ==============================================================
+  CMake Error at cmake/ird_gates.cmake:767 (message):
+    [ird_gates] 渚濊禆绾㈢嚎/琛ヤ竵闂ㄧ瀛樺湪 96 澶勫懡涓€斺€旀寜 ARCH
+    搂3.2 SA-10 鍒ゆ瀯寤哄け璐ワ紱渚嬪鍙粡 DTB 搂4.5 鐧昏鍐?
+  
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: “D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\CMakeFiles\e2a634937b84ccec86dd1bbce05999c3\ird_gates.rule”的自定义生成已退出，代码为 1。 [D:\10_Source_Repos\21_robot\RobWork\build\acc-build-ui-t27\RobWorkStudio\src\rwslibs\industrialrobot\ird_gates.vcxproj]
