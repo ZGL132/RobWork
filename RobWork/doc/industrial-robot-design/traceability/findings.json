@@ -4429,6 +4429,16 @@
       "title": "批量编辑应用后的树重选异常：renderTree clear() 期间选中信号时序清锚且重挂 setSelected 未回写会话锚——连续两次批量命令的第二次（以选中为源的阵列/镜像连用）取不到源。",
       "owner": "requirements 面板批次（UI-T33 前收口——renderTree 重挂选中行时同步回写会话锚）",
       "resolution": "UI-T32 阵列用例以净夹具承载（选中路径 T29 同型全绿）；本条登记防复发。编号顺延自 F-444。"
+    },
+    {
+      "id": "F-446",
+      "source": "所有者 R2 中间验收审核（2026-10-01——五批次合入后全面审核，三 P1 两 P2 逐条实证成立；修复批次 UI-T35 立项承接）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "需求会话一致性五项：①空项目无需求集初始化入口（wireRequirementsSession 无根→attachEditor(nullptr)→生命周期按钮禁用且无从恢复）②提交回执 rootObjectId 传 nullopt（UI-T29 前骨架遗留——建模域同位置有扫描先例）③捕获/拾取 assembled 可点但流程 false（不合格中间态）④外部修订事件不同步需求域⑤RegionPreviewSink 未接宿主视图〔④⑤归 D 批次〕。",
+      "owner": "UI-T35 修复批次（①②③⑤本批；④三维接线归 UI-T33/D 批次随 View3D 立项）",
+      "resolution": "UI-T35 立项承接（契约 tasks/foundation/UI-T35.json ready）；本条随批次完成转 fixed。编号顺延自 F-445。"
     }
   ]
 }
