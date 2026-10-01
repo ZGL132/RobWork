@@ -169,6 +169,11 @@ private Q_SLOTS:
     void onTreeSelectionChanged();
     /// 检查器行编辑提交（L-R2 入口——表单回填→submitEntryEdit 域裁决）。
     void onInspectorEditingFinished();
+    /// 区域检查器行编辑提交（UI-T31 B2——工位轨同构：权威值对照短路→
+    /// parseFieldValueText→applyRegionEditSet→submitEntryEdit）。
+    void onRegionFieldEditingFinished();
+    /// 工况检查器行编辑提交（UI-T31 B2——同上，applyConditionEditSet）。
+    void onConditionFieldEditingFinished();
     /// 命令按钮激活（域命令区——转发注入的提交出口）。
     void onCommandButtonClicked();
     /// 草稿级撤销/重做（L-R4 草稿级半区——包裹编辑器局部撤销＋记账）。

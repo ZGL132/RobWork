@@ -148,13 +148,20 @@ std::vector<StationFieldRow> regionFieldsFor(const WorkRegion& region,
               std::string(requirementRefKindToken(region.refFrame.kind)), "",
               StationFieldEnablement::ReadOnlyGrey);  // 浅引用事实——灰显（语义解析归评估侧，§8.1）
 
-    // ---- 区域盒（I-REQ-6 非退化——直投）----
-    appendRow(rows, "box-center", "盒中心", formatVector(region.box.center), "m");
-    appendRow(rows, "box-size", "盒尺寸",
-              formatDeterministic(region.box.size[0]) + " × "
-                  + formatDeterministic(region.box.size[1]) + " × "
-                  + formatDeterministic(region.box.size[2]),
-              "m");
+    // ---- 区域盒（I-REQ-6 非退化——B2 分量行：复合向量行拆三标量行，
+    //      行键与 regionQuantitySpecs/applyRegionEditSet 单一词表对齐）----
+    appendRow(rows, "box-center-x", "盒中心 X",
+              formatDeterministic(region.box.center[0]), "m");
+    appendRow(rows, "box-center-y", "盒中心 Y",
+              formatDeterministic(region.box.center[1]), "m");
+    appendRow(rows, "box-center-z", "盒中心 Z",
+              formatDeterministic(region.box.center[2]), "m");
+    appendRow(rows, "box-size-x", "盒尺寸 X",
+              formatDeterministic(region.box.size[0]), "m");
+    appendRow(rows, "box-size-y", "盒尺寸 Y",
+              formatDeterministic(region.box.size[1]), "m");
+    appendRow(rows, "box-size-z", "盒尺寸 Z",
+              formatDeterministic(region.box.size[2]), "m");
 
     // ---- 采样定义双模式（计数/间距两行按模式显隐——卡面"双模式"）----
     const SamplingDefinitionView view = samplingDefinitionView(region, service);
@@ -275,6 +282,80 @@ RegionPreviewGeometry regionPreviewGeometry(const WorkRegion& region,
                     + formatDeterministic(box.size[2]) + " m";
     geo.summaryText += countsValid ? (" · 格 " + formatCounts(counts)) : " · 格 未定";
     return geo;
+}
+
+// =====================================================================
+// B2 字段编辑提交协议（UI-T31——specs 词表＋回填；工位模型同构）
+// =====================================================================
+
+std::vector<ui::QuantityFieldSpec> regionQuantitySpecs()
+{
+    // SI 单位锚（core UnitToken::find——工位 specs 同款 fail-fast 纪律）。
+    auto unitOrThrow = [](const char* symbol) {
+        auto u = core::UnitToken::find(symbol);
+        if (!u.has_value()) {
+            throw std::logic_error(std::string("区域面板：单位注册表缺少 ") + symbol
+                                   + "（实现缺陷）");
+        }
+        return u.value();
+    };
+    const core::UnitToken m = unitOrThrow("m");
+    const core::UnitToken one = unitOrThrow("1");  // 无量纲 SI token（"1"）
+
+    // 装配辅助（键＝回填词表同词表——单一词表两处消费）。
+    auto lengthSpec = [&](const char* key, const char* label,
+                          std::optional<ui::QuantityBounds> bounds) {
+        return ui::makeQuantityFieldSpec(key, label, core::QuantityKind::Length,
+                                         m, m, bounds);
+    };
+    // 尺寸正数下界（I-REQ-6 非退化的呈现层预过滤——业务裁决仍归域链，
+    // 此处只是表单输入约束面；中心不设界——坐标无先验范围）。
+    const ui::QuantityBounds positive{1.0e-12, 1.0e9};
+    // 覆盖率 ∈[0,1]（无量纲——I-REQ-6 覆盖率目标的定义域）。
+    const ui::QuantityBounds unit{0.0, 1.0};
+
+    return {
+        lengthSpec("box-center-x", "盒中心 X", std::nullopt),
+        lengthSpec("box-center-y", "盒中心 Y", std::nullopt),
+        lengthSpec("box-center-z", "盒中心 Z", std::nullopt),
+        lengthSpec("box-size-x", "盒尺寸 X", positive),
+        lengthSpec("box-size-y", "盒尺寸 Y", positive),
+        lengthSpec("box-size-z", "盒尺寸 Z", positive),
+        ui::makeQuantityFieldSpec("coverage-position", "位置覆盖率下限",
+                                  core::QuantityKind::Dimensionless,
+                                  one, one, unit),
+    };
+}
+
+WorkRegion applyRegionEditSet(const WorkRegion& base, const ui::ParamEditSet& edits,
+                              std::vector<std::string>& known)
+{
+    known.clear();
+    known.reserve(edits.changes.size());
+    WorkRegion out = base;  // 值拷贝——非表单字段（身份/名称/采样/引用）原样保留
+    for (const ui::ParamChange& c : edits.changes) {
+        // 词表外键＝表单模型与回填词表漂移（实现缺陷）——fail-fast 不静默
+        // 丢弃（与 applyStationEditSet 同纪律）。
+        if (c.key == "box-center-x") {
+            out.box.center[0] = c.newSi;
+        } else if (c.key == "box-center-y") {
+            out.box.center[1] = c.newSi;
+        } else if (c.key == "box-center-z") {
+            out.box.center[2] = c.newSi;
+        } else if (c.key == "box-size-x") {
+            out.box.size[0] = c.newSi;
+        } else if (c.key == "box-size-y") {
+            out.box.size[1] = c.newSi;
+        } else if (c.key == "box-size-z") {
+            out.box.size[2] = c.newSi;
+        } else if (c.key == "coverage-position") {
+            out.coverageTargets.minPositionCoverage = c.newSi;
+        } else {
+            throw std::logic_error("区域面板：编辑行携带词表外键 " + c.key);
+        }
+        known.push_back(c.key);
+    }
+    return out;
 }
 
 }  // namespace sdurws::ird::requirements

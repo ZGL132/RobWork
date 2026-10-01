@@ -437,3 +437,161 @@ TEST_F(RequirementsSessionGuiTest, LifecycleButtons_DisabledWithoutSession_UI_T3
         }
     }
 }
+
+// =====================================================================
+// UI-T31 B2 区域/工况字段编辑四态（接受/拒绝·解析面/回退/未修改不脏化）
+// ＋未设态设值＋只读门控。触发面＝行编辑器 setText＋editingFinished 直发
+//（与失焦同信号路径）；断言面＝工作集权威值＋编辑器回退＋编辑计数。
+// =====================================================================
+
+/// 按 objectName 锚定位面板内表格（区域表/工况表——B2 构建期锚）。
+QTreeWidget* tableByName(const RequirementsPanelWidget& panel, const char* objectName)
+{
+    return const_cast<RequirementsPanelWidget&>(panel).findChild<QTreeWidget*>(
+        QString::fromLatin1(objectName));
+}
+
+/// 按 irdFieldKey 属性定位检查器行编辑器（区域/工况表单共用形态）。
+QLineEdit* fieldEditor(const RequirementsPanelWidget& panel, const char* fieldKey)
+{
+    const auto edits =
+        const_cast<RequirementsPanelWidget&>(panel).findChildren<QLineEdit*>();
+    for (QLineEdit* e : edits) {
+        if (e->property("irdFieldKey").toString() == QString::fromLatin1(fieldKey)) {
+            return e;
+        }
+    }
+    return nullptr;
+}
+
+/// 面板状态行文本（就地错误/接受摘要的呈现面）。
+QString statusText(const RequirementsPanelWidget& panel)
+{
+    const auto labels =
+        const_cast<RequirementsPanelWidget&>(panel).findChildren<QLabel*>();
+    for (QLabel* l : labels) {
+        if (l->wordWrap()) { return l->text(); }  // 状态行＝唯一 wrap 行
+    }
+    return QString();
+}
+
+TEST_F(RequirementsSessionGuiTest, RegionFieldEditing_FourStates_UI_T31)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 选中区域表首行→检查器投影（B2 可编辑行构建）。
+    QTreeWidget* regionTable = tableByName(*m_panel, "ird_req_region_table");
+    ASSERT_NE(regionTable, nullptr);
+    ASSERT_GT(regionTable->topLevelItemCount(), 0);
+    regionTable->setCurrentItem(regionTable->topLevelItem(0));
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    const core::ObjectId rid = m_editor.workingSet().regions.entries.front().objectId;
+    const double sizeXBefore = m_editor.workingSet().regions.entries.front().box.size[0];
+    const std::uint64_t editsBefore = m_editor.draftStatus().edits;
+
+    // ① 未修改短路：直发 editingFinished（文本未变）——零提交（编辑计数
+    // 不变＝幻影脏化消除的四态之四）。
+    QLineEdit* sizeEdit = fieldEditor(*m_panel, "box-size-x");
+    ASSERT_NE(sizeEdit, nullptr);
+    ASSERT_FALSE(sizeEdit->isReadOnly()) << "B2 未解除数值行只读（诚实降级未消除）";
+    Q_EMIT sizeEdit->editingFinished();
+    EXPECT_EQ(m_editor.draftStatus().edits, editsBefore)
+        << "未修改触发产生了编辑（幻影脏化回归）";
+
+    // ② 接受：尺寸 1.0→2.5——工作集权威值变＋编辑计数＋1。
+    sizeEdit->setText(QStringLiteral("2.5"));
+    Q_EMIT sizeEdit->editingFinished();
+    for (const WorkRegion& r : m_editor.workingSet().regions.entries) {
+        if (r.objectId == rid) {
+            EXPECT_DOUBLE_EQ(r.box.size[0], 2.5) << "接受后权威值未变";
+        }
+    }
+    EXPECT_EQ(m_editor.draftStatus().edits, editsBefore + 1);
+
+    // ③ 拒绝·解析面：非数值输入——就地错误＋权威回退（编辑器文本回滚）。
+    QLineEdit* centerEdit = fieldEditor(*m_panel, "box-center-x");
+    ASSERT_NE(centerEdit, nullptr);
+    const QString authoritativeBefore = centerEdit->property("irdAuthoritativeValue").toString();
+    centerEdit->setText(QStringLiteral("abc"));
+    Q_EMIT centerEdit->editingFinished();
+    EXPECT_EQ(m_editor.draftStatus().edits, editsBefore + 1) << "解析拒绝产生了提交";
+    QLineEdit* centerAfter = fieldEditor(*m_panel, "box-center-x");
+    ASSERT_NE(centerAfter, nullptr);
+    EXPECT_EQ(centerAfter->text(), authoritativeBefore)
+        << "拒绝后编辑器未回退权威值";
+    EXPECT_FALSE(statusText(*m_panel).isEmpty()) << "就地错误未呈现";
+
+    // ④ 拒绝·范围面：尺寸负值（bounds 正数）——同解析轨拒绝。
+    QLineEdit* sizeEdit2 = fieldEditor(*m_panel, "box-size-x");
+    sizeEdit2->setText(QStringLiteral("-3"));
+    Q_EMIT sizeEdit2->editingFinished();
+    for (const WorkRegion& r : m_editor.workingSet().regions.entries) {
+        if (r.objectId == rid) {
+            EXPECT_DOUBLE_EQ(r.box.size[0], 2.5) << "范围外输入被写入（bounds 失守）";
+        }
+    }
+
+    // ⑤ 撤销同栈：undoLocal 回滚 2.5→1.0（B1 结构/B2 字段同一局部栈）。
+    EXPECT_TRUE(m_editor.undoLocal());
+    for (const WorkRegion& r : m_editor.workingSet().regions.entries) {
+        if (r.objectId == rid) {
+            EXPECT_DOUBLE_EQ(r.box.size[0], sizeXBefore);
+        }
+    }
+}
+
+TEST_F(RequirementsSessionGuiTest, ConditionCycleTime_SetFromUnset_UI_T31)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 选中工况表首行→检查器投影；未设节拍行（空文本权威基准）输入即设值。
+    QTreeWidget* condTable = tableByName(*m_panel, "ird_req_condition_table");
+    ASSERT_NE(condTable, nullptr);
+    ASSERT_GT(condTable->topLevelItemCount(), 0);
+    condTable->setCurrentItem(condTable->topLevelItem(0));
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    const core::ObjectId cid = m_editor.workingSet().conditions.entries.front().objectId;
+    ASSERT_FALSE(m_editor.workingSet().conditions.entries.front().targetCycleTimeS
+                     .has_value())
+        << "夹具工况应无节拍（未设态设值路径的前提）";
+    QLineEdit* cycleEdit = fieldEditor(*m_panel, "cycle-time");
+    ASSERT_NE(cycleEdit, nullptr);
+    ASSERT_FALSE(cycleEdit->isReadOnly());
+
+    cycleEdit->setText(QStringLiteral("12.5"));
+    Q_EMIT cycleEdit->editingFinished();
+    for (const OperatingCondition& c : m_editor.workingSet().conditions.entries) {
+        if (c.objectId == cid) {
+            ASSERT_TRUE(c.targetCycleTimeS.has_value());
+            EXPECT_DOUBLE_EQ(*c.targetCycleTimeS, 12.5) << "未设→设值未生效";
+        }
+    }
+}
+
+TEST_F(RequirementsSessionGuiTest, FieldEditing_ReadOnlyGate_UI_T31)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+
+    // 只读门控（L-R12 行半区）：setWritable(false)→刷新后区域/工况数值
+    // 行全部只读（B2 门控联动——浏览不受影响）。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);  // 首建表行
+    QTreeWidget* regionTable = tableByName(*m_panel, "ird_req_region_table");
+    ASSERT_NE(regionTable, nullptr);
+    QTreeWidget* condTable = tableByName(*m_panel, "ird_req_condition_table");
+    ASSERT_NE(condTable, nullptr);
+    regionTable->setCurrentItem(regionTable->topLevelItem(0));
+    condTable->setCurrentItem(condTable->topLevelItem(0));
+    m_panel->setWritable(false);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    for (const char* key : {"box-size-x", "box-center-y", "coverage-position",
+                            "cycle-time"}) {
+        QLineEdit* e = fieldEditor(*m_panel, key);
+        ASSERT_NE(e, nullptr) << key;
+        EXPECT_TRUE(e->isReadOnly()) << key << " 只读态未生效";
+    }
+    m_panel->setWritable(true);  // 夹具复位
+}

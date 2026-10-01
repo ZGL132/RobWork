@@ -38,6 +38,7 @@
 #include <vector>
 
 #include <rw/math/Vector3D.hpp>  // rw::math::Vector3D<double>——预览几何顶点（m）
+#include <sdurws/ird/ui/FormEditCommon.hpp>  // ui::QuantityFieldSpec/ParamEditSet（B2 字段编辑——工位模型同款公共件）
 #include <sdurws/ird/requirements/RequirementTypes.hpp>  // WorkRegion/BoundingBox/PositionSampling
 #include <sdurws/ird/requirements/Services.hpp>  // IWorkRegionService（规范化域函数——零复制纪律）
 #include "PanelStationModel.hpp"  // StationFieldRow/StationFieldEnablement（检查器行模型复用——同目录插件私有头）
@@ -137,6 +138,39 @@ SamplingDefinitionView samplingDefinitionView(const WorkRegion& region,
 std::vector<StationFieldRow> regionFieldsFor(const WorkRegion& region,
                                              const IWorkRegionService& service,
                                              bool writable);
+
+// ---- B2 字段编辑提交协议（UI-T31——与 PanelStationModel 的 specs/
+//      applyStationEditSet 同构：单一词表两处消费，行键＝回填键）----
+
+/**
+ * @brief 区域可编辑数值字段的规格词表（UI-T31 B2——盒中心/尺寸三分量
+ *        ＋位置覆盖率下限；parseFieldValueText 的量纲/范围输入约束面）。
+ *
+ * 词表与 applyRegionEditSet 的回填键一致（单一词表两处消费——工位
+ * stationQuantitySpecs 同款纪律）；单位锚：长度 m（尺寸＞0——I-REQ-6
+ * 非退化的呈现层预过滤，业务裁决仍归域链）、覆盖率无量纲 ∈[0,1]。
+ *
+ * @return 规格序列（静态词表——区域条目字段数固定，无逐条目动态行）
+ *
+ * 纯函数；确定性；单位注册表缺项＝实现缺陷 fail-fast（装配期暴露）。
+ */
+std::vector<ui::QuantityFieldSpec> regionQuantitySpecs();
+
+/**
+ * @brief 区域字段编辑回填（ParamEditSet→WorkRegion——值拷贝改字段，
+ *        非表单字段〔身份/名称/采样定义/引用〕原样保留）。
+ *
+ * @param base   [in] 编辑前条目（权威值——从工作集现取）
+ * @param edits  [in] 本次编辑（SI 真值——parseFieldValueText 产出）
+ * @param known  [out] 实际回填的键序列（词表外键＝实现缺陷——fail-fast
+ *               抛 std::logic_error，不静默丢弃；与工位回填同纪律）
+ * @return 候选条目（提交给 editor.applyEdit 域裁决——唯一性/合法性
+ *         拒绝面在编辑器校验链）
+ *
+ * 纯函数（值语义）；确定性。
+ */
+WorkRegion applyRegionEditSet(const WorkRegion& base, const ui::ParamEditSet& edits,
+                              std::vector<std::string>& known);
 
 // =====================================================================
 // 区域轮廓与采样格几何三维预览（§9.8 第 3 行——仅几何预览；结果着色归

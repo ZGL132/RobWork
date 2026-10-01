@@ -1,0 +1,22 @@
+===== ui =====
+1/3 Test #1: sdurws_ird_ui_test ...............   Passed    1.72 sec
+2/3 Test #2: sdurws_ird_ui_contract_test ......   Passed    0.60 sec
+3/3 Test #3: sdurws_ird_ui_gui_test ...........   Passed    3.34 sec
+100% tests passed, 0 tests failed out of 3
+===== modeling =====
+1/3 Test #1: sdurws_ird_modeling_test ............   Passed    0.76 sec
+2/3 Test #2: sdurws_ird_modeling_gui_test ........   Passed    0.18 sec
+3/3 Test #3: sdurws_ird_modeling_contract_test ...   Passed    0.14 sec
+100% tests passed, 0 tests failed out of 3
+===== requirements =====
+1/3 Test #1: sdurws_ird_requirements_test ............   Passed    0.61 sec
+2/3 Test #2: sdurws_ird_requirements_contract_test ...   Passed    0.19 sec
+3/3 Test #3: sdurws_ird_requirements_gui_test ........   Passed    0.08 sec
+100% tests passed, 0 tests failed out of 3
+===== kinematics =====
+1/2 Test #1: sdurws_ird_kinematics_test ............   Passed    7.85 sec
+2/2 Test #2: sdurws_ird_kinematics_contract_test ...   Passed    0.35 sec
+100% tests passed, 0 tests failed out of 2
+===== runtime =====
+1/1 Test #1: sdurws_ird_runtime_test ..........   Passed    0.55 sec
+100% tests passed, 0 tests failed out of 1

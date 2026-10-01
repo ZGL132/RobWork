@@ -304,6 +304,7 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
     lay->addWidget(makeLifecycleBar(page, "regions", WorkingSetMember::Regions,
                                     QStringLiteral("区域")));
     m_regionTable = makeTable(page, QStringList() << "区域" << "采样" << "覆盖目标");
+    m_regionTable->setObjectName(QStringLiteral("ird_req_region_table"));  // 验证定位锚
     connect(m_regionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
     lay->addWidget(m_regionTable);
@@ -328,6 +329,7 @@ void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
                                     WorkingSetMember::Conditions,
                                     QStringLiteral("工况")));
     m_conditionTable = makeTable(page, QStringList() << "工况" << "节拍" << "适用范围");
+    m_conditionTable->setObjectName(QStringLiteral("ird_req_condition_table"));  // 验证定位锚
     connect(m_conditionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
     lay->addWidget(m_conditionTable);
@@ -812,11 +814,27 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         const std::vector<StationFieldRow> fields =
             regionFieldsFor(region, m_regionService, m_writable);
         for (const StationFieldRow& fr : fields) {
-            auto* edit = new QLineEdit(QString::fromStdString(fr.valueText), this);
-            // 区域字段尚无独立编辑提交协议，先保持只读，避免用户输入后
-            // 没有域回写路径却呈现为已修改的假状态。
-            edit->setReadOnly(true);
-            edit->setProperty("irdAuthoritativeValue", QString::fromStdString(fr.valueText));
+            auto* edit = new QLineEdit(QString::fromStdString(
+                fr.valueText == "未提供" || fr.valueText == "未设"
+                    ? std::string{}
+                    : fr.valueText), this);
+            // B2（UI-T31）：数值行按 enablement 可编（specs 词表行——
+            // 编辑提交轨见 onRegionFieldEditingFinished；非词表行〔名称/
+            // 等级等〕保持只读呈现——本批只解除数值字段的诚实降级）。
+            const bool editable = fr.enablement == StationFieldEnablement::Editable;
+            edit->setReadOnly(!editable);
+            edit->setProperty("irdFieldKey", QString::fromStdString(fr.fieldKey));
+            // 权威文本（幻影脏化短路基准——工位轨同款；占位值以空串为
+            // 基准，输入即变更进入编辑流）。
+            edit->setProperty("irdAuthoritativeValue",
+                              QString::fromStdString(
+                                  fr.valueText == "未提供" || fr.valueText == "未设"
+                                      ? std::string{}
+                                      : fr.valueText));
+            if (editable) {
+                connect(edit, &QLineEdit::editingFinished, this,
+                        &RequirementsPanelWidget::onRegionFieldEditingFinished);
+            }
             m_regionForm->addRow(QString::fromStdString(fr.label), edit);
         }
         break;  // 至多一个选中区域——命中即止（确定性）
@@ -850,13 +868,22 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
 
 void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& ws)
 {
-    // 工况表（一工况一行）。
+    // 工况表（一工况一行）。选中锚跨 rebuild 保持（B2——区域页
+    // previousRegion 同款：clear 前保存、rebuild 后恢复；缺恢复＝检查器
+    // 在每次刷新后恒空〔既有缺陷，B2 检查器激活路径的修复〕）。
+    const std::optional<core::ObjectId> previousCondition =
+        m_conditionTable->currentItem()
+            ? nodeAnchor(m_conditionTable->currentItem()) : std::nullopt;
     const std::vector<ConditionRow> rows = conditionRows(ws.conditions.entries);
     m_conditionTable->clear();
     for (const ConditionRow& r : rows) {
-        m_conditionTable->addTopLevelItem(makeRow(QString::fromStdString(r.name),
-                                                  QString::fromStdString(r.cycleText),
-                                                  r.objectId));
+        auto* item = makeRow(QString::fromStdString(r.name),
+                             QString::fromStdString(r.cycleText),
+                             r.objectId);
+        m_conditionTable->addTopLevelItem(item);
+        if (previousCondition.has_value() && r.objectId == previousCondition.value()) {
+            m_conditionTable->setCurrentItem(item);
+        }
     }
     // 工况检查器（选中行→conditionFieldsFor）。
     while (m_conditionForm->rowCount() > 0) {
@@ -868,14 +895,31 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
                 if (c.objectId == anchor.value()) {
                     for (const StationFieldRow& fr :
                          conditionFieldsFor(c, m_conditionService, m_writable)) {
-                        auto* edit =
-                            new QLineEdit(QString::fromStdString(fr.valueText), this);
-                        // 工况表单同样等待域级字段编辑协议，当前只展示权威
-                        // 工作集值，不提供无效的本地输入假象。
-                        edit->setReadOnly(true);
+                        auto* edit = new QLineEdit(QString::fromStdString(
+                            fr.valueText == "未提供" || fr.valueText == "未设"
+                                ? std::string{}
+                                : fr.valueText), this);
+                        // B2（UI-T31）：数值行按 enablement 可编（specs 词
+                        // 表行——onConditionFieldEditingFinished 提交轨）；
+                        // 派生/引用行保持只读（区域页同款收窄）。
+                        const bool editable =
+                            fr.enablement == StationFieldEnablement::Editable;
+                        edit->setReadOnly(!editable);
+                        edit->setProperty("irdFieldKey",
+                                          QString::fromStdString(fr.fieldKey));
                         edit->setProperty("irdAuthoritativeValue",
-                                         QString::fromStdString(fr.valueText));
-                        m_conditionForm->addRow(QString::fromStdString(fr.label), edit);
+                                          QString::fromStdString(
+                                              fr.valueText == "未提供"
+                                                      || fr.valueText == "未设"
+                                                  ? std::string{}
+                                                  : fr.valueText));
+                        if (editable) {
+                            connect(edit, &QLineEdit::editingFinished, this,
+                                    &RequirementsPanelWidget::
+                                        onConditionFieldEditingFinished);
+                        }
+                        m_conditionForm->addRow(QString::fromStdString(fr.label),
+                                                edit);
                     }
                     break;
                 }
@@ -1031,6 +1075,125 @@ void RequirementsPanelWidget::onInspectorEditingFinished()
         }
         // 词表外键＝实现缺陷（表单/回填词表漂移）——fail-fast。
         throw std::logic_error("工位面板：编辑行携带词表外键 " + key);
+    }
+}
+
+void RequirementsPanelWidget::onRegionFieldEditingFinished()
+{
+    // B2（UI-T31）区域轨——工位槽同构：权威值短路→词表 spec 匹配→
+    // parseFieldValueText（唯一解析出口，SA-12）→applyRegionEditSet→
+    // submitEntryEdit 域裁决（接受/拒绝分流见 sink；四态语义与工位一致）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable) {
+        return;  // 无会话/只读——不虚构可编辑
+    }
+    auto* edit = qobject_cast<QLineEdit*>(QObject::sender());
+    if (edit == nullptr) {
+        return;
+    }
+    if (edit->text() == edit->property("irdAuthoritativeValue").toString()) {
+        return;  // 未修改短路（幻影脏化消除——T27 语义跨域一致）
+    }
+    const std::string key = edit->property("irdFieldKey").toString().toStdString();
+    const RequirementWorkingSet& ws = editor->workingSet();
+    for (const WorkRegion& region : ws.regions.entries) {
+        // 区域检查器绑定区域表选中行（renderRegionPage 的投影锚）。
+        std::optional<core::ObjectId> selected;
+        if (m_regionTable->currentItem() != nullptr) {
+            selected = nodeAnchor(m_regionTable->currentItem());
+        }
+        if (!selected.has_value() || region.objectId != selected.value()) {
+            continue;
+        }
+        for (const ui::QuantityFieldSpec& spec : regionQuantitySpecs()) {
+            if (spec.key != key) {
+                continue;
+            }
+            const ui::ValueParseResult parsed =
+                parseFieldValueText(edit->text().toStdString(), spec);
+            if (!parsed.ok) {
+                // 拒绝·解析面：就地错误＋回退权威值（重投影）。
+                m_statusLine->setText(QString::fromStdString(parsed.reason));
+                renderRegionPage(ws);
+                return;
+            }
+            ui::ParamEditSet edits;
+            ui::ParamChange change;
+            change.key = key;
+            change.label = spec.label;
+            change.newSi = parsed.siValue;
+            edits.changes.push_back(change);
+            std::vector<std::string> known;
+            const WorkRegion candidate = applyRegionEditSet(region, edits, known);
+            const EditSubmitOutcome outcome =
+                submitEntryEdit(*editor, *this, RequirementEdit{candidate});
+            if (outcome == EditSubmitOutcome::Applied) {
+                m_undoTracker.recordAppliedEdit();  // L-R4 记账
+            }
+            return;
+        }
+        // 词表外键＝实现缺陷（行模型与 specs 词表漂移）——fail-fast。
+        throw std::logic_error("区域面板：编辑行携带词表外键 " + key);
+    }
+}
+
+void RequirementsPanelWidget::onConditionFieldEditingFinished()
+{
+    // B2（UI-T31）工况轨——同构（applyConditionEditSet 回填）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable) {
+        return;
+    }
+    auto* edit = qobject_cast<QLineEdit*>(QObject::sender());
+    if (edit == nullptr) {
+        return;
+    }
+    if (edit->text() == edit->property("irdAuthoritativeValue").toString()) {
+        return;
+    }
+    const std::string key = edit->property("irdFieldKey").toString().toStdString();
+    const RequirementWorkingSet& ws = editor->workingSet();
+    if (m_conditionTable->currentItem() == nullptr) {
+        return;
+    }
+    const auto selected = nodeAnchor(m_conditionTable->currentItem());
+    if (!selected.has_value()) {
+        return;
+    }
+    for (const OperatingCondition& c : ws.conditions.entries) {
+        if (c.objectId != selected.value()) {
+            continue;
+        }
+        for (const ui::QuantityFieldSpec& spec : conditionQuantitySpecs(c)) {
+            if (spec.key != key) {
+                continue;
+            }
+            const ui::ValueParseResult parsed =
+                parseFieldValueText(edit->text().toStdString(), spec);
+            if (!parsed.ok) {
+                m_statusLine->setText(QString::fromStdString(parsed.reason));
+                renderConditionPage(ws);
+                return;
+            }
+            ui::ParamEditSet edits;
+            ui::ParamChange change;
+            change.key = key;
+            change.label = spec.label;
+            change.newSi = parsed.siValue;
+            edits.changes.push_back(change);
+            std::vector<std::string> known;
+            const OperatingCondition candidate =
+                applyConditionEditSet(c, edits, known);
+            const EditSubmitOutcome outcome =
+                submitEntryEdit(*editor, *this, RequirementEdit{candidate});
+            if (outcome == EditSubmitOutcome::Applied) {
+                m_undoTracker.recordAppliedEdit();
+            }
+            return;
+        }
+        throw std::logic_error("工况面板：编辑行携带词表外键 " + key);
     }
 }
 
