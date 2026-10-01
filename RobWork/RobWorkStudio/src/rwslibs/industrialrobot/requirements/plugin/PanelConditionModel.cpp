@@ -129,8 +129,13 @@ std::vector<StationFieldRow> conditionFieldsFor(const OperatingCondition& condit
         const std::string idx = std::to_string(i + 1);  // 1 起呈现序
         appendRow(rows, "payload-" + idx + "-tool", "负载 " + idx + "·工具",
                   std::string(requirementRefKindToken(p.toolRef.kind)), "");
+        // B2 质量行：仅 Provided 态可编（未提供态的四态语义〔设初值〕归
+        // 负载编辑后续批次——行收窄为只读呈现，不虚构可编）。
         appendRow(rows, "payload-" + idx + "-mass", "负载 " + idx + "·质量",
-                  formatSourcedScalar(p.mass), "kg");
+                  formatSourcedScalar(p.mass), "kg",
+                  p.mass.state() == core::FieldState::Provided
+                      ? StationFieldEnablement::Editable
+                      : StationFieldEnablement::ReadOnlyGrey);
         appendRow(rows, "payload-" + idx + "-com", "负载 " + idx + "·质心",
                   p.com.state() == core::FieldState::Provided ? formatVector(p.com.value())
                                                               : "未提供",
@@ -221,6 +226,74 @@ std::vector<MustListEntryRow> mustListPreview(const std::vector<TaskPoint>& poin
         rows.push_back(std::move(row));
     }
     return rows;
+}
+
+// =====================================================================
+// B2 字段编辑提交协议（UI-T31——specs 词表＋回填；工位/区域同构）
+// =====================================================================
+
+std::vector<ui::QuantityFieldSpec> conditionQuantitySpecs(
+    const OperatingCondition& condition)
+{
+    auto unitOrThrow = [](const char* symbol) {
+        auto u = core::UnitToken::find(symbol);
+        if (!u.has_value()) {
+            throw std::logic_error(std::string("工况面板：单位注册表缺少 ") + symbol
+                                   + "（实现缺陷）");
+        }
+        return u.value();
+    };
+    const core::UnitToken s = unitOrThrow("s");
+    const core::UnitToken kg = unitOrThrow("kg");
+
+    // 正数下界（节拍/质量＞0 的呈现层预过滤——业务裁决归域链）。
+    const ui::QuantityBounds positive{1.0e-12, 1.0e9};
+
+    std::vector<ui::QuantityFieldSpec> specs;
+    specs.reserve(1 + condition.payloads.size());
+    specs.push_back(ui::makeQuantityFieldSpec(
+        "cycle-time", "目标节拍", core::QuantityKind::Time, s, s, positive));
+    for (std::size_t i = 0; i < condition.payloads.size(); ++i) {
+        specs.push_back(ui::makeQuantityFieldSpec(
+            "payload-" + std::to_string(i + 1) + "-mass",
+            "负载 " + std::to_string(i + 1) + "·质量",
+            core::QuantityKind::Mass, kg, kg, positive));
+    }
+    return specs;
+}
+
+OperatingCondition applyConditionEditSet(const OperatingCondition& base,
+                                         const ui::ParamEditSet& edits,
+                                         std::vector<std::string>& known)
+{
+    known.clear();
+    known.reserve(edits.changes.size());
+    OperatingCondition out = base;  // 值拷贝——非表单字段原样保留
+    for (const ui::ParamChange& c : edits.changes) {
+        if (c.key == "cycle-time") {
+            // 节拍为 optional：任何一次提交即设值（未设→设值合法路径；
+            // 清空走条目删除/域命令——行编辑不承载"清除"语义）。
+            out.targetCycleTimeS = c.newSi;
+        } else if (c.key.rfind("payload-", 0) == 0
+                   && c.key.size() > 8U && c.key.substr(c.key.size() - 5U) == "-mass") {
+            // 负载序解析（payload-<i>-mass——i 为 1 起呈现序）。
+            const std::size_t idx = static_cast<std::size_t>(
+                std::stoull(c.key.substr(8U, c.key.size() - 8U - 5U)));
+            if (idx < 1U || idx > out.payloads.size()) {
+                throw std::logic_error("工况面板：负载序越界 " + c.key);
+            }
+            out.payloads[idx - 1U].mass = core::SourcedValue<double>::provided(
+                c.newSi, out.payloads[idx - 1U].mass.state()
+                                 == core::FieldState::Provided
+                             ? out.payloads[idx - 1U].mass.provenance()
+                             : core::ValueProvenance::make(
+                                   core::ProvenanceKind::UserProvided));
+        } else {
+            throw std::logic_error("工况面板：编辑行携带词表外键 " + c.key);
+        }
+        known.push_back(c.key);
+    }
+    return out;
 }
 
 }  // namespace sdurws::ird::requirements

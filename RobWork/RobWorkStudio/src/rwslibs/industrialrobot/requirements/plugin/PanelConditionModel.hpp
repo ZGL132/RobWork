@@ -34,6 +34,7 @@
 #include <sdurws/ird/core/Identity.hpp>  // core::ObjectId（条目锚）
 #include <sdurws/ird/requirements/RequirementTypes.hpp>  // OperatingCondition/RequiredCaseEntry/ConditionPayload 等
 #include <sdurws/ird/requirements/Services.hpp>  // IOperatingConditionService/deriveRequirementProfile（P-EV-9 单点）
+#include <sdurws/ird/ui/FormEditCommon.hpp>  // ui::QuantityFieldSpec/ParamEditSet（B2 字段编辑——工位模型同款公共件）
 #include "PanelStationModel.hpp"  // StationFieldRow/StationFieldEnablement（检查器行模型复用——同目录插件私有头）
 
 namespace sdurws::ird::requirements {
@@ -96,6 +97,39 @@ std::vector<ConditionRow> conditionRows(const std::vector<OperatingCondition>& c
 std::vector<StationFieldRow> conditionFieldsFor(const OperatingCondition& condition,
                                                 const IOperatingConditionService& service,
                                                 bool writable);
+
+// ---- B2 字段编辑提交协议（UI-T31——specs 词表＋回填；工位/区域同构）----
+
+/**
+ * @brief 工况可编辑数值字段的规格词表（UI-T31 B2——目标节拍 s＋逐负载
+ *        质量 kg；词表与 applyConditionEditSet 回填键一致——单一词表
+ *        两处消费）。
+ *
+ * 负载行随条目动态生成（payload-<i>-mass，i＝1 起呈现序——与
+ * conditionFieldsFor 行键同源）；未提供态质量行的编辑面收窄见行模型。
+ *
+ * @param condition [in] 工况条目（负载行数的词表生成依据）
+ * @return 规格序列（确定性——负载序即条目序）
+ *
+ * 纯函数；确定性；单位注册表缺项＝实现缺陷 fail-fast。
+ */
+std::vector<ui::QuantityFieldSpec> conditionQuantitySpecs(
+    const OperatingCondition& condition);
+
+/**
+ * @brief 工况字段编辑回填（ParamEditSet→OperatingCondition——值拷贝改
+ *        字段；节拍未设态输入即设值，负载质量仅 Provided 态改值〔行
+ *        模型已收窄未提供态——回填侧不做二次复判，域链裁决〕）。
+ *
+ * @param base  [in] 编辑前条目（权威值——工作集现取）
+ * @param edits [in] 本次编辑（SI 真值）
+ * @param known [out] 实际回填键序列（词表外键/负载序越界＝实现缺陷
+ *              fail-fast——不静默丢弃）
+ * @return 候选条目（applyEdit 域裁决）
+ */
+OperatingCondition applyConditionEditSet(const OperatingCondition& base,
+                                         const ui::ParamEditSet& edits,
+                                         std::vector<std::string>& known);
 
 // =====================================================================
 // 必验清单预览（卡 §9.8 第 4 行"必验清单预览（RequirementProfile 投影）"）
