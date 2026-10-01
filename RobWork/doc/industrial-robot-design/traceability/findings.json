@@ -4419,6 +4419,16 @@
       "title": "traceability 证据 PNG 落 .gitignore 忽略域：builds/**/smoke/*.png 逐任务被忽略、依赖提交时手工 -f 补录（T25/T26/T27 偶合成功、T29 漏检）——证据面完整性依赖人工记忆，存在逐任务缺帧风险。",
       "owner": "治理面（.gitignore 增补 traceability/builds/**/smoke/*.png 白名单否定项，或留痕流程固化 -f 口径）",
       "resolution": "UI-T29 的九帧已随 acc/UI-T29/1@da7790a5 补全并入主线；本条登记防复发。编号顺延自 F-443。"
+    },
+    {
+      "id": "F-445",
+      "source": "traceability/acceptance/UI-T32-20261001.md（返工实证——CommandFlows_CreateArray 净夹具绿/批量后重选红：模板/镜像批次应用后树重建，行点击与 focusObject 均不落选中锚）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "批量编辑应用后的树重选异常：renderTree clear() 期间选中信号时序清锚且重挂 setSelected 未回写会话锚——连续两次批量命令的第二次（以选中为源的阵列/镜像连用）取不到源。",
+      "owner": "requirements 面板批次（UI-T33 前收口——renderTree 重挂选中行时同步回写会话锚）",
+      "resolution": "UI-T32 阵列用例以净夹具承载（选中路径 T29 同型全绿）；本条登记防复发。编号顺延自 F-444。"
     }
   ]
 }

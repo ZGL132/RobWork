@@ -19,7 +19,12 @@
 #ifndef IRD_REQUIREMENTS_PLUGIN_REQUIREMENTSCOMMANDFLOWS_HPP
 #define IRD_REQUIREMENTS_PLUGIN_REQUIREMENTSCOMMANDFLOWS_HPP
 
+#include <optional>
+#include <QString>
+#include <QStringList>
 #include <string>
+
+#include <sdurws/ird/requirements/TemplateArray.hpp>  // TemplateParams/ArrayKind（表单应答值面）
 
 namespace sdurws::ird::requirements {
 
@@ -28,18 +33,64 @@ class IRequirementEditor;
 struct IRequirementEditSink;
 
 /**
- * @brief 执行一条需求域命令的 UI 流程（九命令统一入口）。
+ * @brief 命令对话框宿主（UI-T32 返工测试缝——attempt1 fail B-1 的修复面）。
  *
- * 已知命令 id（PanelCommandCatalog 九条）；未知 id 返回 false＋提示
- * （不抛——命令路由层的防御面）。
+ * 动机：九命令流程的交互全部是模态对话框（QFileDialog/QInputDialog/
+ * QMessageBox/参数表单 QDialog::exec）——gui 测试进程会被模态阻塞，
+ * 契约 acceptance 的具名用例无落位路径。本抽象把**交互应答**与**流程
+ * 编排**分离：生产装配用 QtDialogHost（真实模态——行为与直调 Qt 完全
+ * 一致）；测试注入预置应答替身（gui 用例自动化）。
  *
- * @param commandId [in] 命令 id（如 "requirements.apply-template"）
- * @param panel     [in] 对话框父窗口与状态行宿主（非 owning）
- * @param editor    [in] 会话权威编辑器（批量经 submitBatchEdit 单快照）
- * @param sink      [in] 编辑流出口（onEditApplied/Rejected 分流）
- * @return true＝流程完成（应用或用户取消——摘要经面板状态行）；
- *         false＝流程失败/未知命令（就地错误已呈现）
+ * 值面约定：所有方法返回 nullopt/false＝用户取消（流程静默终止——
+ * 非失败）；表单方法就地修改入参参数并返回是否确认。
  */
+struct CommandDialogHost {
+    virtual ~CommandDialogHost() = default;
+
+    /// 导出目标路径（QFileDialog::getSaveFileName 应答面）。
+    virtual std::optional<QString> saveFilePath(const QString& title,
+                                                const QString& defaultPath,
+                                                const QString& filter) = 0;
+    /// 导入源路径（QFileDialog::getOpenFileName 应答面）。
+    virtual std::optional<QString> openFilePath(const QString& title,
+                                                const QString& filter) = 0;
+    /// 条目选择（QInputDialog::getItem 应答面——返回 items 下标）。
+    virtual std::optional<int> chooseItem(const QString& title,
+                                          const QString& label,
+                                          const QStringList& items) = 0;
+
+    /// 模板参数表单（六类下拉＋数值行＋计数预览——生产为 QDialog）。
+    /// @param params [in,out] 进入＝表单预填（域黄金默认）；确认＝用户改后值。
+    virtual bool editTemplateParams(TemplateParams& params) = 0;
+
+    /// 阵列参数表单（构型选择在 chooseItem——本面承载数值参数）。
+    /// @param count [in,out] 生成数量；@param spacing [in,out] 间距/半径。
+    virtual bool editArrayParams(int& count, double& spacing) = 0;
+
+    /// 导入预览确认（计数＋行级错误清单——QMessageBox::question 应答面）。
+    virtual bool confirmImport(const QString& summaryText) = 0;
+
+    /// 重生成/解除双动作选择（QMessageBox 三钮应答面）。
+    enum class RegenerateAction { Cancel, Regenerate, Detach };
+    virtual RegenerateAction chooseRegenerateAction() = 0;
+};
+
+/// 生产宿主（真实 Qt 模态——flows 的缺省装配；单例无状态）。
+CommandDialogHost& qtDialogHost();
+
+/**
+ * @brief 执行一条需求域命令的 UI 流程（九命令统一入口——测试缝重载）。
+ *
+ * @param host [in] 对话框宿主（生产＝qtDialogHost()；测试＝预置替身）
+ * 其余参数与返回值同无 host 重载。
+ */
+bool executeRequirementCommand(const std::string& commandId,
+                               RequirementsPanelWidget& panel,
+                               IRequirementEditor& editor,
+                               IRequirementEditSink& sink,
+                               CommandDialogHost& host);
+
+/// 生产装配重载（host＝qtDialogHost()——面板 executeDomainCommand 消费）。
 bool executeRequirementCommand(const std::string& commandId,
                                RequirementsPanelWidget& panel,
                                IRequirementEditor& editor,

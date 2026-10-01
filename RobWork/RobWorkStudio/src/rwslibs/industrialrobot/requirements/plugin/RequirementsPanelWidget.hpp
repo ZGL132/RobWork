@@ -159,6 +159,9 @@ public:
     /// 状态行反馈出口（命令流程的就地中文呈现——UX-02/03）。
     void showCommandFeedback(const QString& text) { m_statusLine->setText(text); }
 
+    /// 状态行只读回取（gui 用例断言面——降级/错误文案呈现）。
+    QString showCommandFeedbackText() const { return m_statusLine->text(); }
+
     /**
      * @brief 执行一条域命令的 UI 流程（UI-T32——命令路由的执行端：经
      *        RequirementsCommandFlows 装配对话框/表单与域纯函数；无会话
