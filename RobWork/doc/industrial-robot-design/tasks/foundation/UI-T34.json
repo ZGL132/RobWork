@@ -4,8 +4,10 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求域校验与应用体验收口（功能对照批次 E）",
-  "status": "planned",
-  "dependsOn": ["UI-T29"],
+  "status": "ready",
+  "dependsOn": [
+    "UI-T29"
+  ],
   "requirements": [
     "UX-02（工程用语——引导文案/过滤标签全中文）",
     "ERR-01（诚实呈现——应用被拒时阻断分组＋定位动作可见；修订只增不改语义如实呈现不借用『冻结』心智）"
@@ -21,6 +23,10 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/BuildGraphContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/PeerFaceContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/units/requirements.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
@@ -31,12 +37,13 @@
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
     "RobWork/RobWork/**",
     "RobWork/RobWorkSim/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/app/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**"
   ],
   "outputs": [
     "implementation",
@@ -66,5 +73,5 @@
     "evidence 投影核验：readinessSummary→①级门禁端到端留痕（既有语义核验非新能力）——核验记录入验收证据",
     "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t34/"
   ],
-  "note": "功能对照批次 E——规划卡（planned，待独立评审放行）。立项来源＝所有者 2026-09-30 需求界面功能对照会话；所有者确认最小校验随批次 A（UI-T29）先行交付，本批保留呈现与引导层收口：逐项过滤、应用被拒引导、修订语义呈现、顶栏联动、evidence 投影核验——等价替代 main 分支旧版『校验并发布（Check and Publish）』的门禁体验（未过校验不能发布→应用命令 Blocking 硬断言；发布后锁定编辑→修订只增不改），不承接冻结工件语义（requirements.md §2.5 既有裁决；文件化工件导出与否见 DTB §4.2 O-46 待裁决）。需求语义零变化。"
+  "note": "功能对照批次 E——规划卡（planned，待独立评审放行）。立项来源＝所有者 2026-09-30 需求界面功能对照会话；所有者确认最小校验随批次 A（UI-T29）先行交付，本批保留呈现与引导层收口：逐项过滤、应用被拒引导、修订语义呈现、顶栏联动、evidence 投影核验——等价替代 main 分支旧版『校验并发布（Check and Publish）』的门禁体验（未过校验不能发布→应用命令 Blocking 硬断言；发布后锁定编辑→修订只增不改），不承接冻结工件语义（requirements.md §2.5 既有裁决；文件化工件导出与否见 DTB §4.2 O-46 待裁决）。需求语义零变化。〔v1.1 放行评审细化——所有者 2026-10-01『放行』口令，CCP 开工前细化兑现：①allowedFiles 由 requirements/** 收敛为精确文件面（plugin 主体＋assembly 门面出线〔T32 B-1′ 教训——若需出线〕＋gui_test＋两契约测试白名单；include/src/test 移入禁止面——E 批次纯呈现层，判定面/数据面零改动〔P-REQ-6〕）；②acceptance 锚既有设施（过滤＝校验页既有呈现＋bindReadiness 刷新链〔UI-T29〕/定位跳转＝m_selection.locate 既有/文案对照 §4.6 静态评审/顶栏＝noteSelectionForContext〔UI-T26〕）；③knownPitfalls 补三条（组合子链路复用/契约扫描面预闭合〔T27/T29/T30 教训〕/F-444 PNG -f 口径）；④S/M 体量单 tick 可完。需求语义零变化。〕"
 }
