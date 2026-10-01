@@ -34,6 +34,7 @@
 
 #include <QFrame>
 #include <QLabel>
+#include <QComboBox>
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QPushButton>
@@ -297,6 +298,11 @@ private:
     QTreeWidget* m_validationLayers = nullptr;  ///< R0~R9 分层结果行
     QTreeWidget* m_validationItems = nullptr;   ///< 逐项行（可点击——L-R1 反向定位跳转）
     QLabel* m_validationNotes = nullptr;        ///< 预览/正式语义说明（REQ-06 固定文案）
+    // ---- UI-T34 E 批次：逐项过滤（级别/层/稳定码）＋报告缓存 ----
+    QComboBox* m_validationLevelFilter = nullptr;  ///< 级别过滤（4 值封闭词表）
+    QComboBox* m_validationLayerFilter = nullptr;  ///< 层过滤（全部＋R0~R9）
+    QLineEdit* m_validationCodeFilter = nullptr;   ///< 稳定码子串过滤
+    std::optional<RequirementReadinessReport> m_lastReadiness;  ///< 最近报告缓存（过滤重投影——值语义）
     std::vector<QPushButton*> m_commandButtons; ///< 域命令按钮（与 m_commands 序对应）
     QPushButton* m_draftUndoButton = nullptr;   ///< 草稿级撤销（L-R4 两级之一——独立控件）
     QPushButton* m_draftRedoButton = nullptr;   ///< 草稿级重做（同上）

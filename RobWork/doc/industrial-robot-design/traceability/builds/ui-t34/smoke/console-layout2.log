@@ -1,0 +1,22 @@
+[ird-ui-plugin] 诊断栈就绪（开发日志目录：D:\10_Source_Repos\21_robot\RobWork\build\ui-t34-smoke-cwd\ird-ui-plugin-logs）
+[ird-ui-plugin] domain assembly: plugin=modeling ok=1 panels=1 commands=10
+[ird-ui-plugin] domain assembly: plugin=requirements ok=1 panels=1 commands=9
+[ird-ui-plugin] domain assembly: plugin=kinematics ok=1 panels=2 commands=8
+[ird-ui-plugin] shared surface: modeling registered
+[ird-ui-plugin] shared surface: requirements registered
+[ird-ui-plugin] shared surface: kinematics registered
+[ird-ui-plugin] 共享面装配完成（项目树＋检查器＋选择服务；三域 Provider 注册；L1/L3 接线；NameMap 端口＝空映射二态——呈现装配随 WP-24-T08）
+[ird-ui-plugin] 工作台装配完成（多 Dock：主 Dock＋属性/任务同级 Dock＋宿主状态栏投影＋Ctrl+Shift+P 命令面板；装载呈现自证在事件循环稍后执行）
+[ird-ui-plugin] 宿主事件桥接线完成（L3 frameSelectedEvent→反解编排；D8 stateChangedEvent→会话姿态桥）
+[ird-ui-plugin] 工作台多 Dock 已呈现（主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 639 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 420 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] [central-guard] 保留量未达成：中央 296 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）
+[ird-ui-smoke-layout] started mode=second
+[ird-ui-smoke-layout] pass memory-requirements-visible
+[ird-ui-smoke-layout] pass memory-modeling-still-hidden
+[ird-ui-smoke-layout] pass memory-kinematics-still-hidden
+[ird-ui-smoke-layout] pass central-guard-second-start (cur=361px)
+[ird-ui-smoke-layout] snap 7-second-start-memory.png
+[ird-ui-smoke-layout] report=D:\10_Source_Repos\21_robot\RobWork\RobWork\doc\industrial-robot-design\traceability\builds\ui-t34\smoke/geometry-report.txt
+[ird-ui-smoke-layout] DONE
