@@ -22,9 +22,11 @@
 #include <QSpinBox>  // 采样计数三轴分割（UI-T37 R1——实时点数预览）
 #include <QFormLayout>
 #include <QFrame>
+#include <QGroupBox>  // 分组容器（UI-T37 返工——旧插件 QGroupBox 形态）
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QMetaObject>  // 提交队列化（UI-T37 返工——出信号处理器防 UB）
 #include <QLineEdit>
 #include <QPushButton>
 #include <QScrollArea>  // 属性表单滚动容器（UI-T36——长表单小窗不截断）
@@ -1252,8 +1254,25 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         return false;
     };
 
-    // 文本行（灰显规则＝L-R12 行门控 ∧ 数量词表裁决）。
+    // 文本行（灰显规则＝L-R12 行门控 ∧ 数量词表裁决）。等级行＝QComboBox
+    // （UI-T37 返工——对齐旧插件"枚举全用 QComboBox"组件形态；提交轨＝
+    // applyStationEnumEdit，词表 Must/Should 直投）。
     auto renderTextRow = [&](QFormLayout* form, const StationFieldRow& r) {
+        if (r.fieldKey == "level"
+            && r.enablement == StationFieldEnablement::Editable) {
+            auto* combo = new QComboBox(this);
+            combo->setObjectName(QStringLiteral("ird_station_level_combo"));
+            combo->addItem(QStringLiteral("Must"));
+            combo->addItem(QStringLiteral("Should"));
+            combo->setCurrentText(QString::fromStdString(r.valueText));
+            combo->setEnabled(m_writable);
+            connect(combo, &QComboBox::currentIndexChanged, this,
+                    [this, key = r.fieldKey, combo](int) {
+                        submitStationEnumValue(key, combo->currentText());
+                    });
+            form->addRow(new QLabel(QString::fromStdString(r.label), this), combo);
+            return;
+        }
         const bool placeholder =
             r.valueText == "未提供" || r.valueText == "未设";
         auto* edit = new QLineEdit(
@@ -1285,8 +1304,11 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         spin->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
         spin->setProperty("irdAuthoritativeValue",
                           QString::fromStdString(r.valueText));
-        connect(spin, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
-                [this, key = r.fieldKey, spin](double) {
+        // editingFinished（回车/失焦）而非 valueChanged——逐键提交＝每次
+        // 按键全面板刷新重建（发射控件被删＝UB 且无法连续输入；旧插件提
+        // 交语义同为编辑完成制）。提交经 submitStationValue 队列化出险。
+        connect(spin, &QDoubleSpinBox::editingFinished, this,
+                [this, key = r.fieldKey, spin]() {
                     const QString text = formatSiText(spin->value());
                     if (text == spin->property("irdAuthoritativeValue").toString()) {
                         return;  // 幻影脏化短路（与行编辑同轨）
@@ -1325,10 +1347,8 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     // Provided 显示占位原文不伪造数值。位置编辑轨随后续批次（本批消除
     // 其"可编辑即崩"陷阱——灰显对齐区域轨 T31 先例），读面零变化）。
     auto renderPoseRow = [&](const StationFieldRow& r) {
-        auto* cell = new QWidget(this);
-        auto* lay = new QHBoxLayout(cell);
-        lay->setContentsMargins(0, 0, 0, 0);
-        lay->setSpacing(4);
+        // 逐轴三行（UI-T37 返工——对齐旧插件 X/Y/Z 逐行 QDoubleSpinBox 的
+        // 布置形态；位置编辑轨随后续批次——灰显呈现面，四态守恒不伪造）。
         const QString text = QString::fromStdString(r.valueText);
         std::array<double, 3> vals{0.0, 0.0, 0.0};
         bool ok = text != QStringLiteral("未提供") && !text.isEmpty();
@@ -1339,30 +1359,34 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
                 vals[i] = parts[i].trimmed().toDouble(&ok);
             }
         }
+        static const char* kAxes[] = {"X", "Y", "Z"};
+        const QString unit = QString::fromStdString(r.unitText);
         if (ok) {
-            static const char* kAxes[] = {"X", "Y", "Z"};
             for (int i = 0; i < 3; ++i) {
-                lay->addWidget(new QLabel(QString::fromLatin1(kAxes[i]), this));
-                auto* e = new QLineEdit(formatSiText(vals[i]), this);
-                e->setReadOnly(true);  // 呈现面（见上注）——灰显读值
-                e->setMaximumWidth(110);
+                auto* spin = new QDoubleSpinBox(this);
+                spin->setDecimals(6);
+                spin->setRange(-1.0e12, 1.0e12);
+                { QSignalBlocker blocker(spin);
+                spin->setValue(vals[i]); }
+                spin->setReadOnly(true);  // 呈现面（编辑轨随后续批次）
+                spin->setButtonSymbols(QAbstractSpinBox::NoButtons);
+                spin->setMaximumWidth(130);
                 if (i == 0) {
-                    e->setProperty("irdFieldKey",
-                                   QString::fromStdString(r.fieldKey));
+                    spin->setProperty("irdFieldKey",
+                                      QString::fromStdString(r.fieldKey));
                 }
-                lay->addWidget(e);
+                m_stationPoseForm->addRow(
+                    QString("%1 (%2)").arg(QString::fromUtf8(kAxes[i]), unit),
+                    spin);
             }
-            lay->addWidget(new QLabel(QString::fromStdString(r.unitText), this));
         } else {
             // 非数值形态（未提供等四态占位）——原文灰显，不伪造。
             auto* e = new QLineEdit(text, this);
             e->setReadOnly(true);
             e->setProperty("irdFieldKey", QString::fromStdString(r.fieldKey));
-            lay->addWidget(e);
+            m_stationPoseForm->addRow(
+                new QLabel(QString::fromStdString(r.label), this), e);
         }
-        lay->addStretch(1);
-        m_stationPoseForm->addRow(new QLabel(QString::fromStdString(r.label), this),
-                                  cell);
     };
 
     // 自由度 2×3 分段矩阵（acceptance 3——受约束/自由二态；提交轨＝
@@ -1540,6 +1564,21 @@ QFormLayout* RequirementsPanelWidget::stationFormForKey(const std::string& key) 
 void RequirementsPanelWidget::submitStationValue(const std::string& key,
                                                  const QString& text)
 {
+    // 队列化出信号处理器（UI-T37 返工——修改容差/启用即崩的根因修复）：
+    // 提交链会同步刷新并清空重建控件树；若在信号槽内直接执行，正在发射
+    // 信号的控件（SpinBox/行编辑/Switch）会在发射途中被删除＝use-after-
+    // free。旧插件同场景不崩＝其刷新为固定控件回填不重建；本面板重建式
+    // 刷新下，队列化（事件循环下一拍执行，控件删除发生在发射完成后）是
+    // 等价的出险排除。
+    QMetaObject::invokeMethod(
+        this,
+        [this, key, text] { submitStationValueNow(key, text); },
+        Qt::QueuedConnection);
+}
+
+void RequirementsPanelWidget::submitStationValueNow(const std::string& key,
+                                                    const QString& text)
+{
     // L-R2 提交轨（复合/SpinBox 控件共用——与行编辑槽同语义；显键形供
     // 非 QLineEdit 控件复用）。权威值短路在控件侧已完成。
     m_threadGuard.assertOnUiThread();
@@ -1582,6 +1621,49 @@ void RequirementsPanelWidget::submitStationValue(const std::string& key,
 }
 
 void RequirementsPanelWidget::submitStationToggle(const std::string& key, bool on)
+{
+    // 队列化出信号处理器（同 submitStationValue——提交链同步删发射控件＝UB）。
+    QMetaObject::invokeMethod(
+        this, [this, key, on] { submitStationToggleNow(key, on); },
+        Qt::QueuedConnection);
+}
+
+void RequirementsPanelWidget::submitStationEnumValue(const std::string& key,
+                                                     const QString& text)
+{
+    // 队列化出信号处理器（QComboBox currentIndexChanged 同样可能发生在
+    // 面板重建期——同 UB 排除口径）。
+    QMetaObject::invokeMethod(
+        this, [this, key, text] { submitStationEnumValueNow(key, text); },
+        Qt::QueuedConnection);
+}
+
+void RequirementsPanelWidget::submitStationEnumValueNow(const std::string& key,
+                                                        const QString& text)
+{
+    // 枚举提交轨（applyStationEnumEdit——等级 QComboBox；域裁决同链）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable || !m_lastSelected.has_value()) {
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    for (const TaskPoint& p : ws.points.entries) {
+        if (p.objectId != m_lastSelected.value()) {
+            continue;
+        }
+        std::vector<std::string> known;
+        const TaskPoint candidate =
+            applyStationEnumEdit(p, key, text.toStdString(), known);
+        const EditSubmitOutcome outcome = submitEntryEdit(*editor, *this, candidate);
+        if (outcome == EditSubmitOutcome::Applied) {
+            m_undoTracker.recordAppliedEdit();
+        }
+        return;
+    }
+}
+
+void RequirementsPanelWidget::submitStationToggleNow(const std::string& key, bool on)
 {
     // 二态提交轨（启用开关/自由度矩阵——applyStationToggleEdit 布尔回填
     // ＋submitEntryEdit 域裁决；拒绝面与行编辑同链）。
@@ -1737,6 +1819,7 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
             auto* slider = new QSlider(Qt::Horizontal, this);
             slider->setObjectName(QStringLiteral("ird_region_coverage_slider"));
             slider->setRange(0, 100);
+            slider->setTracking(false);  // 拖动只走视觉——松手才发 valueChanged（提交去抖）
             { QSignalBlocker blocker(slider);  // 初始化静默（valueChanged→提交→重入）
             slider->setValue(static_cast<int>(
                 QString::fromStdString(fr.valueText).toDouble() * 100.0 + 0.5));
@@ -2247,6 +2330,15 @@ void RequirementsPanelWidget::onRegionFieldEditingFinished()
 void RequirementsPanelWidget::submitRegionValue(const std::string& key,
                                                 const QString& text)
 {
+    // 队列化出信号处理器（同 submitStationValue——提交链同步删发射控件＝UB）。
+    QMetaObject::invokeMethod(
+        this, [this, key, text] { submitRegionValueNow(key, text); },
+        Qt::QueuedConnection);
+}
+
+void RequirementsPanelWidget::submitRegionValueNow(const std::string& key,
+                                                   const QString& text)
+{
     // B2（UI-T31）区域轨统一提交：权威值短路（控件侧）→词表 spec 匹配→
     // parseFieldValueText（唯一解析出口，SA-12）→applyRegionEditSet→
     // submitEntryEdit 域裁决（接受/拒绝分流见 sink；四态语义与工位一致）。
@@ -2299,6 +2391,14 @@ void RequirementsPanelWidget::submitRegionValue(const std::string& key,
 
 void RequirementsPanelWidget::submitRegionToggle(const std::string& key, bool on)
 {
+    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
+    QMetaObject::invokeMethod(
+        this, [this, key, on] { submitRegionToggleNow(key, on); },
+        Qt::QueuedConnection);
+}
+
+void RequirementsPanelWidget::submitRegionToggleNow(const std::string& key, bool on)
+{
     // 区域二态提交轨（启用开关——applyRegionToggleEdit 布尔回填＋域裁决）。
     m_threadGuard.assertOnUiThread();
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
@@ -2326,6 +2426,15 @@ void RequirementsPanelWidget::submitRegionToggle(const std::string& key, bool on
 }
 
 void RequirementsPanelWidget::submitRegionCounts(
+    const std::array<std::uint32_t, 3>& counts)
+{
+    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
+    QMetaObject::invokeMethod(
+        this, [this, counts] { submitRegionCountsNow(counts); },
+        Qt::QueuedConnection);
+}
+
+void RequirementsPanelWidget::submitRegionCountsNow(
     const std::array<std::uint32_t, 3>& counts)
 {
     // 采样计数提交轨（UI-T37 R1——applyRegionSamplingCountsEdit 回填；计数

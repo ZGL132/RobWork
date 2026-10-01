@@ -23,6 +23,7 @@
 
 #include <QApplication>
 #include <QCheckBox>  // 启用 Switch 断言（UI-T37 R1）
+#include <QGroupBox>  // 卡片分组定位（UI-T37 返工——QGroupBox 形态）
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -509,12 +510,14 @@ TEST_F(RequirementsSessionGuiTest, RegionFieldEditing_FourStates_UI_T31)
     ASSERT_NE(sizeEdit, nullptr);
     ASSERT_FALSE(sizeEdit->isReadOnly()) << "B2 未解除数值行只读（诚实降级未消除）";
     Q_EMIT sizeEdit->editingFinished();
+    QApplication::processEvents();  // 队列化提交（UI-T37 返工——事件循环一拍落域）
     EXPECT_EQ(m_editor.draftStatus().edits, editsBefore)
         << "未修改触发产生了编辑（幻影脏化回归）";
 
     // ② 接受：尺寸 1.0→2.5——工作集权威值变＋编辑计数＋1。
     sizeEdit->setText(QStringLiteral("2.5"));
     Q_EMIT sizeEdit->editingFinished();
+    QApplication::processEvents();  // 队列化提交（UI-T37 返工——事件循环一拍落域）
     for (const WorkRegion& r : m_editor.workingSet().regions.entries) {
         if (r.objectId == rid) {
             EXPECT_DOUBLE_EQ(r.box.size[0], 2.5) << "接受后权威值未变";
@@ -528,6 +531,7 @@ TEST_F(RequirementsSessionGuiTest, RegionFieldEditing_FourStates_UI_T31)
     const QString authoritativeBefore = centerEdit->property("irdAuthoritativeValue").toString();
     centerEdit->setText(QStringLiteral("abc"));
     Q_EMIT centerEdit->editingFinished();
+    QApplication::processEvents();  // 队列化提交（UI-T37 返工——事件循环一拍落域）
     EXPECT_EQ(m_editor.draftStatus().edits, editsBefore + 1) << "解析拒绝产生了提交";
     QLineEdit* centerAfter = fieldEditor(*m_panel, "box-center-x");
     ASSERT_NE(centerAfter, nullptr);
@@ -539,6 +543,7 @@ TEST_F(RequirementsSessionGuiTest, RegionFieldEditing_FourStates_UI_T31)
     QLineEdit* sizeEdit2 = fieldEditor(*m_panel, "box-size-x");
     sizeEdit2->setText(QStringLiteral("-3"));
     Q_EMIT sizeEdit2->editingFinished();
+    QApplication::processEvents();  // 队列化提交（UI-T37 返工——事件循环一拍落域）
     for (const WorkRegion& r : m_editor.workingSet().regions.entries) {
         if (r.objectId == rid) {
             EXPECT_DOUBLE_EQ(r.box.size[0], 2.5) << "范围外输入被写入（bounds 失守）";
@@ -576,6 +581,7 @@ TEST_F(RequirementsSessionGuiTest, ConditionCycleTime_SetFromUnset_UI_T31)
 
     cycleEdit->setText(QStringLiteral("12.5"));
     Q_EMIT cycleEdit->editingFinished();
+    QApplication::processEvents();  // 队列化提交（UI-T37 返工——事件循环一拍落域）
     for (const OperatingCondition& c : m_editor.workingSet().conditions.entries) {
         if (c.objectId == cid) {
             ASSERT_TRUE(c.targetCycleTimeS.has_value());
@@ -1228,7 +1234,7 @@ TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
     m_panel->refreshPanel(m_editor.workingSet(), m_report);
     m_panel->focusObject(m_editor.workingSet().points.entries.front().objectId);
     QApplication::processEvents();
-    const QList<QFrame*> cards = m_panel->findChildren<QFrame*>(
+    const QList<QGroupBox*> cards = m_panel->findChildren<QGroupBox*>(
         QStringLiteral("ird_card"));
     ASSERT_GE(cards.size(), 5)
         << "工位检查器卡片缺失（卡片化 acceptance 1）";

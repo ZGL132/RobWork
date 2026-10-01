@@ -22,7 +22,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-class QFrame;
+class QGroupBox;
 
 namespace sdurws::ird::ui {
 
@@ -45,22 +45,22 @@ inline constexpr const char* kTextMuted = "#5B6470"; ///< 次级文本
 }
 
 /**
- * @brief 卡片容器工厂（设计规格 §8 第 3 条——QFrame#card 视觉＋标题行）。
+ * @brief 分组容器工厂（UI-T37 返工——对齐 RobWork-main engineering-
+ *        requirements 插件的 QGroupBox 分组形态：原生组框标题＋分组框
+ *        线框；QSS 保留圆角/边距美化）。
  *
- * 结构：QFrame#card（白底圆角描边）＞ VBox［标题行（QLabel#ird_card_title
- * ＋"?" 帮助 QLabel——helpText 挂 Tooltip）＋ @p contentOut 返回的内容
- * 布局（调用方向其中加行/加控件）］。标题行与内容间 4px 间隔（4px 基数
- * 网格——规格 §8 第 2 条）。
+ * 结构：QGroupBox#ird_card（原生标题＋QSS 线框）＞ VBox［帮助 QLabel
+ * （"?"——helpText 挂 Tooltip，右对齐；去噪纪律：成段说明文字禁止直出
+ * 面板）＋ @p contentOut 返回的内容布局］。
  *
  * @param parent      [in] Qt 父对象（常规所有权）
- * @param title       [in] 卡片标题（工程中文——UiText 词表消费方负责）
- * @param helpText    [in] 悬浮帮助文案（进 "?" 图标 Tooltip——去噪纪律：
- *                    成段说明文字禁止直出面板，一律收纳于此）
- * @param contentOut  [out] 返回内容布局指针（必填——卡片必须被填充）
- * @return 卡片框架（所有权随 Qt 父子树）
+ * @param title       [in] 组标题（工程中文——UiText 词表消费方负责）
+ * @param helpText    [in] 悬浮帮助文案（进 "?" 图标 Tooltip）
+ * @param contentOut  [out] 返回内容布局指针（必填——分组必须被填充）
+ * @return 分组框（所有权随 Qt 父子树）
  */
-QFrame* createCard(QWidget* parent, const QString& title, const QString& helpText,
-                   QVBoxLayout** contentOut);
+QGroupBox* createCard(QWidget* parent, const QString& title, const QString& helpText,
+                      QVBoxLayout** contentOut);
 
 /**
  * @brief 应用工业风主题（面板作用域——widget 级 setStyleSheet）。

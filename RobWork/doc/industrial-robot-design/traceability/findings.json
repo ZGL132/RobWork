@@ -4489,6 +4489,27 @@
       "title": "按钮截断修复的修复前对照数据未落盘：实施留痕 traceability/builds/ui-t36/ 仅含修复后 geometry-report（按钮 cur==minHint 满高），修复前 btnH<hint 的探针实测值未随提交留痕。",
       "owner": "UI-T36 返工轮（attempt2 验证关闭：以 attempt1 验收记录 M2 探针数据作修复前形态等价实测〔contentsMargins=9,9 实测＋变异态行为即修复前语义〕登记闭环；后续同类修复随批附修复前对照帧）",
       "resolution": "实测方法与数据补登记（引 acc/ui-t36/1 验收记录 §1 表 4.5 行）；修复前对照帧补拍归口径改进不追溯本批。编号顺延自 F-450。"
+    },
+    {
+      "id": "F-452",
+      "source": "UI-T37 验收 attempt1（acc/ui-t37/1@55266f3e，建议级——规范 §2 承接余量）：顶部命令栏四组【组名标注】未随批。",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "重构规范 §2 的顶部命令栏【文件数据】【模型拾取】【快捷生成】【版本与撤销】组名标注未随 UI-T37 批实施——既有 UI-T25 四组 QFrame 分隔保持（按钮集合/可达性零变化），组名属呈现余量。",
+      "owner": "UI 面板批次（后续微批承接——QLabel 组名标注于分隔条上方，UiText 键族增量；不阻塞 T37 合入）",
+      "resolution": "后续微批按规范 §2 补组名标注（UiText 键族增量＋T25 用例定位器同步）。编号顺延自 F-451。"
+    },
+    {
+      "id": "F-453",
+      "source": "所有者 2026-10-01 实测反馈（修改容差/改动启用等属性时软件崩溃——UI-T37 R1 轮引入的提交轨缺陷）。",
+      "severity": "blocking",
+      "status": "fixed",
+      "fixedBy": "ui-t37 返工提交（队列化出信号处理器——提交链同步刷新重建控件树，发射中的控件被删＝use-after-free；QMetaObject::invokeMethod Qt::QueuedConnection 出险＋SpinBox 改 editingFinished 编辑完成制＋滑块 setTracking(false) 去抖；旧插件同场景不崩＝固定控件回填不重建的架构差异，本面板重建式刷新下队列化为等价出险排除）",
+      "registeredAt": "2026-10-02",
+      "title": "属性编辑崩溃：容差 SpinBox valueChanged/启用 Switch toggled 直连提交轨——提交链 onEditApplied 同步 renderInspector 清空重建卡片，正在发射信号的控件在发射途中被删除（use-after-free，真实宿主堆状态下必崩；gui 夹具因堆布局差异未复现——0xC0000005 类）。",
+      "owner": "UI-T37 返工轮（已修复：五提交轨全队列化＋SpinBox editingFinished＋滑块去抖；T31 直发 editingFinished 用例补 processEvents 适配队列时序）",
+      "resolution": "已修复并随返工提交送验（attempt2 承载复核）。编号顺延自 F-452。"
     }
   ]
 }

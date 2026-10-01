@@ -217,6 +217,19 @@ TaskPoint applyStationEditSet(const TaskPoint& base, const ui::ParamEditSet& edi
 TaskPoint applyStationToggleEdit(const TaskPoint& base, const std::string& key,
                                  bool on, std::vector<std::string>& known);
 
+/**
+ * @brief 工位枚举行回填（UI-T37 返工——等级 QComboBox 提交轨；对齐旧插件
+ *        "枚举全用 QComboBox"的组件形态）。
+ *
+ * 键词表："level" → point.level（tryRequirementLevel 反查——词表外文本
+ * throw std::invalid_argument，面板词表与回填漂移＝实现缺陷）。
+ *
+ * @return 回填后的条目候选；纯函数；确定性。
+ */
+TaskPoint applyStationEnumEdit(const TaskPoint& base, const std::string& key,
+                               const std::string& valueText,
+                               std::vector<std::string>& known);
+
 }  // namespace sdurws::ird::requirements
 
 #endif  // IRD_REQUIREMENTS_PLUGIN_PANELSTATIONMODEL_HPP

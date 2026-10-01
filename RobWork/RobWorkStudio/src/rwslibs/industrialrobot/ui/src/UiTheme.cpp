@@ -9,42 +9,40 @@
 
 #include <sdurws/ird/ui/UiTheme.hpp>
 
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 
 namespace sdurws::ird::ui {
 
-QFrame* createCard(QWidget* parent, const QString& title, const QString& helpText,
-                   QVBoxLayout** contentOut)
+QGroupBox* createCard(QWidget* parent, const QString& title, const QString& helpText,
+                      QVBoxLayout** contentOut)
 {
-    // 前置：内容布局出口必填——空卡片没有装配意义（调用方错误 fail-fast）。
+    // 前置：内容布局出口必填——空分组没有装配意义（调用方错误 fail-fast）。
     if (contentOut == nullptr) {
         return nullptr;
     }
-    auto* card = new QFrame(parent);
+    // QGroupBox 原生组框（UI-T37 返工——对齐 engineeringrequirements 旧
+    // 插件的分组形态：原生标题＋组框线框；QSS 承载圆角/字体美化）。
+    auto* card = new QGroupBox(title, parent);
     card->setObjectName(QStringLiteral("ird_card"));
+    card->setFlat(false);
     auto* lay = new QVBoxLayout(card);
-    // 4px 基数网格（规格 §8 第 2 条）：卡内边距 12、条目间距 4。
-    lay->setContentsMargins(12, 12, 12, 12);
+    // 4px 基数网格（规格 §8 第 2 条）：组内边距 12、条目间距 4。
+    lay->setContentsMargins(12, 8, 12, 12);
     lay->setSpacing(4);
-    // 标题行：标题（10pt 加粗由 QSS 承载）＋"?" 帮助位（成段说明文字的
-    // 唯一收纳处——去噪纪律；无帮助文案时占位隐藏，保持标题行高度稳定）。
-    // 无父构造（子布局经 addLayout 收养——带 QWidget 父构造即顶层布局
-    // 候选，与卡布局冲突＝"already has a layout"运行告警，首轮 gui 实证）。
-    auto* header = new QHBoxLayout();
-    header->setContentsMargins(0, 0, 0, 4);
-    header->setSpacing(4);
-    auto* titleLabel = new QLabel(title, card);
-    titleLabel->setObjectName(QStringLiteral("ird_card_title"));
-    header->addWidget(titleLabel);
-    header->addStretch(1);
+    // 帮助位（"?"）右对齐一行——成段说明文字的唯一收纳处（去噪纪律；
+    // 无帮助文案时隐藏）。
+    auto* helpRow = new QHBoxLayout();
+    helpRow->setContentsMargins(0, 0, 0, 0);
+    helpRow->addStretch(1);
     auto* helpLabel = new QLabel(QStringLiteral("?"), card);
     helpLabel->setObjectName(QStringLiteral("ird_card_help"));
     helpLabel->setToolTip(helpText);
     helpLabel->setVisible(!helpText.isEmpty());
-    header->addWidget(helpLabel);
-    lay->addLayout(header);
-    // 内容布局（无父构造——由本卡布局收养，Qt 布局树纪律）。
+    helpRow->addWidget(helpLabel);
+    lay->addLayout(helpRow);
+    // 内容布局（无父构造——由本组布局收养，Qt 布局树纪律）。
     auto* content = new QVBoxLayout();
     content->setContentsMargins(0, 0, 0, 0);
     content->setSpacing(4);
@@ -59,17 +57,20 @@ void applyIndustrialTheme(QWidget* root)
         return;  // 无根＝无作用域（调用方错误静默容忍——装配早期可空）
     }
     // QSS 由调色板常量拼装（单一色值源——规格 §8 全部五条的机器可读形）。
-    // 分段钮：checkable QPushButton，checked＝主色底白字；首尾圆角经
-    // objectName 约定（ird_seg_first/ird_seg_last）合并相邻直角。
+    // 分组框：QGroupBox#ird_card 原生标题＋线框（对齐旧插件分组形态）。
+    // 分段钮：checkable QPushButton，checked＝主色底白字。
     // Switch：QCheckBox#ird_switch 指示器重绘为 36×20 圆角滑轨。
     // Tag：QLabel#ird_tag 的动态属性 tag=must|opt 分色（property 选择器）。
     const QString qss = QStringLiteral(
-        "QWidget#ird_card, QFrame#ird_card {"
+        "QGroupBox#ird_card {"
         "  background: %CARD%;"
         "  border: 1px solid %BORDER%;"
         "  border-radius: 6px;"
+        "  margin-top: 10px;"
+        "  font-weight: 600; font-size: 10pt; color: %TEXT%;"
         "}"
-        "QLabel#ird_card_title { font-size: 10pt; font-weight: 600; color: %TEXT%; }"
+        "QGroupBox#ird_card::title { subcontrol-origin: margin; left: 8px;"
+        "  padding: 0 3px; background: %CARD%; }"
         "QLabel#ird_card_help { color: %MUTED%; border: 1px solid %BORDER%;"
         "  border-radius: 7px; min-width: 14px; max-width: 14px; qproperty-alignment: AlignCenter; }"
         "QLabel#ird_tag { border-radius: 9px; padding: 1px 8px; }"

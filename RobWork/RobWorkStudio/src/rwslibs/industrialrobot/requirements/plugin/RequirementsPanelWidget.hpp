@@ -57,6 +57,7 @@
 #include "PanelTreeModel.hpp"                      // 对象树投影
 #include "PanelValidationModel.hpp"                // 校验面板投影
 
+class QGroupBox;
 class QLabel;
 class QVBoxLayout;
 class QFormLayout;
@@ -259,38 +260,46 @@ private:
     //      UiText 键族①c；主题经 ui UiTheme::applyIndustrialTheme 面板作用
     //      域安装）。卡片＝QFrame#card（UiTheme::createCard 工厂）；表单行
     //      按字段键路由到所属卡片（stationFormForKey/regionFormForKey）----
-    QFrame* m_stationBasicCard = nullptr;     ///< 工位卡①基础属性
+    QGroupBox* m_stationBasicCard = nullptr;     ///< 工位卡①基础属性
     QFormLayout* m_stationBasicForm = nullptr;   ///< 卡①行宿主
-    QFrame* m_stationPoseCard = nullptr;      ///< 工位卡②空间与公差
+    QGroupBox* m_stationPoseCard = nullptr;      ///< 工位卡②空间与公差
     QFormLayout* m_stationPoseForm = nullptr;    ///< 卡②行宿主
-    QFrame* m_stationDofCard = nullptr;       ///< 工位卡③自由度约束（矩阵）
+    QGroupBox* m_stationDofCard = nullptr;       ///< 工位卡③自由度约束（矩阵）
     QFormLayout* m_stationDofForm = nullptr;  ///< 卡③行宿主（逐行＝标签＋分段对）
-    QFrame* m_stationSegmentCard = nullptr;   ///< 工位卡④动作阶段（呈现面）
+    QGroupBox* m_stationSegmentCard = nullptr;   ///< 工位卡④动作阶段（呈现面）
     QFormLayout* m_stationSegmentForm = nullptr; ///< 卡④行宿主
-    QFrame* m_stationOrientCard = nullptr;    ///< 工位卡⑤姿态规则（词表行）
+    QGroupBox* m_stationOrientCard = nullptr;    ///< 工位卡⑤姿态规则（词表行）
     QFormLayout* m_stationOrientForm = nullptr;  ///< 卡⑤行宿主
-    QFrame* m_regionBasicCard = nullptr;      ///< 区域卡①基础属性
+    QGroupBox* m_regionBasicCard = nullptr;      ///< 区域卡①基础属性
     QFormLayout* m_regionBasicForm = nullptr;    ///< 区域卡①行宿主
-    QFrame* m_regionBoxCard = nullptr;        ///< 区域卡②空间包围盒（复合行）
+    QGroupBox* m_regionBoxCard = nullptr;        ///< 区域卡②空间包围盒（复合行）
     QVBoxLayout* m_regionBoxLay = nullptr;    ///< 卡②复合行宿主
-    QFrame* m_regionSamplingCard = nullptr;   ///< 区域卡③采样与达标
+    QGroupBox* m_regionSamplingCard = nullptr;   ///< 区域卡③采样与达标
     QVBoxLayout* m_regionSamplingLay = nullptr;  ///< 卡③宿主（滑块/计数复合行）
-    QFrame* m_regionAdvancedCard = nullptr;   ///< 区域卡④高级参数（默认折叠）
+    QGroupBox* m_regionAdvancedCard = nullptr;   ///< 区域卡④高级参数（默认折叠）
     QWidget* m_regionAdvancedBody = nullptr;  ///< 折叠体（toggle 切换可见性）
     QFormLayout* m_regionAdvancedForm = nullptr; ///< 折叠体行宿主
 
-    /// 工位值提交（复合/二态控件共用轨——与行编辑 editingFinished 同语义：
-    /// 权威值短路→stationQuantitySpecs 词表→applyStationEditSet→域裁决）。
+    /// 工位值提交（复合/二态控件共用轨——队列化出信号处理器：提交链同步
+    /// 刷新重建控件树，槽内直执＝发射控件被删 use-after-free——返工修复）。
     void submitStationValue(const std::string& key, const QString& text);
+    void submitStationValueNow(const std::string& key, const QString& text);
     /// 工位二态提交（applyStationToggleEdit——启用开关/自由度矩阵共用）。
     void submitStationToggle(const std::string& key, bool on);
-    /// 区域值提交（onRegionFieldEditingFinished 的显键形——滑块/复合行共用）。
+    void submitStationToggleNow(const std::string& key, bool on);
+    /// 工位枚举提交（applyStationEnumEdit——等级 QComboBox；UI-T37 返工）。
+    void submitStationEnumValue(const std::string& key, const QString& text);
+    void submitStationEnumValueNow(const std::string& key, const QString& text);
+    /// 区域值提交（onRegionFieldEditingFinished 的 sender 无关形）。
     void submitRegionValue(const std::string& key, const QString& text);
+    void submitRegionValueNow(const std::string& key, const QString& text);
     /// 区域二态提交（applyRegionToggleEdit）。
     void submitRegionToggle(const std::string& key, bool on);
+    void submitRegionToggleNow(const std::string& key, bool on);
     /// 区域采样计数提交（applyRegionSamplingCountsEdit——counts 三元组整数
     /// 回填；formatCounts 的逆变换，域规范化/裁决仍走 submitEntryEdit）。
     void submitRegionCounts(const std::array<std::uint32_t, 3>& counts);
+    void submitRegionCountsNow(const std::array<std::uint32_t, 3>& counts);
     /// 工位行键→所属卡片表单路由（词表分派——键族集合封闭）。
     QFormLayout* stationFormForKey(const std::string& key) const;
     /// 状态文本统一出口（横幅可见性随文本——R2 警示条）。
