@@ -11,6 +11,9 @@
 #include "RequirementsPanelWidget.hpp"
 #include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次）
 
+#include <QBrush>
+#include <QColor>
+#include <QComboBox>
 #include <QFormLayout>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -353,6 +356,36 @@ void RequirementsPanelWidget::buildValidationPage(QTabWidget* pages)
     lay->addWidget(m_validationHeader);
     m_validationCounts = new QLabel(page);
     lay->addWidget(m_validationCounts);
+
+    // ---- 逐项过滤行（UI-T34 E 批次 acceptance 1——级别/层/稳定码三过滤；
+    //      纯呈现层重投影，过滤词表封闭，过滤变更重渲染不触域）----
+    auto* filterRow = new QWidget(page);
+    auto* filterLay = new QHBoxLayout(filterRow);
+    filterLay->setContentsMargins(0, 0, 0, 0);
+    m_validationLevelFilter = new QComboBox(filterRow);
+    m_validationLevelFilter->setObjectName(
+        QStringLiteral("ird_req_validation_level_filter"));
+    m_validationLevelFilter->addItem(QStringLiteral("全部级别"));
+    m_validationLevelFilter->addItem(QStringLiteral("仅阻断"));
+    m_validationLevelFilter->addItem(QStringLiteral("仅警告"));
+    m_validationLevelFilter->addItem(QStringLiteral("仅不适用"));
+    m_validationLayerFilter = new QComboBox(filterRow);
+    m_validationLayerFilter->setObjectName(
+        QStringLiteral("ird_req_validation_layer_filter"));
+    m_validationLayerFilter->addItem(QStringLiteral("全部层"));
+    for (int i = 0; i <= 9; ++i) {
+        m_validationLayerFilter->addItem(QStringLiteral("R%1").arg(i));
+    }
+    m_validationCodeFilter = new QLineEdit(filterRow);
+    m_validationCodeFilter->setObjectName(
+        QStringLiteral("ird_req_validation_code_filter"));
+    m_validationCodeFilter->setPlaceholderText(
+        QStringLiteral("按稳定码过滤（如 REQ-READY）"));
+    filterLay->addWidget(m_validationLevelFilter, 1);
+    filterLay->addWidget(m_validationLayerFilter, 1);
+    filterLay->addWidget(m_validationCodeFilter, 2);
+    lay->addWidget(filterRow);
+
     m_validationLayers = makeTable(page, QStringList() << "层" << "检查" << "阻断" << "警告");
     lay->addWidget(m_validationLayers);
     m_validationItems = makeTable(page, QStringList() << "级别" << "层" << "码" << "说明");
@@ -364,6 +397,19 @@ void RequirementsPanelWidget::buildValidationPage(QTabWidget* pages)
                     m_selection.locate(anchor.value());
                 }
             });
+    // 过滤变更→以最近报告重投影（UI-T34——纯呈现层重渲染；报告缓存
+    // m_lastReadiness 由 renderValidationPage 现存，不触域不重估）。
+    auto refilter = [this]() {
+        if (m_lastReadiness.has_value()) {
+            renderValidationPage(*m_lastReadiness);
+        }
+    };
+    connect(m_validationLevelFilter, &QComboBox::currentIndexChanged, this,
+            [refilter](int) { refilter(); });
+    connect(m_validationLayerFilter, &QComboBox::currentIndexChanged, this,
+            [refilter](int) { refilter(); });
+    connect(m_validationCodeFilter, &QLineEdit::textChanged, this,
+            [refilter](const QString&) { refilter(); });
     lay->addWidget(m_validationItems);
     m_validationNotes = new QLabel(page);
     m_validationNotes->setWordWrap(true);
@@ -943,7 +989,17 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
 void RequirementsPanelWidget::renderValidationPage(const RequirementReadinessReport& report)
 {
     // 校验面板（报告→行卡纯投影——零重估零判定，P-REQ-6 边界）。
+    m_lastReadiness = report;  // 过滤重投影的报告缓存（UI-T34——值语义深拷贝）
+    // UI-T34 E 批次：①页头实时化（阻断计数直投——『尚未执行』静态退役，
+    // 报告经 UI-T29 组合子已随编辑实时）；②三过滤（级别/层/码——呈现层
+    // 子集选择）；③Blocking 行红色前景（拒绝分组呈现——应用被拒引导的
+    // 视觉面）＋过滤后阻断行点击可定位（m_selection.locate 既有轨）。
     const ValidationPanelProjection proj = projectValidationPanel(report);
+    m_validationHeader->setText(
+        proj.blockingCount > 0
+            ? QString("校验：存在 %1 项阻断——先处理校验页阻断项再应用")
+                  .arg(proj.blockingCount)
+            : QString("校验：就绪（阻断 0 · 警告 %1）").arg(proj.warningCount));
     m_validationCounts->setText(QString("阻断 %1 · 警告 %2")
                                     .arg(proj.blockingCount)
                                     .arg(proj.warningCount));
@@ -953,17 +1009,46 @@ void RequirementsPanelWidget::renderValidationPage(const RequirementReadinessRep
             << QString::fromStdString(r.layerToken) << QString::fromStdString(r.title)
             << QString::number(r.blocking) << QString::number(r.warning)));
     }
+    // 过滤应答现取（词表封闭：级别 4 值/层 R0~R9/码子串不区分大小写）。
+    const int levelChoice = m_validationLevelFilter != nullptr
+                                ? m_validationLevelFilter->currentIndex() : 0;
+    const QString layerChoice = m_validationLayerFilter != nullptr
+                                    ? m_validationLayerFilter->currentText() : QString();
+    const QString codeNeed = m_validationCodeFilter != nullptr
+                                 ? m_validationCodeFilter->text() : QString();
     m_validationItems->clear();
     for (const ValidationItemRow& r : proj.items) {
+        // 过滤判定（呈现层子集选择——不改报告、不改排序；全命中＝全行）。
+        if (levelChoice == 1 && r.levelToken != "Blocking") { continue; }
+        if (levelChoice == 2 && r.levelToken != "Warning") { continue; }
+        if (levelChoice == 3 && r.levelToken != "NotApplicable") { continue; }
+        if (layerChoice != QStringLiteral("全部层")
+            && QString::fromStdString(r.layerToken) != layerChoice) {
+            continue;
+        }
+        if (!codeNeed.isEmpty()
+            && !QString::fromStdString(r.code).contains(codeNeed, Qt::CaseInsensitive)) {
+            continue;
+        }
         auto* item = new QTreeWidgetItem(QStringList()
             << QString::fromStdString(r.levelToken) << QString::fromStdString(r.layerToken)
             << QString::fromStdString(r.code) << QString::fromStdString(r.summary));
         setNodeAnchor(item, r.jumpTarget);  // 跳转锚（无定位行＝空锚——不可点击跳转）
+        if (r.levelToken == "Blocking") {
+            // 阻断行视觉分组（深红前景——拒绝分组呈现；文案零加工）。
+            item->setForeground(0, QBrush(QColor(176, 32, 32)));
+            item->setForeground(3, QBrush(QColor(176, 32, 32)));
+        }
         m_validationItems->addTopLevelItem(item);
     }
-    // 预览/正式语义说明（REQ-06 固定文案——零加工直投）。
-    m_validationNotes->setText(QString::fromStdString(proj.previewNote) + "\n"
-                               + QString::fromStdString(proj.formalNote));
+    // 预览/正式语义说明（REQ-06 固定文案——零加工直投）＋修订语义行
+    // （UI-T34 acceptance 3——『修订只增不改』：应用＝产生新修订、旧修订
+    // 不变——防旧版冻结心智误读；编辑在应用前保留在草稿，可撤销）。
+    m_validationNotes->setText(
+        QString::fromUtf8("应用＝产生新修订，旧修订保持不变（修订只增不改）；"
+                          "应用前的编辑保留在草稿，可撤销。\n")
+        + QString::fromStdString(proj.previewNote) + "\n"
+        + QString::fromStdString(proj.formalNote));
 }
 
 // =====================================================================
@@ -991,9 +1076,8 @@ void RequirementsPanelWidget::updateTabHeaders()
     if (m_conditionHeader != nullptr) {
         m_conditionHeader->setText(QStringLiteral("工况：") + suffix);
     }
-    if (m_validationHeader != nullptr) {
-        m_validationHeader->setText(QStringLiteral("校验：尚未执行"));
-    }
+    // 校验页头不在此刷新（UI-T34——随 renderValidationPage 的报告实时化：
+    // 『存在 N 项阻断…』/『就绪』二态；updateTabHeaders 只管三对象页头）。
 }
 
 void RequirementsPanelWidget::onTreeSelectionChanged()
