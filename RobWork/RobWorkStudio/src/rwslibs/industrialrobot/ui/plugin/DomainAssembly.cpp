@@ -11,6 +11,7 @@
 #include <QWidget>
 
 #include <sdurws/ird/modeling/ObjectTypes.hpp>       // modeling::kRobotDesignObjectType（建模闭包的根身份回填过滤——域知识在闭包内）
+#include <sdurws/ird/requirements/ObjectTypes.hpp>   // requirements::kReqSetObjectType（UI-T35——需求回执根身份回填的同构过滤）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // ui::CommandDescriptor 完整类型（UI-T23 域命令登记——descriptor.commands 规模遍历的 vector 实例化面）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（§11.2）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // createPluginUiRegistrar/RegistrationOutcome（§10.9）
@@ -235,11 +236,24 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
                 };
             entry.onCommitted =
                 [&bundle](const project::CommandResult& result) {
-                    // 锚前移（根身份回填 nullopt＝未回填——需求根身份的
-                    // 存储回填面随域会话任务；门面契约允许 nullopt）。
+                    // UI-T35 P1-2（R2 审核整改）：锚前移＋根身份回填——
+                    // 扫描新 HEAD objectRefs 的 req-set 条目（建模域
+                    // onCommitted 同构先例）。此前传 nullopt＝UI-T29 前
+                    // 骨架遗留占位：首应用后根身份被清空→后续应用按
+                    // allocateNew 重复建根（恰一根不变量破坏）。
+                    std::optional<core::ObjectId> rootId;
+                    if (result.newHeadState.has_value()) {
+                        for (const auto& ref : result.newHeadState->objectRefs) {
+                            if (ref.objectTypeToken ==
+                                std::string(requirements::kReqSetObjectType)) {
+                                rootId = ref.objectId;
+                                break;
+                            }
+                        }
+                    }
                     if (result.newRevision.has_value()) {
                         bundle->requirements->noteAppliedRevision(
-                            *result.newRevision, std::nullopt);
+                            *result.newRevision, rootId);
                     }
                 };
             bundle->applyEntries.push_back(std::move(entry));

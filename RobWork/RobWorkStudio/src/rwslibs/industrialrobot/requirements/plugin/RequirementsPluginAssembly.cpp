@@ -129,6 +129,15 @@ RequirementsModuleSessionState& RequirementsPluginAssembly::session() const
     return m_impl->session();
 }
 
+std::optional<core::RevisionId> RequirementsPluginAssembly::sessionBaseRevision() const
+{
+    // UI-T35 P2：会话基线只读（外部修订同步的自身回执比对面——零写面）。
+    if (m_impl == nullptr) {
+        return std::nullopt;
+    }
+    return m_impl->session().baseRevision;
+}
+
 // =====================================================================
 // 宿主迁移三接入面（WP-14-T10 已验收面出线——转发模块同名词柄）
 // =====================================================================

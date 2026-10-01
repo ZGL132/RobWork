@@ -1,11 +1,11 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "idle",
-  "tickCount": 451,
-  "currentTask": null,
-  "branch": null,
-  "base": null,
-  "headSha": null,
+  "phase": "awaiting_acceptance",
+  "tickCount": 459,
+  "currentTask": "UI-T35",
+  "branch": "ui-t35",
+  "base": "a869bd545f1a3aae00d829c9ba0d1a82320c12d4",
+  "headSha": "c5549025f77e15deade8c7335d21faec6cfc1351",
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
@@ -16,7 +16,7 @@
     "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T11:17:31+08:00",
+    "updatedAt": "2026-10-01T12:22:42+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -2258,7 +2258,13 @@
       "acceptance": 60
     }
   },
-  "queue": [],
+  "queue": [
+    {
+      "taskId": "UI-T35",
+      "contractPath": "tasks/foundation/UI-T35.json",
+      "branch": "ui-t35"
+    }
+  ],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",

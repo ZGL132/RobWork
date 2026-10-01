@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T35",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求会话一致性修复批次（R2 审核整改——空项目初始化/根身份回填/撤牌/修订同步）",
+  "status": "ready",
+  "dependsOn": ["UI-T34"],
+  "requirements": [
+    "REQ-11（需求命令与草稿——空项目初始化路径合法化：根槽 allocateNew 既有域语义的首消费）",
+    "ERR-01（诚实呈现——按钮可用必须可执行：捕获/拾取撤牌回注册期禁用；外部修订 STALE 提示）",
+    "PM-11（同源投影——提交回执根身份扫描 newHeadState 与建模域同构，会话零第二真值）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/requirements.md#4.6",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/app/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t35",
+  "interUnit": false,
+  "knownPitfalls": [
+    "空项目初始化的正式身份纪律：内存空根/空集合的 ObjectId 全部是编辑期临时句柄（O-36——objectRefs 复核范围＝真实存储对象）；根/集合槽 allocateNew 由草稿源既有判定承载（rootSlot.allocateNew = !rootObjectId.has_value()），UI 侧零伪造存储身份",
+    "提交回执根身份回填与建模域同构：扫描 result.newHeadState.objectRefs 取 kReqSetObjectType 条目——首应用后回填、增量应用后保持；DomainAssembly.cpp:236 的 nullopt 占位（UI-T29 前骨架遗留）由本批消除",
+    "捕获/拾取撤牌＝attempt 审核不合格中间态的处置：isAssembledRequirementCommand 移除两条→注册期禁用（UI-T27 P0-4 既有语义——按钮不可达而非可点即败）；flows 降级函数保留为 UI-T33/D 批次底座，不删除",
+    "外部修订同步的 STALE 诚实边界：编辑器 loadBaseline 无 rebase 语义——有未应用编辑时不自动重载（防丢草稿），状态栏 STALE 提示；零编辑时安全重导线（自身应用的事件经会话基线比对跳过）",
+    "三维预览接线（RegionPreviewSink→宿主视图）与 TCP/拾取完整实现属 D 批次（UI-T33，前置 View3D 阶段 B 立项）——本批只做撤牌不越界",
+    "堆叠声明：分支基点＝redesign-main HEAD（UI-T34 合入收尾 9ec3431e 之后）"
+  ],
+  "acceptance": [
+    "空项目初始化：HEAD 无 req-set→构造内存空根闭包（根＋四集合槽全 nullopt/临时句柄）→loadBaseline 成功→attachEditor→会话活——生命周期按钮可用、新增工位入草稿、draftStatus dirty——域侧 UT（空根闭包载入＋编辑＋根槽 allocateNew 判定）＋宿主 wireRequirementsSession 分支改造",
+    "提交回执根身份回填：onCommitted 扫描 newHeadState.objectRefs 的 req-set 条目→noteAppliedRevision(newRevision, rootId)——首次应用回填/增量应用保持；建模域同构先例对照——代码核验＋既有 draft.apply 链路测试零回归",
+    "捕获/拾取撤牌：isAssembledRequirementCommand 移除两条→注册期禁用＋tooltip『该流程将在后续版本提供』——冒烟九键断言同步（七条可用两条禁用）",
+    "外部修订同步：修订事件→零未应用编辑＝从新 HEAD 重导线（锚/根刷新）；有未应用编辑＝状态栏 STALE 提示不丢草稿；自身应用事件经会话基线比对跳过——gui/UT 具名用例",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增；ctest 全单元全绿（含新增 UT）＋layout 冒烟双场景＋validate-docs PASS；留痕 traceability/builds/ui-t35/（F-444 口径）"
+  ],
+  "note": "立项来源：所有者 2026-10-01 R2 中间验收审核（五批次合入后的全面审核——三条 P1 两条 P2 指控经本会话逐条实证成立：①DomainAssembly.cpp 需求 onCommitted 回执 rootObjectId 传 nullopt＝UI-T29 前骨架遗留占位〔建模域同位置有正确扫描先例〕；②wireRequirementsSession 空项目分支 attachEditor(nullptr) 后无初始化入口——生命周期按钮禁用且无从恢复〔honest empty state 缺配套初始化面〕；③捕获/拾取 assembled 可点但流程 false＝不合格中间形态；④RegionPreviewSink 未接宿主视图〔D 批次〕；⑤DomainRevisionEventBridge 仅建模〕。本批范围＝审核优先级 1/2/4 的可立即修复项＋3 的撤牌处置；优先级 3 的三维接线与优先级 5 的宿主 E2E 用例归 D 批次（UI-T33，前置 View3D 阶段 B 立项）随批次承载。 findings 同批登记 F-446（审核五项发现汇总）。需求语义零变化。"
+}

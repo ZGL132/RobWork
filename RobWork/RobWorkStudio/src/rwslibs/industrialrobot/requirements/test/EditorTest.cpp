@@ -375,3 +375,92 @@ TEST(ReqEditor, O36_AnchorStableAndSchemaRejection_WP14T03_ACC5)
     ASSERT_FALSE(out.ok);
     EXPECT_EQ(out.error.code, RequirementErrorCode::SchemaVersionUnsupported);
 }
+
+// =====================================================================
+// UI-T35 P1-1 空项目需求集初始化（R2 审核整改——内存空根闭包载入路径
+// 的域侧 UT：空根合法态＋生命周期编辑可用＋根槽 allocateNew 语义）。
+// =====================================================================
+
+/// 内存空根闭包（宿主 EmptyRequirementsClosure 同语义——测试直构版）。
+class EmptyRootClosure final : public RequirementObjectClosureView {
+public:
+    EmptyRootClosure()
+    {
+        RequirementSet root;
+        root.name = "需求集";
+        RequirementCodec codec;
+        auto bytes = codec.encode(RequirementObjectVariant{root},
+                                  kCurrentRequirementFormatVersion);
+        rootBytes_ = bytes.ok() ? bytes.get() : RequirementBytes{};
+    }
+
+    std::optional<RequirementClosureObject> tryObjectByToken(
+        std::string_view objectTypeToken) const override
+    {
+        if (objectTypeToken == kReqSetObjectType) {
+            return RequirementClosureObject{std::string(kReqSetObjectType),
+                                            rootBytes_};
+        }
+        return std::nullopt;  // 四集合未挂载（空项目）
+    }
+
+    std::optional<RequirementClosureObject> tryObject(
+        const core::ObjectId&) const override
+    {
+        return std::nullopt;
+    }
+
+private:
+    RequirementBytes rootBytes_;
+};
+
+/// 空根载入：成功＋四集合空＋生命周期首编辑（新增工位）可用——
+/// R2 审核 P1-1 的域侧证据（wireRequirementsSession 空项目分支的
+/// 数据前提）。
+TEST(ReqEditor, EmptyRootLoadBaselineAndFirstEdit_UI_T35)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-11"},
+                  std::vector<std::string>{});
+
+    EmptyRootClosure closure;
+    RequirementEditor editor;
+    auto out = editor.loadBaseline(closure);
+    ASSERT_TRUE(out.ok) << out.error.detail;
+    EXPECT_TRUE(editor.workingSet().points.entries.empty());
+    EXPECT_TRUE(editor.workingSet().regions.entries.empty());
+
+    // 生命周期首编辑可用：新增工位（upsert）→集合 +1＋dirty。
+    TaskPoint p;
+    p.objectId = core::ObjectId::generate();
+    p.name = "工位";
+    p.pose.constrainedDof.z = true;  // 至少约束一个分量（I-REQ-5）
+    p.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(0.0, 0.0, 0.0),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    auto r1 = editor.applyEdit(RequirementEdit{p});
+    ASSERT_TRUE(r1.accepted) << r1.error.detail;
+    EXPECT_TRUE(editor.draftStatus().dirty);
+    EXPECT_EQ(editor.draftStatus().edits, 1U);
+
+    // 复制（第二个 upsert——不同 id 不冲突）。
+    TaskPoint p2 = p;
+    p2.objectId = core::ObjectId::generate();
+    p2.name = "工位 2";
+    auto r2 = editor.applyEdit(RequirementEdit{p2});
+    ASSERT_TRUE(r2.accepted);
+    EXPECT_EQ(editor.workingSet().points.entries.size(), 2U);
+}
+
+/// 空根载入后删除不存在条目：Rejected 零变更（空集合删除的域拒绝面）。
+TEST(ReqEditor, EmptyRootRemoveNonexistentRejected_UI_T35)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"I-REQ-2"},
+                  std::vector<std::string>{});
+
+    EmptyRootClosure closure;
+    RequirementEditor editor;
+    ASSERT_TRUE(editor.loadBaseline(closure).ok);
+    auto r = editor.applyEdit(removeEdit(core::ObjectId::generate(),
+                                         WorkingSetMember::Points));
+    EXPECT_FALSE(r.accepted) << "空集合删除不应接受";
+}

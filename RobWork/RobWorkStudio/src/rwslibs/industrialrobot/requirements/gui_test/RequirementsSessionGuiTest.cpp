@@ -30,6 +30,8 @@
 #include <sdurws/ird/requirements/Editor.hpp>       // RequirementEditor＋闭包视图（域裁决唯一入口）
 #include <sdurws/ird/requirements/ObjectTypes.hpp>  // kReqSetObjectType 等 token（公共头常量）
 #include <sdurws/ird/requirements/Readiness.hpp>    // RequirementReadinessChecker（判定权威）
+#include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // 装配门面（UI-T35 P2 基线出线往返用例）
+#include <sdurws/ird/requirements/RevisionSyncPolicy.hpp>  // 外部修订同步三分岔判定（UI-T35 P2 真值表用例）
 
 #include "plugin/RequirementsPanelWidget.hpp"  // 被测面板（同单元 PRIVATE include 面）
 #include "plugin/RequirementsUiModule.hpp"     // 模块组合子（宿主接线同款形态）
@@ -967,4 +969,75 @@ TEST_F(RequirementsSessionGuiTest, ValidationFilters_HeaderAndRevisionNote_UI_T3
         }
     }
     EXPECT_TRUE(redBlockingFound) << "阻断行红色分组缺失";
+}
+
+// =====================================================================
+// UI-T35 P2：外部修订同步——三分岔决策真值表（RevisionSyncPolicy.hpp
+// planExternalRevisionSync 纯函数）＋门面会话基线出线往返（契约
+// acceptance 4 的 gui/UT 具名自证面）。判定输入全部显式传参——前三例
+// 零 UI 依赖（宿主执行半区＝UiPlugin 事件 sink，归代码核验；此处钉住
+// 判定真值表：同输入恒同输出，NFR-COR-01）。
+// =====================================================================
+
+/// 自身回执跳过：事件修订＝会话基线→SkipSelfApplied（noteAppliedRevision
+/// 锚前移后的自身 draft.apply 事件回流形态——重导线会造成无谓重刷，故
+/// 对账先于草稿态：基线同值即已同步，与未应用编辑数无关）。
+TEST(RequirementRevisionSync, SelfAppliedEventSkips_UI_T35)
+{
+    IRD_TEST_INFO("PM-11", {}, std::nullopt);
+    const core::RevisionId applied = core::RevisionId::generate();
+    EXPECT_EQ(planExternalRevisionSync(applied, applied, 0),
+              ExternalRevisionSync::SkipSelfApplied);
+    EXPECT_EQ(planExternalRevisionSync(applied, applied, 3),
+              ExternalRevisionSync::SkipSelfApplied);
+}
+
+/// 零编辑重导线：会话基线落后于事件修订＋零未应用编辑→RewireFromHead
+/// （从新 HEAD 重建基线——草稿零丢失）；基线未绑定（nullopt＝会话未
+/// 绑定基线的防御形态）与零编辑同路径。
+TEST(RequirementRevisionSync, ZeroEditRewiresFromHead_UI_T35)
+{
+    IRD_TEST_INFO("PM-11", {}, std::nullopt);
+    const core::RevisionId base = core::RevisionId::generate();
+    const core::RevisionId external = core::RevisionId::generate();
+    ASSERT_NE(base, external) << "生成器碰撞（概率上不可能——出现即停）";
+    EXPECT_EQ(planExternalRevisionSync(base, external, 0),
+              ExternalRevisionSync::RewireFromHead);
+    EXPECT_EQ(planExternalRevisionSync(std::nullopt, external, 0),
+              ExternalRevisionSync::RewireFromHead);
+}
+
+/// 脏草稿冻结：会话基线落后＋有未应用编辑→StaleNotice（编辑器
+/// loadBaseline 无 rebase——自动重载即丢草稿；宿主据此外出状态栏
+/// STALE 提示，不静默吞差异）。
+TEST(RequirementRevisionSync, DirtyDraftStaysStale_UI_T35)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    const core::RevisionId base = core::RevisionId::generate();
+    const core::RevisionId external = core::RevisionId::generate();
+    EXPECT_EQ(planExternalRevisionSync(base, external, 1),
+              ExternalRevisionSync::StaleNotice);
+    EXPECT_EQ(planExternalRevisionSync(std::nullopt, external, 2),
+              ExternalRevisionSync::StaleNotice);
+}
+
+/// 门面基线出线往返：attach→noteAppliedRevision 前移后
+/// sessionBaseRevision() 反映新基线（nullopt 根＝首应用 allocateNew
+/// 场景——空项目初始化的宿主同款调用序）；onSessionDetached 后回落
+/// nullopt（会话态全清）。本用例是事件 sink"自身回执"比对输入的
+/// 真值源自证（RequirementsPluginAssembly::sessionBaseRevision）。
+TEST_F(RequirementsSessionGuiTest, FacadeSessionBaseRevisionRoundtrip_UI_T35)
+{
+    IRD_TEST_INFO("PM-11", {}, std::nullopt);
+    RequirementsPluginAssembly facade = createRequirementsPluginAssembly();
+    facade.attachEditor(&m_editor);
+    EXPECT_FALSE(facade.sessionBaseRevision().has_value())
+        << "新装配会话基线应未绑定";
+    const core::RevisionId rev = core::RevisionId::generate();
+    facade.noteAppliedRevision(rev, std::nullopt);
+    ASSERT_TRUE(facade.sessionBaseRevision().has_value());
+    EXPECT_EQ(*facade.sessionBaseRevision(), rev) << "基线出线应随回执前移";
+    facade.onSessionDetached();
+    EXPECT_FALSE(facade.sessionBaseRevision().has_value())
+        << "会话脱离后基线应全清";
 }

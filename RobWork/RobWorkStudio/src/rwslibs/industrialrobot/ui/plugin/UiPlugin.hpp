@@ -182,6 +182,8 @@ private:
 
     // ---- 会话入口编排（§11.5——触发时机编排归装配层；经命令处理器覆写
     //      注入内容装配面，五处壳入口同路由）----
+    /// 需求域修订同步（事件应答体——零编辑重导线/有编辑 STALE 提示）
+    void onRequirementExternalRevision(const core::RevisionId& revision);
     /// 打开编排：目录选择对话框→打开五步协议（PM-07 降级只读是成功形态）。
     CommandOutcome orchestrateOpenProject(const std::vector<CommandParameter>& params);
     /// 需求域会话接线（UI-T29——存储成功捕获回调）：HEAD 闭包载入基线
@@ -301,6 +303,11 @@ private:
     std::unique_ptr<core::IDomainEventSink> m_revisionSink;
     /// 总线订阅句柄（RAII——修订事件→域模块基线同步；析构即退订）
     std::unique_ptr<core::IEventSubscription> m_revisionSubscription;
+    /// 需求域修订同步 sink（UI-T35 P2——外部/他域修订→需求会话重导线
+    /// 或 STALE 提示；与建模桥并列的第二订阅）
+    std::unique_ptr<core::IDomainEventSink> m_requirementsRevisionSink;
+    /// 需求域同步订阅句柄（RAII）
+    std::unique_ptr<core::IEventSubscription> m_requirementsRevisionSubscription;
 
     // ---- 共享面集成产物（UI-T23——B1-SPEC §3/§4；L5 装配层持有）----
     /// 业务选中唯一汇聚点（INV-B3——树/检查器/域适配器/L3 反解的共同

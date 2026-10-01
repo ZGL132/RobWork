@@ -167,6 +167,12 @@ struct RequirementsPluginAssembly {
     /// 仅引用传递；仅 UI 线程）。
     RequirementsModuleSessionState& session() const;
 
+    /**
+     * @brief 会话基线修订只读取（UI-T35 P2——外部修订同步的"自身回执"
+     *        比对面；nullopt＝未绑定。零写面——仅供宿主事件同步判定）。
+     */
+    std::optional<core::RevisionId> sessionBaseRevision() const;
+
     // ---- 宿主迁移三接入面（WP-14-T10 已验收面出线——UI-T23 集成收口的
     //      消费面；零语义重写，全部转发模块同名词柄）----
 
