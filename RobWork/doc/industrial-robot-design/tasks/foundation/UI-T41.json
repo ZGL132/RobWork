@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T41",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "建模插件升级批次 A~C（域命令十条全装配＋预览页/重演接线＋编辑反馈体验修复＋旧版交互亮点迁移——用户 2026-10-03『采用ai对建模插件进行升级』指令承接）",
+  "status": "ready",
+  "dependsOn": ["UI-T37"],
+  "requirements": [
+    "MDL-07（参数化编辑界面——面板五区接线与编辑流）",
+    "UX-02（工程用语——tooltip/回执/树标签零内部标识泄漏）",
+    "UX-03/UX-07（比较型三要素就地呈现＋非模态——校验拒绝与命令回执反馈）",
+    "MDL-04/MDL-05（物性估算公式表与来源标记——estimate-properties 写回徽标）",
+    "SA-16（快捷键零私占——本批零快捷键变更）"
+  ],
+  "designRefs": [
+    "units/modeling.md#9.7",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "units/modeling.md#5.2",
+    "units/modeling.md#5.3",
+    "units/modeling.md#7.5"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T41.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_plugin sdurws_ird_modeling_test sdurws_ird_modeling_contract_test sdurws_ird_modeling_gui_test sdurws_ird_ui sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_ui_gui_test",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_gui_test.exe",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t41",
+  "interUnit": true,
+  "knownPitfalls": ["P-MDL-4", "P-MDL-8"],
+  "acceptance": [
+    "批次A①域命令装配接线：八条域命令经 ModelingCommandFlows（三 TU）接通内核真实链＋UiPlugin isAssembledModelingCommand 路由 executeDomainCommand——证据：test/ModelingCommandFlowsTest.cpp 六用例（FakeHost）＋UiPlugin 冒烟 step7（宿主 console-auto.log '[ird-ui-smoke] step7 modeling-assembly=ok commands=10'）＋F-421 fixed（findings.json fixedAt 2026-10-03）",
+    "批次A②预览页接通（D-MDL-10 保持）：AppliedRevisionView 于 noteAppliedRevision 定格、撤销/重做诚实失效空态——证据：gui 用例（批次B 组外既有投影面）＋代码面 PanelModel buildPreviewPage 唯一数据源类型强制",
+    "批次A③重演接线：PanelRefreshCoordinator setSinks/replayOnRevisionEvent＋手工处置横幅（blockedAtIndex 可见）——证据：PluginPanelTest 既有 L-4 保序重演用例全过＋面板 replayOnRevisionEvent 空会话守卫",
+    "批次A④就绪分层：L0~L11 layerResults 全量行渲染——证据：refreshPanel 层行循环（ModelingPanelWidget.cpp）＋projectReadinessBar 投影 12 行数组既有 PluginPanelTest 断言",
+    "批次A⑤F-421 收口：真链路断言落宿主冒烟 step7（T 规则禁测试目标跨单元直链——gtest 形态不可落位，登记于 ui.md UI-T41 行）——证据：smoke/console-auto.log step7 行",
+    "批次B①B1 实时校验：QDoubleValidator（权威限位范围）＋拒绝行内警示描边（词表 kWarning）＋保留权威原值——证据：gui 用例 ZeroOffsetOutOfRange_InlineWarningKeepsAuthoritative_B1",
+    "批次B②B2 反馈分级与历史：状态行 Severity 着色（五色词表）＋诊断历史 20 条 FIFO 折叠——证据：gui 用例 StatusHistory_AccumulatesAndToggles_B2",
+    "批次B③B3 刷新保态：属性区增量路径（行集合形状不变＝指针不换、焦点不丢）＋树滚动位还原——证据：gui 用例 IncrementalRefresh_PreservesEditorFocus_B3",
+    "批次B④B4/B5/B6/B7：tooltip 词表化十键（去裸 id）＋applyIndustrialTheme＋#555→kTextMuted＋accessibleName＋复合行指引准确化——证据：gui 用例 CommandButtonTooltip_ResolvedFromUiTextKey_UX02_UI_T41B＋UiText.cpp 键族①b 表 40 行",
+    "批次C①estimate-properties：段元推导＋材料五选＋estimateLink＋GeometricEstimate 写回＋覆盖确认——证据：流级用例 EstimateProperties_* 三例（写回徽标/无选中拒绝/覆盖确认）",
+    "批次C②generate-placeholder-geometry：占位圆柱写 visual＋schema 边界留痕＋法兰/零长拒绝——证据：流级用例 PlaceholderGeometry_* 两例＋EstimateProperties_ZeroLengthSegment_Refused",
+    "批次C③C1/C2/C3/C6 投影增强：几何行形状徽标＋悬空检测、dh-derived 四参数只读行、导出名 sanitize 派生——证据：PluginPanelTest JointDhProjectionRows_ReadOnlyWithDerivedBadge_UI_T41C＋GeometryRows_ShapeBadgeAndDanglingDetection_UI_T41C＋flows 内 sanitizeFileBaseName（C6 默认名参数链）",
+    "批次C④十条全装配：isAssembledModelingCommand 十条集——flow-not-assembled 路径退役——证据：UiPlugin.cpp 集合字面＋宿主冒烟 domain assembly commands=10 行",
+    "回归门禁：双模式构建零错误（集成 build-integrated.log／冒烟 gate-all 通道除先在性 ird_gates〔F-463〕外全 PASS）＋gtest 全绿（modeling 290/290＋gui 9/9＋ui 239/239＋契约 17/17＋32/32）＋validate-docs PASS＋ird_gates 净增命中零（批次 A 第 99 处已回退）——留痕 traceability/builds/ui-t41/"
+  ],
+  "note": "批次特有告诫（registry 外自由承载——详 ui.md UI-T41 行批次段落与 commits）：①三 TU 拆分（DhConvert/XacroExpand 同名 ExpandOutcome 不可共 TU）②重演 provider 空会话守卫在调用侧 ③预览页 D-MDL-10 ④段元零长/法兰连杆/占位原语 schema 边界三处诚实拒绝或留痕 ⑤估算写回徽标恒 GeometricEstimate ⑥样式唯一色值源 UiTheme ⑦ird_gates 先在性 98 命中（F-463）与负载敏感用例（F-464）⑧导入文件读取标准库（io 端口接线随后续任务）。立项来源：用户 2026-10-03 指令『采用ai对建模插件进行升级，请审核建模插件功能以及ui逻辑，操作，样式等，并与main分支中的建模插件对比，在现有架构的基础上吸收两者的优点进行优化升级』——三路审核（新版 UI 层/旧版插件全貌/内核与文档约定）后形成 A~D 四批方案，所有者指示按批实施。本契约覆盖批次 A（打通断链）/B（编辑与反馈体验）/C（旧版亮点迁移）；批次 D（发布闭环与 3D 联动准备）未实施（D3 受 UI-T33 前置、D4 归 WP-13-T17）。堆叠声明：分支 ui-t41 基点 redesign-main@295d60e0（UI-T39 合入收尾后）。旧插件（main 分支 robotmodelbuilder）零拷贝——仅交互设计对照（old/ 红线）。C4（结构变更参数保留）/C5（几何资源选择器）登记不实施——依赖结构编辑面与引用字段编辑流（域命令目录无此二面），待后续任务卡。三个实现提交：af14e621（批次A）→5ae6b232（批次A 收口修正）→f2b77e1c（批次B）→1a239bd8（批次C）。门禁口径注：gate-all 通道 ird_gates 先在性 98 命中恒红已转登 F-463（基线归因实测）；ui_gui_test 负载敏感偶发已转登 F-464——验收复现失败先查负载与 F-463 口径。"
+}
