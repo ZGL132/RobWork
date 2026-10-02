@@ -302,6 +302,15 @@ private:
     void submitRegionCountsNow(const std::array<std::uint32_t, 3>& counts);
     /// 工位行键→所属卡片表单路由（词表分派——键族集合封闭）。
     QFormLayout* stationFormForKey(const std::string& key) const;
+    /// 区域/工况表行同步（信号屏蔽——树点击驱动检查器联动用；返工③）。
+    void syncRegionTableSelection(const core::ObjectId& id);
+    void syncConditionTableSelection(const core::ObjectId& id);
+    /// 区域/工况枚举提交（applyRegionEnumEdit/applyConditionEnumEdit——
+    /// 等级与启用 QComboBox 轨；返工②）。
+    void submitRegionEnumValue(const std::string& key, const QString& text);
+    void submitRegionEnumValueNow(const std::string& key, const QString& text);
+    void submitConditionEnumValue(const std::string& key, const QString& text);
+    void submitConditionEnumValueNow(const std::string& key, const QString& text);
     /// 状态文本统一出口（横幅可见性随文本——R2 警示条）。
     void showStatusLine(const QString& text);
 
@@ -373,7 +382,6 @@ private:
     QPushButton* m_draftUndoButton = nullptr;   ///< 草稿级撤销（L-R4 两级之一——独立控件）
     QPushButton* m_draftRedoButton = nullptr;   ///< 草稿级重做（同上）
     QPushButton* m_projectUndoButton = nullptr; ///< 项目级撤销（转发面——与草稿级不混用）
-    QFrame* m_statusBanner = nullptr;           ///< 警示条容器（UI-T37 R2——可关闭轻量横幅）
     QLabel* m_statusLine = nullptr;             ///< 就地错误/警告/摘要行（横幅内消息标签——UX-03/07）
 };
 

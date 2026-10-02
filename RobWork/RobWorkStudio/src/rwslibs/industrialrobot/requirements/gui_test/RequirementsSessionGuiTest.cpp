@@ -1244,10 +1244,10 @@ TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
         << "卡片帮助位 Tooltip 空（去噪纪律面）";
 
     // 启用 Switch→布尔提交轨（acceptance 3）：翻开关＝工作集 enabled 翻转。
-    QCheckBox* sw = m_panel->findChild<QCheckBox*>(QStringLiteral("ird_switch"));
-    ASSERT_NE(sw, nullptr);
-    const bool before = sw->isChecked();
-    sw->setChecked(!before);
+    QComboBox* sw = m_panel->findChild<QComboBox*>(QStringLiteral("ird_station_enabled_combo"));
+    ASSERT_NE(sw, nullptr) << "启用下拉缺失（返工②——布尔枚举一律 QComboBox）";
+    const bool before = sw->currentIndex() == 0;
+    sw->setCurrentIndex(before ? 1 : 0);
     QApplication::processEvents();
     EXPECT_EQ(m_editor.workingSet().points.entries.front().enabled, !before)
         << "启用 Switch 未接通布尔提交轨（applyStationToggleEdit）";
@@ -1257,18 +1257,17 @@ TEST_F(RequirementsSessionGuiTest, StationCards_ModernControls_UI_T37)
     // 翻转（基线任意初态→点其反向钮→域 constrainedDof 等价翻转）。
     const auto& dof = m_editor.workingSet().points.entries.front().pose.constrainedDof;
     const bool xBefore = dof.x;
-    QPushButton* oppositeX = nullptr;
-    for (QPushButton* b : m_panel->findChildren<QPushButton*>(
-             QStringLiteral("ird_seg"))) {
-        if (b->property("irdDofKey").toString() == QStringLiteral("dof-x")
-            && b->property("irdDofOn").toBool() != xBefore) {
-            oppositeX = b;  // 该钮语义位＝当前态反面（点击即翻转到它）
+    QComboBox* dofxCombo = nullptr;
+    for (QComboBox* c : m_panel->findChildren<QComboBox*>(
+             QStringLiteral("ird_dof_combo"))) {
+        if (c->property("irdDofKey").toString() == QStringLiteral("dof-x")) {
+            dofxCombo = c;
             break;
         }
     }
-    ASSERT_NE(oppositeX, nullptr)
-        << "自由度矩阵缺 dof-x 反向钮（测试锚面）";
-    oppositeX->click();
+    ASSERT_NE(dofxCombo, nullptr)
+        << "自由度矩阵缺 dof-x 下拉（测试锚面）";
+    dofxCombo->setCurrentIndex(xBefore ? 1 : 0);  // 选当前态反面＝翻转
     QApplication::processEvents();
     EXPECT_EQ(m_editor.workingSet().points.entries.front().pose.constrainedDof.x,
               !xBefore)
@@ -1479,4 +1478,47 @@ TEST_F(RequirementsSessionGuiTest, ValidationBoardAndSemanticLayers_UI_T37)
         << "修订语义关键词丢失（T34 语义面）";
     EXPECT_FALSE(notesLabel->toolTip().isEmpty()) << "成段说明未收 Tooltip";
     (void)notes;
+}
+
+/// UI-T37 返工③ 联动回归（所有者反馈：新建区域后树/列表点击属性不联动）：
+/// 树点击区域条目→区域表行同步＋区域检查器投影（盒中心编辑器在位）；表
+/// 行点击→同链。页签保持断言（启用切换后不跳页签——返工①信号屏蔽面）。
+TEST_F(RequirementsSessionGuiTest, RegionSelectionLinkage_UI_T37R)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    QPushButton* addBtn = lifecycleButton(*m_panel, "add", "regions");
+    ASSERT_NE(addBtn, nullptr);
+    addBtn->click();
+    QApplication::processEvents();
+    ASSERT_FALSE(m_editor.workingSet().regions.entries.empty());
+    const core::ObjectId rid = m_editor.workingSet().regions.entries.back().objectId;
+
+    // 树点击新区域→区域表行同步＋检查器投影（联动面）。
+    m_panel->focusObject(rid);
+    QApplication::processEvents();
+    ASSERT_NE(fieldEditor(*m_panel, "box-center-x"), nullptr)
+        << "树点击区域后检查器未联动（返工③回归）";
+
+    // 表行点击→检查器保持（页签不跳——表重建信号屏蔽面）。
+    QTreeWidget* regionTable = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_region_table"));
+    ASSERT_NE(regionTable, nullptr);
+    regionTable->setCurrentItem(regionTable->topLevelItem(0));
+    QApplication::processEvents();
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    ASSERT_NE(fieldEditor(*m_panel, "box-center-x"), nullptr)
+        << "表行点击后检查器未联动";
+
+    // 工位页启用下拉切换后页签不跳区域（表重建信号屏蔽——返工①回归）。
+    QPushButton* addStation = lifecycleButton(*m_panel, "add", "points");
+    ASSERT_NE(addStation, nullptr);
+    addStation->click();
+    QApplication::processEvents();
+    QComboBox* enabledCombo = m_panel->findChild<QComboBox*>(
+        QStringLiteral("ird_station_enabled_combo"));
+    ASSERT_NE(enabledCombo, nullptr);
+    enabledCombo->setCurrentIndex(enabledCombo->currentIndex() == 0 ? 1 : 0);
+    QApplication::processEvents();
+    EXPECT_EQ(m_panel->findChild<QTabWidget*>()->currentIndex(), 0)
+        << "启用切换后页签跳转（表重建信号屏蔽回归）";
 }

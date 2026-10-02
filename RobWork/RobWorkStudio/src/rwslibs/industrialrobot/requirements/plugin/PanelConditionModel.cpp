@@ -296,4 +296,29 @@ OperatingCondition applyConditionEditSet(const OperatingCondition& base,
     return out;
 }
 
+
+OperatingCondition applyConditionEnumEdit(const OperatingCondition& base,
+                                          const std::string& key,
+                                          const std::string& valueText,
+                                          std::vector<std::string>& known)
+{
+    known.clear();
+    // 枚举词表回填（UI-T37 返工②——等级/启用；词表外 fail-fast）。
+    OperatingCondition out = base;
+    if (key == "level") {
+        const auto level = tryRequirementLevel(valueText);
+        if (!level.has_value()) {
+            throw std::invalid_argument("工况面板：等级词表外文本 " + valueText);
+        }
+        out.level = level.value();
+    } else if (key == "enabled") {
+        out.enabled = (valueText == "是");
+    } else {
+        throw std::invalid_argument("工况面板：枚举回填携带词表外键 " + key
+                                    + "（实现缺陷）");
+    }
+    known.push_back(key);
+    return out;
+}
+
 }  // namespace sdurws::ird::requirements

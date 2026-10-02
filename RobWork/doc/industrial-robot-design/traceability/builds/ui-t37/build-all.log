@@ -123,6 +123,7 @@
   Automatic MOC for target sdurws_ird_requirements_plugin
   sdurws_ird_requirements_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
   Automatic MOC for target sdurws_ird_ui_plugin
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release/sdurws_ird_ui_plugin.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release/sdurws_ird_ui_plugin.exp
   sdurws_ird_ui_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\libs\Release\sdurws_ird_ui_plugin.dll
   Automatic MOC for target sdurws_plugin.rwplugin
   sdurws_plugin.rwplugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_plugin.rwplugin.dll
@@ -210,18 +211,19 @@
   Automatic MOC for target sdurws_ird_reporting_test
   sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
   Automatic MOC for target sdurws_ird_requirements_app
+  RequirementsHarnessMain.cpp
   sdurws_ird_requirements_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_app.exe
   Automatic MOC for target sdurws_ird_requirements_contract_test
   sdurws_ird_requirements_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
   Automatic MOC for target sdurws_ird_requirements_gui_test
   sdurws_ird_requirements_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_gui_test.exe
   Automatic MOC for target sdurws_ird_requirements_test
+  PluginPanelTest.cpp
   sdurws_ird_requirements_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
   Automatic MOC for target sdurws_ird_runtime_test
   sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
   Automatic MOC for target sdurws_ird_studio
-    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release/sdurws_ird_studio.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/libs/Release/sdurws_ird_studio.exp
-  sdurws_ird_studio.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_studio.exe
+LINK : fatal error LNK1104: 无法打开文件“D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_studio.exe” [D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_studio.vcxproj]
   Automatic MOC for target sdurws_ird_testdata_lint
   sdurws_ird_testdata_lint.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_testdata_lint.exe
   Automatic MOC for target sdurws_ird_testkit_prochelper
@@ -236,4 +238,4 @@
   sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
   Automatic MOC for target sdurws_ird_ui_test
   sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
-ALL_EXIT=0
+ALL_EXIT=1

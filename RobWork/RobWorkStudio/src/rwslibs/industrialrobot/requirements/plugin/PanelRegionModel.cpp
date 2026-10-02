@@ -399,4 +399,26 @@ WorkRegion applyRegionSamplingCountsEdit(const WorkRegion& base,
     return out;
 }
 
+
+WorkRegion applyRegionEnumEdit(const WorkRegion& base, const std::string& key,
+                               const std::string& valueText,
+                               std::vector<std::string>& known)
+{
+    known.clear();
+    // 枚举词表回填（UI-T37 返工②——等级；词表外 fail-fast）。
+    WorkRegion out = base;
+    if (key == "level") {
+        const auto level = tryRequirementLevel(valueText);
+        if (!level.has_value()) {
+            throw std::invalid_argument("区域面板：等级词表外文本 " + valueText);
+        }
+        out.level = level.value();
+    } else {
+        throw std::invalid_argument("区域面板：枚举回填携带词表外键 " + key
+                                    + "（实现缺陷）");
+    }
+    known.push_back(key);
+    return out;
+}
+
 }  // namespace sdurws::ird::requirements

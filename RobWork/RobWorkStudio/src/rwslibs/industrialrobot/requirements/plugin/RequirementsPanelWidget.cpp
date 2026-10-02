@@ -322,30 +322,12 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
     // 收养时控件重挂到布局宿主 bar——漏收养＝布局永不执行、按钮滞留原点
     // 几何，首轮冒烟实证）。
     barLayout->addLayout(flow);
-    // 警示条（UI-T37 R2 acceptance 6——可关闭轻量横幅：橙底白字＋✕；
-    // 原生代码路径提示退役——文案动作导向）。m_statusLine＝横幅内消息
-    // 标签（showCommandFeedbackText 断言面不变）；可见性随文本
-    // （showStatusLine 统一出口：非空即示、✕/清空即隐）。
-    m_statusBanner = new QFrame(bar);
-    m_statusBanner->setObjectName(QStringLiteral("ird_banner"));
-    auto* bannerLay = new QHBoxLayout(m_statusBanner);
-    bannerLay->setContentsMargins(8, 4, 4, 4);
-    bannerLay->setSpacing(4);
-    auto* bannerIcon = new QLabel(QStringLiteral("⚠"), m_statusBanner);
-    m_statusLine = new QLabel(m_statusBanner);
+    // 状态行（就地错误/警告/摘要——非模态呈现，UX-03/07）。UI-T37 返工②
+    // （所有者指令：橙色警示条删除）——恢复裸状态行形态；R2 横幅连同
+    // ✕ 关闭钮一并退役（showStatusLine 退化为直设文本，调用面不变）。
+    m_statusLine = new QLabel(bar);
     m_statusLine->setWordWrap(true);  // 长摘要换行承载（非模态呈现不挤压按钮行）
-    auto* bannerClose = new QPushButton(QStringLiteral("✕"), m_statusBanner);
-    bannerClose->setObjectName(QStringLiteral("ird_banner_close"));
-    bannerClose->setFlat(true);
-    bannerClose->setToolTip(QStringLiteral("关闭提示"));
-    connect(bannerClose, &QPushButton::clicked, this, [this] {
-        showStatusLine(QString());  // 用户关闭＝清空文本并隐藏横幅
-    });
-    bannerLay->addWidget(bannerIcon);
-    bannerLay->addWidget(m_statusLine, /*stretch=*/1);
-    bannerLay->addWidget(bannerClose);
-    m_statusBanner->setVisible(false);  // 无消息即隐（错误/警告到达时示）
-    barLayout->addWidget(m_statusBanner);
+    barLayout->addWidget(m_statusLine);
 
     // 挂到根布局顶部（构造序保证：构造函数先建 QVBoxLayout(this) 再调本
     // 函数——layout() 恒为 QVBoxLayout；异常布局形态＝装配缺陷 fail-fast）。
@@ -768,25 +750,10 @@ defaultConditionWizard(QWidget* parent, const QString& suggestedName)
     cycleSpin->setSpecialValueText(QStringLiteral("未设"));  // 0＝未设（四态守恒）
     cycleSpin->setToolTip(QStringLiteral("该工况期望循环时间（s）；未设＝不参与节拍评估"));
     form->addRow(QStringLiteral("目标节拍 (s)"), cycleSpin);
-    auto* mustButton = new QPushButton(QStringLiteral("必验"), &dialog);
-    auto* optionalButton = new QPushButton(QStringLiteral("可选"), &dialog);
-    for (auto* b : {mustButton, optionalButton}) {
-        b->setObjectName(QStringLiteral("ird_seg"));
-        b->setCheckable(true);
-        b->setFocusPolicy(Qt::NoFocus);
-    }
-    mustButton->setChecked(true);  // 默认必验（§6.2 词表主面）
-    auto* group = new QButtonGroup(&dialog);
-    group->addButton(mustButton);
-    group->addButton(optionalButton);
-    auto* segRow = new QWidget(&dialog);
-    auto* segLay = new QHBoxLayout(segRow);
-    segLay->setContentsMargins(0, 0, 0, 0);
-    segLay->setSpacing(0);
-    segLay->addWidget(mustButton);
-    segLay->addWidget(optionalButton);
-    segLay->addStretch(1);
-    form->addRow(QStringLiteral("验收要求"), segRow);
+    auto* verifyCombo = new QComboBox(&dialog);
+    verifyCombo->addItem(QStringLiteral("必验"));   // Must（默认——§6.2 词表主面）
+    verifyCombo->addItem(QStringLiteral("可选"));   // Should
+    form->addRow(QStringLiteral("验收要求"), verifyCombo);
     lay->addLayout(form);
     auto* buttons = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
@@ -802,7 +769,7 @@ defaultConditionWizard(QWidget* parent, const QString& suggestedName)
     fields.name = nameEdit->text().trimmed().toStdString();
     fields.hasCycle = cycleSpin->value() > 0.0;
     fields.cycleSeconds = cycleSpin->value();
-    fields.mustVerify = mustButton->isChecked();
+    fields.mustVerify = verifyCombo->currentIndex() == 0;
     return fields;
 }
 
@@ -1330,17 +1297,25 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     // applyStationToggleEdit 布尔回填＋域裁决）。
     auto renderSwitchRow = [&](QFormLayout* form, const StationFieldRow& r,
                                std::function<void(bool)> submit) {
-        auto* sw = new QCheckBox(this);
-        sw->setObjectName(QStringLiteral("ird_switch"));
-        { QSignalBlocker blocker(sw);  // 初始化静默（toggled→提交→重入）
-        sw->setChecked(QString::fromStdString(r.valueText) == QStringLiteral("是")); }
+        // 启用下拉行（UI-T37 返工②——所有者指令：布尔枚举一律 QComboBox；
+        // 提交轨＝applyStationToggleEdit 布尔回填＋域裁决）。
+        auto* combo = new QComboBox(this);
+        combo->setObjectName(QStringLiteral("ird_station_enabled_combo"));
+        combo->addItem(QStringLiteral("启用"));
+        combo->addItem(QStringLiteral("停用"));
+        { QSignalBlocker blocker(combo);  // 初始化静默（防触发提交重入）
+        combo->setCurrentIndex(QString::fromStdString(r.valueText)
+                                       == QStringLiteral("是")
+                                   ? 0
+                                   : 1); }
         const bool enabled =
             r.enablement == StationFieldEnablement::Editable && m_writable;
-        sw->setEnabled(enabled);
+        combo->setEnabled(enabled);
         if (enabled) {
-            connect(sw, &QCheckBox::toggled, this, std::move(submit));
+            connect(combo, &QComboBox::currentIndexChanged, this,
+                    [this, submit, combo](int idx) { submit(idx == 0); });
         }
-        form->addRow(new QLabel(QString::fromStdString(r.label), this), sw);
+        form->addRow(new QLabel(QString::fromStdString(r.label), this), combo);
     };
 
     // 位置复合行（acceptance 2——一行三值＋单位；呈现面：四态守恒，非
@@ -1392,51 +1367,33 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     // 自由度 2×3 分段矩阵（acceptance 3——受约束/自由二态；提交轨＝
     // applyStationToggleEdit；已态重击不重复提交——幻影编辑消除）。
     auto renderDofMatrix = [&](const std::vector<const StationFieldRow*>& rows) {
-        // 逐行形态（与其他卡同构的 QFormLayout 承载——标签＝行标签、字段＝
-        // 两枚分段钮；提交轨＝applyStationToggleEdit；互斥由点击逻辑保证）。
+        // 约束下拉行（UI-T37 返工②——所有者指令：能下拉的全部下拉；提交
+        // 轨＝applyStationToggleEdit；已态重选零提交——幻影编辑消除）。
         for (const StationFieldRow* r : rows) {
             const QString key = QString::fromStdString(r->fieldKey);
             const bool constrained =
                 QString::fromStdString(r->valueText) == QStringLiteral("受约束");
             const bool enabled =
                 r->enablement == StationFieldEnablement::Editable && m_writable;
-            auto* cell = new QWidget(this);
-            auto* lay = new QHBoxLayout(cell);
-            lay->setContentsMargins(0, 0, 0, 0);
-            lay->setSpacing(4);
-            QPushButton* pair[2] = {nullptr, nullptr};  // 互斥由点击逻辑保证
-            for (int i = 0; i < 2; ++i) {  // i=0 约束 / i=1 自由
-                auto* b = new QPushButton(i == 0 ? QStringLiteral("约束")
-                                                 : QStringLiteral("自由"),
-                                          this);
-                b->setObjectName(QStringLiteral("ird_seg"));
-                b->setCheckable(true);
-                b->setFocusPolicy(Qt::NoFocus);
-                // 测试锚（irdDofKey＝行键、irdDofOn＝按钮语义位——gui 用例
-                // 定位面；irdFieldKey 词表锚保留给行编辑器共形）。
-                b->setProperty("irdDofKey", key);
-                b->setProperty("irdDofOn", i == 0);
-                { QSignalBlocker blocker(b);  // 初始化静默（防触发提交重入）
-                b->setChecked((i == 0) == constrained); }
-                b->setEnabled(enabled);
-                pair[i] = b;
-                connect(b, &QPushButton::clicked, this,
-                        [this, key, want = (i == 0), was = constrained, pair](bool checked) {
-                            if (!checked || want == was) {
-                                return;  // 对侧钮松开/已态重击——零提交
+            auto* combo = new QComboBox(this);
+            combo->setObjectName(QStringLiteral("ird_dof_combo"));
+            combo->setProperty("irdDofKey", key);
+            combo->addItem(QStringLiteral("约束"));
+            combo->addItem(QStringLiteral("自由"));
+            { QSignalBlocker blocker(combo);  // 初始化静默（防触发提交重入）
+            combo->setCurrentIndex(constrained ? 0 : 1); }
+            combo->setEnabled(enabled);
+            if (enabled) {
+                connect(combo, &QComboBox::currentIndexChanged, this,
+                        [this, key, was = constrained, combo](int idx) {
+                            if ((idx == 0) == was) {
+                                return;  // 已态重选——零提交
                             }
-                            QPushButton* other = pair[want ? 1 : 0];
-                            if (other != nullptr) {
-                                QSignalBlocker quiet(other);  // 互斥呈现侧静默
-                                other->setChecked(false);
-                            }
-                                    key.toStdString().c_str(),
-                            submitStationToggle(key.toStdString(), want);
+                            submitStationToggle(key.toStdString(), idx == 0);
                         });
-                lay->addWidget(b);
             }
-            lay->addStretch(1);
-            m_stationDofForm->addRow(QString::fromStdString(r->label), cell);
+            m_stationDofForm->addRow(
+                new QLabel(QString::fromStdString(r->label), this), combo);
         }
         // 快捷预设行（契约 acceptance 3——全部约束/全部自由）：逐键走既有
         // 布尔轨（已态跳过＝零幻影提交；撤销粒度＝单键，批量单快照归
@@ -1455,8 +1412,8 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
             b->setFocusPolicy(Qt::NoFocus);
             b->setEnabled(m_writable);
             b->setToolTip(QStringLiteral("六轴按预设批量切换（已态轴跳过）"));
-            // 键名值捕获（rows 向量为渲染期局部——悬空捕获＝词表外键
-            // 崩溃，首轮 gui 实证）；已态判定在点击时读工作集权威值。
+            // 键名值捕获（rows 向量为渲染期局部——悬空捕获＝词表外键崩溃，
+            // 首轮 gui 实证）；已态判定在点击时读工作集权威值。
             QStringList keys;
             for (const StationFieldRow* r : rows) {
                 keys << QString::fromStdString(r->fieldKey);
@@ -1534,9 +1491,6 @@ void RequirementsPanelWidget::showStatusLine(const QString& text)
     // 隐；m_statusLine＝横幅内消息标签，showCommandFeedbackText 断言面
     // 不变）。
     m_statusLine->setText(text);
-    if (m_statusBanner != nullptr) {
-        m_statusBanner->setVisible(!text.isEmpty());
-    }
 }
 
 QFormLayout* RequirementsPanelWidget::stationFormForKey(const std::string& key) const
@@ -1663,6 +1617,84 @@ void RequirementsPanelWidget::submitStationEnumValueNow(const std::string& key,
     }
 }
 
+void RequirementsPanelWidget::submitRegionEnumValue(const std::string& key,
+                                                    const QString& text)
+{
+    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
+    QMetaObject::invokeMethod(
+        this, [this, key, text] { submitRegionEnumValueNow(key, text); },
+        Qt::QueuedConnection);
+}
+
+void RequirementsPanelWidget::submitRegionEnumValueNow(const std::string& key,
+                                                       const QString& text)
+{
+    // 区域枚举提交轨（applyRegionEnumEdit——等级 QComboBox；域裁决同链）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable) {
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    for (const WorkRegion& region : ws.regions.entries) {
+        std::optional<core::ObjectId> selected;
+        if (m_regionTable->currentItem() != nullptr) {
+            selected = nodeAnchor(m_regionTable->currentItem());
+        }
+        if (!selected.has_value() || region.objectId != selected.value()) {
+            continue;
+        }
+        std::vector<std::string> known;
+        const WorkRegion candidate =
+            applyRegionEnumEdit(region, key, text.toStdString(), known);
+        const EditSubmitOutcome outcome =
+            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
+        if (outcome == EditSubmitOutcome::Applied) {
+            m_undoTracker.recordAppliedEdit();
+        }
+        return;
+    }
+}
+
+void RequirementsPanelWidget::submitConditionEnumValue(const std::string& key,
+                                                       const QString& text)
+{
+    // 队列化出信号处理器（同 submitStationValue——UB 排除）。
+    QMetaObject::invokeMethod(
+        this, [this, key, text] { submitConditionEnumValueNow(key, text); },
+        Qt::QueuedConnection);
+}
+
+void RequirementsPanelWidget::submitConditionEnumValueNow(const std::string& key,
+                                                          const QString& text)
+{
+    // 工况枚举提交轨（applyConditionEnumEdit——等级/启用；域裁决同链）。
+    m_threadGuard.assertOnUiThread();
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor == nullptr || !m_writable) {
+        return;
+    }
+    const RequirementWorkingSet& ws = editor->workingSet();
+    for (const OperatingCondition& c : ws.conditions.entries) {
+        std::optional<core::ObjectId> selected;
+        if (m_conditionTable->currentItem() != nullptr) {
+            selected = nodeAnchor(m_conditionTable->currentItem());
+        }
+        if (!selected.has_value() || c.objectId != selected.value()) {
+            continue;
+        }
+        std::vector<std::string> known;
+        const OperatingCondition candidate =
+            applyConditionEnumEdit(c, key, text.toStdString(), known);
+        const EditSubmitOutcome outcome =
+            submitEntryEdit(*editor, *this, RequirementEdit{candidate});
+        if (outcome == EditSubmitOutcome::Applied) {
+            m_undoTracker.recordAppliedEdit();
+        }
+        return;
+    }
+}
+
 void RequirementsPanelWidget::submitStationToggleNow(const std::string& key, bool on)
 {
     // 二态提交轨（启用开关/自由度矩阵——applyStationToggleEdit 布尔回填
@@ -1695,6 +1727,11 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
     // （空间采样＝方法＋计数摘要、覆盖目标＝P≥/O≥ 阈值摘要——模型层
     // regionRows 既有投影字段；内部 ObjectId 锚退居末隐藏列）。
     const std::vector<RegionRow> rows = regionRows(ws.regions.entries);
+    // 重建期信号屏蔽（UI-T37 返工②——修复①：恢复选中的 setCurrentItem
+    // 触发 itemSelectionChanged→onTreeSelectionChanged 把页签切到区域并
+    // 改写 m_lastSelected＝"点启用后跳到区域界面"的根因；程序性重建非
+    // 用户点击，L-R1 信号只在真实交互时发射）。
+    m_regionTable->blockSignals(true);
     m_regionTable->clear();
     for (const RegionRow& r : rows) {
         auto* item = makeTableRow(QString::fromStdString(r.name),
@@ -1706,6 +1743,7 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
             m_regionTable->setCurrentItem(item);
         }
     }
+    m_regionTable->blockSignals(false);
     for (int c = 0; c < 3; ++c) {
         m_regionTable->resizeColumnToContents(c);  // 列宽随内容（长摘要不挤压）
     }
@@ -1743,6 +1781,24 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
 
         // 普通文本行（含灰显规则与提交槽挂接——原 B2 行为保持）。
         auto renderRegionTextRow = [&](QFormLayout* form, const StationFieldRow& fr) {
+            // 等级下拉行（UI-T37 返工②——枚举一律 QComboBox；提交轨＝
+            // applyRegionEnumEdit，词表 Must/Should）。
+            if (fr.fieldKey == "level"
+                && fr.enablement == StationFieldEnablement::Editable) {
+                auto* combo = new QComboBox(this);
+                combo->setObjectName(QStringLiteral("ird_region_level_combo"));
+                combo->addItem(QStringLiteral("Must"));
+                combo->addItem(QStringLiteral("Should"));
+                { QSignalBlocker blocker(combo);
+                combo->setCurrentText(QString::fromStdString(fr.valueText)); }
+                combo->setEnabled(m_writable);
+                connect(combo, &QComboBox::currentIndexChanged, this,
+                        [this, key = fr.fieldKey, combo](int) {
+                            submitRegionEnumValue(key, combo->currentText());
+                        });
+                form->addRow(QString::fromStdString(fr.label), combo);
+                return;
+            }
             const bool placeholder =
                 fr.valueText == "未提供" || fr.valueText == "未设";
             auto* edit = new QLineEdit(
@@ -1934,20 +1990,22 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
 
         // 启用 Switch 行（区域轨——applyRegionToggleEdit）。
         auto renderRegionSwitchRow = [&](const StationFieldRow& fr) {
-            auto* sw = new QCheckBox(this);
-            sw->setObjectName(QStringLiteral("ird_switch"));
-            { QSignalBlocker blocker(sw);  // 初始化静默（toggled→提交→重入）
-            sw->setChecked(QString::fromStdString(fr.valueText) == QStringLiteral("是")); }
+            auto* combo = new QComboBox(this);
+            combo->setObjectName(QStringLiteral("ird_region_enabled_combo"));
+            combo->addItem(QStringLiteral("启用"));
+            combo->addItem(QStringLiteral("停用"));
+            { QSignalBlocker blocker(combo);  // 初始化静默（防触发提交重入）
+            combo->setCurrentIndex(QString::fromStdString(fr.valueText) == QStringLiteral("是") ? 0 : 1); }
             const bool enabled =
                 fr.enablement == StationFieldEnablement::Editable && m_writable;
-            sw->setEnabled(enabled);
+            combo->setEnabled(enabled);
             if (enabled) {
-                connect(sw, &QCheckBox::toggled, this,
-                        [this, key = fr.fieldKey](bool on) {
-                            submitRegionToggle(key, on);
+                connect(combo, &QComboBox::currentIndexChanged, this,
+                        [this, key = fr.fieldKey](int idx) {
+                            submitRegionToggle(key, idx == 0);
                         });
             }
-            m_regionBasicForm->addRow(QString::fromStdString(fr.label), sw);
+            m_regionBasicForm->addRow(QString::fromStdString(fr.label), combo);
         };
 
         // 分拣路由（键族封闭——未知键 fail-fast，区域轨与工位轨同纪律）。
@@ -2043,6 +2101,7 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
         m_conditionTable->currentItem()
             ? nodeAnchor(m_conditionTable->currentItem()) : std::nullopt;
     const std::vector<ConditionRow> rows = conditionRows(ws.conditions.entries);
+    m_conditionTable->blockSignals(true);  // 重建期信号屏蔽（同区域表——返工②修复①）
     m_conditionTable->clear();
     for (const ConditionRow& r : rows) {
         // UI-T36：三显示列补全（目标节拍＝数值 s/未设、适用范围＝三值
@@ -2077,6 +2136,7 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
             m_conditionTable->setCurrentItem(item);
         }
     }
+    m_conditionTable->blockSignals(false);
     for (int c = 0; c < 4; ++c) {
         m_conditionTable->resizeColumnToContents(c);  // 列宽随内容（长摘要不挤压）
     }
@@ -2090,6 +2150,46 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
                 if (c.objectId == anchor.value()) {
                     for (const StationFieldRow& fr :
                          conditionFieldsFor(c, m_conditionService, m_writable)) {
+                        // 枚举下拉行（UI-T37 返工②——等级/启用一律
+                        // QComboBox；提交轨＝applyConditionEnumEdit）。
+                        if ((fr.fieldKey == "level"
+                                || fr.fieldKey == "enabled")) {
+                            auto* combo = new QComboBox(this);
+                            combo->setObjectName(
+                                fr.fieldKey == "level"
+                                    ? QStringLiteral("ird_condition_level_combo")
+                                    : QStringLiteral(
+                                        "ird_condition_enabled_combo"));
+                            if (fr.fieldKey == "level") {
+                                combo->addItem(QStringLiteral("Must"));
+                                combo->addItem(QStringLiteral("Should"));
+                                { QSignalBlocker blocker(combo);
+                                combo->setCurrentText(
+                                    QString::fromStdString(fr.valueText)); }
+                            } else {
+                                combo->addItem(QStringLiteral("启用"));
+                                combo->addItem(QStringLiteral("停用"));
+                                { QSignalBlocker blocker(combo);
+                                combo->setCurrentIndex(
+                                    QString::fromStdString(fr.valueText)
+                                            == QStringLiteral("是")
+                                        ? 0
+                                        : 1); }
+                            }
+                            combo->setEnabled(m_writable);
+                            connect(combo, &QComboBox::currentIndexChanged,
+                                    this, [this, key = fr.fieldKey, combo](int) {
+                                        // enabled 词面＝是/否（模型词表）；level＝token 直投。
+                                        const QString text = key == QStringLiteral("enabled")
+                                            ? (combo->currentIndex() == 0 ? QStringLiteral("是")
+                                                                          : QStringLiteral("否"))
+                                            : combo->currentText();
+                                        submitConditionEnumValue(key, text);
+                                    });
+                            m_conditionForm->addRow(
+                                QString::fromStdString(fr.label), combo);
+                            continue;
+                        }
                         auto* edit = new QLineEdit(QString::fromStdString(
                             fr.valueText == "未提供" || fr.valueText == "未设"
                                 ? std::string{}
@@ -2289,7 +2389,55 @@ void RequirementsPanelWidget::onTreeSelectionChanged()
                                : QString());
         // 检查器重投影（从提供器现取——零缓存）。
         if (IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr) {
-            renderInspector(editor->workingSet());
+            const RequirementWorkingSet& ws = editor->workingSet();
+            renderInspector(ws);
+            // 分域检查器联动（UI-T37 返工③——修复"新建区域后树/列表点击
+            // 属性不联动"：区域/工况检查器分别由区域表/工况表选中驱动，
+            // 此前树或表点击区域/工况只走工位轨＝属性面不更新。旧插件
+            // currentRowChanged→refreshXxxInspector 同款；表行同步后按
+            // 种类重投影对应域）。
+            if (anchor.has_value()) {
+                bool isRegion = false;
+                bool isCondition = false;
+                for (const WorkRegion& r : ws.regions.entries) {
+                    if (r.objectId == anchor.value()) { isRegion = true; break; }
+                }
+                for (const OperatingCondition& c : ws.conditions.entries) {
+                    if (c.objectId == anchor.value()) { isCondition = true; break; }
+                }
+                if (isRegion) {
+                    syncRegionTableSelection(anchor.value());
+                    renderRegionPage(ws);
+                } else if (isCondition) {
+                    syncConditionTableSelection(anchor.value());
+                    renderConditionPage(ws);
+                }
+            }
+        }
+    }
+}
+
+void RequirementsPanelWidget::syncRegionTableSelection(const core::ObjectId& id)
+{
+    // 表行同步（信号屏蔽——程序性选中非用户点击，防 L-R1 重入）。
+    for (int i = 0; i < m_regionTable->topLevelItemCount(); ++i) {
+        if (nodeAnchor(m_regionTable->topLevelItem(i)) == id) {
+            m_regionTable->blockSignals(true);
+            m_regionTable->setCurrentItem(m_regionTable->topLevelItem(i));
+            m_regionTable->blockSignals(false);
+            return;
+        }
+    }
+}
+
+void RequirementsPanelWidget::syncConditionTableSelection(const core::ObjectId& id)
+{
+    for (int i = 0; i < m_conditionTable->topLevelItemCount(); ++i) {
+        if (nodeAnchor(m_conditionTable->topLevelItem(i)) == id) {
+            m_conditionTable->blockSignals(true);
+            m_conditionTable->setCurrentItem(m_conditionTable->topLevelItem(i));
+            m_conditionTable->blockSignals(false);
+            return;
         }
     }
 }

@@ -130,6 +130,16 @@ std::vector<ui::QuantityFieldSpec> conditionQuantitySpecs(
 OperatingCondition applyConditionEditSet(const OperatingCondition& base,
                                          const ui::ParamEditSet& edits,
                                          std::vector<std::string>& known);
+/**
+ * @brief 工况枚举行回填（UI-T37 返工②——等级/启用 QComboBox 提交轨）。
+ *
+ * 键词表："level" → tryRequirementLevel 反查（词表外 throw）；
+ * "enabled" → "是"/"否" → bool。其余键＝实现缺陷 fail-fast。
+ */
+OperatingCondition applyConditionEnumEdit(const OperatingCondition& base,
+                                          const std::string& key,
+                                          const std::string& valueText,
+                                          std::vector<std::string>& known);
 
 // =====================================================================
 // 必验清单预览（卡 §9.8 第 4 行"必验清单预览（RequirementProfile 投影）"）

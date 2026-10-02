@@ -181,6 +181,16 @@ WorkRegion applyRegionToggleEdit(const WorkRegion& base, const std::string& key,
                                  bool on, std::vector<std::string>& known);
 
 /**
+ * @brief 区域枚举行回填（UI-T37 返工②——等级 QComboBox 提交轨）。
+ *
+ * 键词表："level" → tryRequirementLevel 反查（词表外 throw）；其余键＝
+ * 实现缺陷 fail-fast（enabled 走 applyRegionToggleEdit）。
+ */
+WorkRegion applyRegionEnumEdit(const WorkRegion& base, const std::string& key,
+                               const std::string& valueText,
+                               std::vector<std::string>& known);
+
+/**
  * @brief 区域采样计数回填（UI-T37 R1——规则网格三轴分割数；方法切至
  *        Grid、spacing 载荷清零）。计数合法域归域校验链（submitEntryEdit
  *        域裁决），本函数零预判；纯函数；确定性。
