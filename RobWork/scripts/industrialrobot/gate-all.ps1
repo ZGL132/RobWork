@@ -125,11 +125,20 @@ if ($intTests.Count -eq 0) {
 }
 
 # ---- 第 4 步：冒烟模式——独立配置（带 toolchain，AGENTS §4.1/F-002 口径）＋构建＋测试 ----
+# F-455：自 WP-10-T02 起 testkit_qt 使 find_package(Qt6 Core REQUIRED) 进入
+# 独立配置面——冒烟树仅带 vcpkg toolchain 必因 Qt6 缺失而配置失败。故此处
+# 将 -QtPrefix 参数（或环境变量 CMAKE_PREFIX_PATH）透传给冒烟配置；两者皆空
+# 时给出可行动的失败文案（操作员补 -QtPrefix <Qt msvc 目录>）。
 if (-not $SmokeDir) { $SmokeDir = Join-Path $env:TEMP 'ird-gate-smoke' }
 if (Test-Path $SmokeDir) { Remove-Item -Recurse -Force $SmokeDir -ErrorAction SilentlyContinue }
-& cmake -S $IndustrialSrc -B $SmokeDir -G 'Visual Studio 17 2022' -A x64 "-DCMAKE_TOOLCHAIN_FILE=$Toolchain" | Out-Null
+$smokeQtArgs = @()
+if (-not $QtPrefix -and $env:CMAKE_PREFIX_PATH) { $QtPrefix = $env:CMAKE_PREFIX_PATH }
+if ($QtPrefix) { $smokeQtArgs += "-DCMAKE_PREFIX_PATH=$QtPrefix" }
+& cmake -S $IndustrialSrc -B $SmokeDir -G 'Visual Studio 17 2022' -A x64 "-DCMAKE_TOOLCHAIN_FILE=$Toolchain" @smokeQtArgs | Out-Null
 if ($LASTEXITCODE -ne 0) {
-    Fail "冒烟树配置" "独立冒烟配置失败（必须带 vcpkg toolchain——DTB §5.5/F-002）"
+    $hint = if ($QtPrefix) { "（配置参数在位仍失败——检查 Qt/vcpkg 路径有效性）" }
+            else { "（未提供 Qt 前缀——补 -QtPrefix <Qt msvc 目录> 或设 CMAKE_PREFIX_PATH；F-455：testkit_qt 自 WP-10-T02 起要求 Qt6）" }
+    Fail "冒烟树配置" "独立冒烟配置失败（必须带 vcpkg toolchain——DTB §5.5/F-002）$hint"
 } else {
     Ok "冒烟树配置（standalone smoke，toolchain 在位）"
     $smokeTests = Find-TestTargets "$SmokeDir"

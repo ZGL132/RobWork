@@ -203,12 +203,25 @@ TEST(ProductBoundary, ZeroTestkitHeadersAndTestIfdef_UT_FAULT)
                     EXPECT_EQ(line.find("sdurws/ird/testkit/"), std::string::npos)
                         << "产品面含 testkit 头（T-1）: " << entry.path().string()
                         << ":" << lineno;
-                    const auto ifdefPos = line.find("#ifdef TEST");
-                    const auto definedPos = line.find("defined(TEST");
-                    EXPECT_EQ(ifdefPos, std::string::npos)
-                        << "产品面含 #ifdef TEST: " << entry.path().string() << ":" << lineno;
-                    EXPECT_EQ(definedPos, std::string::npos)
-                        << "产品面含 defined(TEST): " << entry.path().string() << ":" << lineno;
+                    // 指令行判定（F-454——子串误报修复）：D-10 禁的是
+                    // 预处理器指令（#ifdef TEST / #if defined(TEST)），
+                    // 注释文字提及规则原文不构成违规。实践反例：
+                    // project/src/win32/ILockOps.hpp 头注释写有
+                    // 『不加 #ifdef TEST』——朴素子串匹配把说明文字当
+                    // 违规，WP-04-T03 起恒红。以行首首个非空白字符是
+                    // 否 '#' 判定指令行；测试代码内的违例仍全部命中。
+                    const auto firstNonWs = line.find_first_not_of(" \t\r");
+                    const bool isDirective =
+                        firstNonWs != std::string::npos
+                        && line[firstNonWs] == '#';
+                    if (isDirective) {
+                        EXPECT_EQ(line.find("#ifdef TEST"), std::string::npos)
+                            << "产品面含 #ifdef TEST: " << entry.path().string()
+                            << ":" << lineno;
+                        EXPECT_EQ(line.find("defined(TEST"), std::string::npos)
+                            << "产品面含 defined(TEST): " << entry.path().string()
+                            << ":" << lineno;
+                    }
                 }
                 ++scanned;
             }

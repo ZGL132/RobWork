@@ -732,7 +732,7 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 
 | 项 | 约定 |
 | --- | --- |
-| 双模式 | 集成模式＝仓库根 `build/` 构建树＋`RWS_BUILD_INDUSTRIALROBOT=ON`（patch 0001 守卫，唯一交付口径）；独立冒烟模式＝`industrialrobot/` 单独配置（仅验证目标注册与 include 路径）。两模式结论分别留痕，仅冒烟通过不构成完成 |
+| 双模式 | 集成模式＝仓库根 `build/` 构建树＋`RWS_BUILD_INDUSTRIALROBOT=ON`（patch 0001 守卫，唯一交付口径）；独立冒烟模式＝`industrialrobot/` 单独配置（仅验证目标注册与 include 路径）。独立配置参数＝vcpkg toolchain（F-002）＋Qt 前缀（F-455——自 WP-10-T02 testkit_qt 落位起 `find_package(Qt6 Core REQUIRED)` 进入独立配置面）。两模式结论分别留痕，仅冒烟通过不构成完成 |
 | 目标命名 | 库 `sdurws_ird_<unit>`、别名 `RWS::ird::<unit>`（冒烟模式无别名）；`_test`/`_contract_test`/`_plugin`/`_worker` 随单元任务登记，不预建空目标；INTERFACE→真实库升级时目标名不变 |
 | C++ 标准 | 各目标显式 `CXX_STANDARD 17`；不用 C++20（core.md D-01；C++11 基线混链安全性由各 T01 双模式验证——P-ENV-1，失败回落 C++14 走设计变更） |
 | 第三方依赖 | 一律经 vcpkg（仓库根、经典模式、无 manifest）；禁源码 vendor 与第二渠道；新增依赖先在本文增量修订登记 |

@@ -4510,6 +4510,39 @@
       "title": "属性编辑崩溃：容差 SpinBox valueChanged/启用 Switch toggled 直连提交轨——提交链 onEditApplied 同步 renderInspector 清空重建卡片，正在发射信号的控件在发射途中被删除（use-after-free，真实宿主堆状态下必崩；gui 夹具因堆布局差异未复现——0xC0000005 类）。",
       "owner": "UI-T37 返工轮（已修复：五提交轨全队列化＋SpinBox editingFinished＋滑块去抖；T31 直发 editingFinished 用例补 processEvents 适配队列时序）",
       "resolution": "已修复并随返工提交送验（attempt2 承载复核）。编号顺延自 F-452。"
+    },
+    {
+      "id": "F-454",
+      "source": "UI-T37 返工④自查（gate-all 一键门槛全量扫”——testkit 集成测试退出码 1：ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT 恒红；存量缺陷非本批引入）。",
+      "severity": "suggestion",
+      "status": "fixed",
+      "fixedBy": "testkit FaultTest.cpp 边界扫描改指令行判定（行首首个非空白字符为 '#' 才检查 #ifdef TEST/defined(TEST)——注释文字提及规则原文不再误报）",
+      "registeredAt": "2026-10-02",
+      "title": "testkit 生产面边界扫描子串误报：project/src/win32/ILockOps.hpp:14 头注释写有规则原文『不加 #ifdef TEST』（WP-04-T03 提交），朴素 line.find(\"#ifdef TEST\") 把说明文字当违规——自 WP-04-T03 起 gate-all testkit 项恒红。",
+      "owner": "testkit 单元（本次治理微批修复：D-10 禁的是预处理器指令，注释不构成违规；修复后 testkit 97/97 绿）",
+      "resolution": "随 [governance] 微批提交闭环；后续同类扫描项（testkit 头 include 子串检查）暂无违例源保持原语义。编号顺延自 F-453。"
+    },
+    {
+      "id": "F-455",
+      "source": "UI-T37 返工④自查（gate-all 一键门槛全量扫——冒烟树配置项失败：独立配置缺 Qt6；存量缺陷非本批引入）。",
+      "severity": "suggestion",
+      "status": "fixed",
+      "fixedBy": "gate-all.ps1 冒烟配置透传 Qt 前缀（-QtPrefix 参数→环境变量 CMAKE_PREFIX_PATH 兜底→皆空时失败文案给出可行动提示）＋AGENTS §4.1 独立冒烟命令口径补 Qt 前缀参数",
+      "registeredAt": "2026-10-02",
+      "title": "gate-all 冒烟树配置自 WP-10-T02 起结构性失败：testkit_qt 落位使 find_package(Qt6 Core REQUIRED) 进入独立配置面，而冒烟配置仅带 vcpkg toolchain——无 Qt 前缀必失败（AGENTS §4.1 口径同滞后）。",
+      "owner": "治理脚本（本次治理微批修复；冒烟口径：toolchain＋Qt 前缀两参数均在位）",
+      "resolution": "随 [governance] 微批提交闭环（修复后冒烟树配置过——Qt 前缀 D:/software/Qt/6.11.1/msvc2022_64 实测）；DTB §5.1 双模式口径与 AGENTS §4.1 冒烟命令同批同步。编号顺延自 F-454。"
+    },
+    {
+      "id": "F-456",
+      "source": "UI-T37 返工④自查（gate-all 一键门槛全量扫 F-455 修复后冒烟测试段暴露——sdurws_ird_ui_gui_test 冒烟树退出码 8：qt.qpa.plugin 'Could not find the Qt platform plugin windows'；存量缺陷非本批引入）。",
+      "severity": "suggestion",
+      "status": "fixed",
+      "fixedBy": "ui/CMakeLists.txt GUI 测试 exe 补 qt.conf 生成（Qt6_DIR 推导真实前缀——与 UI-T15 harness 同款机制；前缀推导提前为 GUI 测试/harness 两处共享）",
+      "registeredAt": "2026-10-02",
+      "title": "GUI 测试 exe 独立冒烟树缺 qt.conf：TARGET_RUNTIME_DLLS 复制的 Qt DLL 为可重定位前缀形态，集成树中 studio 目标恰好把 Qt plugins 部署在同目录才'顺带'工作；独立冒烟树无 studio 部署步→qwindows 缺位→ui_gui_test 8 用例全灭（modeling_gui_test 无窗口用例故幸免）。",
+      "owner": "ui 单元（本次治理微批修复；集成树行为不变——qt.conf 钉回的真实安装即同版本 DLL 源）",
+      "resolution": "随 [governance] 微批提交闭环（修复后冒烟 ui_gui_test 全绿实测）。编号顺延自 F-455。"
     }
   ]
 }
