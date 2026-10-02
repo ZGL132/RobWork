@@ -248,6 +248,12 @@ private:
     /// 内容最小宽度全量度量，UTF-8 报告落盘＋控制台 [ird-ui-smoke-layout]
     /// 标记行；只读度量零行为变更）。
     void maybeRunLayoutSmoke();
+    /// 需求界面全功能遍历通道（环境变量 IRD_UI_PLUGIN_SMOKE=requirements-tour
+    /// 触发——新建项目→需求面板三页全操作遍历〔新增/字段编辑/下拉/滑块/
+    /// 向导/校验/应用/撤销重做〕→逐项断言＋截图落盘→自动退出；控制台
+    /// [ird-ui-smoke-tour] 标记行。宿主侧仅经 Qt 公共基类＋objectName 锚
+    /// 操作面板——R-2 零跨单元私有头）。
+    void maybeRunRequirementsTour();
 
     // ---- 装配产物（所有权：诊断栈/适配器经 shared_ptr 供壳与控制器共享
     //      引用；控制器/内容装配面为本插件独占成员——析构序＝声明逆序，

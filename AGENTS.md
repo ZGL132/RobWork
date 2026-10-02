@@ -173,9 +173,12 @@ cmake --build build --config Release
 
 # 独立冒烟模式：仅验证目标注册与 include 路径，脱离 RobWorkStudio。
 # ⚠ 必须带 vcpkg toolchain 参数：单元 CMake 含 find_package(GTest CONFIG REQUIRED)（DTB §5.5），
-#   裸命令会因找不到 GTest 配置失败（CORE-T01 验收 G-2 / findings F-002）：
+#   裸命令会因找不到 GTest 配置失败（CORE-T01 验收 G-2 / findings F-002）。
+# ⚠ 自 WP-10-T02（testkit_qt 落位）起还必须带 Qt 前缀：find_package(Qt6 Core REQUIRED)
+#   进入独立配置面，缺前缀即配置失败（findings F-455）：
 cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <任意临时目录> \
-  -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+  -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
+  -DCMAKE_PREFIX_PATH=<Qt msvc 目录，如 D:/software/Qt/6.11.1/msvc2022_64>
 cmake --build <该目录>
 ```
 

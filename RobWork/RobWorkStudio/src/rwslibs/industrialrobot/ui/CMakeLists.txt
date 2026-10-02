@@ -164,7 +164,8 @@ add_library(sdurws_ird_ui STATIC
     src/SelectionService.cpp        # UI-T21——业务选择唯一汇聚点（B1-SPEC §4.1/§4.2；§13 UI-T21 行）
     src/IndustrialProjectTree.cpp   # UI-T21——工业项目树模型＋面板（B1-SPEC §3.1/§5.1；§13 UI-T21 行）
     src/PropertyInspector.cpp       # UI-T22——共享属性检查器模型＋面板（B1-SPEC §2 D5/D6/§5.1；§13 UI-T22 行）
-    src/FlowLayout.cpp)             # UI-T24——流式栅格布局（P2 钳制源消除的公共构件；§10.1 v1.25）
+    src/FlowLayout.cpp              # UI-T24——流式栅格布局（P2 钳制源消除的公共构件；§10.1 v1.25）
+    src/UiTheme.cpp)                # UI-T37——工业风主题基建（调色板/QSS/卡片容器；契约 acceptance 1）
 
 # C++17（DTB §5.1/core.md D-01 同口径）：逐目标显式设定，不设全局标准。
 # target_compile_features PUBLIC 传播——ui 公共头（UI-T03+）使用 C++17
@@ -547,10 +548,28 @@ target_link_libraries(sdurws_ird_ui_gui_test PRIVATE
 target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE
     IRD_UI_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 
+# Qt 安装前缀推导（F-456 起两处消费：GUI 测试 exe＋下方 harness——原仅
+# harness 单点，推导提前至此）。configure 期从 Qt6_DIR 推导真实
+# Qt 安装前缀：TARGET_RUNTIME_DLLS 复制到 exe 旁的 Qt6Core/Gui/Widgets 是
+# "可重定位前缀"形态，从副本位置自行推导的插件目录在无 studio 部署步的
+# 独立冒烟树中落空（qwindows 缺位即启动失败）。qt.conf 把前缀钉回真实
+# 安装。前缀是机器相关路径，但 qt.conf 为构建期生成物（不入库），与复制
+# 的运行时 DLL 同一来源口径。
+set(_ird_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_qt_prefix "${_ird_qt_prefix}/../../.." ABSOLUTE)
+
+# F-456：GUI 测试 exe 的 qt.conf——独立冒烟树（gate-all 第 4 步）无 studio
+# 部署步，集成树中 studio 目标恰好把 Qt plugins 部署在同目录才"顺带"工作；
+# 显式 qt.conf 让两形态都按真实安装解析插件（与 harness 同款机制）。
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/guitest-qt.conf"
+     "[Paths]\nPrefix=${_ird_qt_prefix}\n")
 add_custom_command(TARGET sdurws_ird_ui_gui_test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_RUNTIME_DLLS:sdurws_ird_ui_gui_test>
             $<TARGET_FILE_DIR:sdurws_ird_ui_gui_test>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/guitest-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_ui_gui_test>/qt.conf"
     COMMAND_EXPAND_LISTS)
 
 # ---- ctest 标签登记（ui.md §12.1 表）----
@@ -607,18 +626,15 @@ add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
             $<TARGET_FILE_DIR:sdurws_ird_ui_app>
     COMMAND_EXPAND_LISTS)
 
-# ---- Qt 平台插件定位：生成 qt.conf（UI-T15 修复）----
+# ---- Qt 平台插件定位：生成 qt.conf（UI-T15 修复；F-456 起推导提前至
+# GUI 测试段共享——本段仅 harness 消费）----
 # 背景：上面 TARGET_RUNTIME_DLLS 把 Qt6Core/Gui/Widgets 复制到 exe 旁——
 # Qt 6 官方发行版的 DLL 是"可重定位前缀"形态，从副本位置自行推导的插件
 # 目录不再成立，平台插件 qwindows 找不到即启动失败（"Could not find the
 # Qt platform plugin \"windows\" in \"\""——VS 启动项/双击场景必现；实施段
 # 手工验证时以 QT_QPA_PLATFORM_PLUGIN_PATH 环境变量绕过，未暴露此问题）。
-# 修复：configure 期从 Qt6_DIR 推导真实 Qt 安装前缀并生成 qt.conf 复制到
-# exe 旁，把前缀钉回真实安装（plugins/imageformats/styles 全部按真实前缀
-# 解析）。前缀是机器相关路径，但本文件为构建期生成物（不入库），与复制的
-# 运行时 DLL 同一来源口径。
-set(_ird_qt_prefix "${Qt6_DIR}")
-get_filename_component(_ird_qt_prefix "${_ird_qt_prefix}/../../.." ABSOLUTE)
+# 修复：生成 qt.conf 复制到 exe 旁，把前缀钉回真实安装（plugins/
+# imageformats/styles 全部按真实前缀解析）。
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/harness-qt.conf"
      "[Paths]\nPrefix=${_ird_qt_prefix}\n")
 add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD

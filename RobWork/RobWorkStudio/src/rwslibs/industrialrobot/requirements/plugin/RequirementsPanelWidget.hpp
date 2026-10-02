@@ -29,6 +29,7 @@
 #ifndef IRD_REQUIREMENTS_PLUGIN_REQUIREMENTSPANELWIDGET_HPP
 #define IRD_REQUIREMENTS_PLUGIN_REQUIREMENTSPANELWIDGET_HPP
 
+#include <array>
 #include <functional>
 #include <optional>
 
@@ -56,7 +57,10 @@
 #include "PanelTreeModel.hpp"                      // 对象树投影
 #include "PanelValidationModel.hpp"                // 校验面板投影
 
+class QAction;
+class QGroupBox;
 class QLabel;
+class QScrollArea;
 class QVBoxLayout;
 class QFormLayout;
 
@@ -158,7 +162,7 @@ public:
     }
 
     /// 状态行反馈出口（命令流程的就地中文呈现——UX-02/03）。
-    void showCommandFeedback(const QString& text) { m_statusLine->setText(text); }
+    void showCommandFeedback(const QString& text) { showStatusLine(text); }
 
     /// 状态行只读回取（gui 用例断言面——降级/错误文案呈现）。
     QString showCommandFeedbackText() const { return m_statusLine->text(); }
@@ -177,6 +181,25 @@ public:
     void onEditApplied(const std::string& changeSummary) override;
     /// 会话脏通知（标题 `*` 标记呈现半区——PM-04/PM-11；信号上呈装配层）。
     void notifySessionDirty() override;
+
+    // ---- UI-T37 R2：工况新增向导（acceptance 4——创建即带完整起步配置；
+    //      取消＝零新增。注入缝与 UI-T32 CommandDialogHost/FakeDialogHost
+    //      同族：缺省＝内建 QDialog 面板，测试注入确定字段工厂）------------
+    /// 向导确认字段（验收要求 mustVerify→RequirementLevel::Must/Should——
+    /// 必验派生归域侧 resolveRequiredCases，面板不私判 I-REQ-9）。
+    struct ConditionWizardFields {
+        std::string name;           ///< 工况名（空＝面板用防撞默认名）
+        bool hasCycle = false;      ///< 目标节拍是否设置（false＝未设，不伪造）
+        double cycleSeconds = 0.0;  ///< 目标节拍（s；hasCycle 时有效，>0）
+        bool mustVerify = true;     ///< true＝必验（Must）；false＝可选（Should）
+    };
+    using ConditionWizardFn =
+        std::function<std::optional<ConditionWizardFields>()>;
+    /// 注入工况新增向导工厂（装配期一次；缺省＝内建对话框）。
+    void setConditionWizardFactory(ConditionWizardFn factory)
+    {
+        m_conditionWizard = std::move(factory);
+    }
     /// 编辑拒绝分支：就地错误呈现（状态行——非模态，UX-03/07；值控件回退
     /// 显示工作集权威值——由全面板重投影实现）。
     void onEditRejected(const EditRejection& rejection) override;
@@ -223,9 +246,18 @@ private:
     void renderRegionPage(const RequirementWorkingSet& ws);    // 区域页重投影
     void renderConditionPage(const RequirementWorkingSet& ws); // 工况页重投影
     void renderValidationPage(const RequirementReadinessReport& report);  // 校验页重投影
-    /// 页签状态行刷新（UI-T26——工位/区域/工况页头随树选中现取对象显示
-    /// 名，未选中＝『未选择对象』；校验页恒『尚未执行』诚实静态）。
+    /// 页签状态行刷新（UI-T26；返工⑤——格式改面包屑『工位 > 〈名|未选择〉』，
+    /// 去与页签名重复的冒号态）。
     void updateTabHeaders();
+    /// 生命周期键＋属性区空态统一刷新（返工⑤——会话内未选择＝复制/删除
+    /// 置灰仅保留新增＋空态提示替代空卡骨架；无会话/只读＝全禁诚实态）。
+    void refreshLifecycleAndEmptyStates();
+    /// 命令按钮/菜单动作可用性统一刷新（返工⑤——原三处循环收敛单出口；
+    /// 导入下拉＝两导入命令可用性之或）。
+    void refreshCommandEnablement();
+    /// 空态提示标签工厂（返工⑤——objectName ird_req_empty_hint；文本走
+    /// UiText 词表，默认隐藏由统一刷新驱动）。
+    QLabel* makeEmptyStateHint(QWidget* parent, const char* key);
 
     // ---- 会话态与呈现模型（零 Qt 半区——全部在 plugin/ 呈现层）----
     PanelSelectionState m_selection;          ///< L-R1 会话选中态（零修订）
@@ -234,6 +266,64 @@ private:
     TaskPointService m_pointService;          ///< 领域服务（顺序键/构造校验——面板模型入口）
     WorkRegionService m_regionService;        ///< 领域服务（采样规范化——D-REQ-2 单点复用）
     OperatingConditionService m_conditionService;  ///< 领域服务（必验解析——P-EV-9 单点复用）
+
+    // ---- UI-T37 R1：卡片化检查器（acceptance 1/2/3——卡片标题/帮助位经
+    //      UiText 键族①c；主题经 ui UiTheme::applyIndustrialTheme 面板作用
+    //      域安装）。卡片＝QFrame#card（UiTheme::createCard 工厂）；表单行
+    //      按字段键路由到所属卡片（stationFormForKey/regionFormForKey）----
+    QGroupBox* m_stationBasicCard = nullptr;     ///< 工位卡①基础属性
+    QFormLayout* m_stationBasicForm = nullptr;   ///< 卡①行宿主
+    QGroupBox* m_stationPoseCard = nullptr;      ///< 工位卡②空间与公差
+    QFormLayout* m_stationPoseForm = nullptr;    ///< 卡②行宿主
+    QGroupBox* m_stationDofCard = nullptr;       ///< 工位卡③自由度约束（矩阵）
+    QFormLayout* m_stationDofForm = nullptr;  ///< 卡③行宿主（逐行＝标签＋分段对）
+    QGroupBox* m_stationSegmentCard = nullptr;   ///< 工位卡④动作阶段（呈现面）
+    QFormLayout* m_stationSegmentForm = nullptr; ///< 卡④行宿主
+    QGroupBox* m_stationOrientCard = nullptr;    ///< 工位卡⑤姿态规则（词表行）
+    QFormLayout* m_stationOrientForm = nullptr;  ///< 卡⑤行宿主
+    QGroupBox* m_regionBasicCard = nullptr;      ///< 区域卡①基础属性
+    QFormLayout* m_regionBasicForm = nullptr;    ///< 区域卡①行宿主
+    QGroupBox* m_regionBoxCard = nullptr;        ///< 区域卡②空间包围盒（复合行）
+    QVBoxLayout* m_regionBoxLay = nullptr;    ///< 卡②复合行宿主
+    QGroupBox* m_regionSamplingCard = nullptr;   ///< 区域卡③采样与达标
+    QVBoxLayout* m_regionSamplingLay = nullptr;  ///< 卡③宿主（滑块/计数复合行）
+    QGroupBox* m_regionAdvancedCard = nullptr;   ///< 区域卡④高级参数（默认折叠）
+    QWidget* m_regionAdvancedBody = nullptr;  ///< 折叠体（toggle 切换可见性）
+    QFormLayout* m_regionAdvancedForm = nullptr; ///< 折叠体行宿主
+
+    /// 工位值提交（复合/二态控件共用轨——队列化出信号处理器：提交链同步
+    /// 刷新重建控件树，槽内直执＝发射控件被删 use-after-free——返工修复）。
+    void submitStationValue(const std::string& key, const QString& text);
+    void submitStationValueNow(const std::string& key, const QString& text);
+    /// 工位二态提交（applyStationToggleEdit——启用开关/自由度矩阵共用）。
+    void submitStationToggle(const std::string& key, bool on);
+    void submitStationToggleNow(const std::string& key, bool on);
+    /// 工位枚举提交（applyStationEnumEdit——等级 QComboBox；UI-T37 返工）。
+    void submitStationEnumValue(const std::string& key, const QString& text);
+    void submitStationEnumValueNow(const std::string& key, const QString& text);
+    /// 区域值提交（onRegionFieldEditingFinished 的 sender 无关形）。
+    void submitRegionValue(const std::string& key, const QString& text);
+    void submitRegionValueNow(const std::string& key, const QString& text);
+    /// 区域二态提交（applyRegionToggleEdit）。
+    void submitRegionToggle(const std::string& key, bool on);
+    void submitRegionToggleNow(const std::string& key, bool on);
+    /// 区域采样计数提交（applyRegionSamplingCountsEdit——counts 三元组整数
+    /// 回填；formatCounts 的逆变换，域规范化/裁决仍走 submitEntryEdit）。
+    void submitRegionCounts(const std::array<std::uint32_t, 3>& counts);
+    void submitRegionCountsNow(const std::array<std::uint32_t, 3>& counts);
+    /// 工位行键→所属卡片表单路由（词表分派——键族集合封闭）。
+    QFormLayout* stationFormForKey(const std::string& key) const;
+    /// 区域/工况表行同步（信号屏蔽——树点击驱动检查器联动用；返工③）。
+    void syncRegionTableSelection(const core::ObjectId& id);
+    void syncConditionTableSelection(const core::ObjectId& id);
+    /// 区域/工况枚举提交（applyRegionEnumEdit/applyConditionEnumEdit——
+    /// 等级与启用 QComboBox 轨；返工②）。
+    void submitRegionEnumValue(const std::string& key, const QString& text);
+    void submitRegionEnumValueNow(const std::string& key, const QString& text);
+    void submitConditionEnumValue(const std::string& key, const QString& text);
+    void submitConditionEnumValueNow(const std::string& key, const QString& text);
+    /// 状态文本统一出口（横幅可见性随文本——R2 警示条）。
+    void showStatusLine(const QString& text);
 
     // ---- 对象生命周期（UI-T30 B1——工位/区域/工况新增/复制/删除）----
     /**
@@ -267,6 +357,7 @@ private:
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     PostEditAction m_postEditAction;          ///< 编辑后动作（UI-T29——就绪重算钩子；可空）
     RegionPreviewSink m_regionPreview;        ///< 区域三维预览出口（装配层注入；空＝文本摘要）
+    ConditionWizardFn m_conditionWizard;      ///< 工况向导缝（空＝内建对话框——R2）
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）
 
@@ -275,20 +366,17 @@ private:
     std::optional<core::ObjectId> m_lastSelected;  ///< 检查器当前选中锚（跨刷新保持）
 
     // ---- 控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
-    QTreeWidget* m_tree = nullptr;              ///< 左栏对象树（隐藏第 1 列＝锚规范文本）
-    QLabel* m_navDeprecationLabel = nullptr;    ///< 左栏自持导航 deprecated 标记
-                                                ///< （B1-SPEC §5.2——标记保留可用；
-                                                ///< objectName 锚供验证定位）
+    QTreeWidget* m_tree = nullptr;              ///< 左栏需求树（层级＝需求工程根→
+                                                ///< 四分组→条目；末隐藏列＝锚规范文本）
     QTabWidget* m_pages = nullptr;              ///< 右栏四页面容器（工位/区域/工况/校验）
-    QFormLayout* m_stationForm = nullptr;       ///< 工位检查器表单（行＝StationFieldRow）
-    std::vector<QLineEdit*> m_stationEditors;   ///< 工位编辑行（与投影行序对应——L-R2 提交面）
     std::vector<StationFieldRow> m_stationRows; ///< 当前工位行（含字段键——提交时的回填参数）
     QTreeWidget* m_regionTable = nullptr;       ///< 区域表（L-R1 行选中）
-    QFormLayout* m_regionForm = nullptr;        ///< 区域检查器表单（行＝StationFieldRow）
     QLabel* m_regionPreviewLabel = nullptr;     ///< 区域预览摘要（几何出口注入时同步投递 View3D）
-    QTreeWidget* m_conditionTable = nullptr;    ///< 工况表（L-R1 行选中）
-    QFormLayout* m_conditionForm = nullptr;     ///< 工况检查器表单
-    QTreeWidget* m_mustList = nullptr;          ///< 必验清单预览（RequirementProfile 投影行）
+    QTreeWidget* m_conditionTable = nullptr;    ///< 工况表（L-R1 行选中；末列＝是否必验 Tag）
+    QFormLayout* m_conditionForm = nullptr;     ///< 工况检查器表单（详情卡内行宿主）
+    QGroupBox* m_conditionDetailCard = nullptr; ///< 工况卡『工况详情与节拍配置』（返工④——
+                                                ///< 结构同工位/区域卡；必验清单预览表
+                                                ///< 并入单表是否必验列后撤销）
     QLabel* m_validationCounts = nullptr;       ///< 校验分层计数行（Blocking/Warning 汇总）
     // 页签状态行（UI-T26——页头『〈页名〉：〈对象名|未选择对象〉』）。
     QLabel* m_stationHeader = nullptr;          ///< 工位页头（随树选中刷新）
@@ -303,11 +391,27 @@ private:
     QComboBox* m_validationLayerFilter = nullptr;  ///< 层过滤（全部＋R0~R9）
     QLineEdit* m_validationCodeFilter = nullptr;   ///< 稳定码子串过滤
     std::optional<RequirementReadinessReport> m_lastReadiness;  ///< 最近报告缓存（过滤重投影——值语义）
-    std::vector<QPushButton*> m_commandButtons; ///< 域命令按钮（与 m_commands 序对应）
+    std::vector<QPushButton*> m_commandButtons; ///< 域命令按钮（与 m_commands 下标对齐；
+                                                ///< 返工⑤导入两槽位＝空指针，动作面在
+                                                ///< m_importActions）
+    std::vector<QAction*> m_importActions;      ///< 导入菜单动作（与 m_commands 下标对齐；
+                                                ///< 非导入槽位＝空——返工⑤下拉整合）
+    QPushButton* m_importDropdownButton = nullptr; ///< 『导入 ▾』下拉宿主（返工⑤——
+                                                ///< CSV/JSON 两键呈现层整合）
     QPushButton* m_draftUndoButton = nullptr;   ///< 草稿级撤销（L-R4 两级之一——独立控件）
     QPushButton* m_draftRedoButton = nullptr;   ///< 草稿级重做（同上）
     QPushButton* m_projectUndoButton = nullptr; ///< 项目级撤销（转发面——与草稿级不混用）
-    QLabel* m_statusLine = nullptr;             ///< 就地错误/警告/摘要行（非模态——UX-03/07）
+    QLabel* m_statusLine = nullptr;             ///< 就地错误/警告/摘要行（横幅内消息标签——UX-03/07）
+    // ---- 返工⑤：空态与页内选择面 ----
+    QScrollArea* m_stationScroll = nullptr;     ///< 工位属性区滚动容器（空态隐藏）
+    QScrollArea* m_regionScroll = nullptr;      ///< 区域属性区滚动容器（同上）
+    QScrollArea* m_conditionScroll = nullptr;   ///< 工况属性区滚动容器（同上）
+    QLabel* m_stationEmptyHint = nullptr;       ///< 工位空态提示（与滚动容器互斥显隐）
+    QLabel* m_regionEmptyHint = nullptr;        ///< 区域空态提示（同上）
+    QLabel* m_conditionEmptyHint = nullptr;     ///< 工况空态提示（同上）
+    std::optional<core::ObjectId> m_stationSelectedId;    ///< 工位页当前选中锚（页内置灰判定源）
+    std::optional<core::ObjectId> m_regionSelectedId;     ///< 区域页当前选中锚（同上）
+    std::optional<core::ObjectId> m_conditionSelectedId;  ///< 工况页当前选中锚（同上）
 };
 
 }  // namespace sdurws::ird::requirements

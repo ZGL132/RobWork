@@ -66,6 +66,14 @@ namespace detail {
 WorkbenchContentImpl::WorkbenchContentImpl(WorkbenchContentDeps deps)
     : m_deps(std::move(deps))
 {
+    // 底部区工厂默认按宿主形态分派（UI-T38——§4.2 底部行"五页签"的呈现
+    // 收口）：插件形态（EmbeddedDock）默认隐藏——底部五页签中四页签为
+    // 阶段占位，净室默认呈现面收敛为"工业项目树主 Dock＋属性诊断 Dock"，
+    // 中央三维视图更宽敞；用户经宿主"视图"菜单勾选呼出后跨会话记忆优先
+    // （PM-14——本位只是无记忆时的工厂缺省，不覆盖用户意愿）。顶层 harness
+    // 形态保持默认可见——开发验证通道行为回归零变化为硬验收项（UI-T19
+    // 降格登记的通道契约），不受本收口影响。
+    m_visibleBottom = (m_deps.hostKind == WorkbenchHostKind::TopLevelWindow);
 }
 
 WorkbenchContentImpl::~WorkbenchContentImpl()
@@ -423,19 +431,22 @@ void WorkbenchContentImpl::resetLayout()
     //   顶层＝几何＋停靠位形经出厂钩子回放（restoreState 会把浮动窗口重新
     //   停靠＝"清除该会话的浮动窗口记忆"原文），随后按当前尺寸重判折叠；
     //   嵌入式＝无窗口半区，只恢复三区可见性出厂值。
+    // UI-T38：底部区出厂值＝构造时同一形态分派（§10.1 v1.45 注⑮——顶层
+    // 可见、插件形态隐藏），"恢复默认布局"回到的是出厂缺省而不是恒可见。
     if (m_deps.restoreFactoryWindowState) {
         m_deps.restoreFactoryWindowState();
     }
     m_visibleLeft = true;
     m_visibleRight = true;
-    m_visibleBottom = true;
+    m_visibleBottom = (m_deps.hostKind == WorkbenchHostKind::TopLevelWindow);
     m_collapsedBySize = false;
     updateCollapseBySize();       // 按当前尺寸重判折叠（出厂恢复≠免折叠——顶层语义）
-    // 嵌入式宿主：折叠机制关闭，直接把三区目标恢复为可见。
+    // 嵌入式宿主：折叠机制关闭，直接把三区目标恢复为出厂可见性
+    // （左/右可见；底部区按形态分派——UI-T38 起出厂隐藏）。
     if (m_deps.hostKind == WorkbenchHostKind::EmbeddedDock) {
         for (const WorkbenchRegion region :
              {WorkbenchRegion::Left, WorkbenchRegion::Right, WorkbenchRegion::Bottom}) {
-            visibilityTarget(region)->setVisible(true);
+            visibilityTarget(region)->setVisible(*userVisibilityFlag(region));
         }
     }
     // 辅助 Dock（UI-T24）同拍恢复工厂默认：域自持面板出厂＝不呈现（P1
@@ -585,19 +596,21 @@ void WorkbenchContentImpl::restoreRegionFlagsEmbedded()
 void WorkbenchContentImpl::applyFactoryLayout()
 {
     // 出厂位形（宿主层构建期快照）：顶层＝几何＋停靠位形经钩子回放＋三区
-    // 全可见＋按当前尺寸重判折叠；嵌入式＝仅三区全可见（无窗口半区）。
+    // 出厂可见性＋按当前尺寸重判折叠；嵌入式＝仅三区出厂可见性（无窗口半
+    // 区）。UI-T38：底部区出厂值＝构造时同一形态分派（§10.1 v1.45 注⑮），
+    // 损坏回退不再把插件形态的底部 Dock 恒点亮。
     if (m_deps.restoreFactoryWindowState) {
         m_deps.restoreFactoryWindowState();
     }
     m_visibleLeft = true;
     m_visibleRight = true;
-    m_visibleBottom = true;
+    m_visibleBottom = (m_deps.hostKind == WorkbenchHostKind::TopLevelWindow);
     m_collapsedBySize = false;
     updateCollapseBySize();
     if (m_deps.hostKind == WorkbenchHostKind::EmbeddedDock) {
         for (const WorkbenchRegion region :
              {WorkbenchRegion::Left, WorkbenchRegion::Right, WorkbenchRegion::Bottom}) {
-            visibilityTarget(region)->setVisible(true);
+            visibilityTarget(region)->setVisible(*userVisibilityFlag(region));
         }
     }
     // 辅助 Dock（UI-T24）回退工厂默认（§4.5 损坏回退半区——记忆已随整组

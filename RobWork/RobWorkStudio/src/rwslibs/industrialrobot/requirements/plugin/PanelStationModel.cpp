@@ -330,4 +330,84 @@ TaskPoint applyStationEditSet(const TaskPoint& base, const ui::ParamEditSet& edi
     return out;
 }
 
+TaskPoint applyStationToggleEdit(const TaskPoint& base, const std::string& key,
+                                 bool on, std::vector<std::string>& known)
+{
+    known.clear();
+    // 二态词表回填（UI-T37 R1——声明见头文件；一处一布尔位，不做批量）。
+    // 词表外键 fail-fast 同 applyStationEditSet 纪律：面板二态控件与词表
+    // 漂移＝实现缺陷，不静默丢弃。
+    TaskPoint out = base;  // 值拷贝——非命中字段原样保留
+    if (key == "enabled") {
+        out.enabled = on;
+    } else if (key == "dof-x") {
+        out.pose.constrainedDof.x = on;
+    } else if (key == "dof-y") {
+        out.pose.constrainedDof.y = on;
+    } else if (key == "dof-z") {
+        out.pose.constrainedDof.z = on;
+    } else if (key == "dof-roll") {
+        out.pose.constrainedDof.roll = on;
+    } else if (key == "dof-pitch") {
+        out.pose.constrainedDof.pitch = on;
+    } else if (key == "dof-yaw") {
+        out.pose.constrainedDof.yaw = on;
+    } else if (key == "segment-approach") {
+        out.approach.enabled = on;  // 返工③——动作阶段下拉（接近段）
+    } else if (key == "segment-work") {
+        out.work.enabled = on;      // 返工③——动作阶段下拉（作业段）
+    } else if (key == "segment-retract") {
+        out.retract.enabled = on;   // 返工③——动作阶段下拉（撤离段）
+    } else {
+        throw std::invalid_argument("工位面板：二态回填携带词表外键 " + key
+                                    + "（实现缺陷）");
+    }
+    known.push_back(key);
+    return out;
+}
+
+TaskPoint applyStationEnumEdit(const TaskPoint& base, const std::string& key,
+                               const std::string& valueText,
+                               std::vector<std::string>& known)
+{
+    known.clear();
+    // 枚举词表回填（UI-T37 返工——等级 QComboBox；tryRequirementLevel 反
+    // 查，词表外＝面板词表漂移 fail-fast）。返工③增列：姿态规则种类与
+    // 三段轴（tryOrientationRuleKind/trySegmentAxis 反查——域词表单点）。
+    TaskPoint out = base;
+    if (key == "level") {
+        const auto level = tryRequirementLevel(valueText);
+        if (!level.has_value()) {
+            throw std::invalid_argument("工位面板：等级词表外文本 " + valueText);
+        }
+        out.level = level.value();
+    } else if (key == "orientation-kind") {
+        const auto kind = tryOrientationRuleKind(valueText);
+        if (!kind.has_value()) {
+            throw std::invalid_argument("工位面板：姿态规则词表外文本 "
+                                        + valueText);
+        }
+        out.pose.orientation.kind = kind.value();
+    } else if (key == "segment-approach-axis") {
+        const auto axis = trySegmentAxis(valueText);
+        if (!axis.has_value()) {
+            throw std::invalid_argument("工位面板：三段轴词表外文本 "
+                                        + valueText);
+        }
+        out.approach.axis = axis.value();
+    } else if (key == "segment-retract-axis") {
+        const auto axis = trySegmentAxis(valueText);
+        if (!axis.has_value()) {
+            throw std::invalid_argument("工位面板：三段轴词表外文本 "
+                                        + valueText);
+        }
+        out.retract.axis = axis.value();
+    } else {
+        throw std::invalid_argument("工位面板：枚举回填携带词表外键 " + key
+                                    + "（实现缺陷）");
+    }
+    known.push_back(key);
+    return out;
+}
+
 }  // namespace sdurws::ird::requirements

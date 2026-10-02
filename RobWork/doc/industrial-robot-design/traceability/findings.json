@@ -4459,6 +4459,111 @@
       "title": "主构建树（build/）增量局部构建会遗留陈旧测试二进制——实探 requirements_contract_test.exe 滞留 9/29（UI-T29 白名单修订前），在该树直跑对应测试会假失败；验收冷启树不受影响。",
       "owner": "实施/验收口径（UI-T35 尾款补齐轮主树全量重建已追平——建议性防复发）",
       "resolution": "送验/自查统一主树全量构建口径，或排查前先全量追平主树。编号顺延自 F-447。"
+    },
+    {
+      "id": "F-449",
+      "source": "所有者 2026-10-01 界面任务书（UI-T36 立项承接——图 1/图 2 截证的窗口缩放/切换期 z-order 错乱与遮挡穿透指控）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "疑似界面遮挡穿透：截图显示窗口缩放/切换时左栏与其他浮动面板存在 z-order 错乱/互相遮挡（静态代码审查未定位到绝对坐标定位或布局越权——各面板均走布局管理器；证据不足静态无法复现定位）。",
+      "owner": "UI 面板批次（待所有者补充稳定复现步骤〔窗口操作序列/Dock 状态〕后专项处置；UI-T36 契约 knownPitfalls 登记为观察项不阻塞其余各项）",
+      "resolution": "稳定复现步骤补齐后立项核查（嫌疑面：QDockWidget 拓扑交互/悬浮 Dock 重绘）；本条为诚实登记防丢失。编号顺延自 F-448。"
+    },
+    {
+      "id": "F-450",
+      "source": "UI-T36 验收 attempt1（acc/ui-t36/1@a0fdc2b4，4.11④ 测试强度——G-1 建议级转登）：LifecycleButton_NoVerticalClipping_UI_T36 对边距回归变异存活。",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "截断防回归守卫对修复点变异不敏感：FlowLayout 边距叠加中和变异（sizeHint/heightForWidth 去 +margins）下，720×640 与 300×200 双场景按钮均满高 25/25——夹具宿主最低高经既有 minimumSize 边距叠加保护＋父布局余量，端到端断言感知不到协商缺边距。",
+      "owner": "UI-T36 返工轮（attempt2 验证关闭：守卫补边距耦合断言——setContentsMargins 0→9/9 的 sizeHint 增量恰 18px，协商缺边距即翻红；冷树 M2 重注变异实测翻红后关闭）",
+      "resolution": "返工提交重构守卫为两半区（耦合半区＋端到端半区）；修复本身实效已证（contentsMargins=9,9 实测非零＋修复后 geometry-report 按钮满高）。编号顺延自 F-449。"
+    },
+    {
+      "id": "F-451",
+      "source": "UI-T36 验收 attempt1（acc/ui-t36/1@a0fdc2b4，4.4 证据留痕——G-2 建议级转登）：契约条目 4『根因实测』修复前探针数据未随批留痕。",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-01",
+      "title": "按钮截断修复的修复前对照数据未落盘：实施留痕 traceability/builds/ui-t36/ 仅含修复后 geometry-report（按钮 cur==minHint 满高），修复前 btnH<hint 的探针实测值未随提交留痕。",
+      "owner": "UI-T36 返工轮（attempt2 验证关闭：以 attempt1 验收记录 M2 探针数据作修复前形态等价实测〔contentsMargins=9,9 实测＋变异态行为即修复前语义〕登记闭环；后续同类修复随批附修复前对照帧）",
+      "resolution": "实测方法与数据补登记（引 acc/ui-t36/1 验收记录 §1 表 4.5 行）；修复前对照帧补拍归口径改进不追溯本批。编号顺延自 F-450。"
+    },
+    {
+      "id": "F-452",
+      "source": "UI-T37 验收 attempt1（acc/ui-t37/1@55266f3e，建议级——规范 §2 承接余量）：顶部命令栏四组【组名标注】未随批。",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "重构规范 §2 的顶部命令栏【文件数据】【模型拾取】【快捷生成】【版本与撤销】组名标注未随 UI-T37 批实施——既有 UI-T25 四组 QFrame 分隔保持（按钮集合/可达性零变化），组名属呈现余量。",
+      "owner": "UI 面板批次（后续微批承接——QLabel 组名标注于分隔条上方，UiText 键族增量；不阻塞 T37 合入）",
+      "resolution": "后续微批按规范 §2 补组名标注（UiText 键族增量＋T25 用例定位器同步）。编号顺延自 F-451。"
+    },
+    {
+      "id": "F-453",
+      "source": "所有者 2026-10-01 实测反馈（修改容差/改动启用等属性时软件崩溃——UI-T37 R1 轮引入的提交轨缺陷）。",
+      "severity": "blocking",
+      "status": "fixed",
+      "fixedBy": "ui-t37 返工提交（队列化出信号处理器——提交链同步刷新重建控件树，发射中的控件被删＝use-after-free；QMetaObject::invokeMethod Qt::QueuedConnection 出险＋SpinBox 改 editingFinished 编辑完成制＋滑块 setTracking(false) 去抖；旧插件同场景不崩＝固定控件回填不重建的架构差异，本面板重建式刷新下队列化为等价出险排除）",
+      "registeredAt": "2026-10-02",
+      "title": "属性编辑崩溃：容差 SpinBox valueChanged/启用 Switch toggled 直连提交轨——提交链 onEditApplied 同步 renderInspector 清空重建卡片，正在发射信号的控件在发射途中被删除（use-after-free，真实宿主堆状态下必崩；gui 夹具因堆布局差异未复现——0xC0000005 类）。",
+      "owner": "UI-T37 返工轮（已修复：五提交轨全队列化＋SpinBox editingFinished＋滑块去抖；T31 直发 editingFinished 用例补 processEvents 适配队列时序）",
+      "resolution": "已修复并随返工提交送验（attempt2 承载复核）。编号顺延自 F-452。"
+    },
+    {
+      "id": "F-454",
+      "source": "UI-T37 返工④自查（gate-all 一键门槛全量扫”——testkit 集成测试退出码 1：ProductBoundary.ZeroTestkitHeadersAndTestIfdef_UT_FAULT 恒红；存量缺陷非本批引入）。",
+      "severity": "suggestion",
+      "status": "fixed",
+      "fixedBy": "testkit FaultTest.cpp 边界扫描改指令行判定（行首首个非空白字符为 '#' 才检查 #ifdef TEST/defined(TEST)——注释文字提及规则原文不再误报）",
+      "registeredAt": "2026-10-02",
+      "title": "testkit 生产面边界扫描子串误报：project/src/win32/ILockOps.hpp:14 头注释写有规则原文『不加 #ifdef TEST』（WP-04-T03 提交），朴素 line.find(\"#ifdef TEST\") 把说明文字当违规——自 WP-04-T03 起 gate-all testkit 项恒红。",
+      "owner": "testkit 单元（本次治理微批修复：D-10 禁的是预处理器指令，注释不构成违规；修复后 testkit 97/97 绿）",
+      "resolution": "随 [governance] 微批提交闭环；后续同类扫描项（testkit 头 include 子串检查）暂无违例源保持原语义。编号顺延自 F-453。"
+    },
+    {
+      "id": "F-455",
+      "source": "UI-T37 返工④自查（gate-all 一键门槛全量扫——冒烟树配置项失败：独立配置缺 Qt6；存量缺陷非本批引入）。",
+      "severity": "suggestion",
+      "status": "fixed",
+      "fixedBy": "gate-all.ps1 冒烟配置透传 Qt 前缀（-QtPrefix 参数→环境变量 CMAKE_PREFIX_PATH 兜底→皆空时失败文案给出可行动提示）＋AGENTS §4.1 独立冒烟命令口径补 Qt 前缀参数",
+      "registeredAt": "2026-10-02",
+      "title": "gate-all 冒烟树配置自 WP-10-T02 起结构性失败：testkit_qt 落位使 find_package(Qt6 Core REQUIRED) 进入独立配置面，而冒烟配置仅带 vcpkg toolchain——无 Qt 前缀必失败（AGENTS §4.1 口径同滞后）。",
+      "owner": "治理脚本（本次治理微批修复；冒烟口径：toolchain＋Qt 前缀两参数均在位）",
+      "resolution": "随 [governance] 微批提交闭环（修复后冒烟树配置过——Qt 前缀 D:/software/Qt/6.11.1/msvc2022_64 实测）；DTB §5.1 双模式口径与 AGENTS §4.1 冒烟命令同批同步。编号顺延自 F-454。"
+    },
+    {
+      "id": "F-456",
+      "source": "UI-T37 返工④自查（gate-all 一键门槛全量扫 F-455 修复后冒烟测试段暴露——sdurws_ird_ui_gui_test 冒烟树退出码 8：qt.qpa.plugin 'Could not find the Qt platform plugin windows'；存量缺陷非本批引入）。",
+      "severity": "suggestion",
+      "status": "fixed",
+      "fixedBy": "ui/CMakeLists.txt GUI 测试 exe 补 qt.conf 生成（Qt6_DIR 推导真实前缀——与 UI-T15 harness 同款机制；前缀推导提前为 GUI 测试/harness 两处共享）",
+      "registeredAt": "2026-10-02",
+      "title": "GUI 测试 exe 独立冒烟树缺 qt.conf：TARGET_RUNTIME_DLLS 复制的 Qt DLL 为可重定位前缀形态，集成树中 studio 目标恰好把 Qt plugins 部署在同目录才'顺带'工作；独立冒烟树无 studio 部署步→qwindows 缺位→ui_gui_test 8 用例全灭（modeling_gui_test 无窗口用例故幸免）。",
+      "owner": "ui 单元（本次治理微批修复；集成树行为不变——qt.conf 钉回的真实安装即同版本 DLL 源）",
+      "resolution": "随 [governance] 微批提交闭环（修复后冒烟 ui_gui_test 全绿实测）。gate-all 与布局冒烟并发时该冒烟测试曾现退出码 8 假阳性（窗口几何类 GUI 用例非并发安全——隔离复扫全绿；gate-all 冒烟段应避免与 GUI 留痕活动并发）。编号顺延自 F-455。"
+    },
+    {
+      "id": "F-457",
+      "source": "UI-T37 返工④自查（gate-all 第 2 步 ird_gates 期望退出码 0，与引擎'任一命中即 FATAL_ERROR'语义＋本项目登记例外模型（96+2 已登记命中）结构性不兼容——存量口径问题，自 96 命中时代起 gate-all 该步恒红；非本批引入）。",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "gate-all ird_gates 检查口径失配：第 2 步以构建退出码 0 为通过判据，而 ird_gates 引擎任一命中即构建失败、项目按 DTB §4.5 登记册运维（96+2 已登记命中常态）——该步自登记命中出现起恒红，各轮实际口径＝命中集与登记基线逐条 diff（ird_gates 归一零新增）。",
+      "owner": "治理脚本（待微批重构第 2 步＝捕获命中集与基线文件逐条 diff 判定；需先固化机器可读命中集基线工件〔traceability 下登记〕——非阻塞，各轮按命中集 diff 口径执行）",
+      "resolution": "本批以命中集 diff 实测：当前 71 行唯一命中与 attempt3 基线（traceability/builds/ui-t37/ird-gates-head.log）逐条一致＝零新增；gate-all 其余 60 项全绿。重构另批处置。编号顺延自 F-456。"
+    },
+    {
+      "id": "F-458",
+      "source": "所有者 2026-10-02 全功能遍历指令承接（requirements-tour 宿主冒烟通道首轮实录——新增工况永不弹向导；gui 注入缝测试全覆盖故历次验收未暴露）。",
+      "severity": "blocking",
+      "status": "fixed",
+      "fixedBy": "RequirementsPanelWidget::onAddEntry(Conditions) 缺省兜底绑定 defaultConditionWizard（缝空时内联 lambda 绑定——宿主真实用户恢复向导弹窗；gui 两用例补注入适配〔fixture 每例重建面板，注入须本例自带〕）",
+      "registeredAt": "2026-10-02",
+      "title": "工况新增向导宿主形态不可达：m_conditionWizard 缝缺省为空且 defaultConditionWizard 从无绑定——onAddEntry 缝空直接创建无配置起步条目，与契约『创建即带完整起步配置、禁止无配置空白条目』纪律矛盾（宿主真实用户点新增工况永不弹向导）。",
+      "owner": "UI-T37 返工⑤轮（遍历通道 requirements-tour 抓获并同批修复；tour 复跑向导弹窗＋自动填写确认断言全绿）",
+      "resolution": "随遍历批次提交闭环（tour-6 步向导段＋gui 32/32 回归）；验收记录 attempt5 的 acceptance 4 向导项由注入缝承载的口径以此勘误——宿主形态行为随本批补齐。编号顺延自 F-457。"
     }
   ]
 }

@@ -67,23 +67,9 @@ KinematicsPanelWidget::KinematicsPanelWidget(KinPanelServices services,
     // 确定性登记序）。
     auto* layout = new QVBoxLayout(this);
 
-    // 自持导航迁移状态标记（WP-15-T18——B1-SPEC §5.2 迁移期双形态并存；
-    // objectName 供 GUI 验证定位，requirements 先例同款机制）。v1 措辞
-    // 如实（O-44 裁决）：共享工业项目树是业务主导航（D3），本域树/页面
-    // 接入面已注册但 v1 无本域树对象〔恒空集供给〕，本面板自持导航因此
-    // **保留可用**、不作"已迁移"虚标——退役归 WP-24-T09。
-    // UI-T25 文案治理：呈现文本改经 UiText 键解析（panel.kinematics.
-    // self-nav.note）——原字面量直出携带内部裁决/任务编号（DTB O-44、
-    // WP-24-T09），属 UX-02 内部名泄漏（F-430/F-432 家族标签一族消账）；
-    // 编号与裁决出处只留在本注释与设计文档，用户见工程化中文（两域措辞
-    // 按各自迁移事实区分，本域不作"已迁移"虚标的诚实口径不变）。
-    m_navDeprecationLabel = new QLabel(this);
-    m_navDeprecationLabel->setObjectName("kinematicsNavDeprecationLabel");
-    m_navDeprecationLabel->setWordWrap(true);
-    m_navDeprecationLabel->setText(
-        QString::fromStdString(
-            ui::resolveText(ui::TextKey("panel.kinematics.self-nav.note"))));
-    layout->addWidget(m_navDeprecationLabel);
+    // 自持导航迁移状态标记已随 UI-T36 退役（原 WP-15-T18 迁移期双形态
+    // 并存的标记标签与 UiText 键族⑨ kinematics 键同步删行——业务主导航
+    // 在共享项目树的口径不变，本面板页签呈现零变化）。
 
     m_tabs = new QTabWidget(this);
     m_tabs->addTab(buildPosePane(), tr("位姿指标"));

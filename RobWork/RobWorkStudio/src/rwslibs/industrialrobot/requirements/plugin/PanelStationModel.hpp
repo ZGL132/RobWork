@@ -195,6 +195,41 @@ std::vector<ui::QuantityFieldSpec> stationQuantitySpecs();
 TaskPoint applyStationEditSet(const TaskPoint& base, const ui::ParamEditSet& edits,
                               std::vector<std::string>& known);
 
+/**
+ * @brief 工位二态行回填（UI-T37 R1——启用开关与自由度约束矩阵的提交轨）。
+ *
+ * 背景：ParamEditSet 载体只携带标量 SI 值，布尔事实（启用/约束）走独立
+ * 原语。键词表（与面板二态控件一一对应——单一词表两处消费）：
+ *   - "enabled"                     → point.enabled
+ *   - "dof-x"/"dof-y"/"dof-z"       → pose.constrainedDof.{x,y,z}
+ *   - "dof-roll"/"dof-pitch"/"dof-yaw" → pose.constrainedDof.{roll,pitch,yaw}
+ *
+ * @param base  [in] 基线条目（工作集权威值）
+ * @param key   [in] 二态行键（词表外键＝实现缺陷 fail-fast）
+ * @param on    [in] 新态（true＝启用/受约束）
+ * @param known [out] 命中的行键（调用方诊断面——与 applyStationEditSet 同款）
+ * @return 回填后的条目候选（base 拷贝＋已命中布尔位）
+ *
+ * @throws std::invalid_argument key 携带词表外键
+ *
+ * 纯函数；确定性。
+ */
+TaskPoint applyStationToggleEdit(const TaskPoint& base, const std::string& key,
+                                 bool on, std::vector<std::string>& known);
+
+/**
+ * @brief 工位枚举行回填（UI-T37 返工——等级 QComboBox 提交轨；对齐旧插件
+ *        "枚举全用 QComboBox"的组件形态）。
+ *
+ * 键词表："level" → point.level（tryRequirementLevel 反查——词表外文本
+ * throw std::invalid_argument，面板词表与回填漂移＝实现缺陷）。
+ *
+ * @return 回填后的条目候选；纯函数；确定性。
+ */
+TaskPoint applyStationEnumEdit(const TaskPoint& base, const std::string& key,
+                               const std::string& valueText,
+                               std::vector<std::string>& known);
+
 }  // namespace sdurws::ird::requirements
 
 #endif  // IRD_REQUIREMENTS_PLUGIN_PANELSTATIONMODEL_HPP

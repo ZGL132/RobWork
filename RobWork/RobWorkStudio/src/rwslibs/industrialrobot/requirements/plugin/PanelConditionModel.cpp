@@ -1,6 +1,6 @@
 /**
  * @file   PanelConditionModel.cpp
- * @brief  工况面板呈现模型实现——工况表/检查器行/必验清单预览。
+ * @brief  工况面板呈现模型实现——工况表（是否必验 Tag 派生）/检查器行。
  *
  * 设计依据：units/requirements.md §9.8（面板表第 4 行）、§4.5/§6.2（字段
  * 与必验冻结 schema）、§4.8（派生档）；契约 WP-14-T08 acceptance 1/3。
@@ -205,29 +205,6 @@ std::vector<StationFieldRow> conditionFieldsFor(const OperatingCondition& condit
     return rows;
 }
 
-std::vector<MustListEntryRow> mustListPreview(const std::vector<TaskPoint>& points,
-                                              const std::vector<WorkRegion>& regions,
-                                              const std::vector<OperatingCondition>& conditions,
-                                              const IOperatingConditionService& service)
-{
-    // 派生档经域函数现算（§4.8——P-EV-9 单点；contentIdentity 不入呈现：
-    // 派生档指纹是 evidence 组装面，面板只呈现清单与计数）。
-    const RequirementProfile profile =
-        deriveRequirementProfile(points, regions, conditions, service);
-
-    std::vector<MustListEntryRow> rows;
-    rows.reserve(profile.requiredCases.size());
-    for (const RequiredCaseEntry& e : profile.requiredCases) {
-        MustListEntryRow row;
-        row.caseId = e.caseId;      // §6.2 caseId——定位跳转锚（L-R1）
-        row.label = e.label;        // §6.2 label＝工况 name
-        row.enabled = e.enabled;
-        row.mandatory = e.mandatory;  // 派生必验标记——域产出直投
-        rows.push_back(std::move(row));
-    }
-    return rows;
-}
-
 // =====================================================================
 // B2 字段编辑提交协议（UI-T31——specs 词表＋回填；工位/区域同构）
 // =====================================================================
@@ -293,6 +270,31 @@ OperatingCondition applyConditionEditSet(const OperatingCondition& base,
         }
         known.push_back(c.key);
     }
+    return out;
+}
+
+
+OperatingCondition applyConditionEnumEdit(const OperatingCondition& base,
+                                          const std::string& key,
+                                          const std::string& valueText,
+                                          std::vector<std::string>& known)
+{
+    known.clear();
+    // 枚举词表回填（UI-T37 返工②——等级/启用；词表外 fail-fast）。
+    OperatingCondition out = base;
+    if (key == "level") {
+        const auto level = tryRequirementLevel(valueText);
+        if (!level.has_value()) {
+            throw std::invalid_argument("工况面板：等级词表外文本 " + valueText);
+        }
+        out.level = level.value();
+    } else if (key == "enabled") {
+        out.enabled = (valueText == "是");
+    } else {
+        throw std::invalid_argument("工况面板：枚举回填携带词表外键 " + key
+                                    + "（实现缺陷）");
+    }
+    known.push_back(key);
     return out;
 }
 

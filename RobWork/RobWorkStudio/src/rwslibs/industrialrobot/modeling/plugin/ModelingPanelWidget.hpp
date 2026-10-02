@@ -188,9 +188,6 @@ private:
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
     QTreeWidget* m_tree = nullptr;            ///< 区①结构树（隐藏第 1 列＝锚规范文本）
-    QLabel* m_navDeprecationLabel = nullptr;  ///< 区①自持导航 deprecated 标记
-                                              ///< （B1-SPEC §5.2——标记保留可用；
-                                              ///< objectName 锚供验证定位）
     QFormLayout* m_propertyForm = nullptr;    ///< 区②属性表单（行＝PropertyFieldRow）
     std::vector<QLineEdit*> m_propertyEditors;///< 属性编辑行（与投影行序对应——L-2 提交面）
     std::vector<PropertyFieldRow> m_propertyRows;  ///< 当前属性行（含字段键——提交时的域入口参数）

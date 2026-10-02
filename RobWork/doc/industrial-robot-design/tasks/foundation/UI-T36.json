@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T36",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求面板可读性与结构治理批次（UUID 列泄漏修复/树层级化/横幅退役/滚动容器/截断修复——所有者 2026-10-01 界面任务书承接）",
+  "status": "ready",
+  "dependsOn": ["UI-T35"],
+  "requirements": [
+    "ERR-01（诚实呈现——业务列显示业务文本：内部 ObjectId 锚退居隐藏列，显示面零内部标识泄漏〔UX-02 既有约束的缺陷修复〕）",
+    "NFR-DEP-05（呈现纪律——左栏树层级化：需求树根→四分组（计数）→条目；分组/条目点击联动右侧页签）",
+    "UX-02（文案治理——三域自持导航迁移标记与 UiText 键族⑨退役；表头/关键字段 tooltip 工程化中文）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "ARCHITECTURE.md#7.12"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.hpp",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/app/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t36",
+  "interUnit": false,
+  "knownPitfalls": [
+    "锚列修复的机制口径：makeTable 末列＝隐藏锚列（追加空标题列）——锚读写统一走『表列数-1』而非既有 kAnchorColumn=1（其为单列树形态遗留；多显示列表格复用 makeRow 时锚文本覆盖第 1 显示列＝采样/节拍列 obj- 直出的根因）；修复后采集表锚行为零变化（树列数 2、锚列 1 恰重合）",
+    "树层级化的联动边界：分组节点无锚——点击分组仅切换右侧页签不清空选中锚；条目节点点击＝锚设置＋页签切换（nodeAnchor 词表复用）；focusObject 反向定位改递归行扫描（层级化后行序≠投影序）",
+    "横幅退役的波及面：三域自持导航标记（modeling/kinematics/requirements）与 UiText 键族⑨三键同批退役；StageNavigationModelTest 键表完备性用例同步（键删除后该用例改断言键不存在或删除该段——登记为准）",
+    "滚动容器纪律：QScrollArea 包裹属性表单区（表/工具行不进滚动区）；widget 尺寸策略零 setGeometry 硬编码（FlowLayout 既有例外形态不动）",
+    "截断修复＝根因先行：运行时探针实测（按钮高度 vs sizeHint/字体度量）定位后修复＋防回归断言；禁无证据盲改",
+    "遮挡穿透（任务书 1②）：截图证据不足静态定位——本批登记观察项 F-449，稳定复现步骤补齐后另行处置；不阻塞其余各项",
+    "三维联动（任务书外）归 UI-T33/D 批次不变"
+  ],
+  "acceptance": [
+    "UUID 列泄漏修复：区域表（区域名称/空间采样/覆盖目标）、工况表（工况/目标节拍/适用范围）、必验清单锚列退居末隐藏列——采样列显示 Grid/间距/Random 摘要、覆盖目标显示 P≥/O≥、节拍显示数值 s/未设、适用范围显示全部工位/N 个工位/不适用——gui 具名用例逐列断言",
+    "左栏树层级化：需求树单根→四分组（名称＋计数）→条目三级；QTreeWidget 折叠形态默认展开一/二级；点击条目＝选中锚＋页签联动、点击分组＝仅页签切换；横幅标签与三域键族⑨删除（StageNavigationModelTest 同步）——gui 具名用例",
+    "滚动容器：工位/区域/工况属性表单区 QScrollArea 承载（表与工具行不滚动）——小窗不截断；关键字段（盒中心/盒尺寸/采样计数/覆盖率下限）与表头 tooltip",
+    "按钮截断修复：根因实测（探针断言按钮实际高≥sizeHint）＋修复＋防回归 gui 断言",
+    "回归门禁：双模式构建零错误；ird_gates 归一零新增；ctest 全单元全绿（含新增用例）＋冒烟双场景＋validate-docs；留痕 traceability/builds/ui-t36/"
+  ],
+  "note": "立项来源：所有者 2026-10-01 需求界面 UI/UX 任务书（四图实证：采样/节拍列 obj- 直出、左栏扁平树＋废弃横幅、工况页信息闭环、按钮截断/遮挡穿透、长表单无滚动）。任务书第 1②遮挡穿透证据不足静态定位——登记 F-449 观察项待复现；第 4 工况编辑表单主线已有（UI-T31 conditionFieldsFor 页签内投影）本批仅核验＋可读化；三维联动归 UI-T33/D 批次不变。需求语义零变化。【契约 v1.1 范围修正（2026-10-01，验收 attempt1 fail B-1 返工——UI-T27 v1.1/UI-T32 v1.2 先例同款）】allowedFiles 增补 modeling/plugin 与 kinematics/plugin 四件精确文件（三域自持导航横幅退役的必然落点——knownPitfalls 已预告波及面但初版 allowedFiles/forbiddenFiles 未同步，立项登记缺口）；forbiddenFiles 两域全域条目收窄为 include/src/test 三面（保住域计算面禁改本意，plugin 呈现面交 allowedFiles 精确放行）。【attempt1 建议级随返工闭环】G-1（4.11④——LifecycleButton_NoVerticalClipping_UI_T36 对边距回归变异存活：夹具宿主最低高含既有 minimumSize 边距叠加＋父布局余量，守卫场景不敏感）→ 守卫补边距耦合断言（setContentsMargins 0→9/9 的 sizeHint 增量恰 18px——协商缺边距即翻红）；G-2（修复前探针数据未留痕）→ findings.json F-451 登记实测方法与数据（attempt1 验收记录 M2 探针：contentsMargins=9,9 实测＋修复后 geometry-report 满高）。记录：traceability/acceptance/UI-T36-20261001.md（acc/ui-t36/1@a0fdc2b4）。"
+}

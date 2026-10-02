@@ -1,0 +1,78 @@
+[ird-ui-plugin] 诊断栈就绪（开发日志目录：D:\10_Source_Repos\21_robot\RobWork\build\ui-t37-tour-cwd\ird-ui-plugin-logs）
+[ird-ui-plugin] domain assembly: plugin=modeling ok=1 panels=1 commands=10
+[ird-ui-plugin] domain assembly: plugin=requirements ok=1 panels=1 commands=9
+[ird-ui-plugin] domain assembly: plugin=kinematics ok=1 panels=2 commands=8
+[ird-ui-plugin] shared surface: modeling registered
+[ird-ui-plugin] shared surface: requirements registered
+[ird-ui-plugin] shared surface: kinematics registered
+[ird-ui-plugin] 共享面装配完成（项目树＋检查器＋选择服务；三域 Provider 注册；L1/L3 接线；NameMap 端口＝空映射二态——呈现装配随 WP-24-T08）
+[ird-ui-plugin] 工作台装配完成（多 Dock：主 Dock＋属性/任务同级 Dock＋宿主状态栏投影＋Ctrl+Shift+P 命令面板；装载呈现自证在事件循环稍后执行）
+[ird-ui-plugin] 宿主事件桥接线完成（L3 frameSelectedEvent→反解编排；D8 stateChangedEvent→会话姿态桥）
+[ird-ui-plugin] 工作台多 Dock 已呈现（主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 259 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 420 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] [central-guard] 保留量未达成：中央 296 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）
+[ird-ui-smoke-tour] started
+[ird-ui-smoke-tour] step 1 create-open-project
+[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-tour-demo-srWSrW（可写：是）
+[ird-ui-smoke-tour] pass step1 project-opened
+[ird-ui-smoke-tour] pass step1 panel-present
+[ird-ui-smoke-tour] snap tour-1-panel-empty-state.png
+[ird-ui-smoke-tour] step 2 empty-state-and-add-station
+[ird-ui-smoke-tour] pass step2 empty-duplicate-disabled
+[ird-ui-smoke-tour] pass step2 empty-remove-disabled
+[ird-ui-smoke-tour] pass step2 empty-add-enabled
+[ird-ui-smoke-tour] pass step2 empty-hint-visible
+[ird-ui-smoke-tour] pass step2 station-added (tree-child=1)
+[ird-ui-smoke-tour] pass step2 selected-duplicate-enabled
+[ird-ui-smoke-tour] pass step2 selected-remove-enabled
+[ird-ui-smoke-tour] pass step2 selected-hint-hidden
+[ird-ui-smoke-tour] pass step2 breadcrumb-object-name (cur=工位 > 工位)
+[ird-ui-smoke-tour] step 3 station-fields
+[ird-ui-smoke-tour] pass step3 name-editor-readonly (product-semantics)
+[ird-ui-smoke-tour] pass step3 level-combo-present
+[ird-ui-smoke-tour] pass step3 level-toggled (idx-submitted)
+[ird-ui-smoke-tour] pass step3 enabled-combo-present
+[ird-ui-smoke-tour] pass step3 enabled-toggled
+[ird-ui-smoke-tour] pass step3 dof-x-combo-present
+[ird-ui-smoke-tour] pass step3 dof-x-toggled
+[ird-ui-smoke-tour] pass step3 tolerance-editor-present
+[ird-ui-smoke-tour] pass step3 tolerance-edited
+[ird-ui-smoke-tour] step 4 segment-and-orientation
+[ird-ui-smoke-tour] pass step4 segment-enabled-present
+[ird-ui-smoke-tour] pass step4 segment-approach-enabled
+[ird-ui-smoke-tour] pass step4 segment-axis-present
+[ird-ui-smoke-tour] pass step4 segment-axis-switched
+[ird-ui-smoke-tour] pass step4 orientation-combo-present
+[ird-ui-smoke-tour] pass step4 orientation-reproject (rows 16->15)
+[ird-ui-smoke-tour] snap tour-2-station-edited.png
+[ird-ui-smoke-tour] step 5 fold-region-sampling
+[ird-ui-smoke-tour] pass step5 card-fold-present
+[ird-ui-smoke-tour] pass step5 card-collapsed
+[ird-ui-smoke-tour] pass step5 card-expanded
+[ird-ui-smoke-tour] pass step5 region-added-breadcrumb
+[ird-ui-smoke-tour] pass step5 count-spins=3 (cur=3)
+[ird-ui-smoke-tour] pass step5 counts-submitted (4x3x2=24)
+[ird-ui-smoke-tour] snap tour-3-region-sampling.png
+[ird-ui-smoke-tour] step 6 coverage-and-condition-wizard
+[ird-ui-smoke-tour] pass step6 coverage-slider-present
+[ird-ui-smoke-tour] pass step6 coverage-set (85%)
+[ird-ui-smoke-tour] pass step6 condition-add-present
+[ird-ui-smoke-tour] pass step6 condition-row-present
+[ird-ui-smoke-tour] pass step6 verify-tag-nonempty (cur=必验)
+[ird-ui-smoke-tour] step 7 cycle-and-validation
+[ird-ui-smoke-tour] pass step7 cycle-editor-present
+[ird-ui-smoke-tour] pass step7 cycle-table-synced
+[ird-ui-smoke-tour] pass step7 tabs=4
+[ird-ui-smoke-tour] pass step7 validation-live (cur=校验：就绪（阻断 0 · 警告 1）)
+[ird-ui-smoke-tour] snap tour-4-validation.png
+[ird-ui-smoke-tour] step 8 draft-undo-redo
+[ird-ui-smoke-tour] pass step8 undo-redo-present
+[ird-ui-smoke-tour] pass step8 redo-initially-disabled
+[ird-ui-smoke-tour] pass step8 undo-lights-redo
+[ird-ui-smoke-tour] pass step8 redo-consumed
+[ird-ui-smoke-tour] step 9 apply-and-project-undo
+[ird-ui-smoke-tour] pass step9 requirements-draft-applied (entries=3)
+[ird-ui-smoke-tour] pass step9 project-undo-enabled
+[ird-ui-smoke-tour] snap tour-5-final-state.png
+[ird-ui-smoke-tour] DONE (failed-assert=0)

@@ -324,6 +324,11 @@ std::vector<ui::QuantityFieldSpec> regionQuantitySpecs()
         ui::makeQuantityFieldSpec("coverage-position", "位置覆盖率下限",
                                   core::QuantityKind::Dimensionless,
                                   one, one, unit),
+        // 姿态覆盖率下限（UI-T37 R1——可选值 ∈[0,1]；未设态由面板灰显
+        // 不进本 spec 的编辑面——设值入口随负载编辑后续批次）。
+        ui::makeQuantityFieldSpec("coverage-orientation", "姿态覆盖率下限",
+                                  core::QuantityKind::Dimensionless,
+                                  one, one, unit),
     };
 }
 
@@ -350,11 +355,69 @@ WorkRegion applyRegionEditSet(const WorkRegion& base, const ui::ParamEditSet& ed
             out.box.size[2] = c.newSi;
         } else if (c.key == "coverage-position") {
             out.coverageTargets.minPositionCoverage = c.newSi;
+        } else if (c.key == "coverage-orientation") {
+            // 姿态覆盖率（可选值——UI-T37 R1 设值入口；置值即进入 has_value 态）。
+            out.coverageTargets.minOrientationCoverage = c.newSi;
         } else {
             throw std::logic_error("区域面板：编辑行携带词表外键 " + c.key);
         }
         known.push_back(c.key);
     }
+    return out;
+}
+
+WorkRegion applyRegionToggleEdit(const WorkRegion& base, const std::string& key,
+                                 bool on, std::vector<std::string>& known)
+{
+    known.clear();
+    // 区域二态回填（UI-T37 R1——与 applyStationToggleEdit 同纪律：词表
+    // 外键 fail-fast；一处一布尔位）。
+    WorkRegion out = base;
+    if (key == "enabled") {
+        out.enabled = on;
+    } else {
+        throw std::logic_error("区域面板：二态回填携带词表外键 " + key
+                               + "（实现缺陷）");
+    }
+    known.push_back(key);
+    return out;
+}
+
+WorkRegion applyRegionSamplingCountsEdit(const WorkRegion& base,
+                                         const std::array<std::uint32_t, 3>& counts,
+                                         std::vector<std::string>& known)
+{
+    known.clear();
+    // 采样计数回填（UI-T37 R1——规则网格计数模式；spacing 载荷清零保持
+    // 单模式单载荷的确定性形态）。计数合法域（≥1/退化判定）归域校验链
+    // （submitEntryEdit 域裁决）——本函数只做词表回填不预判。
+    WorkRegion out = base;
+    out.positionSampling.method = PositionSamplingMethod::Grid;
+    out.positionSampling.counts = counts;
+    out.positionSampling.spacing = {0.0, 0.0, 0.0};
+    known.push_back("sampling-counts");
+    return out;
+}
+
+
+WorkRegion applyRegionEnumEdit(const WorkRegion& base, const std::string& key,
+                               const std::string& valueText,
+                               std::vector<std::string>& known)
+{
+    known.clear();
+    // 枚举词表回填（UI-T37 返工②——等级；词表外 fail-fast）。
+    WorkRegion out = base;
+    if (key == "level") {
+        const auto level = tryRequirementLevel(valueText);
+        if (!level.has_value()) {
+            throw std::invalid_argument("区域面板：等级词表外文本 " + valueText);
+        }
+        out.level = level.value();
+    } else {
+        throw std::invalid_argument("区域面板：枚举回填携带词表外键 " + key
+                                    + "（实现缺陷）");
+    }
+    known.push_back(key);
     return out;
 }
 

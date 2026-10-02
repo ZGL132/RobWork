@@ -1,0 +1,7 @@
+UI-T37 返工④ ird_gates 命中集比对（2026-10-02）
+基线＝traceability/builds/ui-t37/ird-gates-head.log（attempt3 冻结 SHA 81bc9763）
+当前＝返工④实施后主构建树 ird_gates 目标输出
+比对口径：IRD-GATE 行去前缀后 sort -u 逐条 diff
+
+diff 结果（空＝逐条一致，71 行唯一命中全为 DTB §4.5 登记件）：
+HIT-SET-IDENTICAL
