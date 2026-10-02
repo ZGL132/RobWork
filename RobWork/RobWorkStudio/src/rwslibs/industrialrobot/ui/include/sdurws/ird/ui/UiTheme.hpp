@@ -45,22 +45,26 @@ inline constexpr const char* kTextMuted = "#5B6470"; ///< 次级文本
 }
 
 /**
- * @brief 分组容器工厂（UI-T37 返工——对齐 RobWork-main engineering-
- *        requirements 插件的 QGroupBox 分组形态：原生组框标题＋分组框
- *        线框；QSS 保留圆角/边距美化）。
+ * @brief 分组容器工厂（UI-T37 返工对齐旧插件 QGroupBox 形态；返工⑤——
+ *        标题行自绘＝折叠三角＋标题＋标题旁浅灰小号"?"，右侧机械"?"位
+ *        退役；每卡可一键收起，折叠为纯呈现会话态零修订）。
  *
- * 结构：QGroupBox#ird_card（原生标题＋QSS 线框）＞ VBox［帮助 QLabel
- * （"?"——helpText 挂 Tooltip，右对齐；去噪纪律：成段说明文字禁止直出
- * 面板）＋ @p contentOut 返回的内容布局］。
+ * 结构：QGroupBox#ird_card（QSS 线框，原生标题退役——标题行走自绘行）＞
+ * VBox［标题行（QToolButton#ird_card_fold 折叠三角 ▼/▶ ＋ QLabel#ird_card_
+ * title ＋ QLabel#ird_card_help 浅灰小号"?"——helpText 挂 Tooltip，紧贴
+ * 标题；去噪纪律：成段说明文字禁止直出面板）＋折叠体 QWidget（@p
+ * contentOut 返回的内容布局挂其中；折叠时整体隐藏）］。
  *
- * @param parent      [in] Qt 父对象（常规所有权）
- * @param title       [in] 组标题（工程中文——UiText 词表消费方负责）
- * @param helpText    [in] 悬浮帮助文案（进 "?" 图标 Tooltip）
- * @param contentOut  [out] 返回内容布局指针（必填——分组必须被填充）
+ * @param parent         [in] Qt 父对象（常规所有权）
+ * @param title          [in] 组标题（工程中文——UiText 词表消费方负责）
+ * @param helpText       [in] 悬浮帮助文案（进 "?" 标签 Tooltip）
+ * @param contentOut     [out] 返回内容布局指针（必填——分组必须被填充）
+ * @param startCollapsed [in] 初始折叠态（默认展开；次要参数块如"高级参数"
+ *                       传 true——与折叠三角同一机制，不再有第二折叠形态）
  * @return 分组框（所有权随 Qt 父子树）
  */
 QGroupBox* createCard(QWidget* parent, const QString& title, const QString& helpText,
-                      QVBoxLayout** contentOut);
+                      QVBoxLayout** contentOut, bool startCollapsed = false);
 
 /**
  * @brief 应用工业风主题（面板作用域——widget 级 setStyleSheet）。

@@ -57,8 +57,10 @@
 #include "PanelTreeModel.hpp"                      // 对象树投影
 #include "PanelValidationModel.hpp"                // 校验面板投影
 
+class QAction;
 class QGroupBox;
 class QLabel;
+class QScrollArea;
 class QVBoxLayout;
 class QFormLayout;
 
@@ -244,9 +246,18 @@ private:
     void renderRegionPage(const RequirementWorkingSet& ws);    // 区域页重投影
     void renderConditionPage(const RequirementWorkingSet& ws); // 工况页重投影
     void renderValidationPage(const RequirementReadinessReport& report);  // 校验页重投影
-    /// 页签状态行刷新（UI-T26——工位/区域/工况页头随树选中现取对象显示
-    /// 名，未选中＝『未选择对象』；校验页恒『尚未执行』诚实静态）。
+    /// 页签状态行刷新（UI-T26；返工⑤——格式改面包屑『工位 > 〈名|未选择〉』，
+    /// 去与页签名重复的冒号态）。
     void updateTabHeaders();
+    /// 生命周期键＋属性区空态统一刷新（返工⑤——会话内未选择＝复制/删除
+    /// 置灰仅保留新增＋空态提示替代空卡骨架；无会话/只读＝全禁诚实态）。
+    void refreshLifecycleAndEmptyStates();
+    /// 命令按钮/菜单动作可用性统一刷新（返工⑤——原三处循环收敛单出口；
+    /// 导入下拉＝两导入命令可用性之或）。
+    void refreshCommandEnablement();
+    /// 空态提示标签工厂（返工⑤——objectName ird_req_empty_hint；文本走
+    /// UiText 词表，默认隐藏由统一刷新驱动）。
+    QLabel* makeEmptyStateHint(QWidget* parent, const char* key);
 
     // ---- 会话态与呈现模型（零 Qt 半区——全部在 plugin/ 呈现层）----
     PanelSelectionState m_selection;          ///< L-R1 会话选中态（零修订）
@@ -380,11 +391,27 @@ private:
     QComboBox* m_validationLayerFilter = nullptr;  ///< 层过滤（全部＋R0~R9）
     QLineEdit* m_validationCodeFilter = nullptr;   ///< 稳定码子串过滤
     std::optional<RequirementReadinessReport> m_lastReadiness;  ///< 最近报告缓存（过滤重投影——值语义）
-    std::vector<QPushButton*> m_commandButtons; ///< 域命令按钮（与 m_commands 序对应）
+    std::vector<QPushButton*> m_commandButtons; ///< 域命令按钮（与 m_commands 下标对齐；
+                                                ///< 返工⑤导入两槽位＝空指针，动作面在
+                                                ///< m_importActions）
+    std::vector<QAction*> m_importActions;      ///< 导入菜单动作（与 m_commands 下标对齐；
+                                                ///< 非导入槽位＝空——返工⑤下拉整合）
+    QPushButton* m_importDropdownButton = nullptr; ///< 『导入 ▾』下拉宿主（返工⑤——
+                                                ///< CSV/JSON 两键呈现层整合）
     QPushButton* m_draftUndoButton = nullptr;   ///< 草稿级撤销（L-R4 两级之一——独立控件）
     QPushButton* m_draftRedoButton = nullptr;   ///< 草稿级重做（同上）
     QPushButton* m_projectUndoButton = nullptr; ///< 项目级撤销（转发面——与草稿级不混用）
     QLabel* m_statusLine = nullptr;             ///< 就地错误/警告/摘要行（横幅内消息标签——UX-03/07）
+    // ---- 返工⑤：空态与页内选择面 ----
+    QScrollArea* m_stationScroll = nullptr;     ///< 工位属性区滚动容器（空态隐藏）
+    QScrollArea* m_regionScroll = nullptr;      ///< 区域属性区滚动容器（同上）
+    QScrollArea* m_conditionScroll = nullptr;   ///< 工况属性区滚动容器（同上）
+    QLabel* m_stationEmptyHint = nullptr;       ///< 工位空态提示（与滚动容器互斥显隐）
+    QLabel* m_regionEmptyHint = nullptr;        ///< 区域空态提示（同上）
+    QLabel* m_conditionEmptyHint = nullptr;     ///< 工况空态提示（同上）
+    std::optional<core::ObjectId> m_stationSelectedId;    ///< 工位页当前选中锚（页内置灰判定源）
+    std::optional<core::ObjectId> m_regionSelectedId;     ///< 区域页当前选中锚（同上）
+    std::optional<core::ObjectId> m_conditionSelectedId;  ///< 工况页当前选中锚（同上）
 };
 
 }  // namespace sdurws::ird::requirements

@@ -3244,7 +3244,48 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                           "registry-requirements-commands=9 (cur="
                               + std::to_string(reqCommands.size()) + ")");
                     int resolvedButtons = 0;
+                    // 返工⑤：『导入 ▾』下拉呈现面锚（CSV/JSON 两键整合后
+                    // 独立按钮不复存在——菜单动作承载文案与可用性）。
+                    const QPushButton* importDropdown = nullptr;
+                    for (const QPushButton* btn : buttons) {
+                        if (btn->menu() != nullptr
+                            && btn->text()
+                                   == QString::fromStdString(ui::resolveText(
+                                       ui::TextKey{"panel.requirements."
+                                                   "import-dropdown.label"}))) {
+                            importDropdown = btn;
+                            break;
+                        }
+                    }
+                    check(importDropdown != nullptr,
+                          "import-dropdown-present (返工⑤——导入整合面)");
                     for (const ui::CommandView& view : reqCommands) {
+                        const std::string id(view.id);
+                        const bool isImport =
+                            id == "requirements.import-csv"
+                            || id == "requirements.import-json";
+                        if (isImport) {
+                            // 导入命令呈现面＝下拉菜单动作（文案仍经 UiText）。
+                            bool actionOk = false;
+                            bool actionDisabled = true;
+                            if (importDropdown != nullptr) {
+                                for (const QAction* action :
+                                     importDropdown->menu()->actions()) {
+                                    if (action->text().toStdString()
+                                        == ui::resolveText(view.titleKey)) {
+                                        actionOk = true;
+                                        actionDisabled = !action->isEnabled();
+                                    }
+                                }
+                            }
+                            check(actionOk, "menu-action-via-uitext:" + id);
+                            check(actionDisabled,
+                                  "menu-action-disabled-no-project:" + id);
+                            if (actionOk) {
+                                ++resolvedButtons;
+                            }
+                            continue;
+                        }
                         bool textOk = false;
                         for (const QPushButton* btn : buttons) {
                             if (btn->text().toStdString() == std::string(view.id)) {
@@ -3310,6 +3351,10 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                           "requirements-assembled-split=7/2 (cur="
                               + std::to_string(noProjectCount) + "/"
                               + std::to_string(notAssembledCount) + ")");
+                    // 返工⑤：下拉本体呈现面核对——无项目态两导入动作全禁
+                    // ＝下拉按钮置灰（双禁语义，与九键无项目态一致）。
+                    check(importDropdown != nullptr && !importDropdown->isEnabled(),
+                          "import-dropdown-widget-disabled-no-project");
                     // 无重叠断言（两两矩形求交——面积＞0 即重叠；同排/换行
                     // 两种形态都覆盖——当前宽度即换行形态）。
                     int overlaps = 0;

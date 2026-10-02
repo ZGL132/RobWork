@@ -135,6 +135,23 @@ constexpr std::array<TextRow, 18> kRequirementsPanelCardTable{{
       "工况＝作业条件：名称/等级/启用与负载、事件、目标节拍（s）、无碰撞要求、"
       "最小关节裕量、适用范围——选中上方工况行后在此编辑；必验为派生事实（灰显）。" },
 }};
+/// 键族①d：需求面板控件文案（UI-T37 返工⑤——工具栏整合/空态提示/撤销
+/// 三键标签与 Tooltip；原字面直出的撤销三键随批入表——NFR-MNT-03 单一
+/// 文案出口。键前缀 panel.requirements.*，非命令目录 id——区别键族①b）。
+constexpr std::array<TextRow, 8> kRequirementsPanelControlTable{{
+    { "panel.requirements.import-dropdown.label", "导入 ▾" },
+    { "panel.requirements.empty-selection.hint",
+      "请在左侧需求树或列表中选择对象，或点击上方新增" },
+    { "panel.requirements.undo-draft.label",  "撤销" },
+    { "panel.requirements.undo-draft.tooltip",
+      "撤销本次编辑（草稿级撤销栈——尚未应用的编辑回退一级）" },
+    { "panel.requirements.redo-draft.label",  "重做" },
+    { "panel.requirements.redo-draft.tooltip",
+      "重做本次编辑（草稿级重做栈——被撤销的编辑重新生效）" },
+    { "panel.requirements.undo-project.label", "撤销上次应用" },
+    { "panel.requirements.undo-project.tooltip",
+      "撤销最近一次已应用的正式修订（项目级——转发宿主命令）" },
+}};
 
 /// 键族②：七态短标签（state.<token>.label——§6.3 词表 token＋"中文"列；
 /// 与 StatusWordModelTest 钉住的过渡值逐字一致——值源切换零漂移）。
@@ -272,6 +289,9 @@ const TextRow* findRow(const TextKey& key)
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kRequirementsPanelCardTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kRequirementsPanelControlTable) {
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kStatusWordLabelTable) {
@@ -460,6 +480,9 @@ std::vector<TextKey> registeredTextKeys()
         keys.emplace_back(row.key);
     }
     for (const auto& row : kRequirementsPanelCardTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kRequirementsPanelControlTable) {
         keys.emplace_back(row.key);
     }
     for (const auto& row : kStatusWordLabelTable) {

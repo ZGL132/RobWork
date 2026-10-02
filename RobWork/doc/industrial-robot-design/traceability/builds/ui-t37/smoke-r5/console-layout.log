@@ -1,4 +1,4 @@
-[ird-ui-plugin] 诊断栈就绪（开发日志目录：D:\10_Source_Repos\21_robot\RobWork\build\ui-t37-r4-smoke-cwd\ird-ui-plugin-logs）
+[ird-ui-plugin] 诊断栈就绪（开发日志目录：D:\10_Source_Repos\21_robot\RobWork\build\ui-t37-r5-smoke-cwd\ird-ui-plugin-logs）
 [ird-ui-plugin] domain assembly: plugin=modeling ok=1 panels=1 commands=10
 [ird-ui-plugin] domain assembly: plugin=requirements ok=1 panels=1 commands=9
 [ird-ui-plugin] domain assembly: plugin=kinematics ok=1 panels=2 commands=8
@@ -74,5 +74,5 @@
 [ird-ui-smoke-layout] snap 9-kinematics-panel.png
 [ird-ui-smoke-layout] pass central-guard-at-min-window (cur=501px)
 [ird-ui-smoke-layout] snap 6-min-window.png
-[ird-ui-smoke-layout] report=D:\10_Source_Repos\21_robot\RobWork\RobWork\doc\industrial-robot-design\traceability\builds\ui-t37\smoke-r4/geometry-report.txt
+[ird-ui-smoke-layout] report=D:\10_Source_Repos\21_robot\RobWork\RobWork\doc\industrial-robot-design\traceability\builds\ui-t37\smoke-r5/geometry-report.txt
 [ird-ui-smoke-layout] DONE

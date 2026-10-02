@@ -26,11 +26,13 @@
 #include <QGroupBox>  // 卡片分组定位（UI-T37 返工——QGroupBox 形态）
 #include <QLabel>
 #include <QLineEdit>
+#include <QMenu>  // 导入下拉菜单断言（UI-T37 返工⑤）
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSlider>  // 覆盖率双联断言（UI-T37 R1）
 #include <QSpinBox>  // 采样计数复合行断言（UI-T37 R1）
 #include <QTabWidget>
+#include <QToolButton>  // 卡片折叠三角断言（UI-T37 返工⑤）
 #include <QTreeWidget>
 #include <QWidget>
 
@@ -402,8 +404,8 @@ TEST_F(RequirementsSessionGuiTest, LifecycleRemoveAnchorFallbackAndUndo_UI_T30)
     EXPECT_TRUE(m_editor.workingSet().regions.entries.empty())
         << "删除未生效（集合应空）";
     EXPECT_TRUE(tabHeaderText(*m_panel, "ird_req_tab_region_header")
-                    .contains(QStringLiteral("未选择对象")))
-        << "空集合锚回落未清空";
+                    .contains(QStringLiteral("未选择")))
+        << "空集合锚回落未清空（返工⑤——面包屑『区域 > 未选择』态）";
 
     // 撤销（域轨 undoLocal——面板结构操作与字段编辑同栈）→ 区域恢复。
     EXPECT_TRUE(m_editor.undoLocal());
@@ -1443,18 +1445,181 @@ TEST_F(RequirementsSessionGuiTest, ConditionSingleTableDetailCard_UI_T37R4)
             << "必验清单预览表未撤销（单表整合未生效）";
     }
 
-    // 断言③：详情卡存在且唯一（标题走 UiText 词表——键
-    // panel.requirements.card.condition-detail.title；面板全局 ird_card
-    // 集合内按标题计数，跨页不重名）。
+    // 断言③：详情卡存在且唯一（返工⑤卡片标题行走自绘 QLabel——定位面
+    // ird_card_title 标签文本；面板全局 ird_card 集合内按标题计数，跨页
+    // 不重名）。
     int detailCards = 0;
     const QList<QGroupBox*> cards =
         m_panel->findChildren<QGroupBox*>(QStringLiteral("ird_card"));
     for (const QGroupBox* card : cards) {
-        if (card->title() == QStringLiteral("工况详情与节拍配置")) {
+        const QLabel* titleLabel =
+            card->findChild<QLabel*>(QStringLiteral("ird_card_title"));
+        if (titleLabel != nullptr
+            && titleLabel->text() == QStringLiteral("工况详情与节拍配置")) {
             ++detailCards;
         }
     }
     EXPECT_EQ(detailCards, 1) << "工况详情卡缺失或重复（found=" << detailCards << "）";
+}
+
+/// UI-T37 返工⑤：空态体验＋卡片折叠＋导入下拉＋面包屑（所有者指令承接）：
+/// ①未选择对象＝复制/删除置灰仅保留新增＋空态提示替代空卡骨架；②卡片
+/// 标题栏折叠三角（▼/▶）一键收起；③导入 CSV/JSON 整合为『导入 ▾』下拉
+/// （菜单动作文案仍经 UiText）；④页签状态行精简为面包屑。
+TEST_F(RequirementsSessionGuiTest, EmptyStateFoldImportBreadcrumb_UI_T37R5)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    m_panel->resize(900, 700);
+    m_panel->show();
+    QApplication::processEvents();
+
+    // ---- 断言①：未选择对象（refreshPanel 后无树选中）——三页新增可用、
+    // 复制/删除置灰；空态提示可见、属性区滚动容器隐藏。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    QApplication::processEvents();
+    for (const char* key : {"points", "regions", "conditions"}) {
+        QPushButton* addBtn = lifecycleButton(*m_panel, "add", key);
+        QPushButton* dupBtn = lifecycleButton(*m_panel, "duplicate", key);
+        QPushButton* remBtn = lifecycleButton(*m_panel, "remove", key);
+        ASSERT_NE(addBtn, nullptr);
+        ASSERT_NE(dupBtn, nullptr);
+        ASSERT_NE(remBtn, nullptr);
+        EXPECT_TRUE(addBtn->isEnabled())
+            << "新增键不应依赖选择（空集合起步语义——B1）: " << key;
+        EXPECT_FALSE(dupBtn->isEnabled())
+            << "未选择＝复制置灰: " << key;
+        EXPECT_FALSE(remBtn->isEnabled())
+            << "未选择＝删除置灰: " << key;
+        // 滚动容器 objectName＝页名词（station/region/condition——构建侧
+        // 命名），键为复数集合名（points/regions/conditions）——显式映射。
+        const char* scrollName = key == QStringLiteral("points")
+                                     ? "ird_req_station_props_scroll"
+                                     : key == QStringLiteral("regions")
+                                           ? "ird_req_region_props_scroll"
+                                           : "ird_req_condition_props_scroll";
+        QScrollArea* props = m_panel->findChild<QScrollArea*>(
+            QString::fromLatin1(scrollName));
+        ASSERT_NE(props, nullptr);
+        // 页签非激活页的子树 isVisible 恒 false——用 isVisibleTo 断言自身
+        // 显隐态（忽略页签容器），激活页的真实可见性另断（见下文工位页）。
+        EXPECT_FALSE(props->isVisibleTo(props->parentWidget()))
+            << "未选择＝属性区收起（空卡骨架退役）: " << key;
+        QLabel* hint = m_panel->findChild<QLabel*>(
+            QStringLiteral("ird_req_empty_hint_%1").arg(key));
+        ASSERT_NE(hint, nullptr);
+        EXPECT_TRUE(hint->isVisibleTo(hint->parentWidget()))
+            << "未选择＝空态提示可见: " << key;
+        EXPECT_FALSE(hint->text().isEmpty()) << "空态提示文案空: " << key;
+    }
+
+    // ---- 断言②：面包屑初始态（页头与页签名不再重复冒号态）。
+    QLabel* header = m_panel->findChild<QLabel*>(
+        QStringLiteral("ird_req_tab_station_header"));
+    ASSERT_NE(header, nullptr);
+    EXPECT_EQ(header->text(), QStringLiteral("工位 > 未选择"))
+        << "页头面包屑初始态偏离（返工⑤格式）";
+
+    // ---- 断言③：选中工位——复制/删除恢复、提示隐藏、滚动容器可见、
+    // 面包屑＝对象名。
+    m_panel->focusObject(m_editor.workingSet().points.entries.front().objectId);
+    QApplication::processEvents();
+    EXPECT_TRUE(lifecycleButton(*m_panel, "duplicate", "points")->isEnabled())
+        << "选中后复制应恢复";
+    EXPECT_TRUE(lifecycleButton(*m_panel, "remove", "points")->isEnabled())
+        << "选中后删除应恢复";
+    QLabel* stationHint = m_panel->findChild<QLabel*>(
+        QStringLiteral("ird_req_empty_hint_points"));
+    ASSERT_NE(stationHint, nullptr);
+    EXPECT_FALSE(stationHint->isVisible()) << "选中后空态提示应隐藏";
+    QScrollArea* stationProps = m_panel->findChild<QScrollArea*>(
+        QStringLiteral("ird_req_station_props_scroll"));
+    ASSERT_NE(stationProps, nullptr);
+    EXPECT_TRUE(stationProps->isVisible()) << "选中后属性区应可见";
+    EXPECT_TRUE(header->text().startsWith(QStringLiteral("工位 > ")))
+        << "页头非面包屑形态";
+    EXPECT_FALSE(header->text().endsWith(QStringLiteral("未选择")))
+        << "选中后面包屑应为对象名";
+
+    // ---- 断言④：卡片折叠三角——收起后卡内行控件隐藏，展开恢复。
+    // 定位面＝启用下拉所在卡的折叠钮（findChild 全局序不保证卡的创建序——
+    // 同卡内查找规避跨卡命中）。
+    QComboBox* enabledCombo = m_panel->findChild<QComboBox*>(
+        QStringLiteral("ird_station_enabled_combo"));
+    ASSERT_NE(enabledCombo, nullptr);
+    QWidget* comboHost = enabledCombo;
+    while (comboHost != nullptr
+           && comboHost->objectName() != QStringLiteral("ird_card")) {
+        comboHost = comboHost->parentWidget();
+    }
+    ASSERT_NE(comboHost, nullptr) << "启用行未宿主于卡片（卡化结构面）";
+    QToolButton* fold =
+        comboHost->findChild<QToolButton*>(QStringLiteral("ird_card_fold"));
+    ASSERT_NE(fold, nullptr) << "卡片折叠三角缺失（返工⑤统一折叠面）";
+    EXPECT_EQ(fold->text(), QStringLiteral("▼"))
+        << "卡片默认应为展开态";
+    fold->setChecked(false);
+    QApplication::processEvents();
+    EXPECT_EQ(fold->text(), QStringLiteral("▶"))
+        << "折叠后三角未翻转为收起态";
+    EXPECT_FALSE(enabledCombo->isVisible()) << "折叠后卡内行应隐藏";
+    fold->setChecked(true);
+    QApplication::processEvents();
+    EXPECT_TRUE(enabledCombo->isVisible()) << "展开后卡内行应恢复";
+}
+
+/// UI-T37 返工⑤：导入下拉呈现面（CSV/JSON 整合）＋撤销三键文本精简。
+TEST_F(RequirementsSessionGuiTest, ImportDropdownAndUndoTrim_UI_T37R5)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    QApplication::processEvents();
+
+    // 断言①：导入下拉存在且菜单恰两动作（CSV/JSON——文案仍经 UiText 词表）。
+    QPushButton* dropdown = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_req_import_dropdown"));
+    ASSERT_NE(dropdown, nullptr) << "导入下拉缺失（返工⑤工具栏整合面）";
+    QMenu* menu = dropdown->menu();
+    ASSERT_NE(menu, nullptr) << "导入下拉未挂菜单";
+    ASSERT_EQ(menu->actions().size(), 2) << "导入菜单动作数偏离";
+    EXPECT_EQ(menu->actions()[0]->text(), QStringLiteral("导入 CSV"));
+    EXPECT_EQ(menu->actions()[1]->text(), QStringLiteral("导入 JSON"));
+
+    // 断言②：独立导入按钮已撤销（全按钮集合中不再有同名独立键）。
+    const QList<QPushButton*> allButtons =
+        m_panel->findChildren<QPushButton*>();
+    for (const QPushButton* btn : allButtons) {
+        EXPECT_FALSE(btn->text() == QStringLiteral("导入 CSV")
+                     || btn->text() == QStringLiteral("导入 JSON"))
+            << "导入键仍以独立按钮呈现（整合未生效）";
+    }
+
+    // 断言③：撤销三键文本精简（去"草稿级/项目级"括号后缀——完整语义
+    // 移入 Tooltip）。
+    bool sawUndo = false;
+    bool sawRedo = false;
+    bool sawProjectUndo = false;
+    for (const QPushButton* btn : allButtons) {
+        if (btn->text() == QStringLiteral("撤销")) {
+            sawUndo = true;
+            EXPECT_FALSE(btn->toolTip().isEmpty())
+                << "撤销键 Tooltip 空（语义收纳面）";
+        }
+        if (btn->text() == QStringLiteral("重做")) {
+            sawRedo = true;
+            EXPECT_FALSE(btn->toolTip().isEmpty()) << "重做键 Tooltip 空";
+        }
+        if (btn->text() == QStringLiteral("撤销上次应用")) {
+            sawProjectUndo = true;
+            EXPECT_FALSE(btn->toolTip().isEmpty()) << "项目级撤销 Tooltip 空";
+        }
+        EXPECT_FALSE(btn->text().contains(QStringLiteral("草稿级")))
+            << "按钮文本仍含草稿级后缀: " << btn->text().toStdString();
+        EXPECT_FALSE(btn->text().contains(QStringLiteral("项目级")))
+            << "按钮文本仍含项目级后缀: " << btn->text().toStdString();
+    }
+    EXPECT_TRUE(sawUndo) << "标准撤销键缺失";
+    EXPECT_TRUE(sawRedo) << "标准重做键缺失";
+    EXPECT_TRUE(sawProjectUndo) << "撤销上次应用键缺失";
 }
 
 /// UI-T37 R2 校验看板与语义标签（acceptance 5）：状态卡二态（✔/⚠＋阻塞
