@@ -138,6 +138,30 @@ public:
     void setWritable(bool writable);
 
     /**
+     * @brief 会话脱离复位（UI-T39——审核 P1：项目关闭/切换后清理全部旧
+     *        会话态的按钮残留）。清空会话选中锚与草稿撤销记账（栈随编辑
+     *        器基线复位的事实对齐），控件投影收拢为无会话空态（树/表/
+     *        卡片清空、生命周期与撤销键全禁、空态提示显现）。零修订。
+     */
+    void resetForSessionDetached();
+
+    /**
+     * @brief 基线重载登记（UI-T39——宿主在编辑器 loadBaseline 重建会话
+     *        后调用：草稿撤销记账随编辑器局部栈复位归零＋撤销键刷新；
+     *        漏登记＝记账指向已不存在的栈条目，撤销键呈"幽灵可撤销"）。
+     */
+    void noteBaselineReloaded();
+
+    /**
+     * @brief 按集合种类取当前选中锚（UI-T39——审核五.1：命令按输入类型
+     *        校验选中对象，不依赖"全局最后选中"）。
+     *
+     * @param member [in] 集合种类（Points＝工位页锚；Regions/Conditions 同理）
+     * @return 该页当前选中锚（未选择＝nullopt——调用方就地提示，不虚构源条目）
+     */
+    std::optional<core::ObjectId> selectionAnchor(WorkingSetMember member) const;
+
+    /**
      * @brief 定位并高亮指定对象（宿主迁移三接入面的域面板执行器——
      *        WP-14-T10：SelectionAdapter 的"树选→面板高亮"落点与 D6
      *        复杂编辑页"域自持打开"的激活动作共用本入口）。
@@ -253,8 +277,13 @@ private:
     /// 置灰仅保留新增＋空态提示替代空卡骨架；无会话/只读＝全禁诚实态）。
     void refreshLifecycleAndEmptyStates();
     /// 命令按钮/菜单动作可用性统一刷新（返工⑤——原三处循环收敛单出口；
-    /// 导入下拉＝两导入命令可用性之或）。
+    /// 导入下拉＝两导入命令可用性之或，更多操作下拉＝六条派生命令之或
+    /// ——UI-T39 命令条分组后第二下拉宿主）。
     void refreshCommandEnablement();
+    /// 两级撤销三键可用性/提示统一刷新（UI-T39——审核 P1：草稿级键随
+    /// 记账器与可写性；项目级键随 project.undo 命令可用性快照〔无项目/
+    /// 只读/无可撤销修订＝禁用＋原因提示〕；无会话＝三键全禁零残留）。
+    void refreshUndoButtons();
     /// 空态提示标签工厂（返工⑤——objectName ird_req_empty_hint；文本走
     /// UiText 词表，默认隐藏由统一刷新驱动）。
     QLabel* makeEmptyStateHint(QWidget* parent, const char* key);
@@ -360,6 +389,11 @@ private:
     ConditionWizardFn m_conditionWizard;      ///< 工况向导缝（空＝内建对话框——R2）
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）
+    bool m_sessionDetached = false;           ///< 会话脱离旗标（UI-T39——resetFor-
+                                              ///< SessionDetached 置位、refreshPanel
+                                              ///< 复位；无会话判定的双保险半区——
+                                              ///< 编辑目标提供器在测试缝/装配间隙
+                                              ///< 可能仍返回旧编辑器）
 
     // ---- 最近一次刷新的选中锚（零数据缓存——只存"选中锚"，内容一律从
     //      调用方入参现取；refreshPanel 结束后本类不持有 ws/report）----
@@ -393,11 +427,22 @@ private:
     std::optional<RequirementReadinessReport> m_lastReadiness;  ///< 最近报告缓存（过滤重投影——值语义）
     std::vector<QPushButton*> m_commandButtons; ///< 域命令按钮（与 m_commands 下标对齐；
                                                 ///< 返工⑤导入两槽位＝空指针，动作面在
-                                                ///< m_importActions）
+                                                ///< m_importActions；UI-T39 分组后低频
+                                                ///< 六槽位＝空指针，动作面在 m_moreActions）
     std::vector<QAction*> m_importActions;      ///< 导入菜单动作（与 m_commands 下标对齐；
                                                 ///< 非导入槽位＝空——返工⑤下拉整合）
     QPushButton* m_importDropdownButton = nullptr; ///< 『导入 ▾』下拉宿主（返工⑤——
                                                 ///< CSV/JSON 两键呈现层整合）
+    std::vector<QAction*> m_moreActions;        ///< 更多操作菜单动作（UI-T39——与
+                                                ///< m_commands 下标对齐；捕获/模板/
+                                                ///< 派生四组六条低频命令入下拉，
+                                                ///< 非槽位＝空）
+    QPushButton* m_moreMenuButton = nullptr;    ///< 『更多操作 ▾』下拉宿主（UI-T39——
+                                                ///< 命令条"高频主排＋更多操作"分组的
+                                                ///< 下拉承载；使能＝子项可用性之或）
+    bool m_regionColumnsSized = false;    ///< 区域表摘要列首刷成形旗标（UI-T39 列宽
+                                          ///< 策略——用户手调列宽跨刷新保持）
+    bool m_conditionColumnsSized = false; ///< 工况表摘要列首刷成形旗标（同上）
     QPushButton* m_draftUndoButton = nullptr;   ///< 草稿级撤销（L-R4 两级之一——独立控件）
     QPushButton* m_draftRedoButton = nullptr;   ///< 草稿级重做（同上）
     QPushButton* m_projectUndoButton = nullptr; ///< 项目级撤销（转发面——与草稿级不混用）

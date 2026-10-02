@@ -74,7 +74,7 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
 /// 家族需求域按钮一族——此前 RequirementsPanelWidget 按钮以原始 commandId
 /// 直出，UX-02 内部名泄漏；键登记后 resolveText 才可解析，键表完备性由
 /// ui/test 具名用例钉住——F-430 处置约束）。
-constexpr std::array<TextRow, 24> kDomainCommandTitleTable{{
+constexpr std::array<TextRow, 26> kDomainCommandTitleTable{{
     { "cmd.modeling.new-from-template.title",          "从模板新建"       },
     { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
     { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
@@ -90,6 +90,12 @@ constexpr std::array<TextRow, 24> kDomainCommandTitleTable{{
     { "reason.no-project",                              "请先打开工业机器人项目" },
     { "reason.readonly",                                "当前项目为只读，不能修改" },
     { "reason.readiness-blocking",                      "存在未就绪阻断项——先处理校验页阻断" },
+    // 项目级撤销/重做的"无可撤销修订"禁用原因（UI-T39——撤销可用性由
+    // project UndoRedoService 的 tip inverse 推导〔磁盘事实〕，无可撤销
+    // 修订时按钮置灰并以此键呈现原因——审核 P1：撤销按钮不得只按命令
+    // 出口存在性置可用）。
+    { "reason.no-undo-revision",                        "当前没有可撤销的修订" },
+    { "reason.no-redo-revision",                        "当前没有可重做的修订" },
     // —— requirements 域九键（行序＝requirements.md §9.8 命令表行序，
     // PanelCommandCatalog::requirementsDomainCommands 登记序——两端顺序同源
     // 该表；值＝工程用语短句，零 id/内部名词形——UX-02）——
@@ -138,10 +144,12 @@ constexpr std::array<TextRow, 18> kRequirementsPanelCardTable{{
 /// 键族①d：需求面板控件文案（UI-T37 返工⑤——工具栏整合/空态提示/撤销
 /// 三键标签与 Tooltip；原字面直出的撤销三键随批入表——NFR-MNT-03 单一
 /// 文案出口。键前缀 panel.requirements.*，非命令目录 id——区别键族①b）。
-constexpr std::array<TextRow, 8> kRequirementsPanelControlTable{{
+constexpr std::array<TextRow, 13> kRequirementsPanelControlTable{{
     { "panel.requirements.import-dropdown.label", "导入 ▾" },
+    { "panel.requirements.more-actions.label", "更多操作 ▾" },
     { "panel.requirements.empty-selection.hint",
       "请在左侧需求树或列表中选择对象，或点击上方新增" },
+    { "panel.requirements.draft-marker", "草稿" },
     { "panel.requirements.undo-draft.label",  "撤销" },
     { "panel.requirements.undo-draft.tooltip",
       "撤销本次编辑（草稿级撤销栈——尚未应用的编辑回退一级）" },
@@ -150,7 +158,15 @@ constexpr std::array<TextRow, 8> kRequirementsPanelControlTable{{
       "重做本次编辑（草稿级重做栈——被撤销的编辑重新生效）" },
     { "panel.requirements.undo-project.label", "撤销上次应用" },
     { "panel.requirements.undo-project.tooltip",
-      "撤销最近一次已应用的正式修订（项目级——转发宿主命令）" },
+      "撤销最近一次已应用的正式修订（项目级——产生一条新修订，历史只增不改）" },
+    // 生命周期工具行禁用原因（UI-T39——审核返工：禁用键必须给出原因，
+    // 工程师不必猜测是未开项目、只读还是未选中）。
+    { "panel.requirements.lifecycle.tooltip.no-session",
+      "未打开需求会话——请先新建或打开项目" },
+    { "panel.requirements.lifecycle.tooltip.readonly",
+      "当前项目为只读，不能修改需求" },
+    { "panel.requirements.lifecycle.tooltip.no-selection",
+      "请先在上方列表或需求树中选择一个对象" },
 }};
 
 /// 键族②：七态短标签（state.<token>.label——§6.3 词表 token＋"中文"列；

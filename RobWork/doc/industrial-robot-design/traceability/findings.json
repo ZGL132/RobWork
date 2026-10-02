@@ -4574,6 +4574,27 @@
       "title": "工况新增向导宿主形态不可达：m_conditionWizard 缝缺省为空且 defaultConditionWizard 从无绑定——onAddEntry 缝空直接创建无配置起步条目，与契约『创建即带完整起步配置、禁止无配置空白条目』纪律矛盾（宿主真实用户点新增工况永不弹向导）。",
       "owner": "UI-T37 返工⑤轮（遍历通道 requirements-tour 抓获并同批修复；tour 复跑向导弹窗＋自动填写确认断言全绿）",
       "resolution": "随遍历批次提交闭环（tour-6 步向导段＋gui 32/32 回归）；验收记录 attempt5 的 acceptance 4 向导项由注入缝承载的口径以此勘误——宿主形态行为随本批补齐。编号顺延自 F-457。"
+    },
+    {
+      "id": "F-460",
+      "source": "UI-T39 审核返工轮（2026-10-02——生产装配注册需求域命令处理器后首次真实 committed，requirements-tour step9 二连应用探针暴露）",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "需求域二连 draft.apply 必拒：首次应用回执只回填根对象身份（noteAppliedRevision），编辑器工作集根引用表的四集合挂载态仍停留在首应用前（refs 空）→第二次组装的集合槽按 allocateNew 组装，与存储端已挂载集合身份失配（prepare 挂载失配拒绝面，invalid-payload 且零诊断）——生产路径此前处理器未注册（F-461 前身）提交恒拒，缺口从未被踩到。",
+      "owner": "requirements 域会话接线（UI-T40 序列候选：自身回执后以新 HEAD 闭包重导线＋未应用编辑保序重演——§4.6 三态语义与 RequirementsRefreshCoordinator 既有重演机制接线；同时补 prepare 域内拒绝的逐项诊断回填〔本次 invalid-payload 零诊断可观测性缺陷〕）",
+      "resolution": "UI-T39 冒烟 step9 以诚实双态断言承载（committed＝继续撤销点击验证；未 committed＝记录已知缺口），生产通路其余段（处理器注册→首应用真实提交→修订事件→面板刷新→首应用不可逆的诚实禁用）已随本批打通并留痕。编号顺延自 F-459。"
+    },
+    {
+      "id": "F-461",
+      "source": "UI-T39 审核返工轮（2026-10-02——requirements-tour step9 真实撤销回路验证暴露）",
+      "severity": "blocking",
+      "status": "fixed",
+      "fixedBy": "ProjectStore::handlerRegistry() 公共装配通道（§5.3.5『L5 装配期一次性注册』从实现私有提升为公共契约——默认实现诚实拒绝，ProjectStoreImpl 转发命令服务 registry()）＋宿主打开成功回调内 registerRequirementCommandHandlers 注册（apply-requirement-set/apply-requirement-import）",
+      "registeredAt": "2026-10-02",
+      "title": "生产装配从未注册任何域命令处理器：registerRequirementCommandHandlers/registerModelingCommandHandlers 仅被各自单测调用，studio 生产路径 draft.apply 的域信封提交恒被 S1 以 unknown-command 拒绝——『应用修改』对需求域从未真实产生修订，历次冒烟的 requirements-applied 断言只查 Submitted 属假通过。",
+      "owner": "requirements 半区随 UI-T39 修复闭环（宿主级首次真实 committed＋首应用不可逆诚实禁用实证）；modeling 半区（registerModelingCommandHandlers 需 HandlerServices 服务集装配：断言端口/策略锚）与顶层 harness 形态的注册接线仍 open——归建模域任务与 harness 收口任务",
+      "resolution": "UI-T39 修复 requirements 半区（冒烟 step9 实证 committed=1）；modeling/harness 残余面转登本条 owner 列开放项。编号顺延自 F-460。"
     }
   ]
 }

@@ -119,6 +119,12 @@ QTreeWidgetItem* makeTableRow(const QString& a, const QString& b, const QString&
 {
     auto* item = new QTreeWidgetItem(QStringList() << a << b << c << QString());
     setNodeAnchor(item, anchor);
+    // 单元格完整文本承载于 tooltip（UI-T39——审核布局返工：列宽固定策略
+    // 下长摘要〔区域名/采样摘要〕被省略号截断，完整文本移 tooltip 保留
+    // 可读性；Qt::ToolTipRole 逐列设置）。
+    item->setToolTip(0, a);
+    item->setToolTip(1, b);
+    item->setToolTip(2, c);
     return item;
 }
 
@@ -130,6 +136,11 @@ QTreeWidgetItem* makeTableRow4(const QString& a, const QString& b, const QString
     auto* item = new QTreeWidgetItem(
         QStringList() << a << b << c << d << QString());
     setNodeAnchor(item, anchor);
+    // 同上——四列完整文本入 tooltip（适用范围长文本被固定列宽截断时）。
+    item->setToolTip(0, a);
+    item->setToolTip(1, b);
+    item->setToolTip(2, c);
+    item->setToolTip(3, d);
     return item;
 }
 
@@ -182,6 +193,19 @@ RequirementsPanelWidget::RequirementsPanelWidget(bool writable, QWidget* parent)
     m_threadGuard.assertOnUiThread();  // 构造线程＝UI 线程（§3.4——守卫绑定）
     m_commands = requirementsDomainCommands();  // 命令目录（§9.8 九条——装配数据）
 
+    // 面板可用性下限（UI-T39——审核布局返工：需求编辑区在默认布局中被
+    // 纵向堆叠压缩到卡片只见顶部，工程师需频繁滚动。最小尺寸经 Dock 内
+    // 容传导为需求 Dock 的几何下限：高 560 px＝页头＋工具行＋至少一张
+    // 卡片的可见下限；宽 380 px＝流式栅格双按钮行＋卡片表单的可读下限。
+    // ★ 宽度上限的物理约束：最小窗口（§4.4 1280×720）下左列双 Dock＋
+    //   右列属性 Dock 之外须为中央区保留 kCentralMinReserveWidth=320 px
+    //   （UI-T24 中央区保护红线），面板最小宽传导 minimumSizeHint 后即
+    //   回推算法的钳制下限——取 380 恰使 1280 窗口三列共存可满足
+    //   （1280−380−主 Dock≈264−右 Dock 300＝中央 336 ≥ 320）；审核建议
+    //   的 420~480 与该红线在此窗口物理不相容，默认尺寸改由宿主装载拍
+    //   以初始尺寸形态给出〔非硬下限〕）。
+    setMinimumSize(380, 560);
+
     // 骨架：顶部命令条＋（左树 1｜右四页面 2）水平区。
     auto* rootLayout = new QVBoxLayout(this);
     auto* contentLayout = new QHBoxLayout;
@@ -219,15 +243,20 @@ void RequirementsPanelWidget::setCommandSubmit(CommandSubmitFn submitFn)
     m_commandSubmit = std::move(submitFn);
     // 返工⑤：目录与按钮/菜单动作下标对齐（导入两槽位按钮为空——动作面在
     // m_importActions，可用性统一由 refreshPanel 现算，此处零重复判定）。
+    // UI-T39：撤销三键随提交出口注入同步（项目级键的可达前提＝出口在）。
     refreshLifecycleAndEmptyStates();
     refreshCommandEnablement();
+    refreshUndoButtons();
 }
 
 void RequirementsPanelWidget::setCommandAvailability(CommandAvailabilityFn availability)
 {
     m_commandAvailability = std::move(availability);
+    // UI-T39：可用性查询注入后撤销三键随快照重估（项目级键由 project.undo
+    // 谓词门控——无项目/只读/无可撤销修订＝禁用＋原因提示）。
     refreshLifecycleAndEmptyStates();
     refreshCommandEnablement();
+    refreshUndoButtons();
 }
 
 void RequirementsPanelWidget::setEditTargetProvider(EditTargetProvider provider)
@@ -251,26 +280,27 @@ void RequirementsPanelWidget::setRegionPreviewSink(RegionPreviewSink sink)
 
 void RequirementsPanelWidget::buildCommandBar(QWidget* top)
 {
-    // 域命令区（UI-T24 P3 重排）：九条命令按钮＋三个两级撤销按钮，流式
-    // 栅格换行排布——原单行 QHBoxLayout 把 12 个按钮的最小宽度之和
-    // （2074 px）顶成整列 Dock 的最小宽，左列收不下去、中央三维视图被挤
-    // 至 18 px（钳制源 1——定位记录 traceability/builds/ui-t24/
-    // clamp-source.md；流式栅格使行最小宽坍缩为单按钮最宽 ≈200 px）。
+    // 域命令区（UI-T24 P3 重排；UI-T39 分组收敛）：命令条呈现按使用频率
+    // 分组——高频命令保持独立按钮（导入 ▾／导出副本＋两级撤销三键），低频
+    // 命令（几何采集两条＋派生四条）收入『更多操作 ▾』下拉（审核返工：
+    // 原九键同级平铺在窄 Dock 中折成两三行小按钮，工程师需在同等视觉
+    // 权重的按钮里辨认目标——收敛后主排 6 键，行为宽度显著下降）。全部
+    // 命令仍为注册目录中的独立命令（registry 面/可用性门控零变化），仅
+    // 呈现层分组。流式栅格换行排布（原单行 QHBoxLayout 把 12 个按钮的
+    // 最小宽度之和顶成整列 Dock 的最小宽——钳制源 1 消账记录见
+    // traceability/builds/ui-t24/clamp-source.md）。
     // 文案（UX-02/NFR-MNT-03——F-430 家族需求域一族消账）：按钮标题经
     // UiText 键族①b 解析（cmd.<id>.title——§3.5 键约定，值在 UiText.cpp
     // 登记）；resolveText 缺键即 fail-fast 上抛＝键表完备性的构造期保证，
-    // 面板侧零第二文案源（原"按钮暂以 id 呈现"过渡态就此消账）。
+    // 面板侧零第二文案源。
     auto* bar = new QWidget(top);
     auto* barLayout = new QVBoxLayout(bar);
     barLayout->setContentsMargins(0, 0, 0, 0);
     barLayout->setSpacing(2);
     // 无父对象构造（子布局形态——由 addLayout 收养，见下方安装处注释）。
     auto* flow = new ui::FlowLayout(nullptr, /*hSpacing=*/4, /*vSpacing=*/2);
-    // 命令条语义分组分隔（UI-T25——九条目录命令按 §9.8 语义四组呈现：
-    // 导入导出｜几何采集｜模板。分隔符用 QFrame 竖线（非 QPushButton——
-    // 冒烟通道按 findChildren<QPushButton> 枚举九键对照，分隔符不入
-    // 按钮集合、不改按钮挂位与顺序，仅呈现分组）。第四组（编辑——两级
-    // 撤销三按钮）在目录循环后的追加段，组前另起一条分隔符。
+    // 编辑组分隔符（录入命令与两级撤销三按钮之间的强分隔——撤销族是编辑
+    // 会话语义，与录入/派生类命令分属不同操作面向）。
     auto makeGroupSeparator = [bar]() {
         auto* sep = new QFrame(bar);
         sep->setFrameShape(QFrame::VLine);
@@ -278,25 +308,46 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
         sep->setFixedHeight(20);  // 竖线与按钮行等高（≈标准按钮高度）
         return sep;
     };
-    // 分组首命令 id（词表——§9.8 命令表行序；命中即在按钮前加分隔）。
-    const char* const groupLeaders[] = {"requirements.capture-tcp",
-                                        "requirements.apply-template"};
-    // 返工⑤（所有者指令——顶部工具栏整合去重）：导入 CSV/JSON 两键整合为
-    // 『导入 ▾』下拉按钮。两条命令仍为注册目录中的独立命令（registry 面
-    // 零变化），仅呈现层合并：菜单动作文案仍经 UiText 解析、激活仍走
-    // m_commandSubmit 提交出口。m_commandButtons/m_importActions 与目录
-    // 下标对齐（导入槽位按钮为空、动作在册；其余槽位反之）。
+    // 返工⑤（所有者指令——顶部工具栏整合去重；UI-T39 扩至第二下拉）：
+    // 导入 CSV/JSON 两键整合为『导入 ▾』；捕获两条＋派生四条整合为
+    // 『更多操作 ▾』。m_commandButtons/m_importActions/m_moreActions 与
+    // 目录下标对齐（下拉槽位按钮为空、动作在册；主排槽位反之）。
     m_commandButtons.assign(m_commands.size(), nullptr);
     m_importActions.assign(m_commands.size(), nullptr);
+    m_moreActions.assign(m_commands.size(), nullptr);
+    // 更多操作下拉宿主（首个命中命令的挂位——组序不变；QMenu 分组与
+    // §9.8 命令表的语义分组一致：捕获｜派生，以菜单分隔线呈现）。
+    auto moreMenuFor = [this, bar, &flow]() -> QMenu* {
+        if (m_moreMenuButton == nullptr) {
+            auto* dropdown = new QPushButton(QString::fromStdString(
+                ui::resolveText(ui::TextKey{
+                    "panel.requirements.more-actions.label"})),
+                bar);
+            dropdown->setObjectName(
+                QStringLiteral("ird_req_more_actions_dropdown"));
+            dropdown->setMenu(new QMenu(dropdown));
+            connect(dropdown, &QPushButton::clicked, this, [dropdown] {
+                // 无可用子项时按钮置灰不可点；可达时的点击语义＝弹出菜单
+                //（QPushButton+setMenu 默认即弹出——此兜底仅防样式改动后
+                // 菜单丢失）。
+                dropdown->showMenu();
+            });
+            m_moreMenuButton = dropdown;
+            flow->addWidget(dropdown);
+        }
+        return m_moreMenuButton->menu();
+    };
     for (std::size_t i = 0; i < m_commands.size(); ++i) {
         const ui::CommandDescriptor& d = m_commands[i];
-        for (const char* leader : groupLeaders) {
-            if (d.id == leader) {
-                flow->addWidget(makeGroupSeparator());
-            }
-        }
         const bool isImport = d.id == "requirements.import-csv"
                            || d.id == "requirements.import-json";
+        const bool isLowFrequency =
+            d.id == "requirements.capture-tcp"
+            || d.id == "requirements.pick-feature"
+            || d.id == "requirements.mirror-stations"
+            || d.id == "requirements.create-array"
+            || d.id == "requirements.apply-template"
+            || d.id == "requirements.regenerate-linked";
         if (isImport) {
             if (m_importDropdownButton == nullptr) {
                 // 下拉宿主按钮（目录序＝首条导入命令的挂位——组序不变）。
@@ -330,6 +381,25 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
             m_importActions[i] = action;
             continue;
         }
+        if (isLowFrequency) {
+            // 低频命令入『更多操作 ▾』（捕获组与派生组之间加菜单分隔线
+            // ——分组语义与 §9.8 命令表一致，目录挂位以首条命中命令为准）。
+            QMenu* menu = moreMenuFor();
+            if (d.id == "requirements.mirror-stations" && !menu->actions().empty()) {
+                menu->addSeparator();  // 捕获组｜派生组的菜单内分隔
+            }
+            QAction* action = menu->addAction(
+                QString::fromStdString(ui::resolveText(d.titleKey)));
+            action->setToolTip(QString::fromStdString(d.menuPath));
+            const std::string id(d.id);
+            connect(action, &QAction::triggered, this, [this, id] {
+                if (m_commandSubmit != nullptr) {
+                    m_commandSubmit(id);  // 与独立按钮同一提交轨
+                }
+            });
+            m_moreActions[i] = action;
+            continue;
+        }
         auto* btn =
             new QPushButton(QString::fromStdString(ui::resolveText(d.titleKey)),
                             bar);
@@ -338,8 +408,7 @@ void RequirementsPanelWidget::buildCommandBar(QWidget* top)
         flow->addWidget(btn);
         m_commandButtons[i] = btn;
     }
-    // 编辑组分隔符（目录九命令与两级撤销三按钮之间的强分隔——撤销族是
-    // 编辑会话语义，与录入/模板类命令分属不同操作面向）。
+    // 编辑组分隔符（目录主排命令与两级撤销三按钮之间的强分隔）。
     flow->addWidget(makeGroupSeparator());
     // 两级撤销三按钮（L-R4——草稿级撤销/重做与项目级撤销三处独立控件，
     // 不合并：草稿级动编辑器局部栈，项目级纯转发 ui 命令——语义不混用）。
@@ -782,18 +851,35 @@ void RequirementsPanelWidget::refreshLifecycleAndEmptyStates()
     // ①复制/删除置灰仅保留新增（会话内选择面）；②属性区滚动容器隐藏、
     // 居中提示显现。会话语义先行：无会话/只读＝全部禁用（诚实不可编辑
     // ——UI-T30 语义保持），仅会话内再按选择面分岔）。
-    const bool session = m_editTarget != nullptr && m_writable;
+    // UI-T39（审核四.5）：禁用键必须给出原因——无会话/只读/未选择三态
+    // 的 tooltip 差异化，启用键回退基础提示（清残留原因）。会话判定＝
+    // 提供器**现取结果**（provider 函数恒在——装配期注入；会话终结后
+    // attachEditor(nullptr) 使现取返回空＝诚实无会话态）。
+    IRequirementEditor* sessionEditor = m_editTarget ? m_editTarget() : nullptr;
+    const QString noSessionReason = QString::fromStdString(ui::resolveText(
+        ui::TextKey{"panel.requirements.lifecycle.tooltip.no-session"}));
+    const QString readonlyReason = QString::fromStdString(ui::resolveText(
+        ui::TextKey{"panel.requirements.lifecycle.tooltip.readonly"}));
+    const QString noSelectionReason = QString::fromStdString(ui::resolveText(
+        ui::TextKey{"panel.requirements.lifecycle.tooltip.no-selection"}));
     for (QPushButton* btn : findChildren<QPushButton*>()) {
         if (!btn->property("irdLifecycle").toBool()) {
             continue;
         }
-        if (!session) {
+        if (sessionEditor == nullptr || m_sessionDetached) {
             btn->setEnabled(false);
+            btn->setToolTip(noSessionReason);  // 无会话——先开项目
+            continue;
+        }
+        if (!m_writable) {
+            btn->setEnabled(false);
+            btn->setToolTip(readonlyReason);  // 只读项目——L-R12
             continue;
         }
         const QString action = btn->property("irdLifecycleAction").toString();
         if (action == QStringLiteral("add")) {
             btn->setEnabled(true);  // 新增不依赖选择——空集合也能起步（B1）
+            btn->setToolTip(QString());
             continue;
         }
         const QString key = btn->property("irdLifecycleKey").toString();
@@ -802,6 +888,7 @@ void RequirementsPanelWidget::refreshLifecycleAndEmptyStates()
             : key == QStringLiteral("regions")  ? m_regionSelectedId.has_value()
                                                 : m_conditionSelectedId.has_value();
         btn->setEnabled(hasSelection);
+        btn->setToolTip(hasSelection ? QString() : noSelectionReason);
     }
     // 属性区空态（各页独立——选择面按本页对象集合判定，跨页互不影响）。
     const auto applyState = [](QScrollArea* scroll, QLabel* hint, bool has) {
@@ -822,31 +909,48 @@ void RequirementsPanelWidget::refreshCommandEnablement()
     // 独立按钮为空、由『导入 ▾』菜单动作承载；下拉本体＝两导入命令可用性
     // 之或，双禁＝置灰）。setCommandSubmit/setCommandAvailability/refreshPanel
     // 三处共用同一判定面（原三处循环重复实现——本批收敛为单出口）。
-    if (m_commandButtons.size() != m_commands.size()) {
+    // UI-T39：第二下拉『更多操作 ▾』同构——六条低频命令槽位按钮为空、
+    // 动作在 m_moreActions；下拉本体使能＝子项可用性之或（全部禁用＝
+    // 置灰——无项目/只读态命令条不再呈现零散可用按钮）。
+    if (m_commandButtons.size() != m_commands.size()
+        || m_importActions.size() != m_commands.size()
+        || m_moreActions.size() != m_commands.size()) {
         return;  // 目录未装配（构造序前置调用——保守跳过，零误禁）
     }
     bool importAnyEnabled = false;
+    bool moreAnyEnabled = false;
     for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
         const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
                                              : ui::CommandAvailability{};
         const bool enabled =
             m_commandSubmit != nullptr && (!m_commandAvailability || a.enabled);
+        const QString disableReason =
+            (m_commandAvailability && !a.enabled && !a.disableReasonKey.empty())
+                ? QString::fromStdString(ui::resolveText(a.disableReasonKey))
+                : QString();
         if (m_commandButtons[i] != nullptr) {
             m_commandButtons[i]->setEnabled(enabled);
-            if (m_commandAvailability && !a.enabled && !a.disableReasonKey.empty()) {
-                m_commandButtons[i]->setToolTip(QString::fromStdString(ui::resolveText(a.disableReasonKey)));
-            }
+            // 禁用原因随 tooltip 呈现（审核四.5）；启用时回退路径提示。
+            m_commandButtons[i]->setToolTip(disableReason.isEmpty()
+                                                ? QString::fromStdString(m_commands[i].menuPath)
+                                                : disableReason);
         }
         if (m_importActions[i] != nullptr) {
             m_importActions[i]->setEnabled(enabled);
-            if (m_commandAvailability && !a.enabled && !a.disableReasonKey.empty()) {
-                m_importActions[i]->setToolTip(QString::fromStdString(ui::resolveText(a.disableReasonKey)));
-            }
+            m_importActions[i]->setToolTip(disableReason);
             importAnyEnabled = importAnyEnabled || enabled;
+        }
+        if (m_moreActions[i] != nullptr) {
+            m_moreActions[i]->setEnabled(enabled);
+            m_moreActions[i]->setToolTip(disableReason);
+            moreAnyEnabled = moreAnyEnabled || enabled;
         }
     }
     if (m_importDropdownButton != nullptr) {
         m_importDropdownButton->setEnabled(importAnyEnabled);
+    }
+    if (m_moreMenuButton != nullptr) {
+        m_moreMenuButton->setEnabled(moreAnyEnabled);
     }
 }
 
@@ -888,8 +992,12 @@ bool RequirementsPanelWidget::submitStructuralEdit(const RequirementEdit& edit)
             "未应用（" + out.error.detail + "）"));
         return false;
     }
-    // 接受：走既有 sink 链（onEditApplied）——脏标记＋全面板重投影＋
-    // UI-T29 组合子就绪重估；结构操作与字段编辑同一条刷新轨。
+    // 接受：入草稿撤销记账（UI-T39 修正——结构编辑〔新增/复制/删除〕与
+    // 字段编辑同入 L-R4 记账：编辑器局部栈已随 applyEdit 入栈，记账漏记
+    // ＝撤销键对结构编辑呈"不可撤销"假象；字段编辑轨 recordAppliedEdit
+    // 的既有先例同语义）。随后走 sink 链（onEditApplied）——脏标记＋
+    // 全面板重投影＋UI-T29 组合子就绪重估。
+    m_undoTracker.recordAppliedEdit();
     onEditApplied(out.changeSummary);
     return true;
 }
@@ -1129,20 +1237,16 @@ void RequirementsPanelWidget::refreshPanel(const RequirementWorkingSet& ws,
                                            const RequirementReadinessReport& report)
 {
     m_threadGuard.assertOnUiThread();  // §3.4——刷新入口跨线程即 fail-fast
+    m_sessionDetached = false;  // 活会话驱动（装配层 refreshPanel 编排——脱离旗标复位）
     renderTree(ws);
     renderInspector(ws);
     renderRegionPage(ws);
     renderConditionPage(ws);
     renderValidationPage(report);
 
-    // 两级撤销呈现（L-R4——从编辑器草稿态与记账器现取，可位驱动按钮）。
-    if (IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr) {
-        const TwoLevelUndoView undoView = twoLevelUndoView(*editor, m_undoTracker);
-        m_draftUndoButton->setEnabled(m_writable && undoView.canUndoLocal);
-        m_draftRedoButton->setEnabled(m_writable && undoView.canRedoLocal);
-        // 项目级撤销是转发面——可达性随命令提交出口（未注入＝禁用）。
-        m_projectUndoButton->setEnabled(static_cast<bool>(m_commandSubmit));
-    }
+    // 两级撤销呈现（UI-T39 收敛——可用性/提示判定全部在 refreshUndoButtons
+    // 单出口：草稿级随记账器＋可写性，项目级随命令可用性快照）。
+    refreshUndoButtons();
     // 生命周期工具行＋属性区空态（返工⑤统一刷新——无会话/只读＝全禁；
     // 会话内未选择＝复制/删除置灰仅保留新增＋空态提示替代空卡骨架）。
     refreshLifecycleAndEmptyStates();
@@ -1154,16 +1258,189 @@ void RequirementsPanelWidget::setWritable(bool writable)
     m_writable = writable;  // L-R12——ui 只读横幅同源事实
     // 可写性切换＝全面板重投影（检查器行门控随行投影刷新；命令按钮可达
     // 性由 readOnlyAllowed 的 ui 命令门控面承担——本面板只控编辑行与撤销钮）。
+    // UI-T39（审核 P1）：切换后必须同步刷新全部状态承载面——生命周期键/
+    // 空态、命令按钮、两级撤销三键此前不随 setWritable 刷新，只读切换后
+    // 残留可写态按钮（新增/撤销仍可点）。空报告＝只读切换不新造判定——
+    // 刷新沿用最近校验结论（m_lastReadiness 有值则以之重投影校验页，校验
+    // 页不被清空）；编辑面四页按现取工作集重投影。
     if (IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr) {
-        // 空报告＝只读切换不新造判定——刷新沿用最近校验结论由装配层驱动；
-        // 此处仅重投影编辑面（树/检查器/区域/工况），校验页待装配层携带
-        // 报告的下一轮 refreshPanel。
         const RequirementWorkingSet& ws = editor->workingSet();
         renderTree(ws);
         renderInspector(ws);
         renderRegionPage(ws);
         renderConditionPage(ws);
+        if (m_lastReadiness.has_value()) {
+            renderValidationPage(*m_lastReadiness);  // 校验结论保持——只读不清空
+        }
     }
+    refreshLifecycleAndEmptyStates();
+    refreshCommandEnablement();
+    refreshUndoButtons();
+}
+
+void RequirementsPanelWidget::resetForSessionDetached()
+{
+    // 会话脱离复位（UI-T39——审核 P1"会话关闭时清理所有旧按钮状态"）：
+    // 项目关闭/切换后，面板此前残留上一会话的树/表/卡片内容与可用按钮
+    // （生命周期键、撤销键、命令键全部按上一会话末态呈现）。本方法把
+    // 全部会话态归零、投影收拢为无会话空态。零修订（会话态清理面）。
+    m_threadGuard.assertOnUiThread();
+    m_sessionDetached = true;  // 无会话判定旗标（refreshPanel 复位——UI-T39）
+    // ①会话选中锚与草稿撤销记账归零（记账器事实源＝编辑器局部栈——栈
+    //   已随基线复位/会话终结，记账同步归零；跨会话残留即"幽灵可撤销"）。
+    m_selection.select(std::nullopt);
+    m_lastSelected.reset();
+    m_stationSelectedId.reset();
+    m_regionSelectedId.reset();
+    m_conditionSelectedId.reset();
+    m_undoTracker.reset();
+    m_lastReadiness.reset();  // 上一会话的校验结论不再呈现（新会话现算）
+    // 列宽首刷旗标归零（新会话首批数据重新按内容成形——UI-T39 列宽策略）。
+    m_regionColumnsSized = false;
+    m_conditionColumnsSized = false;
+    // ②控件投影收拢（树/表清空＋表单清行＋校验页清空——"面板不缓存权
+    //   威数据"的无会话形态：无数据源即无投影内容）。
+    m_tree->blockSignals(true);
+    m_tree->clear();
+    m_tree->blockSignals(false);
+    m_regionTable->blockSignals(true);
+    m_regionTable->clear();
+    m_regionTable->blockSignals(false);
+    m_conditionTable->blockSignals(true);
+    m_conditionTable->clear();
+    m_conditionTable->blockSignals(false);
+    // 卡片表单清行（清空辅助 clearFormRows/clearBoxRows 定义在本文件
+    // 渲染辅助段——本方法位于其前，按同款语义内联：removeRow 释放行内
+    // 控件、takeAt 收养布局项——与 renderXxx 重投影前置清空一致）。
+    const auto clearForm = [](QFormLayout* form) {
+        if (form == nullptr) {
+            return;
+        }
+        while (form->rowCount() > 0) {
+            form->removeRow(0);
+        }
+    };
+    const auto clearVBox = [](QVBoxLayout* lay) {
+        if (lay == nullptr) {
+            return;
+        }
+        while (QLayoutItem* item = lay->takeAt(0)) {
+            if (item->widget() != nullptr) {
+                item->widget()->deleteLater();
+            }
+            delete item;
+        }
+    };
+    clearForm(m_stationBasicForm);
+    clearForm(m_stationPoseForm);
+    clearForm(m_stationDofForm);
+    clearForm(m_stationSegmentForm);
+    clearForm(m_stationOrientForm);
+    clearForm(m_regionBasicForm);
+    clearVBox(m_regionBoxLay);
+    clearVBox(m_regionSamplingLay);
+    clearForm(m_regionAdvancedForm);
+    clearForm(m_conditionForm);
+    if (m_validationCounts != nullptr) {
+        m_validationCounts->clear();
+    }
+    if (m_validationLayers != nullptr) {
+        m_validationLayers->clear();
+    }
+    if (m_validationItems != nullptr) {
+        m_validationItems->clear();
+    }
+    m_regionPreviewLabel->clear();
+    // ③状态面统一刷新（生命周期/命令/撤销三出口在无会话输入下全禁；
+    //   空态提示显现、页头回落『未选择』）。
+    refreshLifecycleAndEmptyStates();
+    refreshCommandEnablement();
+    refreshUndoButtons();
+    updateTabHeaders();
+    showStatusLine(QString());
+}
+
+void RequirementsPanelWidget::noteBaselineReloaded()
+{
+    // 基线重载登记（UI-T39）：编辑器 loadBaseline 已把局部栈复位——本类
+    // 的撤销记账（对栈深的外部记账）同步归零，撤销/重做键随新记账刷新。
+    // 零修订（记账是会话态）。
+    m_threadGuard.assertOnUiThread();
+    m_undoTracker.reset();
+    refreshUndoButtons();
+}
+
+std::optional<core::ObjectId> RequirementsPanelWidget::selectionAnchor(
+    WorkingSetMember member) const
+{
+    // 按集合种类取锚（UI-T39——审核五.1：镜像/阵列/重生成等命令声明输入
+    // 类型后按页取锚；全局 m_lastSelected 不再充当命令源条目——它随树/
+    // 表/页签任何一次点击漂移，工位命令拿到区域锚会静默找不到源）。
+    switch (member) {
+    case WorkingSetMember::Points:
+        return m_stationSelectedId;
+    case WorkingSetMember::Regions:
+        return m_regionSelectedId;
+    case WorkingSetMember::Conditions:
+        return m_conditionSelectedId;
+    }
+    return std::nullopt;
+}
+
+void RequirementsPanelWidget::refreshUndoButtons()
+{
+    // 两级撤销三键的可用性/提示统一出口（UI-T39——审核 P1）。判定输入：
+    //   草稿级（撤销/重做）＝编辑器草稿视图（twoLevelUndoView——canUndo-
+    //     Local/canRedoLocal）＋可写性（L-R12——只读会话不可改草稿）；
+    //   项目级（撤销上次应用）＝project.undo 命令可用性快照（宿主注册表
+    //     谓词——无项目/只读/无可撤销修订三维，disableReasonKey 即原因
+    //     提示）；无可用性查询注入＝退化为"提交出口存在性"（gui 测试
+    //     缝——不虚构可用性，注册表缺席时无法断言修订事实）。
+    // 无会话（编辑目标缺位）＝草稿级两键全禁（无编辑器栈即无可撤销）；
+    // 项目级键仍按命令快照呈现（命令面事实独立于本域会话）。
+    IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
+    if (editor != nullptr) {
+        const TwoLevelUndoView undoView = twoLevelUndoView(*editor, m_undoTracker);
+        m_draftUndoButton->setEnabled(m_writable && undoView.canUndoLocal);
+        m_draftRedoButton->setEnabled(m_writable && undoView.canRedoLocal);
+        // 禁用原因提示（审核四.5——禁用键必须给出原因；启用时清残留）。
+        m_draftUndoButton->setToolTip(
+            (m_writable && undoView.canUndoLocal)
+                ? QString::fromStdString(ui::resolveText(
+                      ui::TextKey{"panel.requirements.undo-draft.tooltip"}))
+                : QString::fromStdString(ui::resolveText(
+                      ui::TextKey{"panel.requirements.undo-draft.tooltip"})
+                                  + "（当前没有可撤销的编辑）"));
+        m_draftRedoButton->setToolTip(
+            (m_writable && undoView.canRedoLocal)
+                ? QString::fromStdString(ui::resolveText(
+                      ui::TextKey{"panel.requirements.redo-draft.tooltip"}))
+                : QString::fromStdString(ui::resolveText(
+                      ui::TextKey{"panel.requirements.redo-draft.tooltip"})
+                                  + "（当前没有可重做的编辑）"));
+    } else {
+        m_draftUndoButton->setEnabled(false);
+        m_draftRedoButton->setEnabled(false);
+    }
+    // 项目级撤销：按 project.undo 命令可用性快照门控（宿主谓词＝磁盘 tip
+    // inverse 推导的 canUndo——§5.5；无快照查询＝退化二态，不虚构）。
+    const bool submitPresent = m_commandSubmit != nullptr;
+    bool projectUndoEnabled = submitPresent;
+    QString projectUndoReason;
+    if (m_commandAvailability != nullptr) {
+        const auto a = m_commandAvailability(ui::CommandId{"project.undo"});
+        projectUndoEnabled = submitPresent && a.enabled;
+        if (!a.enabled && !a.disableReasonKey.empty()) {
+            projectUndoReason =
+                QString::fromStdString(ui::resolveText(a.disableReasonKey));
+        }
+    }
+    m_projectUndoButton->setEnabled(projectUndoEnabled);
+    m_projectUndoButton->setToolTip(
+        projectUndoReason.isEmpty()
+            ? QString::fromStdString(ui::resolveText(
+                  ui::TextKey{"panel.requirements.undo-project.tooltip"}))
+            : projectUndoReason);
 }
 
 void RequirementsPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
@@ -2026,8 +2303,21 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         }
     }
     m_regionTable->blockSignals(false);
-    for (int c = 0; c < 3; ++c) {
-        m_regionTable->resizeColumnToContents(c);  // 列宽随内容（长摘要不挤压）
+    // 列宽策略（UI-T39——审核布局返工：原三列全部 resizeColumnToContents
+    // 在名称/采样摘要较长时把数值列挤到滚动，右侧属性卡可见面积缩水）。
+    // 名称列伸缩（占满余宽——主定位列），采样/覆盖两列内容自适应＋用户
+    // 可调（Interactive——初始宽度随内容一次成形，长文本截断由 tooltip
+    // 承载完整语义，不再横向挤压）。
+    QHeaderView* regionHeader = m_regionTable->header();
+    regionHeader->setSectionResizeMode(0, QHeaderView::Stretch);
+    regionHeader->setSectionResizeMode(1, QHeaderView::Interactive);
+    regionHeader->setSectionResizeMode(2, QHeaderView::Interactive);
+    if (!m_regionColumnsSized && !rows.empty()) {
+        // 首批数据到达时按内容一次成形两摘要列（后续刷新不再改写——用户
+        // 手调的列宽跨刷新保持；m_regionColumnsSized 会话内一次性旗标）。
+        m_regionTable->resizeColumnToContents(1);
+        m_regionTable->resizeColumnToContents(2);
+        m_regionColumnsSized = true;
     }
     // 返工⑤：选择成员与表事实同步（restore 成败即成员增删——空态提示与
     // 复制/删除置灰据此驱动，不再依赖重建期信号）。
@@ -2424,8 +2714,24 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
         }
     }
     m_conditionTable->blockSignals(false);
-    for (int c = 0; c < 4; ++c) {
-        m_conditionTable->resizeColumnToContents(c);  // 列宽随内容（长摘要不挤压）
+    // 列宽策略（UI-T39——审核布局返工，区域表同款）：名称列伸缩；节拍/
+    // 必验两短列内容自适应一次成形；适用范围列（长文本高发——多工况枚举
+    // 摘要）固定上限宽度，截断语义由行 tooltip 承载，不再横向挤压。
+    QHeaderView* conditionHeader = m_conditionTable->header();
+    conditionHeader->setSectionResizeMode(0, QHeaderView::Stretch);
+    conditionHeader->setSectionResizeMode(1, QHeaderView::Interactive);
+    conditionHeader->setSectionResizeMode(2, QHeaderView::Interactive);
+    conditionHeader->setSectionResizeMode(3, QHeaderView::Interactive);
+    if (!m_conditionColumnsSized && !rows.empty()) {
+        m_conditionTable->resizeColumnToContents(1);
+        m_conditionTable->resizeColumnToContents(3);
+        m_conditionTable->resizeColumnToContents(2);
+        // 适用范围列上限（240 px≈4~5 个工况枚举的摘要宽度——超长走
+        // tooltip；此上限同时是属性卡可见面积的保护线）。
+        if (m_conditionTable->columnWidth(2) > 240) {
+            m_conditionTable->setColumnWidth(2, 240);
+        }
+        m_conditionColumnsSized = true;
     }
     // 返工⑤：选择成员与表事实同步（同区域页——空态/置灰判定源）。
     m_conditionSelectedId = m_conditionTable->currentItem() != nullptr
@@ -2609,12 +2915,21 @@ void RequirementsPanelWidget::updateTabHeaders()
     // 当前树选中行的显示文本（与用户在树里看到的名字同源——树行文本即
     // displayLabel 投影，零第二名称源）。校验页头不在此刷新（UI-T34——
     // 随 renderValidationPage 的报告实时化）。
+    // UI-T39（审核 P1"双树职责"）：有选中对象时页头追加『（草稿）』标注
+    // ——本面板呈现的是需求草稿工作集（基线＋未应用编辑），对象尚未成为
+    // 已应用修订的一部分；已应用对象见宿主共享工业项目树。标注文案经
+    // UiText（panel.requirements.draft-marker）——NFR-MNT-03 单一出口。
     const QString objectName =
             (m_tree != nullptr && m_tree->currentItem() != nullptr)
                 ? m_tree->currentItem()->text(0)
                 : QString();
+    const QString draftMarker = QString::fromStdString(ui::resolveText(
+        ui::TextKey{"panel.requirements.draft-marker"}));
     const QString suffix =
-            objectName.isEmpty() ? QStringLiteral("未选择") : objectName;
+            objectName.isEmpty()
+                ? QStringLiteral("未选择")
+                : objectName + QStringLiteral("（") + draftMarker
+                      + QStringLiteral("）");
     if (m_stationHeader != nullptr) {
         m_stationHeader->setText(QStringLiteral("工位 > ") + suffix);
     }
@@ -3005,6 +3320,10 @@ void RequirementsPanelWidget::onCommandButtonClicked()
 void RequirementsPanelWidget::onDraftUndo()
 {
     // L-R4 草稿级半区：编辑器局部撤销（零修订）＋记账＋刷新。
+    // UI-T39（审核 P1）：撤销后与普通编辑共用同一条"重估校验"链——先
+    // 现取工作集重投影四页，再经编辑后动作组合子重估就绪并以最新报告
+    // refreshPanel（不再以空报告直刷校验页——空报告会把校验页打回
+    // 『尚未执行』态，撤销前的校验结论失真）。
     m_threadGuard.assertOnUiThread();
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
     if (editor == nullptr || !m_writable) {
@@ -3013,14 +3332,27 @@ void RequirementsPanelWidget::onDraftUndo()
     if (m_undoTracker.undo(*editor)) {
         showStatusLine("已撤销一次编辑（草稿级，零修订）");
         if (IRequirementEditor* e2 = m_editTarget()) {
-            refreshPanel(e2->workingSet(), RequirementReadinessReport{});
+            const RequirementWorkingSet& ws = e2->workingSet();
+            renderTree(ws);
+            renderInspector(ws);
+            renderRegionPage(ws);
+            renderConditionPage(ws);
         }
+        // 就绪重估＋以最新报告全面板刷新（装配层组合子——缺位＝仅四页
+        // 重投影的降级形态，校验页保持既有呈现，不虚构空结论）。
+        if (m_postEditAction) {
+            m_postEditAction();
+        }
+        // 撤销/重做键随记账同步（栈深变化——重做键点亮/撤销键可能熄灭；
+        // 不依赖组合子注入与否——UI-T39）。
+        refreshUndoButtons();
     }
 }
 
 void RequirementsPanelWidget::onDraftRedo()
 {
-    // L-R4 草稿级半区：编辑器局部重做（零修订）＋记账＋刷新。
+    // L-R4 草稿级半区：编辑器局部重做（零修订）＋记账＋刷新（校验重估
+    // 链与 onDraftUndo 同构——UI-T39 审核返工，见上）。
     m_threadGuard.assertOnUiThread();
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
     if (editor == nullptr || !m_writable) {
@@ -3029,8 +3361,16 @@ void RequirementsPanelWidget::onDraftRedo()
     if (m_undoTracker.redo(*editor)) {
         showStatusLine("已重做一次编辑（草稿级，零修订）");
         if (IRequirementEditor* e2 = m_editTarget()) {
-            refreshPanel(e2->workingSet(), RequirementReadinessReport{});
+            const RequirementWorkingSet& ws = e2->workingSet();
+            renderTree(ws);
+            renderInspector(ws);
+            renderRegionPage(ws);
+            renderConditionPage(ws);
         }
+        if (m_postEditAction) {
+            m_postEditAction();
+        }
+        refreshUndoButtons();  // 记账同步（同 onDraftUndo——UI-T39）
     }
 }
 
@@ -3038,8 +3378,12 @@ void RequirementsPanelWidget::onProjectUndo()
 {
     // L-R4 项目级半区：纯转发面（经注入的命令提交出口转发 ui 项目撤销
     // 命令——UndoRedoService 语义归 project，本面板不复制不代理其判定）。
+    // UI-T39（审核 P1 修正）：命令 id 此前误写 "edit.undo"——宿主词表中
+    // 无此注册项，点击命中"未知命令"拒绝、无任何撤销发生。修正为宿主
+    // 注册的 project.undo（WorkbenchContent §7.1 命令表＋UiPlugin 撤销
+    // 编排覆写——逆命令提交产生新修订，事件总线同步各域）。
     if (m_commandSubmit) {
-        m_commandSubmit("edit.undo");  // ui 命令词表（壳级撤销命令——装配层绑定）
+        m_commandSubmit("project.undo");
     }
 }
 
@@ -3064,12 +3408,15 @@ void RequirementsPanelWidget::onEditApplied(const std::string& changeSummary)
     }
     showStatusLine(QString::fromStdString(changeSummary));
     Q_EMIT sessionDirtyChanged(true);
-    // UI-T29 最小校验：编辑后动作（装配层在此重估就绪并以新报告
+    // UI-T39 最小校验：编辑后动作（装配层在此重估就绪并以新报告
     // refreshPanel——校验页『尚未执行』静态的实时化编排；本面板零判定，
     // 判定权威在域侧 Readiness——P-REQ-6 边界不变）。
     if (m_postEditAction) {
         m_postEditAction();
     }
+    // 撤销键随入栈同步（UI-T39——编辑接受后草稿栈深 +1，撤销键立即可用；
+    // 不依赖组合子是否驱动 refreshPanel——宿主注入面缺位时按钮态仍诚实）。
+    refreshUndoButtons();
 }
 
 void RequirementsPanelWidget::notifySessionDirty()

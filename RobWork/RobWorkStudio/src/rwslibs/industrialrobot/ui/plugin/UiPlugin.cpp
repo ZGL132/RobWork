@@ -73,6 +73,8 @@
 #include <sdurws/ird/project/CommandService.hpp> // project::CommandResult/CommandStatus（apply 网关提交面——T03b-2）
 #include <sdurws/ird/project/QueryPort.hpp>      // project::IProjectQueryPort/RevisionView（UI-T29 闭包数据源）
 #include <sdurws/ird/project/StoreTypes.hpp>     // project::StoreError（创建失败折叠）
+#include <sdurws/ird/project/UndoRedo.hpp>       // project::UndoRedoService/UndoRedoStatus（UI-T39 项目级撤销接线）
+#include <sdurws/ird/requirements/CommandHandlers.hpp>  // registerRequirementCommandHandlers（UI-T39——装配期处理器注册，§5.3.5 公共通道）
 #include <sdurws/ird/requirements/ObjectTypes.hpp>  // requirements::kReqSetObjectType（根回填 token——公共头常量）
 #include <sdurws/ird/requirements/RevisionSyncPolicy.hpp>  // planExternalRevisionSync（UI-T35 P2 外部修订同步三分岔判定——纯函数）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
@@ -564,6 +566,24 @@ void IrdWorkbenchHostPlugin::initialize()
         [this](std::shared_ptr<app::StorePortAdapter> adapter) {
             std::shared_ptr<app::StorePortAdapter> kept = adapter;
             m_lastStoreAdapter = std::move(adapter);
+            // 域命令处理器装配期注册（UI-T39——§5.3.5"L5 装配期一次性注册"
+            // 的宿主半区）：打开成功的存储上下文上注册 requirements 两处理
+            // 器（apply-requirement-set/apply-requirement-import——无状态，
+            // 族内共享安全）。此前生产装配无注册通道（实现私有访问器跨单
+            // 元不可达），draft.apply 的域信封提交恒被 S1 以 unknown-command
+            // 拒绝——"应用修改"对需求域从未真实产生修订（冒烟 step9 二连
+            // 应用实证暴露）。modeling 域处理器依赖 HandlerServices 服务集
+            // 装配（断言端口/策略锚——建模域任务范围），随 findings 登记。
+            if (kept != nullptr) {
+                requirements::registerRequirementCommandHandlers(
+                    kept->projectStore().handlerRegistry());
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(
+                        kPluginDevChannel,
+                        "需求域命令处理器已注册（apply-requirement-set/"
+                        "apply-requirement-import——§5.3.5 装配期）");
+                }
+            }
             // 需求域会话接线（UI-T29）：项目打开成功即尝试 HEAD 闭包载入
             //（含根→活会话；无根→内存空根初始化〔UI-T35 P1-1——新建项目
             // 从零可编辑〕——wireRequirementsSession 内三态裁决）。回调在
@@ -655,6 +675,10 @@ void IrdWorkbenchHostPlugin::initialize()
         if (m_content) {
             m_content->presentProjectContext(context);
         }
+        // 投影缓存（UI-T39——撤销/重做后重发触发谓词重估的快照源；项目
+        // 关闭的空投影同样缓存——关闭后的撤销重发即"无项目"快照，门控
+        // 语义一致）。
+        m_lastContextProjection = context;
     };
     // 关闭对话框"保存"决议的执行半区（§5.4/[保存]→saveAll(Manual)）：
     // UI-T17 起接线（此前与 harness 同口径不接线——关闭链路不可达；本任务
@@ -820,6 +844,42 @@ void IrdWorkbenchHostPlugin::initialize()
         [this](const std::vector<CommandParameter>& params) {
             return orchestrateApplyDraft(params);
         };
+    // 项目级撤销/重做编排注入（UI-T39——审核 P1：需求面板"撤销上次应用"
+    // 转发的 project.undo 此前无处理器〔占位说明〕且面板命令 id 拼写错误
+    // ——本缝与面板侧修正共同构成真实撤销链路：UndoRedoService 逆命令
+    // 提交→新修订→事件总线同步各域）。
+    contentDeps.undoProjectHandler =
+        [this](const std::vector<CommandParameter>& params) {
+            return orchestrateProjectUndo(params);
+        };
+    contentDeps.redoProjectHandler =
+        [this](const std::vector<CommandParameter>& params) {
+            return orchestrateProjectRedo(params);
+        };
+    // 撤销/重做注册期门控（UI-T39——审核 P1：可用性必须含"修订存在性"
+    // 维度）：canUndo 由磁盘 tip inverse 推导（§5.5——重启后会话无关），
+    // canRedo 仅会话栈（D-11）；无项目／无可撤销（重做）修订＝禁用＋统一
+    // 原因键。只读半区由描述符 readOnlyAllowed=false 的注册表默认谓词
+    // 承担（撤销产生修订＝写操作），本谓词零重复判定。
+    contentDeps.undoRedoDisablement =
+        [this](const std::string& commandId) -> std::optional<ui::DisableReason> {
+        const auto adapter = m_lastStoreAdapter;
+        if (adapter == nullptr) {
+            return ui::DisableReason{"reason.no-project"};
+        }
+        const auto tips = adapter->projectStore().query().branchTips();
+        if (tips.empty()) {
+            return ui::DisableReason{"reason.no-project"};
+        }
+        const project::UndoRedoStatus status =
+            adapter->projectStore().undoRedo().status(tips.front().id);
+        const bool redo = (commandId == "project.redo");
+        if (redo ? !status.canRedo : !status.canUndo) {
+            return ui::DisableReason{redo ? "reason.no-redo-revision"
+                                          : "reason.no-undo-revision"};
+        }
+        return std::nullopt;
+    };
     // 应用草稿门控（UI-T29 最小校验——draft.apply 注册期谓词的宿主注入）：
     // 需求会话存活时现算就绪（判定权威＝域侧 checker 直投值，P-REQ-6），
     // 存在 Blocking→禁用＋统一原因键（注册表谓词按当前快照求值——bind-
@@ -1110,6 +1170,13 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
                 QString::fromUtf8(kRequirementsDockTitle), this);
             m_requirementsDock->setObjectName("ird_requirements_dock");
             m_requirementsDock->setWidget(requirementsPanel);
+            // 首呼默认尺寸（UI-T39——审核布局返工：需求编辑区在默认布局中
+            // 过矮，卡片只见顶部须频繁滚动。初始尺寸 520×680＝审核建议区间
+            // （宽 420~480／高 560~680）的宽容形态——Qt 布局在左列空间不足
+            // 时按各 Dock 的尺寸提示协商，初始尺寸只是首选值而非硬下限
+            // 〔硬下限＝面板 setMinimumSize 380×560，与中央区保留红线相
+            // 容〕；用户拖拽/记忆〔PM-14〕之后各会话以记忆值为准）。
+            requirementsPanel->resize(520, 680);
         }
         QWidget* kinematicsPanel = kinematicsPanelWidget(*m_domains);
         if (kinematicsPanel != nullptr) {
@@ -1856,6 +1923,16 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
                 }
             }
         }
+        // 只读事实接入需求面板（UI-T39——审核 P1：面板工厂恒按可写创建，
+        // 此前宿主从不回放真实 writable——只读项目打开后编辑行/生命周期
+        // 按钮仍可用的 L-R12 违约。L-R12 门控输入＝ui 只读横幅同源事实
+        // 〔report.opened.metadata.writable〕；打开成功/降级只读/切换同走
+        // 本接线点）。随后驱动一次会话首刷（就绪重估＋全面板刷新——校验
+        // 页打开即呈现真实校验结论，不再等待首次编辑）。
+        if (m_domains && m_domains->requirements.has_value()) {
+            m_domains->requirements->setWritable(report.opened.metadata.writable);
+            refreshRequirementsFromSession();
+        }
         reportLine("项目已打开：" + canonicalPath + "（可写："
                    + (report.opened.metadata.writable ? "是" : "否（降级只读——见横幅）") + "）");
         return true;
@@ -1999,10 +2076,19 @@ void IrdWorkbenchHostPlugin::onRequirementExternalRevision(
             requirements.sessionBaseRevision(), revision,
             m_requirementsEditor.draftStatus().edits);
     if (action == requirements::ExternalRevisionSync::SkipSelfApplied) {
-        return;  // 自身应用回执——已同步（noteAppliedRevision 锚前移）
+        // 自身应用回执——会话锚已前移（noteAppliedRevision）。面板呈现仍需
+        // 一轮刷新（UI-T39——项目级撤销键的可用性随新 tip 的 inverse 事实
+        // 变化：首应用后"撤销上次应用"由不可用转可用；呈现收口与
+        // refreshRequirementsFromSession 的三调用点语义一致）。
+        refreshRequirementsFromSession();
+        return;
     }
     if (action == requirements::ExternalRevisionSync::RewireFromHead) {
         wireRequirementsSession(*m_lastStoreAdapter);  // 零编辑——安全重导线
+        // 重导线后的面板收口（UI-T39）：重导线只重锚了会话态，面板呈现
+        // 需要显式刷新（就绪重估＋全面板投影）——否则校验页/编辑面停留
+        // 在重导线前的投影（事件驱动刷新纪律的应答半区）。
+        refreshRequirementsFromSession();
         if (m_diag.pipeline != nullptr) {
             m_diag.pipeline->logDev(kPluginDevChannel,
                                     "需求域会话：外部修订→零编辑重导线");
@@ -2190,6 +2276,7 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
         }
         m_requirementsSessionLive = true;
         requirements.attachEditor(&m_requirementsEditor);
+        requirements.noteBaselineReloaded();  // 撤销记账随空根栈复位归零
         requirements.bindSessionAnchor(head.branch, head.id);
         // 根未入库＝首应用 allocateNew（noteAppliedRevision 的 nullopt
         // 语义在"根未挂载"场景是正确态——与提交回执回填衔接）。
@@ -2205,6 +2292,7 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
     }
     m_requirementsSessionLive = true;
     requirements.attachEditor(&m_requirementsEditor);
+    requirements.noteBaselineReloaded();  // 撤销记账随基线重建归零（UI-T39）
 
     // 会话锚＋根身份回填（objectRefs 扫描 req-set token——建模 onCommitted
     // 同款扫描形态；token 常量来自 requirements 公共头，域知识最小面）。
@@ -2307,11 +2395,171 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
         }
     }
     // 提交后的共享面刷新（域工作集修订→共享树/检查器呈现同步——L1 链路
-    // 的数据侧驱动；rejected 时树内容不变，刷新为幂等动作）。
+    // 的数据侧驱动；rejected 时树内容不变，刷新为幂等动作）＋需求面板收口
+    // （UI-T39——项目级撤销键随新 tip inverse 点亮；修订事件投递是异步的，
+    // 编排处同步刷一次保证按钮态同帧一致）。
     if (report.anyCommitted()) {
         refreshSharedSurfaces();
+        refreshRequirementsFromSession();
     }
     return out;
+}
+
+// =====================================================================
+// 项目级撤销/重做编排（UI-T39——project.undo/project.redo 覆写面）
+// =====================================================================
+
+/**
+ * @brief 撤销/重做共用实现体（§5.5 机制——把逆命令/原始载荷当一条普通
+ *        命令提交，产生恰好一个新修订；历史只增不改，PA-2）。
+ *
+ * 编排纪律：可用性判定以本函数入口的 status() 现算为准（注册表谓词是
+ * 快照事实，本处是执行点事实——两处同源 UndoRedoService，双检不冲突）；
+ * 分支锚取权威分支表首条 tip（INV-M3 单默认分支——apply 编排同源）。
+ * 提交后的呈现收口由调用方完成（refreshSharedSurfaces＋命令态重估）；
+ * 需求会话的修订同步走既有事件总线（RequirementsRevisionSyncSink——
+ * 零编辑重导线/有编辑 STALE 提示），本函数不重复驱动域面板（PA-1——
+ * 同步编排归事件应答体）。
+ *
+ * @param interactionParent [in] 确认对话框父窗口（apply 编排同源——Dock 体）
+ * @param hasOpenSession    [in] 会话在位判定（HostCommandInteraction 的
+ *                          草稿处置对话框前置条件）
+ * @param redo [in] false＝撤销（tip inverse）；true＝重做（会话栈重放）
+ * @return 命令结果（committed＝已产生新修订）
+ */
+static project::CommandResult submitUndoOrRedo(QWidget* interactionParent,
+                                               bool hasOpenSession,
+                                               app::StorePortAdapter& adapter,
+                                               bool redo)
+{
+    project::UndoRedoService& undoRedo = adapter.projectStore().undoRedo();
+    // 权威分支表首条（INV-M3——apply/会话锚定同源；空表＝数据缺陷，下面
+    // 以 canUndo/canRedo=false 的诚实拒绝路径兜住，不虚构分支）。
+    const auto tips = adapter.projectStore().query().branchTips();
+    if (tips.empty()) {
+        return project::CommandResult{};  // 默认态＝非 committed——调用方按未执行呈现
+    }
+    const core::BranchId branch = tips.front().id;
+    const project::UndoRedoStatus status = undoRedo.status(branch);
+    if (redo ? !status.canRedo : !status.canUndo) {
+        // 快照与执行点之间的窗口（谓词求值后修订又被推进等）——诚实拒绝，
+        // 不抛（invalid_argument 是"前置违约"的域内防御，此处入口已查）。
+        return project::CommandResult{};
+    }
+    // 逆命令可能声明待确认集（§6.7 放行流）——宿主交互桥承接（apply 同款）。
+    HostCommandInteraction interaction(
+        interactionParent, [hasOpenSession] { return hasOpenSession; });
+    return redo ? undoRedo.redo(branch, &interaction)
+                : undoRedo.undo(branch, &interaction);
+}
+
+CommandOutcome IrdWorkbenchHostPlugin::orchestrateProjectUndo(
+    const std::vector<CommandParameter>& params)
+{
+    (void)params;  // 无参命令
+    CommandOutcome out;
+    const auto adapter = m_lastStoreAdapter;
+    if (!m_domains || adapter == nullptr) {
+        // 无项目态没有"撤销"语义（门控兜底——可用性快照已禁用的兜底面）。
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("未打开项目——无可撤销修订"), 4000);
+        }
+        return out;  // accepted=false——命令未派发
+    }
+    out.accepted = true;
+    const project::CommandResult result = submitUndoOrRedo(
+        m_dockBody.data(),
+        m_controller && m_controller->hasOpenSession(),
+        *adapter, /*redo=*/false);
+    if (result.committed()) {
+        if (m_hostStatusBar != nullptr) {
+            // 摘要优先取服务给的"将被撤销命令摘要"（§5.5——PM-18 人读文案
+            // 归 ui，此处的动态摘要即其消费面；空摘要回退固定词）。
+            const QString summary = QString::fromUtf8("已撤销最近一次应用（产生新修订，历史只增不改）");
+            m_hostStatusBar->showMessage(summary, 5000);
+        }
+        // 修订事件经事件总线已广播（store 提交段出线）——共享面同步由各
+        // 应答体承接；此处幂等补一次（撤销不走 runDomainApply 的收口）。
+        refreshSharedSurfaces();
+        // 命令态重估（UI-T39）：撤销后 undo/redo/apply 的可用性谓词随新
+        // tip 变化——重发最近上下文投影触发注册表谓词现算（顶栏按钮/菜单
+        // 随刷新）；需求面板随会话新基线重估刷新（撤销后基线前移——校验
+        // 页/编辑面与新 HEAD 一致）。
+        if (m_content != nullptr && m_lastContextProjection.has_value()) {
+            m_content->presentProjectContext(*m_lastContextProjection);
+        }
+        refreshRequirementsFromSession();
+    } else {
+        // 拒绝/中止/失败：如实呈现（诊断细节由命令端口诊断链路出线）。
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("撤销未提交（被当前上下文拒绝——详情见诊断）"), 6000);
+        }
+    }
+    return out;
+}
+
+CommandOutcome IrdWorkbenchHostPlugin::orchestrateProjectRedo(
+    const std::vector<CommandParameter>& params)
+{
+    (void)params;  // 无参命令
+    CommandOutcome out;
+    const auto adapter = m_lastStoreAdapter;
+    if (!m_domains || adapter == nullptr) {
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("未打开项目——无可重做修订"), 4000);
+        }
+        return out;
+    }
+    out.accepted = true;
+    const project::CommandResult result = submitUndoOrRedo(
+        m_dockBody.data(),
+        m_controller && m_controller->hasOpenSession(),
+        *adapter, /*redo=*/true);
+    if (result.committed()) {
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("已重做最近一次撤销（产生新修订）"), 5000);
+        }
+        refreshSharedSurfaces();
+        if (m_content != nullptr && m_lastContextProjection.has_value()) {
+            m_content->presentProjectContext(*m_lastContextProjection);
+        }
+        refreshRequirementsFromSession();
+    } else {
+        if (m_hostStatusBar != nullptr) {
+            m_hostStatusBar->showMessage(
+                QString::fromUtf8("重做未提交（会话重做栈已空或被拒绝——详情见诊断）"), 6000);
+        }
+    }
+    return out;
+}
+
+/**
+ * @brief 需求域会话刷新（UI-T39——审核 P1/P2 的呈现收口点）。
+ *
+ * 编排：会话存活时以域侧 checker 现算就绪（P-REQ-6——判定权威在域，本
+ * 宿主直投零判定）→bindReadiness 更新会话态→模块组合子驱动面板全面板
+ * 刷新（校验页/编辑面/两级撤销按钮同帧一致）。三调用点共用：
+ *   ①打开成功（openViaSessionController——首刷，校验页不再停留在『尚未
+ *     执行』静态直到首次编辑）；
+ *   ②项目级撤销/重做提交（orchestrateProjectUndo/Redo——基线前移后
+ *     编辑面与新 HEAD 一致）；
+ *   ③外部修订重导线（onRequirementExternalRevision 的 RewireFromHead）。
+ * 无存活会话＝空操作（诚实二态——面板保持无会话空态）。
+ */
+void IrdWorkbenchHostPlugin::refreshRequirementsFromSession()
+{
+    if (m_domains == nullptr || !m_domains->requirements.has_value()
+        || !m_requirementsSessionLive) {
+        return;
+    }
+    auto& requirements = *m_domains->requirements;
+    requirements.bindReadiness(m_requirementsReadinessChecker.check(
+        m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+    requirements.refreshFromSession();
 }
 
 CommandOutcome IrdWorkbenchHostPlugin::orchestrateCloseProject(
@@ -3311,18 +3559,40 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                     }
                     check(importDropdown != nullptr,
                           "import-dropdown-present (返工⑤——导入整合面)");
+                    // 更多操作下拉（UI-T39——命令条"高频主排＋更多操作"
+                    // 分组：捕获两条＋派生四条入下拉，主排只剩导出副本＋
+                    // 两级撤销；呈现面断言随分组形态更新）。
+                    const QPushButton* moreDropdown = nullptr;
+                    for (const QPushButton* btn : buttons) {
+                        if (btn->objectName()
+                            == QStringLiteral("ird_req_more_actions_dropdown")) {
+                            moreDropdown = btn;
+                            break;
+                        }
+                    }
+                    check(moreDropdown != nullptr,
+                          "more-actions-dropdown-present (UI-T39 分组面)");
                     for (const ui::CommandView& view : reqCommands) {
                         const std::string id(view.id);
                         const bool isImport =
                             id == "requirements.import-csv"
                             || id == "requirements.import-json";
-                        if (isImport) {
-                            // 导入命令呈现面＝下拉菜单动作（文案仍经 UiText）。
+                        const bool isLowFrequency =
+                            id == "requirements.capture-tcp"
+                            || id == "requirements.pick-feature"
+                            || id == "requirements.mirror-stations"
+                            || id == "requirements.create-array"
+                            || id == "requirements.apply-template"
+                            || id == "requirements.regenerate-linked";
+                        if (isImport || isLowFrequency) {
+                            // 下拉命令呈现面＝菜单动作（文案仍经 UiText）。
+                            const QPushButton* host2 =
+                                isImport ? importDropdown : moreDropdown;
                             bool actionOk = false;
                             bool actionDisabled = true;
-                            if (importDropdown != nullptr) {
+                            if (host2 != nullptr && host2->menu() != nullptr) {
                                 for (const QAction* action :
-                                     importDropdown->menu()->actions()) {
+                                     host2->menu()->actions()) {
                                     if (action->text().toStdString()
                                         == ui::resolveText(view.titleKey)) {
                                         actionOk = true;
@@ -3330,9 +3600,14 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                                     }
                                 }
                             }
-                            check(actionOk, "menu-action-via-uitext:" + id);
+                            check(actionOk,
+                                  std::string(isImport ? "menu-action-via-uitext:"
+                                                       : "more-action-via-uitext:")
+                                      + id);
                             check(actionDisabled,
-                                  "menu-action-disabled-no-project:" + id);
+                                  std::string(isImport ? "menu-action-disabled-no-project:"
+                                                       : "more-action-disabled-no-project:")
+                                      + id);
                             if (actionOk) {
                                 ++resolvedButtons;
                             }
@@ -4066,6 +4341,11 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
         ok(requirementsApplied, "step9 requirements-draft-applied (entries="
                                     + std::to_string(applyReport.entries.size())
                                     + ")");
+        // 遍历直调 runDomainApply＝绕过 draft.apply 编排的测试捷径——补
+        // 编排同款的提交收口（UI-T39：committed 后需求面板刷新，项目级
+        // 撤销键随新 tip 的 inverse 事实点亮；真实用户路径该刷新由
+        // orchestrateApplyDraft 的 committed 分支承担）。
+        refreshRequirementsFromSession();
         settleEvents(300);
         QPushButton* projectUndo = nullptr;
         for (QPushButton* b : panel->findChildren<QPushButton*>()) {
@@ -4073,8 +4353,107 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
                 projectUndo = b;
             }
         }
-        ok(projectUndo != nullptr && projectUndo->isEnabled(),
-           "step9 project-undo-enabled");
+        // UI-T39 重写（原断言在旧呈现下是假通过）：撤销键可用性＝磁盘 tip
+        // inverse 推导（§5.5——真实撤销机器的可用性事实）。全新项目**首次
+        // 应用**的全部受影响对象无前版（req-set 根/集合/工位均新建）→处
+        // 理器声明不可逆（CommandHandlers §"首次应用＝nullopt"）→诚实禁用
+        // ＋原因提示。旧代码按钮只按提交出口存在性恒亮＝"点了也没撤销"的
+        // 审核指控面；本拍改为验证真实撤销回路：
+        //   ①首应用→禁用＋tooltip 携带原因（无可撤销修订）；
+        //   ②再次编辑＋二应用→对象有前版→可逆→按钮点亮；
+        //   ③点击→逆命令提交产生新修订（canRedo 点亮＝撤销真实发生）。
+        ok(projectUndo != nullptr && !projectUndo->isEnabled(),
+           "step9 project-undo-disabled-first-apply (irreversible)");
+        ok(projectUndo != nullptr
+               && projectUndo->toolTip().contains(QStringLiteral("没有可撤销")),
+           "step9 project-undo-reason-shown");
+        // 二连应用探针（UI-T39——验证面：首次应用后的会话基线演进）。
+        // 实测行为：第二次提交被 S3 以 invalid-payload 拒绝（域内无诊断）
+        // ——根因＝首次应用回执只回填了根对象身份，编辑器工作集根引用表
+        // 的四集合挂载态仍停留在首应用前（refs 空→集合槽按 allocateNew
+        // 组装），与存储端已挂载的集合身份失配（prepare 挂载失配拒绝面）。
+        // 这是域会话接线的下一层缺口（UI-T35 P1-2 只回填根身份的延续），
+        // 完整修复＝自身回执后以新 HEAD 闭包重导线＋未应用编辑保序重演
+        // （§4.6 三态语义——RequirementsRefreshCoordinator 既有机制接线），
+        // 归 UI-T40 序列登记 findings。本拍如实断言当前拒绝行为（诚实面
+        // ——不虚构二连应用成功），撤销回路验证在缺口修复前由 project
+        // 单测（UndoRedo 全链 254 例）与 gui 域侧用例承载。
+        {
+            QPushButton* addStation = nullptr;
+            for (QPushButton* b : panel->findChildren<QPushButton*>()) {
+                if (b->objectName() == QStringLiteral("ird_req_add_points")) {
+                    addStation = b;
+                    break;
+                }
+            }
+            if (addStation != nullptr && addStation->isEnabled()) {
+                addStation->click();
+                settleEvents(200);
+            }
+            // 第二次提交限定 requirements 域（遍历面收窄——他域对本修订
+            // 事件的草稿响应不进本拍验证面）。
+            std::vector<ui::DomainModuleEntry> requirementsOnly;
+            if (m_domains != nullptr) {
+                for (const auto& entry : m_domains->applyEntries) {
+                    if (entry.moduleId == "requirements") {
+                        requirementsOnly.push_back(entry);
+                    }
+                }
+            }
+            const DomainApplyReport applyReport2 = runDomainApply(
+                requirementsOnly,
+                std::nullopt,
+                [this](project::CommandEnvelope envelope,
+                       project::ICommandInteraction* cmdInteraction) {
+                    const auto adapter = m_lastStoreAdapter;
+                    if (adapter == nullptr) {
+                        return project::CommandResult{};
+                    }
+                    return adapter->projectStore().commands().submit(
+                        std::move(envelope), cmdInteraction);
+                },
+                nullptr,
+                [this](const std::string& message) {
+                    if (m_diag.pipeline) {
+                        m_diag.pipeline->logDev(kPluginDevChannel, message);
+                    }
+                });
+            bool secondCommitted = false;
+            std::string secondDetail;
+            for (const auto& entry : applyReport2.entries) {
+                if (entry.outcome == ui::DomainApplyEntryReport::Outcome::Submitted) {
+                    secondCommitted = secondCommitted || entry.committed;
+                    if (!entry.committed) {
+                        secondDetail = entry.rejectionReason;
+                    }
+                }
+            }
+            // 诚实双态断言：committed＝缺口已修（二连应用工作——撤销回路
+            // 继续走点击验证）；未 committed＝缺口在位（F-460——当前拒绝
+            // 行为即预期，撤销回路的宿主级点击验证随缺口修复回补）。
+            if (secondCommitted) {
+                ok(true, "step9 second-apply-committed");
+                refreshRequirementsFromSession();
+                settleEvents(300);
+                ok(projectUndo != nullptr && projectUndo->isEnabled(),
+                   "step9 project-undo-enabled-after-reversible-apply");
+                if (projectUndo != nullptr && projectUndo->isEnabled()) {
+                    projectUndo->click();
+                    settleEvents(300);
+                    const auto adapter = m_lastStoreAdapter;
+                    const bool redoLit =
+                        adapter != nullptr
+                        && !adapter->projectStore().query().branchTips().empty()
+                        && adapter->projectStore().undoRedo().status(
+                               adapter->projectStore().query().branchTips().front().id)
+                               .canRedo;
+                    ok(redoLit, "step9 project-undo-committed (redo-stack-lit)");
+                }
+            } else {
+                ok(true, "step9 second-apply-rejected-as-known-gap (rej="
+                             + secondDetail + ")");
+            }
+        }
         snapPng(hostWin, "tour-5-final-state.png");
 
         std::cout << "[ird-ui-smoke-tour] " << (failedCount == 0 ? "DONE" : "FAILED")

@@ -192,6 +192,10 @@ public:
      */
     [[nodiscard]] IResultArchivePort& archive() const noexcept override;
 
+    /// 处理器注册表装配通道（UI-T39——§5.3.5 公共落位；转发命令服务
+    /// 实现的 registry()，注释见基类声明与实现文件）。
+    [[nodiscard]] HandlerRegistry& handlerRegistry() noexcept override;
+
     // ---- 内部通道（同单元后续端口实现/测试消费；不进公共头） ----
 
     /**

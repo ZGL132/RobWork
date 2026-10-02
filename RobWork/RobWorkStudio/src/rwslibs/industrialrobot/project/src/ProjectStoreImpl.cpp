@@ -775,6 +775,27 @@ IResultArchivePort& ProjectStoreImpl::archive() const noexcept
     return *m_archive;
 }
 
+HandlerRegistry& ProjectStoreImpl::handlerRegistry() noexcept
+{
+    // 装配期注册通道公共化（UI-T39——§5.3.5"L5 装配期一次性注册"的
+    // 公共落位）：转发命令服务实现的注册表（registry() 交付面——S1 解析
+    // 与查询判据共用同一表）。宿主装配层在打开成功回调内注册各业务域
+    // 处理器（任何 submit 之前——运行期注册是装配纪律违约，重复 token
+    // 由注册表边界 invalid_argument 拒绝）。
+    return m_commands->registry();
+}
+
+HandlerRegistry& ProjectStore::handlerRegistry() noexcept
+{
+    // 基类默认实现（非纯虚——测试桩等未开放注册通道的实现不被迫 override，
+    // 契约面同时不虚构注册表）：诚实拒绝轨。真实存储上下文（ProjectStoreImpl）
+    // 的 override 才交付命令服务注册表——调用方只应对打开成功的存储上下文
+    // 调用本访问器（§5.3.5 装配期纪律）。
+    throw std::logic_error(
+        "project::ProjectStore::handlerRegistry：本实现未开放装配期注册通道"
+        "（默认实现——真实存储上下文经 ProjectStoreImpl override 交付）");
+}
+
 bool ProjectStoreImpl::writable() const noexcept
 {
     // 唯一依据＝本实例持有的 OS 排他句柄（SA-17）：无锁对象＝只读上下文；

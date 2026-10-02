@@ -201,6 +201,13 @@ private:
     /// 应用编排（WP-24-T03b-2——draft.apply 覆写面）：域信封组装→命令
     /// 网关 submit→回执回写 onCommandResult＋模块会话锚前移。
     CommandOutcome orchestrateApplyDraft(const std::vector<CommandParameter>& params);
+    /// 项目级撤销编排（UI-T39——project.undo 覆写面）：UndoRedoService
+    /// 逆命令提交（产生恰好一个新修订——PA-2 历史只增不改）；修订事件
+    /// 经既有事件总线流至各域同步面（需求域零编辑重导线/有编辑 STALE）。
+    CommandOutcome orchestrateProjectUndo(const std::vector<CommandParameter>& params);
+    /// 项目级重做编排（UI-T39 同型——project.redo 覆写面）：重放被撤销
+    /// 命令的原始载荷（产生新修订；会话 redo 栈仅会话内有效——D-11）。
+    CommandOutcome orchestrateProjectRedo(const std::vector<CommandParameter>& params);
     /// 最近项目打开编排（宿主 File 子菜单——无会话走标准打开协议；有会话
     /// 走 §5.4 S2 切换流：beginSwitch→同一确认对话框→候选验证）。
     void openRecentProject(const std::string& canonicalPath);
@@ -314,6 +321,14 @@ private:
     std::unique_ptr<core::IDomainEventSink> m_requirementsRevisionSink;
     /// 需求域同步订阅句柄（RAII）
     std::unique_ptr<core::IEventSubscription> m_requirementsRevisionSubscription;
+    /// 最近一次上下文投影缓存（UI-T39——撤销/重做等"上下文值不变但命令
+    /// 可用性是时间函数"的场景，重发同一投影触发注册表谓词重估〔顶栏按
+    /// 钮/菜单使能随新 tip 修订刷新〕；nullopt＝尚无投影——打开前无重发面）。
+    std::optional<ui::ProjectContextProjection> m_lastContextProjection;
+    /// 需求域会话刷新（UI-T39——就绪重估＋bindReadiness＋面板全面板刷新
+    /// 的宿主编排收口：打开成功首刷/外部修订重导线后/项目级撤销提交后
+    /// 共用；无存活会话＝空操作）。
+    void refreshRequirementsFromSession();
 
     // ---- 共享面集成产物（UI-T23——B1-SPEC §3/§4；L5 装配层持有）----
     /// 业务选中唯一汇聚点（INV-B3——树/检查器/域适配器/L3 反解的共同

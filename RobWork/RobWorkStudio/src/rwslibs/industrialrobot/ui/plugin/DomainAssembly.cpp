@@ -173,12 +173,19 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
             DomainModuleEntry entry;
             entry.moduleId = modeling::kModuleHandle;
             entry.module = bundle->modeling.module.get();
+            // 闭包捕获＝堆对象裸指针（UI-T39 修正——此前捕获 &bundle：栈上
+            // unique_ptr 形参的地址，assembleDomainPlugins 返回即悬挂；
+            // bindAnchor 每次 draft.apply 都会调用、onCommitted 在首次真实
+            // committed 修订时调用——悬挂解引用＝use-after-free，冒烟 tour
+            // 二连应用实证崩溃 0xC0000005）。bundle 由 unique_ptr 持有至
+            // DomainPluginAssembly 析构，裸指针存活期覆盖闭包调用期。
             entry.bindAnchor =
-                [&bundle](const core::BranchId& branch, const core::RevisionId& base) {
-                    bundle->modeling.bindSessionAnchor(branch, base);
+                [bundleRaw = bundle.get()](
+                    const core::BranchId& branch, const core::RevisionId& base) {
+                    bundleRaw->modeling.bindSessionAnchor(branch, base);
                 };
             entry.onCommitted =
-                [&bundle](const project::CommandResult& result) {
+                [bundleRaw = bundle.get()](const project::CommandResult& result) {
                     // 锚前移＋根身份回填（T03b-2——rootId 取自新 HEAD
                     // objectRefs 中建模根 token 条目；域知识在闭包内，
                     // 遍历单元零建模知识）。
@@ -193,8 +200,8 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
                         }
                     }
                     if (result.newRevision.has_value()) {
-                        bundle->modeling.noteAppliedRevision(*result.newRevision,
-                                                             rootId);
+                        bundleRaw->modeling.noteAppliedRevision(
+                            *result.newRevision, rootId);
                     }
                 };
             // onResult 由宿主补填（DraftController 挂接后的回写闭包——
@@ -226,16 +233,18 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
                              "outcome=" + std::to_string(static_cast<int>(outcome)));
         if (status.ok) {
             // 登记表：需求域闭包（锚绑定/锚前移真实；onResult 空＝草稿源
-            // 未挂接的诚实缺席——回执投影不回写 DraftController）。
+            // 未挂接的诚实缺席——回执投影不回写 DraftController）。闭包
+            // 捕获＝堆对象裸指针（UI-T39——建模域同款修正，悬挂分析见上）。
             DomainModuleEntry entry;
             entry.moduleId = "requirements";
             entry.module = bundle->requirements->module.get();
             entry.bindAnchor =
-                [&bundle](const core::BranchId& branch, const core::RevisionId& base) {
-                    bundle->requirements->bindSessionAnchor(branch, base);
+                [bundleRaw = bundle.get()](
+                    const core::BranchId& branch, const core::RevisionId& base) {
+                    bundleRaw->requirements->bindSessionAnchor(branch, base);
                 };
             entry.onCommitted =
-                [&bundle](const project::CommandResult& result) {
+                [bundleRaw = bundle.get()](const project::CommandResult& result) {
                     // UI-T35 P1-2（R2 审核整改）：锚前移＋根身份回填——
                     // 扫描新 HEAD objectRefs 的 req-set 条目（建模域
                     // onCommitted 同构先例）。此前传 nullopt＝UI-T29 前
@@ -252,7 +261,7 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
                         }
                     }
                     if (result.newRevision.has_value()) {
-                        bundle->requirements->noteAppliedRevision(
+                        bundleRaw->requirements->noteAppliedRevision(
                             *result.newRevision, rootId);
                     }
                 };

@@ -173,6 +173,38 @@ public:
         return m_session;
     }
 
+    // ---- 会话事实接入面（UI-T39——审核 P1/P2 的模块侧转发半区）--------
+
+    /**
+     * @brief 会话可写性切换（L-R12 门控输入的宿主接线——ui 只读横幅同源
+     *        事实经本面直达面板；转发面零判定。项目打开成功/降级只读/
+     *        切换由宿主按打开报告驱动）。
+     *
+     * @param writable [in] 当前项目会话是否可写
+     */
+    void setWritable(bool writable);
+
+    /**
+     * @brief 会话刷新（就绪重估已由宿主完成 bindReadiness 后的呈现收口
+     *        ——以会话最新报告驱动面板全面板刷新。打开成功首刷/外部修订
+     *        重导线后/项目级撤销提交后共用；面板缺位＝空操作）。
+     */
+    void refreshFromSession();
+
+    /**
+     * @brief 基线重载登记（编辑器 loadBaseline 重建会话后由宿主调用——
+     *        草稿撤销记账随编辑器局部栈复位归零，撤销键随新记账刷新；
+     *        漏登记＝"幽灵可撤销"——记账指向已不存在的栈条目）。
+     */
+    void noteBaselineReloaded();
+
+    /**
+     * @brief 会话脱离的面板复位（项目关闭/切换的呈现收口——转发面板
+     *        resetForSessionDetached：会话选中锚/撤销记账归零＋控件投影
+     *        收拢为无会话空态。面板缺位＝空操作）。
+     */
+    void resetPanelForDetach();
+
     // ---- ui.md §11.2 三方法（逐方法对齐卡文——P-REQ-8 同形面）----------
 
     /**

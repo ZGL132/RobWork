@@ -264,7 +264,11 @@ bool flowApplyTemplate(RequirementsPanelWidget& panel, IRequirementEditor& edito
 bool flowMirrorStations(RequirementsPanelWidget& panel, IRequirementEditor& editor,
                         IRequirementEditSink& sink, CommandDialogHost& host)
 {
-    const std::optional<core::ObjectId> selected = panel.selectedObjectId();
+    // 输入类型＝工位（UI-T39——审核五.1：镜像按工位页锚取源，不依赖"全局
+    // 最后选中"——后者随树/表/页签任何一次点击漂移，选中区域/工况后触发
+    // 镜像会静默找不到源条目）。
+    const std::optional<core::ObjectId> selected =
+        panel.selectionAnchor(WorkingSetMember::Points);
     if (!selected.has_value()) {
         note(panel, QString::fromUtf8("未应用：镜像需要先选中一个工位条目"));
         return false;
@@ -299,7 +303,9 @@ bool flowMirrorStations(RequirementsPanelWidget& panel, IRequirementEditor& edit
 bool flowCreateArray(RequirementsPanelWidget& panel, IRequirementEditor& editor,
                      IRequirementEditSink& sink, CommandDialogHost& host)
 {
-    const std::optional<core::ObjectId> selected = panel.selectedObjectId();
+    // 输入类型＝工位（UI-T39——审核五.1，镜像同款按工位页锚取源）。
+    const std::optional<core::ObjectId> selected =
+        panel.selectionAnchor(WorkingSetMember::Points);
     if (!selected.has_value()) {
         note(panel, QString::fromUtf8("未应用：阵列需要先选中一个源工位条目"));
         return false;
@@ -353,7 +359,9 @@ bool flowCreateArray(RequirementsPanelWidget& panel, IRequirementEditor& editor,
 bool flowRegenerateLinked(RequirementsPanelWidget& panel, IRequirementEditor& editor,
                           IRequirementEditSink& sink, CommandDialogHost& host)
 {
-    const std::optional<core::ObjectId> selected = panel.selectedObjectId();
+    // 输入类型＝工位（UI-T39——审核五.1，镜像同款按工位页锚取源）。
+    const std::optional<core::ObjectId> selected =
+        panel.selectionAnchor(WorkingSetMember::Points);
     if (!selected.has_value()) {
         note(panel, QString::fromUtf8("未应用：重生成需要先选中一个生成工位"));
         return false;

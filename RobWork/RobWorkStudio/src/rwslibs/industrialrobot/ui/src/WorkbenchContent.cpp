@@ -1175,6 +1175,16 @@ void WorkbenchContentImpl::assembleCommandSystem()
             // 装配层覆写（WP-24-T03b-2 增量——§8.5 应用编排）：宿主的
             // 域信封组装＋命令网关提交＋回执回写（未注入＝占位说明）。
             handler = m_deps.applyDraftHandler.value();
+        } else if (std::string_view(row.id) == "project.undo"
+                   && m_deps.undoProjectHandler.has_value()) {
+            // 装配层覆写（UI-T39——§6.9 撤销编排）：宿主的 UndoRedoService
+            // 逆命令提交（产生新修订）；未注入＝占位说明（harness 形态）。
+            handler = m_deps.undoProjectHandler.value();
+        } else if (std::string_view(row.id) == "project.redo"
+                   && m_deps.redoProjectHandler.has_value()) {
+            // 装配层覆写（UI-T39 同型——重做半区）：重放被撤销命令原始
+            // 载荷（产生新修订）；未注入＝占位说明。
+            handler = m_deps.redoProjectHandler.value();
         } else {
             // 占位说明处理器（阶段 A 契约显式形态——accepted=true：提交
             // 链路真实走通，能力面以 §11.4 说明呈现）。
@@ -1187,18 +1197,34 @@ void WorkbenchContentImpl::assembleCommandSystem()
                 return out;
             };
         }
-        // UI-T29 最小校验：draft.apply 的宿主门控谓词（applyDraftDisable-
-        // ment 注入形态）——存在未就绪阻断时注册期禁用（按钮/命令面板/
-        // 菜单共享同一 availability 快照，谓词按当前快照求值）；未注入＝
-        // 零新增门控（诚实二态，注册形态与既有壳命令完全一致）。
-        const bool applyGated = (std::string_view(row.id) == "draft.apply"
-                                 && m_deps.applyDraftDisablement != nullptr);
+        // 宿主门控谓词的注册期挂接（UI-T29 起建立、UI-T39 扩表）：有注入
+        // 门控的命令走 registerCommandWithPredicates（按钮/命令面板/菜单
+        // 共享同一 availability 快照，谓词按当前快照求值）；未注入＝零新
+        // 增门控（诚实二态，注册形态与既有壳命令完全一致）。门控表＝
+        // 命令 id → deps 注入的禁用原因求值器（draft.apply＝就绪阻断；
+        // project.undo/redo＝修订存在性——审核返工：撤销按钮不得在无可
+        // 撤销修订时保持可用）。
+        std::function<std::optional<ui::DisableReason>()> gatedDisablement;
+        if (std::string_view(row.id) == "draft.apply"
+            && m_deps.applyDraftDisablement != nullptr) {
+            gatedDisablement = m_deps.applyDraftDisablement;
+        } else if ((std::string_view(row.id) == "project.undo"
+                    || std::string_view(row.id) == "project.redo")
+                   && m_deps.undoRedoDisablement != nullptr) {
+            // 撤销/重做共用注入缝——按命令 id 分派（缝内自辨 undo/redo）。
+            const std::string gatedId = row.id;
+            gatedDisablement = [this, gatedId]() -> std::optional<ui::DisableReason> {
+                return m_deps.undoRedoDisablement(gatedId);
+            };
+        }
         const RegistrationResult result =
-            applyGated
+            gatedDisablement
                 ? m_commands->registerCommandWithPredicates(
                       desc, handler, nullptr,
-                      EnablementPredicate{[this](const UiContextSnapshot&) {
-                          return m_deps.applyDraftDisablement();
+                      // 谓词返回载核＝DisableReason（§7.5——有值＝禁用），
+                      // 注入的求值器同构直转，零语义改写。
+                      EnablementPredicate{[gatedDisablement](const UiContextSnapshot&) {
+                          return gatedDisablement();
                       }})
                 : m_commands->registerCommand(desc, handler);
         Q_ASSERT(result == RegistrationResult::Ok
