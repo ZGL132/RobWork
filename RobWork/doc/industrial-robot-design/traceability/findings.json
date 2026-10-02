@@ -4461,6 +4461,16 @@
       "resolution": "送验/自查统一主树全量构建口径，或排查前先全量追平主树。编号顺延自 F-447。"
     },
     {
+      "id": "F-459",
+      "source": "UI-T38 验收 attempt 1（2026-10-02——冷构建树首跑 sdurws_ird_studio.exe 报 0xC0000135）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "冷构建树（独立 configure 的集成树）产出的 studio 运行时缺 DLL 前置：需追加主构建树各 bin（RobWork/RobWorkSim/RobWorkStudio 的 bin+libs）到 PATH 才可启动——F-007（配置期 toolchain/Qt 前缀）/F-009（gate-all 非主树环境）同族的运行时半区；主树增量运行不受影响，验收复现配方已按此规避（acc-smoke 驱动内联主树 bin 兜底）。",
+      "owner": "构建脚本/交付侧（候选：ui CMakeLists 运行时 DLL 汇集或验收驱动模板固化 PATH 配方）",
+      "resolution": "建议与 F-007 一并治理（冷树配方文档化或 CMake 侧运行时自包含）；编号为收尾合并预留（evidence 分支基点编号止于 F-448），落库于 UI-T38 合入收尾提交。"
+    },
+    {
       "id": "F-449",
       "source": "所有者 2026-10-01 界面任务书（UI-T36 立项承接——图 1/图 2 截证的窗口缩放/切换期 z-order 错乱与遮挡穿透指控）",
       "severity": "suggestion",
