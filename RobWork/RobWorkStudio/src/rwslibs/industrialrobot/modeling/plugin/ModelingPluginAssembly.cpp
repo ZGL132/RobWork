@@ -81,6 +81,14 @@ void ModelingPluginAssembly::refreshFromSession()
     }
 }
 
+bool ModelingPluginAssembly::executeDomainCommand(const std::string& commandId)
+{
+    if (m_impl != nullptr) {
+        return m_impl->executeDomainCommand(commandId);
+    }
+    return false;  /* 模块缺位＝失败隔离缺席域 */
+}
+
 void ModelingPluginAssembly::bindRuntimeNameMap(
     const sdurws::ird::runtime::RuntimeNameMap* map)
 {

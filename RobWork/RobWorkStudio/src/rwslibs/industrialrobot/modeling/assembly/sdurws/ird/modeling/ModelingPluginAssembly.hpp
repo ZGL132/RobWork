@@ -107,6 +107,10 @@ struct ModelingPluginAssembly {
     /// 会话刷新（restoreOnOpen 后由宿主调用——面板同步；T03b-2）。
     void refreshFromSession();
 
+    /// 执行一条本域命令的 UI 流程（UI-T41 A2——宿主注册表处理器落点；
+    /// 转发模块。false＝用户取消；域内拒绝＝true＋面板状态行原因）。
+    bool executeDomainCommand(const std::string& commandId);
+
     // ---- T03b 收口装配面（策略/名称/会话同步/汇聚源）------------------
 
     /// 绑定运行时名称映射（⑥端口——nullptr＝未绑定如实空值轨；见模块

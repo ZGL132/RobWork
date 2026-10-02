@@ -189,6 +189,9 @@ add_library(sdurws_ird_modeling_plugin STATIC
     plugin/ModelingPanelWidget.cpp   # 五区面板 widget（Q_OBJECT——AUTOMOC 载体）
     plugin/ModelingPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
     plugin/ModelingUiModule.cpp      # ui.md §11.2 模块实现（buildDraftCommand 域侧组装）
+    plugin/ModelingCommandFlows.cpp  # 域命令 UI 流（UI-T41 A2——八命令真实链）
+    plugin/ModelingAuthorityFlows.cpp  # 权威切换流（UI-T41——DhConvert 独立 TU）
+    plugin/ModelingXacroBridge.cpp  # Xacro 展开桥（UI-T41——XacroExpand 独立 TU）
     plugin/ModelingPluginAssembly.cpp)  # WP-24-T03 首版装配门面实现（assembly/ 公共头的私有实现）
 set_target_properties(sdurws_ird_modeling_plugin PROPERTIES
     CXX_STANDARD 17
@@ -518,6 +521,7 @@ add_executable(sdurws_ird_modeling_test
     test/CanonicalBridgeTest.cpp
     test/PackageTest.cpp
     test/ModelDiffTest.cpp
+    test/PluginRegistrarChainTest.cpp  # F-421 真链路 gtest（UI-T41 A1）
     test/PluginPanelTest.cpp
     test/HostMigrationTest.cpp
     test/GoldenDatasetTest.cpp
@@ -604,7 +608,7 @@ endif()
 # ——T-1 允许形态：仅测试目标链 testkit，产品目标不链）。单行链接语句＝
 # 契约测试 T-1 扫描的登记形态约束（testkit 与测试目标名同行可见——
 # reporting 同款）。
-target_link_libraries(sdurws_ird_modeling_test PRIVATE sdurws_ird_modeling sdurws_ird_modeling_plugin sdurws_ird_testkit GTest::gtest)
+target_link_libraries(sdurws_ird_modeling_test PRIVATE sdurws_ird_modeling sdurws_ird_modeling_plugin sdurws_ird_ui sdurws_ird_testkit GTest::gtest)
 
 # 插件私有头解析（测试消费 plugin/*.hpp 呈现模型头——同单元 PRIVATE 面；
 # 插件目标自身的 include 已 PRIVATE 自持，测试目标另行声明同路径）。

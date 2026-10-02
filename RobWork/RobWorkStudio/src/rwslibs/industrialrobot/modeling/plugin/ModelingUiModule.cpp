@@ -9,6 +9,7 @@
 
 #include "ModelingUiModule.hpp"
 
+#include "ModelingCommandFlows.hpp"           // executeModelingCommand（UI-T41 A2——域命令 UI 流）
 #include "ModelingPanelWidget.hpp"
 #include "PolicyNameContexts.hpp"             // RuntimeMapPolicyNameContext（T03b——映射转发形名称上下文，退役草稿桩）
 
@@ -240,6 +241,9 @@ void ModelingUiModule::seedTemplateSession()
         TemplateId{kTemplateIdGeneric6R},
         runtime::InstallationPresetToken::Ground, "demo", diags);
     m_session.draft = outcome.get();
+    // 种子即重置应用侧快照（UI-T41——基线快照/预览视图随草稿重建失效）。
+    m_session.baselineSnapshot.reset();
+    m_session.appliedPreview.reset();
     // baseRevision 留空（nullopt＝提交期解析 tip——§6.2）；种子后就绪
     // 真判定即刻重算（T03b-2b——就绪条不再空态，如实呈现阻塞/缺项）。
     recomputeReadiness();
@@ -283,6 +287,32 @@ void ModelingUiModule::refreshFromSession()
     }
 }
 
+// =====================================================================
+// 域命令 UI 流程执行（UI-T41 A2——宿主注册表处理器的建模侧落点）
+// =====================================================================
+
+bool ModelingUiModule::executeDomainCommand(const std::string& commandId)
+{
+    m_guard.assertOnUiThread();
+    // 流程依赖（宿主侧回调全量接线——flows 零模块类型依赖的测试缝形态）：
+    // reseedTemplate＝模板重种子；recomputeReadiness＝草稿变更后真判定；
+    // selectedAnchor＝面板会话选中锚（estimate/diff 的目标解析输入面）。
+    ModelingFlowDeps deps;
+    deps.reseedTemplate = [this] { seedTemplateSession(); };
+    deps.recomputeReadiness = [this] { recomputeReadiness(); };
+    deps.selectedAnchor = [this]() -> std::optional<core::ObjectId> {
+        return m_panel != nullptr ? m_panel->selectedAnchor() : std::nullopt;
+    };
+    std::string summary;
+    const bool executed = executeModelingCommand(commandId, m_session, deps,
+                                                 qtModelingDialogHost(), summary);
+    if (m_panel != nullptr && !summary.empty()) {
+        // 回执/原因就地呈现（非模态——UX-03/07；命令级反馈与编辑反馈同口）。
+        m_panel->setOutcomeMessage(QString::fromStdString(summary));
+    }
+    return executed;
+}
+
 void ModelingUiModule::recomputeReadiness()
 {
     m_guard.assertOnUiThread();
@@ -322,6 +352,8 @@ void ModelingUiModule::onSessionDetached()
     m_session.baseRevision.reset();
     m_session.draft = ModelingWorkingSet{};
     m_session.readiness.reset();
+    m_session.baselineSnapshot.reset();   // 应用侧快照随会话作废（UI-T41）
+    m_session.appliedPreview.reset();
     {
         std::lock_guard<std::mutex> lock(m_readinessMutex);
         m_readinessSnapshot.reset();
@@ -346,6 +378,10 @@ void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
     // 编辑记录不清零（撤销/重做消费的是修订历史，未应用的域编辑仍归
     // 用户处置——草稿继续以新基线编辑，再应用不误报 Stale）。
     m_session.baseRevision = newTip;
+    // 应用侧快照失效（UI-T41——撤销/重做后的修订内容本模块未知：预览页/
+    // diff 基线以空态诚实呈现，不虚构内容；再次应用即重新定格）。
+    m_session.baselineSnapshot.reset();
+    m_session.appliedPreview.reset();
     recomputeReadiness();
 }
 
@@ -377,6 +413,19 @@ void ModelingUiModule::noteAppliedRevision(
         m_session.draft.rootObjectId = rootObjectId;
     }
     m_session.draft.changes.clear();
+    // 应用侧快照定格（UI-T41——此时草稿内容＝已应用修订内容）：diff-baseline
+    // 的 baseline 侧与预览页 AppliedRevisionView 同源（D-MDL-10——预览仅
+    // 呈现已应用修订；撤销/重做事件使快照失效，见 onRevisionCommitted）。
+    m_session.baselineSnapshot = m_session.draft;
+    {
+        AppliedRevisionView view;
+        view.revision = newBase;
+        view.summaryText =
+            "已应用修订快照：关节 " + std::to_string(m_session.draft.design.joints.size())
+            + " 个、连杆 " + std::to_string(m_session.draft.design.links.size())
+            + " 个（内容定格于应用时刻）";
+        m_session.appliedPreview = std::move(view);
+    }
     recomputeReadiness();  // 应用后基线前移——就绪状态同步刷新
 }
 

@@ -166,6 +166,70 @@ void ModelingPanelWidget::setCommandTitleResolver(CommandTitleResolver resolver)
 void ModelingPanelWidget::setEditTargetProvider(EditTargetProvider provider)
 {
     m_editTarget = std::move(provider);
+    // L-4 重演接线（UI-T41 A4）：基线提供器＝编辑目标现取（零缓存同源），
+    // 刷新出口＝属性区重投影；重演入口经 replayOnRevisionEvent 显式触发
+    // （事件驱动——模块 onRevisionCommitted 转达，无轮询面）。
+    if (m_editTarget) {
+        m_refresh.setSinks(
+            [this]() -> ModelingWorkingSet& {
+                // 返回引用契约（PanelRefresh.hpp）：调用期保证工作集在位——
+                // 重演入口先经 replayOnRevisionEvent 空会话守卫，不触本路。
+                static ModelingWorkingSet empty;
+                ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+                return ws != nullptr ? *ws : empty;
+            },
+            [this]() { refreshPropertiesFromLastWorkingSet(); });
+    }
+}
+
+// ---- UI-T41 A3/A2/A4：预览注入／命令回执／重演入口 ---------------------
+
+void ModelingPanelWidget::setAppliedPreview(
+    const std::optional<AppliedRevisionView>& view)
+{
+    m_appliedPreview = view;
+    if (m_preview == nullptr) { return; }
+    if (!m_appliedPreview.has_value()) {
+        // 空态占位（不伪造内容——D-MDL-10：预览页仅呈现已应用修订）。
+        m_preview->setPlainText(
+            QStringLiteral("尚无已应用修订——预览页仅呈现已应用修订内容（D-MDL-10）。\n"
+                           "编辑后请经顶栏『应用草稿』提交，预览随应用刷新。"));
+        return;
+    }
+    QString text;
+    for (const std::string& line : buildPreviewPage(*m_appliedPreview)) {
+        text += QString::fromStdString(line) + QLatin1Char('\n');
+    }
+    if (text.isEmpty()) {
+        text = QStringLiteral("已应用修订无预览摘要内容。");
+    }
+    m_preview->setPlainText(text);
+}
+
+void ModelingPanelWidget::setOutcomeMessage(const QString& message)
+{
+    m_statusLine->setText(message);
+}
+
+void ModelingPanelWidget::replayOnRevisionEvent()
+{
+    // 空会话守卫（重演需要权威工作集——无会话＝清队列静默返回，不虚构重演）。
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr) {
+        m_refresh.clearPending();
+        return;
+    }
+    if (m_refresh.pending().empty() && !m_refresh.manualInterventionRequired()) {
+        return;  // 无待重演编辑＝零开销（事件驱动——无刷新风暴）
+    }
+    const ReplayOutcome outcome = m_refresh.onRevisionEvent(std::nullopt);
+    if (outcome == ReplayOutcome::BlockedAtEdit) {
+        const auto blockedAt = m_refresh.blockedAtIndex();
+        setOutcomeMessage(QStringLiteral("修订刷新后存在 %1 条未应用编辑待手工处置"
+                                         "（下标 %2 起重演被拒）——请重新编辑或放弃")
+                              .arg(m_refresh.pending().size())
+                              .arg(blockedAt.has_value() ? qint64(*blockedAt) : qint64(-1)));
+    }
 }
 
 // ---- 区①建模结构树 ---------------------------------------------------
@@ -287,6 +351,20 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
         item->setText(kAnchorColumn, row.jumpTarget.has_value()
                                          ? QString::fromStdString(row.jumpTarget->toCanonical())
                                          : QString());  // 无主体＝不可点击定位
+        m_readinessItems->addTopLevelItem(item);
+    }
+
+    // ---- 区④补：L0～L11 分层结果行（UI-T41 A5——层结论保序呈现；层行
+    //      无锚不可点击定位——定位走逐项行 jumpTarget）。
+    for (std::size_t i = 0; i < bar.layerResults.size(); ++i) {
+        const LayerResultRow& layer = bar.layerResults[i];
+        auto* item = new QTreeWidgetItem(m_readinessItems);
+        item->setText(kLabelColumn,
+                      QStringLiteral("L%1 %2：%3")
+                          .arg(i)
+                          .arg(layer.passed ? QStringLiteral("通过")
+                                            : QStringLiteral("未通过"),
+                               QString::fromStdString(layer.note)));
         m_readinessItems->addTopLevelItem(item);
     }
 

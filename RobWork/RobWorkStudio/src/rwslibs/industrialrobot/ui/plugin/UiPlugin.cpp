@@ -110,10 +110,20 @@ constexpr const char* kPluginLogDirName = "ird-ui-plugin-logs";
 /// content submitCommand 对 outcome.messageKey 的呈现值源）。
 constexpr const char* kModelingFlowNotAssembledKey = "cmd.modeling.flow-not-assembled";
 
-/// 真实执行面已落位的域命令（WP-24-T03b 诚实边界—— modeling §9.7.3 十条
-/// 中唯一具备域内已落位能力的命令：模板工厂重种子；其余九条的域流程归
-/// 后续建模任务，提交走"域流程未装配"诚实反馈，不虚构执行成功）。
-constexpr const char* kModelingNewFromTemplateId = "modeling.new-from-template";
+/// 真实执行面已落位的建模域命令（UI-T41 A2——modeling.md §9.7.3 十条中
+/// 八条经 ModelingCommandFlows 装配真实链；estimate-properties 与
+/// generate-placeholder-geometry 的域链依赖几何投影面（批次 C）——保持
+/// 注册期禁用的诚实路径（requirements 7/2 同款先例），不虚构可执行）。
+bool isAssembledModelingCommand(const std::string& id)
+{
+    static const std::set<std::string> kAssembled{
+        "modeling.new-from-template", "modeling.import-urdf",
+        "modeling.import-xacro",      "modeling.switch-authority",
+        "modeling.diff-baseline",     "modeling.export-package",
+        "modeling.import-package",    "modeling.reset-home-zero",
+    };
+    return kAssembled.count(id) != 0;
+}
 
 /// UI-T32 C 批次已装配的需求域命令（组1：导出副本/模板/镜像/阵列/重生成
 /// ——flows 装配 RequirementsCommandFlows 落位；组2 导入与组3 捕获/拾取
@@ -742,25 +752,21 @@ void IrdWorkbenchHostPlugin::initialize()
             for (const CommandDescriptor& desc : descriptor->commands) {
                 WorkbenchContentDeps::DomainCommandEntry entry;
                 entry.descriptor = desc;
-                entry.assembled = (desc.id == kModelingNewFromTemplateId)
+                entry.assembled = (domainKey == std::string("modeling")
+                                   && isAssembledModelingCommand(desc.id))
                                   || (domainKey == std::string("requirements")
                                           && isAssembledRequirementCommand(desc.id));
-                if (desc.id == kModelingNewFromTemplateId) {
-                    // 真实执行面（域内已落位能力）：模板草稿重种子＋就绪
-                    // 重算——种子内部走真实 RobotDesignTemplateFactory::createDraft。
-                    entry.handler = [this](const std::vector<CommandParameter>&) {
+                if (domainKey == std::string("modeling")
+                    && isAssembledModelingCommand(desc.id)) {
+                    // UI-T41 A2：已装配的建模域命令——经装配门面执行真实
+                    // UI 流程（对话框＋内核实现类；路由唯一，requirements
+                    // executeDomainCommand 同构先例）。
+                    const std::string commandId = desc.id;
+                    entry.handler = [this, commandId](
+                                        const std::vector<CommandParameter>&) {
                         CommandOutcome out;
-                        m_domains->modeling.seedTemplateSession();
-                        if (m_hostStatusBar != nullptr) {
-                            m_hostStatusBar->showMessage(
-                                QString::fromUtf8("已从模板重建建模草稿（generic-6r）"),
-                                4000);
-                        }
-                        if (m_diag.pipeline) {
-                            m_diag.pipeline->logDev(kPluginDevChannel,
-                                                    "domain command executed: modeling.new-from-template");
-                        }
-                        out.accepted = true;
+                        out.accepted = true;  // 流程已派发（回执/原因经面板状态行）
+                        m_domains->modeling.executeDomainCommand(commandId);
                         return out;
                     };
                 } else if (domainKey == std::string("requirements")
