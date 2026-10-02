@@ -3300,7 +3300,30 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
             std::cout << "[ird-ui-smoke] step6 teardown=" << (step6Ok ? "ok" : "fail")
                       << std::endl;
 
-            exitCode = (opened && treeOk && step3Ok && step4Ok && step5Ok && step6Ok)
+            // 步骤 7（UI-T41 A1——F-421 真链路断言）：真实建模装配描述符经
+            // registrar 登记的报告对账（门禁 T 规则禁止测试目标跨单元直链
+            // 产品目标，真链路 gtest 不可落位——宿主冒烟通道是唯一合法的
+            // 真实装配观测面；断言 Ok/panels=1/commands=10——十条连字符
+            // 命令 id 过句法校验的直接证据）。
+            bool step7Ok = false;
+            std::size_t modelingCommands = 0;
+            if (m_domains != nullptr) {
+                for (const ui::PluginAssemblyReport& report :
+                     bundleAboutSource(*m_domains)->assemblyReports()) {
+                    if (report.pluginId == "modeling") {
+                        step7Ok = report.ok && report.panelsLoaded == 1
+                                  && report.commandsRegistered == 10;
+                        modelingCommands = report.commandsRegistered;
+                        break;
+                    }
+                }
+            }
+            std::cout << "[ird-ui-smoke] step7 modeling-assembly="
+                      << (step7Ok ? "ok" : "fail") << " commands="
+                      << modelingCommands << std::endl;
+
+            exitCode = (opened && treeOk && step3Ok && step4Ok && step5Ok
+                        && step6Ok && step7Ok)
                            ? 0 : 1;
         } catch (const std::exception& smokeError) {
             std::cout << "[ird-ui-smoke] exception: " << smokeError.what()
