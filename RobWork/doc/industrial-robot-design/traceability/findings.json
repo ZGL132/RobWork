@@ -4595,6 +4595,16 @@
       "title": "生产装配从未注册任何域命令处理器：registerRequirementCommandHandlers/registerModelingCommandHandlers 仅被各自单测调用，studio 生产路径 draft.apply 的域信封提交恒被 S1 以 unknown-command 拒绝——『应用修改』对需求域从未真实产生修订，历次冒烟的 requirements-applied 断言只查 Submitted 属假通过。",
       "owner": "requirements 半区随 UI-T39 修复闭环（宿主级首次真实 committed＋首应用不可逆诚实禁用实证）；modeling 半区（registerModelingCommandHandlers 需 HandlerServices 服务集装配：断言端口/策略锚）与顶层 harness 形态的注册接线仍 open——归建模域任务与 harness 收口任务",
       "resolution": "UI-T39 修复 requirements 半区（冒烟 step9 实证 committed=1）；modeling/harness 残余面转登本条 owner 列开放项。编号顺延自 F-460。"
+    },
+    {
+      "id": "F-462",
+      "source": "UI-T39 验收 attempt 1（2026-10-02——4.5 变异测试：setWritable 内 refreshLifecycleAndEmptyStates 调用移除后 WritableSwitchRefreshesAll_UI_T39 仍通过）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "WritableSwitchRefreshesAll_UI_T39 用例对『setWritable 不再全量刷新生命周期按钮』的变异不敏感：使能断言疑似被空态互斥显隐等其他呈现路径掩盖——setWritable 全量刷新契约（L-R12 切换后按钮态零残留）缺一记直接红验的强断言。",
+      "owner": "requirements gui 测试（UI-T40 序列候选：拆分生命周期刷新为可独立驱动面或补『使能位直接受 setWritable 驱动』的强断言——变异记录见 acc/ui-t39/1 验收记录 4.5 节）",
+      "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T39 合入。编号顺延自 F-461。"
     }
   ]
 }
