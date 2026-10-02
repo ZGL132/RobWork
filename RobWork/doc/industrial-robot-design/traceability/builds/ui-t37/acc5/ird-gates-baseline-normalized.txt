@@ -1,0 +1,39 @@
+IND/ui/include/sdurws/ird/ui/FlowLayout.hpp
+IND/ui/include/sdurws/ird/ui/ICommandRegistry.hpp
+IND/ui/include/sdurws/ird/ui/IGlobalShortcutRegistry.hpp
+IND/ui/include/sdurws/ird/ui/UiTheme.hpp
+IND/ui/src/AboutDialog.cpp
+IND/ui/src/CommandInteractionBridge.cpp
+IND/ui/src/CommandPalette.cpp
+IND/ui/src/CommandPalette_p.hpp
+IND/ui/src/DiagnosticPresentation.cpp
+IND/ui/src/IndustrialProjectTree.cpp
+IND/ui/src/ParamTablePanel.cpp
+IND/ui/src/PolicySummaryCard.cpp
+IND/ui/src/PropertyInspector.cpp
+IND/ui/src/ShellSupport.cpp
+IND/ui/src/UiTheme.cpp
+IND/ui/src/View3DPlaceholder.cpp
+IND/ui/src/WorkbenchContent.cpp
+IND/ui/src/WorkbenchContent_p.hpp
+IND/ui/src/WorkbenchShell.cpp
+IND/ui/src/WorkbenchShell_p.hpp
+IRD-GATE-R1
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_kinematics_app 鈫?sdurws_ird_kinematics_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_kinematics_plugin 鈫?sdurws_ird_kinematics锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_modeling_app 鈫?sdurws_ird_modeling_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_modeling_plugin 鈫?sdurws_ird_modeling锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_requirements_app 鈫?sdurws_ird_requirements_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_requirements_plugin 鈫?sdurws_ird_requirements锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R3
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Core锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Gui锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Widgets锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Core锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Gui锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Widgets锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R4
+IRD-GATE-R5
+IRD-GATE-SUB
+IRD-GATE-T1
+IRD-GATE-T2
