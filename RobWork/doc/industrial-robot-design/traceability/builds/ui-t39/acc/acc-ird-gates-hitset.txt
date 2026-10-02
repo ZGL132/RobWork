@@ -1,0 +1,39 @@
+IRD-GATE-R1
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_kinematics_app 鈫?sdurws_ird_kinematics_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_kinematics_plugin 鈫?sdurws_ird_kinematics锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_modeling_app 鈫?sdurws_ird_modeling_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_modeling_plugin 鈫?sdurws_ird_modeling锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_requirements_app 鈫?sdurws_ird_requirements_plugin锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R1: 涓氬姟鍩熺洰鏍囦簰閾撅細sdurws_ird_requirements_plugin 鈫?sdurws_ird_requirements锛圓RC-02锛汻-1 鏃犱緥澶栵級
+IRD-GATE-R3
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Core锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Gui锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_studio 閾炬帴 Qt 搴?Qt6::Widgets锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Core锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Gui锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: L2 鐩爣 sdurws_ird_ui 閾炬帴 Qt 搴?Qt6::Widgets锛圢FR-MNT-01锛氳绠楁牳蹇冮浂 Qt锛涗緥澶栦粎 ui 鐣岄潰鐩爣褰㈡€侊級
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/FlowLayout.hpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/ICommandRegistry.hpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/IGlobalShortcutRegistry.hpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/include/sdurws/ird/ui/UiTheme.hpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/AboutDialog.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandInteractionBridge.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/CommandPalette_p.hpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/DiagnosticPresentation.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/IndustrialProjectTree.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PolicySummaryCard.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/PropertyInspector.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ShellSupport.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/UiTheme.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/View3DPlaceholder.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchContent_p.hpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell.cpp
+IRD-GATE-R3: ui 浜у搧闈㈢枒浼煎寘鍚?Qt 绫诲ご锛圦+澶у啓绾﹀畾锛夛細D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/WorkbenchShell_p.hpp
+IRD-GATE-R4
+IRD-GATE-R5
+IRD-GATE-SUB
+IRD-GATE-T1
+IRD-GATE-T2

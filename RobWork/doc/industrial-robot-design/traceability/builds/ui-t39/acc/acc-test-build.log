@@ -1,0 +1,1838 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_core_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_core_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_diagnostics_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_diagnostics_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_evidence_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_evidence_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_execution_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_execution_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_io_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_io_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_kinematics_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_kinematics_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_modeling_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_modeling_gui_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_modeling_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_policy_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_policy_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_project_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_project_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_requirements_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_requirements_gui_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_requirements_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_runtime_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_testkit_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_ui_contract_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+MSBUILD : error MSB1008: 只能指定一个项目。
+    完整命令行:“"D:/software/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" sdurws_ird_ui_gui_test.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m”
+  响应文件追加的开关: 
+“”来自“D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.rsp”
+开关:.vcxproj
+
+若要显示开关的语法，请键入“MSBuild -help”
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_ui_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  ShellModelTest.cpp
+  StatusWordModelTest.cpp
+  View3DContractTest.cpp
+  CommandRegistryModelTest.cpp
+  ShortcutRegistryModelTest.cpp
+  PolicySummaryCardTest.cpp
+  FormEditModelTest.cpp
+  StageNavigationModelTest.cpp
+  AboutDialogModelTest.cpp
+  SessionControllerModelTest.cpp
+  DraftControllerModelTest.cpp
+  DiagPresentationModelTest.cpp
+  TaskPresentationModelTest.cpp
+  CommandInteractionBridgeTest.cpp
+  HostControllerModelTest.cpp
+  RuntimePublishBridgeTest.cpp
+  SelectionServiceTest.cpp
+  IndustrialProjectTreeModelTest.cpp
+  PropertyInspectorModelTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_core_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  BuildRedLineTest.cpp
+  IdentityTest.cpp
+  DigestTest.cpp
+  ConventionValueSemanticsTest.cpp
+  ProvenanceTest.cpp
+  UnitsTest.cpp
+  CompareTest.cpp
+  EvaluationTest.cpp
+  DiagDataTest.cpp
+  EventsTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\gtest_main.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_diagnostics_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  LinkageContractTest.cpp
+  ConfirmableProjectStubTest.cpp
+  CatalogHostTraceStubTest.cpp
+  ScriptedDiagSourceTest.cpp
+  DiagContractCheckTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_diagnostics_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  BuildRedLineTest.cpp
+  StableCodeRegistryTest.cpp
+  CatalogFactoryTest.cpp
+  CatalogLifecycleTest.cpp
+  ConfirmableTest.cpp
+  AggregationTest.cpp
+  LoggingTest.cpp
+  RedactionTest.cpp
+  CollaborationQueryTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_evidence_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  EnvelopeContractTest.cpp
+  EnvelopeAccessorContractTest.cpp
+  SliceFixtureContractTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_evidence_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_evidence_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  BuildRedLineTest.cpp
+  ErrorsTest.cpp
+  DependencyTest.cpp
+  SnapshotTest.cpp
+  SliceTest.cpp
+  EvidenceTest.cpp
+  VerdictTest.cpp
+  EnvelopeTest.cpp
+  CurrentnessTest.cpp
+  CompatibilityTest.cpp
+  EvaluatorTest.cpp
+  EvaluatorPortSuiteTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_execution_worker
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  main.cpp
+  ChannelProtocol.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(54,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_worker.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(54,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(55,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_worker.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(55,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_worker.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(299,37):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\worker\main.cpp(299,37):
+              请参阅 "`anonymous-namespace'::parseArgs" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  sdurws_ird_execution_worker.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_execution_worker.exe
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_execution_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  ContractTestMain.cpp
+  LinkageContractTest.cpp
+  IdentityVocabularyContractTest.cpp
+  ArchiveCollaborationContractTest.cpp
+  EventBusDeliveryContractTest.cpp
+  WorkerProcessContractTest.cpp
+  CacheJudgeContractTest.cpp
+  ArchiveFaultContractTest.cpp
+  RecoveryProcessContractTest.cpp
+  RecoveryChild.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp(53,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp(53,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp(54,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp(54,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp(53,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp(53,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp(54,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp(54,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\RecoveryProcessContractTest.cpp(61,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\RecoveryProcessContractTest.cpp(61,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\RecoveryProcessContractTest.cpp(62,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\RecoveryProcessContractTest.cpp(62,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(72,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(72,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(73,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp(73,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(70,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(70,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(71,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(71,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(718,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+  sdurws_ird_execution_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_execution_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_execution_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  TaskStateMachineTest.cpp
+  CancelProtocolTest.cpp
+  RunRegistryAdmissionTest.cpp
+  SchedulerEventBusTest.cpp
+  ChannelProtocolTest.cpp
+  ResourceGovernanceTest.cpp
+  CheckpointCacheTest.cpp
+  ContractSuiteFacilitiesTest.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(62,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(62,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(63,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\CheckpointCacheTest.cpp(63,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(52,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(52,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(53,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(53,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\SchedulerEventBusTest.cpp(61,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\SchedulerEventBusTest.cpp(61,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\SchedulerEventBusTest.cpp(62,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\SchedulerEventBusTest.cpp(62,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\ResourceGovernanceTest.cpp(77,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\ResourceGovernanceTest.cpp(77,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\ResourceGovernanceTest.cpp(78,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\ResourceGovernanceTest.cpp(78,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1236,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1258,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_io_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  ContractTestMain.cpp
+  PackageContractTest.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp(719,63): warning C4129: “ ：: 不可识别的字符转义序列 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\io\sdurws_ird_io_contract_test.vcxproj]
+  sdurws_ird_io_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_io_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\bz2.dll -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\z.dll -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\z.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_io_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  TestMainReport.cpp
+  SafePathTest.cpp
+  BudgetTest.cpp
+  IoDiagnosticsTest.cpp
+  CsvTest.cpp
+  JsonTest.cpp
+  ZipChannelTest.cpp
+  ResourceIoTest.cpp
+  ResourceSolidifyTest.cpp
+  PackageTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_io_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_io_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_kinematics_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  PoseMetricsEvaluatorContractTest.cpp
+  TaskPointIkEvaluatorContractTest.cpp
+  TaskPointsBatchEvaluatorContractTest.cpp
+  RegionCoverageEvaluatorContractTest.cpp
+  CollisionConsistencyContractTest.cpp
+  CommandFacadeContractTest.cpp
+  PluginGraphContractTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_kinematics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_kinematics_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt
+  TestMainReport.cpp
+  GoldenKinTest.cpp
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  FkTest.cpp
+  IkTest.cpp
+  TaskPointsBatchTest.cpp
+  RegionCoverageTest.cpp
+  CommandsTest.cpp
+  SolutionSetViewTest.cpp
+  ExportTest.cpp
+  RecomputeTest.cpp
+  AnalysisConfigTest.cpp
+  RenderTest.cpp
+  PluginPanelTest.cpp
+  HostMigrationTest.cpp
+  CollisionPortTest.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\CommandsTest.cpp(590,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\CommandsTest.cpp(611,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp(1215,45): warning C4804: “>”: 在操作中使用类型“bool”不安全 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\assembly\sdurws\ird\kinematics\KinematicsPluginAssembly.hpp(53,7): warning C4099: “sdurws::ird::kinematics::KinModuleSessionState”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/PluginPanelTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(329,8):
+      参见“sdurws::ird::kinematics::KinModuleSessionState”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(329,8): warning C4099: “sdurws::ird::kinematics::KinModuleSessionState”: 类型名称以前使用“class”现在使用的是“struct” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/HostMigrationTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\plugin\KinPanelTypes.hpp(329,8):
+      参见“sdurws::ird::kinematics::KinModuleSessionState”的声明
+  
+  sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_modeling_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  DescriptionBridgeContractTest.cpp
+  CommandPipelineContractTest.cpp
+  CompileBridgeContractTest.cpp
+  GoldenPeerContractTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_modeling_gui_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  TestMainReport.cpp
+  ModelingPanelGuiTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_modeling_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_modeling_gui_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_modeling_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt
+  TestMainReport.cpp
+  ObjectTypesTest.cpp
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  RobotDesignTest.cpp
+  PartsTest.cpp
+  CodecTest.cpp
+  PropertyEstimationTest.cpp
+  ImportTest.cpp
+  XacroExpandTest.cpp
+  TemplateTest.cpp
+  BasePlacementEditTest.cpp
+  DhConvertTest.cpp
+  CanonicalBridgeTest.cpp
+  PackageTest.cpp
+  ModelDiffTest.cpp
+  PluginPanelTest.cpp
+  HostMigrationTest.cpp
+  GoldenDatasetTest.cpp
+  GoldenTemplateTest.cpp
+  GoldenImportTest.cpp
+  ReadinessTest.cpp
+  PluginModuleT03BTest.cpp
+  HostMigrationModuleTest.cpp
+  CommandHandlersTest.cpp
+  DhConvertEquivalenceTest.cpp
+  PartObjectCommandTest.cpp
+  PackageWorkCellTest.cpp
+  GoldenDhEquivalenceTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_modeling_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\xerces-c_3_3.dll -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\xerces-c_3_3.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\freeglut.dll -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\freeglut.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_policy_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  PolicyCodecFixtureContractTest.cpp
+  PolicyTestDoubleBoundaryTest.cpp
+  PolicyContractDoublesTest.cpp
+  PolicyProofMaterialContractTest.cpp
+  CollisionAnalyticDatasetTest.cpp
+  mocs_compilation_Release.cpp
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(232,40):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(237,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(244,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(253,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(258,30):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(264,5):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionAnalyticDatasetTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(269,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(232,40):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(237,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(244,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(253,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(258,30):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(264,5):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyContractDoublesTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(269,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(232,40):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::createModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(237,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::destroyModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(244,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::addGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(253,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::removeGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(258,30):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(264,5):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::getGeometrys”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(306,7): warning C4250: “sdurws::ird::policy::testdoubles::ScriptedDistanceBackend”: 通过域控制继承“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/PolicyProofMaterialContractTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\sdurws\ird\policy\testdouble\PolicyTestDoubles.hpp(269,10):
+      参见“sdurws::ird::policy::testdoubles::ScriptedCollisionBackend::clear”的声明
+  
+  sdurws_ird_policy_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_policy_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt
+  BuildRedLineTest.cpp
+  PolicySetTest.cpp
+  PolicyInputTest.cpp
+  PolicyParsingTest.cpp
+  PolicyPortTest.cpp
+  DiagnosticsTest.cpp
+  CollisionSessionTest.cpp
+  CollisionEvaluationTest.cpp
+  JointLimitsTest.cpp
+  CompatibilityTest.cpp
+  mocs_compilation_Release.cpp
+  #include <rw/common/Exception.hpp> is deprecated use #include <rw/core/Exception.hpp> instead
+  #include <rw/common/macros.hpp> is deprecated use #include <rw/core/macros.hpp> instead
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::createModel” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(206,40):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::createModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::destroyModel” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(211,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::destroyModel”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::addGeometry” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(218,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::addGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::removeGeometry” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(227,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::removeGeometry”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::getGeometryIDs” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(232,30):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::getGeometryIDs”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::getGeometrys” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(238,5):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::getGeometrys”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(278,7): warning C4250: “`anonymous-namespace'::ScriptedDistanceBackend”: 通过域控制继承“`anonymous-namespace'::ScriptedCollisionBackend::`anonymous-namespace'::ScriptedCollisionBackend::clear” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\policy\sdurws_ird_policy_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\CollisionEvaluationTest.cpp(243,10):
+      参见“`anonymous-namespace'::ScriptedCollisionBackend::clear”的声明
+  
+  sdurws_ird_policy_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_project_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  LinkageContractTest.cpp
+  LockContractTest.cpp
+  CommandContractTest.cpp
+  ArchiveContractTest.cpp
+  ProcessCrashContractTest.cpp
+  ProcessLockContractTest.cpp
+  Tx2DiagnosticRecordContractTest.cpp
+  Tx15Child.cpp
+  StubHandlers.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveContractTest.cpp(383,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_contract_test.vcxproj]
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_contract_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/Tx15Child.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx15Child.cpp(301,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\Tx15Child.cpp(301,27):
+              请参阅 "sdurws::ird::project::tx15::`anonymous-namespace'::runCrashCommitChild" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_project_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  BuildRedLineTest.cpp
+  AtomicFileTest.cpp
+  StoreLockTest.cpp
+  PathCanonicalTest.cpp
+  PersistenceFormatTest.cpp
+  ObjectStoreTest.cpp
+  RevisionIndexTest.cpp
+  TxEngineTest.cpp
+  ProjectStoreTest.cpp
+  QueryPortTest.cpp
+  CommandServiceTest.cpp
+  DraftServiceTest.cpp
+  UndoRedoServiceTest.cpp
+  ArchiveServiceTest.cpp
+  Tx11Tx13SuiteTest.cpp
+  StubHandlers.cpp
+  TestMainReport.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(416,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(424,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(683,33): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(835,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ArchiveServiceTest.cpp(845,31): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(420,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(473,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PathCanonicalTest.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(150,27):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\PathCanonicalTest.cpp(148,9):
+              请参阅 "PathCanonicalTest_SameProject_DifferentSpellings_CanonicalizeEqual_Test::TestBody" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(799,23): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1010,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1015,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1017,9): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1024,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1026,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1028,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1048,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_requirements_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  PeerFaceContractTest.cpp
+  PluginGraphContractTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  sdurws_ird_requirements_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_requirements_gui_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  TestMainReport.cpp
+  RequirementsSessionGuiTest.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\RequirementsCommandFlows.hpp(33,8): warning C4099: “sdurws::ird::requirements::IRequirementEditSink”: 类型名称以前使用“class”现在使用的是“struct” [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\requirements\sdurws_ird_requirements_gui_test.vcxproj]
+  (编译源文件“../../../../../../acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/RequirementsSessionGuiTest.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\requirements\plugin\PanelEditFlow.hpp(70,7):
+      参见“sdurws::ird::requirements::IRequirementEditSink”的声明
+  
+  sdurws_ird_requirements_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_requirements_gui_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  sdurws_ird_requirements_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_requirements_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt
+  TestMainReport.cpp
+  ObjectTypesTest.cpp
+  ErrorsTest.cpp
+  DiagCodesTest.cpp
+  BuildRedLineTest.cpp
+  RequirementTypesTest.cpp
+  CodecTest.cpp
+  ServicesTest.cpp
+  SamplingTest.cpp
+  EditorTest.cpp
+  ImportTest.cpp
+  ReadinessTest.cpp
+  CommandHandlersTest.cpp
+  OrientationResolutionTest.cpp
+  CaptureTest.cpp
+  TemplateArrayTest.cpp
+  PluginPanelTest.cpp
+  HostMigrationTest.cpp
+  GoldenDatasetsContractTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_runtime_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  BuildRedLineTest.cpp
+  ErrorsTest.cpp
+  SourcesTest.cpp
+  ExpectedTest.cpp
+  DescriptionTest.cpp
+  DescriptionValidatorTest.cpp
+  CanonicalModelTest.cpp
+  CodecTest.cpp
+  NameMapTest.cpp
+  BaseWorldTransformTest.cpp
+  WorkCellCompilerTest.cpp
+  DynamicWorkCellCompilerTest.cpp
+  SnapshotTest.cpp
+  CacheKeyTest.cpp
+  CompilerTest.cpp
+  ContractSuiteTest.cpp
+  HostPresentationViewTest.cpp
+  GoldenDataLintTest.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(65,9): warning C4005: “NOMINMAX”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(65,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(66,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\ContractSuiteTest.cpp(66,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_testkit_prochelper
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  main.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_testkit_prochelper.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_testkit_prochelper.exe
+  Automatic MOC for target sdurws_ird_testkit_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPathsTest.cpp
+  JsonLiteTest.cpp
+  FaultTest.cpp
+  DatasetTest.cpp
+  ToleranceProfileTest.cpp
+  CheckTest.cpp
+  ContractCheckTest.cpp
+  SetCheckTest.cpp
+  FixtureTest.cpp
+  ReportTest.cpp
+  ProcessRunnerTest.cpp
+  CoreIntegrationExampleTest.cpp
+  TestMain.cpp
+  BuildRedLineTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Auto build dll exports
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_kinematics.dll
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_control.dll
+  Auto build dll exports
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graphics.dll
+  Auto build dll exports
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_simulation.dll
+  Auto build dll exports
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_trajectory.dll
+  Auto build dll exports
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_task.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_policy
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_policy.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\pqp.lib
+  Auto build dll exports
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_invkin.dll
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_algorithms.dll
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_graspplanning.dll
+  Auto build dll exports
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanning.dll
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_plugin.dll
+  Auto build dll exports
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_assembly.dll
+  Auto build dll exports
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_opengl.dll
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_pathplanners.dll
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\libs\Release\yaobi.lib
+  Auto build dll exports
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_kinematics
+  sdurws_ird_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_kinematics.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_kinematics_plugin
+  sdurws_ird_kinematics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_kinematics_plugin.lib
+  Automatic MOC for target sdurws_ird_modeling
+  sdurws_ird_modeling.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_modeling.lib
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_modeling_plugin.lib
+  Automatic MOC for target sdurws_ird_requirements
+  sdurws_ird_requirements.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  sdurws_ird_requirements_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_requirements_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  LinkageContractTest.cpp
+  SessionContractTest.cpp
+  DraftContractTest.cpp
+  InteractionTaskContractTest.cpp
+  PeerBridgeContractTest.cpp
+  Section12RegistryTest.cpp
+  PresentationBridgeContractTest.cpp
+  HostIntegrationContractTest.cpp
+  DomainModuleRunner.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_ui_gui_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t39-1-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  BuildPlacementTest.cpp
+  WorkbenchShellGuiTest.cpp
+  WorkbenchContentGuiTest.cpp
+  CommandPaletteGuiTest.cpp
+  PolicySummaryCardGuiTest.cpp
+  ParamTablePanelGuiTest.cpp
+  AboutDialogGuiTest.cpp
+  IndustrialProjectTreeGuiTest.cpp
+  PropertyInspectorGuiTest.cpp
+  HostIntegrationGuiTest.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(174,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_gui_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(172,23): warning C4996: 'QApplication::setActiveWindow': Use QWidget::activateWindow() instead. [D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_gui_test.vcxproj]
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_ui_test
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t39-1-build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
