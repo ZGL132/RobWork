@@ -1421,6 +1421,42 @@ TEST_F(RequirementsSessionGuiTest, ConditionTagAndWizard_UI_T37)
     EXPECT_EQ(created->level, RequirementLevel::Should) << "可选等级未落条目";
 }
 
+/// UI-T37 返工④：工况页单表整合＋详情卡（所有者指令——原上下叠放的
+/// 工况表＋必验清单预览表合并为单表『是否必验』列，腾出的下半部改为
+/// 『工况详情与节拍配置』卡，结构同工位/区域页 QGroupBox 卡）。
+TEST_F(RequirementsSessionGuiTest, ConditionSingleTableDetailCard_UI_T37R4)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 断言①：单表末显示列列名＝『是否必验』（更名——原『验收』）。
+    QTreeWidget* table = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_condition_table"));
+    ASSERT_NE(table, nullptr);
+    EXPECT_EQ(table->headerItem()->text(3), QStringLiteral("是否必验"));
+
+    // 断言②：必验清单预览表已撤销——面板内不存在『必验工况』表头的树
+    // （整合后必验事实只经单表 Tag 列与检查器必验行呈现）。
+    const QList<QTreeWidget*> trees = m_panel->findChildren<QTreeWidget*>();
+    for (const QTreeWidget* t : trees) {
+        EXPECT_NE(t->headerItem()->text(0), QStringLiteral("必验工况"))
+            << "必验清单预览表未撤销（单表整合未生效）";
+    }
+
+    // 断言③：详情卡存在且唯一（标题走 UiText 词表——键
+    // panel.requirements.card.condition-detail.title；面板全局 ird_card
+    // 集合内按标题计数，跨页不重名）。
+    int detailCards = 0;
+    const QList<QGroupBox*> cards =
+        m_panel->findChildren<QGroupBox*>(QStringLiteral("ird_card"));
+    for (const QGroupBox* card : cards) {
+        if (card->title() == QStringLiteral("工况详情与节拍配置")) {
+            ++detailCards;
+        }
+    }
+    EXPECT_EQ(detailCards, 1) << "工况详情卡缺失或重复（found=" << detailCards << "）";
+}
+
 /// UI-T37 R2 校验看板与语义标签（acceptance 5）：状态卡二态（✔/⚠＋阻塞
 /// 计数）、逐项层列语义标签（原始码入 Tooltip）、修订说明一行化（成段
 /// 说明收 Tooltip——『修订只增不改』关键词保留）。

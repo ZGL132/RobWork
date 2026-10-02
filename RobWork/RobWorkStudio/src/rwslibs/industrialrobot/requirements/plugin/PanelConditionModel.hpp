@@ -1,22 +1,24 @@
 /**
  * @file   PanelConditionModel.hpp
- * @brief  工况面板呈现模型（零 Qt）——工况表＋负载/事件/节拍/适用范围
- *         投影＋必验清单预览（RequirementProfile 投影）（卡 §9.8 面板表
- *         第 4 行）。
+ * @brief  工况面板呈现模型（零 Qt）——工况表（含是否必验 Tag 列）＋
+ *         负载/事件/节拍/适用范围投影（卡 §9.8 面板表第 4 行）。
  *
  * 设计依据：
- *   - units/requirements.md §9.8（面板组成表第 4 行——"工况表＋负载/事件/
- *     节拍/适用范围编辑＋必验清单预览（RequirementProfile 投影）"；消费
- *     契约＝§6.1/§9.4）、§4.5（OperatingCondition 字段表）、§6.2（必验
+ *   - units/requirements.md §9.8（面板组成表第 4 行；UI-T37 返工④增量
+ *     修订——原"必验清单预览（RequirementProfile 投影）"独立表并入工况表
+ *     『是否必验』列，投影函数随之撤销）；消费契约＝§6.1/§9.4）、§4.5
+ *     （OperatingCondition 字段表）、§6.2（必验
  *     冻结 schema——resolveRequiredCases P-EV-9 唯一实现点）、§4.8
  *     （RequirementProfile 派生档——deriveRequirementProfile 派生入口）
  *   - 需求 REQ-04（工况要求值）、P-EV-9（必验派生唯一——I-REQ-9）；任务
  *     契约 tasks/foundation/WP-14-T08.json acceptance 1（工况面板行）
  *
- * 背景说明（零计算逻辑——acceptance 3）：必验清单是**派生档**（P-EV-9
- * 冻结规则 mandatory≡(level==Must)）——本面板不复制派生规则，必验预览经
- * deriveRequirementProfile/IOperatingConditionService::resolveRequiredCases
- * 域函数现算（P-EV-9 单点，NFR-MNT-04）；负载四态字段（SourcedValue）
+ * 背景说明（零计算逻辑——acceptance 3）：必验事实是**派生档**（P-EV-9
+ * 冻结规则 mandatory≡(level==Must)∧enabled）——本面板不复制派生规则，
+ * 工况表『是否必验』列经
+ * IOperatingConditionService::resolveRequiredCases
+ * 域函数现算（P-EV-9 单点，NFR-MNT-04；UI-T37 返工④起不再有独立清单
+ * 投影）；负载四态字段（SourcedValue）
  * 呈现"未提供/不适用"占位（缺失≠零，ERR-01 纪律）；适用范围/事件绑定
  * 全部直投（悬空引用的判定归就绪层 R4，呈现层不代判）。
  *
@@ -33,7 +35,7 @@
 
 #include <sdurws/ird/core/Identity.hpp>  // core::ObjectId（条目锚）
 #include <sdurws/ird/requirements/RequirementTypes.hpp>  // OperatingCondition/RequiredCaseEntry/ConditionPayload 等
-#include <sdurws/ird/requirements/Services.hpp>  // IOperatingConditionService/deriveRequirementProfile（P-EV-9 单点）
+#include <sdurws/ird/requirements/Services.hpp>  // IOperatingConditionService/resolveRequiredCases（P-EV-9 单点）
 #include <sdurws/ird/ui/FormEditCommon.hpp>  // ui::QuantityFieldSpec/ParamEditSet（B2 字段编辑——工位模型同款公共件）
 #include "PanelStationModel.hpp"  // StationFieldRow/StationFieldEnablement（检查器行模型复用——同目录插件私有头）
 
@@ -142,44 +144,10 @@ OperatingCondition applyConditionEnumEdit(const OperatingCondition& base,
                                           std::vector<std::string>& known);
 
 // =====================================================================
-// 必验清单预览（卡 §9.8 第 4 行"必验清单预览（RequirementProfile 投影）"）
+// （UI-T37 返工④）必验清单预览投影已撤销——必验事实改由工况表
+// 『是否必验』列直投（RequirementsPanelWidget 经 resolveRequiredCases
+// 单条目解析，P-EV-9 单点不变）；跨域必验明细经各域页等级列呈现。
 // =====================================================================
-
-/**
- * @brief 必验清单预览行（RequiredCaseEntry 的呈现承载——§6.2 冻结 schema
- *        的直投；mandatory 是派生事实（I-REQ-9），呈现层零复判）。
- */
-struct MustListEntryRow {
-    core::ObjectId caseId;   ///< 工况条目 ObjectId（§6.2 caseId——定位跳转锚）
-    std::string label;       ///< 人读标签（§6.2 label＝工况 name——D-REQ-6）
-    bool enabled = false;    ///< 用户启用开关原值
-    bool mandatory = false;  ///< 派生必验标记（≡level==Must——域解析产出直投）
-
-    bool operator==(const MustListEntryRow& o) const
-    {
-        return caseId == o.caseId && label == o.label && enabled == o.enabled
-            && mandatory == o.mandatory;
-    }
-    bool operator!=(const MustListEntryRow& o) const { return !(*this == o); }
-};
-
-/**
- * @brief 必验清单预览投影（RequirementProfile 的呈现半区——全量投影行
- *        ＋Must/Should 计数＋覆盖目标汇总；派生档经
- *        deriveRequirementProfile 域函数现算——P-EV-9 单点零复制）。
- *
- * @param points     [in] 任务点集合（Must/Should 计数输入——工作集权威）
- * @param regions    [in] 区域集合（计数＋覆盖汇总输入）
- * @param conditions [in] 工况集合（必验清单输入）
- * @param service    [in] 工况服务（resolveRequiredCases 复用入口）
- * @return 预览行序列（序＝域解析规范序——确定性）
- *
- * 纯函数；确定性；不抛。
- */
-std::vector<MustListEntryRow> mustListPreview(const std::vector<TaskPoint>& points,
-                                              const std::vector<WorkRegion>& regions,
-                                              const std::vector<OperatingCondition>& conditions,
-                                              const IOperatingConditionService& service);
 
 }  // namespace sdurws::ird::requirements
 

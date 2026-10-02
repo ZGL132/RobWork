@@ -1,6 +1,6 @@
 /**
  * @file   PanelConditionModel.cpp
- * @brief  工况面板呈现模型实现——工况表/检查器行/必验清单预览。
+ * @brief  工况面板呈现模型实现——工况表（是否必验 Tag 派生）/检查器行。
  *
  * 设计依据：units/requirements.md §9.8（面板表第 4 行）、§4.5/§6.2（字段
  * 与必验冻结 schema）、§4.8（派生档）；契约 WP-14-T08 acceptance 1/3。
@@ -201,29 +201,6 @@ std::vector<StationFieldRow> conditionFieldsFor(const OperatingCondition& condit
                 r.enablement = StationFieldEnablement::ReadOnlyGrey;
             }
         }
-    }
-    return rows;
-}
-
-std::vector<MustListEntryRow> mustListPreview(const std::vector<TaskPoint>& points,
-                                              const std::vector<WorkRegion>& regions,
-                                              const std::vector<OperatingCondition>& conditions,
-                                              const IOperatingConditionService& service)
-{
-    // 派生档经域函数现算（§4.8——P-EV-9 单点；contentIdentity 不入呈现：
-    // 派生档指纹是 evidence 组装面，面板只呈现清单与计数）。
-    const RequirementProfile profile =
-        deriveRequirementProfile(points, regions, conditions, service);
-
-    std::vector<MustListEntryRow> rows;
-    rows.reserve(profile.requiredCases.size());
-    for (const RequiredCaseEntry& e : profile.requiredCases) {
-        MustListEntryRow row;
-        row.caseId = e.caseId;      // §6.2 caseId——定位跳转锚（L-R1）
-        row.label = e.label;        // §6.2 label＝工况 name
-        row.enabled = e.enabled;
-        row.mandatory = e.mandatory;  // 派生必验标记——域产出直投
-        rows.push_back(std::move(row));
     }
     return rows;
 }

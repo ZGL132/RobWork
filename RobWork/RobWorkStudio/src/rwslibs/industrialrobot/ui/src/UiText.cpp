@@ -105,7 +105,7 @@ constexpr std::array<TextRow, 24> kDomainCommandTitleTable{{
 }};
 /// 键族①c：需求面板卡片文案（UI-T37——卡片标题＋"?"帮助位；值＝设计规格
 /// 2026-10-01 §3/§4 卡片化分组词表；键前缀 panel.requirements.card.*）。
-constexpr std::array<TextRow, 16> kRequirementsPanelCardTable{{
+constexpr std::array<TextRow, 18> kRequirementsPanelCardTable{{
     { "panel.requirements.card.basic.title",        "基础属性" },
     { "panel.requirements.card.basic.help",
       "条目级属性。灰显行＝只读事实（来源/等级等），权威值以工作集为准。" },
@@ -130,6 +130,10 @@ constexpr std::array<TextRow, 16> kRequirementsPanelCardTable{{
     { "panel.requirements.card.region-advanced.title", "高级参数" },
     { "panel.requirements.card.region-advanced.help",
       "顺序键/备注等次要字段——默认折叠，按需展开。" },
+    { "panel.requirements.card.condition-detail.title", "工况详情与节拍配置" },
+    { "panel.requirements.card.condition-detail.help",
+      "工况＝作业条件：名称/等级/启用与负载、事件、目标节拍（s）、无碰撞要求、"
+      "最小关节裕量、适用范围——选中上方工况行后在此编辑；必验为派生事实（灰显）。" },
 }};
 
 /// 键族②：七态短标签（state.<token>.label——§6.3 词表 token＋"中文"列；

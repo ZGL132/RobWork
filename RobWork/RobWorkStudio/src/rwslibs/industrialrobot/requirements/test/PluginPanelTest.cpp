@@ -644,14 +644,9 @@ TEST(PluginPanel, ConditionPanelRowsAndMustListPreview_ACC1)
     }
     EXPECT_TRUE(shouldNotMandatory);
 
-    // 必验清单预览（RequirementProfile 投影——P-EV-9 单点经域函数）。
-    // requiredCases＝enabled∧Must 子集（§4.8"必验工况清单"行）——Should
-    // 工况不入清单（恰好断言 I-REQ-9 派生唯一：清单≠全量投影）。
-    const auto mustRows = mustListPreview({}, {}, {cond, should}, service);
-    ASSERT_EQ(mustRows.size(), std::size_t(1));
-    EXPECT_EQ(mustRows[0].label, "搬运");
-    EXPECT_TRUE(mustRows[0].mandatory);
-    EXPECT_TRUE(mustRows[0].enabled);
+    // （UI-T37 返工④）必验清单预览投影已撤销——必验事实改由工况表
+    // 『是否必验』列直投（P-EV-9 域单点不变）；Should 不入必验集的
+    // 派生断言由上方 conditionFieldsFor 必验行"否"承载。
 }
 
 /// 校验面板：R0~R9 分层计数＋逐项定位跳转＋预览/正式语义说明（面板表第 5 行）。

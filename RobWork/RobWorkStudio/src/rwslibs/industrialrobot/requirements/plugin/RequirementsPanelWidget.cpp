@@ -523,7 +523,8 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
 
 void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
 {
-    // 右栏页③工况（表＋检查器＋必验清单预览——§9.8 面板表第 4 行）＋
+    // 右栏页③工况（单表＋详情卡——§9.8 面板表第 4 行；返工④：必验清单
+    // 预览表并入单表『是否必验』列，下半部改为详情与节拍配置卡）＋
     // UI-T26 页签状态行（同工位页）。
     auto* page = new QWidget(pages);
     auto* lay = new QVBoxLayout(page);
@@ -538,23 +539,41 @@ void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
                                         << QStringLiteral("工况")
                                         << QStringLiteral("目标节拍")
                                         << QStringLiteral("适用范围")
-                                        << QStringLiteral("验收"));
+                                        << QStringLiteral("是否必验"));
     m_conditionTable->setObjectName(QStringLiteral("ird_req_condition_table"));  // 验证定位锚
-    // 验收 Tag 列（UI-T37 R2 acceptance 4——必验红/可选灰彩色标签委托；
-    // 第 3 显示列，对象锚仍居末隐藏列）。
+    // 是否必验 Tag 列（UI-T37 R2 acceptance 4 引入；返工④表头由『验收』
+    // 更名——所有者指令：必验清单预览表并入本列后列名自释）。
+    // 必验红/可选灰彩色标签委托；第 3 显示列，对象锚仍居末隐藏列。
     m_conditionTable->setItemDelegateForColumn(3, new TagDelegate(m_conditionTable));
     connect(m_conditionTable, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);
     lay->addWidget(m_conditionTable);
-    // 属性表单滚动容器（UI-T36——同工位页；必验清单留在滚动区外）。
+    // 属性表单滚动容器（UI-T36 引入；返工④卡化——同工位/区域页结构：
+    // QGroupBox 卡片宿主 QFormLayout，替代裸表单）。
     auto* conditionScroll = new QScrollArea(page);
     conditionScroll->setWidgetResizable(true);
     conditionScroll->setFrameShape(QFrame::NoFrame);
     auto* conditionFormHost = new QWidget(conditionScroll);
-    conditionFormHost->setToolTip(QStringLiteral(
-        "工况＝作业条件：目标节拍（s）、适用工位范围与必验要求——选中上方"
-        "工况行后在此编辑"));
-    m_conditionForm = new QFormLayout(conditionFormHost);
+    // 返工④：检查器卡『工况详情与节拍配置』（标题/help 经 UiText 词表——
+    // NFR-MNT-03 唯一文案出口）。必验清单预览表（m_mustList）按所有者
+    // 指令撤销：其必验事实已并入上方单表『是否必验』列（派生仍走
+    // resolveRequiredCases 域单点——P-EV-9 不变），腾出的下半部即本卡。
+    auto* conditionHostLay = new QVBoxLayout(conditionFormHost);
+    conditionHostLay->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout* content = nullptr;
+    const auto conditionCardText = [](const char* key) {
+        return QString::fromStdString(ui::resolveText(ui::TextKey{key}));
+    };
+    m_conditionDetailCard = ui::createCard(
+        conditionFormHost,
+        conditionCardText("panel.requirements.card.condition-detail.title"),
+        conditionCardText("panel.requirements.card.condition-detail.help"),
+        &content);
+    m_conditionForm = new QFormLayout;
+    m_conditionForm->setLabelAlignment(Qt::AlignRight);
+    content->addLayout(m_conditionForm);
+    conditionHostLay->addWidget(m_conditionDetailCard);
+    conditionHostLay->addStretch(1);  // 卡片贴顶（同区域页——空白沉底不出现在卡内）
     conditionScroll->setWidget(conditionFormHost);
     lay->addWidget(conditionScroll, /*stretch=*/1);
     m_conditionTable->headerItem()->setToolTip(
@@ -562,9 +581,7 @@ void RequirementsPanelWidget::buildConditionPage(QTabWidget* pages)
     m_conditionTable->headerItem()->setToolTip(
         2, QStringLiteral("适用的工位范围（全部工位/N 个工位/不适用）"));
     m_conditionTable->headerItem()->setToolTip(
-        3, QStringLiteral("必验＝应用前必须通过校验（等级 Must 派生——域解析单点）；可选＝告警级"));
-    m_mustList = makeTable(page, QStringList() << "必验工况" << "必验");
-    lay->addWidget(m_mustList);
+        3, QStringLiteral("是否必验＝应用前必须通过校验（启用∧等级 Must 派生——域解析单点）；可选＝告警级"));
     pages->addTab(page, "工况");
 }
 
@@ -2338,17 +2355,9 @@ void RequirementsPanelWidget::renderConditionPage(const RequirementWorkingSet& w
             }
         }
     }
-    // 必验清单预览（RequirementProfile 投影——派生经域函数，P-EV-9 单点）。
-    const std::vector<MustListEntryRow> mustRows =
-        mustListPreview(ws.points.entries, ws.regions.entries, ws.conditions.entries,
-                        m_conditionService);
-    m_mustList->clear();
-    for (const MustListEntryRow& r : mustRows) {
-        m_mustList->addTopLevelItem(
-            makeRow(QString::fromStdString(r.label),
-                    r.enabled && r.mandatory ? QString("必验") : QString(),
-                    r.caseId));
-    }
+    // 返工④：必验清单预览表已撤销——必验事实改由单表『是否必验』列
+    // 直投（上方行循环内 resolveRequiredCases 单条目解析，P-EV-9 单点
+    // 不变）；跨域必验明细经各域页等级列呈现，不再重复建表。
 }
 
 void RequirementsPanelWidget::renderValidationPage(const RequirementReadinessReport& report)

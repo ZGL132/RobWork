@@ -361,9 +361,11 @@ private:
     std::vector<StationFieldRow> m_stationRows; ///< 当前工位行（含字段键——提交时的回填参数）
     QTreeWidget* m_regionTable = nullptr;       ///< 区域表（L-R1 行选中）
     QLabel* m_regionPreviewLabel = nullptr;     ///< 区域预览摘要（几何出口注入时同步投递 View3D）
-    QTreeWidget* m_conditionTable = nullptr;    ///< 工况表（L-R1 行选中）
-    QFormLayout* m_conditionForm = nullptr;     ///< 工况检查器表单
-    QTreeWidget* m_mustList = nullptr;          ///< 必验清单预览（RequirementProfile 投影行）
+    QTreeWidget* m_conditionTable = nullptr;    ///< 工况表（L-R1 行选中；末列＝是否必验 Tag）
+    QFormLayout* m_conditionForm = nullptr;     ///< 工况检查器表单（详情卡内行宿主）
+    QGroupBox* m_conditionDetailCard = nullptr; ///< 工况卡『工况详情与节拍配置』（返工④——
+                                                ///< 结构同工位/区域卡；必验清单预览表
+                                                ///< 并入单表是否必验列后撤销）
     QLabel* m_validationCounts = nullptr;       ///< 校验分层计数行（Blocking/Warning 汇总）
     // 页签状态行（UI-T26——页头『〈页名〉：〈对象名|未选择对象〉』）。
     QLabel* m_stationHeader = nullptr;          ///< 工位页头（随树选中刷新）
