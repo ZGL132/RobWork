@@ -110,15 +110,17 @@ constexpr const char* kPluginLogDirName = "ird-ui-plugin-logs";
 /// content submitCommand 对 outcome.messageKey 的呈现值源）。
 constexpr const char* kModelingFlowNotAssembledKey = "cmd.modeling.flow-not-assembled";
 
-/// 真实执行面已落位的建模域命令（UI-T41 A2——modeling.md §9.7.3 十条中
-/// 八条经 ModelingCommandFlows 装配真实链；estimate-properties 与
-/// generate-placeholder-geometry 的域链依赖几何投影面（批次 C）——保持
-/// 注册期禁用的诚实路径（requirements 7/2 同款先例），不虚构可执行）。
+/// 真实执行面已落位的建模域命令（UI-T41 批次C 收口——modeling.md §9.7.3
+/// 十条全部装配真实链：批次A 八条＋批次C estimate-properties（§5.3 段元
+/// 推导＋estimateLink＋GeometricEstimate 写回）与 generate-placeholder-
+/// geometry（§5.2 占位圆柱；资源清单登记受 schema 边界——流程内如实留痕）。
+/// flow-not-assembled 未装配路径就此退役）。
 bool isAssembledModelingCommand(const std::string& id)
 {
     static const std::set<std::string> kAssembled{
         "modeling.new-from-template", "modeling.import-urdf",
         "modeling.import-xacro",      "modeling.switch-authority",
+        "modeling.estimate-properties", "modeling.generate-placeholder-geometry",
         "modeling.diff-baseline",     "modeling.export-package",
         "modeling.import-package",    "modeling.reset-home-zero",
     };

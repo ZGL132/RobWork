@@ -315,6 +315,21 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
             }
             add("working-range", text, "rad", FieldEnablement::Editable, prov);
         }
+        // DH 投影参数（UI-T41 批次C C3——§7.2"DH 态下为权威可编辑"的呈现半区；
+        // 有投影值即呈现（无论当前权威——显式权威下的残留投影值如实直投），
+        // 恒只读灰显＋DerivedReadOnly 徽标：面板编辑面未含 DH 参数就地提交轨
+        // （§7.4 权威切换流是唯一写入口），MDL-07"只显示相关属性"按值在否）。
+        if (j.dhDerived.has_value()) {
+            const core::ProvenanceKind derived = core::ProvenanceKind::DerivedReadOnly;
+            add("dh-alpha", formatDeterministic(j.dhDerived->alpha), "rad",
+                FieldEnablement::ReadOnlyGrey, derived);
+            add("dh-a", formatDeterministic(j.dhDerived->a), "m",
+                FieldEnablement::ReadOnlyGrey, derived);
+            add("dh-d", formatDeterministic(j.dhDerived->d), "m",
+                FieldEnablement::ReadOnlyGrey, derived);
+            add("dh-theta", formatDeterministic(j.dhDerived->thetaOffset), "rad",
+                FieldEnablement::ReadOnlyGrey, derived);
+        }
         break;
     }
     case SelectedTarget::Kind::Link: {
@@ -335,11 +350,24 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
             auto [text, prov] = sourcedRow(l.body.inertia);
             add("inertia", text, "kg*m^2", FieldEnablement::Editable, prov);
         }
-        // 几何引用行（visual/collision 有无——引用资源键，不复制内容）。
-        add("visual-geometry", l.visual.has_value() ? l.visual->resourceRefId : "未设置", "",
+        // 几何引用行（visual/collision——UI-T41 批次C C1/C2 增强：形状类别
+        // 徽标（Primitive/Mesh——GeometryKind 直投）＋引用完整性检测（引用键
+        // 在 resourceManifest 无对应条目＝悬空引用，⚠ 前缀警示——"让悬空可
+        // 见"的呈现半区；占位原语的清单登记受 schema 边界约束〔makeLink-
+        // PlaceholderCylinder 注〕，悬空如实呈现不伪造解析）。
+        auto geometryRow = [&ws](const std::optional<GeometryRef>& ref) {
+            if (!ref.has_value()) { return std::string("未设置"); }
+            const std::string kindToken = std::string(geometryKindToken(ref->kind));
+            const bool resolvable = std::any_of(
+                ws.design.resourceManifest.begin(), ws.design.resourceManifest.end(),
+                [&ref](const ResourceRef& r) { return r.resourceId == ref->resourceRefId; });
+            return (resolvable ? std::string(kindToken) + " · " + ref->resourceRefId
+                               : "⚠ " + kindToken + " · " + ref->resourceRefId + "（未入资源清单）");
+        };
+        add("visual-geometry", geometryRow(l.visual), "",
             FieldEnablement::Editable, std::nullopt);
-        add("collision-geometry", l.collision.has_value() ? l.collision->resourceRefId : "未设置",
-            "", FieldEnablement::Editable, std::nullopt);
+        add("collision-geometry", geometryRow(l.collision), "",
+            FieldEnablement::Editable, std::nullopt);
         break;
     }
     case SelectedTarget::Kind::Tool: {

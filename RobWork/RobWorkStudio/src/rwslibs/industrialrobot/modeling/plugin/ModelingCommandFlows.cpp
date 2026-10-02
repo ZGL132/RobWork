@@ -29,6 +29,8 @@
 #include <sdurws/ird/modeling/Import.hpp>        // ModelImportMapper（URDF/Xacro 映射）
 #include <sdurws/ird/modeling/ModelDiff.hpp>     // ModelDiffService（与基线比较）
 #include <sdurws/ird/modeling/ObjectTypes.hpp>   // 五对象 token（闭包视图路由键）
+#include <sdurws/ird/modeling/PropertyEstimation.hpp>  // PropertyEstimator/SegmentSpec（批次C 估算流）
+#include <sdurws/ird/modeling/Template.hpp>      // makeLinkPlaceholderCylinder/kPlaceholderCylinderRadius（批次C）
 #include <sdurws/ird/modeling/Package.hpp>       // ModelPackagePort（MDL-20 导出/导入）
 #include "ModelingXacroBridge.hpp"            // 受控展开桥（独立 TU——XacroExpand 不可与 DhConvert 共 TU）
 #include <sdurws/ird/ui/UiText.hpp>              // resolveText（按钮文案同源的呈现值）
@@ -239,12 +241,39 @@ private:
     const ModelingWorkingSet& m_ws;  ///< 会话工作集（非 owning）
 };
 
+/// 导出默认文件名派生（UI-T41 批次C C6——旧版"输出文件名跟随模型名"亮点的
+/// 最小承接）：根对象 displayName 清洗为合法文件名基（Windows 保留字符→
+/// '_'、控制字符剔除、首尾空白裁剪）；空/全非法回退 "model"。
+std::string sanitizeFileBaseName(const std::string& name)
+{
+    std::string cleaned;
+    cleaned.reserve(name.size());
+    for (const char c : name) {
+        const bool illegal = (c == '\\' || c == '/' || c == ':' || c == '*'
+                              || c == '?' || c == '"' || c == '<' || c == '>'
+                              || c == '|');
+        if (illegal) {
+            cleaned.push_back('_');
+        } else if (static_cast<unsigned char>(c) >= 0x20) {
+            cleaned.push_back(c);
+        }  // 控制字符（<0x20）直接剔除
+    }
+    const std::size_t first = cleaned.find_first_not_of(" \t");
+    const std::size_t last = cleaned.find_last_not_of(" \t");
+    if (first == std::string::npos) { return "model"; }
+    return cleaned.substr(first, last - first + 1);
+}
+
 /// 规范包导出流程（export-package——目标路径用户选定，原子写归 io 端口）。
 bool runExportPackage(ModuleSessionState& session, ModelingDialogHost& host,
                       std::string& summary)
 {
     const auto pickedPath = host.saveFilePath(
-        QStringLiteral("导出规范模型包"), QStringLiteral("model.irdbundle"),
+        // C6 默认名派生：模型显示名清洗（改名跟随——对话框预填即默认产物
+        // 名，用户可改）。
+        QStringLiteral("导出规范模型包"),
+        QString::fromStdString(sanitizeFileBaseName(session.draft.design.displayName)
+                               + ".irdbundle"),
         QStringLiteral("规范模型包 (*.irdbundle);;所有文件 (*)"));
     if (!pickedPath.has_value()) { return false; }  // 用户取消
     const QString& path = *pickedPath;
@@ -406,6 +435,148 @@ bool executeModelingCommand(const std::string& commandId,
     // ---- modeling.switch-authority（权威切换——L-9；独立 TU 承载）----
     if (commandId == "modeling.switch-authority") {
         return executeSwitchAuthorityFlow(session, host, summary);
+    }
+
+    // ---- modeling.estimate-properties（选中连杆批量物性估算——§5.3）----
+    if (commandId == "modeling.estimate-properties") {
+        // 目标解析：面板会话选中锚→连杆（deps.selectedAnchor——未选中/非
+        // 连杆＝调用侧错误面，诚实拒绝不抛）。
+        const auto anchor = deps.selectedAnchor ? deps.selectedAnchor()
+                                                : std::optional<core::ObjectId>{};
+        if (!anchor.has_value()) {
+            summary = "请先在结构树选中一个连杆再执行物性估算";
+            return false;
+        }
+        const ModelingWorkingSet& draft = session.draft;
+        std::size_t linkIndex = draft.design.links.size();
+        for (std::size_t i = 0; i < draft.design.links.size(); ++i) {
+            if (draft.design.links[i].objectId == *anchor) { linkIndex = i; break; }
+        }
+        if (linkIndex >= draft.design.links.size()) {
+            summary = "选中对象不是本模型连杆——估算目标无效";
+            return false;
+        }
+        // 段元几何（旧版 autoLink 同款近似——§5.2）：连杆 i 的占位段＝该
+        // 连杆系原点→其驱动关节 j_i 安装原点（joints[i].origin，连杆系下）；
+        // 末端法兰连杆（links.size()==joints.size()+1 的尾元素）无驱动关节
+        // ——诚实拒绝（法兰几何归后续任务）。位姿数学复用内核
+        // makeLinkPlaceholderCylinder（z 对齐＋中点定位——段系在连杆系下）。
+        if (linkIndex >= draft.design.joints.size()) {
+            summary = "末端法兰连杆无驱动关节原点可构段元——请经导入或后续法兰几何任务";
+            return false;
+        }
+        const auto& origin = draft.design.joints[linkIndex].origin;
+        if (!origin.tryValue().has_value()) {
+            summary = "驱动关节原点未提供——无法推导连杆段元（先补关节原点）";
+            return false;
+        }
+        const rw::math::Vector3D<double> segmentEnd(origin.tryValue()->d());
+        const double length = segmentEnd.norm2();
+        if (!(length > 0.0)) {
+            summary = "段元零长度（关节原点与连杆系原点重合）——无估算几何意义";
+            return false;
+        }
+        // 材料选择（§5.3 默认密度表五键——chooseItem 应答面）。
+        const std::pair<const char*, const char*> materials[] = {
+            {"steel", "钢（7850 kg/m³）"}, {"aluminum", "铝（2700 kg/m³）"},
+            {"cast-iron", "铸铁（7200 kg/m³）"}, {"titanium-alloy", "钛合金（4430 kg/m³）"},
+            {"engineering-plastic", "工程塑料（1200 kg/m³）"},
+        };
+        QStringList items;
+        for (const auto& [id, label] : materials) { items << QString::fromUtf8(label); }
+        const auto pickedMaterial = host.chooseItem(QStringLiteral("选择连杆材料"),
+                                                    QStringLiteral("估算采用 §5.3 默认密度表："),
+                                                    items);
+        if (!pickedMaterial.has_value()) { return false; }  // 用户取消
+
+        // 段元组装（单段实心圆柱——半径＝占位圆柱设计默认值；密度解析在
+        // estimateLink 内〔先 density 已提供值再查默认表〕，此处只给键）。
+        SegmentSpec segment;
+        segment.primitive = SolidCylinderSpec{kPlaceholderCylinderRadius, length};
+        segment.linkFromSegment = makeLinkPlaceholderCylinder(
+            rw::math::Vector3D<double>(0.0, 0.0, 0.0), segmentEnd,
+            "estimate-segment", kPlaceholderCylinderRadius).geometry.localTransform;
+        segment.material.materialId = materials[*pickedMaterial].first;
+
+        const PropertyEstimator estimator;
+        std::vector<core::DiagnosticRecord> diags;
+        const auto outcome = estimator.estimateLink({segment}, diags);
+        if (!outcome.ok()) {
+            summary = "物性估算失败：" + outcome.error().detail;
+            return false;
+        }
+        const EstimatedLinkProperties& props = outcome.get();
+        // 写回（§5.3 规则 1——估算结果一律 GeometricEstimate＋公式表标记）：
+        // 覆盖既有用户值前确认（旧值来源非估算＝用户手填，破坏性覆盖须确认）。
+        LinkEntry& link = session.draft.design.links[linkIndex];
+        const bool overwritingUser =
+            link.body.mass.state() == core::FieldState::Provided
+            && link.body.mass.provenance().kind == core::ProvenanceKind::UserProvided;
+        if (overwritingUser
+            && !host.confirmProceed(QStringLiteral("覆盖确认"),
+                                    QStringLiteral("该连杆已有用户手填物性——估算结果将覆盖。是否继续？"))) {
+            return false;
+        }
+        link.body.mass = core::SourcedValue<double>::provided(props.massKg, props.provenance);
+        link.body.centerOfMass =
+            core::SourcedValue<rw::math::Vector3D<double>>::provided(
+                props.centerOfMass, props.provenance);
+        link.body.inertia =
+            core::SourcedValue<InertiaTensor>::provided(props.inertia, props.provenance);
+        ModelingChangeRecord record;
+        record.subject = "links[" + std::to_string(linkIndex) + "].body";
+        record.summary = std::string("物性估算（材料 ") + materials[*pickedMaterial].first
+                         + "，单段圆柱近似）";
+        session.draft.changes.push_back(std::move(record));
+        if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
+        summary = "物性估算完成：质量 " + std::to_string(props.massKg) + " kg（来源＝估算）——请经『应用草稿』提交";
+        return true;
+    }
+
+    // ---- modeling.generate-placeholder-geometry（占位圆柱生成——§5.2）----
+    if (commandId == "modeling.generate-placeholder-geometry") {
+        const auto anchor = deps.selectedAnchor ? deps.selectedAnchor()
+                                                : std::optional<core::ObjectId>{};
+        if (!anchor.has_value()) {
+            summary = "请先在结构树选中一个连杆再生成占位几何";
+            return false;
+        }
+        ModelingWorkingSet& draft = session.draft;
+        std::size_t linkIndex = draft.design.links.size();
+        for (std::size_t i = 0; i < draft.design.links.size(); ++i) {
+            if (draft.design.links[i].objectId == *anchor) { linkIndex = i; break; }
+        }
+        if (linkIndex >= draft.design.links.size()) {
+            summary = "选中对象不是本模型连杆——生成目标无效";
+            return false;
+        }
+        if (linkIndex >= draft.design.joints.size()) {
+            summary = "末端法兰连杆无驱动关节原点参考——占位几何归后续法兰任务";
+            return false;
+        }
+        const auto& origin = draft.design.joints[linkIndex].origin;
+        if (!origin.tryValue().has_value()) {
+            summary = "驱动关节原点未提供——无法定位占位圆柱（先补关节原点）";
+            return false;
+        }
+        const auto& link = draft.design.links[linkIndex];
+        const std::string refId = "placeholder-" + link.localName;
+        // 内核纯函数生成（确定性——同输入同位姿字节；resourceRefId＝会话内
+        // 作用域键）。★ schema 边界（内核注释原文）：占位原语的 resourceManifest
+        // 登记形态"随 schema 澄清落位"（图元参数无 schema 落点）——本流程不
+        // 伪造清单条目，悬空状态经面板几何行"未入资源清单"警示如实呈现。
+        GeneratedGeometry generated = makeLinkPlaceholderCylinder(
+            rw::math::Vector3D<double>(0.0, 0.0, 0.0),
+            origin.tryValue()->d(), refId, kPlaceholderCylinderRadius);
+        draft.design.links[linkIndex].visual = std::move(generated.geometry);
+        ModelingChangeRecord record;
+        record.subject = "links[" + std::to_string(linkIndex) + "].visual";
+        record.summary = "生成占位圆柱（半径 " + std::to_string(kPlaceholderCylinderRadius)
+                         + " m，几何引用未入资源清单——schema 边界）";
+        session.draft.changes.push_back(std::move(record));
+        if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
+        summary = "占位圆柱已生成并写入视觉几何（资源清单登记随 schema 澄清落位）——请经『应用草稿』提交";
+        return true;
     }
 
     // ---- modeling.diff-baseline（与基线比较——只读；L-6 差异定位数据面）----

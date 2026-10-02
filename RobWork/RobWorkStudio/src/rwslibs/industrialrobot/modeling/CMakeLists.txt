@@ -521,6 +521,7 @@ add_executable(sdurws_ird_modeling_test
     test/CanonicalBridgeTest.cpp
     test/PackageTest.cpp
     test/ModelDiffTest.cpp
+    test/ModelingCommandFlowsTest.cpp  # 域命令流测试（UI-T41 批次C——FakeHost 替身）
     test/PluginPanelTest.cpp
     test/HostMigrationTest.cpp
     test/GoldenDatasetTest.cpp

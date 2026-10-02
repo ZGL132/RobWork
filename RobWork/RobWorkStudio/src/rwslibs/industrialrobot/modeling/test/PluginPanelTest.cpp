@@ -944,3 +944,90 @@ TEST(PluginPanel, Thread_UiThreadOnlyConstraint_WP13T15_ACC5)
 // （TARGET sdurw_kinematics 集成 gating——与 ReadinessTest/CommandHandlers
 // Test 同款先例）。迁移不改任何断言语义；详见该文件头 gating 说明。
 // ---------------------------------------------------------------------
+
+// =====================================================================
+// UI-T41 批次C：DH 投影参数行（C3）＋几何引用行形状徽标与悬空检测（C1/C2）
+// =====================================================================
+
+/// C3：dhDerived 在位时关节属性区追加四参数只读行（§7.2"DH 态权威可编辑"
+/// 的呈现半区——面板就地提交轨未开，恒只读灰显＋DerivedReadOnly 徽标；
+/// 无投影值＝零 DH 行——MDL-07 相关属性按值在否）。
+TEST(PluginPanel, JointDhProjectionRows_ReadOnlyWithDerivedBadge_UI_T41C)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07"}, std::vector<std::string>{});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    const auto target = resolveSelection(ws, ws.design.joints[0].objectId);
+    ASSERT_TRUE(target.has_value());
+
+    // 前置：模板种子无 DH 投影值——零 DH 行（不虚构）。
+    auto countDhKeys = [](const std::vector<PropertyFieldRow>& rows) {
+        std::size_t n = 0;
+        for (const auto& r : rows) {
+            if (r.fieldKey.rfind("dh-", 0) == 0) { ++n; }
+        }
+        return n;
+    };
+    ASSERT_EQ(countDhKeys(propertyFieldsFor(ws, *target)), std::size_t{0})
+        << "种子草稿不应带 DH 投影行（夹具前置）";
+
+    // 注入投影值（显式→DH 判定的产物形态——批次A 权威切换流写入面）。
+    ws.design.joints[0].dhDerived = DhParameters{0.1, 0.2, 0.3, 1.5708};
+    const auto rows = propertyFieldsFor(ws, *target);
+    EXPECT_EQ(countDhKeys(rows), std::size_t{4}) << "四参数行齐全（α/a/d/θ）";
+    std::set<std::string> dhKeys;
+    for (const auto& r : rows) {
+        if (r.fieldKey.rfind("dh-", 0) != 0) { continue; }
+        dhKeys.insert(r.fieldKey);
+        EXPECT_EQ(r.enablement, FieldEnablement::ReadOnlyGrey)
+            << "DH 投影行恒只读灰显（写入口＝权威切换流）";
+        ASSERT_TRUE(r.provenance.has_value());
+        EXPECT_EQ(*r.provenance, core::ProvenanceKind::DerivedReadOnly)
+            << "DH 投影行来源徽标＝派生只读";
+    }
+    EXPECT_TRUE(dhKeys.count("dh-alpha") && dhKeys.count("dh-a")
+                && dhKeys.count("dh-d") && dhKeys.count("dh-theta"));
+}
+
+/// C1/C2：几何引用行＝形状类别徽标（Primitive/Mesh——GeometryKind 直投）
+/// ＋引用完整性（清单无对应条目＝⚠ 悬空警示——"让悬空可见"的呈现半区；
+/// 占位原语的清单登记受 schema 边界，悬空如实呈现不伪造解析）。
+TEST(PluginPanel, GeometryRows_ShapeBadgeAndDanglingDetection_UI_T41C)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07"}, std::vector<std::string>{});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    ws.design.links[0].visual = GeometryRef{};
+    ws.design.links[0].visual->resourceRefId = "dangling-mesh";
+    ws.design.links[0].visual->kind = GeometryKind::Mesh;
+
+    auto rowOf = [&ws](const char* key) {
+        const auto target = resolveSelection(ws, ws.design.links[0].objectId);
+        const auto rows = propertyFieldsFor(ws, *target);
+        for (const auto& r : rows) {
+            if (r.fieldKey == key) { return r; }
+        }
+        return PropertyFieldRow{};  // 未命中＝缺省行（下述断言即失败）
+    };
+
+    // 悬空引用（清单空）：⚠ 前缀＋形状徽标＋说明。
+    PropertyFieldRow visual = rowOf("visual-geometry");
+    EXPECT_TRUE(visual.valueText.find("\xe2\x9a\xa0") != std::string::npos)  // "⚠"
+        << "悬空引用未带警示前缀";
+    EXPECT_TRUE(visual.valueText.find("dangling-mesh") != std::string::npos);
+    EXPECT_TRUE(visual.valueText.find("未入资源清单") != std::string::npos);
+
+    // 清单登记同键条目后：悬空消失（可解析形态＝"类别 · 键"）。
+    ResourceRef entry;
+    entry.resourceId = "dangling-mesh";
+    entry.externalRecord = ExternalResourceRecord{};
+    entry.externalRecord->absPath = "D:/demo/dangling-mesh.stl";
+    ws.design.resourceManifest.push_back(std::move(entry));
+    visual = rowOf("visual-geometry");
+    EXPECT_TRUE(visual.valueText.find("\xe2\x9a\xa0") == std::string::npos)
+        << "可解析引用不应带警示";
+    EXPECT_TRUE(visual.valueText.find("dangling-mesh") != std::string::npos);
+    EXPECT_TRUE(visual.valueText.find(
+        std::string(geometryKindToken(GeometryKind::Mesh))) != std::string::npos)
+        << "形状类别徽标缺失（C2）";
+}
