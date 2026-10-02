@@ -31,6 +31,7 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QStringList>
 #include <QTreeWidget>
 #include <QWidget>
 
@@ -121,8 +122,16 @@ public:
     /// 已应用修订预览注入（UI-T41 A3——模块应用/失效时调用；D-MDL-10：
     /// 内容只来自 AppliedRevisionView，nullopt＝空态占位）。
     void setAppliedPreview(const std::optional<AppliedRevisionView>& view);
-    /// 命令流程回执/原因就地呈现（UI-T41 A2——状态行非模态唯一出口）。
-    void setOutcomeMessage(const QString& message);
+
+    /// 状态行回执分级（UI-T41 批次B B2——词表着色：Success 绿＝接受回执、
+    /// Warning 橙＝拒绝/待处置、Info 正文＝命令回执；阻断不设红色——调色板
+    /// 五色词表无红，阻断以警示橙加粗承载，防彩虹化纪律）。
+    enum class OutcomeSeverity { Info, Success, Warning };
+
+    /// 命令流程回执/原因就地呈现（UI-T41 A2——状态行非模态唯一出口；
+    /// 批次B：按 severity 着色＋追加诊断历史，不清空覆盖）。
+    void setOutcomeMessage(const QString& message,
+                           OutcomeSeverity severity = OutcomeSeverity::Info);
     /// 修订事件重演入口（UI-T41 A4——模块 onRevisionCommitted 调用；L-4
     /// 保序重演＋手工处置横幅。无会话编辑面＝静默返回）。
     void replayOnRevisionEvent();
@@ -197,6 +206,12 @@ private:
     //      一律从调用方入参现取；refreshPanel 结束后本类不持有 ws/report）----
     std::optional<core::ObjectId> m_lastSelected;  ///< 属性区当前选中锚（跨刷新保持）
     std::optional<AppliedRevisionView> m_appliedPreview; ///< 预览页数据源（A3——模块注入的已应用修订视图）
+
+    // ---- UI-T41 批次B（B1/B2/B3 呈现态）--------------------------------
+    QLineEdit* m_warningEditor = nullptr;     ///< 校验拒绝的行内警示编辑器（B1——警示描边；重建即清）
+    QPushButton* m_historyToggle = nullptr;   ///< 诊断历史折叠钮（B2——可勾选）
+    QPlainTextEdit* m_historyView = nullptr;  ///< 诊断历史只读视图（B2——最近 20 条不清空覆盖）
+    QStringList m_history;                    ///< 诊断历史内容（B2——定容 FIFO，20 条）
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
     QTreeWidget* m_tree = nullptr;            ///< 区①结构树（隐藏第 1 列＝锚规范文本）
