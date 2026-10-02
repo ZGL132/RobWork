@@ -351,6 +351,13 @@ TEST_F(RequirementsSessionGuiTest, LifecycleAdd_ThreeCollections_UI_T30)
 
     const std::size_t conditionsBefore =
         m_editor.workingSet().conditions.entries.size();
+    // 缺省向导兜底绑定后（遍历实录修复），空缝不再直接创建——用例注入
+    // 确定工厂（空名走 uniqueEntryName 防撞＝原起步语义）。
+    m_panel->setConditionWizardFactory(
+        []() -> std::optional<RequirementsPanelWidget::ConditionWizardFields> {
+            RequirementsPanelWidget::ConditionWizardFields f;
+            return f;
+        });
     lifecycleButton(*m_panel, "add", "conditions")->click();
     ASSERT_EQ(m_editor.workingSet().conditions.entries.size(), conditionsBefore + 1);
     EXPECT_TRUE(tabHeaderText(*m_panel, "ird_req_tab_condition_header")
@@ -416,6 +423,13 @@ TEST_F(RequirementsSessionGuiTest, LifecycleRemoveAnchorFallbackAndUndo_UI_T30)
 
     // 工况锚回落（非空集合）：选中唯一工况删除→集合空清空；再 undo 恢复
     // ＋新增第二个工况后删除首个→锚回落到次条（同位次钳制）。
+    // （缺省向导兜底绑定后 add 会弹模态——本用例注入确定工厂＝空名走
+    // uniqueEntryName 防撞起步语义；fixture 每用例重建面板，注入须本例自带。）
+    m_panel->setConditionWizardFactory(
+        []() -> std::optional<RequirementsPanelWidget::ConditionWizardFields> {
+            RequirementsPanelWidget::ConditionWizardFields f;
+            return f;
+        });
     const core::ObjectId condId =
         m_editor.workingSet().conditions.entries.front().objectId;
     m_panel->focusObject(condId);

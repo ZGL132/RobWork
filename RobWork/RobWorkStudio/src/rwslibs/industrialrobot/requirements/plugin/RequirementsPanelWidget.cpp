@@ -974,10 +974,21 @@ void RequirementsPanelWidget::onAddEntry(WorkingSetMember member)
         c.objectId = core::ObjectId::generate();
         c.name = uniqueEntryName(ws, member, "工况");
         // 工况新增向导（UI-T37 R2 acceptance 4——创建即带完整起步配置，
-        // 禁止无配置空白条目；取消＝零新增）。缝缺省＝内建对话框；测试
-        // 经 setConditionWizardFactory 注入确定字段（FakeDialogHost 同族）。
-        if (m_conditionWizard) {
-            auto fields = m_conditionWizard();
+        // 禁止无配置空白条目；取消＝零新增）。缝缺省＝内建对话框（缺省
+        // 绑定在此兜底——遍历实录修复：此前缝空直接创建无配置条目，与
+        // 本条纪律矛盾且宿主真实用户永不弹向导；测试经
+        // setConditionWizardFactory 注入确定字段〔FakeDialogHost 同族〕）。
+        std::function<std::optional<ConditionWizardFields>()> wizard =
+            m_conditionWizard;
+        if (!wizard) {
+            wizard = [this, suggested =
+                                QString::fromStdString(uniqueEntryName(
+                                    ws, member, "工况"))]() {
+                return defaultConditionWizard(this, suggested);
+            };
+        }
+        auto fields = wizard();
+        {
             if (!fields.has_value()) {
                 return;  // 取消——不产生条目
             }

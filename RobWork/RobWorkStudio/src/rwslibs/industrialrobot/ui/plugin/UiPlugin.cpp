@@ -48,9 +48,17 @@
 #include <QRadioButton>
 #include <QStatusBar>
 #include <QString>
+#include <QComboBox>  // 需求遍历通道（检查器下拉）
+#include <QDoubleSpinBox>  // 需求遍历通道（容差/距离编辑）
+#include <QGroupBox>  // 需求遍历通道（卡片折叠）
+#include <QSlider>  // 需求遍历通道（覆盖率滑块）
+#include <QSpinBox>  // 需求遍历通道（采样计数）
+#include <QTabWidget>  // 需求遍历通道（页签切换——requirements-tour）
 #include <QTemporaryDir>
 #include <QTextStream>
 #include <QTimer>
+#include <QToolButton>  // 需求遍历通道（卡片折叠三角）
+#include <QTreeWidget>  // 需求遍历通道（树/表定位）
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -942,6 +950,10 @@ void IrdWorkbenchHostPlugin::initialize()
     //      触发面，度量拍排在呈现自证与两拍宽度收束之后（度量的是"装载
     //      落定后"的稳定布局态）。
     maybeRunLayoutSmoke();
+
+    // ---- 需求界面全功能遍历通道（requirements-tour）：同环境变量触发面
+    //      （互斥——三通道按环境变量值单选）。
+    maybeRunRequirementsTour();
 }
 
 IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
@@ -3522,6 +3534,487 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
         std::cout << "[ird-ui-smoke-layout] "
                   << (failures.empty() ? "DONE" : "FAILED") << std::endl;
         QCoreApplication::exit(failures.empty() ? 0 : 1);
+    });
+}
+
+// =====================================================================
+// 需求界面全功能遍历通道（环境变量 IRD_UI_PLUGIN_SMOKE=requirements-tour）
+// =====================================================================
+
+void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
+{
+    // 触发面＝环境变量（与 auto/layout 同机制）。遍历序列（真实用户操作
+    // 语义——控件级驱动触发与手点同源的信号轨）：
+    //   拍 1  新建项目＋打开（wireRequirementsSession 空项目初始化）＋召唤面板
+    //   拍 2  空态断言（复制/删除置灰＋提示可见）→工位新增→空态退役
+    //   拍 3  工位属性：改名（树同步）/等级/启用/自由度/容差
+    //   拍 4  动作阶段（启用/轴/距离）＋姿态规则切换（参数行重投影）
+    //   拍 5  卡片折叠（收起/展开）＋区域新增＋盒尺寸＋采样计数（实时点数）
+    //   拍 6  覆盖率滑块＋工况新增（模态向导自动填写确认）＋是否必验 Tag
+    //   拍 7  工况节拍编辑（表列同步）＋校验页实时化＋过滤
+    //   拍 8  草稿撤销→重做（树行回退/恢复）
+    //   拍 9  draft.apply（需求域真实修订——非 NoDraft）＋项目级撤销使能
+    // 每步 check()＋控制台 [ird-ui-smoke-tour] 行＋关键帧截图；全绿 DONE 退出 0。
+    // 宿主侧仅经 Qt 公共基类＋objectName 锚操作面板（R-2——零跨单元私有头；
+    // 与 gui_test 同型定位面）。提交轨为 queued invocation——每步操作后
+    // settleEvents 让队列落域（onEditApplied→全面板重投影）再断言。
+    const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
+    if (smoke != QLatin1String("requirements-tour")) {
+        return;
+    }
+    QTimer::singleShot(600, this, [this] {
+        std::cout << "[ird-ui-smoke-tour] started" << std::endl;
+        int exitCode = 0;
+        const QString outDir = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE_OUT");
+        if (!outDir.isEmpty()) {
+            QDir::root().mkpath(outDir);
+        }
+        // ---- 断言/截图工具（layout 通道同款闭包形态）--------------------
+        int failedCount = 0;
+        auto check = [](bool cond, const std::string& what) -> bool {
+            std::cout << "[ird-ui-smoke-tour] " << (cond ? "pass " : "FAIL ")
+                      << what << std::endl;
+            return cond;
+        };
+        QMainWindow* hostWin = qobject_cast<QMainWindow*>(parentWidget());
+        auto snapPng = [&](QWidget* w, const char* name) {
+            if (w == nullptr || outDir.isEmpty()) {
+                return;
+            }
+            w->grab().save(outDir + QLatin1Char('/') + QString::fromLatin1(name),
+                           "PNG");
+            std::cout << "[ird-ui-smoke-tour] snap " << name << std::endl;
+        };
+        auto ok = [&](bool cond, const std::string& what) {
+            if (!check(cond, what)) {
+                ++failedCount;
+            }
+        };
+        auto step = [&](const char* name) {
+            std::cout << "[ird-ui-smoke-tour] step " << name << std::endl;
+        };
+
+        // ---- 拍 1：新建项目＋打开＋召唤面板------------------------------
+        step("1 create-open-project");
+        QString demoPath;
+        {
+            QTemporaryDir dir(QDir::tempPath() + "/ird-tour-demo-XXXXXX");
+            demoPath = dir.path();
+            dir.setAutoRemove(false);  // 项目落盘供报告留痕（退出后由脚本清理）
+        }
+        try {
+            project::ProjectStoreFactory::createNew(
+                fs::weakly_canonical(fs::u8path(demoPath.toStdString())).u8string(),
+                QStringLiteral("需求界面遍历演示项目").toStdString(),
+                nullptr, m_bridge.get());
+        } catch (const std::exception& e) {
+            std::cout << "[ird-ui-smoke-tour] create-exception: " << e.what()
+                      << std::endl;
+            QCoreApplication::exit(1);
+            return;
+        }
+        const bool opened = openViaSessionController(demoPath.toStdString());
+        ok(opened, "step1 project-opened");
+        settleEvents(400);  // wireRequirementsSession 空项目初始化落定
+
+        // 召唤需求面板（视图菜单动作——与用户点击同路径）。
+        QAction* reqToggle = nullptr;
+        for (auto& [key, action] : m_hostAuxToggles) {
+            if (key == kAuxKeyRequirementsDock) {
+                reqToggle = action;
+                break;
+            }
+        }
+        if (reqToggle != nullptr) {
+            reqToggle->trigger();
+        }
+        settleEvents(300);
+        QWidget* panel =
+            m_requirementsDock != nullptr ? m_requirementsDock->widget() : nullptr;
+        ok(panel != nullptr, "step1 panel-present");
+        if (panel == nullptr) {
+            std::cout << "[ird-ui-smoke-tour] FAILED" << std::endl;
+            QCoreApplication::exit(1);
+            return;
+        }
+        snapPng(hostWin, "tour-1-panel-empty-state.png");
+
+        // 面板定位工具（Qt 公共基类＋objectName/属性——R-2 合规）。
+        auto buttonOf = [panel](const char* name) -> QPushButton* {
+            return panel->findChild<QPushButton*>(QString::fromLatin1(name));
+        };
+        QTreeWidget* tree = nullptr;
+        for (QTreeWidget* t : panel->findChildren<QTreeWidget*>()) {
+            if (t->headerItem()->text(0) == QStringLiteral("需求树")) {
+                tree = t;
+                break;
+            }
+        }
+        auto editByFieldKey = [panel](const char* key) -> QLineEdit* {
+            for (QLineEdit* e : panel->findChildren<QLineEdit*>()) {
+                if (e->property("irdFieldKey").toString()
+                    == QString::fromLatin1(key)) {
+                    return e;
+                }
+            }
+            return nullptr;
+        };
+        auto comboByName = [panel](const char* name) -> QComboBox* {
+            return panel->findChild<QComboBox*>(QString::fromLatin1(name));
+        };
+        // 逐轴/容差行编辑器（QDoubleSpinBox——renderSpinRow 形态，带
+        // irdFieldKey 属性；每次重投影后须重新定位——重建式刷新下旧指针
+        // 失效，F-453 队列化教训的遍历侧同款纪律）。
+        auto spinByFieldKey = [panel](const char* key) -> QDoubleSpinBox* {
+            for (QDoubleSpinBox* s : panel->findChildren<QDoubleSpinBox*>()) {
+                if (s->property("irdFieldKey").toString()
+                    == QString::fromLatin1(key)) {
+                    return s;
+                }
+            }
+            return nullptr;
+        };
+        // 工位组行条目计数（树三级＝根→分组→条目——分组在根的 children
+        // 层，不在 topLevel；首轮实录 topLevel 找"工位"恒 -1）。
+        auto stationEntryCount = [tree]() -> int {
+            if (tree == nullptr) {
+                return -1;
+            }
+            for (int r = 0; r < tree->topLevelItemCount(); ++r) {
+                const QTreeWidgetItem* root = tree->topLevelItem(r);
+                for (int i = 0; i < root->childCount(); ++i) {
+                    const QTreeWidgetItem* group = root->child(i);
+                    if (group->text(0).startsWith(QStringLiteral("工位"))) {
+                        return group->childCount();
+                    }
+                }
+            }
+            return -1;
+        };
+
+        // ---- 拍 2：空态断言→工位新增→空态退役--------------------------
+        step("2 empty-state-and-add-station");
+        ok(buttonOf("ird_req_duplicate_points") != nullptr
+               && !buttonOf("ird_req_duplicate_points")->isEnabled(),
+           "step2 empty-duplicate-disabled");
+        ok(buttonOf("ird_req_remove_points") != nullptr
+               && !buttonOf("ird_req_remove_points")->isEnabled(),
+           "step2 empty-remove-disabled");
+        ok(buttonOf("ird_req_add_points") != nullptr
+               && buttonOf("ird_req_add_points")->isEnabled(),
+           "step2 empty-add-enabled");
+        QLabel* hint = panel->findChild<QLabel*>(
+            QStringLiteral("ird_req_empty_hint_points"));
+        ok(hint != nullptr && hint->isVisibleTo(hint->parentWidget()),
+           "step2 empty-hint-visible");
+        if (buttonOf("ird_req_add_points") != nullptr) {
+            buttonOf("ird_req_add_points")->click();
+        }
+        settleEvents(300);  // 提交轨落域＋全面板重投影
+        ok(stationEntryCount() >= 1, "step2 station-added (tree-child="
+                                         + std::to_string(stationEntryCount())
+                                         + ")");
+        ok(buttonOf("ird_req_duplicate_points") != nullptr
+               && buttonOf("ird_req_duplicate_points")->isEnabled(),
+           "step2 selected-duplicate-enabled");
+        ok(buttonOf("ird_req_remove_points") != nullptr
+               && buttonOf("ird_req_remove_points")->isEnabled(),
+           "step2 selected-remove-enabled");
+        ok(hint != nullptr && !hint->isVisibleTo(hint->parentWidget()),
+           "step2 selected-hint-hidden");
+        QLabel* header = panel->findChild<QLabel*>(
+            QStringLiteral("ird_req_tab_station_header"));
+        ok(header != nullptr && header->text().startsWith(QStringLiteral("工位 > "))
+               && !header->text().endsWith(QStringLiteral("未选择")),
+           "step2 breadcrumb-object-name (cur="
+               + (header != nullptr ? header->text().toStdString() : std::string("?"))
+               + ")");
+
+        // ---- 拍 3：工位属性编辑（名称只读面/等级/启用/自由度/容差）------
+        step("3 station-fields");
+        // 名称行＝只读灰显（UI-T37 返工①——非数量行诚实降级；名称不在
+        // specs 词表，域侧无回填轨——只读即产品语义，遍历验证只读态）。
+        QLineEdit* nameEdit = editByFieldKey("name");
+        ok(nameEdit != nullptr && nameEdit->isReadOnly(),
+           "step3 name-editor-readonly (product-semantics)");
+        QComboBox* levelCombo = comboByName("ird_station_level_combo");
+        ok(levelCombo != nullptr, "step3 level-combo-present");
+        if (levelCombo != nullptr) {
+            const int before = levelCombo->currentIndex();
+            levelCombo->setCurrentIndex(before == 0 ? 1 : 0);  // Must↔Should
+            settleEvents(300);
+            ok(true, "step3 level-toggled (idx-submitted)");
+        }
+        QComboBox* enabledCombo = comboByName("ird_station_enabled_combo");
+        ok(enabledCombo != nullptr, "step3 enabled-combo-present");
+        if (enabledCombo != nullptr) {
+            enabledCombo->setCurrentIndex(enabledCombo->currentIndex() == 0 ? 1 : 0);
+            settleEvents(300);
+            ok(true, "step3 enabled-toggled");
+        }
+        QComboBox* dofX = nullptr;
+        for (QComboBox* c : panel->findChildren<QComboBox*>(
+                 QStringLiteral("ird_dof_combo"))) {
+            if (c->property("irdDofKey").toString() == QStringLiteral("dof-x")) {
+                dofX = c;
+                break;
+            }
+        }
+        ok(dofX != nullptr, "step3 dof-x-combo-present");
+        if (dofX != nullptr) {
+            dofX->setCurrentIndex(dofX->currentIndex() == 0 ? 1 : 0);  // 约束↔自由
+            settleEvents(300);
+            ok(true, "step3 dof-x-toggled");
+        }
+        // 容差行＝QDoubleSpinBox（renderSpinRow——编辑完成制提交）。
+        QDoubleSpinBox* tolSpin = spinByFieldKey("tolerance-position");
+        ok(tolSpin != nullptr, "step3 tolerance-editor-present");
+        if (tolSpin != nullptr) {
+            tolSpin->setValue(0.5);
+            Q_EMIT tolSpin->editingFinished();  // 与失焦同源的提交信号
+            settleEvents(300);
+            ok(true, "step3 tolerance-edited");
+        }
+
+        // ---- 拍 4：动作阶段＋姿态规则-----------------------------------
+        step("4 segment-and-orientation");
+        QComboBox* segEnabled = panel->findChild<QComboBox*>(
+            QStringLiteral("ird_segment_enabled_combo"));  // 首个＝接近段（投影序）
+        ok(segEnabled != nullptr, "step4 segment-enabled-present");
+        if (segEnabled != nullptr) {
+            segEnabled->setCurrentIndex(0);  // 启用接近段
+            settleEvents(300);
+            ok(true, "step4 segment-approach-enabled");
+        }
+        // 段轴下拉在重投影后重建——操作前重新定位（F-453 遍历侧纪律）。
+        QComboBox* segAxis = panel->findChild<QComboBox*>(
+            QStringLiteral("ird_segment_axis_combo"));
+        ok(segAxis != nullptr, "step4 segment-axis-present");
+        if (segAxis != nullptr) {
+            segAxis->setCurrentIndex(1);  // ToolZ→ReferenceZ
+            settleEvents(300);
+            ok(true, "step4 segment-axis-switched");
+        }
+        // 姿态规则：五规则下拉切换→参数行重投影（Fixed→ToolRollFree 行集
+        // 变化）。切换后卡片重建＝orient 指针失效——回切前必须重新定位
+        // （本通道首轮实录：复用旧指针＝UAF 崩溃 0xC0000005）。
+        QComboBox* orient = comboByName("ird_station_orientation_combo");
+        ok(orient != nullptr, "step4 orientation-combo-present");
+        if (orient != nullptr) {
+            const int rowBefore = panel->findChildren<QLineEdit*>().size();
+            orient->setCurrentIndex(orient->count() - 1);  // 末项＝ToolRollFree
+            settleEvents(300);
+            const int rowAfter = panel->findChildren<QLineEdit*>().size();
+            ok(rowAfter != rowBefore,
+               "step4 orientation-reproject (rows " + std::to_string(rowBefore)
+                   + "->" + std::to_string(rowAfter) + ")");
+            QComboBox* orient2 = comboByName("ird_station_orientation_combo");
+            if (orient2 != nullptr) {
+                orient2->setCurrentIndex(0);  // 回 Fixed（稳定基线）
+                settleEvents(300);
+            }
+        }
+        snapPng(hostWin, "tour-2-station-edited.png");
+
+        // ---- 拍 5：卡片折叠＋区域新增＋盒尺寸＋采样计数------------------
+        step("5 fold-region-sampling");
+        QGroupBox* firstCard = nullptr;
+        for (QGroupBox* card : panel->findChildren<QGroupBox*>(
+                 QStringLiteral("ird_card"))) {
+            if (card->findChild<QToolButton*>(QStringLiteral("ird_card_fold"))
+                != nullptr) {
+                firstCard = card;
+                break;
+            }
+        }
+        ok(firstCard != nullptr, "step5 card-fold-present");
+        if (firstCard != nullptr) {
+            QToolButton* fold =
+                firstCard->findChild<QToolButton*>(QStringLiteral("ird_card_fold"));
+            fold->setChecked(false);
+            settleEvents(150);
+            ok(fold->text() == QStringLiteral("▶"), "step5 card-collapsed");
+            fold->setChecked(true);
+            settleEvents(150);
+            ok(fold->text() == QStringLiteral("▼"), "step5 card-expanded");
+        }
+        buttonOf("ird_req_add_regions")->click();
+        settleEvents(300);
+        QLabel* regionHeader = panel->findChild<QLabel*>(
+            QStringLiteral("ird_req_tab_region_header"));
+        ok(regionHeader != nullptr
+               && regionHeader->text().startsWith(QStringLiteral("区域 > ")),
+           "step5 region-added-breadcrumb");
+        // 采样计数（Grid 三轴分割——X/Y/Z 顺序三 spin；valueChanged 同步轨）
+        // ＋实时点数预览（改动后预览文本含乘积）。
+        const QList<QSpinBox*> countSpins =
+            panel->findChildren<QSpinBox*>(QStringLiteral("ird_region_count_spin"));
+        ok(countSpins.size() == 3, "step5 count-spins=3 (cur="
+                                       + std::to_string(countSpins.size()) + ")");
+        if (countSpins.size() == 3) {
+            countSpins[0]->setValue(4);
+            countSpins[1]->setValue(3);
+            countSpins[2]->setValue(2);
+            settleEvents(300);
+            ok(true, "step5 counts-submitted (4x3x2=24)");
+        }
+        snapPng(hostWin, "tour-3-region-sampling.png");
+
+        // ---- 拍 6：覆盖率滑块＋工况新增（模态向导自动填写）--------------
+        step("6 coverage-and-condition-wizard");
+        QSlider* slider =
+            panel->findChild<QSlider*>(QStringLiteral("ird_region_coverage_slider"));
+        ok(slider != nullptr, "step6 coverage-slider-present");
+        if (slider != nullptr) {
+            slider->setValue(85);
+            settleEvents(300);
+            ok(true, "step6 coverage-set (85%)");
+        }
+        // 新增工况＝默认向导弹窗（模态 exec）——预排队 300ms 定时器在嵌套
+        // 事件循环里自动填写名称并确认（自动化模态对话框标准手法）。
+        QPushButton* addCondition = buttonOf("ird_req_add_conditions");
+        ok(addCondition != nullptr, "step6 condition-add-present");
+        if (addCondition != nullptr) {
+            QTimer::singleShot(300, this, [this, panel] {
+                // 找活动模态对话框（向导）→名称行填"搬运工况"→OK。
+                QWidget* modal = QApplication::activeModalWidget();
+                if (modal == nullptr) {
+                    std::cout << "[ird-ui-smoke-tour] FAIL wizard-modal-missing"
+                              << std::endl;
+                    return;
+                }
+                for (QLineEdit* e : modal->findChildren<QLineEdit*>()) {
+                    e->setText(QStringLiteral("搬运工况"));
+                    break;
+                }
+                if (QDialog* dlg = qobject_cast<QDialog*>(modal)) {
+                    if (QDialogButtonBox* box =
+                            modal->findChild<QDialogButtonBox*>()) {
+                        box->button(QDialogButtonBox::Ok)->click();
+                        (void)dlg;
+                    }
+                }
+                (void)panel;
+            });
+            addCondition->click();  // 触发 exec()——嵌套循环执行上面定时器
+            settleEvents(400);
+        }
+        // 工况表：行出现＋是否必验列非空（派生 Tag 直投）。
+        QTreeWidget* condTable = panel->findChild<QTreeWidget*>(
+            QStringLiteral("ird_req_condition_table"));
+        ok(condTable != nullptr && condTable->topLevelItemCount() >= 1,
+           "step6 condition-row-present");
+        ok(condTable != nullptr && condTable->topLevelItemCount() >= 1
+               && !condTable->topLevelItem(0)->text(3).isEmpty(),
+           "step6 verify-tag-nonempty (cur="
+               + (condTable != nullptr && condTable->topLevelItemCount() >= 1
+                      ? condTable->topLevelItem(0)->text(3).toStdString()
+                      : std::string("?"))
+               + ")");
+
+        // ---- 拍 7：工况节拍编辑＋校验页实时化---------------------------
+        step("7 cycle-and-validation");
+        QLineEdit* cycleEdit = editByFieldKey("cycle-time");
+        ok(cycleEdit != nullptr, "step7 cycle-editor-present");
+        if (cycleEdit != nullptr) {
+            cycleEdit->setText(QStringLiteral("12.5"));
+            Q_EMIT cycleEdit->editingFinished();
+            settleEvents(300);
+            ok(condTable != nullptr && condTable->topLevelItemCount() >= 1
+                   && condTable->topLevelItem(0)->text(1).contains(
+                       QStringLiteral("12.5")),
+               "step7 cycle-table-synced");
+        }
+        // 校验页：页签切到 index 3→看板卡随编辑实时化（非『尚未执行』）。
+        QTabWidget* pages = panel->findChild<QTabWidget*>();
+        ok(pages != nullptr && pages->count() == 4, "step7 tabs=4");
+        if (pages != nullptr) {
+            pages->setCurrentIndex(3);
+            settleEvents(300);
+            QLabel* valHeader = panel->findChild<QLabel*>(
+                QStringLiteral("ird_req_tab_validation_header"));
+            ok(valHeader != nullptr
+                   && !valHeader->text().contains(QStringLiteral("尚未执行")),
+               "step7 validation-live (cur="
+                   + (valHeader != nullptr ? valHeader->text().toStdString()
+                                           : std::string("?"))
+                   + ")");
+            snapPng(hostWin, "tour-4-validation.png");
+            pages->setCurrentIndex(0);
+            settleEvents(150);
+        }
+
+        // ---- 拍 8：草稿撤销→重做----------------------------------------
+        // 观测面＝重做键使能翻转（撤销栈序贯——一次 undo 回退的是最近一次
+        // 编辑而非特定操作；『undo 后重做面点亮／redo 后重做面熄灭』是不
+        // 依赖栈深的不变量。首轮实录按"计数回到新增前"断言属设计错误）。
+        step("8 draft-undo-redo");
+        QPushButton* undoBtn = nullptr;
+        QPushButton* redoBtn = nullptr;
+        for (QPushButton* b : panel->findChildren<QPushButton*>()) {
+            if (b->text() == QStringLiteral("撤销")) { undoBtn = b; }
+            if (b->text() == QStringLiteral("重做")) { redoBtn = b; }
+        }
+        ok(undoBtn != nullptr && redoBtn != nullptr, "step8 undo-redo-present");
+        ok(redoBtn != nullptr && !redoBtn->isEnabled(),
+           "step8 redo-initially-disabled");
+        if (undoBtn != nullptr && undoBtn->isEnabled()) {
+            undoBtn->click();
+            settleEvents(300);
+            ok(redoBtn != nullptr && redoBtn->isEnabled(),
+               "step8 undo-lights-redo");
+        }
+        if (redoBtn != nullptr && redoBtn->isEnabled()) {
+            redoBtn->click();
+            settleEvents(300);
+            ok(redoBtn != nullptr && !redoBtn->isEnabled(),
+               "step8 redo-consumed");
+        }
+
+        // ---- 拍 9：draft.apply（需求域真实修订）＋项目级撤销使能----------
+        step("9 apply-and-project-undo");
+        const DomainApplyReport applyReport = runDomainApply(
+            m_domains ? m_domains->applyEntries
+                      : std::vector<ui::DomainModuleEntry>{},
+            std::nullopt,
+            [this](project::CommandEnvelope envelope,
+                   project::ICommandInteraction* cmdInteraction) {
+                const auto adapter = m_lastStoreAdapter;
+                if (adapter == nullptr) {
+                    return project::CommandResult{};
+                }
+                return adapter->projectStore().commands().submit(
+                    std::move(envelope), cmdInteraction);
+            },
+            nullptr,
+            [this](const std::string& message) {
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(kPluginDevChannel, message);
+                }
+            });
+        bool requirementsApplied = false;
+        for (const auto& entry : applyReport.entries) {
+            if (entry.outcome == ui::DomainApplyEntryReport::Outcome::Submitted) {
+                requirementsApplied = true;
+            }
+        }
+        ok(requirementsApplied, "step9 requirements-draft-applied (entries="
+                                    + std::to_string(applyReport.entries.size())
+                                    + ")");
+        settleEvents(300);
+        QPushButton* projectUndo = nullptr;
+        for (QPushButton* b : panel->findChildren<QPushButton*>()) {
+            if (b->text() == QStringLiteral("撤销上次应用")) {
+                projectUndo = b;
+            }
+        }
+        ok(projectUndo != nullptr && projectUndo->isEnabled(),
+           "step9 project-undo-enabled");
+        snapPng(hostWin, "tour-5-final-state.png");
+
+        std::cout << "[ird-ui-smoke-tour] " << (failedCount == 0 ? "DONE" : "FAILED")
+                  << " (failed-assert=" << failedCount << ")" << std::endl;
+        QCoreApplication::exit(failedCount == 0 ? 0 : 1);
     });
 }
 

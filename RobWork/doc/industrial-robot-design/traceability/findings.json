@@ -4542,7 +4542,28 @@
       "registeredAt": "2026-10-02",
       "title": "GUI 测试 exe 独立冒烟树缺 qt.conf：TARGET_RUNTIME_DLLS 复制的 Qt DLL 为可重定位前缀形态，集成树中 studio 目标恰好把 Qt plugins 部署在同目录才'顺带'工作；独立冒烟树无 studio 部署步→qwindows 缺位→ui_gui_test 8 用例全灭（modeling_gui_test 无窗口用例故幸免）。",
       "owner": "ui 单元（本次治理微批修复；集成树行为不变——qt.conf 钉回的真实安装即同版本 DLL 源）",
-      "resolution": "随 [governance] 微批提交闭环（修复后冒烟 ui_gui_test 全绿实测）。编号顺延自 F-455。"
+      "resolution": "随 [governance] 微批提交闭环（修复后冒烟 ui_gui_test 全绿实测）。gate-all 与布局冒烟并发时该冒烟测试曾现退出码 8 假阳性（窗口几何类 GUI 用例非并发安全——隔离复扫全绿；gate-all 冒烟段应避免与 GUI 留痕活动并发）。编号顺延自 F-455。"
+    },
+    {
+      "id": "F-457",
+      "source": "UI-T37 返工④自查（gate-all 第 2 步 ird_gates 期望退出码 0，与引擎'任一命中即 FATAL_ERROR'语义＋本项目登记例外模型（96+2 已登记命中）结构性不兼容——存量口径问题，自 96 命中时代起 gate-all 该步恒红；非本批引入）。",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "gate-all ird_gates 检查口径失配：第 2 步以构建退出码 0 为通过判据，而 ird_gates 引擎任一命中即构建失败、项目按 DTB §4.5 登记册运维（96+2 已登记命中常态）——该步自登记命中出现起恒红，各轮实际口径＝命中集与登记基线逐条 diff（ird_gates 归一零新增）。",
+      "owner": "治理脚本（待微批重构第 2 步＝捕获命中集与基线文件逐条 diff 判定；需先固化机器可读命中集基线工件〔traceability 下登记〕——非阻塞，各轮按命中集 diff 口径执行）",
+      "resolution": "本批以命中集 diff 实测：当前 71 行唯一命中与 attempt3 基线（traceability/builds/ui-t37/ird-gates-head.log）逐条一致＝零新增；gate-all 其余 60 项全绿。重构另批处置。编号顺延自 F-456。"
+    },
+    {
+      "id": "F-458",
+      "source": "所有者 2026-10-02 全功能遍历指令承接（requirements-tour 宿主冒烟通道首轮实录——新增工况永不弹向导；gui 注入缝测试全覆盖故历次验收未暴露）。",
+      "severity": "blocking",
+      "status": "fixed",
+      "fixedBy": "RequirementsPanelWidget::onAddEntry(Conditions) 缺省兜底绑定 defaultConditionWizard（缝空时内联 lambda 绑定——宿主真实用户恢复向导弹窗；gui 两用例补注入适配〔fixture 每例重建面板，注入须本例自带〕）",
+      "registeredAt": "2026-10-02",
+      "title": "工况新增向导宿主形态不可达：m_conditionWizard 缝缺省为空且 defaultConditionWizard 从无绑定——onAddEntry 缝空直接创建无配置起步条目，与契约『创建即带完整起步配置、禁止无配置空白条目』纪律矛盾（宿主真实用户点新增工况永不弹向导）。",
+      "owner": "UI-T37 返工⑤轮（遍历通道 requirements-tour 抓获并同批修复；tour 复跑向导弹窗＋自动填写确认断言全绿）",
+      "resolution": "随遍历批次提交闭环（tour-6 步向导段＋gui 32/32 回归）；验收记录 attempt5 的 acceptance 4 向导项由注入缝承载的口径以此勘误——宿主形态行为随本批补齐。编号顺延自 F-457。"
     }
   ]
 }
