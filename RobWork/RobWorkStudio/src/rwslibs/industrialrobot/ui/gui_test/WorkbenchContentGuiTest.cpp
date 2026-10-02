@@ -340,9 +340,11 @@ TEST_F(WorkbenchContentGuiTest, EmbeddedMemoryFlagsOnlyBoundary_UI_SPLIT)
 }
 
 /**
- * 损坏回退（§4.5 的嵌入式适配面）：版本不识别 → 三区回退全可见＋
+ * 损坏回退（§4.5 的嵌入式适配面）：版本不识别 → 三区回退出厂可见性＋
  * UI-LAYOUT-RESTORE-FAILED 经 Dev 通道出线＋损坏段整段丢弃（版本键消失），
  * 不阻塞启动（activate 正常完成）。
+ * UI-T38：出厂可见性按宿主形态分派（§10.1 v1.45 注⑮）——嵌入式形态
+ * 底部区出厂隐藏（净室默认布局），左/右区出厂可见；本夹具即嵌入式形态。
  */
 TEST_F(WorkbenchContentGuiTest, EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_UI_SPLIT)
 {
@@ -357,10 +359,12 @@ TEST_F(WorkbenchContentGuiTest, EmbeddedCorruptMemoryFallsBackWithDevDiagnostic_
     auto content = ui::createWorkbenchContent(makeEmbeddedDeps());
     ASSERT_TRUE(content->build());
     content->activate();  // 损坏不阻塞启动
-    // 三区回退出厂可见性（全可见）；Dev 诊断出线；损坏段整段丢弃。
+    // 三区回退出厂可见性（左/右可见、底部隐藏——UI-T38 形态分派缺省位）；
+    // Dev 诊断出线；损坏段整段丢弃。
     EXPECT_TRUE(content->regionVisible(WorkbenchRegion::Left));
     EXPECT_TRUE(content->regionVisible(WorkbenchRegion::Right));
-    EXPECT_TRUE(content->regionVisible(WorkbenchRegion::Bottom));
+    EXPECT_FALSE(content->regionVisible(WorkbenchRegion::Bottom))
+        << "嵌入式底部区出厂缺省应为隐藏（UI-T38 §10.1 v1.45 注⑮）";
     EXPECT_TRUE(m_devLog->seen("UI-LAYOUT-RESTORE-FAILED"))
         << "UI-LAYOUT-RESTORE-FAILED 未经 Dev 通道出线（§6.2）";
     QSettings check(QSettings::IniFormat, QSettings::UserScope,

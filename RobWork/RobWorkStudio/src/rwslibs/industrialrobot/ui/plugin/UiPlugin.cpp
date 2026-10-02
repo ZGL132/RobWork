@@ -243,8 +243,8 @@ constexpr int kCentralMinReserveWidth = 320;
 
 /// 本插件 Dock 回推时的收缩下限（UI-T24 P2），单位 px。回推不与内容最小
 /// 宽度对抗（Qt 布局对 minimumSizeHint 以下本就拒收）——本常量只是再垫
-/// 一层"不缩到不可辨认"的插件侧地板：主 Dock 承载命令条与项目树，低于
-/// 160 px 呈现已无意义。
+/// 一层"不缩到不可辨认"的插件侧地板：主 Dock 承载工业项目树（UI-T38 起
+/// 外壳退役、树是唯一内容），低于 160 px 呈现已无意义。
 constexpr int kDockShrinkFloorWidth = 160;
 
 /**
@@ -510,7 +510,12 @@ std::optional<std::vector<double>> extractJointQFromState(
 IrdWorkbenchHostPlugin::IrdWorkbenchHostPlugin()
     // 插件名：Dock 标题/宿主 Plugins 菜单开关项/卸载对话框的显示名。
     // 图标留空（开发期通道不引入资源文件——零图标不是零功能）。
-    : rws::RobWorkStudioPlugin(QString::fromUtf8("IRD 工作台"), QIcon())
+    // UI-T38 更名"IRD 工作台"→"工业项目树"：主 Dock 自建外壳（顶栏/左栏）
+    // 退役后插件本体 Dock 内容＝纯工业项目树，标题如实反映内容并与宿主
+    // 原生插件（TreeView 等）命名风格一致；类名保持 IrdWorkbenchHostPlugin
+    // 不变（插件仍是全部 IRD Dock/菜单/投影的宿主装配体，更名只作用于
+    // 显示名——宿主 QSettings 布局记忆键随名一次性轮换，旧键残留无害）。
+    : rws::RobWorkStudioPlugin(QString::fromUtf8("工业项目树"), QIcon())
 {
 }
 
@@ -925,7 +930,7 @@ void IrdWorkbenchHostPlugin::initialize()
     // restoreState(QtMainWindowState)）还没执行，它们会把本 Dock 置为
     // 隐藏——呈现结论只能由 reassertEmbeddedPresentation 在事件循环
     // 回归后给出（G1 装载门控的第二判据），此处不得提前声称"已嵌入"。
-    reportLine("工作台装配完成（多 Dock：主 Dock＋属性/任务同级 Dock＋宿主状态栏投影＋Ctrl+Shift+P 命令面板；"
+    reportLine("工业项目树装配完成（多 Dock：项目树主 Dock＋属性/任务同级 Dock＋宿主状态栏投影＋Ctrl+Shift+P 命令面板；"
                "装载呈现自证在事件循环稍后执行）");
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
@@ -1009,18 +1014,26 @@ void IrdWorkbenchHostPlugin::close()
 
 bool IrdWorkbenchHostPlugin::buildDockBody()
 {
-    // 多 Dock 拓扑（UI-T18——O-43 裁决③：单一工作台 Dock 五区栅格拆分）：
-    //   ①插件本体 Dock＝主 Dock（Left 停靠区）——命令条（顶栏）＋项目导航
-    //     （左栏）纵排；
-    //   ②IRD 属性与诊断 Dock（Right 停靠区）＝右栏内容（本插件新建、宿主
-    //     addDockWidget 同级注册——addDockWidget 延后到装载呈现自证，彼时
-    //     插件已入宿主主窗口）；
-    //   ③IRD 任务和状态 Dock（Bottom 停靠区）＝底部内容（同上）。
-    // 中央区不安放（宿主中央 RWStudioView3D 唯一所有三维——O-38 裁决③；
-    // 内容装配面的中央让位页保持已构建不挂载，零呈现面）。状态行不进任何
-    // Dock——PM-11 永久投影与瞬态消息经双观测钩子直投宿主状态栏（宿主
-    // chrome 唯一，v1.11"状态行钉底"的语义等价迁移见落位登记注）。
-    // 红线不变：不建任何顶层 QMainWindow（O-38 裁决②）。
+    // 多 Dock 拓扑（UI-T18——O-43 裁决③：单一工作台 Dock 五区栅格拆分；
+    // UI-T38 收口——主 Dock 自建外壳退役）：插件本体 Dock＝主 Dock（Left
+    // 停靠区）＝纯工业项目树（业务主导航），不再挂载内容装配面的顶栏命令
+    // 条与左栏导航——顶栏命令与宿主 File 菜单重复、左栏为未落地占位，外
+    // 壳退役后主 Dock 与宿主原生插件 Dock（TreeView 等）同形态；命令入口
+    // 全量由宿主菜单（File 项目子菜单/Tools/视图）＋命令面板承载（见
+    // registerHostMenus）。     ②IRD 属性与诊断 Dock（Right 停靠区）＝右
+    // 栏内容（本插件新建、宿主 addDockWidget 同级注册——addDockWidget 延
+    // 后到装载呈现自证，彼时插件已入宿主主窗口）；③IRD 任务和状态 Dock
+    // （Bottom 停靠区）＝底部内容（同上；UI-T38 起工厂默认隐藏——见
+    // WorkbenchContent 构造的宿主形态分派）。中央区不安放（宿主中央
+    // RWStudioView3D 唯一所有三维——O-38 裁决③；内容装配面的中央让位页
+    // 保持已构建不挂载，零呈现面）。状态行不进任何 Dock——PM-11 永久投影
+    // 与瞬态消息经双观测钩子直投宿主状态栏（宿主 chrome 唯一，v1.11"状态
+    // 行钉底"的语义等价迁移见落位登记注）。红线不变：不建任何顶层
+    // QMainWindow（O-38 裁决②）。
+    // 内容装配面（m_content）仍全量构建五区并持有命令设施（命令注册表/
+    // 快捷键/命令面板/PM-11 投影）——本 Dock 只是不再消费其顶栏/左栏
+    // Widget 出口（构建产物保持未挂载＝不可见，harness 顶层形态消费面
+    // 不变）；submitCommand 路由与三区可见性记忆照常经它运转。
     auto* body = new QWidget(this);
     body->setObjectName("ird_plugin_dock_body");
     auto* mainLayout = new QVBoxLayout(body);
@@ -1031,16 +1044,29 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
         return false;  // wiring 校验被拒（装配缺陷——调用方上抛处理）
     }
 
-    // 主 Dock 体（内容 Widget 从宿主控件重挂进纵排——Qt 对象树托管）。
-    // UI-T23：主 Dock 纵排扩展为"顶栏＋左栏导航＋工业项目树"三段（B1-SPEC
-    // D3——工业项目树是业务主导航，入宿主主 Dock 的挂位编排归本收口任务，
-    // UI-T21 登记注③的预留缝）；共享树面板未装配（装配缺陷防御）时保持
-    // 首版两段形态，零回归。
-    mainLayout->addWidget(m_content->topBarWidget(), /*stretch=*/0);
-    mainLayout->addWidget(m_content->leftWidget(), /*stretch=*/1);
+    // 主 Dock 体＝共享工业项目树单段（UI-T38——B1-SPEC D3 的收口形态：
+    // 树是业务主导航，独占主 Dock；顶栏/左栏外壳退役登记于 units/ui.md
+    // UI-T38 增量注）。树面板未装配＝装配缺陷防御：空体兜底（宿主装载
+    // 不中断，缺陷经 Dev 留痕上抛），不虚构占位内容。
+    // 顶栏/左栏出口显式藏（buildDockBody 安放纪律）：两 Widget 的父对象＝
+    // 本 Dock 内容体（内容装配面统一以宿主控件为父），且创建于宿主显示
+    // 之前——Qt 级联显示语义（父 show 时未 hide 的子件一并点亮）会把未
+    // 安放的它们在 Dock 原点裸显成叠影；本形态不安放＝必须出显隐面。
+    // harness 顶层形态两出口照常安放，不受影响。
+    if (QWidget* topBar = m_content->topBarWidget()) {
+        topBar->hide();
+    }
+    if (QWidget* leftNav = m_content->leftWidget()) {
+        leftNav->hide();
+    }
     if (m_treePanel != nullptr) {
-        // 共享树段（stretch 2＝树占主导航主区；左栏导航为命令/入口条）。
-        mainLayout->addWidget(m_treePanel->widget(), /*stretch=*/2);
+        mainLayout->addWidget(m_treePanel->widget(), /*stretch=*/1);
+    } else {
+        reportLine("工业项目树面板未装配——主 Dock 空体（装配缺陷，如实留痕）");
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel,
+                                    "buildDockBody：共享树面板缺席，主 Dock 空体");
+        }
     }
     setWidget(body);
     m_dockBody = body;
@@ -1183,6 +1209,13 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
         addCommandAction(projectMenu, "新建项目", "project.new");
         addCommandAction(projectMenu, "打开项目", "project.open");
         addCommandAction(projectMenu, "保存草稿", "draft.save");
+        // 写命令入口补全（UI-T38——主 Dock 顶栏命令条退役的承接面）：应用/
+        // 撤销/重做此前仅顶栏按钮与 Ctrl+Shift+P 命令面板两入口，顶栏退役
+        // 后菜单成为唯一常驻图形入口（§7.2 路由红线不变——动作只转发命令
+        // 板，文案与原顶栏按钮逐字一致；使能态随命令可用性快照刷新）。
+        addCommandAction(projectMenu, "应用修改", "draft.apply");
+        addCommandAction(projectMenu, "撤销", "project.undo");
+        addCommandAction(projectMenu, "重做", "project.redo");
         addCommandAction(projectMenu, "项目另存为", "project.saveAs");
         addCommandAction(projectMenu, "关闭项目", "workbench.closeProject");
         // 最近项目子菜单（PM-10）：内容装配时清空、aboutToShow 现取重建
@@ -1228,11 +1261,14 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
     // 区域开关语义（§4.1"支持隐藏"的宿主菜单承载；勾选态随内容装配层刷新
     // 同步，triggered/toggled 分离避免回环）。可隐藏三区（Top/Central 恒在
     // ——§4.4）。插入位置：Plugins 菜单之前（File/Tools 之后）。
+    // UI-T38：开关文案与 Dock 标题对齐——主 Dock 外壳退役后，三个可隐藏
+    // 区在用户视野里就是三个 Dock 面板（原"左栏/右栏/底部"是内容装配面
+    // 栅格词表，宿主融合形态下不直观）；开关目标与跨会话记忆键零变化。
     auto* viewMenu = new QMenu(QString::fromUtf8(kViewMenuTitle), menuBar);
     const std::pair<WorkbenchRegion, const char*> regionToggles[] = {
-        {WorkbenchRegion::Left, "左栏"},
-        {WorkbenchRegion::Right, "右栏"},
-        {WorkbenchRegion::Bottom, "底部任务和状态区"},
+        {WorkbenchRegion::Left, "工业项目树"},
+        {WorkbenchRegion::Right, "IRD 属性与诊断"},
+        {WorkbenchRegion::Bottom, "IRD 任务和状态"},
     };
     for (const auto& [region, title] : regionToggles) {
         auto* action = viewMenu->addAction(QString::fromUtf8(title));
@@ -1441,12 +1477,13 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
         hostWindow->addDockWidget(Qt::RightDockWidgetArea, m_propsDock);
         hostWindow->addDockWidget(Qt::BottomDockWidgetArea, m_tasksDock);
         // 建模 Dock 入宿主（WP-24-T03 首版装配挂位——Left 区；与属性/任务
-        // Dock 同受宿主装载语义支配）。呈现位（UI-T24 P1——默认布局收敛）：
-        // 三域自持面板工厂默认＝不呈现（净室默认呈现面收敛为"主 Dock＋属性/
-        // 任务 Dock"，中央三维视图非零），可见性由内容装配面的辅助记忆半区
-        // 决定（用户经"视图"菜单呼出后跨会话记忆优先——PM-14；框架
-        // restoreState 先于本拍 addDockWidget，blob 对域 Dock 无效，故记忆
-        // 自持）。缺席域跳过——失败隔离挂位形态。
+        // Dock 同受宿主装载语义支配）。呈现位（UI-T24 P1——默认布局收敛；
+        // UI-T38 收敛面更新）：三域自持面板与任务 Dock 工厂默认＝不呈现
+        // （净室默认呈现面收敛为"工业项目树主 Dock＋属性诊断 Dock"，中央
+        // 三维视图非零），可见性由内容装配面的辅助/区域记忆半区决定（用户
+        // 经"视图"菜单呼出后跨会话记忆优先——PM-14；框架 restoreState 先于
+        // 本拍 addDockWidget，blob 对域 Dock 无效，故记忆自持）。缺席域跳过
+        // ——失败隔离挂位形态。
         if (m_modelingDock != nullptr) {
             hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_modelingDock);
             m_modelingDock->setVisible(m_content->auxVisible(kAuxKeyModelingDock));
@@ -1476,7 +1513,8 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
         // 重施一次：用户隐藏的区保持隐藏（可经宿主"视图"菜单重新开启），
         // 无隐藏记忆（缺省）时与重显结果一致。主 Dock（Left 目标）不在此
         // 重施——其装载呈现维持 v1.11 注册口径（G1 门控判据"装载即呈现"；
-        // 主 Dock 承载命令条，整 Dock 隐藏将无处承载工作台入口）。
+        // 主 Dock 承载工业项目树——业务主导航，整 Dock 隐藏将无处承载项目
+        // 对象导航，UI-T38 外壳退役后语义不变）。
         m_propsDock->setVisible(m_content->regionVisible(WorkbenchRegion::Right));
         m_tasksDock->setVisible(m_content->regionVisible(WorkbenchRegion::Bottom));
     }
@@ -1488,8 +1526,10 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     // 布局落定后的下一拍用 resizeDocks 显式把 Dock 宽度收束到宿主主窗口客户
     // 宽的约 2/5——中央三维视图保有其余宽度，两能力同帧共存。连续两拍各发一
     // 次收束（show 布局与主窗口布局的落定拍序不由插件决定，第二拍兜底）；
-    // 结果宽度如实留痕——若被内容最小宽度钳制（该形态下顶栏按钮行很宽），
-    // 收束只能到达钳制宽度，此时宿主窗口越宽三维视图所得越多，如实呈现。
+    // 结果宽度如实留痕——若被内容最小宽度钳制，收束只能到达钳制宽度，
+    // 此时宿主窗口越宽三维视图所得越多，如实呈现（UI-T38 后主 Dock 内容
+    // ＝纯项目树，顶栏按钮行 1054 px 钳制源已随外壳退役消失，收束可达性
+    // 显著改善）。
     // 右/底 Dock（UI-T18）同拍给一次合理初值（右＝宿主宽约 1/5 钳制到
     // [300, 480] px、底＝宿主高约 1/4 钳制到 [190, 340] px——下界 300/190 px
     // 高于 §4.4 各区内容最小尺寸 280/160 px，初值在最小可用之上留余量，
@@ -1551,7 +1591,7 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
     // 极端拖拽与最小窗口下的最后防线（中央三维视图不归零）。
     installCentralReserveGuard();
 
-    reportLine("工作台多 Dock 已呈现（主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）");
+    reportLine("工业项目树多 Dock 已呈现（项目树主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）");
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
                                 "装载呈现自证完成（多 Dock 嵌入宿主主窗口可见；状态投影归宿主状态栏）");
@@ -1630,7 +1670,7 @@ void IrdWorkbenchHostPlugin::enforceCentralMinWidth()
     if (m_kinematicsDock != nullptr && m_kinematicsDock->isVisible()) {
         leftColumn.append(m_kinematicsDock);
     }
-    // 主 Dock 最后收（承载命令条与项目树——工作台入口，优先保它宽裕）。
+    // 主 Dock 最后收（承载工业项目树——业务主导航，优先保它宽裕）。
     for (QDockWidget* dock : leftColumn) {
         const int target = clampFloor(dock);
         if (dock->width() > target) {
@@ -3140,14 +3180,16 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
 
         if (firstRun) {
             // ---- 首启场景：P1 默认收敛＋P2 中央保护＋P3 按钮语义化 --------
-            // P1 断言（净室＝辅助记忆缺失，驱动夹具保证）：三域自持面板
-            // 默认不呈现；默认呈现面＝主 Dock＋属性/任务 Dock；中央三维
-            // 视图可见且宽度非零（验收原文判据）。
+            // P1 断言（净室＝辅助记忆缺失，驱动夹具保证）：三域自持面板与
+            // 任务 Dock 默认不呈现（UI-T38——任务 Dock 工厂默认按宿主形态
+            // 分派，插件形态隐藏）；默认呈现面＝工业项目树主 Dock＋属性诊断
+            // Dock；中央三维视图可见且宽度非零（验收原文判据）。
             const std::vector<std::pair<const char*, const QDockWidget*>> auxDocks{
                 {"modeling", m_modelingDock},
                 {"requirements", m_requirementsDock},
                 {"kinematics", m_kinematicsDock},
                 {"kinematics-advanced", m_kinematicsAdvancedDock},
+                {"tasks", m_tasksDock},
             };
             for (const auto& [name, dock] : auxDocks) {
                 check(dock == nullptr || !dock->isVisible(),
@@ -3156,8 +3198,6 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
             check(isVisible(), "default-visible:main-dock");
             check(m_propsDock != nullptr && m_propsDock->isVisible(),
                   "default-visible:props-dock");
-            check(m_tasksDock != nullptr && m_tasksDock->isVisible(),
-                  "default-visible:tasks-dock");
             if (central != nullptr) {
                 lines.push_back("central cur=" + std::to_string(central->width())
                                 + "x" + std::to_string(central->height()));
@@ -3452,6 +3492,31 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                 }
                 domainToggle->trigger();  // 关闭复位（记忆初态保持——见上）
                 settleEvents(300);
+            }
+
+            // 任务 Dock 呼出验证（UI-T38——底部区工厂默认隐藏后的用户通道
+            // 抽查）：三区区域开关（"视图"菜单『IRD 任务和状态』）触发→
+            // 呈现→回翻复位。翻转经内容装配面即时落盘（嵌入式形态单键微
+            // 写），回翻后记忆值与工厂默认一致（隐藏）——二次启动场景的
+            // memory-* 断言初态不受影响。
+            QAction* tasksToggle = nullptr;
+            for (auto& [region, action] : m_hostRegionToggles) {
+                if (region == WorkbenchRegion::Bottom) {
+                    tasksToggle = action;
+                    break;
+                }
+            }
+            check(tasksToggle != nullptr, "tasks-region-toggle-present");
+            if (tasksToggle != nullptr) {
+                tasksToggle->trigger();
+                settleEvents(300);
+                check(m_tasksDock != nullptr && m_tasksDock->isVisible(),
+                      "tasks-summoned-visible");
+                snapPng(hostWindow, "10-tasks-dock-summoned.png");
+                tasksToggle->trigger();  // 关闭复位（记忆值回到隐藏缺省）
+                settleEvents(300);
+                check(m_tasksDock == nullptr || !m_tasksDock->isVisible(),
+                      "tasks-restored-hidden");
             }
 
             // P2 断言：最小窗口（§4.4 1280×720）下中央区不归零（装配侧

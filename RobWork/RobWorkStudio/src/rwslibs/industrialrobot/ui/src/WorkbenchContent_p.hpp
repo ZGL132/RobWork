@@ -206,6 +206,8 @@ private:
     /// 三区用户可见性意愿位（§4.4 折叠不覆盖用户意愿；Top/Central 恒在无此位）。
     bool m_visibleLeft = true;
     bool m_visibleRight = true;
+    /// 底部区工厂默认：构造体按宿主形态分派（UI-T38）——顶层 harness＝可见
+    /// （行为回归零变化），插件形态＝隐藏（净室默认布局；跨会话记忆仍优先）。
     bool m_visibleBottom = true;
 
     /// 辅助 Dock 可见性记忆（UI-T24——§10.1 v1.25）：目标登记表＋记忆值表。
