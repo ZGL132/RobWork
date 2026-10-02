@@ -572,6 +572,47 @@ void appendJsonString(std::string& out, const std::string& utf8, const char* wha
 // dump 复用片段（身份/摘要字段均为 core 规范文本或 64hex——ASCII 安全直出）
 // =====================================================================
 
+/// 字节序列的 hex 文本编码（UI-T39——payloadCanonical 持久化编码：域负载
+/// 是不透明任意字节〔§6.4；CommandRecord 载体＝std::string 字节串〕，JSON
+/// 承载取小写 hex——每字节两字符，往返确定性与 core 摘要 hex 同一口径）。
+void appendHexString(std::string& out, const std::string& bytes)
+{
+    static constexpr char kHex[] = "0123456789abcdef";
+    out += '"';
+    for (const char raw : bytes) {
+        const unsigned char b = static_cast<unsigned char>(raw);
+        out += kHex[(b >> 4) & 0xF];
+        out += kHex[b & 0xF];
+    }
+    out += '"';
+}
+
+/// hex 文本解码回字节序列（parse 对称半区——奇数长度/非 hex 字符＝
+/// store-corrupt，不猜测）。
+std::string decodeHexString(const std::string& hex)
+{
+    static constexpr int kInvalid = -1;
+    const auto nibble = [](char c) -> int {
+        if (c >= '0' && c <= '9') { return c - '0'; }
+        if (c >= 'a' && c <= 'f') { return c - 'a' + 10; }
+        return kInvalid;
+    };
+    if (hex.size() % 2 != 0) {
+        corrupt("hex-encoded byte field has odd length");
+    }
+    std::string out;
+    out.reserve(hex.size() / 2);
+    for (std::size_t i = 0; i < hex.size(); i += 2) {
+        const int hi = nibble(hex[i]);
+        const int lo = nibble(hex[i + 1]);
+        if (hi == kInvalid || lo == kInvalid) {
+            corrupt("hex-encoded byte field has non-hex character");
+        }
+        out.push_back(static_cast<char>((hi << 4) | lo));
+    }
+    return out;
+}
+
 /// 身份字段规范化文本（ProjectId → "prj-…"）。
 std::string canonical(ProjectId id) { return id.toCanonical(); }
 
@@ -994,19 +1035,27 @@ std::string dump(const CommandRecord& value)
 {
     // §4.4.4 表列序：commandType, payloadFormatVersion, payloadCanonical,
     // inverse?, confirmations?, summary。
+    // UI-T39：payloadCanonical 的持久化编码由"UTF-8 字符串直写"改为
+    // **hex 文本**——payload 契约是"域 canonical 负载字节（不透明；project
+    // 原样存储——§6.4）"，域负载是任意字节（requirements 的紧凑二进制
+    // 载荷含 magic/长度前缀与 double 原始字节，必然含非 UTF-8 序列）；
+    // 旧实现经 appendJsonString 的严格 UTF-8 校验即拒绝合法域负载（生产
+    // 装配注册处理器后的首次真实提交实证）。hex 编码字节安全且往返确定
+    // （同字节→同文本——NFR-COR-02）；磁盘兼容负担为零：生产路径此前
+    // 从未有域 payload 落盘（处理器未注册＝提交恒 unknown-command 拒绝）。
     std::string out;
     out += "{\"commandType\":";
     appendJsonString(out, value.commandType, "commandType");
     out += ",\"payloadFormatVersion\":" + std::to_string(value.payloadFormatVersion);
     out += ",\"payloadCanonical\":";
-    appendJsonString(out, value.payloadCanonical, "payloadCanonical");  // 域负载透传编码
+    appendHexString(out, value.payloadCanonical);  // 域负载透传（hex 编码——字节安全）
     if (value.inverse.has_value()) {
         out += ",\"inverse\":{\"commandType\":";
         appendJsonString(out, value.inverse->commandType, "inverse.commandType");
         out += ",\"payloadFormatVersion\":"
              + std::to_string(value.inverse->payloadFormatVersion);
         out += ",\"payloadCanonical\":";
-        appendJsonString(out, value.inverse->payloadCanonical, "inverse.payloadCanonical");
+        appendHexString(out, value.inverse->payloadCanonical);
         out += '}';
     }
     if (!value.confirmations.empty()) {
@@ -1287,7 +1336,9 @@ CommandRecord parseCommandRecord(std::string_view text)
         }
     }
     v.payloadFormatVersion = requireUint32Field(root, "payloadFormatVersion");
-    v.payloadCanonical = requireStringField(root, "payloadCanonical");  // 域负载透传（不解释）
+    // 域负载透传（不解释）——hex 文本解码回字节（UI-T39：与 dump 的
+    // appendHexString 对称；奇长/非 hex 字符＝store-corrupt 不猜测）。
+    v.payloadCanonical = decodeHexString(requireStringField(root, "payloadCanonical"));
     if (const JsonValue* inv = findMember(root, "inverse")) {
         if (inv->kind != JsonValue::Kind::Object) {
             corrupt("field 'inverse' must be an object");
@@ -1295,7 +1346,8 @@ CommandRecord parseCommandRecord(std::string_view text)
         InverseCommand i;
         i.commandType = requireTokenField(*inv, "commandType");
         i.payloadFormatVersion = requireUint32Field(*inv, "payloadFormatVersion");
-        i.payloadCanonical = requireStringField(*inv, "payloadCanonical");
+        i.payloadCanonical =
+            decodeHexString(requireStringField(*inv, "payloadCanonical"));
         rejectUnknownFields(*inv,
                             {"commandType", "payloadFormatVersion", "payloadCanonical"},
                             false);

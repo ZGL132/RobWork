@@ -21,12 +21,16 @@ namespace {
 constexpr const char* kRequirementsDomainKey = "requirements";
 
 // ---- 页面冻结文案（文案改动＝契约改动，须升单元卡修订——对端同款惯例）--
-constexpr const char* kPointCommonPageTitle = "任务点常用参数";
-constexpr const char* kPointEditorTitle = "任务点编辑";
-constexpr const char* kRegionDefinitionTitle = "区域定义";
-constexpr const char* kConditionEditorTitle = "工况编辑";
-constexpr const char* kPlanEditorTitle = "采样计划编辑";
-constexpr const char* kImportWizardTitle = "CSV/JSON 导入向导";
+// UI-T39（审核 P1"双树/双检查器职责"）：共享检查器的本域页面标题统一
+// 携带『（需求草稿）』标注——共享检查器呈现的是需求草稿工作集中的对象
+// （尚未应用为项目修订），标题自释"这里看到的不是已应用事实"；复杂编辑
+// 页入口（hosted=false）激活即跳转需求面板，标注同时提示真正的编辑入口。
+constexpr const char* kPointCommonPageTitle = "任务点常用参数（需求草稿）";
+constexpr const char* kPointEditorTitle = "任务点编辑（在需求面板打开）";
+constexpr const char* kRegionDefinitionTitle = "区域定义（在需求面板打开）";
+constexpr const char* kConditionEditorTitle = "工况编辑（在需求面板打开）";
+constexpr const char* kPlanEditorTitle = "采样计划编辑（在需求面板打开）";
+constexpr const char* kImportWizardTitle = "CSV/JSON 导入向导（在需求面板打开）";
 
 // ---- 字段稳定键（基线注入与批量粘贴的寻址锚——小写连字符词法）----------
 constexpr const char* kPosXFieldKey = "point-x";

@@ -157,6 +157,13 @@ struct WorkbenchContentDeps {
     /// 占位说明处理器，harness 形态不变。覆写只换处理器，描述符/谓词/
     /// 门控零变化——同上方三覆写的既有模式）。
     std::optional<ICommandRegistry::CommandHandler> applyDraftHandler;
+    /// project.undo 的装配期处理器覆写（UI-T39——宿主插件的撤销编排：
+    /// project UndoRedoService.undo 经命令端口提交逆命令，产生恰好一个
+    /// 新修订〔PA-2 历史只增不改〕；未注入＝§7.1 占位说明处理器）。
+    std::optional<ICommandRegistry::CommandHandler> undoProjectHandler;
+    /// project.redo 的装配期处理器覆写（UI-T39——同上 redo 半区：重放
+    /// 被撤销命令的原始载荷，产生新修订；未注入＝占位）。
+    std::optional<ICommandRegistry::CommandHandler> redoProjectHandler;
 
     // ---- 域装配面（WP-24-T03b 收口——§7.2 域命令入册＋§4.1 中央区挂位）----
 
@@ -180,6 +187,16 @@ struct WorkbenchContentDeps {
     /// 返回 disable reason＝存在未就绪阻断〔按钮/命令面板共享同一快照〕；
     /// nullopt/缺省＝零新增门控——诚实二态，注册期谓词按当前快照求值）。
     std::function<std::optional<ui::DisableReason>()> applyDraftDisablement;
+
+    /// project.undo/project.redo 注册期使能谓词的宿主注入（UI-T39——审核
+    /// 返工：撤销可用性必须含"无可撤销/可重做修订"维度）。入参＝命令 id
+    /// （"project.undo"／"project.redo"）；返回 disable reason＝当前禁用
+    /// （如无可撤销修订/只读项目——只读半区由描述符 readOnlyAllowed 的
+    /// 注册表默认谓词承担，本注入只补"修订存在性"事实）；nullopt/缺省＝
+    /// 零新增门控。谓词按当前上下文快照求值（§7.5——refreshCommandStates
+    /// 时点的事实，修订事件后由宿主驱动刷新）。
+    std::function<std::optional<ui::DisableReason>(const std::string&)>
+        undoRedoDisablement;
 
     /// 阶段面板页（§4.1 中央工作区行——CentralAreaHost 按 StageId 挂位的
     /// 装配面：每项在中央栈追加一页，经 showStagePanel 切换激活）。工厂

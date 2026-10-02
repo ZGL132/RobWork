@@ -154,6 +154,30 @@ struct RequirementsPluginAssembly {
     /// 『只出线不重写』门面先例同款）。
     void setPostEditAction(std::function<void()> action);
 
+    // ---- 会话事实接入面（UI-T39——审核 P1/P2 只读接线与呈现收口）----
+
+    /**
+     * @brief 会话可写性切换（L-R12 门控输入的宿主接线——项目打开成功/
+     *        降级只读/切换时由宿主按打开报告的真实 writable 驱动；转发
+     *        模块/面板 setWritable，门控事实源＝ui 只读横幅同源报告）。
+     *
+     * @param writable [in] 当前项目会话是否可写
+     */
+    void setWritable(bool writable);
+
+    /**
+     * @brief 会话刷新（宿主 bindReadiness 后的呈现收口——面板以会话最新
+     *        报告全面板重投影。打开首刷/外部修订重导线后/项目级撤销提交
+     *        后共用；转发模块 refreshFromSession）。
+     */
+    void refreshFromSession();
+
+    /**
+     * @brief 基线重载登记（编辑器 loadBaseline 重建会话后调用——草稿撤销
+     *        记账随编辑器栈复位归零＋撤销键刷新；转发模块 noteBaselineReloaded）。
+     */
+    void noteBaselineReloaded();
+
     /**
      * @brief 执行一条域命令的 UI 流程（UI-T32 C 批次——宿主命令 handler
      *        的执行出口；转发模块 executeDomainCommand→面板 flows）。

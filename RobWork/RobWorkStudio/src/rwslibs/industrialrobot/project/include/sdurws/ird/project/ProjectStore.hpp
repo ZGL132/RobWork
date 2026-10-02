@@ -77,6 +77,11 @@ class UndoRedoService;
 // archive() 以引用返回接口，PRJ-T14 增量挂载）。
 class IResultArchivePort;
 
+// HandlerRegistry 完整定义于 CommandService.hpp（同款前向声明纪律——
+// handlerRegistry() 以引用返回装配面，UI-T39 增量；调用方注册处理器
+// 需自行 include CommandService.hpp）。
+class HandlerRegistry;
+
 /**
  * @brief 关闭完成观察者（§5.1 ProjectStore::subscribeClose 的回调契约）。
  *
@@ -283,6 +288,37 @@ public:
      *   串行——§9.8）。
      */
     [[nodiscard]] virtual IResultArchivePort& archive() const noexcept = 0;
+
+    /**
+     * @brief 处理器注册表装配通道（§5.3.5"L5 装配期一次性注册"的公共
+     *        落位——UI-T39 增量）。
+     *
+     * 背景说明（为什么需要公共通道）：§5.3.5/§6.5 契约原文即"L5 应用壳
+     * 装配期实例化各业务域命令处理器并注册进本表"，但此前注册访问器仅
+     * 存在于实现类型（ProjectStoreImpl——R-2 禁止跨单元包含），宿主装配
+     * 层无可达注册入口——域处理器（requirements 的 apply-requirement-set
+     * 等）在 studio 生产路径从未注册，draft.apply 的域信封提交恒被 S1
+     * 以 unknown-command 拒绝（冒烟 step9 二连应用实证暴露）。本访问器
+     * 把"装配期注册"从实现私有提升为公共契约半区，消除该缺口。
+     *
+     * 语义：
+     *   - 引用与上下文同生命周期（同 query()/commands() 等端口——注册
+     *     表归属命令服务实现，本访问器转发）；
+     *   - 注册仅限装配期（打开成功回调内、任何 submit 之前——§5.3.5
+     *     "运行期只读"纪律：运行期注册是装配违约，注册表边界以
+     *     invalid_argument 拒绝重复 token）；
+     *   - 默认实现＝诚实拒绝（std::logic_error）——测试桩等未开放注册
+     *     通道的实现按各自契约处置，不虚构注册表。
+     *
+     * @return 处理器注册表引用（非 owning——随上下文消亡）
+     *
+     * @throws std::logic_error 本实现未开放装配期注册通道（默认实现——
+     *         调用方应只对真实存储上下文调用）
+     *
+     * 线程安全：registerHandler 仅装配期调用（§5.3.5——与运行期并发
+     *   使用是装配纪律违约）；find()/registeredCommandTypes() 并发安全。
+     */
+    [[nodiscard]] virtual HandlerRegistry& handlerRegistry() noexcept;
 
     // ---- 关闭协议（PM-03"等待"选项的实现锚点；§9.7） ----
 

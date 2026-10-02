@@ -100,6 +100,47 @@ void RequirementsUiModule::setPostEditAction(PostEditAction action)
     wirePanelPostEdit();
 }
 
+void RequirementsUiModule::setWritable(bool writable)
+{
+    // L-R12 门控输入转发（UI-T39——宿主按打开报告的真实 writable 驱动；
+    // 本转发面零判定，门控事实源＝ui 只读横幅同源的宿主报告）。
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->setWritable(writable);
+    }
+}
+
+void RequirementsUiModule::refreshFromSession()
+{
+    // 会话刷新呈现收口（UI-T39——宿主在 bindReadiness 后调用；面板以
+    // 会话态最新报告全面板重投影。面板缺位＝装配间隙，空操作不虚构）。
+    m_guard.assertOnUiThread();
+    if (m_panel == nullptr || m_editor == nullptr
+        || !m_session.readiness.has_value()) {
+        return;
+    }
+    m_panel->refreshPanel(m_editor->workingSet(), *m_session.readiness);
+}
+
+void RequirementsUiModule::noteBaselineReloaded()
+{
+    // 基线重载登记（UI-T39——编辑器栈随 loadBaseline 复位，撤销记账同步
+    // 归零后刷新撤销键；面板缺位＝空操作）。
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->noteBaselineReloaded();
+    }
+}
+
+void RequirementsUiModule::resetPanelForDetach()
+{
+    // 会话脱离的面板复位转发（UI-T39——项目关闭/切换的旧态清理）。
+    m_guard.assertOnUiThread();
+    if (m_panel != nullptr) {
+        m_panel->resetForSessionDetached();
+    }
+}
+
 void RequirementsUiModule::wirePanelPostEdit()
 {
     if (m_panel == nullptr) {

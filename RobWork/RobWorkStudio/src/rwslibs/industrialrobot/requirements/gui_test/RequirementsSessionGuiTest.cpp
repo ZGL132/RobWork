@@ -1737,3 +1737,257 @@ TEST_F(RequirementsSessionGuiTest, RegionSelectionLinkage_UI_T37R)
     EXPECT_EQ(m_panel->findChild<QTabWidget*>()->currentIndex(), 0)
         << "启用切换后页签跳转（表重建信号屏蔽回归）";
 }
+
+// =====================================================================
+// UI-T39 审核返工批次：项目级撤销命令 id／可用性门控／撤销后校验链／
+// 只读全量刷新／会话脱离复位／折叠跨刷新保持／命令按输入类型取锚。
+// =====================================================================
+
+/// 撤销三键现取（文本定位——构建期字面经 UiText 词表，测试同词对照）。
+QPushButton* undoButtonByText(const RequirementsPanelWidget& panel,
+                              const QString& text)
+{
+    const QList<QPushButton*> all =
+        const_cast<RequirementsPanelWidget&>(panel).findChildren<QPushButton*>();
+    for (QPushButton* btn : all) {
+        if (btn->text() == text) {
+            return btn;
+        }
+    }
+    return nullptr;
+}
+
+/// UI-T39 审核返工 P1（项目级撤销）：①点击转发宿主注册的 project.undo
+/// （此前误写 edit.undo——宿主词表无此命令，点击仅产生"未知命令"拒绝）；
+/// ②按钮可用性随命令可用性快照门控（禁用＋原因提示），不再只按提交
+/// 出口存在性置可用。
+TEST_F(RequirementsSessionGuiTest, ProjectUndoCommandIdAndGate_UI_T39)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // ①提交 id 捕获：点击"撤销上次应用"→提交出口收到 project.undo。
+    std::vector<std::string> submitted;
+    m_panel->setCommandSubmit([&submitted](const ui::CommandId& id) {
+        submitted.push_back(std::string(id));  // 捕获面（不执行宿主命令）
+    });
+    QPushButton* projectUndo =
+        undoButtonByText(*m_panel, QStringLiteral("撤销上次应用"));
+    ASSERT_NE(projectUndo, nullptr) << "项目级撤销键缺失";
+    projectUndo->click();
+    QApplication::processEvents();
+    ASSERT_EQ(submitted.size(), 1u) << "项目级撤销点击未产生命令提交";
+    EXPECT_EQ(submitted.front(), "project.undo")
+        << "项目级撤销转发了错误命令 id（edit.undo 存量缺陷回归面）";
+
+    // ②可用性门控：project.undo 不可用（如无可撤销修订）→按钮禁用＋
+    //   禁用原因入 tooltip；恢复可用→按钮恢复。
+    m_panel->setCommandAvailability([](const ui::CommandId& id) {
+        ui::CommandAvailability a;
+        a.registered = true;
+        a.enabled = (std::string(id) != "project.undo");
+        if (!a.enabled) {
+            a.disableReasonKey = "reason.no-undo-revision";
+        }
+        return a;
+    });
+    QApplication::processEvents();
+    EXPECT_FALSE(projectUndo->isEnabled())
+        << "project.undo 不可用时按钮仍可用（门控缺失）";
+    EXPECT_FALSE(projectUndo->toolTip().isEmpty())
+        << "禁用原因未入 tooltip（审核四.5）";
+    m_panel->setCommandAvailability([](const ui::CommandId&) {
+        ui::CommandAvailability a;
+        a.registered = true;
+        a.enabled = true;
+        return a;
+    });
+    QApplication::processEvents();
+    EXPECT_TRUE(projectUndo->isEnabled())
+        << "project.undo 可用时按钮未恢复（门控误禁）";
+}
+
+/// UI-T39 审核返工 P1（撤销后校验链）：草稿撤销/重做与普通编辑共用同一条
+/// "编辑后动作"链——就绪重估由装配层组合子承担（此前撤销以空报告直刷，
+/// 校验页被打回未执行态）。断言面＝撤销/重做后 postEditAction 触发计数。
+TEST_F(RequirementsSessionGuiTest, DraftUndoRerunsReadinessChain_UI_T39)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    int postEditCalls = 0;
+    m_panel->setPostEditAction([&postEditCalls] { ++postEditCalls; });
+
+    // 一次结构编辑（接受轨——onEditApplied 即触发一次组合子）。
+    QPushButton* addBtn = lifecycleButton(*m_panel, "add", "points");
+    ASSERT_NE(addBtn, nullptr);
+    addBtn->click();
+    QApplication::processEvents();
+    const int afterEdit = postEditCalls;
+    EXPECT_GE(afterEdit, 1) << "编辑后动作未触发（组合子缺位）";
+
+    // 草稿撤销→组合子再触发（校验重估链与编辑同轨——本用例核心断言）。
+    QPushButton* draftUndo = undoButtonByText(*m_panel, QStringLiteral("撤销"));
+    ASSERT_NE(draftUndo, nullptr);
+    ASSERT_TRUE(draftUndo->isEnabled()) << "有编辑后撤销键应可用";
+    draftUndo->click();
+    QApplication::processEvents();
+    EXPECT_GT(postEditCalls, afterEdit)
+        << "撤销未重估校验（空报告直刷回归面）";
+
+    // 草稿重做→组合子再触发（同链对称半区）。
+    QPushButton* draftRedo = undoButtonByText(*m_panel, QStringLiteral("重做"));
+    ASSERT_NE(draftRedo, nullptr);
+    ASSERT_TRUE(draftRedo->isEnabled());
+    const int afterUndo = postEditCalls;
+    draftRedo->click();
+    QApplication::processEvents();
+    EXPECT_GT(postEditCalls, afterUndo)
+        << "重做未重估校验（与编辑不同链）";
+}
+
+/// UI-T39 审核返工 P1（会话脱离复位）：项目关闭后全部旧会话按钮状态与
+/// 投影清理——树/表清空、生命周期键全禁、撤销三键全禁（撤销记账随基线
+/// 复位归零）、空态提示显现。
+TEST_F(RequirementsSessionGuiTest, SessionDetachedResetsPanel_UI_T39)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    // 有编辑＋选中（旧会话活跃态——撤销键可用、生命周期键在位）。
+    lifecycleButton(*m_panel, "add", "points")->click();
+    QApplication::processEvents();
+    ASSERT_TRUE(undoButtonByText(*m_panel, QStringLiteral("撤销"))->isEnabled());
+
+    m_panel->resetForSessionDetached();
+    QApplication::processEvents();
+
+    // 撤销三键全禁（无会话＝无可撤销；项目级键未注入可用性查询＝按提交
+    // 出口存在性退化——本用例未注入提交出口，同为禁用）。
+    EXPECT_FALSE(undoButtonByText(*m_panel, QStringLiteral("撤销"))->isEnabled())
+        << "会话脱离后草稿撤销键残留可用";
+    EXPECT_FALSE(undoButtonByText(*m_panel, QStringLiteral("重做"))->isEnabled())
+        << "会话脱离后草稿重做键残留可用";
+    EXPECT_FALSE(undoButtonByText(*m_panel, QStringLiteral("撤销上次应用"))
+                      ->isEnabled())
+        << "会话脱离后项目级撤销键残留可用";
+    // 生命周期键全禁＋tooltip 给出无会话原因（审核四.5）。
+    QPushButton* addBtn = lifecycleButton(*m_panel, "add", "points");
+    ASSERT_NE(addBtn, nullptr);
+    EXPECT_FALSE(addBtn->isEnabled()) << "会话脱离后新增键残留可用";
+    EXPECT_FALSE(addBtn->toolTip().isEmpty())
+        << "无会话禁用缺原因提示";
+    // 树/区域表投影清空。
+    QTreeWidget* regionTable = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_region_table"));
+    ASSERT_NE(regionTable, nullptr);
+    EXPECT_EQ(regionTable->topLevelItemCount(), 0)
+        << "会话脱离后区域表残留旧行";
+    // 工位空态提示显现（无会话＝无选中＝空态面；页签非激活页 isVisible
+    // 恒 false——按返工⑤空态用例同款 isVisibleTo 断自身显隐态）。
+    QLabel* hint = m_panel->findChild<QLabel*>(
+        QStringLiteral("ird_req_empty_hint_points"));
+    ASSERT_NE(hint, nullptr);
+    EXPECT_TRUE(hint->isVisibleTo(hint->parentWidget()))
+        << "会话脱离后空态提示未显现";
+}
+
+/// UI-T39 审核返工 P1（只读接线）：setWritable(false) 后全部状态承载面
+/// 同帧刷新——生命周期键（含新增）禁用＋只读原因提示、草稿撤销键禁用；
+/// 校验页结论保持（只读切换不清空最近报告）。
+TEST_F(RequirementsSessionGuiTest, WritableSwitchRefreshesAll_UI_T39)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(m_editor.workingSet().points.entries.front().objectId);
+    QApplication::processEvents();
+    ASSERT_TRUE(lifecycleButton(*m_panel, "add", "points")->isEnabled());
+
+    m_panel->setWritable(false);
+    QApplication::processEvents();
+
+    // 生命周期键全禁＋只读原因（此前 setWritable 不刷生命周期/撤销键——
+    // 只读切换后新增/撤销残留可用的审核返工面）。
+    QPushButton* addBtn = lifecycleButton(*m_panel, "add", "points");
+    ASSERT_NE(addBtn, nullptr);
+    EXPECT_FALSE(addBtn->isEnabled()) << "只读后新增键残留可用";
+    EXPECT_TRUE(addBtn->toolTip().contains(QStringLiteral("只读")))
+        << "只读禁用原因未呈现";
+    EXPECT_FALSE(undoButtonByText(*m_panel, QStringLiteral("撤销"))->isEnabled())
+        << "只读后草稿撤销键残留可用";
+    // 复制/删除同禁（选中态仍在但只读压制）。
+    EXPECT_FALSE(lifecycleButton(*m_panel, "duplicate", "points")->isEnabled());
+    // 恢复可写→新增恢复（门控对称性）。
+    m_panel->setWritable(true);
+    QApplication::processEvents();
+    EXPECT_TRUE(lifecycleButton(*m_panel, "add", "points")->isEnabled())
+        << "恢复可写后新增键未恢复";
+}
+
+/// UI-T39 审核返工三.5（卡片折叠跨刷新保持）：收起区域高级卡后触发区域
+/// 页重投影（refreshPanel——render 只填行、卡片构造期一次），折叠态不因
+/// 刷新复位（UiTheme::createCard 的 fold 会话态跨刷新保持的回归钉）。
+TEST_F(RequirementsSessionGuiTest, CollapseSurvivesFieldRefresh_UI_T39)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    m_panel->focusObject(m_editor.workingSet().regions.entries.front().objectId);
+    QApplication::processEvents();
+
+    // 区域高级卡折叠钮定位：卡是高级参数卡（QGroupBox#ird_card 之一）——
+    // 经卡标题文本找到卡，再取卡内 fold 钮（ird_card_fold 锚——UiTheme
+    // createCard 的定位面；checked＝展开态，▶＝已收起）。
+    QToolButton* fold = nullptr;
+    const QList<QGroupBox*> cards = m_panel->findChildren<QGroupBox*>();
+    for (QGroupBox* card : cards) {
+        QLabel* title = card->findChild<QLabel*>(QStringLiteral("ird_card_title"));
+        if (title != nullptr && title->text().contains(QStringLiteral("高级参数"))) {
+            fold = card->findChild<QToolButton*>(QStringLiteral("ird_card_fold"));
+            break;
+        }
+    }
+    ASSERT_NE(fold, nullptr) << "区域高级卡折叠钮未定位（ird_card_fold 锚漂移）";
+    // 契约前置：高级参数卡默认收起（startCollapsed=true——去噪设计规格 §4）。
+    ASSERT_FALSE(fold->isChecked())
+        << "前置失真：高级卡应默认收起（startCollapsed 契约面回归）";
+    // 用户展开（审核四.3 的真实诉求：用户展开后不应因一次刷新自动收起）。
+    fold->setChecked(true);  // 展开态（toggled 轨——与手点同一数据流）
+    QApplication::processEvents();
+    ASSERT_TRUE(fold->isChecked());
+
+    // 重投影（字段编辑/校验刷新的真实路径）后展开态保持。
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+    QApplication::processEvents();
+    EXPECT_TRUE(fold->isChecked())
+        << "刷新后展开态被复位（卡片折叠跨刷新保持回归——用户展开不应被收起）";
+}
+
+/// UI-T39 审核返工五.1（命令按输入类型取锚）：选中区域后触发镜像——
+/// 按工位页锚判选中（此前用全局最后选中＝区域锚，镜像静默找不到源）。
+/// 断言面＝流程以"需要先选中一个工位条目"就地拒绝，不产生任何编辑。
+TEST_F(RequirementsSessionGuiTest, MirrorRequiresStationAnchor_UI_T39)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+    using namespace requirements;
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 选中区域（区域表行点击——用户路径；全局最后选中随之变为区域锚）。
+    QTreeWidget* regionTable = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_req_region_table"));
+    ASSERT_NE(regionTable, nullptr);
+    ASSERT_GT(regionTable->topLevelItemCount(), 0);
+    regionTable->setCurrentItem(regionTable->topLevelItem(0));
+    QApplication::processEvents();
+    ASSERT_TRUE(m_panel->selectedObjectId().has_value())
+        << "区域表行点击未落选中（前置失真）";
+
+    // 镜像（无工位页选中）→就地拒绝＋集合规模不变。
+    FakeDialogHost host;
+    const std::size_t before = m_editor.workingSet().points.entries.size();
+    const bool applied = executeRequirementCommand(
+        "requirements.mirror-stations", *m_panel, m_editor, *m_panel, host);
+    EXPECT_FALSE(applied) << "区域选中被镜像当作源（输入类型未校验）";
+    EXPECT_TRUE(m_panel->showCommandFeedbackText().contains(
+                    QStringLiteral("工位条目")))
+        << "拒绝反馈未说明需要工位条目";
+    EXPECT_EQ(m_editor.workingSet().points.entries.size(), before)
+        << "被拒镜像产生了集合变更";
+}

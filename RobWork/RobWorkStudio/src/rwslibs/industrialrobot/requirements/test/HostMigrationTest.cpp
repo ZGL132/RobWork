@@ -455,7 +455,9 @@ TEST(HostMigration, CommonPage_PointFiveFieldsWithBaseline_ACC1)
 
     const auto page = provider.commonFieldsPage(pointOid);
     ASSERT_TRUE(page.has_value());
-    EXPECT_EQ(page->title, "任务点常用参数");
+    // UI-T39：页面标题携带『（需求草稿）』标注（双树/双检查器职责自释——
+    // 共享检查器呈现的是草稿工作集对象，非已应用事实）。
+    EXPECT_EQ(page->title, "任务点常用参数（需求草稿）");
     EXPECT_FALSE(page->readOnly);
     ASSERT_EQ(page->fields.size(), 5u);  // 位置三分量＋双容差
     EXPECT_LE(page->fields.size(), ui::kMaxCommonFieldsPerObject);  // 分野哨兵内

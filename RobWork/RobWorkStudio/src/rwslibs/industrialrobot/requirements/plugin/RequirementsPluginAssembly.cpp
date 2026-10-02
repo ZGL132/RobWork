@@ -88,7 +88,14 @@ void RequirementsPluginAssembly::onSessionDetached()
         // 项目关闭/切换的会话清理半区：选择服务退订（幂等——适配器 RAII
         // 句柄收口，UI-T23 关闭清理核查的域侧对端）＋会话权威态全字段
         // 清空（磁盘草稿零触碰——模块零持久化路径，结构保证）。
+        // UI-T39（审核 P1）：面板复位同场收口——旧会话的树/表/卡片投影
+        // 与可用按钮不再残留（选中锚/撤销记账归零＋无会话空态）；编辑器
+        // 引用同场解除（attachEditor(nullptr)——会话终结后工作集无权威
+        // 基线，编辑目标的"现取"提供器返回空＝面板诚实无会话态；下次
+        // 打开由 wireRequirementsSession 重新 attach）。
         detachSelectionService();
+        m_impl->attachEditor(nullptr);
+        m_impl->resetPanelForDetach();
         auto& session = m_impl->session();
         session.branch = core::BranchId{};
         session.baseRevision = std::nullopt;
@@ -119,6 +126,31 @@ void RequirementsPluginAssembly::setPostEditAction(
 {
     if (m_impl != nullptr) {
         m_impl->setPostEditAction(std::move(action));
+    }
+}
+
+// =====================================================================
+// 会话事实接入面（UI-T39——审核 P1/P2 的只读接线与呈现收口转发）
+// =====================================================================
+
+void RequirementsPluginAssembly::setWritable(bool writable)
+{
+    if (m_impl != nullptr) {
+        m_impl->setWritable(writable);  // L-R12 门控输入转发（宿主报告事实）
+    }
+}
+
+void RequirementsPluginAssembly::refreshFromSession()
+{
+    if (m_impl != nullptr) {
+        m_impl->refreshFromSession();  // bindReadiness 后的呈现收口
+    }
+}
+
+void RequirementsPluginAssembly::noteBaselineReloaded()
+{
+    if (m_impl != nullptr) {
+        m_impl->noteBaselineReloaded();  // 撤销记账随基线复位归零
     }
 }
 

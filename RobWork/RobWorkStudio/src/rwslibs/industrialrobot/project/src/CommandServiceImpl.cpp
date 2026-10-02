@@ -410,6 +410,15 @@ void CommandServiceImpl::executePlan(const CommandEnvelope& envelope,
         result.status.rejection
             = CommandStatus::Rejection::InvalidPayload;
         result.diagnostics = std::move(prepareDiags);
+        // 拒绝定位留痕（UI-T39——域内拒绝不产稳定诊断码时呈现面只剩
+        // rejection token，逐项原因无处可查；dev 通道补记处理器与诊断
+        // 数，供装配/集成期定位）。
+        if (m_sink != nullptr) {
+            m_sink->reportDev(
+                "project/command",
+                "S3 拒绝：invalid-payload handler=" + envelope.commandType
+                    + " diags=" + std::to_string(result.diagnostics.size()));
+        }
         return;
     }
 
