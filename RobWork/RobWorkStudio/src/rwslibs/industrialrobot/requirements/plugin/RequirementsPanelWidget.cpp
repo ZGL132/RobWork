@@ -1225,6 +1225,34 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
     // （UI-T37 返工——对齐旧插件"枚举全用 QComboBox"组件形态；提交轨＝
     // applyStationEnumEdit，词表 Must/Should 直投）。
     auto renderTextRow = [&](QFormLayout* form, const StationFieldRow& r) {
+        if (r.fieldKey == "orientation-kind"
+            && r.enablement == StationFieldEnablement::Editable) {
+            // 姿态规则五规则下拉（返工③——tryOrientationRuleKind 词表直投；
+            // 参数行随模型按 kind 显隐重投影）。
+            auto* combo = new QComboBox(this);
+            combo->setObjectName(QStringLiteral("ird_station_orientation_combo"));
+            const OrientationRuleKind kinds[] = {
+                OrientationRuleKind::Fixed, OrientationRuleKind::AlignFrame,
+                OrientationRuleKind::AlignGeometryNormal,
+                OrientationRuleKind::PointAtTarget,
+                OrientationRuleKind::ToolRollFree};
+            for (const OrientationRuleKind k : kinds) {
+                combo->addItem(QString::fromStdString(
+                    std::string(orientationRuleKindToken(k))));
+            }
+            { QSignalBlocker blocker(combo);
+            combo->setCurrentText(QString::fromStdString(r.valueText)); }
+            combo->setEnabled(m_writable);
+            combo->setToolTip(QStringLiteral(
+                "参数行按规则种类显隐（Fixed＝固定欧拉角；PointAtTarget＝目"
+                "标点；ToolRollFree＝滚转区间）"));
+            connect(combo, &QComboBox::currentIndexChanged, this,
+                    [this, key = r.fieldKey, combo](int) {
+                        submitStationEnumValue(key, combo->currentText());
+                    });
+            form->addRow(new QLabel(QString::fromStdString(r.label), this), combo);
+            return;
+        }
         if (r.fieldKey == "level"
             && r.enablement == StationFieldEnablement::Editable) {
             auto* combo = new QComboBox(this);
@@ -1453,6 +1481,94 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         m_stationDofForm->addRow(QStringLiteral("快捷"), presetBar);
     };
 
+    // 动作阶段复合行（返工③——启用/轴下拉＋距离 SpinBox；对齐旧插件
+    // "Approach & Retract" 分组形态。值/单位词面解析＝模型 format 词面
+    // 逆（"启用 ToolZ"＋"· 1 m"——确定性词面，零域判定）；距离经既有
+    // segment-*-distance spec 轨，启用经 toggle 轨、轴经 enum 新词表键）。
+    auto renderSegmentRow = [&](const StationFieldRow& r) {
+        const QString text = QString::fromStdString(r.valueText);
+        const bool segOn = text.startsWith(QStringLiteral("启用"));
+        const bool hasAxis = r.fieldKey != QStringLiteral("segment-work");
+        QString axisToken;
+        if (hasAxis) {
+            const int sp = text.indexOf(QLatin1Char(' '));
+            if (sp > 0) {
+                axisToken = text.mid(sp + 1);
+            }
+        }
+        // 距离现值＝单位词面逆（"· 1 m"→1；解析失败＝不渲染距离行）。
+        double dist = 0.0;
+        bool hasDist = false;
+        QString unit = QString::fromStdString(r.unitText);
+        if (unit.startsWith(QStringLiteral("· "))
+            && unit.endsWith(QStringLiteral(" m"))) {
+            unit.remove(0, 2);
+            unit.chop(2);
+            dist = unit.toDouble(&hasDist);
+        }
+        const QString key = QString::fromStdString(r.fieldKey);
+        auto* cell = new QWidget(this);
+        auto* lay = new QHBoxLayout(cell);
+        lay->setContentsMargins(0, 0, 0, 0);
+        lay->setSpacing(4);
+        auto* enabledCombo = new QComboBox(this);
+        enabledCombo->setObjectName(QStringLiteral("ird_segment_enabled_combo"));
+        enabledCombo->addItem(QStringLiteral("启用"));
+        enabledCombo->addItem(QStringLiteral("停用"));
+        { QSignalBlocker blocker(enabledCombo);
+        enabledCombo->setCurrentIndex(segOn ? 0 : 1); }
+        enabledCombo->setEnabled(m_writable);
+        connect(enabledCombo, &QComboBox::currentIndexChanged, this,
+                [this, key](int idx) {
+                    submitStationToggle(key.toStdString(), idx == 0);
+                });
+        lay->addWidget(enabledCombo);
+        if (!axisToken.isEmpty()) {
+            auto* axisCombo = new QComboBox(this);
+            axisCombo->setObjectName(QStringLiteral("ird_segment_axis_combo"));
+            axisCombo->addItem(QStringLiteral("ToolZ"));
+            axisCombo->addItem(QStringLiteral("ReferenceZ"));
+            { QSignalBlocker blocker(axisCombo);
+            axisCombo->setCurrentText(axisToken); }
+            axisCombo->setEnabled(m_writable);
+            axisCombo->setToolTip(
+                QStringLiteral("进退轴（§4.3——ToolZ 工具系／ReferenceZ 参考系）"));
+            connect(axisCombo, &QComboBox::currentIndexChanged, this,
+                    [this, key, axisCombo](int) {
+                        submitStationEnumValue(
+                            key.toStdString()
+                                + QStringLiteral("-axis").toStdString(),
+                            axisCombo->currentText());
+                    });
+            lay->addWidget(axisCombo);
+        }
+        if (hasDist) {
+            auto* spin = new QDoubleSpinBox(this);
+            spin->setDecimals(6);
+            spin->setSingleStep(0.01);
+            spin->setRange(1.0e-12, 1.0e9);  // 正数下界（spec 同口径预过滤）
+            { QSignalBlocker blocker(spin);
+            spin->setValue(dist); }
+            spin->setEnabled(m_writable);
+            spin->setMaximumWidth(130);
+            connect(spin, &QDoubleSpinBox::editingFinished, this,
+                    [this, key, spin]() {
+                        // 距离 spec 键（approach/retract——work 无距离）。
+                        const QString specKey =
+                            key == QStringLiteral("segment-approach")
+                                ? QStringLiteral("segment-approach-distance")
+                                : QStringLiteral("segment-retract-distance");
+                        submitStationValue(specKey.toStdString(),
+                                           formatSiText(spin->value()));
+                    });
+            lay->addWidget(spin);
+            lay->addWidget(new QLabel(QStringLiteral("m"), this));
+        }
+        lay->addStretch(1);
+        m_stationSegmentForm->addRow(
+            new QLabel(QString::fromStdString(r.label), this), cell);
+    };
+
     // 行分拣路由（键族集合封闭——未知键＝投影/卡片漂移 fail-fast）。
     std::vector<const StationFieldRow*> dofRows;
     for (const StationFieldRow& r : m_stationRows) {
@@ -1476,6 +1592,11 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
             renderSpinRow(r);
             continue;
         }
+        if (r.fieldKey == "segment-approach" || r.fieldKey == "segment-work"
+            || r.fieldKey == "segment-retract") {
+            renderSegmentRow(r);
+            continue;
+        }
         QFormLayout* form = stationFormForKey(r.fieldKey);
         if (form == nullptr) {
             throw std::logic_error("工位面板：投影行键无卡片宿主 " + r.fieldKey);
@@ -1495,15 +1616,11 @@ void RequirementsPanelWidget::showStatusLine(const QString& text)
 
 QFormLayout* RequirementsPanelWidget::stationFormForKey(const std::string& key) const
 {
-    // 词表分派（封闭集合＝stationFieldsFor 全键；dof/enabled/pose/容差在
-    // 分拣层已截获不落此处）。
+    // 词表分派（封闭集合＝stationFieldsFor 全键；dof/enabled/pose/容差/
+    // segment-* 在分拣层已截获不落此处）。
     if (key == "name" || key == "level" || key == "source" || key == "process-tag"
         || key == "sequence-key" || key == "note") {
         return m_stationBasicForm;
-    }
-    if (key == "segment-approach" || key == "segment-work"
-        || key == "segment-retract") {
-        return m_stationSegmentForm;
     }
     if (key == "orientation-kind" || key == "fixed-rpy-r" || key == "fixed-rpy-p"
         || key == "fixed-rpy-y" || key == "target-frame" || key == "target-point-x"

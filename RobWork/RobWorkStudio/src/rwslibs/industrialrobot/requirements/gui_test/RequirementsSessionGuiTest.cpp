@@ -1357,8 +1357,8 @@ TEST_F(RequirementsSessionGuiTest, NonQuantityRowsReadOnly_UI_T37)
     m_panel->refreshPanel(m_editor.workingSet(), m_report);
     m_panel->focusObject(m_editor.workingSet().points.entries.front().objectId);
     QApplication::processEvents();
-    const char* readonlyKeys[] = {"name", "segment-approach", "sequence-key",
-                                  "orientation-kind"};
+    // segment-approach 返工③起为下拉复合行（启用/轴/距离）——不再断言只读。
+    const char* readonlyKeys[] = {"name", "sequence-key"};
     for (const char* key : readonlyKeys) {
         QLineEdit* edit = fieldEditor(*m_panel, key);
         ASSERT_NE(edit, nullptr) << "行缺失: " << key;
