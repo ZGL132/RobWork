@@ -518,7 +518,23 @@ bool RequirementsUiModule::reportView3DPick(const core::ObjectId& oid)
 {
     m_guard.assertOnUiThread();  // §3.4——选中写入口只允许 UI 线程
     if (!m_adapter) { return false; }  // 未接线＝无上报通道（诚实 false）
-    return m_adapter->reportView3DPick(oid);
+    const bool accepted = m_adapter->reportView3DPick(oid);
+    if (accepted) {
+        // UI-T33：本域拾取成功登记（拾取命令的输入面——flowPickFeature
+        // 经缝取用；零修订会话态）。
+        m_lastView3DPick = oid;
+    }
+    return accepted;
+}
+
+void RequirementsUiModule::bindView3DSeams(RequirementsView3DSeams seams)
+{
+    m_guard.assertOnUiThread();
+    // lastPicked 缝重写为自引用闭包（本模块即拾取登记面——宿主透传的
+    // 其余缝保持原样）。
+    seams.lastPickedObjectId = [this]() { return m_lastView3DPick; };
+    m_view3dSeams = std::move(seams);
+    m_view3dSeamsBound = true;
 }
 
 bool RequirementsUiModule::executeDomainCommand(const std::string& commandId)
@@ -527,7 +543,10 @@ bool RequirementsUiModule::executeDomainCommand(const std::string& commandId)
     if (m_panel == nullptr) {
         return false;  // 面板缺位（装配间隙）——命令不可达，不虚构执行
     }
-    return m_panel->executeDomainCommand(commandId);
+    // UI-T33：三维缝透传（绑定在位＝capture-tcp/pick-feature 走真数据源；
+    // 未绑定＝空指针透传，面板/命令流保持诚实降级原文）。
+    return m_panel->executeDomainCommand(
+        commandId, m_view3dSeamsBound ? &m_view3dSeams : nullptr);
 }
 
 }  // namespace sdurws::ird::requirements

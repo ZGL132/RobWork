@@ -46,6 +46,7 @@
 #include <sdurws/ird/core/Identity.hpp>            // core::ObjectId（节点锚）
 #include <sdurws/ird/requirements/Editor.hpp>      // IRequirementEditor/RequirementWorkingSet（投影数据源）
 #include <sdurws/ird/requirements/Readiness.hpp>   // RequirementReadinessReport（校验面板数据源）
+#include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // RequirementsView3DSeams（UI-T33——本单元门面消费面）
 #include <sdurws/ird/requirements/Services.hpp>    // 领域服务（规范化/必验解析——面板模型域函数入口）
 #include "PanelCommandCatalog.hpp"                 // 命令目录/就绪投影/L-R12 行门控
 #include "PanelConditionModel.hpp"                 // 工况面板投影
@@ -125,6 +126,15 @@ public:
     void setRegionPreviewSink(RegionPreviewSink sink);
 
     /**
+     * @brief 工位页当前选中锚（UI-T33——拾取写回的目标点解析输入；
+     *       nullopt＝未选择，命令流以诚实指引呈现）。
+     */
+    std::optional<core::ObjectId> selectedPointId() const
+    {
+        return m_stationSelectedId;
+    }
+
+    /**
      * @brief 全面板刷新（事件驱动的刷新出口——装配层在编辑接受/修订事件/
      *        只读切换后调用；也可由装配层在打开项目等场景直接驱动）。
      *
@@ -198,6 +208,14 @@ public:
      * @return 流程是否完成（应用/用户取消＝true；失败/未知命令＝false）
      */
     bool executeDomainCommand(const std::string& commandId);
+
+    /**
+     * @brief 域命令执行（UI-T33 重载——三维视图缝透传命令流：capture-tcp/
+     *        pick-feature 随缝在位解除降级；view3d 为空指针＝诚实降级原文，
+     *        其余命令零影响）。
+     */
+    bool executeDomainCommand(const std::string& commandId,
+                              const RequirementsView3DSeams* view3d);
 
     // ---- IRequirementEditSink（L-R2 分流回调——widget 层落点）------------
 

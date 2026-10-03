@@ -36,7 +36,9 @@
 #include <optional>
 #include <string>
 #include <functional>
+#include <vector>
 
+#include <rw/math/Transform3D.hpp>               // TCP 世界系位姿值面（RequirementsView3DSeams）
 #include <sdurws/ird/core/Identity.hpp>          // core::BranchId/RevisionId/ObjectId（会话锚/回执值面）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // ui::PluginUiDescriptor（§10.9 装配描述符——值成员需完整类型）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // ui::CommandAvailability（按钮门控）
@@ -90,6 +92,31 @@ struct RequirementsSharedSurfaceHandles {
  * 所有权：module 由本结构 unique_ptr 持有；内部实现指针非 owning。可移动
  * （装配层转移持有）；不可拷贝。
  */
+
+/**
+ * @brief 三维视图缝（UI-T33——捕获 TCP/拾取收口的宿主真数据源；定义于
+ *        本门面＝O-45 消费面：宿主装配层构造、bindView3DSeams 注入后经
+ *        模块下传命令流。全部缝可空/缺省＝诚实降级形态——命令流对空缝
+ *        按"数据源不可得"原文呈现，不虚构能力）。
+ */
+struct RequirementsView3DSeams {
+    /// 宿主 WorkCell 设备名清单（现取零缓存；空＝无设备）。
+    std::function<std::vector<std::string>()> listDevices;
+    /// 设备 TCP 世界系位姿（设备名→位姿；nullopt＝不可得——诚实失败）。
+    std::function<std::optional<rw::math::Transform3D<>>(
+        const std::string& deviceName)>
+        tcpWorldPose;
+    /// 帧名→业务对象身份（网关名称映射共享实例——拾取收口反解；当前
+    /// 宿主＝HostEmptyNameMapPort 诚实空映射，WP-24-T08 替换即激活）。
+    std::function<std::optional<core::ObjectId>(const std::string& frameName)>
+        resolveFrameObjectId;
+    /// 最近一次本域三维拾取（网关分发落点——拾取命令的输入面；空＝未拾取）。
+    std::function<std::optional<core::ObjectId>()> lastPickedObjectId;
+    /// 会话基线修订 id（捕获 STALE 对账键；空＝无基线——Capture.hpp
+    /// CapturedTcpPose.sessionRevisionId 语义同源）。
+    std::string sessionRevisionId;
+};
+
 struct RequirementsPluginAssembly {
     std::unique_ptr<ui::IPluginUiModule> module;  ///< 模块（接口面——三方法契约）
     ui::PluginUiDescriptor descriptor;            ///< 装配描述符（§10.9 形状直通）
@@ -164,6 +191,13 @@ struct RequirementsPluginAssembly {
      * @param writable [in] 当前项目会话是否可写
      */
     void setWritable(bool writable);
+
+    /**
+     * @brief 绑定三维视图缝（装配期一次；网关装配完成后由宿主调用——
+     *        命令流 requirements.capture-tcp/pick-feature 随之解除降级；
+     *        未绑定＝两命令保持诚实降级原文）。
+     */
+    void bindView3DSeams(RequirementsView3DSeams seams);
 
     /**
      * @brief 会话刷新（宿主 bindReadiness 后的呈现收口——面板以会话最新

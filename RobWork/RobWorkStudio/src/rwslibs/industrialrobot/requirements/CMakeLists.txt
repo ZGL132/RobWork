@@ -537,7 +537,8 @@ ird_add_gtest(sdurws_ird_requirements_contract_test)
 # 反推 <Qt>/plugins/platforms——ctest 直跑 GUI 用例的解析口径）。
 add_executable(sdurws_ird_requirements_gui_test
     gui_test/TestMainReport.cpp
-    gui_test/RequirementsSessionGuiTest.cpp)
+    gui_test/RequirementsSessionGuiTest.cpp
+    gui_test/RequirementsView3DFlowTest.cpp)  # UI-T33——三维缝命令流（capture-tcp 解除降级主证面；widget 面板需 QApplication）
 
 target_compile_features(sdurws_ird_requirements_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_requirements_gui_test PROPERTIES

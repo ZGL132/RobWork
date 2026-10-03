@@ -3144,6 +3144,35 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
 
     m_view3dGateway = std::make_unique<HostView3DGateway>(std::move(deps));
 
+    // 需求域三维缝绑定（UI-T33——capture-tcp/pick-feature 解除降级；
+    // 全部缝对网关/宿主现取零缓存）。需求域缺席＝失败隔离形态零绑定。
+    if (m_domains->requirements.has_value()) {
+        requirements::RequirementsView3DSeams seams;
+        seams.listDevices = [studio]() -> std::vector<std::string> {
+            std::vector<std::string> names;
+            const rw::models::WorkCell::Ptr workcell =
+                studio != nullptr ? studio->getWorkCell() : nullptr;
+            if (workcell.isNull()) { return names; }
+            for (const auto& device : workcell->getDevices()) {
+                if (device != nullptr) { names.push_back(device->getName()); }
+            }
+            return names;
+        };
+        seams.tcpWorldPose = [this](const std::string& deviceName) {
+            return m_view3dGateway != nullptr
+                       ? m_view3dGateway->currentTcpPose(deviceName)
+                       : std::nullopt;
+        };
+        seams.resolveFrameObjectId =
+            [this](const std::string& frameName) {
+                return m_nameMapPort != nullptr
+                           ? m_nameMapPort->resolveObjectIdFromRuntimeName(frameName)
+                           : std::nullopt;
+            };
+        seams.sessionRevisionId;  // 会话基线对账键＝空（无基线语义已定义——捕获请求随域门如实降级）
+        m_domains->requirements->bindView3DSeams(std::move(seams));
+    }
+
     // 事件过滤挂接＝视图本体＋全部后代 QWidget（双击事件的落点控件在
     // 框架内部组装——零脆弱查找，isAncestorOf 判定事件归属；视图未挂＝
     // 上游拾取不接——诚实降级面，呈现出口/TCP 源照常在位）。
@@ -3151,10 +3180,6 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
     view->installEventFilter(this);
     for (QWidget* child : view->findChildren<QWidget*>()) {
         child->installEventFilter(this);
-    }
-    if (m_diag.pipeline) {
-        m_diag.pipeline->logDev(kPluginDevChannel,
-                                "view3d gateway: 装配完成（上行拾取＋呈现出口＋TCP 会话态源；名称映射＝宿主当前实例）");
     }
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
