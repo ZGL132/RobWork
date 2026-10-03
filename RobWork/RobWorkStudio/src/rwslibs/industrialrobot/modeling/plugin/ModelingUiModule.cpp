@@ -240,7 +240,13 @@ void ModelingUiModule::seedTemplateSession()
     const TemplateOutcome outcome = factory.createDraft(
         TemplateId{kTemplateIdGeneric6R},
         runtime::InstallationPresetToken::Ground, "demo", diags);
+    // 审核修正（UI-T41 批次D R1——恰一根不变量）：重种子＝既有模型内容的
+    // 模板化替换——已回填的项目根身份保留（下次 draft.apply 走同根替换，
+    // 不按 allocateNew 重复建根——requirements 域 F-461 同型缺陷的预防）；
+    // 无根（纯草稿会话/会话脱离后）保持 nullopt＝应用时分配。
+    const std::optional<core::ObjectId> previousRoot = m_session.draft.rootObjectId;
     m_session.draft = outcome.get();
+    m_session.draft.rootObjectId = previousRoot;
     // 种子即重置应用侧快照（UI-T41——基线快照/预览视图随草稿重建失效）。
     m_session.baselineSnapshot.reset();
     m_session.appliedPreview.reset();

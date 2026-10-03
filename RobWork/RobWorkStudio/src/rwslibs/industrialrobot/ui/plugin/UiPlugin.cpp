@@ -85,6 +85,8 @@
 
 #include "DomainModuleRunner.hpp"                // runDomainApply（UI-T23 acceptance 2——draft.apply 多模块遍历）
 
+#include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>  // modeling::isAssembledModelingCommand（UI-T42——F-466 路由判定出线）
+
 #include <filesystem>
 #include <iostream>
 #include <stdexcept>
@@ -110,21 +112,13 @@ constexpr const char* kPluginLogDirName = "ird-ui-plugin-logs";
 /// content submitCommand 对 outcome.messageKey 的呈现值源）。
 constexpr const char* kModelingFlowNotAssembledKey = "cmd.modeling.flow-not-assembled";
 
-/// 真实执行面已落位的建模域命令（UI-T41 批次C 收口——modeling.md §9.7.3
-/// 十条全部装配真实链：批次A 八条＋批次C estimate-properties（§5.3 段元
-/// 推导＋estimateLink＋GeometricEstimate 写回）与 generate-placeholder-
-/// geometry（§5.2 占位圆柱；资源清单登记受 schema 边界——流程内如实留痕）。
-/// flow-not-assembled 未装配路径就此退役）。
+/// 真实执行面已落位的建模域命令（UI-T42——F-466 消账：判定逻辑迁至
+/// modeling 命令流层 ModelingCommandFlows.hpp 的 isAssembledModelingCommand
+/// ——路由词表与 executeModelingCommand 同 TU 演化，装配集∧目录集一致性
+/// 可被 modeling_test 断言；本处只转发，零第二词表）。
 bool isAssembledModelingCommand(const std::string& id)
 {
-    static const std::set<std::string> kAssembled{
-        "modeling.new-from-template", "modeling.import-urdf",
-        "modeling.import-xacro",      "modeling.switch-authority",
-        "modeling.estimate-properties", "modeling.generate-placeholder-geometry",
-        "modeling.diff-baseline",     "modeling.export-package",
-        "modeling.import-package",    "modeling.reset-home-zero",
-    };
-    return kAssembled.count(id) != 0;
+    return modeling::isAssembledModelingCommand(id);
 }
 
 /// UI-T32 C 批次已装配的需求域命令（组1：导出副本/模板/镜像/阵列/重生成

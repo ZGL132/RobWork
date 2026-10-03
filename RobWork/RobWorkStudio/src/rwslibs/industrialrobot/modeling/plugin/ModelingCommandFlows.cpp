@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <set>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -74,7 +75,11 @@ public:
 
     bool confirmProceed(const QString& title, const QString& text) override
     {
-        return QMessageBox::question(nullptr, title, text)
+        // UI-T41 批次D（D1）：破坏性操作确认默认否——用户未明示即不执行
+        // （旧版 confirmOutputOverwrite 同款默认钮纪律）。
+        return QMessageBox::question(nullptr, title, text,
+                                     QMessageBox::Yes | QMessageBox::No,
+                                     QMessageBox::No)
                == QMessageBox::Yes;
     }
 
@@ -105,6 +110,25 @@ bool executeModelingCommand(const std::string& commandId,
 {
     return executeModelingCommand(commandId, session, deps,
                                   qtModelingDialogHost(), summary);
+}
+
+// =====================================================================
+// 装配路由权威判定（UI-T42——F-466 消账：宿主 UiPlugin 只转发本判定；
+// 十条词表与 §9.7.3 卡表同源演化——新增命令漏登此处＝宿主禁用（fail-
+// closed，不产生"按钮可用但执行失败"的不合格中间态——requirements 7/2
+// 撤牌教训的同型预防）。
+// =====================================================================
+
+bool isAssembledModelingCommand(const std::string& commandId)
+{
+    static const std::set<std::string> kAssembled{
+        "modeling.new-from-template", "modeling.import-urdf",
+        "modeling.import-xacro",      "modeling.switch-authority",
+        "modeling.estimate-properties", "modeling.generate-placeholder-geometry",
+        "modeling.diff-baseline",     "modeling.export-package",
+        "modeling.import-package",    "modeling.reset-home-zero",
+    };
+    return kAssembled.count(commandId) != 0;
 }
 
 namespace {
@@ -281,9 +305,37 @@ bool runExportPackage(ModuleSessionState& session, ModelingDialogHost& host,
         summary = "草稿为空——无规范内容可导出";
         return false;
     }
+
+    // UI-T41 批次D（D1）：写入前清单化确认（借鉴旧版 confirmOutputOverwrite
+    // ——列出将写入/替换的目标，默认否）。内容清单＝根对象＋部件闭包计数；
+    // 存在性检查→"替换现有文件"明示；原子替换语义（失败保留原文件）随行。
+    const std::filesystem::path targetPath = path.toStdWString();
+    const bool fileExists = std::filesystem::exists(targetPath);
+    const ModelingWorkingSet& draft = session.draft;
+    QString confirmText =
+        QStringLiteral("将写入规范模型包：\n  · %1%2\n\n包含对象：\n"
+                       "  · 根对象 robot-design（关节 %3／连杆 %4）\n"
+                       "  · 工具 %5／场景 %6／位姿集 %7／传动 %8\n\n"
+                       "写出采用 io 原子替换——失败保留先前文件。是否继续？")
+            .arg(path, fileExists ? QStringLiteral("（将替换现有文件）")
+                                  : QStringLiteral())
+            .arg(draft.design.joints.size())
+            .arg(draft.design.links.size())
+            .arg(draft.toolObjects.size())
+            .arg(draft.sceneObjects.size())
+            .arg(draft.poseSetObject.has_value() ? 1 : 0)
+            .arg(draft.drivetrainObject.has_value() ? 1 : 0);
+    if (!draft.changes.empty()) {
+        confirmText += QStringLiteral("\n注意：当前草稿有 %1 条未应用编辑——导出内容为草稿现状。")
+                           .arg(draft.changes.size());
+    }
+    if (!host.confirmProceed(QStringLiteral("导出确认"), confirmText)) {
+        return false;  // 默认否——用户未明示即不写盘
+    }
+
     WorkingSetClosureView closure(session.draft);
     PackageExportTarget target;
-    target.targetFile = path.toStdWString();
+    target.targetFile = targetPath;
     // 替换策略缺省 OverwriteAtomic（io 原子替换——失败保留先前输出）；
     // createdAtUtc 留空（服务不取时钟——确定性口径；记录字段可省略）。
     ModelPackagePort port;
@@ -293,7 +345,27 @@ bool runExportPackage(ModuleSessionState& session, ModelingDialogHost& host,
         summary = "导出失败：" + outcome.error.detail;
         return false;
     }
-    summary = "规范包已导出：" + path.toStdString();
+
+    // UI-T41 批次D（D2 发布即所见——旧版"事务化发布"承诺的最小承接）：
+    // 导出后立即经包端口回读校验（manifest 校验＋逐条目 SHA-256 复算＋根
+    // 对象解码——端口 importPackage 全链），失败如实回报（导出成功≠可用）。
+    // 运行时真实加载校验（编译链）依赖 runtime 绑定面，归后续任务链——
+    // 此处诚实注明，不虚构"加载成功"。
+    ValidatedSource verifySource;
+    verifySource.entrySnapshot.finalPath = targetPath;
+    std::vector<std::uint8_t> containerProbe{0x50, 0x4B};  // 端口不复读字节——ZipChannel 唯一读取口
+    verifySource.bytes = containerProbe;
+    std::vector<core::DiagnosticRecord> verifyDiags;
+    const PackageImportOutcome verify = port.importPackage(verifySource, verifyDiags);
+    if (!verify.ok) {
+        summary = "规范包已写出，但回读校验失败：" + verify.error.detail
+                  + "——请检查目标文件后再分发";
+        return false;  // 校验失败＝不可信产物（诚实拒绝，不粉饰为成功）
+    }
+    summary = "规范包已导出并通过回读校验（对象条目 "
+              + std::to_string(verify.report.parts.size()) + "，条目数 "
+              + std::to_string(outcome.entryCount) + "）：" + path.toStdString()
+              + "——运行时加载校验归后续任务链";
     return true;
 }
 
@@ -419,8 +491,14 @@ bool executeModelingCommand(const std::string& commandId,
         if (!host.confirmImport(importSummaryText(outcome.report))) {
             return false;
         }
+        // 审核修正（UI-T41 批次D R1——恰一根不变量）：导入＝**替换既有模型
+        // 内容**——已回填的项目根身份必须保留，否则下次 draft.apply 按
+        // allocateNew 重复建根（requirements 域 UI-T35 P1-2 同型缺陷 F-461
+        // 的建模侧翻版）；无根（纯草稿会话）保持 nullopt＝应用时分配。
+        const std::optional<core::ObjectId> previousRoot = session.draft.rootObjectId;
         session.draft = ModelingWorkingSet{};
-        session.draft.design = *outcome.draft;  // 导入草稿为新根（无 project 身份——应用时分配）
+        session.draft.rootObjectId = previousRoot;
+        session.draft.design = *outcome.draft;
         ModelingChangeRecord record;
         record.subject = "design";
         record.summary = isXacro ? "导入 Xacro 草稿（源已展开映射）" : "导入 URDF 草稿";
@@ -629,15 +707,30 @@ bool executeModelingCommand(const std::string& commandId,
             return false;
         }
         // 导入回读＝根对象值直取（报告值已解码——PackageImportReport.design）
-        // 入草稿（与 URDF 导入同落点——应用时分配新根）。
+        // 入草稿（与 URDF 导入同落点——已回填根则同根替换，恰一根不变量 R1）。
         const RobotDesign* design = &outcome.report.design;
-        if (!host.confirmImport(QStringLiteral("规范包导入报告\n\n"
-                                                "部件对象：%1\n固化资源：%2\n\n确认后将替换当前草稿。")
-                                    .arg(outcome.report.parts.size())
-                                    .arg(outcome.report.solidifiedResources.size()))) {
+        // UI-T41 批次D（D1）：确认文本清单化——对象计数＋草稿覆盖后果（未
+        // 应用编辑将丢弃）＋应用语义（同根替换/新根分配如实区分）。
+        QString importConfirm =
+            QStringLiteral("规范包导入报告\n\n部件对象：%1\n固化资源：%2\n\n"
+                           "确认后将替换当前草稿。")
+                .arg(outcome.report.parts.size())
+                .arg(outcome.report.solidifiedResources.size());
+        if (!session.draft.changes.empty()) {
+            importConfirm += QStringLiteral("\n注意：当前草稿 %1 条未应用编辑将丢弃。")
+                                 .arg(session.draft.changes.size());
+        }
+        importConfirm += session.draft.rootObjectId.has_value()
+                             ? QStringLiteral("\n应用语义：替换既有模型根（不新建）。")
+                             : QStringLiteral("\n应用语义：经『应用草稿』分配新模型根。");
+        if (!host.confirmImport(importConfirm)) {
             return false;
         }
+        // 审核修正（R1——恰一根不变量，语义同 URDF/Xacro 导入侧）：保留
+        // 已回填的项目根身份——导入＝同根内容替换，不重复建根。
+        const std::optional<core::ObjectId> previousRoot = session.draft.rootObjectId;
         session.draft = ModelingWorkingSet{};
+        session.draft.rootObjectId = previousRoot;
         session.draft.design = *design;
         ModelingChangeRecord record;
         record.subject = "design";

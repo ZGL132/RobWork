@@ -190,6 +190,19 @@ private:
  */
 ModelingPluginAssembly createModelingPluginAssembly();
 
+/**
+ * @brief 已装配域命令的权威判定（UI-T42——F-466 消账：宿主注册表路由集
+ *        的唯一事实源在 modeling 命令流层〔ModelingCommandFlows 同词表〕，
+ *        经本门面出线供 ui 插件转发消费——R-2 合规：ui 只见本装配契约头，
+ *        零 modeling 私有头依赖；装配集∧目录集一致性可被 modeling_test
+ *        断言，宿主侧零第二词表）。
+ *
+ * @param commandId [in] 域命令 id（点分小写——§9.7.3 卡表词表）
+ * @return true＝真实执行链在位（宿主按 assembled 放行）；false＝注册期
+ *         禁用（fail-closed——不产生"可点但执行失败"的中间态）
+ */
+bool isAssembledModelingCommand(const std::string& commandId);
+
 }  // namespace modeling
 }  // namespace ird
 }  // namespace sdurws
