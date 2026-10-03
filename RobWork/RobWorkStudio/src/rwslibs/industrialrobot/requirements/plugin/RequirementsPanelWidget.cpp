@@ -1788,12 +1788,16 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
         form->addRow(new QLabel(QString::fromStdString(r.label), this), combo);
     };
 
-    // 位置复合行（acceptance 2——一行三值＋单位；呈现面：四态守恒，非
-    // Provided 显示占位原文不伪造数值。位置编辑轨随后续批次（本批消除
-    // 其"可编辑即崩"陷阱——灰显对齐区域轨 T31 先例），读面零变化）。
+    // 位置复合行（acceptance 2——一行三值＋单位；UI-T47 位置编辑轨落位：
+    // Provided 态三轴 SpinBox 条件可编辑（m_writable 门控），提交轨＝
+    // submitStationValue("pose-position-x/y/z") 队列化出险——与同卡容差
+    // SpinBox 同一提交链（幻影脏化短路＋editingFinished＋域裁决回退）。
+    // 非数值形态（四态占位）维持灰显原文不伪造——未提供态无逐轴输入面，
+    // "提供位置"录入归捕获 TCP/导入通道（域侧回填对未提供基线 fail-fast
+    // 同轨，四态语义无"以零补全"通道）。
     auto renderPoseRow = [&](const StationFieldRow& r) {
         // 逐轴三行（UI-T37 返工——对齐旧插件 X/Y/Z 逐行 QDoubleSpinBox 的
-        // 布置形态；位置编辑轨随后续批次——灰显呈现面，四态守恒不伪造）。
+        // 布置形态）。
         const QString text = QString::fromStdString(r.valueText);
         std::array<double, 3> vals{0.0, 0.0, 0.0};
         bool ok = text != QStringLiteral("未提供") && !text.isEmpty();
@@ -1805,20 +1809,42 @@ void RequirementsPanelWidget::renderInspector(const RequirementWorkingSet& ws)
             }
         }
         static const char* kAxes[] = {"X", "Y", "Z"};
+        static const char* kAxisKeys[] = {"pose-position-x", "pose-position-y",
+                                          "pose-position-z"};
         const QString unit = QString::fromStdString(r.unitText);
+        // 可编辑＝会话可写（行 enablement 恒 Editable——模型层词表默认；
+        // 位置行无域级只读语义，只读门控唯一事实源＝会话可写性——L-R12
+        // 与区域轨盒复合行同款合取形态）。
+        const bool editable = m_writable;
         if (ok) {
             for (int i = 0; i < 3; ++i) {
                 auto* spin = new QDoubleSpinBox(this);
                 spin->setDecimals(6);
-                spin->setRange(-1.0e12, 1.0e12);
-                { QSignalBlocker blocker(spin);
+                spin->setRange(-1.0e12, 1.0e12);  // 宽域——合法性归域校验链
+                { QSignalBlocker blocker(spin);   // 初始化静默（防提交重入）
                 spin->setValue(vals[i]); }
-                spin->setReadOnly(true);  // 呈现面（编辑轨随后续批次）
+                spin->setReadOnly(!editable);  // UI-T47——只读呈现退役
+                spin->setEnabled(editable);
                 spin->setButtonSymbols(QAbstractSpinBox::NoButtons);
                 spin->setMaximumWidth(130);
-                if (i == 0) {
-                    spin->setProperty("irdFieldKey",
-                                      QString::fromStdString(r.fieldKey));
+                spin->setProperty("irdFieldKey",
+                                  QString::fromLatin1(kAxisKeys[i]));
+                // 权威值＝同函数格式化（formatSiText 与提交侧比较同形——
+                // 幻影脏化短路的等值前提；域原文 r.valueText 为逗号复合
+                // 形态，不直接可比）。
+                spin->setProperty("irdAuthoritativeValue", formatSiText(vals[i]));
+                if (editable) {
+                    // editingFinished（回车/失焦）——与同卡容差行同一提交
+                    // 语义（逐键提交＝重建式刷新下发射控件被删＝UB）。
+                    connect(spin, &QDoubleSpinBox::editingFinished, this,
+                            [this, key = std::string(kAxisKeys[i]), spin]() {
+                                const QString text = formatSiText(spin->value());
+                                if (text == spin->property("irdAuthoritativeValue")
+                                                 .toString()) {
+                                    return;  // 幻影脏化短路（同卡先例）
+                                }
+                                submitStationValue(key, text);
+                            });
                 }
                 m_stationPoseForm->addRow(
                     QString("%1 (%2)").arg(QString::fromUtf8(kAxes[i]), unit),

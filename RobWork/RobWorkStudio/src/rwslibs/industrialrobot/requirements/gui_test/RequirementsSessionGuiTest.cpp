@@ -493,6 +493,19 @@ QLineEdit* fieldEditor(const RequirementsPanelWidget& panel, const char* fieldKe
     return nullptr;
 }
 
+/// 按 irdFieldKey 属性定位检查器 SpinBox（UI-T47——工位位置三轴行形态）。
+QDoubleSpinBox* spinEditor(const RequirementsPanelWidget& panel, const char* fieldKey)
+{
+    const auto spins =
+        const_cast<RequirementsPanelWidget&>(panel).findChildren<QDoubleSpinBox*>();
+    for (QDoubleSpinBox* s : spins) {
+        if (s->property("irdFieldKey").toString() == QString::fromLatin1(fieldKey)) {
+            return s;
+        }
+    }
+    return nullptr;
+}
+
 /// 面板状态行文本（就地错误/接受摘要的呈现面）。
 QString statusText(const RequirementsPanelWidget& panel)
 {
@@ -628,6 +641,62 @@ TEST_F(RequirementsSessionGuiTest, FieldEditing_ReadOnlyGate_UI_T31)
         EXPECT_TRUE(e->isReadOnly()) << key << " 只读态未生效";
     }
     m_panel->setWritable(true);  // 夹具复位
+}
+
+TEST_F(RequirementsSessionGuiTest, StationPositionEditing_ThreeAxis_UI_T47)
+{
+    IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 选中工位（P1 位置＝1.0,2.0,3.0 Provided——fixture 同款；focusObject
+    // ＝UI-T36 起的产品选中路径，工位页无独立表——左栏树联动）→检查器
+    // "空间与公差"卡三轴 SpinBox 投影。
+    const core::ObjectId pid = m_editor.workingSet().points.entries.front().objectId;
+    m_panel->focusObject(pid);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    const std::uint64_t editsBefore = m_editor.draftStatus().edits;
+
+    // ① 只读呈现退役：可写会话下三轴 SpinBox 可编辑（UI-T47 主体——
+    // "编辑轨随后续批次"登记面的落位证据）。
+    QDoubleSpinBox* xSpin = spinEditor(*m_panel, "pose-position-x");
+    ASSERT_NE(xSpin, nullptr) << "位置 X 轴 SpinBox 未投影";
+    ASSERT_NE(spinEditor(*m_panel, "pose-position-y"), nullptr);
+    ASSERT_NE(spinEditor(*m_panel, "pose-position-z"), nullptr);
+    ASSERT_FALSE(xSpin->isReadOnly()) << "可写会话下位置轴仍只读（编辑轨未生效）";
+
+    // ② 幻影短路：直发 editingFinished（值未变）——零提交（编辑计数不变）。
+    Q_EMIT xSpin->editingFinished();
+    QApplication::processEvents();  // 队列化提交（事件循环一拍落域）
+    EXPECT_EQ(m_editor.draftStatus().edits, editsBefore)
+        << "未修改触发产生了编辑（幻影脏化回归）";
+
+    // ③ 接受：X 1.0→2.5——工作集权威值变（Y/Z 原值保持＝三维整体重写的
+    // 单轴语义）＋编辑计数＋1。
+    xSpin->setValue(2.5);
+    Q_EMIT xSpin->editingFinished();
+    QApplication::processEvents();  // 队列化提交（事件循环一拍落域）
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.objectId == pid) {
+            ASSERT_TRUE(p.pose.position.tryValue().has_value());
+            EXPECT_DOUBLE_EQ((*p.pose.position.tryValue())[0], 2.5)
+                << "接受后 X 权威值未变";
+            EXPECT_DOUBLE_EQ((*p.pose.position.tryValue())[1], 2.0)
+                << "未编辑轴 Y 被连带改写（三维整体语义破坏）";
+            EXPECT_DOUBLE_EQ((*p.pose.position.tryValue())[2], 3.0)
+                << "未编辑轴 Z 被连带改写（三维整体语义破坏）";
+        }
+    }
+    EXPECT_EQ(m_editor.draftStatus().edits, editsBefore + 1);
+
+    // ④ 撤销同栈：undoLocal 回滚 X 2.5→1.0（字段编辑同一局部撤销栈）。
+    EXPECT_TRUE(m_editor.undoLocal());
+    for (const TaskPoint& p : m_editor.workingSet().points.entries) {
+        if (p.objectId == pid) {
+            ASSERT_TRUE(p.pose.position.tryValue().has_value());
+            EXPECT_DOUBLE_EQ((*p.pose.position.tryValue())[0], 1.0);
+        }
+    }
 }
 
 // =====================================================================
