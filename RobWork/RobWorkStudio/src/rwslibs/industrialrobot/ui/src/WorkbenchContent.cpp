@@ -802,21 +802,20 @@ void WorkbenchContentImpl::buildSideContents()
     leftLayout->addStretch(1);
     m_regionWidgets[static_cast<std::size_t>(WorkbenchRegion::Left)] = leftContent;
 
-    // 右栏（§4.2 右栏行：属性编辑区＋诊断与设置区——属性编辑阶段 B 域
-    // 编辑器、诊断摘要 UI-T13、策略摘要入口 UI-T07）。最小内容宽 280 px。
+    // 右栏（§4.2 右栏行——UI-T44 收口后形态）：属性编辑半区已由共享属性
+    // 检查器承载（B1-SPEC D5——UI-T23 升格"检查器为右 Dock 唯一跨域属性
+    // 呈现面"，本区原"属性编辑区"占位标签随之退役）；诊断摘要半区由宿主
+    // 装配的跨域就绪摘要卡承载（DomainReadinessSummaryCard——挂同一 Dock
+    // 的检查器与本区之间；数据源＝各域 §11.2 readonlyProjections）。本区
+    // 保留：工程策略摘要只读卡（UI-T07——§6.7"诊断与设置区"内嵌策略摘要
+    // 入口：数据源＝ShellWiring.policySource，O-31 ui 自有端口，L5 适配
+    // policy::IPolicyProvider——摘要只读面语义不变；行装配与分组异名语义
+    // 在 PolicySummaryCard 模型层，GUI 只渲染；策略未装载时卡内呈占位行，
+    // 不虚构数值）。最小内容宽 280 px。
     auto* rightContent = new QWidget(m_deps.hostWidget);
     rightContent->setObjectName("ird_right_content");
     rightContent->setMinimumWidth(kRightDockMinWidth);
     auto* rightLayout = new QVBoxLayout(rightContent);
-    rightLayout->addWidget(new QLabel(u8"属性编辑区（本阶段将在后续版本提供）", rightContent));
-    rightLayout->addWidget(new QLabel(u8"诊断与设置区（本阶段将在后续版本提供）", rightContent));
-    // 工程策略摘要只读卡（UI-T07——§6.7"诊断与设置区"内嵌策略摘要入口）：
-    // 数据源＝ShellWiring.policySource（O-31 ui 自有端口，L5 适配
-    // policy::IPolicyProvider——§6.7 摘要只读面语义不变；build 前置
-    // 已校验非空，此处恒可解引用）；行装配与分组异名语义在
-    // PolicySummaryCard 模型层（GUI 只渲染）。右侧既有的"策略摘要入口
-    // 占位"标签由真实卡取代——策略未装载时卡内呈占位行（不虚构数值），
-    // 仍是契约显式设计而非未完成实现。
     rightLayout->addWidget(createPolicySummaryCard(*m_deps.wiring.policySource,
                                                    &m_refreshPolicyCard, rightContent));
     rightLayout->addStretch(1);

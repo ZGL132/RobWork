@@ -91,6 +91,14 @@ class QWidget;    // Dock 体控件（前置声明）
 namespace sdurws {
 namespace ird {
 namespace ui {
+class DomainReadinessSummaryCard;  // 跨域就绪摘要卡（UI-T44——Right Dock 诊断摘要半区）
+}  // namespace ui
+}  // namespace ird
+}  // namespace sdurws
+
+namespace sdurws {
+namespace ird {
+namespace ui {
 
 /**
  * @brief 工作台宿主插件（ui 单元唯一 _plugin 目标的根类型）。
@@ -238,6 +246,9 @@ private:
     /// 共享面刷新编排（树 rebuild→双面板 refresh→检查器按当前选中重
     /// 询问——域修订/项目打开后的呈现同步动作）。
     void refreshSharedSurfaces();
+    /// 跨域就绪摘要重取（UI-T44——三域 readonlyProjections 现取投卡；卡
+    /// 未装配/域装配缺席＝幂等静默。随 refreshSharedSurfaces 编排触发）。
+    void refreshReadinessSummary();
     /// 项目关闭统一清理（acceptance 4——八类对象的宿主收口：项目树/
     /// SelectionService/检查器/复杂编辑宿装/HostWorkCell 呈现/会话姿态/
     /// 播放驱动/运行中订阅；具名用例承载，presentContext 无项目半区调用）。
@@ -284,6 +295,10 @@ private:
     std::unique_ptr<IWorkbenchContent> m_content;             ///< 内容装配面（与 harness 同源）
     QPointer<QWidget> m_dockBody;                             ///< 主 Dock 体控件（Qt 父子树托管）
     QDockWidget* m_propsDock = nullptr;    ///< "IRD 属性与诊断"Dock（Right 区——UI-T18 拆分面，窗口树托管）
+    /// 跨域就绪摘要卡（UI-T44——Right Dock 内，检查器与右栏之间的诊断
+    /// 摘要半区；数据源＝各域 §11.2 readonlyProjections，随共享面刷新点
+    /// 重取。Qt 父子树托管——rightColumn 销毁随行，指针仅装配期寻址）。
+    DomainReadinessSummaryCard* m_readinessCard = nullptr;
     QDockWidget* m_tasksDock = nullptr;    ///< "IRD 任务和状态"Dock（Bottom 区——UI-T18 拆分面，窗口树托管）
     QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
     QDockWidget* m_requirementsDock = nullptr;   ///< "IRD 需求"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
