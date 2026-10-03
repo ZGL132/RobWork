@@ -189,6 +189,9 @@ add_library(sdurws_ird_modeling_plugin STATIC
     plugin/ModelingPanelWidget.cpp   # 五区面板 widget（Q_OBJECT——AUTOMOC 载体）
     plugin/ModelingPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
     plugin/ModelingUiModule.cpp      # ui.md §11.2 模块实现（buildDraftCommand 域侧组装）
+    plugin/ModelingCommandFlows.cpp  # 域命令 UI 流（UI-T41 A2——八命令真实链）
+    plugin/ModelingAuthorityFlows.cpp  # 权威切换流（UI-T41——DhConvert 独立 TU）
+    plugin/ModelingXacroBridge.cpp  # Xacro 展开桥（UI-T41——XacroExpand 独立 TU）
     plugin/ModelingPluginAssembly.cpp)  # WP-24-T03 首版装配门面实现（assembly/ 公共头的私有实现）
 set_target_properties(sdurws_ird_modeling_plugin PROPERTIES
     CXX_STANDARD 17
@@ -517,7 +520,8 @@ add_executable(sdurws_ird_modeling_test
     test/DhConvertTest.cpp
     test/CanonicalBridgeTest.cpp
     test/PackageTest.cpp
-    test/ModelDiffTest.cpp
+    test/ModelDiffTest.cpp
+    test/ModelingCommandFlowsTest.cpp  # 域命令流测试（UI-T41 批次C——FakeHost 替身）
     test/PluginPanelTest.cpp
     test/HostMigrationTest.cpp
     test/GoldenDatasetTest.cpp

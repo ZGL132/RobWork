@@ -43,6 +43,16 @@
       "resolution": "随后续单元落位任务评估目标级 CMAKE_AUTOMOC OFF 的构建收益（NFR-MNT-01 语义下倾向显式关闭）；涉及框架构建面时按 SA-02 先登记后改。"
     },
     {
+      "id": "F-463",
+      "source": "UI-T41 批次A 收尾门禁核查（2026-10-03）——gate-all.ps1 -QtPrefix 通道 ird_gates 项 FAIL；基线归因实测：checkout 基点 295d60e0 的本批改动路径后 ird_gates 目标仍 FATAL 命中 98 处，先于本批存在",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "ird_gates cmake 目标在 redesign-main 现况命中 98 处恒 FATAL（gate-all 通道恒红）——与验收通道『ird_gates 引擎直跑＋归一化比对零新增』口径分叉：命中集含 kinematics->ui〔sdurws_ird_kinematics_plugin〕等已按 DTB §4.5 登记的许可边与测试目标同单元链接行，cmake 通道未消费该登记口径",
+      "owner": "治理会话（WP-01-T03 门禁白名单/引擎口径统一裁决）",
+      "resolution": "UI-T41 实测归因：基点 295d60e0 即 98 命中（本批改动路径 checkout 后复跑），本批曾新增第 99 处（modeling_test→sdurws_ird_ui）已随后续提交回退归零——本批净增零命中。修复方向：cmake 通道消费 DTB §4.5 登记许可集或补齐白名单文件与 dependency-graph.json 的一致性。"
+    },
+    {
       "id": "F-005",
       "source": "units/core.md 文末（本次 v1.3 治理修复中发现）",
       "severity": "suggestion",
@@ -4181,7 +4191,9 @@
       "id": "F-421",
       "source": "WP-24-T03 验收 attempt 1（记录 traceability/acceptance/WP-24-T03-20260928.md @ acc/WP-24-T03/2，2026-09-28）——验收者 GUI 冒烟亲手补做实证（真宿主 --rwsplugin 直载 console 留痕 'domain assembly: modeling outcome=3' 在场＋ACC-PROBE 探针逐命令判定 wellFormed=0 ×10；证据 builds/wp24-t03b/acc-host-evidence/acc-run1-console.log、acc-run5-probe-console.log）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-03",
+      "fixedBy": "UI-T41 批次A（分支 ui-t41）：真链路断言落宿主冒烟通道（T 规则禁测试目标跨单元直链——UiPlugin 冒烟 step7 断言 Ok/panels=1/commands=10）；八条连字符域命令经 ModelingCommandFlows 真实装配入册（UiPlugin isAssembledModelingCommand 八条集→executeDomainCommand 路由）；estimate-properties/generate-placeholder-geometry 保持注册期禁用（几何投影面归批次C）。",
       "registeredAt": "2026-09-28",
       "title": "PluginUiRegistrar::commandIdWellFormed 句法字符集（[a-z0-9.]）拒绝连字符 '-'，而 modeling.md §9.7.3 卡表十条域命令 id 全部含连字符（modeling.new-from-template / import-urdf / import-xacro / switch-authority / estimate-properties / generate-placeholder-geometry / diff-baseline / export-package / import-package / reset-home-zero——契约明文词表），致真宿主装配 registerPluginUi 对建模描述符恒返回 InvalidDescriptor（§11.3 失败隔离）：PluginAssemblyReport 恒不入列→assemblyReports() 恒空→IRD 关于框真机恒呈现白名单占位行（acceptance 7『关于框清单 modeling 行呈现真实装配事实』的真机呈现面失效）＋§10.9 后置条件（Ok：能力入关于页数据源）真机恒不满足。该缺陷为 T03a 首版装配遗留（base..head 对 PluginUiRegistrar.cpp 零触碰、同输入同输出），T03a/T03b 两轮均漏检——根因＝registrar 真链路（createModelingPluginAssembly→registerPluginUi→Ok 断言）零测试覆盖＋GUI 冒烟 console 留痕无人工判读。修复建议：①commandIdWellFormed 字符集放行 '-'（卡表词表即权威；注释自述『只拦截空/大写/空白』与实现不符一并修正）；②补真链路 gtest 一条（registerPluginUi(真实 modeling descriptor)→EXPECT Ok＋报告 ok=1/panels=1/commands=10——消账零覆盖缺口）；③修复后复录 GUI 冒烟关于框真实清单（WP-24-T03 验收 fail 阻断 B-1 的返工输入）。顺带面：WorkbenchContent.cpp 域命令注册段注释任务号拼写 'WP-24_T03B'（下划线）随手订正。",
       "owner": "WP-24-T03 实施者（返工批修复）＋WP-13-T15 交付物所有者（卡表 id 词表与句法校验的契约面裁决）",
@@ -4605,6 +4617,17 @@
       "title": "WritableSwitchRefreshesAll_UI_T39 用例对『setWritable 不再全量刷新生命周期按钮』的变异不敏感：使能断言疑似被空态互斥显隐等其他呈现路径掩盖——setWritable 全量刷新契约（L-R12 切换后按钮态零残留）缺一记直接红验的强断言。",
       "owner": "requirements gui 测试（UI-T40 序列候选：拆分生命周期刷新为可独立驱动面或补『使能位直接受 setWritable 驱动』的强断言——变异记录见 acc/ui-t39/1 验收记录 4.5 节）",
       "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T39 合入。编号顺延自 F-461。"
+    },
+    {
+      "id": "F-464",
+      "source": "UI-T41 批次A gate-all 复核（2026-10-03）——gate 并发构建负载期间 ctest ui_gui 偶发失败（exit 8＝AssemblyFailureGroupPlaceholder_RendersAndNotSelectable 1 例），静置复跑隔离 5/5＋全量 3/3 全过",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder_RendersAndNotSelectable 对系统负载敏感（gate-all 并发烟测/构建期间偶发 1ms 级断言翻红）——疑渲染/事件循环时序依赖，非本批行为变化引入（本批未触 HostIntegration 域装配失败隔离路径）",
+      "owner": "ui 单元所有者（用例时序去敏感化或负载标记）",
+      "resolution": "UI-T41 实测记录：隔离与静置全绿、负载下偶发；验收会话若遇同例失败先复核系统负载再判。"
+
     }
   ]
 }

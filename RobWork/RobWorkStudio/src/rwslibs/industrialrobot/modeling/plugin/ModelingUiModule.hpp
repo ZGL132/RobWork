@@ -89,6 +89,12 @@ struct ModuleSessionState {
     ModelingWorkingSet draft{};                 ///< 当前草稿工作集（编辑态——§4.9）
     std::optional<core::RevisionId> baseRevision;  ///< 草稿基线修订（nullopt＝提交期解析 tip——§6.2）
     std::optional<ModelReadinessReport> readiness; ///< 最近一次就绪报告（readonlyProjections 源——判定权威在 checker）
+    /// 最近应用的基线快照（UI-T41——diff-baseline 的 baseline 侧；应用时刻
+    /// 的草稿内容定格，编辑不回写。会话态非面板缓存——§9.7.4 不违 ACC5）。
+    std::optional<ModelingWorkingSet> baselineSnapshot;
+    /// 已应用修订预览视图（UI-T41 A3——AppliedRevisionView 定格于应用时刻；
+    /// nullopt＝无已应用修订——预览页空态。撤销/重做事件即失效——内容未知）。
+    std::optional<AppliedRevisionView> appliedPreview;
 };
 
 /**
@@ -233,6 +239,16 @@ public:
      *        ＋就绪条刷新；面板未创建＝空操作）。
      */
     void refreshFromSession();
+
+    /**
+     * @brief 执行一条本域命令的 UI 流程（UI-T41 A2——宿主注册表处理器的
+     *        建模侧落点；路由唯一经 ModelingCommandFlows。反馈经面板状态
+     *        行；草稿变更后就绪重算＋面板刷新）。
+     *
+     * @param commandId [in] 域命令 id（点分小写——§9.7.3 词表）
+     * @return true＝流程执行完成（含域内拒绝的诚实应答）；false＝用户取消
+     */
+    bool executeDomainCommand(const std::string& commandId);
 
     // ---- 会话锚定与应用回执（T03b-2——apply 网关的模块半区）------------
 

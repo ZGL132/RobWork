@@ -11,17 +11,22 @@
 
 #include "ModelingPanelWidget.hpp"
 
+#include <QDoubleValidator>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QScrollBar>
 #include <QTabWidget>
+#include <QTime>
 #include <QTreeWidgetItemIterator>
 #include <QVBoxLayout>
 
 #include <sdurws/ird/ui/UiText.hpp>   // 文案键解析（UI-T25——迁移标记标签挂键；
                                       // 构造期命令标题 resolver 尚未注入，此处直读
                                       // UiText 静态表，requirements 面板先例同款）
+#include <sdurws/ird/ui/UiTheme.hpp>  // 工业风主题（UI-T37 基建——批次B B5 接入；
+                                      // 调色板五色词表＝唯一色值源，防彩虹化）
 #include <sdurws/ird/ui/UiTypes.hpp>  // ui::TextKey（命令标题键——呈现层键解析约定）
 
 namespace sdurws::ird::modeling {
@@ -73,9 +78,31 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     right->addWidget(tabs, 1);
 
     // 就地状态行（错误/横幅——非模态呈现的唯一出口，置底部常驻）。
+    // UI-T41 批次B（B2）：状态行分级着色（词表色）＋可折叠诊断历史（最近
+    // 20 条不清空覆盖——后条不再覆盖前条）；objectName 供契约测试定位。
     m_statusLine = new QLabel(this);
     m_statusLine->setWordWrap(true);
+    m_statusLine->setObjectName(QStringLiteral("ird_modeling_status_line"));
     right->addWidget(m_statusLine);
+
+    m_historyToggle = new QPushButton(
+        QString::fromStdString(ui::resolveText("panel.modeling.history.title")), this);
+    m_historyToggle->setObjectName(QStringLiteral("ird_modeling_history_toggle"));
+    m_historyToggle->setCheckable(true);
+    m_historyToggle->setToolTip(QString::fromStdString(
+        ui::resolveText("panel.modeling.history.tooltip")));
+    m_historyToggle->setStyleSheet(
+        QStringLiteral("font-weight: 400; color: %1; padding: 2px; text-align: left;")
+            .arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    right->addWidget(m_historyToggle);
+    m_historyView = new QPlainTextEdit(this);
+    m_historyView->setObjectName(QStringLiteral("ird_modeling_history_view"));
+    m_historyView->setReadOnly(true);
+    m_historyView->setMaximumHeight(96);
+    m_historyView->hide();  // 默认折叠（B2——展开面，非弹窗；UX-07）
+    right->addWidget(m_historyView);
+    connect(m_historyToggle, &QPushButton::toggled, m_historyView,
+            &QPlainTextEdit::setVisible);
 
     // 命令目录装载（§9.7.3 十条——装配数据，构造期一次；按钮使能态随
     // writable 与注入出口切换——见 refreshPanel/setWritable）。
@@ -84,11 +111,16 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     // 使能逻辑零变化（分组语义＝目录 menuPath/作用域的呈现归纳，非新
     // 命令语义）。
     m_commands = modelingDomainCommands();
+    // UI-T41 批次B（B5）：工业风主题安装（面板作用域——宿主 chrome/其他域
+    // 面板不受影响）；分节标题色值从硬编码 #555 迁移至词表 kTextMuted
+    // （UiTheme 五色词表＝唯一色值源，防彩虹化 NFR-DEP-05）。
+    ui::applyIndustrialTheme(this);
     auto* toolsLayout = static_cast<QVBoxLayout*>(toolsPage->layout());
     auto addSectionHeader = [toolsPage, toolsLayout](const char* title) {
         auto* header = new QLabel(QString::fromUtf8(title), toolsPage);
         header->setStyleSheet(
-            QStringLiteral("font-weight: 600; color: #555; padding-top: 4px;"));
+            QStringLiteral("font-weight: 600; color: %1; padding-top: 4px;")
+                .arg(QString::fromLatin1(ui::palette::kTextMuted)));
         toolsLayout->addWidget(header);
     };
     // 组首 id → 组标题（§9.7.3 目录行序内首组"对象与导入"无组首 id——
@@ -106,7 +138,12 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
             }
         }
         auto* btn = new QPushButton(QString::fromStdString(m_commands[i].titleKey), toolsPage);
-        btn->setToolTip(QString::fromStdString(m_commands[i].id));  // 悬停显示命令 id（装配对账面）
+        // UI-T41 批次B（B4）：悬停文案＝UiText tooltip 键（工程中文，UX-02——
+        // 去裸命令 id 呈现）；解析空回退命令 id 原文（对账兜底，不虚构文案）。
+        const std::string tooltipText =
+            ui::resolveText("cmd." + m_commands[i].id + ".tooltip");
+        btn->setToolTip(QString::fromStdString(
+            tooltipText.empty() ? m_commands[i].id : tooltipText));
         connect(btn, &QPushButton::clicked, this, &ModelingPanelWidget::onCommandButtonClicked);
         m_commandButtons.push_back(btn);
         // 命令按 readOnlyAllowed 分组布局（简单纵排——呈现密度非本层关切）。
@@ -160,12 +197,106 @@ void ModelingPanelWidget::setCommandTitleResolver(CommandTitleResolver resolver)
         const QString resolved = m_titleResolver(key);
         m_commandButtons[i]->setText(
             resolved.isEmpty() ? QString::fromStdString(key) : resolved);
+        // 批次B（B4）：tooltip 与标题同源重解析（装配序无关——解析器后注入
+        // 时悬停文案同步升级为工程中文）。
+        const QString resolvedTip =
+            m_titleResolver("cmd." + m_commands[i].id + ".tooltip");
+        if (!resolvedTip.isEmpty()) {
+            m_commandButtons[i]->setToolTip(resolvedTip);
+        }
     }
 }
 
 void ModelingPanelWidget::setEditTargetProvider(EditTargetProvider provider)
 {
     m_editTarget = std::move(provider);
+    // L-4 重演接线（UI-T41 A4）：基线提供器＝编辑目标现取（零缓存同源），
+    // 刷新出口＝属性区重投影；重演入口经 replayOnRevisionEvent 显式触发
+    // （事件驱动——模块 onRevisionCommitted 转达，无轮询面）。
+    if (m_editTarget) {
+        m_refresh.setSinks(
+            [this]() -> ModelingWorkingSet& {
+                // 返回引用契约（PanelRefresh.hpp）：调用期保证工作集在位——
+                // 重演入口先经 replayOnRevisionEvent 空会话守卫，不触本路。
+                static ModelingWorkingSet empty;
+                ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+                return ws != nullptr ? *ws : empty;
+            },
+            [this]() { refreshPropertiesFromLastWorkingSet(); });
+    }
+}
+
+// ---- UI-T41 A3/A2/A4：预览注入／命令回执／重演入口 ---------------------
+
+void ModelingPanelWidget::setAppliedPreview(
+    const std::optional<AppliedRevisionView>& view)
+{
+    m_appliedPreview = view;
+    if (m_preview == nullptr) { return; }
+    if (!m_appliedPreview.has_value()) {
+        // 空态占位（不伪造内容——D-MDL-10：预览页仅呈现已应用修订）。
+        m_preview->setPlainText(
+            QStringLiteral("尚无已应用修订——预览页仅呈现已应用修订内容（D-MDL-10）。\n"
+                           "编辑后请经顶栏『应用草稿』提交，预览随应用刷新。"));
+        return;
+    }
+    QString text;
+    for (const std::string& line : buildPreviewPage(*m_appliedPreview)) {
+        text += QString::fromStdString(line) + QLatin1Char('\n');
+    }
+    if (text.isEmpty()) {
+        text = QStringLiteral("已应用修订无预览摘要内容。");
+    }
+    m_preview->setPlainText(text);
+}
+
+void ModelingPanelWidget::setOutcomeMessage(const QString& message,
+                                            OutcomeSeverity severity)
+{
+    // UI-T41 批次B（B2）：分级着色（UiTheme 词表——Success 绿＝接受、
+    // Warning 橙＝拒绝/待处置、Info＝次级文本；阻断不设红——词表无红，
+    // 防彩虹化纪律）＋诊断历史追加（最近 20 条，FIFO 裁剪——后条不再
+    // 覆盖前条，回执可回溯）。
+    const char* color = ui::palette::kTextMuted;
+    const char* weight = "400";
+    switch (severity) {
+    case OutcomeSeverity::Success: color = ui::palette::kSuccess; break;
+    case OutcomeSeverity::Warning: color = ui::palette::kWarning; weight = "600"; break;
+    case OutcomeSeverity::Info: break;
+    }
+    m_statusLine->setStyleSheet(
+        QStringLiteral("color: %1; font-weight: %2;")
+            .arg(QString::fromLatin1(color), QString::fromLatin1(weight)));
+    m_statusLine->setText(message);
+
+    m_history.push_back(
+        QStringLiteral("[%1] %2")
+            .arg(QTime::currentTime().toString(QStringLiteral("HH:mm:ss")), message));
+    if (m_history.size() > 20) {
+        m_history.erase(m_history.begin());  // 定容 FIFO——会话内回执可回溯
+    }
+    m_historyView->setPlainText(m_history.join(QLatin1Char('\n')));
+}
+
+void ModelingPanelWidget::replayOnRevisionEvent()
+{
+    // 空会话守卫（重演需要权威工作集——无会话＝清队列静默返回，不虚构重演）。
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr) {
+        m_refresh.clearPending();
+        return;
+    }
+    if (m_refresh.pending().empty() && !m_refresh.manualInterventionRequired()) {
+        return;  // 无待重演编辑＝零开销（事件驱动——无刷新风暴）
+    }
+    const ReplayOutcome outcome = m_refresh.onRevisionEvent(std::nullopt);
+    if (outcome == ReplayOutcome::BlockedAtEdit) {
+        const auto blockedAt = m_refresh.blockedAtIndex();
+        setOutcomeMessage(QStringLiteral("修订刷新后存在 %1 条未应用编辑待手工处置"
+                                         "（下标 %2 起重演被拒）——请重新编辑或放弃")
+                              .arg(m_refresh.pending().size())
+                              .arg(blockedAt.has_value() ? qint64(*blockedAt) : qint64(-1)));
+    }
 }
 
 // ---- 区①建模结构树 ---------------------------------------------------
@@ -182,6 +313,10 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     m_tree->setColumnCount(2);
     m_tree->setHeaderHidden(true);
     m_tree->hideColumn(kAnchorColumn);  // 锚列隐藏——UX-02：界面不见哈希/内部标识
+    // UI-T41 批次B（B6）：可访问性——树/状态行/预览挂 accessibleName
+    // （读屏与自动化定位锚；文案挂 UiText 键，UX-02 同源）。
+    m_tree->setAccessibleName(QString::fromStdString(
+        ui::resolveText("panel.modeling.tree.accessible")));
     connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
             &ModelingPanelWidget::onTreeSelectionChanged);
     left->addWidget(m_tree, 1);
@@ -236,6 +371,7 @@ void ModelingPanelWidget::buildPreviewPane(QVBoxLayout* bottom)
 {
     m_preview = new QPlainTextEdit(this);
     m_preview->setReadOnly(true);  // 只读预览（内容仅来自 AppliedRevisionView——D-MDL-10）
+    m_preview->setAccessibleName(QStringLiteral("已应用修订预览"));  // B6 可访问性
     bottom->addWidget(m_preview, 1);
 }
 
@@ -249,6 +385,9 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
     m_threadGuard.assertOnUiThread();  // §3.4——刷新触点同样是编辑面
 
     // ---- 区①结构树：全量重建（投影行序＝呈现序；UX-02 标签已过守卫）----
+    // UI-T41 批次B（B3）：滚动位跨刷新保持（树行重建后滚回原视口——刷新
+    // 不打断浏览位置；选中恢复既有锚机制不变）。
+    const int treeScroll = m_tree->verticalScrollBar()->value();
     m_tree->blockSignals(true);  // 重建期的选中变化不回环（避免重投影风暴）
     m_tree->clear();
     const std::string lastAnchor =
@@ -266,6 +405,7 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
         }
     }
     m_tree->blockSignals(false);
+    m_tree->verticalScrollBar()->setValue(treeScroll);  // B3 滚动位还原
 
     // ---- 区②属性区：按当前选中锚现取重投影（选中失效＝空态——不伪造行）----
     refreshPropertiesFromLastWorkingSet();
@@ -287,6 +427,20 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
         item->setText(kAnchorColumn, row.jumpTarget.has_value()
                                          ? QString::fromStdString(row.jumpTarget->toCanonical())
                                          : QString());  // 无主体＝不可点击定位
+        m_readinessItems->addTopLevelItem(item);
+    }
+
+    // ---- 区④补：L0～L11 分层结果行（UI-T41 A5——层结论保序呈现；层行
+    //      无锚不可点击定位——定位走逐项行 jumpTarget）。
+    for (std::size_t i = 0; i < bar.layerResults.size(); ++i) {
+        const LayerResultRow& layer = bar.layerResults[i];
+        auto* item = new QTreeWidgetItem(m_readinessItems);
+        item->setText(kLabelColumn,
+                      QStringLiteral("L%1 %2：%3")
+                          .arg(i)
+                          .arg(layer.passed ? QStringLiteral("通过")
+                                            : QStringLiteral("未通过"),
+                               QString::fromStdString(layer.note)));
         m_readinessItems->addTopLevelItem(item);
     }
 
@@ -370,22 +524,59 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
 {
     // 现取编辑目标（装配层会话工作集——面板零副本）；无会话＝空态。
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
-    // UI-T27 P0-1 修复：清空必须删尽全部行（此前 removeRow(0) 单次调用
-    // 只删首行——每次刷新净增 N-1 行，属性行无上限累积／重复呈现／最小
-    // 高度无界膨胀；requirements 三处同型代码均为 while 循环的正确模式，
-    // 本处为全仓唯一漏网——对照修复）。
+
+    // 先投影本次目标行（不触碰既有控件——增量/重建的分路判据）。
+    std::vector<PropertyFieldRow> rows;
+    std::optional<SelectedTarget> target;
+    if (ws != nullptr && m_lastSelected.has_value()) {
+        target = resolveSelection(*ws, *m_lastSelected);
+        if (target.has_value()) {
+            rows = applyReadOnlyGate(propertyFieldsFor(*ws, *target), m_writable);
+        }
+    }
+
+    // UI-T41 批次B（B3）增量路径：行集合形状（字段键序）与上次一致＝原地
+    // 更新值文本——不删行不重建控件，输入焦点与未完成输入不丢失（选中/
+    // 就绪刷新不再打断编辑）；形状变化（换选中对象/只读切换）才走重建。
+    // UI-T27 P0-1 修复的"清空删尽"语义保留在重建路径（while 删尽）。
+    const bool sameShape = rows.size() == m_propertyRows.size()
+                           && m_propertyEditors.size() == rows.size();
+    if (sameShape) {
+        bool keysEqual = true;
+        for (std::size_t i = 0; i < rows.size() && keysEqual; ++i) {
+            keysEqual = rows[i].fieldKey == m_propertyRows[i].fieldKey;
+        }
+        if (keysEqual) {
+            for (std::size_t i = 0; i < rows.size(); ++i) {
+                QLineEdit* editor = m_propertyEditors[i];
+                const QString authoritative =
+                    QString::fromStdString(rows[i].valueText);
+                // 焦点中的编辑器不回写（用户正在输入——权威值回显由提交
+                // 分支负责）；非焦点编辑器回显最新权威值；值一致时顺手清
+                // 上次校验拒绝的警示描边（B1——重编辑恢复正常呈现）。
+                if (!editor->hasFocus()) {
+                    editor->setText(authoritative);
+                }
+                if (editor->text() == authoritative) {
+                    editor->setStyleSheet({});
+                }
+                m_propertyRows[i] = rows[i];
+            }
+            return;
+        }
+    }
+
+    // 重建路径：清空必须删尽全部行（UI-T27 P0-1 修复——while 循环删尽，
+    // 行数不累积）。
     while (m_propertyForm->rowCount() > 0) {
         m_propertyForm->removeRow(0);
     }
     m_propertyEditors.clear();
-    m_propertyRows.clear();
-    if (ws == nullptr || !m_lastSelected.has_value()) { return; }
+    m_warningEditor = nullptr;  // 重建即清警示描边（B1 状态随行销毁）
+    m_propertyRows = std::move(rows);
+    if (ws == nullptr || !target.has_value()) { return; }  // 闭包外身份——空态
 
-    const auto target = resolveSelection(*ws, *m_lastSelected);
-    if (!target.has_value()) { return; }  // 闭包外身份——属性区空态（不伪造行）
-
-    m_propertyRows = applyReadOnlyGate(propertyFieldsFor(*ws, *target), m_writable);
-    for (const PropertyFieldRow& row : m_propertyRows) {
+    for (PropertyFieldRow& row : m_propertyRows) {
         auto* editor = new QLineEdit(this);
         // UI-T27 P0-2 单位分离：编辑器文本＝纯值（toDouble 全串可解析），
         // 单位并入行标签（UX-05 数值＋单位同显的呈现位迁移——值/单位分离
@@ -396,14 +587,32 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
         const bool panelEditable = (row.fieldKey == "zero-offset");
         editor->setText(QString::fromStdString(row.valueText));
         editor->setReadOnly(!panelEditable || rowReadOnly(row.enablement));
-        if (!panelEditable) {
-            editor->setToolTip(
-                QStringLiteral("该字段经批量粘贴或域命令编辑（不支持就地输入）"));
-        }
         QString label = QString::fromStdString(row.fieldKey);
         if (!row.unitText.empty()) {
             label += QStringLiteral("（") + QString::fromStdString(row.unitText)
                      + QStringLiteral("）");
+        }
+        if (!panelEditable) {
+            // UI-T41 批次B（B7）：只读复合行指引准确化——挂 UiText 键
+            // （物性估算/占位几何域命令与批量粘贴的真实归宿；批次A 已装配
+            // 的命令与后续批次的入口如实区分，消除"提示去用不存在的功能"）。
+            editor->setToolTip(QString::fromStdString(
+                ui::resolveText("panel.modeling.field.composite.tooltip")));
+        } else {
+            // UI-T41 批次B（B1）：实时校验提示——QDoubleValidator 范围取
+            // 选中关节权威限位（bounds，rad/m——域函数仍是唯一裁决者，
+            // 校验器只作输入期引导；范围未提供＝不限，不伪造约束）。
+            if (target->kind == SelectedTarget::Kind::Joint
+                && target->index < ws->design.joints.size()) {
+                const auto& joint = ws->design.joints[target->index];
+                if (const auto bounds = joint.bounds.tryValue()) {
+                    auto* validator = new QDoubleValidator(
+                        bounds->first, bounds->second, 6, editor);
+                    validator->setNotation(QDoubleValidator::StandardNotation);
+                    editor->setValidator(validator);
+                }
+            }
+            editor->setAccessibleName(label);  // B6：读屏锚＝行标签同源
         }
         connect(editor, &QLineEdit::editingFinished, this,
                 &ModelingPanelWidget::onPropertyEditingFinished);
@@ -434,6 +643,7 @@ void ModelingPanelWidget::onPropertyEditingFinished()
     if (ws == nullptr) { return; }  // 无会话编辑面——不虚构提交
     QLineEdit* senderEditor = qobject_cast<QLineEdit*>(sender());
     if (senderEditor == nullptr) { return; }
+    m_warningEditor = senderEditor;  // B1：记住本次提交编辑器——拒绝时行内警示描边落点
     // 行定位：编辑器指针与投影行序一致（m_propertyEditors 与 m_propertyRows
     // 同序 push——构造/刷新纪律）。
     std::size_t row = 0;
@@ -458,9 +668,12 @@ void ModelingPanelWidget::onPropertyEditingFinished()
     // 复合行（bounds 双值/axis 向量/type 枚举/物性组）保留只读投影——其
     // 编辑走批量粘贴与域命令（面板不自行发明解析器——插件零计算逻辑）。
     if (key != "zero-offset") {
+        // UI-T41 批次B（B7）：拒绝指引与 tooltip 同口径——指向真实归宿
+        // （物性估算/占位几何域命令），不再虚指"批量粘贴"。
         EditRejection r;
         r.codeToken = "value-not-finite";
-        r.detail = "该字段为复合行（" + key + "），请经批量粘贴或域命令编辑";
+        r.detail = "该字段为复合行（" + key
+                   + "）——物性可经『物性估算』、几何可经『生成占位几何』域命令维护（入口随后续批次装配）";
         onEditRejected(r);
         return;
     }
@@ -516,7 +729,12 @@ void ModelingPanelWidget::onEditApplied(const std::string& subjectPath)
     // 接受分支：树/属性区/就绪条的增量刷新由装配层刷新出口统一驱动
     // （事件驱动纪律——本回调只标记脏＋呈现；全面板刷新随⑤/手工触发）。
     notifySessionDirty();
-    m_statusLine->setText(QString::fromStdString("已应用：" + subjectPath));
+    setOutcomeMessage(QString::fromStdString("已应用：" + subjectPath),
+                      OutcomeSeverity::Success);  // B2：接受＝成功绿＋入历史
+    if (m_warningEditor != nullptr) {
+        m_warningEditor->setStyleSheet({});  // B1：接受后清上次警示描边
+        m_warningEditor = nullptr;
+    }
     if (m_postEditAction) {
         m_postEditAction();  // T03b-2b——就绪重算钩子（编辑→真判定刷新）
     }
@@ -525,9 +743,17 @@ void ModelingPanelWidget::onEditApplied(const std::string& subjectPath)
 void ModelingPanelWidget::onEditRejected(const EditRejection& rejection)
 {
     // 拒绝分支：就地呈现原因（非模态——UX-03/07）；值控件已回显权威值
-    // （onPropertyEditingFinished 先回显后提交的强顺序保证）。
-    m_statusLine->setText(QString::fromStdString("未应用（" + rejection.codeToken
-                                                 + "）：" + rejection.detail));
+    // （onPropertyEditingFinished 先回显后提交的强顺序保证）。批次B（B2）：
+    // 状态行警示橙着色＋入历史；B1：被拒编辑器行内警示描边（词表色），
+    // 重编辑/刷新即恢复。
+    setOutcomeMessage(QString::fromStdString("未应用（" + rejection.codeToken
+                                             + "）：" + rejection.detail),
+                      OutcomeSeverity::Warning);
+    if (m_warningEditor != nullptr) {
+        m_warningEditor->setStyleSheet(
+            QStringLiteral("border: 1px solid %1;")
+                .arg(QString::fromLatin1(ui::palette::kWarning)));
+    }
 }
 
 void ModelingPanelWidget::notifySessionDirty()

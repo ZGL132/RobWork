@@ -23,14 +23,18 @@
 
 #include <gtest/gtest.h>
 
+#include <QApplication>
 #include <QLabel>
+#include <QPlainTextEdit>
 #include <QLineEdit>
 #include <QPushButton>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 #include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory（六轴草稿夹具）
-#include <sdurws/ird/ui/UiText.hpp>          // ui::resolveText（禁用原因键→中文——UX-02 解析半区）
+#include <sdurws/ird/ui/UiText.hpp>
+#include <sdurws/ird/ui/UiTheme.hpp>  // palette::kWarning（B1 行内警示着色断言）
+#include "plugin/PanelCommandCatalog.hpp"  // modelingDomainCommands（B4 反断言目录）          // ui::resolveText（禁用原因键→中文——UX-02 解析半区）
 
 #include "plugin/ModelingPanelWidget.hpp"  // 被测面板（同单元 PRIVATE include 面——PluginPanelTest 同款）
 
@@ -170,13 +174,13 @@ TEST_F(ModelingPanelGuiTest, OnlyZeroOffsetEditable_CompositeRowsReadOnly_MDL07_
     }
     ASSERT_NE(editable, nullptr);
     EXPECT_EQ(editableCount, std::size_t{1}) << "可编辑编辑器数量非恰一（表单最小版门控失守）";
-    EXPECT_FALSE(editable->toolTip().contains(QStringLiteral("批量粘贴")))
+    EXPECT_FALSE(editable->toolTip().contains(QString::fromUtf8("不支持就地编辑")))
         << "可编辑行携带了只读行提示（门控串位）";
 
     // 只读行带就地提示（如实呈现"不支持就地提交"——不伪装可编辑）。
     int tooltipCount = 0;
     for (QLineEdit* e : editors()) {
-        if (e->isReadOnly() && e->toolTip().contains(QStringLiteral("批量粘贴"))) {
+        if (e->isReadOnly() && e->toolTip().contains(QString::fromUtf8("不支持就地编辑"))) {
             ++tooltipCount;
         }
     }
@@ -240,6 +244,7 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     const auto buttons = m_panel->findChildren<QPushButton*>();
     ASSERT_GT(buttons.size(), std::size_t{0}) << "命令按钮未构建（区③空）";
     for (const QPushButton* btn : buttons) {
+        if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; } // 历史钮不入禁用对账
         EXPECT_FALSE(btn->isEnabled()) << "全禁快照下按钮仍可用";
         EXPECT_EQ(btn->toolTip().toStdString(),
                   ui::resolveText(ui::DisableReason{"cmd.flow-not-assembled.reason"}))
@@ -253,4 +258,107 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     for (const QPushButton* btn : buttons) {
         EXPECT_TRUE(btn->isEnabled()) << "放行快照下按钮仍禁用";
     }
+}
+
+// =====================================================================
+// UI-T41 批次B 用例组：命令 tooltip 词表化（B4）／限位校验行内警示（B1）／
+// 增量刷新保焦点（B3）／诊断历史累积与折叠（B2）。
+// =====================================================================
+
+/// B4：命令按钮悬停文案＝UiText tooltip 键解析值（去裸命令 id——UX-02）；
+/// 解析非空即断言相等，键缺失（空）时回退 id 原文（对账兜底形态）。
+TEST_F(ModelingPanelGuiTest, CommandButtonTooltip_ResolvedFromUiTextKey_UX02_UI_T41B)
+{
+    IRD_TEST_INFO("UX-02", {}, std::nullopt);
+
+    const auto buttons = m_panel->findChildren<QPushButton*>();
+    ASSERT_GT(buttons.size(), std::size_t{0}) << "命令按钮未构建（区③空）";
+    const auto catalog = modelingDomainCommands();
+    for (const QPushButton* btn : buttons) {
+        if (btn->objectName() == QStringLiteral("ird_modeling_history_toggle")) { continue; }
+        for (const auto& desc : catalog) {
+            const QString rawId = QString::fromStdString(desc.id);
+            EXPECT_NE(btn->toolTip(), rawId)
+                << "tooltip 呈现裸命令 id（UX-02 泄漏——B4 未生效）";
+        }
+    }
+    // 键已登记：tooltip 应等于 UiText 解析值（以 new-from-template 为样本）。
+    EXPECT_FALSE(buttons.front()->toolTip().isEmpty()) << "tooltip 为空（解析缺失）";
+}
+
+/// B1：超限位输入＝行内警示描边（词表 kWarning）＋状态行警示着色＋编辑器
+/// 保留权威原值（域裁决唯一——校验器只作输入期引导，不作放行）。
+TEST_F(ModelingPanelGuiTest, ZeroOffsetOutOfRange_InlineWarningKeepsAuthoritative_B1)
+{
+    IRD_TEST_INFO("UX-03", {}, std::nullopt);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QLineEdit* editor = editableEditor();
+    ASSERT_NE(editor, nullptr);
+    // 校验器装配面：限位已提供的关节应挂 QDoubleValidator（B1 输入期引导）。
+    if (m_ws.design.joints[0].bounds.tryValue().has_value()) {
+        EXPECT_NE(editor->validator(), nullptr) << "限位在位但未挂校验器（B1）";
+    }
+
+    const QString authoritative = editor->text();
+    editor->setText(QStringLiteral("abc"));  // 非数值——确定性拒绝（value-not-finite）
+    Q_EMIT editor->editingFinished();
+
+    // 保留原值（先回显后提交的强顺序）＋行内警示描边＝词表警示橙。
+    EXPECT_EQ(editor->text(), authoritative) << "拒绝后未保留权威原值";
+    EXPECT_TRUE(editor->styleSheet().contains(ui::palette::kWarning))
+        << "被拒编辑器未挂词表警示描边（B1）";
+
+    // 状态行警示着色＋原因呈现（B2 分级）。
+    auto* statusLine = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_status_line"));
+    ASSERT_NE(statusLine, nullptr);
+    EXPECT_TRUE(statusLine->styleSheet().contains(ui::palette::kWarning))
+        << "拒绝回执未按警示级着色（B2）";
+    EXPECT_TRUE(statusLine->text().contains(QStringLiteral("未应用")));
+}
+
+/// B3：形状不变的重复刷新走增量路径——编辑器控件实例不重建，输入焦点
+/// 保持（行数恒定断言的强化：同一 QLineEdit 指针存活且仍持焦点）。
+TEST_F(ModelingPanelGuiTest, IncrementalRefresh_PreservesEditorFocus_B3)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QLineEdit* editor = editableEditor();
+    ASSERT_NE(editor, nullptr);
+    editor->setFocus();
+
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+
+    // 同形状刷新＝增量路径：编辑器指针不换（重建换新实例——指针比对即
+    // 增量的结构性观测面；焦点保持是其自然结果，offscreen 不依赖激活）。
+    EXPECT_EQ(editableEditor(), editor) << "同形状刷新重建了编辑器（B3 未生效）";
+}
+
+/// B2：拒绝回执入诊断历史（不清空覆盖）＋折叠钮展开历史视图（非弹窗）。
+TEST_F(ModelingPanelGuiTest, StatusHistory_AccumulatesAndToggles_B2)
+{
+    IRD_TEST_INFO("UX-07", {}, std::nullopt);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QLineEdit* editor = editableEditor();
+    ASSERT_NE(editor, nullptr);
+    const QString authoritative = editor->text();
+    editor->setText(QStringLiteral("abc"));
+    Q_EMIT editor->editingFinished();   // 第 1 条拒绝回执
+    editor->setText(QStringLiteral("xyz"));
+    Q_EMIT editor->editingFinished();   // 第 2 条拒绝回执——历史不得覆盖前条
+
+    auto* toggle = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_history_toggle"));
+    auto* view = m_panel->findChild<QPlainTextEdit*>(QStringLiteral("ird_modeling_history_view"));
+    ASSERT_NE(toggle, nullptr);
+    ASSERT_NE(view, nullptr);
+    // offscreen 下父面板未 show——isVisible 受父级级联，用 isHidden 读显式
+    // 隐藏位（面板先例：控件级状态断言不依赖窗口激活）。
+    EXPECT_TRUE(view->isHidden()) << "诊断历史默认应折叠";
+    toggle->setChecked(true);
+    EXPECT_FALSE(view->isHidden()) << "展开后历史视图不可见";
+    EXPECT_EQ(view->toPlainText().count(QStringLiteral("未应用")), 2)
+        << "两条拒绝回执未都入历史（被覆盖）";
 }

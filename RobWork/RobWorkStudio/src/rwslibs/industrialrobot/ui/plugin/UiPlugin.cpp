@@ -110,10 +110,22 @@ constexpr const char* kPluginLogDirName = "ird-ui-plugin-logs";
 /// content submitCommand 对 outcome.messageKey 的呈现值源）。
 constexpr const char* kModelingFlowNotAssembledKey = "cmd.modeling.flow-not-assembled";
 
-/// 真实执行面已落位的域命令（WP-24-T03b 诚实边界—— modeling §9.7.3 十条
-/// 中唯一具备域内已落位能力的命令：模板工厂重种子；其余九条的域流程归
-/// 后续建模任务，提交走"域流程未装配"诚实反馈，不虚构执行成功）。
-constexpr const char* kModelingNewFromTemplateId = "modeling.new-from-template";
+/// 真实执行面已落位的建模域命令（UI-T41 批次C 收口——modeling.md §9.7.3
+/// 十条全部装配真实链：批次A 八条＋批次C estimate-properties（§5.3 段元
+/// 推导＋estimateLink＋GeometricEstimate 写回）与 generate-placeholder-
+/// geometry（§5.2 占位圆柱；资源清单登记受 schema 边界——流程内如实留痕）。
+/// flow-not-assembled 未装配路径就此退役）。
+bool isAssembledModelingCommand(const std::string& id)
+{
+    static const std::set<std::string> kAssembled{
+        "modeling.new-from-template", "modeling.import-urdf",
+        "modeling.import-xacro",      "modeling.switch-authority",
+        "modeling.estimate-properties", "modeling.generate-placeholder-geometry",
+        "modeling.diff-baseline",     "modeling.export-package",
+        "modeling.import-package",    "modeling.reset-home-zero",
+    };
+    return kAssembled.count(id) != 0;
+}
 
 /// UI-T32 C 批次已装配的需求域命令（组1：导出副本/模板/镜像/阵列/重生成
 /// ——flows 装配 RequirementsCommandFlows 落位；组2 导入与组3 捕获/拾取
@@ -742,25 +754,21 @@ void IrdWorkbenchHostPlugin::initialize()
             for (const CommandDescriptor& desc : descriptor->commands) {
                 WorkbenchContentDeps::DomainCommandEntry entry;
                 entry.descriptor = desc;
-                entry.assembled = (desc.id == kModelingNewFromTemplateId)
+                entry.assembled = (domainKey == std::string("modeling")
+                                   && isAssembledModelingCommand(desc.id))
                                   || (domainKey == std::string("requirements")
                                           && isAssembledRequirementCommand(desc.id));
-                if (desc.id == kModelingNewFromTemplateId) {
-                    // 真实执行面（域内已落位能力）：模板草稿重种子＋就绪
-                    // 重算——种子内部走真实 RobotDesignTemplateFactory::createDraft。
-                    entry.handler = [this](const std::vector<CommandParameter>&) {
+                if (domainKey == std::string("modeling")
+                    && isAssembledModelingCommand(desc.id)) {
+                    // UI-T41 A2：已装配的建模域命令——经装配门面执行真实
+                    // UI 流程（对话框＋内核实现类；路由唯一，requirements
+                    // executeDomainCommand 同构先例）。
+                    const std::string commandId = desc.id;
+                    entry.handler = [this, commandId](
+                                        const std::vector<CommandParameter>&) {
                         CommandOutcome out;
-                        m_domains->modeling.seedTemplateSession();
-                        if (m_hostStatusBar != nullptr) {
-                            m_hostStatusBar->showMessage(
-                                QString::fromUtf8("已从模板重建建模草稿（generic-6r）"),
-                                4000);
-                        }
-                        if (m_diag.pipeline) {
-                            m_diag.pipeline->logDev(kPluginDevChannel,
-                                                    "domain command executed: modeling.new-from-template");
-                        }
-                        out.accepted = true;
+                        out.accepted = true;  // 流程已派发（回执/原因经面板状态行）
+                        m_domains->modeling.executeDomainCommand(commandId);
                         return out;
                     };
                 } else if (domainKey == std::string("requirements")
@@ -3294,7 +3302,30 @@ void IrdWorkbenchHostPlugin::maybeRunIntegrationSmoke()
             std::cout << "[ird-ui-smoke] step6 teardown=" << (step6Ok ? "ok" : "fail")
                       << std::endl;
 
-            exitCode = (opened && treeOk && step3Ok && step4Ok && step5Ok && step6Ok)
+            // 步骤 7（UI-T41 A1——F-421 真链路断言）：真实建模装配描述符经
+            // registrar 登记的报告对账（门禁 T 规则禁止测试目标跨单元直链
+            // 产品目标，真链路 gtest 不可落位——宿主冒烟通道是唯一合法的
+            // 真实装配观测面；断言 Ok/panels=1/commands=10——十条连字符
+            // 命令 id 过句法校验的直接证据）。
+            bool step7Ok = false;
+            std::size_t modelingCommands = 0;
+            if (m_domains != nullptr) {
+                for (const ui::PluginAssemblyReport& report :
+                     bundleAboutSource(*m_domains)->assemblyReports()) {
+                    if (report.pluginId == "modeling") {
+                        step7Ok = report.ok && report.panelsLoaded == 1
+                                  && report.commandsRegistered == 10;
+                        modelingCommands = report.commandsRegistered;
+                        break;
+                    }
+                }
+            }
+            std::cout << "[ird-ui-smoke] step7 modeling-assembly="
+                      << (step7Ok ? "ok" : "fail") << " commands="
+                      << modelingCommands << std::endl;
+
+            exitCode = (opened && treeOk && step3Ok && step4Ok && step5Ok
+                        && step6Ok && step7Ok)
                            ? 0 : 1;
         } catch (const std::exception& smokeError) {
             std::cout << "[ird-ui-smoke] exception: " << smokeError.what()
