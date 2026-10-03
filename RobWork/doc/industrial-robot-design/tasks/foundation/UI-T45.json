@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "View3D 阶段 B 宿主三维网关（HostView3DGateway——上行拾取＋下行高亮/呈现出口＋TCP 会话态数据源；方案 spec 2026-10-03-view3d-stage-b-design 承接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T44"],
   "requirements": [
     "UX-11（三维视图交互——view3d.pick_ray_cast 交付＋高亮/呈现出线；其余八项宿主原生已提供的登记校准）",
