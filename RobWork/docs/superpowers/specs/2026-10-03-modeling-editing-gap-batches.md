@@ -63,4 +63,4 @@
 1. **UI-T33 三项呈现收口**（工位标记/区域边界框/采样格着色——RegionPreviewSink 宿主场景注入）：在其卡承载，UI-T46 合入后回到该卡完成（acc 随收口合并复验）——本四批不涉及。
 2. **需求域坐标输入差距**（"空间与公差"卡位置框只读——`RequirementsPanelWidget.cpp` ~1808 行 `setReadOnly(true)`，UI-T37 返工③登记为后续批次；域侧 `applyStationEditSet` 词表已在位）：可另立卡或并入 UI-T33 后批次，与本四批无关。
 3. **F-462**（建议级——WritableSwitchRefreshesAll 变异不敏感，UI-T40 序列候选）：维持 open，不在本四批。
-4. **登记漂移观察**：UI-T43/T44/T45 三批在 `units/ui.md` §13 与 DTB §2.11 均无登记行（实施留痕仅在提交与 builds/ 目录；同族先例＝F-467 版本谱系跳号）——建议随下一治理批补登，本批不代修。
+4. **登记漂移回填**：UI-T43/T44/T45 三批在 `units/ui.md` §13 与 DTB §2.11 均无登记行（实施留痕此前仅在提交与 builds/ 目录；同族先例＝F-467 版本谱系跳号）——已由四批立项的同日治理批次回填（ui.md v1.53：§13 表尾 T42 与 T46 之间增三行＋DTB §2.11 同步；三行均注明 acc/ui-t43、acc/ui-t44、acc/ui-t45 待独立验收会话补录）。
