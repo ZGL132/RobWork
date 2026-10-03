@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "宿主呈现装配——发布桥接线＋编译链真数据源＋名称映射真值（UI-T45/UI-T33 登记注挂起的\"呈现装配\"批次承接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T45", "UI-T20", "RT-T14"],
   "requirements": [
     "UX-11（三维视图交互——拾取链真数据源激活的呈现面前提）",

@@ -3,75 +3,58 @@
   "taskId": "UI-T51",
   "unit": "ui",
   "masterWp": "WP-I",
-  "title": "建模域结构编辑面批次——关节链结构编辑（增删/上移下移/六轴重置）＋结构变更参数保留（UI-T41 批次C C4 承接＋modeling.md §2.5 关节表编辑行承接；差距清单 spec 2026-10-03-modeling-editing-gap-batches 批一）",
-  "status": "ready",
-  "dependsOn": ["UI-T46"],
+  "title": "工位位置编辑轨——\"空间与公差\"卡三轴坐标输入解锁（UI-T37 返工③登记的\"位置编辑轨随后续批次\"承接）",
+  "status": "done",
+  "dependsOn": ["UI-T37"],
   "requirements": [
-    "MDL-01（建模与参数化——§2.5 关节表编辑行承接：增删/上移下移/六轴重置）",
-    "MDL-07（参数化编辑界面——结构编辑操作的面板承载与 L-2 编辑流同规）",
-    "MDL-09（结构/参数变更下游失效就地提示——改名与结构变更使运动学及下游重算）",
-    "UX-03/UX-05/UX-07（比较型反馈三要素/数值单位同显/就地拒绝保留原值——结构编辑流同规）",
-    "ERR-01（诚实拒绝——链连续性与引用保护拒绝原因可见，零伪造）"
+    "UX-05（就地编辑——编辑完成制提交＋拒绝行内警示＋权威回退）",
+    "UX-03（编辑必须可撤销——undoLocal 同栈回滚）",
+    "ERR-01（四态语义诚实——未提供态无逐轴输入面，不引入\"以零补全\"通道）"
   ],
   "designRefs": [
-    "units/modeling.md#5.1",
-    "units/modeling.md#5.2",
-    "units/modeling.md#9.4",
-    "units/modeling.md#9.7",
-    "units/modeling.md#2.5",
     "units/ui.md#13",
+    "units/requirements.md#9.8",
     "development-task-breakdown.md#2.11"
   ],
   "allowedFiles": [
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
-    "RobWork/docs/superpowers/specs/2026-10-03-modeling-editing-gap-batches.md",
-    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/**",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
-    "RobWork/doc/industrial-robot-design/traceability/**",
-    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T47.json"
+    "RobWork/doc/industrial-robot-design/traceability/**"
   ],
   "forbiddenFiles": [
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
     "RobWork/RobWork/**",
     "RobWork/RobWorkSim/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
   ],
-  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
   "verify": [
-    "cmake --build build --config Release --target sdurws_ird_modeling sdurws_ird_modeling_plugin sdurws_ird_modeling_test sdurws_ird_modeling_contract_test sdurws_ird_modeling_gui_test sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_test sdurws_ird_ui_gui_test",
-    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
-    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe",
-    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe",
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
   "branch": "ui-t51",
-  "interUnit": true,
-  "knownPitfalls": ["O-36", "P-MDL-1", "P-MDL-8"],
-  "acceptance": [
-    "关节新增：建模结构树/关节表新增入口（选中位插入）→域原语新增关节（默认值＝T-MDL-1 同族设计默认：Explicit 权威 axis/origin＋限位按 §5.1 表值）→就绪重算→草稿应用走 apply-robot-design 既有信封（零新 project token）——域 UT＋流级/gui 具名用例",
-    "关节删除：引用保护（被 defaultTcp/几何引用等引用的对象拒绝——I-MDL-9 比较型定位诊断）＋链连续性拒绝原因可见；中间关节删除语义按 modeling.md 词表落位（缺口先卡修订再实现）——具名用例",
-    "重排：上移/下移（串联序交换）后链不变量（I-MDL 系）保持＋参数随动——具名用例",
-    "六轴重置：选中链重置为六轴模板参数（§5.1 T-MDL-1 设计默认值；黄金数据集 mdl-template-6r 锁定后以其为准）——具名用例",
-    "C4 参数保留：结构操作前后用户权威参数（axis/origin/zeroOffset/bounds/workingRange/物性/几何引用）随对象保留的往返断言＋派生值重算不冒充权威——具名用例（UI-T41 批次C C4 消账）",
-    "回归门禁：受影响目标零错误构建＋modeling/ui 套件全绿＋ird_gates 归一零新增（或逐条登记）＋validate-docs PASS——留痕 traceability/builds/ui-t51/"
+  "interUnit": false,
+  "knownPitfalls": [
+    "O-36"
   ],
-  "note": "批次特有告诫（registry 外自由承载）：①新关节身份分配＝PA-1 唯一取号点：prepare 期经 HandlerContext.objectId()（CommandHandlers.hpp PayloadObjectSlot 口径）；关节/连杆为模型内标识（O-36 裁决/P-MDL-1 背景登记）随根槽替换落库——禁私设第二取号路径；§6.7 确定性临时句柄纪律（草稿期 tmp 句柄不入库）同构适用；②结构编辑域语义以 §5.1/§5.2 既有词表为边界（AddJoint/AddTool/RemoveObjectRef/RenameEdit 系）；中间关节删除的链语义等词表缺口＝先 units/modeling.md 增量修订登记再实现（DTB §5.4），禁代码先行；③权威模式整链一个（RobotDesign.authority）：结构编辑零权威模式切换语义；DH 权威态下新增关节按 §7.2 参数来源表落位（axis/origin 在 StandardDH 态为派生），实施前对照 §7.3 冲突矩阵；④C4 参数保留语义：结构操作（重排/删除邻位）时用户权威参数随对象身份保留；DH 派生四参数（dhDerived）重算不冒充权威（D-MDL-5——不参与编码身份）；⑤就绪校验联动：结构编辑接受后链类就绪结果重算投影（§8.2）；拒绝路径工作集字节不变（EditOutcome 逐项诊断——UX-03 比较型三要素）；⑥局部撤销：结构编辑入 undoLocal 单快照；空变化零快照（UI-T30 幻影脏化纪律同源）；⑦gui 测试 QT_QPA_PLATFORM=windows（offscreen 假红——环境纪律）；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：所有者 2026-10-03 指令『从这三处出发做差距清单并拆四批立项（任务号 UI-T47 起）』——三处＝UI-T41 批次C 登记不实施项（C4/C5）＋UI-T43 契约注外审 P1（建模对象编辑扩展）＋modeling.md §2.5 对照表三行新版无编辑面；差距清单与四批映射＝docs/superpowers/specs/2026-10-03-modeling-editing-gap-batches.md（本卡＝批一 G1＋G2）。关键事实：结构编辑无需新增 project commandType——草稿差值经 buildDraftCommand 组装 apply-robot-design 既有信封（五 token 整对象应用语义，§1 现状盘点），缺的是域编辑原语＋面板编辑面。堆叠序：ui-t47 基点＝UI-T46 合入后 redesign-main（dependsOn=UI-T46 为排序前置——文件面零交叠：UI-T46 触及 ui/plugin＋runtime，本卡触及 modeling 域＋modeling/plugin）；后续 ui-t48→ui-t49→ui-t50 串行堆叠（T36→T37 先例）。"
+  "acceptance": [
+    "域侧回填：applyStationEditSet 增 pose-position-x/y/z 三键——三维整体量语义（基于基线向量改命中轴后整体重写 SourcedValue，来源标记翻转为 UserProvided）；NotProvided 基线收到单轴编辑＝四态语义漂移 fail-fast（\"以零补全\"通道在域函数层被切断）；stationQuantitySpecs 三键在册（Length/m 不设界——合法性归域校验链，防范围暗示误导，target-point-* 同款）——具名用例 PluginPanelTest.StationEditSetFillsOnlyTargetFields_ACC2 规格封闭性断言随批（12→15＋三键在册）",
+    "UI 半区：renderPoseRow 三轴 SpinBox 只读呈现退役——条件可编辑（m_writable 门控，L-R12 与区域轨盒复合行同款合取形态）＋editingFinished 队列化提交（submitStationValue 同卡先例——幻影脏化短路＋权威值 formatSiText 同形等值）＋非数值四态占位维持灰显",
+    "具名用例：StationPositionEditing_ThreeAxis_UI_T47（只读退役证据／幻影短路零提交／单轴接受后未编辑轴保持＝三维整体语义／undoLocal 同栈回滚）——fresh 复跑 OK＋V1/V2 变异（幻影短路移除/单轴语义破坏）双翻红",
+    "回归门禁：双模式构建零错误；requirements_test 200/200＋requirements_gui 40/40；ird_gates 命中集与基线一致（75 条零新增）；留痕 traceability/builds/ui-t51/"
+  ],
+  "note": "立项来源：所有者 2026-10-03 使用反馈『需求界面空间与公差没法输入坐标值』——UI-T37 返工③（2026-10-01）登记的\"位置编辑轨随后续批次\"承接（当时提交流未接线，直接给可编辑控件＝\"可编辑即崩\"陷阱，故先灰显呈现）。本卡只接 Provided 态三轴编辑（最常用——捕获 TCP 后微调坐标）；未提供态\"提供位置\"录入归捕获 TCP/导入通道（域侧回填对未提供基线 fail-fast 同轨——四态语义无缺失＝零通道，ERR-01/I-REQ 语义零变化）。【合入登记注（2026-10-04，PIPE §4.7 收尾）】acceptedHead e5a762fe 合入 redesign-main@92d12ada（acc/UI-T51/1@9e6d621b 按 SHA 先并）；对抗式验收 11 项 pass（单会话顺序执行例外声明）＋V1/V2 变异翻红；合并态验证 requirements 200/requirements_gui 40/ui 246/runtime 265/modeling 297/ui_gui 76 全绿。【契约文件勘误（2026-10-04，合入收尾时发现并当场修复）】合入包内的本文件曾为建模编辑四批批一契约（UI-T47.json）的误拷贝（taskId 被改为 UI-T51——立项撞号时的文件操作事故：本卡初稿 Write 因文件已存在而未落盘，mv 改名作用在四批契约副本上），验收与合入的对象（requirements 四文件代码改动＋测试）不受影响（契约文件不参与构建/测试面）；本提交按原初稿重写为本卡正确内容并保持 status=done。原初稿与合入版的差异仅契约文本本身；builds/ui-t51/ 留痕与 acc/UI-T51/1 验收记录全部有效。"
 }
