@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T45",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "View3D 阶段 B 宿主三维网关（HostView3DGateway——上行拾取＋下行高亮/呈现出口＋TCP 会话态数据源；方案 spec 2026-10-03-view3d-stage-b-design 承接）",
+  "status": "ready",
+  "dependsOn": ["UI-T44"],
+  "requirements": [
+    "UX-11（三维视图交互——view3d.pick_ray_cast 交付＋高亮/呈现出线；其余八项宿主原生已提供的登记校准）",
+    "KIN-06（会话姿态零修订——TCP 位姿＝宿主会话态只读，View3DSessionPoseContract 四常量为断言锚）",
+    "ERR-01（诚实呈现——getView 不可得＝三桥不接降级；反解失败零伪造选中；TCP 无设备/无状态＝失败原因可见）",
+    "SA-02（框架零源码修改——eventFilter 外挂＋公开 API 消费，零 patch）"
+  ],
+  "designRefs": [
+    "units/ui.md#4.3",
+    "units/ui.md#6.5",
+    "units/ui.md#11.2",
+    "units/ui.md#13"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/docs/superpowers/specs/2026-10-03-view3d-stage-b-design.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T45.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rws/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_test sdurws_ird_ui_gui_test",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_gui_test.exe",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t45",
+  "interUnit": false,
+  "knownPitfalls": [
+    "SA-02 红线：事件注入＝QObject::eventFilter 外挂到 RWStudioView3D viewport（禁改框架 mouseDoubleClickEvent）；实施中发现必须改框架（如双击被框架吞）——先登记 patch 再动，方案不预授权",
+    "生命周期正交（O-38③/O-43）：网关只缓存 WorkCell/Scene 引用随打开/关闭两拍同步（open(workcell) 回调升级为场景可用通知；teardownSharedSurfacesForClose 增网关清理步）——禁接管场景/禁建顶层窗口",
+    "残留三拍清：选择失效/会话切换/项目关闭（高亮位与呈现组两处）——'不残留旧高亮'纪律的对称收口",
+    "拾取反解失败＝L3 分支②语义（树不动不报错记暂态，零伪造 ObjectId）；domain 分发未命中＝域内诚实 false",
+    "TCP 出口＝宿主当前 State 只读＋FK 计算（KIN-06 零修订；View3DSessionPoseContract 四常量即 gui 断言锚）；无设备/无 WorkCell＝诚实失败原因，不虚构位姿",
+    "诚实降级基线：getView() 不可得＝三桥不接（与现状等价——outlet 保持可空声明的显式形态），不虚构三维能力",
+    "呈现对象零解引用：hostPayload 对 ui 不透明（RT-T14 契约）——网关只挂接/摘除，着色判定归域侧纯函数"
+  ],
+  "acceptance": [
+    "上行拾取：替身视图发 Ctrl+双击事件→pickFrame 替身帧→名称映射反解→SelectionService 选中（来源 View3DPick）＋两域 reportView3DPick 分发断言；反解失败分支零选中变化——gui 具名用例",
+    "下行高亮：IUiHighlightOutlet 出口实现——选中置位/清除对称/失效与项目关闭三拍清理断言（不残留）——gui 具名用例",
+    "呈现出口：IUiPresentationOutlet 宿主半区——RT-T14 替身对象挂接/整组摘除断言（刷新失败保留旧呈现语义不变）——gui 具名用例",
+    "TCP 数据源出口：替身 State→baseToTcp 位姿断言（零修订四常量）＋无设备/无 WorkCell 诚实失败断言——gui 具名用例",
+    "九项清单校准：view3d.pick_ray_cast 交付标记＋其余八项'宿主原生提供'呈现文案校准（View3DContract 词表对账）——gui 断言",
+    "降级形态：getView 不可得＝三桥不接、outlet 可空声明保持（与现状等价）——gui 具名用例",
+    "回归门禁：受影响目标零错误构建＋ui 域套件全绿＋ird_gates 归一零新增（或逐条登记）＋validate-docs PASS——留痕 traceability/builds/ui-t45/"
+  ],
+  "note": "立项来源：外审后功能盘点（2026-10-03）——'View3D 阶段 B 方案＋UI-T33 立项'owner 指令承接；方案＝docs/superpowers/specs/2026-10-03-view3d-stage-b-design.md（三桥一源架构/现状逐项实证/风险红线自查）。关键事实：架构面零新概念——IUiHighlightOutlet/IUiPresentationOutlet/IUiRuntimeNameMapPort/L3 分支/两域 reportView3DPick/RT-T14 工厂全部已冻结在位，阶段 B 只把端口从'可空诚实缺席'接到'宿主真身'（与 B1-SPEC D10 分工一致）；框架能力 pickFrame/pick/getWorkCellScene/getState 公开 API 实证在位。堆叠序：ui-t45（基点合流后主线）→UI-T33 转 ready（dependsOn 增本卡，基点 ui-t45 head——UI-T36→T37 串行堆叠先例同款）。"
+}

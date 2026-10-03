@@ -4,8 +4,8 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求域三维呈现与拾取（功能对照批次 D）",
-  "status": "planned",
-  "dependsOn": ["UI-T29"],
+  "status": "ready",
+  "dependsOn": ["UI-T29", "UI-T45"],
   "requirements": [
     "UX-02（工程用语——三维标记/预览说明中文）",
     "ERR-01（诚实呈现——参考系缺失等三维预览失败原因可见；View3D 未落位期不虚构三维能力）"
@@ -52,7 +52,7 @@
   "branch": "ui-t33",
   "interUnit": false,
   "knownPitfalls": [
-    "开工前置＝中央区三维视图接管（ui.md UI-T05 其余内容，阶段 B）另行落位——本卡是需求域消费侧：RegionPreviewSink 注入与 reportView3DPick 上行均以 View3DContract.hpp 九项交互契约为范围边界——处置约束＝前置未落位时本卡保持 blocked 不虚行",
+    "开工前置＝UI-T45 宿主三维网关（HostView3DGateway——方案 spec docs/superpowers/specs/2026-10-03-view3d-stage-b-design.md；2026-10-03 立项转 ready）先行合入——本卡是需求域消费侧：RegionPreviewSink 注入与 reportView3DPick 上行均以 View3DContract.hpp 九项交互契约为范围边界——处置约束＝前置未合入时本卡保持 ready 待领不虚行（堆叠基点＝ui-t45 head）",
     "三维呈现数据面＝会话投影非第二状态源（PM-11）：工位标记/区域边界框/采样格着色全部从会话工作集投影派生，随编辑刷新——处置约束＝着色判定（Good/Weak/Failed）归域侧采样纯函数，UI 零判定",
     "拾取收口：Ctrl+双击上行经 reportView3DPick 既有桥（WP-14-T10 出线面）→UI-T32 拾取流程壳解除引导——处置约束＝拾取坐标→工位写回走域侧 applyPickToOrientation 既有纯函数＋确认凭据语义",
     "宿主 WorkCell 回调保持正交观测（O-38 ③/O-43 生命周期边界）：三维对象挂接不接管宿主场景生命周期——处置约束＝关闭清理走 teardownSharedSurfacesForClose 既有编排语义",
