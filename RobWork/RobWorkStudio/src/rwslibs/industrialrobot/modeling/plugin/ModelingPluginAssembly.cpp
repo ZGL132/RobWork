@@ -49,6 +49,15 @@ void ModelingPluginAssembly::bindTextResolver(
     }
 }
 
+void ModelingPluginAssembly::setWritable(bool writable)
+{
+    // L-7 门控输入宿主接线面（UI-T43——需求域 RequirementsPluginAssembly
+    // ::setWritable 同构转发；m_impl 缺位＝失败隔离缺席域，静默零操作）。
+    if (m_impl != nullptr) {
+        m_impl->setWritable(writable);
+    }
+}
+
 void ModelingPluginAssembly::seedTemplateSession()
 {
     if (m_impl != nullptr) {

@@ -1935,6 +1935,18 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
             m_domains->requirements->setWritable(report.opened.metadata.writable);
             refreshRequirementsFromSession();
         }
+        // 只读事实接入建模面板（UI-T43——审核 P1 同源缺口：建模域此前无
+        // setWritable 接线链，面板恒按可写创建/保持，只读项目下属性编辑
+        // 行与写命令按钮仍可用，两域只读体验不一致。L-7 门控输入＝需求域
+        // 同一宿主事实 report.opened.metadata.writable；打开/切换/降级只读
+        // 同走本接线点。面板未创建＝模块暂存初值（装配序无关）；面板内
+        // 即时重算属性行灰显与命令按钮使能，无需额外刷新事件）。项目关闭
+        // 路径不加写重置：脱会话后面板呈空态、十条命令均 Project/Session
+        // 作用域由注册表 §7.5 门控（无活动项目即禁用写命令），下次打开时
+        // 本接线点以新项目的真实 writable 重放。
+        if (m_domains) {
+            m_domains->modeling.setWritable(report.opened.metadata.writable);
+        }
         reportLine("项目已打开：" + canonicalPath + "（可写："
                    + (report.opened.metadata.writable ? "是" : "否（降级只读——见横幅）") + "）");
         return true;

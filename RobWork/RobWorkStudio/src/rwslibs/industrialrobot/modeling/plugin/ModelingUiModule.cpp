@@ -229,6 +229,20 @@ void ModelingUiModule::bindTextResolver(std::function<QString(const std::string&
     m_textResolver = std::move(resolve);
 }
 
+void ModelingUiModule::setWritable(bool writable)
+{
+    // L-7 门控输入转发（UI-T43——宿主按打开报告的真实 writable 驱动；
+    // 本转发面零判定，需求域 RequirementsUiModule::setWritable 同构）。
+    // 双形态与 bindCommandSubmit 同一时序语义：面板已创建＝即时转发（面板
+    // 内即时降级属性行与写命令按钮）；未创建＝暂存初值（createPanel 时
+    // 应用——装配序无关，杜绝面板恒按可写创建的初值失实）。
+    m_guard.assertOnUiThread();
+    m_writable = writable;
+    if (m_panel != nullptr) {
+        m_panel->setWritable(writable);
+    }
+}
+
 void ModelingUiModule::seedTemplateSession()
 {
     m_guard.assertOnUiThread();
@@ -258,9 +272,11 @@ void ModelingUiModule::seedTemplateSession()
 QWidget* ModelingUiModule::createPanel()
 {
     m_guard.assertOnUiThread();
-    // 面板与接线一次完成：可写初值 true（L-7 门控）；编辑目标提供器现取
-    // 会话权威工作集（ACC5 零缓存——提供器每次经 session() 入口取指针）。
-    auto* panel = new ModelingPanelWidget(true);
+    // 面板与接线一次完成：可写初值取模块当前会话可写性（UI-T43——此前
+    // 硬编码 true：宿主在面板创建前已打开只读项目时，面板初始态失实；
+    // setWritable 暂存语义保证装配序无关）。编辑目标提供器现取会话权威
+    // 工作集（ACC5 零缓存——提供器每次经 session() 入口取指针）。
+    auto* panel = new ModelingPanelWidget(m_writable);
     panel->setEditTargetProvider([this]() -> ModelingWorkingSet* {
         return &m_session.draft;
     });

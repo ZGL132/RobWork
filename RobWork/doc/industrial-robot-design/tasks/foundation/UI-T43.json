@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T43",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "建模域宿主接线修复批次（可写链路 setWritable 门面/模块/宿主三段＋面板命令使能统一收口 refreshCommandEnablement＋文案解析生产装配序回归钉——外审报告接线类 P1 承接）",
+  "status": "ready",
+  "dependsOn": ["UI-T42"],
+  "requirements": [
+    "MDL-07（建模界面——面板可写态如实呈现：只读会话编辑行灰显与写命令置灰）",
+    "UX-02（呈现纪律——命令按钮文案/悬停文案过 UiText，零内部键泄漏）",
+    "ERR-01（诚实呈现——可用性三输入合取，不虚构可达性；只读门不因可用性刷新被旁路）"
+  ],
+  "designRefs": [
+    "units/modeling.md#9.7.2",
+    "units/modeling.md#9.7.3",
+    "units/ui.md#7.6",
+    "units/ui.md#11.2"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T43.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_plugin sdurws_ird_modeling_test sdurws_ird_modeling_gui_test sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_test sdurws_ird_ui_gui_test",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_gui_test.exe",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t43",
+  "interUnit": true,
+  "knownPitfalls": ["P-MDL-8"],
+  "acceptance": [
+    "W1 可写链路三段贯通：宿主 openViaSessionController 成功段建模域接线（与需求域同位同源事实 report.opened.metadata.writable）→ModelingPluginAssembly::setWritable 转发→ModelingUiModule::setWritable（面板创建前暂存初值/创建后即时转发，需求域 RequirementsUiModule::setWritable 同构）→createPanel 按模块初值创建面板（废除硬编码 true）——证据：WritableChain_PendingInitialAndLiveForward_L7_UI_T43（暂存＋即时双形态）",
+    "W2 面板使能统一收口：refreshCommandEnablement 单出口（提交出口∧只读门∧可用性快照三合取）承接 setCommandSubmit/setCommandAvailability/setWritable/refreshPanel 四触发点；修复 setCommandAvailability 缺只读合取项的门控旁路（只读态下重新注入全放行快照写命令不得复活）；setWritable 即时重算命令使能（废除推迟到下次 refreshPanel 的残留窗口）＋启用态 tooltip 回复悬停说明（需求域同款先例）——证据：ReadOnlySession_AvailabilityRefreshCannotReviveWriteCommands_L7_UI_T43",
+    "W3 文案解析回归钉：生产装配序（先 bindTextResolver 后面板工厂）下建模按钮标题＝UiText 中文值、零 cmd.* 内部键泄漏、tooltip 非裸命令 id——核实结论：DomainAssembly.cpp:145 生产绑定在位（外审报告'宿主未绑定'与现状不符），本项以回归测试钉住替代补绑定——证据：TextResolverBoundBeforePanelCreation_NoInternalKeyLeak_UX02_UI_T43",
+    "F-472 消账（顺带）：HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder 悬挂指针修复——refresh() 全量重渲染 clear() 后用例仍读清除前捕获的组行指针（UB，冒烟留痕 1/4 轮次翻红实证）——占位清除后重新现取 topLevelItem 再断言——证据：冒烟 ui_gui_test 连续多轮全绿＋findings.json F-472 fixed",
+    "回归门禁：受影响目标零错误构建＋建模域/宿主域四套件全绿（modeling_test 294、modeling_gui_test 9+3 新用例、ui_test、ui_gui_test）＋validate-docs PASS——留痕 traceability/builds/ui-t43/"
+  ],
+  "note": "立项来源：外审报告（对比 RobWork-main 旧插件的功能覆盖审计）建议第八节第一阶段'宿主接线问题'；实施前逐条核实：报告建议 1（绑定建模 bindTextResolver）不成立——DomainAssembly::assembleDomainPlugins 已在装配路径绑定 standardTextResolver（报告引用面 UiPlugin.cpp 未直接含该调用导致误判），本批只补回归测试；建议 2（setWritable 链缺失）与建议 3（setCommandAvailability 只读门控缺失）属实，为本批代码修复主体。诚实边界：只读链路的会话脱离（项目关闭）路径不加重置——脱会话后面板空态＋命令 Project/Session 作用域由注册表 §7.5 门控，下次打开以新项目真实 writable 重放（接线点注释同步登记）；外审报告其余 P1（TCP 捕获/三维拾取/建模对象编辑扩展）属功能批次，不在本批范围。批次特有告诫：①模块级 gui 用例（ModelingUiModuleHostWiringGuiTest.cpp）持 policy 评估器符号，须维持 TARGET sdurw_kinematics gating——移出条件块＝冒烟树 LNK2019（实施期实证）；②F-472 修复后测试面读树必须现取指针（refresh=clear+重建，捕获指针过 refresh 即悬挂）。"
+}

@@ -189,6 +189,22 @@ private:
     void refreshPropertiesFromLastWorkingSet();  // 属性区按当前选中重投影（L-1 反向/编辑后）
     std::optional<core::ObjectId> nodeAnchor(QTreeWidgetItem* item) const;  // 树行→锚（隐藏列）
 
+    /**
+     * @brief 命令按钮使能态统一刷新（UI-T43——L-7 门控三输入的单一判定面）。
+     *
+     * 判定合取（三输入缺一即禁用——不虚构可达性）：
+     *   ①提交出口已注入（m_commandSubmit 非空）；
+     *   ②只读门控放行（writable=true，或命令 readOnlyAllowed=true——
+     *     §7.6/L-7 的面板半区）；
+     *   ③注册表可用性放行（未注入提供器＝不设限；注入后按快照求值）。
+     *
+     * setCommandSubmit／setCommandAvailability／setWritable／refreshPanel
+     * 四个触发点全部经本单出口刷新（原四处循环重复实现收敛——返工先例
+     * ＝需求面板 refreshCommandEnablement）；此后任一输入变化（如只读
+     * 切换后再刷新可用性快照）都不会复活被另一输入禁用的按钮。
+     */
+    void refreshCommandEnablement();
+
     // ---- 会话态与呈现模型（零 Qt 半区——全部在 plugin/ 呈现层）----
     PanelSelectionState m_selection;          ///< L-1 会话选中态（零修订）
     PanelUiThreadGuard m_threadGuard;         ///< §3.4 UI 线程守卫（构造线程绑定）
