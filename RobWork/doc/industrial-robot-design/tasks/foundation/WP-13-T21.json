@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T21",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "URDF/Xacro 导入命令流依赖树装配修复（F-473——含 mesh 引用的模型经生产流恒被 SourceInconsistent 拒绝；顺带消 F-469 导入流零自动化网半边）",
+  "status": "ready",
+  "dependsOn": ["WP-13-T16"],
+  "requirements": [
+    "MDL-03（URDF 导入——含 mesh 引用的常规形态必须可导入）",
+    "MDL-19（导入诚实分层——缺失资源 V-08 Recorded 缺失可携带，不虚构存在性）",
+    "NFR-COR-01（黄金数据集为独立正确性依据——流半区装配纪律与 GoldenImportTest V-06/V-08 同源）"
+  ],
+  "designRefs": [
+    "units/modeling.md#6.5",
+    "units/modeling.md#6.4",
+    "units/io.md#6.5"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/io.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T21.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_plugin sdurws_ird_modeling_test sdurws_ird_modeling_gui_test sdurws_ird_studio",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp13-t21",
+  "interUnit": false,
+  "acceptance": [
+    "T1 依赖树装配半区落位：assembleImportDependencyTree（缺失容忍——存在＝io 真实快照、缺失/不可达＝exists=false 叶、package:// 不入树、同键去重＋稳定序）接入 modeling.import-urdf/选链重映射/import-xacro 三调用点；映射器保持唯一权威（提取遗漏→SourceInconsistent fail-closed 不伪成功）——证据：ImportUrdf_WithMeshAndMissingResource_ProducesDraft_WP13_T21（含 mesh＋缺失叶 URDF 导入成功、清单两笔、就绪重算触发）",
+    "T2 回归守卫：无 mesh 引用的纯 URDF 照常导入（零引用面退化为仅入口节点）——证据：ImportUrdf_PlainNoMesh_ProducesDraft_WP13_T21",
+    "T3 确认流半区：导入报告确认拒绝→不落草稿（SA-15——导入路径取消面首覆盖）——证据：ImportUrdf_ConfirmRejected_KeepsSessionDraft_WP13_T21",
+    "F-473 消账：findings.json F-473 fixed；F-469 半边消账（导入流三用例首上网）",
+    "回归门禁：受影响目标零错误构建＋modeling域套件全绿（modeling_test 294+3、modeling_gui_test 9〔基点不含 UI-T43 三用例〕）＋validate-docs PASS——留痕 traceability/builds/wp13-t21/"
+  ],
+  "note": "立项来源：外审后用户发起的 URDF 识别验证（临时 harness 对黄金件 golden-6r.urdf 全链执行）实证——域级映射器识别能力完好（黄金全链 21 项映射/6 关节/7 连杆/四清单分层诚实），但生产命令流 ValidatedSource 只装 bytes＋入口快照、恒缺依赖树，任何含 mesh 引用的 URDF/Xacro 经 modeling.import-urdf/import-xacro 恒被 SourceInconsistent 拒绝（无 mesh 的 URDF 不受影响——阴性对照证实）。诚实边界：①xacro 半区树自展开产物提取、基目录＝入口文档目录——单文件 xacro 精确，include 子目录内 mesh 引用可能标缺失（V-08 警告可见），多文件精确解析随导入向导任务（与选链重映射同批）；②io snapshot 拒绝（预算/网格护栏拦截）一律按缺失叶入树——exists=true 必须携带真实快照（ResourceNode 契约），误标缺失属诚实降级可见面。跨分支登记注：本卡 F-473 与 ui-t43 批次 F-472 并行编号（两边各自顺延 F-471），合并时序不影响唯一性。"
+}

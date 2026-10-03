@@ -16,9 +16,11 @@
 #include <QString>
 
 #include <algorithm>
+#include <cctype>
 #include <filesystem>
 #include <set>
 #include <fstream>
+#include <regex>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -26,6 +28,7 @@
 #include "ModelingFlowsInternal.hpp"          // 域内拆分接口（权威切换流——DhConvert 独立 TU）
 
 #include <sdurws/ird/core/Digest.hpp>            // core::ContentDigester（快照摘要——io 快照同源口径）
+#include <sdurws/ird/io/ResourceIo.hpp>          // io 资源读取服务（F-473——导入依赖树装配半区）
 #include <sdurws/ird/modeling/Codec.hpp>         // RobotDesignCodec/ObjectVariant（闭包字节编码）
 #include <sdurws/ird/modeling/Import.hpp>        // ModelImportMapper（URDF/Xacro 映射）
 #include <sdurws/ird/modeling/ModelDiff.hpp>     // ModelDiffService（与基线比较）
@@ -169,6 +172,124 @@ io::ResourceSnapshot makeEntrySnapshot(const QString& path,
     digester.update(bytes.data(), bytes.size());
     snapshot.contentDigest = digester.finalize();
     return snapshot;
+}
+
+/// relPath 折叠（io §6.5 约定：正斜杠＋折叠小写——Import.cpp 树查找同款）。
+std::string foldResourceKey(const std::string& ref)
+{
+    std::string key;
+    key.reserve(ref.size());
+    for (const char ch : ref) {
+        key.push_back(ch == '\\' ? '/'
+                                 : static_cast<char>(std::tolower(
+                                       static_cast<unsigned char>(ch))));
+    }
+    return key;
+}
+
+/// 提取 XML 文本中的 mesh 引用（仅 <mesh> 元素的 filename/file 属性——
+/// io §6.5 mesh 边同源的最小装配输入；<xacro:*> 宏面在展开产物中已代入，
+/// 无残余标签）。本提取仅为树装配输入，权威识别在映射器：提取遗漏→
+/// 映射器 SourceInconsistent（fail-closed——不产生伪成功）。
+std::vector<std::string> extractMeshRefs(const std::string& xmlText)
+{
+    static const std::regex kMeshAttr(
+        "<mesh\\b[^>]*?\\b(?:filename|file)\\s*=\\s*(\"([^\"]*)\"|'([^']*)')");
+    std::vector<std::string> refs;
+    for (std::sregex_iterator it(xmlText.begin(), xmlText.end(), kMeshAttr), end;
+         it != end; ++it) {
+        const std::string quoted = (*it)[1].str();
+        if (quoted.size() >= 2) {
+            refs.push_back(quoted.substr(1, quoted.size() - 2));
+        }
+    }
+    return refs;
+}
+
+/**
+ * @brief 缺失容忍的导入依赖树装配（F-473——URDF/Xacro 导入命令流的
+ *        ValidatedSource 补树半区）。
+ *
+ * 背景：映射器契约要求"URDF 含 mesh 引用时 bytes 与 dependencyTree 必须
+ * 同源"（否则 SourceInconsistent 拒绝、无草稿）；io 整树扫描
+ * （IResourceReader::dependencyTree）对缺失引用整树拒绝（§6.5"无部分
+ * 产物"），而映射器容忍缺失叶（V-08"应用可过（Warning）"）——两条契约
+ * 的夹缝使含 mesh 的 URDF 经生产流恒被拒绝。本辅助按黄金测试
+ * （GoldenImportTest V-06/V-08 装配纪律）补齐装配半区：
+ *   - 入口文档＝exists=true＋调用方 entrySnapshot（bytes 真实摘要）；
+ *   - 逐 mesh 引用调 io snapshot：成功＝io 真实快照（digest 身份）；
+ *     失败（缺失/预算/网格护栏/路径违约）＝exists=false 缺失叶——映射器
+ *     以 V-08 事实（Recorded 缺失）承载，不阻断导入（不虚构存在性）；
+ *   - 远距方案（package:// 等含 "://"）不入树（io 不可达——映射器以
+ *     ros-uri 不支持项承载，黄金件同款约定）；
+ *   - 同键去重＋relPath 字典序（io 产物稳定序——映射器不依赖序）。
+ *
+ * @param xmlText       [in] 入口（或 xacro 展开后）的 XML 文本（UTF-8）
+ * @param entrySnapshot [in] 入口文档快照（makeEntrySnapshot/桥产物）
+ * @param baseDir       [in] 引用解析基目录（入口文档所在目录——管辖根）
+ * @param rootRel       [in] 入口相对键（折叠形——报告 sourceLabel 同源）
+ * @return 依赖树（无环；允许缺失叶——映射器消费形态）
+ */
+io::ResourceDependencyTree assembleImportDependencyTree(
+    const std::string& xmlText,
+    const io::ResourceSnapshot& entrySnapshot,
+    const std::filesystem::path& baseDir,
+    const std::string& rootRel)
+{
+    io::ResourceDependencyTree tree;
+    tree.rootRel = rootRel;
+
+    io::ResourceNode entry;
+    entry.relPath = rootRel;
+    entry.exists = true;                 // 入口文档已读取成功（bytes 非空）
+    entry.snapshot = entrySnapshot;
+    tree.nodes.push_back(std::move(entry));
+
+    const io::IResourceReaderPtr reader = io::makeResourceReader();
+    io::ResourceOpenSpec spec;
+    spec.role = io::PathRole::UserSource;  // 用户自选导入文件的角色同源
+
+    for (const std::string& rawRef : extractMeshRefs(xmlText)) {
+        const std::string relKey = foldResourceKey(rawRef);
+        // 远距方案不入树（黄金件约定）；空引用不入树（不虚构资源）。
+        if (relKey.empty() || relKey.find("://") != std::string::npos) {
+            continue;
+        }
+        // 同键去重（同一 mesh 被视觉/碰撞多次引用＝一节点；映射器清单侧
+        // 亦同键去重——两半区口径一致）。
+        bool seen = false;
+        for (const io::ResourceNode& n : tree.nodes) {
+            if (n.relPath == relKey) { seen = true; break; }
+        }
+        if (seen) { continue; }
+
+        io::ResourceNode node;
+        node.relPath = relKey;
+        // io snapshot 拒绝（含存在但被预算/网格护栏拦截）一律按缺失叶入树
+        // ——exists=true 必须携带真实快照（ResourceNode 契约），拦截面
+        // 误标为缺失属诚实降级（V-08 警告路径可见，不阻断、不伪存在）。
+        const auto snapshot = reader->snapshot(
+            baseDir / std::filesystem::u8path(rawRef), spec, nullptr, nullptr);
+        if (snapshot) {
+            node.exists = true;
+            node.snapshot = snapshot.value;
+        } else {
+            node.exists = false;
+        }
+        tree.nodes.push_back(std::move(node));
+
+        io::ResourceEdge edge;
+        edge.fromRel = rootRel;
+        edge.toRel = relKey;
+        edge.kind = io::ResourceEdgeKind::Mesh;
+        tree.edges.push_back(std::move(edge));
+    }
+
+    std::sort(tree.nodes.begin(), tree.nodes.end(),
+              [](const io::ResourceNode& a, const io::ResourceNode& b) {
+                  return a.relPath < b.relPath;
+              });
+    return tree;
 }
 
 /// 导入报告的人读摘要（确认对话框文本——四清单计数＋分支/错误如实呈现）。
@@ -425,6 +546,31 @@ bool executeModelingCommand(const std::string& commandId,
         std::vector<core::DiagnosticRecord> diags;
         const ModelImportMapper mapper;
         ImportOptions options;  // 单可动链默认（selectedMainBranch 空）
+
+        // ValidatedSource 装配（bytes＋入口快照＋缺失容忍依赖树——F-473）：
+        // 映射器要求"含 mesh 引用的文档必须携带同源依赖树"（否则
+        // SourceInconsistent 拒绝、无草稿），io 整树扫描对缺失引用整树拒绝
+        // （无部分产物）——两契约夹缝使含 mesh 的模型此前经本流恒被拒。
+        // 按黄金测试（GoldenImportTest V-06/V-08）装配纪律在流半区补树，
+        // 装配语义见 assembleImportDependencyTree 头注。Xacro 树自展开产物
+        // 提取、基目录＝入口文档目录：单文件 xacro 精确；include 子目录内
+        // 的 mesh 引用可能标缺失（V-08 警告可见）——多文件精确解析随导入
+        // 向导任务（与选链重映射同批）。
+        const std::filesystem::path fsPath(path.toStdWString());
+        const std::string rootRel =
+            foldResourceKey(fsPath.filename().u8string());
+        const auto assembleSource =
+            [&](const std::vector<std::uint8_t>& documentBytes,
+                const std::string& xmlText,
+                const io::ResourceSnapshot& entrySnapshot) {
+                ValidatedSource source;
+                source.bytes = documentBytes;
+                source.entrySnapshot = entrySnapshot;
+                source.dependencyTree = assembleImportDependencyTree(
+                    xmlText, entrySnapshot, fsPath.parent_path(), rootRel);
+                return source;
+            };
+
         ImportOutcome outcome;
         if (isXacro) {
             // Xacro 受控展开（P-MDL-4——护栏归 io/语义归 modeling）：展开经
@@ -435,17 +581,19 @@ bool executeModelingCommand(const std::string& commandId,
                 summary = "Xacro 展开失败：" + expanded.errorDetail;
                 return false;
             }
-            ValidatedSource expandedSource;
-            expandedSource.bytes = expanded.expandedBytes;
-            expandedSource.entrySnapshot = expanded.entrySnapshot;  // 来源身份保持
+            ValidatedSource expandedSource = assembleSource(
+                expanded.expandedBytes,
+                std::string(expanded.expandedBytes.begin(),
+                            expanded.expandedBytes.end()),
+                expanded.entrySnapshot);  // 来源身份保持
             XacroProvenance provenance;
             provenance.sourceDigest = expanded.sourceDigest;
             provenance.sourceAbsPath = path.toStdString();
             outcome = mapper.mapXacroExpanded(expandedSource, provenance, options, diags);
         } else {
-            ValidatedSource source;
-            source.bytes = *bytes;
-            source.entrySnapshot = makeEntrySnapshot(path, *bytes);
+            const auto source = assembleSource(
+                *bytes, std::string(bytes->begin(), bytes->end()),
+                makeEntrySnapshot(path, *bytes));
             outcome = mapper.mapUrdf(source, options, diags);
         }
 
@@ -470,9 +618,9 @@ bool executeModelingCommand(const std::string& commandId,
             if (!picked.has_value()) { return false; }
             options.selectedMainBranch = outcome.report.branches[*picked].branchRoot;
             diags.clear();
-            ValidatedSource source;
-            source.bytes = *bytes;
-            source.entrySnapshot = makeEntrySnapshot(path, *bytes);
+            const auto source = assembleSource(
+                *bytes, std::string(bytes->begin(), bytes->end()),
+                makeEntrySnapshot(path, *bytes));
             outcome = mapper.mapUrdf(source, options, diags);
         }
 
