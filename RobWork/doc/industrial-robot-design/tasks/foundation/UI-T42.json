@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T42",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "建模面板发布闭环与联动准备批次（恰一根不变量 R1＋清单化确认 D1＋回读校验 D2＋选中来源会话态 D3——UI-T41 批次 D 承接改立；顺带消账 F-465/F-466）",
+  "status": "ready",
+  "dependsOn": ["UI-T41"],
+  "requirements": [
+    "ARC-04（身份可追溯——项目根身份跨导入稳定：恰一根不变量）",
+    "SA-15（确认流——破坏性操作清单化确认默认否）",
+    "MDL-20（规范模型包——导出后回读校验的流程半区兑现）",
+    "UX-07（非模态确认——对话框默认钮纪律）",
+    "ERR-01（诚实呈现——回读失败/运行时校验缺席如实回报）"
+  ],
+  "designRefs": [
+    "units/modeling.md#6.8",
+    "units/modeling.md#9.4.9",
+    "units/modeling.md#9.7.2",
+    "units/ui.md#13",
+    "units/requirements.md#9.8",
+    "units/core.md#5.1",
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T42.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_plugin sdurws_ird_modeling_test sdurws_ird_modeling_gui_test sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_test sdurws_ird_ui_gui_test",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_gui_test.exe",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t42",
+  "interUnit": true,
+  "knownPitfalls": ["P-MDL-4", "P-MDL-8"],
+  "acceptance": [
+    "审核修正 R1 恰一根不变量：导入 URDF/Xacro/规范包与模板重种子四路径保留已回填 rootObjectId——证据：ImportPackage_PreservesAppliedRootIdentity_R1（规范包路径）＋flows 四处 previousRoot 保存/回填（ModelingCommandFlows.cpp×2＋ModelingUiModule.cpp seedTemplateSession）",
+    "D1 清单化确认：export-package 确认文本列对象计数/替换明示/原子替换语义/未应用编辑警示；import-package 确认列应用语义（同根替换/新根分配）；QMessageBox 默认钮 No——证据：ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D（清单断言）＋ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D（默认否不写盘）",
+    "D2 回读校验：导出后包端口 importPackage 全链（manifest/SHA-256 逐条目/解码）验证，失败如实回报拒绝成功话术——证据：ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D（summary 含'回读校验'与'运行时加载校验归后续'双断言）",
+    "D3 选中来源会话态：SelectionSource 词表＋PanelSelectionState.lastSource——证据：PanelSelection.hpp（词表与成员）＋select() 签名扩展（默认 Tree 向后兼容）；视口零触碰（UI-T33 前置）",
+    "F-465 消账：四处『（入口随后续批次装配）』过期尾缀删除——证据：grep 全单元零命中＋findings.json F-465 fixed",
+    "F-466 消账：isAssembledModelingCommand 判定迁 flows 层经装配门面头出线（UiPlugin 只转发零第二词表——R-2 合规）＋gtest 装配集∧目录集双向对账——证据：AssembledSetMatchesCatalog_F466（目录十条全装配＋无幽灵路由）＋findings.json F-466 fixed",
+    "回归门禁：受影响目标零错误构建＋六套件全绿（modeling 294/294 含新增四用例·gui 9/9·ui 239/239·契约 17/17·32/32·67/67）＋validate-docs PASS——留痕 traceability/builds/ui-t42/"
+  ],
+  "note": "立项来源：UI-T41 批次 D 承接——UI-T41 于批次 A~C 后先期验收合入（acc/ui-t41/1 attempt 1 pass，redesign-main@d5b96d5a），批次 D 改立新号 UI-T42（分支 ui-t42 基点 d00795f9＝UI-T41 收尾提交）。诚实边界：D2 的运行时加载校验（编译链）依赖 runtime 绑定面，本批以包端口回读校验兑现最小承诺并在摘要诚实注明；D3 视口接线受 UI-T33（View3D 阶段 B）前置，本批只落状态模型零触碰视口；D4 WorkCell 反向导入对齐登记 WP-13-T17（R2/D）零实施。规范包 ObjectId canonical 形态＝obj-<32 小写 hex>（无 # 前缀——core Identity.hpp §5.1，测试夹具曾误用 # 前缀已修正）。批次特有告诫：①R1 语义＝同根内容替换（非新建）——回滚测试若见 allocateNew 重复建根即本不变量回归；②D1 默认否是硬纪律（QMessageBox default No）——改回默认 Yes 即违约；③F-466 判定出线后 UiPlugin 侧禁止再出现第二份命令词表字面。"
+}

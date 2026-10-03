@@ -124,6 +124,17 @@ bool executeModelingCommand(const std::string& commandId,
                             const ModelingFlowDeps& deps,
                             std::string& summary);
 
+/**
+ * @brief 已装配域命令的权威判定（UI-T42——F-466 消账：宿主注册表路由集
+ *        的唯一事实源从 UiPlugin 字面集合迁移至此，与 executeModelingCommand
+ *        的路由词表同 TU 同步演化——"装配集∧目录集一致"有了可断言面）。
+ *
+ * @param commandId [in] 域命令 id（点分小写）
+ * @return true＝该命令有真实执行链（宿主按 assembled 放行）；false＝保持
+ *         注册期禁用（flow-not-assembled 诚实路径）
+ */
+bool isAssembledModelingCommand(const std::string& commandId);
+
 }  // namespace sdurws::ird::modeling
 
 #endif  // IRD_MODELING_PLUGIN_MODELINGCOMMANDFLOWS_HPP

@@ -673,7 +673,7 @@ void ModelingPanelWidget::onPropertyEditingFinished()
         EditRejection r;
         r.codeToken = "value-not-finite";
         r.detail = "该字段为复合行（" + key
-                   + "）——物性可经『物性估算』、几何可经『生成占位几何』域命令维护（入口随后续批次装配）";
+                   + "）——物性可经『物性估算』、几何可经『生成占位几何』域命令维护";
         onEditRejected(r);
         return;
     }

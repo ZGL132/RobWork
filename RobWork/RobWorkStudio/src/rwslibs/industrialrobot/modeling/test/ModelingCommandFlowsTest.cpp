@@ -11,6 +11,9 @@
 
 #include <gtest/gtest.h>
 
+#include <QFile>
+#include <QTemporaryDir>
+
 #include <QString>
 #include <QStringList>
 
@@ -47,25 +50,29 @@ struct FakeHost final : ModelingDialogHost {
     std::optional<int> chooseItemAnswer;        ///< chooseItem 应答（nullopt＝取消）
     bool confirmProceedAnswer = true;           ///< confirmProceed 应答
     bool confirmImportAnswer = true;            ///< confirmImport 应答
+    std::optional<QString> openPathAnswer;      ///< openFilePath 应答（nullopt＝取消）
+    std::optional<QString> savePathAnswer;      ///< saveFilePath 应答（nullopt＝取消）
+    QString lastConfirmText;                    ///< confirmProceed 文本留痕（D1 清单断言）
     int showInfoCount = 0;                      ///< showInfo 调用计数
     QStringList showInfoTexts;                  ///< showInfo 文本留痕
 
     std::optional<QString> openFilePath(const QString&, const QString&) override
     {
-        return std::nullopt;
+        return openPathAnswer;
     }
     std::optional<QString> saveFilePath(const QString&, const QString&,
                                         const QString&) override
     {
-        return std::nullopt;
+        return savePathAnswer;
     }
     std::optional<int> chooseItem(const QString&, const QString&,
                                   const QStringList&) override
     {
         return chooseItemAnswer;
     }
-    bool confirmProceed(const QString&, const QString&) override
+    bool confirmProceed(const QString&, const QString& text) override
     {
+        lastConfirmText = text;
         return confirmProceedAnswer;
     }
     bool confirmImport(const QString&) override { return confirmImportAnswer; }
@@ -251,4 +258,127 @@ TEST(ModelingCommandFlows, EstimateProperties_ZeroLengthSegment_Refused_UI_T41C)
                                         fx.session, fx.deps(), fx.host, summary));
     EXPECT_TRUE(summary.find("零长度") != std::string::npos)
         << "种子态（恒位姿）拒绝摘要含几何原因";
+}
+
+// =====================================================================
+// UI-T41 批次D：导出清单确认＋回读校验（D1/D2）＋根身份保留（审核 R1）
+// =====================================================================
+
+/// D1+D2：export-package 全链——清单化确认（对象计数在场）→导出→包端口
+/// 回读校验通过（manifest/SHA/解码全链）；目标路径来自 saveFilePath 替身
+/// （QTemporaryDir 隔离——零真实用户目录触碰）。
+TEST(ModelingCommandFlows, ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-20"}, std::vector<std::string>{});
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString target = dir.filePath(QStringLiteral("demo.irdbundle"));
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.host.savePathAnswer = target;
+
+    std::string summary;
+    ASSERT_TRUE(executeModelingCommand("modeling.export-package",
+                                       fx.session, fx.deps(), fx.host, summary));
+    // D1：确认文本清单化（对象计数＋原子替换语义在场）。
+    EXPECT_TRUE(fx.host.lastConfirmText.contains(QStringLiteral("根对象")))
+        << "确认清单缺根对象条目（D1）";
+    EXPECT_TRUE(fx.host.lastConfirmText.contains(QStringLiteral("原子替换")));
+    // D2：回读校验通过（诚实回报——运行时加载校验归后续任务链）。
+    EXPECT_TRUE(summary.find("回读校验") != std::string::npos) << "摘要未含回读校验结论";
+    EXPECT_TRUE(summary.find("运行时加载校验归后续") != std::string::npos)
+        << "不得虚构运行时加载成功";
+    EXPECT_TRUE(QFile::exists(target)) << "目标包文件未落盘";
+}
+
+/// D1 默认否：确认拒绝＝不写盘（用户未明示即不产出文件）。
+TEST(ModelingCommandFlows, ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-07"}, std::vector<std::string>{});
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString target = dir.filePath(QStringLiteral("demo.irdbundle"));
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.host.savePathAnswer = target;
+    fx.host.confirmProceedAnswer = false;  // 默认否被采纳
+
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand("modeling.export-package",
+                                        fx.session, fx.deps(), fx.host, summary));
+    EXPECT_FALSE(QFile::exists(target)) << "确认拒绝后仍写盘（D1 默认否违约）";
+}
+
+/// 审核 R1：导入保留已回填的项目根身份（恰一根不变量——下次 apply 走
+/// 同根替换而非 allocateNew 重复建根，requirements 域 F-461 同型缺陷预防）。
+TEST(ModelingCommandFlows, ImportPackage_PreservesAppliedRootIdentity_R1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"ARC-04"}, std::vector<std::string>{});
+
+    // 先导出一个真实规范包（回读输入——非伪造字节）。
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString packagePath = dir.filePath(QStringLiteral("demo.irdbundle"));
+    {
+        FlowHarness fx;
+        fx.session.draft = makeSixAxisDraft();
+        fx.host.savePathAnswer = packagePath;
+        std::string summary;
+        ASSERT_TRUE(executeModelingCommand("modeling.export-package",
+                                           fx.session, fx.deps(), fx.host, summary));
+    }
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    // 已回填的项目根身份（noteAppliedRevision 的回执形态）＋一条未应用编辑
+    // （D1 确认文本的丢弃警示应随行）。
+    fx.session.draft.rootObjectId = core::ObjectId::tryFromCanonical(
+        "obj-" + std::string(32, 'a'));
+    ASSERT_TRUE(fx.session.draft.rootObjectId.has_value());
+    ModelingChangeRecord pending;
+    pending.subject = "joints[0]";
+    pending.summary = "未应用编辑（将被导入丢弃）";
+    fx.session.draft.changes.push_back(pending);
+    fx.host.openPathAnswer = packagePath;
+
+    std::string summary;
+    const bool imported = executeModelingCommand("modeling.import-package",
+                                                 fx.session, fx.deps(), fx.host, summary);
+    ASSERT_TRUE(imported) << "import summary: " << summary;
+    ASSERT_TRUE(fx.session.draft.rootObjectId.has_value());
+    EXPECT_EQ(fx.session.draft.rootObjectId->toCanonical(), "obj-" + std::string(32, 'a'))
+        << "导入后项目根身份被清空（R1 恰一根不变量破坏）";
+    EXPECT_TRUE(fx.session.draft.design.joints.size() >= std::size_t{1})
+        << "导入草稿未落位";
+}
+
+// =====================================================================
+// UI-T42（F-466 消账）：装配集∧目录集一致性——路由权威判定（flows 层
+// isAssembledModelingCommand）与 §9.7.3 卡表目录双向对账：目录十条全部
+// 可执行（无"禁用但已交付"的缩水）；路由集无目录外条目（无幽灵路由）。
+// =====================================================================
+
+TEST(ModelingCommandFlows, AssembledSetMatchesCatalog_F466)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"ERR-01"}, std::vector<std::string>{});
+
+    const auto catalog = modelingDomainCommands();
+    ASSERT_EQ(catalog.size(), std::size_t{10}) << "§9.7.3 卡表目录十条（契约面）";
+
+    for (const auto& desc : catalog) {
+        EXPECT_TRUE(isAssembledModelingCommand(desc.id))
+            << "目录命令未装配（缩水交付——F-466 变异①的断言面）: " << desc.id;
+    }
+
+    // 反向：路由集无目录外条目（幽灵路由＝点击后 fail-fast——不可达面）。
+    for (const std::string& ghost : {
+             "modeling.nonexistent", "modeling.new-from-template-x",
+             "modeling.export-package-extra"}) {
+        EXPECT_FALSE(isAssembledModelingCommand(ghost))
+            << "路由集含目录外条目（幽灵路由）: " << ghost;
+    }
 }

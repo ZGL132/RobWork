@@ -55,6 +55,18 @@ struct LocateTarget {
 };
 
 /**
+ * @brief 选中来源词表（UI-T41 批次D D3——3D 联动准备面：选中事件来源的
+ *        会话态标记；View3D 阶段 B（UI-T33）落位后拾取上行经此标记驱动
+ *        "拾取→树滚动"与"树选→三维高亮"的差异化联动，本批只备状态模型
+ *        与默认值，不触碰视口——ARC-03/View3DContract 前置如实保持）。
+ */
+enum class SelectionSource {
+    Tree,       ///< 树点击（自持结构树/共享项目树——现役唯一来源）
+    View3DPick, ///< 三维拾取上行（UI-T33 落位后启用——本批预留词表位）
+    LocateJump, ///< 属性区/诊断条反向定位跳转
+};
+
+/**
  * @brief 建模面板会话选中态（L-1 的建模侧承载——零修订纪律的结构化实现）。
  *
  * 使用方式（widget 层接线约定）：
@@ -95,12 +107,18 @@ public:
      * @return true＝选中态变化（widget 据此刷新属性区投影）；false＝重复
      *         选中同一锚（幂等——不重复触发刷新）
      */
-    bool select(const std::optional<core::ObjectId>& oid)
+    bool select(const std::optional<core::ObjectId>& oid,
+                SelectionSource source = SelectionSource::Tree)
     {
         if (m_selected == oid) { return false; }  // 幂等：重复选中不抖动属性区
         m_selected = oid;
+        m_lastSource = source;  // D3：选中来源随事件落会话态（联动准备面）
         return true;
     }
+
+    /// 最近一次选中的来源（D3 准备面——View3D 阶段 B 接线时驱动差异化联动；
+    /// 默认 Tree＝现役唯一来源的诚实缺省）。
+    SelectionSource lastSource() const noexcept { return m_lastSource; }
 
     /**
      * @brief 反向定位入口（L-1 反向半区：树滚动＋三维高亮目标产出）。
@@ -126,6 +144,7 @@ public:
 
 private:
     std::optional<core::ObjectId> m_selected;  ///< 会话选中锚（仅 UI 线程可变——§3.4）
+    SelectionSource m_lastSource = SelectionSource::Tree;  ///< 最近选中来源（D3 准备面）
     std::function<void(const LocateTarget&)> m_locateSink;  ///< 定位出口（非 owning——widget 层注入）
 };
 
