@@ -1,0 +1,4 @@
+add_library(sdurws_ird_core INTERFACE)
+add_library(sdurws_ird_evidence INTERFACE)
+add_library(sdurws_ird_testkit INTERFACE)
+target_link_libraries(sdurws_ird_testkit INTERFACE sdurws_ird_core sdurws_ird_evidence)

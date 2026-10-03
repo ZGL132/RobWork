@@ -1,0 +1,3 @@
+add_library(sdurws_ird_core INTERFACE)
+add_library(sdurws_ird_evidence STATIC src/Evidence.cpp)
+target_link_libraries(sdurws_ird_evidence PUBLIC sdurws_ird_core sdurw_proximity)
