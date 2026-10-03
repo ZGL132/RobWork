@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求面板可读性与结构治理批次（UUID 列泄漏修复/树层级化/横幅退役/滚动容器/截断修复——所有者 2026-10-01 界面任务书承接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T35"],
   "requirements": [
     "ERR-01（诚实呈现——业务列显示业务文本：内部 ObjectId 锚退居隐藏列，显示面零内部标识泄漏〔UX-02 既有约束的缺陷修复〕）",

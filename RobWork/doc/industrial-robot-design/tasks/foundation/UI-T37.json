@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求面板呈现层现代化批次（卡片化分组/复合控件/二态控件/工况向导/校验看板/警示条——所有者 2026-10-01『认可』需求界面重构规范承接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T36"],
   "requirements": [
     "UX-02（文案治理——新标签/Tooltip 全量入 UiText 键族；显示面零内部标识：R 层码/诊断码转语义标签与 Tooltip/UserRole 承载）",
