@@ -219,6 +219,20 @@ public:
     void bindTextResolver(std::function<QString(const std::string&)> resolve);
 
     /**
+     * @brief 会话可写性切换（UI-T43——L-7 门控输入的模块转发面，需求域
+     *        RequirementsUiModule::setWritable 同构先例）。
+     *
+     * 门控事实源＝ui 只读横幅同源的宿主打开报告（report.opened.metadata
+     * .writable——L-R12 同款纪律），本转发面零判定：面板已创建＝即时转发
+     * （面板内即时重算属性行灰显与命令按钮使能）；面板未创建＝暂存初值，
+     * createPanel 时作为面板初始可写态应用（装配序无关——与命令提交出口
+     * 暂存同一时序语义，杜绝"面板恒按可写创建"的初值失实）。
+     *
+     * @param writable [in] 会话可写性（true＝可写会话；false＝只读/降级只读）
+     */
+    void setWritable(bool writable);
+
+    /**
      * @brief 首版装配会话种子（generic-6r 草稿经真实 createDraft 产出——
      *        会话工作集权威载体；readiness 不预置＝投影呈 DataInsufficient
      *        缺省行，判定接线随收口任务）。
@@ -397,6 +411,12 @@ private:
     CommandSubmitFn m_pendingSubmit;         ///< 面板创建前的提交出口暂存（创建时应用）
     CommandAvailabilityFn m_pendingAvailability; ///< 面板创建前的可用性查询暂存
     std::function<QString(const std::string&)> m_textResolver;  ///< 文案解析（创建时应用）
+    bool m_writable = true;                  ///< 会话可写性（L-7 初值——setWritable
+                                             ///  更新；createPanel 作为面板初始态。
+                                             ///  默认 true＝装配期无项目会话的可写
+                                             ///  草稿态，宿主打开只读项目后经转发
+                                             ///  面纠正——UI-T43 前该初值在面板上
+                                             ///  不可纠正，是接线缺口）
     std::unique_ptr<policy::IJointLimitEvaluator> m_evaluator{
         policy::makeJointLimitEvaluator()};  ///< 行程评估器（policy 唯一实现——T03b-2b）
     std::unique_ptr<policy::IPolicyNameContext> m_nameContext;  ///< 名称上下文（T03b 起＝映射适配器——绑定切换经重建）

@@ -11,6 +11,10 @@
  *     版的面板半区）、UX-02/05、ERR-01；
  *   - ctest LABELS ird_gui 串行（testkit §6.7——ui.md §12.1 表既定口径；
  *     本目标为 UI-T27 诚实登记缺口"gui_test 补建归下批"的兑现）。
+ *   - UI-T43 增量（宿主接线修复回归钉）：L-7 防复活（只读态下可用性
+ *     刷新不越门——本文件）；生产装配序文案解析回归＋模块 setWritable
+ *     暂存/即时双形态链路在 ModelingUiModuleHostWiringGuiTest.cpp
+ *     （policy 符号 gating——集成模式专属）。
  *
  * 先例：ui/gui_test（QApplication main＋findChild 定位——树夹具容器化
  * 修订同款）；modeling/test/PluginPanelTest.cpp（makeSixAxisDraft 六轴
@@ -37,6 +41,10 @@
 #include "plugin/PanelCommandCatalog.hpp"  // modelingDomainCommands（B4 反断言目录）          // ui::resolveText（禁用原因键→中文——UX-02 解析半区）
 
 #include "plugin/ModelingPanelWidget.hpp"  // 被测面板（同单元 PRIVATE include 面——PluginPanelTest 同款）
+// （UI-T43 模块级接线用例——ModelingUiModule 被测面——落位
+//   ModelingUiModuleHostWiringGuiTest.cpp：其被测类型构造期持 policy 行程
+//   评估器符号，须随 PluginModuleT03BTest 先例做集成模式 gating，不能与
+//   本文件（冒烟模式无条件编入）同 TU。）
 
 using namespace sdurws::ird;
 using namespace sdurws::ird::modeling;
@@ -52,6 +60,21 @@ ModelingWorkingSet makeSixAxisDraft()
         TemplateId{kTemplateIdGeneric6R},
         runtime::InstallationPresetToken::Ground, "demo", diags);
     return outcome.get();  // 成功前置——失败即测试自身装配错误（logic_error）
+}
+
+/// 命令按钮全集（构造序＝目录序——Qt 子对象按挂树序枚举；诊断历史折叠
+/// 钮非命令按钮，按 objectName 剔除）。返回序与 modelingDomainCommands()
+/// 一一对应——用例以 size 相等断言作序漂移守卫，错位即测试装配错误。
+QList<QPushButton*> commandButtonsOf(const QWidget& panel)
+{
+    QList<QPushButton*> buttons;
+    for (QPushButton* btn : panel.findChildren<QPushButton*>()) {
+        if (btn->objectName() == QStringLiteral("ird_modeling_history_toggle")) {
+            continue;  // 历史折叠钮不入命令对账（B2 呈现件）
+        }
+        buttons.push_back(btn);
+    }
+    return buttons;
 }
 
 }  // namespace
@@ -361,4 +384,59 @@ TEST_F(ModelingPanelGuiTest, StatusHistory_AccumulatesAndToggles_B2)
     EXPECT_FALSE(view->isHidden()) << "展开后历史视图不可见";
     EXPECT_EQ(view->toPlainText().count(QStringLiteral("未应用")), 2)
         << "两条拒绝回执未都入历史（被覆盖）";
+}
+
+// =====================================================================
+// UI-T43 用例组：宿主接线修复的回归钉（审核 P1 三项中两代码项的测试面）
+// =====================================================================
+
+/// L-7 门控防复活：只读会话下重新注入"全放行"可用性快照，写命令
+/// （readOnlyAllowed=false）不得因可用性刷新复活（UI-T43 修复点——
+/// 此前 setCommandAvailability 缺只读合取项，三处使能判定不一致即门控
+/// 旁路：只读切换后再刷新可用性＝写命令错误亮起）。恢复可写＝双向即时。
+TEST_F(ModelingPanelGuiTest, ReadOnlySession_AvailabilityRefreshCannotReviveWriteCommands_L7_UI_T43)
+{
+    IRD_TEST_INFO("ERR-01", {}, std::nullopt);
+
+    // 可写基线：提交出口＋全放行快照——全部命令按钮可用（夹具自检，
+    // 同时覆盖 setCommandSubmit/setCommandAvailability 即时刷新路径）。
+    m_panel->setCommandSubmit([](const ui::CommandId&) {});
+    const auto allEnabled = [] (const ui::CommandId&) {
+        return ui::CommandAvailability{true, true, true, ui::DisableReason{}};
+    };
+    m_panel->setCommandAvailability(allEnabled);
+
+    const auto catalog = modelingDomainCommands();
+    const auto buttons = commandButtonsOf(*m_panel);
+    ASSERT_EQ(buttons.size(), catalog.size())
+        << "命令按钮与目录错位（构造序漂移——本用例按下标对账失效）";
+    for (const QPushButton* btn : buttons) {
+        ASSERT_TRUE(btn->isEnabled()) << "可写＋全放行基线下按钮仍禁用（夹具失实）";
+    }
+
+    // 只读切换：写命令（readOnlyAllowed=false，目录十条中七条）禁用；
+    // 只读命令（diff-baseline/export-package/reset-home-zero）保持可用。
+    m_panel->setWritable(false);
+    for (std::size_t i = 0; i < buttons.size(); ++i) {
+        EXPECT_EQ(buttons[i]->isEnabled(), catalog[i].readOnlyAllowed)
+            << "只读切换后使能态与 readOnlyAllowed 不符：" << catalog[i].id;
+    }
+
+    // 修复点（审核 P1）：只读态下重新注入全放行快照——可用性刷新不得
+    // 越过只读门（修复前本步写命令全部复活）。
+    m_panel->setCommandAvailability(allEnabled);
+    for (std::size_t i = 0; i < buttons.size(); ++i) {
+        EXPECT_EQ(buttons[i]->isEnabled(), catalog[i].readOnlyAllowed)
+            << "可用性刷新复活了只读会话的写命令（L-7 门控旁路回归）：" << catalog[i].id;
+    }
+
+    // 恢复可写：写命令即时回升（双向即时——残留窗口为零）。
+    m_panel->setWritable(true);
+    for (const QPushButton* btn : buttons) {
+        EXPECT_TRUE(btn->isEnabled()) << "恢复可写后写命令未回升";
+    }
+
+    // （模块级链路用例——生产装配序文案解析回归＋模块 setWritable 暂存/
+    //   即时双形态——在 ModelingUiModuleHostWiringGuiTest.cpp：被测类型
+    //   ModelingUiModule 持 policy 评估器符号，gating 见该文件头注。）
 }

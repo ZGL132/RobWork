@@ -193,10 +193,18 @@ TEST(HostIntegrationGuiTest, AssemblyFailureGroupPlaceholder_RendersAndNotSelect
     EXPECT_TRUE(modelingGroup->child(0)->data(0, Qt::UserRole).isValid());
 
     // 占位清除（空串）后 refresh——占位行消失（域恢复形态）。
+    // F-472 修复：refresh() 全量重渲染以 m_tree->clear() 删除全部顶层项
+    // ——清除前捕获的 reqGroup 指针随行销毁，清除后再读取＝读取已释放
+    // 对象（UB——陈旧内存多数轮次恰似"通过"，偶发翻红即为本次冒烟留痕
+    // 实证）。清除后重新现取组行指针再断言（现取纪律＝测试面同款：
+    // "编辑接受后随重投影重建，断言必须重新现取"）。
     panel->setGroupPlaceholder(ui::ProjectTreeGroup::RequirementObjects,
                                std::string());
     panel->refresh();
-    EXPECT_EQ(reqGroup->childCount(), 0);
+    QTreeWidgetItem* reqGroupAfterClear = tree->topLevelItem(
+        ui::projectTreeGroupIndex(ui::ProjectTreeGroup::RequirementObjects));
+    ASSERT_NE(reqGroupAfterClear, nullptr);
+    EXPECT_EQ(reqGroupAfterClear->childCount(), 0);
 }
 
 /// acceptance 4：项目关闭清理的检查器宿装清空——非对象态 refresh 清宿装

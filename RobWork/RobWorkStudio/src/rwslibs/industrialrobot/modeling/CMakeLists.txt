@@ -520,7 +520,7 @@ add_executable(sdurws_ird_modeling_test
     test/DhConvertTest.cpp
     test/CanonicalBridgeTest.cpp
     test/PackageTest.cpp
-    test/ModelDiffTest.cpp
+    test/ModelDiffTest.cpp
     test/ModelingCommandFlowsTest.cpp  # 域命令流测试（UI-T41 批次C——FakeHost 替身）
     test/PluginPanelTest.cpp
     test/HostMigrationTest.cpp
@@ -668,6 +668,17 @@ ird_add_gtest(sdurws_ird_modeling_test)
 add_executable(sdurws_ird_modeling_gui_test
     gui_test/TestMainReport.cpp
     gui_test/ModelingPanelGuiTest.cpp)
+
+# UI-T43 模块级接线用例（ModelingUiModule 被测面——生产装配序文案解析
+# 回归＋setWritable 暂存/即时双形态链路）：被测类型构造期持 policy 行程
+# 评估器符号（makeJointLimitEvaluator——policy/JointLimits.cpp 仅集成
+# 模式编译），冒烟模式链接该 obj 即 LNK2019。gating 同
+# PluginModuleT03BTest/ReadinessTest 先例（上方 sdurws_ird_modeling_test
+# 同款条件编入）——冒烟口径"目标注册＋include 路径"不受影响。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_modeling_gui_test PRIVATE
+        gui_test/ModelingUiModuleHostWiringGuiTest.cpp)
+endif()
 
 target_compile_features(sdurws_ird_modeling_gui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_modeling_gui_test PROPERTIES

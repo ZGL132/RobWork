@@ -157,28 +157,21 @@ void ModelingPanelWidget::setCommandSubmit(CommandSubmitFn submitFn)
     m_commandSubmit = std::move(submitFn);
     // 提交出口可能在面板创建后才接入；立即重算按钮，避免按钮一直
     // 保持构造期禁用态（宿主装配顺序不应影响可用性呈现）。
-    for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
-        const bool readonlyBlocked = !m_writable && !m_commands[i].readOnlyAllowed;
-        const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
-                                             : ui::CommandAvailability{};
-        m_commandButtons[i]->setEnabled(
-            m_commandSubmit != nullptr && !readonlyBlocked
-            && (!m_commandAvailability || a.enabled));
-    }
+    // UI-T43：使能判定收敛到 refreshCommandEnablement 单出口（原处循环
+    // 与 setCommandAvailability/refreshPanel 三处重复实现——只读门控输入
+    // 的合取语义在此唯一维护，见其头注）。
+    refreshCommandEnablement();
 }
 
 void ModelingPanelWidget::setCommandAvailability(CommandAvailabilityFn availability)
 {
     m_commandAvailability = std::move(availability);
-    for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
-        const auto a = m_commandAvailability ? m_commandAvailability(m_commands[i].id)
-                                             : ui::CommandAvailability{};
-        m_commandButtons[i]->setEnabled(
-            m_commandSubmit != nullptr && (!m_commandAvailability || a.enabled));
-        if (m_commandAvailability && !a.enabled && !a.disableReasonKey.empty()) {
-            m_commandButtons[i]->setToolTip(QString::fromStdString(ui::resolveText(a.disableReasonKey)));
-        }
-    }
+    // UI-T43 修复（审核 P1）：本注入点此前缺失只读门控合取项——只读会话
+    // 下宿主重新注入/刷新可用性快照时，可用性提供器返回 enabled=true 的
+    // 写命令会被错误复活（setCommandSubmit/refreshPanel 两处均含
+    // readonlyBlocked 判定，唯此处遗漏——三处不一致即门控旁路）。统一走
+    // refreshCommandEnablement：可用性刷新永不越过 writable 门（L-7）。
+    refreshCommandEnablement();
 }
 
 void ModelingPanelWidget::setPostEditAction(PostEditAction action)
@@ -444,21 +437,10 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
         m_readinessItems->addTopLevelItem(item);
     }
 
-    // ---- 区③命令使能态：writable=false 时 readOnlyAllowed=false 的按钮
-    //      禁用（L-7 命令半区）；未注入提交出口的命令一律禁用（不虚构可达）。
-    for (std::size_t i = 0; i < m_commandButtons.size(); ++i) {
-        const bool readonlyBlocked = !m_writable && !m_commands[i].readOnlyAllowed;
-        const auto availability = m_commandAvailability
-                                      ? m_commandAvailability(m_commands[i].id)
-                                      : ui::CommandAvailability{};
-        m_commandButtons[i]->setEnabled(m_commandSubmit != nullptr && !readonlyBlocked
-                                        && (!m_commandAvailability || availability.enabled));
-        if (m_commandAvailability && !availability.enabled
-            && !availability.disableReasonKey.empty()) {
-            m_commandButtons[i]->setToolTip(
-                QString::fromStdString(ui::resolveText(availability.disableReasonKey)));
-        }
-    }
+    // ---- 区③命令使能态：统一出口重算（UI-T43——原内联循环迁移至
+    //      refreshCommandEnablement；writable/提交出口/可用性三输入的
+    //      合取判定在该单出口维护，本处零重复实现）。
+    refreshCommandEnablement();
 }
 
 void ModelingPanelWidget::setWritable(bool writable)
@@ -473,7 +455,40 @@ void ModelingPanelWidget::setWritable(bool writable)
         m_propertyEditors[i]->setText(
             QString::fromStdString(m_propertyRows[i].valueText));
     }
-    // 命令按钮使能态在下次 refreshPanel 统一重算（事件驱动——无即时轮询面）。
+    // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
+    // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
+    // 残留可用呈现，与需求域"切换后必须同步刷新全部状态承载面"的整改口径
+    // 不一致。本域无重投影依赖的会话数据（零缓存——ACC5），使能重算零代价，
+    // 即时执行消除残留窗口）。
+    refreshCommandEnablement();
+}
+
+void ModelingPanelWidget::refreshCommandEnablement()
+{
+    // UI-T43 统一收口（四个触发点共用——判定面唯一，语义见头注）。循环内
+    // 合取顺序：提交出口→只读门控（§7.6/L-7 面板半区）→可用性快照；
+    // 任一不满足＝禁用，不虚构可达性。
+    for (std::size_t i = 0; i < m_commandButtons.size() && i < m_commands.size(); ++i) {
+        const bool readonlyBlocked = !m_writable && !m_commands[i].readOnlyAllowed;
+        const auto availability = m_commandAvailability
+                                      ? m_commandAvailability(m_commands[i].id)
+                                      : ui::CommandAvailability{};
+        const bool enabled = m_commandSubmit != nullptr && !readonlyBlocked
+                             && (!m_commandAvailability || availability.enabled);
+        m_commandButtons[i]->setEnabled(enabled);
+        // 禁用原因随 tooltip 呈现（UX-02——键解析归 UiText；解析空＝键缺失
+        // 回退键名原文，不虚构文案）。启用/无原因＝恢复悬停说明（消除"禁用
+        // 一次后原因文案残留"——需求域 refreshCommandEnablement 同款先例）。
+        if (m_commandAvailability && !enabled && !availability.disableReasonKey.empty()) {
+            m_commandButtons[i]->setToolTip(
+                QString::fromStdString(ui::resolveText(availability.disableReasonKey)));
+        } else {
+            const std::string tooltipText =
+                ui::resolveText("cmd." + m_commands[i].id + ".tooltip");
+            m_commandButtons[i]->setToolTip(QString::fromStdString(
+                tooltipText.empty() ? m_commands[i].id : tooltipText));
+        }
+    }
 }
 
 void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)

@@ -93,6 +93,18 @@ struct ModelingPluginAssembly {
     /// 文案解析绑定（titleKey→工程用语；转发模块内部）。
     void bindTextResolver(std::function<QString(const std::string& titleKey)> resolve);
 
+    /**
+     * @brief 会话可写性切换（UI-T43——L-7 门控输入的宿主接线面；转发模块
+     *        内部，需求域 RequirementsPluginAssembly::setWritable 同构）。
+     *
+     * 门控事实源＝ui 只读横幅同源的宿主打开报告；面板创建前后皆可调用
+     * （创建前＝模块暂存初值，createPanel 应用——装配序无关）。宿主在
+     * 项目打开/切换/只读降级（openViaSessionController 统一接线点）驱动。
+     *
+     * @param writable [in] 会话可写性（true＝可写；false＝只读/降级只读）
+     */
+    void setWritable(bool writable);
+
     /// 首版会话种子（generic-6r 真实草稿；转发模块内部）。
     void seedTemplateSession();
 
