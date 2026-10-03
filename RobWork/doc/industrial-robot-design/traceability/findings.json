@@ -4721,6 +4721,46 @@
       "title": "URDF/Xacro 导入命令流缺依赖树装配半区（域级识别能力完好，生产流不可用）：映射器契约要求含 mesh 引用的文档必须携带同源依赖树（SourceInconsistent 否则、无草稿），io 整树扫描对缺失引用整树拒绝（无部分产物）——两契约夹缝使生产流 ValidatedSource 只装 bytes＋入口快照、恒缺树，任何含 mesh 的 URDF/Xacro 经 modeling.import-urdf/import-xacro 恒失败；无 mesh 的 URDF 不受影响。阴性对照：同模型剔除 mesh 引用后生产流正常导入。",
       "owner": "WP-13-T21（流半区按黄金测试 GoldenImportTest V-06/V-08 装配纪律补缺失容忍树——存在＝io 真实快照，缺失/不可达＝exists=false 叶，package:// 不入树；映射器保持唯一权威）",
       "resolution": "编号顺延自 F-471（F-472 另登于 ui-t43 批次——跨分支并行登记，合并时序不影响唯一性）；修复落位 ModelingCommandFlows.cpp assembleImportDependencyTree（URDF/选链重映射/Xacro 三调用点）；ModelingCommandFlowsTest 增三用例（含 mesh＋缺失/无 mesh/确认拒绝）消 F-469 导入流零自动化网的半边。"
+    },
+    {
+      "id": "F-474",
+      "source": "UI-T46/UI-T51 验收 attempt 1（2026-10-03——fresh detached worktree 全量复现，ACC §2.1 单会话顺序执行例外）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "fresh worktree 全仓 ALL_BUILD 在框架 RWSimulatorPlugin（RobWorkSim 插件）编译失败：Windows.h min/max 宏污染 rw::math::Math.hpp（C4003/C2059/C2334 等 73 处）——主构建树经历史对象缓存不可见，fresh 复现（验收协议 §3）在该框架插件处阻断；框架区代码 diff＝0（基线既有非送验缺陷），送验面（industrialrobot 全目标）逐一零错误可复现。",
+      "owner": "框架基线维护（SA-02 区——需 patches/ 登记后补 NOMINMAX 或源内防护；fresh 复现指引同步 testkit 构建约定）",
+      "resolution": "UI-T46/UI-T51 验收记录 4.2 环境事实转登（acc/UI-T46/1）；送验面复现以显式目标构建承载。"
+    },
+    {
+      "id": "F-475",
+      "source": "同上（UI-T46/UI-T51 验收 attempt 1）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "fresh 树测试 exe 运行时依赖需手工补齐：框架 DLL 仅 studio 目标 POST_BUILD 复制（其余测试目标依赖主树历史累积状态）＋vcpkg DLL 需 vcpkg/bin＋python313.dll 经系统 Miniconda PATH 解析（ui_test 依赖链）——fresh 复现无指引文档。",
+      "owner": "testkit/构建约定所有者（DTB §5.1：fresh 复现运行时补齐指引登记；或测试目标 POST_BUILD 统一复制面）",
+      "resolution": "UI-T46/UI-T51 验收记录 4.2 环境事实转登。"
+    },
+    {
+      "id": "F-476",
+      "source": "同上（UI-T46/UI-T51 验收 attempt 1——4.9 核查）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "任务提交标题为名词短语开头（『[UI-T46] 宿主呈现装配：…』『[UI-T51] 工位位置编辑轨：…』）与 acceptance-protocol §4.9『动词开头』字面偏差——仓库既有风格同形态（UI-T44 先例），属协议措辞与仓库实践的对齐裁决项。",
+      "owner": "治理所有者（ACC 措辞与仓库 commit 风格二选一：协议改『动词或主题词开头』或提交纪律收紧）",
+      "resolution": "验收记录 4.9 先例豁免判定转登。"
+    },
+    {
+      "id": "F-477",
+      "source": "同上（UI-T46/UI-T51 验收 attempt 1——4.10 核查）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "近期 ui 系任务留痕无 ird-test-report.json（ui-t43/t45/t46/t51 同形态——gtest XML＋log 承载），与 acceptance-protocol §4.10 字面『gtest XML＋ird-test-report.json＋构建日志』偏差：报告生成物不在近期实践，协议字面未随实践修订。",
+      "owner": "testkit 所有者（ACC §4.10 留痕形态与近期实践对齐：协议修订或报告生成恢复）",
+      "resolution": "验收记录 4.10 说明转登。"
     }
   ]
 }
