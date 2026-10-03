@@ -4671,6 +4671,36 @@
       "title": "import-package 确认文本的『应用语义两态/未应用编辑丢弃警示』（ModelingCommandFlows.cpp:716-726）无具名 gtest 截获断言——R1 用例经 FakeHost 走 confirmImport 默认 true 路径未截获文本（export 侧已有 FakeHost::lastConfirmText 截获先例）；同族观察：真实 QMessageBox 默认钮 No 纪律（:82）属 UI 进程代码，自动化面仅能代码级核对。",
       "owner": "ui 侧测试补强（下一批次 ModelingCommandFlowsTest 增 import 侧 lastConfirmText 截获断言——FakeHost 增 confirmImport 文本留痕一行的最小改动；验收记录见 acc/ui-t42/1 4.4②/4.11③）",
       "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T42 合入。编号顺延自 F-467。"
+    },
+    {
+      "id": "F-469",
+      "source": "UI-T42 合入收尾后完善性复核（2026-10-03——R1 测试覆盖面盘点：具名回归仅覆盖规范包导入路径）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "R1 恰一根不变量四路径中仅规范包导入有具名回归网（ImportPackage_PreservesAppliedRootIdentity_R1）——URDF/Xacro 导入（ModelingCommandFlows.cpp:498-500）与模板重种子（ModelingUiModule.cpp seedTemplateSession:247-249）仅代码审查背书，零自动化网；UI-T42 验收变异①亦仅翻规范包路径红。未来改动该两处落点时现有测试不会翻红。",
+      "owner": "modeling 测试补强（modeling_test 补两用例：URDF 导入前预置 rootObjectId 断言导入后保留——需真实 URDF 解析成功前置，成本高一档；seedTemplateSession 重种子断言根身份保留——HostMigrationModuleTest 已有该函数测试落点可挂）",
+      "resolution": "审核发现转登（2026-10-03 合入收尾后完善性复核）；编号顺延自 F-468。"
+    },
+    {
+      "id": "F-470",
+      "source": "UI-T42 合入收尾后完善性复核（2026-10-03——导出确认文本分支触达核查：导出用例夹具 changes 为空）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "export-package 确认文本的『未应用编辑警示』分支（ModelingCommandFlows.cpp:329 仅 !draft.changes.empty() 时出现）零测试触达——导出确认测试夹具为干净 makeSixAxisDraft（changes 空），警示行既未被执行也无文本断言。F-468 同族（确认文本截获断言缺网），同一 FakeHost 改动面可顺手覆盖。",
+      "owner": "modeling 测试补强（夹具 push 一条 change 后在 ExportPackage_ConfirmListAndRoundTripVerify 的 lastConfirmText 断言补『未应用编辑』包含断言——与 F-468 修法同面顺手）",
+      "resolution": "审核发现转登（2026-10-03 合入收尾后完善性复核）；编号顺延自 F-469。"
+    },
+    {
+      "id": "F-471",
+      "source": "UI-T42 合入收尾后完善性复核（2026-10-03——UiPlugin.cpp include 面复核：kAssembled 集合删除后 std::set 仍有消费点）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "UiPlugin.cpp 存量 include-what-you-use 瑕疵（非 UI-T42 引入）：文件内仍有一处 std::set 消费（UI-T32 时代需求域装配集）但 #include <set> 不在位，现靠传递包含编译通过——上游头文件调整即编译失败。",
+      "owner": "ui 侧（随下一 ui 批次补一行 #include <set>）",
+      "resolution": "审核发现转登（2026-10-03 合入收尾后完善性复核）；编号顺延自 F-470。"
     }
   ]
 }
