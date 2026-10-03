@@ -4627,7 +4627,26 @@
       "title": "HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder_RendersAndNotSelectable 对系统负载敏感（gate-all 并发烟测/构建期间偶发 1ms 级断言翻红）——疑渲染/事件循环时序依赖，非本批行为变化引入（本批未触 HostIntegration 域装配失败隔离路径）",
       "owner": "ui 单元所有者（用例时序去敏感化或负载标记）",
       "resolution": "UI-T41 实测记录：隔离与静置全绿、负载下偶发；验收会话若遇同例失败先复核系统负载再判。"
-
+    },
+    {
+      "id": "F-465",
+      "source": "UI-T41 验收 attempt 1（2026-10-03——4.11 偷懒/缩水扫描命中复核：UiText.cpp tooltip 尾缀与同分支批次C 装配事实矛盾）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "UiText.cpp 三处词表键（cmd.modeling.estimate-properties.tooltip／cmd.modeling.generate-placeholder-geometry.tooltip／panel.modeling.field.composite.tooltip）文案尾缀『（入口随后续批次装配）』——批次B 时点属实，但同分支批次C 已将两命令装配（宿主冒烟 step7 commands=10 实证），已装配按钮悬停仍告知『入口随后续批次装配』＝用户可见过期信息，与批次B B7『指引准确化』意图相悖。",
+      "owner": "ui 词表面（下一 UI 序列批次删除三处尾缀——一处词表改动的最小回归面）",
+      "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T41 合入。编号顺延自 F-464。"
+    },
+    {
+      "id": "F-466",
+      "source": "UI-T41 验收 attempt 1（2026-10-03——4.5 变异测试①：UiPlugin.cpp kAssembled 路由集剔除一条命令并重建（UiPlugin.cpp 重编＋studio 重链实证）后零断言翻红）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "isAssembledModelingCommand 路由集无测试网：变异实录宿主冒烟 step7 仍绿（step7 对账 commandsRegistered 注册面，不看路由集）＋ui 三套件 338 例全绿；路由退化只把已装配命令静默降级为『未装配』诚实拒绝路径，零断言翻红。",
+      "owner": "ui 侧测试补强（补『装配集∧目录集一致』断言——如 HostIntegrationContractTest 对账 kAssembled 与 PluginAssemblyReport.commandsRegistered 差集为零，或冒烟 auto 增 step8 逐命令 executeDomainCommand 探针；变异记录见 acc/ui-t41/1 验收记录 4.5 节）",
+      "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T41 合入。编号顺延自 F-465。"
     }
   ]
 }

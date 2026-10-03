@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "建模插件升级批次 A~C（域命令十条全装配＋预览页/重演接线＋编辑反馈体验修复＋旧版交互亮点迁移——用户 2026-10-03『采用ai对建模插件进行升级』指令承接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T37"],
   "requirements": [
     "MDL-07（参数化编辑界面——面板五区接线与编辑流）",
