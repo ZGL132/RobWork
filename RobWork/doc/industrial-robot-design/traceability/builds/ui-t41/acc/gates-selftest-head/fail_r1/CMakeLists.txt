@@ -1,0 +1,5 @@
+add_library(sdurws_ird_core INTERFACE)
+add_library(sdurws_ird_kinematics INTERFACE)
+target_link_libraries(sdurws_ird_kinematics INTERFACE sdurws_ird_core)
+add_library(sdurws_ird_modeling INTERFACE)
+target_link_libraries(sdurws_ird_kinematics INTERFACE sdurws_ird_modeling)

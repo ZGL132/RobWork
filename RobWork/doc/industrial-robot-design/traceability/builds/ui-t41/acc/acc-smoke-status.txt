@@ -1,0 +1,1 @@
+SMOKE_CONFIGURE_EXIT=1 SMOKE_BUILD_TAIL=  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/acc-ui-t41-1-wt/RobWork/RobWorkStud

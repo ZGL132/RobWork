@@ -1,0 +1,5 @@
+add_library(sdurws_ird_core INTERFACE)
+add_library(sdurws_ird_testkit INTERFACE)
+target_link_libraries(sdurws_ird_testkit INTERFACE sdurws_ird_core)
+add_library(sdurws_ird_io STATIC src/Io.cpp)
+target_link_libraries(sdurws_ird_io PUBLIC sdurws_ird_testkit)

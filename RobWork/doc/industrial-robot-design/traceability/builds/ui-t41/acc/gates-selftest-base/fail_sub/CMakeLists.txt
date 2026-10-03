@@ -1,0 +1,3 @@
+add_library(sdurws_ird_core INTERFACE)
+add_library(sdurws_ird_ui INTERFACE)
+target_link_libraries(sdurws_ird_core INTERFACE sdurws_ird_ui)
