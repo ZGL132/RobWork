@@ -140,6 +140,14 @@ void RequirementsPluginAssembly::setWritable(bool writable)
     }
 }
 
+void RequirementsPluginAssembly::bindView3DSeams(RequirementsView3DSeams seams)
+{
+    // UI-T33——三维视图缝转发（lastPicked 缝由模块内部重写为自引用）。
+    if (m_impl != nullptr) {
+        m_impl->bindView3DSeams(std::move(seams));
+    }
+}
+
 void RequirementsPluginAssembly::refreshFromSession()
 {
     if (m_impl != nullptr) {
