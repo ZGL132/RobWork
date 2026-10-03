@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.013" timestamp="2026-10-03T10:24:46.038" name="AllTests">
+  <testsuite name="ModelingCommandFlows" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.013" timestamp="2026-10-03T10:24:46.038">
+    <testcase name="ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D" file="D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t42-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="270" status="run" result="completed" time="0.007" timestamp="2026-10-03T10:24:46.038" classname="ModelingCommandFlows" />
+    <testcase name="ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D" file="D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t42-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="297" status="run" result="completed" time="0." timestamp="2026-10-03T10:24:46.045" classname="ModelingCommandFlows" />
+    <testcase name="ImportPackage_PreservesAppliedRootIdentity_R1" file="D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t42-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="318" status="run" result="completed" time="0.005" timestamp="2026-10-03T10:24:46.046" classname="ModelingCommandFlows" />
+    <testcase name="AssembledSetMatchesCatalog_F466" file="D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t42-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp" line="365" status="run" result="completed" time="0." timestamp="2026-10-03T10:24:46.051" classname="ModelingCommandFlows" />
+  </testsuite>
+</testsuites>

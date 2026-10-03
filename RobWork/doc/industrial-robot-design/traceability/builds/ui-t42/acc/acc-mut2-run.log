@@ -1,0 +1,20 @@
+Note: Google Test filter = ModelingCommandFlows.AssembledSetMatchesCatalog_F466
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t42-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(373): error: Value of: isAssembledModelingCommand(desc.id)
+  Actual: false
+Expected: true
+目录命令未装配（缩水交付——F-466 变异①的断言面）: modeling.export-package
+
+[  FAILED  ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466 (10 ms)
+[----------] 1 test from ModelingCommandFlows (10 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (11 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466
+
+ 1 FAILED TEST

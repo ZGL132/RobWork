@@ -1,0 +1,9 @@
+verify-task: RepoRoot=D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t42-1-wt
+validate-task: PASS (1 tasks)
+[dryrun] cmake --build build --config Release --target sdurws_ird_modeling_plugin sdurws_ird_modeling_test sdurws_ird_modeling_gui_test sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_test sdurws_ird_ui_gui_test
+[dryrun] build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe
+[dryrun] build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe
+[dryrun] build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe
+[dryrun] build/RobWorkStudio/bin/Release/sdurws_ird_ui_gui_test.exe
+[dryrun] pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
+verify-task: DRYRUN PASS UI-T42
