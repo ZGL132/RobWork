@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T49",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "碰撞模型编辑面批次——独立碰撞模型表＋视觉→碰撞引用复制辅助（modeling.md §2.5 碰撞模型行承接＋§5.2 几何生成辅助②落位；差距清单 spec 批三）",
+  "status": "planned",
+  "dependsOn": ["UI-T48"],
+  "requirements": [
+    "MDL-04（碰撞几何引用编辑面——§2.5 独立碰撞模型表行承接）",
+    "ARC-05（碰撞判定唯一归 policy——本卡零判定语义；modeling 只管几何引用）",
+    "UX-05（数值单位同显——碰撞几何 localTransform 编辑同规）",
+    "ERR-01（诚实拒绝与悬空警示——复制辅助覆盖确认/引用保护拒绝原因可见）"
+  ],
+  "designRefs": [
+    "units/modeling.md#5.2",
+    "units/modeling.md#4.3",
+    "units/modeling.md#9.7",
+    "units/modeling.md#2.5",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/docs/superpowers/specs/2026-10-03-modeling-editing-gap-batches.md",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T49.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling sdurws_ird_modeling_plugin sdurws_ird_modeling_test sdurws_ird_modeling_contract_test sdurws_ird_modeling_gui_test sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_test sdurws_ird_ui_gui_test",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t49",
+  "interUnit": true,
+  "knownPitfalls": ["P-MDL-3", "P-MDL-8"],
+  "acceptance": [
+    "独立碰撞模型表：逐连杆 collision 引用行编辑（挂接/替换/摘除——消费 UI-T48 引用编辑流设施；视觉/碰撞独立性断言：collision 编辑零 visual 改写）——具名用例",
+    "视觉→碰撞复制辅助：选中连杆一键复制 visual→collision（同资源＋来源徽标 GeometricEstimate；visual 未设禁用＋原因；已存在确认覆盖）——具名用例",
+    "悬空检测与资源状态呈现复用既有投影（C2 徽标＋L6 Missing/Changed）——具名用例",
+    "拒绝路径：引用保护（被引用资源摘除拒绝——I-MDL-9 比较型定位）——具名用例",
+    "回归门禁：受影响目标零错误构建＋modeling/ui 套件全绿＋ird_gates 归一零新增（或逐条登记）＋validate-docs PASS——留痕 traceability/builds/ui-t49/"
+  ],
+  "note": "批次特有告诫（registry 外自由承载）：①碰撞判定归 policy（ARC-05 红线）：本卡只承载 collision 几何引用的编辑与辅助生成；SelfCollisionHints 不动（导入报告→策略草稿输入——P-MDL-3 既有轨；策略草稿输入面归 policy 协作任务）；②复制辅助＝§5.2 几何生成辅助②：把 visual 引用复制为同资源 collision 引用（同 resourceRefId＋localTransform 初值随复制）——产物普通 GeometryRef 与手编同权同校验，来源标记 GeometricEstimate（methodTag 区分辅助类型）；零网格重画/凸包简化算法（如需简化代理走需求变更）；③视觉/碰撞引用相互独立（LinkEntry.visual/collision 两槽——§4.3-B）：碰撞表编辑不得顺带改写 visual；visual 未设时复制辅助诚实禁用（原因提示非置灰无解释）；④覆盖确认：collision 已有引用时复制辅助须显式确认覆盖（UI-T41 批次C estimate 覆盖确认同款交互纪律）；⑤gui 测试 QT_QPA_PLATFORM=windows；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：同 UI-T47（差距清单 spec 批三 G6＋G7）。关键事实：旧版『独立碰撞模型表＋从 Drawables 生成碰撞模型』（§2.5 行7）的承接语义在设计面已冻结——碰撞几何引用归 modeling（LinkEntry.collision 槽）、碰撞判定唯一归 policy（ARC-05）；本卡只是把该行从『设计 ✅、面板无编辑面』变为面板实位。堆叠序：ui-t49 基点 ui-t48 head（串行堆叠——消费批二引用编辑流与资源选择器设施）；status=planned 待 UI-T48 落位后转 ready。"
+}
