@@ -53,6 +53,7 @@
 #include <sdurws/ird/project/CommandService.hpp>   // project::CommandEnvelope（§8.5 返回值面——登记边）
 #include <sdurws/ird/requirements/Editor.hpp>      // IRequirementEditor（草稿唯一写目标——工作集权威）
 #include <sdurws/ird/requirements/Readiness.hpp>   // RequirementReadinessReport（就绪投影数据源）
+#include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // RequirementsView3DSeams（UI-T33——本单元门面消费面）
 #include <sdurws/ird/ui/IDraftController.hpp>      // ui::IModuleDraftSource（P-REQ-4 冻结面——UI-T12）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>       // ui::IPluginUiModule（P-REQ-8 消账——WP-24-T03 落位的冻结接口）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
@@ -157,6 +158,19 @@ public:
      * @return 流程完成与否（面板缺位/无会话＝false＋面板状态行不可达时静默）
      */
     bool executeDomainCommand(const std::string& commandId);
+
+    /**
+     * @brief 绑定三维视图缝（UI-T33——宿主网关装配后调用；capture-tcp/
+     *        pick-feature 随之解除降级。lastPicked 缝在本模块内重写为
+     *        自引用闭包——本模块即拾取登记面）。
+     */
+    void bindView3DSeams(RequirementsView3DSeams seams);
+
+    /// 最近一次本域三维拾取（观测面——拾取命令输入；nullopt＝未拾取）。
+    std::optional<core::ObjectId> lastView3DPick() const
+    {
+        return m_lastView3DPick;
+    }
 
     /**
      * @brief 注入需求编辑器（草稿唯一写目标与工作集权威——装配层注入；
@@ -309,6 +323,10 @@ private:
     CommandSubmitFn m_pendingSubmit;             ///< 面板创建前暂存的宿主出口
     CommandAvailabilityFn m_pendingAvailability;  ///< 面板创建前暂存的可用性查询
     PostEditAction m_hostPostEdit;  ///< 宿主编辑后动作（UI-T29——重估＋bindReadiness；组合子承载）
+    /// 三维视图缝（UI-T33——bindView3DSeams 注入；未绑定＝命令流降级原文）。
+    RequirementsView3DSeams m_view3dSeams;
+    bool m_view3dSeamsBound = false;             ///< 缝绑定旗标（透传判定面）
+    std::optional<core::ObjectId> m_lastView3DPick;  ///< 最近本域拾取（网关分发登记——零修订会话态）
 
     /// 编辑后组合子挂面板（UI-T29——宿主重估先行＋最新报告 refreshPanel；
     /// 面板缺位＝仅暂存，attachPanel 时补挂）。

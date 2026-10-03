@@ -9,7 +9,7 @@
  */
 
 #include "RequirementsPanelWidget.hpp"
-#include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次）
+#include "RequirementsCommandFlows.hpp"  // 域命令 UI 流程装配（UI-T32 C 批次＋UI-T33 三维缝重载）
 
 #include <QBrush>
 #include <QAction>   // 导入下拉菜单动作（返工⑤）
@@ -3451,6 +3451,12 @@ void RequirementsPanelWidget::onBatchWarning(const core::DiagnosticRecord& warni
 
 bool RequirementsPanelWidget::executeDomainCommand(const std::string& commandId)
 {
+    return executeDomainCommand(commandId, nullptr);  // 无缝＝两命令诚实降级原文
+}
+
+bool RequirementsPanelWidget::executeDomainCommand(
+    const std::string& commandId, const RequirementsView3DSeams* view3d)
+{
     m_threadGuard.assertOnUiThread();
     IRequirementEditor* editor = m_editTarget ? m_editTarget() : nullptr;
     if (editor == nullptr) {
@@ -3458,7 +3464,9 @@ bool RequirementsPanelWidget::executeDomainCommand(const std::string& commandId)
         return false;
     }
     // flows 装配层（对话框/表单＋域纯函数）；sink＝本面板（L-R2 分流）。
-    return executeRequirementCommand(commandId, *this, *editor, *this);
+    // view3d＝三维视图缝透传（UI-T33——capture-tcp/pick-feature 解除降级）。
+    return executeRequirementCommand(commandId, *this, *editor, *this,
+                                    qtDialogHost(), view3d);
 }
 
 }  // namespace sdurws::ird::requirements

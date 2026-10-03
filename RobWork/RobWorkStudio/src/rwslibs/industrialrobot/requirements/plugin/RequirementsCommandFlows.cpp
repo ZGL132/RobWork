@@ -26,8 +26,14 @@
 #include <QVBoxLayout>
 
 #include <sdurws/ird/io/Csv.hpp>         // makeCsvReader/RawTable（CSV 通道）
+#include <sdurws/ird/requirements/Capture.hpp>       // RequirementCaptureService/请求模型（UI-T33——捕获/拾取真实现）
+#include <sdurws/ird/requirements/Readiness.hpp>     // CheckContext（捕获服务第三参——空上下文预检口径）
+#include <rw/math/RPY.hpp>                          // RPY（TCP 姿态欧拉序——CapturedTcpPose.rpy 值面）
 #include <sdurws/ird/requirements/Import.hpp>        // RequirementImporter/exportCopy/mapJson
 #include <sdurws/ird/requirements/TemplateArray.hpp>  // TemplateArrayService/defaultTemplateParams
+
+#include <chrono>
+#include <algorithm>
 
 #include "ImportWizardFlow.hpp"        // L-R10 五步向导域侧流（组2）
 #include "PanelEditFlow.hpp"             // submitBatchEdit/IRequirementEditSink
@@ -516,18 +522,162 @@ bool flowImportJson(RequirementsPanelWidget& panel, IRequirementEditor& editor,
     return confirmImportOutcome(panel, editor, sink, host, outcome, diags);
 }
 
-bool flowCaptureTcp(RequirementsPanelWidget& panel)
+bool flowCaptureTcp(RequirementsPanelWidget& panel,
+                    IRequirementEditor& editor, IRequirementEditSink& sink,
+                    CommandDialogHost& host,
+                    const RequirementsView3DSeams* view3d)
 {
-    note(panel, QString::fromUtf8(
-                    "捕获 TCP 需要三维视图关节状态数据源——该数据源将在后续版本提供"));
-    return false;
+    (void)sink;  // 捕获经域服务直改编辑器——sink 编辑通知由面板刷新编排承接
+    // 缝缺省＝诚实降级原文（back-compat——绑定前两命令保持阶段 A 口径）。
+    if (view3d == nullptr || !view3d->listDevices
+        || !view3d->tcpWorldPose) {
+        note(panel, QString::fromUtf8(
+                        "捕获 TCP 需要三维视图关节状态数据源——该数据源将在后续版本提供"));
+        return false;
+    }
+    // 设备清点（宿主 WorkCell 现查）：零台＝诚实失败；多台＝宿主下拉选择。
+    const std::vector<std::string> devices = view3d->listDevices();
+    if (devices.empty()) {
+        note(panel, QString::fromUtf8(
+                        "捕获 TCP 失败：三维视图未发现设备（WorkCell 未装载机器人）"));
+        return false;
+    }
+    QString deviceName = QString::fromStdString(devices.front());
+    if (devices.size() > 1) {
+        QStringList candidates;
+        for (const std::string& d : devices) {
+            candidates << QString::fromStdString(d);
+        }
+        const auto picked =
+            host.chooseItem(QString::fromUtf8("选择设备"),
+                            QString::fromUtf8("捕获 TCP——请选择目标设备："),
+                            candidates);
+        if (!picked.has_value()) {
+            return false;  // 用户取消——流程静默终止
+        }
+        deviceName = candidates.at(*picked);
+    }
+    // TCP 世界系位姿（网关 State 只读——KIN-06 零修订）。
+    const auto pose = view3d->tcpWorldPose(deviceName.toStdString());
+    if (!pose.has_value()) {
+        note(panel, QString::fromUtf8("捕获 TCP 失败：设备 %1 的 TCP 位姿不可得")
+                        .arg(deviceName));
+        return false;
+    }
+
+    // 目标任务点＝捕获即新建固定点（域语义 captureTcpAsFixedPoint——
+    // pointName 确定性命名＋集合内去重后缀，I-REQ-3 唯一性由服务复核）。
+    std::vector<std::string> siblingNames;
+    for (const TaskPoint& p : editor.workingSet().points.entries) {
+        siblingNames.push_back(p.name);
+    }
+    std::string pointName = "TcpCapture";
+    for (int suffix = 2;
+         std::find(siblingNames.begin(), siblingNames.end(), pointName)
+         != siblingNames.end();
+         ++suffix) {
+        pointName = "TcpCapture" + std::to_string(suffix);
+    }
+
+    // 写回确认（REQ-08——确认凭据随请求过域门；拒绝走服务保守门径）。
+    const rw::math::Vector3D<double> p = pose->P();
+    const rw::math::RPY<double> rpy(pose->R());
+    const QString summary =
+        QString::fromUtf8("捕获 TCP（设备 %1）：位置（%2, %3, %4） m、"
+                          "姿态 RPY（%5, %6, %7） rad——新建固定任务点 %8。确认写回？")
+            .arg(deviceName)
+            .arg(p[0], 0, 'f', 4)
+            .arg(p[1], 0, 'f', 4)
+            .arg(p[2], 0, 'f', 4)
+            .arg(rpy[0], 0, 'f', 4)
+            .arg(rpy[1], 0, 'f', 4)
+            .arg(rpy[2], 0, 'f', 4)
+            .arg(QString::fromStdString(pointName));
+    if (!host.confirmImport(summary)) {  // 确认缝复用（CommandDialogHost 通用摘要确认面——REQ-08 语义)
+        return false;  // 用户取消——流程静默终止（零数据变更）
+    }
+
+    // 域服务裁决（REQ-08 确认门＋STALE 对账＋I-REQ-3/5 校验全部在域侧——
+    // 流程零判定；World 缺省参考系＝捕获值世界系直投）。
+    CapturedTcpPose captured;
+    captured.position = p;
+    captured.rpy = rw::math::Vector3D<double>(rpy[0], rpy[1], rpy[2]);
+    captured.refFrame = RequirementReference{};  // World 缺省（捕获值世界系）
+    captured.sessionRevisionId = view3d->sessionRevisionId;
+    CaptureTcpRequest request;
+    request.captured = captured;
+    request.pointName = pointName;
+    request.tolerance = ToleranceSpec{};  // 设计默认（§4.3）
+    request.confirmation = CaptureConfirmation::confirmed(
+        "ui", std::chrono::system_clock::now());
+    request.siblingNames = siblingNames;
+
+    RequirementCaptureService service;
+    const CaptureOutcome outcome =
+        service.captureTcpAsFixedPoint(editor, request, CheckContext{});
+    for (const core::DiagnosticRecord& diag : outcome.diags) {
+        note(panel, QString::fromStdString(diag.cause));
+    }
+    if (!outcome.accepted) {
+        note(panel, QString::fromUtf8("捕获 TCP 未写入（域侧拒绝）——详见上方诊断"));
+        return false;
+    }
+    note(panel, QString::fromUtf8("已捕获 TCP 至新任务点 %1（位置世界系，"
+                                  "姿态规则未变更——域侧规则语义）")
+                    .arg(QString::fromStdString(pointName)));
+    return true;
 }
 
-bool flowPickFeature(RequirementsPanelWidget& panel)
+bool flowPickFeature(RequirementsPanelWidget& panel,
+                     IRequirementEditor& editor, IRequirementEditSink& sink,
+                     CommandDialogHost& host,
+                     const RequirementsView3DSeams* view3d)
 {
-    note(panel, QString::fromUtf8(
-                    "拾取几何特征需要三维视图——三维交互将在后续版本提供"));
-    return false;
+    (void)editor;  // 姿态写回经域服务直改编辑器
+    // 缝缺省＝诚实降级原文（back-compat 同 capture-tcp）。
+    if (view3d == nullptr || !view3d->resolveFrameObjectId
+        || !view3d->lastPickedObjectId) {
+        note(panel, QString::fromUtf8(
+                        "拾取几何特征需要三维视图——三维交互将在后续版本提供"));
+        return false;
+    }
+    const std::optional<core::ObjectId> picked = view3d->lastPickedObjectId();
+    if (!picked.has_value()) {
+        // 网关分发未命中本域（名称映射未发布/非业务对象）——交互指引
+        // 取代阶段 A 的"版本未提供"（真实可操作路径的诚实呈现）。
+        note(panel, QString::fromUtf8(
+                        "尚未拾取到模型元素——请先在三维视图按住 Ctrl 双击目标对象"));
+        return false;
+    }
+    const std::optional<core::ObjectId> targetPoint = panel.selectedPointId();
+    if (!targetPoint.has_value()) {
+        note(panel, QString::fromUtf8(
+                        "拾取几何特征需要目标工位——请先在需求树或工位页选中目标任务点"));
+        return false;
+    }
+
+    // 域服务裁决（applyPickToOrientation——拾取目标→工位姿态规则写回；
+    // 确认凭据随请求过域门）。
+    ApplyPickRequest request;
+    request.picked.target.kind = RequirementRefKind::ModelFrame;
+    request.picked.target.objectId = *picked;  // ModelFrame 浅引用（帧拾取＝feature 空）
+    request.targetPointId = *targetPoint;
+    request.confirmation = CaptureConfirmation::confirmed(
+        "ui", std::chrono::system_clock::now());
+
+    RequirementCaptureService service;
+    const CaptureOutcome outcome =
+        service.applyPickToOrientation(editor, request, CheckContext{});
+    for (const core::DiagnosticRecord& diag : outcome.diags) {
+        note(panel, QString::fromStdString(diag.cause));
+    }
+    if (!outcome.accepted) {
+        note(panel, QString::fromUtf8("拾取结果未写入（域侧拒绝）——详见上方诊断"));
+        return false;
+    }
+    sink.notifySessionDirty();
+    note(panel, QString::fromUtf8("拾取结果已写入目标工位姿态规则"));
+    return true;
 }
 
 }  // namespace
@@ -537,6 +687,17 @@ bool executeRequirementCommand(const std::string& commandId,
                                IRequirementEditor& editor,
                                IRequirementEditSink& sink,
                                CommandDialogHost& host)
+{
+    return executeRequirementCommand(commandId, panel, editor, sink, host,
+                                     nullptr);  // 无缝＝两命令诚实降级原文
+}
+
+bool executeRequirementCommand(const std::string& commandId,
+                               RequirementsPanelWidget& panel,
+                               IRequirementEditor& editor,
+                               IRequirementEditSink& sink,
+                               CommandDialogHost& host,
+                               const RequirementsView3DSeams* view3d)
 {
     if (commandId == "requirements.export-copy") {
         return flowExportCopy(panel, editor, host);
@@ -560,10 +721,10 @@ bool executeRequirementCommand(const std::string& commandId,
         return flowImportJson(panel, editor, sink, host);
     }
     if (commandId == "requirements.capture-tcp") {
-        return flowCaptureTcp(panel);
+        return flowCaptureTcp(panel, editor, sink, host, view3d);
     }
     if (commandId == "requirements.pick-feature") {
-        return flowPickFeature(panel);
+        return flowPickFeature(panel, editor, sink, host, view3d);
     }
     note(panel, QString::fromUtf8("该流程将在后续版本提供（%1）")
                     .arg(QString::fromStdString(commandId)));

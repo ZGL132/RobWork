@@ -25,6 +25,7 @@
 #include <string>
 
 #include <sdurws/ird/requirements/TemplateArray.hpp>  // TemplateParams/ArrayKind（表单应答值面）
+#include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // RequirementsView3DSeams（UI-T33——门面消费面同单元）
 
 namespace sdurws::ird::requirements {
 
@@ -95,6 +96,21 @@ bool executeRequirementCommand(const std::string& commandId,
                                RequirementsPanelWidget& panel,
                                IRequirementEditor& editor,
                                IRequirementEditSink& sink);
+
+/**
+ * @brief 同 host 重载（带三维视图缝——UI-T33：requirements.capture-tcp/
+ *        pick-feature 随缝在位解除降级，走域捕获服务真实现；view3d 为
+ *        空指针＝两命令保持诚实降级原文，其余命令零影响）。
+ *
+ * @param view3d [in] 三维视图缝（门面 RequirementsView3DSeams——宿主
+ *               网关真数据源；可为空指针）
+ */
+bool executeRequirementCommand(const std::string& commandId,
+                               RequirementsPanelWidget& panel,
+                               IRequirementEditor& editor,
+                               IRequirementEditSink& sink,
+                               CommandDialogHost& host,
+                               const RequirementsView3DSeams* view3d);
 
 }  // namespace sdurws::ird::requirements
 
