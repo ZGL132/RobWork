@@ -1,0 +1,19 @@
+Note: Google Test filter = ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1
+D:\10_Source_Repos\21_robot\RobWork\build\acc-ui-t42-1-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ModelingCommandFlowsTest.cpp(352): error: Value of: fx.session.draft.rootObjectId.has_value()
+  Actual: false
+Expected: true
+
+[  FAILED  ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1 (7 ms)
+[----------] 1 test from ModelingCommandFlows (7 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (7 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1
+
+ 1 FAILED TEST

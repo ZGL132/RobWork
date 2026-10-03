@@ -1,0 +1,17 @@
+Note: Google Test filter = ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1:ModelingCommandFlows.AssembledSetMatchesCatalog_F466:ModelingCommandFlows.ExportPackage*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from ModelingCommandFlows
+[ RUN      ] ModelingCommandFlows.ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D
+[       OK ] ModelingCommandFlows.ExportPackage_ConfirmListAndRoundTripVerify_UI_T41D (7 ms)
+[ RUN      ] ModelingCommandFlows.ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D
+[       OK ] ModelingCommandFlows.ExportPackage_ConfirmRejected_NoFileWritten_UI_T41D (0 ms)
+[ RUN      ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1
+[       OK ] ModelingCommandFlows.ImportPackage_PreservesAppliedRootIdentity_R1 (5 ms)
+[ RUN      ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466
+[       OK ] ModelingCommandFlows.AssembledSetMatchesCatalog_F466 (0 ms)
+[----------] 4 tests from ModelingCommandFlows (13 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (13 ms total)
+[  PASSED  ] 4 tests.
