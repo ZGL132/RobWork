@@ -148,6 +148,7 @@ add_library(sdurws_ird_ui STATIC
     src/GlobalShortcutRegistry.cpp
     src/CommandPalette.cpp
     src/PolicySummaryCard.cpp
+    src/DomainReadinessSummaryCard.cpp  # UI-T44——跨域就绪摘要卡（§4.2 右栏行诊断摘要最小兑现）
     src/FormEditCommon.cpp
     src/ParamTablePanel.cpp
     src/UiText.cpp
@@ -527,6 +528,7 @@ add_executable(sdurws_ird_ui_gui_test
     gui_test/AboutDialogGuiTest.cpp
     gui_test/IndustrialProjectTreeGuiTest.cpp   # UI-T21——面板：五分组组行/选中回流/名称现取/L3 落点
     gui_test/PropertyInspectorGuiTest.cpp       # UI-T22——检查器面板：分态占位/标题现取/构件复用/入口宿装
+    gui_test/DomainReadinessSummaryCardGuiTest.cpp  # UI-T44——就绪摘要卡：判定词映射/逐域行/诚实空态
     gui_test/HostIntegrationGuiTest.cpp)        # UI-T23——集成收口：装配失败占位呈现/关闭清理宿装清空
 
 target_compile_features(sdurws_ird_ui_gui_test PRIVATE cxx_std_17)

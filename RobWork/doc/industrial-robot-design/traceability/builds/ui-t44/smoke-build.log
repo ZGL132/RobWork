@@ -1,0 +1,130 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\core\Release\sdurws_ird_core.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Diagnostics.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  ParamSchema.cpp
+  Catalog.cpp
+  Factory.cpp
+  Confirmable.cpp
+  Aggregation.cpp
+  Logging.cpp
+  Redaction.cpp
+  CrashReport.cpp
+  正在生成代码...
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\diagnostics\Release\sdurws_ird_diagnostics.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  Ui.cpp
+  WorkbenchShell.cpp
+  WorkbenchContent.cpp
+  ShellSupport.cpp
+  StatusProjection.cpp
+  View3DPlaceholder.cpp
+  CommandRegistry.cpp
+  GlobalShortcutRegistry.cpp
+  CommandPalette.cpp
+  PolicySummaryCard.cpp
+  DomainReadinessSummaryCard.cpp
+  FormEditCommon.cpp
+  ParamTablePanel.cpp
+  UiText.cpp
+  StageNavigationModel.cpp
+  AboutDialog.cpp
+  UiSessionController.cpp
+  DraftController.cpp
+  DiagnosticPresentation.cpp
+  CommandInteractionBridge.cpp
+  正在生成代码...
+  正在编译...
+  TaskPresentation.cpp
+  PluginUiRegistrar.cpp
+  HostController.cpp
+  RuntimePublishBridge.cpp
+  SelectionService.cpp
+  IndustrialProjectTree.cpp
+  PropertyInspector.cpp
+  FlowLayout.cpp
+  UiTheme.cpp
+  正在生成代码...
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\ui\Release\sdurws_ird_ui.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\diagnostics\Release\sdurws_ird_diagnostics.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\ui\Release\sdurws_ird_ui.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  ShellModelTest.cpp
+  StatusWordModelTest.cpp
+  View3DContractTest.cpp
+  CommandRegistryModelTest.cpp
+  ShortcutRegistryModelTest.cpp
+  PolicySummaryCardTest.cpp
+  FormEditModelTest.cpp
+  StageNavigationModelTest.cpp
+  AboutDialogModelTest.cpp
+  SessionControllerModelTest.cpp
+  DraftControllerModelTest.cpp
+  DiagPresentationModelTest.cpp
+  TaskPresentationModelTest.cpp
+  CommandInteractionBridgeTest.cpp
+  HostControllerModelTest.cpp
+  RuntimePublishBridgeTest.cpp
+  SelectionServiceTest.cpp
+  IndustrialProjectTreeModelTest.cpp
+  正在生成代码...
+  正在编译...
+  PropertyInspectorModelTest.cpp
+  正在生成代码...
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\ui\Release\sdurws_ird_ui_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\ui\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\ui\Release\sdurws_ird_ui.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  TestMainReport.cpp
+  BuildPlacementTest.cpp
+  WorkbenchShellGuiTest.cpp
+  WorkbenchContentGuiTest.cpp
+  CommandPaletteGuiTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(174,36): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\ui\sdurws_ird_ui_gui_test.vcxproj]
+  PolicySummaryCardGuiTest.cpp
+  ParamTablePanelGuiTest.cpp
+  AboutDialogGuiTest.cpp
+  IndustrialProjectTreeGuiTest.cpp
+  PropertyInspectorGuiTest.cpp
+  DomainReadinessSummaryCardGuiTest.cpp
+  HostIntegrationGuiTest.cpp
+  正在生成代码...
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build-smoke-ui-t44\ui\Release\sdurws_ird_ui_gui_test.exe

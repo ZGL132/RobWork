@@ -257,6 +257,20 @@ constexpr std::array<TextRow, 3> kPluginAssemblyLabelTable{{
     { "plugin.assembly.failed.label",        "装配失败" },
 }};
 
+/// 键族⑦a：跨域就绪判定词（verdict.<status>——UI-T44；四值与
+/// core::EngineeringStatus 枚举一一对应，映射函数
+/// engineeringStatusDisplayName 单点消费）。值＝工程用语中文（UX-02）：
+/// "待提交后判定"承载 NotApplicable 的映射语义（呈现约定——§6.5 值语义
+/// 直投：ReadyWithNotes＝输入完整但结论非"可行"，草稿预检口径不替代
+/// 命令 prepare 现场重估）；"输入不完整"承载 DataInsufficient（REQ-06
+/// 缺项呈现归域面板就绪条，摘要卡只给判定词）。
+constexpr std::array<TextRow, 4> kVerdictTable{{
+    { "verdict.feasible",              "可行"         },
+    { "verdict.engineering-infeasible", "工程不可行"  },
+    { "verdict.data-insufficient",     "输入不完整"   },
+    { "verdict.not-applicable",        "待提交后判定" },
+}};
+
 /// 键族⑧：诊断/确认/任务呈现键（UI-T13 冻结登记，§16.7 v1.5——§9.1
 /// 诊断呈现〔比较型占位/恢复横幅 PM-15/日志面板〕＋§9.2 确认对话〔批量
 /// 决议/失效标注/策略绑定提示——MDL-06④ 确认不豁免校验〕＋§9.4 任务
@@ -346,6 +360,9 @@ const TextRow* findRow(const TextKey& key)
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kPluginAssemblyLabelTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kVerdictTable) {
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kPresentationTable) {
@@ -541,6 +558,9 @@ std::vector<TextKey> registeredTextKeys()
         keys.emplace_back(row.key);
     }
     for (const auto& row : kPluginAssemblyLabelTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kVerdictTable) {
         keys.emplace_back(row.key);
     }
     for (const auto& row : kPresentationTable) {

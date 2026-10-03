@@ -78,6 +78,7 @@
 #include <sdurws/ird/requirements/ObjectTypes.hpp>  // requirements::kReqSetObjectType（根回填 token——公共头常量）
 #include <sdurws/ird/requirements/RevisionSyncPolicy.hpp>  // planExternalRevisionSync（UI-T35 P2 外部修订同步三分岔判定——纯函数）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
+#include <sdurws/ird/ui/DomainReadinessSummaryCard.hpp>  // 跨域就绪摘要卡（UI-T44——Right Dock 诊断摘要半区）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // PluginUiDescriptor/CommandDescriptor 完整类型（UI-T23 三域命令入册的遍历面）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（buildDraftCommand 调用面）
 #include <sdurws/ird/ui/UiText.hpp>              // ui::resolveText（§3.5 唯一文案出口——域命令诚实反馈文案）
@@ -1139,18 +1140,26 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
     // UI-T23：右 Dock 内容升格为"共享属性检查器＋右栏（诊断与设置）"纵排
     // （B1-SPEC D5——共享检查器为宿主右 Dock 唯一跨域属性呈现面；UI-T22
     // 登记注③的预留缝）。检查器未装配时保持首版单段形态，零回归。
+    // UI-T44：检查器与右栏之间插入跨域就绪摘要卡（诊断摘要半区——§4.2
+    // 右栏行的最小兑现；数据源＝各域 §11.2 readonlyProjections，随共享面
+    // 刷新点重取）。检查器缺席形态下卡照常挂（就绪摘要不依赖检查器）。
     m_propsDock = new QDockWidget(QString::fromUtf8("IRD 属性与诊断"), this);
     m_propsDock->setObjectName("ird_props_dock");
-    if (m_inspectorPanel != nullptr) {
+    {
         auto* rightColumn = new QWidget(m_propsDock);
         auto* rightLayout = new QVBoxLayout(rightColumn);
         rightLayout->setContentsMargins(0, 0, 0, 0);
         rightLayout->setSpacing(2);
-        rightLayout->addWidget(m_inspectorPanel->widget(), /*stretch=*/3);
+        if (m_inspectorPanel != nullptr) {
+            rightLayout->addWidget(m_inspectorPanel->widget(), /*stretch=*/3);
+        }
+        m_readinessCard =
+            new DomainReadinessSummaryCard(QString::fromUtf8("跨域就绪摘要"),
+                                           rightColumn);
+        rightLayout->addWidget(m_readinessCard);
         rightLayout->addWidget(m_content->rightWidget(), /*stretch=*/2);
+        rightLayout->addStretch(0);
         m_propsDock->setWidget(rightColumn);
-    } else {
-        m_propsDock->setWidget(m_content->rightWidget());
     }
     m_tasksDock = new QDockWidget(QString::fromUtf8("IRD 任务和状态"), this);
     m_tasksDock->setObjectName("ird_tasks_dock");
@@ -3032,6 +3041,11 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
 
 void IrdWorkbenchHostPlugin::refreshSharedSurfaces()
 {
+    // 跨域就绪摘要先行重取（UI-T44——卡刷新不依赖树/检查器装配态；三域
+    // readonlyProjections 现取零缓存，ACC5 同纪律。刷新时机＝本编排的
+    // 全部触发点：项目打开/关闭、应用草稿、撤销/重做、装配首刷——编辑
+    // 未应用的中间态不实时投递，卡头语义即"随共享面刷新"，不冒名实时）。
+    refreshReadinessSummary();
     // 共享面刷新编排（装配层编排形——与域 harness 同构）：树 rebuild→
     // 树面板 refresh→检查器按当前选中重询问→检查器面板 refresh。重建
     // 拒绝（域数据违约）保持旧内容＋Dev 留痕（拒绝优于残缺——模型契约）。
@@ -3051,6 +3065,46 @@ void IrdWorkbenchHostPlugin::refreshSharedSurfaces()
         ui::SelectionSource::ProjectTree);
     m_inspectorModel->onSelectionChanged(current);
     m_inspectorPanel->refresh();
+}
+
+void IrdWorkbenchHostPlugin::refreshReadinessSummary()
+{
+    // 跨域就绪摘要重取（UI-T44——§11.2 readonlyProjections 汇聚半区）：
+    // 三域模块现取投影（零判定——verdict 直投，N-11 无第二套），逐项转
+    // 摘要行投卡。域装配缺席（§11.3 失败隔离形态）＝该域零行——卡呈剩余
+    // 域如实汇总；三域全缺席＝诚实空态行。UI 线程调用（§3.4——调用点全
+    // 在共享面刷新编排）。
+    if (m_readinessCard == nullptr || m_domains == nullptr) {
+        return;  // 卡未装配/域装配未就绪（装配序保证——幂等静默）
+    }
+    std::vector<ui::DomainReadinessSummaryRow> rows;
+    // 行装配辅助：一个域模块＝至少一行投影（§11.2 契约——空集亦呈空态
+    // 行）；域名挂宿主装配词（plugin.<domain>.title 同词——UX-02 值源）。
+    const auto addRows = [&rows](const char* domainLabel,
+                                 ui::IPluginUiModule* module) {
+        if (module == nullptr) { return; }
+        for (const ui::DomainReadinessItem& item : module->readonlyProjections()) {
+            ui::DomainReadinessSummaryRow row;
+            row.domainLabel = QString::fromUtf8(domainLabel);
+            row.verdictText = ui::engineeringStatusDisplayName(item.verdict);
+            if (!item.inputComplete) {
+                // 输入不完整附注（REQ-06——缺项明细归域面板就绪条，摘要
+                // 只提示不展开；verdict 词已承载"输入不完整"时附注不重复）。
+                if (item.verdict != core::EngineeringStatus::DataInsufficient) {
+                    row.noteText = QString::fromUtf8("输入不完整");
+                }
+            }
+            rows.push_back(std::move(row));
+        }
+    };
+    addRows("建模", m_domains->modeling.module.get());
+    if (m_domains->requirements.has_value()) {
+        addRows("需求", m_domains->requirements->module.get());
+    }
+    if (m_domains->kinematics.has_value()) {
+        addRows("运动学", m_domains->kinematics->module.get());
+    }
+    m_readinessCard->setRows(rows);
 }
 
 void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
