@@ -484,17 +484,25 @@ TEST(PluginPanel, StationEditSetFillsOnlyTargetFields_ACC2)
     base.tolerance = ToleranceSpec{1.0e-3, 3.14159265358979323846 / 180.0};
 
     // QuantityFieldSpec 装配面（WP-10-T08 公共件——SI 单位锚＋量纲一致性
-    // 由 makeQuantityFieldSpec fail-fast 保证）。
+    // 由 makeQuantityFieldSpec fail-fast 保证；UI-T47 增位置三轴＝15）。
     const auto specs = stationQuantitySpecs();
-    ASSERT_EQ(specs.size(), std::size_t(12));
+    ASSERT_EQ(specs.size(), std::size_t(15));
     bool foundTolerance = false;
+    int positionAxes = 0;
     for (const ui::QuantityFieldSpec& s : specs) {
         if (s.key == "tolerance-position") {
             foundTolerance = true;
             EXPECT_EQ(s.kind, core::QuantityKind::Length);
         }
+        // UI-T47 位置三轴键在册（Length/m——与回填词表同源单一词表）。
+        if (s.key == "pose-position-x" || s.key == "pose-position-y"
+            || s.key == "pose-position-z") {
+            ++positionAxes;
+            EXPECT_EQ(s.kind, core::QuantityKind::Length);
+        }
     }
     EXPECT_TRUE(foundTolerance);
+    EXPECT_EQ(positionAxes, 3) << "位置三轴键未全量在册（编辑轨词表缺项）";
 
     // 回填：仅命中的字段变化（其余字段原样保留——数据搬运零判定）。
     ui::ParamEditSet edits;

@@ -285,6 +285,13 @@ std::vector<ui::QuantityFieldSpec> stationQuantitySpecs()
         // ToolRollFree 区间（rad；有序性归域校验 rollRange.wellFormed）。
         spec("roll-min", "滚转下限", core::QuantityKind::Angle, rad, std::nullopt),
         spec("roll-max", "滚转上限", core::QuantityKind::Angle, rad, std::nullopt),
+        // 受约束位置三轴（UI-T47 位置编辑轨——"空间与公差"卡 X/Y/Z 逐轴
+        // SpinBox 的提交键；Length/m 不设界：零向量合法性与参考系语义归
+        // 域校验链，表单不设界防"范围暗示"误导——target-point-* 同款
+        // 呈现层契约）。
+        spec("pose-position-x", "位置 X", core::QuantityKind::Length, m, std::nullopt),
+        spec("pose-position-y", "位置 Y", core::QuantityKind::Length, m, std::nullopt),
+        spec("pose-position-z", "位置 Z", core::QuantityKind::Length, m, std::nullopt),
     };
 }
 
@@ -321,6 +328,30 @@ TaskPoint applyStationEditSet(const TaskPoint& base, const ui::ParamEditSet& edi
             out.pose.orientation.rollRange.min = c.newSi;
         } else if (c.key == "roll-max") {
             out.pose.orientation.rollRange.max = c.newSi;
+        } else if (c.key == "pose-position-x" || c.key == "pose-position-y"
+                   || c.key == "pose-position-z") {
+            // 位置三轴（UI-T47——"空间与公差"卡逐轴编辑轨）。位置是**三维
+            // 整体量**（SourcedValue<Vector3D>——四态承载"缺失≠零"），单轴
+            // 编辑＝基于基线值改命中轴后整体重写： Provided 基线→取原向量
+            // 改一轴、来源标记翻转为 UserProvided（用户直接输入事实——编辑
+            // 覆盖既有来源）；NotProvided 基线→本轨不可达（UI 呈现面在非
+            // Provided 态为灰显占位，无 SpinBox 输入），到达即表单模型与
+            // 四态语义漂移（"以零补全未编辑轴"会引入'缺失＝零'通道，违背
+            // I-REQ 四态语义）——fail-fast 同词表外键轨。
+            const std::optional<rw::math::Vector3D<double>> baseVec =
+                out.pose.position.tryValue();
+            if (!baseVec.has_value()) {
+                throw std::invalid_argument(
+                    "工位面板：位置未提供态收到单轴编辑（" + c.key
+                    + "）——四态语义漂移（未提供态无逐轴输入面，实现缺陷）");
+            }
+            rw::math::Vector3D<double> v = *baseVec;
+            const std::size_t axis = c.key == "pose-position-x"
+                                         ? 0
+                                         : (c.key == "pose-position-y" ? 1 : 2);
+            v[axis] = c.newSi;  // SI 直投（m——spec 词表同单位，零换算）
+            out.pose.position = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+                v, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
         } else {
             throw std::invalid_argument("工位面板：修改集携带词表外键 " + c.key
                                         + "（表单/回填词表漂移——实现缺陷）");
