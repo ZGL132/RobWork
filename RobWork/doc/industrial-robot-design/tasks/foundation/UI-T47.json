@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "建模域结构编辑面批次——关节链结构编辑（增删/上移下移/六轴重置）＋结构变更参数保留（UI-T41 批次C C4 承接＋modeling.md §2.5 关节表编辑行承接；差距清单 spec 2026-10-03-modeling-editing-gap-batches 批一）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T46"],
   "requirements": [
     "MDL-01（建模与参数化——§2.5 关节表编辑行承接：增删/上移下移/六轴重置）",
@@ -63,9 +63,11 @@
     "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
   "branch": "ui-t47",
+  "acceptedBase": "redesign-main@1797bec3",
   "interUnit": true,
   "knownPitfalls": ["O-36", "P-MDL-1", "P-MDL-8"],
   "acceptance": [
+    "【F-478 措辞澄清（2026-10-04，治理随批——语义零变化）】本数组第 1 条的『选中位插入』＝在选中关节之后插入（下标 index+1 位——单元卡 modeling.md v0.28 词表权威口径）",
     "关节新增：建模结构树/关节表新增入口（选中位插入）→域原语新增关节（默认值＝T-MDL-1 同族设计默认：Explicit 权威 axis/origin＋限位按 §5.1 表值）→就绪重算→草稿应用走 apply-robot-design 既有信封（零新 project token）——域 UT＋流级/gui 具名用例",
     "关节删除：引用保护（被 defaultTcp/几何引用等引用的对象拒绝——I-MDL-9 比较型定位诊断）＋链连续性拒绝原因可见；中间关节删除语义按 modeling.md 词表落位（缺口先卡修订再实现）——具名用例",
     "重排：上移/下移（串联序交换）后链不变量（I-MDL 系）保持＋参数随动——具名用例",
@@ -73,5 +75,5 @@
     "C4 参数保留：结构操作前后用户权威参数（axis/origin/zeroOffset/bounds/workingRange/物性/几何引用）随对象保留的往返断言＋派生值重算不冒充权威——具名用例（UI-T41 批次C C4 消账）",
     "回归门禁：受影响目标零错误构建＋modeling/ui 套件全绿＋ird_gates 归一零新增（或逐条登记）＋validate-docs PASS——留痕 traceability/builds/ui-t47/"
   ],
-  "note": "批次特有告诫（registry 外自由承载）：①新关节身份分配＝PA-1 唯一取号点：prepare 期经 HandlerContext.objectId()（CommandHandlers.hpp PayloadObjectSlot 口径）；关节/连杆为模型内标识（O-36 裁决/P-MDL-1 背景登记）随根槽替换落库——禁私设第二取号路径；§6.7 确定性临时句柄纪律（草稿期 tmp 句柄不入库）同构适用；②结构编辑域语义以 §5.1/§5.2 既有词表为边界（AddJoint/AddTool/RemoveObjectRef/RenameEdit 系）；中间关节删除的链语义等词表缺口＝先 units/modeling.md 增量修订登记再实现（DTB §5.4），禁代码先行；③权威模式整链一个（RobotDesign.authority）：结构编辑零权威模式切换语义；DH 权威态下新增关节按 §7.2 参数来源表落位（axis/origin 在 StandardDH 态为派生），实施前对照 §7.3 冲突矩阵；④C4 参数保留语义：结构操作（重排/删除邻位）时用户权威参数随对象身份保留；DH 派生四参数（dhDerived）重算不冒充权威（D-MDL-5——不参与编码身份）；⑤就绪校验联动：结构编辑接受后链类就绪结果重算投影（§8.2）；拒绝路径工作集字节不变（EditOutcome 逐项诊断——UX-03 比较型三要素）；⑥局部撤销：结构编辑入 undoLocal 单快照；空变化零快照（UI-T30 幻影脏化纪律同源）；⑦gui 测试 QT_QPA_PLATFORM=windows（offscreen 假红——环境纪律）；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：所有者 2026-10-03 指令『从这三处出发做差距清单并拆四批立项（任务号 UI-T47 起）』——三处＝UI-T41 批次C 登记不实施项（C4/C5）＋UI-T43 契约注外审 P1（建模对象编辑扩展）＋modeling.md §2.5 对照表三行新版无编辑面；差距清单与四批映射＝docs/superpowers/specs/2026-10-03-modeling-editing-gap-batches.md（本卡＝批一 G1＋G2）。关键事实：结构编辑无需新增 project commandType——草稿差值经 buildDraftCommand 组装 apply-robot-design 既有信封（五 token 整对象应用语义，§1 现状盘点），缺的是域编辑原语＋面板编辑面。堆叠序：ui-t47 基点＝UI-T46 合入后 redesign-main（dependsOn=UI-T46 为排序前置——文件面零交叠：UI-T46 触及 ui/plugin＋runtime，本卡触及 modeling 域＋modeling/plugin）；后续 ui-t48→ui-t49→ui-t50 串行堆叠（T36→T37 先例）。"
+  "note": "【合入登记注（2026-10-04，PIPE §4.7 收尾）】acceptedHead de1bf1e5 合入 redesign-main@e4881442（acc/UI-T47/1@96aa98e6 按 SHA 先并）；对抗式验收 11 项 pass（单会话顺序执行例外声明）＋V1/V2/V3 三变异翻红；合并态验证 modeling 306/modeling_gui 14/modeling_contract 17/ui 246/requirements 200 全绿＋ird_gates 75 条零新增；UI-T48 随本收口转 ready（串行堆叠批二）。批次特有告诫（registry 外自由承载）：①新关节身份分配＝PA-1 唯一取号点：prepare 期经 HandlerContext.objectId()（CommandHandlers.hpp PayloadObjectSlot 口径）；关节/连杆为模型内标识（O-36 裁决/P-MDL-1 背景登记）随根槽替换落库——禁私设第二取号路径；§6.7 确定性临时句柄纪律（草稿期 tmp 句柄不入库）同构适用；②结构编辑域语义以 §5.1/§5.2 既有词表为边界（AddJoint/AddTool/RemoveObjectRef/RenameEdit 系）；中间关节删除的链语义等词表缺口＝先 units/modeling.md 增量修订登记再实现（DTB §5.4），禁代码先行；③权威模式整链一个（RobotDesign.authority）：结构编辑零权威模式切换语义；DH 权威态下新增关节按 §7.2 参数来源表落位（axis/origin 在 StandardDH 态为派生），实施前对照 §7.3 冲突矩阵；④C4 参数保留语义：结构操作（重排/删除邻位）时用户权威参数随对象身份保留；DH 派生四参数（dhDerived）重算不冒充权威（D-MDL-5——不参与编码身份）；⑤就绪校验联动：结构编辑接受后链类就绪结果重算投影（§8.2）；拒绝路径工作集字节不变（EditOutcome 逐项诊断——UX-03 比较型三要素）；⑥局部撤销：结构编辑入 undoLocal 单快照；空变化零快照（UI-T30 幻影脏化纪律同源）；⑦gui 测试 QT_QPA_PLATFORM=windows（offscreen 假红——环境纪律）；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：所有者 2026-10-03 指令『从这三处出发做差距清单并拆四批立项（任务号 UI-T47 起）』——三处＝UI-T41 批次C 登记不实施项（C4/C5）＋UI-T43 契约注外审 P1（建模对象编辑扩展）＋modeling.md §2.5 对照表三行新版无编辑面；差距清单与四批映射＝docs/superpowers/specs/2026-10-03-modeling-editing-gap-batches.md（本卡＝批一 G1＋G2）。关键事实：结构编辑无需新增 project commandType——草稿差值经 buildDraftCommand 组装 apply-robot-design 既有信封（五 token 整对象应用语义，§1 现状盘点），缺的是域编辑原语＋面板编辑面。堆叠序：ui-t47 基点＝UI-T46 合入后 redesign-main（dependsOn=UI-T46 为排序前置——文件面零交叠：UI-T46 触及 ui/plugin＋runtime，本卡触及 modeling 域＋modeling/plugin）；后续 ui-t48→ui-t49→ui-t50 串行堆叠（T36→T37 先例）。"
 }
