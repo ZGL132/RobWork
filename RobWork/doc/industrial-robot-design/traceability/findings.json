@@ -4651,6 +4651,26 @@
       "title": "isAssembledModelingCommand 路由集无测试网：变异实录宿主冒烟 step7 仍绿（step7 对账 commandsRegistered 注册面，不看路由集）＋ui 三套件 338 例全绿；路由退化只把已装配命令静默降级为『未装配』诚实拒绝路径，零断言翻红。",
       "owner": "ui 侧测试补强（补『装配集∧目录集一致』断言——如 HostIntegrationContractTest 对账 kAssembled 与 PluginAssemblyReport.commandsRegistered 差集为零，或冒烟 auto 增 step8 逐命令 executeDomainCommand 探针；变异记录见 acc/ui-t41/1 验收记录 4.5 节）",
       "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T41 合入。编号顺延自 F-465。"
+    },
+    {
+      "id": "F-467",
+      "source": "UI-T42 验收 attempt 1（2026-10-03——4.8 文档同步核查：ui.md 头部版本行 v1.48（UI-T41 批次C）直跳 v1.50（UI-T42））",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "ui.md 头部版本谱系跳号：v1.48→v1.50 直跳，v1.49 无独立落库态，且新头部对 v1.49 的描述文字沿用批次B 的『B1~B7…批次A 同日先行』文案、与『批次D 段修复』标签不匹配——纯文档谱系瑕疵，不影响语义追溯（§13 UI-T42 行本身完整）。",
+      "owner": "ui 文档所有者（下一 UI 序列批次登记时顺带修正头部谱系描述——一处头行文字的最小回归面）",
+      "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T42 合入。编号顺延自 F-466。"
+    },
+    {
+      "id": "F-468",
+      "source": "UI-T42 验收 attempt 1（2026-10-03——4.4②/4.11③ 逐条证据表核查：import-package 确认文本半区仅代码行号证据、无具名测试）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "import-package 确认文本的『应用语义两态/未应用编辑丢弃警示』（ModelingCommandFlows.cpp:716-726）无具名 gtest 截获断言——R1 用例经 FakeHost 走 confirmImport 默认 true 路径未截获文本（export 侧已有 FakeHost::lastConfirmText 截获先例）；同族观察：真实 QMessageBox 默认钮 No 纪律（:82）属 UI 进程代码，自动化面仅能代码级核对。",
+      "owner": "ui 侧测试补强（下一批次 ModelingCommandFlowsTest 增 import 侧 lastConfirmText 截获断言——FakeHost 增 confirmImport 文本留痕一行的最小改动；验收记录见 acc/ui-t42/1 4.4②/4.11③）",
+      "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T42 合入。编号顺延自 F-467。"
     }
   ]
 }

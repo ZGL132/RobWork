@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "建模面板发布闭环与联动准备批次（恰一根不变量 R1＋清单化确认 D1＋回读校验 D2＋选中来源会话态 D3——UI-T41 批次 D 承接改立；顺带消账 F-465/F-466）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T41"],
   "requirements": [
     "ARC-04（身份可追溯——项目根身份跨导入稳定：恰一根不变量）",
