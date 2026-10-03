@@ -85,6 +85,7 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #                        §9.4.9；pugixml 复用 T05 已登记依赖——O-40 不二
 #                        次引入渠道）
 # T07 增列（tasks/foundation/WP-13-T07.json，§3.3 表 T07 行）：
+#   src/StructureEdit.cpp 关节链结构编辑原语（§5.2 v0.28——UI-T47）
 #   src/Template.cpp     模板创建与参数化编辑（IRobotDesignTemplateFactory
 #                        ＋T-MDL-1 六轴默认参数表＋ModelingWorkingSet v1
 #                        ＋创建入口守卫〔§6.4 判定复用〕＋逐轴编辑流＋
@@ -159,6 +160,7 @@ add_library(sdurws_ird_modeling STATIC
     src/Import.cpp
     src/XacroExpand.cpp
     src/Template.cpp
+    src/StructureEdit.cpp   # UI-T47——关节链结构编辑原语（§5.2 v0.28 四操作）
     src/Readiness.cpp
     src/CommandHandlers.cpp
     src/DhConvert.cpp
@@ -515,6 +517,7 @@ add_executable(sdurws_ird_modeling_test
     test/PropertyEstimationTest.cpp
     test/ImportTest.cpp
     test/XacroExpandTest.cpp
+    test/StructureEditTest.cpp  # UI-T47——结构编辑四操作（增删/重排/重置＋C4 保留）
     test/TemplateTest.cpp
     test/BasePlacementEditTest.cpp
     test/DhConvertTest.cpp

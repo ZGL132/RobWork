@@ -128,4 +128,52 @@ CentroidSubmitOutcome submitCentroidEdit(BodyData& body, IPanelEditSink& sink,
                : CentroidSubmitOutcome::Rejected;
 }
 
+// =====================================================================
+// 关节链结构编辑提交流（UI-T47——契约头 StructureOp/submitStructureOp；
+// 域裁决唯一在 StructureEdit 四原语——本层零判定零回滚，字段轨同款形态）
+// =====================================================================
+
+EditSubmitOutcome submitStructureOp(ModelingWorkingSet& ws, IPanelEditSink& sink,
+                                    StructureOp op, std::size_t jointIndex)
+{
+    // 域裁决（唯一判定点——拒绝时工作集字节不变，域内强保证）。
+    std::optional<StructureEditError> err;
+    switch (op) {
+    case StructureOp::Add:
+        err = addJointAt(ws, jointIndex);
+        break;
+    case StructureOp::Remove:
+        err = removeJointAt(ws, jointIndex);
+        break;
+    case StructureOp::MoveUp:
+        err = reorderJoint(ws, jointIndex, /*down=*/false);
+        break;
+    case StructureOp::MoveDown:
+        err = reorderJoint(ws, jointIndex, /*down=*/true);
+        break;
+    case StructureOp::ResetSixAxis:
+        err = resetToSixAxis(ws);
+        break;
+    }
+
+    if (!err.has_value()) {
+        // 接受分支（L-2）：结构变更＝树/属性全面重建（链长变了——增量
+        // 投影的形状前提失效），刷新由调用方编排（refreshPanel 全量——
+        // 与字段轨的增量刷新不同形，见面板按钮槽）；脏通知在此（PM-04）。
+        static const char* kOpSubject[] = {"add", "remove", "move-up",
+                                           "move-down", "reset-six-axis"};
+        sink.onEditApplied(std::string("structure/")
+                           + kOpSubject[static_cast<int>(op)]);
+        sink.notifySessionDirty();
+        return EditSubmitOutcome::Applied;
+    }
+
+    // 拒绝分支（L-2）：比较型呈现（token＋域 detail——UX-03 非模态）。
+    EditRejection rejection;
+    rejection.codeToken = std::string(structureEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    sink.onEditRejected(rejection);
+    return EditSubmitOutcome::Rejected;
+}
+
 }  // namespace sdurws::ird::modeling

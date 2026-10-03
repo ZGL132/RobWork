@@ -24,7 +24,8 @@
 
 #include <sdurws/ird/core/Digest.hpp>  // ContentDigester——确定性临时句柄派生（SHA-256）
 #include <sdurws/ird/modeling/DiagCodes.hpp>  // kMdlTemplateDisabled/kMdlImportTemplateRange——码常量唯一书写点
-#include <sdurws/ird/modeling/PropertyEstimation.hpp>  // defaultMaterialDensity——材料密度默认表（单一权威）
+#include "DraftIdentity.hpp"                       // deriveDraftObjectId/makeSeedLink（UI-T47 提升——单元内共享头）
+#include <sdurws/ird/modeling/PropertyEstimation.hpp>  // defaultMaterialDensity——材料密度默认表（单一权威；经 DraftIdentity.hpp 使用）
 #include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // rotationFromCustomEaa——EAA→R 唯一权威换算点（I-MDL-7/P-RT-4）
 
 #include <algorithm>
@@ -109,35 +110,9 @@ std::vector<TemplateDescriptor> templateCatalog()
 // ---------------------------------------------------------------------
 // 确定性临时句柄（§5.2——内存编辑态先用临时句柄，提交时回填）
 // ---------------------------------------------------------------------
-
-/**
- * @brief 由稳定键派生草稿对象的临时 ObjectId（确定性——同键同句柄）。
- *
- * 派生规则：对稳定键（"ird/modeling/template-draft/<templateId>/<类别>/
- * <序>"）取 SHA-256，摘要前 16 字节即 ObjectId 字节（T05 导入路径
- * §14.6 v0.6 ②i 同款纪律：确定性散列派生 128 位、不经随机源；真实
- * ObjectId 仍由命令 prepare 阶段经 HandlerContext.objectId() 分配回填
- * ——PA-1，本句柄不外泄为持久身份）。全零摘要命中（保留值——core
- * Identity 纪律禁止）在 SHA-256 下实际不可达，此处置尾字节 1 作确定性
- * 兜底（同键仍同句柄，保留值不出现）。
- *
- * 纯函数；线程安全；确定性。
- */
-core::ObjectId deriveDraftObjectId(const std::string& stableKey)
-{
-    core::ContentDigester digester;
-    digester.update(stableKey.data(), stableKey.size());
-    const core::Digest256 digest = digester.finalize();
-
-    core::ObjectId id;
-    for (std::size_t i = 0; i < 16; ++i) {
-        id.bytes[i] = digest[i];  // 摘要前 16 字节（确定性——不用随机源）
-    }
-    if (id.bytes == core::ObjectId{}.bytes) {
-        id.bytes[15] = 1;  // 保留值（全零）兜底——确定性不改（实际不可达）
-    }
-    return id;
-}
+// deriveDraftObjectId／makeSeedLink 已提升至单元内共享头 src/DraftIdentity.hpp
+// （UI-T47——结构编辑 StructureEdit.cpp 同一实现的第二消费者；NFR-MNT-04
+// 单一实现纪律，行为零变化）。
 
 /**
  * @brief 模板来源标记（§5.1"来源=UserProvided/Template"的统一落点）：
@@ -178,35 +153,7 @@ bool allFinite(const rw::math::Vector3D<double>& v)
     return std::isfinite(v[0]) && std::isfinite(v[1]) && std::isfinite(v[2]);
 }
 
-/**
- * @brief 草稿连杆种子（§5.1"连杆几何默认"句的材料半句——钢；几何半句的
- *        schema 边界见 makeLinkPlaceholderCylinder 注，种子不预填几何）。
- *
- * 材料密度取 §5.3 材料密度默认表（单一权威——不写第二处 7850 字面量；
- * NFR-MNT-07 单源精神）；来源标记随模板轨迹。物性数值（mass/com/inertia）
- * 全部 NotProvided——缺失不触发断言、走 DataInsufficient 降级（MDL-06/
- * V15-01），模板不猜测物性（NFR-COR-03）。
- */
-LinkEntry makeSeedLink(const std::string& stableKey, const std::string& localName,
-                       const core::ValueProvenance& provenance)
-{
-    LinkEntry link;
-    link.objectId = deriveDraftObjectId(stableKey);
-    link.localName = localName;
-
-    const std::optional<double> steelDensity = defaultMaterialDensity("steel");
-    if (!steelDensity.has_value()) {
-        // 材料表键"steel"是本单元 §5.3 表内登记键——查不到＝表被改坏的
-        // 实现缺陷，fail-fast（不静默产出无材料种子——§5.1 材料默认句失守）
-        throw std::logic_error("modeling/template/material-table: 默认材料表"
-                               "缺少登记键 steel（实现缺陷）");
-    }
-    MaterialRef steel;
-    steel.materialId = "steel";
-    steel.density = core::SourcedValue<double>::provided(*steelDensity, provenance);
-    link.body.material = std::move(steel);
-    return link;
-}
+// makeSeedLink 同在 src/DraftIdentity.hpp（见上——UI-T47 提升注）。
 
 /**
  * @brief 单字段编辑的实现内核（不触 changes——变更记录由外层按"一次调用
