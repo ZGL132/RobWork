@@ -89,8 +89,16 @@
 
 #include "DomainModuleRunner.hpp"                // runDomainApply（UI-T23 acceptance 2——draft.apply 多模块遍历）
 #include "HostView3DGateway.hpp"                 // 宿主三维网关（UI-T45——上行拾取/呈现出口/TCP 源）
+#include "HostCompilePort.hpp"                   // 宿主编译端口（UI-T46——十段链适配＋快照缓存＋分段探针）
+#include "HostPresentationAdapters.hpp"          // 呈现装配适配器族（UI-T46——映射真值/挂接对象/构造源）
 
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>  // modeling::isAssembledModelingCommand（UI-T42——F-466 路由判定出线）
+#include <sdurws/ird/modeling/CommandHandlers.hpp>  // registerModelingCommandHandlers/HandlerServices（UI-T46——F-461 modeling 半区装配）
+#include <sdurws/ird/modeling/DhConvert.hpp>     // DhExplicitConverter（UI-T46——HandlerServices 转换器注入）
+#include <sdurws/ird/modeling/ObjectTypes.hpp>   // modeling::kRobotDesignObjectType（UI-T46——编译根 token 单一权威）
+#include <sdurws/ird/policy/JointLimits.hpp>     // makeJointLimitEvaluator（UI-T46——HandlerServices 评估器装配）
+#include <sdurws/ird/policy/Contexts.hpp>        // policy::IPolicyNameContext（UI-T46——行程评估名称上下文适配基类）
+#include <sdurws/ird/ui/RuntimePublishBridge.hpp>  // RuntimePublishBridge/观察者（UI-T46——呈现刷新事务装配）
 
 #include <filesystem>
 #include <iostream>
@@ -385,28 +393,14 @@ private:
  * @brief 空映射名称端口（IUiRuntimeNameMapPort 的宿主形态适配——两向恒
  *        nullopt 的诚实空映射）。
  *
- * 为什么允许"空映射"：SelectionService Deps.nameMap 构造期必填（L2/L3
- * 承诺的端口缝），而当前宿主形态没有呈现装配（RuntimePublishBridge 与
- * runtime RuntimeNameMap 随 WP-24-T08 呈现装配接续）——无已应用呈现＝
- * 无任何名字映射是与空会话同构的诚实二态：L2 正向判定照常执行并得
- * nullopt（不高亮不报错）、L3 反解照常走失败分支（树不动＋runtimeOnly
- * 暂态）。真映射注入点单一（本端口替换），替换零改代码——端口注入
- * 纪律（UI-T21 冻结面）的结构收益。
+ * 为什么允许"空二态"：SelectionService Deps.nameMap 构造期必填（L2/L3
+ * 承诺的端口缝），而呈现未就位（本会话尚无成功呈现发布）＝无任何名字
+ * 映射是与空会话同构的诚实二态：L2 正向判定照常执行并得 nullopt（不
+ * 高亮不报错）、L3 反解照常走失败分支（树不动＋runtimeOnly 暂态）。
+ * UI-T46 呈现装配起本插件实例化为 HostRuntimeNameMapPort（绑当前呈现
+ * 视图——发布/拆除拍单点 bind/clear 即三消费面同步升级；上注语义在
+ * 未就位形态逐字保持）。
  */
-class HostEmptyNameMapPort final : public ui::IUiRuntimeNameMapPort {
-public:
-    std::optional<core::ObjectId> resolveObjectIdFromRuntimeName(
-        const std::string& /*runtimeName*/) const override
-    {
-        return std::nullopt;  // 无呈现装配＝无映射（L3 反解失败分支的合法触发面）
-    }
-
-    std::optional<std::string> resolveRuntimeName(
-        const core::ObjectId& /*id*/) const override
-    {
-        return std::nullopt;  // 同上（L2 正向"未应用"分支的合法触发面）
-    }
-};
 
 /**
  * @brief 宿主三维高亮出口（IUiHighlightOutlet 的宿主实现——L2 的动作
@@ -601,6 +595,12 @@ void IrdWorkbenchHostPlugin::initialize()
             // UI 线程（打开协议同线程）。
             if (kept != nullptr) {
                 wireRequirementsSession(*kept);
+            }
+            // 呈现会话绑定（UI-T46）：编译端口按打开上下文构造＋建模命令
+            // 处理器注册（F-461 modeling 半区）＋发布桥 attach——与需求域
+            // 会话接线同点同线程。
+            if (kept != nullptr) {
+                attachPresentationSession(kept->projectStore().projectId());
             }
         });
     m_storeFactory = storeBundle;
@@ -1012,6 +1012,11 @@ void IrdWorkbenchHostPlugin::initialize()
     //      后执行——Deps 借用两者指针。getView 不可得＝降级留痕不装配）。
     assembleView3DGateway();
 
+    // ---- 宿主呈现装配（UI-T46——发布桥＋呈现源＋建模处理器服务集；
+    //      须在网关之后执行——出口借用网关本体。编译端口随项目打开构造，
+    //      名称映射真值随发布拍绑定）。
+    assemblePresentationPipeline();
+
     // ---- 装配第六步（时序关键）：装载呈现自证排队 ----
     // 零等待单发定时器：控制流回到事件循环的第一拍执行重申（此时 addPlugin
     // 已返回、其尾段 setVisible/restoreState 已完成——队列语义保证严格晚于
@@ -1046,6 +1051,12 @@ IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
     if (m_diskExecutor) {
         m_diskExecutor->stop();
     }
+    // 呈现管道兜底收口（UI-T46）：桥先毁（观察者弱持有自动退订）→编译
+    // 端口后毁（query 指针随 store 适配器——成员声明逆序保证端口析构时
+    // 适配器仍在）。正常关闭路径已随 teardown 收口，此处兜底。
+    m_publishBridge.reset();
+    m_presentationObserver.reset();
+    m_compilePort.reset();
 }
 
 // =====================================================================
@@ -2457,6 +2468,9 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
     if (report.anyCommitted()) {
         refreshSharedSurfaces();
         refreshRequirementsFromSession();
+        // 呈现发布触发（UI-T46——编译端口有新快照时驱动呈现刷新事务；
+        // S5 双编译随命令提交同步发生，此处快照即为本次修订的编译产物）。
+        refreshPresentationAfterCommit();
     }
     return out;
 }
@@ -2546,6 +2560,9 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateProjectUndo(
             m_content->presentProjectContext(*m_lastContextProjection);
         }
         refreshRequirementsFromSession();
+        // 呈现发布触发（UI-T46——撤销的逆命令若声明双编译，S5 产物即本次
+        // 发布快照；呈现随新 tip 刷新）。
+        refreshPresentationAfterCommit();
     } else {
         // 拒绝/中止/失败：如实呈现（诊断细节由命令端口诊断链路出线）。
         if (m_hostStatusBar != nullptr) {
@@ -2584,6 +2601,9 @@ CommandOutcome IrdWorkbenchHostPlugin::orchestrateProjectRedo(
             m_content->presentProjectContext(*m_lastContextProjection);
         }
         refreshRequirementsFromSession();
+        // 呈现发布触发（UI-T46——重放命令若声明双编译同拍刷新，与撤销
+        // 对称）。
+        refreshPresentationAfterCommit();
     } else {
         if (m_hostStatusBar != nullptr) {
             m_hostStatusBar->showMessage(
@@ -2928,14 +2948,16 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
     }
 
     // ①选择服务（INV-B3 唯一汇聚点）。端口注入（O-31 装配层特权边）：
-    //    NameMap＝空映射适配器（宿主无呈现装配的诚实二态——L3 反解失败
-    //    分支为当前形态常态；真映射注入点单一，随 WP-24-T08 呈现装配
-    //    替换）；树定位回调＝共享树面板 locateAndHighlight（面板创建后
-    //    经 lambda 捕获重绑——面板先于服务构造的次序解法与域 harness
-    //    同款）；高亮出口＝宿主 WorkCellScene 实现（L2 真高亮——呈现
-    //    缺席时动作跳过＋Dev 留痕，判定照常）。
-    auto nameMap = std::make_shared<HostEmptyNameMapPort>();
-    m_nameMapPort = nameMap;  // UI-T45：提升为成员——三维网关共享同一实例（真映射注入点单一，WP-24-T08 替换即两消费面同步升级）
+    //    NameMap＝真值端口（HostRuntimeNameMapPort——UI-T46 呈现装配：
+    //    绑当前呈现视图，未就位＝同构诚实空二态——L3 反解失败分支为
+    //    未发布形态常态；发布/拆除拍 bind/clear 单点更新即 Selection
+    //    服务/三维网关/需求域缝三消费面同步升级）；树定位回调＝共享树
+    //    面板 locateAndHighlight（面板创建后经 lambda 捕获重绑——面板
+    //    先于服务构造的次序解法与域 harness 同款）；高亮出口＝宿主
+    //    WorkCellScene 实现（L2 真高亮——呈现缺席时动作跳过＋Dev 留痕，
+    //    判定照常）。
+    m_runtimeNameMap = std::make_shared<HostRuntimeNameMapPort>();
+    m_nameMapPort = m_runtimeNameMap;  // UI-T46：具型句柄＋端口面同一对象（三消费面共享）
     m_highlightOutlet = std::make_shared<HostHighlightOutlet>(
         getRobWorkStudio(),
         [this](const std::string& message) {
@@ -2946,7 +2968,7 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
     std::function<bool(const core::ObjectId&)> treeLocator =
         [](const core::ObjectId&) { return false; };  // 面板创建后重绑
     m_selection = std::make_shared<ui::SelectionService>(ui::SelectionService::Deps{
-        nameMap,
+        m_nameMapPort,
         [&treeLocator](const core::ObjectId& oid) { return treeLocator(oid); },
         m_highlightOutlet,
         m_diag.pipeline});
@@ -3187,6 +3209,186 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
     }
 }
 
+// =====================================================================
+// 宿主呈现装配（UI-T46——发布桥接线＋编译链服务集＋名称映射真值编排）
+// =====================================================================
+
+void IrdWorkbenchHostPlugin::assemblePresentationPipeline()
+{
+    // 呈现装配（幂等守卫；出口缺位＝呈现刷新无宿主半区——与 UI-T45 降级
+    // 基线同构，桥不装配、编译端口照常在位——命令域编译仍真实执行）。
+    if (m_publishBridge != nullptr || m_view3dGateway == nullptr) {
+        return;
+    }
+    rws::RobWorkStudio* studio = getRobWorkStudio();
+
+    // ---- 建模命令处理器服务集（F-461 modeling 半区——所有权锚成员持有，
+    // 存活期覆盖注册表使用期；装配期一次）。策略端口保持 C-10 诚实基线
+    // （未装载——resolvePolicy 按 POLICY-OBJECT-MISSING 诊断轨如实降级，
+    // 行程校验不虚构策略），评估器/转换器/探针/名称上下文为产品实现。
+    m_jointLimitEvaluator = policy::makeJointLimitEvaluator();
+    m_dhConverter = std::make_unique<modeling::DhExplicitConverter>();
+    m_compileProbe = std::make_unique<HostCompileProbe>(HostCompileProbe::Deps{
+        modeling::kRobotDesignObjectType,
+        [this](const std::string& message) {
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel, message);
+            }
+        }});
+    m_runtimeNameContext = std::make_unique<HostRuntimeNameContext>(
+        m_runtimeNameMap.get());
+
+    // ---- 呈现构造源（RT-T14 工厂适配——供数缝绑编译端口现取；编译端口
+    // 随会话构造，此处绑"经成员现取"的间接缝保持源生命周期独立）。
+    m_presentationSource = std::make_shared<HostPresentationSource>(
+        HostPresentationSource::Deps{
+            [this]() -> std::shared_ptr<const runtime::RuntimeSnapshot> {
+                return m_compilePort != nullptr ? m_compilePort->lastPublishedSnapshot()
+                                                : nullptr;
+            },
+            studio,
+            [this](const std::string& message) {
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(kPluginDevChannel, message);
+                }
+            }});
+
+    // ---- 发布桥（UI-T20——四步刷新事务；出口＝UI-T45 网关（IUiPresentation
+    // Outlet 实现体），宿主半区经 HostWorkCellPresentationObject 落地）。
+    std::shared_ptr<ui::IUiPresentationOutlet> outlet(
+        m_view3dGateway.get(), [](ui::IUiPresentationOutlet*) {});  // 非 owning 别名（网关 unique_ptr 持有本体）
+    m_publishBridge = std::make_unique<ui::RuntimePublishBridge>(
+        ui::RuntimePublishBridge::Deps{
+            m_presentationSource,
+            outlet,
+            m_diag.catalog,   ///< 用户级诊断 sink（IDiagnosticSink——会话级目录）
+            m_diag.factory,
+            m_diag.pipeline});
+
+    // ---- 刷新结果观察者（呈现发布成功拍→名称映射真值绑定——拾取反解/
+    // 高亮/需求域三维缝三消费面同步激活；失败拍→Dev 留痕）。
+    class PresentationNameMapBinder final : public ui::IUiPresentationRefreshObserver {
+    public:
+        explicit PresentationNameMapBinder(IrdWorkbenchHostPlugin* host)
+            : m_host(host)
+        {
+        }
+
+        void onPresentationReplaced(const ui::PresentationViewProjection& view) override
+        {
+            // hostPayload 取回（装配层自家类型——网关"本类型本解释"同款
+            // 纪律：误型载荷属装配缺陷，非运行态）。
+            const auto* object = static_cast<const HostWorkCellPresentationObject*>(
+                view.hostPayload.get());
+            if (m_host->m_runtimeNameMap != nullptr && object != nullptr) {
+                m_host->m_runtimeNameMap->bindPresentation(object->view());
+            }
+        }
+
+        void onPresentationRefreshFailed(const ui::PresentationEventFacts& /*facts*/,
+                                         const std::string& reasonToken) override
+        {
+            if (m_host->m_diag.pipeline) {
+                m_host->m_diag.pipeline->logDev(
+                    kPluginDevChannel,
+                    "presentation: 刷新失败（token=" + reasonToken
+                        + "）——旧呈现保持原状");
+            }
+        }
+
+    private:
+        IrdWorkbenchHostPlugin* m_host;  ///< 宿主编排面（非 owning——存活期由插件保证）
+    };
+    m_publishBridge->addObserver(
+        std::weak_ptr<ui::IUiPresentationRefreshObserver>(
+            m_presentationObserver = std::make_shared<PresentationNameMapBinder>(this)));
+
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "presentation pipeline: 装配完成（发布桥＋呈现源＋建模处理器服务集——"
+                                "编译端口随项目打开构造）");
+    }
+}
+
+void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& project)
+{
+    // 呈现会话绑定拍（项目打开成功回调——与 requirements 会话接线同点）。
+    // 前会话编译端口先毁（旧快照随旧会话废弃——不跨会话残留）。
+    m_compilePort.reset();
+    if (m_lastStoreAdapter == nullptr) {
+        return;  // 存储适配缺位（打开协议外的调用——诚实静默）
+    }
+    project::ProjectStore& store = m_lastStoreAdapter->projectStore();
+
+    // 编译端口（十段链适配——S5 双编译的真实执行面；快照缓存随端口持有）。
+    m_compilePort = std::make_unique<HostModelCompilePort>(HostModelCompilePort::Deps{
+        &store.query(),
+        project,
+        modeling::kRobotDesignObjectType,
+        [this](const std::string& message) {
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel, message);
+            }
+        }});
+
+    // 建模命令处理器注册（F-461 modeling 半区收口——§5.3.5 装配期一次性；
+    // 服务集指针经 HandlerServices 值拷贝注入，存活期由插件成员锚定）。
+    const modeling::HandlerServices services{
+        modeling::AssertionSuite::Ports{m_jointLimitEvaluator.get(),
+                                        m_runtimeNameContext.get()},
+        nullptr,                 // policyProvider＝未装载（C-10 诚实基线）
+        core::ObjectId{},        // policyObject＝空（同上——POLICY-OBJECT-MISSING 轨）
+        std::nullopt,            // policyVersion＝不可编址取数
+        m_dhConverter.get(),     // DH 转换器（权威切换变体）
+        m_compileProbe.get(),    // 编译分段探针（等价验证）
+    };
+    modeling::registerModelingCommandHandlers(store.handlerRegistry(), services);
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "建模域命令处理器已注册（apply-robot-design 族五 token——§5.3.5 装配期；"
+                                "F-461 modeling 半区收口）");
+    }
+
+    // 桥会话绑定（绑定后等待首次发布事件——attach 重复＝状态机违约，
+    // 会话内单次调用由打开协议保证）。
+    if (m_publishBridge != nullptr) {
+        m_publishBridge->attachHostSession(project);
+    }
+}
+
+void IrdWorkbenchHostPlugin::refreshPresentationAfterCommit()
+{
+    // 发布触发拍（命令提交/撤销/重做后——编译端口有新发布快照才进事务；
+    // 无桥/无端口/无快照＝幂等静默——诚实降级链与装配缺席形态）。
+    if (m_publishBridge == nullptr || m_compilePort == nullptr
+        || m_lastStoreAdapter == nullptr) {
+        return;
+    }
+    const std::shared_ptr<const runtime::RuntimeSnapshot> snapshot =
+        m_compilePort->lastPublishedSnapshot();
+    if (snapshot == nullptr) {
+        return;  // 本会话尚无编译发布（纯草稿编辑/无建模命令）——无呈现可刷新
+    }
+    // 新 tip（发布归属修订——对账基准；权威分支表首条，apply 编排同源）。
+    const auto tips = m_lastStoreAdapter->projectStore().query().branchTips();
+    if (tips.empty()) {
+        return;
+    }
+    const ui::PresentationEventFacts facts{
+        ui::PresentationEventKind::Publish,
+        m_lastStoreAdapter->projectStore().projectId(),
+        tips.front().tip,
+        snapshot->modelIdentity(),
+    };
+    const ui::PresentationRefreshOutcome outcome =
+        m_publishBridge->handlePresentationEvent(facts);
+    if (m_diag.pipeline != nullptr && !outcome.applied) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "presentation: 发布事务未应用（token=" + outcome.failureToken
+                                    + "）——旧呈现保持");
+    }
+}
+
 void IrdWorkbenchHostPlugin::refreshSharedSurfaces()
 {
     // 跨域就绪摘要先行重取（UI-T44——卡刷新不依赖树/检查器装配态；三域
@@ -3294,9 +3496,18 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
     //    测试断言宿装容器为空）。
 
     // ⑤HostWorkCell 呈现对象：宿主高亮出口的按名清除已执行（上方②）；
-    //    RuntimePublishBridge 的宿主呈现释放（detachHostSession）随呈现
-    //    装配接续（当前装配形态无桥实例＝无污染源——WP-24-T08 装配时
-    //    本清理点扩展桥调用，登记 ui.md §13 落位注）。
+    //    呈现装配收口（UI-T46——原登记"随呈现装配接续"的扩展点）：
+    //    detachHostSession（桥：释放宿主呈现＋清当前呈现与绑定）＋名称
+    //    映射真值端口回诚实空二态（拾取反解/高亮判定回落未应用分支）＋
+    //    编译端口随会话销毁（旧快照不跨会话残留）。无桥形态（降级基线）
+    //    ＝前两步幂等静默，编译端口照常清理。
+    if (m_publishBridge) {
+        m_publishBridge->detachHostSession();
+    }
+    if (m_runtimeNameMap) {
+        m_runtimeNameMap->clearPresentation();
+    }
+    m_compilePort.reset();
 
     // ⑥TimedStatePath 播放驱动：当前装配形态无 Playback 发布缝（B1-SPEC
     //    D9 的 TimedStatePath 载体经 UI-T20 发布桥承载——同⑤随呈现装配

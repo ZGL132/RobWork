@@ -91,9 +91,34 @@ class QEvent;     // 三维事件过滤（UI-T45——完整定义在 Qt 头）
 
 namespace sdurws {
 namespace ird {
+namespace core {
+class ProjectId;  // 呈现会话绑定入参（UI-T46——完整类型在 core/Identity.hpp）
+}
+}  // namespace ird
+}  // namespace sdurws
+
+namespace sdurws {
+namespace ird {
+namespace policy {
+class IJointLimitEvaluator;        // 评估器（HandlerServices 注入——完整类型在 policy/JointLimits.hpp）
+}  // namespace policy
+namespace modeling {
+class IDhExplicitConverter;        // DH↔显式转换器（HandlerServices 注入——完整类型在 modeling/DhConvert.hpp）
+}  // namespace modeling
+}  // namespace ird
+}  // namespace sdurws
+
+namespace sdurws {
+namespace ird {
 namespace ui {
 class DomainReadinessSummaryCard;  // 跨域就绪摘要卡（UI-T44——Right Dock 诊断摘要半区）
 class HostView3DGateway;           // 宿主三维网关（UI-T45——三桥一源）
+class HostRuntimeNameMapPort;      // 名称映射真值端口（UI-T46——绑当前呈现视图）
+class RuntimePublishBridge;        // 宿主发布桥（UI-T20——呈现刷新事务编排）
+class HostPresentationSource;      // 呈现构造源（UI-T46——RT-T14 工厂适配）
+class HostModelCompilePort;        // 宿主编译端口（UI-T46——十段链适配＋快照缓存）
+class HostCompileProbe;            // 编译分段探针（UI-T46——等价验证注入面）
+class HostRuntimeNameContext;      // 行程评估名称上下文（UI-T46——真值端口现取）
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
@@ -254,6 +279,16 @@ private:
     /// 宿主三维网关装配（UI-T45——getView 不可得＝降级留痕不装配；
     /// 三桥一源的 Deps 绑定与事件过滤挂接）。
     void assembleView3DGateway();
+    /// 宿主呈现装配（UI-T46——发布桥＋呈现构造源实例化与观察者接线；
+    /// 名称映射真值端口升级为呈现绑定形态。视图不可得＝桥缺席降级，
+    /// 与 UI-T45 降级基线同构；编译端口随每次项目打开构造）。
+    void assemblePresentationPipeline();
+    /// 呈现会话绑定（项目打开成功拍——桥 attachHostSession＋编译端口
+    /// 按打开上下文构造。随打开成功回调触发）。
+    void attachPresentationSession(const core::ProjectId& project);
+    /// 提交后呈现刷新（发布触发拍——编译端口有新发布快照时构造事件
+    /// 事实驱动桥事务；无项目/无桥/无快照＝幂等静默）。
+    void refreshPresentationAfterCommit();
     /// 项目关闭统一清理（acceptance 4——八类对象的宿主收口：项目树/
     /// SelectionService/检查器/复杂编辑宿装/HostWorkCell 呈现/会话姿态/
     /// 播放驱动/运行中订阅；具名用例承载，presentContext 无项目半区调用）。
@@ -313,9 +348,32 @@ private:
     /// ——诚实降级面）。
     QPointer<QWidget> m_view3d;
     /// 运行时名称映射实例（SelectionService 与三维网关共用同一实例——
-    /// "真映射注入点单一"纪律：WP-24-T08 呈现装配替换此实例即两消费面
-    /// 同步升级；宿主现值＝HostEmptyNameMapPort 诚实空映射）。
+    /// "真映射注入点单一"纪律：UI-T46 呈现装配起实例为 HostRuntimeNameMapPort
+    /// （绑当前呈现视图），发布/拆除拍单点 bind/clear 即三消费面同步升级；
+    /// 未就位＝同构诚实空二态）。
     std::shared_ptr<ui::IUiRuntimeNameMapPort> m_nameMapPort;
+    /// 名称映射真值端口的具型句柄（bind/clear 编排面——与 m_nameMapPort
+    /// 同一对象；UI-T46 呈现装配成员）。
+    std::shared_ptr<ui::HostRuntimeNameMapPort> m_runtimeNameMap;
+    /// 宿主发布桥（UI-T20 RuntimePublishBridge——呈现刷新事务唯一编排者；
+    /// UI-T46 装配。视图不可得＝不装配（降级基线）。
+    std::unique_ptr<ui::RuntimePublishBridge> m_publishBridge;
+    /// 呈现构造源（UI-T46——IUiPresentationSource 的 RT-T14 工厂适配；
+    /// 桥 shared_ptr 共享持有，本成员为编排面句柄）。
+    std::shared_ptr<ui::HostPresentationSource> m_presentationSource;
+    /// 宿主编译端口（UI-T46——project IModelCompilePort 的十段链适配＋
+    /// 最近发布快照缓存；随每次项目打开成功构造、随会话拆除销毁）。
+    std::unique_ptr<ui::HostModelCompilePort> m_compilePort;
+    /// 建模命令处理器装配的持有面（UI-T46——F-461 modeling 半区收口：
+    /// HandlerServices 注入成员的全部所有权锚，存活期覆盖注册表使用期；
+    /// 完整类型在 UiPlugin.cpp——析构序经显式析构承载）。
+    std::unique_ptr<policy::IJointLimitEvaluator> m_jointLimitEvaluator;
+    std::unique_ptr<modeling::IDhExplicitConverter> m_dhConverter; ///< DH↔显式转换器（无状态产品）
+    std::unique_ptr<ui::HostCompileProbe> m_compileProbe; ///< 编译分段探针（等价验证注入面）
+    std::unique_ptr<ui::HostRuntimeNameContext> m_runtimeNameContext; ///< 行程评估名称上下文（真值端口现取）
+    /// 呈现刷新观察者（UI-T46——桥弱持有，保活锚在本成员：发布成功拍经
+    /// 此绑定名称映射真值；析构自动退订）。
+    std::shared_ptr<ui::IUiPresentationRefreshObserver> m_presentationObserver;
     QDockWidget* m_tasksDock = nullptr;    ///< "IRD 任务和状态"Dock（Bottom 区——UI-T18 拆分面，窗口树托管）
     QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
     QDockWidget* m_requirementsDock = nullptr;   ///< "IRD 需求"Dock（Left 区——UI-T23 三域挂位，窗口树托管）

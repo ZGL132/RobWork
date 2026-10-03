@@ -809,4 +809,16 @@ CanonicalModelCompiler::buildCanonicalModel(const CompileRequest& request)
     }
 }
 
+// =====================================================================
+// createCanonicalModelCompiler——产品编译器装配出口（L5 装配线唯一入口；
+// UI-T46 增量——声明见公共头 Compiler.hpp 尾段，契约注释在那里）。
+// =====================================================================
+
+std::unique_ptr<ICanonicalModelCompiler> createCanonicalModelCompiler()
+{
+    // 产品实现唯一出口：完整类型封闭在本单元内（R-2），调用方只见抽象
+    // 接口。实例无状态、可重入（§5.5）——L5 可长期持有复用。
+    return std::make_unique<CanonicalModelCompiler>();
+}
+
 }  // namespace sdurws::ird::runtime

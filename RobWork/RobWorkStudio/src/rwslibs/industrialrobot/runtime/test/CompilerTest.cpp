@@ -679,27 +679,33 @@ TEST(CompilerTest, MassNotProvidedPublishesDegraded_RT_CPX_2)
 }
 
 /**
- * S5 段失败转移（builder 不变量——objectId ∈ objectRefs）：Description 的
- * 关节携带闭包外 ObjectId——S3 不覆盖对象身份（无 ObjectId 语义），S5
- * builder 拦截 →Failed＋StructureInvalid（段定位 S5）。
+ * S5 段 CM-0 复核范围（UI-T46 对齐 O-36 裁决——units/runtime.md §15.4
+ * v0.18 登记）：复核范围＝真实存储对象（根/工具/场景），关节/连杆为模型
+ * 内标识（内嵌根对象字节、不独立存储）——闭包外关节身份**放行**（发布
+ * 成功，建模域"根对象内嵌部件"的存储形态由此相容）。
+ *
+ * 根/工具/场景的"闭包外拒绝"半区在整体事务入口结构性不可达（S2② 经同
+ * 一闭包源定位根——header.objectRefs 与 S2 定位同源，根恒在 refs；工具/
+ * 场景由 builder 前置校验链覆盖）——防御面保留在实现中（S2 一致性破坏
+ * 时的兜底），测试不再以注入两源分歧的伪造形态覆盖（替身欺骗非验收面）。
  */
-TEST(CompilerTest, JointObjectIdOutsideRefsRejectedAtS5)
+TEST(CompilerTest, JointObjectIdOutsideRefsAllowedAtS5_O36)
 {
     Harness h = makeHarness(true);
-    // 注入：joint_2 的对象身份不在闭包 objectRefs（builder 值级不变量面）。
+    // 注入：joint_2 的对象身份不在闭包 objectRefs（模型内标识——不参与
+    // 闭包存在性复核）。
     h.description.joints[1].objectId = idFrom<core::ObjectId>("rtt11-ghost-joint");
     ScriptedReader reader(h.description);
     CompileRequest req = makeRequest(h, h.store, h.store, reader);
 
     CanonicalModelCompiler compiler;
     const CompileOutcome out = compiler.compile(req);
-    EXPECT_EQ(out.status, CompileStatus::Failed);
-    EXPECT_EQ(out.snapshot, nullptr);
-    ASSERT_FALSE(out.diagnostics.empty());
-    EXPECT_EQ(out.diagnostics.front().code,
-              std::string{registryCode(RuntimeErrorCode::StructureInvalid)});
-    EXPECT_NE(out.diagnostics.front().cause.find("S5"), std::string::npos)
-        << "builder 违约应在失败诊断中定位到 S5 段";
+    EXPECT_EQ(out.status, CompileStatus::Published)
+        << "关节为模型内标识（O-36）——闭包外身份不构成 CM-0 违约";
+    EXPECT_NE(out.snapshot, nullptr);
+    // 放行面的语义完整性：名称映射仍按模型内容生成（关节在映射内——
+    // 模型内标识的名称映射锚语义不受闭包复核范围影响）。
+    EXPECT_NE(out.snapshot->nameMap().size(), 0u);
 }
 
 // =====================================================================

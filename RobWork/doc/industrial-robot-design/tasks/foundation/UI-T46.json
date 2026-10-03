@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T46",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主呈现装配——发布桥接线＋编译链真数据源＋名称映射真值（UI-T45/UI-T33 登记注挂起的\"呈现装配\"批次承接）",
+  "status": "ready",
+  "dependsOn": ["UI-T45", "UI-T20", "RT-T14"],
+  "requirements": [
+    "UX-11（三维视图交互——拾取链真数据源激活的呈现面前提）",
+    "ERR-01（诚实呈现——无编译发布＝呈现缺席二态，不虚构呈现；编译失败诊断透传）",
+    "ARC-03/B1-SPEC D10（同一编译链——呈现 source 只消费编译端口顺带保留的快照，零第二构造路径）",
+    "SA-02（框架零源码修改——setWorkCell 公开 API 挂接）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#6.5",
+    "units/runtime.md#15.4",
+    "development-task-breakdown.md#2.11",
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Compiler.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/HostPresentationView.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CompilerImpl.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/HostPresentationView.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update",
+    "doc-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t46",
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-38",
+    "O-43",
+    "O-36",
+    "P-RT-4"
+  ],
+  "acceptance": [
+    "编译链真数据源：HostModelCompilePort（project IModelCompilePort 的十段链适配）经打开上下文装配——合成闭包（基线＋计划写入）→RuntimeSnapshotFactory::create→Published 快照缓存（同产物传递）；Failed 诊断透传不提交——具名用例 CompilePort_PublishesSnapshotAndCachesIt/FailsWithDiagnosticsOnGarbageBytes",
+    "呈现装配链：RuntimePublishBridge 实例化（source＝HostPresentationSource 的 RT-T14 工厂折叠投影＋outlet＝UI-T45 网关）＋会话 attach/switch 拍（打开成功回调）＋发布触发拍（提交/撤销/重做后 refreshPresentationAfterCommit）＋detach（teardown 收口）——桥四步事务全链在产品装配中可达",
+    "名称映射真值：HostRuntimeNameMapPort 绑当前呈现视图替换 HostEmptyNameMapPort（诚实空二态语义逐字保持）——发布观察者单点 bind/clear，SelectionService/三维网关/需求域三维缝三消费面同步升级；真实编译产物反解往返具名用例 NameMapPort_ResolvesAfterPresentationBinding",
+    "建模命令处理器装配（F-461 modeling 半区收口）：HandlerServices 产品装配（评估器/名称上下文/DH 转换器/编译探针——所有权锚成员持有）＋打开成功回调 registerModelingCommandHandlers 注册；策略端口保持 C-10 诚实基线（未装载——POLICY-OBJECT-MISSING 轨）",
+    "runtime 公共面增量（units/runtime.md §15.4 v0.13 登记）：createCanonicalModelCompiler 工厂出口＋WorkCellConstView::workCellHandle 只读句柄＋HostPresentationView::hostPresentationWorkCell 宿主挂接出口（const 面审计唯一登记豁免点）＋CM-0 复核范围对齐 O-36（存储对象半区——关节/连杆为模型内标识不参与闭包存在性复核；唯一性半区不限缩）",
+    "回归门禁：双模式构建零错误；ird_gates 命中集归一 diff 唯一新增 1 条（ui_test→modeling_plugin 测试面边——contract_test 先例形态，随批登记）；九套件全绿（ui_test 246 含新增 7 用例、runtime 265、modeling 297、ui_contract 32、modeling_contract 17、ui_gui 76、modeling_gui 12、requirements 200、requirements_gui 39）；留痕 traceability/builds/ui-t46/"
+  ],
+  "note": "立项来源：UI-T45/UI-T33 合入登记注挂起的\"WP-24-T08 呈现装配\"批次（名称映射现为诚实空映射，宿主网关两侧注入点单一，替换即全链激活）——本卡即该替换的落位。UI-T33 余下三项（工位标记/边界框/采样格着色）与拾取 3D 可见半区随本卡呈现链激活后在其卡收口（域侧呈现对象挂接面另行接线——呈现链数据面已就绪）。批次特有告诫（registry 外自由承载——详 ui.md §13 UI-T46 行与各 TU 头注）：①D10 红线＝呈现 source 只经 createHostPresentationView 构造（工厂唯一入口），快照来自编译端口顺带保留的同一产物（传递非重建）——呈现侧第二构造路径在适配面即被禁止；②hostPayload 载荷契约＝HostPresentationObject 约定型由装配侧适配器包裹（网关\"本类型本解释\"）——跨适配器解释禁止；③S5 编译输入＝基线闭包＋计划写入合成视图（project §6.6）——计划写入对象以载荷 SHA-256 充当合成 cv/digest（编译调用期自洽，CM-0 校验闭合；提交后存储自算 cv 与合成 cv 无耦合）；④宿主挂接＝setWorkCell 单入口（TreeView 与三维同源——INV-B4），WorkCell 句柄经 hostPresentationWorkCell 出口（B1-SPEC v1.1 const 面审计唯一登记豁免点——呈现借用写纪律，头注三条口径澄清为对账面；P-RT-4 变换单点不受触）；⑤gui 测试执行纪律＝QT_QPA_PLATFORM=windows（UI-T03 口径）——offscreen 平台下 ui_gui_test 布局/调色用例假红（环境形态，非代码缺陷）。诚实边界：①本批不做需求域 RegionPreviewSink 的宿主场景注入（UI-T33 收口面）；②策略装配保持 C-10 未装载基线（行程校验走 POLICY-OBJECT-MISSING 轨——首编译前名称上下文未绑定同轨，均为既有诚实降级形态的如实延续）；③CM-0 复核范围修正是对齐 O-36 既有裁决的实现偏差修正（非语义变更——登记 units/runtime.md §15.4 v0.18），runtime 两测试随口径翻转。interUnit=true 判定＝runtime 公共面三增量＋project 端口消费＋modeling HandlerServices 装配（F-461 modeling 半区随本卡消账——owner 列\"归建模域任务\"的建模半区由本卡承接，登记 findings 消账随批）。"
+}

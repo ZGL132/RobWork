@@ -314,6 +314,34 @@ public:
     virtual std::string implementationVersion() const noexcept = 0;
 };
 
+// =====================================================================
+// createCanonicalModelCompiler——产品编译器装配出口（L5 装配线唯一入口）。
+// =====================================================================
+
+/**
+ * @brief 构造产品编译器（§10.0 ICanonicalModelCompiler 唯一产品实现的
+ *        装配出口——UI-T46 增量落位，DTB §5.4 / units/runtime.md §15.4
+ *        v0.18 登记）。
+ *
+ * 为什么需要本出口（背景说明）：产品实现的完整类型封闭在单元 src/ 内
+ * （R-2——公共头只承诺抽象），而 L5 装配层（应用壳）装配
+ * IRuntimeSnapshotFactory::create(request, compiler) 与 project
+ * IModelCompilePort 适配器时必须**持有**一个编译器实例——此前该实例
+ * 只在单元测试内可达（test 直接见 src/ 私有头），生产装配线无合法构造
+ * 点，宿主呈现装配（发布桥→呈现视图→名称映射真值）因此悬空。本工厂
+ * 即"实现封闭"与"L5 可装配"两约束的交点：调用方只见抽象接口，产品
+ * 实现的内部结构零暴露。
+ *
+ * @return 产品编译器实例（无状态、可重入——多线程可并发调用同一实例，
+ *         §5.5；调用方经 unique_ptr 持有。可长期复用——构造零成本，
+ *         全部状态在调用栈上的事务对象）
+ *
+ * @throws std::bad_alloc（实例构造本身零资源分配——仅形式契约；不抛）
+ *
+ * 线程安全：工厂本身可重入（每次调用返回独立实例）。
+ */
+std::unique_ptr<ICanonicalModelCompiler> createCanonicalModelCompiler();
+
 }  // namespace sdurws::ird::runtime
 
 #endif  // SDURWS_IRD_RUNTIME_COMPILER_HPP
