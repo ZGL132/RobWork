@@ -15,6 +15,7 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <QMessageBox>                            // 六轴重置确认对话（UI-T47——有损操作知情面）
 #include <QLabel>
 #include <QScrollBar>
 #include <QTabWidget>
@@ -33,7 +34,7 @@ namespace sdurws::ird::modeling {
 namespace {
 
 /// 树锚列（隐藏列——节点锚 ObjectId 规范文本；L-1 关联键的控件承载）。
-constexpr int kAnchorColumn = 1;
+constexpr int kAnchorColumn = 1;  // 锚列（树第 2 列——UI-T47 gui 定位复用）
 /// 树标签列（呈现列——localName＋工程用语标签，UX-02）。
 constexpr int kLabelColumn = 0;
 
@@ -305,6 +306,7 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     m_tree = new QTreeWidget(this);
     m_tree->setColumnCount(2);
     m_tree->setHeaderHidden(true);
+    m_tree->setObjectName(QStringLiteral("ird_modeling_struct_tree"));  // UI-T47——gui 定位锚（B6 可访问性同款）
     m_tree->hideColumn(kAnchorColumn);  // 锚列隐藏——UX-02：界面不见哈希/内部标识
     // UI-T41 批次B（B6）：可访问性——树/状态行/预览挂 accessibleName
     // （读屏与自动化定位锚；文案挂 UiText 键，UX-02 同源）。
@@ -313,6 +315,33 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
             &ModelingPanelWidget::onTreeSelectionChanged);
     left->addWidget(m_tree, 1);
+
+    // 结构操作按钮行（UI-T47——§5.2 v0.28 四操作词表的面板承载；六轴重置
+    // 为有损操作，确认对话在槽内呈现）。objectName 供 gui 具名用例定位。
+    auto* structBar = new QWidget(this);
+    auto* barLay = new QHBoxLayout(structBar);
+    barLay->setContentsMargins(0, 0, 0, 0);
+    structBar->setObjectName(QStringLiteral("ird_modeling_struct_bar"));
+    static const char* kStructButtons[] = {
+        "新增关节", "删除关节", "上移", "下移", "六轴重置",
+    };
+    static const char* kStructNames[] = {
+        "ird_modeling_struct_add", "ird_modeling_struct_remove",
+        "ird_modeling_struct_up", "ird_modeling_struct_down",
+        "ird_modeling_struct_reset",
+    };
+    for (int i = 0; i < 5; ++i) {
+        auto* btn = new QPushButton(QString::fromUtf8(kStructButtons[i]), structBar);
+        btn->setObjectName(QString::fromLatin1(kStructNames[i]));
+        btn->setToolTip(QString::fromUtf8(kStructButtons[i])
+                        + QStringLiteral("（作用于选中关节；草稿级编辑——"
+                                         "应用修改后才产生修订）"));
+        connect(btn, &QPushButton::clicked, this,
+                [this, i] { onStructureOpClicked(i); });
+        barLay->addWidget(btn);
+    }
+    barLay->addStretch(1);
+    left->addWidget(structBar);
 }
 
 // ---- 区②属性编辑区 ---------------------------------------------------
@@ -369,15 +398,11 @@ void ModelingPanelWidget::buildPreviewPane(QVBoxLayout* bottom)
 }
 
 // =====================================================================
-// 全面板刷新（事件驱动出口——零缓存：内容全部来自入参现取）
+// 结构树重建（UI-T47 从 refreshPanel 抽出——与结构操作按钮槽共用）
 // =====================================================================
 
-void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
-                                       const ModelReadinessReport& report)
+void ModelingPanelWidget::refreshStructureTree(const ModelingWorkingSet& ws)
 {
-    m_threadGuard.assertOnUiThread();  // §3.4——刷新触点同样是编辑面
-
-    // ---- 区①结构树：全量重建（投影行序＝呈现序；UX-02 标签已过守卫）----
     // UI-T41 批次B（B3）：滚动位跨刷新保持（树行重建后滚回原视口——刷新
     // 不打断浏览位置；选中恢复既有锚机制不变）。
     const int treeScroll = m_tree->verticalScrollBar()->value();
@@ -389,16 +414,88 @@ void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
         auto* item = new QTreeWidgetItem(m_tree);
         item->setText(kLabelColumn, QString::fromStdString(n.displayLabel));
         item->setText(kAnchorColumn,
-                      n.objectId.has_value() ? QString::fromStdString(n.objectId->toCanonical())
-                                             : QString());
+                      n.objectId.has_value()
+                          ? QString::fromStdString(n.objectId->toCanonical())
+                          : QString());
         item->setDisabled(!n.objectId.has_value());  // 分组行不可选（无锚——仅折叠呈现）
-        // 选中保持：重建后按锚恢复当前行（L-1 选中态跨刷新恒定）。
-        if (!lastAnchor.empty() && item->text(kAnchorColumn) == QString::fromStdString(lastAnchor)) {
+        // 选中保持：重建后按锚恢复当前行（L-1 选中态跨刷新恒定）。失效锚
+        // （被删对象）恢复落空＝空选中——属性区空态如实（不伪造行）。
+        if (!lastAnchor.empty()
+            && item->text(kAnchorColumn) == QString::fromStdString(lastAnchor)) {
             m_tree->setCurrentItem(item);
         }
     }
     m_tree->blockSignals(false);
     m_tree->verticalScrollBar()->setValue(treeScroll);  // B3 滚动位还原
+}
+
+// =====================================================================
+// 结构操作按钮槽（UI-T47——五钮共用落点；域裁决唯一在四原语）
+// =====================================================================
+
+void ModelingPanelWidget::onStructureOpClicked(int opIndex)
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——编辑面
+
+    // 六轴重置＝有损操作（§5.2 v0.28 ④——既有链参数被表值覆盖）：确认
+    // 对话承载知情（域原语纯执行不内嵌确认——UI 层职责面）。
+    if (opIndex == 4) {
+        const QMessageBox::StandardButton confirmed = QMessageBox::question(
+            this, QStringLiteral("六轴重置"),
+            QStringLiteral("将整链重建为六轴模板参数（%1 轴→6 轴，既有链参数"
+                           "与工具/场景引用被覆盖/清空——不可撤销草稿外的历"
+                           "史）。确认重置？")
+                .arg(QString::number(m_editTarget && m_editTarget()
+                                         ? m_editTarget()->design.joints.size()
+                                         : 0)),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        if (confirmed != QMessageBox::Yes) { return; }
+    }
+
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr) { return; }  // 无会话＝编辑禁用（装配层门控同形态）
+
+    // 目标下标：Add 的插入位＝选中关节之后（未选中＝链尾追加）；Remove/
+    // Up/Down 需选中关节（未选中＝就地提示——不虚构操作位）；Reset 忽略。
+    std::size_t targetIndex = ws->design.joints.size();  // 缺省＝尾追加位
+    if (opIndex != 4) {
+        const auto target =
+            m_lastSelected.has_value()
+                ? resolveSelection(*ws, *m_lastSelected)
+                : std::optional<SelectedTarget>{};
+        const bool needsSelection = (opIndex != 0);
+        if (target.has_value() && target->kind == SelectedTarget::Kind::Joint) {
+            targetIndex = target->index;
+        } else if (needsSelection) {
+            EditRejection r;
+            r.codeToken = "no-selection";
+            r.detail = "请先在结构树选中目标关节（结构操作作用于选中位）";
+            onEditRejected(r);
+            return;
+        }
+    }
+
+    const auto outcome = submitStructureOp(
+        *ws, *this, static_cast<StructureOp>(opIndex), targetIndex);
+    if (outcome == EditSubmitOutcome::Applied) {
+        // 结构变更＝树/属性全面重建（链长变了——增量投影形状前提失效）。
+        refreshStructureTree(*ws);
+        refreshPropertiesFromLastWorkingSet();
+    }
+}
+
+// =====================================================================
+// 全面板刷新（事件驱动出口——零缓存：内容全部来自入参现取）
+// =====================================================================
+
+void ModelingPanelWidget::refreshPanel(const ModelingWorkingSet& ws,
+                                       const ModelReadinessReport& report)
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——刷新触点同样是编辑面
+
+    // ---- 区①结构树：全量重建（UI-T47 抽出 refreshStructureTree——与
+    //      结构操作按钮槽共用同一树投影，零第二实现）----
+    refreshStructureTree(ws);
 
     // ---- 区②属性区：按当前选中锚现取重投影（选中失效＝空态——不伪造行）----
     refreshPropertiesFromLastWorkingSet();

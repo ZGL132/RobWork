@@ -72,6 +72,9 @@ QList<QPushButton*> commandButtonsOf(const QWidget& panel)
         if (btn->objectName() == QStringLiteral("ird_modeling_history_toggle")) {
             continue;  // 历史折叠钮不入命令对账（B2 呈现件）
         }
+        if (btn->objectName().startsWith(QStringLiteral("ird_modeling_struct_"))) {
+            continue;  // 结构操作钮不入命令对账（UI-T47 呈现件——非命令目录按钮）
+        }
         buttons.push_back(btn);
     }
     return buttons;
@@ -268,6 +271,7 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     ASSERT_GT(buttons.size(), std::size_t{0}) << "命令按钮未构建（区③空）";
     for (const QPushButton* btn : buttons) {
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; } // 历史钮不入禁用对账
+        if (btn->objectName().startsWith(QString::fromUtf8("ird_modeling_struct_"))) { continue; } // 结构操作钮不入禁用对账（UI-T47 呈现件——非命令目录按钮）
         EXPECT_FALSE(btn->isEnabled()) << "全禁快照下按钮仍可用";
         EXPECT_EQ(btn->toolTip().toStdString(),
                   ui::resolveText(ui::DisableReason{"cmd.flow-not-assembled.reason"}))
@@ -439,4 +443,84 @@ TEST_F(ModelingPanelGuiTest, ReadOnlySession_AvailabilityRefreshCannotReviveWrit
     // （模块级链路用例——生产装配序文案解析回归＋模块 setWritable 暂存/
     //   即时双形态——在 ModelingUiModuleHostWiringGuiTest.cpp：被测类型
     //   ModelingUiModule 持 policy 评估器符号，gating 见该文件头注。）
+}
+
+// =====================================================================
+// UI-T47 结构编辑面：五钮承载＋选中位插入/删除的草稿级编辑链
+// （域裁决唯一在 StructureEdit 四原语——本组用例断言面板承载与刷新编排）
+// =====================================================================
+
+TEST_F(ModelingPanelGuiTest, StructureButtons_InsertAndRemove_DraftOnly_UI_T47)
+{
+    // ①五钮在位（objectName 定位——面板承载面的存在性证据）。
+    QPushButton* addBtn = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_struct_add"));
+    QPushButton* removeBtn = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_struct_remove"));
+    ASSERT_NE(addBtn, nullptr) << "新增关节钮未构建";
+    ASSERT_NE(removeBtn, nullptr) << "删除关节钮未构建";
+
+    // ②选中首关节（树行锚＝joints[0]——L-1 关联键复用）→新增＝选中位
+    //   插入：工作集 7 关节（六轴+1）＋8 连杆（I-MDL-1）。
+    const core::ObjectId j1 = m_ws.design.joints.front().objectId;
+    const QString j1Anchor = QString::fromStdString(j1.toCanonical());
+    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>());
+    while (*it != nullptr
+           && (*it)->text(1) != j1Anchor) { ++it; }
+    ASSERT_NE(*it, nullptr) << "首关节树行未投影";
+    m_panel->findChild<QTreeWidget*>()->setCurrentItem(*it);
+
+    const std::size_t jointsBefore = m_ws.design.joints.size();
+    addBtn->click();
+    ASSERT_EQ(m_ws.design.joints.size(), jointsBefore + 1)
+        << "新增未落草稿（域原语未触工作集——提交流断链）";
+    ASSERT_EQ(m_ws.design.links.size(), m_ws.design.joints.size() + 1)
+        << "I-MDL-1 计数关系破坏";
+    // 插入位语义：新关节在选中位之后（index 1）——设计默认种子。
+    EXPECT_EQ(m_ws.design.joints[1].localName, "j7")
+        << "插入位/消歧命名失守（六轴链 j1~j6 已占用）";
+
+    // ③未选中态删除＝诚实指引（no-selection——状态行呈现，工作集不动）。
+    //    形态：全新面板（未点过树——m_lastSelected 空；clearSelection 不清
+    //    currentItem，不构成"未选中"的真实模拟）。
+    const std::size_t jointsStable = m_ws.design.joints.size();
+    ModelingPanelWidget freshPanel(true);
+    freshPanel.setEditTargetProvider([this]() { return &m_ws; });
+    ModelReadinessReport emptyReport;
+    freshPanel.refreshPanel(m_ws, emptyReport);
+    QPushButton* freshRemove = freshPanel.findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_struct_remove"));
+    ASSERT_NE(freshRemove, nullptr);
+    freshRemove->click();
+    EXPECT_EQ(m_ws.design.joints.size(), jointsStable)
+        << "未选中删除产生了操作（应就地指引）";
+    QLabel* freshStatus = freshPanel.findChild<QLabel*>(
+        QStringLiteral("ird_modeling_status_line"));
+    ASSERT_NE(freshStatus, nullptr);
+    EXPECT_FALSE(freshStatus->text().isEmpty())
+        << "未选中删除未呈现指引（诚实指引面失守）";
+}
+
+TEST_F(ModelingPanelGuiTest, StructureButtons_RemoveSelected_DraftOnly_UI_T47)
+{
+    // 选中首关节→删除：6→5 关节（草稿级——无修订产生）。
+    const core::ObjectId j1 = m_ws.design.joints.front().objectId;
+    const QString j1Anchor = QString::fromStdString(j1.toCanonical());
+    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>());
+    while (*it != nullptr
+           && (*it)->text(1) != j1Anchor) { ++it; }
+    ASSERT_NE(*it, nullptr);
+    m_panel->findChild<QTreeWidget*>()->setCurrentItem(*it);
+
+    QPushButton* removeBtn = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_struct_remove"));
+    ASSERT_NE(removeBtn, nullptr);
+    removeBtn->click();
+    ASSERT_EQ(m_ws.design.joints.size(), 5u) << "删除未落草稿";
+    ASSERT_EQ(m_ws.design.links.size(), 6u) << "I-MDL-1 计数关系破坏";
+    bool removedStillThere = false;
+    for (const JointEntry& j : m_ws.design.joints) {
+        if (j.objectId == j1) { removedStillThere = true; }
+    }
+    EXPECT_FALSE(removedStillThere) << "被删关节仍在工作集";
 }

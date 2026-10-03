@@ -188,6 +188,12 @@ private:
     // ---- 接线辅助 ----
     void refreshPropertiesFromLastWorkingSet();  // 属性区按当前选中重投影（L-1 反向/编辑后）
     std::optional<core::ObjectId> nodeAnchor(QTreeWidgetItem* item) const;  // 树行→锚（隐藏列）
+    /// 结构树全量重建（UI-T47 从 refreshPanel 抽出——结构操作按钮槽与
+    /// refreshPanel 共用同一树投影，零第二实现）。
+    void refreshStructureTree(const ModelingWorkingSet& ws);
+    /// 结构操作按钮槽（UI-T47——新增/删除/上移/下移/六轴重置五钮的共用
+    /// 落点；域裁决唯一在 StructureEdit 四原语，本槽零判定）。
+    void onStructureOpClicked(int opIndex);
 
     /**
      * @brief 命令按钮使能态统一刷新（UI-T43——L-7 门控三输入的单一判定面）。
