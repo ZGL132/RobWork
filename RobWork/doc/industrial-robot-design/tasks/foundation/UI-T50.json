@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T50",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "建模对象编辑扩展收口批次——五对象属性页扩展（§9.7.5 D5 增量边界兑现）＋外审 P1「建模对象编辑扩展」收口对账＋三处差距整合回归（差距清单 spec 批四）",
+  "status": "planned",
+  "dependsOn": ["UI-T47", "UI-T48", "UI-T49"],
+  "requirements": [
+    "MDL-13（工具定义——安装接口/TCP 列表字段页）",
+    "MDL-15（场景对象——世界位姿/角色字段页）",
+    "MDL-17（位姿集——命名位姿列表字段页）",
+    "MDL-16（传动设计——比率/摩擦/力矩字段页；SourcedValue 来源标记呈现）",
+    "MDL-07（参数化编辑界面——UI-T22 页协议消费与 L-2 编辑流同规）",
+    "UX-02/UX-04（工程用语零内部名/字段呈现与单位同显）"
+  ],
+  "designRefs": [
+    "units/modeling.md#9.7",
+    "units/modeling.md#4.4",
+    "units/modeling.md#4.5",
+    "units/modeling.md#4.6",
+    "units/modeling.md#4.7",
+    "units/modeling.md#2.5",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/docs/superpowers/specs/2026-10-03-modeling-editing-gap-batches.md",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T50.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling sdurws_ird_modeling_plugin sdurws_ird_modeling_test sdurws_ird_modeling_contract_test sdurws_ird_modeling_gui_test sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_ui_gui_test",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_gui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_contract_test.exe",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t50",
+  "interUnit": true,
+  "knownPitfalls": ["P-MDL-2", "P-MDL-8"],
+  "acceptance": [
+    "工具页：安装接口/TCP 列表字段页（§9.7.1 属性编辑区工具行）——具名用例",
+    "场景页：世界位姿/角色字段页（§4.5 世界系固连＋role 词表）——具名用例",
+    "位姿集页：命名位姿列表字段页（§4.6）——具名用例",
+    "传动页：比率/摩擦/力矩字段页（§4.7；逐项 SourcedValue 来源标记呈现——UserProvided/ImportMapped/CatalogBackfill）——具名用例",
+    "P1 收口对账：外审 P1 三项（TCP 捕获〔UI-T45＋UI-T33 已收口〕/三维拾取〔UI-T45 已收口〕/建模对象编辑扩展〔本四批〕）落位声明登记——报告原文取得后逐项对账、残项如实登记（acceptance 以对账登记行＋可考面用例承载）",
+    "整合回归：建模面板编辑链端到端 gui 拍（结构编辑→几何引用→碰撞表→对象属性页四段贯通＋draft.apply→编译链发布既有链路复验）＋双模式构建＋ird_gates＋validate-docs PASS——留痕 traceability/builds/ui-t50/"
+  ],
+  "note": "批次特有告诫（registry 外自由承载）：①外审 P1 报告原文不在库（UI-T43 实施段仅逐条核实接线类建议——功能类 P1 原文未入留痕）：实施前置＝报告原文由用户补充或自外部审计记录取得；缺失时按本卡可考面（G8 五对象属性页）收口并如实登记残留项——禁凭记忆推断报告内容（AGENTS §7）；②页协议走 UI-T22 冻结面（IUiPropertyPagesProvider——D5 常用字段 hosted 页＋D6 复杂编辑域面板页 hosted=false 两形态）；共享检查器零建模类型知识（resolveSelection 域判定在域——§9.7.5）；③根/基座页面是否纳入＝实施段按 §9.7.5 增量边界复核后定并登记决议（displayName/基座安装布置字段面）；新增页覆盖后对应『v1 无页面供给』诚实二态逐键撤牌（登记退役面）；④D-MDL-10：草稿不编译——位姿集/传动页零即时编译语义（预览页仅基于已应用修订的既有口径不变）；⑤字段编辑经既有编辑出口同规（JointCommonFieldsOutlet 同型的域出口转译——域裁决唯一）；L-8 平行轴确认等既有确认流不被绕过；P-MDL-2 失效粒度背景：字段级保守失效语义维持（evidence 侧裁决不因本批改变）；⑥gui 测试 QT_QPA_PLATFORM=windows；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：同 UI-T47（差距清单 spec 批四 G8＋G9；本批为四批收口）。关键事实：『建模对象编辑扩展』外审 P1 的可考主体＝§9.7.5 PropertyPagesProvider『根/基座/工具/场景/位姿集/传动 v1 无页面供给（诚实二态——不虚构字段，增量边界随 WP-14-T10/WP-15-T18 同构扩展）』注的 modeling 半区增量兑现；页协议 UI-T22 已冻结（hosted/D6 两形态），本卡零新协议概念。堆叠序：ui-t50 基点 ui-t49 head；status=planned 待 UI-T47/T48/T49 落位后转 ready。"
+}

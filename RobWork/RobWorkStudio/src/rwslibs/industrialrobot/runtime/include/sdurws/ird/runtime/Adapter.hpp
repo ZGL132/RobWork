@@ -161,6 +161,26 @@ public:
      */
     rw::kinematics::State defaultState() const;
 
+    /**
+     * @brief 只读句柄访问器（UI-T46 增量落位——units/runtime.md §15.4
+     *        v0.18 登记）。
+     *
+     * 背景：宿主呈现装配（RuntimePublishBridge→呈现 outlet 挂接）需要把
+     * 编译产物 WorkCell 以引用计数句柄形态交给宿主单入口
+     * （RobWorkStudio::setWorkCell——TreeView 与三维场景从同一载体刷新，
+     * INV-B4），而本视图原契约面只暴露 const 引用与逐项查询，句柄形态
+     * 不可达——宿主挂接无合法取数路径。本访问器**原样返回构造入参句柄**
+     * （const 形态——仍是只读句柄，零写路径新增；与本视图其余查询同一
+     * 语义强度）。
+     *
+     * @return 借持的只读 WC 句柄（与视图同生命周期语义——快照仍是唯一
+     *         规范持有者，§8.2；不抛）
+     */
+    const rw::core::Ptr<const rw::models::WorkCell>& workCellHandle() const noexcept
+    {
+        return m_workCell;
+    }
+
 private:
     /// 借持的只读 WC 句柄（构造时非空——唯一构造入口已 fail-fast 空输入）。
     rw::core::Ptr<const rw::models::WorkCell> m_workCell;

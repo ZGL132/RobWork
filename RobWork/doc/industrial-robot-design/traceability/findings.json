@@ -4606,7 +4606,7 @@
       "registeredAt": "2026-10-02",
       "title": "生产装配从未注册任何域命令处理器：registerRequirementCommandHandlers/registerModelingCommandHandlers 仅被各自单测调用，studio 生产路径 draft.apply 的域信封提交恒被 S1 以 unknown-command 拒绝——『应用修改』对需求域从未真实产生修订，历次冒烟的 requirements-applied 断言只查 Submitted 属假通过。",
       "owner": "requirements 半区随 UI-T39 修复闭环（宿主级首次真实 committed＋首应用不可逆诚实禁用实证）；modeling 半区（registerModelingCommandHandlers 需 HandlerServices 服务集装配：断言端口/策略锚）与顶层 harness 形态的注册接线仍 open——归建模域任务与 harness 收口任务",
-      "resolution": "UI-T39 修复 requirements 半区（冒烟 step9 实证 committed=1）；modeling/harness 残余面转登本条 owner 列开放项。编号顺延自 F-460。"
+      "resolution": "UI-T39 修复 requirements 半区（冒烟 step9 实证 committed=1）；modeling/harness 残余面转登本条 owner 列开放项。编号顺延自 F-460。〔2026-10-03 消账〕modeling 半区随 UI-T46 宿主呈现装配收口：HandlerServices 产品装配（makeJointLimitEvaluator＋HostRuntimeNameContext〔呈现真值端口现取〕＋DhExplicitConverter＋HostCompileProbe——所有权锚成员持有）＋打开成功回调 registerModelingCommandHandlers 五 token 注册（打开上下文 store.handlerRegistry——与 requirements 半区同点同线程）；策略端口保持 C-10 未装载诚实基线（POLICY-OBJECT-MISSING 轨）。配套深层修正是 CM-0 复核范围对齐 O-36（runtime builder 原全模型复核使生产命令流首应用即被拒——接通生产编译链实证暴露，登记 units/runtime.md §15.4 v0.18）。顶层 harness 形态（sdurws_ird_ui_app）注册接线维持 open——harness 为开发验证通道（D13），正式产品路径（sdurws_ird_studio 同 TU 同源）已随本批覆盖。生产链路实证：HostCompilePipelineTest 端到端（合成闭包→十段链发布→快照缓存）＋ui_test 246 全绿；留痕 traceability/builds/ui-t46/。"
     },
     {
       "id": "F-462",

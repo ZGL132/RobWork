@@ -250,17 +250,28 @@ TEST(CanonicalModelBuilderTest, RejectsIllegalProvidedValues)
     expectBuildThrows(nonSpd.toBuilder(), RuntimeErrorCode::InputInvalid, "非正定惯量");
 }
 
-/** 全模型 ObjectId 唯一性／引用∈objectRefs（CM-0）→ StructureInvalid。 */
-TEST(CanonicalModelBuilderTest, RejectsDuplicateAndForeignObjectIds)
+/** 全模型 ObjectId 唯一性（CM-0 值层面）→ StructureInvalid；引用∈objectRefs
+ * 复核范围对齐 O-36 裁决（UI-T46——units/runtime.md §15.4 v0.18）＝真实
+ * 存储对象（根/工具/场景），关节/连杆（模型内标识）闭包外身份**放行**。 */
+TEST(CanonicalModelBuilderTest, RejectsDuplicateIds_AllowsForeignJointIds_O36)
 {
+    // 唯一性半区不限缩（§4.3.3 全模型约束）：关节撞连杆仍拒绝。
     Fixture dup = minimalFixture();
     dup.chain.joints.at(1).objectId = dup.chain.links.at(1).objectId;  // 关节撞连杆
     expectBuildThrows(dup.toBuilder(), RuntimeErrorCode::StructureInvalid, "重复 id");
 
-    Fixture foreign = minimalFixture();
-    foreign.chain.joints.at(1).objectId = idFrom<core::ObjectId>("not-in-closure");
-    expectBuildThrows(foreign.toBuilder(), RuntimeErrorCode::StructureInvalid,
-                      "引用不在闭包清单");
+    // 放行半区（O-36）：闭包外关节身份不构成引用违约（模型内标识——建模
+    // 域"根对象内嵌部件"存储形态的相容面）。
+    Fixture foreignJoint = minimalFixture();
+    foreignJoint.chain.joints.at(1).objectId = idFrom<core::ObjectId>("not-in-closure");
+    EXPECT_NO_THROW(foreignJoint.build())
+        << "关节为模型内标识（O-36）——闭包外身份不参与引用复核";
+
+    // 拒绝半区（存储对象——原语义保持）：根对象不在引用清单仍拒绝。
+    Fixture foreignRoot = minimalFixture();
+    foreignRoot.header.objectRefs.clear();
+    expectBuildThrows(foreignRoot.toBuilder(), RuntimeErrorCode::StructureInvalid,
+                      "不在 header.objectRefs");
 }
 
 /** 局部名空/含 '/' → InputInvalid（§4.3.3；消歧归 S8 不在此拒绝）。 */

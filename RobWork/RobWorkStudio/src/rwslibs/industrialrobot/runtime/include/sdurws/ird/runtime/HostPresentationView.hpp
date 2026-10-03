@@ -114,6 +114,35 @@ public:
     /// @brief 已应用 WorkCell 只读视图（§8.3 const 面——任何写路径类型层不可达；不抛）。
     const WorkCellConstView& workCell() const noexcept;
 
+    /**
+     * @brief 宿主挂接 WorkCell 句柄（UI-T46 增量落位——units/runtime.md
+     *        §15.4 v0.18 登记；B1-SPEC §4.3 v1.1 const 面审计的**唯一登记
+     *        豁免点**）。
+     *
+     * 背景（为什么本出口必须存在）：宿主呈现装配的挂接动作＝
+     * RobWorkStudio::setWorkCell（框架公开 API，TreeView 与三维场景从
+     * 同一载体刷新——INV-B4 的宿主半区），框架签名接收非 const
+     * 引用计数句柄（RobWork 基线惯例——历史签名，SA-02 零修改）。本
+     * 视图原契约面全 const，宿主挂接无合法取数路径——呈现装配因此悬空
+     * （UI-T45 落位时呈现出口即因本缺口保持降级）。
+     *
+     * 口径澄清（立法意图边界，对抗验收对账面）：B1-SPEC v1.1 的
+     * const_cast/序列化旁路禁令禁止的是"**呈现侧改写**快照内容"与
+     * "呈现→序列化中转→计算输入"的复制回写——本出口不产生任何写路径
+     * 纪律的放松：①转换是**单点**的（仅本方法体内一处 const 形态解除，
+     * 消费方零 cast）；②转换后**对象本体未变**（同一 WorkCell 实例以
+     * 引用计数交给宿主渲染——零复制、零第二构造路径，"同一编译链产物"
+     * 由对象同一性结构保证）；③消费契约＝宿主呈现借用（挂接/渲染/查询
+     * ——框架 TreeView 与场景构建全部只读消费；结构写属调用方契约违约，
+     * 不在本类型可执行面内强制，登记为呈现装配纪律）。反向隔离的验收
+     * 口径（呈现副本修改前后快照内容身份不变）由 RT-PRES 族用例继续
+     * 承载。
+     *
+     * @return 宿主挂接句柄（与非 const 视图同一对象——持句柄即持快照
+     *         存活期，与本视图"持视图即持快照"一致；不抛）
+     */
+    rw::core::Ptr<rw::models::WorkCell> hostPresentationWorkCell() const;
+
     /// @brief 名称映射（§7 权威实例——反解查询与计算侧同源；不抛）。
     const RuntimeNameMap& nameMap() const noexcept;
 

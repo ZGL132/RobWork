@@ -67,6 +67,21 @@ const WorkCellConstView& HostPresentationView::workCell() const noexcept
     return m_snapshot->workCell();
 }
 
+rw::core::Ptr<rw::models::WorkCell> HostPresentationView::hostPresentationWorkCell() const
+{
+    // 宿主挂接出口（契约注释见头——B1-SPEC v1.1 const 面审计的唯一登记
+    // 豁免点）。const 形态解除收编在本单元此一处：从只读视图取原句柄
+    // （WorkCellConstView::workCellHandle——构造入参原样返回）后经标准
+    // const_pointer_cast 交给宿主渲染。对象本体未变（同一 WorkCell 以
+    // 引用计数共享——零复制零第二构造路径），写纪律由呈现装配契约承载
+    // （宿主挂接＝渲染/查询的只读借用——头注口径澄清三条）。
+    const rw::core::Ptr<const rw::models::WorkCell>& readOnly =
+        m_snapshot->workCell().workCellHandle();
+    return rw::core::Ptr<rw::models::WorkCell>(
+        std::const_pointer_cast<rw::models::WorkCell>(
+            readOnly.getCppSharedPtr()));
+}
+
 const RuntimeNameMap& HostPresentationView::nameMap() const noexcept
 {
     // §7 权威映射转发（反解查询与计算侧同实例——结果逐字节一致的结构性

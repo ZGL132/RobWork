@@ -386,6 +386,30 @@ target_link_libraries(sdurws_ird_ui_test PRIVATE
 target_compile_definitions(sdurws_ird_ui_test PRIVATE
     IRD_UI_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 
+# UI-T46 宿主编译链/呈现装配适配器测试（集成树专属门控——被测 TU 同源
+# 编入＋传递链接面；冒烟树无框架目标不注册——UI-T45 网关测试同款判别
+# 纪律。链接面经 sdurws_ird_modeling_plugin 的 PUBLIC 六边传递到达
+# modeling/runtime/policy——测试面消费，无新 SUB 直链边；框架 math 符号
+# 经 rw 头内联面需求由 sdurws 传递供给）。位置纪律：必须置于主链接声明
+# 之后——LinkageContractTest 的链接块提取取"首个 target_link_libraries"
+# 命中（UI-T45 实施期实证的门控块次序约束）。
+if(TARGET sdurws)
+    target_sources(sdurws_ird_ui_test PRIVATE
+        test/HostCompilePipelineTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostCompilePort.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostPresentationAdapters.cpp)
+    target_include_directories(sdurws_ird_ui_test PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR})
+    # 传递链接面（contract_test 同款测试面边）：modeling_plugin 的 PUBLIC
+    # 六边携带 modeling/runtime/policy（include 目录＋符号——被测 TU 与
+    # 测试 TU 的消费面）；sdurws＝框架库（rws/RobWorkStudio.hpp——挂接
+    # 对象的宿主注入面类型）；sdurw_math 为 rw 头内联模板符号的框架面。
+    target_link_libraries(sdurws_ird_ui_test PRIVATE
+        sdurws_ird_modeling_plugin
+        sdurws
+        sdurw_math)
+endif()
+
 # vcpkg gtest 与 Qt6 均为动态库：拷贝运行期 DLL 到测试可执行文件输出目录，
 # 保证不经 PATH 配置即可直接运行（留痕与验收都要直接执行该可执行文件；
 # TARGET_RUNTIME_DLLS 需 CMake ≥3.21，本仓库 VS2022 工具链满足——execution
@@ -690,6 +714,8 @@ if(TARGET sdurws)
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（上行拾取/呈现出口/TCP 源）
+        plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（十段链适配＋快照缓存＋探针＋名称上下文）
+        plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（映射真值/挂接对象/构造源）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 
@@ -780,6 +806,8 @@ if(TARGET sdurws)
         plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历（与插件目标同源）
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（与插件目标同源）
+        plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（与插件目标同源）
+        plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（与插件目标同源）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 

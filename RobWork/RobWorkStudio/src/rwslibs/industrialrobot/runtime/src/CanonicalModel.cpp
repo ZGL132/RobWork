@@ -698,14 +698,37 @@ CanonicalModel CanonicalModelBuilder::build() const
                                        + "）——§4.3.3 唯一性约束");
             }
         }
-        // 每个模型内对象都必须出现在修订闭包引用清单（objectRefs）中。
+        // 存储对象必须出现在修订闭包引用清单（objectRefs）中。复核范围＝
+        // **真实存储对象**（根/工具/场景——修订闭包的合法成员面）；关节/
+        // 连杆为模型内标识（内嵌根对象字节、不独立存储——O-36 裁决原文
+        // "objectRefs/CM-0 复核范围＝真实存储对象……关节/连杆子 ObjectId
+        // 为模型内标识（诊断 subject 与名称映射锚）"），不参与闭包存在性
+        // 复核。原实现对全模型对象复核，与建模域"根对象内嵌部件"的存储
+        // 形态不相容（生产命令流的 plannedWrites 只有根槽——首应用即被
+        // 拒，UI-T46 呈现装配接通生产编译链时实证暴露）；唯一性约束对
+        // 全模型对象继续成立（上方查重不限缩）。
         std::vector<std::string> refIds;
         refIds.reserve(header.objectRefs.size());
         for (const ObjectRefEntry& e : header.objectRefs) { refIds.push_back(e.objectId.toCanonical()); }
         std::sort(refIds.begin(), refIds.end());
-        for (const std::string& id : allIds) {
-            if (!std::binary_search(refIds.begin(), refIds.end(), id)) {
-                throw structureInvalid("对象 " + id + " 不在 header.objectRefs（CM-0 引用约束）");
+        const bool rootInRefs = std::binary_search(
+            refIds.begin(), refIds.end(), chain.robotObjectId.toCanonical());
+        if (!rootInRefs) {
+            throw structureInvalid("对象 " + chain.robotObjectId.toCanonical()
+                                   + " 不在 header.objectRefs（CM-0 引用约束）");
+        }
+        for (const CanonicalTool& t : tools) {
+            if (!std::binary_search(refIds.begin(), refIds.end(),
+                                    t.objectId.toCanonical())) {
+                throw structureInvalid("对象 " + t.objectId.toCanonical()
+                                       + " 不在 header.objectRefs（CM-0 引用约束）");
+            }
+        }
+        for (const CanonicalSceneObject& s : scene) {
+            if (!std::binary_search(refIds.begin(), refIds.end(),
+                                    s.objectId.toCanonical())) {
+                throw structureInvalid("对象 " + s.objectId.toCanonical()
+                                       + " 不在 header.objectRefs（CM-0 引用约束）");
             }
         }
     }
