@@ -44,6 +44,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QMessageBox>
+#include <QMouseEvent>  // 三维拾取拦截（UI-T45——双击事件位形）
 #include <QPushButton>
 #include <QRadioButton>
 #include <QStatusBar>
@@ -63,10 +64,12 @@
 #include <QWidget>
 
 #include <rws/RobWorkStudio.hpp>                 // 宿主注入面：getView()/getWorkCellScene()/menuBar()/事件面（共存接入＋UI-T23 桥）
+#include <rws/RWStudioView3D.hpp>                // 框架三维视图（UI-T45——pickFrame 公开 API 消费面）
 
 #include <rw/kinematics/Frame.hpp>               // rw::kinematics::Frame（L3 桥事件值——TreeView Select Frame 转发名源）
 #include <rw/kinematics/State.hpp>               // rw::kinematics::State（D8 Jog 桥——State 变化采样）
 #include <rw/models/Device.hpp>                  // rw::models::Device（D8 桥——WorkCell 设备 q 提取）
+#include <rw/models/JointDevice.hpp>             // rw::models::JointDevice（UI-T45——TCP 帧解析 getEnd）
 #include <rw/models/WorkCell.hpp>                // rw::models::WorkCell（L2 高亮按名寻帧/D8 设备枚举——呈现对象公开面）
 #include <rw/graphics/WorkCellScene.hpp>         // rw::graphics::WorkCellScene（L2 高亮出口——setHighlighted 公开 API）
 
@@ -85,6 +88,7 @@
 #include <sdurws/ird/ui/UiPorts.hpp>             // ui::IUiNameResolver（共享面名称解析端口——C-11 复用面）
 
 #include "DomainModuleRunner.hpp"                // runDomainApply（UI-T23 acceptance 2——draft.apply 多模块遍历）
+#include "HostView3DGateway.hpp"                 // 宿主三维网关（UI-T45——上行拾取/呈现出口/TCP 源）
 
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>  // modeling::isAssembledModelingCommand（UI-T42——F-466 路由判定出线）
 
@@ -1004,6 +1008,10 @@ void IrdWorkbenchHostPlugin::initialize()
     //      面就位后执行——桥回调消费 m_selection/m_domains）----
     connectHostEventBridges();
 
+    // ---- 宿主三维网关装配（UI-T45——三桥一源；须在选择服务/域装配就位
+    //      后执行——Deps 借用两者指针。getView 不可得＝降级留痕不装配）。
+    assembleView3DGateway();
+
     // ---- 装配第六步（时序关键）：装载呈现自证排队 ----
     // 零等待单发定时器：控制流回到事件循环的第一拍执行重申（此时 addPlugin
     // 已返回、其尾段 setVisible/restoreState 已完成——队列语义保证严格晚于
@@ -1049,7 +1057,8 @@ void IrdWorkbenchHostPlugin::open(rw::models::WorkCell* workcell)
     // 宿主装载工作单元＝宿主中央区 RWStudioView3D 将呈现三维场景；本插件
     // 让位（工作台面板与宿主中央视图并存，不承载、不复制三维能力）。此处
     // 只做注入面的只读观测留痕（getView()/getWorkCellScene()——验收操作
-    // 序列"宿主三维共存"的可观测面），完整三维交互归 WP-10-T05 阶段 B。
+    // 序列"宿主三维共存"的可观测面）。UI-T45：三维交互经网关受控消费
+    // （阶段 B 交付——上行拾取/呈现出口/TCP 源；引用全部现取零挂接）。
     (void)workcell;  // 场景本体归宿主呈现——本插件零场景语义
     if (m_diag.pipeline) {
         const bool viewInPlace = getRobWorkStudio() != nullptr
@@ -1064,6 +1073,11 @@ void IrdWorkbenchHostPlugin::open(rw::models::WorkCell* workcell)
 
 void IrdWorkbenchHostPlugin::close()
 {
+    // UI-T45：场景清除拍——网关呈现残留整组清理（幂等；高亮归既有
+    // outlet 的选中流收口——teardown 选择清空即驱动）。
+    if (m_view3dGateway != nullptr) {
+        m_view3dGateway->onSceneCleared();
+    }
     // 宿主关闭工作单元：观测留痕（零操作本体——工作台面板状态不随工作单元
     // 变化；ird 项目会话生命周期归 UiSessionController，与 rw WorkCell 正交）。
     if (m_diag.pipeline) {
@@ -1703,6 +1717,25 @@ void IrdWorkbenchHostPlugin::installCentralReserveGuard()
 
 bool IrdWorkbenchHostPlugin::eventFilter(QObject* watched, QEvent* event)
 {
+    // 三维拾取拦截（UI-T45——Ctrl+双击＝旧版交互语义等价承接）。事件
+    // 归属判定＝watched 为视图本体或其后代 QWidget；非 Ctrl/非双击/非
+    // 视图域＝放行框架默认处理（零行为外溢）；拦截后无论链路产出与否
+    // 均消费（未命中也是诚实处置——放行会触发框架默认双击行为）。
+    if (m_view3dGateway != nullptr && !m_view3d.isNull()
+        && event->type() == QEvent::MouseButtonDblClick) {
+        auto* widget = qobject_cast<QWidget*>(watched);
+        if (widget != nullptr && m_view3d->isAncestorOf(widget)) {
+            const auto* mouse = static_cast<QMouseEvent*>(event);
+            if ((mouse->modifiers() & Qt::ControlModifier) != 0) {
+                // 坐标映射到视图系（落点控件可能与视图原点有布局偏移——
+                // pickFrame 约定＝视图坐标系）。
+                const QPoint pos =
+                    widget->mapTo(m_view3d, mouse->position().toPoint());
+                m_view3dGateway->handleViewDoubleClick(pos);
+                return true;
+            }
+        }
+    }
     // 只认 Resize 事件（其余全放行基类——零干预面）；宿主窗口与中央控件
     // 的几何变化都会到这里，合并抖动后排程检查。
     if (event != nullptr && event->type() == QEvent::Resize
@@ -2902,6 +2935,7 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
     //    同款）；高亮出口＝宿主 WorkCellScene 实现（L2 真高亮——呈现
     //    缺席时动作跳过＋Dev 留痕，判定照常）。
     auto nameMap = std::make_shared<HostEmptyNameMapPort>();
+    m_nameMapPort = nameMap;  // UI-T45：提升为成员——三维网关共享同一实例（真映射注入点单一，WP-24-T08 替换即两消费面同步升级）
     m_highlightOutlet = std::make_shared<HostHighlightOutlet>(
         getRobWorkStudio(),
         [this](const std::string& message) {
@@ -3049,6 +3083,83 @@ void IrdWorkbenchHostPlugin::assembleSharedSurfaces()
     }
     reportLine("共享面装配完成（项目树＋检查器＋选择服务；三域 Provider 注册；L1/L3 接线；"
                "NameMap 端口＝空映射二态——呈现装配随 WP-24-T08）");
+}
+
+void IrdWorkbenchHostPlugin::assembleView3DGateway()
+{
+    // 宿主三维网关装配（UI-T45——方案 spec 三桥一源的宿主半区；SA-02：
+    // 全部经 RWStudioView3D 公开 API 消费，事件注入＝过滤器外挂）。
+    if (m_view3dGateway != nullptr || m_domains == nullptr
+        || m_selection == nullptr || m_nameMapPort == nullptr) {
+        return;  // 已装配/依赖缺席（幂等静默——装配序保证）
+    }
+    rws::RobWorkStudio* studio = getRobWorkStudio();
+    const rws::RWStudioView3D::Ptr view =
+        studio != nullptr ? studio->getView() : nullptr;
+    if (view == nullptr) {
+        // 降级基线（spec §4）：视图不可得＝网关不装配——上行拾取/TCP 源
+        // /呈现出口三面缺席（选择服务既有 outlet 保持显式形态），不虚构
+        // 三维能力（UX-11/ERR-01）。
+        if (m_diag.pipeline) {
+            m_diag.pipeline->logDev(kPluginDevChannel,
+                                    "view3d gateway: RWStudioView3D 不可得——三桥不接（降级基线）");
+        }
+        return;
+    }
+
+    HostView3DGateway::Deps deps;
+    // 上行拾取缝（框架公开 API 直绑——屏幕坐标语义与事件位形同系）。
+    deps.pickFrame = [view](int x, int y) { return view->pickFrame(x, y); };
+    // TCP 帧缝（设备名→JointDevice 末端帧——WorkCell 现查，非 owning）。
+    deps.resolveTcpFrame = [studio](const std::string& deviceName)
+        -> const rw::kinematics::Frame* {
+        if (studio == nullptr) {
+            return nullptr;
+        }
+        const rw::models::WorkCell::Ptr workcell = studio->getWorkCell();
+        if (workcell.isNull()) {
+            return nullptr;
+        }
+        const auto device =
+            workcell->findDevice<rw::models::JointDevice>(deviceName);
+        return device != nullptr ? device->getEnd() : nullptr;
+    };
+    // 会话态缝（宿主当前 State——只读借用，KIN-06 零修订）。
+    deps.currentState = [studio]() -> const rw::kinematics::State* {
+        return studio != nullptr ? &studio->getState() : nullptr;
+    };
+    // 汇聚端口（与 SelectionService 同一名称映射实例——"真映射注入点
+    // 单一"纪律：WP-24-T08 替换成员实例即两消费面同步升级）。
+    deps.selection = m_selection.get();
+    deps.nameMap = m_nameMapPort.get();
+    // 域分发缝（未命中本域＝域内诚实 false；需求域缺席＝失败隔离形态）。
+    deps.dispatchToModeling = [this](const core::ObjectId& oid) {
+        return m_domains != nullptr
+               && m_domains->modeling.reportView3DPick(oid);
+    };
+    deps.dispatchToRequirements = [this](const core::ObjectId& oid) {
+        return m_domains != nullptr && m_domains->requirements.has_value()
+               && m_domains->requirements->reportView3DPick(oid);
+    };
+
+    m_view3dGateway = std::make_unique<HostView3DGateway>(std::move(deps));
+
+    // 事件过滤挂接＝视图本体＋全部后代 QWidget（双击事件的落点控件在
+    // 框架内部组装——零脆弱查找，isAncestorOf 判定事件归属；视图未挂＝
+    // 上游拾取不接——诚实降级面，呈现出口/TCP 源照常在位）。
+    m_view3d = view.get();
+    view->installEventFilter(this);
+    for (QWidget* child : view->findChildren<QWidget*>()) {
+        child->installEventFilter(this);
+    }
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "view3d gateway: 装配完成（上行拾取＋呈现出口＋TCP 会话态源；名称映射＝宿主当前实例）");
+    }
+    if (m_diag.pipeline) {
+        m_diag.pipeline->logDev(kPluginDevChannel,
+                                "view3d gateway: 装配完成（上行拾取＋呈现出口＋TCP 会话态源；名称映射＝宿主当前实例）");
+    }
 }
 
 void IrdWorkbenchHostPlugin::refreshSharedSurfaces()

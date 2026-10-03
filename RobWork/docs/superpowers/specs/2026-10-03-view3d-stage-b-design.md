@@ -1,7 +1,11 @@
 # View3D 阶段 B 宿主三维网关方案（UI-T45 ＋ UI-T33 承接）
 
-> 状态：已评审待实施（2026-10-03 起草；立项配套＝`tasks/foundation/UI-T45.json`〔网关〕＋`UI-T33.json` 转可执行〔需求域消费侧〕）。
+> 状态：已评审，UI-T45 实施落位（2026-10-03 起草；立项配套＝`tasks/foundation/UI-T45.json`〔网关〕＋`UI-T33.json` 转可执行〔需求域消费侧〕）。
 > 红线前置：框架零源码修改（SA-02——本方案全部经框架公开 API＋Qt 事件过滤器外挂实现，零 patch）；不接管宿主三维场景生命周期（O-38 裁决③/O-43）；KIN-06 会话姿态零修订。
+>
+> **范围勘误（2026-10-03 实施期实证，两处）**：
+> ①下行高亮桥**已在位**——`HostHighlightOutlet`（UiPlugin 匿名命名空间）为 IUiHighlightOutlet 的完整实现（WorkCellScene::setHighlighted 真高亮＋Dev 留痕）且已装配进 SelectionService（§1 现状盘点误记为"空出口存根"）——阶段 B 高亮零新增，本 spec §2.3 不实施（残留清理由既有选中流收口：teardown 选择清空→outlet.clearHighlight）；
+> ②呈现出口的场景绑定**下沉适配器**——WorkCellScene 无头构造不可行（SceneGraph 依赖渲染库），HostPresentationObject 的 apply/remove 零场景参数（适配器构造期自绑场景），网关零场景缝——spec §2.4 的"网关从宿主取现值"口径随之修正（呈现对象不透明面进一步最小化，headless 测试面全链路可驱）。
 
 ---
 

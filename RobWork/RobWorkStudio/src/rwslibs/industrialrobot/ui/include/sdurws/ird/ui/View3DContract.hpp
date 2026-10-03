@@ -75,6 +75,10 @@ struct View3DInteractionItem {
     const char* id;
     /// 中文呈现名（工程用语——占位面板清单行文案；见结构体注释）。
     const char* label;
+    /// 提供方式（UI-T45 阶段 B 校准——"宿主原生提供"＝框架 RWStudioView3D
+    /// 既有能力；"阶段 B 网关交付"＝宿主三维网关新增；占位面板清单行
+    /// 括注呈现——"将在后续版本提供"的计划性口径退役）。
+    const char* provision;
 };
 
 /**

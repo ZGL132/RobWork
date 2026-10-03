@@ -219,7 +219,7 @@ struct WorkbenchText {
     static constexpr const char* kView3dTitle = "三维视图";
     // 交互清单引导行：显式声明清单内容尚未提供（呈现的是 UX-11 登记的
     // 阶段 B 交付计划，不是当前可用功能——不虚构业务能力红线）。
-    static constexpr const char* kView3dManifestLead = "计划提供的视图交互（将在后续版本提供）：";
+    static constexpr const char* kView3dManifestLead = "三维视图交互（宿主原生提供＋阶段 B 网关交付）：";
 
     // ---- 禁用原因文案键（ShellCommandAvailability.reasonKey 的稳定键值；
     //      值解析随 UI-T09 UiText 落地——键即契约）----

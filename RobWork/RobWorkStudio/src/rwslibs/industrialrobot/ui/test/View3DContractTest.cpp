@@ -50,15 +50,16 @@ using sdurws::ird::ui::View3DSessionPoseContract;
 const std::vector<View3DInteractionItem>& expectedManifest()
 {
     static const std::vector<View3DInteractionItem> kExpected = {
-        {"view3d.host", u8"三维视图（中央工作区）"},
-        {"view3d.standard_camera_views", u8"标准视图（顶/右/前）与相机视图"},
-        {"view3d.zoom", u8"缩放"},
-        {"view3d.projection_toggle", u8"透视/正交切换"},
-        {"view3d.wireframe_transparency", u8"线框/透明切换"},
-        {"view3d.render_group_visibility", u8"渲染分组显隐（Virtual/Physical/Drawable/Collision/User）"},
-        {"view3d.collision_highlight_mask", u8"碰撞高亮与碰撞组掩码"},
-        {"view3d.screenshot_png", u8"视图截图（PNG）"},
-        {"view3d.pick_ray_cast", u8"三维拾取（ray-cast 选择 Frame/Drawable）"},
+        // provision（UI-T45 阶段 B 校准——与 View3DPlaceholder.cpp 逐字同源）。
+        {"view3d.host", u8"三维视图（中央工作区）", u8"宿主原生提供"},
+        {"view3d.standard_camera_views", u8"标准视图（顶/右/前）与相机视图", u8"宿主原生提供"},
+        {"view3d.zoom", u8"缩放", u8"宿主原生提供"},
+        {"view3d.projection_toggle", u8"透视/正交切换", u8"宿主原生提供"},
+        {"view3d.wireframe_transparency", u8"线框/透明切换", u8"宿主原生提供"},
+        {"view3d.render_group_visibility", u8"渲染分组显隐（Virtual/Physical/Drawable/Collision/User）", u8"宿主原生提供"},
+        {"view3d.collision_highlight_mask", u8"碰撞高亮与碰撞组掩码", u8"宿主原生提供"},
+        {"view3d.screenshot_png", u8"视图截图（PNG）", u8"宿主原生提供"},
+        {"view3d.pick_ray_cast", u8"三维拾取（ray-cast 选择 Frame/Drawable）", u8"阶段 B 网关交付（Ctrl+双击）"},
     };
     return kExpected;
 }
@@ -86,6 +87,8 @@ TEST(View3DContract, ManifestFreezesNineItemsInRequirementOrder_UX11)
             << "第 " << i << " 项 id 漂移（登记序＝需求条目序，禁止重排/改名）";
         EXPECT_STREQ(manifest[i].label, expected[i].label)
             << "第 " << i << " 项 label 漂移（呈现文案随契约冻结）";
+        EXPECT_STREQ(manifest[i].provision, expected[i].provision)
+            << "第 " << i << " 项 provision 漂移（UI-T45 提供方式校准随契约冻结）";
     }
 }
 

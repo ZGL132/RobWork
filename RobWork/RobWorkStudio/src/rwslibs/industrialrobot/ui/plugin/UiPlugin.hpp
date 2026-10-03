@@ -87,11 +87,13 @@ class QMenu;      // 宿主 Plugins 菜单（setupMenu 回调参数）
 class QStatusBar; // 宿主状态栏（UI-T18 状态投影面——完整定义在 Qt 头）
 class QTimer;     // Draining 轮询驱动（UI 线程周期——完整定义在 Qt 头）
 class QWidget;    // Dock 体控件（前置声明）
+class QEvent;     // 三维事件过滤（UI-T45——完整定义在 Qt 头）
 
 namespace sdurws {
 namespace ird {
 namespace ui {
 class DomainReadinessSummaryCard;  // 跨域就绪摘要卡（UI-T44——Right Dock 诊断摘要半区）
+class HostView3DGateway;           // 宿主三维网关（UI-T45——三桥一源）
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
@@ -249,6 +251,9 @@ private:
     /// 跨域就绪摘要重取（UI-T44——三域 readonlyProjections 现取投卡；卡
     /// 未装配/域装配缺席＝幂等静默。随 refreshSharedSurfaces 编排触发）。
     void refreshReadinessSummary();
+    /// 宿主三维网关装配（UI-T45——getView 不可得＝降级留痕不装配；
+    /// 三桥一源的 Deps 绑定与事件过滤挂接）。
+    void assembleView3DGateway();
     /// 项目关闭统一清理（acceptance 4——八类对象的宿主收口：项目树/
     /// SelectionService/检查器/复杂编辑宿装/HostWorkCell 呈现/会话姿态/
     /// 播放驱动/运行中订阅；具名用例承载，presentContext 无项目半区调用）。
@@ -299,6 +304,18 @@ private:
     /// 摘要半区；数据源＝各域 §11.2 readonlyProjections，随共享面刷新点
     /// 重取。Qt 父子树托管——rightColumn 销毁随行，指针仅装配期寻址）。
     DomainReadinessSummaryCard* m_readinessCard = nullptr;
+    /// 宿主三维网关（UI-T45——三桥一源：上行拾取/下行高亮/呈现出口
+    /// ＋TCP 会话态数据源。getView 不可得＝不装配（降级基线与阶段 A
+    /// 等价）；unique_ptr 持有，存活期随插件）。
+    std::unique_ptr<ui::HostView3DGateway> m_view3dGateway;
+    /// 三维事件过滤根（生产＝RWStudioView3D——过滤器挂其本体与全部
+    /// 后代 QWidget，isAncestorOf 判定事件归属；未取到＝上游拾取不挂
+    /// ——诚实降级面）。
+    QPointer<QWidget> m_view3d;
+    /// 运行时名称映射实例（SelectionService 与三维网关共用同一实例——
+    /// "真映射注入点单一"纪律：WP-24-T08 呈现装配替换此实例即两消费面
+    /// 同步升级；宿主现值＝HostEmptyNameMapPort 诚实空映射）。
+    std::shared_ptr<ui::IUiRuntimeNameMapPort> m_nameMapPort;
     QDockWidget* m_tasksDock = nullptr;    ///< "IRD 任务和状态"Dock（Bottom 区——UI-T18 拆分面，窗口树托管）
     QDockWidget* m_modelingDock = nullptr; ///< "IRD 建模"Dock（Left 区——WP-24-T03 首版装配挂位，窗口树托管）
     QDockWidget* m_requirementsDock = nullptr;   ///< "IRD 需求"Dock（Left 区——UI-T23 三域挂位，窗口树托管）

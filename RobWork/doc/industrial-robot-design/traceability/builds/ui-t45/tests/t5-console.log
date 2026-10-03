@@ -1,0 +1,35 @@
+[==========] Running 12 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 10 tests from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27
+[       OK ] ModelingPanelGuiTest.PropertyFormFullClear_RowCountStableAcrossRefresh_MDL07_UI_T27 (15 ms)
+[ RUN      ] ModelingPanelGuiTest.UnitSeparation_EditorTextPurelyNumeric_UX05_UI_T27
+[       OK ] ModelingPanelGuiTest.UnitSeparation_EditorTextPurelyNumeric_UX05_UI_T27 (1 ms)
+[ RUN      ] ModelingPanelGuiTest.OnlyZeroOffsetEditable_CompositeRowsReadOnly_MDL07_UI_T27
+[       OK ] ModelingPanelGuiTest.OnlyZeroOffsetEditable_CompositeRowsReadOnly_MDL07_UI_T27 (1 ms)
+[ RUN      ] ModelingPanelGuiTest.UnmodifiedEditingFinished_NoDirtyNoApply_ERR01_UI_T27
+[       OK ] ModelingPanelGuiTest.UnmodifiedEditingFinished_NoDirtyNoApply_ERR01_UI_T27 (1 ms)
+[ RUN      ] ModelingPanelGuiTest.AvailabilityProviderDisabled_ButtonsGreyWithReason_UX02_UI_T27
+[       OK ] ModelingPanelGuiTest.AvailabilityProviderDisabled_ButtonsGreyWithReason_UX02_UI_T27 (1 ms)
+[ RUN      ] ModelingPanelGuiTest.CommandButtonTooltip_ResolvedFromUiTextKey_UX02_UI_T41B
+[       OK ] ModelingPanelGuiTest.CommandButtonTooltip_ResolvedFromUiTextKey_UX02_UI_T41B (1 ms)
+[ RUN      ] ModelingPanelGuiTest.ZeroOffsetOutOfRange_InlineWarningKeepsAuthoritative_B1
+[       OK ] ModelingPanelGuiTest.ZeroOffsetOutOfRange_InlineWarningKeepsAuthoritative_B1 (1 ms)
+[ RUN      ] ModelingPanelGuiTest.IncrementalRefresh_PreservesEditorFocus_B3
+[       OK ] ModelingPanelGuiTest.IncrementalRefresh_PreservesEditorFocus_B3 (2 ms)
+[ RUN      ] ModelingPanelGuiTest.StatusHistory_AccumulatesAndToggles_B2
+[       OK ] ModelingPanelGuiTest.StatusHistory_AccumulatesAndToggles_B2 (2 ms)
+[ RUN      ] ModelingPanelGuiTest.ReadOnlySession_AvailabilityRefreshCannotReviveWriteCommands_L7_UI_T43
+[       OK ] ModelingPanelGuiTest.ReadOnlySession_AvailabilityRefreshCannotReviveWriteCommands_L7_UI_T43 (1 ms)
+[----------] 10 tests from ModelingPanelGuiTest (32 ms total)
+
+[----------] 2 tests from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.TextResolverBoundBeforePanelCreation_NoInternalKeyLeak_UX02_UI_T43
+[       OK ] ModelingUiModuleHostWiring.TextResolverBoundBeforePanelCreation_NoInternalKeyLeak_UX02_UI_T43 (1 ms)
+[ RUN      ] ModelingUiModuleHostWiring.WritableChain_PendingInitialAndLiveForward_L7_UI_T43
+[       OK ] ModelingUiModuleHostWiring.WritableChain_PendingInitialAndLiveForward_L7_UI_T43 (1 ms)
+[----------] 2 tests from ModelingUiModuleHostWiring (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 2 test suites ran. (35 ms total)
+[  PASSED  ] 12 tests.
