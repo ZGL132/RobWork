@@ -11,6 +11,7 @@
 
 #include <gtest/gtest.h>
 
+#include <QDir>
 #include <QFile>
 #include <QTemporaryDir>
 
@@ -381,4 +382,165 @@ TEST(ModelingCommandFlows, AssembledSetMatchesCatalog_F466)
         EXPECT_FALSE(isAssembledModelingCommand(ghost))
             << "路由集含目录外条目（幽灵路由）: " << ghost;
     }
+}
+
+// =====================================================================
+// import-urdf 依赖树装配（WP-13-T21——F-473 修复面；顺带消 F-469 半边：
+// 导入流此前零自动化网）。夹具＝临时目录真实文件（流经 readFileBytes
+// 真读盘＋io snapshot 真扫描——非内存替身），mesh 资产＝最小合法 ASCII
+// STL（io 网格护栏按真实面数统计——1 面远低于限额）。
+// =====================================================================
+
+namespace {
+
+/// 写临时 URDF（mesh 引用由 useMesh 开关控制——同一模型面覆盖两形态；
+/// 连杆结构两形态恒完整——j1/j2 的父子引用不随开关悬空）。
+QString writeUrdf(const QTemporaryDir& dir, bool withMesh)
+{
+    // withMesh=true：l1 视觉几何＝存在的相对引用（meshes/l1.stl）、l2 视觉
+    // 几何＝缺失叶（meshes/ghost.dae——V-08 面）；withMesh=false：两连杆
+    // 均无几何（零 mesh 引用面）。
+    const QString l1Visual = withMesh
+        ? QStringLiteral(
+              "    <visual><geometry><mesh filename=\"meshes/l1.stl\"/></geometry></visual>\n")
+        : QString();
+    const QString l2Visual = withMesh
+        ? QStringLiteral(
+              "    <visual><geometry><mesh filename=\"meshes/ghost.dae\"/></geometry></visual>\n")
+        : QString();
+    const QString urdf = QStringLiteral(
+        "<?xml version=\"1.0\"?>\n"
+        "<robot name=\"flow arm\">\n"
+        "  <link name=\"base\"/>\n"
+        "  <link name=\"l1\">\n"
+        "%1"
+        "  </link>\n"
+        "  <link name=\"l2\">\n"
+        "%2"
+        "  </link>\n"
+        "  <joint name=\"j1\" type=\"revolute\">\n"
+        "    <parent link=\"base\"/><child link=\"l1\"/>\n"
+        "    <origin xyz=\"0 0 0.2\"/><axis xyz=\"0 1 0\"/>\n"
+        "    <limit lower=\"-1.57\" upper=\"1.57\" effort=\"50\" velocity=\"1.0\"/>\n"
+        "  </joint>\n"
+        "  <joint name=\"j2\" type=\"revolute\">\n"
+        "    <parent link=\"l1\"/><child link=\"l2\"/>\n"
+        "    <origin xyz=\"0.1 0 0\"/><axis xyz=\"0 0 1\"/>\n"
+        "    <limit lower=\"-3.14\" upper=\"3.14\" effort=\"40\" velocity=\"2.0\"/>\n"
+        "  </joint>\n"
+        "</robot>\n")
+        .arg(l1Visual, l2Visual);
+    const QString path = dir.filePath(QStringLiteral("robot.urdf"));
+    QFile file(path);
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    file.write(urdf.toUtf8());
+    return path;
+}
+
+/// 写最小合法 ASCII STL（io 流式统计面数——1 面合规）。
+void writeStl(const QTemporaryDir& dir)
+{
+    const QDir meshDir = QDir(dir.path());
+    meshDir.mkpath(QStringLiteral("meshes"));
+    QFile file(meshDir.filePath(QStringLiteral("meshes/l1.stl")));
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    file.write("solid m\n"
+               "facet normal 0 0 1\n"
+               " outer loop\n"
+               "  vertex 0 0 0\n"
+               "  vertex 1 0 0\n"
+               "  vertex 0 1 0\n"
+               " endloop\n"
+               "endfacet\n"
+               "endsolid m\n");
+}
+
+}  // namespace
+
+/// 含 mesh 引用（一存在一缺失）的 URDF → 导入成功产草稿：修复前本形态
+/// 被映射器以 SourceInconsistent 拒绝（bytes 与依赖树非同源——生产流未
+/// 装树）；修复后流半区按黄金测试装配纪律补缺失容忍树——存在 mesh＝io
+/// 真实快照入清单、缺失 mesh＝V-08 Recorded 缺失（应用可过，警告可见）。
+TEST(ModelingCommandFlows, ImportUrdf_WithMeshAndMissingResource_ProducesDraft_WP13_T21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-03", "MDL-19"},
+                  std::vector<std::string>{"F-473"});
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    writeStl(dir);
+    const QString urdfPath = writeUrdf(dir, /*withMesh=*/true);
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.host.openPathAnswer = urdfPath;
+    fx.host.confirmImportAnswer = true;
+
+    std::string summary;
+    const bool executed = executeModelingCommand(
+        "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary);
+
+    // 修复点：不再 SourceInconsistent——流程成功、草稿替换、就绪重算触发。
+    EXPECT_TRUE(executed) << "summary=" << summary;
+    EXPECT_NE(summary.find("URDF 导入完成"), std::string::npos)
+        << "summary=" << summary;
+    EXPECT_EQ(fx.session.draft.design.joints.size(), std::size_t{2})
+        << "识别关节数不符（URDF j1/j2）";
+    EXPECT_EQ(fx.session.draft.design.links.size(), std::size_t{3})
+        << "识别连杆数不符（base/l1/l2）";
+    // 资源清单＝同键去重后的 mesh 引用全集（存在 l1.stl＋缺失 ghost.dae）。
+    EXPECT_EQ(fx.session.draft.design.resourceManifest.size(), std::size_t{2})
+        << "资源清单未承载两笔 mesh 引用";
+    EXPECT_FALSE(fx.session.draft.changes.empty()) << "导入未留编辑记录";
+    EXPECT_EQ(fx.recomputeCalls, 1) << "导入后未触发就绪重算";
+}
+
+/// 无 mesh 引用的纯 URDF → 照常导入（回归守卫：依赖树装配对零引用面
+/// 退化为仅入口节点——原可用形态不因修复面变化）。
+TEST(ModelingCommandFlows, ImportUrdf_PlainNoMesh_ProducesDraft_WP13_T21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-03"}, std::vector<std::string>{});
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString urdfPath = writeUrdf(dir, /*withMesh=*/false);
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.host.openPathAnswer = urdfPath;
+    fx.host.confirmImportAnswer = true;
+
+    std::string summary;
+    const bool executed = executeModelingCommand(
+        "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary);
+
+    EXPECT_TRUE(executed) << "summary=" << summary;
+    EXPECT_EQ(fx.session.draft.design.joints.size(), std::size_t{2});
+    EXPECT_TRUE(fx.session.draft.design.resourceManifest.empty())
+        << "无 mesh 引用时资源清单应为空";
+}
+
+/// 用户在导入确认框取消 → 不落草稿（SA-15 确认流半区——导入路径的
+/// 取消面此前零覆盖，随本批补网）。
+TEST(ModelingCommandFlows, ImportUrdf_ConfirmRejected_KeepsSessionDraft_WP13_T21)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SA-15"}, std::vector<std::string>{});
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    writeStl(dir);
+    const QString urdfPath = writeUrdf(dir, /*withMesh=*/true);
+
+    FlowHarness fx;
+    ModelingWorkingSet before = makeSixAxisDraft();
+    fx.session.draft = before;
+    fx.host.openPathAnswer = urdfPath;
+    fx.host.confirmImportAnswer = false;  // 用户拒绝导入报告
+
+    std::string summary;
+    const bool executed = executeModelingCommand(
+        "modeling.import-urdf", fx.session, fx.deps(), fx.host, summary);
+
+    EXPECT_FALSE(executed) << "确认拒绝应按用户取消处置";
+    EXPECT_TRUE(fx.session.draft == before) << "取消后草稿被改动";
 }

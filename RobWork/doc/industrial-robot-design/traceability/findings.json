@@ -4711,6 +4711,16 @@
       "title": "HostIntegrationGuiTest 悬挂指针（非 UI-T43 引入）：refresh() 全量重渲染 m_tree->clear() 删除全部顶层项后，用例继续读取清除前捕获的 reqGroup 指针（HostIntegrationGuiTest.cpp:199）＝读取已释放对象（UB）——陈旧内存多数轮次恰似通过、偶发翻红，冒烟留痕两次实证（childCount 实际 1 期望 0）。",
       "owner": "UI-T43 顺带消账（清除后重新现取组行指针再断言——测试面现取纪律同款）",
       "resolution": "修复落位：HostIntegrationGuiTest.cpp 占位清除段重取 topLevelItem 后断言（F-472 修复注）；UI-T43 集成/冒烟双树复跑全绿后消账。"
+    },
+    {
+      "id": "F-473",
+      "source": "URDF 识别验证实证（2026-10-03——外审后用户发起的导入验证，临时 harness 对黄金件 golden-6r.urdf 全链执行）：生产命令流 modeling.import-urdf 对含 mesh 引用的 URDF 恒被映射器以 SourceInconsistent 拒绝",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-03",
+      "title": "URDF/Xacro 导入命令流缺依赖树装配半区（域级识别能力完好，生产流不可用）：映射器契约要求含 mesh 引用的文档必须携带同源依赖树（SourceInconsistent 否则、无草稿），io 整树扫描对缺失引用整树拒绝（无部分产物）——两契约夹缝使生产流 ValidatedSource 只装 bytes＋入口快照、恒缺树，任何含 mesh 的 URDF/Xacro 经 modeling.import-urdf/import-xacro 恒失败；无 mesh 的 URDF 不受影响。阴性对照：同模型剔除 mesh 引用后生产流正常导入。",
+      "owner": "WP-13-T21（流半区按黄金测试 GoldenImportTest V-06/V-08 装配纪律补缺失容忍树——存在＝io 真实快照，缺失/不可达＝exists=false 叶，package:// 不入树；映射器保持唯一权威）",
+      "resolution": "编号顺延自 F-471（F-472 另登于 ui-t43 批次——跨分支并行登记，合并时序不影响唯一性）；修复落位 ModelingCommandFlows.cpp assembleImportDependencyTree（URDF/选链重映射/Xacro 三调用点）；ModelingCommandFlowsTest 增三用例（含 mesh＋缺失/无 mesh/确认拒绝）消 F-469 导入流零自动化网的半边。"
     }
   ]
 }
