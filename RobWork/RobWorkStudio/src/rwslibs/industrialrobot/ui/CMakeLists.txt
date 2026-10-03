@@ -550,6 +550,22 @@ target_link_libraries(sdurws_ird_ui_gui_test PRIVATE
 target_compile_definitions(sdurws_ird_ui_gui_test PRIVATE
     IRD_UI_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 
+# UI-T45 宿主三维网关测试（集成树专属门控——被测 TU 同源编入＋rw 框架
+# 链接面；冒烟树无框架目标不注册——与 contract 三域增列同款判别纪律）。
+# 位置纪律：必须置于主链接声明之后——LinkageContractTest 的链接块提取取
+# "首个 target_link_libraries(<目标> "命中，本门控块若在前即被误取为主
+# 块（testkit/testkit_qt 断言翻红——UI-T45 实施期实证）。
+if(TARGET sdurws)
+    target_sources(sdurws_ird_ui_gui_test PRIVATE
+        gui_test/HostView3DGatewayGuiTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostView3DGateway.cpp)
+    target_include_directories(sdurws_ird_ui_gui_test PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR})
+    target_link_libraries(sdurws_ird_ui_gui_test PRIVATE
+        sdurw_kinematics
+        sdurw_math)
+endif()
+
 # Qt 安装前缀推导（F-456 起两处消费：GUI 测试 exe＋下方 harness——原仅
 # harness 单点，推导提前至此）。configure 期从 Qt6_DIR 推导真实
 # Qt 安装前缀：TARGET_RUNTIME_DLLS 复制到 exe 旁的 Qt6Core/Gui/Widgets 是
@@ -673,6 +689,7 @@ if(TARGET sdurws)
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
+        plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（上行拾取/呈现出口/TCP 源）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 
@@ -762,6 +779,7 @@ if(TARGET sdurws)
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历（与插件目标同源）
+        plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（与插件目标同源）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 
