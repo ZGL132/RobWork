@@ -309,3 +309,69 @@ TEST(RequirementsView3DFlow, PickFeature_PickedAndSelected_WritesOrientationRule
     EXPECT_NE(host.lastConfirmText.indexOf(QString::fromUtf8("拾取")), -1)
         << "确认摘要未含拾取语义（REQ-08 确认门呈现面）";
 }
+
+/// 门面区域预览转发（UI-T52 acceptance 2——RegionPreviewGeometry→
+/// RegionPreviewView 转换的 gridLines 直投断言：零重排零丢失；转换层
+/// 在门面实现——本用例为该层的唯一自动化断言面）。
+TEST(RequirementsView3DFlow, RegionPreviewSink_ForwardsGridLines_UI_T52)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-03"},
+                  std::vector<std::string>{"UI-T52-ACC2"});
+
+    // ①预置：带一个区域的基线（盒 0.4³ 中心 (0.1,0.2,0.3)＋Grid 采样
+    // 1×1×1——每轴 2 条格线、全局 6 条的最小可断言面）。
+    MapClosure closure;
+    RegionSet regions;
+    WorkRegion region;
+    region.objectId = core::ObjectId::generate();
+    region.name = "r1";
+    region.box = BoundingBox{rw::math::Vector3D<double>(0.1, 0.2, 0.3),
+                             rw::math::Vector3D<double>(0.4, 0.4, 0.4)};
+    region.positionSampling.counts = {1, 1, 1};
+    regions.entries.push_back(region);
+    fillBaseline(closure, PointSet{});
+    const core::ObjectId regionSetId =
+        core::ObjectId::fromCanonical("obj-20000000000000000000000000000002");
+    // 双覆盖（token 路由＋id 解引用两通道同源——loadBaseline 按 token 取
+    // 集合、根引用表按 id 解引用；单覆盖任一通道＝另一通道读旧空集）。
+    closure.put(std::string{kReqRegionSetObjectType},
+                RequirementObjectVariant{regions});
+    closure.putById(regionSetId, std::string{kReqRegionSetObjectType},
+                    RequirementObjectVariant{regions});
+
+    RequirementEditor editor;
+    ASSERT_TRUE(editor.loadBaseline(closure).ok);
+    ASSERT_FALSE(editor.workingSet().regions.entries.empty())
+        << "区域未入工作集（token 路由覆盖缺口——投影无从触发）";
+
+    // ②门面装配＋编辑器注入＋绑定接收＋会话刷新触发投影（面板 regions
+    // 非空→front 区域投递——RegionPreview 触发语义）。
+    RequirementsPluginAssembly assembly = createRequirementsPluginAssembly();
+    assembly.attachEditor(&editor);
+    std::optional<RequirementsPluginAssembly::RegionPreviewView> received;
+    assembly.bindRegionPreviewSink(
+        [&](const RequirementsPluginAssembly::RegionPreviewView& view) {
+            received = view;
+        });
+    // 面板工厂调用（descriptor.panels[0].factory——惰性创建：调用发生前
+    // m_panel 为空，bindRegionPreviewSink 走模块暂存、本调用经 attachPanel
+    // 时序即注入。产物归本用例持有〔unique_ptr——测试尾随析构〕）。
+    ASSERT_FALSE(assembly.descriptor.panels.empty()) << "面板工厂未登记";
+    std::unique_ptr<QWidget> panelHolder(assembly.descriptor.panels.front().factory());
+    ASSERT_NE(panelHolder, nullptr) << "面板工厂未产面板";
+    // 会话刷新前置＝bindReadiness（模块 refreshFromSession 的就绪门——
+    // readiness 缺席＝空操作不虚构；空报告即可过门——本用例只断言投影
+    // 转发，不涉就绪内容）。
+    assembly.bindReadiness(RequirementReadinessReport{});
+    assembly.refreshFromSession();
+
+    // ③断言：格线直投（6 条＝每轴 counts+1=2 条×3 轴）＋参考系原值＋
+    // 角点同源（center±half 确定算术——转换零重排零丢失）。
+    ASSERT_TRUE(received.has_value()) << "区域预览未触发（regions 非空应投递）";
+    EXPECT_EQ(received->refFrame.kind, RequirementRefKind::World);
+    ASSERT_EQ(received->gridLines.size(), std::size_t{6})
+        << "格线段丢失（UI-T52 转换缺口——acceptance 2 失守）";
+    EXPECT_DOUBLE_EQ(received->corners[0][0], -0.1) << "角点 X 失实（转换重排/丢失）";
+    EXPECT_DOUBLE_EQ(received->corners[0][1], 0.0) << "角点 Y 失实";
+    EXPECT_DOUBLE_EQ(received->corners[0][2], 0.1) << "角点 Z 失实";
+}
