@@ -73,6 +73,7 @@
 #include <sdurws/ird/ui/IndustrialProjectTree.hpp>  // ui::ProjectTreeModel/SelectionService/树面板（UI-T23 共享面挂位）
 #include <sdurws/ird/ui/PropertyInspector.hpp>    // ui::PropertyInspectorModel/检查器面板（UI-T23 共享面挂位）
 #include <sdurws/ird/ui/UiSessionController.hpp>  // ui::UiSessionController（§5 会话状态机）
+#include <sdurws/ird/ui/View3DPreviewContract.hpp>  // ui::View3DPreviewUpdate（会话预览协议——UI-T33）
 #include <sdurws/ird/ui/WorkbenchContent.hpp>     // ui::IWorkbenchContent（内容装配面）
 #include <sdurws/ird/requirements/Editor.hpp>     // requirements::RequirementEditor（UI-T29 会话权威——宿主按值持有）
 #include <sdurws/ird/requirements/Readiness.hpp>  // requirements::RequirementReadinessChecker（判定权威直投值）
@@ -113,6 +114,7 @@ namespace ird {
 namespace ui {
 class DomainReadinessSummaryCard;  // 跨域就绪摘要卡（UI-T44——Right Dock 诊断摘要半区）
 class HostView3DGateway;           // 宿主三维网关（UI-T45——三桥一源）
+class HostView3DPreviewBackend;    // 会话预览渲染后端（UI-T33——场景原语绑定）
 class HostRuntimeNameMapPort;      // 名称映射真值端口（UI-T46——绑当前呈现视图）
 class RuntimePublishBridge;        // 宿主发布桥（UI-T20——呈现刷新事务编排）
 class HostPresentationSource;      // 呈现构造源（UI-T46——RT-T14 工厂适配）
@@ -343,6 +345,14 @@ private:
     /// ＋TCP 会话态数据源。getView 不可得＝不装配（降级基线与阶段 A
     /// 等价）；unique_ptr 持有，存活期随插件）。
     std::unique_ptr<ui::HostView3DGateway> m_view3dGateway;
+    /// 会话预览渲染后端（UI-T33——网关 previewBackend 的场景原语绑定；
+    /// unique_ptr 持有，存活期随插件；非 owning studio 引用在成员内）。
+    std::unique_ptr<ui::HostView3DPreviewBackend> m_view3dPreviewBackend;
+    /// 需求域预览的两层投影缓存（UI-T33——markers/region 双 sink 各自
+    /// 更新本层，合并整组 applyPreview；原子替换语义的宿主编排载体）。
+    std::vector<ui::View3DFrameMarker> m_reqMarkers;
+    std::optional<ui::View3DBoxOutline> m_reqBox;
+    std::optional<ui::View3DSampleGrid> m_reqGrid;
     /// 三维事件过滤根（生产＝RWStudioView3D——过滤器挂其本体与全部
     /// 后代 QWidget，isAncestorOf 判定事件归属；未取到＝上游拾取不挂
     /// ——诚实降级面）。

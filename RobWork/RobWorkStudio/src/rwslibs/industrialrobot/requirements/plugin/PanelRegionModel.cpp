@@ -281,6 +281,7 @@ RegionPreviewGeometry regionPreviewGeometry(const WorkRegion& region,
                     + formatDeterministic(box.size[1]) + "×"
                     + formatDeterministic(box.size[2]) + " m";
     geo.summaryText += countsValid ? (" · 格 " + formatCounts(counts)) : " · 格 未定";
+    geo.refFrame = region.refFrame;  // UI-T33——参考系原值随几何（世界系变换的投影方输入）
     return geo;
 }
 

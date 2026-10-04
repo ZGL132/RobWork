@@ -37,6 +37,7 @@
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 #include <sdurws/ird/ui/SelectionService.hpp>         // SelectionService/观察者/来源词表
 #include "plugin/HostView3DGateway.hpp"               // 被测网关（同单元 PRIVATE 面——插件目标同源）
+#include <sdurws/ird/ui/View3DPreviewContract.hpp>    // 会话预览协议值（UI-T33——预览半区替身面）
 
 using namespace sdurws::ird;
 using namespace sdurws::ird::ui;
@@ -151,8 +152,22 @@ struct GatewayHarness {
             ++dispatchRequirementsCalls;
             return true;
         };
+        // 预览后端替身（UI-T33——previewDraw 空＝后端缺位的降级形态；
+        // 非空＝记录绘制并按返回值编排——测试以字段操控编排分支）。
+        if (previewDraw) {
+            deps.previewBackend.draw = [this](const ui::View3DPreviewUpdate& u) {
+                lastDrawn = u;
+                return previewDraw(u);
+            };
+            deps.previewBackend.clear = [this]() { ++previewClears; };
+        }
         return std::make_unique<HostView3DGateway>(std::move(deps));
     }
+
+    // ---- 预览后端替身字段（UI-T33 用例——操控编排分支的记录面）--------
+    std::function<bool(const ui::View3DPreviewUpdate&)> previewDraw;  ///< 空＝后端缺位
+    std::optional<ui::View3DPreviewUpdate> lastDrawn;                 ///< 最近一次绘制值
+    int previewClears = 0;                                            ///< 清除计数
 };
 
 }  // namespace
@@ -363,4 +378,76 @@ TEST(HostView3DGateway, Constructor_MissingRequiredSeams_Throws_UI_T45)
     deps.pickFrame = [](int, int) { return nullptr; };
     EXPECT_NO_THROW({ HostView3DGateway gw(deps); (void)gw; })
         << "required 缝齐备不应抛（TCP 缺省＝源降级合法形态）";
+}
+
+// =====================================================================
+// 会话预览出口（UI-T33 收口——acceptance 1/2/3 的网关编排半区）
+// =====================================================================
+
+/// 预览编排三面：后端缺位＝诚实降级 false；apply 成功＝挂接态＋观测值
+/// 同源；removePreview 幂等＋onSceneCleared 对称收口（零残留纪律）。
+TEST(HostView3DGateway, PreviewOutlet_DegradedApplyAndClear_UI_T33)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-02", "ERR-01"},
+                  std::vector<std::string>{"UI-T33-ACC1", "UI-T33-ACC2"});
+    GatewayHarness fx;
+    // ①后端缺位＝诚实降级（呈现/TCP/预览三面独立降级的显式形态——
+    // 不虚构预览，ERR-01）。gateway 在替身字段前置后构造（Deps 冻结面
+    // ——后段切替身需重建网关）。
+    ui::View3DPreviewUpdate update;
+    update.frameMarkers.push_back(ui::View3DFrameMarker{"工位 A", "World"});
+    {
+        auto degraded = fx.make();
+        EXPECT_FALSE(degraded->applyPreview(update))
+            << "渲染后端缺位却报成功（虚构预览）";
+        EXPECT_FALSE(degraded->previewAttached());
+    }
+
+    // ②后端在位＝原子应用（挂接态＋观测值同源——currentPreview 观测面）。
+    fx.previewDraw = [](const ui::View3DPreviewUpdate&) { return true; };
+    auto gateway = fx.make();  // 替身字段前置后构造（Deps 冻结面）
+    ASSERT_TRUE(gateway->applyPreview(update));
+    EXPECT_TRUE(gateway->previewAttached());
+    ASSERT_TRUE(fx.lastDrawn.has_value());
+    ASSERT_EQ(fx.lastDrawn->frameMarkers.size(), std::size_t{1});
+    EXPECT_EQ(fx.lastDrawn->frameMarkers[0].label, "工位 A");
+    EXPECT_EQ(gateway->currentPreview().frameMarkers.size(), std::size_t{1});
+
+    // ③removePreview 幂等（两次清除＝两次后端调用——语义直译）。
+    gateway->removePreview();
+    gateway->removePreview();
+    EXPECT_FALSE(gateway->previewAttached());
+    EXPECT_EQ(fx.previewClears, 2);
+
+    // ④场景清除拍联动（onSceneCleared 对称收口——零残留纪律）。
+    ASSERT_TRUE(gateway->applyPreview(update));
+    gateway->onSceneCleared();
+    EXPECT_FALSE(gateway->previewAttached())
+        << "场景清除后预览残留（零残留纪律失守）";
+}
+
+/// 预览失败保持原状（后端 draw 失败＝false 且旧挂接/旧观测保持——
+/// 事务语义与修订呈现同款）。
+TEST(HostView3DGateway, PreviewOutlet_DrawFailureKeepsOld_UI_T33)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"ERR-01"},
+                  std::vector<std::string>{"UI-T33-ACC2"});
+    GatewayHarness fx;
+    bool drawOk = true;
+    fx.previewDraw = [&drawOk](const ui::View3DPreviewUpdate&) { return drawOk; };
+    auto gateway = fx.make();  // 替身字段前置后构造（Deps 冻结面）
+
+    ui::View3DPreviewUpdate first;
+    first.frameMarkers.push_back(ui::View3DFrameMarker{"首组", "World"});
+    ASSERT_TRUE(gateway->applyPreview(first));
+
+    drawOk = false;  // 第二次绘制失败
+    ui::View3DPreviewUpdate second;
+    second.frameMarkers.push_back(ui::View3DFrameMarker{"次组", "World"});
+    EXPECT_FALSE(gateway->applyPreview(second));
+    EXPECT_TRUE(gateway->previewAttached())
+        << "失败后挂接态被清除（保持原状失守）";
+    ASSERT_FALSE(gateway->currentPreview().frameMarkers.empty());
+    EXPECT_EQ(gateway->currentPreview().frameMarkers.front().label, "首组")
+        << "失败后观测值被覆盖（保留旧呈现失守）";
 }

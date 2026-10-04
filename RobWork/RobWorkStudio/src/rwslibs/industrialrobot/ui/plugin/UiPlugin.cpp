@@ -89,6 +89,7 @@
 
 #include "DomainModuleRunner.hpp"                // runDomainApply（UI-T23 acceptance 2——draft.apply 多模块遍历）
 #include "HostView3DGateway.hpp"                 // 宿主三维网关（UI-T45——上行拾取/呈现出口/TCP 源）
+#include "HostView3DPreviewBackend.hpp"          // 会话预览渲染后端（UI-T33——场景原语绑定）
 #include "HostCompilePort.hpp"                   // 宿主编译端口（UI-T46——十段链适配＋快照缓存＋分段探针）
 #include "HostPresentationAdapters.hpp"          // 呈现装配适配器族（UI-T46——映射真值/挂接对象/构造源）
 
@@ -3163,6 +3164,16 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
         return m_domains != nullptr && m_domains->requirements.has_value()
                && m_domains->requirements->reportView3DPick(oid);
     };
+    // 会话预览渲染后端（UI-T33——场景原语绑定；装配序在网关构造前——
+    // Deps 冻结面）。studio 非 owning——后端存活期随插件（成员持有）。
+    m_view3dPreviewBackend = std::make_unique<HostView3DPreviewBackend>(studio);
+    deps.previewBackend.draw = [this](const ui::View3DPreviewUpdate& update) {
+        return m_view3dPreviewBackend != nullptr
+                   ? m_view3dPreviewBackend->draw(update) : false;
+    };
+    deps.previewBackend.clear = [this]() {
+        if (m_view3dPreviewBackend != nullptr) { m_view3dPreviewBackend->clear(); }
+    };
 
     m_view3dGateway = std::make_unique<HostView3DGateway>(std::move(deps));
 
@@ -3192,7 +3203,93 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                            : std::nullopt;
             };
         seams.sessionRevisionId;  // 会话基线对账键＝空（无基线语义已定义——捕获请求随域门如实降级）
+        // 会话闭包引用元数据（UI-T33——拾取写回浅核对的 CheckContext 来
+        // 源：宿主查询端口 head().objectRefs 现取零缓存；适配器缺位＝空
+        // 上下文——浅核对如实拒绝，不虚构通过）。
+        if (m_lastStoreAdapter != nullptr) {
+            app::StorePortAdapter* adapter = m_lastStoreAdapter.get();
+            seams.sessionClosureRefs = [adapter]()
+                -> std::vector<project::ObjectRef> {
+                if (adapter == nullptr) { return {}; }
+                return adapter->projectStore().query().head().objectRefs;
+            };
+        }
         m_domains->requirements->bindView3DSeams(std::move(seams));
+
+        // ---- 会话预览双 sink 投影绑定（UI-T33 收口——acceptance 1/2/3
+        // 的投影半区；着色判定零参与〔spec §2.4——cellStates 归域侧采
+        // 样纯函数，本层只透传〕；参考系解析失败＝对应层清除＋Dev 留痕，
+        // 诚实呈现不虚构预览）。两层各自缓存＋合并整组 applyPreview——
+        // 原子替换语义的宿主编排（半新半旧杜绝）。
+        auto resolveFrameName =
+            [this](const requirements::RequirementReference& ref)
+            -> std::optional<std::string> {
+            if (ref.kind == requirements::RequirementRefKind::World) {
+                return std::string("World");  // 宿主世界帧（RobWork 惯例名）
+            }
+            if (ref.objectId.has_value() && m_nameMapPort != nullptr) {
+                return m_nameMapPort->resolveRuntimeName(*ref.objectId);
+            }
+            return std::nullopt;
+        };
+        m_domains->requirements->bindStationMarkersSink(
+            [this, resolveFrameName](
+                const std::vector<requirements::RequirementsPluginAssembly::StationMarkerView>& markers) {
+                m_reqMarkers.clear();
+                for (const auto& marker : markers) {
+                    const auto frameName = resolveFrameName(marker.refFrame);
+                    if (frameName.has_value()) {
+                        m_reqMarkers.push_back(ui::View3DFrameMarker{
+                            marker.label, *frameName});
+                    }  // 帧名不可解析＝该标记跳过（渲染端 unresolved 计数留痕）
+                }
+                ui::View3DPreviewUpdate update;
+                update.frameMarkers = m_reqMarkers;
+                update.boxOutline = m_reqBox;
+                update.sampleGrid = m_reqGrid;
+                m_view3dGateway->applyPreview(update);
+            });
+        m_domains->requirements->bindRegionPreviewSink(
+            [this, resolveFrameName, studio](
+                const requirements::RequirementsPluginAssembly::RegionPreviewView& geo) {
+                // refFrame 系→世界系（宿主帧位姿——Kinematics::worldT；
+                // 参考系缺失＝框层清除＋Dev 留痕——acceptance 2 的失败
+                // 原因可见面在投影方摘要与 Dev 双承载）。
+                std::optional<ui::View3DBoxOutline> box;
+                const auto frameName = resolveFrameName(geo.refFrame);
+                rw::kinematics::Frame* frame = nullptr;
+                if (frameName.has_value() && studio != nullptr
+                    && !studio->getWorkCell().isNull()) {
+                    frame = studio->getWorkCell()->findFrame(*frameName);
+                }
+                if (frame != nullptr) {
+                    const rw::math::Transform3D<> worldT =
+                        rw::kinematics::Kinematics::worldTframe(
+                            rw::core::Ptr<const rw::kinematics::Frame>(frame),
+                            studio->getState());
+                    ui::View3DBoxOutline outline;
+                    for (std::size_t i = 0; i < 8; ++i) {
+                        outline.corners[i] = worldT * geo.corners[i];
+                    }
+                    box = outline;
+                } else if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(
+                        kPluginDevChannel,
+                        "view3d preview: 区域参考系不可解析——框层清除（"
+                            + (frameName.has_value() ? *frameName
+                                                     : std::string("<无引用>"))
+                            + "）");
+                }
+                m_reqBox = box;
+                // 采样格层本轮不投（评估判定数据面接线留 KIN-07 消费任务
+                // ——管道就绪：协议 SampleGrid＋渲染着色＋网关在位，替身
+                // gui 用例断言；诚实边界登记 ui.md §13 UI-T33 行）。
+                ui::View3DPreviewUpdate update;
+                update.frameMarkers = m_reqMarkers;
+                update.boxOutline = m_reqBox;
+                update.sampleGrid = m_reqGrid;
+                m_view3dGateway->applyPreview(update);
+            });
     }
 
     // 事件过滤挂接＝视图本体＋全部后代 QWidget（双击事件的落点控件在

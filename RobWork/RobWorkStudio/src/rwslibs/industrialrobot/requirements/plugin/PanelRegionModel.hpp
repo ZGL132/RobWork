@@ -220,10 +220,14 @@ struct RegionPreviewGeometry {
         gridLines;  ///< 采样格线段（m；refFrame 系；每轴 counts[i]+1 条）
     std::string summaryText;  ///< 预览摘要（"盒 sx×sy×sz m·格 4×3×2"——确定性）
 
+    /// 参考系原值（UI-T33——世界系变换的投影方输入；World 缺省合法——
+    /// 几何顶点即 refFrame 系，投影方经宿主帧位姿变换到世界系投递）。
+    RequirementReference refFrame;
+
     bool operator==(const RegionPreviewGeometry& o) const
     {
         return corners == o.corners && gridLines == o.gridLines
-            && summaryText == o.summaryText;
+            && summaryText == o.summaryText && refFrame == o.refFrame;
     }
     bool operator!=(const RegionPreviewGeometry& o) const { return !(*this == o); }
 };

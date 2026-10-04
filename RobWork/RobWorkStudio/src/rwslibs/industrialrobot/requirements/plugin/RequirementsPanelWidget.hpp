@@ -125,6 +125,24 @@ public:
     /** @brief 注入区域三维预览出口（装配期；不注入＝预览仅文本摘要）。 */
     void setRegionPreviewSink(RegionPreviewSink sink);
 
+    /// 工位标记投影值（UI-T33 收口——非禁用工位的挂帧标记；enabled 过滤
+    /// 在面板——投影值集合即呈现集合）。refFrame 原值直投（宿主帧名解析
+    /// 归投影方——World/ModelFrame 的宿主帧名映射在装配层全缝侧）。
+    struct StationMarkerProjection {
+        std::string label;                          ///< 工位名（场景节点名后缀——UX-02）
+        RequirementReference refFrame;              ///< 参考系原值（投影方解析宿主帧名）
+    };
+    /// 工位标记出口（随面板重载全量投递——会话编辑/选择刷新的承接点）。
+    using StationMarkersSink =
+        std::function<void(const std::vector<StationMarkerProjection>&)>;
+
+    /** @brief 注入工位标记出口（装配期；不注入＝无三维标记投递）。 */
+    void setStationMarkersSink(StationMarkersSink sink);
+
+    /// 工位标记投递（refreshPanel 枢纽调用——非禁用工位全量集合；出口
+    /// 未注入＝静默跳过）。
+    void emitStationMarkers(const RequirementWorkingSet& ws);
+
     /**
      * @brief 工位页当前选中锚（UI-T33——拾取写回的目标点解析输入；
      *       nullopt＝未选择，命令流以诚实指引呈现）。
@@ -404,6 +422,7 @@ private:
     EditTargetProvider m_editTarget;          ///< 编辑目标提供器（装配层注入；空＝编辑禁用）
     PostEditAction m_postEditAction;          ///< 编辑后动作（UI-T29——就绪重算钩子；可空）
     RegionPreviewSink m_regionPreview;        ///< 区域三维预览出口（装配层注入；空＝文本摘要）
+    StationMarkersSink m_stationMarkersSink;  ///< 工位标记出口（UI-T33——装配层注入；空＝无投递）
     ConditionWizardFn m_conditionWizard;      ///< 工况向导缝（空＝内建对话框——R2）
     bool m_writable = true;                   ///< 会话可写性（L-R12 门控输入）
     bool m_dirty = false;                     ///< 会话脏标记（PM-04/PM-11 呈现半区）

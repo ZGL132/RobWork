@@ -169,6 +169,12 @@ void RequirementsUiModule::attachPanel(RequirementsPanelWidget* panel)
     if (m_panel != nullptr && m_pendingAvailability) {
         m_panel->setCommandAvailability(std::move(m_pendingAvailability));
     }
+    if (m_panel != nullptr && m_pendingMarkersSink) {
+        m_panel->setStationMarkersSink(m_pendingMarkersSink);  // UI-T33——预览/标记双暂存的创建后应用
+    }
+    if (m_panel != nullptr && m_pendingRegionSink) {
+        m_panel->setRegionPreviewSink(m_pendingRegionSink);
+    }
     wirePanelPostEdit();
 }
 
@@ -535,6 +541,29 @@ void RequirementsUiModule::bindView3DSeams(RequirementsView3DSeams seams)
     seams.lastPickedObjectId = [this]() { return m_lastView3DPick; };
     m_view3dSeams = std::move(seams);
     m_view3dSeamsBound = true;
+}
+
+void RequirementsUiModule::bindStationMarkersSink(
+    RequirementsPanelWidget::StationMarkersSink sink)
+{
+    m_guard.assertOnUiThread();
+    // 双形态（bindCommandSubmit 同一时序语义——UI-T43 可写链同构先例）：
+    // 面板已创建＝即时注入；未创建＝暂存（attachPanel 时应用——装配序
+    // 无关，杜绝"宿主先绑、面板后建"的初值失实）。
+    m_pendingMarkersSink = std::move(sink);
+    if (m_panel != nullptr) {
+        m_panel->setStationMarkersSink(m_pendingMarkersSink);
+    }
+}
+
+void RequirementsUiModule::bindRegionPreviewSink(
+    RequirementsPanelWidget::RegionPreviewSink sink)
+{
+    m_guard.assertOnUiThread();
+    m_pendingRegionSink = std::move(sink);
+    if (m_panel != nullptr) {
+        m_panel->setRegionPreviewSink(m_pendingRegionSink);
+    }
 }
 
 bool RequirementsUiModule::executeDomainCommand(const std::string& commandId)
