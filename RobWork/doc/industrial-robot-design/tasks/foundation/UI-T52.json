@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T52",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求域三维预览呈现深化批次——工位标签文本渲染（F-490② 消账）＋采样格线投递（acceptance 3 字面完整化）＋投影断言增强（宿主融合深化——呈现面迭代）",
+  "status": "ready",
+  "dependsOn": ["UI-T33"],
+  "requirements": [
+    "UX-02（工程用语——工位标签中文直投）",
+    "ERR-01（诚实呈现——标签承载可见化；格线与着色分色不虚构判定）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/requirements.md#9.8",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T52.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWork/**",
+    "RobWork/RobWorkSim/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/include/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_plugin sdurws_ird_studio sdurws_ird_ui_gui_test sdurws_ird_requirements_gui_test sdurws_ird_requirements_plugin",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_ui_gui_test.exe",
+    "build/RobWorkStudio/bin/Release/sdurws_ird_requirements_gui_test.exe",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "ui-t52",
+  "interUnit": true,
+  "knownPitfalls": ["P-MDL-8", "P-MDL-3"],
+  "acceptance": [
+    "工位标签文本渲染：HostView3DPreviewBackend draw 增标签半区——逐 marker 以框架 RenderText 挂帧投递（label 直投；与 FrameAxis 同帧同组）——证据：后端编排 gui 替身断言（标签随 update 整组透传）＋代码核查 RenderText 挂帧面",
+    "采样格线投递：View3DSampleGrid 增格线段字段（世界系）——UiPlugin 投影 geo.gridLines 经 worldTframe 变换直投；SampleGridRender 增线段渲染（格线灰/点着色分色并存）——证据：投影闭包 gui 替身断言（gridLines 变换透传）",
+    "投影断言增强：网关预览替身用例扩格线/标签字段断言（lastDrawn 深检）——证据：ui_gui_test 预览用例扩断言全绿",
+    "回归门禁：受影响目标零错误构建＋ui/requirements gui 套件全绿＋ird_gates 语义全等零新增＋validate-docs PASS——留痕 traceability/builds/ui-t52/"
+  ],
+  "note": "立项来源：所有者 2026-10-04 指令『宿主融合深化（WP-24-T09 之后的呈现面迭代）』承接——UI-T33 验收 F-490②（三维浮动文本）消账＋acceptance 3 采样格字面完整化。候选甄别记录：①requirements-tour 三维取证段不可行（遍历通道零 WorkCell 装载——预览降级形态无取证价值）；②采样格着色生产数据面留 KIN-07 消费任务（F-490① 维持）。关键事实：框架自带 RenderText（rwlibs/opengl——glRasterPos 文本渲染；GLUT 依赖在宿主三维形态在位）；RegionPreviewGeometry.gridLines（refFrame 系格线段）在 UI-T33 弃用——本批字面化。堆叠序：ui-t52 基点＝redesign-main@6a917a09（UI-T33 合入收尾后）。"
+}

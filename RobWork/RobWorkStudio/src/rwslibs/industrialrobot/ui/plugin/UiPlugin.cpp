@@ -3272,6 +3272,15 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                         outline.corners[i] = worldT * geo.corners[i];
                     }
                     box = outline;
+                    // 采样格骨架线投递（UI-T52——格线段世界系变换直投；
+                    // 着色点/判定仍归评估接线任务——F-490① 维持）。
+                    ui::View3DSampleGrid grid;
+                    grid.gridLines.reserve(geo.gridLines.size());
+                    for (const auto& seg : geo.gridLines) {
+                        grid.gridLines.emplace_back(worldT * seg.first,
+                                                    worldT * seg.second);
+                    }
+                    m_reqGrid = grid;
                 } else if (m_diag.pipeline) {
                     m_diag.pipeline->logDev(
                         kPluginDevChannel,
@@ -3281,9 +3290,8 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                             + "）");
                 }
                 m_reqBox = box;
-                // 采样格层本轮不投（评估判定数据面接线留 KIN-07 消费任务
-                // ——管道就绪：协议 SampleGrid＋渲染着色＋网关在位，替身
-                // gui 用例断言；诚实边界登记 ui.md §13 UI-T33 行）。
+                // 着色采样点层仍归评估接线任务（F-490① 维持）——本批投递
+                // 格线骨架（gridLines 世界系变换直投）。
                 ui::View3DPreviewUpdate update;
                 update.frameMarkers = m_reqMarkers;
                 update.boxOutline = m_reqBox;

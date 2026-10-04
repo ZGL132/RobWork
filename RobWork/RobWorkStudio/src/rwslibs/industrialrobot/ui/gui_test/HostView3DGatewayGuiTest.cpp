@@ -406,11 +406,24 @@ TEST(HostView3DGateway, PreviewOutlet_DegradedApplyAndClear_UI_T33)
     // ②后端在位＝原子应用（挂接态＋观测值同源——currentPreview 观测面）。
     fx.previewDraw = [](const ui::View3DPreviewUpdate&) { return true; };
     auto gateway = fx.make();  // 替身字段前置后构造（Deps 冻结面）
+    update.boxOutline = ui::View3DBoxOutline{};  // 空框占位（层存在性断言载体）
+    ui::View3DSampleGrid grid;
+    grid.gridLines.emplace_back(rw::math::Vector3D<double>(0, 0, 0),
+                                rw::math::Vector3D<double>(1, 0, 0));
+    grid.samples.push_back(rw::math::Vector3D<double>(0.5, 0, 0));
+    update.sampleGrid = grid;  // UI-T52——格线/采样点整组透传断言载体
     ASSERT_TRUE(gateway->applyPreview(update));
     EXPECT_TRUE(gateway->previewAttached());
     ASSERT_TRUE(fx.lastDrawn.has_value());
     ASSERT_EQ(fx.lastDrawn->frameMarkers.size(), std::size_t{1});
     EXPECT_EQ(fx.lastDrawn->frameMarkers[0].label, "工位 A");
+    ASSERT_TRUE(fx.lastDrawn->sampleGrid.has_value());
+    EXPECT_EQ(fx.lastDrawn->sampleGrid->gridLines.size(), std::size_t{1})
+        << "格线段透传失真（UI-T52 acceptance 2）";
+    EXPECT_EQ(fx.lastDrawn->sampleGrid->samples.size(), std::size_t{1});
+    EXPECT_EQ(gateway->currentPreview().sampleGrid->gridLines.size(),
+              std::size_t{1})
+        << "观测值与绘制值不同源（currentPreview 观测面失守）";
     EXPECT_EQ(gateway->currentPreview().frameMarkers.size(), std::size_t{1});
 
     // ③removePreview 幂等（两次清除＝两次后端调用——语义直译）。

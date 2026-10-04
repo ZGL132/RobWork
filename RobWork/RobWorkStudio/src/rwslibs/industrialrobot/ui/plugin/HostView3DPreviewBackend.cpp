@@ -16,6 +16,7 @@
 #include <rw/graphics/WorkCellScene.hpp>
 #include <rw/kinematics/Frame.hpp>
 #include <rwlibs/opengl/DrawableUtil.hpp>
+#include <rwlibs/opengl/RenderText.hpp>  // 框架文本渲染（UI-T52——工位标签；F-490② 消账）
 #include <rwlibs/opengl/rwgl.hpp>  // GL 聚合头（框架 RenderFrame 同款——平台 glext 由其内部处理）
 
 #include <rws/RobWorkStudio.hpp>
@@ -96,7 +97,9 @@ class SampleGridRender final : public Render
 {
   public:
     SampleGridRender(const View3DSampleGrid& grid)
-        : m_samples(grid.samples), m_states(grid.cellStates)
+        : m_samples(grid.samples),
+          m_states(grid.cellStates),
+          m_gridLines(grid.gridLines)
     {}
 
     void draw(const DrawableNode::RenderInfo& info,
@@ -104,9 +107,19 @@ class SampleGridRender final : public Render
     {
         (void)info;
         (void)type;
-        // 采样点渲染（点阵——格线段由协议格线语义归并为本渲染的点表达：
-        // 采样点即格单元锚，点着色即格着色的最小诚实呈现；线框骨架由
-        // 边界框层承载——双渲染不重复画线）。
+        // 格线骨架（UI-T52 字面化——采样格的线段呈现：灰细线与着色点并
+        // 存〔格线＝格结构、点＝样本锚——两层视觉语义分离〕；空＝无格）。
+        if (!m_gridLines.empty()) {
+            glLineWidth(1.0f);
+            glColor4f(0.55f, 0.55f, 0.60f, static_cast<float>(alpha));  // 格线灰
+            glBegin(GL_LINES);
+            for (const auto& seg : m_gridLines) {
+                glVertex3d(seg.first[0], seg.first[1], seg.first[2]);
+                glVertex3d(seg.second[0], seg.second[1], seg.second[2]);
+            }
+            glEnd();
+        }
+        // 采样点渲染（点阵着色——评估就位＝逐点分色；空＝中性灰诚实空态）。
         glPointSize(5.0f);
         glBegin(GL_POINTS);
         for (std::size_t i = 0; i < m_samples.size(); ++i) {
@@ -124,6 +137,7 @@ class SampleGridRender final : public Render
   private:
     std::vector<Vector3D<double>> m_samples;  ///< 采样点（世界系——构造冻结）
     std::vector<View3DCellState> m_states;    ///< 着色态（空＝中性——诚实空态）
+    std::vector<std::pair<Vector3D<double>, Vector3D<double>>> m_gridLines;  ///< 格线段（UI-T52——构造冻结）
 };
 
 }  // namespace
@@ -153,7 +167,9 @@ bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
     clear();
 
     // ②工位标记：findFrame 挂 FrameAxis（坐标轴随帧动——会话/示教移动
-    // 零重投；帧不可解析＝跳过并追加失败定位到标签——失败可见面）。
+    // 零重投；帧不可解析＝跳过并追加失败定位到标签——失败可见面）＋
+    // 标签 RenderText（UI-T52——F-490② 消账：工位名随帧浮动文本；
+    // RenderText 构造期持帧——同帧同组随动）。
     int unresolved = 0;
     for (const View3DFrameMarker& marker : update.frameMarkers) {
         Frame* const frame = m_studio->getWorkCell() != nullptr
@@ -163,10 +179,20 @@ bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
             ++unresolved;  // 失败可见面在投影方摘要——此处计数不虚构坐标轴
             continue;
         }
-        const std::string nodeName =
+        const rw::core::Ptr<Frame> framePtr(frame);  // 非 owning 包装（场景树持有帧存活）
+        const std::string axisName =
             std::string(kPreviewPrefix) + "marker-" + marker.label;
-        scene->addFrameAxis(nodeName, 0.25, frame);  // 轴长 0.25 m（工位尺度）
-        m_nodeNames.push_back(nodeName);
+        scene->addFrameAxis(axisName, 0.25, frame);  // 轴长 0.25 m（工位尺度）
+        m_nodeNames.push_back(axisName);
+        // 标签（框架 RenderText——文本直投；标签名独立命名空间防与轴同名
+        // 冲突——removeDrawable 按名逐个删互不干扰）。
+        const std::string labelName =
+            std::string(kPreviewPrefix) + "label-" + marker.label;
+        scene->addRender(labelName,
+                         rw::core::ownedPtr(
+                             new rwlibs::opengl::RenderText(marker.label, framePtr)),
+                         frame);
+        m_nodeNames.push_back(labelName);
     }
 
     // ③区域边界框（世界系八角点 12 棱线框——辨识蓝）。
