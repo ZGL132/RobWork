@@ -47,6 +47,69 @@ bool rowReadOnly(FieldEnablement en) noexcept
     return en != FieldEnablement::Editable;
 }
 
+// ---- 属性行标签的中文呈现映射（UX-02 工程用语）------------------------
+// fieldKey 是 PanelModel 投影的稳定机器键（小写连字符词法——HostMigration
+// 批量粘贴/基线注入的寻址锚，键面保持英文不动）；本表只是"键→行标签"的
+// 呈现层固定映射（基座安装预设中文标签同款先例——机器判别仍以键为权威）。
+// 表外键回退键名原文（不虚构文案——UiText 解析空回退的既有纪律），前缀键
+// （tcp:/pose:）取后半段拼接中文主题词。
+//
+// @param key [in] PanelModel 投影行字段键（"type"/"tcp:tcp-center" 等）
+// @return 行标签中文文本（单位后缀由调用方另行拼接——值/单位分离 UX-05）
+std::string chineseFieldLabel(const std::string& key)
+{
+    // 前缀键先行（TCP/命名位姿行——键尾为用户数据 key，不入静态表）。
+    static constexpr const char* kTcpPrefix = "tcp:";
+    static constexpr const char* kPosePrefix = "pose:";
+    if (key.rfind(kTcpPrefix, 0) == 0) {
+        return std::string("TCP ") + key.substr(std::char_traits<char>::length(kTcpPrefix));
+    }
+    if (key.rfind(kPosePrefix, 0) == 0) {
+        return std::string("位姿 ") + key.substr(std::char_traits<char>::length(kPosePrefix));
+    }
+
+    // 无前缀键的固定映射（键序＝PanelModel 各类别投影行序——查表可读性）。
+    struct LabelEntry {
+        const char* key;
+        const char* label;
+    };
+    static constexpr LabelEntry kLabels[] = {
+        // 关节（§9.7.1 六字段面＋DH 投影四参数）。
+        {"type", "类型"},
+        {"axis", "轴向"},
+        {"origin", "原点位姿"},
+        {"zero-offset", "零位偏置"},
+        {"bounds", "限位"},
+        {"working-range", "工作范围"},
+        {"dh-alpha", "DH-α"},
+        {"dh-a", "DH-a"},
+        {"dh-d", "DH-d"},
+        {"dh-theta", "DH-θ偏置"},
+        // 连杆物性＋几何引用。
+        {"mass", "质量"},
+        {"center-of-mass", "质心"},
+        {"inertia", "惯量张量"},
+        {"visual-geometry", "视觉几何"},
+        {"collision-geometry", "碰撞几何"},
+        // 工具/场景/位姿集/传动。
+        {"mount-interface", "安装接口"},
+        {"world-pose", "世界位姿"},
+        {"role", "场景角色"},
+        {"ratio-per-joint", "逐关节减速比"},
+        {"friction-per-joint", "逐关节摩擦"},
+        {"torque-limits-per-joint", "逐关节力矩限值"},
+        // 模型根/基座安装。
+        {"display-name", "显示名"},
+        {"authority", "权威模式"},
+        {"preset", "安装预设"},
+        {"base-position", "基座位置"},
+    };
+    for (const LabelEntry& e : kLabels) {
+        if (key == e.key) { return e.label; }
+    }
+    return key;  // 表外键回退键名原文（防御面——不虚构中文文案）
+}
+
 }  // namespace
 
 // =====================================================================
@@ -705,7 +768,9 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
         const bool panelEditable = (row.fieldKey == "zero-offset");
         editor->setText(QString::fromStdString(row.valueText));
         editor->setReadOnly(!panelEditable || rowReadOnly(row.enablement));
-        QString label = QString::fromStdString(row.fieldKey);
+        // 行标签＝中文呈现映射（UX-02 工程用语——fieldKey 机器键经
+        // chineseFieldLabel 固定映射；表外键回退键名原文，不虚构文案）。
+        QString label = QString::fromStdString(chineseFieldLabel(row.fieldKey));
         if (!row.unitText.empty()) {
             label += QStringLiteral("（") + QString::fromStdString(row.unitText)
                      + QStringLiteral("）");
