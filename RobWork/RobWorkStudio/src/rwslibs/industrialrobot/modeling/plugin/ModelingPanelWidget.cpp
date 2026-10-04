@@ -674,6 +674,12 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
                 }
                 m_propertyRows[i] = rows[i];
             }
+            // UI-T49：复制钮禁用态随 visual 有无同步（visual 挂/摘是行键
+            // 不变形变更——增量路径不重建钮，禁用态必须就地刷新，否则
+            // "诚实禁用"滞后一次投影）。
+            if (target.has_value() && target->kind == SelectedTarget::Kind::Link) {
+                refreshCollisionCopyGating(*ws, target->index);
+            }
             return;
         }
     }
@@ -762,10 +768,32 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
                     [this, slot] { onGeometryDetachClicked(slot); });
             geoLay->addWidget(attachBtn);
             geoLay->addWidget(detachBtn);
+            // UI-T49 视觉→碰撞复制辅助（G7——§5.2 几何生成辅助②）：仅在
+            // collision 行追加第三钮（方向固定 visual→collision）。visual
+            // 未设＝诚实禁用＋toolTip 原因（"非置灰无解释"纪律——§9.7.1
+            // 交互；域侧 VisualNotSet 码仍是直接调用的防御面）。
+            QPushButton* copyBtn = nullptr;
+            if (row.fieldKey == "collision-geometry") {
+                copyBtn = new QPushButton(QStringLiteral("从视觉复制"), geoBar);
+                copyBtn->setObjectName(
+                    QString::fromUtf8("ird_modeling_geo_copy_collision"));
+                copyBtn->setToolTip(QStringLiteral(
+                    "把本连杆视觉几何引用复制为碰撞引用（同资源共享——"
+                    "localTransform 初值随复制，独立可改；零网格重画/凸包简化）"));
+                connect(copyBtn, &QPushButton::clicked, this,
+                        &ModelingPanelWidget::onGeometryCopyToCollisionClicked);
+                geoLay->addWidget(copyBtn);
+                m_collisionCopyBtn = copyBtn;  // 增量路径禁用态刷新的握把
+            }
             geoLay->addStretch(1);
             if (!m_writable) {
                 attachBtn->setEnabled(false);
                 detachBtn->setEnabled(false);  // 只读会话禁用（L-R12 同款门控）
+                if (copyBtn != nullptr) { copyBtn->setEnabled(false); }
+            } else if (copyBtn != nullptr) {
+                // 复制源缺失＝诚实禁用＋原因（非置灰无解释——§9.7.1；
+                // 禁用态判定收敛到共用辅助——重建/增量两路径同源）。
+                refreshCollisionCopyGating(*ws, target->index);
             }
             m_propertyForm->addRow(QString(), geoBar);
         }
@@ -818,6 +846,67 @@ void ModelingPanelWidget::onGeometryDetachClicked(GeometrySlot slot)
     rejection.codeToken = std::string(geometryLinkErrorCodeToken(err->code));
     rejection.detail = err->detail;
     onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::onGeometryCopyToCollisionClicked()
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——编辑面
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable) { return; }  // 无会话/只读——编辑禁用
+    const auto target = m_lastSelected.has_value()
+                            ? resolveSelection(*ws, *m_lastSelected)
+                            : std::optional<SelectedTarget>{};
+    if (!target.has_value() || target->kind != SelectedTarget::Kind::Link) { return; }
+
+    // 编辑器警示落点预置（拒绝时行内描边——字段轨同款呈现位）。
+    m_warningEditor = nullptr;
+    // 首调不携覆盖确认——collision 已有时域原语返回 CollisionOccupied，
+    // 由本函数承载显式确认交互（estimate 覆盖确认同款纪律：域裁决＋UI 确
+    // 认分离，域原语不弹窗）。
+    std::optional<GeometryLinkError> err =
+        copyVisualToCollision(*ws, target->index, false);
+    if (err.has_value() && err->code == GeometryLinkErrorCode::CollisionOccupied) {
+        const QMessageBox::StandardButton confirmed = QMessageBox::question(
+            this, QStringLiteral("覆盖碰撞几何"),
+            QStringLiteral("本连杆碰撞几何已有引用（%1）。用视觉引用覆盖它？"
+                           "\n\n覆盖后旧引用被替换（清单条目保留——共享资源不级联删除）。")
+                .arg(QString::fromStdString(
+                    ws->design.links[target->index].collision->resourceRefId)),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        if (confirmed != QMessageBox::Yes) {
+            return;  // 用户取消＝零变更（不落摘要不刷新）
+        }
+        err = copyVisualToCollision(*ws, target->index, true);
+    }
+    if (!err.has_value()) {
+        // 复制落草稿——属性区刷新（清单零改动，树形状不变；重投影重评复
+        // 制钮禁用态）。
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(geometryLinkErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::refreshCollisionCopyGating(const ModelingWorkingSet& ws,
+                                                     std::size_t linkIndex)
+{
+    if (m_collisionCopyBtn.isNull()) { return; }  // 行未构建/已被重建销毁
+    if (linkIndex < ws.design.links.size()
+        && !ws.design.links[linkIndex].visual.has_value()) {
+        // 复制源缺失＝诚实禁用＋原因（非置灰无解释——§9.7.1 交互纪律；
+        // 域侧 VisualNotSet 码仍是直接调用的防御面）。
+        m_collisionCopyBtn->setEnabled(false);
+        m_collisionCopyBtn->setToolTip(QStringLiteral(
+            "视觉几何未挂接——先挂接 visual 槽后可复制为碰撞引用"));
+    } else {
+        m_collisionCopyBtn->setEnabled(true);
+        m_collisionCopyBtn->setToolTip(QStringLiteral(
+            "把本连杆视觉几何引用复制为碰撞引用（同资源共享——"
+            "localTransform 初值随复制，独立可改；零网格重画/凸包简化）"));
+    }
 }
 
 void ModelingPanelWidget::onTreeSelectionChanged()

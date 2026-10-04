@@ -4781,6 +4781,16 @@
       "title": "UI-T48 契约 acceptance 1 措辞含 wrl/iv（§2.5 行 6 旧版格式族全量列举），但 io 阶段 A 未登记 wrl/iv 识别（IO-FORMAT-MESH-UNKNOWN 诚实呈现，对话框过滤器只列 stl/obj/dae）——实现如实呈现不支持，非缩水；契约措辞与 io 阶段 A 能力面的对齐裁决项（wrl/iv 支持随 io 阶段 B 或需求变更）。",
       "owner": "UI-T48 契约文本澄清（acceptance 1 wrl/iv 措辞随 io 阶段 B 能力面或需求变更对齐；本卡诚实呈现已达标）",
       "resolution": "验收记录 4.4 发现转登（acc/UI-T48/1）。"
+    },
+    {
+      "id": "F-480",
+      "source": "UI-T49 实施段（2026-10-04——独立冒烟模式全量构建实测，ACC §4.2 双模式口径）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "独立冒烟模式全量构建中 requirements 三目标（app/gui_test/test）LNK2019：RequirementsCommandFlows.obj flowCaptureTcp 引用 rw::math::RPY<double>(const Rotation3D&, double) 外联符号无法解析——冒烟 header-only 纪律（框架只链 math 头内联部分）的又一实例（UI-T33/T45 requirements 侧 TCP 捕获代码引入，非 UI-T49 改动面；集成模式零影响——框架库全量链接）。本卡 modeling 族冒烟构建＋260/260 测试全绿不受波及；冒烟全量绿待该符号替换为逐元素构造（Template.cpp rpyToRotation 同款）或冒烟树链接面补齐。",
+      "owner": "requirements 侧 TCP 捕获代码（UI-T33/T45 遗留——flowCaptureTcp 的 RPY 构造改逐元素旋转矩阵构造；随下一 requirements 触碰任务顺手消账或专项小修）",
+      "resolution": "UI-T49 实施段实测转登（traceability/builds/ui-t49/ 冒烟留痕）。"
     }
   ]
 }

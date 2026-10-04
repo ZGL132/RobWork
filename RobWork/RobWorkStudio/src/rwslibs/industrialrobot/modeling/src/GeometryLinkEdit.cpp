@@ -73,6 +73,9 @@ std::string_view geometryLinkErrorCodeToken(GeometryLinkErrorCode code) noexcept
     case GeometryLinkErrorCode::DuplicateResource: return "duplicate-resource";
     case GeometryLinkErrorCode::NoSuchResource: return "no-such-resource";
     case GeometryLinkErrorCode::IndexOutOfRange: return "index-out-of-range";
+    // UI-T49 视觉→碰撞复制辅助两值（表尾追加——登记簿纪律不重排既有行）。
+    case GeometryLinkErrorCode::VisualNotSet: return "visual-not-set";
+    case GeometryLinkErrorCode::CollisionOccupied: return "collision-occupied";
     }
     return "unknown";
 }
@@ -243,6 +246,56 @@ std::optional<GeometryLinkError>
                  "links[" + std::to_string(linkIndex) + "]." + std::string(slotName(slot))
                      + ".localTransform",
                  "编辑几何局部变换（平移 m／姿态 rad）——引用 " + ref->resourceRefId);
+    return std::nullopt;
+}
+
+// =====================================================================
+// ④ 视觉→碰撞引用复制辅助（UI-T49——§5.2 几何生成辅助②）
+// =====================================================================
+
+std::optional<GeometryLinkError>
+    copyVisualToCollision(ModelingWorkingSet& ws, std::size_t linkIndex,
+                          bool confirmOverwrite)
+{
+    // 拒绝面前置一：连杆下标（拒绝路径工作集零触碰面——三原语同序）。
+    if (const std::optional<GeometryLinkError> bad = checkLinkIndex(ws, linkIndex);
+        bad.has_value()) {
+        return bad;
+    }
+    LinkEntry& link = ws.design.links[linkIndex];
+
+    // 拒绝面前置二：复制源必须已挂（visual 未设＝诚实拒绝——非静默产出
+    // 空引用；UI 入口同时禁用＋原因提示，本码是直接调用的防御面）。
+    if (!link.visual.has_value()) {
+        return GeometryLinkError{
+            GeometryLinkErrorCode::VisualNotSet,
+            "连杆「" + link.localName + "」视觉几何未挂接——复制辅助无源"
+                                         "可用（先挂接 visual 槽）"};
+    }
+
+    // 拒绝面前置三：覆盖确认（collision 已有引用不静默覆盖——UI-T41 批
+    // 次C estimate 覆盖确认同款纪律；UI 收此码弹显式确认后携 true 重调）。
+    if (link.collision.has_value() && !confirmOverwrite) {
+        return GeometryLinkError{
+            GeometryLinkErrorCode::CollisionOccupied,
+            "连杆「" + link.localName + "」碰撞几何已有引用（"
+                + link.collision->resourceRefId + "）——覆盖须显式确认"};
+    }
+
+    // 复制落位：同 resourceRefId＋localTransform/kind 初值随复制（GeometryRef
+    // 值拷贝即全部语义——清单零改动：两槽引用同一 ResourceRef 条目是合法
+    // 共享态，资源本体不入对象字节 CON-03）。零网格重画/凸包简化（§5.2——
+    // 几何算法不引入；ARC-05 红线下零碰撞判定语义，判定唯一归 policy）。
+    link.collision = link.visual;
+
+    // 变更摘要一条（MDL-09）：来源标记经 summary 留痕——methodTag
+    // "collision-copy"（GeometricEstimate 族；GeometryRef schema 无来源
+    // 字段〔§4.3-B 产物与手编同权〕，标记只存在于摘要呈现链）。
+    recordChange(ws,
+                 "links[" + std::to_string(linkIndex) + "].collision",
+                 "视觉→碰撞引用复制（辅助 methodTag collision-copy）——引用 "
+                     + link.collision->resourceRefId
+                     + "（localTransform 初值随视觉，独立可改）");
     return std::nullopt;
 }
 

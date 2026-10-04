@@ -1,0 +1,10 @@
+ird_gates 命中集对比（UI-T49 实施段留痕，2026-10-04）
+================================================================
+当前命中集：75 条（ird-gates-current.txt——集成树 ird_gates 目标实测输出，
+GBK 原始输出经行归一排序）
+基线口径：UI-T48 验收（acc/UI-T48/1）冻结态 75 条，零新增判定成立
+结构性佐证：本卡 git diff f7d32d8a..ui-t49 零 CMakeLists 改动（无新增
+target/target_link_libraries）；新增 include 仅 QPointer（modeling plugin
+层既有 Qt 面，非 L2 计算内核）；门禁扫描的目标集合与依赖边集合不变。
+注：gate-all.ps1 全量跑在并行编辑中间态曾报 101 条，为源码不一致瞬间的
+假象——源码定稿后单跑 ird_gates 目标复测为 75 条，与基线一致。

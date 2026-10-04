@@ -67,6 +67,13 @@ enum class GeometryLinkErrorCode {
     NoSuchResource,
     /// "index-out-of-range"——连杆下标越界
     IndexOutOfRange,
+    /// "visual-not-set"——视觉→碰撞复制辅助（UI-T49）：目标连杆 visual
+    /// 未挂引用（复制源缺失——诚实拒绝，非静默产出空引用）
+    VisualNotSet,
+    /// "collision-occupied"——视觉→碰撞复制辅助（UI-T49）：collision 槽
+    /// 已有引用而调用方未确认覆盖（覆盖确认交互面——UI 收此码弹确认后
+    /// 携 confirmOverwrite=true 重调；工作集在该拒绝路径零触碰）
+    CollisionOccupied,
 };
 
 /// 局部错误码稳定 token（枚举成员名连字符串——UT 判别与 UI 呈现映射）。
@@ -186,6 +193,51 @@ std::optional<GeometryLinkError>
     editGeometryLocalTransform(ModelingWorkingSet& ws, std::size_t linkIndex,
                                GeometrySlot slot, double x, double y, double z,
                                double roll, double pitch, double yaw);
+
+// =====================================================================
+// 原语 ④：视觉→碰撞引用复制辅助（UI-T49——§5.2 几何生成辅助②；
+//        差距清单 G7）
+// =====================================================================
+
+/**
+ * @brief 把目标连杆的 visual 引用复制为同资源 collision 引用（§5.2 几何
+ *        生成辅助②——"碰撞引用复制辅助"）。
+ *
+ * 复制语义（§5.2 v0.2 增补原文的落位）：
+ *   - **同 resourceRefId**：不新登清单条目——清单零改动（资源本体本就
+ *     不入对象字节 CON-03，两槽引用同一清单条目是合法共享态）；
+ *   - **localTransform 初值随复制**：collision 槽以 visual 的局部变换
+ *     （T_link_geom，m/rad）为初值——复制后两槽字段独立，各自可改；
+ *   - **kind 同步**：Mesh/Primitive 类别随源引用（同权同校验——产物与
+ *     手编 collision 引用无 schema 区别）；
+ *   - **零网格重画/凸包简化**：不引入任何几何算法（ARC-05 红线下本卡
+ *     零碰撞判定语义，简化代理走需求变更）。
+ *
+ * 来源标记：methodTag "collision-copy"（GeometricEstimate 族——§5.2"来
+ * 源标记 GeometricEstimate（methodTag 区分辅助类型）"；与占位圆柱
+ * "link-placeholder-cylinder" 同族异tag）。GeometryRef schema 无来源
+ * 字段（§4.3-B——产物与手编同权），标记经**变更摘要**留痕（MDL-09：
+ * summary 携带 "collision-copy" 字面），呈现归 §9.7 属性区摘要链。
+ *
+ * 拒绝面（先校验后变更——拒绝路径工作集字节不变）：
+ *   - 连杆下标越界 → IndexOutOfRange；
+ *   - visual 未挂引用 → VisualNotSet（诚实拒绝——UI 侧同时禁用入口＋
+ *     原因提示，本码是直接调用的防御面）；
+ *   - collision 已有引用且 confirmOverwrite==false → CollisionOccupied
+ *     （覆盖确认交互面——estimate 覆盖确认同款纪律：不静默覆盖；UI 收
+ *     此码弹显式确认后携 confirmOverwrite=true 重调）。
+ *
+ * @param ws               [in,out] 编辑态工作集
+ * @param linkIndex        [in] 目标连杆下标（越界拒绝）
+ * @param confirmOverwrite [in] 覆盖确认位（默认 false——collision 已有
+ *                         引用时返回 CollisionOccupied；true＝调用方已
+ *                         取得用户显式确认，直接覆盖）
+ * @return nullopt＝接受（collision 槽已写入复制引用＋摘要一条）；错误值
+ *         ＝拒绝（工作集未动）
+ */
+std::optional<GeometryLinkError>
+    copyVisualToCollision(ModelingWorkingSet& ws, std::size_t linkIndex,
+                          bool confirmOverwrite = false);
 
 }  // namespace sdurws::ird::modeling
 

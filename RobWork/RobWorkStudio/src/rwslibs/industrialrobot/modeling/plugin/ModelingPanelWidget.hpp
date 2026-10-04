@@ -30,6 +30,7 @@
 #include <QFrame>
 #include <QLineEdit>
 #include <QPlainTextEdit>
+#include <QPointer>
 #include <QPushButton>
 #include <QStringList>
 #include <QTreeWidget>
@@ -199,6 +200,13 @@ private:
     void onGeometryAttachClicked(GeometrySlot slot);
     /// 几何摘除按钮槽（UI-T48——幂等摘除；清单条目不级联删除）。
     void onGeometryDetachClicked(GeometrySlot slot);
+    /// 视觉→碰撞复制按钮槽（UI-T49——§5.2 几何生成辅助②；域裁决唯一在
+    /// GeometryLinkEdit.copyVisualToCollision，覆盖确认交互在本槽承载）。
+    void onGeometryCopyToCollisionClicked();
+    /// 复制钮禁用态刷新（UI-T49——visual 未设＝禁用＋toolTip 原因；重建
+    /// 与增量两条投影路径共用同一判定，杜绝禁用态滞后）。
+    void refreshCollisionCopyGating(const ModelingWorkingSet& ws,
+                                    std::size_t linkIndex);
 
     /**
      * @brief 命令按钮使能态统一刷新（UI-T43——L-7 门控三输入的单一判定面）。
@@ -239,6 +247,9 @@ private:
     QPushButton* m_historyToggle = nullptr;   ///< 诊断历史折叠钮（B2——可勾选）
     QPlainTextEdit* m_historyView = nullptr;  ///< 诊断历史只读视图（B2——最近 20 条不清空覆盖）
     QStringList m_history;                    ///< 诊断历史内容（B2——定容 FIFO，20 条）
+    /// 视觉→碰撞复制钮（UI-T49——禁用态随 visual 有无变化；QPointer：
+    /// 属性区重建路径销毁行控件时自动置空，增量路径安全刷新）
+    QPointer<QPushButton> m_collisionCopyBtn;
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
     QTreeWidget* m_tree = nullptr;            ///< 区①结构树（隐藏第 1 列＝锚规范文本）
