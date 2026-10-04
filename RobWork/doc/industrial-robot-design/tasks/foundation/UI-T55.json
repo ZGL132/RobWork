@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T55",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "工具安装接口/场景世界位姿编辑页（F-497 兑现③）：PartPoseEdit 域原语新增＋\"编辑\"页签选择驱动分派（Tool/Scene 两页——ParamTablePanel 常驻不重建）",
+  "status": "ready",
+  "dependsOn": ["UI-T54"],
+  "requirements": [
+    "MDL-04/MDL-15（工具安装接口 T_flange_tool §4.4／场景世界位姿 §4.5——位姿一等字段获得编辑入口）",
+    "MDL-07（选中只显示相关属性——选择驱动分派：树选中 Tool/Scene 自动切页）",
+    "ERR-01（诚实拒绝——非有限分量 ValueNotFinite 就地呈现，工作集字节不变）",
+    "UX-07（表单级确认应用——ParamTablePanel 非模态确认区）"
+  ],
+  "designRefs": [
+    "units/modeling.md#4.4",
+    "units/modeling.md#4.5",
+    "units/modeling.md#9.7",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-497"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T55.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t55/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11——世界系固连语义零触碰）"
+  ],
+  "outputs": [
+    "modeling/include/sdurws/ird/modeling/Parts.hpp：PartPoseEditValue 六标量载荷（平移 m＋ZYX 姿态 rad——参考系随消费面：工具＝法兰系 T_flange_tool／场景＝世界系固连 M-11）＋PartPoseEditErrorCode 局部枚举（ValueNotFinite）＋token＋PartPoseEditError＋applyToolMountEdit/applyScenePoseEdit 声明（ModelingWorkingSet 前置声明——本头被 Template.hpp 包含禁反向 include）",
+    "modeling/src/Parts.cpp：applyToolMountEdit/applyScenePoseEdit 实现（越界 fail-fast→共用有限性判定→Transform3D 直写〔值语义非 SourcedValue〕＋恰一条变更记录 subject tools[i]/scenes[i]）＋src/RpyMath.hpp 消费（第三消费面——正解单一实现复用）",
+    "modeling/plugin/ModelingPanelWidget.hpp/.cpp：\"编辑\"页签堆栈扩至四页（关节 0/基座 1/工具 2/场景 3）＋refreshEditPages 选择驱动分派（Joint/Tool/Scene 树锚自动切页；其余目标维持当前页）＋buildPoseEditPage 通用位姿页构建（说明行＋ParamTablePanel）＋工具/场景两出口壳＋applyToolMountEdits/applyScenePoseEdits 分组装配＋L-7 页级禁用；★ 重建策略修正＝工具/场景页字段集常量，构造期一次建成不随换目标重建（deleteLater 重建引入旧表悬空引用窗口——UI-T55 实测 AV 教训，基线推送完成对象切换）",
+    "modeling/test/PartsTest.cpp：PartPoseEdits_ToolMountAndSceneWorld_UI_T55（双接受面＋R20 字面/独立反解互证＋非有限拒字节不变＋越界 fail-fast＋token）",
+    "modeling/gui_test/ModelingPanelGuiTest.cpp：三用例（ToolMountEdit_SelectionDrivenChain／ScenePoseEdit_SelectionDrivenChain／PoseEditPanes_ReadOnlyDisables——L-7 控件半区）＋对账排除扩展（tool_area/scene_area 容器与 ird_param_ 前缀钮——ModelingPanelGuiTest/ModelingUiModuleHostWiringGuiTest 两 TU 同步）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟 ctest 3/3）",
+    "modeling_test 324/324（新增 1）＋modeling_gui_test 28/28（新增 3）＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78（原生窗口平台）＋requirements_gui 44/44",
+    "ird_gates base..branch 零新增（基线 101 条存量集口径——比对见验收记录）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t55/"
+  ],
+  "acceptance": [
+    "域原语面：applyToolMountEdit/applyScenePoseEdit（越界 fail-fast→六分量有限性→Transform3D 直写＋恰一条变更记录）——具名用例 PartPoseEdits_ToolMountAndSceneWorld_UI_T55（双接受面 R20 字面/独立反解互证＋非有限拒＋越界 fail-fast＋token）",
+    "选择驱动分派：树选中 Tool/Scene 自动切对应编辑页（均有 ObjectId 树锚——B.1 主通道；其余目标维持当前页）——gui 具名用例两链路开段 focusObject 后 posePageTable 断言",
+    "工具全链：mount-x 编辑→应用→确认→applyToolMountEdit 接受＝mountInterface 平移更新＋恰一条变更记录（subject tools[0]）——gui 具名用例 ToolMountEdit_SelectionDrivenChain_UI_T55",
+    "场景全链：world-z 编辑→应用→确认→applyScenePoseEdit 接受＝worldPose 平移更新＋恰一条变更记录（subject scenes[0]）——gui 具名用例 ScenePoseEdit_SelectionDrivenChain_UI_T55",
+    "L-7 门控：只读会话两页 ParamTablePanel 整体禁用——gui 具名用例 PoseEditPanes_ReadOnlyDisables_UI_T55",
+    "回归门槛：受影响目标零错误构建（集成＋独立冒烟 ctest 3/3）＋全套件回归（口径同 verify）＋validate-docs/validate-task PASS；留痕 traceability/builds/ui-t55/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "★ ParamTablePanel 生命周期教训（UI-T55 实测 AV）：字段集常量的页（工具/场景）严禁 deleteLater 重建——旧面板入删除队列而引用方（测试/用户）仍持其表项，事件循环删除后悬空；对象切换唯一安全形态＝基线推送 setBaseline（暂存/错误随新基线清除）。关节页因字段集随关节类型可变仍需重建——两策略并存已在代码注释双登记",
+    "M-11 红线：场景世界位姿为世界系固连，不预乘安装旋转——UI 直交六标量，域内 RPY 正解组合",
+    "旋转正解唯一实现 src/RpyMath.hpp 第三消费面（Template/Import/Parts）——禁 rw::math::RPY 外联符号（F-480）",
+    "gui 对账排除：tool_area/scene_area 容器（SpinBox 内部 QLineEdit）与 ird_param_ 前缀钮须入两 TU 的对账排除——否则污染 P0-3/命令目录计数"
+  ],
+  "branch": "ui-t55",
+  "note": "分支基点＝redesign-main@dc0f5dca。F-497 兑现③；TCP 列表结构化编辑（MDL-13 不变量流）登记 UI-T56 诚实边界（列表结构流复杂度高于单页数值编辑，独立批次承载）。后续：F-498 多类 XML 预览。"
+}

@@ -1,8 +1,9 @@
 /**
  * @file   Parts.cpp
  * @brief  四部件对象值模型的实现——值相等、耦合阶段 token、部件级
- *         不变量核查（工具 I-MDL-5＋I-MDL-13；传动 I-MDL-11/I-MDL-12）
- *         与命名位姿合并编辑流（T10——保留键保留/关节序一一对应）。
+ *         不变量核查（工具 I-MDL-5＋I-MDL-13；传动 I-MDL-11/I-MDL-12）、
+ *         命名位姿合并编辑流（T10——保留键保留/关节序一一对应）与
+ *         部件位姿编辑流（UI-T55——工具安装接口/场景世界位姿）。
  *
  * 设计依据：units/modeling.md §4.4/§4.6/§4.7/§4.10、§9.5（MDL-21 码行——T18/R2
  * 注册，本文件只产出值面违例）；任务契约 tasks/foundation/WP-13-T03.json
@@ -12,11 +13,15 @@
 
 #include <sdurws/ird/modeling/Parts.hpp>
 
+#include <sdurws/ird/modeling/Template.hpp>  // ModelingWorkingSet（部件编辑流的写入目标——Parts.hpp 前置声明的完整型）
+
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 #include <utility>
 
 #include "InertiaMath.hpp"  // 单元私有：惯量 SPD＋三角不等式单一实现（I-MDL-5——与连杆同源）
+#include "RpyMath.hpp"      // 单元私有：RPY 正解唯一实现（UI-T55——部件位姿编辑的组合数学落点）
 
 namespace sdurws::ird::modeling {
 
@@ -267,6 +272,89 @@ PoseEditOutcome mergeNamedPoseEntries(const std::optional<PoseSet>& baseline,
     out.code = PoseEditErrorCode::Ok;
     out.merged = std::move(result);
     return out;
+}
+
+// =====================================================================
+// 部件位姿编辑流（UI-T55——F-497 兑现③；§4.4/§4.5）
+// =====================================================================
+
+std::string_view partPoseEditErrorCodeToken(PartPoseEditErrorCode code) noexcept
+{
+    switch (code) {
+    case PartPoseEditErrorCode::ValueNotFinite: return "value-not-finite";
+    }
+    return "value-not-finite";  // 全枚举已覆盖，不达此处（无 default——漏项编译器告警）
+}
+
+namespace {
+
+/**
+ * @brief 六分量有限性检查（两消费面同一判定——I-MDL-3；拒绝面单一实现，
+ *        NFR-MNT-04）。
+ */
+std::optional<PartPoseEditError> partPoseFiniteCheck(const PartPoseEditValue& value,
+                                                     const std::string& subject)
+{
+    const double comps[6] = {value.x, value.y, value.z,
+                             value.roll, value.pitch, value.yaw};
+    for (const double c : comps) {
+        if (!std::isfinite(c)) {
+            return PartPoseEditError{PartPoseEditErrorCode::ValueNotFinite,
+                                     subject + "：位姿含非有限分量（NaN/Inf）"};
+        }
+    }
+    return std::nullopt;
+}
+
+}  // namespace
+
+std::optional<PartPoseEditError> applyToolMountEdit(ModelingWorkingSet& ws,
+                                                    std::size_t toolIndex,
+                                                    const PartPoseEditValue& value)
+{
+    // ① 越界＝调用方契约违约（fail-fast——与 applyJointFieldEdit ①同款）。
+    if (toolIndex >= ws.toolObjects.size()) {
+        throw std::invalid_argument(
+            "modeling/parts/tool-mount-edit-index: 工具下标越界: tools["
+            + std::to_string(toolIndex) + "]");
+    }
+    const std::string subject = "tools[" + std::to_string(toolIndex) + "]";
+    // ② 六分量有限性（I-MDL-3）。
+    if (const auto err = partPoseFiniteCheck(value, subject)) { return err; }
+    // ③ 提交：mountInterface 直写（Transform3D 值语义——§4.4 表行；旋转
+    // 经域内核唯一正解组合 rpymath，ZYX 约定——法兰系 T_flange_tool）。
+    auto& tool = ws.toolObjects[toolIndex];
+    tool.mountInterface = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(value.x, value.y, value.z),
+        rpymath::rpyToRotation(value.roll, value.pitch, value.yaw));
+    ModelingChangeRecord record;
+    record.subject = subject;
+    record.summary = "修改工具安装接口（法兰系 T_flange_tool，m/rad——ZYX 约定）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::optional<PartPoseEditError> applyScenePoseEdit(ModelingWorkingSet& ws,
+                                                    std::size_t sceneIndex,
+                                                    const PartPoseEditValue& value)
+{
+    // ①/②/③ 与工具面同构（对象表/字段/subject 差异化——共用有限性判定）。
+    if (sceneIndex >= ws.sceneObjects.size()) {
+        throw std::invalid_argument(
+            "modeling/parts/scene-pose-edit-index: 场景下标越界: scenes["
+            + std::to_string(sceneIndex) + "]");
+    }
+    const std::string subject = "scenes[" + std::to_string(sceneIndex) + "]";
+    if (const auto err = partPoseFiniteCheck(value, subject)) { return err; }
+    auto& scene = ws.sceneObjects[sceneIndex];
+    scene.worldPose = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(value.x, value.y, value.z),
+        rpymath::rpyToRotation(value.roll, value.pitch, value.yaw));
+    ModelingChangeRecord record;
+    record.subject = subject;
+    record.summary = "修改场景世界位姿（世界系固连，m/rad——M-11 不预乘安装旋转）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
 }
 
 }  // namespace sdurws::ird::modeling

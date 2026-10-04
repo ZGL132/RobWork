@@ -61,6 +61,9 @@ QList<QPushButton*> commandButtonsOf(const QWidget& panel)
         if (btn->objectName().startsWith(QStringLiteral("ird_modeling_base_"))) {
             continue;  // 基座页应用/还原钮不入命令对账（UI-T54 呈现件）
         }
+        if (btn->objectName().startsWith(QStringLiteral("ird_param_"))) {
+            continue;  // 编辑页参数表内部钮不入命令对账（UI-T53~T55 呈现件——apply/取消/确认区）
+        }
         buttons.push_back(btn);
     }
     return buttons;

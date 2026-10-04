@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <cstdio>
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QLineEdit>
@@ -78,7 +79,9 @@ bool inJointEditPane(const QWidget& panel, const QObject* widget)
         const QString name = p->objectName();
         if (name == QStringLiteral("ird_modeling_edit_host")
             || name == QStringLiteral("ird_param_table_panel")
-            || name == QStringLiteral("ird_modeling_base_page")) {
+            || name == QStringLiteral("ird_modeling_base_page")
+            || name == QStringLiteral("ird_modeling_tool_area")
+            || name == QStringLiteral("ird_modeling_scene_area")) {
             return true;
         }
     }
@@ -1045,4 +1048,139 @@ TEST_F(ModelingPanelGuiTest, EditingChain_EndToEnd_FourSegments_UI_T50)
 
     // ---- 四段全落草稿的域状态总核对（变更摘要累积——MDL-09 载体）。
     EXPECT_FALSE(m_ws.changes.empty()) << "四段贯通零变更摘要（草稿未脏化）";
+}
+
+// =====================================================================
+// UI-T55 工具安装接口/场景世界位姿编辑页（选择驱动分派——B.1 主通道）
+// =====================================================================
+
+/// 由 64 位序号构造确定 ObjectId（PartsTest 同款——工具/场景夹具树锚）。
+core::ObjectId guiMakeOid(unsigned long long v)
+{
+    char text[40] = {};
+    std::snprintf(text, sizeof(text), "obj-%024llx%08llx",
+                  static_cast<unsigned long long>(0),
+                  static_cast<unsigned long long>(v));
+    return core::ObjectId::fromCanonical(text);
+}
+
+/// 指定编辑页容器内的参数表现取（ird_param_table——容器 objectName 锚）。
+QTableWidget* posePageTable(const QWidget& panel, const char* areaName)
+{
+    QWidget* area = panel.findChild<QWidget*>(QString::fromLatin1(areaName));
+    return area == nullptr
+               ? nullptr
+               : area->findChild<QTableWidget*>(QStringLiteral("ird_param_table"));
+}
+
+/// 按字段键定位行下标（键挂键列 UserRole——ParamTablePanel 装配契约）。
+int posePageRowOf(const QTableWidget& table, const char* fieldKey)
+{
+    for (int row = 0; row < table.rowCount(); ++row) {
+        const QTableWidgetItem* keyItem = table.item(row, 0);
+        if (keyItem != nullptr
+            && keyItem->data(Qt::UserRole).toString().toStdString() == fieldKey) {
+            return row;
+        }
+    }
+    return -1;
+}
+
+/**
+ * 工具安装接口编辑全链（UI-T55 验收主链①——选择驱动分派）：树选中工具
+ * 对象→自动切工具页→mount-x 编辑→应用→确认→applyToolMountEdit 接受＝
+ * mountInterface 平移分量更新＋恰一条变更记录（subject tools[0]）。
+ */
+TEST_F(ModelingPanelGuiTest, ToolMountEdit_SelectionDrivenChain_UI_T55)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = guiMakeOid(501);
+    m_ws.toolObjects.push_back(tool);
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+
+    m_panel->focusObject(m_ws.toolObjects[0].objectId);
+    QTableWidget* table = posePageTable(*m_panel, "ird_modeling_tool_area");
+    ASSERT_NE(table, nullptr) << "选中工具未切工具页（选择驱动分派失守）";
+    const int row = posePageRowOf(*table, "mount-x");
+    ASSERT_GE(row, 0);
+
+    table->item(row, 1)->setText(QStringLiteral("0.5"));
+    QApplication::processEvents();
+    QWidget* area = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_tool_area"));
+    area->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    area->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+
+    EXPECT_DOUBLE_EQ(m_ws.toolObjects[0].mountInterface.P()[0], 0.5);
+    ASSERT_EQ(m_ws.changes.size(), std::size_t{1});
+    EXPECT_EQ(m_ws.changes[0].subject, "tools[0]");
+}
+
+/**
+ * 场景世界位姿编辑全链（UI-T55 验收主链②——世界系固连语义）：选中场景
+ * 对象→场景页→world-z 编辑→应用→确认→applyScenePoseEdit 接受＝worldPose
+ * 平移更新＋恰一条变更记录（subject scenes[0]）。
+ */
+TEST_F(ModelingPanelGuiTest, ScenePoseEdit_SelectionDrivenChain_UI_T55)
+{
+    IRD_TEST_INFO("MDL-15", {}, std::nullopt);
+
+    SceneObject scene;
+    scene.localName = "s1";
+    scene.objectId = guiMakeOid(601);
+    m_ws.sceneObjects.push_back(scene);
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+
+    m_panel->focusObject(m_ws.sceneObjects[0].objectId);
+    QTableWidget* table = posePageTable(*m_panel, "ird_modeling_scene_area");
+    ASSERT_NE(table, nullptr) << "选中场景未切场景页";
+    const int row = posePageRowOf(*table, "world-z");
+    ASSERT_GE(row, 0);
+
+    table->item(row, 1)->setText(QStringLiteral("2.5"));
+    QApplication::processEvents();
+    QWidget* area = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_scene_area"));
+    area->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    area->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+
+    EXPECT_DOUBLE_EQ(m_ws.sceneObjects[0].worldPose.P()[2], 2.5);
+    ASSERT_EQ(m_ws.changes.size(), std::size_t{1});
+    EXPECT_EQ(m_ws.changes[0].subject, "scenes[0]");
+}
+
+/**
+ * 工具/场景页 L-7 门控（UI-T55）：只读会话＝两页 ParamTablePanel 整体
+ * 禁用（域出口 writable 防御面另在，本用例钉控件半区）。
+ */
+TEST_F(ModelingPanelGuiTest, PoseEditPanes_ReadOnlyDisables_UI_T55)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = guiMakeOid(502);
+    m_ws.toolObjects.push_back(tool);
+    SceneObject scene;
+    scene.localName = "s1";
+    scene.objectId = guiMakeOid(602);
+    m_ws.sceneObjects.push_back(scene);
+
+    ModelingPanelWidget readonlyPanel(false);
+    readonlyPanel.setEditTargetProvider([this]() { return &m_ws; });
+    ModelReadinessReport emptyReport;
+    readonlyPanel.refreshPanel(m_ws, emptyReport);
+
+    readonlyPanel.focusObject(m_ws.toolObjects[0].objectId);
+    QTableWidget* toolTable = posePageTable(readonlyPanel, "ird_modeling_tool_area");
+    ASSERT_NE(toolTable, nullptr);
+    EXPECT_FALSE(toolTable->isEnabled()) << "只读会话工具页未禁用";
+
+    readonlyPanel.focusObject(m_ws.sceneObjects[0].objectId);
+    QTableWidget* sceneTable = posePageTable(readonlyPanel, "ird_modeling_scene_area");
+    ASSERT_NE(sceneTable, nullptr);
+    EXPECT_FALSE(sceneTable->isEnabled()) << "只读会话场景页未禁用";
 }
