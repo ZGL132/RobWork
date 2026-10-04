@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T01",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "编写 trajectory 单元任务卡（阶段 A 设计卡——PTP/笛卡尔/避障、平滑复检协议、时间参数化可扩展维度、诊断定位、任务拆分）",
+  "status": "ready",
+  "dependsOn": [],
+  "requirements": [
+    "TRJ-01",
+    "TRJ-02",
+    "TRJ-03",
+    "TRJ-04",
+    "TRJ-05",
+    "TRJ-06",
+    "TRJ-07",
+    "TRJ-08"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#3.1",
+    "REQUIREMENTS.md#12",
+    "REQUIREMENTS.md#17.1",
+    "units/policy.md#13",
+    "units/kinematics.md#9.2",
+    "development-task-breakdown.md#2.16"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T01.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**"
+  ],
+  "outputs": ["doc-update", "traceability-update"],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T01.json"
+  ],
+  "branch": "wp16-t01",
+  "interUnit": false,
+  "knownPitfalls": ["P-MDL-8", "P-MDL-3"],
+  "acceptance": [
+    "新建 units/trajectory.md ≥v0.1：标准单元卡结构（文档信息/需求承接与职责边界/单元组成依赖与公共头布局/轨迹数据模型/路径规划三入口/简化平滑与碰撞复检协议/时间参数化与扩展维度/结果表达与导出/公共接口与跨单元协作/验证方案/任务拆分/追踪矩阵/待裁决与变更记录）",
+    "卡含五要素（DTB §2.16 WP-16-T01 行）：①PTP/笛卡尔/避障三入口设计；②平滑复检协议（P-06 数值消费——冻结前 DataInsufficient 门槛语义；双上界取严；代表点集；细分预算；安全间距阈值唯一来源 policy）；③时间参数化可扩展维度（TRJ-08 接口约束——jerk/工艺速度/连续工艺段预留评估维度，零空字段/空页面/占位模块，S1~S3 分期承接）；④失败段诊断定位（TRJ-06 四类原因码与段落定位）；⑤任务拆分（§11 对齐 DTB WP-16-T02~T16 全行——T02 P-06 冻结横切卡、T14~T16 R2 分期）",
+    "依赖语义合规：trajectory 与 kinematics 协作仅经③端口评估器（kin.task-point-ik——TRJ-02 段内 IK 连续性），R-1 禁直链；复检阈值唯一来源 policy④端口；需求语义零重定义"
+  ]
+}
