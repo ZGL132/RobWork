@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求域三维呈现与拾取（功能对照批次 D）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T29", "UI-T45"],
   "requirements": [
     "UX-02（工程用语——三维标记/预览说明中文）",
@@ -21,6 +21,7 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/assembly/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/**",
     "RobWork/doc/industrial-robot-design/units/ui.md",
     "RobWork/doc/industrial-robot-design/units/requirements.md",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
@@ -65,5 +66,5 @@
     "三维拾取收口：Ctrl+双击 Frame→reportView3DPick→拾取几何特征命令写回（UI-T32 流程壳解除引导）——gui 具名用例",
     "回归门禁：双模式构建零错误；ird_gates 归一零新增（或逐条登记）；ctest 全单元全绿＋layout 冒烟＋validate-docs PASS；留痕 traceability/builds/ui-t33/"
   ],
-  "note": "功能对照批次 D——规划卡（planned，待独立评审放行；开工前置＝View3D 阶段 B 落位，落位任务另行立项）。立项来源＝所有者 2026-09-30 需求界面功能对照会话。旧版对应：工位标记（addFrameAxis＋文本标签＋掩码防碰撞）、选中区域蓝色边界框（WorkspaceRegionSceneVisualizer）、采样格 Good/Weak/Failed 着色（上限 2000 单元均匀抽样）、Ctrl+双击几何特征拾取（frameSelectedEvent）——新版以 View3D 契约＋RegionPreviewSink/reportView3DPick 出线面等价承接，不照搬旧实现（实现口径仍为从头构建）。需求语义零变化。"
+  "note": "【合入登记注（2026-10-04，PIPE §4.7 收尾）】acceptedHead 25603504 合入 redesign-main@3e8be45c（acc/UI-T33/1@12c60d82 按 SHA 先并——零冲突）；对抗式验收 11 项 pass（单会话顺序执行例外声明）＋V1/V2 两变异翻红；合并态验证七套件 200/41/246/78/321/17/17 全绿；三维缝（UI-T45 网关＋UI-T33 消费）随本合入全闭环，需求域功能对照批次 D 完成。【F-489 闭环（验收建议级随本收尾）】allowedFiles 补 requirements/gui_test/**（流测试落位面——第一批 README 边界④的既有选择随本批字面化）。【历史登记注】功能对照批次 D——规划卡（planned，待独立评审放行；开工前置＝View3D 阶段 B 落位，落位任务另行立项）。立项来源＝所有者 2026-09-30 需求界面功能对照会话。旧版对应：工位标记（addFrameAxis＋文本标签＋掩码防碰撞）、选中区域蓝色边界框（WorkspaceRegionSceneVisualizer）、采样格 Good/Weak/Failed 着色（上限 2000 单元均匀抽样）、Ctrl+双击几何特征拾取（frameSelectedEvent）——新版以 View3D 契约＋RegionPreviewSink/reportView3DPick 出线面等价承接，不照搬旧实现（实现口径仍为从头构建）。需求语义零变化。"
 }
