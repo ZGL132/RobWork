@@ -4771,6 +4771,16 @@
       "title": "UI-T47 契约 acceptance 1 措辞"选中位插入"与实现语义（joints[index] 之后插入——下标 index+1 位）存在一词语义歧义：单元卡 modeling.md v0.28 词表已明确"joints[i] 之后插入"，契约文本未同步——实施与验收以单元卡为准无歧义，契约文本留澄清债。",
       "owner": "UI-T47 契约文本澄清（随下一治理批——acceptance 1 补"（在选中关节之后插入）"后缀；语义零变化）",
       "resolution": "验收记录 4.4 发现转登（acc/UI-T47/1）。"
+    },
+    {
+      "id": "F-479",
+      "source": "UI-T48 验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T48 契约 acceptance 1 措辞含 wrl/iv（§2.5 行 6 旧版格式族全量列举），但 io 阶段 A 未登记 wrl/iv 识别（IO-FORMAT-MESH-UNKNOWN 诚实呈现，对话框过滤器只列 stl/obj/dae）——实现如实呈现不支持，非缩水；契约措辞与 io 阶段 A 能力面的对齐裁决项（wrl/iv 支持随 io 阶段 B 或需求变更）。",
+      "owner": "UI-T48 契约文本澄清（acceptance 1 wrl/iv 措辞随 io 阶段 B 能力面或需求变更对齐；本卡诚实呈现已达标）",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T48/1）。"
     }
   ]
 }
