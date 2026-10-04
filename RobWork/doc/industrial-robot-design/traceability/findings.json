@@ -4768,8 +4768,8 @@
       "severity": "suggestion",
       "status": "open",
       "registeredAt": "2026-10-04",
-      "title": "UI-T47 契约 acceptance 1 措辞"选中位插入"与实现语义（joints[index] 之后插入——下标 index+1 位）存在一词语义歧义：单元卡 modeling.md v0.28 词表已明确"joints[i] 之后插入"，契约文本未同步——实施与验收以单元卡为准无歧义，契约文本留澄清债。",
-      "owner": "UI-T47 契约文本澄清（随下一治理批——acceptance 1 补"（在选中关节之后插入）"后缀；语义零变化）",
+      "title": "UI-T47 契约 acceptance 1 措辞\"选中位插入\"与实现语义（joints[index] 之后插入——下标 index+1 位）存在一词语义歧义：单元卡 modeling.md v0.28 词表已明确\"joints[i] 之后插入\"，契约文本未同步——实施与验收以单元卡为准无歧义，契约文本留澄清债。",
+      "owner": "UI-T47 契约文本澄清（随下一治理批——acceptance 1 补\"（在选中关节之后插入）\"后缀；语义零变化）",
       "resolution": "验收记录 4.4 发现转登（acc/UI-T47/1）。"
     },
     {
@@ -4888,9 +4888,9 @@
       "severity": "suggestion",
       "status": "open",
       "registeredAt": "2026-10-04",
-      "title": "UI-T33 两条诚实边界跟踪：①采样格着色生产数据面（KIN-07 评估判定→cellStates 投影）留消费任务——管道/协议/渲染分色/替身断言在本批（契约 note②「预览零结果语义」背书非缩水）；②三维浮动文本无渲染基建——工位标签承载场景节点名（addFrameAxis 节点名），Billboard 文本随文本渲染基建任务。",
-      "owner": "①KIN-07 评估判定消费任务（接线 cellStates 投影即闭环）；②文本渲染基建任务（两项均为管道就绪的增量面，非缺陷）",
-      "resolution": "验收记录 4.4 发现转登（acc/UI-T33/1）。"
+      "title": "UI-T33 两条诚实边界跟踪：①采样格着色生产数据面（KIN-07 评估判定→cellStates 投影）留消费任务——管道/协议/渲染分色/替身断言在本批（契约 note②「预览零结果语义」背书非缩水）；②三维浮动文本无渲染基建——工位标签承载场景节点名（addFrameAxis 节点名），Billboard 文本随文本渲染基建任务。【进展 2026-10-04】②已随 UI-T52 消账：HostView3DPreviewBackend 标签半区落位（框架 RenderText 挂帧直投工位标签，acc/UI-T52/2 验收 pass）——②闭合无需后续动作；①维持 open 待 KIN-07 消费任务。",
+      "owner": "①KIN-07 评估判定消费任务（接线 cellStates 投影即闭环）；②已闭合——UI-T52 文本渲染落位（RenderText 挂帧），无需后续动作",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T33/1）。②随 UI-T52 合入消账（2026-10-04，acc/UI-T52/2）；①维持 open 待 KIN-07 消费任务。"
     },
     {
       "id": "F-491",
@@ -4911,6 +4911,16 @@
       "title": "契约起草教训留痕（UI-T52 attempt 1 fail B-1 的根因）：acceptance 证据面措辞与可自动化断言层错位——「投影闭包 gui 替身断言」中的投影闭包（UiPlugin lambda）依赖 studio 现取，gui 替身不可达，致该条证据在 attempt 1 无落位面（转换层门面转发零断言）。起草纪律＝acceptance 证据措辞须与可自动化断言层对齐（投影类字段的可断言层＝门面转发用例与网关替身透传断言——本卡返工即按此对齐）。",
       "owner": "已随 attempt 2 对齐（门面转发用例补齐＋acceptance 2 措辞修正载明）——本条为起草纪律教训永久留痕",
       "resolution": "验收记录 attempt 2 载明（acc/UI-T52/2）。"
+    },
+    {
+      "id": "F-493",
+      "source": "UI-T52 合入段治理编辑（2026-10-04——pwsh ConvertFrom-Json 例行校验检出）",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-04",
+      "title": "findings.json 存在未转义 ASCII 引号致整库不可严格 JSON 解析（自 96aa98e6 acc/UI-T47/1 evidence 合入引入——F-478 条目 title/owner 两字段内嵌裸引号\"选中位插入\"等三处）；历轮合并与 validate-docs 均未检出（校验面不含 findings.json 严格解析）。UI-T52 合入段 F-490② 消账编辑后例行 ConvertFrom-Json 校验暴露。",
+      "owner": "已随本提交修复（三处裸引号转义为 \\\"，语义零变化；修复后 ConvertFrom-Json 全库解析通过）——教训：findings.json 编辑后须跑严格 JSON 解析校验（与任务契约同待遇）",
+      "resolution": "UI-T52 合入段治理提交随批修复闭环（2026-10-04）。"
     }
   ]
 }

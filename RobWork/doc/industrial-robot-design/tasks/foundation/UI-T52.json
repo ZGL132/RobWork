@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求域三维预览呈现深化批次——工位标签文本渲染（F-490② 消账）＋采样格线投递（acceptance 3 字面完整化）＋投影断言增强（宿主融合深化——呈现面迭代）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T33"],
   "requirements": [
     "UX-02（工程用语——工位标签中文直投）",
@@ -65,5 +65,5 @@
     "投影断言增强：网关预览替身用例扩格线/标签字段断言（lastDrawn 深检）——证据：ui_gui_test 预览用例扩断言全绿",
     "回归门禁：受影响目标零错误构建＋ui/requirements gui 套件全绿＋ird_gates 语义全等零新增＋validate-docs PASS——留痕 traceability/builds/ui-t52/"
   ],
-  "note": "立项来源：所有者 2026-10-04 指令『宿主融合深化（WP-24-T09 之后的呈现面迭代）』承接——UI-T33 验收 F-490②（三维浮动文本）消账＋acceptance 3 采样格字面完整化。候选甄别记录：①requirements-tour 三维取证段不可行（遍历通道零 WorkCell 装载——预览降级形态无取证价值）；②采样格着色生产数据面留 KIN-07 消费任务（F-490① 维持）。关键事实：框架自带 RenderText（rwlibs/opengl——glRasterPos 文本渲染；GLUT 依赖在宿主三维形态在位）；RegionPreviewGeometry.gridLines（refFrame 系格线段）在 UI-T33 弃用——本批字面化。堆叠序：ui-t52 基点＝redesign-main@6a917a09（UI-T33 合入收尾后）。"
+  "note": "立项来源：所有者 2026-10-04 指令『宿主融合深化（WP-24-T09 之后的呈现面迭代）』承接——UI-T33 验收 F-490②（三维浮动文本）消账＋acceptance 3 采样格字面完整化。候选甄别记录：①requirements-tour 三维取证段不可行（遍历通道零 WorkCell 装载——预览降级形态无取证价值）；②采样格着色生产数据面留 KIN-07 消费任务（F-490① 维持）。关键事实：框架自带 RenderText（rwlibs/opengl——glRasterPos 文本渲染；GLUT 依赖在宿主三维形态在位）；RegionPreviewGeometry.gridLines（refFrame 系格线段）在 UI-T33 弃用——本批字面化。堆叠序：ui-t52 基点＝redesign-main@6a917a09（UI-T33 合入收尾后）。合入登记（2026-10-04，owner 指令『合入』＝合入决策授权）：acceptedHead df3235e7（漂移检测 origin/ui-t52＝df3235e7、origin/redesign-main＝6a917a09 零漂移后按 SHA 合入）；evidence 先并 acc/UI-T52/2@5d36c628，合并态补并 acc/UI-T52/1@6c0418f3（两 attempt 记录分属两 evidence 分支——首并误判同链，b2f6e757 纠正）；合并态验证：六显式目标构建零错误＋四套件 ui_test 246/requirements_test 200（另 1 例 ACC-1 登记跳过，口径同验收 201）/ui_gui 78/requirements_gui 42 全绿＋ird_gates 101 条命中与基线核心标识集语义全等（零新增——引擎『任一命中即失败』设计下 101 条为既有登记噪声基线，与验收两轮同口径）；F-490② 随本合入消账落库；分支 ui-t52＋acc/UI-T52/1＋acc/UI-T52/2 收尾清理。"
 }
