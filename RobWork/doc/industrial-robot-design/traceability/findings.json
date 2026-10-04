@@ -5110,7 +5110,7 @@
       "severity": "suggestion",
       "status": "open",
       "registeredAt": "2026-10-05",
-      "title": "两条验证基建口径：①未触碰套件（ui/requirements 等）的回归留痕以\"会话执行记录\"指代、无落盘工件——建议后续批次落盘或明文\"以验收复现为准\"；②verify-task.ps1 对描述性 verify 条目（非命令文本）Invoke-Expression 失败仍打 PASS（仓级既有特征，非 UI-T55 引入）——建议治理批次决断描述性条目的机器可执行化或显式标注\"人工核对\"。",
+      "title": "两条验证基建口径：①未触碰套件（ui/requirements 等）的回归留痕以\"会话执行记录\"指代、无落盘工件——建议后续批次落盘或明文\"以验收复现为准\"；②verify-task.ps1 对描述性 verify 条目（非命令文本）Invoke-Expression 失败仍打 PASS（仓级既有特征，非 UI-T55 引入）——建议治理批次决断描述性条目的机器可执行化或显式标注\"人工核对\"。；附备忘（acc/ui-t56/1 验收 S5）：ui_test 运行时需 python313.dll（Miniconda3）入 PATH——DTB §5.1 fresh 树前置（F-007/F-475 族同款环境备忘）",
       "owner": "治理侧（验证基建口径批次）"
     },
     {
