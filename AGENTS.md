@@ -182,6 +182,7 @@ cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <任意临时目�
 cmake --build <该目录>
 ```
 
+- ⚠ **全新克隆/worktree 配置前**：`RobWorkStudio.ini.template.static` 被 .gitignore `[Bb]in/` 规则吞没不入库（框架配置必需，缺则卡 `RobWorkStudio/src/CMakeLists.txt:58`）——手工自**源码树** `RobWork/RobWorkStudio/bin/`（非 build/）复制至构建树对应 bin/；运行测试 exe 的其余 fresh 前置（框架 DLL／vcpkg 与 python PATH）见 DTB §5.1『fresh 树运行时前置』行（F-007/F-475）。
 - 工具链：MSVC 2022 x64（Visual Studio 17 2022 生成器），Qt 与 vcpkg 依赖已就位。
 - 治理脚本调用：`pwsh -File RobWork/scripts/industrialrobot/<脚本>.ps1`（pwsh 7 与 Windows PowerShell 5.1 均可——脚本对仓库根做自检解析，与调用方式无关；口径登记于 DTB §5.1）。
 - **仅冒烟通过不构成任务完成**；集成模式零错误是 DoD 第 1 条。
