@@ -233,4 +233,132 @@ TEST(GeometryLinkEditTest, AttachExternalGeometry_NullProbe_FailsFast)
                  std::invalid_argument);
 }
 
+// =====================================================================
+// UI-T49——视觉→碰撞复制辅助（§5.2 几何生成辅助②；G6 独立性＋G7 复制）
+// =====================================================================
+
+/// 复制基本语义：同 resourceRefId＋localTransform/kind 初值随复制＋清单
+/// 零改动＋摘要携带来源标记 "collision-copy"（GeometricEstimate 族）。
+TEST(GeometryLinkEditTest, CopyVisualToCollision_ReplicatesRefAndRecordsProvenance)
+{
+    ModelingWorkingSet ws = makeSeedWorkset();
+    FakeProbe probe;
+    ASSERT_FALSE(attachExternalGeometry(ws, 1, GeometrySlot::Visual,
+                                        "D:/a/v.stl", probe.fn())
+                     .has_value());
+    // 造非恒等初值（复制应整体搬运——非仅引用键）。
+    ASSERT_FALSE(editGeometryLocalTransform(ws, 1, GeometrySlot::Visual,
+                                            0.1, 0.2, 0.3, 0.0, 0.0, 0.5)
+                     .has_value());
+    const GeometryRef visualSnapshot = *ws.design.links[1].visual;
+
+    const std::optional<GeometryLinkError> err =
+        copyVisualToCollision(ws, 1);
+    ASSERT_FALSE(err.has_value());
+    ASSERT_TRUE(ws.design.links[1].collision.has_value());
+    const GeometryRef& copied = *ws.design.links[1].collision;
+    EXPECT_EQ(copied.resourceRefId, visualSnapshot.resourceRefId)
+        << "同资源复制失守（复制不得新登清单条目）";
+    EXPECT_TRUE(copied.localTransform == visualSnapshot.localTransform)
+        << "localTransform 初值未随复制";
+    EXPECT_EQ(copied.kind, visualSnapshot.kind) << "kind 未随复制";
+    EXPECT_EQ(ws.design.resourceManifest.size(), 1u)
+        << "复制产生了清单新条目（应为同资源引用共享）";
+    // 摘要留痕：来源标记 methodTag "collision-copy"（GeometryRef schema
+    // 无来源字段——标记只在呈现链）。本用例前置两动作各落一条摘要
+    // （挂接＋局部变换），复制摘要为末条。
+    ASSERT_EQ(ws.changes.size(), 3u);
+    EXPECT_EQ(ws.changes.back().subject, "links[1].collision");
+    EXPECT_NE(ws.changes.back().summary.find("collision-copy"), std::string::npos)
+        << "摘要未携带辅助来源标记";
+}
+
+/// visual 未设＝诚实拒绝（ERR-01——非静默产出空引用；工作集字节不变）。
+TEST(GeometryLinkEditTest, CopyVisualToCollision_VisualNotSet_Rejected)
+{
+    ModelingWorkingSet ws = makeSeedWorkset();
+    const ModelingWorkingSet before = ws;
+    const std::optional<GeometryLinkError> err = copyVisualToCollision(ws, 1);
+    ASSERT_TRUE(err.has_value());
+    EXPECT_EQ(err->code, GeometryLinkErrorCode::VisualNotSet);
+    EXPECT_EQ(geometryLinkErrorCodeToken(err->code), "visual-not-set");
+    EXPECT_FALSE(err->detail.empty()) << "诚实拒绝缺原因文本";
+    EXPECT_TRUE(before == ws) << "拒绝路径工作集被改动";
+}
+
+/// collision 已有引用＝须显式确认覆盖（estimate 覆盖确认同款纪律——
+/// 不确认拒绝且工作集不变；确认后覆盖为新引用，旧清单条目保留）。
+TEST(GeometryLinkEditTest, CopyVisualToCollision_OccupiedRequiresExplicitConfirm)
+{
+    ModelingWorkingSet ws = makeSeedWorkset();
+    FakeProbe probe;
+    ASSERT_FALSE(attachExternalGeometry(ws, 1, GeometrySlot::Visual,
+                                        "D:/a/v.stl", probe.fn())
+                     .has_value());
+    ASSERT_FALSE(attachExternalGeometry(ws, 1, GeometrySlot::Collision,
+                                        "D:/a/old.stl", probe.fn())
+                     .has_value());
+    const std::string oldCollisionRef =
+        ws.design.links[1].collision->resourceRefId;
+
+    const std::optional<GeometryLinkError> unconfirmed =
+        copyVisualToCollision(ws, 1, false);
+    ASSERT_TRUE(unconfirmed.has_value());
+    EXPECT_EQ(unconfirmed->code, GeometryLinkErrorCode::CollisionOccupied);
+    EXPECT_EQ(ws.design.links[1].collision->resourceRefId, oldCollisionRef)
+        << "未确认覆盖已改写 collision（静默覆盖纪律失守）";
+    EXPECT_EQ(ws.changes.size(), 2u) << "拒绝路径产生了幻影摘要";
+
+    const std::optional<GeometryLinkError> confirmed =
+        copyVisualToCollision(ws, 1, true);
+    ASSERT_FALSE(confirmed.has_value());
+    EXPECT_EQ(ws.design.links[1].collision->resourceRefId,
+              ws.design.links[1].visual->resourceRefId)
+        << "确认覆盖后未复制视觉引用";
+    EXPECT_EQ(ws.design.resourceManifest.size(), 2u)
+        << "被覆盖旧引用的清单条目被级联删除（失引用条目保留语义失守）";
+}
+
+/// 两槽独立性（acceptance 1 核心断言）：复制后摘除 visual，collision 仍
+/// 持有引用；改 collision 位姿，visual 位姿不动——collision 编辑零 visual
+/// 改写。
+TEST(GeometryLinkEditTest, CopyVisualToCollision_SlotsIndependentAfterCopy)
+{
+    ModelingWorkingSet ws = makeSeedWorkset();
+    FakeProbe probe;
+    ASSERT_FALSE(attachExternalGeometry(ws, 1, GeometrySlot::Visual,
+                                        "D:/a/v.stl", probe.fn())
+                     .has_value());
+    ASSERT_FALSE(copyVisualToCollision(ws, 1).has_value());
+    const GeometryRef visualSnapshot = *ws.design.links[1].visual;
+
+    // ①摘除 visual——collision 引用独立存活（槽位摘除只动本槽）。
+    ASSERT_FALSE(detachGeometry(ws, 1, GeometrySlot::Visual).has_value());
+    EXPECT_FALSE(ws.design.links[1].visual.has_value());
+    ASSERT_TRUE(ws.design.links[1].collision.has_value())
+        << "摘除 visual 连带清了 collision（两槽独立性失守）";
+    EXPECT_EQ(ws.design.resourceManifest.size(), 1u)
+        << "清单条目应保留（collision 仍在引用）";
+
+    // ②恢复 visual 并改 collision 位姿——visual 位姿不动。
+    ASSERT_FALSE(attachExternalGeometry(ws, 1, GeometrySlot::Visual,
+                                        "D:/a/v.stl", probe.fn())
+                     .has_value());
+    ASSERT_FALSE(editGeometryLocalTransform(ws, 1, GeometrySlot::Collision,
+                                            1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+                     .has_value());
+    EXPECT_TRUE(ws.design.links[1].visual->localTransform
+                == visualSnapshot.localTransform)
+        << "collision 位姿编辑改写了 visual（零 visual 改写断言失守）";
+}
+
+/// 连杆下标越界＝拒绝（复用挂换摘同款前置面）。
+TEST(GeometryLinkEditTest, CopyVisualToCollision_IndexOutOfRange_Rejected)
+{
+    ModelingWorkingSet ws = makeSeedWorkset();
+    const std::optional<GeometryLinkError> err = copyVisualToCollision(ws, 9);
+    ASSERT_TRUE(err.has_value());
+    EXPECT_EQ(err->code, GeometryLinkErrorCode::IndexOutOfRange);
+}
+
 }  // namespace sdurws::ird::modeling::test

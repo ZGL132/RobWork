@@ -5,6 +5,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 文档版本 | v0.28（2026-10-04，UI-T47 结构编辑面批次落位——§5.2 v0.28 四操作词表〔同日先行修订〕＋§3.3 公共头表 StructureEdit.hpp 行；域原语 StructureEdit.hpp/.cpp＋DraftIdentity.hpp 共享头提升＋面板五钮承载与提交流；UT 九例＋gui 两例；前一版 v0.27＝UI-T42；v0.24~v0.26＝UI-T41 批次A/B/C；v0.23＝WP-13-T20 宿主迁移） |
+| 文档版本 | v0.30（2026-10-04，UI-T49 碰撞模型编辑面批次落位——§3.3 公共头表 GeometryLinkEdit.hpp 行增记复制原语〔§5.2 几何生成辅助②落位：copyVisualToCollision——同 resourceRefId＋localTransform/kind 初值随复制＋覆盖确认面 CollisionOccupied＋VisualNotSet 诚实拒绝；来源标记 methodTag "collision-copy" 经变更摘要留痕〕；局部错误码表尾追加两值；域用例五＋gui 一例；前一版 v0.29＝UI-T48 几何引用编辑） |
 | 文档版本 | v0.29（2026-10-04，UI-T48 几何引用编辑面批次落位——§3.3 公共头表 GeometryLinkEdit.hpp 行〔§6.7 Recorded 登记面＋挂换摘＋局部变换编辑〕；域原语 GeometryLinkEdit.hpp/.cpp＋GeometryResourceFlow io 真装；前一版 v0.28＝UI-T47 结构编辑） |
 | 状态 | **`Draft`**（待评审；DETAILED-DESIGN.md 单元状态表中的"modeling｜待产出"以本卡落盘为准，索引行同步由治理侧执行，本卡不代改） |
 | 文档代号 | UNIT-MODELING |
@@ -256,7 +257,7 @@ sdurws_ird_modeling_contract_test  跨单元契约测试（project/runtime/io/po
 | `Codec.hpp` | `IRobotDesignCodec`：建模对象 canonical 编码/解码（确定性序列化登记，core §6.3 分工） | T03 |
 | `Template.hpp` | `IRobotDesignTemplateFactory`、模板描述符、六轴默认参数表（§5.1）、逐轴编辑流＋基座安装姿态编辑流（§5.2——T11 编辑流落位于本头而非 `Parts.hpp`：basePlacement 是根对象字段，编辑域内核与逐轴编辑流同址；原表 Parts.hpp 行的 T11 归属订正见 §15 v0.13 ④） | T07/T11 |
 | `StructureEdit.hpp` | 关节链结构编辑原语（§5.2 v0.28 四操作词表——新增/删除/重排/六轴重置；局部错误码＋拒绝值面；拒绝路径工作集字节不变——UI-T47 承接） | UI-T47 |
-| `GeometryLinkEdit.hpp` | 几何资源引用编辑原语（§6.7 Recorded 登记面——外部文件探测缝 ResourceProbeFn〔P-MDL-8 零直读〕＋清单登记＋visual/collision 挂换摘＋局部变换 m/rad 编辑；局部错误码＋拒绝值面——UI-T48 承接） | UI-T48 |
+| `GeometryLinkEdit.hpp` | 几何资源引用编辑原语（§6.7 Recorded 登记面——外部文件探测缝 ResourceProbeFn〔P-MDL-8 零直读〕＋清单登记＋visual/collision 挂换摘＋局部变换 m/rad 编辑＋视觉→碰撞复制辅助 copyVisualToCollision〔§5.2 几何生成辅助②——UI-T49：同 resourceRefId＋localTransform/kind 初值随复制，清单零改动；覆盖确认面 CollisionOccupied／复制源缺失 VisualNotSet 诚实拒绝；methodTag "collision-copy" 经摘要留痕——产物与手编同权〕；局部错误码＋拒绝值面——UI-T48 承接＋UI-T49 增记） | UI-T48/T49 |
 | `PropertyEstimation.hpp` | `IPropertyEstimator`、唯一公式表（版本 `mdl-property-formula/1`）、材料密度默认表 | T04 |
 | `Import.hpp` | `IModelImportMapper`、URDF/Xacro/WorkCell 映射值类型与导入报告 | T05/T06/T17 |
 | `XacroExpand.hpp` | `IXacroExpandService`（受控展开语义；护栏经 io） | T06 |

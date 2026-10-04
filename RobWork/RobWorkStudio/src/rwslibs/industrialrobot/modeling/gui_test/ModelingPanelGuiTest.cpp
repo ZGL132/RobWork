@@ -574,3 +574,60 @@ TEST_F(ModelingPanelGuiTest, GeometryActionButtons_LoadAndDetach_UI_T48)
     EXPECT_EQ(m_ws.design.resourceManifest.size(), 1u)
         << "清单条目被级联删除";
 }
+
+/// UI-T49 视觉→碰撞复制辅助（G7 承载＋acceptance 1 两槽独立性＋诚实禁用）：
+/// visual 已挂＝复制钮可用，点击落草稿（collision 同资源引用、visual 零
+/// 改写、清单零新增）；visual 未设＝钮禁用＋toolTip 原因（非置灰无解释）。
+TEST_F(ModelingPanelGuiTest, GeometryCopyButton_VisualToCollision_UI_T49)
+{
+    // ①预置 visual 挂接（域原语直调——绕过对话框；T48 用例同形态）。
+    core::ContentDigester d;
+    const std::string seed = "gui: D:/a/link1.stl";
+    d.update(seed.data(), seed.size());
+    ResourceProbeFn probe = [&](const std::string&, std::string&)
+        -> std::optional<ResourceProbeResult> {
+        ResourceProbeResult r;
+        r.contentDigest = d.finalize();
+        r.absPath = "D:/a/link1.stl";
+        r.isMeshFamily = true;
+        return r;
+    };
+    ASSERT_FALSE(attachExternalGeometry(m_ws, 1, GeometrySlot::Visual,
+                                        "D:/a/link1.stl", probe)
+                     .has_value());
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+    m_panel->focusObject(m_ws.design.links[1].objectId);
+
+    // ②复制钮承载存在（仅 collision 行——G7 入口）＋visual 已挂＝可用。
+    QPushButton* copy = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_geo_copy_collision"));
+    ASSERT_NE(copy, nullptr) << "复制钮未构建（G7 承载缺席）";
+    EXPECT_TRUE(copy->isEnabled()) << "visual 已挂时复制钮被禁用";
+
+    // ③点击复制→collision 落草稿（同资源引用）＋visual 零改写
+    //   （acceptance 1 两槽独立性断言的 gui 半区）。
+    copy->click();
+    ASSERT_TRUE(m_ws.design.links[1].collision.has_value())
+        << "复制未落草稿（collision 槽仍空）";
+    ASSERT_TRUE(m_ws.design.links[1].visual.has_value())
+        << "复制改写了 visual 槽（零 visual 改写失守）";
+    EXPECT_EQ(m_ws.design.links[1].collision->resourceRefId,
+              m_ws.design.links[1].visual->resourceRefId)
+        << "未同资源复制（复制产生了第二引用键）";
+    EXPECT_EQ(m_ws.design.resourceManifest.size(), 1u)
+        << "复制新增了清单条目（应共享同一 ResourceRef）";
+
+    // ④摘除 visual 后重投影——复制钮诚实禁用＋toolTip 携原因
+    //   （"非置灰无解释"纪律——§9.7.1 交互）。
+    ASSERT_FALSE(detachGeometry(m_ws, 1, GeometrySlot::Visual).has_value());
+    m_panel->refreshPanel(m_ws, emptyReport);
+    m_panel->focusObject(m_ws.design.links[1].objectId);
+    QPushButton* copyAfter = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_geo_copy_collision"));
+    ASSERT_NE(copyAfter, nullptr) << "重投影后复制钮丢失";
+    EXPECT_FALSE(copyAfter->isEnabled())
+        << "visual 未设时复制钮未诚实禁用";
+    EXPECT_TRUE(copyAfter->toolTip().contains(QStringLiteral("视觉几何未挂接")))
+        << "禁用态缺原因提示（置灰无解释——交互纪律失守）";
+}
