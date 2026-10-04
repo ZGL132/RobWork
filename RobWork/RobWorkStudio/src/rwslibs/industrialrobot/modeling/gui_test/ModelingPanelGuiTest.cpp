@@ -31,6 +31,8 @@
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QLineEdit>
+#include <QComboBox>
+#include <QDoubleSpinBox>
 #include <QTableWidget>
 #include <QTreeWidgetItemIterator>
 #include <QPushButton>
@@ -67,13 +69,16 @@ ModelingWorkingSet makeSixAxisDraft()
 
 /// 控件是否位于关节详细编辑页子树（UI-T53——"编辑"页签承载 ParamTablePanel，
 /// 其筛选框/表格/按钮不入属性区与命令目录的对账面——P0-3 门控管辖的是
-/// 属性行，编辑页是 B.1 详细编辑面的独立承载）。
+/// 属性行，编辑页是 B.1 详细编辑面的独立承载）。UI-T54 起同规则覆盖基座
+/// 安装页（QDoubleSpinBox 内部持有可编辑 QLineEdit——不对账即污染 P0-3 计数）。
 bool inJointEditPane(const QWidget& panel, const QObject* widget)
 {
     for (const QObject* p = widget; p != nullptr; p = p->parent()) {
         if (p == &panel) { return false; }  // 未途经编辑页宿主即达面板根
-        if (p->objectName() == QStringLiteral("ird_modeling_edit_host")
-            || p->objectName() == QStringLiteral("ird_param_table_panel")) {
+        const QString name = p->objectName();
+        if (name == QStringLiteral("ird_modeling_edit_host")
+            || name == QStringLiteral("ird_param_table_panel")
+            || name == QStringLiteral("ird_modeling_base_page")) {
             return true;
         }
     }
@@ -95,6 +100,9 @@ QList<QPushButton*> commandButtonsOf(const QWidget& panel)
         }
         if (btn->objectName().startsWith(QStringLiteral("ird_modeling_struct_"))) {
             continue;  // 结构操作钮不入命令对账（UI-T47 呈现件——非命令目录按钮）
+        }
+        if (btn->objectName().startsWith(QStringLiteral("ird_modeling_edit_"))) {
+            continue;  // 编辑页模式钮不入命令对账（UI-T53/T54 呈现件）
         }
         if (inJointEditPane(panel, btn)) {
             continue;  // 编辑页按钮（应用/取消/确认区）不入命令对账（UI-T53 呈现件）
@@ -407,6 +415,111 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_ReadOnlySessionDisablesPanel_UI
 }
 
 // =====================================================================
+// UI-T54 基座安装姿态编辑页（MDL-22——applyBasePlacementEdit 域原语接线）
+// =====================================================================
+
+/// 基座页进页辅助（点击"基座安装…"入口钮——锚外对象显式入口）。
+void enterBaseMode(ModelingPanelWidget& panel)
+{
+    QPushButton* baseMode = panel.findChild<QPushButton*>(QStringLiteral("ird_modeling_edit_base_mode"));
+    ASSERT_NE(baseMode, nullptr) << "基座入口钮未构建（UI-T54 承载缺失）";
+    baseMode->click();
+}
+
+/**
+ * 基座编辑全链（UI-T54 验收主链——整体替换语义）：模板种子（地面＋未提供）
+ * →切自定义预设（EAA 行随启）→写 EAA＋位置→应用→applyBasePlacementEdit
+ * 接受＝preset/customEaa/basePosition 三面更新＋UserProvided 来源＋恰一条
+ * 变更记录；还原钮＝权威值回填零脏化（changes 不增长）。
+ */
+TEST_F(ModelingPanelGuiTest, BasePlacementEdit_WholeReplacementChain_UI_T54)
+{
+    IRD_TEST_INFO("MDL-22", {}, std::nullopt);
+
+    enterBaseMode(*m_panel);
+    QComboBox* preset = m_panel->findChild<QComboBox*>(QStringLiteral("ird_modeling_base_preset"));
+    ASSERT_NE(preset, nullptr);
+    EXPECT_EQ(preset->currentIndex(), 0) << "模板种子应为地面预设（V15-04）";
+
+    // 自定义预设→EAA 行随启（I-MDL-7：仅 Custom 有语义——非 Custom 携带即
+    // 域原语 fail-fast 面，UI 侧先行禁用同口径）。
+    preset->setCurrentIndex(3);
+    QDoubleSpinBox* eaaY = m_panel->findChild<QDoubleSpinBox*>(QStringLiteral("ird_modeling_base_eaa_y"));
+    ASSERT_NE(eaaY, nullptr);
+    EXPECT_TRUE(eaaY->isEnabled()) << "自定义预设下 EAA 行应启用";
+    // SpinBox 呈现精度＝6 位小数（rad）——测试值按该精度取整后断言
+    // （1.5708 rad ≈ 89.95°，域接受任意有限 double，呈现精度非语义边界）。
+    eaaY->setValue(1.5708);
+    QDoubleSpinBox* posX = m_panel->findChild<QDoubleSpinBox*>(QStringLiteral("ird_modeling_base_pos_x"));
+    ASSERT_NE(posX, nullptr);
+    posX->setValue(0.25);
+
+    QPushButton* applyBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_base_apply"));
+    ASSERT_NE(applyBtn, nullptr);
+    applyBtn->click();
+
+    // 域面：三面整体替换＋UserProvided＋恰一条变更记录。
+    const auto& bp = m_ws.design.basePlacement;
+    EXPECT_EQ(bp.preset, runtime::InstallationPresetToken::Custom);
+    ASSERT_EQ(bp.customEaa.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(bp.customEaa.value()[1], 1.5708);
+    EXPECT_EQ(bp.customEaa.provenance().kind, core::ProvenanceKind::UserProvided);
+    ASSERT_EQ(bp.basePosition.state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(bp.basePosition.value()[0], 0.25);
+    ASSERT_EQ(m_ws.changes.size(), std::size_t{1});
+    EXPECT_NE(m_ws.changes[0].summary.find("安装预设"), std::string::npos);
+
+    // 还原钮＝权威值回填零脏化（不再增长 changes——纯呈现动作）。
+    QPushButton* restoreBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_base_restore"));
+    ASSERT_NE(restoreBtn, nullptr);
+    restoreBtn->click();
+    ASSERT_EQ(m_ws.changes.size(), std::size_t{1}) << "还原不得产生域调用";
+}
+
+/**
+ * 基座编辑域守卫面（UI-T54——Custom＋零 EAA＝R=I 的映射层拒绝）：
+ * 状态行就地呈现 preset-identity-rotation、工作集零变更（I-MDL-7 后半——
+ * 非地面预设而恒等旋转在编辑边界就地拒绝，域裁决唯一）。
+ */
+TEST_F(ModelingPanelGuiTest, BasePlacementEdit_PresetIdentityRotationRejected_UI_T54)
+{
+    IRD_TEST_INFO("MDL-22", {}, std::nullopt);
+
+    const ModelingWorkingSet before = m_ws;
+    enterBaseMode(*m_panel);
+    QComboBox* preset = m_panel->findChild<QComboBox*>(QStringLiteral("ird_modeling_base_preset"));
+    ASSERT_NE(preset, nullptr);
+    preset->setCurrentIndex(3);  // Custom＋EAA 全零（默认）＝R=I
+    QPushButton* applyBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_base_apply"));
+    ASSERT_NE(applyBtn, nullptr);
+    applyBtn->click();
+
+    QLabel* status = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_status_line"));
+    ASSERT_NE(status, nullptr);
+    EXPECT_TRUE(status->text().contains(QStringLiteral("preset-identity-rotation")))
+        << "恒等旋转拒绝原因未就地呈现（UX-03）";
+    EXPECT_EQ(m_ws, before) << "拒绝路径工作集字节不变";
+}
+
+/**
+ * 基座编辑 L-7 门控（UI-T54）：只读会话＝应用钮禁用（域出口 onBasePlacement-
+ * ApplyClicked 另有 writable 防御面，本用例钉控件半区）。
+ */
+TEST_F(ModelingPanelGuiTest, BasePlacementEdit_ReadOnlyDisablesApply_UI_T54)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    ModelingPanelWidget readonlyPanel(false);
+    readonlyPanel.setEditTargetProvider([this]() { return &m_ws; });
+    ModelReadinessReport emptyReport;
+    readonlyPanel.refreshPanel(m_ws, emptyReport);
+    enterBaseMode(readonlyPanel);
+    QPushButton* applyBtn = readonlyPanel.findChild<QPushButton*>(QStringLiteral("ird_modeling_base_apply"));
+    ASSERT_NE(applyBtn, nullptr);
+    EXPECT_FALSE(applyBtn->isEnabled()) << "只读会话基座应用钮未禁用（L-7 门控失守）";
+}
+
+// =====================================================================
 // P1-1 幻影脏化短路：editingFinished 失焦语义下，未修改＝零提交零脏化
 // （postEditAction 恰零次）；修改后＝恰一次接受（ERR-01——不虚报未应用）。
 // =====================================================================
@@ -465,6 +578,8 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; } // 历史钮不入禁用对账
         if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; } // 折叠开关不入对账（F-502 呈现件——非命令目录按钮）
         if (btn->objectName().startsWith(QString::fromUtf8("ird_modeling_struct_"))) { continue; } // 结构操作钮不入禁用对账（UI-T47 呈现件——非命令目录按钮）
+        if (btn->objectName().startsWith(QString::fromUtf8("ird_modeling_edit_"))) { continue; } // 编辑页模式钮不入对账（UI-T53/T54 呈现件——非命令目录按钮）
+        if (inJointEditPane(*m_panel, btn)) { continue; } // 编辑页/基座页内部钮不入对账（UI-T53/T54 呈现件）
         EXPECT_FALSE(btn->isEnabled()) << "全禁快照下按钮仍可用";
         EXPECT_EQ(btn->toolTip().toStdString(),
                   ui::resolveText(ui::DisableReason{"cmd.flow-not-assembled.reason"}))

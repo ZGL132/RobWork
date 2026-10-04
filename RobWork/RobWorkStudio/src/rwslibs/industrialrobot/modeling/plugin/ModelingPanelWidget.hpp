@@ -50,6 +50,9 @@
 class QLabel;
 class QVBoxLayout;
 class QFormLayout;
+class QComboBox;
+class QDoubleSpinBox;
+class QStackedWidget;
 
 namespace sdurws::ird::modeling {
 
@@ -237,6 +240,20 @@ private:
     /// bounds-*→Bounds；提交序固定登记序，单组拒绝不阻断其余组）。
     void applyJointDetailEdits(const ui::ParamEditSet& editSet);
 
+    // ---- UI-T54 基座安装姿态编辑页（"编辑"页签第二模式——锚外对象入口）----
+
+    /// 基座安装编辑页内容构建（构造期一次——表单挂 m_basePage 布局）。
+    void buildBasePlacementPane();
+    /// 权威值→基座表单回填（ws 现取；预设组合框/位置/EAA 三组；进页与
+    /// 应用后调用——不在全局刷新中回填，避免踩踏未应用输入）。
+    void refreshBasePlacementPane();
+    /// 应用槽（整体替换语义→applyBasePlacementEdit 域原语；接受走 L-2
+    /// 分流〔onEditApplied〕，拒绝经 basePlacementEditErrorCodeToken 就地
+    /// 呈现——工作集字节不变由域内强保证）。
+    void onBasePlacementApplyClicked();
+    /// 还原槽（放弃未应用输入——权威值回填，零域调用零脏化）。
+    void onBasePlacementRestoreClicked();
+
     /**
      * @brief 命令按钮使能态统一刷新（UI-T43——L-7 门控三输入的单一判定面）。
      *
@@ -287,6 +304,19 @@ private:
     QWidget* m_jointEditPanel = nullptr;      ///< createParamTablePanel 产物（换选中目标时重建）
     std::unique_ptr<ui::ParamEditModel> m_jointEditModel;  ///< 编辑会话模型（基线/暂存/就地错误三层——ui 公共件）
     std::optional<std::size_t> m_jointEditTarget;  ///< 页当前绑定关节下标（nullopt＝未绑定——重建/推基线分路锚）
+
+    // ---- UI-T54 基座安装姿态编辑页（raw 指针＝Qt 父子所有权）----
+    QStackedWidget* m_editStack = nullptr;      ///< 编辑页签模态堆栈（0＝关节区，1＝基座安装页）
+    QWidget* m_basePage = nullptr;              ///< 基座安装编辑页（stacked 第 2 页）
+    QComboBox* m_basePreset = nullptr;          ///< 安装预设（四值词表——runtime 单一权威的呈现映射）
+    QDoubleSpinBox* m_basePosX = nullptr;       ///< 基座原点位置 X，单位 m（世界坐标系下表示）
+    QDoubleSpinBox* m_basePosY = nullptr;       ///< 基座原点位置 Y，单位 m（世界坐标系下表示）
+    QDoubleSpinBox* m_basePosZ = nullptr;       ///< 基座原点位置 Z，单位 m（世界坐标系下表示）
+    QDoubleSpinBox* m_baseEaaX = nullptr;       ///< Custom 预设 EAA 绕 X 分量，单位 rad（仅自定义预设启用）
+    QDoubleSpinBox* m_baseEaaY = nullptr;       ///< Custom 预设 EAA 绕 Y 分量，单位 rad（仅自定义预设启用）
+    QDoubleSpinBox* m_baseEaaZ = nullptr;       ///< Custom 预设 EAA 绕 Z 分量，单位 rad（仅自定义预设启用）
+    QPushButton* m_baseApplyBtn = nullptr;      ///< 应用钮（整体替换提交）
+    QLabel* m_baseHint = nullptr;               ///< 基座页无会话/只读态提示
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
     QTreeWidget* m_tree = nullptr;            ///< 区①结构树（隐藏第 1 列＝锚规范文本）
