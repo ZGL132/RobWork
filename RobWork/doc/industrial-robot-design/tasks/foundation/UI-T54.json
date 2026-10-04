@@ -4,8 +4,10 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "基座安装姿态编辑接线（F-497 兑现②）：applyBasePlacementEdit 域原语 UI 面板承载——\"编辑\"页签第二模式（预设/位置/自定义 EAA，整体替换语义）",
-  "status": "ready",
-  "dependsOn": ["UI-T53"],
+  "status": "done",
+  "dependsOn": [
+    "UI-T53"
+  ],
   "requirements": [
     "MDL-22（基座安装姿态与重力配置——预设＋任意欧拉角编辑，原子持久化；基座相对世界系单一变换口径 M-11）",
     "MDL-07（选中只显示相关属性——B.1 复杂对象编辑模式的锚外对象入口适配）",
@@ -63,5 +65,5 @@
     "gui 套件跑法：原生窗口平台（gate-all 同口径）——offscreen 下 WorkbenchShell 布局/窗口几何类用例为环境性误报（F-507 同族教训：环境口径差异须先排除再判回归）"
   ],
   "branch": "ui-t54",
-  "note": "分支基点＝redesign-main@5a2245d9。F-497（建模复杂对象只读事实页）兑现②——基座安装为审核推荐页序外的低成本前置（域原语已在位零新增）；F-502 折叠用例的 isVisibleTo→isHidden 适配为 UI-T53 栈合入遗留项随本批落位。后续批次：UI-T55 工具/场景详细编辑页（B.1 扩展面＋新域原语）、F-498 多类 XML 预览。"
+  "note": "【合入登记注（2026-10-05，PIPE §4.7 收尾——所有者 2026-10-05 按序实施指令＋PIPE v1.8 autoMerge 预授权）】acceptedHead e0495b26 合入 redesign-main@99691076（acc/ui-t54/1@d0914bbb 按 SHA 先并）；独立子会话对抗式验收 11 项 pass。建议级三条转登 F-510~F-511（S-2 F-497 进展注随批直接落账）。分支基点＝redesign-main@5a2245d9。F-497（建模复杂对象只读事实页）兑现②——基座安装为审核推荐页序外的低成本前置（域原语已在位零新增）；F-502 折叠用例的 isVisibleTo→isHidden 适配为 UI-T53 栈合入遗留项随本批落位。后续批次：UI-T55 工具/场景详细编辑页（B.1 扩展面＋新域原语）、F-498 多类 XML 预览。"
 }
