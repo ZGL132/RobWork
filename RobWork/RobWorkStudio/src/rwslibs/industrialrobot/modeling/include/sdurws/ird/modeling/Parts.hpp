@@ -485,6 +485,102 @@ PoseEditOutcome mergeNamedPoseEntries(const std::optional<PoseSet>& baseline,
                                       std::vector<PoseSetEntry> userEntries,
                                       std::size_t rootJointCount);
 
+// =====================================================================
+// 部件位姿编辑流（UI-T55——F-497 兑现③：工具安装接口/场景世界位姿）
+// =====================================================================
+
+/**
+ * @brief 工具/场景位姿编辑值（六标量载荷——旋转组合归域内核，与
+ *        JointOriginEditValue 同一划界：UI 交标量、域出矩阵）。
+ *
+ * 字段语义（ZYX 约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)——与 src/RpyMath.hpp
+ * 正解/呈现反解同一约定）：
+ *   - 工具安装接口面：x/y/z m＋roll/pitch/yaw rad，**法兰坐标系**下表示
+ *     （T_flange_tool——§4.4 表行）；
+ *   - 场景世界位姿面：x/y/z m＋roll/pitch/yaw rad，**世界坐标系**固连
+ *     （M-11——不预乘安装旋转）。
+ */
+struct PartPoseEditValue {
+    double x = 0.0;      ///< 平移 X 分量，单位 m（参考系随消费面——见类型注）
+    double y = 0.0;      ///< 平移 Y 分量，单位 m（参考系随消费面——见类型注）
+    double z = 0.0;      ///< 平移 Z 分量，单位 m（参考系随消费面——见类型注）
+    double roll = 0.0;   ///< 姿态 roll 角（绕 X），单位 rad（ZYX 约定）
+    double pitch = 0.0;  ///< 姿态 pitch 角（绕 Y），单位 rad（ZYX 约定）
+    double yaw = 0.0;    ///< 姿态 yaw 角（绕 Z），单位 rad（ZYX 约定）
+
+    bool operator==(const PartPoseEditValue& o) const noexcept
+    {
+        return x == o.x && y == o.y && z == o.z && roll == o.roll
+               && pitch == o.pitch && yaw == o.yaw;
+    }
+    bool operator!=(const PartPoseEditValue& o) const noexcept
+    {
+        return !(*this == o);
+    }
+};
+
+/**
+ * @brief 部件位姿编辑局部错误码（局部载体先例同款——JointEditErrorCode
+ *        同款"接口局部错误枚举，不进域级错误轨道"）。
+ */
+enum class PartPoseEditErrorCode {
+    /// "value-not-finite"——六分量含 NaN/Inf（I-MDL-3：非法值不静默置 0）
+    ValueNotFinite,
+};
+
+/// @brief 局部错误码稳定 token（"value-not-finite"）。纯函数；确定性。
+std::string_view partPoseEditErrorCodeToken(PartPoseEditErrorCode code) noexcept;
+
+/**
+ * @brief 部件位姿编辑拒绝值（局部错误面：码＋定位细节——呈现文案归
+ *        UI 层按码映射，同 JointEditError 注）。
+ */
+struct PartPoseEditError {
+    PartPoseEditErrorCode code = PartPoseEditErrorCode::ValueNotFinite;  ///< 稳定错误码
+    std::string detail;  ///< 定位细节（UTF-8；subject/原因）
+
+    bool operator==(const PartPoseEditError& o) const noexcept
+    {
+        return code == o.code && detail == o.detail;
+    }
+    bool operator!=(const PartPoseEditError& o) const noexcept { return !(*this == o); }
+};
+
+// ModelingWorkingSet 前置声明（本头被 Template.hpp 包含——R-2 禁反向
+// include；仅引用语义，完整型在 .cpp 侧消费）。
+struct ModelingWorkingSet;
+
+/**
+ * @brief 应用一次工具安装接口编辑（§4.4——UI-T55 接线面）。
+ *
+ * 规则：①toolIndex 越界＝调用方契约违约→抛 std::invalid_argument；
+ * ②六分量有限性→ValueNotFinite（I-MDL-3）；③提交 mountInterface 直写
+ * （Transform3D 值语义——非 SourcedValue，§4.4 表行）＋追加一条变更摘要
+ * 记录（append-only）。拒绝时工作集字节不变（域内强保证）。
+ *
+ * @param ws        [in,out] 目标工作集
+ * @param toolIndex [in] 工具下标（toolObjects 序，0 起；越界＝fail-fast）
+ * @param value     [in] 编辑值（法兰系六标量——见 PartPoseEditValue 注）
+ * @return nullopt＝接受；非空＝拒绝（工作集不变）
+ * @throws std::invalid_argument 越界下标（调用方契约违约）
+ *
+ * 纯函数（除工作集写入）；确定性；仅 UI 线程（编辑态纪律）。
+ */
+std::optional<PartPoseEditError> applyToolMountEdit(ModelingWorkingSet& ws,
+                                                    std::size_t toolIndex,
+                                                    const PartPoseEditValue& value);
+
+/**
+ * @brief 应用一次场景世界位姿编辑（§4.5——UI-T55 接线面）。
+ *
+ * 规则同 applyToolMountEdit（sceneIndex 越界 fail-fast／六分量有限性／
+ * worldPose 直写＋一条变更记录——拒绝时工作集不变）。参考系＝世界坐标系
+ * 固连（M-11——不预乘安装旋转）。
+ */
+std::optional<PartPoseEditError> applyScenePoseEdit(ModelingWorkingSet& ws,
+                                                    std::size_t sceneIndex,
+                                                    const PartPoseEditValue& value);
+
 }  // namespace sdurws::ird::modeling
 
 #endif  // IRD_MODELING_PARTS_HPP

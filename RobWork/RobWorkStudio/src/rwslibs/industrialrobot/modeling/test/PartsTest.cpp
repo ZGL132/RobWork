@@ -14,6 +14,7 @@
 #include <sdurws/ird/modeling/Parts.hpp>
 #include <sdurws/ird/modeling/Codec.hpp>
 #include <sdurws/ird/modeling/RobotDesign.hpp>
+#include <sdurws/ird/modeling/Template.hpp>  // ModelingWorkingSet（部件位姿编辑流写入目标——UI-T55）
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
 #include <gtest/gtest.h>
@@ -36,6 +37,13 @@ using sdurws::ird::modeling::InertiaTensor;
 using sdurws::ird::modeling::InvariantId;
 using sdurws::ird::modeling::TcpEntry;
 using sdurws::ird::modeling::ToolDefinition;
+using sdurws::ird::modeling::ModelingWorkingSet;
+using sdurws::ird::modeling::PartPoseEditValue;
+using sdurws::ird::modeling::PartPoseEditErrorCode;
+using sdurws::ird::modeling::SceneObject;
+using sdurws::ird::modeling::applyToolMountEdit;
+using sdurws::ird::modeling::applyScenePoseEdit;
+using sdurws::ird::modeling::partPoseEditErrorCodeToken;
 using sdurws::ird::modeling::checkInvariants;
 
 namespace {
@@ -348,4 +356,78 @@ TEST(MdlParts, NamedPoseMergeReservedKeysAndJointOrder_WP13T10_ACC4)
         EXPECT_EQ(out.code, PoseEditErrorCode::JointOrderMismatch);
         EXPECT_EQ(out.subject, "wrong");
     }
+}
+
+/**
+ * 工具安装接口/场景世界位姿编辑（UI-T55——F-497 兑现③域面）：接受＝六标量
+ * 组合为位姿（平移直写＋旋转经域内核 ZYX 正解）＋恰一条变更记录；非有限
+ * 拒绝（I-MDL-3）工作集字节不变；越界下标 fail-fast（调用方契约违约）。
+ *
+ * 旋转核验与 TemplateTest Origin 用例同口径：R20＝-sin(pitch) 字面断言＋
+ * 独立反解 1e-12 容差互证（不复制正解公式自证）。
+ */
+TEST(MdlParts, PartPoseEdits_ToolMountAndSceneWorld_UI_T55)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-22"},
+                  std::vector<std::string>{"AT-01"});
+
+    ModelingWorkingSet ws;
+    ToolDefinition tool;
+    tool.localName = "t1";
+    ws.toolObjects.push_back(tool);
+    SceneObject scene;
+    scene.localName = "s1";
+    ws.sceneObjects.push_back(scene);
+
+    // ---- 接受面①：工具安装接口（法兰系 T_flange_tool）----
+    constexpr double kRoll = 0.1;
+    constexpr double kPitch = 0.2;
+    constexpr double kYaw = 0.3;
+    const auto toolRejection = applyToolMountEdit(
+        ws, 0, PartPoseEditValue{0.4, -0.5, 0.6, kRoll, kPitch, kYaw});
+    EXPECT_FALSE(toolRejection.has_value()) << "合法工具安装接口编辑应接受";
+    const auto& mount = ws.toolObjects[0].mountInterface;
+    EXPECT_DOUBLE_EQ(mount.P()[0], 0.4);
+    EXPECT_DOUBLE_EQ(mount.P()[2], 0.6);
+    EXPECT_DOUBLE_EQ(mount.R()(2, 0), -std::sin(kPitch));
+    const double pitchBack = -std::asin(mount.R()(2, 0));
+    const double rollBack = std::atan2(mount.R()(2, 1), mount.R()(2, 2));
+    const double yawBack = std::atan2(mount.R()(1, 0), mount.R()(0, 0));
+    EXPECT_NEAR(rollBack, kRoll, 1e-12);
+    EXPECT_NEAR(pitchBack, kPitch, 1e-12);
+    EXPECT_NEAR(yawBack, kYaw, 1e-12);
+    ASSERT_EQ(ws.changes.size(), std::size_t{1});
+    EXPECT_EQ(ws.changes[0].subject, "tools[0]");
+    EXPECT_NE(ws.changes[0].summary.find("安装接口"), std::string::npos);
+
+    // ---- 接受面②：场景世界位姿（世界系固连——M-11）----
+    const auto sceneRejection = applyScenePoseEdit(
+        ws, 0, PartPoseEditValue{1.0, 2.0, 3.0, 0.0, 0.0, 0.5});
+    EXPECT_FALSE(sceneRejection.has_value());
+    const auto& world = ws.sceneObjects[0].worldPose;
+    EXPECT_DOUBLE_EQ(world.P()[0], 1.0);
+    EXPECT_DOUBLE_EQ(world.R()(2, 0), -std::sin(0.0));
+    EXPECT_NEAR(std::atan2(world.R()(1, 0), world.R()(0, 0)), 0.5, 1e-12);
+    ASSERT_EQ(ws.changes.size(), std::size_t{2});
+    EXPECT_EQ(ws.changes[1].subject, "scenes[0]");
+    EXPECT_NE(ws.changes[1].summary.find("世界位姿"), std::string::npos);
+
+    // ---- 拒绝面：非有限分量（工作集字节不变——I-MDL-3）----
+    const ModelingWorkingSet before = ws;
+    const auto nanRejection = applyToolMountEdit(
+        ws, 0, PartPoseEditValue{0.0, 0.0, 0.0, 0.0, std::nan(""), 0.0});
+    ASSERT_TRUE(nanRejection.has_value());
+    EXPECT_EQ(nanRejection->code, PartPoseEditErrorCode::ValueNotFinite);
+    EXPECT_EQ(partPoseEditErrorCodeToken(PartPoseEditErrorCode::ValueNotFinite),
+              "value-not-finite");
+    const auto sceneNan = applyScenePoseEdit(
+        ws, 0, PartPoseEditValue{std::nan(""), 0.0, 0.0, 0.0, 0.0, 0.0});
+    ASSERT_TRUE(sceneNan.has_value());
+    EXPECT_EQ(ws, before) << "拒绝路径工作集字节不变";
+
+    // ---- fail-fast 面：越界下标（调用方契约违约）----
+    EXPECT_THROW(applyToolMountEdit(ws, 9, PartPoseEditValue{}),
+                 std::invalid_argument);
+    EXPECT_THROW(applyScenePoseEdit(ws, 9, PartPoseEditValue{}),
+                 std::invalid_argument);
 }

@@ -254,6 +254,31 @@ private:
     /// 还原槽（放弃未应用输入——权威值回填，零域调用零脏化）。
     void onBasePlacementRestoreClicked();
 
+    // ---- UI-T55 工具/场景位姿编辑页（"编辑"页签选择驱动分派）----
+
+    /// 编辑页分派总入口（refreshPropertiesFromLastWorkingSet 尾驱动）：
+    /// Joint→关节区（stack 0）／Tool→工具页／Scene→场景页（选择驱动——
+    /// B.1 主通道，二者均有 ObjectId 树锚）；其余目标不动当前页仅刷新
+    /// 关节区（基座模式为显式入口不受选中影响——UI-T54 语义保持）。
+    void refreshEditPages();
+    /// 工具页内容构建（6 行数值表：安装接口 XYZ m＋RPY rad——法兰系）。
+    void buildToolMountPane();
+    /// 场景页内容构建（6 行数值表：世界位姿 XYZ m＋RPY rad——世界系固连）。
+    void buildScenePosePane();
+    /// 工具/场景页随选中同步（换目标重建／同目标推基线——关节页同款纪律）。
+    void refreshToolMountPane();
+    void refreshScenePosePane();
+    /// 出口移交落点（键分组装配 PartPoseEditValue→applyToolMountEdit／
+    /// applyScenePoseEdit；任一分量缺失＝就地拒绝不组装）。
+    void applyToolMountEdits(const ui::ParamEditSet& editSet);
+    void applyScenePoseEdits(const ui::ParamEditSet& editSet);
+    /// 位姿类编辑页通用构建（说明行＋ParamTablePanel——工具/场景页同构
+    /// 复用；模型/面板经引用回填成员，堆栈页由调用方 addWidget 定序）。
+    QWidget* buildPoseEditPage(
+        const QString& caption, std::vector<ui::QuantityFieldSpec> specs,
+        std::unique_ptr<ui::ParamEditModel>& model,
+        ui::IFormEditOutlet& outlet, QWidget*& panelOut);
+
     /**
      * @brief 命令按钮使能态统一刷新（UI-T43——L-7 门控三输入的单一判定面）。
      *
@@ -317,6 +342,20 @@ private:
     QDoubleSpinBox* m_baseEaaZ = nullptr;       ///< Custom 预设 EAA 绕 Z 分量，单位 rad（仅自定义预设启用）
     QPushButton* m_baseApplyBtn = nullptr;      ///< 应用钮（整体替换提交）
     QLabel* m_baseHint = nullptr;               ///< 基座页无会话/只读态提示
+
+    // ---- UI-T55 工具/场景位姿编辑页（raw 指针＝Qt 父子所有权）----
+    class ToolMountEditOutlet;    ///< 工具页移交壳（applyToolMountEdits 转接）
+    class ScenePoseEditOutlet;    ///< 场景页移交壳（applyScenePoseEdits 转接）
+    std::unique_ptr<ui::IFormEditOutlet> m_toolOutlet;   ///< 工具页出口（构造期一次）
+    std::unique_ptr<ui::IFormEditOutlet> m_sceneOutlet;  ///< 场景页出口（构造期一次）
+    QWidget* m_toolArea = nullptr;              ///< 工具页容器（stacked 第 3 页）
+    QWidget* m_sceneArea = nullptr;             ///< 场景页容器（stacked 第 4 页）
+    QWidget* m_toolEditPanel = nullptr;         ///< 工具页 ParamTablePanel 产物
+    QWidget* m_sceneEditPanel = nullptr;        ///< 场景页 ParamTablePanel 产物
+    std::unique_ptr<ui::ParamEditModel> m_toolEditModel;   ///< 工具页编辑会话模型
+    std::unique_ptr<ui::ParamEditModel> m_sceneEditModel;  ///< 场景页编辑会话模型
+    std::optional<std::size_t> m_toolEditTarget;   ///< 工具页当前绑定下标
+    std::optional<std::size_t> m_sceneEditTarget;  ///< 场景页当前绑定下标
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
     QTreeWidget* m_tree = nullptr;            ///< 区①结构树（隐藏第 1 列＝锚规范文本）

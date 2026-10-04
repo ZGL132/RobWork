@@ -74,6 +74,52 @@ constexpr const char* kJointZeroOffsetKey = "zero-offset";
 constexpr const char* kJointBoundsMinKey = "bounds-min";
 constexpr const char* kJointBoundsMaxKey = "bounds-max";
 
+// ---- UI-T55 工具/场景位姿编辑页字段键（各 6 行——出口分组装配与基线
+//      回填的寻址锚；小写连字符词法同上）---------------------------
+constexpr const char* kToolMountXKey = "mount-x";
+constexpr const char* kToolMountYKey = "mount-y";
+constexpr const char* kToolMountZKey = "mount-z";
+constexpr const char* kToolMountRollKey = "mount-r";
+constexpr const char* kToolMountPitchKey = "mount-p";
+constexpr const char* kToolMountYawKey = "mount-yaw";
+constexpr const char* kSceneWorldXKey = "world-x";
+constexpr const char* kSceneWorldYKey = "world-y";
+constexpr const char* kSceneWorldZKey = "world-z";
+constexpr const char* kSceneWorldRollKey = "world-r";
+constexpr const char* kSceneWorldPitchKey = "world-p";
+constexpr const char* kSceneWorldYawKey = "world-yaw";
+
+/// 工具页字段集（6 行——安装接口 XYZ m＋RPY rad；specs 常量→模型重建仅在
+/// 换目标时发生，字段集本身与目标无关）。
+std::vector<ui::QuantityFieldSpec> toolMountSpecs()
+{
+    const core::UnitToken m = core::UnitToken::find("m").value();
+    const core::UnitToken rad = core::UnitToken::find("rad").value();
+    return {
+        ui::makeQuantityFieldSpec(kToolMountXKey, "安装接口 X", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kToolMountYKey, "安装接口 Y", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kToolMountZKey, "安装接口 Z", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kToolMountRollKey, "安装接口 R（roll）", core::QuantityKind::Angle, rad, rad),
+        ui::makeQuantityFieldSpec(kToolMountPitchKey, "安装接口 P（pitch）", core::QuantityKind::Angle, rad, rad),
+        ui::makeQuantityFieldSpec(kToolMountYawKey, "安装接口 Y（yaw）", core::QuantityKind::Angle, rad, rad),
+    };
+}
+
+/// 场景页字段集（6 行——世界位姿 XYZ m＋RPY rad）。
+std::vector<ui::QuantityFieldSpec> sceneWorldSpecs()
+{
+    const core::UnitToken m = core::UnitToken::find("m").value();
+    const core::UnitToken rad = core::UnitToken::find("rad").value();
+    return {
+        ui::makeQuantityFieldSpec(kSceneWorldXKey, "世界位姿 X", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kSceneWorldYKey, "世界位姿 Y", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kSceneWorldZKey, "世界位姿 Z", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kSceneWorldRollKey, "世界位姿 R（roll）", core::QuantityKind::Angle, rad, rad),
+        ui::makeQuantityFieldSpec(kSceneWorldPitchKey, "世界位姿 P（pitch）", core::QuantityKind::Angle, rad, rad),
+        ui::makeQuantityFieldSpec(kSceneWorldYawKey, "世界位姿 Y（yaw）", core::QuantityKind::Angle, rad, rad),
+    };
+}
+
 /// 关节零位/限位的量纲分流（Prismatic＝移动 m，其余＝转动 rad——与共享
 /// 检查器 jointQuantityKind 同一规则；两处为呈现辅助零业务判定，公式/规则
 /// 漂移由各自单元测试钉住——rotationToRpy 提升前同款先例）。
@@ -186,6 +232,34 @@ private:
 };
 
 // =====================================================================
+// 工具/场景位姿编辑页的移交出口（UI-T55——IFormEditOutlet 转译壳×2）
+// =====================================================================
+
+/// 工具安装接口页出口（转接 applyToolMountEdits——与关节页出口同构零判定）。
+class ModelingPanelWidget::ToolMountEditOutlet final : public ui::IFormEditOutlet {
+public:
+    explicit ToolMountEditOutlet(ModelingPanelWidget& owner) : m_owner(owner) {}
+    void applyEdits(const ui::ParamEditSet& editSet) override
+    {
+        m_owner.applyToolMountEdits(editSet);
+    }
+private:
+    ModelingPanelWidget& m_owner;
+};
+
+/// 场景世界位姿页出口（转接 applyScenePoseEdits——同上）。
+class ModelingPanelWidget::ScenePoseEditOutlet final : public ui::IFormEditOutlet {
+public:
+    explicit ScenePoseEditOutlet(ModelingPanelWidget& owner) : m_owner(owner) {}
+    void applyEdits(const ui::ParamEditSet& editSet) override
+    {
+        m_owner.applyScenePoseEdits(editSet);
+    }
+private:
+    ModelingPanelWidget& m_owner;
+};
+
+// =====================================================================
 // 构造与五区骨架
 // =====================================================================
 
@@ -201,6 +275,12 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     mainLayout->addLayout(right, 4);
     buildStructureTreePane(left);   // 区①建模结构树（左栏）
     buildPropertyPane(right);       // 区②属性编辑区（右栏）
+
+    // 编辑页出口先行（构造顺序纪律——编辑页构建传入 *outlet，晚于解引用
+    // 即空 unique_ptr 解引用崩溃；UI-T55 建页入栈时实测暴露，前置修正）。
+    m_jointEditOutlet = std::make_unique<JointDetailEditOutlet>(*this);
+    m_toolOutlet = std::make_unique<ToolMountEditOutlet>(*this);
+    m_sceneOutlet = std::make_unique<ScenePoseEditOutlet>(*this);
 
     auto* tabs = new QTabWidget(this);
     auto* editPage = new QWidget(tabs);
@@ -229,6 +309,20 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     m_basePage = new QWidget(m_editStack);
     buildBasePlacementPane();                          // 区⑥编辑页（基座）
     m_editStack->addWidget(m_basePage);                // index 1
+    // 工具/场景页（UI-T55——选择驱动分派：二者均有 ObjectId 树锚，B.1 主
+    // 通道；与关节页同款"换目标重建/同目标推基线"纪律）。
+    m_toolArea = buildPoseEditPage(
+        QStringLiteral("工具安装接口编辑（T_flange_tool——法兰坐标系；"
+                       "位置 m／姿态 rad，ZYX 约定 R＝Rz·Ry·Rx）"),
+        toolMountSpecs(), m_toolEditModel, *m_toolOutlet, m_toolEditPanel);
+    m_toolArea->setObjectName(QStringLiteral("ird_modeling_tool_area"));
+    m_editStack->addWidget(m_toolArea);                // index 2
+    m_sceneArea = buildPoseEditPage(
+        QStringLiteral("场景世界位姿编辑（世界坐标系固连——M-11 不预乘安装"
+                       "旋转；位置 m／姿态 rad，ZYX 约定 R＝Rz·Ry·Rx）"),
+        sceneWorldSpecs(), m_sceneEditModel, *m_sceneOutlet, m_sceneEditPanel);
+    m_sceneArea->setObjectName(QStringLiteral("ird_modeling_scene_area"));
+    m_editStack->addWidget(m_sceneArea);               // index 3
     editLay->addWidget(m_editStack, 1);
     connect(baseModeBtn, &QPushButton::clicked, this, [this] {
         m_editStack->setCurrentWidget(m_basePage);
@@ -248,8 +342,7 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     tabs->addTab(readinessPage, QStringLiteral("就绪"));
     tabs->addTab(previewPage, QStringLiteral("预览"));
     right->addWidget(tabs, 1);
-    // 编辑页出口（构造期一次——转译到本面板域编辑流；域裁决唯一在域函数）。
-    m_jointEditOutlet = std::make_unique<JointDetailEditOutlet>(*this);
+    // （出口初始化已前置至编辑页构建之前——构造顺序纪律，UI-T55。）
 
     // 就地状态行（错误/横幅——非模态呈现的唯一出口，置底部常驻）。
     // UI-T41 批次B（B2）：状态行分级着色（词表色）＋可折叠诊断历史（最近
@@ -778,6 +871,10 @@ void ModelingPanelWidget::setWritable(bool writable)
     if (m_baseApplyBtn != nullptr) {
         m_baseApplyBtn->setEnabled(m_writable);
     }
+    // L-7 工具/场景页半区（UI-T55）：面板整体禁用（刷新入口按 writable
+    // 复合，此处即时同步不等待下次选中事件）。
+    if (m_toolEditPanel != nullptr) { m_toolEditPanel->setEnabled(m_writable); }
+    if (m_sceneEditPanel != nullptr) { m_sceneEditPanel->setEnabled(m_writable); }
     // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
     // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
     // 残留可用呈现，与需求域"切换后必须同步刷新全部状态承载面"的整改口径
@@ -860,10 +957,10 @@ void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
 
 void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
 {
-    // UI-T53 统一刷新入口：属性行重投影＋编辑页同步（两区同源——选中/
-    // 编辑后/refreshPanel 全部经此，零第二刷新路径）。
+    // UI-T55 统一刷新入口：编辑页选择驱动分派（Joint/Tool/Scene 三页）——
+    // 属性行重投影在其内联动，零第二刷新路径。
     refreshPropertyRowsFromLastWorkingSet();
-    refreshJointEditPane();
+    refreshEditPages();
 }
 
 void ModelingPanelWidget::refreshPropertyRowsFromLastWorkingSet()
@@ -1620,6 +1717,204 @@ void ModelingPanelWidget::onBasePlacementRestoreClicked()
     m_threadGuard.assertOnUiThread();
     // 纯呈现动作——权威值回填，零域调用零脏化。
     refreshBasePlacementPane();
+}
+
+// =====================================================================
+// 工具/场景位姿编辑页（UI-T55——F-497 兑现③；域原语 applyToolMountEdit/
+// applyScenePoseEdit 接线；选择驱动分派——二者均有 ObjectId 树锚）
+// =====================================================================
+
+QWidget* ModelingPanelWidget::buildPoseEditPage(
+    const QString& caption, std::vector<ui::QuantityFieldSpec> specs,
+    std::unique_ptr<ui::ParamEditModel>& model,
+    ui::IFormEditOutlet& outlet, QWidget*& panelOut)
+{
+    auto* area = new QWidget(m_editStack);
+    auto* lay = new QVBoxLayout(area);
+    lay->setContentsMargins(0, 0, 0, 0);
+    // 语义说明行（常驻——参考系/单位/约定随页可读，与关节/基座页同款）。
+    auto* cap = new QLabel(caption, area);
+    cap->setWordWrap(true);
+    cap->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    lay->addWidget(cap);
+    model = std::make_unique<ui::ParamEditModel>(std::move(specs));
+    panelOut = ui::createParamTablePanel(*model, &outlet, {}, area);
+    lay->addWidget(panelOut, 1);
+    return area;
+}
+
+void ModelingPanelWidget::refreshToolMountPane()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    std::optional<std::size_t> toolIndex;
+    if (ws != nullptr && m_lastSelected.has_value()) {
+        const auto target = resolveSelection(*ws, *m_lastSelected);
+        if (target.has_value() && target->kind == SelectedTarget::Kind::Tool) {
+            toolIndex = target->index;
+        }
+    }
+    // 空态：面板禁用＋锚清空（页本体保留——选择漂移后回归复用）。
+    if (ws == nullptr || !toolIndex.has_value()
+        || *toolIndex >= ws->toolObjects.size()) {
+        m_toolEditTarget.reset();
+        if (m_toolEditPanel != nullptr) { m_toolEditPanel->setEnabled(false); }
+        return;
+    }
+    // ★ 与关节页的差异：本页字段集为常量（工具安装接口无类型相关单位——
+    // 六行固定 m/rad），模型/面板构造期一次建成、**不随换目标重建**——
+    // ParamTablePanel 的 deleteLater 重建会引入"旧表悬空引用"窗口（旧
+    // 面板入删除队列而测试/用户仍持其表项引用——UI-T55 实测 AV），基线
+    // 推送（setBaseline）即可完成对象切换（暂存/错误随新基线清除）。
+    m_toolEditTarget = toolIndex;
+    // 基线回填（mountInterface 恒有值——Transform3D 值语义，无未提供态）。
+    const auto& mount = ws->toolObjects[*toolIndex].mountInterface;
+    const auto rpy = rpyview::rotationToRpy(mount.R());
+    m_toolEditModel->setBaseline(kToolMountXKey, mount.P()[0]);
+    m_toolEditModel->setBaseline(kToolMountYKey, mount.P()[1]);
+    m_toolEditModel->setBaseline(kToolMountZKey, mount.P()[2]);
+    m_toolEditModel->setBaseline(kToolMountRollKey, rpy[0]);
+    m_toolEditModel->setBaseline(kToolMountPitchKey, rpy[1]);
+    m_toolEditModel->setBaseline(kToolMountYawKey, rpy[2]);
+    m_toolEditPanel->setEnabled(m_writable);  // L-7 页级门控
+}
+
+void ModelingPanelWidget::refreshScenePosePane()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    std::optional<std::size_t> sceneIndex;
+    if (ws != nullptr && m_lastSelected.has_value()) {
+        const auto target = resolveSelection(*ws, *m_lastSelected);
+        if (target.has_value() && target->kind == SelectedTarget::Kind::Scene) {
+            sceneIndex = target->index;
+        }
+    }
+    if (ws == nullptr || !sceneIndex.has_value()
+        || *sceneIndex >= ws->sceneObjects.size()) {
+        m_sceneEditTarget.reset();
+        if (m_sceneEditPanel != nullptr) { m_sceneEditPanel->setEnabled(false); }
+        return;
+    }
+    // 与工具页同款：字段集常量，不随换目标重建（deleteLater 悬空窗口——
+    // UI-T55 实测教训；基线推送完成对象切换）。
+    m_sceneEditTarget = sceneIndex;
+    const auto& world = ws->sceneObjects[*sceneIndex].worldPose;
+    const auto rpy = rpyview::rotationToRpy(world.R());
+    m_sceneEditModel->setBaseline(kSceneWorldXKey, world.P()[0]);
+    m_sceneEditModel->setBaseline(kSceneWorldYKey, world.P()[1]);
+    m_sceneEditModel->setBaseline(kSceneWorldZKey, world.P()[2]);
+    m_sceneEditModel->setBaseline(kSceneWorldRollKey, rpy[0]);
+    m_sceneEditModel->setBaseline(kSceneWorldPitchKey, rpy[1]);
+    m_sceneEditModel->setBaseline(kSceneWorldYawKey, rpy[2]);
+    m_sceneEditPanel->setEnabled(m_writable);
+}
+
+void ModelingPanelWidget::applyToolMountEdits(const ui::ParamEditSet& editSet)
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_toolEditTarget.has_value() || !m_writable) { return; }
+    const std::size_t toolIndex = *m_toolEditTarget;
+    if (toolIndex >= ws->toolObjects.size()) { return; }  // 结构变更竞态防御
+
+    std::map<std::string, double> staged;
+    for (const ui::ParamChange& change : editSet.changes) { staged[change.key] = change.newSi; }
+    if (staged.empty()) { return; }
+    // 组内分量：脏键取移交新值，未脏键取当前权威（与关节页 assembly 同款）。
+    const auto component = [this, &staged](const char* key) -> std::optional<double> {
+        if (const auto it = staged.find(key); it != staged.end()) { return it->second; }
+        return m_toolEditModel ? m_toolEditModel->currentValueSi(key) : std::nullopt;
+    };
+    const auto x = component(kToolMountXKey);
+    const auto y = component(kToolMountYKey);
+    const auto z = component(kToolMountZKey);
+    const auto r = component(kToolMountRollKey);
+    const auto p = component(kToolMountPitchKey);
+    const auto w = component(kToolMountYawKey);
+    if (!(x && y && z && r && p && w)) { return; }  // 权威值恒在——防御面
+
+    // 域裁决唯一（六分量有限性在域；RPY 组合归域内核）。
+    const std::optional<PartPoseEditError> err = applyToolMountEdit(
+        *ws, toolIndex,
+        PartPoseEditValue{*x, *y, *z, *r, *p, *w});
+    if (!err.has_value()) {
+        onEditApplied("tools[" + std::to_string(toolIndex) + "].mountInterface");
+    } else {
+        EditRejection rejection;
+        rejection.codeToken = std::string(partPoseEditErrorCodeToken(err->code));
+        rejection.detail = err->detail;
+        onEditRejected(rejection);
+    }
+    refreshPropertiesFromLastWorkingSet();  // 权威同步（乐观基线修正）
+}
+
+void ModelingPanelWidget::applyScenePoseEdits(const ui::ParamEditSet& editSet)
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_sceneEditTarget.has_value() || !m_writable) { return; }
+    const std::size_t sceneIndex = *m_sceneEditTarget;
+    if (sceneIndex >= ws->sceneObjects.size()) { return; }
+
+    std::map<std::string, double> staged;
+    for (const ui::ParamChange& change : editSet.changes) { staged[change.key] = change.newSi; }
+    if (staged.empty()) { return; }
+    const auto component = [this, &staged](const char* key) -> std::optional<double> {
+        if (const auto it = staged.find(key); it != staged.end()) { return it->second; }
+        return m_sceneEditModel ? m_sceneEditModel->currentValueSi(key) : std::nullopt;
+    };
+    const auto x = component(kSceneWorldXKey);
+    const auto y = component(kSceneWorldYKey);
+    const auto z = component(kSceneWorldZKey);
+    const auto r = component(kSceneWorldRollKey);
+    const auto p = component(kSceneWorldPitchKey);
+    const auto w = component(kSceneWorldYawKey);
+    if (!(x && y && z && r && p && w)) { return; }
+
+    const std::optional<PartPoseEditError> err = applyScenePoseEdit(
+        *ws, sceneIndex,
+        PartPoseEditValue{*x, *y, *z, *r, *p, *w});
+    if (!err.has_value()) {
+        onEditApplied("scenes[" + std::to_string(sceneIndex) + "].worldPose");
+    } else {
+        EditRejection rejection;
+        rejection.codeToken = std::string(partPoseEditErrorCodeToken(err->code));
+        rejection.detail = err->detail;
+        onEditRejected(rejection);
+    }
+    refreshPropertiesFromLastWorkingSet();
+}
+
+void ModelingPanelWidget::refreshEditPages()
+{
+    // 选择驱动分派（B.1 主通道）：Joint/Tool/Scene 三页均挂 ObjectId 树锚
+    // ——树选中即切页；其余目标/空选中不动当前页（基座模式为显式入口，
+    // UI-T54 语义保持——仅刷新关节区提示面）。
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    SelectedTarget::Kind kind = SelectedTarget::Kind::Joint;
+    bool resolved = false;
+    if (ws != nullptr && m_lastSelected.has_value()) {
+        const auto target = resolveSelection(*ws, *m_lastSelected);
+        if (target.has_value()) {
+            kind = target->kind;
+            resolved = true;
+        }
+    }
+    if (resolved && kind == SelectedTarget::Kind::Tool) {
+        refreshToolMountPane();
+        m_editStack->setCurrentWidget(m_toolArea);
+        return;
+    }
+    if (resolved && kind == SelectedTarget::Kind::Scene) {
+        refreshScenePosePane();
+        m_editStack->setCurrentWidget(m_sceneArea);
+        return;
+    }
+    // Joint／未解析：关节区照常刷新（空态提示在其内）；BaseInstall/PoseSet/
+    // Drivetrain/ModelRoot 目标维持当前页（各自编辑页归后续批次）。
+    refreshJointEditPane();
 }
 
 void ModelingPanelWidget::onTreeSelectionChanged()
