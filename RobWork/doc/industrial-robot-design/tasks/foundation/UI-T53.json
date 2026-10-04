@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "关节详细编辑页批次——XYZ/RPY 数值编辑回归（F-497 关节侧兑现①）：JointEditField::Origin 域原语表尾追加＋建模面板\"编辑\"页签（ParamTablePanel 承载 12 行数值表）＋属性区复合行拒绝指引分流",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T50"],
   "requirements": [
     "MDL-07（关节树/参数表/三维联动；选中只显示相关属性——表单最小版划界的增量修订：属性行保持最小版，详细编辑收口\"编辑\"页）",
@@ -69,5 +69,5 @@
     "gui 夹具对账范围：编辑页子树（ird_modeling_edit_host/ird_param_table_panel）不入属性行与命令目录对账——P0-3\"恰一可编辑\"契约面仍指属性行（MDL-07 表单最小版不变）"
   ],
   "branch": "ui-t53",
-  "note": "分支基点＝redesign-main@fef002f9。F-497（建模复杂对象只读事实页——宿主审核 20261004 P1）关节侧兑现①；工具/场景/位姿集/传动/基座安装编辑页（B.1 模式扩展面）与基座安装姿态接线（applyBasePlacementEdit 已在域、无 UI 暴露）归后续批次。审核裁决依据：traceability/reviews/owner-review-20261004-ui-gaps.md 会话审查结论『新架构承载旧插件的数值编辑体验，不恢复 .wc.xml 文件权威模型』。"
+  "note": "【合入登记注（2026-10-04，PIPE §4.7 收尾——所有者指令合入）】acceptedHead 583279fb 合入 redesign-main@273894b2（acc/ui-t53/1@bb0cc913 按 SHA 先并 ff6c1830e）；独立子会话对抗式验收 11 项 pass（evidence acc/ui-t53/1@bb0cc913——独立性模式声明与协议 v1.6 增量修订待办见记录内）。建议级问题六条转登 findings F-503~F-508（避开待合入栈 F-494~F-502 占号区间）。分支基点＝redesign-main@fef002f9。F-497（建模复杂对象只读事实页——宿主审核 20261004 P1）关节侧兑现①；工具/场景/位姿集/传动/基座安装编辑页（B.1 模式扩展面）与基座安装姿态接线（applyBasePlacementEdit 已在域、无 UI 暴露）归后续批次。审核裁决依据：traceability/reviews/owner-review-20261004-ui-gaps.md 会话审查结论『新架构承载旧插件的数值编辑体验，不恢复 .wc.xml 文件权威模型』。"
 }

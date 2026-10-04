@@ -4921,6 +4921,62 @@
       "title": "findings.json 存在未转义 ASCII 引号致整库不可严格 JSON 解析（自 96aa98e6 acc/UI-T47/1 evidence 合入引入——F-478 条目 title/owner 两字段内嵌裸引号\"选中位插入\"等三处）；历轮合并与 validate-docs 均未检出（校验面不含 findings.json 严格解析）。UI-T52 合入段 F-490② 消账编辑后例行 ConvertFrom-Json 校验暴露。",
       "owner": "已随本提交修复（三处裸引号转义为 \\\"，语义零变化；修复后 ConvertFrom-Json 全库解析通过）——教训：findings.json 编辑后须跑严格 JSON 解析校验（与任务契约同待遇）",
       "resolution": "UI-T52 合入段治理提交随批修复闭环（2026-10-04）。"
+    },
+    {
+      "id": "F-503",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-1（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 契约 allowedFiles 与 outputs 不一致：附带修复文件 requirements/plugin/RequirementsCommandFlows.cpp 按 outputs 第 8 条登记但字面越出 allowedFiles（允许面仅 modeling/**＋文档链）；验收实测改动与登记逐字一致（一处呈现辅助＋include、语义零变化）——登记滞后非越权改动。后续契约卡 allowedFiles 应把 outputs 登记的附带修复面同步入列（或在契约模板注明附带修复的登记路径）。",
+      "owner": "治理侧（契约模板口径澄清；UI-T53 已合入不追改）"
+    },
+    {
+      "id": "F-504",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-2（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 契约 allowedFiles 未列契约自身路径（tasks/foundation/UI-T53.json——验收请求前置补 acceptance 数组的提交触及自身）；UI-T50 先例卡含自身路径。后续契约卡模板统一补列自身路径。",
+      "owner": "治理侧（契约模板口径）"
+    },
+    {
+      "id": "F-505",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-3（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-04",
+      "title": "F-480 同族修复已落库待消账登记：requirements/plugin/RequirementsCommandFlows.cpp 的 rw::math::RPY 外联符号（UI-T33 引入——requirements_test/gui_test 独立冒烟链接失败 LNK2019）经 UI-T53 附带修复换 rotationToRpyPresentation 逐元素反解；本条为该修复的消账登记锚（原缺陷未单独立条，故本条兼作发现登记＋修复闭环记录）。",
+      "owner": "已随 UI-T53 修复（requirements 冒烟链接实证恢复）；本条目闭合该发现",
+      "resolution": "UI-T53 附带修复闭环（2026-10-04 合入——acc/ui-t53/1 验收 4.2 冒烟段实证）。"
+    },
+    {
+      "id": "F-506",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-4（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 第二提交（任务卡补 acceptance）正文中 requirements 测试行数字错置（test 写 42 实测 201 含 1skip、gui 写 16 实测 42——两数字互错位）；方向一致无失败掩盖、非粉饰（验收 4.9 判定 pass 附本条）。教训：提交正文的套件数字应在发送前对照当次运行输出逐一复核。",
+      "owner": "已随本条登记（错置随已推送提交不可改写——协议 §6.3 禁改写已推送历史；教训条目即处置）"
+    },
+    {
+      "id": "F-507",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-5（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 实施留痕 ird_gates 口径偏差：builds/ui-t53/README 与 DTB 行记\"75 条\"（暖构建树欠计数）且 ird-gates-hits 留痕存在中文编码截断损坏（45 行串行）；验收者以全新配置 worktree 独立双侧复跑实测 base/head 各 101 项（SUB 54/R3 30/R1 6/LIB 6/T1 4/R4 1）多重集全等——零新增结论不受影响，但留痕数字与实测口径不符。教训：ird_gates 留痕须以全新（或至少同状态）配置树双侧复跑为准，且 hits 导出须经编码归一（UTF-8 显式）。",
+      "owner": "留痕文件保持原样（验收记录已含实测口径与比对文件）；本条登记口径教训",
+      "resolution": "验收者独立复跑结论（101/101 全等）已载 acc/ui-t53/1@bb0cc913，作为 UI-T53 门禁项的权威证据（2026-10-04）。"
+    },
+    {
+      "id": "F-508",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-6（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 实施留痕 gtest XML 落盘覆盖面窄于先例（仅 modeling_test/gui 两套件——T48 先例为受影响套件全量落盘；首次落盘时 --gtest_output 相对路径误写致 XML 缺失，补跑仅覆盖两套件）；验收复现已补齐该面。后续任务留痕：受影响套件 XML 全量落盘为留痕完成判据。",
+      "owner": "验收侧已补（acc/ui-t53/1 记录）；本条登记留痕口径教训"
     }
   ]
 }
