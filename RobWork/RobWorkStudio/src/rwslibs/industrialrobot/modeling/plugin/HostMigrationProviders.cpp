@@ -7,9 +7,13 @@
 
 #include "HostMigrationProviders.hpp"
 
+#include <algorithm>
+#include <array>
+#include <cmath>
 #include <stdexcept>
 #include <utility>
 
+#include <sdurws/ird/core/Provenance.hpp>  // core::ProvenanceKind/SourcedValue（来源标记呈现——UI-T50 acceptance 4）
 #include <sdurws/ird/core/Units.hpp>  // core::UnitToken::find（字段 SI/显示单位 token——SA-12 换算入口的装配面）
 
 namespace sdurws {
@@ -25,12 +29,42 @@ constexpr const char* kJointCommonPageTitle = "关节常用参数";
 constexpr const char* kLinkCommonPageTitle = "连杆物性（只读）";
 constexpr const char* kDhPageTitle = "DH 参数";
 constexpr const char* kPropertiesPageTitle = "物性编辑";
+constexpr const char* kObjectPropertiesPageTitle = "在域面板编辑";
+// UI-T50 四对象扩展页（§9.7.5 增量边界兑现——"v1 无页面供给"诚实二态
+// 对四对象撤牌；readOnly 事实页形态与连杆页同款——P-UI-6 单侧纪律）。
+constexpr const char* kToolCommonPageTitle = "工具常用参数（只读）";
+constexpr const char* kSceneCommonPageTitle = "场景对象常用参数（只读）";
+constexpr const char* kPoseSetCommonPageTitle = "命名位姿集概要（只读）";
+constexpr const char* kDrivetrainCommonPageTitle = "传动设计概要（只读·首关节）";
 
 // ---- 字段稳定键（基线注入与批量粘贴的寻址锚——小写连字符词法）----------
 constexpr const char* kZeroOffsetFieldKey = "zero-offset";
 constexpr const char* kLowerLimitFieldKey = "joint-lower-limit";
 constexpr const char* kUpperLimitFieldKey = "joint-upper-limit";
 constexpr const char* kMassFieldKey = "mass";
+// UI-T50 四页字段键（页内唯一——跨页允许复用同键名〔每页独立寻址空间〕，
+// 但为 Dev 日志可读性仍带对象前缀）。
+constexpr const char* kToolMountXKey = "tool-mount-x";
+constexpr const char* kToolMountYKey = "tool-mount-y";
+constexpr const char* kToolMountZKey = "tool-mount-z";
+constexpr const char* kToolMountRollKey = "tool-mount-r";
+constexpr const char* kToolMountPitchKey = "tool-mount-p";
+constexpr const char* kToolMountYawKey = "tool-mount-y";
+constexpr const char* kToolTcpCountKey = "tool-tcp-count";
+constexpr const char* kScenePoseXKey = "scene-pose-x";
+constexpr const char* kScenePoseYKey = "scene-pose-y";
+constexpr const char* kScenePoseZKey = "scene-pose-z";
+constexpr const char* kScenePoseRollKey = "scene-pose-r";
+constexpr const char* kScenePosePitchKey = "scene-pose-p";
+constexpr const char* kScenePoseYawKey = "scene-pose-y";
+constexpr const char* kPoseEntryCountKey = "pose-entry-count";
+constexpr const char* kPoseHomeSetKey = "pose-home-set";
+constexpr const char* kPoseZeroSetKey = "pose-zero-set";
+constexpr const char* kDtJointCountKey = "dt-joint-count";
+constexpr const char* kDtJ1RatioKey = "dt-j1-ratio";
+constexpr const char* kDtJ1CoulombKey = "dt-j1-coulomb";
+constexpr const char* kDtJ1RatedKey = "dt-j1-rated";
+constexpr const char* kDtJ1PeakKey = "dt-j1-peak";
 
 /**
  * @brief 关节平移/角度量纲与单位（按类型分流——Prismatic 为移动 m，
@@ -51,11 +85,68 @@ core::UnitToken unitTokenFor(core::QuantityKind kind)
     case core::QuantityKind::Length: return core::UnitToken::find("m").value();
     case core::QuantityKind::Angle: return core::UnitToken::find("rad").value();
     case core::QuantityKind::Mass: return core::UnitToken::find("kg").value();
+    case core::QuantityKind::Torque: return core::UnitToken::find("N*m").value();
     default: break;
     }
-    // 词表内建模字段只出现上述三量纲——不可达分支以 Dimensionless 兜底
+    // 词表内建模字段只出现上述量纲——不可达分支以 Dimensionless 兜底
     // （fail-fast 交给 makeQuantityFieldSpec 的量纲核对）。
     return core::UnitToken::find("1").value();
+}
+
+/**
+ * @brief 旋转矩阵 → ZYX 欧拉角反解（RPY——与 Import.cpp rpyToRotation
+ *        正解互逆；UI-T50 只读事实页的位姿六值呈现用）。
+ *
+ * ★ 逐元素解析实现——不调用 rw::math::RPY 构造（冒烟 header-only 纪律：
+ *   RPY 构造是框架外联符号，F-480 同族——requirements 侧已实测链接失败，
+ *   本文件禁重蹈）。正解约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)（GeometryLinkEdit
+ *   的正解同式），反解：pitch＝-asin(R20)，roll＝atan2(R21,R22)，
+ *   yaw＝atan2(R10,R00)；|R20|≈1 奇异（万向锁）时 roll＝0、yaw 改由
+ *   atan2(-R01,R11) 确定（确定性特例——与 Template.cpp 占位圆柱特例同款
+ *   纪律）。
+ *
+ * @param R [in] 旋转矩阵（连杆/工具系约定内使用——本函数不涉参考系语义）
+ * @return {roll, pitch, yaw}，单位 rad
+ */
+std::array<double, 3> rotationToRpy(const rw::math::Rotation3D<double>& R)
+{
+    const double pitch = -std::asin(std::clamp(R(2, 0), -1.0, 1.0));
+    const double cp = std::cos(pitch);
+    double roll;
+    double yaw;
+    if (std::abs(cp) > 1e-12) {
+        roll = std::atan2(R(2, 1), R(2, 2));
+        yaw = std::atan2(R(1, 0), R(0, 0));
+    } else {
+        // 万向锁：roll/yaw 共线不可分——确定性取 roll=0（工程惯例）。
+        roll = 0.0;
+        yaw = std::atan2(-R(0, 1), R(1, 1));
+    }
+    return {roll, pitch, yaw};
+}
+
+/**
+ * @brief SourcedValue 来源标记的标签后缀（acceptance 4"逐项 SourcedValue
+ *        来源标记呈现"的承载——D5 协议无来源徽标字段〔QuantityFieldSpec
+ *        是数值面〕，标记经 label 文本呈现：供给时刻按值态现拼，检查器
+ *        零感知）。
+ *
+ * 中文映射（UX-02 工程用语——provenanceKindToken 的呈现面翻译）。
+ */
+std::string provenanceLabelSuffix(const core::SourcedValue<double>& v)
+{
+    // 非提供态诚实呈现（Invalid＝原始输入保留态——与"未提供"区分，
+    // 不把非法值粉饰成缺值）。
+    if (v.state() == core::FieldState::Invalid) { return "（值非法）"; }
+    if (v.state() != core::FieldState::Provided) { return "（未提供）"; }
+    switch (v.provenance().kind) {
+    case core::ProvenanceKind::UserProvided: return "（来源＝用户输入）";
+    case core::ProvenanceKind::ImportMapped: return "（来源＝导入映射）";
+    case core::ProvenanceKind::CatalogBackfill: return "（来源＝目录回填）";
+    case core::ProvenanceKind::GeometricEstimate: return "（来源＝几何估算）";
+    case core::ProvenanceKind::DerivedReadOnly: return "（来源＝派生只读）";
+    }
+    return "（来源＝未知）";
 }
 
 /// @brief 出口拒绝投递（editSink 缺席＝静默丢弃——纯呈现装配形态的
@@ -205,8 +296,179 @@ ModelingPropertyPagesProvider::commonFieldsPage(const core::ObjectId& object) co
         page.editOutlet = nullptr;  // 只读页不提供移交面（保守收口——对端契约）
         return page;
     }
-    // 其余建模对象（根/基座/工具/场景/位姿集/传动）：v1 无页面供给
-    // （增量面边界——不虚构字段，登记单元卡 §14.6）。
+    // =================================================================
+    // UI-T50 四对象扩展页（§9.7.5 增量边界兑现——"v1 无页面供给"诚实二态
+    // 对工具/场景/位姿集/传动撤牌）。形态统一＝**只读事实页**（readOnly=
+    // true＋零移交面——P-UI-6 单侧纪律，与连杆页同款）：四对象的编辑流
+    // 是列表/合并/命令流结构（TCP 列表 MDL-13 不变量、命名位姿合并流
+    // D-MDL-3、传动逐关节批量），不是"少量高频标量"——D5 分野语义下不
+    // 在共享检查器展开，D6 入口"在域面板编辑"收口（complexPageEntries
+    // 同步扩展）。D-MDL-10：位姿集/传动页零即时编译语义（只读呈现零编
+    // 译触发，结构面即证）。
+    // =================================================================
+    if (target->kind == SelectedTarget::Kind::Tool) {
+        // ---- 工具页（§4.4：安装接口位姿六值＋TCP 计数＋质量——TCP 明细/
+        //      物性编辑收口域面板）。
+        const ToolDefinition& t = ws->toolObjects.at(target->index);
+        const core::UnitToken m = unitTokenFor(core::QuantityKind::Length);
+        const core::UnitToken rad = unitTokenFor(core::QuantityKind::Angle);
+        const core::UnitToken kg = unitTokenFor(core::QuantityKind::Mass);
+        page.title = kToolCommonPageTitle;
+        page.readOnly = true;
+        const auto rpy = rotationToRpy(t.mountInterface.R());
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kToolMountXKey, "安装接口 X", core::QuantityKind::Length, m, m));
+        page.values.push_back({kToolMountXKey, t.mountInterface.P()[0]});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kToolMountYKey, "安装接口 Y", core::QuantityKind::Length, m, m));
+        page.values.push_back({kToolMountYKey, t.mountInterface.P()[1]});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kToolMountZKey, "安装接口 Z", core::QuantityKind::Length, m, m));
+        page.values.push_back({kToolMountZKey, t.mountInterface.P()[2]});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kToolMountRollKey, "安装接口 R（roll）", core::QuantityKind::Angle, rad, rad));
+        page.values.push_back({kToolMountRollKey, std::get<0>(rpy)});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kToolMountPitchKey, "安装接口 P（pitch）", core::QuantityKind::Angle, rad, rad));
+        page.values.push_back({kToolMountPitchKey, std::get<1>(rpy)});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kToolMountYawKey, "安装接口 Y（yaw）", core::QuantityKind::Angle, rad, rad));
+        page.values.push_back({kToolMountYawKey, std::get<2>(rpy)});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kToolTcpCountKey, "TCP 数量", core::QuantityKind::Dimensionless,
+            unitTokenFor(core::QuantityKind::Dimensionless),
+            unitTokenFor(core::QuantityKind::Dimensionless), std::nullopt, true));
+        page.values.push_back(
+            {kToolTcpCountKey, static_cast<double>(t.tcpList.size())});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kMassFieldKey, "质量", core::QuantityKind::Mass, kg, kg));
+        if (const auto mass = t.body.mass.tryValue()) {
+            page.values.push_back({kMassFieldKey, *mass});
+        }
+        page.editOutlet = nullptr;
+        return page;
+    }
+    if (target->kind == SelectedTarget::Kind::Scene) {
+        // ---- 场景页（§4.5：世界系固连位姿六值——M-11 不预乘安装旋转，
+        //      呈现即字节原值；role 词表是枚举非数值面，D6 入口承载）。
+        const SceneObject& s = ws->sceneObjects.at(target->index);
+        const core::UnitToken m = unitTokenFor(core::QuantityKind::Length);
+        const core::UnitToken rad = unitTokenFor(core::QuantityKind::Angle);
+        page.title = kSceneCommonPageTitle;
+        page.readOnly = true;
+        const auto rpy = rotationToRpy(s.worldPose.R());
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kScenePoseXKey, "世界位姿 X", core::QuantityKind::Length, m, m));
+        page.values.push_back({kScenePoseXKey, s.worldPose.P()[0]});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kScenePoseYKey, "世界位姿 Y", core::QuantityKind::Length, m, m));
+        page.values.push_back({kScenePoseYKey, s.worldPose.P()[1]});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kScenePoseZKey, "世界位姿 Z", core::QuantityKind::Length, m, m));
+        page.values.push_back({kScenePoseZKey, s.worldPose.P()[2]});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kScenePoseRollKey, "世界位姿 R（roll）", core::QuantityKind::Angle, rad, rad));
+        page.values.push_back({kScenePoseRollKey, std::get<0>(rpy)});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kScenePosePitchKey, "世界位姿 P（pitch）", core::QuantityKind::Angle, rad, rad));
+        page.values.push_back({kScenePosePitchKey, std::get<1>(rpy)});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kScenePoseYawKey, "世界位姿 Y（yaw）", core::QuantityKind::Angle, rad, rad));
+        page.values.push_back({kScenePoseYawKey, std::get<2>(rpy)});
+        page.editOutlet = nullptr;
+        return page;
+    }
+    if (target->kind == SelectedTarget::Kind::PoseSet) {
+        // ---- 位姿集页（§4.6：条目计数＋保留键存在性——条目关节角向量
+        //      是不定长向量非 D5 数值面，编辑走 apply-named-poses 合并流
+        //      〔D-MDL-3 保留键语义——域面板收口〕）。
+        const PoseSet& p = *ws->poseSetObject;
+        const core::UnitToken one = unitTokenFor(core::QuantityKind::Dimensionless);
+        page.title = kPoseSetCommonPageTitle;
+        page.readOnly = true;
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kPoseEntryCountKey, "位姿条目数", core::QuantityKind::Dimensionless,
+            one, one, std::nullopt, true));
+        page.values.push_back(
+            {kPoseEntryCountKey, static_cast<double>(p.entries.size())});
+        // 保留键存在性（0/1 计数呈现——homeConfiguration/zeroConfiguration
+        // 是编辑器"复位 Home/Zero"会话命令的目标参考，KIN-06）。
+        const bool homeSet = std::any_of(
+            p.entries.begin(), p.entries.end(),
+            [](const PoseSetEntry& e) { return e.key == "homeConfiguration"; });
+        const bool zeroSet = std::any_of(
+            p.entries.begin(), p.entries.end(),
+            [](const PoseSetEntry& e) { return e.key == "zeroConfiguration"; });
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kPoseHomeSetKey, "Home 保留键已设（0/1）", core::QuantityKind::Dimensionless,
+            one, one, std::nullopt, true));
+        page.values.push_back({kPoseHomeSetKey, homeSet ? 1.0 : 0.0});
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kPoseZeroSetKey, "Zero 保留键已设（0/1）", core::QuantityKind::Dimensionless,
+            one, one, std::nullopt, true));
+        page.values.push_back({kPoseZeroSetKey, zeroSet ? 1.0 : 0.0});
+        page.editOutlet = nullptr;
+        return page;
+    }
+    if (target->kind == SelectedTarget::Kind::Drivetrain) {
+        // ---- 传动页（§4.7：链计数＋首关节样例——逐关节全链呈现受 D5
+        //      16 字段哨兵约束〔六轴链 ratio6＋摩擦18＋力矩12 远超〕，取
+        //      J1 样例＋计数，全链编辑收口域面板）。逐项来源标记经 label
+        //      后缀呈现（acceptance 4——SourcedValue 态现拼，协议零改动）。
+        //      ★ 黏滞摩擦 fv（N·m·s/rad）量纲不在 core QuantityKind 词表
+        //      ——不虚构量纲，本页缺席（F-483 登记，随 core 单位表扩展
+        //      任务补齐）。
+        const DrivetrainDesign& d = *ws->drivetrainObject;
+        const core::UnitToken one = unitTokenFor(core::QuantityKind::Dimensionless);
+        const core::UnitToken nm = unitTokenFor(core::QuantityKind::Torque);
+        page.title = kDrivetrainCommonPageTitle;
+        page.readOnly = true;
+        page.fields.push_back(ui::makeQuantityFieldSpec(
+            kDtJointCountKey, "传动链关节数", core::QuantityKind::Dimensionless,
+            one, one, std::nullopt, true));
+        page.values.push_back(
+            {kDtJointCountKey, static_cast<double>(d.ratioPerJoint.size())});
+        if (!d.ratioPerJoint.empty()) {
+            page.fields.push_back(ui::makeQuantityFieldSpec(
+                kDtJ1RatioKey,
+                "J1 减速比" + provenanceLabelSuffix(d.ratioPerJoint.front()),
+                core::QuantityKind::Dimensionless, one, one));
+            if (const auto ratio = d.ratioPerJoint.front().tryValue()) {
+                page.values.push_back({kDtJ1RatioKey, *ratio});
+            }
+        }
+        if (!d.frictionPerJoint.empty()) {
+            page.fields.push_back(ui::makeQuantityFieldSpec(
+                kDtJ1CoulombKey,
+                "J1 库仑摩擦 fc" + provenanceLabelSuffix(d.frictionPerJoint.front().coulomb),
+                core::QuantityKind::Torque, nm, nm));
+            if (const auto fc = d.frictionPerJoint.front().coulomb.tryValue()) {
+                page.values.push_back({kDtJ1CoulombKey, *fc});
+            }
+        }
+        if (!d.torqueLimitsPerJoint.empty()) {
+            page.fields.push_back(ui::makeQuantityFieldSpec(
+                kDtJ1RatedKey,
+                "J1 额定力矩" + provenanceLabelSuffix(d.torqueLimitsPerJoint.front().rated),
+                core::QuantityKind::Torque, nm, nm));
+            if (const auto rated = d.torqueLimitsPerJoint.front().rated.tryValue()) {
+                page.values.push_back({kDtJ1RatedKey, *rated});
+            }
+            page.fields.push_back(ui::makeQuantityFieldSpec(
+                kDtJ1PeakKey,
+                "J1 峰值力矩" + provenanceLabelSuffix(d.torqueLimitsPerJoint.front().peak),
+                core::QuantityKind::Torque, nm, nm));
+            if (const auto peak = d.torqueLimitsPerJoint.front().peak.tryValue()) {
+                page.values.push_back({kDtJ1PeakKey, *peak});
+            }
+        }
+        page.editOutlet = nullptr;
+        return page;
+    }
+    // 其余建模对象（根/基座）：v1 无页面供给维持（UI-T50 实施段决议——
+    // G8 增量词表只点名工具/场景/位姿集/传动四对象；根的 displayName/
+    // 权威模式与基座安装布置的编辑面在域面板模板区/基座区既有，非"少量
+    // 高频标量"D5 语义——诚实边界维持，决议登记 ui.md §13 UI-T50 行）。
     return std::nullopt;
 }
 
@@ -232,6 +494,17 @@ ModelingPropertyPagesProvider::complexPageEntries(const core::ObjectId& object) 
         e.title = kPropertiesPageTitle;
         e.hosted = false;  // 同上——质心/惯量编辑流（L-8）在域面板内联呈现
         entries.push_back(std::move(e));
+    } else if (target->kind == SelectedTarget::Kind::Tool
+               || target->kind == SelectedTarget::Kind::Scene
+               || target->kind == SelectedTarget::Kind::PoseSet
+               || target->kind == SelectedTarget::Kind::Drivetrain) {
+        // UI-T50 四对象统一入口："在域面板编辑"——列表/合并/命令流编辑
+        // （TCP 列表/role 词表/位姿合并/传动逐关节）收口域面板属性区。
+        ui::ComplexPageEntry e;
+        e.pageKey = kObjectPropertiesPageKey;
+        e.title = kObjectPropertiesPageTitle;
+        e.hosted = false;  // 同上——激活聚焦建模面板该对象
+        entries.push_back(std::move(e));
     }
     return entries;
 }
@@ -248,14 +521,22 @@ ModelingPropertyPagesProvider::activateComplexPage(const core::ObjectId& object,
     const auto target = ws != nullptr ? resolveSelection(*ws, object) : std::nullopt;
 
     // ①寻址核对：pageKey 必须与该对象的声明入口一致（检查器编排面已查，
-    //   本处为 Provider 侧防御——两处同 token，拒绝语义一致）。
+    //   本处为 Provider 侧防御——两处同 token，拒绝语义一致）。UI-T50 增
+    //   四对象统一入口 object-properties（工具/场景/位姿集/传动——域面板
+    //   编辑收口，激活语义与 DH/物性页同款 focusObject 定位）。
     const bool isDh = target.has_value()
         && target->kind == SelectedTarget::Kind::Joint
         && pageKey == kDhParametersPageKey;
     const bool isProperties = target.has_value()
         && target->kind == SelectedTarget::Kind::Link
         && pageKey == kPropertiesPageKey;
-    if (!isDh && !isProperties) {
+    const bool isObjectProperties = target.has_value()
+        && (target->kind == SelectedTarget::Kind::Tool
+            || target->kind == SelectedTarget::Kind::Scene
+            || target->kind == SelectedTarget::Kind::PoseSet
+            || target->kind == SelectedTarget::Kind::Drivetrain)
+        && pageKey == kObjectPropertiesPageKey;
+    if (!isDh && !isProperties && !isObjectProperties) {
         report.reason = "activation-unknown-page";
         return report;
     }

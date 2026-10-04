@@ -648,3 +648,169 @@ TEST(HostMigrationEndToEnd, TreeToInspectorToComplexToHighlight)
     EXPECT_TRUE(inspector.view().objectId == viewBefore.objectId);
 }
 
+
+// =====================================================================
+// UI-T50——四对象属性页扩展（§9.7.5 增量边界兑现：诚实二态撤牌）
+// =====================================================================
+
+/**
+ * @brief 给 fixture 工作集补四对象（工具/场景/位姿集/传动——传动字段带
+ *        目录回填来源标记，验收 acceptance 4 的"逐项来源标记呈现"锚）。
+ */
+void seedExtensionObjects(ModelingWorkingSet& ws)
+{
+    ToolDefinition tool;
+    tool.objectId = core::ObjectId::generate();
+    tool.localName = "t1";
+    tool.tcpList.emplace_back();
+    ws.toolObjects.push_back(std::move(tool));
+
+    SceneObject scene;
+    scene.objectId = core::ObjectId::generate();
+    scene.localName = "s1";
+    scene.role = SceneObjectRole::Workpiece;
+    ws.sceneObjects.push_back(std::move(scene));
+
+    PoseSet ps;
+    ps.objectId = core::ObjectId::generate();
+    PoseSetEntry home;
+    home.key = "homeConfiguration";
+    home.jointConfiguration = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    ps.entries.push_back(std::move(home));
+    ws.poseSetObject = std::move(ps);
+
+    DrivetrainDesign dt;
+    dt.objectId = core::ObjectId::generate();
+    const core::ValueProvenance catalog =
+        core::ValueProvenance::make(core::ProvenanceKind::CatalogBackfill);
+    dt.ratioPerJoint.push_back(
+        core::SourcedValue<double>::provided(101.0, catalog));
+    FrictionEntry friction;
+    friction.coulomb = core::SourcedValue<double>::provided(2.5, catalog);
+    dt.frictionPerJoint.push_back(std::move(friction));
+    TorqueLimitEntry limit;
+    limit.rated = core::SourcedValue<double>::provided(30.0, catalog);
+    limit.peak = core::SourcedValue<double>::provided(60.0, catalog);
+    dt.torqueLimitsPerJoint.push_back(std::move(limit));
+    ws.drivetrainObject = std::move(dt);
+}
+
+/**
+ * 契约 UI-T50 acceptance 1~4：四对象常用字段页供给（诚实二态撤牌——
+ * 此前 nullopt 现为只读事实页；零移交面；D5 哨兵内；传动页逐项来源
+ * 标记经 label 呈现）。
+ */
+TEST(HostMigrationPropertyPages, ExtensionPages_FourObjectFactSupplied_UI_T50)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07", "MDL-13", "MDL-15", "MDL-16", "MDL-17"},
+                  std::vector<std::string>{"G8"});
+    MigrationFixture fx;
+    seedExtensionObjects(fx.ws);
+
+    // ---- 工具页：安装接口六值＋TCP 计数＋质量（8 字段 ≤16 哨兵）。
+    const core::ObjectId toolOid = fx.ws.toolObjects[0].objectId;
+    const auto toolPage = fx.pages->commonFieldsPage(toolOid);
+    ASSERT_TRUE(toolPage.has_value());
+    EXPECT_TRUE(toolPage->readOnly);
+    EXPECT_EQ(toolPage->editOutlet, nullptr);  // 只读事实页零移交面
+    EXPECT_LE(toolPage->fields.size(), ui::kMaxCommonFieldsPerObject);
+    ASSERT_EQ(toolPage->fields.size(), std::size_t{8});
+    EXPECT_TRUE(baselineValue(*toolPage, "tool-tcp-count").has_value());
+    EXPECT_EQ(*baselineValue(*toolPage, "tool-tcp-count"), 1.0);
+
+    // ---- 场景页：世界系固连位姿六值（M-11——呈现即字节原值）。
+    const core::ObjectId sceneOid = fx.ws.sceneObjects[0].objectId;
+    const auto scenePage = fx.pages->commonFieldsPage(sceneOid);
+    ASSERT_TRUE(scenePage.has_value());
+    EXPECT_TRUE(scenePage->readOnly);
+    ASSERT_EQ(scenePage->fields.size(), std::size_t{6});
+    EXPECT_EQ(scenePage->fields[0].key, "scene-pose-x");
+
+    // ---- 位姿集页：条目计数＋Home/Zero 保留键存在性（home 已设＝1）。
+    const core::ObjectId poseOid = fx.ws.poseSetObject->objectId;
+    const auto posePage = fx.pages->commonFieldsPage(poseOid);
+    ASSERT_TRUE(posePage.has_value());
+    EXPECT_TRUE(posePage->readOnly);
+    ASSERT_EQ(posePage->fields.size(), std::size_t{3});
+    ASSERT_TRUE(baselineValue(*posePage, "pose-home-set").has_value());
+    EXPECT_EQ(*baselineValue(*posePage, "pose-home-set"), 1.0);
+    EXPECT_EQ(*baselineValue(*posePage, "pose-zero-set"), 0.0);
+
+    // ---- 传动页：链计数＋首关节样例＋逐项来源标记（label 含"目录回填"
+    //      ——acceptance 4 的呈现锚；fv 量纲缺席的诚实边界）。
+    const core::ObjectId dtOid = fx.ws.drivetrainObject->objectId;
+    const auto dtPage = fx.pages->commonFieldsPage(dtOid);
+    ASSERT_TRUE(dtPage.has_value());
+    EXPECT_TRUE(dtPage->readOnly);
+    ASSERT_EQ(dtPage->fields.size(), std::size_t{5});
+    EXPECT_NE(dtPage->fields[1].label.find("目录回填"), std::string::npos)
+        << "减速比字段缺来源标记（acceptance 4 失守）";
+    EXPECT_NE(dtPage->fields[2].label.find("目录回填"), std::string::npos);
+    ASSERT_TRUE(baselineValue(*dtPage, "dt-j1-ratio").has_value());
+    EXPECT_EQ(*baselineValue(*dtPage, "dt-j1-ratio"), 101.0);
+}
+
+/**
+ * 契约 UI-T50 acceptance 1~4（D6 入口半区）＋note③ 根/基座决议：四对象
+ * 统一"在域面板编辑"入口（hosted=false）＋激活命中执行器；根/基座零应
+ * 答**维持**（G8 词表边界——诚实二态不撤）。
+ */
+TEST(HostMigrationPropertyPages, ExtensionPages_ObjectPropertiesEntryAndActivation_UI_T50)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07"}, std::vector<std::string>{"G8"});
+    MigrationFixture fx;
+    seedExtensionObjects(fx.ws);
+
+    for (const core::ObjectId* oid :
+         {&fx.ws.toolObjects[0].objectId, &fx.ws.sceneObjects[0].objectId,
+          &fx.ws.poseSetObject->objectId, &fx.ws.drivetrainObject->objectId}) {
+        const auto entries = fx.pages->complexPageEntries(*oid);
+        ASSERT_EQ(entries.size(), std::size_t{1});
+        EXPECT_EQ(entries[0].pageKey, "object-properties");
+        EXPECT_FALSE(entries[0].hosted);
+        // 激活命中执行器（focusObject 定位域面板——hosted=false 语义）。
+        const auto report = fx.pages->activateComplexPage(*oid, "object-properties", nullptr);
+        EXPECT_TRUE(report.ok);
+    }
+    EXPECT_EQ(fx.activator.calls.size(), std::size_t{4});
+
+    // 未知页键拒绝（寻址核对——四对象上乱键不误激活）。
+    const auto bad =
+        fx.pages->activateComplexPage(fx.ws.toolObjects[0].objectId, "dh-parameters", nullptr);
+    EXPECT_FALSE(bad.ok);
+    EXPECT_EQ(bad.reason, "activation-unknown-page");
+
+    // 根/基座零应答维持（G8 增量词表边界——实施段决议的测试锚）。模板
+    // 初始草稿 rootObjectId 未回填（设计如此——Provider 类注），根身份
+    // 的零应答由闭包外对象锚承载（NonDomainObjectGetsNoAnswer 既有用例
+    // 同一面）；此处以关节页形态未变作"非四对象无增量"旁证。
+    EXPECT_FALSE(fx.pages->commonFieldsPage(fixedOid(0x7F)).has_value());
+}
+
+/**
+ * 契约 UI-T50 note⑤（不虚构字段）：空集合优雅降级——空 TCP 工具/空传
+ * 动/无保留键位姿集的页供给仍在（计数＝0），样例字段缺席、值不伪造。
+ */
+TEST(HostMigrationPropertyPages, ExtensionPages_EmptyCollectionsGraceful_UI_T50)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07"}, std::vector<std::string>{"G8"});
+    MigrationFixture fx;
+
+    ToolDefinition tool;
+    tool.objectId = core::ObjectId::generate();
+    fx.ws.toolObjects.push_back(std::move(tool));  // 零 TCP
+
+    DrivetrainDesign dt;
+    dt.objectId = core::ObjectId::generate();
+    fx.ws.drivetrainObject = std::move(dt);  // 零链
+
+    const auto toolPage = fx.pages->commonFieldsPage(fx.ws.toolObjects[0].objectId);
+    ASSERT_TRUE(toolPage.has_value());
+    EXPECT_EQ(*baselineValue(*toolPage, "tool-tcp-count"), 0.0);
+
+    const auto dtPage = fx.pages->commonFieldsPage(fx.ws.drivetrainObject->objectId);
+    ASSERT_TRUE(dtPage.has_value());
+    ASSERT_EQ(dtPage->fields.size(), std::size_t{1});  // 仅计数——样例字段缺席
+    EXPECT_EQ(dtPage->fields[0].key, "dt-joint-count");
+    EXPECT_FALSE(baselineValue(*dtPage, "dt-j1-ratio").has_value());
+}
