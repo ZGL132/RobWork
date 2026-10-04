@@ -59,6 +59,10 @@ std::vector<ui::CommandDescriptor> modelingDomainCommands()
         // ⑩ 复位 Home/Zero（会话姿态——KIN-06 语义零修订；scope=Session、
         // readOnlyAllowed=true——只读会话可用的会话操作，AT-04）。
         make("modeling.reset-home-zero", ui::CommandScope::Session, true, "建模/姿态"),
+        // ⑪ WC/DWC XML 外供导出（UI-T56——MDL-20 ③会话级文件操作；数据源
+        // ＝已应用修订的 runtime 编译快照只读视图，零修订零失效；
+        // readOnlyAllowed=true——只读会话亦可导出查看）。
+        make("modeling.export-workcell-xml", ui::CommandScope::Project, true, "建模/规范包"),
     };
 }
 

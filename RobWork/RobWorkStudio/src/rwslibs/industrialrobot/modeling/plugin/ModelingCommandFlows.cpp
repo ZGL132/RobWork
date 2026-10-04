@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QFile>
 #include <QString>
 
 #include <algorithm>
@@ -118,7 +119,7 @@ bool executeModelingCommand(const std::string& commandId,
 
 // =====================================================================
 // 装配路由权威判定（UI-T42——F-466 消账：宿主 UiPlugin 只转发本判定；
-// 十条词表与 §9.7.3 卡表同源演化——新增命令漏登此处＝宿主禁用（fail-
+// 词表与 §9.7.3 卡表同源演化——新增命令漏登此处＝宿主禁用（fail-
 // closed，不产生"按钮可用但执行失败"的不合格中间态——requirements 7/2
 // 撤牌教训的同型预防）。
 // =====================================================================
@@ -131,6 +132,7 @@ bool isAssembledModelingCommand(const std::string& commandId)
         "modeling.estimate-properties", "modeling.generate-placeholder-geometry",
         "modeling.diff-baseline",     "modeling.export-package",
         "modeling.import-package",    "modeling.reset-home-zero",
+        "modeling.export-workcell-xml",  // UI-T56——WC/DWC XML 外供导出（第十一号）
     };
     return kAssembled.count(commandId) != 0;
 }
@@ -888,6 +890,37 @@ bool executeModelingCommand(const std::string& commandId,
         if (deps.recomputeReadiness) { deps.recomputeReadiness(); }
         summary = "规范包导入完成——草稿已更新，请经『应用草稿』提交";
         return true;
+    }
+
+    // ---- modeling.export-workcell-xml（WC/DWC XML 外供导出——UI-T56）----
+    // MDL-20 ③"另可导出 WorkCell/DWC XML 供外部查看"的命令面：数据源＝
+    // 已应用修订的 runtime 编译快照只读视图（宿主注入——快照空＝诚实缺席
+    // 不虚构产物）；本流程零修订零草稿触碰（会话级文件操作——Package.hpp
+    // §6.8 契约），只读会话亦可导出（readOnlyAllowed=true 的卡表值）。
+    if (commandId == "modeling.export-workcell-xml") {
+        if (!deps.exportWorkCellXml) {
+            summary = "WC XML 导出出口未接线（装配缺陷）";
+            return false;
+        }
+        const auto pickedPath = host.saveFilePath(
+            QStringLiteral("导出 WorkCell XML"),
+            QStringLiteral("workcell.xml"),
+            QStringLiteral("XML (*.xml);;所有文件 (*)"));
+        if (!pickedPath.has_value()) { return false; }  // 用户取消
+        // 覆盖确认（既有文件＝有损替换——知情面与规范包导出同款纪律）。
+        if (QFile::exists(*pickedPath)
+            && !host.confirmProceed(
+                   QStringLiteral("导出 WorkCell XML"),
+                   QStringLiteral("目标文件已存在：%1\n\n写出采用原子替换——"
+                                  "失败保留先前文件。确认替换？")
+                       .arg(*pickedPath))) {
+            return false;
+        }
+        std::string exportSummary;
+        const bool ok = deps.exportWorkCellXml(pickedPath->toStdString(),
+                                               exportSummary);
+        summary = exportSummary;  // 成功/失败摘要均由宿主回调形成（含诊断）
+        return ok;
     }
 
     // ---- modeling.reset-home-zero（会话命令——零修订；MDL-17/§4.6）-------

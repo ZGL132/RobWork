@@ -90,6 +90,11 @@ struct ModelingFlowDeps {
     std::function<void()> recomputeReadiness;
     /// 当前选中锚（面板会话选中态——estimate-properties 的目标解析输入）。
     std::function<std::optional<core::ObjectId>()> selectedAnchor;
+    /// WC/DWC XML 外供导出（UI-T56——export-workcell-xml 落点）：宿主注入
+    /// 的整体回调（取编译快照→域 exportWorkCellXml→摘要形成）。快照缺席
+    /// ＝false＋原因入 summary（诚实缺席不虚构产物）；目标路径来自
+    /// saveFilePath 替身/真身。
+    std::function<bool(const std::string& targetPath, std::string& summary)> exportWorkCellXml;
 };
 
 /**

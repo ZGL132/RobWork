@@ -426,7 +426,7 @@ TEST(PluginRegistrarT03B, RealChainModelingDescriptorOkTenCommands_WP24_T03B)
 
     // 前置①：卡表十条全量在 descriptor（词表权威 modeling.md §9.7.3）。
     // 计数漂移应在此显式失败，而不是被下游计数断言含混吞掉。
-    ASSERT_EQ(assembly.descriptor.commands.size(), std::size_t{10});
+    ASSERT_EQ(assembly.descriptor.commands.size(), std::size_t{11});  // UI-T56 表尾追加第十一号
     // 前置②：十条 id 全含连字符（F-421 缺陷的触发词形）——修复后必须
     // 全数通过句法校验；逐一显式断言使词形回归一望可知。
     for (const ui::CommandDescriptor& command : assembly.descriptor.commands) {
@@ -446,7 +446,7 @@ TEST(PluginRegistrarT03B, RealChainModelingDescriptorOkTenCommands_WP24_T03B)
     EXPECT_EQ(reports.front().pluginId, "modeling");
     EXPECT_TRUE(reports.front().ok);
     EXPECT_EQ(reports.front().panelsLoaded, std::size_t{1});
-    EXPECT_EQ(reports.front().commandsRegistered, std::size_t{10});
+    EXPECT_EQ(reports.front().commandsRegistered, std::size_t{11});  // UI-T56 表尾追加
 }
 
 /**

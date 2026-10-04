@@ -97,6 +97,7 @@
 #include <sdurws/ird/modeling/CommandHandlers.hpp>  // registerModelingCommandHandlers/HandlerServices（UI-T46——F-461 modeling 半区装配）
 #include <sdurws/ird/modeling/DhConvert.hpp>     // DhExplicitConverter（UI-T46——HandlerServices 转换器注入）
 #include <sdurws/ird/modeling/ObjectTypes.hpp>   // modeling::kRobotDesignObjectType（UI-T46——编译根 token 单一权威）
+#include <sdurws/ird/modeling/Package.hpp>       // exportWorkCellXml/WorkCellExportTarget（UI-T56——WC/DWC XML 外供导出接源）
 #include <sdurws/ird/policy/JointLimits.hpp>     // makeJointLimitEvaluator（UI-T46——HandlerServices 评估器装配）
 #include <sdurws/ird/policy/Contexts.hpp>        // policy::IPolicyNameContext（UI-T46——行程评估名称上下文适配基类）
 #include <sdurws/ird/ui/RuntimePublishBridge.hpp>  // RuntimePublishBridge/观察者（UI-T46——呈现刷新事务装配）
@@ -953,6 +954,37 @@ void IrdWorkbenchHostPlugin::initialize()
         m_domains->modeling.bindCommandAvailability(
             [this](const ui::CommandId& id) {
                 return m_content->commandRegistry().availability(id);
+            });
+        // WC/DWC XML 外供导出接源（UI-T56——export-workcell-xml 落点）：
+        // 快照现取 m_compilePort->lastPublishedSnapshot（已应用修订的编译
+        // 产物——零第二编译路径，PackageWorkCell §6.8 契约）；缺席＝诚实
+        // 拒绝（原因入 summary——未应用修订/编译链未跑均此形态）。双面
+        // 输出：用户选定路径→WC 面；同名 +".dwc.xml"→DWC 面（独立可选，
+        // DWC 能力缺失＝域 ExportFailed 如实呈现）。
+        m_domains->modeling.bindWorkCellExport(
+            [this](const std::string& targetPath, std::string& summary) -> bool {
+                const auto snapshot = m_compilePort != nullptr
+                                          ? m_compilePort->lastPublishedSnapshot()
+                                          : nullptr;
+                if (snapshot == nullptr) {
+                    summary = "尚无已应用修订的编译产物——请先经顶栏『应用草稿』"
+                              "提交（WorkCell XML 的数据源＝编译快照）";
+                    return false;
+                }
+                modeling::WorkCellExportTarget target;
+                target.wcTargetFile = targetPath;
+                target.dwcTargetFile = targetPath + ".dwc.xml";
+                std::vector<core::DiagnosticRecord> diags;
+                const modeling::PackageExportOutcome outcome =
+                    modeling::exportWorkCellXml(*snapshot, target, diags);
+                if (!outcome.ok) {
+                    summary = "WorkCell XML 导出失败：" + outcome.error.detail;
+                    return false;
+                }
+                summary = "WorkCell/DWC XML 已导出（" + targetPath + " 与 "
+                          + targetPath + ".dwc.xml）——外部查看产物（非 .wc.xml "
+                          "标准格式）；运行时加载校验归后续任务链";
+                return true;
             });
         if (m_domains->requirements.has_value()) {
             m_domains->requirements->bindCommandSubmit(

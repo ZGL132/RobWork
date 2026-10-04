@@ -90,6 +90,12 @@ struct FlowHarness {
     FakeHost host;
     std::optional<core::ObjectId> anchor;
     int recomputeCalls = 0;
+    /// WC XML 导出回调替身（UI-T56——deps().exportWorkCellXml 注入面；
+    /// 默认未接线＝nullptr，测试按用例覆写 exportAnswer/记录调用）。
+    bool exportWired = false;
+    bool exportAnswer = true;
+    int exportCalls = 0;
+    std::string exportLastPath;
 
     ModelingFlowDeps deps()
     {
@@ -97,6 +103,19 @@ struct FlowHarness {
         d.reseedTemplate = [] {};
         d.recomputeReadiness = [this] { ++recomputeCalls; };
         d.selectedAnchor = [this] { return anchor; };
+        if (exportWired) {
+            d.exportWorkCellXml =
+                [this](const std::string& targetPath, std::string& summary) {
+                    ++exportCalls;
+                    exportLastPath = targetPath;
+                    if (exportAnswer) {
+                        summary = "WorkCell/DWC XML 已导出（替身）";
+                    } else {
+                        summary = "尚无已应用修订的编译产物——替身缺席态";
+                    }
+                    return exportAnswer;
+                };
+        }
         return d;
     }
 };
@@ -368,7 +387,7 @@ TEST(ModelingCommandFlows, AssembledSetMatchesCatalog_F466)
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01"}, std::vector<std::string>{});
 
     const auto catalog = modelingDomainCommands();
-    ASSERT_EQ(catalog.size(), std::size_t{10}) << "§9.7.3 卡表目录十条（契约面）";
+    ASSERT_EQ(catalog.size(), std::size_t{11}) << "§9.7.3 卡表目录十一条（契约面——UI-T56 表尾追加）";
 
     for (const auto& desc : catalog) {
         EXPECT_TRUE(isAssembledModelingCommand(desc.id))
@@ -543,4 +562,102 @@ TEST(ModelingCommandFlows, ImportUrdf_ConfirmRejected_KeepsSessionDraft_WP13_T21
 
     EXPECT_FALSE(executed) << "确认拒绝应按用户取消处置";
     EXPECT_TRUE(fx.session.draft == before) << "取消后草稿被改动";
+}
+
+// =====================================================================
+// UI-T56：WC/DWC XML 外供导出命令流（export-workcell-xml——第十一号）
+// =====================================================================
+
+/// 全链（接线在位＋路径应答）＝回调恰调一次、路径透传、摘要透传、草稿
+/// 零触碰（会话级文件操作——零修订零脏化）。
+TEST(ModelingCommandFlows, ExportWorkCellXml_HappyPath_UI_T56)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-20"}, std::vector<std::string>{});
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString target = dir.filePath(QStringLiteral("workcell.xml"));
+
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.exportWired = true;
+    fx.exportAnswer = true;
+    fx.host.savePathAnswer = target;
+
+    const ModelingWorkingSet before = fx.session.draft;
+    std::string summary;
+    ASSERT_TRUE(executeModelingCommand("modeling.export-workcell-xml",
+                                       fx.session, fx.deps(), fx.host, summary));
+    EXPECT_EQ(fx.exportCalls, 1) << "回调恰调一次";
+    EXPECT_EQ(fx.exportLastPath, target.toStdString()) << "路径透传";
+    EXPECT_NE(summary.find("导出"), std::string::npos);
+    EXPECT_TRUE(fx.session.draft == before) << "会话级文件操作零草稿触碰";
+    EXPECT_EQ(fx.recomputeCalls, 0) << "零就绪重算（零修订语义）";
+}
+
+/// 快照缺席（宿主回调 false）＝诚实拒绝＋原因透传（不虚构产物）；出口
+/// 未接线＝装配缺陷摘要（fail-closed 同 kAssembled 口径）。
+TEST(ModelingCommandFlows, ExportWorkCellXml_SnapshotMissingAndNotWired_UI_T56)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-20"}, std::vector<std::string>{});
+
+    // 缺席态：回调在位但返回 false。
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.exportWired = true;
+    fx.exportAnswer = false;
+    fx.host.savePathAnswer = QStringLiteral("unused.xml");
+
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand("modeling.export-workcell-xml",
+                                        fx.session, fx.deps(), fx.host, summary));
+    EXPECT_NE(summary.find("缺席"), std::string::npos)
+        << "缺席原因透传（诚实缺席不虚构产物）";
+
+    // 未接线态：deps 无回调＝装配缺陷摘要（fail-closed）。
+    FlowHarness unwired;
+    unwired.session.draft = makeSixAxisDraft();
+    unwired.host.savePathAnswer = QStringLiteral("unused.xml");
+    std::string unwiredSummary;
+    EXPECT_FALSE(executeModelingCommand("modeling.export-workcell-xml",
+                                        unwired.session, unwired.deps(),
+                                        unwired.host, unwiredSummary));
+    EXPECT_NE(unwiredSummary.find("装配缺陷"), std::string::npos);
+}
+
+/// 用户取消（saveFilePath 返回 nullopt）＝零回调零副作用；既有文件＋确认
+/// 拒绝＝零回调（覆盖知情面——确认文本含原子替换语义）。
+TEST(ModelingCommandFlows, ExportWorkCellXml_CancelAndOverwriteConfirm_UI_T56)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-20"}, std::vector<std::string>{});
+
+    // 用户取消路径选择。
+    FlowHarness fx;
+    fx.session.draft = makeSixAxisDraft();
+    fx.exportWired = true;
+    fx.host.savePathAnswer = std::nullopt;  // 取消
+    std::string summary;
+    EXPECT_FALSE(executeModelingCommand("modeling.export-workcell-xml",
+                                        fx.session, fx.deps(), fx.host, summary));
+    EXPECT_EQ(fx.exportCalls, 0) << "取消＝零回调";
+
+    // 既有文件＋确认拒绝（知情面——替换需用户明示）。
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString existing = dir.filePath(QStringLiteral("workcell.xml"));
+    { QFile f(existing); ASSERT_TRUE(f.open(QIODevice::WriteOnly)); f.write("old"); }
+    fx.host.savePathAnswer = existing;
+    fx.host.confirmProceedAnswer = false;
+    std::string declined;
+    EXPECT_FALSE(executeModelingCommand("modeling.export-workcell-xml",
+                                        fx.session, fx.deps(), fx.host, declined));
+    EXPECT_EQ(fx.exportCalls, 0) << "确认拒绝＝零回调";
+    EXPECT_TRUE(fx.host.lastConfirmText.contains(QStringLiteral("原子替换")))
+        << "确认文本缺原子替换语义（知情面）";
+    // 确认放行＝回调放行。
+    fx.host.confirmProceedAnswer = true;
+    std::string accepted;
+    ASSERT_TRUE(executeModelingCommand("modeling.export-workcell-xml",
+                                       fx.session, fx.deps(), fx.host, accepted));
+    EXPECT_EQ(fx.exportCalls, 1);
 }
