@@ -1,22 +1,22 @@
 {
   "schemaVersion": "ird-pipeline/1",
-  "phase": "awaiting_acceptance",
+  "phase": "idle",
   "tickCount": 461,
-  "currentTask": "UI-T36",
-  "branch": "ui-t36",
-  "base": "ed215912bca512440ecb79080b0ed9f09bbc0d0a",
-  "headSha": "fc27c33c9f197f4a1ed8adec80c60db5abcb1158",
+  "currentTask": null,
+  "branch": null,
+  "base": null,
+  "headSha": null,
   "acceptedHead": null,
   "acceptanceRecord": null,
   "lastFailureRecord": null,
   "run": null,
   "attempts": {
     "implement": 0,
-    "fix": 1,
-    "accept": 1
+    "fix": 0,
+    "accept": 0
   },
   "heartbeat": {
-    "updatedAt": "2026-10-01T20:58:29+08:00",
+    "updatedAt": "2026-10-04T17:10:55+08:00",
     "ticksNoProgress": 0
   },
   "history": [
@@ -2270,18 +2270,7 @@
       "acceptance": 60
     }
   },
-  "queue": [
-    {
-      "taskId": "UI-T36",
-      "contractPath": "tasks/foundation/UI-T36.json",
-      "branch": "ui-t36"
-    },
-    {
-      "taskId": "UI-T37",
-      "contractPath": "tasks/foundation/UI-T37.json",
-      "branch": "ui-t37"
-    }
-  ],
+  "queue": [],
   "docRefs": {
     "pipeline": "doc/industrial-robot-design/automation-pipeline.md",
     "acceptance": "doc/industrial-robot-design/acceptance-protocol.md",
@@ -2291,5 +2280,5 @@
     "taskContracts": "doc/industrial-robot-design/tasks/",
     "b1BatchManifest": "traceability/pipeline/b1-host-integration-batch.json"
   },
-  "tickToken": "4302e215-21a9-4ddc-ac3d-8c0b5ac9d268"
+  "tickToken": "fb03cf28-1627-48e5-892c-df5d7eca4f20"
 }
