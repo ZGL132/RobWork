@@ -4,8 +4,10 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "工具安装接口/场景世界位姿编辑页（F-497 兑现③）：PartPoseEdit 域原语新增＋\"编辑\"页签选择驱动分派（Tool/Scene 两页——ParamTablePanel 常驻不重建）",
-  "status": "ready",
-  "dependsOn": ["UI-T54"],
+  "status": "done",
+  "dependsOn": [
+    "UI-T54"
+  ],
   "requirements": [
     "MDL-04/MDL-15（工具安装接口 T_flange_tool §4.4／场景世界位姿 §4.5——位姿一等字段获得编辑入口）",
     "MDL-07（选中只显示相关属性——选择驱动分派：树选中 Tool/Scene 自动切页）",
@@ -62,5 +64,5 @@
     "gui 对账排除：tool_area/scene_area 容器（SpinBox 内部 QLineEdit）与 ird_param_ 前缀钮须入两 TU 的对账排除——否则污染 P0-3/命令目录计数"
   ],
   "branch": "ui-t55",
-  "note": "分支基点＝redesign-main@dc0f5dca。F-497 兑现③；TCP 列表结构化编辑（MDL-13 不变量流）登记 UI-T56 诚实边界（列表结构流复杂度高于单页数值编辑，独立批次承载）。后续：F-498 多类 XML 预览。"
+  "note": "【合入登记注（2026-10-05，PIPE §4.7 收尾——所有者按序实施指令＋PIPE v1.8 autoMerge 预授权）】acceptedHead 4875758e 合入 redesign-main@e5c9fb00（acc/ui-t55/1@64c7c3ee 按 SHA 先并）；独立子会话对抗式验收 11 项 pass。建议级四条转登 F-512~F-514（S-2 F-497 进展注随批直接落账；S-4 verify-task 描述性条目特征并入 F-513 沿用登记）。分支基点＝redesign-main@dc0f5dca。F-497 兑现③；TCP 列表结构化编辑（MDL-13 不变量流）登记 UI-T56 诚实边界（列表结构流复杂度高于单页数值编辑，独立批次承载）。后续：F-498 多类 XML 预览。"
 }
