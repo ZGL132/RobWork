@@ -229,6 +229,89 @@ TEST(PluginPanel, Properties_JointRelevantFieldsAndDHGrey_WP13T15_ACC2)
     }
 }
 
+/// 属性区复合值展开与枚举值中文呈现：Provided 态复合行展开为精确数值
+/// （轴向三维／原点·安装接口·世界位姿六值／惯量六分量——不再落
+/// "[值已提供]/[位姿已提供]"占位）；类型/权威模式/场景角色值＝中文呈现
+/// 映射（英文 token 括注保留——机器判别仍以词表 token 为权威）。
+TEST(PluginPanel, Properties_CompoundValuesExpandedAndChineseTokenDisplay)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07", "UX-02"},
+                  std::vector<std::string>{});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    auto rowOf = [](const ModelingWorkingSet& w, const core::ObjectId& oid,
+                    const char* key) {
+        const auto rows = propertyFieldsFor(w, *resolveSelection(w, oid));
+        for (const auto& r : rows) {
+            if (r.fieldKey == key) { return r; }
+        }
+        return PropertyFieldRow{};  // 未命中＝缺省行（下述断言即失败）
+    };
+
+    // 关节 0（表 T-MDL-1 种子：Revolute＋axis Z＋原点恒位姿）：复合 Provided
+    // 态展开为精确数值，类型值＝中文呈现映射。
+    const core::ObjectId& j0 = ws.design.joints[0].objectId;
+    EXPECT_EQ(rowOf(ws, j0, "axis").valueText, "0, 0, 1")
+        << "轴向 Provided 态展开为三维分量（不再落\"[值已提供]\"占位）";
+    EXPECT_EQ(rowOf(ws, j0, "origin").valueText, "0, 0, 0, 0, 0, 0")
+        << "原点 Provided 态展开为位姿六值（恒位姿种子）";
+    EXPECT_EQ(rowOf(ws, j0, "type").valueText, "转动（Revolute）")
+        << "类型值＝中文呈现映射（token 括注保留）";
+
+    // 连杆惯量：注入已提供值后展开为六分量（字段序＝InertiaTensor 声明序）。
+    InertiaTensor inertiaSeed;
+    inertiaSeed.ixx = 1.5;
+    inertiaSeed.iyy = 2.5;
+    inertiaSeed.izz = 3.5;
+    inertiaSeed.ixy = 0.1;
+    ws.design.links[0].body.inertia =
+        core::SourcedValue<InertiaTensor>::provided(
+            inertiaSeed,
+            core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    EXPECT_EQ(rowOf(ws, ws.design.links[0].objectId, "inertia").valueText,
+              "1.5, 2.5, 3.5, 0.1, 0, 0")
+        << "惯量 Provided 态展开为六分量";
+
+    // 场景：世界位姿非恒等（平移 (1,2,3)＋绕 z 轴 90°）——RPY 反解确定性
+    // （Rz(π/2)→roll=0/pitch=0/yaw=π/2，呈现专用逐元素反解）；角色值＝
+    // 中文呈现映射。
+    SceneObject scene;
+    scene.objectId = fixedOid(0xB1);
+    scene.localName = "table";
+    scene.role = SceneObjectRole::EnvironmentObject;
+    scene.worldPose = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(1.0, 2.0, 3.0),
+        rw::math::Rotation3D<double>(0.0, -1.0, 0.0, 1.0, 0.0, 0.0,
+                                     0.0, 0.0, 1.0));
+    ws.sceneObjects.push_back(scene);
+    EXPECT_EQ(rowOf(ws, scene.objectId, "world-pose").valueText,
+              "1, 2, 3, 0, 0, 1.570796")
+        << "世界位姿展开为六值（formatDeterministic 6 位裁尾零）";
+    EXPECT_EQ(rowOf(ws, scene.objectId, "role").valueText,
+              "环境物体（EnvironmentObject）")
+        << "场景角色值＝中文呈现映射";
+
+    // 工具：安装接口恒有值（Transform3D 值语义、非 SourcedValue）——恒等
+    // 种子展开为六值零（此前硬编码"[位姿已提供]"占位）。
+    ToolDefinition tool;
+    tool.objectId = fixedOid(0xA1);
+    tool.localName = "gripper";
+    ws.toolObjects.push_back(tool);
+    EXPECT_EQ(rowOf(ws, tool.objectId, "mount-interface").valueText,
+              "0, 0, 0, 0, 0, 0")
+        << "安装接口展开为位姿六值（不再落占位）";
+
+    // 根：权威模式值中文映射两态各断言一次（模板草稿 rootObjectId 为空
+    // ——夹具显式注入根身份以定位 ModelRoot 目标，与 resolveSelection
+    // 闭包语义一致）。
+    ws.rootObjectId = fixedOid(0xD0);
+    EXPECT_EQ(rowOf(ws, *ws.rootObjectId, "authority").valueText,
+              "显式（Explicit）");
+    ws.design.authority = AuthorityMode::StandardDH;
+    EXPECT_EQ(rowOf(ws, *ws.rootObjectId, "authority").valueText,
+              "标准DH（StandardDH）");
+}
+
 /// 属性区：连杆物性三行带 ValueProvenance 来源徽标（用户/估算/导入——
 /// core ProvenanceKind 直投）；几何引用行反映引用有无；未提供行呈现缺失
 /// 占位（不伪造数值——ERR-01 四态纪律）。

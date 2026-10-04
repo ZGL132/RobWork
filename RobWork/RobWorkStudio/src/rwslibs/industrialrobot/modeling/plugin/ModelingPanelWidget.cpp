@@ -92,6 +92,69 @@ core::UnitToken jointEditUnitToken(core::QuantityKind kind)
     return core::UnitToken::find("1").value();  // 轴向＝无量纲单位向量
 }
 
+// ---- 属性行标签的中文呈现映射（UX-02 工程用语）------------------------
+// fieldKey 是 PanelModel 投影的稳定机器键（小写连字符词法——HostMigration
+// 批量粘贴/基线注入的寻址锚，键面保持英文不动）；本表只是"键→行标签"的
+// 呈现层固定映射（基座安装预设中文标签同款先例——机器判别仍以键为权威）。
+// 表外键回退键名原文（不虚构文案——UiText 解析空回退的既有纪律），前缀键
+// （tcp:/pose:）取后半段拼接中文主题词。
+//
+// @param key [in] PanelModel 投影行字段键（"type"/"tcp:tcp-center" 等）
+// @return 行标签中文文本（单位后缀由调用方另行拼接——值/单位分离 UX-05）
+std::string chineseFieldLabel(const std::string& key)
+{
+    // 前缀键先行（TCP/命名位姿行——键尾为用户数据 key，不入静态表）。
+    static constexpr const char* kTcpPrefix = "tcp:";
+    static constexpr const char* kPosePrefix = "pose:";
+    if (key.rfind(kTcpPrefix, 0) == 0) {
+        return std::string("TCP ") + key.substr(std::char_traits<char>::length(kTcpPrefix));
+    }
+    if (key.rfind(kPosePrefix, 0) == 0) {
+        return std::string("位姿 ") + key.substr(std::char_traits<char>::length(kPosePrefix));
+    }
+
+    // 无前缀键的固定映射（键序＝PanelModel 各类别投影行序——查表可读性）。
+    struct LabelEntry {
+        const char* key;
+        const char* label;
+    };
+    static constexpr LabelEntry kLabels[] = {
+        // 关节（§9.7.1 六字段面＋DH 投影四参数）。
+        {"type", "类型"},
+        {"axis", "轴向"},
+        {"origin", "原点位姿"},
+        {"zero-offset", "零位偏置"},
+        {"bounds", "限位"},
+        {"working-range", "工作范围"},
+        {"dh-alpha", "DH-α"},
+        {"dh-a", "DH-a"},
+        {"dh-d", "DH-d"},
+        {"dh-theta", "DH-θ偏置"},
+        // 连杆物性＋几何引用。
+        {"mass", "质量"},
+        {"center-of-mass", "质心"},
+        {"inertia", "惯量张量"},
+        {"visual-geometry", "视觉几何"},
+        {"collision-geometry", "碰撞几何"},
+        // 工具/场景/位姿集/传动。
+        {"mount-interface", "安装接口"},
+        {"world-pose", "世界位姿"},
+        {"role", "场景角色"},
+        {"ratio-per-joint", "逐关节减速比"},
+        {"friction-per-joint", "逐关节摩擦"},
+        {"torque-limits-per-joint", "逐关节力矩限值"},
+        // 模型根/基座安装。
+        {"display-name", "显示名"},
+        {"authority", "权威模式"},
+        {"preset", "安装预设"},
+        {"base-position", "基座位置"},
+    };
+    for (const LabelEntry& e : kLabels) {
+        if (key == e.key) { return e.label; }
+    }
+    return key;  // 表外键回退键名原文（防御面——不虚构中文文案）
+}
+
 }  // namespace
 
 // =====================================================================
@@ -188,31 +251,59 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     // 几何与姿态｜校验与导出）——只加分节标题行，按钮集合、目录顺序、
     // 使能逻辑零变化（分组语义＝目录 menuPath/作用域的呈现归纳，非新
     // 命令语义）。
+    // F-502（宿主审核 P2）频率分层：高频（对象与导入组＋复位 Home/Zero）
+    // 常驻，低频诊断组（权威切换/物性估算/占位几何/基线比较/规范包导出
+    // 导入）收进『更多操作』折叠区（默认收起）——压缩工具页纵向长度，
+    // 命令集合/id/使能逻辑零变化（按钮仍在 m_commandButtons，仅容器迁移）。
     m_commands = modelingDomainCommands();
     // UI-T41 批次B（B5）：工业风主题安装（面板作用域——宿主 chrome/其他域
     // 面板不受影响）；分节标题色值从硬编码 #555 迁移至词表 kTextMuted
     // （UiTheme 五色词表＝唯一色值源，防彩虹化 NFR-DEP-05）。
     ui::applyIndustrialTheme(this);
     auto* toolsLayout = static_cast<QVBoxLayout*>(toolsPage->layout());
-    auto addSectionHeader = [toolsPage, toolsLayout](const char* title) {
+    // 折叠区承载（低频组容器＋开关钮——先建后挂，按钮循环中按 id 入组）。
+    auto* moreToggle = new QPushButton(QStringLiteral("更多操作 ▸"), toolsPage);
+    moreToggle->setObjectName(QStringLiteral("ird_modeling_more_toggle"));
+    moreToggle->setCheckable(true);
+    moreToggle->setToolTip(QStringLiteral(
+        "展开低频与诊断操作（权威切换/物性估算/占位几何/基线比较/规范包）"));
+    moreToggle->setStyleSheet(
+        QStringLiteral("font-weight: 400; color: %1; padding: 2px; text-align: left;")
+            .arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    auto* moreHost = new QWidget(toolsPage);
+    moreHost->setObjectName(QStringLiteral("ird_modeling_more_host"));
+    auto* moreLayout = new QVBoxLayout(moreHost);
+    moreLayout->setContentsMargins(0, 0, 0, 0);
+    moreHost->hide();  // 默认收起（F-502——展开面非删除，命令使能逻辑不受影响）
+    connect(moreToggle, &QPushButton::toggled, moreToggle,
+            [moreToggle, moreHost](bool checked) {
+                moreHost->setVisible(checked);
+                moreToggle->setText(checked ? QStringLiteral("更多操作 ▾")
+                                            : QStringLiteral("更多操作 ▸"));
+            });
+    auto addSectionHeader = [toolsPage, toolsLayout, moreLayout](const char* title,
+                                                                 bool collapsed) {
         auto* header = new QLabel(QString::fromUtf8(title), toolsPage);
         header->setStyleSheet(
             QStringLiteral("font-weight: 600; color: %1; padding-top: 4px;")
                 .arg(QString::fromLatin1(ui::palette::kTextMuted)));
-        toolsLayout->addWidget(header);
+        (collapsed ? moreLayout : toolsLayout)->addWidget(header);
     };
     // 组首 id → 组标题（§9.7.3 目录行序内首组"对象与导入"无组首 id——
-    // 循环前先挂；其余三组在组首命令按钮前挂）。
+    // 循环前先挂；其余三组随其组首命令挂入折叠区——低频组整体收起）。
     const std::pair<const char*, const char*> sectionLeaders[] = {
         {"modeling.switch-authority", "参数"},
         {"modeling.generate-placeholder-geometry", "几何与姿态"},
         {"modeling.diff-baseline", "校验与导出"},
     };
-    addSectionHeader("对象与导入");
+    addSectionHeader("对象与导入", false);
     for (std::size_t i = 0; i < m_commands.size(); ++i) {
+        // F-502 分层归组：低频诊断六命令入折叠区，其余（对象与导入三条＋
+        // 复位 Home/Zero——常用姿态操作）常驻。组首标题随命令同容器。
+        const bool collapsed = m_commands[i].id != "modeling.reset-home-zero";
         for (const auto& [leaderId, title] : sectionLeaders) {
             if (m_commands[i].id == leaderId) {
-                addSectionHeader(title);
+                addSectionHeader(title, collapsed);
             }
         }
         auto* btn = new QPushButton(QString::fromStdString(m_commands[i].titleKey), toolsPage);
@@ -224,9 +315,13 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
             tooltipText.empty() ? m_commands[i].id : tooltipText));
         connect(btn, &QPushButton::clicked, this, &ModelingPanelWidget::onCommandButtonClicked);
         m_commandButtons.push_back(btn);
-        // 命令按 readOnlyAllowed 分组布局（简单纵排——呈现密度非本层关切）。
-        toolsLayout->addWidget(btn);
+        // 命令按 readOnlyAllowed 分组布局（使能逻辑与容器无关——m_commands/
+        // m_commandButtons 同序 push 的索引对应保持，refreshCommandEnablement
+        // 零改动）。
+        (collapsed ? moreLayout : toolsLayout)->addWidget(btn);
     }
+    toolsLayout->addWidget(moreToggle);  // 折叠开关（低频组之后——常驻区尾部）
+    toolsLayout->addWidget(moreHost);
     toolsLayout->addStretch(1);  // 分节后的尾部弹性（纵列顶端对齐）
 }
 
@@ -308,7 +403,8 @@ void ModelingPanelWidget::setAppliedPreview(
         // 空态占位（不伪造内容——D-MDL-10：预览页仅呈现已应用修订）。
         m_preview->setPlainText(
             QStringLiteral("尚无已应用修订——预览页仅呈现已应用修订内容（D-MDL-10）。\n"
-                           "编辑后请经顶栏『应用草稿』提交，预览随应用刷新。"));
+                           "编辑后请经菜单 File→工业机器人项目→『应用草稿』提交，"
+                           "预览随应用刷新。"));
         return;
     }
     QString text;
@@ -411,8 +507,8 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
         auto* btn = new QPushButton(QString::fromUtf8(kStructButtons[i]), structBar);
         btn->setObjectName(QString::fromLatin1(kStructNames[i]));
         btn->setToolTip(QString::fromUtf8(kStructButtons[i])
-                        + QStringLiteral("（作用于选中关节；草稿级编辑——"
-                                         "应用修改后才产生修订）"));
+                        + QStringLiteral("（作用于选中关节；草稿级编辑——经"
+                                         "『应用草稿』提交后才产生修订）"));
         connect(btn, &QPushButton::clicked, this,
                 [this, i] { onStructureOpClicked(i); });
         barLay->addWidget(btn);
@@ -516,12 +612,22 @@ void ModelingPanelWidget::onStructureOpClicked(int opIndex)
 
     // 六轴重置＝有损操作（§5.2 v0.28 ④——既有链参数被表值覆盖）：确认
     // 对话承载知情（域原语纯执行不内嵌确认——UI 层职责面）。
+    // F-502（宿主审核 P2）分段知情文案：逐项列出将被替换/清空的对象面＋
+    // 明确项目历史语义（草稿级操作不立即产生修订；应用后修订不可变——
+    // PA-2；草稿期无撤销栈，如实告知），默认按钮保持"否"。
     if (opIndex == 4) {
         const QMessageBox::StandardButton confirmed = QMessageBox::question(
             this, QStringLiteral("六轴重置"),
-            QStringLiteral("将整链重建为六轴模板参数（%1 轴→6 轴，既有链参数"
-                           "与工具/场景引用被覆盖/清空——不可撤销草稿外的历"
-                           "史）。确认重置？")
+            QStringLiteral("即将把整链重建为六轴模板参数（%1 轴 → 6 轴）。\n\n"
+                           "将被替换/清空：\n"
+                           "・全部关节参数（类型/轴向/原点/限位/零位）\n"
+                           "・已挂接的工具与场景对象引用\n"
+                           "・物性与几何引用随连杆重建一并清空\n\n"
+                           "项目历史：本操作只改当前草稿，不会立即产生修订；"
+                           "点『应用草稿』后才生成新修订——修订不可变（历史只"
+                           "增不改，项目级撤销＝以新修订对冲），草稿期亦无撤"
+                           "销栈，请确认后执行。\n\n"
+                           "确认重置？")
                 .arg(QString::number(m_editTarget && m_editTarget()
                                          ? m_editTarget()->design.joints.size()
                                          : 0)),
@@ -795,7 +901,9 @@ void ModelingPanelWidget::refreshPropertyRowsFromLastWorkingSet()
         const bool panelEditable = (row.fieldKey == "zero-offset");
         editor->setText(QString::fromStdString(row.valueText));
         editor->setReadOnly(!panelEditable || rowReadOnly(row.enablement));
-        QString label = QString::fromStdString(row.fieldKey);
+        // 行标签＝中文呈现映射（UX-02 工程用语——fieldKey 机器键经
+        // chineseFieldLabel 固定映射；表外键回退键名原文，不虚构文案）。
+        QString label = QString::fromStdString(chineseFieldLabel(row.fieldKey));
         if (!row.unitText.empty()) {
             label += QStringLiteral("（") + QString::fromStdString(row.unitText)
                      + QStringLiteral("）");

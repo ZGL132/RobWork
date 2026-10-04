@@ -1316,10 +1316,22 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
         // 写命令入口补全（UI-T38——主 Dock 顶栏命令条退役的承接面）：应用/
         // 撤销/重做此前仅顶栏按钮与 Ctrl+Shift+P 命令面板两入口，顶栏退役
         // 后菜单成为唯一常驻图形入口（§7.2 路由红线不变——动作只转发命令
-        // 板，文案与原顶栏按钮逐字一致；使能态随命令可用性快照刷新）。
-        addCommandAction(projectMenu, "应用修改", "draft.apply");
-        addCommandAction(projectMenu, "撤销", "project.undo");
-        addCommandAction(projectMenu, "重做", "project.redo");
+        // 板；使能态随命令可用性快照刷新）。
+        // F-501（宿主审核 P2）应用语义明确化：菜单文案与两域面板既有指引
+        // （『应用草稿』）统一——"应用修改"易与项目级修改混淆；悬停说明
+        // 分层交代预检门禁/修订生成/两级撤销的差别（语义零变化，纯文案）。
+        QAction* applyDraft = addCommandAction(projectMenu, "应用草稿", "draft.apply");
+        applyDraft->setToolTip(QStringLiteral(
+            "预检并应用当前草稿——通过门禁后生成新项目修订。"
+            "历史只增不改：旧修订不变，项目级撤销＝以新修订对冲；"
+            "未应用的草稿编辑请在各域面板内草稿撤销/直接改写。"));
+        QAction* undoAction = addCommandAction(projectMenu, "撤销", "project.undo");
+        undoAction->setToolTip(QStringLiteral(
+            "项目级撤销——对冲最近一次已应用的修订（产生一条新修订，历史只增不改）；"
+            "未应用的草稿编辑不在此列。"));
+        QAction* redoAction = addCommandAction(projectMenu, "重做", "project.redo");
+        redoAction->setToolTip(QStringLiteral(
+            "项目级重做——对冲最近一次项目级撤销（产生一条新修订，历史只增不改）。"));
         addCommandAction(projectMenu, "项目另存为", "project.saveAs");
         addCommandAction(projectMenu, "关闭项目", "workbench.closeProject");
         // 最近项目子菜单（PM-10）：内容装配时清空、aboutToShow 现取重建

@@ -18,7 +18,10 @@
 
 #include "PanelModel.hpp"
 
+#include <algorithm>
+#include <array>
 #include <charconv>
+#include <cmath>
 #include <type_traits>
 #include <utility>
 
@@ -54,11 +57,65 @@ std::string formatVector(const rw::math::Vector3D<double>& v)
          + formatDeterministic(v[2]);
 }
 
+// 旋转矩阵 → ZYX 欧拉角（RPY）反解——位姿行的角度半区呈现用。
+// ★ 逐元素解析实现，不调用 rw::math::RPY 构造（冒烟 header-only 纪律：
+//   RPY 构造是框架外联符号，F-480 同族——HostMigrationProviders 侧已实测
+//   链接失败，本文件禁重蹈）。正解约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)
+//   （GeometryLinkEdit 正解同式），反解：pitch＝-asin(R20)，
+//   roll＝atan2(R21,R22)，yaw＝atan2(R10,R00)；|R20|≈1 奇异（万向锁）时
+//   roll＝0、yaw 改由 atan2(-R01,R11) 确定（确定性特例——呈现专用，
+//   与 HostMigrationProviders::rotationToRpy 同式同源，两处均为插件私有
+//   呈现辅助、零业务判定，公式漂移由各自单元测试钉住）。
+//
+// @param R [in] 旋转矩阵（无量纲正交阵；参考系语义由调用行负责）
+// @return {roll, pitch, yaw}，单位 rad
+std::array<double, 3> rotationToRpy(const rw::math::Rotation3D<double>& R)
+{
+    const double pitch = -std::asin(std::clamp(R(2, 0), -1.0, 1.0));
+    const double cp = std::cos(pitch);
+    if (std::abs(cp) > 1e-12) {
+        return {std::atan2(R(2, 1), R(2, 2)), pitch, std::atan2(R(1, 0), R(0, 0))};
+    }
+    // 万向锁：roll/yaw 共线不可分——确定性取 roll=0（工程惯例）。
+    return {0.0, pitch, std::atan2(-R(0, 1), R(1, 1))};
+}
+
+// 位姿的一行文本（"x, y, z, r, p, y"六值——前三维平移 m，后三维 RPY rad；
+// 六值口径与 HostMigrationProviders 工具/场景检查器页一致，单位由行字段
+// "m, rad" 负责）。
+std::string formatPose(const rw::math::Vector3D<double>& d,
+                       const rw::math::Rotation3D<double>& R)
+{
+    const std::array<double, 3> rpy = rotationToRpy(R);
+    return formatDeterministic(d[0]) + ", " + formatDeterministic(d[1]) + ", "
+         + formatDeterministic(d[2]) + ", " + formatDeterministic(rpy[0]) + ", "
+         + formatDeterministic(rpy[1]) + ", " + formatDeterministic(rpy[2]);
+}
+
+// JointPose 重载（关节原点位姿——Transform3D 同构值类型，逐半区取值）。
+std::string formatPose(const JointPose& p)
+{
+    return formatPose(p.d(), p.r());
+}
+
+// 惯量张量的一行文本（六分量"Ixx, Iyy, Izz, Ixy, Ixz, Iyz"——字段序＝
+// RobotDesign.hpp InertiaTensor 声明序；基准＝质心、参考姿态＝连杆系，
+// 单位 kg*m^2 由行字段负责）。
+std::string formatInertia(const InertiaTensor& i)
+{
+    return formatDeterministic(i.ixx) + ", " + formatDeterministic(i.iyy) + ", "
+         + formatDeterministic(i.izz) + ", " + formatDeterministic(i.ixy) + ", "
+         + formatDeterministic(i.ixz) + ", " + formatDeterministic(i.iyz);
+}
+
 // ---- SourcedValue 的呈现半区 -----------------------------------------
 // Provided→数值文本；其余态→固定占位（"未提供"/"不适用"——不伪造数值，
 // ERR-01 四态呈现纪律）；Provided 态同时直投来源徽标（core ProvenanceKind
 // 五值——UX-02 文案归 widget 层）。显式函数模板（不用 auto lambda——
 // 返回类型推定经 pair 显式书写，MSVC 结构化绑定兼容）。
+// 复合值类型（向量/位姿/张量/限位对）的 Provided 态占位"[值已提供]"现仅
+// 为模板级兜底——当前全部调用点均已按字段展开为精确数值（见 propertyFieldsFor
+// 各行），占位出现在界面上即"新增复合字段漏登记展开"的信号（防御面）。
 template <typename T>
 std::pair<std::string, std::optional<core::ProvenanceKind>> sourcedRow(
     const core::SourcedValue<T>& sv)
@@ -82,6 +139,58 @@ std::pair<std::string, std::optional<core::ProvenanceKind>> sourcedRow(
         prov = sv.provenance().kind;
     }
     return {text, prov};
+}
+
+// ---- 枚举值的呈现层中文映射 ------------------------------------------
+// 词表 token（jointTypeToken 等）是机器判别与编码的唯一权威（编解码/校验
+// 面零变化）；下表只是"枚举→工程中文"的呈现固定映射（基座安装预设中文
+// 标签同款先例），括注保留英文 token 供与设计文档词表对照（可回查性）。
+// 新增枚举值而漏登记表项＝编译器告警暴露（switch 全枚举、无 default——
+// 与 token 转发表同款防漏纪律）。
+
+// 关节类型（§7.2——两模式均权威的一等字段）。
+std::string jointTypeDisplay(JointType type)
+{
+    switch (type) {
+    case JointType::Revolute: return "转动（Revolute）";
+    case JointType::Continuous: return "连续（Continuous）";
+    case JointType::Prismatic: return "移动（Prismatic）";
+    case JointType::Fixed: return "固定（Fixed）";
+    }
+    return std::string(jointTypeToken(type));  // 防御性兜底（全枚举已覆盖，不达）
+}
+
+// 权威模式（§7.2 C-1/C-2——显示于根对象属性行）。
+std::string authorityModeDisplay(AuthorityMode mode)
+{
+    switch (mode) {
+    case AuthorityMode::StandardDH: return "标准DH（StandardDH）";
+    case AuthorityMode::Explicit: return "显式（Explicit）";
+    }
+    return std::string(authorityModeToken(mode));
+}
+
+// 场景角色（§4.5 词表——RobotLink/Tool/Payload/EnvironmentObject/Workpiece）。
+std::string sceneRoleDisplay(SceneObjectRole role)
+{
+    switch (role) {
+    case SceneObjectRole::RobotLink: return "机器人连杆（RobotLink）";
+    case SceneObjectRole::Tool: return "工具（Tool）";
+    case SceneObjectRole::Payload: return "负载（Payload）";
+    case SceneObjectRole::EnvironmentObject: return "环境物体（EnvironmentObject）";
+    case SceneObjectRole::Workpiece: return "工件（Workpiece）";
+    }
+    return std::string(sceneObjectRoleToken(role));
+}
+
+// 几何形状类别（几何引用行的徽标半区——Mesh/Primitive 两值）。
+std::string geometryKindDisplay(GeometryKind kind)
+{
+    switch (kind) {
+    case GeometryKind::Mesh: return "网格（Mesh）";
+    case GeometryKind::Primitive: return "原语（Primitive）";
+    }
+    return std::string(geometryKindToken(kind));
 }
 
 // 组节点工厂（分组无对象身份——objectId 为空，锚语义只属于对象叶子）。
@@ -276,16 +385,26 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
         const bool dhAuthority = ws.design.authority == AuthorityMode::StandardDH;
         const auto dhGrey = dhAuthority ? FieldEnablement::ReadOnlyGrey : FieldEnablement::Editable;
 
-        // 类型：两模式均权威（§7.2 表——不在 C-1/C-2 管辖），恒可编辑。
-        add("type", std::string(jointTypeToken(j.type)), "", FieldEnablement::Editable, std::nullopt);
+        // 类型：两模式均权威（§7.2 表——不在 C-1/C-2 管辖），恒可编辑；
+        // 值＝中文呈现映射（token 仍为机器权威——jointTypeDisplay 注）。
+        add("type", jointTypeDisplay(j.type), "", FieldEnablement::Editable, std::nullopt);
         // 轴向：StandardDH＝派生只读（灰显；DerivedReadOnly 来源徽标直投）。
+        // Provided 态展开为三维分量精确数值（"x, y, z"——无量纲单位向量），
+        // 不再落"[值已提供]"占位（复合值展开呈现纪律，见 sourcedRow 注）。
         {
             auto [text, prov] = sourcedRow(j.axis);
+            if (j.axis.state() == core::FieldState::Provided) {
+                text = formatVector(j.axis.value());
+            }
             add("axis", text, "", dhGrey, prov);
         }
-        // 原点：同轴的权威/派生语义（§7.2）。
+        // 原点：同轴的权威/派生语义（§7.2）。Provided 态展开为位姿六值
+        // （"x, y, z, r, p, y"——m/rad，见 formatPose 注）。
         {
             auto [text, prov] = sourcedRow(j.origin);
+            if (j.origin.state() == core::FieldState::Provided) {
+                text = formatPose(j.origin.value());
+            }
             add("origin", text, "m, rad", dhGrey, prov);
         }
         // 零位偏置：两模式均权威（rad/m 随类型——单位标注呈现侧拼接）。
@@ -348,6 +467,11 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
         }
         {
             auto [text, prov] = sourcedRow(l.body.inertia);
+            // Provided 态展开为六分量精确数值（"Ixx, Iyy, Izz, Ixy, Ixz, Iyz"
+            // ——formatInertia 注；不再落"[值已提供]"占位）。
+            if (l.body.inertia.state() == core::FieldState::Provided) {
+                text = formatInertia(l.body.inertia.value());
+            }
             add("inertia", text, "kg*m^2", FieldEnablement::Editable, prov);
         }
         // 几何引用行（visual/collision——UI-T41 批次C C1/C2 增强：形状类别
@@ -357,7 +481,8 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
         // PlaceholderCylinder 注〕，悬空如实呈现不伪造解析）。
         auto geometryRow = [&ws](const std::optional<GeometryRef>& ref) {
             if (!ref.has_value()) { return std::string("未设置"); }
-            const std::string kindToken = std::string(geometryKindToken(ref->kind));
+            // 形状类别＝中文呈现映射（token 仍为机器权威——geometryKindDisplay 注）。
+            const std::string kindToken = geometryKindDisplay(ref->kind);
             const bool resolvable = std::any_of(
                 ws.design.resourceManifest.begin(), ws.design.resourceManifest.end(),
                 [&ref](const ResourceRef& r) { return r.resourceId == ref->resourceRefId; });
@@ -371,9 +496,13 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
         break;
     }
     case SelectedTarget::Kind::Tool: {
-        // 工具（§4.4：安装接口/TCP 列表——逐 TCP 行）。
+        // 工具（§4.4：安装接口/TCP 列表——逐 TCP 行）。安装接口恒有值
+        // （Transform3D 值语义、非 SourcedValue——Parts.hpp 注），展开为
+        // 位姿六值精确呈现（此前硬编码"[位姿已提供]"占位——同 axis 展开
+        // 批次的占位消除）。
         const ToolDefinition& t = ws.toolObjects.at(target.index);
-        add("mount-interface", "[位姿已提供]", "m, rad", FieldEnablement::Editable, std::nullopt);
+        add("mount-interface", formatPose(t.mountInterface.P(), t.mountInterface.R()),
+            "m, rad", FieldEnablement::Editable, std::nullopt);
         for (const TcpEntry& tcp : t.tcpList) {
             // TCP 行键＝"tcp:<key>"（工具内唯一键——defaultTcp 引用目标）。
             add("tcp:" + tcp.key, tcp.displayName, "m, rad", FieldEnablement::Editable,
@@ -383,9 +512,12 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
     }
     case SelectedTarget::Kind::Scene: {
         // 场景（§4.5：世界位姿/角色——世界系固连，M-11 呈现注记随 widget 文案）。
+        // 世界位姿恒有值（Transform3D 值语义），展开为位姿六值；角色值＝
+        // 中文呈现映射（token 仍为机器权威——sceneRoleDisplay 注）。
         const SceneObject& s = ws.sceneObjects.at(target.index);
-        add("world-pose", "[位姿已提供]", "m, rad", FieldEnablement::Editable, std::nullopt);
-        add("role", std::string(sceneObjectRoleToken(s.role)), "", FieldEnablement::Editable,
+        add("world-pose", formatPose(s.worldPose.P(), s.worldPose.R()), "m, rad",
+            FieldEnablement::Editable, std::nullopt);
+        add("role", sceneRoleDisplay(s.role), "", FieldEnablement::Editable,
             std::nullopt);
         break;
     }
@@ -411,9 +543,10 @@ std::vector<PropertyFieldRow> propertyFieldsFor(const ModelingWorkingSet& ws,
         break;
     }
     case SelectedTarget::Kind::ModelRoot: {
-        // 根（显示名/权威模式——权威切换走 L-9 命令流，本区只投影）。
+        // 根（显示名/权威模式——权威切换走 L-9 命令流，本区只投影；
+        // 权威模式值＝中文呈现映射，token 仍为机器权威）。
         add("display-name", ws.design.displayName, "", FieldEnablement::Editable, std::nullopt);
-        add("authority", std::string(authorityModeToken(ws.design.authority)), "",
+        add("authority", authorityModeDisplay(ws.design.authority), "",
             FieldEnablement::ReadOnlyGrey, std::nullopt);
         break;
     }

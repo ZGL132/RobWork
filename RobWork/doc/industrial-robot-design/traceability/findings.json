@@ -4977,6 +4977,103 @@
       "registeredAt": "2026-10-04",
       "title": "UI-T53 实施留痕 gtest XML 落盘覆盖面窄于先例（仅 modeling_test/gui 两套件——T48 先例为受影响套件全量落盘；首次落盘时 --gtest_output 相对路径误写致 XML 缺失，补跑仅覆盖两套件）；验收复现已补齐该面。后续任务留痕：受影响套件 XML 全量落盘为留痕完成判据。",
       "owner": "验收侧已补（acc/ui-t53/1 记录）；本条登记留痕口径教训"
+    },
+    {
+      "id": "F-494",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-1",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-04",
+      "title": "需求只读会话初始化潜在不一致（宿主审核 P1）：RequirementsUiModule::setWritable 在面板缺位（需求 Dock 尚未首次创建）时直接丢弃可写性事实，装配工厂又硬编码 new RequirementsPanelWidget(true)——『只读项目先开、需求 Dock 后开』装配序下面板自首次显示起即呈可写（L-R12 安全边界违约；建模域同位置已有 m_writable 暂存无此缺陷）",
+      "owner": "UI 会话（所有者指示按宿主审核阶段 0 第 1 项执行）",
+      "resolution": "随 2026-10-04 修复提交闭环：RequirementsUiModule 缓存 m_writable（面板缺位＝暂存，与 bindCommandSubmit 同一时序语义）＋新增 initialWritable() 供装配工厂作面板构造初值＋attachPanel 幂等回放兜底（构造与挂接之间又有 setWritable 到达也拉齐）；回归用例 RequirementsSessionGuiTest.ReadOnlyStagedBeforePanelCreate_L_R12 钉住装配序。",
+      "fixedAt": "2026-10-04"
+    },
+    {
+      "id": "F-495",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-2",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "需求三维区域采样结果状态着色未闭环（宿主审核 P1）：当前仅有包围盒＋采样格线骨架，缺采样点通过/失败/未采样三态、达标颜色区分、覆盖率颜色映射、校验项点击定位采样点、颜色图例；颜色必须由统一 UI 词表提供（建议语义：绿=通过/红=未通过/灰=未采样/黄=警告/蓝框=当前选中），禁止三维后端各自硬编码",
+      "owner": "待立项（宿主审核阶段 1 首项——数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/透明度/图例→校验页与覆盖率摘要）"
+    },
+    {
+      "id": "F-496",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-3",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "完整 RobWorkStudio 宿主人工验收证据缺失（宿主审核 P1）：既有测试证明模块/Widget/桥接正确，未证明真实宿主中『启动→新建项目→开需求 Dock→增工位→改位置→三维拾取→捕获 TCP→应用草稿→修订推进→关闭→三维标记/选择/属性全清理』十步人工链可操作。既有自动化覆盖面（SessionDetachedResetsPanel／PluginModuleT03BTest onSessionDetached／HostIntegrationGuiTest ProjectCloseTeardown 检查器半区）不替代人工验收；启动面证据＝所有者运行实例证实 2026-10-04 18:19 链接的 exe 可正常启动（含建模中文化批次）；本批 F-494 修复的重链因运行实例锁定 exe（LNK1104）待关闭宿主后执行",
+      "owner": "所有者（人工验收须人执行；建议按审核原文阶段 0 验收标准逐项留痕 traceability/acceptance/）"
+    },
+    {
+      "id": "F-497",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#M-1",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "建模复杂对象主要是只读事实页、未真正可编辑（宿主审核建模 P1）：工具坐标与负载/场景位姿/命名位姿/传动/动力学/限位批量编辑缺真编辑能力（面板就地编辑仅 zero-offset——MDL-07 表单最小版划界）。应按 B.1 复杂对象编辑模式（结构树选择→公共摘要→详细编辑抽屉/页→草稿变更→就绪校验→应用修订），不向普通 QFormLayout 堆字段；推荐页序：工具→场景→位姿集→传动→动力学→限位",
+      "owner": "待立项（宿主审核阶段 2）"
+    },
+    {
+      "id": "F-498",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#M-2",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "建模预览页单一、未对齐旧版多类 XML 预览（宿主审核建模 P2）：当前仅已应用修订摘要文本（D-MDL-10 保持），旧版有 SerialDevice/Scene/DWC/CollisionSetup/ProximitySetup 多类预览。建议预览类型下拉（模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML/规范包清单），每类须来源修订号/模型身份/生成时间/来源对象明确、只读、可复制导出、UI 不自行拼 XML（XML 由 runtime 编译产生——既有导出能力为产物源）",
+      "owner": "待立项（宿主审核阶段 2/3 交界）"
+    },
+    {
+      "id": "F-499",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-4",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "需求双树职责呈现标识缺失（宿主审核 P2）：工业项目树（已应用修订）与需求内部树（草稿）并存，工程师易困惑同一工位为何出现两次/哪棵可编辑/草稿何时进项目树/共享检查器展示草稿还是已应用版本。建议两树挂『已应用/当前草稿』状态标识＋需求面板顶部提示『当前编辑：需求草稿，应用后将生成新的项目修订』＋检查器对草稿来源对象挂说明条。【进展 2026-10-04】自持面已落位（需求卡 v0.16）：面板顶部常驻草稿提示条（ird_req_draft_hint）＋树名标注『需求树（当前草稿）』＋gui 具名用例；共享项目树侧标识涉 PIPE §6.2 共享装配面互斥，随后续任务协调——本条维持 open 待共享面半区",
+      "owner": "待立项（共享项目树/检查器侧标识——须与共享装配面任务协调）"
+    },
+    {
+      "id": "F-500",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-5",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "需求区域编辑缺表格视图（宿主审核 P2）：卡片视图适合复杂编辑，但连续录入多区域/尺寸比较/单位与数值异常批量发现/全区域参考系采样方式状态速览场景下表格更高效。建议双视图（卡片＋表格）同步，表格先支持名称/参考系/X-Y-Z 范围/采样方式/采样数量/覆盖率/校验状态七列，复杂字段仍进右侧编辑区",
+      "owner": "待立项（宿主审核阶段 1/3）"
+    },
+    {
+      "id": "F-501",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-6",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-04",
+      "title": "需求『应用』语义文案需分层明确（宿主审核 P2）：按钮与状态统一为预检/应用草稿/生成修订/查看修订，并解释草稿撤销只影响当前编辑、项目撤销产生新历史修订、应用不改旧修订、校验失败哪些阻断/哪些警告可继续（对齐旧版 Validate & Publish 的用户心智但语义更严）",
+      "owner": "已随 2026-10-04 呈现批次①闭环（需求卡 v0.16）：宿主菜单『应用修改』→『应用草稿』（与两域面板既有指引统一）＋应用/撤销/重做三动作悬停说明分层交代（预检门禁/修订不可变·历史只增不改/草稿撤销与项目撤销的差别）；独立『预检』命令未新增——预检已内建于 draft.apply 门禁与校验页实时化，避免第二语义入口",
+      "resolution": "呈现批次①提交（2026-10-04）：ui_gui 78/78＋requirements_gui 44/44 回归全绿；语义零变化（纯文案）。",
+      "fixedAt": "2026-10-04"
+    },
+    {
+      "id": "F-502",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#M-3",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-04",
+      "title": "建模工具区命令频率分层不足＋六轴重置确认文案需分段（宿主审核建模 P2）：十条命令四组纵排仍高低频混杂——建议高频（模板新建/URDF/Xacro 导入）/常用（新增关节/几何挂接/碰撞复制/六轴重置/Home-Zero）/低频诊断（权威切换/物性估算/占位几何/基线比较/规范包导入导出，入『更多操作』菜单）三层；六轴重置确认分段列出将被替换的关节参数与工具/场景引用、说明不立即修改项目历史（应用草稿后才产生修订），默认按钮保持取消",
+      "owner": "已随 2026-10-04 呈现批次①闭环（建模卡 v0.33）：低频诊断六命令收进『更多操作』折叠区（默认收起——压缩纵向长度；命令集合/id/使能逻辑零变化；复位 Home/Zero 常驻常用层）＋六轴重置确认分段知情文案（逐项列替换/清空面＋项目历史语义＋草稿期无撤销栈如实告知，默认按钮保持『否』）",
+      "resolution": "呈现批次①提交（2026-10-04）：modeling_gui 18/18（新增 MoreActionsCollapse_DefaultCollapsedAndToggle_F502）＋modeling_test 322 全绿；语义零变化。",
+      "fixedAt": "2026-10-04"
+    },
+    {
+      "id": "F-509",
+      "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#M-5",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "需求与建模编辑反馈视觉语言未统一（宿主审核 P2）：结构操作/几何挂接/碰撞复制/字段编辑各有状态提示但词形不一——建议两域共用同一套状态标签（草稿已修改/等待应用/已应用并生成修订/操作被拒绝/只读项目/无选中对象）与来源标签（导入/用户输入/模板/估算/运行时捕获；core ProvenanceKind 五值呈现映射在 HostMigrationProviders 已有先例，应收口为共享 UiText 词表）",
+      "owner": "待立项（宿主审核阶段 3——跨域呈现统一）",
+      "resolution": "与主线 F-503（UI-T53 验收 S-1）撞号且异义——按主线尾部顺延重取 F-509（PIPE v1.17 ①取号口径，2026-10-05 栈合入人工解算）。"
     }
   ]
 }

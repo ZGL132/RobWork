@@ -49,6 +49,9 @@ QList<QPushButton*> commandButtonsOf(const QWidget& panel)
         if (btn->objectName() == QStringLiteral("ird_modeling_history_toggle")) {
             continue;  // 历史折叠钮不入命令对账（B2 呈现件）
         }
+        if (btn->objectName() == QStringLiteral("ird_modeling_more_toggle")) {
+            continue;  // 工具区折叠开关不入命令对账（F-502 呈现件——非命令目录按钮）
+        }
         if (btn->objectName().startsWith(QStringLiteral("ird_modeling_struct_"))) {
             continue;  // 结构操作钮不入命令对账（UI-T47 呈现件——非命令目录按钮）
         }

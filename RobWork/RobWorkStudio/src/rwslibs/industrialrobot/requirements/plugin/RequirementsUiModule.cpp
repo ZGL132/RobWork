@@ -104,7 +104,12 @@ void RequirementsUiModule::setWritable(bool writable)
 {
     // L-R12 门控输入转发（UI-T39——宿主按打开报告的真实 writable 驱动；
     // 本转发面零判定，门控事实源＝ui 只读横幅同源的宿主报告）。
+    // 只读初始化修复：面板缺位（Dock 尚未首次创建）不再丢弃该态——缓存
+    // 本模块（与 bindCommandSubmit 面板前暂存同一时序语义），由装配工厂
+    // 经 initialWritable() 作面板构造初值＋attachPanel 回放兜底；否则
+    // "只读项目先开、需求 Dock 后开"装配序下面板恒按可写创建（L-R12 违约）。
     m_guard.assertOnUiThread();
+    m_writable = writable;
     if (m_panel != nullptr) {
         m_panel->setWritable(writable);
     }
@@ -174,6 +179,12 @@ void RequirementsUiModule::attachPanel(RequirementsPanelWidget* panel)
     }
     if (m_panel != nullptr && m_pendingRegionSink) {
         m_panel->setRegionPreviewSink(m_pendingRegionSink);
+    }
+    // 可写性缓存回放（只读初始化修复——工厂构造初值经 initialWritable()
+    // 已对齐，此处幂等再拉齐一次：即便面板以其他路径构造/构造与挂接之间
+    // 又有 setWritable 到达，attachPanel 完成后面板必等于模块缓存态）。
+    if (m_panel != nullptr) {
+        m_panel->setWritable(m_writable);
     }
     wirePanelPostEdit();
 }

@@ -206,13 +206,29 @@ RequirementsPanelWidget::RequirementsPanelWidget(bool writable, QWidget* parent)
     //   以初始尺寸形态给出〔非硬下限〕）。
     setMinimumSize(380, 560);
 
-    // 骨架：顶部命令条＋（左树 1｜右四页面 2）水平区。
+    // 骨架：顶部命令条＋草稿提示条＋（左树 1｜右四页面 2）水平区。
     auto* rootLayout = new QVBoxLayout(this);
     auto* contentLayout = new QHBoxLayout;
     rootLayout->addLayout(contentLayout);
 
     // 命令条（rootLayout 第 0 行——buildCommandBar 经 insertWidget 挂入）。
     buildCommandBar(this);
+
+    // 双树职责提示条（F-499——宿主审核 P2，自持面）：需求树＝草稿编辑面、
+    // 工业项目树＝已应用修订呈现——同一对象两处可见的认知锚在面板顶部
+    // 常驻说明（纯呈现；muted 次级文本——与建模分节标题同款词表色）。
+    // 共享项目树侧的状态标识涉共享装配面（PIPE §6.2 互斥），随后续任务
+    // 协调落地（findings F-499 登记）。
+    auto* draftHint = new QLabel(
+        QStringLiteral("当前编辑：需求草稿——经『应用草稿』提交后生成新项目修订"
+                       "（工业项目树呈现已应用版本）"),
+        this);
+    draftHint->setObjectName(QStringLiteral("ird_req_draft_hint"));
+    draftHint->setWordWrap(true);
+    draftHint->setStyleSheet(
+        QStringLiteral("color: %1; padding: 1px 0;")
+            .arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    rootLayout->insertWidget(1, draftHint);  // 命令条（第 0 行）之下、内容区之上
 
     // 左栏对象树（权 1）。
     auto* left = new QWidget(this);
@@ -489,7 +505,10 @@ void RequirementsPanelWidget::buildTreePane(QWidget* left)
     // 与共享项目树联动语义不变〔L-R1 双向〕）。
     auto* leftLayout = new QVBoxLayout(left);
 
-    m_tree = makeTable(left, QStringList() << "需求树");
+    // F-499（宿主审核 P2）：树名标注"（当前草稿）"——与工业项目树（已应用
+    // 修订）的职责分界在两处呈现位同频（顶部提示条＋树名），消除"同一
+    // 工位为何出现两次/哪棵可编辑"的认知歧义。
+    m_tree = makeTable(left, QStringList() << "需求树（当前草稿）");
     m_tree->setRootIsDecorated(true);  // 层级折叠形态（分组节点的展开指示器）
     connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
             &RequirementsPanelWidget::onTreeSelectionChanged);

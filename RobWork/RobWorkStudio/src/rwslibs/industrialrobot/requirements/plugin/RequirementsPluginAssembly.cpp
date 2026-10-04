@@ -297,9 +297,11 @@ RequirementsPluginAssembly createRequirementsPluginAssembly()
         static_cast<RequirementsUiModule*>(result.module.get());
     panel.factory = [moduleRaw]() -> QWidget* {
         // 静态转换安全面：本门面产出的模块恒为 requirements 具体模块
-        // （单一来源）。面板初始可写（L-R12 门控初值——只读态由宿主会话
-        // 驱动，非本装配缝范围）。
-        auto* widget = new RequirementsPanelWidget(true);
+        // （单一来源）。面板初始可写性＝模块缓存的最近 setWritable 值
+        // （L-R12 门控初值——只读初始化修复：此前硬编码 true，"只读项目
+        // 先开、需求 Dock 后开"装配序下首开即呈可写；现经 initialWritable()
+        // 取值＋attachPanel 缓存回放双保险，装配序无关）。
+        auto* widget = new RequirementsPanelWidget(moduleRaw->initialWritable());
         // 编辑目标提供器：每次编辑提交现取权威编辑器（零缓存——PA-1；
         // 惰性安全：工厂执行时编辑器可尚未 attachEditor，提供器返回
         // nullptr＝编辑禁用的诚实态，不虚构可编辑性）。
