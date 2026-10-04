@@ -4851,6 +4851,26 @@
       "title": "UI-T43 补录验收的回归基线口径注记（同 F-485 族）：契约 acceptance 6 基线数字（modeling_test 294、modeling_gui_test 9+3、ui_test/ui_gui_test 该点值）为冻结 SHA 8d5b2584 时代口径——补录按冻结 SHA 复现逐数一致（294/12/239/67）；主线当前态（321/17/201/246）另经后续各卡验收覆盖。两口径无矛盾，契约文本未标注时代限定。",
       "owner": "下一治理批（UI-T43.json note 补一行时代限定注即闭环——与 F-485 同款处置）",
       "resolution": "验收记录 4.4 发现转登（acc/UI-T43/1）。"
+    },
+    {
+      "id": "F-487",
+      "source": "UI-T44 补录验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外；该卡合入时点早于补录 50+ 个主线提交）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T44 补录验收的回归基线口径注记（同 F-485/F-486 族）：契约 acceptance 回归数字（ui_test 239、ui_gui_test 67+3）为冻结 SHA 08053bf7 时代口径——补录逐数一致；且该点携带 F-472 修复前形态的宿主测试（偶发 UB——补录首轮 ui_gui_test 撞上一次 AssemblyFailureGroupPlaceholder 失败，单用例六连跑全绿＋零触碰缺陷文件归因留痕），主线当前态已含 UI-T43 修复。",
+      "owner": "下一治理批（UI-T44.json note 补一行时代限定注即闭环——与 F-485 同款处置）",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T44/1）。"
+    },
+    {
+      "id": "F-488",
+      "source": "UI-T44 补录验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T44 D3 宿主接线（refreshReadinessSummary 挂 refreshSharedSurfaces 编排）无直接断言用例——acceptance 证据为「ui_test/ui_gui_test 全绿（零回归）」的间接承载＋实现核查（UiPlugin.cpp L3048 调用点在位）；若编排位次（「首位」）需防回归，宜补一条 refreshSharedSurfaces 调用序断言用例。",
+      "owner": "后续 ui 编排触碰批次（顺手补调用序断言钉；本卡实现核查证据已记录非缺陷）",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T44/1）。"
     }
   ]
 }
