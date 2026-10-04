@@ -4841,6 +4841,16 @@
       "title": "WP-13-T21 补录验收的回归基线口径注记：契约 acceptance 6 数字（modeling_test 294+3、modeling_gui_test 9）为冻结 SHA eaf8dded 时代口径——补录按冻结 SHA 复现逐数一致（297/9）；主线当前态（321/17）另经 UI-T47~T50 各自验收覆盖。两口径无矛盾，但契约文本未标注时代限定，读者对「297≠321」需查证方知原因。",
       "owner": "下一治理批（WP-13-T21.json note 补一行时代限定注即闭环——语义零变化）",
       "resolution": "验收记录 4.4 发现转登（acc/WP-13-T21/1）。"
+    },
+    {
+      "id": "F-486",
+      "source": "UI-T43 补录验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外；该卡合入时点早于补录 49 个主线提交）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T43 补录验收的回归基线口径注记（同 F-485 族）：契约 acceptance 6 基线数字（modeling_test 294、modeling_gui_test 9+3、ui_test/ui_gui_test 该点值）为冻结 SHA 8d5b2584 时代口径——补录按冻结 SHA 复现逐数一致（294/12/239/67）；主线当前态（321/17/201/246）另经后续各卡验收覆盖。两口径无矛盾，契约文本未标注时代限定。",
+      "owner": "下一治理批（UI-T43.json note 补一行时代限定注即闭环——与 F-485 同款处置）",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T43/1）。"
     }
   ]
 }
