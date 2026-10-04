@@ -40,6 +40,12 @@ using sdurws::ird::modeling::ToolDefinition;
 using sdurws::ird::modeling::ModelingWorkingSet;
 using sdurws::ird::modeling::PartPoseEditValue;
 using sdurws::ird::modeling::PartPoseEditErrorCode;
+using sdurws::ird::modeling::TcpEditErrorCode;
+using sdurws::ird::modeling::applyTcpAddEdit;
+using sdurws::ird::modeling::applyTcpRemoveEdit;
+using sdurws::ird::modeling::applyTcpOffsetEdit;
+using sdurws::ird::modeling::applyDefaultTcpSwitchEdit;
+using sdurws::ird::modeling::tcpEditErrorCodeToken;
 using sdurws::ird::modeling::SceneObject;
 using sdurws::ird::modeling::applyToolMountEdit;
 using sdurws::ird::modeling::applyScenePoseEdit;
@@ -430,4 +436,92 @@ TEST(MdlParts, PartPoseEdits_ToolMountAndSceneWorld_UI_T55)
                  std::invalid_argument);
     EXPECT_THROW(applyScenePoseEdit(ws, 9, PartPoseEditValue{}),
                  std::invalid_argument);
+}
+
+/**
+ * TCP 列表结构化编辑（UI-T57——F-497 兑现④；MDL-13 不变量流）：
+ * 新增（键唯一/非空＋offset ZYX 正解）→删除（键存在/最后一条保护/
+ * defaultTcp 引用保护）→offset 编辑→默认切换（根对象写入）。
+ * 全拒绝路径工作集字节不变（域内强保证）。
+ */
+TEST(MdlParts, TcpListEdits_AddRemoveOffsetDefault_UI_T57)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-13"}, std::vector<std::string>{"AT-01"});
+
+    ModelingWorkingSet ws;
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = makeOid(701);
+    tool.tcpList.push_back(TcpEntry{});  // 种子键 "" ——先补首个合法键
+    tool.tcpList[0].key = "tcp-1";
+    ws.toolObjects.push_back(tool);
+
+    // ---- 新增：合法键 tcp-2（offset 全零＋yaw 0.25）----
+    const auto add = applyTcpAddEdit(ws, 0, "tcp-2", "法兰 2",
+                                     PartPoseEditValue{0.0, 0.0, 0.1, 0.0, 0.0, 0.25});
+    EXPECT_FALSE(add.has_value()) << "合法新增应接受";
+    ASSERT_EQ(ws.toolObjects[0].tcpList.size(), std::size_t{2});
+    EXPECT_DOUBLE_EQ(ws.toolObjects[0].tcpList[1].offset.P()[2], 0.1);
+    EXPECT_NEAR(std::atan2(ws.toolObjects[0].tcpList[1].offset.R()(1, 0),
+                           ws.toolObjects[0].tcpList[1].offset.R()(0, 0)),
+                0.25, 1e-12);
+    ASSERT_EQ(ws.changes.size(), std::size_t{1});
+    EXPECT_NE(ws.changes[0].summary.find("tcp-2"), std::string::npos);
+
+    // ---- 新增拒绝面：空键/重复键（I-MDL-13）----
+    const ModelingWorkingSet before = ws;
+    const auto emptyKey = applyTcpAddEdit(ws, 0, "", "x",
+                                          PartPoseEditValue{});
+    ASSERT_TRUE(emptyKey.has_value());
+    EXPECT_EQ(emptyKey->code, TcpEditErrorCode::KeyEmpty);
+    const auto dupKey = applyTcpAddEdit(ws, 0, "tcp-2", "x",
+                                        PartPoseEditValue{});
+    ASSERT_TRUE(dupKey.has_value());
+    EXPECT_EQ(dupKey->code, TcpEditErrorCode::KeyDuplicate);
+    EXPECT_EQ(ws, before) << "拒绝路径工作集字节不变";
+
+    // ---- 删除拒绝面：最后一条保护（tcpList 仅 1 条时删 tcp-1）----
+    // 先删 tcp-2 使表剩 1 条（合法——表非空），再删最后一条拒绝。
+    const auto remove2 = applyTcpRemoveEdit(ws, 0, "tcp-2");
+    EXPECT_FALSE(remove2.has_value());
+    ASSERT_EQ(ws.changes.size(), std::size_t{2});
+    const ModelingWorkingSet beforeLast = ws;
+    const auto removeLast = applyTcpRemoveEdit(ws, 0, "tcp-1");
+    ASSERT_TRUE(removeLast.has_value());
+    EXPECT_EQ(removeLast->code, TcpEditErrorCode::LastTcpProtected);
+    EXPECT_EQ(ws, beforeLast) << "最后一条保护：工作集字节不变";
+
+    // ---- defaultTcp 引用保护：根引用 tcp-1 后再删拒绝（I-MDL-9）----
+    EXPECT_FALSE(applyDefaultTcpSwitchEdit(ws, 0, "tcp-1").has_value());
+    ASSERT_EQ(ws.changes.size(), std::size_t{3});
+    EXPECT_EQ(ws.design.defaultTcp->toolOid, makeOid(701));
+    EXPECT_EQ(ws.design.defaultTcp->tcpKey, "tcp-1");
+    const ModelingWorkingSet beforeRef = ws;
+    const auto removeRef = applyTcpRemoveEdit(ws, 0, "tcp-1");
+    ASSERT_TRUE(removeRef.has_value());
+    EXPECT_EQ(removeRef->code, TcpEditErrorCode::DefaultTcpReferenced);
+    EXPECT_EQ(ws, beforeRef) << "引用保护：工作集字节不变";
+
+    // ---- offset 编辑：键存在→ZYX 正解写入＋变更记录；键不存在→拒绝 ----
+    const auto offsetEdit = applyTcpOffsetEdit(
+        ws, 0, "tcp-1", PartPoseEditValue{0.0, 0.0, 0.2, 0.0, 0.0, 0.0});
+    EXPECT_FALSE(offsetEdit.has_value());
+    EXPECT_DOUBLE_EQ(ws.toolObjects[0].tcpList[0].offset.P()[2], 0.2);
+    const auto notFound = applyTcpOffsetEdit(ws, 0, "nope",
+                                             PartPoseEditValue{});
+    ASSERT_TRUE(notFound.has_value());
+    EXPECT_EQ(notFound->code, TcpEditErrorCode::KeyNotFound);
+
+    // ---- 越界 fail-fast（调用方契约违约）----
+    EXPECT_THROW(applyTcpAddEdit(ws, 9, "x", "x", PartPoseEditValue{}),
+                 std::invalid_argument);
+    EXPECT_THROW(applyTcpRemoveEdit(ws, 9, "tcp-1"), std::invalid_argument);
+    EXPECT_THROW(applyTcpOffsetEdit(ws, 9, "tcp-1", PartPoseEditValue{}),
+                 std::invalid_argument);
+    EXPECT_THROW(applyDefaultTcpSwitchEdit(ws, 9, "tcp-1"),
+                 std::invalid_argument);
+
+    // ---- token（词表对账）----
+    EXPECT_EQ(tcpEditErrorCodeToken(TcpEditErrorCode::LastTcpProtected),
+              "last-tcp-protected");
 }

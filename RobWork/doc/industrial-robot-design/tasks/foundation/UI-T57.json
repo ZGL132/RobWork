@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T57",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "TCP 列表结构化编辑（F-497 兑现④）：TcpEdit 四原语域新增＋工具页 TCP 段（combo 选 TCP＋增删钮＋offset 六行面板＋默认切换）",
+  "status": "ready",
+  "dependsOn": ["UI-T55"],
+  "requirements": [
+    "MDL-13（工具 TCP 完整——tcpList ≥1、键非空唯一；删除守卫双保护）",
+    "I-MDL-9（defaultTcp 引用保护——被引用键删除拒绝，RemoveObjectRefEdit 同款语义）",
+    "MDL-07（选中只显示相关属性——工具页 TCP 段承载 TCP 列表编辑）",
+    "ERR-01（诚实拒绝——六类错误码就地呈现，工作集字节不变）"
+  ],
+  "designRefs": [
+    "units/modeling.md#4.4",
+    "units/modeling.md#9.7",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-497"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T57.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t57/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "modeling/include/sdurws/ird/modeling/Parts.hpp：TcpEditErrorCode 六值（KeyEmpty/KeyDuplicate/KeyNotFound/LastTcpProtected/DefaultTcpReferenced/ValueNotFinite）＋token＋TcpEditError＋四原语声明（applyTcpAddEdit/applyTcpRemoveEdit/applyTcpOffsetEdit/applyDefaultTcpSwitchEdit——ModelingWorkingSet 前置声明沿用）",
+    "modeling/src/Parts.cpp：四原语实现（新增：键空/重+有限性→TcpEntry push＋记录；删除：键存在→引用保护先于最后一条保护→erase＋记录；offset 编辑：键存在→有限性→直写＋记录；默认切换：键存在→根 defaultTcp 整体写入＋记录）＋tcpKeyIndex 共用查找",
+    "modeling/plugin/ModelingPanelWidget.hpp/.cpp：工具页 TCP 段（combo＋新增/删除/设为默认三钮＋TCP offset 六行 ParamTablePanel——字段集常量构造期一次建成不重建）＋refreshTcpPane（combo 重建保留选中键 QSignalBlocker 防重入＋基线回填）＋onTcpAddClicked 自动键 tcp-N 首空位＋applyTcpOffsetEdits 分组装配＋refreshEditPages Tool 分支随刷 TCP 段＋L-7 门控（setWritable 即时同步＋出口防御面）",
+    "modeling/test/PartsTest.cpp：TcpListEdits_AddRemoveOffsetDefault_UI_T57（新增/空键/重复键/删除/最后一条保护/defaultTcp 引用保护/offset 编辑/键不存在/默认切换/越界 fail-fast/token——全拒绝路径字节不变）",
+    "modeling/gui_test/ModelingPanelGuiTest.cpp：三用例（TcpListEdit_AddAndOffsetChain——新增自动键＋offset 全链＋设为默认／TcpListEdit_RemoveGuards——引用保护就地呈现＋字节不变／TcpPane_ReadOnlyDisables——L-7 控件半区）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟 ctest 3/3）",
+    "modeling_test 328/328（新增 1）＋modeling_gui_test 31/31（新增 3）＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78（原生窗口平台）＋requirements_gui 44/44",
+    "ird_gates base..branch 零新增（基线 101 条存量集口径）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t57/"
+  ],
+  "acceptance": [
+    "域原语面：四原语全拒绝路径字节不变＋新增 ZYX 正解互证＋token——具名用例 PartPoseEdits 姊妹篇 TcpListEdits_AddRemoveOffsetDefault_UI_T57（PartsTest）",
+    "选择驱动+自动键：选中工具→TCP 段可见→新增 TCP 自动键 tcp-2 即选中——TcpListEdit_AddAndOffsetChain_UI_T57 前段",
+    "offset 全链：tcp-offset-z 编辑→应用→确认→applyTcpOffsetEdit 接受＝tcpList[1].offset 更新——TcpListEdit_AddAndOffsetChain_UI_T57 中段（TCP 面板定位按行键 tcp-offset-z——两面板同容器故按面板取钮）",
+    "默认切换：设为默认→根 defaultTcp＝(tool.objectId, tcp-2) 整体写入——TcpListEdit_AddAndOffsetChain_UI_T57 尾段",
+    "守卫面：defaultTcp 引用保护就地呈现＋字节不变——TcpListEdit_RemoveGuards_UI_T57（域内引用保护先于最后一条保护——指引更明确）",
+    "L-7 门控：只读会话三钮禁用——TcpPane_ReadOnlyDisables_UI_T57",
+    "回归门槛：受影响目标零错误构建（集成＋独立冒烟 ctest 3/3）＋全套件回归＋validate-docs/validate-task PASS；留痕 traceability/builds/ui-t57/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "删除守卫次序＝引用保护先于最后一条保护（指引更明确：先切默认再删；UI-T57 实测两种次序语义均正确后定序）",
+    "工具页两 ParamTablePanel 同容器——测试按行键定位面板并取同面板内 apply/确认钮（跨面板取钮会点到安装接口面板——gui 用例实测教训）",
+    "combo 重建期 QSignalBlocker 防重入（currentIndexChanged 触发基线回填会打断重建）",
+    "gui 对账排除：tcp_combo/tcp_add/tcp_remove/tcp_default 呈现件与 tcp offset 面板 ird_param_* 钮不入命令目录对账（ird_param_ 前缀已覆盖）"
+  ],
+  "branch": "ui-t57",
+  "note": "分支基点＝redesign-main@53c5fcc8。F-497 兑现④（TCP 列表结构化编辑——UI-T55 卡注取号顺延后本批为 UI-T57）。F-497 余项：位姿集/传动编辑页（检查器readOnly事实页已有，编辑页待后续）。"
+}

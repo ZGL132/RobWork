@@ -357,4 +357,196 @@ std::optional<PartPoseEditError> applyScenePoseEdit(ModelingWorkingSet& ws,
     return std::nullopt;
 }
 
+// =====================================================================
+// TCP 列表结构化编辑流（UI-T57——F-497 兑现④；MDL-13 不变量流）
+// =====================================================================
+
+std::string_view tcpEditErrorCodeToken(TcpEditErrorCode code) noexcept
+{
+    switch (code) {
+    case TcpEditErrorCode::KeyEmpty: return "key-empty";
+    case TcpEditErrorCode::KeyDuplicate: return "key-duplicate";
+    case TcpEditErrorCode::KeyNotFound: return "key-not-found";
+    case TcpEditErrorCode::LastTcpProtected: return "last-tcp-protected";
+    case TcpEditErrorCode::DefaultTcpReferenced: return "default-tcp-referenced";
+    case TcpEditErrorCode::ValueNotFinite: return "value-not-finite";
+    }
+    return "value-not-finite";  // 全枚举已覆盖，不达此处
+}
+
+namespace {
+
+/// TCP 键查找（返回条目下标；未命中＝nullopt）。
+std::optional<std::size_t> tcpKeyIndex(const ToolDefinition& tool,
+                                       const std::string& tcpKey)
+{
+    for (std::size_t i = 0; i < tool.tcpList.size(); ++i) {
+        if (tool.tcpList[i].key == tcpKey) { return i; }
+    }
+    return std::nullopt;
+}
+
+/// TCP offset 六分量有限性检查（与部件位姿面同一判定口径）。
+std::optional<TcpEditError> tcpOffsetFiniteCheck(const PartPoseEditValue& value,
+                                                 const std::string& subject)
+{
+    const double comps[6] = {value.x, value.y, value.z,
+                             value.roll, value.pitch, value.yaw};
+    for (const double c : comps) {
+        if (!std::isfinite(c)) {
+            return TcpEditError{TcpEditErrorCode::ValueNotFinite,
+                                subject + "：offset 含非有限分量（NaN/Inf）"};
+        }
+    }
+    return std::nullopt;
+}
+
+}  // namespace
+
+std::optional<TcpEditError> applyTcpAddEdit(ModelingWorkingSet& ws,
+                                            std::size_t toolIndex,
+                                            const std::string& key,
+                                            const std::string& displayName,
+                                            const PartPoseEditValue& offset)
+{
+    // ① 越界 fail-fast。
+    if (toolIndex >= ws.toolObjects.size()) {
+        throw std::invalid_argument(
+            "modeling/parts/tcp-add-index: 工具下标越界: tools["
+            + std::to_string(toolIndex) + "]");
+    }
+    const std::string subject = "tools[" + std::to_string(toolIndex) + "]";
+    // ② 键非空（I-MDL-13：键是 defaultTcp 引用锚——空键即引用锚损坏面）。
+    if (key.empty()) {
+        return TcpEditError{TcpEditErrorCode::KeyEmpty,
+                            subject + "：TCP 键为空（I-MDL-13——键须非空唯一）"};
+    }
+    // ③ 键集合内唯一（I-MDL-13）。
+    auto& tool = ws.toolObjects[toolIndex];
+    if (tcpKeyIndex(tool, key).has_value()) {
+        return TcpEditError{TcpEditErrorCode::KeyDuplicate,
+                            subject + "：TCP 键重复：" + key};
+    }
+    // ④ offset 有限性（I-MDL-3）。
+    if (const auto err = tcpOffsetFiniteCheck(offset, subject)) { return err; }
+    // ⑤ 提交：offset 经 ZYX 正解组合；displayName 原样。
+    TcpEntry entry;
+    entry.key = key;
+    entry.displayName = displayName;
+    entry.offset = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(offset.x, offset.y, offset.z),
+        rpymath::rpyToRotation(offset.roll, offset.pitch, offset.yaw));
+    tool.tcpList.push_back(std::move(entry));
+    ModelingChangeRecord record;
+    record.subject = subject + ".tcpList";
+    record.summary = "新增 TCP 条目（键 " + key + "——tcp 系相对安装接口，m/rad）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::optional<TcpEditError> applyTcpRemoveEdit(ModelingWorkingSet& ws,
+                                               std::size_t toolIndex,
+                                               const std::string& tcpKey)
+{
+    // ① 越界 fail-fast。
+    if (toolIndex >= ws.toolObjects.size()) {
+        throw std::invalid_argument(
+            "modeling/parts/tcp-remove-index: 工具下标越界: tools["
+            + std::to_string(toolIndex) + "]");
+    }
+    auto& tool = ws.toolObjects[toolIndex];
+    const std::string subject = "tools[" + std::to_string(toolIndex) + "]";
+    // ② 键须存在。
+    const auto idx = tcpKeyIndex(tool, tcpKey);
+    if (!idx.has_value()) {
+        return TcpEditError{TcpEditErrorCode::KeyNotFound,
+                            subject + "：TCP 键不存在：" + tcpKey};
+    }
+    // ③ defaultTcp 引用保护（I-MDL-9——RemoveObjectRefEdit 同款语义；
+    // 先于最后一条保护——引用保护的指引更明确：先切换默认 TCP）。
+    if (ws.design.defaultTcp.has_value()
+        && ws.design.defaultTcp->tcpKey == tcpKey
+        && ws.design.defaultTcp->toolOid == tool.objectId) {
+        return TcpEditError{
+            TcpEditErrorCode::DefaultTcpReferenced,
+            subject + "：TCP 键被根 defaultTcp 引用：" + tcpKey
+                + "——请先切换默认 TCP（引用保护，I-MDL-9）"};
+    }
+    // ④ 最后一条保护（I-MDL-13：tcpList ≥1——删除即空表违例）。
+    if (tool.tcpList.size() == 1) {
+        return TcpEditError{TcpEditErrorCode::LastTcpProtected,
+                            subject + "：最后一条 TCP 不得删除"
+                                      "（I-MDL-13——tcpList ≥1）"};
+    }
+    // ⑤ 提交＋一条变更记录。
+    tool.tcpList.erase(tool.tcpList.begin() + static_cast<std::ptrdiff_t>(*idx));
+    ModelingChangeRecord record;
+    record.subject = subject + ".tcpList";
+    record.summary = "删除 TCP 条目（键 " + tcpKey + "）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::optional<TcpEditError> applyTcpOffsetEdit(ModelingWorkingSet& ws,
+                                               std::size_t toolIndex,
+                                               const std::string& tcpKey,
+                                               const PartPoseEditValue& offset)
+{
+    // ① 越界 fail-fast。
+    if (toolIndex >= ws.toolObjects.size()) {
+        throw std::invalid_argument(
+            "modeling/parts/tcp-offset-edit-index: 工具下标越界: tools["
+            + std::to_string(toolIndex) + "]");
+    }
+    auto& tool = ws.toolObjects[toolIndex];
+    const std::string subject = "tools[" + std::to_string(toolIndex) + "].tcp(" + tcpKey + ")";
+    // ② 键须存在。
+    const auto idx = tcpKeyIndex(tool, tcpKey);
+    if (!idx.has_value()) {
+        return TcpEditError{TcpEditErrorCode::KeyNotFound,
+                            subject + "：TCP 键不存在"};
+    }
+    // ③ offset 有限性（I-MDL-3）。
+    if (const auto err = tcpOffsetFiniteCheck(offset, subject)) { return err; }
+    // ④ 提交：offset 直写（tcp 系相对安装接口——core.md §4.6 T_ab 约定）。
+    tool.tcpList[*idx].offset = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(offset.x, offset.y, offset.z),
+        rpymath::rpyToRotation(offset.roll, offset.pitch, offset.yaw));
+    ModelingChangeRecord record;
+    record.subject = subject;
+    record.summary = "修改 TCP 安装偏移（键 " + tcpKey + "，m/rad——ZYX 约定）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::optional<TcpEditError> applyDefaultTcpSwitchEdit(ModelingWorkingSet& ws,
+                                                      std::size_t toolIndex,
+                                                      const std::string& tcpKey)
+{
+    // ① 越界 fail-fast。
+    if (toolIndex >= ws.toolObjects.size()) {
+        throw std::invalid_argument(
+            "modeling/parts/default-tcp-switch-index: 工具下标越界: tools["
+            + std::to_string(toolIndex) + "]");
+    }
+    auto& tool = ws.toolObjects[toolIndex];
+    // ② 键须存在（引用锚不得悬空——I-MDL-9/KIN-14 前置）。
+    if (!tcpKeyIndex(tool, tcpKey).has_value()) {
+        return TcpEditError{TcpEditErrorCode::KeyNotFound,
+                            "tools[" + std::to_string(toolIndex)
+                                + "]：TCP 键不存在：" + tcpKey};
+    }
+    // ③ 提交：根 defaultTcp 整体写入（根字段编辑——与基座安装编辑流同址
+    // 口径：本原语落位 Parts.cpp 与其消费面同址）。
+    modeling::TcpRef ref;
+    ref.toolOid = tool.objectId;
+    ref.tcpKey = tcpKey;
+    ws.design.defaultTcp = ref;
+    ModelingChangeRecord record;
+    record.subject = "design.defaultTcp";
+    record.summary = "切换默认 TCP（键 " + tcpKey + "）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
 }  // namespace sdurws::ird::modeling

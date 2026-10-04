@@ -1195,3 +1195,153 @@ TEST_F(ModelingPanelGuiTest, PoseEditPanes_ReadOnlyDisables_UI_T55)
     ASSERT_NE(sceneTable, nullptr);
     EXPECT_FALSE(sceneTable->isEnabled()) << "只读会话场景页未禁用";
 }
+
+// =====================================================================
+// UI-T57 TCP 列表结构化编辑（MDL-13 不变量流——工具页 TCP 段）
+// =====================================================================
+
+/// 工具页 TCP 段现取辅助（combo——容器 objectName 锚）。
+QComboBox* tcpComboOf(const QWidget& panel)
+{
+    return panel.findChild<QComboBox*>(QStringLiteral("ird_modeling_tcp_combo"));
+}
+
+/// 进工具模式辅助：选中工具对象（选择驱动分派——与 T55 同款主通道）。
+void enterToolMode(ModelingPanelWidget& panel, const core::ObjectId& toolOid)
+{
+    panel.focusObject(toolOid);
+}
+
+/**
+ * TCP 编辑全链（UI-T57 验收主链）：选中工具→工具页 TCP 段可见→新增 TCP
+ * （自动键 tcp-2）→combo 即选中→offset 编辑→应用→applyTcpOffsetEdit 接受
+ * ＝tcpList[1].offset 更新＋变更记录；设为默认→根 defaultTcp 写入。
+ */
+TEST_F(ModelingPanelGuiTest, TcpListEdit_AddAndOffsetChain_UI_T57)
+{
+    IRD_TEST_INFO("MDL-13", {}, std::nullopt);
+
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = guiMakeOid(701);
+    TcpEntry tcp0;
+    tcp0.key = "tcp-1";
+    tool.tcpList.push_back(tcp0);
+    m_ws.toolObjects.push_back(tool);
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+
+    enterToolMode(*m_panel, m_ws.toolObjects[0].objectId);
+    QComboBox* combo = tcpComboOf(*m_panel);
+    ASSERT_NE(combo, nullptr) << "TCP 选择器未构建（UI-T57 承载缺失）";
+    EXPECT_EQ(combo->currentIndex(), 0);
+    EXPECT_EQ(combo->currentText(), QStringLiteral("tcp-1"));
+
+    // 新增 TCP（自动键 tcp-2）→combo 重建并选中新键。
+    QPushButton* addBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_add"));
+    ASSERT_NE(addBtn, nullptr);
+    addBtn->click();
+    EXPECT_EQ(combo->currentText(), QStringLiteral("tcp-2")) << "新增后 combo 应选中新键";
+    ASSERT_EQ(m_ws.toolObjects[0].tcpList.size(), std::size_t{2});
+
+    // offset 编辑（tcp-offset-z→应用→确认）→域接受。
+    // 工具页两个 ParamTablePanel（安装接口＋TCP offset）——按行键定位 TCP
+    // 面板，并取同一面板内的 apply/确认钮（跨面板取钮会点到安装接口面板）。
+    QWidget* area = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_tool_area"));
+    QList<QWidget*> panels = area->findChildren<QWidget*>(QStringLiteral("ird_param_table_panel"));
+    QWidget* tcpPanel = nullptr;
+    QTableWidget* tcpTable2 = nullptr;
+    for (QWidget* p : panels) {
+        QTableWidget* t = p->findChild<QTableWidget*>(QStringLiteral("ird_param_table"));
+        if (t != nullptr && posePageRowOf(*t, "tcp-offset-z") >= 0) {
+            tcpPanel = p;
+            tcpTable2 = t;
+            break;
+        }
+    }
+    ASSERT_NE(tcpPanel, nullptr) << "TCP offset 面板未构建";
+    const int zRow = posePageRowOf(*tcpTable2, "tcp-offset-z");
+    tcpTable2->item(zRow, 1)->setText(QStringLiteral("0.3"));
+    QApplication::processEvents();
+    tcpPanel->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    tcpPanel->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+
+    ASSERT_EQ(m_ws.toolObjects[0].tcpList[1].offset.P()[2], 0.3);
+    EXPECT_EQ(m_ws.toolObjects[0].tcpList[1].key, "tcp-2");
+
+    // 设为默认→根 defaultTcp 写入（tool.objectId＋tcp-2）。
+    QPushButton* defBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_default"));
+    ASSERT_NE(defBtn, nullptr);
+    defBtn->click();
+    ASSERT_TRUE(m_ws.design.defaultTcp.has_value());
+    EXPECT_EQ(m_ws.design.defaultTcp->toolOid, m_ws.toolObjects[0].objectId);
+    EXPECT_EQ(m_ws.design.defaultTcp->tcpKey, "tcp-2");
+}
+
+/**
+ * TCP 删除守卫面（UI-T57）：defaultTcp 引用保护（I-MDL-9——先切换默认再
+ * 删除的域指引）＋最后一条保护（I-MDL-13 ≥1）；状态行就地呈现＋工作集
+ * 字节不变。
+ */
+TEST_F(ModelingPanelGuiTest, TcpListEdit_RemoveGuards_UI_T57)
+{
+    IRD_TEST_INFO("MDL-13", {}, std::nullopt);
+
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = guiMakeOid(702);
+    TcpEntry tcp0;
+    tcp0.key = "tcp-1";
+    tool.tcpList.push_back(tcp0);
+    m_ws.toolObjects.push_back(tool);
+    // 根 defaultTcp 引用 tcp-1（场景装配——I-MDL-9 保护面）。
+    modeling::TcpRef ref;
+    ref.toolOid = tool.objectId;
+    ref.tcpKey = "tcp-1";
+    m_ws.design.defaultTcp = ref;
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+
+    enterToolMode(*m_panel, m_ws.toolObjects[0].objectId);
+    QPushButton* removeBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_remove"));
+    ASSERT_NE(removeBtn, nullptr);
+    removeBtn->click();
+
+    QLabel* status = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_status_line"));
+    ASSERT_NE(status, nullptr);
+    EXPECT_TRUE(status->text().contains(QStringLiteral("default-tcp-referenced")))
+        << "引用保护原因未就地呈现";
+    // 工作集字节不变（tcpList 仍 1 条＋defaultTcp 仍在）。
+    ASSERT_EQ(m_ws.toolObjects[0].tcpList.size(), std::size_t{1});
+    EXPECT_TRUE(m_ws.design.defaultTcp.has_value());
+}
+
+/**
+ * TCP 段 L-7 门控（UI-T57）：只读会话＝增删/默认钮与 offset 面板整体
+ * 禁用（域出口 writable 防御面另在）。
+ */
+TEST_F(ModelingPanelGuiTest, TcpPane_ReadOnlyDisables_UI_T57)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = guiMakeOid(703);
+    TcpEntry tcp0;
+    tcp0.key = "tcp-1";
+    tool.tcpList.push_back(tcp0);
+    m_ws.toolObjects.push_back(tool);
+
+    ModelingPanelWidget readonlyPanel(false);
+    readonlyPanel.setEditTargetProvider([this]() { return &m_ws; });
+    ModelReadinessReport emptyReport;
+    readonlyPanel.refreshPanel(m_ws, emptyReport);
+    readonlyPanel.focusObject(m_ws.toolObjects[0].objectId);
+
+    QPushButton* addBtn = readonlyPanel.findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_add"));
+    ASSERT_NE(addBtn, nullptr);
+    EXPECT_FALSE(addBtn->isEnabled()) << "只读会话新增 TCP 钮未禁用";
+    QPushButton* removeBtn = readonlyPanel.findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_remove"));
+    ASSERT_NE(removeBtn, nullptr);
+    EXPECT_FALSE(removeBtn->isEnabled()) << "只读会话删除 TCP 钮未禁用";
+}

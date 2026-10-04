@@ -581,6 +581,98 @@ std::optional<PartPoseEditError> applyScenePoseEdit(ModelingWorkingSet& ws,
                                                     std::size_t sceneIndex,
                                                     const PartPoseEditValue& value);
 
+// =====================================================================
+// TCP 列表结构化编辑流（UI-T57——F-497 兑现④：MDL-13 不变量流）
+// =====================================================================
+
+/**
+ * @brief TCP 列表编辑局部错误码（局部载体先例同款）。
+ */
+enum class TcpEditErrorCode {
+    /// "key-empty"——新增/改名的键为空（I-MDL-13：键是 defaultTcp 引用锚）
+    KeyEmpty,
+    /// "key-duplicate"——新增键与既有键重复（I-MDL-13：集合内唯一）
+    KeyDuplicate,
+    /// "key-not-found"——删除/改偏移的目标键不在 tcpList 中
+    KeyNotFound,
+    /// "last-tcp-protected"——删除最后一条 TCP（I-MDL-13：tcpList ≥1）
+    LastTcpProtected,
+    /// "default-tcp-referenced"——目标键被根 defaultTcp 引用（I-MDL-9
+    /// 引用保护——RemoveObjectRefEdit 同款语义）
+    DefaultTcpReferenced,
+    /// "value-not-finite"——offset 含 NaN/Inf（I-MDL-3）
+    ValueNotFinite,
+};
+
+/// @brief 局部错误码稳定 token。纯函数；确定性。
+std::string_view tcpEditErrorCodeToken(TcpEditErrorCode code) noexcept;
+
+/**
+ * @brief TCP 列表编辑拒绝值（局部错误面：码＋定位细节）。
+ */
+struct TcpEditError {
+    TcpEditErrorCode code = TcpEditErrorCode::ValueNotFinite;  ///< 稳定错误码
+    std::string detail;  ///< 定位细节（UTF-8；subject/键/原因）
+
+    bool operator==(const TcpEditError& o) const noexcept
+    {
+        return code == o.code && detail == o.detail;
+    }
+    bool operator!=(const TcpEditError& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief 追加一条 TCP 条目（§4.4 tcpList 行——UI-T57）。
+ *
+ * 规则：①toolIndex 越界 fail-fast；②key 非空（KeyEmpty）且不与既有键
+ * 重复（KeyDuplicate）；③offset 六分量有限性（ValueNotFinite）；④提交
+ * （displayName 原样；offset 经 ZYX 正解组合）＋一条变更记录。
+ *
+ * @throws std::invalid_argument 越界下标（调用方契约违约）
+ */
+std::optional<TcpEditError> applyTcpAddEdit(ModelingWorkingSet& ws,
+                                            std::size_t toolIndex,
+                                            const std::string& key,
+                                            const std::string& displayName,
+                                            const PartPoseEditValue& offset);
+
+/**
+ * @brief 删除一条 TCP 条目（§4.4 tcpList 行——UI-T57）。
+ *
+ * 规则：①越界 fail-fast；②键须存在（KeyNotFound）；③tcpList 仅剩一条
+ * 时拒绝（LastTcpProtected——I-MDL-13 ≥1）；④根 defaultTcp 引用该键时
+ * 拒绝（DefaultTcpReferenced——I-MDL-9 引用保护，同 RemoveObjectRefEdit
+ * 语义）；⑤提交＋一条变更记录。
+ */
+std::optional<TcpEditError> applyTcpRemoveEdit(ModelingWorkingSet& ws,
+                                               std::size_t toolIndex,
+                                               const std::string& tcpKey);
+
+/**
+ * @brief 编辑一条 TCP 的安装偏移位姿（§4.4 offset 行——UI-T57）。
+ *
+ * 规则：①越界 fail-fast；②键须存在（KeyNotFound）；③六分量有限性；
+ * ④offset 直写＋一条变更记录。参考系＝"tcp 系相对 tool 系安装接口"
+ * （core.md §4.6 T_ab 约定）。
+ */
+std::optional<TcpEditError> applyTcpOffsetEdit(ModelingWorkingSet& ws,
+                                               std::size_t toolIndex,
+                                               const std::string& tcpKey,
+                                               const PartPoseEditValue& offset);
+
+/**
+ * @brief 将根 defaultTcp 切换为指定工具的指定 TCP（§4.3 defaultTcp 行——
+ *        UI-T57；根对象写入——与 SetBasePlacementEdit 同为根字段编辑，
+ *        域内核落位于本文件与其消费面同址）。
+ *
+ * 规则：①越界 fail-fast；②键须存在（KeyNotFound）；③根 defaultTcp 以
+ * (tool.objectId, key) 整体写入（UserProvided 语义——值模型无来源标记的
+ * 引用字段，直写）＋一条变更记录。
+ */
+std::optional<TcpEditError> applyDefaultTcpSwitchEdit(ModelingWorkingSet& ws,
+                                                      std::size_t toolIndex,
+                                                      const std::string& tcpKey);
+
 }  // namespace sdurws::ird::modeling
 
 #endif  // IRD_MODELING_PARTS_HPP
