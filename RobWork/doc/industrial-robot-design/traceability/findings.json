@@ -4901,6 +4901,16 @@
       "title": "实施段落分支事故留痕：git checkout -b ui-t33 因分支已存在（第一批遗留）而失败，实现误落本地 redesign-main 工作树——推送前发现并纠正（提交移至 ui-t33＋主线重置回远程头），origin/redesign-main 全程零污染（验收段漂移检测复核证实 origin 停在 62f21852）。教训：建分支失败（分支已存在等）须立即停手核查工作树状态，不得继续编辑。",
       "owner": "已纠正（零外泄）——本条为教训永久留痕，随记录闭合无需后续动作",
       "resolution": "验收记录过程声明与 4.1 载明（acc/UI-T33/1）。"
+    },
+    {
+      "id": "F-492",
+      "source": "UI-T52 验收 attempt 1 fail→attempt 2 pass（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "契约起草教训留痕（UI-T52 attempt 1 fail B-1 的根因）：acceptance 证据面措辞与可自动化断言层错位——「投影闭包 gui 替身断言」中的投影闭包（UiPlugin lambda）依赖 studio 现取，gui 替身不可达，致该条证据在 attempt 1 无落位面（转换层门面转发零断言）。起草纪律＝acceptance 证据措辞须与可自动化断言层对齐（投影类字段的可断言层＝门面转发用例与网关替身透传断言——本卡返工即按此对齐）。",
+      "owner": "已随 attempt 2 对齐（门面转发用例补齐＋acceptance 2 措辞修正载明）——本条为起草纪律教训永久留痕",
+      "resolution": "验收记录 attempt 2 载明（acc/UI-T52/2）。"
     }
   ]
 }
