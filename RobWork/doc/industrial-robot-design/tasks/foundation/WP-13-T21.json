@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "URDF/Xacro 导入命令流依赖树装配修复（F-473——含 mesh 引用的模型经生产流恒被 SourceInconsistent 拒绝；顺带消 F-469 导入流零自动化网半边）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-13-T16"],
   "requirements": [
     "MDL-03（URDF 导入——含 mesh 引用的常规形态必须可导入）",
@@ -62,5 +62,5 @@
     "F-473 消账：findings.json F-473 fixed；F-469 半边消账（导入流三用例首上网）",
     "回归门禁：受影响目标零错误构建＋modeling域套件全绿（modeling_test 294+3、modeling_gui_test 9〔基点不含 UI-T43 三用例〕）＋validate-docs PASS——留痕 traceability/builds/wp13-t21/"
   ],
-  "note": "立项来源：外审后用户发起的 URDF 识别验证（临时 harness 对黄金件 golden-6r.urdf 全链执行）实证——域级映射器识别能力完好（黄金全链 21 项映射/6 关节/7 连杆/四清单分层诚实），但生产命令流 ValidatedSource 只装 bytes＋入口快照、恒缺依赖树，任何含 mesh 引用的 URDF/Xacro 经 modeling.import-urdf/import-xacro 恒被 SourceInconsistent 拒绝（无 mesh 的 URDF 不受影响——阴性对照证实）。诚实边界：①xacro 半区树自展开产物提取、基目录＝入口文档目录——单文件 xacro 精确，include 子目录内 mesh 引用可能标缺失（V-08 警告可见），多文件精确解析随导入向导任务（与选链重映射同批）；②io snapshot 拒绝（预算/网格护栏拦截）一律按缺失叶入树——exists=true 必须携带真实快照（ResourceNode 契约），误标缺失属诚实降级可见面。跨分支登记注：本卡 F-473 与 ui-t43 批次 F-472 并行编号（两边各自顺延 F-471），合并时序不影响唯一性。"
+  "note": "【合入登记注（2026-10-04，PIPE §4.7 收尾·补录口径）】acceptedHead eaf8dded 已于 3af8dd74 合入 redesign-main（F-473 fixed＋F-469 URDF 半边消账）；对抗式验收经补录完成——acc/WP-13-T21/1@c4b43e6a（verdict=pass，11 项清单全过＋V1/V2 两变异翻红；冻结 SHA 口径 fresh 复现 297/9 逐数一致），evidence 已按 SHA 先并主线。【F-485 时代限定注（验收建议级随本收尾闭环）】本卡 acceptance 6 的回归基线数字（modeling_test 294+3、modeling_gui_test 9）为冻结 SHA eaf8dded 时代口径——补录按该 SHA 复现逐数一致；主线当前态（321/17）另经 UI-T47~T50 各自验收覆盖，两口径无矛盾。批次特有告诫（registry 外自由承载）：立项来源：外审后用户发起的 URDF 识别验证（临时 harness 对黄金件 golden-6r.urdf 全链执行）实证——域级映射器识别能力完好（黄金全链 21 项映射/6 关节/7 连杆/四清单分层诚实），但生产命令流 ValidatedSource 只装 bytes＋入口快照、恒缺依赖树，任何含 mesh 引用的 URDF/Xacro 经 modeling.import-urdf/import-xacro 恒被 SourceInconsistent 拒绝（无 mesh 的 URDF 不受影响——阴性对照证实）。诚实边界：①xacro 半区树自展开产物提取、基目录＝入口文档目录——单文件 xacro 精确，include 子目录内 mesh 引用可能标缺失（V-08 警告可见），多文件精确解析随导入向导任务（与选链重映射同批）；②io snapshot 拒绝（预算/网格护栏拦截）一律按缺失叶入树——exists=true 必须携带真实快照（ResourceNode 契约），误标缺失属诚实降级可见面。跨分支登记注：本卡 F-473 与 ui-t43 批次 F-472 并行编号（两边各自顺延 F-471），合并时序不影响唯一性。"
 }
