@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "建模域宿主接线修复批次（可写链路 setWritable 门面/模块/宿主三段＋面板命令使能统一收口 refreshCommandEnablement＋文案解析生产装配序回归钉——外审报告接线类 P1 承接）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T42"],
   "requirements": [
     "MDL-07（建模界面——面板可写态如实呈现：只读会话编辑行灰显与写命令置灰）",
@@ -67,5 +67,5 @@
     "F-472 消账（顺带）：HostIntegrationGuiTest.AssemblyFailureGroupPlaceholder 悬挂指针修复——refresh() 全量重渲染 clear() 后用例仍读清除前捕获的组行指针（UB，冒烟留痕 1/4 轮次翻红实证）——占位清除后重新现取 topLevelItem 再断言——证据：冒烟 ui_gui_test 连续多轮全绿＋findings.json F-472 fixed",
     "回归门禁：受影响目标零错误构建＋建模域/宿主域四套件全绿（modeling_test 294、modeling_gui_test 9+3 新用例、ui_test、ui_gui_test）＋validate-docs PASS——留痕 traceability/builds/ui-t43/"
   ],
-  "note": "立项来源：外审报告（对比 RobWork-main 旧插件的功能覆盖审计）建议第八节第一阶段'宿主接线问题'；实施前逐条核实：报告建议 1（绑定建模 bindTextResolver）不成立——DomainAssembly::assembleDomainPlugins 已在装配路径绑定 standardTextResolver（报告引用面 UiPlugin.cpp 未直接含该调用导致误判），本批只补回归测试；建议 2（setWritable 链缺失）与建议 3（setCommandAvailability 只读门控缺失）属实，为本批代码修复主体。诚实边界：只读链路的会话脱离（项目关闭）路径不加重置——脱会话后面板空态＋命令 Project/Session 作用域由注册表 §7.5 门控，下次打开以新项目真实 writable 重放（接线点注释同步登记）；外审报告其余 P1（TCP 捕获/三维拾取/建模对象编辑扩展）属功能批次，不在本批范围。批次特有告诫：①模块级 gui 用例（ModelingUiModuleHostWiringGuiTest.cpp）持 policy 评估器符号，须维持 TARGET sdurw_kinematics gating——移出条件块＝冒烟树 LNK2019（实施期实证）；②F-472 修复后测试面读树必须现取指针（refresh=clear+重建，捕获指针过 refresh 即悬挂）。"
+  "note": "【合入登记注（2026-10-04，PIPE §4.7 收尾·补录口径）】acceptedHead 8d5b2584 已于 008269837 合入 redesign-main（F-472 fixed 随批）；对抗式验收经补录完成——acc/UI-T43/1@21d31180（verdict=pass，11 项清单全过＋V1/V2 两变异翻红＋ui_gui_test 四轮全绿稳定性实证；冻结 SHA 口径 fresh 复现 294/12/239/67 逐数一致），evidence 已按 SHA 先并主线。【F-486 时代限定注（验收建议级随本收尾闭环）】本卡 acceptance 6 的回归基线数字（modeling_test 294、modeling_gui_test 9+3、ui_test/ui_gui_test 该点值）为冻结 SHA 8d5b2584 时代口径——补录按该 SHA 复现逐数一致；主线当前态（321/17/201/246）另经后续各卡验收覆盖，两口径无矛盾。批次特有告诫（registry 外自由承载）：立项来源：外审报告（对比 RobWork-main 旧插件的功能覆盖审计）建议第八节第一阶段'宿主接线问题'；实施前逐条核实：报告建议 1（绑定建模 bindTextResolver）不成立——DomainAssembly::assembleDomainPlugins 已在装配路径绑定 standardTextResolver（报告引用面 UiPlugin.cpp 未直接含该调用导致误判），本批只补回归测试；建议 2（setWritable 链缺失）与建议 3（setCommandAvailability 只读门控缺失）属实，为本批代码修复主体。诚实边界：只读链路的会话脱离（项目关闭）路径不加重置——脱会话后面板空态＋命令 Project/Session 作用域由注册表 §7.5 门控，下次打开以新项目真实 writable 重放（接线点注释同步登记）；外审报告其余 P1（TCP 捕获/三维拾取/建模对象编辑扩展）属功能批次，不在本批范围。批次特有告诫：①模块级 gui 用例（ModelingUiModuleHostWiringGuiTest.cpp）持 policy 评估器符号，须维持 TARGET sdurw_kinematics gating——移出条件块＝冒烟树 LNK2019（实施期实证）；②F-472 修复后测试面读树必须现取指针（refresh=clear+重建，捕获指针过 refresh 即悬挂）。"
 }
