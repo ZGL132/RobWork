@@ -229,6 +229,31 @@ TEST_F(RequirementsSessionGuiTest, SessionDataPlane_FourSetsIntoPanel_UI_T29)
         << "任务点聚焦后检查器无编辑行（L-R2 数据前提断链）";
 }
 
+/// F-499（宿主审核 P2）双树职责呈现标识（自持面）：顶部草稿提示条常驻
+/// 说明"需求树＝草稿编辑面／工业项目树＝已应用修订"，树名标注
+/// "需求树（当前草稿）"——消除"同一工位为何出现两次/哪棵可编辑"歧义。
+QTreeWidget* requirementTree(const RequirementsPanelWidget& panel);  // 前置声明（定义在本文件下半——树定位辅助区）
+TEST_F(RequirementsSessionGuiTest, DraftHintAndTreeTitle_DualTreeRoleLabels_F499)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+
+    // 顶部提示条：说明当前编辑对象（草稿）与应用后的修订语义。
+    QLabel* hint = m_panel->findChild<QLabel*>(QStringLiteral("ird_req_draft_hint"));
+    ASSERT_NE(hint, nullptr) << "草稿提示条未构建（F-499 承载缺失）";
+    EXPECT_TRUE(hint->text().contains(QStringLiteral("需求草稿")))
+        << "提示条未说明当前编辑对象＝需求草稿";
+    EXPECT_TRUE(hint->text().contains(QStringLiteral("应用草稿")))
+        << "提示条未说明『应用草稿』的修订语义";
+    EXPECT_TRUE(hint->text().contains(QStringLiteral("工业项目树")))
+        << "提示条未点明与工业项目树（已应用）的分界";
+
+    // 树名标注＝提示条同频的第二呈现位（requirementTree 定位器同文——
+    // 失配即本断言先行暴露）。
+    QTreeWidget* tree = requirementTree(*m_panel);
+    ASSERT_NE(tree, nullptr) << "需求树未定位（表头标注失配）";
+    EXPECT_EQ(tree->headerItem()->text(0), QStringLiteral("需求树（当前草稿）"));
+}
+
 // =====================================================================
 // acceptance 2/5 编辑生效＋最小校验：L-2 接受→宿主编辑后动作触发→
 // 模块组合子以会话最新报告 refreshPanel（校验页实时化的编排面）。
@@ -1145,12 +1170,13 @@ TEST_F(RequirementsSessionGuiTest, FacadeSessionBaseRevisionRoundtrip_UI_T35)
 // 层级需求树（根→分组→条目＋页签联动）、截断修复防回归。
 // =====================================================================
 
-/// 定位左栏需求树（表头列 0＝"需求树"——与区域/工况/必验/校验表区分）。
+/// 定位左栏需求树（表头列 0＝"需求树（当前草稿）"——F-499 双树职责标注
+/// 后的全文；与区域/工况/必验/校验表区分）。
 QTreeWidget* requirementTree(const RequirementsPanelWidget& panel)
 {
     for (QTreeWidget* t :
          const_cast<RequirementsPanelWidget&>(panel).findChildren<QTreeWidget*>()) {
-        if (t->headerItem()->text(0) == QStringLiteral("需求树")) {
+        if (t->headerItem()->text(0) == QStringLiteral("需求树（当前草稿）")) {
             return t;
         }
     }

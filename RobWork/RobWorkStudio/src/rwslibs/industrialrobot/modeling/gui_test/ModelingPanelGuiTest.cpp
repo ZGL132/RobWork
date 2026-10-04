@@ -74,6 +74,9 @@ QList<QPushButton*> commandButtonsOf(const QWidget& panel)
         if (btn->objectName() == QStringLiteral("ird_modeling_history_toggle")) {
             continue;  // 历史折叠钮不入命令对账（B2 呈现件）
         }
+        if (btn->objectName() == QStringLiteral("ird_modeling_more_toggle")) {
+            continue;  // 工具区折叠开关不入命令对账（F-502 呈现件——非命令目录按钮）
+        }
         if (btn->objectName().startsWith(QStringLiteral("ird_modeling_struct_"))) {
             continue;  // 结构操作钮不入命令对账（UI-T47 呈现件——非命令目录按钮）
         }
@@ -273,6 +276,7 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     ASSERT_GT(buttons.size(), std::size_t{0}) << "命令按钮未构建（区③空）";
     for (const QPushButton* btn : buttons) {
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; } // 历史钮不入禁用对账
+        if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; } // 折叠开关不入对账（F-502 呈现件——非命令目录按钮）
         if (btn->objectName().startsWith(QString::fromUtf8("ird_modeling_struct_"))) { continue; } // 结构操作钮不入禁用对账（UI-T47 呈现件——非命令目录按钮）
         EXPECT_FALSE(btn->isEnabled()) << "全禁快照下按钮仍可用";
         EXPECT_EQ(btn->toolTip().toStdString(),
@@ -305,6 +309,7 @@ TEST_F(ModelingPanelGuiTest, CommandButtonTooltip_ResolvedFromUiTextKey_UX02_UI_
     const auto catalog = modelingDomainCommands();
     for (const QPushButton* btn : buttons) {
         if (btn->objectName() == QStringLiteral("ird_modeling_history_toggle")) { continue; }
+        if (btn->objectName() == QStringLiteral("ird_modeling_more_toggle")) { continue; } // 折叠开关（F-502 呈现件——非命令钮）
         for (const auto& desc : catalog) {
             const QString rawId = QString::fromStdString(desc.id);
             EXPECT_NE(btn->toolTip(), rawId)
@@ -313,6 +318,36 @@ TEST_F(ModelingPanelGuiTest, CommandButtonTooltip_ResolvedFromUiTextKey_UX02_UI_
     }
     // 键已登记：tooltip 应等于 UiText 解析值（以 new-from-template 为样本）。
     EXPECT_FALSE(buttons.front()->toolTip().isEmpty()) << "tooltip 为空（解析缺失）";
+}
+
+/// F-502（宿主审核 P2）命令频率分层：低频诊断组（权威切换/物性估算/
+/// 占位几何/基线比较/规范包导出/规范包导入）收进『更多操作』折叠区——
+/// 默认收起（工具页纵向长度压缩），展开/收起翻转对称；命令集合与目录
+/// 对账不因容器迁移漂移（commandButtonsOf 仍与目录一一对应——使能逻辑
+/// 零变化的守卫面）。
+TEST_F(ModelingPanelGuiTest, MoreActionsCollapse_DefaultCollapsedAndToggle_F502)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    // 目录对账（构造序＝目录序——折叠区重排后仍保持，commandButtonsOf 守卫）。
+    const auto catalog = modelingDomainCommands();
+    const auto buttons = commandButtonsOf(*m_panel);
+    ASSERT_EQ(buttons.size(), catalog.size())
+        << "命令按钮与目录错位（折叠区容器迁移破坏构造序）";
+
+    // 折叠承载存在；默认收起（开关未选中＋容器隐藏）。
+    QPushButton* toggle = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_more_toggle"));
+    ASSERT_NE(toggle, nullptr) << "折叠开关未构建（F-502 承载缺失）";
+    QWidget* moreHost = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_more_host"));
+    ASSERT_NE(moreHost, nullptr) << "折叠容器未构建（F-502 承载缺失）";
+    EXPECT_FALSE(toggle->isChecked()) << "折叠开关默认应未选中";
+    EXPECT_FALSE(moreHost->isVisibleTo(m_panel.get())) << "折叠区默认未收起（纵向长度未压缩）";
+
+    // 展开开关→容器显现；收起→复隐（翻转对称——展开面非删除）。
+    toggle->setChecked(true);
+    EXPECT_TRUE(moreHost->isVisibleTo(m_panel.get())) << "展开后低频组未显现";
+    toggle->setChecked(false);
+    EXPECT_FALSE(moreHost->isVisibleTo(m_panel.get())) << "收起后低频组残留可见";
 }
 
 /// B1：超限位输入＝行内警示描边（词表 kWarning）＋状态行警示着色＋编辑器
