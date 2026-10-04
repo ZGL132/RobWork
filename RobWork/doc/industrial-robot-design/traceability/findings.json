@@ -4811,6 +4811,26 @@
       "title": "UI-T49 契约 acceptance 3「悬空检测与资源状态呈现复用既有投影（C2 徽标＋L6 Missing/Changed）——具名用例」未新增专门具名用例：复用为结构事实（复制产物与手编引用同 resourceRefId→同一条目→同一 geometryRow C2 检测与同一 L6 清单级探测，零新代码路径无独立可断言面），既有 C2/L6 用例随套件全绿；后续批次若触碰投影路径宜补复制产物同权断言。",
       "owner": "后续投影触碰批次（补复制产物同权具名断言；本卡零新投影路径的裁量已记录）",
       "resolution": "验收记录 4.4 发现转登（acc/UI-T49/1）。"
+    },
+    {
+      "id": "F-483",
+      "source": "UI-T50 验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T50 传动检查器页黏滞摩擦 fv（N·m·s/rad）缺席：该量纲不在 core QuantityKind 词表（Units.hpp 十四量纲枚举）——makeQuantityFieldSpec 量纲核对契约下无法诚实建字段，本卡不虚构量纲而取缺席（ui.md/modeling.md 登记行已随批声明）；fv 呈现随 core 单位表扩展任务补齐（扩词表＋传动页加行——两改一点）。",
+      "owner": "core 单位表扩展任务（QuantityKind 增 N·m·s/rad 量纲类时顺手补传动页 fv 字段；本卡缺席为诚实边界非缺陷）",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T50/1）。"
+    },
+    {
+      "id": "F-484",
+      "source": "UI-T50 验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T50 四对象检查器页全只读形态：字段编辑（场景 worldPose/role 改写、工具 TCP 列表编辑、位姿集合并流、传动逐关节批量）统一收口 D6「在域面板编辑」入口，检查器内零编辑移交面。取舍依据（列表/合并/命令流结构非 D5「少量高频标量」语义）已在单元卡 §9.7.5/登记行载明，非缩水；若产品侧要求检查器内直接编辑特定标量（如场景 worldPose 六值），走增量任务扩 JointCommonFieldsOutlet 同型出口（域出口转译既有纪律）。",
+      "owner": "产品形态增量候选（用户提出检查器内编辑诉求时立项——零协议改动可扩；本卡取舍已登记非缺陷）",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T50/1）。"
     }
   ]
 }
