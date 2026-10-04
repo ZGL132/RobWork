@@ -5024,7 +5024,8 @@
       "status": "open",
       "registeredAt": "2026-10-04",
       "title": "建模预览页单一、未对齐旧版多类 XML 预览（宿主审核建模 P2）：当前仅已应用修订摘要文本（D-MDL-10 保持），旧版有 SerialDevice/Scene/DWC/CollisionSetup/ProximitySetup 多类预览。建议预览类型下拉（模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML/规范包清单），每类须来源修订号/模型身份/生成时间/来源对象明确、只读、可复制导出、UI 不自行拼 XML（XML 由 runtime 编译产生——既有导出能力为产物源）",
-      "owner": "待立项（宿主审核阶段 2/3 交界）"
+      "owner": "待立项（宿主审核阶段 2/3 交界）",
+      "resolution": "【进展】导出半区兑现＝UI-T56（modeling.export-workcell-xml 第十一号命令——WC/DWC XML 外供导出挂 UI，已合入 4e7db25a）；预览页多类型下拉半区维持 open（需域侧 toString 导出面与 SerialDevice/Scene/Collision XML 域导出函数）。（2026-10-05 UI-T56 合入段补注——acc/ui-t56/1 验收 S4）"
     },
     {
       "id": "F-499",
@@ -5111,6 +5112,25 @@
       "registeredAt": "2026-10-05",
       "title": "两条验证基建口径：①未触碰套件（ui/requirements 等）的回归留痕以\"会话执行记录\"指代、无落盘工件——建议后续批次落盘或明文\"以验收复现为准\"；②verify-task.ps1 对描述性 verify 条目（非命令文本）Invoke-Expression 失败仍打 PASS（仓级既有特征，非 UI-T55 引入）——建议治理批次决断描述性条目的机器可执行化或显式标注\"人工核对\"。",
       "owner": "治理侧（验证基建口径批次）"
+    },
+    {
+      "id": "F-514",
+      "source": "acc/ui-t56/1@b3da53be 验收记录 S1（UI-T56 独立子会话对抗式验收 2026-10-05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-05",
+      "title": "modeling.md v0.34 版本行悬挂列（表行缺列致表格渲染断裂——本批新引入；ui.md 侧 v1.67 同型系沿袭既有悬挂）——已随 UI-T56 合入段治理提交修正并复核全文件表格行列数。后续文档编辑：版本行/表行新增后须渲染复核。",
+      "owner": "已随 UI-T56 合入段治理提交修正",
+      "resolution": "UI-T56 合入段随批修正（2026-10-05）。"
+    },
+    {
+      "id": "F-515",
+      "source": "acc/ui-t56/1@b3da53be 验收记录 S3（UI-T56 独立子会话对抗式验收 2026-10-05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-05",
+      "title": "两 gui TU 命令对账辅助调用点对 modelingDomainCommands() 冗余二次调用（每调用点重建目录 vector——无行为影响，微开销）。建议后续批次调用点提为局部静态或夹具成员一次构建。",
+      "owner": "后续 gui 测试维护批次顺手处理（无行为影响不单独出批次）"
     }
   ]
 }

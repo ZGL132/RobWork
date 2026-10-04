@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "WC/DWC XML 外供导出命令（F-498 导出半区）：modeling.export-workcell-xml 第十一号命令挂接——exportWorkCellXml 域导出的 UI 命令面（宿主 bindWorkCellExport 快照接源）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T55"
   ],
@@ -68,5 +68,5 @@
     "预览页多类型下拉（F-498 预览半区）不在本批——需域侧内存导出面（toString 变体）与 SerialDevice/Scene/Collision XML 域导出函数，登记后续批次；F-498 维持 open 登记导出半区兑现"
   ],
   "branch": "ui-t56",
-  "note": "分支基点＝redesign-main@7743af91。F-498 导出半区兑现（预览半区维持 open）；UI-T55 卡面注记的\"TCP 列表＝UI-T56\"取号顺延为 UI-T57（本号被 F-498 批次占用——登记序修正随本卡备案）。interUnit=false 口径（UI-T53 先例）：ui 单元触碰限于同插件宿主接线面（bindWorkCellExport/UiText 键表），非单元间端口协作。"
+  "note": "【合入登记注（2026-10-05，PIPE §4.7 收尾——所有者按序实施指令＋PIPE v1.8 autoMerge 预授权）】acceptedHead 145f8eaf 合入 redesign-main@4e7db25a（acc/ui-t56/1@b3da53be 按 SHA 先并）；独立子会话对抗式验收 11 项 pass。建议级五条转登 F-514~F-515（S4 F-498 进展注随批直接落账；S5 备忘并入 F-513 验证基建条目；S1/S3 随批修正）。分支基点＝redesign-main@7743af91。F-498 导出半区兑现（预览半区维持 open）；UI-T55 卡面注记的\"TCP 列表＝UI-T56\"取号顺延为 UI-T57（本号被 F-498 批次占用——登记序修正随本卡备案）。interUnit=false 口径（UI-T53 先例）：ui 单元触碰限于同插件宿主接线面（bindWorkCellExport/UiText 键表），非单元间端口协作。"
 }
