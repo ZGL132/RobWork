@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "几何资源引用编辑流批次——资源选择器（UI-T41 批次C C5 承接）＋外部几何文件导入接线（io 端口真装——UI-T41 挂账⑧兑现）＋visual/collision 引用挂换摘（差距清单 spec 批二）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T47"],
   "requirements": [
     "MDL-04（连杆几何——外部几何文件导入与引用承载；§2.5 外部几何文件导入行承接）",
@@ -73,5 +73,5 @@
     "C5 消账断言：几何行编辑面落位（UI-T41 批次C C5 消账）＋io 端口接线替身退役（UI-T41 note⑧ 消账）——登记行载明",
     "回归门禁：受影响目标零错误构建＋modeling/ui 套件全绿＋ird_gates 归一零新增（或逐条登记）＋validate-docs PASS——留痕 traceability/builds/ui-t48/"
   ],
-  "note": "批次特有告诫（registry 外自由承载）：①io 受管路径治理：SafePath 逃逸检查＋BudgetGuard 预算经 io 公共头消费（modeling→io 边既登记——modeling.md §3.2）；io/** 零修改，公共面缺口停原地登记；标准库直读替身随本批退役（UI-T41 note⑧ 挂账兑现）；②modeling 只持引用（CON-03）：资源本体不入对象字节；ExternalResourceRecord{absPath＋recordedDigest} Recorded 态登记＋probe 检测（Missing/Changed）经就绪校验 L6 既有投影呈现；③固化半区不实施：solidifyToStaging→Solidified 归 io/project 既有轨（§6.7 三段边界；证据门禁阻断语义不变）——本卡零固化语义；④格式族按 §2.5 行6（stl/obj/dae/wrl/iv）；io 不识别/不支持的格式＝诚实拒绝非静默忽略；「复制入项目资源区」提前固化路径不做（维持 Recorded 单态——如需走需求变更）；⑤GeometryRef.localTransform 编辑（m/rad——FormEditCommon.parseFieldValueText 单位解析唯一出口同规；core Units 换算 SA-12）；⑥gui 测试 QT_QPA_PLATFORM=windows；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：同 UI-T47（所有者 2026-10-03 四批立项指令——差距清单 spec 批二 G3＋G4＋G5）。关键事实：modeling→io 为已登记依赖边（modeling.md §3.2 六行表），资源选择器经 io 公共面（IResourceReader/ResourceSnapshot/SafePath/BudgetGuard）消费即可，io/** 零改动；UI-T41 批次C 的 C5（几何资源选择器）因『引用字段编辑流』缺席登记不实施——本卡随批消账。堆叠序：ui-t48 基点 ui-t47 head（串行堆叠——PanelEditFlow/属性区编辑面同文件交叠，T36→T37 先例）；status=planned 待 UI-T47 落位后转 ready。"
+  "note": "【合入登记注（2026-10-04，PIPE §4.7 收尾）】acceptedHead 1ab8fe00 合入 redesign-main@0d318d3c（acc/UI-T48/1@bfb721c5 按 SHA 先并）；对抗式验收 11 项 pass（单会话顺序执行例外声明）＋V1/V2/V3 三变异翻红；合并态验证 modeling 313/modeling_gui 15/modeling_contract 17/ui 246/requirements 200 全绿＋ird_gates 75 条零新增；UI-T49 随本收口转 ready（串行堆叠批三）。收尾过程留痕：首轮 evidence merge 因主工作树仍检出 ui-t48（实施遗留）误落在任务分支侧——该 merge commit 未推送即重置丢弃（origin/ui-t48 与 origin/acc/UI-T48/1 全程零漂移），切回 redesign-main 后按序重做，两 merge 干净落位。批次特有告诫（registry 外自由承载）：①io 受管路径治理：SafePath 逃逸检查＋BudgetGuard 预算经 io 公共头消费（modeling→io 边既登记——modeling.md §3.2）；io/** 零修改，公共面缺口停原地登记；标准库直读替身随本批退役（UI-T41 note⑧ 挂账兑现）；②modeling 只持引用（CON-03）：资源本体不入对象字节；ExternalResourceRecord{absPath＋recordedDigest} Recorded 态登记＋probe 检测（Missing/Changed）经就绪校验 L6 既有投影呈现；③固化半区不实施：solidifyToStaging→Solidified 归 io/project 既有轨（§6.7 三段边界；证据门禁阻断语义不变）——本卡零固化语义；④格式族按 §2.5 行6（stl/obj/dae/wrl/iv）；io 不识别/不支持的格式＝诚实拒绝非静默忽略；「复制入项目资源区」提前固化路径不做（维持 Recorded 单态——如需走需求变更）；⑤GeometryRef.localTransform 编辑（m/rad——FormEditCommon.parseFieldValueText 单位解析唯一出口同规；core Units 换算 SA-12）；⑥gui 测试 QT_QPA_PLATFORM=windows；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：同 UI-T47（所有者 2026-10-03 四批立项指令——差距清单 spec 批二 G3＋G4＋G5）。关键事实：modeling→io 为已登记依赖边（modeling.md §3.2 六行表），资源选择器经 io 公共面（IResourceReader/ResourceSnapshot/SafePath/BudgetGuard）消费即可，io/** 零改动；UI-T41 批次C 的 C5（几何资源选择器）因『引用字段编辑流』缺席登记不实施——本卡随批消账。堆叠序：ui-t48 基点 ui-t47 head（串行堆叠——PanelEditFlow/属性区编辑面同文件交叠，T36→T37 先例）；status=planned 待 UI-T47 落位后转 ready。"
 }

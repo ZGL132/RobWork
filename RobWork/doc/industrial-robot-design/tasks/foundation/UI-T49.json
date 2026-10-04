@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "碰撞模型编辑面批次——独立碰撞模型表＋视觉→碰撞引用复制辅助（modeling.md §2.5 碰撞模型行承接＋§5.2 几何生成辅助②落位；差距清单 spec 批三）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["UI-T48"],
   "requirements": [
     "MDL-04（碰撞几何引用编辑面——§2.5 独立碰撞模型表行承接）",
