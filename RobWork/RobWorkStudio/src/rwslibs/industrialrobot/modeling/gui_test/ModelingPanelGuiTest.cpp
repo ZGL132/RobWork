@@ -31,7 +31,9 @@
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QLineEdit>
+#include <QTreeWidgetItemIterator>
 #include <QPushButton>
+#include <sdurws/ird/modeling/GeometryLinkEdit.hpp>  // attachExternalGeometry/detachGeometry/GeometrySlot（UI-T48 域原语直调）
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
@@ -523,4 +525,52 @@ TEST_F(ModelingPanelGuiTest, StructureButtons_RemoveSelected_DraftOnly_UI_T47)
         if (j.objectId == j1) { removedStillThere = true; }
     }
     EXPECT_FALSE(removedStillThere) << "被删关节仍在工作集";
+}
+
+// =====================================================================
+// UI-T48 几何引用编辑面：操作行承载（挂接/摘除钮）＋拒绝呈现
+// （io 真装路径经 QFileDialog 不可 headless 驱动——本组用例断言承载面
+// 与摘除落草稿；挂接流端到端由域 UT 替身缝承载，见 GeometryLinkEditTest）
+// =====================================================================
+
+TEST_F(ModelingPanelGuiTest, GeometryActionButtons_LoadAndDetach_UI_T48)
+{
+    // ①预置挂接（域原语直调——绕过对话框；摘要缝替身同 UT 形态）。
+    core::ContentDigester d;
+    const std::string seed = "gui: D:/a/link1.stl";
+    d.update(seed.data(), seed.size());
+    ResourceProbeFn probe = [&](const std::string&, std::string&)
+        -> std::optional<ResourceProbeResult> {
+        ResourceProbeResult r;
+        r.contentDigest = d.finalize();
+        r.absPath = "D:/a/link1.stl";
+        r.isMeshFamily = true;
+        return r;
+    };
+    ASSERT_FALSE(attachExternalGeometry(m_ws, 0, GeometrySlot::Visual,
+                                        "D:/a/link1.stl", probe)
+                     .has_value());
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+
+    // ②连杆选中后属性区出现几何操作钮（挂接/摘除——承载面存在性）。
+    const core::ObjectId l1 = m_ws.design.links[1].objectId;
+    const QString l1Anchor = QString::fromStdString(l1.toCanonical());
+    QTreeWidgetItemIterator it(m_panel->findChild<QTreeWidget*>());
+    while (*it != nullptr && (*it)->text(1) != l1Anchor) { ++it; }
+    ASSERT_NE(*it, nullptr) << "连杆树行未投影";
+    m_panel->findChild<QTreeWidget*>()->setCurrentItem(*it);
+
+    QPushButton* detach = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_geo_detach_visual"));
+    ASSERT_NE(detach, nullptr) << "摘除钮未构建（几何行编辑面缺席）";
+    QPushButton* attach = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_geo_attach_visual"));
+    ASSERT_NE(attach, nullptr) << "挂接钮未构建";
+
+    // ③摘除落草稿（引用清空＋清单条目保留——共享引用语义）。
+    detach->click();
+    EXPECT_FALSE(m_ws.design.links[1].visual.has_value()) << "摘除未落草稿";
+    EXPECT_EQ(m_ws.design.resourceManifest.size(), 1u)
+        << "清单条目被级联删除";
 }
