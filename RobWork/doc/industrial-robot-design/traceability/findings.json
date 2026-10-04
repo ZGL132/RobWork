@@ -4871,6 +4871,36 @@
       "title": "UI-T44 D3 宿主接线（refreshReadinessSummary 挂 refreshSharedSurfaces 编排）无直接断言用例——acceptance 证据为「ui_test/ui_gui_test 全绿（零回归）」的间接承载＋实现核查（UiPlugin.cpp L3048 调用点在位）；若编排位次（「首位」）需防回归，宜补一条 refreshSharedSurfaces 调用序断言用例。",
       "owner": "后续 ui 编排触碰批次（顺手补调用序断言钉；本卡实现核查证据已记录非缺陷）",
       "resolution": "验收记录 4.4 发现转登（acc/UI-T44/1）。"
+    },
+    {
+      "id": "F-489",
+      "source": "UI-T33 验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T33 契约 allowedFiles 字面未含 requirements/gui_test/**——第一批（同卡 faa48332/93923d98，已合入主线）即以「流测试落位 gui_test 目标」（README 边界④：requirements_test 为 QCoreApplication 不能构造 widget 面板）落位该文件并合入，收口批延续同一落位选择；判 pass-with-note 非越界（同卡先例＋登记注背书＋零语义越界），契约文本随治理批补 gui_test 面。",
+      "owner": "下一治理批（UI-T33.json allowedFiles 补 requirements/gui_test/** 即闭环——语义零变化）",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T33/1）。"
+    },
+    {
+      "id": "F-490",
+      "source": "UI-T33 验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T33 两条诚实边界跟踪：①采样格着色生产数据面（KIN-07 评估判定→cellStates 投影）留消费任务——管道/协议/渲染分色/替身断言在本批（契约 note②「预览零结果语义」背书非缩水）；②三维浮动文本无渲染基建——工位标签承载场景节点名（addFrameAxis 节点名），Billboard 文本随文本渲染基建任务。",
+      "owner": "①KIN-07 评估判定消费任务（接线 cellStates 投影即闭环）；②文本渲染基建任务（两项均为管道就绪的增量面，非缺陷）",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T33/1）。"
+    },
+    {
+      "id": "F-491",
+      "source": "UI-T33 实施段（2026-10-04——落分支事故，验收 attempt 1 复核证实零外泄）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "实施段落分支事故留痕：git checkout -b ui-t33 因分支已存在（第一批遗留）而失败，实现误落本地 redesign-main 工作树——推送前发现并纠正（提交移至 ui-t33＋主线重置回远程头），origin/redesign-main 全程零污染（验收段漂移检测复核证实 origin 停在 62f21852）。教训：建分支失败（分支已存在等）须立即停手核查工作树状态，不得继续编辑。",
+      "owner": "已纠正（零外泄）——本条为教训永久留痕，随记录闭合无需后续动作",
+      "resolution": "验收记录过程声明与 4.1 载明（acc/UI-T33/1）。"
     }
   ]
 }
