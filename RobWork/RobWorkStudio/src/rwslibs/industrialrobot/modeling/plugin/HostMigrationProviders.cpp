@@ -7,6 +7,8 @@
 
 #include "HostMigrationProviders.hpp"
 
+#include "RpyPresentation.hpp"  // 单元插件私有头——RPY 反解唯一实现（UI-T53 提升共享）
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -94,36 +96,11 @@ core::UnitToken unitTokenFor(core::QuantityKind kind)
 }
 
 /**
- * @brief 旋转矩阵 → ZYX 欧拉角反解（RPY——与 Import.cpp rpyToRotation
- *        正解互逆；UI-T50 只读事实页的位姿六值呈现用）。
- *
- * ★ 逐元素解析实现——不调用 rw::math::RPY 构造（冒烟 header-only 纪律：
- *   RPY 构造是框架外联符号，F-480 同族——requirements 侧已实测链接失败，
- *   本文件禁重蹈）。正解约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)（GeometryLinkEdit
- *   的正解同式），反解：pitch＝-asin(R20)，roll＝atan2(R21,R22)，
- *   yaw＝atan2(R10,R00)；|R20|≈1 奇异（万向锁）时 roll＝0、yaw 改由
- *   atan2(-R01,R11) 确定（确定性特例——与 Template.cpp 占位圆柱特例同款
- *   纪律）。
- *
- * @param R [in] 旋转矩阵（连杆/工具系约定内使用——本函数不涉参考系语义）
- * @return {roll, pitch, yaw}，单位 rad
+ * @brief 旋转矩阵 → ZYX 欧拉角反解的共享实现（UI-T53 提升至
+ *        RpyPresentation.hpp——检查器位姿六值呈现与编辑页 origin 基线
+ *        回填同源；本 TU 经 using 保持既有调用面）。
  */
-std::array<double, 3> rotationToRpy(const rw::math::Rotation3D<double>& R)
-{
-    const double pitch = -std::asin(std::clamp(R(2, 0), -1.0, 1.0));
-    const double cp = std::cos(pitch);
-    double roll;
-    double yaw;
-    if (std::abs(cp) > 1e-12) {
-        roll = std::atan2(R(2, 1), R(2, 2));
-        yaw = std::atan2(R(1, 0), R(0, 0));
-    } else {
-        // 万向锁：roll/yaw 共线不可分——确定性取 roll=0（工程惯例）。
-        roll = 0.0;
-        yaw = std::atan2(-R(0, 1), R(1, 1));
-    }
-    return {roll, pitch, yaw};
-}
+using rpyview::rotationToRpy;
 
 /**
  * @brief SourcedValue 来源标记的标签后缀（acceptance 4"逐项 SourcedValue

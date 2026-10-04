@@ -25,6 +25,7 @@
 #define IRD_MODELING_PLUGIN_MODELINGPANELWIDGET_HPP
 
 #include <functional>
+#include <memory>
 #include <optional>
 
 #include <QFrame>
@@ -38,6 +39,7 @@
 
 #include <sdurws/ird/modeling/Readiness.hpp>          // ModelReadinessReport（就绪条数据源）
 #include <sdurws/ird/modeling/Template.hpp>           // ModelingWorkingSet（工作集——投影数据源）
+#include <sdurws/ird/ui/FormEditCommon.hpp>           // ParamEditModel/IFormEditOutlet（UI-T53 编辑页公共件）
 #include "PanelCommandCatalog.hpp"                    // modelingDomainCommands/applyReadOnlyGate（命令目录/L-7——同目录私有头）
 #include "PanelEditFlow.hpp"                          // IPanelEditSink/submitJointFieldEdit（L-2 编排）
 #include "GeometryResourceFlow.hpp"                   // runGeometryResourceSelection/GeometrySlot（UI-T48——资源选择流）
@@ -188,7 +190,12 @@ private:
     void buildPreviewPane(QVBoxLayout* bottom);         // 区⑤预览页（仅已应用修订）
 
     // ---- 接线辅助 ----
-    void refreshPropertiesFromLastWorkingSet();  // 属性区按当前选中重投影（L-1 反向/编辑后）
+    /// 属性区＋编辑页的统一刷新入口（选中/编辑后/refreshPanel 共用——
+    /// UI-T53 起本入口在属性行重投影后同步驱动编辑页，两区同源刷新）。
+    void refreshPropertiesFromLastWorkingSet();
+    /// 属性行重投影（UI-T53 从 refreshPropertiesFromLastWorkingSet 抽出
+    /// ——原实现整体更名，刷新入口语义不变）。
+    void refreshPropertyRowsFromLastWorkingSet();
     std::optional<core::ObjectId> nodeAnchor(QTreeWidgetItem* item) const;  // 树行→锚（隐藏列）
     /// 结构树全量重建（UI-T47 从 refreshPanel 抽出——结构操作按钮槽与
     /// refreshPanel 共用同一树投影，零第二实现）。
@@ -207,6 +214,28 @@ private:
     /// 与增量两条投影路径共用同一判定，杜绝禁用态滞后）。
     void refreshCollisionCopyGating(const ModelingWorkingSet& ws,
                                     std::size_t linkIndex);
+
+    // ---- UI-T53 关节详细编辑页（"编辑"页签——B.1 复杂对象编辑模式关节侧）----
+
+    /// 编辑页出口（ParamEditSet→域编辑流分组转译——.cpp 内定义的具体类；
+    /// 域裁决唯一在 applyJointFieldEdit，本类零判定）。
+    class JointDetailEditOutlet;
+
+    /// 编辑页签骨架（构造期一次——提示行＋ParamTablePanel 宿主容器）。
+    void buildJointEditPane(QVBoxLayout* bottom);
+    /// 编辑页随选中/权威变化同步（refreshPropertiesFromLastWorkingSet 尾
+    /// 驱动）：换目标＝重建模型（specs 量纲随关节类型），同目标＝推基线
+    /// （暂存编辑保留——未完成输入不因刷新丢失）。
+    void refreshJointEditPane();
+    /// 编辑页模型重建（字段集 12 行装配＋createParamTablePanel 挂载）。
+    void rebuildJointEditModel(const JointEntry& joint);
+    /// 权威值→表单基线回填（SI 真值；未提供字段＝nullopt 基线——kFieldUnset
+    /// 占位呈现，不伪造 0）。
+    void pushJointEditBaselines(const JointEntry& joint);
+    /// 出口移交落点（IFormEditOutlet::applyEdits 转接——键分组装配域编辑
+    /// 流：axis-*→Axis、origin-*→Origin、zero-offset→ZeroOffset、
+    /// bounds-*→Bounds；提交序固定登记序，单组拒绝不阻断其余组）。
+    void applyJointDetailEdits(const ui::ParamEditSet& editSet);
 
     /**
      * @brief 命令按钮使能态统一刷新（UI-T43——L-7 门控三输入的单一判定面）。
@@ -250,6 +279,14 @@ private:
     /// 视觉→碰撞复制钮（UI-T49——禁用态随 visual 有无变化；QPointer：
     /// 属性区重建路径销毁行控件时自动置空，增量路径安全刷新）
     QPointer<QPushButton> m_collisionCopyBtn;
+
+    // ---- UI-T53 关节详细编辑页（"编辑"页签——构造期挂树，随 Qt 析构）----
+    std::unique_ptr<ui::IFormEditOutlet> m_jointEditOutlet; ///< 移交出口（构造期一次——转译到本面板域编辑流）
+    QWidget* m_jointEditHost = nullptr;       ///< 页签容器（提示行＋面板宿主——QVBoxLayout 承载）
+    QLabel* m_jointEditHint = nullptr;        ///< 空态提示（非关节选中/无会话——不伪造编辑页）
+    QWidget* m_jointEditPanel = nullptr;      ///< createParamTablePanel 产物（换选中目标时重建）
+    std::unique_ptr<ui::ParamEditModel> m_jointEditModel;  ///< 编辑会话模型（基线/暂存/就地错误三层——ui 公共件）
+    std::optional<std::size_t> m_jointEditTarget;  ///< 页当前绑定关节下标（nullopt＝未绑定——重建/推基线分路锚）
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
     QTreeWidget* m_tree = nullptr;            ///< 区①结构树（隐藏第 1 列＝锚规范文本）

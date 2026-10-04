@@ -58,6 +58,7 @@ using sdurws::ird::modeling::JointEditField;
 using sdurws::ird::modeling::JointEditValue;
 using sdurws::ird::modeling::JointEntry;
 using sdurws::ird::modeling::JointLimits;
+using sdurws::ird::modeling::JointOriginEditValue;
 using sdurws::ird::modeling::JointType;
 using sdurws::ird::modeling::ModelingChangeRecord;
 using sdurws::ird::modeling::ModelingWorkingSet;
@@ -614,12 +615,108 @@ TEST(MdlTemplate, CreateEditChain_AuthorityLockedAxis_WP13T07_ACC4)
 }
 
 /**
+ * 关节原点字段编辑（UI-T53——JointEditField::Origin 表尾追加；MDL-09/C-1）：
+ * Explicit 态接受＝六标量组合为位姿（平移 m 直写＋旋转经域内核 ZYX 正解
+ * R＝Rz·Ry·Rx）＋UserProvided 来源＋恰一条变更记录；StandardDH 态拒绝＝
+ * AuthorityLocked 且工作集字节不变（C-1——与 Axis 同一 authorityEditGuard
+ * 单一判定）；六分量任一非有限拒绝（I-MDL-3）；备择不匹配 fail-fast
+ * （Origin 字段携 double 载荷＝调用方契约违约）；批量变体同键可用。
+ *
+ * 旋转核验口径（与实现独立）：R20 元素在实现中即 -sin(pitch) 字面计算
+ * （逐元素精确相等）；三角还原（pitch=-asin(R20)、roll=atan2(R21,R22)、
+ * yaw=atan2(R10,R00)——PanelModel 呈现反解同式）经 1e-12 容差互证——
+ * 正逆两实现互为对照，不复制正解公式自证。
+ */
+TEST(MdlTemplate, CreateEditChain_OriginEditField_UI_T53)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-01", "MDL-09"},
+                  std::vector<std::string>{"AT-20", "AT-01"});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+
+    // ---- 接受面：Explicit 态编辑关节 1 原点（全非零常规角——钉全元素
+    //      组合而非特例；非万向锁区执内 asin/atan2 还原唯一）。----
+    constexpr double kRoll = 0.1;
+    constexpr double kPitch = 0.2;
+    constexpr double kYaw = 0.3;
+    const auto rejection =
+        applyJointFieldEdit(ws, 1, JointEditField::Origin,
+                            JointEditValue{JointOriginEditValue{
+                                0.4, -0.5, 0.6, kRoll, kPitch, kYaw}});
+    EXPECT_FALSE(rejection.has_value()) << "Explicit 态原点编辑应接受";
+    const auto& origin = ws.design.joints[1].origin;
+    ASSERT_EQ(origin.state(), FieldState::Provided);
+    // 平移半区（m——父连杆系下）逐分量直写。
+    EXPECT_EQ(origin.value().d()[0], 0.4);
+    EXPECT_EQ(origin.value().d()[1], -0.5);
+    EXPECT_EQ(origin.value().d()[2], 0.6);
+    // 旋转半区：R20＝-sin(pitch) 为实现字面计算——逐位相等断言。
+    EXPECT_EQ(origin.value().r()(2, 0), -std::sin(kPitch));
+    // 独立反解还原三角（容差 1e-12——asin/atan2 舍入不保证逐位还原）。
+    const double pitchBack = -std::asin(origin.value().r()(2, 0));
+    const double rollBack =
+        std::atan2(origin.value().r()(2, 1), origin.value().r()(2, 2));
+    const double yawBack =
+        std::atan2(origin.value().r()(1, 0), origin.value().r()(0, 0));
+    EXPECT_NEAR(rollBack, kRoll, 1e-12);
+    EXPECT_NEAR(pitchBack, kPitch, 1e-12);
+    EXPECT_NEAR(yawBack, kYaw, 1e-12);
+    // 来源＝UserProvided（用户输入覆盖——Axis 分支同款语义）＋恰一条记录。
+    EXPECT_EQ(origin.provenance().kind, ProvenanceKind::UserProvided);
+    ASSERT_EQ(ws.changes.size(), 1U) << "一次字段级编辑＝一条变更记录";
+    EXPECT_EQ(ws.changes[0].subject, "joints[1]");
+    EXPECT_EQ(sdurws::ird::modeling::jointEditFieldToken(
+                  JointEditField::Origin),
+              "origin");
+
+    // ---- 拒绝面①：StandardDH 态 C-1（值面演算构造场景——不经 T09 转换，
+    //      转换判定归 T09，本用例只钉编辑守卫语义）。----
+    ws.design.authority = AuthorityMode::StandardDH;
+    const ModelingWorkingSet beforeDh = ws;
+    const auto dhRejection = applyJointFieldEdit(
+        ws, 0, JointEditField::Origin,
+        JointEditValue{JointOriginEditValue{}});
+    ASSERT_TRUE(dhRejection.has_value()) << "DH 权威态编辑 origin＝C-1 拒绝";
+    EXPECT_EQ(dhRejection->code, JointEditErrorCode::AuthorityLocked);
+    EXPECT_EQ(ws, beforeDh) << "拒绝：工作集字节不变（V-14 同口径）";
+
+    // ---- 拒绝面②：非有限分量（yaw＝NaN——I-MDL-3；恢复 Explicit 后
+    //      提交，六分量逐一有限）。----
+    ws.design.authority = AuthorityMode::Explicit;
+    const ModelingWorkingSet beforeFinite = ws;
+    const auto nanRejection = applyJointFieldEdit(
+        ws, 0, JointEditField::Origin,
+        JointEditValue{
+            JointOriginEditValue{0.0, 0.0, 0.0, 0.0, 0.0, std::nan("")}});
+    ASSERT_TRUE(nanRejection.has_value());
+    EXPECT_EQ(nanRejection->code, JointEditErrorCode::ValueNotFinite);
+    EXPECT_EQ(ws, beforeFinite) << "拒绝：工作集字节不变";
+
+    // ---- fail-fast 面：Origin 字段携不匹配备择（double）＝调用方契约
+    //      违约（备择匹配检查——与 Type/Axis/ZeroOffset/Bounds 同款）。----
+    EXPECT_THROW(applyJointFieldEdit(ws, 0, JointEditField::Origin,
+                                     JointEditValue{0.25}),
+                 std::invalid_argument);
+
+    // ---- 批量变体同键可用（备择匹配放行——行级拒绝语义归行级校验；
+    //      批量摘要 subject＝joints[*].origin）。----
+    std::vector<JointBatchEditItem> originItems;
+    originItems.push_back(JointBatchEditItem{
+        2, JointEditValue{JointOriginEditValue{0.0, 0.0, 1.0, 0.0, 0.0, 0.0}}});
+    const auto batchOutcome =
+        applyJointFieldEditBatch(ws, JointEditField::Origin, originItems);
+    EXPECT_EQ(batchOutcome.appliedCount, 1U);
+    EXPECT_EQ(ws.design.joints[2].origin.value().d()[2], 1.0);
+    ASSERT_EQ(ws.changes.size(), 2U) << "拒绝路径不追加记录（1 字段级＋1 批量）";
+    EXPECT_EQ(ws.changes[1].subject, "joints[*].origin");
+}
+
+/**
  * 批量变体＋变更摘要（acceptance 4——"§5.2 字段级/批量变体、批量产出单条
  * 变更摘要→buildChangeSummary"）：批量＝同一字段多行（UX-05）；应用行与
  * 拒绝行互不连带（BatchPartial 语义）；恰一条批量变更记录；buildChangeSummary
  * 确定性人读中文（行数＝记录数）。
- */
-TEST(MdlTemplate, CreateEditChain_BatchAndChangeSummary_WP13T07_ACC4)
+ */TEST(MdlTemplate, CreateEditChain_BatchAndChangeSummary_WP13T07_ACC4)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-01"},
                   std::vector<std::string>{"AT-20", "AT-01"});

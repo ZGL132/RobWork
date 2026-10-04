@@ -28,12 +28,13 @@
 #include <sdurws/ird/io/Csv.hpp>         // makeCsvReader/RawTable（CSV 通道）
 #include <sdurws/ird/requirements/Capture.hpp>       // RequirementCaptureService/请求模型（UI-T33——捕获/拾取真实现）
 #include <sdurws/ird/requirements/Readiness.hpp>     // CheckContext（捕获服务第三参——空上下文预检口径）
-#include <rw/math/RPY.hpp>                          // RPY（TCP 姿态欧拉序——CapturedTcpPose.rpy 值面）
 #include <sdurws/ird/requirements/Import.hpp>        // RequirementImporter/exportCopy/mapJson
 #include <sdurws/ird/requirements/TemplateArray.hpp>  // TemplateArrayService/defaultTemplateParams
 
-#include <chrono>
 #include <algorithm>
+#include <array>
+#include <chrono>
+#include <cmath>
 
 #include "ImportWizardFlow.hpp"        // L-R10 五步向导域侧流（组2）
 #include "PanelEditFlow.hpp"             // submitBatchEdit/IRequirementEditSink
@@ -49,6 +50,30 @@ RequirementImporter importer{};
 void note(RequirementsPanelWidget& panel, const QString& text)
 {
     panel.showCommandFeedback(text);
+}
+
+/**
+ * @brief 旋转矩阵 → RPY（roll/pitch/yaw，单位 rad）反解——TCP 捕获摘要
+ *        呈现用（UI-T53 附带修复：原实现调 rw::math::RPY 构造——F-480
+ *        同族框架外联符号，独立冒烟模式链接失败〔LNK2019〕；本插件禁
+ *        重蹈同款纪律，改逐元素解析——与 modeling 侧 rotationToRpy 反解
+ *        同式同源，公式一致性由各自单元测试钉住）。
+ *
+ * 正解约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)；反解：pitch＝-asin(R20)，
+ * roll＝atan2(R21,R22)，yaw＝atan2(R10,R00)；万向锁（|R20|≈1）时
+ * roll＝0、yaw 改由 atan2(-R01,R11) 确定（确定性特例——工程惯例）。
+ *
+ * @param R [in] 旋转矩阵（无量纲正交阵）
+ * @return {roll, pitch, yaw}，单位 rad
+ */
+std::array<double, 3> rotationToRpyPresentation(const rw::math::Rotation3D<double>& R)
+{
+    const double pitch = -std::asin(std::clamp(R(2, 0), -1.0, 1.0));
+    const double cp = std::cos(pitch);
+    if (std::abs(cp) > 1e-12) {
+        return {std::atan2(R(2, 1), R(2, 2)), pitch, std::atan2(R(1, 0), R(0, 0))};
+    }
+    return {0.0, pitch, std::atan2(-R(0, 1), R(1, 1))};
 }
 
 // =====================================================================
@@ -580,8 +605,10 @@ bool flowCaptureTcp(RequirementsPanelWidget& panel,
     }
 
     // 写回确认（REQ-08——确认凭据随请求过域门；拒绝走服务保守门径）。
+    // RPY 呈现反解（UI-T53 附带修复——rw::math::RPY 外联符号换逐元素解析，
+    // 见 rotationToRpyPresentation 注）。
     const rw::math::Vector3D<double> p = pose->P();
-    const rw::math::RPY<double> rpy(pose->R());
+    const auto rpy = rotationToRpyPresentation(pose->R());
     const QString summary =
         QString::fromUtf8("捕获 TCP（设备 %1）：位置（%2, %3, %4） m、"
                           "姿态 RPY（%5, %6, %7） rad——新建固定任务点 %8。确认写回？")

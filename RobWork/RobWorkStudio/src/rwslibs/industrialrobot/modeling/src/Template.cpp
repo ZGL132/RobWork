@@ -14,7 +14,8 @@
  *     环境/locale/文件系统；同输入→同输出（NFR-COR-02）。
  *   - 冒烟 header-only 纪律（T03 落位起）：不调用 Rotation3D::identity()/
  *     rw::math::RPY 等框架外联符号——旋转矩阵一律逐元素解析式构造
- *     （Import.cpp rpyToRotation 同款；见 makeLinkPlaceholderCylinder）。
+ *     （RPY 正解唯一实现＝src/RpyMath.hpp，UI-T53 提升共享；见
+ *     makeLinkPlaceholderCylinder 同款纪律）。
  *   - 错误语义（AGENTS）：调用方契约违约 fail-fast（invalid_argument/
  *     logic_error）；正常业务拒绝走值面（TemplateOutcome/JointEditError）
  *     ——§9.4 前言"非异常出口"。
@@ -25,6 +26,7 @@
 #include <sdurws/ird/core/Digest.hpp>  // ContentDigester——确定性临时句柄派生（SHA-256）
 #include <sdurws/ird/modeling/DiagCodes.hpp>  // kMdlTemplateDisabled/kMdlImportTemplateRange——码常量唯一书写点
 #include "DraftIdentity.hpp"                       // deriveDraftObjectId/makeSeedLink（UI-T47 提升——单元内共享头）
+#include "RpyMath.hpp"                             // rpymath::rpyToRotation——RPY 正解唯一实现（UI-T53 提升共享）
 #include <sdurws/ird/modeling/PropertyEstimation.hpp>  // defaultMaterialDensity——材料密度默认表（单一权威；经 DraftIdentity.hpp 使用）
 #include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // rotationFromCustomEaa——EAA→R 唯一权威换算点（I-MDL-7/P-RT-4）
 
@@ -37,6 +39,10 @@
 namespace sdurws::ird::modeling {
 
 namespace {
+
+// RPY 正解共享引入（src/RpyMath.hpp——本文件 Origin 编辑分支按旧名直呼，
+// 与 Import.cpp 历史调用面同形）。
+using rpymath::rpyToRotation;
 
 // ---------------------------------------------------------------------
 // 模板登记清单（§5.1 表——listTemplates 与 createDraft 共用的单一数据源；
@@ -153,6 +159,9 @@ bool allFinite(const rw::math::Vector3D<double>& v)
     return std::isfinite(v[0]) && std::isfinite(v[1]) && std::isfinite(v[2]);
 }
 
+// RPY→旋转正解唯一实现＝src/RpyMath.hpp（UI-T53 从 Import.cpp 提升共享；
+// 本 TU 经 using 引入——见文件头 include 区注释）。
+
 // makeSeedLink 同在 src/DraftIdentity.hpp（见上——UI-T47 提升注）。
 
 /**
@@ -259,6 +268,44 @@ std::optional<JointEditError> editJointFieldImpl(RobotDesign& design,
         design.joints[jointIndex].type = newType;
         return std::nullopt;
     }
+    case JointEditField::Origin: {
+        // ⑦ 原点位姿（UI-T53 表尾追加）：权威守卫与 Axis 同一 C-1 语义
+        // （StandardDH 态 origin 为派生只读，编辑即双真值写入），随后六
+        // 分量有限性，最后经域内核正解组合旋转矩阵提交。
+        const auto& originEdit = std::get<JointOriginEditValue>(value);
+        // 权威守卫（C-1——authorityEditGuard 单一判定，Axis 分支同款）。
+        if (authorityEditGuard(design.authority, AuthorityLockedField::Origin)
+                .has_value()) {
+            return JointEditError{JointEditErrorCode::AuthorityLocked,
+                                  subject + "：StandardDH 权威态下 origin 为"
+                                            "派生只读（C-1）——切换权威模式"
+                                            "需经转换判定（§7.6）"};
+        }
+        // 六分量有限性（I-MDL-3：平移 m 三分量＋姿态 rad 三分量——NaN/Inf
+        // 非法，不静默置 0）。
+        const double comps[6] = {originEdit.x, originEdit.y, originEdit.z,
+                                 originEdit.roll, originEdit.pitch,
+                                 originEdit.yaw};
+        for (const double c : comps) {
+            if (!std::isfinite(c)) {
+                return JointEditError{JointEditErrorCode::ValueNotFinite,
+                                      subject + ".origin：含非有限分量"
+                                                "（NaN/Inf）"};
+            }
+        }
+        // 提交：平移直写；旋转经域内核唯一正解组合（UserProvided——用户
+        // 输入覆盖，MDL-09 显式权威一等字段）。
+        const rw::math::Vector3D<double> translation(originEdit.x,
+                                                     originEdit.y,
+                                                     originEdit.z);
+        const rw::math::Rotation3D<double> rotation = rpyToRotation(
+            originEdit.roll, originEdit.pitch, originEdit.yaw);
+        design.joints[jointIndex].origin =
+            core::SourcedValue<JointPose>::provided(
+                JointPose(rw::math::Transform3D<double>(translation, rotation)),
+                core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+        return std::nullopt;
+    }
     }
     // 枚举全覆盖，不达此处（switch 无 default——新枚举值漏处理编译器告警）。
     return JointEditError{JointEditErrorCode::ValueNotFinite, "unreachable"};
@@ -290,6 +337,10 @@ void appendChangeRecord(ModelingWorkingSet& ws, std::size_t jointIndex,
         break;
     case JointEditField::Bounds:
         record.summary = "修改限位 [qmin,qmax]（转动 rad／移动 m）";
+        break;
+    case JointEditField::Origin:
+        record.summary = "修改关节原点位姿（父连杆系——Explicit 权威一等字段；"
+                         "改原点属设计变更，下游需重算）";
         break;
     }
     ws.changes.push_back(std::move(record));
@@ -553,6 +604,7 @@ std::string_view jointEditFieldToken(JointEditField field) noexcept
     case JointEditField::Axis: return "axis";
     case JointEditField::ZeroOffset: return "zeroOffset";
     case JointEditField::Bounds: return "bounds";
+    case JointEditField::Origin: return "origin";
     }
     return "type";  // 全枚举已覆盖，不达此处（无 default——漏项编译器告警）
 }
@@ -581,7 +633,8 @@ std::optional<JointEditError> applyJointFieldEdit(ModelingWorkingSet& ws,
             + std::to_string(jointIndex) + "]");
     }
     // ② field 与 value 备择匹配检查（variant 备择序＝枚举声明序——Type/
-    //    Axis/ZeroOffset/Bounds 对 JointType/V3/double/JointLimits）。
+    //    Axis/ZeroOffset/Bounds/Origin 对 JointType/V3/double/JointLimits/
+    //    JointOriginEditValue）。
     const bool matched =
         (field == JointEditField::Type
          && std::holds_alternative<JointType>(value))
@@ -590,7 +643,9 @@ std::optional<JointEditError> applyJointFieldEdit(ModelingWorkingSet& ws,
         || (field == JointEditField::ZeroOffset
             && std::holds_alternative<double>(value))
         || (field == JointEditField::Bounds
-            && std::holds_alternative<JointLimits>(value));
+            && std::holds_alternative<JointLimits>(value))
+        || (field == JointEditField::Origin
+            && std::holds_alternative<JointOriginEditValue>(value));
     if (!matched) {
         throw std::invalid_argument(
             "modeling/template/edit-variant: value 备择与 field 不匹配: "
@@ -626,7 +681,9 @@ JointBatchEditOutcome applyJointFieldEditBatch(ModelingWorkingSet& ws,
             || (field == JointEditField::ZeroOffset
                 && std::holds_alternative<double>(item.value))
             || (field == JointEditField::Bounds
-                && std::holds_alternative<JointLimits>(item.value));
+                && std::holds_alternative<JointLimits>(item.value))
+            || (field == JointEditField::Origin
+                && std::holds_alternative<JointOriginEditValue>(item.value));
         if (!matched) {
             throw std::invalid_argument(
                 "modeling/template/batch-variant: 批量行 value 备择与批量字段"

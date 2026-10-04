@@ -23,12 +23,21 @@
 #include <QTreeWidgetItemIterator>
 #include <QVBoxLayout>
 
+#include <array>
+#include <map>
+#include <string>
+
 #include <sdurws/ird/ui/UiText.hpp>   // 文案键解析（UI-T25——迁移标记标签挂键；
                                       // 构造期命令标题 resolver 尚未注入，此处直读
                                       // UiText 静态表，requirements 面板先例同款）
 #include <sdurws/ird/ui/UiTheme.hpp>  // 工业风主题（UI-T37 基建——批次B B5 接入；
                                       // 调色板五色词表＝唯一色值源，防彩虹化）
 #include <sdurws/ird/ui/UiTypes.hpp>  // ui::TextKey（命令标题键——呈现层键解析约定）
+#include <sdurws/ird/core/Units.hpp>  // core::UnitToken::find/QuantityKind（编辑页字段
+                                      // 量纲 token——SA-12 换算入口的装配面）
+
+#include "RpyPresentation.hpp"        // 单元插件私有头——RPY 反解（编辑页 origin
+                                      // 基线回填——UI-T53 提升共享）
 
 namespace sdurws::ird::modeling {
 namespace {
@@ -47,7 +56,68 @@ bool rowReadOnly(FieldEnablement en) noexcept
     return en != FieldEnablement::Editable;
 }
 
+// ---- UI-T53 关节详细编辑页字段键（编辑页 12 行——outlet 分组装配与基线
+//      回填的寻址锚；小写连字符词法与共享检查器字段键同风格）------------
+constexpr const char* kJointAxisXKey = "axis-x";
+constexpr const char* kJointAxisYKey = "axis-y";
+constexpr const char* kJointAxisZKey = "axis-z";
+constexpr const char* kJointOriginXKey = "origin-x";
+constexpr const char* kJointOriginYKey = "origin-y";
+constexpr const char* kJointOriginZKey = "origin-z";
+constexpr const char* kJointOriginRollKey = "origin-r";
+constexpr const char* kJointOriginPitchKey = "origin-p";
+constexpr const char* kJointOriginYawKey = "origin-yaw";
+constexpr const char* kJointZeroOffsetKey = "zero-offset";
+constexpr const char* kJointBoundsMinKey = "bounds-min";
+constexpr const char* kJointBoundsMaxKey = "bounds-max";
+
+/// 关节零位/限位的量纲分流（Prismatic＝移动 m，其余＝转动 rad——与共享
+/// 检查器 jointQuantityKind 同一规则；两处为呈现辅助零业务判定，公式/规则
+/// 漂移由各自单元测试钉住——rotationToRpy 提升前同款先例）。
+core::QuantityKind jointEditQuantityKind(JointType type) noexcept
+{
+    return type == JointType::Prismatic ? core::QuantityKind::Length
+                                        : core::QuantityKind::Angle;
+}
+
+/// 量纲→单位 token（建模字段 SI 恒同显示——m/rad 制式；KIN-12 显示切换
+/// 是 ParamTablePanel 会话面不在装配面）。
+core::UnitToken jointEditUnitToken(core::QuantityKind kind)
+{
+    switch (kind) {
+    case core::QuantityKind::Length: return core::UnitToken::find("m").value();
+    case core::QuantityKind::Angle: return core::UnitToken::find("rad").value();
+    default: break;
+    }
+    return core::UnitToken::find("1").value();  // 轴向＝无量纲单位向量
+}
+
 }  // namespace
+
+// =====================================================================
+// 关节详细编辑页的移交出口（UI-T53——IFormEditOutlet 的域转译壳）
+// =====================================================================
+
+/**
+ * @brief ParamEditModel::confirmApply → 本面板域编辑流的移交壳（ui 公共件
+ *        O-31 最小端口的产品实现）。
+ *
+ * 本类零判定零状态（仅回指宿主面板）——分组装配、域提交与拒绝分流全部
+ * 在 ModelingPanelWidget::applyJointDetailEdits（与属性行提交轨同一落点，
+ * L-2 sink 分流复用）。线程：applyEdits 仅 UI 线程（公共件契约——§3.4）。
+ */
+class ModelingPanelWidget::JointDetailEditOutlet final : public ui::IFormEditOutlet {
+public:
+    explicit JointDetailEditOutlet(ModelingPanelWidget& owner) : m_owner(owner) {}
+
+    void applyEdits(const ui::ParamEditSet& editSet) override
+    {
+        m_owner.applyJointDetailEdits(editSet);  // 移交即转接——零第二实现
+    }
+
+private:
+    ModelingPanelWidget& m_owner;  ///< 宿主面板（非 owning——面板持有本出口）
+};
 
 // =====================================================================
 // 构造与五区骨架
@@ -67,16 +137,23 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     buildPropertyPane(right);       // 区②属性编辑区（右栏）
 
     auto* tabs = new QTabWidget(this);
+    auto* editPage = new QWidget(tabs);
     auto* toolsPage = new QWidget(tabs);
     auto* readinessPage = new QWidget(tabs);
     auto* previewPage = new QWidget(tabs);
+    buildJointEditPane(new QVBoxLayout(editPage));     // 区⑥编辑页（UI-T53——关节详细编辑）
     buildToolsPane(new QVBoxLayout(toolsPage));        // 区③域工具区（StageId=modeling）
     buildReadinessPane(new QVBoxLayout(readinessPage));// 区④就绪与诊断条
     buildPreviewPane(new QVBoxLayout(previewPage));    // 区⑤预览页（仅已应用修订）
+    // 编辑页签居首（B.1 复杂对象编辑模式——结构树选择→详细编辑页的主入口；
+    // 与共享检查器高频标量页分野：大批量/权威敏感字段收口本页）。
+    tabs->addTab(editPage, QStringLiteral("编辑"));
     tabs->addTab(toolsPage, QStringLiteral("工具"));
     tabs->addTab(readinessPage, QStringLiteral("就绪"));
     tabs->addTab(previewPage, QStringLiteral("预览"));
     right->addWidget(tabs, 1);
+    // 编辑页出口（构造期一次——转译到本面板域编辑流；域裁决唯一在域函数）。
+    m_jointEditOutlet = std::make_unique<JointDetailEditOutlet>(*this);
 
     // 就地状态行（错误/横幅——非模态呈现的唯一出口，置底部常驻）。
     // UI-T41 批次B（B2）：状态行分级着色（词表色）＋可折叠诊断历史（最近
@@ -552,6 +629,11 @@ void ModelingPanelWidget::setWritable(bool writable)
         m_propertyEditors[i]->setText(
             QString::fromStdString(m_propertyRows[i].valueText));
     }
+    // L-7 编辑页半区（UI-T53）：只读会话＝ParamTablePanel 整体禁用（页内
+    // 全部编辑控件同步灰显——出口侧 applyJointDetailEdits 另有防御面）。
+    if (m_jointEditPanel != nullptr) {
+        m_jointEditPanel->setEnabled(m_writable);
+    }
     // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
     // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
     // 残留可用呈现，与需求域"切换后必须同步刷新全部状态承载面"的整改口径
@@ -634,6 +716,14 @@ void ModelingPanelWidget::focusObject(const std::optional<core::ObjectId>& oid)
 
 void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
 {
+    // UI-T53 统一刷新入口：属性行重投影＋编辑页同步（两区同源——选中/
+    // 编辑后/refreshPanel 全部经此，零第二刷新路径）。
+    refreshPropertyRowsFromLastWorkingSet();
+    refreshJointEditPane();
+}
+
+void ModelingPanelWidget::refreshPropertyRowsFromLastWorkingSet()
+{
     // 现取编辑目标（装配层会话工作集——面板零副本）；无会话＝空态。
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
 
@@ -711,11 +801,18 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
                      + QStringLiteral("）");
         }
         if (!panelEditable) {
-            // UI-T41 批次B（B7）：只读复合行指引准确化——挂 UiText 键
-            // （物性估算/占位几何域命令与批量粘贴的真实归宿；批次A 已装配
-            // 的命令与后续批次的入口如实区分，消除"提示去用不存在的功能"）。
-            editor->setToolTip(QString::fromStdString(
-                ui::resolveText("panel.modeling.field.composite.tooltip")));
+            // 只读复合行指引（与提交拒绝分流同口径——UI-T41 B7＋UI-T53）：
+            // 关节行指向"编辑"页逐字段提交轨；其余行挂 UiText 键（物性
+            // 估算/占位几何域命令的真实归宿，批次A 已装配的命令与后续
+            // 批次的入口如实区分）。
+            if (target->kind == SelectedTarget::Kind::Joint) {
+                editor->setToolTip(QStringLiteral(
+                    "该字段为复合行，不支持就地编辑——请切到『编辑』页"
+                    "逐字段数值提交（批量粘贴/表单级确认应用）"));
+            } else {
+                editor->setToolTip(QString::fromStdString(
+                    ui::resolveText("panel.modeling.field.composite.tooltip")));
+            }
         } else {
             // UI-T41 批次B（B1）：实时校验提示——QDoubleValidator 范围取
             // 选中关节权威限位（bounds，rad/m——域函数仍是唯一裁决者，
@@ -909,6 +1006,306 @@ void ModelingPanelWidget::refreshCollisionCopyGating(const ModelingWorkingSet& w
     }
 }
 
+// =====================================================================
+// 关节详细编辑页（UI-T53——B.1 复杂对象编辑模式的关节侧承载）
+// =====================================================================
+
+void ModelingPanelWidget::buildJointEditPane(QVBoxLayout* bottom)
+{
+    bottom->setContentsMargins(0, 0, 0, 0);
+    // 空态提示行（非关节选中/无会话＝如实呈现，不伪造编辑页——ERR-01）。
+    m_jointEditHint = new QLabel(this);
+    m_jointEditHint->setObjectName(QStringLiteral("ird_modeling_edit_hint"));
+    m_jointEditHint->setWordWrap(true);
+    m_jointEditHint->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    bottom->addWidget(m_jointEditHint);
+    // 语义说明行（常驻——审核语义固定清单的呈现半区：参考系/角度制式/
+    // 权威守卫随页可读，工程师不看设计文档也能读懂字段语义）。
+    auto* caption = new QLabel(this);
+    caption->setObjectName(QStringLiteral("ird_modeling_edit_caption"));
+    caption->setWordWrap(true);
+    caption->setText(QStringLiteral(
+        "原点：父连杆系（位置 m／姿态 rad；ZYX 约定 R＝Rz(yaw)·Ry(pitch)·"
+        "Rx(roll)）；轴向：连杆系单位向量。Explicit 权威下轴向/原点可编辑，"
+        "StandardDH 权威下为派生只读（提交被域守卫拒绝）。"));
+    caption->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    bottom->addWidget(caption);
+    // ParamTablePanel 宿主（面板产物换选中目标时重建——父子挂本容器）。
+    m_jointEditHost = new QWidget(this);
+    m_jointEditHost->setObjectName(QStringLiteral("ird_modeling_edit_host"));
+    auto* hostLay = new QVBoxLayout(m_jointEditHost);
+    hostLay->setContentsMargins(0, 0, 0, 0);
+    bottom->addWidget(m_jointEditHost, 1);
+    m_jointEditHint->setText(QStringLiteral(
+        "在结构树选中一个关节后，此处呈现其 12 行数值编辑表"
+        "（轴向／原点 XYZ＋RPY／零位偏置／限位）——批量粘贴与表单级"
+        "确认应用经 ui 表单公共件（UX-05/07）。"));
+    m_jointEditHint->show();
+}
+
+void ModelingPanelWidget::refreshJointEditPane()
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——刷新触点同样是编辑面
+
+    // 现取编辑目标＋选中锚→关节下标（与属性行同一 resolveSelection——
+    // L-1 关联键复用，零第二选中语义）。
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    std::optional<std::size_t> jointIndex;
+    if (ws != nullptr && m_lastSelected.has_value()) {
+        const auto target = resolveSelection(*ws, *m_lastSelected);
+        if (target.has_value() && target->kind == SelectedTarget::Kind::Joint) {
+            jointIndex = target->index;
+        }
+    }
+
+    // 空态：无会话／非关节选中（含失效锚）——面板收起＋提示行呈现。
+    if (ws == nullptr || !jointIndex.has_value()
+        || *jointIndex >= ws->design.joints.size()) {
+        m_jointEditTarget.reset();
+        if (m_jointEditPanel != nullptr) { m_jointEditPanel->hide(); }
+        if (ws == nullptr) {
+            m_jointEditHint->setText(QStringLiteral(
+                "编辑页需已打开项目（草稿会话）——选中结构树中的关节后"
+                "呈现数值编辑表。"));
+        } else {
+            m_jointEditHint->setText(QStringLiteral(
+                "当前选中对象无数值编辑页（本批次承载关节——工具/场景/"
+                "基座安装编辑随后续批次）。"));
+        }
+        m_jointEditHint->show();
+        return;
+    }
+
+    const JointEntry& joint = ws->design.joints[*jointIndex];
+    // 同目标＝推基线（暂存编辑保留——UI-T41 B3 增量语义的同源纪律：刷新
+    // 不打断未完成输入）；换目标/首建＝重建（字段量纲随关节类型，模型
+    // 构造后字段集不可变——ParamEditModel 契约）。
+    const bool sameTarget = m_jointEditTarget.has_value()
+                            && *m_jointEditTarget == *jointIndex
+                            && m_jointEditPanel != nullptr;
+    if (!sameTarget) {
+        rebuildJointEditModel(joint);
+    }
+    m_jointEditHint->hide();
+    if (m_jointEditPanel != nullptr) {
+        m_jointEditPanel->show();
+        m_jointEditPanel->setEnabled(m_writable);  // L-7 页级门控（只读会话整体灰显）
+    }
+    m_jointEditTarget = jointIndex;
+    pushJointEditBaselines(joint);
+}
+
+void ModelingPanelWidget::rebuildJointEditModel(const JointEntry& joint)
+{
+    // 12 行字段装配（行序＝登记序——表单呈现与确认区明细的稳定序）：
+    // 轴向 3（无量纲）→原点 6（m＋rad）→零位偏置 1→限位 2（量纲随类型）。
+    const core::QuantityKind qk = jointEditQuantityKind(joint.type);
+    const core::UnitToken jointUnit = jointEditUnitToken(qk);
+    const core::UnitToken dimensionless = core::UnitToken::find("1").value();
+
+    std::vector<ui::QuantityFieldSpec> specs;
+    specs.reserve(12);
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointAxisXKey, "轴向 X", core::QuantityKind::Dimensionless,
+        dimensionless, dimensionless));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointAxisYKey, "轴向 Y", core::QuantityKind::Dimensionless,
+        dimensionless, dimensionless));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointAxisZKey, "轴向 Z", core::QuantityKind::Dimensionless,
+        dimensionless, dimensionless));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointOriginXKey, "原点 X", core::QuantityKind::Length,
+        core::UnitToken::find("m").value(), core::UnitToken::find("m").value()));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointOriginYKey, "原点 Y", core::QuantityKind::Length,
+        core::UnitToken::find("m").value(), core::UnitToken::find("m").value()));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointOriginZKey, "原点 Z", core::QuantityKind::Length,
+        core::UnitToken::find("m").value(), core::UnitToken::find("m").value()));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointOriginRollKey, "原点 R（roll）", core::QuantityKind::Angle,
+        core::UnitToken::find("rad").value(), core::UnitToken::find("rad").value()));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointOriginPitchKey, "原点 P（pitch）", core::QuantityKind::Angle,
+        core::UnitToken::find("rad").value(), core::UnitToken::find("rad").value()));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointOriginYawKey, "原点 Y（yaw）", core::QuantityKind::Angle,
+        core::UnitToken::find("rad").value(), core::UnitToken::find("rad").value()));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointZeroOffsetKey, "零位偏置", qk, jointUnit, jointUnit));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointBoundsMinKey, "限位下限", qk, jointUnit, jointUnit));
+    specs.push_back(ui::makeQuantityFieldSpec(
+        kJointBoundsMaxKey, "限位上限", qk, jointUnit, jointUnit));
+
+    // 换目标重建：旧面板随 Qt 父子析构（deleteLater——重建处于刷新路径内，
+    // 延迟删除避免重入）；模型随之重建（字段集不可变契约）。
+    if (m_jointEditPanel != nullptr) {
+        m_jointEditPanel->deleteLater();
+        m_jointEditPanel = nullptr;
+    }
+    m_jointEditModel = std::make_unique<ui::ParamEditModel>(std::move(specs));
+    // 出口为空＝只读呈现（"应用…"禁用＋kNoOutletTooltip——不虚构可达性；
+    // 本面板构造期即建出口，此为防御面）。
+    m_jointEditPanel = ui::createParamTablePanel(
+        *m_jointEditModel, m_jointEditOutlet.get(), {}, m_jointEditHost);
+    static_cast<QVBoxLayout*>(m_jointEditHost->layout())->addWidget(m_jointEditPanel);
+}
+
+void ModelingPanelWidget::pushJointEditBaselines(const JointEntry& joint)
+{
+    if (m_jointEditModel == nullptr) { return; }  // 页未建（空态）——零回填
+    const auto set = [this](const char* key, std::optional<double> v) {
+        m_jointEditModel->setBaseline(key, std::move(v));
+    };
+    // 轴向：未提供＝nullopt 基线（kFieldUnsetText 占位——不伪造 0；ERR-01）。
+    if (const auto axis = joint.axis.tryValue()) {
+        set(kJointAxisXKey, (*axis)[0]);
+        set(kJointAxisYKey, (*axis)[1]);
+        set(kJointAxisZKey, (*axis)[2]);
+    } else {
+        set(kJointAxisXKey, std::nullopt);
+        set(kJointAxisYKey, std::nullopt);
+        set(kJointAxisZKey, std::nullopt);
+    }
+    // 原点：平移直读；姿态半区经 RPY 反解（呈现层唯一实现——
+    // RpyPresentation.hpp，与域内核正解互为正逆）。
+    if (const auto origin = joint.origin.tryValue()) {
+        const auto& d = origin->d();
+        const auto rpy = rpyview::rotationToRpy(origin->r());
+        set(kJointOriginXKey, d[0]);
+        set(kJointOriginYKey, d[1]);
+        set(kJointOriginZKey, d[2]);
+        set(kJointOriginRollKey, rpy[0]);
+        set(kJointOriginPitchKey, rpy[1]);
+        set(kJointOriginYawKey, rpy[2]);
+    } else {
+        set(kJointOriginXKey, std::nullopt);
+        set(kJointOriginYKey, std::nullopt);
+        set(kJointOriginZKey, std::nullopt);
+        set(kJointOriginRollKey, std::nullopt);
+        set(kJointOriginPitchKey, std::nullopt);
+        set(kJointOriginYawKey, std::nullopt);
+    }
+    // 零位偏置非 SourcedValue（恒有值）。
+    set(kJointZeroOffsetKey, joint.zeroOffset);
+    // 限位：Continuous＝NotApplicable（I-MDL-4）→ nullopt 基线。
+    if (const auto bounds = joint.bounds.tryValue()) {
+        set(kJointBoundsMinKey, bounds->first);
+        set(kJointBoundsMaxKey, bounds->second);
+    } else {
+        set(kJointBoundsMinKey, std::nullopt);
+        set(kJointBoundsMaxKey, std::nullopt);
+    }
+}
+
+void ModelingPanelWidget::applyJointDetailEdits(const ui::ParamEditSet& editSet)
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——编辑面
+    // 出口只在页绑定有效且会话可写时可达（ParamTablePanel 在只读会话已
+    // 整体禁用——此处为防御面，L-7 双半区）。
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_jointEditTarget.has_value() || !m_writable) { return; }
+    const std::size_t jointIndex = *m_jointEditTarget;
+    if (jointIndex >= ws->design.joints.size()) { return; }  // 结构变更竞态防御
+
+    // 键→新值表（一次装配；同组多键一次域提交——UX-05 批量语义的域半区）。
+    std::map<std::string, double> staged;
+    for (const ui::ParamChange& change : editSet.changes) {
+        staged[change.key] = change.newSi;
+    }
+    // 组内分量取值：脏键取移交新值，未脏键取当前权威基线（confirmApply 已
+    // 推进脏键基线——currentValueSi 对两态统一可读）。
+    const auto component = [this, &staged](const char* key) -> std::optional<double> {
+        if (const auto it = staged.find(key); it != staged.end()) { return it->second; }
+        return m_jointEditModel ? m_jointEditModel->currentValueSi(key) : std::nullopt;
+    };
+    // 提交轨复用 L-2 分流（submitJointFieldEdit→域裁决→sink 接受/拒绝——
+    // 与属性行/共享检查器同一落点，零第二分流实现）；拒绝不阻断其余组。
+    const auto submit = [this, ws, jointIndex](JointEditField field,
+                                               JointEditValue&& value) {
+        submitJointFieldEdit(*ws, *this, jointIndex, field, value);
+    };
+
+    // 拒绝就地呈现的辅助（组级装配缺分量＝调用面提示，域函数未触）。
+    const auto rejectAssembly = [this](const std::string& detail) {
+        EditRejection r;
+        r.codeToken = "value-not-finite";
+        r.detail = detail;
+        onEditRejected(r);
+    };
+
+    // ---- 轴向组（axis-* 任一脏→三键组装 Vector3D——未脏分量取权威）----
+    if (staged.count(kJointAxisXKey) || staged.count(kJointAxisYKey)
+        || staged.count(kJointAxisZKey)) {
+        const auto x = component(kJointAxisXKey);
+        const auto y = component(kJointAxisYKey);
+        const auto z = component(kJointAxisZKey);
+        if (x.has_value() && y.has_value() && z.has_value()) {
+            submit(JointEditField::Axis,
+                   JointEditValue{rw::math::Vector3D<double>(*x, *y, *z)});
+        } else {
+            rejectAssembly("轴向分量缺失（该关节 axis 未提供）——无法组装"
+                           "向量编辑，请先补全三行分量");
+        }
+    }
+
+    // ---- 原点组（origin-* 任一脏→六键组装 JointOriginEditValue——旋转
+    //      矩阵组合归域内核 ZYX 正解）----
+    if (staged.count(kJointOriginXKey) || staged.count(kJointOriginYKey)
+        || staged.count(kJointOriginZKey) || staged.count(kJointOriginRollKey)
+        || staged.count(kJointOriginPitchKey)
+        || staged.count(kJointOriginYawKey)) {
+        const auto x = component(kJointOriginXKey);
+        const auto y = component(kJointOriginYKey);
+        const auto z = component(kJointOriginZKey);
+        const auto r = component(kJointOriginRollKey);
+        const auto p = component(kJointOriginPitchKey);
+        const auto w = component(kJointOriginYawKey);
+        if (x.has_value() && y.has_value() && z.has_value() && r.has_value()
+            && p.has_value() && w.has_value()) {
+            submit(JointEditField::Origin,
+                   JointEditValue{JointOriginEditValue{*x, *y, *z, *r, *p, *w}});
+        } else {
+            rejectAssembly("原点分量缺失（该关节 origin 未提供）——无法组装"
+                           "位姿编辑，请先补全六行分量");
+        }
+    }
+
+    // ---- 零位偏置组（单值直投——rad/m 随类型，域内裁决）----
+    if (const auto it = staged.find(kJointZeroOffsetKey); it != staged.end()) {
+        submit(JointEditField::ZeroOffset, JointEditValue{it->second});
+    }
+
+    // ---- 限位组（bounds-* 任一脏→单侧替换整对提交——未脏侧取权威；与
+    //      共享检查器出口同口径）----
+    if (staged.count(kJointBoundsMinKey) || staged.count(kJointBoundsMaxKey)) {
+        const JointEntry& current = ws->design.joints[jointIndex];
+        const auto cur = current.bounds.tryValue();
+        if (!cur.has_value()) {
+            rejectAssembly("该关节限位未提供（Continuous 不适用或未填）——"
+                           "无法单侧修改");
+        } else {
+            JointLimits updated = *cur;
+            if (const auto it = staged.find(kJointBoundsMinKey);
+                it != staged.end()) { updated.first = it->second; }
+            if (const auto it = staged.find(kJointBoundsMaxKey);
+                it != staged.end()) { updated.second = it->second; }
+            submit(JointEditField::Bounds, JointEditValue{updated});
+        }
+    }
+
+    // 权威同步（接受组基线推进对齐、被拒组基线回退真实权威——
+    // ParamEditModel.confirmApply 的移交推进是乐观的，域拒绝在此修正）。
+    // 边界登记（诚实缺席）：编辑页分组编辑不入 L-4 重演队列（PendingEdit
+    // 是单字段轨——分组表单编辑的重演语义归后续批次；修订事件到达时的
+    // 处置＝本刷新把基线对齐新权威，未应用暂存由用户重录）。
+    refreshPropertiesFromLastWorkingSet();
+}
+
 void ModelingPanelWidget::onTreeSelectionChanged()
 {
     // L-1 正向半区：树点击→会话选中态（零修订）→属性区重投影。
@@ -956,12 +1353,22 @@ void ModelingPanelWidget::onPropertyEditingFinished()
     // 复合行（bounds 双值/axis 向量/type 枚举/物性组）保留只读投影——其
     // 编辑走批量粘贴与域命令（面板不自行发明解析器——插件零计算逻辑）。
     if (key != "zero-offset") {
-        // UI-T41 批次B（B7）：拒绝指引与 tooltip 同口径——指向真实归宿
-        // （物性估算/占位几何域命令），不再虚指"批量粘贴"。
+        // 拒绝指引与真实归宿同口径（UI-T41 批次B B7＋UI-T53 增量）：关节
+        // 复合行（轴向/原点/限位/type）指向"编辑"页逐字段提交轨；连杆物性
+        // /几何仍指域命令——不虚指不存在的入口。
         EditRejection r;
         r.codeToken = "value-not-finite";
-        r.detail = "该字段为复合行（" + key
-                   + "）——物性可经『物性估算』、几何可经『生成占位几何』域命令维护";
+        const auto target = m_lastSelected.has_value()
+                                ? resolveSelection(*ws, *m_lastSelected)
+                                : std::optional<SelectedTarget>{};
+        if (target.has_value() && target->kind == SelectedTarget::Kind::Joint) {
+            r.detail = "该字段为复合行（" + key
+                       + "）——请切到『编辑』页逐字段数值提交（批量粘贴/表单级"
+                         "确认应用）";
+        } else {
+            r.detail = "该字段为复合行（" + key
+                       + "）——物性可经『物性估算』、几何可经『生成占位几何』域命令维护";
+        }
         onEditRejected(r);
         return;
     }
