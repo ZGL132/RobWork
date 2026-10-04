@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "碰撞模型编辑面批次——独立碰撞模型表＋视觉→碰撞引用复制辅助（modeling.md §2.5 碰撞模型行承接＋§5.2 几何生成辅助②落位；差距清单 spec 批三）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T48"],
   "requirements": [
     "MDL-04（碰撞几何引用编辑面——§2.5 独立碰撞模型表行承接）",
@@ -70,5 +70,5 @@
     "拒绝路径：引用保护（被引用资源摘除拒绝——I-MDL-9 比较型定位）——具名用例",
     "回归门禁：受影响目标零错误构建＋modeling/ui 套件全绿＋ird_gates 归一零新增（或逐条登记）＋validate-docs PASS——留痕 traceability/builds/ui-t49/"
   ],
-  "note": "批次特有告诫（registry 外自由承载）：①碰撞判定归 policy（ARC-05 红线）：本卡只承载 collision 几何引用的编辑与辅助生成；SelfCollisionHints 不动（导入报告→策略草稿输入——P-MDL-3 既有轨；策略草稿输入面归 policy 协作任务）；②复制辅助＝§5.2 几何生成辅助②：把 visual 引用复制为同资源 collision 引用（同 resourceRefId＋localTransform 初值随复制）——产物普通 GeometryRef 与手编同权同校验，来源标记 GeometricEstimate（methodTag 区分辅助类型）；零网格重画/凸包简化算法（如需简化代理走需求变更）；③视觉/碰撞引用相互独立（LinkEntry.visual/collision 两槽——§4.3-B）：碰撞表编辑不得顺带改写 visual；visual 未设时复制辅助诚实禁用（原因提示非置灰无解释）；④覆盖确认：collision 已有引用时复制辅助须显式确认覆盖（UI-T41 批次C estimate 覆盖确认同款交互纪律）；⑤gui 测试 QT_QPA_PLATFORM=windows；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：同 UI-T47（差距清单 spec 批三 G6＋G7）。关键事实：旧版『独立碰撞模型表＋从 Drawables 生成碰撞模型』（§2.5 行7）的承接语义在设计面已冻结——碰撞几何引用归 modeling（LinkEntry.collision 槽）、碰撞判定唯一归 policy（ARC-05）；本卡只是把该行从『设计 ✅、面板无编辑面』变为面板实位。堆叠序：ui-t49 基点 ui-t48 head（串行堆叠——消费批二引用编辑流与资源选择器设施）；status=planned 待 UI-T48 落位后转 ready。"
+  "note": "【合入登记注（2026-10-04，PIPE §4.7 收尾）】acceptedHead 76f8ff2e 合入 redesign-main@cacf315a（acc/UI-T49/1@2f23fa96 按 SHA 先并——findings.json 冲突按三方保留编号序解决：F-480〔实施段〕＋F-481/F-482〔验收段〕）；对抗式验收 11 项 pass（单会话顺序执行例外声明）＋V1/V2 两变异翻红；合并态验证五套件 318/16/17/200/246 全绿；UI-T50 随本收口转 ready（串行堆叠批四——四批收口卡）。批次特有告诫（registry 外自由承载）：①碰撞判定归 policy（ARC-05 红线）：本卡只承载 collision 几何引用的编辑与辅助生成；SelfCollisionHints 不动（导入报告→策略草稿输入——P-MDL-3 既有轨；策略草稿输入面归 policy 协作任务）；②复制辅助＝§5.2 几何生成辅助②：把 visual 引用复制为同资源 collision 引用（同 resourceRefId＋localTransform 初值随复制）——产物普通 GeometryRef 与手编同权同校验，来源标记 GeometricEstimate（methodTag 区分辅助类型）；零网格重画/凸包简化算法（如需简化代理走需求变更）；③视觉/碰撞引用相互独立（LinkEntry.visual/collision 两槽——§4.3-B）：碰撞表编辑不得顺带改写 visual；visual 未设时复制辅助诚实禁用（原因提示非置灰无解释）；④覆盖确认：collision 已有引用时复制辅助须显式确认覆盖（UI-T41 批次C estimate 覆盖确认同款交互纪律）；⑤gui 测试 QT_QPA_PLATFORM=windows；ird_gates 命中集归一 diff（或逐条随批登记）。立项来源：同 UI-T47（差距清单 spec 批三 G6＋G7）。关键事实：旧版『独立碰撞模型表＋从 Drawables 生成碰撞模型』（§2.5 行7）的承接语义在设计面已冻结——碰撞几何引用归 modeling（LinkEntry.collision 槽）、碰撞判定唯一归 policy（ARC-05）；本卡只是把该行从『设计 ✅、面板无编辑面』变为面板实位。堆叠序：ui-t49 基点 ui-t48 head（串行堆叠——消费批二引用编辑流与资源选择器设施）；status=planned 待 UI-T48 落位后转 ready。"
 }

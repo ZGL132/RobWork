@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "建模对象编辑扩展收口批次——五对象属性页扩展（§9.7.5 D5 增量边界兑现）＋外审 P1「建模对象编辑扩展」收口对账＋三处差距整合回归（差距清单 spec 批四）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": ["UI-T47", "UI-T48", "UI-T49"],
   "requirements": [
     "MDL-13（工具定义——安装接口/TCP 列表字段页）",
