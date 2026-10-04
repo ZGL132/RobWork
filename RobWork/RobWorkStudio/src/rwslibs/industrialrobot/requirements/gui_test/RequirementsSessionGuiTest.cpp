@@ -1991,6 +1991,48 @@ TEST_F(RequirementsSessionGuiTest, WritableSwitchRefreshesAll_UI_T39)
         << "恢复可写后新增键未恢复";
 }
 
+/// 只读初始化（L-R12 装配序回归——宿主审核 2026-10-04 P1）：只读项目先开
+/// （宿主 setWritable(false) 时需求 Dock 尚未创建、面板缺位）→用户随后
+/// 首次打开需求 Dock（装配工厂创建面板＋attachPanel）。修复前：模块
+/// setWritable 把面板缺位期的只读事实直接丢弃＋工厂硬编码 true——首开
+/// Dock 即呈可写（L-R12 安全边界违约）；修复后：模块缓存初值经
+/// initialWritable() 作面板构造参数＋attachPanel 幂等回放，首开即只读。
+TEST_F(RequirementsSessionGuiTest, ReadOnlyStagedBeforePanelCreate_L_R12)
+{
+    IRD_TEST_INFO("REQ-11", {}, std::nullopt);
+
+    // 装配序复现（测试自持模块——不触夹具面板 m_panel）：面板缺位期宿主
+    // 先行 setWritable(false)（UiPlugin 项目打开接线点同款调用时序）。
+    RequirementsUiModule module;
+    module.attachEditor(&m_editor);
+    module.setWritable(false);
+    ASSERT_FALSE(module.initialWritable())
+        << "模块未缓存面板缺位期的只读事实（暂存语义失守）";
+
+    // 装配工厂同款创建（RequirementsPluginAssembly 面板 factory 语义——
+    // 构造参数取模块缓存；编辑目标提供器同款接线——面板现取会话编辑器，
+    // 缺此缝＝面板呈"无会话"态而非"只读"态，门控原因失真）＋挂接
+    // （attachPanel 回放兜底）＋会话首刷。
+    RequirementsPanelWidget panel(module.initialWritable());
+    panel.setEditTargetProvider([&module]() -> IRequirementEditor* {
+        return module.editor();
+    });
+    module.attachPanel(&panel);
+    panel.refreshPanel(m_editor.workingSet(), m_report);
+    panel.focusObject(m_editor.workingSet().points.entries.front().objectId);
+    QApplication::processEvents();
+
+    // 可观测面＝生命周期"新增"键：只读初值在首刷即生效（禁用＋只读原因
+    // tooltip）——与 WritableSwitchRefreshesAll_UI_T39 运行中切换的观测量
+    // 同源（同一门控的两个到达时序）。
+    QPushButton* addBtn = lifecycleButton(panel, "add", "points");
+    ASSERT_NE(addBtn, nullptr);
+    EXPECT_FALSE(addBtn->isEnabled())
+        << "只读项目首开 Dock 呈可写（面板缺位期丢态——L-R12 违约回归）";
+    EXPECT_TRUE(addBtn->toolTip().contains(QStringLiteral("只读")))
+        << "只读禁用原因未呈现";
+}
+
 /// UI-T39 审核返工三.5（卡片折叠跨刷新保持）：收起区域高级卡后触发区域
 /// 页重投影（refreshPanel——render 只填行、卡片构造期一次），折叠态不因
 /// 刷新复位（UiTheme::createCard 的 fold 会话态跨刷新保持的回归钉）。

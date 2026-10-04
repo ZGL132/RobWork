@@ -209,9 +209,22 @@ public:
      *        事实经本面直达面板；转发面零判定。项目打开成功/降级只读/
      *        切换由宿主按打开报告驱动）。
      *
+     * 面板缺位（Dock 尚未首次创建）＝暂存本模块（与 bindCommandSubmit
+     * 暂存同一时序语义）——createPanel/attachPanel 时以缓存值生效；此前
+     * 直接丢弃该态＝"只读项目先开、需求 Dock 后开"装配序下面板恒可写
+     * （L-R12 违约——只读初始化缺陷的修复面）。
+     *
      * @param writable [in] 当前项目会话是否可写
      */
     void setWritable(bool writable);
+
+    /**
+     * @brief 面板初始可写性（装配工厂创建面板时的构造参数来源——取本模块
+     *        缓存的最近 setWritable 值；缺省 true＝可写项目先行的既有
+     *        语义。与 attachPanel 的缓存回放互为双保险：无论工厂取值与
+     *        setWritable 时序如何，面板创建后必被拉齐到模块缓存态）。
+     */
+    bool initialWritable() const noexcept { return m_writable; }
 
     /**
      * @brief 会话刷新（就绪重估已由宿主完成 bindReadiness 后的呈现收口
@@ -335,6 +348,7 @@ private:
     PanelUiThreadGuard m_guard;  ///< §3.4 UI 线程守卫（构造线程绑定）
     RequirementsModuleSessionState m_session;  ///< 会话权威态（装配层更新）
     RequirementsPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
+    bool m_writable = true;  ///< 会话可写性缓存（L-R12 门控输入——面板缺位时暂存，创建/挂接时生效）
     CommandSubmitFn m_pendingSubmit;             ///< 面板创建前暂存的宿主出口
     CommandAvailabilityFn m_pendingAvailability;  ///< 面板创建前暂存的可用性查询
     RequirementsPanelWidget::StationMarkersSink m_pendingMarkersSink;  ///< 面板创建前暂存的工位标记出口（UI-T33）
