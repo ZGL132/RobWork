@@ -631,3 +631,77 @@ TEST_F(ModelingPanelGuiTest, GeometryCopyButton_VisualToCollision_UI_T49)
     EXPECT_TRUE(copyAfter->toolTip().contains(QStringLiteral("视觉几何未挂接")))
         << "禁用态缺原因提示（置灰无解释——交互纪律失守）";
 }
+
+// =====================================================================
+// UI-T50——建模面板编辑链端到端 gui 拍（acceptance 6：结构→几何→碰撞→
+// 对象属性页四段贯通）
+// =====================================================================
+
+/**
+ * 契约 UI-T50 acceptance 6（整合回归·面板侧四段贯通）：真实点击链驱动
+ * 四段编辑全部落草稿——①结构段（结构树"新增"钮插入关节）→②几何段
+ * （域原语挂接 visual——对话框不可 headless，T48 用例同款直调）→③碰撞
+ * 段（"从视觉复制"钮落 collision）→④对象属性页段（属性区重投影后几何
+ * 行值与草稿同源）。draft.apply→编译链发布复验不在面板 gui 域内（命令
+ * 总线/工程装配在宿主层）——援引既有契约面：apply-robot-design 命令流
+ * 由 ui_contract/contract 测试与 WP-24-T08 装配验证覆盖（登记注，非本
+ * 用例断言面）。
+ */
+TEST_F(ModelingPanelGuiTest, EditingChain_EndToEnd_FourSegments_UI_T50)
+{
+    const ModelReadinessReport emptyReport;
+
+    // ---- ①结构段：选中连杆 1 后点"新增"钮（选中位插入 j7——UI-T47
+    //      词表），关节链 +1 落草稿。
+    m_panel->focusObject(m_ws.design.links[1].objectId);
+    QPushButton* structAdd = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_struct_add"));
+    ASSERT_NE(structAdd, nullptr) << "结构新增钮未构建";
+    const std::size_t jointsBefore = m_ws.design.joints.size();
+    structAdd->click();
+    EXPECT_EQ(m_ws.design.joints.size(), jointsBefore + 1)
+        << "结构段：新增钮点击未落草稿";
+
+    // ---- ②几何段：域原语挂接 visual（替身 probe——T48 gui 先例）。
+    core::ContentDigester d;
+    const std::string seed = "e2e: D:/a/link.stl";
+    d.update(seed.data(), seed.size());
+    ResourceProbeFn probe = [&](const std::string&, std::string&)
+        -> std::optional<ResourceProbeResult> {
+        ResourceProbeResult r;
+        r.contentDigest = d.finalize();
+        r.absPath = "D:/a/link.stl";
+        r.isMeshFamily = true;
+        return r;
+    };
+    ASSERT_FALSE(attachExternalGeometry(m_ws, 1, GeometrySlot::Visual,
+                                        "D:/a/link.stl", probe)
+                     .has_value());
+    ASSERT_TRUE(m_ws.design.links[1].visual.has_value());
+
+    // ---- ③碰撞段：重投影后点"从视觉复制"钮（T49 语义——同资源落
+    //      collision）。
+    m_panel->refreshPanel(m_ws, emptyReport);
+    m_panel->focusObject(m_ws.design.links[1].objectId);
+    QPushButton* copy = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_geo_copy_collision"));
+    ASSERT_NE(copy, nullptr) << "复制钮未构建";
+    copy->click();
+    ASSERT_TRUE(m_ws.design.links[1].collision.has_value())
+        << "碰撞段：复制钮点击未落草稿";
+    EXPECT_EQ(m_ws.design.links[1].collision->resourceRefId,
+              m_ws.design.links[1].visual->resourceRefId)
+        << "碰撞段：未同资源复制";
+
+    // ---- ④对象属性页段：属性区重投影后编辑面仍以草稿为源（面板行值
+    //      与域状态同源——选中保持连杆 1，几何行/物性行刷新不回退）。
+    m_panel->refreshPanel(m_ws, emptyReport);
+    m_panel->focusObject(m_ws.design.links[1].objectId);
+    QPushButton* detach = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_geo_detach_visual"));
+    ASSERT_NE(detach, nullptr)
+        << "对象属性页段：重投影后几何行编辑面丢失（投影回退）";
+
+    // ---- 四段全落草稿的域状态总核对（变更摘要累积——MDL-09 载体）。
+    EXPECT_FALSE(m_ws.changes.empty()) << "四段贯通零变更摘要（草稿未脏化）";
+}

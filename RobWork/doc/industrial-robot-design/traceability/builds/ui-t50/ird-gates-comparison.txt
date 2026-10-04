@@ -1,0 +1,9 @@
+ird_gates 命中集对比（UI-T50 实施段留痕，2026-10-04）
+================================================================
+当前命中集：75 条（ird-gates-current.txt——集成树 ird_gates 目标实测）
+基线口径：UI-T49 验收基线 75 条（traceability/builds/ui-t49/ 同名留痕）。
+归一比对：语义归一（IRD-GATE 类型 × 目标集合）后逐项全等——
+IDENTICAL-SEMANTIC-SET＋TARGET-SETS-IDENTICAL（文本 diff 全行差异为
+GBK 控制台编码噪声，非语义差异）。
+结构性佐证：本卡零 CMake 改动（无新 target/链接边）；改动面＝
+HostMigrationProviders.cpp（plugin 层既有目标内增量）＋测试两文件。

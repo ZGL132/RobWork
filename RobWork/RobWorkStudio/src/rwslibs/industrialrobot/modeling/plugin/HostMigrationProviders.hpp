@@ -177,7 +177,7 @@ private:
  * @brief 建模域属性页供给者（ui::IUiPropertyPagesProvider 实现——协议
  *        形状 UI-T22 冻结，零签名改动；D5/D6 分野的建模侧落位）。
  *
- * 页面供给语义（acceptance 1 的 D5/D6 分野）：
+ * 页面供给语义（acceptance 1 的 D5/D6 分野；UI-T50 四对象扩展后口径）：
  *   - 关节（Joint）：常用字段页＝零位偏置＋限位下/上限（少量高频编辑
  *     字段——可编辑，编辑出口转译为域编辑流）；复杂页入口＝"DH 参数"
  *     （dh-parameters——axis/origin/DH 大批量字段收口域面板，D6）；
@@ -185,9 +185,23 @@ private:
  *     只读呈现；物性编辑需 L-8 平行轴确认流，不在共享检查器展开）；
  *     复杂页入口＝"物性编辑"（properties——质心/惯量编辑收口域面板，
  *     D6）；
- *   - 其余建模对象（根/基座/工具/场景/位姿集/传动）：v1 无页面供给
- *     （commonFieldsPage 返回 nullopt 且 complexPageEntries 空集——协议
- *     的"非本域应答"二态；诚实边界：不虚构字段，登记单元卡 §14.6）。
+ *   - 工具（Tool）：常用字段页＝安装接口位姿六值＋TCP 计数＋质量（只读
+ *     事实——TCP 列表 MDL-13 不变量编辑收口域面板，D6 入口）；（UI-T50）
+ *   - 场景（Scene）：常用字段页＝世界系固连位姿六值（M-11 不预乘安装
+ *     旋转——只读原值呈现；role 词表为枚举非 D5 数值面，D6 入口承载）；
+ *     （UI-T50）
+ *   - 位姿集（PoseSet）：常用字段页＝条目计数＋Home/Zero 保留键存在性
+ *     （0/1——条目关节角向量不定长非 D5 面，编辑走 apply-named-poses
+ *     合并流收口域面板）；（UI-T50）
+ *   - 传动（Drivetrain）：常用字段页＝链计数＋首关节样例（减速比/库仑
+ *     摩擦/额定与峰值力矩——逐关节全链超 D5 16 字段哨兵，样例＋计数取
+ *     舍；逐项 SourcedValue 来源标记经 label 后缀呈现；黏滞摩擦 fv 的
+ *     N·m·s/rad 量纲不在 core 词表——诚实缺席 F-483）；（UI-T50）
+ *   - 根/基座：v1 无页面供给**维持**（UI-T50 实施段决议——G8 增量词表
+ *     只点名四对象；根 displayName/权威模式与基座安装布置的编辑面在域
+ *     面板既有区，非 D5 语义——决议登记 ui.md §13 UI-T50 行）。
+ *   四扩展页统一形态＝readOnly 事实页＋D6"在域面板编辑"入口
+ *   （object-properties 统一键，hosted=false——激活 focusObject 定位）。
  *
  * 域判定在域（协议纪律）：对象归属由 resolveSelection 既有投影自答——
  *   命中关节/连杆才应答，检查器零建模类型知识。
@@ -202,8 +216,11 @@ private:
 class ModelingPropertyPagesProvider final : public ui::IUiPropertyPagesProvider {
 public:
     /// 复杂页稳定键（D6 激活寻址锚——小写连字符词法，协议建议风格）。
+    /// UI-T50 增 object-properties 统一键：工具/场景/位姿集/传动四对象的
+    /// "在域面板编辑"入口（列表/合并/命令流编辑收口域面板——hosted=false）。
     static constexpr const char* kDhParametersPageKey = "dh-parameters";
     static constexpr const char* kPropertiesPageKey = "properties";
+    static constexpr const char* kObjectPropertiesPageKey = "object-properties";
 
     /**
      * @brief 构造属性页供给者。
