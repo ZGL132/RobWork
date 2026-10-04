@@ -179,6 +179,8 @@ struct RecordingSink final : IRequirementEditSink {
 struct StubSeams {
     std::vector<std::string> devices;
     std::optional<rw::math::Transform3D<>> pose;
+    std::optional<core::ObjectId> lastPicked;  ///< 网关分发落点（UI-T33——拾取流输入面）
+    std::vector<project::ObjectRef> closureRefs;  ///< 会话闭包引用（拾取浅核对元数据——UI-T33）
     RequirementsView3DSeams seams() const
     {
         RequirementsView3DSeams s;
@@ -187,6 +189,8 @@ struct StubSeams {
         s.resolveFrameObjectId = [](const std::string&) {
             return std::nullopt;
         };
+        s.lastPickedObjectId = [this]() { return lastPicked; };
+        s.sessionClosureRefs = [this]() { return closureRefs; };
         s.sessionRevisionId;  // 空＝无基线（STALE 对账诚实缺省）
         return s;
     }
@@ -232,4 +236,76 @@ TEST(RequirementsView3DFlow, CaptureTcp_SeamsPresent_CreatesFixedPoint_UI_T33)
     EXPECT_DOUBLE_EQ(written[2], 0.3) << "捕获位置 Z 失实";
     EXPECT_NE(host.lastConfirmText.indexOf(QString::fromUtf8("捕获 TCP")), -1)
         << "确认摘要未含语义标题（REQ-08 确认门呈现面）";
+}
+
+/// 网关拾取登记＋目标点选中＋确认接受 → 姿态规则写回（AlignFrame——
+/// applyPickToOrientation 域裁决；拾取只动姿态规则其余字段原样保留）
+/// ——pick-feature 解除引导的主证面（UI-T33 acceptance 4）。
+TEST(RequirementsView3DFlow, PickFeature_PickedAndSelected_WritesOrientationRule_UI_T33)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-08", "REQ-10"},
+                  std::vector<std::string>{});
+
+    // ①预置：带一个已启用任务点的基线（refFrame=World 缺省）＋拾取目标
+    // 登记（ModelFrame 承载对象 token "robot-design"——浅核对的 closure 面）。
+    MapClosure closure;
+    PointSet points;
+    points.entries.push_back(makePoint("tp1"));
+    fillBaseline(closure, points);
+    const core::ObjectId pickedId =
+        core::ObjectId::fromCanonical("obj-60000000000000000000000000000006");
+    closure.putById(pickedId, "robot-design",
+                    RequirementObjectVariant{RequirementSet{}});
+
+    RequirementEditor editor;
+    ASSERT_TRUE(editor.loadBaseline(closure).ok);
+    ASSERT_EQ(editor.workingSet().points.entries.size(), std::size_t{1});
+    const core::ObjectId pointId =
+        editor.workingSet().points.entries.front().objectId;
+
+    // ②缝替身：lastPicked 预置（网关分发落点——Ctrl+双击的等价输入）＋
+    // 会话闭包引用（picked 目标的浅核对元数据——ObjectRef token 与
+    // expectedTargetToken 字面同源 "robot-design"）。
+    StubSeams stub;
+    stub.lastPicked = pickedId;
+    stub.closureRefs.push_back(project::ObjectRef{
+        pickedId, core::ContentVersion{}, std::string("robot-design"), {}});
+    RequirementsView3DSeams seams = stub.seams();
+
+    // ③面板重载＋树选中目标点（选中锚＝拾取写回目标——L-R1 选中联动）。
+    RequirementsPanelWidget panel(true);
+    panel.setEditTargetProvider([&editor]() -> IRequirementEditor* {
+        return &editor;  // 选中槽经编辑目标现取工作集——注入缺失＝锚不落
+    });
+    panel.refreshPanel(editor.workingSet(), RequirementReadinessReport{});
+    const QString pointAnchor =
+        QString::fromStdString(pointId.toCanonical());
+    QTreeWidget* tree = panel.findChild<QTreeWidget*>();
+    ASSERT_NE(tree, nullptr) << "需求树未构建";
+    QTreeWidgetItemIterator it(tree);
+    while (*it != nullptr && (*it)->text(1) != pointAnchor) { ++it; }
+    ASSERT_NE(*it, nullptr) << "任务点树行未投影（选中锚无落点）";
+    tree->setCurrentItem(*it);
+    ASSERT_TRUE(panel.selectedPointId().has_value())
+        << "树选中未落工位锚（写回目标解析输入缺席）";
+
+    // ④确认接受＋执行拾取命令（确认门 REQ-08——写回前确认）。
+    FakeHost host;
+    host.confirmAnswer = true;
+    RecordingSink sink;
+    const bool executed = executeRequirementCommand(
+        "requirements.pick-feature", panel, editor, sink, host, &seams);
+
+    EXPECT_TRUE(executed) << "缝与选中在位应解除引导";
+    // ⑤写回断言：姿态规则＝AlignFrame{picked}；其余字段原样（拾取只动
+    // 姿态规则——NFR-COR-03 不顺带改写）。
+    const TaskPoint& updated = editor.workingSet().points.entries.front();
+    EXPECT_EQ(updated.objectId, pointId) << "写回目标漂移";
+    EXPECT_EQ(updated.pose.orientation.kind, OrientationRuleKind::AlignFrame)
+        << "姿态规则未写回（拾取收口语义缺失）";
+    ASSERT_TRUE(updated.pose.orientation.targetFrame.objectId.has_value());
+    EXPECT_TRUE(updated.pose.orientation.targetFrame.objectId.value() == pickedId)
+        << "AlignFrame 目标失实（picked 直投语义缺失）";
+    EXPECT_NE(host.lastConfirmText.indexOf(QString::fromUtf8("拾取")), -1)
+        << "确认摘要未含拾取语义（REQ-08 确认门呈现面）";
 }

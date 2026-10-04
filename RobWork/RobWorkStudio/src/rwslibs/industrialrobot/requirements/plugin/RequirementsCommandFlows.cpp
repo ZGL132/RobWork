@@ -656,6 +656,17 @@ bool flowPickFeature(RequirementsPanelWidget& panel,
         return false;
     }
 
+    // 写回前确认（REQ-08——L-R6"写回前确认"的对话桥承载：用户拒绝＝
+    // 零数据变更静默终止；确认凭据在用户 Yes 之后才采集——SA-15 禁止
+    // 凭据先于确认事实存在）。
+    const QString confirmText =
+        QString::fromUtf8("拾取几何特征写回确认\n\n"
+                          "将把三维拾取的模型坐标系写入选中目标任务点的姿态"
+                          "规则（AlignFrame）。确认写回？");
+    if (!host.confirmImport(confirmText)) {
+        return false;  // 用户取消＝零数据变更（SA-15 导入路径取消面）
+    }
+
     // 域服务裁决（applyPickToOrientation——拾取目标→工位姿态规则写回；
     // 确认凭据随请求过域门）。
     ApplyPickRequest request;
@@ -666,8 +677,15 @@ bool flowPickFeature(RequirementsPanelWidget& panel,
         "ui", std::chrono::system_clock::now());
 
     RequirementCaptureService service;
+    // 浅核对上下文（UI-T33 收口——会话闭包引用元数据经缝取自宿主查询
+    // 端口 head().objectRefs；缝缺省/空返回＝空上下文——picked 目标浅
+    // 核对如实拒绝，不虚构通过）。
+    CheckContext closureContext;
+    if (view3d->sessionClosureRefs) {
+        closureContext.closureRefs = view3d->sessionClosureRefs();
+    }
     const CaptureOutcome outcome =
-        service.applyPickToOrientation(editor, request, CheckContext{});
+        service.applyPickToOrientation(editor, request, closureContext);
     for (const core::DiagnosticRecord& diag : outcome.diags) {
         note(panel, QString::fromStdString(diag.cause));
     }

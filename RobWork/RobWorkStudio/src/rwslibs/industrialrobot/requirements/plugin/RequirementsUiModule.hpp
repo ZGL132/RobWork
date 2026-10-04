@@ -54,6 +54,7 @@
 #include <sdurws/ird/requirements/Editor.hpp>      // IRequirementEditor（草稿唯一写目标——工作集权威）
 #include <sdurws/ird/requirements/Readiness.hpp>   // RequirementReadinessReport（就绪投影数据源）
 #include <sdurws/ird/requirements/RequirementsPluginAssembly.hpp>  // RequirementsView3DSeams（UI-T33——本单元门面消费面）
+#include "RequirementsPanelWidget.hpp"             // 面板嵌套 sink 类型（UI-T33——StationMarkersSink/RegionPreviewSink 值面；同单元私有头，无循环——面板头不反向依赖本头）
 #include <sdurws/ird/ui/IDraftController.hpp>      // ui::IModuleDraftSource（P-REQ-4 冻结面——UI-T12）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>       // ui::IPluginUiModule（P-REQ-8 消账——WP-24-T03 落位的冻结接口）
 #include <sdurws/ird/ui/IWorkbenchShell.hpp>       // ui::IWorkbenchShell（onShellReady 入参——壳门面）
@@ -165,6 +166,20 @@ public:
      *        自引用闭包——本模块即拾取登记面）。
      */
     void bindView3DSeams(RequirementsView3DSeams seams);
+
+    /**
+     * @brief 绑定工位标记出口（UI-T33 收口——宿主预览装配后调用；面板
+     *        重载时全量投递非禁用工位标记。面板未创建＝暂存，创建后随
+     *        attachPanel 转发〔与 bindCommandSubmit 同一时序语义〕）。
+     */
+    void bindStationMarkersSink(
+        RequirementsPanelWidget::StationMarkersSink sink);
+
+    /**
+     * @brief 绑定区域预览出口（UI-T33 收口——同上暂存/转发双形态；面板
+     *        区域页投影时投递预览几何〔refFrame 系——投影方变换〕）。
+     */
+    void bindRegionPreviewSink(RequirementsPanelWidget::RegionPreviewSink sink);
 
     /// 最近一次本域三维拾取（观测面——拾取命令输入；nullopt＝未拾取）。
     std::optional<core::ObjectId> lastView3DPick() const
@@ -322,6 +337,8 @@ private:
     RequirementsPanelWidget* m_panel = nullptr;  ///< 面板引用（非 owning——归装配层）
     CommandSubmitFn m_pendingSubmit;             ///< 面板创建前暂存的宿主出口
     CommandAvailabilityFn m_pendingAvailability;  ///< 面板创建前暂存的可用性查询
+    RequirementsPanelWidget::StationMarkersSink m_pendingMarkersSink;  ///< 面板创建前暂存的工位标记出口（UI-T33）
+    RequirementsPanelWidget::RegionPreviewSink m_pendingRegionSink;    ///< 面板创建前暂存的区域预览出口（UI-T33）
     PostEditAction m_hostPostEdit;  ///< 宿主编辑后动作（UI-T29——重估＋bindReadiness；组合子承载）
     /// 三维视图缝（UI-T33——bindView3DSeams 注入；未绑定＝命令流降级原文）。
     RequirementsView3DSeams m_view3dSeams;

@@ -140,8 +140,41 @@ HostView3DGateway::currentTcpPose(const std::string& deviceName)
 
 void HostView3DGateway::onSceneCleared()
 {
-    // 场景清除拍残留清理（呈现——幂等；高亮归既有 outlet 的选中流收口）。
+    // 场景清除拍残留清理（呈现＋预览——幂等；高亮归既有 outlet 的选中
+    // 流收口）。场景已清＝渲染对象随组消亡，这里只做摘除编排对称收口
+    // （后端 clear 幂等可重复调用——"不残留旧呈现"纪律的双拍承载）。
     releasePresentation();
+    removePreview();
+}
+
+// =====================================================================
+// 会话预览出口（UI-T33——IUiView3DPreviewOutlet 半区）
+// =====================================================================
+
+bool HostView3DGateway::applyPreview(const View3DPreviewUpdate& update)
+{
+    // 预览诚实降级（渲染后端缺位＝呈现/TCP/预览三面独立降级的显式形态
+    // ——headless/无缝装配下不虚构预览，调用方呈现失败原因）。
+    if (!m_deps.previewBackend.draw) {
+        return false;
+    }
+    // 整组绘制（原子替换语义在后端 draw 的实现契约——先清旧组再挂新组；
+    // 失败＝保留旧呈现，"失败保持原状"事务语义与修订呈现同款）。
+    if (!m_deps.previewBackend.draw(update)) {
+        return false;
+    }
+    m_previewAttached = true;
+    m_currentPreview = update;
+    return true;
+}
+
+void HostView3DGateway::removePreview()
+{
+    if (m_deps.previewBackend.clear) {
+        m_deps.previewBackend.clear();  // 幂等（后端清除可重复调用）
+    }
+    m_previewAttached = false;
+    m_currentPreview = View3DPreviewUpdate{};
 }
 
 }  // namespace ui

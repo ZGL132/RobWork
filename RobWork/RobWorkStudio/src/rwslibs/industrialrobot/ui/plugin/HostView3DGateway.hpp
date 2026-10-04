@@ -39,12 +39,14 @@
 #include <sdurws/ird/core/Identity.hpp>                  // core::ObjectId（拾取反解目标——CON-01 表内登记边）
 #include <sdurws/ird/ui/RuntimePublishBridge.hpp>        // IUiPresentationOutlet/PresentationViewProjection/PresentationApplyReport
 #include <sdurws/ird/ui/SelectionService.hpp>            // IUiRuntimeNameMapPort/SelectionService/SelectionSource（端口契约）
+#include <sdurws/ird/ui/View3DPreviewContract.hpp>       // IUiView3DPreviewOutlet/View3DPreviewUpdate（会话预览协议——UI-T33）
 
 namespace sdurws {
 namespace ird {
 namespace ui {
 
-class HostView3DGateway final : public IUiPresentationOutlet {
+class HostView3DGateway final : public IUiPresentationOutlet,
+                                public IUiView3DPreviewOutlet {
 public:
     /**
      * @brief 宿主呈现对象约定型（hostPayload 的取回类型——UI-T45 自己
@@ -89,6 +91,20 @@ public:
         std::function<bool(const core::ObjectId&)> dispatchToModeling;
         /// 需求域分发（nullable——同上；未命中本域＝域内诚实 false）。
         std::function<bool(const core::ObjectId&)> dispatchToRequirements;
+
+        // ---- 会话预览渲染后端（UI-T33——预览半区的场景原语缝）--------
+        // 生产绑定 WorkCellScene 渲染分组（装配层适配——SceneGraph 依赖
+        // 渲染库，构造下沉适配器与呈现对象同款纪律）；测试绑替身记录。
+        // nullable＝预览出口诚实降级（applyPreview 如实 false——不虚构
+        // 预览；呈现/TCP/预览三面可独立降级）。
+        struct PreviewBackend {
+            /// 整组绘制（原子替换语义在网关编排——后端只画：标记坐标轴
+            /// ＋标签/盒线框/格线着色；false＝场景不可得等渲染失败）。
+            std::function<bool(const View3DPreviewUpdate&)> draw;
+            /// 整组清除（幂等——removePreview/场景清除拍共用）。
+            std::function<void()> clear;
+        };
+        PreviewBackend previewBackend;
     };
 
     /**
@@ -141,6 +157,28 @@ public:
     std::optional<rw::math::Transform3D<>>
     currentTcpPose(const std::string& deviceName);
 
+    // ---- 会话预览出口（UI-T33——IUiView3DPreviewOutlet 半区）-----------
+
+    /**
+     * @brief 原子应用一次会话预览（整组替换——工位标记/区域框/采样格
+     *        三层聚合，杜绝半新半旧）。
+     *
+     * 编排：previewBackend 缺位＝false（预览诚实降级——呈现/TCP/预览
+     * 三面独立降级的显式形态）；后端 draw 失败＝false 且**保留旧呈现**
+     * （"失败保持原状"事务语义——与修订呈现同款）；成功＝更新挂接态。
+     * 着色判定零参与（cellStates 已由域侧判定——网关零判定，spec §2.4）。
+     */
+    bool applyPreview(const View3DPreviewUpdate& update) override;
+
+    /// 整组摘除（幂等——项目关闭/会话拆除拍对称收口，"不残留旧呈现"）。
+    void removePreview() override;
+
+    /// 预览挂接态（观测面——true＝有已挂接预览）。
+    bool previewAttached() const { return m_previewAttached; }
+
+    /// 当前预览值（观测面——最近一次成功应用的整组值；未挂接＝空聚合）。
+    const View3DPreviewUpdate& currentPreview() const { return m_currentPreview; }
+
     // ---- 会话/场景拍（宿主生命周期同步）----------------------------
 
     /// 场景清除拍（宿主 WorkCell 关闭——呈现残留整组清理；幂等）。
@@ -162,6 +200,8 @@ public:
 private:
     Deps m_deps;                                        ///< 装配依赖（构造冻结）
     std::shared_ptr<const HostPresentationObject> m_attachedPresentation;   ///< 已挂接呈现（原子替换的当前面）
+    bool m_previewAttached = false;                     ///< 预览挂接态（预览半区——UI-T33）
+    View3DPreviewUpdate m_currentPreview;               ///< 当前预览值（成功应用面——观测）
 };
 
 }  // namespace ui

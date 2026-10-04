@@ -148,6 +148,46 @@ void RequirementsPluginAssembly::bindView3DSeams(RequirementsView3DSeams seams)
     }
 }
 
+void RequirementsPluginAssembly::bindStationMarkersSink(
+    std::function<void(const std::vector<StationMarkerView>&)> sink)
+{
+    // UI-T33——工位标记出口转发（面板投影值→中性公共值的转换在本层：
+    // 同构直转零语义损失，面板类型不出插件边界〔R-2——跨域消费面唯一
+    // 形态为本头 StationMarkerView〕）。
+    if (m_impl == nullptr) {
+        return;
+    }
+    m_impl->bindStationMarkersSink(
+        [forward = std::move(sink)](
+            const std::vector<RequirementsPanelWidget::StationMarkerProjection>&
+                markers) {
+            std::vector<StationMarkerView> views;
+            views.reserve(markers.size());
+            for (const auto& marker : markers) {
+                views.push_back(StationMarkerView{marker.label, marker.refFrame});
+            }
+            forward(views);
+        });
+}
+
+void RequirementsPluginAssembly::bindRegionPreviewSink(
+    std::function<void(const RegionPreviewView&)> sink)
+{
+    // UI-T33——区域预览出口转发（同上转换纪律：几何角序零重排直投＋
+    // 参考系原值直投＋摘要直投）。
+    if (m_impl == nullptr) {
+        return;
+    }
+    m_impl->bindRegionPreviewSink(
+        [forward = std::move(sink)](const RegionPreviewGeometry& geo) {
+            RegionPreviewView view;
+            view.corners = geo.corners;
+            view.refFrame = geo.refFrame;
+            view.summaryText = geo.summaryText;
+            forward(view);
+        });
+}
+
 void RequirementsPluginAssembly::refreshFromSession()
 {
     if (m_impl != nullptr) {

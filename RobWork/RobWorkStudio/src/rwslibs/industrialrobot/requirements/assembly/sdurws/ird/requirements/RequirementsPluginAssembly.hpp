@@ -32,6 +32,7 @@
 #ifndef IRD_REQUIREMENTS_ASSEMBLY_REQUIREMENTSPLUGINASSEMBLY_HPP
 #define IRD_REQUIREMENTS_ASSEMBLY_REQUIREMENTSPLUGINASSEMBLY_HPP
 
+#include <array>
 #include <memory>
 #include <optional>
 #include <string>
@@ -40,6 +41,8 @@
 
 #include <rw/math/Transform3D.hpp>               // TCP 世界系位姿值面（RequirementsView3DSeams）
 #include <sdurws/ird/core/Identity.hpp>          // core::BranchId/RevisionId/ObjectId（会话锚/回执值面）
+#include <sdurws/ird/project/QueryPort.hpp>      // project::ObjectRef（会话闭包引用元数据——UI-T33 浅核对来源；requirements→project 已登记边公共面消费）
+#include <sdurws/ird/requirements/RequirementTypes.hpp>  // RequirementReference（会话预览投影值面——UI-T33）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // ui::PluginUiDescriptor（§10.9 装配描述符——值成员需完整类型）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // ui::CommandAvailability（按钮门控）
 #include <sdurws/ird/ui/SelectionService.hpp>    // ui::SelectionService（attachSelectionService 入参——ui 公共头，kinematics 先例同款）
@@ -115,6 +118,11 @@ struct RequirementsView3DSeams {
     /// 会话基线修订 id（捕获 STALE 对账键；空＝无基线——Capture.hpp
     /// CapturedTcpPose.sessionRevisionId 语义同源）。
     std::string sessionRevisionId;
+    /// 会话闭包引用元数据（UI-T33 收口——拾取写回浅核对的 CheckContext
+    /// 来源：picked 目标 ObjectId 存在＋token 匹配在 project 修订视图的
+    /// objectRefs 核对。空返回/缺省＝空上下文——浅核对如实拒绝〔不虚构
+    /// 通过〕；生产绑定＝宿主查询端口 head().objectRefs）。
+    std::function<std::vector<project::ObjectRef>()> sessionClosureRefs;
 };
 
 struct RequirementsPluginAssembly {
@@ -198,6 +206,38 @@ struct RequirementsPluginAssembly {
      *        未绑定＝两命令保持诚实降级原文）。
      */
     void bindView3DSeams(RequirementsView3DSeams seams);
+
+    // ---- 会话预览投影出口（UI-T33 收口——acceptance 1/2/3 的公共值面）----
+
+    /// 工位标记投影值（中性公共面——label＋参考系原值；宿主帧名解析与
+    /// 世界系变换归投影方〔ui 侧全缝〕，域类型不出本头）。
+    struct StationMarkerView {
+        std::string label;              ///< 工位名（场景节点名后缀——UX-02）
+        RequirementReference refFrame;  ///< 参考系原值（World 缺省合法）
+    };
+
+    /// 区域预览投影值（中性公共面——refFrame 系几何＋参考系原值；世界系
+    /// 变换归投影方。角序＝regionPreviewGeometry 同款零重排直投）。
+    struct RegionPreviewView {
+        std::array<rw::math::Vector3D<double>, 8> corners{};  ///< 盒八角点（m；refFrame 系）
+        RequirementReference refFrame;  ///< 参考系原值（World 缺省合法）
+        std::string summaryText;        ///< 预览摘要（失败可见面承载——投影方追注）
+    };
+
+    /**
+     * @brief 绑定工位标记出口（UI-T33——面板重载时全量投递非禁用工位；
+     *        未绑定＝无三维标记投递。转换在门面实现——面板投影值不出
+     *        插件边界，本头值面为跨域消费的唯一形态〔R-2〕）。
+     */
+    void bindStationMarkersSink(
+        std::function<void(const std::vector<StationMarkerView>&)> sink);
+
+    /**
+     * @brief 绑定区域预览出口（UI-T33——区域页投影时投递；未绑定＝预览
+     *        仅文本摘要。同上转换在门面实现）。
+     */
+    void bindRegionPreviewSink(
+        std::function<void(const RegionPreviewView&)> sink);
 
     /**
      * @brief 会话刷新（宿主 bindReadiness 后的呈现收口——面板以会话最新

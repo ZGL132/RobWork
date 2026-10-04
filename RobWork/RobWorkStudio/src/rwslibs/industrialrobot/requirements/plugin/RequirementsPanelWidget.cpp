@@ -274,6 +274,31 @@ void RequirementsPanelWidget::setRegionPreviewSink(RegionPreviewSink sink)
     m_regionPreview = std::move(sink);
 }
 
+void RequirementsPanelWidget::setStationMarkersSink(StationMarkersSink sink)
+{
+    m_stationMarkersSink = std::move(sink);
+}
+
+void RequirementsPanelWidget::emitStationMarkers(const RequirementWorkingSet& ws)
+{
+    // 工位标记投递（UI-T33 acceptance 1——非禁用工位全量集合；enabled
+    // 过滤在面板〔投影值集合即呈现集合〕；refFrame 原值直投——宿主帧名
+    // 解析归投影方〔World/ModelFrame 的宿主映射在装配层全缝侧〕）。出口
+    // 未注入＝静默跳过（呈现面缺席的显式形态）。
+    if (!m_stationMarkersSink) {
+        return;
+    }
+    std::vector<StationMarkerProjection> markers;
+    markers.reserve(ws.points.entries.size());
+    for (const TaskPoint& point : ws.points.entries) {
+        if (!point.enabled) {
+            continue;  // 禁用工位不进三维（acceptance 1 词面——诚实呈现）
+        }
+        markers.push_back(StationMarkerProjection{point.name, point.refFrame});
+    }
+    m_stationMarkersSink(markers);
+}
+
 // =====================================================================
 // 面板构建（构造期一次——布局骨架）
 // =====================================================================
@@ -1243,6 +1268,7 @@ void RequirementsPanelWidget::refreshPanel(const RequirementWorkingSet& ws,
     renderRegionPage(ws);
     renderConditionPage(ws);
     renderValidationPage(report);
+    emitStationMarkers(ws);  // UI-T33——工位标记随面板重载全量投递（会话编辑/选择刷新承接点）
 
     // 两级撤销呈现（UI-T39 收敛——可用性/提示判定全部在 refreshUndoButtons
     // 单出口：草稿级随记账器＋可写性，项目级随命令可用性快照）。
