@@ -161,6 +161,7 @@ add_library(sdurws_ird_modeling STATIC
     src/XacroExpand.cpp
     src/Template.cpp
     src/StructureEdit.cpp   # UI-T47——关节链结构编辑原语（§5.2 v0.28 四操作）
+    src/GeometryLinkEdit.cpp  # UI-T48——几何资源引用编辑原语（§6.7 登记面＋挂换摘）
     src/Readiness.cpp
     src/CommandHandlers.cpp
     src/DhConvert.cpp
@@ -186,6 +187,7 @@ add_library(sdurws_ird_modeling STATIC
 add_library(sdurws_ird_modeling_plugin STATIC
     plugin/PanelModel.cpp            # 五区信息架构投影（ACC2——树/属性/就绪条/预览，零 Qt）
     plugin/PanelEditFlow.cpp         # L-2/L-8 编辑流编排（域裁决唯一，分流即全部逻辑）
+    plugin/GeometryResourceFlow.cpp  # UI-T48——几何资源选择流（io 端口真装＋对话框编排）
     plugin/PanelCommandCatalog.cpp   # 十条域命令登记数据（ACC4——卡 §9.7.3 表值化）
     plugin/HostMigrationProviders.cpp  # 宿主迁移三接入面（WP-13-T20——B1-SPEC §5.1，零 Qt）
     plugin/ModelingPanelWidget.cpp   # 五区面板 widget（Q_OBJECT——AUTOMOC 载体）
@@ -518,6 +520,7 @@ add_executable(sdurws_ird_modeling_test
     test/ImportTest.cpp
     test/XacroExpandTest.cpp
     test/StructureEditTest.cpp  # UI-T47——结构编辑四操作（增删/重排/重置＋C4 保留）
+    test/GeometryLinkEditTest.cpp  # UI-T48——几何引用编辑（登记/挂换摘/拒绝路径）
     test/TemplateTest.cpp
     test/BasePlacementEditTest.cpp
     test/DhConvertTest.cpp

@@ -730,7 +730,94 @@ void ModelingPanelWidget::refreshPropertiesFromLastWorkingSet()
                 &ModelingPanelWidget::onPropertyEditingFinished);
         m_propertyForm->addRow(label, editor);
         m_propertyEditors.push_back(editor);
+
+        // UI-T48 几何引用操作行：连杆选中且行键为几何槽时，在行编辑器下
+        // 补挂接/摘除两钮（资源选择器入口——C5 消账；io 真装经
+        // GeometryResourceFlow，域裁决唯一在 GeometryLinkEdit 三原语）。
+        if (target->kind == SelectedTarget::Kind::Link
+            && (row.fieldKey == "visual-geometry"
+                || row.fieldKey == "collision-geometry")) {
+            const GeometrySlot slot = row.fieldKey == "visual-geometry"
+                                          ? GeometrySlot::Visual
+                                          : GeometrySlot::Collision;
+            auto* geoBar = new QWidget(this);
+            auto* geoLay = new QHBoxLayout(geoBar);
+            geoLay->setContentsMargins(0, 0, 0, 0);
+            const std::string keySuffix = row.fieldKey == "visual-geometry"
+                                              ? "visual" : "collision";
+            auto* attachBtn = new QPushButton(QStringLiteral("挂接/替换…"), geoBar);
+            attachBtn->setObjectName(
+                QString::fromUtf8("ird_modeling_geo_attach_") + keySuffix.c_str());
+            attachBtn->setToolTip(QStringLiteral(
+                "选择外部几何文件（stl/obj/dae）登记为资源并挂接到本槽"
+                "（Recorded——固化随项目资源区既有轨）"));
+            connect(attachBtn, &QPushButton::clicked, this,
+                    [this, slot] { onGeometryAttachClicked(slot); });
+            auto* detachBtn = new QPushButton(QStringLiteral("摘除"), geoBar);
+            detachBtn->setObjectName(
+                QString::fromUtf8("ird_modeling_geo_detach_") + keySuffix.c_str());
+            detachBtn->setToolTip(QStringLiteral(
+                "摘除本槽几何引用（清单条目保留——共享引用不级联删除）"));
+            connect(detachBtn, &QPushButton::clicked, this,
+                    [this, slot] { onGeometryDetachClicked(slot); });
+            geoLay->addWidget(attachBtn);
+            geoLay->addWidget(detachBtn);
+            geoLay->addStretch(1);
+            if (!m_writable) {
+                attachBtn->setEnabled(false);
+                detachBtn->setEnabled(false);  // 只读会话禁用（L-R12 同款门控）
+            }
+            m_propertyForm->addRow(QString(), geoBar);
+        }
     }
+}
+
+// =====================================================================
+// 几何引用操作槽（UI-T48——资源选择器入口；域裁决唯一在 GeometryLinkEdit）
+// =====================================================================
+
+void ModelingPanelWidget::onGeometryAttachClicked(GeometrySlot slot)
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——编辑面
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable) { return; }  // 无会话/只读——编辑禁用
+    const auto target = m_lastSelected.has_value()
+                            ? resolveSelection(*ws, *m_lastSelected)
+                            : std::optional<SelectedTarget>{};
+    if (!target.has_value() || target->kind != SelectedTarget::Kind::Link) { return; }
+
+    // 编辑器警示落点预置（拒绝时行内描边——字段轨同款呈现位）。
+    m_warningEditor = nullptr;
+    // 资源选择流（文件对话框＋io 真装探测＋域原语；拒绝原因经 sink 呈现）。
+    if (runGeometryResourceSelection(*this, *ws, target->index, slot, *this)) {
+        // 挂接落草稿——树/属性全面重建（清单变更——增量投影形状失效）。
+        refreshStructureTree(*ws);
+        refreshPropertiesFromLastWorkingSet();
+    }
+}
+
+void ModelingPanelWidget::onGeometryDetachClicked(GeometrySlot slot)
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable) { return; }
+    const auto target = m_lastSelected.has_value()
+                            ? resolveSelection(*ws, *m_lastSelected)
+                            : std::optional<SelectedTarget>{};
+    if (!target.has_value() || target->kind != SelectedTarget::Kind::Link) { return; }
+
+    // 摘除（域原语幂等——本无引用不出摘要；拒绝仅越界面）。
+    const std::optional<GeometryLinkError> err =
+        detachGeometry(*ws, target->index, slot);
+    if (!err.has_value()) {
+        refreshStructureTree(*ws);
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(geometryLinkErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
 }
 
 void ModelingPanelWidget::onTreeSelectionChanged()

@@ -39,6 +39,7 @@
 #include <sdurws/ird/modeling/Template.hpp>           // ModelingWorkingSet（工作集——投影数据源）
 #include "PanelCommandCatalog.hpp"                    // modelingDomainCommands/applyReadOnlyGate（命令目录/L-7——同目录私有头）
 #include "PanelEditFlow.hpp"                          // IPanelEditSink/submitJointFieldEdit（L-2 编排）
+#include "GeometryResourceFlow.hpp"                   // runGeometryResourceSelection/GeometrySlot（UI-T48——资源选择流）
 #include "PanelModel.hpp"                             // 五区投影（树/属性/就绪条/预览）
 #include "PanelRefresh.hpp"                           // PanelRefreshCoordinator/UI 线程守卫（L-4/§3.4）
 #include "PanelSelection.hpp"                         // PanelSelectionState（L-1 会话态）
@@ -194,6 +195,10 @@ private:
     /// 结构操作按钮槽（UI-T47——新增/删除/上移/下移/六轴重置五钮的共用
     /// 落点；域裁决唯一在 StructureEdit 四原语，本槽零判定）。
     void onStructureOpClicked(int opIndex);
+    /// 几何挂接按钮槽（UI-T48——资源选择器入口；域裁决唯一在 GeometryLinkEdit）。
+    void onGeometryAttachClicked(GeometrySlot slot);
+    /// 几何摘除按钮槽（UI-T48——幂等摘除；清单条目不级联删除）。
+    void onGeometryDetachClicked(GeometrySlot slot);
 
     /**
      * @brief 命令按钮使能态统一刷新（UI-T43——L-7 门控三输入的单一判定面）。
