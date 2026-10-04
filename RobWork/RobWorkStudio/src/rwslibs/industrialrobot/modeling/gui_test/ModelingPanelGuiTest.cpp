@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QMap>
 #include <cstdio>
 #include <QLabel>
 #include <QPlainTextEdit>
@@ -89,11 +90,13 @@ bool inJointEditPane(const QWidget& panel, const QObject* widget)
 }
 
 /// 命令按钮全集（构造序＝目录序——Qt 子对象按挂树序枚举；诊断历史折叠
-/// 钮非命令按钮，按 objectName 剔除）。返回序与 modelingDomainCommands()
-/// 一一对应——用例以 size 相等断言作序漂移守卫，错位即测试装配错误。
-QList<QPushButton*> commandButtonsOf(const QWidget& panel)
+/// 钮非命令按钮，按 objectName 剔除）。返回序与 catalog 序一一对应
+/// （F-502 折叠重排后 findChildren 子树序≠目录序——按命令钮 objectName
+/// 挂载的 id 后缀恢复目录序，UI-T56；用例以 size 相等断言作漂移守卫）。
+QList<QPushButton*> commandButtonsOf(
+    const QWidget& panel, const std::vector<ui::CommandDescriptor>& catalog)
 {
-    QList<QPushButton*> buttons;
+    QMap<QString, QPushButton*> byId;
     for (QPushButton* btn : panel.findChildren<QPushButton*>()) {
         if (btn->objectName() == QStringLiteral("ird_modeling_history_toggle")) {
             continue;  // 历史折叠钮不入命令对账（B2 呈现件）
@@ -110,9 +113,17 @@ QList<QPushButton*> commandButtonsOf(const QWidget& panel)
         if (inJointEditPane(panel, btn)) {
             continue;  // 编辑页按钮（应用/取消/确认区）不入命令对账（UI-T53 呈现件）
         }
-        buttons.push_back(btn);
+        if (btn->objectName().startsWith(QStringLiteral("ird_modeling_cmd_"))) {
+            byId.insert(btn->objectName(), btn);  // 命令钮按 id 归位（目录序输出）
+        }
     }
-    return buttons;
+    QList<QPushButton*> ordered;
+    for (const auto& desc : catalog) {
+        const QString key = QStringLiteral("ird_modeling_cmd_")
+                            + QString::fromStdString(desc.id);
+        if (byId.contains(key)) { ordered.push_back(byId.value(key)); }
+    }
+    return ordered;
 }
 
 }  // namespace
@@ -636,7 +647,7 @@ TEST_F(ModelingPanelGuiTest, MoreActionsCollapse_DefaultCollapsedAndToggle_F502)
 
     // 目录对账（构造序＝目录序——折叠区重排后仍保持，commandButtonsOf 守卫）。
     const auto catalog = modelingDomainCommands();
-    const auto buttons = commandButtonsOf(*m_panel);
+    const auto buttons = commandButtonsOf(*m_panel, modelingDomainCommands());
     ASSERT_EQ(buttons.size(), catalog.size())
         << "命令按钮与目录错位（折叠区容器迁移破坏构造序）";
 
@@ -757,7 +768,7 @@ TEST_F(ModelingPanelGuiTest, ReadOnlySession_AvailabilityRefreshCannotReviveWrit
     m_panel->setCommandAvailability(allEnabled);
 
     const auto catalog = modelingDomainCommands();
-    const auto buttons = commandButtonsOf(*m_panel);
+    const auto buttons = commandButtonsOf(*m_panel, modelingDomainCommands());
     ASSERT_EQ(buttons.size(), catalog.size())
         << "命令按钮与目录错位（构造序漂移——本用例按下标对账失效）";
     for (const QPushButton* btn : buttons) {

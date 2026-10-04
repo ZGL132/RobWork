@@ -433,6 +433,10 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
             }
         }
         auto* btn = new QPushButton(QString::fromStdString(m_commands[i].titleKey), toolsPage);
+        // 对象名挂命令 id（UI-T56——F-502 折叠重排后 findChildren 子树序≠
+        // 目录序，测试对账需按 id 恢复目录序；生产零消费此名，仅测试锚）。
+        btn->setObjectName(QStringLiteral("ird_modeling_cmd_")
+                           + QString::fromStdString(m_commands[i].id));
         // UI-T41 批次B（B4）：悬停文案＝UiText tooltip 键（工程中文，UX-02——
         // 去裸命令 id 呈现）；解析空回退命令 id 原文（对账兜底，不虚构文案）。
         const std::string tooltipText =

@@ -42,9 +42,10 @@ namespace {
 /// 命令按钮全集（构造序＝目录序——Qt 子对象按挂树序枚举；诊断历史折叠
 /// 钮非命令按钮，按 objectName 剔除）。与 ModelingPanelGuiTest 同款辅助
 /// （两文件分目标编入，不共享匿名命名空间——复制面最小化）。
-QList<QPushButton*> commandButtonsOf(const QWidget& panel)
+QList<QPushButton*> commandButtonsOf(
+    const QWidget& panel, const std::vector<ui::CommandDescriptor>& catalog)
 {
-    QList<QPushButton*> buttons;
+    QMap<QString, QPushButton*> byId;
     for (QPushButton* btn : panel.findChildren<QPushButton*>()) {
         if (btn->objectName() == QStringLiteral("ird_modeling_history_toggle")) {
             continue;  // 历史折叠钮不入命令对账（B2 呈现件）
@@ -64,9 +65,19 @@ QList<QPushButton*> commandButtonsOf(const QWidget& panel)
         if (btn->objectName().startsWith(QStringLiteral("ird_param_"))) {
             continue;  // 编辑页参数表内部钮不入命令对账（UI-T53~T55 呈现件——apply/取消/确认区）
         }
-        buttons.push_back(btn);
+        if (btn->objectName().startsWith(QStringLiteral("ird_modeling_cmd_"))) {
+            byId.insert(btn->objectName(), btn);  // 命令钮按 id 归位（目录序输出）
+        }
     }
-    return buttons;
+    // F-502 折叠重排后子树序≠目录序——按命令钮 objectName 挂载的 id 后缀
+    // 恢复目录序（UI-T56；与 ModelingPanelGuiTest 同款）。
+    QList<QPushButton*> ordered;
+    for (const auto& desc : catalog) {
+        const QString key = QStringLiteral("ird_modeling_cmd_")
+                            + QString::fromStdString(desc.id);
+        if (byId.contains(key)) { ordered.push_back(byId.value(key)); }
+    }
+    return ordered;
 }
 
 }  // namespace
@@ -96,7 +107,7 @@ TEST(ModelingUiModuleHostWiring, TextResolverBoundBeforePanelCreation_NoInternal
     QWidget* widget = module.createPanel();
     ASSERT_NE(widget, nullptr);
     const auto catalog = modelingDomainCommands();
-    const auto buttons = commandButtonsOf(*widget);
+    const auto buttons = commandButtonsOf(*widget, modelingDomainCommands());
     ASSERT_EQ(buttons.size(), catalog.size())
         << "命令按钮与目录错位（构造序漂移）";
 
@@ -142,7 +153,7 @@ TEST(ModelingUiModuleHostWiring, WritableChain_PendingInitialAndLiveForward_L7_U
     QWidget* widget = module.createPanel();
     ASSERT_NE(widget, nullptr);
     const auto catalog = modelingDomainCommands();
-    const auto buttons = commandButtonsOf(*widget);
+    const auto buttons = commandButtonsOf(*widget, modelingDomainCommands());
     ASSERT_EQ(buttons.size(), catalog.size());
 
     // ①初始态兑现：写命令按只读禁用、只读命令可用（修复前面板恒按

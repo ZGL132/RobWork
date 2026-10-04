@@ -219,6 +219,18 @@ public:
     void bindTextResolver(std::function<QString(const std::string&)> resolve);
 
     /**
+     * @brief 绑定 WC/DWC XML 外供导出回调（UI-T56——export-workcell-xml
+     *        落点；宿主侧取编译快照→域 exportWorkCellXml→摘要形成）。
+     *
+     * 快照缺席（未应用修订/编译失败）＝回调返回 false＋原因入 summary——
+     * 模块与流程零判定（诚实缺席不虚构产物）；不绑定＝命令执行报装配
+     * 缺陷（fail-closed 同 kAssembled 口径）。
+     */
+    void bindWorkCellExport(
+        std::function<bool(const std::string& targetPath, std::string& summary)> exportFn);
+
+
+    /**
      * @brief 会话可写性切换（UI-T43——L-7 门控输入的模块转发面，需求域
      *        RequirementsUiModule::setWritable 同构先例）。
      *
@@ -411,6 +423,10 @@ private:
     CommandSubmitFn m_pendingSubmit;         ///< 面板创建前的提交出口暂存（创建时应用）
     CommandAvailabilityFn m_pendingAvailability; ///< 面板创建前的可用性查询暂存
     std::function<QString(const std::string&)> m_textResolver;  ///< 文案解析（创建时应用）
+    /// WC/DWC XML 导出回调（UI-T56——宿主 bindWorkCellExport 注入；空＝
+    /// 命令执行报装配缺陷，fail-closed）。
+    std::function<bool(const std::string& targetPath, std::string& summary)>
+        m_workCellExport;
     bool m_writable = true;                  ///< 会话可写性（L-7 初值——setWritable
                                              ///  更新；createPanel 作为面板初始态。
                                              ///  默认 true＝装配期无项目会话的可写

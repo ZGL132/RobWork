@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T56",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "WC/DWC XML 外供导出命令（F-498 导出半区）：modeling.export-workcell-xml 第十一号命令挂接——exportWorkCellXml 域导出的 UI 命令面（宿主 bindWorkCellExport 快照接源）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T55"
+  ],
+  "requirements": [
+    "MDL-20（③\"另可导出 WorkCell/DWC XML 供外部查看\"——会话级文件操作零修订）",
+    "MDL-07（命令目录同源演化——§9.7.3 表尾追加）",
+    "ERR-01（诚实缺席——快照空＝原因入摘要不虚构产物；覆盖确认＝知情面）",
+    "UX-02（tooltip 键登记——UiText 同表解析）"
+  ],
+  "designRefs": [
+    "units/modeling.md#9.7.3",
+    "units/modeling.md#6.8",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-498"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T56.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t56/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（编译产物只读消费——零触碰）"
+  ],
+  "outputs": [
+    "modeling/plugin/PanelCommandCatalog.cpp：第十一号命令 modeling.export-workcell-xml（Project/只读允许——readOnlyAllowed=true；menuPath 建模/规范包；F-502 频率分层自动入折叠区）",
+    "modeling/plugin/ModelingCommandFlows.hpp/.cpp：ModelingFlowDeps 增 exportWorkCellXml 回调＋执行分支（saveFilePath→QFile 存在性覆盖确认→回调透传；摘要由宿主回调形成）＋isAssembledModelingCommand 词表增列（fail-closed 路由同源演化）",
+    "modeling/plugin/ModelingUiModule.hpp/.cpp：bindWorkCellExport 绑定面＋m_workCellExport 成员＋executeDomainCommand deps 注入（模块零 runtime 类型依赖——回调整体由宿主形成）",
+    "ui/plugin/UiPlugin.cpp：bindWorkCellExport 接源（m_compilePort->lastPublishedSnapshot 现取——零第二编译路径；快照缺席诚实拒绝；双面输出 wc＋dwc＋.dwc.xml）",
+    "ui/src/UiText.cpp：cmd.modeling.export-workcell-xml 的 title/tooltip 两键（kDomainCommandTitleTable 容量 40→42）",
+    "modeling/test/ModelingCommandFlowsTest.cpp：三用例（HappyPath——回调恰调一次路径透传草稿零触碰／SnapshotMissingAndNotWired——缺席原因透传＋未接线装配缺陷 fail-closed／CancelAndOverwriteConfirm——取消零回调＋既有文件覆盖确认知情面）＋FlowHarness 增 export 替身",
+    "modeling/test/PluginPanelTest.cpp＋PluginModuleT03BTest.cpp：命令计数与 readOnlyAllowed 集合更新（10→11）",
+    "ModelingPanelWidget.cpp：命令钮 objectName 挂 id 后缀（ird_modeling_cmd_<id>——F-502 折叠重排后子树序≠目录序的测试对账锚）＋两 gui 测试 TU 对账改目录序拾取",
+    "登记文档：modeling.md v0.34（§9.7.3 表尾追加行）＋ui.md v1.67 §13 UI-T56 行＋DTB WP-10-T56 行＋任务契约 UI-T56.json＋留痕 builds/ui-t56/"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟）",
+    "modeling_test 327/327（新增 3 流用例）＋modeling_gui_test 28/28＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44",
+    "ird_gates base..branch 零新增（基线 101 条存量集口径）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t56/"
+  ],
+  "acceptance": [
+    "命令目录：十一条命令 id 序/只读集合/点分词形——PluginPanelTest Commands_TenDottedCommandIds（计数 11＋新 id）与 Commands_ReadOnlyAllowedPerTable（新 id 入只读集）",
+    "流全链：接线在位→saveFilePath 应答→回调恰调一次路径透传摘要透传草稿零触碰——ModelingCommandFlowsTest ExportWorkCellXml_HappyPath_UI_T56",
+    "诚实缺席：快照缺席回调 false 原因透传／未接线装配缺陷 fail-closed——ExportWorkCellXml_SnapshotMissingAndNotWired_UI_T56",
+    "取消与覆盖知情面：用户取消零回调／既有文件确认文本含原子替换语义拒绝零回调放行回调——ExportWorkCellXml_CancelAndOverwriteConfirm_UI_T56",
+    "装配路由：目录命令全量 isAssembledModelingCommand 放行（F-466 断言面计数 11）——AssembledSetMatchesCatalog_F466",
+    "回归门槛：受影响目标零错误构建（集成＋独立冒烟）＋全套件回归（口径同 verify）＋validate-docs/validate-task PASS；留痕 traceability/builds/ui-t56/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "F-502 折叠重排后 Qt 子树序≠目录序——命令钮 objectName 挂 id 后缀（ird_modeling_cmd_<id>），两 TU 对账辅助改目录序拾取；新命令钮自动入折叠区（id≠reset-home-zero）",
+    "快照接源零第二编译路径——数据源唯一＝m_compilePort->lastPublishedSnapshot（PackageWorkCell §6.8 契约）；快照缺席＝诚实缺席不虚构产物",
+    "UiText kDomainCommandTitleTable 为定容数组——新增键须同步扩容（title/tooltip 两键各一行）",
+    "预览页多类型下拉（F-498 预览半区）不在本批——需域侧内存导出面（toString 变体）与 SerialDevice/Scene/Collision XML 域导出函数，登记后续批次；F-498 维持 open 登记导出半区兑现"
+  ],
+  "branch": "ui-t56",
+  "note": "分支基点＝redesign-main@7743af91。F-498 导出半区兑现（预览半区维持 open）；UI-T55 卡面注记的\"TCP 列表＝UI-T56\"取号顺延为 UI-T57（本号被 F-498 批次占用——登记序修正随本卡备案）。interUnit=false 口径（UI-T53 先例）：ui 单元触碰限于同插件宿主接线面（bindWorkCellExport/UiText 键表），非单元间端口协作。"
+}

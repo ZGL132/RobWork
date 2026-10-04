@@ -229,6 +229,15 @@ void ModelingUiModule::bindTextResolver(std::function<QString(const std::string&
     m_textResolver = std::move(resolve);
 }
 
+void ModelingUiModule::bindWorkCellExport(
+    std::function<bool(const std::string& targetPath, std::string& summary)> exportFn)
+{
+    m_guard.assertOnUiThread();
+    // 无面板形态差异（面板不经手本回调——命令流经 executeDomainCommand
+    // 的 deps 直取成员）；重复绑定＝以最新宿主装配为准（幂等覆盖）。
+    m_workCellExport = std::move(exportFn);
+}
+
 void ModelingUiModule::setWritable(bool writable)
 {
     // L-7 门控输入转发（UI-T43——宿主按打开报告的真实 writable 驱动；
@@ -318,13 +327,15 @@ bool ModelingUiModule::executeDomainCommand(const std::string& commandId)
     m_guard.assertOnUiThread();
     // 流程依赖（宿主侧回调全量接线——flows 零模块类型依赖的测试缝形态）：
     // reseedTemplate＝模板重种子；recomputeReadiness＝草稿变更后真判定；
-    // selectedAnchor＝面板会话选中锚（estimate/diff 的目标解析输入面）。
+    // selectedAnchor＝面板会话选中锚（estimate/diff 的目标解析输入面）；
+    // exportWorkCellXml＝宿主绑定回调（UI-T56——快照取源＋域导出整体）。
     ModelingFlowDeps deps;
     deps.reseedTemplate = [this] { seedTemplateSession(); };
     deps.recomputeReadiness = [this] { recomputeReadiness(); };
     deps.selectedAnchor = [this]() -> std::optional<core::ObjectId> {
         return m_panel != nullptr ? m_panel->selectedAnchor() : std::nullopt;
     };
+    deps.exportWorkCellXml = m_workCellExport;
     std::string summary;
     const bool executed = executeModelingCommand(commandId, m_session, deps,
                                                  qtModelingDialogHost(), summary);

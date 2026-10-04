@@ -77,7 +77,7 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
 /// UI-T41 批次B 增行：建模十条命令的 tooltip 键（cmd.<id>.tooltip——B4 去
 /// 裸命令 id 悬停文案）＋建模面板呈现键（panel.modeling.*——B7 复合行指引
 /// ／B2 诊断历史标题；值＝工程用语中文，UX-02）。
-constexpr std::array<TextRow, 40> kDomainCommandTitleTable{{
+constexpr std::array<TextRow, 42> kDomainCommandTitleTable{{
     { "cmd.modeling.new-from-template.title",          "从模板新建"       },
     { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
     { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
@@ -88,6 +88,7 @@ constexpr std::array<TextRow, 40> kDomainCommandTitleTable{{
     { "cmd.modeling.export-package.title",             "导出规范包"       },
     { "cmd.modeling.import-package.title",             "导入规范包"       },
     { "cmd.modeling.reset-home-zero.title",            "复位 Home/Zero"   },
+    { "cmd.modeling.export-workcell-xml.title",        "导出 WorkCell XML" },
     { "cmd.modeling.flow-not-assembled",               "该域流程未装配（随后续建模任务提供）" },
     { "cmd.flow-not-assembled.reason",                 "该流程将在后续版本提供" },
     { "reason.no-project",                              "请先打开工业机器人项目" },
@@ -121,6 +122,7 @@ constexpr std::array<TextRow, 40> kDomainCommandTitleTable{{
     { "cmd.modeling.generate-placeholder-geometry.tooltip", "按相邻关节原点生成连杆占位圆柱（视觉几何）" },
     { "cmd.modeling.diff-baseline.tooltip",            "与最近应用的基线修订做模型差异比较（只读）" },
     { "cmd.modeling.export-package.tooltip",           "把当前草稿闭包导出为规范模型包（只读会话可用）" },
+    { "cmd.modeling.export-workcell-xml.tooltip",      "把已应用修订的编译产物导出为 WorkCell/DWC XML 供外部工具查看（只读会话可用；数据源＝编译快照）" },
     { "cmd.modeling.import-package.tooltip",           "导入本软件导出的规范模型包并替换当前草稿" },
     { "cmd.modeling.reset-home-zero.tooltip",          "呈报位姿集 Home/Zero 参考数据（会话命令，零修订）" },
     // —— UI-T41 批次B：建模面板呈现键（B2 诊断历史标题／B7 复合行指引）——

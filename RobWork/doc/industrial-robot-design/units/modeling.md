@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.33（2026-10-04，宿主审核 P2 呈现批次①——F-502：六轴重置确认分段知情文案＋工具区低频命令『更多操作』折叠区〔命令集合/使能逻辑零变化〕＋过期"顶栏"指引修正〔UI-T38 退役后失实〕；gui 18/18 含新增 1 例；前一版 v0.32b＝UI-T53 关节详细编辑页；v0.32＝建模面板呈现中文化与复合值展开） |
+| 文档版本 | v0.34（2026-10-05，UI-T56 WC/DWC XML 外供导出命令落位——§9.7.3 表尾追加第十一号 modeling.export-workcell-xml〔readOnlyAllowed=true——会话级文件操作零修订，MDL-20 ③命令面〕＋数据源契约登记＝已应用修订的 runtime 编译快照只读视图〔宿主 bindWorkCellExport 注入——快照缺席诚实缺席〕；前一版 v0.33＝宿主审核 P2 呈现批次①；v0.32b＝UI-T53；v0.32＝呈现中文化） |——F-502：六轴重置确认分段知情文案＋工具区低频命令『更多操作』折叠区〔命令集合/使能逻辑零变化〕＋过期"顶栏"指引修正〔UI-T38 退役后失实〕；gui 18/18 含新增 1 例；前一版 v0.32b＝UI-T53 关节详细编辑页；v0.32＝建模面板呈现中文化与复合值展开） |
 | 文档版本 | v0.32b（2026-10-04，UI-T53 关节详细编辑页批次落位——§5.2 逐轴编辑流 Origin 表尾追加：JointEditField 增 Origin 值＋JointOriginEditValue 六标量载荷〔旋转组合归域内核 ZYX 正解——src/RpyMath.hpp 唯一实现，Import.cpp 私有副本提升共享〕＋applyJointFieldEdit 规则⑦〔C-1 守卫→六分量有限性→UserProvided 提交〕＋token "origin" 与变更记录；§9.7 面板"编辑"页签＝ui FormEditCommon 公共件承载 12 行数值表〔轴向 3＋原点 XYZ/RPY 6＋零位偏置 1＋限位 2，rad/m 随关节类型〕＋JointDetailEditOutlet 分组转译＋L-7 页级禁用；MDL-07 表单最小版划界增量登记＝属性行保持最小版、详细编辑收口"编辑"页；诚实边界＝类型枚举行与编辑页 L-4 重演不入本批；F-497 关节侧兑现①；前一版 v0.32＝建模面板呈现中文化与复合值展开；v0.31＝UI-T50 五对象属性页扩展） |
 | 文档版本 | v0.32（2026-10-04，建模面板呈现中文化与复合值展开批次——属性行标签 fieldKey→工程中文固定映射〔type→类型等 25 键＋tcp:/pose: 前缀键；fieldKey 机器键面零变化——HostMigration 寻址锚不动〕＋Provided 态复合值展开为精确数值〔轴向三维／原点·安装接口·世界位姿六值 RPY 反解／惯量六分量——"[值已提供]/[位姿已提供]"占位退役为模板级防御面〕＋类型/权威模式/场景角色/几何类别值中文呈现映射〔token 仍为机器权威，括注保留英文〕；投影新用例一＋modeling_test 322/322＋gui 17/17；前一版 v0.31＝UI-T50 五对象属性页） |
 | 文档版本 | v0.28（2026-10-04，UI-T47 结构编辑面批次落位——§5.2 v0.28 四操作词表〔同日先行修订〕＋§3.3 公共头表 StructureEdit.hpp 行；域原语 StructureEdit.hpp/.cpp＋DraftIdentity.hpp 共享头提升＋面板五钮承载与提交流；UT 九例＋gui 两例；前一版 v0.27＝UI-T42；v0.24~v0.26＝UI-T41 批次A/B/C；v0.23＝WP-13-T20 宿主迁移） |
@@ -1261,6 +1261,7 @@ protected:
 | `modeling.diff-baseline` | Stage/Project | 与基线 Model Diff 查看 | true |
 | `modeling.export-package` / `modeling.import-package` | Stage/Project | MDL-20 规范包导出/导入 | true / false |
 | `modeling.reset-home-zero` | Session | 复位 Home/Zero（会话姿态，KIN-06 语义，零修订） | true |
+| `modeling.export-workcell-xml` | Project | WC/DWC XML 外供导出（UI-T56——MDL-20 ③"另可导出供外部查看"；数据源＝已应用修订的 runtime 编译快照只读视图，宿主 bindWorkCellExport 注入，快照缺席诚实缺席；零修订零草稿触碰） | true |
 
 （`draft.apply`/`draft.save` 等项目级命令由 ui 既有注册承载，modeling 只供给 `buildDraftCommand`；快捷键绑定一律经 ui HotkeyBindingTable，插件不私占全局快捷键——SA-16。）
 
