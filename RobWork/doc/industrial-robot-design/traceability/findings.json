@@ -76,11 +76,11 @@
       "id": "F-007",
       "source": "traceability/acceptance/TK-T01-20260910.md#G-2",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-09-10",
       "title": "全新集成树配置参数未载明：需 vcpkg toolchain＋Qt CMAKE_PREFIX_PATH（AGENTS §4.1 集成命令字面不含，主树缓存为证）；且框架配置必需的 RobWorkStudio/bin/RobWorkStudio.ini.template.static 被 .gitignore [Bb]in/ 规则吞掉，全新克隆/worktree 配置必卡在 RobWorkStudio/src/CMakeLists.txt:58",
-      "owner": "构建约定所有者（DTB §5.1 辖域）",
-      "resolution": "AGENTS §4.1 补全新树配置口径（toolchain＋Qt 前缀＋模板文件处置——复制样板或 .gitignore 白名单例外）；WP-01-T02 CI 一键门禁的前置输入。"
+      "owner": "已闭环——①toolchain＋Qt 前缀＝AGENTS §4.1 独立冒烟段已载（F-002/F-455）；②模板文件处置＝AGENTS §4.1＋DTB §5.1 双登记手工复制口径（2026-10-04 治理批）；.gitignore 白名单例外留待后续批决策",
+      "resolution": "AGENTS §4.1 补全新树配置口径（toolchain＋Qt 前缀＋模板文件处置——复制样板或 .gitignore 白名单例外）；WP-01-T02 CI 一键门禁的前置输入。2026-10-04 治理批双登记落位翻 closed。"
     },
     {
       "id": "F-008",
@@ -4736,11 +4736,11 @@
       "id": "F-475",
       "source": "同上（UI-T46/UI-T51 验收 attempt 1）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-03",
       "title": "fresh 树测试 exe 运行时依赖需手工补齐：框架 DLL 仅 studio 目标 POST_BUILD 复制（其余测试目标依赖主树历史累积状态）＋vcpkg DLL 需 vcpkg/bin＋python313.dll 经系统 Miniconda PATH 解析（ui_test 依赖链）——fresh 复现无指引文档。",
-      "owner": "testkit/构建约定所有者（DTB §5.1：fresh 复现运行时补齐指引登记；或测试目标 POST_BUILD 统一复制面）",
-      "resolution": "UI-T46/UI-T51 验收记录 4.2 环境事实转登。"
+      "owner": "已闭环——DTB §5.1『fresh 树运行时前置』行登记现状口径（2026-10-04 治理批）；『测试目标 POST_BUILD 统一复制面』工程化选项留待构建约定所有者后续批决策",
+      "resolution": "UI-T46/UI-T51 验收记录 4.2 环境事实转登。DTB §5.1 登记闭环（2026-10-04 治理批）。"
     },
     {
       "id": "F-476",
@@ -4836,31 +4836,31 @@
       "id": "F-485",
       "source": "WP-13-T21 补录验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外；该卡合入时点早于补录 46 个主线提交）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-04",
       "title": "WP-13-T21 补录验收的回归基线口径注记：契约 acceptance 6 数字（modeling_test 294+3、modeling_gui_test 9）为冻结 SHA eaf8dded 时代口径——补录按冻结 SHA 复现逐数一致（297/9）；主线当前态（321/17）另经 UI-T47~T50 各自验收覆盖。两口径无矛盾，但契约文本未标注时代限定，读者对「297≠321」需查证方知原因。",
-      "owner": "下一治理批（WP-13-T21.json note 补一行时代限定注即闭环——语义零变化）",
-      "resolution": "验收记录 4.4 发现转登（acc/WP-13-T21/1）。"
+      "owner": "已闭环——WP-13-T21.json note【F-485 时代限定注】段随补录翻账落位（冻结 SHA eaf8dded 口径＋主线当前态双口径载明），无需后续动作",
+      "resolution": "验收记录 4.4 发现转登（acc/WP-13-T21/1）。契约注记随补录翻账落位，2026-10-04 治理批核对后翻 closed。"
     },
     {
       "id": "F-486",
       "source": "UI-T43 补录验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外；该卡合入时点早于补录 49 个主线提交）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-04",
       "title": "UI-T43 补录验收的回归基线口径注记（同 F-485 族）：契约 acceptance 6 基线数字（modeling_test 294、modeling_gui_test 9+3、ui_test/ui_gui_test 该点值）为冻结 SHA 8d5b2584 时代口径——补录按冻结 SHA 复现逐数一致（294/12/239/67）；主线当前态（321/17/201/246）另经后续各卡验收覆盖。两口径无矛盾，契约文本未标注时代限定。",
-      "owner": "下一治理批（UI-T43.json note 补一行时代限定注即闭环——与 F-485 同款处置）",
-      "resolution": "验收记录 4.4 发现转登（acc/UI-T43/1）。"
+      "owner": "已闭环——UI-T43.json note【F-486 时代限定注】段随补录翻账落位（同 F-485 款），无需后续动作",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T43/1）。契约注记随补录翻账落位，2026-10-04 治理批核对后翻 closed。"
     },
     {
       "id": "F-487",
       "source": "UI-T44 补录验收 attempt 1（2026-10-04——fresh detached worktree 复现，ACC §2.1 单会话顺序执行例外；该卡合入时点早于补录 50+ 个主线提交）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-04",
       "title": "UI-T44 补录验收的回归基线口径注记（同 F-485/F-486 族）：契约 acceptance 回归数字（ui_test 239、ui_gui_test 67+3）为冻结 SHA 08053bf7 时代口径——补录逐数一致；且该点携带 F-472 修复前形态的宿主测试（偶发 UB——补录首轮 ui_gui_test 撞上一次 AssemblyFailureGroupPlaceholder 失败，单用例六连跑全绿＋零触碰缺陷文件归因留痕），主线当前态已含 UI-T43 修复。",
-      "owner": "下一治理批（UI-T44.json note 补一行时代限定注即闭环——与 F-485 同款处置）",
-      "resolution": "验收记录 4.4 发现转登（acc/UI-T44/1）。"
+      "owner": "已闭环——UI-T44.json note【F-487 时代限定注】段随补录翻账落位（同 F-485 款，含 F-472 修复前形态注），无需后续动作",
+      "resolution": "验收记录 4.4 发现转登（acc/UI-T44/1）。契约注记随补录翻账落位，2026-10-04 治理批核对后翻 closed。"
     },
     {
       "id": "F-488",
