@@ -51,6 +51,15 @@
     "ird_gates 全绿（gate-all.ps1——含冒烟树配置）",
     "留痕 traceability/builds/ui-t53/"
   ],
+  "acceptance": [
+    "域原语面：JointEditField::Origin 表尾追加＋JointOriginEditValue 六标量载荷＋applyJointFieldEdit Origin 分支（C-1 权威守卫→六分量有限性→ZYX 正解 UserProvided 提交＋恰一条变更记录）——具名用例 CreateEditChain_OriginEditField_UI_T53 五面（Explicit 接受＋独立反解互证／StandardDH 拒／非有限拒／备择不匹配 fail-fast／批量同键＋摘要 subject）",
+    "共享头收敛：src/RpyMath.hpp（RPY 正解——Import.cpp 私有副本提升共享）＋plugin/RpyPresentation.hpp（RPY 反解——HostMigrationProviders.cpp 私有副本提升共享）——两调用面零变化（Import.cpp 三处调用点／检查器位姿六值行原样通过）",
+    "面板编辑页面：建模面板\"编辑\"页签＝ParamTablePanel 12 行数值表（轴向 3＋原点 XYZ/RPY 6＋零位偏置 1＋限位 2）——空态诚实提示（非关节选中不建页）、选中关节建页、切连杆收起——gui 具名用例 JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53",
+    "编辑全链：origin-x 值列编辑→应用→确认区→域接受（工作集 origin 平移分量更新＋UserProvided 来源＋恰一条变更记录）——gui 具名用例 JointDetailEditPane_OriginEditApplyChain_UI_T53",
+    "守卫呈现：StandardDH 态轴向编辑走完整确认链被域拒绝——状态行 authority-locked 就地呈现＋工作集字节不变——gui 具名用例 JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T53",
+    "L-7 门控：只读会话编辑页 ParamTablePanel 整体禁用；属性行 P0-3\"恰一可编辑\"契约面不变（夹具对账排除编辑页子树）——gui 具名用例 JointDetailEditPane_ReadOnlySessionDisablesPanel_UI_T53＋OnlyZeroOffsetEditable 原样通过",
+    "回归门槛：受影响目标零错误构建（集成＋独立冒烟）＋modeling_test 322/modeling_gui 21/modeling_contract 17/ui_test 246/ui_contract 32 全绿＋ird_gates base..branch 零新增（基线 worktree 同引擎比对——75 条存量集语义全等）＋validate-docs/validate-task PASS——留痕 traceability/builds/ui-t53/"
+  ],
   "interUnit": false,
   "knownPitfalls": [
     "F-480 同族：RPY 正解/反解均逐元素展开，禁调 rw::math::RPY 构造（冒烟 header-only 纪律）——正解归域内核 src/RpyMath.hpp，反解归插件 RpyPresentation.hpp，互为正逆由测试钉住",
