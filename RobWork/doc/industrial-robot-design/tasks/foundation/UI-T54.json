@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T54",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "基座安装姿态编辑接线（F-497 兑现②）：applyBasePlacementEdit 域原语 UI 面板承载——\"编辑\"页签第二模式（预设/位置/自定义 EAA，整体替换语义）",
+  "status": "ready",
+  "dependsOn": ["UI-T53"],
+  "requirements": [
+    "MDL-22（基座安装姿态与重力配置——预设＋任意欧拉角编辑，原子持久化；基座相对世界系单一变换口径 M-11）",
+    "MDL-07（选中只显示相关属性——B.1 复杂对象编辑模式的锚外对象入口适配）",
+    "ERR-01（诚实拒绝——PresetIdentityRotation/CustomEaaMissing 等域守卫拒绝原因就地呈现；工作集字节不变）",
+    "UX-03（比较型原因呈现——非模态状态行）"
+  ],
+  "designRefs": [
+    "units/modeling.md#5.2",
+    "units/modeling.md#4.3",
+    "units/modeling.md#9.7",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-497"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T54.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t54/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（P-RT-4——预设轴向矩阵唯一产出点在 runtime，本任务零触碰）"
+  ],
+  "outputs": [
+    "modeling/plugin/ModelingPanelWidget.hpp/.cpp：\"编辑\"页签改模态堆栈（0＝关节区〔UI-T53 既有〕，1＝基座安装页）＋模式入口行（关节编辑/基座安装…——基座安装为锚外对象〔无 ObjectId 树锚〕，显式入口进页；建模树模型 demo 行在草稿根身份回填前禁选，入口钮保证全生命周期可达）＋基座页（预设四值组合框＋位置 XYZ m＋自定义 EAA XYZ rad〔仅 Custom 启用〕＋应用/还原）＋onBasePlacementApplyClicked 整体替换提交（非 Custom 不携 customEaa——域 fail-fast 契约的 UI 侧同口径分流；接受走 L-2 分流 onEditApplied；拒绝经 basePlacementEditErrorCodeToken 就地呈现）＋refreshBasePlacementPane 权威回填（进页/应用后，不在全局刷新中回填防踩踏未应用输入）＋L-7 门控（应用钮随 writable 禁用＋出口防御面）",
+    "modeling/gui_test/ModelingPanelGuiTest.cpp：三用例（WholeReplacementChain——Custom 全链落草稿三面更新＋UserProvided＋恰一条记录＋还原零脏化／PresetIdentityRotationRejected——Custom＋零 EAA 域守卫拒绝就地呈现＋工作集字节不变／ReadOnlyDisablesApply——L-7 控件半区）＋对账排除扩展（基座页 QDoubleSpinBox 内部 QLineEdit 与模式钮不入 P0-3/命令目录对账）",
+    "ModelingUiModuleHostWiringGuiTest.cpp：按钮对账排除同步（edit_/base_ 前缀呈现件）",
+    "F-502 折叠用例合并适配：isVisibleTo(面板)→isHidden（\"编辑\"页签居首后工具页恒非当前页，QTabWidget 隐藏链使 isVisibleTo 失去判别力——折叠语义 setVisible 翻转零变化，UI-T53 栈合入时的遗留适配，随本批登记）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟）",
+    "modeling_test 323/323（零新增——域原语 BasePlacementEditTest 既有九例不动）",
+    "modeling_gui_test 25/25（新增 3）＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78（原生窗口平台——gate-all 同口径）＋requirements_gui 44/44",
+    "ird_gates base..branch 零新增（本任务零新增依赖/目标——比对以基线 101 条存量集为准）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t54/"
+  ],
+  "acceptance": [
+    "编辑页签双模式：模式入口行（关节编辑/基座安装…）＋模态堆栈切换——gui 进页辅助 enterBaseMode 经入口钮驱动（具名用例三段均经此进入）",
+    "整体替换全链：Custom 预设→EAA 行随启→写 EAA/位置→应用→applyBasePlacementEdit 接受＝preset/customEaa/basePosition 三面 UserProvided 更新＋恰一条变更记录——gui 具名用例 BasePlacementEdit_WholeReplacementChain_UI_T54",
+    "域守卫呈现：Custom＋零 EAA（R=I）→状态行 preset-identity-rotation 就地呈现＋工作集字节不变——gui 具名用例 BasePlacementEdit_PresetIdentityRotationRejected_UI_T54",
+    "L-7 门控：只读会话基座应用钮禁用——gui 具名用例 BasePlacementEdit_ReadOnlyDisablesApply_UI_T54",
+    "还原语义：还原钮＝权威值回填零脏化（changes 不增长、零域调用）——WholeReplacementChain 用例尾段断言",
+    "回归门槛：受影响目标零错误构建（集成＋独立冒烟 3/3）＋全套件回归（口径同 verify）＋validate-docs/validate-task PASS；留痕 traceability/builds/ui-t54/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "P-RT-4 红线：建模只存参数不存矩阵——预设轴向矩阵唯一产出点＝runtime installationPresetRotation()，UI 零预乘零换算（EAA 输入原样交域）",
+    "非 Custom 携带 customEaa＝applyBasePlacementEdit fail-fast 契约违约——UI 按预设分流组装（Custom 才填 customEaa），不触发 fail-fast 路径",
+    "QDoubleSpinBox 内部 QLineEdit 会入 findChildren<QLineEdit*>——对账排除须覆盖基座页（ird_modeling_base_page），否则污染 P0-3 恰一可编辑计数",
+    "EAA SpinBox 呈现精度 6 位小数（rad）／位置 4 位（m）——呈现精度非语义边界，域接受任意有限 double；测试断言按精度取整值",
+    "gui 套件跑法：原生窗口平台（gate-all 同口径）——offscreen 下 WorkbenchShell 布局/窗口几何类用例为环境性误报（F-507 同族教训：环境口径差异须先排除再判回归）"
+  ],
+  "branch": "ui-t54",
+  "note": "分支基点＝redesign-main@5a2245d9。F-497（建模复杂对象只读事实页）兑现②——基座安装为审核推荐页序外的低成本前置（域原语已在位零新增）；F-502 折叠用例的 isVisibleTo→isHidden 适配为 UI-T53 栈合入遗留项随本批落位。后续批次：UI-T55 工具/场景详细编辑页（B.1 扩展面＋新域原语）、F-498 多类 XML 预览。"
+}

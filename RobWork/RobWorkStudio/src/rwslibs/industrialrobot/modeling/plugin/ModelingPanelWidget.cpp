@@ -11,13 +11,16 @@
 
 #include "ModelingPanelWidget.hpp"
 
+#include <QComboBox>
 #include <QDoubleValidator>
+#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QMessageBox>                            // 六轴重置确认对话（UI-T47——有损操作知情面）
 #include <QLabel>
 #include <QScrollBar>
+#include <QStackedWidget>
 #include <QTabWidget>
 #include <QTime>
 #include <QTreeWidgetItemIterator>
@@ -204,7 +207,37 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     auto* toolsPage = new QWidget(tabs);
     auto* readinessPage = new QWidget(tabs);
     auto* previewPage = new QWidget(tabs);
-    buildJointEditPane(new QVBoxLayout(editPage));     // 区⑥编辑页（UI-T53——关节详细编辑）
+    // 编辑页签＝模式入口行＋模态堆栈（0＝关节区〔UI-T53〕，1＝基座安装页
+    // 〔UI-T54——锚外对象显式入口，B.1 模式的锚外适配〕）。
+    auto* editLay = new QVBoxLayout(editPage);
+    auto* modeRow = new QHBoxLayout();
+    auto* jointModeBtn = new QPushButton(QStringLiteral("关节编辑"), editPage);
+    jointModeBtn->setObjectName(QStringLiteral("ird_modeling_edit_joint_mode"));
+    jointModeBtn->setToolTip(QStringLiteral("按结构树选中关节呈现 12 行数值编辑表"));
+    auto* baseModeBtn = new QPushButton(QStringLiteral("基座安装…"), editPage);
+    baseModeBtn->setObjectName(QStringLiteral("ird_modeling_edit_base_mode"));
+    baseModeBtn->setToolTip(QStringLiteral(
+        "基座安装姿态编辑（预设/位置/自定义 EAA——MDL-22，整体替换语义）"));
+    modeRow->addWidget(jointModeBtn);
+    modeRow->addWidget(baseModeBtn);
+    modeRow->addStretch(1);
+    editLay->addLayout(modeRow);
+    m_editStack = new QStackedWidget(editPage);
+    auto* jointArea = new QWidget(m_editStack);
+    buildJointEditPane(new QVBoxLayout(jointArea));    // 区⑥编辑页（关节）
+    m_editStack->addWidget(jointArea);                 // index 0
+    m_basePage = new QWidget(m_editStack);
+    buildBasePlacementPane();                          // 区⑥编辑页（基座）
+    m_editStack->addWidget(m_basePage);                // index 1
+    editLay->addWidget(m_editStack, 1);
+    connect(baseModeBtn, &QPushButton::clicked, this, [this] {
+        m_editStack->setCurrentWidget(m_basePage);
+        refreshBasePlacementPane();  // 进页即回填权威值（零脏化）
+    });
+    connect(jointModeBtn, &QPushButton::clicked, this, [this] {
+        m_editStack->setCurrentIndex(0);
+        refreshJointEditPane();  // 回关节模式——树选中锚照常驱动
+    });
     buildToolsPane(new QVBoxLayout(toolsPage));        // 区③域工具区（StageId=modeling）
     buildReadinessPane(new QVBoxLayout(readinessPage));// 区④就绪与诊断条
     buildPreviewPane(new QVBoxLayout(previewPage));    // 区⑤预览页（仅已应用修订）
@@ -739,6 +772,11 @@ void ModelingPanelWidget::setWritable(bool writable)
     // 全部编辑控件同步灰显——出口侧 applyJointDetailEdits 另有防御面）。
     if (m_jointEditPanel != nullptr) {
         m_jointEditPanel->setEnabled(m_writable);
+    }
+    // L-7 基座页半区（UI-T54）：应用钮同步禁用（EAA 行使能在
+    // refreshBasePlacementPane 按 writable 复合判定，进页/应用后刷新）。
+    if (m_baseApplyBtn != nullptr) {
+        m_baseApplyBtn->setEnabled(m_writable);
     }
     // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
     // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
@@ -1412,6 +1450,176 @@ void ModelingPanelWidget::applyJointDetailEdits(const ui::ParamEditSet& editSet)
     // 是单字段轨——分组表单编辑的重演语义归后续批次；修订事件到达时的
     // 处置＝本刷新把基线对齐新权威，未应用暂存由用户重录）。
     refreshPropertiesFromLastWorkingSet();
+}
+
+// =====================================================================
+// 基座安装姿态编辑页（UI-T54——MDL-22；域原语 applyBasePlacementEdit 接线）
+// =====================================================================
+
+void ModelingPanelWidget::buildBasePlacementPane()
+{
+    m_basePage->setObjectName(QStringLiteral("ird_modeling_base_page"));
+    auto* lay = new QVBoxLayout(m_basePage);
+    lay->setContentsMargins(0, 0, 0, 0);
+    // 语义说明行（常驻——审核语义固定清单的呈现半区：参考系/单位/整体
+    // 替换语义随页可读）。
+    m_baseHint = new QLabel(this);
+    m_baseHint->setObjectName(QStringLiteral("ird_modeling_base_hint"));
+    m_baseHint->setWordWrap(true);
+    m_baseHint->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    m_baseHint->setText(QStringLiteral(
+        "基座安装姿态＝基座坐标系相对世界坐标系（MDL-22/M-11）：预设给出安装"
+        "旋转（地面 0°／倒挂 180°／壁装 90°），自定义预设须给 EAA 旋转矢量"
+        "（轴×角，rad）；位置为基座原点世界系坐标（m）。提交＝整体替换"
+        "（落草稿，经顶栏『应用草稿』产生修订）。"));
+    lay->addWidget(m_baseHint);
+
+    auto* form = new QFormLayout();
+    m_basePreset = new QComboBox(m_basePage);
+    m_basePreset->setObjectName(QStringLiteral("ird_modeling_base_preset"));
+    // 呈现层固定映射（词表 token 为机器权威——PanelModel 预设中文标签同款）。
+    m_basePreset->addItem(QStringLiteral("地面（Ground）"));
+    m_basePreset->addItem(QStringLiteral("倒挂（Inverted）"));
+    m_basePreset->addItem(QStringLiteral("壁装（Wall）"));
+    m_basePreset->addItem(QStringLiteral("自定义（Custom）"));
+    form->addRow(QStringLiteral("安装预设"), m_basePreset);
+
+    const auto makeSpin = [this](const char* objectName, double lo, double hi,
+                                 double step) {
+        auto* spin = new QDoubleSpinBox(m_basePage);
+        spin->setObjectName(QString::fromLatin1(objectName));
+        spin->setRange(lo, hi);
+        spin->setDecimals(4);
+        spin->setSingleStep(step);
+        return spin;
+    };
+    // 位置（世界系 m）与自定义 EAA（rad）——范围宽设防误触，业务裁决在域。
+    m_basePosX = makeSpin("ird_modeling_base_pos_x", -1e4, 1e4, 0.01);
+    m_basePosY = makeSpin("ird_modeling_base_pos_y", -1e4, 1e4, 0.01);
+    m_basePosZ = makeSpin("ird_modeling_base_pos_z", -1e4, 1e4, 0.01);
+    m_baseEaaX = makeSpin("ird_modeling_base_eaa_x", -6.283185307179586, 6.283185307179586, 0.01);
+    m_baseEaaY = makeSpin("ird_modeling_base_eaa_y", -6.283185307179586, 6.283185307179586, 0.01);
+    m_baseEaaZ = makeSpin("ird_modeling_base_eaa_z", -6.283185307179586, 6.283185307179586, 0.01);
+    // EAA 用 6 位小数（rad 的呈现精度——0.000001 rad ≈ 0.00006°，位置 4 位
+    // ＝0.1 mm 已足；两者均为呈现精度，域接受任意有限 double）。
+    for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) { spin->setDecimals(6); }
+    form->addRow(QStringLiteral("位置 X（m）"), m_basePosX);
+    form->addRow(QStringLiteral("位置 Y（m）"), m_basePosY);
+    form->addRow(QStringLiteral("位置 Z（m）"), m_basePosZ);
+    form->addRow(QStringLiteral("自定义 EAA X（rad）"), m_baseEaaX);
+    form->addRow(QStringLiteral("自定义 EAA Y（rad）"), m_baseEaaY);
+    form->addRow(QStringLiteral("自定义 EAA Z（rad）"), m_baseEaaZ);
+    lay->addLayout(form);
+
+    auto* btnRow = new QHBoxLayout();
+    m_baseApplyBtn = new QPushButton(QStringLiteral("应用"), m_basePage);
+    m_baseApplyBtn->setObjectName(QStringLiteral("ird_modeling_base_apply"));
+    m_baseApplyBtn->setToolTip(QStringLiteral(
+        "整体替换基座安装姿态（预设/自定义 EAA/位置）——落草稿，拒绝原因就地呈现"));
+    auto* restoreBtn = new QPushButton(QStringLiteral("还原"), m_basePage);
+    restoreBtn->setObjectName(QStringLiteral("ird_modeling_base_restore"));
+    restoreBtn->setToolTip(QStringLiteral("放弃未应用输入，回填当前权威值（零脏化）"));
+    btnRow->addWidget(m_baseApplyBtn);
+    btnRow->addWidget(restoreBtn);
+    btnRow->addStretch(1);
+    lay->addLayout(btnRow);
+    lay->addStretch(1);
+
+    // 预设切换→EAA 行使能跟随（仅 Custom 有语义——I-MDL-7；非 Custom 携带
+    // EAA 是域原语 fail-fast 面，UI 侧先行禁用即呈现层同口径）。
+    connect(m_basePreset, &QComboBox::currentIndexChanged, this, [this](int index) {
+        const bool custom = index == 3;
+        for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) {
+            spin->setEnabled(custom);
+        }
+    });
+    connect(m_baseApplyBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onBasePlacementApplyClicked);
+    connect(restoreBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onBasePlacementRestoreClicked);
+}
+
+void ModelingPanelWidget::refreshBasePlacementPane()
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——刷新触点同样是编辑面
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    const bool usable = ws != nullptr && m_writable;
+    m_baseApplyBtn->setEnabled(usable);  // L-7 页级门控（无会话/只读＝禁用）
+    if (ws == nullptr) {
+        m_baseHint->setText(QStringLiteral(
+            "基座安装编辑需已打开项目（草稿会话）。"));
+        return;
+    }
+    const auto& bp = ws->design.basePlacement;
+    // 预设回填（枚举→组合框序——构建期固定映射的逆）。
+    int index = 0;
+    switch (bp.preset) {
+    case runtime::InstallationPresetToken::Ground: index = 0; break;
+    case runtime::InstallationPresetToken::Inverted: index = 1; break;
+    case runtime::InstallationPresetToken::Wall: index = 2; break;
+    case runtime::InstallationPresetToken::Custom: index = 3; break;
+    }
+    m_basePreset->setCurrentIndex(index);
+    const bool custom = index == 3;
+    for (auto* spin : {m_baseEaaX, m_baseEaaY, m_baseEaaZ}) {
+        spin->setEnabled(custom && m_writable);
+    }
+    // 位置回填（未提供＝0 占位——模板/导入缺省即地面零位，不伪造"已设"徽标）。
+    const auto pos = bp.basePosition.tryValue();
+    m_basePosX->setValue(pos.has_value() ? (*pos)[0] : 0.0);
+    m_basePosY->setValue(pos.has_value() ? (*pos)[1] : 0.0);
+    m_basePosZ->setValue(pos.has_value() ? (*pos)[2] : 0.0);
+    // Custom EAA 回填（仅 Custom 态有值——切离 Custom 时域已复位 NotProvided）。
+    const auto eaa = bp.customEaa.tryValue();
+    m_baseEaaX->setValue(custom && eaa.has_value() ? (*eaa)[0] : 0.0);
+    m_baseEaaY->setValue(custom && eaa.has_value() ? (*eaa)[1] : 0.0);
+    m_baseEaaZ->setValue(custom && eaa.has_value() ? (*eaa)[2] : 0.0);
+}
+
+void ModelingPanelWidget::onBasePlacementApplyClicked()
+{
+    m_threadGuard.assertOnUiThread();  // §3.4——编辑面
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable) { return; }  // 无会话/只读——编辑禁用（L-7）
+
+    // 表单→编辑值（整体替换语义；非 Custom 不携 customEaa——携带即域原语
+    // fail-fast 契约违约，UI 侧按预设分流避免）。
+    BasePlacementEditValue edit;
+    switch (m_basePreset->currentIndex()) {
+    case 1: edit.preset = runtime::InstallationPresetToken::Inverted; break;
+    case 2: edit.preset = runtime::InstallationPresetToken::Wall; break;
+    case 3: edit.preset = runtime::InstallationPresetToken::Custom; break;
+    default: edit.preset = runtime::InstallationPresetToken::Ground; break;
+    }
+    if (edit.preset == runtime::InstallationPresetToken::Custom) {
+        edit.customEaa = rw::math::Vector3D<double>(
+            m_baseEaaX->value(), m_baseEaaY->value(), m_baseEaaZ->value());
+    }
+    edit.basePosition = rw::math::Vector3D<double>(
+        m_basePosX->value(), m_basePosY->value(), m_basePosZ->value());
+
+    // 域裁决唯一（先校验后提交——拒绝时工作集字节不变）；接受走 L-2 分流
+    // （脏通知＋状态行＋就绪重算钩子），拒绝经局部错误 token 就地呈现。
+    const std::optional<BasePlacementEditError> err =
+        applyBasePlacementEdit(*ws, edit);
+    if (!err.has_value()) {
+        onEditApplied("basePlacement");
+        refreshPropertiesFromLastWorkingSet();
+        refreshBasePlacementPane();  // 回填权威值（清未应用输入）
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(basePlacementEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::onBasePlacementRestoreClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    // 纯呈现动作——权威值回填，零域调用零脏化。
+    refreshBasePlacementPane();
 }
 
 void ModelingPanelWidget::onTreeSelectionChanged()
