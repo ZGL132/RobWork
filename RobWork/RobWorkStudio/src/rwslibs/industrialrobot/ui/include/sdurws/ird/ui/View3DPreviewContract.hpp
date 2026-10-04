@@ -96,6 +96,8 @@ enum class View3DCellState {
  * 着色语义：cellStates 与 samples 一一对应（序即渲染着色依据——判定
  * 已在域侧完成，本协议零判定）；**cellStates 空＝无评估结果的中性格
  * 呈现**（诚实空态——不虚构判定；契约 note②"预览零结果语义"）。
+ * gridLines＝采样格骨架线段（世界系——UI-T52 字面化：格线与着色点
+ * 并存呈现，格线灰/点分色）。
  */
 struct View3DSampleGrid {
     /// 采样点世界系位置（m——格单元锚点，与 cellStates 一一对应）。
@@ -103,10 +105,15 @@ struct View3DSampleGrid {
     /// 逐点着色态（与 samples 等长——不等长属投影方装配缺陷，渲染层
     /// fail-fast；空＝无评估结果的中性格线呈现）。
     std::vector<View3DCellState> cellStates;
+    /// 采样格骨架线段（世界系，m——UI-T52：requirements 侧
+    /// RegionPreviewGeometry.gridLines 经世界系变换直投；空＝无格）。
+    std::vector<std::pair<rw::math::Vector3D<double>, rw::math::Vector3D<double>>>
+        gridLines;
 
     bool operator==(const View3DSampleGrid& o) const
     {
-        return samples == o.samples && cellStates == o.cellStates;
+        return samples == o.samples && cellStates == o.cellStates
+            && gridLines == o.gridLines;
     }
     bool operator!=(const View3DSampleGrid& o) const { return !(*this == o); }
 };

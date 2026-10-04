@@ -184,6 +184,7 @@ void RequirementsPluginAssembly::bindRegionPreviewSink(
             view.corners = geo.corners;
             view.refFrame = geo.refFrame;
             view.summaryText = geo.summaryText;
+            view.gridLines = geo.gridLines;  // UI-T52——格线段直投（角序零重排）
             forward(view);
         });
 }

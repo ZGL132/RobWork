@@ -222,6 +222,10 @@ struct RequirementsPluginAssembly {
         std::array<rw::math::Vector3D<double>, 8> corners{};  ///< 盒八角点（m；refFrame 系）
         RequirementReference refFrame;  ///< 参考系原值（World 缺省合法）
         std::string summaryText;        ///< 预览摘要（失败可见面承载——投影方追注）
+        /// 采样格骨架线段（UI-T52——m；refFrame 系；世界系变换归投影方。
+        /// 空＝零样本区域仅轮廓〔V-02 口径〕）。
+        std::vector<std::pair<rw::math::Vector3D<double>, rw::math::Vector3D<double>>>
+            gridLines;
     };
 
     /**
