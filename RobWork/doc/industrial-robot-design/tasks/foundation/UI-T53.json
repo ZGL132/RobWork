@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T53",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "关节详细编辑页批次——XYZ/RPY 数值编辑回归（F-497 关节侧兑现①）：JointEditField::Origin 域原语表尾追加＋建模面板\"编辑\"页签（ParamTablePanel 承载 12 行数值表）＋属性区复合行拒绝指引分流",
+  "status": "ready",
+  "dependsOn": ["UI-T50"],
+  "requirements": [
+    "MDL-07（关节树/参数表/三维联动；选中只显示相关属性——表单最小版划界的增量修订：属性行保持最小版，详细编辑收口\"编辑\"页）",
+    "MDL-09（显式权威一等字段——轴/原点编辑；StandardDH 派生只读守卫 C-1）",
+    "UX-05（参数表批量粘贴/筛选/单位显示/错误定位——FormEditCommon 公共件消费）",
+    "UX-07（表单级确认应用——非模态确认区；断言与放行归 project）",
+    "ERR-01（诚实呈现——空态不伪造页/拒绝原因就地呈现/未提供字段占位不伪造 0）"
+  ],
+  "designRefs": [
+    "units/modeling.md#5.2",
+    "units/modeling.md#7.2",
+    "units/modeling.md#9.7",
+    "units/ui.md#4.2",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-497"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t53/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1——编辑轨不触 project 写路径）"
+  ],
+  "outputs": [
+    "modeling/include/sdurws/ird/modeling/Template.hpp：JointEditField::Origin 表尾追加＋JointOriginEditValue 编辑载荷（六标量——旋转组合归域内核）＋JointEditValue 变体扩备择＋applyJointFieldEdit 头注规则⑦",
+    "modeling/src/Template.cpp：Origin 分支（authorityEditGuard C-1 守卫→六分量有限性→ZYX 正解提交 UserProvided）＋jointEditFieldToken \"origin\"＋变更记录＋单条/批量备择匹配扩列",
+    "modeling/src/RpyMath.hpp：RPY 正解唯一实现（UI-T53 从 Import.cpp 私有副本提升共享——NFR-MNT-04；Import.cpp/Template.cpp 同轨消费）",
+    "modeling/plugin/ModelingPanelWidget.hpp/.cpp：\"编辑\"页签（buildJointEditPane/refreshJointEditPane/rebuildJointEditModel/pushJointEditBaselines/applyJointDetailEdits＋JointDetailEditOutlet 移交壳）＋refreshPropertiesFromLastWorkingSet 统一刷新入口抽取＋setWritable 编辑页 L-7 半区＋复合行拒绝指引/悬停提示分流（关节行→\"编辑\"页）",
+    "modeling/plugin/RpyPresentation.hpp：RPY 反解唯一实现（HostMigrationProviders.cpp 私有副本提升共享）",
+    "modeling/test/TemplateTest.cpp：CreateEditChain_OriginEditField_UI_T53（接受/DH 拒/非有限/fail-fast/批量五面）",
+    "modeling/gui_test/ModelingPanelGuiTest.cpp：夹具对账排除编辑页子树＋四用例（空态建页链/原点编辑全链/DH 守卫拒绝/L-7 整体禁用）",
+    "requirements/plugin/RequirementsCommandFlows.cpp：附带修复（F-480 同族——UI-T33 引入的 rw::math::RPY 外联符号使 requirements_test/gui_test 独立冒烟链接失败〔LNK2019〕，本任务门禁发现；换 rotationToRpyPresentation 逐元素反解并删除 RPY.hpp include）——非建模域文件，改动仅此一处呈现辅助，语义零变化；findings 正式登记随合并序由治理侧协调 ID（本分支 findings 词表止于 F-493，F-497 审核登记在待合入栈上）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟——vcpkg toolchain＋Qt 前缀）",
+    "modeling_test 322/322（新增 1：CreateEditChain_OriginEditField_UI_T53）",
+    "modeling_gui_test 21/21（新增 4——夹具对账范围调整：编辑页子树不入属性区/命令目录对账，P0-3 契约面不变）",
+    "modeling_contract_test 17/17＋ui_test 246/246＋ui_contract_test 32/32",
+    "ird_gates 全绿（gate-all.ps1——含冒烟树配置）",
+    "留痕 traceability/builds/ui-t53/"
+  ],
+  "acceptance": [
+    "域原语面：JointEditField::Origin 表尾追加＋JointOriginEditValue 六标量载荷＋applyJointFieldEdit Origin 分支（C-1 权威守卫→六分量有限性→ZYX 正解 UserProvided 提交＋恰一条变更记录）——具名用例 CreateEditChain_OriginEditField_UI_T53 五面（Explicit 接受＋独立反解互证／StandardDH 拒／非有限拒／备择不匹配 fail-fast／批量同键＋摘要 subject）",
+    "共享头收敛：src/RpyMath.hpp（RPY 正解——Import.cpp 私有副本提升共享）＋plugin/RpyPresentation.hpp（RPY 反解——HostMigrationProviders.cpp 私有副本提升共享）——两调用面零变化（Import.cpp 三处调用点／检查器位姿六值行原样通过）",
+    "面板编辑页面：建模面板\"编辑\"页签＝ParamTablePanel 12 行数值表（轴向 3＋原点 XYZ/RPY 6＋零位偏置 1＋限位 2）——空态诚实提示（非关节选中不建页）、选中关节建页、切连杆收起——gui 具名用例 JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53",
+    "编辑全链：origin-x 值列编辑→应用→确认区→域接受（工作集 origin 平移分量更新＋UserProvided 来源＋恰一条变更记录）——gui 具名用例 JointDetailEditPane_OriginEditApplyChain_UI_T53",
+    "守卫呈现：StandardDH 态轴向编辑走完整确认链被域拒绝——状态行 authority-locked 就地呈现＋工作集字节不变——gui 具名用例 JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T53",
+    "L-7 门控：只读会话编辑页 ParamTablePanel 整体禁用；属性行 P0-3\"恰一可编辑\"契约面不变（夹具对账排除编辑页子树）——gui 具名用例 JointDetailEditPane_ReadOnlySessionDisablesPanel_UI_T53＋OnlyZeroOffsetEditable 原样通过",
+    "回归门槛：受影响目标零错误构建（集成＋独立冒烟）＋modeling_test 322/modeling_gui 21/modeling_contract 17/ui_test 246/ui_contract 32 全绿＋ird_gates base..branch 零新增（基线 worktree 同引擎比对——75 条存量集语义全等）＋validate-docs/validate-task PASS——留痕 traceability/builds/ui-t53/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "F-480 同族：RPY 正解/反解均逐元素展开，禁调 rw::math::RPY 构造（冒烟 header-only 纪律）——正解归域内核 src/RpyMath.hpp，反解归插件 RpyPresentation.hpp，互为正逆由测试钉住",
+    "ParamEditModel 字段集构造后不可变——换选中目标必须重建模型（量纲随关节类型 rad/m），同目标只推基线（暂存编辑不因刷新丢失——UI-T41 B3 同源纪律）",
+    "ParamEditModel.confirmApply 移交时乐观推进基线——域拒绝组的真实权威经 applyJointDetailEdits 尾部统一刷新回退（applyReadOnlyGate→refreshPropertiesFromLastWorkingSet）",
+    "编辑页分组编辑不入 L-4 重演队列（PendingEdit 为单字段轨）——诚实缺席登记，分组重演语义归后续批次",
+    "gui 夹具对账范围：编辑页子树（ird_modeling_edit_host/ird_param_table_panel）不入属性行与命令目录对账——P0-3\"恰一可编辑\"契约面仍指属性行（MDL-07 表单最小版不变）"
+  ],
+  "branch": "ui-t53",
+  "note": "分支基点＝redesign-main@fef002f9。F-497（建模复杂对象只读事实页——宿主审核 20261004 P1）关节侧兑现①；工具/场景/位姿集/传动/基座安装编辑页（B.1 模式扩展面）与基座安装姿态接线（applyBasePlacementEdit 已在域、无 UI 暴露）归后续批次。审核裁决依据：traceability/reviews/owner-review-20261004-ui-gaps.md 会话审查结论『新架构承载旧插件的数值编辑体验，不恢复 .wc.xml 文件权威模型』。"
+}

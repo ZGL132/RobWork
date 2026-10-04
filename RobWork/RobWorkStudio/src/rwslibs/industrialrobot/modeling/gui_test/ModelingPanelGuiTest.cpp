@@ -31,6 +31,7 @@
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QLineEdit>
+#include <QTableWidget>
 #include <QTreeWidgetItemIterator>
 #include <QPushButton>
 #include <sdurws/ird/modeling/GeometryLinkEdit.hpp>  // attachExternalGeometry/detachGeometry/GeometrySlot（UI-T48 域原语直调）
@@ -64,6 +65,21 @@ ModelingWorkingSet makeSixAxisDraft()
     return outcome.get();  // 成功前置——失败即测试自身装配错误（logic_error）
 }
 
+/// 控件是否位于关节详细编辑页子树（UI-T53——"编辑"页签承载 ParamTablePanel，
+/// 其筛选框/表格/按钮不入属性区与命令目录的对账面——P0-3 门控管辖的是
+/// 属性行，编辑页是 B.1 详细编辑面的独立承载）。
+bool inJointEditPane(const QWidget& panel, const QObject* widget)
+{
+    for (const QObject* p = widget; p != nullptr; p = p->parent()) {
+        if (p == &panel) { return false; }  // 未途经编辑页宿主即达面板根
+        if (p->objectName() == QStringLiteral("ird_modeling_edit_host")
+            || p->objectName() == QStringLiteral("ird_param_table_panel")) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /// 命令按钮全集（构造序＝目录序——Qt 子对象按挂树序枚举；诊断历史折叠
 /// 钮非命令按钮，按 objectName 剔除）。返回序与 modelingDomainCommands()
 /// 一一对应——用例以 size 相等断言作序漂移守卫，错位即测试装配错误。
@@ -76,6 +92,9 @@ QList<QPushButton*> commandButtonsOf(const QWidget& panel)
         }
         if (btn->objectName().startsWith(QStringLiteral("ird_modeling_struct_"))) {
             continue;  // 结构操作钮不入命令对账（UI-T47 呈现件——非命令目录按钮）
+        }
+        if (inJointEditPane(panel, btn)) {
+            continue;  // 编辑页按钮（应用/取消/确认区）不入命令对账（UI-T53 呈现件）
         }
         buttons.push_back(btn);
     }
@@ -102,10 +121,16 @@ protected:
     }
 
     /// 属性区编辑器现取（QLineEdit 全集——面板内属性编辑行是该控件类型
-    /// 的唯一来源；顺序＝表单行序）。
+    /// 的唯一来源；顺序＝表单行序）。UI-T53 起排除编辑页子树（ParamTablePanel
+    /// 筛选框等——P0-3 门控管辖面＝属性行，两对账面分离）。
     QList<QLineEdit*> editors() const
     {
-        return m_panel->findChildren<QLineEdit*>();
+        QList<QLineEdit*> rows;
+        for (QLineEdit* e : m_panel->findChildren<QLineEdit*>()) {
+            if (inJointEditPane(*m_panel, e)) { continue; }
+            rows.push_back(e);
+        }
+        return rows;
     }
 
     /// 定位唯一可编辑编辑器（P0-3 门控——恰一非只读，即 zero-offset 行）。
@@ -214,6 +239,168 @@ TEST_F(ModelingPanelGuiTest, OnlyZeroOffsetEditable_CompositeRowsReadOnly_MDL07_
     }
     EXPECT_EQ(tooltipCount, editors().size() - 1)
         << "只读行未全部携带就地编辑提示";
+}
+
+// =====================================================================
+// UI-T53 关节详细编辑页（B.1 复杂对象编辑模式关节侧——ParamTablePanel 承载）
+// =====================================================================
+
+/// 编辑页 ParamTablePanel 现取（objectName 锚——ird_modeling_edit_host 容器
+/// 内唯一 ird_param_table；未建页（空态）返回 nullptr）。
+QTableWidget* jointEditTable(const ModelingPanelWidget& panel)
+{
+    QWidget* host = panel.findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    return host == nullptr
+               ? nullptr
+               : host->findChild<QTableWidget*>(QStringLiteral("ird_param_table"));
+}
+
+/// 按字段键定位行下标（键挂键列 item 的 Qt::UserRole——ParamTablePanel 装配
+/// 契约；未命中返回负数）。
+int jointEditRowOf(const QTableWidget& table, const char* fieldKey)
+{
+    for (int row = 0; row < table.rowCount(); ++row) {
+        const QTableWidgetItem* keyItem = table.item(row, 0);
+        if (keyItem != nullptr
+            && keyItem->data(Qt::UserRole).toString().toStdString() == fieldKey) {
+            return row;
+        }
+    }
+    return -1;
+}
+
+/**
+ * 编辑页空态→选中建页链（UI-T53——B.1"结构树选择→详细编辑页"主入口）：
+ * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝12 行数值表装配
+ * （轴向 3＋原点 6＋零位 1＋限位 2）；切到连杆＝面板收起回空态（编辑页
+ * 只对关节供给——工具/场景归后续批次）。
+ */
+TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    // 空态（fixture 已 refreshPanel、未选中）：零表格＋提示行在。
+    EXPECT_EQ(jointEditTable(*m_panel), nullptr) << "未选中不应建编辑页";
+    QLabel* hint = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_edit_hint"));
+    ASSERT_NE(hint, nullptr);
+    EXPECT_FALSE(hint->text().isEmpty()) << "空态提示缺失（ERR-01——不伪造页也不留白）";
+
+    // 选中关节→建页：12 行（登记序＝装配序）。
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QTableWidget* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr) << "选中关节后编辑页未装配";
+    EXPECT_EQ(table->rowCount(), 12) << "编辑页字段集非 12 行（轴向 3＋原点 6＋零位 1＋限位 2）";
+    EXPECT_NE(jointEditRowOf(*table, "origin-x"), -1);
+    EXPECT_NE(jointEditRowOf(*table, "origin-yaw"), -1);
+    EXPECT_NE(jointEditRowOf(*table, "bounds-max"), -1);
+
+    // 切到连杆→回空态（非关节目标无数值编辑页——诚实收口；收起打在
+    // ParamTablePanel 根的显式隐藏位上，内层表格只随父链不可见）。
+    m_panel->focusObject(m_ws.design.links[0].objectId);
+    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    ASSERT_NE(host, nullptr);
+    QWidget* tablePanel = host->findChild<QWidget*>(QStringLiteral("ird_param_table_panel"));
+    if (tablePanel != nullptr) {
+        EXPECT_TRUE(tablePanel->isHidden()) << "连杆选中后编辑页未收起";
+    }
+    ASSERT_NE(hint, nullptr);
+    EXPECT_FALSE(hint->isHidden()) << "空态提示未随非关节选中恢复";
+}
+
+/**
+ * 编辑页原点编辑全链（UI-T53 验收主链——"输入 XYZ/RPY→草稿变更→域裁决"）：
+ * 值列就地编辑 origin-x→暂存→"应用…"→确认区呈现→"确认应用"→移交出口→
+ * applyJointFieldEdit(Origin) 接受→工作集平移分量更新＋UserProvided 来源＋
+ * 恰一条变更记录（域内核 ZYX 组合——本用例只钉 UI→域链路，矩阵元素归
+ * TemplateTest）。
+ */
+TEST_F(ModelingPanelGuiTest, JointDetailEditPane_OriginEditApplyChain_UI_T53)
+{
+    IRD_TEST_INFO("MDL-09", {}, std::nullopt);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QTableWidget* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    const int row = jointEditRowOf(*table, "origin-x");
+    ASSERT_GE(row, 0) << "origin-x 行未装配";
+
+    // 值列就地编辑（itemChanged→单发排队的 setEditText——processEvents 冲刷）。
+    table->item(row, 1)->setText(QStringLiteral("0.5"));
+    QApplication::processEvents();
+
+    // 表单级确认应用（UX-07 两步：应用→确认区→确认）。
+    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    QPushButton* applyBtn = host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"));
+    ASSERT_NE(applyBtn, nullptr);
+    applyBtn->click();
+    QPushButton* confirmYes = host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"));
+    ASSERT_NE(confirmYes, nullptr);
+    confirmYes->click();
+
+    // 域面结果：平移 x 更新（m）＋UserProvided＋恰一条变更记录。
+    const auto& origin = m_ws.design.joints[0].origin;
+    ASSERT_EQ(origin.state(), core::FieldState::Provided);
+    EXPECT_EQ(origin.value().d()[0], 0.5);
+    EXPECT_EQ(origin.provenance().kind, core::ProvenanceKind::UserProvided);
+    ASSERT_EQ(m_ws.changes.size(), std::size_t{1});
+    EXPECT_EQ(m_ws.changes[0].subject, "joints[0]");
+    EXPECT_NE(m_ws.changes[0].summary.find("原点"), std::string::npos);
+}
+
+/**
+ * 编辑页 DH 权威守卫面（UI-T53——L-7/域守卫的呈现半区）：StandardDH 态下
+ * 轴向编辑走完整确认链后被域守卫拒绝——状态行如实呈现 authority-locked、
+ * 工作集字节不变（C-1 派生只读的域级单一判定，UI 零旁路）。
+ */
+TEST_F(ModelingPanelGuiTest, JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T53)
+{
+    IRD_TEST_INFO("MDL-09", {}, std::nullopt);
+
+    // 场景装配：模板草稿为 Explicit——置 StandardDH（值面演算，V-14 同款）。
+    m_ws.design.authority = AuthorityMode::StandardDH;
+    const ModelingWorkingSet before = m_ws;
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QTableWidget* table = jointEditTable(*m_panel);
+    ASSERT_NE(table, nullptr);
+    const int row = jointEditRowOf(*table, "axis-z");
+    ASSERT_GE(row, 0);
+
+    table->item(row, 1)->setText(QStringLiteral("0"));
+    QApplication::processEvents();
+    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+
+    // 拒绝面：状态行警示＋工作集不变（域裁决唯一——UI 零旁路）。
+    QLabel* status = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_status_line"));
+    ASSERT_NE(status, nullptr);
+    EXPECT_TRUE(status->text().contains(QStringLiteral("authority-locked")))
+        << "拒绝原因未就地呈现（UX-03——比较型原因）";
+    EXPECT_EQ(m_ws, before) << "拒绝路径工作集字节不变（V-14）";
+}
+
+/**
+ * 编辑页 L-7 门控（UI-T53——只读会话＝ParamTablePanel 整体禁用；域出口侧
+ * applyJointDetailEdits 另有防御面，本用例钉控件半区）。
+ */
+TEST_F(ModelingPanelGuiTest, JointDetailEditPane_ReadOnlySessionDisablesPanel_UI_T53)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    ModelingPanelWidget readonlyPanel(false);
+    readonlyPanel.setEditTargetProvider([this]() { return &m_ws; });
+    ModelReadinessReport emptyReport;
+    readonlyPanel.refreshPanel(m_ws, emptyReport);
+    readonlyPanel.focusObject(m_ws.design.joints[0].objectId);
+
+    QWidget* host = readonlyPanel.findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    ASSERT_NE(host, nullptr);
+    QWidget* tablePanel = host->findChild<QWidget*>(QStringLiteral("ird_param_table_panel"));
+    ASSERT_NE(tablePanel, nullptr);
+    EXPECT_FALSE(tablePanel->isEnabled()) << "只读会话编辑页未整体禁用（L-7 门控失守）";
 }
 
 // =====================================================================

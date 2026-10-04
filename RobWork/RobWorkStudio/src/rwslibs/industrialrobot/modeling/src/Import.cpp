@@ -40,6 +40,7 @@
 #include <sdurws/ird/modeling/DiagCodes.hpp> // MDL-IMPORT-* 码值常量（唯一书写点）
 
 #include "InertiaMath.hpp"  // 单元私有头（R-2）——I-MDL-5 SPD/三角不等式单一实现（§6.3 错误项判定）
+#include "RpyMath.hpp"      // 单元私有头（R-2）——RPY 正解唯一实现（UI-T53 提升共享）
 
 #include <pugixml.hpp>  // O-40：URDF DOM 解析（vcpkg 经典模式 1.16/x64-windows，modeling PRIVATE）。
                         // 有界性由 io BudgetGuard 前置保证：进入本单元的字节已经 io 预算入账
@@ -170,34 +171,9 @@ bool parseVec3Stable(std::string_view text, double* x, double* y, double* z)
 // rpy → 旋转矩阵（URDF 固定轴 roll-pitch-yaw：R = Rz(yaw)·Ry(pitch)·Rx(roll)）
 // =====================================================================
 
-/**
- * @brief URDF <origin rpy="r p y"> 的旋转矩阵（单位 rad；固定轴约定——
- *        绕父系 X/Y/Z 依次旋转，等价 R=Rz·Ry·Rx）。
- *
- * 为什么不用 rw::math::RPY/Rotation3D::identity 等框架构造：SourcedValue
- * 默认构造路径与独立冒烟模式要求"冒烟可达代码零框架外联符号"（T03 落位
- * 纪律——JointPose 同款），逐元素解析式为零依赖且算式确定（同输入位级
- * 同输出）。公式为标准欧拉角展开（与 rw::math::RPY 约定逐元素一致）。
- *
- * 纯函数；线程安全；确定性。
- */
-rw::math::Rotation3D<double> rpyToRotation(double roll, double pitch, double yaw)
-{
-    const double cr = std::cos(roll), sr = std::sin(roll);
-    const double cp = std::cos(pitch), sp = std::sin(pitch);
-    const double cy = std::cos(yaw), sy = std::sin(yaw);
-    // R = Rz(yaw)·Ry(pitch)·Rx(roll) 展开（行主序）
-    return rw::math::Rotation3D<double>(
-        cy * cp,
-        cy * sp * sr - sy * cr,
-        cy * sp * cr + sy * sr,
-        sy * cp,
-        sy * sp * sr + cy * cr,
-        sy * sp * cr - cy * sr,
-        -sp,
-        cp * sr,
-        cp * cr);
-}
+// 正解唯一实现＝src/RpyMath.hpp（UI-T53 提升共享——导入映射与字段编辑
+// 的旋转组合逐字同源，NFR-MNT-04；本 TU 经 using 保持既有调用面零改动）。
+using rpymath::rpyToRotation;
 
 // =====================================================================
 // 惯量张量相似变换（R·I·Rᵀ——inertial origin rpy≠0 时把 URDF 惯量从

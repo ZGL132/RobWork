@@ -71,6 +71,8 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #                        派生字段排除的编码侧声明点）
 #   src/InertiaMath.hpp  单元私有头（R-2：不入 include/——惯量 SPD＋三角
 #                        不等式单一实现，连杆/工具共用）
+#   src/RpyMath.hpp      单元私有头（R-2：不入 include/——RPY 正解唯一
+#                        实现，Import/Template 共用；UI-T53 提升共享）
 # T04 增列（tasks/foundation/WP-13-T04.json，§3.3 表 T04 行）：
 #   src/PropertyEstimation.cpp  物性估算唯一公式表 mdl-property-formula/1
 #                        （段元闭式公式/平行轴合成/输出自检/密度默认表/

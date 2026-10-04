@@ -460,6 +460,11 @@ enum class JointEditField {
     Axis,        ///< 轴线（连杆系下单位向量；Explicit 权威一等字段——MDL-09/C-1）
     ZeroOffset,  ///< 零位偏置（rad/m——两态均权威）
     Bounds,      ///< 限位 {qmin,qmax}（rad/m——Revolute/Prismatic 必填面）
+    /// 关节原点位姿（父连杆系下 x/y/z m＋roll/pitch/yaw rad；Explicit 权威
+    /// 一等字段——MDL-09/C-1）。UI-T53 表尾追加（持久化契约面纪律：只允许
+    /// 表尾追加并走单元卡增量修订——本枚举注同款口径）；RPY 约定＝ZYX
+    /// （R＝Rz(yaw)·Ry(pitch)·Rx(roll)——与面板呈现反解同一约定）。
+    Origin,
 };
 
 /**
@@ -513,13 +518,50 @@ struct JointEditError {
 };
 
 /**
- * @brief 字段编辑的值载荷（与 JointEditField 一一对应的 variant——四可
- *        编辑字段各一备择；备择序＝枚举声明序）。
+ * @brief 关节原点编辑值（UI-T53——Origin 字段的编辑载荷）。
+ *
+ * 为什么不是直接带 JointPose：旋转半区若由调用方组装，RPY→R 的组合数学
+ * 就落在了插件/UI 层（违"插件零计算逻辑"——DTB 禁止项）；本结构只携带
+ * 六个标量，旋转矩阵组合唯一在域内核 rpyToRotation 完成（可单测、可
+ * 复用）。字段语义（MDL-09；§4.3-A JointEntry.origin 同一参考系）：
+ *   - x/y/z：关节系相对父连杆系的原点平移，单位 m；
+ *   - roll/pitch/yaw：关节系相对父连杆系的姿态 RPY 角，单位 rad（不是
+ *     度！），ZYX 约定 R＝Rz(yaw)·Ry(pitch)·Rx(roll)——与 PanelModel
+ *     呈现反解 rotationToRpy 互为正逆（同约定，两实现互为测试对照）。
+ *
+ * 生命周期：纯值类型；作为 JointEditValue 变体的备择承载（表尾追加——
+ * 与 JointEditField::Origin 追加同批登记）。
+ */
+struct JointOriginEditValue {
+    double x = 0.0;      ///< 原点平移 x 分量，单位 m（父连杆系下表示）
+    double y = 0.0;      ///< 原点平移 y 分量，单位 m（父连杆系下表示）
+    double z = 0.0;      ///< 原点平移 z 分量，单位 m（父连杆系下表示）
+    double roll = 0.0;   ///< 姿态 roll 角（绕 X），单位 rad（ZYX 约定）
+    double pitch = 0.0;  ///< 姿态 pitch 角（绕 Y），单位 rad（ZYX 约定）
+    double yaw = 0.0;    ///< 姿态 yaw 角（绕 Z），单位 rad（ZYX 约定）
+
+    bool operator==(const JointOriginEditValue& o) const noexcept
+    {
+        return x == o.x && y == o.y && z == o.z && roll == o.roll
+               && pitch == o.pitch && yaw == o.yaw;
+    }
+    bool operator!=(const JointOriginEditValue& o) const noexcept
+    {
+        return !(*this == o);
+    }
+};
+
+/**
+ * @brief 字段编辑的值载荷（与 JointEditField 一一对应的 variant——可编辑
+ *        字段各一备择；备择序＝枚举声明序）。
  *
  * Axis 备择不预先归一化（不静默改写输入——NFR-COR-03；I-MDL-6 只要求
- * 非零/有限/可归一化，单位向量语义在消费侧解读）。
+ * 非零/有限/可归一化，单位向量语义在消费侧解读）。Origin 备择携带六个
+ * 标量（JointOriginEditValue——旋转矩阵组合归域内核，见其类型注）。
  */
-using JointEditValue = std::variant<JointType, rw::math::Vector3D<double>, double, JointLimits>;
+using JointEditValue =
+    std::variant<JointType, rw::math::Vector3D<double>, double, JointLimits,
+                 JointOriginEditValue>;
 
 /**
  * @brief 应用一次字段级逐轴编辑（§5.2 字段级变体；acceptance 4 编辑链）。
@@ -535,7 +577,12 @@ using JointEditValue = std::variant<JointType, rw::math::Vector3D<double>, doubl
  *     Continuous 时拒绝（TypeBoundsConflict——不静默清除/覆盖 NotApplicable）；
  *   ⑥Type：改为 Continuous 时若既有 bounds 为 Provided 拒绝
  *     （TypeBoundsConflict——同样不静默清除）；其余类型转换接受（转换后
- *     的 bounds 缺失面归就绪校验待确认——导入路径同口径）。
+ *     的 bounds 缺失面归就绪校验待确认——导入路径同口径）；
+ *   ⑦Origin（UI-T53 表尾追加）：先过权威守卫（authorityEditGuard——
+ *     StandardDH 态拒绝，AuthorityLocked——与 Axis 同一 C-1 语义），再查
+ *     六分量有限性（ValueNotFinite），接受时旋转矩阵由域内核按 ZYX 约定
+ *     组合（R＝Rz·Ry·Rx——JointOriginEditValue 类型注；F-480 外联符号
+ *     纪律：不调 rw::math::RPY 构造）。
  *
  * 接受后：design 对应字段更新（axis/bounds 以 UserProvided 来源写入——
  * 用户输入覆盖保留来源标记，§5.3 规则 1 同款语义）＋追加**一条**变更摘要
