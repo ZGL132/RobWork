@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "右 Dock 诊断摘要半区填实（跨域就绪摘要卡 DomainReadinessSummaryCard）＋右栏占位标签退役——外审建议承接（'IRD 属性与诊断'Dock 保留评估的落地改进）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["UI-T42"],
   "requirements": [
     "UX-02（呈现纪律——判定词经 UiText verdict.* 键，键值分离单点词表）",
@@ -61,5 +61,5 @@
     "D3 宿主接线：refreshReadinessSummary（三域 §11.2 readonlyProjections 现取投卡）挂 refreshSharedSurfaces 编排首位（项目打开/关闭/应用/撤销/重做/装配首刷全覆盖）——证据：ui_test/ui_gui_test 全绿（宿主装配路径零回归）",
     "回归门禁：受影响目标零错误构建＋ui 域套件全绿（ui_test 239、ui_gui_test 67+3）＋validate-docs PASS——留痕 traceability/builds/ui-t44/"
   ],
-  "note": "立项来源：外审后用户问询'IRD 属性与诊断 Dock 是否有必要保留'的评估结论落地——保留 Dock（B1-SPEC D5 目标架构面＋已应用对象唯一读面），填实诊断半区（§4.2 右栏行'诊断摘要 UI-T13'的最小兑现）、退役空洞占位。诚实边界：①卡随共享面刷新点重取（项目打开/关闭/应用/撤销/重做/装配首刷）——编辑未应用的中间态不实时投递（域面板就绪条承载实时明细，摘要卡只做跨域总览，卡头语义不冒名实时）；②数据源＝各域 §11.2 readonlyProjections 接口方法（modeling/requirements/kinematics 三模块均已实现）——域装配缺席（§11.3 失败隔离）＝该域零行，卡呈剩余域如实汇总；③O-31 纪律：卡消费面只见行值＋core::EngineeringStatus（表内登记边），零域模块类型依赖——替身测试不引入 project 完整类型。"
+  "note": "【合入登记注（2026-10-04，PIPE §4.7 收尾·补录口径）】acceptedHead 08053bf7 已于 1bf6c462 合入 redesign-main；对抗式验收经补录完成——acc/UI-T44/1@3d425392（verdict=pass，11 项清单全过＋V1/V2 两变异翻红；冻结 SHA 口径 fresh 复现 ui_test 239/ui_gui_test 70 逐数一致），evidence 已按 SHA 先并主线。【F-487 时代限定注（验收建议级随本收尾闭环）】本卡 acceptance 回归数字（ui_test 239、ui_gui_test 67+3）为冻结 SHA 08053bf7 时代口径——补录按该 SHA 复现逐数一致；该点携带 F-472 修复前形态的宿主测试（补录首轮撞上一次偶发，六连跑全绿归因留痕），主线当前态已含 UI-T43 修复。批次特有告诫（registry 外自由承载）：立项来源：外审后用户问询'IRD 属性与诊断 Dock 是否有必要保留'的评估结论落地——保留 Dock（B1-SPEC D5 目标架构面＋已应用对象唯一读面），填实诊断半区（§4.2 右栏行'诊断摘要 UI-T13'的最小兑现）、退役空洞占位。诚实边界：①卡随共享面刷新点重取（项目打开/关闭/应用/撤销/重做/装配首刷）——编辑未应用的中间态不实时投递（域面板就绪条承载实时明细，摘要卡只做跨域总览，卡头语义不冒名实时）；②数据源＝各域 §11.2 readonlyProjections 接口方法（modeling/requirements/kinematics 三模块均已实现）——域装配缺席（§11.3 失败隔离）＝该域零行，卡呈剩余域如实汇总；③O-31 纪律：卡消费面只见行值＋core::EngineeringStatus（表内登记边），零域模块类型依赖——替身测试不引入 project 完整类型。"
 }
