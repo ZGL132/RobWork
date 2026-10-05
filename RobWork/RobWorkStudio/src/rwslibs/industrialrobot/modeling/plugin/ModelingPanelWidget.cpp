@@ -822,9 +822,18 @@ void ModelingPanelWidget::refreshPreview()
     const auto answer = (*m_previewProvider)(kindToken.toStdString());
     if (!answer.has_value()) {
         if (m_previewSourceHeader != nullptr) { m_previewSourceHeader->clear(); }
-        m_preview->setPlainText(
-            QStringLiteral("预览不可用：尚无已应用修订的编译产物——请先经顶栏"
-                           "『应用草稿』提交（DWC XML 另需物性齐备编译）。"));
+        // 缺席文案按 kind 分流（F-521——acc/ui-t61/1 D-1：清单轨是对象级
+        // 闭包清单语义，"编译产物/物性齐备"措辞不适用；XML 轨文案保持）。
+        if (kindToken == QStringLiteral("package-checklist")) {
+            m_preview->setPlainText(
+                QStringLiteral("预览不可用：尚无已应用修订的闭包内容——规范包"
+                               "清单呈现已应用修订的对象级逐项清单（D-MDL-10），"
+                               "请先经顶栏『应用草稿』提交。"));
+        } else {
+            m_preview->setPlainText(
+                QStringLiteral("预览不可用：尚无已应用修订的编译产物——请先经顶栏"
+                               "『应用草稿』提交（DWC XML 另需物性齐备编译）。"));
+        }
         return;
     }
     if (m_previewSourceHeader != nullptr) {

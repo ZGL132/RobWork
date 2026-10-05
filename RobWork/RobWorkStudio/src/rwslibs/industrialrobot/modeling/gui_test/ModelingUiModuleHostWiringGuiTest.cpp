@@ -285,10 +285,13 @@ TEST(ModelingUiModuleHostWiring, PackageChecklistPreviewChain_UI_T61)
         widget->findChild<QPlainTextEdit*>(QStringLiteral("ird_modeling_preview_text"));
     ASSERT_NE(preview, nullptr);
 
-    // 未应用修订：切第六项→诚实缺席（不虚构清单）。
+    // 未应用修订：切第六项→诚实缺席（不虚构清单）。缺席文案按 kind 分流
+    // （F-521——清单轨闭包语义措辞，与 XML 轨"编译产物"措辞区分）。
     combo->setCurrentIndex(5);
     QApplication::processEvents();
     EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("预览不可用")));
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("对象级逐项清单")))
+        << "清单轨缺席文案未按 kind 分流（F-521）";
     EXPECT_FALSE(hostAsked) << "规范包清单不经宿主回调（模块本地应答）";
 
     // 应用定格（noteAppliedRevision＝基线定格＋预览推送→重渲）：清单文本

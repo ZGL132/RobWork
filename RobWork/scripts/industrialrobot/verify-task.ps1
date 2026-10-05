@@ -34,10 +34,33 @@ if ($DryRun) {
   Write-Output "verify-task: DRYRUN PASS $($t.taskId)"
   return
 }
+# 散文条目显式化（F-513②——UI-T62 治理清扫批次）：verify 数组允许散文式
+# 验收条目（非命令文本）。Invoke-Expression 对散文必然报错——此前无
+# catch、非终结错误不打断循环、LASTEXITCODE 沿用上一命令 → 散文条目被
+# 静默"PASS"。本版逐条捕获：机器可执行＝真实执行并核对退出码；执行失败
+# （非命令/术语不识别）＝显式 [manual] 人工核对口径并计数——汇总行分列
+# 两种条目数，"PASS" 仅代表机器可执行部分全部通过（散文部分不产生虚假
+# 通过语义；人工核对结论归验收记录）。
+$manualEntries = 0
+$machineEntries = 0
 foreach ($cmd in @($t.verify)) {
   Write-Output "> $cmd"
   Push-Location $RepoRoot
-  try { Invoke-Expression $cmd; if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "verification failed: $cmd" } }
+  try {
+    Invoke-Expression $cmd -ErrorAction Stop
+    if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "verification failed: $cmd" }
+    $machineEntries++
+  } catch {
+    # 散文条目判定＝Parse/CommandNotFound 类错误（非命令文本必然抛出）；
+    # 其余异常＝真实验证失败，原样重抛（不吞错——验证失败轨保持致命）。
+    if ($_.Exception -is [System.Management.Automation.CommandNotFoundException] -or
+        $_.Exception -is [System.Management.Automation.ParseException]) {
+      Write-Output "[manual] 条目非机器可执行——人工核对口径（结论归验收记录）: $cmd"
+      $manualEntries++
+    } else {
+      throw
+    }
+  }
   finally { Pop-Location }
 }
-Write-Output "verify-task: PASS $($t.taskId)"
+Write-Output ("verify-task: PASS {0}（机器可执行 {1} 条全部通过；散文人工核对 {2} 条）" -f $t.taskId, $machineEntries, $manualEntries)
