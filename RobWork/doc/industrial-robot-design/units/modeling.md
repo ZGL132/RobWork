@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.36（2026-10-05，UI-T58 TCP 显示名文本行编辑批次落位——§4.4 TCP 编辑流第五原语 applyTcpDisplayNameEdit〔键存在 KeyNotFound→displayName 直写＋恰一条变更记录；仅呈现字段 UX-02 无内容校验——空串接受＝呈现回落按键；§4.8 改名语义＝新修订但 Description 不变，编译缓存可复用〕；UI-T57 卡诚实边界顺延项；F-516④ applyTcpRemoveEdit 注释次序随代码修正；前一版 v0.35＝UI-T57 TCP 列表结构化编辑；v0.34＝UI-T56 WC/DWC XML 外供导出命令） |
 | 文档版本 | v0.35（2026-10-05，UI-T57 TCP 列表结构化编辑批次落位——§4.4 TCP 编辑流：TcpEditErrorCode 六值＋四原语〔applyTcpAddEdit/applyTcpRemoveEdit/applyTcpOffsetEdit/applyDefaultTcpSwitchEdit——引用保护先于最后一条保护〕＋tcpKeyIndex 共用查找；UI-T57 兑现④；前一版 v0.34＝UI-T56 WC/DWC XML 外供导出命令；v0.33＝宿主审核 P2 呈现批次①） |
 | 文档版本 | v0.34（2026-10-05，UI-T56 WC/DWC XML 外供导出命令落位——§9.7.3 表尾追加第十一号 modeling.export-workcell-xml〔readOnlyAllowed=true——会话级文件操作零修订，MDL-20 ③命令面〕＋数据源契约登记＝已应用修订的 runtime 编译快照只读视图〔宿主 bindWorkCellExport 注入——快照缺席诚实缺席〕；前一版 v0.33＝宿主审核 P2 呈现批次①；v0.32b＝UI-T53；v0.32＝呈现中文化） |
 | 文档版本 | v0.33（2026-10-04，宿主审核 P2 呈现批次①——F-502：六轴重置确认分段知情文案＋工具区低频命令『更多操作』折叠区〔命令集合/使能逻辑零变化〕＋过期"顶栏"指引修正〔UI-T38 退役后失实〕；gui 18/18 含新增 1 例；前一版 v0.32b＝UI-T53 关节详细编辑页；v0.32＝建模面板呈现中文化与复合值展开） |

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T58",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "TCP 显示名文本行编辑（UI-T57 卡诚实边界顺延项）：applyTcpDisplayNameEdit 第五原语＋工具页 TCP 段显示名行",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T57"
+  ],
+  "requirements": [
+    "MDL-13（工具 TCP 完整——键为 defaultTcp 引用锚，键不存在拒绝）",
+    "UX-02（displayName 仅呈现字段口径——编辑不入编译身份，§4.8 改名语义）",
+    "MDL-07（选中只显示相关属性——显示名基线随选中切换回填）",
+    "ERR-01（诚实拒绝——KeyNotFound 就地呈现，工作集字节不变；PA-2 零差异提交＝零修订）"
+  ],
+  "designRefs": [
+    "units/modeling.md#4.4",
+    "units/modeling.md#4.8",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-516"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T58.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t58/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "modeling/include/sdurws/ird/modeling/Parts.hpp：applyTcpDisplayNameEdit 第五原语声明（复用 TcpEditErrorCode 错误面——仅 KeyNotFound 命中面，零新增枚举值；displayName 仅呈现字段无内容校验的语义注释）；applyTcpRemoveEdit 规则注释次序随代码修正（F-516④——引用保护先于最后一条保护）",
+    "modeling/src/Parts.cpp：applyTcpDisplayNameEdit 实现（越界 fail-fast→键存在 KeyNotFound→displayName 直写＋恰一条变更记录 subject tools[i].tcp(<key>)）；段头注释补 UI-T58",
+    "modeling/plugin/ModelingPanelWidget.hpp/.cpp：工具页 TCP 段显示名行（QLineEdit ird_modeling_tcp_displayname＋应用钮 ird_modeling_tcp_displayname_apply——placeholder 提示空值回落按键呈现）；refreshTcpPane/onTcpComboChanged 基线回填；onTcpDisplayNameApplyClicked（零差异＝零修订零动作；选中键与工作集失配＝零动作）；setWritable L-7 即时同步",
+    "modeling/test/PartsTest.cpp：TcpDisplayNameEdit_PresentationOnlyField_UI_T58（接受直写＋变更记录/空串接受/键不存在拒绝字节不变）；TcpListEdits_AddRemoveOffsetDefault_UI_T57 增补——offset 编辑 ValueNotFinite 直断言（F-516⑦）＋越界面补 applyTcpDisplayNameEdit",
+    "modeling/gui_test/ModelingPanelGuiTest.cpp：TcpDisplayNameEdit_Chain_UI_T58（基线回填→改文本→应用→域接受＋变更记录；选中切换基线随刷；零差异应用零动作）；TcpPane_ReadOnlyDisables_UI_T57 断言面补全（F-516③——default 钮/两 ParamTablePanel/显示名行/应用钮）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟——standalone 配置构建零错误）",
+    "集成模式：modeling_test 329/329（新增 1）＋modeling_gui_test 32/32（新增 1）＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78（原生窗口平台）＋requirements_gui 44/44",
+    "独立冒烟（standalone 构建树实测）：modeling_test 271/271＋modeling_gui_test 30/30（冒烟模式门控差异——集成模式多 58/2 例为 sdurw_kinematics 等框架链接专属用例；gui 冒烟需 QT_QPA_PLATFORM_PLUGIN_PATH——F-007/F-475 族运行时前置）",
+    "ird_gates base..branch 零新增（引擎汇总 101 命中＝基线 101 条存量集口径；命中集零项涉改动文件；归一化多重集比对见验收记录）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t58/"
+  ],
+  "acceptance": [
+    "域原语面：接受直写＋恰一条变更记录（键/offset 字节不变）＋空串接受＋KeyNotFound 拒绝字节不变＋越界 fail-fast——具名用例 TcpDisplayNameEdit_PresentationOnlyField_UI_T58（PartsTest）",
+    "F-516⑦ 闭环：TcpListEdits_AddRemoveOffsetDefault_UI_T57 增 offset 编辑 NaN 直断言（ValueNotFinite＋字节不变）",
+    "面板全链：选中工具→显示名基线回填→改文本→应用→域接受＋变更记录→选中切换基线随刷→零差异应用零动作——TcpDisplayNameEdit_Chain_UI_T58（gui）",
+    "F-516③ 闭环：TcpPane_ReadOnlyDisables_UI_T57 断言面扩至 default 钮/两 ParamTablePanel/显示名行/应用钮",
+    "F-516④ 闭环：Parts.hpp applyTcpRemoveEdit 规则注释次序＝代码执行次序（引用保护先于最后一条保护）",
+    "L-7 门控：setWritable 即时同步＋只读用例断言（见 F-516③ 项）",
+    "回归门槛：受影响目标零错误构建（集成＋独立冒烟 standalone 实测口径见 verify）＋全套件回归＋validate-docs/validate-task PASS；留痕 traceability/builds/ui-t58/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "零差异提交＝零修订（PA-2）：应用钮点击时先与工作集现值比对——无差异不产生变更记录，不做无信息量历史",
+    "QLineEdit setText 不触发 editingFinished——refreshTcpPane/onTcpComboChanged 回填无重入面；未连接 editingFinished（提交唯一入口＝应用钮）",
+    "显示名行编辑不进 ird_param_ 前缀对账排除面（独立 objectName 锚）——gui 对账排除清单无需演化"
+  ],
+  "branch": "ui-t58",
+  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@66117de7。顺延项来源：UI-T57 卡诚实边界（displayName 编辑不在本批）＋UI-T56 卡备案。随批闭环 F-516③④⑦（UI-T57 验收建议合集——③只读断言面/④Parts.hpp 注释次序/⑦ValueNotFinite 直断言；①②已于 UI-T57 合入段治理提交闭环），F-516 状态翻转归合入段治理提交。"
+}
