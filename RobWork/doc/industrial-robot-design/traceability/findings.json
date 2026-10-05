@@ -5025,7 +5025,7 @@
       "registeredAt": "2026-10-04",
       "title": "建模预览页单一、未对齐旧版多类 XML 预览（宿主审核建模 P2）：当前仅已应用修订摘要文本（D-MDL-10 保持），旧版有 SerialDevice/Scene/DWC/CollisionSetup/ProximitySetup 多类预览。建议预览类型下拉（模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML/规范包清单），每类须来源修订号/模型身份/生成时间/来源对象明确、只读、可复制导出、UI 不自行拼 XML（XML 由 runtime 编译产生——既有导出能力为产物源）",
       "owner": "待立项（宿主审核阶段 2/3 交界）",
-      "resolution": "全部兑现闭环（fixedBy=UI-T59，2026-10-05 合入段翻转）：导出半区＝UI-T56（modeling.export-workcell-xml 第十一号命令，已合入 4e7db25a）；预览半区＝UI-T59（exportPreviewXml 四类内存导出＋预览页五类下拉〔模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML——来源修订号/模型身份/生成时间/来源对象经宿主来源头行明确、只读、复制钮可复制导出、XML 类唯一来源＝域导出面零拼装〕，acc/ui-t59/1@e2734d83 全项 pass 合入）。余项注：建议六类中『规范包清单』类型未承接（需已应用修订闭包的 manifest 清单面——待后续批次，不阻塞本条闭环）；『CollisionSetup/ProximitySetup』的碰撞规则面由 Collision XML 参与面＋缺席注记承载（几何挂接前置任务落位后自然充实）。"
+      "resolution": "全部兑现闭环（fixedBy=UI-T59，2026-10-05 合入段翻转）：导出半区＝UI-T56（modeling.export-workcell-xml 第十一号命令，已合入 4e7db25a）；预览半区＝UI-T59（exportPreviewXml 四类内存导出＋预览页五类下拉〔模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML——来源修订号/模型身份/生成时间/来源对象经宿主来源头行明确、只读、复制钮可复制导出、XML 类唯一来源＝域导出面零拼装〕，acc/ui-t59/1@e2734d83 全项 pass 合入）。余项注（2026-10-05 UI-T61 合入段追记）：『规范包清单』类型已兑现＝UI-T61（eea3bae0——packageChecklistText 域渲染面＋预览页第六项＋模块本地应答〔数据源＝会话基线定格内容 D-MDL-10〕，acc/ui-t61/1@d8b1a083 全项 pass 合入；digest 级 manifest 面归 MDL-20 导出命令本体）；『CollisionSetup/ProximitySetup』的碰撞规则面由 Collision XML 参与面＋缺席注记承载（几何挂接前置任务落位后自然充实）。"
     },
     {
       "id": "F-499",
@@ -5176,6 +5176,15 @@
       "registeredAt": "2026-10-05",
       "title": "UI-T60 验收建议合集：①DTB §5.1 新增『验证口径』行与既有『语言/工具链』行熔接在同一物理行（『…为准 ||』连写——插入时换行丢失；内容零丢失、validate-docs 不查表格结构，但 GFM 渲染为畸形行）；②Parts.hpp 新增段注释括号排版瑕疵『（无量纲（ SI 系数 1）』多一空格",
       "owner": "两条均已随 UI-T60 合入段治理提交修正闭环（D-1 行拆分＋D-2 一字修正），fixedBy=UI-T60 合入段（2026-10-05）——本条登记防『表格行熔接』复发（F-514/F-516① 同族：文档行编辑后须分列数/换行复核）"
+    },
+    {
+      "id": "F-521",
+      "source": "acc/ui-t61/1@d8b1a083 验收记录建议级 D-1（UI-T61 独立子会话对抗式验收 2026-10-05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-05",
+      "title": "ModelingPanelWidget refreshPreview 缺席分支文案按 XML 编译产物轨措辞（UI-T59 既有文案，UI-T61 清单轨复用）——规范包清单（对象级清单语义）缺席时呈现『尚无已应用修订的编译产物…（DWC XML 另需物性齐备编译）』语义不精确；行为正确（诚实缺席＋用例通过），建议按 kind 分流缺席文案",
+      "owner": "后续触碰预览页批次顺手修正（行为正确纯文案——不单独出批次）"
     }
   ]
 }
