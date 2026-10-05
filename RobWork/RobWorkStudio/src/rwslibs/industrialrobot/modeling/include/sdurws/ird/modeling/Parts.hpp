@@ -639,10 +639,11 @@ std::optional<TcpEditError> applyTcpAddEdit(ModelingWorkingSet& ws,
 /**
  * @brief 删除一条 TCP 条目（§4.4 tcpList 行——UI-T57）。
  *
- * 规则：①越界 fail-fast；②键须存在（KeyNotFound）；③tcpList 仅剩一条
- * 时拒绝（LastTcpProtected——I-MDL-13 ≥1）；④根 defaultTcp 引用该键时
+ * 规则（次序随代码——F-516④：引用保护先于最后一条保护，指引更明确）：
+ * ①越界 fail-fast；②键须存在（KeyNotFound）；③根 defaultTcp 引用该键时
  * 拒绝（DefaultTcpReferenced——I-MDL-9 引用保护，同 RemoveObjectRefEdit
- * 语义）；⑤提交＋一条变更记录。
+ * 语义）；④tcpList 仅剩一条时拒绝（LastTcpProtected——I-MDL-13 ≥1）；
+ * ⑤提交＋一条变更记录。
  */
 std::optional<TcpEditError> applyTcpRemoveEdit(ModelingWorkingSet& ws,
                                                std::size_t toolIndex,
@@ -672,6 +673,25 @@ std::optional<TcpEditError> applyTcpOffsetEdit(ModelingWorkingSet& ws,
 std::optional<TcpEditError> applyDefaultTcpSwitchEdit(ModelingWorkingSet& ws,
                                                       std::size_t toolIndex,
                                                       const std::string& tcpKey);
+
+/**
+ * @brief 编辑一条 TCP 的显示名（§4.4 tcpList displayName 行——UI-T58；
+ *        UI-T57 卡"诚实边界"的顺延项）。
+ *
+ * 规则：①toolIndex 越界 fail-fast；②键须存在（KeyNotFound——编辑目标
+ * 锚定既有条目，不接受按下标定位）；③displayName 直写＋一条变更记录。
+ *
+ * displayName 是**仅呈现字段**（UX-02 口径——同根对象 displayName；
+ * §4.8：displayName 改名产生新修订但 Description 不变，编译缓存可复用），
+ * 故本原语不做内容校验：空串接受（呈现侧回落按 TCP 键呈现）、无长度/
+ * 字符集约束——MDL-13 不变量只约束键与列表长度，不约束呈现名。
+ *
+ * @throws std::invalid_argument 越界下标（调用方契约违约）
+ */
+std::optional<TcpEditError> applyTcpDisplayNameEdit(ModelingWorkingSet& ws,
+                                                    std::size_t toolIndex,
+                                                    const std::string& tcpKey,
+                                                    const std::string& displayName);
 
 }  // namespace sdurws::ird::modeling
 

@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <QMessageBox>                            // 六轴重置确认对话（UI-T47——有损操作知情面）
 #include <QLabel>
+#include <QLineEdit>                              // TCP 显示名行编辑（UI-T58）
 #include <QScrollBar>
 #include <QStackedWidget>
 #include <QTabWidget>
@@ -910,6 +911,10 @@ void ModelingPanelWidget::setWritable(bool writable)
         m_tcpDefaultBtn->setEnabled(m_writable);
     }
     if (m_tcpOffsetPanel != nullptr) { m_tcpOffsetPanel->setEnabled(m_writable); }
+    // L-7 显示名行半区（UI-T58）：行编辑与应用钮即时同步（刷新入口按
+    // writable 复合判定，此处不等待下次选中事件）。
+    if (m_tcpDisplayNameEdit != nullptr) { m_tcpDisplayNameEdit->setEnabled(m_writable); }
+    if (m_tcpDisplayNameApplyBtn != nullptr) { m_tcpDisplayNameApplyBtn->setEnabled(m_writable); }
     // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
     // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
     // 残留可用呈现，与需求域"切换后必须同步刷新全部状态承载面"的整改口径
@@ -1924,7 +1929,8 @@ void ModelingPanelWidget::applyScenePoseEdits(const ui::ParamEditSet& editSet)
 
 // =====================================================================
 // TCP 列表编辑段（UI-T57——F-497 兑现④；MDL-13 不变量流；域原语
-// applyTcpAddEdit/applyTcpRemoveEdit/applyTcpOffsetEdit/applyDefaultTcpSwitchEdit）
+// applyTcpAddEdit/applyTcpRemoveEdit/applyTcpOffsetEdit/applyDefaultTcpSwitchEdit；
+// UI-T58 增显示名行编辑——applyTcpDisplayNameEdit）
 // =====================================================================
 
 void ModelingPanelWidget::buildTcpPane()
@@ -1961,6 +1967,26 @@ void ModelingPanelWidget::buildTcpPane()
     row->addWidget(m_tcpDefaultBtn);
     lay->addLayout(row);
 
+    // 显示名行（UI-T58——TCP displayName 文本行编辑，UI-T57 卡"诚实边界"
+    // 的顺延项）：仅呈现字段（UX-02 口径），不进 Description 编译身份；
+    // 空值经 placeholder 提示"按 TCP 键呈现"回落（域对空串接受——MDL-13
+    // 不变量只约束键与列表长度，不约束呈现名）。
+    auto* nameRow = new QHBoxLayout();
+    auto* nameLabel = new QLabel(QStringLiteral("显示名"), m_toolArea);
+    nameRow->addWidget(nameLabel);
+    m_tcpDisplayNameEdit = new QLineEdit(m_toolArea);
+    m_tcpDisplayNameEdit->setObjectName(QStringLiteral("ird_modeling_tcp_displayname"));
+    m_tcpDisplayNameEdit->setPlaceholderText(QStringLiteral("留空＝按 TCP 键呈现"));
+    m_tcpDisplayNameEdit->setToolTip(QStringLiteral(
+        "当前选中 TCP 的显示名（仅呈现，不入编译身份）——修改后用右侧按钮应用"));
+    nameRow->addWidget(m_tcpDisplayNameEdit, 1);
+    m_tcpDisplayNameApplyBtn = new QPushButton(QStringLiteral("应用显示名"), m_toolArea);
+    m_tcpDisplayNameApplyBtn->setObjectName(QStringLiteral("ird_modeling_tcp_displayname_apply"));
+    m_tcpDisplayNameApplyBtn->setToolTip(QStringLiteral(
+        "把文本提交为当前选中 TCP 的显示名（与现值相同＝零修订零动作）"));
+    nameRow->addWidget(m_tcpDisplayNameApplyBtn);
+    lay->addLayout(nameRow);
+
     // TCP offset 编辑模型/面板（字段集常量——构造期一次建成，选中切换仅
     // 推基线；与工具/场景页同款不重建纪律）。
     const core::UnitToken m = core::UnitToken::find("m").value();
@@ -1986,6 +2012,8 @@ void ModelingPanelWidget::buildTcpPane()
             &ModelingPanelWidget::onTcpRemoveClicked);
     connect(m_tcpDefaultBtn, &QPushButton::clicked, this,
             &ModelingPanelWidget::onTcpDefaultClicked);
+    connect(m_tcpDisplayNameApplyBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onTcpDisplayNameApplyClicked);
 }
 
 void ModelingPanelWidget::refreshTcpPane()
@@ -2006,6 +2034,9 @@ void ModelingPanelWidget::refreshTcpPane()
         }
         m_tcpSelectedKey.clear();
         if (m_tcpOffsetPanel != nullptr) { m_tcpOffsetPanel->setEnabled(false); }
+        // 显示名行同步禁用（L-7 无目标分支——UI-T58）。
+        if (m_tcpDisplayNameEdit != nullptr) { m_tcpDisplayNameEdit->setEnabled(false); }
+        if (m_tcpDisplayNameApplyBtn != nullptr) { m_tcpDisplayNameApplyBtn->setEnabled(false); }
         return;
     }
     const auto& tool = ws->toolObjects[*m_toolEditTarget];
@@ -2027,11 +2058,20 @@ void ModelingPanelWidget::refreshTcpPane()
     m_tcpRemoveBtn->setEnabled(m_writable && !m_tcpSelectedKey.isEmpty());
     m_tcpDefaultBtn->setEnabled(m_writable && !m_tcpSelectedKey.isEmpty());
     if (m_tcpOffsetPanel != nullptr) { m_tcpOffsetPanel->setEnabled(m_writable); }
+    if (m_tcpDisplayNameEdit != nullptr) { m_tcpDisplayNameEdit->setEnabled(m_writable); }
+    if (m_tcpDisplayNameApplyBtn != nullptr) {
+        m_tcpDisplayNameApplyBtn->setEnabled(m_writable && !m_tcpSelectedKey.isEmpty());
+    }
 
     // offset 基线回填（选中 TCP——offset 恒有值；RPY 反解呈现）。
     const int sel = m_tcpCombo->currentIndex();
     if (sel < 0) { return; }
     const auto& entry = tool.tcpList[static_cast<std::size_t>(sel)];
+    // 显示名基线回填（UI-T58——选中条目 displayName 原样呈现；空值经
+    // placeholder 提示回落。setText 不触发 editingFinished，无重入面）。
+    if (m_tcpDisplayNameEdit != nullptr) {
+        m_tcpDisplayNameEdit->setText(QString::fromStdString(entry.displayName));
+    }
     const auto rpy = rpyview::rotationToRpy(entry.offset.R());
     m_tcpOffsetModel->setBaseline(kTcpOffsetXKey, entry.offset.P()[0]);
     m_tcpOffsetModel->setBaseline(kTcpOffsetYKey, entry.offset.P()[1]);
@@ -2054,6 +2094,10 @@ void ModelingPanelWidget::onTcpComboChanged(int index)
     m_tcpSelectedKey = m_tcpCombo->currentText();
     const auto& entry =
         ws->toolObjects[*m_toolEditTarget].tcpList[static_cast<std::size_t>(index)];
+    // 显示名基线随选中切换回填（UI-T58——与 offset 基线同源同刻）。
+    if (m_tcpDisplayNameEdit != nullptr) {
+        m_tcpDisplayNameEdit->setText(QString::fromStdString(entry.displayName));
+    }
     const auto rpy = rpyview::rotationToRpy(entry.offset.R());
     m_tcpOffsetModel->setBaseline(kTcpOffsetXKey, entry.offset.P()[0]);
     m_tcpOffsetModel->setBaseline(kTcpOffsetYKey, entry.offset.P()[1]);
@@ -2120,6 +2164,35 @@ void ModelingPanelWidget::onTcpDefaultClicked()
         *ws, *m_toolEditTarget, m_tcpSelectedKey.toStdString());
     if (!err.has_value()) {
         onEditApplied("design.defaultTcp");
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(tcpEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::onTcpDisplayNameApplyClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_toolEditTarget.has_value() || !m_writable
+        || m_tcpSelectedKey.isEmpty() || m_tcpDisplayNameEdit == nullptr) { return; }
+    const std::string key = m_tcpSelectedKey.toStdString();
+    const std::string displayName = m_tcpDisplayNameEdit->text().toStdString();
+    // 零差异＝零修订（PA-2 修订只增不改——与现值相同的提交不产生无信息
+    // 量历史；ParamTablePanel"未脏不提交"同款诚实语义）。选中键与工作集
+    // 失配（刷新滞后窗口）＝零动作，不伪造提交面。
+    const auto& tcpList = ws->toolObjects[*m_toolEditTarget].tcpList;
+    const auto it = std::find_if(tcpList.begin(), tcpList.end(),
+                                 [&key](const TcpEntry& e) { return e.key == key; });
+    if (it == tcpList.end() || it->displayName == displayName) { return; }
+
+    const std::optional<TcpEditError> err = applyTcpDisplayNameEdit(
+        *ws, *m_toolEditTarget, key, displayName);
+    if (!err.has_value()) {
+        onEditApplied("tools[" + std::to_string(*m_toolEditTarget) + "].tcp(" + key + ")");
         refreshPropertiesFromLastWorkingSet();
         return;
     }

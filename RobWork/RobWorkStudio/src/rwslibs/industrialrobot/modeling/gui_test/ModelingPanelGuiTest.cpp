@@ -1197,7 +1197,8 @@ TEST_F(ModelingPanelGuiTest, PoseEditPanes_ReadOnlyDisables_UI_T55)
 }
 
 // =====================================================================
-// UI-T57 TCP 列表结构化编辑（MDL-13 不变量流——工具页 TCP 段）
+// UI-T57 TCP 列表结构化编辑（MDL-13 不变量流——工具页 TCP 段）；
+// UI-T58 增显示名行编辑链（displayName 仅呈现字段）
 // =====================================================================
 
 /// 工具页 TCP 段现取辅助（combo——容器 objectName 锚）。
@@ -1319,6 +1320,8 @@ TEST_F(ModelingPanelGuiTest, TcpListEdit_RemoveGuards_UI_T57)
 /**
  * TCP 段 L-7 门控（UI-T57）：只读会话＝增删/默认钮与 offset 面板整体
  * 禁用（域出口 writable 防御面另在）。
+ * F-516③ 断言面补全（UI-T58 随批）：default 钮与 offset 面板此前仅经
+ * 探针实证未入断言；显示名行（UI-T58）一并纳入。
  */
 TEST_F(ModelingPanelGuiTest, TcpPane_ReadOnlyDisables_UI_T57)
 {
@@ -1344,4 +1347,80 @@ TEST_F(ModelingPanelGuiTest, TcpPane_ReadOnlyDisables_UI_T57)
     QPushButton* removeBtn = readonlyPanel.findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_remove"));
     ASSERT_NE(removeBtn, nullptr);
     EXPECT_FALSE(removeBtn->isEnabled()) << "只读会话删除 TCP 钮未禁用";
+    // ---- F-516③ 断言面补全（UI-T58 随批）----
+    QPushButton* defBtn = readonlyPanel.findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_default"));
+    ASSERT_NE(defBtn, nullptr);
+    EXPECT_FALSE(defBtn->isEnabled()) << "只读会话设默认钮未禁用";
+    // 工具页两个 ParamTablePanel（安装接口＋TCP offset）——只读会话全部
+    // 禁用。范围＝工具页容器（基座/场景页在构造期同样预建面板，但从未被
+    // 选中故不走 L-7 降级路径——其门控归各自刷新入口，不在本用例断言面）。
+    QWidget* toolArea = readonlyPanel.findChild<QWidget*>(QStringLiteral("ird_modeling_tool_area"));
+    ASSERT_NE(toolArea, nullptr);
+    const QList<QWidget*> paramPanels =
+        toolArea->findChildren<QWidget*>(QStringLiteral("ird_param_table_panel"));
+    ASSERT_GE(paramPanels.size(), 2) << "工具页应含安装接口与 TCP offset 两面板";
+    for (QWidget* panel : paramPanels) {
+        EXPECT_FALSE(panel->isEnabled()) << "只读会话 ParamTablePanel 未禁用";
+    }
+    QLineEdit* nameEdit = readonlyPanel.findChild<QLineEdit*>(QStringLiteral("ird_modeling_tcp_displayname"));
+    ASSERT_NE(nameEdit, nullptr);
+    EXPECT_FALSE(nameEdit->isEnabled()) << "只读会话显示名行编辑未禁用";
+    QPushButton* nameApply = readonlyPanel.findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_displayname_apply"));
+    ASSERT_NE(nameApply, nullptr);
+    EXPECT_FALSE(nameApply->isEnabled()) << "只读会话显示名应用钮未禁用";
+}
+
+/**
+ * TCP 显示名编辑全链（UI-T58——UI-T57 卡"诚实边界"顺延项；§4.4 tcpList
+ * displayName 行）：选中工具→行编辑回填基线→改文本→应用→
+ * applyTcpDisplayNameEdit 接受＝displayName 更新＋变更记录；选中切换基线
+ * 随刷；未变更应用＝零修订零动作（PA-2——无信息量历史不产生）。
+ */
+TEST_F(ModelingPanelGuiTest, TcpDisplayNameEdit_Chain_UI_T58)
+{
+    IRD_TEST_INFO("MDL-13", {}, std::nullopt);
+
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = guiMakeOid(711);
+    TcpEntry tcp0;
+    tcp0.key = "tcp-1";
+    tcp0.displayName = "TCP tcp-1";
+    TcpEntry tcp1;
+    tcp1.key = "tcp-2";  // displayName 留空——空值回落呈现面
+    tool.tcpList.push_back(tcp0);
+    tool.tcpList.push_back(tcp1);
+    m_ws.toolObjects.push_back(tool);
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+
+    enterToolMode(*m_panel, m_ws.toolObjects[0].objectId);
+    QLineEdit* nameEdit =
+        m_panel->findChild<QLineEdit*>(QStringLiteral("ird_modeling_tcp_displayname"));
+    ASSERT_NE(nameEdit, nullptr) << "显示名行编辑未构建（UI-T58 承载缺失）";
+    EXPECT_EQ(nameEdit->text(), QStringLiteral("TCP tcp-1")) << "选中 TCP 显示名基线回填";
+
+    // 改文本→应用→域接受（displayName 直写＋一条变更记录）。
+    nameEdit->setText(QStringLiteral("法兰中心"));
+    QApplication::processEvents();
+    QPushButton* applyBtn = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_tcp_displayname_apply"));
+    ASSERT_NE(applyBtn, nullptr);
+    applyBtn->click();
+    EXPECT_EQ(m_ws.toolObjects[0].tcpList[0].displayName, "法兰中心");
+    EXPECT_FALSE(m_ws.changes.empty()) << "接受路径应产生变更记录";
+
+    // 选中切换→基线随刷：tcp-2 displayName 为空＝回填空文本（placeholder
+    // 提示"按 TCP 键呈现"）。
+    QComboBox* combo = tcpComboOf(*m_panel);
+    ASSERT_NE(combo, nullptr);
+    combo->setCurrentIndex(1);
+    QApplication::processEvents();
+    EXPECT_EQ(nameEdit->text(), QString()) << "空 displayName 回填空文本";
+
+    // 未变更应用＝零动作（空名对空名——不产生新变更记录；PA-2）。
+    const std::size_t changesBefore = m_ws.changes.size();
+    applyBtn->click();
+    EXPECT_EQ(m_ws.changes.size(), changesBefore) << "零差异提交不产生变更记录";
+    EXPECT_TRUE(m_ws.toolObjects[0].tcpList[1].displayName.empty());
 }

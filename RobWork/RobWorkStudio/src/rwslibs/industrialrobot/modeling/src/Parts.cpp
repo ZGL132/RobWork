@@ -358,7 +358,8 @@ std::optional<PartPoseEditError> applyScenePoseEdit(ModelingWorkingSet& ws,
 }
 
 // =====================================================================
-// TCP 列表结构化编辑流（UI-T57——F-497 兑现④；MDL-13 不变量流）
+// TCP 列表结构化编辑流（UI-T57——F-497 兑现④；MDL-13 不变量流；UI-T58
+// 增第五原语 applyTcpDisplayNameEdit——displayName 仅呈现字段编辑）
 // =====================================================================
 
 std::string_view tcpEditErrorCodeToken(TcpEditErrorCode code) noexcept
@@ -545,6 +546,37 @@ std::optional<TcpEditError> applyDefaultTcpSwitchEdit(ModelingWorkingSet& ws,
     ModelingChangeRecord record;
     record.subject = "design.defaultTcp";
     record.summary = "切换默认 TCP（键 " + tcpKey + "）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::optional<TcpEditError> applyTcpDisplayNameEdit(ModelingWorkingSet& ws,
+                                                    std::size_t toolIndex,
+                                                    const std::string& tcpKey,
+                                                    const std::string& displayName)
+{
+    // ① 越界 fail-fast。
+    if (toolIndex >= ws.toolObjects.size()) {
+        throw std::invalid_argument(
+            "modeling/parts/tcp-displayname-edit-index: 工具下标越界: tools["
+            + std::to_string(toolIndex) + "]");
+    }
+    auto& tool = ws.toolObjects[toolIndex];
+    const std::string subject = "tools[" + std::to_string(toolIndex) + "].tcp(" + tcpKey + ")";
+    // ② 键须存在（编辑目标锚定既有条目——键是 defaultTcp 引用锚，
+    // I-MDL-13；不存在即引用锚失配，拒绝而非静默丢弃）。
+    const auto idx = tcpKeyIndex(tool, tcpKey);
+    if (!idx.has_value()) {
+        return TcpEditError{TcpEditErrorCode::KeyNotFound,
+                            subject + "：TCP 键不存在"};
+    }
+    // ③ 提交：displayName 直写（仅呈现字段——UX-02 口径；空串接受＝
+    // 呈现侧回落按 TCP 键呈现。§4.8：displayName 改名产生新修订但
+    // Description 不变——编译缓存可复用，不触发运动学失效）。
+    tool.tcpList[*idx].displayName = displayName;
+    ModelingChangeRecord record;
+    record.subject = subject;
+    record.summary = "修改 TCP 显示名（键 " + tcpKey + "——仅呈现，不入编译身份）";
     ws.changes.push_back(std::move(record));
     return std::nullopt;
 }

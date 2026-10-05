@@ -512,6 +512,17 @@ TEST(MdlParts, TcpListEdits_AddRemoveOffsetDefault_UI_T57)
     ASSERT_TRUE(notFound.has_value());
     EXPECT_EQ(notFound->code, TcpEditErrorCode::KeyNotFound);
 
+    // ---- offset 编辑 ValueNotFinite 直断言（F-516⑦——此前该拒绝路径仅
+    // 经新增混入非有限 offset 间接覆盖；此处 NaN 分量直接命中 I-MDL-3）----
+    const ModelingWorkingSet beforeNonFinite = ws;
+    const auto nonFinite = applyTcpOffsetEdit(
+        ws, 0, "tcp-1",
+        PartPoseEditValue{0.0, 0.0, std::numeric_limits<double>::quiet_NaN(),
+                          0.0, 0.0, 0.0});
+    ASSERT_TRUE(nonFinite.has_value());
+    EXPECT_EQ(nonFinite->code, TcpEditErrorCode::ValueNotFinite);
+    EXPECT_EQ(ws, beforeNonFinite) << "非有限拒绝：工作集字节不变";
+
     // ---- 越界 fail-fast（调用方契约违约）----
     EXPECT_THROW(applyTcpAddEdit(ws, 9, "x", "x", PartPoseEditValue{}),
                  std::invalid_argument);
@@ -520,8 +531,51 @@ TEST(MdlParts, TcpListEdits_AddRemoveOffsetDefault_UI_T57)
                  std::invalid_argument);
     EXPECT_THROW(applyDefaultTcpSwitchEdit(ws, 9, "tcp-1"),
                  std::invalid_argument);
+    EXPECT_THROW(applyTcpDisplayNameEdit(ws, 9, "tcp-1", "x"),
+                 std::invalid_argument);
 
     // ---- token（词表对账）----
     EXPECT_EQ(tcpEditErrorCodeToken(TcpEditErrorCode::LastTcpProtected),
               "last-tcp-protected");
+}
+
+/**
+ * TCP 显示名编辑（UI-T58——UI-T57 卡"诚实边界"顺延项；§4.4 tcpList
+ * displayName 行）：接受路径直写＋恰一条变更记录（键与 offset 字节不变）；
+ * 空串接受（仅呈现字段——MDL-13 不变量只约束键与列表长度）；键不存在
+ * 拒绝字节不变；越界 fail-fast（越界断言并入上方 UI_T57 用例尾段）。
+ */
+TEST(MdlParts, TcpDisplayNameEdit_PresentationOnlyField_UI_T58)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-13"}, std::vector<std::string>{"UX-02"});
+
+    ModelingWorkingSet ws;
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = makeOid(711);
+    TcpEntry tcp0;
+    tcp0.key = "tcp-1";
+    tcp0.displayName = "TCP tcp-1";
+    tool.tcpList.push_back(tcp0);
+    ws.toolObjects.push_back(tool);
+
+    // ---- 接受路径：displayName 直写＋一条变更记录；键（引用锚）不动 ----
+    const auto edit = applyTcpDisplayNameEdit(ws, 0, "tcp-1", "法兰中心");
+    EXPECT_FALSE(edit.has_value()) << "合法显示名编辑应接受";
+    EXPECT_EQ(ws.toolObjects[0].tcpList[0].displayName, "法兰中心");
+    EXPECT_EQ(ws.toolObjects[0].tcpList[0].key, "tcp-1");
+    ASSERT_EQ(ws.changes.size(), std::size_t{1});
+    EXPECT_NE(ws.changes[0].summary.find("tcp-1"), std::string::npos);
+    EXPECT_NE(ws.changes[0].summary.find("仅呈现"), std::string::npos);
+
+    // ---- 空串接受：仅呈现字段无内容约束（呈现侧回落按 TCP 键呈现）----
+    EXPECT_FALSE(applyTcpDisplayNameEdit(ws, 0, "tcp-1", "").has_value());
+    EXPECT_EQ(ws.toolObjects[0].tcpList[0].displayName, "");
+
+    // ---- 键不存在拒绝：工作集字节不变 ----
+    const ModelingWorkingSet before = ws;
+    const auto notFound = applyTcpDisplayNameEdit(ws, 0, "nope", "x");
+    ASSERT_TRUE(notFound.has_value());
+    EXPECT_EQ(notFound->code, TcpEditErrorCode::KeyNotFound);
+    EXPECT_EQ(ws, before) << "拒绝路径工作集字节不变";
 }

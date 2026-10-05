@@ -279,6 +279,7 @@ private:
     void onTcpRemoveClicked();                    ///< 删除选中（域守卫拒绝就地呈现）
     void onTcpDefaultClicked();                   ///< 选中 TCP 设为默认
     void onTcpComboChanged(int index);            ///< 选中切换→offset 基线回填
+    void onTcpDisplayNameApplyClicked();          ///< 显示名行编辑提交（UI-T58）
     void applyTcpOffsetEdits(const ui::ParamEditSet& editSet);  ///< 出口移交
     /// 位姿类编辑页通用构建（说明行＋ParamTablePanel——工具/场景页同构
     /// 复用；模型/面板经引用回填成员，堆栈页由调用方 addWidget 定序）。
@@ -373,6 +374,10 @@ private:
     QPushButton* m_tcpDefaultBtn = nullptr;       ///< 选中 TCP 设为默认
     QWidget* m_tcpOffsetPanel = nullptr;          ///< TCP offset ParamTablePanel
     std::unique_ptr<ui::ParamEditModel> m_tcpOffsetModel;  ///< offset 编辑模型
+    /// 显示名行编辑（UI-T58——displayName 仅呈现字段；空值经 placeholder
+    /// 呈现"按 TCP 键"回落；未变更提交＝零修订零动作）。
+    QLineEdit* m_tcpDisplayNameEdit = nullptr;
+    QPushButton* m_tcpDisplayNameApplyBtn = nullptr;  ///< 显示名应用钮（UI-T58）
     QString m_tcpSelectedKey;                     ///< 当前选中 TCP 键（空＝未选）
     std::optional<std::size_t> m_sceneEditTarget;  ///< 场景页当前绑定下标
 
