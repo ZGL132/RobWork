@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T59",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "F-498 预览半区：多类型预览下拉＋域侧内存导出面（exportPreviewXml 四类）＋appliedPreview 推送缺口修复＋ui_plugin 断链修复（F-518）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T58"
+  ],
+  "requirements": [
+    "MDL-20（WC/DWC XML 外供——预览为内存导出变体，同一只读数据源纪律）",
+    "D-MDL-10（预览仅呈现已应用修订——编辑态即时预览不提供；XML 类唯一来源＝域导出面，UI 零拼装）",
+    "UX-02（预览只读、可复制导出；来源修订号/模型身份/生成时间/来源对象明确）",
+    "ERR-01（诚实缺席——快照缺席/能力缺席/未接线如实呈现，不虚构产物）"
+  ],
+  "designRefs": [
+    "units/modeling.md#6.8",
+    "units/modeling.md#9.7.1",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-498",
+    "traceability/findings.json#F-518"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T59.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t59/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "modeling/include/sdurws/ird/modeling/Package.hpp＋src/PackageWorkCell.cpp：PreviewExportKind 四值（SerialDeviceXml/SceneXml/CollisionXml/DwcXml）＋previewExportKindToken＋PreviewExportOutcome＋exportPreviewXml（快照只读消费零修订零 I/O；Scene 面 T_world_frame 经 Kinematics::worldTframe 默认状态只读推导；Collision 面能力位＋编译选项＋参与面＋缺席注记；Dwc 面能力缺席 ExportFailed 拒绝；确定性同快照同字节）＋buildDevicesSection/buildBodiesSection 共用段抽取（文件导出与预览导出单点实现——NFR-MNT-04，两处字节恒一致）",
+    "modeling/plugin/ModelingUiModule.hpp/.cpp：bindWorkCellPreview 回调（模块零 runtime 类型依赖——五 out 参字符串形态）＋pushAppliedPreviewToPanel 推送辅助＋attachPanelWiring 接线（provider 转发＋定格预览推送）＋★appliedPreview 推送缺口修复（seedTemplateSession/resetSession/onRevisionCommitted/noteAppliedRevision/createPanel·attachPanel 五位点——UI-T41 A3 残留：m_session.appliedPreview 有存有清但从未推送面板，预览页在产品中恒停留构造初态）",
+    "modeling/plugin/ModelingPluginAssembly.hpp/.cpp：bindWorkCellExport＋bindWorkCellPreview 装配门面转发器补登（★F-518：UI-T56 宿主调用 bindWorkCellExport 时漏登装配面——sdurws_ird_ui_plugin 自 UI-T56 起编译断链，该目标不在受影响测试目标集内潜伏未察；本批修复并登记）",
+    "modeling/plugin/ModelingPanelWidget.hpp/.cpp：预览页多类型（combo ird_modeling_preview_kind 五类＝模型摘要＋SerialDevice/Scene/Collision/DWC XML——itemData 取 previewExportKindToken 单一词表源＋来源头行 ird_modeling_preview_source＋复制全部钮 ird_modeling_preview_copy〔QClipboard〕＋refreshPreview 单一渲染出口分轨〔摘要轨 buildPreviewPage 本地渲染；XML 轨供给器现取；缺席/未接线诚实呈现〕＋setPreviewContentProvider 注入面）",
+    "ui/plugin/UiPlugin.cpp：bindWorkCellPreview 宿主接源（lastPublishedSnapshot 现取零第二编译路径；kind token→域枚举 fail-closed 分派 exportPreviewXml；来源头行＝修订规范文本＋序号＋模型身份规范文本＋快照创建时刻〔QDateTime 宿主格式化——域面零时钟〕＋来源对象）",
+    "测试：PackageWorkCellTest PreviewExportsFourKinds_UI_T59（四类内容核对＋worldToBase 独立复算互证＋DWC 缺席拒绝＋确定性同字节＋token 词表）＋gui ModelingPanelGuiTest PreviewPane_MultiTypeChain_UI_T59（摘要轨零供给器/XML 轨应答呈现/缺席诚实/复制钮剪贴板）＋HostWiringGuiTest AppliedPreviewPushChain_Fix_UI_T59（创建即接线/晚绑定补线/定格即推送/失效即回落四断言面）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release——含本批修复的 sdurws_ird_ui_plugin 目标；独立冒烟 standalone）",
+    "集成模式：modeling_test 330/330（新增 1）＋modeling_gui_test 34/34（新增 2，含 HostWiring 新用例）＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44＋sdurws_ird_ui_plugin 构建零错误（F-518 修复验证面）",
+    "ird_gates base..branch 零新增（引擎汇总计数与基线一致口径；命中集零项涉改动文件；归一化多重集比对见验收记录）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t59/"
+  ],
+  "acceptance": [
+    "域导出面：四类 exportPreviewXml 内容核对（设备/限位/帧表/重力/体物性透传）＋Scene 面 worldToBase 独立复算互证＋Collision 缺席注记＋DWC 缺席拒绝＋确定性同字节＋token——具名用例 PreviewExportsFourKinds_UI_T59（PackageWorkCellTest）",
+    "面板多类型链：默认摘要轨零供给器调用→定格呈现→XML 轨供给器应答＋来源头行→缺席诚实呈现→复制钮剪贴板——PreviewPane_MultiTypeChain_UI_T59（gui）",
+    "★推送缺口修复：创建即空态→XML 类晚绑定补线→noteAppliedRevision 定格即推送→onRevisionCommitted 失效即回落空态——AppliedPreviewPushChain_Fix_UI_T59（HostWiringGuiTest；做红注入＝移除 noteAppliedRevision 位点的 pushAppliedPreviewToPanel 调用应使③断言翻红）",
+    "★F-518 修复：sdurws_ird_ui_plugin 目标构建零错误（装配门面 bindWorkCellExport/bindWorkCellPreview 转发器在位——UI-T56 起断链的宿主调用复绿）",
+    "D-MDL-10 纪律：XML 类预览唯一来源＝域 exportPreviewXml（UI 零拼 XML 的强制点＝面板无供给器时诚实呈现未接线）",
+    "回归门槛：受影响目标零错误构建（集成＋冒烟）＋全套件回归＋validate-docs/validate-task PASS；留痕 traceability/builds/ui-t59/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "appliedPreview 推送位点共五处（三个复位/一个定格/面板接入）——遗漏任一位点即对应场景预览页失真；做红最小集＝noteAppliedRevision 位点",
+    "装配门面转发器必须与模块绑定面同步演化（F-518 教训：UI-T56 宿主直调模块面方法名但漏登装配转发器——ui_plugin 不在测试目标集内故编译断链潜伏）；后续宿主接线新增模块方法时须同步补门面转发并构建 sdurws_ird_ui_plugin 验证",
+    "Kinematics::worldTframe 入参为 Ptr<const Frame>（非裸指针重载）——World 根帧为 NULL 时恒等变换契约（文档明示）；Scene 面遍历 getFrames 全集含 WORLD",
+    "预览面纯函数零诊断（能力缺席走返回值错误轨——诊断对应写路径环境失败，exportWorkCellXml 的 MDL-EXPORT-FAILED 轨不适用）",
+    "gui 对账排除：preview_kind/preview_copy/preview_source/preview_text 呈现件不入命令目录对账（objectName 非命令钮前缀——既有对账规则天然覆盖，无需演化）"
+  ],
+  "branch": "ui-t59",
+  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@de1d3018。F-498 预览半区兑现（导出半区已由 UI-T56 兑现）——预览类型下拉建议六类中五类落位（模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML），规范包清单类型未承接（需已应用修订闭包的 manifest 面——登记 F-498 余项注随合入段）。随批处置：F-518（UI-T56 潜伏断链 sdurws_ird_ui_plugin——装配门面漏登 bindWorkCellExport 转发器，本批补登修复）＋appliedPreview 推送缺口（UI-T41 A3 残留，本批修复并有测试钉扎）；两者 finding 登记随合入段治理提交。"
+}

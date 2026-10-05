@@ -4,6 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.37（2026-10-05，UI-T59 F-498 预览半区批次落位——§6.8 第三条预览内存导出面：exportPreviewXml〔PreviewExportKind 四值 SerialDeviceXml/SceneXml/CollisionXml/DwcXml＋token＋PreviewExportOutcome——快照只读消费零修订零 I/O 零诊断；Scene 面 T_world_frame 经 Kinematics::worldTframe 默认状态只读推导〔呈现推导非内容改造〕；Collision 面能力位＋参与面＋缺席注记；Dwc 面能力缺席 ExportFailed 拒绝；确定性同快照同字节〕＋buildDevicesSection/buildBodiesSection 共用段抽取〔文件导出与预览导出单点实现——NFR-MNT-04〕；§9.7.1 预览页多类型下拉承载〔摘要＋四 XML 类——XML 类唯一来源＝域导出面，UI 零拼装〕；appliedPreview 推送缺口修复〔UI-T41 A3 残留〕＋F-518 装配门面断链修复；前一版 v0.36＝UI-T58 TCP 显示名；v0.35＝UI-T57 TCP 列表） |
 | 文档版本 | v0.36（2026-10-05，UI-T58 TCP 显示名文本行编辑批次落位——§4.4 TCP 编辑流第五原语 applyTcpDisplayNameEdit〔键存在 KeyNotFound→displayName 直写＋恰一条变更记录；仅呈现字段 UX-02 无内容校验——空串接受＝呈现回落按键；§4.8 改名语义＝新修订但 Description 不变，编译缓存可复用〕；UI-T57 卡诚实边界顺延项；F-516④ applyTcpRemoveEdit 注释次序随代码修正；前一版 v0.35＝UI-T57 TCP 列表结构化编辑；v0.34＝UI-T56 WC/DWC XML 外供导出命令） |
 | 文档版本 | v0.35（2026-10-05，UI-T57 TCP 列表结构化编辑批次落位——§4.4 TCP 编辑流：TcpEditErrorCode 六值＋四原语〔applyTcpAddEdit/applyTcpRemoveEdit/applyTcpOffsetEdit/applyDefaultTcpSwitchEdit——引用保护先于最后一条保护〕＋tcpKeyIndex 共用查找；UI-T57 兑现④；前一版 v0.34＝UI-T56 WC/DWC XML 外供导出命令；v0.33＝宿主审核 P2 呈现批次①） |
 | 文档版本 | v0.34（2026-10-05，UI-T56 WC/DWC XML 外供导出命令落位——§9.7.3 表尾追加第十一号 modeling.export-workcell-xml〔readOnlyAllowed=true——会话级文件操作零修订，MDL-20 ③命令面〕＋数据源契约登记＝已应用修订的 runtime 编译快照只读视图〔宿主 bindWorkCellExport 注入——快照缺席诚实缺席〕；前一版 v0.33＝宿主审核 P2 呈现批次①；v0.32b＝UI-T53；v0.32＝呈现中文化） |

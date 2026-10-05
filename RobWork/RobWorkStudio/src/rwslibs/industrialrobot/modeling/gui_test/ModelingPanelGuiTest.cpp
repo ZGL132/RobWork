@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 
 #include <QApplication>
+#include <QClipboard>   // 复制钮断言（UI-T59 剪贴板＝预览全文）
 #include <QMap>
 #include <cstdio>
 #include <QLabel>
@@ -103,6 +104,9 @@ QList<QPushButton*> commandButtonsOf(
         }
         if (btn->objectName() == QStringLiteral("ird_modeling_more_toggle")) {
             continue;  // 工具区折叠开关不入命令对账（F-502 呈现件——非命令目录按钮）
+        }
+        if (btn->objectName() == QStringLiteral("ird_modeling_preview_copy")) {
+            continue;  // 预览复制钮不入命令对账（UI-T59 呈现件——非命令目录按钮）
         }
         if (btn->objectName().startsWith(QStringLiteral("ird_modeling_struct_"))) {
             continue;  // 结构操作钮不入命令对账（UI-T47 呈现件——非命令目录按钮）
@@ -591,6 +595,7 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
     for (const QPushButton* btn : buttons) {
         if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; } // 历史钮不入禁用对账
         if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; } // 折叠开关不入对账（F-502 呈现件——非命令目录按钮）
+        if (btn->objectName() == QString::fromUtf8("ird_modeling_preview_copy")) { continue; } // 预览复制钮不入对账（UI-T59 呈现件——非命令目录按钮）
         if (btn->objectName().startsWith(QString::fromUtf8("ird_modeling_struct_"))) { continue; } // 结构操作钮不入禁用对账（UI-T47 呈现件——非命令目录按钮）
         if (btn->objectName().startsWith(QString::fromUtf8("ird_modeling_edit_"))) { continue; } // 编辑页模式钮不入对账（UI-T53/T54 呈现件——非命令目录按钮）
         if (inJointEditPane(*m_panel, btn)) { continue; } // 编辑页/基座页内部钮不入对账（UI-T53/T54 呈现件）
@@ -1423,4 +1428,84 @@ TEST_F(ModelingPanelGuiTest, TcpDisplayNameEdit_Chain_UI_T58)
     applyBtn->click();
     EXPECT_EQ(m_ws.changes.size(), changesBefore) << "零差异提交不产生变更记录";
     EXPECT_TRUE(m_ws.toolObjects[0].tcpList[1].displayName.empty());
+}
+
+// =====================================================================
+// UI-T59 预览页多类型（F-498 预览半区——combo 分轨＋诚实缺席＋复制钮）
+// =====================================================================
+
+/**
+ * 预览页多类型链（UI-T59）：默认摘要轨（D-MDL-10——空态占位/定格呈现，
+ * 不经供给器）→XML 类经供给器现取（text 原样＋来源头行）→缺席诚实呈现
+ * （不虚构）→复制全部钮（剪贴板＝当前预览全文）。供给替身＝宿主
+ * bindWorkCellPreview 适配形态（模块级接线用例在 HostWiringGuiTest——
+ * 本用例直注面板供给器，聚焦分轨呈现）。
+ */
+TEST_F(ModelingPanelGuiTest, PreviewPane_MultiTypeChain_UI_T59)
+{
+    IRD_TEST_INFO("MDL-20", {}, std::nullopt);
+
+    bool called = false;
+    std::string askedKind;
+    m_panel->setPreviewContentProvider(
+        [&called, &askedKind](const std::string& kind)
+            -> std::optional<ModelingPanelWidget::PreviewContentAnswer> {
+            called = true;
+            askedKind = kind;
+            if (kind == "dwc-xml") {
+                return std::nullopt;  // 快照缺席/能力缺席形态——诚实缺席
+            }
+            ModelingPanelWidget::PreviewContentAnswer answer;
+            answer.headerLine = "来源修订 rev-test（序号 1）｜模型身份 cid-test";
+            answer.sourceObject = "devices=1";
+            answer.text = "<ird-serial-device-export>stub</ird-serial-device-export>";
+            return answer;
+        });
+
+    QComboBox* combo =
+        m_panel->findChild<QComboBox*>(QStringLiteral("ird_modeling_preview_kind"));
+    ASSERT_NE(combo, nullptr);
+    ASSERT_EQ(combo->count(), 5) << "五类预览（摘要＋四 XML）";
+    QPlainTextEdit* preview =
+        m_panel->findChild<QPlainTextEdit*>(QStringLiteral("ird_modeling_preview_text"));
+    ASSERT_NE(preview, nullptr);
+    QLabel* header =
+        m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_preview_source"));
+    ASSERT_NE(header, nullptr);
+
+    // ---- 默认摘要轨：无已应用修订＝空态占位（不经供给器）----
+    EXPECT_EQ(combo->currentIndex(), 0);
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("D-MDL-10")));
+    EXPECT_FALSE(called) << "摘要轨零外部供给（AppliedRevisionView 本地渲染）";
+
+    // ---- 定格已应用修订视图→摘要即刻呈现（setAppliedPreview 注入即重渲）----
+    AppliedRevisionView applied;
+    applied.revision = core::RevisionId::generate();
+    applied.summaryText = "已应用修订快照：关节 6 个";
+    m_panel->setAppliedPreview(applied);
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("关节 6 个")));
+
+    // ---- 切 SerialDevice XML→供给器应答呈现（text 原样＋来源头行）----
+    combo->setCurrentIndex(1);
+    QApplication::processEvents();
+    EXPECT_TRUE(called) << "XML 类应经供给器现取";
+    EXPECT_EQ(QString::fromStdString(askedKind), QStringLiteral("serial-device-xml"));
+    EXPECT_TRUE(preview->toPlainText().contains(
+        QStringLiteral("<ird-serial-device-export>")));
+    EXPECT_TRUE(header->text().contains(QStringLiteral("rev-test")))
+        << "来源头行呈现（修订/身份/时间——宿主组装）";
+
+    // ---- 切 DWC XML→供给器缺席→诚实缺席呈现（不虚构内容）----
+    combo->setCurrentIndex(4);
+    QApplication::processEvents();
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("预览不可用")));
+    EXPECT_TRUE(header->text().isEmpty()) << "缺席态无来源头行（不伪造溯源）";
+
+    // ---- 复制全部钮：剪贴板＝当前预览全文（UX-02 可复制导出）----
+    QPushButton* copyBtn = m_panel->findChild<QPushButton*>(
+        QStringLiteral("ird_modeling_preview_copy"));
+    ASSERT_NE(copyBtn, nullptr);
+    copyBtn->click();
+    QApplication::processEvents();
+    EXPECT_EQ(QApplication::clipboard()->text(), preview->toPlainText());
 }

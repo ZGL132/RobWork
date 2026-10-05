@@ -229,13 +229,68 @@ void ModelingUiModule::bindTextResolver(std::function<QString(const std::string&
     m_textResolver = std::move(resolve);
 }
 
-void ModelingUiModule::bindWorkCellExport(
+    void ModelingUiModule::bindWorkCellExport(
     std::function<bool(const std::string& targetPath, std::string& summary)> exportFn)
 {
     m_guard.assertOnUiThread();
     // 无面板形态差异（面板不经手本回调——命令流经 executeDomainCommand
     // 的 deps 直取成员）；重复绑定＝以最新宿主装配为准（幂等覆盖）。
     m_workCellExport = std::move(exportFn);
+}
+
+void ModelingUiModule::bindWorkCellPreview(
+    std::function<bool(const std::string& kind, std::string& headerLine,
+                       std::string& sourceObject, std::string& text,
+                       std::string& reason)> previewFn)
+{
+    m_guard.assertOnUiThread();
+    // 重复绑定＝以最新宿主装配为准（幂等覆盖——bindWorkCellExport 同款）；
+    // 面板已创建＝即时转发 provider 适配（晚绑定装配序补齐——面板经
+    // setPreviewContentProvider 持适配闭包，XML 类预览请求经此达宿主）。
+    m_workCellPreview = std::move(previewFn);
+    if (m_panel != nullptr) {
+        attachPanelWiring();
+    }
+}
+
+void ModelingUiModule::pushAppliedPreviewToPanel()
+{
+    // 预览态变迁的统一推送点（UI-T59 接线缺口修复——UI-T41 A3 残留：
+    // m_session.appliedPreview 有存有清但从未推送面板，预览页在产品中恒
+    // 停留构造初态）。面板侧 refreshPreview 单一渲染出口自行分辨空态/
+    // 摘要/XML 轨——本推送面零判定（当前选中预览类型是什么就重渲什么）。
+    if (m_panel != nullptr) {
+        m_panel->setAppliedPreview(m_session.appliedPreview);
+    }
+}
+
+void ModelingUiModule::attachPanelWiring()
+{
+    if (m_panel == nullptr) { return; }
+    // XML 类预览供给适配（宿主回调已绑定时转发——不绑定＝面板 fail-closed
+    // 诚实呈现"未接线"；适配闭包零 runtime 类型——纯字符串搬运）。
+    if (m_workCellPreview) {
+        m_panel->setPreviewContentProvider(
+            [this](const std::string& kind)
+                -> std::optional<ModelingPanelWidget::PreviewContentAnswer> {
+                std::string headerLine;
+                std::string sourceObject;
+                std::string text;
+                std::string reason;
+                if (!m_workCellPreview || !m_workCellPreview(kind, headerLine,
+                                                             sourceObject, text,
+                                                             reason)) {
+                    return std::nullopt;  // 快照缺席/能力缺席——诚实缺席
+                }
+                ModelingPanelWidget::PreviewContentAnswer answer;
+                answer.headerLine = std::move(headerLine);
+                answer.sourceObject = std::move(sourceObject);
+                answer.text = std::move(text);
+                return answer;
+            });
+    }
+    // 已定格预览推送（attachPanel/createPanel 装配序补齐——面板晚于定格）。
+    pushAppliedPreviewToPanel();
 }
 
 void ModelingUiModule::setWritable(bool writable)
@@ -273,6 +328,7 @@ void ModelingUiModule::seedTemplateSession()
     // 种子即重置应用侧快照（UI-T41——基线快照/预览视图随草稿重建失效）。
     m_session.baselineSnapshot.reset();
     m_session.appliedPreview.reset();
+    pushAppliedPreviewToPanel();  // 预览态变迁推送（UI-T59 接线缺口修复）
     // baseRevision 留空（nullopt＝提交期解析 tip——§6.2）；种子后就绪
     // 真判定即刻重算（T03b-2b——就绪条不再空态，如实呈现阻塞/缺项）。
     recomputeReadiness();
@@ -299,6 +355,8 @@ QWidget* ModelingUiModule::createPanel()
         panel->setCommandTitleResolver(m_textResolver);
     }
     m_panel = panel;  // attachPanel 同义（公开方法语义一致，直接落成员）
+    attachPanelWiring();  // 预览供给接线＋已定格预览推送（UI-T59——面板
+                          // 晚于绑定/定格的装配序补齐）
     // 编辑后钩子（T03b-2b）：每次 L-2 接受后重算真就绪并刷新就绪条。
     panel->setPostEditAction([this] { recomputeReadiness(); });
     // 首刷（§9.7.2 L-4 同款入口——装配层创建面板后必须立即呈现当前会话）：
@@ -387,6 +445,7 @@ void ModelingUiModule::onSessionDetached()
     m_session.readiness.reset();
     m_session.baselineSnapshot.reset();   // 应用侧快照随会话作废（UI-T41）
     m_session.appliedPreview.reset();
+    pushAppliedPreviewToPanel();  // 预览态变迁推送（UI-T59 接线缺口修复）
     {
         std::lock_guard<std::mutex> lock(m_readinessMutex);
         m_readinessSnapshot.reset();
@@ -415,6 +474,7 @@ void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
     // diff 基线以空态诚实呈现，不虚构内容；再次应用即重新定格）。
     m_session.baselineSnapshot.reset();
     m_session.appliedPreview.reset();
+    pushAppliedPreviewToPanel();  // 预览态变迁推送（UI-T59 接线缺口修复）
     recomputeReadiness();
 }
 
@@ -459,6 +519,8 @@ void ModelingUiModule::noteAppliedRevision(
             + " 个（内容定格于应用时刻）";
         m_session.appliedPreview = std::move(view);
     }
+    pushAppliedPreviewToPanel();  // 定格即推送（UI-T59 接线缺口修复——此前
+                                  // 仅存会话未达面板，预览页恒空态）
     recomputeReadiness();  // 应用后基线前移——就绪状态同步刷新
 }
 

@@ -27,6 +27,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDateTime>                            // 快照创建时刻呈现格式化（UI-T59 来源头行）
 #include <QDir>
 #include <QDialog>
 #include <QDialogButtonBox>
@@ -984,6 +985,68 @@ void IrdWorkbenchHostPlugin::initialize()
                 summary = "WorkCell/DWC XML 已导出（" + targetPath + " 与 "
                           + targetPath + ".dwc.xml）——外部查看产物（非 .wc.xml "
                           "标准格式）；运行时加载校验归后续任务链";
+                return true;
+            });
+        // 预览内存导出接源（UI-T59——F-498 预览半区）：与文件导出同源同
+        // 纪律——快照现取 lastPublishedSnapshot（零第二编译路径）；kind 分
+        // 派域 exportPreviewXml（建模自有 XML 表示，UI 零拼装）；来源头行
+        // （修订号/序号/模型身份/生成时间——非 XML 呈现元数据）由宿主组装
+        // （快照身份块值供给 CR-05 同款值传递——呈现层不重算身份）。
+        // 缺席＝诚实拒绝（原因入 reason——未应用修订/DWC 能力缺席均此形）。
+        m_domains->modeling.bindWorkCellPreview(
+            [this](const std::string& kind, std::string& headerLine,
+                   std::string& sourceObject, std::string& text,
+                   std::string& reason) -> bool {
+                const auto snapshot = m_compilePort != nullptr
+                                          ? m_compilePort->lastPublishedSnapshot()
+                                          : nullptr;
+                if (snapshot == nullptr) {
+                    reason = "尚无已应用修订的编译产物——请先经顶栏『应用草稿』"
+                             "提交（预览数据源＝编译快照）";
+                    return false;
+                }
+                // kind token→域枚举（fail-closed——未知 token 拒绝，不猜测）。
+                std::optional<modeling::PreviewExportKind> parsed;
+                for (const modeling::PreviewExportKind k : {
+                         modeling::PreviewExportKind::SerialDeviceXml,
+                         modeling::PreviewExportKind::SceneXml,
+                         modeling::PreviewExportKind::CollisionXml,
+                         modeling::PreviewExportKind::DwcXml,
+                     }) {
+                    if (std::string(modeling::previewExportKindToken(k)) == kind) {
+                        parsed = k;
+                        break;
+                    }
+                }
+                if (!parsed.has_value()) {
+                    reason = "未知预览类型：" + kind;
+                    return false;
+                }
+                const modeling::PreviewExportOutcome outcome =
+                    modeling::exportPreviewXml(*snapshot, *parsed);
+                if (!outcome.ok) {
+                    reason = "预览导出失败：" + outcome.error.detail;
+                    return false;
+                }
+                // 来源头行（F-498"来源修订号/模型身份/生成时间/来源对象
+                // 明确"）：修订规范文本＋序号＋模型身份规范文本＋快照创建
+                // 时刻。UTC 文本经 QDateTime（宿主层允许 Qt；域导出面自身
+                // 零时钟——确定性归域，呈现时间归宿主，两不相扰）。
+                const std::chrono::system_clock::time_point createdAt =
+                    snapshot->createdAtUtc();
+                const QDateTime qCreated = QDateTime::fromMSecsSinceEpoch(
+                    std::chrono::duration_cast<std::chrono::milliseconds>(
+                        createdAt.time_since_epoch())
+                        .count());
+                headerLine = "来源修订 " + snapshot->revision().toCanonical()
+                           + "（序号 " + std::to_string(snapshot->revisionSeq())
+                           + "）｜模型身份 " + snapshot->modelIdentity().toCanonical()
+                           + "｜生成于 "
+                           + qCreated.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss UTC"))
+                                 .toStdString()
+                           + "｜" + outcome.sourceObject;
+                sourceObject = outcome.sourceObject;
+                text = outcome.text;
                 return true;
             });
         if (m_domains->requirements.has_value()) {

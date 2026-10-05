@@ -93,6 +93,19 @@ struct ModelingPluginAssembly {
     /// 文案解析绑定（titleKey→工程用语；转发模块内部）。
     void bindTextResolver(std::function<QString(const std::string& titleKey)> resolve);
 
+    /// WC/DWC XML 外供导出回调绑定（UI-T56——转发模块内部；m_impl 缺位＝
+    /// 静默零操作。UI-T59 补登：本转发器在 UI-T56 落位时漏登装配面——
+    /// sdurws_ird_ui_plugin 自该批起断链〔F-518〕，随 UI-T59 修复）。
+    void bindWorkCellExport(
+        std::function<bool(const std::string& targetPath, std::string& summary)> exportFn);
+
+    /// 预览内存导出回调绑定（UI-T59——F-498 预览半区；转发模块内部；
+    /// m_impl 缺位＝静默零操作）。
+    void bindWorkCellPreview(
+        std::function<bool(const std::string& kind, std::string& headerLine,
+                           std::string& sourceObject, std::string& text,
+                           std::string& reason)> previewFn);
+
     /**
      * @brief 会话可写性切换（UI-T43——L-7 门控输入的宿主接线面；转发模块
      *        内部，需求域 RequirementsPluginAssembly::setWritable 同构）。

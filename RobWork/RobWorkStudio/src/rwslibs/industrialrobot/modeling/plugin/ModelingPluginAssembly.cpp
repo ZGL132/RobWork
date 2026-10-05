@@ -49,6 +49,30 @@ void ModelingPluginAssembly::bindTextResolver(
     }
 }
 
+void ModelingPluginAssembly::bindWorkCellExport(
+    std::function<bool(const std::string& targetPath, std::string& summary)> exportFn)
+{
+    // WC/DWC XML 外供导出回调宿主接线面（UI-T56——UI-T59 补登转发器：
+    // UI-T56 落位时漏登本装配面，sdurws_ird_ui_plugin 自该批起断链〔F-518〕
+    // ——该目标不在受影响测试目标集内，潜伏两轮验收未被发现）。m_impl
+    // 缺位＝失败隔离缺席域，静默零操作（setWritable 同款口径）。
+    if (m_impl != nullptr) {
+        m_impl->bindWorkCellExport(std::move(exportFn));
+    }
+}
+
+void ModelingPluginAssembly::bindWorkCellPreview(
+    std::function<bool(const std::string& kind, std::string& headerLine,
+                       std::string& sourceObject, std::string& text,
+                       std::string& reason)> previewFn)
+{
+    // 预览内存导出回调宿主接线面（UI-T59——F-498 预览半区；转发模块；
+    // m_impl 缺位＝失败隔离缺席域，静默零操作）。
+    if (m_impl != nullptr) {
+        m_impl->bindWorkCellPreview(std::move(previewFn));
+    }
+}
+
 void ModelingPluginAssembly::setWritable(bool writable)
 {
     // L-7 门控输入宿主接线面（UI-T43——需求域 RequirementsPluginAssembly
