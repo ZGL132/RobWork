@@ -5136,10 +5136,19 @@
       "id": "F-516",
       "source": "acc/ui-t57/1@278573c8 验收记录 S1/S2/S3/S4/S7（UI-T57 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "UI-T57 验收建议合集：①modeling.md v0.35 版本行悬挂列（F-514 同类复发——已随合入段拆分修正，本条登记防复发机制缺失：版本行新增后须分列数复核）；②refreshEditPages 首行注释在选择驱动分派改造时误删残行（已随合入段治理修正）；③只读用例断言仅两钮（default 钮与 TCP 面板经探针实证行为正确——断言面可补全）；④Parts.hpp 删除规则枚举③④与代码执行次序错位（代码引用保护先于最后一条——注释次序应随代码）；⑦ValueNotFinite 拒绝路径无直接断言（域用例经 offset 混入间接覆盖）。S6 verify-task 散文条目并入 F-513。",
-      "owner": "①②已随 UI-T57 合入段治理提交修正闭环；③④⑦后续测试维护批次顺手补全；S6 并入 F-513 治理批次"
+      "owner": "全部闭环：①②已随 UI-T57 合入段治理提交（66117de7）修正；③④⑦已随 UI-T58 闭环（653a24dc——③TcpPane_ReadOnlyDisables_UI_T57 断言面补全〔acc/ui-t58/1 做红②′实证〕、④applyTcpRemoveEdit 注释次序随代码、⑦UI_T57 域用例 ValueNotFinite 直断言），fixedBy=UI-T58（2026-10-05 合入段治理提交翻转）；S6 并入 F-513 治理批次"
+    },
+    {
+      "id": "F-517",
+      "source": "acc/ui-t58/1@e40883f2 验收记录建议级三条（UI-T58 独立子会话对抗式验收 2026-10-05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-05",
+      "title": "UI-T58 验收建议合集：①setWritable 的 L-7 显示名行半区缺动态窗口测试覆盖（做红②注入 setWritable 半区缺陷未红——refreshTcpPane 刷新半区兜底，双半区设计生效非行为缺陷；建议补『可写选中→切只读→无刷新事件』用例钉扎 setWritable 半区）；②全框架 fresh 树字面构建因框架侧 RWSimulatorPlugin 失败（head 28 errors/base 71 errors——与送验 SHA 无关，错误在框架头消费链，主树与既往验收树均无该插件产物）；建议 DTB §5.1 明文登记集成口径＝受影响目标冷构建；③ird_gates 引擎输出经 MSBuild 存在消息粘连与对称双回显——按物理行提取会得 ≠101 计数（双侧比对须按引擎自报汇总计数或粘连感知提取；本备忘应随验收指令传达）",
+      "owner": "①后续 gui 测试维护批次顺手补全；②③治理批次（DTB §5.1 口径登记＋验收备忘传达）"
     }
   ]
 }

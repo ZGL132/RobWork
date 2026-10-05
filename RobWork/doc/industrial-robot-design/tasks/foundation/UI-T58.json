@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "TCP 显示名文本行编辑（UI-T57 卡诚实边界顺延项）：applyTcpDisplayNameEdit 第五原语＋工具页 TCP 段显示名行",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T57"
   ],
@@ -64,5 +64,5 @@
     "显示名行编辑不进 ird_param_ 前缀对账排除面（独立 objectName 锚）——gui 对账排除清单无需演化"
   ],
   "branch": "ui-t58",
-  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@66117de7。顺延项来源：UI-T57 卡诚实边界（displayName 编辑不在本批）＋UI-T56 卡备案。随批闭环 F-516③④⑦（UI-T57 验收建议合集——③只读断言面/④Parts.hpp 注释次序/⑦ValueNotFinite 直断言；①②已于 UI-T57 合入段治理提交闭环），F-516 状态翻转归合入段治理提交。"
+  "note": "【合入登记注（2026-10-05，PIPE §4.7 收尾——PIPE v1.8 autoMerge 预授权）】acceptedHead 653a24dc 合入 redesign-main（acc/ui-t58/1@e40883f2 按 SHA 先并）；独立子会话对抗式验收全项 pass（协议 §4.1~§4.11 亲手复现；做红三处实证——域原语键查找破坏/零差异守卫破坏/L-7 刷新半区破坏均翻红后复绿；ird_gates 双侧引擎直跑 101 命中归一化多重集 diff=0 零新增）。建议级三条转登 F-517：S1 setWritable L-7 显示名半区缺动态窗口覆盖（做红②被刷新半区兜底——双半区设计生效，非行为缺陷）；S2 全框架 fresh 树字面构建框架侧 RWSimulatorPlugin 失败与送验 SHA 无关（建议 DTB §5.1 明文集成口径＝受影响目标冷构建）；S3 ird_gates 输出经 MSBuild 粘连双回显（按物理行提取计数失真——后续验收备忘传达）。F-516③④⑦ 随本批闭环（状态翻转随本治理提交）；①②已于 UI-T57 合入段治理提交闭环——F-516 全项关闭。分支基点＝redesign-main@66117de7。"
 }
