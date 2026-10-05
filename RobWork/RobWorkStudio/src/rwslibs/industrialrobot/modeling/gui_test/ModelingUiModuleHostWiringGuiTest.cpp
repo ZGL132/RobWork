@@ -23,6 +23,9 @@
 
 #include <gtest/gtest.h>
 
+#include <QApplication>
+#include <QComboBox>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QWidget>
 
@@ -174,4 +177,76 @@ TEST(ModelingUiModuleHostWiring, WritableChain_PendingInitialAndLiveForward_L7_U
         EXPECT_EQ(buttons[i]->isEnabled(), catalog[i].readOnlyAllowed)
             << "再降级只读未即时转发面板：" << catalog[i].id;
     }
+}
+
+// =====================================================================
+// UI-T59：appliedPreview 推送接线缺口修复——UI-T41 A3 残留（模块有存有清
+// 但从未推送面板，预览页恒空态）。本组用例钉扎预览态三个变迁点。
+// =====================================================================
+
+/**
+ * 预览态变迁推送链（UI-T59）：createPanel 即接线（构造后空态）→
+ * noteAppliedRevision 定格即推送（摘要呈现——修复前恒空态的缺口面）→
+ * onRevisionCommitted（撤销/重做形态）失效即推送（空态诚实回落）；
+ * bindWorkCellPreview 晚绑定＝面板供给器即时补线（XML 类请求达宿主）。
+ */
+TEST(ModelingUiModuleHostWiring, AppliedPreviewPushChain_Fix_UI_T59)
+{
+    IRD_TEST_INFO("D-MDL-10", {}, std::nullopt);
+
+    ModelingUiModule module;
+    module.seedTemplateSession();
+
+    // 预览供给替身（宿主形态——缺席轨迹返回 false；应答轨迹返回 stub 文本
+    // ＋来源头行。经装配门面绑定＝UI-T59 补登的转发器路径）。
+    bool asked = false;
+    module.bindWorkCellPreview(
+        [&asked](const std::string& kind, std::string& headerLine,
+                 std::string& sourceObject, std::string& text,
+                 std::string&) -> bool {
+            asked = true;
+            headerLine = "来源修订 stub｜模型身份 stub｜生成于 stub";
+            sourceObject = "stub=1";
+            text = "<ird-" + kind + "-stub/>";
+            return true;
+        });
+
+    QWidget* widget = module.createPanel();
+    ASSERT_NE(widget, nullptr);
+    QPlainTextEdit* preview =
+        widget->findChild<QPlainTextEdit*>(QStringLiteral("ird_modeling_preview_text"));
+    ASSERT_NE(preview, nullptr) << "预览页承载（区⑤）";
+    QComboBox* combo =
+        widget->findChild<QComboBox*>(QStringLiteral("ird_modeling_preview_kind"));
+    ASSERT_NE(combo, nullptr);
+
+    // ①创建后即空态（种子会话无已应用修订——D-MDL-10 占位）。
+    EXPECT_EQ(combo->currentIndex(), 0);
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("D-MDL-10")));
+
+    // ②XML 类经供给器（晚绑定转发器已补线——请求达宿主替身）。
+    combo->setCurrentIndex(1);
+    QApplication::processEvents();
+    EXPECT_TRUE(asked) << "bindWorkCellPreview 应转发面板供给器";
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("<ird-serial-device-xml-stub/>")));
+
+    // ③定格即推送（修复核心断言——修复前 appliedPreview 只存不推，预览页
+    //   恒停留构造初态）：切回摘要轨→noteAppliedRevision→摘要呈现。
+    combo->setCurrentIndex(0);
+    QApplication::processEvents();
+    const core::RevisionId appliedRev = core::RevisionId::generate();
+    module.noteAppliedRevision(appliedRev, std::nullopt);
+    QApplication::processEvents();
+    EXPECT_FALSE(preview->toPlainText().contains(QStringLiteral("D-MDL-10")))
+        << "已应用修订定格后预览页不应停留空态（UI-T41 A3 残留缺口修复）";
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("已应用修订快照")))
+        << "摘要轨呈现定格内容（generic-6r 种子草稿）";
+
+    // ④失效即推送（撤销/重做形态——锚定分支事件触发复位，空态诚实回落）。
+    const core::BranchId branch = core::BranchId::generate();
+    module.bindSessionAnchor(branch, appliedRev);
+    module.onRevisionCommitted(branch, core::RevisionId::generate());
+    QApplication::processEvents();
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("D-MDL-10")))
+        << "修订内容未知＝预览页空态诚实呈现（不虚构）";
 }

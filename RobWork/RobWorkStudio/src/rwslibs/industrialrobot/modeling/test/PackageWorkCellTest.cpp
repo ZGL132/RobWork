@@ -33,6 +33,10 @@
 #include <sdurws/ird/runtime/Snapshot.hpp>         // RuntimeSnapshot/RuntimeSnapshotFactory（S6~S10）
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
+#include <rw/kinematics/Kinematics.hpp>            // worldTframe（UI-T59 Scene 面互证）
+#include <rw/models/Device.hpp>                    // Device::getBase（BaseMount 定位）
+#include <rw/models/WorkCell.hpp>                  // WorkCell 完整类型（getDevices——UI-T59）
+
 namespace {
 
 using namespace sdurws::ird;
@@ -312,6 +316,109 @@ TEST(MdlPackageWorkCell, WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5)
     EXPECT_EQ(noCapability.error.code, ModelingErrorCode::ExportFailed);
 
     std::filesystem::remove_all(dir);
+}
+
+// =====================================================================
+// F-498 预览半区（UI-T59）：exportPreviewXml 四类内存导出
+// =====================================================================
+
+/**
+ * @brief 预览内存导出面（UI-T59——F-498 预览半区）：SerialDevice/Scene/
+ *        Collision/DWC 四类——内容核对＋确定性同字节＋DWC 缺席诚实拒绝＋
+ *        token 词表。零文件副作用（预览面无 I/O——与文件导出的分界）。
+ */
+TEST(MdlPackageWorkCell, PreviewExportsFourKinds_UI_T59)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-20", "MDL-22"},
+                  std::vector<std::string>{"F-498"});
+
+    // ---- 真实编译快照（复用 ACC5 夹具——全物性 DWC 就绪）----
+    const auto snapshot = createPublished(compileReadyModel(), CompileOptions{});
+    ASSERT_NE(snapshot, nullptr);
+    ASSERT_TRUE(snapshot->capabilities().hasDynamicWorkCell);
+
+    // ---- SerialDevice XML：设备结构面（共用设备段——名/关节/限位透传）----
+    const auto deviceOut = exportPreviewXml(*snapshot, PreviewExportKind::SerialDeviceXml);
+    ASSERT_TRUE(deviceOut.ok) << deviceOut.error.detail;
+    EXPECT_NE(deviceOut.text.find("<ird-serial-device-export"), std::string::npos);
+    EXPECT_NE(deviceOut.text.find("IRB_PKG"), std::string::npos) << "设备名透传";
+    EXPECT_NE(deviceOut.text.find("joint_1"), std::string::npos) << "关节名透传";
+    EXPECT_NE(deviceOut.text.find("-1.5"), std::string::npos) << "限位下限 rad 原值";
+    EXPECT_NE(deviceOut.sourceObject.find("devices=1"), std::string::npos)
+        << "来源对象摘要（呈现层来源头行素材）";
+    EXPECT_NE(deviceOut.sourceObject.find("joints=2"), std::string::npos)
+        << "夹具 2 旋转关节";
+
+    // ---- Scene XML：场景布局面（全帧世界系位姿——worldTframe 只读推导）----
+    const auto sceneOut = exportPreviewXml(*snapshot, PreviewExportKind::SceneXml);
+    ASSERT_TRUE(sceneOut.ok) << sceneOut.error.detail;
+    EXPECT_NE(sceneOut.text.find("<ird-scene-export"), std::string::npos);
+    EXPECT_NE(sceneOut.text.find("t-world-frame"), std::string::npos);
+    EXPECT_NE(sceneOut.text.find("WORLD"), std::string::npos) << "根帧在世界系表";
+    // 世界系位姿独立复算互证：设备基座帧的父帧＝BaseMount（S6 §6.3 结构
+    // 契约），其世界系位姿应＝worldToBase()（M-11 唯一存储的 T_world_base
+    // ——worldTframe 沿父链状态传播的结果须与模型值逐元素一致）。
+    const auto& wcView = snapshot->workCell();
+    const rw::kinematics::State defaultState = wcView.defaultState();
+    const std::vector<rw::core::Ptr<rw::models::Device>>& devices =
+        wcView.workCell().getDevices();
+    ASSERT_FALSE(devices.empty()) << "夹具应有设备";
+    const rw::kinematics::Frame* baseMount =
+        devices.front()->getBase() != nullptr ? devices.front()->getBase()->getParent()
+                                              : nullptr;
+    ASSERT_NE(baseMount, nullptr) << "S6 结构：设备基座帧的父帧＝BaseMount";
+    const rw::math::Transform3D<double> worldT =
+        rw::kinematics::Kinematics::worldTframe(
+            rw::core::Ptr<const rw::kinematics::Frame>(baseMount), defaultState);
+    const rw::math::Transform3D<double> expected = snapshot->worldToBase();
+    for (std::size_t r = 0; r < 3; ++r) {
+        for (std::size_t c = 0; c < 3; ++c) {
+            EXPECT_NEAR(worldT.R()(r, c), expected.R()(r, c), 1e-9);
+        }
+    }
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_NEAR(worldT.P()[i], expected.P()[i], 1e-9);
+    }
+
+    // ---- Collision XML：能力位＋参与面＋诚实缺席注记（夹具无几何挂接）----
+    const auto collisionOut = exportPreviewXml(*snapshot, PreviewExportKind::CollisionXml);
+    ASSERT_TRUE(collisionOut.ok) << collisionOut.error.detail;
+    EXPECT_NE(collisionOut.text.find("<ird-collision-export"), std::string::npos);
+    EXPECT_NE(collisionOut.text.find("capability=\"false\""), std::string::npos)
+        << "夹具未挂接几何——能力位如实 false";
+    EXPECT_NE(collisionOut.text.find("collision geometry not attached"), std::string::npos)
+        << "缺席注记（不虚构几何数据）";
+    EXPECT_NE(collisionOut.text.find("kind=\"device\""), std::string::npos)
+        << "参与面＝设备链";
+
+    // ---- DWC XML：动力学面（重力/体物性透传——与文件导出同字节）----
+    const auto dwcOut = exportPreviewXml(*snapshot, PreviewExportKind::DwcXml);
+    ASSERT_TRUE(dwcOut.ok) << dwcOut.error.detail;
+    EXPECT_NE(dwcOut.text.find("<ird-dwc-export"), std::string::npos);
+    EXPECT_NE(dwcOut.text.find("-9.81"), std::string::npos) << "重力透传";
+    EXPECT_NE(dwcOut.text.find("base_link"), std::string::npos) << "体名透传";
+
+    // ---- DWC 缺席诚实拒绝（requestDynamicWorkCell=false 快照）----
+    CompileOptions noDwc;
+    noDwc.requestDynamicWorkCell = false;
+    const auto wcOnly = createPublished(compileReadyModel(), noDwc);
+    ASSERT_NE(wcOnly, nullptr);
+    const auto refused = exportPreviewXml(*wcOnly, PreviewExportKind::DwcXml);
+    ASSERT_FALSE(refused.ok) << "无 DWC 能力——诚实拒绝不产出空壳文档";
+    EXPECT_EQ(refused.error.code, ModelingErrorCode::ExportFailed);
+    EXPECT_TRUE(refused.text.empty());
+
+    // ---- 确定性（同快照同 kind→同字节——NFR-COR-02；纯函数零 I/O）----
+    const auto sceneAgain = exportPreviewXml(*snapshot, PreviewExportKind::SceneXml);
+    ASSERT_TRUE(sceneAgain.ok);
+    EXPECT_EQ(sceneOut.text, sceneAgain.text) << "同快照同字节";
+
+    // ---- token 词表（面板 combo itemData 的单一来源）----
+    EXPECT_EQ(previewExportKindToken(PreviewExportKind::SerialDeviceXml),
+              "serial-device-xml");
+    EXPECT_EQ(previewExportKindToken(PreviewExportKind::SceneXml), "scene-xml");
+    EXPECT_EQ(previewExportKindToken(PreviewExportKind::CollisionXml), "collision-xml");
+    EXPECT_EQ(previewExportKindToken(PreviewExportKind::DwcXml), "dwc-xml");
 }
 
 }  // namespace

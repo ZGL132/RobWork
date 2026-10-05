@@ -127,8 +127,32 @@ public:
     void refreshPanel(const ModelingWorkingSet& ws, const ModelReadinessReport& report);
 
     /// 已应用修订预览注入（UI-T41 A3——模块应用/失效时调用；D-MDL-10：
-    /// 内容只来自 AppliedRevisionView，nullopt＝空态占位）。
+    /// 内容只来自 AppliedRevisionView，nullopt＝空态占位。UI-T59 起该注入
+    /// 同时触发当前选中预览类型的重渲染——XML 类经供给器现取最新编译产物）。
     void setAppliedPreview(const std::optional<AppliedRevisionView>& view);
+
+    // ---- 预览页多类型（UI-T59——F-498 预览半区）--------------------------
+
+    /// XML 类预览的域侧供给应答（全部 UTF-8 文本——UI 零拼装纪律：text 为
+    /// 域 exportPreviewXml 产物原样，headerLine 为宿主组装的来源头行〔修订/
+    /// 模型身份/生成时间——非 XML 呈现元数据〕，sourceObject 域侧摘要透传）。
+    struct PreviewContentAnswer {
+        std::string headerLine;    ///< 来源头行（宿主组装——呈现层元数据）
+        std::string sourceObject;  ///< 来源对象摘要（域 sourceObject 透传）
+        std::string text;          ///< 导出文本（域 exportPreviewXml 产物）
+    };
+
+    /// XML 类预览供给器（模块注入——适配宿主 bindWorkCellPreview 回调；
+    /// 返回 nullopt＝快照缺席/能力缺席/未接线——面板诚实呈现缺席态）。
+    using PreviewContentProvider =
+        std::function<std::optional<PreviewContentAnswer>(const std::string& kindToken)>;
+
+    /**
+     * @brief 注入 XML 类预览供给器（装配期——模块 attachPanelWiring 转发；
+     *        不注入＝XML 类预览诚实呈现"未接线"，fail-closed 不自行拼 XML
+     *        ——D-MDL-10 同款纪律的域侧产物强制点）。
+     */
+    void setPreviewContentProvider(PreviewContentProvider provider);
 
     /// 状态行回执分级（UI-T41 批次B B2——词表着色：Success 绿＝接受回执、
     /// Warning 橙＝拒绝/待处置、Info 正文＝命令回执；阻断不设红色——调色板
@@ -191,6 +215,8 @@ private:
     void buildToolsPane(QVBoxLayout* bottom);           // 区③域工具区（StageId=modeling）
     void buildReadinessPane(QVBoxLayout* bottom);       // 区④就绪与诊断条
     void buildPreviewPane(QVBoxLayout* bottom);         // 区⑤预览页（仅已应用修订）
+    void refreshPreview();                              ///< 预览页单一渲染出口（UI-T59——按选中类型分轨）
+    void onPreviewCopyClicked();                        ///< 预览全文复制（UX-02 可复制导出）
 
     // ---- 接线辅助 ----
     /// 属性区＋编辑页的统一刷新入口（选中/编辑后/refreshPanel 共用——
@@ -390,6 +416,11 @@ private:
     QLabel* m_readinessCounts = nullptr;      ///< 区④三组计数行
     QTreeWidget* m_readinessItems = nullptr;  ///< 区④逐项行（可点击——定位跳转）
     QPlainTextEdit* m_preview = nullptr;      ///< 区⑤预览页（只读——仅已应用修订内容）
+    // ---- UI-T59 预览页多类型（F-498 预览半区）----
+    QComboBox* m_previewKindCombo = nullptr;  ///< 预览类型选择（摘要＋四 XML 类）
+    QLabel* m_previewSourceHeader = nullptr;  ///< 来源头行（修订/身份/时间——宿主组装）
+    QPushButton* m_previewCopyBtn = nullptr;  ///< 复制全部钮（UX-02 可复制导出）
+    std::optional<PreviewContentProvider> m_previewProvider;  ///< XML 类供给（空＝未接线）
     QLabel* m_statusLine = nullptr;           ///< 就地错误/手工处置横幅（非模态——UX-03/07）
 };
 

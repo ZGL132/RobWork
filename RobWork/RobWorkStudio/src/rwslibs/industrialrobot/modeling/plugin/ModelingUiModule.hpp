@@ -122,7 +122,12 @@ public:
      *
      * @param panel [in] 面板 widget（非 owning——调用方保证存活期覆盖模块）
      */
-    void attachPanel(ModelingPanelWidget* panel) { m_panel = panel; }
+    void attachPanel(ModelingPanelWidget* panel)
+    {
+        m_panel = panel;
+        attachPanelWiring();  // 预览供给与已定格预览的接线（UI-T59——面板
+                              // 晚于绑定/定格的装配序补齐）
+    }
 
     /// 会话态访问（装配层更新入口——工作集权威载体；仅 UI 线程）。
     ModuleSessionState& session() noexcept { m_guard.assertOnUiThread(); return m_session; }
@@ -228,6 +233,23 @@ public:
      */
     void bindWorkCellExport(
         std::function<bool(const std::string& targetPath, std::string& summary)> exportFn);
+
+    /**
+     * @brief 绑定预览内存导出回调（UI-T59——F-498 预览半区；宿主侧取编译
+     *        快照→域 exportPreviewXml→来源头行组装）。
+     *
+     * 回调契约（与 bindWorkCellExport 同形——模块零 runtime 类型依赖）：
+     * 入参 kindToken＝域 previewExportKindToken 词表（"serial-device-xml" 等
+     * 四值）；返回 false＝快照缺席/能力缺席（原因入 reason——诚实缺席不
+     * 虚构产物）；返回 true＝headerLine（来源修订号/模型身份/生成时间——
+     * 宿主组装，非 XML）/sourceObject（域侧来源对象摘要）/text（域导出
+     * XML）三值有效。不绑定＝面板 XML 类预览诚实呈现"未接线"（fail-closed
+     * ——UI 不自行拼 XML 的强制点）。
+     */
+    void bindWorkCellPreview(
+        std::function<bool(const std::string& kind, std::string& headerLine,
+                           std::string& sourceObject, std::string& text,
+                           std::string& reason)> previewFn);
 
 
     /**
@@ -427,6 +449,29 @@ private:
     /// 命令执行报装配缺陷，fail-closed）。
     std::function<bool(const std::string& targetPath, std::string& summary)>
         m_workCellExport;
+    /// 预览内存导出回调（UI-T59——宿主 bindWorkCellPreview 注入；空＝面板
+    /// XML 类预览诚实呈现"未接线"，fail-closed 不自行拼 XML）。
+    std::function<bool(const std::string& kind, std::string& headerLine,
+                       std::string& sourceObject, std::string& text,
+                       std::string& reason)>
+        m_workCellPreview;
+
+    /**
+     * @brief 把会话已定格的已应用修订视图推送到面板（UI-T59 接线缺口修复
+     *        ——UI-T41 A3 残留：m_session.appliedPreview 有存有清但从未
+     *        推送，预览页在产品中恒停留空态）。
+     *
+     * 消费位点＝预览态的每个变迁点（seedTemplateSession/resetSession/
+     * onRevisionCommitted 复位、noteAppliedRevision 定格、面板接入）——
+     * 面板侧 refreshPreview 单一渲染出口自行分辨空态/摘要/XML 轨。
+     */
+    void pushAppliedPreviewToPanel();
+
+    /**
+     * @brief 面板接入后的预览供给接线（attachPanel/createPanel 共用——
+     *        provider 转发〔回调已绑定时〕＋已定格预览推送）。
+     */
+    void attachPanelWiring();
     bool m_writable = true;                  ///< 会话可写性（L-7 初值——setWritable
                                              ///  更新；createPanel 作为面板初始态。
                                              ///  默认 true＝装配期无项目会话的可写

@@ -433,6 +433,114 @@ PackageExportOutcome exportWorkCellXml(const runtime::RuntimeSnapshot& snapshot,
                                        const WorkCellExportTarget& target,
                                        std::vector<core::DiagnosticRecord>& diags);
 
+// =====================================================================
+// 预览内存导出面（卡 §6.8 第三条——F-498 预览半区；UI-T59；ACC5——
+// 集成模式 TU 承载，与 exportWorkCellXml 同址）
+// =====================================================================
+
+/**
+ * @brief 预览导出类型（§9.7.1 预览页多类型下拉的域侧数据面——UI-T59）。
+ *
+ * 四类均为"已应用修订编译快照"的只读内存导出（D-MDL-10：编辑态即时
+ * 预览不提供——预览页仅呈现已应用修订内容）；"模型摘要"类型不经本面
+ * （呈现层已有 AppliedRevisionView 摘要轨——PanelModel buildPreviewPage）。
+ * 枚举序即词表登记序，一经交付不得改动（token 稳定面）。
+ */
+enum class PreviewExportKind {
+    /// "serial-device-xml"——设备结构面（名/基座/末端/DOF/逐关节限位）。
+    SerialDeviceXml,
+    /// "scene-xml"——场景布局面（全帧世界系位姿 T_world_frame；worldT
+    /// 只读推导——零改造内容，§6.8 同款"只读取数"纪律）。
+    SceneXml,
+    /// "collision-xml"——碰撞相关面（能力位＋编译选项＋参与面清单；
+    /// 碰撞几何未挂接时如实注记缺席——不虚构几何数据）。
+    CollisionXml,
+    /// "dwc-xml"——动力学面（重力/体物性/动力设备名；无 DWC＝该面拒绝）。
+    DwcXml,
+};
+
+/// @brief 预览导出类型稳定 token。
+///
+/// ★ 落位注记：头内联（非 src/PackageWorkCell.cpp——该 TU 仅集成模式编译，
+/// 冒烟模式无 TU 消费），而本 token 被 plugin 面板（冒烟模式无条件编入）
+/// 消费——放集成专属 TU 即冒烟链接断（UI-T59 实测）。token 是纯词表映射
+/// （零 runtime 符号依赖），头内联不违反"实现与声明分离"惯例。
+inline std::string_view previewExportKindToken(PreviewExportKind kind) noexcept
+{
+    switch (kind) {
+    case PreviewExportKind::SerialDeviceXml: return "serial-device-xml";
+    case PreviewExportKind::SceneXml: return "scene-xml";
+    case PreviewExportKind::CollisionXml: return "collision-xml";
+    case PreviewExportKind::DwcXml: return "dwc-xml";
+    }
+    return "dwc-xml";  // 全枚举已覆盖，不达此处
+}
+
+/**
+ * @brief 预览内存导出结果（ok=false 时仅 error 有意义）。
+ */
+struct PreviewExportOutcome {
+    /// 是否成功（true＝text/sourceObject 有效）。
+    bool ok = false;
+
+    /// 失败承载（ok=false 时有效；码面 ExportFailed——能力缺席/视图失败）。
+    ModelingError error{};
+
+    /// 导出文本（UTF-8 XML；确定性序列化——同快照同字节，NFR-COR-02）。
+    std::string text;
+
+    /// 来源对象摘要（呈现用一句话，如 "devices=1; joints=6"；ASCII 稳定
+    /// 格式——不入 XML，供预览页来源头行拼接）。
+    std::string sourceObject;
+};
+
+/**
+ * @brief 预览内存导出（§9.7.1 预览页数据源——F-498 预览半区；UI-T59）。
+ *
+ * 与 exportWorkCellXml 同一纪律的内存变体：数据源＝RuntimeSnapshot 只读
+ * 视图（消费已应用修订的编译产物，零修订、零失效、不私设第二编译路径）；
+ * 只读取数→确定性 XML 序列化→**返回内存文本**（零文件副作用——落盘归
+ * modeling.export-workcell-xml 命令面，UI-T56）。XML 为 modeling 自有的
+ * 外供查看表示（元素命名镜像 RobWork WorkCell/DWC 概念），非 RobWork
+ * wc.xml 格式（同 exportWorkCellXml 实现注②）。"不改造内容"的边界注记：
+ * Scene 面的 T_world_frame 经 rw::kinematics::worldT 在默认状态上只读推
+ * 导（状态传播纯函数）——是"从只读数据推导呈现位姿"，不修改任何编译
+ * 产物，与 §6.8"取只读数据→序列化"编排面同构。
+ *
+ * 各类型内容面（§9.7.1 呈现语义的域侧承载）：
+ *   - SerialDeviceXml：设备表（名/基座/末端/DOF＋SerialDevice 逐关节
+ *     名/下标/限位 lower/upper——rad/m 随关节类型）；无设备＝空表文档
+ *     （快照恒有 WC 但可无设备——诚实空态）。
+ *   - SceneXml：全帧表（名/父/DOF＋世界系位姿 T_world_frame）；世界系
+ *     位姿经 worldT 只读推导（基座—世界唯一投影 M-11 的下游呈现面）。
+ *   - CollisionXml：能力位（capabilities().hasCollisionGeometry）＋编译
+ *     选项（compileOptions.includeCollisionGeometry）＋参与面清单（设备
+ *     链帧＋DWC 体名——DWC 缺席则仅设备链）＋缺席注记（能力位 false 时
+ *     如实登记"碰撞几何未挂接"——资源几何挂接前置任务未落位的诚实面）。
+ *   - DwcXml：重力（基座系投影前原始值经 DynamicWorkCell::getGravity）＋
+ *     体物性（质量/质心/惯量/材料）＋动力设备名表；快照无 DWC（能力位
+ *     false）＝ExportFailed 拒绝（诚实缺席——不产出空壳文档）。
+ *
+ * 实现落位：src/PackageWorkCell.cpp——与 exportWorkCellXml 同 TU（消费
+ * runtime 编译产物非模板类，仅集成模式编译；冒烟模式声明可用无 TU 消费，
+ * §15.4 v0.10 同款分工）。
+ *
+ * @param snapshot [in] 已编译运行时快照（只读消费；Compiled 态前置由调用
+ *                 方保证——同 exportWorkCellXml 口径）
+ * @param kind     [in] 预览导出类型（见类型注）
+ * @return ok＝text/sourceObject 有效；err＝ModelingError（码面
+ *         ExportFailed——DWC 能力缺席/DWC 视图失败）
+ *
+ * 诊断纪律：本面零 I/O 零文件副作用，能力缺席/视图失败经返回值错误轨
+ * 携带（呈现层诚实呈现），不产诊断——诊断对应"写路径环境失败"（
+ * exportWorkCellXml 的 MDL-EXPORT-FAILED 轨），查询面无写失败可言。
+ *
+ * 纯函数（无 I/O 无副作用）；线程安全；确定性（同快照同 kind→同字节，
+ * 不读时钟/locale——生成时间呈现归宿主层，不入导出面）。
+ */
+PreviewExportOutcome exportPreviewXml(const runtime::RuntimeSnapshot& snapshot,
+                                      PreviewExportKind kind);
+
 }  // namespace sdurws::ird::modeling
 
 #endif  // IRD_MODELING_PACKAGE_HPP

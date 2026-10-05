@@ -11,6 +11,8 @@
 
 #include "ModelingPanelWidget.hpp"
 
+#include <QApplication>                           // clipboard（UI-T59 预览复制钮）
+#include <QClipboard>                             // QClipboard 完整类型（复制钮——UI-T59）
 #include <QComboBox>
 #include <QDoubleValidator>
 #include <QDoubleSpinBox>
@@ -32,6 +34,7 @@
 #include <map>
 #include <string>
 
+#include <sdurws/ird/modeling/Package.hpp>  // previewExportKindToken（UI-T59——预览类型词表单一来源）
 #include <sdurws/ird/ui/UiText.hpp>   // 文案键解析（UI-T25——迁移标记标签挂键；
                                       // 构造期命令标题 resolver 尚未注入，此处直读
                                       // UiText 静态表，requirements 面板先例同款）
@@ -548,29 +551,8 @@ void ModelingPanelWidget::setEditTargetProvider(EditTargetProvider provider)
 }
 
 // ---- UI-T41 A3/A2/A4：预览注入／命令回执／重演入口 ---------------------
-
-void ModelingPanelWidget::setAppliedPreview(
-    const std::optional<AppliedRevisionView>& view)
-{
-    m_appliedPreview = view;
-    if (m_preview == nullptr) { return; }
-    if (!m_appliedPreview.has_value()) {
-        // 空态占位（不伪造内容——D-MDL-10：预览页仅呈现已应用修订）。
-        m_preview->setPlainText(
-            QStringLiteral("尚无已应用修订——预览页仅呈现已应用修订内容（D-MDL-10）。\n"
-                           "编辑后请经菜单 File→工业机器人项目→『应用草稿』提交，"
-                           "预览随应用刷新。"));
-        return;
-    }
-    QString text;
-    for (const std::string& line : buildPreviewPage(*m_appliedPreview)) {
-        text += QString::fromStdString(line) + QLatin1Char('\n');
-    }
-    if (text.isEmpty()) {
-        text = QStringLiteral("已应用修订无预览摘要内容。");
-    }
-    m_preview->setPlainText(text);
-}
+// （setAppliedPreview 实现随 UI-T59 迁至区⑤预览页段——refreshPreview 单一
+//   渲染出口；本节保留命令回执/重演入口注释锚）
 
 void ModelingPanelWidget::setOutcomeMessage(const QString& message,
                                             OutcomeSeverity severity)
@@ -719,10 +701,136 @@ void ModelingPanelWidget::buildReadinessPane(QVBoxLayout* bottom)
 
 void ModelingPanelWidget::buildPreviewPane(QVBoxLayout* bottom)
 {
+    // 类型选择行（UI-T59——F-498 预览半区）：五类预览——"模型摘要"为既有
+    // D-MDL-10 轨（AppliedRevisionView 摘要，零外部供给），其余四类走域侧
+    // 内存导出面（exportPreviewXml——宿主 bindWorkCellPreview 接源；UI 零
+    // 拼 XML 纪律的强制点＝XML 类唯一来源是供给器）。
+    auto* kindRow = new QHBoxLayout();
+    auto* kindLabel = new QLabel(QStringLiteral("预览类型"), this);
+    kindRow->addWidget(kindLabel);
+    m_previewKindCombo = new QComboBox(this);
+    m_previewKindCombo->setObjectName(QStringLiteral("ird_modeling_preview_kind"));
+    // itemData＝域词表 token（空串＝摘要轨）；词表单一来源＝
+    // previewExportKindToken（禁字符串字面量分叉）。
+    m_previewKindCombo->addItem(QStringLiteral("模型摘要"), QString());
+    m_previewKindCombo->addItem(
+        QStringLiteral("SerialDevice XML"),
+        QString::fromStdString(std::string(
+            modeling::previewExportKindToken(modeling::PreviewExportKind::SerialDeviceXml))));
+    m_previewKindCombo->addItem(
+        QStringLiteral("Scene XML"),
+        QString::fromStdString(std::string(
+            modeling::previewExportKindToken(modeling::PreviewExportKind::SceneXml))));
+    m_previewKindCombo->addItem(
+        QStringLiteral("Collision XML"),
+        QString::fromStdString(std::string(
+            modeling::previewExportKindToken(modeling::PreviewExportKind::CollisionXml))));
+    m_previewKindCombo->addItem(
+        QStringLiteral("DWC XML"),
+        QString::fromStdString(std::string(
+            modeling::previewExportKindToken(modeling::PreviewExportKind::DwcXml))));
+    kindRow->addWidget(m_previewKindCombo, 1);
+    m_previewCopyBtn = new QPushButton(QStringLiteral("复制全部"), this);
+    m_previewCopyBtn->setObjectName(QStringLiteral("ird_modeling_preview_copy"));
+    m_previewCopyBtn->setToolTip(QStringLiteral(
+        "把当前预览全文复制到剪贴板（只读文本——可复制导出）"));
+    kindRow->addWidget(m_previewCopyBtn);
+    bottom->addLayout(kindRow);
+
+    // 来源头行（F-498"来源修订号/模型身份/生成时间/来源对象明确"——XML 类
+    // 由宿主回调组装〔非 XML 呈现元数据〕；摘要类留空——摘要文本自述）。
+    m_previewSourceHeader = new QLabel(this);
+    m_previewSourceHeader->setObjectName(QStringLiteral("ird_modeling_preview_source"));
+    m_previewSourceHeader->setWordWrap(true);
+    m_previewSourceHeader->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    bottom->addWidget(m_previewSourceHeader);
+
     m_preview = new QPlainTextEdit(this);
-    m_preview->setReadOnly(true);  // 只读预览（内容仅来自 AppliedRevisionView——D-MDL-10）
+    m_preview->setObjectName(QStringLiteral("ird_modeling_preview_text"));
+    m_preview->setReadOnly(true);  // 只读预览（内容仅来自已应用修订——D-MDL-10）
     m_preview->setAccessibleName(QStringLiteral("已应用修订预览"));  // B6 可访问性
     bottom->addWidget(m_preview, 1);
+
+    connect(m_previewKindCombo, &QComboBox::currentIndexChanged, this, [this](int) {
+        refreshPreview();  // 类型切换→按新类型重渲（零状态——渲染即现取）
+    });
+    connect(m_previewCopyBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onPreviewCopyClicked);
+}
+
+void ModelingPanelWidget::setPreviewContentProvider(PreviewContentProvider provider)
+{
+    m_threadGuard.assertOnUiThread();
+    m_previewProvider = std::move(provider);
+    refreshPreview();  // 供给到位即重渲（晚绑定装配序——当前类型可能是 XML 类）
+}
+
+void ModelingPanelWidget::onPreviewCopyClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    if (m_preview == nullptr) { return; }
+    QApplication::clipboard()->setText(m_preview->toPlainText());
+    setOutcomeMessage(QStringLiteral("预览全文已复制到剪贴板"),
+                      OutcomeSeverity::Info);
+}
+
+void ModelingPanelWidget::refreshPreview()
+{
+    if (m_preview == nullptr) { return; }
+    const QString kindToken = m_previewKindCombo != nullptr
+                                  ? m_previewKindCombo->currentData().toString()
+                                  : QString();
+    // ---- 摘要轨（D-MDL-10 既有行为——内容只来自 AppliedRevisionView）----
+    if (kindToken.isEmpty()) {
+        if (m_previewSourceHeader != nullptr) { m_previewSourceHeader->clear(); }
+        if (!m_appliedPreview.has_value()) {
+            // 空态占位（不伪造内容——D-MDL-10：预览页仅呈现已应用修订）。
+            m_preview->setPlainText(
+                QStringLiteral("尚无已应用修订——预览页仅呈现已应用修订内容（D-MDL-10）。\n"
+                               "编辑后请经菜单 File→工业机器人项目→『应用草稿』提交，"
+                               "预览随应用刷新。"));
+            return;
+        }
+        QString text;
+        for (const std::string& line : buildPreviewPage(*m_appliedPreview)) {
+            text += QString::fromStdString(line) + QLatin1Char('\n');
+        }
+        if (text.isEmpty()) {
+            text = QStringLiteral("已应用修订无预览摘要内容。");
+        }
+        m_preview->setPlainText(text);
+        return;
+    }
+
+    // ---- XML 轨（域侧内存导出——UI 零拼装；缺席诚实呈现）----
+    if (!m_previewProvider.has_value()) {
+        if (m_previewSourceHeader != nullptr) { m_previewSourceHeader->clear(); }
+        m_preview->setPlainText(
+            QStringLiteral("预览供给未接线（宿主未绑定编译快照源）——XML 类预览不可用。"));
+        return;
+    }
+    const auto answer = (*m_previewProvider)(kindToken.toStdString());
+    if (!answer.has_value()) {
+        if (m_previewSourceHeader != nullptr) { m_previewSourceHeader->clear(); }
+        m_preview->setPlainText(
+            QStringLiteral("预览不可用：尚无已应用修订的编译产物——请先经顶栏"
+                           "『应用草稿』提交（DWC XML 另需物性齐备编译）。"));
+        return;
+    }
+    if (m_previewSourceHeader != nullptr) {
+        m_previewSourceHeader->setText(QString::fromStdString(answer->headerLine));
+    }
+    m_preview->setPlainText(QString::fromStdString(answer->text));
+}
+
+void ModelingPanelWidget::setAppliedPreview(
+    const std::optional<AppliedRevisionView>& view)
+{
+    m_appliedPreview = view;
+    // UI-T59：注入即按当前选中类型重渲（摘要类即刻呈现新定格；XML 类经
+    // 供给器现取最新编译产物——应用修订后 XML 预览不再滞留旧快照）。
+    refreshPreview();
 }
 
 // =====================================================================
