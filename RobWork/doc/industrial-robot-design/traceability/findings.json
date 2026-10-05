@@ -4926,7 +4926,7 @@
       "id": "F-503",
       "source": "acc/ui-t53/1@bb0cc913 验收记录 S-1（UI-T53 独立子会话对抗式验收 2026-10-04）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-04",
       "title": "UI-T53 契约 allowedFiles 与 outputs 不一致：附带修复文件 requirements/plugin/RequirementsCommandFlows.cpp 按 outputs 第 8 条登记但字面越出 allowedFiles（允许面仅 modeling/**＋文档链）；验收实测改动与登记逐字一致（一处呈现辅助＋include、语义零变化）——登记滞后非越权改动。后续契约卡 allowedFiles 应把 outputs 登记的附带修复面同步入列（或在契约模板注明附带修复的登记路径）。",
       "owner": "治理侧（契约模板口径澄清；UI-T53 已合入不追改）"
@@ -4935,7 +4935,7 @@
       "id": "F-504",
       "source": "acc/ui-t53/1@bb0cc913 验收记录 S-2（UI-T53 独立子会话对抗式验收 2026-10-04）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-04",
       "title": "UI-T53 契约 allowedFiles 未列契约自身路径（tasks/foundation/UI-T53.json——验收请求前置补 acceptance 数组的提交触及自身）；UI-T50 先例卡含自身路径。后续契约卡模板统一补列自身路径。",
       "owner": "治理侧（契约模板口径）"
@@ -5090,7 +5090,7 @@
       "id": "F-511",
       "source": "acc/ui-t54/1@d0914bbb 验收记录 S-3（UI-T54 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "ui-t54 留痕较 ui-t53 先例缺 ird-gates 双侧 hits 文件与 gate-all.log（验收者已独立双侧复跑补证——101/101 多重集全等零新增）。后续任务留痕全集口径＝README＋受影响套件 XML/log＋gate 双侧 hits＋gate-all log（UI-T53 先例）。",
       "owner": "留痕保持原样（验收记录已含实测）；本条登记留痕口径教训"
@@ -5099,7 +5099,7 @@
       "id": "F-512",
       "source": "acc/ui-t55/1@64c7c3ee 验收记录 S-1（UI-T55 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "ui-t55 留痕缺 gate 双侧 hits＋gate-all.log——F-511 口径复发（验收者已双侧复跑补证 101/101 多重集全等零新增）。后续任务留痕全集口径（README＋XML/log＋gate 双侧 hits＋gate-all log）应固化为契约 verify 列显式条目而非惯例。",
       "owner": "留痕保持原样（验收记录已含实测）；本条与 F-511 合并跟踪口径固化"
@@ -5108,10 +5108,10 @@
       "id": "F-513",
       "source": "acc/ui-t55/1@64c7c3ee 验收记录 S-3/S-4（UI-T55 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "两条验证基建口径：①未触碰套件（ui/requirements 等）的回归留痕以\"会话执行记录\"指代、无落盘工件——建议后续批次落盘或明文\"以验收复现为准\"；②verify-task.ps1 对描述性 verify 条目（非命令文本）Invoke-Expression 失败仍打 PASS（仓级既有特征，非 UI-T55 引入）——建议治理批次决断描述性条目的机器可执行化或显式标注\"人工核对\"。；附备忘（acc/ui-t56/1 验收 S5）：ui_test 运行时需 python313.dll（Miniconda3）入 PATH——DTB §5.1 fresh 树前置（F-007/F-475 族同款环境备忘）",
-      "owner": "治理侧（验证基建口径批次）"
+      "owner": "已随 UI-T62 治理清扫批次闭环（596b0b3c——①DTB §5.1 回归留痕全集口径行〔受影响套件 XML/log 全量落盘＋gate 双侧 hits＋未触碰套件以验收复现为准〕②verify-task.ps1 散文条目显式 [manual] 人工核对口径〔Parse/CommandNotFound 判定＋汇总分列——UI-T61 契约实测 0 机器/4 人工；验收三探针散文 manual/cmd0 机器/cmd4 致命〕），fixedBy=UI-T62（2026-10-05 合入段治理提交翻转）"
     },
     {
       "id": "F-514",
@@ -5181,10 +5181,19 @@
       "id": "F-521",
       "source": "acc/ui-t61/1@d8b1a083 验收记录建议级 D-1（UI-T61 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "ModelingPanelWidget refreshPreview 缺席分支文案按 XML 编译产物轨措辞（UI-T59 既有文案，UI-T61 清单轨复用）——规范包清单（对象级清单语义）缺席时呈现『尚无已应用修订的编译产物…（DWC XML 另需物性齐备编译）』语义不精确；行为正确（诚实缺席＋用例通过），建议按 kind 分流缺席文案",
-      "owner": "后续触碰预览页批次顺手修正（行为正确纯文案——不单独出批次）"
+      "owner": "已随 UI-T62 随批闭环（596b0b3c——缺席文案按 kind 分流：清单轨闭包措辞/XML 轨措辞保持，PackageChecklistPreviewChain 断言适配），fixedBy=UI-T62（2026-10-05 合入段治理提交翻转）"
+    },
+    {
+      "id": "F-522",
+      "source": "UI-T62 治理清扫批次全文件表格分列审计（2026-10-05；acc/ui-t62/1@c5261c3c 验收 D-2 同源面）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-05",
+      "title": "ui.md §13 任务表十三行历史分列不齐（分列审计实证：1 行 9 列〔内容含未转义管道〕＋12 行 3~4 列〔历史堆叠/缺列〕——期望 5 列；GFM 渲染错位）。皆为 UI-T21~T53 时代历史行，非本批引入",
+      "owner": "逐行修需判读历史行语义（任务内容/诚实边界/前置列归属）——留治理批次统一处置；本批新增 UI-T62 行自身 3 列同款复现（acc/ui-t62/1 D-2）已随 UI-T62 合入段五列补齐修正（fixed 随批注）"
     }
   ]
 }
