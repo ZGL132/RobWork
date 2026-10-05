@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "F-498 预览半区：多类型预览下拉＋域侧内存导出面（exportPreviewXml 四类）＋appliedPreview 推送缺口修复＋ui_plugin 断链修复（F-518）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T58"
   ],
@@ -67,5 +67,5 @@
     "gui 对账排除：preview_kind/preview_copy/preview_source/preview_text 呈现件不入命令目录对账（objectName 非命令钮前缀——既有对账规则天然覆盖，无需演化）"
   ],
   "branch": "ui-t59",
-  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@de1d3018。F-498 预览半区兑现（导出半区已由 UI-T56 兑现）——预览类型下拉建议六类中五类落位（模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML），规范包清单类型未承接（需已应用修订闭包的 manifest 面——登记 F-498 余项注随合入段）。随批处置：F-518（UI-T56 潜伏断链 sdurws_ird_ui_plugin——装配门面漏登 bindWorkCellExport 转发器，本批补登修复）＋appliedPreview 推送缺口（UI-T41 A3 残留，本批修复并有测试钉扎）；两者 finding 登记随合入段治理提交。"
+  "note": "【合入登记注（2026-10-05，PIPE §4.7 收尾——PIPE v1.8 autoMerge 预授权）】acceptedHead fbb3351d 合入 redesign-main（acc/ui-t59/1@e2734d83 按 SHA 先并）；独立子会话对抗式验收全项 pass（协议 §4.1~§4.11 亲手复现；做红两红＋一覆盖观察——①noteAppliedRevision 推送移除→AppliedPreviewPushChain③翻红〔推送缺口修复实证有效〕②复制钮破坏→哨兵隔离后翻红〔系统剪贴板跨进程残留碰巧满足首跑——S2〕③Scene worldTframe 恒等替换实测不翻红〔worldToBase 互证为测试侧自洽复算、实现导出值未入断言——覆盖缺口 S1，非缺陷〕；ird_gates 双侧 101 命中粘连感知归一化多重集 diff=0〔209/209 逐行相等〕）。建议级四条转登 F-519（S1 t-world-frame 值断言缺口／S2 剪贴板断言未隔离系统状态／S3 用例注释表述与实际直调不符／S4 bindWorkCellExport 定义行缩进漂移——纯格式）。F-518（UI-T56 潜伏断链 sdurws_ird_ui_plugin——base 侧静态取证 UiPlugin.cpp:964 已调用而装配面零该成员）随本治理提交登记；F-498 翻转 fixed（预览半区兑现——规范包清单类型未承接维持余项注）。分支基点＝redesign-main@de1d3018。"
 }

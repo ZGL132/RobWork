@@ -5021,11 +5021,11 @@
       "id": "F-498",
       "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#M-2",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-04",
       "title": "建模预览页单一、未对齐旧版多类 XML 预览（宿主审核建模 P2）：当前仅已应用修订摘要文本（D-MDL-10 保持），旧版有 SerialDevice/Scene/DWC/CollisionSetup/ProximitySetup 多类预览。建议预览类型下拉（模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML/规范包清单），每类须来源修订号/模型身份/生成时间/来源对象明确、只读、可复制导出、UI 不自行拼 XML（XML 由 runtime 编译产生——既有导出能力为产物源）",
       "owner": "待立项（宿主审核阶段 2/3 交界）",
-      "resolution": "【进展】导出半区兑现＝UI-T56（modeling.export-workcell-xml 第十一号命令——WC/DWC XML 外供导出挂 UI，已合入 4e7db25a）；预览页多类型下拉半区维持 open（需域侧 toString 导出面与 SerialDevice/Scene/Collision XML 域导出函数）。（2026-10-05 UI-T56 合入段补注——acc/ui-t56/1 验收 S4）"
+      "resolution": "全部兑现闭环（fixedBy=UI-T59，2026-10-05 合入段翻转）：导出半区＝UI-T56（modeling.export-workcell-xml 第十一号命令，已合入 4e7db25a）；预览半区＝UI-T59（exportPreviewXml 四类内存导出＋预览页五类下拉〔模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML——来源修订号/模型身份/生成时间/来源对象经宿主来源头行明确、只读、复制钮可复制导出、XML 类唯一来源＝域导出面零拼装〕，acc/ui-t59/1@e2734d83 全项 pass 合入）。余项注：建议六类中『规范包清单』类型未承接（需已应用修订闭包的 manifest 清单面——待后续批次，不阻塞本条闭环）；『CollisionSetup/ProximitySetup』的碰撞规则面由 Collision XML 参与面＋缺席注记承载（几何挂接前置任务落位后自然充实）。"
     },
     {
       "id": "F-499",
@@ -5149,6 +5149,24 @@
       "registeredAt": "2026-10-05",
       "title": "UI-T58 验收建议合集：①setWritable 的 L-7 显示名行半区缺动态窗口测试覆盖（做红②注入 setWritable 半区缺陷未红——refreshTcpPane 刷新半区兜底，双半区设计生效非行为缺陷；建议补『可写选中→切只读→无刷新事件』用例钉扎 setWritable 半区）；②全框架 fresh 树字面构建因框架侧 RWSimulatorPlugin 失败（head 28 errors/base 71 errors——与送验 SHA 无关，错误在框架头消费链，主树与既往验收树均无该插件产物）；建议 DTB §5.1 明文登记集成口径＝受影响目标冷构建；③ird_gates 引擎输出经 MSBuild 存在消息粘连与对称双回显——按物理行提取会得 ≠101 计数（双侧比对须按引擎自报汇总计数或粘连感知提取；本备忘应随验收指令传达）",
       "owner": "①后续 gui 测试维护批次顺手补全；②③治理批次（DTB §5.1 口径登记＋验收备忘传达）"
+    },
+    {
+      "id": "F-518",
+      "source": "UI-T59 实施段实测（2026-10-05——sdurws_ird_ui_plugin 构建发现；acc/ui-t59/1@e2734d83 验收 4.10 base 侧静态取证）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-05",
+      "title": "UI-T56 潜伏断链：宿主 UiPlugin.cpp:964 调用 m_domains->modeling.bindWorkCellExport(...)，但 ModelingPluginAssembly 装配门面漏登同名转发器——sdurws_ird_ui_plugin 自 UI-T56 起编译断链（error C2039）。根因＝该目标不在受影响测试目标集内（ui_test 等测试目标不链接插件 DLL），UI-T56 两轮验证（实施自验＋acc/ui-t56/1 独立验收）的受影响目标集均未触及，断链潜伏至 UI-T59 实施时构建该目标才显形",
+      "owner": "已随 UI-T59 修复闭环（fbb3351d——装配门面补登 bindWorkCellExport/bindWorkCellPreview 两转发器，验收 4.2 集成 fresh 树 11 目标冷构建含 ui_plugin exit 0＋DLL 产出）；fixedBy=UI-T59（2026-10-05 合入段治理提交翻转）。防复发：宿主接线新增模块方法时须同步补门面转发并构建 sdurws_ird_ui_plugin 验证（UI-T59 契约 knownPitfalls 已登记）"
+    },
+    {
+      "id": "F-519",
+      "source": "acc/ui-t59/1@e2734d83 验收记录建议级四条（UI-T59 独立子会话对抗式验收 2026-10-05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-05",
+      "title": "UI-T59 验收建议合集：①PreviewExportsFourKinds 未钉扎导出 XML 中 t-world-frame 属性值（做红③实证——Scene 分支 worldTframe 换恒等变换不翻红：worldToBase 互证为测试侧自洽复算、实现导出值未入断言，覆盖缺口非行为缺陷）——建议补属性值断言；②PreviewPane_MultiTypeChain 剪贴板断言未隔离系统剪贴板状态（做红②首跑被 Windows 跨进程剪贴板残留碰巧满足，哨兵隔离后翻红——测试卫生/确定性缺口）——建议预置哨兵文本；③AppliedPreviewPushChain 用例注释称『经装配门面绑定』与实际直调 module 不符——表述修订；④ModelingUiModule.cpp bindWorkCellExport 定义行 4 空格缩进漂移（UI-T59 引入——纯格式）",
+      "owner": "①②后续 gui/域测试维护批次顺手补全（S1 补值断言＋S2 哨兵隔离）；③④随下一触碰批次顺手修正（S3 表述＋S4 缩进——均无行为影响）"
     }
   ]
 }
