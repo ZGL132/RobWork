@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "位姿集/传动编辑页（F-497 余项收尾）：PoseSet 两原语＋Drivetrain 三原语＋编辑页签五/六页＋随批治理（F-519①~④/F-515/F-517 S1/S2/S3＋F-518 防复发登记）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T59"
   ],
@@ -69,5 +69,5 @@
     "gui 对账排除：pose_combo/pose_add/pose_remove/pose_apply/pose_key/pose_note 呈现件经 pose_area 容器入 inJointEditPane 排除面；drivetrain 表经 param_table_panel 已覆盖；AvailabilityProviderDisabled 放行循环排除链与全禁循环对齐（空选择下删除钮合法禁用）"
   ],
   "branch": "ui-t60",
-  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@c58af6d6。F-497 余项收尾（兑现①关节 Origin②基座③工具/场景④TCP 列表已合入——本批⑤位姿集/传动编辑页落位后 F-497 全项闭环，状态翻转归合入段治理提交）。随批治理：F-519①~④＋F-515＋F-517 S1 随批闭环；F-517 S2/S3＋F-518 防复发经 DTB §5.1 口径登记闭环（findings 翻转归合入段）。传动耦合 coupling（R2/MDL-21）与目录回填（SEL-10）不在本页编辑面（页说明行如实划界）。"
+  "note": "【合入登记注（2026-10-05，PIPE §4.7 收尾——PIPE v1.8 autoMerge 预授权）】acceptedHead fcdbc049 合入 redesign-main（acc/ui-t60/1@daec68e8 按 SHA 先并）；独立子会话对抗式验收全项 pass（§4.1~§4.11 亲手复现；做红三处三红——move 污染/RatioNotPositive/确认值丢失，全部还原复绿终态 332+38；ird_gates 引擎直跑双侧 101 命中归一化多重集 diff=0）。建议级两条随本治理提交修正闭环：D-1（DTB §5.1 行熔接拆分）＋D-2（Parts.hpp 注释一字）。F-497 全项闭环（兑现①~⑤）随本治理提交翻转 fixed。前一版注：立项＋落位登记（2026-10-05，status=ready 待独立验收）——分支基点＝redesign-main@c58af6d6；随批治理 F-519①~④＋F-515＋F-517 S1 随批闭环＋F-517 S2/S3＋F-518 防复发经 DTB §5.1 登记。"\n  "noteHistory": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@c58af6d6。F-497 余项收尾（兑现①关节 Origin②基座③工具/场景④TCP 列表已合入——本批⑤位姿集/传动编辑页落位后 F-497 全项闭环，状态翻转归合入段治理提交）。随批治理：F-519①~④＋F-515＋F-517 S1 随批闭环；F-517 S2/S3＋F-518 防复发经 DTB §5.1 口径登记闭环（findings 翻转归合入段）。传动耦合 coupling（R2/MDL-21）与目录回填（SEL-10）不在本页编辑面（页说明行如实划界）。"
 }

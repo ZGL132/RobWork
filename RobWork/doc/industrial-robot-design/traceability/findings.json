@@ -5011,11 +5011,11 @@
       "id": "F-497",
       "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#M-1",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-04",
       "title": "建模复杂对象主要是只读事实页、未真正可编辑（宿主审核建模 P1）：工具坐标与负载/场景位姿/命名位姿/传动/动力学/限位批量编辑缺真编辑能力（面板就地编辑仅 zero-offset——MDL-07 表单最小版划界）。应按 B.1 复杂对象编辑模式（结构树选择→公共摘要→详细编辑抽屉/页→草稿变更→就绪校验→应用修订），不向普通 QFormLayout 堆字段；推荐页序：工具→场景→位姿集→传动→动力学→限位",
       "owner": "待立项（宿主审核阶段 2）",
-      "resolution": "【进展】兑现①关节侧＝UI-T53（273894b2）；兑现②基座安装＝UI-T54（99691076）；兑现③工具安装接口/场景世界位姿＝UI-T55（e5c9fb00）；兑现④TCP 列表结构化编辑＝UI-T57（b3a608e9）——余项（位姿集/传动编辑页、类型枚举行、L-4 分组重演、displayName 文本行）维持 open 待后续批次。（2026-10-05 UI-T57 合入段补注——acc/ui-t57/1 验收 S5）"
+      "resolution": "全部兑现闭环（fixedBy=UI-T60，2026-10-05 合入段翻转）：兑现①关节侧＝UI-T53（273894b2）；②基座安装＝UI-T54（99691076）；③工具安装接口/场景世界位姿＝UI-T55（e5c9fb00）；④TCP 列表结构化编辑＝UI-T57（b3a608e9，displayName 文本行随 UI-T58 补齐——653a24dc）；⑤位姿集/传动编辑页＝UI-T60（fcdbc049，acc/ui-t60/1@daec68e8 全项 pass 合入）。余项注：类型枚举行（ParamEditModel 数值面）与 L-4 分组重演仍为登记待后续批次（UI-T53 卡诚实边界——不阻塞本条闭环，编辑主链五类对象全量可编辑）。"
     },
     {
       "id": "F-498",
@@ -5127,10 +5127,10 @@
       "id": "F-515",
       "source": "acc/ui-t56/1@b3da53be 验收记录 S3（UI-T56 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "两 gui TU 命令对账辅助调用点对 modelingDomainCommands() 冗余二次调用（每调用点重建目录 vector——无行为影响，微开销）。建议后续批次调用点提为局部静态或夹具成员一次构建。",
-      "owner": "后续 gui 测试维护批次顺手处理（无行为影响不单独出批次）"
+      "owner": "已随 UI-T60 随批闭环（fcdbc049——两 TU commandButtonsOf 调用点改传局部 catalog 变量），fixedBy=UI-T60（2026-10-05 合入段治理提交翻转）"
     },
     {
       "id": "F-516",
@@ -5145,10 +5145,10 @@
       "id": "F-517",
       "source": "acc/ui-t58/1@e40883f2 验收记录建议级三条（UI-T58 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "UI-T58 验收建议合集：①setWritable 的 L-7 显示名行半区缺动态窗口测试覆盖（做红②注入 setWritable 半区缺陷未红——refreshTcpPane 刷新半区兜底，双半区设计生效非行为缺陷；建议补『可写选中→切只读→无刷新事件』用例钉扎 setWritable 半区）；②全框架 fresh 树字面构建因框架侧 RWSimulatorPlugin 失败（head 28 errors/base 71 errors——与送验 SHA 无关，错误在框架头消费链，主树与既往验收树均无该插件产物）；建议 DTB §5.1 明文登记集成口径＝受影响目标冷构建；③ird_gates 引擎输出经 MSBuild 存在消息粘连与对称双回显——按物理行提取会得 ≠101 计数（双侧比对须按引擎自报汇总计数或粘连感知提取；本备忘应随验收指令传达）",
-      "owner": "①后续 gui 测试维护批次顺手补全；②③治理批次（DTB §5.1 口径登记＋验收备忘传达）"
+      "owner": "全部闭环：①已随 UI-T60 随批闭环（fcdbc049——TcpDisplayNameEdit_SetWritableDynamicWindow gui 用例，setWritable 半区独立断言面）；②③已随 UI-T60 随批经 DTB §5.1『验证口径』行登记闭环（受影响目标冷构建＋宿主接线批次必建 sdurws_ird_ui_plugin＋ird_gates 输出提取备忘），fixedBy=UI-T60（2026-10-05 合入段治理提交翻转）"
     },
     {
       "id": "F-518",
@@ -5163,10 +5163,19 @@
       "id": "F-519",
       "source": "acc/ui-t59/1@e2734d83 验收记录建议级四条（UI-T59 独立子会话对抗式验收 2026-10-05）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-05",
       "title": "UI-T59 验收建议合集：①PreviewExportsFourKinds 未钉扎导出 XML 中 t-world-frame 属性值（做红③实证——Scene 分支 worldTframe 换恒等变换不翻红：worldToBase 互证为测试侧自洽复算、实现导出值未入断言，覆盖缺口非行为缺陷）——建议补属性值断言；②PreviewPane_MultiTypeChain 剪贴板断言未隔离系统剪贴板状态（做红②首跑被 Windows 跨进程剪贴板残留碰巧满足，哨兵隔离后翻红——测试卫生/确定性缺口）——建议预置哨兵文本；③AppliedPreviewPushChain 用例注释称『经装配门面绑定』与实际直调 module 不符——表述修订；④ModelingUiModule.cpp bindWorkCellExport 定义行 4 空格缩进漂移（UI-T59 引入——纯格式）",
-      "owner": "①②后续 gui/域测试维护批次顺手补全（S1 补值断言＋S2 哨兵隔离）；③④随下一触碰批次顺手修正（S3 表述＋S4 缩进——均无行为影响）"
+      "owner": "全部闭环：①②③④已随 UI-T60 随批闭环（fcdbc049——①t-world-frame 值断言〔测试侧 to_chars 同格式镜像〕②剪贴板哨兵隔离＋做红锚③注释表述修正④缩进修正），fixedBy=UI-T60（2026-10-05 合入段治理提交翻转）"
+    },
+    {
+      "id": "F-520",
+      "source": "acc/ui-t60/1@daec68e8 验收记录建议级两条（UI-T60 独立子会话对抗式验收 2026-10-05）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-05",
+      "title": "UI-T60 验收建议合集：①DTB §5.1 新增『验证口径』行与既有『语言/工具链』行熔接在同一物理行（『…为准 ||』连写——插入时换行丢失；内容零丢失、validate-docs 不查表格结构，但 GFM 渲染为畸形行）；②Parts.hpp 新增段注释括号排版瑕疵『（无量纲（ SI 系数 1）』多一空格",
+      "owner": "两条均已随 UI-T60 合入段治理提交修正闭环（D-1 行拆分＋D-2 一字修正），fixedBy=UI-T60 合入段（2026-10-05）——本条登记防『表格行熔接』复发（F-514/F-516① 同族：文档行编辑后须分列数/换行复核）"
     }
   ]
 }

@@ -802,7 +802,7 @@ std::optional<DrivetrainEditError> ensureDrivetrainEditTarget(ModelingWorkingSet
  * 规则：①ensureDrivetrainEditTarget（缺席创建/向量对齐/越界 fail-fast）；
  * ②有限性（ValueNotFinite，I-MDL-3）＋正值（RatioNotPositive，I-MDL-11）；
  * ③SourcedValue UserProvided 写入（MDL-05 显式权威一等值）＋恰一条变更
- * 记录。无量纲（ SI 系数 1）。
+ * 记录。无量纲（SI 系数 1）。
  */
 std::optional<DrivetrainEditError> applyDrivetrainRatioEdit(ModelingWorkingSet& ws,
                                                             std::size_t jointIndex,
