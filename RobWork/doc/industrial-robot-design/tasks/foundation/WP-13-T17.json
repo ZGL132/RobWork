@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T17",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "WorkCell 反向导入通道（MDL-18/AT-33，R2/阶段 D——有损提取＋提取报告；本契约为 planned 占位登记，阶段门禁未启用不得领取实施）",
+  "status": "planned",
+  "dependsOn": [
+    "WP-13-T05",
+    "IO-T05"
+  ],
+  "requirements": [
+    "MDL-18（任意外部 WorkCell .wc.xml 反向导入——有损提取，区别于 MDL-20 自有工件保真回读；结果为草稿不直接形成正式模型）",
+    "AT-33（从 .wc.xml 创建草稿模型＋提取报告——不可表达/未保留内容逐项列出）"
+  ],
+  "designRefs": [
+    "units/modeling.md#6.6",
+    "units/modeling.md#9.4.9",
+    "development-task-breakdown.md#2.14"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T17.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/wp13-t17/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改；.wc.xml 读取不引入框架 sdurw_loaders——DTB §4.6 '原则不使用、启用须登记'表行，启用须先登记）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1——导入产物为草稿，不经确认不产生修订）"
+  ],
+  "outputs": [
+    "modeling/include/sdurws/ird/modeling/WorkCellReverseImport.hpp＋src 实现（有损提取：设备/关节/限位/Q 构型/场景/碰撞设置→RobotDesign 草稿＋提取报告——不可表达/未保留内容逐项列出 ImportUnsupportedItem 复用面；不可表达内容按 MDL-10/12 同一判定规则处置）",
+    "IModelImportMapper::mapWorkCellXml 从 R1 NotImplemented 稳定诊断切换为真实提取（R1 边界响应 'workcell-channel-r2' 引导面退役——Import.hpp kind 词表表尾退役纪律随批登记）",
+    "io 侧 GenericXml 通用 XML 通道消费面（本卡不授权 io/** 文件——GenericXml 签名冻结归 io 侧后续契约，冻结后由 status 翻转时的契约增量修订扩授权）",
+    "导入向导 WorkCell 来源形态（PM-01 向导第五来源——草稿落点与取消/预算语义同 §6.7 既有边界）",
+    "测试：提取语义逐项用例（关节类型/限位/位姿/几何/碰撞提取）＋不可表达清单用例＋草稿不产生修订断言＋有损报告逐项列出断言"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟）",
+    "全套件回归＋新增提取语义用例全绿",
+    "ird_gates base..branch 零新增",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/wp13-t17/"
+  ],
+  "acceptance": [
+    "AT-33：从 .wc.xml 创建草稿模型＋提取报告（不可表达/未保留内容逐项列出）；不可表达内容按统一判定处置",
+    "导入结果永远是草稿——不经确认不产生修订（PA-1 权威唯一；§6.6 原文）",
+    "边界红线：'从 WorkCell XML 新建项目来源'维持明确不做（PM 明确不做清单——建模通道≠新建来源通道）"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "阶段门禁：本任务 R2/阶段 D 启用前不得实施（REQUIREMENTS MDL-18 分期 R2；modeling.md §6.6 '仅边界设计'；DTB §2.14 WP-13-T17 行依赖'阶段 D 启用'）——领取前置＝所有者阶段 D 启用裁决＋io 卡冻结 IResourceReader GenericXml 具名签名（io.md 现未定义）",
+    "框架读侧禁用：.wc.xml 解析不引入 sdurw_loaders（框架写侧/读侧同表行管辖——自行实现 XML 处理为 modeling/io 既有设计哲学，Import.cpp/XacroExpand 先例）",
+    "有损提取报告是本任务的验收核心（AT-33 字面）——不可表达/未保留内容逐项列出不是附属品，缺失即验收 fail"
+  ],
+  "branch": "wp13-t17",
+  "note": "【planned 占位登记（2026-10-05，队列治理批次）】MDL-18 .wc.xml 互操作按所有者队列指令'另立任务'落位本契约（此前仅 DTB §2.14 表行占位无契约文件；表行依赖 WP-11-T06 系 io 旧编号——落位实绩＝IO-T05 资源导入服务 reader 面，已 done）。R2/阶段 D 门禁未启用：①所有者阶段启用裁决未作；②io 卡 IResourceReader GenericXml 签名未冻结（modeling.md §6.6 原文'R2 启用前由 io 卡冻结'——须 io 侧增补契约后方可持续）。两前置齐备前本契约保持 planned 不得领取；status 翻转 ready 归所有者/编排者。R1 边界现状＝IModelImportMapper::mapWorkCellXml 返回 NotImplemented 稳定诊断（§9.4.9；'workcell-channel-r2' 引导词表已登记于 ImportUnsupportedItem kind）——用户引导链已通，通道本体待阶段 D。"
+}

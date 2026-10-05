@@ -622,6 +622,8 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 
 ### 6.6 WorkCell 反向导入（MDL-18，R2／阶段 D——仅边界设计）
 
+> 【planned 占位登记（2026-10-05 队列治理批次）】本通道任务契约已落位＝tasks/foundation/WP-13-T17.json（status=planned——R2/阶段 D 门禁未启用不得领取；领取前置＝所有者阶段 D 启用裁决＋io 卡冻结 IResourceReader GenericXml 具名签名）。
+
 - 通道：`IModelImportMapper::mapWorkCellXml(...)`（有损提取）；io 侧 `IResourceReader` 通用 XML 通道（`GenericXml` 文件层形态，具体签名 io.md 未定义——R2 启用前由 io 卡冻结）。
 - 提取语义：关节/限位/位姿/几何/碰撞设置→RobotDesign 草稿＋**提取报告**（不可表达/未保留内容逐项列出）；不可表达内容按 MDL-10/12 **同一判定规则**处置；结果永远是草稿，不经确认不产生修订。
 - R1 不实现、不留桩代码（DTB WP-13-T17，阶段 D 启用）；"从 WorkCell XML 新建项目来源"维持明确不做（PM 明确不做清单）。
