@@ -18,6 +18,7 @@
 
 #include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory/kTemplateIdGeneric6R（首版装配会话种子——真实域路径）
 
+#include <sdurws/ird/modeling/Package.hpp>    // packageChecklistText（UI-T61——规范包清单预览域面）
 #include <sdurws/ird/modeling/Codec.hpp>       // RobotDesignCodec/kCurrentFormatVersion（根对象确定性编码——§4.8）
 #include <sdurws/ird/modeling/ObjectTypes.hpp> // kRobotDesignObjectType（根对象 token——runtime 单一权威的 using 重导出）
 
@@ -273,6 +274,42 @@ void ModelingUiModule::attachPanelWiring()
         m_panel->setPreviewContentProvider(
             [this](const std::string& kind)
                 -> std::optional<ModelingPanelWidget::PreviewContentAnswer> {
+                // "规范包清单"（UI-T61——F-498 余项）本地应答：数据源＝会话
+                // 基线定格内容（已应用修订的草稿值视图——D-MDL-10），不经
+                // 宿主编译快照（清单面是对象级 MDL-20/V-20 语义，非编译产
+                // 物）；文本由域 packageChecklistText 确定性渲染（UI 零拼
+                // 装同款纪律）。缺席＝撤销/重做失效或未应用——诚实缺席。
+                if (kind == "package-checklist") {
+                    if (!m_session.appliedPreview.has_value()
+                        || !m_session.baselineSnapshot.has_value()) {
+                        return std::nullopt;
+                    }
+                    const ModelingWorkingSet& baseline = *m_session.baselineSnapshot;
+                    std::vector<ObjectVariant> parts;
+                    parts.reserve(baseline.toolObjects.size()
+                                  + baseline.sceneObjects.size() + 2);
+                    for (const ToolDefinition& t : baseline.toolObjects) {
+                        parts.push_back(ObjectVariant{t});
+                    }
+                    for (const SceneObject& s : baseline.sceneObjects) {
+                        parts.push_back(ObjectVariant{s});
+                    }
+                    if (baseline.poseSetObject.has_value()) {
+                        parts.push_back(ObjectVariant{*baseline.poseSetObject});
+                    }
+                    if (baseline.drivetrainObject.has_value()) {
+                        parts.push_back(ObjectVariant{*baseline.drivetrainObject});
+                    }
+                    ModelingPanelWidget::PreviewContentAnswer answer;
+                    answer.headerLine =
+                        "来源修订 " + m_session.appliedPreview->revision.toCanonical()
+                        + "（内容定格于应用时刻——D-MDL-10）｜对象 "
+                        + std::to_string(parts.size()) + " 个";
+                    answer.sourceObject =
+                        "checklist-objects=" + std::to_string(parts.size());
+                    answer.text = modeling::packageChecklistText(baseline.design, parts);
+                    return answer;
+                }
                 std::string headerLine;
                 std::string sourceObject;
                 std::string text;

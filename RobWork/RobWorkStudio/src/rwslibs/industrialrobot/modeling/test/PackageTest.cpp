@@ -605,4 +605,40 @@ TEST(MdlPackage, TamperedPackageRejected_WP13T13_ACC3_ACC4)
     EXPECT_TRUE(std::filesystem::exists(packageFile));
 }
 
+
+/**
+ * 规范包清单文本渲染（UI-T61——F-498 余项）：同输入→同文本（确定性）＋
+ * 五组词表覆盖＋行数＝清单条目数＋两行头＋逐项渲染抽验（group | path |
+ * valueText 管道分隔）。数据面＝roundtripChecklist 单一实现（本函数仅
+ * 渲染——NFR-MNT-04 的渲染侧单点）。
+ */
+TEST(MdlPackage, PackageChecklistText_Deterministic_UI_T61)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-20"},
+                  std::vector<std::string>{"F-498"});
+
+    PackageFixture fx;
+    const std::vector<ObjectVariant> parts = fx.originalParts();
+
+    const std::string text = packageChecklistText(fx.design, parts);
+    EXPECT_FALSE(text.empty()) << "清单文本非空";
+    // 确定性（同输入→同文本——NFR-COR-02）。
+    EXPECT_EQ(text, packageChecklistText(fx.design, parts)) << "同输入同字节";
+
+    // 首两行头（标题＋条目计数）与五组词表覆盖。
+    EXPECT_NE(text.find("# 规范包 roundtrip 逐项清单"), std::string::npos);
+    const std::vector<PackageCheckItem> items = roundtripChecklist(fx.design, parts);
+    ASSERT_FALSE(items.empty());
+    EXPECT_NE(text.find("# 条目 " + std::to_string(items.size()) + " 项"),
+              std::string::npos) << "计数行与清单条目数一致";
+    for (const char* group : {"authority", "physics", "resource", "collision", "pose"}) {
+        EXPECT_NE(text.find(std::string("\n") + group + " | "), std::string::npos)
+            << "五组词表行在场：" << group;
+    }
+    // 逐项渲染抽验（首条目整行逐字节命中——含 group/path/valueText 管道分隔）。
+    const std::string firstLine = items.front().group + " | " + items.front().path
+                                + " | " + items.front().valueText + "\n";
+    EXPECT_NE(text.find(firstLine), std::string::npos) << "首条目渲染逐字节命中";
+}
+
 }  // namespace

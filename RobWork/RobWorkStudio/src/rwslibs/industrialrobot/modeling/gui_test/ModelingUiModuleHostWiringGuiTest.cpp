@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <QComboBox>
+#include <QLabel>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QWidget>
@@ -251,4 +252,67 @@ TEST(ModelingUiModuleHostWiring, AppliedPreviewPushChain_Fix_UI_T59)
     QApplication::processEvents();
     EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("D-MDL-10")))
         << "修订内容未知＝预览页空态诚实呈现（不虚构）";
+}
+
+/**
+ * 规范包清单预览链（UI-T61——F-498 余项）：combo 第六项走模块本地应答
+ * （数据源＝会话基线定格内容，不经宿主编译快照回调——asked 替身保持
+ * 未触状态）；未应用＝诚实缺席；noteAppliedRevision 定格后（推送触发
+ * 重渲）清单文本呈现（标题＋修订头行）；撤销/重做失效回落缺席态。
+ */
+TEST(ModelingUiModuleHostWiring, PackageChecklistPreviewChain_UI_T61)
+{
+    IRD_TEST_INFO("MDL-20", {}, std::nullopt);
+
+    ModelingUiModule module;
+    module.seedTemplateSession();
+    // 宿主 XML 类替身（不被本链触碰——规范包清单走模块本地应答）。
+    bool hostAsked = false;
+    module.bindWorkCellPreview(
+        [&hostAsked](const std::string&, std::string&, std::string&,
+                     std::string&, std::string&) -> bool {
+            hostAsked = true;
+            return false;
+        });
+
+    QWidget* widget = module.createPanel();
+    ASSERT_NE(widget, nullptr);
+    QComboBox* combo =
+        widget->findChild<QComboBox*>(QStringLiteral("ird_modeling_preview_kind"));
+    ASSERT_NE(combo, nullptr);
+    ASSERT_EQ(combo->count(), 6) << "六类预览（含规范包清单——UI-T61）";
+    QPlainTextEdit* preview =
+        widget->findChild<QPlainTextEdit*>(QStringLiteral("ird_modeling_preview_text"));
+    ASSERT_NE(preview, nullptr);
+
+    // 未应用修订：切第六项→诚实缺席（不虚构清单）。
+    combo->setCurrentIndex(5);
+    QApplication::processEvents();
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("预览不可用")));
+    EXPECT_FALSE(hostAsked) << "规范包清单不经宿主回调（模块本地应答）";
+
+    // 应用定格（noteAppliedRevision＝基线定格＋预览推送→重渲）：清单文本
+    // 呈现（标题行＋来源修订头行——generic-6r 种子的 authority 组行在场）。
+    const core::RevisionId appliedRev = core::RevisionId::generate();
+    module.noteAppliedRevision(appliedRev, std::nullopt);
+    QApplication::processEvents();
+    EXPECT_TRUE(preview->toPlainText().contains(
+                    QStringLiteral("规范包 roundtrip 逐项清单")))
+        << "清单文本呈现（基线定格内容——generic-6r 草稿）";
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("authority | ")))
+        << "authority 组行在场（关节 DH 逐项）";
+    QLabel* header =
+        widget->findChild<QLabel*>(QStringLiteral("ird_modeling_preview_source"));
+    ASSERT_NE(header, nullptr);
+    EXPECT_TRUE(header->text().contains(
+                    QStringLiteral("内容定格于应用时刻")))
+        << "来源头行（修订＋定格语义）";
+
+    // 撤销/重做形态失效→回落缺席态（D-MDL-10——不虚构内容）。
+    const core::BranchId branch = core::BranchId::generate();
+    module.bindSessionAnchor(branch, appliedRev);
+    module.onRevisionCommitted(branch, core::RevisionId::generate());
+    QApplication::processEvents();
+    EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("预览不可用")))
+        << "基线失效后清单缺席（诚实语义）";
 }

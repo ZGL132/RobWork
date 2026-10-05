@@ -220,6 +220,23 @@ struct PackageCheckItem {
 std::vector<PackageCheckItem> roundtripChecklist(const RobotDesign& design,
                                                  const std::vector<ObjectVariant>& parts);
 
+/**
+ * @brief 规范包 roundtrip 逐项清单的确定性文本渲染（§6.8——UI-T61 预览页
+ *        "规范包清单"类型的域侧数据面；F-498 余项）。
+ *
+ * 数据面＝roundtripChecklist 单一实现（NFR-MNT-04——本函数只做清单到
+ * 文本的确定性渲染，零第二判定/零第二排序）：首行清单标题＋条目计数行，
+ * 其后逐行 "group | path | valueText"（清单序即输出序——组序
+ * authority→physics→resource→collision→pose，组内对象/字段稳定序）。
+ * 三字段均为稳定文本（无换行/无竖线——清单契约），管道分隔无歧义。
+ *
+ * 消费面＝ui 模块"规范包清单"预览类型（已应用修订闭包的草稿值视图——
+ * 基线定格内容；D-MDL-10 预览仅呈现已应用修订）。确定性：同输入→同
+ * 文本（NFR-COR-02）；纯函数；线程安全；不抛。
+ */
+std::string packageChecklistText(const RobotDesign& design,
+                                 const std::vector<ObjectVariant>& parts);
+
 // =====================================================================
 // 导入：结果（§9.4.9 行"ImportOutcome"的落位承载——命名见
 // PackageExportOutcome 注）

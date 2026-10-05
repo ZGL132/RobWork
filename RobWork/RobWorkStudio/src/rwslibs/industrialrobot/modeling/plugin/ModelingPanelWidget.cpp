@@ -733,6 +733,11 @@ void ModelingPanelWidget::buildPreviewPane(QVBoxLayout* bottom)
         QStringLiteral("DWC XML"),
         QString::fromStdString(std::string(
             modeling::previewExportKindToken(modeling::PreviewExportKind::DwcXml))));
+    // 第六项"规范包清单"（UI-T61——F-498 余项）：非 XML 类——数据源＝已
+    // 应用修订闭包的草稿值视图（模块会话基线定格；不经宿主编译快照回调），
+    // 文本由域 packageChecklistText 确定性渲染（UI 零拼装同款纪律）。
+    m_previewKindCombo->addItem(QStringLiteral("规范包清单"),
+                                QStringLiteral("package-checklist"));
     kindRow->addWidget(m_previewKindCombo, 1);
     m_previewCopyBtn = new QPushButton(QStringLiteral("复制全部"), this);
     m_previewCopyBtn->setObjectName(QStringLiteral("ird_modeling_preview_copy"));
