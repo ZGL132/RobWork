@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T62",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "治理清扫批次：F-521 缺席文案 kind 分流＋F-513①② 验证基建口径（留痕全集登记＋verify-task 散文显式化）＋ui.md 版本行堆叠拆分＋F-503/F-504 契约模板口径",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T61"
+  ],
+  "requirements": [
+    "UX-02（缺席文案按预览类型语义精确——清单轨闭包措辞与 XML 轨编译产物措辞分流）",
+    "ERR-01（verify-task 散文条目不再静默 PASS——人工核对口径显式化，不产虚假通过语义）",
+    "NFR-MNT（文档健康——版本行堆叠拆分＋全文件表格分列审计，F-514/F-520① 防复发机制落实）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "development-task-breakdown.md#5.1",
+    "traceability/findings.json#F-521",
+    "traceability/findings.json#F-513",
+    "traceability/findings.json#F-511"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T62.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t62/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "modeling/plugin/ModelingPanelWidget.cpp：refreshPreview 缺席文案按 kind 分流（package-checklist＝闭包/对象级逐项清单措辞；XML 轨编译产物措辞保持——F-521）＋PackageChecklistPreviewChain_UI_T61 缺席段补分流断言（对象级逐项清单在场）",
+    "RobWork/scripts/industrialrobot/verify-task.ps1：散文条目显式化（F-513②）——Invoke-Expression -ErrorAction Stop 逐条捕获；Parse/CommandNotFound 类错误＝[manual] 人工核对口径计数（不产虚假通过语义）；其余异常原样重抛（验证失败轨保持致命）；汇总行分列机器可执行/散文人工核对条目数",
+    "units/ui.md：版本行堆叠拆分（F-514 防复发落实——v1.69 七列堆叠行照录拆为规范行＋六条'历史残段'行〔版本头失佚不臆补〕；v1.70 起规范行不动）＋全文件表格分列审计（发现 §13 十三行历史分列不齐——登记 F-522 留治理）",
+    "development-task-breakdown.md §5.1：新增'回归留痕全集口径'行（F-513①＋F-511/F-512——受影响套件 XML/log 全量落盘＋gate 双侧 hits＋未触碰套件以验收复现为准）＋'契约模板口径'行（F-503/F-504——allowedFiles 含契约自身路径＋附带修复文件逐列）＋F-517 验证口径行闭合管道补齐（UI-T60 D-1 拆分遗留）",
+    "测试：PackageChecklistPreviewChain_UI_T61 断言适配（分流文案）；全套件回归（ModelingPanelWidget 改动面）"
+  ],
+  "verify": [
+    "verify-task.ps1 行为实测（UI-T61 契约——散文条目显式 [manual] 计数、汇总行分列）",
+    "集成模式全套件回归：modeling_test 333/333＋modeling_gui_test 39/39＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44",
+    "ird_gates base..branch 零新增（引擎自报计数口径；归一化多重集比对见验收记录）",
+    "validate-docs/validate-task PASS（显式核验输出行非 0 tasks/duplicate——UI-T60 教训落实）；留痕 traceability/builds/ui-t62/"
+  ],
+  "acceptance": [
+    "F-521：清单轨缺席文案与 XML 轨分流（PackageChecklistPreviewChain 断言'对象级逐项清单'在场＋XML 轨既有用例文案不变）",
+    "F-513②：verify-task 散文条目显式 [manual]（UI-T61 契约实测 0 机器/4 人工核对汇总分列；无虚假 PASS 语义）",
+    "F-513①＋F-511/F-512：DTB §5.1 回归留痕全集口径行登记",
+    "F-503/F-504：DTB §5.1 契约模板口径行登记（UI-T53 已合入不追改）",
+    "ui.md 版本行拆分：七列堆叠→规范行＋历史残段照录（不臆补）＋全文件分列审计（F-522 登记历史不齐面）＋F-517 行闭合管道修复（D-1 遗留）",
+    "回归门槛：受影响目标零错误构建＋全套件回归＋validate 双 PASS（显式核验）；留痕 traceability/builds/ui-t62/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "verify-task.ps1 行为变化：真实命令的运行失败仍致命（Parse/CommandNotFound 类错误才判散文）——误吞验证失败的回归由 UI-T61 契约实测盯住（4 条散文全显式化）",
+    "ui.md 版本行残段为历史截段照录（版本头失佚不臆补）——后续版本行新增一律规范两列行（本批起堆叠面已清零，F-514 防复发机制由分列审计工具承接）",
+    "ui.md §13 十三行历史分列不齐为既有面（非本批引入）——逐行修需判读历史行语义，登记 F-522 留治理"
+  ],
+  "branch": "ui-t62",
+  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@b19ff973。治理清扫批次（建模面板序列收官后的建议级尾款——F-521 唯一代码面＋验证基建口径＋文档健康）。findings 翻转归合入段治理提交：F-521/F-513/F-511/F-512/F-503/F-504 fixed＋F-522 登记（§13 历史分列不齐面）；F-506/F-507/F-508/F-510 维持 open（owner 口径＝教训条目即处置，无新动作）。"
+}
