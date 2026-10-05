@@ -97,6 +97,11 @@ struct ModuleSessionState {
     std::optional<AppliedRevisionView> appliedPreview;
 };
 
+// UI-T63 从零创建面（CustomChainJointSpec/CustomChainDeclaration——完整型
+// 在 ModelingCommandFlows.hpp；flows→module 单向包含故此处仅前向声明，
+// 方法参数以 const& 传递、实现 TU 经 flows 头取得完整型）。
+struct CustomChainDeclaration;
+
 /**
  * @brief 建模插件界面模块（ui::IPluginUiModule 的建模侧实现——WP-24-T03
  *        首版装配起为正式继承形态；P-MDL-8 同形面消账）。
@@ -272,6 +277,20 @@ public:
      *        缺省行，判定接线随收口任务）。
      */
     void seedTemplateSession();
+
+    /**
+     * @brief custom-chain 六轴声明重种子（UI-T63——从零创建落点；域原语
+     *        组合：createDraft(custom-chain 1 轴种子)→addJointAt 补齐→
+     *        applyJointFieldEdit 逐轴声明〔Axis/ZeroOffset/Bounds/Origin
+     *        UserProvided——插件零计算逻辑〕。会话替换语义同
+     *        seedTemplateSession：根身份保留＋基线/已应用预览失效＋就绪
+     *        重算驱动面板刷新）。
+     *
+     * @param decls   [in] 六轴声明（恰六项——R1 合规创建面；其他轴数拒绝）
+     * @param summary [out] 中文回执/原因（面板状态行呈现）
+     * @return true＝草稿已按声明重建；false＝声明非法/域拒绝（会话不变）
+     */
+    bool reseedCustomChain(const CustomChainDeclaration& decls, std::string& summary);
 
     /**
      * @brief 创建面板（§10.9 PanelRegistration.factory 的模块半区——内部

@@ -34,6 +34,7 @@
 
 #include <sdurws/ird/ui/UiText.hpp>       // ui::resolveText（生产装配序解析值——UX-02）
 #include "plugin/ModelingUiModule.hpp"    // 被测模块（同单元 PRIVATE include 面）
+#include "plugin/ModelingCommandFlows.hpp" // CustomChainDeclaration 完整型（UI-T63——module 前向声明的实现 TU 面）
 #include "plugin/ModelingPanelWidget.hpp" // 面板具体类型（createPanel 返回值下转型——
                                           // 命令按钮对账需要目录序，QWidget 面不够）
 #include "plugin/PanelCommandCatalog.hpp" // modelingDomainCommands（对账目录）
@@ -318,4 +319,68 @@ TEST(ModelingUiModuleHostWiring, PackageChecklistPreviewChain_UI_T61)
     QApplication::processEvents();
     EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("预览不可用")))
         << "基线失效后清单缺席（诚实语义）";
+}
+
+// =====================================================================
+// UI-T63：custom-chain 六轴声明从零创建（模块 reseedCustomChain 真实域
+// 原语组合——createDraft(custom-chain 1 轴种子)→addJointAt 补齐→
+// applyJointFieldEdit 逐轴声明 UserProvided）
+// =====================================================================
+
+/**
+ * 声明重种子组合链（UI-T63）：未接线声明（null deps 形态＝flows 侧装配
+ * 缺陷，模块直调面 null decls 不适用——本用例直调 reseedCustomChain）：
+ * ①恰六轴校验（非六拒绝会话不变）；②合法声明→草稿六轴全 Revolute＋
+ * 声明值逐项 UserProvided 落位（轴线/Origin XYZ＋RPY 逐字）＋变更账面
+ * ＝待应用编辑＋基线/已应用预览失效；③rootObjectId 保留。
+ */
+TEST(ModelingUiModuleHostWiring, ReseedCustomChainComposition_UI_T63)
+{
+    IRD_TEST_INFO("MDL-02", {}, std::nullopt);
+
+    ModelingUiModule module;
+    module.seedTemplateSession();
+    const auto rootBefore = module.session().draft.rootObjectId;
+
+    // ①轴数拒绝（非六——R1 合规创建面；会话字节不变）。
+    CustomChainDeclaration bad;
+    bad.joints.assign(4, CustomChainJointSpec{});
+    std::string summary;
+    EXPECT_FALSE(module.reseedCustomChain(bad, summary));
+    EXPECT_NE(summary.find("恰六轴"), std::string::npos);
+    EXPECT_EQ(module.session().draft.design.joints.size(), std::size_t{6})
+        << "拒绝路径会话不变（generic-6r 种子仍在）";
+
+    // ②合法六轴声明：J2 轴 z 反向＋J4 Origin 位置/RPY 逐字（从零定义核验）。
+    CustomChainDeclaration decls;
+    decls.joints.assign(6, CustomChainJointSpec{});
+    decls.joints[1].axisZ = -1.0;
+    decls.joints[3].x = 0.25;
+    decls.joints[3].z = 0.10;
+    decls.joints[3].yaw = 0.5;
+    decls.joints[5].upper = 1.2;
+    EXPECT_TRUE(module.reseedCustomChain(decls, summary)) << summary;
+
+    const auto& ws = module.session().draft;
+    ASSERT_EQ(ws.design.joints.size(), std::size_t{6});
+    for (const auto& j : ws.design.joints) {
+        EXPECT_EQ(j.type, JointType::Revolute) << "R1 合规创建面＝全旋转";
+    }
+    // 声明逐项 UserProvided 落位（轴/Origin 逐字——域 applyJointFieldEdit
+    // 组合的真实效果，插件零计算逻辑）。
+    EXPECT_DOUBLE_EQ((*ws.design.joints[1].axis.tryValue())[2], -1.0);
+    // Origin：JointPose d()/r() 面——roll/pitch＝0、yaw＝0.5 的旋转核验
+    // （R(1,0)＝sin yaw／R(0,0)＝cos yaw——与域 ZYX 正解互证，无外联符号）。
+    const auto& o4 = ws.design.joints[3].origin.tryValue()->d();
+    EXPECT_DOUBLE_EQ(o4[0], 0.25);
+    EXPECT_DOUBLE_EQ(o4[2], 0.10);
+    const auto& R4 = ws.design.joints[3].origin.tryValue()->r();
+    EXPECT_NEAR(R4(1, 0), std::sin(0.5), 1e-12);
+    EXPECT_NEAR(R4(0, 0), std::cos(0.5), 1e-12);
+    EXPECT_DOUBLE_EQ(ws.design.joints[5].bounds.tryValue()->second, 1.2);
+    EXPECT_FALSE(ws.changes.empty()) << "声明编辑＝待应用账面";
+    EXPECT_EQ(ws.rootObjectId, rootBefore) << "根身份保留（种子替换语义）";
+    // 基线/已应用预览失效（D-MDL-10——预览页回落空态）。
+    EXPECT_FALSE(module.session().baselineSnapshot.has_value());
+    EXPECT_FALSE(module.session().appliedPreview.has_value());
 }

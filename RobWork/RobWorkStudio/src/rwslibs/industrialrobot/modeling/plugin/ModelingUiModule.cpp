@@ -16,7 +16,8 @@
 #include <stdexcept>
 #include <utility>
 
-#include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory/kTemplateIdGeneric6R（首版装配会话种子——真实域路径）
+#include <sdurws/ird/modeling/StructureEdit.hpp>  // addJointAt/structureEditErrorCodeToken（UI-T63 声明补轴——域原语）
+#include <sdurws/ird/modeling/Template.hpp>  // RobotDesignTemplateFactory/applyJointFieldEdit（首版种子＋UI-T63 声明驱动——真实域路径）
 
 #include <sdurws/ird/modeling/Package.hpp>    // packageChecklistText（UI-T61——规范包清单预览域面）
 #include <sdurws/ird/modeling/Codec.hpp>       // RobotDesignCodec/kCurrentFormatVersion（根对象确定性编码——§4.8）
@@ -371,6 +372,89 @@ void ModelingUiModule::seedTemplateSession()
     recomputeReadiness();
 }
 
+bool ModelingUiModule::reseedCustomChain(const CustomChainDeclaration& decls,
+                                         std::string& summary)
+{
+    m_guard.assertOnUiThread();
+    // 声明面校验（恰六项——R1 合规创建面；其他轴数拒绝不虚放——4/5 轴与
+    // 含 prismatic 链的创建确认仍受 creationEntryGuard 红线〔AT-20/§6.4〕，
+    // 本面不新增放行）。
+    if (decls.joints.size() != 6) {
+        summary = "custom-chain 声明须恰六轴（R1 合规创建面）——实得 "
+                + std::to_string(decls.joints.size()) + " 轴";
+        return false;
+    }
+    // 种子：custom-chain 1 轴（Revolute J1 行——createDraft 真实域路径，
+    // 禁手搓工作集）。fresh 上组合声明——拒绝时整体丢弃、会话字节不变。
+    const RobotDesignTemplateFactory factory;
+    std::vector<core::DiagnosticRecord> diags;
+    auto outcome = factory.createDraft(TemplateId{kTemplateIdCustomChain},
+                                       runtime::InstallationPresetToken::Ground,
+                                       "demo", diags);
+    if (!outcome.ok()) {
+        summary = "custom-chain 种子创建失败（装配缺陷——种子恒可产）";
+        return false;
+    }
+    ModelingWorkingSet fresh = outcome.get();
+    // 补齐至六轴（addJointAt 尾追加——种子 Revolute 同款，链序 j1..j6；
+    // 新关节种子＝T-MDL-1 J1 行表值〔Origin 恒零——随后声明 Origin 覆盖〕）。
+    for (std::size_t i = 1; i < decls.joints.size(); ++i) {
+        if (const auto err = addJointAt(fresh, i - 1)) {
+            summary = "custom-chain 补轴失败（" + std::string(structureEditErrorCodeToken(err->code))
+                    + "）：" + err->detail;
+            return false;
+        }
+    }
+    // 逐轴声明驱动既有域原语（Axis/ZeroOffset/Bounds/Origin——UserProvided
+    // 提交，插件零计算逻辑；域内校验＝权威裁决面：轴线可归一化/限位有序/
+    // Origin 有限性——拒绝即整体放弃，不产半成品草稿）。
+    for (std::size_t j = 0; j < decls.joints.size(); ++j) {
+        const CustomChainJointSpec& d = decls.joints[j];
+        const std::string jn = "J" + std::to_string(j + 1);
+        auto reject = [&](const JointEditError& err) {
+            summary = jn + "：" + err.detail;
+        };
+        if (const auto err = applyJointFieldEdit(
+                fresh, j, JointEditField::Axis,
+                JointEditValue{rw::math::Vector3D<double>(d.axisX, d.axisY, d.axisZ)})) {
+            reject(*err);
+            return false;
+        }
+        if (const auto err = applyJointFieldEdit(
+                fresh, j, JointEditField::ZeroOffset, JointEditValue{d.zero})) {
+            reject(*err);
+            return false;
+        }
+        if (const auto err = applyJointFieldEdit(
+                fresh, j, JointEditField::Bounds,
+                JointEditValue{JointLimits{d.lower, d.upper}})) {
+            reject(*err);
+            return false;
+        }
+        if (const auto err = applyJointFieldEdit(
+                fresh, j, JointEditField::Origin,
+                JointEditValue{JointOriginEditValue{d.x, d.y, d.z,
+                                                    d.roll, d.pitch, d.yaw}})) {
+            reject(*err);
+            return false;
+        }
+    }
+    // 提交：会话替换（seedTemplateSession 同款语义——根身份保留＋基线/
+    // 已应用预览失效＋就绪重算驱动面板刷新；声明编辑保留在 changes 账面
+    // ＝待应用编辑，应用修订后随基线消费）。
+    const std::optional<core::ObjectId> previousRoot = m_session.draft.rootObjectId;
+    m_session.draft = std::move(fresh);
+    m_session.draft.rootObjectId = previousRoot;
+    m_session.baselineSnapshot.reset();
+    m_session.appliedPreview.reset();
+    pushAppliedPreviewToPanel();
+    recomputeReadiness();
+    summary = "已按声明创建 custom-chain 六轴草稿（全旋转——R1 合规创建面；"
+              "声明编辑 " + std::to_string(m_session.draft.changes.size())
+            + " 项待应用）";
+    return true;
+}
+
 QWidget* ModelingUiModule::createPanel()
 {
     m_guard.assertOnUiThread();
@@ -421,11 +505,16 @@ bool ModelingUiModule::executeDomainCommand(const std::string& commandId)
 {
     m_guard.assertOnUiThread();
     // 流程依赖（宿主侧回调全量接线——flows 零模块类型依赖的测试缝形态）：
-    // reseedTemplate＝模板重种子；recomputeReadiness＝草稿变更后真判定；
+    // reseedTemplate＝模板重种子；reseedCustomChain＝custom-chain 声明重种
+    // 子（UI-T63——从零创建落点）；recomputeReadiness＝草稿变更后真判定；
     // selectedAnchor＝面板会话选中锚（estimate/diff 的目标解析输入面）；
     // exportWorkCellXml＝宿主绑定回调（UI-T56——快照取源＋域导出整体）。
     ModelingFlowDeps deps;
     deps.reseedTemplate = [this] { seedTemplateSession(); };
+    deps.reseedCustomChain =
+        [this](const CustomChainDeclaration& decls, std::string& summary) {
+            return reseedCustomChain(decls, summary);
+        };
     deps.recomputeReadiness = [this] { recomputeReadiness(); };
     deps.selectedAnchor = [this]() -> std::optional<core::ObjectId> {
         return m_panel != nullptr ? m_panel->selectedAnchor() : std::nullopt;

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T63",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "从零创建批次：new-from-template 参数化（模板选择＋custom-chain 六轴声明——Origin 位置＋RPY 从零定义）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T62"
+  ],
+  "requirements": [
+    "MDL-02（模板创建——custom-chain R1 可用：六轴全旋转逐轴声明）",
+    "MDL-09（声明经既有域原语 UserProvided 提交——插件零计算逻辑）",
+    "AT-20（创建入口守卫口径保持——4/5 轴与含 prismatic 链仍受 creationEntryGuard 红线，本批不新增放行）",
+    "ERR-01（声明非法域内诚实拒绝——fresh 丢弃会话不变，不产半成品）"
+  ],
+  "designRefs": [
+    "units/modeling.md#5.1",
+    "units/modeling.md#6.4",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T63.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t63/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "modeling/plugin/ModelingCommandFlows.hpp：CustomChainJointSpec（单轴声明十二标量——轴线 xyz/零位/限位下上限/Origin xyz＋rpy；类型不入载体＝R1 合规面恒 Revolute）＋CustomChainDeclaration（恰六项）＋ModelingDialogHost::declareCustomChain 缝（seedDefaults 预填参数）＋ModelingFlowDeps::reseedCustomChain（声明重种子回调）",
+    "modeling/plugin/ModelingCommandFlows.cpp：new-from-template 分流（chooseItem 选单：generic-6r 现行为｜custom-chain 声明路径——未接线装配缺陷 fail-closed）＋qtModelingDialogHost::declareCustomChain（QDialog 六行十三列表单——类型锁 Revolute＋逐格有限性校验拒绝关闭＋T-MDL-1 J1 种子预填 to_chars 文本）",
+    "modeling/plugin/ModelingUiModule.hpp/.cpp：reseedCustomChain 域原语组合（恰六轴校验→createDraft(custom-chain 1 轴种子)→addJointAt 补齐→applyJointFieldEdit 逐轴 Axis/ZeroOffset/Bounds/Origin UserProvided——拒绝 fresh 丢弃会话不变；提交语义同 seedTemplateSession：根身份保留＋基线/预览失效＋声明编辑入 changes 待应用账面）＋deps 接线",
+    "测试：FlowsTest NewFromTemplateCustomChain_UI_T63（声明透传逐字/选单取消/表单取消/未接线 fail-closed/域拒绝态）＋NewFromTemplateGeneric6RKept_UI_T63（第一项原行为回归）＋HostWiringGuiTest ReseedCustomChainComposition_UI_T63（恰六轴拒绝会话不变/合法声明→六轴全 Revolute＋轴/Origin 逐字 UserProvided〔旋转核验 R(1,0)=sin yaw〕＋变更账面＋根身份保留＋基线失效）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟 standalone）",
+    "集成模式：modeling_test 335/335（新增 2）＋modeling_gui_test 40/40（新增 1）＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44",
+    "ird_gates base..branch 零新增（引擎自报计数口径；归一化多重集比对见验收记录）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t63/（留痕全集口径——含 gate-all.log）"
+  ],
+  "acceptance": [
+    "声明透传：模板选择第二项→表单→声明逐字达 reseedCustomChain（flows 零改写）＋取消两态静默终止＋未接线 fail-closed＋域拒绝态透传——NewFromTemplateCustomChain_UI_T63（FlowsTest）",
+    "generic-6r 路径保持：选单第一项走 reseedTemplate 原行为（声明表单零进入）——NewFromTemplateGeneric6RKept_UI_T63",
+    "模块组合：恰六轴拒绝会话不变→合法声明→六轴全 Revolute＋轴/Origin 逐字 UserProvided（旋转核验 R(1,0)=sin yaw）＋变更账面＋根身份保留＋基线失效——ReseedCustomChainComposition_UI_T63（HostWiringGuiTest）",
+    "红线不触：本命令不新增放行（4/5 轴与含 prismatic 的创建确认仍受 creationEntryGuard；声明面恰六轴校验＋类型锁 Revolute——批次 A 范围声明）",
+    "回归门槛：受影响目标零错误构建（集成＋冒烟）＋全套件回归＋validate 双 PASS（显式核验）；留痕 traceability/builds/ui-t63/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "deps 按值返回——flows 测试替身状态必须在 FlowHarness 成员（lambda 捕 this），捕获函数局部引用即悬垂（实施实测）",
+    "flows 侧未接线断言＝deps 不设置（std::function 空判 null 路径）；harness 内 null-return 形态不可达 flow 装配缺陷分支（两条路径语义不同——harness 假 null 是'替身拒绝'非'未接线'）",
+    "Vector3D 无 .z() 取值（x()/y()/z() 是单位轴静态量）——标量取值用 operator[]；JointPose 呈现面＝d()/r()（无 x/yaw 字段）——RPY 核验走旋转矩阵元素（R(1,0)=sin yaw）",
+    "ModelingUiModule.hpp 对 CustomChainDeclaration 仅前向声明（flows→module 单向包含；方法参数 const&——实现 TU 经 flows 头取完整型）",
+    "声明编辑保留在 changes 账面＝待应用编辑（~29 条）——与 generic-6r 重种子（changes 清零）语义不同：声明是真编辑非模板种子，应用后随基线消费"
+  ],
+  "branch": "ui-t63",
+  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@64f84a74。批次 A（建议已获所有者'按照建议进行'指令）：new-from-template 参数化＋custom-chain 六轴从零声明（Origin 位置＋RPY）。红线不触声明：4/5 轴与含 prismatic 链的创建确认仍受 creationEntryGuard（AT-20 需求分期口径）；类型枚举行编辑（既有关节类型转换）仍为 UI-T53 登记诚实边界——本批类型在声明时给定（锁 Revolute）。七轴归 P-03 冻结。"
+}
