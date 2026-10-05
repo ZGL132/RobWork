@@ -53,6 +53,10 @@ struct FakeHost final : ModelingDialogHost {
     bool confirmImportAnswer = true;            ///< confirmImport 应答
     std::optional<QString> openPathAnswer;      ///< openFilePath 应答（nullopt＝取消）
     std::optional<QString> savePathAnswer;      ///< saveFilePath 应答（nullopt＝取消）
+    // custom-chain 声明表单应答（UI-T63——nullopt＝取消；nullopt 内值＝六轴
+    // 声明预置；declareCalls 计数留痕）。
+    std::optional<std::vector<CustomChainJointSpec>> declareAnswer;
+    int declareCalls = 0;
     QString lastConfirmText;                    ///< confirmProceed 文本留痕（D1 清单断言）
     int showInfoCount = 0;                      ///< showInfo 调用计数
     QStringList showInfoTexts;                  ///< showInfo 文本留痕
@@ -82,6 +86,12 @@ struct FakeHost final : ModelingDialogHost {
         ++showInfoCount;
         showInfoTexts << text;
     }
+    std::optional<std::vector<CustomChainJointSpec>> declareCustomChain(
+        const QString&, const CustomChainJointSpec&) override
+    {
+        ++declareCalls;
+        return declareAnswer;
+    }
 };
 
 /// 会话态＋依赖替身（selectedAnchor 预置＋recompute 计数）。
@@ -96,11 +106,34 @@ struct FlowHarness {
     bool exportAnswer = true;
     int exportCalls = 0;
     std::string exportLastPath;
+    // custom-chain 声明重种子替身状态（UI-T63——deps() 内 lambda 经 this
+    // 消费；wired=false＝未接线形态）。
+    bool reseedCustomWired = false;
+    bool reseedCustomAnswer = true;
+    int reseedCustomCalls = 0;
+    CustomChainDeclaration reseedCustomLast;
 
     ModelingFlowDeps deps()
     {
         ModelingFlowDeps d;
         d.reseedTemplate = [] {};
+        // custom-chain 声明重种子替身（UI-T63——记录声明＋可编程应答/摘要；
+        // 状态在 FlowHarness 成员〔deps 按值返回——捕获 this 防悬垂〕；
+        // wired=false＝不设置 deps〔flow 侧 null 检查＝装配缺陷 fail-closed
+        // 断言面〕）。
+        if (reseedCustomWired) {
+        d.reseedCustomChain =
+            [this](const CustomChainDeclaration& decls, std::string& summary) {
+                ++reseedCustomCalls;
+                reseedCustomLast = decls;
+                if (reseedCustomAnswer) {
+                    summary = "已按声明创建 custom-chain 六轴草稿（替身）";
+                } else {
+                    summary = "声明非法（替身拒绝态）";
+                }
+                return reseedCustomAnswer;
+            };
+        }
         d.recomputeReadiness = [this] { ++recomputeCalls; };
         d.selectedAnchor = [this] { return anchor; };
         if (exportWired) {
@@ -660,4 +693,95 @@ TEST(ModelingCommandFlows, ExportWorkCellXml_CancelAndOverwriteConfirm_UI_T56)
     ASSERT_TRUE(executeModelingCommand("modeling.export-workcell-xml",
                                        fx.session, fx.deps(), fx.host, accepted));
     EXPECT_EQ(fx.exportCalls, 1);
+}
+
+// =====================================================================
+// UI-T63 从零创建（custom-chain 六轴声明——new-from-template 参数化）
+// =====================================================================
+
+/**
+ * custom-chain 声明链（UI-T63）：模板选择第二项→声明表单→deps 透传
+ * （声明逐字达 reseedCustomChain——flows 零改写的编排面）；取消两态
+ * （选单取消/表单取消）静默终止；未接线＝装配缺陷 fail-closed。
+ */
+TEST(ModelingCommandFlows, NewFromTemplateCustomChain_UI_T63)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-02"}, std::vector<std::string>{"AT-20"});
+
+    FlowHarness fx;
+    fx.host.chooseItemAnswer = 1;  // 选第二项＝custom-chain
+    fx.host.declareAnswer = std::vector<CustomChainJointSpec>(6);
+    fx.host.declareAnswer->at(1).z = 0.4;  // 声明变化点（J2 轴 z——透传留痕）
+    fx.host.declareAnswer->at(3).x = 0.25;
+    fx.host.declareAnswer->at(3).yaw = 0.5;
+    fx.reseedCustomWired = true;
+
+    std::string summary;
+    const bool executed = executeModelingCommand(
+        "modeling.new-from-template", fx.session, fx.deps(), fx.host, summary);
+    ASSERT_TRUE(executed);
+    EXPECT_EQ(fx.host.declareCalls, 1);
+    EXPECT_EQ(fx.reseedCustomCalls, 1);
+    ASSERT_EQ(fx.reseedCustomLast.joints.size(), std::size_t{6});
+    EXPECT_DOUBLE_EQ(fx.reseedCustomLast.joints[1].z, 0.4) << "声明逐字透传（J2 轴）";
+    EXPECT_DOUBLE_EQ(fx.reseedCustomLast.joints[3].x, 0.25) << "声明逐字透传（J4 Origin）";
+    EXPECT_DOUBLE_EQ(fx.reseedCustomLast.joints[3].yaw, 0.5) << "声明逐字透传（J4 yaw）";
+    EXPECT_NE(summary.find("custom-chain"), std::string::npos);
+
+    // 选单取消＝静默终止（零声明零重种子）。
+    fx.host.chooseItemAnswer = std::nullopt;
+    summary.clear();
+    EXPECT_FALSE(executeModelingCommand("modeling.new-from-template",
+                                        fx.session, fx.deps(), fx.host, summary));
+    EXPECT_TRUE(summary.empty());
+    EXPECT_EQ(fx.host.declareCalls, 1) << "选单取消不进表单";
+
+    // 表单取消＝静默终止（零重种子）。
+    fx.host.chooseItemAnswer = 1;
+    fx.host.declareAnswer = std::nullopt;
+    summary.clear();
+    EXPECT_FALSE(executeModelingCommand("modeling.new-from-template",
+                                        fx.session, fx.deps(), fx.host, summary));
+    EXPECT_TRUE(summary.empty());
+    EXPECT_EQ(fx.reseedCustomCalls, 1);
+
+    // 未接线＝装配缺陷 fail-closed（原因就地）。
+    fx.host.declareAnswer = std::vector<CustomChainJointSpec>(6);
+    fx.reseedCustomWired = false;
+    summary.clear();
+    const bool executed2 = executeModelingCommand(
+        "modeling.new-from-template", fx.session, fx.deps(), fx.host, summary);
+    EXPECT_FALSE(executed2);
+    EXPECT_NE(summary.find("装配缺陷"), std::string::npos);
+
+    // 域拒绝态：deps 返回 false＋summary 透传（false＝流程失败语义）。
+    fx.reseedCustomWired = true;
+    fx.reseedCustomAnswer = false;
+    summary.clear();
+    EXPECT_FALSE(executeModelingCommand("modeling.new-from-template",
+                                        fx.session, fx.deps(), fx.host, summary));
+    EXPECT_NE(summary.find("替身拒绝态"), std::string::npos);
+}
+
+/**
+ * generic-6r 路径保持（UI-T63 参数化回归——选单第一项走 reseedTemplate
+ * 原行为；模板选择不改变既有重种子语义）。
+ */
+TEST(ModelingCommandFlows, NewFromTemplateGeneric6RKept_UI_T63)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-02"}, std::vector<std::string>{});
+
+    FlowHarness fx;
+    fx.host.chooseItemAnswer = 0;  // 选第一项＝generic-6r
+    bool reseeded = false;
+    ModelingFlowDeps d;
+    d.reseedTemplate = [&reseeded] { reseeded = true; };
+    d.recomputeReadiness = [] {};
+    std::string summary;
+    const bool executed = executeModelingCommand(
+        "modeling.new-from-template", fx.session, d, fx.host, summary);
+    ASSERT_TRUE(executed);
+    EXPECT_TRUE(reseeded);
+    EXPECT_EQ(fx.host.declareCalls, 0) << "generic-6r 路径不进声明表单";
+    EXPECT_NE(summary.find("generic-6r"), std::string::npos);
 }

@@ -54,6 +54,52 @@ namespace sdurws::ird::modeling {
  *
  * 值面约定：返回 nullopt/false＝用户取消（流程静默终止——非失败）。
  */
+
+/**
+ * @brief custom-chain 单轴声明值（UI-T63——从零创建面的表单行载体；纯值）。
+ *
+ * R1 合规创建面＝六轴全旋转：类型不入本载体（种子恒 Revolute——prismatic/
+ * continuous/fixed 的创建声明受 creationEntryGuard 需求分期红线约束，归
+ * 所有者裁决通道）。单位：轴线无量纲、零位/限位随关节类型（rad）——
+ * Origin 平移 m／姿态 rad（ZYX）。
+ */
+struct CustomChainJointSpec {
+    double axisX = 0.0;   ///< 关节轴线 x 分量（无量纲，可归一化——I-MDL-6）
+    double axisY = 0.0;   ///< 关节轴线 y 分量
+    double axisZ = 1.0;   ///< 关节轴线 z 分量（缺省 z 轴——T-MDL-1 J1 同款）
+    double zero = 0.0;    ///< 零位偏置（rad）
+    double lower = -1.5;  ///< 限位下限（rad）
+    double upper = 1.5;   ///< 限位上限（rad）
+    double x = 0.0;       ///< Origin 平移 x（m，父连杆系）
+    double y = 0.0;       ///< Origin 平移 y（m）
+    double z = 0.0;       ///< Origin 平移 z（m）
+    double roll = 0.0;    ///< Origin 姿态 roll（rad，ZYX）
+    double pitch = 0.0;   ///< Origin 姿态 pitch（rad）
+    double yaw = 0.0;     ///< Origin 姿态 yaw（rad）
+
+    bool operator==(const CustomChainJointSpec& o) const noexcept
+    {
+        return axisX == o.axisX && axisY == o.axisY && axisZ == o.axisZ
+            && zero == o.zero && lower == o.lower && upper == o.upper
+            && x == o.x && y == o.y && z == o.z && roll == o.roll
+            && pitch == o.pitch && yaw == o.yaw;
+    }
+    bool operator!=(const CustomChainJointSpec& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief custom-chain 六轴声明集（UI-T63——恰六项；R1 合规创建面轴数固定）。
+ */
+struct CustomChainDeclaration {
+    std::vector<CustomChainJointSpec> joints;  ///< 恰六项（链序 j1..j6）
+
+    bool operator==(const CustomChainDeclaration& o) const noexcept
+    {
+        return joints == o.joints;
+    }
+    bool operator!=(const CustomChainDeclaration& o) const noexcept { return !(*this == o); }
+};
+
 struct ModelingDialogHost {
     virtual ~ModelingDialogHost() = default;
 
@@ -74,6 +120,18 @@ struct ModelingDialogHost {
     virtual bool confirmImport(const QString& summaryText) = 0;
     /// 结论呈现（权威切换判定报告/diff 报告——纯知会，仅"确定"钮）。
     virtual void showInfo(const QString& title, const QString& text) = 0;
+
+    /**
+     * @brief custom-chain 六轴声明表单（UI-T63——从零创建面；nullopt＝取消）。
+     *
+     * 生产＝Qt 模态表单（六行×[类型锁 Revolute｜轴线 xyz｜零位｜限位下/上限｜
+     * Origin xyz/r/p/y]——R1 合规创建面＝六轴全旋转，4/5 轴与含 prismatic
+     * 链的创建确认仍受 creationEntryGuard 红线约束〔需求分期口径，本批不
+     * 触〕）；替身＝测试缝预置应答。seedDefaults＝表单预填种子（T-MDL-1
+     * J1 行——sixAxisTemplateDefaults().front() 单一权威）。
+     */
+    virtual std::optional<std::vector<CustomChainJointSpec>> declareCustomChain(
+        const QString& title, const CustomChainJointSpec& seedDefaults) = 0;
 };
 
 /// 生产宿主（真实 Qt 模态——flows 的缺省装配；无状态）。
@@ -86,6 +144,10 @@ ModelingDialogHost& qtModelingDialogHost();
 struct ModelingFlowDeps {
     /// 模板重种子（new-from-template 落点——模块 seedTemplateSession 同义）。
     std::function<void()> reseedTemplate;
+    /// custom-chain 声明重种子（UI-T63——从零创建落点：域原语组合
+    /// createDraft(custom-chain)→addJointAt→applyJointFieldEdit 逐轴声明；
+    /// false＝声明非法/域拒绝，原因入 summary）。
+    std::function<bool(const CustomChainDeclaration&, std::string&)> reseedCustomChain;
     /// 就绪重算（草稿变更后——模块 recomputeReadiness 同义）。
     std::function<void()> recomputeReadiness;
     /// 当前选中锚（面板会话选中态——estimate-properties 的目标解析输入）。

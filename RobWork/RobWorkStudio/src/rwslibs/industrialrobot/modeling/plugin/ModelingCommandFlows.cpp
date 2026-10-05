@@ -16,8 +16,14 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QString>
+#include <QDialog>                                // custom-chain 声明表单（UI-T63）
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QTableWidget>
 
 #include <algorithm>
+#include <charconv>                               // std::to_chars（UI-T63 声明表单预填文本）
+#include <cmath>                                   // std::isfinite（表单逐格校验）
 #include <cctype>
 #include <filesystem>
 #include <set>
@@ -36,7 +42,8 @@
 #include <sdurws/ird/modeling/ModelDiff.hpp>     // ModelDiffService（与基线比较）
 #include <sdurws/ird/modeling/ObjectTypes.hpp>   // 五对象 token（闭包视图路由键）
 #include <sdurws/ird/modeling/PropertyEstimation.hpp>  // PropertyEstimator/SegmentSpec（批次C 估算流）
-#include <sdurws/ird/modeling/Template.hpp>      // makeLinkPlaceholderCylinder/kPlaceholderCylinderRadius（批次C）
+#include <sdurws/ird/modeling/Template.hpp>      // makeLinkPlaceholderCylinder/sixAxisTemplateDefaults（批次C＋UI-T63 声明预填种子）
+#include <sdurws/ird/ui/UiTheme.hpp>             // ui::palette（声明表单警示色——主题词表单点）
 #include <sdurws/ird/modeling/Package.hpp>       // ModelPackagePort（MDL-20 导出/导入）
 #include "ModelingXacroBridge.hpp"            // 受控展开桥（独立 TU——XacroExpand 不可与 DhConvert 共 TU）
 #include <sdurws/ird/ui/UiText.hpp>              // resolveText（按钮文案同源的呈现值）
@@ -97,6 +104,100 @@ public:
     void showInfo(const QString& title, const QString& text) override
     {
         QMessageBox::information(nullptr, title, text);
+    }
+
+    std::optional<std::vector<CustomChainJointSpec>> declareCustomChain(
+        const QString& title, const CustomChainJointSpec& seedDefaults) override
+    {
+        // 六轴声明表单（UI-T63——从零创建面）：QTableWidget 六行十三列
+        // [类型锁 Revolute｜轴线 xyz｜零位｜限位下/上限｜Origin xyz/r/p/y]，
+        // 预填 T-MDL-1 J1 行种子（sixAxisTemplateDefaults 单一权威——调用方
+        // 传入）；OK 时逐格 toDouble 校验（非法输入定位提示并拒绝关闭），
+        // Cancel＝nullopt 取消。
+        QDialog dialog(nullptr);
+        dialog.setWindowTitle(title);
+        auto* lay = new QVBoxLayout(&dialog);
+        auto* note = new QLabel(QStringLiteral(
+            "R1 合规创建面：类型 Revolute（六轴全旋转）；轴线无量纲、零位/限位"
+            "rad、Origin 位置 m／姿态 rad（ZYX）。4/5 轴与含 prismatic 链受创"
+            "建入口守卫约束（AT-20/§6.4）。"), &dialog);
+        note->setWordWrap(true);
+        lay->addWidget(note);
+        auto* table = new QTableWidget(6, 13, &dialog);
+        table->setHorizontalHeaderLabels(QStringList{
+            QStringLiteral("类型"), QStringLiteral("轴 x"), QStringLiteral("轴 y"),
+            QStringLiteral("轴 z"), QStringLiteral("零位"), QStringLiteral("限位下"),
+            QStringLiteral("限位上"), QStringLiteral("Origin x"), QStringLiteral("Origin y"),
+            QStringLiteral("Origin z"), QStringLiteral("R（roll）"),
+            QStringLiteral("P（pitch）"), QStringLiteral("Y（yaw）")});
+        const double seedV[13] = {
+            0, seedDefaults.axisX, seedDefaults.axisY, seedDefaults.axisZ,
+            seedDefaults.zero, seedDefaults.lower, seedDefaults.upper,
+            seedDefaults.x, seedDefaults.y, seedDefaults.z,
+            seedDefaults.roll, seedDefaults.pitch, seedDefaults.yaw};
+        QString seedTexts[13];  // 列 0＝类型锁不使用（硬编码 Revolute）
+        for (int c = 1; c < 13; ++c) {
+            char buf[32];
+            const auto r = std::to_chars(buf, buf + sizeof(buf), seedV[c]);
+            seedTexts[c] = QString::fromLatin1(buf, static_cast<qsizetype>(r.ptr - buf));
+        }
+        for (int row = 0; row < 6; ++row) {
+            for (int c = 0; c < 13; ++c) {
+                auto* item = new QTableWidgetItem(c == 0 ? QStringLiteral("Revolute")
+                                                         : seedTexts[c]);
+                if (c == 0) {
+                    item->setFlags(item->flags() & ~Qt::ItemIsEditable);  // 类型锁
+                }
+                table->setItem(row, c, item);
+            }
+            table->setVerticalHeaderItem(row, new QTableWidgetItem(
+                QStringLiteral("J%1").arg(row + 1)));
+        }
+        lay->addWidget(table);
+        auto* errLabel = new QLabel(QString(), &dialog);
+        errLabel->setStyleSheet(
+            QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kWarning)));
+        lay->addWidget(errLabel);
+        auto* buttons =
+            new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+        lay->addWidget(buttons);
+        QObject::connect(buttons, &QDialogButtonBox::accepted, &dialog, [&]() {
+            // 逐格校验（列 1..12 须为有限数值——非法定位提示并拒绝关闭）。
+            for (int row = 0; row < 6; ++row) {
+                for (int c = 1; c < 13; ++c) {
+                    const QTableWidgetItem* it = table->item(row, c);
+                    bool ok = false;
+                    const double v = it != nullptr ? it->text().toDouble(&ok) : 0.0;
+                    if (!ok || !std::isfinite(v)) {
+                        errLabel->setText(QStringLiteral(
+                            "J%1 第 %2 列不是有效数值——请修正后重试").arg(row + 1).arg(c));
+                        return;
+                    }
+                }
+            }
+            dialog.accept();
+        });
+        QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        if (dialog.exec() != QDialog::Accepted) { return std::nullopt; }
+        std::vector<CustomChainJointSpec> joints;
+        joints.reserve(6);
+        for (int row = 0; row < 6; ++row) {
+            CustomChainJointSpec spec;
+            spec.axisX = table->item(row, 1)->text().toDouble();
+            spec.axisY = table->item(row, 2)->text().toDouble();
+            spec.axisZ = table->item(row, 3)->text().toDouble();
+            spec.zero = table->item(row, 4)->text().toDouble();
+            spec.lower = table->item(row, 5)->text().toDouble();
+            spec.upper = table->item(row, 6)->text().toDouble();
+            spec.x = table->item(row, 7)->text().toDouble();
+            spec.y = table->item(row, 8)->text().toDouble();
+            spec.z = table->item(row, 9)->text().toDouble();
+            spec.roll = table->item(row, 10)->text().toDouble();
+            spec.pitch = table->item(row, 11)->text().toDouble();
+            spec.yaw = table->item(row, 12)->text().toDouble();
+            joints.push_back(spec);
+        }
+        return joints;
     }
 };
 
@@ -507,7 +608,8 @@ bool executeModelingCommand(const std::string& commandId,
 {
     summary.clear();
 
-    // ---- modeling.new-from-template（模板新建——TemplateFactory→草稿）----
+    // ---- modeling.new-from-template（模板新建——TemplateFactory→草稿；
+    //      UI-T63 参数化：模板选择＋custom-chain 六轴逐轴声明从零创建）----
     if (commandId == "modeling.new-from-template") {
         if (!session.draft.changes.empty()) {
             // 有未应用编辑——破坏性重建先确认（SA-15 确认流的最小形态：
@@ -518,13 +620,57 @@ bool executeModelingCommand(const std::string& commandId,
                     .arg(session.draft.changes.size()));
             if (!proceed) { return false; }
         }
-        if (!deps.reseedTemplate) {
-            summary = "模板重种子出口未接线（装配缺陷）";
+        // 模板选择（UI-T63——此前硬编码 generic-6r 重种子；R1 合规创建面
+        // ＝generic-6r 种子 或 custom-chain 六轴全旋转逐轴声明。4/5 轴与
+        // 含 prismatic 链仍受 creationEntryGuard 红线约束〔AT-20/§6.4〕，
+        // 本命令不新增放行）。
+        const auto picked = host.chooseItem(
+            QStringLiteral("从模板新建"),
+            QStringLiteral("选择模板（R1 合规创建面——4/5 轴与含 prismatic 链"
+                           "受创建入口守卫约束）"),
+            QStringList{QStringLiteral("六轴通用串联（generic-6r——T-MDL-1 种子）"),
+                        QStringLiteral("自定义链（custom-chain——六轴逐轴声明，"
+                                       "全旋转，Origin 位置＋RPY 从零定义）")});
+        if (!picked.has_value()) { return false; }  // 用户取消
+        if (*picked == 0) {
+            // generic-6r：同模板重种子（既有行为——T-MDL-1 设计默认种子）。
+            if (!deps.reseedTemplate) {
+                summary = "模板重种子出口未接线（装配缺陷）";
+                return false;
+            }
+            deps.reseedTemplate();
+            summary = "已从模板重建草稿（generic-6r）——未应用编辑已清空";
+            return true;
+        }
+        // custom-chain：六轴逐轴声明（UI-T63——从零创建；类型锁 Revolute，
+        // Origin 位置＋RPY 表单直输——域原语组合落草稿，插件零计算逻辑）。
+        if (!deps.reseedCustomChain) {
+            summary = "custom-chain 声明出口未接线（装配缺陷）";
             return false;
         }
-        deps.reseedTemplate();
-        summary = "已从模板重建草稿（generic-6r）——未应用编辑已清空";
-        return true;
+        const auto declared = host.declareCustomChain(
+            QStringLiteral("自定义链六轴声明（R1 合规创建面——类型 Revolute；"
+                           "Origin 位置 m／姿态 rad ZYX）"),
+            [] {
+                // T-MDL-1 J1 行种子预填（sixAxisTemplateDefaults 单一权威；
+                // SixAxisJointSpec→CustomChainJointSpec 显式映射——maxVelocity/
+                // maxAcceleration 不入声明面〔schema 落点归导入通道〕）。
+                const SixAxisJointSpec seed = sixAxisTemplateDefaults().front();
+                CustomChainJointSpec spec;
+                spec.axisX = seed.axis[0];
+                spec.axisY = seed.axis[1];
+                spec.axisZ = seed.axis[2];
+                spec.zero = seed.zeroOffset;
+                spec.lower = seed.bounds.first;
+                spec.upper = seed.bounds.second;
+                return spec;
+            }());
+        if (!declared.has_value()) { return false; }  // 用户取消
+        CustomChainDeclaration declaration;
+        declaration.joints = *declared;
+        const bool reseeded = deps.reseedCustomChain(declaration, summary);
+        return reseeded;  // true＝草稿已按声明重建（summary 带回执）；
+                          // false＝声明非法/域拒绝（summary 带原因）
     }
 
     // ---- modeling.import-urdf / import-xacro（导入——§6.1 映射管线最小链）----
