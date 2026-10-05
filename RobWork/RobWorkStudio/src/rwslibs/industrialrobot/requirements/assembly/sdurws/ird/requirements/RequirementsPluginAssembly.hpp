@@ -226,6 +226,12 @@ struct RequirementsPluginAssembly {
         /// 空＝零样本区域仅轮廓〔V-02 口径〕）。
         std::vector<std::pair<rw::math::Vector3D<double>, rw::math::Vector3D<double>>>
             gridLines;
+        /// 区域锚（UI-T65——F-495 消费卡的逐区域过滤键：宿主投影方据此
+        /// 从评估账面过滤本区域样本；表尾追加零破坏）。
+        core::ObjectId regionObjectId;
+        /// 位置覆盖率目标下限（UI-T65——∈[0,1]，REQ-03；nullopt＝区域
+        /// 未设目标→投影方框色无映射。呈现对照输入，非判定权威）。
+        std::optional<double> minPositionCoverage;
     };
 
     /**

@@ -47,6 +47,9 @@
 #include <string>
 #include <vector>
 
+#include <rw/math/Transform3D.hpp>
+#include <rw/math/Vector3D.hpp>
+
 #include <sdurws/ird/core/Identity.hpp>       // core::ObjectId/ContentIdentity（身份值面）
 #include <sdurws/ird/kinematics/Evaluators.hpp>  // IKinRuntimeView/IIkSolver/IFkEvaluator（缝的公共类型——门面直传）
 
@@ -193,6 +196,11 @@ enum class KinChannelSampleState : std::uint8_t {
 /**
  * @brief 单样本结果投影记录（与域 SampleResultRecord 同构——F-495
  *        消费卡按 sampleIndex 与需求侧采样格对齐着色）。
+ *
+ * UI-T65 表尾追加两字段（消费卡投影需要）：position（样本坐标——域
+ * SampleRecord::position 直投，基座系 {B}，单位 m；着色点世界系变换
+ * 归投影方）与 regionObjectId（归属区域锚——多计划结果的逐区域过滤
+ * 键）。追加纪律：既有消费面按字段名取值，追加零破坏。
  */
 struct KinChannelSampleRecord {
     /// 对齐键（＝域 SampleRecord::sampleIndex——分母完整性核查键）。
@@ -202,11 +210,18 @@ struct KinChannelSampleRecord {
     /// 原因文本（NotApplicable/NotRun 必填非空——ERR-01；缺检测器的
     /// DataInsufficient 也携带）。
     std::string reason;
+    /// 样本坐标（基座系 {B}，单位 m——域 SampleRecord::position 直投；
+    /// UI-T65 追加。着色点世界系变换归消费投影方）。
+    rw::math::Vector3D<double> position = rw::math::Vector3D<double>(0.0, 0.0, 0.0);
+    /// 归属区域对象身份（域 SampleRecord::regionObjectId 直投——多计划
+    /// 结果的逐区域过滤键；UI-T65 追加）。
+    core::ObjectId regionObjectId;
 
     bool operator==(const KinChannelSampleRecord& o) const
     {
         return sampleIndex == o.sampleIndex && state == o.state
-            && reason == o.reason;
+            && reason == o.reason && position == o.position
+            && regionObjectId == o.regionObjectId;
     }
     bool operator!=(const KinChannelSampleRecord& o) const { return !(*this == o); }
 };

@@ -31,7 +31,9 @@ namespace sdurws::ird::ui {
  *
  * 全站仅 5 个强调色：主色工程蓝（选中/主按钮/焦点）、警示橙（警示条/
  * 必验标签）、成功绿（状态卡通过面）、正文/次级灰阶。任何新 UI 面禁止
- * 引入词表外色值（防彩虹化——呈现一致性 NFR-DEP-05）。
+ * 引入词表外色值（防彩虹化——呈现一致性 NFR-DEP-05）。UI-T65 增采样
+ * 状态色族（见 kSampleGoodGl 起的词表块——F-495"颜色由统一 UI 词表
+ * 提供"的单一供色点，三维后端与图例同源消费）。
  */
 namespace palette {
 inline constexpr const char* kWindow = "#F2F4F7";    ///< 窗口底（浅灰工业底）
@@ -42,6 +44,28 @@ inline constexpr const char* kWarning = "#E8833A";   ///< 警示橙
 inline constexpr const char* kSuccess = "#2E9E5B";   ///< 成功绿
 inline constexpr const char* kText = "#1F2733";      ///< 正文
 inline constexpr const char* kTextMuted = "#5B6470"; ///< 次级文本
+
+// ---- 采样状态色（UI-T65——三维格元分色与图例色块的唯一供色点；GL 与
+//      hex 两形态同源换算，消费面禁止各自硬编码）----
+
+/// 达标绿（GL 三元组——三维格元 Good 档）。
+inline constexpr float kSampleGoodGl[3] = {0.15f, 0.85f, 0.25f};
+/// 临界/数据不足黄（GL——Weak 档）。
+inline constexpr float kSampleWeakGl[3] = {0.95f, 0.80f, 0.15f};
+/// 未达标红（GL——Failed 档）。
+inline constexpr float kSampleFailedGl[3] = {0.90f, 0.15f, 0.15f};
+/// 未采样灰（GL——NotSampled 档；工业灰阶——诚实空态辨识色）。
+inline constexpr float kSampleNotSampledGl[3] = {0.55f, 0.58f, 0.62f};
+/// 达标绿（QColor 呈现面——图例色块；与 kSampleGoodGl 同源换算）。
+inline constexpr const char* kSampleGoodHex = "#26D940";
+/// 临界黄（图例；与 kSampleWeakGl 同源换算）。
+inline constexpr const char* kSampleWeakHex = "#F2CC26";
+/// 未达标红（图例；与 kSampleFailedGl 同源换算）。
+inline constexpr const char* kSampleFailedHex = "#E62626";
+/// 未采样灰（图例；与 kSampleNotSampledGl 同源换算）。
+inline constexpr const char* kSampleNotSampledHex = "#8C949E";
+/// 选中蓝（图例"当前选中"项——三维区域框缺省档＝主色词表同值）。
+inline constexpr const char* kSampleSelectedHex = "#1E5AA8";
 }
 
 /**

@@ -374,4 +374,12 @@ TEST(RequirementsView3DFlow, RegionPreviewSink_ForwardsGridLines_UI_T52)
     EXPECT_DOUBLE_EQ(received->corners[0][0], -0.1) << "角点 X 失实（转换重排/丢失）";
     EXPECT_DOUBLE_EQ(received->corners[0][1], 0.0) << "角点 Y 失实";
     EXPECT_DOUBLE_EQ(received->corners[0][2], 0.1) << "角点 Z 失实";
+    // UI-T65——区域锚与覆盖率目标透传（F-495 消费卡的投影过滤/框色对照
+    // 输入：regionObjectId＝工作集区域条目 id 原值；minPositionCoverage
+    // ＝CoverageTargets 域默认 0.8 直投）。
+    EXPECT_TRUE(received->regionObjectId == region.objectId)
+        << "区域锚失实（F-495 逐区域过滤键断裂）";
+    ASSERT_TRUE(received->minPositionCoverage.has_value());
+    EXPECT_DOUBLE_EQ(*received->minPositionCoverage, 0.8)
+        << "覆盖率目标失实（域默认 0.8 直投面）";
 }

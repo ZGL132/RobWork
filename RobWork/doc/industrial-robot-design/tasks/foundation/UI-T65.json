@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T65",
+  "unit": "requirements",
+  "masterWp": "WP-I",
+  "title": "需求三维采样着色闭环批次（F-495 消费卡——三态着色＋覆盖率框色映射＋校验定位链＋统一供色图例）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T64"
+  ],
+  "requirements": [
+    "KIN-07（三维显示失败点/薄弱区——渲染数据产自评估面、呈现归 ui View3D；本批落位消费半区：逐样本三态着色上屏）",
+    "REQ-03（区域采样定义与覆盖率目标——三态映射与覆盖率框色对照的呈现口径锚）",
+    "UX-11（三维预览可视化语义——着色/图例/选中辨识色由统一 UI 词表供色，禁止三维后端各自硬编码）",
+    "F-495（宿主审核 P1 消费卡：采样点通过/失败/未采样三态＋达标颜色区分＋覆盖率颜色映射＋校验项点击定位＋颜色图例）",
+    "ERR-01（诚实呈现：无评估结果/跨快照账面＝中性格线不虚构判定——中空态语义保持）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/kinematics.md#9.8",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/assembly/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/requirements.md",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T65.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t65/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1——呈现层零修订面写入）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/**（呈现对照零证据面写入——判定权威归域/evidence）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/**、kinematics/src/**、kinematics/include/**（本批零计算域改动——消费卡只扩 assembly 通道值面与 ui/requirements 消费面）"
+  ],
+  "outputs": [
+    "ui/include/sdurws/ird/ui/View3DPreviewContract.hpp：View3DCellState 表尾追加 NotSampled（灰——未采样/未运行诚实态）＋新枚举 View3DTint 四值（None/Good/Weak/Failed——区域框覆盖率映射档）＋View3DBoxOutline 表尾追加 optional<View3DTint> tint 字段（operator== 同步——UI-T33 冻结面追加纪律注释登记）",
+    "ui/include/sdurws/ird/ui/UiTheme.hpp：palette 增采样状态色词表单点（kSampleGoodGl/WeakGl/FailedGl/NotSampledGl 四组 GL float 三元组＋同源换算 hex 常量——三维后端/图例唯一供色点，消 HostView3DPreviewBackend 硬编码）",
+    "ui/plugin/HostView3DPreviewBackend.cpp：applyCellColor 改消费 palette 词表（消硬编码）＋NotSampled 灰分支；RegionOutlineRender 按 tint 四档分色（缺省蓝保持——未评估语义）",
+    "kinematics/assembly/sdurws/ird/kinematics/KinematicsPanelChannels.hpp：KinChannelSampleRecord 表尾追加 position（基座系 m——域 SampleRecord::position 直投）与 regionObjectId（归属锚——逐区域过滤键）两字段（operator== 同步）",
+    "ui/plugin/KinEvaluationChannel.cpp：onCoverageFinished 结构化投影补样本坐标/区域 id（computation.samples 按 sampleIndex 双射对齐取值）",
+    "ui/plugin/KinEvaluationChannel.hpp：增两个 inline 纯值映射函数——mapSampleStateToCell（域五值→View3DCellState 四值词表翻译：Reached→Good/Unreachable→Failed/DataInsufficient→Weak/NotRun·NotApplicable→NotSampled）＋view3DTintFromCoverage（计数比×目标下限→View3DTint 三档呈现对照——分母 0/未评估→None；注释登记呈现对照非工程判定）",
+    "requirements/assembly/sdurws/ird/requirements/RequirementsPluginAssembly.hpp：RegionPreviewView 表尾追加 regionObjectId（区域锚——投影逐区域过滤键）与 minPositionCoverage（覆盖率目标下限——框色对照输入）两字段；RequirementsPluginAssembly.cpp 门面转换透传",
+    "requirements/plugin/RequirementsPanelWidget.cpp：区域页预览投递填充新字段（regionObjectId/minPositionCoverage）；区域页预览摘要标签旁增富文本图例行（四状态色块＋蓝框选中——palette hex 供色＋工程中文词——F-495 图例项）",
+    "ui/plugin/UiPlugin.cpp：bindRegionPreviewSink 投影合并——执行器账面（latestCoverageResult）经 snapshotId+epoch 对账后逐区域过滤（regionObjectId）：样本坐标基座系→世界系（执行器视图 worldToBase 逆变换）投 View3DSampleGrid.samples/cellStates；区域框 tint 按该区域位置口径计数比×minPositionCoverage 三档（View3DTint）——着色判定零参与（词表翻译＋呈现对照，F-490① 维持口径消账）",
+    "测试：KinEvaluationChannelTest 扩投影出口断言（样本坐标非零/regionObjectId 对齐/映射函数五值+tint 三档表驱动用例）＋HostView3DGatewayGuiTest 替身断言扩 NotSampled 透传＋RequirementsView3DFlowTest 扩 regionObjectId/minPositionCoverage 透传断言"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟 standalone）",
+    "集成模式全套件回归：ui_test/ui_contract/ui_gui/requirements_test/requirements_gui/kinematics_test/kinematics_contract/modeling 三套全绿（基线数不降——新增用例如实计数）",
+    "ird_gates 引擎自报口径：base..branch 命中数与登记册一致（本批预期零新增链接边——消费面全走既有装配边与 UI-T64 测试面直链；如有新增按登记册机制落位）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t65/"
+  ],
+  "acceptance": [
+    "三态着色上屏：评估完成后选中区域的三维格元携带逐样本 cellStates（含 NotSampled 灰）与真实样本坐标（基座→世界变换）——View3DSampleGrid 透传断言（KinEvaluationChannelTest＋ui_gui 替身）；无评估/跨快照＝中性格线（中空态不虚构——ERR-01）",
+    "统一供色：三维后端零硬编码色值（palette 词表单点消费）；图例四色块与三维色同源（palette hex）；HostView3DPreviewBackend 消 palette 断言（源码级——ird_gates 扫描域或 code review 承载）",
+    "覆盖率框色映射：区域框 tint 按该区域位置口径计数比×目标下限三档（Good≥目标/Weak<目标/None 未评估或零分母）——映射函数表驱动用例（呈现对照注释——工程判定权威归域）",
+    "校验定位链：校验页行点击→SelectionService 区域选中→区域预览投影（含着色点层）——既有 jumpTarget 机制串联，requirements 三维流用例断言链路",
+    "回归门槛：受影响目标零错误构建（集成＋冒烟）＋全套件回归＋validate 双 PASS；留痕 traceability/builds/ui-t65/"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-KIN-7",
+    "P-REQ-8"
+  ],
+  "branch": "ui-t65",
+  "note": "【落位登记（2026-10-06，status=ready 待独立验收）】分支基点＝堆叠 ui-t64@2972b5d7，留痕 traceability/builds/ui-t65/。①协议扩展（NotSampled/tint——UI-T33 冻结面追加纪律）；②统一供色（palette 采样状态色族——三维/图例单一供色点，硬编码消账）；③通道字段（position/regionObjectId＋执行器双射投影）；④映射函数（两 inline 纯值翻译——表驱动用例）；⑤投影合并（UiPlugin 对账门/区域过滤/基座→世界系逆变换）；⑥需求侧（RegionPreviewGeometry/RegionPreviewView 追加字段＋门面透传＋富文本图例）；⑦测试（ui_test 253＝＋2 表驱动；ui_gui 78 替身扩四态/tint 透传；requirements_gui 44 扩区域锚/目标透传；其余六套件全绿基线不降）。ird_gates 自报 103＝ui-t64 侧 103 零新增（消费面全走既有边）；validate 双 PASS。",
+  "noteHistory": "【立项登记（2026-10-06，status=planned）】F-495 消费卡（审计建议 U-R1 本体；宿主审核 20261004 R-2/P1）。分支基点＝堆叠 ui-t64@2972b5d7（UI-T30 堆叠先例——UI-T64 已推 origin 待独立验收，本批验证面以堆叠树为准，合入后基点等价后移）。上游数据面＝UI-T64 的 KinChannelCoverageResultView（逐样本五值＋覆盖率标记＋snapshotId/epoch 提交锚）。着色判定纪律：映射函数＝词表翻译（域五值→四值）、覆盖率框色＝呈现对照（计数比×目标下限）——零工程判定（spec §2.4 口径维持，F-490① 消费卡口径兑现）。校验定位链复用 L-R1 jumpTarget 现成机制（区域级定位——样本级定位随诊断素材粒度扩展留后续）。"
+}

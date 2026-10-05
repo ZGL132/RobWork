@@ -35,6 +35,7 @@
 #include <rw/math/Transform3D.hpp>
 #include <rw/math/Vector3D.hpp>
 
+
 namespace sdurws {
 namespace ird {
 namespace ui {
@@ -66,6 +67,18 @@ struct View3DFrameMarker {
 };
 
 /**
+ * @brief 区域框覆盖率映射档（UI-T65——F-495"覆盖率颜色映射"的框层承载；
+ * 呈现对照档位：分档由消费侧按"计数比×目标下限"对照计算〔呈现对照
+ * 非工程判定——判定权威归域/evidence〕，渲染层零判定只分色）。
+ */
+enum class View3DTint {
+    None,   ///< 无映射（未评估/分母零/无对照目标——缺省蓝保持）
+    Good,   ///< 达标档（位置口径计数比 ≥ 目标下限——绿）
+    Weak,   ///< 未达档（计数比 < 目标下限——黄）
+    Failed, ///< 零达标档（有样本但零达标——红；零样本不走本档走 None）
+};
+
+/**
  * @brief 区域边界框线框值（acceptance 2——选中区域的三维轮廓预览）。
  *
  * 八角点为**世界系**盒角（投影方自 refFrame 系变换；参考系缺失＝投影
@@ -76,18 +89,28 @@ struct View3DBoxOutline {
     /// 同款角序——投影方零重排直投）。
     std::array<rw::math::Vector3D<double>, 8> corners{};
 
+    /// 覆盖率映射档（UI-T65——nullopt＝无映射〔未评估/零分母/无对照
+    /// 目标——缺省蓝保持〕；枚举档位语义见 View3DTint 注。表尾追加
+    /// 纪律：既有消费面缺省构造即 None 语义，二进制面零破坏）。
+    std::optional<View3DTint> tint;
+
     bool operator==(const View3DBoxOutline& o) const
     {
-        return corners == o.corners;
+        return corners == o.corners && tint == o.tint;
     }
     bool operator!=(const View3DBoxOutline& o) const { return !(*this == o); }
 };
 
 /// 采样格单元着色态词表（判定已由域侧采样纯函数完成——本协议零判定）。
+/// UI-T65 表尾追加 NotSampled：F-495 四态词表（绿=通过/红=未通过/
+/// 灰=未采样/黄=警告）的协议承载——未运行/未采样样本的诚实态（不虚构
+/// 判定；与"cellStates 空＝中性格线"的整层空态语义正交：四值词表表达
+/// 逐点事实，空序列表达"本层无评估结果"）。
 enum class View3DCellState {
-    Good,     ///< "good"——达标单元
-    Weak,     ///< "weak"——临界单元
-    Failed,   ///< "failed"——不达标单元
+    Good,        ///< "good"——达标单元
+    Weak,        ///< "weak"——临界/数据不足单元（黄）
+    Failed,      ///< "failed"——不达标单元（红）
+    NotSampled,  ///< "not-sampled"——未采样/未运行单元（灰；UI-T65 追加）
 };
 
 /**

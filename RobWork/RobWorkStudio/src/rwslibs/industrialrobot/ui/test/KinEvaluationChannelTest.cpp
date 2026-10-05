@@ -296,12 +296,17 @@ TEST(KinEvaluationChannel, Submit_RunsAndRecordsCoverage_UI_T64)
     EXPECT_EQ(result->orientation.planned, 2U);
     EXPECT_EQ(result->samples.size(), 4U);  // 位置 2＋位姿 2（双口径全样本）
     // 逐样本状态五值合法（位置样本∈{Reached,Unreachable,...}——模型黄金
-    // 值不在此断言，覆盖面的结构性由分母对账保证）。
+    // 值不在此断言，覆盖面的结构性由分母对账保证）＋UI-T65 投影面：坐标
+    // 与区域锚随账面（消费卡投影的过滤/变换输入）。
     for (const auto& record : result->samples) {
         EXPECT_TRUE(record.state == KinChannelSampleState::Reached
                     || record.state == KinChannelSampleState::Unreachable
                     || record.state == KinChannelSampleState::DataInsufficient
                     || record.state == KinChannelSampleState::NotRun);
+        // 坐标非零（两连杆黄金模型的工作区样本不在原点——直投面实证）
+        // ＋区域锚对齐工作集条目（逐区域过滤键）。
+        EXPECT_FALSE(record.position == rw::math::Vector3D<double>(0, 0, 0));
+        EXPECT_TRUE(record.regionObjectId.isValid());
     }
     // 任务区投影：一完成行（taskRef 对齐）。
     const auto rows = h.executor->taskRows();
@@ -310,6 +315,48 @@ TEST(KinEvaluationChannel, Submit_RunsAndRecordsCoverage_UI_T64)
     // 投递槽：一 note（完成态——摘要非空）。
     ASSERT_EQ(h.notes.size(), 1U);
     EXPECT_FALSE(h.notes[0].summaryText.empty());
+}
+
+// =====================================================================
+// 呈现对照映射（UI-T65——F-495 消费卡的纯值词表翻译：表驱动逐档断言；
+// 判定零参与——映射面正确性的直接承载）
+// =====================================================================
+
+/// 域样本五值→三维格元四值映射（表驱动——Reached 绿/Unreachable 红/
+/// DataInsufficient 黄/NotRun·NotApplicable 灰）。
+TEST(KinEvaluationChannel, MapSampleStateToCell_TableDriven_UI_T65)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"F-495", "UX-11"},
+                  std::vector<std::string>{});
+    EXPECT_EQ(mapSampleStateToCell(KinChannelSampleState::Reached),
+              View3DCellState::Good);
+    EXPECT_EQ(mapSampleStateToCell(KinChannelSampleState::Unreachable),
+              View3DCellState::Failed);
+    EXPECT_EQ(mapSampleStateToCell(KinChannelSampleState::DataInsufficient),
+              View3DCellState::Weak);
+    EXPECT_EQ(mapSampleStateToCell(KinChannelSampleState::NotRun),
+              View3DCellState::NotSampled);
+    EXPECT_EQ(mapSampleStateToCell(KinChannelSampleState::NotApplicable),
+              View3DCellState::NotSampled);
+}
+
+/// 覆盖率框色三档对照（表驱动——比率×目标下限；零分母/无目标＝None
+/// 不虚构档位——ERR-01 同源诚实面）。
+TEST(KinEvaluationChannel, View3DTintFromCoverage_TableDriven_UI_T65)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"F-495", "REQ-03"},
+                  std::vector<std::string>{});
+    // 达标档：3/4＝0.75 ≥ 目标 0.7。
+    EXPECT_EQ(view3DTintFromCoverage(3, 4, 0.7), View3DTint::Good);
+    // 未达档：3/4＝0.75 < 目标 0.8。
+    EXPECT_EQ(view3DTintFromCoverage(3, 4, 0.8), View3DTint::Weak);
+    // 零达标：0/4＝0 < 任意正目标——Weak（有样本未达——非 Failed 档：
+    // Failed 留给"零达标"强信号呈现由消费侧裁定，本映射两档保守）。
+    EXPECT_EQ(view3DTintFromCoverage(0, 4, 0.8), View3DTint::Weak);
+    // 零分母（零样本区域）＝None；无目标＝None。
+    EXPECT_EQ(view3DTintFromCoverage(0, 0, 0.8), View3DTint::None);
+    EXPECT_EQ(view3DTintFromCoverage(3, 4, std::optional<double>{}),
+              View3DTint::None);
 }
 
 /// 换绑清账＋迟到丢弃：提交后立即换绑（纪元推进＋账面清空）——回投

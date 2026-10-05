@@ -680,6 +680,26 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
     m_regionPreviewLabel = new QLabel(page);
     m_regionPreviewLabel->setWordWrap(true);
     lay->addWidget(m_regionPreviewLabel);
+    // 颜色图例（UI-T65——F-495"颜色图例"项：三维采样着色词表的呈现面
+    // 色块行；色值经 ui palette 采样状态色词表供色——与三维后端 GL 分色
+    // 同源单一供色点，本面零自配色值；蓝框＝当前选中区域辨识色语义）。
+    {
+        auto* legend = new QLabel(page);
+        legend->setObjectName("ird_req_region_legend");
+        legend->setTextFormat(Qt::RichText);
+        legend->setText(QStringLiteral(
+                            "<span style=\"color:%1\">■</span> 通过　"
+                            "<span style=\"color:%2\">■</span> 未通过　"
+                            "<span style=\"color:%3\">■</span> 数据不足　"
+                            "<span style=\"color:%4\">■</span> 未采样　"
+                            "<span style=\"color:%5\">□</span> 当前选中区域")
+                            .arg(QString::fromUtf8(ui::palette::kSampleGoodHex),
+                                 QString::fromUtf8(ui::palette::kSampleFailedHex),
+                                 QString::fromUtf8(ui::palette::kSampleWeakHex),
+                                 QString::fromUtf8(ui::palette::kSampleNotSampledHex),
+                                 QString::fromUtf8(ui::palette::kSampleSelectedHex)));
+        lay->addWidget(legend);
+    }
     pages->addTab(page, "区域");
 }
 

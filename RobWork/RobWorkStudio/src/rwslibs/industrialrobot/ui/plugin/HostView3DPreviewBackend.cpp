@@ -11,6 +11,8 @@
 
 #include "HostView3DPreviewBackend.hpp"
 
+#include <sdurws/ird/ui/UiTheme.hpp>  // 采样状态色词表（UI-T65——F-495 统一供色单点）
+
 #include <rw/graphics/DrawableNode.hpp>
 #include <rw/graphics/Render.hpp>
 #include <rw/graphics/WorkCellScene.hpp>
@@ -35,20 +37,45 @@ namespace {
 /// 预览组节点名前缀（clear 的删除面——draw/clear 共用常量，防漂移）。
 constexpr char kPreviewPrefix[] = "ird-req-preview-";
 
-/// 逐点着色分色（判定已由域侧完成——本函数只做词表到 GL 颜色的映射）。
+/// 逐点着色分色（判定已由域侧完成——本函数只做词表到 GL 颜色的映射；
+/// 色值经 UiTheme palette 词表供色——UI-T65 消硬编码，F-495 统一供色）。
 void applyCellColor(View3DCellState state)
 {
     switch (state) {
     case View3DCellState::Good:
-        glColor3f(0.15f, 0.85f, 0.25f);  // 达标＝绿
+        glColor3fv(ui::palette::kSampleGoodGl);  // 达标＝绿（词表）
         break;
     case View3DCellState::Weak:
-        glColor3f(0.95f, 0.80f, 0.15f);  // 临界＝黄
+        glColor3fv(ui::palette::kSampleWeakGl);  // 临界＝黄（词表）
         break;
     case View3DCellState::Failed:
-        glColor3f(0.90f, 0.15f, 0.15f);  // 不达标＝红
+        glColor3fv(ui::palette::kSampleFailedGl);  // 不达标＝红（词表）
+        break;
+    case View3DCellState::NotSampled:
+        glColor3fv(ui::palette::kSampleNotSampledGl);  // 未采样＝灰（UI-T65）
         break;
     }
+}
+
+/// 区域框 tint 分色（UI-T65——覆盖率映射档；None/缺省＝缺省蓝保持——
+/// 选中预览的辨识色不因无评估而改变）。返回色三元组供 glColor4f 消费。
+std::array<float, 3> tintColor(std::optional<View3DTint> tint)
+{
+    if (!tint.has_value() || *tint == View3DTint::None) {
+        return {0.12f, 0.35f, 0.66f};  // 缺省蓝（既有选中辨识色——原值保持）
+    }
+    switch (*tint) {
+    case View3DTint::Good:
+        return {ui::palette::kSampleGoodGl[0], ui::palette::kSampleGoodGl[1],
+                ui::palette::kSampleGoodGl[2]};  // 达标档＝绿
+    case View3DTint::Weak:
+        return {ui::palette::kSampleWeakGl[0], ui::palette::kSampleWeakGl[1],
+                ui::palette::kSampleWeakGl[2]};  // 未达档＝黄
+    case View3DTint::Failed:
+        return {ui::palette::kSampleFailedGl[0], ui::palette::kSampleFailedGl[1],
+                ui::palette::kSampleFailedGl[2]};  // 零达标档＝红
+    }
+    return {0.12f, 0.35f, 0.66f};  // 不可达分支（switch 全覆盖——防御面）
 }
 
 /**
@@ -58,7 +85,11 @@ void applyCellColor(View3DCellState state)
 class RegionOutlineRender final : public Render
 {
   public:
-    explicit RegionOutlineRender(const View3DBoxOutline& box) : m_corners(box.corners) {}
+    /// 构造持框值（tint 一并冻结——UI-T65 覆盖率映射档随整组替换刷新）。
+    explicit RegionOutlineRender(const View3DBoxOutline& box)
+        : m_corners(box.corners), m_tint(box.tint)
+    {
+    }
 
     void draw(const DrawableNode::RenderInfo& info,
               DrawableNode::DrawType type, double alpha) const override
@@ -74,7 +105,10 @@ class RegionOutlineRender final : public Render
             {0, 4}, {1, 5}, {2, 6}, {3, 7},  // 立柱
         };
         glLineWidth(2.0f);
-        glColor4f(0.25f, 0.45f, 1.0f, static_cast<float>(alpha));  // 辨识蓝
+        // 框色＝tint 分色（UI-T65——覆盖率映射档；缺省蓝＝既有选中辨识
+        // 色语义保持）。
+        const std::array<float, 3> color = tintColor(m_tint);
+        glColor4f(color[0], color[1], color[2], static_cast<float>(alpha));
         glBegin(GL_LINES);
         for (const auto& e : kEdges) {
             const Vector3D<double>& a = m_corners[e[0]];
@@ -88,6 +122,7 @@ class RegionOutlineRender final : public Render
 
   private:
     std::array<Vector3D<double>, 8> m_corners;  ///< 盒八角点（世界系——构造冻结）
+    std::optional<View3DTint> m_tint;  ///< 覆盖率映射档（UI-T65——构造冻结）
 };
 
 /**

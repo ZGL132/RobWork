@@ -224,10 +224,19 @@ struct RegionPreviewGeometry {
     /// 几何顶点即 refFrame 系，投影方经宿主帧位姿变换到世界系投递）。
     RequirementReference refFrame;
 
+    /// 区域锚（UI-T65——F-495 消费卡的逐区域过滤键：宿主投影方据此从
+    /// 评估账面过滤本区域样本；表尾追加零破坏）。
+    core::ObjectId regionObjectId;
+    /// 位置覆盖率目标下限（UI-T65——∈[0,1]；nullopt＝未设目标→投影方
+    /// 框色无映射。呈现对照输入——非判定权威）。
+    std::optional<double> minPositionCoverage;
+
     bool operator==(const RegionPreviewGeometry& o) const
     {
         return corners == o.corners && gridLines == o.gridLines
-            && summaryText == o.summaryText && refFrame == o.refFrame;
+            && summaryText == o.summaryText && refFrame == o.refFrame
+            && regionObjectId == o.regionObjectId
+            && minPositionCoverage == o.minPositionCoverage;
     }
     bool operator!=(const RegionPreviewGeometry& o) const { return !(*this == o); }
 };
