@@ -1457,6 +1457,28 @@ void ModelingPanelWidget::buildJointEditPane(QVBoxLayout* bottom)
     m_jointEditHost->setObjectName(QStringLiteral("ird_modeling_edit_host"));
     auto* hostLay = new QVBoxLayout(m_jointEditHost);
     hostLay->setContentsMargins(0, 0, 0, 0);
+    // 关节类型枚举行（UI-T66——M-R4 划界消账：域 JointEditField::Type 词表
+    // 直投——I-MDL-4 组合约束归域裁决（TypeBoundsConflict 拒绝就地呈现＋
+    // 回退）；四值词表＝jointTypeToken 同源）。回填屏蔽旗标：换目标回填
+    // 触发的 currentIndexChanged 不提交（防幽灵编辑——knownPitfalls）。
+    auto* typeRow = new QWidget(m_jointEditHost);
+    auto* typeLay = new QHBoxLayout(typeRow);
+    typeLay->setContentsMargins(0, 0, 0, 0);
+    auto* typeLabel = new QLabel(QStringLiteral("关节类型"), typeRow);
+    m_jointEditTypeBox = new QComboBox(typeRow);
+    m_jointEditTypeBox->setObjectName(QStringLiteral("ird_modeling_edit_type"));
+    for (const JointType t : {JointType::Revolute, JointType::Continuous,
+                              JointType::Prismatic, JointType::Fixed}) {
+        m_jointEditTypeBox->addItem(
+            QString::fromStdString(std::string(jointTypeToken(t))));
+    }
+    typeLay->addWidget(typeLabel);
+    typeLay->addWidget(m_jointEditTypeBox);
+    typeLay->addStretch(1);
+    m_jointEditTypeRow = typeRow;
+    hostLay->addWidget(typeRow);
+    connect(m_jointEditTypeBox, &QComboBox::currentIndexChanged, this,
+            &ModelingPanelWidget::onJointEditTypeChanged);
     bottom->addWidget(m_jointEditHost, 1);
     m_jointEditHint->setText(QStringLiteral(
         "在结构树选中一个关节后，此处呈现其 12 行数值编辑表"
@@ -1485,6 +1507,7 @@ void ModelingPanelWidget::refreshJointEditPane()
         || *jointIndex >= ws->design.joints.size()) {
         m_jointEditTarget.reset();
         if (m_jointEditPanel != nullptr) { m_jointEditPanel->hide(); }
+        if (m_jointEditTypeRow != nullptr) { m_jointEditTypeRow->hide(); }
         if (ws == nullptr) {
             m_jointEditHint->setText(QStringLiteral(
                 "编辑页需已打开项目（草稿会话）——选中结构树中的关节后"
@@ -1512,6 +1535,18 @@ void ModelingPanelWidget::refreshJointEditPane()
     if (m_jointEditPanel != nullptr) {
         m_jointEditPanel->show();
         m_jointEditPanel->setEnabled(m_writable);  // L-7 页级门控（只读会话整体灰显）
+    }
+    // 关节类型行（UI-T66——回填当前权威类型＋L-7 门控；blockSignals 屏蔽
+    // 回填触发的 currentIndexChanged——防换目标幽灵提交，knownPitfalls）。
+    if (m_jointEditTypeRow != nullptr) {
+        m_jointEditTypeRow->show();
+    }
+    if (m_jointEditTypeBox != nullptr) {
+        QSignalBlocker blocker(*m_jointEditTypeBox);
+        const int idx = m_jointEditTypeBox->findText(
+            QString::fromStdString(std::string(jointTypeToken(joint.type))));
+        m_jointEditTypeBox->setCurrentIndex(idx < 0 ? -1 : idx);
+        m_jointEditTypeBox->setEnabled(m_writable);
     }
     m_jointEditTarget = jointIndex;
     pushJointEditBaselines(joint);
@@ -1645,9 +1680,21 @@ void ModelingPanelWidget::applyJointDetailEdits(const ui::ParamEditSet& editSet)
     };
     // 提交轨复用 L-2 分流（submitJointFieldEdit→域裁决→sink 接受/拒绝——
     // 与属性行/共享检查器同一落点，零第二分流实现）；拒绝不阻断其余组。
-    const auto submit = [this, ws, jointIndex](JointEditField field,
-                                               JointEditValue&& value) {
-        submitJointFieldEdit(*ws, *this, jointIndex, field, value);
+    // UI-T66 分组重演：本轮提交分配一个重演组 id，域接受的编辑逐条入队
+    // 同组——修订事件重演时组内保序整组落位/整组手工处置（L-4 组粒度）。
+    const std::uint64_t replayGroup = m_refresh.allocateGroupId();
+    const auto submit = [this, ws, jointIndex, replayGroup](
+                            JointEditField field, JointEditValue&& value) {
+        const auto outcome =
+            submitJointFieldEdit(*ws, *this, jointIndex, field, value);
+        if (outcome == EditSubmitOutcome::Applied) {
+            PendingEdit e;
+            e.jointIndex = jointIndex;
+            e.field = field;
+            e.value = std::move(value);
+            e.groupId = replayGroup;
+            m_refresh.recordPending(e);  // 入重演队列（真实编辑意图——被拒不入）
+        }
     };
 
     // 拒绝就地呈现的辅助（组级装配缺分量＝调用面提示，域函数未触）。
@@ -1720,9 +1767,10 @@ void ModelingPanelWidget::applyJointDetailEdits(const ui::ParamEditSet& editSet)
 
     // 权威同步（接受组基线推进对齐、被拒组基线回退真实权威——
     // ParamEditModel.confirmApply 的移交推进是乐观的，域拒绝在此修正）。
-    // 边界登记（诚实缺席）：编辑页分组编辑不入 L-4 重演队列（PendingEdit
-    // 是单字段轨——分组表单编辑的重演语义归后续批次；修订事件到达时的
-    // 处置＝本刷新把基线对齐新权威，未应用暂存由用户重录）。
+    // UI-T66 落位注（UI-T53 划界"编辑页分组编辑不入 L-4 重演队列"消账）：
+    // 本轮域接受的编辑已带同组 id 入重演队列（submit 闭包内 recordPending）
+    // ——修订事件到达时按组保序重演、组内失败整组手工处置（PanelRefresh
+    // 分组语义）；被拒组不入队（队列＝真实编辑意图）。
     refreshPropertiesFromLastWorkingSet();
 }
 
@@ -3083,6 +3131,49 @@ void ModelingPanelWidget::onPropertyEditingFinished()
         e.value = parsed;
         m_refresh.recordPending(e);
         refreshPropertiesFromLastWorkingSet();
+    }
+}
+
+void ModelingPanelWidget::onJointEditTypeChanged(int index)
+{
+    m_threadGuard.assertOnUiThread();  // §3.4（UI 线程信号——防御面）
+    // 回填屏蔽（QSignalBlocker）之外的用户切换才提交；无会话/无选中/只读
+    // ＝不虚构提交（ERR-01；L-7 禁用为常驻门控，此为防御半区）。
+    if (!m_writable || !m_jointEditTypeBox || index < 0) { return; }
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_jointEditTarget.has_value()
+        || *m_jointEditTarget >= ws->design.joints.size()) {
+        return;
+    }
+    // 下标→域词表（addItem 序＝词表序——buildJointEditPane 同源）。
+    static const JointType kTypes[] = {JointType::Revolute, JointType::Continuous,
+                                       JointType::Prismatic, JointType::Fixed};
+    if (static_cast<std::size_t>(index) >= std::size(kTypes)) { return; }
+    const JointType newType = kTypes[index];
+    // L-2 分流（域 Type 分支裁决——I-MDL-4 组合约束：TypeBoundsConflict
+    // 拒绝就地呈现；L-7 同款 sink 面板）；接受后入重演队列（独立单条组）
+    // ＋全面板刷新（限位行量纲随类型重建——refreshPropertiesFromLast
+    // WorkingSet→换量纲重建编辑页模型）。
+    const auto outcome =
+        submitJointFieldEdit(*ws, *this, *m_jointEditTarget,
+                             JointEditField::Type, JointEditValue{newType});
+    if (outcome == EditSubmitOutcome::Applied) {
+        PendingEdit e;
+        e.jointIndex = *m_jointEditTarget;
+        e.field = JointEditField::Type;
+        e.value = JointEditValue{newType};
+        e.groupId = 0;  // 独立单条（单编辑动作——不与分组提交并组）
+        m_refresh.recordPending(e);
+        refreshPropertiesFromLastWorkingSet();
+    } else {
+        // 域拒绝（如 Continuous↔限位冲突）：下拉回退当前权威类型——
+        // 拒绝详情已由 sink 面板就地呈现（L-2 同款），此处恢复呈现一致。
+        QSignalBlocker blocker(*m_jointEditTypeBox);
+        const int authoritative = m_jointEditTypeBox->findText(
+            QString::fromStdString(std::string(
+                jointTypeToken(ws->design.joints[*m_jointEditTarget].type))));
+        m_jointEditTypeBox->setCurrentIndex(authoritative < 0 ? -1
+                                                             : authoritative);
     }
 }
 

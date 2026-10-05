@@ -41,6 +41,7 @@
 #include "plugin/PanelModel.hpp"           // 五区投影（ACC2/ACC5）
 #include "plugin/PanelRefresh.hpp"         // 刷新协调器/线程守卫（ACC5）
 #include "plugin/PanelSelection.hpp"       // L-1 会话选中（ACC3）
+#include "plugin/ModelingCommandFlows.hpp"  // customChainRowSemanticCheck（UI-T66——F-523① 录入辅助面）
 #include <sdurws/ird/ui/CommandInteractionBridge.hpp>          // ui 确认交互桥（L-3——UI-T13 落位面）
 
 // ---- 使用声明（与被测头同一命名空间——用例可读性）--------------------
@@ -964,6 +965,161 @@ TEST(PluginPanel, Refresh_ReplayFailureManualIntervention_WP13T15_ACC5)
     // 手工处置：用户放弃全部未应用编辑→标记复位可重演。
     coordinator.clearPending();
     EXPECT_TRUE(coordinator.pending().empty());
+}
+
+// =====================================================================
+// UI-T66——分组重演（L-4 的组粒度推广：编辑页一次分组提交＝一个重演组，
+// 组内保序整组落位/整组手工处置；属性行单字段轨 groupId=0 兼容回归）
+// =====================================================================
+
+/// 同组多条编辑组内保序落位＋跨组继续（分组重演的正向语义面）。
+TEST(PluginPanel, Refresh_GroupedReplayWholeGroupsInOrder_UI_T66)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"L-4", "MDL-07"},
+                  std::vector<std::string>{"UI-T66-ACC2"});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    int refreshCount = 0;
+    PanelRefreshCoordinator coordinator;
+    coordinator.setSinks([&ws]() -> ModelingWorkingSet& { return ws; },
+                         [&refreshCount]() { ++refreshCount; });
+
+    // 组 7（模拟编辑页一轮分组提交：零位＋限位两字段同组）＋组 8（独立
+    // 零位编辑）——组间以 groupId 变化为界，重演跨组继续。
+    PendingEdit g1a;
+    g1a.jointIndex = 0;
+    g1a.field = JointEditField::ZeroOffset;
+    g1a.value = 0.5;
+    g1a.groupId = 7;
+    PendingEdit g1b;
+    g1b.jointIndex = 0;
+    g1b.field = JointEditField::Bounds;
+    g1b.value = JointLimits{-2.0, 2.0};
+    g1b.groupId = 7;
+    PendingEdit g2;
+    g2.jointIndex = 1;
+    g2.field = JointEditField::ZeroOffset;
+    g2.value = -0.25;
+    g2.groupId = 8;
+    coordinator.recordPending(g1a);
+    coordinator.recordPending(g1b);
+    coordinator.recordPending(g2);
+
+    const auto outcome = coordinator.onRevisionEvent(std::nullopt);
+    EXPECT_EQ(outcome, ReplayOutcome::Replayed);
+    EXPECT_FALSE(coordinator.manualInterventionRequired());
+    EXPECT_EQ(refreshCount, 1);  // 全面板刷新恰一次（组粒度不改事件语义）
+    // 组内保序落位：两条编辑都生效（同组原子呈现——工作集含组 7 全部）。
+    EXPECT_DOUBLE_EQ(ws.design.joints[0].zeroOffset, 0.5);
+    ASSERT_TRUE(ws.design.joints[0].bounds.tryValue().has_value());
+    EXPECT_DOUBLE_EQ(ws.design.joints[0].bounds.tryValue()->second, 2.0);
+    // 跨组继续：组 8 亦落位（失败即停语义只在被拒时生效）。
+    EXPECT_DOUBLE_EQ(ws.design.joints[1].zeroOffset, -0.25);
+    // 队列原样保留（编辑意图由用户处置）。
+    EXPECT_EQ(coordinator.pending().size(), 3U);
+}
+
+/// 组内中途被拒＝整组手工处置（blockedAt 指组首；后续组保留；不半组
+/// 静默——组粒度的"不静默丢弃"）。
+TEST(PluginPanel, Refresh_GroupReplayBlockedKeepsWholeGroup_UI_T66)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"L-4", "ERR-01"},
+                  std::vector<std::string>{"UI-T66-ACC2"});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    int refreshCount = 0;
+    PanelRefreshCoordinator coordinator;
+    coordinator.setSinks([&ws]() -> ModelingWorkingSet& { return ws; },
+                         [&refreshCount]() { ++refreshCount; });
+
+    // 组 1：e1 零位合法（组内先落位）→ e2 类型改 Continuous（六轴夹具
+    // 限位 Provided——I-MDL-4 组合约束域拒 TypeBoundsConflict）。组 2：
+    // 合法零位编辑（被拒组之后的现场保留载体）。
+    PendingEdit g1a;
+    g1a.jointIndex = 0;
+    g1a.field = JointEditField::ZeroOffset;
+    g1a.value = 0.5;
+    g1a.groupId = 1;
+    PendingEdit g1b;
+    g1b.jointIndex = 0;
+    g1b.field = JointEditField::Type;
+    g1b.value = JointEditValue{JointType::Continuous};
+    g1b.groupId = 1;
+    PendingEdit g2;
+    g2.jointIndex = 1;
+    g2.field = JointEditField::ZeroOffset;
+    g2.value = -0.25;
+    g2.groupId = 2;
+    coordinator.recordPending(g1a);
+    coordinator.recordPending(g1b);
+    coordinator.recordPending(g2);
+
+    const auto outcome = coordinator.onRevisionEvent(std::nullopt);
+    EXPECT_EQ(outcome, ReplayOutcome::BlockedAtEdit);
+    ASSERT_TRUE(coordinator.blockedAtIndex().has_value());
+    // blockedAt＝失败组组首（整组手工处置的锚——非被拒条下标 1）。
+    EXPECT_EQ(*coordinator.blockedAtIndex(), 0U)
+        << "整组语义：blockedAt 指组首而非被拒条";
+    EXPECT_TRUE(coordinator.manualInterventionRequired());
+    EXPECT_EQ(refreshCount, 1);  // 失败态同样刷新（横幅可见）
+    // 队列现场全保留（被拒组两条＋后续组——不半组静默不丢弃）。
+    ASSERT_EQ(coordinator.pending().size(), 3U);
+    EXPECT_EQ(coordinator.pending()[0].groupId, 1U);
+    // 组内前缀已落位（重演落权威工作集——e1 零位 0.5 已生效；被拒类型
+    // 未触碰——域拒绝强保证，关节类型保持 Revolute）。
+    EXPECT_DOUBLE_EQ(ws.design.joints[0].zeroOffset, 0.5);
+    EXPECT_TRUE(ws.design.joints[0].type == JointType::Revolute);
+    // 后续组未重演（失败即停——跨组语义与单字段轨一致）。
+    EXPECT_DOUBLE_EQ(ws.design.joints[1].zeroOffset, 0.0);
+}
+
+/// 类型编辑单条重演（groupId=0 独立单条轨——类型枚举行编辑入队后随
+/// 修订事件落位；Revolute→Prismatic 带限位＝I-MDL-4 合法组合轨）。
+TEST(PluginPanel, Refresh_TypeEditReplaySingleTrack_UI_T66)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "I-MDL-4"},
+                  std::vector<std::string>{"UI-T66-ACC1"});
+
+    ModelingWorkingSet ws = makeSixAxisDraft();
+    int refreshCount = 0;
+    PanelRefreshCoordinator coordinator;
+    coordinator.setSinks([&ws]() -> ModelingWorkingSet& { return ws; },
+                         [&refreshCount]() { ++refreshCount; });
+
+    PendingEdit e;
+    e.jointIndex = 0;
+    e.field = JointEditField::Type;
+    e.value = JointEditValue{JointType::Prismatic};  // 限位 Provided＋workingRange 缺——合法
+    e.groupId = 0;  // 独立单条（类型下拉轨——单编辑动作）
+    coordinator.recordPending(e);
+
+    const auto outcome = coordinator.onRevisionEvent(std::nullopt);
+    EXPECT_EQ(outcome, ReplayOutcome::Replayed);
+    EXPECT_TRUE(ws.design.joints[0].type == JointType::Prismatic)
+        << "类型编辑经域分支落位（I-MDL-4 组合约束通过）";
+    EXPECT_EQ(refreshCount, 1);
+}
+
+/// 声明表单语义即时校验纯函数（F-523① 录入辅助面——两规则与域同口径；
+/// 域拒绝面兜底语义不变，本函数只前置提示）。
+TEST(PluginPanel, CustomChainRowSemanticCheck_TableDriven_UI_T66)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"F-523", "I-MDL-4"},
+                  std::vector<std::string>{"UI-T66-ACC3"});
+
+    // 限位逆序/相等＝拒（I-MDL-4）。
+    const auto reversed = customChainRowSemanticCheck(0.0, 0.0, 1.0, 0.5, 0.2);
+    ASSERT_TRUE(reversed.has_value());
+    EXPECT_NE(reversed->find("I-MDL-4"), std::string::npos);
+    const auto equal = customChainRowSemanticCheck(0.0, 0.0, 1.0, 0.5, 0.5);
+    ASSERT_TRUE(equal.has_value());
+    EXPECT_NE(equal->find("I-MDL-4"), std::string::npos);
+    // 轴零向量＝拒（I-MDL-6）。
+    const auto zeroAxis = customChainRowSemanticCheck(0.0, 0.0, 0.0, -1.0, 1.0);
+    ASSERT_TRUE(zeroAxis.has_value());
+    EXPECT_NE(zeroAxis->find("I-MDL-6"), std::string::npos);
+    // 合法行＝通过（T-MDL-1 J1 种子形态——轴 z＋对称限位）。
+    EXPECT_EQ(customChainRowSemanticCheck(0.0, 0.0, 1.0, -1.0, 1.0), std::nullopt);
 }
 
 /// 真值纪律：投影为纯函数（同输入同输出）；输入变更后重投影立即反映

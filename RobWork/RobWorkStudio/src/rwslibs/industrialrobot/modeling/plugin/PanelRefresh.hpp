@@ -25,6 +25,7 @@
 #ifndef IRD_MODELING_PLUGIN_PANELREFRESH_HPP
 #define IRD_MODELING_PLUGIN_PANELREFRESH_HPP
 
+#include <cstdint>
 #include <functional>
 #include <optional>
 #include <string>
@@ -86,11 +87,18 @@ private:
  * 与 ModelingChangeRecord 的分工：变更记录是域侧"已发生"摘要（append-only
  * 留痕）；本值是面板侧"未应用"意图（重演输入）。字段四元组恰为
  * applyJointFieldEdit 的入参形状——重演即逐条原样回放（零重新解释）。
+ *
+ * UI-T66 分组语义：groupId 标识一次分组提交（编辑页"应用"一次＝一组），
+ * 队列中**连续同 groupId 条目构成一个重演组**（组间以 groupId 变化为界；
+ * 入队顺序即组序）。0＝独立单条（属性行单字段轨的兼容缺省——每条自成
+ * 一组，重演语义与 UI-T41 时代逐条裁决完全一致）。
  */
 struct PendingEdit {
     std::size_t jointIndex = 0;  ///< 关节下标（链序——域函数入参）
-    JointEditField field = JointEditField::Type;  ///< 待编辑字段（四值词表）
+    JointEditField field = JointEditField::Type;  ///< 待编辑字段（词表）
     JointEditValue value{};      ///< 新值载荷（备择与 field 匹配——契约同域函数）
+    std::uint64_t groupId = 0;   ///< 重演组标识（UI-T66——0＝独立单条；同组
+                                 ///  连续条目整组重演/整组手工处置）
 };
 
 /**
@@ -144,6 +152,10 @@ public:
     /// 编辑接受后的入队（保序——submitJointFieldEdit Applied 分支回传）。
     void recordPending(const PendingEdit& edit) { m_pending.push_back(edit); }
 
+    /// 分配新重演组标识（UI-T66——编辑页每轮分组提交取一次；单调递增不
+    /// 复用，0 保留给独立单条——属性行单字段轨兼容缺省）。
+    std::uint64_t allocateGroupId() { return m_nextGroupId++; }
+
     /// 待重演队列只读投影（呈现"未应用编辑"清单——零复制语义由 const& 承担）。
     const std::vector<PendingEdit>& pending() const noexcept { return m_pending; }
 
@@ -162,15 +174,19 @@ public:
     const std::optional<std::size_t>& blockedAtIndex() const noexcept { return m_blockedAt; }
 
     /**
-     * @brief ⑤修订事件入口（L-4 主干——重载基线→保序重演→全面板刷新）。
+     * @brief ⑤修订事件入口（L-4 主干——重载基线→按组保序重演→全面板
+     *        刷新）。
      *
-     * 编排序（§9.7.2 L-4 行逐段落位）：
+     * 编排序（§9.7.2 L-4 行逐段落位＋UI-T66 分组推广）：
      *   ① assertOnUiThread（§3.4——违约 fail-fast）；
      *   ② provider() 现取基线闭包（零缓存——每次事件现场重载）；
-     *   ③ 保序重演：逐条 applyJointFieldEdit（域裁决）——接受即继续，
-     *      拒绝即停：置 manualIntervention＋blockedAt（失败编辑与其后
-     *      编辑**保留**在队列——不静默丢弃），失败事实经返回值上呈；
-     *   ④ 重演完毕（全成或停在失败处）→ refreshSink()（全面板刷新——
+     *   ③ 按组保序重演：队列切分为重演组（**连续同 groupId 条目一组**，
+     *      groupId=0 的条目各自成组），组内逐条 applyJointFieldEdit（域
+     *      裁决）——组内任一条被拒＝**整组失败**（UI-T66 分组语义：编辑
+     *      页一次分组提交是用户的一个编辑动作，半组落位半组拒绝的重演
+     *      结果会让工作集处于用户不可拼合的中间态——整组保留手工处置）；
+     *      跨组仍"失败即停"（后续组原样保留，与单字段轨语义一致）；
+     *   ④ 重演完毕（全成或停在失败组）→ refreshSink()（全面板刷新——
      *      widget 现取工作集重投影；失败态同样刷新——横幅与队列可见）。
      *
      * @param newBaseline [in] 事件携带的基线修订身份（留痕/对账用——工作
@@ -194,18 +210,30 @@ public:
         //   PA-1：闭包重建权威在装配层，本层不持有工作集）。
         ModelingWorkingSet& ws = m_provider();
 
-        // ③保序重演（失败即停＋保留现场——L-4"重演失败提示手工处置，
-        //   不静默丢弃编辑"）。
-        for (std::size_t i = 0; i < m_pending.size(); ++i) {
-            const PendingEdit& e = m_pending[i];
-            if (applyJointFieldEdit(ws, e.jointIndex, e.field, e.value).has_value()) {
-                // 域拒绝：停在此条——队列原样保留（含失败条与其后条），
-                // 手工处置标记置位；用户决议走 discardPendingFrom/重编辑。
-                m_manualIntervention = true;
-                m_blockedAt = i;
-                m_refreshSink();  // ④失败态同样全面板刷新（横幅可见）
-                return ReplayOutcome::BlockedAtEdit;
+        // ③按组保序重演（组＝连续同 groupId 段；组内失败整组标记——
+        //   L-4"重演失败提示手工处置，不静默丢弃编辑"的组粒度推广）。
+        std::size_t i = 0;
+        while (i < m_pending.size()) {
+            // 组边界扫描（同 groupId 连续段——入队顺序即组序）。
+            const std::uint64_t group = m_pending[i].groupId;
+            std::size_t end = i + 1;
+            while (end < m_pending.size() && m_pending[end].groupId == group
+                   && group != 0) {
+                ++end;  // groupId=0 的条目不并组（各自独立——单字段轨兼容）
             }
+            // 组内逐条域裁决（组内失败＝整组保留＋blockedAt 指组首条——
+            // 用户决议以组为单位：discardPendingFrom(组首) 或重编辑）。
+            for (std::size_t k = i; k < end; ++k) {
+                const PendingEdit& e = m_pending[k];
+                if (applyJointFieldEdit(ws, e.jointIndex, e.field, e.value)
+                        .has_value()) {
+                    m_manualIntervention = true;
+                    m_blockedAt = i;  // 组首（整组手工处置的锚）
+                    m_refreshSink();  // ④失败态同样全面板刷新（横幅可见）
+                    return ReplayOutcome::BlockedAtEdit;
+                }
+            }
+            i = end;
         }
 
         // 全部落位：清手工处置标记（上一轮失败经处置后恢复），全面板刷新。
@@ -220,8 +248,10 @@ private:
     BaselineProvider m_provider;           ///< 基线提供器（非 owning——装配层注入）
     RefreshSink m_refreshSink;             ///< 全面板刷新出口（非 owning）
     std::vector<PendingEdit> m_pending;    ///< 待重演编辑（保序——编辑意图队列）
+    std::uint64_t m_nextGroupId = 1;       ///< 重演组分配器（UI-T66——单调递增；0 保留）
     bool m_manualIntervention = false;     ///< 手工处置标记（BlockedAtEdit 置位）
-    std::optional<std::size_t> m_blockedAt; ///< 被拒编辑下标（BlockedAtEdit 时有值）
+    std::optional<std::size_t> m_blockedAt; ///< 被拒处下标（BlockedAtEdit 时有值
+                                            ///  ——UI-T66 分组语义＝失败组组首）
 };
 
 }  // namespace sdurws::ird::modeling

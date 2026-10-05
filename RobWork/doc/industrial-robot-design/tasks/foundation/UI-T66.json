@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T66",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "建模 R1 尾款合批批次（关节类型枚举行面板轨＋编辑页分组重演入 L-4 队列＋F-523① 声明表单语义即时校验顺带）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T65"
+  ],
+  "requirements": [
+    "MDL-06（编辑链失效传播——类型变更复用 L-2 提交流，基线/预览失效随编辑流统一）",
+    "I-MDL-4（限位有序与类型组合约束——类型行提交经域裁决 TypeBoundsConflict，不静默清除既有值）",
+    "MDL-09（显式权威一等字段——Type 域原语 Template.cpp 既有分支直投，面板零计算逻辑）",
+    "§9.7.2 L-4（修订事件刷新——未应用编辑保序重演；本批把编辑页分组编辑纳入重演队列并赋予组语义：组内保序、失败整组手工处置）",
+    "ERR-01（诚实呈现——类型组合拒绝就地呈现＋下拉回退权威值；分组重演失败整组标记不半组静默）"
+  ],
+  "designRefs": [
+    "units/modeling.md#5.2",
+    "units/modeling.md#9.7.2",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T66.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t66/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/**、modeling/include/**（域 Type 分支/I-MDL-4 组合约束已落位 Template.cpp——本批零域改动，纯面板轨与重演组语义）"
+  ],
+  "outputs": [
+    "modeling/plugin/PanelRefresh.hpp：PendingEdit 表尾追加 groupId（std::uint64_t——0＝独立单条，属性行单字段轨兼容缺省）；PanelRefreshCoordinator::onRevisionEvent 按组切分重演——同组连续条目组内保序整组原子（组内任一条被域拒＝整组 blocked：manualIntervention 置位＋blockedAt 指向组首条，队列现场保留；跨组仍失败即停语义不变）——分组重演语义落位（UI-T53 划界消账）",
+    "modeling/plugin/ModelingPanelWidget.cpp：applyJointDetailEditSet 分组提交接入重演队列——每轮分组提交分配新 groupId，逐组域接受（EditSubmitOutcome::Applied）即 recordPending 同组 id；1715 行诚实缺席边界登记更新为落位注",
+    "modeling/plugin/ModelingPanelWidget.cpp/.hpp：编辑页增'关节类型'枚举行——m_jointEditHost 表单面板上方 QComboBox（Revolute/Continuous/Prismatic/Fixed 四值——jointTypeToken 同源词表直投）；refreshJointEditPane 换目标回填当前权威类型；currentIndexChanged→L-2 分流 submitJointFieldEdit(jointIndex, Type, JointEditValue{JointType})——TypeBoundsConflict 等域拒绝就地呈现＋下拉回退权威值；L-7 只读/无选中禁用；接受后入重演队列（独立单条组）＋refreshPropertiesFromLastWorkingSet 重建（限位行量纲随类型）",
+    "modeling/plugin/ModelingCommandFlows.cpp：declareCustomChain 声明表单语义即时校验顺带（F-523①）——限位下限<上限（TypeBoundsConflict 同族语义的表单侧录入辅助）与轴线非零（I-MDL-6 同口径）逐格即时校验拒绝关闭＋行内提示（既有有限性校验保留）",
+    "测试：PluginPanelTest 分组重演用例（同组多条编辑→修订事件组内保序重放；组内中途被拒＝整组 blockedAt 组首＋队列现场保留）＋类型编辑入队重演断言＋gui 类型下拉用例（切换→域接受→变更账面/TypeBoundsConflict 拒绝呈现＋回退）＋FlowsTest 声明表单校验用例（限位逆序/轴线零向量拒绝关闭）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟 standalone）",
+    "集成模式全套件回归：modeling_test/modeling_gui/modeling_contract＋ui_test/ui_contract/ui_gui＋requirements_test/requirements_gui＋kinematics_test/kinematics_contract 全绿（基线数不降——新增用例如实计数）",
+    "ird_gates 引擎自报口径零新增链接边（面板轨与重演组为既有目标内改动）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t66/"
+  ],
+  "acceptance": [
+    "类型枚举行面板轨：编辑页类型下拉→域 Type 分支裁决（I-MDL-4 组合约束）→接受入账＋变更记录'修改关节类型为「…」'＋限位行量纲随类型重建；TypeBoundsConflict 拒绝就地呈现＋下拉回退权威值；L-7 只读禁用",
+    "分组重演：编辑页一次分组提交（Axis/Origin/ZeroOffset/Bounds 多组）的域接受编辑入重演队列同组 id——修订事件重演组内保序整组落位；组内被拒＝整组 blocked（blockedAt 指组首）＋队列现场保留（不半组静默——L-4 语义的组粒度推广）；属性行单字段轨 groupId=0 兼容回归",
+    "声明表单语义即时校验（F-523①）：限位逆序/轴线零向量在表单侧即时拒绝关闭（域 detail 缺列定位的录入辅助面——域拒绝面兜底语义不变）",
+    "诚实边界消账：UI-T53 划界两处（类型枚举行/分组重演）在单元卡与 ui.md 行登记消账；划界原文位置的边界登记更新为落位注",
+    "回归门槛：受影响目标零错误构建（集成＋冒烟）＋全套件回归＋validate 双 PASS；留痕 traceability/builds/ui-t66/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "域 Type 分支（Template.cpp:248）与 I-MDL-4 组合约束已落位——本批严禁改域（allowedFiles 排除 src/include）；面板轨只做词表直投与 L-2 分流复用",
+    "类型下拉的 currentIndexChanged 在 refreshJointEditPane 回填时也会触发——回填需屏蔽提交（blockSignals 或回填旗标），否则换选中目标即幽灵提交",
+    "分组重演的组切分＝队列中连续同 groupId 条目（组间以 groupId 变化为界）——入队顺序即组序，跨组失败即停语义与单字段轨一致",
+    "编辑页分组提交的 confirmApply 基线推进是乐观的（域拒绝在 applyJointDetailEditSet 尾部修正）——recordPending 只记 Applied 条目，被拒组不入队（重演队列＝真实编辑意图）",
+    "declareCustomChain 表单校验为录入辅助面：域拒绝面（reseedCustomChain恰六轴/域裁决）兜底语义不变——表单侧拒绝只是前置体验，不替代域权威"
+  ],
+  "branch": "ui-t66",
+  "note": "【落位登记（2026-10-06，status=ready 待独立验收）】分支基点＝堆叠 ui-t65@14e5697d，留痕 traceability/builds/ui-t66/。①分组重演（groupId/allocateGroupId/按组保序——组内失败整组 blocked 组首锚、跨组失败即停不变）；②编辑页分组提交入队（被拒不入队）＋边界登记更新为落位注；③类型枚举行面板轨（QComboBox 词表直投＋QSignalBlocker 回填屏蔽＋L-7＋拒绝回退）；④F-523①（customChainRowSemanticCheck——I-MDL-4/I-MDL-6 表单前置，域兜底不变）；modeling_test 339（＋4）＋modeling_gui 41（＋1）＋八套件全绿；ird_gates 103＝ui-t65 侧 103 零新增；modeling.md v0.33；validate 双 PASS。",
+  "noteHistory": "【立项登记（2026-10-06，status=planned）】审计建议第 3 项 M-R4/M-R5 合批（UI-T53 两处划界余项一次清掉）＋F-523① 顺带（建议级——M-R6 的随批部分）。分支基点＝堆叠 ui-t65@14e5697d（UI-T64/T65 已推 origin 待独立验收）。关键侦察结论：域侧 JointEditField::Type 词表/token/applyJointFieldEdit 分支（I-MDL-4 组合约束＋变更记录）已在 WP-13 时代落位（Template.cpp:248）——M-R4 缺口确认为纯面板轨（编辑页 12 行数值表无类型枚举行）；M-R5 缺口确认为编辑页分组提交不入重演队列（applyJointDetailEditSet 无 recordPending——唯一入队在属性行 zero-offset 单字段轨 3084；修订事件到达时未应用暂存由用户重录，划界原文 ModelingPanelWidget.cpp:1715）。F-522（§13 历史行分列）与 F-523②（子聚合）不在本批（纯治理/批次 B 随批）。"
+}

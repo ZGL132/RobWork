@@ -207,6 +207,8 @@ private Q_SLOTS:
     void onPropertyEditingFinished();
     /// 命令按钮激活（域工具区——转发注入的提交出口）。
     void onCommandButtonClicked();
+    /// 编辑页关节类型切换（UI-T66——L-2 分流 Type 域分支；拒绝回退权威值）。
+    void onJointEditTypeChanged(int index);
 
 private:
     // ---- 五区构建（构造期一次——布局骨架；内容全部走 refreshPanel）----
@@ -375,6 +377,8 @@ private:
     // ---- UI-T53 关节详细编辑页（"编辑"页签——构造期挂树，随 Qt 析构）----
     std::unique_ptr<ui::IFormEditOutlet> m_jointEditOutlet; ///< 移交出口（构造期一次——转译到本面板域编辑流）
     QWidget* m_jointEditHost = nullptr;       ///< 页签容器（提示行＋面板宿主——QVBoxLayout 承载）
+    QWidget* m_jointEditTypeRow = nullptr;    ///< 类型枚举行容器（UI-T66——空态隐藏/目标态显示）
+    QComboBox* m_jointEditTypeBox = nullptr;  ///< 关节类型下拉（UI-T66——域 Type 词表直投）
     QLabel* m_jointEditHint = nullptr;        ///< 空态提示（非关节选中/无会话——不伪造编辑页）
     QWidget* m_jointEditPanel = nullptr;      ///< createParamTablePanel 产物（换选中目标时重建）
     std::unique_ptr<ui::ParamEditModel> m_jointEditModel;  ///< 编辑会话模型（基线/暂存/就地错误三层——ui 公共件）
