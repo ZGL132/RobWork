@@ -38,6 +38,24 @@ using sdurws::ird::modeling::InvariantId;
 using sdurws::ird::modeling::TcpEntry;
 using sdurws::ird::modeling::ToolDefinition;
 using sdurws::ird::modeling::ModelingWorkingSet;
+// UI-T60 位姿集/传动编辑流符号（本文件显式 using 同款口径）。
+using sdurws::ird::core::DiagnosticRecord;
+using sdurws::ird::core::FieldState;
+using sdurws::ird::modeling::PoseEditErrorCode;
+using sdurws::ird::modeling::DrivetrainEditErrorCode;
+using sdurws::ird::modeling::PoseSetEntry;
+using sdurws::ird::modeling::RobotDesignTemplateFactory;
+using sdurws::ird::modeling::TemplateId;
+using sdurws::ird::modeling::applyDrivetrainFrictionEdit;
+using sdurws::ird::modeling::applyDrivetrainRatioEdit;
+using sdurws::ird::modeling::applyDrivetrainTorqueLimitEdit;
+using sdurws::ird::modeling::applyPoseSetEntryRemoveEdit;
+using sdurws::ird::modeling::applyPoseSetEntryUpsertEdit;
+using sdurws::ird::modeling::drivetrainEditErrorCodeToken;
+using sdurws::ird::modeling::ensureDrivetrainEditTarget;
+using sdurws::ird::modeling::kTemplateIdGeneric6R;
+using sdurws::ird::modeling::poseEditErrorCodeToken;
+using sdurws::ird::runtime::InstallationPresetToken;
 using sdurws::ird::modeling::PartPoseEditValue;
 using sdurws::ird::modeling::PartPoseEditErrorCode;
 using sdurws::ird::modeling::TcpEditErrorCode;
@@ -578,4 +596,155 @@ TEST(MdlParts, TcpDisplayNameEdit_PresentationOnlyField_UI_T58)
     ASSERT_TRUE(notFound.has_value());
     EXPECT_EQ(notFound->code, TcpEditErrorCode::KeyNotFound);
     EXPECT_EQ(ws, before) << "拒绝路径工作集字节不变";
+}
+
+// =====================================================================
+// 位姿集/传动编辑流（UI-T60——F-497 余项收尾；§4.6/§4.7 编辑页承载面）
+// =====================================================================
+
+/**
+ * 位姿集条目编辑（UI-T60——F-497 余项；§4.6 编辑页承载）：upsert 新增/
+ * 覆盖/保留键拒绝/空键/关节序失配＋remove 键不存在/保留键保护＋草稿句柄
+ * 创建（缺席位姿集首存）＋恰一条变更记录＋token 词表（含 UI-T60 表尾
+ * 追加的 KeyNotFound）。全拒绝路径工作集字节不变。
+ */
+TEST(MdlParts, PoseSetEntryEdits_UpsertRemove_UI_T60)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-17"}, std::vector<std::string>{"AT-01"});
+
+    // 六轴草稿夹具（根关节表＝关节序比对基准——§4.6 一一对应）。
+    const RobotDesignTemplateFactory factory;
+    std::vector<DiagnosticRecord> diags;
+    ModelingWorkingSet ws = factory.createDraft(
+        TemplateId{kTemplateIdGeneric6R},
+        InstallationPresetToken::Ground, "demo", diags).get();
+    ASSERT_EQ(ws.design.joints.size(), std::size_t{6});
+
+    // ---- 拒绝面：空键/保留键（写入越出面——MDL-17 字面）----
+    const auto emptyKey = applyPoseSetEntryUpsertEdit(
+        ws, PoseSetEntry{"", std::vector<double>(6, 0.0), ""});
+    ASSERT_TRUE(emptyKey.has_value());
+    EXPECT_EQ(emptyKey->code, PoseEditErrorCode::EmptyKey);
+    const auto reserved = applyPoseSetEntryUpsertEdit(
+        ws, PoseSetEntry{"homeConfiguration", std::vector<double>(6, 0.0), ""});
+    ASSERT_TRUE(reserved.has_value());
+    EXPECT_EQ(reserved->code, PoseEditErrorCode::ReservedKeyInEdit);
+    const ModelingWorkingSet before = ws;
+
+    // ---- 接受面：新增（缺席位姿集→草稿句柄创建＋根引用写入）----
+    PoseSetEntry entry;
+    entry.key = "pose-a";
+    entry.jointConfiguration = {0.1, 0.2, 0.3, 0.0, 0.0, 0.0};
+    entry.note = "拾取位";
+    const auto add = applyPoseSetEntryUpsertEdit(ws, entry);
+    EXPECT_FALSE(add.has_value()) << "合法新增应接受";
+    ASSERT_TRUE(ws.poseSetObject.has_value()) << "缺席位姿集应经草稿句柄创建";
+    EXPECT_TRUE(ws.design.poseSetRef.has_value());
+    EXPECT_EQ(ws.design.poseSetRef->toCanonical(),
+              ws.poseSetObject->objectId.toCanonical());
+    ASSERT_EQ(ws.poseSetObject->entries.size(), std::size_t{1});
+    EXPECT_EQ(ws.poseSetObject->entries[0].jointConfiguration[2], 0.3);
+    ASSERT_EQ(ws.changes.size(), std::size_t{1});
+
+    // ---- 接受面：同键覆盖（编辑提交＝单条目增量形态）----
+    entry.jointConfiguration[2] = 0.9;
+    EXPECT_FALSE(applyPoseSetEntryUpsertEdit(ws, entry).has_value());
+    ASSERT_EQ(ws.poseSetObject->entries.size(), std::size_t{1}) << "同键覆盖不新增";
+    EXPECT_DOUBLE_EQ(ws.poseSetObject->entries[0].jointConfiguration[2], 0.9);
+    ASSERT_EQ(ws.changes.size(), std::size_t{2});
+
+    // ---- 拒绝面：关节序失配（§4.6"与关节序一一对应"）＋字节不变----
+    const ModelingWorkingSet beforeMismatch = ws;
+    const auto mismatch = applyPoseSetEntryUpsertEdit(
+        ws, PoseSetEntry{"pose-b", std::vector<double>(5, 0.0), ""});
+    ASSERT_TRUE(mismatch.has_value());
+    EXPECT_EQ(mismatch->code, PoseEditErrorCode::JointOrderMismatch);
+    EXPECT_EQ(ws, beforeMismatch) << "拒绝路径工作集字节不变";
+
+    // ---- 删除面：键不存在（UI-T60 表尾追加值）＋保留键保护----
+    const auto notFound = applyPoseSetEntryRemoveEdit(ws, "nope");
+    ASSERT_TRUE(notFound.has_value());
+    EXPECT_EQ(notFound->code, PoseEditErrorCode::KeyNotFound);
+    const auto removeReserved = applyPoseSetEntryRemoveEdit(ws, "zeroConfiguration");
+    ASSERT_TRUE(removeReserved.has_value());
+    EXPECT_EQ(removeReserved->code, PoseEditErrorCode::ReservedKeyInEdit);
+
+    // ---- 删除接受＋删空用户集（合法态）＋token（含表尾追加值）----
+    EXPECT_FALSE(applyPoseSetEntryRemoveEdit(ws, "pose-a").has_value());
+    EXPECT_TRUE(ws.poseSetObject->entries.empty()) << "删空用户条目集＝仅剩保留键（合法）";
+    EXPECT_EQ(poseEditErrorCodeToken(PoseEditErrorCode::KeyNotFound), "key-not-found");
+    EXPECT_EQ(poseEditErrorCodeToken(PoseEditErrorCode::ReservedKeyInEdit),
+              "reserved-key-in-edit");
+}
+
+/**
+ * 传动编辑（UI-T60——§4.7 编辑页承载）：ratio 接受（UserProvided）/
+ * 非有限/非正值拒绝＋摩擦三元整组（任一非有限拒绝）＋力矩限值对＋缺席
+ * 创建＋向量对齐＋恰一条变更记录＋越界 fail-fast＋token。
+ */
+TEST(MdlParts, DrivetrainEdits_RatioFrictionTorque_UI_T60)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-16", "MDL-21"},
+                  std::vector<std::string>{"I-MDL-11"});
+
+    const RobotDesignTemplateFactory factory;
+    std::vector<DiagnosticRecord> diags;
+    ModelingWorkingSet ws = factory.createDraft(
+        TemplateId{kTemplateIdGeneric6R},
+        InstallationPresetToken::Ground, "demo", diags).get();
+
+    // ---- 接受面：ratio 编辑（缺席传动→草稿句柄创建＋三向量按关节表对齐）----
+    const auto ratio = applyDrivetrainRatioEdit(ws, 0, 100.0);
+    EXPECT_FALSE(ratio.has_value()) << "合法传动比应接受";
+    ASSERT_TRUE(ws.drivetrainObject.has_value());
+    EXPECT_TRUE(ws.design.drivetrainRef.has_value());
+    ASSERT_EQ(ws.drivetrainObject->ratioPerJoint.size(), std::size_t{6});
+    ASSERT_EQ(ws.drivetrainObject->ratioPerJoint[0].state(), FieldState::Provided);
+    EXPECT_DOUBLE_EQ(*ws.drivetrainObject->ratioPerJoint[0].tryValue(), 100.0);
+    EXPECT_EQ(ws.drivetrainObject->ratioPerJoint[0].provenance().kind,
+              ProvenanceKind::UserProvided);
+    ASSERT_EQ(ws.changes.size(), std::size_t{1});
+
+    // ---- 拒绝面：非有限/非正值（I-MDL-3/I-MDL-11）＋字节不变----
+    const ModelingWorkingSet before = ws;
+    const auto notFinite = applyDrivetrainRatioEdit(
+        ws, 0, std::numeric_limits<double>::quiet_NaN());
+    ASSERT_TRUE(notFinite.has_value());
+    EXPECT_EQ(notFinite->code, DrivetrainEditErrorCode::ValueNotFinite);
+    const auto notPositive = applyDrivetrainRatioEdit(ws, 0, 0.0);
+    ASSERT_TRUE(notPositive.has_value());
+    EXPECT_EQ(notPositive->code, DrivetrainEditErrorCode::RatioNotPositive);
+    EXPECT_EQ(ws, before) << "拒绝路径工作集字节不变";
+
+    // ---- 摩擦三元：整组接受＋任一非有限整组拒绝----
+    EXPECT_FALSE(applyDrivetrainFrictionEdit(ws, 1, 0.5, 2.0, 0.1).has_value());
+    ASSERT_EQ(ws.drivetrainObject->frictionPerJoint[1].viscous.state(),
+              FieldState::Provided);
+    EXPECT_DOUBLE_EQ(*ws.drivetrainObject->frictionPerJoint[1].coulomb.tryValue(), 2.0);
+    const auto frictionBad = applyDrivetrainFrictionEdit(
+        ws, 2, 0.5, std::numeric_limits<double>::infinity(), 0.1);
+    ASSERT_TRUE(frictionBad.has_value());
+    EXPECT_EQ(frictionBad->code, DrivetrainEditErrorCode::ValueNotFinite);
+    EXPECT_EQ(ws.drivetrainObject->frictionPerJoint[2].viscous.state(),
+              FieldState::NotProvided) << "整组拒绝＝零半成品";
+
+    // ---- 力矩限值对：接受＋非有限拒绝----
+    EXPECT_FALSE(applyDrivetrainTorqueLimitEdit(ws, 2, 50.0, 80.0).has_value());
+    EXPECT_DOUBLE_EQ(*ws.drivetrainObject->torqueLimitsPerJoint[2].peak.tryValue(), 80.0);
+    const auto torqueBad = applyDrivetrainTorqueLimitEdit(
+        ws, 3, std::numeric_limits<double>::quiet_NaN(), 80.0);
+    ASSERT_TRUE(torqueBad.has_value());
+    EXPECT_EQ(torqueBad->code, DrivetrainEditErrorCode::ValueNotFinite);
+
+    // ---- 越界 fail-fast（调用方契约违约——五入口全量）----
+    EXPECT_THROW(ensureDrivetrainEditTarget(ws, 9), std::invalid_argument);
+    EXPECT_THROW(applyDrivetrainRatioEdit(ws, 9, 1.0), std::invalid_argument);
+    EXPECT_THROW(applyDrivetrainFrictionEdit(ws, 9, 0, 0, 0), std::invalid_argument);
+    EXPECT_THROW(applyDrivetrainTorqueLimitEdit(ws, 9, 0, 0), std::invalid_argument);
+
+    // ---- token（词表对账）----
+    EXPECT_EQ(drivetrainEditErrorCodeToken(DrivetrainEditErrorCode::RatioNotPositive),
+              "ratio-not-positive");
+    EXPECT_EQ(drivetrainEditErrorCodeToken(DrivetrainEditErrorCode::ValueNotFinite),
+              "value-not-finite");
 }

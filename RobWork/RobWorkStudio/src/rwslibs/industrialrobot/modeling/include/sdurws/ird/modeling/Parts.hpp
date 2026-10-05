@@ -437,6 +437,9 @@ enum class PoseEditErrorCode {
     EmptyKey,            ///< 条目键为空串（引用锚不可为空——codec 键作用域）
     DuplicateKey,        ///< 编辑条目键重复（I-MDL-2 身份/键唯一性的条目面）
     JointOrderMismatch,  ///< 条目 jointConfiguration 长度≠根关节表长度（§4.6"与关节序一一对应"）
+    /// "key-not-found"——剔除面键不在用户条目集（UI-T60 表尾追加值；
+    /// 既有五值次序不动——词表表尾追加纪律）
+    KeyNotFound,
 };
 
 /**
@@ -450,6 +453,22 @@ struct PoseEditOutcome {
     PoseEditErrorCode code = PoseEditErrorCode::Ok;  ///< 结果码（见枚举注）
     std::string subject;                             ///< 定位（出错条目键；Ok 时为空串）
     std::optional<PoseSet> merged;                   ///< 合并产物（仅 Ok 时有值）
+};
+
+/**
+ * @brief 位姿集编辑拒绝值（UI-T60——applyPoseSetEntryUpsertEdit/
+ *        applyPoseSetEntryRemoveEdit 的返回错误面；与其余编辑流错误值
+ *        同构：码＋定位细节。可默认构造供值语义容器使用）。
+ */
+struct PoseEditError {
+    PoseEditErrorCode code = PoseEditErrorCode::EmptyKey;  ///< 稳定错误码
+    std::string detail;  ///< 定位细节（UTF-8；subject 键/原因）
+
+    bool operator==(const PoseEditError& o) const noexcept
+    {
+        return code == o.code && detail == o.detail;
+    }
+    bool operator!=(const PoseEditError& o) const noexcept { return !(*this == o); }
 };
 
 /**
@@ -692,6 +711,126 @@ std::optional<TcpEditError> applyTcpDisplayNameEdit(ModelingWorkingSet& ws,
                                                     std::size_t toolIndex,
                                                     const std::string& tcpKey,
                                                     const std::string& displayName);
+
+// =====================================================================
+// 位姿集/传动编辑流（UI-T60——F-497 余项收尾：§4.6/§4.7 对象的编辑页
+// 承载面；位姿集复用 mergeNamedPoseEntries 单一合并实现——NFR-MNT-04）
+// =====================================================================
+
+/**
+ * @brief 位姿集编辑错误码稳定 token。纯函数；确定性。
+ *
+ * （UI-T60 表尾追加 KeyNotFound——剔除面需要"键不存在"的显式拒绝面；
+ * 既有五值次序不动——词表表尾追加纪律。）
+ */
+std::string_view poseEditErrorCodeToken(PoseEditErrorCode code) noexcept;
+
+/**
+ * @brief 新增/覆盖一条用户命名位姿（§4.6——UI-T60 编辑页承载）。
+ *
+ * 规则：①条目键非空（EmptyKey）且非保留键（ReservedKeyInEdit——
+ * homeConfiguration/zeroConfiguration 的写入不属用户命名位姿管理面，
+ * MDL-17 字面）；②经 mergeNamedPoseEntries 单一合并实现校验＋合并
+ * （条目键与用户集内既有键相同＝覆盖语义——编辑提交＝完整用户清单的
+ * 单条目增量形态；jointConfiguration 长度≠根关节表长度→
+ * JointOrderMismatch）；③位姿集对象缺席→以草稿确定性句柄创建
+ * （deriveDraftObjectId——§5.2 临时句柄纪律，提交时回填正式身份）＋
+ * 根 poseSetRef 写入；④合并产物写入工作集＋恰一条变更记录。
+ *
+ * @throws 无（全部经返回值错误面——调用方输入属可恢复错误轨）
+ */
+std::optional<PoseEditError> applyPoseSetEntryUpsertEdit(ModelingWorkingSet& ws,
+                                                         const PoseSetEntry& entry);
+
+/**
+ * @brief 删除一条用户命名位姿（§4.6——UI-T60 编辑页承载）。
+ *
+ * 规则：①保留键拒绝（ReservedKeyInEdit——保留键条目原样保留，
+ * V-27 建模侧）；②键须存在于用户条目集（KeyNotFound——UI-T60 表尾
+ * 追加值）；③经 mergeNamedPoseEntries 合并（用户集剔除该键）＋写入；
+ * ④恰一条变更记录。删空用户条目集＝位姿集仅剩保留键条目（合法态）。
+ *
+ * @throws 无（返回值错误面）
+ */
+std::optional<PoseEditError> applyPoseSetEntryRemoveEdit(ModelingWorkingSet& ws,
+                                                         const std::string& key);
+
+/**
+ * @brief 传动编辑错误码（局部错误轨道——PoseEditErrorCode 同款先例）。
+ */
+enum class DrivetrainEditErrorCode {
+    /// "value-not-finite"——分量含 NaN/Inf（I-MDL-3）
+    ValueNotFinite,
+    /// "ratio-not-positive"——传动比 ≤0（I-MDL-11：有限且 >0）
+    RatioNotPositive,
+    /// "key-not-found"——键/下标定位的对象缺失（UI-T60 剔除面预留）
+    KeyNotFound,
+};
+
+/// @brief 传动编辑错误码稳定 token。纯函数；确定性。
+std::string_view drivetrainEditErrorCodeToken(DrivetrainEditErrorCode code) noexcept;
+
+/**
+ * @brief 传动编辑拒绝值（局部错误面：码＋定位细节）。
+ */
+struct DrivetrainEditError {
+    DrivetrainEditErrorCode code = DrivetrainEditErrorCode::ValueNotFinite;  ///< 稳定错误码
+    std::string detail;  ///< 定位细节（UTF-8）
+
+    bool operator==(const DrivetrainEditError& o) const noexcept
+    {
+        return code == o.code && detail == o.detail;
+    }
+    bool operator!=(const DrivetrainEditError& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief 传动编辑会话的公共前置（UI-T60——三编辑原语共用；单元内实现
+ *        细节：传动对象缺席→草稿确定性句柄创建＋根 drivetrainRef 写入
+ *        ＋三向量按根关节表长度补齐 NotProvided〔§4.7"与关节序一一对应"
+ *        ——值模型下标即关节序；结构编辑后由本前置对齐〕）。
+ *
+ * @throws std::invalid_argument jointIndex 越界（调用方契约违约）
+ */
+std::optional<DrivetrainEditError> ensureDrivetrainEditTarget(ModelingWorkingSet& ws,
+                                                              std::size_t jointIndex);
+
+/**
+ * @brief 编辑一关节的传动比（§4.7 ratioPerJoint 行——UI-T60；R1 可编辑，
+ *        OPT StageB 连续变量 V12-02）。
+ *
+ * 规则：①ensureDrivetrainEditTarget（缺席创建/向量对齐/越界 fail-fast）；
+ * ②有限性（ValueNotFinite，I-MDL-3）＋正值（RatioNotPositive，I-MDL-11）；
+ * ③SourcedValue UserProvided 写入（MDL-05 显式权威一等值）＋恰一条变更
+ * 记录。无量纲（ SI 系数 1）。
+ */
+std::optional<DrivetrainEditError> applyDrivetrainRatioEdit(ModelingWorkingSet& ws,
+                                                            std::size_t jointIndex,
+                                                            double ratio);
+
+/**
+ * @brief 编辑一关节的摩擦三元（§4.7 frictionPerJoint 行——UI-T60）。
+ *
+ * 三分量逐项有限性（ValueNotFinite）；写入单位随关节类型（转动
+ * N·m·s/rad＋N·m；移动 N·s/m＋N——SI 真值直写，量纲词表缺席面〔fv〕
+ * 的换算归呈现层不归本原语）；SourcedValue UserProvided＋恰一条记录。
+ */
+std::optional<DrivetrainEditError> applyDrivetrainFrictionEdit(ModelingWorkingSet& ws,
+                                                               std::size_t jointIndex,
+                                                               double viscous,
+                                                               double coulomb,
+                                                               double bias);
+
+/**
+ * @brief 编辑一关节的力矩限值对（§4.7 torqueLimitsPerJoint 行——UI-T60；
+ *        不进 CanonicalModel——消费方 SEL/DYN）。
+ *
+ * 两分量逐项有限性；SourcedValue UserProvided＋恰一条变更记录。
+ */
+std::optional<DrivetrainEditError> applyDrivetrainTorqueLimitEdit(ModelingWorkingSet& ws,
+                                                                  std::size_t jointIndex,
+                                                                  double rated,
+                                                                  double peak);
 
 }  // namespace sdurws::ird::modeling
 

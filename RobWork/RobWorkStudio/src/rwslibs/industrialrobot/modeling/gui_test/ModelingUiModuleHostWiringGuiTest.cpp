@@ -110,7 +110,7 @@ TEST(ModelingUiModuleHostWiring, TextResolverBoundBeforePanelCreation_NoInternal
     QWidget* widget = module.createPanel();
     ASSERT_NE(widget, nullptr);
     const auto catalog = modelingDomainCommands();
-    const auto buttons = commandButtonsOf(*widget, modelingDomainCommands());
+    const auto buttons = commandButtonsOf(*widget, catalog);
     ASSERT_EQ(buttons.size(), catalog.size())
         << "命令按钮与目录错位（构造序漂移）";
 
@@ -156,7 +156,7 @@ TEST(ModelingUiModuleHostWiring, WritableChain_PendingInitialAndLiveForward_L7_U
     QWidget* widget = module.createPanel();
     ASSERT_NE(widget, nullptr);
     const auto catalog = modelingDomainCommands();
-    const auto buttons = commandButtonsOf(*widget, modelingDomainCommands());
+    const auto buttons = commandButtonsOf(*widget, catalog);
     ASSERT_EQ(buttons.size(), catalog.size());
 
     // ①初始态兑现：写命令按只读禁用、只读命令可用（修复前面板恒按
@@ -198,7 +198,9 @@ TEST(ModelingUiModuleHostWiring, AppliedPreviewPushChain_Fix_UI_T59)
     module.seedTemplateSession();
 
     // 预览供给替身（宿主形态——缺席轨迹返回 false；应答轨迹返回 stub 文本
-    // ＋来源头行。经装配门面绑定＝UI-T59 补登的转发器路径）。
+    // ＋来源头行。本用例直调模块绑定面（module.bindWorkCellPreview）——
+    // 装配门面转发器的接线语义由 UiPlugin 装配面承载，模块级用例不经过
+    // 门面（F-519③ 表述修正：原注"经装配门面绑定"与实际直调不符））。
     bool asked = false;
     module.bindWorkCellPreview(
         [&asked](const std::string& kind, std::string& headerLine,

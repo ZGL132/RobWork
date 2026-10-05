@@ -22,6 +22,7 @@
 
 #include "InertiaMath.hpp"  // 单元私有：惯量 SPD＋三角不等式单一实现（I-MDL-5——与连杆同源）
 #include "RpyMath.hpp"      // 单元私有：RPY 正解唯一实现（UI-T55——部件位姿编辑的组合数学落点）
+#include "DraftIdentity.hpp"  // 单元私有：草稿确定性句柄（UI-T60——位姿集/传动缺席创建；§5.2 临时句柄纪律）
 
 namespace sdurws::ird::modeling {
 
@@ -577,6 +578,295 @@ std::optional<TcpEditError> applyTcpDisplayNameEdit(ModelingWorkingSet& ws,
     ModelingChangeRecord record;
     record.subject = subject;
     record.summary = "修改 TCP 显示名（键 " + tcpKey + "——仅呈现，不入编译身份）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+// =====================================================================
+// 位姿集/传动编辑流（UI-T60——F-497 余项收尾；§4.6/§4.7 编辑页承载面。
+// 位姿集经 mergeNamedPoseEntries 单一合并实现——NFR-MNT-04，本段零第二
+// 合并判定；传动对象缺席时的创建经 deriveDraftObjectId 草稿确定性句柄
+// ——§5.2"内存编辑态先用临时句柄，提交时回填"）
+// =====================================================================
+
+std::string_view poseEditErrorCodeToken(PoseEditErrorCode code) noexcept
+{
+    switch (code) {
+    case PoseEditErrorCode::Ok: return "ok";
+    case PoseEditErrorCode::ReservedKeyInEdit: return "reserved-key-in-edit";
+    case PoseEditErrorCode::EmptyKey: return "empty-key";
+    case PoseEditErrorCode::DuplicateKey: return "duplicate-key";
+    case PoseEditErrorCode::JointOrderMismatch: return "joint-order-mismatch";
+    case PoseEditErrorCode::KeyNotFound: return "key-not-found";
+    }
+    return "empty-key";  // 全枚举已覆盖，不达此处
+}
+
+namespace {
+
+/// 位姿集编辑目标的确保/创建（两原语共用——UI-T60）。
+PoseSet& ensurePoseSetObject(ModelingWorkingSet& ws)
+{
+    if (!ws.poseSetObject.has_value()) {
+        // 草稿确定性句柄（§5.2——同键同句柄；提交时命令 prepare 回填
+        // 正式身份，PA-1）。批次命名空间与结构编辑同族防跨流撞句柄。
+        PoseSet created;
+        created.objectId = deriveDraftObjectId("ird/modeling/structure-draft/pose-set/1");
+        ws.design.poseSetRef = created.objectId;
+        ws.poseSetObject = std::move(created);
+    }
+    return *ws.poseSetObject;
+}
+
+/// 传动编辑目标的确保/创建/向量对齐（三原语共用——UI-T60）。
+DrivetrainDesign& ensureDrivetrainObject(ModelingWorkingSet& ws)
+{
+    if (!ws.drivetrainObject.has_value()) {
+        DrivetrainDesign created;
+        created.objectId = deriveDraftObjectId("ird/modeling/structure-draft/drivetrain/1");
+        ws.design.drivetrainRef = created.objectId;
+        ws.drivetrainObject = std::move(created);
+    }
+    // 三向量与根关节表长度对齐（§4.7"与关节序一一对应"——值模型下标即
+    // 关节序；结构编辑增删关节后由本对齐补齐/裁剪，NotProvided 补位保
+    // 前缀——既有值零丢失）。
+    const std::size_t jointCount = ws.design.joints.size();
+    auto& dt = *ws.drivetrainObject;
+    if (dt.ratioPerJoint.size() != jointCount) {
+        dt.ratioPerJoint.resize(jointCount);
+    }
+    if (dt.frictionPerJoint.size() != jointCount) {
+        dt.frictionPerJoint.resize(jointCount);
+    }
+    if (dt.torqueLimitsPerJoint.size() != jointCount) {
+        dt.torqueLimitsPerJoint.resize(jointCount);
+    }
+    return dt;
+}
+
+}  // namespace
+
+std::optional<PoseEditError> applyPoseSetEntryUpsertEdit(ModelingWorkingSet& ws,
+                                                         const PoseSetEntry& entry)
+{
+    // ① 条目键非空（EmptyKey——引用锚不可为空）。
+    if (entry.key.empty()) {
+        return PoseEditError{PoseEditErrorCode::EmptyKey,
+                             "位姿条目键为空（键是复位/导出消费的编址锚）"};
+    }
+    // ② 保留键拒绝（ReservedKeyInEdit——home/zero 的写入不属用户命名
+    // 位姿管理面，MDL-17 字面；其读取归 ui 会话复位，KIN-06）。
+    if (isReservedPoseKey(entry.key)) {
+        return PoseEditError{PoseEditErrorCode::ReservedKeyInEdit,
+                             "保留键不得经编辑面写入：" + entry.key
+                                 + "（home/zero 归会话复位——KIN-06 零修订）"};
+    }
+    // ③ 经 mergeNamedPoseEntries 单一合并实现校验＋合并（NFR-MNT-04；
+    //    同键＝覆盖语义——编辑提交＝完整用户清单的单条目增量形态）。
+    //    ★ 用户集构建用拷贝（拒绝路径工作集字节不变纪律——搬移会在合并
+    //    校验失败时把工作集条目留成 moved-from 空壳，UI-T60 域测试实测
+    //    抓获；条目集为草稿小集合，拷贝成本可忽略）。
+    std::vector<PoseSetEntry> userEntries;
+    if (ws.poseSetObject.has_value()) {
+        for (const PoseSetEntry& e : ws.poseSetObject->entries) {
+            if (!isReservedPoseKey(e.key)) {
+                userEntries.push_back(e);
+            }
+        }
+    }
+    // 同键既有条目先剔除再压入（覆盖语义——C++17 无 vector erase_if，
+    // 手写剔除循环）。
+    std::vector<PoseSetEntry> merged1;
+    merged1.reserve(userEntries.size());
+    for (PoseSetEntry& e : userEntries) {
+        if (e.key != entry.key) { merged1.push_back(std::move(e)); }
+    }
+    merged1.push_back(entry);
+    const PoseEditOutcome outcome = mergeNamedPoseEntries(
+        ws.poseSetObject, std::move(merged1), ws.design.joints.size());
+    if (outcome.code != PoseEditErrorCode::Ok) {
+        // 校验失败透传（EmptyKey/ReservedKey/Duplicate/OrderMismatch——
+        // 合并实现的拒绝面即本原语的拒绝面，零转译失真）。
+        return PoseEditError{outcome.code, outcome.subject};
+    }
+    // ④ 提交：对象缺席→草稿句柄创建＋根引用写入；合并产物整体写入
+    // （保留键由合并实现原样带回——V-27 建模侧）＋恰一条变更记录。
+    ensurePoseSetObject(ws);
+    ws.poseSetObject->entries = outcome.merged->entries;
+    ModelingChangeRecord record;
+    record.subject = "poseSet.entries";
+    record.summary = "保存命名位姿（键 " + entry.key + "——与关节序一一对应，rad/m）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::optional<PoseEditError> applyPoseSetEntryRemoveEdit(ModelingWorkingSet& ws,
+                                                         const std::string& key)
+{
+    // ① 保留键拒绝（ ReservedKeyInEdit——保留键条目原样保留，V-27）。
+    if (isReservedPoseKey(key)) {
+        return PoseEditError{PoseEditErrorCode::ReservedKeyInEdit,
+                             "保留键不得经编辑面删除：" + key
+                                 + "（home/zero 归会话复位——KIN-06 零修订）"};
+    }
+    // ② 键须存在于用户条目集（KeyNotFound——UI-T60 表尾追加值）。
+    //    ★ 拷贝构建（拒绝路径字节不变——同 upsert 段注）。
+    std::vector<PoseSetEntry> userEntries;
+    bool found = false;
+    if (ws.poseSetObject.has_value()) {
+        for (const PoseSetEntry& e : ws.poseSetObject->entries) {
+            if (isReservedPoseKey(e.key)) { continue; }
+            if (e.key == key) {
+                found = true;
+                continue;  // 剔除目标——不入用户集
+            }
+            userEntries.push_back(e);
+        }
+    }
+    if (!found) {
+        return PoseEditError{PoseEditErrorCode::KeyNotFound,
+                             "位姿键不存在：" + key};
+    }
+    // ③ 经合并实现（剩余用户集合法性随剔除断言——合并实现复核）＋写入
+    // ＋恰一条变更记录。删空用户集＝位姿集仅剩保留键（合法态）。
+    const PoseEditOutcome outcome = mergeNamedPoseEntries(
+        ws.poseSetObject, std::move(userEntries), ws.design.joints.size());
+    if (outcome.code != PoseEditErrorCode::Ok) {
+        return PoseEditError{outcome.code, outcome.subject};
+    }
+    ensurePoseSetObject(ws);
+    ws.poseSetObject->entries = outcome.merged->entries;
+    ModelingChangeRecord record;
+    record.subject = "poseSet.entries";
+    record.summary = "删除命名位姿（键 " + key + "）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::string_view drivetrainEditErrorCodeToken(DrivetrainEditErrorCode code) noexcept
+{
+    switch (code) {
+    case DrivetrainEditErrorCode::ValueNotFinite: return "value-not-finite";
+    case DrivetrainEditErrorCode::RatioNotPositive: return "ratio-not-positive";
+    case DrivetrainEditErrorCode::KeyNotFound: return "key-not-found";
+    }
+    return "value-not-finite";  // 全枚举已覆盖，不达此处
+}
+
+std::optional<DrivetrainEditError> ensureDrivetrainEditTarget(ModelingWorkingSet& ws,
+                                                              std::size_t jointIndex)
+{
+    // 越界 fail-fast（调用方契约违约——UI-T55 部件位姿编辑同款口径）。
+    if (jointIndex >= ws.design.joints.size()) {
+        throw std::invalid_argument(
+            "modeling/parts/drivetrain-edit-index: 关节下标越界: joints["
+            + std::to_string(jointIndex) + "]");
+    }
+    // 缺席创建/向量对齐不产生错误（纯确保步）——错误面由各原语的值校验
+    // 半段产出。
+    ensureDrivetrainObject(ws);
+    return std::nullopt;
+}
+
+std::optional<DrivetrainEditError> applyDrivetrainRatioEdit(ModelingWorkingSet& ws,
+                                                            std::size_t jointIndex,
+                                                            double ratio)
+{
+    // ① 确保目标（缺席创建/对齐/越界 fail-fast）。
+    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
+    // ② 有限性（I-MDL-3）＋正值（I-MDL-11：无量纲比有限且 >0）。
+    if (!std::isfinite(ratio)) {
+        return DrivetrainEditError{DrivetrainEditErrorCode::ValueNotFinite,
+                                   "joints[" + std::to_string(jointIndex)
+                                       + "]：传动比含非有限分量（NaN/Inf）"};
+    }
+    if (ratio <= 0.0) {
+        return DrivetrainEditError{DrivetrainEditErrorCode::RatioNotPositive,
+                                   "joints[" + std::to_string(jointIndex)
+                                       + "]：传动比须 >0（I-MDL-11）"};
+    }
+    // ③ SourcedValue UserProvided 写入（MDL-05 显式权威一等值）＋恰一条
+    // 变更记录（无量纲——SI 系数 1）。
+    ws.drivetrainObject->ratioPerJoint[jointIndex] =
+        core::SourcedValue<double>::provided(ratio, core::ValueProvenance::make(
+                                                        core::ProvenanceKind::UserProvided,
+                                                        std::nullopt, std::nullopt,
+                                                        std::string("panel-edit")));
+    ModelingChangeRecord record;
+    record.subject = "drivetrain.ratioPerJoint[" + std::to_string(jointIndex) + "]";
+    record.summary = "修改传动比（关节序 " + std::to_string(jointIndex)
+                   + "，无量纲——R1 可编辑 OPT StageB 变量）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::optional<DrivetrainEditError> applyDrivetrainFrictionEdit(ModelingWorkingSet& ws,
+                                                               std::size_t jointIndex,
+                                                               double viscous,
+                                                               double coulomb,
+                                                               double bias)
+{
+    // ① 确保目标。
+    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
+    // ② 三分量逐项有限性（I-MDL-3——Viscous/Coulomb/Bias 任一非有限即
+    // 整组拒绝，不产出半成品三元）。
+    const double comps[3] = {viscous, coulomb, bias};
+    const char* names[3] = {"viscous", "coulomb", "bias"};
+    for (std::size_t i = 0; i < 3; ++i) {
+        if (!std::isfinite(comps[i])) {
+            return DrivetrainEditError{
+                DrivetrainEditErrorCode::ValueNotFinite,
+                "joints[" + std::to_string(jointIndex) + "]：摩擦 " + names[i]
+                    + " 含非有限分量（NaN/Inf）"};
+        }
+    }
+    // ③ SourcedValue UserProvided 三元写入＋恰一条变更记录（单位随关节
+    // 类型：转动 N·m·s/rad＋N·m；移动 N·s/m＋N——SI 真值直写）。
+    auto provenance = core::ValueProvenance::make(core::ProvenanceKind::UserProvided,
+                                                  std::nullopt, std::nullopt,
+                                                  std::string("panel-edit"));
+    FrictionEntry& entry = ws.drivetrainObject->frictionPerJoint[jointIndex];
+    entry.viscous = core::SourcedValue<double>::provided(viscous, provenance);
+    entry.coulomb = core::SourcedValue<double>::provided(coulomb, provenance);
+    entry.bias = core::SourcedValue<double>::provided(bias, provenance);
+    ModelingChangeRecord record;
+    record.subject = "drivetrain.frictionPerJoint[" + std::to_string(jointIndex) + "]";
+    record.summary = "修改关节摩擦（关节序 " + std::to_string(jointIndex)
+                   + "，三元 fv/fc/bias——DYN-06 缺失降级解除）";
+    ws.changes.push_back(std::move(record));
+    return std::nullopt;
+}
+
+std::optional<DrivetrainEditError> applyDrivetrainTorqueLimitEdit(ModelingWorkingSet& ws,
+                                                                  std::size_t jointIndex,
+                                                                  double rated,
+                                                                  double peak)
+{
+    // ① 确保目标。
+    if (const auto err = ensureDrivetrainEditTarget(ws, jointIndex)) { return err; }
+    // ② 两分量逐项有限性（I-MDL-3）。
+    const double comps[2] = {rated, peak};
+    const char* names[2] = {"rated", "peak"};
+    for (std::size_t i = 0; i < 2; ++i) {
+        if (!std::isfinite(comps[i])) {
+            return DrivetrainEditError{
+                DrivetrainEditErrorCode::ValueNotFinite,
+                "joints[" + std::to_string(jointIndex) + "]：力矩限值 " + names[i]
+                    + " 含非有限分量（NaN/Inf）"};
+        }
+    }
+    // ③ SourcedValue UserProvided 对写入＋恰一条变更记录（单位随关节
+    // 类型：转动 N·m；移动 N——不进 CanonicalModel，消费方 SEL/DYN）。
+    auto provenance = core::ValueProvenance::make(core::ProvenanceKind::UserProvided,
+                                                  std::nullopt, std::nullopt,
+                                                  std::string("panel-edit"));
+    TorqueLimitEntry& entry = ws.drivetrainObject->torqueLimitsPerJoint[jointIndex];
+    entry.rated = core::SourcedValue<double>::provided(rated, provenance);
+    entry.peak = core::SourcedValue<double>::provided(peak, provenance);
+    ModelingChangeRecord record;
+    record.subject = "drivetrain.torqueLimitsPerJoint[" + std::to_string(jointIndex) + "]";
+    record.summary = "修改力矩限值（关节序 " + std::to_string(jointIndex)
+                   + "，额定/峰值——驱动工作点评估输入）";
     ws.changes.push_back(std::move(record));
     return std::nullopt;
 }

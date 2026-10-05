@@ -351,6 +351,10 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
         sceneWorldSpecs(), m_sceneEditModel, *m_sceneOutlet, m_sceneEditPanel);
     m_sceneArea->setObjectName(QStringLiteral("ird_modeling_scene_area"));
     m_editStack->addWidget(m_sceneArea);               // index 3
+    buildPoseSetPane();                                // UI-T60——位姿集页（F-497 余项）
+    m_editStack->addWidget(m_poseSetArea);             // index 4
+    buildDrivetrainPane();                             // UI-T60——传动页（F-497 余项）
+    m_editStack->addWidget(m_drivetrainArea);          // index 5
     editLay->addWidget(m_editStack, 1);
     connect(baseModeBtn, &QPushButton::clicked, this, [this] {
         m_editStack->setCurrentWidget(m_basePage);
@@ -1023,6 +1027,17 @@ void ModelingPanelWidget::setWritable(bool writable)
     // writable 复合判定，此处不等待下次选中事件）。
     if (m_tcpDisplayNameEdit != nullptr) { m_tcpDisplayNameEdit->setEnabled(m_writable); }
     if (m_tcpDisplayNameApplyBtn != nullptr) { m_tcpDisplayNameApplyBtn->setEnabled(m_writable); }
+    // L-7 位姿集/传动页半区（UI-T60）：两页控件即时同步（刷新入口按
+    // writable 复合判定，此处不等待下次选中事件）。
+    if (m_poseSetAddBtn != nullptr) {
+        m_poseSetAddBtn->setEnabled(m_writable);
+        m_poseSetRemoveBtn->setEnabled(m_writable);
+        m_poseSetApplyBtn->setEnabled(m_writable);
+        m_poseSetKeyEdit->setEnabled(m_writable);
+        m_poseSetNoteEdit->setEnabled(m_writable);
+    }
+    if (m_poseSetConfigPanel != nullptr) { m_poseSetConfigPanel->setEnabled(m_writable); }
+    if (m_drivetrainPanel != nullptr) { m_drivetrainPanel->setEnabled(m_writable); }
     // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
     // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
     // 残留可用呈现，与需求域"切换后必须同步刷新全部状态承载面"的整改口径
@@ -2347,6 +2362,573 @@ void ModelingPanelWidget::applyTcpOffsetEdits(const ui::ParamEditSet& editSet)
     refreshPropertiesFromLastWorkingSet();
 }
 
+// =====================================================================
+// 位姿集/传动编辑段（UI-T60——F-497 余项收尾；域原语 applyPoseSetEntry*
+// ／applyDrivetrain*；位姿集经 mergeNamedPoseEntries 单一合并实现——
+// NFR-MNT-04；两页行集随关节表（重建策略——UI-T55"字段集可变需重建"侧）
+// =====================================================================
+
+class ModelingPanelWidget::PoseSetEditOutlet final : public ui::IFormEditOutlet {
+public:
+    explicit PoseSetEditOutlet(ModelingPanelWidget& owner) : m_owner(owner) {}
+    void applyEdits(const ui::ParamEditSet& editSet) override
+    {
+        // config 表确认流＝模型基线已推进（confirmApply 后 pendingChanges
+        // 清空）——本出口把确认值同步进页侧权威基线缓存（位姿条目的提交
+        // 锚＝"保存条目"钮，组装"净取权威"须读到确认后的值；不同步即确认
+        // 值丢失——UI-T60 实测）。
+        m_owner.stagePoseSetConfigEdits(editSet);
+    }
+private:
+    ModelingPanelWidget& m_owner;
+};
+
+class ModelingPanelWidget::DrivetrainEditOutlet final : public ui::IFormEditOutlet {
+public:
+    explicit DrivetrainEditOutlet(ModelingPanelWidget& owner) : m_owner(owner) {}
+    void applyEdits(const ui::ParamEditSet& editSet) override
+    {
+        m_owner.applyDrivetrainEdits(editSet);
+    }
+private:
+    ModelingPanelWidget& m_owner;
+};
+
+void ModelingPanelWidget::buildPoseSetPane()
+{
+    auto* area = new QWidget(m_editStack);
+    area->setObjectName(QStringLiteral("ird_modeling_pose_area"));  // 对账排除＋gui 锚
+    m_poseSetArea = area;  // 先落成员（rebuildPoseSetConfigModel 挂本布局）
+    auto* lay = new QVBoxLayout(area);
+    lay->setContentsMargins(0, 0, 0, 0);
+    auto* cap = new QLabel(QStringLiteral(
+        "命名位姿编辑（与关节序一一对应——rad/m 随关节类型；"
+        "homeConfiguration/zeroConfiguration 为保留键，写入/删除归会话"
+        "复位面不在此页；保存条目＝键＋备注＋构型整批提交）"), area);
+    cap->setWordWrap(true);
+    cap->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    lay->addWidget(cap);
+
+    auto* entryRow = new QHBoxLayout();
+    m_poseSetCombo = new QComboBox(area);
+    m_poseSetCombo->setObjectName(QStringLiteral("ird_modeling_pose_combo"));
+    entryRow->addWidget(m_poseSetCombo, 1);
+    m_poseSetAddBtn = new QPushButton(QStringLiteral("新增条目"), area);
+    m_poseSetAddBtn->setObjectName(QStringLiteral("ird_modeling_pose_add"));
+    m_poseSetAddBtn->setToolTip(QStringLiteral(
+        "新增一条命名位姿（自动键 pose-N，构型零位种子——数值随后可编辑）"));
+    m_poseSetRemoveBtn = new QPushButton(QStringLiteral("删除条目"), area);
+    m_poseSetRemoveBtn->setObjectName(QStringLiteral("ird_modeling_pose_remove"));
+    m_poseSetRemoveBtn->setToolTip(QStringLiteral(
+        "删除当前选中条目（保留键被域守卫拒绝）"));
+    m_poseSetApplyBtn = new QPushButton(QStringLiteral("保存条目"), area);
+    m_poseSetApplyBtn->setObjectName(QStringLiteral("ird_modeling_pose_apply"));
+    m_poseSetApplyBtn->setToolTip(QStringLiteral(
+        "把键＋备注＋构型（脏值取新、未编辑取权威）组装为一条命名位姿提交"));
+    entryRow->addWidget(m_poseSetAddBtn);
+    entryRow->addWidget(m_poseSetRemoveBtn);
+    entryRow->addWidget(m_poseSetApplyBtn);
+    lay->addLayout(entryRow);
+
+    auto* keyNoteForm = new QHBoxLayout();
+    auto* keyLabel = new QLabel(QStringLiteral("键"), area);
+    keyNoteForm->addWidget(keyLabel);
+    m_poseSetKeyEdit = new QLineEdit(area);
+    m_poseSetKeyEdit->setObjectName(QStringLiteral("ird_modeling_pose_key"));
+    keyNoteForm->addWidget(m_poseSetKeyEdit, 1);
+    auto* noteLabel = new QLabel(QStringLiteral("备注"), area);
+    keyNoteForm->addWidget(noteLabel);
+    m_poseSetNoteEdit = new QLineEdit(area);
+    m_poseSetNoteEdit->setObjectName(QStringLiteral("ird_modeling_pose_note"));
+    keyNoteForm->addWidget(m_poseSetNoteEdit, 2);
+    lay->addLayout(keyNoteForm);
+
+    // 构型表（行随关节表——关节计数缓存，变化才重建；UI-T55 两策略并存
+    // 的"字段集可变需重建"侧。键前缀 pose-config-<序>）。
+    rebuildPoseSetConfigModel();
+    if (m_poseSetConfigPanel != nullptr) {
+        lay->addWidget(m_poseSetConfigPanel, 1);  // 零关节守卫下为空——重建期再挂
+    }
+
+    connect(m_poseSetCombo, &QComboBox::currentIndexChanged, this,
+            &ModelingPanelWidget::onPoseSetComboChanged);
+    connect(m_poseSetAddBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onPoseSetAddClicked);
+    connect(m_poseSetRemoveBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onPoseSetRemoveClicked);
+    connect(m_poseSetApplyBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onPoseSetApplyClicked);
+}
+
+void ModelingPanelWidget::rebuildPoseSetConfigModel()
+{
+    // 零关节守卫（构造期无编辑目标——ParamEditModel 空字段集 fail-fast，
+    // 行集延迟到刷新期有目标时重建）。
+    ModelingWorkingSet* wsProbe = m_editTarget ? m_editTarget() : nullptr;
+    if (wsProbe == nullptr || wsProbe->design.joints.empty()) {
+        if (m_poseSetConfigPanel != nullptr) {
+            m_poseSetConfigPanel->deleteLater();
+            m_poseSetConfigPanel = nullptr;
+        }
+        m_poseSetConfigJointCount = 0;
+        return;
+    }
+    // 旧行随 Qt 父子析构（deleteLater——刷新路径内延迟删除防重入；
+    // UI-T55 实测教训同款防悬空纪律）。
+    if (m_poseSetConfigPanel != nullptr) {
+        m_poseSetConfigPanel->deleteLater();
+        m_poseSetConfigPanel = nullptr;
+    }
+    m_poseSetOutlet = std::make_unique<PoseSetEditOutlet>(*this);
+    const core::UnitToken m = core::UnitToken::find("m").value();
+    const core::UnitToken rad = core::UnitToken::find("rad").value();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    const std::size_t jointCount = ws != nullptr ? ws->design.joints.size() : 0;
+    std::vector<ui::QuantityFieldSpec> specs;
+    specs.reserve(jointCount);
+    for (std::size_t i = 0; i < jointCount; ++i) {
+        // 量纲随关节类型（Prismatic＝移动 m，其余＝转动 rad——既有呈现
+        // 辅助 jointEditQuantityKind 单一规则复用）。
+        const core::QuantityKind kind =
+            jointEditQuantityKind(ws->design.joints[i].type);
+        const core::UnitToken unit = jointEditUnitToken(kind);
+        specs.push_back(ui::makeQuantityFieldSpec(
+            "pose-config-" + std::to_string(i),
+            "J" + std::to_string(i + 1) + " 构型",
+            kind, unit, unit));
+    }
+    m_poseSetConfigModel = std::make_unique<ui::ParamEditModel>(std::move(specs));
+    m_poseSetConfigPanel = ui::createParamTablePanel(
+        *m_poseSetConfigModel, m_poseSetOutlet.get(), {}, m_poseSetArea);
+    qobject_cast<QVBoxLayout*>(m_poseSetArea->layout())->addWidget(m_poseSetConfigPanel);
+    m_poseSetConfigJointCount = jointCount;
+}
+
+void ModelingPanelWidget::refreshPoseSetPane()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (m_poseSetCombo == nullptr) { return; }
+    // 关节表变化→构型表重建（行集契约）。
+    const std::size_t jointCount = ws != nullptr ? ws->design.joints.size() : 0;
+    if (jointCount != m_poseSetConfigJointCount) { rebuildPoseSetConfigModel(); }
+    const bool writable = m_writable;
+
+    // 条目清单重建（仅用户条目——保留键不进编辑面；QSignalBlocker 防重
+    // 入；保留选中键，失效回落首项）。
+    const QString oldKey = m_poseSetSelectedKey;
+    {
+        QSignalBlocker blocker(m_poseSetCombo);
+        m_poseSetCombo->clear();
+        int keepIndex = -1;
+        if (ws != nullptr && ws->poseSetObject.has_value()) {
+            int row = 0;
+            for (const PoseSetEntry& e : ws->poseSetObject->entries) {
+                if (isReservedPoseKey(e.key)) { continue; }
+                m_poseSetCombo->addItem(QString::fromStdString(e.key));
+                if (QString::fromStdString(e.key) == oldKey) { keepIndex = row; }
+                ++row;
+            }
+        }
+        m_poseSetCombo->setCurrentIndex(keepIndex >= 0 ? keepIndex
+                                                       : (m_poseSetCombo->count() > 0 ? 0 : -1));
+    }
+    m_poseSetSelectedKey = m_poseSetCombo->currentText();
+    m_poseSetAddBtn->setEnabled(writable);
+    m_poseSetRemoveBtn->setEnabled(writable && !m_poseSetSelectedKey.isEmpty());
+    m_poseSetApplyBtn->setEnabled(writable);
+    m_poseSetKeyEdit->setEnabled(writable);
+    m_poseSetNoteEdit->setEnabled(writable);
+    if (m_poseSetConfigPanel != nullptr) { m_poseSetConfigPanel->setEnabled(writable); }
+
+    // 选中条目基线回填（key/note 行编辑＋构型表；未选中＝键/备注清空、
+    // 构型表基线清空〔nullopt——不虚构数值〕）。
+    const int sel = m_poseSetCombo->currentIndex();
+    std::optional<PoseSetEntry> entry;
+    if (ws != nullptr && ws->poseSetObject.has_value() && sel >= 0) {
+        for (const PoseSetEntry& e : ws->poseSetObject->entries) {
+            if (e.key == m_poseSetSelectedKey.toStdString()) { entry = e; break; }
+        }
+    }
+    m_poseSetKeyEdit->setText(entry.has_value()
+                                  ? QString::fromStdString(entry->key)
+                                  : QString());
+    m_poseSetNoteEdit->setText(entry.has_value()
+                                   ? QString::fromStdString(entry->note)
+                                   : QString());
+    m_poseSetConfigBaseline.assign(jointCount, 0.0);
+    for (std::size_t i = 0; i < jointCount; ++i) {
+        const std::string key = "pose-config-" + std::to_string(i);
+        if (entry.has_value() && i < entry->jointConfiguration.size()) {
+            m_poseSetConfigBaseline[i] = entry->jointConfiguration[i];
+            m_poseSetConfigModel->setBaseline(key, entry->jointConfiguration[i]);
+        } else {
+            m_poseSetConfigModel->setBaseline(key, std::nullopt);
+        }
+    }
+}
+
+void ModelingPanelWidget::onPoseSetComboChanged(int index)
+{
+    // 选中切换→基线回填（零脏化；refreshPoseSetPane 重建期被 QSignalBlocker
+    // 屏蔽，仅用户切换到达此处）。
+    Q_UNUSED(index);
+    refreshPoseSetPane();
+}
+
+void ModelingPanelWidget::onPoseSetAddClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable) { return; }
+    // 自动键 pose-N 首空位（TCP add 的 tcp-N 同款惯例）。
+    std::size_t n = 1;
+    auto keyExists = [&ws](const std::string& k) {
+        return ws->poseSetObject.has_value()
+            && std::any_of(ws->poseSetObject->entries.begin(),
+                           ws->poseSetObject->entries.end(),
+                           [&k](const PoseSetEntry& e) { return e.key == k; });
+    };
+    std::string key = "pose-" + std::to_string(n);
+    while (keyExists(key)) { key = "pose-" + std::to_string(++n); }
+    // 零位姿种子（构型零向量，长度＝根关节表——TCP 恒位姿种子同款惯例；
+    // 数值随后可编辑）。
+    PoseSetEntry entry;
+    entry.key = key;
+    entry.jointConfiguration.assign(ws->design.joints.size(), 0.0);
+    const std::optional<PoseEditError> err = applyPoseSetEntryUpsertEdit(*ws, entry);
+    if (!err.has_value()) {
+        onEditApplied("poseSet.entries");
+        m_poseSetSelectedKey = QString::fromStdString(key);  // 新键即选中
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(poseEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::onPoseSetRemoveClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable || m_poseSetSelectedKey.isEmpty()) { return; }
+    const std::optional<PoseEditError> err = applyPoseSetEntryRemoveEdit(
+        *ws, m_poseSetSelectedKey.toStdString());
+    if (!err.has_value()) {
+        onEditApplied("poseSet.entries");
+        m_poseSetSelectedKey.clear();  // 回落首项（refresh 内定位）
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(poseEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::stagePoseSetConfigEdits(const ui::ParamEditSet& editSet)
+{
+    // 确认值→页侧权威基线缓存（键 pose-config-<序>→槽位序；UI-T60——
+    // 保存条目组装"净取权威"的数据源）。
+    const std::string prefix = "pose-config-";
+    for (const ui::ParamChange& change : editSet.changes) {
+        if (change.key.rfind(prefix, 0) != 0) { continue; }
+        const auto idx = std::stoull(change.key.substr(prefix.size()));
+        if (idx < m_poseSetConfigBaseline.size()) {
+            m_poseSetConfigBaseline[idx] = change.newSi;
+        }
+    }
+}
+
+void ModelingPanelWidget::onPoseSetApplyClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable || m_poseSetConfigModel == nullptr) { return; }
+    // 组装条目：键/备注现行编辑；构型脏值取暂存、未编辑取权威基线
+    // （UI-T55 分组装配同款"脏取新/净取权威"）。
+    PoseSetEntry entry;
+    entry.key = m_poseSetKeyEdit->text().toStdString();
+    entry.note = m_poseSetNoteEdit->text().toStdString();
+    entry.jointConfiguration.assign(m_poseSetConfigBaseline.size(), 0.0);
+    std::map<std::string, double> staged;
+    for (const ui::ParamChange& change : m_poseSetConfigModel->pendingChanges()) {
+        staged[change.key] = change.newSi;
+    }
+    for (std::size_t i = 0; i < m_poseSetConfigBaseline.size(); ++i) {
+        const std::string key = "pose-config-" + std::to_string(i);
+        entry.jointConfiguration[i] =
+            staged.count(key) != 0 ? staged[key] : m_poseSetConfigBaseline[i];
+    }
+    const std::optional<PoseEditError> err = applyPoseSetEntryUpsertEdit(*ws, entry);
+    if (!err.has_value()) {
+        onEditApplied("poseSet.entries");
+        m_poseSetSelectedKey = QString::fromStdString(entry.key);
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(poseEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::buildDrivetrainPane()
+{
+    auto* area = new QWidget(m_editStack);
+    auto* lay = new QVBoxLayout(area);
+    lay->setContentsMargins(0, 0, 0, 0);
+    auto* cap = new QLabel(QStringLiteral(
+        "传动设计编辑（传动比无量纲须 >0；摩擦三元 fv/fc/bias 与力矩限值"
+        "额定/峰值——单位随关节类型；耦合 coupling 属 R2/阶段 D、目录回填"
+        "归选型命令，均不在此页）"), area);
+    cap->setWordWrap(true);
+    cap->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    lay->addWidget(cap);
+    // 数值表（行随关节表：ratio N＋摩擦 3N＋力矩 2N；关节计数缓存，变化
+    // 才重建）。首次构建在 rebuildDrivetrainModel 内完成（m_drivetrainArea
+    // 先落成员再建表——面板挂本布局）。
+    area->setObjectName(QStringLiteral("ird_modeling_drivetrain_area"));  // 对账排除＋gui 锚
+    m_drivetrainArea = area;
+    rebuildDrivetrainModel();
+    if (m_drivetrainPanel != nullptr) {
+        lay->addWidget(m_drivetrainPanel, 1);  // 零关节守卫下为空——重建期再挂
+    }
+}
+
+void ModelingPanelWidget::rebuildDrivetrainModel()
+{
+    // 零关节守卫（构造期无编辑目标——同 rebuildPoseSetConfigModel 口径）。
+    ModelingWorkingSet* wsProbe = m_editTarget ? m_editTarget() : nullptr;
+    if (wsProbe == nullptr || wsProbe->design.joints.empty()) {
+        if (m_drivetrainPanel != nullptr) {
+            m_drivetrainPanel->deleteLater();
+            m_drivetrainPanel = nullptr;
+        }
+        m_drivetrainJointCount = 0;
+        return;
+    }
+    if (m_drivetrainPanel != nullptr) {
+        m_drivetrainPanel->deleteLater();
+        m_drivetrainPanel = nullptr;
+    }
+    m_drivetrainOutlet = std::make_unique<DrivetrainEditOutlet>(*this);
+    const core::UnitToken one = core::UnitToken::find("1").value();
+    const core::UnitToken nm = core::UnitToken::find("N*m").value();
+    const core::UnitToken n = core::UnitToken::find("N").value();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    const std::size_t jointCount = ws != nullptr ? ws->design.joints.size() : 0;
+    std::vector<ui::QuantityFieldSpec> specs;
+    specs.reserve(jointCount * 6);
+    for (std::size_t i = 0; i < jointCount; ++i) {
+        const bool prismatic =
+            ws->design.joints[i].type == JointType::Prismatic;
+        const std::string idx = std::to_string(i);
+        const std::string jn = "J" + std::to_string(i + 1) + " ";
+        // 传动比（无量纲——SI 系数 1；I-MDL-11 须 >0）。
+        specs.push_back(ui::makeQuantityFieldSpec(
+            "dt-ratio-" + idx, jn + "传动比",
+            core::QuantityKind::Dimensionless, one, one));
+        // 摩擦三元：黏滞 fv 量纲（N·m·s/rad 或 N·s/m）不在 core 词表——
+        // F-510 族诚实边界：数值面原样直投零换算（标签注明真实单位），
+        // 不虚构量纲 token。fc/bias 量纲在表（转动 N·m／移动 N）。
+        specs.push_back(ui::makeQuantityFieldSpec(
+            "dt-friction-viscous-" + idx, jn + "摩擦 fv（N·m·s/rad 或 N·s/m）",
+            core::QuantityKind::Dimensionless, one, one));
+        specs.push_back(ui::makeQuantityFieldSpec(
+            "dt-friction-coulomb-" + idx, jn + "摩擦 fc",
+            prismatic ? core::QuantityKind::Force : core::QuantityKind::Torque,
+            prismatic ? n : nm, prismatic ? n : nm));
+        specs.push_back(ui::makeQuantityFieldSpec(
+            "dt-friction-bias-" + idx, jn + "摩擦偏置",
+            prismatic ? core::QuantityKind::Force : core::QuantityKind::Torque,
+            prismatic ? n : nm, prismatic ? n : nm));
+        // 力矩限值对（额定/峰值——转动 N·m／移动 N）。
+        specs.push_back(ui::makeQuantityFieldSpec(
+            "dt-torque-rated-" + idx, jn + "力矩额定",
+            prismatic ? core::QuantityKind::Force : core::QuantityKind::Torque,
+            prismatic ? n : nm, prismatic ? n : nm));
+        specs.push_back(ui::makeQuantityFieldSpec(
+            "dt-torque-peak-" + idx, jn + "力矩峰值",
+            prismatic ? core::QuantityKind::Force : core::QuantityKind::Torque,
+            prismatic ? n : nm, prismatic ? n : nm));
+    }
+    m_drivetrainModel = std::make_unique<ui::ParamEditModel>(std::move(specs));
+    m_drivetrainPanel = ui::createParamTablePanel(
+        *m_drivetrainModel, m_drivetrainOutlet.get(), {}, m_drivetrainArea);
+    qobject_cast<QVBoxLayout*>(m_drivetrainArea->layout())->addWidget(m_drivetrainPanel);
+    m_drivetrainJointCount = jointCount;
+}
+
+void ModelingPanelWidget::refreshDrivetrainPane()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (m_drivetrainArea == nullptr) { return; }
+    // 关节表变化→数值表重建（行集契约）。
+    const std::size_t jointCount = ws != nullptr ? ws->design.joints.size() : 0;
+    if (jointCount != m_drivetrainJointCount) { rebuildDrivetrainModel(); }
+    if (m_drivetrainPanel != nullptr) { m_drivetrainPanel->setEnabled(m_writable); }
+
+    // SourcedValue 基线回填（NotProvided＝nullopt 空编辑器——不虚构数值；
+    // 权威值缓存供分组装配"净取权威"）。
+    m_drivetrainBaseline.assign(jointCount * 6, std::nullopt);
+    const std::optional<DrivetrainDesign>& dt =
+        ws != nullptr ? ws->drivetrainObject : std::nullopt;
+    for (std::size_t i = 0; i < jointCount; ++i) {
+        const auto setRow = [&](std::size_t slot, const std::string& key,
+                                const std::optional<core::SourcedValue<double>>& v) {
+            if (v.has_value()) {
+                const auto value = v->tryValue();
+                m_drivetrainBaseline[slot] = value;
+                m_drivetrainModel->setBaseline(key, value);
+            } else {
+                m_drivetrainModel->setBaseline(key, std::nullopt);
+            }
+        };
+        setRow(i * 6 + 0, "dt-ratio-" + std::to_string(i),
+               dt.has_value() && i < dt->ratioPerJoint.size()
+                   ? std::optional<core::SourcedValue<double>>{dt->ratioPerJoint[i]}
+                   : std::nullopt);
+        if (dt.has_value() && i < dt->frictionPerJoint.size()) {
+            setRow(i * 6 + 1, "dt-friction-viscous-" + std::to_string(i),
+                   dt->frictionPerJoint[i].viscous);
+            setRow(i * 6 + 2, "dt-friction-coulomb-" + std::to_string(i),
+                   dt->frictionPerJoint[i].coulomb);
+            setRow(i * 6 + 3, "dt-friction-bias-" + std::to_string(i),
+                   dt->frictionPerJoint[i].bias);
+        } else {
+            m_drivetrainModel->setBaseline("dt-friction-viscous-" + std::to_string(i), std::nullopt);
+            m_drivetrainModel->setBaseline("dt-friction-coulomb-" + std::to_string(i), std::nullopt);
+            m_drivetrainModel->setBaseline("dt-friction-bias-" + std::to_string(i), std::nullopt);
+        }
+        if (dt.has_value() && i < dt->torqueLimitsPerJoint.size()) {
+            setRow(i * 6 + 4, "dt-torque-rated-" + std::to_string(i),
+                   dt->torqueLimitsPerJoint[i].rated);
+            setRow(i * 6 + 5, "dt-torque-peak-" + std::to_string(i),
+                   dt->torqueLimitsPerJoint[i].peak);
+        } else {
+            m_drivetrainModel->setBaseline("dt-torque-rated-" + std::to_string(i), std::nullopt);
+            m_drivetrainModel->setBaseline("dt-torque-peak-" + std::to_string(i), std::nullopt);
+        }
+    }
+}
+
+void ModelingPanelWidget::applyDrivetrainEdits(const ui::ParamEditSet& editSet)
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_writable) { return; }
+    // 分组装配（UI-T55 同款：脏键取新值、未脏取权威基线）：按关节×族
+    // （ratio/摩擦/力矩）聚合脏键，逐关节逐族调用域原语（提交序＝登记序；
+    // 单族拒绝不阻断其余族——ERR-01 就地呈现逐族回执）。
+    std::map<std::string, double> staged;
+    for (const ui::ParamChange& change : editSet.changes) { staged[change.key] = change.newSi; }
+    if (staged.empty()) { return; }
+    const std::size_t jointCount = ws->design.joints.size();
+    auto component = [&](const std::string& key) -> std::optional<double> {
+        if (const auto it = staged.find(key); it != staged.end()) { return it->second; }
+        const auto slot = drivetrainBaselineSlot(key);
+        return slot < m_drivetrainBaseline.size() ? m_drivetrainBaseline[slot]
+                                                  : std::optional<double>{};
+    };
+    bool anyAccepted = false;
+    std::size_t applied = 0;
+    // 族分量齐备性守卫：三元/对组装取"脏取新、净取权威"——权威侧
+    // NotProvided（空基线）且用户未编辑＝分量缺失，诚实拒绝该族（不虚构
+    // 零值——ERR-01；数值面空编辑器语义＝"未提供"非"零"）。
+    auto complete = [&](std::initializer_list<std::string> keys,
+                        const char* family, std::size_t i,
+                        double* out) {
+        std::size_t k = 0;
+        for (const std::string& key : keys) {
+            const auto v = component(key);
+            if (!v.has_value()) {
+                EditRejection rejection;
+                rejection.codeToken = std::string(drivetrainEditErrorCodeToken(
+                    DrivetrainEditErrorCode::ValueNotFinite));
+                rejection.detail = "joints[" + std::to_string(i) + "]：" + family
+                                 + " 分量缺失（未提供的基线不可隐式为零——请"
+                                   "给出全部分量数值）";
+                onEditRejected(rejection);
+                return false;
+            }
+            out[k] = *v;
+            ++k;
+        }
+        return true;
+    };
+    for (std::size_t i = 0; i < jointCount; ++i) {
+        const std::string idx = std::to_string(i);
+        // 族一：传动比。
+        if (staged.count("dt-ratio-" + idx) != 0) {
+            double ratio = 0.0;
+            if (complete({"dt-ratio-" + idx}, "传动比", i, &ratio)) {
+                const std::optional<DrivetrainEditError> err =
+                    applyDrivetrainRatioEdit(*ws, i, ratio);
+                if (!err.has_value()) { anyAccepted = true; ++applied; }
+                else { rejectDrivetrainEdit(*err); }
+            }
+        }
+        // 族二：摩擦三元（任一分量脏＝整组组装提交——域内整组校验）。
+        if (staged.count("dt-friction-viscous-" + idx) != 0
+            || staged.count("dt-friction-coulomb-" + idx) != 0
+            || staged.count("dt-friction-bias-" + idx) != 0) {
+            double vals[3] = {0.0, 0.0, 0.0};
+            if (complete({"dt-friction-viscous-" + idx, "dt-friction-coulomb-" + idx,
+                          "dt-friction-bias-" + idx},
+                         "摩擦三元", i, vals)) {
+                const std::optional<DrivetrainEditError> err = applyDrivetrainFrictionEdit(
+                    *ws, i, vals[0], vals[1], vals[2]);
+                if (!err.has_value()) { anyAccepted = true; ++applied; }
+                else { rejectDrivetrainEdit(*err); }
+            }
+        }
+        // 族三：力矩限值对。
+        if (staged.count("dt-torque-rated-" + idx) != 0
+            || staged.count("dt-torque-peak-" + idx) != 0) {
+            double vals[2] = {0.0, 0.0};
+            if (complete({"dt-torque-rated-" + idx, "dt-torque-peak-" + idx},
+                         "力矩限值", i, vals)) {
+                const std::optional<DrivetrainEditError> err = applyDrivetrainTorqueLimitEdit(
+                    *ws, i, vals[0], vals[1]);
+                if (!err.has_value()) { anyAccepted = true; ++applied; }
+                else { rejectDrivetrainEdit(*err); }
+            }
+        }
+    }
+    if (anyAccepted) {
+        onEditApplied("drivetrain（" + std::to_string(applied) + " 族）");
+    }
+    refreshPropertiesFromLastWorkingSet();
+}
+
+void ModelingPanelWidget::rejectDrivetrainEdit(const DrivetrainEditError& err)
+{
+    EditRejection rejection;
+    rejection.codeToken = std::string(drivetrainEditErrorCodeToken(err.code));
+    rejection.detail = err.detail;
+    onEditRejected(rejection);
+}
+
+std::size_t ModelingPanelWidget::drivetrainBaselineSlot(const std::string& key) const
+{
+    // 键→基线槽位（dt-<族>-<序>；解析失败＝SIZE_MAX——调用方越界回落）。
+    const std::string prefixes[6] = {"dt-ratio-", "dt-friction-viscous-",
+                                     "dt-friction-coulomb-", "dt-friction-bias-",
+                                     "dt-torque-rated-", "dt-torque-peak-"};
+    for (std::size_t fam = 0; fam < 6; ++fam) {
+        if (key.rfind(prefixes[fam], 0) == 0) {
+            return std::stoull(key.substr(prefixes[fam].size())) * 6 + fam;
+        }
+    }
+    return SIZE_MAX;
+}
+
 void ModelingPanelWidget::refreshEditPages()
 {
     // 选择驱动分派（B.1 主通道）：Joint/Tool/Scene 三页均挂 ObjectId 树锚
@@ -2373,8 +2955,25 @@ void ModelingPanelWidget::refreshEditPages()
         m_editStack->setCurrentWidget(m_sceneArea);
         return;
     }
-    // Joint／未解析：关节区照常刷新（空态提示在其内）；BaseInstall/PoseSet/
-    // Drivetrain/ModelRoot 目标维持当前页（各自编辑页归后续批次）。
+    // 位姿集/传动页（UI-T60——F-497 余项：均有 ObjectId 树锚，B.1 主通道）。
+    if (resolved && kind == SelectedTarget::Kind::PoseSet) {
+        refreshPoseSetPane();
+        m_editStack->setCurrentWidget(m_poseSetArea);
+        return;
+    }
+    if (resolved && kind == SelectedTarget::Kind::Drivetrain) {
+        refreshDrivetrainPane();
+        m_editStack->setCurrentWidget(m_drivetrainArea);
+        return;
+    }
+    // 两页基线随每次刷新驱动（不依赖选中——模板会话两对象缺席时无法经
+    // 树选中触发，页面在选中前也须可建行集/可用：新建条目/传动值编辑不
+    // 需要既有对象。行集随关节表重建，基线推送幂等——与工具/场景页同款
+    // "刷新即回权威"语义）。页面切换仍由选中驱动（上方两分支）。
+    refreshPoseSetPane();
+    refreshDrivetrainPane();
+    // Joint／未解析：关节区照常刷新（空态提示在其内）；BaseInstall/
+    // ModelRoot 目标维持当前页（基座模式为显式入口，UI-T54 语义保持）。
     refreshJointEditPane();
 }
 

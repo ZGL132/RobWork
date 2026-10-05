@@ -229,7 +229,7 @@ void ModelingUiModule::bindTextResolver(std::function<QString(const std::string&
     m_textResolver = std::move(resolve);
 }
 
-    void ModelingUiModule::bindWorkCellExport(
+void ModelingUiModule::bindWorkCellExport(
     std::function<bool(const std::string& targetPath, std::string& summary)> exportFn)
 {
     m_guard.assertOnUiThread();

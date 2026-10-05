@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T60",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "位姿集/传动编辑页（F-497 余项收尾）：PoseSet 两原语＋Drivetrain 三原语＋编辑页签五/六页＋随批治理（F-519①~④/F-515/F-517 S1/S2/S3＋F-518 防复发登记）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T59"
+  ],
+  "requirements": [
+    "MDL-17（命名位姿保存/命名/恢复——保留键写入/删除越出面拒绝）",
+    "MDL-16（传动参数编辑——ratio 有限>0 I-MDL-11；摩擦/力矩 SourcedValue UserProvided）",
+    "MDL-07（选中只显示相关属性——位姿集/传动树锚选择驱动切页）",
+    "ERR-01（诚实拒绝——保留键/关节序/非有限/非正值就地呈现，字节不变；传动族分量缺失不虚构零值）"
+  ],
+  "designRefs": [
+    "units/modeling.md#4.6",
+    "units/modeling.md#4.7",
+    "units/modeling.md#5.2",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-497",
+    "traceability/findings.json#F-519"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T60.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t60/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "modeling/include/sdurws/ird/modeling/Parts.hpp＋src/Parts.cpp：位姿集两原语（applyPoseSetEntryUpsertEdit/applyPoseSetEntryRemoveEdit——复用 mergeNamedPoseEntries 单一合并实现 NFR-MNT-04；KeyNotFound 词表表尾追加；PoseEditError 值＋poseEditErrorCodeToken；对象缺席经 deriveDraftObjectId 草稿句柄创建＋poseSetRef 写入；保留键拒绝；用户集拷贝构建——拒绝路径字节不变）＋传动三原语（applyDrivetrainRatioEdit〔有限＋>0 I-MDL-11〕/applyDrivetrainFrictionEdit〔三元整组〕/applyDrivetrainTorqueLimitEdit〔对〕＋ensureDrivetrainEditTarget 公共前置＋DrivetrainEditError＋token；SourcedValue UserProvided 写入 MDL-05；三向量按关节表对齐 NotProvided 补位）",
+    "modeling/plugin/ModelingPanelWidget.hpp/.cpp：编辑页签堆栈 4→6 页（位姿集 4/传动 5）＋buildPoseSetPane（combo＋新增/删除/保存三钮＋key/note 行编辑＋构型表 pose-config-<i>——行随关节表重建，零关节守卫）＋stagePoseSetConfigEdits（确认值→页侧基线缓存——保存条目'净取权威'数据源）＋buildDrivetrainPane（ratio/摩擦/力矩六行每关节——fv 量纲词表缺席按 F-510 族诚实边界原样直投标签注明，fc/bias/力矩按关节类型 Torque/Force 分流）＋refreshEditPages 分派（两 Kind 树锚切页＋无选中路径基线驱动——模板会话两对象缺席也可用）＋L-7 门控两页",
+    "随批治理：F-519①（PackageWorkCellTest t-world-frame 值断言——测试侧同格式 to_chars 镜像）②（PreviewPane 剪贴板哨兵）③（HostWiring 注释表述修正）④（ModelingUiModule bindWorkCellExport 缩进修正）＋F-515（两 TU commandButtonsOf 冗余 modelingDomainCommands() 调用消除）＋F-517 S1（TcpDisplayNameEdit_SetWritableDynamicWindow gui 用例）＋对账排除面（pose/drivetrain 页容器入 inJointEditPane＋放行循环排除链对齐）",
+    "测试：PartsTest PoseSetEntryEdits_UpsertRemove_UI_T60＋DrivetrainEdits_RatioFrictionTorque_UI_T60（全拒绝路径字节不变）＋gui PoseSetEdit_Chain_UI_T60/DrivetrainEdit_Chain_UI_T60/PoseDrivetrainPanes_ReadOnlyDisables_UI_T60＋TcpDisplayNameEdit_SetWritableDynamicWindow_F517",
+    "DTB §5.1：集成口径登记（受影响目标冷构建；宿主接线批次必建 sdurws_ird_ui_plugin——F-517 S2/F-518 防复发）＋ird_gates 输出提取备忘（F-517 S3）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟 standalone）",
+    "集成模式：modeling_test 332/332（新增 2）＋modeling_gui_test 38/38（新增 4）＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44",
+    "ird_gates base..branch 零新增（引擎自报计数与基线一致口径；命中集零项涉改动文件；归一化多重集比对见验收记录）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t60/"
+  ],
+  "acceptance": [
+    "位姿集域原语面：upsert 新增（草稿句柄创建＋poseSetRef）/覆盖/空键/保留键/关节序失配拒绝字节不变＋remove KeyNotFound/保留键保护/删空用户集合法态＋token——具名用例 PoseSetEntryEdits_UpsertRemove_UI_T60（PartsTest）",
+    "传动域原语面：ratio 接受（UserProvided）/非有限/非正值拒绝＋摩擦三元整组（零半成品）＋力矩限值对＋缺席创建＋向量对齐＋越界 fail-fast＋token——具名用例 DrivetrainEdits_RatioFrictionTorque_UI_T60（PartsTest）",
+    "位姿集全链：新增条目（pose-1 种子）→构型表编辑（标准 apply/confirm 流）→保存条目（确认值经 stagePoseSetConfigEdits 入组装）→域接受＋备注/键组装→保留键删除就地呈现——PoseSetEdit_Chain_UI_T60（gui）",
+    "传动全链：dt-ratio-0 行编辑→apply/confirm→分组装配→域接受＝草稿句柄创建＋ratioPerJoint[0] UserProvided——DrivetrainEdit_Chain_UI_T60（gui）",
+    "L-7 门控：只读会话两页禁用——PoseDrivetrainPanes_ReadOnlyDisables_UI_T60（gui）",
+    "F-517 S1：setWritable 动态窗口（无刷新事件降级）显示名行/应用钮即时禁用——TcpDisplayNameEdit_SetWritableDynamicWindow_F517（gui；与刷新半区双半区各有断言）",
+    "F-519①②③④＋F-515 随批闭环：t-world-frame 值断言（PackageWorkCellTest）＋剪贴板哨兵＋注释表述＋缩进＋冗余调用消除",
+    "回归门槛：受影响目标零错误构建（集成＋冒烟）＋全套件回归＋validate-docs/validate-task PASS；留痕 traceability/builds/ui-t60/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "ParamTablePanel confirmApply 会推进模型基线并清空 pendingChanges——页侧'保存条目'组装的权威基线缓存须在出口 applyEdits 同步（stagePoseSetConfigEdits——不同步即确认值丢失，实测抓获）",
+    "编辑用户集构建必须拷贝（std::move 会在合并校验失败的拒绝路径把工作集条目留成 moved-from 空壳——字节不变纪律被破坏，域测试实测抓获）",
+    "refreshEditPages 无选中路径必须驱动两页基线（模板会话两对象缺席时无法经树选中触发——否则构型表零行死锁）；基线推送会清暂存（既有刷新语义一致）",
+    "零关节守卫：构造期无编辑目标时 ParamEditModel 空字段集 fail-fast——两重建函数须在行集为空时延迟到刷新期",
+    "传动 fv 量纲（N·m·s/rad 或 N·s/m）不在 core 词表——F-510 族诚实边界：数值面 Dimensionless 原样直投零换算，标签注明真实单位；不虚构量纲 token",
+    "gui 对账排除：pose_combo/pose_add/pose_remove/pose_apply/pose_key/pose_note 呈现件经 pose_area 容器入 inJointEditPane 排除面；drivetrain 表经 param_table_panel 已覆盖；AvailabilityProviderDisabled 放行循环排除链与全禁循环对齐（空选择下删除钮合法禁用）"
+  ],
+  "branch": "ui-t60",
+  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@c58af6d6。F-497 余项收尾（兑现①关节 Origin②基座③工具/场景④TCP 列表已合入——本批⑤位姿集/传动编辑页落位后 F-497 全项闭环，状态翻转归合入段治理提交）。随批治理：F-519①~④＋F-515＋F-517 S1 随批闭环；F-517 S2/S3＋F-518 防复发经 DTB §5.1 口径登记闭环（findings 翻转归合入段）。传动耦合 coupling（R2/MDL-21）与目录回填（SEL-10）不在本页编辑面（页说明行如实划界）。"
+}
