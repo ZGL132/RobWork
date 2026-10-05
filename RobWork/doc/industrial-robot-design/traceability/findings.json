@@ -5194,6 +5194,15 @@
       "registeredAt": "2026-10-05",
       "title": "ui.md §13 任务表十三行历史分列不齐（分列审计实证：1 行 9 列〔内容含未转义管道〕＋12 行 3~4 列〔历史堆叠/缺列〕——期望 5 列；GFM 渲染错位）。皆为 UI-T21~T53 时代历史行，非本批引入",
       "owner": "逐行修需判读历史行语义（任务内容/诚实边界/前置列归属）——留治理批次统一处置；本批新增 UI-T62 行自身 3 列同款复现（acc/ui-t62/1 D-2）已随 UI-T62 合入段五列补齐修正（fixed 随批注）"
+    },
+    {
+      "id": "F-523",
+      "source": "acc/ui-t63/1@8276c02c 验收记录建议级两条（UI-T63 独立子会话对抗式验收 2026-10-05）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-05",
+      "title": "UI-T63 验收建议合集：①custom-chain 声明表单仅逐格有限性校验——限位有序（lower<upper）/轴线非零等语义错误提交后才由域拒绝面兜底（行为正确：fresh 丢弃会话不变），建议后续批次加表单侧即时录入辅助校验（缺列定位于域 detail 转译）；②CustomChainJointSpec 十二裸 double 平铺＋手写 ==，与域侧聚合风格（SixAxisJointSpec/JointOriginEditValue）不一致——批次 B 如扩列建议引入子聚合",
+      "owner": "①后续触碰声明表单批次顺手补全（表单即时校验＋域 detail 列转译）；②批次 B（所有者裁决放开红线后）随扩列重构"
     }
   ]
 }

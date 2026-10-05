@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "从零创建批次：new-from-template 参数化（模板选择＋custom-chain 六轴声明——Origin 位置＋RPY 从零定义）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T62"
   ],
@@ -61,5 +61,6 @@
     "声明编辑保留在 changes 账面＝待应用编辑（~29 条）——与 generic-6r 重种子（changes 清零）语义不同：声明是真编辑非模板种子，应用后随基线消费"
   ],
   "branch": "ui-t63",
-  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@64f84a74。批次 A（建议已获所有者'按照建议进行'指令）：new-from-template 参数化＋custom-chain 六轴从零声明（Origin 位置＋RPY）。红线不触声明：4/5 轴与含 prismatic 链的创建确认仍受 creationEntryGuard（AT-20 需求分期口径）；类型枚举行编辑（既有关节类型转换）仍为 UI-T53 登记诚实边界——本批类型在声明时给定（锁 Revolute）。七轴归 P-03 冻结。"
+  "note": "【合入登记注（2026-10-05，PIPE §4.7 收尾——PIPE v1.8 autoMerge 预授权）】acceptedHead 41c61848 合入 redesign-main（acc/ui-t63/1@8276c02c 按 SHA 先并）；独立子会话对抗式验收全项 pass（§4.1~§4.11 亲手复现；做红三处三红——恰六轴守卫移除/flows reseed 调用移除/Origin 分支移除，全部还原复绿终态 335+40；ird_gates 引擎直跑双侧 101 命中归一化多重集 diff=空）。建议级两条转登 F-523（S-1 表单侧语义校验延迟到域拒绝面兜底——建议表单即时录入辅助校验；S-2 裸 double 平铺与域聚合风格不一致——批次 B 扩列时引子聚合）。",
+  "noteHistory": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@64f84a74。批次 A（建议已获所有者'按照建议进行'指令）：new-from-template 参数化＋custom-chain 六轴从零声明（Origin 位置＋RPY）。红线不触声明：4/5 轴与含 prismatic 链的创建确认仍受 creationEntryGuard（AT-20 需求分期口径）；类型枚举行编辑（既有关节类型转换）仍为 UI-T53 登记诚实边界——本批类型在声明时给定（锁 Revolute）。七轴归 P-03 冻结。"
 }
