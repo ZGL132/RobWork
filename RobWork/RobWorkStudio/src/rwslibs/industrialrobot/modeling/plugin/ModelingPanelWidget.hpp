@@ -272,6 +272,14 @@ private:
     /// applyScenePoseEdit；任一分量缺失＝就地拒绝不组装）。
     void applyToolMountEdits(const ui::ParamEditSet& editSet);
     void applyScenePoseEdits(const ui::ParamEditSet& editSet);
+    // ---- UI-T57 TCP 列表编辑段 ----
+    void buildTcpPane();                          ///< TCP 段构建（挂工具页既有布局）
+    void refreshTcpPane();                        ///< combo/使能/基线回填（工具页刷新尾驱动）
+    void onTcpAddClicked();                       ///< 新增（默认键 tcp-N 首空位；offset 恒位姿）
+    void onTcpRemoveClicked();                    ///< 删除选中（域守卫拒绝就地呈现）
+    void onTcpDefaultClicked();                   ///< 选中 TCP 设为默认
+    void onTcpComboChanged(int index);            ///< 选中切换→offset 基线回填
+    void applyTcpOffsetEdits(const ui::ParamEditSet& editSet);  ///< 出口移交
     /// 位姿类编辑页通用构建（说明行＋ParamTablePanel——工具/场景页同构
     /// 复用；模型/面板经引用回填成员，堆栈页由调用方 addWidget 定序）。
     QWidget* buildPoseEditPage(
@@ -355,6 +363,17 @@ private:
     std::unique_ptr<ui::ParamEditModel> m_toolEditModel;   ///< 工具页编辑会话模型
     std::unique_ptr<ui::ParamEditModel> m_sceneEditModel;  ///< 场景页编辑会话模型
     std::optional<std::size_t> m_toolEditTarget;   ///< 工具页当前绑定下标
+    // ---- UI-T57 TCP 列表编辑段（工具页第二段——combo 选 TCP＋增删钮＋
+    //      offset 六行面板＋默认切换钮；offset 面板字段集常量不重建）----
+    class TcpOffsetEditOutlet;                    ///< TCP offset 移交壳
+    std::unique_ptr<ui::IFormEditOutlet> m_tcpOutlet;   ///< TCP offset 页出口
+    QComboBox* m_tcpCombo = nullptr;              ///< TCP 选择（键呈现）
+    QPushButton* m_tcpAddBtn = nullptr;           ///< 新增 TCP（默认键 tcp-N）
+    QPushButton* m_tcpRemoveBtn = nullptr;        ///< 删除选中 TCP
+    QPushButton* m_tcpDefaultBtn = nullptr;       ///< 选中 TCP 设为默认
+    QWidget* m_tcpOffsetPanel = nullptr;          ///< TCP offset ParamTablePanel
+    std::unique_ptr<ui::ParamEditModel> m_tcpOffsetModel;  ///< offset 编辑模型
+    QString m_tcpSelectedKey;                     ///< 当前选中 TCP 键（空＝未选）
     std::optional<std::size_t> m_sceneEditTarget;  ///< 场景页当前绑定下标
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----

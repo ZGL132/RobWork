@@ -17,6 +17,7 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
+#include <algorithm>
 #include <QMessageBox>                            // 六轴重置确认对话（UI-T47——有损操作知情面）
 #include <QLabel>
 #include <QScrollBar>
@@ -88,6 +89,15 @@ constexpr const char* kSceneWorldZKey = "world-z";
 constexpr const char* kSceneWorldRollKey = "world-r";
 constexpr const char* kSceneWorldPitchKey = "world-p";
 constexpr const char* kSceneWorldYawKey = "world-yaw";
+
+// ---- UI-T57 TCP offset 编辑段字段键（6 行——选中 TCP 的安装偏移，键面
+//      固定不随 TCP 键变化；选中经 combo 承载）-------------------------
+constexpr const char* kTcpOffsetXKey = "tcp-offset-x";
+constexpr const char* kTcpOffsetYKey = "tcp-offset-y";
+constexpr const char* kTcpOffsetZKey = "tcp-offset-z";
+constexpr const char* kTcpOffsetRollKey = "tcp-offset-r";
+constexpr const char* kTcpOffsetPitchKey = "tcp-offset-p";
+constexpr const char* kTcpOffsetYawKey = "tcp-offset-yaw";
 
 /// 工具页字段集（6 行——安装接口 XYZ m＋RPY rad；specs 常量→模型重建仅在
 /// 换目标时发生，字段集本身与目标无关）。
@@ -259,6 +269,18 @@ private:
     ModelingPanelWidget& m_owner;
 };
 
+/// TCP offset 编辑页出口（UI-T57——转接 applyTcpOffsetEdits，同构零判定）。
+class ModelingPanelWidget::TcpOffsetEditOutlet final : public ui::IFormEditOutlet {
+public:
+    explicit TcpOffsetEditOutlet(ModelingPanelWidget& owner) : m_owner(owner) {}
+    void applyEdits(const ui::ParamEditSet& editSet) override
+    {
+        m_owner.applyTcpOffsetEdits(editSet);
+    }
+private:
+    ModelingPanelWidget& m_owner;
+};
+
 // =====================================================================
 // 构造与五区骨架
 // =====================================================================
@@ -281,6 +303,7 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     m_jointEditOutlet = std::make_unique<JointDetailEditOutlet>(*this);
     m_toolOutlet = std::make_unique<ToolMountEditOutlet>(*this);
     m_sceneOutlet = std::make_unique<ScenePoseEditOutlet>(*this);
+    m_tcpOutlet = std::make_unique<TcpOffsetEditOutlet>(*this);
 
     auto* tabs = new QTabWidget(this);
     auto* editPage = new QWidget(tabs);
@@ -317,6 +340,7 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
         toolMountSpecs(), m_toolEditModel, *m_toolOutlet, m_toolEditPanel);
     m_toolArea->setObjectName(QStringLiteral("ird_modeling_tool_area"));
     m_editStack->addWidget(m_toolArea);                // index 2
+    buildTcpPane();                                    // UI-T57——TCP 段（工具页内，mount 面板之下）
     m_sceneArea = buildPoseEditPage(
         QStringLiteral("场景世界位姿编辑（世界坐标系固连——M-11 不预乘安装"
                        "旋转；位置 m／姿态 rad，ZYX 约定 R＝Rz·Ry·Rx）"),
@@ -879,6 +903,13 @@ void ModelingPanelWidget::setWritable(bool writable)
     // 复合，此处即时同步不等待下次选中事件）。
     if (m_toolEditPanel != nullptr) { m_toolEditPanel->setEnabled(m_writable); }
     if (m_sceneEditPanel != nullptr) { m_sceneEditPanel->setEnabled(m_writable); }
+    // L-7 TCP 段半区（UI-T57）：增删/默认钮与 offset 面板即时同步。
+    if (m_tcpAddBtn != nullptr) {
+        m_tcpAddBtn->setEnabled(m_writable);
+        m_tcpRemoveBtn->setEnabled(m_writable);
+        m_tcpDefaultBtn->setEnabled(m_writable);
+    }
+    if (m_tcpOffsetPanel != nullptr) { m_tcpOffsetPanel->setEnabled(m_writable); }
     // 命令按钮使能态即时重算（UI-T43 修复——审核 P1：此前注释推迟到"下次
     // refreshPanel"实现；但宿主只读降级后可能长时间无刷新事件，期间写命令
     // 残留可用呈现，与需求域"切换后必须同步刷新全部状态承载面"的整改口径
@@ -1891,9 +1922,252 @@ void ModelingPanelWidget::applyScenePoseEdits(const ui::ParamEditSet& editSet)
     refreshPropertiesFromLastWorkingSet();
 }
 
+// =====================================================================
+// TCP 列表编辑段（UI-T57——F-497 兑现④；MDL-13 不变量流；域原语
+// applyTcpAddEdit/applyTcpRemoveEdit/applyTcpOffsetEdit/applyDefaultTcpSwitchEdit）
+// =====================================================================
+
+void ModelingPanelWidget::buildTcpPane()
+{
+    // 挂工具页既有布局（mount 面板之下）——工具页＝安装接口＋TCP 两段。
+    auto* lay = qobject_cast<QVBoxLayout*>(m_toolArea->layout());
+    if (lay == nullptr) { return; }  // 布局未建（装配序防御）
+    auto* cap = new QLabel(QStringLiteral(
+        "TCP 列表（tcp 系相对安装接口——位置 m／姿态 rad，ZYX 约定；"
+        "键为 defaultTcp 引用锚，须非空唯一；列表至少保留一条）"), m_toolArea);
+    cap->setWordWrap(true);
+    cap->setStyleSheet(
+        QStringLiteral("color: %1;").arg(QString::fromLatin1(ui::palette::kTextMuted)));
+    lay->addWidget(cap);
+
+    auto* row = new QHBoxLayout();
+    m_tcpCombo = new QComboBox(m_toolArea);
+    m_tcpCombo->setObjectName(QStringLiteral("ird_modeling_tcp_combo"));
+    row->addWidget(m_tcpCombo, 1);
+    m_tcpAddBtn = new QPushButton(QStringLiteral("新增 TCP"), m_toolArea);
+    m_tcpAddBtn->setObjectName(QStringLiteral("ird_modeling_tcp_add"));
+    m_tcpAddBtn->setToolTip(QStringLiteral(
+        "追加一条 TCP（自动生成键 tcp-N，offset 恒位姿——数值随后可编辑）"));
+    m_tcpRemoveBtn = new QPushButton(QStringLiteral("删除 TCP"), m_toolArea);
+    m_tcpRemoveBtn->setObjectName(QStringLiteral("ird_modeling_tcp_remove"));
+    m_tcpRemoveBtn->setToolTip(QStringLiteral(
+        "删除当前选中 TCP（最后一条与被 defaultTcp 引用者被域守卫拒绝）"));
+    m_tcpDefaultBtn = new QPushButton(QStringLiteral("设为默认"), m_toolArea);
+    m_tcpDefaultBtn->setObjectName(QStringLiteral("ird_modeling_tcp_default"));
+    m_tcpDefaultBtn->setToolTip(QStringLiteral(
+        "把当前选中 TCP 设为工具默认（根 defaultTcp 整体写入）"));
+    row->addWidget(m_tcpAddBtn);
+    row->addWidget(m_tcpRemoveBtn);
+    row->addWidget(m_tcpDefaultBtn);
+    lay->addLayout(row);
+
+    // TCP offset 编辑模型/面板（字段集常量——构造期一次建成，选中切换仅
+    // 推基线；与工具/场景页同款不重建纪律）。
+    const core::UnitToken m = core::UnitToken::find("m").value();
+    const core::UnitToken rad = core::UnitToken::find("rad").value();
+    std::vector<ui::QuantityFieldSpec> specs = {
+        ui::makeQuantityFieldSpec(kTcpOffsetXKey, "TCP X", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kTcpOffsetYKey, "TCP Y", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kTcpOffsetZKey, "TCP Z", core::QuantityKind::Length, m, m),
+        ui::makeQuantityFieldSpec(kTcpOffsetRollKey, "TCP R（roll）", core::QuantityKind::Angle, rad, rad),
+        ui::makeQuantityFieldSpec(kTcpOffsetPitchKey, "TCP P（pitch）", core::QuantityKind::Angle, rad, rad),
+        ui::makeQuantityFieldSpec(kTcpOffsetYawKey, "TCP Y（yaw）", core::QuantityKind::Angle, rad, rad),
+    };
+    m_tcpOffsetModel = std::make_unique<ui::ParamEditModel>(std::move(specs));
+    m_tcpOffsetPanel = ui::createParamTablePanel(
+        *m_tcpOffsetModel, m_tcpOutlet.get(), {}, m_toolArea);
+    lay->addWidget(m_tcpOffsetPanel, 1);
+
+    connect(m_tcpCombo, &QComboBox::currentIndexChanged, this,
+            &ModelingPanelWidget::onTcpComboChanged);
+    connect(m_tcpAddBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onTcpAddClicked);
+    connect(m_tcpRemoveBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onTcpRemoveClicked);
+    connect(m_tcpDefaultBtn, &QPushButton::clicked, this,
+            &ModelingPanelWidget::onTcpDefaultClicked);
+}
+
+void ModelingPanelWidget::refreshTcpPane()
+{
+    // 选中工具现取（工具页目标——refreshToolMountPane 已定 toolIndex；
+    // 本段复用同一目标：无工具/越界＝整段禁用）。
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    const bool hasTool = ws != nullptr && m_toolEditTarget.has_value()
+                         && *m_toolEditTarget < ws->toolObjects.size();
+    if (m_tcpCombo == nullptr) { return; }
+
+    // combo 重建（保留选中键——列表条目变化后仍定位原键；失效键回落首项；
+    // QSignalBlocker 防重建期 currentIndexChanged 触发重入）。
+    if (!hasTool) {
+        {
+            QSignalBlocker blocker(m_tcpCombo);
+            if (m_tcpCombo->count() > 0) { m_tcpCombo->clear(); }
+        }
+        m_tcpSelectedKey.clear();
+        if (m_tcpOffsetPanel != nullptr) { m_tcpOffsetPanel->setEnabled(false); }
+        return;
+    }
+    const auto& tool = ws->toolObjects[*m_toolEditTarget];
+    const QString oldKey = m_tcpSelectedKey;
+    {
+        QSignalBlocker blocker(m_tcpCombo);
+        m_tcpCombo->clear();
+        int keepIndex = -1;
+        for (std::size_t i = 0; i < tool.tcpList.size(); ++i) {
+            m_tcpCombo->addItem(QString::fromStdString(tool.tcpList[i].key));
+            if (QString::fromStdString(tool.tcpList[i].key) == oldKey) {
+                keepIndex = static_cast<int>(i);
+            }
+        }
+        m_tcpCombo->setCurrentIndex(keepIndex >= 0 ? keepIndex : 0);
+    }
+    m_tcpSelectedKey = m_tcpCombo->currentText();
+    m_tcpAddBtn->setEnabled(m_writable);
+    m_tcpRemoveBtn->setEnabled(m_writable && !m_tcpSelectedKey.isEmpty());
+    m_tcpDefaultBtn->setEnabled(m_writable && !m_tcpSelectedKey.isEmpty());
+    if (m_tcpOffsetPanel != nullptr) { m_tcpOffsetPanel->setEnabled(m_writable); }
+
+    // offset 基线回填（选中 TCP——offset 恒有值；RPY 反解呈现）。
+    const int sel = m_tcpCombo->currentIndex();
+    if (sel < 0) { return; }
+    const auto& entry = tool.tcpList[static_cast<std::size_t>(sel)];
+    const auto rpy = rpyview::rotationToRpy(entry.offset.R());
+    m_tcpOffsetModel->setBaseline(kTcpOffsetXKey, entry.offset.P()[0]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetYKey, entry.offset.P()[1]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetZKey, entry.offset.P()[2]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetRollKey, rpy[0]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetPitchKey, rpy[1]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetYawKey, rpy[2]);
+}
+
+void ModelingPanelWidget::onTcpComboChanged(int index)
+{
+    // 选中切换→键更新＋offset 基线回填（零脏化——基线是权威非编辑）。
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_toolEditTarget.has_value()
+        || *m_toolEditTarget >= ws->toolObjects.size()
+        || m_tcpCombo == nullptr || index < 0
+        || index >= static_cast<int>(ws->toolObjects[*m_toolEditTarget].tcpList.size())) {
+        return;
+    }
+    m_tcpSelectedKey = m_tcpCombo->currentText();
+    const auto& entry =
+        ws->toolObjects[*m_toolEditTarget].tcpList[static_cast<std::size_t>(index)];
+    const auto rpy = rpyview::rotationToRpy(entry.offset.R());
+    m_tcpOffsetModel->setBaseline(kTcpOffsetXKey, entry.offset.P()[0]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetYKey, entry.offset.P()[1]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetZKey, entry.offset.P()[2]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetRollKey, rpy[0]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetPitchKey, rpy[1]);
+    m_tcpOffsetModel->setBaseline(kTcpOffsetYawKey, rpy[2]);
+}
+
+void ModelingPanelWidget::onTcpAddClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_toolEditTarget.has_value() || !m_writable) { return; }
+    // 自动键：tcp-N 首空位（tcp-1 为种子惯例首键）。
+    std::size_t n = ws->toolObjects[*m_toolEditTarget].tcpList.size() + 1;
+    std::string key = "tcp-" + std::to_string(n);
+    while (std::any_of(ws->toolObjects[*m_toolEditTarget].tcpList.begin(),
+                       ws->toolObjects[*m_toolEditTarget].tcpList.end(),
+                       [&key](const TcpEntry& e) { return e.key == key; })) {
+        key = "tcp-" + std::to_string(++n);
+    }
+    const std::optional<TcpEditError> err = applyTcpAddEdit(
+        *ws, *m_toolEditTarget, key, "TCP " + key, PartPoseEditValue{});
+    if (!err.has_value()) {
+        onEditApplied("tools[" + std::to_string(*m_toolEditTarget) + "].tcpList");
+        m_tcpSelectedKey = QString::fromStdString(key);  // 新键即选中
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(tcpEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::onTcpRemoveClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_toolEditTarget.has_value() || !m_writable
+        || m_tcpSelectedKey.isEmpty()) { return; }
+    const std::optional<TcpEditError> err = applyTcpRemoveEdit(
+        *ws, *m_toolEditTarget, m_tcpSelectedKey.toStdString());
+    if (!err.has_value()) {
+        onEditApplied("tools[" + std::to_string(*m_toolEditTarget) + "].tcpList");
+        m_tcpSelectedKey.clear();  // 回落首项（refreshTcpPane 内定位）
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(tcpEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::onTcpDefaultClicked()
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_toolEditTarget.has_value() || !m_writable
+        || m_tcpSelectedKey.isEmpty()) { return; }
+    const std::optional<TcpEditError> err = applyDefaultTcpSwitchEdit(
+        *ws, *m_toolEditTarget, m_tcpSelectedKey.toStdString());
+    if (!err.has_value()) {
+        onEditApplied("design.defaultTcp");
+        refreshPropertiesFromLastWorkingSet();
+        return;
+    }
+    EditRejection rejection;
+    rejection.codeToken = std::string(tcpEditErrorCodeToken(err->code));
+    rejection.detail = err->detail;
+    onEditRejected(rejection);
+}
+
+void ModelingPanelWidget::applyTcpOffsetEdits(const ui::ParamEditSet& editSet)
+{
+    m_threadGuard.assertOnUiThread();
+    ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
+    if (ws == nullptr || !m_toolEditTarget.has_value() || !m_writable
+        || m_tcpSelectedKey.isEmpty()) { return; }
+
+    std::map<std::string, double> staged;
+    for (const ui::ParamChange& change : editSet.changes) { staged[change.key] = change.newSi; }
+    if (staged.empty()) { return; }
+    const auto component = [this, &staged](const char* key) -> std::optional<double> {
+        if (const auto it = staged.find(key); it != staged.end()) { return it->second; }
+        return m_tcpOffsetModel ? m_tcpOffsetModel->currentValueSi(key) : std::nullopt;
+    };
+    const auto x = component(kTcpOffsetXKey);
+    const auto y = component(kTcpOffsetYKey);
+    const auto z = component(kTcpOffsetZKey);
+    const auto r = component(kTcpOffsetRollKey);
+    const auto p = component(kTcpOffsetPitchKey);
+    const auto w = component(kTcpOffsetYawKey);
+    if (!(x && y && z && r && p && w)) { return; }
+
+    const std::optional<TcpEditError> err = applyTcpOffsetEdit(
+        *ws, *m_toolEditTarget, m_tcpSelectedKey.toStdString(),
+        PartPoseEditValue{*x, *y, *z, *r, *p, *w});
+    if (!err.has_value()) {
+        onEditApplied("tools[" + std::to_string(*m_toolEditTarget) + "].tcp("
+                      + m_tcpSelectedKey.toStdString() + ")");
+    } else {
+        EditRejection rejection;
+        rejection.codeToken = std::string(tcpEditErrorCodeToken(err->code));
+        rejection.detail = err->detail;
+        onEditRejected(rejection);
+    }
+    refreshPropertiesFromLastWorkingSet();
+}
+
 void ModelingPanelWidget::refreshEditPages()
 {
-    // 选择驱动分派（B.1 主通道）：Joint/Tool/Scene 三页均挂 ObjectId 树锚
     // ——树选中即切页；其余目标/空选中不动当前页（基座模式为显式入口，
     // UI-T54 语义保持——仅刷新关节区提示面）。
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
@@ -1908,6 +2182,7 @@ void ModelingPanelWidget::refreshEditPages()
     }
     if (resolved && kind == SelectedTarget::Kind::Tool) {
         refreshToolMountPane();
+        refreshTcpPane();  // UI-T57——TCP 段随工具页同刷（combo/基线/使能）
         m_editStack->setCurrentWidget(m_toolArea);
         return;
     }
