@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T61",
+  "unit": "modeling",
+  "masterWp": "WP-I",
+  "title": "规范包清单预览类型（F-498 余项收尾）：packageChecklistText 域渲染面＋预览页第六项＋模块本地应答",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T60"
+  ],
+  "requirements": [
+    "MDL-20（规范包清单＝roundtrip 逐项清单 V-20 的预览呈现——数据面单一实现复用）",
+    "D-MDL-10（预览仅呈现已应用修订——基线定格内容，撤销/重做失效回落缺席）",
+    "UX-02（只读、可复制导出、来源修订明确、UI 不自行拼装——域确定性渲染）",
+    "ERR-01（诚实缺席——未应用/基线失效如实呈现，不虚构清单）"
+  ],
+  "designRefs": [
+    "units/modeling.md#6.8",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-498"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T61.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t61/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "modeling/include/sdurws/ird/modeling/Package.hpp＋src/Package.cpp：packageChecklistText（roundtripChecklist 单一实现的确定性文本渲染——NFR-MNT-04 渲染侧单点；首行标题＋条目计数行＋逐行 group | path | valueText 管道分隔；纯函数零 I/O 同输入同字节）",
+    "modeling/plugin/ModelingPanelWidget.cpp：预览页 combo 第六项'规范包清单'（token package-checklist——非 XML 类，不经宿主编译快照回调）",
+    "modeling/plugin/ModelingUiModule.cpp：attachPanelWiring 适配 lambda 本地应答 package-checklist（数据源＝会话基线定格内容——已应用修订的草稿值视图 D-MDL-10；对象缺席诚实缺席；headerLine＝来源修订＋定格语义＋对象计数；缺席＝撤销/重做失效回落）",
+    "测试：PackageTest PackageChecklistText_Deterministic_UI_T61（确定性同字节＋五组词表覆盖＋计数行一致＋首条目渲染逐字节抽验）＋gui PreviewPane_MultiTypeChain count 5→6 适配＋HostWiringGuiTest PackageChecklistPreviewChain_UI_T61（缺席→定格呈现→失效回落三段；hostAsked 替身保持未触——模块本地应答不经宿主回调）"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟 standalone）",
+    "集成模式：modeling_test 333/333（新增 1）＋modeling_gui_test 39/39（新增 1）＋modeling_contract 17/17＋ui_test 246/246＋ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44",
+    "ird_gates base..branch 零新增（引擎自报计数与基线一致口径；命中集零项涉改动文件；归一化多重集比对见验收记录）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t61/"
+  ],
+  "acceptance": [
+    "域渲染面：确定性同字节＋五组词表覆盖＋计数行一致＋首条目逐字节抽验——具名用例 PackageChecklistText_Deterministic_UI_T61（PackageTest）",
+    "模块本地应答：规范包清单不经宿主编译快照回调（hostAsked 替身未触）＋未应用缺席＋定格呈现（标题/authority 组行/来源头行）＋失效回落——PackageChecklistPreviewChain_UI_T61（HostWiringGuiTest）",
+    "面板六类：combo count 6（PreviewPane_MultiTypeChain 适配断言）",
+    "D-MDL-10 纪律：清单数据源＝会话基线定格内容（已应用修订的草稿值视图）——非编辑态、非编译产物第二来源",
+    "回归门槛：受影响目标零错误构建（集成＋冒烟）＋全套件回归＋validate-docs/validate-task PASS；留痕 traceability/builds/ui-t61/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "规范包清单与四 XML 类数据源不同源：XML 类＝编译快照（宿主回调），清单＝会话基线定格（模块本地应答）——分流点在 attachPanelWiring 适配 lambda 的 kind 分支；透传顺序错置会使清单走宿主轨被拒",
+    "packageChecklistText 仅渲染（roundtripChecklist 单一判定/排序）——禁止在渲染侧增删条目或重排（NFR-MNT-04 渲染侧单点纪律）",
+    "gui 对账排除：第六项为 combo data 非控件——对账面零演化"
+  ],
+  "branch": "ui-t61",
+  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@6618ce02。F-498 余项收尾（预览六类全量落位——模型摘要/SerialDevice XML/Scene XML/Collision XML/DWC XML/规范包清单；F-498 已于 UI-T59 合入段翻转 fixed，本批兑现其 resolution 余项注，合入段补 resolution 追记）。清单数据源语义登记：会话基线定格内容（已应用修订的草稿值视图）——与 MDL-20 导出的闭包同内容源（应用时刻定格），digest 级 manifest 面归 MDL-20 导出命令本体（预览呈现 V-20 逐项清单语义）。"
+}

@@ -1475,7 +1475,7 @@ TEST_F(ModelingPanelGuiTest, PreviewPane_MultiTypeChain_UI_T59)
     QComboBox* combo =
         m_panel->findChild<QComboBox*>(QStringLiteral("ird_modeling_preview_kind"));
     ASSERT_NE(combo, nullptr);
-    ASSERT_EQ(combo->count(), 5) << "五类预览（摘要＋四 XML）";
+    ASSERT_EQ(combo->count(), 6) << "六类预览（摘要＋四 XML＋规范包清单——UI-T61）";
     QPlainTextEdit* preview =
         m_panel->findChild<QPlainTextEdit*>(QStringLiteral("ird_modeling_preview_text"));
     ASSERT_NE(preview, nullptr);

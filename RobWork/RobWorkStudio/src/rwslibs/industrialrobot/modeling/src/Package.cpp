@@ -1398,4 +1398,22 @@ PackageImportOutcome
     return outcome;
 }
 
+std::string packageChecklistText(const RobotDesign& design,
+                                 const std::vector<ObjectVariant>& parts)
+{
+    // 清单单一实现现取（NFR-MNT-04——本函数仅渲染，零第二判定）。
+    const std::vector<PackageCheckItem> items = roundtripChecklist(design, parts);
+    std::string text;
+    text += "# 规范包 roundtrip 逐项清单（MDL-20/V-20——五组：authority/"
+            "physics/resource/collision/pose）\n";
+    text += "# 条目 " + std::to_string(items.size()) + " 项\n";
+    for (const PackageCheckItem& item : items) {
+        // 三字段均为稳定文本（无换行/无竖线——清单契约），管道分隔无歧义；
+        // 行序＝清单序（组序 authority→physics→resource→collision→pose，
+        // 组内对象/字段稳定序——确定性 NFR-COR-02）。
+        text += item.group + " | " + item.path + " | " + item.valueText + "\n";
+    }
+    return text;
+}
+
 }  // namespace sdurws::ird::modeling
