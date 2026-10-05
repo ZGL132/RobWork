@@ -33,7 +33,7 @@ UI-T65 行；findings F-495 两批链进展注）。
 | 项 | 结果 | 留痕 |
 | --- | --- | --- |
 | 集成构建（全量 Release） | 零错误 | 会话执行记录 |
-| 独立冒烟（standalone 树 build-smoke-ui-t65） | 构建零错误＋kinematics_test/ui_test 全绿（数字见会话补记） | gate-all.log |
+| 独立冒烟（standalone 树 build-smoke-ui-t65） | 构建零错误（RC=0）＋kinematics_test 176/176（1 跳过＝gui 呈现登记）＋ui_test 239/239 全绿 | gate-all.log＋冒烟树实测 |
 | sdurws_ird_ui_test（集成） | 253/253（新增 2——MapSampleStateToCell/View3DTintFromCoverage 表驱动） | 会话执行记录 |
 | sdurws_ird_ui_gui_test（集成） | 78/78（PreviewOutlet 用例扩四态/tint 透传断言——计数不变断言扩面） | 会话执行记录 |
 | sdurws_ird_requirements_gui_test（集成） | 44/44（RegionPreviewSink 用例扩区域锚/目标透传断言） | 会话执行记录 |
