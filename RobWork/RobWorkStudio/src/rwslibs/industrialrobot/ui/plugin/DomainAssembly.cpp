@@ -279,7 +279,10 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
                              status.detail);
     }
 
-    // ④运动学装配（try/catch——同上；服务缝不注入——诚实边界见头文件）。
+    // ④运动学装配（try/catch——同上；覆盖评估执行通道服务缝由
+    // UiPlugin::wireKinematicsEvaluationChannel 经公共通道值面注入
+    // （UI-T64——F-490① 上游批），本装配面零私有头、零缝构造——
+    // 其余缝维持降级语义，见头文件诚实边界注）。
     try {
         bundle->kinematics = kinematics::createKinematicsPluginAssembly();
         bundle->kinematics->bindTextResolver(standardTextResolver());

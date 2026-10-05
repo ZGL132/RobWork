@@ -35,6 +35,8 @@
 #include <sdurws/ird/ui/SelectionService.hpp>      // ui::SelectionService（attachSelectionService 入参——ui 公共头）
 #include <sdurws/ird/ui/UiTypes.hpp>               // ui::CommandId（命令提交出口入参）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>     // ui::CommandAvailability（按钮门控）
+#include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（会话事实基线——kinematics 公共头）
+#include <sdurws/ird/kinematics/KinematicsPanelChannels.hpp>  // UI-T64 装配通道值面（同目录公共头——R-2 装配层零私有头）
 
 namespace sdurws {
 namespace ird {
@@ -92,6 +94,62 @@ struct KinematicsPluginAssembly {
     /// 服务缝注入（面板创建前调用生效——真实模型视图/求解器/后台缝的
     /// 装配接线点；转发模块内部）。
     void setServices(KinPanelServices services);
+
+    // ---- 覆盖评估执行通道（UI-T64——F-490① 上游批的装配半区）----
+
+    /**
+     * @brief 装配覆盖评估执行通道（产品装配层的产品注入点——通道值面
+     *        翻译进插件私有 KinPanelServices 对应缝，翻译在本门面实现
+     *        TU 单点执行）。
+     *
+     * R-2 纪律的落位形态：KinPanelServices 及其往返值类型是插件私有
+     * 类型，ui 装配层不可见也不可构造——装配层经本方法以公共通道值面
+     * （KinematicsAssemblyChannels）注入，等效于私有缝注入（空缝降级
+     * 语义逐字保持）。面板创建前后皆可调用（面板读缝时机＝能力判定，
+     * 与 setServices 同纪律：建议面板创建前注入生效）。
+     *
+     * @param channels [in] 通道聚合（指针缝非 owning——存活期契约见值
+     *                面类注；function 缝值持有）
+     */
+    void installAssemblyChannels(KinematicsAssemblyChannels channels);
+
+    /**
+     * @brief 后台完成通知入口（装配层执行器任务终态的投递面——通道
+     *        ResultNote 翻译为插件私有 KinBackgroundResultNote 后经
+     *        KinPanelFlows::noteBackgroundResult 消费：迟到判定/中断
+     *        如实/状态反馈）。
+     *
+     * 线程义务在调用方：本方法须在 UI 线程调用（执行器侧经
+     * QMetaObject::invokeMethod 回投——harness 的同步直调形态不可照抄
+     * 到产品多线程面）。
+     *
+     * @param note [in] 完成通知值（通道投影——原值面语义见类型注）
+     * @return 状态反馈文本（noteBackgroundResult 产出——迟到丢弃/中断/
+     *         正常三态的如实文案；调用方可呈现或留痕）
+     */
+    std::string noteAssemblyBackgroundResult(
+        const KinChannelBackgroundResultNote& note);
+
+    /**
+     * @brief 会话事实批量写入（UI-T64——装配层发布消费点的绑定面同步：
+     *        snapshotId/纪元/可写性/配置基线四值一次写入模块会话态）。
+     *
+     * R-2 落位说明：KinModuleSessionState 是插件私有类型——装配层经
+     * 本公共方法写会话事实，不解引用私有聚合（成员语义见模块侧类型注
+     * ——snapshotId＝结果绑定快照内容身份；epoch＝迟到判定锚；writable
+     * ＝L-K11 门控输入；savedConfig＝求解配置基线，须恒过
+     * validateAnalysisConfiguration——I-KIN-4，合法性由调用方保证）。
+     *
+     * 线程约束：仅 UI 线程（§9.4 会话态纪律）。
+     *
+     * @param snapshotId [in] 结果绑定快照内容身份（全零＝未绑定）
+     * @param epoch      [in] 会话纪元（调用方为主锚——执行器同源值）
+     * @param writable   [in] 会话可写性（项目打开拍的事实重放）
+     * @param config     [in] 求解配置基线（合法——seed≥1）
+     */
+    void bindSessionFacts(core::ContentIdentity snapshotId, std::uint64_t epoch,
+                          bool writable,
+                          const AnalysisConfiguration& config);
 
     /// 文案解析绑定（titleKey→工程用语；转发模块内部）。
     void bindTextResolver(std::function<QString(const std::string& titleKey)> resolve);

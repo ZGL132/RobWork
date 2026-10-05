@@ -91,6 +91,38 @@ public:
      */
     void setServices(KinPanelServices services) { m_services = std::move(services); }
 
+    /**
+     * @brief 逐缝合并服务缝（UI-T64——装配通道翻译的写入面）。
+     *
+     * 与 setServices 的整体替换语义刻意不同：仅覆盖传入聚合中**非空**
+     * 的缝（modelView 非空指针/function 缝非空判定），未触缝保持原值
+     * ——装配通道只声明覆盖评估执行通道五缝，不得清掉装配层既有的
+     * bindCommandSubmit 等其它注入（kinematics 的命令出口经门面独立
+     * 绑定路径，服务缝里的 commandSubmit 等若已注入须保留）。
+     *
+     * @param partial [in] 部分服务缝（仅非空成员生效）
+     */
+    void mergeAssemblyChannels(const KinPanelServices& partial)
+    {
+        if (partial.modelView != nullptr) {
+            m_services.modelView = partial.modelView;
+        }
+        if (partial.taskPoints) {
+            m_services.taskPoints = partial.taskPoints;
+        }
+        if (partial.taskRows) {
+            m_services.taskRows = partial.taskRows;
+        }
+        if (partial.backgroundSubmit) {
+            m_services.backgroundSubmit = partial.backgroundSubmit;
+        }
+    }
+
+    /// 服务缝只读访问（UI-T64 测试面——PluginPanelTest 经门面
+    /// installAssemblyChannels 注入后回读翻译结果的断言入口；产品代码
+    /// 零消费——缝的权威消费面仍是面板工厂与流函数）。
+    const KinPanelServices& services() const { return m_services; }
+
     // ---- ui.md §11.2 三方法 ------------------------------------------------
 
     /**

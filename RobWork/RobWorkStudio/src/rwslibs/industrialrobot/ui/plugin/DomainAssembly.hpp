@@ -29,10 +29,16 @@
  *     （显式无会话＝门面合法二态：树供给空集、buildDraftCommand 如实
  *     nullopt）；共享面 Provider 照常注册（无会话二态由域侧如实表达）；
  *   - kinematics 服务缝（KinPanelServices——域 plugin 私有类型，R-2 禁
- *     跨单元消费）在宿主形态不注入：面板降级语义如实呈现；会话姿态载体
- *     （KinSessionPose）注入缝随该类型公共化增量任务（D8 域侧承接
- *     applyHostJointState 已就位，宿主 Jog 桥经门面公共方法接线——写入
- *     时载体未注入由域侧返回 false 诚实降级＋Dev 留痕，不虚构写入）。
+ *     跨单元消费）的覆盖评估执行通道**已随 UI-T64 注入**（F-490① 上游
+ *     批：触发缝绑定＋结构化结果回路——经 assembly 公共通道值面
+ *     KinematicsAssemblyChannels＋门面 installAssemblyChannels 翻译，
+ *     本装配面零私有头；接线在 UiPlugin::wireKinematicsEvaluationChannel
+ *     ——会话事实随快照发布拍同步）。其余缝（commandHandler/
+ *     sessionPose/exportWriter/configPersist/ikSolver/fkEvaluator）维持
+ *     降级语义如实呈现；会话姿态载体（KinSessionPose）注入缝随该类型
+ *     公共化增量任务（D8 域侧承接 applyHostJointState 已就位，宿主 Jog
+ *     桥经门面公共方法接线——写入时载体未注入由域侧返回 false 诚实
+ *     降级＋Dev 留痕，不虚构写入）。
  *
  * 线程模型：全部函数 UI 线程（initialize 装配线程——§10.9 同口径）。
  */
