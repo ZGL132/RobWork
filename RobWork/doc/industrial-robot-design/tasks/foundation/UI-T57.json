@@ -4,8 +4,10 @@
   "unit": "modeling",
   "masterWp": "WP-I",
   "title": "TCP 列表结构化编辑（F-497 兑现④）：TcpEdit 四原语域新增＋工具页 TCP 段（combo 选 TCP＋增删钮＋offset 六行面板＋默认切换）",
-  "status": "ready",
-  "dependsOn": ["UI-T55"],
+  "status": "done",
+  "dependsOn": [
+    "UI-T55"
+  ],
   "requirements": [
     "MDL-13（工具 TCP 完整——tcpList ≥1、键非空唯一；删除守卫双保护）",
     "I-MDL-9（defaultTcp 引用保护——被引用键删除拒绝，RemoveObjectRefEdit 同款语义）",
@@ -62,5 +64,5 @@
     "gui 对账排除：tcp_combo/tcp_add/tcp_remove/tcp_default 呈现件与 tcp offset 面板 ird_param_* 钮不入命令目录对账（ird_param_ 前缀已覆盖）"
   ],
   "branch": "ui-t57",
-  "note": "分支基点＝redesign-main@53c5fcc8。F-497 兑现④（TCP 列表结构化编辑——UI-T55 卡注取号顺延后本批为 UI-T57）。F-497 余项：位姿集/传动编辑页（检查器readOnly事实页已有，编辑页待后续）。"
+  "note": "【合入登记注（2026-10-05，PIPE §4.7 收尾——所有者按序实施指令＋PIPE v1.8 autoMerge 预授权）】acceptedHead b3a608e9 合入 redesign-main@a951a6c4（acc/ui-t57/1@278573c8 按 SHA 先并）；独立子会话对抗式验收 11 项 pass。建议级七条：S1/S2 随批修正（悬挂列＋注释残行），S5 F-497 进展④随批落账，S3/S4/S6/S7 转登 F-516（S7 ValueNotFinite 直断言缺口与 F-507/F-513 同族并入验证基建口径；S6 verify-task 散文条目并入既有 F-513）。分支基点＝redesign-main@53c5fcc8。F-497 兑现④（TCP 列表结构化编辑——UI-T55 卡注取号顺延后本批为 UI-T57）。F-497 余项：位姿集/传动编辑页（检查器readOnly事实页已有，编辑页待后续）。"
 }

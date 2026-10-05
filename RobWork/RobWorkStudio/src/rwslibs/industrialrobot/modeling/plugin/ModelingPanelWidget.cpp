@@ -2168,6 +2168,7 @@ void ModelingPanelWidget::applyTcpOffsetEdits(const ui::ParamEditSet& editSet)
 
 void ModelingPanelWidget::refreshEditPages()
 {
+    // 选择驱动分派（B.1 主通道）：Joint/Tool/Scene 三页均挂 ObjectId 树锚
     // ——树选中即切页；其余目标/空选中不动当前页（基座模式为显式入口，
     // UI-T54 语义保持——仅刷新关节区提示面）。
     ModelingWorkingSet* ws = m_editTarget ? m_editTarget() : nullptr;
