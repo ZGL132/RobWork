@@ -19,6 +19,7 @@
 
 #include <gtest/gtest.h>
 
+#include <charconv>                                    // std::to_chars（F-519① 值断言格式化）
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -378,6 +379,37 @@ TEST(MdlPackageWorkCell, PreviewExportsFourKinds_UI_T59)
     }
     for (std::size_t i = 0; i < 3; ++i) {
         EXPECT_NEAR(worldT.P()[i], expected.P()[i], 1e-9);
+    }
+
+    // ---- F-519①：t-world-frame 属性值断言（做红③实证——此前实现导出
+    // 值未入断言，worldTframe 换恒等变换可逃逸）。测试侧按实现同格式
+    // （std::to_chars 最短往返＋平移 3/旋转行主序 12 逗号串）格式化
+    // worldToBase()，在 BaseMount 帧行内断言导出文本逐字节命中。
+    {
+        auto fmt = [](double v) {
+            char buf[64];
+            const auto r = std::to_chars(buf, buf + sizeof(buf), v);
+            return std::string(buf, r.ptr);
+        };
+        std::string expectedText;
+        for (std::size_t i = 0; i < 3; ++i) {
+            expectedText += (i == 0 ? "" : ",") + fmt(expected.P()[i]);
+        }
+        for (std::size_t r = 0; r < 3; ++r) {
+            for (std::size_t c = 0; c < 3; ++c) {
+                expectedText += "," + fmt(expected.R()(r, c));
+            }
+        }
+        const std::string mountLineProbe =
+            "name=\"" + baseMount->getName() + "\"";
+        const std::size_t namePos = sceneOut.text.find(mountLineProbe);
+        ASSERT_NE(namePos, std::string::npos) << "BaseMount 帧行应在 Scene 导出内";
+        const std::size_t lineEnd = sceneOut.text.find("/>", namePos);
+        ASSERT_NE(lineEnd, std::string::npos);
+        const std::string frameLine =
+            sceneOut.text.substr(namePos, lineEnd - namePos);
+        EXPECT_NE(frameLine.find(expectedText), std::string::npos)
+            << "t-world-frame 导出值应与 worldToBase 序列化逐字节一致：" << frameLine;
     }
 
     // ---- Collision XML：能力位＋参与面＋诚实缺席注记（夹具无几何挂接）----

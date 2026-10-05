@@ -83,7 +83,9 @@ bool inJointEditPane(const QWidget& panel, const QObject* widget)
             || name == QStringLiteral("ird_param_table_panel")
             || name == QStringLiteral("ird_modeling_base_page")
             || name == QStringLiteral("ird_modeling_tool_area")
-            || name == QStringLiteral("ird_modeling_scene_area")) {
+            || name == QStringLiteral("ird_modeling_scene_area")
+            || name == QStringLiteral("ird_modeling_pose_area")
+            || name == QStringLiteral("ird_modeling_drivetrain_area")) {
             return true;
         }
     }
@@ -605,11 +607,19 @@ TEST_F(ModelingPanelGuiTest, AvailabilityProviderDisabled_ButtonsGreyWithReason_
             << "禁用原因 tooltip 未走 UiText 中文解析";
     }
 
-    // 放行快照（同源机制——提供器返回可用即恢复，绑定即时刷新）。
+    // 放行快照（同源机制——提供器返回可用即恢复，绑定即时刷新）。排除链
+    // 与全禁循环一致（UI-T60：位姿集删除钮在空选择下合法禁用——非命令
+    // 门控面不入本对账；排除链两处重复为本用例既有形态的最小改动）。
     m_panel->setCommandAvailability([](const ui::CommandId&) {
         return ui::CommandAvailability{true, true, true, ui::DisableReason{}};
     });
     for (const QPushButton* btn : buttons) {
+        if (btn->objectName() == QString::fromUtf8("ird_modeling_history_toggle")) { continue; }
+        if (btn->objectName() == QString::fromUtf8("ird_modeling_more_toggle")) { continue; }
+        if (btn->objectName() == QString::fromUtf8("ird_modeling_preview_copy")) { continue; }
+        if (btn->objectName().startsWith(QString::fromUtf8("ird_modeling_struct_"))) { continue; }
+        if (btn->objectName().startsWith(QString::fromUtf8("ird_modeling_edit_"))) { continue; }
+        if (inJointEditPane(*m_panel, btn)) { continue; }
         EXPECT_TRUE(btn->isEnabled()) << "放行快照下按钮仍禁用";
     }
 }
@@ -652,7 +662,7 @@ TEST_F(ModelingPanelGuiTest, MoreActionsCollapse_DefaultCollapsedAndToggle_F502)
 
     // 目录对账（构造序＝目录序——折叠区重排后仍保持，commandButtonsOf 守卫）。
     const auto catalog = modelingDomainCommands();
-    const auto buttons = commandButtonsOf(*m_panel, modelingDomainCommands());
+    const auto buttons = commandButtonsOf(*m_panel, catalog);
     ASSERT_EQ(buttons.size(), catalog.size())
         << "命令按钮与目录错位（折叠区容器迁移破坏构造序）";
 
@@ -773,7 +783,7 @@ TEST_F(ModelingPanelGuiTest, ReadOnlySession_AvailabilityRefreshCannotReviveWrit
     m_panel->setCommandAvailability(allEnabled);
 
     const auto catalog = modelingDomainCommands();
-    const auto buttons = commandButtonsOf(*m_panel, modelingDomainCommands());
+    const auto buttons = commandButtonsOf(*m_panel, catalog);
     ASSERT_EQ(buttons.size(), catalog.size())
         << "命令按钮与目录错位（构造序漂移——本用例按下标对账失效）";
     for (const QPushButton* btn : buttons) {
@@ -1501,11 +1511,194 @@ TEST_F(ModelingPanelGuiTest, PreviewPane_MultiTypeChain_UI_T59)
     EXPECT_TRUE(preview->toPlainText().contains(QStringLiteral("预览不可用")));
     EXPECT_TRUE(header->text().isEmpty()) << "缺席态无来源头行（不伪造溯源）";
 
-    // ---- 复制全部钮：剪贴板＝当前预览全文（UX-02 可复制导出）----
+    // ---- 复制全部钮：剪贴板＝当前预览全文（UX-02 可复制导出）。预置
+    // 哨兵隔离系统剪贴板状态（F-519②——跨进程剪贴板残留可能碰巧等于
+    // 预览文本使断言恒真；哨兵既定值保证断言的区分度）。
+    QApplication::clipboard()->setText(QStringLiteral("ird-clipboard-sentinel"));
     QPushButton* copyBtn = m_panel->findChild<QPushButton*>(
         QStringLiteral("ird_modeling_preview_copy"));
     ASSERT_NE(copyBtn, nullptr);
     copyBtn->click();
     QApplication::processEvents();
     EXPECT_EQ(QApplication::clipboard()->text(), preview->toPlainText());
+    EXPECT_NE(QApplication::clipboard()->text(), QStringLiteral("ird-clipboard-sentinel"))
+        << "剪贴板仍为哨兵＝复制钮未写入（做红锚）";
+}
+
+// =====================================================================
+// UI-T60 位姿集/传动编辑页（F-497 余项收尾）＋F-517 S1 动态窗口
+// =====================================================================
+
+/**
+ * 位姿集编辑全链（UI-T60）：新增条目（pose-1 零位姿种子，缺席位姿集经
+ * 草稿句柄创建）→构型编辑（表行 pose-config-2 走标准 apply/confirm 流）→
+ * 保存条目（键/备注/构型组装）→域接受＝entries[0] 更新＋变更记录→
+ * 保留键删除拒绝就地呈现。
+ */
+TEST_F(ModelingPanelGuiTest, PoseSetEdit_Chain_UI_T60)
+{
+    IRD_TEST_INFO("MDL-17", {}, std::nullopt);
+
+    // 刷新即建页（refreshEditPages 无选中路径驱动两页基线——模板会话
+    // 无位姿集对象也可用：新建不需要既有对象）。
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+    QPushButton* addBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_pose_add"));
+    ASSERT_NE(addBtn, nullptr) << "位姿集页承载缺失（UI-T60）";
+    addBtn->click();
+    ASSERT_TRUE(m_ws.poseSetObject.has_value()) << "缺席位姿集应经草稿句柄创建";
+    ASSERT_EQ(m_ws.poseSetObject->entries.size(), std::size_t{1});
+    EXPECT_EQ(m_ws.poseSetObject->entries[0].key, "pose-1");
+
+    // 构型编辑：pose-config-2 行置 0.5（标准 apply/confirm 流——暂存入
+    // 模型；保存条目组装取 pendingChanges）。
+    QWidget* posePanel = nullptr;
+    QTableWidget* poseTable = nullptr;
+    const QList<QWidget*> paramPanels =
+        m_panel->findChildren<QWidget*>(QStringLiteral("ird_param_table_panel"));
+    for (QWidget* p : paramPanels) {
+        QTableWidget* t = p->findChild<QTableWidget*>(QStringLiteral("ird_param_table"));
+        if (t != nullptr && posePageRowOf(*t, "pose-config-2") >= 0) {
+            posePanel = p;
+            poseTable = t;
+            break;
+        }
+    }
+    ASSERT_NE(posePanel, nullptr) << "构型表未构建";
+    const int row2 = posePageRowOf(*poseTable, "pose-config-2");
+    poseTable->item(row2, 1)->setText(QStringLiteral("0.5"));
+    QApplication::processEvents();
+    posePanel->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    posePanel->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+    QApplication::processEvents();
+
+    // 保存条目（键/备注现取行编辑——combo 重建后键已回填 pose-1）。
+    QLineEdit* keyEdit = m_panel->findChild<QLineEdit*>(QStringLiteral("ird_modeling_pose_key"));
+    ASSERT_NE(keyEdit, nullptr);
+    QLineEdit* noteEdit = m_panel->findChild<QLineEdit*>(QStringLiteral("ird_modeling_pose_note"));
+    ASSERT_NE(noteEdit, nullptr);
+    noteEdit->setText(QStringLiteral("拾取位"));
+    QPushButton* applyBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_pose_apply"));
+    ASSERT_NE(applyBtn, nullptr);
+    applyBtn->click();
+    ASSERT_FALSE(m_ws.poseSetObject->entries.empty());
+    EXPECT_EQ(m_ws.poseSetObject->entries[0].key, "pose-1");
+    EXPECT_EQ(m_ws.poseSetObject->entries[0].note, "拾取位");
+    EXPECT_DOUBLE_EQ(m_ws.poseSetObject->entries[0].jointConfiguration[2], 0.5);
+
+    // 保留键删除拒绝（就地呈现——域内裁决）。
+    keyEdit->setText(QStringLiteral("homeConfiguration"));
+    applyBtn->click();
+    QLabel* status = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_status_line"));
+    ASSERT_NE(status, nullptr);
+    EXPECT_TRUE(status->text().contains(QStringLiteral("reserved-key-in-edit")))
+        << "保留键拒绝原因未就地呈现";
+    // 工作集字节不变（拒绝路径）。
+    ASSERT_EQ(m_ws.poseSetObject->entries.size(), std::size_t{1});
+    EXPECT_EQ(m_ws.poseSetObject->entries[0].key, "pose-1");
+}
+
+/**
+ * 传动编辑全链（UI-T60）：ratio 行（dt-ratio-0）置 100→面板 apply/confirm
+ * →分组装配→applyDrivetrainRatioEdit 接受＝缺席传动经草稿句柄创建＋
+ * ratioPerJoint[0] UserProvided 100＋变更记录。
+ */
+TEST_F(ModelingPanelGuiTest, DrivetrainEdit_Chain_UI_T60)
+{
+    IRD_TEST_INFO("MDL-16", {}, std::nullopt);
+
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+    QWidget* dtPanel = nullptr;
+    QTableWidget* dtTable = nullptr;
+    const QList<QWidget*> paramPanels =
+        m_panel->findChildren<QWidget*>(QStringLiteral("ird_param_table_panel"));
+    for (QWidget* p : paramPanels) {
+        QTableWidget* t = p->findChild<QTableWidget*>(QStringLiteral("ird_param_table"));
+        if (t != nullptr && posePageRowOf(*t, "dt-ratio-0") >= 0) {
+            dtPanel = p;
+            dtTable = t;
+            break;
+        }
+    }
+    ASSERT_NE(dtPanel, nullptr) << "传动数值表未构建（UI-T60）";
+    const int row0 = posePageRowOf(*dtTable, "dt-ratio-0");
+    dtTable->item(row0, 1)->setText(QStringLiteral("100"));
+    QApplication::processEvents();
+    dtPanel->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
+    dtPanel->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
+
+    ASSERT_TRUE(m_ws.drivetrainObject.has_value()) << "缺席传动应经草稿句柄创建";
+    EXPECT_TRUE(m_ws.design.drivetrainRef.has_value());
+    ASSERT_EQ(m_ws.drivetrainObject->ratioPerJoint.size(), std::size_t{6});
+    ASSERT_EQ(m_ws.drivetrainObject->ratioPerJoint[0].state(), core::FieldState::Provided);
+    EXPECT_DOUBLE_EQ(*m_ws.drivetrainObject->ratioPerJoint[0].tryValue(), 100.0);
+}
+
+/**
+ * 位姿集/传动页 L-7 门控（UI-T60）：只读会话＝三钮/键备注行编辑/构型表/
+ * 传动表整体禁用。
+ */
+TEST_F(ModelingPanelGuiTest, PoseDrivetrainPanes_ReadOnlyDisables_UI_T60)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    ModelingPanelWidget readonlyPanel(false);
+    readonlyPanel.setEditTargetProvider([this]() { return &m_ws; });
+    ModelReadinessReport emptyReport;
+    readonlyPanel.refreshPanel(m_ws, emptyReport);
+
+    QPushButton* addBtn = readonlyPanel.findChild<QPushButton*>(QStringLiteral("ird_modeling_pose_add"));
+    ASSERT_NE(addBtn, nullptr);
+    EXPECT_FALSE(addBtn->isEnabled()) << "只读会话新增位姿条目钮未禁用";
+    QPushButton* applyBtn = readonlyPanel.findChild<QPushButton*>(QStringLiteral("ird_modeling_pose_apply"));
+    ASSERT_NE(applyBtn, nullptr);
+    EXPECT_FALSE(applyBtn->isEnabled()) << "只读会话保存条目钮未禁用";
+    QLineEdit* keyEdit = readonlyPanel.findChild<QLineEdit*>(QStringLiteral("ird_modeling_pose_key"));
+    ASSERT_NE(keyEdit, nullptr);
+    EXPECT_FALSE(keyEdit->isEnabled()) << "只读会话位姿键行编辑未禁用";
+    // 构型表与传动表（行键定位面板——两面板均在只读会话禁用）。
+    for (const char* rowKey : {"pose-config-0", "dt-ratio-0"}) {
+        QWidget* target = nullptr;
+        const QList<QWidget*> paramPanels =
+            readonlyPanel.findChildren<QWidget*>(QStringLiteral("ird_param_table_panel"));
+        for (QWidget* p : paramPanels) {
+            QTableWidget* t = p->findChild<QTableWidget*>(QStringLiteral("ird_param_table"));
+            if (t != nullptr && posePageRowOf(*t, rowKey) >= 0) { target = p; break; }
+        }
+        ASSERT_NE(target, nullptr) << "面板未构建：" << rowKey;
+        EXPECT_FALSE(target->isEnabled()) << "只读会话面板未禁用：" << rowKey;
+    }
+}
+
+/**
+ * TCP 显示名 L-7 动态窗口（F-517 S1——setWritable 半区钉扎）：可写会话
+ * 选中工具后宿主降级只读（无刷新事件到达的动态窗口形态），显示名行与
+ * 应用钮由 setWritable 即时禁用——与 refreshTcpPane 刷新半区（UI-T57 用例）
+ * 双半区各有断言（F-517① 做红②′注入 setWritable 缺陷被刷新半区兜底，
+ * 本用例补齐 setWritable 半区的独立断言面）。
+ */
+TEST_F(ModelingPanelGuiTest, TcpDisplayNameEdit_SetWritableDynamicWindow_F517)
+{
+    IRD_TEST_INFO("MDL-07", {}, std::nullopt);
+
+    ToolDefinition tool;
+    tool.localName = "t1";
+    tool.objectId = guiMakeOid(721);
+    TcpEntry tcp0;
+    tcp0.key = "tcp-1";
+    tool.tcpList.push_back(tcp0);
+    m_ws.toolObjects.push_back(tool);
+    ModelReadinessReport emptyReport;
+    m_panel->refreshPanel(m_ws, emptyReport);
+    enterToolMode(*m_panel, m_ws.toolObjects[0].objectId);
+
+    // 宿主降级只读（不触发刷新事件——动态窗口形态）。
+    m_panel->setWritable(false);
+    QLineEdit* nameEdit = m_panel->findChild<QLineEdit*>(QStringLiteral("ird_modeling_tcp_displayname"));
+    ASSERT_NE(nameEdit, nullptr);
+    EXPECT_FALSE(nameEdit->isEnabled()) << "动态窗口降级后显示名行未禁用（setWritable 半区）";
+    QPushButton* nameApply = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_tcp_displayname_apply"));
+    ASSERT_NE(nameApply, nullptr);
+    EXPECT_FALSE(nameApply->isEnabled()) << "动态窗口降级后显示名应用钮未禁用（setWritable 半区）";
 }

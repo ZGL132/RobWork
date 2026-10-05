@@ -307,6 +307,21 @@ private:
     void onTcpComboChanged(int index);            ///< 选中切换→offset 基线回填
     void onTcpDisplayNameApplyClicked();          ///< 显示名行编辑提交（UI-T58）
     void applyTcpOffsetEdits(const ui::ParamEditSet& editSet);  ///< 出口移交
+    // ---- UI-T60 位姿集/传动编辑页（F-497 余项收尾）----
+    void buildPoseSetPane();                      ///< 位姿集页构建（combo＋key/note＋config 表＋三钮）
+    void rebuildPoseSetConfigModel();             ///< 构型表重建（行随关节表——UI-T55 可变侧）
+    void stagePoseSetConfigEdits(const ui::ParamEditSet& editSet);  ///< 确认值→基线缓存（出口同步）
+    void refreshPoseSetPane();                    ///< 条目清单/基线回填（选择驱动）
+    void onPoseSetAddClicked();                   ///< 新增条目（pose-N 首空位零位姿种子）
+    void onPoseSetRemoveClicked();                ///< 删除条目（保留键保护域内裁决）
+    void onPoseSetApplyClicked();                 ///< 应用条目（key/note/config 组装→域 upsert）
+    void onPoseSetComboChanged(int index);        ///< 条目切换→基线回填
+    void buildDrivetrainPane();                   ///< 传动页构建（ratio/摩擦/力矩数值表）
+    void rebuildDrivetrainModel();                ///< 传动表重建（行随关节表）
+    void refreshDrivetrainPane();                 ///< SourcedValue 基线回填（NotProvided＝空）
+    void applyDrivetrainEdits(const ui::ParamEditSet& editSet);  ///< 出口分组装配（三族原语）
+    void rejectDrivetrainEdit(const DrivetrainEditError& err);   ///< 拒绝就地呈现（词表 token）
+    std::size_t drivetrainBaselineSlot(const std::string& key) const;  ///< 键→基线槽位
     /// 位姿类编辑页通用构建（说明行＋ParamTablePanel——工具/场景页同构
     /// 复用；模型/面板经引用回填成员，堆栈页由调用方 addWidget 定序）。
     QWidget* buildPoseEditPage(
@@ -405,6 +420,30 @@ private:
     QLineEdit* m_tcpDisplayNameEdit = nullptr;
     QPushButton* m_tcpDisplayNameApplyBtn = nullptr;  ///< 显示名应用钮（UI-T58）
     QString m_tcpSelectedKey;                     ///< 当前选中 TCP 键（空＝未选）
+    // ---- UI-T60 位姿集页（F-497 余项）----
+    class PoseSetEditOutlet;                      ///< config 表移交壳
+    std::unique_ptr<ui::IFormEditOutlet> m_poseSetOutlet;  ///< config 页出口
+    QWidget* m_poseSetArea = nullptr;             ///< 位姿集页容器（stacked 第 5 页）
+    QComboBox* m_poseSetCombo = nullptr;          ///< 条目选择（键呈现）
+    QPushButton* m_poseSetAddBtn = nullptr;       ///< 新增条目（pose-N 零位姿种子）
+    QPushButton* m_poseSetRemoveBtn = nullptr;    ///< 删除条目
+    QPushButton* m_poseSetApplyBtn = nullptr;     ///< 应用条目（key/note/config 组装）
+    QLineEdit* m_poseSetKeyEdit = nullptr;        ///< 条目键行编辑
+    QLineEdit* m_poseSetNoteEdit = nullptr;       ///< 条目备注行编辑
+    QWidget* m_poseSetConfigPanel = nullptr;      ///< 关节构型数值表（行随关节表）
+    std::unique_ptr<ui::ParamEditModel> m_poseSetConfigModel;  ///< 构型编辑模型
+    std::size_t m_poseSetConfigJointCount = 0;    ///< 构型表行缓存（关节表变化→重建）
+    QString m_poseSetSelectedKey;                 ///< 当前选中条目键（空＝未选）
+    std::vector<double> m_poseSetConfigBaseline;  ///< 构型权威基线（保存条目"净取权威"）
+    // ---- UI-T60 传动页（F-497 余项）----
+    class DrivetrainEditOutlet;                   ///< 传动数值表移交壳
+    std::unique_ptr<ui::IFormEditOutlet> m_drivetrainOutlet;  ///< 传动页出口
+    QWidget* m_drivetrainArea = nullptr;          ///< 传动页容器（stacked 第 6 页）
+    QWidget* m_drivetrainPanel = nullptr;         ///< 传动数值表（ratio/摩擦/力矩）
+    std::unique_ptr<ui::ParamEditModel> m_drivetrainModel;    ///< 传动编辑模型
+    std::size_t m_drivetrainJointCount = 0;       ///< 行缓存（关节表变化→重建）
+    /// 传动权威基线（槽位＝关节序×6＋族序 0~5——"净取权威"分组装配）。
+    std::vector<std::optional<double>> m_drivetrainBaseline;
     std::optional<std::size_t> m_sceneEditTarget;  ///< 场景页当前绑定下标
 
     // ---- 五区控件（raw 指针＝Qt 父子所有权——构造期挂树，随 Qt 析构）----
