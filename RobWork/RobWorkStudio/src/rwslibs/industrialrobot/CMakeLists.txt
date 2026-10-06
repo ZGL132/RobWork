@@ -38,8 +38,13 @@
 #       core/evidence 两条卡 §3.2 登记边〔ARCH §3.5 原始边〕，测试目标
 #       sdurws_ird_drivetrain_test/_contract_test 随落位登记——见
 #       drivetrain/CMakeLists.txt；本单元无 plugin/worker 目标——卡
-#       §2.3/§4.2 明文默认禁止）；其余 4 个单元仍为 INTERFACE 占位，源码
-#       随各自单元任务卡落地，落地时升级为真实库（CMake 目标名不变）
+#       §2.3/§4.2 明文默认禁止）、selection 已随 WP-19-T02 落地为真实
+#       STATIC 库（PUBLIC 链 core/evidence 两条卡 §3.2 登记边，插件目标
+#       sdurws_ird_selection_plugin（最小可注册实现——自持描述符装配
+#       门面，零 ui 编译边）与测试目标 sdurws_ird_selection_test/
+#       _contract_test 随落位登记——见 selection/CMakeLists.txt）；其余
+#       3 个单元仍为 INTERFACE 占位，源码随各自单元任务卡落地，落地时
+#       升级为真实库（CMake 目标名不变）
 # =====================================================================
 
 # 独立冒烟模式：允许脱离 RobWorkStudio 单独配置本目录（验证目标注册、include
@@ -59,10 +64,10 @@ endif()
 # WP-10-T02（≙UI-T02，R-3 唯一 Qt Widgets 例外目标）、reporting 自
 # RPT-T01（≙WP-12-T02）、modeling 自 WP-13-T02、requirements 自 WP-14-T02、
 # kinematics 自 WP-15-T02、workflow 自 WP-22-T02、drivetrain 自
-# WP-18-T02 起移出（下方 add_subdirectory）。
+# WP-18-T02、selection 自 WP-19-T02 起移出（下方 add_subdirectory）。
 set(IRD_MODULES
     trajectory dynamics
-    selection optimization
+    optimization
 )
 
 foreach(ird_m ${IRD_MODULES})
@@ -273,6 +278,28 @@ add_subdirectory(workflow)
 # 两者目标——drivetrain.md §3.2 边表；各被链单元均已在上方
 # add_subdirectory）。
 add_subdirectory(drivetrain)
+# selection（WP-19-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、
+# PUBLIC 链 core＋evidence——selection.md §3.2 两条编译链接边，属
+# ARCH §3.5"各业务域单元→L2/L3 公共接口"许可方向的实例化，ird_gates
+# 白名单 "selection->…" 两行随本任务登记并同步刷新 dependency-graph.json
+# ——双面留痕；零 Qt 含 Core——R-3/NFR-MNT-01，插件目标
+# sdurws_ird_selection_plugin 随本任务落位（契约 acceptance 1 明文，
+# 与 kinematics"_plugin 随 T12"不同、workflow T02 同款）为 Qt 例外载体
+# ——最小可注册实现：自持描述符装配门面〔pluginId/titleKey 均有
+# ui.md §11.1/§3.5 登记出处〕，零 ui 编译边——卡 §3.2 树/属性页协议列
+# 运行时注入列，界面面随 WP-19-T10；_worker 不默认创建——D-SEL-13），
+# 并新建 selection/CMakeLists.txt（本注册行即其挂载点）；T02 源码集＝
+# src/DiagCodes.cpp（SEL-* 17 码登记表——卡 §2.2/§5.3/§6.2/§6.3/§9.3
+# 登记值物化，L5 装配期注册数据源；§10.3 淘汰原因词表逐 token 稳定码
+# 随 WP-19-T06），测试目标 sdurws_ird_selection_test（登记表＋红线扫描，
+# LABELS ird）/sdurws_ird_selection_contract_test（构建图边界契约＋插件
+# 可注册契约——卡 §3.4 插件零计算红线词表扫描，LABELS ird）随本任务
+# 登记。零其他业务域单元（R-1——drivetrain 映射经③端口消费、dynamics
+# 关节侧事实经上游切片值传递，不落编译边；P-SEL-2 推荐端口形态）、零
+# testkit（T-1）、零 sdurw_proximity（R-5）。次序约束：必须在 core 与
+# evidence 之后（链接两者目标——selection.md §3.2 边表；各被链单元均已
+# 在上方 add_subdirectory）。
+add_subdirectory(selection)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake

@@ -57,7 +57,13 @@
 # 任何业务域单元，只经端口与事件协作"＋§3.5"L4 编排→L2/L3 公共接口"
 # 既有许可方向的实例化。八边已随本任务同步刷新进 dependency-graph.json
 # 〔traceability/ 在 allowedFiles 内——WP-14/WP-15 双面留痕同款〕，并仍
-# 经 IRD_EXTRA_EDGE_REFS 登记出处）。
+# 经 IRD_EXTRA_EDGE_REFS 登记出处）；另含 2026-10-06 增登的
+# selection→core/evidence 两条（WP-19-T02——units/selection.md §3.2 边表
+# 编译链接列，属 ARCH §3.5"各业务域单元→L2/L3 公共接口"既有许可方向的
+# 实例化；卡面"运行时注入/端口"列七单元〔policy/io/project/diagnostics/
+# ui/runtime/drivetrain〕零编译边故不登记。两边已随本任务同步刷新进
+# dependency-graph.json〔traceability/ 在 allowedFiles 内——WP-14/WP-15/
+# WP-22 三面留痕同款〕，并仍经 IRD_EXTRA_EDGE_REFS 登记出处）。
 # 书写格式："依赖方->被依赖方"（与 traceability/dependency-graph.json 同序）。
 # ---------------------------------------------------------------------
 set(IRD_ALLOWED_UNIT_EDGES
@@ -107,6 +113,8 @@ set(IRD_ALLOWED_UNIT_EDGES
     "workflow->io"          # WP-22-T02（包导入校验执行、JSON canonical 写出——用户设置、SafePath/BudgetGuard）
     "workflow->evidence"    # WP-22-T02（当前性投影 Superseded 原因清单、失效范围判定结果经投影——级联提示数据源）
     "workflow->reporting"   # WP-22-T02（报告导出服务——"报告导出"命令执行面，RPT-02/UX-13）
+    "selection->core"       # WP-19-T02 两边（selection.md §3.2 边表编译链接列——身份/内容摘要/单位/比较工具/词表/诊断承载）
+    "selection->evidence"   # WP-19-T02（IEngineeringEvaluator/切片/Profile/包络契约——sel.combination-check 评估器与组合校核实现；T02 仅链接不消费——P-RPT-9 先例，消费随 WP-19-T05 回填）
     "modeling->ui"          # WP-22-T02 返工回填（modeling.md §3.2"插件目标→本计算库＋sdurws_ird_ui"明文——WP-13-T15 落位的装配面边；WP-15-T02 附件"逐条具名登记——登记册回填归 WP-01-T03"的执行）
     "requirements->ui"      # WP-22-T02 返工回填（requirements.md §3.2 同款插件装配面边——WP-14-T08 落位）
     "kinematics->ui"        # WP-22-T02 返工回填（kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位）
@@ -167,6 +175,8 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "workflow->io"
     "workflow->evidence"
     "workflow->reporting"
+    "selection->core"
+    "selection->evidence"
     "modeling->ui"
     "requirements->ui"
     "kinematics->ui"
@@ -202,6 +212,8 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——包导入校验执行、JSON canonical 写出（用户设置 PM-14）、SafePath/BudgetGuard（dependency-graph.json 已随任务同步刷新）"
     "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——当前性投影（Superseded 原因清单）、失效范围判定结果经投影（级联提示数据源——D-WF-2 不复制失效计算；dependency-graph.json 已随任务同步刷新）"
     "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——报告导出服务（\"报告导出\"命令执行面——RPT-02/UX-13；dependency-graph.json 已随任务同步刷新）"
+    "WP-19-T02 落位登记（2026-10-06）：units/selection.md §3.2 边表编译链接列——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/内容摘要/单位/比较工具/词表/诊断承载——core::ContentDigester/Units/比较规则/DiagCode 句法）；dependency-graph.json 已随任务同步刷新（双面留痕）"
+    "WP-19-T02 落位登记（2026-10-06）：units/selection.md §3.2 边表编译链接列——IEngineeringEvaluator/切片/Profile/包络契约（sel.combination-check 评估器与组合校核实现面）；T02 仅链接目标不消费上游公共头（P-RPT-9 先例），消费随 WP-19-T05 回填（dependency-graph.json 已随任务同步刷新）"
     "WP-22-T02 返工回填（2026-10-06）：units/modeling.md §3.2 插件目标行\"→本计算库＋sdurws_ird_ui\"——WP-13-T15 落位的装配面边（WP-15-T02 附件\"逐条具名登记——登记册回填归 WP-01-T03\"的机器面执行；dependency-graph.json 已随本任务同步刷新——双面留痕）"
     "WP-22-T02 返工回填（2026-10-06）：units/requirements.md §3.2 同款插件装配面边——WP-14-T08 落位（dependency-graph.json 已随本任务同步刷新）"
     "WP-22-T02 返工回填（2026-10-06）：units/kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位（dependency-graph.json 已随本任务同步刷新）"

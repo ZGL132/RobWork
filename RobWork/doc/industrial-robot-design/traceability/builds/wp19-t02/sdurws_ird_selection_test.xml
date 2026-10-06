@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="7" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-10-06T22:43:46.113" name="AllTests">
+  <testsuite name="SelDiagCodes" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-06T22:43:46.113">
+    <testcase name="FullTableMatchesUnitCard_WP19T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\DiagCodesTest.cpp" line="87" status="run" result="completed" time="0." timestamp="2026-10-06T22:43:46.113" classname="SelDiagCodes" />
+    <testcase name="CodeSyntaxViaCoreContract_WP19T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\DiagCodesTest.cpp" line="137" status="run" result="completed" time="0." timestamp="2026-10-06T22:43:46.113" classname="SelDiagCodes" />
+    <testcase name="EntriesCarryCardProvenance_WP19T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\DiagCodesTest.cpp" line="176" status="run" result="completed" time="0." timestamp="2026-10-06T22:43:46.113" classname="SelDiagCodes" />
+  </testsuite>
+  <testsuite name="SelBuildRedLine" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-06T22:43:46.113">
+    <testcase name="ProductFaceHasZeroQtIncludes_WP19T02_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BuildRedLineTest.cpp" line="183" status="run" result="completed" time="0." timestamp="2026-10-06T22:43:46.113" classname="SelBuildRedLine" />
+    <testcase name="IncludeFaceRestrictedToTwoRegisteredEdges_WP19T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BuildRedLineTest.cpp" line="211" status="run" result="completed" time="0." timestamp="2026-10-06T22:43:46.113" classname="SelBuildRedLine" />
+    <testcase name="ProductFaceHasNoRobWorkStringLiterals_WP19T02_ACC2" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BuildRedLineTest.cpp" line="254" status="run" result="completed" time="0." timestamp="2026-10-06T22:43:46.114" classname="SelBuildRedLine" />
+    <testcase name="ProductFaceFilesNonEmpty_WP19T02_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BuildRedLineTest.cpp" line="277" status="run" result="completed" time="0." timestamp="2026-10-06T22:43:46.114" classname="SelBuildRedLine" />
+  </testsuite>
+</testsuites>
