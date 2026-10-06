@@ -1,6 +1,6 @@
 /**
  * @file   DiagCodes.cpp
- * @brief  drivetrain 稳定诊断码登记表的实现——DT-* 全表 19 码登记行清单
+ * @brief  drivetrain 稳定诊断码登记表的实现——DT-* 全表 21 码登记行清单
  *         （逐码出处与语义登记）。
  *
  * 设计依据：
@@ -170,6 +170,21 @@ std::vector<DiagnosticEntry> drivetrainCodeEntries()
         {kDtSeriesLengthMismatch,
          "units/drivetrain.md §12.1",
          "输入序列长度不一致（等长数组契约破坏）：不补齐、不外推"},
+
+        // ---- WP-18-T03 表尾追加（追加纪律＝表尾追加、既有行不重排——
+        // DiagCodes.hpp 文件头"确定性"段；单元卡登记随增量修订同步，见
+        // units/drivetrain.md §18.5 WP-18-T03 行）。工况批次边界取消——
+        // 宿主请求取消后不发布完整结果（TASK-02：Canceled 不得进入正式
+        // 报告或可行集；卡 §12.4 取消行）。
+        {kDtEvaluationCancelled,
+         "units/drivetrain.md §12.4（WP-18-T03 追加）",
+         "工况批次边界取消：不发布完整结果，返回取消诊断，消费方按 TASK-02 处置"},
+
+        // ---- WP-18-T03 表尾追加：内部不变量守护（实现面守护码——非调用
+        // 方错误也非环境错误；映射自检失败＝实现缺陷，fail-fast 暴露）。
+        {kDtInternalInvariant,
+         "units/drivetrain.md §8.4（WP-18-T03 追加）",
+         "映射自检内部不变量失同步（实现缺陷）：fail-fast 暴露，不吞错"},
     };
 }
 

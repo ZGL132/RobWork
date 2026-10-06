@@ -61,12 +61,14 @@
 find_package(GTest CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
-# T02 源码集＝src/DiagCodes.cpp（DT-* 19 码登记清单——码值常量的唯一
-# 实现翻译单元；逐码落值依据见该文件逐码注释）。映射核心/评估器等实现
-# 翻译单元随 WP-18-T03 按卡 §4.2 布局表增列（MappingCore/Evaluator 等
-# ——本任务不预建占位实现，NFR-MNT-04 不建无边界价值包装器）。
+# T02 源码集＝src/DiagCodes.cpp（DT-* 登记清单——码值常量的唯一实现翻译
+# 单元；逐码落值依据见该文件逐码注释）。
+# WP-18-T03 增列 src/MappingCore.cpp（映射核心唯一实现——卡 §4.2 布局表：
+# 阻断面检查序/R1 对角精确虚功映射/一致性检查/反射惯量/效率折算/工作点
+# 统计；评估器适配面 src/Evaluator.cpp 随同任务工作点统计批次增列）。
 add_library(sdurws_ird_drivetrain STATIC
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/MappingCore.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：drivetrain 公共头使用 C++17 设施（inline constexpr 变量
@@ -144,7 +146,8 @@ enable_testing()
 add_executable(sdurws_ird_drivetrain_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/MappingGoldenTest.cpp)
 
 target_compile_features(sdurws_ird_drivetrain_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_drivetrain_test PROPERTIES

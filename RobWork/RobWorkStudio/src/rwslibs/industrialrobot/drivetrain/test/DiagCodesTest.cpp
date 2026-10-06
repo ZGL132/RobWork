@@ -1,13 +1,13 @@
 /**
  * @file   DiagCodesTest.cpp
- * @brief  drivetrain 稳定诊断码登记表用例组（DtDiagCodes）——DT-* 19 码
+ * @brief  drivetrain 稳定诊断码登记表用例组（DtDiagCodes）——DT-* 21 码
  *         全表清单纪律、码值句法（经 core 契约权威校验）与登记出处完整
  *         性（任务契约 WP-18-T02 acceptance 2"DT-* 域诊断码按
  *         units/drivetrain.md 登记表装配期注册"的实现侧自证面）。
  *
  * 设计依据：
  *   - units/drivetrain.md §6.3/§7.2/§9/§10/§12.1（DT-* 登记值散布各节
- *     ——全表 19 码的字面清单即其机器核对面）、§1.3/D-DT-15（DT-* 建议
+ *     ——全表 21 码的字面清单即其机器核对面）、§1.3/D-DT-15（DT-* 建议
  *     值；注册归 diagnostics；P-DT-7）、§5.3（c＝Δq_joint/Δθ_motor 口径
  *     ——P-DT-10）
  *   - units/core.md §4.8（DiagCode 句法 ^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64
@@ -71,9 +71,11 @@ const char* kUnitCardFullTable[] = {
     "DT-INPUT-SAMPLE-MISSING",            // §10.4（缺样本降级）
     "DT-INPUT-TIME-NONMONOTONIC",         // §10.4/§12.1（时间非单调）
     "DT-SERIES-LENGTH-MISMATCH",          // §12.1（序列长度不一致）
+    "DT-EVALUATION-CANCELLED",            // §12.4（WP-18-T03 表尾追加——批次取消）
+    "DT-INTERNAL-INVARIANT",              // §8.4（WP-18-T03 表尾追加——内部不变量守护）
 };
 
-/// 登记表码数（卡面全集 19——实现清单与本清单同长断言的期望值）。
+/// 登记表码数（卡面全集 21——实现清单与本清单同长断言的期望值）。
 constexpr std::size_t kExpectedCodeCount
     = sizeof(kUnitCardFullTable) / sizeof(kUnitCardFullTable[0]);
 

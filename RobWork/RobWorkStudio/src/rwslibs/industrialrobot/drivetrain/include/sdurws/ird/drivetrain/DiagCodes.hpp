@@ -1,6 +1,6 @@
 /**
  * @file   DiagCodes.hpp
- * @brief  drivetrain 稳定诊断码登记表——DT-* 码值常量（19 码：卡 §6.3
+ * @brief  drivetrain 稳定诊断码登记表——DT-* 码值常量（21 码：卡 §6.3
  *         阻断面 8 码＋§7.2 矩阵形态 4 码＋§9 惯量 2 码＋§10 效率/统计
  *         4 码＋§12.1 序列契约 1 码）与登记清单函数。
  *
@@ -35,7 +35,7 @@
  * 背景说明（码值权威链——为什么 drivetrain 只产出"登记表"不产出
  * "注册函数"）：稳定码的注册表唯一权威＝diagnostics::StableCodeRegistry
  * （PA-1/NFR-MNT-03），码值文本的合法性权威＝units/drivetrain.md 各节
- * 登记值（建议值——D-DT-15）。本头把卡面**全部 19 码**的登记值物化为
+ * 登记值（建议值——D-DT-15）。本头把卡面**全部 21 码**的登记值物化为
  * 码值常量（inline constexpr string_view——T03+ 产码路径与 L5 装配共用
  * 唯一书写点）与登记行清单（码值＋卡面出处＋语义原文）。装配期注册的
  * 执行面与 kinematics（registerKinematicsCodes）不同，差异来自依赖白
@@ -156,6 +156,18 @@ inline constexpr std::string_view kDtInputTimeNonmonotonic = "DT-INPUT-TIME-NONM
 /// 等长数组契约破坏；本卡不重采样、不插值）。
 inline constexpr std::string_view kDtSeriesLengthMismatch = "DT-SERIES-LENGTH-MISMATCH";
 
+// ---- WP-18-T03 表尾追加（追加纪律：只允许表尾、既有行不重排——文件头
+// "确定性"段；单元卡 §6.3/§10/§12.1 登记值随单元卡增量修订同步）----
+
+/// WP-18-T03 追加：DT-EVALUATION-CANCELLED（工况批次边界取消——宿主在
+/// 批次边界请求取消后不发布完整结果〔TASK-02：取消后不得进入正式报告
+/// 或可行集〕；数据类诊断，卡 §12.4 取消行）。
+inline constexpr std::string_view kDtEvaluationCancelled = "DT-EVALUATION-CANCELLED";
+/// WP-18-T03 追加：DT-INTERNAL-INVARIANT（映射自检内部不变量失同步——
+/// 理想映射自检〔§8.4 ②映射自检形态〕失败＝实现缺陷，fail-fast 暴露而
+/// 非吞错；非调用方错误也非环境错误，属实现面守护码）。
+inline constexpr std::string_view kDtInternalInvariant = "DT-INTERNAL-INVARIANT";
+
 // =====================================================================
 // DT-* 登记行与全表清单（units/drivetrain.md 登记值的物化——L5 装配期
 // 注册进 diagnostics StableCodeRegistry 的数据源；见文件头注"码值权威
@@ -179,7 +191,7 @@ struct DiagnosticEntry {
 };
 
 /**
- * @brief 产出 DT-* 全表（19 码）的登记行清单（units/drivetrain.md 登记表
+ * @brief 产出 DT-* 全表（21 码）的登记行清单（units/drivetrain.md 登记表
  *        的物化——装配期注册进 diagnostics StableCodeRegistry 的数据源；
  *        WP-18-T03+ 产码路径的码值语义对照面）。
  *
