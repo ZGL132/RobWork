@@ -5275,6 +5275,42 @@
       "registeredAt": "2026-10-06",
       "title": "tallyRegionPositionCoverage 与域 computeCoverage 位置轴'同定义'的一致性当前由注释锚（口径权威出处声明）＋发散用例期望值（2/2）承载——域无逐区域覆盖率 API 无法同输入双跑直接对比；若域侧位置轴定义将来演化需人工同步 tally",
       "owner": "随域 API 演化任务留意同步 tally 并扩充对比用例（不阻断；ui.md/README 诚实边界已登记合并纪律）"
+    },
+    {
+      "id": "F-532",
+      "source": "acc/ui-t66/1@3477abc8 验收记录建议级 E-1（UI-T66 独立子会话对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "units/modeling.md 版本号复用：本批把字态表 v0.32b 行就地改写为'v0.33（2026-10-06，UI-T66…）'——与既有 v0.33（2026-10-04，宿主审核 P2 呈现批次）同文件并存两个 v0.33 行，且低于该文档当前版本 v0.40（2026-10-05 UI-T63）；DTB/ui.md/契约/README 声明'modeling.md v0.33'按字段表首行（v0.40）语法不指向本批登记。v0.32b 内容经'前一版'链内联保留（信息无丢失），消账注落位本身准确",
+      "owner": "后续治理批次把本批 modeling.md 登记更正为顺延版本号（v0.41 或收尾时统一理链；与 F-514 渲染复核同批顺手）"
+    },
+    {
+      "id": "F-533",
+      "source": "acc/ui-t66/1@3477abc8 验收记录建议级 E-2（UI-T66 独立子会话对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-06",
+      "title": "builds/ui-t66/ 留痕件数口径：提交 144d2476 正文与验收请求写'24 件'，实际 26 文件（README＋25 证据件）——构成齐全性不受影响（多 2 件非缺件），仅汇总口径误写",
+      "owner": "验收记录 E-2 勘误已随 acc/ui-t66/1@3477abc8 存档（本条 fixed 即勘误载体）；后续留痕汇总以 README 文件清单为准"
+    },
+    {
+      "id": "F-534",
+      "source": "acc/ui-t66/1@3477abc8 验收记录建议级 E-3（UI-T66 独立子会话对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "knownPitfalls② 回填屏蔽（refreshJointEditPane 回填触发 currentIndexChanged 须屏蔽提交）实现侧 QSignalBlocker 正确落位（回填与拒绝回退两处），但测试无钉扎：gui 用例夹具六轴全 Revolute——回填 setCurrentIndex(0) 时 currentIndex 已为 0（Qt 同值不发信号），删除 QSignalBlocker 的变异不可被现有用例检出（acc/ui-t66/1 M-A 选回退面变异的原因）",
+      "owner": "后续随 gui 夹具多类型化时补'换目标回填不产生变更提交'断言"
+    },
+    {
+      "id": "F-535",
+      "source": "acc/ui-t66/1@3477abc8 验收记录建议级 E-4（UI-T66 独立子会话对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-06",
+      "title": "契约 outputs④ 承诺'FlowsTest 声明表单校验用例'实际落位 PluginPanelTest 纯函数表驱动用例（CustomChainRowSemanticCheck_TableDriven_UI_T66）——技术约束真实（FlowsTest 对话框基建替身宿主、真实 Qt 模态不进测试面；纯函数零 Qt 可直测为等价方案），功能语义达成且 ui.md/README 以实际落位如实登记，但 DTB §5.4 口径的偏差登记字样未出现在契约 note/单元卡",
+      "owner": "随本合入收尾补记偏差说明（fixed）：落位面＝FlowsTest 用例→PluginPanelTest 纯函数用例，缘由＝对话框替身基建——本条即偏差登记载体"
     }
   ]
 }
