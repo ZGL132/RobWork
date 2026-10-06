@@ -5002,10 +5002,10 @@
       "id": "F-496",
       "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-3",
       "severity": "blocking",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-04",
       "title": "完整 RobWorkStudio 宿主人工验收证据缺失（宿主审核 P1）：既有测试证明模块/Widget/桥接正确，未证明真实宿主中『启动→新建项目→开需求 Dock→增工位→改位置→三维拾取→捕获 TCP→应用草稿→修订推进→关闭→三维标记/选择/属性全清理』十步人工链可操作。既有自动化覆盖面（SessionDetachedResetsPanel／PluginModuleT03BTest onSessionDetached／HostIntegrationGuiTest ProjectCloseTeardown 检查器半区）不替代人工验收；启动面证据＝所有者运行实例证实 2026-10-04 18:19 链接的 exe 可正常启动（含建模中文化批次）；本批 F-494 修复的重链因运行实例锁定 exe（LNK1104）待关闭宿主后执行",
-      "owner": "所有者（人工验收须人执行；建议按审核原文阶段 0 验收标准逐项留痕 traceability/acceptance/）"
+      "owner": "所有者（人工验收须人执行；建议按审核原文阶段 0 验收标准逐项留痕 traceability/acceptance/）；【2026-10-06 翻转】取证通道建成＝UI-T67（modeling-tour 冒烟面——20 断言 MTOUR_PASS 合入 653e8d12；应用→修订取证链在 F-536 已知部署缺口下以 精确拒绝断言承载），fixedBy=UI-T67"
     },
     {
       "id": "F-497",
@@ -5253,10 +5253,10 @@
       "id": "F-529",
       "source": "acc/ui-t65/1@08e0ceb7 验收记录建议级 E5（UI-T65 attempt 1 对抗式验收 2026-10-06）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-06",
       "title": "acceptance 1 的'三态着色上屏'与 acceptance 4 的'校验定位链'均无自动化屏证（诚实边界已声明归宿主手动通道——UI-T33 先例、F-496 同族）",
-      "owner": "随 F-496 宿主人工验收批次补三态着色上屏取证项"
+      "owner": "随 F-496 宿主人工验收批次补三态着色上屏取证项；【2026-10-06 翻转】屏证自动化建成＝UI-T67 requirements-tour 7.5 拍（定位链 exercised rows=10＋着色数据面断言＋3D 截图），fixedBy=UI-T67；三态全谱视觉屏证需评估执行联动（UI-T64 通道）——归宿主手动复核边界"
     },
     {
       "id": "F-530",
@@ -5311,6 +5311,33 @@
       "registeredAt": "2026-10-06",
       "title": "契约 outputs④ 承诺'FlowsTest 声明表单校验用例'实际落位 PluginPanelTest 纯函数表驱动用例（CustomChainRowSemanticCheck_TableDriven_UI_T66）——技术约束真实（FlowsTest 对话框基建替身宿主、真实 Qt 模态不进测试面；纯函数零 Qt 可直测为等价方案），功能语义达成且 ui.md/README 以实际落位如实登记，但 DTB §5.4 口径的偏差登记字样未出现在契约 note/单元卡",
       "owner": "随本合入收尾补记偏差说明（fixed）：落位面＝FlowsTest 用例→PluginPanelTest 纯函数用例，缘由＝对话框替身基建——本条即偏差登记载体"
+    },
+    {
+      "id": "F-536",
+      "source": "UI-T67 建模域 tour 真机取证捕获（2026-10-06；acc/ui-t67/1@a67a695f 验收 step5 亲证复现）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "宿主装配 policyProvider=nullptr（UiPlugin.cpp C-10 诚实基线——『policyProvider＝未装载』）使建模 draft.apply 恒被 ④策略端口未装配（装配缺陷） 拒绝——应用草稿主链在真实宿主部署不可用＝F-496 长期缺证据的根因面",
+      "owner": "宿主装配批次（策略装载面接线——或所有者裁决降级 ④ 检查为警告轨）。修复后 tour step5 断言翻转为 committed"
+    },
+    {
+      "id": "F-537",
+      "source": "UI-T67 requirements-tour 真机取证（2026-10-06——step2 树行计数失败；先于本批复现）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "requirements-tour step2 station-added 断言失败（stationEntryCount()=0 树行未现身）。零触达需求域代码（UI-T67 验收 4.1 实证）——先于本批，疑似 T65 面板改动或 settleEvents 时序",
+      "owner": "需求域/UI 面排查批次（时序加大或工位树行锚核对）；修复后 tour 全谱恢复"
+    },
+    {
+      "id": "F-538",
+      "source": "acc/ui-t67/1@a67a695f 验收记录建议级 E-1~E-6（UI-T67 独立子会话对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "UI-T67 验收建议合集：①E-1 断言计数 20→18 已随合入段更正；②E-2 0 字节留痕件；③E-3 判定行未归档；④E-4 屏证图像静窗；⑤E-5 locate-chain 恒真断言；⑥E-6 整洁度（重复循环已删/尾换行已补）",
+      "owner": "①随 UI-T67 合入段更正；⑥a/b 随合入段修正；②③④⑤留后续触碰 tour 批次顺手处理"
     }
   ]
-}
+}
