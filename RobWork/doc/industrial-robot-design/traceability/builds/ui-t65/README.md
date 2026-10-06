@@ -48,7 +48,7 @@ DTB §2.11 WP-10-T65 行；units/ui.md §13 UI-T65 行；findings F-495 两批�
 | --- | --- | --- |
 | 集成构建（全量 Release，build-int） | EXIT 0，error C/LNK/fatal 计数＝0（60 warning＝框架既有噪声） | build-integration.log |
 | 独立冒烟构建（standalone 树 smoke） | configure EXIT 0＋全量构建 EXIT 0，error 计数＝0 | gate-all.log（51049 字节） |
-| 冒烟 ctest（14 单元按子目录） | 14 单元全部 100% 通过（26 tests） | ctest-smoke.log |
+| 冒烟 ctest（14 单元按子目录） | 14 单元全部 100% 通过（28 tests；E-R2-1 汇总数笔误随 UI-T65 合入收尾更正） | ctest-smoke.log |
 | 冒烟直跑 sdurws_ird_ui_test | 239/239（本批新用例位于 if(TARGET sdurws) 集成门控文件——冒烟树不编译不运行，与 ui-t64 侧同数＝构成性结果） | smoke-ui-test.log |
 | 冒烟直跑 sdurws_ird_kinematics_test | 176 passed＋1 skipped（ACC1 登记 gui 呈现项） | smoke-kinematics-test.log |
 | sdurws_ird_ui_test（集成） | 254/254（合并树基线 253＋返工新增 1——RegionTint_FollowsPositionAxisNotMixed_UI_T65 双口径发散用例） | ui-test.log／ui-test.xml |
