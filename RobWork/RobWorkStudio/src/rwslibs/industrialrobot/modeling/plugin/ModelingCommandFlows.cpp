@@ -61,7 +61,13 @@ public:
     std::optional<QString> openFilePath(const QString& title,
                                         const QString& filter) override
     {
-        const QString path = QFileDialog::getOpenFileName(nullptr, title, QString(), filter);
+        // 冒烟遍历环境（IRD_UI_PLUGIN_SMOKE 非空——UI-T63 起声明表单同族）
+        // ＝非原生对话框形态：tour 自动应答需 findChild 可达的行编辑（原生
+        // 模态不可自动化）；生产交互不受影响（env 缺省＝原生形态）。
+        const bool smokeMode = !qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE").isEmpty();
+        const QString path = QFileDialog::getOpenFileName(
+            nullptr, title, QString(), filter, nullptr,
+            smokeMode ? QFileDialog::DontUseNativeDialog : QFileDialog::Options());
         if (path.isEmpty()) { return std::nullopt; }  // 用户取消——流程静默终止
         return path;
     }
@@ -70,8 +76,10 @@ public:
                                         const QString& defaultName,
                                         const QString& filter) override
     {
-        const QString path =
-            QFileDialog::getSaveFileName(nullptr, title, defaultName, filter);
+        const bool smokeMode = !qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE").isEmpty();
+        const QString path = QFileDialog::getSaveFileName(
+            nullptr, title, defaultName, filter, nullptr,
+            smokeMode ? QFileDialog::DontUseNativeDialog : QFileDialog::Options());
         if (path.isEmpty()) { return std::nullopt; }
         return path;
     }

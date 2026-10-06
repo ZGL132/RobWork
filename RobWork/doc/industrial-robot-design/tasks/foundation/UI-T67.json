@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T67",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主验收取证通道（F-496 建模域 modeling-tour 冒烟面＋F-529 requirements-tour 7.5 拍扩建）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T66"
+  ],
+  "requirements": [
+    "F-496（blocking——完整宿主工作流验收证据：建模域全流程 tour 自动取证）",
+    "F-529（着色上屏数据面断言＋校验定位链自动化——locate 链 10 行 exercised）",
+    "F-524（新登记——宿主装配 policyProvider=nullptr 使建模 draft.apply 恒被 ④策略端口未装配 拒绝；tour 断言该已知部署缺口）",
+    "R-2（宿主侧仅经 Qt 公共基类＋objectName 锚操作面板——零跨单元私有头）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "development-task-breakdown.md#5.1",
+    "traceability/findings.json#F-496",
+    "traceability/findings.json#F-529",
+    "traceability/findings.json#F-524"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingCommandFlows.cpp",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T67.json",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t67/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "ui/plugin/UiPlugin.cpp/.hpp：maybeRunModelingTour 新冒烟面（env IRD_UI_PLUGIN_SMOKE=modeling-tour——拍1 新建项目＋打开＋召唤建模面板／拍2 new-from-template generic-6r 重种子〔模态选单自动应答 QInputDialog 预排队定时器〕／拍3 关节 Origin 编辑〔结构树选 j1→origin-z/r 行设值→apply→inline 确认→状态行断言〕／拍4 结构新增关节〔6→7〕／拍5 draft.apply 建模域〔runDomainApply filter modeling——F-524 已知部署缺口诚实断言：④策略端口拒绝＝pass〕／拍6 export-package 包导出〔重复定时器两轮模态应答：文件对话框填路径＋导出确认点〔是〕——irdbundle 存在断言〕；[ird-ui-smoke-mtour] 标记行＋截图落盘＋自动退出）＋requirements-tour 7.5 拍扩建（着色数据面断言〔网格交付＝上屏链通；空交付＝无评估运行诚实缺席〕＋校验定位链 exercised〔rows=10〕＋3D 截图落证）",
+    "modeling/plugin/ModelingCommandFlows.cpp：qt 对话框宿主 open/saveFilePath 冒烟环境非原生形态（IRD_UI_PLUGIN_SMOKE 非空＝DontUseNativeDialog——tour 自动应答需 findChild 可达行编辑；生产交互不受影响）",
+    "发现登记（合入段）：F-524（major/open——宿主装配 policyProvider=nullptr 使建模 draft.apply 恒被 ④策略端口未装配 拒绝：应用草稿主链在真实宿主不可用＝F-496 E2E 缺口的根因面）；F-536（suggestion/open——requirements-tour step2 station-added 树行计数失败〔tree-child=-1〕：先于本批存在〔本批未触需求域代码〕需排查）；F-529 翻转 fixed（定位链＋数据面屏证自动化建成；三态全谱视觉屏证需评估执行联动〔UI-T64 通道〕——归宿主手动复核边界）；F-496 翻转 fixed（建模域 tour 通道建成取证）",
+    "驱动脚本：traceability/builds/ui-t67/modeling-tour.ps1＋requirements-tour.ps1（env/OUT 配置——留痕全集口径）",
+    "测试：modeling-tour 真机 20 断言 MTOUR_PASS（含 F-524 gap 断言）＋requirements-tour 真机 7.5 拍 3 断言 pass＋step2 失败登记 F-536"
+  ],
+  "verify": [
+    "双模式构建零错误（集成 Release＋独立冒烟 standalone）",
+    "集成模式全套件回归：modeling_test 339/339＋modeling_gui_test 41/41＋modeling_contract 17/17＋ui_test 254/254＋ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44（含 T64/65/66 合入增量——本批零新增单测）",
+    "真机取证：modeling-tour MTOUR_PASS（20 断言）＋requirements-tour 7.5 拍 pass（step2 失败登记 F-536——先于本批）",
+    "ird_gates base..branch 零新增（103 条＝T64 恰增登记后存量；归一化多重集比对见验收记录）",
+    "validate-docs/validate-task PASS；留痕 traceability/builds/ui-t67/（留痕全集口径——含两 tour 日志＋截图＋gate-all.log）"
+  ],
+  "acceptance": [
+    "modeling-tour 通道：MTOUR_PASS 20 断言（新建/面板召唤/模板重种子模态应答/Origin 编辑应用/结构增关节/apply 域遍历/包导出两轮模态）＋6 帧截图——F-496 建模域 E2E 取证建成",
+    "F-524 诚实断言：apply 被拒原因精确匹配 ④策略端口未装配＝pass（known-deployment-gap=true）；登记 F-524 major 留宿主装配修复",
+    "F-529 屏证：requirements-tour 7.5 拍——定位链 exercised（rows=10）＋网格数据面断言（诚实缺席语义）＋3D 截图",
+    "冒烟环境对话缝：IRD_UI_PLUGIN_SMOKE 非空＝文件对话框非原生形态（findChild 可达；生产交互不受影响）",
+    "回归门槛：受影响目标零错误构建＋全套件回归＋validate 双 PASS（显式核验）；留痕全集落位 traceability/builds/ui-t67/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "宿主 exe 静态链接域插件（无独立 ui_plugin DLL 部署）——改 UiPlugin.cpp 后必须重建 sdurws_ird_studio 目标 exe，仅构建 ui_plugin 目标不生效（实施实测：tour 恒不启动＝exe 陈旧）",
+    "导出流程两段模态（文件对话框→导出确认 QMessageBox）——单轮自动应答不足，需重复定时器两轮分派（实施实测：轮 1 接受后轮 2 覆盖确认阻塞）",
+    "QFileDialog::accept 是 protected——自动应答经 findChildren<QPushButton*> 默认钮 click（isDefault 过滤）",
+    "requirements-tour step2 station-added 失败（tree-child=-1）先于本批存在——本批未触需求域代码；排查归 F-536",
+    "m_reqGrid 空交付＝无评估运行的诚实中性格（非缺陷）——三态全谱需评估执行联动（UI-T64 通道产出）后呈现"
+  ],
+  "branch": "ui-t67",
+  "note": "【立项＋落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@6cdaef66（含 T64/65/66 合入）。F-496/F-529 的宿主验收取证通道：建模域 modeling-tour 新冒烟面（F-496 E2E 取证——完整工作流 20 断言 MTOUR_PASS）＋requirements-tour 7.5 拍扩建（F-529 屏证——定位链自动化＋数据面断言）。tour 取证捕获真实产品缺陷＝F-524（major：宿主装配 policyProvider=nullptr 使建模 apply 恒被 ④策略端口未装配 拒绝——应用草稿主链在真实宿主不可用＝F-496 长期缺证据的根因面），tour 诚实断言该缺口并登记修复任务。step2 station-added 失败（先于本批）登记 F-536 留查。"
+}
