@@ -5202,7 +5202,7 @@
       "status": "open",
       "registeredAt": "2026-10-05",
       "title": "UI-T63 验收建议合集：①custom-chain 声明表单仅逐格有限性校验——限位有序（lower<upper）/轴线非零等语义错误提交后才由域拒绝面兜底（行为正确：fresh 丢弃会话不变），建议后续批次加表单侧即时录入辅助校验（缺列定位于域 detail 转译）；②CustomChainJointSpec 十二裸 double 平铺＋手写 ==，与域侧聚合风格（SixAxisJointSpec/JointOriginEditValue）不一致——批次 B 如扩列建议引入子聚合",
-      "owner": "①后续触碰声明表单批次顺手补全（表单即时校验＋域 detail 列转译）；②批次 B（所有者裁决放开红线后）随扩列重构"
+      "owner": "①已随 UI-T66 消账（2026-10-06）：customChainRowSemanticCheck 录入辅助面落位（I-MDL-4 限位有序＋I-MDL-6 轴非零——声明表单 accepted 前置逐行校验定位到行；域拒绝面兜底语义不变；modeling_test 表驱动用例）——domain detail 列转译以表单自带文案承载（同口径语义），登记为等价兑现；②维持 open——批次 B（所有者裁决放开红线后）随扩列重构"
     },
     {
       "id": "F-524",

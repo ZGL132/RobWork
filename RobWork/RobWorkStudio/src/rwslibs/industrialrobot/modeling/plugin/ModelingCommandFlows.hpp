@@ -138,6 +138,27 @@ struct ModelingDialogHost {
 ModelingDialogHost& qtModelingDialogHost();
 
 /**
+ * @brief custom-chain 单轴声明的语义即时校验（UI-T66——F-523① 的录入
+ *        辅助面；**域拒绝面兜底语义不变**——本函数只是把域裁决的两个
+ *        同口径规则前置到表单关闭前，定位到行提示）。
+ *
+ * 规则（与域判定同口径）：
+ *   - I-MDL-4 限位有序：lower < upper（Revolute 限位组合约束的表单侧
+ *     前置——域侧对应 TypeBoundsConflict 族拒绝语义）；
+ *   - I-MDL-6 轴非零：轴线三分量不全为零（可归一化前提的表单侧前置）。
+ *
+ * @param axisX/axisY/axisZ [in] 轴线分量（无量纲）
+ * @param lower/upper       [in] 限位下/上限（rad）
+ * @return nullopt＝通过；有值＝拒绝原因（人读中文，含需求 ID 锚——
+ *         表单 errLabel 直投）
+ *
+ * 纯函数；确定性（同输入同文案）；零 Qt 依赖（可单元直测）。
+ */
+std::optional<std::string> customChainRowSemanticCheck(double axisX, double axisY,
+                                                       double axisZ,
+                                                       double lower, double upper);
+
+/**
  * @brief 命令流程的宿主侧依赖（UI-T41——模块注入的回调面；零模块类型
  *        依赖，测试可全替身）。
  */

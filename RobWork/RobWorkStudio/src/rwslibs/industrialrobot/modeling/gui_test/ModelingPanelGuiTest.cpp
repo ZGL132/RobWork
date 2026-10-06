@@ -414,6 +414,53 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T
 }
 
 /**
+ * 编辑页关节类型枚举行（UI-T66——M-R4 划界消账）：①合法轨 Revolute→
+ * Prismatic（限位 Provided＋workingRange 缺＝I-MDL-4 合法组合）经域 Type
+ * 分支落位＋变更记录；②拒绝轨 Prismatic→Continuous（限位 Provided 冲突
+ * ——TypeBoundsConflict）就地呈现＋下拉回退权威值（ERR-01 不半途保留
+ * 幻影选择）。
+ */
+TEST_F(ModelingPanelGuiTest, JointDetailEditPane_TypeComboBoxChainAndRejectFallback_UI_T66)
+{
+    IRD_TEST_INFO("I-MDL-4", {}, std::nullopt);
+
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    QComboBox* typeBox =
+        m_panel->findChild<QComboBox*>(QStringLiteral("ird_modeling_edit_type"));
+    ASSERT_NE(typeBox, nullptr) << "类型下拉未装配（编辑页枚举行缺席）";
+    ASSERT_EQ(typeBox->currentText(), QStringLiteral("Revolute"))
+        << "回填失真（当前权威类型应直投下拉）";
+
+    // ①合法轨：切 Prismatic——域接受（限位保留＋workingRange 缺）。
+    const int prismatic = typeBox->findText(QStringLiteral("Prismatic"));
+    ASSERT_GE(prismatic, 0);
+    typeBox->setCurrentIndex(prismatic);
+    QApplication::processEvents();
+    EXPECT_TRUE(m_ws.design.joints[0].type == JointType::Prismatic)
+        << "类型编辑未达域（L-2 分流链断裂）";
+    ASSERT_EQ(m_ws.changes.size(), std::size_t{1});
+    EXPECT_NE(m_ws.changes[0].summary.find("修改关节类型"), std::string::npos)
+        << "变更记录缺席（域 append-only 留痕）";
+    EXPECT_EQ(typeBox->currentText(), QStringLiteral("Prismatic"));
+
+    // ②拒绝轨：切 Continuous——限位 Provided 冲突（域 TypeBoundsConflict）。
+    const int continuous = typeBox->findText(QStringLiteral("Continuous"));
+    ASSERT_GE(continuous, 0);
+    typeBox->setCurrentIndex(continuous);
+    QApplication::processEvents();
+    // 拒绝面：类型保持 Prismatic＋下拉回退权威值（用户所见与权威一致）＋
+    // 拒绝原因就地呈现。
+    EXPECT_TRUE(m_ws.design.joints[0].type == JointType::Prismatic)
+        << "被拒类型落位（域守卫失守——I-MDL-4 组合约束旁路）";
+    EXPECT_EQ(typeBox->currentText(), QStringLiteral("Prismatic"))
+        << "下拉未回退权威值（幻影选择——ERR-01）";
+    QLabel* status = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_status_line"));
+    ASSERT_NE(status, nullptr);
+    EXPECT_TRUE(status->text().contains(QStringLiteral("Continuous")))
+        << "组合约束拒绝原因未呈现（限位冲突详情）";
+}
+
+/**
  * 编辑页 L-7 门控（UI-T53——只读会话＝ParamTablePanel 整体禁用；域出口侧
  * applyJointDetailEdits 另有防御面，本用例钉控件半区）。
  */

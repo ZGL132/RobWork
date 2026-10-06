@@ -175,6 +175,23 @@ public:
                     }
                 }
             }
+            // 语义即时校验（UI-T66——F-523①建议：域拒绝面兜底前的录入
+            // 辅助面；规则在 customChainRowSemanticCheck 单点——单元可直
+            // 测。定位到行；域 detail 转译兜底面不变）。
+            for (int row = 0; row < 6; ++row) {
+                const auto err = customChainRowSemanticCheck(
+                    table->item(row, 1)->text().toDouble(),
+                    table->item(row, 2)->text().toDouble(),
+                    table->item(row, 3)->text().toDouble(),
+                    table->item(row, 5)->text().toDouble(),
+                    table->item(row, 6)->text().toDouble());
+                if (err.has_value()) {
+                    errLabel->setText(QStringLiteral("J%1 %2")
+                                          .arg(row + 1)
+                                          .arg(QString::fromStdString(*err)));
+                    return;
+                }
+            }
             dialog.accept();
         });
         QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
@@ -202,6 +219,23 @@ public:
 };
 
 }  // namespace
+
+std::optional<std::string> customChainRowSemanticCheck(double axisX, double axisY,
+                                                       double axisZ,
+                                                       double lower, double upper)
+{
+    // I-MDL-4 限位有序（表单侧前置——域侧 TypeBoundsConflict 族同口径）。
+    if (!(lower < upper)) {
+        return "限位须下限＜上限（I-MDL-4）——当前 " + std::to_string(lower)
+               + " ≥ " + std::to_string(upper) + "，请修正后重试";
+    }
+    // I-MDL-6 轴非零（可归一化前提的表单侧前置——域侧 AxisNotNormalizable
+    // 同口径；零向量三分量判等即可，无需容差——用户录入面的显式零）。
+    if (axisX == 0.0 && axisY == 0.0 && axisZ == 0.0) {
+        return "轴向为零向量（I-MDL-6：轴须非零可归一化）——请补全轴线分量";
+    }
+    return std::nullopt;
+}
 
 ModelingDialogHost& qtModelingDialogHost()
 {
