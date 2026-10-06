@@ -27,7 +27,7 @@ units/modeling.md v0.33；units/ui.md §13 UI-T66 行；findings F-523① 消账
 | 项 | 结果 | 留痕 |
 | --- | --- | --- |
 | 集成构建（全量 Release） | 零错误 | 会话执行记录 |
-| 独立冒烟（standalone 树 build-smoke-ui-t66） | 构建零错误＋modeling_test/modeling_gui_test 全绿（数字见冒烟段补记） | gate-all.log |
+| 独立冒烟（standalone 树 build-smoke-ui-t66） | 构建零错误（RC=0）＋modeling_test 280/280＋modeling_gui_test 36/36 全绿（冒烟树口径——集成树框架门控测试不计入，与 ui-t63 时代 276/35 同构＋本批 +4/+1） | gate-all.log＋冒烟树实测 |
 | sdurws_ird_modeling_test（集成） | 339/339（新增 4：Refresh_GroupedReplayWholeGroupsInOrder／Refresh_GroupReplayBlockedKeepsWholeGroup／Refresh_TypeEditReplaySingleTrack／CustomChainRowSemanticCheck_TableDriven） | 会话执行记录 |
 | sdurws_ird_modeling_gui_test（集成） | 41/41（新增 1：JointDetailEditPane_TypeComboBoxChainAndRejectFallback——合法轨变更记录＋拒绝轨工作集不变＋下拉回退） | 会话执行记录 |
 | 其余全套件回归 | modeling_contract 17/ui_test 253/ui_contract 32/ui_gui 78/requirements_gui 44/requirements_test 200/kinematics_test 182/kinematics_contract 57 全绿（基线不降） | 会话执行记录 |
