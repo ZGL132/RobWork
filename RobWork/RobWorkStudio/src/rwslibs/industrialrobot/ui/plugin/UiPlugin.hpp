@@ -324,6 +324,14 @@ private:
     /// 操作面板——R-2 零跨单元私有头）。
     void maybeRunRequirementsTour();
 
+    /// 建模域全功能遍历通道（UI-T67——F-496 取证；环境变量
+    /// IRD_UI_PLUGIN_SMOKE=modeling-tour 触发——新建项目→建模面板→模板
+    /// 重种子〔模态选单自动应答〕→关节 Origin 编辑→结构增删→draft.apply
+    /// 建模域真实修订→包导出〔模态文件对话框自动填写〕→逐项断言＋截图
+    /// 落盘→自动退出；控制台 [ird-ui-smoke-mtour] 标记行。宿主侧仅经 Qt
+    /// 公共基类＋objectName 锚操作面板——R-2 零跨单元私有头）。
+    void maybeRunModelingTour();
+
     // ---- 装配产物（所有权：诊断栈/适配器经 shared_ptr 供壳与控制器共享
     //      引用；控制器/内容装配面为本插件独占成员——析构序＝声明逆序，
     //      控制器与内容装配面先于端口适配器消亡）----

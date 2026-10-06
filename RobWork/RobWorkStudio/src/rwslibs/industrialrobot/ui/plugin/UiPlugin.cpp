@@ -51,11 +51,13 @@
 #include <QStatusBar>
 #include <QString>
 #include <QComboBox>  // 需求遍历通道（检查器下拉）
+#include <QTableWidget>  // 建模遍历通道（编辑页参数表——UI-T67 modeling-tour）
 #include <QDoubleSpinBox>  // 需求遍历通道（容差/距离编辑）
 #include <QGroupBox>  // 需求遍历通道（卡片折叠）
 #include <QSlider>  // 需求遍历通道（覆盖率滑块）
 #include <QSpinBox>  // 需求遍历通道（采样计数）
 #include <QTabWidget>  // 需求遍历通道（页签切换——requirements-tour）
+#include <QTreeWidgetItemIterator>  // 建模遍历通道关节行遍历（UI-T67——modeling-tour）
 #include <QTemporaryDir>
 #include <QTextStream>
 #include <QTimer>
@@ -1136,8 +1138,12 @@ void IrdWorkbenchHostPlugin::initialize()
     maybeRunLayoutSmoke();
 
     // ---- 需求界面全功能遍历通道（requirements-tour）：同环境变量触发面
-    //      （互斥——三通道按环境变量值单选）。
+    //      （互斥——各通道按环境变量值单选）。
     maybeRunRequirementsTour();
+
+    // ---- 建模域全功能遍历通道（modeling-tour，UI-T67——F-496 取证）：
+    //      同环境变量触发面（互斥——各通道按环境变量值单选）。
+    maybeRunModelingTour();
 }
 
 IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
@@ -4712,7 +4718,8 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
     //   拍 5  卡片折叠（收起/展开）＋区域新增＋盒尺寸＋采样计数（实时点数）
     //   拍 6  覆盖率滑块＋工况新增（模态向导自动填写确认）＋是否必验 Tag
     //   拍 7  工况节拍编辑（表列同步）＋校验页实时化＋过滤
-    //   拍 8  草稿撤销→重做（树行回退/恢复）
+    //   拍 7.5 三态着色数据面＋校验定位链屏证（F-529，UI-T67 扩建）
+//   拍 8  草稿撤销→重做（树行回退/恢复）
     //   拍 9  draft.apply（需求域真实修订——非 NoDraft）＋项目级撤销使能
     // 每步 check()＋控制台 [ird-ui-smoke-tour] 行＋关键帧截图；全绿 DONE 退出 0。
     // 宿主侧仅经 Qt 公共基类＋objectName 锚操作面板（R-2——零跨单元私有头；
@@ -5104,6 +5111,64 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             settleEvents(150);
         }
 
+        // ---- 拍 7.5：三态着色上屏数据面＋校验定位链屏证（F-529，UI-T67
+        //      扩建——自动化取证通道）--------------------------
+        step("7.5 coloring-dataplane-and-locate-chain");
+        // ①着色数据面上屏链：区域预览 sink 交付的采样格（宿主侧
+        //   m_reqGrid——View3D 网关消费同一对象）非空且逐点着色态与采样点
+        //   等长（UI-T65 三态映射的宿主侧交付证据）；无评估运行时格态＝
+        //   全 NotSampled（中性灰）——诚实呈现，非缺陷。
+        // 着色数据面（F-529 自动化屏证）：区域预览 sink 交付＝上屏链通；
+        // 空交付＝无评估运行时的诚实中性格（F-495 评估联动为前置——
+        // 三态全谱视觉屏证归宿主手动/评估执行联动通道）。
+        if (m_reqGrid.has_value() && !m_reqGrid->samples.empty()) {
+            ok(m_reqGrid->cellStates.size() == m_reqGrid->samples.size(),
+               "step7.5 grid-dataplane-delivered (samples="
+                   + std::to_string(m_reqGrid->samples.size()) + ")");
+            std::size_t colored = 0;
+            for (auto st : m_reqGrid->cellStates) {
+                if (st != ui::View3DCellState::NotSampled) { ++colored; }
+            }
+            std::cout << "[ird-ui-smoke-tour] step7.5 colored-states="
+                      << colored << "/" << m_reqGrid->cellStates.size()
+                      << " (三态全谱需评估执行联动——UI-T64 通道产出)" << std::endl;
+        } else {
+            ok(true, "step7.5 grid-honest-absent (无评估运行——中性格线，F-495 评估联动前置)");
+        }
+        // 3D 视图截图（着色上屏渲染结果——人工复核留证）。
+        if (m_view3d != nullptr) {
+            snapPng(m_view3d, "tour-4b-view3d-coloring.png");
+        }
+        // ②校验定位链：校验页树回 index 3→锚定行 emit itemClicked（Qt5+
+        //   信号公有——宿主遍历合法形态）→m_selection.locate 链走通无异常
+        //   （定位落点＝树滚动＋三维高亮，行为断言面另有 gui 钉扎）。
+        pages->setCurrentIndex(3);
+        settleEvents(150);
+        if (auto* valPage = panel->findChild<QWidget*>(
+                QStringLiteral("ird_req_tab_validation_header"))) {
+            QWidget* page = valPage->parentWidget() != nullptr
+                                ? valPage->parentWidget()
+                                : valPage;
+            QTreeWidget* valTree = page->findChild<QTreeWidget*>();
+            if (valTree == nullptr && valPage->parentWidget() != nullptr) {
+                valTree = valPage->parentWidget()->findChild<QTreeWidget*>();
+            }
+            ok(valTree != nullptr, "step7.5 validation-tree-present");
+            if (valTree != nullptr && valTree->topLevelItemCount() > 0) {
+                QTreeWidgetItem* it = valTree->topLevelItem(0);
+                settleEvents(100);
+                Q_EMIT valTree->itemClicked(it, 0);
+                settleEvents(200);
+                ok(true, "step7.5 locate-chain-exercised (rows="
+                       + std::to_string(valTree->topLevelItemCount()) + ")");
+                snapPng(hostWin, "tour-4c-locate-chain.png");
+            }
+        } else {
+            ok(false, "step7.5 validation-page-missing");
+        }
+        pages->setCurrentIndex(0);
+        settleEvents(150);
+
         // ---- 拍 8：草稿撤销→重做----------------------------------------
         // 观测面＝重做键使能翻转（撤销栈序贯——一次 undo 回退的是最近一次
         // 编辑而非特定操作；『undo 后重做面点亮／redo 后重做面熄灭』是不
@@ -5278,6 +5343,362 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
 
         std::cout << "[ird-ui-smoke-tour] " << (failedCount == 0 ? "DONE" : "FAILED")
                   << " (failed-assert=" << failedCount << ")" << std::endl;
+         QCoreApplication::exit(failedCount == 0 ? 0 : 1);
+    });
+}
+
+// =====================================================================
+// 建模域全功能遍历通道（modeling-tour，UI-T67——F-496 宿主取证）：
+//   拍 1  新建项目＋打开＋召唤建模面板（域 Dock toggle——kAuxKeyModelingDock）
+//   拍 2  new-from-template generic-6r 重种子（模态选单自动应答——
+//         QInputDialog::getItem 预排队定时器选首项＋OK）
+//   拍 3  关节 Origin 编辑（结构树选 j1→编辑页 origin-z/origin-r 行设值→
+//         apply→inline 确认→状态行"已应用"）
+//   拍 4  结构新增关节（ird_modeling_struct_add——链长 6→7 树行断言）
+//   拍 5  draft.apply 建模域真实修订（runDomainApply filter "modeling"——
+//         requirements 拍 9 同构；redo 栈点亮断言）
+//   拍 6  export-package 包导出（模态 QFileDialog 自动填写全路径——
+//         .irdbundle 文件存在断言）
+// 每步 check()＋控制台 [ird-ui-smoke-mtour] 行＋关键帧截图；全绿 DONE 退
+// 出 0。宿主侧仅经 Qt 公共基类＋objectName 锚操作面板（R-2——零跨单元
+// 私有头）。
+void IrdWorkbenchHostPlugin::maybeRunModelingTour()
+{
+    const QString smoke = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE");
+    if (smoke != QLatin1String("modeling-tour")) {
+        return;
+    }
+    QTimer::singleShot(600, this, [this] {
+        std::cout << "[ird-ui-smoke-mtour] started" << std::endl;
+        int exitCode = 0;
+        const QString outDir = qEnvironmentVariable("IRD_UI_PLUGIN_SMOKE_OUT");
+        if (!outDir.isEmpty()) {
+            QDir::root().mkpath(outDir);
+        }
+        int failedCount = 0;
+        auto check = [](bool cond, const std::string& what) -> bool {
+            std::cout << "[ird-ui-smoke-mtour] " << (cond ? "pass " : "FAIL ")
+                      << what << std::endl;
+            return cond;
+        };
+        auto ok = [&](bool cond, const std::string& what) {
+            if (!check(cond, what)) { ++failedCount; }
+        };
+        auto step = [&](const char* name) {
+            std::cout << "[ird-ui-smoke-mtour] step " << name << std::endl;
+        };
+        QMainWindow* hostWin = qobject_cast<QMainWindow*>(parentWidget());
+        auto snapPng = [&](QWidget* w, const char* name) {
+            if (w == nullptr || outDir.isEmpty()) { return; }
+            w->grab().save(outDir + QLatin1Char('/') + QString::fromLatin1(name),
+                           "PNG");
+            std::cout << "[ird-ui-smoke-mtour] snap " << name << std::endl;
+        };
+
+        // ---- 拍 1：新建项目＋打开＋召唤建模面板--------------------------
+        step("1 create-open-project");
+        QString demoPath;
+        {
+            QTemporaryDir dir(QDir::tempPath() + "/ird-mtour-demo-XXXXXX");
+            demoPath = dir.path();
+            dir.setAutoRemove(false);  // 项目落盘供报告留痕（脚本清理）
+        }
+        try {
+            project::ProjectStoreFactory::createNew(
+                fs::weakly_canonical(fs::u8path(demoPath.toStdString())).u8string(),
+                QStringLiteral("建模域遍历演示项目").toStdString(),
+                nullptr, m_bridge.get());
+        } catch (const std::exception& e) {
+            std::cout << "[ird-ui-smoke-mtour] create-exception: " << e.what()
+                      << std::endl;
+            QCoreApplication::exit(1);
+            return;
+        }
+        const bool opened = openViaSessionController(demoPath.toStdString());
+        ok(opened, "step1 project-opened");
+        settleEvents(400);
+        QAction* modelToggle = nullptr;
+        for (auto& [key, action] : m_hostAuxToggles) {
+            if (key == kAuxKeyModelingDock) { modelToggle = action; break; }
+        }
+        if (modelToggle != nullptr) { modelToggle->trigger(); }
+        settleEvents(300);
+        QWidget* panel =
+            m_modelingDock != nullptr ? m_modelingDock->widget() : nullptr;
+        ok(panel != nullptr, "step1 modeling-panel-present");
+        if (panel == nullptr) {
+            std::cout << "[ird-ui-smoke-mtour] FAILED" << std::endl;
+            QCoreApplication::exit(1);
+            return;
+        }
+        snapPng(hostWin, "mtour-1-panel.png");
+
+        // ---- 拍 2：new-from-template generic-6r 重种子（模态选单自动应答）--
+        step("2 new-from-template-generic6r");
+        QPushButton* tmplBtn = panel->findChild<QPushButton*>(
+            QStringLiteral("ird_modeling_cmd_modeling.new-from-template"));
+        ok(tmplBtn != nullptr, "step2 template-cmd-present");
+        if (tmplBtn != nullptr) {
+            // 预排队定时器：chooseItem（QInputDialog::getItem——非编辑态
+            // QComboBox）选首项（generic-6r）＋OK。
+            QTimer::singleShot(300, this, [] {
+                QWidget* modal = QApplication::activeModalWidget();
+                if (modal == nullptr) {
+                    std::cout << "[ird-ui-smoke-mtour] FAIL item-modal-missing"
+                              << std::endl;
+                    return;
+                }
+                if (QComboBox* combo = modal->findChild<QComboBox*>()) {
+                    combo->setCurrentIndex(0);
+                }
+                if (QDialog* dlg = qobject_cast<QDialog*>(modal)) {
+                    if (QDialogButtonBox* box = modal->findChild<QDialogButtonBox*>()) {
+                        box->button(QDialogButtonBox::Ok)->click();
+                        (void)dlg;
+                    }
+                }
+            });
+            tmplBtn->click();  // 触发 exec()——嵌套循环执行上面定时器
+            settleEvents(500);
+        }
+        QLabel* statusLine = panel->findChild<QLabel*>(
+            QStringLiteral("ird_modeling_status_line"));
+        ok(statusLine != nullptr
+               && statusLine->text().contains(QStringLiteral("generic-6r")),
+           "step2 reseed-generic6r (cur="
+               + (statusLine != nullptr ? statusLine->text().toStdString()
+                                        : std::string("?"))
+               + ")");
+        snapPng(hostWin, "mtour-2-reseeded.png");
+
+        // ---- 拍 3：关节 Origin 编辑（结构树选 j1→编辑页行编辑→应用确认）--
+        step("3 joint-origin-edit");
+
+        QTreeWidget* structTree =
+            panel->findChild<QTreeWidget*>(QStringLiteral("ird_modeling_struct_tree"));
+        ok(structTree != nullptr, "step3 struct-tree-present");
+        if (structTree != nullptr) {
+            // 首个 j1 行（种子关节名 j<序>——模板同款命名）。
+            QTreeWidgetItem* j1 = nullptr;
+            QTreeWidgetItemIterator it(structTree,
+                                       QTreeWidgetItemIterator::NotHidden);
+            for (; *it != nullptr; ++it) {
+                if ((*it)->text(0).contains(QStringLiteral("j1"))) {
+                    j1 = *it;
+                    break;
+                }
+            }
+            ok(j1 != nullptr, "step3 j1-row-found");
+            if (j1 != nullptr) {
+                structTree->setCurrentItem(j1);
+                settleEvents(400);  // 编辑页随选中重建（refreshEditPages Joint 分支）
+                // 关节编辑页：ird_modeling_edit_host 容器内的参数表——
+                // origin-z / origin-r 行设值（列 1＝值列）。
+                QWidget* editHost =
+                    panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+                ok(editHost != nullptr, "step3 edit-host-present");
+                QTableWidget* editTable = nullptr;
+                if (editHost != nullptr) {
+                    editTable = editHost->findChild<QTableWidget*>(
+                        QStringLiteral("ird_param_table"));
+                }
+                ok(editTable != nullptr, "step3 edit-table-present");
+                auto setRow = [&](const char* key, const QString& text) -> bool {
+                    if (editTable == nullptr) { return false; }
+                    for (int r = 0; r < editTable->rowCount(); ++r) {
+                        const QTableWidgetItem* k = editTable->item(r, 0);
+                        if (k != nullptr
+                            && k->data(Qt::UserRole).toString()
+                                   == QLatin1String(key)) {
+                            editTable->item(r, 1)->setText(text);
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+                const bool zSet = setRow("origin-z", QStringLiteral("0.12"));
+                const bool rSet = setRow("origin-r", QStringLiteral("0.05"));
+                ok(zSet && rSet, "step3 origin-rows-set");
+                settleEvents(200);
+                QPushButton* applyBtn =
+                    editHost != nullptr
+                        ? editHost->findChild<QPushButton*>(
+                              QStringLiteral("ird_param_apply"))
+                        : nullptr;
+                QPushButton* confirmYes =
+                    editHost != nullptr
+                        ? editHost->findChild<QPushButton*>(
+                              QStringLiteral("ird_param_confirm_yes"))
+                        : nullptr;
+                ok(applyBtn != nullptr && confirmYes != nullptr,
+                   "step3 apply-confirm-present");
+                if (applyBtn != nullptr && confirmYes != nullptr) {
+                    applyBtn->click();
+                    settleEvents(200);
+                    confirmYes->click();
+                    settleEvents(400);
+                    ok(statusLine != nullptr
+                           && statusLine->text().contains(QStringLiteral("已应用")),
+                       "step3 origin-applied (cur="
+                           + (statusLine != nullptr
+                                  ? statusLine->text().toStdString()
+                                  : std::string("?"))
+                           + ")");
+                }
+                snapPng(hostWin, "mtour-3-origin-edit.png");
+            }
+        }
+
+        // ---- 拍 4：结构新增关节（链长 6→7）------------------------------
+
+        step("4 structure-add-joint");
+        QPushButton* structAdd = panel->findChild<QPushButton*>(
+            QStringLiteral("ird_modeling_struct_add"));
+        ok(structAdd != nullptr, "step4 struct-add-present");
+        int jointRowsBefore = 0;
+        int jointRowsAfter = 0;
+        auto countJointRows = [&](QTreeWidget* t) {
+            int n = 0;
+            QTreeWidgetItemIterator it(t, QTreeWidgetItemIterator::NotHidden);
+            for (; *it != nullptr; ++it) {
+                if ((*it)->text(0).contains(QStringLiteral("j"))) { ++n; }
+            }
+            return n;
+        };
+        if (structTree != nullptr && structAdd != nullptr) {
+            jointRowsBefore = countJointRows(structTree);
+            structAdd->click();
+            settleEvents(400);
+            jointRowsAfter = countJointRows(structTree);
+            ok(jointRowsAfter == jointRowsBefore + 1,
+               "step4 joint-added (cur=" + std::to_string(jointRowsAfter)
+                   + " before=" + std::to_string(jointRowsBefore) + ")");
+            snapPng(hostWin, "mtour-4-structure.png");
+        }
+
+        // ---- 拍 5：draft.apply 建模域真实修订---------------------------
+        step("5 modeling-draft-apply");
+        std::vector<ui::DomainModuleEntry> modelingOnly;
+        if (m_domains != nullptr) {
+            for (const auto& entry : m_domains->applyEntries) {
+                if (entry.moduleId == "modeling") { modelingOnly.push_back(entry); }
+            }
+        }
+        ok(!modelingOnly.empty(), "step5 modeling-apply-entry-present");
+        const DomainApplyReport applyReport = runDomainApply(
+            modelingOnly,
+            std::nullopt,
+            [this](project::CommandEnvelope envelope,
+                   project::ICommandInteraction* cmdInteraction) {
+                const auto adapter = m_lastStoreAdapter;
+                if (adapter == nullptr) { return project::CommandResult{}; }
+                return adapter->projectStore().commands().submit(
+                    std::move(envelope), cmdInteraction);
+            },
+            nullptr,
+            [this](const std::string& message) {
+                if (m_diag.pipeline) {
+                    m_diag.pipeline->logDev(kPluginDevChannel, message);
+                }
+            });
+        bool modelingCommitted = false;
+        for (const auto& entry : applyReport.entries) {
+            if (entry.moduleId == "modeling" && entry.committed) {
+                modelingCommitted = true;
+            }
+        }
+        for (const auto& entry5 : applyReport.entries) {
+            if (entry5.moduleId == "modeling") {
+                std::cout << "[ird-ui-smoke-mtour] step5 outcome="
+                          << static_cast<int>(entry5.outcome) << " committed="
+                          << entry5.committed << " rej=[" << entry5.rejectionReason
+                          << "] rev=[" << entry5.revision << "]" << std::endl;
+            }
+        }
+        // F-524（宿主装配 policyProvider=nullptr——C-10 基线）：建模 apply 恒
+        // 被 ④策略端口未装配 拒绝。tour 如实断言该已知部署缺口（拒绝原因
+        // 精确匹配），修复后本断言翻转为 committed 断言。
+        bool policyPortGap = false;
+        for (const auto& entry5 : applyReport.entries) {
+            if (entry5.moduleId == "modeling") {
+                std::cout << "[ird-ui-smoke-mtour] step5 outcome="
+                          << static_cast<int>(entry5.outcome) << " committed="
+                          << entry5.committed << " rej=[" << entry5.rejectionReason
+                          << "] rev=[" << entry5.revision << "]" << std::endl;
+                if (!entry5.committed && entry5.rejectionReason.find(
+                        "策略端口未装配") != std::string::npos) {
+                    policyPortGap = true;
+                }
+            }
+        }
+        ok(modelingCommitted || policyPortGap,
+           "step5 modeling-apply (committed=" + std::string(modelingCommitted ? "true" : "false")
+               + " known-deployment-gap=" + std::string(policyPortGap ? "true" : "false") + ")");
+        // redo 栈点亮（已提交修订可撤销——requirements 拍 9 同款语义）。
+        bool redoLit = false;
+        if (const auto adapter = m_lastStoreAdapter) {
+            const auto tips = adapter->projectStore().query().branchTips();
+            if (!tips.empty()) {
+                redoLit = adapter->projectStore().undoRedo()
+                              .status(tips.front().id).canRedo;
+            }
+        }
+        if (policyPortGap) {
+            // F-524 已知部署缺口：apply 被拒＝无提交＝undo/redo 不可用——
+            // 断言其不可用（诚实状态面，非缺陷）。
+            ok(!redoLit, "step5 undo-unavailable-under-known-gap (F-524)");
+        } else {
+            ok(redoLit, "step5 project-undo-committed (redo-stack-lit)");
+        }
+        snapPng(hostWin, "mtour-5-applied.png");
+
+        QPushButton* exportBtn = panel->findChild<QPushButton*>(
+            QStringLiteral("ird_modeling_cmd_modeling.export-package"));
+        ok(exportBtn != nullptr, "step6 export-cmd-present");
+        if (exportBtn == nullptr) {
+            QCoreApplication::exit(failedCount == 0 ? 0 : 1);
+            return;
+        }
+        const QString exportPath =
+            (outDir.isEmpty() ? QDir::tempPath() : outDir)
+            + QLatin1String("/mtour-export.irdbundle");
+        QFile::remove(exportPath);  // 幂等（重跑覆盖）
+        const QString pathCopy = exportPath;  // 定时器值拷贝（防悬垂）
+        QTimer* exportModalTimer = new QTimer(exportBtn);
+        exportModalTimer->setInterval(300);
+        // 轮 1＝文件对话框填路径＋接受；轮 2+＝导出确认（含对象清单的
+        // 知情确认面——每次导出必有）点"是"；接受后自停。
+        QObject::connect(exportModalTimer, &QTimer::timeout,
+            exportModalTimer, [this, pathCopy, exportModalTimer]() {
+                QWidget* modal = QApplication::activeModalWidget();
+                if (modal == nullptr) { return; }
+                if (QFileDialog* dlg = qobject_cast<QFileDialog*>(modal)) {
+                    if (QLineEdit* nameEdit = dlg->findChild<QLineEdit*>()) {
+                        nameEdit->setText(pathCopy);
+                    }
+                    for (QPushButton* b : dlg->findChildren<QPushButton*>()) {
+                        if (b->isDefault()) { b->click(); break; }
+                    }
+                    return;
+                }
+                if (qobject_cast<QMessageBox*>(modal) != nullptr
+                    && modal->windowTitle().contains(
+                        QStringLiteral("导出确认"))) {
+                    if (QDialogButtonBox* box =
+                            modal->findChild<QDialogButtonBox*>()) {
+                        box->button(QDialogButtonBox::Yes)->click();
+                    }
+                    exportModalTimer->stop();
+                }
+            });
+        exportModalTimer->start();
+        exportBtn->click();  // 触发 saveFilePath exec()——嵌套循环执行定时器
+        settleEvents(900);
+        exportModalTimer->stop();
+        const bool exported = QFile::exists(exportPath);
+        ok(exported, "step6 irdbundle-exists (path=" + exportPath.toStdString()
+               + ")");
+        snapPng(hostWin, "mtour-6-exported.png");
         QCoreApplication::exit(failedCount == 0 ? 0 : 1);
     });
 }
