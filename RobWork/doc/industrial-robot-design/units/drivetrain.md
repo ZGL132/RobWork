@@ -230,14 +230,20 @@ L1  框架基线        RobWork(rw) │ RobWorkSim(rwsim) │ RobWorkStudio(rws)
 
 ## 4. 当前代码落位与目标布局
 
-### 4.1 当前落位（如实登记，2026-10-06 实测）
+### 4.1 当前落位（如实登记；2026-10-06 WP-18-T02 落位后刷新）
 
 | 项 | 状态 |
 | --- | --- |
-| `include/sdurws/ird/drivetrain/README.md` | 存在（公共头保留位；文案指向"卡 §9"与本卡 §15 实际任务章不符——§18.3 登记随 T02 修正） |
-| `CMakeLists.txt` / `src/` / `test/` / `contract_test/` | 不存在 |
-| 上级目标注册 | 无 `sdurws_ird_drivetrain` 及测试目标 |
-| plugin/worker | 不存在（**符合设计**——本架构不要求，§2.3） |
+| `CMakeLists.txt` | **存在（WP-18-T02）**——`sdurws_ird_drivetrain` STATIC（C++17，PUBLIC 链 core＋evidence——§3.2 两登记边；别名 `RWS::ird::drivetrain` 仅集成模式）；配置期依赖红线守卫（两登记边/零 Qt/零 gtest·testkit 于产品目标）自持 |
+| `include/sdurws/ird/drivetrain/DiagCodes.hpp` | **存在（WP-18-T02）**——DT-* 19 码值常量＋登记行清单（§6.3 阻断面 8＋§7.2 矩阵 4＋§9 惯量 2＋§10 效率/统计 4＋§12.1 序列 1；装配期注册数据源——P-DT-7 收编前不进 diagnostics 全局装配，头内"码值权威链"注释） |
+| `include/sdurws/ird/drivetrain/README.md` | 存在（落位说明版；原占位文案"指向卡 §9"偏差已随 T02 修正——§18.3 闭环） |
+| `src/DiagCodes.cpp` | **存在（WP-18-T02）**——19 码登记行清单实现（逐码出处/语义注释）；映射实现翻译单元随 T03 增列（§4.2 布局表） |
+| `test/`（TestMainReport/DiagCodesTest/BuildRedLineTest） | **存在（WP-18-T02）**——`sdurws_ird_drivetrain_test`：登记表全表/句法（经 core::DiagnosticRecord C-3 句法权威）/红线扫描（零 Qt＋两 include 面＋R-4＋@file 头注释）7 用例 |
+| `contract_test/`（ContractTestMain/BuildGraphContractTest） | **存在（WP-18-T02）**——`sdurws_ird_drivetrain_contract_test`：构建图边界契约（两登记边封闭性/存在性/无业务域＋表外平台边/testkit 仅测试目标/无 plugin·worker 形态/include 面同界）5 用例 |
+| 上级目标注册 | `sdurws_ird_drivetrain`＋`_test`＋`_contract_test` 已注册（industrialrobot/CMakeLists.txt——drivetrain 自 WP-18-T02 移出 IRD_MODULES 占位循环，add_subdirectory 挂载） |
+| plugin/worker | 不存在（**符合设计**——§2.3/§4.2 明文默认禁止创建〔无独立界面、worker 归 execution〕，如需走 P-DT-8；契约 acceptance 1"无插件目标"同口径） |
+
+> WP-18-T02 执行实录（2026-10-06）：集成模式三目标构建零错误＋ird_gates 零命中＋validate-docs PASS；独立冒烟配置＋全量构建零错误；gtest XML（7/7＋5/5，零失败）＋ird-test-report.json×2＋双模式构建日志留痕于 `traceability/builds/wp18-t02/`。真实 StableCodeRegistry 注册**未执行**（依赖白名单无 diagnostics 边〔§3.2 点名表外〕＋diagnostics 前缀表无 DT——P-DT-7 收编归 diagnostics 所有者，两处文件不在该任务 allowedFiles），登记表以 core 句法权威（DiagnosticRecord::make C-3）验证——不以桩伪造注册结论。
 
 ### 4.2 目标布局（全部为设计；落位动作归 WP-18-T02 及后续任务）
 
@@ -1110,10 +1116,10 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 
 | 项 | 内容 |
 | --- | --- |
-| 占位 README 指向 | README 文案"见 units/drivetrain.md §9"与本卡章节编号不符（实现任务＝§15）——随 WP-18-T02 落位时修正 |
+| 占位 README 指向 | **已闭环（WP-18-T02，2026-10-06）**——README 已改写为落位说明版（指向 §4.2/§15），原"见卡 §9"偏差消除 |
 | DTB 锚点 | DTB WP-18-T05 引用"drivetrain.md §13（卡预留）"——本卡 R2 承接章为 §16（§13 为公共接口）；DTB 侧锚点修订随其下次修订登记 |
 | 索引状态 | DETAILED-DESIGN.md §20 与 unit-status.json 的 drivetrain 行（"待产出/planned"）刷新归治理任务（与 trajectory 卡同批待登记），本卡不代改 |
-| diagnostics 命名空间 | `DT` 前缀补登（P-DT-7） |
+| diagnostics 命名空间 | `DT` 前缀补登（P-DT-7）——WP-18-T02 落地了 DT-* 19 码登记表（DiagCodes.hpp/cpp，码值/出处/语义三列物化）作为注册数据源；真实 StableCodeRegistry 注册与 diagnostics.md §4.5/代码前缀表同步（`{"DT","drivetrain"}`）属 diagnostics 所有者治理动作，两处文件不在 WP-18-T02 allowedFiles，**尚未执行**（如实登记；L5 装配收编时按登记表逐行构造 CodeDescriptor 注册） |
 
 ### 18.4 风险登记（R-DT-x）
 
@@ -1132,6 +1138,7 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-10-06 | 首版草案（WP-18-T01 交付物）：基于 REQUIREMENTS v1.16、ARCHITECTURE v0.13、DTB v0.53 与 core/evidence/runtime/modeling 卡既有契约编写；R1/R2 边界、归一化模型与身份、R1 对角映射与阻断面、R2 耦合矩阵、虚功/功率一致性四口径、反射惯量与防重复计入、效率/能量/四象限、工作点与包络、五单元协作与最小依赖契约（dynamics/selection 卡未产出）、公共接口、验证方案与故障注入矩阵、任务拆分对齐、追踪矩阵、决策/风险/待裁决登记、自审与未执行声明 |
+| v0.2 | 2026-10-06 | WP-18-T02 构建落位随附同步：§4.1 落位表刷新（STATIC＋DiagCodes 19 码登记表＋_test/_contract_test 落位实录）；§18.3 占位 README 行闭环＋diagnostics 命名空间行补登记表落地/注册未执行现状；§20 执行状态按真实结果刷新（双模式构建零错误/ird_gates 零命中/12 用例通过留痕——映射实现与黄金数据集仍归 T03/T04 未实现）；传动比口径 c＝Δq_joint/Δθ_motor（P-DT-10 采用口径）已按任务契约 note 在 T02 公共头（DiagCodes.hpp）落笔 |
 
 ---
 
@@ -1179,11 +1186,12 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 
 | 类别 | 状态 |
 | --- | --- |
-| 产品源码/CMake/测试实现 | **未实现**（本卡为 WP-18-T01 文档交付物；落位动作归 WP-18-T02～T04） |
-| 集成模式构建 / 独立冒烟构建 | **未执行**（无构建目标可构建） |
-| 单元测试 / 契约测试 / 黄金数据集 | **未执行**（§14 全部为设计；"全部为设计"≠"已通过"） |
-| ird_gates 门禁 | **未执行**（无源码改动；门禁随实现任务执行） |
+| 产品源码/CMake/测试实现 | **部分实现（WP-18-T02 落位面）**——CMakeLists＋DiagCodes.hpp/cpp（19 码登记表）＋_test/_contract_test 已落地；映射实现（§13 接口/§4.2 布局表主体）与黄金数据集仍归 WP-18-T03/T04，**未实现** |
+| 集成模式构建 / 独立冒烟构建 | **已执行（WP-18-T02，2026-10-06）**——集成模式 sdurws_ird_drivetrain＋两测试目标构建零错误、ird_gates 目标退出 0；独立冒烟模式配置＋全量构建零错误；日志留痕 `traceability/builds/wp18-t02/` |
+| 单元测试 / 契约测试 / 黄金数据集 | **T02 面已执行**——sdurws_ird_drivetrain_test 7/7、sdurws_ird_drivetrain_contract_test 5/5 通过（gtest XML＋ird-test-report.json 留痕同上）；映射黄金数据集（§14.2 DT-G 组等）**未执行**（随 T03/T04） |
+| ird_gates 门禁 | **已执行（WP-18-T02）**——全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（含引擎自测 9 例） |
+| 真实 StableCodeRegistry 注册 | **未执行（P-DT-7 待收编）**——依赖白名单无 diagnostics 边＋前缀表无 DT（见 §4.1 执行实录/§18.3）；登记表以 core 句法权威验证，不以桩伪造注册结论 |
+| 文档验证脚本 | **已执行（WP-18-T02）**——validate-docs.ps1 PASS（20 units, 12 trace entries, 307 task files） |
 | GUI 测试 | **不适用**（本单元无 plugin/GUI 目标，§14.4） |
-| 文档验证脚本 | **未执行**（validate-docs.ps1 等治理脚本运行随 WP-18-T01 验收会话执行） |
 
 以上任何一项在后续任务中执行后，须按 DTB §5.4 与本卡 §18.5 登记真实结果；未执行项不得标注"通过"。

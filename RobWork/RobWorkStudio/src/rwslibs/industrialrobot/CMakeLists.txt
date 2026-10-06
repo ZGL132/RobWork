@@ -33,8 +33,12 @@
 #       diagnostics/project/execution/io/evidence/reporting 八条卡 §3.2
 #       依赖白名单边，插件目标 sdurws_ird_workflow_plugin（最小可注册
 #       实现）与测试目标 sdurws_ird_workflow_test/_contract_test 随落位
-#       登记——见 workflow/CMakeLists.txt；界面面随 WP-22-T04~T12）；
-#       其余 5 个单元仍为 INTERFACE 占位，源码
+#       登记——见 workflow/CMakeLists.txt；界面面随 WP-22-T04~T12）、
+#       drivetrain 已随 WP-18-T02 落地为真实 STATIC 库（PUBLIC 链
+#       core/evidence 两条卡 §3.2 登记边〔ARCH §3.5 原始边〕，测试目标
+#       sdurws_ird_drivetrain_test/_contract_test 随落位登记——见
+#       drivetrain/CMakeLists.txt；本单元无 plugin/worker 目标——卡
+#       §2.3/§4.2 明文默认禁止）；其余 4 个单元仍为 INTERFACE 占位，源码
 #       随各自单元任务卡落地，落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
@@ -54,10 +58,10 @@ endif()
 # io 自 IO-T01（≙WP-11-T02）、execution 自 EX-T01（≙WP-08-T02）、ui 自
 # WP-10-T02（≙UI-T02，R-3 唯一 Qt Widgets 例外目标）、reporting 自
 # RPT-T01（≙WP-12-T02）、modeling 自 WP-13-T02、requirements 自 WP-14-T02、
-# kinematics 自 WP-15-T02、workflow 自 WP-22-T02 起移出（下方
-# add_subdirectory）。
+# kinematics 自 WP-15-T02、workflow 自 WP-22-T02、drivetrain 自
+# WP-18-T02 起移出（下方 add_subdirectory）。
 set(IRD_MODULES
-    trajectory dynamics drivetrain
+    trajectory dynamics
     selection optimization
 )
 
@@ -248,6 +252,27 @@ add_subdirectory(kinematics)
 # diagnostics、project、execution、io、evidence、reporting 之后（链接八者
 # 目标——workflow.md §3.2 白名单；各被链单元均已在上方 add_subdirectory）。
 add_subdirectory(workflow)
+# drivetrain（WP-18-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、
+# PUBLIC 链 core＋evidence——drivetrain.md §3.2 两条登记接口依赖边，属
+# ARCH §3.5 原始登记边〔L2 共享计算服务→L2/L3 公共接口，白名单
+# "drivetrain->core"/"drivetrain->evidence" 两行 2026-09-10 建册即含、
+# dependency-graph.json 第 8/9 行同源镜像——本任务零白名单增补〕，ird_
+# gates 机器面无需新登记；零 Qt 含 Core——R-3/NFR-MNT-01，本单元无
+# plugin/worker 目标〔卡 §2.3/§4.2 明文默认禁止——无独立界面、worker 归
+# execution〕，无 Qt 例外载体；零 diagnostics/runtime/policy 边——卡 §3.2
+# 自查表点名表外，DT-* 码登记面以 core 句法承载、注册收编归 P-DT-7），
+# 并新建 drivetrain/CMakeLists.txt（本注册行即其挂载点）；T02 源码集＝
+# src/DiagCodes.cpp（DT-* 19 码登记表——卡 §6.3/§7.2/§9/§10/§12.1 登记值
+# 物化，L5 装配期注册数据源；映射实现随 WP-18-T03——卡 §4.2 布局表），
+# 测试目标 sdurws_ird_drivetrain_test（登记表＋红线扫描，LABELS ird）/
+# sdurws_ird_drivetrain_contract_test（构建图边界契约——两边封闭性/无
+# 业务域互链/无 plugin/worker 形态，LABELS ird）随本任务登记。零其他
+# 业务域单元（R-1——dynamics 关节侧序列经 UpstreamResult 切片值传递、
+# selection 消费经③评估器端口，不落编译边）、零 testkit（T-1）、零
+# sdurw_proximity（R-5）。次序约束：必须在 core 与 evidence 之后（链接
+# 两者目标——drivetrain.md §3.2 边表；各被链单元均已在上方
+# add_subdirectory）。
+add_subdirectory(drivetrain)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake
