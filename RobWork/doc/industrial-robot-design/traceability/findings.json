@@ -5212,6 +5212,69 @@
       "registeredAt": "2026-10-05",
       "title": "ui-t63 留痕目录的 ird-gates-branch-hits-normalized.txt 为双重编码损坏形态（GBK 字节经错误链转存 UTF-8——与现行引擎 UTF-8 log 域不可直接文本比对，UI-T64 实施侧归一化比对受阻）：实施侧已以引擎自报计数（103＝基线 101＋登记 2）＋登记册 SUB 行原文完成增量证据；精确多重集比对需同编码口径重跑",
       "owner": "治理批次统一处置：以当前引擎口径重产基线 normalized 文件（fresh 双侧 stash 法）并回填 builds/ui-t63/；重跑后本条可闭合"
+    },
+    {
+      "id": "F-525",
+      "source": "acc/ui-t64/1@87760059 验收记录建议级 S1（UI-T64 独立子会话对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "集成模式 fresh 树文档配置口径缺 NOMINMAX 族 flags（AGENTS.md §4.1/DTB §5.1 命令与主 build/ 树实际口径不一致）：按文档命令（无 CXX flags）配置的 fresh 树全量构建在 RobWorkSim 框架插件 RWSimulatorPlugin（71 错）/rwplugin（2 错）失败（首错链 Math.hpp warning C4003——windows.h min/max 宏污染）；主检出 build/ 缓存实带 CMAKE_CXX_FLAGS＝-DNOMINMAX -DWIN32_LEAN_AND_MEAN -DWIN32。industrialrobot 目标不受影响（acc/ui-t64/1 与 acc/ui-t65/1 两批验收均以 flags 口径全量零错误复现）——'集成模式＝唯一交付口径'的复现依赖未记载",
+      "owner": "治理批次：AGENTS.md §4.1 与 DTB §5.1 集成配置命令补记 CMAKE_CXX_FLAGS＝'-DNOMINMAX -DWIN32_LEAN_AND_MEAN -DWIN32'（或框架根 CMake 为 MSVC 全局补定义——后者属框架行为变更须走 patch 登记，前者零风险）；随下批文档修订顺手落实"
+    },
+    {
+      "id": "F-526",
+      "source": "acc/ui-t64/1@87760059 验收记录建议级 S2（UI-T64 独立子会话对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "KinEvaluationExecutor 后台回投存活期论证依赖实现布局而非类型约束：后台 lambda 捕 KinEvaluationExecutor* 裸指针，悬垂安全性依赖'Deps.routeContext 与执行器同存活期（UiPlugin 成员序）＋receiver 析构后 Qt 丢弃 queued functor'两条外部不变量（代码注释已声明，验收复核成立）；若 routeContext 未来换绑为更长寿对象（如主窗口）回投将悬垂",
+      "owner": "后续触碰 kinematics 评估通道批次类型化该不变量（QPointer 守卫或 shared_ptr/weak_ptr 持执行器）并补拆除后回投回归用例；现阶段行为正确，仅防御面改进"
+    },
+    {
+      "id": "F-527",
+      "source": "acc/ui-t64/1@87760059 验收记录建议级 S3（UI-T64 独立子会话对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "冒烟树留痕计数口径不统一：commit/README/DTB/ui.md 声明'冒烟树 kinematics 176＋ui 239 全绿'为 gtest 直接计数，验收者以 ctest 单元子目录口径复证（各单元 2/2 100% passed）——两口径结论相容但计数不可直接互查（ctest 汇总行不携带 gtest 用例数）；近批同口径，非本批缺陷",
+      "owner": "治理批次统一'冒烟留痕＝gtest XML 或 ctest --output-on-failure 之一'的载体口径，便于验收侧逐数核对"
+    },
+    {
+      "id": "F-528",
+      "source": "acc/ui-t65/1@08e0ceb7 验收记录建议级 E4（UI-T65 attempt 1 对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-06",
+      "title": "mapSampleStateToCell switch 尾部防御 return 不可达（五值 switch 全覆盖）——死代码面",
+      "owner": "返工评估后保留：删除将触发 C4715 穷尽性警告，属编译器穷尽性惯例面；已在留痕 README 诚实边界登记（返工提交 16b62c9b~714c6bad）——随 UI-T65 合入收尾登记为已处置（fixed）"
+    },
+    {
+      "id": "F-529",
+      "source": "acc/ui-t65/1@08e0ceb7 验收记录建议级 E5（UI-T65 attempt 1 对抗式验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "acceptance 1 的'三态着色上屏'与 acceptance 4 的'校验定位链'均无自动化屏证（诚实边界已声明归宿主手动通道——UI-T33 先例、F-496 同族）",
+      "owner": "随 F-496 宿主人工验收批次补三态着色上屏取证项"
+    },
+    {
+      "id": "F-530",
+      "source": "acc/ui-t65/2@7ea10318 验收记录建议级 E-R2-1（UI-T65 attempt 2 全量重验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-06",
+      "title": "builds/ui-t65/README.md 冒烟 ctest 行汇总数笔误：'26 tests'实为 28 tests（core 1＋diagnostics 2＋evidence 2＋execution 2＋io 2＋kinematics 2＋modeling 3＋policy 2＋project 2＋reporting 2＋requirements 3＋runtime 1＋testkit 1＋ui 3）；'100% 通过'实质与留痕原件一致，仅汇总数字误写",
+      "owner": "随 UI-T65 合入收尾更正 README 汇总数并加更正注（本条即更正提交——fixed）"
+    },
+    {
+      "id": "F-531",
+      "source": "acc/ui-t65/2@7ea10318 验收记录建议级 E-R2-2（UI-T65 attempt 2 全量重验收 2026-10-06）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-06",
+      "title": "tallyRegionPositionCoverage 与域 computeCoverage 位置轴'同定义'的一致性当前由注释锚（口径权威出处声明）＋发散用例期望值（2/2）承载——域无逐区域覆盖率 API 无法同输入双跑直接对比；若域侧位置轴定义将来演化需人工同步 tally",
+      "owner": "随域 API 演化任务留意同步 tally 并扩充对比用例（不阻断；ui.md/README 诚实边界已登记合并纪律）"
     }
   ]
 }

@@ -64,8 +64,19 @@ inline constexpr const char* kSampleWeakHex = "#F2CC26";
 inline constexpr const char* kSampleFailedHex = "#E62626";
 /// 未采样灰（图例；与 kSampleNotSampledGl 同源换算）。
 inline constexpr const char* kSampleNotSampledHex = "#8C949E";
-/// 选中蓝（图例"当前选中"项——三维区域框缺省档＝主色词表同值）。
-inline constexpr const char* kSampleSelectedHex = "#1E5AA8";
+
+// ---- 区域框缺省蓝（UI-T65 返工——三维区域框 None/缺省档的唯一供色点；
+//      值＝UI-T33 以来的区域框既有辨识蓝 (0.25, 0.45, 1.0)＝#4073FF。
+//      返工缘由：首轮实现把缺省档改为 kPrimary 同值 (0.12, 0.35, 0.66)
+//      且在三维后端硬编码——未评估态框色实际变更＋"单一供色点"纪律
+//      自破（acc/ui-t65/1 阻断 B/E2）；本常量族恢复原值并词表化，GL 与
+//      hex 同源换算，三维后端与图例禁止各自硬编码）----
+
+/// 区域框缺省蓝（GL 三元组——三维后端 tintColor 的 None/不可达分支）。
+inline constexpr float kRegionTintDefaultGl[3] = {0.25f, 0.45f, 1.0f};
+/// 区域框缺省蓝（图例"当前选中区域"色块；与 kRegionTintDefaultGl 同源
+/// 换算：0.25×255≈64=0x40、0.45×255≈115=0x73、1.0×255=255=0xFF）。
+inline constexpr const char* kRegionTintDefaultHex = "#4073FF";
 }
 
 /**

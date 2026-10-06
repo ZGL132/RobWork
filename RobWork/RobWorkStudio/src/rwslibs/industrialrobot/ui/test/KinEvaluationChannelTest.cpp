@@ -359,6 +359,85 @@ TEST(KinEvaluationChannel, View3DTintFromCoverage_TableDriven_UI_T65)
               View3DTint::None);
 }
 
+/// 双口径发散（UI-T65 返工——契约 acceptance 3 位置口径的守护用例）：
+/// 同区域 4 样本＝位置 2（全 Reached）＋位姿 2（全 Unreachable）——
+/// 位置口径 2/2＝1.0 ≥ 目标 0.7（Good），而全样本混计 2/4＝0.5 < 0.7
+/// （Weak）。断言框色跟随**位置口径**——若实现退化为混计（acc/
+/// ui-t65/1 阻断 A 的缺陷形态：计数不分 SampleKind），本用例红。
+TEST(KinEvaluationChannel, RegionTint_FollowsPositionAxisNotMixed_UI_T65)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"F-495", "KIN-04", "REQ-03"},
+                  std::vector<std::string>{});
+    // 区域锚（两区域——发散场景外加他区域过滤面）。
+    const core::ObjectId regionA = core::ObjectId::tryFromCanonical(
+        "obj-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").value_or(core::ObjectId{});
+    const core::ObjectId regionB = core::ObjectId::tryFromCanonical(
+        "obj-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb").value_or(core::ObjectId{});
+    ASSERT_TRUE(regionA.isValid());
+    ASSERT_TRUE(regionB.isValid());
+
+    // 样本账面构造（坐标值与框色无关——计数只看区域锚/kind/状态）。
+    std::vector<KinChannelSampleRecord> samples;
+    // 区域 A：位置 2 全达标（位置口径分子 2）。
+    for (std::uint64_t i = 0; i < 2; ++i) {
+        KinChannelSampleRecord rec;
+        rec.sampleIndex = i;
+        rec.state = KinChannelSampleState::Reached;
+        rec.position = rw::math::Vector3D<double>(0.1 * (i + 1), 0.0, 0.3);
+        rec.regionObjectId = regionA;
+        rec.kind = KinChannelSampleKind::Position;
+        samples.push_back(rec);
+    }
+    // 区域 A：位姿 2 全不可达（混计口径的"拖低项"——不入位置轴）。
+    for (std::uint64_t i = 0; i < 2; ++i) {
+        KinChannelSampleRecord rec;
+        rec.sampleIndex = 2 + i;
+        rec.state = KinChannelSampleState::Unreachable;
+        rec.position = rw::math::Vector3D<double>(0.1 * (i + 1), 0.0, 0.3);
+        rec.regionObjectId = regionA;
+        rec.kind = KinChannelSampleKind::Pose;
+        samples.push_back(rec);
+    }
+    // 区域 B：位置 1 未达标（他区域样本——不得漏入 A 的计数）。
+    KinChannelSampleRecord other;
+    other.sampleIndex = 4;
+    other.state = KinChannelSampleState::Reached;
+    other.position = rw::math::Vector3D<double>(0.5, 0.0, 0.3);
+    other.regionObjectId = regionB;
+    other.kind = KinChannelSampleKind::Position;
+    samples.push_back(other);
+
+    // 发散断言本体：位置口径 2/2＝1.0 ≥ 0.7 → Good（混计 2/4＝0.5 < 0.7
+    // 会得 Weak——两种口径在本场景分档不同，用例判别力成立）。
+    EXPECT_EQ(view3DRegionTintFromSamples(samples, regionA, 0.7),
+              View3DTint::Good);
+    // 计数半区逐值钉扎（tally 直查——分母/分子恰为位置轴口径）。
+    const RegionPositionTally tally =
+        tallyRegionPositionCoverage(samples, regionA);
+    EXPECT_EQ(tally.planned, 2U);  // 位置分母不含位姿 2 与他区域 1
+    EXPECT_EQ(tally.reached, 2U);  // 位置分子＝Position∧Reached
+    // 他区域过滤：B 自身 1/1 达标；对 B 的查询不受 A 的 4 样本干扰。
+    EXPECT_EQ(view3DRegionTintFromSamples(samples, regionB, 0.7),
+              View3DTint::Good);
+    // 无目标＝None（不虚构档位）；目标高于比率＝Weak（1.0 < 1.1）。
+    EXPECT_EQ(view3DRegionTintFromSamples(samples, regionA,
+                                          std::optional<double>{}),
+              View3DTint::None);
+    EXPECT_EQ(view3DRegionTintFromSamples(samples, regionA, 1.1),
+              View3DTint::Weak);
+    // 零位置分母区域（只有位姿样本）：位置口径无定义→None（而非用
+    // 位姿样本顶替分母——混计口径在本场景会虚产 0/2→Weak）。
+    std::vector<KinChannelSampleRecord> poseOnly;
+    KinChannelSampleRecord poseRec;
+    poseRec.sampleIndex = 0;
+    poseRec.state = KinChannelSampleState::Unreachable;
+    poseRec.regionObjectId = regionA;
+    poseRec.kind = KinChannelSampleKind::Pose;
+    poseOnly.push_back(poseRec);
+    EXPECT_EQ(view3DRegionTintFromSamples(poseOnly, regionA, 0.7),
+              View3DTint::None);
+}
+
 /// 换绑清账＋迟到丢弃：提交后立即换绑（纪元推进＋账面清空）——回投
 /// 结果按提交锚丢弃（账面仍空）；任务行终态在案（诚实中止/完成面）。
 TEST(KinEvaluationChannel, Rebind_ClearsAccountAndDropsLateResult_UI_T64)

@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-I",
   "title": "kinematics 覆盖评估执行通道产品装配（F-490① 上游批——F-495 需求三维采样着色闭环的数据生产前置）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T63"
   ],
@@ -67,6 +67,6 @@
     "P-KIN-7"
   ],
   "branch": "ui-t64",
-  "note": "【落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@9326060e，留痕 traceability/builds/ui-t64/。①通道值面＝KinematicsPanelChannels.hpp（assembly 新公共头——同构投影＋翻译单点）；②门面三方法＝installAssemblyChannels/noteAssemblyBackgroundResult/bindSessionFacts（私有缝翻译逐字段具名面 KinPanelChannelTranslation.hpp；mergeAssemblyChannels 逐缝不误伤）；③执行器＝KinEvaluationChannel（受理校验/工作集切片〔计划摘要域函数现算＋旋转参考系诚实拒绝〕/后台纯计算面〔future 持有〕/提交锚账面〔迟到不入账〕/invokeMethod 回投）；④接线＝UiPlugin 装配拍 wire＋发布拍 sync（bindSessionFacts 整体写——私有会话态零解引用）＋打开拍 writable＋拆除拍解绑；DomainAssembly 诚实边界注修订。测试：kinematics 182（＋2）＋ui_test 251（＋5，含真实计算主链/换绑迟到面）＋七套件回归全绿；冒烟树 kinematics 176＋ui 239 全绿；ird_gates 引擎自报 103＝基线 101＋登记恰增 2（登记册 wp10-t64-gate-registrations.md）；validate 双 PASS。基线 normalized 文件编码损坏转登 F-524（治理批次重产）。",
-  "noteHistory": "【立项登记（2026-10-05，status=planned）】批次承接：所有者'按照建议的顺序进行实施'指令下的审计建议第 1 项 U-R1（F-495 需求三维采样着色闭环）——立项前依赖核查发现 F-495 存在登记在案的上游前置 F-490①（2026-10-04 二次核查原文：区域覆盖正式评估在产品装配内不可触发——createKinematicsPluginAssembly() 以默认 KinPanelServices 构造、setServices 产品侧零调用，SampleResultSet 在产品内无生产者，消费卡即使立项也无源可接；真上游＝kinematics 后台评估执行通道产品装配）。故本批＝上游批先行（触发缝绑定＋结构化结果回路），F-495 消费卡（三态着色/覆盖率映射/校验定位/图例——统一 UI 词表供色）随后续批次立项。范围声明：会话级评估（纯计算面＋Preview 语义）——正式评估归档链（evidence 冻结对账/envelope/workflow 任务注册）不在本批，登记为后续任务边界。"
+  "note": "【合入登记注（2026-10-06，PIPE §4.7 收尾——所有者'认可'指令先并 T64，堆叠基点等价后移）】acceptedHead 2972b5d7 合入 redesign-main（acc/ui-t64/1@87760059 按 SHA 先并）；独立子会话对抗式验收全项 pass（§4.1~§4.11 亲手复现；双变异翻红复绿——SessionSolve 拒绝分支失效/翻译闭包丢 epoch；ird_gates 双侧 103/101 归一化多重集恰增登记册 2 条零表外）。建议级三条转登 F-525（fresh 树 NOMINMAX 配置口径）、F-526（执行器后台回投存活期布局依赖）、F-527（冒烟留痕 gtest/ctest 口径）。",
+  "noteHistory": "【落位登记（2026-10-05，status=ready 待独立验收）】分支基点＝redesign-main@9326060e，留痕 traceability/builds/ui-t64/。①通道值面＝KinematicsPanelChannels.hpp（assembly 新公共头——同构投影＋翻译单点）；②门面三方法＝installAssemblyChannels/noteAssemblyBackgroundResult/bindSessionFacts（私有缝翻译逐字段具名面 KinPanelChannelTranslation.hpp；mergeAssemblyChannels 逐缝不误伤）；③执行器＝KinEvaluationChannel（受理校验/工作集切片〔计划摘要域函数现算＋旋转参考系诚实拒绝〕/后台纯计算面〔future 持有〕/提交锚账面〔迟到不入账〕/invokeMethod 回投）；④接线＝UiPlugin 装配拍 wire＋发布拍 sync（bindSessionFacts 整体写——私有会话态零解引用）＋打开拍 writable＋拆除拍解绑；DomainAssembly 诚实边界注修订。测试：kinematics 182（＋2）＋ui_test 251（＋5，含真实计算主链/换绑迟到面）＋七套件回归全绿；冒烟树 kinematics 176＋ui 239 全绿；ird_gates 引擎自报 103＝基线 101＋登记恰增 2（登记册 wp10-t64-gate-registrations.md）；validate 双 PASS。基线 normalized 文件编码损坏转登 F-524（治理批次重产）。【更早：立项登记（2026-10-05，status=planned）】批次承接：所有者'按照建议的顺序进行实施'指令下的审计建议第 1 项 U-R1（F-495 需求三维采样着色闭环）——立项前依赖核查发现 F-495 存在登记在案的上游前置 F-490①（2026-10-04 二次核查原文：区域覆盖正式评估在产品装配内不可触发——createKinematicsPluginAssembly() 以默认 KinPanelServices 构造、setServices 产品侧零调用，SampleResultSet 在产品内无生产者，消费卡即使立项也无源可接；真上游＝kinematics 后台评估执行通道产品装配）。故本批＝上游批先行（触发缝绑定＋结构化结果回路），F-495 消费卡（三态着色/覆盖率映射/校验定位/图例——统一 UI 词表供色）随后续批次立项。范围声明：会话级评估（纯计算面＋Preview 语义）——正式评估归档链（evidence 冻结对账/envelope/workflow 任务注册）不在本批，登记为后续任务边界。"
 }

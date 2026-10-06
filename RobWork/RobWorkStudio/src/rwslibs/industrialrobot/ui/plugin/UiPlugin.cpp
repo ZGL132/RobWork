@@ -3531,10 +3531,8 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                         const rw::math::Transform3D<double> worldTbase =
                             rw::math::inverse(
                                 m_kinEvaluation->sessionView()->worldToBase());
-                        // 该区域逐样本切片（位置口径分母/达标计数同程累计
-                        // ——框色对照输入）。
-                        std::uint64_t regionReached = 0;
-                        std::uint64_t regionPlanned = 0;
+                        // 该区域逐样本切片（着色点层＝全 kind 样本透传——
+                        // 位置/位姿样本都上屏；计数已抽至纯函数）。
                         grid.samples.reserve(coverage->samples.size());
                         grid.cellStates.reserve(coverage->samples.size());
                         for (const auto& record : coverage->samples) {
@@ -3544,16 +3542,15 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                             grid.samples.push_back(worldTbase * record.position);
                             grid.cellStates.push_back(
                                 mapSampleStateToCell(record.state));
-                            if (record.state
-                                == kinematics::KinChannelSampleState::Reached) {
-                                ++regionReached;
-                            }
-                            ++regionPlanned;
                         }
-                        // 框色＝该区域位置口径计数比×目标下限（呈现对照
-                        // ——view3DTintFromCoverage 注：判定权威归域）。
-                        outline.tint = view3DTintFromCoverage(
-                            regionReached, regionPlanned,
+                        // 框色＝该区域**位置口径**计数比×目标下限（契约
+                        // acceptance 3；计数＋分档一体在纯函数
+                        // view3DRegionTintFromSamples——kind 分轴与域
+                        // computeCoverage 位置轴同定义，与面板呈现的
+                        // computation.coverage.position 同口径；呈现对照
+                        // ——判定权威归域）。
+                        outline.tint = view3DRegionTintFromSamples(
+                            coverage->samples, geo.regionObjectId,
                             geo.minPositionCoverage);
                     }
                     box = outline;

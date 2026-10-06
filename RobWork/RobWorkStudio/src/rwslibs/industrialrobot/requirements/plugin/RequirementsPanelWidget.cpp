@@ -681,8 +681,10 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
     m_regionPreviewLabel->setWordWrap(true);
     lay->addWidget(m_regionPreviewLabel);
     // 颜色图例（UI-T65——F-495"颜色图例"项：三维采样着色词表的呈现面
-    // 色块行；色值经 ui palette 采样状态色词表供色——与三维后端 GL 分色
-    // 同源单一供色点，本面零自配色值；蓝框＝当前选中区域辨识色语义）。
+    // 色块行；色值经 ui palette 词表供色——与三维后端 GL 分色同源单一
+    // 供色点，本面零自配色值；蓝框＝区域框既有辨识蓝（UI-T65 返工——
+    // 与三维框 None/缺省档同源消费 kRegionTintDefaultHex，原值
+    // (0.25,0.45,1.0)＝#4073FF））。
     {
         auto* legend = new QLabel(page);
         legend->setObjectName("ird_req_region_legend");
@@ -697,7 +699,7 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
                                  QString::fromUtf8(ui::palette::kSampleFailedHex),
                                  QString::fromUtf8(ui::palette::kSampleWeakHex),
                                  QString::fromUtf8(ui::palette::kSampleNotSampledHex),
-                                 QString::fromUtf8(ui::palette::kSampleSelectedHex)));
+                                 QString::fromUtf8(ui::palette::kRegionTintDefaultHex)));
         lay->addWidget(legend);
     }
     pages->addTab(page, "区域");
