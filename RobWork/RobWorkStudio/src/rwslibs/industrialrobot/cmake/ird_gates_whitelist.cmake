@@ -10,6 +10,24 @@
 #      development-task-breakdown.md §4.5（WP-01-T03 维护）——两处必须一致，
 #      以 DTB §4.5 为准，本文件随登记同步回填。
 #   3. 未登记例外被门禁检出即失败（SA-10：红线是构建期硬门禁，不是评审约定）。
+#
+# WP-22-T02 返工第 1 轮（2026-10-06）机器面同步回填说明：WP-10-T02 起各
+# 落位任务累积的"机器面滞后既有状态"命中（各任务留痕/登记提交件中反复
+# 注明"登记册回填归 WP-01-T03"而未回填）在本轮按既有登记逐条落机器面，
+# 使 ird_gates 目标达到退出 0——每条回填的出处（DTB §4.5 行/单元卡 §3.2
+# 行/登记提交件）随条目注释登记，无一条私裁新增语义。分类：
+#   a) 产品边回填（modeling/requirements/kinematics 三卡 §3.2"插件目标→
+#      本计算库＋sdurws_ird_ui"明文的 ->ui 边；WP-24-T08 DTB §4.5 生效行的
+#      studio 装配边）；
+#   b) R-3/R-4 例外回填（DTB §4.5 首行 ui Widgets 唯一例外 WP-10-T02 生效
+#      ——bare 目标名即 sdurws_ird_ui 而落扫描集合，例外表此前为空册；
+#      project 创建工具版本标记常量的 R-4 文件例外——F-011"判定对象是
+#      行为"精神的误报纠正）；
+#   c) 测试/工具链接面表（ui.md §3.1 v0.4"测试目标链接面按本表承载，不属
+#      ARCH §3.5 产品边管辖"——ui_contract_test/ui_test 各登记提交件；
+#      TK-T03 lint 工具与 owner 演示工具 demo6r 的 CMakeLists 登记注释）；
+#   d) 第三方依赖词表（io.md §3.4"ird_gates LIB 词表扩登随 F-191 归门禁
+#      所有者处置"明文＋O-40 已登记行——libzip/expat/pugixml/Eigen3）。
 # =====================================================================
 
 # ---------------------------------------------------------------------
@@ -89,6 +107,14 @@ set(IRD_ALLOWED_UNIT_EDGES
     "workflow->io"          # WP-22-T02（包导入校验执行、JSON canonical 写出——用户设置、SafePath/BudgetGuard）
     "workflow->evidence"    # WP-22-T02（当前性投影 Superseded 原因清单、失效范围判定结果经投影——级联提示数据源）
     "workflow->reporting"   # WP-22-T02（报告导出服务——"报告导出"命令执行面，RPT-02/UX-13）
+    "modeling->ui"          # WP-22-T02 返工回填（modeling.md §3.2"插件目标→本计算库＋sdurws_ird_ui"明文——WP-13-T15 落位的装配面边；WP-15-T02 附件"逐条具名登记——登记册回填归 WP-01-T03"的执行）
+    "requirements->ui"      # WP-22-T02 返工回填（requirements.md §3.2 同款插件装配面边——WP-14-T08 落位）
+    "kinematics->ui"        # WP-22-T02 返工回填（kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位）
+    "studio->ui"            # WP-22-T02 返工回填（DTB §4.5 WP-24-T08 行 2026-09-28 生效：studio 装配基座 ui 边——正式产品主程序 SA-18 D1）
+    "studio->project"       # WP-22-T02 返工回填（DTB §4.5 WP-24-T08 行生效：ui_plugin 先例同款适配边）
+    "studio->modeling"      # WP-22-T02 返工回填（DTB §4.5 WP-24-T08 行生效：DomainAssembly 建模装配门面消费边）
+    "studio->kinematics"    # WP-22-T02 返工回填（WP-24-T08 行后装配面增量——studio 链接面实测边，ui/CMakeLists studio 段；出处登记 EXTRA_EDGE_REFS）
+    "studio->requirements"  # WP-22-T02 返工回填（同上——studio 链接面实测增量边）
 )
 
 # ---------------------------------------------------------------------
@@ -140,7 +166,15 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "workflow->execution"
     "workflow->io"
     "workflow->evidence"
-    "workflow->reporting")
+    "workflow->reporting"
+    "modeling->ui"
+    "requirements->ui"
+    "kinematics->ui"
+    "studio->ui"
+    "studio->project"
+    "studio->modeling"
+    "studio->kinematics"
+    "studio->requirements")
 set(IRD_EXTRA_EDGE_REFS_NOTES
     "ARCH §3.5 补登（O-21 消账，2026-09-10）；testkit.md §2.4 T-2 允许形态"
     "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/SourcedValue/单位/比较/诊断契约/事件）"
@@ -167,7 +201,15 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——shutdown(DrainPolicy)/drained()、任务清单九态数据、Interrupted 条目（重跑入口）、进度/取消控制接口（dependency-graph.json 已随任务同步刷新）"
     "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——包导入校验执行、JSON canonical 写出（用户设置 PM-14）、SafePath/BudgetGuard（dependency-graph.json 已随任务同步刷新）"
     "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——当前性投影（Superseded 原因清单）、失效范围判定结果经投影（级联提示数据源——D-WF-2 不复制失效计算；dependency-graph.json 已随任务同步刷新）"
-    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——报告导出服务（\"报告导出\"命令执行面——RPT-02/UX-13；dependency-graph.json 已随任务同步刷新）")
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——报告导出服务（\"报告导出\"命令执行面——RPT-02/UX-13；dependency-graph.json 已随任务同步刷新）"
+    "WP-22-T02 返工回填（2026-10-06）：units/modeling.md §3.2 插件目标行\"→本计算库＋sdurws_ird_ui\"——WP-13-T15 落位的装配面边（WP-15-T02 附件\"逐条具名登记——登记册回填归 WP-01-T03\"的机器面执行；dependency-graph.json 已随本任务同步刷新——双面留痕）"
+    "WP-22-T02 返工回填（2026-10-06）：units/requirements.md §3.2 同款插件装配面边——WP-14-T08 落位（dependency-graph.json 已随本任务同步刷新）"
+    "WP-22-T02 返工回填（2026-10-06）：units/kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位（dependency-graph.json 已随本任务同步刷新）"
+    "WP-22-T02 返工回填（2026-10-06）：DTB §4.5 WP-24-T08 行（2026-09-28 生效）——sdurws_ird_studio 装配基座 ui/project/modeling 三边；studio 为正式产品主程序目标（SA-18 D1）非 20 单元节点，不入 dependency-graph.json（图节点集＝单元），出处登记于本表（ui/CMakeLists studio 段同源）"
+    "WP-22-T02 返工回填（2026-10-06）：同上——studio->project"
+    "WP-22-T02 返工回填（2026-10-06）：同上——studio->modeling"
+    "WP-22-T02 返工回填（2026-10-06）：WP-24-T08 行后装配面增量（ui/CMakeLists studio 链接段实测）——studio->kinematics；同前不入 dependency-graph.json"
+    "WP-22-T02 返工回填（2026-10-06）：同上——studio->requirements")
 
 # ---------------------------------------------------------------------
 # 业务域单元清单（R-1 的判定范围；来源 AGENTS.md §5 架构红线 2）
@@ -185,19 +227,36 @@ set(IRD_BUSINESS_UNITS
 #     提交转生效——届时由 WP-01-T03 回填 IRD_R4_EXCEPTION_FILES。
 #   - policy 策略消费点（只读消费整名）：DTB §4.5 待 O-12 措辞确认后回填。
 # 语义：IRD_R4_EXCEPTION_FILES 中的文件（相对 IRD_ROOT 的路径）豁免
-# R-4 扫描；IRD_R4_EXCEPTION_UNITS 中的整单元豁免（当前两者皆空）。
+# R-4 扫描；IRD_R4_EXCEPTION_UNITS 中的整单元豁免。
+# WP-22-T02 返工回填：project/src/ProjectStoreImpl.cpp——kCreatedWithTool-
+# Version 常量（"RobWork-IndustrialRobot/0.1"——项目文件 createdWith 元
+# 数据的创建工具版本标记，ARC-04 身份留痕值）。F-011 修复后的 R-4 判定
+# 对象是"名称拼接/剥离的代码行为"（引擎第 4c 步注释原文），注释性提及
+# 已剥离；本常量为**标识值**而非行为（无前缀拼接/剥离运算），属该启发
+# 式的字面量误报面——按同精神以文件例外登记（回填归 WP-01-T03 抽查）。
 # ---------------------------------------------------------------------
-set(IRD_R4_EXCEPTION_FILES "")
+set(IRD_R4_EXCEPTION_FILES
+    "project/src/ProjectStoreImpl.cpp")
 set(IRD_R4_EXCEPTION_UNITS "")
 
 # ---------------------------------------------------------------------
 # R-3 例外登记（机器面）——L2 产品库零 Qt。
-# 既有登记（DTB §4.5）：ui 单元界面目标（Widgets 唯一例外，WP-10-T02 生效）。
-# 该例外以目标形态承载（_plugin／应用壳目标），不落入本门禁的"L2 裸计算库"
-# 扫描集合（sdurws_ird_<unit> 与 _worker），故机器面无需登记条目；
-# 若未来裸计算库需豁免，在此追加目标名。
+# 既有登记（DTB §4.5 首行，2026-09-10 预登记、WP-10-T02 生效）：ui 单元
+# 界面目标（Widgets 唯一例外）。ui 单元的产品目标名即 sdurws_ird_ui（bare
+# 形态——ui 是平台单元，其"界面目标"与产品库同名同目标），**事实落入**本
+# 门禁的"L2 裸计算库"扫描集合（sdurws_ird_<unit> 与 _worker）：链接面（Qt
+# 三件套）与产品面文件扫描（ui/include、ui/src 的 Qt 呈现构件——FlowLayout/
+# UiTheme 等各文件已按 DTB §4.5"命中集增量登记"逐批生效）此前因例外表为
+# 空册而逐条命中。WP-22-T02 返工回填：把该已生效登记落到机器面——
+# sdurws_ird_ui 列入例外后，2b 链接面检查与 4b 文件扫描对 ui 目标豁免
+# （引擎侧按本表判定）。ui 之外零条目——L2 计算内核与业务计算库零 Qt
+# （R-3）的硬红线不因本例外松动（ui 是全产品唯一例外单元，NFR-MNT-01）。
 # ---------------------------------------------------------------------
-set(IRD_R3_EXCEPTION_TARGETS "")
+set(IRD_R3_EXCEPTION_TARGETS "sdurws_ird_ui"
+    "sdurws_ird_studio")   # WP-22-T02 返工回填：DTB §4.5 WP-24-T08 行（2026-09-28 生效）——
+                           #   "R-3 命中×3＝产品名形态目标链 Qt6::Core/Gui/Widgets（sdurws_ird_ui
+                           #   同款既有命中模式——NFR-MNT-01 ui 界面目标例外类：宿主包装目标
+                           #   本体即 Qt 界面，非 L2 计算内核）"；正式产品主程序（SA-18 D1）。
 
 # ---------------------------------------------------------------------
 # R-5 例外登记（机器面）——proximity 直链/包含禁止（policy.md §3.4，
@@ -231,3 +290,114 @@ set(IRD_FRAMEWORK_REGISTER_ALLOWED "")
 # 测试目标允许链接的非 ird 目标前缀（gtest 家族；DTB §5.5 唯一接入机制）
 # ---------------------------------------------------------------------
 set(IRD_TEST_ALLOWED_LIB_PREFIXES "GTest::" "gtest" "gmock" "Threads::")
+
+# ---------------------------------------------------------------------
+# IRD_THIRDPARTY_ALLOWED_TARGETS —— 允许产品/测试目标链接的 vcpkg 第三方
+# 目标词表（引擎 2e"未知目标族"的放行面；DTB §5.1"第三方依赖：一律经
+# vcpkg……新增依赖先在本文增量修订登记"条款的机器承载）。
+# 每条依赖均有登记出处（无一条新增语义）：
+#   - libzip::zip / expat::expat：io.md §3.4 库目标行明文"ird_gates LIB 词
+#     表扩登（libzip::zip/expat::expat）随 F-191 归门禁所有者处置"——P-IO-3
+#     冻结裁决（2026-09-17 所有者裁决，governance-log §1.9；vcpkg 版本
+#     1.11.4/2.8.3 随 IO-T04 登记）；
+#   - pugixml::pugixml：O-40（DTB §4.2，2026-09-22 所有者批次授权"已登
+#     记"）——modeling 计算库 PRIVATE，URDF/Xacro DOM 解析（WP-13-T05/T06）；
+#   - Eigen3::Eigen：O-40 同行——kinematics 计算库 PRIVATE，Jacobian SVD
+#     （WP-15-T03；kinematics/CMakeLists.txt O-40 注释同源）。
+# 全部 PRIVATE 于各计算库（依赖面最小化），非产品分发改变项。
+# ---------------------------------------------------------------------
+set(IRD_THIRDPARTY_ALLOWED_TARGETS
+    "libzip::zip"
+    "expat::expat"
+    "pugixml::pugixml"
+    "Eigen3::Eigen")
+
+# ---------------------------------------------------------------------
+# IRD_TOOL_TARGET_EDGES —— 开发/演示工具目标的允许链接边（ird_gates 形态
+# 解析为 other 的非单元词表目标；引擎 2a 形态二查本表放行）。
+#   - sdurws_ird_testdata_lint：testkit 单元 testdata lint 工具（TK-T03
+#     交付——testkit/CMakeLists.txt"只链 testkit（数据根经 TestPaths 两级
+#     解析）；不进产品安装面（T-1 同款纪律——testkit 与其工具不随产品
+#     分发）"）——lint 工具与 testkit 同生命周期，链 testkit 属 T-1 分发
+#     红线的既有语义内（工具不入产品面，DTB §2.2 TK-T03 行）；
+#   - sdurws_ird_demo6r：6 自由度机械臂 demo 项目生成器（owner 演示指令
+#     2026-09-26——modeling/CMakeLists.txt"链接面＝modeling＋project（两
+#     登记边；demo 工具非产品交付路径）"）。
+# ---------------------------------------------------------------------
+set(IRD_TOOL_TARGET_EDGES
+    "sdurws_ird_testdata_lint->sdurws_ird_testkit"
+    "sdurws_ird_demo6r->sdurws_ird_modeling"
+    "sdurws_ird_demo6r->sdurws_ird_project")
+
+# ---------------------------------------------------------------------
+# IRD_T1_EXEMPT_TARGETS —— T-1（产品目标禁链 testkit）的目标豁免表。
+#   - sdurws_ird_testdata_lint：见 IRD_TOOL_TARGET_EDGES 注——lint 工具
+#     与 testkit 同生命周期（TK-T03），不随产品分发（豁免的是"产品目标"
+#     形态误判——该目标为开发工具，非产品交付物）。
+# ---------------------------------------------------------------------
+set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint")
+
+# ---------------------------------------------------------------------
+# IRD_TEST_TARGET_EDGES —— 测试目标（_test/_contract_test/_gui_test）的
+# 跨单元产品目标链接面（引擎 2a 形态一的第三规则放行面）。
+# 设计权威＝units/ui.md §3.1 sdurws_ird_ui_contract_test 目标行 v0.4 原文：
+# "测试目标链接面按本表承载，不属 ARCH §3.5 产品边管辖"（O-31 裁决
+# 2026-09-19 的测试面承载；F-228 随之消解）——ui 单元契约测试套件与
+# 三域集成测试按各任务登记的链接面承载（每条边的出处逐条登记；DTB §4.5
+# R-5 行"各 _test/_contract_test 经 testkit/policy 替身消费：生效"为
+# testkit 边的总登记，testkit 边由引擎按 testkit.md §2.4 T-1 允许形态
+# 硬编码判定，不入本表）。
+#   - ui_contract_test→project/execution/diagnostics：UI-T14 契约测试套件
+#     （ui.md §12.1 第二层行"对接 project/execution/diagnostics 公共头与
+#     桩实现"；diagnostics 为表内登记边 ui→diagnostics 的测试侧显式自证）；
+#   - ui_contract_test→runtime：UI-T20（登记提交件
+#     traceability/wp10-t20-gate-registrations.md——真实④端口呈现桥对账）；
+#   - ui_contract_test→modeling_plugin/kinematics_plugin/requirements_plugin：
+#     三域集成批次（UI-T23 宿主集成收口与后续装配批次——域模块消费面）；
+#   - ui_test→requirements/modeling_plugin/kinematics_plugin：UI-T64（登记
+#     册 traceability/wp10-t64-gate-registrations.md——执行器消费通道值面
+#     与 SamplingPlanBuilder::digest 切片消费）。
+# 产品库链接块不受本表影响（各单元产品面守卫/LinkageContractTest 硬断言
+# 不变——本表仅属测试目标）。
+# ---------------------------------------------------------------------
+set(IRD_TEST_TARGET_EDGES
+    "sdurws_ird_ui_contract_test->sdurws_ird_project"
+    "sdurws_ird_ui_contract_test->sdurws_ird_execution"
+    "sdurws_ird_ui_contract_test->sdurws_ird_diagnostics"
+    "sdurws_ird_ui_contract_test->sdurws_ird_runtime"
+    "sdurws_ird_ui_contract_test->sdurws_ird_modeling_plugin"
+    "sdurws_ird_ui_contract_test->sdurws_ird_kinematics_plugin"
+    "sdurws_ird_ui_contract_test->sdurws_ird_requirements_plugin"
+    "sdurws_ird_ui_test->sdurws_ird_requirements"
+    "sdurws_ird_ui_test->sdurws_ird_modeling_plugin"
+    "sdurws_ird_ui_test->sdurws_ird_kinematics_plugin")
+
+# ---------------------------------------------------------------------
+# IRD_TARGET_LEVEL_EDGES —— 装配层特权边的【目标级】登记（引擎形态二放行
+# 面；unit 粒度白名单 miss 后查本表）。为什么用目标粒度而非 unit 粒度：
+# ui 单元的产品库 sdurws_ird_ui 保持零对 project 的链接/include（O-31
+# 常驻红线——ui/CMakeLists 配置期守卫＋BuildRedLineTest 扫描钉住），特权
+# 边仅属装配层目标（同时看见两边的适配器 TU）——unit 粒度登记会放宽产
+# 品库红线，目标粒度忠实于 DTB §4.5 登记行的逐目标原文。
+#   - sdurws_ird_ui_app->sdurws_ird_project：DTB §4.5 O-31 行（2026-09-22
+#     生效——"ui->project（打开五步协议适配链接面）"开发验证 harness）；
+#   - sdurws_ird_ui_plugin->sdurws_ird_project：DTB §4.5 O-38 行（2026-09-23
+#     生效——宿主集成边，插件复用 harness PortAdapters 适配形态；登记提交
+#     件 traceability/wp10-t16-gate-registrations.md）；
+#   - sdurws_ird_ui_plugin->sdurws_ird_modeling_plugin：WP-24-T03 首版装
+#     配边（ui/CMakeLists ui_plugin 链接段注——DTB §4.5 同款 SUB 登记模
+#     式；装配层 O-31 特权，业务域互不依赖 R-1 不因装配边破坏）；
+#   - sdurws_ird_ui_plugin->sdurws_ird_requirements_plugin／
+#     sdurws_ird_kinematics_plugin：UI-T23 三域装配边（ui_plugin 链接段
+#     注——登记提交件 traceability/wp10-t23-gate-registrations.md；消费面
+#     仅 O-45 补建 requirements 装配门面与 WP-15-T18 出线的 kinematics 装
+#     配门面，域私有头零触碰）。
+# （ui->ui 自边两处——ui_app/ui_plugin 链接本单元产品库——由引擎同单元
+# 装配自边豁免承载，不入本表。）
+# ---------------------------------------------------------------------
+set(IRD_TARGET_LEVEL_EDGES
+    "sdurws_ird_ui_app->sdurws_ird_project"
+    "sdurws_ird_ui_plugin->sdurws_ird_project"
+    "sdurws_ird_ui_plugin->sdurws_ird_modeling_plugin"
+    "sdurws_ird_ui_plugin->sdurws_ird_requirements_plugin"
+    "sdurws_ird_ui_plugin->sdurws_ird_kinematics_plugin")

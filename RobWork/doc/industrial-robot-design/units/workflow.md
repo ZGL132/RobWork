@@ -3,7 +3,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 单元 | workflow（**L4 业务域单元·编排**——ARCHITECTURE §3.1/§3.4：消费平台事件与各域就绪状态投影，产出七阶段导航的门控状态与"下一步建议"；生命周期入口（新建/打开/另存/导入导出向导）整合于此；不直链任何业务域单元） |
-| 文档版本 | v0.2（2026-10-06，WP-22-T02 落位登记增补；v0.1（2026-10-06，首版草案，WP-22-T01 交付物）） |
+| 文档版本 | v0.3（2026-10-06，WP-22-T02 返工第 1 轮登记增补；v0.2（2026-10-06，落位登记）；v0.1（2026-10-06，首版草案，WP-22-T01 交付物）） |
 | 文档状态 | **`Draft`**（未冻结；本文只做详细设计，不自行宣布任何验收通过；本文自审不等于实现测试通过） |
 | 主 WP | WP-I（WP-10、WP-22、WP-23、WP-24、WP-25——DTB §0.1 主 WP 映射；单元任务主责 **WP-22，跨阶段 A～E**：REQUIREMENTS §17 表注 RV-11） |
 | 上游 | `REQUIREMENTS.md` v1.16（`Accepted`，唯一需求权威）、`ARCHITECTURE.md` v0.13（`Draft`）、`development-task-breakdown.md` v0.53（`Draft`） |
@@ -856,6 +856,7 @@ P-UI-6（三方契约——本卡谈判对面）；P-UI-9（报告预览宿主�
 | --- | --- | --- |
 | v0.1 | 2026-10-06 | 首版草案（WP-22-T01 交付物）：20 单元第 20 卡（收官）——编排定位、四段职责链、七阶段门控与级联提示、下一步建议八规则、生命周期入口九流程、方案比较与命令集、八接口、27 验证用例、5 项待裁决。未实现产品源码；未执行构建/测试/GUI 测试 |
 | v0.2 | 2026-10-06 | WP-22-T02 落位登记增补：构建骨架落位（§1.3/§3.1/§3.3 实测同步）——sdurws_ird_workflow STATIC＋八边 PUBLIC 链接（§3.2 白名单全登记）＋_plugin 最小可注册实现（assembly/ 装配门面；三能力 false、panels/commands 空）＋_test/_contract_test（12 用例；ird_add_gtest 同款）；R1 零新增域码兑现（§6.5）；白名单八行＋dependency-graph.json 随任务登记。文档状态仍 `Draft`（未冻结） |
+| v0.3 | 2026-10-06 | WP-22-T02 返工第 1 轮（验收裁决：ird_gates 目标须退出 0——第 1 轮交付按"存量不清零"口径留痕交验收，验收侧不认）：**机器面滞后既有状态的同步回填**（全部在 cmake/ird_gates.cmake＋cmake/ird_gates_whitelist.cmake 两 allowedFiles 内，每条出处随条目注释，无一条私裁新增语义）——①产品边回填：modeling/requirements/kinematics→ui 三边（各卡 §3.2 插件目标行明文，dependency-graph.json 同步刷新）＋studio→ui/project/modeling/kinematics/requirements 五边（DTB §4.5 WP-24-T08 行生效＋装配面增量）；②R-3 例外回填：IRD_R3_EXCEPTION_TARGETS＝sdurws_ird_ui＋sdurws_ird_studio（DTB §4.5 首行 WP-10-T02 生效＋WP-24-T08 行 R-3×3 生效）；③R-4 文件例外：project/src/ProjectStoreImpl.cpp（kCreatedWithToolVersion 创建工具版本标记常量——非名称拼接/剥离行为，F-011 同精神）；④判定面修复：引擎 test 形态纳入 _gui_test＋testkit 允许形态实装（testkit.md §2.4 T-1 允许形态与 DTB §4.5 R-5 行——此前 22 处测试目标 testkit SUB 为引擎漏实现）＋同单元装配自边豁免（plugin/app face——各卡 §3.2 明文＋DTB §4.5 O-31 行 ui->ui 既有登记形态）＋IRD_TEST_TARGET_EDGES（ui.md §3.1 v0.4"测试目标链接面按本表承载，不属 ARCH §3.5 产品边管辖"——10 边逐条出处）＋IRD_TOOL_TARGET_EDGES/IRD_T1_EXEMPT_TARGETS（TK-T03 lint 工具＋owner 演示工具 demo6r）＋IRD_TARGET_LEVEL_EDGES（装配层特权边目标级登记——DTB §4.5 O-31/O-38 行＋WP-24-T03/UI-T23 批次；ui 产品库零 project 链接红线不放宽）＋IRD_THIRDPARTY_ALLOWED_TARGETS（io.md §3.4 F-191 明文＋O-40 已登记：libzip/expat/pugixml/Eigen3）。**结果：ird_gates 引擎直跑＋构建目标双双退出 0（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中），引擎自测 9/9 保持检出能力**；比对附件 traceability/builds/wp22-t02/ird-gates-base-head-compare.md 第 2 轮。workflow 本单元零语义变化 |
 
 ---
 
@@ -903,4 +904,4 @@ P-UI-6（三方契约——本卡谈判对面）；P-UI-9（报告预览宿主�
 - **实际代码缺口**：全部产品代码（计算库/插件/测试/契约测试）、golden `wf-*` 夹具、向导/首页/比较视图/横幅 UI——待 WP-22-T02 起逐卡落位。
 - **20 单元详设收官状态**：本卡落盘后 `units/` 目录 20/20 齐备（全部 Draft/`Draft-Structured` 草稿态）；索引与状态刷新归治理任务。
 
-**本文档结束（workflow 单元详细设计 v0.2，状态 `Draft`；v0.1 未实现源码、未构建、未测试；v0.2 构建骨架落位并以任务验证留痕为准——业务实现未落位、未 GUI 验证；自审≠实现测试≠正式验收）**
+**本文档结束（workflow 单元详细设计 v0.3，状态 `Draft`；v0.1 未实现源码、未构建、未测试；v0.2 构建骨架落位并以任务验证留痕为准；v0.3 返工回填机器面滞后命中、ird_gates 双口径退出 0——业务实现未落位、未 GUI 验证；自审≠实现测试≠正式验收）**

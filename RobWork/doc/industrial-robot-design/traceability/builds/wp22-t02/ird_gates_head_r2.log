@@ -1,0 +1,52 @@
+IRD-GATE-SUB: 表外依赖边 ui->project（sdurws_ird_ui_app → sdurws_ird_project）不在 ARCH §3.5 白名单
+IRD-GATE-SUB: 表外依赖边 ui->project（sdurws_ird_ui_plugin → sdurws_ird_project）不在 ARCH §3.5 白名单
+IRD-GATE-SUB: 表外依赖边 ui->modeling（sdurws_ird_ui_plugin → sdurws_ird_modeling_plugin）不在 ARCH §3.5 白名单
+IRD-GATE-SUB: 表外依赖边 ui->requirements（sdurws_ird_ui_plugin → sdurws_ird_requirements_plugin）不在 ARCH §3.5 白名单
+IRD-GATE-SUB: 表外依赖边 ui->kinematics（sdurws_ird_ui_plugin → sdurws_ird_kinematics_plugin）不在 ARCH §3.5 白名单
+IRD-GATE-R3: L2 目标 sdurws_ird_studio 链接 Qt 库 Qt6::Core（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+IRD-GATE-R3: L2 目标 sdurws_ird_studio 链接 Qt 库 Qt6::Gui（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+IRD-GATE-R3: L2 目标 sdurws_ird_studio 链接 Qt 库 Qt6::Widgets（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+IRD-GATE-GRAPH: 白名单边 modeling->ui 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+IRD-GATE-GRAPH: 白名单边 requirements->ui 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+IRD-GATE-GRAPH: 白名单边 kinematics->ui 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+IRD-GATE-GRAPH: 白名单边 studio->ui 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+IRD-GATE-GRAPH: 白名单边 studio->project 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+IRD-GATE-GRAPH: 白名单边 studio->modeling 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+IRD-GATE-GRAPH: 白名单边 studio->kinematics 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+IRD-GATE-GRAPH: 白名单边 studio->requirements 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+IRD-GATE-GRAPH: IRD_EXTRA_EDGE_REFS 边/出处数量不配对（26 vs 34）
+[ird_gates] 自测 pass_clean：干净夹具通过（无误报）
+[ird_gates] 自测 pass_r4comment：干净夹具通过（无误报）
+[ird_gates] 自测 fail_r1：按预期检出 IRD-GATE-R1
+[ird_gates] 自测 fail_t1：按预期检出 IRD-GATE-T1
+[ird_gates] 自测 fail_r5：按预期检出 IRD-GATE-R5
+[ird_gates] 自测 fail_sub：按预期检出 IRD-GATE-SUB
+[ird_gates] 自测 fail_r3：按预期检出 IRD-GATE-R3
+[ird_gates] 自测 fail_r4：按预期检出 IRD-GATE-R4
+[ird_gates] 自测 fail_t2：按预期检出 IRD-GATE-T2
+==============================================================
+[ird_gates] 扫描根：D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+[ird_gates] 命中 17 项：
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ui->project（sdurws_ird_ui_app → sdurws_ird_project）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ui->project（sdurws_ird_ui_plugin → sdurws_ird_project）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ui->modeling（sdurws_ird_ui_plugin → sdurws_ird_modeling_plugin）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ui->requirements（sdurws_ird_ui_plugin → sdurws_ird_requirements_plugin）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-SUB: 表外依赖边 ui->kinematics（sdurws_ird_ui_plugin → sdurws_ird_kinematics_plugin）不在 ARCH §3.5 白名单
+[ird_gates] IRD-GATE-R3: L2 目标 sdurws_ird_studio 链接 Qt 库 Qt6::Core（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+[ird_gates] IRD-GATE-R3: L2 目标 sdurws_ird_studio 链接 Qt 库 Qt6::Gui（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+[ird_gates] IRD-GATE-R3: L2 目标 sdurws_ird_studio 链接 Qt 库 Qt6::Widgets（NFR-MNT-01：计算核心零 Qt；例外仅 ui 界面目标形态）
+[ird_gates] IRD-GATE-GRAPH: 白名单边 modeling->ui 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+[ird_gates] IRD-GATE-GRAPH: 白名单边 requirements->ui 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+[ird_gates] IRD-GATE-GRAPH: 白名单边 kinematics->ui 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+[ird_gates] IRD-GATE-GRAPH: 白名单边 studio->ui 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+[ird_gates] IRD-GATE-GRAPH: 白名单边 studio->project 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+[ird_gates] IRD-GATE-GRAPH: 白名单边 studio->modeling 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+[ird_gates] IRD-GATE-GRAPH: 白名单边 studio->kinematics 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+[ird_gates] IRD-GATE-GRAPH: 白名单边 studio->requirements 不在依赖图且未登记出处（IRD_EXTRA_EDGE_REFS）
+[ird_gates] IRD-GATE-GRAPH: IRD_EXTRA_EDGE_REFS 边/出处数量不配对（26 vs 34）
+==============================================================
+CMake Error at RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake:851 (message):
+  [ird_gates] 依赖红线/补丁门禁存在 17 处命中——按 ARCH
+  §3.2 SA-10 判构建失败；例外只经 DTB §4.5 登记册
+
+

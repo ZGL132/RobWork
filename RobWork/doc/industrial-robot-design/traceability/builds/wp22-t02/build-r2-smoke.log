@@ -1,0 +1,50 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_plugin.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_plugin.lib
+  sdurws_ird_workflow_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_contract_test.exe

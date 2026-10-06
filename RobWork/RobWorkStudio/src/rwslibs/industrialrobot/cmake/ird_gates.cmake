@@ -143,6 +143,12 @@ endforeach()
 
 # 目标名 → 单元 与 目标名 → 形态（bare/lib、plugin、worker、test、contract_test）
 # 解析规则：sdurws_ird_<unit>[_<suffix>]；未知单元目标在边检查时报 SUB。
+# WP-22-T02 返工回填（2026-10-06）：_gui_test 后缀并入 test 形态——GUI 测试
+# 目标（sdurws_ird_<unit>_gui_test，ui/requirements/modeling 三单元登记的
+# 测试目标形态，DTB §5.1"ctest 全单元"口径与各卡 §3.2 目标表）此前三段
+# 后缀不匹配任何形态正则、unit 解析为空，其链接边（本单元自边＋testkit）
+# 被误判为"表外依赖边 ->ui/->testkit"——按 testkit.md §2.4 T-1 允许形态
+# （白名单文件头明文"引擎按此硬编码判定"）归入 test 形态统一判定。
 function(ird_classify_target name out_unit out_face)
     set(_unit "")
     set(_face "other")
@@ -152,7 +158,7 @@ function(ird_classify_target name out_unit out_face)
     elseif(name MATCHES "^sdurws_ird_([a-z]+)_(plugin|worker|app)$")
         set(_unit "${CMAKE_MATCH_1}")
         set(_face "${CMAKE_MATCH_2}")
-    elseif(name MATCHES "^sdurws_ird_([a-z]+)_(test|contract_test)$")
+    elseif(name MATCHES "^sdurws_ird_([a-z]+)_(test|contract_test|gui_test)$")
         set(_unit "${CMAKE_MATCH_1}")
         set(_face "test")
     endif()
@@ -261,32 +267,99 @@ foreach(_edge ${IRD_EDGES})
 
     # ---- 2a. 链接目标是 ird 单元目标：按形态走 T 规则或白名单 ----
     if(_l_face MATCHES "^(product|plugin|worker|app)$")
-        # 形态一：测试目标链接产品目标——仅允许【同单元】产品目标（testkit.md §2.4
-        # 允许形态"被测产品目标"；跨单元契约语义走 _contract_test＋testkit 替身，
-        # 若确需直链他单元产品目标，属未登记例外 → SUB）
+        # 形态一：测试目标（_test/_contract_test/_gui_test）链接产品目标。
+        # 允许形态三则（testkit.md §2.4 T-1 允许形态原文"测试目标 → { 同单元
+        # 产品目标, sdurws_ird_testkit, gtest 系 }"；白名单文件头同文明文
+        # "引擎按此硬编码判定"；跨单元链接面＝ui.md §3.1 v0.4"测试目标链接
+        # 面按本表承载，不属 ARCH §3.5 产品边管辖"——各任务登记提交件逐边
+        # 承载，机器面＝白名单 IRD_TEST_TARGET_EDGES）：
+        #   ①同单元产品目标（被测目标——本规则既有形态）；
+        #   ②sdurws_ird_testkit（报告设施/FaultInterceptor——WP-10-T02 起各
+        #     单元测试目标同形态，DTB §4.5 R-5 行"各 _test/_contract_test 经
+        #     testkit/policy 替身消费：生效"；此前引擎漏实现该分支致 22 处
+        #     SUB——WP-22-T02 返工回填修复）；
+        #   ③白名单 IRD_TEST_TARGET_EDGES 登记的跨单元边（逐边出处见该表
+        #     注释；未登记的跨单元直链仍 SUB）。
         if(_t_face STREQUAL "test")
-            if(NOT _l_unit STREQUAL _t_unit)
-                ird_hit("SUB" "测试目标 ${_tgt} 直链他单元产品目标 ${_lib}（允许形态仅同单元被测目标；跨单元需求经 testkit 替身或 DTB §4.5 登记）")
+            set(_test_edge_ok FALSE)
+            if(_l_unit STREQUAL _t_unit)
+                set(_test_edge_ok TRUE)   # 规则①：同单元被测目标
+            elseif(_lib STREQUAL "sdurws_ird_testkit")
+                set(_test_edge_ok TRUE)   # 规则②：testkit 报告设施（T-1 允许形态）
+            else()
+                # 规则③：各卡登记的测试链接面（白名单数据表）
+                list(FIND IRD_TEST_TARGET_EDGES "${_tgt}->${_lib}" _tidx)
+                if(NOT _tidx EQUAL -1)
+                    set(_test_edge_ok TRUE)
+                endif()
+            endif()
+            if(NOT _test_edge_ok)
+                ird_hit("SUB" "测试目标 ${_tgt} 直链他单元产品目标 ${_lib}（允许形态：同单元被测目标／sdurws_ird_testkit／IRD_TEST_TARGET_EDGES 登记边；跨单元需求经 testkit 替身或 DTB §4.5 登记）")
             endif()
         else()
-            # 形态二：产品目标之间——边必须落在 §3.5 白名单（ARCH §3.5：表外边＝构建失败）
-            list(FIND IRD_ALLOWED_UNIT_EDGES "${_t_unit}->${_l_unit}" _idx)
-            if(_idx EQUAL -1)
-                # 业务域互链额外以 R-1 命中码标出（更醒目；R-1 无例外，SA-10）
-                list(FIND IRD_BUSINESS_UNITS "${_t_unit}" _bi)
-                list(FIND IRD_BUSINESS_UNITS "${_l_unit}" _bj)
-                if(_bi GREATER -1 AND _bj GREATER -1)
-                    ird_hit("R1" "业务域目标互链：${_tgt} → ${_lib}（ARC-02；R-1 无例外）")
-                else()
-                    ird_hit("SUB" "表外依赖边 ${_t_unit}->${_l_unit}（${_tgt} → ${_lib}）不在 ARCH §3.5 白名单")
+            # 形态二：产品目标之间——边必须落在 §3.5 白名单（ARCH §3.5：表外
+            # 边＝构建失败）。
+            # WP-22-T02 返工回填（2026-10-06）——同单元装配自边豁免：插件
+            # （_plugin）／开发验证 harness（_app）／正式主程序目标链接**本
+            # 单元**产品目标属装配结构边而非跨单元依赖（各卡 §3.2 明文"插件
+            # 目标 → 本计算库"；DTB §4.5 O-31 行"ui->ui（app 目标自边）"
+            # 既有登记形态；DTB §5.1 v0.20 _app 登记形态）——自边不进 §3.5
+            # 单元级依赖表（表语义＝单元**间**边），此前逐单元以 R-1/SUB 命
+            # 中（modeling/requirements/kinematics 三 plugin＋两 app＋
+            # workflow_plugin——DTB §4.5 登记册既有模式）。跨单元边仍查白
+            # 名单；业务域互链 R-1 判定不受本豁免影响（_t_unit≠_l_unit）。
+            set(_self_edge FALSE)
+            if(_t_unit STREQUAL _l_unit AND NOT _t_unit STREQUAL ""
+               AND _t_face MATCHES "^(plugin|worker|app)$")
+                set(_self_edge TRUE)
+            endif()
+            # WP-22-T02 返工回填：开发/演示工具目标（ird_gates 形态解析为
+            # other 的非单元词表目标——sdurws_ird_testdata_lint/sdurws_ird_
+            # demo6r）的登记链接边走白名单 IRD_TOOL_TARGET_EDGES（TK-T03/
+            # owner 演示指令 2026-09-26，出处见该表注释）。
+            set(_tool_edge FALSE)
+            if(NOT _self_edge)
+                list(FIND IRD_TOOL_TARGET_EDGES "${_tgt}->${_lib}" _tool_idx)
+                if(NOT _tool_idx EQUAL -1)
+                    set(_tool_edge TRUE)
+                endif()
+            endif()
+            # WP-22-T02 返工回填：装配层特权边（目标级登记——白名单
+            # IRD_TARGET_LEVEL_EDGES：DTB §4.5 O-31/O-38 行与 WP-24-T03/
+            # UI-T23 装配批次逐目标登记；ui 产品库零 project 链接红线不因
+            # 目标粒度登记放宽）。
+            set(_asm_edge FALSE)
+            if(NOT _self_edge AND NOT _tool_edge)
+                list(FIND IRD_TARGET_LEVEL_EDGES "${_tgt}->${_lib}" _asm_idx)
+                if(NOT _asm_idx EQUAL -1)
+                    set(_asm_edge TRUE)
+                endif()
+            endif()
+            if(NOT _self_edge AND NOT _tool_edge AND NOT _asm_edge)
+                list(FIND IRD_ALLOWED_UNIT_EDGES "${_t_unit}->${_l_unit}" _idx)
+                if(_idx EQUAL -1)
+                    # 业务域互链额外以 R-1 命中码标出（更醒目；R-1 无例外，SA-10）
+                    list(FIND IRD_BUSINESS_UNITS "${_t_unit}" _bi)
+                    list(FIND IRD_BUSINESS_UNITS "${_l_unit}" _bj)
+                    if(_bi GREATER -1 AND _bj GREATER -1)
+                        ird_hit("R1" "业务域目标互链：${_tgt} → ${_lib}（ARC-02；R-1 无例外）")
+                    else()
+                        ird_hit("SUB" "表外依赖边 ${_t_unit}->${_l_unit}（${_tgt} → ${_lib}）不在 ARCH §3.5 白名单")
+                    endif()
                 endif()
             endif()
         endif()
 
-        # 形态三：产品目标链接 testkit＝T-1（testkit 不随产品分发）
+        # 形态三：产品目标链接 testkit＝T-1（testkit 不随产品分发）。
+        # WP-22-T02 返工回填：IRD_T1_EXEMPT_TARGETS 豁免表（白名单数据面）
+        # ——sdurws_ird_testdata_lint（TK-T03 lint 工具，与 testkit 同生命
+        # 周期、同"不随产品分发"纪律，非产品交付物）。
         if(_lib STREQUAL "sdurws_ird_testkit")
             if(NOT _t_face STREQUAL "test")
-                ird_hit("T1" "产品目标 ${_tgt} 链接 testkit（testkit.md §2.4 T-1：产品目标不得链接/包含 testkit）")
+                ird_in_list("${_tgt}" "${IRD_T1_EXEMPT_TARGETS}" _t1_ex)
+                if(NOT _t1_ex)
+                    ird_hit("T1" "产品目标 ${_tgt} 链接 testkit（testkit.md §2.4 T-1：产品目标不得链接/包含 testkit）")
+                endif()
             endif()
         endif()
 
@@ -333,6 +406,16 @@ foreach(_edge ${IRD_EDGES})
     if(_lib MATCHES "^sdurws_ird_" OR _lib MATCHES "^sdurw" OR _lib MATCHES "^sdurwsim"
        OR _lib MATCHES "^GTest::" OR _lib MATCHES "^(gtest|gmock)$" OR _lib MATCHES "^Threads::")
         set(_known_family TRUE)
+    endif()
+    # WP-22-T02 返工回填：vcpkg 第三方依赖词表（白名单 IRD_THIRDPARTY_
+    # ALLOWED_TARGETS——io.md §3.4"LIB 词表扩登随 F-191"明文＋O-40 已登记：
+    # libzip::zip/expat::expat/pugixml::pugixml/Eigen3::Eigen，全部 PRIVATE
+    # 于各计算库，无一条新增语义）。
+    if(NOT _known_family)
+        ird_in_list("${_lib}" "${IRD_THIRDPARTY_ALLOWED_TARGETS}" _tp_ok)
+        if(_tp_ok)
+            set(_known_family TRUE)
+        endif()
     endif()
     if(NOT _known_family)
         # Qt 链接已由 R-3/形态豁免逻辑处置（plugin 允许），此处不再重复命中
@@ -417,7 +500,13 @@ foreach(_entry ${IRD_PRODUCT_FACE_FILES})
     endforeach()
 
     # ---- 4b. R-3 头包含：L2 单元（bare/worker 目标所属单元）产品面零 Qt ----
-    # 该单元是否存在 bare/worker 目标——存在才做 R-3 文件扫描
+    # 该单元是否存在 bare/worker 目标——存在才做 R-3 文件扫描。
+    # WP-22-T02 返工回填：IRD_R3_EXCEPTION_TARGETS 例外目标（白名单数据面
+    # ——sdurws_ird_ui，DTB §4.5 首行"ui 单元界面目标（Widgets 唯一例外）
+    # WP-10-T02 生效"）同时豁免链接面（2b 查本表）与本文件扫描——ui 是
+    # 平台单元，其产品目标即 Qt 界面载体，产品面 Qt 呈现构件（FlowLayout/
+    # UiTheme 等已按 DTB §4.5 命中集增量登记逐批生效）属例外类既定形态；
+    # 例外表之外零松动（L2 计算内核与业务计算库零 Qt 硬红线不变）。
     set(_has_l2 FALSE)
     foreach(_t ${IRD_TARGETS})
         ird_classify_target("${_t}" _tu _tf)
@@ -425,6 +514,12 @@ foreach(_entry ${IRD_PRODUCT_FACE_FILES})
             set(_has_l2 TRUE)
         endif()
     endforeach()
+    if(_has_l2)
+        ird_in_list("sdurws_ird_${_unit}" "${IRD_R3_EXCEPTION_TARGETS}" _r3_unit_ex)
+        if(_r3_unit_ex)
+            set(_has_l2 FALSE)
+        endif()
+    endif()
     if(_has_l2)
         # 两个模式：Qt 模块路径（<QtWidgets/…>、<QtCore/…>）与 Qt 类头（<QWidget> 等
         # Q+大写开头头文件——Qt 类名头约定）；rw/std 头不含该形态
