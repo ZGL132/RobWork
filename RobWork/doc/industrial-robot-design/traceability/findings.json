@@ -4888,8 +4888,8 @@
       "severity": "suggestion",
       "status": "open",
       "registeredAt": "2026-10-04",
-      "title": "UI-T33 两条诚实边界跟踪：①采样格着色生产数据面（KIN-07 评估判定→cellStates 投影）留消费任务——管道/协议/渲染分色/替身断言在本批（契约 note②「预览零结果语义」背书非缩水）；②三维浮动文本无渲染基建——工位标签承载场景节点名（addFrameAxis 节点名），Billboard 文本随文本渲染基建任务。【进展 2026-10-04】②已随 UI-T52 消账：HostView3DPreviewBackend 标签半区落位（框架 RenderText 挂帧直投工位标签，acc/UI-T52/2 验收 pass）——②闭合无需后续动作；①维持 open 待 KIN-07 消费任务。【进展 2026-10-04 二次核查（消费卡立项前甄别）】①的上游前置比原判多一层：区域覆盖正式评估在产品装配内不可触发——KinematicsPluginAssembly::createKinematicsPluginAssembly() 以默认 KinPanelServices 构造（backgroundSubmit 缝为空），setServices 产品侧零调用（绑定仅存于 kinematics harness/tests），覆盖评估按钮如实禁用；即 SampleResultSet 在产品内无生产者，cellStates 消费卡（查结果→映射→透传→投影）即使立项也无源可接。真上游＝kinematics 后台评估执行通道产品装配（触发缝绑定＋结构化结果回路——L-K6 正式评估写 results，P-KIN-7 任务注册/检查点/归档协议归装配层），落位后消费卡方可立项。",
-      "owner": "①上游先行＝kinematics 后台评估执行通道产品装配卡（触发＋结构化结果回路——P-KIN-7 协议归装配层），其后再立 cellStates 消费卡（查结果→映射→透传→投影，管道/协议/渲染分色已就绪）；②已闭合——UI-T52 文本渲染落位（RenderText 挂帧），无需后续动作",
+      "title": "UI-T33 两条诚实边界跟踪：①采样格着色生产数据面（KIN-07 评估判定→cellStates 投影）留消费任务——管道/协议/渲染分色/替身断言在本批（契约 note②「预览零结果语义」背书非缩水）；②三维浮动文本无渲染基建——工位标签承载场景节点名（addFrameAxis 节点名），Billboard 文本随文本渲染基建任务。【进展 2026-10-04】②已随 UI-T52 消账：HostView3DPreviewBackend 标签半区落位（框架 RenderText 挂帧直投工位标签，acc/UI-T52/2 验收 pass）——②闭合无需后续动作；①维持 open 待 KIN-07 消费任务。【进展 2026-10-04 二次核查（消费卡立项前甄别）】①的上游前置比原判多一层：区域覆盖正式评估在产品装配内不可触发——KinematicsPluginAssembly::createKinematicsPluginAssembly() 以默认 KinPanelServices 构造（backgroundSubmit 缝为空），setServices 产品侧零调用（绑定仅存于 kinematics harness/tests），覆盖评估按钮如实禁用；即 SampleResultSet 在产品内无生产者，cellStates 消费卡（查结果→映射→透传→投影）即使立项也无源可接。真上游＝kinematics 后台评估执行通道产品装配（触发缝绑定＋结构化结果回路——L-K6 正式评估写 results，P-KIN-7 任务注册/检查点/归档协议归装配层），落位后消费卡方可立项。【进展 2026-10-05】上游批已立项＝UI-T64（kinematics 覆盖评估执行通道产品装配——触发缝绑定＋结构化结果回路；契约 tasks/foundation/UI-T64.json；分支 ui-t64 基点 redesign-main@9326060e；范围声明：会话级评估〔纯计算面＋Preview 语义〕，正式归档链〔AnalysisSnapshot 冻结对账/envelope/workflow 任务注册/检查点〕留后续任务）；F-495 消费卡（三态着色/覆盖率映射/校验定位/图例）待本批落位后立项。",
+      "owner": "①上游先行＝kinematics 后台评估执行通道产品装配卡（已立项 UI-T64——触发＋结构化结果回路，会话级边界；P-KIN-7 协议归装配层），其后再立 cellStates 消费卡（查结果→映射→透传→投影，管道/协议/渲染分色已就绪）；②已闭合——UI-T52 文本渲染落位（RenderText 挂帧），无需后续动作",
       "resolution": "验收记录 4.4 发现转登（acc/UI-T33/1）。②随 UI-T52 合入消账（2026-10-04，acc/UI-T52/2）；①维持 open——上游执行通道卡先行后消费卡跟进。"
     },
     {
@@ -5203,6 +5203,15 @@
       "registeredAt": "2026-10-05",
       "title": "UI-T63 验收建议合集：①custom-chain 声明表单仅逐格有限性校验——限位有序（lower<upper）/轴线非零等语义错误提交后才由域拒绝面兜底（行为正确：fresh 丢弃会话不变），建议后续批次加表单侧即时录入辅助校验（缺列定位于域 detail 转译）；②CustomChainJointSpec 十二裸 double 平铺＋手写 ==，与域侧聚合风格（SixAxisJointSpec/JointOriginEditValue）不一致——批次 B 如扩列建议引入子聚合",
       "owner": "①后续触碰声明表单批次顺手补全（表单即时校验＋域 detail 列转译）；②批次 B（所有者裁决放开红线后）随扩列重构"
+    },
+    {
+      "id": "F-524",
+      "source": "UI-T64 实施侧门禁留痕（2026-10-05——traceability/builds/ui-t64/README.md 诚实边界段）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-05",
+      "title": "ui-t63 留痕目录的 ird-gates-branch-hits-normalized.txt 为双重编码损坏形态（GBK 字节经错误链转存 UTF-8——与现行引擎 UTF-8 log 域不可直接文本比对，UI-T64 实施侧归一化比对受阻）：实施侧已以引擎自报计数（103＝基线 101＋登记 2）＋登记册 SUB 行原文完成增量证据；精确多重集比对需同编码口径重跑",
+      "owner": "治理批次统一处置：以当前引擎口径重产基线 normalized 文件（fresh 双侧 stash 法）并回填 builds/ui-t63/；重跑后本条可闭合"
     }
   ]
 }

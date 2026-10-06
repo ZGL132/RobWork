@@ -43,10 +43,12 @@
 #include <sdurws/ird/ui/ICommandRegistry.hpp>  // CommandDescriptor 冻结形状断言面
 #include <sdurws/ird/ui/UiTypes.hpp>           // DomainReadinessItem/StageId
 #include "plugin/KinPanelCommandCatalog.hpp"   // 命令目录/登记记录/就绪投影/只读门控
+#include "plugin/KinPanelChannelTranslation.hpp"  // UI-T64——通道↔私有值翻译（单测面）
 #include "plugin/KinPanelFlows.hpp"            // L-K2~L-K12 编排（被测主面）
 #include "plugin/KinPanelModel.hpp"            // 行集投影（L-K1）
 #include "plugin/KinPanelTypes.hpp"            // 会话态/服务缝
 #include "plugin/KinPanelUnits.hpp"            // L-K8 单位重投影
+#include "plugin/KinematicsUiModule.hpp"       // UI-T64——具体模块（services() 测试访问面）
 #include <sdurws/ird/kinematics/KinematicsPluginAssembly.hpp>  // 装配契约头（assembly/ PUBLIC include 面——链 plugin 目标传播） // 装配门面（契约头——acceptance 3）
 #include "KinFkFixture.hpp"                    // TestView/twoLinkModel（同目录夹具）
 
@@ -786,6 +788,164 @@ TEST(KinPluginAssembly, ReadinessProjectionDefaultsAndActiveTask_ACC3)
     EXPECT_TRUE(active[0].inputComplete);
     EXPECT_TRUE(active[0].hasActiveTask);
     EXPECT_TRUE(active[0].missingItemKeys.empty());
+}
+
+// =====================================================================
+// UI-T64——装配通道翻译与注入（F-490① 上游批：通道值面→私有缝翻译
+// 单点＋门面 install/note 消费面；需求追溯＝KIN-07/KIN-04/L-K6/P-KIN-7）
+// =====================================================================
+
+/// 翻译函数逐字段单测（请求/回执/通知/任务点/任务状态——五方向全拷贝
+/// 断言：任何一侧字段漂移都在翻译编译点或此处断言点暴露）。
+TEST(KinAssemblyChannels, TranslationRoundTripFieldByField_UI_T64)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-07", "KIN-04"},
+                  std::vector<std::string>{"AT-03"});
+
+    // ---- 请求翻译：kind 三值逐一映射＋身份/纪元逐字段。
+    KinChannelBackgroundRequest channelRequest;
+    channelRequest.kind = KinChannelBackgroundKind::RegionCoverage;
+    channelRequest.snapshotId = core::ContentIdentity::tryFromCanonical(
+        "cid-1111111111111111111111111111111111111111111111111111111111111111")
+                                    .value_or(core::ContentIdentity{});
+    channelRequest.configDigest = core::ContentIdentity::tryFromCanonical(
+        "cid-2222222222222222222222222222222222222222222222222222222222222222")
+                                      .value_or(core::ContentIdentity{});
+    channelRequest.epoch = 42;
+    const KinBackgroundRequest privateRequest = toPrivateRequest(channelRequest);
+    EXPECT_TRUE(privateRequest.kind == KinBackgroundKind::RegionCoverage);
+    EXPECT_TRUE(privateRequest.snapshotId == channelRequest.snapshotId);
+    EXPECT_TRUE(privateRequest.configDigest == channelRequest.configDigest);
+    EXPECT_EQ(privateRequest.epoch, 42U);
+
+    // ---- 回执翻译：受理/原因/任务引用三字段。
+    KinChannelBackgroundAck channelAck;
+    channelAck.accepted = true;
+    channelAck.reason = "覆盖评估已受理";
+    channelAck.taskRef = "kin-cov-42-1";
+    const KinBackgroundAck privateAck = toPrivateAck(channelAck);
+    EXPECT_TRUE(privateAck.accepted);
+    EXPECT_EQ(privateAck.reason, "覆盖评估已受理");
+    EXPECT_EQ(privateAck.taskRef, "kin-cov-42-1");
+
+    // ---- 通知翻译：纪元/类别/中断/摘要四字段（迟到判定三要素）。
+    KinChannelBackgroundResultNote channelNote;
+    channelNote.acceptedEpoch = 42;
+    channelNote.kind = KinChannelBackgroundKind::RegionCoverage;
+    channelNote.interrupted = false;
+    channelNote.summaryText = "覆盖评估完成：3/4 点可达（位置口径）";
+    const KinBackgroundResultNote privateNote = toPrivateNote(channelNote);
+    EXPECT_EQ(privateNote.acceptedEpoch, 42U);
+    EXPECT_TRUE(privateNote.kind == KinBackgroundKind::RegionCoverage);
+    EXPECT_FALSE(privateNote.interrupted);
+    EXPECT_EQ(privateNote.summaryText, "覆盖评估完成：3/4 点可达（位置口径）");
+
+    // ---- 任务点行翻译：六字段（含 optional 三态原样搬运）。
+    KinChannelTaskPointRow channelPoint;
+    channelPoint.pointOid = core::ObjectId::generate();
+    channelPoint.label = "任务点 P1";
+    channelPoint.enabled = false;
+    channelPoint.outcomeState = std::string("reached");
+    channelPoint.outcomeText = std::string("2 解/残差 0.1 mm");
+    channelPoint.requiredCoverageDone = true;
+    const KinTaskPointRow privatePoint = toPrivateTaskPoint(channelPoint);
+    EXPECT_TRUE(privatePoint.pointOid == channelPoint.pointOid);
+    EXPECT_EQ(privatePoint.label, "任务点 P1");
+    EXPECT_FALSE(privatePoint.enabled);
+    EXPECT_TRUE(privatePoint.outcomeState.has_value()
+                && *privatePoint.outcomeState == "reached");
+    EXPECT_TRUE(privatePoint.outcomeText.has_value()
+                && *privatePoint.outcomeText == "2 解/残差 0.1 mm");
+    EXPECT_TRUE(privatePoint.requiredCoverageDone.has_value()
+                && *privatePoint.requiredCoverageDone);
+
+    // ---- 任务状态行翻译：四字段。
+    KinChannelTaskStatusRow channelRow;
+    channelRow.taskRefText = "kin-cov-42-1";
+    channelRow.stateLabelKey = "task.state.running";
+    channelRow.interrupted = false;
+    channelRow.percent = std::nullopt;
+    const KinTaskStatusRow privateRow = toPrivateTaskStatus(channelRow);
+    EXPECT_EQ(privateRow.taskRefText, "kin-cov-42-1");
+    EXPECT_EQ(privateRow.stateLabelKey, "task.state.running");
+    EXPECT_FALSE(privateRow.interrupted);
+    EXPECT_FALSE(privateRow.percent.has_value());
+}
+
+/// 门面通道注入集成（installAssemblyChannels→模块缝回读翻译结果＋
+/// noteAssemblyBackgroundResult 三态文案——迟到判定/中断如实/正常）。
+TEST(KinAssemblyChannels, InstallChannelsAndNoteRoute_UI_T64)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-07", "L-K6"},
+                  std::vector<std::string>{"AT-03"});
+
+    // 装配门面（产品入口——真实模块＋真实描述符）。
+    KinematicsPluginAssembly bundle = createKinematicsPluginAssembly();
+
+    // 注入前：backgroundSubmit 缝为空（F-490① 登记的原始形态——诚实
+    // 禁用"执行通道未装配"）。
+    {
+        KinematicsPluginAssembly probe = createKinematicsPluginAssembly();
+        auto* probeModule = static_cast<KinematicsUiModule*>(probe.module.get());
+        EXPECT_FALSE(probeModule->services().backgroundSubmit);
+    }
+
+    // ---- 通道注入（脚本化提交缝——受理透传断言面）。
+    TestView view(twoLinkModel());
+    KinChannelBackgroundAck scriptedAck;
+    scriptedAck.accepted = true;
+    scriptedAck.reason = "脚本受理";
+    scriptedAck.taskRef = "kin-cov-1-1";
+    KinematicsAssemblyChannels channels;
+    channels.modelView = &view;
+    channels.backgroundSubmit =
+        [scriptedAck](const KinChannelBackgroundRequest& request) {
+            // 通道请求字段透传断言（翻译闭包方向①：私有请求→通道请求）。
+            EXPECT_TRUE(request.kind == KinChannelBackgroundKind::RegionCoverage);
+            EXPECT_EQ(request.epoch, 7U);
+            return scriptedAck;
+        };
+    bundle.installAssemblyChannels(channels);
+
+    // 模块缝回读：提交缝非空且经翻译往返保真（私有请求进→通道请求出→
+    // 通道回执回→私有回执出）；modelView 指针直传；未触缝（ikSolver）
+    // 保持空——mergeAssemblyChannels 逐缝语义不误伤。
+    auto* module = static_cast<KinematicsUiModule*>(bundle.module.get());
+    ASSERT_TRUE(module->services().backgroundSubmit);
+    KinBackgroundRequest privateRequest;
+    privateRequest.kind = KinBackgroundKind::RegionCoverage;
+    privateRequest.epoch = 7;
+    const KinBackgroundAck ack =
+        module->services().backgroundSubmit(privateRequest);
+    EXPECT_TRUE(ack.accepted);
+    EXPECT_EQ(ack.reason, "脚本受理");
+    EXPECT_EQ(ack.taskRef, "kin-cov-1-1");
+    EXPECT_EQ(module->services().modelView, &view);
+    EXPECT_FALSE(module->services().ikSolver);
+
+    // ---- 完成通知三态（门面 noteAssemblyBackgroundResult——经
+    // KinPanelFlows::noteBackgroundResult 权威消费；模块内会话纪元经
+    // bindSessionFacts 写入＝UI-T64 新门面方法的同用例消费）。
+    kinematics::AnalysisConfiguration baseline;
+    baseline.seed = 1;
+    baseline.regionBudget.seed = 1;
+    bundle.bindSessionFacts(core::ContentIdentity{}, 7, true, baseline);
+    KinChannelBackgroundResultNote note;
+    note.acceptedEpoch = 7;
+    note.kind = KinChannelBackgroundKind::RegionCoverage;
+    note.summaryText = "覆盖评估完成：3/4 点可达（位置口径）";
+    // 正常态：纪元一致——原样摘要。
+    EXPECT_EQ(bundle.noteAssemblyBackgroundResult(note),
+              "覆盖评估完成：3/4 点可达（位置口径）");
+    // 迟到态：纪元不符——丢弃并如实反馈（L-K12）。
+    bundle.bindSessionFacts(core::ContentIdentity{}, 8, true, baseline);
+    const std::string late = bundle.noteAssemblyBackgroundResult(note);
+    EXPECT_NE(late.find("迟到结果已丢弃"), std::string::npos);
+    // 中断态：纪元一致＋中断标记——"已中断"前缀（NFR-REL-03）。
+    bundle.bindSessionFacts(core::ContentIdentity{}, 7, true, baseline);
+    note.interrupted = true;
+    const std::string interrupted = bundle.noteAssemblyBackgroundResult(note);
+    EXPECT_NE(interrupted.find("已中断"), std::string::npos);
 }
 
 }  // namespace

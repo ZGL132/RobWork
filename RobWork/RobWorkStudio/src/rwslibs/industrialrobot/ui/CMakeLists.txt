@@ -396,16 +396,30 @@ target_compile_definitions(sdurws_ird_ui_test PRIVATE
 if(TARGET sdurws)
     target_sources(sdurws_ird_ui_test PRIVATE
         test/HostCompilePipelineTest.cpp
+        test/KinEvaluationChannelTest.cpp  # UI-T64——覆盖评估执行器（受理/切片/账面/迟到判定）
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostCompilePort.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostPresentationAdapters.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostPresentationAdapters.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinEvaluationChannel.cpp)  # UI-T64——被测 TU 同源编入（HostCompilePort 先例形态）
     target_include_directories(sdurws_ird_ui_test PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR})
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        # UI-T64——kinematics 测试夹具复用（KinFkFixture header-only：
+        # 两连杆黄金模型——执行器用例的真实计算面供数；测试面私有 include，
+        # 产品目标零消费）。
+        ${CMAKE_CURRENT_SOURCE_DIR}/../kinematics/test)
     # 传递链接面（contract_test 同款测试面边）：modeling_plugin 的 PUBLIC
     # 六边携带 modeling/runtime/policy（include 目录＋符号——被测 TU 与
     # 测试 TU 的消费面）；sdurws＝框架库（rws/RobWorkStudio.hpp——挂接
     # 对象的宿主注入面类型）；sdurw_math 为 rw 头内联模板符号的框架面。
+    # UI-T64 增两条测试面直链（登记册 traceability/wp10-t64-gate-registrations.md）：
+    #   - sdurws_ird_kinematics_plugin＝执行器消费通道值面（assembly include
+    #     PUBLIC 面）＋runRegionCoverageComputation/analysisConfigurationDigest
+    #     （经 plugin 目标 PUBLIC 传递的计算库面）；
+    #   - sdurws_ird_requirements＝执行器切片消费 SamplingPlanBuilder::digest
+    #     （计划内容身份域函数——零复制纪律）。
     target_link_libraries(sdurws_ird_ui_test PRIVATE
         sdurws_ird_modeling_plugin
+        sdurws_ird_kinematics_plugin
+        sdurws_ird_requirements
         sdurws
         sdurw_math)
 endif()
@@ -717,6 +731,7 @@ if(TARGET sdurws)
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（WorkCellScene 原语编排）
         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（十段链适配＋快照缓存＋探针＋名称上下文）
         plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（映射真值/挂接对象/构造源）
+        plugin/KinEvaluationChannel.cpp  # UI-T64——kinematics 覆盖评估执行通道（F-490① 上游批装配半区）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 
@@ -810,6 +825,7 @@ if(TARGET sdurws)
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（与插件目标同源）
         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（与插件目标同源）
         plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（与插件目标同源）
+        plugin/KinEvaluationChannel.cpp  # UI-T64——kinematics 覆盖评估执行通道（与插件目标同源）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
 

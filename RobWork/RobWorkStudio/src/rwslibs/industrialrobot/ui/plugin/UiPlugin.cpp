@@ -81,6 +81,8 @@
 #include <sdurws/ird/requirements/CommandHandlers.hpp>  // registerRequirementCommandHandlers（UI-T39——装配期处理器注册，§5.3.5 公共通道）
 #include <sdurws/ird/requirements/ObjectTypes.hpp>  // requirements::kReqSetObjectType（根回填 token——公共头常量）
 #include <sdurws/ird/requirements/RevisionSyncPolicy.hpp>  // planExternalRevisionSync（UI-T35 P2 外部修订同步三分岔判定——纯函数）
+#include <sdurws/ird/kinematics/AnalysisConfig.hpp>  // AnalysisConfiguration（UI-T64——会话态 savedConfig 合法基线）
+#include <sdurws/ird/kinematics/KinematicsPluginAssembly.hpp>  // kinematics 装配门面（UI-T23；UI-T64 通道注入/note 入口）
 #include <sdurws/ird/ui/ICommandRegistry.hpp>    // CommandOutcome/CommandParameter（会话入口覆写载体）
 #include <sdurws/ird/ui/DomainReadinessSummaryCard.hpp>  // 跨域就绪摘要卡（UI-T44——Right Dock 诊断摘要半区）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // PluginUiDescriptor/CommandDescriptor 完整类型（UI-T23 三域命令入册的遍历面）
@@ -89,6 +91,7 @@
 #include <sdurws/ird/ui/UiPorts.hpp>             // ui::IUiNameResolver（共享面名称解析端口——C-11 复用面）
 
 #include "DomainModuleRunner.hpp"                // runDomainApply（UI-T23 acceptance 2——draft.apply 多模块遍历）
+#include "KinEvaluationChannel.hpp"              // kinematics 覆盖评估执行器（UI-T64——F-490① 上游批装配半区）
 #include "HostView3DGateway.hpp"                 // 宿主三维网关（UI-T45——上行拾取/呈现出口/TCP 源）
 #include "HostView3DPreviewBackend.hpp"          // 会话预览渲染后端（UI-T33——场景原语绑定）
 #include "HostCompilePort.hpp"                   // 宿主编译端口（UI-T46——十段链适配＋快照缓存＋分段探针）
@@ -1074,6 +1077,10 @@ void IrdWorkbenchHostPlugin::initialize()
                 [this](const std::string& id) {
                     return m_content->commandRegistry().availability(id);
                 });
+            // 覆盖评估执行通道接线（UI-T64——F-490① 上游批：服务缝经
+            // 公共通道值面注入，面板覆盖评估按钮点亮；会话事实随发布拍
+            // 同步——syncKinematicsSessionFacts）。
+            wireKinematicsEvaluationChannel();
         }
     }
     if (!buildDockBody()) {
@@ -2108,6 +2115,16 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
         if (m_domains) {
             m_domains->modeling.setWritable(report.opened.metadata.writable);
         }
+        // 只读事实接入运动学会话态（UI-T64——L-K11 正式评估门控输入与
+        // 需求/建模同一宿主事实；私有会话态零解引用——门面
+        // bindSessionFacts 整体写，绑定键/配置基线经宿主缓存重放）。
+        if (m_domains && m_domains->kinematics.has_value()
+            && m_kinEvaluation != nullptr) {
+            m_kinSessionWritable = report.opened.metadata.writable;
+            m_domains->kinematics->bindSessionFacts(
+                m_kinEvaluation->snapshotId(), m_kinEvaluation->epoch(),
+                m_kinSessionWritable, m_kinConfigBaseline);
+        }
         reportLine("项目已打开：" + canonicalPath + "（可写："
                    + (report.opened.metadata.writable ? "是" : "否（降级只读——见横幅）") + "）");
         return true;
@@ -2415,6 +2432,105 @@ private:
  *
  * 线程：存储捕获回调在 UI 线程（打开协议同线程）——模块/面板同约束。
  */
+void IrdWorkbenchHostPlugin::wireKinematicsEvaluationChannel()
+{
+    // 装配缺席/重复接线守卫（§11.3 失败隔离形态——一次接线语义）。
+    if (m_domains == nullptr || !m_domains->kinematics.has_value()
+        || m_kinEvaluation != nullptr) {
+        return;
+    }
+    auto& kin = *m_domains->kinematics;
+
+    // ---- 投递槽闭包（UI 线程——执行器侧 invokeMethod 已保证回投；槽
+    // 体经门面消费＝迟到判定/中断如实的权威面，本闭包零判定逻辑）。
+    auto route = [this](const kinematics::KinChannelBackgroundResultNote& note) {
+        if (m_domains != nullptr && m_domains->kinematics.has_value()) {
+            (void)m_domains->kinematics->noteAssemblyBackgroundResult(note);
+        }
+    };
+
+    // ---- 执行器构造（deps：工作集切片源/回投上下文/投递槽——route 按
+    // 值拷入，channels 侧再持同一槽；std::function 拷贝即共享目标）。参考
+    // 系解析缝本批不接（空缝＝非 World 参考系恒拒如实——区域 refFrame 的
+    // R1 实际形态恒 World 缺省；ModelFrame 解析随帧名映射任务接续）。
+    m_kinEvaluation = std::make_unique<KinEvaluationExecutor>(
+        KinEvaluationExecutor::Deps{&m_requirementsEditor, nullptr, this, route});
+
+    // ---- 求解配置合法基线（I-KIN-4 seed≥1——装配纪律；执行器与会话态
+    // 同源同值，configPersist 缝留空＝保存禁用降级，编辑与提示流不受影响）。
+    kinematics::AnalysisConfiguration baseline;
+    baseline.seed = 1;
+    baseline.regionBudget.seed = 1;
+    m_kinEvaluation->setConfiguration(baseline);
+    m_kinConfigBaseline = baseline;
+    // 会话事实整体写（私有会话态零解引用——门面 bindSessionFacts；
+    // 未绑定态 snapshotId 全零，writable 初始可写——无项目态受理已由
+    // 快照缺位拒绝，真实值随项目打开拍重放）。
+    kin.bindSessionFacts(core::ContentIdentity{}, m_kinEvaluation->epoch(),
+                         m_kinSessionWritable, baseline);
+
+    // ---- 通道注入（公共通道值面——R-2：装配层零私有头；值面→私有缝
+    // 翻译在门面实现 TU 单点执行）。
+    kinematics::KinematicsAssemblyChannels channels;
+    channels.modelView = m_kinEvaluation->sessionView();
+    // 任务点投影（工作集现取零缓存——面板每次刷新现调；仅呈现字段，
+    // 结果状态词列随批量通道任务接续）。
+    channels.taskPoints = [this]() {
+        std::vector<kinematics::KinChannelTaskPointRow> rows;
+        if (m_kinEvaluation == nullptr) {
+            return rows;
+        }
+        const requirements::RequirementWorkingSet& ws =
+            m_requirementsEditor.workingSet();
+        rows.reserve(ws.points.entries.size());
+        for (const requirements::TaskPoint& point : ws.points.entries) {
+            kinematics::KinChannelTaskPointRow row;
+            row.pointOid = point.objectId;
+            row.label = point.name;
+            row.enabled = point.enabled;
+            rows.push_back(std::move(row));
+        }
+        return rows;
+    };
+    channels.taskRows = [this]() {
+        return m_kinEvaluation != nullptr
+                   ? m_kinEvaluation->taskRows()
+                   : std::vector<kinematics::KinChannelTaskStatusRow>{};
+    };
+    channels.backgroundSubmit =
+        [this](const kinematics::KinChannelBackgroundRequest& request) {
+            // 执行器缺位＝装配缺陷——拒绝受理（不虚构，ERR-01）。
+            return m_kinEvaluation != nullptr
+                       ? m_kinEvaluation->submit(request)
+                       : kinematics::KinChannelBackgroundAck{};
+        };
+    channels.resultRoute = std::move(route);
+    kin.installAssemblyChannels(channels);
+}
+
+void IrdWorkbenchHostPlugin::syncKinematicsSessionFacts()
+{
+    if (m_kinEvaluation == nullptr || m_domains == nullptr
+        || !m_domains->kinematics.has_value()) {
+        return;
+    }
+    auto& kin = *m_domains->kinematics;
+    // ---- 快照换绑（发布消费点零第二编译路径——lastPublishedSnapshot
+    // 同源现取；attachSnapshot 内部＝纪元推进＋账面清空，L-K12 迟到锚）。
+    std::shared_ptr<const runtime::RuntimeSnapshot> snapshot =
+        m_compilePort != nullptr ? m_compilePort->lastPublishedSnapshot()
+                                 : nullptr;
+    const core::ContentIdentity identity =
+        snapshot != nullptr ? snapshot->modelIdentity() : core::ContentIdentity{};
+    m_kinEvaluation->attachSnapshot(std::move(snapshot), identity);
+    // ---- 模块会话态整体写（面板绑定面与执行器受理面的一致性键同源——
+    // 提交流构造请求携带的 snapshotId/epoch 即本处写入值；私有会话态
+    // 零解引用——门面 bindSessionFacts，可写性/配置基线经宿主成员重放）。
+    kin.bindSessionFacts(m_kinEvaluation->snapshotId(),
+                         m_kinEvaluation->epoch(), m_kinSessionWritable,
+                         m_kinConfigBaseline);
+}
+
 void IrdWorkbenchHostPlugin::wireRequirementsSession(
     app::StorePortAdapter& adapter)
 {
@@ -3042,6 +3158,15 @@ void IrdWorkbenchHostPlugin::syncDomainModulesToContext(
     if (m_domains->requirements.has_value()) {
         m_domains->requirements->onSessionDetached();
     }
+    // kinematics 会话脱离（UI-T64——执行器快照解绑＋面板绑定键同步清空
+    // ——拆除拍对称收口：无项目态受理由快照缺位拒绝，不残留旧会话绑定；
+    // 私有会话态零解引用——门面 bindSessionFacts）。
+    if (m_kinEvaluation != nullptr && m_domains->kinematics.has_value()) {
+        m_kinEvaluation->attachSnapshot(nullptr, core::ContentIdentity{});
+        m_domains->kinematics->bindSessionFacts(
+            core::ContentIdentity{}, m_kinEvaluation->epoch(),
+            m_kinSessionWritable, m_kinConfigBaseline);
+    }
     teardownSharedSurfacesForClose();
 }
 
@@ -3581,6 +3706,9 @@ void IrdWorkbenchHostPlugin::refreshPresentationAfterCommit()
     if (snapshot == nullptr) {
         return;  // 本会话尚无编译发布（纯草稿编辑/无建模命令）——无呈现可刷新
     }
+    // kinematics 会话事实同步（UI-T64——发布消费点：快照换绑＋纪元推进
+    // ＋面板绑定键同步；在途评估回执按旧纪元比对即迟到丢弃，L-K12）。
+    syncKinematicsSessionFacts();
     // 新 tip（发布归属修订——对账基准；权威分支表首条，apply 编排同源）。
     const auto tips = m_lastStoreAdapter->projectStore().query().branchTips();
     if (tips.empty()) {

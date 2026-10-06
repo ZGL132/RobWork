@@ -121,6 +121,7 @@ class HostPresentationSource;      // 呈现构造源（UI-T46——RT-T14 工�
 class HostModelCompilePort;        // 宿主编译端口（UI-T46——十段链适配＋快照缓存）
 class HostCompileProbe;            // 编译分段探针（UI-T46——等价验证注入面）
 class HostRuntimeNameContext;      // 行程评估名称上下文（UI-T46——真值端口现取）
+class KinEvaluationExecutor;       // kinematics 覆盖评估执行器（UI-T64——完整类型在本目录 .cpp）
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
@@ -227,6 +228,14 @@ private:
     /// →attachEditor＋bindSessionAnchor＋bindReadiness＋根回填；闭包无
     /// req-set 根→attachEditor(nullptr) 诚实空态（不虚构会话）。
     void wireRequirementsSession(app::StorePortAdapter& adapter);
+    /// kinematics 覆盖评估执行通道接线（UI-T64——F-490① 上游批）：执行
+    /// 器构造＋KinematicsAssemblyChannels 注入＋会话事实同步（savedConfig
+    /// 合法基线）。装配拍一次；快照换绑随发布拍 attachSnapshot。
+    void wireKinematicsEvaluationChannel();
+    /// kinematics 会话事实同步（UI-T64——快照发布消费点调用）：执行器
+    /// attachSnapshot（纪元推进/账面清空）＋模块会话态三写（snapshotId/
+    /// epoch/writable 同源事实——面板绑定面与执行器受理面的一致性键）。
+    void syncKinematicsSessionFacts();
     /// 新建编排：目录＋显示名采集→创建协议（零半成品）→经标准打开协议进入。
     CommandOutcome orchestrateNewProject(const std::vector<CommandParameter>& params);
     /// 保存编排（UI-T17——draft.save 覆写面）：DraftController saveAll
@@ -409,6 +418,18 @@ private:
     /// 需求会话存活旗标（UI-T29——wireRequirementsSession 二态裁决的登记
     /// 面；draft.apply 门控谓词的启用前提，无会话＝零门控诚实二态）。
     bool m_requirementsSessionLive = false;
+    /// kinematics 覆盖评估执行器（UI-T64——F-490① 上游批：受理/切片/
+    /// 后台执行/结构化结果账面；完整类型在 UiPlugin.cpp——unique_ptr
+    /// 成员析构序经显式析构承载，m_jointLimitEvaluator 同款模式）。堆
+    /// 持有保证 sessionView() 地址稳定（面板 modelView 缝的注入值）。
+    std::unique_ptr<KinEvaluationExecutor> m_kinEvaluation;
+    /// kinematics 会话可写性事实（UI-T64——L-K11 门控输入的宿主侧缓存；
+    /// 项目打开拍以 report.opened.metadata.writable 重放，bindSessionFacts
+    /// 整体写会话态时消费——私有会话态零解引用，R-2）。
+    bool m_kinSessionWritable = true;
+    /// kinematics 求解配置合法基线（UI-T64——wire 拍注入值；I-KIN-4
+    /// seed≥1，bindSessionFacts 整体写会话态时消费）。
+    kinematics::AnalysisConfiguration m_kinConfigBaseline{};
     /// 域事件总线（WP-24-T03b 收口——修订提交事件面：store 打开请求挂接
     /// ＋宿主订阅转达域模块；进程内恰一次投递，core::ReferenceEventBus）
     std::shared_ptr<core::ReferenceEventBus> m_eventBus;
