@@ -17,7 +17,7 @@
 
 ## 20 单元状态
 
-2026-09-10：第一批 11 份详设已编写，剩余 9 份待产出。五基础单元保持 contract-review，其余六单元保持 Draft；无单元因文档完成而自动 frozen。第一批包含 reporting，属于设计批次，不改变 REQUIREMENTS 阶段 A～E 的功能启用范围。编码准入与待办见 [phase-one-readiness.md](traceability/phase-one-readiness.md)。2026-09-22：modeling／requirements／kinematics 三卡产出（14/20 已编写，剩余 6 份待产出：trajectory/dynamics/drivetrain/selection/optimization/workflow）。
+2026-09-10：第一批 11 份详设已编写，剩余 9 份待产出。五基础单元保持 contract-review，其余六单元保持 Draft；无单元因文档完成而自动 frozen。第一批包含 reporting，属于设计批次，不改变 REQUIREMENTS 阶段 A～E 的功能启用范围。编码准入与待办见 [phase-one-readiness.md](traceability/phase-one-readiness.md)。2026-09-22：modeling／requirements／kinematics 三卡产出（14/20 已编写，剩余 6 份待产出：trajectory/dynamics/drivetrain/selection/optimization/workflow）。2026-10-06：trajectory／dynamics／drivetrain／selection／optimization／workflow 六卡产出（**20/20 已编写**；六卡均为 v0.1 首版草案、状态 `Draft`，分别为 WP-16-T01／WP-17-T01／WP-18-T01／WP-19-T01／WP-20-T01／WP-22-T01 交付物；详设收官，索引表行与 unit-status.json 随本治理批次同步）。
 
 | 类别 | 单元 | 详设状态 | 主 WP |
 |---|---|---|---|
@@ -35,12 +35,12 @@
 | 业务域 | modeling | Draft / 已有任务卡（v0.2，2026-09-22） | WP-E |
 | 业务域 | requirements | Draft / 已有任务卡（v0.1，2026-09-22） | WP-E |
 | 业务域 | kinematics | Draft / 已有任务卡（v0.1，2026-09-22） | WP-F |
-| 业务域 | trajectory | 待产出 | WP-F |
-| 业务域 | dynamics | 待产出 | WP-G |
-| 共享计算服务 | drivetrain | 待产出 | WP-G |
-| 业务域 | selection | 待产出 | WP-G |
-| 业务域 | optimization | 待产出 | WP-H |
-| 编排 | workflow | 待产出 | WP-I |
+| 业务域 | trajectory | Draft / 已有任务卡（v0.1，2026-10-06） | WP-F |
+| 业务域 | dynamics | Draft / 已有任务卡（v0.1，2026-10-06） | WP-G |
+| 共享计算服务 | drivetrain | Draft / 已有任务卡（v0.1，2026-10-06） | WP-G |
+| 业务域 | selection | Draft / 已有任务卡（v0.1，2026-10-06） | WP-G |
+| 业务域 | optimization | Draft / 已有任务卡（v0.1，2026-10-06） | WP-H |
+| 编排 | workflow | Draft / 已有任务卡（v0.1，2026-10-06） | WP-I |
 
 > drivetrain 类别依 ARCHITECTURE §2.3/§3.1 为 **L2 共享计算服务**（非业务域），不受 R-1 业务域互链禁令约束——dynamics 与 selection 统一消费其传动映射（§7.10）；原登记"业务域"系索引笔误（2026-09-10 修正）。
 

@@ -134,51 +134,51 @@
     {
       "id": "trajectory",
       "design": "units/trajectory.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-F"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     },
     {
       "id": "dynamics",
       "design": "units/dynamics.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-G"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     },
     {
       "id": "drivetrain",
       "design": "units/drivetrain.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-G"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     },
     {
       "id": "selection",
       "design": "units/selection.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-G"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     },
     {
       "id": "optimization",
       "design": "units/optimization.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-H"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     },
     {
@@ -205,11 +205,11 @@
     {
       "id": "workflow",
       "design": "units/workflow.md",
-      "status": "planned",
+      "status": "draft",
       "masterWps": [
         "WP-I"
       ],
-      "designCompletion": "not-written",
+      "designCompletion": "written",
       "implementationStatus": "not-verified"
     }
   ]
