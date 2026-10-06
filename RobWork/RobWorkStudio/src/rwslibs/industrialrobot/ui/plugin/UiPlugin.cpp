@@ -5607,15 +5607,6 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 modelingCommitted = true;
             }
         }
-        for (const auto& entry5 : applyReport.entries) {
-            if (entry5.moduleId == "modeling") {
-                std::cout << "[ird-ui-smoke-mtour] step5 outcome="
-                          << static_cast<int>(entry5.outcome) << " committed="
-                          << entry5.committed << " rej=[" << entry5.rejectionReason
-                          << "] rev=[" << entry5.revision << "]" << std::endl;
-            }
-        }
-        // F-524（宿主装配 policyProvider=nullptr——C-10 基线）：建模 apply 恒
         // 被 ④策略端口未装配 拒绝。tour 如实断言该已知部署缺口（拒绝原因
         // 精确匹配），修复后本断言翻转为 committed 断言。
         bool policyPortGap = false;
