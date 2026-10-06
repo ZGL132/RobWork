@@ -3,11 +3,11 @@
 | 字段 | 值 |
 | --- | --- |
 | 单元 | optimization（**L4 业务域单元**——ARCHITECTURE §3.1/§3.3：计算库＋Qt Widgets 插件二分结构；设计变量/候选补丁、约束编排、候选生成、评估器组合、Pareto 非支配、Quick/Verified、缓存与种子、预检、候选应用与一站式导出） |
-| 文档版本 | v0.1（2026-10-06，首版草案，WP-20-T01 交付物） |
+| 文档版本 | v0.2（2026-10-07，WP-20-T02 构建落位登记——变更记录见 §16.5；v0.1＝2026-10-06 首版草案，WP-20-T01 交付物） |
 | 文档状态 | **`Draft`**（未冻结；本文只做详细设计，不自行宣布任何验收通过；本文自审不等于实现测试通过） |
 | 主 WP | WP-H（WP-12、WP-20、WP-21——DTB §0.1 主 WP 映射；单元任务主责 WP-20/WP-21） |
 | 上游 | `REQUIREMENTS.md` v1.16（`Accepted`，唯一需求权威）、`ARCHITECTURE.md` v0.13（`Draft`）、`development-task-breakdown.md` v0.53（`Draft`） |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/`（**当前仅公共头保留位 README，尚未落位任何源码**——见 §1.3/§3.6） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/`——**WP-20-T02 已落位**：计算库 STATIC（PUBLIC 链 core/evidence/runtime/policy/execution/project/io/reporting/diagnostics 九条 §3.2 依赖白名单边）＋`sdurws_ird_optimization_plugin` 最小可注册实现＋`sdurws_ird_optimization_test`/`_contract_test` 随落位登记；OPT-\* 15 码登记表随批（§6.6——阶段锁码落位 `OPT-STAGE-LOCKED`，P-OPT-1）；变量/补丁/约束/Pareto/管线等业务实现随 WP-20-T03~T09（见 §1.3 落位登记注/§3.1） |
 | 实现口径 | 从头构建（REQUIREMENTS v1.9 确立）：不继承、不恢复 `old/` 历史实现；旧结构优化器（structureoptimizer）仅作功能范围对照（需求附录 A.5），其"六维加权评分""混合寻优"等被裁决排除项**不恢复**（需求附录 B） |
 | 任务编号 | 本卡决策 `DOPT-x`；待裁决项 `P-OPT-x`；验证用例 `OPT-VER-x`；诊断码前缀 `OPT-`（diagnostics.md §4.5 业务域命名空间清单已登记 `OPT`，码值注册归 diagnostics StableCodeRegistry——见 §6.6） |
 
@@ -92,6 +92,8 @@ RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/
 README 占位原文："本目录为 optimization 单元公共头保留位（命名空间 sdurws/ird/optimization）。源码随对应任务卡（见 doc/industrial-robot-design/units/optimization.md §9）落地；本文件不参与编译。"（其引用的"§9"是占位期提示，不代表本卡章节号——本卡落位后以本卡实际章节为准。）
 
 CMake 侧：`industrialrobot/CMakeLists.txt` 以 `IRD_MODULES` 列表统一注册 20 单元 INTERFACE 目标（第 53～56 行含 `selection optimization workflow`），即当前仅存在 **INTERFACE 占位目标** `sdurws_ird_optimization`（无源文件、无别名外消费）——这是骨架期统一占位，不构成实现；WP-20-T02 落位时由 `optimization/CMakeLists.txt` 升级为真实库（目标名不变，DTB §5.1"INTERFACE→真实库升级时目标名不变"）。**无** `_plugin`/`_test`/`_contract_test`/`_worker` 目标，**无**源码、测试或契约测试落位——与 unit-status.json `not-verified` 一致。
+
+> **WP-20-T02 落位登记（2026-10-07，构建落位任务——上文两段为 T01 时点实测，本注为落位后状态）**：`optimization/CMakeLists.txt` 已建成——`sdurws_ird_optimization` 由上级 INTERFACE 占位升级为真实 STATIC 库（C++17、PUBLIC 链 core/evidence/runtime/policy/execution/project/io/reporting/diagnostics 九条 §3.2 依赖白名单边，ird_gates 白名单 "optimization->…" 九行随任务登记并同步刷新 dependency-graph.json；PUBLIC 形态与卡面白名单的链接语义＝DiagCodes.hpp 内嵌 diagnostics/core 承载类型需随链到达＋测试目标表外边禁令，已落位各单元同以 PUBLIC 建边——P-RPT-9 同款先例，DTB §5.4 偏差登记面）；`sdurws_ird_optimization_plugin` 最小可注册实现（自持描述符装配门面 `assembly/sdurws/ird/optimization/OptimizationPluginAssembly.hpp`——pluginId="optimization"〔ui.md §11.1 白名单 token〕＋titleKey="plugin.optimization.title"〔ui.md §3.5 键族〕，零 ui 编译边；trajectory WP-16-T03/dynamics WP-17-T02 同款先例；本注取代 §3.2 表"插件目标……WP-20-T10"的时点口径：任务契约 WP-20-T02 acceptance 1 明文 _plugin/_test/_contract_test 三目标同批创建——界面面仍归 WP-20-T10，T02 仅装配门面壳）；`sdurws_ird_optimization_test`/`_contract_test` 随落位登记（ctest LABELS ird——T02 测试面＝OPT-* 登记表＋红线扫描＋构建图/插件契约；§13.1 黄金数据集与全量用例仍归 WP-20-T11）；`src/DiagCodes.cpp`＋`include/.../DiagCodes.hpp`＝OPT-* 15 码登记表（§6.6 全表物化——本单元依赖白名单含 diagnostics 编译边，走 kinematics WP-15-T02 注册函数形态〔CodeDescriptor＋registerOptimizationCodes 装配期注册，真实 StableCodeRegistry 验证〕；阶段锁码落位 `OPT-STAGE-LOCKED`——P-OPT-1 前缀归一，对应关系见 §6.6 行注/§16.3；诊断**实例**产码路径随 WP-20-T03~T09 逐个落地，本批仅登记表＋注册面）；占位 README 文案修正为落位说明版；`optimization/worker/` 仍不创建（§3.2 表"worker 目标：不建"/§2.4 N13/DOPT-14，符合设计）。T03+ 源码集（Types/Variable/CandidatePatch/Constraint/Objective/Run/EvaluatorPorts/Preflight/Pareto/Export/Applier——§3.1 布局表）尚未落地——布局表任务列为权威。
 
 ---
 
@@ -1702,6 +1704,7 @@ P-PR-9（命令 token 语法——本卡经 DOPT-6 规避）；P-POL-3/P-DT-2（
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-10-06 | 首版草案（WP-20-T01 交付物）：20 单元第 19 卡——OPT-B/OPT-D 两阶段详设；输入台账（§1.1 实测）、身份体系、变量与补丁、约束与 Preflight、指标与 Pareto、编排与 Quick/Verified/缓存、execution 协作、候选应用、evidence 与导出、十接口、验证矩阵（R1 48 例＋R2 35 例）、任务拆分与追踪矩阵、15 码登记表、9 项待裁决。未实现产品源码；未执行构建/测试/GUI 测试 |
+| v0.2 | 2026-10-07 | WP-20-T02 构建落位登记：头表"构建落位"行刷新＋§1.3 追加落位登记注（CMake/STATIC 九条 §3.2 依赖白名单边/插件最小可注册/两测试目标同批〔任务契约 acceptance 1 口径取代 §3.2 表"插件目标 WP-20-T10"时点注——界面面仍归 T10〕/OPT-* 15 码登记表 kinematics 注册函数形态/阶段锁码落位 OPT-STAGE-LOCKED——P-OPT-1/README 修正——业务实现随 T03+）＋§17.2 追加落位后执行状态注；文档语义零变化（设计面不含 T02 实现新增决策——OPT-* 登记表为卡面既有登记值的物化；PUBLIC 链接形态为 P-RPT-9 同款先例，§1.3 注已载） |
 
 ---
 
@@ -1750,6 +1753,8 @@ P-PR-9（命令 token 语法——本卡经 DOPT-6 规避）；P-POL-3/P-DT-2（
 - 文档自审不等于实现测试通过；文档自审不等于正式验收（正式验收按 acceptance-protocol.md 三段式）。
 - 当前代码状态仍以磁盘实测和任务验收证据为准；`unit-status.json`/`DETAILED-DESIGN.md` 状态刷新归治理任务。
 
+> **WP-20-T02 落位后执行状态注（2026-10-07，按真实结果登记——上文四条为 T01 时点声明，本注为落位后状态）**：`sdurws_ird_optimization`（STATIC）＋`_plugin`（最小可注册）＋`_test`/`_contract_test` 已随 T02 落位并执行通过（OPT-* 登记表＋红线扫描＋构建图/插件契约——留痕 traceability/builds/wp20-t02/）；本节故障注入矩阵 OPT-VER-101~252 仍为设计（未执行——各行业务实现随 WP-20-T03~T09 落位）；文档头"文档版本"已随之刷新 v0.2（§16.5）。
+
 ### 17.3 交付报告（最终报告）
 
 - **产出文件**：`RobWork/doc/industrial-robot-design/units/optimization.md`（v0.1，Draft，2026-10-06，首版草案，WP-20-T01 交付物；17 章、8 图、20+ 表、48＋35 验证用例、15 码、9 待裁决项）。
@@ -1764,4 +1769,4 @@ P-PR-9（命令 token 语法——本卡经 DOPT-6 规避）；P-POL-3/P-DT-2（
 - **实际代码缺口**：全部产品代码（计算库/插件/测试/契约测试）、OPT-\* 码注册、golden/opt-\* 数据集、`optimization-candidates` 报告章节提供方、插件面板——全部待 WP-20-T02 起逐卡落位。
 - **自审结果**：§17.1 全项通过；3 处初稿问题已在自审中修复（见 §17.1 末段）。
 
-**本文档结束（optimization 单元详细设计 v0.1，状态 `Draft`；未实现源码、未构建、未测试、未 GUI 验证；自审≠实现测试≠正式验收）**
+**本文档结束（optimization 单元详细设计 v0.2，状态 `Draft`；v0.2 仅 WP-20-T02 落位登记——构建骨架/15 码登记表/两测试目标已落位执行，业务实现（变量/补丁/约束/Pareto/管线/导出）与 OPT-VER 全量用例未实现未执行；自审≠实现测试≠正式验收）**

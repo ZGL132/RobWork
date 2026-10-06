@@ -78,7 +78,12 @@
 # ——requirements/dynamics 卡同款处理〕。七边已随本任务同步刷新进
 # dependency-graph.json〔traceability/ 在 allowedFiles 内——WP-14/
 # WP-15/WP-22/WP-19/WP-17 五面留痕同款〕，并仍经 IRD_EXTRA_EDGE_REFS
-# 登记出处）。
+# 登记出处）；另含 2026-10-07 增登的 optimization->core/evidence/
+# runtime/policy/execution/project/io/reporting/diagnostics 九条
+# （WP-20-T02——units/optimization.md §3.2 依赖白名单，属 ARCH §3.5
+# 既有许可方向的实例化。九边已随本任务同步刷新进 dependency-graph.json
+# 〔traceability/ 在 allowedFiles 内——WP-14/WP-15/WP-22/WP-19/WP-17/
+# WP-16 六面留痕同款〕，并仍经 IRD_EXTRA_EDGE_REFS 登记出处）。
 # 书写格式："依赖方->被依赖方"（与 traceability/dependency-graph.json 同序）。
 # ---------------------------------------------------------------------
 set(IRD_ALLOWED_UNIT_EDGES
@@ -142,6 +147,15 @@ set(IRD_ALLOWED_UNIT_EDGES
     "trajectory->execution"   # WP-16-T03（任务提交/取消令牌/检查点/共享 worker 装配面——接口消费；T03 仅链接不消费，消费随 WP-16-T04 回填）
     "trajectory->diagnostics" # WP-16-T03（TRJ-* 12 码 StableCodeRegistry 装配期注册、CodeDescriptor/IDiagnosticRegistry——本批即真实消费面）
     "trajectory->io"          # WP-16-T03（标准轨迹导出 CSV/原子写通道——字段字典归本域、执行经 io；T03 仅链接不消费，消费随 WP-16-T10 回填）
+    "optimization->core"        # WP-20-T02 九边（optimization.md §3.2 依赖白名单——身份/单位/比较/DiagCode 句法）
+    "optimization->evidence"    # WP-20-T02（AnalysisSnapshot/InputSlice/评估器注册契约/缓存判定——opt-static-screen 评估器与编排面；T02 仅链接不消费——P-RPT-9 先例，消费随 WP-20-T06 回填）
+    "optimization->runtime"     # WP-20-T02（RuntimeSnapshot/IRobotDesignReader/名称端口——候选编译与基线闭包面；T02 仅链接不消费，消费随 WP-20-T03 回填）
+    "optimization->policy"      # WP-20-T02（EngineeringPolicySet 只读消费/共享碰撞评估/IJointLimitEvaluator ④端口——约束计算权威；T02 仅链接不消费，消费随 WP-20-T04 回填）
+    "optimization->execution"   # WP-20-T02（任务提交/取消令牌/检查点/缓存治理/worker——接口消费；T02 仅链接不消费，消费随 WP-20-T06 回填）
+    "optimization->project"     # WP-20-T02（①命令提交/②只读查询/StaleRevisionRejected/results 归档端口——候选应用与归档面；T02 仅链接不消费，消费随 WP-20-T07 回填）
+    "optimization->io"          # WP-20-T02（CSV/JSON 安全写出/原子写/包导出——OPT-12 六工件通道；T02 仅链接不消费，消费随 WP-20-T09 回填）
+    "optimization->reporting"   # WP-20-T02（IReportSectionProvider 注册/共用导出规则/EvidenceBundle——optimization-candidates 章节面；T02 仅链接不消费，消费随 WP-20-T09 回填）
+    "optimization->diagnostics" # WP-20-T02（OPT-* 15 码 StableCodeRegistry 装配期注册、CodeDescriptor/IDiagnosticRegistry——本批即真实消费面）
     "modeling->ui"          # WP-22-T02 返工回填（modeling.md §3.2"插件目标→本计算库＋sdurws_ird_ui"明文——WP-13-T15 落位的装配面边；WP-15-T02 附件"逐条具名登记——登记册回填归 WP-01-T03"的执行）
     "requirements->ui"      # WP-22-T02 返工回填（requirements.md §3.2 同款插件装配面边——WP-14-T08 落位）
     "kinematics->ui"        # WP-22-T02 返工回填（kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位）
@@ -216,6 +230,15 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "trajectory->execution"
     "trajectory->diagnostics"
     "trajectory->io"
+    "optimization->core"
+    "optimization->evidence"
+    "optimization->runtime"
+    "optimization->policy"
+    "optimization->execution"
+    "optimization->project"
+    "optimization->io"
+    "optimization->reporting"
+    "optimization->diagnostics"
     "modeling->ui"
     "requirements->ui"
     "kinematics->ui"
@@ -265,6 +288,15 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表——任务提交/取消令牌/检查点/共享 worker 装配面（接口消费）；T03 仅链接不消费，消费随 WP-16-T04 回填（dependency-graph.json 已随任务同步刷新）"
     "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表＋§14.4——TRJ-* 12 码 StableCodeRegistry 装配期注册、CodeDescriptor/IDiagnosticRegistry（本批即真实消费面——kinematics KIN/dynamics DYN 同款注册函数形态）；dependency-graph.json 已随任务同步刷新"
     "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表——标准轨迹导出 CSV/原子写通道（字段字典归本域、执行经 io——io.md C-6 格式所有者注册机制）；T03 仅链接不消费，消费随 WP-16-T10 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/单位/比较/DiagCode 句法）；dependency-graph.json 已随任务同步刷新（双面留痕）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单——AnalysisSnapshot/InputSlice/评估器注册契约/缓存判定（opt-static-screen 评估器与候选评估编排面）；T02 仅链接目标不消费上游公共头（P-RPT-9 先例），消费随 WP-20-T06 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单——RuntimeSnapshot/IRobotDesignReader/RuntimeNameMap 只读消费（候选编译/基线对象闭包/名称反解面）；T02 仅链接不消费，消费随 WP-20-T03 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单——EngineeringPolicySet 只读消费、共享碰撞评估（SampleSet）、IJointLimitEvaluator ④端口只读调用（约束计算唯一权威——R-POL-2：optimization 零碰撞算法复制）；T02 仅链接不消费，消费随 WP-20-T04 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单——任务提交/取消令牌/检查点/缓存治理/worker（接口消费；optimization 不自有 worker——DOPT-14 共享 worker 唯一）；T02 仅链接不消费，消费随 WP-20-T06 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单——①命令提交/②只读查询/StaleRevisionRejected/IResultArchivePort（候选应用两步组合与运行归档面——§10.2 不注册新命令 token）；T02 仅链接不消费，消费随 WP-20-T07 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单——ICsvWriter/IJsonWriter/IAtomicFileWriter/IPackageExporter（OPT-12 六工件导出通道——字段契约归本域、写出经 io）；T02 仅链接不消费，消费随 WP-20-T09 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单——IReportSectionProvider/共用导出规则/EvidenceBundle（optimization-candidates 章节提供方——reporting §5.1 SectionId 第 6 项）；T02 仅链接不消费，消费随 WP-20-T09 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-20-T02 落位登记（2026-10-07）：units/optimization.md §3.2 依赖白名单＋§6.6——OPT-* 15 码 StableCodeRegistry 装配期注册、CodeDescriptor/IDiagnosticRegistry（本批即真实消费面——kinematics KIN/dynamics DYN/trajectory TRJ 同款注册函数形态）；dependency-graph.json 已随任务同步刷新"
     "WP-22-T02 返工回填（2026-10-06）：units/modeling.md §3.2 插件目标行\"→本计算库＋sdurws_ird_ui\"——WP-13-T15 落位的装配面边（WP-15-T02 附件\"逐条具名登记——登记册回填归 WP-01-T03\"的机器面执行；dependency-graph.json 已随本任务同步刷新——双面留痕）"
     "WP-22-T02 返工回填（2026-10-06）：units/requirements.md §3.2 同款插件装配面边——WP-14-T08 落位（dependency-graph.json 已随本任务同步刷新）"
     "WP-22-T02 返工回填（2026-10-06）：units/kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位（dependency-graph.json 已随本任务同步刷新）"

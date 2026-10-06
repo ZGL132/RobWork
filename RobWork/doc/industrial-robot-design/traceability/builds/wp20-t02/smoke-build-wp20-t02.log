@@ -1,0 +1,12 @@
+# WP-20-T02 独立冒烟模式构建留痕（2026-10-07）
+# 口径：-S industrialrobot -B build-smoke ＋ vcpkg toolchain ＋ Qt6 前缀（D:/software/Qt/6.11.1/msvc2022_64）；增量全树构建（冒烟树缓存已存在——本日志如实记录最终链接状态，零 error）
+
+## 配置命令
+cmake -S .../industrialrobot -B .../build-smoke -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=.../vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64
+
+## 全树构建（optimization 相关产物行＋error 扫描）
+  sdurws_ird_optimization.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\optimization\Release\sdurws_ird_optimization.lib
+  sdurws_ird_optimization_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\optimization\Release\sdurws_ird_optimization_plugin.lib
+  sdurws_ird_optimization_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\optimization\Release\sdurws_ird_optimization_contract_test.exe
+  sdurws_ird_optimization_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\optimization\Release\sdurws_ird_optimization_test.exe
+build_exit=0
