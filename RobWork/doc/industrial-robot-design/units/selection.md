@@ -73,6 +73,8 @@
 > 如实声明：当前代码只有 README 保留位，**没有** selection 计算库、CMake、插件、worker 或测试实现；本卡是文档交付物（WP-19-T01），不把 README、任务登记、接口名称、UI 标签或目录占位描述为已实现功能。
 >
 > **WP-19-T02 落位登记（2026-10-06，构建落位任务——上表为 T01 时点实测，本注为落位后状态）**：`selection/CMakeLists.txt` 已建成——`sdurws_ird_selection` 由上级 INTERFACE 占位升级为真实 STATIC 库（C++17、PUBLIC 链 core＋evidence 两条 §3.2 编译链接边，ird_gates 白名单 "selection->…" 两行随任务登记并同步刷新 dependency-graph.json）；`sdurws_ird_selection_plugin` 最小可注册实现（自持描述符装配门面 `assembly/SelectionPluginAssembly.hpp`——pluginId/titleKey 均有 ui.md §11.1/§3.5 登记出处，零 ui 编译边；与 modeling/requirements/kinematics/workflow 插件门面的差异论证见单元 CMakeLists 头注）；`sdurws_ird_selection_test`/`_contract_test` 随落位登记（ctest LABELS ird）；`src/DiagCodes.cpp`＋`include/.../DiagCodes.hpp`＝SEL-* 17 码登记表（§2.2/§5.3/§6.2/§6.3/§9.3 登记值物化，L5 装配期注册数据源——依赖白名单无 diagnostics 编译边，kinematics 注册函数形态不适用，drivetrain WP-18-T02 同款承载；§10.3 词表逐 token 稳定码映射随 WP-19-T06）；占位 README 文案修正为落位说明版（§19.3 登记项闭环）；worker 目录仍不创建（§3.5/D-SEL-13，符合设计）。T03+ 源码集（目录模型/校验/插值/筛选/组合校核/可行集/回填）尚未落地——§3.5 布局表任务列为权威。
+>
+> **WP-19-T03 落位登记（2026-10-07，目录包模型与导入校验——SEL-01/02/AT-08）**：§3.5 布局表八头中的三公共头已落地——`CatalogTypes.hpp`（§4.1 数据模型全量：CatalogIdentity/CatalogVersion/CatalogSource/CatalogManifest＋FieldDictionary/FieldSpec＋Motor/GearboxCatalogEntry＋CompatibilityRecord＋§6.1 PerformanceCurve/CapabilityPoint＋§4.2 CatalogPackageSnapshot＋ParsedCatalogInput/CatalogValidationReport——io 解析产物的纯 std 承载形态＋规范序列化与内容身份）；`CatalogProvider.hpp`（§14.1 ICatalogProvider/§14.2 ICatalogValidator 接口＋CatalogImporter 校验装配器＋InMemoryCatalogProvider 内存锁定供给＋`catalogPackageFileSchema()` P-IO-7 注册面）；`Curve.hpp`（§14.3 IPerformanceCurveEvaluator/CurveQueryResult＋LinearCurveEvaluator）。实现翻译单元四件：`src/CatalogTypes.cpp`（规范序列化/SHA-256 内容身份——to_chars 最短 round-trip＋确定性排序）、`src/CatalogValidation.cpp`（§5.3 八码＋§6.3 四码全表＋v1 列契约注册表＋assemble 快照装配）、`src/CapabilityCurve.cpp`（§6.2 分段线性插值/默认禁止外推）、`src/CatalogProvider.cpp`（锁定只增/快照冻结/摘要不符 fail-fast）。落位细化七项登记于 §19.3（T03 ①~⑦）。§3.5 布局表的 Screening/Combination/FeasibleSet/ResultFacts/Backfill 五头与对应实现随 WP-19-T04~T09（§3.5 任务列为权威）；`catalog/<id>/<ver>/` 的 project 端口落位随 WP-19-T07（§14.1 头注已登记注入形态）。
 
 ### 1.3 本卡与上游文档的编号口径
 
@@ -1135,9 +1137,16 @@ selection 作为器件匹配内层（外层候选→轨迹/动力学校核→dri
 | 项 | 内容 |
 | --- | --- |
 | 占位 README 指向 | ~~README 文案"见 units/selection.md §9"与本卡章节编号不符（实现任务＝§16）——随 WP-19-T02 落位时修正~~ **已闭环（WP-19-T02）**：README 已改写为落位说明版（指向卡 §3.5/§16，列当前公共头与后续落位路线） |
-| P-IO-7 消账 | 目录包文件清单/文件名 schema 已在本卡 §5.2 注册——随 WP-19-T03 落位同步 io 侧登记（本卡不直接修改 io.md） |
+| P-IO-7 消账 | 目录包文件清单/文件名 schema 已在本卡 §5.2 注册——随 WP-19-T03 落位同步 io 侧登记（本卡不直接修改 io.md）。**T03 落位状态（2026-10-07）**：注册数据已物化为 `catalogPackageFileSchema()`（v1 五文件：名称/角色/必备性，序＝§5.2 表行序——CatalogProvider.hpp）；io.md 侧的文字登记与 L5 装配把该数据接入 io §7.8 清单核对框架的接线动作，随后续装配任务收编（本卡零 io 编译边，不越界接线） |
 | drivetrain 卡细化 | `config.dt-mapping` 条目细化为"候选组合集"载荷（§9.2）——登记为跨卡对齐注记，drivetrain 卡内核契约不变 |
 | 索引状态 | DETAILED-DESIGN.md §20 与 unit-status.json 的 selection 行刷新归治理任务（与 trajectory/drivetrain 卡同批待登记） |
+| T03 落位细化 ①（StableId 承载） | 卡 §4.1 写 `core::StableId`：core 单元未落位该类型（core include 树实测无）。T03 以域内强语义别名 `ModelId`/`CurveId`（std::string 承载，包内唯一）落位（CatalogTypes.hpp）；core 侧 StableId 落位后收编，包内唯一性语义不变 |
+| T03 落位细化 ②（字段字典按文件承载） | 卡 §4.1 `CatalogManifest::fieldDictionary` 为单数：目录包有四 CSV 表，T03 承载为 `std::vector<FieldDictionary>`（`FieldDictionary::targetFile` 定位），语义不变（列名→语义/单位/必填性——SEL-01） |
+| T03 落位细化 ③（v1 单位词表冻结 SI 本位） | core Units 已注册词表无 rpm/arcmin/h/°C（core/src/Units.cpp 实测：m/mm/rad/deg/kg/s/N/N*m/kg*m^2/W/m/s/rad/s/m/s^2/rad/s^2/V/1）。v1 目录模板（formatVersion "1"）数值列单位冻结 SI 口径（rated_speed→rad/s、backlash→rad、rated_life→循环数 "1"、thermal 两列→无量纲档位）；"目录若以 rpm 提供"的换算支持随 core Units 词表扩展（换算唯一经 core，§5.3——本域不自建换算表、不自扩 core） |
+| T03 落位细化 ④（两码分配） | §5.3 行 4 的 SEL-CATALOG-DUPLICATE-MODEL / DUPLICATE-ID 两码分配：同 modelId 多行且行内容全同 → DUPLICATE-MODEL（重复行）；同 modelId 多行且内容不同 → DUPLICATE-ID（主键冲突）。显示名重复但 ID 不同＝合法（表行原文） |
+| T03 落位细化 ⑤（码归族，不新增码值） | 卡面未指名码的拒绝面按族归类：数值文本无法解析 → 主表 RANGE-INVALID／曲线表 NONFINITE（NFR-COR-03 同路径，actualText 保留原文）；曲线 owner_kind 词表违约（非 motor/gearbox）→ REF-DANGLING（owner 无法归属）；x/y_quantity 词表违约 → SCHEMA-MISMATCH（词表归字段字典，§6.1）；同条目引用同 (xQuantity,yQuantity) 多曲线（§6.4 歧义）→ SCHEMA-MISMATCH。均不新增码值（码表随 DiagCodes.hpp 表尾追加纪律） |
+| T03 落位细化 ⑥（manifest 身份分轨） | catalogId/version 为空 → schema 级 fail-fast 抛出（身份三元组前提破坏，§4.3/§14.2 note）；source 为空 → 行级 FIELD-MISSING（V1"来源缺失"可定位拒绝面）；未知 formatVersion → 抛出＋升级指引（§5.2/PM-06） |
+| T03 落位细化 ⑦（curve_ref 分隔符） | 条目→多曲线引用的 `curve_ref` 列值以分号（`;`）分隔多 curve_id（§5.2"curve_ref…"列形态的冻结） |
 
 ### 19.4 风险登记（R-SEL-x）
 
@@ -1157,6 +1166,7 @@ selection 作为器件匹配内层（外层候选→轨迹/动力学校核→dri
 | --- | --- | --- |
 | v0.1 | 2026-10-06 | 首版草案（WP-19-T01 交付物）：基于 REQUIREMENTS v1.16、ARCHITECTURE v0.13、DTB v0.53 与 core/evidence/io/project/policy/modeling/drivetrain 卡既有契约编写；R1/R2 边界、目录包模型与版本身份、io 双层交接（P-IO-7 schema 注册）、能力曲线插值与外推边界、电机/减速器硬筛选、两段管线组合校核（消费唯一映射）、可行集/稳定排序/淘汰原因词表、Quick/Verified 证据边界与 O-11 保守处理、回填命令与物性合成、六方协作与责任矩阵、公共接口、验证方案与故障注入矩阵、任务拆分对齐、追踪矩阵、决策/风险/待裁决登记、自审与未执行声明 |
 | v0.2 | 2026-10-06 | WP-19-T02 构建落位登记：头表"构建落位"行刷新＋§1.2 追加落位登记注（CMake/STATIC/插件最小可注册/两测试目标/SEL-* 17 码登记表/README 修正——业务实现随 T03+）＋§19.3 README 行闭环＋§21 执行状态按真实结果刷新；文档语义零变化（设计面不含 T02 实现新增决策——SEL-* 登记表为卡面既有登记值的物化） |
+| v0.3 | 2026-10-07 | WP-19-T03 实现落位登记（目录包模型与导入校验）：§1.2 追加 T03 落位登记注（CatalogTypes/CatalogValidation/CapabilityCurve/CatalogProvider 四翻译单元＋CatalogTypes/CatalogProvider/Curve 三公共头＋内存锁定供给）；§19.3 追加 T03 落位细化七项（StableId 域内承载/字段字典按文件承载/v1 单位词表冻结 SI/DUPLICATE 两码分配/码归族不新增/manifest 身份分轨/curve_ref 分隔符）；§21 执行状态按真实结果刷新（集成/冒烟构建、_test 66/66、_contract_test 13/13、ird_gates、gtest XML 留痕 traceability/gtest-reports/wp-19-t03/）；设计语义零变更（全部登记为实现期细化，DTB §5.4） |
 
 ---
 
@@ -1209,11 +1219,11 @@ selection 作为器件匹配内层（外层候选→轨迹/动力学校核→dri
 
 | 类别 | 状态 |
 | --- | --- |
-| 产品源码/CMake/插件/测试实现 | **T02 登记面已落位**（WP-19-T02：CMake＋DiagCodes 登记表＋插件最小可注册＋两测试目标——见 §1.2 落位登记注）；目录模型/校验/插值/筛选/组合校核/可行集/回填实现**未实现**（随 WP-19-T03～T11） |
-| 集成模式构建 / 独立冒烟构建 | **已执行零错误**（WP-19-T02：集成模式 selection 四目标＋ird_gates 退出 0；独立冒烟全树配置＋构建退出 0——留痕 traceability/builds/wp19-t02/） |
-| 单元测试 / 契约测试 / 黄金数据集（sel-*） | **_test 7/7、_contract_test 9/9 已执行通过**（WP-19-T02：登记表/红线扫描/构建图/插件契约用例；gtest XML＋ird-test-report.json 留痕同目录）；§15 V1～V9 业务用例与 sel-* 黄金数据集**未执行**（随 WP-19-T11；"已执行的登记面用例"≠"业务功能已验证"——业务实现未落地） |
-| ird_gates 门禁 | **已执行零命中**（WP-19-T02：R-1~R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中＋引擎自测 9 例按预期——留痕同目录 integrate-build 日志） |
-| GUI 测试 | **未执行**（T02 无 GUI 用例；插件界面与 GUI 用例随 WP-19-T10/T11 按 §15.3 约定执行，一次一个可执行文件、不用 offscreen） |
+| 产品源码/CMake/插件/测试实现 | **T02 登记面＋T03 领域面已落位**（T03：CatalogTypes/CatalogValidation/CapabilityCurve/CatalogProvider 四翻译单元＋CatalogTypes/CatalogProvider/Curve 三公共头＋内存锁定供给——见 §1.2 T03 落位登记注）；硬筛选/组合校核/可行集/回填实现**未实现**（随 WP-19-T04～T11） |
+| 集成模式构建 / 独立冒烟构建 | **已执行零错误**（WP-19-T03：集成模式 selection 四目标增量重建 error 计数 0＋ird_gates 退出 0；独立冒烟全树构建退出 0——留痕 traceability/builds/wp19-t03/。注：全仓 ALL_BUILD 中 RobWork/RobWorkSim 框架插件存在与本任务无关的既有编译错误〔框架区域零修改，SA-02〕，industrialrobot 区域零错误） |
+| 单元测试 / 契约测试 / 黄金数据集（sel-*） | **_test 66/66、_contract_test 13/13 已执行通过**（WP-19-T03：T02 既有 16 例零回归＋T03 新增 63 例〔SelCatalogImport 39＋SelCapabilityCurve 10＋SelCatalogLock 10＋SelCatalogIoBoundary 4〕；gtest XML＋ird-test-report.json 留痕 traceability/gtest-reports/wp-19-t03/）；§15 V2~V9 业务用例（电机/减速器筛选、组合校核、可行集、回填等）与 sel-* 黄金数据集**未执行**（随 WP-19-T04~T11；"已执行的目录导入用例"≠"选型业务全链已验证"——V1 组的 io 文件层注入面〔公式字符串/路径穿越/超预算〕归 io 侧已落位用例） |
+| ird_gates 门禁 | **已执行零命中**（WP-19-T03：R-1~R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中＋引擎自测按预期——留痕 traceability/builds/wp19-t03/integrate-build-wp19-t03.log，退出码 0） |
+| GUI 测试 | **未执行**（T03 无 GUI 用例；插件界面与 GUI 用例随 WP-19-T10/T11 按 §15.3 约定执行，一次一个可执行文件、不用 offscreen） |
 | 文档验证脚本 | validate-docs.ps1 已在 WP-19-T01/T02 交付会话执行（T02：PASS，20 units/12 trace entries/307 task files）；validate-task/verify-task 随各任务验收会话执行 |
 
 以上任何一项在后续任务中执行后，须按 DTB §5.4 与本卡 §19.5 登记真实结果；未执行项不得标注"通过"。

@@ -75,12 +75,21 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 # T02 源码集＝src/DiagCodes.cpp（SEL-* 17 码登记清单——码值常量的唯一
-# 实现翻译单元；逐码落值依据见该文件逐码注释）。目录模型/导入校验/筛选/
-# 组合校核/可行集/回填等实现翻译单元随 WP-19-T03~T09 按卡 §3.5 布局表
-# 增列（CatalogTypes/Curve/Screening/…——本任务不预建占位实现，
-# NFR-MNT-04 不建无边界价值包装器）。
+# 实现翻译单元；逐码落值依据见该文件逐码注释）。T03 增列四翻译单元（卡
+# §3.5 布局表："目录包业务模型与版本身份/业务校验/分段线性插值/快照
+# 供给"——WP-19-T03 交付面）：
+#   src/CatalogTypes.cpp      §4.1 数据模型＋§4.2 规范序列化与内容身份
+#   src/CatalogValidation.cpp §5.3 业务校验全表＋§6.3 曲线校验＋快照装配
+#   src/CapabilityCurve.cpp   §6.2 分段线性插值（默认禁止外推）
+#   src/CatalogProvider.cpp   §14.1 锁定供给（内存形态）＋P-IO-7 注册面
+# 筛选/组合校核/可行集/回填等实现翻译单元随 WP-19-T04~T09 按卡 §3.5
+# 布局表增列（本任务不预建占位实现，NFR-MNT-04 不建无边界价值包装器）。
 add_library(sdurws_ird_selection STATIC
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/CatalogTypes.cpp
+    src/CatalogValidation.cpp
+    src/CapabilityCurve.cpp
+    src/CatalogProvider.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：selection 公共头使用 C++17 设施（inline constexpr 变量
@@ -223,7 +232,10 @@ enable_testing()
 add_executable(sdurws_ird_selection_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/CatalogImportTest.cpp
+    test/CapabilityCurveTest.cpp
+    test/CatalogLockTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -306,7 +318,8 @@ ird_add_gtest(sdurws_ird_selection_test)
 add_executable(sdurws_ird_selection_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/SelectionPluginAssemblyContractTest.cpp)
+    contract_test/SelectionPluginAssemblyContractTest.cpp
+    contract_test/CatalogIoBoundaryContractTest.cpp)
 
 target_compile_features(sdurws_ird_selection_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_contract_test PROPERTIES
