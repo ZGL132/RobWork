@@ -440,6 +440,11 @@ kinematics::KinChannelBackgroundAck KinEvaluationExecutor::submit(
                 projected.reason = record.reason;
                 projected.position = sample.position;      // 基座系 m（直投）
                 projected.regionObjectId = sample.regionObjectId;  // 区域锚
+                // 样本类别直投（UI-T65 返工——双口径判定键：消费侧按
+                // kind 过滤复算位置轴计数，与域 computeCoverage 同定义）。
+                projected.kind = sample.kind == kinematics::SampleKind::Pose
+                                     ? kinematics::KinChannelSampleKind::Pose
+                                     : kinematics::KinChannelSampleKind::Position;
                 result.samples.push_back(std::move(projected));
             }
             const kinematics::CoverageTotals& pos = computation.coverage.position;
