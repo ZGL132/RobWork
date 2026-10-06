@@ -65,8 +65,13 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # T02 源码集＝锚点翻译单元（空起步；后续任务增列路线见该文件尾注）。
 # 门控/建议纯函数面（D-WF-3）与生命周期流程编排（§7）随 T03+ 逐头落位，
 # 每公共头一个对应实现翻译单元——modeling/requirements 同款布局。
+# WP-22-T03 增列（§3.1 布局表 Types/Gate/Advice 三头兑现——每头一个实现
+# 翻译单元；门控判定只消费投影快照＋事件，级联提示纯函数面，D-WF-3）。
 add_library(sdurws_ird_workflow STATIC
-    src/Workflow.cpp)
+    src/Workflow.cpp
+    src/Types.cpp    # 词表与映射（§4.2 域↔阶段表／UX-02 文案键唯一构造点）
+    src/Gate.cpp     # 七阶段门控（§4.4 状态机重放）＋级联失效映射（§4.3）
+    src/Advice.cpp)  # 下一步建议引擎（§6.3 八规则——UX-01 四要素）
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：workflow 公共头（T03+ 落位）使用 C++17 设施，消费者编译
@@ -192,15 +197,19 @@ endif()
 #                                 include 面＋R-4 字面量＋文件头注释——
 #                                 acceptance 1/2，与文件末尾配置期守卫
 #                                 互为两道防线；kinematics 同款四用例）
+#   test/GateAdviceTest.cpp       门控/建议模型测试（WP-22-T03 增列——
+#                                 WF-VER-101~109/111 逐用例承载；直调
+#                                 纯函数面，固定投影夹具，卡 §11.1）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/modeling/requirements/kinematics 同款先例；IRD_TEST_INFO 携带
-# 需求/AT 追溯字段）。门控/建议模型测试用例随 WP-22-T03 增列（卡 §11）。
+# 需求/AT 追溯字段）。
 enable_testing()
 
 add_executable(sdurws_ird_workflow_test
     test/TestMainReport.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/GateAdviceTest.cpp)
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -274,11 +283,16 @@ ird_add_gtest(sdurws_ird_workflow_test)
 # 重复拒绝——acceptance 1"最小可注册实现"的执行证明）；业务对端面契约
 # （ui 快照/事件 fake 套件）随 T03~T12 落地（卡 §11——T02 不预建占位
 # 用例）。
+# WP-22-T03 增列 GateContractTest.cpp：门控零领域调用运行断言（WF-VER-112
+# ——R-1/I-WF-2/I-WF-3 判定面文本扫描＋GateInputs 类型面 static_assert）
+# ＋P-WF-2 数据形状对齐（status 词表＝ui::StageViewStatus）＋词表零新增
+# ＋投影不双权威（DTB 禁止项）的契约面自证。
 # 自有 main 同 _test 目标（报告设施接入）。
 add_executable(sdurws_ird_workflow_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/PluginRegistrationContractTest.cpp)
+    contract_test/PluginRegistrationContractTest.cpp
+    contract_test/GateContractTest.cpp)
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
