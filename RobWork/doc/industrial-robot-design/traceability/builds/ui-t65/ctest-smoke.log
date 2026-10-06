@@ -1,0 +1,42 @@
+=== core ===
+100% tests passed, 0 tests failed out of 1
+Total Test time (real) =   0.25 sec
+=== diagnostics ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   0.42 sec
+=== evidence ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   0.07 sec
+=== execution ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   3.43 sec
+=== io ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   1.48 sec
+=== kinematics ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =  10.61 sec
+=== modeling ===
+100% tests passed, 0 tests failed out of 3
+Total Test time (real) =   1.02 sec
+=== policy ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   0.06 sec
+=== project ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =  16.82 sec
+=== reporting ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   0.36 sec
+=== requirements ===
+100% tests passed, 0 tests failed out of 3
+Total Test time (real) =   1.29 sec
+=== runtime ===
+100% tests passed, 0 tests failed out of 1
+Total Test time (real) =   0.06 sec
+=== testkit ===
+100% tests passed, 0 tests failed out of 1
+Total Test time (real) =   9.17 sec
+=== ui ===
+100% tests passed, 0 tests failed out of 3
+Total Test time (real) =   3.41 sec
