@@ -42,9 +42,13 @@
 #       STATIC 库（PUBLIC 链 core/evidence 两条卡 §3.2 登记边，插件目标
 #       sdurws_ird_selection_plugin（最小可注册实现——自持描述符装配
 #       门面，零 ui 编译边）与测试目标 sdurws_ird_selection_test/
-#       _contract_test 随落位登记——见 selection/CMakeLists.txt）；其余
-#       3 个单元仍为 INTERFACE 占位，源码随各自单元任务卡落地，落地时
-#       升级为真实库（CMake 目标名不变）
+#       _contract_test 随落位登记——见 selection/CMakeLists.txt）；dynamics
+#       已随 WP-17-T02 落地为真实 STATIC 库（PUBLIC 链 core/evidence/
+#       runtime/execution/diagnostics 五条卡 §3.2 CMake 行登记边，插件
+#       目标 sdurws_ird_dynamics_plugin（最小可注册实现）与测试目标
+#       sdurws_ird_dynamics_test/_contract_test 随落位登记——见
+#       dynamics/CMakeLists.txt）；其余 2 个单元仍为 INTERFACE 占位，源码
+#       随各自单元任务卡落地，落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
 # 独立冒烟模式：允许脱离 RobWorkStudio 单独配置本目录（验证目标注册、include
@@ -64,9 +68,10 @@ endif()
 # WP-10-T02（≙UI-T02，R-3 唯一 Qt Widgets 例外目标）、reporting 自
 # RPT-T01（≙WP-12-T02）、modeling 自 WP-13-T02、requirements 自 WP-14-T02、
 # kinematics 自 WP-15-T02、workflow 自 WP-22-T02、drivetrain 自
-# WP-18-T02、selection 自 WP-19-T02 起移出（下方 add_subdirectory）。
+# WP-18-T02、selection 自 WP-19-T02、dynamics 自 WP-17-T02 起移出
+# （下方 add_subdirectory）。
 set(IRD_MODULES
-    trajectory dynamics
+    trajectory
     optimization
 )
 
@@ -300,6 +305,38 @@ add_subdirectory(drivetrain)
 # evidence 之后（链接两者目标——selection.md §3.2 边表；各被链单元均已
 # 在上方 add_subdirectory）。
 add_subdirectory(selection)
+# dynamics（WP-17-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、
+# PUBLIC 链 core＋evidence＋runtime＋execution＋diagnostics——dynamics.md
+# §3.2 CMake 行五条登记边，属 ARCH §3.5"各业务域单元→L2/L3 公共接口"
+# 许可方向的实例化〔O-07 的 dynamics 侧承接＝卡 §3.1/§3.2 明文 runtime
+# 接口依赖——WP-17-T01 卡面登记〕，ird_gates 白名单 "dynamics->…" 五行
+# 随本任务登记并同步刷新 dependency-graph.json——双面留痕；project 边
+# T02 零公共值类型引用不落——requirements 卡 T02"runtime 边暂不登记"
+# 同款处理，实际引用时按卡 §3.2 增登；集成模式另链 L1 基线 sdurw_math/
+# kinematics/models＋sdurwsim〔DTB §4.6 L1 基线表 dynamics 行——DYN-01/
+# 05 经 RobWorkSim 消费，链 rwsim 零 Qt 基线〕＋Eigen3 PRIVATE〔卡 §3.2
+# 参照 kinematics O-40 先例〕；零 Qt 含 Core——R-3/NFR-MNT-01，插件目标
+# sdurws_ird_dynamics_plugin 随本任务落位（契约 acceptance 1 明文，
+# selection/workflow T02 同款）为 Qt 例外载体——最小可注册实现：自持
+# 描述符装配门面〔pluginId/titleKey 均有 ui.md §11.1/§3.5 登记出处〕，
+# 零 ui 编译边——界面面随 WP-17-T09；_worker 不创建——卡 §3.3/D-DYN-10
+# 共享 worker 唯一），并新建 dynamics/CMakeLists.txt（本注册行即其
+# 挂载点）；T02 源码集＝src/DiagCodes.cpp（DYN-* 15 码登记表——卡 §9.4
+# 拟注册清单全表物化，本单元依赖白名单含 diagnostics 编译边故走
+# kinematics WP-15-T02 注册函数形态〔CodeDescriptor＋装配期注册〕，
+# 与 selection/drivetrain 的纯登记表形态差异来自各自卡 §3.2 有无
+# diagnostics 边），测试目标 sdurws_ird_dynamics_test（登记表真实注册表
+# 验证＋红线扫描，LABELS ird）/sdurws_ird_dynamics_contract_test（构建
+# 图边界契约＋插件可注册契约——卡 §9.5 插件零计算红线词表扫描，LABELS
+# ird）随本任务登记。零其他业务域单元（R-1——trajectory 激励经
+# ITrajectorySourcePort 注入端口、requirements 工况经快照 objectClosure、
+# drivetrain 映射唯一实现经③端口、selection 消费经归档结果＋
+# JointSideSeriesPack，不落编译边）、零 testkit（T-1）、零 sdurw_proximity
+# （R-5/N3——dynamics 全程零碰撞，AT-19 无本域入口）。次序约束：必须
+# 在 core、evidence、runtime、execution、diagnostics 之后（链接五者目标
+# ——dynamics.md §3.2 CMake 行边表；各被链单元均已在上方
+# add_subdirectory）。
+add_subdirectory(dynamics)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake

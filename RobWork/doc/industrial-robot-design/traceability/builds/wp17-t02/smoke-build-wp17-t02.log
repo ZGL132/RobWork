@@ -1,0 +1,56 @@
+=== WP-17-T02 独立冒烟模式构建留痕（2026-10-06）
+=== 配置: cmake -S industrialrobot -B build-smoke -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64 （退出 0；Vulkan 头探测告警为 Qt 检测项既有现象，非错误）
+=== 本命令为增量复跑（本会话已完成全量编译，全树零错误）
+
+--- cmake --build build-smoke --config Release ---
+  sdurws_ird_kinematics_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\kinematics\Release\sdurws_ird_kinematics_plugin.lib
+  sdurws_ird_kinematics_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\kinematics\Release\sdurws_ird_kinematics_app.exe
+  sdurws_ird_kinematics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\kinematics\Release\sdurws_ird_kinematics_contract_test.exe
+  sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\kinematics\Release\sdurws_ird_kinematics_test.exe
+  Automatic MOC for target sdurws_ird_modeling_plugin
+  sdurws_ird_modeling_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\modeling\Release\sdurws_ird_modeling_plugin.lib
+  sdurws_ird_modeling_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\modeling\Release\sdurws_ird_modeling_app.exe
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\modeling\Release\sdurws_ird_modeling_contract_test.exe
+  sdurws_ird_modeling_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\modeling\Release\sdurws_ird_modeling_gui_test.exe
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\modeling\Release\sdurws_ird_modeling_test.exe
+  sdurws_ird_policy_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\policy\Release\sdurws_ird_policy_contract_test.exe
+  sdurws_ird_policy_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\policy\Release\sdurws_ird_policy_test.exe
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project_contract_test.exe
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project_test.exe
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting_contract_test.exe
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting_test.exe
+  sdurws_ird_requirements.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\requirements\Release\sdurws_ird_requirements.lib
+  Automatic MOC for target sdurws_ird_requirements_plugin
+  sdurws_ird_requirements_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\requirements\Release\sdurws_ird_requirements_plugin.lib
+  sdurws_ird_requirements_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\requirements\Release\sdurws_ird_requirements_app.exe
+  sdurws_ird_requirements_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\requirements\Release\sdurws_ird_requirements_contract_test.exe
+  sdurws_ird_requirements_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\requirements\Release\sdurws_ird_requirements_gui_test.exe
+  sdurws_ird_requirements_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\requirements\Release\sdurws_ird_requirements_test.exe
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\runtime\Release\sdurws_ird_runtime_test.exe
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\selection\Release\sdurws_ird_selection.lib
+  sdurws_ird_selection_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\selection\Release\sdurws_ird_selection_plugin.lib
+  sdurws_ird_selection_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\selection\Release\sdurws_ird_selection_contract_test.exe
+  sdurws_ird_selection_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\selection\Release\sdurws_ird_selection_test.exe
+  sdurws_ird_testdata_lint.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testdata_lint.exe
+  sdurws_ird_testkit_prochelper.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit_prochelper.exe
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit_test.exe
+  sdurws_ird_ui_app.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui_app.exe
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui_contract_test.exe
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui_gui_test.exe
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui_test.exe
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_plugin.lib
+  sdurws_ird_workflow_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_contract_test.exe
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_test.exe
+smoke-build-exit=0
+
+--- dynamics 冒烟产物 ---
+Qt6Core.dll
+Qt6Gui.dll
+Qt6Widgets.dll
+gtest.dll
+sdurws_ird_dynamics.lib
+sdurws_ird_dynamics_contract_test.exe
+sdurws_ird_dynamics_plugin.lib
+sdurws_ird_dynamics_test.exe

@@ -13,7 +13,7 @@
 | 协作输入 | `units/core.md` v0.11、`units/testkit.md` v0.9、`units/project.md` v0.19、`units/evidence.md` v1.3（**§9 评估器接口/注册表已冻结为设计基线**）、`units/runtime.md` v0.17、`units/policy.md` v0.15、`units/execution.md` v0.12、`units/diagnostics.md` v0.13、`units/ui.md` v1.76、`units/io.md` 卡头 v0.9、`units/modeling.md` v0.40、`units/requirements.md` v0.16、`units/kinematics.md` v0.15、`units/trajectory.md` v0.1（2026-10-06，同批产出）、`units/reporting.md` v0.16——除 evidence §9 冻结基线外**均为 Draft/Draft-Structured（未冻结）**；本卡消费的签名以各卡当前文本为基线，冻结后按影响面增量同步（§15.2 P-DYN-11） |
 | **缺失上游（如实登记）** | **`units/drivetrain.md` 不存在**（WP-18-T01 未产出——DriveTrainMappingEvaluator 契约未冻结，本卡以需求 DYN-04/ARCH §7.10 原文为消费契约基线，§8.2/§15.2）；**`units/selection.md` 不存在**（WP-19-T01 未产出——消费协议以需求 SEL-05/10 为基线）；**`units/optimization.md` 不存在**（WP-20/21 未产出——R2 承接仅登记边界）；`units/workflow.md` 不存在 |
 | 上游下游链位置 | ARCHITECTURE §11.1：`DETAILED-DESIGN.md`（已建立，dynamics 行"待产出"）→ `units/*.md`。本文即 `units/dynamics.md`，按任务卡深度编写 |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/`——**当前磁盘实况：仅 `include/sdurws/ird/dynamics/README.md` 一个占位文件（2026-10-06 实测；无 core/plugin/worker/include 产品头/src/test/contract_test/CMakeLists.txt）**；主 CMakeLists 中 `sdurws_ird_dynamics` 为 INTERFACE 占位目标（IRD_MODULES 列表成员）。真实库/插件/测试目标落位归 WP-17-T02（§3/§12） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/`——**WP-17-T02 已落位**：计算库 STATIC（PUBLIC 链 core/evidence/runtime/execution/diagnostics 五条 §3.2 CMake 行登记边＋集成模式 L1 基线 sdurw_math/kinematics/models＋sdurwsim＋Eigen3 PRIVATE）＋`sdurws_ird_dynamics_plugin` 最小可注册实现＋`sdurws_ird_dynamics_test`/`_contract_test` 随落位登记；RNEA/正动力学/统计等业务实现随 WP-17-T03～T10（见 §1.2 落位登记注/§3.2） |
 | 任务归属 | `development-task-breakdown.md`（v0.53）§2.18 WP-17（T01～T10）、§2.19 WP-18（外部依赖，T03 映射实现）、§2.24 WP-23（横切）；本文 §12 只做单元内部任务拆分与排序，不重排 WP 编号 |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释（§2）、框架零源码修改（SA-02）、双模式构建与留痕、提交后推送、分支红线（唯一开发主线 `redesign-main`）；Windows Qt GUI 测试须 VS x64 环境、`QT_QPA_PLATFORM=windows`、绝对路径逐个启动、不用 offscreen——**本次不启动 GUI**（§11.5） |
 | 实现口径 | **从头构建**（REQUIREMENTS v1.9/v1.11 确立）：一切实现按需求与本文新建，不继承、不恢复任何历史实现源码。旧代码对照：REQUIREMENTS 附录 A.6 明文"轨迹/动力学/选型在旧代码中无插件 → 按本文 TRJ/DYN/SEL 家族需求全新实现"——本卡不做旧代码逐文件对照（DYN 家族无旧实现可对照） |
@@ -73,7 +73,7 @@
 
 | # | 检查对象 | 实测结果 | 处置 |
 | --- | --- | --- | --- |
-| C-1 | `industrialrobot/dynamics/` 目录 | 存在，仅含 `include/sdurws/ird/dynamics/README.md`（占位说明："源码随对应任务卡（见 units/dynamics.md §9）落地；本文件不参与编译"） | 如实登记；README 的"§9"指向按本卡实际章节号（§3/§10）在 T02 落位时同步（README 指向核对随落位任务执行——runtime 卡 RT-T13 先例） |
+| C-1 | `industrialrobot/dynamics/` 目录 | 存在，仅含 `include/sdurws/ird/dynamics/README.md`（占位说明："源码随对应任务卡（见 units/dynamics.md §9）落地；本文件不参与编译"） | 如实登记；README 的"§9"指向按本卡实际章节号（§3/§10）在 T02 落位时同步（README 指向核对随落位任务执行——runtime 卡 RT-T13 先例）。**已闭环（WP-17-T02）**：README 已改写为落位说明版（指向卡 §3.2/§12，列当前公共头 DiagCodes.hpp 与后续落位路线） |
 | C-2 | `dynamics/core/`、`dynamics/plugin/`、`dynamics/worker/`、`dynamics/src/`、`dynamics/test/`、`dynamics/contract_test/`、`dynamics/CMakeLists.txt` | **均不存在**（当前尚未落位） | 本卡 §3.2 给出目标布局设计（明确标记为目标设计，不写成已存在）；落位归 WP-17-T02 |
 | C-3 | 主 CMakeLists 中 dynamics 目标 | `sdurws_ird_dynamics` INTERFACE 占位（IRD_MODULES 循环注册 include 路径），无别名用例、无 `_plugin`/`_test`/`_contract_test` | 转真实库归 WP-17-T02（DTB §6 自检清单 20/20 对应行） |
 | C-4 | `sdurws_ird_dynamics_worker` 目标 | **不存在；且本设计明确不创建**（与任务指令建议布局的差异及依据见 §3.3） | §3.3 差异登记 |
@@ -81,6 +81,8 @@
 | C-6 | 与任务拆分的差异 | DTB §2.18 WP-17-T02 输出列为"计算库（链 rwsim 零 Qt 基线）＋`_plugin`"——**无 worker 目标**；与 ARCH §4.1/execution.md §3.1 共享 worker 口径一致 | 本卡与 DTB/架构零差异；任务指令建议布局中"必要时的独立 worker"按"不必要"处置（§3.3） |
 | C-7 | diagnostics 内置码表 DYN-\* 条目 | 不存在（87 码零 DYN；DYN 前缀已在业务域清单预留，"阶段 B 起业务域注册须域卡在案"） | DYN-\* 拟注册清单见 §9.4，随 WP-17-T02/T03 注册 |
 | C-8 | ui 卡中 WP-17-T09 / dynamics 域消费者登记 | 不存在（WP-10-T08 域消费者清单未列 WP-17；Playback 动力学衔接无接口登记） | 登记 P-DYN-8（§15.2），随 WP-17-T09/ui 卡增量修订双向补齐 |
+
+> **WP-17-T02 落位登记（2026-10-06，构建落位任务——上表 C-1～C-8 为 T01 时点实测，本注为落位后状态）**：`dynamics/CMakeLists.txt` 已建成——`sdurws_ird_dynamics` 由上级 INTERFACE 占位升级为真实 STATIC 库（C++17、PUBLIC 链 core/evidence/runtime/execution/diagnostics 五条 §3.2 CMake 行登记边，ird_gates 白名单 "dynamics->…" 五行随任务登记并同步刷新 dependency-graph.json；project 边 T02 零公共值类型引用不落——requirements 卡 T02"runtime 边暂不登记"同款处理，实际引用时按 §3.2 增登；集成模式另链 L1 基线 sdurw_math/kinematics/models＋sdurwsim〔DTB §4.6 登记行〕＋Eigen3 PRIVATE〔参照 kinematics O-40〕；PUBLIC 形态与 §3.2 CMake 行"PRIVATE 链"字样的差异＝DiagCodes.hpp 内嵌 diagnostics/core 承载类型需随链到达＋测试目标表外边禁令，已落位各单元同以 PUBLIC 建边——P-RPT-9 同款，DTB §5.4 偏差登记面）；`sdurws_ird_dynamics_plugin` 最小可注册实现（自持描述符装配门面 `assembly/DynamicsPluginAssembly.hpp`——pluginId/titleKey 均有 ui.md §11.1/§3.5 登记出处，零 ui 编译边；selection WP-19-T02 同款先例）；`sdurws_ird_dynamics_test`/`_contract_test` 随落位登记（ctest LABELS ird——本注取代 §3.2 CMake 行"注册 _test/_contract_test（T10 起）"的时点口径：任务契约 WP-17-T02 acceptance 1 明文三目标同批创建）；`src/DiagCodes.cpp`＋`include/.../DiagCodes.hpp`＝DYN-* 15 码登记表（§9.4 全表物化——本单元依赖白名单含 diagnostics 编译边，走 kinematics WP-15-T02 注册函数形态〔CodeDescriptor＋registerDynamicsCodes 装配期注册，真实 StableCodeRegistry 验证〕，与 selection/drivetrain 纯登记表形态差异来自各自卡 §3.2 有无 diagnostics 边；卡面 §6.1/§10.2 提及但不在 §9.4 登记表的 DYN-FD-NUMERIC-ANOMALY 不进本批——随 WP-17-T05 先走 §9.4 增量修订再表尾追加）；占位 README 文案修正为落位说明版（C-1 闭环）；`dynamics/worker/` 仍不创建（§3.3/D-DYN-10，符合设计）。T03+ 源码集（DynTypes/Errors/DynConfig/InverseDynamics/ForwardDynamics/SeriesBuilder/Envelope/PowerEnergy/Evidence/Evaluators/TrajectorySourcePort/Commands/Handoff）尚未落地——§3.2 布局表任务列为权威。
 
 ### 1.3 本卡与上游文档的编号口径
 
@@ -1365,6 +1367,7 @@ AT-05→V-07/41/45；AT-07→V-01/13/22/23/24/25（动力学链）；AT-10→V-4
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-10-06 | 首版草案（WP-17-T01 交付物）：依据 REQUIREMENTS v1.16 与 ARCHITECTURE v0.13 完成 16 节详细设计——输入版本与代码落位实测（仅 README 占位；drivetrain/selection/optimization 卡缺失如实登记）、R1/R2 边界与拥有/消费/不拥有表、目标布局（不设专属 worker 的差异登记）、输入快照与数据模型（8 类型＋JointSideSeriesPack；单位表；能量量纲缺口登记）、RNEA 逆动力学（分项图；摩擦 sgn₀ 约定；负载事件变体；DYN-06 三层降级；耦合链防御）、正动力学一致性（时序图；分析配置容差来源）、峰值/RMS/包络/功率能量（时间加权含驻留；峰值窗样本级定义；百分位非 R1 明示）、多工况与 drivetrain/evidence 交接（dyn Profile 六项；不内嵌映射调用决策）、execution/selection/reporting/ui 协作（共享 worker、工况级检查点、15 条 DYN-\* 拟注册码、零修订命令集）、公共接口 7＋1 端口（含不新增接口论证）、52 行故障注入矩阵（AT-05/07/10/11/19/27/34/37/38 归属）、T01～T10＋WP-18-T03＋WP-23 任务拆分、四单元交接清单、追踪矩阵、10 项设计决策、12 项待裁决、5 项风险、交付前自审。纯文档交付：未执行任何构建/测试/GUI 测试/验收 |
+| v0.2 | 2026-10-06 | WP-17-T02 构建落位登记：头表"构建落位"行刷新＋§1.2 追加落位登记注（CMake/STATIC 五登记边＋L1 基线/插件最小可注册/两测试目标同批〔任务契约 acceptance 1 口径取代 §3.2 CMake 行"T10 起"时点注〕/DYN-* 15 码登记表 kinematics 注册函数形态/DYN-FD-NUMERIC-ANOMALY 不进本批的登记面/README 修正 C-1 闭环——业务实现随 T03+）；文档语义零变化（设计面不含 T02 实现新增决策——DYN-* 登记表为卡面既有登记值的物化；PUBLIC 链接形态差异为 DTB §5.4 偏差登记面，§1.2 注已载） |
 
 ---
 
@@ -1407,11 +1410,12 @@ AT-05→V-07/41/45；AT-07→V-01/13/22/23/24/25（动力学链）；AT-10→V-4
 | 动力学 vs 策略变更失效口径 | CON-06 策略身份入快照 vs dynamics 零策略消费 | 策略变更是否失效动力学的口径 | 无 policy 依赖条目→不失效（AT-05 电机成本类比）；已登记口径依据 | evidence 所有者复核（P-DYN-11 关联） | 全部评估链 |
 | 任务指令建议 worker 布局 | 指令建议 `sdurws_ird_dynamics_worker` vs execution.md D-16/DTB §5.1 唯一交付 worker | 目标布局差异 | 不设专属 worker（§3.3 差异登记＋触发重审条件） | 架构所有者（如需重审） | 共享 worker 全部协作 |
 
-### 16.3 未执行事项（如实声明）
+### 16.3 执行状态（WP-17-T02 落位后按真实结果刷新；v0.1 行为 T01 时点登记，历史如实保留于 §15.4）
 
-- **构建**：双模式构建未执行（纯文档任务，DTB §5.2 DoD 第 1 条对纯文档任务免除，仍如实登记）。
-- **测试**：§11 全部 52 行验证条目为设计，未编写、未执行；无任何"通过"结论。
-- **GUI 测试**：§11.5 流程为设计；本次未启动任何 GUI 程序（当前 dynamics 无 GUI 目标）。
-- **正式验收**：未发起、未通过；本卡为 Draft 待评审，验收按 acceptance-protocol.md 由独立上下文执行。
-- **门禁**：`ird_gates` 未执行（无代码变更）。
-- 后续落位路径：WP-17-T02（构建落位）起按 §12 任务表推进，全部验收以真实执行留痕为准。
+- **构建**：**双模式已执行零错误**（WP-17-T02：集成模式四目标 sdurws_ird_dynamics/_plugin/_test/_contract_test Release 构建零错误零警告；独立冒烟全树配置＋构建退出 0——留痕 traceability/builds/wp17-t02/ 两份构建日志）。
+- **测试**：`sdurws_ird_dynamics_test` **9/9 通过**（DynDiagCodes 5＋DynBuildRedLine 4）、`sdurws_ird_dynamics_contract_test` **9/9 通过**（DynBuildGraph 6＋DynPluginAssembly 3）——gtest XML＋ird-test-report.json 留痕同目录；期间契约测试曾真实检出插件面注释含词表符号字样的违例（PluginFaceHasZeroComputationSymbols 首跑 FAILED），修正注释措辞后复跑通过——失败能力与检出纪律有效。§11 全部 52 行验证条目（V-01～V-48 业务/黄金/故障注入）仍为设计，**未执行**（随 WP-17-T03～T10；"登记面用例通过"≠"业务功能已验证"——业务实现未落地）。
+- **GUI 测试**：未执行（T02 无 GUI 用例；插件界面与 GUI 手动验证通道随 WP-17-T09 按 §11.5 约定执行，一次一个可执行文件、不用 offscreen）。
+- **正式验收**：未发起、未通过；本卡 Draft 待评审，WP-17-T02 实施验收按 acceptance-protocol.md 由独立上下文执行。
+- **门禁**：**ird_gates 已执行零命中**（WP-17-T02：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中＋引擎自测 9 例按预期检出——留痕 integrate-build 日志）。
+- **文档验证脚本**：validate-docs.ps1 已在 WP-17-T02 交付会话执行（PASS：20 units/12 trace entries/307 task files）。
+- 后续落位路径：WP-17-T03（RNEA 逆动力学评估器）起按 §12 任务表推进，全部验收以真实执行留痕为准。
