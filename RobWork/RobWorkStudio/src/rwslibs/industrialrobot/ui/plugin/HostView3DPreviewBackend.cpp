@@ -57,12 +57,17 @@ void applyCellColor(View3DCellState state)
     }
 }
 
-/// 区域框 tint 分色（UI-T65——覆盖率映射档；None/缺省＝缺省蓝保持——
-/// 选中预览的辨识色不因无评估而改变）。返回色三元组供 glColor4f 消费。
+/// 区域框 tint 分色（UI-T65——覆盖率映射档；None/缺省＝区域框既有辨识
+/// 蓝（UI-T33 以来的原值 (0.25, 0.45, 1.0)——UI-T65 返工恢复并经
+/// palette::kRegionTintDefaultGl 词表供色，本文件零硬编码色值；返工前
+/// 误为 kPrimary 同值且字面量硬编码，acc/ui-t65/1 阻断 B/E2 消账）。
+/// 返回色三元组供 glColor4f 消费。
 std::array<float, 3> tintColor(std::optional<View3DTint> tint)
 {
     if (!tint.has_value() || *tint == View3DTint::None) {
-        return {0.12f, 0.35f, 0.66f};  // 缺省蓝（既有选中辨识色——原值保持）
+        return {ui::palette::kRegionTintDefaultGl[0],
+                ui::palette::kRegionTintDefaultGl[1],
+                ui::palette::kRegionTintDefaultGl[2]};  // 缺省蓝（词表单点）
     }
     switch (*tint) {
     case View3DTint::Good:
@@ -75,7 +80,10 @@ std::array<float, 3> tintColor(std::optional<View3DTint> tint)
         return {ui::palette::kSampleFailedGl[0], ui::palette::kSampleFailedGl[1],
                 ui::palette::kSampleFailedGl[2]};  // 零达标档＝红
     }
-    return {0.12f, 0.35f, 0.66f};  // 不可达分支（switch 全覆盖——防御面）
+    // 不可达分支（switch 全覆盖——防御面）：同缺省蓝词表值。
+    return {ui::palette::kRegionTintDefaultGl[0],
+            ui::palette::kRegionTintDefaultGl[1],
+            ui::palette::kRegionTintDefaultGl[2]};
 }
 
 /**
