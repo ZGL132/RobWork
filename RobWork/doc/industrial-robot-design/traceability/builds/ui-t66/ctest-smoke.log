@@ -1,0 +1,51 @@
+=== core ===
+100% tests passed, 0 tests failed out of 1
+Total Test time (real) =   0.42 sec
+=== diagnostics ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   1.14 sec
+=== evidence ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   0.64 sec
+=== execution ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   4.50 sec
+=== io ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   2.67 sec
+=== kinematics ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =  11.59 sec
+=== modeling ===
+100% tests passed, 0 tests failed out of 3
+Total Test time (real) =   2.03 sec
+=== policy ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   0.60 sec
+=== project ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =  20.32 sec
+=== reporting ===
+100% tests passed, 0 tests failed out of 2
+Total Test time (real) =   0.85 sec
+=== requirements ===
+100% tests passed, 0 tests failed out of 3
+Total Test time (real) =   2.10 sec
+=== runtime ===
+100% tests passed, 0 tests failed out of 1
+Total Test time (real) =   0.43 sec
+=== testkit ===
+100% tests passed, 0 tests failed out of 1
+Total Test time (real) =   9.82 sec
+=== ui ===
+100% tests passed, 0 tests failed out of 3
+Total Test time (real) =   4.18 sec
+=== smoke modeling_test direct ===
+rc=0
+[==========] 280 tests from 28 test suites ran. (321 ms total)
+[  PASSED  ] 280 tests.
+=== smoke modeling_gui direct ===
+rc=0
+[==========] 36 tests from 1 test suite ran. (652 ms total)
+[  PASSED  ] 36 tests.
+=== SMOKE DONE ===
