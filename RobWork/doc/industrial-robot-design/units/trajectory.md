@@ -12,7 +12,7 @@
 | 上游 | `REQUIREMENTS.md` **v1.16（`Accepted`，2026-09-09 签署；签署后变更 C1～C8 已留痕）**；`ARCHITECTURE.md` **v0.13（`Draft`，2026-09-27，方案 B.1 宿主融合 SA-18）** |
 | 协作输入 | `units/core.md` v0.11、`units/testkit.md` v0.9、`units/project.md` v0.19、`units/evidence.md` v1.3（**§9 评估器接口/注册表已冻结为设计基线**）、`units/runtime.md` v0.17、`units/policy.md` v0.15、`units/execution.md` v0.12、`units/diagnostics.md` v0.13、`units/ui.md` v1.76、`units/io.md` 卡头 v0.9、`units/modeling.md` v0.40、`units/requirements.md` v0.16、`units/kinematics.md` v0.15——除 evidence §9 冻结基线外**均为 Draft/Draft-Structured（未冻结）**；本卡消费的签名以各卡当前文本为基线，冻结后按影响面增量同步（§21.2 P-TRJ-11） |
 | 上游下游链位置 | ARCHITECTURE §11.1：`DETAILED-DESIGN.md`（已建立，trajectory 行"待产出"）→ `units/*.md`。本文即 `units/trajectory.md`，按任务卡深度编写 |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/`——**当前磁盘实况：仅 `include/sdurws/ird/trajectory/README.md` 一个占位文件（2026-10-06 实测）**；主 CMakeLists 中 `sdurws_ird_trajectory` 为 INTERFACE 占位目标（IRD_MODULES 列表成员，无别名用例、无子目录 add_subdirectory）。真实库/插件/测试目标落位归 WP-16-T03（§4/§18） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/`——**WP-16-T03 已落位**：计算库 STATIC（PUBLIC 链 core/evidence/runtime/policy/execution/diagnostics/io 七条 §4.2 CMake 行登记边＋集成模式 L1 基线 sdurw_math/kinematics/models/pathplanners〔DTB §4.6 登记行〕）＋`sdurws_ird_trajectory_plugin` 最小可注册实现＋`sdurws_ird_trajectory_test`/`_contract_test` 随落位登记；TRJ-\* 12 码登记表随批（§14.4）；PTP/直线/连续性/时间化等业务实现随 WP-16-T04~T10（见 §1.2 落位登记注/§4.2） |
 | 任务归属 | `development-task-breakdown.md`（v0.53）§2.17 WP-16（T01～T16；T14～T16 为 R2 预留）；本文 §18 只做单元内部任务拆分与排序，不重排 WP 编号 |
 | 适用 AGENTS.md | 仓库根 `AGENTS.md` 适用：产品代码详细中文注释（§2）、框架零源码修改（SA-02）、双模式构建与留痕、提交后推送、分支红线（唯一开发主线 `redesign-main`）；Windows Qt GUI 测试须 VS x64 环境、`QT_QPA_PLATFORM=windows`、绝对路径逐个启动、不用 offscreen |
 | 实现口径 | **从头构建**（REQUIREMENTS v1.9/v1.11 确立）：一切实现按需求与本文新建，不继承、不恢复任何历史实现源码；`old/` 仅作功能范围对照（本卡不做旧代码逐文件对照——TRJ 家族在旧代码中无对应插件，需求附录 A.6 明文"轨迹/动力学/选型在旧代码中无插件 → 按本文 TRJ/DYN/SEL 家族需求全新实现"） |
@@ -88,6 +88,8 @@
 | M-8 | io 卡中"标准轨迹导出"格式 | 不存在（io 仅通用 CSV/原子写通道） | 格式定义归本卡 §15.13；是否属需求语义变更登记 P-TRJ-5 |
 | M-9 | 已执行的 trajectory 构建/测试/GUI 测试/验收记录 | **不存在**（本卡为纯文档交付，未执行任何构建、测试或验收） | 如实声明；§17 全部验证条目为设计，非执行结果 |
 | M-10 | `old/` 历史轨迹实现 | DTB §4.1 O-01 登记 old/ 磁盘不存在；本卡不做旧代码对照 | 从头构建口径（表头"实现口径"行） |
+
+> **WP-16-T03 落位登记（2026-10-06，构建落位任务——上表 M-1～M-10 为 T01 时点实测，本注为落位后状态）**：`trajectory/CMakeLists.txt` 已建成——`sdurws_ird_trajectory` 由上级 INTERFACE 占位升级为真实 STATIC 库（C++17、PUBLIC 链 core/evidence/runtime/policy/execution/diagnostics/io 七条 §4.2 CMake 行登记边，ird_gates 白名单 "trajectory->…" 七行随任务登记并同步刷新 dependency-graph.json；project 边 T03 零公共值类型引用不落——requirements/dynamics 卡落位批同款处理，实际引用时按 §3.2 增登；集成模式另链 L1 基线 sdurw_math/kinematics/models/pathplanners〔§3.2 L1 基线集——DTB §4.6 登记行；P-TRJ-2 口径不扩大到 proximity，R-5 红线不动；T03 仅链接不消费——P-RPT-9 先例〕；PUBLIC 形态与 §4.2 CMake 行"PRIVATE 链"字样的差异＝DiagCodes.hpp 内嵌 diagnostics/core 承载类型需随链到达＋测试目标表外边禁令，已落位各单元同以 PUBLIC 建边——P-RPT-9 同款，DTB §5.4 偏差登记面）；`sdurws_ird_trajectory_plugin` 最小可注册实现（自持描述符装配门面 `assembly/TrajectoryPluginAssembly.hpp`——pluginId/titleKey 均有 ui.md §11.1/§3.5 登记出处，零 ui 编译边；dynamics WP-17-T02 同款先例；本注取代 §4.2 布局表"plugin/ 随 WP-16-T12"的时点口径：任务契约 WP-16-T03 acceptance 1 明文 _plugin/_test/_contract_test 三目标同批创建——界面面仍归 T12，T03 仅装配门面壳）；`sdurws_ird_trajectory_test`/`_contract_test` 随落位登记（ctest LABELS ird——本注取代 §4.2 CMake 行"注册 _test/_contract_test（T13 起）"的时点口径：同上契约 acceptance 1 明文；§17.1 黄金数据集与 AT-06 反例全集仍归 T13，T03 测试面＝登记表＋红线扫描＋构建图契约）；`src/DiagCodes.cpp`＋`include/.../DiagCodes.hpp`＝TRJ-* 12 码登记表（§14.4 全表物化——本单元依赖白名单含 diagnostics 编译边，走 kinematics WP-15-T02 注册函数形态〔CodeDescriptor＋registerTrajectoryCodes 装配期注册，真实 StableCodeRegistry 验证〕；逐码分类/重试族落值锚点＝diagnostics §4.3/§4.4 词表，逐码注释可追溯）；占位 README 文案修正为落位说明版（M-1 闭环）；`trajectory/worker/` 仍不创建（§4.3，符合设计）。T04+ 源码集（TrjTypes/Errors/PlanConfig/Sequence/Ptp/CartesianLine/Continuity/Planner/Smooth/Recheck/TimeParam/Quality/Evidence/Evaluators/KinematicsPort/Commands/Export——§4.2 布局表）尚未落地——布局表任务列为权威。
 
 ### 1.3 本卡与上游文档的编号口径
 
@@ -1270,6 +1272,7 @@ EvaluatorRegistry.register(TrjSequencePlanEvaluatorFactory{
 
 - 测试框架：googletest 经 vcpkg（DTB §5.5 定稿）；目标 `sdurws_ird_trajectory_test`/`_contract_test`（T13 注册）；黄金数据集 `testdata/golden/trj-*`（testkit §3.4 schema：`ird-golden-manifest/1`）＋容差档案（导出量 ε_abs 逐例声明——附录 D C7 测试对照口径）。
 - 双模式构建＋`ird_gates` 零命中＋留痕（gtest XML＋ird-test-report.json＋构建日志）＝DoD（DTB §5.2）；**本卡交付时全部未执行**（§1.2 M-9）。
+- **WP-16-T03 落位后执行状态注（2026-10-06，按真实结果登记——取代上行"T13 注册"时点口径中的目标注册时点，黄金数据集与 AT-06 反例全集仍归 T13）**：`sdurws_ird_trajectory_test`/`_contract_test` 已随 T03 注册并执行通过（登记表＋红线扫描＋构建图契约——留痕 traceability/builds/wp16-t03/）；本节故障注入矩阵 V-01~V-30 仍为设计（未执行——各行业务实现随 T04+ 落位）。
 - 测试替身纪律：替身只能证明**端口、状态与错误传播**，不能证明真实 RobWork 规划器、碰撞后端、runtime 快照或轨迹算法正确性——凡标注"需真实 planner/真实后端"的用例不得以替身替代送验（§17.3 列标注）；替身注入经 testkit FaultInterceptor（进程内）与域端口替身（KinematicsPort/policy 会话/runtime 视图替身）。
 
 ### 17.2 故障注入矩阵（核心 30 行；全部为设计）
@@ -1480,6 +1483,7 @@ V-10、V-11、V-12（部分）、V-13、V-14、V-19（部分）、AT-19 联合�
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-10-06 | 首版草案（WP-16-T01 交付物）：依据 REQUIREMENTS v1.16 与 ARCHITECTURE v0.13 完成 23 节详细设计——输入版本与缺失项实测台账、R1/R2 边界、拥有/消费/不拥有表、未来目标布局（不建专属 worker）、输入快照与身份（config.trj 进切片）、轨迹数据模型（零 jerk/工艺速度占位）、PTP、笛卡尔直线与 IK 分支连续性、路径连续性（R1 验收锚点=至少加速度连续）、RobWork 规划器与 policy 交接（pathplanners 消费口径＋P-TRJ-2 登记）、平滑与 TRJ-04 复检协议（P-06 零自设）、时间参数化（五次样条 C²＋附录 D 第 10 项容差）、trj Profile 与证据素材、execution/evidence/project/diagnostics/ui 协作（共享 worker、无专属 worker、取消/检查点/当前性）、公共接口 13 族、插件界面边界（零计算逻辑、零修订）、30 行故障注入矩阵、T01~T16 任务拆分（T14~T16 R2）、追踪矩阵、10 项设计决策、12 项待裁决、5 项风险、交付前自审。纯文档交付：未执行任何构建/测试/GUI 测试/验收 |
+| v0.2 | 2026-10-06 | WP-16-T03 构建落位登记：头表"构建落位"行刷新＋§1.2 追加落位登记注（CMake/STATIC 七登记边＋L1 基线/插件最小可注册/两测试目标同批〔任务契约 acceptance 1 口径取代 §4.2"plugin/ 随 T12、_test/_contract_test 随 T13"时点注——界面面仍归 T12、黄金数据集仍归 T13〕/TRJ-* 12 码登记表 kinematics 注册函数形态/README 修正 M-1 闭环——业务实现随 T04+）＋§17.1 追加落位后执行状态注（两测试目标已执行通过，V-01~V-30 仍为设计）；文档语义零变化（设计面不含 T03 实现新增决策——TRJ-* 登记表为卡面既有登记值的物化；PUBLIC 链接形态差异为 DTB §5.4 偏差登记面，§1.2 注已载） |
 
 ---
 

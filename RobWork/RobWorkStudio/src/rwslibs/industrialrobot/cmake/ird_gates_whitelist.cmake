@@ -71,7 +71,14 @@
 # 引用不落〔requirements 卡 T02 同款处理〕。五边已随本任务同步刷新进
 # dependency-graph.json〔traceability/ 在 allowedFiles 内——WP-14/
 # WP-15/WP-22/WP-19 四面留痕同款〕，并仍经 IRD_EXTRA_EDGE_REFS 登记
-# 出处）。
+# 出处）；另含 2026-10-06 增登的 trajectory->core/evidence/runtime/
+# policy/execution/diagnostics/io 七条（WP-16-T03——units/trajectory.md
+# §4.2 CMake 行边表，属 ARCH §3.5 既有许可方向的实例化；project 边 T03
+# 零公共值类型引用不落〔卡 §3.2 接口依赖清单提及但 §4.2 CMake 行未列
+# ——requirements/dynamics 卡同款处理〕。七边已随本任务同步刷新进
+# dependency-graph.json〔traceability/ 在 allowedFiles 内——WP-14/
+# WP-15/WP-22/WP-19/WP-17 五面留痕同款〕，并仍经 IRD_EXTRA_EDGE_REFS
+# 登记出处）。
 # 书写格式："依赖方->被依赖方"（与 traceability/dependency-graph.json 同序）。
 # ---------------------------------------------------------------------
 set(IRD_ALLOWED_UNIT_EDGES
@@ -128,6 +135,13 @@ set(IRD_ALLOWED_UNIT_EDGES
     "dynamics->runtime"       # WP-17-T02（RuntimeSnapshot/IRuntimeModelView/DynamicWorkCellConstView/gravityBase/makeState 只读消费——RNEA 输入面；O-07 dynamics 侧承接＝卡 §3.1/§3.2 明文；T02 仅链接不消费，消费随 WP-17-T03 回填）
     "dynamics->execution"     # WP-17-T02（任务提交/取消令牌/工况级检查点/结果归档通道——接口消费；T02 仅链接不消费，消费随 WP-17-T05 批量通道回填）
     "dynamics->diagnostics"   # WP-17-T02（DYN-* 15 码 StableCodeRegistry 装配期注册、CodeDescriptor/IDiagnosticRegistry——本批即真实消费面）
+    "trajectory->core"        # WP-16-T03 七边（trajectory.md §4.2 CMake 行边表——身份/单位/比较/词表/诊断契约）
+    "trajectory->evidence"    # WP-16-T03（IEngineeringEvaluator/EvaluationRequest/IEvaluatorFactory——trj-sequence-plan 评估器实现；T03 仅链接不消费——P-RPT-9 先例，消费随 WP-16-T10 回填）
+    "trajectory->runtime"     # WP-16-T03（RuntimeSnapshot/IRuntimeModelView/WorkCellConstView/RuntimeNameMap 只读消费——输入组装与名称端口面；T03 仅链接不消费，消费随 WP-16-T04 回填）
+    "trajectory->policy"      # WP-16-T03（IPolicyProvider/CollisionEvaluationSession ④端口只读调用——碰撞与复检唯一权威；T03 仅链接不消费，消费随 WP-16-T06/T07 回填）
+    "trajectory->execution"   # WP-16-T03（任务提交/取消令牌/检查点/共享 worker 装配面——接口消费；T03 仅链接不消费，消费随 WP-16-T04 回填）
+    "trajectory->diagnostics" # WP-16-T03（TRJ-* 12 码 StableCodeRegistry 装配期注册、CodeDescriptor/IDiagnosticRegistry——本批即真实消费面）
+    "trajectory->io"          # WP-16-T03（标准轨迹导出 CSV/原子写通道——字段字典归本域、执行经 io；T03 仅链接不消费，消费随 WP-16-T10 回填）
     "modeling->ui"          # WP-22-T02 返工回填（modeling.md §3.2"插件目标→本计算库＋sdurws_ird_ui"明文——WP-13-T15 落位的装配面边；WP-15-T02 附件"逐条具名登记——登记册回填归 WP-01-T03"的执行）
     "requirements->ui"      # WP-22-T02 返工回填（requirements.md §3.2 同款插件装配面边——WP-14-T08 落位）
     "kinematics->ui"        # WP-22-T02 返工回填（kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位）
@@ -195,6 +209,13 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "dynamics->runtime"
     "dynamics->execution"
     "dynamics->diagnostics"
+    "trajectory->core"
+    "trajectory->evidence"
+    "trajectory->runtime"
+    "trajectory->policy"
+    "trajectory->execution"
+    "trajectory->diagnostics"
+    "trajectory->io"
     "modeling->ui"
     "requirements->ui"
     "kinematics->ui"
@@ -237,6 +258,13 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-17-T02 落位登记（2026-10-06）：units/dynamics.md §3.2 CMake 行边表——RuntimeSnapshot/IRuntimeModelView/DynamicWorkCellConstView/gravityBase/makeState 只读消费（RNEA 输入面）；O-07 的 dynamics 侧承接＝卡 §3.1/§3.2 明文 runtime 接口依赖（WP-17-T01 卡面登记）；T02 仅链接不消费，消费随 WP-17-T03 回填（dependency-graph.json 已随任务同步刷新）"
     "WP-17-T02 落位登记（2026-10-06）：units/dynamics.md §3.2 CMake 行边表——任务提交/取消令牌/工况级检查点/结果归档通道（接口消费）；T02 仅链接不消费，消费随 WP-17-T05 批量通道回填（dependency-graph.json 已随任务同步刷新）"
     "WP-17-T02 落位登记（2026-10-06）：units/dynamics.md §3.2 CMake 行边表＋§9.4——DYN-* 15 码 StableCodeRegistry 装配期注册、CodeDescriptor/IDiagnosticRegistry（本批即真实消费面——kinematics KIN 同款注册函数形态）；dependency-graph.json 已随任务同步刷新"
+    "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/单位/比较/词表/诊断契约）；project 边 T03 零公共值类型引用不落（requirements/dynamics 卡同款处理）；dependency-graph.json 已随任务同步刷新（双面留痕）"
+    "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表——IEngineeringEvaluator/EvaluationRequest/IEvaluatorFactory（trj-sequence-plan 评估器实现面）；T03 仅链接目标不消费上游公共头（P-RPT-9 先例），消费随 WP-16-T10 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表——RuntimeSnapshot/IRuntimeModelView/WorkCellConstView/RuntimeNameMap 只读消费（输入组装与名称端口面）；T03 仅链接不消费，消费随 WP-16-T04 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表——IPolicyProvider/CollisionEvaluationSession ④端口只读调用（碰撞与复检唯一权威——R-5：零 proximity 直链，P-TRJ-2 口径不扩大）；T03 仅链接不消费，消费随 WP-16-T06/T07 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表——任务提交/取消令牌/检查点/共享 worker 装配面（接口消费）；T03 仅链接不消费，消费随 WP-16-T04 回填（dependency-graph.json 已随任务同步刷新）"
+    "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表＋§14.4——TRJ-* 12 码 StableCodeRegistry 装配期注册、CodeDescriptor/IDiagnosticRegistry（本批即真实消费面——kinematics KIN/dynamics DYN 同款注册函数形态）；dependency-graph.json 已随任务同步刷新"
+    "WP-16-T03 落位登记（2026-10-06）：units/trajectory.md §4.2 CMake 行边表——标准轨迹导出 CSV/原子写通道（字段字典归本域、执行经 io——io.md C-6 格式所有者注册机制）；T03 仅链接不消费，消费随 WP-16-T10 回填（dependency-graph.json 已随任务同步刷新）"
     "WP-22-T02 返工回填（2026-10-06）：units/modeling.md §3.2 插件目标行\"→本计算库＋sdurws_ird_ui\"——WP-13-T15 落位的装配面边（WP-15-T02 附件\"逐条具名登记——登记册回填归 WP-01-T03\"的机器面执行；dependency-graph.json 已随本任务同步刷新——双面留痕）"
     "WP-22-T02 返工回填（2026-10-06）：units/requirements.md §3.2 同款插件装配面边——WP-14-T08 落位（dependency-graph.json 已随本任务同步刷新）"
     "WP-22-T02 返工回填（2026-10-06）：units/kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位（dependency-graph.json 已随本任务同步刷新）"
