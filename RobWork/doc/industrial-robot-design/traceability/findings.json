@@ -4996,7 +4996,7 @@
       "status": "open",
       "registeredAt": "2026-10-04",
       "title": "需求三维区域采样结果状态着色未闭环（宿主审核 P1）：当前仅有包围盒＋采样格线骨架，缺采样点通过/失败/未采样三态、达标颜色区分、覆盖率颜色映射、校验项点击定位采样点、颜色图例；颜色必须由统一 UI 词表提供（建议语义：绿=通过/红=未通过/灰=未采样/黄=警告/蓝框=当前选中），禁止三维后端各自硬编码",
-      "owner": "待立项（宿主审核阶段 1 首项——数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/透明度/图例→校验页与覆盖率摘要）"
+      "owner": "两批链落位：上游批 UI-T64（kinematics 覆盖评估执行通道产品装配——2026-10-05 落位 ready 待独立验收，ui-t64@2972b5d7）＋消费卡 UI-T65（三态着色/覆盖率框色映射/统一供色图例——2026-10-06 落位 ready 待独立验收，ui-t65 堆叠 ui-t64）；数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/图例 全通〔校验项点击定位＝L-R1 jumpTarget 区域级现成机制，样本级定位随诊断素材粒度留后续〕；两批独立验收 pass 后本条闭合"
     },
     {
       "id": "F-496",

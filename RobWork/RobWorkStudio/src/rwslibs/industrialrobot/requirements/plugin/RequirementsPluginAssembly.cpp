@@ -185,6 +185,10 @@ void RequirementsPluginAssembly::bindRegionPreviewSink(
             view.refFrame = geo.refFrame;
             view.summaryText = geo.summaryText;
             view.gridLines = geo.gridLines;  // UI-T52——格线段直投（角序零重排）
+            // UI-T65——区域锚与覆盖率目标透传（F-495 消费卡的投影过滤/
+            // 框色对照输入；值直投零换算）。
+            view.regionObjectId = geo.regionObjectId;
+            view.minPositionCoverage = geo.minPositionCoverage;
             forward(view);
         });
 }

@@ -3503,15 +3503,57 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                     for (std::size_t i = 0; i < 8; ++i) {
                         outline.corners[i] = worldT * geo.corners[i];
                     }
-                    box = outline;
-                    // 采样格骨架线投递（UI-T52——格线段世界系变换直投；
-                    // 着色点/判定仍归评估接线任务——F-490① 维持）。
+                    // 采样格骨架线投递（UI-T52——格线段世界系变换直投）。
                     ui::View3DSampleGrid grid;
                     grid.gridLines.reserve(geo.gridLines.size());
                     for (const auto& seg : geo.gridLines) {
                         grid.gridLines.emplace_back(worldT * seg.first,
                                                     worldT * seg.second);
                     }
+
+                    // ---- 着色采样点层投影（UI-T65——F-495 消费卡兑现，
+                    // F-490① 维持口径消账）：执行器账面→三维格元。对账
+                    // 纪律：snapshotId+epoch 与当前会话绑定一致才投影
+                    // （跨快照账面＝PA 权威镜像的呈现侧拒绝——不虚构
+                    // 判定）；区域锚过滤（多计划结果的逐区域切片）；
+                    // 坐标基座系→世界系（执行器视图 worldToBase 的逆——
+                    // 唯一读取点反向，零第二套基座变换代数）。
+                    std::optional<kinematics::KinChannelCoverageResult> coverage =
+                        m_kinEvaluation != nullptr
+                            ? m_kinEvaluation->latestCoverageResult()
+                            : std::nullopt;
+                    if (coverage.has_value() && coverage->ok
+                        && m_kinEvaluation != nullptr
+                        && coverage->snapshotId == m_kinEvaluation->snapshotId()
+                        && coverage->epoch == m_kinEvaluation->epoch()) {
+                        // T_world_base（快照唯一读取点的逆——世界系变换；
+                        // rw::math::inverse＝Transform3D 逆的自由函数单点）。
+                        const rw::math::Transform3D<double> worldTbase =
+                            rw::math::inverse(
+                                m_kinEvaluation->sessionView()->worldToBase());
+                        // 该区域逐样本切片（着色点层＝全 kind 样本透传——
+                        // 位置/位姿样本都上屏；计数已抽至纯函数）。
+                        grid.samples.reserve(coverage->samples.size());
+                        grid.cellStates.reserve(coverage->samples.size());
+                        for (const auto& record : coverage->samples) {
+                            if (!(record.regionObjectId == geo.regionObjectId)) {
+                                continue;  // 他区域样本——预览是单选区域面
+                            }
+                            grid.samples.push_back(worldTbase * record.position);
+                            grid.cellStates.push_back(
+                                mapSampleStateToCell(record.state));
+                        }
+                        // 框色＝该区域**位置口径**计数比×目标下限（契约
+                        // acceptance 3；计数＋分档一体在纯函数
+                        // view3DRegionTintFromSamples——kind 分轴与域
+                        // computeCoverage 位置轴同定义，与面板呈现的
+                        // computation.coverage.position 同口径；呈现对照
+                        // ——判定权威归域）。
+                        outline.tint = view3DRegionTintFromSamples(
+                            coverage->samples, geo.regionObjectId,
+                            geo.minPositionCoverage);
+                    }
+                    box = outline;
                     m_reqGrid = grid;
                 } else if (m_diag.pipeline) {
                     m_diag.pipeline->logDev(
@@ -3522,8 +3564,8 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                             + "）");
                 }
                 m_reqBox = box;
-                // 着色采样点层仍归评估接线任务（F-490① 维持）——本批投递
-                // 格线骨架（gridLines 世界系变换直投）。
+                // 着色采样点层已随上方合并投递（UI-T65——F-490① 消费卡
+                // 兑现：格线骨架＋着色点两层并存，格线灰/点分色）。
                 ui::View3DPreviewUpdate update;
                 update.frameMarkers = m_reqMarkers;
                 update.boxOutline = m_reqBox;

@@ -282,6 +282,10 @@ RegionPreviewGeometry regionPreviewGeometry(const WorkRegion& region,
                     + formatDeterministic(box.size[2]) + " m";
     geo.summaryText += countsValid ? (" · 格 " + formatCounts(counts)) : " · 格 未定";
     geo.refFrame = region.refFrame;  // UI-T33——参考系原值随几何（世界系变换的投影方输入）
+    // UI-T65——区域锚与覆盖率目标（F-495 消费卡的投影过滤/框色对照输入；
+    // 值直投零换算——目标下限域默认 0.8 由 CoverageTargets 承载）。
+    geo.regionObjectId = region.objectId;
+    geo.minPositionCoverage = region.coverageTargets.minPositionCoverage;
     return geo;
 }
 

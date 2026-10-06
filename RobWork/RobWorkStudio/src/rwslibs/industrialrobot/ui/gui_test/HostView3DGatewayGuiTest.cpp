@@ -411,6 +411,11 @@ TEST(HostView3DGateway, PreviewOutlet_DegradedApplyAndClear_UI_T33)
     grid.gridLines.emplace_back(rw::math::Vector3D<double>(0, 0, 0),
                                 rw::math::Vector3D<double>(1, 0, 0));
     grid.samples.push_back(rw::math::Vector3D<double>(0.5, 0, 0));
+    // UI-T65——四态词表＋框 tint 透传断言载体（F-495 消费卡：协议面
+    // 逐点状态经网关原样达渲染层；渲染分色在词表映射面）。
+    grid.cellStates = {ui::View3DCellState::Good, ui::View3DCellState::NotSampled};
+    grid.samples.push_back(rw::math::Vector3D<double>(0.7, 0, 0));
+    update.boxOutline->tint = ui::View3DTint::Good;
     update.sampleGrid = grid;  // UI-T52——格线/采样点整组透传断言载体
     ASSERT_TRUE(gateway->applyPreview(update));
     EXPECT_TRUE(gateway->previewAttached());
@@ -420,7 +425,17 @@ TEST(HostView3DGateway, PreviewOutlet_DegradedApplyAndClear_UI_T33)
     ASSERT_TRUE(fx.lastDrawn->sampleGrid.has_value());
     EXPECT_EQ(fx.lastDrawn->sampleGrid->gridLines.size(), std::size_t{1})
         << "格线段透传失真（UI-T52 acceptance 2）";
-    EXPECT_EQ(fx.lastDrawn->sampleGrid->samples.size(), std::size_t{1});
+    ASSERT_EQ(fx.lastDrawn->sampleGrid->samples.size(), std::size_t{2});
+    ASSERT_EQ(fx.lastDrawn->sampleGrid->cellStates.size(), std::size_t{2})
+        << "逐点状态透传失真（F-495 三态面断裂）";
+    EXPECT_EQ(fx.lastDrawn->sampleGrid->cellStates[0], ui::View3DCellState::Good);
+    EXPECT_EQ(fx.lastDrawn->sampleGrid->cellStates[1],
+              ui::View3DCellState::NotSampled)
+        << "NotSampled 灰态透传失真（UI-T65 四态词表）";
+    ASSERT_TRUE(fx.lastDrawn->boxOutline.has_value());
+    ASSERT_TRUE(fx.lastDrawn->boxOutline->tint.has_value());
+    EXPECT_EQ(*fx.lastDrawn->boxOutline->tint, ui::View3DTint::Good)
+        << "框色映射档透传失真（UI-T65 覆盖率映射）";
     EXPECT_EQ(gateway->currentPreview().sampleGrid->gridLines.size(),
               std::size_t{1})
         << "观测值与绘制值不同源（currentPreview 观测面失守）";

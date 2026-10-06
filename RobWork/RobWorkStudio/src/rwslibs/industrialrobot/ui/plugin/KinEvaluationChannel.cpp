@@ -409,7 +409,12 @@ kinematics::KinChannelBackgroundAck KinEvaluationExecutor::submit(
             // ---- 成功：结构化投影（逐样本＋覆盖率标记——域值直投翻译）。
             result.ok = true;
             result.samples.reserve(computation.results.results.size());
-            for (const auto& record : computation.results.results) {
+            // ---- 逐样本投影（状态五值翻译＋坐标/区域锚直投——UI-T65：
+            // results 与 samples 按 sampleIndex 双射对齐（computeCoverage
+            // 保证），同下标取坐标零查找）。
+            for (std::size_t i = 0; i < computation.results.results.size(); ++i) {
+                const auto& record = computation.results.results[i];
+                const auto& sample = computation.samples.samples[i];
                 kinematics::KinChannelSampleRecord projected;
                 projected.sampleIndex = record.sampleIndex;
                 switch (record.state) {
@@ -433,6 +438,13 @@ kinematics::KinChannelBackgroundAck KinEvaluationExecutor::submit(
                         break;
                 }
                 projected.reason = record.reason;
+                projected.position = sample.position;      // 基座系 m（直投）
+                projected.regionObjectId = sample.regionObjectId;  // 区域锚
+                // 样本类别直投（UI-T65 返工——双口径判定键：消费侧按
+                // kind 过滤复算位置轴计数，与域 computeCoverage 同定义）。
+                projected.kind = sample.kind == kinematics::SampleKind::Pose
+                                     ? kinematics::KinChannelSampleKind::Pose
+                                     : kinematics::KinChannelSampleKind::Position;
                 result.samples.push_back(std::move(projected));
             }
             const kinematics::CoverageTotals& pos = computation.coverage.position;

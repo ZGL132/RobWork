@@ -47,6 +47,9 @@
 #include <string>
 #include <vector>
 
+#include <rw/math/Transform3D.hpp>
+#include <rw/math/Vector3D.hpp>
+
 #include <sdurws/ird/core/Identity.hpp>       // core::ObjectId/ContentIdentity（身份值面）
 #include <sdurws/ird/kinematics/Evaluators.hpp>  // IKinRuntimeView/IIkSolver/IFkEvaluator（缝的公共类型——门面直传）
 
@@ -191,8 +194,34 @@ enum class KinChannelSampleState : std::uint8_t {
 };
 
 /**
+ * @brief 单样本类别投影（与域 SampleKind 两值词表同构——Sampling.hpp
+ *        枚举注的映射口径；通道头零域头依赖纪律与 KinChannelSampleState
+ *        同款：值语义逐字一致，消费方不直达域头）。
+ *
+ * 双口径判定键（UI-T65 返工追加——契约 acceptance 3"区域框 tint 按该
+ * 区域位置口径计数比"的结构前提）：位置/位姿样本分属覆盖率的两条轴
+ * （域 computeCoverage 按 kind 分轴累计——分母 plannedPositionSamples/
+ * plannedPoseSamples），消费侧按 kind 过滤才能复算出与域位置轴同定义
+ * 的逐区域计数——无本字段时合并点只能全样本混计，系统性偏离域位置
+ * 口径（acc/ui-t65/1 阻断 A 的结构性根源）。
+ */
+enum class KinChannelSampleKind : std::uint8_t {
+    /// 位置样本（域 Position——评估＝位置存在性 IK，orientation 无约束）。
+    Position,
+    /// 位姿样本（域 Pose——评估＝完整位姿 IK，(位置×姿态) 组合全局口径）。
+    Pose,
+};
+
+/**
  * @brief 单样本结果投影记录（与域 SampleResultRecord 同构——F-495
  *        消费卡按 sampleIndex 与需求侧采样格对齐着色）。
+ *
+ * UI-T65 表尾追加三字段（消费卡投影需要）：position（样本坐标——域
+ * SampleRecord::position 直投，基座系 {B}，单位 m；着色点世界系变换
+ * 归投影方）、regionObjectId（归属区域锚——多计划结果的逐区域过滤
+ * 键）与 kind（样本类别——位置/位姿双口径的判定键，UI-T65 返工追加；
+ * 见 KinChannelSampleKind 注）。追加纪律：既有消费面按字段名取值，
+ * 追加零破坏。
  */
 struct KinChannelSampleRecord {
     /// 对齐键（＝域 SampleRecord::sampleIndex——分母完整性核查键）。
@@ -202,11 +231,21 @@ struct KinChannelSampleRecord {
     /// 原因文本（NotApplicable/NotRun 必填非空——ERR-01；缺检测器的
     /// DataInsufficient 也携带）。
     std::string reason;
+    /// 样本坐标（基座系 {B}，单位 m——域 SampleRecord::position 直投；
+    /// UI-T65 追加。着色点世界系变换归消费投影方）。
+    rw::math::Vector3D<double> position = rw::math::Vector3D<double>(0.0, 0.0, 0.0);
+    /// 归属区域对象身份（域 SampleRecord::regionObjectId 直投——多计划
+    /// 结果的逐区域过滤键；UI-T65 追加）。
+    core::ObjectId regionObjectId;
+    /// 样本类别（位置/位姿——双口径判定键；域 SampleRecord::kind 直投，
+    /// UI-T65 返工表尾追加）。
+    KinChannelSampleKind kind = KinChannelSampleKind::Position;
 
     bool operator==(const KinChannelSampleRecord& o) const
     {
         return sampleIndex == o.sampleIndex && state == o.state
-            && reason == o.reason;
+            && reason == o.reason && position == o.position
+            && regionObjectId == o.regionObjectId && kind == o.kind;
     }
     bool operator!=(const KinChannelSampleRecord& o) const { return !(*this == o); }
 };

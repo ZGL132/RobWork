@@ -61,6 +61,7 @@
 #include <sdurws/ird/kinematics/Sampling.hpp>    // SamplingPlan/RegionSamplingBudget（域投影型）
 #include <sdurws/ird/runtime/Snapshot.hpp>       // runtime::RuntimeSnapshot（快照持有）
 #include <sdurws/ird/requirements/Editor.hpp>    // IRequirementEditor（工作集切片源）
+#include <sdurws/ird/ui/View3DPreviewContract.hpp>  // View3DCellState/View3DTint（三维词表——映射目标）
 
 namespace sdurws {
 namespace ird {
@@ -156,6 +157,132 @@ public:
         return std::nullopt;  // 纯计算面零物化读取（见类注）
     }
 };
+
+// =====================================================================
+// 呈现对照映射（F-495 消费卡的纯值词表翻译——判定零参与：spec §2.4
+// "着色判定归域侧，呈现只分色"口径的两函数落位）
+// =====================================================================
+
+/**
+ * @brief 域样本五值 → 三维格元词表映射（inline 纯函数——逐值词表翻译
+ *        零判定；语义：Reached→Good 绿／Unreachable→Failed 红／
+ *        DataInsufficient→Weak 黄〔数据不足＝警告档〕／NotRun·
+ *        NotApplicable→NotSampled 灰〔未采样诚实态〕）。
+ */
+inline View3DCellState mapSampleStateToCell(kinematics::KinChannelSampleState state)
+{
+    switch (state) {
+    case kinematics::KinChannelSampleState::Reached:
+        return View3DCellState::Good;
+    case kinematics::KinChannelSampleState::Unreachable:
+        return View3DCellState::Failed;
+    case kinematics::KinChannelSampleState::DataInsufficient:
+        return View3DCellState::Weak;
+    case kinematics::KinChannelSampleState::NotApplicable:
+    case kinematics::KinChannelSampleState::NotRun:
+        return View3DCellState::NotSampled;
+    }
+    return View3DCellState::NotSampled;  // 不可达（switch 全覆盖——防御面）
+}
+
+/**
+ * @brief 覆盖率框色档位（inline 纯函数——呈现对照：位置口径计数比 ×
+ *        目标下限的三档映射；**非工程判定**——达标语义权威归域/evidence，
+ *        本映射只服务框色呈现〔View3DTint 注〕）。
+ *
+ * @param reached          [in] 位置口径 Reached 计数（无量纲）
+ * @param planned          [in] 位置口径分母计数（无量纲；0＝零样本）
+ * @param minTargetCoverage [in] 覆盖率目标下限（∈[0,1]——REQ-03；
+ *                          nullopt＝区域未设目标→None）
+ * @return Good＝比率≥目标／Weak＝比率<目标／None＝未评估·零分母·无目标
+ */
+inline View3DTint view3DTintFromCoverage(std::uint64_t reached,
+                                         std::uint64_t planned,
+                                         std::optional<double> minTargetCoverage)
+{
+    // 对照输入不完整＝无映射（未评估/零分母/无目标——不虚构档位）。
+    if (planned == 0 || !minTargetCoverage.has_value()) {
+        return View3DTint::None;
+    }
+    const double ratio = static_cast<double>(reached)
+                         / static_cast<double>(planned);
+    return ratio >= *minTargetCoverage ? View3DTint::Good : View3DTint::Weak;
+}
+
+/**
+ * @brief 逐区域位置口径计数（inline 纯函数——UI-T65 返工把合并段计数
+ *        逻辑抽出的可测半区；区域过滤＋kind 分轴计数一体）。
+ *
+ * 口径权威（PA-1 工程判定——与域 KIN-04 位置轴同定义，acc/ui-t65/1
+ * 阻断 A 的口径修正本体）：
+ *   分母＝该区域（regionObjectId 相等）kind==Position 的样本数。域
+ *         generateSampleSet 的不变式"样本总数＝plannedPositionSamples＋
+ *         plannedPoseSamples"保证逐 kind 计数与计划分母逐区域同构；
+ *   分子＝其中 kind==Position 且 state==Reached。
+ * 位姿（Pose）样本**不入**框色对照输入：UI 评估流恒产位姿样本（需求
+ * 侧 orientationSampling 缺省 1×1 且域装配保证 ≥1），全样本混计比与域
+ * 位置覆盖率系统性分叉——同屏面板已消费域 computation.coverage.position
+ * （位置口径），框色不得是另一口径（契约 acceptance 3"位置口径"一字
+ * 未改，所有者 2026-10-06 裁决）。
+ *
+ * @param samples        [in] 覆盖结果逐样本账面（执行器投影出口——
+ *                       含 kind 双口径判定键；只读，本函数不接管所有权）
+ * @param regionObjectId [in] 目标区域对象身份（区域过滤键——精确相等）
+ * @return 位置轴计数对（reached/planned；零样本区域＝0/0——由
+ *         view3DTintFromCoverage 映射为 None）
+ */
+struct RegionPositionTally {
+    std::uint64_t reached = 0;  ///< 位置轴分子（该区域 Position∧Reached；无量纲）
+    std::uint64_t planned = 0;  ///< 位置轴分母（该区域 Position 样本数；无量纲）
+};
+
+inline RegionPositionTally tallyRegionPositionCoverage(
+    const std::vector<kinematics::KinChannelSampleRecord>& samples,
+    const core::ObjectId& regionObjectId)
+{
+    RegionPositionTally tally;
+    for (const auto& record : samples) {
+        if (!(record.regionObjectId == regionObjectId)) {
+            continue;  // 他区域样本——预览是单选区域面（过滤不入计数）
+        }
+        if (record.kind != kinematics::KinChannelSampleKind::Position) {
+            continue;  // 位姿样本不入位置轴（双口径分轴——类注口径权威）
+        }
+        ++tally.planned;  // 位置轴分母（不可达/数据不足一律保留——域 R8）
+        if (record.state == kinematics::KinChannelSampleState::Reached) {
+            ++tally.reached;  // 位置轴分子
+        }
+    }
+    return tally;
+}
+
+/**
+ * @brief 区域框色对照一体入口（inline 纯函数——UI-T65 返工：逐区域
+ *        位置口径计数＋比率分档的合并段唯一调用点；可测性承载——
+ *        双口径发散用例直接断言本函数）。
+ *
+ * 与调用方（UiPlugin 合并段）的分工：着色点层（全 kind 样本的
+ * samples/cellStates 投递）留在合并段；框色（位置口径对照）收拢于
+ * 本函数——计数逻辑全部进 ui_test 可编译单元，合并段回归"透传＋
+ * 调用"薄面。
+ *
+ * @param samples           [in] 覆盖结果逐样本账面（同 tallyRegionPositionCoverage）
+ * @param regionObjectId    [in] 目标区域对象身份（区域过滤键）
+ * @param minTargetCoverage [in] 位置覆盖率目标下限（∈[0,1]——REQ-03；
+ *                          nullopt＝区域未设目标→None）
+ * @return Good/Weak/None 三档（语义同 view3DTintFromCoverage——内部
+ *         复用其分档，比率计算单一实现）
+ */
+inline View3DTint view3DRegionTintFromSamples(
+    const std::vector<kinematics::KinChannelSampleRecord>& samples,
+    const core::ObjectId& regionObjectId,
+    std::optional<double> minTargetCoverage)
+{
+    const RegionPositionTally tally =
+        tallyRegionPositionCoverage(samples, regionObjectId);
+    return view3DTintFromCoverage(tally.reached, tally.planned,
+                                  std::move(minTargetCoverage));
+}
 
 // =====================================================================
 // KinEvaluationExecutor——覆盖评估执行器（装配层受理/切片/后台执行/账面）

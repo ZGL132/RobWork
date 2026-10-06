@@ -31,7 +31,9 @@ namespace sdurws::ird::ui {
  *
  * 全站仅 5 个强调色：主色工程蓝（选中/主按钮/焦点）、警示橙（警示条/
  * 必验标签）、成功绿（状态卡通过面）、正文/次级灰阶。任何新 UI 面禁止
- * 引入词表外色值（防彩虹化——呈现一致性 NFR-DEP-05）。
+ * 引入词表外色值（防彩虹化——呈现一致性 NFR-DEP-05）。UI-T65 增采样
+ * 状态色族（见 kSampleGoodGl 起的词表块——F-495"颜色由统一 UI 词表
+ * 提供"的单一供色点，三维后端与图例同源消费）。
  */
 namespace palette {
 inline constexpr const char* kWindow = "#F2F4F7";    ///< 窗口底（浅灰工业底）
@@ -42,6 +44,39 @@ inline constexpr const char* kWarning = "#E8833A";   ///< 警示橙
 inline constexpr const char* kSuccess = "#2E9E5B";   ///< 成功绿
 inline constexpr const char* kText = "#1F2733";      ///< 正文
 inline constexpr const char* kTextMuted = "#5B6470"; ///< 次级文本
+
+// ---- 采样状态色（UI-T65——三维格元分色与图例色块的唯一供色点；GL 与
+//      hex 两形态同源换算，消费面禁止各自硬编码）----
+
+/// 达标绿（GL 三元组——三维格元 Good 档）。
+inline constexpr float kSampleGoodGl[3] = {0.15f, 0.85f, 0.25f};
+/// 临界/数据不足黄（GL——Weak 档）。
+inline constexpr float kSampleWeakGl[3] = {0.95f, 0.80f, 0.15f};
+/// 未达标红（GL——Failed 档）。
+inline constexpr float kSampleFailedGl[3] = {0.90f, 0.15f, 0.15f};
+/// 未采样灰（GL——NotSampled 档；工业灰阶——诚实空态辨识色）。
+inline constexpr float kSampleNotSampledGl[3] = {0.55f, 0.58f, 0.62f};
+/// 达标绿（QColor 呈现面——图例色块；与 kSampleGoodGl 同源换算）。
+inline constexpr const char* kSampleGoodHex = "#26D940";
+/// 临界黄（图例；与 kSampleWeakGl 同源换算）。
+inline constexpr const char* kSampleWeakHex = "#F2CC26";
+/// 未达标红（图例；与 kSampleFailedGl 同源换算）。
+inline constexpr const char* kSampleFailedHex = "#E62626";
+/// 未采样灰（图例；与 kSampleNotSampledGl 同源换算）。
+inline constexpr const char* kSampleNotSampledHex = "#8C949E";
+
+// ---- 区域框缺省蓝（UI-T65 返工——三维区域框 None/缺省档的唯一供色点；
+//      值＝UI-T33 以来的区域框既有辨识蓝 (0.25, 0.45, 1.0)＝#4073FF。
+//      返工缘由：首轮实现把缺省档改为 kPrimary 同值 (0.12, 0.35, 0.66)
+//      且在三维后端硬编码——未评估态框色实际变更＋"单一供色点"纪律
+//      自破（acc/ui-t65/1 阻断 B/E2）；本常量族恢复原值并词表化，GL 与
+//      hex 同源换算，三维后端与图例禁止各自硬编码）----
+
+/// 区域框缺省蓝（GL 三元组——三维后端 tintColor 的 None/不可达分支）。
+inline constexpr float kRegionTintDefaultGl[3] = {0.25f, 0.45f, 1.0f};
+/// 区域框缺省蓝（图例"当前选中区域"色块；与 kRegionTintDefaultGl 同源
+/// 换算：0.25×255≈64=0x40、0.45×255≈115=0x73、1.0×255=255=0xFF）。
+inline constexpr const char* kRegionTintDefaultHex = "#4073FF";
 }
 
 /**
