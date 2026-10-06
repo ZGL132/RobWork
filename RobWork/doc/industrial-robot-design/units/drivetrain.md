@@ -1120,6 +1120,15 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | DTB 锚点 | DTB WP-18-T05 引用"drivetrain.md §13（卡预留）"——本卡 R2 承接章为 §16（§13 为公共接口）；DTB 侧锚点修订随其下次修订登记 |
 | 索引状态 | DETAILED-DESIGN.md §20 与 unit-status.json 的 drivetrain 行（"待产出/planned"）刷新归治理任务（与 trajectory 卡同批待登记），本卡不代改 |
 | diagnostics 命名空间 | `DT` 前缀补登（P-DT-7）——WP-18-T02 落地了 DT-* 19 码登记表（DiagCodes.hpp/cpp，码值/出处/语义三列物化）作为注册数据源；真实 StableCodeRegistry 注册与 diagnostics.md §4.5/代码前缀表同步（`{"DT","drivetrain"}`）属 diagnostics 所有者治理动作，两处文件不在 WP-18-T02 allowedFiles，**尚未执行**（如实登记；L5 装配收编时按登记表逐行构造 CodeDescriptor 注册） |
+| **评估键词形（WP-18-T03 实现偏差）** | 本卡 §3.3/§12.4/§13.10 记作评估键 `dt.mapping`；实现取 `dt-mapping`（kebab）——evidence 的评估键词形闸门 `isValidEvaluationKey`（§8.2 原文语法 `[a-z][a-z0-9-]{1,63}`）**不含点**，含点键在注册期即被 KeySyntaxInvalid 拒绝。evidence 为③端口所有者，实现按其词形权威执行；本卡各处 `dt.mapping` 记法按 `dt-mapping` 读。若裁决改 evidence 词表则回改（登记于 §18.5 v0.3） |
+| **Profile 绑定域（WP-18-T03 实现偏差）** | 本卡 §12.3 建议 profileId=`dt`；实现绑定消费域 `sel`（version `1`）——evidence `isDomainProfileId` 五域词表封闭（kin/trj/dyn/sel/opt），`dt` 无法注册 Profile、评估器注册期 Profile 解析必失败。按需求 §8.1 表 4 选型域必需项"每组合电机侧工作点——DriveTrainMappingEvaluator 同一口径"绑定 sel 域（itemId `sel.motor-op-point`）；Profile 内容权威归 selection 卡（WP-19-T01），R1 阶段以最小必需项登记 |
+| **config.dt-mapping 不入 R1 依赖声明（WP-18-T03 实现偏差）** | 本卡 §13.10 descriptor 含 `config.dt-mapping(Configuration,Optional)`；evidence 依赖必需性词表为二值（Required/Conditional——无 Optional 位），且 R1 阶段效率经 DriveTrainModel 值传递（§5.2 EfficiencyModel 字段）——R1 评估器依赖声明只含 `model.drivetrain`(Object,Required)＋`dyn.joint-series`(UpstreamResult,Required) 两条；配置条目消费随组合场景任务（WP-19-T05）落位 |
+| **矩阵承载（WP-18-T03 实现微调）** | §5.2 `Matrix` 占位记号落位为自持行主序轻量矩阵（`std::vector<double>`＋行列数）——R1 对角映射全部运算可解析退化（逐轴标量＋对角条件数 max&#124;c&#124;/min&#124;c&#124;），无通用矩阵库需求；公共头保持纯 std 值语义（零 L1 类型向③端口消费方传播）。R2 通用非对角矩阵（求逆/交叉惯量矩阵/通用条件数）归 WP-18-T05 按 L1 实测再对齐 |
+| **DriveTrainModel 增量字段（WP-18-T03 实现微调）** | 增加 `ratedTorque`（逐电机轴 optional，N·m 电机轴系）——MDL-16 力矩限值字段的工作点消费面（§10.4 负载率参考值分母；缺失→负载率不适用）；§5.2 签名表未列该字段（负载率需要分母输入，值传递通道必须承载） |
+| **JointSeriesView 消费面（WP-18-T03 实现微调）** | §12.1 DynamicsJointSeries 提议 DTO 的本卡消费形态：`JointSeriesView{jointIds, caseId, samples[{t,q,q̇,q̈,τ_joint,segmentId}], upstreamSliceId}`；上游独立 `P_joint` 字段暂不消费（关节侧功率按 τ·q̇ 逐元素派生——§8.3 复核口径，虚功自洽）；P-DT-6 对齐时同步 |
+| **上游序列物化锚（WP-18-T03 实现提议）** | UpstreamResult 条目载荷＝UpstreamResultRef（无对象 id），而评估上下文读取原语为 `tryObjectBytes(objectId, version)`——本域约定组装方把序列字节物化在 `jointSeriesAnchor(upstreamSliceId)`（ObjectId＝上游切片身份摘要前 16 字节，确定性派生，规则单点在 Codec）对应对象下；P-DT-6 对齐后若 dynamics/evidence 冻结正式通道则退役 |
+| **E_loss 口径澄清（WP-18-T03 实现注记）** | §10.5 公式记 `E_loss＝∫(P_motor−P_joint)dt`；§10.3 的 P_motor 含转子功率项（pTransmission＋pRotor）——两式联立时该差不恒为正（转子往返段可负）。实现按"传动箱损耗"物理语义与"＞0 恒成立"约束取 `E_loss＝∫(pTransmission−pJoint)dt`（两方向折算均消耗——§10.2），转子项独立分项 `E_rotor` 另列（§8.2 分项不混写纪律）；§10.5 公式行的 P_motor 按 pTransmission（效率折算后传动功率）读 |
+| **DT-* 码表尾追加（WP-18-T03）** | `DT-EVALUATION-CANCELLED`（§12.4 取消行——批次边界取消不发布完整结果）、`DT-INTERNAL-INVARIANT`（§8.4 ②映射自检实现面守护码）两码按表尾追加纪律登记（19→21 码；既有行不重排）——实现侧 DiagCodes.hpp/cpp 与测试字面清单三处同步 |
 
 ### 18.4 风险登记（R-DT-x）
 
@@ -1139,6 +1148,7 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | --- | --- | --- |
 | v0.1 | 2026-10-06 | 首版草案（WP-18-T01 交付物）：基于 REQUIREMENTS v1.16、ARCHITECTURE v0.13、DTB v0.53 与 core/evidence/runtime/modeling 卡既有契约编写；R1/R2 边界、归一化模型与身份、R1 对角映射与阻断面、R2 耦合矩阵、虚功/功率一致性四口径、反射惯量与防重复计入、效率/能量/四象限、工作点与包络、五单元协作与最小依赖契约（dynamics/selection 卡未产出）、公共接口、验证方案与故障注入矩阵、任务拆分对齐、追踪矩阵、决策/风险/待裁决登记、自审与未执行声明 |
 | v0.2 | 2026-10-06 | WP-18-T02 构建落位随附同步：§4.1 落位表刷新（STATIC＋DiagCodes 19 码登记表＋_test/_contract_test 落位实录）；§18.3 占位 README 行闭环＋diagnostics 命名空间行补登记表落地/注册未执行现状；§20 执行状态按真实结果刷新（双模式构建零错误/ird_gates 零命中/12 用例通过留痕——映射实现与黄金数据集仍归 T03/T04 未实现）；传动比口径 c＝Δq_joint/Δθ_motor（P-DT-10 采用口径）已按任务契约 note 在 T02 公共头（DiagCodes.hpp）落笔 |
+| v0.3 | 2026-10-07 | WP-18-T03 实现增量登记（DTB §5.4）：①§18.3 增补实现偏差九则（评估键 `dt-mapping` kebab 词形／Profile 绑定 sel 域／config.dt-mapping 不入 R1 声明／矩阵承载自持行主序／ratedTorque 增量字段／JointSeriesView 消费面／上游序列物化锚／E_loss 传动损耗口径澄清／DT-* 两码表尾追加）；②实现落位面＝MappingTypes/Series/MappingCore/Facts/Codec/Evaluator 六公共头＋MappingCore/DriveTrainCodec/Evaluator 三实现（卡 §4.2 布局表兑现，R1 能力位——窗口输入保守阻止，R2 数值路径归 T05）；③黄金数据组（DT-G1～G9/B1～B3/G12/G13＋codec 往返＋Facts＋③端口注册闭环与端到端切片评估契约用例）全部真实执行通过（gtest XML＋ird-test-report.json 留痕 traceability/gtest-reports/wp-18-t03/——执行事实的登记，验收重跑归验收会话）；④R1 评估器的 UpstreamResult 依赖声明以提议键 `dyn.joint-series` 登记（P-DT-6 不变） |
 
 ---
 
