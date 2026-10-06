@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T10",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现用户设置持久化",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02"],
+  "requirements": ["PM-14"],
+  "designRefs": [
+    "units/workflow.md#7",
+    "REQUIREMENTS.md#17",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_workflow_test"],
+  "branch": "wp22-t10",
+  "interUnit": true,
+  "knownPitfalls": ["P-WF-5"],
+  "acceptance": [
+    "用户级设置（最近项目/包导出默认勾选/上次打开目录/快捷键绑定）持久化于用户目录、不入 .rwdesign（PM-14；JSON canonical 经 io 写出）",
+    "求解配置等分析设置独立持久化（KIN-13）不混入本存储——设置 schema 零分析配置字段（I-WF-5）用例通过",
+    "设置文件损坏给诊断不崩溃；容量/脱敏参数（P-WF-5）未冻结按安全默认；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.7/§12。"
+}

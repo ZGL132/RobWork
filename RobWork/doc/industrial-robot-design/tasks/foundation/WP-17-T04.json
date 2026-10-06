@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-17-T04",
+  "unit": "dynamics",
+  "masterWp": "WP-G",
+  "title": "实现输出序列与峰值/RMS 包络",
+  "status": "ready",
+  "dependsOn": ["WP-17-T03"],
+  "requirements": ["DYN-03"],
+  "designRefs": [
+    "units/dynamics.md#7",
+    "REQUIREMENTS.md#13",
+    "development-task-breakdown.md#2.18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/doc/industrial-robot-design/units/dynamics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_dynamics_test"],
+  "branch": "wp17-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-DYN-9", "P-DYN-11"],
+  "acceptance": [
+    "每轴转角/位移、转速、加速度、类型化广义力（转动 N·m/移动 N）、机械功率序列输出（DYN-03）",
+    "峰值必须报告持续时间窗与所在轨迹段；RMS 基于完整任务循环含驻留（时间加权，禁样本平均）——用例通过",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §7/§12；能量量纲运行容差默认缺位（P-DYN-9）不得预填。"
+}

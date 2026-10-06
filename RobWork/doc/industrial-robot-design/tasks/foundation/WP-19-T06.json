@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T06",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现可行集与淘汰原因输出",
+  "status": "ready",
+  "dependsOn": ["WP-19-T05"],
+  "requirements": ["SEL-06", "EVI-01"],
+  "designRefs": [
+    "units/selection.md#10",
+    "REQUIREMENTS.md#8.1",
+    "REQUIREMENTS.md#14",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
+  "branch": "wp19-t06",
+  "interUnit": true,
+  "knownPitfalls": ["P-SEL-4"],
+  "acceptance": [
+    "可行组合＋裕量/质量/成本/来源＋逐项淘汰原因（实际值/阈值/thresholdSource）输出（SEL-06）用例通过",
+    "多工况资格：组合仅在全部启用必验工况通过后进入可行集（EVI-02），任一工况数据不足整体 DataInsufficient 不漏验",
+    "选型域 Profile（REQUIREMENTS §8.1 表 4 选型行）必需证据承载齐备；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §10/§16。"
+}

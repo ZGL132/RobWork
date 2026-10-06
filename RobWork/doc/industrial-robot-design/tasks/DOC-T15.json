@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "DOC-T15",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "六单元（trajectory/dynamics/drivetrain/selection/optimization/workflow）61 份 canonical 任务契约全量编译与入口索引同步",
+  "status": "done",
+  "dependsOn": [],
+  "requirements": ["NFR-MNT-05"],
+  "designRefs": [
+    "development-task-breakdown.md#2.17",
+    "development-task-breakdown.md#2.18",
+    "development-task-breakdown.md#2.19",
+    "development-task-breakdown.md#2.20",
+    "development-task-breakdown.md#2.21",
+    "development-task-breakdown.md#2.23",
+    "units/trajectory.md#18",
+    "units/dynamics.md#12",
+    "units/drivetrain.md#15",
+    "units/selection.md#16",
+    "units/optimization.md#14",
+    "units/workflow.md#12"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["task-contracts", "traceability-update"],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T03.json",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "61 份契约（WP-16-T02~T16、WP-17-T02~T10、WP-18-T02~T05、WP-19-T02~T12、WP-20-T02~T11、WP-22-T02~T13）逐份 validate-task PASS：55 ready（branch/interUnit/knownPitfalls/锚点齐备）＋6 blocked（WP-16-T02、WP-16-T14~T16、WP-18-T05、WP-19-T12——P-06 冻结与 R2 分期前置）",
+    "dependsOn 全部指向真实存在任务（悬空前置零命中）；designRefs 锚点全部实测存在（ready/done 锚点强制校验通过）",
+    "foundation-tasks.json 入口索引追加 61 条简化条目并修正契约总数注记；validate-docs.ps1 PASS"
+  ],
+  "note": "2026-10-06 执行：编译自 DTB §2.17~§2.21/§2.23 任务行＋六张单元详设卡（v0.1，已落库 f59e4eb4..15469f70）。WP-21（OPT-D，8 任务）不在本批——P-04 冻结（WP-21-T01）前置未满足，另行成批。"
+}

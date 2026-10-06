@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-18-T05",
+  "unit": "drivetrain",
+  "masterWp": "WP-G",
+  "title": "实现耦合矩阵 C 全链消费（R2/D）",
+  "status": "blocked",
+  "dependsOn": ["WP-18-T03"],
+  "requirements": ["MDL-21", "DYN-04"],
+  "designRefs": [
+    "units/drivetrain.md#7",
+    "REQUIREMENTS.md#13",
+    "development-task-breakdown.md#2.19"
+  ],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_drivetrain_test"],
+  "note": "DOC-T15 编译（2026-10-06）。blocked：MDL-21（R2/阶段 D）启用前置未满足——建模侧承载任务 WP-13-T18 契约尚未生成（foundation 目录无该文件），且耦合矩阵属 R2 分期（P1/R2，AT-38 全量）。解冻条件＝MDL-21 契约批次落地＋R2 启动；解冻后补齐 ready 必备字段（依赖 WP-13-T18）。"
+}

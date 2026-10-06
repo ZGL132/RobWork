@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T02",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "构建落位：workflow 占位转真实库＋插件目标",
+  "status": "ready",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["NFR-MNT-01"],
+  "designRefs": [
+    "units/workflow.md#3",
+    "ARCHITECTURE.md#3.4",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp22-t02",
+  "interUnit": true,
+  "knownPitfalls": ["P-WF-2"],
+  "acceptance": [
+    "双模式构建零错误并留痕：sdurws_ird_workflow 由 INTERFACE 占位转 STATIC（零 Qt、C++17，依赖白名单 workflow→core/ui/diagnostics/project/execution/io/evidence/reporting——禁止业务域直链边），创建 _plugin/_test/_contract_test 目标",
+    "R-1 扫描通过（无业务域直链边，ARCH §3.4）；ird_gates 零命中",
+    "gtest XML＋ird-test-report.json＋构建日志留痕齐全"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §3/§12；前置 WP-22-T01（卡任务）已落盘。"
+}

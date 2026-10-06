@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T11",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "契约测试与选型黄金数据集",
+  "status": "ready",
+  "dependsOn": ["WP-19-T10"],
+  "requirements": ["SEL-03", "SEL-05", "SEL-06", "SEL-10"],
+  "designRefs": [
+    "units/selection.md#15",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "golden-datasets", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_selection_contract_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp19-t11",
+  "interUnit": true,
+  "knownPitfalls": ["P-SEL-2"],
+  "acceptance": [
+    "AT-08/AT-30（目录导入→硬筛选→可行组合＋逐项淘汰原因；应用选型回填闭环与复算提示）用例全部通过并留痕",
+    "testdata/golden/sel-* 按 DatasetManifest 登记（可行＋不可行样例，不可行项含实际值/阈值与原因）",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §15/§16。"
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-20-T04",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "实现静态硬约束执行",
+  "status": "ready",
+  "dependsOn": ["WP-20-T03", "WP-15-T03", "WP-15-T04", "WP-15-T05", "WP-15-T06", "WP-15-T07", "POL-T07"],
+  "requirements": ["OPT-03", "EVI-01", "EVI-02"],
+  "designRefs": [
+    "units/optimization.md#6",
+    "REQUIREMENTS.md#15.0",
+    "REQUIREMENTS.md#8.1",
+    "ARCHITECTURE.md#7.10",
+    "development-task-breakdown.md#2.21"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_optimization_test"],
+  "branch": "wp20-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-OPT-2", "P-EV-3", "P-EV-7"],
+  "acceptance": [
+    "硬约束先行管线（拓扑/输入前置→关节限位→Must 工位可达→Must 区域覆盖→碰撞静态子集，§6.2 顺序）用例通过；约束计算消费 kin.task-points-batch/kin.region-coverage（③端口）与 policy 唯一碰撞实现（④端口 SampleSet，三入口一致 AT-19）",
+    "阶段 B 引用联合约束即拒（OPT-STAGE-LOCKED，不静默降级不呈现为候选淘汰）用例通过",
+    "漏一个启用必验工况不得出正式通过（AT-09 反例）；不可行候选不进入可行集；搜索未果/多初值未收敛不判任务级确定性不可行（C5/C8）；ird_gates 零命中",
+    "空必验工况集合保守处置（P-EV-7 同源：Preflight 阻塞，绝不输出正式通过）；跨域汇总顺序引用 evidence 现状（P-EV-3 open）"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §6/§14；WP-15-T03~T07≙运动学评估器族（ Must 可达/区域覆盖/限位裕量/碰撞证据）。"
+}

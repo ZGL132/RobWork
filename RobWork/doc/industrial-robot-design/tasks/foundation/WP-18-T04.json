@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-18-T04",
+  "unit": "drivetrain",
+  "masterWp": "WP-G",
+  "title": "契约测试与传动映射黄金数据集",
+  "status": "ready",
+  "dependsOn": ["WP-18-T03"],
+  "requirements": ["DYN-04"],
+  "designRefs": [
+    "units/drivetrain.md#14",
+    "REQUIREMENTS.md#13",
+    "development-task-breakdown.md#2.19"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/**",
+    "RobWork/doc/industrial-robot-design/units/drivetrain.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "golden-datasets", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_drivetrain_contract_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp18-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-DT-3"],
+  "acceptance": [
+    "AT-38 R1 可验部分（R1 无耦合链等价对角映射反例）＋传动映射黄金数据全部用例通过并留痕",
+    "testdata/golden/dt-* 按 DatasetManifest 登记；运行时数值一致性阈值（P-DT-3）未冻结期间保守不引入",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.19 行＋units/drivetrain.md §14/§15。"
+}

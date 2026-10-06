@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T11",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现方案比较视图",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02", "WP-13-T14"],
+  "requirements": ["UX-13"],
+  "designRefs": [
+    "units/workflow.md#8",
+    "units/modeling.md#9",
+    "REQUIREMENTS.md#18",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_plugin",
+    "cmake --build build --config Release --target sdurws_ird_workflow_test"
+  ],
+  "branch": "wp22-t11",
+  "interUnit": true,
+  "knownPitfalls": ["P-OPT-8"],
+  "acceptance": [
+    "2~4 个方案按八项比较指标差异高亮＋Model Diff 呈现（结构/参数（DH、轴线、限位）与物性分组、点击定位对象——UX-13/V15-02）用例通过（AT-12 呈现侧）",
+    "数据实体与语义归 MDL-08（不重复实现 diff 计算）；基准不一致（EVI-02/RPT-04）拒绝比较并提示；八项指标取数为只读投影，不可算项显示\"—\"",
+    "传动比差异覆盖受 modeling diff 范围限制（P-OPT-8）：范围外给警告不虚构差异；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §8/§12；WP-13-T14≙Model Diff 数据实体。"
+}

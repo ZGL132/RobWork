@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T06",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现关闭/切换/退出统一确认",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02", "EX-T06", "PRJ-T12"],
+  "requirements": ["PM-03", "PM-12"],
+  "designRefs": [
+    "units/workflow.md#7",
+    "ARCHITECTURE.md#6.8",
+    "REQUIREMENTS.md#17",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_plugin",
+    "cmake --build build --config Release --target sdurws_ird_workflow_test"
+  ],
+  "branch": "wp22-t06",
+  "interUnit": true,
+  "knownPitfalls": ["P-UI-6"],
+  "acceptance": [
+    "统一确认对话框：未应用草稿三选（保存/放弃/取消）＋运行中任务二选（等待/协作取消）＋任务清单 9 态短标签；取消可中止整个流程（PM-03）用例通过（AT-20/21）",
+    "等待选项覆盖在途归档（ARCH §6.8 A7：界面会话与存储上下文分离，等待在途运行接纳归档＋草稿落盘完成）；协作取消即清理临时区；切换＝关闭后候选验证成功才切上下文",
+    "方案分支切换（PM-12）零写入（不产生修订、不写文件含 HEAD）；关闭编排三方契约（P-UI-6）冻结前按本卡 §7.3 形态实现；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.3/§12；EX-T06≙worker 通道，PRJ-T12≙存储上下文排空语义。"
+}

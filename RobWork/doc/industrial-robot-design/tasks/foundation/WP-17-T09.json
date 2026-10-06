@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-17-T09",
+  "unit": "dynamics",
+  "masterWp": "WP-G",
+  "title": "实现 dynamics 插件界面",
+  "status": "ready",
+  "dependsOn": ["WP-17-T05", "WP-17-T06", "WP-17-T07", "WP-17-T08", "UI-T08"],
+  "requirements": ["UX-02", "UX-10"],
+  "designRefs": [
+    "units/dynamics.md#9",
+    "development-task-breakdown.md#2.18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/doc/industrial-robot-design/units/dynamics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_dynamics_plugin",
+    "cmake --build build --config Release --target sdurws_ird_dynamics_test"
+  ],
+  "branch": "wp17-t09",
+  "interUnit": true,
+  "knownPitfalls": ["P-DYN-11"],
+  "acceptance": [
+    "动力学工作流页＋曲线视图（经 IPluginUiRegistrar 白名单挂位）界面链路用例通过",
+    "插件零计算逻辑（二分结构扫描）；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §9/§12。"
+}

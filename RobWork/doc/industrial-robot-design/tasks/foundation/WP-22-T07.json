@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T07",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现另存为与包导出/导入向导",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02"],
+  "requirements": ["PM-05"],
+  "designRefs": [
+    "units/workflow.md#7",
+    "REQUIREMENTS.md#17",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_plugin",
+    "cmake --build build --config Release --target sdurws_ird_workflow_test"
+  ],
+  "branch": "wp22-t07",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-1"],
+  "acceptance": [
+    "另存为执行完整目录复制（results/reports/drafts 勾选、记忆默认）并换新 projectId 后按打开协议进入（PM-05/AT-20）用例通过",
+    "包导出 .rwpack ZIP 传输封装：后台进度可取消、取消即清理临时区；导入执行预算/路径穿越防护与全量校验（失败不留目标目录）并给出校验报告",
+    "io 边注入形态（P-IO-1）裁决前与 reporting P-RPT-1 同案处理；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.4/§12；DTB 前置 WP-04-T18（另存存储侧）契约未生成——经 PRJ 命令面触达，不设 dependsOn 边。"
+}

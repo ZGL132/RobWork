@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T13",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "契约测试与轨迹黄金数据集",
+  "status": "ready",
+  "dependsOn": ["WP-16-T12"],
+  "requirements": ["TRJ-01", "TRJ-02", "TRJ-03", "TRJ-04", "TRJ-05", "TRJ-06"],
+  "designRefs": [
+    "units/trajectory.md#17",
+    "development-task-breakdown.md#2.17"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/**",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "golden-datasets", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_trajectory_contract_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp16-t13",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-11"],
+  "acceptance": [
+    "AT-06 全部反例（段内碰撞检出/细分预算耗尽/初始路径碰撞重规划成功/限制超标定位）契约测试通过并留痕",
+    "testdata/golden/trj-* 按 DatasetManifest（ird-golden-manifest/1）登记：coveredRequirements 逐项 lint、容差档案、producer/edgeCases 字段齐备",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §17/§18。"
+}

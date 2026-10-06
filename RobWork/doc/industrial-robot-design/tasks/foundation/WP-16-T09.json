@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T09",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "实现失败段诊断定位",
+  "status": "ready",
+  "dependsOn": ["WP-16-T07", "WP-16-T08"],
+  "requirements": ["TRJ-06", "ERR-01"],
+  "designRefs": [
+    "units/trajectory.md#9",
+    "units/trajectory.md#12",
+    "REQUIREMENTS.md#12",
+    "development-task-breakdown.md#2.17"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_trajectory_test"],
+  "branch": "wp16-t09",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-11"],
+  "acceptance": [
+    "无路径/分支跳变/奇异邻域/限制超标定位到具体段落与原因（TRJ-06，TRJ-* 稳定码）用例通过",
+    "诊断字段满足 ERR-01（对象/上下文/原因/建议动作；比较型含实际值/要求值/单位）；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §9/§12/§18。"
+}

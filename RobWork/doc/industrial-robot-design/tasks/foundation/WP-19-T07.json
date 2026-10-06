@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T07",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现优选品牌与目录版本管理",
+  "status": "ready",
+  "dependsOn": ["WP-19-T03"],
+  "requirements": ["SEL-07", "SEL-08"],
+  "designRefs": [
+    "units/selection.md#4",
+    "units/selection.md#5",
+    "REQUIREMENTS.md#14",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
+  "branch": "wp19-t07",
+  "interUnit": true,
+  "knownPitfalls": ["P-SEL-2"],
+  "acceptance": [
+    "企业自定义优选品牌、供应状态和系列限制（SEL-07）——不改变硬能力判定用例通过",
+    "目录差异比较与项目锁定版本（SEL-08，catalog/<id>/<ver>/ 写入即锁定、只增）；目录更新不静默改变历史结果用例通过",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §4/§5/§16。"
+}

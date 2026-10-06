@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T09",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现标题栏/状态栏与恢复横幅",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02", "UI-T04", "DIAG-T05"],
+  "requirements": ["PM-11", "PM-15"],
+  "designRefs": [
+    "units/workflow.md#7",
+    "REQUIREMENTS.md#17",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_plugin",
+    "cmake --build build --config Release --target sdurws_ird_workflow_test"
+  ],
+  "branch": "wp22-t09",
+  "interUnit": true,
+  "knownPitfalls": ["P-DIAG-7"],
+  "acceptance": [
+    "标题栏/状态栏 `<显示名>[*][（只读）]`＋当前方案＋结果状态（是否过期）来源用例通过（PM-11；PM-11-S1~S3 为 R2 子项）",
+    "恢复横幅三场景（未完成保存已忽略/任务已中断/检测到未保存草稿）一句话汇总＋查看详情/恢复草稿/放弃用例通过（PM-15/AT-21）；经统一诊断目录集成",
+    "诊断目录/日志容量工程默认（P-DIAG-7）未校准期间按保守默认＋留痕；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.6/§12；UI-T04≙公共状态投影。"
+}

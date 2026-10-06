@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T06",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "实现避障路径搜索接入",
+  "status": "ready",
+  "dependsOn": ["WP-16-T04", "POL-T07"],
+  "requirements": ["TRJ-03"],
+  "designRefs": [
+    "units/trajectory.md#10",
+    "REQUIREMENTS.md#12",
+    "development-task-breakdown.md#2.17"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_trajectory_test"],
+  "branch": "wp16-t06",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-2"],
+  "acceptance": [
+    "RobWork 规划器调用接入（规划器与参数可配置，TRJ-03）基准用例通过并留痕",
+    "碰撞消费 policy 共享评估器（④端口），候选路径碰撞＝该路径淘汰并触发重规划、不判任务不可行（§8.1 C8 作用域）用例通过",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §10/§18；P-TRJ-2（规划器适配归属）裁决前按卡内登记口径实现。POL-T07≙WP-07-T07 共享碰撞评估。"
+}

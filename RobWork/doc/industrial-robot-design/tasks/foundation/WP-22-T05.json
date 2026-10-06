@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T05",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现打开向导与无项目首页",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02", "PRJ-T08"],
+  "requirements": ["PM-02", "PM-10"],
+  "designRefs": [
+    "units/workflow.md#7",
+    "REQUIREMENTS.md#17",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_plugin",
+    "cmake --build build --config Release --target sdurws_ird_workflow_test"
+  ],
+  "branch": "wp22-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-WF-5"],
+  "acceptance": [
+    "五步打开协议 UI（命令行/拖放/对话框格式识别分流，PM-02）：失败显示具体文件且不动当前项目用例通过（AT-20）",
+    "无项目首页三入口（新建/打开/最近）：最近项目 10 上限、规范路径去重、失效项保留＋\"位置不可用\"提示＋移除；无项目禁用七阶段/运行/应用/报告入口（PM-10）用例通过",
+    "最近项目/设置容量与脱敏参数（P-WF-5）未冻结期间按安全默认＋留痕；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.2/§7.8/§12；PRJ-T08≙打开协议服务侧。"
+}

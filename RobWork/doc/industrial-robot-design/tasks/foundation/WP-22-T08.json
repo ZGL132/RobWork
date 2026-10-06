@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T08",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现旧格式拒绝/只读/重关联流程",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02", "PRJ-T03"],
+  "requirements": ["PM-06", "PM-07", "PM-09"],
+  "designRefs": [
+    "units/workflow.md#7",
+    "REQUIREMENTS.md#17",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_plugin",
+    "cmake --build build --config Release --target sdurws_ird_workflow_test"
+  ],
+  "branch": "wp22-t08",
+  "interUnit": true,
+  "knownPitfalls": ["P-PR-9"],
+  "acceptance": [
+    "旧格式（.rwproj 等）稳定只读拒绝＋诊断码（PRJ-FORMAT-LEGACY）＋升级指引（当前版本/项目版本/工具入口，不自动升级）；原文件不动（PM-06/AT-20）用例通过",
+    "只读打开：锁被持提示 PID（writable=false 禁编辑与应用提交）；双实例第二写者不阻塞等待（PM-07）用例通过",
+    "外部源重关联入口：经显式提交产生新修订（PM-09/AT-21）用例通过；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.5/§12；PRJ-T03≙写锁。"
+}

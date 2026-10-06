@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T04",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现电机/减速器硬筛选",
+  "status": "ready",
+  "dependsOn": ["WP-19-T03"],
+  "requirements": ["SEL-03", "SEL-04"],
+  "designRefs": [
+    "units/selection.md#7",
+    "units/selection.md#8",
+    "REQUIREMENTS.md#14",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
+  "branch": "wp19-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-POL-3", "P-SEL-4"],
+  "acceptance": [
+    "电机筛选（连续/峰值转矩、转速、功率、过载持续时间、工作制、电压、温度降额、制动/保持、安全系数）＋减速器筛选（额定/峰值转矩、输入转速、速比、效率、回程间隙、寿命、安装方向、外载荷）全覆盖（SEL-03/04）",
+    "可行/不可行型号黄金表用例通过——每个淘汰项含实际值和阈值",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §7/§8/§16；惯量比阈值归属（P-POL-3/P-DT-2）未裁决期间不内嵌阈值。"
+}

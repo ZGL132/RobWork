@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T05",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现组合校核",
+  "status": "ready",
+  "dependsOn": ["WP-19-T04", "WP-18-T03"],
+  "requirements": ["SEL-05", "DYN-04"],
+  "designRefs": [
+    "units/selection.md#9",
+    "ARCHITECTURE.md#7.10",
+    "REQUIREMENTS.md#14",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
+  "branch": "wp19-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-SEL-1", "P-DT-2", "P-SEL-4"],
+  "acceptance": [
+    "电机—减速器—负载惯量校核、组合兼容与每轴工作点经共享 DriveTrainMappingEvaluator（③端口 dt.mapping，同一映射口径）用例通过",
+    "不自建映射实现（SEL-05 红线：不重算传动比映射/耦合/虚功/电机侧力矩速度功率/反射惯量/交叉耦合）；惯量比阈值为可配置工程规则（SEL-05），P-POL-3/P-DT-2 未裁决期间输出\"未判定\"维度不整体阻断",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §9/§16。"
+}

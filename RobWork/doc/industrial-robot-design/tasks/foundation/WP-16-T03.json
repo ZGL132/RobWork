@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T03",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "构建落位：trajectory 占位转真实库＋插件目标",
+  "status": "ready",
+  "dependsOn": ["CORE-T01"],
+  "requirements": ["NFR-MNT-01"],
+  "designRefs": [
+    "units/trajectory.md#4",
+    "ARCHITECTURE.md#3.3",
+    "development-task-breakdown.md#2.17"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_trajectory",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp16-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-11"],
+  "acceptance": [
+    "双模式构建零错误并留痕：集成模式 sdurws_ird_trajectory 由 INTERFACE 占位转 STATIC（零 Qt，C++17，依赖白名单见 units/trajectory.md §3），并创建 _plugin/_test/_contract_test 目标；独立冒烟模式（带 vcpkg toolchain 与 Qt 前缀，DTB §5.1）配置＋构建通过",
+    "二分结构扫描通过（ird_gates 零命中）：计算库零 Widgets、无业务域互链边、无跨单元私有头 include；R-1/R-2/R-3 红线门禁全绿",
+    "TRJ-* 域诊断码按 units/trajectory.md 登记表在装配期注册（diagnostics §4.5 协议）；gtest XML＋ird-test-report.json＋构建日志留痕齐全"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §4/§18；前置 WP-16-T01（卡任务）已落盘为事实完成，CORE-T01≙WP-03-T01。"
+}

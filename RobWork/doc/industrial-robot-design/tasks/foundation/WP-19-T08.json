@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T08",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现移动关节范围外诊断",
+  "status": "ready",
+  "dependsOn": ["WP-19-T04"],
+  "requirements": ["SEL-09"],
+  "designRefs": [
+    "units/selection.md#8",
+    "REQUIREMENTS.md#2",
+    "REQUIREMENTS.md#14",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
+  "branch": "wp19-t08",
+  "interUnit": true,
+  "knownPitfalls": ["P-SEL-1"],
+  "acceptance": [
+    "目标链含移动关节时该轴选型输出明确\"范围外\"诊断（SEL-INPUT-AXIS-OUT-OF-SCOPE，DataInsufficient 语义），不静默套用旋转传动",
+    "含移动关节链阻断测试用例通过（与 §2.1 支持矩阵一致；MDL-12-S1/SEL-09-S1 启用前不放开）；ird_gates 零命中",
+    "未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §8/§16。"
+}

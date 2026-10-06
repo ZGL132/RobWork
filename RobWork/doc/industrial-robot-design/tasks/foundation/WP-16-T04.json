@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T04",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "实现关节空间 PTP 与作业序列路径",
+  "status": "ready",
+  "dependsOn": ["WP-16-T03", "RT-T09"],
+  "requirements": ["TRJ-01"],
+  "designRefs": [
+    "units/trajectory.md#7",
+    "units/trajectory.md#6",
+    "REQUIREMENTS.md#12",
+    "development-task-breakdown.md#2.17"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_trajectory_test"],
+  "branch": "wp16-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-11"],
+  "acceptance": [
+    "PTP 点到点路径与任务点有序作业序列（TRJ-01）模型测试通过并留痕；黄金数据集基准对照满足附录 D 容差",
+    "路径数据模型与身份绑定（units/trajectory.md §6：snapshotId/sliceId/评估键六要素）与 §7 一致",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §6/§7/§18。"
+}

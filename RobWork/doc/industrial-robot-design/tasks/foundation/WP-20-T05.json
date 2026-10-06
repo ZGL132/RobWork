@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-20-T05",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "实现 Pareto 非支配与八项指标分层",
+  "status": "ready",
+  "dependsOn": ["WP-20-T04"],
+  "requirements": ["OPT-04", "OPT-07"],
+  "designRefs": [
+    "units/optimization.md#7",
+    "REQUIREMENTS.md#15.0",
+    "development-task-breakdown.md#2.21"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_optimization_test"],
+  "branch": "wp20-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-OPT-5"],
+  "acceptance": [
+    "非支配排序＋容差支配（显式配置容差进 config.opt；默认零容差浮点全序——不发明阈值，P-OPT-5）集合/排序满足容差支配（AT-09）用例通过",
+    "三项静态指标可算（尺寸包络/结构质量/最小关节裕量），其余五项显示\"—\"：不显示为零、不参与 Pareto、不因空判动力学/器件不可行（OPT-07/ERR-01）用例通过",
+    "禁止单一加权总分（需求附录 B 裁决排除）；稳定排序输出（rank→目标序→CandidateId 终键）与线程数无关；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §7/§14。"
+}

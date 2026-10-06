@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T10",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "实现动画/曲线/局部重规划/导出",
+  "status": "ready",
+  "dependsOn": ["WP-16-T08"],
+  "requirements": ["TRJ-07"],
+  "designRefs": [
+    "units/trajectory.md#13",
+    "units/trajectory.md#16",
+    "REQUIREMENTS.md#12",
+    "development-task-breakdown.md#2.17"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_trajectory_test"],
+  "branch": "wp16-t10",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-11"],
+  "acceptance": [
+    "轨迹动画、曲线查看、路点局部重规划与标准轨迹导出（TRJ-07）用例通过",
+    "动画/导出不产生项目修订（AT-04 会话/研究态零修订）；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §13/§16/§18。"
+}

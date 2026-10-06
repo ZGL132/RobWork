@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-20-T03",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "实现变量与候选补丁模型",
+  "status": "ready",
+  "dependsOn": ["WP-20-T02", "RT-T04"],
+  "requirements": ["OPT-01", "OPT-02"],
+  "designRefs": [
+    "units/optimization.md#5",
+    "REQUIREMENTS.md#15",
+    "REQUIREMENTS.md#15.0",
+    "development-task-breakdown.md#2.21"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_optimization_test"],
+  "branch": "wp20-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-OPT-2", "P-OPT-3", "P-OPT-4"],
+  "acceptance": [
+    "新机型/改型两种初始化用例通过（改型未授权参数默认锁定，OPT-01/02）；连续/量化/枚举变量与 9 类 R1 变量绑定词表（§5.3）落地",
+    "drivetrain.ratio 编译进候选（V12-02：StageB 连续变量，c＝Δq_joint/Δθ_motor 口径）用例通过——不被阶段锁错误拒绝（AT-09 回归反例）",
+    "CandidatePatch 确定性序列化：相同补丁必得相同 CandidatePatchId；候选身份不含显示单位/UI 状态；补丁触及锁定变量生成阶段拒绝（OPT-VAR-LOCKED）；ird_gates 零命中",
+    "候选物化通道（P-OPT-2）与应用物化命令面（P-OPT-3）裁决前：研究定义/导出/应用组装面先行，评估链路联调随裁决"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §5/§14；RT-T04≙runtime 视图消费面。"
+}

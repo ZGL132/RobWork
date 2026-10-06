@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T03",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现七阶段门控与下一步建议",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02", "UI-T09"],
+  "requirements": ["UX-01", "UX-12"],
+  "designRefs": [
+    "units/workflow.md#4",
+    "units/workflow.md#5",
+    "units/workflow.md#6",
+    "REQUIREMENTS.md#18",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_workflow_test"],
+  "branch": "wp22-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-WF-1", "P-WF-2"],
+  "acceptance": [
+    "七阶段导航（建模→…→报告）按就绪条件解锁/锁定；上游完成态/结果失效时级联提示下游需重算（提示数据不自动触发重算）用例通过（UX-12）",
+    "门控判定只消费 StageReadinessSnapshot＋事件（不重算领域就绪、无领域阈值——运行断言锁定）；门控/建议纯函数面同输入同输出；建议八规则优先级与可跳过（UX-01 四要素）",
+    "阶段状态投影归 ui 不双权威（DTB 禁止项）；门控数据形状按 P-WF-2 谈判起点（ui §6.5）实现，词表零新增；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §4/§5/§6/§12；UI-T09≙StageStatusModel 汇聚。"
+}

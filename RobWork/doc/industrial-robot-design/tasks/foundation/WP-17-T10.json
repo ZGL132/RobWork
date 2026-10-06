@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-17-T10",
+  "unit": "dynamics",
+  "masterWp": "WP-G",
+  "title": "契约测试与动力学黄金数据集",
+  "status": "ready",
+  "dependsOn": ["WP-17-T09"],
+  "requirements": ["DYN-01", "DYN-03", "DYN-05", "DYN-06", "DYN-07"],
+  "designRefs": [
+    "units/dynamics.md#11",
+    "development-task-breakdown.md#2.18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/**",
+    "RobWork/doc/industrial-robot-design/units/dynamics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "golden-datasets", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_dynamics_contract_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp17-t10",
+  "interUnit": true,
+  "knownPitfalls": ["P-DYN-2", "P-DYN-5"],
+  "acceptance": [
+    "AT-07（完整循环包络/数据不足降级/多工况不漏验）契约测试通过并留痕",
+    "testdata/golden/dyn-* 按 DatasetManifest 登记（二连杆解析算例/静态重力矩/倒挂重力矩，零值/近零值/正负抵消样例齐备）",
+    "与 selection/drivetrain 卡的载荷对齐（P-DYN-2/P-DYN-5：对端卡已落盘 v0.1，消费键以卡内登记为准）；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §11/§12。"
+}

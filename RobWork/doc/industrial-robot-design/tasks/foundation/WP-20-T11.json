@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-20-T11",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "契约测试与优化黄金数据集",
+  "status": "ready",
+  "dependsOn": ["WP-20-T10"],
+  "requirements": ["OPT-01", "OPT-03", "OPT-04", "OPT-08", "OPT-12"],
+  "designRefs": [
+    "units/optimization.md#13",
+    "development-task-breakdown.md#2.21"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "golden-datasets", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_optimization_contract_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp20-t11",
+  "interUnit": true,
+  "knownPitfalls": ["P-OPT-5", "P-OPT-7"],
+  "acceptance": [
+    "同种子确定性/不可行不入可行集/采用守卫用例通过并留痕（AT-09/12/34 OPT-B 部分，DTB WP-20-T11 验收原文）",
+    "testdata/golden/opt-* 按 DatasetManifest 登记；Pareto 集断言经 testkit SetMatchTraits 域侧特化（testkit 不含 Pareto 逻辑）",
+    "容差支配用例以显式配置容差执行（默认零容差，P-OPT-5 裁决前不预设）；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §13/§14。"
+}

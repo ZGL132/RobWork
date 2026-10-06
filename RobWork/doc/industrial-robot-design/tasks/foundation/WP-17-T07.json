@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-17-T07",
+  "unit": "dynamics",
+  "masterWp": "WP-G",
+  "title": "实现多工况与包络合并",
+  "status": "ready",
+  "dependsOn": ["WP-17-T04"],
+  "requirements": ["DYN-07", "EVI-02"],
+  "designRefs": [
+    "units/dynamics.md#8",
+    "REQUIREMENTS.md#8.1",
+    "REQUIREMENTS.md#13",
+    "development-task-breakdown.md#2.18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/doc/industrial-robot-design/units/dynamics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_dynamics_test"],
+  "branch": "wp17-t07",
+  "interUnit": true,
+  "knownPitfalls": ["P-DYN-4"],
+  "acceptance": [
+    "多负载工况、急停/保持等设计工况与结果包络合并（DYN-07）用例通过",
+    "包络合并不替代必验工况覆盖规则（EVI-02；覆盖矩阵分母口径按快照冻结 RequiredCaseSet）用例通过；ird_gates 零命中",
+    "急停/保持工况模板结构（P-DYN-4）未冻结期间按统一 RNEA 评估给定工况，不自行定义构造语义"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §8/§12。"
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-18-T03",
+  "unit": "drivetrain",
+  "masterWp": "WP-G",
+  "title": "实现 DriveTrainMappingEvaluator 唯一实现",
+  "status": "ready",
+  "dependsOn": ["WP-18-T02", "EV-T10"],
+  "requirements": ["DYN-04", "NFR-COR-01"],
+  "designRefs": [
+    "units/drivetrain.md#6",
+    "units/drivetrain.md#11",
+    "ARCHITECTURE.md#7.10",
+    "REQUIREMENTS.md#13",
+    "development-task-breakdown.md#2.19"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/doc/industrial-robot-design/units/drivetrain.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_drivetrain_test"],
+  "branch": "wp18-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-DT-2", "P-DT-6", "P-DT-9", "P-DT-10"],
+  "acceptance": [
+    "唯一映射实现（dt.mapping 评估器经③端口注册）：τ_motor＝Cᵀ·τ_joint＋J_rotor·θ̈ 精确虚功映射，不对角化/准静态近似、不丢交叉耦合项；电机侧工作点 τ/ω/P、方向相关效率 η±、反射惯量 J·i²、惯量比、能量分项与四象限统计输出",
+    "传动映射黄金数据（双向效率/反射惯量/摩擦不重复计入）用例通过；常矩阵 C 下与对角传动比等价验证（NFR-COR-01）；C 非常矩阵/病态给诊断并阻止（DT-* 码）",
+    "本卡只输出数值不判限位（校验归消费域）；惯量比阈值不内嵌（P-DT-2）；映射核心/工作点统计按卡内拆分为两提交（规模 L）；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.19 行＋units/drivetrain.md §6/§11/§15；EV-T10≙③端口注册表。"
+}

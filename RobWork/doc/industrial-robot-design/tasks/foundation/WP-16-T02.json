@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T02",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "冻结 P-06 轨迹碰撞复检协议数值（与需求所有者协同）",
+  "status": "blocked",
+  "dependsOn": [],
+  "requirements": ["P-06"],
+  "designRefs": [
+    "REQUIREMENTS.md#24",
+    "REQUIREMENTS.md#12",
+    "units/trajectory.md#11",
+    "development-task-breakdown.md#2.17"
+  ],
+  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
+  "note": "DOC-T15 编译（2026-10-06）。blocked：P-06 冻结属需求变更，须经需求所有者签署（REQUIREMENTS 附录 C 冻结前置；WP-16-T07 复检实现以冻结值为准，未冻结不得启用）。解冻后补齐 ready 必备字段（allowedFiles/outputs/acceptance/branch/interUnit）。"
+}

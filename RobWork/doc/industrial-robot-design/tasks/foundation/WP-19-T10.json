@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T10",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现 selection 插件界面",
+  "status": "ready",
+  "dependsOn": ["WP-19-T07", "WP-19-T08", "WP-19-T09", "UI-T08"],
+  "requirements": ["UX-02", "UX-10"],
+  "designRefs": [
+    "units/selection.md#13",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_selection_plugin",
+    "cmake --build build --config Release --target sdurws_ird_selection_test"
+  ],
+  "branch": "wp19-t10",
+  "interUnit": true,
+  "knownPitfalls": ["P-SEL-2"],
+  "acceptance": [
+    "选型工作流页＋目录管理＋候选表（经 IPluginUiRegistrar 白名单挂位）界面链路用例通过",
+    "插件零计算逻辑（二分结构扫描）；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §13/§16。"
+}

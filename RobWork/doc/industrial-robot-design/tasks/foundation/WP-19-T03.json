@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T03",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现器件目录包模型与导入校验",
+  "status": "ready",
+  "dependsOn": ["WP-19-T02", "IO-T03", "IO-T04"],
+  "requirements": ["SEL-01", "SEL-02"],
+  "designRefs": [
+    "units/selection.md#4",
+    "units/selection.md#5",
+    "units/selection.md#6",
+    "REQUIREMENTS.md#14",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
+  "branch": "wp19-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-IO-7", "P-SEL-2"],
+  "acceptance": [
+    "版本化 CSV 目录包（清单/型号主表/能力曲线表/兼容关系表＋字段字典/版本/来源）导入校验（文件间引用/单位/必填/唯一性/数值范围，SEL-01/02）用例通过；AT-08 导入/错误字段/版本锁定测试",
+    "能力曲线分段线性插值、默认禁止外推（SEL-CURVE-EXTRAPOLATION-DENIED）用例通过",
+    "文件层＝io（清单核对/路径与预算防护/CSV 通道）、业务层＝selection（字段字典/单位/必填/唯一性/范围/插值语义）分工不越界；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §4/§5/§6/§16；IO-T03/T04≙CSV/JSON 读写器落位。"
+}

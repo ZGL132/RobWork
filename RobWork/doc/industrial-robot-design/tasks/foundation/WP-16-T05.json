@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T05",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "实现笛卡尔段与段内 IK 连续性检查",
+  "status": "ready",
+  "dependsOn": ["WP-16-T04", "WP-15-T04"],
+  "requirements": ["TRJ-02"],
+  "designRefs": [
+    "units/trajectory.md#8",
+    "REQUIREMENTS.md#8.1",
+    "development-task-breakdown.md#2.17"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_trajectory_test"],
+  "branch": "wp16-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-3", "P-TRJ-11"],
+  "acceptance": [
+    "直线接近/撤离段＋沿途 IK 连续性检查（TRJ-02）模型测试通过；适用条件双路用例（含笛卡尔段→检查；纯关节路径→标记不适用，§8.1 C2 口径）通过",
+    "IK 经③端口消费（IKinematicsComputePort 透传 kin.task-point-ik/kin.pose-metrics），不直链 kinematics（R-1）；分支跳变/奇异邻域判定与 units/trajectory.md §8 一致",
+    "ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §8/§18；WP-15-T04≙③端口 IK 协作面。"
+}

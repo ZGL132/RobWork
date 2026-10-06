@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-20-T10",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "实现 optimization 插件界面",
+  "status": "ready",
+  "dependsOn": ["WP-20-T08", "WP-20-T09", "UI-T08"],
+  "requirements": ["UX-02", "UX-10", "TASK-01"],
+  "designRefs": [
+    "units/optimization.md#6",
+    "units/optimization.md#9",
+    "development-task-breakdown.md#2.21"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_optimization_plugin",
+    "cmake --build build --config Release --target sdurws_ird_optimization_test"
+  ],
+  "branch": "wp20-t10",
+  "interUnit": true,
+  "knownPitfalls": ["P-OPT-1"],
+  "acceptance": [
+    "变量表/约束页/运行控制（取消/进度漏斗）/候选表与对比（经 IPluginUiRegistrar 白名单挂位 StageId::Optimization）界面链路用例通过",
+    "取消协作生效与进度显示（AT-34）用例通过；暂停/继续不出现（归 R2/AT-35，V12-06）；阶段锁呈现为阻塞诊断非候选淘汰",
+    "插件零计算逻辑；UI 只消费只读投影不在 UI 线程评估；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §6.5/§9/§14。"
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-20-T07",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "实现 OptimizationRunResult 与采用守卫",
+  "status": "ready",
+  "dependsOn": ["WP-20-T05", "PRJ-T10"],
+  "requirements": ["OPT-08"],
+  "designRefs": [
+    "units/optimization.md#10",
+    "units/project.md#10",
+    "ARCHITECTURE.md#7.1",
+    "development-task-breakdown.md#2.21"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_optimization_test"],
+  "branch": "wp20-t07",
+  "interUnit": true,
+  "knownPitfalls": ["P-OPT-3", "P-OPT-8", "P-PR-9"],
+  "acceptance": [
+    "候选归属 OptimizationRunResult，不产生项目修订；预览候选不得修改基线（OPT-08）用例通过",
+    "\"设为当前方案\"＝project.create-branch＋modeling.apply-robot-design 两步命令组合（经①端口；本单元不注册新命令 token——P-PR-9 规避）：创建方案分支（记录 baseRevisionId 不复制对象）＋新修订＋完整复算提示；基线对象字节不变（AT-12）用例通过",
+    "过期基线 StaleRevisionRejected（PRJ-STALE-REVISION-REJECTED）候选保留；撤销/重做由 project 接管（本单元零自建栈）；候选差异预览消费 Model Diff（P-OPT-8 范围外项给警告不虚构）；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §10/§14；PRJ-T10≙命令服务。"
+}

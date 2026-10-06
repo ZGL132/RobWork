@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T13",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "契约测试套件",
+  "status": "ready",
+  "dependsOn": ["WP-22-T03", "WP-22-T04", "WP-22-T05", "WP-22-T06", "WP-22-T07", "WP-22-T08", "WP-22-T09", "WP-22-T10", "WP-22-T11", "WP-22-T12", "TK-T03"],
+  "requirements": ["PM-01", "PM-03", "PM-05", "PM-18"],
+  "designRefs": [
+    "units/workflow.md#11",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_contract_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "branch": "wp22-t13",
+  "interUnit": true,
+  "knownPitfalls": ["P-WF-2"],
+  "acceptance": [
+    "生命周期主线：新建→编辑→应用→撤销/重做→包导出导入→另存用例通过并留痕（AT-20/21/29，DTB WP-22-T13 验收原文）",
+    "门控/建议/映射纯函数面固定投影夹具（contract-fixture）确定性重放用例通过；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §11/§12；TK-T03≙契约测试设施。"
+}

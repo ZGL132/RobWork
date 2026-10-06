@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-20-T06",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "实现 Quick/Verified 两层、缓存与种子",
+  "status": "ready",
+  "dependsOn": ["WP-20-T04", "EV-T09"],
+  "requirements": ["OPT-06", "NFR-COR-02"],
+  "designRefs": [
+    "units/optimization.md#8",
+    "REQUIREMENTS.md#15.0",
+    "ARCHITECTURE.md#7.6",
+    "development-task-breakdown.md#2.21"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_optimization_test"],
+  "branch": "wp20-t06",
+  "interUnit": true,
+  "knownPitfalls": ["P-EV-8"],
+  "acceptance": [
+    "Quick 保守淘汰→Verified 复核（Quick 标 screening-only 不支撑正式结论；Quick↔Verified 缓存双向 Incompatible，无隐式升降级——D-13/EV-CPA-1）用例通过",
+    "会话内缓存命中经 evidence judgeCacheHit（命中≠Current，两套语义不混同）；失败/取消/部分结果不作正式缓存命中（CON-04）",
+    "确定性随机种子（≥1，0 非法不静默替换）：同种子同线程配置等价候选集合与稳定排序（AT-09~11）用例通过；并行与检查点不作 B 期承诺（§15.0）；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §8/§14；EV-T09≙兼容判定（judgeCacheHit）。Quick 产物在 Verified 判定中＝Unverified（P-EV-8 实现承载词表）。"
+}

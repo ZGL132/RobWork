@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T12",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现直线传动目录与映射（R2）",
+  "status": "blocked",
+  "dependsOn": ["WP-19-T05"],
+  "requirements": ["SEL-09-S1"],
+  "designRefs": [
+    "units/selection.md#17",
+    "REQUIREMENTS.md#17.1",
+    "development-task-breakdown.md#2.20"
+  ],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
+  "note": "DOC-T15 编译（2026-10-06）。blocked：SEL-09-S1（P1/R2 分期子项，选型层）——直线传动目录模板与映射；R2 启动且 MDL-12-S1 前置链（选型层先行）明确后解冻。解冻后补齐 ready 必备字段（drivetrain 协作依赖另登记）。"
+}

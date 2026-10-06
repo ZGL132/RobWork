@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-20-T08",
+  "unit": "optimization",
+  "masterWp": "WP-H",
+  "title": "实现预检 Preflight 与基线评估",
+  "status": "ready",
+  "dependsOn": ["WP-20-T03"],
+  "requirements": ["OPT-11"],
+  "designRefs": [
+    "units/optimization.md#6",
+    "units/optimization.md#8",
+    "REQUIREMENTS.md#15",
+    "development-task-breakdown.md#2.21"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/**",
+    "RobWork/doc/industrial-robot-design/units/optimization.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_optimization_test"],
+  "branch": "wp20-t08",
+  "interUnit": true,
+  "knownPitfalls": ["P-OPT-6"],
+  "acceptance": [
+    "预检 20 检查项（写集冲突/未登记绑定/缺失上游工件/阶段能力冲突/P-04 未冻结等）：阻塞/警告计数＋逐项定位＋basis＋修复建议＋allowances 五元组（OPT-11）用例通过（阻塞项可定位）",
+    "Evaluate Baseline：基线候选（空补丁）与候选同管线同基准；基线数据不足不伪造完整比较、评估失败不包装为候选淘汰用例通过",
+    "研究配置持久化通道（P-OPT-6）裁决前：会话态＋导出副本承载，不入 .rwdesign；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §6.4/§8.2/§14。"
+}

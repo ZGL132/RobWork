@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-19-T09",
+  "unit": "selection",
+  "masterWp": "WP-G",
+  "title": "实现选型回填命令与合成",
+  "status": "ready",
+  "dependsOn": ["WP-19-T06", "PRJ-T10"],
+  "requirements": ["SEL-10", "MDL-16"],
+  "designRefs": [
+    "units/selection.md#12",
+    "ARCHITECTURE.md#7.1",
+    "development-task-breakdown.md#2.20"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
+  "branch": "wp19-t09",
+  "interUnit": true,
+  "knownPitfalls": ["P-SEL-3", "P-PR-9"],
+  "acceptance": [
+    "应用选型方案经①命令端口（ProjectCommandService 域命令）回填各轴 DriveTrainDesign：记录目录版本与安装关系；按明确参考系合成质量/质心/惯量，壳体质量与转子等效惯性区分、禁止重复计入（SEL-10/MDL-16 合成规则）",
+    "回填产生新修订并提示实际依赖结果（运动学/动力学/选型/优化指标）需复算；复核完成前不沿用原通过结论（AT-30）用例通过",
+    "回填命令 token 语法遵守 project 冻结词形（P-PR-9 裁决前取无点保守形态，与 modeling 卡 D-MDL-6 同案）；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §12/§16；PRJ-T10≙命令服务落位。"
+}

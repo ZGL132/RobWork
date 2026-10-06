@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T12",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现命令集注册与工业高频命令",
+  "status": "ready",
+  "dependsOn": ["WP-22-T03", "WP-22-T04", "WP-22-T05", "WP-22-T06", "WP-22-T07", "WP-22-T08", "WP-22-T09", "UI-T06"],
+  "requirements": ["UX-13"],
+  "designRefs": [
+    "units/workflow.md#8",
+    "REQUIREMENTS.md#18",
+    "ARCHITECTURE.md#7.11",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_plugin",
+    "cmake --build build --config Release --target sdurws_ird_workflow_test"
+  ],
+  "branch": "wp22-t12",
+  "interUnit": true,
+  "knownPitfalls": ["P-WF-3"],
+  "acceptance": [
+    "最小命令集（新建/打开/保存草稿/应用/撤销/重做/切换方案/另存为/包导出/报告导出）＋工业高频（运行碰撞检查/切换显示模式/复位关节 Home·Zero）注册并可经命令面板模糊搜索到达（≥10 条，UX-13/F5）",
+    "复位关节不产生修订（KIN-06 会话语义）；全局快捷键经 ui 唯一注册点（SA-16），插件不私占；产生修订的命令经①端口",
+    "\"运行碰撞检查\"保持会话级最小语义（O-26 三方契约裁决前，P-WF-3）；报告导出编排 reporting 服务（预览宿主 P-UI-9 缺位如实呈现）；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §8/§12；UI-T06≙CommandRegistry。"
+}

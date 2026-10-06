@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-17-T06",
+  "unit": "dynamics",
+  "masterWp": "WP-G",
+  "title": "实现数据不足降级与可信等级",
+  "status": "ready",
+  "dependsOn": ["WP-17-T03"],
+  "requirements": ["DYN-06"],
+  "designRefs": [
+    "units/dynamics.md#8",
+    "units/evidence.md#6",
+    "REQUIREMENTS.md#13",
+    "development-task-breakdown.md#2.18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/doc/industrial-robot-design/units/dynamics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_dynamics_test"],
+  "branch": "wp17-t06",
+  "interUnit": true,
+  "knownPitfalls": ["P-DYN-11"],
+  "acceptance": [
+    "物性或摩擦数据不足时标记可信等级（DYN-06），降级经 evidence 证据表达（缺失项全量列入清单，DataInsufficient）",
+    "不把估算结果包装成精确结论（限定语纪律）用例通过；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §8/§12。"
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T14",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "实现 jerk 上限约束（R2）",
+  "status": "blocked",
+  "dependsOn": ["WP-16-T08", "WP-16-T11"],
+  "requirements": ["TRJ-08-S1"],
+  "designRefs": [
+    "REQUIREMENTS.md#17.1",
+    "units/trajectory.md#12",
+    "development-task-breakdown.md#2.17"
+  ],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_trajectory_test"],
+  "note": "DOC-T15 编译（2026-10-06）。blocked：R2 分期子项（TRJ-08-S1，P1/R2）——R1 不承诺交付；解冻条件＝R2 批次启动（WP-16-T08/T11 完成为实现前置）。解冻后补齐 ready 必备字段。"
+}

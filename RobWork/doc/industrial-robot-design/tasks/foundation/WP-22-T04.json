@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-22-T04",
+  "unit": "workflow",
+  "masterWp": "WP-I",
+  "title": "实现新建项目三步向导",
+  "status": "ready",
+  "dependsOn": ["WP-22-T02", "IO-T06", "WP-13-T03"],
+  "requirements": ["PM-01"],
+  "designRefs": [
+    "units/workflow.md#7",
+    "REQUIREMENTS.md#17",
+    "development-task-breakdown.md#2.23"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/**",
+    "RobWork/doc/industrial-robot-design/units/workflow.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_workflow_plugin",
+    "cmake --build build --config Release --target sdurws_ird_workflow_test"
+  ],
+  "branch": "wp22-t04",
+  "interUnit": true,
+  "knownPitfalls": ["P-WF-2"],
+  "acceptance": [
+    "三步向导（项目信息→初始来源：模板六/七轴×安装｜URDF/Xacro｜空白→确认）＋右侧实时步骤摘要（PM-01）",
+    "取消/失败不留半成品；URDF 基线修订只读保存＋外部引用记录（复制入资源区或登记外部引用）二选一处置用例通过（AT-20）",
+    "P-03（七轴模板数值）未冻结——向导不预填数值，模板启用前置 WP-13-T07；模板/导入经 modeling 公共契约（WP-13-T03）与①端口，不直链；ird_gates 零命中"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.1/§12；IO-T06≙JSON 通道。"
+}

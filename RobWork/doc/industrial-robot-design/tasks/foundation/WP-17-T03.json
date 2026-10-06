@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-17-T03",
+  "unit": "dynamics",
+  "masterWp": "WP-G",
+  "title": "实现 RNEA 逆动力学评估器",
+  "status": "ready",
+  "dependsOn": ["WP-17-T02", "RT-T08", "RT-T09"],
+  "requirements": ["DYN-01", "DYN-02"],
+  "designRefs": [
+    "units/dynamics.md#5",
+    "REQUIREMENTS.md#13",
+    "ARCHITECTURE.md#7.3",
+    "development-task-breakdown.md#2.18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/doc/industrial-robot-design/units/dynamics.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": ["cmake --build build --config Release --target sdurws_ird_dynamics_test"],
+  "branch": "wp17-t03",
+  "interUnit": true,
+  "knownPitfalls": ["P-DYN-1", "P-DYN-3", "P-DYN-11"],
+  "acceptance": [
+    "RNEA 逆动力学（重力/连杆惯性/末端负载/外部力/黏性+库仑摩擦，关节空间精确含全部耦合项）二连杆解析算例＋静态重力矩用例通过",
+    "倒挂工况重力矩（AT-37 动力侧）消费同一基座—世界编译变换（R_world_base），禁止任何下游二次旋转；摩擦参数输入链对接 MDL-16（缺失触发 DYN-06 降级）",
+    "关节侧结果与候选传动无关（DYN-04 边界——映射归 drivetrain）；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §5/§12；RT-T08/T09≙runtime 双编译与重力投影消费面。"
+}

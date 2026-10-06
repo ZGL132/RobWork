@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-16-T12",
+  "unit": "trajectory",
+  "masterWp": "WP-F",
+  "title": "实现 trajectory 插件界面",
+  "status": "ready",
+  "dependsOn": ["WP-16-T09", "WP-16-T10", "WP-16-T11", "UI-T08"],
+  "requirements": ["UX-02", "UX-10"],
+  "designRefs": [
+    "units/trajectory.md#16",
+    "units/trajectory.md#14",
+    "development-task-breakdown.md#2.17"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_trajectory_plugin",
+    "cmake --build build --config Release --target sdurws_ird_trajectory_test"
+  ],
+  "branch": "wp16-t12",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-11"],
+  "acceptance": [
+    "轨迹工作流页＋曲线视图入口（经 IPluginUiRegistrar 白名单挂位）界面链路用例通过",
+    "插件零计算逻辑（二分结构扫描）；结果呈现守只读投影纪律；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §14/§16/§18。"
+}
