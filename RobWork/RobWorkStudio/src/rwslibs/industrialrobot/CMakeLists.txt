@@ -29,7 +29,12 @@
 #       diagnostics/runtime/policy/evidence/execution 六条卡 §3.2 登记
 #       边，测试目标 sdurws_ird_kinematics_test/_contract_test 随落位
 #       登记——见 kinematics/CMakeLists.txt；_plugin 随 WP-15-T12）；
-#       其余 6 个单元仍为 INTERFACE 占位，源码
+#       workflow 已随 WP-22-T02 落地为真实 STATIC 库（PUBLIC 链 core/ui/
+#       diagnostics/project/execution/io/evidence/reporting 八条卡 §3.2
+#       依赖白名单边，插件目标 sdurws_ird_workflow_plugin（最小可注册
+#       实现）与测试目标 sdurws_ird_workflow_test/_contract_test 随落位
+#       登记——见 workflow/CMakeLists.txt；界面面随 WP-22-T04~T12）；
+#       其余 5 个单元仍为 INTERFACE 占位，源码
 #       随各自单元任务卡落地，落地时升级为真实库（CMake 目标名不变）
 # =====================================================================
 
@@ -49,10 +54,11 @@ endif()
 # io 自 IO-T01（≙WP-11-T02）、execution 自 EX-T01（≙WP-08-T02）、ui 自
 # WP-10-T02（≙UI-T02，R-3 唯一 Qt Widgets 例外目标）、reporting 自
 # RPT-T01（≙WP-12-T02）、modeling 自 WP-13-T02、requirements 自 WP-14-T02、
-# kinematics 自 WP-15-T02 起移出（下方 add_subdirectory）。
+# kinematics 自 WP-15-T02、workflow 自 WP-22-T02 起移出（下方
+# add_subdirectory）。
 set(IRD_MODULES
     trajectory dynamics drivetrain
-    selection optimization workflow
+    selection optimization
 )
 
 foreach(ird_m ${IRD_MODULES})
@@ -222,6 +228,26 @@ add_subdirectory(requirements)
 # （链接六者目标——kinematics.md §3.2 边表；各被链单元均已在上方
 # add_subdirectory）。
 add_subdirectory(kinematics)
+# workflow（WP-22-T02 落位）：INTERFACE 占位升级为 STATIC（C++17、
+# PUBLIC 链 core＋ui＋diagnostics＋project＋execution＋io＋evidence＋
+# reporting——workflow.md §3.2 依赖白名单八条接口依赖边，属 ARCH §3.4
+# "不直链任何业务域单元，只经端口与事件协作"＋§3.5"L4 编排→L2/L3 公共
+# 接口"许可方向的实例化，ird_gates 白名单 "workflow->…" 八行随本任务
+# 登记；零 Qt 含 Core——R-3/NFR-MNT-01，插件目标 sdurws_ird_workflow_
+# plugin 随本任务落位（本单元契约 acceptance 1 明文，与 kinematics"_
+# plugin 随 T12"不同）为 Qt 例外载体——最小可注册实现，界面面随
+# WP-22-T04~T12），并新建 workflow/CMakeLists.txt（本注册行即其挂载点）；
+# T02 源码集＝src/Workflow.cpp 锚点翻译单元（空起步＝无接口预建——
+# NFR-MNT-04；七公共头随 T03~T12——卡 §3.1 布局表），测试目标
+# sdurws_ird_workflow_test（红线扫描，LABELS ird）/sdurws_ird_workflow_
+# contract_test（构建图边界契约＋插件可注册契约，LABELS ird）随本任务
+# 登记。零其他业务域单元（R-1——编排单元不直链 modeling/requirements/
+# kinematics/trajectory/dynamics/drivetrain/selection/optimization）、零
+# testkit（T-1）、零 _worker 形态（卡 §3.2"worker 目标：不建"）。R1 零
+# 新增域码（卡 §6.5——不建 DiagCodes 面）。次序约束：必须在 core、ui、
+# diagnostics、project、execution、io、evidence、reporting 之后（链接八者
+# 目标——workflow.md §3.2 白名单；各被链单元均已在上方 add_subdirectory）。
+add_subdirectory(workflow)
 
 # 依赖红线门禁（WP-01-T01 落地）：ird_gates 自定义目标＝构建期硬门禁
 # （ARCH §3.2 SA-10"红线即构建门禁"）。检查项与命中码见 cmake/ird_gates.cmake

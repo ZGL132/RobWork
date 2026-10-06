@@ -1,0 +1,419 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWork/src/rw/core/CMakeLists.txt
+  Extension.cpp
+  ExtensionPoint.cpp
+  ExtensionRegistry.cpp
+  Log.cpp
+  LogStreamWriter.cpp
+  Message.cpp
+  RobWork.cpp
+  Property.cpp
+  PropertyBase.cpp
+  PropertyMap.cpp
+  PropertyValue.cpp
+  PropertyValueBase.cpp
+  AnyPtr.cpp
+  PropertyType.cpp
+  Event.cpp
+  Exception.cpp
+  LogWriter.cpp
+  IOUtil.cpp
+  Plugin.cpp
+  StringUtil.cpp
+  DOMElem.cpp
+  DOMParser.cpp
+  DOMCorePropertyMapLoader.cpp
+  DOMCorePropertyMapSaver.cpp
+  DOMCoreBasisTypes.cpp
+  DOMPropertyMapFormat.cpp
+  BoostXMLParser.cpp
+  os.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/build/RobWork/libs/Release/sdurw_core.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/build/RobWork/libs/Release/sdurw_core.exp
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_filesystem-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\boost_filesystem-vc143-mt-x64-1_92.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_program_options-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\boost_program_options-vc143-mt-x64-1_92.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWork/src/rw/common/CMakeLists.txt
+  Archive.cpp
+  BINArchive.cpp
+  Cache.cpp
+  ConcatVectorIterator.cpp
+  FileCache.cpp
+  INIArchive.cpp
+  InputArchive.cpp
+  LogBufferedChar.cpp
+  LogBufferedMsg.cpp
+  LogFileWriter.cpp
+  LogMultiWriter.cpp
+  OutputArchive.cpp
+  PairMap.cpp
+  ProgramOptions.cpp
+  Serializable.cpp
+  ThreadPool.cpp
+  ThreadSafeQueue.cpp
+  ThreadSafeStack.cpp
+  ThreadSafeVariable.cpp
+  ThreadTask.cpp
+  Timer.cpp
+  TimerUtil.cpp
+  VectorIterator.cpp
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/build/RobWork/libs/Release/sdurw_common.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/build/RobWork/libs/Release/sdurw_common.exp
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\boost_thread-vc143-mt-x64-1_92.dll -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\boost_thread-vc143-mt-x64-1_92.dll done
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWork/src/rw/math/CMakeLists.txt
+  CameraMatrix.cpp
+  EAA.cpp
+  EigenDecomposition.cpp
+  InertiaMatrix.cpp
+  Jacobian.cpp
+  Line2D.cpp
+  Line2DPolar.cpp
+  LinearAlgebra.cpp
+  Math.cpp
+  Metric.cpp
+  MetricFactory.cpp
+  MetricUtil.cpp
+  PerspectiveTransform2D.cpp
+  Polynomial.cpp
+  PolynomialND.cpp
+  PolynomialSolver.cpp
+  Pose2D.cpp
+  Pose6D.cpp
+  ProjectionMatrix.cpp
+  Q.cpp
+  Quaternion.cpp
+  RPY.cpp
+  Random.cpp
+  Rotation2D.cpp
+  Rotation3D.cpp
+  Rotation3DVector.cpp
+  Statistics.cpp
+  Transform2D.cpp
+  Transform3D.cpp
+  Transform3DVector.cpp
+  Vector.cpp
+  Vector2D.cpp
+  Vector3D.cpp
+  VectorND.cpp
+  VelocityScrew6D.cpp
+  Wrench6D.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         with [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         [ [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(32,15): warning C4996:         ] [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         with [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         [ [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(44,16): warning C4996:         ] [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996: 'Eigen::MatrixBase<Derived>::jacobiSvd': Options should be specified using method's template parameter. [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         with [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         [ [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:             Derived=Eigen::Matrix<double,-1,-1,0,-1,-1> [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\LinearAlgebra.cpp(59,11): warning C4996:         ] [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\VectorND.hpp(444,21): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/math/VectorND.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\VectorND.hpp(444,21):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\VectorND.hpp(764,57):
+          查看对正在编译的 类 模板 实例化“rw::math::VectorND<2,float>”的引用
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\VectorND.hpp(442,27):
+          在编译 类 模板 成员函数“rw::math::VectorND<2,float> &rw::math::VectorND<2,float>::operator /=(double)”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\VectorND.hpp(435,21): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/math/VectorND.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\VectorND.hpp(435,21):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\VectorND.hpp(433,27):
+          在编译 类 模板 成员函数“rw::math::VectorND<2,float> &rw::math::VectorND<2,float>::operator *=(double)”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244: “=”: 从“double”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:             T=float [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.cpp(64,27):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(629,56):
+          查看对正在编译的 类 模板 实例化“rw::math::Quaternion<float>”的引用
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.cpp(61,1):
+          在编译 类 模板 成员函数“rw::math::Quaternion<float> rw::math::Quaternion<float>::pow(double) const”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244: “初始化”: 从“T”转换到“T”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         and [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:             T=float [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/math/Quaternion.cpp”)
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,50):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(540,26):
+          在编译 类 模板 成员函数“rw::math::Quaternion<float> &rw::math::Quaternion<float>::operator =(const rw::math::Rotation3D<double> &)”时
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(542,19):
+          查看对正在编译的函数 模板 实例化“void rw::math::Quaternion<float>::setRotation<double>(const rw::math::Rotation3D<double> &)”的引用
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244: “初始化”: 从“T”转换到“const T”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         with [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:             T=double [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         and [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         [ [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:             T=float [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWork\src\rw\math\Quaternion.hpp(276,24): warning C4244:         ] [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  (编译源文件“../../../../../RobWork/RobWork/src/rw/math/Quaternion.cpp”)
+  
+  Auto build dll exports
+    正在创建库 D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/build/RobWork/libs/Release/sdurw_math.lib 和对象 D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/build/RobWork/libs/Release/sdurw_math.exp
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(174,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Length>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Length>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(175,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Angle>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Angle>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(176,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Mass>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Mass>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(177,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Time>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Time>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(178,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Force>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Force>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(179,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Torque>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Torque>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(180,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Inertia>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Inertia>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(181,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Power>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Power>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(182,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearVelocity>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearVelocity>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(183,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularVelocity>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularVelocity>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(184,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearAcceleration>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::LinearAcceleration>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(185,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularAcceleration>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::AngularAcceleration>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(186,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Voltage>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Voltage>”的声明
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Units.cpp(187,16): warning C4099: “sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Dimensionless>”: 类型名称以前使用“struct”现在使用的是“class” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include\sdurws\ird\core\Units.hpp(111,8):
+      参见“sdurws::ird::core::Quantity<sdurws::ird::core::QuantityKind::Dimensionless>”的声明
+  
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Diagnostics.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  ParamSchema.cpp
+  Catalog.cpp
+  Factory.cpp
+  Confirmable.cpp
+  Aggregation.cpp
+  Logging.cpp
+  Redaction.cpp
+  CrashReport.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Evidence.cpp
+  Errors.cpp
+  Snapshot.cpp
+  Slice.cpp
+  Verdict.cpp
+  Envelope.cpp
+  Currentness.cpp
+  Compatibility.cpp
+  Evaluator.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Project.cpp
+  Codec.cpp
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5): warning C4297: “sdurws::ird::project::ProjectStore::handlerRegistry”: 假定函数不引发异常，但确实发生了 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5):
+      在函数上指定了 __declspec(nothrow)、throw()、noexcept(true)或 noexcept
+  
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Execution.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  StateMachine.cpp
+  Controller.cpp
+  Scheduler.cpp
+  RunRegistry.cpp
+  Admission.cpp
+  EventBus.cpp
+  ChannelProtocol.cpp
+  WorkerSupervisor.cpp
+  Checkpoint.cpp
+  CacheCoordinator.cpp
+  ChannelPair.cpp
+  JobScope.cpp
+  MemProbe.cpp
+  ProcessLauncher.cpp
+  mocs_compilation_Release.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution.vcxproj]
+  (编译源文件“../../../../../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(291,43):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(289,38):
+              请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt
+  Io.cpp
+  SafePath.cpp
+  Budget.cpp
+  IoDiagnostics.cpp
+  Csv.cpp
+  Json.cpp
+  ZipChannel.cpp
+  ResourceIo.cpp
+  TempArea.cpp
+  AtomicFile.cpp
+  Package.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_reporting
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt
+  Reporting.cpp
+  Errors.cpp
+  Identity.cpp
+  ReportModel.cpp
+  ReportCodec.cpp
+  Sections.cpp
+  Builder.cpp
+  Render.cpp
+  Consistency.cpp
+  Archive.cpp
+  Export.cpp
+  Bundle.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  Automatic MOC for target sdurws_ird_ui
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt
+  Ui.cpp
+  WorkbenchShell.cpp
+  WorkbenchContent.cpp
+  ShellSupport.cpp
+  StatusProjection.cpp
+  View3DPlaceholder.cpp
+  CommandRegistry.cpp
+  GlobalShortcutRegistry.cpp
+  CommandPalette.cpp
+  PolicySummaryCard.cpp
+  DomainReadinessSummaryCard.cpp
+  FormEditCommon.cpp
+  ParamTablePanel.cpp
+  UiText.cpp
+  StageNavigationModel.cpp
+  AboutDialog.cpp
+  UiSessionController.cpp
+  DraftController.cpp
+  DiagnosticPresentation.cpp
+  CommandInteractionBridge.cpp
+  TaskPresentation.cpp
+  PluginUiRegistrar.cpp
+  HostController.cpp
+  RuntimePublishBridge.cpp
+  SelectionService.cpp
+  IndustrialProjectTree.cpp
+  PropertyInspector.cpp
+  FlowLayout.cpp
+  UiTheme.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_workflow
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt
+  Workflow.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_workflow.lib

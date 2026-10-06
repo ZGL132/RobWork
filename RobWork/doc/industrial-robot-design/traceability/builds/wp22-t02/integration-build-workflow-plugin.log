@@ -1,0 +1,399 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_reporting
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_workflow
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_workflow.lib
+  Automatic MOC for target sdurws_ird_workflow_plugin
+  WorkflowPluginAssembly.cpp
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_workflow_plugin.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_reporting
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  Automatic MOC for target sdurws_ird_testkit
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_workflow
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_workflow.lib
+  Automatic MOC for target sdurws_ird_workflow_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  mocs_compilation_Release.cpp
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\gtest.dll done
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_reporting
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_workflow
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_workflow.lib
+  Automatic MOC for target sdurws_ird_workflow_plugin
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_workflow_plugin.lib
+  Automatic MOC for target sdurws_ird_workflow_contract_test
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt
+  ContractTestMain.cpp
+  BuildGraphContractTest.cpp
+  PluginRegistrationContractTest.cpp
+  mocs_compilation_Release.cpp
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(67,22): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(67,26): error C3861: “createPluginUiRegistrar”: 找不到标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(68,5): error C2672: “testing::internal::CmpHelperNE”: 未找到匹配的重载函数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1477,1):
+      可能是“testing::AssertionResult testing::internal::CmpHelperNE(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(68,5):
+          未能使函数模板“testing::AssertionResult testing::internal::CmpHelperNE(const char *,const char *,const T1 &,const T2 &)”专用化
+              D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(68,5):
+              用下列模板参数:
+                  D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(68,5):
+                  “T1=unknown-type”
+                  D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(68,5):
+                  “T2=nullptr”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(68,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(70,21): error C2653: “workflow”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(70,31): error C3861: “createWorkflowPluginAssembly”: 找不到标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(71,5): error C2672: “testing::internal::CmpHelperNE”: 未找到匹配的重载函数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1477,1):
+      可能是“testing::AssertionResult testing::internal::CmpHelperNE(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(71,5):
+          “testing::AssertionResult testing::internal::CmpHelperNE(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(71,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(72,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(72,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(72,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(72,5):
+      尝试匹配参数列表“(const char [29], const char [11], const char [9])”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(76,16): error C2737: “outcome”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(78,5): error C3536: “outcome”: 初始化之前无法使用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(78,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(78,5): error C2065: “Ok”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(78,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(84,16): error C2737: “reports”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(85,5): error C3536: “reports”: 初始化之前无法使用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(85,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(85,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(85,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(85,5):
+      尝试匹配参数列表“(const char [15], const char [3], unsigned int)”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(86,5): error C2109: 下标要求数组或指针类型 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(86,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(86,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(86,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(86,5):
+      尝试匹配参数列表“(const char [20], const char [11], const char [9])”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(87,5): error C2109: 下标要求数组或指针类型 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(87,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(87,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(87,5):
+          尝试匹配参数列表“()”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(87,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(87,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(88,5): error C2109: 下标要求数组或指针类型 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(88,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(88,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(88,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(88,5):
+      尝试匹配参数列表“(const char [24], const char [3], unsigned int)”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(90,5): error C2109: 下标要求数组或指针类型 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(90,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(90,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(90,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(90,5):
+      尝试匹配参数列表“(const char [30], const char [3], unsigned int)”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(92,5): error C2109: 下标要求数组或指针类型 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(92,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(92,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(92,5):
+          尝试匹配参数列表“()”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(92,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(92,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(108,27): error C2653: “workflow”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(108,37): error C3861: “createWorkflowPluginAssembly”: 找不到标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(109,19): error C2530: “d”: 必须初始化引用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(111,5): error C3536: “d”: 初始化之前无法使用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(111,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(111,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(111,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(111,5):
+      尝试匹配参数列表“(const char [11], const char [24], const char [22])”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(115,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(115,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(115,5):
+          尝试匹配参数列表“()”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(115,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(115,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(117,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(117,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(117,5):
+          尝试匹配参数列表“()”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(117,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(117,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(119,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(119,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(119,5):
+          尝试匹配参数列表“()”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(119,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(119,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(121,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(121,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(121,5):
+          尝试匹配参数列表“()”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(121,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(121,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(122,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(122,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(122,5):
+          尝试匹配参数列表“()”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(122,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(122,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(125,5): error C2660: “testing::internal::EqHelper::Compare”: 函数不接受 3 个参数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1427,26):
+      参见“testing::internal::EqHelper::Compare”的声明
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1434,26):
+      可能是“testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(125,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,std::nullptr_t,T *)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1415,26):
+      或    “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(125,5):
+          “testing::AssertionResult testing::internal::EqHelper::Compare(const char *,const char *,const T1 &,const T2 &)”: 应输入 4 个参数，却提供了 3 个
+      D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(125,5):
+      尝试匹配参数列表“(const char [16], const char [3], unsigned int)”时
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(126,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(126,5): error C2065: “Modeling”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(126,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(127,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(127,5): error C2065: “Requirements”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(127,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(128,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(128,5): error C2065: “Kinematics”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(128,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(129,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(129,5): error C2065: “TrajectoryDynamics”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(129,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(130,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(130,5): error C2065: “Selection”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(130,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(131,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(131,5): error C2065: “Optimization”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(131,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(132,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(132,5): error C2065: “Reporting”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(132,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(147,22): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(147,26): error C3861: “createPluginUiRegistrar”: 找不到标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(148,5): error C2672: “testing::internal::CmpHelperNE”: 未找到匹配的重载函数 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1477,1):
+      可能是“testing::AssertionResult testing::internal::CmpHelperNE(const char *,const char *,const T1 &,const T2 &)”
+          D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(148,5):
+          未能使函数模板“testing::AssertionResult testing::internal::CmpHelperNE(const char *,const char *,const T1 &,const T2 &)”专用化
+              D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(148,5):
+              用下列模板参数:
+                  D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(148,5):
+                  “T1=unknown-type”
+                  D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(148,5):
+                  “T2=nullptr”
+  
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(148,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(153,21): error C2653: “workflow”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(153,31): error C3861: “createWorkflowPluginAssembly”: 找不到标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(156,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(156,5): error C2065: “NotWhitelisted”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(156,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(162,18): error C2653: “workflow”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(162,28): error C3861: “createWorkflowPluginAssembly”: 找不到标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(163,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(163,5): error C2065: “Ok”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(163,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(166,19): error C2653: “workflow”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(166,29): error C3861: “createWorkflowPluginAssembly”: 找不到标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(167,5): error C2653: “ui”: 不是类或命名空间名称 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(167,5): error C2065: “DuplicatePlugin”: 未声明的标识符 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\PluginRegistrationContractTest.cpp(167,5): error C2737: “gtest_ar”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]

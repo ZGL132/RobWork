@@ -1,0 +1,16 @@
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from WfBuildRedLine
+[ RUN      ] WfBuildRedLine.ProductFaceHasZeroQtIncludes_WP22T02_ACC1
+[       OK ] WfBuildRedLine.ProductFaceHasZeroQtIncludes_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfBuildRedLine.IncludeFaceRestrictedToEightRegisteredEdges_WP22T02_ACC2
+[       OK ] WfBuildRedLine.IncludeFaceRestrictedToEightRegisteredEdges_WP22T02_ACC2 (0 ms)
+[ RUN      ] WfBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP22T02_ACC2
+[       OK ] WfBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP22T02_ACC2 (0 ms)
+[ RUN      ] WfBuildRedLine.ProductFaceFilesNonEmpty_WP22T02_ACC1
+[       OK ] WfBuildRedLine.ProductFaceFilesNonEmpty_WP22T02_ACC1 (0 ms)
+[----------] 4 tests from WfBuildRedLine (10 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (10 ms total)
+[  PASSED  ] 4 tests.

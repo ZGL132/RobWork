@@ -3,11 +3,11 @@
 | 字段 | 值 |
 | --- | --- |
 | 单元 | workflow（**L4 业务域单元·编排**——ARCHITECTURE §3.1/§3.4：消费平台事件与各域就绪状态投影，产出七阶段导航的门控状态与"下一步建议"；生命周期入口（新建/打开/另存/导入导出向导）整合于此；不直链任何业务域单元） |
-| 文档版本 | v0.1（2026-10-06，首版草案，WP-22-T01 交付物） |
+| 文档版本 | v0.2（2026-10-06，WP-22-T02 落位登记增补；v0.1（2026-10-06，首版草案，WP-22-T01 交付物）） |
 | 文档状态 | **`Draft`**（未冻结；本文只做详细设计，不自行宣布任何验收通过；本文自审不等于实现测试通过） |
 | 主 WP | WP-I（WP-10、WP-22、WP-23、WP-24、WP-25——DTB §0.1 主 WP 映射；单元任务主责 **WP-22，跨阶段 A～E**：REQUIREMENTS §17 表注 RV-11） |
 | 上游 | `REQUIREMENTS.md` v1.16（`Accepted`，唯一需求权威）、`ARCHITECTURE.md` v0.13（`Draft`）、`development-task-breakdown.md` v0.53（`Draft`） |
-| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/`（**当前仅公共头保留位 README，尚未落位任何源码**——见 §1.3/§3.6） |
+| 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/`（**WP-22-T02 起已落位构建骨架**：sdurws_ird_workflow STATIC＋_plugin（最小可注册实现）/_test/_contract_test 三目标；业务公共头与实现随 WP-22-T03~T12 增列——见 §1.3/§3.1/§3.3） |
 | 实现口径 | 从头构建（REQUIREMENTS v1.9 确立）：不继承、不恢复 `old/` 历史实现；旧 `WorkflowStageController`（四阶段锁/就绪重估）仅作功能范围对照（需求附录 A.1），扩展为七阶段等价承接，不继承其实现 |
 | 任务编号 | 本卡决策 `D-WF-x`；待裁决项 `P-WF-x`；验证用例 `WF-VER-x`；诊断码前缀 `WF-`（diagnostics.md §4.5 业务域命名空间清单已登记 `WF`，码值注册归 diagnostics StableCodeRegistry；**R1 零新增码**——登记原则见 §6.5） |
 
@@ -69,16 +69,28 @@
 | workflow 代码目录仅公共头保留位 README | ✅ 与磁盘一致（§1.3） |
 | DTB §2.23 WP-22-T01～T13 共 13 任务（统计行"WP-22:13"） | ✅ 与磁盘一致 |
 
-### 1.3 workflow 代码目录磁盘实测（2026-10-06）
+### 1.3 workflow 代码目录磁盘实测（2026-10-06，WP-22-T02 落位后）
 
 ```text
 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/
-└── include/sdurws/ird/workflow/README.md     ← 唯一文件：公共头保留位（不参与编译）
+├── CMakeLists.txt                              ← WP-22-T02：构建脚本（STATIC＋plugin＋两测试目标＋配置期守卫）
+├── include/sdurws/ird/workflow/README.md       ← 公共头保留位（业务公共头随 T03+ 增列，不参与编译）
+├── src/Workflow.cpp                            ← WP-22-T02：锚点翻译单元（空起步——NFR-MNT-04）
+├── assembly/sdurws/ird/workflow/
+│   └── WorkflowPluginAssembly.hpp              ← WP-22-T02：装配契约头（plugin 目标 PUBLIC 面——O-31 门面）
+├── plugin/
+│   ├── WorkflowUiModule.hpp/.cpp               ← WP-22-T02：ui.md §11.2 三方法最小实现（诚实空态）
+│   └── WorkflowPluginAssembly.cpp              ← WP-22-T02：装配门面实现（descriptor 现产）
+├── test/
+│   ├── TestMainReport.cpp                      ← WP-22-T02：自有 main＋testkit 报告监听器
+│   └── BuildRedLineTest.cpp                    ← WP-22-T02：产品面红线扫描四用例
+└── contract_test/
+    ├── ContractTestMain.cpp                    ← WP-22-T02：自有 main＋报告监听器
+    ├── BuildGraphContractTest.cpp              ← WP-22-T02：构建图边界契约五用例（八边）
+    └── PluginRegistrationContractTest.cpp      ← WP-22-T02：插件可注册契约三用例
 ```
 
-README 占位原文："本目录为 workflow 单元公共头保留位（命名空间 sdurws/ird/workflow）。源码随对应任务卡（见 doc/industrial-robot-design/units/workflow.md §9）落地；本文件不参与编译。"（其引用的"§9"是占位期提示，不代表本卡章节号——本卡落位后以本卡实际章节为准。）
-
-CMake 侧：`industrialrobot/CMakeLists.txt` 以 `IRD_MODULES` 列表统一注册（第 53～56 行含 `workflow`），当前仅 **INTERFACE 占位目标** `sdurws_ird_workflow`——骨架期统一占位，不构成实现；WP-22-T02 落位时升级为真实库（目标名不变）。**无** `_plugin`/`_test`/`_contract_test` 目标，**无**源码——与 unit-status.json `not-verified` 一致。
+CMake 侧：`industrialrobot/CMakeLists.txt` 的 `IRD_MODULES` 占位列表**已不含 `workflow`**（WP-22-T02 移出），以 `add_subdirectory(workflow)` 挂载真实目标：`sdurws_ird_workflow` **STATIC**（PUBLIC 链卡 §3.2 依赖白名单八边——core/ui/diagnostics/project/execution/io/evidence/reporting）、`sdurws_ird_workflow_plugin`（最小可注册实现——本单元契约 acceptance 1 明文随 T02 创建，与 kinematics"_plugin 随 T12"不同）、`sdurws_ird_workflow_test`/`sdurws_ird_workflow_contract_test`（ird_add_gtest 同款，LABELS "ird"）。业务公共头（Types/Gate/Advice/Lifecycle/Settings/Comparison/Projection——§3.1 布局表）与其实现**尚未落位**，随 WP-22-T03~T12 增列；门控/建议/生命周期业务实现**无**——单元验证状态仍以任务验收证据为准（unit-status.json 刷新归治理任务）。
 
 ---
 
@@ -155,23 +167,24 @@ R2 子项边界（不新增架构机制，PA-7）：PM-11-S1～S3（项目属性
 
 ## 3. 单元组成、依赖、构建目标与实际代码状态
 
-### 3.1 目标形态（WP-22-T02 落位后的建议布局；当前磁盘仅占位 README——§1.3，不得把本节写成已有实现）
+### 3.1 目标形态（WP-22-T02 已落位构建骨架；业务公共头与其实现随 T03~T12 增列——§1.3 实测）
 
 ```text
 workflow/
-├── CMakeLists.txt                    ← WP-22-T02：INTERFACE 占位升级为真实库
-├── include/sdurws/ird/workflow/      ← 公共头（R-2：跨单元只允许消费这些头）
-│   ├── Types.hpp                     ← 门控/建议/流程词表（复用 ui StageId——零新增枚举）
-│   ├── Gate.hpp                      ← StageGatingState/级联提示数据（O1/O2）
-│   ├── Advice.hpp                    ← NextStepAdvice 与建议词表（O3）
-│   ├── Lifecycle.hpp                 ← 向导流程状态机与流程编排接口（O4/O5/O10）
-│   ├── Settings.hpp                  ← 用户设置 schema 与存取（O6）
-│   ├── Comparison.hpp                ← 方案比较编排（O7）
-│   └── Projection.hpp               ← 横幅/标题栏状态数据（O9）
-├── src/                              ← 计算库实现（零 Qt；门控/建议为纯函数面）
-├── plugin/                           ← sdurws_ird_workflow_plugin（Qt Widgets 界面：向导/首页/比较视图/确认对话框）
-├── test/                             ← sdurws_ird_workflow_test
-└── contract_test/                    ← sdurws_ird_workflow_contract_test
+├── CMakeLists.txt                    ← WP-22-T02 已落位：INTERFACE 占位升级为真实库（STATIC）
+├── include/sdurws/ird/workflow/      ← 公共头（R-2：跨单元只允许消费这些头；T02 期仅 README 保留位）
+│   ├── Types.hpp                     ← 门控/建议/流程词表（复用 ui StageId——零新增枚举）〔WP-22-T03+〕
+│   ├── Gate.hpp                      ← StageGatingState/级联提示数据（O1/O2）〔WP-22-T03〕
+│   ├── Advice.hpp                    ← NextStepAdvice 与建议词表（O3）〔WP-22-T03〕
+│   ├── Lifecycle.hpp                 ← 向导流程状态机与流程编排接口（O4/O5/O10）〔WP-22-T04~T08〕
+│   ├── Settings.hpp                  ← 用户设置 schema 与存取（O6）〔WP-22-T10〕
+│   ├── Comparison.hpp                ← 方案比较编排（O7）〔WP-22-T11〕
+│   └── Projection.hpp               ← 横幅/标题栏状态数据（O9）〔WP-22-T09〕
+├── src/                              ← 计算库实现（零 Qt；门控/建议为纯函数面）〔T02＝锚点 Workflow.cpp〕
+├── plugin/                           ← sdurws_ird_workflow_plugin〔T02＝最小可注册实现；Qt Widgets 界面：向导/首页/比较视图/确认对话框随 T04~T12〕
+├── test/                             ← sdurws_ird_workflow_test〔T02＝红线扫描；门控/建议用例随 T03+〕
+└── contract_test/                    ← sdurws_ird_workflow_contract_test〔T02＝构建图边界＋插件可注册契约〕
+（另：assembly/sdurws/ird/workflow/WorkflowPluginAssembly.hpp——T02 落位的装配契约头，plugin 目标 PUBLIC 面）
 ```
 
 ### 3.2 构建目标与依赖红线
@@ -186,9 +199,9 @@ workflow/
 
 **依赖白名单**：`sdurws_ird_workflow` 允许链接 core/ui/diagnostics/project/execution/io/evidence/reporting 的公共接口（L4→L2/L3）；**禁止链接任何业务域单元计算库**（modeling/requirements/kinematics/trajectory/dynamics/selection/optimization——ARCH §3.4"不直链任何业务域单元，只经端口与事件协作"；R-1 门禁）。就绪事实只经 ui StageStatusModel 投影与⑤事件端口进入本单元；模板/导入等领域能力只经①命令端口与各域公共数据契约触达。**ui 依赖方向说明**：workflow→ui 是 L4→L3 接口依赖（消费 `UiTypes.hpp`/`ICommandRegistry`/`IUiProjectionStore` 公共头），与 ui→workflow 的"门控规则归 workflow"语义不冲突——ui 拥有投影设施与呈现，workflow 拥有门控规则（P-UI-6 三方契约的落地形态，§5.1）。
 
-### 3.3 与磁盘实况的差异清单
+### 3.3 与磁盘实况的差异清单（2026-10-06，WP-22-T02 落位后）
 
-1. 已实现文件：**无**（目录树仅 README 占位）。2. 代码占位：CMake INTERFACE 目标 `sdurws_ird_workflow`。3. 公共头保留位：README。4. CMake 目标：仅占位；`_plugin/_test/_contract_test` 未登记。5. 测试/契约测试/plugin：无。6. 缺失目录：`src/`、`plugin/`、`test/`、`contract_test/`。7. 与 unit-status.json 差异：**无差异**；本卡产出后刷新归治理任务。
+1. 已实现文件：构建骨架（src 锚点翻译单元＋plugin 最小可注册实现＋两测试目标源码——§1.3 实测树）；**业务实现（门控/建议/生命周期/设置/比较/投影）仍无**（随 T03~T12）。2. 代码占位：无占位目标（INTERFACE 占位已升级 STATIC）。3. 公共头保留位：README（业务公共头随 T03+ 增列）。4. CMake 目标：`sdurws_ird_workflow` STATIC＋`sdurws_ird_workflow_plugin`＋`sdurws_ird_workflow_test`＋`sdurws_ird_workflow_contract_test` 四目标已登记。5. 测试/契约测试：红线扫描＋构建图边界＋插件可注册契约共 12 用例已落位；门控/建议/生命周期用例随 T03+。6. 缺失目录：无（include/ 业务头随 T03+ 增列）。7. 与 unit-status.json 差异：实现状态已超前于 `not-verified` 记录（构建骨架已落位、单元测试已执行——记录刷新归治理任务）。
 
 ### 3.4 单元详设最低结构对照（DETAILED-DESIGN.md 要求）
 
@@ -736,7 +749,7 @@ public:
 | 任务卡 | 标题（DTB 原文要点） | 本卡设计章节 | 落位/前置 | 验收锚 |
 | --- | --- | --- | --- | --- |
 | WP-22-T01 | 编写 workflow 单元任务卡（含阶段 A 生命周期原形条款） | **本卡整体** | 前置 WP-10/WP-04/WP-08/WP-09 各卡；ARCH §3.4；REQUIREMENTS §17 表注/§18；project.md §13.2 | 卡含：七阶段门控规则与状态投影消费、生命周期入口流程（新建/打开/另存/包/重关联）、失败路径用户呈现、任务拆分；禁止项：workflow 不直链任何业务域单元（ARCH §3.4） |
-| WP-22-T02 | 构建落位：workflow 占位转真实库＋插件目标 | §3 | 前置 WP-22-T01、WP-03-T01 | 双模式构建零错误；R-1 扫描（无业务域直链边）通过 |
+| WP-22-T02 | 构建落位：workflow 占位转真实库＋插件目标 | §3 | 前置 WP-22-T01、WP-03-T01 | 双模式构建零错误；R-1 扫描（无业务域直链边）通过。**落位登记（v0.2，2026-10-06）**：sdurws_ird_workflow STATIC（src 锚点空起步——NFR-MNT-04）＋八边 PUBLIC 链接（§3.2 白名单全登记，含 ui——D-WF-6）＋_plugin 最小可注册实现（IPluginUiModule 三方法诚实空态＋§10.9 装配门面 assembly/；三能力 false、panels/commands 空——界面面随 T04+）＋_test/_contract_test（红线扫描四用例＋构建图边界五用例＋插件可注册三用例；ird_add_gtest 同款、LABELS "ird"）；R1 零新增域码（§6.5——不建 DiagCodes 面）；白名单 "workflow->…" 八行随任务登记＋dependency-graph.json 同步刷新（双面留痕） |
 | WP-22-T03 | 实现七阶段门控与下一步建议 | §4/§5/§6 | 前置 WP-22-T02、WP-10-T09（StageStatusModel） | 上游完成态/结果失效时级联提示下游需重算用例通过；禁止项：阶段状态投影归 ui（不双权威） |
 | WP-22-T04 | 实现新建项目三步向导 | §7.1 | 前置 WP-22-T02、WP-13（模板/导入）、WP-11-T06、WP-04 | 取消/失败不留半成品；URDF 基线修订保存＋外部引用记录用例通过 |
 | WP-22-T05 | 实现打开向导与无项目首页 | §7.2/§7.8 | 前置 WP-22-T02、WP-04-T08 | 失败显示具体文件且不动当前项目；最近项目 10 上限/去重/失效提示；无项目禁用七阶段入口 |
@@ -842,6 +855,7 @@ P-UI-6（三方契约——本卡谈判对面）；P-UI-9（报告预览宿主�
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v0.1 | 2026-10-06 | 首版草案（WP-22-T01 交付物）：20 单元第 20 卡（收官）——编排定位、四段职责链、七阶段门控与级联提示、下一步建议八规则、生命周期入口九流程、方案比较与命令集、八接口、27 验证用例、5 项待裁决。未实现产品源码；未执行构建/测试/GUI 测试 |
+| v0.2 | 2026-10-06 | WP-22-T02 落位登记增补：构建骨架落位（§1.3/§3.1/§3.3 实测同步）——sdurws_ird_workflow STATIC＋八边 PUBLIC 链接（§3.2 白名单全登记）＋_plugin 最小可注册实现（assembly/ 装配门面；三能力 false、panels/commands 空）＋_test/_contract_test（12 用例；ird_add_gtest 同款）；R1 零新增域码兑现（§6.5）；白名单八行＋dependency-graph.json 随任务登记。文档状态仍 `Draft`（未冻结） |
 
 ---
 
@@ -870,23 +884,23 @@ P-UI-6（三方契约——本卡谈判对面）；P-UI-9（报告预览宿主�
 
 自审发现并已直接修复的问题：①初稿曾把"门控数据形状"写成 workflow 自有词表——已改为复用 ui 词表（D-WF-4）；②曾把 PM-17 写入拥有表——已更正为非所有权（N12，主责 WP-24）；③级联失效曾表述为"触发下游重算"——已更正为"提示数据、不自动触发"（D-WF-2/UX-12 口径）。
 
-### 15.2 未执行声明
+### 15.2 未执行声明（v0.2 时点更新——仅描述本卡 v0.1 期状态的部分随落位翻转，业务面声明保持）
 
-- 本次只完成 workflow 详细设计文档（`units/workflow.md` v0.1）。
-- **未实现产品源码**；未创建/修改 workflow 任何源码文件（磁盘仍仅 README 占位——§1.3）。
-- **未执行构建**（双模式均未执行）；**未执行单元测试或契约测试**；**未执行 GUI 测试**（§11.3 GUI 约束仅为流程设计）。
-- 文档自审不等于实现测试通过；文档自审不等于正式验收（正式验收按 acceptance-protocol.md 三段式）。
-- 当前代码状态仍以磁盘实测和任务验收证据为准；`unit-status.json`/`DETAILED-DESIGN.md` 状态刷新归治理任务。
+- ~~本次只完成 workflow 详细设计文档（`units/workflow.md` v0.1）。~~ → v0.2（WP-22-T02）：构建骨架已落位（目标/测试/插件最小实现），文档增补落位登记。
+- ~~**未实现产品源码**；未创建/修改 workflow 任何源码文件。~~ → v0.2：src 锚点翻译单元＋plugin 最小可注册实现＋两测试目标源码已落位；**业务实现（门控/建议/生命周期/设置/比较/投影）仍未实现**（随 WP-22-T03~T12）。
+- ~~**未执行构建**（双模式均未执行）；**未执行单元测试或契约测试**；~~ → v0.2：双模式构建与 12 用例执行随 WP-22-T02 任务验证留痕（traceability/builds/wp22-t02/——以该目录证据为准，本文不自行宣布验收通过）。**未执行 GUI 测试**（§11.3 GUI 约束仅为流程设计——不变）。
+- 文档自审不等于实现测试通过；文档自审不等于正式验收（正式验收按 acceptance-protocol.md 三段式）——不变。
+- 当前代码状态仍以磁盘实测和任务验收证据为准；`unit-status.json`/`DETAILED-DESIGN.md` 状态刷新归治理任务——不变。
 
 ### 15.3 交付报告（最终报告）
 
 - **产出文件**：`RobWork/doc/industrial-robot-design/units/workflow.md`（v0.1，Draft，2026-10-06，首版草案，WP-22-T01 交付物；15 章、5 图、15+ 表、12＋15 验证用例、12 项设计决策、5 项待裁决）。
 - **读取的输入版本与状态**：REQUIREMENTS v1.16（Accepted）、ARCHITECTURE v0.13（Draft）、DTB v0.53（Draft）、unit-status.json（workflow＝planned/not-written/not-verified，masterWps=WP-I）、19 张既有单元卡（版本见 §1.1）；缺失文件：units/workflow.md（本次创建，此前为 20 单元中唯一缺口）。
-- **当前 workflow 代码实际状态**：仅公共头保留位 README＋CMake INTERFACE 占位目标；无源码/插件/测试——与 unit-status.json 一致。
+- **当前 workflow 代码实际状态**：v0.1 期＝仅公共头保留位 README＋CMake INTERFACE 占位目标；v0.2（WP-22-T02）起＝构建骨架已落位（STATIC＋_plugin 最小可注册＋两测试目标——§1.3 实测树）；业务实现仍无。
 - **主要决策**：四段职责链（域自报→ui 汇聚→workflow 门控→ui 呈现）；门控/建议纯函数面＋零新增词表；级联提示不自动重算；建议八规则可跳过；生命周期十流程编排（存储语义归 project、校验归 io、调度归 execution）；方案比较只读投影＋基准前置；命令贡献不拥有注册设施；R1 零新增 WF- 码。
 - **交接决策**：ui（P-UI-6 谈判对面＋命令贡献＋横幅数据）、project（PM 存储侧分工逐行承接）、execution（shutdown/drained＋Interrupted 条目——§13 行兑现）、io（包校验/设置 JSON）、diagnostics（诊断目录集成）。
 - **待裁决事项**：P-WF-1~5（含 DTB 前置方向互指的勘误建议）＋联动 P-UI-6/P-UI-9/O-26/O-32/P-03/P-PR-9/P-DIAG-7。
 - **实际代码缺口**：全部产品代码（计算库/插件/测试/契约测试）、golden `wf-*` 夹具、向导/首页/比较视图/横幅 UI——待 WP-22-T02 起逐卡落位。
 - **20 单元详设收官状态**：本卡落盘后 `units/` 目录 20/20 齐备（全部 Draft/`Draft-Structured` 草稿态）；索引与状态刷新归治理任务。
 
-**本文档结束（workflow 单元详细设计 v0.1，状态 `Draft`；未实现源码、未构建、未测试、未 GUI 验证；自审≠实现测试≠正式验收）**
+**本文档结束（workflow 单元详细设计 v0.2，状态 `Draft`；v0.1 未实现源码、未构建、未测试；v0.2 构建骨架落位并以任务验证留痕为准——业务实现未落位、未 GUI 验证；自审≠实现测试≠正式验收）**

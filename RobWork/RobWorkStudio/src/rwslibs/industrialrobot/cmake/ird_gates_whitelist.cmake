@@ -33,7 +33,13 @@
 # execution 六条（WP-15-T02——units/kinematics.md §3.2 边表，同属
 # ARCH §3.5 既有许可方向的实例化。六边已随本任务同步刷新进 dependency-
 # graph.json〔traceability/ 在 allowedFiles 内——WP-14-T02 双面留痕同款〕，
-# 并仍经 IRD_EXTRA_EDGE_REFS 登记出处）。
+# 并仍经 IRD_EXTRA_EDGE_REFS 登记出处）；另含 2026-10-06 增登的
+# workflow→core/ui/diagnostics/project/execution/io/evidence/reporting 八条
+# （WP-22-T02——units/workflow.md §3.2 依赖白名单，属 ARCH §3.4"不直链
+# 任何业务域单元，只经端口与事件协作"＋§3.5"L4 编排→L2/L3 公共接口"
+# 既有许可方向的实例化。八边已随本任务同步刷新进 dependency-graph.json
+# 〔traceability/ 在 allowedFiles 内——WP-14/WP-15 双面留痕同款〕，并仍
+# 经 IRD_EXTRA_EDGE_REFS 登记出处）。
 # 书写格式："依赖方->被依赖方"（与 traceability/dependency-graph.json 同序）。
 # ---------------------------------------------------------------------
 set(IRD_ALLOWED_UNIT_EDGES
@@ -75,6 +81,14 @@ set(IRD_ALLOWED_UNIT_EDGES
     "kinematics->policy"        # WP-15-T02（④端口 ICollisionEvaluator/IPolicyProvider/IJointLimitEvaluator 只读调用）
     "kinematics->evidence"      # WP-15-T02（IEngineeringEvaluator/EvaluationRequest/IEvaluationContext/EvaluationOutput 契约实现、DependencyDeclaration 值）
     "kinematics->execution"     # WP-15-T02（任务提交/取消令牌/检查点/结果归档通道——接口消费）
+    "workflow->core"        # WP-22-T02 八边（workflow.md §3.2 依赖白名单——身份/事件 DomainEventKind/TaskState 九态/单位）
+    "workflow->ui"          # WP-22-T02（StageId/StageViewStatus 词表、StageReadinessSnapshot/DomainReadinessItem 投影、ICommandRegistry 注册端口、IUiProjectionStore——L4→L3 接口依赖，D-WF-6 两权分立）
+    "workflow->diagnostics" # WP-22-T02（统一诊断目录条目消费——横幅/建议的问题数据源；R1 零新增码，卡 §6.5）
+    "workflow->project"     # WP-22-T02（①命令提交协议/HandlerContext、打开协议服务侧、ProjectMetadata/分支会话切换、存储上下文排空语义）
+    "workflow->execution"   # WP-22-T02（shutdown(DrainPolicy)/drained()、任务清单九态数据、Interrupted 条目、进度/取消控制接口）
+    "workflow->io"          # WP-22-T02（包导入校验执行、JSON canonical 写出——用户设置、SafePath/BudgetGuard）
+    "workflow->evidence"    # WP-22-T02（当前性投影 Superseded 原因清单、失效范围判定结果经投影——级联提示数据源）
+    "workflow->reporting"   # WP-22-T02（报告导出服务——"报告导出"命令执行面，RPT-02/UX-13）
 )
 
 # ---------------------------------------------------------------------
@@ -95,6 +109,9 @@ set(IRD_ALLOWED_UNIT_EDGES
 # WP-15-T02 增登的 kinematics 六边：traceability/ 在该任务 allowedFiles
 # 内（WP-14-T02 双面留痕同款），dependency-graph.json 已随任务同步刷新
 # （六边入图，⊆ 方向成立）；仍在本表登记出处。
+# WP-22-T02 增登的 workflow 八边：traceability/ 在该任务 allowedFiles 内
+# （WP-14/WP-15 双面留痕同款），dependency-graph.json 已随任务同步刷新
+# （八边入图，⊆ 方向成立）；仍在本表登记出处。
 # 格式：边 与 出处成对书写（各一个条目，数量必须相等）。
 # ---------------------------------------------------------------------
 set(IRD_EXTRA_EDGE_REFS_EDGES
@@ -115,7 +132,15 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "kinematics->runtime"
     "kinematics->policy"
     "kinematics->evidence"
-    "kinematics->execution")
+    "kinematics->execution"
+    "workflow->core"
+    "workflow->ui"
+    "workflow->diagnostics"
+    "workflow->project"
+    "workflow->execution"
+    "workflow->io"
+    "workflow->evidence"
+    "workflow->reporting")
 set(IRD_EXTRA_EDGE_REFS_NOTES
     "ARCH §3.5 补登（O-21 消账，2026-09-10）；testkit.md §2.4 T-2 允许形态"
     "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/SourcedValue/单位/比较/诊断契约/事件）"
@@ -134,7 +159,15 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——IRuntimeModelView/RuntimeSnapshot 只读消费、worker 物化入口（dependency-graph.json 已随任务同步刷新）"
     "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——④端口 ICollisionEvaluator/IPolicyProvider/IJointLimitEvaluator 只读调用（dependency-graph.json 已随任务同步刷新）"
     "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——IEngineeringEvaluator/EvaluationRequest/IEvaluationContext/EvaluationOutput 契约实现、DependencyDeclaration 值（dependency-graph.json 已随任务同步刷新）"
-    "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——任务提交/取消令牌/检查点/结果归档通道（接口消费；dependency-graph.json 已随任务同步刷新）")
+    "WP-15-T02 落位登记（2026-09-26）：units/kinematics.md §3.2 边表——任务提交/取消令牌/检查点/结果归档通道（接口消费；dependency-graph.json 已随任务同步刷新）"
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——ARCH §3.4 编排定位＋§3.5 L4→L2/L3 公共接口许可方向的实例化（身份/事件/任务状态词表——消费 core 四类事件与九态）；dependency-graph.json 已随任务同步刷新（双面留痕）"
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——StageId/StageViewStatus 词表、StageReadinessSnapshot/DomainReadinessItem 投影消费、ICommandRegistry 注册端口、IUiProjectionStore（L4→L3 接口依赖——D-WF-6 两权分立非循环；dependency-graph.json 已随任务同步刷新）"
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——统一诊断目录条目消费（横幅/建议的问题数据源；R1 零新增码——卡 §6.5；dependency-graph.json 已随任务同步刷新）"
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——①命令提交协议/HandlerContext、打开协议服务侧（五步②③⑤）、ProjectMetadata/分支会话切换、存储上下文排空语义（dependency-graph.json 已随任务同步刷新）"
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——shutdown(DrainPolicy)/drained()、任务清单九态数据、Interrupted 条目（重跑入口）、进度/取消控制接口（dependency-graph.json 已随任务同步刷新）"
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——包导入校验执行、JSON canonical 写出（用户设置 PM-14）、SafePath/BudgetGuard（dependency-graph.json 已随任务同步刷新）"
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——当前性投影（Superseded 原因清单）、失效范围判定结果经投影（级联提示数据源——D-WF-2 不复制失效计算；dependency-graph.json 已随任务同步刷新）"
+    "WP-22-T02 落位登记（2026-10-06）：units/workflow.md §3.2 依赖白名单——报告导出服务（\"报告导出\"命令执行面——RPT-02/UX-13；dependency-graph.json 已随任务同步刷新）")
 
 # ---------------------------------------------------------------------
 # 业务域单元清单（R-1 的判定范围；来源 AGENTS.md §5 架构红线 2）

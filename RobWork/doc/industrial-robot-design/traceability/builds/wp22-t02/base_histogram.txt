@@ -1,0 +1,6 @@
+     56 IRD-GATE-SUB
+     30 IRD-GATE-R3
+      6 IRD-GATE-R1
+      6 IRD-GATE-LIB
+      4 IRD-GATE-T1
+      1 IRD-GATE-R4

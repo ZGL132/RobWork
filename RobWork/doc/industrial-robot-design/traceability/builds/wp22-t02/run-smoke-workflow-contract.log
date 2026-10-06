@@ -1,0 +1,27 @@
+[==========] Running 8 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from WfBuildGraph
+[ RUN      ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1
+[       OK ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1
+[       OK ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2
+[       OK ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2 (0 ms)
+[ RUN      ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1
+[       OK ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2
+[       OK ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2 (0 ms)
+[----------] 5 tests from WfBuildGraph (11 ms total)
+
+[----------] 3 tests from WfPluginRegistration
+[ RUN      ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1
+[       OK ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1
+[       OK ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1 (0 ms)
+[ RUN      ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1
+[       OK ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1 (0 ms)
+[----------] 3 tests from WfPluginRegistration (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 2 test suites ran. (11 ms total)
+[  PASSED  ] 8 tests.
