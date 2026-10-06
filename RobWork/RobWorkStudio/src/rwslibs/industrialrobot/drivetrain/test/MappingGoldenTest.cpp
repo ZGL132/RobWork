@@ -28,6 +28,9 @@
 
 #include <sdurws/ird/drivetrain/DiagCodes.hpp>
 #include <sdurws/ird/drivetrain/MappingCore.hpp>
+#include <sdurws/ird/drivetrain/Codec.hpp>
+#include <sdurws/ird/drivetrain/Evaluator.hpp>
+#include <sdurws/ird/drivetrain/Facts.hpp>
 
 #include <sdurws/ird/core/Digest.hpp>
 #include <sdurws/ird/core/Identity.hpp>
@@ -701,4 +704,519 @@ TEST(DtMappingGolden, RotorSingleInclusionAndNoExtraFriction_WP18T03_ACC2)
             EXPECT_EQ(s.tauMotor, 0.01 * 2.3);
         }
     }
+}
+
+// =====================================================================
+// DT-G6：双向效率与再生（AT-07"双向效率"——方向折算＋E_loss＞0 恒等式）
+// =====================================================================
+
+/**
+ * η⁺=0.9/η⁻=0.7 的混合循环（正功段 2 s＋再生段 1 s，匀速 θ̈=0——转子项
+ * 恰零，效率折算面单独可验）。能量期望按**梯形积分**语义计算（§10.5
+ * 冻结口径——阶跃功率在段边界的过渡区间贡献＝两端均值×时长）：
+ *   pJoint＝[10,10,−10,−10]（τ·q̇，q̇=1）⟹
+ *   E_joint＝10＋0−10＝0 J（段边界过渡区间正负对消）；
+ *   E_pos＝10＋5＋0＝15 J；E_regen＝0＋5＋10＝15 J；
+ *   pTrans＝[11.111,11.111,−7,−7]⟹E_motor＝11.111＋2.0556−7＝6.1667 J；
+ *   E_loss＝1.111＋2.0556＋3＝6.1667 J（恒＞0——两方向折算均消耗）。
+ * 象限：ω＞0 恒，正功段 P_quad＝τ_m·θ̇＞0→Q1；再生段 τ_m＜0→Q2
+ * （象限能量按左矩形约定——与占比同区间，见 summarize 注释）。
+ */
+TEST(DtMappingGolden, BidirectionalEfficiencyEnergy_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-04"},
+                  std::vector<std::string>{"AT-07"});
+
+    dt::DriveTrainModel model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{0.01, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {eta(0.9, 0.7)}, {rotor(1e-4)});
+
+    // 匀速轨迹（q̈=0——q̇=1 rad/s 常值；τ_joint 分段常值）。
+    dt::JointSeriesView series;
+    series.jointIds = {idFrom<core::ObjectId>("dt-joint-0")};
+    series.caseId = idFrom<core::ObjectId>("dt-case-g6");
+    series.upstreamSliceId.bytes = idFrom<core::ContentIdentity>("dt-up-g6").bytes;
+    const double tauSeg[4] = {10.0, 10.0, -10.0, -10.0}; // N·m（正功段＋再生段）
+    for (std::size_t i = 0; i < 4; ++i) {
+        dt::JointDriveSample s;
+        s.t = static_cast<double>(i); // s（间隔 1 s）
+        s.qd = 1.0;                   // rad/s（匀速）
+        s.qdd = 0.0;                  // rad/s²（转子项恰零）
+        s.tauJoint = tauSeg[i];
+        s.segmentId = (i < 2) ? "seg-drive" : "seg-regen";
+        series.samples.push_back(s);
+    }
+
+    dt::DriveTrainMappingCore coreImpl;
+    const dt::DriveTrainMappingOutput out = coreImpl.evaluate(model, series, nullptr);
+    ASSERT_EQ(out.points.size(), 1U);
+    const auto& p = out.points[0];
+    const auto& s0 = out.motorSeries[0].samples[0];
+    const auto& s2 = out.motorSeries[0].samples[2];
+
+    // 方向折算（§10.2）：正功 P_trans＝P/η⁺（样本 0）；再生 P_trans＝P·η⁻
+    //（样本 2——τ<0、q̇>0）。
+    EXPECT_PRED_FORMAT2(closeRel, s0.pTransmission, 10.0 / 0.9);  // W（驱动）
+    EXPECT_PRED_FORMAT2(closeRel, s2.pTransmission, -10.0 * 0.7); // W（再生）
+    EXPECT_TRUE(s0.efficiencyApplicable);
+
+    // 能量分项（§10.5 梯形积分——期望见用例注释；actual 值已按实现语义
+    // 独立手算复核）。
+    EXPECT_PRED_FORMAT2(closeRel, p.energy.ePos, 15.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.energy.eRegen, 15.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.energy.eJoint, 0.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.energy.eLoss,
+                        10.0 / 9.0 + (10.0 / 0.9 - 7.0) / 2.0 + 3.0);
+    EXPECT_GT(p.energy.eLoss, 0.0); // 损耗恒正（两方向折算均消耗——§10.5）
+    EXPECT_PRED_FORMAT2(closeRel, p.energy.eMotor,
+                        10.0 / 0.9 + (10.0 / 0.9 - 7.0) / 2.0 - 7.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.energy.eRotor, 0.0); // 匀速：转子往返净额 0
+
+    // 象限（§10.6——P_quad＝τ_m·θ̇；ω＞0 恒）：正功段 Q1、再生段 Q2。
+    EXPECT_EQ(p.q1.sampleCount, 2U);
+    EXPECT_PRED_FORMAT2(closeRel, p.q1.timeShare, 2.0 / 3.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q1.energy, 20.0); // 象限能量＝左矩形 ∫pJoint
+    EXPECT_EQ(p.q2.sampleCount, 2U);
+    EXPECT_PRED_FORMAT2(closeRel, p.q2.energy, -10.0);
+    EXPECT_EQ(p.zeroDwell.sampleCount, 0U);
+}
+
+// =====================================================================
+// DT-G7：零功率/驻留（效率不适用显式标记＋RMS 含驻留——§10.2/§10.4）
+// =====================================================================
+
+TEST(DtMappingGolden, DwellAndZeroPower_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-04"},
+                  std::vector<std::string>{});
+
+    // c=1（直驱——标量易读）；驻留 2 s（q̇=0、τ 保持）＋运动 1 s。
+    dt::DriveTrainModel model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{1.0, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {eta(0.9, 0.7)}, {rotor(1e-4)});
+
+    dt::JointSeriesView series;
+    series.jointIds = {idFrom<core::ObjectId>("dt-joint-0")};
+    series.caseId = idFrom<core::ObjectId>("dt-case-g7");
+    const double tau[4] = {5.0, 5.0, 3.0, 3.0}; // N·m（驻留保持＋运动段）
+    for (std::size_t i = 0; i < 4; ++i) {
+        dt::JointDriveSample s;
+        s.t = static_cast<double>(i);
+        s.qd = (i < 2) ? 0.0 : 2.0; // rad/s（驻留段速度恰零）
+        s.tauJoint = tau[i];
+        s.segmentId = (i < 2) ? "seg-dwell" : "seg-move";
+        series.samples.push_back(s);
+    }
+
+    dt::DriveTrainMappingCore coreImpl;
+    const dt::DriveTrainMappingOutput out = coreImpl.evaluate(model, series, nullptr);
+    ASSERT_EQ(out.points.size(), 1U);
+    const auto& p = out.points[0];
+
+    // 驻留样本效率不适用（精确零——显式标记，不伪造数值）。
+    EXPECT_FALSE(out.motorSeries[0].samples[0].efficiencyApplicable);
+    EXPECT_EQ(out.motorSeries[0].samples[0].pTransmission, 0.0);
+    EXPECT_TRUE(out.motorSeries[0].samples[2].efficiencyApplicable);
+
+    // RMS 含驻留（§10.4——力矩保持计入热负载）：τ_m=[5,5,3,3]、T=3、梯形
+    // ∫τ²dt＝25＋17＋9＝51 ⟹ RMS(τ)=√(51/3)；ω=[0,0,2,2]、∫ω²dt＝0＋2＋4＝6
+    // ⟹ RMS(ω)=√(6/3)=√2。
+    EXPECT_PRED_FORMAT2(closeRel, p.tauRms, std::sqrt(51.0 / 3.0));
+    EXPECT_PRED_FORMAT2(closeRel, p.omegaRms, std::sqrt(6.0 / 3.0));
+
+    // 零速样本只计时间占比（2/3），不计象限能量（§10.6 表行 5）。
+    EXPECT_EQ(p.zeroDwell.sampleCount, 2U);
+    EXPECT_PRED_FORMAT2(closeRel, p.zeroDwell.timeShare, 2.0 / 3.0);
+    EXPECT_EQ(p.zeroDwell.energy, 0.0);
+    EXPECT_EQ(p.q1.sampleCount, 2U);
+    // 能量分项不含驻留区间（零功率样本置 0 进梯形积分——§8.3 剔除语义）：
+    // pJoint=[0,0,6,6]⟹E_pos＝E_joint＝0＋3＋6＝9 J。
+    EXPECT_PRED_FORMAT2(closeRel, p.energy.ePos, 9.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.energy.eJoint, 9.0);
+}
+
+// =====================================================================
+// DT-G8：反射惯量与惯量比（AT-07"反射惯量"——J/c² 与 c²·J_load/J_rotor）
+// =====================================================================
+
+TEST(DtMappingGolden, ReflectedInertiaAndInertiaRatio_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-04", "SEL-05"},
+                  std::vector<std::string>{"AT-07"});
+
+    dt::DriveTrainModel model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0), jointAxis(1)}, {motorAxis(0), motorAxis(1)},
+        {{0.01, dt::SourcedValueTag::ModelingField},
+         {0.02, dt::SourcedValueTag::ModelingField}},
+        {0.0, 0.0}, testIdentity(), {eta(0.9, 0.7), eta(0.9, 0.7)},
+        {rotor(1e-4), rotor(4e-4)});
+
+    // 负载折算惯量（关节轴系，kg·m²——组装方值传递，P-DT-4 保守消费）：
+    // 轴 0 提供 0.5；轴 1 缺失（惯量比不适用——显式标记）。
+    std::vector<dt::LoadInertiaEntry> load;
+    dt::LoadInertiaEntry e0;
+    e0.loadInertiaJointSide = 0.5;
+    e0.source = dt::SourcedValueTag::UserProvided;
+    load.push_back(e0);
+
+    dt::DriveTrainMappingCore coreImpl;
+    const dt::ReflectedInertiaResult inertia = coreImpl.evaluate(model, load);
+    ASSERT_EQ(inertia.axes.size(), 2U);
+
+    // 轴 0：J_reflected＝1e-4/0.01²＝1.0 kg·m²（DYN-04 记法 J·i²，i=100）；
+    // 惯量比＝0.01²×0.5/1e-4＝0.5（数值事实——无阈值判定，P-DT-2）。
+    EXPECT_PRED_FORMAT2(closeRel, inertia.axes[0].jReflectedJointSide, 1.0);
+    ASSERT_TRUE(inertia.axes[0].inertiaRatio.has_value());
+    EXPECT_PRED_FORMAT2(closeRel, *inertia.axes[0].inertiaRatio, 0.5);
+
+    // 轴 1：J_reflected＝4e-4/0.02²＝1.0；负载缺失→惯量比不适用（§10.7）。
+    EXPECT_PRED_FORMAT2(closeRel, inertia.axes[1].jReflectedJointSide, 1.0);
+    EXPECT_FALSE(inertia.axes[1].inertiaRatio.has_value());
+
+    // 反射惯量照常进入工作点（效率无关面）；惯量比在主管线（无负载输入）
+    // 保持不适用。
+    std::vector<double> times{0.0, 0.1};
+    dt::JointSeriesView series = sineSeries(2, 0.1, 6.283185307179586, times, 2.0, "s");
+    const dt::DriveTrainMappingOutput out = coreImpl.evaluate(model, series, nullptr);
+    ASSERT_EQ(out.points.size(), 2U);
+    EXPECT_PRED_FORMAT2(closeRel, out.points[0].reflectedInertia, 1.0);
+    EXPECT_FALSE(out.points[0].inertiaRatio.has_value());
+}
+
+// =====================================================================
+// DT-G9：峰值窗与 RMS 多段循环（DYN-03 口径——峰值带时刻/段/工况）
+// =====================================================================
+
+TEST(DtMappingGolden, PeakAndRmsMultiSegment_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-04", "DYN-03"},
+                  std::vector<std::string>{});
+
+    dt::DriveTrainModel model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{1.0, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {eta(0.9, 0.7)}, {rotor(1e-4)},
+        {std::optional<double>(10.0)} // 额定/参考力矩 10 N·m（负载率分母）
+    );
+
+    // 三段循环：τ=[2,8,-6,-6]、q̇=[1,1,1,1]、t=[0,1,2,3]（q̈=0）。
+    dt::JointSeriesView series;
+    series.jointIds = {idFrom<core::ObjectId>("dt-joint-0")};
+    series.caseId = idFrom<core::ObjectId>("dt-case-g9");
+    const double tau[4] = {2.0, 8.0, -6.0, -6.0};
+    const char* seg[4] = {"seg-1", "seg-2", "seg-3", "seg-3"};
+    for (std::size_t i = 0; i < 4; ++i) {
+        dt::JointDriveSample s;
+        s.t = static_cast<double>(i);
+        s.qd = 1.0;
+        s.tauJoint = tau[i];
+        s.segmentId = seg[i];
+        series.samples.push_back(s);
+    }
+
+    dt::DriveTrainMappingCore coreImpl;
+    const dt::DriveTrainMappingOutput out = coreImpl.evaluate(model, series, nullptr);
+    ASSERT_EQ(out.points.size(), 1U);
+    const auto& p = out.points[0];
+
+    // 正/负峰值分列（不混取绝对值——§10.4），带时刻/段/工况（"峰值不带
+    // 来源即非法输出"——§11.2）。
+    ASSERT_TRUE(p.tauPeakPos.present);
+    EXPECT_PRED_FORMAT2(closeRel, p.tauPeakPos.value, 8.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.tauPeakPos.t, 1.0);
+    EXPECT_EQ(p.tauPeakPos.segmentId, "seg-2");
+    EXPECT_EQ(p.tauPeakPos.caseId, series.caseId);
+    ASSERT_TRUE(p.tauPeakNeg.present);
+    EXPECT_PRED_FORMAT2(closeRel, p.tauPeakNeg.value, -6.0);
+    EXPECT_EQ(p.tauPeakNeg.segmentId, "seg-3");
+
+    // 速度峰值（带符号实测值）与功率峰值（pMotor＝pJoint/η⁺——q̇=1、
+    // q̈=0：峰值＝8/0.9，样本 1）。
+    ASSERT_TRUE(p.omegaPeak.present);
+    EXPECT_PRED_FORMAT2(closeRel, p.omegaPeak.value, 1.0);
+    ASSERT_TRUE(p.powerPeak.present);
+    EXPECT_PRED_FORMAT2(closeRel, p.powerPeak.value, 8.0 / 0.9);
+
+    // RMS（完整循环、梯形）：τ²=[4,64,36,36]⟹∫＝34＋50＋36＝120⟹RMS=√40。
+    EXPECT_PRED_FORMAT2(closeRel, p.tauRms, std::sqrt(120.0 / 3.0));
+    // 负载率（参考值——§10.4）：RMS/额定。
+    ASSERT_TRUE(p.loadRatio.has_value());
+    EXPECT_PRED_FORMAT2(closeRel, *p.loadRatio, std::sqrt(120.0 / 3.0) / 10.0);
+}
+
+// =====================================================================
+// 四象限全覆盖（§10.6——Q1～Q4＋零速的符号组合）
+// =====================================================================
+
+TEST(DtMappingGolden, QuadrantCoverage_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-04"},
+                  std::vector<std::string>{});
+
+    dt::DriveTrainModel model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{1.0, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {eta(0.9, 0.7)}, {rotor(1e-4)});
+
+    // 符号设计（ω＝q̇、P_quad＝τ_m·θ̇＝τ·q̇；q̈=0——转子项零；象限判定
+    // 按 §10.6 表的符号条件——ω、P 符号→编号）：
+    //   t0: ω=+1,τ=+2 → P=+2 → Q1   t1: ω=+1,τ=−2 → P=−2 → Q2
+    //   t2: ω=−1,τ=−2 → P=+2 → Q4（ω<0 且 P>0——表行 4）
+    //   t3: ω=−1,τ=+2 → P=−2 → Q3（ω<0 且 P<0——表行 3）
+    //   t4: ω=0, τ=+1 → 零速（span 1）  t5: ω=+1,τ=+1 → Q1（span 0）
+    dt::JointSeriesView series;
+    series.jointIds = {idFrom<core::ObjectId>("dt-joint-0")};
+    series.caseId = idFrom<core::ObjectId>("dt-case-quad");
+    const double omega[6] = {1.0, 1.0, -1.0, -1.0, 0.0, 1.0};
+    const double tau[6] = {2.0, -2.0, -2.0, 2.0, 1.0, 1.0};
+    for (std::size_t i = 0; i < 6; ++i) {
+        dt::JointDriveSample s;
+        s.t = static_cast<double>(i);
+        s.qd = omega[i];
+        s.tauJoint = tau[i];
+        s.segmentId = "seg-q";
+        series.samples.push_back(s);
+    }
+
+    dt::DriveTrainMappingCore coreImpl;
+    const dt::DriveTrainMappingOutput out = coreImpl.evaluate(model, series, nullptr);
+    ASSERT_EQ(out.points.size(), 1U);
+    const auto& p = out.points[0];
+
+    EXPECT_EQ(p.q1.sampleCount, 2U); // t0、t5
+    EXPECT_EQ(p.q2.sampleCount, 1U);
+    EXPECT_EQ(p.q3.sampleCount, 1U);
+    EXPECT_EQ(p.q4.sampleCount, 1U);
+    EXPECT_EQ(p.zeroDwell.sampleCount, 1U);
+    EXPECT_PRED_FORMAT2(closeRel, p.q1.timeShare, 1.0 / 5.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q2.timeShare, 1.0 / 5.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q3.timeShare, 1.0 / 5.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q4.timeShare, 1.0 / 5.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.zeroDwell.timeShare, 1.0 / 5.0);
+    // 象限能量＝∫pJoint dt（左矩形）：q1＝2×1＋1×0＝2；q2＝−2×1＝−2；
+    // q3（t3：pJoint＝τ·ω＝2×(−1)＝−2）；q4（t2：pJoint＝−2×(−1)＝+2）。
+    EXPECT_PRED_FORMAT2(closeRel, p.q1.energy, 2.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q2.energy, -2.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q3.energy, -2.0);
+    EXPECT_PRED_FORMAT2(closeRel, p.q4.energy, 2.0);
+    EXPECT_EQ(p.zeroDwell.energy, 0.0);
+}
+
+// =====================================================================
+// 数据不足降级（§10.7——效率缺失/转子缺失/估算来源/时间非单调）
+// =====================================================================
+
+TEST(DtMappingGolden, DataInsufficientDegradation_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"EVI-02"},
+                  std::vector<std::string>{"AT-07"});
+
+    // ---- 效率缺失：力矩/速度照常，功率/能量/四象限降级（不伪造、不以
+    // η=1 替代——§10.1/§10.7）。
+    dt::DriveTrainModel noEff = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{1.0, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {}, {rotor(1e-4)});
+    std::vector<double> times{0.0, 1.0, 2.0};
+    dt::JointSeriesView series = sineSeries(1, 0.1, 6.283185307179586, times, 2.0, "s");
+
+    dt::DriveTrainMappingCore coreImpl;
+    const dt::DriveTrainMappingOutput out1 = coreImpl.evaluate(noEff, series, nullptr);
+    EXPECT_EQ(out1.completeness, dt::CompletenessState::Partial);
+    ASSERT_GE(out1.missingItems.size(), 1U);
+    EXPECT_EQ(out1.missingItems[0], "efficiency[j=0]");
+    ASSERT_EQ(out1.motorSeries.size(), 1U);
+    // 力矩照常（理想＋转子项——与含效率模型一致）。
+    EXPECT_EQ(out1.motorSeries[0].samples[0].tauMotor, 1.0 * series.samples[0].tauJoint);
+    // 功率降级：pTransmission/pMotor 恒 0、能量 0、四象限不产出。
+    EXPECT_EQ(out1.motorSeries[0].samples[0].pTransmission, 0.0);
+    EXPECT_EQ(out1.motorSeries[0].samples[0].pMotor, 0.0);
+    ASSERT_EQ(out1.points.size(), 1U);
+    EXPECT_EQ(out1.points[0].energy.eJoint, 0.0);
+    EXPECT_EQ(out1.points[0].q1.sampleCount, 0U);
+    EXPECT_EQ(out1.points[0].quality, dt::CompletenessState::Partial);
+    EXPECT_FALSE(out1.points[0].etaApplied.has_value());
+
+    // ---- 转子缺失：τ_m＝理想口径＋DT-ROTOR-MISSING 诊断＋缺失清单。
+    dt::DriveTrainModel noRotor = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{1.0, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {eta(0.9, 0.7)}, {});
+    const dt::DriveTrainMappingOutput out2 = coreImpl.evaluate(noRotor, series, nullptr);
+    EXPECT_EQ(out2.completeness, dt::CompletenessState::Partial);
+    bool rotorMissingItem = false;
+    bool rotorMissingDiag = false;
+    for (const auto& item : out2.missingItems) {
+        if (item == "rotor[j=0]") {
+            rotorMissingItem = true;
+        }
+    }
+    for (const auto& rec : out2.diagnostics) {
+        if (rec.code == dt::kDtRotorMissing) {
+            rotorMissingDiag = true;
+        }
+    }
+    EXPECT_TRUE(rotorMissingItem);
+    EXPECT_TRUE(rotorMissingDiag);
+    ASSERT_EQ(out2.motorSeries.size(), 1U);
+    EXPECT_EQ(out2.motorSeries[0].samples[0].tauMotor,
+              out2.motorSeries[0].samples[0].tauIdeal); // 理想口径输出
+
+    // ---- 估算来源（Estimated）贯穿：缺失清单含限定语素材（§10.7）。
+    dt::DriveTrainModel estEff = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{1.0, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {eta(0.9, 0.7, dt::SourcedValueTag::Estimated)}, {rotor(1e-4)});
+    const dt::DriveTrainMappingOutput out3 = coreImpl.evaluate(estEff, series, nullptr);
+    bool estimatedSeen = false;
+    for (const auto& item : out3.missingItems) {
+        if (item == "estimated-source") {
+            estimatedSeen = true;
+        }
+    }
+    EXPECT_TRUE(estimatedSeen);
+    EXPECT_TRUE(out3.points[0].estimatedSource);
+
+    // ---- 时间非单调（DT-G12——数据类：不抛、不排序吞错；统计降级）。
+    dt::JointSeriesView bad
+        = sineSeries(1, 0.1, 6.283185307179586, {0.0, 2.0, 1.0}, 2.0, "s");
+    const dt::DriveTrainMappingOutput out4 = coreImpl.evaluate(noEff, bad, nullptr);
+    bool nonmonotonicDiag = false;
+    for (const auto& rec : out4.diagnostics) {
+        if (rec.code == dt::kDtInputTimeNonmonotonic) {
+            nonmonotonicDiag = true;
+        }
+    }
+    EXPECT_TRUE(nonmonotonicDiag);
+    ASSERT_EQ(out4.points.size(), 1U);
+    // 不输出"部分 RMS 冒充完整循环 RMS"——降级为 0＋缺失清单。
+    EXPECT_EQ(out4.points[0].tauRms, 0.0);
+}
+
+// =====================================================================
+// 取消（批次边界——不发布完整结果；TASK-02）
+// =====================================================================
+
+namespace {
+/// 取消语义替身（恒真——批次边界即取消）。
+class CancellingGate final : public dt::ICancellation {
+public:
+    bool cancellationRequested() const override
+    {
+        return true;
+    }
+};
+}  // namespace
+
+TEST(DtMappingGolden, CancellationAtBatchBoundary_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TASK-02", "NFR-PERF-02"},
+                  std::vector<std::string>{"AT-34"});
+
+    dt::DriveTrainModel model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{1.0, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {eta(0.9, 0.7)}, {rotor(1e-4)});
+    std::vector<double> times{0.0, 1.0};
+    dt::JointSeriesView series = sineSeries(1, 0.1, 6.283185307179586, times, 2.0, "s");
+
+    dt::DriveTrainMappingCore coreImpl;
+    CancellingGate gate;
+    const dt::DriveTrainMappingOutput out = coreImpl.evaluate(model, series, &gate);
+    // 取消后不发布完整结果：空素材＋取消诊断（消费方按 TASK-02 处置）。
+    EXPECT_TRUE(out.points.empty());
+    EXPECT_TRUE(out.motorSeries.empty());
+    EXPECT_EQ(out.completeness, dt::CompletenessState::Partial);
+    ASSERT_FALSE(out.missingItems.empty());
+    EXPECT_EQ(out.missingItems.front(), "cancelled");
+    ASSERT_FALSE(out.diagnostics.empty());
+    EXPECT_EQ(out.diagnostics.front().code, dt::kDtEvaluationCancelled);
+}
+
+// =====================================================================
+// canonical 编解码往返（NFR-COR-02——组装方契约的确定性面）
+// =====================================================================
+
+TEST(DtMappingGolden, CodecRoundtrip_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-COR-02", "CON-04"},
+                  std::vector<std::string>{});
+
+    dt::DriveTrainModel model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0), jointAxis(1)}, {motorAxis(0), motorAxis(1)},
+        {{0.01, dt::SourcedValueTag::ModelingField},
+         {-0.02, dt::SourcedValueTag::UserProvided}},
+        {0.25, -0.5}, testIdentity(), {eta(0.9, 0.7), eta(0.85, 0.6)},
+        {rotor(1e-4), rotor(2e-4)},
+        {std::optional<double>(10.0), std::nullopt});
+
+    // 模型往返等值（同值模型必得同字节——编码确定性锚点）。
+    const auto modelBytes = dt::encodeDriveTrainModel(model);
+    const dt::DriveTrainModel decoded = dt::decodeDriveTrainModel(modelBytes);
+    EXPECT_EQ(decoded, model);
+    EXPECT_EQ(dt::encodeDriveTrainModel(decoded), modelBytes);
+
+    // 序列往返等值。
+    dt::JointSeriesView series = sineSeries(2, 0.1, 6.283185307179586,
+                                            {0.0, 0.5, 1.0}, 2.0, "seg-rt");
+    const auto seriesBytes = dt::encodeJointSeries(series);
+    EXPECT_EQ(dt::decodeJointSeries(seriesBytes), series);
+
+    // 输出往返等值（端到端产物；模型完整——无降级诊断）。payload 编码边界
+    // （Codec.hpp 文件头）：诊断记录不进 payload（经 EvaluationOutput.
+    // diagnostics 通道）——往返等值断言以诊断面为空的输出为准，并钉住
+    // 解码侧 diagnostics 恒空的行为。
+    dt::DriveTrainMappingCore coreImpl;
+    const dt::DriveTrainMappingOutput out = coreImpl.evaluate(model, series, nullptr);
+    ASSERT_TRUE(out.diagnostics.empty());
+    const auto outBytes = dt::encodeMappingOutput(out);
+    const dt::DriveTrainMappingOutput outDecoded = dt::decodeMappingOutput(outBytes);
+    EXPECT_TRUE(outDecoded.diagnostics.empty());
+    EXPECT_EQ(outDecoded, out);
+
+    // 拒绝面：magic 不符／截断字节——调用方契约违约 fail-fast。
+    auto corrupted = modelBytes;
+    corrupted[0] = 'X';
+    EXPECT_THROW((void)dt::decodeDriveTrainModel(corrupted), std::invalid_argument);
+    auto truncated = modelBytes;
+    truncated.pop_back();
+    EXPECT_THROW((void)dt::decodeDriveTrainModel(truncated), std::invalid_argument);
+}
+
+// =====================================================================
+// Facts DTO 提取（§13.6——只含事实；D-DT-10 命名边界）
+// =====================================================================
+
+TEST(DtMappingGolden, FactsExtraction_WP18T03_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"EVI-01", "NFR-COR-04"},
+                  std::vector<std::string>{});
+
+    dt::DriveTrainModel model = dt::makeDiagonalDriveTrainModel(
+        {jointAxis(0)}, {motorAxis(0)},
+        {{1.0, dt::SourcedValueTag::ModelingField}}, {0.0}, testIdentity(),
+        {eta(0.9, 0.7)}, {rotor(1e-4)});
+    std::vector<double> times{0.0, 1.0, 2.0};
+    dt::JointSeriesView series = sineSeries(1, 0.1, 6.283185307179586, times, 2.0, "s");
+
+    dt::DriveTrainMappingCore coreImpl;
+    const dt::DriveTrainMappingOutput out = coreImpl.evaluate(model, series, nullptr);
+
+    dt::DriveTrainFactsProvider provider;
+    const dt::DriveTrainEvidenceFacts f = provider.facts(out);
+
+    // 身份块逐字段一致（NFR-COR-04 可追溯）。
+    EXPECT_EQ(f.identity, model.identity);
+    EXPECT_EQ(f.upstreamSliceId, series.upstreamSliceId);
+    EXPECT_EQ(f.caseCovered, series.caseId);
+    EXPECT_EQ(f.completeness, out.completeness);
+    EXPECT_TRUE(f.missingItems.empty());
+    // 逐轴事实摘要与工作点一致（数值事实引用面）。
+    ASSERT_EQ(f.axes.size(), 1U);
+    EXPECT_EQ(f.axes[0].axisId, out.points[0].axisId);
+    EXPECT_PRED_FORMAT2(closeRel, f.axes[0].tauRms, out.points[0].tauRms);
+    EXPECT_TRUE(f.axes[0].efficiencyApplied);
+    EXPECT_EQ(f.diagnosticCount, out.diagnostics.size());
 }

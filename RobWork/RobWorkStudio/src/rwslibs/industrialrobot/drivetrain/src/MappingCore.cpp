@@ -943,10 +943,16 @@ DriveTrainMappingOutput DriveTrainMappingCore::evaluate(const DriveTrainModel& m
         }
     }
 
-    // 时间非单调（数据类）：统计降级诊断在 summarize 内给——这里补整体
-    // 完整性标记。
+    // 时间非单调（数据类）：validate 的数据类诊断（DT-INPUT-TIME-NONMONO-
+    // TONIC）并入输出诊断——数据类问题走诊断＋降级，不抛不吞；统计面由
+    // summarize 拒绝（DT-INPUT-SAMPLE-MISSING＋"cycle-interval" 缺清单）。
     if (!timeMonotonic) {
         missingItems.push_back("monotonic-time");
+        for (const core::DiagnosticRecord& rec : inputCheck.diagnostics) {
+            if (rec.code == kDtInputTimeNonmonotonic) {
+                diagnostics.push_back(rec);
+            }
+        }
     }
 
     // ---- 第五步：反射惯量（§9——数值事实）。负载折算惯量不属于序列输入

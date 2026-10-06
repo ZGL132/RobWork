@@ -68,7 +68,9 @@ find_package(GTest CONFIG REQUIRED)
 # 统计；评估器适配面 src/Evaluator.cpp 随同任务工作点统计批次增列）。
 add_library(sdurws_ird_drivetrain STATIC
     src/DiagCodes.cpp
-    src/MappingCore.cpp)
+    src/MappingCore.cpp
+    src/DriveTrainCodec.cpp
+    src/Evaluator.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：drivetrain 公共头使用 C++17 设施（inline constexpr 变量
@@ -221,9 +223,12 @@ ird_add_gtest(sdurws_ird_drivetrain_test)
 # contract_test 行）随 WP-18-T03 落地（卡 §15 内部顺序——T02 登记面不触
 # 对端契约面，不预建占位用例）。
 # 自有 main 同 _test 目标（报告设施接入）。
+# WP-18-T03 增列 contract_test/EvaluatorContractTest.cpp（业务对端面契约
+# ——evidence 评估器注册/切片依赖声明套件；卡 §4.2 contract_test 行）。
 add_executable(sdurws_ird_drivetrain_contract_test
     contract_test/ContractTestMain.cpp
-    contract_test/BuildGraphContractTest.cpp)
+    contract_test/BuildGraphContractTest.cpp
+    contract_test/EvaluatorContractTest.cpp)
 
 target_compile_features(sdurws_ird_drivetrain_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_drivetrain_contract_test PROPERTIES

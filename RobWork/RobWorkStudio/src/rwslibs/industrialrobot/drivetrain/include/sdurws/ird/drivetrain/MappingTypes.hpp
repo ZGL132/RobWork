@@ -46,6 +46,7 @@
 #ifndef IRD_DRIVETRAIN_MAPPINGTYPES_HPP
 #define IRD_DRIVETRAIN_MAPPINGTYPES_HPP
 
+#include <sdurws/ird/core/Digest.hpp>
 #include <sdurws/ird/core/Identity.hpp>
 
 #include <cstddef>
