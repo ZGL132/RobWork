@@ -694,10 +694,13 @@ void ModelingPanelWidget::buildReadinessPane(QVBoxLayout* bottom)
     m_readinessCounts = new QLabel(this);  // 三组计数行（L0~L11 分层结果经逐项行呈现）
     bottom->addWidget(m_readinessCounts);
     m_readinessItems = new QTreeWidget(this);
-    // F-539（UI-T71）接线核对发现：本表从未 setColumnCount（Qt 默认 1 列）
-    // ——就绪行锚列 setText(kAnchorColumn=1) 一直被静默丢弃（定位链断点之
-    // 一，与 sink 缺席叠加）。补足两列并隐藏锚列（结构树 hideColumn 同款
-    // ——UX-02 界面不见内部标识）＋objectName 测试锚（ird_ 前缀族）。
+    // F-539/UI-T71 返工更正（acc/ui-t71/1 B-1——原注释「锚列 setText 静默
+    // 丢弃＝定位链第二断点」为错误技术断言，验收变异＋运行时探针证伪）：
+    // QTreeWidgetItem 逐项值存于条目自身、不受所在树 columnCount 上限——
+    // 锚文本从未因列数缺省而丢失，modeling 侧真实且唯一的断点＝sink 缺席
+    // （已由本批构造期接线修复）。此处两列＋隐锚列＝与 UX-02 结构树（两列
+    // ＋hideColumn）的声明式呈现形态对齐（非功能性修复）；objectName＝
+    // 测试锚（ird_ 前缀族）。
     m_readinessItems->setColumnCount(2);
     m_readinessItems->hideColumn(kAnchorColumn);
     m_readinessItems->setObjectName(QStringLiteral("ird_modeling_readiness_items"));

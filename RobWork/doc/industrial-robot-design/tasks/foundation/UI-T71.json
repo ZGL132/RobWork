@@ -3,7 +3,7 @@
   "taskId": "UI-T71",
   "unit": "requirements",
   "masterWp": "WP-I",
-  "title": "定位出口生产接线（F-539）：双面板构造期 setLocateSink→focusObject 既有执行器＋modeling 就绪表锚列断链修正＋两 gui 钉扎用例",
+  "title": "定位出口生产接线（F-539）：双面板构造期 setLocateSink→focusObject 既有执行器＋modeling 孪生接线（就绪表两列声明式形态对齐）＋两 gui 钉扎用例",
   "status": "ready",
   "dependsOn": [
     "UI-T68"
@@ -39,7 +39,7 @@
   ],
   "outputs": [
     "requirements/plugin/RequirementsPanelWidget.cpp：构造期注册定位出口（m_selection.setLocateSink→focusObject(t.scrollToNode)——校验逐项行点击经 locate 产出 LocateTarget 后由既有执行器落位：自持树滚动＋置当前行→itemSelectionChanged→onTreeSelectionChanged→L-R1 前向链——检查器重投影＋panelHighlight 三维高亮顺链达成〔HostMigrationProviders Deps.panelHighlight 既有通道〕）",
-    "modeling/plugin/ModelingPanelWidget.cpp：孪生面同构接线（就绪逐项行点击→locate→sink→focusObject——结构树滚动＋置当前行＋selectionChanged→检查器重投影，L-1 前向链复用）＋就绪表锚列断链修正（该表从未 setColumnCount——Qt 默认 1 列，setText(kAnchorColumn=1) 一直被静默丢弃＝定位链第二断点；补 setColumnCount(2)＋hideColumn(1)〔UX-02 结构树同款〕）＋objectName 测试锚 ird_modeling_readiness_items",
+    "modeling/plugin/ModelingPanelWidget.cpp：孪生面同构接线（就绪逐项行点击→locate→sink→focusObject——结构树滚动＋置当前行＋selectionChanged→检查器重投影，L-1 前向链复用——modeling 侧真实且唯一的断点＝sink 缺席，接线即修复）＋就绪表声明式呈现形态对齐（setColumnCount(2)＋hideColumn(1)——与 UX-02 结构树两列＋隐锚列同款；acc/ui-t71/1 B-1 更正：锚列逐项值不受树 columnCount 上限，setText 越列从未被丢弃，本三行为呈现形态契约非功能修复）＋objectName 测试锚 ird_modeling_readiness_items",
     "requirements/gui_test/RequirementsSessionGuiTest.cpp：LocateSinkProductionWiring_ValidationRowClickFocusesTree_UI_T71（伪造带锚行与真实阻断行同形——诊断 subject 直投锚列口径；点击→生产 sink→focusObject→需求树当前行锚断言——不注入替身 sink，被测链全生产代码）",
     "modeling/gui_test/ModelingPanelGuiTest.cpp：LocateSinkProductionWiring_ReadinessRowClickFocusesTree_UI_T71（孪生同构——j1 锚行点击→结构树当前行锚断言）",
     "traceability/findings.json：F-539 翻转 fixed（owner 注如实登记：落点钉扎由两 gui 用例承载；tour 7.5 拍维持点击协议面——快乐路径 Warning 行无 subject 为 Readiness 规格，原『升级落点读回断言』预期按实调整）"
@@ -51,7 +51,7 @@
   ],
   "acceptance": [
     "生产接线面：双面板构造期 sink 注册直指 focusObject（复用既有执行器零新逻辑）——代码审读＋两 gui 用例绿",
-    "孪生断链修正面：readiness 表 setColumnCount(2)＋锚列隐藏——无此修正则孪生用例红（锚列 setText 静默丢弃）",
+    "孪生接线面：就绪行点击→生产 sink→focusObject 落点——无 sink 则用例红（M-C 口径，验收 attempt 1 实证）；列数声明（两列＋隐锚列）为呈现形态契约、由用例 ASSERT_EQ(columnCount,2) 钉扎（B-1 返工②补钉——去列数声明即红），如实登记为呈现对齐非定位链功能修复",
     "转红能力：注释任一面板 sink 注册→对应用例落点断言红（production-wiring 断言真实守护）",
     "诚实边界保持面：无锚行点击不进 sink（locate 入口拦截）＋闭包外身份 focusObject 清除语义——既有行为零变化",
     "回归门槛：受影响目标零错误＋套件回归＋ird_gates 零新增＋validate 双 PASS；留痕 traceability/builds/ui-t71/"
@@ -60,7 +60,7 @@
   "knownPitfalls": [
     "tour 7.5 拍不随本批升级：快乐路径就绪报告的 Warning 行全无 subject（Readiness 规格——仅 Blocking 携带跳转锚），校验逐项表无带锚行可点——落点读回只能由 gui 用例承载（伪造带锚行同形注入）；F-539 原 owner 注『升级落点读回断言』按此实情调整",
     "PluginPanelTest 的 PanelSelectionState 直测（L1_ReverseLocateScrollAndHighlight）注入替身 sink 在构造期注册之后——覆写即替身生效，既有用例零影响",
-    "readiness 表列数缺口是 Qt 静默行为（setText 越列不告警不生效）——审计时以运行时 columnCount 为准，勿信『代码写了 setText 即有列』",
+    "acc/ui-t71/1 B-1 真教训：勿信「越列 setText 即被丢弃」——QTreeWidgetItem 逐项值存于条目自身、不受所在树 columnCount 上限（锚列本就隐藏，显示与存储两回事）；审计断言以运行时条目值探针为准，勿以「树列数」推断「值丢失」",
     "requirements 侧落点选择 requirementTree 辅助须前缀匹配树头（F-499 更名「需求树（当前草稿）」——F-537 同款教训）"
   ],
   "branch": "ui-t71",

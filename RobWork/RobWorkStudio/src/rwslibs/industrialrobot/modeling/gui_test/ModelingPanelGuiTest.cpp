@@ -872,9 +872,10 @@ TEST_F(ModelingPanelGuiTest, ReadOnlySession_AvailabilityRefreshCannotReviveWrit
 /// F-539（UI-T71）定位出口生产接线（孪生面）：就绪逐项行点击（锚列＝对象
 /// 身份）→locate()→构造期注册的生产 sink→focusObject——结构树聚焦锚定行
 /// （滚动＋置当前行＋selectionChanged→检查器重投影，L-1 前向链复用）。
-/// 伪造带锚行与真实就绪行同形（label 列＋锚列直投）。接线前该链三重断点
-/// （sink 零调用点＋表未设列数锚列静默丢弃＋落点无执行器），本用例即其
-/// 转红面。
+/// 伪造带锚行与真实就绪行同形（label 列＋锚列直投）。接线前该链唯一断点
+/// ＝sink 缺席（acc/ui-t71/1 B-1 更正：锚列逐项值不受树 columnCount 上限
+/// ——「列数断链」前提不存在），本用例即其转红面。另钉扎列数声明（两列
+/// ＋隐锚列）为呈现形态契约——acc B-1 返工②补钉，去列数声明即红。
 TEST_F(ModelingPanelGuiTest,
        LocateSinkProductionWiring_ReadinessRowClickFocusesTree_UI_T71)
 {
@@ -884,6 +885,10 @@ TEST_F(ModelingPanelGuiTest,
     QTreeWidget* readinessItems = m_panel->findChild<QTreeWidget*>(
         QStringLiteral("ird_modeling_readiness_items"));
     ASSERT_NE(readinessItems, nullptr) << "就绪逐项表缺失（区④构建缺陷）";
+    // 列数声明钉扎（呈现形态契约——acc/ui-t71/1 B-1 返工②；两列＋隐锚列
+    // 与 UX-02 结构树声明式形态对齐，非定位链功能前提）。
+    ASSERT_EQ(readinessItems->columnCount(), 2)
+        << "就绪表列数声明漂移（两列＋隐锚列的呈现形态契约被改）";
 
     // 伪造带锚行（锚＝j1——结构树真实在册行，落点可断言）。
     const core::ObjectId j1 = m_ws.design.joints.front().objectId;
