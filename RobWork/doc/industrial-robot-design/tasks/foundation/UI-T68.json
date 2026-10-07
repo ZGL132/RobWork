@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "需求巡检取证通道清理（F-537 根因修复＋F-538②③④⑤）：需求树锚前缀匹配＋step2 有界轮询＋7.5 名实相符断言＋面板可见性取证＋判定行入档＋E-2 留痕补正",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T67"
   ],
@@ -26,7 +26,8 @@
     "RobWork/doc/industrial-robot-design/traceability/builds/ui-t68/**",
     "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T68.json",
     "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
-    "RobWork/doc/industrial-robot-design/units/ui.md"
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json"
   ],
   "forbiddenFiles": [
     "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
@@ -64,5 +65,5 @@
     "取证前必须 show＋raise 需求 Dock：trigger 只翻动作态，页签叠放下面板存在而不可见；panel-visible 断言（visibleRegion 非空）把静窗形态转显式红"
   ],
   "branch": "ui-t68",
-  "note": "清理批次（验收建议随手 closure——acceptance/UI-T67-20261006.md E-2~E-5＋F-537）：实施段一提交；独立子会话对抗式验收后按 PIPE §4.7 合入。"
+  "note": "【合入登记注（2026-10-07，PIPE §4.7 收尾——所有者按序实施指令＋PIPE v1.8 autoMerge 预授权）】934539a5＋验收记录 4c6d2b2b 合入 redesign-main@a77b3ca4（acc/ui-t68/1 按 SHA 先并——acc 基于实施头，一合并承载实施与记录）；独立子会话对抗式验收 7 项成立 pass（双变异做红复绿）。建议级四条：G-A 随本治理提交修正（F-537 翻转 fixed＋F-538 闭合＋本契约 allowedFiles 补 findings.json）；G-B 随本治理提交修正（PNG 计数口径 13 PNG/8 唯一哈希——七帧 hostWin 口径全异成立）；G-C 转登 F-541（建模通道静窗加固）；G-D 转登 F-542（逐套件原始 log 构成口径）。分支基点＝redesign-main@48251bc5。F-537 fixedBy=UI-T68；F-538 closedBy=UI-T68。"
 }

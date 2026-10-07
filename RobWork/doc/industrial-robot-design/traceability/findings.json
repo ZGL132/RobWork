@@ -5325,19 +5325,19 @@
       "id": "F-537",
       "source": "UI-T67 requirements-tour 真机取证（2026-10-06——step2 树行计数失败；先于本批复现）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-06",
       "title": "requirements-tour step2 station-added 断言失败（stationEntryCount()=0 树行未现身）。零触达需求域代码（UI-T67 验收 4.1 实证）——先于本批，疑似 T65 面板改动或 settleEvents 时序",
-      "owner": "需求域/UI 面排查批次（时序加大或工位树行锚核对）；修复后 tour 全谱恢复"
+      "owner": "需求域/UI 面排查批次（时序加大或工位树行锚核对）；修复后 tour 全谱恢复；【2026-10-07 翻转】根因修复＝UI-T68（需求树发现锚前缀匹配——F-499 更名「需求树（当前草稿）」后遍历锚未随更＋step2 有界轮询 100ms×30；验收 M-A 变异反向实证锚回退即红，TOUR_PASS tree-child=1），fixedBy=UI-T68"
     },
     {
       "id": "F-538",
       "source": "acc/ui-t67/1@a67a695f 验收记录建议级 E-1~E-6（UI-T67 独立子会话对抗式验收 2026-10-06）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "closed",
       "registeredAt": "2026-10-06",
       "title": "UI-T67 验收建议合集：①E-1 断言计数 20→18 已随合入段更正；②E-2 0 字节留痕件；③E-3 判定行未归档；④E-4 屏证图像静窗；⑤E-5 locate-chain 恒真断言；⑥E-6 整洁度（重复循环已删/尾换行已补）",
-      "owner": "①随 UI-T67 合入段更正；⑥a/b 随合入段修正；②③④⑤留后续触碰 tour 批次顺手处理"
+      "owner": "①随 UI-T67 合入段更正；⑥a/b 随合入段修正；②③④⑤留后续触碰 tour 批次顺手处理；【2026-10-07 闭合】②真实摘录填充＋README 补正注／③双驱动判定行入档 driver-verdict.log／④取证前提加固（最大化＋show/raise＋panel-visible——七帧 hostWin PNG 异哈希，tour-4b 484B→120KB）／⑤7.5 拍名实相符断言（validation-row-click-protocol——两半点击协议＋后置条件；恒真面退役）＝UI-T68 合入 a77b3ca4，closedBy=UI-T68（①⑥先前随 ui-t67 合入段；建模通道静窗加固残余转 F-541）"
     },
     {
       "id": "F-539",
@@ -5356,6 +5356,24 @@
       "registeredAt": "2026-10-07",
       "title": "WP-22-T02 返工（3fdafa36 门禁机器面同步回填）重写 ird_gates_whitelist.cmake R-3 例外登记注释时，把元测试钉扎短语「ui 单元界面目标」由单行拆为 339/340 两行（「…WP-10-T02 生效）：ui 单元⏎界面目标（Widgets…」）——ui/test/BuildRedLineTest QtLinkageLiteralAndExceptionText_UI_BUILD 的 whitelist.find(\"ui 单元界面目标\") 单行匹配恒失（whitelist.find(\"WP-10-T02 生效\") 半区仍在）＝ui_test 冒烟 238/239、集成 253/254 在 redesign-main 当前基线恒红",
       "owner": "门禁机器面/WP-22 批次所有者（二选一：①白名单注释短语并回单行——恢复被钉扎登记文本原状；②元测试改空白归一化后 find——注释为散文、换行不属登记语义。修复落定前各批次冒烟 ui_test 全绿口径须如实注明本条）"
+    },
+    {
+      "id": "F-541",
+      "source": "acc/ui-t68/1@4c6d2b2b 验收建议级 G-C（UI-T68 独立子会话对抗式验收 2026-10-07）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "ui-t68 归档 modeling-tour 六帧逐字节同哈希静窗（需求 Dock 盖压建模面板），较 ui-t67 基线（5 异值）退化——E-4 取证前提加固（最大化＋show/raise＋panel-visible）只落 requirements 通道，建模通道无同构防护；验收同代码复跑得 5 异值＝实施会话布局态偶发，非代码回归",
+      "owner": "后续触碰建模通道批次（E-4 同构加固——最大化＋建模 Dock show/raise＋panel-visible 断言；复跑多轮核实布局态稳定性）"
+    },
+    {
+      "id": "F-542",
+      "source": "acc/ui-t68/1@4c6d2b2b 验收建议级 G-D（UI-T68 独立子会话对抗式验收 2026-10-07）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "builds/ui-t68/ 逐套件原始 log/XML 未入库（README/smoke-build.log 以口径行承载）——弱于 ui-t65/67 构成；实质面由验收全量独立复现替代采信（十套件未在本批实跑部分＝diff 不触其编译面，CMake 实证 UiPlugin.cpp 仅 plugin/studio 两目标编译）",
+      "owner": "后续批次回归全构成口径（逐套件 stdout log＋gtest XML 随批入库）；小清理批次可继续以验收复现替代采信但须如实验记"
     }
   ]
 }
