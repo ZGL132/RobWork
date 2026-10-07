@@ -250,6 +250,18 @@ RequirementsPanelWidget::RequirementsPanelWidget(bool writable, QWidget* parent)
     // chrome/其他域面板不受影响；QSS 由 UiTheme 调色板常量单一词表拼装）。
     ui::applyIndustrialTheme(this);
 
+    // F-539（UI-T71）：定位出口生产接线——PanelSelectionState 契约「widget
+    // 执行滚动与高亮」的落位（此前 setLocateSink 生产零调用点，校验逐项行
+    // 点击的 LocateTarget 产出即弃——UX-06 落点不可达）。本面板以既有
+    // focusObject 为执行器：自持树滚动＋置当前行→itemSelectionChanged→
+    // onTreeSelectionChanged→L-R1 前向链（检查器重投影＋panelHighlight 三
+    // 维高亮顺链达成——HostMigrationProviders Deps.panelHighlight 既有通
+    // 道）。无锚行在 locate() 入口已按「不伪造定位」拦截（规格行为）；
+    // 闭包外身份由 focusObject 按清除语义对齐（不伪造落点）。
+    m_selection.setLocateSink([this](const LocateTarget& t) {
+        focusObject(t.scrollToNode);
+    });
+
     // 构造完成即可刷新（空工作集态——投影产出空行/占位，不虚构内容；
     // 首次 refreshPanel 由装配层在载入基线后驱动）。
 }
