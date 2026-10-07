@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T68",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "需求巡检取证通道清理（F-537 根因修复＋F-538②③④⑤）：需求树锚前缀匹配＋step2 有界轮询＋7.5 名实相符断言＋面板可见性取证＋判定行入档＋E-2 留痕补正",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T67"
+  ],
+  "requirements": [
+    "UX-06（校验逐项行定位跳转的屏证面——断言名实相符，不虚称 exercised）",
+    "ERR-01（诚实取证——面板不可见从静默态转显式断言；判定行入档不留缺口字证）",
+    "NFR-MNT（验证基建健康——巡检断言对呈现层文案更名稳健；驱动留痕自含结论证据）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-537",
+    "traceability/findings.json#F-538",
+    "traceability/acceptance/UI-T67-20261006.md"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t67/**",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t68/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T68.json",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**（需求域零触碰——F-537 根因在宿主遍历侧锚定过时，非面板缺陷）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）"
+  ],
+  "outputs": [
+    "ui/plugin/UiPlugin.cpp maybeRunRequirementsTour 四处：①需求树发现锚由全等「需求树」改前缀匹配（F-537 根因——树头自 F-499 起更名「需求树（当前草稿）」，全等匹配失配致 tree=nullptr→stationEntryCount 恒 -1，非时序竞态）；②step2 工位新增改有界轮询（100ms 拍×最多 30 拍＝3s 上限——消时序抖动不放宽断言本体）；③拍 7.5 第二半名实相符重做（E-5）：按表头首列『级别』锚定逐项表（首版 findChild 误取层汇总表〔聚合行无锚〕）＋两半点击协议（setCurrentItem＝Qt 选中面＋itemClicked emit＝面板定位槽）＋后置条件断言（点击行＝当前行＋锚列良构：空＝Warning 行无 subject 属规格／非空必须解析为有效 ObjectId）＋断言更名 validation-row-click-protocol；④取证前提加固（E-4）：宿主窗体最大化＋需求 Dock show/raise＋step1 panel-visible 断言（存在≠可见——页签叠放静窗截图零信息量转显式红）",
+    "builds/ui-t67/requirements-tour.ps1＋modeling-tour.ps1：判定行随留痕归档（E-3/F-538③）——断言摘录＋exit＋TOUR_PASS/MTOUR_PASS 判定行入档 driver-verdict.log，留痕目录自含结论证据（ui-t68 驱动副本同构升级）",
+    "builds/ui-t67/console-tour-75.log：0 字节空件按验收建议以 smoke-tour/console-tour.log:69~74 的 7.5 拍真实摘录原文填充（E-2/F-538②）＋README 补正注",
+    "builds/ui-t68/：双巡检复跑留痕全集（双 driver＋console 双 log＋driver-verdict 双档＋9 PNG 唯一哈希）",
+    "traceability/findings.json：F-537 翻转 fixed（根因＝F-499 更名后遍历锚未随更）；F-538 状态更新（②③④⑤ 随本批闭合）；F-539 新登（生产装配 locateSink 缺席——校验行定位链 LocateTarget 产出即丢弃，遍历/gui 断言面只覆盖调用半区）；F-540 新登（major 基线既有——WP-22-T02 返工 3fdafa36 把元测试钉扎短语「ui 单元界面目标」拆行，ui_test 冒烟 238/239／集成 253/254 恒红；修复权归门禁机器面所有者，本批零触碰该面）"
+  ],
+  "verify": [
+    "受影响目标零错误构建（集成 Release：sdurws_ird_ui_plugin＋sdurws_ird_studio——UiPlugin.cpp 仅此两目标编译，CMake 实证；测试目标不触该 TU）",
+    "独立冒烟：全树 vcpkg+Qt 配置＋构建零 error；ctest——ui_test 238/239（1 失败＝F-540 基线既有，本批零触碰白名单/测试文件）＋ui_contract/ui_gui 全绿＋requirements 单元冒烟同口径如实登记",
+    "真机双巡检：requirements-tour TOUR_PASS（exit=0——step2 tree-child=1＋7.5 三断言＋panel-visible）＋modeling-tour MTOUR_PASS（回归——F-524 gap 断言保持）；driver-verdict 双档入库",
+    "截图证据唯一性：七帧 hostWin PNG 逐字节异哈希（E-4 闭环——ui-t67 五帧同哈希静窗的对偶面闭合）；tour-4b 由 484B 空条转 120KB 真实渲染",
+    "ird_gates 零命中 exit 0（引擎自测 9 项符合预期）；validate-docs/validate-task PASS；集成相邻套件 ui_contract/ui_gui/requirements_gui 实跑（ui_test 同 F-540 口径）；留痕 traceability/builds/ui-t68/"
+  ],
+  "acceptance": [
+    "F-537 根因修复面：需求树发现锚前缀匹配＋step2 有界轮询——TOUR_PASS 全绿实录（tree-child=1），且修因说明与 F-499 更名史实对账（ui-t67 实录 tree-child=-1 的真因非时序）",
+    "E-5 名实相符面：7.5 断言体非 ok(true)——正确逐项表锚定＋两半点击协议＋后置条件（当前行命中＋锚列良构）实录行 validation-row-click-protocol (rows=4 anchor=empty)",
+    "E-4 取证面：panel-visible 断言在场＋七帧 PNG 唯一哈希＋需求面板画面可见（需求树/校验页/层表/逐项表入图）",
+    "E-3 入档面：双巡检 driver-verdict.log 含 exit＋判定行（TOUR_PASS/MTOUR_PASS 字证入库）",
+    "E-2 补正面：console-tour-75.log 406 字节真实摘录（六行 7.5 拍实录）＋ui-t67 README 补正注",
+    "回归门槛：受影响目标零错误＋独立冒烟 ctest 全绿＋modeling-tour 回归 MTOUR_PASS＋ird_gates 零新增＋validate 双 PASS；留痕 traceability/builds/ui-t68/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "需求树发现锚必须前缀匹配——树头带职责标注后缀（F-499「（当前草稿）」），全等匹配是 ui-t67 step2 误红真因（当时误登记为时序疑点）",
+    "校验页有两张 QTreeWidget（层汇总表『层』＋逐项表『级别』）——findChild 取首树必中层汇总表（聚合行无锚）；逐项表必须按表头首列『级别』锚定",
+    "Warning 级就绪项全无 subject（Readiness 规格仅 Blocking 携带跳转锚）——快乐路径校验逐项表无带锚行，定位链落点行为断言只能归 gui 钉扎（注入 locateSink 形态）；生产 locateSink 缺席已登 F-539",
+    "取证前必须 show＋raise 需求 Dock：trigger 只翻动作态，页签叠放下面板存在而不可见；panel-visible 断言（visibleRegion 非空）把静窗形态转显式红"
+  ],
+  "branch": "ui-t68",
+  "note": "清理批次（验收建议随手 closure——acceptance/UI-T67-20261006.md E-2~E-5＋F-537）：实施段一提交；独立子会话对抗式验收后按 PIPE §4.7 合入。"
+}

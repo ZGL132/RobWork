@@ -5338,6 +5338,24 @@
       "registeredAt": "2026-10-06",
       "title": "UI-T67 验收建议合集：①E-1 断言计数 20→18 已随合入段更正；②E-2 0 字节留痕件；③E-3 判定行未归档；④E-4 屏证图像静窗；⑤E-5 locate-chain 恒真断言；⑥E-6 整洁度（重复循环已删/尾换行已补）",
       "owner": "①随 UI-T67 合入段更正；⑥a/b 随合入段修正；②③④⑤留后续触碰 tour 批次顺手处理"
+    },
+    {
+      "id": "F-539",
+      "source": "UI-T68 需求巡检取证通道清理批次实现段发现（2026-10-07——E-5 名实相符重做触及定位链装配面实证：生产形态无落点可断言）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "生产装配未注册校验行定位链 locateSink——RequirementsPanelWidget 校验逐项行点击经 PanelSelectionState.locate 产出 LocateTarget（scrollToNode＋highlightObject）后因 m_locateSink 为空即弃（setLocateSink 全仓零生产调用点，仅 modeling 测试 PluginPanelTest 注入）——代码注释承诺的 UX-06『树滚动＋三维高亮』落点在生产形态不可达；点击链只余 nodeAnchor→locate 调用半区（不抛不伪造——无锚防护轨有效），用户无可见反馈。modeling 域同名 PanelSelection 形态同构（ModelingPanelWidget.cpp:699 同走 sink——随修一并核对）",
+      "owner": "需求域/装配批次（widget 侧定位执行器接线——面板自持滚动＋高亮，或经宿主 SelectionService 树定位缝；规格口径 PanelSelection.hpp『widget 执行滚动与高亮』）。修复后 ui-t68 7.5 拍可升级落点读回断言（当前 validation-row-click-protocol 只钉调用半区——ui.md §13 UI-T68 行如实登记）"
+    },
+    {
+      "id": "F-540",
+      "source": "UI-T68 清理批次独立冒烟 ui_test 实跑发现（2026-10-07——git 考古实证引入点＝3fdafa36，先于本批在 redesign-main 基线）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "WP-22-T02 返工（3fdafa36 门禁机器面同步回填）重写 ird_gates_whitelist.cmake R-3 例外登记注释时，把元测试钉扎短语「ui 单元界面目标」由单行拆为 339/340 两行（「…WP-10-T02 生效）：ui 单元⏎界面目标（Widgets…」）——ui/test/BuildRedLineTest QtLinkageLiteralAndExceptionText_UI_BUILD 的 whitelist.find(\"ui 单元界面目标\") 单行匹配恒失（whitelist.find(\"WP-10-T02 生效\") 半区仍在）＝ui_test 冒烟 238/239、集成 253/254 在 redesign-main 当前基线恒红",
+      "owner": "门禁机器面/WP-22 批次所有者（二选一：①白名单注释短语并回单行——恢复被钉扎登记文本原状；②元测试改空白归一化后 find——注释为散文、换行不属登记语义。修复落定前各批次冒烟 ui_test 全绿口径须如实注明本条）"
     }
   ]
-}
+}

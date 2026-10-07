@@ -32,5 +32,16 @@ Get-Content "$OUT\console-mtour.log" |
     Select-String -Pattern 'step |pass |FAIL|snap |DONE|started|exception' |
     ForEach-Object { $_.Line }
 
+# 判定行随留痕归档（E-3/F-538③——ui-t67 验收实证缺口：exit/MTOUR_PASS
+# 结论此前只产生于会话控制台，留痕目录内无字证）。断言摘录＋退出码＋判定
+# 行入档 driver-verdict.log，留痕目录自含结论证据。
+$verdict = if ($proc.ExitCode -eq 0) { 'MTOUR_PASS' } else { 'MTOUR_FAIL' }
+@("===== driver verdict ($(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')) =====") +
+    (Get-Content "$OUT\console-mtour.log" |
+        Select-String -Pattern 'step |pass |FAIL|snap |DONE|started|exception' |
+        ForEach-Object { $_.Line }) +
+    @("exit=$($proc.ExitCode)", $verdict) |
+    Set-Content -Path "$OUT\driver-verdict.log" -Encoding UTF8
+
 Write-Output "exit=$($proc.ExitCode)"
 if ($proc.ExitCode -eq 0) { Write-Output 'MTOUR_PASS' } else { Write-Output 'MTOUR_FAIL' }
