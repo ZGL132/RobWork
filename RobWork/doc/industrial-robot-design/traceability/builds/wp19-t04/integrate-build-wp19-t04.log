@@ -1,0 +1,489 @@
+==== WP-19-T04 集成模式构建日志（增量；cmake --build --target sdurws_ird_selection / sdurws_ird_selection_plugin / sdurws_ird_selection_test / sdurws_ird_selection_contract_test，Release）====
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_selection_plugin
+  sdurws_ird_selection_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection_plugin.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_selection_test
+  sdurws_ird_selection_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_selection_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_selection_plugin
+  sdurws_ird_selection_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_selection_contract_test
+  sdurws_ird_selection_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_selection_contract_test.exe
+==== BUILD_EXIT=0 ====
+==== gtest 运行：contract_test 先、test 后（ird-test-report.json 以 _test 为准——T03 留痕同口径）====
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_selection_plugin
+  sdurws_ird_selection_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_selection_contract_test
+  sdurws_ird_selection_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_selection_contract_test.exe
+  ird: run sdurws_ird_selection_contract_test and write gtest XML report
+  [==========] Running 22 tests from 4 test suites.
+  [----------] Global test environment set-up.
+  [----------] 6 tests from SelBuildGraph
+  [ RUN      ] SelBuildGraph.UnitEdgesTwoRegisteredAndClosed_WP19T02_ACC1
+  [       OK ] SelBuildGraph.UnitEdgesTwoRegisteredAndClosed_WP19T02_ACC1 (0 ms)
+  [ RUN      ] SelBuildGraph.PluginTargetPresent_WP19T02_ACC1
+  [       OK ] SelBuildGraph.PluginTargetPresent_WP19T02_ACC1 (0 ms)
+  [ RUN      ] SelBuildGraph.TwoRegisteredEdgesPresent_WP19T02_ACC1
+  [       OK ] SelBuildGraph.TwoRegisteredEdgesPresent_WP19T02_ACC1 (0 ms)
+  [ RUN      ] SelBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP19T02_ACC2
+  [       OK ] SelBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP19T02_ACC2 (0 ms)
+  [ RUN      ] SelBuildGraph.NoTestkitEdgeOnProductTarget_WP19T02_ACC1
+  [       OK ] SelBuildGraph.NoTestkitEdgeOnProductTarget_WP19T02_ACC1 (0 ms)
+  [ RUN      ] SelBuildGraph.IncludeFaceMatchesRegisteredEdges_WP19T02_ACC2
+  [       OK ] SelBuildGraph.IncludeFaceMatchesRegisteredEdges_WP19T02_ACC2 (3 ms)
+  [----------] 6 tests from SelBuildGraph (5 ms total)
+  
+  [----------] 3 tests from SelPluginAssembly
+  [ RUN      ] SelPluginAssembly.DescriptorMatchesUiRegistrations_WP19T02_ACC1
+  [       OK ] SelPluginAssembly.DescriptorMatchesUiRegistrations_WP19T02_ACC1 (0 ms)
+  [ RUN      ] SelPluginAssembly.PluginFaceHasZeroComputationSymbols_WP19T02_ACC2
+  [       OK ] SelPluginAssembly.PluginFaceHasZeroComputationSymbols_WP19T02_ACC2 (0 ms)
+  [ RUN      ] SelPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP19T02_ACC2
+  [       OK ] SelPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP19T02_ACC2 (0 ms)
+  [----------] 3 tests from SelPluginAssembly (0 ms total)
+  
+  [----------] 4 tests from SelCatalogIoBoundary
+  [ RUN      ] SelCatalogIoBoundary.ProductFaceHasZeroIoIncludes
+  [       OK ] SelCatalogIoBoundary.ProductFaceHasZeroIoIncludes (2 ms)
+  [ RUN      ] SelCatalogIoBoundary.PackageFileSchemaRegisteredFiveEntries
+  [       OK ] SelCatalogIoBoundary.PackageFileSchemaRegisteredFiveEntries (0 ms)
+  [ RUN      ] SelCatalogIoBoundary.ValidationChainConsumesPureParsedDataOnly
+  [       OK ] SelCatalogIoBoundary.ValidationChainConsumesPureParsedDataOnly (0 ms)
+  [ RUN      ] SelCatalogIoBoundary.ValidatorAssertsIoLayerPrecondition
+  [       OK ] SelCatalogIoBoundary.ValidatorAssertsIoLayerPrecondition (0 ms)
+  [----------] 4 tests from SelCatalogIoBoundary (3 ms total)
+  
+  [----------] 9 tests from SelHardScreeningContract
+  [ RUN      ] SelHardScreeningContract.MotorScreeningReachableThroughInterface
+  [       OK ] SelHardScreeningContract.MotorScreeningReachableThroughInterface (1 ms)
+  [ RUN      ] SelHardScreeningContract.GearboxScreeningReachableThroughInterface
+  [       OK ] SelHardScreeningContract.GearboxScreeningReachableThroughInterface (0 ms)
+  [ RUN      ] SelHardScreeningContract.ReasonTokenVocabularyIsClosedAndWellFormed
+  [       OK ] SelHardScreeningContract.ReasonTokenVocabularyIsClosedAndWellFormed (0 ms)
+  [ RUN      ] SelHardScreeningContract.RejectionReasonFieldsCompleteByTrack
+  [       OK ] SelHardScreeningContract.RejectionReasonFieldsCompleteByTrack (0 ms)
+  [ RUN      ] SelHardScreeningContract.CancellationTruncatesAtCandidateBoundary
+  [       OK ] SelHardScreeningContract.CancellationTruncatesAtCandidateBoundary (0 ms)
+  [ RUN      ] SelHardScreeningContract.NoCancellationReturnsFullSet
+  [       OK ] SelHardScreeningContract.NoCancellationReturnsFullSet (0 ms)
+  [ RUN      ] SelHardScreeningContract.EmptySnapshotYieldsEmptyRecordsNoThrow
+  [       OK ] SelHardScreeningContract.EmptySnapshotYieldsEmptyRecordsNoThrow (0 ms)
+  [ RUN      ] SelHardScreeningContract.EmptyAxisFactsYieldEmptyRecords
+  [       OK ] SelHardScreeningContract.EmptyAxisFactsYieldEmptyRecords (0 ms)
+  [ RUN      ] SelHardScreeningContract.ContractViolationFailsFastThroughInterface
+  [       OK ] SelHardScreeningContract.ContractViolationFailsFastThroughInterface (0 ms)
+  [----------] 9 tests from SelHardScreeningContract (1 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 22 tests from 4 test suites ran. (11 ms total)
+  [  PASSED  ] 22 tests.
+==== CONTRACT_REPORT_EXIT=0 ====
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_selection_test
+  sdurws_ird_selection_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_selection_test.exe
+  ird: run sdurws_ird_selection_test and write gtest XML report
+  [==========] Running 137 tests from 7 test suites.
+  [----------] Global test environment set-up.
+  [----------] 3 tests from SelDiagCodes
+  [ RUN      ] SelDiagCodes.FullTableMatchesUnitCard_WP19T02_ACC2
+  [       OK ] SelDiagCodes.FullTableMatchesUnitCard_WP19T02_ACC2 (0 ms)
+  [ RUN      ] SelDiagCodes.CodeSyntaxViaCoreContract_WP19T02_ACC2
+  [       OK ] SelDiagCodes.CodeSyntaxViaCoreContract_WP19T02_ACC2 (0 ms)
+  [ RUN      ] SelDiagCodes.EntriesCarryCardProvenance_WP19T02_ACC2
+  [       OK ] SelDiagCodes.EntriesCarryCardProvenance_WP19T02_ACC2 (0 ms)
+  [----------] 3 tests from SelDiagCodes (0 ms total)
+  
+  [----------] 4 tests from SelBuildRedLine
+  [ RUN      ] SelBuildRedLine.ProductFaceHasZeroQtIncludes_WP19T02_ACC1
+  [       OK ] SelBuildRedLine.ProductFaceHasZeroQtIncludes_WP19T02_ACC1 (3 ms)
+  [ RUN      ] SelBuildRedLine.IncludeFaceRestrictedToTwoRegisteredEdges_WP19T02_ACC2
+  [       OK ] SelBuildRedLine.IncludeFaceRestrictedToTwoRegisteredEdges_WP19T02_ACC2 (2 ms)
+  [ RUN      ] SelBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP19T02_ACC2
+  [       OK ] SelBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP19T02_ACC2 (2 ms)
+  [ RUN      ] SelBuildRedLine.ProductFaceFilesNonEmpty_WP19T02_ACC1
+  [       OK ] SelBuildRedLine.ProductFaceFilesNonEmpty_WP19T02_ACC1 (2 ms)
+  [----------] 4 tests from SelBuildRedLine (10 ms total)
+  
+  [----------] 39 tests from SelCatalogImport
+  [ RUN      ] SelCatalogImport.ValidPackageValidatesAndAssembles_AT08_SEL01
+  [       OK ] SelCatalogImport.ValidPackageValidatesAndAssembles_AT08_SEL01 (0 ms)
+  [ RUN      ] SelCatalogImport.AssembleIsDeterministicSameInputSameSnapshot
+  [       OK ] SelCatalogImport.AssembleIsDeterministicSameInputSameSnapshot (0 ms)
+  [ RUN      ] SelCatalogImport.ContentIdentityChangesWithBusinessByte
+  [       OK ] SelCatalogImport.ContentIdentityChangesWithBusinessByte (0 ms)
+  [ RUN      ] SelCatalogImport.UnknownFormatVersionRejectedWithUpgradeGuidance
+  [       OK ] SelCatalogImport.UnknownFormatVersionRejectedWithUpgradeGuidance (0 ms)
+  [ RUN      ] SelCatalogImport.MissingManifestIdentityRejected_AT08
+  [       OK ] SelCatalogImport.MissingManifestIdentityRejected_AT08 (0 ms)
+  [ RUN      ] SelCatalogImport.MissingSourceLocatedAtManifest_AT08
+  [       OK ] SelCatalogImport.MissingSourceLocatedAtManifest_AT08 (0 ms)
+  [ RUN      ] SelCatalogImport.MissingParsedTableIsCallerContractBreach
+  [       OK ] SelCatalogImport.MissingParsedTableIsCallerContractBreach (0 ms)
+  [ RUN      ] SelCatalogImport.AssembleRequiresValidatedInput
+  [       OK ] SelCatalogImport.AssembleRequiresValidatedInput (0 ms)
+  [ RUN      ] SelCatalogImport.HeaderMissingColumnLocated
+  [       OK ] SelCatalogImport.HeaderMissingColumnLocated (0 ms)
+  [ RUN      ] SelCatalogImport.HeaderExtraColumnLocated
+  [       OK ] SelCatalogImport.HeaderExtraColumnLocated (0 ms)
+  [ RUN      ] SelCatalogImport.DictionaryDeviationFromV1ContractLocated
+  [       OK ] SelCatalogImport.DictionaryDeviationFromV1ContractLocated (0 ms)
+  [ RUN      ] SelCatalogImport.UnknownUnitRejectedNotGuessed
+  [       OK ] SelCatalogImport.UnknownUnitRejectedNotGuessed (0 ms)
+  [ RUN      ] SelCatalogImport.CurveUnitDimensionMismatchLocated
+  [       OK ] SelCatalogImport.CurveUnitDimensionMismatchLocated (0 ms)
+  [ RUN      ] SelCatalogImport.RequiredFieldMissingLocatedByRowAndColumn_AT08
+  [       OK ] SelCatalogImport.RequiredFieldMissingLocatedByRowAndColumn_AT08 (0 ms)
+  [ RUN      ] SelCatalogImport.OptionalMissingGoesToEntryMissingList
+  [       OK ] SelCatalogImport.OptionalMissingGoesToEntryMissingList (0 ms)
+  [ RUN      ] SelCatalogImport.DuplicateIdConflictDetected_AT08
+  [       OK ] SelCatalogImport.DuplicateIdConflictDetected_AT08 (0 ms)
+  [ RUN      ] SelCatalogImport.DuplicateIdenticalRowDetected
+  [       OK ] SelCatalogImport.DuplicateIdenticalRowDetected (0 ms)
+  [ RUN      ] SelCatalogImport.SameDisplayNameDifferentIdIsLegal
+  [       OK ] SelCatalogImport.SameDisplayNameDifferentIdIsLegal (0 ms)
+  [ RUN      ] SelCatalogImport.EfficiencyAboveOneReportedWithComparison
+  [       OK ] SelCatalogImport.EfficiencyAboveOneReportedWithComparison (0 ms)
+  [ RUN      ] SelCatalogImport.PeakBelowRatedReported
+  [       OK ] SelCatalogImport.PeakBelowRatedReported (0 ms)
+  [ RUN      ] SelCatalogImport.NonFiniteValueRejectedWithRawText
+  [       OK ] SelCatalogImport.NonFiniteValueRejectedWithRawText (0 ms)
+  [ RUN      ] SelCatalogImport.UnparseableNumberRejected
+  [       OK ] SelCatalogImport.UnparseableNumberRejected (0 ms)
+  [ RUN      ] SelCatalogImport.DanglingCurveRefLocated_AT08
+  [       OK ] SelCatalogImport.DanglingCurveRefLocated_AT08 (0 ms)
+  [ RUN      ] SelCatalogImport.CurveOwnerMismatchDetected
+  [       OK ] SelCatalogImport.CurveOwnerMismatchDetected (0 ms)
+  [ RUN      ] SelCatalogImport.CurveOwnerModelDanglingDetected
+  [       OK ] SelCatalogImport.CurveOwnerModelDanglingDetected (0 ms)
+  [ RUN      ] SelCatalogImport.CurveOwnerKindVocabularyRejected
+  [       OK ] SelCatalogImport.CurveOwnerKindVocabularyRejected (0 ms)
+  [ RUN      ] SelCatalogImport.CurveQuantityVocabularyRejected
+  [       OK ] SelCatalogImport.CurveQuantityVocabularyRejected (0 ms)
+  [ RUN      ] SelCatalogImport.SameQuantityTwoCurvesAmbiguous
+  [       OK ] SelCatalogImport.SameQuantityTwoCurvesAmbiguous (0 ms)
+  [ RUN      ] SelCatalogImport.CompatReferenceDanglingDetected
+  [       OK ] SelCatalogImport.CompatReferenceDanglingDetected (0 ms)
+  [ RUN      ] SelCatalogImport.CompatMountKindConflictDetected
+  [       OK ] SelCatalogImport.CompatMountKindConflictDetected (1 ms)
+  [ RUN      ] SelCatalogImport.EmptyCompatTableIsLegalNoDeclaredPairs
+  [       OK ] SelCatalogImport.EmptyCompatTableIsLegalNoDeclaredPairs (0 ms)
+  [ RUN      ] SelCatalogImport.CurveUnorderedRejected
+  [       OK ] SelCatalogImport.CurveUnorderedRejected (0 ms)
+  [ RUN      ] SelCatalogImport.CurveDuplicateXRejected
+  [       OK ] SelCatalogImport.CurveDuplicateXRejected (0 ms)
+  [ RUN      ] SelCatalogImport.CurveNonfinitePointRejected
+  [       OK ] SelCatalogImport.CurveNonfinitePointRejected (0 ms)
+  [ RUN      ] SelCatalogImport.SinglePointCurveRejected
+  [       OK ] SelCatalogImport.SinglePointCurveRejected (0 ms)
+  [ RUN      ] SelCatalogImport.ValidateIsPureSameInputSameReport
+  [       OK ] SelCatalogImport.ValidateIsPureSameInputSameReport (0 ms)
+  [ RUN      ] SelCatalogImport.MakeCurveHappyPathProducesIdentity
+  [       OK ] SelCatalogImport.MakeCurveHappyPathProducesIdentity (0 ms)
+  [ RUN      ] SelCatalogImport.MakeCurveRejectsUnregisteredUnit
+  [       OK ] SelCatalogImport.MakeCurveRejectsUnregisteredUnit (0 ms)
+  [ RUN      ] SelCatalogImport.MakeCurveDoesNotReorderUnorderedPoints
+  [       OK ] SelCatalogImport.MakeCurveDoesNotReorderUnorderedPoints (0 ms)
+  [----------] 39 tests from SelCatalogImport (7 ms total)
+  
+  [----------] 10 tests from SelCapabilityCurve
+  [ RUN      ] SelCapabilityCurve.InterpolatesMidSegmentWithAnalyticValue
+  [       OK ] SelCapabilityCurve.InterpolatesMidSegmentWithAnalyticValue (0 ms)
+  [ RUN      ] SelCapabilityCurve.InterpolatesSecondSegmentWithAnalyticValue
+  [       OK ] SelCapabilityCurve.InterpolatesSecondSegmentWithAnalyticValue (0 ms)
+  [ RUN      ] SelCapabilityCurve.BoundaryQueriesReturnExactEndpointValues
+  [       OK ] SelCapabilityCurve.BoundaryQueriesReturnExactEndpointValues (0 ms)
+  [ RUN      ] SelCapabilityCurve.ExtrapolationDeniedOnBothSides_AT08
+  [       OK ] SelCapabilityCurve.ExtrapolationDeniedOnBothSides_AT08 (0 ms)
+  [ RUN      ] SelCapabilityCurve.RejectionCarriesValidRangeAndUnits
+  [       OK ] SelCapabilityCurve.RejectionCarriesValidRangeAndUnits (0 ms)
+  [ RUN      ] SelCapabilityCurve.RejectionIsDataInsufficiencyNotCapabilityShortfall
+  [       OK ] SelCapabilityCurve.RejectionIsDataInsufficiencyNotCapabilityShortfall (0 ms)
+  [ RUN      ] SelCapabilityCurve.EmptyOrSinglePointCurveIsDataInsufficient
+  [       OK ] SelCapabilityCurve.EmptyOrSinglePointCurveIsDataInsufficient (0 ms)
+  [ RUN      ] SelCapabilityCurve.NonFiniteQueryFailsFast
+  [       OK ] SelCapabilityCurve.NonFiniteQueryFailsFast (0 ms)
+  [ RUN      ] SelCapabilityCurve.EvaluatorIsPureAndDeterministic
+  [       OK ] SelCapabilityCurve.EvaluatorIsPureAndDeterministic (0 ms)
+  [ RUN      ] SelCapabilityCurve.CurveContentIdentityTracksPointChanges
+  [       OK ] SelCapabilityCurve.CurveContentIdentityTracksPointChanges (0 ms)
+  [----------] 10 tests from SelCapabilityCurve (0 ms total)
+  
+  [----------] 10 tests from SelCatalogLock
+  [ RUN      ] SelCatalogLock.LockThenLoadIsIdempotentSnapshot_AT08
+  [       OK ] SelCatalogLock.LockThenLoadIsIdempotentSnapshot_AT08 (0 ms)
+  [ RUN      ] SelCatalogLock.LockedSnapshotImmutableAgainstCallerMutation
+  [       OK ] SelCatalogLock.LockedSnapshotImmutableAgainstCallerMutation (0 ms)
+  [ RUN      ] SelCatalogLock.DuplicateLockOfSameCatalogVersionRejected_AT08
+  [       OK ] SelCatalogLock.DuplicateLockOfSameCatalogVersionRejected_AT08 (0 ms)
+  [ RUN      ] SelCatalogLock.ContentChangeRequiresNewVersion_AT08
+  [       OK ] SelCatalogLock.ContentChangeRequiresNewVersion_AT08 (1 ms)
+  [ RUN      ] SelCatalogLock.LoadUnknownLockObjectRejected
+  [       OK ] SelCatalogLock.LoadUnknownLockObjectRejected (0 ms)
+  [ RUN      ] SelCatalogLock.LoadWithMismatchedContentIdentityRejected
+  [       OK ] SelCatalogLock.LoadWithMismatchedContentIdentityRejected (0 ms)
+  [ RUN      ] SelCatalogLock.LockingIdentitylessSnapshotRejected
+  [       OK ] SelCatalogLock.LockingIdentitylessSnapshotRejected (0 ms)
+  [ RUN      ] SelCatalogLock.ListLockedSortedAscending
+  [       OK ] SelCatalogLock.ListLockedSortedAscending (0 ms)
+  [ RUN      ] SelCatalogLock.FailedImportKeepsCurrentLockedCatalogs
+  [       OK ] SelCatalogLock.FailedImportKeepsCurrentLockedCatalogs (0 ms)
+  [ RUN      ] SelCatalogLock.NewerVersionDoesNotAlterLockedHistory
+  [       OK ] SelCatalogLock.NewerVersionDoesNotAlterLockedHistory (0 ms)
+  [----------] 10 tests from SelCatalogLock (5 ms total)
+  
+  [----------] 41 tests from SelScreeningMotor
+  [ RUN      ] SelScreeningMotor.GoldenFeasibleBaseline
+  [       OK ] SelScreeningMotor.GoldenFeasibleBaseline (2 ms)
+  [ RUN      ] SelScreeningMotor.ContinuousTorqueExactBoundaryPasses
+  [       OK ] SelScreeningMotor.ContinuousTorqueExactBoundaryPasses (0 ms)
+  [ RUN      ] SelScreeningMotor.ContinuousTorqueInsufficientGoldenRow
+  [       OK ] SelScreeningMotor.ContinuousTorqueInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.PeakTorqueInsufficientGoldenRow
+  [       OK ] SelScreeningMotor.PeakTorqueInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.SpeedPeakInsufficientGoldenRow
+  [       OK ] SelScreeningMotor.SpeedPeakInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.SpeedRmsInsufficientGoldenRow
+  [       OK ] SelScreeningMotor.SpeedRmsInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.PowerInsufficientRatedFieldGoldenRow
+  [       OK ] SelScreeningMotor.PowerInsufficientRatedFieldGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.PowerCurveWithinPassesWithCurveSource
+  [       OK ] SelScreeningMotor.PowerCurveWithinPassesWithCurveSource (0 ms)
+  [ RUN      ] SelScreeningMotor.PowerCurveExceededGoldenRow
+  [       OK ] SelScreeningMotor.PowerCurveExceededGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.PowerCurveExtrapolationBecomesDataGap
+  [       OK ] SelScreeningMotor.PowerCurveExtrapolationBecomesDataGap (0 ms)
+  [ RUN      ] SelScreeningMotor.OverloadTimeInsufficientGoldenRow
+  [       OK ] SelScreeningMotor.OverloadTimeInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.OverloadDimensionNotTriggeredInContinuousZone
+  [       OK ] SelScreeningMotor.OverloadDimensionNotTriggeredInContinuousZone (0 ms)
+  [ RUN      ] SelScreeningMotor.OverloadZoneWithoutCatalogSpecIsDataGap
+  [       OK ] SelScreeningMotor.OverloadZoneWithoutCatalogSpecIsDataGap (0 ms)
+  [ RUN      ] SelScreeningMotor.DutyMismatchGoldenRow
+  [       OK ] SelScreeningMotor.DutyMismatchGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.VoltageMismatchGoldenRow
+  [       OK ] SelScreeningMotor.VoltageMismatchGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.VoltageWithinTolerancePasses
+  [       OK ] SelScreeningMotor.VoltageWithinTolerancePasses (0 ms)
+  [ RUN      ] SelScreeningMotor.VoltageMissingInCatalogIsDataGap
+  [       OK ] SelScreeningMotor.VoltageMissingInCatalogIsDataGap (0 ms)
+  [ RUN      ] SelScreeningMotor.ThermalDeratingInsufficientGoldenRow
+  [       OK ] SelScreeningMotor.ThermalDeratingInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.ThermalDeratingHalfStepRoundsUp
+  [       OK ] SelScreeningMotor.ThermalDeratingHalfStepRoundsUp (0 ms)
+  [ RUN      ] SelScreeningMotor.ThermalDeratingBelowReferenceNoDerating
+  [       OK ] SelScreeningMotor.ThermalDeratingBelowReferenceNoDerating (0 ms)
+  [ RUN      ] SelScreeningMotor.ThermalMissingInCatalogIsDataGap
+  [       OK ] SelScreeningMotor.ThermalMissingInCatalogIsDataGap (0 ms)
+  [ RUN      ] SelScreeningMotor.BrakeInsufficientGoldenRow
+  [       OK ] SelScreeningMotor.BrakeInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.HoldingInsufficientWithBrakeBothRecorded
+  [       OK ] SelScreeningMotor.HoldingInsufficientWithBrakeBothRecorded (0 ms)
+  [ RUN      ] SelScreeningMotor.HoldingDimensionsNotApplicableWithoutDemand
+  [       OK ] SelScreeningMotor.HoldingDimensionsNotApplicableWithoutDemand (0 ms)
+  [ RUN      ] SelScreeningMotor.BrakeMissingInCatalogIsDataGap
+  [       OK ] SelScreeningMotor.BrakeMissingInCatalogIsDataGap (0 ms)
+  [ RUN      ] SelScreeningMotor.SafetyFactorInsufficientGoldenRow
+  [       OK ] SelScreeningMotor.SafetyFactorInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.SafetyFactorWithinPasses
+  [       OK ] SelScreeningMotor.SafetyFactorWithinPasses (0 ms)
+  [ RUN      ] SelScreeningMotor.SafetyFactorOneDoesNotAddDimension
+  [       OK ] SelScreeningMotor.SafetyFactorOneDoesNotAddDimension (0 ms)
+  [ RUN      ] SelScreeningMotor.MountingIncompatibleGoldenRow
+  [       OK ] SelScreeningMotor.MountingIncompatibleGoldenRow (0 ms)
+  [ RUN      ] SelScreeningMotor.MountingMissingInCatalogIsDataGap
+  [       OK ] SelScreeningMotor.MountingMissingInCatalogIsDataGap (0 ms)
+  [ RUN      ] SelScreeningMotor.MountingNotApplicableWithoutRequirement
+  [       OK ] SelScreeningMotor.MountingNotApplicableWithoutRequirement (0 ms)
+  [ RUN      ] SelScreeningMotor.MultiDimensionFailuresAllRecordedInLexicographicOrder
+  [       OK ] SelScreeningMotor.MultiDimensionFailuresAllRecordedInLexicographicOrder (0 ms)
+  [ RUN      ] SelScreeningMotor.MultiCaseMergedIntoSingleRecordWithCaseIds
+  [       OK ] SelScreeningMotor.MultiCaseMergedIntoSingleRecordWithCaseIds (0 ms)
+  [ RUN      ] SelScreeningMotor.MultiAxisProducesRecordPerAxis
+  [       OK ] SelScreeningMotor.MultiAxisProducesRecordPerAxis (0 ms)
+  [ RUN      ] SelScreeningMotor.DeterministicSameInputSameOutput
+  [       OK ] SelScreeningMotor.DeterministicSameInputSameOutput (0 ms)
+  [ RUN      ] SelScreeningMotor.AllWorkpointsMissingBecomesDataInsufficient
+  [       OK ] SelScreeningMotor.AllWorkpointsMissingBecomesDataInsufficient (0 ms)
+  [ RUN      ] SelScreeningMotor.EndToEndFromCatalogImportToScreening
+  [       OK ] SelScreeningMotor.EndToEndFromCatalogImportToScreening (0 ms)
+  [ RUN      ] SelScreeningMotor.InvalidEntryIsSkipped
+  [       OK ] SelScreeningMotor.InvalidEntryIsSkipped (0 ms)
+  [ RUN      ] SelScreeningMotor.SafetyFactorBelowOneFailsFast
+  [       OK ] SelScreeningMotor.SafetyFactorBelowOneFailsFast (0 ms)
+  [ RUN      ] SelScreeningMotor.NonFiniteWorkpointFailsFast
+  [       OK ] SelScreeningMotor.NonFiniteWorkpointFailsFast (0 ms)
+  [ RUN      ] SelScreeningMotor.MinEfficiencyOutOfRangeFailsFast
+  [       OK ] SelScreeningMotor.MinEfficiencyOutOfRangeFailsFast (0 ms)
+  [----------] 41 tests from SelScreeningMotor (4 ms total)
+  
+  [----------] 30 tests from SelScreeningGearbox
+  [ RUN      ] SelScreeningGearbox.GoldenFeasibleBaseline
+  [       OK ] SelScreeningGearbox.GoldenFeasibleBaseline (0 ms)
+  [ RUN      ] SelScreeningGearbox.RatedTorqueInsufficientGoldenRow
+  [       OK ] SelScreeningGearbox.RatedTorqueInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.PeakTorqueInsufficientGoldenRow
+  [       OK ] SelScreeningGearbox.PeakTorqueInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.InputSpeedExceededViaRatioConversion
+  [       OK ] SelScreeningGearbox.InputSpeedExceededViaRatioConversion (0 ms)
+  [ RUN      ] SelScreeningGearbox.InputSpeedPrefersMappingFactOverConversion
+  [       OK ] SelScreeningGearbox.InputSpeedPrefersMappingFactOverConversion (0 ms)
+  [ RUN      ] SelScreeningGearbox.InputSpeedMissingFactsIsDataGap
+  [       OK ] SelScreeningGearbox.InputSpeedMissingFactsIsDataGap (0 ms)
+  [ RUN      ] SelScreeningGearbox.RatioBelowRangeGoldenRow
+  [       OK ] SelScreeningGearbox.RatioBelowRangeGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.RatioAboveRangeGoldenRow
+  [       OK ] SelScreeningGearbox.RatioAboveRangeGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.RatioAtRangeBoundaryPasses
+  [       OK ] SelScreeningGearbox.RatioAtRangeBoundaryPasses (0 ms)
+  [ RUN      ] SelScreeningGearbox.RatioDimensionNotApplicableWithoutCriterion
+  [       OK ] SelScreeningGearbox.RatioDimensionNotApplicableWithoutCriterion (0 ms)
+  [ RUN      ] SelScreeningGearbox.EfficiencyInsufficientGoldenRow
+  [       OK ] SelScreeningGearbox.EfficiencyInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.BacklashExceededGoldenRow
+  [       OK ] SelScreeningGearbox.BacklashExceededGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.BacklashMissingInCatalogIsDataGap
+  [       OK ] SelScreeningGearbox.BacklashMissingInCatalogIsDataGap (0 ms)
+  [ RUN      ] SelScreeningGearbox.LifeInsufficientGoldenRow
+  [       OK ] SelScreeningGearbox.LifeInsufficientGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.LifeMissingInCatalogIsDataGap
+  [       OK ] SelScreeningGearbox.LifeMissingInCatalogIsDataGap (0 ms)
+  [ RUN      ] SelScreeningGearbox.OrientationMismatchGoldenRow
+  [       OK ] SelScreeningGearbox.OrientationMismatchGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.FlangeAndOrientationBothRecorded
+  [       OK ] SelScreeningGearbox.FlangeAndOrientationBothRecorded (0 ms)
+  [ RUN      ] SelScreeningGearbox.AxialLoadExceededGoldenRow
+  [       OK ] SelScreeningGearbox.AxialLoadExceededGoldenRow (0 ms)
+  [ RUN      ] SelScreeningGearbox.RadialLoadLeverArmReductionExceeded
+  [       OK ] SelScreeningGearbox.RadialLoadLeverArmReductionExceeded (0 ms)
+  [ RUN      ] SelScreeningGearbox.RadialLoadWithinReducedLimitPasses
+  [       OK ] SelScreeningGearbox.RadialLoadWithinReducedLimitPasses (0 ms)
+  [ RUN      ] SelScreeningGearbox.RadialLoadCloserThanRatedNoReduction
+  [       OK ] SelScreeningGearbox.RadialLoadCloserThanRatedNoReduction (0 ms)
+  [ RUN      ] SelScreeningGearbox.ExternalLoadMissingInCatalogIsDataGap
+  [       OK ] SelScreeningGearbox.ExternalLoadMissingInCatalogIsDataGap (0 ms)
+  [ RUN      ] SelScreeningGearbox.ExternalLoadNotApplicableWhenUndeclaredBothSides
+  [       OK ] SelScreeningGearbox.ExternalLoadNotApplicableWhenUndeclaredBothSides (0 ms)
+  [ RUN      ] SelScreeningGearbox.MultiDimensionFailuresAllRecorded
+  [       OK ] SelScreeningGearbox.MultiDimensionFailuresAllRecorded (0 ms)
+  [ RUN      ] SelScreeningGearbox.MultiCaseMergedIntoSingleRecord
+  [       OK ] SelScreeningGearbox.MultiCaseMergedIntoSingleRecord (0 ms)
+  [ RUN      ] SelScreeningGearbox.DeterministicSameInputSameOutput
+  [       OK ] SelScreeningGearbox.DeterministicSameInputSameOutput (0 ms)
+  [ RUN      ] SelScreeningGearbox.AllConditionsOffWithSparseEntryFeasible
+  [       OK ] SelScreeningGearbox.AllConditionsOffWithSparseEntryFeasible (0 ms)
+  [ RUN      ] SelScreeningGearbox.EndToEndFromCatalogImportToScreening
+  [       OK ] SelScreeningGearbox.EndToEndFromCatalogImportToScreening (0 ms)
+  [ RUN      ] SelScreeningGearbox.InvertedRatioRangeFailsFast
+  [       OK ] SelScreeningGearbox.InvertedRatioRangeFailsFast (0 ms)
+  [ RUN      ] SelScreeningGearbox.NonFiniteJointWorkpointFailsFast
+  [       OK ] SelScreeningGearbox.NonFiniteJointWorkpointFailsFast (0 ms)
+  [----------] 30 tests from SelScreeningGearbox (1 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 137 tests from 7 test suites ran. (29 ms total)
+  [  PASSED  ] 137 tests.
+==== TEST_REPORT_EXIT=0 ====
+==== ird_gates（IRD_ROOT=WT 工作树 industrialrobot 源码根）====
+[ird_gates] 自测 pass_clean：干净夹具通过（无误报）
+[ird_gates] 自测 pass_r4comment：干净夹具通过（无误报）
+[ird_gates] 自测 fail_r1：按预期检出 IRD-GATE-R1
+[ird_gates] 自测 fail_t1：按预期检出 IRD-GATE-T1
+[ird_gates] 自测 fail_r5：按预期检出 IRD-GATE-R5
+[ird_gates] 自测 fail_sub：按预期检出 IRD-GATE-SUB
+[ird_gates] 自测 fail_r3：按预期检出 IRD-GATE-R3
+[ird_gates] 自测 fail_r4：按预期检出 IRD-GATE-R4
+[ird_gates] 自测 fail_t2：按预期检出 IRD-GATE-T2
+==============================================================
+[ird_gates] 扫描根：D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+[ird_gates] 全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中
+==============================================================
+==== GATES_EXIT=0 ====

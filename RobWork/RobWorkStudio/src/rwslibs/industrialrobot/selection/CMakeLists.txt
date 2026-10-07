@@ -82,14 +82,21 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #   src/CatalogValidation.cpp §5.3 业务校验全表＋§6.3 曲线校验＋快照装配
 #   src/CapabilityCurve.cpp   §6.2 分段线性插值（默认禁止外推）
 #   src/CatalogProvider.cpp   §14.1 锁定供给（内存形态）＋P-IO-7 注册面
-# 筛选/组合校核/可行集/回填等实现翻译单元随 WP-19-T04~T09 按卡 §3.5
-# 布局表增列（本任务不预建占位实现，NFR-MNT-04 不建无边界价值包装器）。
+# T04 增列筛选实现翻译单元（卡 §3.1 组成表 Screening 行——WP-19-T04
+# 交付面"电机/减速器硬筛选（§7/§8 全维度）"）：
+#   src/Screening.cpp         §7 电机九维＋§8 减速器九维＋§10.1 记录类型
+#                             ＋§10.3 词表映射＋§10.4 稳定排序（公共头
+#                             include/sdurws/ird/selection/Screening.hpp）
+# 组合校核/可行集/目录差异/回填等实现翻译单元随 WP-19-T05~T09 按卡
+# §3.5 布局表增列（本任务不预建占位实现，NFR-MNT-04 不建无边界价值
+# 包装器）。
 add_library(sdurws_ird_selection STATIC
     src/DiagCodes.cpp
     src/CatalogTypes.cpp
     src/CatalogValidation.cpp
     src/CapabilityCurve.cpp
-    src/CatalogProvider.cpp)
+    src/CatalogProvider.cpp
+    src/Screening.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：selection 公共头使用 C++17 设施（inline constexpr 变量
@@ -235,7 +242,9 @@ add_executable(sdurws_ird_selection_test
     test/BuildRedLineTest.cpp
     test/CatalogImportTest.cpp
     test/CapabilityCurveTest.cpp
-    test/CatalogLockTest.cpp)
+    test/CatalogLockTest.cpp
+    test/ScreeningMotorTest.cpp
+    test/ScreeningGearboxTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -319,7 +328,8 @@ add_executable(sdurws_ird_selection_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
     contract_test/SelectionPluginAssemblyContractTest.cpp
-    contract_test/CatalogIoBoundaryContractTest.cpp)
+    contract_test/CatalogIoBoundaryContractTest.cpp
+    contract_test/HardScreeningContractTest.cpp)
 
 target_compile_features(sdurws_ird_selection_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_contract_test PROPERTIES
