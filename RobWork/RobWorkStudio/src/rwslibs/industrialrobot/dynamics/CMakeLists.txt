@@ -77,12 +77,24 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # WP-17-T03 增列 src/InverseDynamics.cpp（RNEA 逆动力学评估器实现——卡
 # §3.2 布局表 InverseDynamics.hpp 行：模型提取/末端体合成/几何与力学双
 # 递推/摩擦叠加/样本行组装；自持 Vec3/Mat3 逐元素算术——零 rw 外联符号，
-# 冒烟 header-only 纪律同 runtime RT-T03 先例）。正动力学/统计等实现
-# 翻译单元随 WP-17-T04~T08 按卡 §3.2 布局表增列（ForwardDynamics/
-# SeriesBuilder/Envelope/…——不预建占位实现，NFR-MNT-04）。
+# 冒烟 header-only 纪律同 runtime RT-T03 先例）。
+# WP-17-T04 增列三实现 TU（卡 §3.2 布局表 SeriesBuilder/Envelope/
+# PowerEnergy 行——输出序列与峰值/RMS 统计面）：
+#   src/SeriesBuilder.cpp  §10.3 序列构建（排序/完整性/身份冻结/canonical
+#                          内容身份——SHA-256 编码唯一实现点）；
+#   src/Envelope.cpp       §10.4 统计面（工况级峰值含持续时间窗与所在段
+#                          ＋完整循环时间加权 RMS 含驻留；mergeEnvelope
+#                          多工况包络合并归 WP-17-T07——DTB §2.18 分界）；
+#   src/PowerEnergy.cpp    §10.5 功率/能量（§7.5 符号约定唯一实现点——
+#                          E⁺/E⁻ 分项梯形积分含驻留）。
+# 正动力学/证据装配等实现翻译单元随 WP-17-T05~T10 按卡 §3.2 布局表增列
+# （ForwardDynamics/Evidence/…——不预建占位实现，NFR-MNT-04）。
 add_library(sdurws_ird_dynamics STATIC
     src/DiagCodes.cpp
-    src/InverseDynamics.cpp)
+    src/InverseDynamics.cpp
+    src/SeriesBuilder.cpp
+    src/Envelope.cpp
+    src/PowerEnergy.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：dynamics 公共头使用 C++17 设施（inline constexpr 变量
@@ -255,7 +267,7 @@ add_executable(sdurws_ird_dynamics_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
-    test/RneaTest.cpp)               # WP-17-T03：RNEA 评估器用例组（DynRnea——
+    test/RneaTest.cpp                # WP-17-T03：RNEA 评估器用例组（DynRnea——
                                      #   二连杆解析算例/静态重力矩含倒挂 AT-37/
                                      #   分项恒等式与 M·q̈ 科氏解析对照/摩擦
                                      #   sgn₀ 约定与 MDL-16 缺失降级/负载事件
@@ -264,6 +276,13 @@ add_executable(sdurws_ird_dynamics_test
                                      #   夹具 test/TwoLinkFixture.hpp（自持
                                      #   CanonicalModel 直构——R-2 不跨单元
                                      #   include 他单元测试私有头）
+    test/StatisticsTest.cpp)         # WP-17-T04：序列与统计用例组（DynSeries/
+                                     #   DynEnvelope/DynPowerEnergy——峰值窗与
+                                     #   所在段黄金算例/时间加权 RMS 含驻留解析
+                                     #   对照（禁样本平均对照）/E⁺E⁻ 分项与
+                                     #   制动段符号/序列身份冻结与内容身份确定
+                                     #   性/类型化不混算/Empty 与无效显式 NaN/
+                                     #   fail-fast 边界/RNEA→序列→统计端到端）
 
 target_compile_features(sdurws_ird_dynamics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_test PROPERTIES
