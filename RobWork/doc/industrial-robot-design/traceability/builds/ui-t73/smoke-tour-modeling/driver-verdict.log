@@ -1,0 +1,35 @@
+===== driver verdict (2026-10-07 13:38:19) =====
+[ird-ui-smoke-mtour] started
+[ird-ui-smoke-mtour] step 1 create-open-project
+[ird-ui-smoke-mtour] pass step1 project-opened
+[ird-ui-smoke-mtour] pass step1 modeling-panel-present
+[ird-ui-smoke-mtour] pass step1 modeling-panel-visible (取证前提——非静窗)
+[ird-ui-smoke-mtour] snap mtour-1-panel.png
+[ird-ui-smoke-mtour] step 2 new-from-template-generic6r
+[ird-ui-smoke-mtour] pass step2 template-cmd-present
+[ird-ui-smoke-mtour] pass step2 reseed-generic6r (cur=已从模板重建草稿（generic-6r）——未应用编辑已清空)
+[ird-ui-smoke-mtour] snap mtour-2-reseeded.png
+[ird-ui-smoke-mtour] step 3 joint-origin-edit
+[ird-ui-smoke-mtour] pass step3 struct-tree-present
+[ird-ui-smoke-mtour] pass step3 j1-row-found
+[ird-ui-smoke-mtour] pass step3 edit-host-present
+[ird-ui-smoke-mtour] pass step3 edit-table-present
+[ird-ui-smoke-mtour] pass step3 origin-rows-set
+[ird-ui-smoke-mtour] pass step3 apply-confirm-present
+[ird-ui-smoke-mtour] pass step3 origin-applied (cur=已应用：joints[0])
+[ird-ui-smoke-mtour] snap mtour-3-origin-edit.png
+[ird-ui-smoke-mtour] step 4 structure-add-joint
+[ird-ui-smoke-mtour] pass step4 struct-add-present
+[ird-ui-smoke-mtour] pass step4 joint-added (cur=7 before=6)
+[ird-ui-smoke-mtour] snap mtour-4-structure.png
+[ird-ui-smoke-mtour] step 5 modeling-draft-apply
+[ird-ui-smoke-mtour] pass step5 modeling-apply-entry-present
+[ird-ui-smoke-mtour] step5 outcome=1 committed=0 rej=[hard-assert-failed] rev=[]
+[ird-ui-smoke-mtour] pass step5 modeling-apply (④装配缺陷已消除——拒绝面=行程校验执行层 F-546; rej=[hard-assert-failed])
+[ird-ui-smoke-mtour] pass step5 project-undo-unavailable-no-revision
+[ird-ui-smoke-mtour] snap mtour-5-applied.png
+[ird-ui-smoke-mtour] pass step6 export-cmd-present
+[ird-ui-smoke-mtour] pass step6 irdbundle-exists (path=D:\10_Source_Repos\21_robot\RobWork\RobWork\doc\industrial-robot-design\traceability\builds\ui-t73\smoke-tour-modeling/mtour-export.irdbundle)
+[ird-ui-smoke-mtour] snap mtour-6-exported.png
+exit=0
+MTOUR_PASS

@@ -77,6 +77,7 @@
 #include <sdurws/ird/ui/WorkbenchContent.hpp>     // ui::IWorkbenchContent（内容装配面）
 #include <sdurws/ird/requirements/Editor.hpp>     // requirements::RequirementEditor（UI-T29 会话权威——宿主按值持有）
 #include <sdurws/ird/requirements/Readiness.hpp>  // requirements::RequirementReadinessChecker（判定权威直投值）
+#include <sdurws/ird/policy/SystemDefaultPolicy.hpp>  // policy::SystemDefaultPolicyProvider（④端口缺省源——UI-T73/O-46 裁决出路②；宿主装配层特权边）
 
 #include "DomainAssembly.hpp"                    // 域插件装配产物（WP-24-T03 首版装配）
 #include "app/DiagnosticsAssembly.hpp"           // 诊断栈装配（与 harness 共用序列）
@@ -397,6 +398,11 @@ private:
     std::unique_ptr<policy::IJointLimitEvaluator> m_jointLimitEvaluator;
     std::unique_ptr<modeling::IDhExplicitConverter> m_dhConverter; ///< DH↔显式转换器（无状态产品）
     std::unique_ptr<ui::HostCompileProbe> m_compileProbe; ///< 编译分段探针（等价验证注入面）
+    /// 系统缺省策略供给器（UI-T73——O-46 裁决出路②：附录 D 冻结默认 4π 的
+    /// ④端口缺省源；建模 HandlerServices 装配期取址注入，成员锚定存活期
+    /// ——借用契约。解析半区专用：碰撞评估面调用即 fail-fast，④行程校验
+    /// 只走 resolvePolicy）。
+    policy::SystemDefaultPolicyProvider m_systemDefaultPolicyProvider;
     std::unique_ptr<ui::HostRuntimeNameContext> m_runtimeNameContext; ///< 行程评估名称上下文（真值端口现取）
     /// 呈现刷新观察者（UI-T46——桥弱持有，保活锚在本成员：发布成功拍经
     /// 此绑定名称映射真值；析构自动退订）。
