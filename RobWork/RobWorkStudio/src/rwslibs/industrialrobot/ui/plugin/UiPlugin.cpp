@@ -4796,13 +4796,36 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             reqToggle->trigger();
         }
         settleEvents(300);
+        // E-4（F-538④，UI-T68）续：trigger 翻转的是动作态，页签叠放形态下
+        // 面板可存在而不可见（ui-t68 首轮实录——最大化后主窗截图仍五帧同
+        // 哈希，需求面板不在可见层）。show＋raise 强制升至所在页签组前景，
+        // 并以可见性断言把「面板不可见」从静默态转为显式红——截图取证以
+        // 可见层为前提。
+        if (m_requirementsDock != nullptr) {
+            m_requirementsDock->show();
+            m_requirementsDock->raise();
+            settleEvents(200);
+        }
         QWidget* panel =
             m_requirementsDock != nullptr ? m_requirementsDock->widget() : nullptr;
         ok(panel != nullptr, "step1 panel-present");
+        // 可见性断言（E-4 配对——存在≠可见；页签叠放/零宽挤压下的静窗
+        // 截图零信息量，此处显式红可阻断该形态溜过取证通道）。
+        ok(panel != nullptr && panel->isVisible()
+               && !panel->visibleRegion().isEmpty(),
+           "step1 panel-visible (取证前提——非静窗)");
         if (panel == nullptr) {
             std::cout << "[ird-ui-smoke-tour] FAILED" << std::endl;
             QCoreApplication::exit(1);
             return;
+        }
+        // E-4（F-538④，UI-T68）：取证前宿主窗体最大化——默认尺寸下多 Dock
+        // 挤压（ui-t67 central-guard「中央 18 px<320 px」实录）把需求面板
+        // 压成静窗，五帧截图逐字节同哈希零信息量。最大化让 Dock 布局拿到
+        // 物理空间后再取屏证，兑现「截图落证」的完整语义。
+        if (hostWin != nullptr) {
+            hostWin->showMaximized();
+            settleEvents(400);
         }
         snapPng(hostWin, "tour-1-panel-empty-state.png");
 
@@ -4811,8 +4834,13 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             return panel->findChild<QPushButton*>(QString::fromLatin1(name));
         };
         QTreeWidget* tree = nullptr;
+        // F-537（UI-T68）根因：树头自 F-499 起更名「需求树（当前草稿）」
+        // （职责分界标注——双呈现位同频），本遍历原用全等匹配「需求树」
+        // →tree=nullptr→stationEntryCount 恒 -1（ui-t67 实录 tree-child=-1
+        // 的真因，非时序竞态——3s 有界轮询亦不现身即证）。改前缀匹配，
+        // 对职责标注后缀稳健。
         for (QTreeWidget* t : panel->findChildren<QTreeWidget*>()) {
-            if (t->headerItem()->text(0) == QStringLiteral("需求树")) {
+            if (t->headerItem()->text(0).startsWith(QStringLiteral("需求树"))) {
                 tree = t;
                 break;
             }
@@ -4877,10 +4905,18 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
         if (buttonOf("ird_req_add_points") != nullptr) {
             buttonOf("ird_req_add_points")->click();
         }
-        settleEvents(300);  // 提交轨落域＋全面板重投影
-        ok(stationEntryCount() >= 1, "step2 station-added (tree-child="
-                                         + std::to_string(stationEntryCount())
-                                         + ")");
+        // F-537（UI-T68）：提交轨（queued invocation）落域＋全面板重投影的
+        // 时延随宿主负载波动——单次静置 300ms 在负载尖峰下树行尚未现身
+        // （ui-t67 实录 tree-child=-1 误红）。改有界轮询：100ms 拍×最多 30
+        // 拍（3s 上限），行一现身即收拍；超界仍无行＝如实红（不掩盖真缺陷
+        // ——轮询只消时序抖动，不放宽断言本体）。
+        int stationRows = -1;
+        for (int beat = 0; beat < 30 && stationRows < 1; ++beat) {
+            settleEvents(100);
+            stationRows = stationEntryCount();
+        }
+        ok(stationRows >= 1, "step2 station-added (tree-child="
+                                 + std::to_string(stationRows) + ")");
         ok(buttonOf("ird_req_duplicate_points") != nullptr
                && buttonOf("ird_req_duplicate_points")->isEnabled(),
            "step2 selected-duplicate-enabled");
@@ -5111,9 +5147,9 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
             settleEvents(150);
         }
 
-        // ---- 拍 7.5：三态着色上屏数据面＋校验定位链屏证（F-529，UI-T67
-        //      扩建——自动化取证通道）--------------------------
-        step("7.5 coloring-dataplane-and-locate-chain");
+        // ---- 拍 7.5：三态着色上屏数据面＋校验逐项行点击协议（F-529，
+        //      UI-T67 扩建；UI-T68 按 E-5 名实相符重做②半）----------
+        step("7.5 coloring-dataplane-and-validation-click");
         // ①着色数据面上屏链：区域预览 sink 交付的采样格（宿主侧
         //   m_reqGrid——View3D 网关消费同一对象）非空且逐点着色态与采样点
         //   等长（UI-T65 三态映射的宿主侧交付证据）；无评估运行时格态＝
@@ -5139,29 +5175,59 @@ void IrdWorkbenchHostPlugin::maybeRunRequirementsTour()
         if (m_view3d != nullptr) {
             snapPng(m_view3d, "tour-4b-view3d-coloring.png");
         }
-        // ②校验定位链：校验页树回 index 3→锚定行 emit itemClicked（Qt5+
-        //   信号公有——宿主遍历合法形态）→m_selection.locate 链走通无异常
-        //   （定位落点＝树滚动＋三维高亮，行为断言面另有 gui 钉扎）。
+        // ②校验逐项行点击协议（E-5/F-538⑤ 名实相符重做——UI-T67 首版
+        //   findChild 取首树＝层汇总表〔聚合行无锚〕且断言体 ok(true) 恒真
+        //   ——验收 M-B 变异实证 emit 删除仍绿）。本版按表头首列『级别』
+        //   锚定逐项表（行带隐藏锚列；层汇总表首列＝『层』），两半点击
+        //   协议＋可断言后置条件：setCurrentItem＝真实点击的 Qt 选中面；
+        //   itemClicked emit＝面板定位槽（nodeAnchor→locate——与手点同源
+        //   信号轨）。定位行为面（树滚动＋三维高亮）另有 gui 钉扎
+        //   （RequirementsSessionGuiTest 注入 locateSink 形态）——生产装配
+        //   locateSink 缺席（F-539 登记）使 LocateTarget 产出即丢弃，遍历
+        //   侧无可读回的落点态，故本拍断言面＝点击协议落地＋锚列良构，
+        //   不虚称 exercised。
         pages->setCurrentIndex(3);
         settleEvents(150);
+        QTreeWidget* itemsTree = nullptr;
         if (auto* valPage = panel->findChild<QWidget*>(
                 QStringLiteral("ird_req_tab_validation_header"))) {
             QWidget* page = valPage->parentWidget() != nullptr
                                 ? valPage->parentWidget()
                                 : valPage;
-            QTreeWidget* valTree = page->findChild<QTreeWidget*>();
-            if (valTree == nullptr && valPage->parentWidget() != nullptr) {
-                valTree = valPage->parentWidget()->findChild<QTreeWidget*>();
+            for (QTreeWidget* t : page->findChildren<QTreeWidget*>()) {
+                if (t->headerItem()->text(0) == QStringLiteral("级别")) {
+                    itemsTree = t;  // 逐项表（首列『级别』≠层汇总表『层』）
+                    break;
+                }
             }
-            ok(valTree != nullptr, "step7.5 validation-tree-present");
-            if (valTree != nullptr && valTree->topLevelItemCount() > 0) {
-                QTreeWidgetItem* it = valTree->topLevelItem(0);
+            ok(itemsTree != nullptr, "step7.5 validation-items-tree-present");
+            if (itemsTree != nullptr && itemsTree->topLevelItemCount() > 0) {
+                QTreeWidgetItem* row = itemsTree->topLevelItem(0);
+                itemsTree->setCurrentItem(row);
                 settleEvents(100);
-                Q_EMIT valTree->itemClicked(it, 0);
+                Q_EMIT itemsTree->itemClicked(row, 0);
                 settleEvents(200);
-                ok(true, "step7.5 locate-chain-exercised (rows="
-                       + std::to_string(valTree->topLevelItemCount()) + ")");
-                snapPng(hostWin, "tour-4c-locate-chain.png");
+                // 后置条件两半：①点击行＝当前行（选中面落地）；②锚列良
+                //   构——空＝Warning 行无 subject 属规格（无锚不伪造定位
+                //   分支），非空则必须解析为有效 ObjectId（垃圾锚＝投影
+                //   缺陷必红）。
+                const QString anchorText =
+                    row->text(itemsTree->columnCount() - 1);
+                const bool anchorWellFormed =
+                    anchorText.isEmpty()
+                    || core::ObjectId::tryFromCanonical(
+                           anchorText.toStdString())
+                           .has_value();
+                ok(itemsTree->currentItem() == row && anchorWellFormed,
+                   "step7.5 validation-row-click-protocol (rows="
+                       + std::to_string(itemsTree->topLevelItemCount())
+                       + " anchor="
+                       + (anchorText.isEmpty() ? std::string("empty")
+                                               : std::string("valid"))
+                       + ")");
+                snapPng(hostWin, "tour-4c-validation-row-click.png");
+            } else if (itemsTree != nullptr) {
+                ok(false, "step7.5 validation-items-empty");
             }
         } else {
             ok(false, "step7.5 validation-page-missing");

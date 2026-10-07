@@ -4,8 +4,8 @@
 $ErrorActionPreference = 'Continue'
 $ROOT = 'D:\10_Source_Repos\21_robot\RobWork'
 $BLD = "$ROOT\build"
-$OUT = "$ROOT\RobWork\doc\industrial-robot-design\traceability\builds\ui-t67\smoke-tour"
-$CWD = "$ROOT\build\ui-t37-tour-cwd"
+$OUT = "$ROOT\RobWork\doc\industrial-robot-design\traceability\builds\ui-t68\smoke-tour"
+$CWD = "$ROOT\build\ui-t68-tour-cwd"
 New-Item -ItemType Directory -Force -Path $OUT, $CWD | Out-Null
 
 # 进程清扫（残留实例锁 exe＝LNK1104——历次实录）。

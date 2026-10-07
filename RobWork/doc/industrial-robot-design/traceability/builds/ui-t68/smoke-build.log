@@ -1,0 +1,7 @@
+# UI-T68 独立冒烟构建实录（2026-10-07，分支 ui-t68）
+# 配置：cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build-smoke/ui-t68 -DCMAKE_TOOLCHAIN_FILE=<repo>/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64
+# 构建：cmake --build build-smoke/ui-t68 --config Release —— error C/LNK 计数 = 0（全单元含并行批次新增 workflow/trajectory/dynamics/selection/optimization/drivetrain 目标）
+# ctest（QT_QPA_PLATFORM_PLUGIN_PATH=Qt msvc 平台插件，原生窗口口径）：
+#   ui 单元 3 项：ui_test 238/239（1 失败＝F-540 基线既有——3fdafa36 拆行，本批零触碰）＋ui_contract PASS＋ui_gui PASS
+#   requirements 单元 3 项：100% passed（requirements_test＋contract＋gui）
+# 集成树相邻套件（2026-10-07 实跑）：ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44 全绿；ui_test 253/254（1 失败＝同 F-540）
