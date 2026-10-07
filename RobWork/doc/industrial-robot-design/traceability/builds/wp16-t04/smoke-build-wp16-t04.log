@@ -1,0 +1,9 @@
+=== WP-16-T04 独立冒烟模式构建留痕（2026-10-07）===
+
+[配置命令] cmake -S <WT>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <WT>/build-smoke -G 'Visual Studio 17 2022' -A x64 -DCMAKE_TOOLCHAIN_FILE=<repo>/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64
+[构建命令] cmake --build <WT>/build-smoke --config Release
+[结论] 全量构建零 error 零 C 类 warning（T04 冒烟面＝DiagCodes/TrjTypes/PlanConfig 全编译＋测试 DiagCodesTest/BuildRedLineTest/PlanConfigTest/契约三文件；Ptp.cpp/Sequence.cpp/PtpSequenceTest.cpp 为集成模式条件源——rw::math::Q 虚析构库符号 gating，kinematics src/Collision.cpp 先例）
+
+[构建输出 error 计数（grep -icE 'error'）]
+0
+---（上行数字＝error 计数，0＝零错误）---
