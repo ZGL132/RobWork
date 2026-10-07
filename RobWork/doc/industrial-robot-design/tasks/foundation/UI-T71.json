@@ -4,7 +4,7 @@
   "unit": "requirements",
   "masterWp": "WP-I",
   "title": "定位出口生产接线（F-539）：双面板构造期 setLocateSink→focusObject 既有执行器＋modeling 孪生接线（就绪表两列声明式形态对齐）＋两 gui 钉扎用例",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T68"
   ],
@@ -64,5 +64,5 @@
     "requirements 侧落点选择 requirementTree 辅助须前缀匹配树头（F-499 更名「需求树（当前草稿）」——F-537 同款教训）"
   ],
   "branch": "ui-t71",
-  "note": "F-539 收口批次（suggestion 级 UX 缺口）：需求域主面＋modeling 孪生面一并（F-539 owner 注『随修一并核对』兑现）；实施段一提交，独立子会话对抗式验收后按 PIPE §4.7 合入。"
+  "note": "【合入登记注（2026-10-07，PIPE §4.7 收尾——所有者按序实施指令）】实施 566a62a1＋返工 df3689a2 合入 redesign-main（acc/ui-t71/2@d0ff4982 attempt 2 全量重验 pass 按 SHA 先并；主线基点 e02e42cb 一合并双件 6718b65e）。attempt 1 fail（B-1——「锚列断链」失实叙事）返工四项落实＋attempt 2 三变异三红三绿全过。S-A（ui.md 版本头残留旧表述）随本治理提交清扫；S-B（modeling 巡检六帧 6/6 同哈希）归 F-541 持有；S-2 并案 F-542。F-539 fixedBy=UI-T71（更正后口径——不引用「第二断点」）。分支基点＝redesign-main@76e9f554。"
 }

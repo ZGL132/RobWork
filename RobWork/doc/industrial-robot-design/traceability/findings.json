@@ -5343,10 +5343,10 @@
       "id": "F-539",
       "source": "UI-T68 需求巡检取证通道清理批次实现段发现（2026-10-07——E-5 名实相符重做触及定位链装配面实证：生产形态无落点可断言）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-07",
       "title": "生产装配未注册校验行定位链 locateSink——RequirementsPanelWidget 校验逐项行点击经 PanelSelectionState.locate 产出 LocateTarget（scrollToNode＋highlightObject）后因 m_locateSink 为空即弃（setLocateSink 全仓零生产调用点，仅 modeling 测试 PluginPanelTest 注入）——代码注释承诺的 UX-06『树滚动＋三维高亮』落点在生产形态不可达；点击链只余 nodeAnchor→locate 调用半区（不抛不伪造——无锚防护轨有效），用户无可见反馈。modeling 域同名 PanelSelection 形态同构（ModelingPanelWidget.cpp:699 同走 sink——随修一并核对）",
-      "owner": "需求域/装配批次（widget 侧定位执行器接线——面板自持滚动＋高亮，或经宿主 SelectionService 树定位缝；规格口径 PanelSelection.hpp『widget 执行滚动与高亮』）。修复后 ui-t68 7.5 拍可升级落点读回断言（当前 validation-row-click-protocol 只钉调用半区——ui.md §13 UI-T68 行如实登记）"
+      "owner": "需求域/装配批次（widget 侧定位执行器接线——面板自持滚动＋高亮，或经宿主 SelectionService 树定位缝；规格口径 PanelSelection.hpp『widget 执行滚动与高亮』）。修复后 ui-t68 7.5 拍可升级落点读回断言（当前 validation-row-click-protocol 只钉调用半区——ui.md §13 UI-T68 行如实登记）；【2026-10-07 翻转】生产接线建成＝UI-T71（双面板构造期 setLocateSink→focusObject 既有执行器——校验/就绪逐项行点击 LocateTarget 经 sink 落位：自持树滚动＋置当前行→L-R1 前向链〔检查器＋panelHighlight 三维高亮顺链〕；两 gui 钉扎用例转红实证 M-A/M-C），fixedBy=UI-T71 合入 6718b65e。原 owner 注『升级落点读回断言』按实调整：快乐路径 Warning 行无 subject（Readiness 规格）——tour 7.5 拍维持点击协议面，落点钉扎由 gui 用例承载。另：实施段「就绪表锚列断链」叙事经 acc/ui-t71/1 B-1 证伪已全线更正（QTreeWidgetItem 逐项值不受树 columnCount 上限——教训登记 F-544/契约 knownPitfalls③）"
     },
     {
       "id": "F-540",
@@ -5388,10 +5388,10 @@
       "id": "F-544",
       "source": "acc/ui-t71/1@8c971519 验收建议级 S-1（UI-T71 attempt 1 对抗式验收 2026-10-07——verdict fail 单一阻断 B-1 的登记面波及清理项）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-07",
       "title": "UI-T71 实施段对 Qt 行为的误判（「QTreeWidgetItem 越树 columnCount 的 setText 被静默丢弃」——实为逐项值存于条目自身不受列数上限）随批写入五处登记面（契约/DTB §2.11 行/ui.md §13 行/实施提交正文/产品代码注释）被验收变异＋运行时探针证伪——返工前任何后续批次引用 UI-T71 行均会继承错误 Qt 行为模型；B-1 返工（同批更正）与 S-1 清扫为同一改动面",
-      "owner": "UI-T71 返工提交一次性更正（attempt 2 全量重验核 五处更正到位）；教训入 UI-T71 契约 knownPitfalls③（审计断言以运行时条目值探针为准，勿以树列数推断值丢失）"
+      "owner": "UI-T71 返工提交一次性更正（attempt 2 全量重验核 五处更正到位）；教训入 UI-T71 契约 knownPitfalls③（审计断言以运行时条目值探针为准，勿以树列数推断值丢失）；【2026-10-07 翻转】B-1 返工（ui-t71@df3689a2）五面更正到位＋attempt 2 全量重验 pass（三变异三红三绿）；S-A 残留（ui.md:8 版本头一行未标记旧表述）随本合入段治理提交清扫，fixedBy=UI-T71 合入段"
     }
   ]
 }
