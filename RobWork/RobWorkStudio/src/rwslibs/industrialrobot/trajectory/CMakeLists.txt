@@ -106,8 +106,12 @@ add_library(sdurws_ird_trajectory STATIC
 
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_trajectory PRIVATE
-        src/Ptp.cpp       # §7 PTP 规划（Q 构造面——集成条件，见上）
-        src/Sequence.cpp) # §5.4 序列展开（Q 构造面——集成条件，见上）
+        src/Ptp.cpp           # §7 PTP 规划（Q 构造面——集成条件，见上）
+        src/Sequence.cpp      # §5.4 序列展开（Q 构造面——集成条件，见上）
+        src/CartesianLine.cpp # §8 笛卡尔直线段＋IK ③端口逐采样连续性
+                              #   （Q 构造面——WP-16-T05；集成条件，见上）
+        src/Continuity.cpp)   # §9 段边界几何连续＋C2 适用双路（Q 构造面
+                              #   ——WP-16-T05；集成条件，见上）
 endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
@@ -342,10 +346,14 @@ add_executable(sdurws_ird_trajectory_test
 # PtpSequenceTest 为集成模式条件源（同产品面 Ptp.cpp/Sequence.cpp 的 gating
 # 口径——用例构造 rw::math::Q 对象，冒烟模式无框架库符号可链；V-01/02/03
 # 解析算例的真实执行归集成模式测试运行）。
+# CartesianLineContinuityTest 同为条件源（WP-16-T05——V-04~V-07/V-09 与
+# C2 双路用例：构造 Transform3D/Q 对象＋端口假实现，真实执行归集成模式）。
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_trajectory_test PRIVATE
         test/PtpSequenceTest.cpp)    # WP-16-T04：TRJ-01（PTP 插值/构型选择/
                                      #   限位守卫/序列展开——V-01/02/03 面）
+    target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/CartesianLineContinuityTest.cpp)
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
@@ -433,6 +441,15 @@ add_executable(sdurws_ird_trajectory_contract_test
     contract_test/PlanConfigContractTest.cpp)  # WP-16-T04：config.trj 条目与
                                                #   evidence::ConfigEntry 的跨
                                                #   单元契约（§5.5 身份路径）
+
+# KinematicsPortContractTest 为集成模式条件源（WP-16-T05——③端口消费契
+# 约：R-1 源码扫描零 kinematics include／请求字段透传钉扎／确定性解序／
+# 端口错误传播；用例构造 CartesianLineRequest（rw::math::Q/Transform3D
+# 对象），冒烟模式无框架库符号可链——同 PtpSequenceTest gating 口径）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_trajectory_contract_test PRIVATE
+        contract_test/KinematicsPortContractTest.cpp)
+endif()
 
 target_compile_features(sdurws_ird_trajectory_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_trajectory_contract_test PROPERTIES
