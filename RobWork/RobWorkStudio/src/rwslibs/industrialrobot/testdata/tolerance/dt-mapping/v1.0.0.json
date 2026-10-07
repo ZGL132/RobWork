@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "dt-mapping",
+  "version": "1.0.0",
+  "basis": "appendixD#9 (黄金算例解析对照——标量相对 1e-9，数据集逐例声明 eps_abs 1e-12) —— 测试侧黄金对照容差（units/drivetrain.md §8.4：黄金数据集对照归测试侧；§6.2 映射封闭代数无截断误差，容差只吸收双实现浮点路径差）。P-DT-3 纪律：本档案只服务黄金数据对照，不构成任何运行时数值一致性校验阈值（运行侧保持精确判据，附录 D C7）。能量分项（J）不在 core 单位表——不经本档案通道，消费测试以独立梯形积分重算＋恒等式断言复核。",
+  "entries": [
+    {
+      "fieldPath": "cases[*].samples[*].t",
+      "quantityKind": "time",
+      "unit": "s",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].theta",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].thetaDot",
+      "quantityKind": "angular-velocity",
+      "unit": "rad/s",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].thetaDDot",
+      "quantityKind": "angular-acceleration",
+      "unit": "rad/s^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].tauIdeal",
+      "quantityKind": "torque",
+      "unit": "N*m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].tauMotor",
+      "quantityKind": "torque",
+      "unit": "N*m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].pJoint",
+      "quantityKind": "power",
+      "unit": "W",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].pTransmission",
+      "quantityKind": "power",
+      "unit": "W",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].pRotor",
+      "quantityKind": "power",
+      "unit": "W",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].samples[*].pMotor",
+      "quantityKind": "power",
+      "unit": "W",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].matrixForm.thetaDot[*]",
+      "quantityKind": "angular-velocity",
+      "unit": "rad/s",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].matrixForm.tauIdeal[*]",
+      "quantityKind": "torque",
+      "unit": "N*m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].tauRms",
+      "quantityKind": "torque",
+      "unit": "N*m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].omegaRms",
+      "quantityKind": "angular-velocity",
+      "unit": "rad/s",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].loadRatio",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].reflectedInertia",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].q1.timeShare",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].q2.timeShare",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].q3.timeShare",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].q4.timeShare",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].points[*].zeroDwell.timeShare",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "inertiaCases[*].axes[*].jReflected",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "inertiaCases[*].axes[*].inertiaRatio",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    }
+  ]
+}

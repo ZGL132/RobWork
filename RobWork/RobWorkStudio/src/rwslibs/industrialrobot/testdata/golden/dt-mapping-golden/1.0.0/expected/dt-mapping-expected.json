@@ -1,0 +1,1045 @@
+{
+  "schema": "dt-mapping-expected/1",
+  "note": "传动映射黄金期望值——由 generate/make_dt_mapping_golden.mjs 独立参考实现产出（单元卡 §6.2/§9/§10 冻结公式标量直算，与产品 C++ 实现零共享）。能量分项单位 J（档案通道不承载 J——消费测试以独立积分重算＋恒等式断言复核本文件能量值）。",
+  "cases": [
+    {
+      "id": "analytic-single",
+      "samples": [
+        [
+          {
+            "t": 0,
+            "theta": 0.5,
+            "thetaDot": 62.83185307179586,
+            "thetaDDot": 0,
+            "tauIdeal": 0.02,
+            "tauMotor": 0.02,
+            "pJoint": 1.2566370614359172,
+            "pTransmission": 1.3962634015954636,
+            "pRotor": 0,
+            "pMotor": 1.3962634015954636,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.125,
+            "theta": 7.571067811865475,
+            "thetaDot": 44.428829381583675,
+            "thetaDDot": -279.18228350867616,
+            "tauIdeal": 0.02,
+            "tauMotor": -0.007918228350867619,
+            "pJoint": 0.8885765876316735,
+            "pTransmission": 0.9873073195907482,
+            "pRotor": -1.2403742040367896,
+            "pMotor": -0.2530668844460413,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.25,
+            "theta": 10.5,
+            "thetaDot": 3.8981718325013774e-15,
+            "thetaDDot": -394.7841760435743,
+            "tauIdeal": 0.02,
+            "tauMotor": -0.019478417604357433,
+            "pJoint": 7.796343665002754e-17,
+            "pTransmission": 8.662604072225282e-17,
+            "pRotor": -1.5389365549703266e-16,
+            "pMotor": -6.726761477477985e-17,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.375,
+            "theta": 7.571067811865476,
+            "thetaDot": -44.428829381583675,
+            "thetaDDot": -279.1822835086762,
+            "tauIdeal": 0.02,
+            "tauMotor": -0.007918228350867623,
+            "pJoint": -0.8885765876316735,
+            "pTransmission": -0.6220036113421714,
+            "pRotor": 1.2403742040367898,
+            "pMotor": 0.6183705926946184,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.5,
+            "theta": 0.5000000000000012,
+            "thetaDot": -62.83185307179586,
+            "thetaDDot": -4.836909530771047e-14,
+            "tauIdeal": 0.02,
+            "tauMotor": 0.019999999999999997,
+            "pJoint": -1.2566370614359172,
+            "pTransmission": -0.879645943005142,
+            "pRotor": 3.039119889589755e-16,
+            "pMotor": -0.8796459430051417,
+            "efficiencyApplicable": true
+          }
+        ]
+      ],
+      "points": [
+        {
+          "tauRms": 0.015039991961456538,
+          "omegaRms": 44.42882938158367,
+          "loadRatio": null,
+          "reflectedInertia": 1,
+          "tauPeakPos": {
+            "present": true,
+            "value": 0.02,
+            "t": 0,
+            "segmentId": "seg-A"
+          },
+          "tauPeakNeg": {
+            "present": true,
+            "value": -0.019478417604357433,
+            "t": 0.25,
+            "segmentId": "seg-A"
+          },
+          "omegaPeak": {
+            "present": true,
+            "value": 62.83185307179586,
+            "t": 0,
+            "segmentId": "seg-A"
+          },
+          "powerPeak": {
+            "present": true,
+            "value": 1.3962634015954636,
+            "t": 0,
+            "segmentId": "seg-A"
+          },
+          "q1": {
+            "sampleCount": 1,
+            "timeShare": 0.25,
+            "energy": 0.15707963267948966
+          },
+          "q2": {
+            "sampleCount": 2,
+            "timeShare": 0.5,
+            "energy": 0.1110720734539592
+          },
+          "q3": {
+            "sampleCount": 1,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q4": {
+            "sampleCount": 1,
+            "timeShare": 0.25,
+            "energy": -0.11107207345395918
+          },
+          "zeroDwell": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "energy": {
+            "eMotor": 0.07795155469296725,
+            "eJoint": 0,
+            "eLoss": 0.0779515546929672,
+            "eRegen": 0.18961188979370402,
+            "ePos": 0.18961188979370402,
+            "eRotor": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "virtualwork-multi",
+      "samples": [
+        [
+          {
+            "t": 0,
+            "theta": 0,
+            "thetaDot": 62.83185307179586,
+            "thetaDDot": 0,
+            "tauIdeal": 0.02,
+            "tauMotor": 0.02,
+            "pJoint": 1.2566370614359172,
+            "pTransmission": 1.3962634015954636,
+            "pRotor": 0,
+            "pMotor": 1.3962634015954636,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.125,
+            "theta": 7.071067811865475,
+            "thetaDot": 44.428829381583675,
+            "thetaDDot": -279.18228350867616,
+            "tauIdeal": 0.02,
+            "tauMotor": -0.007918228350867619,
+            "pJoint": 0.8885765876316735,
+            "pTransmission": 0.9873073195907482,
+            "pRotor": -1.2403742040367896,
+            "pMotor": -0.2530668844460413,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.25,
+            "theta": 10,
+            "thetaDot": 3.8981718325013774e-15,
+            "thetaDDot": -394.7841760435743,
+            "tauIdeal": 0.02,
+            "tauMotor": -0.019478417604357433,
+            "pJoint": 7.796343665002754e-17,
+            "pTransmission": 8.662604072225282e-17,
+            "pRotor": -1.5389365549703266e-16,
+            "pMotor": -6.726761477477985e-17,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.375,
+            "theta": 7.071067811865476,
+            "thetaDot": -44.428829381583675,
+            "thetaDDot": -279.1822835086762,
+            "tauIdeal": 0.02,
+            "tauMotor": -0.007918228350867623,
+            "pJoint": -0.8885765876316735,
+            "pTransmission": -0.6220036113421714,
+            "pRotor": 1.2403742040367898,
+            "pMotor": 0.6183705926946184,
+            "efficiencyApplicable": true
+          }
+        ],
+        [
+          {
+            "t": 0,
+            "theta": 0,
+            "thetaDot": 125.66370614359172,
+            "thetaDDot": 0,
+            "tauIdeal": 0.01,
+            "tauMotor": 0.01,
+            "pJoint": 1.2566370614359172,
+            "pTransmission": 1.3962634015954636,
+            "pRotor": 0,
+            "pMotor": 1.3962634015954636,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.125,
+            "theta": 14.14213562373095,
+            "thetaDot": 88.85765876316735,
+            "thetaDDot": -558.3645670173523,
+            "tauIdeal": 0.01,
+            "tauMotor": -0.04583645670173524,
+            "pJoint": 0.8885765876316735,
+            "pTransmission": 0.9873073195907482,
+            "pRotor": -4.961496816147158,
+            "pMotor": -3.97418949655641,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.25,
+            "theta": 20,
+            "thetaDot": 7.796343665002755e-15,
+            "thetaDDot": -789.5683520871486,
+            "tauIdeal": 0.01,
+            "tauMotor": -0.06895683520871487,
+            "pJoint": 7.796343665002754e-17,
+            "pTransmission": 8.662604072225282e-17,
+            "pRotor": -6.155746219881307e-16,
+            "pMotor": -5.289485812658778e-16,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.375,
+            "theta": 14.142135623730953,
+            "thetaDot": -88.85765876316735,
+            "thetaDDot": -558.3645670173524,
+            "tauIdeal": 0.01,
+            "tauMotor": -0.045836456701735244,
+            "pJoint": -0.8885765876316735,
+            "pTransmission": -0.6220036113421714,
+            "pRotor": 4.961496816147159,
+            "pMotor": 4.339493204804988,
+            "efficiencyApplicable": true
+          }
+        ],
+        [
+          {
+            "t": 0,
+            "theta": 0,
+            "thetaDot": 31.41592653589793,
+            "thetaDDot": 0,
+            "tauIdeal": 0.04,
+            "tauMotor": 0.04,
+            "pJoint": 1.2566370614359172,
+            "pTransmission": 1.3962634015954636,
+            "pRotor": 0,
+            "pMotor": 1.3962634015954636,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.125,
+            "theta": 3.5355339059327373,
+            "thetaDot": 22.214414690791838,
+            "thetaDDot": -139.59114175433808,
+            "tauIdeal": 0.04,
+            "tauMotor": 0.026040885824566193,
+            "pJoint": 0.8885765876316735,
+            "pTransmission": 0.9873073195907482,
+            "pRotor": -0.3100935510091974,
+            "pMotor": 0.6772137685815509,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.25,
+            "theta": 5,
+            "thetaDot": 1.9490859162506887e-15,
+            "thetaDDot": -197.39208802178715,
+            "tauIdeal": 0.04,
+            "tauMotor": 0.020260791197821284,
+            "pJoint": 7.796343665002754e-17,
+            "pTransmission": 8.662604072225282e-17,
+            "pRotor": -3.8473413874258166e-17,
+            "pMotor": 4.815262684799465e-17,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 0.375,
+            "theta": 3.535533905932738,
+            "thetaDot": -22.214414690791838,
+            "thetaDDot": -139.5911417543381,
+            "tauIdeal": 0.04,
+            "tauMotor": 0.02604088582456619,
+            "pJoint": -0.8885765876316735,
+            "pTransmission": -0.6220036113421714,
+            "pRotor": 0.31009355100919744,
+            "pMotor": -0.31191006033297397,
+            "efficiencyApplicable": true
+          }
+        ]
+      ],
+      "points": [
+        {
+          "tauRms": 0.014982837544943072,
+          "omegaRms": 40.557786759736125,
+          "loadRatio": null,
+          "reflectedInertia": 1,
+          "tauPeakPos": {
+            "present": true,
+            "value": 0.02,
+            "t": 0,
+            "segmentId": "seg-E"
+          },
+          "tauPeakNeg": {
+            "present": true,
+            "value": -0.019478417604357433,
+            "t": 0.25,
+            "segmentId": "seg-E"
+          },
+          "omegaPeak": {
+            "present": true,
+            "value": 62.83185307179586,
+            "t": 0,
+            "segmentId": "seg-E"
+          },
+          "powerPeak": {
+            "present": true,
+            "value": 1.3962634015954636,
+            "t": 0,
+            "segmentId": "seg-E"
+          },
+          "q1": {
+            "sampleCount": 1,
+            "timeShare": 0.3333333333333333,
+            "energy": 0.15707963267948966
+          },
+          "q2": {
+            "sampleCount": 2,
+            "timeShare": 0.6666666666666666,
+            "energy": 0.1110720734539592
+          },
+          "q3": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q4": {
+            "sampleCount": 1,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "zeroDwell": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "energy": {
+            "eMotor": 0.09428126408737494,
+            "eJoint": 0.13407585306672443,
+            "eLoss": 0.03772879877294987,
+            "eRegen": 0.05553603672697959,
+            "ePos": 0.18961188979370402,
+            "eRotor": -0.07752338775229937
+          }
+        },
+        {
+          "tauRms": 0.05149924357521164,
+          "omegaRms": 81.11557351947225,
+          "loadRatio": null,
+          "reflectedInertia": 4,
+          "tauPeakPos": {
+            "present": true,
+            "value": 0.01,
+            "t": 0,
+            "segmentId": "seg-E"
+          },
+          "tauPeakNeg": {
+            "present": true,
+            "value": -0.06895683520871487,
+            "t": 0.25,
+            "segmentId": "seg-E"
+          },
+          "omegaPeak": {
+            "present": true,
+            "value": 125.66370614359172,
+            "t": 0,
+            "segmentId": "seg-E"
+          },
+          "powerPeak": {
+            "present": true,
+            "value": 4.339493204804988,
+            "t": 0.375,
+            "segmentId": "seg-E"
+          },
+          "q1": {
+            "sampleCount": 1,
+            "timeShare": 0.3333333333333333,
+            "energy": 0.15707963267948966
+          },
+          "q2": {
+            "sampleCount": 2,
+            "timeShare": 0.6666666666666666,
+            "energy": 0.1110720734539592
+          },
+          "q3": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q4": {
+            "sampleCount": 1,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "zeroDwell": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "energy": {
+            "eMotor": -0.13828889916952308,
+            "eJoint": 0.13407585306672443,
+            "eLoss": 0.03772879877294987,
+            "eRegen": 0.05553603672697959,
+            "ePos": 0.18961188979370402,
+            "eRotor": -0.3100935510091975
+          }
+        },
+        {
+          "tauRms": 0.0272500230076591,
+          "omegaRms": 20.278893379868062,
+          "loadRatio": null,
+          "reflectedInertia": 0.25,
+          "tauPeakPos": {
+            "present": true,
+            "value": 0.04,
+            "t": 0,
+            "segmentId": "seg-E"
+          },
+          "tauPeakNeg": {
+            "present": false,
+            "value": 0.020260791197821284,
+            "t": 0.25,
+            "segmentId": "seg-E"
+          },
+          "omegaPeak": {
+            "present": true,
+            "value": 31.41592653589793,
+            "t": 0,
+            "segmentId": "seg-E"
+          },
+          "powerPeak": {
+            "present": true,
+            "value": 1.3962634015954636,
+            "t": 0,
+            "segmentId": "seg-E"
+          },
+          "q1": {
+            "sampleCount": 3,
+            "timeShare": 1,
+            "energy": 0.26815170613344885
+          },
+          "q2": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q3": {
+            "sampleCount": 1,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q4": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "zeroDwell": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "energy": {
+            "eMotor": 0.15242380490159946,
+            "eJoint": 0.13407585306672443,
+            "eLoss": 0.03772879877294987,
+            "eRegen": 0.05553603672697959,
+            "ePos": 0.18961188979370402,
+            "eRotor": -0.019380846938074844
+          }
+        }
+      ],
+      "matrixForm": {
+        "thetaDot": [
+          [
+            62.83185307179586,
+            125.66370614359172,
+            31.41592653589793
+          ],
+          [
+            44.428829381583675,
+            88.85765876316735,
+            22.214414690791838
+          ],
+          [
+            3.8981718325013774e-15,
+            7.796343665002755e-15,
+            1.9490859162506887e-15
+          ],
+          [
+            -44.428829381583675,
+            -88.85765876316735,
+            -22.214414690791838
+          ]
+        ],
+        "tauIdeal": [
+          [
+            0.02,
+            0.01,
+            0.04
+          ],
+          [
+            0.02,
+            0.01,
+            0.04
+          ],
+          [
+            0.02,
+            0.01,
+            0.04
+          ],
+          [
+            0.02,
+            0.01,
+            0.04
+          ]
+        ],
+        "wMotor": [
+          [
+            1.2566370614359172,
+            1.2566370614359172,
+            1.2566370614359172
+          ],
+          [
+            0.8885765876316736,
+            0.8885765876316736,
+            0.8885765876316736
+          ],
+          [
+            7.796343665002756e-17,
+            7.796343665002756e-17,
+            7.796343665002756e-17
+          ],
+          [
+            -0.8885765876316736,
+            -0.8885765876316736,
+            -0.8885765876316736
+          ]
+        ],
+        "wJoint": [
+          [
+            1.2566370614359172,
+            1.2566370614359172,
+            1.2566370614359172
+          ],
+          [
+            0.8885765876316735,
+            0.8885765876316735,
+            0.8885765876316735
+          ],
+          [
+            7.796343665002754e-17,
+            7.796343665002754e-17,
+            7.796343665002754e-17
+          ],
+          [
+            -0.8885765876316735,
+            -0.8885765876316735,
+            -0.8885765876316735
+          ]
+        ]
+      }
+    },
+    {
+      "id": "energy-bidirectional",
+      "samples": [
+        [
+          {
+            "t": 0,
+            "theta": 0,
+            "thetaDot": 100,
+            "thetaDDot": 0,
+            "tauIdeal": 0.1,
+            "tauMotor": 0.1,
+            "pJoint": 10,
+            "pTransmission": 11.11111111111111,
+            "pRotor": 0,
+            "pMotor": 11.11111111111111,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 1,
+            "theta": 100,
+            "thetaDot": 100,
+            "thetaDDot": 0,
+            "tauIdeal": 0.1,
+            "tauMotor": 0.1,
+            "pJoint": 10,
+            "pTransmission": 11.11111111111111,
+            "pRotor": 0,
+            "pMotor": 11.11111111111111,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 2,
+            "theta": 200,
+            "thetaDot": 100,
+            "thetaDDot": 0,
+            "tauIdeal": -0.1,
+            "tauMotor": -0.1,
+            "pJoint": -10,
+            "pTransmission": -7,
+            "pRotor": 0,
+            "pMotor": -7,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 3,
+            "theta": 300,
+            "thetaDot": 100,
+            "thetaDDot": 0,
+            "tauIdeal": -0.1,
+            "tauMotor": -0.1,
+            "pJoint": -10,
+            "pTransmission": -7,
+            "pRotor": 0,
+            "pMotor": -7,
+            "efficiencyApplicable": true
+          }
+        ]
+      ],
+      "points": [
+        {
+          "tauRms": 0.1,
+          "omegaRms": 100,
+          "loadRatio": null,
+          "reflectedInertia": 1,
+          "tauPeakPos": {
+            "present": true,
+            "value": 0.1,
+            "t": 0,
+            "segmentId": "seg-drive"
+          },
+          "tauPeakNeg": {
+            "present": true,
+            "value": -0.1,
+            "t": 2,
+            "segmentId": "seg-regen"
+          },
+          "omegaPeak": {
+            "present": true,
+            "value": 100,
+            "t": 0,
+            "segmentId": "seg-drive"
+          },
+          "powerPeak": {
+            "present": true,
+            "value": 11.11111111111111,
+            "t": 0,
+            "segmentId": "seg-drive"
+          },
+          "q1": {
+            "sampleCount": 2,
+            "timeShare": 0.6666666666666666,
+            "energy": 20
+          },
+          "q2": {
+            "sampleCount": 2,
+            "timeShare": 0.3333333333333333,
+            "energy": -10
+          },
+          "q3": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q4": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "zeroDwell": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "energy": {
+            "eMotor": 6.166666666666666,
+            "eJoint": 0,
+            "eLoss": 6.166666666666666,
+            "eRegen": 15,
+            "ePos": 15,
+            "eRotor": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "dwell-zero",
+      "samples": [
+        [
+          {
+            "t": 0,
+            "theta": 0,
+            "thetaDot": 0,
+            "thetaDDot": 0,
+            "tauIdeal": 5,
+            "tauMotor": 5,
+            "pJoint": 0,
+            "pTransmission": 0,
+            "pRotor": 0,
+            "pMotor": 0,
+            "efficiencyApplicable": false
+          },
+          {
+            "t": 1,
+            "theta": 1,
+            "thetaDot": 0,
+            "thetaDDot": 0,
+            "tauIdeal": 5,
+            "tauMotor": 5,
+            "pJoint": 0,
+            "pTransmission": 0,
+            "pRotor": 0,
+            "pMotor": 0,
+            "efficiencyApplicable": false
+          },
+          {
+            "t": 2,
+            "theta": 2,
+            "thetaDot": 1e-9,
+            "thetaDDot": 0,
+            "tauIdeal": 3,
+            "tauMotor": 3,
+            "pJoint": 3.0000000000000004e-9,
+            "pTransmission": 3.333333333333334e-9,
+            "pRotor": 0,
+            "pMotor": 3.333333333333334e-9,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 3,
+            "theta": 3,
+            "thetaDot": 2,
+            "thetaDDot": 0,
+            "tauIdeal": 3,
+            "tauMotor": 3,
+            "pJoint": 6,
+            "pTransmission": 6.666666666666666,
+            "pRotor": 0,
+            "pMotor": 6.666666666666666,
+            "efficiencyApplicable": true
+          }
+        ]
+      ],
+      "points": [
+        {
+          "tauRms": 4.123105625617661,
+          "omegaRms": 0.816496580927726,
+          "loadRatio": 0.41231056256176607,
+          "reflectedInertia": 0.0001,
+          "tauPeakPos": {
+            "present": true,
+            "value": 5,
+            "t": 0,
+            "segmentId": "seg-dwell"
+          },
+          "tauPeakNeg": {
+            "present": false,
+            "value": 3,
+            "t": 2,
+            "segmentId": "seg-move"
+          },
+          "omegaPeak": {
+            "present": true,
+            "value": 2,
+            "t": 3,
+            "segmentId": "seg-move"
+          },
+          "powerPeak": {
+            "present": true,
+            "value": 6.666666666666666,
+            "t": 3,
+            "segmentId": "seg-move"
+          },
+          "q1": {
+            "sampleCount": 2,
+            "timeShare": 0.3333333333333333,
+            "energy": 3.0000000000000004e-9
+          },
+          "q2": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q3": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q4": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "zeroDwell": {
+            "sampleCount": 2,
+            "timeShare": 0.6666666666666666,
+            "energy": 0
+          },
+          "energy": {
+            "eMotor": 3.3333333366666666,
+            "eJoint": 3.0000000030000002,
+            "eLoss": 0.3333333336666664,
+            "eRegen": 0,
+            "ePos": 3.0000000030000002,
+            "eRotor": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "inertia-golden",
+      "samples": [
+        [
+          {
+            "t": 0,
+            "theta": 0,
+            "thetaDot": 100,
+            "thetaDDot": 0,
+            "tauIdeal": 0.02,
+            "tauMotor": 0.02,
+            "pJoint": 2,
+            "pTransmission": 2.2222222222222223,
+            "pRotor": 0,
+            "pMotor": 2.2222222222222223,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 1,
+            "theta": 100,
+            "thetaDot": 100,
+            "thetaDDot": 0,
+            "tauIdeal": 0.02,
+            "tauMotor": 0.02,
+            "pJoint": 2,
+            "pTransmission": 2.2222222222222223,
+            "pRotor": 0,
+            "pMotor": 2.2222222222222223,
+            "efficiencyApplicable": true
+          }
+        ],
+        [
+          {
+            "t": 0,
+            "theta": 0,
+            "thetaDot": 50,
+            "thetaDDot": 0,
+            "tauIdeal": 0.04,
+            "tauMotor": 0.04,
+            "pJoint": 2,
+            "pTransmission": 2.2222222222222223,
+            "pRotor": 0,
+            "pMotor": 2.2222222222222223,
+            "efficiencyApplicable": true
+          },
+          {
+            "t": 1,
+            "theta": 50,
+            "thetaDot": 50,
+            "thetaDDot": 0,
+            "tauIdeal": 0.04,
+            "tauMotor": 0.04,
+            "pJoint": 2,
+            "pTransmission": 2.2222222222222223,
+            "pRotor": 0,
+            "pMotor": 2.2222222222222223,
+            "efficiencyApplicable": true
+          }
+        ]
+      ],
+      "points": [
+        {
+          "tauRms": 0.02,
+          "omegaRms": 100,
+          "loadRatio": null,
+          "reflectedInertia": 1,
+          "tauPeakPos": {
+            "present": true,
+            "value": 0.02,
+            "t": 0,
+            "segmentId": "seg-I"
+          },
+          "tauPeakNeg": {
+            "present": false,
+            "value": 0.02,
+            "t": 0,
+            "segmentId": "seg-I"
+          },
+          "omegaPeak": {
+            "present": true,
+            "value": 100,
+            "t": 0,
+            "segmentId": "seg-I"
+          },
+          "powerPeak": {
+            "present": true,
+            "value": 2.2222222222222223,
+            "t": 0,
+            "segmentId": "seg-I"
+          },
+          "q1": {
+            "sampleCount": 2,
+            "timeShare": 1,
+            "energy": 2
+          },
+          "q2": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q3": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q4": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "zeroDwell": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "energy": {
+            "eMotor": 2.2222222222222223,
+            "eJoint": 2,
+            "eLoss": 0.22222222222222232,
+            "eRegen": 0,
+            "ePos": 2,
+            "eRotor": 0
+          }
+        },
+        {
+          "tauRms": 0.04,
+          "omegaRms": 50,
+          "loadRatio": null,
+          "reflectedInertia": 1,
+          "tauPeakPos": {
+            "present": true,
+            "value": 0.04,
+            "t": 0,
+            "segmentId": "seg-I"
+          },
+          "tauPeakNeg": {
+            "present": false,
+            "value": 0.04,
+            "t": 0,
+            "segmentId": "seg-I"
+          },
+          "omegaPeak": {
+            "present": true,
+            "value": 50,
+            "t": 0,
+            "segmentId": "seg-I"
+          },
+          "powerPeak": {
+            "present": true,
+            "value": 2.2222222222222223,
+            "t": 0,
+            "segmentId": "seg-I"
+          },
+          "q1": {
+            "sampleCount": 2,
+            "timeShare": 1,
+            "energy": 2
+          },
+          "q2": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q3": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "q4": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "zeroDwell": {
+            "sampleCount": 0,
+            "timeShare": 0,
+            "energy": 0
+          },
+          "energy": {
+            "eMotor": 2.2222222222222223,
+            "eJoint": 2,
+            "eLoss": 0.22222222222222232,
+            "eRegen": 0,
+            "ePos": 2,
+            "eRotor": 0
+          }
+        }
+      ]
+    }
+  ],
+  "inertiaCases": [
+    {
+      "id": "inertia-golden",
+      "axes": [
+        {
+          "jointIndex": 0,
+          "jReflected": 1,
+          "inertiaRatio": 0.5
+        },
+        {
+          "jointIndex": 1,
+          "jReflected": 1,
+          "inertiaRatio": null
+        }
+      ]
+    }
+  ]
+}
