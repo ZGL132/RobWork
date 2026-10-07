@@ -3622,6 +3622,20 @@ void IrdWorkbenchHostPlugin::assemblePresentationPipeline()
     m_runtimeNameContext = std::make_unique<HostRuntimeNameContext>(
         m_runtimeNameMap.get());
 
+    // F-546 出路①（UI-T74）：草稿名感知装饰——发布真值＋草稿名补位（模块
+    // 草稿投影缝 tryDraftObjectName）。首应用行程校验的名称解析由此可达。
+    m_draftAwareNameContext = std::make_unique<HostDraftAwareNameContext>(
+        HostDraftAwareNameContext::Deps{
+            m_runtimeNameContext.get(),
+            [this](const core::ObjectId& object) -> std::optional<std::string> {
+                std::string name;
+                if (m_domains != nullptr
+                    && m_domains->modeling.tryDraftObjectName(object, name)) {
+                    return name;  // 草稿权威命名（localName——确定性标识标签）
+                }
+                return std::nullopt;  // 闭包外身份（不猜测——ARC-04）
+            }});
+
     // ---- 呈现构造源（RT-T14 工厂适配——供数缝绑编译端口现取；编译端口
     // 随会话构造，此处绑"经成员现取"的间接缝保持源生命周期独立）。
     m_presentationSource = std::make_shared<HostPresentationSource>(
@@ -3715,11 +3729,18 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
             }
         }});
 
+    // 双编译端口注入（UI-T74——F-546 链路收口暴露的装配缺口）：§5.3.6 L5
+    // 装配面——store 命令服务的 S5 双编译执行端。此前 apply 的行程校验层
+    // 恒先行拒绝（F-536 策略墙/F-546 名解析墙），本缺口从未到达；行程校
+    // 验贯通后 requiresDualCompile 命令（apply-robot-design）即达 S5。提
+    // 交前装配、运行期替换属装配纪律违约（setCompilePort 契约原文）。
+    store.commands().attachCompilePort(m_compilePort.get());
+
     // 建模命令处理器注册（F-461 modeling 半区收口——§5.3.5 装配期一次性；
     // 服务集指针经 HandlerServices 值拷贝注入，存活期由插件成员锚定）。
     const modeling::HandlerServices services{
         modeling::AssertionSuite::Ports{m_jointLimitEvaluator.get(),
-                                        m_runtimeNameContext.get()},
+                                        m_draftAwareNameContext.get()},
         // F-536/O-46 裁决出路②（UI-T73）：④端口装配系统缺省策略源——附录
         // D 唯一冻结默认（4π 行程上限，DefaultAppendixD）的解析半区供给器；
         // 工程内真实策略对象生命周期落地后可换装存储背书 PolicyProvider
@@ -5715,16 +5736,13 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 if (!entry5.committed) { modelingRej = entry5.rejectionReason; }
             }
         }
-        // 本拍断言面（UI-T73 诚实中间态）：④装配缺陷已消除（拒绝原因不再
-        // 含「策略端口未装配」）；当前拒绝面＝行程校验执行层
-        // （hard-assert-failed——IPolicyNameContext 需运行时名解析，首应用
-        // 发布前名称映射为空→CllNameUnresolved→EvaluationFailed，结构性
-        // 下一层墙已登记 F-546）。F-546 修复后本断言翻转为 committed。
-        ok(!modelingCommitted
-               && modelingRej.find("hard-assert-failed") != std::string::npos
-               && modelingRej.find("策略端口未装配") == std::string::npos,
-           "step5 modeling-apply (④装配缺陷已消除——拒绝面=行程校验执行层"
-           " F-546; rej=[" + modelingRej + "])");
+        // F-546 出路①（UI-T74）：草稿名感知装饰装配——首应用行程校验可执
+        // 行，apply 提交（UI-T73 诚实中间态断言兑现翻转；行程按附录 D 4π
+        // 冻结默认评估，超限项经 Confirmable 确认编排呈现）。
+        ok(modelingCommitted,
+           "step5 modeling-apply (committed=" +
+               std::string(modelingCommitted ? "true" : "false") +
+               " rej=[" + modelingRej + "])");
         // 首应用不可逆（全新项目全部受影响对象无前版——处理器声明不可逆，
         // requirements 拍 9 同款产品语义）：项目级 undo 不可用＝诚实状态面
         // （非缺陷；二连应用探针见 requirements 拍 9 的会话基线演进验证）。
@@ -5736,7 +5754,7 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                               .status(tips.front().id).canUndo;
             }
         }
-        ok(!undoLit, "step5 project-undo-unavailable-no-revision");
+        ok(!undoLit, "step5 project-undo-irreversible-first-apply");
         snapPng(hostWin, "mtour-5-applied.png");
 
         QPushButton* exportBtn = panel->findChild<QPushButton*>(

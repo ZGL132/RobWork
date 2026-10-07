@@ -122,6 +122,40 @@ void ModelingUiModule::bindRuntimeNameMap(const runtime::RuntimeNameMap* map)
     recomputeReadiness();
 }
 
+// F-546 出路①（UI-T74）：草稿对象名解析——草稿名感知名称上下文的模块侧
+// 执行器。行程校验（MDL-06④）的评估器以 runtimeName 作发现/诊断的标识
+// 标签（判定本体＝限位区间对策略阈值的纯算术，JointLimits.cpp）；首应用
+// 时发布拍未发生、映射为空（F-546 结构性墙）——本执行器以草稿工作集
+// 自身命名补位（localName＝草稿的权威命名，确定性；对象经应用入库后
+// 身份跨修订稳定，发布后由映射真值接管的语义不变）。仅读投影零修订；
+// 闭包外身份如实 false（不猜测——ARC-04）。
+bool ModelingUiModule::tryDraftObjectName(const core::ObjectId& object,
+                                          std::string& name) const
+{
+    m_guard.assertOnUiThread();  // 会话态只读（§3.4 UI 线程纪律）
+    const auto match = [&object, &name](const core::ObjectId& id,
+                                        const std::string& local) {
+        if (id == object && !local.empty()) {
+            name = local;
+            return true;
+        }
+        return false;
+    };
+    for (const JointEntry& j : m_session.draft.design.joints) {
+        if (match(j.objectId, j.localName)) { return true; }
+    }
+    for (const LinkEntry& l : m_session.draft.design.links) {
+        if (match(l.objectId, l.localName)) { return true; }
+    }
+    for (const ToolDefinition& t : m_session.draft.toolObjects) {
+        if (match(t.objectId, t.localName)) { return true; }
+    }
+    for (const SceneObject& sc : m_session.draft.sceneObjects) {
+        if (match(sc.objectId, sc.localName)) { return true; }
+    }
+    return false;  // 闭包外身份（不猜测——ARC-04）
+}
+
 // =====================================================================
 // 宿主迁移三接入面（WP-13-T20——B1-SPEC §5.1；只消费 UI-T21/T22 冻结协议）
 // =====================================================================

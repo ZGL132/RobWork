@@ -142,6 +142,13 @@ struct ModelingPluginAssembly {
     /// 同名方法）。绑定即触发就绪重算。
     void bindRuntimeNameMap(const sdurws::ird::runtime::RuntimeNameMap* map);
 
+    /// 草稿对象名解析（UI-T74/F-546 出路①——草稿名感知名称上下文的宿主
+    /// 装配缝）：对象身份→当前草稿工作集内的名称（joints/links/tools/
+    /// scene 逐表行取 localName；未命中＝false——闭包外身份不猜测，
+    /// ARC-04）。转发模块同名方法；仅读投影、零修订。
+    bool tryDraftObjectName(const sdurws::ird::core::ObjectId& object,
+                            std::string& name) const;
+
     /// 绑定策略提供器（已装载 EngineeringPolicySet 现取入口；nullptr 返回
     /// 值＝未装载→L11 如实 Blocking。绑定即触发就绪重算）。
     void bindPolicyProvider(

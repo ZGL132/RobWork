@@ -122,6 +122,7 @@ class HostPresentationSource;      // 呈现构造源（UI-T46——RT-T14 工�
 class HostModelCompilePort;        // 宿主编译端口（UI-T46——十段链适配＋快照缓存）
 class HostCompileProbe;            // 编译分段探针（UI-T46——等价验证注入面）
 class HostRuntimeNameContext;      // 行程评估名称上下文（UI-T46——真值端口现取）
+class HostDraftAwareNameContext;   // 草稿名感知装饰上下文（UI-T74/F-546 出路①）
 class KinEvaluationExecutor;       // kinematics 覆盖评估执行器（UI-T64——完整类型在本目录 .cpp）
 }  // namespace ui
 }  // namespace ird
@@ -404,6 +405,9 @@ private:
     /// 只走 resolvePolicy）。
     policy::SystemDefaultPolicyProvider m_systemDefaultPolicyProvider;
     std::unique_ptr<ui::HostRuntimeNameContext> m_runtimeNameContext; ///< 行程评估名称上下文（真值端口现取）
+    /// 草稿名感知装饰上下文（UI-T74——F-546 出路①：发布真值＋草稿名补位；
+    /// 装配在 m_runtimeNameContext 之后，HandlerServices 以其指针注入）。
+    std::unique_ptr<ui::HostDraftAwareNameContext> m_draftAwareNameContext;
     /// 呈现刷新观察者（UI-T46——桥弱持有，保活锚在本成员：发布成功拍经
     /// 此绑定名称映射真值；析构自动退订）。
     std::shared_ptr<ui::IUiPresentationRefreshObserver> m_presentationObserver;

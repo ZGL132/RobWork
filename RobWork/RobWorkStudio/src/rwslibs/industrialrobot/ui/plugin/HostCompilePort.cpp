@@ -545,6 +545,38 @@ runtime::Expected<runtime::CanonicalModel, runtime::RuntimeError>
     return m_compiler->buildCanonicalModel(request);
 }
 
+// =====================================================================
+// HostDraftAwareNameContext——草稿名感知装饰上下文（UI-T74/F-546 出路①）
+// =====================================================================
+HostDraftAwareNameContext::HostDraftAwareNameContext(Deps deps)
+    : m_deps(std::move(deps))
+{
+}
+std::optional<core::ObjectId> HostDraftAwareNameContext::tryObjectId(
+    const std::string& runtimeName) const
+{
+    // 反解向只转发发布真值（草稿对象无运行时名可反解——类注释差异面）。
+    return m_deps.runtime->tryObjectId(runtimeName);
+}
+std::optional<std::string> HostDraftAwareNameContext::tryRuntimeName(
+    core::ObjectId object) const
+{
+    // 第一优先：发布真值（已发布对象——重应用场景的身份标签与发布态一致）。
+    if (const auto published = m_deps.runtime->tryRuntimeName(object)) {
+        return published;
+    }
+    // 第二优先：草稿名源（发布前窗口期——模块草稿工作集自身命名；
+    // 闭包外身份 nullopt 原样透传——不猜测，ARC-04）。
+    return m_deps.draftName ? m_deps.draftName(object) : std::nullopt;
+}
+core::ContentIdentity HostDraftAwareNameContext::nameMapContentIdentity() const
+{
+    // 恒转发真值（草稿补位不参与映射身份——头文件差异面登记；行程路径
+    // 不消费本身份，CollisionEvaluator 会话账本才是其消费面）。
+    return m_deps.runtime->nameMapContentIdentity();
+}
+
 }  // namespace ui
 }  // namespace ird
 }  // namespace sdurws
+

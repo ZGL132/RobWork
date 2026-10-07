@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T74",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "草稿名感知名称上下文＋双编译端口注入（F-546 出路①——所有者裁决；建模 apply 首次在真实宿主走通）",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T73"
+  ],
+  "requirements": [
+    "MDL-06④（行程校验贯通——首应用即可执行，超限项经 Confirmable 确认编排呈现）",
+    "ARC-04（不猜测——草稿补位仅答草稿工作集在册对象，闭包外身份如实 nullopt）",
+    "§5.3.6（双编译端口 L5 装配面——OpenStoreRequest 无端口字段下的「装配后注入」公共通道落地）"
+  ],
+  "designRefs": [
+    "units/policy.md#4",
+    "units/modeling.md#9.7",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-546",
+    "traceability/findings.json#F-536"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPluginAssembly.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingUiModule.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/CommandService.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.hpp",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T74.json",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/units/project.md",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t74/**",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md（零需求语义变更——F-546 修复为装配层实现）"
+  ],
+  "outputs": [
+    "ui/plugin/HostCompilePort.hpp/.cpp：HostDraftAwareNameContext 装饰上下文（发布真值 HostRuntimeNameContext 第一优先＋草稿名源回缝第二优先；nameMapContentIdentity 恒转发真值〔草稿补位不参与映射身份——消费面仅 CollisionEvaluator 会话账本〕；tryObjectId 反解向只转发真值〔草稿对象无运行时名可反解——诚实空〕）",
+    "modeling 草稿名缝：ModelingPluginAssembly 门面＋ModelingUiModule 模块同纹方法 tryDraftObjectName（object→当前草稿工作集内名称——design.joints/links＋toolObjects/sceneObjects 逐行取 localName；未命中 false＝闭包外身份不猜测〔ARC-04〕；仅读投影零修订；仅 UI 线程）",
+    "project 装配通道：ProjectCommandService 接口增 attachCompilePort（默认空实现＝向后兼容——OpenStoreRequest 无端口字段〔§5.1 冻结〕下「装配后注入」机制面的公共承载；§5.3.6）＋CommandServiceImpl 覆写转发既有 setCompilePort",
+    "ui/plugin/UiPlugin.cpp/.hpp：m_draftAwareNameContext 成员＋装饰装配（回缝绑 m_domains->modeling.tryDraftObjectName）＋AssertionSuite::Ports 名称上下文换装＋attachPresentationSession 注入 attachCompilePort（此前 apply 的行程校验层恒先行拒绝，本缺口从未到达）＋mtour step5 兑现翻转（committed 断言＋project-undo-irreversible-first-apply〔首修订不可逆——requirements 拍 9 同款语义〕）",
+    "traceability/findings.json：F-546 翻转 fixed（合入段）；登记链 F-536 进展注同步（合入段）",
+    "development-task-breakdown.md §2.11 WP-10-T74 行；units/ui.md v1.88 §13 UI-T74 行；units/modeling.md／units/project.md 增量登记；traceability/builds/ui-t74/ 留痕（logs/ 十件——F-542 口径）"
+  ],
+  "verify": [
+    "受影响目标零错误构建（project/ui/modeling 三单元＋sdurws_ird_studio 静态链接重建）",
+    "十套件实跑全绿：policy 206/23＋project 254＋1skip/28＋modeling 339/17＋ui 254/32＋modeling_gui 42＋requirements_gui 45（logs/ 十件——F-542 口径）",
+    "真机双巡检：modeling-tour MTOUR_PASS（step5 committed=true rej=[]——首次在真实宿主走通；mtour 六帧全异——已提交修订的自然视觉分化）；requirements-tour TOUR_PASS 回归",
+    "ird_gates 零新增；validate-docs/validate-task PASS；留痕 traceability/builds/ui-t74/"
+  ],
+  "acceptance": [
+    "草稿名感知面：装饰上下文先真值后草稿补位（代码审读）＋mtour step5 committed=true 实证（首应用行程校验真实执行——F-546 墙拆除）",
+    "装配通道面：attachCompilePort 接口增＋覆写转发＋宿主注入——mtour 实证 requiresDualCompile 命令达 S5 并提交（此前恒 rejected）",
+    "诚实边界面：闭包外身份 nullopt 不猜测（ARC-04）＋反解向只转发真值＋nameMapContentIdentity 不混草稿态（差异面登记于 HostCompilePort.hpp 注释）",
+    "做红能力：回退名称上下文换装（装饰→真值裸形）→step5 红（hard-assert-failed 复现）；回退 attachCompilePort 注入→step5 红（requiresDualCompile 拒绝复现）",
+    "回归门槛：十套件＋双巡检＋ird_gates＋validate 双 PASS；留痕全集落位"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-46",
+    "O-10"
+  ],
+  "branch": "ui-t74",
+  "note": "F-546 出路①落地批次（所有者 2026-10-07 AskUserQuestion 裁决①草稿名感知）。链路三层依次剥净（UI-T73 策略墙→本批名解析墙＋双编译端口缺口）——建模 apply 首次在真实宿主走通（committed=true），F-496「应用主链可用」目标达成。"
+}

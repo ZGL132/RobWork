@@ -628,6 +628,18 @@ public:
     /// 虚析构：实现随存储上下文消亡（unique_ptr 成员多态销毁）。
     virtual ~ProjectCommandService() = default;
 
+    // ---- L5 装配通道（§5.3.6——OpenStoreRequest 无端口字段〔§5.1 冻结〕
+    //      下「装配后注入」机制面的公共承载；UI-T74/F-546 链路收口即首个
+      //      生产消费面。提交前装配、运行期替换属装配纪律违约。）----
+    /// 注入双编译端口（非 owning——所有权归装配方；可空＝未装配，
+    /// requiresDualCompile 命令即 rejected(submit-failed) 装配违约轨）。
+    /// 默认空实现＝接口面向后兼容（无装配通道的既有实现保持编译兼容；
+    /// 产品实现 CommandServiceImpl 覆写转发既有装配通道）。
+    virtual void attachCompilePort(IModelCompilePort* port) noexcept
+    {
+        (void)port;  // 默认无装配通道（语义见上——诚实无操作）
+    }
+
     /**
      * @brief 唯一写路径入口（§5.3.1 原文签名；S1～S7 生命周期——§6.1）。
      *

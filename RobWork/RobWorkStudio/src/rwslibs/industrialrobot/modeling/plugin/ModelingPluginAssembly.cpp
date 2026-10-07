@@ -130,6 +130,15 @@ void ModelingPluginAssembly::bindRuntimeNameMap(
     }
 }
 
+bool ModelingPluginAssembly::tryDraftObjectName(
+    const sdurws::ird::core::ObjectId& object, std::string& name) const
+{
+    if (m_impl != nullptr) {
+        return m_impl->tryDraftObjectName(object, name);
+    }
+    return false;  /* 模块缺位＝解析缺席（诚实 false——不猜测） */
+}
+
 void ModelingPluginAssembly::bindPolicyProvider(
     std::function<const policy::EngineeringPolicySet*()> provider)
 {

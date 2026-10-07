@@ -297,6 +297,51 @@ private:
     const HostRuntimeNameMapPort* m_port; ///< 真值端口（非 owning——现取当前视图）
 };
 
+/**
+ * @brief 草稿名感知名称上下文（UI-T74/F-546 出路①——发布真值＋草稿补位
+ *        的装饰形态；所有者裁决 2026-10-07）。
+ *
+ * 背景：④行程校验（MDL-06④）的评估器以 tryRuntimeName 作发现/诊断的
+ * 标识标签（判定本体＝限位区间对策略阈值的纯算术，JointLimits.cpp）；
+ * 发布拍未发生时名称映射为空（F-546 结构性墙）——首应用行程相关 apply
+ * 恒被 CllNameUnresolved 阻断。本类先问发布真值（装饰的
+ * HostRuntimeNameContext），未命中落到草稿名源（宿主装配回缝——
+ * ModelingPluginAssembly::tryDraftObjectName，模块侧以草稿工作集自身
+ * 命名 localName 补位）。
+ *
+ * 差异面登记：草稿补位名≠运行时名——发布后同对象由真值命中，草稿名仅在
+ * 发布前窗口期被消费；nameMapContentIdentity 恒转发真值（草稿补位不参与
+ * 映射身份——消费面仅 CollisionEvaluator 会话账本，行程路径不触）。
+ * tryObjectId（反解向）只转发真值——草稿对象无运行时名可反解（诚实空）。
+ *
+ * 线程安全：const 方法并发安全（两依赖并发只读；draftFallback 的会话态
+ * 访问由宿主 UI 线程纪律保证——prepare 与草稿编辑同线程）。
+ */
+class HostDraftAwareNameContext final : public policy::IPolicyNameContext {
+public:
+    /**
+     * @brief 装配依赖。
+     * @param runtime    [in] 发布真值上下文（非 owning——存活期覆盖本类）
+     * @param draftName  [in] 草稿名源（非 owning 回缝——宿主装配绑模块
+     *                   草稿投影；未命中返回 nullopt，不猜测）
+     */
+    struct Deps {
+        const policy::IPolicyNameContext* runtime;  ///< 发布真值（非 owning）
+        std::function<std::optional<std::string>(const core::ObjectId&)>
+            draftName;  ///< 草稿名源（发布前窗口期补位——未命中 nullopt）
+    };
+
+    explicit HostDraftAwareNameContext(Deps deps);
+
+    std::optional<core::ObjectId> tryObjectId(const std::string& runtimeName) const override;
+    std::optional<std::string> tryRuntimeName(core::ObjectId object) const override;
+    core::ContentIdentity nameMapContentIdentity() const override;
+
+private:
+    Deps m_deps;  ///< 构造冻结（runtime 非 owning——宿主存活期契约）
+};
+
+
 // =====================================================================
 // HostCompileProbe——编译分段探针（modeling::CompileProbe 产品实现——
 // 等价验证的 S1～S5 只读注入面）

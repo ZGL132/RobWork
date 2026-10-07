@@ -372,6 +372,12 @@ public:
      */
     void bindRuntimeNameMap(const runtime::RuntimeNameMap* map);
 
+    /// 草稿对象名解析（UI-T74/F-546 出路①——草稿名感知名称上下文的模块
+    /// 侧执行器）：对象身份→当前草稿工作集内名称（design.joints/links＋
+    /// toolObjects/sceneObjects 逐行取 localName；未命中＝false——闭包
+    /// 外身份不猜测，ARC-04）。仅读投影、零修订；仅 UI 线程（会话态）。
+    bool tryDraftObjectName(const core::ObjectId& object, std::string& name) const;
+
     /**
      * @brief 绑定策略提供器（已装载 EngineeringPolicySet 的现取入口——
      *        装配期由宿主注入；返回 nullptr＝策略未装载，就绪 L11 层如实

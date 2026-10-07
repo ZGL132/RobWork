@@ -159,6 +159,13 @@ public:
         m_compilePort = port;
     }
 
+    /// ProjectCommandService 装配通道覆写（UI-T74——接口面公共承载转发
+    /// 既有装配通道；语义同上——提交前装配、运行期替换属纪律违约）。
+    void attachCompilePort(IModelCompilePort* port) noexcept override
+    {
+        setCompilePort(port);
+    }
+
     /**
      * @brief 绑定复核探针装配通道（PRJ-T11——confirm::IConfirmationProbe
      *        的 D-10 形态接缝；指针非 owning，所有权归装配方）。
