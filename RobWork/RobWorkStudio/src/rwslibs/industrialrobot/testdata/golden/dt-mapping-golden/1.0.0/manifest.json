@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "dt-mapping-golden",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "dt/mapping-golden",
+  "coveredRequirements": [
+    "DYN-04",
+    "NFR-COR-01",
+    "NFR-COR-03",
+    "MDL-21",
+    "SEL-10"
+  ],
+  "coveredAt": [
+    "AT-07",
+    "AT-38"
+  ],
+  "toleranceProfile": {
+    "id": "dt-mapping",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/dt-mapping-inputs.json"
+  ],
+  "expected": [
+    "expected/dt-mapping-expected.json"
+  ],
+  "parameters": {
+    "contract": "传动映射黄金数据（DYN-04/M-12 精确虚功映射——R1 对角组；§14.1 解析算例组①～⑤的 R1 可执行面）——WP-18-T04 主数据载体（AT-38 R1 可验部分：无耦合链等价对角映射正命题＋R1 阻断反例）",
+    "entryFaces": {
+      "analytic": "expected/cases[]——analytic-single（单轴 c=0.01 正弦解析＋θ_off 偏置＋手算锚点）、dwell-zero（零功率/驻留＋近零功率方向判据）、energy-bidirectional（η⁺≠η⁻ 混合循环 E_loss>0 恒等式）、inertia-golden（J/c² 与 c²·J_load/J_rotor）",
+      "virtualWork": "expected/cases[virtualwork-multi]——matrixForm（常矩阵 C 语义 τ_m=Cᵀ·τ_j、θ̇=C⁻¹·q̇ 双重循环参考实现）与逐轴标量路双路互证（AT-38 R1 正命题：无耦合链等价对角映射）＋虚功对偶 wMotor/wJoint（§8.1）",
+      "rejections": "inputs/at38R1Rejections[]——R1 阻断反例（非对角输入 DT-MATRIX-NONDIAGONAL-LOCKED；耦合窗口 DT-COUPLING-STAGE-LOCKED——含 R2 能力位同拒的保守面），evaluate 与 validator 双路径核对（AT-38 'R1 阻断反例'）",
+      "energyNote": "能量分项单位 J（core 单位表无 J token）——档案通道不承载，消费测试以独立梯形积分重算＋恒等式断言（E_joint=E_pos−E_regen、E_motor=E_joint+E_loss+E_rotor、E_loss>0）复核 expected 能量值"
+    },
+    "ratioConvention": "c＝Δq_joint/Δθ_motor（D-DT-4 全文唯一；减速器 n:1 → c=1/n）；J·i² 记法按 i=1/c 换算（J_reflected=J_rotor/c²）"
+  },
+  "units": {
+    "position": "rad",
+    "velocity": "rad/s",
+    "acceleration": "rad/s^2",
+    "torque": "N*m",
+    "power": "W",
+    "inertia": "kg*m^2",
+    "time": "s",
+    "ratio": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "本数据集全部量为关节轴系/电机轴系标量（单元卡 §13.0——本卡无世界系量，不做基座变换 MDL-22）；base 声明为上游序列的安装约定归属，不参与任何数值"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "R1 对角映射逐样本量（θ/θ̇/θ̈/τ_ideal/τ_m/P 列）、工作点统计（峰值/RMS/负载率/四象限/能量分项）、反射惯量与惯量比、虚功对偶矩阵语义参考（§6.2/§8.1/§9/§10 冻结公式的封闭代数直算）",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_dt_mapping_golden.mjs——标量公式按单元卡冻结口径直写、梯形积分/象限判定同口径复刻）推导，与产品实现（drivetrain/src/MappingCore.cpp）零共享代码——独立性由公式来源层面保证（两侧各自对照单元卡原文）"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "dt-mapping-golden-closed-form",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-07T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/dt-mapping-expected.json#cases[dwell-zero].samples[0..1]（零值——pJoint 精确零，效率不适用显式标记）",
+      "expected/dt-mapping-expected.json#cases[dwell-zero].samples[2]（近零——q̇=1e-9 rad/s 近零功率仍按符号精确判据经 η⁺ 折算）",
+      "expected/dt-mapping-expected.json#cases[energy-bidirectional].points[0].energy（正负抵消——E_joint=0 恒等式 E_pos−E_regen=0）",
+      "expected/dt-mapping-expected.json#cases[analytic-single].samples[2].thetaDot（近零——qd=cos(π/2)·A·ω≈3.9e-17 噪声级速度）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/dt-mapping-inputs.json",
+      "sha256": "12c7842fe650fe4f1d99ba05a2b5b8750dc3ac931b0da1ce13762e3c6db96021",
+      "sizeBytes": 9044
+    },
+    {
+      "path": "expected/dt-mapping-expected.json",
+      "sha256": "4e6b7a844a60f1cff6513ba1ac8d0ca325004700fc13e7db5d4b024ca1431b03",
+      "sizeBytes": 28445
+    },
+    {
+      "path": "generate/make_dt_mapping_golden.mjs",
+      "sha256": "eb59d09e1477f0b67fea26eaf8fdfbd757ba6a0fae0e1229771d91525840ac5f",
+      "sizeBytes": 11902
+    }
+  ],
+  "generator": {
+    "script": "generate/make_dt_mapping_golden.mjs",
+    "invocation": "node generate/make_dt_mapping_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-07",
+      "change": "首版：传动映射黄金数据（§14.1 解析算例组 R1 面单文件外化——单轴解析/矩阵语义双路/双向效率能量恒等/零功率近零/反射惯量＋AT-38 R1 阻断反例声明）——WP-18-T04 交付物（testdata/golden/dt-* 按 DatasetManifest 登记）",
+      "reReviewedBy": "WP-18-T04 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}
