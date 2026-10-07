@@ -1,0 +1,67 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 23 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from PolPolicyCodecFixture
+[ RUN      ] PolPolicyCodecFixture.LoadsThroughFullManifestChain
+[       OK ] PolPolicyCodecFixture.LoadsThroughFullManifestChain (1 ms)
+[ RUN      ] PolPolicyCodecFixture.IntegrityDigestsMatchCommittedFiles
+[       OK ] PolPolicyCodecFixture.IntegrityDigestsMatchCommittedFiles (0 ms)
+[ RUN      ] PolPolicyCodecFixture.CanonicalEncodingMatchesIndependentExpectation
+[       OK ] PolPolicyCodecFixture.CanonicalEncodingMatchesIndependentExpectation (0 ms)
+[ RUN      ] PolPolicyCodecFixture.ContentIdentityMatchesIndependentDigest
+[       OK ] PolPolicyCodecFixture.ContentIdentityMatchesIndependentDigest (0 ms)
+[ RUN      ] PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity
+[       OK ] PolPolicyCodecFixture.ShuffledAndDisplayUnitVariantKeepsIdentity (0 ms)
+[----------] 5 tests from PolPolicyCodecFixture (3 ms total)
+
+[----------] 3 tests from PolicyTestDoubleBoundary
+[ RUN      ] PolicyTestDoubleBoundary.ProductSourcesContainNoDoubleSymbols
+[       OK ] PolicyTestDoubleBoundary.ProductSourcesContainNoDoubleSymbols (3 ms)
+[ RUN      ] PolicyTestDoubleBoundary.DoubleHeaderCarriesBoundaryDeclaration
+[       OK ] PolicyTestDoubleBoundary.DoubleHeaderCarriesBoundaryDeclaration (0 ms)
+[ RUN      ] PolicyTestDoubleBoundary.TestReadmeDeclaresBoundaryFullText
+[       OK ] PolicyTestDoubleBoundary.TestReadmeDeclaresBoundaryFullText (0 ms)
+[----------] 3 tests from PolicyTestDoubleBoundary (3 ms total)
+
+[----------] 7 tests from PolicyContractDoubles
+[ RUN      ] PolicyContractDoubles.ScriptedEvaluatorProducesAllFourScriptTracks
+[       OK ] PolicyContractDoubles.ScriptedEvaluatorProducesAllFourScriptTracks (0 ms)
+[ RUN      ] PolicyContractDoubles.StubProviderMirrorsAssemblyStepwiseContract
+[       OK ] PolicyContractDoubles.StubProviderMirrorsAssemblyStepwiseContract (0 ms)
+[ RUN      ] PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs
+[       OK ] PolicyContractDoubles.ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs (0 ms)
+[ RUN      ] PolicyContractDoubles.At19ThreeEntriesIdenticalIdPairsVerdictsAndReasonCodes
+[       OK ] PolicyContractDoubles.At19ThreeEntriesIdenticalIdPairsVerdictsAndReasonCodes (0 ms)
+[ RUN      ] PolicyContractDoubles.At01TravelLimitConfirmableReleaseChain
+[       OK ] PolicyContractDoubles.At01TravelLimitConfirmableReleaseChain (0 ms)
+[ RUN      ] PolicyContractDoubles.At27DisplayUnitSwitchKeepsIdentityAndOutput
+[       OK ] PolicyContractDoubles.At27DisplayUnitSwitchKeepsIdentityAndOutput (0 ms)
+[ RUN      ] PolicyContractDoubles.At27AnalysisConfigChangeDoesNotAffectEvaluation
+[       OK ] PolicyContractDoubles.At27AnalysisConfigChangeDoesNotAffectEvaluation (0 ms)
+[----------] 7 tests from PolicyContractDoubles (1 ms total)
+
+[----------] 4 tests from PolicyProofMaterialContract
+[ RUN      ] PolicyProofMaterialContract.FindingCarriesCompleteProofMaterialFields
+[       OK ] PolicyProofMaterialContract.FindingCarriesCompleteProofMaterialFields (0 ms)
+[ RUN      ] PolicyProofMaterialContract.NonCollisionOrSelfPairRejectedByChecklist
+[       OK ] PolicyProofMaterialContract.NonCollisionOrSelfPairRejectedByChecklist (0 ms)
+[ RUN      ] PolicyProofMaterialContract.SourceAnchorsPinBothFieldShapes
+[       OK ] PolicyProofMaterialContract.SourceAnchorsPinBothFieldShapes (0 ms)
+[ RUN      ] PolicyProofMaterialContract.ContentIdentityChangeSuppliesSliceInvalidationMaterial
+[       OK ] PolicyProofMaterialContract.ContentIdentityChangeSuppliesSliceInvalidationMaterial (0 ms)
+[----------] 4 tests from PolicyProofMaterialContract (0 ms total)
+
+[----------] 4 tests from PolCollisionAnalytic
+[ RUN      ] PolCollisionAnalytic.DatasetLoadsThroughFullManifestChain
+[       OK ] PolCollisionAnalytic.DatasetLoadsThroughFullManifestChain (0 ms)
+[ RUN      ] PolCollisionAnalytic.PolicySnapshotConsumedThroughPolicyObject
+[       OK ] PolCollisionAnalytic.PolicySnapshotConsumedThroughPolicyObject (0 ms)
+[ RUN      ] PolCollisionAnalytic.AllCasesMatchHandDerivedExpectations
+[       OK ] PolCollisionAnalytic.AllCasesMatchHandDerivedExpectations (0 ms)
+[ RUN      ] PolCollisionAnalytic.At37InvertedMountConsumesCompiledStateWithoutSecondRotation
+[       OK ] PolCollisionAnalytic.At37InvertedMountConsumesCompiledStateWithoutSecondRotation (0 ms)
+[----------] 4 tests from PolCollisionAnalytic (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 5 test suites ran. (11 ms total)
+[  PASSED  ] 23 tests.

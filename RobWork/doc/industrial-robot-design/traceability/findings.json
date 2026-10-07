@@ -5319,7 +5319,7 @@
       "status": "open",
       "registeredAt": "2026-10-06",
       "title": "宿主装配 policyProvider=nullptr（UiPlugin.cpp C-10 诚实基线——『policyProvider＝未装载』）使建模 draft.apply 恒被 ④策略端口未装配（装配缺陷） 拒绝——应用草稿主链在真实宿主部署不可用＝F-496 长期缺证据的根因面",
-      "owner": "宿主装配批次（策略装载面接线——或所有者裁决降级 ④ 检查为警告轨）。修复后 tour step5 断言翻转为 committed；【2026-10-07 UI-T68 会话实现段穷尽核查附录】三路修复前提全部上游未决：①真实策略装载源需工程内 EngineeringPolicySet 对象生命周期（project/workflow 域——对象创建/导入/挂接零实现，workflow 单元并行批次实施中不触碰）；②缺省策略集工厂被 P-POL-2/O-10 冻结口径挡住（PolicySet.hpp 冻结原文『唯一冻结默认——其余阈值不在此发明数值』『DefaultTemplate 数值待 P-POL-2 裁决——裁决前不产生』——仅 4π 行程上限有冻结默认）；③④降级警告轨＝MDL-06④ REQUIREMENTS 语义变更。裁决项登记＝DTB §4.2 O-46；另：UI-T67 时代文档沿旧号 F-524 称呼本缺口（登记库 F-524＝ui-t64 门禁基线编码损坏）——更正传证＝F-543"
+      "owner": "宿主装配批次（策略装载面接线——或所有者裁决降级 ④ 检查为警告轨）。修复后 tour step5 断言翻转为 committed；【2026-10-07 UI-T68 会话实现段穷尽核查附录】三路修复前提全部上游未决：①真实策略装载源需工程内 EngineeringPolicySet 对象生命周期（project/workflow 域——对象创建/导入/挂接零实现，workflow 单元并行批次实施中不触碰）；②缺省策略集工厂被 P-POL-2/O-10 冻结口径挡住（PolicySet.hpp 冻结原文『唯一冻结默认——其余阈值不在此发明数值』『DefaultTemplate 数值待 P-POL-2 裁决——裁决前不产生』——仅 4π 行程上限有冻结默认）；③④降级警告轨＝MDL-06④ REQUIREMENTS 语义变更。裁决项登记＝DTB §4.2 O-46；另：UI-T67 时代文档沿旧号 F-524 称呼本缺口（登记库 F-524＝ui-t64 门禁基线编码损坏）——更正传证＝F-543；【2026-10-07 裁决＋落地进展】O-46 出路②-scope 落地＝UI-T73（policy SystemDefaultPolicy——附录 D 唯一冻结默认 4π 的 ④端口缺省源＋宿主装配接线）：④「策略端口未装配（装配缺陷）」拒绝面消除（mtour step5 实证 rej=hard-assert-failed——拒绝面移出行程策略层）；**本条保持 open**——行程相关应用主干的下一层墙＝F-546（首应用名解析不可达，与策略源无关），F-536 的「主链可用」目标以 F-546 修复为完成口径；mtour step5 断言为诚实中间态（翻转点内建）"
     },
     {
       "id": "F-537",
@@ -5401,6 +5401,15 @@
       "registeredAt": "2026-10-07",
       "title": "UI-T72 契约 acceptance[0] 括注做红配方「移除 show/raise 即红」失准——modelToggle->trigger()（:5490）前置已翻起 Dock，show/raise 在该点位冗余；实测做红配方＝show/raise 后注入 hide() 复现静窗态（M-2 实证断言本体守护力不受影响）。requirements 通道 E-4 侧（:4796→:4804）存在同构前置序列，如被引用需一并复核",
       "owner": "随 UI-T72 合入段治理提交更正契约配方表述（已同车）；E-4 侧同构序列复核归后续触碰 requirements-tour 批次"
+    },
+    {
+      "id": "F-546",
+      "source": "UI-T73 实现段真机取证（2026-10-07——O-46 出路②落地后 mtour step5 拒绝面从 ④策略端口未装配 移为 hard-assert-failed，dev 定性＋代码链钉扎）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "④行程校验经 IPolicyNameContext 需运行时名解析（JointLimits.cpp tryRuntimeName——ARC-04 不猜测），而名称映射真值端口绑定于发布拍（HostRuntimeNameMapPort 空映射二态——WP-24-T08 呈现装配）——全新项目首次行程相关 draft.apply 在发布前必然 CllNameUnresolved→EvaluationFailed→RejectedHardAssert：行程相关应用主干的首应用在真实宿主结构性地不可达（与策略源无关——O-46 出路②落地后的下一层墙；修订后再应用因对象身份跨修订稳定可解析，行为不一致面）。二连应用探针（requirements 拍 9）证明首修订后基线演进可走通",
+      "owner": "宿主装配/modeling 批次所有者裁决（三选一：①名称上下文候选感知——prepare 期对候选工作集对象可解析〔装配/域语义增量〕；②行程校验时点后移至编译/发布后〔断言序变更——modeling 卡裁决〕；③首应用豁免语义＋诚实诊断〔REQ 语义裁决〕）。修复后 mtour step5 断言翻转为 committed（翻转点已内建）"
     }
   ]
 }

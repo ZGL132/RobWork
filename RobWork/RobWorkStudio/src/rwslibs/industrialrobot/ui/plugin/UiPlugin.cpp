@@ -3608,9 +3608,8 @@ void IrdWorkbenchHostPlugin::assemblePresentationPipeline()
     rws::RobWorkStudio* studio = getRobWorkStudio();
 
     // ---- 建模命令处理器服务集（F-461 modeling 半区——所有权锚成员持有，
-    // 存活期覆盖注册表使用期；装配期一次）。策略端口保持 C-10 诚实基线
-    // （未装载——resolvePolicy 按 POLICY-OBJECT-MISSING 诊断轨如实降级，
-    // 行程校验不虚构策略），评估器/转换器/探针/名称上下文为产品实现。
+    // 策略端口＝系统缺省源（UI-T73/O-46 裁决出路②——附录 D 冻结默认 4π；
+    // 工程内策略对象生命周期落地后可换装存储背书 PolicyProvider）。
     m_jointLimitEvaluator = policy::makeJointLimitEvaluator();
     m_dhConverter = std::make_unique<modeling::DhExplicitConverter>();
     m_compileProbe = std::make_unique<HostCompileProbe>(HostCompileProbe::Deps{
@@ -3721,9 +3720,16 @@ void IrdWorkbenchHostPlugin::attachPresentationSession(const core::ProjectId& pr
     const modeling::HandlerServices services{
         modeling::AssertionSuite::Ports{m_jointLimitEvaluator.get(),
                                         m_runtimeNameContext.get()},
-        nullptr,                 // policyProvider＝未装载（C-10 诚实基线）
-        core::ObjectId{},        // policyObject＝空（同上——POLICY-OBJECT-MISSING 轨）
-        std::nullopt,            // policyVersion＝不可编址取数
+        // F-536/O-46 裁决出路②（UI-T73）：④端口装配系统缺省策略源——附录
+        // D 唯一冻结默认（4π 行程上限，DefaultAppendixD）的解析半区供给器；
+        // 工程内真实策略对象生命周期落地后可换装存储背书 PolicyProvider
+        // （O-46 登记的后续面）。policyObject＝系统缺省保留身份（非项目对
+        // 象，不入 project 存储）；policyVersion 传 nullopt＝系统缺省集为
+        // 编译期常量、无存储版本演进（供给器契约不消费期望版本——
+        // SystemDefaultPolicy.hpp 差异面登记）。
+        &m_systemDefaultPolicyProvider,  // policyProvider＝系统缺省源（④端口装配）
+        policy::systemDefaultPolicyObjectId(),  // policyObject＝保留身份
+        std::nullopt,            // policyVersion＝不适用（系统缺省集无版本演进）
         m_dhConverter.get(),     // DH 转换器（权威切换变体）
         m_compileProbe.get(),    // 编译分段探针（等价验证）
     };
@@ -5695,40 +5701,42 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 modelingCommitted = true;
             }
         }
-        // 被 ④策略端口未装配 拒绝。tour 如实断言该已知部署缺口（拒绝原因
-        // 精确匹配），修复后本断言翻转为 committed 断言。
-        bool policyPortGap = false;
+        // F-536/O-46 裁决出路②（UI-T73）：④端口已装配系统缺省策略源——
+        // apply 走通（行程校验按附录 D 4π 冻结默认评估）。原 known-gap 断
+        // 言（policyPortGap/undo-unavailable-under-known-gap）随翻转退役，
+        // 断言名沿用旧号 F-524 的历史行一并更正（F-543 传证）。
+        std::string modelingRej;
         for (const auto& entry5 : applyReport.entries) {
             if (entry5.moduleId == "modeling") {
                 std::cout << "[ird-ui-smoke-mtour] step5 outcome="
                           << static_cast<int>(entry5.outcome) << " committed="
                           << entry5.committed << " rej=[" << entry5.rejectionReason
                           << "] rev=[" << entry5.revision << "]" << std::endl;
-                if (!entry5.committed && entry5.rejectionReason.find(
-                        "策略端口未装配") != std::string::npos) {
-                    policyPortGap = true;
-                }
+                if (!entry5.committed) { modelingRej = entry5.rejectionReason; }
             }
         }
-        ok(modelingCommitted || policyPortGap,
-           "step5 modeling-apply (committed=" + std::string(modelingCommitted ? "true" : "false")
-               + " known-deployment-gap=" + std::string(policyPortGap ? "true" : "false") + ")");
-        // redo 栈点亮（已提交修订可撤销——requirements 拍 9 同款语义）。
-        bool redoLit = false;
+        // 本拍断言面（UI-T73 诚实中间态）：④装配缺陷已消除（拒绝原因不再
+        // 含「策略端口未装配」）；当前拒绝面＝行程校验执行层
+        // （hard-assert-failed——IPolicyNameContext 需运行时名解析，首应用
+        // 发布前名称映射为空→CllNameUnresolved→EvaluationFailed，结构性
+        // 下一层墙已登记 F-546）。F-546 修复后本断言翻转为 committed。
+        ok(!modelingCommitted
+               && modelingRej.find("hard-assert-failed") != std::string::npos
+               && modelingRej.find("策略端口未装配") == std::string::npos,
+           "step5 modeling-apply (④装配缺陷已消除——拒绝面=行程校验执行层"
+           " F-546; rej=[" + modelingRej + "])");
+        // 首应用不可逆（全新项目全部受影响对象无前版——处理器声明不可逆，
+        // requirements 拍 9 同款产品语义）：项目级 undo 不可用＝诚实状态面
+        // （非缺陷；二连应用探针见 requirements 拍 9 的会话基线演进验证）。
+        bool undoLit = false;
         if (const auto adapter = m_lastStoreAdapter) {
             const auto tips = adapter->projectStore().query().branchTips();
             if (!tips.empty()) {
-                redoLit = adapter->projectStore().undoRedo()
-                              .status(tips.front().id).canRedo;
+                undoLit = adapter->projectStore().undoRedo()
+                              .status(tips.front().id).canUndo;
             }
         }
-        if (policyPortGap) {
-            // F-524 已知部署缺口：apply 被拒＝无提交＝undo/redo 不可用——
-            // 断言其不可用（诚实状态面，非缺陷）。
-            ok(!redoLit, "step5 undo-unavailable-under-known-gap (F-524)");
-        } else {
-            ok(redoLit, "step5 project-undo-committed (redo-stack-lit)");
-        }
+        ok(!undoLit, "step5 project-undo-unavailable-no-revision");
         snapPng(hostWin, "mtour-5-applied.png");
 
         QPushButton* exportBtn = panel->findChild<QPushButton*>(

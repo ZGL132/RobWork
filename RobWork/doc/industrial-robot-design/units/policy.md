@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.15（WP-24-T01 冻结版本基线回填——§15.3 P-POL-5 消账：`ird/share/baseline.md` v1.0 登记 backendVersion=`rw-31b8184` 冻结值＋CollisionEvaluator.hpp 新增 `kFrozenBuiltinBackendVersion` 单点常量＋两处装配调用切换＋RobWorkConfig.hpp/RW_VERSION 临时注入删除＋toleranceModel 占位尾替换；v0.14（POL-T12 返工——B-1 载体归位（登记册改动 governance-log.md 拆出治理提交 governance/pol-t12-registry，任务分支追加还原）＋F-095/F-096 消账；v0.13＝POL-T12 文档与门禁同步——README 指向核对零偏差＋§15.3 P-POL-6 stale 翻转〔P-POL-1 已关闭状态复核维持〕＋UT-BUILD 并入 CI 建议登记 WP-01＋F-089/F-091 散文计数消账＋卡头版本链补全；v0.12＝POL-T11 替身与契约套件实现落位登记；v0.11＝POL-T10 诊断构造实现落位登记；v0.10＝POL-T09 兼容判定实现落位登记；v0.9＝POL-T08 关节限位评估实现落位登记；v0.8＝POL-T07 评估实现落位登记；v0.7＝POL-T06 场景与会话实现落位登记；v0.6＝POL-T05 上下文与端口实现落位登记；v0.5＝POL-T04 解析器与校验器实现落位登记；v0.4＝POL-T03 编码与身份实现落位登记；v0.3＝POL-T02 错误与策略类型实现落位登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案；各版变更记录见 §15.4） |
+| 文档版本 | v0.16（UI-T73/O-46 裁决出路②-scope 落位登记——§3.1 表增 SystemDefaultPolicy.hpp 行＋§9.10 新节：系统缺省策略集工厂（附录 D 唯一冻结默认 4π——JointThresholds 默认成员初始化即规格化承载；未裁决阈值 nullopt＝显式不适用 P-POL-2/O-10 口径不变）＋SystemDefaultPolicyProvider 解析半区供给器（保留身份任意版本应答／外来身份 MISSING／碰撞面 PortAssemblyIncomplete fail-fast）。前一版本 v0.15：WP-24-T01 冻结版本基线回填|
 | 日期 | 2026-09-10 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-POLICY |
@@ -169,6 +169,7 @@ policy 由 11 个公共头模块＋1 个编译实现组成（实现文件随 §1
 | `PolicyParsing.hpp` | PolicyParseResult、resolvePolicy（解析管线纯函数）、IPolicyValidationContext、IPolicyValidator | §5.1/§9.2 |
 | `Contexts.hpp` | IPolicyNameContext、IPolicyCallContext、IPolicyBytesSource（注入用最小接口） | §3.3/§9.7 |
 | `PolicyPort.hpp` | PolicyResolutionRequest/PolicyResolution、CollisionBackendDescriptor、IPolicyProvider（④端口） | §9.1 |
+| `SystemDefaultPolicy.hpp` | 系统缺省策略集工厂＋SystemDefaultPolicyProvider（④端口宿主装配缺省源——UI-T73/O-46 裁决出路②-scope；解析半区专用） | §9.10 |
 | `CollisionQuery.hpp` | CollisionQueryKind、CollisionQuery、CollisionFindingKind、CollisionFinding、PairCoverageRecord、AppliedFilterRecord、SampleDistanceSummary、CollisionEvaluationStatus、ScopeApplicability、CollisionEvaluation | §6.2 |
 | `CollisionEvaluator.hpp` | ICollisionEvaluator、CollisionEvaluationSession、CollisionScene、SceneObjectEntry/Role、makeRobWorkCollisionEvaluator（唯一实现工厂） | §6.1/§9.3 |
 | `JointLimits.hpp` | JointLimitSpec/Query/Finding/Evaluation、IJointLimitEvaluator | §9.4 |
@@ -1000,6 +1001,18 @@ public:
 | `IPolicyValidationContext`（§5.1） | 适配修订闭包查询 | 存在性/角色只读 | 无 | 并发只读 | 每次解析一个 | 合法：resolvePolicy/validate 传入 |
 
 ---
+
+### 9.10 系统缺省策略集与供给器（`SystemDefaultPolicy.hpp`——UI-T73/O-46）
+
+**系统缺省源裁决口径（O-46，2026-10-07 所有者授权出路②-scope）**：④行程校验的策略消费面仅 `finiteRotationTravelLimit`——唯一冻结默认（4π rad，DefaultAppendixD）即全部所需；未裁决阈值（P-POL-2）保持 nullopt＝显式不适用，碰撞策略 disabled（无冻结间距即显式不适用）。不建对象生命周期（存储背书 `PolicyProvider` 为生命周期落地后的换装形态）、不降级 ④ 语义、不发明任何数值。
+
+| 构件 | 契约 |
+| --- | --- |
+| `systemDefaultPolicyObjectId()` | 系统缺省保留身份（well-known `obj-…01` 字面量；非项目对象、不入存储；函数局部静态线程安全） |
+| `makeSystemDefaultPolicySet()` | 附录 D 冻结默认构成＋`PolicyCodec::contentIdentity` 现算身份＋`make` 发布门 Valid；同闭包确定性（CON-05/06） |
+| `SystemDefaultPolicyProvider` | `IPolicyProvider` 解析半区专用：保留身份任意 expectedVersion 应答（编译期常量无版本演进——差异面登记）；外来身份→空 policy＋`POLICY-OBJECT-MISSING`（subject 绑请求对象）；全零→fail-fast；`collisionEvaluator/collisionBackend`→`PortAssemblyIncomplete` fail-fast（④行程校验不消费碰撞面） |
+
+宿主装配（ui/plugin）：`HandlerServices{provider, 保留身份, nullopt}`——建模 ④ 校验按缺省 4π 评估；F-546（首应用名解析墙）为独立后续裁决项。
 
 ## 10. 跨单元调用流程
 

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T73",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "宿主 ④ 端口缺省策略源（F-536/O-46 裁决出路②-scope）：policy SystemDefaultPolicy 面＋宿主装配接线＋mtour step5 诚实中间态断言",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T72"
+  ],
+  "requirements": [
+    "ARC-05（策略单一权威、唯一默认＝附录 D 第 11 项 4π——缺省源只消费冻结默认）",
+    "MDL-06④（行程校验执行——travelLimitCheckEnabled=true 且阈值唯一来源＝policy.jointThresholds）",
+    "ERR-01（诚实呈现——未裁决阈值 nullopt＝显式不适用不发明数值；外来身份 POLICY-OBJECT-MISSING 码面；step5 断言面如实呈现 F-546 中间态）"
+  ],
+  "designRefs": [
+    "units/policy.md#4",
+    "units/modeling.md#9.7",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-536",
+    "traceability/findings.json#F-546"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/SystemDefaultPolicy.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/SystemDefaultPolicy.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/SystemDefaultPolicyTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T73.json",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/units/policy.md",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t73/**",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**（域零改动——HandlerServices 消费面既有契约照常）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md（P-POL-2 未裁决阈值不进本批——零需求语义变更）"
+  ],
+  "outputs": [
+    "policy/include/sdurws/ird/policy/SystemDefaultPolicy.hpp＋src/SystemDefaultPolicy.cpp（新公共面）：①systemDefaultPolicyObjectId()——系统缺省保留身份（well-known 固定字面量 obj-…01；非项目对象不入存储）；②makeSystemDefaultPolicySet()——附录 D 冻结默认构成（JointThresholds 默认成员初始化＝4π DefaultAppendixD＋未裁决阈值 nullopt 显式不适用〔P-POL-2/O-10 口径不变〕＋碰撞 disabled〔无冻结间距即显式不适用〕＋空 applicability＋SystemDefault 来源＋PolicyCodec::contentIdentity 现算身份＋make 发布门 Valid）；③SystemDefaultPolicyProvider（IPolicyProvider 解析半区专用——保留身份任意版本应答／外来身份 POLICY-OBJECT-MISSING 码面／全零 fail-fast／碰撞评估面 PortAssemblyIncomplete fail-fast）",
+    "policy/test/SystemDefaultPolicyTest.cpp：五用例（工厂发布门＋构成面＋确定性身份／供给器三面）",
+    "ui/plugin/UiPlugin.hpp/.cpp：m_systemDefaultPolicyProvider 成员（存活期锚）＋HandlerServices 装配换装（nullptr→缺省源——F-536 ④装配缺陷消除）＋mtour step5 诚实中间态断言（④装配缺陷已消除＋拒绝面=行程校验执行层 F-546；undo 断言更名 unavailable-no-revision）",
+    "traceability/findings.json：F-546 新登（major——首应用名解析结构性不可达，O-46 落地后暴露的下一层墙）；F-536 保持 open＋裁决落地进展注",
+    "development-task-breakdown.md §4.2 O-46 状态更新（已裁决出路②-scope＋落地登记＋后续面）＋§2.11 WP-10-T73 行；units/policy.md 增量；units/ui.md v1.86 §13 UI-T73 行",
+    "traceability/builds/ui-t73/：双巡检留痕＋logs/ 逐套件 stdout（F-542 口径）"
+  ],
+  "verify": [
+    "受影响目标零错误构建（policy 库＋policy_test＋sdurws_ird_studio 静态链接重建）",
+    "policy_test 全绿（含 SystemDefaultPolicy 五新用例）；六套件回归不降（ui/modeling/requirements 族）",
+    "真机双巡检：modeling-tour MTOUR_PASS（step5 诚实中间态断言——④装配缺陷消除实证）；requirements-tour TOUR_PASS 回归",
+    "ird_gates 零新增；validate-docs/validate-task PASS；留痕 traceability/builds/ui-t73/"
+  ],
+  "acceptance": [
+    "缺省源构成面：makeSystemDefaultPolicySet 零发明数值（4π 唯一冻结默认＋nullopt 显式不适用＋碰撞 disabled）＋发布门 Valid＋确定性身份——policy_test 五用例",
+    "供给器契约面：保留身份任意版本应答／外来身份 MISSING 码面／全零 fail-fast／碰撞面 fail-fast——policy_test 钉扎",
+    "宿主装配面：HandlerServices nullptr→缺省源（④装配缺陷消除）——mtour step5 实证 rej 从「④策略端口未装配」变为「hard-assert-failed」（拒绝面移出装配层）",
+    "诚实边界面：step5 诚实中间态断言（F-546 在案＋翻转点内建）＋F-536 保持 open 的裁决口径（不虚报主链已可用）",
+    "回归门槛：双巡检＋六套件＋policy_test＋ird_gates＋validate 双 PASS；留痕全集落位"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "O-46",
+    "O-10"
+  ],
+  "branch": "ui-t73",
+  "note": "O-46 裁决落地批次（所有者 2026-10-07『按照你的建议进行裁决』授权——出路②-scope：不动 P-POL-2／不建对象生命周期／不降级④语义；附录 D 唯一冻结默认即 ④校验全部策略消费面）。F-546＝落地后暴露的结构性下一层墙（独立 major，另有裁决队列）。"
+}

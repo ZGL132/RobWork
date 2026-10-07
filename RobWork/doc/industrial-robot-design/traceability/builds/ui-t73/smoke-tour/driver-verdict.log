@@ -1,0 +1,75 @@
+===== driver verdict (2026-10-07 13:39:39) =====
+[ird-ui-smoke-tour] started
+[ird-ui-smoke-tour] step 1 create-open-project
+[ird-ui-smoke-tour] pass step1 project-opened
+[ird-ui-smoke-tour] pass step1 panel-present
+[ird-ui-smoke-tour] pass step1 panel-visible (取证前提——非静窗)
+[ird-ui-smoke-tour] snap tour-1-panel-empty-state.png
+[ird-ui-smoke-tour] step 2 empty-state-and-add-station
+[ird-ui-smoke-tour] pass step2 empty-duplicate-disabled
+[ird-ui-smoke-tour] pass step2 empty-remove-disabled
+[ird-ui-smoke-tour] pass step2 empty-add-enabled
+[ird-ui-smoke-tour] pass step2 empty-hint-visible
+[ird-ui-smoke-tour] pass step2 station-added (tree-child=1)
+[ird-ui-smoke-tour] pass step2 selected-duplicate-enabled
+[ird-ui-smoke-tour] pass step2 selected-remove-enabled
+[ird-ui-smoke-tour] pass step2 selected-hint-hidden
+[ird-ui-smoke-tour] pass step2 breadcrumb-object-name (cur=工位 > 工位（草稿）)
+[ird-ui-smoke-tour] step 3 station-fields
+[ird-ui-smoke-tour] pass step3 name-editor-readonly (product-semantics)
+[ird-ui-smoke-tour] pass step3 level-combo-present
+[ird-ui-smoke-tour] pass step3 level-toggled (idx-submitted)
+[ird-ui-smoke-tour] pass step3 enabled-combo-present
+[ird-ui-smoke-tour] pass step3 enabled-toggled
+[ird-ui-smoke-tour] pass step3 dof-x-combo-present
+[ird-ui-smoke-tour] pass step3 dof-x-toggled
+[ird-ui-smoke-tour] pass step3 tolerance-editor-present
+[ird-ui-smoke-tour] pass step3 tolerance-edited
+[ird-ui-smoke-tour] step 4 segment-and-orientation
+[ird-ui-smoke-tour] pass step4 segment-enabled-present
+[ird-ui-smoke-tour] pass step4 segment-approach-enabled
+[ird-ui-smoke-tour] pass step4 segment-axis-present
+[ird-ui-smoke-tour] pass step4 segment-axis-switched
+[ird-ui-smoke-tour] pass step4 orientation-combo-present
+[ird-ui-smoke-tour] pass step4 orientation-reproject (rows 16->15)
+[ird-ui-smoke-tour] snap tour-2-station-edited.png
+[ird-ui-smoke-tour] step 5 fold-region-sampling
+[ird-ui-smoke-tour] pass step5 card-fold-present
+[ird-ui-smoke-tour] pass step5 card-collapsed
+[ird-ui-smoke-tour] pass step5 card-expanded
+[ird-ui-smoke-tour] pass step5 region-added-breadcrumb
+[ird-ui-smoke-tour] pass step5 count-spins=3 (cur=3)
+[ird-ui-smoke-tour] pass step5 counts-submitted (4x3x2=24)
+[ird-ui-smoke-tour] snap tour-3-region-sampling.png
+[ird-ui-smoke-tour] step 6 coverage-and-condition-wizard
+[ird-ui-smoke-tour] pass step6 coverage-slider-present
+[ird-ui-smoke-tour] pass step6 coverage-set (85%)
+[ird-ui-smoke-tour] pass step6 condition-add-present
+[ird-ui-smoke-tour] pass step6 condition-row-present
+[ird-ui-smoke-tour] pass step6 verify-tag-nonempty (cur=必验)
+[ird-ui-smoke-tour] step 7 cycle-and-validation
+[ird-ui-smoke-tour] pass step7 cycle-editor-present
+[ird-ui-smoke-tour] pass step7 cycle-table-synced
+[ird-ui-smoke-tour] pass step7 tabs=4
+[ird-ui-smoke-tour] pass step7 validation-live (cur=校验：就绪（阻断 0 · 警告 1）)
+[ird-ui-smoke-tour] snap tour-4-validation.png
+[ird-ui-smoke-tour] step 7.5 coloring-dataplane-and-validation-click
+[ird-ui-smoke-tour] pass step7.5 grid-honest-absent (无评估运行——中性格线，F-495 评估联动前置)
+[ird-ui-smoke-tour] snap tour-4b-view3d-coloring.png
+[ird-ui-smoke-tour] pass step7.5 validation-items-tree-present
+[ird-ui-smoke-tour] pass step7.5 validation-row-click-protocol (rows=4 anchor=empty)
+[ird-ui-smoke-tour] snap tour-4c-validation-row-click.png
+[ird-ui-smoke-tour] step 8 draft-undo-redo
+[ird-ui-smoke-tour] pass step8 undo-redo-present
+[ird-ui-smoke-tour] pass step8 redo-initially-disabled
+[ird-ui-smoke-tour] pass step8 undo-lights-redo
+[ird-ui-smoke-tour] pass step8 redo-consumed
+[ird-ui-smoke-tour] step 9 apply-and-project-undo
+[ird-ui-smoke-tour] pass step9 requirements-draft-applied (entries=3)
+[ird-ui-smoke-tour] pass step9 project-undo-disabled-first-apply (irreversible)
+[ird-ui-smoke-tour] pass step9 project-undo-reason-shown
+[ird-ui-smoke-tour] pass step9 second-apply-rejected-as-known-gap (rej=invalid-payload)
+[ird-ui-smoke-tour] snap tour-5-final-state.png
+[ird-ui-smoke-tour] DONE (failed-assert=0)
+exit=0
+TOUR_PASS
