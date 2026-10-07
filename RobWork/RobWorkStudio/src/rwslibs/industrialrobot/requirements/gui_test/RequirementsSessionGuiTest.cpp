@@ -229,6 +229,56 @@ TEST_F(RequirementsSessionGuiTest, SessionDataPlane_FourSetsIntoPanel_UI_T29)
         << "任务点聚焦后检查器无编辑行（L-R2 数据前提断链）";
 }
 
+/// F-539（UI-T71）定位出口生产接线：校验逐项行点击（锚列＝对象身份）→
+/// locate()→构造期注册的生产 sink→focusObject——自持树聚焦锚定行（滚动＋
+/// 置当前行；检查器/三维高亮经 L-R1 前向链顺链达成）。伪造带锚行与真实
+/// 阻断行同形（PanelValidationModel 投影口径：诊断 subject 直投锚列）——
+/// 被测链＝生产代码（点击槽→locate→sink→focusObject），不注入替身 sink。
+/// 实施前该链终点静默丢弃（setLocateSink 生产零调用点——F-539 形态），
+/// 本用例即其转红面。
+TEST_F(RequirementsSessionGuiTest,
+       LocateSinkProductionWiring_ValidationRowClickFocusesTree_UI_T71)
+{
+    IRD_TEST_INFO("UX-06", {}, std::nullopt);
+    // 本用例位置先于 F-499 块的声明行——同签名前置声明重复合法（定义在文件下半辅助区）。
+    QTreeWidget* requirementTree(const RequirementsPanelWidget& panel);
+    m_panel->refreshPanel(m_editor.workingSet(), m_report);
+
+    // 定位校验逐项表（表头首列『级别』——层汇总表首列『层』的同页姊妹，
+    // UI-T68 巡检同款锚定法）。
+    QTreeWidget* itemsTree = nullptr;
+    for (QTreeWidget* t : m_panel->findChildren<QTreeWidget*>()) {
+        if (t->headerItem()->text(0) == QStringLiteral("级别")) {
+            itemsTree = t;
+            break;
+        }
+    }
+    ASSERT_NE(itemsTree, nullptr) << "校验逐项表缺失（校验页构建缺陷）";
+
+    // 伪造带锚行（锚＝任务点身份——树中真实在册行，落点可断言）。
+    const core::ObjectId pointOid =
+        m_editor.workingSet().points.entries.front().objectId;
+    auto* row = new QTreeWidgetItem(
+        itemsTree,
+        QStringList() << QStringLiteral("Blocking") << QStringLiteral("R0")
+                      << QStringLiteral("TEST-LOCATE") << QStringLiteral("定位链测试行"));
+    row->setText(itemsTree->columnCount() - 1,
+                 QString::fromStdString(pointOid.toCanonical()));
+
+    // 点击（与手点同源信号轨）→生产 sink→focusObject→树聚焦。
+    Q_EMIT itemsTree->itemClicked(row, 0);
+    QApplication::processEvents();
+
+    // 落点断言：自持树当前行＝锚定对象行（树滚动＋置当前行的呈现面）。
+    QTreeWidget* tree = requirementTree(*m_panel);
+    ASSERT_NE(tree, nullptr) << "需求树缺失（F-499 更名后辅助失配）";
+    ASSERT_NE(tree->currentItem(), nullptr)
+        << "定位链落点缺失（生产 sink 未接线——F-539 静默丢弃形态）";
+    EXPECT_EQ(tree->currentItem()->text(tree->columnCount() - 1).toStdString(),
+              pointOid.toCanonical())
+        << "落点锚失配（focusObject 未命中锚定行）";
+}
+
 /// F-499（宿主审核 P2）双树职责呈现标识（自持面）：顶部草稿提示条常驻
 /// 说明"需求树＝草稿编辑面／工业项目树＝已应用修订"，树名标注
 /// "需求树（当前草稿）"——消除"同一工位为何出现两次/哪棵可编辑"歧义。

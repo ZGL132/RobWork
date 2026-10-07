@@ -869,6 +869,43 @@ TEST_F(ModelingPanelGuiTest, ReadOnlySession_AvailabilityRefreshCannotReviveWrit
 // （域裁决唯一在 StructureEdit 四原语——本组用例断言面板承载与刷新编排）
 // =====================================================================
 
+/// F-539（UI-T71）定位出口生产接线（孪生面）：就绪逐项行点击（锚列＝对象
+/// 身份）→locate()→构造期注册的生产 sink→focusObject——结构树聚焦锚定行
+/// （滚动＋置当前行＋selectionChanged→检查器重投影，L-1 前向链复用）。
+/// 伪造带锚行与真实就绪行同形（label 列＋锚列直投）。接线前该链三重断点
+/// （sink 零调用点＋表未设列数锚列静默丢弃＋落点无执行器），本用例即其
+/// 转红面。
+TEST_F(ModelingPanelGuiTest,
+       LocateSinkProductionWiring_ReadinessRowClickFocusesTree_UI_T71)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-06"}, std::vector<std::string>{});
+
+    // 就绪逐项表（objectName 锚——F-539 随批挂名，ird_ 前缀族）。
+    QTreeWidget* readinessItems = m_panel->findChild<QTreeWidget*>(
+        QStringLiteral("ird_modeling_readiness_items"));
+    ASSERT_NE(readinessItems, nullptr) << "就绪逐项表缺失（区④构建缺陷）";
+
+    // 伪造带锚行（锚＝j1——结构树真实在册行，落点可断言）。
+    const core::ObjectId j1 = m_ws.design.joints.front().objectId;
+    auto* row = new QTreeWidgetItem(readinessItems);
+    row->setText(0, QStringLiteral("[Blocking] 定位链测试行"));
+    row->setText(1, QString::fromStdString(j1.toCanonical()));
+
+    // 点击（与手点同源信号轨）→生产 sink→focusObject→结构树聚焦。
+    Q_EMIT readinessItems->itemClicked(row, 0);
+    QApplication::processEvents();
+
+    // 落点断言：结构树当前行＝锚定关节行（首 QTreeWidget＝区①结构树；
+    // kAnchorColumn=1——UI-T47 gui 定位复用列）。
+    QTreeWidget* structureTree = m_panel->findChild<QTreeWidget*>();
+    ASSERT_NE(structureTree, nullptr) << "结构树缺失（区①构建缺陷）";
+    ASSERT_NE(structureTree->currentItem(), nullptr)
+        << "定位链落点缺失（生产 sink 未接线——F-539 静默丢弃形态）";
+    EXPECT_EQ(structureTree->currentItem()->text(1).toStdString(),
+              j1.toCanonical())
+        << "落点锚失配（focusObject 未命中锚定行）";
+}
+
 TEST_F(ModelingPanelGuiTest, StructureButtons_InsertAndRemove_DraftOnly_UI_T47)
 {
     // ①五钮在位（objectName 定位——面板承载面的存在性证据）。

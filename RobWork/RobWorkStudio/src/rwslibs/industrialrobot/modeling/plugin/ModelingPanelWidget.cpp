@@ -485,6 +485,16 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     toolsLayout->addWidget(moreToggle);  // 折叠开关（低频组之后——常驻区尾部）
     toolsLayout->addWidget(moreHost);
     toolsLayout->addStretch(1);  // 分节后的尾部弹性（纵列顶端对齐）
+
+    // F-539（UI-T71）：定位出口生产接线——PanelSelectionState 契约「widget
+    // 执行滚动与高亮」的落位（此前 setLocateSink 生产零调用点，就绪逐项行
+    // 点击的 LocateTarget 产出即弃——UX-06 落点不可达）。本面板以既有
+    // focusObject 为执行器：树滚动＋置当前行＋selectionChanged→检查器重投
+    // 影（L-1 前向数据流复用，零新增路径）。无锚行在 locate() 入口已按
+    // 「不伪造定位」拦截；闭包外身份由 focusObject 按清除语义对齐。
+    m_selection.setLocateSink([this](const LocateTarget& t) {
+        focusObject(t.scrollToNode);
+    });
 }
 
 void ModelingPanelWidget::setCommandSubmit(CommandSubmitFn submitFn)
@@ -684,6 +694,13 @@ void ModelingPanelWidget::buildReadinessPane(QVBoxLayout* bottom)
     m_readinessCounts = new QLabel(this);  // 三组计数行（L0~L11 分层结果经逐项行呈现）
     bottom->addWidget(m_readinessCounts);
     m_readinessItems = new QTreeWidget(this);
+    // F-539（UI-T71）接线核对发现：本表从未 setColumnCount（Qt 默认 1 列）
+    // ——就绪行锚列 setText(kAnchorColumn=1) 一直被静默丢弃（定位链断点之
+    // 一，与 sink 缺席叠加）。补足两列并隐藏锚列（结构树 hideColumn 同款
+    // ——UX-02 界面不见内部标识）＋objectName 测试锚（ird_ 前缀族）。
+    m_readinessItems->setColumnCount(2);
+    m_readinessItems->hideColumn(kAnchorColumn);
+    m_readinessItems->setObjectName(QStringLiteral("ird_modeling_readiness_items"));
     m_readinessItems->setHeaderHidden(true);
     m_readinessItems->setRootIsDecorated(false);
     bottom->addWidget(m_readinessItems, 1);

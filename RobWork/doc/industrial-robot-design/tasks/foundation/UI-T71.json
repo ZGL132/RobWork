@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T71",
+  "unit": "requirements",
+  "masterWp": "WP-I",
+  "title": "定位出口生产接线（F-539）：双面板构造期 setLocateSink→focusObject 既有执行器＋modeling 就绪表锚列断链修正＋两 gui 钉扎用例",
+  "status": "ready",
+  "dependsOn": [
+    "UI-T68"
+  ],
+  "requirements": [
+    "UX-06（校验/就绪逐项行定位跳转落地——树滚动＋高亮在产品形态可达）",
+    "ERR-01（诚实呈现保持——无锚行不伪造定位拦截＋闭包外身份清除语义均不变）",
+    "NFR-MNT-04（单一实现点——落点执行器复用既有 focusObject，零新增刷新路径）"
+  ],
+  "designRefs": [
+    "units/requirements.md#9.8",
+    "units/modeling.md#9.7",
+    "units/ui.md#13",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-539"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/RequirementsSessionGuiTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingPanelGuiTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T71.json",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/builds/ui-t71/**",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/**（权威唯一 PA-1）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（M-11 零触碰）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp（tour 断言面零改动——证据串不漂移；7.5 拍不升级的理由见 knownPitfalls）"
+  ],
+  "outputs": [
+    "requirements/plugin/RequirementsPanelWidget.cpp：构造期注册定位出口（m_selection.setLocateSink→focusObject(t.scrollToNode)——校验逐项行点击经 locate 产出 LocateTarget 后由既有执行器落位：自持树滚动＋置当前行→itemSelectionChanged→onTreeSelectionChanged→L-R1 前向链——检查器重投影＋panelHighlight 三维高亮顺链达成〔HostMigrationProviders Deps.panelHighlight 既有通道〕）",
+    "modeling/plugin/ModelingPanelWidget.cpp：孪生面同构接线（就绪逐项行点击→locate→sink→focusObject——结构树滚动＋置当前行＋selectionChanged→检查器重投影，L-1 前向链复用）＋就绪表锚列断链修正（该表从未 setColumnCount——Qt 默认 1 列，setText(kAnchorColumn=1) 一直被静默丢弃＝定位链第二断点；补 setColumnCount(2)＋hideColumn(1)〔UX-02 结构树同款〕）＋objectName 测试锚 ird_modeling_readiness_items",
+    "requirements/gui_test/RequirementsSessionGuiTest.cpp：LocateSinkProductionWiring_ValidationRowClickFocusesTree_UI_T71（伪造带锚行与真实阻断行同形——诊断 subject 直投锚列口径；点击→生产 sink→focusObject→需求树当前行锚断言——不注入替身 sink，被测链全生产代码）",
+    "modeling/gui_test/ModelingPanelGuiTest.cpp：LocateSinkProductionWiring_ReadinessRowClickFocusesTree_UI_T71（孪生同构——j1 锚行点击→结构树当前行锚断言）",
+    "traceability/findings.json：F-539 翻转 fixed（owner 注如实登记：落点钉扎由两 gui 用例承载；tour 7.5 拍维持点击协议面——快乐路径 Warning 行无 subject 为 Readiness 规格，原『升级落点读回断言』预期按实调整）"
+  ],
+  "verify": [
+    "受影响目标集成构建零错误（requirements/modeling 两 plugin＋两 gui_test——sdurws_ird_studio 静态链接重建）",
+    "套件回归：modeling_gui／requirements_gui 全绿（各含新增 1 用例）＋ui_test/ui_contract＋modeling_test/modeling_contract 不降",
+    "ird_gates 零新增；validate-docs/validate-task PASS；留痕 traceability/builds/ui-t71/"
+  ],
+  "acceptance": [
+    "生产接线面：双面板构造期 sink 注册直指 focusObject（复用既有执行器零新逻辑）——代码审读＋两 gui 用例绿",
+    "孪生断链修正面：readiness 表 setColumnCount(2)＋锚列隐藏——无此修正则孪生用例红（锚列 setText 静默丢弃）",
+    "转红能力：注释任一面板 sink 注册→对应用例落点断言红（production-wiring 断言真实守护）",
+    "诚实边界保持面：无锚行点击不进 sink（locate 入口拦截）＋闭包外身份 focusObject 清除语义——既有行为零变化",
+    "回归门槛：受影响目标零错误＋套件回归＋ird_gates 零新增＋validate 双 PASS；留痕 traceability/builds/ui-t71/"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [
+    "tour 7.5 拍不随本批升级：快乐路径就绪报告的 Warning 行全无 subject（Readiness 规格——仅 Blocking 携带跳转锚），校验逐项表无带锚行可点——落点读回只能由 gui 用例承载（伪造带锚行同形注入）；F-539 原 owner 注『升级落点读回断言』按此实情调整",
+    "PluginPanelTest 的 PanelSelectionState 直测（L1_ReverseLocateScrollAndHighlight）注入替身 sink 在构造期注册之后——覆写即替身生效，既有用例零影响",
+    "readiness 表列数缺口是 Qt 静默行为（setText 越列不告警不生效）——审计时以运行时 columnCount 为准，勿信『代码写了 setText 即有列』",
+    "requirements 侧落点选择 requirementTree 辅助须前缀匹配树头（F-499 更名「需求树（当前草稿）」——F-537 同款教训）"
+  ],
+  "branch": "ui-t71",
+  "note": "F-539 收口批次（suggestion 级 UX 缺口）：需求域主面＋modeling 孪生面一并（F-539 owner 注『随修一并核对』兑现）；实施段一提交，独立子会话对抗式验收后按 PIPE §4.7 合入。"
+}
