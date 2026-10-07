@@ -38,7 +38,7 @@ tasks/foundation/UI-T68.json；DTB §2.11 WP-10-T68 行；units/ui.md v1.79
 | 冒烟 ctest requirements 单元 | 3/3 全绿 | smoke-build.log |
 | 集成相邻套件实跑 | ui_contract 32/32＋ui_gui 78/78＋requirements_gui 44/44；ui_test 253/254（1＝F-540） | smoke-build.log（口径行） |
 | 真机 requirements-tour | TOUR_PASS（exit=0；step2 tree-child=1＋7.5 三断言＋panel-visible） | smoke-tour/console-tour.log＋driver-verdict.log＋7 PNG |
-| 真机 modeling-tour（回归） | MTOUR_PASS（exit=0；F-524 gap 断言保持） | smoke-tour-modeling/console-mtour.log＋driver-verdict.log＋6 PNG＋irdbundle |
+| 真机 modeling-tour（回归） | MTOUR_PASS（exit=0；F-536 gap 断言保持〔登记号更正 2026-10-07——原稿沿旧号 F-524，登记库该号＝ui-t64 编码损坏；本缺口＝F-536（F-543 传证）〕） | smoke-tour-modeling/console-mtour.log＋driver-verdict.log＋6 PNG＋irdbundle |
 | 截图唯一性（E-4） | 七帧逐字节异哈希 | smoke-tour/*.png（md5 七值全异） |
 | ird_gates | 零命中 exit 0＋引擎自测 9 项符合预期 | ird-gates.log |
 | validate-docs／validate-task（UI-T68.json） | PASS（20 units/308 task files）／PASS | 会话执行记录（显式核验输出行） |

@@ -5319,7 +5319,7 @@
       "status": "open",
       "registeredAt": "2026-10-06",
       "title": "宿主装配 policyProvider=nullptr（UiPlugin.cpp C-10 诚实基线——『policyProvider＝未装载』）使建模 draft.apply 恒被 ④策略端口未装配（装配缺陷） 拒绝——应用草稿主链在真实宿主部署不可用＝F-496 长期缺证据的根因面",
-      "owner": "宿主装配批次（策略装载面接线——或所有者裁决降级 ④ 检查为警告轨）。修复后 tour step5 断言翻转为 committed"
+      "owner": "宿主装配批次（策略装载面接线——或所有者裁决降级 ④ 检查为警告轨）。修复后 tour step5 断言翻转为 committed；【2026-10-07 UI-T68 会话实现段穷尽核查附录】三路修复前提全部上游未决：①真实策略装载源需工程内 EngineeringPolicySet 对象生命周期（project/workflow 域——对象创建/导入/挂接零实现，workflow 单元并行批次实施中不触碰）；②缺省策略集工厂被 P-POL-2/O-10 冻结口径挡住（PolicySet.hpp 冻结原文『唯一冻结默认——其余阈值不在此发明数值』『DefaultTemplate 数值待 P-POL-2 裁决——裁决前不产生』——仅 4π 行程上限有冻结默认）；③④降级警告轨＝MDL-06④ REQUIREMENTS 语义变更。裁决项登记＝DTB §4.2 O-46；另：UI-T67 时代文档沿旧号 F-524 称呼本缺口（登记库 F-524＝ui-t64 门禁基线编码损坏）——更正传证＝F-543"
     },
     {
       "id": "F-537",
@@ -5374,6 +5374,15 @@
       "registeredAt": "2026-10-07",
       "title": "builds/ui-t68/ 逐套件原始 log/XML 未入库（README/smoke-build.log 以口径行承载）——弱于 ui-t65/67 构成；实质面由验收全量独立复现替代采信（十套件未在本批实跑部分＝diff 不触其编译面，CMake 实证 UiPlugin.cpp 仅 plugin/studio 两目标编译）",
       "owner": "后续批次回归全构成口径（逐套件 stdout log＋gtest XML 随批入库）；小清理批次可继续以验收复现替代采信但须如实验记"
+    },
+    {
+      "id": "F-543",
+      "source": "UI-T68 会话第 3 项（宿主策略端口装配）开工前登记库核对发现（2026-10-07）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "文档面登记号漂移：UI-T67 时代起批次文档（契约/留痕 README/DTB §2.11 行/ui.md §13 行/版本头栈/tour 代码注释与断言名串）沿『F-524』称呼宿主策略端口缺口，而登记库 F-524＝ui-t64 门禁基线双重编码损坏（2026-10-05 先登）；策略端口缺口的登记号实为 F-536（2026-10-06 合入段按序取号）——文档面与登记库指针失同步",
+      "owner": "治理批次（文档面更正随本条同批落地：UI-T67/UI-T68 契约＋两批 README＋DTB/ui.md 行——T64 行内两处 F-524 为正确引用保留）；UiPlugin.cpp 内两处注释/断言名串『(F-524)』随 F-536 宿主装配批次实施时一并更正（改动即证据串漂移，避免本批单独触代码）"
     }
   ]
 }

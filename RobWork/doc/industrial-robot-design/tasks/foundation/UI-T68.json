@@ -45,7 +45,7 @@
   "verify": [
     "受影响目标零错误构建（集成 Release：sdurws_ird_ui_plugin＋sdurws_ird_studio——UiPlugin.cpp 仅此两目标编译，CMake 实证；测试目标不触该 TU）",
     "独立冒烟：全树 vcpkg+Qt 配置＋构建零 error；ctest——ui_test 238/239（1 失败＝F-540 基线既有，本批零触碰白名单/测试文件）＋ui_contract/ui_gui 全绿＋requirements 单元冒烟同口径如实登记",
-    "真机双巡检：requirements-tour TOUR_PASS（exit=0——step2 tree-child=1＋7.5 三断言＋panel-visible）＋modeling-tour MTOUR_PASS（回归——F-524 gap 断言保持）；driver-verdict 双档入库",
+    "真机双巡检：requirements-tour TOUR_PASS（exit=0——step2 tree-child=1＋7.5 三断言＋panel-visible）＋modeling-tour MTOUR_PASS（回归——F-536〔＝原稿 F-524 笔误，2026-10-07 更正——F-543 传证〕 gap 断言保持）；driver-verdict 双档入库",
     "截图证据唯一性：七帧 hostWin PNG 逐字节异哈希（E-4 闭环——ui-t67 五帧同哈希静窗的对偶面闭合）；tour-4b 由 484B 空条转 120KB 真实渲染",
     "ird_gates 零命中 exit 0（引擎自测 9 项符合预期）；validate-docs/validate-task PASS；集成相邻套件 ui_contract/ui_gui/requirements_gui 实跑（ui_test 同 F-540 口径）；留痕 traceability/builds/ui-t68/"
   ],
