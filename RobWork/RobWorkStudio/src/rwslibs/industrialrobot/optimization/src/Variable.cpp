@@ -705,7 +705,15 @@ std::vector<VariableDefinition> OptimizationVariableProvider::definitionsFor(
 std::vector<VariableDiffEntry> OptimizationVariableProvider::diffCandidatePatch(
     const CandidatePatch& a, const CandidatePatch& b) const
 {
-    return diffCandidatePatch(a, b);
+    // ★ 必须写**命名空间限定名** optimization::diffCandidatePatch（I-OPT-10
+    //   自由函数实现，本文件上方"补丁差异"节）：若写非限定名 diffCandidatePatch，
+    //   C++ 非限定名字查找从最内层作用域向外——成员函数自身在类作用域先于
+    //   命名空间作用域命中，调用即成员无限自递归（首轮验收 B-1 缺陷：任何
+    //   接口调用即栈溢出崩溃，MSVC C4717 编译期告警；27 个用例全走自由函数
+    //   漏过该路径）。接口实现＝自由函数的薄转发：经接口（§12.2
+    //   IOptimizationVariableProvider）与直接调自由函数两条路径的输出必须
+    //   逐字段一致，该一致性由 contract_test 接口路径用例钉扎。
+    return optimization::diffCandidatePatch(a, b);
 }
 
 }  // namespace sdurws::ird::optimization
