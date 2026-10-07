@@ -5005,7 +5005,7 @@
       "status": "fixed",
       "registeredAt": "2026-10-04",
       "title": "完整 RobWorkStudio 宿主人工验收证据缺失（宿主审核 P1）：既有测试证明模块/Widget/桥接正确，未证明真实宿主中『启动→新建项目→开需求 Dock→增工位→改位置→三维拾取→捕获 TCP→应用草稿→修订推进→关闭→三维标记/选择/属性全清理』十步人工链可操作。既有自动化覆盖面（SessionDetachedResetsPanel／PluginModuleT03BTest onSessionDetached／HostIntegrationGuiTest ProjectCloseTeardown 检查器半区）不替代人工验收；启动面证据＝所有者运行实例证实 2026-10-04 18:19 链接的 exe 可正常启动（含建模中文化批次）；本批 F-494 修复的重链因运行实例锁定 exe（LNK1104）待关闭宿主后执行",
-      "owner": "所有者（人工验收须人执行；建议按审核原文阶段 0 验收标准逐项留痕 traceability/acceptance/）；【2026-10-06 翻转】取证通道建成＝UI-T67（modeling-tour 冒烟面——20 断言 MTOUR_PASS 合入 653e8d12；应用→修订取证链在 F-536 已知部署缺口下以 精确拒绝断言承载），fixedBy=UI-T67"
+      "owner": "所有者（人工验收须人执行；建议按审核原文阶段 0 验收标准逐项留痕 traceability/acceptance/）；【2026-10-06 翻转】取证通道建成＝UI-T67（modeling-tour 冒烟面——20 断言 MTOUR_PASS 合入 653e8d12；应用→修订取证链在 F-536 已知部署缺口下以 精确拒绝断言承载），fixedBy=UI-T67；【2026-10-07 进展】主链自动化取证完备＝UI-T73+UI-T74（mtour step5 committed=true——十步人工链的「应用草稿→修订推进」段已在真实宿主自动化走通）；人工验收执行仍归所有者，本条保持 open"
     },
     {
       "id": "F-497",
@@ -5316,10 +5316,10 @@
       "id": "F-536",
       "source": "UI-T67 建模域 tour 真机取证捕获（2026-10-06；acc/ui-t67/1@a67a695f 验收 step5 亲证复现）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-06",
       "title": "宿主装配 policyProvider=nullptr（UiPlugin.cpp C-10 诚实基线——『policyProvider＝未装载』）使建模 draft.apply 恒被 ④策略端口未装配（装配缺陷） 拒绝——应用草稿主链在真实宿主部署不可用＝F-496 长期缺证据的根因面",
-      "owner": "宿主装配批次（策略装载面接线——或所有者裁决降级 ④ 检查为警告轨）。修复后 tour step5 断言翻转为 committed；【2026-10-07 UI-T68 会话实现段穷尽核查附录】三路修复前提全部上游未决：①真实策略装载源需工程内 EngineeringPolicySet 对象生命周期（project/workflow 域——对象创建/导入/挂接零实现，workflow 单元并行批次实施中不触碰）；②缺省策略集工厂被 P-POL-2/O-10 冻结口径挡住（PolicySet.hpp 冻结原文『唯一冻结默认——其余阈值不在此发明数值』『DefaultTemplate 数值待 P-POL-2 裁决——裁决前不产生』——仅 4π 行程上限有冻结默认）；③④降级警告轨＝MDL-06④ REQUIREMENTS 语义变更。裁决项登记＝DTB §4.2 O-46；另：UI-T67 时代文档沿旧号 F-524 称呼本缺口（登记库 F-524＝ui-t64 门禁基线编码损坏）——更正传证＝F-543；【2026-10-07 裁决＋落地进展】O-46 出路②-scope 落地＝UI-T73（policy SystemDefaultPolicy——附录 D 唯一冻结默认 4π 的 ④端口缺省源＋宿主装配接线）：④「策略端口未装配（装配缺陷）」拒绝面消除（mtour step5 实证 rej=hard-assert-failed——拒绝面移出行程策略层）；**本条保持 open**——行程相关应用主干的下一层墙＝F-546（首应用名解析不可达，与策略源无关），F-536 的「主链可用」目标以 F-546 修复为完成口径；mtour step5 断言为诚实中间态（翻转点内建）"
+      "owner": "宿主装配批次（策略装载面接线——或所有者裁决降级 ④ 检查为警告轨）。修复后 tour step5 断言翻转为 committed；【2026-10-07 UI-T68 会话实现段穷尽核查附录】三路修复前提全部上游未决：①真实策略装载源需工程内 EngineeringPolicySet 对象生命周期（project/workflow 域——对象创建/导入/挂接零实现，workflow 单元并行批次实施中不触碰）；②缺省策略集工厂被 P-POL-2/O-10 冻结口径挡住（PolicySet.hpp 冻结原文『唯一冻结默认——其余阈值不在此发明数值』『DefaultTemplate 数值待 P-POL-2 裁决——裁决前不产生』——仅 4π 行程上限有冻结默认）；③④降级警告轨＝MDL-06④ REQUIREMENTS 语义变更。裁决项登记＝DTB §4.2 O-46；另：UI-T67 时代文档沿旧号 F-524 称呼本缺口（登记库 F-524＝ui-t64 门禁基线编码损坏）——更正传证＝F-543；【2026-10-07 裁决＋落地进展】O-46 出路②-scope 落地＝UI-T73（policy SystemDefaultPolicy——附录 D 唯一冻结默认 4π 的 ④端口缺省源＋宿主装配接线）：④「策略端口未装配（装配缺陷）」拒绝面消除（mtour step5 实证 rej=hard-assert-failed——拒绝面移出行程策略层）；**本条保持 open**——行程相关应用主干的下一层墙＝F-546（首应用名解析不可达，与策略源无关），F-536 的「主链可用」目标以 F-546 修复为完成口径；mtour step5 断言为诚实中间态（翻转点内建）；【2026-10-07 翻转】主链可用达成＝UI-T73（④端口缺省策略源——O-46 出路②）＋UI-T74（草稿名感知＋attachCompilePort 双编译注入）链式修复：mtour step5 committed=true rej=[] 三轮独立实证（行程校验按 4π 冻结默认真实执行），fixedBy=UI-T73+UI-T74（合入 f73334b8）；「策略对象生命周期」后续面独立演进不阻本条"
     },
     {
       "id": "F-537",
@@ -5406,10 +5406,37 @@
       "id": "F-546",
       "source": "UI-T73 实现段真机取证（2026-10-07——O-46 出路②落地后 mtour step5 拒绝面从 ④策略端口未装配 移为 hard-assert-failed，dev 定性＋代码链钉扎）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-07",
       "title": "④行程校验经 IPolicyNameContext 需运行时名解析（JointLimits.cpp tryRuntimeName——ARC-04 不猜测），而名称映射真值端口绑定于发布拍（HostRuntimeNameMapPort 空映射二态——WP-24-T08 呈现装配）——全新项目首次行程相关 draft.apply 在发布前必然 CllNameUnresolved→EvaluationFailed→RejectedHardAssert：行程相关应用主干的首应用在真实宿主结构性地不可达（与策略源无关——O-46 出路②落地后的下一层墙；修订后再应用因对象身份跨修订稳定可解析，行为不一致面）。二连应用探针（requirements 拍 9）证明首修订后基线演进可走通",
-      "owner": "宿主装配/modeling 批次所有者裁决（三选一：①名称上下文候选感知——prepare 期对候选工作集对象可解析〔装配/域语义增量〕；②行程校验时点后移至编译/发布后〔断言序变更——modeling 卡裁决〕；③首应用豁免语义＋诚实诊断〔REQ 语义裁决〕）。修复后 mtour step5 断言翻转为 committed（翻转点已内建）"
+      "owner": "宿主装配/modeling 批次所有者裁决（三选一：①名称上下文候选感知——prepare 期对候选工作集对象可解析〔装配/域语义增量〕；②行程校验时点后移至编译/发布后〔断言序变更——modeling 卡裁决〕；③首应用豁免语义＋诚实诊断〔REQ 语义裁决〕）。修复后 mtour step5 断言翻转为 committed（翻转点已内建）；【2026-10-07 翻转】出路①落地＝UI-T74（HostDraftAwareNameContext 草稿名感知装饰上下文——发布真值第一优先＋tryDraftObjectName 草稿名源回缝；mtour step5 committed=true rej=[] 三轮独立实证＋M-A 做红第三次复现），fixedBy=UI-T74 合入 f73334b8"
+    },
+    {
+      "id": "F-547",
+      "source": "acc/ui-t74/1@433453e0 验收建议级 S-1（UI-T74 attempt 1）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "HostDraftAwareNameContext::Deps.runtime 空指针契约语义未声明（装配缺陷形态下 tryRuntimeName 解引用即崩——非空为装配纪律但注释未显式声明 fail-fast 口径）",
+      "owner": "后续触碰 ui/plugin 装配面批次顺手补注（一行契约注）"
+    },
+    {
+      "id": "F-548",
+      "source": "acc/ui-t74/1@433453e0 验收建议级 S-2（UI-T74 attempt 1）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "tryDraftObjectName 逐表线性扫描 O(n²)（对象数×表行）——草稿规模千级关节时呈平方；现网六轴模板无感，规模阈值出现时改散列索引",
+      "owner": "规模触发时批次（散列索引重构；触发前留查）"
+    },
+    {
+      "id": "F-549",
+      "source": "acc/ui-t74/2@2e2d0e40 验收建议级 S-4（UI-T74 attempt 2）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "requirements-tour.ps1 驱动头注「五帧截图」与实际七帧不符（UI-T68 E-4 扩增两帧后头注未随更——驱动谱系复制遗留）",
+      "owner": "下一批触碰巡检驱动时顺手更正（本批 ui-t74 驱动头注已同步更正为七帧）"
     }
   ]
 }

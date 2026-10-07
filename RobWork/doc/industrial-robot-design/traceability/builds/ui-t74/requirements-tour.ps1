@@ -1,6 +1,6 @@
 # 需求界面全功能遍历驱动（requirements-tour 通道——IRD_UI_PLUGIN_SMOKE=
 # requirements-tour）：新建项目→需求面板三页全操作→校验→应用→撤销重做，
-# 逐项断言＋五帧截图落盘 smoke-tour/；控制台报告随留痕归档。
+# 逐项断言＋七帧截图落盘 smoke-tour/（UI-T68 E-4 扩增后口径——F-549 头注更正）；控制台报告随留痕归档。
 $ErrorActionPreference = 'Continue'
 $ROOT = 'D:\10_Source_Repos\21_robot\RobWork'
 $BLD = "$ROOT\build"

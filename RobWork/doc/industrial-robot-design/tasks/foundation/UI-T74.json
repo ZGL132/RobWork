@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "草稿名感知名称上下文＋双编译端口注入（F-546 出路①——所有者裁决；建模 apply 首次在真实宿主走通）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T73"
   ],
@@ -73,5 +73,5 @@
     "O-10"
   ],
   "branch": "ui-t74",
-  "note": "F-546 出路①落地批次（所有者 2026-10-07 AskUserQuestion 裁决①草稿名感知）。链路三层依次剥净（UI-T73 策略墙→本批名解析墙＋双编译端口缺口）——建模 apply 首次在真实宿主走通（committed=true），F-496「应用主链可用」目标达成。"
+  "note": "【合入登记注（2026-10-07，PIPE §4.7 收尾——所有者 F-546 裁决①『草稿名感知』）】实施 0bfb17eb＋返工 488fed4a（B-1~B-3）＋fa6b4325（B-4）合入 redesign-main（acc/ui-t74/3@2b5087e1 attempt 3 全项 pass 按 SHA 先并——主线同步 0c8ca109 后一合并承载 f73334b8）。**里程碑：建模 draft.apply 首次在真实宿主走通（committed=true rej=[] 三轮独立实证）＝F-496 主链可用达成**。链路三层：UI-T73 策略缺省源→本批名解析墙（出路①）→双编译端口缺口（§5.3.6 装配通道）。F-546 fixedBy／F-536 fixedBy＝UI-T73+UI-T74；F-496 进展注（人工验收仍归所有者）；S-1/S-2/S-4 转登 F-547/F-548/F-549。教训登记：巡检驱动误用覆写事故（三案）；版本栈登记「替换头行」毁账（B-4——栈式账本必须插行不得替换）。分支基点＝redesign-main@2f74ef03。"
 }
