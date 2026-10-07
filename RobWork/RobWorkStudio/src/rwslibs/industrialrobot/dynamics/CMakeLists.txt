@@ -74,11 +74,15 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 # T02 源码集＝src/DiagCodes.cpp（DYN-* 15 码登记表——CodeDescriptor 描述
 # 符清单＋装配注册函数的唯一实现翻译单元；逐码落值依据见该文件逐码注释）。
-# RNEA/正动力学/统计等实现翻译单元随 WP-17-T03~T08 按卡 §3.2 布局表
-# 增列（InverseDynamics/ForwardDynamics/SeriesBuilder/Envelope/…——本
-# 任务不预建占位实现，NFR-MNT-04 不建无边界价值包装器）。
+# WP-17-T03 增列 src/InverseDynamics.cpp（RNEA 逆动力学评估器实现——卡
+# §3.2 布局表 InverseDynamics.hpp 行：模型提取/末端体合成/几何与力学双
+# 递推/摩擦叠加/样本行组装；自持 Vec3/Mat3 逐元素算术——零 rw 外联符号，
+# 冒烟 header-only 纪律同 runtime RT-T03 先例）。正动力学/统计等实现
+# 翻译单元随 WP-17-T04~T08 按卡 §3.2 布局表增列（ForwardDynamics/
+# SeriesBuilder/Envelope/…——不预建占位实现，NFR-MNT-04）。
 add_library(sdurws_ird_dynamics STATIC
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/InverseDynamics.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：dynamics 公共头使用 C++17 设施（inline constexpr 变量
@@ -250,7 +254,16 @@ enable_testing()
 add_executable(sdurws_ird_dynamics_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/RneaTest.cpp)               # WP-17-T03：RNEA 评估器用例组（DynRnea——
+                                     #   二连杆解析算例/静态重力矩含倒挂 AT-37/
+                                     #   分项恒等式与 M·q̈ 科氏解析对照/摩擦
+                                     #   sgn₀ 约定与 MDL-16 缺失降级/负载事件
+                                     #   变体/外力恒零/fail-fast 前置/非有限
+                                     #   标记/DYN-04 传动无关边界/取消语义）；
+                                     #   夹具 test/TwoLinkFixture.hpp（自持
+                                     #   CanonicalModel 直构——R-2 不跨单元
+                                     #   include 他单元测试私有头）
 
 target_compile_features(sdurws_ird_dynamics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_test PROPERTIES
@@ -331,7 +344,12 @@ ird_add_gtest(sdurws_ird_dynamics_test)
 add_executable(sdurws_ird_dynamics_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/DynamicsPluginAssemblyContractTest.cpp)
+    contract_test/DynamicsPluginAssemblyContractTest.cpp
+    contract_test/RneaBoundaryContractTest.cpp)  # WP-17-T03：RNEA 面单元边界
+                                     #   契约（DynRneaBoundary——DYN-04 关节侧
+                                     #   零传动映射消费符号词表扫描〔V-28/V-31
+                                     #   静态精神〕＋产品面 include 白名单
+                                     #   〔R-1/R-2——五登记边＋本单元〕）
 
 target_compile_features(sdurws_ird_dynamics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_contract_test PROPERTIES
