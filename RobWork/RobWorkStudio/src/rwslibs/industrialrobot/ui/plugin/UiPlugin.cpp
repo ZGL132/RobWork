@@ -5489,13 +5489,35 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
         }
         if (modelToggle != nullptr) { modelToggle->trigger(); }
         settleEvents(300);
+        // F-541（UI-T72）：取证前提加固——E-4 的 modeling 通道同款（acc/
+        // ui-t68/1 G-C＋acc/ui-t71/2 S-B 双实证：需求 Dock 盖压建模面板，
+        // 六帧逐字节同哈希静窗）。trigger 只翻动作态，页签叠放形态下面板
+        // 可存在而不可见——show＋raise 强制升至所在页签组前景，并以可见性
+        // 断言把「面板不可见」从静默态转为显式红（截图取证以可见层为前提）。
+        if (m_modelingDock != nullptr) {
+            m_modelingDock->show();
+            m_modelingDock->raise();
+            settleEvents(200);
+        }
         QWidget* panel =
             m_modelingDock != nullptr ? m_modelingDock->widget() : nullptr;
         ok(panel != nullptr, "step1 modeling-panel-present");
+        // 可见性断言（E-4 配对——存在≠可见；页签叠放/零宽挤压下的静窗
+        // 截图零信息量，此处显式红可阻断该形态溜过取证通道）。
+        ok(panel != nullptr && panel->isVisible()
+               && !panel->visibleRegion().isEmpty(),
+           "step1 modeling-panel-visible (取证前提——非静窗)");
         if (panel == nullptr) {
             std::cout << "[ird-ui-smoke-mtour] FAILED" << std::endl;
             QCoreApplication::exit(1);
             return;
+        }
+        // 宿主窗体最大化（默认尺寸下多 Dock 挤压——central-guard「中央
+        // 18 px<320 px」实录——把面板压成静窗；最大化让 Dock 布局拿到物
+        // 理空间后再取屏证）。
+        if (hostWin != nullptr) {
+            hostWin->showMaximized();
+            settleEvents(400);
         }
         snapPng(hostWin, "mtour-1-panel.png");
 
