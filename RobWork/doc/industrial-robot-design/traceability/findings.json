@@ -5361,10 +5361,10 @@
       "id": "F-541",
       "source": "acc/ui-t68/1@4c6d2b2b 验收建议级 G-C（UI-T68 独立子会话对抗式验收 2026-10-07）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-07",
       "title": "ui-t68 归档 modeling-tour 六帧逐字节同哈希静窗（需求 Dock 盖压建模面板），较 ui-t67 基线（5 异值）退化——E-4 取证前提加固（最大化＋show/raise＋panel-visible）只落 requirements 通道，建模通道无同构防护；验收同代码复跑得 5 异值＝实施会话布局态偶发，非代码回归",
-      "owner": "后续触碰建模通道批次（E-4 同构加固——最大化＋建模 Dock show/raise＋panel-visible 断言；复跑多轮核实布局态稳定性）"
+      "owner": "后续触碰建模通道批次（E-4 同构加固——最大化＋建模 Dock show/raise＋panel-visible 断言；复跑多轮核实布局态稳定性）；【2026-10-07 翻转】E-4 同款加固落地＝UI-T72（maybeRunModelingTour 拍 1 建模 Dock show/raise＋panel-visible 断言＋窗体最大化），fixedBy=UI-T72 合入 09a19397。六帧 6/6 全同→5 异值；唯一相同对 mtour-4==mtour-5＝F-536 已知缺口的功能性视觉签名（apply 被拒 committed=false→无状态变化——acc/ui-t72/1 五点独立核验），F-536 修复后自然分化"
     },
     {
       "id": "F-542",
@@ -5373,7 +5373,7 @@
       "status": "open",
       "registeredAt": "2026-10-07",
       "title": "builds/ui-t68/ 逐套件原始 log/XML 未入库（README/smoke-build.log 以口径行承载）——弱于 ui-t65/67 构成；实质面由验收全量独立复现替代采信（十套件未在本批实跑部分＝diff 不触其编译面，CMake 实证 UiPlugin.cpp 仅 plugin/studio 两目标编译）",
-      "owner": "后续批次回归全构成口径（逐套件 stdout log＋gtest XML 随批入库）；小清理批次可继续以验收复现替代采信但须如实验记；【2026-10-07 并注】acc/ui-t71/1 验收建议级 S-2 同口径（UI-T71 留痕逐套件 log/XML 未入库——本条并案留查，不另立号）"
+      "owner": "后续批次回归全构成口径（逐套件 stdout log＋gtest XML 随批入库）；小清理批次可继续以验收复现替代采信但须如实验记；【2026-10-07 并注】acc/ui-t71/1 验收建议级 S-2 同口径（UI-T71 留痕逐套件 log/XML 未入库——本条并案留查，不另立号）；【2026-10-07 进展】粒度恢复示范件成立＝UI-T72（builds/ui-t72/logs/ 逐套件原始 stdout 六件随批入库＋留痕 README 构成节）；后续批次沿用即不复发，本条保持 open 至连续两批构成达标后闭合"
     },
     {
       "id": "F-543",
@@ -5392,6 +5392,15 @@
       "registeredAt": "2026-10-07",
       "title": "UI-T71 实施段对 Qt 行为的误判（「QTreeWidgetItem 越树 columnCount 的 setText 被静默丢弃」——实为逐项值存于条目自身不受列数上限）随批写入五处登记面（契约/DTB §2.11 行/ui.md §13 行/实施提交正文/产品代码注释）被验收变异＋运行时探针证伪——返工前任何后续批次引用 UI-T71 行均会继承错误 Qt 行为模型；B-1 返工（同批更正）与 S-1 清扫为同一改动面",
       "owner": "UI-T71 返工提交一次性更正（attempt 2 全量重验核 五处更正到位）；教训入 UI-T71 契约 knownPitfalls③（审计断言以运行时条目值探针为准，勿以树列数推断值丢失）；【2026-10-07 翻转】B-1 返工（ui-t71@df3689a2）五面更正到位＋attempt 2 全量重验 pass（三变异三红三绿）；S-A 残留（ui.md:8 版本头一行未标记旧表述）随本合入段治理提交清扫，fixedBy=UI-T71 合入段"
+    },
+    {
+      "id": "F-545",
+      "source": "acc/ui-t72/1@fbcaf0d1 验收建议级（UI-T72 独立子会话对抗式验收 2026-10-07——M-1 变异实证）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-07",
+      "title": "UI-T72 契约 acceptance[0] 括注做红配方「移除 show/raise 即红」失准——modelToggle->trigger()（:5490）前置已翻起 Dock，show/raise 在该点位冗余；实测做红配方＝show/raise 后注入 hide() 复现静窗态（M-2 实证断言本体守护力不受影响）。requirements 通道 E-4 侧（:4796→:4804）存在同构前置序列，如被引用需一并复核",
+      "owner": "随 UI-T72 合入段治理提交更正契约配方表述（已同车）；E-4 侧同构序列复核归后续触碰 requirements-tour 批次"
     }
   ]
 }

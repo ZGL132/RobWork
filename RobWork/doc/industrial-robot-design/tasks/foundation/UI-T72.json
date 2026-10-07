@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "modeling 通道取证加固（F-541）：maybeRunModelingTour 拍 1 最大化＋建模 Dock show/raise＋panel-visible 断言＋F-542 逐套件留痕粒度恢复",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T71"
   ],
@@ -44,7 +44,7 @@
     "六套件回归全绿＋ird_gates 零命中＋validate 双 PASS；留痕 traceability/builds/ui-t72/"
   ],
   "acceptance": [
-    "加固面：panel-visible 断言在场（做红能力＝移除 show/raise 即红——E-4 同构）＋六帧哈希从 6/6 全同转 5 异值",
+    "加固面：panel-visible 断言在场（做红能力＝show/raise 后注入 hide() 复现静窗态即红——M-2 实证；注意 trigger 前置已翻起 Dock，单纯移除 show/raise 不红——acc/ui-t72/1 F-545 配方更正）＋六帧哈希从 6/6 全同转 5 异值",
     "mtour-4==mtour-5 残留同哈希的功能性解释核验：step5 apply 因 F-536 已知装配缺口被拒（committed=false）→无状态变化→无视觉差异——非静窗退化（attempt 2 S-B 同口径）；F-536 修复后该帧自然分化",
     "F-542 粒度面：logs/ 六件逐套件 log 与套件实跑一一对应",
     "回归门槛：双巡检＋六套件＋ird_gates＋validate 双 PASS；留痕全集落位"
@@ -56,5 +56,5 @@
     "mtour 变异面板后 sdurws_ird_studio 必须重建（F-518 家族教训——宿主 exe 静态链接插件）"
   ],
   "branch": "ui-t72",
-  "note": "F-541 收口批次（suggestion 级取证前提缺口）：实施段一提交；独立子会话对抗式验收后按 PIPE §4.7 合入。F-542 粒度示范随批。"
+  "note": "【合入登记注（2026-10-07，PIPE §4.7 收尾——所有者按序实施指令）】e00e936f 合入 redesign-main（acc/ui-t72/1@fbcaf0d1 attempt 1 全项 pass 按 SHA 先并——acc 基于实施头一合并承载 09a19397）。做红 M-2/M-3 双向实证；F-545 建议级随本治理提交转登＋契约配方更正（trigger 前置序列教训——E-4 侧同构序列复核注留档）。F-541 fixedBy=UI-T72；F-542 进展注（示范件成立，保持 open 至连续两批构成达标）。分支基点＝redesign-main@988336be。"
 }
