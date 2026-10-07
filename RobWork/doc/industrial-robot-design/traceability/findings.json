@@ -5352,10 +5352,10 @@
       "id": "F-540",
       "source": "UI-T68 清理批次独立冒烟 ui_test 实跑发现（2026-10-07——git 考古实证引入点＝3fdafa36，先于本批在 redesign-main 基线）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-07",
       "title": "WP-22-T02 返工（3fdafa36 门禁机器面同步回填）重写 ird_gates_whitelist.cmake R-3 例外登记注释时，把元测试钉扎短语「ui 单元界面目标」由单行拆为 339/340 两行（「…WP-10-T02 生效）：ui 单元⏎界面目标（Widgets…」）——ui/test/BuildRedLineTest QtLinkageLiteralAndExceptionText_UI_BUILD 的 whitelist.find(\"ui 单元界面目标\") 单行匹配恒失（whitelist.find(\"WP-10-T02 生效\") 半区仍在）＝ui_test 冒烟 238/239、集成 253/254 在 redesign-main 当前基线恒红",
-      "owner": "门禁机器面/WP-22 批次所有者（二选一：①白名单注释短语并回单行——恢复被钉扎登记文本原状；②元测试改空白归一化后 find——注释为散文、换行不属登记语义。修复落定前各批次冒烟 ui_test 全绿口径须如实注明本条）"
+      "owner": "门禁机器面/WP-22 批次所有者（二选一：①白名单注释短语并回单行——恢复被钉扎登记文本原状；②元测试改空白归一化后 find——注释为散文、换行不属登记语义。修复落定前各批次冒烟 ui_test 全绿口径须如实注明本条）；【2026-10-07 翻转】出路①落地＝白名单 R-3 登记注释短语「ui 单元界面目标」并回单行（恢复被钉扎登记文本原状——WP-22-T02 返工拆行的更正；内容零改动仅换行重排＋更正注两行），fixedBy=F-540 治理提交（ui-t70 分支）；验证＝集成 ui_test 254/254＋冒烟 239/239 全绿（拆行前基线口径恢复）＋ird_gates 零命中 exit 0；留痕 traceability/builds/ui-t70/"
     },
     {
       "id": "F-541",
