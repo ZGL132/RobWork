@@ -1,16 +1,18 @@
 /**
  * @file   Lifecycle.cpp
- * @brief  新建项目三步向导编排的实现（O4 子集）——输入校验、实时摘要
- *         组装、词表规范化映射与创建编排（PM-01；units/workflow.md §7.1）。
+ * @brief  生命周期入口流程编排的实现——新建项目三步向导（PM-01）＋打开
+ *         协议（PM-02 五步的 workflow 面）＋最近项目管理（PM-10）＋无
+ *         项目首页数据面（PM-10）。
  *
  * 设计依据见公共头 Lifecycle.hpp 文件头（本实现文件只补充逐段实现口径；
- * 段落注释对应头注释的"编排序 1~5"——两处同步维护，改逻辑必改两处）。
+ * 段落注释对应头注释的编排序——两处同步维护，改逻辑必改两处）。
  *
  * 实现纪律（与本单元既有实现同源）：
  *   - 零 Qt（R-3/NFR-MNT-01——本翻译单元在计算库源码集内）；
  *   - 零 modeling/io/业务域头（R-1——模板/导入只经 IDomainInitSubmitter
- *     端口触达；文件系统清理用标准库）；
- *   - 词表与文案键构造集中（NFR-MNT-03——本文件是向导词表的唯一映射点）；
+ *     端口触达、打开协议只经 project 公共头触达；文件系统操作用标准库）；
+ *   - 词表与文案键构造集中（NFR-MNT-03——本文件是生命周期编排词表的
+ *     唯一映射点）；
  *   - 错误二分（§10.3）：调用方错误 WorkflowError fail-fast；环境/对端
  *     错误值轨道呈现（failure 三字段——UX-03），零新增稳定码（D-WF-7）。
  */
@@ -18,6 +20,7 @@
 #include <sdurws/ird/workflow/Lifecycle.hpp>
 
 #include <algorithm>
+#include <cctype>
 #include <exception>
 #include <system_error>
 #include <utility>
@@ -339,6 +342,366 @@ NewProjectOutcome NewProjectWizardFlow::commit(const NewProjectInputs& inputs,
     }
     outcome.failure = std::move(failure);
     return outcome;  // created=false、store 空——零半成品（目录已删或残留已呈现）
+}
+
+// =====================================================================
+// 打开协议编排（PM-02 五步——§7.2；WP-22-T05 落位段）
+// =====================================================================
+
+namespace {
+
+/// 路径词面（UX-03 context/file 半区的人读形态——u8string 无损 UTF-8；
+/// 同 pathSummaryText：不做规范化/加引号，呈现修饰归 ui）。
+std::string openPathText(const std::filesystem::path& p)
+{
+    return p.empty() ? std::string() : p.u8string();
+}
+
+/**
+ * @brief 从对端 detail 提取失败定位文件（PM-02"失败显示具体文件"）。
+ *
+ * project 侧打开失败 detail 是机器可读键值串（"project/<域>: <原因>
+ * key=value ..."），定位键为 "path=<路径>" 或 "file=<路径>"。提取规则：
+ * 取**最后一次**出现的定位键（失败链的最后落点最具体），值域到串尾或
+ * 下一个 " <词>=" 键边界为止。这是**尽力呈现**而非协议解析：找不到定位
+ * 键返回空串（调用方回退目标路径词面——file 恒非空的呈现承诺不变）；
+ * 含空格路径仅在下一条键存在时可能被截断（cause 全文始终透传兜底）。
+ *
+ * @param detail [in] 对端 detail 原文（StoreError::what()）
+ * @return 定位文件串（空＝detail 无定位键）
+ */
+std::string extractDetailLocation(const std::string& detail)
+{
+    // 定位键扫描：两个候选键取更靠后者（最后落点最具体——如 manifest
+    // 解析失败的 "path=<清单文件> detail=..." 链尾）。
+    const std::size_t pathKey = detail.rfind(" path=");
+    const std::size_t fileKey = detail.rfind(" file=");
+    std::size_t keyPos = std::string::npos;
+    if (pathKey != std::string::npos
+        && (fileKey == std::string::npos || pathKey > fileKey)) {
+        keyPos = pathKey;
+    } else {
+        keyPos = fileKey;  // 两键都缺时为 npos——下方统一短路返回空
+    }
+    if (keyPos == std::string::npos) {
+        return {};
+    }
+    const std::size_t valueStart = keyPos + 6;  // 跳过 " path="/" file="（6 字节）
+
+    // 值域终点：其后第一个 " <词>=" 键边界（键词为字母/数字/连字符——
+    // project 侧键词表 path/file/detail/revision/schemaVersion/...）。
+    std::size_t valueEnd = detail.size();
+    for (std::size_t i = valueStart + 1; i < detail.size(); ++i) {
+        if (detail[i] != ' ') {
+            continue;  // 键边界必以空格起始——非空格继续扫
+        }
+        std::size_t j = i + 1;
+        while (j < detail.size()
+               && (std::isalnum(static_cast<unsigned char>(detail[j])) != 0
+                   || detail[j] == '-')) {
+            ++j;
+        }
+        // "空格＋至少一个键词字符＋'='"＝下一条键的起点——值域在此截断。
+        if (j > i + 1 && j < detail.size() && detail[j] == '=') {
+            valueEnd = i;
+            break;
+        }
+    }
+    return detail.substr(valueStart, valueEnd - valueStart);
+}
+
+/**
+ * @brief 按对端稳定码分派建议动作（UX-03 半区三——switch 封闭集词表）。
+ *
+ * 建议文本是编排器直产的呈现半区（人读中文——同 NewProjectFailure 先例；
+ * 键化文案归 diagnostics/ui 文案体系，本面为编排器组装的即时呈现材料）。
+ * 分派依据＝StoreErrorCode（对端稳定码——枚举封闭集，新增码＝对端单元卡
+ * 增量修订时此处同步，编译期 switch 遗漏即告警）。
+ */
+std::string recommendActionFor(project::StoreErrorCode code)
+{
+    switch (code) {
+    case project::StoreErrorCode::NotAProject:
+        return "所选位置不是项目目录：请选择 .rwdesign 项目目录，"
+               "或用新建向导创建项目";
+    case project::StoreErrorCode::FormatLegacy:
+        return "项目格式较旧：请使用升级工具迁移后再打开（本软件不自动升级）";
+    case project::StoreErrorCode::SchemaFuture:
+        return "项目由更新版本创建：请升级软件后再打开（升级指引见原因中的版本信息）";
+    case project::StoreErrorCode::StoreCorrupt:
+        return "项目数据损坏：请按失败文件定位检查磁盘与备份，必要时从备份恢复";
+    case project::StoreErrorCode::LockHeldByOther:
+        return "项目已被占用：可关闭对方实例后重试，或以只读方式打开查看";
+    case project::StoreErrorCode::MediaReadOnly:
+    case project::StoreErrorCode::AccessDenied:
+        return "请检查存储介质与访问权限后重试";
+    default:
+        // 其余码（写路径/命令/归档类）不在打开协议失败面——通用兜底指引。
+        return "请检查项目目录后重试";
+    }
+}
+
+}  // namespace
+
+OpenTargetKind classifyOpenTarget(const std::filesystem::path& path)
+{
+    // 空路径＝无目标（宿主应拦截取消态；此处按 Unknown 呈现面兜底——
+    // run 入口另有 fail-fast 前置，本纯函数不抛以保"分流判定"纯面）。
+    if (path.empty()) {
+        return OpenTargetKind::Unknown;
+    }
+
+    // 第一判定：实测目录（.rwdesign 目录形态——形态细检归 open ②步
+    // not-a-project，入口分流不复制对端规则——PA-1）。错误码版 is_directory
+    // 不抛：不可达（权限/竞态删除）→ false 落入词面判定。
+    std::error_code ec;
+    if (std::filesystem::is_directory(path, ec) && !ec) {
+        return OpenTargetKind::ProjectDirectory;
+    }
+
+    // 第二判定：扩展名词面（.rwpack——大小写不敏感；Windows 词面惯例，
+    // 与资源管理器双击语义一致）。包文件不要求实测存在（拖放/对话框
+    // 词面识别——不存在包的失败由导入通道呈现）。
+    std::string extension = path.extension().string();
+    std::transform(extension.begin(), extension.end(), extension.begin(),
+                   [](unsigned char c) {
+                       return static_cast<char>(std::tolower(c));
+                   });
+    if (extension == kPackageExtensionToken) {
+        return OpenTargetKind::PackageFile;
+    }
+
+    // 其余（普通文件/无扩展/其他扩展）→ 不可识别（失败呈现面）。
+    return OpenTargetKind::Unknown;
+}
+
+OpenProjectOutcome OpenProjectFlow::run(OpenSource source,
+                                        const std::filesystem::path& path,
+                                        core::IDomainEventBus* eventBus,
+                                        project::IDiagnosticsSink* diagnosticsSink)
+{
+    // ---- 第 1 段：前置校验（调用方契约违约 fail-fast）----
+    // 空路径＝宿主把"取消"漏传到了编排器（取消不是错误也不进编排——
+    // UX-03；对话框返回空路径应就地结束向导）。
+    if (path.empty()) {
+        throw WorkflowError(
+            "OpenProjectFlow::run: 空路径（取消应在宿主侧拦截，不得进入打开编排）");
+    }
+
+    OpenProjectOutcome outcome;
+    outcome.source = source;
+
+    // ---- 第 2 段：协议①入口分流（格式识别——§7.2 表①行 workflow 面）。
+    // 分流目标：目录→打开通道（第 3 段）；包→导入通道（WP-22-T07 落位，
+    // 本批登记分流零副作用）；不可识别→失败呈现。
+    const OpenTargetKind kind = classifyOpenTarget(path);
+    outcome.targetKind = kind;
+    if (kind == OpenTargetKind::Unknown) {
+        OpenProjectFailure failure;
+        failure.context = openPathText(path);
+        failure.file = openPathText(path);  // 具体文件＝目标本身（AT-20 观测点恒非空）
+        failure.cause =
+            "无法识别为 .rwdesign 项目目录或 .rwpack 包文件";
+        failure.recommendedAction =
+            "请选择 .rwdesign 项目目录或 .rwpack 包文件后重试";
+        outcome.failure = std::move(failure);
+        return outcome;  // opened=false——零副作用（未触达 store 侧）
+    }
+    if (kind == OpenTargetKind::PackageFile) {
+        // 分流登记返回：不解包、不建目录、不触碰任何盘面（包导入编排
+        // 归 WP-22-T07——本批三入口识别到位即验收面；failure 置空＝
+        // 分流不是错误，调用方按 targetKind 路由包导入向导）。
+        return outcome;
+    }
+
+    // ---- 第 3 段：协议②③⑤服务侧（ProjectStoreFactory::open——PRJ-T08）。
+    // 激活前失败不影响当前项目（§8.7）：open 完整构造候选上下文才返回，
+    // 任何失败路径不写当前项目；编排器签名不接收当前 store——"不动当前
+    // 项目"（AT-20）在此为结构性保证，测试以双项目事实复核。
+    project::OpenStoreRequest request;
+    request.path = path;
+    request.mode = project::OpenMode::Writable;  // 请求写权限；被持锁时
+                                                 // 服务侧降级只读（PM-07
+                                                 // 不阻塞等待）
+    request.eventBus = eventBus;
+    request.diagnostics = diagnosticsSink;
+    try {
+        project::OpenStoreResult result =
+            project::ProjectStoreFactory::open(request);
+
+        // ---- 第 5 段：成功（协议⑤激活材料移交——会话激活与门控 epoch
+        // 重建由调用方执行：store 交接即激活的编排面事实）。
+        outcome.opened = true;
+        outcome.readonly = !result.writable;  // PM-07 降级只读的如实登记
+        outcome.store = std::move(result.store);
+        if (outcome.store) {
+            outcome.projectId = outcome.store->projectId();
+            outcome.canonicalPath = outcome.store->canonicalPath();
+        }
+        outcome.recovery = std::move(result.recovery);
+        return outcome;
+    } catch (const project::StoreError& e) {
+        // ---- 第 4 段：失败转呈现（环境/对端错误——值轨道，UX-03 三字段；
+        // D-WF-7 零新增码：cause＝detail 原文透传含对端稳定码语义，码的
+        // 用户文案归 diagnostics 供文案链路）。
+        OpenProjectFailure failure;
+        failure.context = openPathText(path);
+        failure.cause = e.what();
+        // 具体文件＝detail 定位键提取（"path="/"file="）；无定位键（如
+        // 跨文件不一致类）回退目标路径——file 恒非空（AT-20 呈现承诺）。
+        failure.file = extractDetailLocation(e.what());
+        if (failure.file.empty()) {
+            failure.file = openPathText(path);
+        }
+        failure.recommendedAction = recommendActionFor(e.code());
+        outcome.failure = std::move(failure);
+        return outcome;  // opened=false——零副作用（服务侧已保证无半构造上下文）
+    } catch (const std::exception& e) {
+        // 非对端分类的标准异常（环境异常面）——同样值轨道呈现，不穿透
+        // 编排器（打开失败是用户流程事件，不是进程故障）。
+        OpenProjectFailure failure;
+        failure.context = openPathText(path);
+        failure.cause = e.what();
+        failure.file = openPathText(path);
+        failure.recommendedAction = "请检查项目目录后重试";
+        outcome.failure = std::move(failure);
+        return outcome;
+    }
+}
+
+// =====================================================================
+// 最近项目管理（PM-10——§7.8；容量/去重/失效标记/移除）
+// =====================================================================
+
+RecentProjectsService::RecentProjectsService(std::size_t maxEntries)
+    : m_maxEntries(maxEntries)
+{
+    // 零容量＝调用方契约违约（fail-fast——空列表服务无业务意义；
+    // PM-10 冻结容量 1×10，生产装配用缺省值）。
+    if (m_maxEntries == 0) {
+        throw WorkflowError(
+            "RecentProjectsService: 容量上限不得为 0（PM-10 冻结值为 10）");
+    }
+}
+
+std::vector<RecentProjectEntry> RecentProjectsService::list() const
+{
+    // 失效项保留（PM-10）：逐项实测位置可用性——"项目位置不可用"＝该
+    // 路径当前不是一个可进入的目录（不存在或被替换为普通文件）；这是
+    // 位置事实不是项目有效性事实（目录在但 project.json 损坏的判定归
+    // 打开协议②步——PA-1 不越权）。环境事实：同列表不同时点可不同。
+    std::vector<RecentProjectEntry> snapshot = m_entries;
+    std::error_code ec;
+    for (RecentProjectEntry& entry : snapshot) {
+        entry.locationAvailable =
+            std::filesystem::is_directory(entry.canonicalPath, ec) && !ec;
+    }
+    return snapshot;
+}
+
+void RecentProjectsService::record(const std::string& canonicalPath)
+{
+    // 前置：空路径记录无意义（调用方契约违约——打开成功必然产生非空
+    // canonicalPath；空值到达此处是装配缺陷，fail-fast）。
+    if (canonicalPath.empty()) {
+        throw WorkflowError("RecentProjectsService::record: 空路径");
+    }
+
+    // 去重键收敛（唯一规范化点——recentProjectKey：lexically_normal 词法
+    // 规范化，不触盘、确定性；大小写收敛由上游规范路径来源保证）。
+    const std::filesystem::path key = recentProjectKey(canonicalPath);
+
+    // 去重后置顶（LRU）：已存在→原位摘除再插首；不存在→插首。
+    // 线性扫描：容量≤10（PM-10 冻结），扫描成本可忽略——不做哈希索引
+    // （KISS：小容量线性序即最简确定性实现）。
+    m_entries.erase(
+        std::remove_if(m_entries.begin(), m_entries.end(),
+                       [&key](const RecentProjectEntry& e) {
+                           return e.canonicalPath == key;
+                       }),
+        m_entries.end());
+
+    RecentProjectEntry entry;
+    entry.canonicalPath = key;
+    // locationAvailable 不在此实测（list 时实时检查——记录时的存在性
+    // 是过时事实，持久化恢复后的失效项正是靠 list 实测标记）。
+    entry.locationAvailable = true;
+    m_entries.insert(m_entries.begin(), std::move(entry));
+
+    // 上限裁剪（PM-10"上限 10"）：LRU 尾部溢出淘汰（最老的先出）；失效
+    // 项同样参与容量（"保留"指不因失效自动剔除，不是容量豁免）。
+    if (m_entries.size() > m_maxEntries) {
+        m_entries.resize(m_maxEntries);
+    }
+}
+
+void RecentProjectsService::remove(const std::string& canonicalPath)
+{
+    // 空路径同样 fail-fast（与 record 同一入口契约——remove("") 不是
+    // 合法的用户动作词面，到达此处是装配缺陷）。
+    if (canonicalPath.empty()) {
+        throw WorkflowError("RecentProjectsService::remove: 空路径");
+    }
+
+    // 同键收敛匹配移除；不在列表＝幂等无操作（首页呈现刷新与列表变化
+    // 的竞态容忍——移除是用户处置动作，不是需要仲裁的状态迁移）。
+    const std::filesystem::path key = recentProjectKey(canonicalPath);
+    m_entries.erase(
+        std::remove_if(m_entries.begin(), m_entries.end(),
+                       [&key](const RecentProjectEntry& e) {
+                           return e.canonicalPath == key;
+                       }),
+        m_entries.end());
+}
+
+std::filesystem::path recentProjectKey(const std::string& canonicalPath)
+{
+    // 词法规范化（去冗余分隔符与 . / .. 段——同义词面收敛为一个键）；
+    // 不做 weakly_canonical（触盘且依赖存在性——失效项（已删除路径）
+    // 也必须有稳定键）。UTF-8 窄串 → path：MSVC 下按源/执行字符集解释，
+    // 测试面全用 ASCII 词面规避编码歧义（生产面路径来自
+    // std::filesystem 原生 API，无窄串转码问题）。
+    return std::filesystem::path(canonicalPath).lexically_normal();
+}
+
+// =====================================================================
+// 无项目首页数据面（PM-10——§7.8；三入口＋项目状态摘要＋入口禁用数据）
+// =====================================================================
+
+HomeScreenData buildNoProjectHomeScreen(
+    const std::vector<RecentProjectEntry>& recentEntries)
+{
+    HomeScreenData data;
+
+    // 项目状态摘要（PM-10"与项目状态摘要"——无项目态固定键；用户呈现
+    // 词归 ui 文案资源——UX-10"空项目"状态词归 ui，§7.9 分工）。
+    data.statusKey = kHomeStatusNoProjectKey;
+
+    // 入口清单（固定序八项——头注释 HomeScreenData 冻结序；禁用集＝
+    // PM-10"无项目时禁用七阶段/运行/应用/报告入口（仅留项目菜单）"的
+    // 逐项承载——呈现层按 enabled=false 渲染禁用态，数据与呈现两权分立
+    // ——D-WF-6/R-WF-4）。
+    data.entries = {
+        {kHomeEntryNewProject, true},       ///< 三入口之一：新建（向导 PM-01）
+        {kHomeEntryOpenProject, true},      ///< 三入口之一：打开（协议 PM-02）
+        {kHomeEntryRecentProjects, true},   ///< 三入口之一：最近项目
+        {kHomeEntryProjectMenu, true},      ///< "仅留项目菜单"的留侧入口
+        {kHomeEntryStageNavigation, false}, ///< 七阶段导航——无项目禁用
+        {kHomeEntryRun, false},             ///< 运行入口——无项目禁用
+        {kHomeEntryApply, false},           ///< 应用（提交）入口——无项目禁用
+        {kHomeEntryReport, false},          ///< 报告入口——无项目禁用
+    };
+
+    // 最近项目内容面：服务列表逐项透传（失效项保留——PM-10；可用性
+    // 标记沿用服务实测值，本函数不复查——单一事实源）。
+    data.recentItems.reserve(recentEntries.size());
+    for (const RecentProjectEntry& entry : recentEntries) {
+        RecentHomeItem item;
+        item.canonicalPath = entry.canonicalPath;
+        item.locationAvailable = entry.locationAvailable;
+        data.recentItems.push_back(std::move(item));
+    }
+    return data;
 }
 
 }  // namespace workflow

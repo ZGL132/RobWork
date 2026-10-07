@@ -70,12 +70,18 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # WP-22-T04 增列（§7.1 新建项目三步向导——Lifecycle.hpp＋Lifecycle.cpp；
 # 编排面消费 project createNew/①端口（白名单边），模板/导入经
 # IDomainInitSubmitter 端口触达、零业务域头（R-1））。
+# WP-22-T05 增列（§7.2 打开协议＋§7.8 无项目首页/最近项目——同头追加：
+# OpenProjectFlow::run 编排（PM-02 五步 workflow 面——入口格式识别分流、
+# 失败呈现 UX-03＋具体文件定位）、IRecentProjectsService/RecentProjects-
+# Service（PM-10 上限 10/去重/失效标记/移除）、buildNoProjectHomeScreen
+# （入口禁用数据）；零业务域头（R-1）维持）。
 add_library(sdurws_ird_workflow STATIC
     src/Workflow.cpp
     src/Types.cpp       # 词表与映射（§4.2 域↔阶段表／UX-02 文案键唯一构造点）
     src/Gate.cpp        # 七阶段门控（§4.4 状态机重放）＋级联失效映射（§4.3）
     src/Advice.cpp      # 下一步建议引擎（§6.3 八规则——UX-01 四要素）
-    src/Lifecycle.cpp)  # 新建项目三步向导（§7.1 PM-01——O4 编排子集）
+    src/Lifecycle.cpp)  # 新建向导（§7.1 PM-01）＋打开协议（§7.2 PM-02）＋
+                        # 最近项目/无项目首页（§7.8 PM-10）编排面
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：workflow 公共头（T03+ 落位）使用 C++17 设施，消费者编译
@@ -214,8 +220,11 @@ add_executable(sdurws_ird_workflow_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
     test/GateAdviceTest.cpp
-    test/LifecycleTest.cpp)  # 新建向导模型测试（WP-22-T04——词表/校验/摘要/
-                             # P-03 零数值/commit 前置契约）
+    test/LifecycleTest.cpp  # 新建向导模型测试（WP-22-T04——词表/校验/摘要/
+                            # P-03 零数值/commit 前置契约）
+    test/OpenWizardHomeTest.cpp)  # 打开分流/最近项目/首页模型测试（WP-22-T05——
+                                  # PM-02 格式识别与失败呈现、PM-10 容量/去重/
+                                  # 失效标记/移除、入口禁用数据）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -299,10 +308,13 @@ add_executable(sdurws_ird_workflow_contract_test
     contract_test/BuildGraphContractTest.cpp
     contract_test/PluginRegistrationContractTest.cpp
     contract_test/GateContractTest.cpp
-    contract_test/NewProjectWizardContractTest.cpp)  # WF-VER-201~204（WP-22-T04——
-                                                     # createNew＋①端口真实落盘
-                                                     # 契约；领域处理器为测试桩，
-                                                     # R-1 不链 modeling）
+    contract_test/NewProjectWizardContractTest.cpp  # WF-VER-201~204（WP-22-T04——
+                                                    # createNew＋①端口真实落盘
+                                                    # 契约；领域处理器为测试桩，
+                                                    # R-1 不链 modeling）
+    contract_test/OpenWizardContractTest.cpp)  # WF-VER-205/206（WP-22-T05——打开
+                                               # 五步协议三入口真实落盘＋失败
+                                               # 不动当前项目 Fault 契约）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
