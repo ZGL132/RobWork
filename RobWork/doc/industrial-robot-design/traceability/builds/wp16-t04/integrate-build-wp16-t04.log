@@ -1,0 +1,30 @@
+=== WP-16-T04 集成模式构建与测试留痕（2026-10-07）===
+
+[命令 1] cmake --build <WT>/build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test sdurws_ird_trajectory_plugin
+[结论] 三目标零 error 零 trajectory 侧 warning（输出中全部 warning 位于框架库 sdurw_proximity/sdurw_opengl——预存，与本批无关）
+
+[命令 1 输出筛误（grep -iE 'error'）] 无输出＝零错误
+---（以上为 error 筛选段；空＝零错误）---
+
+[命令 2] cmake --build <WT>/build --config Release --target sdurws_ird_trajectory_test_report（gtest XML：build 树 gtest_reports/）
+  [----------] 16 tests from TrjPlanConfig
+  [----------] 16 tests from TrjPlanConfig (1 ms total)
+  [----------] 16 tests from TrjPtp
+  [----------] 16 tests from TrjPtp (0 ms total)
+  [----------] 7 tests from TrjSequence
+  [----------] 7 tests from TrjSequence (0 ms total)
+  [==========] 48 tests from 5 test suites ran. (12 ms total)
+  [  PASSED  ] 48 tests.
+
+[命令 3] cmake --build <WT>/build --config Release --target sdurws_ird_trajectory_contract_test_report
+  [----------] 6 tests from TrjBuildGraph
+  [----------] 6 tests from TrjBuildGraph (5 ms total)
+  [----------] 3 tests from TrjPluginAssembly
+  [----------] 3 tests from TrjPluginAssembly (0 ms total)
+  [----------] 3 tests from TrjPlanConfigContract
+  [----------] 3 tests from TrjPlanConfigContract (0 ms total)
+  [==========] 12 tests from 3 test suites ran. (5 ms total)
+  [  PASSED  ] 12 tests.
+
+[命令 4] cmake --build <WT>/build --config Release --target ird_gates（依赖红线门禁 R-1~R-5/T-1/T-2/SUB/GRAPH/LIB/SA02）
+閫傜敤浜

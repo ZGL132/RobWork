@@ -78,11 +78,37 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 # T03 源码集＝src/DiagCodes.cpp（TRJ-* 12 码登记表——CodeDescriptor 描
 # 述符清单＋装配注册函数的唯一实现翻译单元；逐码落值依据见该文件逐码
-# 注释）。PTP/直线/连续性/时间化等实现翻译单元随 WP-16-T04~T10 按卡
-# §4.2 布局表增列（TrjTypes/Errors/Ptp/CartesianLine/…——本任务不预建
-# 占位实现，NFR-MNT-04 不建无边界价值包装器）。
+# 注释）。T04 批（WP-16-T04）按卡 §4.2 布局表增列四个实现翻译单元：
+#   src/TrjTypes.cpp   §6 数据模型 T04 面＋段结构守卫（validateTrajectory-
+#                      Segment——§6.2 不变量执行点；只读校验零 Q 对象
+#                      构造——冒烟模式可编译）
+#   src/PlanConfig.cpp §5.5 求解配置五件套（validate/encode/decode/digest/
+#                      ConfigEntry 组装——canonical magic IRDCFGTR1；纯
+#                      std＋core 头——冒烟模式可编译）
+#   src/Ptp.cpp        §7 PTP 规划（插值/构型选择三键/planPtpSegment——
+#                      TRJ-01 点到点路径）
+#   src/Sequence.cpp   §5.4 任务序列展开（I-REQ-7 校验/Kahn 拓扑/段链——
+#                      TRJ-01 有序作业序列）
+# 其余翻译单元（CartesianLine/Continuity/Planner/…）随 WP-16-T05~T10
+# 增列（本批不预建占位实现，NFR-MNT-04 不建无边界价值包装器）。
+#
+# Ptp.cpp/Sequence.cpp 为集成模式条件源（kinematics src/Collision.cpp
+# 同款 gating 先例——WP-15-T07）：两 TU 构造/析构 rw::math::Q 对象，而
+# Q 的虚析构符号（rw::math::Q::~Q）定义在框架库 sdurw_math 内（非
+# header-only）——冒烟模式无框架库可链，链接面必然未定义符号；冒烟
+# 口径＝"目标注册＋include 路径"（DTB §5.1），Q 构造型算法面的真实验证
+# 归集成模式（唯一交付口径）。注意与 TrjTypes.cpp 的差异：后者只做
+# const 引用遍历校验，不实例化任何 Q 构造/析构点，两模式均可编译链接。
 add_library(sdurws_ird_trajectory STATIC
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/TrjTypes.cpp
+    src/PlanConfig.cpp)
+
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_trajectory PRIVATE
+        src/Ptp.cpp       # §7 PTP 规划（Q 构造面——集成条件，见上）
+        src/Sequence.cpp) # §5.4 序列展开（Q 构造面——集成条件，见上）
+endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：trajectory 公共头使用 C++17 设施（inline constexpr 变量
@@ -166,6 +192,61 @@ if(TARGET sdurw_kinematics)
         sdurw_kinematics
         sdurw_models
         sdurw_pathplanners)
+else()
+    # ---- 冒烟分支：rw 源码树头路径（WP-16-T04 起 T04 源码消费 rw 数学
+    # 模板头——rw::math::Q/Transform3D 均 header-only；runtime RT-T03 冒烟
+    # header-only 机制同款：只加 include 路径＋Eigen 头，不链接框架库——
+    # 冒烟口径＝"目标注册＋include 路径"，库目标在冒烟树不存在即无链接
+    # 面）。约束（实现纪律，与 runtime 同款）：T04 产品代码只消费 rw 的
+    # header-only 面（模板/内联）——不调用框架库 .cpp 导出符号（如
+    # Rotation3D::identity() 的库内定义形态），否则冒烟链接未定义符号。
+    set(IRT_RW_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../RobWork/src")
+    if(NOT EXISTS "${IRT_RW_SRC_DIR}/rw/math/Q.hpp")
+        message(FATAL_ERROR
+            "trajectory 冒烟模式：未找到 rw 模板头（期望 ${IRT_RW_SRC_DIR}/"
+            "rw/math/Q.hpp）——T04 起产品源码消费 rw::math 头（header-only），"
+            "请勿移动仓库目录结构")
+    endif()
+    target_include_directories(sdurws_ird_trajectory PUBLIC "${IRT_RW_SRC_DIR}")
+    find_package(Eigen3 CONFIG QUIET)
+    if(NOT TARGET Eigen3::Eigen)
+        message(FATAL_ERROR
+            "trajectory 冒烟模式：未找到 Eigen3（vcpkg eigen3）——rw 数学头"
+            "依赖 <Eigen/Core>（RT-T03 冒烟 header-only 机制同款）")
+    endif()
+    get_target_property(IRT_EIGEN_INC Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+    if(NOT IRT_EIGEN_INC)
+        message(FATAL_ERROR
+            "trajectory 冒烟模式：Eigen3::Eigen 无 INTERFACE_INCLUDE_DIRECTORIES"
+            "——vcpkg eigen3 配置包异常（RT-T03 冒烟 header-only 机制同款）")
+    endif()
+    # Eigen 仅取 include 目录不入链接清单（header-only 语义＝"头可达"；
+    # ird_gates LIB 门禁按链接清单核对，框架外目标入清单即命中）。
+    target_include_directories(sdurws_ird_trajectory PUBLIC ${IRT_EIGEN_INC})
+
+    # boost 头路径：rw/math/Q.hpp 无条件 include <boost/serialization/...>
+    # （T04 关节向量 rw::math::Q——§6.4"不包装不重定义"——必然携带此头
+    # 依赖）。boost 头随 vcpkg 经典模式安装（installed/x64-windows/include
+    # ——gtest 同款安装根，DTB §5.5）；toolchain 已在独立冒烟命令行给定，
+    # vcpkg 根由 toolchain 路径上溯三级推导（<vcpkg>/scripts/buildsystems/
+    # vcpkg.cmake）。同样只取 include 目录不入链接清单——Q.hpp 的序列化
+    # 模板在冒烟编译只实例化声明级内联，不引用 boost 编译库。
+    if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+        message(FATAL_ERROR
+            "trajectory 冒烟模式：必须带 vcpkg toolchain 参数（DTB §5.1/"
+            "CORE-T01 G-2 口径）——rw/math/Q.hpp 依赖 boost 头")
+    endif()
+    get_filename_component(IRT_VCPKG_ROOT "${CMAKE_TOOLCHAIN_FILE}" DIRECTORY)
+    get_filename_component(IRT_VCPKG_ROOT "${IRT_VCPKG_ROOT}" DIRECTORY)
+    get_filename_component(IRT_VCPKG_ROOT "${IRT_VCPKG_ROOT}" DIRECTORY)
+    set(IRT_BOOST_INC "${IRT_VCPKG_ROOT}/installed/x64-windows/include")
+    if(NOT EXISTS "${IRT_BOOST_INC}/boost/serialization/split_free.hpp")
+        message(FATAL_ERROR
+            "trajectory 冒烟模式：未找到 boost 头（期望 ${IRT_BOOST_INC}/"
+            "boost/serialization/split_free.hpp）——rw/math/Q.hpp 序列化头"
+            "依赖（vcpkg 经典模式经典布局）")
+    endif()
+    target_include_directories(sdurws_ird_trajectory PUBLIC "${IRT_BOOST_INC}")
 endif()
 
 # 别名（集成模式）：供其余单元以 RWS::ird::trajectory 消费；冒烟模式无
@@ -254,7 +335,18 @@ enable_testing()
 add_executable(sdurws_ird_trajectory_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/PlanConfigTest.cpp)         # WP-16-T04：§5.5 求解配置（校验/canonical
+                                     #   往返/确定性/digest 身份面）
+
+# PtpSequenceTest 为集成模式条件源（同产品面 Ptp.cpp/Sequence.cpp 的 gating
+# 口径——用例构造 rw::math::Q 对象，冒烟模式无框架库符号可链；V-01/02/03
+# 解析算例的真实执行归集成模式测试运行）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/PtpSequenceTest.cpp)    # WP-16-T04：TRJ-01（PTP 插值/构型选择/
+                                     #   限位守卫/序列展开——V-01/02/03 面）
+endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_trajectory_test PROPERTIES
@@ -337,7 +429,10 @@ ird_add_gtest(sdurws_ird_trajectory_test)
 add_executable(sdurws_ird_trajectory_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/TrajectoryPluginAssemblyContractTest.cpp)
+    contract_test/TrajectoryPluginAssemblyContractTest.cpp
+    contract_test/PlanConfigContractTest.cpp)  # WP-16-T04：config.trj 条目与
+                                               #   evidence::ConfigEntry 的跨
+                                               #   单元契约（§5.5 身份路径）
 
 target_compile_features(sdurws_ird_trajectory_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_trajectory_contract_test PROPERTIES
