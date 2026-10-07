@@ -6,7 +6,7 @@ DTB §4.2 O-46 已裁决＋§2.11 WP-10-T73 行；units/ui.md v1.86 §13 UI-T73 
 ## 交付物
 
 - policy 新公共面 SystemDefaultPolicy（.hpp/.cpp）：保留身份＋附录 D 缺省集工厂＋
-  SystemDefaultPolicyProvider 解析半区供给器；test/SystemDefaultPolicyTest.cpp 五用例。
+  SystemDefaultPolicyProvider 解析半区供给器；test/SystemDefaultPolicyTest.cpp 六用例。
 - 宿主装配换装：UiPlugin.hpp 成员＋UiPlugin.cpp HandlerServices nullptr→缺省源；
   mtour step5 诚实中间态断言（F-546）。
 
@@ -28,3 +28,8 @@ DTB §4.2 O-46 已裁决＋§2.11 WP-10-T73 行；units/ui.md v1.86 §13 UI-T73 
 - **F-546（major，本批新登）**：④行程校验需运行时名解析，首应用（发布前）名称映射为空→CllNameUnresolved→EvaluationFailed→RejectedHardAssert——行程相关应用主干的首应用在真实宿主结构性地不可达（与策略源无关）。mtour step5 断言为诚实中间态（翻转点内建）；三路修复方向已列 F-546 owner（候选感知上下文／校验时点后移／首应用豁免）待所有者裁决。
 - F-536 保持 open（进展注）：④装配缺陷面已消除，但「主链可用」口径以 F-546 修复为完成——不虚报。
 - P-POL-2/O-10 口径不变：未裁决阈值 nullopt＝显式不适用，本批零数值发明；REQUIREMENTS.md 零改动。
+
+## 合入段更正（acc/ui-t73/1 建议级 S-1/S-2）
+
+- S-1：SystemDefaultPolicyTest 实为 **6 用例**（工厂构成/确定性身份/保留身份应答/外来身份 MISSING/全零 fail-fast/碰撞面 fail-fast）——首版口径「五用例」系计数误值（提交件 logs/policy_test.log 自证 6 tests）。
+- S-2：逐套件 log 实为 **8 件**（logs/ 目录）＋ird-gates.log（父级）——首版「九件」口径并计有误。

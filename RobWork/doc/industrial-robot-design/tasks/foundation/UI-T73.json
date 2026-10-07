@@ -4,7 +4,7 @@
   "unit": "ui",
   "masterWp": "WP-I",
   "title": "宿主 ④ 端口缺省策略源（F-536/O-46 裁决出路②-scope）：policy SystemDefaultPolicy 面＋宿主装配接线＋mtour step5 诚实中间态断言",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "UI-T72"
   ],
@@ -45,7 +45,7 @@
   ],
   "outputs": [
     "policy/include/sdurws/ird/policy/SystemDefaultPolicy.hpp＋src/SystemDefaultPolicy.cpp（新公共面）：①systemDefaultPolicyObjectId()——系统缺省保留身份（well-known 固定字面量 obj-…01；非项目对象不入存储）；②makeSystemDefaultPolicySet()——附录 D 冻结默认构成（JointThresholds 默认成员初始化＝4π DefaultAppendixD＋未裁决阈值 nullopt 显式不适用〔P-POL-2/O-10 口径不变〕＋碰撞 disabled〔无冻结间距即显式不适用〕＋空 applicability＋SystemDefault 来源＋PolicyCodec::contentIdentity 现算身份＋make 发布门 Valid）；③SystemDefaultPolicyProvider（IPolicyProvider 解析半区专用——保留身份任意版本应答／外来身份 POLICY-OBJECT-MISSING 码面／全零 fail-fast／碰撞评估面 PortAssemblyIncomplete fail-fast）",
-    "policy/test/SystemDefaultPolicyTest.cpp：五用例（工厂发布门＋构成面＋确定性身份／供给器三面）",
+    "policy/test/SystemDefaultPolicyTest.cpp：六用例（工厂发布门＋构成面＋确定性身份／供给器三面）",
     "ui/plugin/UiPlugin.hpp/.cpp：m_systemDefaultPolicyProvider 成员（存活期锚）＋HandlerServices 装配换装（nullptr→缺省源——F-536 ④装配缺陷消除）＋mtour step5 诚实中间态断言（④装配缺陷已消除＋拒绝面=行程校验执行层 F-546；undo 断言更名 unavailable-no-revision）",
     "traceability/findings.json：F-546 新登（major——首应用名解析结构性不可达，O-46 落地后暴露的下一层墙）；F-536 保持 open＋裁决落地进展注",
     "development-task-breakdown.md §4.2 O-46 状态更新（已裁决出路②-scope＋落地登记＋后续面）＋§2.11 WP-10-T73 行；units/policy.md 增量；units/ui.md v1.86 §13 UI-T73 行",
@@ -58,7 +58,7 @@
     "ird_gates 零新增；validate-docs/validate-task PASS；留痕 traceability/builds/ui-t73/"
   ],
   "acceptance": [
-    "缺省源构成面：makeSystemDefaultPolicySet 零发明数值（4π 唯一冻结默认＋nullopt 显式不适用＋碰撞 disabled）＋发布门 Valid＋确定性身份——policy_test 五用例",
+    "缺省源构成面：makeSystemDefaultPolicySet 零发明数值（4π 唯一冻结默认＋nullopt 显式不适用＋碰撞 disabled）＋发布门 Valid＋确定性身份——policy_test 六用例",
     "供给器契约面：保留身份任意版本应答／外来身份 MISSING 码面／全零 fail-fast／碰撞面 fail-fast——policy_test 钉扎",
     "宿主装配面：HandlerServices nullptr→缺省源（④装配缺陷消除）——mtour step5 实证 rej 从「④策略端口未装配」变为「hard-assert-failed」（拒绝面移出装配层）",
     "诚实边界面：step5 诚实中间态断言（F-546 在案＋翻转点内建）＋F-536 保持 open 的裁决口径（不虚报主链已可用）",
@@ -70,5 +70,5 @@
     "O-10"
   ],
   "branch": "ui-t73",
-  "note": "O-46 裁决落地批次（所有者 2026-10-07『按照你的建议进行裁决』授权——出路②-scope：不动 P-POL-2／不建对象生命周期／不降级④语义；附录 D 唯一冻结默认即 ④校验全部策略消费面）。F-546＝落地后暴露的结构性下一层墙（独立 major，另有裁决队列）。"
+  "note": "【合入登记注（2026-10-07，PIPE §4.7 收尾——所有者裁决授权『按照你的建议进行裁决』）】bba03dbc 合入 redesign-main（acc/ui-t73/1@1aae808f attempt 1 全项 pass 按 SHA 先并——acc 基于实施头一合并承载 22c17c32）。做红 M-A/M-B 双向实证＋F-546 定性四环代码链核过。建议级五条随本治理提交清扫：S-1 用例计数口径（实为 6 用例——本注更正）；S-2 logs 件数（8 件＋父级 ird-gates.log）；S-3 F-543 进展注；S-4 DTB 版本头升 v0.54；S-5 O-46 同号冲突（先在项——原冻结工件项让号 O-48）。F-536 保持 open（F-546 接棒——主链可用以 F-546 修复为口径）；F-546 major 待所有者三路裁决（候选感知上下文／校验时点后移／首应用豁免）。分支基点＝redesign-main@4f2ebbaf。"
 }
