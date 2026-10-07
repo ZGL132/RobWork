@@ -5005,7 +5005,7 @@
       "status": "fixed",
       "registeredAt": "2026-10-04",
       "title": "完整 RobWorkStudio 宿主人工验收证据缺失（宿主审核 P1）：既有测试证明模块/Widget/桥接正确，未证明真实宿主中『启动→新建项目→开需求 Dock→增工位→改位置→三维拾取→捕获 TCP→应用草稿→修订推进→关闭→三维标记/选择/属性全清理』十步人工链可操作。既有自动化覆盖面（SessionDetachedResetsPanel／PluginModuleT03BTest onSessionDetached／HostIntegrationGuiTest ProjectCloseTeardown 检查器半区）不替代人工验收；启动面证据＝所有者运行实例证实 2026-10-04 18:19 链接的 exe 可正常启动（含建模中文化批次）；本批 F-494 修复的重链因运行实例锁定 exe（LNK1104）待关闭宿主后执行",
-      "owner": "所有者（人工验收须人执行；建议按审核原文阶段 0 验收标准逐项留痕 traceability/acceptance/）；【2026-10-06 翻转】取证通道建成＝UI-T67（modeling-tour 冒烟面——20 断言 MTOUR_PASS 合入 653e8d12；应用→修订取证链在 F-536 已知部署缺口下以 精确拒绝断言承载），fixedBy=UI-T67；【2026-10-07 进展】主链自动化取证完备＝UI-T73+UI-T74（mtour step5 committed=true——十步人工链的「应用草稿→修订推进」段已在真实宿主自动化走通）；人工验收执行仍归所有者，本条保持 open"
+      "owner": "所有者（人工验收须人执行；建议按审核原文阶段 0 验收标准逐项留痕 traceability/acceptance/）；【2026-10-06 翻转】取证通道建成＝UI-T67（modeling-tour 冒烟面——20 断言 MTOUR_PASS 合入 653e8d12；应用→修订取证链在 F-536 已知部署缺口下以 精确拒绝断言承载），fixedBy=UI-T67；【2026-10-07 进展】主链自动化取证完备＝UI-T73+UI-T74（mtour step5 committed=true——十步人工链的「应用草稿→修订推进」段已在真实宿主自动化走通）；人工验收执行仍归所有者，本条保持 open；【2026-10-07 进展】十步人工验收 runbook 备妥＝traceability/manual-acceptance/F-496-manual-acceptance-runbook.md（环境准备＋十步逐项操作/预期/留证约定＋结果登记表模板——所有者照表执行后交回登记）；等待所有者执行"
     },
     {
       "id": "F-497",
