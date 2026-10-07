@@ -75,12 +75,20 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 # T02 源码集＝src/DiagCodes.cpp（OPT-* 15 码登记表——CodeDescriptor 描
 # 述符清单＋装配注册函数的唯一实现翻译单元；逐码落值依据见该文件逐码
-# 注释）。变量/补丁/约束/目标/管线/Pareto/预检/运行/导出/应用等实现翻译
-# 单元随 WP-20-T03~T09 按卡 §3.1 布局表增列（Types/Variable/
-# CandidatePatch/…——本任务不预建占位实现，NFR-MNT-04 不建无边界价值
-# 包装器）。
+# 注释）。WP-20-T03 增列变量与候选补丁模型实现（卡 §3.1 布局表的
+# Types/Variable/CandidatePatch 三头＋src 三 TU；约束/目标/管线/Pareto/
+# 预检/运行/导出/应用等实现翻译单元仍随 WP-20-T04~T09 增列——本任务
+# 不预建占位，NFR-MNT-04 不建无边界价值包装器）：
+#   src/Types.cpp           阶段 token＋OptimizationError（域异常 fail-fast）
+#   src/Variable.cpp        §5.3 R1 词表物化/两种初始化/绑定校验/diff（§5.2~§5.4/§8.2）
+#   src/CandidatePatch.cpp  canonical "IRDOPTP1" 序列化/CandidatePatchId/
+#                           CandidateId 身份链/补丁校验/round-half-even
+#                           量化/覆盖视图数据面（§4.2/§5.4/§5.5/§8.2/P-OPT-2）
 add_library(sdurws_ird_optimization STATIC
-    src/DiagCodes.cpp)
+    src/DiagCodes.cpp
+    src/Types.cpp
+    src/Variable.cpp
+    src/CandidatePatch.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -224,6 +232,13 @@ endif()
 #                                 acceptance 1/2，与文件末尾配置期守卫
 #                                 互为两道防线；trajectory/dynamics/
 #                                 selection 同款四用例）
+#   test/VariableTest.cpp         WP-20-T03 增列——OPT-VER-101~106/108＋
+#                                 I-OPT-7～9＋快照闭包核对（acceptance 1：
+#                                 两种初始化/锁定/值域/阶段锁）
+#   test/CandidatePatchTest.cpp   WP-20-T03 增列——确定性序列化与身份链
+#                                 （acceptance 3）＋OPT-VER-107（acceptance 2：
+#                                 ratio 不被阶段锁拒绝）＋canonical 布局
+#                                 黄金核对＋diff（I-OPT-10）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/selection/dynamics/trajectory 同款先例；IRD_TEST_INFO 携带
@@ -234,7 +249,9 @@ enable_testing()
 add_executable(sdurws_ird_optimization_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
-    test/BuildRedLineTest.cpp)
+    test/BuildRedLineTest.cpp
+    test/VariableTest.cpp
+    test/CandidatePatchTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -310,14 +327,18 @@ ird_add_gtest(sdurws_ird_optimization_test)
 # 面同界；_plugin 目标落位为正向断言）＋插件可注册契约
 # （OptimizationPluginAssemblyContractTest——描述符登记出处自证＋二分
 # 结构"不持算法/判定真值"红线词表扫描＋直接文件/项目访问零命中——
-# acceptance 1"最小可注册实现"的执行证明）；业务对端面契约（evidence
-# 评估器注册/runtime 编译链视图/execution 任务通道/policy 会话 fake
-# 套件）随 WP-20-T03+ 落地（T02 登记面不触对端契约面，不预建占位用例）。
+# acceptance 1"最小可注册实现"的执行证明）＋WP-20-T03 增列变量契约
+# （VariableContractTest——OPT-VER-107 契约半区：StageB 传动比启用位＋
+# 离散器件禁用位的两阶段口径分离〔V12-02/DOPT-15〕、I-MDL-11 值域、
+# evidence AnalysisSnapshot 闭包核对契约——acceptance 2/4）；其余业务
+# 对端面契约（runtime 编译链视图/execution 任务通道/policy 会话 fake
+# 套件）随 WP-20-T04+ 落地（不预建占位用例）。
 # 自有 main 同 _test 目标（报告设施接入）。
 add_executable(sdurws_ird_optimization_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/OptimizationPluginAssemblyContractTest.cpp)
+    contract_test/OptimizationPluginAssemblyContractTest.cpp
+    contract_test/VariableContractTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_contract_test PROPERTIES

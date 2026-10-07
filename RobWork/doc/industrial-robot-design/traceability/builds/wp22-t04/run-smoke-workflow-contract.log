@@ -1,0 +1,72 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_plugin.lib
+  sdurws_ird_workflow_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_contract_test.exe
+  ird: run sdurws_ird_workflow_contract_test and write gtest XML report
+  [==========] Running 20 tests from 4 test suites.
+  [----------] Global test environment set-up.
+  [----------] 5 tests from WfBuildGraph
+  [ RUN      ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1
+  [       OK ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1
+  [       OK ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2
+  [       OK ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2 (0 ms)
+  [ RUN      ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1
+  [       OK ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2
+  [       OK ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2 (2 ms)
+  [----------] 5 tests from WfBuildGraph (4 ms total)
+  
+  [----------] 3 tests from WfPluginRegistration
+  [ RUN      ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1 (0 ms)
+  [----------] 3 tests from WfPluginRegistration (0 ms total)
+  
+  [----------] 4 tests from WfGateContract
+  [ RUN      ] WfGateContract.GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112
+  [       OK ] WfGateContract.GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112 (7 ms)
+  [ RUN      ] WfGateContract.WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3
+  [       OK ] WfGateContract.WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3 (3 ms)
+  [ RUN      ] WfGateContract.ProjectionOwnershipStaysWithUi_WP22T03_ACC3
+  [       OK ] WfGateContract.ProjectionOwnershipStaysWithUi_WP22T03_ACC3 (3 ms)
+  [ RUN      ] WfGateContract.InvalidationHintIsPureValueData_WP22T03_ACC1
+  [       OK ] WfGateContract.InvalidationHintIsPureValueData_WP22T03_ACC1 (0 ms)
+  [----------] 4 tests from WfGateContract (15 ms total)
+  
+  [----------] 8 tests from NewProjectWizardContract
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_TemplateMainlineCreatesBaselineRevision
+  [       OK ] NewProjectWizardContract.WF_VER_201_TemplateMainlineCreatesBaselineRevision (40 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_UrdfSourceRegistersReadOnlyBaseline
+  [       OK ] NewProjectWizardContract.WF_VER_201_UrdfSourceRegistersReadOnlyBaseline (37 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_BlankMainlineStopsAtR0
+  [       OK ] NewProjectWizardContract.WF_VER_201_BlankMainlineStopsAtR0 (15 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_202_CancelBeforeConfirmLeavesNothing
+  [       OK ] NewProjectWizardContract.WF_VER_202_CancelBeforeConfirmLeavesNothing (0 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_203_DomainInitFailureCleansAndKeepsInputs
+  [       OK ] NewProjectWizardContract.WF_VER_203_DomainInitFailureCleansAndKeepsInputs (59 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_203_CreateNewFailurePresentsAndRetries
+  [       OK ] NewProjectWizardContract.WF_VER_203_CreateNewFailurePresentsAndRetries (35 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_204_ExternalHandlingBothWaysForwarded
+  [       OK ] NewProjectWizardContract.WF_VER_204_ExternalHandlingBothWaysForwarded (96 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_Port_ModelingNotDirectlyLinked
+  [       OK ] NewProjectWizardContract.WF_VER_Port_ModelingNotDirectlyLinked (1 ms)
+  [----------] 8 tests from NewProjectWizardContract (285 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 20 tests from 4 test suites ran. (315 ms total)
+  [  PASSED  ] 20 tests.

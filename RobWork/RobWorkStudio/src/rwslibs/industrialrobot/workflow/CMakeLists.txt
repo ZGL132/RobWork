@@ -67,11 +67,15 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # 每公共头一个对应实现翻译单元——modeling/requirements 同款布局。
 # WP-22-T03 增列（§3.1 布局表 Types/Gate/Advice 三头兑现——每头一个实现
 # 翻译单元；门控判定只消费投影快照＋事件，级联提示纯函数面，D-WF-3）。
+# WP-22-T04 增列（§7.1 新建项目三步向导——Lifecycle.hpp＋Lifecycle.cpp；
+# 编排面消费 project createNew/①端口（白名单边），模板/导入经
+# IDomainInitSubmitter 端口触达、零业务域头（R-1））。
 add_library(sdurws_ird_workflow STATIC
     src/Workflow.cpp
-    src/Types.cpp    # 词表与映射（§4.2 域↔阶段表／UX-02 文案键唯一构造点）
-    src/Gate.cpp     # 七阶段门控（§4.4 状态机重放）＋级联失效映射（§4.3）
-    src/Advice.cpp)  # 下一步建议引擎（§6.3 八规则——UX-01 四要素）
+    src/Types.cpp       # 词表与映射（§4.2 域↔阶段表／UX-02 文案键唯一构造点）
+    src/Gate.cpp        # 七阶段门控（§4.4 状态机重放）＋级联失效映射（§4.3）
+    src/Advice.cpp      # 下一步建议引擎（§6.3 八规则——UX-01 四要素）
+    src/Lifecycle.cpp)  # 新建项目三步向导（§7.1 PM-01——O4 编排子集）
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：workflow 公共头（T03+ 落位）使用 C++17 设施，消费者编译
@@ -209,7 +213,9 @@ enable_testing()
 add_executable(sdurws_ird_workflow_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
-    test/GateAdviceTest.cpp)
+    test/GateAdviceTest.cpp
+    test/LifecycleTest.cpp)  # 新建向导模型测试（WP-22-T04——词表/校验/摘要/
+                             # P-03 零数值/commit 前置契约）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -292,7 +298,11 @@ add_executable(sdurws_ird_workflow_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
     contract_test/PluginRegistrationContractTest.cpp
-    contract_test/GateContractTest.cpp)
+    contract_test/GateContractTest.cpp
+    contract_test/NewProjectWizardContractTest.cpp)  # WF-VER-201~204（WP-22-T04——
+                                                     # createNew＋①端口真实落盘
+                                                     # 契约；领域处理器为测试桩，
+                                                     # R-1 不链 modeling）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES

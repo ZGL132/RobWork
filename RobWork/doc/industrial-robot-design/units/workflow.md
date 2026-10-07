@@ -3,7 +3,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 单元 | workflow（**L4 业务域单元·编排**——ARCHITECTURE §3.1/§3.4：消费平台事件与各域就绪状态投影，产出七阶段导航的门控状态与"下一步建议"；生命周期入口（新建/打开/另存/导入导出向导）整合于此；不直链任何业务域单元） |
-| 文档版本 | v0.4（2026-10-07，WP-22-T03 实现登记——七阶段门控与下一步建议落位＋接口签名偏差增补；v0.3（2026-10-06，WP-22-T02 返工第 1 轮登记增补）；v0.2（2026-10-06，落位登记）；v0.1（2026-10-06，首版草案，WP-22-T01 交付物）） |
+| 文档版本 | v0.5（2026-10-07，WP-22-T04 实现登记——新建项目三步向导落位＋Lifecycle.hpp 编排面与实现口径偏差增补；v0.4（2026-10-07，WP-22-T03 实现登记——七阶段门控与下一步建议落位＋接口签名偏差增补）；v0.3（2026-10-06，WP-22-T02 返工第 1 轮登记增补）；v0.2（2026-10-06，落位登记）；v0.1（2026-10-06，首版草案，WP-22-T01 交付物）） |
 | 文档状态 | **`Draft`**（未冻结；本文只做详细设计，不自行宣布任何验收通过；本文自审不等于实现测试通过） |
 | 主 WP | WP-I（WP-10、WP-22、WP-23、WP-24、WP-25——DTB §0.1 主 WP 映射；单元任务主责 **WP-22，跨阶段 A～E**：REQUIREMENTS §17 表注 RV-11） |
 | 上游 | `REQUIREMENTS.md` v1.16（`Accepted`，唯一需求权威）、`ARCHITECTURE.md` v0.13（`Draft`）、`development-task-breakdown.md` v0.53（`Draft`） |
@@ -176,7 +176,7 @@ workflow/
 │   ├── Types.hpp                     ← 门控/建议/流程词表（复用 ui StageId——零新增枚举）〔WP-22-T03 已落位〕
 │   ├── Gate.hpp                      ← StageGatingState/级联提示数据（O1/O2）〔WP-22-T03 已落位〕
 │   ├── Advice.hpp                    ← NextStepAdvice 与建议词表（O3）〔WP-22-T03 已落位〕
-│   ├── Lifecycle.hpp                 ← 向导流程状态机与流程编排接口（O4/O5/O10）〔WP-22-T04~T08〕
+│   ├── Lifecycle.hpp                 ← 向导流程状态机与流程编排接口（O4/O5/O10）〔WP-22-T04 落位新建向导子集（步骤/来源/处置词表＋校验＋实时摘要＋IDomainInitSubmitter 端口＋NewProjectWizardFlow 编排）；基线虚类 ILifecycleFlowController 及打开/关闭/另存/包/重关联面随 T05~T08 增列〕
 │   ├── Settings.hpp                  ← 用户设置 schema 与存取（O6）〔WP-22-T10〕
 │   ├── Comparison.hpp                ← 方案比较编排（O7）〔WP-22-T11〕
 │   └── Projection.hpp               ← 横幅/标题栏状态数据（O9）〔WP-22-T09〕
@@ -184,7 +184,8 @@ workflow/
 │   ├── Workflow.cpp                  ← T02 锚点翻译单元（增列路线注释）
 │   ├── Types.cpp                     ← T03：域↔阶段映射表＋文案键唯一构造点（§4.2/§6.2）
 │   ├── Gate.cpp                      ← T03：门控判定（§4.4 重放）＋级联失效映射（§4.3）
-│   └── Advice.cpp                    ← T03：建议八规则（§6.3——UX-01 四要素）
+│   ├── Advice.cpp                    ← T03：建议八规则（§6.3——UX-01 四要素）
+│   └── Lifecycle.cpp                 ← T04：新建三步向导（§7.1——校验/摘要/领域初始化端口/创建编排）
 ├── plugin/                           ← sdurws_ird_workflow_plugin〔T02＝最小可注册实现；Qt Widgets 界面：向导/首页/比较视图/确认对话框随 T04~T12〕
 ├── test/                             ← sdurws_ird_workflow_test〔T02＝红线扫描四用例；T03 增列 GateAdviceTest.cpp——WF-VER-101~109/111 模型测试〕
 └── contract_test/                    ← sdurws_ird_workflow_contract_test〔T02＝构建图边界＋插件可注册契约；T03 增列 GateContractTest.cpp——WF-VER-112＋P-WF-2 形状/词表/投影所有权契约〕
@@ -203,9 +204,9 @@ workflow/
 
 **依赖白名单**：`sdurws_ird_workflow` 允许链接 core/ui/diagnostics/project/execution/io/evidence/reporting 的公共接口（L4→L2/L3）；**禁止链接任何业务域单元计算库**（modeling/requirements/kinematics/trajectory/dynamics/selection/optimization——ARCH §3.4"不直链任何业务域单元，只经端口与事件协作"；R-1 门禁）。就绪事实只经 ui StageStatusModel 投影与⑤事件端口进入本单元；模板/导入等领域能力只经①命令端口与各域公共数据契约触达。**ui 依赖方向说明**：workflow→ui 是 L4→L3 接口依赖（消费 `UiTypes.hpp`/`ICommandRegistry`/`IUiProjectionStore` 公共头），与 ui→workflow 的"门控规则归 workflow"语义不冲突——ui 拥有投影设施与呈现，workflow 拥有门控规则（P-UI-6 三方契约的落地形态，§5.1）。
 
-### 3.3 与磁盘实况的差异清单（2026-10-07，WP-22-T03 落位后）
+### 3.3 与磁盘实况的差异清单（2026-10-07，WP-22-T04 落位后）
 
-1. 已实现文件：构建骨架（T02）＋**门控/建议业务面（T03）**：Types/Gate/Advice 三公共头＋Types/Gate/Advice 三实现翻译单元＋test/GateAdviceTest.cpp（16 用例）＋contract_test/GateContractTest.cpp（4 用例）；生命周期/设置/比较/投影业务面仍随 T04~T12。2. 代码占位：无占位目标（INTERFACE 占位已升级 STATIC）。3. 公共头：README 保留位仍在；Types/Gate/Advice 已落位，Lifecycle/Settings/Comparison/Projection 随 T04+ 增列。4. CMake 目标：四目标不变；`sdurws_ird_workflow` 源码集增列三翻译单元、两测试目标各增列一用例源。5. 测试/契约测试：T02 既有 12 用例＋T03 增列 20 用例（模型 16＋契约 4）＝32 用例；执行留痕见 traceability/gtest-reports/wp-22-t03/。6. 缺失目录：无。7. 与 unit-status.json 差异：实现状态已超前于 `not-verified` 记录（门控/建议已实现、模型/契约测试已执行——记录刷新归治理任务）。
+1. 已实现文件：构建骨架（T02）＋门控/建议业务面（T03）＋**新建向导业务面（T04）**：Types/Gate/Advice/Lifecycle 四公共头＋Types/Gate/Advice/Lifecycle 四实现翻译单元＋test/GateAdviceTest.cpp（16 用例）＋test/LifecycleTest.cpp（13 用例）＋contract_test/GateContractTest.cpp（4 用例）＋contract_test/NewProjectWizardContractTest.cpp（8 用例）；打开/关闭/另存/包/重关联/设置/比较/投影业务面仍随 T05~T12。2. 代码占位：无占位目标（INTERFACE 占位已升级 STATIC）。3. 公共头：README 保留位仍在；Types/Gate/Advice/Lifecycle 已落位，Settings/Comparison/Projection 随 T09~T11 增列。4. CMake 目标：四目标不变；`sdurws_ird_workflow` 源码集增列 src/Lifecycle.cpp、两测试目标各增列一用例源。5. 测试/契约测试（计数以 wp22-t04 批次 gtest 实测为准，F-543 同型漂移自查）：`sdurws_ird_workflow_test` 34 用例（红线扫描 4＋门控/建议 17＋新建向导模型 13）、`sdurws_ird_workflow_contract_test` 20 用例（构建图 5＋插件注册 3＋门控契约 4＋新建向导契约 8）＝**54 用例**；T04 批次增列 21（模型 13＋契约 8），其余为 T02/T03 既有存量（零回归）；执行留痕见 traceability/gtest-reports/wp-22-t03/（T03 批次）与 wp22-t04/（T04 批次——集成 34/34＋20/20）。6. 缺失目录：无。7. 与 unit-status.json 差异：实现状态已超前于 `not-verified` 记录（门控/建议/新建向导已实现、模型/契约测试已执行——记录刷新归治理任务）。
 
 ### 3.4 单元详设最低结构对照（DETAILED-DESIGN.md 要求）
 
@@ -410,6 +411,8 @@ flowchart TB
 - 取消/失败不留半成品（AT-20）：向导取消＝丢弃未提交草稿与临时区；创建命令失败＝project 保证无修订（七步事务），向导呈现错误并保留输入供重试。
 - URDF 项目：以不可修改基线修订保存（PM-12/PM-01）；外部资源二选一处置在步骤②内完成；未固化外部引用在 Verified/正式报告前阻断（CON-03——呈现归本单元横幅/缺项提示，阻断判定归 evidence/project）。
 
+> **v0.5 落位注记（WP-22-T04）**：本章流程的**可测编排核**已落位 `include/sdurws/ird/workflow/Lifecycle.hpp`＋`src/Lifecycle.cpp`（§3.1）——三步步骤词表（`NewProjectStep` 冻结序）、初始来源与处置词表（模板六轴/七轴×地面/墙面/倒挂 token、URDF/Xacro、空白；外部资源二选一 token）、输入校验（`validateStep`/`validateNewProjectInputs`——步骤放行判定，键集见头注）、右侧实时步骤摘要（`buildNewProjectSummary`——纯函数，行集随来源裁剪：空白 3 行/模板 5 行/URDF 5 行）、领域初始化提交端口（`IDomainInitSubmitter`——①命令端口的 workflow 侧视图，实现归 L5 装配层：消费 modeling 公共契约组装载荷经 `store.commands().submit()` 提交，**workflow 零 modeling 头零链接**——R-1）与创建编排器（`NewProjectWizardFlow::commit`——§7.1 流程 CMD→EXT→DONE 的执行点：createNew（PM-01 存储侧）→来源分派（空白止于 r0；模板/URDF 经端口提交基线修订，请求恒带 `baselineReadOnly` 登记位——URDF 恒 true）→领域初始化失败收尾（requestClose→remove_all 本次创建目录——不留半成品；createNew 失败由 project 侧"失败清理目标目录"兜底）。P-03 兑现：向导全部类型**零模板数值字段**（模型测试 `WfLifecycle.WizardHeaderHasNoNumericPrefill_P03` 以头文件代码面零 double/float 词形钉扎）；模板启用与否由对端（TemplateDescriptor.enabled）裁决，P-03 冻结（WP-13-T07）后本向导零改动。向导 GUI 面（Qt 控件/对话框宿主）**本批不落位**——按 D-WF-6/R-WF-4，workflow 只承诺状态数据与流程编排契约，宿主面归 ui，经 §10.2 基线 `ILifecycleFlowController::startNewProjectWizard` 的 L5 适配器接线（随 T05+ 消费方任务增列基线虚类，§14.5 v0.5 偏差登记）。执行留痕：traceability/gtest-reports/wp22-t04/＋traceability/builds/wp22-t04/。
+
 ### 7.2 打开协议（PM-02 五步）
 
 | 步骤 | 执行者 | workflow 职责 |
@@ -548,7 +551,7 @@ DTB §4.2 O-26：该高频命令的执行编排需 workflow/ui/execution 三方�
 | --- | --- | --- | --- |
 | `IStageGateService` | Gate.hpp | 本卡新增（O1/O2 门控与级联） | ARCH §3.4；ui P-UI-6 数据形状 |
 | `INextStepAdvisor` | Advice.hpp | 本卡新增（O3） | UX-01/ARCH §3.4 |
-| `ILifecycleFlowController` | Lifecycle.hpp | 本卡新增（O4/O10） | PM-01~03/05~09；project §13.2 |
+| `ILifecycleFlowController` | Lifecycle.hpp | 本卡新增（O4/O10）〔v0.5：Lifecycle.hpp 已落位**新建向导子集**（词表/校验/摘要/IDomainInitSubmitter/NewProjectWizardFlow——§10.2 v0.5 偏差登记）；基线虚类随 T05+ 增列〕 | PM-01~03/05~09；project §13.2 |
 | `IRecentProjectsService` | Lifecycle.hpp | 本卡新增（O5/O6 部分） | PM-10/PM-14 |
 | `IUserSettingsStore` | Settings.hpp | 本卡新增（O6） | PM-14；io JSON |
 | `ISchemeComparisonController` | Comparison.hpp | 本卡新增（O7） | UX-13/V15-02/MDL-08 |
@@ -560,6 +563,8 @@ DTB §4.2 O-26：该高频命令的执行编排需 workflow/ui/execution 三方�
 ### 10.2 接口签名（C++17 设计基线，Draft）
 
 > **v0.4 实现口径偏差登记（WP-22-T03，DTB §5.4）**：T03 落位 Gate.hpp/Advice.hpp 时对下方 Draft 签名做了四处增补——①`evaluate` 入参由单 `StageReadinessSnapshot` 改为 `GateInputs`（七阶段快照板＋会话事件窗口＋epoch 水位）：ui 汇聚出口按阶段取数（§6.5"每阶段一份"），而门控序贯判定依赖前序链（I-WF-1），单快照无法表达"汇聚投影"的完整形态；acceptance 2"只消费 StageReadinessSnapshot＋事件"由 GateInputs 的唯二成员面承载（契约测试 static_assert 钉住）。②`mapInvalidation` 增补 `signal`（evidence 失效范围判定结果——受影响域＋原因清单，事件仅身份 D-09）与 `gates`（下游级联的 Completed 判定输入）两参。③`adviseFor` 增补第四参 `AdviceInputs`（恢复横幅场景/阻塞诊断/归档结果事实/只读会话——§6.4 数据流图"任务状态投影/恢复横幅状态"两路输入的实现承载；缺省值＝基线三参语义）。④`GateDecision` 增补 `unlocked` 便利位（NotStarted 双义：前序未过的锁定 vs "可进入但评估未开始"的解锁——bool 位区分，供 L5 适配器直读组装 IUiStageGate::allowed，避免适配器从 reasonKeys 反推门控语义）。以上均为**增补而非语义变更**；词表零新增不受影响（P-WF-2 谈判起点形状照旧——status 复用 ui::StageViewStatus、快照形状照旧消费 ui::StageReadinessSnapshot）。
+
+> **v0.5 实现口径偏差登记（WP-22-T04，DTB §5.4）**：T04 落位 Lifecycle.hpp 时对上方 Lifecycle.hpp 基线块（§10.2 ILifecycleFlowController Draft 签名）做两处分歧登记——①**基线虚类 `ILifecycleFlowController` 本批不声明**：其六方法（startNewProjectWizard/openProject/requestClose/startSaveAsWizard/startPackageWizard/startRelinkFlow）的宿主接线形态依赖 ui 宿主面对话框收集输入（D-WF-6——workflow 只承诺状态数据与流程编排契约，宿主面归 ui），而 T02~T03 既有先例为"接口随消费方任务落位"（NFR-MNT-04 不预建无消费者接口——§5.1 端口访问器 PRJ-T09~T14 增量挂载同款纪律）；本批消费面是 Lifecycle.hpp 内的可测编排核（词表/校验/摘要/提交端口/`NewProjectWizardFlow::commit` 静态编排器），基线虚类与其 L5 适配器随 T05（打开向导与无项目首页——首个流程编排消费方）任务增列，届时按本块 Draft 签名兑现。②**新增 `IDomainInitSubmitter` 端口**（Draft 块未预见的接缝面）：acceptance 3"模板/导入经 modeling 公共契约与①端口，不直链"要求 workflow 零 modeling 头零链接（§3.2 白名单八边不含 modeling——R-1），而模板工作集/URDF 映射的 canonical 载荷组装恰是 modeling 公共契约消费面——故以纯接口端口（project ICommandInteraction/IModelCompilePort 同款形态）承载该接缝：workflow 侧组装 `DomainInitRequest`（来源参数＋外部资源处置＋`baselineReadOnly` 编排登记位——URDF 恒 true），端口实现（L5 装配层）消费 modeling 公共契约组装载荷并经 `store.commands().submit()` 提交、把 `CommandResult` 折叠为 `DomainInitResult`（对端诊断原样透传——D-WF-7 零加工零归码）。两处分歧均为**实现边界澄清而非语义变更**——PM-01 三步结构与"不留半成品"语义与 §7.1 原文一致。
 
 ```cpp
 // —— Gate.hpp ——
@@ -705,6 +710,8 @@ public:
 
 ### 11.2 生命周期主线（契约＋GUI 设计；AT-20/21/29）
 
+> **v0.5 落位注记（WP-22-T04）**：WF-VER-201~204 已落位为 `sdurws_ird_workflow_contract_test` 的 `NewProjectWizardContract` 用例组（contract_test/NewProjectWizardContractTest.cpp——真实落盘契约：createNew＋①端口提交＋失败收尾清理；领域命令处理器为测试桩 `wf-contract-baseline-seed`，模拟 L5 装配层注册的建模处理器——R-1 不链 modeling）；其纯函数承载半区（词表/校验/摘要/P-03 零数值钉扎/commit 前置 fail-fast 契约）落位为 `sdurws_ird_workflow_test` 的 `WfLifecycle` 用例组（test/LifecycleTest.cpp，13 用例）。执行留痕：traceability/gtest-reports/wp22-t04/（gtest XML＋ird-test-report 分目标留档）；实测计数（两模式一致）：`sdurws_ird_workflow_test` 34/34、`sdurws_ird_workflow_contract_test` 20/20 全绿（含 T02/T03 既有用例零回归）。205~227 未落位（随 WP-22-T05~T13）。
+
 | 用例 | 场景 | 依据 | 前置 | 操作 | 预期结果与失败语义 | 观测点 | 类型 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | WF-VER-201 | 新建主线 | PM-01/AT-20 | 无项目 | 三步向导→确认 | 项目创建、模板基线修订、进入建模阶段；右侧实时摘要 | 修订/元数据 | 契约 |
@@ -759,7 +766,7 @@ public:
 | WP-22-T01 | 编写 workflow 单元任务卡（含阶段 A 生命周期原形条款） | **本卡整体** | 前置 WP-10/WP-04/WP-08/WP-09 各卡；ARCH §3.4；REQUIREMENTS §17 表注/§18；project.md §13.2 | 卡含：七阶段门控规则与状态投影消费、生命周期入口流程（新建/打开/另存/包/重关联）、失败路径用户呈现、任务拆分；禁止项：workflow 不直链任何业务域单元（ARCH §3.4） |
 | WP-22-T02 | 构建落位：workflow 占位转真实库＋插件目标 | §3 | 前置 WP-22-T01、WP-03-T01 | 双模式构建零错误；R-1 扫描（无业务域直链边）通过。**落位登记（v0.2，2026-10-06）**：sdurws_ird_workflow STATIC（src 锚点空起步——NFR-MNT-04）＋八边 PUBLIC 链接（§3.2 白名单全登记，含 ui——D-WF-6）＋_plugin 最小可注册实现（IPluginUiModule 三方法诚实空态＋§10.9 装配门面 assembly/；三能力 false、panels/commands 空——界面面随 T04+）＋_test/_contract_test（红线扫描四用例＋构建图边界五用例＋插件可注册三用例；ird_add_gtest 同款、LABELS "ird"）；R1 零新增域码（§6.5——不建 DiagCodes 面）；白名单 "workflow->…" 八行随任务登记＋dependency-graph.json 同步刷新（双面留痕） |
 | WP-22-T03 | 实现七阶段门控与下一步建议 | §4/§5/§6 | 前置 WP-22-T02、WP-10-T09（StageStatusModel） | 上游完成态/结果失效时级联提示下游需重算用例通过；禁止项：阶段状态投影归 ui（不双权威） |
-| WP-22-T04 | 实现新建项目三步向导 | §7.1 | 前置 WP-22-T02、WP-13（模板/导入）、WP-11-T06、WP-04 | 取消/失败不留半成品；URDF 基线修订保存＋外部引用记录用例通过 |
+| WP-22-T04 | 实现新建项目三步向导 | §7.1 | 前置 WP-22-T02、WP-13（模板/导入）、WP-11-T06、WP-04 | 取消/失败不留半成品；URDF 基线修订保存＋外部引用记录用例通过。**落位登记（v0.5，2026-10-07）**：Lifecycle.hpp/Lifecycle.cpp（三步词表＋校验＋实时摘要＋IDomainInitSubmitter 端口＋NewProjectWizardFlow::commit 编排——P-03 零数值预填、模板启用由对端裁决、R-1 零 modeling 触达）；测试增列 WfLifecycle 13 用例（模型）＋NewProjectWizardContract 8 用例（契约——WF-VER-201~204 真实落盘）；基线虚类 ILifecycleFlowController 未声明随 T05+ 增列（§10.2 v0.5 偏差登记）；GUI 面不落位（D-WF-6 宿主面归 ui）。双模式构建零错误＋ird_gates 零命中；集成 34/34＋契约 20/20 全绿（含存量零回归），留痕 traceability/{gtest-reports,builds}/…wp22-t04…/ |
 | WP-22-T05 | 实现打开向导与无项目首页 | §7.2/§7.8 | 前置 WP-22-T02、WP-04-T08 | 失败显示具体文件且不动当前项目；最近项目 10 上限/去重/失效提示；无项目禁用七阶段入口 |
 | WP-22-T06 | 实现关闭/切换/退出统一确认 | §7.3 | 前置 WP-22-T02、WP-08-T06、WP-04-T12；ARCH §6.8 | 取消可中止；等待选项覆盖在途归档（A7）；退出复用同一流程 |
 | WP-22-T07 | 实现另存为与包导出/导入向导 | §7.4 | 前置 WP-22-T02、WP-04-T18 | 进度可取消即清理；失败不留目标目录 |
@@ -862,6 +869,7 @@ P-UI-6（三方契约——本卡谈判对面）；P-UI-9（报告预览宿主�
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v0.5 | 2026-10-07 | WP-22-T04 实现登记：新建项目三步向导落位——`Lifecycle.hpp`＋`src/Lifecycle.cpp`（§7.1 v0.5 落位注记）：三步步骤词表＋初始来源/处置词表（模板六轴/七轴×安装 token／URDF-Xacro／空白；外部资源二选一 token）＋输入校验（`validateStep`/`validateNewProjectInputs`——步骤放行判定与 UX-02 错误文案键）＋右侧实时步骤摘要（`buildNewProjectSummary`——纯函数行集，空白 3/模板 5/URDF 5 行）＋领域初始化提交端口 `IDomainInitSubmitter`（①命令端口的 workflow 侧视图——实现归 L5 装配层：消费 modeling 公共契约组装载荷经 store.commands().submit() 提交，workflow 零 modeling 头零链接，R-1 结构性兑现）＋创建编排器 `NewProjectWizardFlow::commit`（createNew→来源分派→领域初始化失败收尾 requestClose+remove_all——不留半成品的编排责任段；createNew 失败由 project"失败清理目标目录"兜底；UX-03 三字段失败呈现——D-WF-7 零新增码，对端诊断透传）。测试增列：`WfLifecycle` 13 用例（模型——词表/校验/摘要精确值/确定性/P-03 零数值头扫描钉扎/commit 前置 fail-fast 契约）＋`NewProjectWizardContract` 8 用例（契约——WF-VER-201~204 真实落盘：模板基线修订主分支 2 修订＋URDF baselineReadOnly=true 登记＋取消零残留＋领域初始化失败清理且输入零改写可重试＋createNew 失败呈现＋二选一处置原样传递＋R-1 源码面自证）。**实现口径偏差两处**（§10.2 v0.5 登记段）：①基线虚类 ILifecycleFlowController 本批不声明（接口随消费方任务落位——NFR-MNT-04，project §5.1 端口增量挂载同款纪律；随 T05 增列）；②新增 IDomainInitSubmitter 端口（Draft 未预见的 R-1 接缝面——纯接口形态，project ICommandInteraction 同款）。P-03 兑现：向导全部类型零模板数值字段（头文件代码面零 double/float 词形由 `WfLifecycle.WizardHeaderHasNoNumericPrefill_P03` 钉住），模板启用由对端 TemplateDescriptor.enabled 裁决——WP-13-T07 冻结后本向导零改动。GUI 面不落位（D-WF-6/R-WF-4——宿主面归 ui，经 §10.2 基线 startNewProjectWizard 的 L5 适配器接线）。验证：双模式构建零错误；ird_gates 直跑 R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中；集成 34/34＋契约 20/20、冒烟 34/34＋契约 20/20 全绿（含 T02/T03 存量零回归；计数以 gtest XML＋ird-test-report 双通道实测为准）；留痕 traceability/gtest-reports/wp22-t04/＋traceability/builds/wp22-t04/。R1 零新增 WF- 稳定码持续兑现（向导失败呈现走 UX-03 三字段文本＋对端码透传，零自有码） |
 | v0.4 | 2026-10-07 | WP-22-T03 实现登记：七阶段门控与下一步建议落位——Types/Gate/Advice 三公共头＋Types/Gate/Advice 三实现翻译单元（域↔阶段映射 §4.2、门控序贯判定＋事件重放 §4.4/§5.2、级联失效映射 §4.3 D-WF-2、建议八规则＋UX-01 四要素 §6.2/§6.3）；两测试目标增列 GateAdviceTest（16 用例）/GateContractTest（4 用例）——WF-VER-101~109/111 模型测试＋WF-VER-112 运行断言＋P-WF-2 形状（status 复用 ui::StageViewStatus）/词表零新增（零 enum class）/投影不双权威契约全数执行留痕。**接口签名偏差四处**（§10.2 v0.4 登记段：GateInputs 板式输入/mapInvalidation 四参/adviseFor 第四参 AdviceInputs/GateDecision.unlocked 便利位——均增补非语义变更）。**实现期语义澄清**（随代码注释登记）：①NotStarted 双义（前序未过锁定 vs 可进入但评估未开始）由 unlocked 位区分；②缺项（Blocked）与结果过期（staleHints）并存——§4.4 Completed→Blocked"输入回退"转移下缺项与过期是独立事实，Blocked 判定同时携带 staleHints（UX-12 级联提示不因缺项豁免）；③I-WF-1 前序链按字面"非 Blocked"放行（Unavailable/NotStarted 前序不阻断下游——就绪权威在域自报投影 N1/I-WF-2，门控不替域判断上游产物是否够用）；④失效后新归档结果清除 stale（事件窗口发布序重放——重算完成的门控可见效果）。呈现端口（IUiStageGate::presentStage）对门控 InProgress 的映射仍归 P-WF-2 裁决后的 L5 适配器（GateDecision 类型注释登记张力），本单元不预判呈现折叠。R1 零新增 WF- 稳定码兑现（§6.5——零诊断码，文案键唯一构造点在 Types.hpp） |
 | v0.1 | 2026-10-06 | 首版草案（WP-22-T01 交付物）：20 单元第 20 卡（收官）——编排定位、四段职责链、七阶段门控与级联提示、下一步建议八规则、生命周期入口九流程、方案比较与命令集、八接口、27 验证用例、5 项待裁决。未实现产品源码；未执行构建/测试/GUI 测试 |
 | v0.2 | 2026-10-06 | WP-22-T02 落位登记增补：构建骨架落位（§1.3/§3.1/§3.3 实测同步）——sdurws_ird_workflow STATIC＋八边 PUBLIC 链接（§3.2 白名单全登记）＋_plugin 最小可注册实现（assembly/ 装配门面；三能力 false、panels/commands 空）＋_test/_contract_test（12 用例；ird_add_gtest 同款）；R1 零新增域码兑现（§6.5）；白名单八行＋dependency-graph.json 随任务登记。文档状态仍 `Draft`（未冻结） |
@@ -897,8 +905,8 @@ P-UI-6（三方契约——本卡谈判对面）；P-UI-9（报告预览宿主�
 ### 15.2 未执行声明（v0.2 时点更新——仅描述本卡 v0.1 期状态的部分随落位翻转，业务面声明保持）
 
 - ~~本次只完成 workflow 详细设计文档（`units/workflow.md` v0.1）。~~ → v0.2（WP-22-T02）：构建骨架已落位（目标/测试/插件最小实现），文档增补落位登记。
-- ~~**未实现产品源码**；未创建/修改 workflow 任何源码文件。~~ → v0.2：src 锚点翻译单元＋plugin 最小可注册实现＋两测试目标源码已落位；→ v0.4（WP-22-T03）：**门控/建议业务面已实现**（Types/Gate/Advice 三公共头＋三实现翻译单元）；生命周期/设置/比较/投影业务面仍未实现（随 WP-22-T04~T12）。
-- ~~**未执行构建**（双模式均未执行）；**未执行单元测试或契约测试**；~~ → v0.2：双模式构建与 12 用例执行随 WP-22-T02 任务验证留痕（traceability/builds/wp22-t02/）；→ v0.4：集成模式（增量配置＋workflow 四目标构建）与独立冒烟模式构建通过、模型测试 21/21＋契约测试 12/12 全绿、ird_gates 零命中退出 0，留痕见 traceability/gtest-reports/wp-22-t03/（gtest XML＋ird-test-report.json 分目标留档）——本文不自行宣布验收通过。**未执行 GUI 测试**（§11.3 GUI 约束仅为流程设计——不变）。
+- ~~**未实现产品源码**；未创建/修改 workflow 任何源码文件。~~ → v0.2：src 锚点翻译单元＋plugin 最小可注册实现＋两测试目标源码已落位；→ v0.4（WP-22-T03）：**门控/建议业务面已实现**（Types/Gate/Advice 三公共头＋三实现翻译单元）；→ v0.5（WP-22-T04）：**新建向导业务面已实现**（Lifecycle 公共头＋实现翻译单元——三步词表/校验/实时摘要/领域初始化端口/创建编排）；打开/关闭切换退出/另存/包/重关联/标题栏/横幅/设置/首页/比较/命令集业务面仍未实现（随 WP-22-T05~T12）；向导 GUI 面（Qt 宿主控件）未实现（D-WF-6——归 ui 宿主面，L5 接线随 T05+）。
+- ~~**未执行构建**（双模式均未执行）；**未执行单元测试或契约测试**；~~ → v0.2：双模式构建与 12 用例执行随 WP-22-T02 任务验证留痕（traceability/builds/wp22-t02/）；→ v0.4：集成模式（增量配置＋workflow 四目标构建）与独立冒烟模式构建通过、模型测试 21/21＋契约测试 12/12 全绿、ird_gates 零命中退出 0，留痕见 traceability/gtest-reports/wp-22-t03/（gtest XML＋ird-test-report.json 分目标留档）；→ v0.5：双模式构建零错误、ird_gates 零命中退出 0、集成模型 34/34＋契约 20/20 与冒烟模型 34/34＋契约 20/20 全绿（计数以 gtest XML＋ird-test-report 双通道实测为准——F-543 同型漂移自查），留痕见 traceability/gtest-reports/wp22-t04/＋traceability/builds/wp22-t04/——本文不自行宣布验收通过。**未执行 GUI 测试**（§11.3 GUI 约束仅为流程设计——不变）。
 - 文档自审不等于实现测试通过；文档自审不等于正式验收（正式验收按 acceptance-protocol.md 三段式）——不变。
 - 当前代码状态仍以磁盘实测和任务验收证据为准；`unit-status.json`/`DETAILED-DESIGN.md` 状态刷新归治理任务——不变。
 
@@ -913,4 +921,4 @@ P-UI-6（三方契约——本卡谈判对面）；P-UI-9（报告预览宿主�
 - **实际代码缺口**：全部产品代码（计算库/插件/测试/契约测试）、golden `wf-*` 夹具、向导/首页/比较视图/横幅 UI——待 WP-22-T02 起逐卡落位。
 - **20 单元详设收官状态**：本卡落盘后 `units/` 目录 20/20 齐备（全部 Draft/`Draft-Structured` 草稿态）；索引与状态刷新归治理任务。
 
-**本文档结束（workflow 单元详细设计 v0.3，状态 `Draft`；v0.1 未实现源码、未构建、未测试；v0.2 构建骨架落位并以任务验证留痕为准；v0.3 返工回填机器面滞后命中、ird_gates 双口径退出 0——业务实现未落位、未 GUI 验证；自审≠实现测试≠正式验收）**
+**本文档结束（workflow 单元详细设计 v0.5，状态 `Draft`；v0.1 未实现源码、未构建、未测试；v0.2 构建骨架落位并以任务验证留痕为准；v0.3 返工回填机器面滞后命中、ird_gates 双口径退出 0；v0.4 门控/建议业务面落位；v0.5 新建三步向导业务面落位——双模式构建零错误、ird_gates 零命中、54 用例双模式全绿留痕在案；打开/关闭/另存/包/重关联/标题栏/横幅/设置/首页/比较/命令集业务面与全部 GUI 面未落位、未 GUI 验证；自审≠实现测试≠正式验收）**
