@@ -718,7 +718,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "testId": "OptCandidatePatch.IdenticalPatchesProduceIdenticalIdentity_WP20T03_ACC3",
