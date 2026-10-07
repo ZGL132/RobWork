@@ -1,0 +1,102 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_test.exe
+  ird: run sdurws_ird_workflow_test and write gtest XML report
+  [==========] Running 34 tests from 5 test suites.
+  [----------] Global test environment set-up.
+  [----------] 4 tests from WfBuildRedLine
+  [ RUN      ] WfBuildRedLine.ProductFaceHasZeroQtIncludes_WP22T02_ACC1
+  [       OK ] WfBuildRedLine.ProductFaceHasZeroQtIncludes_WP22T02_ACC1 (2 ms)
+  [ RUN      ] WfBuildRedLine.IncludeFaceRestrictedToEightRegisteredEdges_WP22T02_ACC2
+  [       OK ] WfBuildRedLine.IncludeFaceRestrictedToEightRegisteredEdges_WP22T02_ACC2 (1 ms)
+  [ RUN      ] WfBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP22T02_ACC2
+  [       OK ] WfBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP22T02_ACC2 (1 ms)
+  [ RUN      ] WfBuildRedLine.ProductFaceFilesNonEmpty_WP22T02_ACC1
+  [       OK ] WfBuildRedLine.ProductFaceFilesNonEmpty_WP22T02_ACC1 (1 ms)
+  [----------] 4 tests from WfBuildRedLine (7 ms total)
+  
+  [----------] 10 tests from WfGate
+  [ RUN      ] WfGate.SevenStageUnlockSequence_WP22T03_ACC1_UX12_WFVER101
+  [       OK ] WfGate.SevenStageUnlockSequence_WP22T03_ACC1_UX12_WFVER101 (0 ms)
+  [ RUN      ] WfGate.MissingItemsLockedWithTransparency_WP22T03_ACC1_WFVER102
+  [       OK ] WfGate.MissingItemsLockedWithTransparency_WP22T03_ACC1_WFVER102 (0 ms)
+  [ RUN      ] WfGate.DomainAbsentReportsUnavailable_WP22T03_ACC1_WFVER103
+  [       OK ] WfGate.DomainAbsentReportsUnavailable_WP22T03_ACC1_WFVER103 (0 ms)
+  [ RUN      ] WfGate.AggregateStagePartialReady_WP22T03_ACC1_WFVER104
+  [       OK ] WfGate.AggregateStagePartialReady_WP22T03_ACC1_WFVER104 (0 ms)
+  [ RUN      ] WfGate.CascadeInvalidationHints_WP22T03_ACC1_UX12_WFVER105
+  [       OK ] WfGate.CascadeInvalidationHints_WP22T03_ACC1_UX12_WFVER105 (0 ms)
+  [ RUN      ] WfGate.CascadeSkipsDownstreamWithoutResults_WP22T03_ACC1
+  [       OK ] WfGate.CascadeSkipsDownstreamWithoutResults_WP22T03_ACC1 (0 ms)
+  [ RUN      ] WfGate.StaleClearedByFreshResult_WP22T03_ACC1
+  [       OK ] WfGate.StaleClearedByFreshResult_WP22T03_ACC1 (0 ms)
+  [ RUN      ] WfGate.EpochWatermarkRejected_WP22T03_ACC2_WFVER106
+  [       OK ] WfGate.EpochWatermarkRejected_WP22T03_ACC2_WFVER106 (0 ms)
+  [ RUN      ] WfGate.BoardStageMismatchRejected_WP22T03_ACC2
+  [       OK ] WfGate.BoardStageMismatchRejected_WP22T03_ACC2 (0 ms)
+  [ RUN      ] WfGate.DeterministicReplay_WP22T03_ACC2_WFVER107
+  [       OK ] WfGate.DeterministicReplay_WP22T03_ACC2_WFVER107 (0 ms)
+  [----------] 10 tests from WfGate (1 ms total)
+  
+  [----------] 6 tests from WfAdvice
+  [ RUN      ] WfAdvice.RulePriorityOrder_WP22T03_ACC2_WFVER108
+  [       OK ] WfAdvice.RulePriorityOrder_WP22T03_ACC2_WFVER108 (0 ms)
+  [ RUN      ] WfAdvice.Ux01FourElementsPresent_WP22T03_ACC2_UX01_WFVER109
+  [       OK ] WfAdvice.Ux01FourElementsPresent_WP22T03_ACC2_UX01_WFVER109 (0 ms)
+  [ RUN      ] WfAdvice.RunEvaluationWhenReadyWithoutResult_WP22T03_ACC2
+  [       OK ] WfAdvice.RunEvaluationWhenReadyWithoutResult_WP22T03_ACC2 (0 ms)
+  [ RUN      ] WfAdvice.AdvanceStageAfterCompletion_WP22T03_ACC2
+  [       OK ] WfAdvice.AdvanceStageAfterCompletion_WP22T03_ACC2 (0 ms)
+  [ RUN      ] WfAdvice.ReadonlyNoticeAndReviewTask_WP22T03_ACC2
+  [       OK ] WfAdvice.ReadonlyNoticeAndReviewTask_WP22T03_ACC2 (0 ms)
+  [ RUN      ] WfAdvice.EngineeringWordingKeys_WP22T03_ACC2_UX02_WFVER111
+  [       OK ] WfAdvice.EngineeringWordingKeys_WP22T03_ACC2_UX02_WFVER111 (0 ms)
+  [----------] 6 tests from WfAdvice (0 ms total)
+  
+  [----------] 1 test from WfTypes
+  [ RUN      ] WfTypes.DomainStageMapping_WP22T03_ACC3
+  [       OK ] WfTypes.DomainStageMapping_WP22T03_ACC3 (0 ms)
+  [----------] 1 test from WfTypes (0 ms total)
+  
+  [----------] 13 tests from WfLifecycle
+  [ RUN      ] WfLifecycle.StepSequenceFrozen_PM01_ACC1
+  [       OK ] WfLifecycle.StepSequenceFrozen_PM01_ACC1 (0 ms)
+  [ RUN      ] WfLifecycle.TokenMappingExactForms_ACC1
+  [       OK ] WfLifecycle.TokenMappingExactForms_ACC1 (0 ms)
+  [ RUN      ] WfLifecycle.ValidateProjectInfoStep_KeysAndPass
+  [       OK ] WfLifecycle.ValidateProjectInfoStep_KeysAndPass (1 ms)
+  [ RUN      ] WfLifecycle.ValidateInitialSourceStep_KeysAndPass
+  [       OK ] WfLifecycle.ValidateInitialSourceStep_KeysAndPass (0 ms)
+  [ RUN      ] WfLifecycle.ValidateConfirmStep_UnionAndStableOrder
+  [       OK ] WfLifecycle.ValidateConfirmStep_UnionAndStableOrder (0 ms)
+  [ RUN      ] WfLifecycle.ValidateStepOutOfRange_FailFast
+  [       OK ] WfLifecycle.ValidateStepOutOfRange_FailFast (0 ms)
+  [ RUN      ] WfLifecycle.SummaryTemplateSource_FiveLinesExact
+  [       OK ] WfLifecycle.SummaryTemplateSource_FiveLinesExact (0 ms)
+  [ RUN      ] WfLifecycle.SummaryUrdfSource_FiveLinesAndHandling
+  [       OK ] WfLifecycle.SummaryUrdfSource_FiveLinesAndHandling (0 ms)
+  [ RUN      ] WfLifecycle.SummaryBlankSource_ThreeLines
+  [       OK ] WfLifecycle.SummaryBlankSource_ThreeLines (0 ms)
+  [ RUN      ] WfLifecycle.SummaryDeterministicReplay
+  [       OK ] WfLifecycle.SummaryDeterministicReplay (0 ms)
+  [ RUN      ] WfLifecycle.WizardHeaderHasNoNumericPrefill_P03
+  [       OK ] WfLifecycle.WizardHeaderHasNoNumericPrefill_P03 (0 ms)
+  [ RUN      ] WfLifecycle.CommitRejectsInvalidInputs_FailFast
+  [       OK ] WfLifecycle.CommitRejectsInvalidInputs_FailFast (0 ms)
+  [ RUN      ] WfLifecycle.CommitRequiresDomainInitSubmitterForTemplateSource
+  [       OK ] WfLifecycle.CommitRequiresDomainInitSubmitterForTemplateSource (0 ms)
+  [----------] 13 tests from WfLifecycle (2 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 34 tests from 5 test suites ran. (11 ms total)
+  [  PASSED  ] 34 tests.
