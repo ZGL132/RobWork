@@ -336,8 +336,11 @@ set(IRD_R4_EXCEPTION_UNITS "")
 
 # ---------------------------------------------------------------------
 # R-3 例外登记（机器面）——L2 产品库零 Qt。
-# 既有登记（DTB §4.5 首行，2026-09-10 预登记、WP-10-T02 生效）：ui 单元
-# 界面目标（Widgets 唯一例外）。ui 单元的产品目标名即 sdurws_ird_ui（bare
+# 既有登记（DTB §4.5 首行，2026-09-10 预登记、WP-10-T02 生效）：ui 单元界面目标（Widgets 唯一例外）。
+# F-540 更正（2026-10-07）：登记短语「ui 单元界面目标」被 WP-22-T02 返工拆行，
+# 元测试 UiBuild.QtLinkageLiteralAndExceptionText_UI_BUILD 单行 find 恒失——上行并回
+# 单行恢复被钉扎的登记文本原状（内容零改动，仅换行重排）。
+# ui 单元的产品目标名即 sdurws_ird_ui（bare
 # 形态——ui 是平台单元，其"界面目标"与产品库同名同目标），**事实落入**本
 # 门禁的"L2 裸计算库"扫描集合（sdurws_ird_<unit> 与 _worker）：链接面（Qt
 # 三件套）与产品面文件扫描（ui/include、ui/src 的 Qt 呈现构件——FlowLayout/
