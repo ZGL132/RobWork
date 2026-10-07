@@ -1,0 +1,6 @@
+# WP-19-T05 独立冒烟构建日志
+# 命令：cmake -S industrialrobot -B build-smoke -G "Visual Studio 17 2022" -A x64
+#       -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
+#       -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64
+#       cmake --build build-smoke --config Release
+# 结论：全树构建退出 0，错误行计数 0（grep -icE "error"）——通过。

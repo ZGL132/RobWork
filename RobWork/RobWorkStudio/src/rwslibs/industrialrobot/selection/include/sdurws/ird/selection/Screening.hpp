@@ -32,8 +32,9 @@
  *   3. 惯量比维度不在本头（O-11/P-POL-3 阈值归属未裁决——卡 §11.3：
  *      未裁决期间该维度输出"未判定"且不是 §7/§8 硬筛选维度；组合校核
  *      阶段〔WP-19-T05〕才消费，且不内嵌任何阈值数字）。
- *   4. 组合构造/可行集汇总/淘汰原因的独立供给接口归 WP-19-T05/T06
- *      （§14.5/§14.6）——本头的 RejectionReason/FeasibilityRecord 是
+ *   4. 组合构造/组合校核评估器已随 WP-19-T05 落位（Combination.hpp——
+ *      §14.5/§9）；可行集汇总/淘汰原因的独立供给接口归 WP-19-T06
+ *      （§14.6）——本头的 RejectionReason/FeasibilityRecord 是
  *      §10.1 基线类型的候选级承载，供 T05/T06 复用（同一类型，不分叉）。
  *
  * 线程安全：HardConstraintSelector 无状态纯函数对象（可重入——卡
@@ -156,9 +157,12 @@ enum class VerdictKind {
 };
 
 /// 候选器件类别（FeasibilityRecord 侧标记——电机/减速器筛选共用记录类型）。
+/// Combination 为 WP-19-T05 表尾追加值（封闭枚举追加只允许表尾，既有项
+/// 不重排/不删除——词表纪律；组合级记录复用本类型，T05 落位细化登记）。
 enum class DeviceKind {
-    Motor,    ///< 电机候选（screenMotors 产出）
-    Gearbox,  ///< 减速器候选（screenGearboxes 产出）
+    Motor,      ///< 电机候选（screenMotors 产出）
+    Gearbox,    ///< 减速器候选（screenGearboxes 产出）
+    Combination ///< 器件组合（组合校核产出——WP-19-T05；组合级记录的类别标记）
 };
 
 /**

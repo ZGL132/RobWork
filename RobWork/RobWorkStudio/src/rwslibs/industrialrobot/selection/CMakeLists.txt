@@ -96,7 +96,15 @@ add_library(sdurws_ird_selection STATIC
     src/CatalogValidation.cpp
     src/CapabilityCurve.cpp
     src/CatalogProvider.cpp
-    src/Screening.cpp)
+    src/Screening.cpp
+# T05 增列组合校核实现翻译单元（卡 §3.1 组成表 CombinationCheck 行——
+# WP-19-T05 交付面"组合校核：兼容＋负载惯量＋每轴工作点（共享
+# DriveTrainMappingEvaluator）＋多工况＋峰值/RMS＋质量成本＋惯量比配置"；
+# 公共头 include/sdurws/ird/selection/Combination.hpp——§14.5 组合构造
+# ＋§9.2 管线②评估器＋P-SEL-1 提议契约 v1 承载）：
+#   src/CombinationCheck.cpp  §9 组合校核（组合键/构造/传动参数构造/
+#                             canonical 编解码/校核核心/③端口评估器）
+    src/CombinationCheck.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：selection 公共头使用 C++17 设施（inline constexpr 变量
@@ -244,7 +252,11 @@ add_executable(sdurws_ird_selection_test
     test/CapabilityCurveTest.cpp
     test/CatalogLockTest.cpp
     test/ScreeningMotorTest.cpp
-    test/ScreeningGearboxTest.cpp)
+    test/ScreeningGearboxTest.cpp
+    test/CombinationBuilderTest.cpp
+    test/CombinationCheckTest.cpp
+    test/CombinationCheckCodecTest.cpp
+    test/CombinationCheckEvaluatorTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -329,7 +341,8 @@ add_executable(sdurws_ird_selection_contract_test
     contract_test/BuildGraphContractTest.cpp
     contract_test/SelectionPluginAssemblyContractTest.cpp
     contract_test/CatalogIoBoundaryContractTest.cpp
-    contract_test/HardScreeningContractTest.cpp)
+    contract_test/HardScreeningContractTest.cpp
+    contract_test/CombinationCheckContractTest.cpp)
 
 target_compile_features(sdurws_ird_selection_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_contract_test PROPERTIES

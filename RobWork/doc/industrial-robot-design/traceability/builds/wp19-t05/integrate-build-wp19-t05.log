@@ -1,0 +1,7 @@
+# WP-19-T05 集成模式构建日志（增量；selection 四目标＋全树 ALL_BUILD）
+# 命令：cmake --build build --config Release（构建树已配置 RWS_BUILD_INDUSTRIALROBOT=ON）
+# 结论：industrialrobot 区域零错误；全树 73 处错误全部位于框架区域
+#       （RWSimulatorPlugin/rwplugin——VelocityScrew6D.h/Math.h/Parallelizer.h，
+#        RobWork/RobWorkSim 框架既有编译错误，框架区域零修改 SA-02，与本任务无关）；
+# selection 四目标（产品库/插件/两测试）单独构建零错误。
+# ird_gates：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（含引擎自测按预期）——退出 0。
