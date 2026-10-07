@@ -1,12 +1,15 @@
 /**
  * @file   Types.cpp
- * @brief  optimization 基础词表实现——阶段 token 与域异常（WP-20-T03）。
+ * @brief  optimization 基础词表实现——阶段 token、候选状态 token 与域异常
+ *         （WP-20-T03 落位；WP-20-T04 表尾追加候选状态 token）。
  *
- * 设计依据：units/optimization.md §4.3（阶段 token "stage-b"/"stage-d"）、
- * §12.3（错误语义——fail-fast 异常携带稳定码）；DiagCodes.hpp 码值常量
+ * 设计依据：units/optimization.md §4.3（阶段 token "stage-b"/"stage-d"、
+ * 候选状态七值词表——"候选状态 ≠ 任务状态 ≠ 工程判定"正交表）、§12.3
+ * （错误语义——fail-fast 异常携带稳定码）；DiagCodes.hpp 码值常量
  * （唯一书写点——调用方传入，本文件不持码值字面量）。
  *
- * 确定性：token 为编译期字面量，与枚举值的对应关系恒定（NFR-COR-02）。
+ * 确定性：token 为编译期字面量，与枚举值的对应关系恒定（NFR-COR-02）；
+ * 候选状态 token 进候选表/导出/审计书写面，改名即消费面漂移——冻结。
  */
 
 #include <sdurws/ird/optimization/Types.hpp>
@@ -28,6 +31,31 @@ std::string_view toToken(OptimizationStage s) noexcept
     // 不可达分支：枚举只有两个值；为未处理枚举值（未来追加——表尾追加
     // 纪律下的新值）兜底返回 StageB token 会让错误静默，故按域内约定
     // 断言失败路径不可达——返回空串并由消费方显式判空（防御式，不吞错）。
+    return {};
+}
+
+std::string_view toToken(CandidateStatus s) noexcept
+{
+    // 候选状态稳定 token（卡 §4.3 七值；kebab 词形与证据侧状态词表消费
+    // 惯例一致）。枚举值序＝卡面登记契约（Pending→…→ParetoNondominated），
+    // 与 token 一一对应——值序一经交付不得改动/插入（表尾追加纪律）。
+    switch (s) {
+    case CandidateStatus::Pending:
+        return "pending";
+    case CandidateStatus::ScreenedOut:
+        return "screened-out";
+    case CandidateStatus::Infeasible:
+        return "infeasible";
+    case CandidateStatus::DataInsufficient:
+        return "data-insufficient";
+    case CandidateStatus::EvaluationFailed:
+        return "evaluation-failed";
+    case CandidateStatus::Feasible:
+        return "feasible";
+    case CandidateStatus::ParetoNondominated:
+        return "pareto-nondominated";
+    }
+    // 不可达分支（同 toToken(OptimizationStage) 口径——防御式空串，不吞错）。
     return {};
 }
 

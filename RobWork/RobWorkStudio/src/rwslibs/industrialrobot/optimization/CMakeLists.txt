@@ -88,7 +88,8 @@ add_library(sdurws_ird_optimization STATIC
     src/DiagCodes.cpp
     src/Types.cpp
     src/Variable.cpp
-    src/CandidatePatch.cpp)
+    src/CandidatePatch.cpp
+    src/Constraint.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -251,7 +252,8 @@ add_executable(sdurws_ird_optimization_test
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
     test/VariableTest.cpp
-    test/CandidatePatchTest.cpp)
+    test/CandidatePatchTest.cpp
+    test/ConstraintTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -338,7 +340,8 @@ add_executable(sdurws_ird_optimization_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
     contract_test/OptimizationPluginAssemblyContractTest.cpp
-    contract_test/VariableContractTest.cpp)
+    contract_test/VariableContractTest.cpp
+    contract_test/ConstraintContractTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_contract_test PROPERTIES
