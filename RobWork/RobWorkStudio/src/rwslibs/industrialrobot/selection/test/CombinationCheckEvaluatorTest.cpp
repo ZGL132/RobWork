@@ -26,6 +26,7 @@
 #include <sdurws/ird/selection/CatalogTypes.hpp>
 #include <sdurws/ird/selection/Combination.hpp>
 #include <sdurws/ird/selection/DiagCodes.hpp>
+#include <sdurws/ird/selection/FeasibleSet.hpp>  // kSelProfileItem*——T06 证据项词表断言
 #include <sdurws/ird/selection/Screening.hpp>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO
@@ -374,12 +375,21 @@ TEST(SelCombinationCheckEvaluator, FullPathAssemblesPayloadAndEvidence)
     EXPECT_TRUE(result.inputSliceId == fx.request.slice.sliceId);
     EXPECT_TRUE(result.mappingSliceId.isValid());
     EXPECT_EQ(result.catalog, fx.snapshot.manifest.identity);
-    // EvidenceItem：Satisfied＋摘要＝payload 摘要＋itemId 词形。
-    ASSERT_EQ(out.evidence.size(), std::size_t{1});
+    // EvidenceItem（T06 扩展断言——证据项与 sel 域 Profile 必需项对齐）：
+    // 4 项＝总证据项（T05 既有）＋表 4 选型行必需项①③④（②"每组合电机
+    // 侧工作点"由 drivetrain dt.mapping 评估器产出——项级分工，本评估器
+    // 不重复登记）；全部 Satisfied＋摘要＝同一 payload 摘要。
+    ASSERT_EQ(out.evidence.size(), std::size_t{4});
     EXPECT_EQ(out.evidence[0].itemId, "sel.combination-check");
-    EXPECT_EQ(out.evidence[0].status, evidence::EvidenceItemStatus::Satisfied);
-    ASSERT_TRUE(out.evidence[0].artifactDigest.has_value());
-    EXPECT_EQ(*out.evidence[0].artifactDigest, recomputed.bytes);
+    EXPECT_EQ(out.evidence[1].itemId, std::string(kSelProfileItemCatalogLock));
+    EXPECT_EQ(out.evidence[2].itemId, std::string(kSelProfileItemRejectionReasons));
+    EXPECT_EQ(out.evidence[3].itemId, std::string(kSelProfileItemComboCompatibility));
+    for (const evidence::EvidenceItem& item : out.evidence) {
+        EXPECT_EQ(item.status, evidence::EvidenceItemStatus::Satisfied);
+        ASSERT_TRUE(item.artifactDigest.has_value());
+        EXPECT_EQ(*item.artifactDigest, recomputed.bytes)
+            << "证据项摘要与 payload 不一致: " << item.itemId;
+    }
 }
 
 /// 映射批诊断码透传：批携带 DT-* 码 ⇒ 评估输出诊断通道逐码透传

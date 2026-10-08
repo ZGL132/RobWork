@@ -104,7 +104,15 @@ add_library(sdurws_ird_selection STATIC
 # ＋§9.2 管线②评估器＋P-SEL-1 提议契约 v1 承载）：
 #   src/CombinationCheck.cpp  §9 组合校核（组合键/构造/传动参数构造/
 #                             canonical 编解码/校核核心/③端口评估器）
-    src/CombinationCheck.cpp)
+# T06 增列可行集实现翻译单元（卡 §3.1 组成表 FeasibleSet 行——WP-19-T06
+# 交付面"可行集与淘汰原因输出（§10；EVI-01 选型 Profile 注册）"；公共头
+# include/sdurws/ird/selection/FeasibleSet.hpp——§14.6 可行集组装＋淘汰
+# 原因构造＋§10.1 结果类型＋SEL-06 指标＋sel 域 Profile 实例）：
+#   src/FeasibleSet.cpp       §10 可行集组装（分层资格/EVI-02 覆盖复核/
+#                             稳定排序/diagRef 回填）＋§14.6 淘汰原因
+#                             构造＋§17.3 裕量计算＋Profile 实例化
+    src/CombinationCheck.cpp
+    src/FeasibleSet.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：selection 公共头使用 C++17 设施（inline constexpr 变量
@@ -256,7 +264,11 @@ add_executable(sdurws_ird_selection_test
     test/CombinationBuilderTest.cpp
     test/CombinationCheckTest.cpp
     test/CombinationCheckCodecTest.cpp
-    test/CombinationCheckEvaluatorTest.cpp)
+    test/CombinationCheckEvaluatorTest.cpp
+# T06 增列可行集/淘汰原因用例组（WP-19-T06 acceptance 1/2——SEL-06
+# 输出面＋EVI-02 多工况资格；接口路径钉扎：经 IFeasibleSetBuilder/
+# IRejectionReasonProvider 引用消费，不留只测自由函数的盲区）：
+    test/FeasibleSetTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -342,7 +354,11 @@ add_executable(sdurws_ird_selection_contract_test
     contract_test/SelectionPluginAssemblyContractTest.cpp
     contract_test/CatalogIoBoundaryContractTest.cpp
     contract_test/HardScreeningContractTest.cpp
-    contract_test/CombinationCheckContractTest.cpp)
+    contract_test/CombinationCheckContractTest.cpp
+# T06 增列可行集/淘汰原因契约用例组（WP-19-T06 acceptance 1/3——词表→
+# 稳定码映射封闭性＋sel 域 Profile 经真实 EvidenceProfileRegistry 注册
+# 闭环＋err-01 字段面契约）：
+    contract_test/FeasibleSetContractTest.cpp)
 
 target_compile_features(sdurws_ird_selection_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_contract_test PROPERTIES

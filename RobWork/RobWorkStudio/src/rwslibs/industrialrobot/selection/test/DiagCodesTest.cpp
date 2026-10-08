@@ -1,16 +1,16 @@
 /**
  * @file   DiagCodesTest.cpp
- * @brief  selection 稳定诊断码登记表用例组（SelDiagCodes）——SEL-* 17 码
- *         全表清单纪律、码值句法（经 core 契约权威校验）与登记出处完整
- *         性（任务契约 WP-19-T02 acceptance 2"SEL-* 域诊断码按
- *         units/selection.md 登记表装配期注册"的实现侧自证面）。
+ * @brief  selection 稳定诊断码登记表用例组（SelDiagCodes）——SEL-* 45 码
+ *         全表清单纪律（T02 批 17＋T06 批表尾追加 28）、码值句法（经 core
+ *         契约权威校验）与登记出处完整性（任务契约 WP-19-T02 acceptance 2
+ *         ＋WP-19-T06 acceptance 1 的实现侧自证面）。
  *
  * 设计依据：
  *   - units/selection.md §2.2/§5.3/§6.2/§6.3/§9.3（SEL-* 登记值散布各节
- *     ——全表 17 码的字面清单即其机器核对面）、§1.3（SEL-* 建议值；前缀
- *     已在 diagnostics.md §4.5 业务域命名空间清单在册——无补登事项）、
- *     §10.3（ReasonToken 词表的逐 token 稳定码映射随 WP-19-T06——本组
- *     用例不覆盖、不预建）
+ *     ——T02 批 17 码的字面清单即其机器核对面）、§10.3（淘汰原因词表的
+ *     逐 token 稳定码建议值——WP-19-T06 批 28 码表尾追加，批内序＝
+ *     ReasonToken 词表组序）、§1.3（SEL-* 建议值；前缀
+ *     已在 diagnostics.md §4.5 业务域命名空间清单在册——无补登事项）
  *   - units/core.md §4.8（DiagCode 句法 ^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64
  *     ——core 仅承载；CR-08 码值权威在 diagnostics）＋core/DiagData.hpp
  *     （DiagnosticRecord::make 的 C-3 句法校验＝core 侧句法权威执行点）
@@ -24,7 +24,8 @@
  *     注册"结论**（登记表→StableCodeRegistry 的注册闭环随 L5 装配按本
  *     登记表逐行注册——诚实边界，未执行的验证不标注通过；与 DT 前缀
  *     不同，SEL 前缀已在注册表前缀-所有权表在册，注册无前缀阻塞）。
- *   - 任务契约 tasks/foundation/WP-19-T02.json acceptance 2
+ *   - 任务契约 tasks/foundation/WP-19-T02.json acceptance 2、
+ *     tasks/foundation/WP-19-T06.json acceptance 1
  */
 
 #include <sdurws/ird/selection/DiagCodes.hpp>
@@ -46,12 +47,14 @@ using sdurws::ird::selection::selectionCodeEntries;
 namespace {
 
 /// units/selection.md 登记表的**应登记码面**（测试内自持字面清单——与
-/// 实现清单机械比对，任一侧漂移即失败：失同步防线）。行序＝卡面章节序
-/// （§2.2 一码 → §5.3 表行序八码 → §6.2 一码 → §6.3 表行序四码 → §9.3
-/// 表行序三码——实现清单序＝确定性序的依据面）；卡面增码（随消费任务
-/// T03+）时在实现清单与本清单表尾同步追加并走单元卡增量修订——既有行
-/// 不重排。
+/// 实现清单机械比对，任一侧漂移即失败：失同步防线）。行序＝登记契约序
+/// （T02 批＝卡面章节序：§2.2 一码 → §5.3 表行序八码 → §6.2 一码 →
+/// §6.3 表行序四码 → §9.3 表行序三码；T06 批表尾追加 28 码＝§10.3 词表
+/// 逐 token 稳定码建议值，批内序＝ReasonToken 词表组序——实现清单序＝
+/// 确定性序的依据面）；卡面增码（随消费任务）时在实现清单与本清单表尾
+/// 同步追加并走单元卡增量修订——既有行不重排。
 const char* kUnitCardFullTable[] = {
+    // ---- T02 批（17 码——卡面已具名码值）----
     "SEL-INPUT-AXIS-OUT-OF-SCOPE",      // §2.2（移动关节范围外）
     "SEL-CATALOG-SCHEMA-MISMATCH",      // §5.3 行 1（字段字典不完整）
     "SEL-CATALOG-UNIT-INVALID",         // §5.3 行 2（单位非法）
@@ -69,10 +72,41 @@ const char* kUnitCardFullTable[] = {
     "SEL-COMBO-INCOMPATIBLE",           // §9.3 行 1（组合不兼容）
     "SEL-COMBO-AXIS-MAPPING-INCOMPLETE",// §9.3 行 2（轴映射不完整）
     "SEL-IDENTITY-MISMATCH",            // §9.3 行 11/12（身份不一致）
+    // ---- T06 批（28 码——§10.3 词表逐 token 稳定码建议值；批内序＝
+    //      ReasonToken 词表组序：电机 11→减速器 9→组合/一致性 1→上游/
+    //      数据 5→边界/偏好 2）----
+    "SEL-MOTOR-TORQUE-CONTINUOUS-INSUFFICIENT",  // 词表行 1（连续转矩不足）
+    "SEL-MOTOR-TORQUE-PEAK-INSUFFICIENT",        // （峰值转矩不足）
+    "SEL-MOTOR-SPEED-INSUFFICIENT",              // （转速不足）
+    "SEL-MOTOR-POWER-INSUFFICIENT",              // （功率不足）
+    "SEL-MOTOR-OVERLOAD-TIME-INSUFFICIENT",      // （过载持续时间不足）
+    "SEL-MOTOR-DUTY-MISMATCH",                   // （工作制不匹配）
+    "SEL-MOTOR-VOLTAGE-MISMATCH",                // （电压不匹配）
+    "SEL-MOTOR-THERMAL-DERATING-INSUFFICIENT",   // （温度降额复判不足）
+    "SEL-MOTOR-BRAKE-INSUFFICIENT",              // （制动能力不足）
+    "SEL-MOTOR-HOLDING-INSUFFICIENT",            // （保持能力不足）
+    "SEL-MOTOR-SAFETY-FACTOR-INSUFFICIENT",      // （安全系数复判不足）
+    "SEL-GEARBOX-RATED-TORQUE-INSUFFICIENT",     // 词表行 2（减速器额定转矩不足）
+    "SEL-GEARBOX-PEAK-TORQUE-INSUFFICIENT",      // （减速器峰值转矩不足）
+    "SEL-GEARBOX-INPUT-SPEED-EXCEEDED",          // （输入转速超限）
+    "SEL-GEARBOX-RATIO-MISMATCH",                // （速比不匹配）
+    "SEL-GEARBOX-EFFICIENCY-INSUFFICIENT",       // （效率不足）
+    "SEL-GEARBOX-BACKLASH-EXCEEDED",             // （回程间隙超限）
+    "SEL-GEARBOX-LIFE-INSUFFICIENT",             // （寿命不足）
+    "SEL-MOUNTING-INCOMPATIBLE",                 // （安装不兼容——共用 token）
+    "SEL-GEARBOX-EXTERNAL-LOAD-EXCEEDED",        // （允许外载荷超限）
+    "SEL-INERTIA-RATIO-POLICY-UNSETTLED",        // 词表行 3（惯量比策略未裁决——O-11）
+    "SEL-DYNAMICS-MISSING",                      // 词表行 4（dynamics 缺失）
+    "SEL-DRIVETRAIN-MISSING",                    // （drivetrain 映射缺失/失败）
+    "SEL-CASE-COVERAGE-GAP",                     // （工况覆盖缺口）
+    "SEL-INPUT-INVALID",                         // （输入非法）
+    "SEL-COMPUTE-FAILED",                        // （计算失败）
+    "SEL-R2-CAPABILITY-DISABLED",                // 词表行 5（R2 能力未启用）
+    "SEL-USER-PREFERENCE-FILTERED",              // （用户优选过滤）
 };
 
-/// 登记表码数（卡面已具名全集 17——实现清单与本清单同长断言的期望值；
-/// §10.3 词表的逐 token 稳定码映射随 WP-19-T06 增列，不在本表）。
+/// 登记表码数（T02 批 17＋T06 批 28＝45——实现清单与本清单同长断言的
+/// 期望值；后续任务增码在两清单表尾同步追加）。
 constexpr std::size_t kExpectedCodeCount
     = sizeof(kUnitCardFullTable) / sizeof(kUnitCardFullTable[0]);
 
@@ -162,10 +196,13 @@ TEST(SelDiagCodes, CodeSyntaxViaCoreContract_WP19T02_ACC2)
 
     // 唯一书写点：常量与登记清单逐字一致（禁字符串拼码/第二处字面量
     // ——T03+ 产码路径引用常量，登记表引用同一常量，两处失同步即实现
-    // 缺陷）。抽首/中/尾三行锚定。
+    // 缺陷）。抽首/中/尾三行锚定（T02 批首行/T06 批首行/全表尾行——
+    // 批边界漂移即失败）。
     EXPECT_EQ(entries[0].code, sdurws::ird::selection::kSelInputAxisOutOfScope);
-    EXPECT_EQ(entries[9].code, sdurws::ird::selection::kSelCurveExtrapolationDenied);
-    EXPECT_EQ(entries[16].code, sdurws::ird::selection::kSelIdentityMismatch);
+    EXPECT_EQ(entries[17].code,
+              sdurws::ird::selection::kSelMotorTorqueContinuousInsufficient);
+    EXPECT_EQ(entries.back().code,
+              sdurws::ird::selection::kSelUserPreferenceFiltered);
 }
 
 /**

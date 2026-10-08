@@ -31,6 +31,10 @@
 #include <sdurws/ird/selection/Combination.hpp>
 
 #include <sdurws/ird/selection/DiagCodes.hpp>
+// T06：Profile 项 itemId 词表常量（kSelProfileItem*——唯一书写点引用；
+// 评估器证据项产出与 sel 域 Profile 必需项对齐——WP-19-T06 acceptance 3。
+// 单元内头依赖：FeasibleSet.hpp → Combination.hpp 单向，无环）。
+#include <sdurws/ird/selection/FeasibleSet.hpp>
 
 #include <algorithm>
 #include <array>
@@ -1977,13 +1981,30 @@ evidence::EvaluationOutput CombinationCheckEvaluator::evaluate(
     // EvidenceItem（"域.项"词形——有完整产出〔未取消截断〕即 Satisfied；
     // 截断/空产出由 presence 纪律由汇总层处置——本层不对不完整素材出
     // Satisfied 项）。
+    // T06 扩展（WP-19-T06 acceptance 3）：证据项与 sel 域 RequiredEvidence
+    // Profile（makeSelRequiredEvidenceProfile——表 4 选型行）必需项对齐
+    // ——目录版本锁定/逐项淘汰原因/组合兼容记录三项随本 payload 产出登
+    // 记（同 payload 摘要；"sel.combination-check" 为既有总证据项保留
+    // ——T05 验收面）；必需项②"每组合电机侧工作点"（sel.motor-op-point）
+    // 由 dt.mapping 评估器（drivetrain）产出——同一 sel Profile 的项级
+    // 分工，本评估器不重复登记（不伪造上游证据）。
     const bool truncated = outcomes.size() < mappingBatch.combinations.size();
     if (!truncated && !result.records.empty()) {
         evidence::EvidenceItem item;
-        item.itemId = std::string(kSelProfileId) + ".combination-check";
         item.status = evidence::EvidenceItemStatus::Satisfied;
         item.artifactDigest = digestOf(payloadBytes).bytes;
-        out.evidence.push_back(std::move(item));
+        // 总证据项（T05 既有——payload 完整性证据）。
+        item.itemId = std::string(kSelProfileId) + ".combination-check";
+        out.evidence.push_back(item);
+        // 必需项①：目录版本锁定标识（payload 内 SelectionCheckResult.catalog）。
+        item.itemId = std::string(kSelProfileItemCatalogLock);
+        out.evidence.push_back(item);
+        // 必需项③：逐项淘汰原因（payload 内 records——实际值/阈值/来源）。
+        item.itemId = std::string(kSelProfileItemRejectionReasons);
+        out.evidence.push_back(item);
+        // 必需项④：组合兼容记录（payload 内兼容核对原因记录）。
+        item.itemId = std::string(kSelProfileItemComboCompatibility);
+        out.evidence.push_back(item);
     }
     return out;
 }

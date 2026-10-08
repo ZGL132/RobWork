@@ -1,27 +1,36 @@
 /**
  * @file   DiagCodes.cpp
- * @brief  selection 稳定诊断码登记表的实现——SEL-* 全表 17 码登记行清单
- *         （逐码出处与语义登记）。
+ * @brief  selection 稳定诊断码登记表的实现——SEL-* 全表 45 码登记行清单
+ *         （逐码出处与语义登记；T02 批 17 码＋T06 批表尾追加 28 码）与
+ *         ReasonToken→稳定码唯一映射函数。
  *
  * 设计依据：
  *   - units/selection.md §2.2（移动关节范围外纪律）、§5.3（目录业务校验
  *     清单——逐行触发条件与比较型字段要求）、§6.2（默认禁止外推——不
  *     自动使用最近点）、§6.3（曲线校验表——拒绝优于排序掩盖）、§9.3
  *     （组合校核清单——兼容/轴映射/身份一致性；各码登记值与处置口径的
- *     唯一权威）、§1.3（SEL-* 建议值；前缀已在 diagnostics §4.5 在册）
+ *     唯一权威）、§10.3（淘汰原因词表——SEL-* 稳定码建议值随 WP-19-T06
+ *     注册；token→码映射的唯一实现点在本文件）、§1.3（SEL-* 建议值；
+ *     前缀已在 diagnostics §4.5 在册）
  *   - units/core.md §4.8（DiagCode 句法——core 仅承载；本清单码值经
- *     DiagCodesTest 以 core::DiagnosticRecord 句法权威校验）
+ *     DiagCodesTest 与 FeasibleSetContractTest 以 core::DiagnosticRecord
+ *     句法权威校验）
  *   - 先例：drivetrain/src/DiagCodes.cpp（依赖白名单无 diagnostics 编译
  *     边的登记表物化同款形态——kinematics/src/DiagCodes.cpp 的注册函数
  *     形态在此不适用，差异论证见 DiagCodes.hpp 文件头注）
- *   - 任务契约 tasks/foundation/WP-19-T02.json acceptance 2
+ *   - 任务契约 tasks/foundation/WP-19-T02.json acceptance 2、
+ *     tasks/foundation/WP-19-T06.json acceptance 1（逐项淘汰原因含
+ *     thresholdSource 与稳定诊断引用）
  *
- * 确定性（NFR-COR-02）：清单序＝卡面章节序（§2.2 → §5.3 → §6.2 → §6.3
- * → §9.3，同节按表行序）；每次调用返回同序同值新清单（登记行为纯值
- * 聚合）；码值经 DiagCodes.hpp 常量引用（唯一书写点）。
+ * 确定性（NFR-COR-02）：清单序＝登记契约序（T02 批＝卡面章节序 §2.2 →
+ * §5.3 → §6.2 → §6.3 → §9.3；T06 批表尾追加，批内序＝ReasonToken 词表
+ * 组序）；每次调用返回同序同值新清单（登记行为纯值聚合）；码值经
+ * DiagCodes.hpp 常量引用（唯一书写点）。
  */
 
 #include <sdurws/ird/selection/DiagCodes.hpp>
+
+#include <string>
 
 namespace sdurws::ird::selection {
 
@@ -161,7 +170,205 @@ std::vector<DiagnosticEntry> selectionCodeEntries()
         {kSelIdentityMismatch,
          "units/selection.md §9.3",
          "身份不一致（目录版本/映射契约版本与切片声明不符）：拒绝评估，AT-38 三方同口径"},
+
+        // =============================================================
+        // T06 批（WP-19-T06）：§10.3 淘汰原因词表的逐 token 稳定码建议值
+        // ——28 码表尾追加；批内序＝ReasonToken 词表组序。逐码出处统一
+        // 登记卡 §10.3（词表行）；语义列登记该 token 的判定语义与分轨
+        // 口径（ERR-01 比较型字段齐备由 RejectionReason 承载——码是
+        // 引用面，不是第二事实源）。
+        // =============================================================
+
+        // ---- 电机能力组（词表行 1；11 码）----
+        {kSelMotorTorqueContinuousInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机连续转矩不足：工作点 τ_rms＞额定连续转矩——逐项淘汰原因（SEL-03 维度）"},
+        {kSelMotorTorquePeakInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机峰值转矩不足：工作点 τ_peak＞峰值转矩——逐项淘汰原因（SEL-03 维度）"},
+        {kSelMotorSpeedInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机转速不足：ω_peak＞最高转速或 ω_rms＞额定转速——逐项淘汰原因（SEL-03 维度）"},
+        {kSelMotorPowerInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机功率不足：工作点功率＞功率能力——逐项淘汰原因（SEL-03 维度）"},
+        {kSelMotorOverloadTimeInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机过载持续时间不足：峰值段时长＞目录允许时长——逐项淘汰原因（触发式维度）"},
+        {kSelMotorDutyMismatch,
+         "units/selection.md §10.3/§7.1",
+         "电机工作制不匹配：需求工作制∉目录工作制——逐项淘汰原因"},
+        {kSelMotorVoltageMismatch,
+         "units/selection.md §10.3/§7.1",
+         "电机电压不匹配：需求电压与目录额定电压超出容差——逐项淘汰原因"},
+        {kSelMotorThermalDeratingInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机温度降额复判不足：折减后能力＜工作点——独立 token 与原始转矩维度分轨并行"},
+        {kSelMotorBrakeInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机制动能力不足：保持需求＞制动转矩——逐项淘汰原因"},
+        {kSelMotorHoldingInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机保持能力不足：保持需求＞保持能力——逐项淘汰原因"},
+        {kSelMotorSafetyFactorInsufficient,
+         "units/selection.md §10.3/§7.1",
+         "电机安全系数复判不足：工作点×SF＞能力值——逐项淘汰原因（复判维度）"},
+
+        // ---- 减速器能力组（词表行 2；9 码）----
+        {kSelGearboxRatedTorqueInsufficient,
+         "units/selection.md §10.3/§8.1",
+         "减速器额定输出转矩不足：关节 τ_rms＞额定输出转矩——逐项淘汰原因（SEL-04 维度）"},
+        {kSelGearboxPeakTorqueInsufficient,
+         "units/selection.md §10.3/§8.1",
+         "减速器峰值输出转矩不足：关节 τ_peak＞峰值输出转矩——逐项淘汰原因（SEL-04 维度）"},
+        {kSelGearboxInputSpeedExceeded,
+         "units/selection.md §10.3/§8.1",
+         "减速器输入转速超限：ω_m_peak＞允许输入转速——逐项淘汰原因（SEL-04 维度）"},
+        {kSelGearboxRatioMismatch,
+         "units/selection.md §10.3/§8.1",
+         "速比不匹配：候选速比∉该轴允许传动比范围——逐项淘汰原因"},
+        {kSelGearboxEfficiencyInsufficient,
+         "units/selection.md §10.3/§8.1",
+         "减速器效率不足：目录效率＜筛选条件最低效率——逐项淘汰原因"},
+        {kSelGearboxBacklashExceeded,
+         "units/selection.md §10.3/§8.1",
+         "回程间隙超限：目录回隙＞筛选条件上限——逐项淘汰原因"},
+        {kSelGearboxLifeInsufficient,
+         "units/selection.md §10.3/§8.1",
+         "减速器寿命不足：目录额定寿命＜筛选条件要求——逐项淘汰原因"},
+        {kSelMountingIncompatible,
+         "units/selection.md §10.3/§7.1/§8.1",
+         "安装不兼容（电机/减速器共用 token——T04 落位细化 ③）：接口/安装方向与关节安装关系不符，失败分轨独立记因"},
+        {kSelGearboxExternalLoadExceeded,
+         "units/selection.md §10.3/§8.1",
+         "允许外载荷超限：实际外载荷＞力臂核算后允许值——逐项淘汰原因"},
+
+        // ---- 组合/一致性组新增码（词表行 3；其余 5 token 复用 T02 批码）----
+        {kSelInertiaRatioPolicyUnsettled,
+         "units/selection.md §10.3/§11.3",
+         "惯量比策略未裁决（O-11/P-POL-3）：显式未判定标记——非淘汰码，不进入淘汰统计，Verified 不整体阻断"},
+
+        // ---- 上游/数据组（词表行 4；5 码——与候选淘汰分轨）----
+        {kSelDynamicsMissing,
+         "units/selection.md §10.3/§10.2",
+         "dynamics 结果缺失：上游缺失按数据不足分轨——不伪装候选淘汰、不默认零负载"},
+        {kSelDrivetrainMissing,
+         "units/selection.md §10.3/§10.2",
+         "drivetrain 映射缺失/失败：上游诊断透传——映射失败≠器件能力不足，不自动判整机不可行"},
+        {kSelCaseCoverageGap,
+         "units/selection.md §10.3/§9.4",
+         "工况覆盖缺口：EVI-02 素材面——任一必验工况数据不足组合整体 DataInsufficient，不漏验"},
+        {kSelInputInvalid,
+         "units/selection.md §10.3/§10.2",
+         "输入非法：校验边界快速拒绝类——与候选能力淘汰分轨（不留下笼统不可行）"},
+        {kSelComputeFailed,
+         "units/selection.md §10.3",
+         "计算失败：与候选淘汰分开、不进入淘汰原因统计（卡 §10.3 词表登记）"},
+
+        // ---- 边界/偏好组（词表行 5；2 码——AxisOutOfScope 复用 T02 批码）----
+        {kSelR2CapabilityDisabled,
+         "units/selection.md §10.3/§17.2",
+         "R2 能力未启用：直线传动等 R2 扩展在阶段 D 前显式拒绝——不静默套用旋转传动"},
+        {kSelUserPreferenceFiltered,
+         "units/selection.md §10.3/§10.2",
+         "用户优选过滤：偏好呈现结果、非工程结论——与硬能力淘汰分开（SEL-07 分轨）"},
     };
+}
+
+// =====================================================================
+// ReasonToken → 稳定码唯一映射（DiagCodes.hpp 声明的唯一实现——全表
+// 34 token；复用码分支引用既有常量、新码分支引用 T06 批常量，禁第二处
+// 字面量）。分支序＝ReasonToken 枚举序＝词表序（与 switch 可读序一致；
+// 映射值与 selectionCodeEntries 登记行同源——两处皆引用同一常量，失同
+// 步由 FeasibleSetContractTest 全遍历＋DiagCodesTest 机械比对双面钉住）。
+// =====================================================================
+
+std::string_view reasonTokenDiagCode(ReasonToken token)
+{
+    switch (token) {
+    // ---- 电机能力组（11 token→SEL-MOTOR- 族）----
+    case ReasonToken::TorqueContinuousInsufficient:
+        return kSelMotorTorqueContinuousInsufficient;
+    case ReasonToken::TorquePeakInsufficient:
+        return kSelMotorTorquePeakInsufficient;
+    case ReasonToken::SpeedInsufficient:
+        return kSelMotorSpeedInsufficient;
+    case ReasonToken::PowerInsufficient:
+        return kSelMotorPowerInsufficient;
+    case ReasonToken::OverloadTimeInsufficient:
+        return kSelMotorOverloadTimeInsufficient;
+    case ReasonToken::DutyMismatch:
+        return kSelMotorDutyMismatch;
+    case ReasonToken::VoltageMismatch:
+        return kSelMotorVoltageMismatch;
+    case ReasonToken::ThermalDeratingInsufficient:
+        return kSelMotorThermalDeratingInsufficient;
+    case ReasonToken::BrakeInsufficient:
+        return kSelMotorBrakeInsufficient;
+    case ReasonToken::HoldingInsufficient:
+        return kSelMotorHoldingInsufficient;
+    case ReasonToken::SafetyFactorInsufficient:
+        return kSelMotorSafetyFactorInsufficient;
+
+    // ---- 减速器能力组（9 token→SEL-GEARBOX- 族＋共用安装码）----
+    case ReasonToken::GearboxRatedTorqueInsufficient:
+        return kSelGearboxRatedTorqueInsufficient;
+    case ReasonToken::GearboxPeakTorqueInsufficient:
+        return kSelGearboxPeakTorqueInsufficient;
+    case ReasonToken::InputSpeedExceeded:
+        return kSelGearboxInputSpeedExceeded;
+    case ReasonToken::RatioMismatch:
+        return kSelGearboxRatioMismatch;
+    case ReasonToken::EfficiencyInsufficient:
+        return kSelGearboxEfficiencyInsufficient;
+    case ReasonToken::BacklashExceeded:
+        return kSelGearboxBacklashExceeded;
+    case ReasonToken::LifeInsufficient:
+        return kSelGearboxLifeInsufficient;
+    case ReasonToken::MountingIncompatible:
+        return kSelMountingIncompatible;
+    case ReasonToken::ExternalLoadExceeded:
+        return kSelGearboxExternalLoadExceeded;
+
+    // ---- 组合/一致性组（6 token：3 复用 T02 批码＋1 复用同码＋2 新码；
+    //      CatalogVersionIncompatible/MappingVersionIncompatible 按卡
+    //      §9.3 行 10/11 与 IdentityMismatch 同码——SEL-IDENTITY-MISMATCH）----
+    case ReasonToken::ComboIncompatible:
+        return kSelComboIncompatible;
+    case ReasonToken::AxisMappingIncomplete:
+        return kSelComboAxisMappingIncomplete;
+    case ReasonToken::InertiaRatioPolicyUnsettled:
+        return kSelInertiaRatioPolicyUnsettled;
+    case ReasonToken::IdentityMismatch:
+        return kSelIdentityMismatch;
+    case ReasonToken::CatalogVersionIncompatible:
+        return kSelIdentityMismatch;
+    case ReasonToken::MappingVersionIncompatible:
+        return kSelIdentityMismatch;
+
+    // ---- 上游/数据组（5 token→新码；与候选淘汰分轨）----
+    case ReasonToken::DynamicsMissing:
+        return kSelDynamicsMissing;
+    case ReasonToken::DrivetrainMissing:
+        return kSelDrivetrainMissing;
+    case ReasonToken::CaseCoverageGap:
+        return kSelCaseCoverageGap;
+    case ReasonToken::InputInvalid:
+        return kSelInputInvalid;
+    case ReasonToken::ComputeFailed:
+        return kSelComputeFailed;
+
+    // ---- 边界/偏好组（3 token：1 复用 T02 批码＋2 新码）----
+    case ReasonToken::AxisOutOfScope:
+        return kSelInputAxisOutOfScope;
+    case ReasonToken::R2CapabilityDisabled:
+        return kSelR2CapabilityDisabled;
+    case ReasonToken::UserPreferenceFiltered:
+        return kSelUserPreferenceFiltered;
+    }
+    // 词表外整数值（防御分支——不抛不私造）：返回空串，调用方以空串判
+    // "无码可引"，diagRef 保持 nullopt（NFR-MNT-03 不伪造码值）。
+    return std::string_view{};
 }
 
 }  // namespace sdurws::ird::selection
