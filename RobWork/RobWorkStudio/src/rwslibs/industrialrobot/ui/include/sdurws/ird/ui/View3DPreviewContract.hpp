@@ -43,14 +43,21 @@ namespace ui {
 /**
  * @brief 工位标记值（acceptance 1——非禁用工位的坐标轴＋名称标签）。
  *
- * 挂帧语义：标记经 frameName 挂接宿主 WorkCell 对应帧（坐标轴**随帧
- * 位姿动**——会话/示教移动零重投；投影方零位姿计算）。label 承载为
- * 场景节点名（三维内浮动文本无渲染基建——诚实边界：标签文本随场景
- * 结构可见，浮动 Billboard 文本随文本渲染基建任务补齐）。
+ * 双形态语义（UI-T77——F-555 修复增量；表尾追加纪律〔UI-T65 tint 同款〕
+ * ——既有消费面缺省构造即"挂帧"旧语义，二进制面零破坏）：
+ *   - position 无值（nullopt，缺省）＝**挂帧指示器**：标记经 frameName
+ *     挂接宿主 WorkCell 对应帧（坐标轴随帧位姿动——会话/示教移动零重
+ *     投；投影方零位姿计算）——UI-T33 既有语义原样保持；
+ *   - position 有值＝**空间点位**：坐标轴与标签渲染于该世界系点位（工
+ *     位作为带坐标的空间点在三维可辨——F-555：此前工位坐标在投影链全
+ *     程丢失，标记恒渲染于参考系原点）。label 承载为场景节点名。
  *
  * 语义约定：enabled=false 的工位**不入**标记集（投影方过滤——协议值
  * 集合即呈现集合，渲染层零过滤逻辑）；帧不可解析（宿主 WorkCell 无
- * 对应帧）＝该标记由渲染后端跳过并计数（失败可见面——投影方摘要承载）。
+ * 对应帧）＝挂帧形态下该标记由渲染后端跳过并计数（失败可见面——投影
+ * 方摘要承载）；position 形态下参考系解析失败由**投影方**降级（世界系
+ * 变换不可得＝position 置空回落挂帧形态——诚实降级，协议层无参考系
+ * 语义）。
  */
 struct View3DFrameMarker {
     /// 名称标签（工程用语——UX-02；承载为场景节点名后缀）。
@@ -58,10 +65,16 @@ struct View3DFrameMarker {
     /// 挂接帧名（宿主 WorkCell 帧名——工位参考帧；渲染层 findFrame
     /// 挂接，坐标轴随帧位姿动）。
     std::string frameName;
+    /// 工位点位置（UI-T77——F-555 增量；**世界系** m，契约头注坐标系
+    /// 约定——投影方负责 refFrame→世界变换〔区域框角点同款纪律〕；
+    /// nullopt＝挂帧指示器形态〔缺省——UI-T33 旧语义零破坏〕。表尾
+    /// 追加纪律：既有消费面缺省构造语义不变）。
+    std::optional<rw::math::Vector3D<double>> position;
 
     bool operator==(const View3DFrameMarker& o) const
     {
-        return label == o.label && frameName == o.frameName;
+        return label == o.label && frameName == o.frameName
+            && position == o.position;
     }
     bool operator!=(const View3DFrameMarker& o) const { return !(*this == o); }
 };

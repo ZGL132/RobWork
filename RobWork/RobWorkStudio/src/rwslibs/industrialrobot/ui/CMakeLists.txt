@@ -397,8 +397,10 @@ if(TARGET sdurws)
     target_sources(sdurws_ird_ui_test PRIVATE
         test/HostCompilePipelineTest.cpp
         test/KinEvaluationChannelTest.cpp  # UI-T64——覆盖评估执行器（受理/切片/账面/迟到判定）
+        test/View3DPreviewMarkerPositionTest.cpp  # UI-T77——预览协议 position 追加纪律（F-555；rw 头依赖面——冒烟树无框架目标不编）
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostCompilePort.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/HostPresentationAdapters.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/QtTextBillboard.cpp  # UI-T77——被测 TU 的同源依赖（F-556 承载件）
         ${CMAKE_CURRENT_SOURCE_DIR}/plugin/KinEvaluationChannel.cpp)  # UI-T64——被测 TU 同源编入（HostCompilePort 先例形态）
     target_include_directories(sdurws_ird_ui_test PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
@@ -731,6 +733,7 @@ if(TARGET sdurws)
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（WorkCellScene 原语编排）
         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（十段链适配＋快照缓存＋探针＋名称上下文）
         plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（映射真值/挂接对象/构造源）
+        plugin/QtTextBillboard.cpp  # UI-T77——Qt 纹理化文本 billboard（F-556 承载件——呈现适配器骨架标签依赖）
         plugin/KinEvaluationChannel.cpp  # UI-T64——kinematics 覆盖评估执行通道（F-490① 上游批装配半区）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)
@@ -825,6 +828,7 @@ if(TARGET sdurws)
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（与插件目标同源）
         plugin/HostCompilePort.cpp  # UI-T46——宿主编译端口（与插件目标同源）
         plugin/HostPresentationAdapters.cpp  # UI-T46——呈现装配适配器族（与插件目标同源）
+        plugin/QtTextBillboard.cpp  # UI-T77——Qt 纹理化文本 billboard（F-556 承载件，与插件目标同源）
         plugin/KinEvaluationChannel.cpp  # UI-T64——kinematics 覆盖评估执行通道（与插件目标同源）
         app/PortAdapters.cpp
         app/DiagnosticsAssembly.cpp)

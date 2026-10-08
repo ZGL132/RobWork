@@ -211,9 +211,14 @@ struct RequirementsPluginAssembly {
 
     /// 工位标记投影值（中性公共面——label＋参考系原值；宿主帧名解析与
     /// 世界系变换归投影方〔ui 侧全缝〕，域类型不出本头）。
+    /// UI-T77（F-555）表尾追加 position：refFrame 系受约束位置原值直投
+    /// （同构直转零语义损失——世界系变换与帧名解析同缝归投影方）；
+    /// nullopt＝工位未提供位置值（四态诚实投影——缺失不转零〔MDL-06〕）。
     struct StationMarkerView {
         std::string label;              ///< 工位名（场景节点名后缀——UX-02）
         RequirementReference refFrame;  ///< 参考系原值（World 缺省合法）
+        /// 受约束位置（UI-T77——F-555；m，refFrame 系；nullopt＝未提供）。
+        std::optional<rw::math::Vector3D<double>> position;
     };
 
     /// 区域预览投影值（中性公共面——refFrame 系几何＋参考系原值；世界系

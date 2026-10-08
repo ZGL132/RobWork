@@ -3534,14 +3534,51 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
             return std::nullopt;
         };
         m_domains->requirements->bindStationMarkersSink(
-            [this, resolveFrameName](
+            [this, resolveFrameName, studio](
                 const std::vector<requirements::RequirementsPluginAssembly::StationMarkerView>& markers) {
                 m_reqMarkers.clear();
                 for (const auto& marker : markers) {
                     const auto frameName = resolveFrameName(marker.refFrame);
                     if (frameName.has_value()) {
+                        // UI-T77（F-555）：工位受约束位置随标记投影——
+                        // refFrame 系→世界系（区域框角点同款变换纪律，
+                        // 契约头注"投影方负责参考系变换"）：
+                        //   - World 缺省参考系＝位置本身就是世界系坐标，
+                        //     恒等直投（不经宿主帧解析——与区域框 F-550②
+                        //     ③修复同理，首应用前会话预览锚下即可呈现）；
+                        //   - 对象引用系＝宿主帧位姿（worldTframe，发布后
+                        //     帧树在位）左乘位置；帧不可解析（宿主无发布
+                        //     WC 或帧缺失）＝position 降级置空——标记回落
+                        //     挂帧指示器形态（渲染端按 frameName 走既有
+                        //     解析/计数路径），不虚构世界系坐标；
+                        //   - 工位未提供位置值（四态 NotProvided）＝
+                        //     nullopt 透传——缺失不转零〔MDL-06〕，渲染
+                        //     端保持挂帧行为（UI-T33 旧语义）。
+                        std::optional<rw::math::Vector3D<double>> worldPos;
+                        if (marker.position.has_value()) {
+                            if (marker.refFrame.kind
+                                == requirements::RequirementRefKind::World) {
+                                worldPos = *marker.position;  // 恒等直投
+                            } else {
+                                rw::kinematics::Frame* frame = nullptr;
+                                if (frameName.has_value() && studio != nullptr
+                                    && !studio->getWorkCell().isNull()) {
+                                    frame = studio->getWorkCell()->findFrame(
+                                        *frameName);
+                                }
+                                if (frame != nullptr) {
+                                    const rw::math::Transform3D<double> worldT =
+                                        rw::kinematics::Kinematics::worldTframe(
+                                            rw::core::Ptr<
+                                                const rw::kinematics::Frame>(
+                                                frame),
+                                            studio->getState());
+                                    worldPos = worldT * *marker.position;
+                                }  // 帧不可解析＝worldPos 保持空（诚实降级）
+                            }
+                        }
                         m_reqMarkers.push_back(ui::View3DFrameMarker{
-                            marker.label, *frameName});
+                            marker.label, *frameName, worldPos});
                     }  // 帧名不可解析＝该标记跳过（渲染端 unresolved 计数留痕）
                 }
                 ui::View3DPreviewUpdate update;

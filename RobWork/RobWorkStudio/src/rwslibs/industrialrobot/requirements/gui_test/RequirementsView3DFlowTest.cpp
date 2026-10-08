@@ -383,3 +383,74 @@ TEST(RequirementsView3DFlow, RegionPreviewSink_ForwardsGridLines_UI_T52)
     EXPECT_DOUBLE_EQ(*received->minPositionCoverage, 0.8)
         << "覆盖率目标失实（域默认 0.8 直投面）";
 }
+
+/// 工位标记投影 position 直投（UI-T77——F-555 修复）：Provided 态位置
+/// 随标记原值透传（refFrame 系——世界系变换归 ui 投影方）、NotProvided
+/// 态诚实降级为 nullopt（缺失不转零——MDL-06 四态纪律；投影链无坐标
+/// 可虚构）、禁用工位不入标记集（acceptance 1 词面不变）。面板→门面
+/// 两层转换（emitStationMarkers→StationMarkerView 同构直转）一体断言。
+TEST(RequirementsView3DFlow, StationMarkersCarryPositionWhenProvided_UI_T77)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01"},
+                  std::vector<std::string>{});
+
+    // ①预置三点基线：tp-a 位置 Provided(0.5,0.5,0.0)／tp-b 位置未提供
+    // （makePoint 不设 position——SourcedValue 缺省 NotProvided）／
+    // tp-c-off 禁用（不入标记集——enabled 过滤回归面）。
+    MapClosure closure;
+    PointSet points;
+    TaskPoint provided = makePoint("tp-a");
+    provided.pose.position =
+        core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            rw::math::Vector3D<double>(0.5, 0.5, 0.0),
+            core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    points.entries.push_back(provided);
+    points.entries.push_back(makePoint("tp-b"));  // 位置 NotProvided
+    TaskPoint disabled = makePoint("tp-c-off");
+    disabled.enabled = false;
+    points.entries.push_back(disabled);
+    fillBaseline(closure, points);
+
+    RequirementEditor editor;
+    ASSERT_TRUE(editor.loadBaseline(closure).ok);
+    ASSERT_EQ(editor.workingSet().points.entries.size(), std::size_t{3});
+
+    // ②门面装配＋面板工厂＋sink 捕获＋会话刷新触发投影（emitStation
+    // Markers 在 refreshPanel 尾部全量投递——UI-T33 承接点）。
+    RequirementsPluginAssembly assembly = createRequirementsPluginAssembly();
+    assembly.attachEditor(&editor);
+    std::vector<RequirementsPluginAssembly::StationMarkerView> received;
+    assembly.bindStationMarkersSink(
+        [&](const std::vector<RequirementsPluginAssembly::StationMarkerView>&
+                markers) { received = markers; });
+    ASSERT_FALSE(assembly.descriptor.panels.empty()) << "面板工厂未登记";
+    std::unique_ptr<QWidget> panelHolder(assembly.descriptor.panels.front().factory());
+    ASSERT_NE(panelHolder, nullptr) << "面板工厂未产面板";
+    assembly.bindReadiness(RequirementReadinessReport{});
+    assembly.refreshFromSession();
+
+    // ③断言：禁用点过滤＋位置原值透传＋缺失诚实降级。标记序＝工作集
+    // 条目序（Codec 按 ObjectId 稳定排序——generate 随机 id，测试按
+    // label 匹配断言，不依赖随机序）。
+    ASSERT_EQ(received.size(), std::size_t{2})
+        << "标记集应恰为两个启用工位（禁用点不入——acceptance 1 词面）";
+    const RequirementsPluginAssembly::StationMarkerView* withPosition = nullptr;
+    const RequirementsPluginAssembly::StationMarkerView* withoutPosition = nullptr;
+    for (const auto& marker : received) {
+        if (marker.label == "tp-a") {
+            withPosition = &marker;
+        } else if (marker.label == "tp-b") {
+            withoutPosition = &marker;
+        }
+    }
+    ASSERT_NE(withPosition, nullptr) << "tp-a 应入标记集";
+    ASSERT_NE(withoutPosition, nullptr) << "tp-b 应入标记集";
+    ASSERT_TRUE(withPosition->position.has_value())
+        << "Provided 位置应随标记投递（F-555 投影链补位）";
+    EXPECT_DOUBLE_EQ((*withPosition->position)[0], 0.5) << "位置 X 失实";
+    EXPECT_DOUBLE_EQ((*withPosition->position)[1], 0.5) << "位置 Y 失实";
+    EXPECT_DOUBLE_EQ((*withPosition->position)[2], 0.0) << "位置 Z 失实";
+    EXPECT_FALSE(withoutPosition->position.has_value())
+        << "NotProvided 不得转零（缺失→nullopt——MDL-06 诚实投影，"
+           "渲染端据此回落挂帧指示器形态）";
+}

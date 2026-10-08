@@ -1,17 +1,33 @@
 /**
  * @file   HostView3DPreviewBackend.cpp
  * @brief  需求域三维会话预览渲染后端实现（契约头 HostView3DPreviewBackend
- *         .hpp——WorkCellScene 原语编排＋两组自绘 Render）。
+ *         .hpp——WorkCellScene 原语编排＋自绘 Render 族）。
  *
  * GL 纪律：固定管线即时模式（glBegin/glEnd——框架 RenderFrame 同款先例；
  * 头 rwlibs/opengl/glext_win32.hpp 的框架聚合面——ui_plugin 链接面既有）。
  * 着色词表：Good 绿/Weak 黄/Failed 红（spec §2.4——判定归域侧，此处只
  * 分色）；中性格线＝灰（无评估结果的诚实空态——不虚构判定）。
+ *
+ * 文本渲染（UI-T77——F-556 修复）：框架 rwlibs::opengl::RenderText 基于
+ * GLUT 位图字体（freeglut bitmap 仅 ASCII 字形集，无 CJK），UTF-8 工位
+ * 名按字节映射拉丁字形即乱码——框架级限制（2009 年代件，非产品缺陷）。
+ * 本后端以 Qt 纹理化文本替代件（QtTextBillboard——QImage/QPainter 离屏
+ * 排版〔QFont 原生 UTF-8/CJK 字形〕→GL 纹理→面向相机四边形）承接全部
+ * 三维标签字面；billboard 手法仿 RenderText（相机世界变换→挂接帧局部
+ * 系四角），世界尺寸固定（文本渲染基建的自适应尺寸演进仍归 WP-10-T05）。
+ *
+ * 线程约束：仅 UI 线程（宿主三维交互面——§3.4；RobWorkStudio 场景渲染
+ * 与 Qt 事件循环同线程——QImage 离屏排版无跨线程约束）。
  */
 
 #include "HostView3DPreviewBackend.hpp"
 
+#include "QtTextBillboard.hpp"  // Qt 纹理化文本 billboard（F-556——标签替代承载，同单元共享件）
+
 #include <sdurws/ird/ui/UiTheme.hpp>  // 采样状态色词表（UI-T65——F-495 统一供色单点）
+
+#include <QColor>          // 标签字色现取（词表 hex → Qt 值——纹理缓存键）
+#include <QOpenGLContext>  // 当前 GL 上下文（文本层现取——QtTextBillboard 消费面）
 
 #include <rw/graphics/DrawableNode.hpp>
 #include <rw/graphics/Render.hpp>
@@ -19,12 +35,12 @@
 #include <rw/graphics/WorkCellScene.hpp>
 #include <rw/kinematics/Frame.hpp>
 #include <rwlibs/opengl/DrawableUtil.hpp>
-#include <rwlibs/opengl/RenderText.hpp>  // 框架文本渲染（UI-T52——工位标签；F-490② 消账）
 #include <rwlibs/opengl/rwgl.hpp>  // GL 聚合头（框架 RenderFrame 同款——平台 glext 由其内部处理）
 
 #include <rws/RobWorkStudio.hpp>
 #include <rws/RWStudioView3D.hpp>  // getView→getSceneViewer（F-550② 世界节点重同步）
 
+#include <array>
 #include <cstdio>
 
 using namespace rw::graphics;
@@ -87,6 +103,69 @@ std::array<float, 3> tintColor(std::optional<View3DTint> tint)
             ui::palette::kRegionTintDefaultGl[1],
             ui::palette::kRegionTintDefaultGl[2]};
 }
+
+/**
+ * @brief 工位点值标记渲染（UI-T77——F-555：position 形态的坐标轴＋标签
+ *        一体件，挂 WORLD 根帧、渲染于世界系点位）。
+ *
+ * 为什么挂 WORLD 自绘：框架 addFrameAxis 只能画在挂接帧原点（帧＝参考
+ * 系语义），无法表达"参考系内偏移点位"；点位标记的轴与标签都锚定在
+ * 世界系 position 上（工位作为空间点可辨——F-555 缺位语义），故三轴
+ * 与标签一体自绘、整体挂 WORLD（根帧局部系＝世界系，位姿零换算）。
+ *
+ * 轴色经 UiTheme 坐标轴词表（RobWork 惯例 X 红/Y 绿/Z 蓝——见词表注）。
+ */
+class StationMarkerRender final : public Render
+{
+  public:
+    /// 构造（点位世界系坐标＋工位名标签——构造冻结）。
+    StationMarkerRender(const Vector3D<double>& worldPosition,
+                        std::string label)
+        : m_position(worldPosition), m_label(std::move(label))
+    {
+    }
+
+    void draw(const DrawableNode::RenderInfo& info,
+              DrawableNode::DrawType type, double alpha) const override
+    {
+        (void)type;
+        // 三轴：局部平移至点位后画 X/Y/Z 三线段（GL_LINES——轴指示惯例
+        // 形态；轴长与挂帧形态 addFrameAxis 同尺度 0.25 m＝工位尺度）。
+        glPushMatrix();
+        glTranslated(m_position[0], m_position[1], m_position[2]);
+        glLineWidth(2.0f);
+        glBegin(GL_LINES);
+        glColor4f(ui::palette::kAxisXGl[0], ui::palette::kAxisXGl[1],
+                  ui::palette::kAxisXGl[2], static_cast<float>(alpha));
+        glVertex3d(0.0, 0.0, 0.0);
+        glVertex3d(kAxisLenM, 0.0, 0.0);
+        glColor4f(ui::palette::kAxisYGl[0], ui::palette::kAxisYGl[1],
+                  ui::palette::kAxisYGl[2], static_cast<float>(alpha));
+        glVertex3d(0.0, 0.0, 0.0);
+        glVertex3d(0.0, kAxisLenM, 0.0);
+        glColor4f(ui::palette::kAxisZGl[0], ui::palette::kAxisZGl[1],
+                  ui::palette::kAxisZGl[2], static_cast<float>(alpha));
+        glVertex3d(0.0, 0.0, 0.0);
+        glVertex3d(0.0, 0.0, kAxisLenM);
+        glEnd();
+        glLineWidth(1.0f);
+        glPopMatrix();
+        // 标签：点位上方（轴顶之外——层次分离）；挂 WORLD＝局部系即世界
+        // 系，帧世界位姿恒等（省 State 查询——根帧语义保证）。
+        m_label.drawBillboard(
+            m_position + Vector3D<double>(0.0, 0.0, kLabelLiftM),
+            Transform3D<double>::identity(), info, alpha);
+    }
+
+  private:
+    /// 轴长（m——与 addFrameAxis 挂帧形态同尺度，工位可视一致）。
+    static constexpr double kAxisLenM = 0.25;
+    /// 标签相对点位的上方偏移（m——轴顶 0.25 之外，防视觉重叠）。
+    static constexpr double kLabelLiftM = 0.32;
+
+    Vector3D<double> m_position;  ///< 点位（世界系 m——构造冻结）
+    QtTextBillboard m_label;      ///< 文本 billboard（UTF-8——构造冻结）
+};
 
 /**
  * @brief 区域边界框线框渲染（12 棱——八角点拓扑直投；蓝色——旧版
@@ -225,15 +304,34 @@ bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
     // ①清旧组（节点名清单逐个删——原子替换语义的"先清"半区）。
     clear();
 
-    // ②工位标记：findFrame 挂 FrameAxis（坐标轴随帧动——会话/示教移动
-    // 零重投；帧不可解析＝跳过并追加失败定位到标签——失败可见面）＋
-    // 标签 RenderText（UI-T52——F-490② 消账：工位名随帧浮动文本；
-    // RenderText 构造期持帧——同帧同组随动）。
+    // ②工位标记（UI-T77——F-555 双形态）：
+    //   - position 形态（世界系点位）：坐标轴＋标签一体自绘
+    //     （StationMarkerRender）挂 WORLD 根帧——工位作为带坐标的空间点
+    //     在三维可辨（此前标记恒渲染于参考系原点＝工位坐标投影链丢失）；
+    //     投影方保证到达本形态的 position 已可用（World 恒等或参考帧已
+    //     解析——变换失败降级为挂帧形态），故无需再解析 frameName；
+    //   - 挂帧形态（position 空，UI-T33 旧语义）：findFrame 挂 FrameAxis
+    //     （坐标轴随帧动——会话/示教移动零重投；帧不可解析＝跳过并计数
+    //     ——失败可见面）。
+    //   两形态标签统一走 Qt 纹理化文本（QtTextBillboard——F-556：GLUT
+    //   位图字体无 CJK，UTF-8 工位名乱码的替代承载；标签名独立命名空间
+    //   防与轴同名冲突——removeDrawable 按名逐个删互不干扰）。
     // 帧解析锚＝上方现取的挂接锚 WC（F-550②——发布前＝会话预览锚，
     // "WORLD" 别名经 WorkCell::findFrame 特判命中其根帧；发布后＝编译
     // 产物 WC，同一别名命中发布根帧——两态查找语义一致）。
     int unresolved = 0;
     for (const View3DFrameMarker& marker : update.frameMarkers) {
+        if (marker.position.has_value()) {
+            // 点值形态：轴＋标签一体挂 WORLD（世界系点位——见上注）。
+            const std::string nodeName =
+                std::string(kPreviewPrefix) + "marker3d-" + marker.label;
+            scene->addRender(nodeName,
+                             rw::core::ownedPtr(new StationMarkerRender(
+                                 *marker.position, marker.label)),
+                             world);
+            m_nodeNames.push_back(nodeName);
+            continue;
+        }
         Frame* const frame = workcell->findFrame(marker.frameName);
         if (frame == nullptr) {
             ++unresolved;  // 失败可见面在投影方摘要——此处计数不虚构坐标轴
@@ -244,13 +342,12 @@ bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
             std::string(kPreviewPrefix) + "marker-" + marker.label;
         scene->addFrameAxis(axisName, 0.25, frame);  // 轴长 0.25 m（工位尺度）
         m_nodeNames.push_back(axisName);
-        // 标签（框架 RenderText——文本直投；标签名独立命名空间防与轴同名
-        // 冲突——removeDrawable 按名逐个删互不干扰）。
+        // 标签（Qt 纹理化文本——F-556 替代件；挂帧随动，帧原点上方）。
         const std::string labelName =
             std::string(kPreviewPrefix) + "label-" + marker.label;
         scene->addRender(labelName,
                          rw::core::ownedPtr(
-                             new rwlibs::opengl::RenderText(marker.label, framePtr)),
+                             new QtTextBillboardRender(marker.label, framePtr)),
                          frame);
         m_nodeNames.push_back(labelName);
     }

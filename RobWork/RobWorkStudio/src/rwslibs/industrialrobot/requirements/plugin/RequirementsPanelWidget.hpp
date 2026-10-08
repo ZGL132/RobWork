@@ -128,9 +128,16 @@ public:
     /// 工位标记投影值（UI-T33 收口——非禁用工位的挂帧标记；enabled 过滤
     /// 在面板——投影值集合即呈现集合）。refFrame 原值直投（宿主帧名解析
     /// 归投影方——World/ModelFrame 的宿主帧名映射在装配层全缝侧）。
+    /// UI-T77（F-555）表尾追加 position：refFrame 系受约束位置原值直投
+    /// （世界系变换归投影方——与 refFrame 解析同缝）；nullopt＝工位未
+    /// 提供位置值（core::SourcedValue 四态——MDL-06 缺失不转零，投影
+    /// 链诚实降级为挂帧指示器形态）。
     struct StationMarkerProjection {
         std::string label;                          ///< 工位名（场景节点名后缀——UX-02）
         RequirementReference refFrame;              ///< 参考系原值（投影方解析宿主帧名）
+        /// 受约束位置（UI-T77——F-555；m，refFrame 系；四态字段仅
+        /// Provided 态有值——缺失不转零）。
+        std::optional<rw::math::Vector3D<double>> position;
     };
     /// 工位标记出口（随面板重载全量投递——会话编辑/选择刷新的承接点）。
     using StationMarkersSink =

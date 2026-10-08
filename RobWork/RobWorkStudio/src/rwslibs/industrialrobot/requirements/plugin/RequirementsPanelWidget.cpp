@@ -322,7 +322,12 @@ void RequirementsPanelWidget::emitStationMarkers(const RequirementWorkingSet& ws
         if (!point.enabled) {
             continue;  // 禁用工位不进三维（acceptance 1 词面——诚实呈现）
         }
-        markers.push_back(StationMarkerProjection{point.name, point.refFrame});
+        // UI-T77（F-555）：工位受约束位置随标记投递——tryValue 仅 Provided
+        // 态有值（四态字段的诚实投影：NotProvided/NotApplicable/Invalid 均
+        // 为 nullopt，缺失不转零〔MDL-06〕——投影方据此回落挂帧指示器
+        // 形态，渲染链无坐标可虚构）。
+        markers.push_back(StationMarkerProjection{
+            point.name, point.refFrame, point.pose.position.tryValue()});
     }
     m_stationMarkersSink(markers);
 }
