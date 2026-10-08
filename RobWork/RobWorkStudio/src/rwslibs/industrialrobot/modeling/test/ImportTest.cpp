@@ -554,6 +554,125 @@ TEST(MdlImport, MissingInertial_NotProvidedInDefaults_WP13T05_ACC2)
 }
 
 /**
+ * 回归（F-570，P0——audit/unit-code-review-20261009）：<origin> 属性部分
+ * 缺省曾被整条误判数值非法（缺失属性取空串喂 parseVec3Stable→false→
+ * originIllegal→valueIllegal→submittable=false）——而 URDF 规范规定
+ * xyz/rpy 均**可选**、缺省＝零向量/零旋转，只写 xyz 不写 rpy 是真实
+ * URDF 文件的常见写法，常规导入即不可提交。修复后：缺失属性补零缺省
+ * （映射照常 Provided）＋默认补全清单可追溯（NFR-COR-03）。
+ *
+ * 验证：①关节 origin 只带 xyz→Planned 面（origin Provided：z=0.2＋恒等
+ * 旋转）、defaults 含 "rpy=0 0 0" 条目；②inertial origin 只带 rpy→质心
+ * Provided 零向量、defaults 含 "xyz=0 0 0" 条目；③可提交性恢复 true。
+ */
+TEST(MdlImport, PartialOriginAttributes_DefaultZeroNotIllegal_F570)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-03", "MDL-06"},
+                  std::vector<std::string>{"AT-15"});
+
+    const ModelImportMapper mapper;
+    const char* urdf = R"(<?xml version="1.0"?>
+<robot name="n">
+  <link name="base">
+    <inertial>
+      <origin rpy="0 0 0.5"/>
+      <mass value="2.0"/>
+      <inertia ixx="0.01" iyy="0.01" izz="0.01" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  <link name="l"/>
+  <joint name="j" type="revolute">
+    <parent link="base"/>
+    <child link="l"/>
+    <origin xyz="0 0 0.2"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+</robot>
+)";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+
+    // ① 关节 origin：xyz 解析保留、rpy 缺省＝零旋转（恒等阵）。
+    const auto jOrigin = outcome.draft->joints[0].origin.tryValue();
+    ASSERT_TRUE(jOrigin.has_value()) << "部分缺省 origin 不得再走 invalid 面";
+    const auto jT = static_cast<rw::math::Transform3D<double>>(*jOrigin);
+    EXPECT_EQ(jT.P()[2], 0.2);  // xyz="0 0 0.2" 的 z 分量（m）
+    const rw::math::Rotation3D<double> identity(
+        1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
+    EXPECT_TRUE(jT.R() == identity) << "rpy 缺省＝零旋转";
+
+    // ② inertial origin：xyz 缺省＝质心零向量（连杆系）、rpy 保留给定值
+    //    （惯量旋转按 0 0 0.5 执行——语义不受 xyz 缺省影响）。
+    const auto com = outcome.draft->links[0].body.centerOfMass.tryValue();
+    ASSERT_TRUE(com.has_value());
+    EXPECT_EQ((*com)[0], 0.0);
+    EXPECT_EQ((*com)[1], 0.0);
+    EXPECT_EQ((*com)[2], 0.0);
+
+    // ③ 默认补全清单可追溯：两处缺省各入一条（NFR-COR-03 不静默）。
+    bool jointRpyDefaulted = false;
+    bool inertialXyzDefaulted = false;
+    for (const auto& item : outcome.report.defaults) {
+        if (item.field == "joints[0].origin"
+            && item.appliedValue.find("rpy=0 0 0") != std::string::npos) {
+            jointRpyDefaulted = true;
+        }
+        if (item.field == "links[0].body.centerOfMass"
+            && item.appliedValue.find("xyz=0 0 0") != std::string::npos) {
+            inertialXyzDefaulted = true;
+        }
+    }
+    EXPECT_TRUE(jointRpyDefaulted) << "关节 origin rpy 缺省必须入补全清单";
+    EXPECT_TRUE(inertialXyzDefaulted) << "inertial origin xyz 缺省必须入补全清单";
+
+    // ④ 可提交性恢复：部分缺省不再是 valueIllegal（修复前 false）。
+    EXPECT_TRUE(outcome.report.submittable)
+        << "URDF 规范合法的部分缺省 origin 不得阻断提交";
+}
+
+/**
+ * 回归（F-570）反面：属性**存在但语法非法**仍走原非法值面——缺省补零
+ * 不构成对非法值的静默改写（NFR-COR-03/ERR-01 边界：容错不等于改值）。
+ */
+TEST(MdlImport, IllegalOriginTextStillRejected_F570)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-03"},
+                  std::vector<std::string>{});
+
+    const ModelImportMapper mapper;
+    const char* urdf = R"(<?xml version="1.0"?>
+<robot name="n">
+  <link name="base"/>
+  <link name="l"/>
+  <joint name="j" type="revolute">
+    <parent link="base"/>
+    <child link="l"/>
+    <origin xyz="abc" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+</robot>
+)";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+    // 非法原串保留（invalid 态）＋错误项＋不可提交（原面不变）。
+    EXPECT_FALSE(outcome.draft->joints[0].origin.tryValue().has_value());
+    EXPECT_EQ(outcome.draft->joints[0].origin.state(), FieldState::Invalid);
+    bool hasOriginError = false;
+    for (const auto& item : outcome.report.errors) {
+        if (item.kind == "value-illegal"
+            && item.subject.find("joint 'j'.origin") != std::string::npos) {
+            hasOriginError = true;
+        }
+    }
+    EXPECT_TRUE(hasOriginError);
+    EXPECT_FALSE(outcome.report.submittable);
+}
+
+/**
  * 物理合法性错误项（acceptance 2——"已提供但 m≤0/非 SPD→导入报告错误项
  * （应用将被断言阻断）"）：m=0→mass-nonpositive；零张量→inertia-not-spd；
  * diag(10,1,1)→inertia-triangle；三者皆置 submittable=false。

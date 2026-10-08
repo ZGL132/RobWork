@@ -167,6 +167,54 @@ bool parseVec3Stable(std::string_view text, double* x, double* y, double* z)
         && parseDoubleStable(parts[2], z);
 }
 
+/**
+ * @brief <origin> 属性解析结果（URDF 缺省语义承载——F-570 修复）。
+ */
+struct OriginParseOutcome {
+    bool ok = true;              ///< 存在的属性全部解析成功（false＝走非法值面）
+    bool xyzDefaulted = false;   ///< xyz 属性缺失——按 URDF 语义补零（m）
+    bool rpyDefaulted = false;   ///< rpy 属性缺失——按 URDF 语义补零（rad）
+    double ox = 0.0, oy = 0.0, oz = 0.0;         ///< 平移（m；连杆系/父关节系）
+    double roll = 0.0, pitch = 0.0, yaw = 0.0;   ///< 固定轴姿态（rad）
+};
+
+/**
+ * @brief 解析 <origin> 的 xyz/rpy 属性（URDF 规范：两属性**均可选**，
+ *        缺省＝零向量/零旋转）。
+ *
+ * 为什么不改 parseVec3Stable：空串判非法（parseVec3Stable 对 "" 返回
+ * false）对"属性存在但为空"仍是正确语义；缺陷在于把"属性缺失"也喂成
+ * 空串——原实现（audit F-570，P0）据此把规范合法的部分缺省 origin 误判
+ * 为数值非法（valueIllegal→submittable=false），常规 URDF（只写 xyz 不写
+ * rpy）导入即不可提交。本助手区分两种形态：属性**缺失**→补零缺省并置
+ * defaulted 标志（映射段入默认补全清单——NFR-COR-03 不静默）；属性
+ * **存在但语法非法**→ok=false，调用方维持 originIllegal 原面（非法值
+ * 不静默改写）。
+ *
+ * 纯函数；确定性。
+ */
+OriginParseOutcome parseOriginAttributes(const pugi::xml_node& origin)
+{
+    OriginParseOutcome out;
+    const pugi::xml_attribute xyz = origin.attribute("xyz");
+    const pugi::xml_attribute rpy = origin.attribute("rpy");
+    if (xyz) {
+        if (!parseVec3Stable(xyz.as_string(""), &out.ox, &out.oy, &out.oz)) {
+            out.ok = false;
+        }
+    } else {
+        out.xyzDefaulted = true;   // 缺省＝零向量（成员已零初始化）
+    }
+    if (rpy) {
+        if (!parseVec3Stable(rpy.as_string(""), &out.roll, &out.pitch, &out.yaw)) {
+            out.ok = false;
+        }
+    } else {
+        out.rpyDefaulted = true;   // 缺省＝零旋转
+    }
+    return out;
+}
+
 // =====================================================================
 // rpy → 旋转矩阵（URDF 固定轴 roll-pitch-yaw：R = Rz(yaw)·Ry(pitch)·Rx(roll)）
 // =====================================================================
@@ -550,6 +598,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
         double roll = 0.0, pitch = 0.0, yaw = 0.0;  ///< inertial 系姿态 rad（惯量参考系）
         std::string originRaw;                      ///< xyz/rpy 原文（非法值保留）
         bool originIllegal = false;
+        bool originXyzDefaulted = false;  ///< xyz 属性缺失——URDF 零缺省（F-570）
+        bool originRpyDefaulted = false;  ///< rpy 属性缺失——URDF 零缺省（F-570）
         ImportSourceSpan originSpan;
         bool hasInertia = false;                    ///< 六分量齐备且解析成功
         InertiaTensor inertia;                      ///< 原始张量（inertial 系），kg·m²
@@ -581,6 +631,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
         double roll = 0.0, pitch = 0.0, yaw = 0.0;  ///< rad
         std::string originRaw;                      ///< 非法值保留
         bool originIllegal = false;
+        bool originXyzDefaulted = false;  ///< xyz 属性缺失——URDF 零缺省（F-570）
+        bool originRpyDefaulted = false;  ///< rpy 属性缺失——URDF 零缺省（F-570）
         GeometrySrc geometry;
         std::string materialName;                   ///< <material name>（估算密度提示源）
         bool materialPresent = false;
@@ -607,8 +659,10 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
         bool hasOrigin = false;
         double ox = 0.0, oy = 0.0, oz = 0.0;        ///< m
         double roll = 0.0, pitch = 0.0, yaw = 0.0;  ///< rad
-        std::string originRaw;
+        std::string originRaw;                      ///< xyz/rpy 原文（非法值承载）
         bool originIllegal = false;
+        bool originXyzDefaulted = false;  ///< xyz 属性缺失——URDF 零缺省（F-570）
+        bool originRpyDefaulted = false;  ///< rpy 属性缺失——URDF 零缺省（F-570）
         ImportSourceSpan originSpan;
         bool hasAxis = false;
         double ax = 0.0, ay = 0.0, az = 0.0;
@@ -728,12 +782,22 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                                 const std::string xyz(is.attribute("xyz").as_string(""));
                                 const std::string rpy(is.attribute("rpy").as_string(""));
                                 link.inertial.originRaw = "xyz='" + xyz + "' rpy='" + rpy + "'";
-                                link.inertial.originIllegal =
-                                    !parseVec3Stable(xyz, &link.inertial.ox, &link.inertial.oy,
-                                                     &link.inertial.oz)
-                                    || !parseVec3Stable(rpy, &link.inertial.roll,
-                                                        &link.inertial.pitch,
-                                                        &link.inertial.yaw);
+                                // F-570（P0）：同关节 origin——属性缺失按 URDF
+                                // 零缺省（defaulted 标志随行），仅存在但非法
+                                // 才走 originIllegal。
+                                const OriginParseOutcome originParsed =
+                                    parseOriginAttributes(is);
+                                link.inertial.ox = originParsed.ox;
+                                link.inertial.oy = originParsed.oy;
+                                link.inertial.oz = originParsed.oz;
+                                link.inertial.roll = originParsed.roll;
+                                link.inertial.pitch = originParsed.pitch;
+                                link.inertial.yaw = originParsed.yaw;
+                                link.inertial.originXyzDefaulted =
+                                    originParsed.xyzDefaulted;
+                                link.inertial.originRpyDefaulted =
+                                    originParsed.rpyDefaulted;
+                                link.inertial.originIllegal = !originParsed.ok;
                             } else if (isName == "mass") {
                                 link.inertial.massSpan = spanOfNode(is);
                                 const pugi::xml_attribute value = is.attribute("value");
@@ -805,9 +869,20 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                             const std::string xyz(as.attribute("xyz").as_string(""));
                             const std::string rpy(as.attribute("rpy").as_string(""));
                             att.originRaw = "xyz='" + xyz + "' rpy='" + rpy + "'";
-                            att.originIllegal =
-                                !parseVec3Stable(xyz, &att.ox, &att.oy, &att.oz)
-                                || !parseVec3Stable(rpy, &att.roll, &att.pitch, &att.yaw);
+                            // F-570（P0）：同关节 origin——属性缺失按 URDF
+                            // 零缺省（defaulted 标志随行），仅存在但非法才
+                            // 走 originIllegal。
+                            const OriginParseOutcome originParsed =
+                                parseOriginAttributes(as);
+                            att.ox = originParsed.ox;
+                            att.oy = originParsed.oy;
+                            att.oz = originParsed.oz;
+                            att.roll = originParsed.roll;
+                            att.pitch = originParsed.pitch;
+                            att.yaw = originParsed.yaw;
+                            att.originXyzDefaulted = originParsed.xyzDefaulted;
+                            att.originRpyDefaulted = originParsed.rpyDefaulted;
+                            att.originIllegal = !originParsed.ok;
                         } else if (asName == "geometry") {
                             att.geometry.present = true;
                             att.geometry.span = spanOfNode(as);
@@ -880,9 +955,20 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                     const std::string xyz(sub.attribute("xyz").as_string(""));
                     const std::string rpy(sub.attribute("rpy").as_string(""));
                     joint.originRaw = "xyz='" + xyz + "' rpy='" + rpy + "'";
-                    joint.originIllegal =
-                        !parseVec3Stable(xyz, &joint.ox, &joint.oy, &joint.oz)
-                        || !parseVec3Stable(rpy, &joint.roll, &joint.pitch, &joint.yaw);
+                    // F-570（P0）：属性缺失≠数值非法——URDF 规定 origin 的
+                    // xyz/rpy 均可选、缺省为零；缺失属性补零并置 defaulted
+                    // 标志（映射段入默认补全清单），仅"存在但语法非法"走
+                    // originIllegal 面。
+                    const OriginParseOutcome originParsed = parseOriginAttributes(sub);
+                    joint.ox = originParsed.ox;
+                    joint.oy = originParsed.oy;
+                    joint.oz = originParsed.oz;
+                    joint.roll = originParsed.roll;
+                    joint.pitch = originParsed.pitch;
+                    joint.yaw = originParsed.yaw;
+                    joint.originXyzDefaulted = originParsed.xyzDefaulted;
+                    joint.originRpyDefaulted = originParsed.rpyDefaulted;
+                    joint.originIllegal = !originParsed.ok;
                 } else if (subName == "axis") {
                     joint.hasAxis = true;
                     joint.axisSpan = spanOfNode(sub);
@@ -1540,6 +1626,20 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                               "zeroOffset=0（schema 缺省——URDF 无零位偏置概念）";
                 mapped.span = src.originSpan;
                 report.mapped.push_back(std::move(mapped));
+                // F-570：属性缺省补零必须入默认补全清单（NFR-COR-03 不
+                // 静默——补了什么、为什么补，报告面可追溯）。
+                if (src.originXyzDefaulted || src.originRpyDefaulted) {
+                    ImportDefaultItem item;
+                    item.field = "joints[" + std::to_string(ci) + "].origin";
+                    item.appliedValue =
+                        std::string(src.originXyzDefaulted ? "xyz=0 0 0（m）" : "")
+                        + (src.originXyzDefaulted && src.originRpyDefaulted ? "；" : "")
+                        + (src.originRpyDefaulted ? "rpy=0 0 0（rad）" : "");
+                    item.reason = "<origin> 属性缺省——URDF 规范 xyz/rpy 均可选"
+                                  "（缺省＝零向量/零旋转）";
+                    item.span = src.originSpan;
+                    report.defaults.push_back(std::move(item));
+                }
             }
         } else {
             entry.origin = core::SourcedValue<JointPose>::notProvided();
@@ -1945,6 +2045,21 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
             geometry.localTransform = rw::math::Transform3D<double>(
                 rw::math::Vector3D<double>(att.ox, att.oy, att.oz),
                 rpyToRotation(att.roll, att.pitch, att.yaw));
+            // F-570：属性缺省补零入默认补全清单（NFR-COR-03——visual/
+            // collision origin 的 URDF 零缺省同样可追溯）。
+            if (att.originXyzDefaulted || att.originRpyDefaulted) {
+                ImportDefaultItem item;
+                item.field = "links[" + std::to_string(linkIndex) + "]." + role
+                             + ".origin";
+                item.appliedValue =
+                    std::string(att.originXyzDefaulted ? "xyz=0 0 0（m）" : "")
+                    + (att.originXyzDefaulted && att.originRpyDefaulted ? "；" : "")
+                    + (att.originRpyDefaulted ? "rpy=0 0 0（rad）" : "");
+                item.reason = "<origin> 属性缺省——URDF 规范 xyz/rpy 均可选"
+                              "（缺省＝零向量/零旋转）";
+                item.span = att.span;  // 与非法路径同宿主定位（AttachmentSrc 无 originSpan）
+                report.defaults.push_back(std::move(item));
+            }
         }
         *target = std::move(geometry);
         ImportMappedItem mapped;
@@ -2029,6 +2144,29 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                         rw::math::Vector3D<double>(src.inertial.ox, src.inertial.oy,
                                                    src.inertial.oz),
                         importProvenance("urdf-import"));
+                // F-570：属性缺省补零入默认补全清单（同关节 origin——
+                // NFR-COR-03；rpy 缺省同时意味着惯量参考系＝inertial 系，
+                // 上方惯量旋转按零旋转走恒等，语义自洽）。
+                if (src.inertial.originXyzDefaulted
+                    || src.inertial.originRpyDefaulted) {
+                    ImportDefaultItem item;
+                    item.field = "links[" + std::to_string(ci)
+                                 + "].body.centerOfMass";
+                    item.appliedValue =
+                        std::string(src.inertial.originXyzDefaulted
+                                        ? "xyz=0 0 0（m）"
+                                        : "")
+                        + (src.inertial.originXyzDefaulted
+                                   && src.inertial.originRpyDefaulted
+                               ? "；"
+                               : "")
+                        + (src.inertial.originRpyDefaulted ? "rpy=0 0 0（rad）"
+                                                           : "");
+                    item.reason = "<inertial><origin> 属性缺省——URDF 规范 "
+                                  "xyz/rpy 均可选（缺省＝零向量/零旋转）";
+                    item.span = src.inertial.originSpan;
+                    report.defaults.push_back(std::move(item));
+                }
             } else if (src.inertial.originIllegal) {
                 valueIllegal = true;
                 link.body.centerOfMass =
