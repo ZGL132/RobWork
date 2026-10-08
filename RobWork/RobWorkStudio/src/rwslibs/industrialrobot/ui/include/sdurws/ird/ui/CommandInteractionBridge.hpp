@@ -314,7 +314,11 @@ private:
     std::unique_ptr<MarshalContext> m_context;  ///< Marshal 上下文（构造线程＝UI 线程）
     std::string m_principal;              ///< 会话缓存确认主体（P-UI-4）
     std::atomic<bool> m_alive{true};      ///< 存活探针（任意线程原子读——§9.2）
-    std::uint64_t m_revisionEpoch{0};     ///< 修订代次（noteRevisionCommitted 递增——新对话失效标注判别）
+    /// 修订代次（noteRevisionCommitted 在 UI 线程递增；requestConfirmations
+    /// 在命令执行线程读——跨线程面与 m_alive 同款走 atomic，relaxed 序即可：
+    /// 仅作"是否已发生过修订"的标注判别，不参与同步（audit F-573：
+    /// 原实现为普通 uint64，两线程并发读改写构成数据竞争 UB）。
+    std::atomic<std::uint64_t> m_revisionEpoch{0};
     std::mutex m_pendingMutex;            ///< 在等注册表互斥（markSessionDismantled 唤醒面）
     std::vector<std::shared_ptr<PendingWait>> m_pending;  ///< 在等命令线程集
 };
