@@ -358,7 +358,11 @@ private:
 // ---- 各编码面的 codec 版本（随字段面演进递增并登记——CON-04 同源）----
 constexpr std::uint32_t kCatalogLockCodecVersion = 1;   ///< IRDSLKV1
 constexpr std::uint32_t kScreeningCodecVersion = 1;     ///< IRDSLBV1
-constexpr std::uint32_t kAxisFactsCodecVersion = 1;     ///< IRDSAFV1
+// kAxisFactsCodecVersion＝2（WP-19-T08：AxisWorkpointFacts 表尾追加
+// jointKind 字段〔u8 枚举〕——SEL-09 范围外语义的编码面；字段面演进
+// 版本递增纪律的执行，v1 字节流由 expectHeader 版本核对拒绝——不带
+// 静默兼容读）。
+constexpr std::uint32_t kAxisFactsCodecVersion = 2;     ///< IRDSAFV1
 constexpr std::uint32_t kMappingBatchCodecVersion = 1;  ///< IRDSMBV1
 constexpr std::uint32_t kCheckResultCodecVersion = 1;   ///< IRDSCCV1
 constexpr std::uint32_t kDtComboSetCodecVersion = 1;    ///< IRDSDCV1
@@ -468,6 +472,9 @@ void writeAxisWorkpointFacts(ByteWriter& w, const AxisWorkpointFacts& f)
     }
     w.f64(f.atTime);
     w.str(f.segmentId);
+    // 关节类型（WP-19-T08 表尾追加——枚举＝u8 底层值；编码侧值域由
+    // 类型系统保证，解码侧严格校验词表内值——下 readAxisWorkpointFacts）。
+    w.u8(static_cast<std::uint8_t>(f.jointKind));
 }
 
 AxisWorkpointFacts readAxisWorkpointFacts(ByteReader& r)
@@ -502,6 +509,17 @@ AxisWorkpointFacts readAxisWorkpointFacts(ByteReader& r)
     }
     f.atTime = r.f64();
     f.segmentId = r.str();
+    // 关节类型（WP-19-T08 表尾追加字段——v2 起携带）。严格解码：词表外
+    // 枚举值＝编码协议破坏（fail-fast，不静默归默认——静默会把范围外轴
+    // 误降级为旋转轴，违反 SEL-09 阻断语义）。
+    const std::uint8_t kindByte = r.u8();
+    if (kindByte != static_cast<std::uint8_t>(JointKind::Revolute)
+        && kindByte != static_cast<std::uint8_t>(JointKind::Prismatic)) {
+        throw std::invalid_argument(
+            "组合校核解码：AxisWorkpointFacts.jointKind 词表外枚举值 "
+            + std::to_string(kindByte) + "（协议违约——严格解码）");
+    }
+    f.jointKind = static_cast<JointKind>(kindByte);
     return f;
 }
 
@@ -1320,6 +1338,21 @@ void aggregateCaseCell(const std::vector<FeasibilityRecord>& records,
     cell.note = "pass";
 }
 
+/// 轴关节类型查询（input.axisFacts 中按轴 ID 查首条声明——同轴一致性已
+/// 由 checkCombinations 入口校验保证；找不到时返回 Revolute 防御分支
+/// ——组合轴表中的轴可能不在事实轴集〔漏轴场景已由 ③AxisMapping-
+/// Incomplete 承载〕，此时不在此处代判范围外，交由轴级筛选的既有缺口面）。
+JointKind factAxisJointKind(const std::vector<AxisWorkpointFacts>& facts,
+                            const core::ObjectId& jointId)
+{
+    for (const AxisWorkpointFacts& f : facts) {
+        if (f.jointId == jointId) {
+            return f.jointKind;
+        }
+    }
+    return JointKind::Revolute;  // 防御分支（无事实声明的轴——漏轴另轨）
+}
+
 }  // namespace
 
 std::vector<CombinationCheckOutcome> checkCombinations(
@@ -1358,14 +1391,29 @@ std::vector<CombinationCheckOutcome> checkCombinations(
 
     // ---- 事实轴集与工况集（首现序——确定性；必验工况集＝事实已覆盖的
     // 工况集，覆盖缺口核对归 evidence 汇总〔EVI-02 跨批次〕——登记边界）。
+    // 同时校验同轴 jointKind 一致性（WP-19-T08——与 T04 validateFacts
+    // 同语义：关节类型是轴级属性，同轴既旋转又移动属物理矛盾，调用方
+    // 契约违约 fail-fast。此处显式执行的原因：Prismatic 轴不进入 T04
+    // 筛选调用，矛盾若只靠筛选器校验会在全移动链上逃过检查）。
     std::vector<core::ObjectId> factAxes;
     std::vector<CaseId> caseOrder;
     {
         std::set<std::string> axisSeen;
         std::set<std::string> caseSeen;
+        std::map<std::string, JointKind> axisKinds;
         for (const AxisWorkpointFacts& f : input.axisFacts) {
             if (axisSeen.insert(f.jointId.toCanonical()).second) {
                 factAxes.push_back(f.jointId);
+                axisKinds.emplace(f.jointId.toCanonical(), f.jointKind);
+            } else {
+                const JointKind first = axisKinds.at(f.jointId.toCanonical());
+                if (first != f.jointKind) {
+                    throw std::invalid_argument(
+                        "组合校核：同轴 jointKind 矛盾（轴 "
+                        + f.jointId.toCanonical()
+                        + " 的多条事实声明了不同关节类型——轴类型是轴级属性，"
+                          "调用方契约违约）");
+                }
             }
             if (caseSeen.insert(f.caseId).second) {
                 caseOrder.push_back(f.caseId);
@@ -1473,6 +1521,20 @@ std::vector<CombinationCheckOutcome> checkCombinations(
         // ④~⑤ 轴级能力判定装配＋惯量比维度（逐工况分格——资格矩阵）。
         outcome.coverage.reserve(caseOrder.size());
         std::size_t unsettledAxes = 0;   // 惯量比未判定轴计数（O-11 显式标记面）。
+        // WP-19-T08（SEL-09）：本组合是否含移动关节轴（链级范围外标志
+        // ——格级阻断与组合级缺口面共用）。范围外缺口在此逐轴恰一条
+        // （轴级边界事实与工况无关——DataGap.caseId 空串语义；不放入
+        // 格循环以免多工况重复计入）。
+        bool comboHasOutOfScopeAxis = false;
+        for (const AxisDeviceAssignment& axis : combo.axes) {
+            if (factAxisJointKind(input.axisFacts, axis.jointId)
+                == JointKind::Prismatic) {
+                comboHasOutOfScopeAxis = true;
+                rec.gaps.push_back(
+                    makeAxisOutOfScopeGap(axis.jointId,
+                                          std::string(kSelInputAxisOutOfScope)));
+            }
+        }
         for (const CaseId& caseId : caseOrder) {
             CaseCoverageEntry cell;
             cell.combinationId = combo.combinationId;
@@ -1535,6 +1597,18 @@ std::vector<CombinationCheckOutcome> checkCombinations(
             // 失败，§9.4 矩阵语义）。
             std::vector<FeasibilityRecord> cellAxisRecords;
             for (const AxisDeviceAssignment& axis : combo.axes) {
+                // WP-19-T08（SEL-09）：移动关节轴范围外——先于工作点/映射
+                // 事实查询与 T04 筛选调用（不静默套用旋转传动：直线轴的
+                // τ/ω 工作点物理不存在，"workpoint-missing 覆盖缺口"语义
+                // 不适用）。缺口已在本组合入口逐轴恰一条登记（格循环外
+                // ——与工况无关），此处仅跳过该轴的旋转传动判定路径；
+                // 该轴在 cellAxisRecords 中无记录，格级由下方
+                // comboHasOutOfScopeAxis 强制覆盖兜底（全移动链时格聚合
+                // 无记录可依，不得误判 Feasible）。
+                if (factAxisJointKind(input.axisFacts, axis.jointId)
+                    == JointKind::Prismatic) {
+                    continue;
+                }
                 // 关节侧＋需求侧（与组合无关——DYN-03 口径，按 轴×工况 查）。
                 const AxisWorkpointFacts* joint = nullptr;
                 for (const AxisWorkpointFacts& f : input.axisFacts) {
@@ -1655,6 +1729,16 @@ std::vector<CombinationCheckOutcome> checkCombinations(
             // 格聚合（原因优先→缺口次之→通过；覆盖全部轴记录——任一轴
             // 失败即格失败，定位＝首条原因的工作点，卡 §9.4）。
             aggregateCaseCell(cellAxisRecords, cell);
+            // WP-19-T08（SEL-09）：组合含移动关节轴时该格不得判 Pass
+            // （不静默套用旋转传动——格聚合对该轴无记录可依，全移动链
+            // 时 cellAxisRecords 为空会误判 Feasible，此处兜底）。已有
+            // 更严判定保持原样：混合链中旋转轴的 Rejected（候选能力
+            // 淘汰）优先于范围外——范围外是数据/边界类事实，不覆盖
+            // 既有淘汰原因（原因优先原则不变，格定位面照旧）。
+            if (comboHasOutOfScopeAxis && cell.verdict == VerdictKind::Feasible) {
+                cell.verdict = VerdictKind::DataInsufficient;
+                cell.note = "axis-out-of-scope";
+            }
             // 该格相关的组合级缺口（惯量比）回落为格 DataInsufficient 的
             // 呈现面（记录 gaps 已全量列出——格 note 摘要标注）。
             if (cell.verdict == VerdictKind::Feasible && cellHasInertiaGap) {

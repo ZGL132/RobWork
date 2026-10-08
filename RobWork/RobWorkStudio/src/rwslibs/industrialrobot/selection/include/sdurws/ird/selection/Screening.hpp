@@ -33,9 +33,16 @@
  *      未裁决期间该维度输出"未判定"且不是 §7/§8 硬筛选维度；组合校核
  *      阶段〔WP-19-T05〕才消费，且不内嵌任何阈值数字）。
  *   4. 组合构造/组合校核评估器已随 WP-19-T05 落位（Combination.hpp——
- *      §14.5/§9）；可行集汇总/淘汰原因的独立供给接口归 WP-19-T06
- *      （§14.6）——本头的 RejectionReason/FeasibilityRecord 是
- *      §10.1 基线类型的候选级承载，供 T05/T06 复用（同一类型，不分叉）。
+ *      §14.5/§9）；可行集汇总/淘汰原因的独立供给接口已随 WP-19-T06
+ *      落位（FeasibleSet.hpp——§14.6）；本头的 RejectionReason/
+ *      FeasibilityRecord 是 §10.1 基线类型的候选级承载，供 T05/T06
+ *      复用（同一类型，不分叉）。
+ *   5. 移动关节范围外阻断已随 WP-19-T08 落位（SEL-09——卡 §2.2 R1
+ *      纪律/D-SEL-15）：AxisWorkpointFacts.jointKind 声明轴关节类型，
+ *      Prismatic 轴在本筛选器输出"范围外"记录（VerdictKind::
+ *      DataInsufficient＋SEL-INPUT-AXIS-OUT-OF-SCOPE 数据缺口），不执行
+ *      §7/§8 任何旋转传动维度判定——不静默套用旋转传动、不伪造电机
+ *      工作点、不升级整机不可行（判定权在 evidence 汇总）。
  *
  * 线程安全：HardConstraintSelector 无状态纯函数对象（可重入——卡
  * §14.10"筛选/曲线/组合构造（纯函数）可重入"）；全部输入由调用方持有，
@@ -188,6 +195,42 @@ struct DataGap {
     }
     bool operator!=(const DataGap& o) const { return !(*this == o); }
 };
+
+/**
+ * @brief 移动关节"范围外"数据缺口构造（WP-19-T08——SEL-09/D-SEL-15：
+ *        目标链含移动关节时该轴输出明确"范围外"诊断，DataInsufficient
+ *        语义，不静默套用旋转传动）。
+ *
+ * 唯一书写点：dimension 词面（"axis-out-of-scope"，与 §10.3 词表
+ * ReasonToken::AxisOutOfScope 文本一致——同一语义在"原因词表面"与
+ * "数据缺口面"分轨使用同一定位词）与中文 detail 文本在本函数唯一
+ * 书写；筛选器（screenMotors/screenGearboxes）与组合校核
+ * （checkCombinations）共用，禁第二处字面量（NFR-MNT-03 单一权威）。
+ *
+ * @param axisId   [in] 范围外轴的对象 ID（定位面——多轴链中区分哪根轴
+ *                 范围外）
+ * @param diagCode [in] 关联稳定码（调用方传 DiagCodes.hpp 的
+ *                 kSelInputAxisOutOfScope 常量；以参数注入而非本头直接
+ *                 include DiagCodes.hpp——DiagCodes.hpp 反向 include 本头
+ *                 取 ReasonToken，直接包含会形成循环依赖）
+ * @return 缺口记录（caseId 为空——轴级边界事实与工况无关，DataGap
+ *         caseId 空串语义）
+ *
+ * @note 纯函数；确定性。
+ */
+inline DataGap makeAxisOutOfScopeGap(const core::ObjectId& axisId, std::string diagCode)
+{
+    DataGap g;
+    g.dimension = "axis-out-of-scope";  // 定位词＝词表 token 文本（§10.3）
+    g.detail = "目标链该轴为移动关节（prismatic）——R1 选型只支持旋转传动"
+               "（SEL-09 范围外：不静默套用旋转传动、不伪造电机工作点；"
+               "SEL-09-S1/MDL-12-S1 启用前维持阻断，DataInsufficient 语义，"
+               "不升级整机不可行——判定权在 evidence 汇总）";
+    g.axisId = axisId;
+    g.caseId = CaseId{};  // 与工况无关——空串（轴级边界事实）
+    g.diagCode = std::move(diagCode);
+    return g;
+}
 
 /**
  * @brief 逐项淘汰原因（卡 §10.1 RejectionReason 基线——ERR-01 比较型
@@ -372,6 +415,25 @@ struct ExternalLoadFacts {
 };
 
 /**
+ * @brief 关节类型（卡 §2.2 R1 范围纪律与 §17.1 交接行"modeling/runtime
+ *        → selection：关节类型；旋转/移动能力"的轴侧承载——WP-19-T08
+ *        落位，登记单元卡 §19.3 T08 ①）。
+ *
+ * 承载纪律：关节类型的权威判定与链型支持矩阵归 modeling（MDL-12——
+ * R1 正式链限全旋转主链；本枚举只是上游值传递的事实声明，selection
+ * 不自判关节类型）。词表与 modeling 关节类型词面（revolute/continuous/
+ * prismatic）对齐：continuous 关节经 modeling MDL-12 工程工作范围确认后
+ * 进入正式链，在选型侧属旋转传动——与本枚举 Revolute 同成员（类型细分
+ * 不在本枚举承载——selection 消费的是"旋转传动可用与否"这一维度）。
+ */
+enum class JointKind {
+    Revolute,   ///< 旋转关节（revolute/continuous——R1 旋转传动适用；枚举值 0
+                ///  兼作默认值——见 AxisWorkpointFacts.jointKind 注）
+    Prismatic,  ///< 移动关节（prismatic——R1 选型范围外：SEL-09 阻断，
+                ///  输出 SEL-INPUT-AXIS-OUT-OF-SCOPE 数据缺口）
+};
+
+/**
  * @brief 单轴×单工况的工作点事实（卡 §14.4 axisFacts"关节侧事实
  *        （dynamics 上游：峰值/RMS/工况分组）"的 v1 承载——登记单元卡
  *        §19.3 T04 ②：dynamics 卡未产出（R-SEL-1），本结构为 selection
@@ -387,10 +449,23 @@ struct ExternalLoadFacts {
  *
  * 全部 optional 数值字段：nullopt＝该量未供给（对应维度数据不足）；
  * present 值必须有限（NaN/±Inf＝调用方契约违约 fail-fast）。
+ *
+ * ★ jointKind 与工作点字段的关系（WP-19-T08——SEL-09）：移动关节轴的
+ *   旋转工作点物理不存在（直线轴无 τ/ω 口径的旋转量）——组装方对
+ *   Prismatic 轴的 joint* 与 motor* 各字段应全部保持 nullopt（不伪造
+ *   工作点，卡 §2.2"不得伪造电机工作点"）；筛选器对该轴不消费任何
+ *   工作点字段（先于全部维度判定输出范围外记录）。同轴多条 facts 的
+ *   jointKind 必须一致（轴类型是轴级属性——矛盾属调用方契约违约
+ *   fail-fast）。
  */
 struct AxisWorkpointFacts {
     core::ObjectId jointId;   ///< 轴对象 ID（modeling 项目对象——稳定身份）
     CaseId caseId;            ///< 工况 ID（同轴多工况分组——逐工况独立判定）
+    /// 关节类型（轴级属性——默认 Revolute：R1 产品管线中 modeling
+    /// MDL-12 已在链型入口阻断混合链，能流转到选型的轴事实缺省即全
+    /// 旋转链成员；显式 Prismatic 是上游的范围外信号——WP-19-T08。
+    /// 默认值使 T04~T07 既有构造零破坏；dynamics 收编时按其卡对齐）。
+    JointKind jointKind = JointKind::Revolute;
 
     // ---- 关节侧（减速器筛选消费——DYN-03 口径值传递）----
     std::optional<double> jointTorqueRms;   ///< 关节侧 RMS 转矩，单位 N·m
@@ -452,12 +527,21 @@ public:
      *                  卡 §14.4"维度批次边界查询"——观测到取消即停止处理
      *                  剩余候选，返回已完成记录〔截断语义——调用方以记录数
      *                  对 候选数×轴数 感知截断；登记单元卡 §19.3 T04 ④〕）
-     * @return 逐候选×逐轴 FeasibilityRecord（含全部独立原因与数据缺口）
+     * @return 逐候选×逐轴 FeasibilityRecord（含全部独立原因与数据缺口）。
+     *             移动关节轴（jointKind==Prismatic）的每条记录为
+     *             "范围外"形态（WP-19-T08——SEL-09/D-SEL-15）：verdict＝
+     *             DataInsufficient、reasons 恒空、gaps 恰含一条
+     *             dimension="axis-out-of-scope" 的缺口（diagCode＝
+     *             SEL-INPUT-AXIS-OUT-OF-SCOPE）——该轴不执行 §7 任何
+     *             旋转传动维度判定（不静默套用旋转传动；工作点字段即使
+     *             供给也不消费——不伪造电机工作点），记录数不变量
+     *             （候选数×轴数）保持
      *
      * @throws std::invalid_argument 致命输入错误（调用方契约违约 fail-fast
      *         ——卡 §14.4 @throws 注：筛选条件非有限/安全系数＜1/工作点
-     *         数值非有限；候选能力筛选不短路原则不受影响——短路仅允许
-     *         在校验边界的致命输入错误，卡 §10.2）
+     *         数值非有限/同轴多条 facts 的 jointKind 矛盾〔轴类型是轴级
+     *         属性——既旋转又移动属物理矛盾〕；候选能力筛选不短路原则
+     *         不受影响——短路仅允许在校验边界的致命输入错误，卡 §10.2）
      *
      * @note 纯函数；同输入恒同输出（NFR-COR-01/02）；可重入。
      */
@@ -469,13 +553,16 @@ public:
 
     /**
      * @brief 减速器硬筛选（卡 §8 全维度——SEL-04；签名/遍历序/取消语义
-     *        同 screenMotors）。
+     *        同 screenMotors；移动关节轴的范围外记录形态同 screenMotors
+     *        ——WP-19-T08：该轴不执行 §8 任何旋转传动维度判定，速比
+     *        换算 ω_m＝ω_joint/c 亦不适用〔移动关节轴无旋转速比语义〕）。
      *
      * 输入转速维度：ω_m_peak 优先取映射事实 motorSpeedPeak（"ω_m 来自
      * 映射工作点"）；映射事实未供给时以 ω_m＝ω_joint_peak/ratio 换算
      * （§8.2 明文允许的唯一自算——候选传动参数换算）。
      *
-     * @throws std::invalid_argument 同 screenMotors。
+     * @throws std::invalid_argument 同 screenMotors（含同轴 jointKind
+     *         矛盾 fail-fast）。
      * @note 纯函数；确定性；可重入。
      */
     virtual std::vector<FeasibilityRecord> screenGearboxes(

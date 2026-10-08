@@ -569,8 +569,10 @@ struct CatalogLockPayload {
  *        消费字节形态——P-SEL-1 提议契约 v1）。
  *
  * ★ 消费面边界（组合口径纪律）：组合校核消费本包条目的【关节侧三量＋
- *   需求侧字段（保持/外载荷/安装）】——这些量与组合无关（DYN-03 关节
- *   侧口径）；电机侧六量在组合校核中以 MappingBatchFacts.axes 为权威
+ *   需求侧字段（保持/外载荷/安装）＋关节类型 jointKind（WP-19-T08
+ *   ——SEL-09 范围外阻断：Prismatic 轴不进入旋转传动判定）】——这些量
+ *   与组合无关（DYN-03 关节侧口径）；电机侧六量在组合校核中以
+ *   MappingBatchFacts.axes 为权威
  *   （电机侧工作点依赖组合 c——见 MappingAxisFact 注），本包条目的
  *   motor* 字段在组合校核路径被忽略（直调组装方无须填充）。
  *
@@ -781,21 +783,31 @@ struct CombinationCheckCoreInput {
  *  ②组合兼容：任一轴 (motor, gearbox) 在兼容表无记录 → ComboIncompatible
  *    （构造面已过滤的前提下的双保险核对）；
  *  ③轴映射完整性：事实轴集 ⊄ 组合轴集（缺轴）→ AxisMappingIncomplete；
- *  ④轴级能力判定（复用 T04 HardConstraintSelector——同一实现不分叉）：
+ *  ④SEL-09 范围外阻断（WP-19-T08——卡 §2.2 R1 纪律/D-SEL-15）：组合含
+ *    移动关节轴（jointKind==Prismatic）→ 逐范围外轴恰一条数据缺口
+ *    （dimension="axis-out-of-scope"，diagCode＝SEL-INPUT-AXIS-OUT-OF-
+ *    SCOPE，caseId 空——轴级边界事实与工况无关）；该轴不查询工作点/
+ *    映射事实、不调用 T04 旋转传动筛选（不静默套用旋转传动、不伪造
+ *    电机工作点）；含范围外轴的资格矩阵格不得判 Pass（全移动链时格
+ *    聚合无轴记录可依，兜底为 DataInsufficient＋note="axis-out-of-
+ *    scope"）；混合链中旋转轴的既有 Rejected 判定保持原样（范围外是
+ *    数据/边界类事实——不覆盖淘汰原因，也不升级整机不可行，判定权在
+ *    evidence 汇总）；
+ *  ⑤轴级能力判定（复用 T04 HardConstraintSelector——同一实现不分叉）：
  *    按 (轴×工况) 先对全部候选筛选一次（R-SEL-2 缓解——逐轴先筛选），
  *    组合装配时取本组合候选的记录；电机侧维度消费映射事实（调用方供给
  *    的 motor* 字段），关节侧维度消费 dynamics 事实；
- *  ⑤惯量比维度（§11.3）：规则未配置→显式未判定（inertiaRatioUnsettled
+ *  ⑥惯量比维度（§11.3）：规则未配置→显式未判定（inertiaRatioUnsettled
  *    标记，不产生原因/缺口、不影响 verdict）；配置且映射事实缺失→
  *    DataGap；配置且有值→withinReference 参考判定（不产生淘汰原因）；
- *  ⑥映射完整性：mappingFailed→DataGap（上游失败透传——不伪装淘汰）；
+ *  ⑦映射完整性：mappingFailed→DataGap（上游失败透传——不伪装淘汰）；
  *    Partial→missingItems 逐条转 DataGap；
- *  ⑦效率降级：映射事实 efficiencyApplied=false 的轴→DataGap（不以
+ *  ⑧效率降级：映射事实 efficiencyApplied=false 的轴→DataGap（不以
  *    η＝1 静默替代）；
- *  ⑧多工况资格矩阵：每（组合×工况）格按该工况轴级判定聚合（全部启用
+ *  ⑨多工况资格矩阵：每（组合×工况）格按该工况轴级判定聚合（全部启用
  *    必验工况通过方可行——EVI-02 不得漏验）；
- *  ⑨质量核算：Σ 各轴电机＋减速器质量（kg）；
- *  ⑩verdict 汇总（T04 细化 ⑦ 同规则）：reasons 非空→Rejected；gaps
+ *  ⑩质量核算：Σ 各轴电机＋减速器质量（kg）；
+ *  ⑪verdict 汇总（T04 细化 ⑦ 同规则）：reasons 非空→Rejected；gaps
  *    非空→DataInsufficient；否则 Feasible。
  *
  * @param input [in] 核心输入（snapshot 须非空；mappingBatch.combinations

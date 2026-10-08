@@ -1,0 +1,81 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_selection_test
+  sdurws_ird_selection_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_selection_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_selection_plugin
+  sdurws_ird_selection_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection_plugin.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_selection_contract_test
+  sdurws_ird_selection_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_selection_contract_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_selection
+  sdurws_ird_selection.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection.lib
+  Automatic MOC for target sdurws_ird_selection_plugin
+  sdurws_ird_selection_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_selection_plugin.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
+  [ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================

@@ -122,6 +122,38 @@ TEST(SelCombinationCheckCodec, AxisFactsBundleRoundtrip)
     EXPECT_EQ(decoded[1], bundle[1]);
 }
 
+/// 关节类型字段往返（WP-19-T08——jointKind 表尾追加字段的两值形态：
+/// 显式 Revolute 与 Prismatic 逐字节还原——SEL-09 范围外语义的编码面）。
+TEST(SelCombinationCheckCodec, JointKindRoundtrip)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-09", "NFR-COR-02"}, std::vector<std::string>{"AT-08"});  // R1——关节类型字段——canonical 往返（v2 起）
+    const GoldenAxes axes = makeGoldenAxes();
+    AxisWorkpointFacts rotating = makeJointFacts(axes.j1, "case-A", true);
+    rotating.jointKind = JointKind::Revolute;    // 显式旋转（默认值路径之外）
+    AxisWorkpointFacts prismatic = makeJointFacts(axes.j2, "case-A", false);
+    prismatic.jointKind = JointKind::Prismatic;  // 移动关节（范围外信号值）
+    const AxisFactsBundle decoded = decodeAxisFactsBundle(
+        encodeAxisFactsBundle(AxisFactsBundle{rotating, prismatic}));
+    ASSERT_EQ(decoded.size(), std::size_t{2});
+    EXPECT_EQ(decoded[0].jointKind, JointKind::Revolute);
+    EXPECT_EQ(decoded[1].jointKind, JointKind::Prismatic);
+    EXPECT_EQ(decoded, AxisFactsBundle({rotating, prismatic}));
+}
+
+/// 关节类型词表外枚举值拒绝解码（严格解码——静默归默认会把范围外轴
+/// 误降级为旋转轴，违反 SEL-09 阻断语义；协议违约 fail-fast）。
+TEST(SelCombinationCheckCodec, ForeignJointKindRejectedOnDecode)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-09", "NFR-COR-03"}, std::vector<std::string>{"AT-08"});  // R1——关节类型词表外值——严格解码拒绝
+    const GoldenAxes axes = makeGoldenAxes();
+    AxisWorkpointFacts f = makeJointFacts(axes.j1, "case-A", true);
+    std::vector<std::uint8_t> bytes = encodeAxisFactsBundle(AxisFactsBundle{f});
+    // 尾字节＝jointKind（表尾追加字段——u8 枚举；单条 facts 的最后字节）。
+    ASSERT_FALSE(bytes.empty());
+    bytes.back() = 0x7F;  // 词表外值（既非 Revolute=0 也非 Prismatic=1）。
+    EXPECT_THROW((void)decodeAxisFactsBundle(bytes), std::invalid_argument);
+}
+
 /// 映射批事实包往返（含组合表＋逐轴事实全量字段）。
 TEST(SelCombinationCheckCodec, MappingBatchFactsRoundtrip)
 {

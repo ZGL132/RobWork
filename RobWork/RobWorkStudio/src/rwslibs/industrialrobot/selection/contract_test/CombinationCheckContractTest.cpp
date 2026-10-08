@@ -249,6 +249,43 @@ TEST(SelCombinationCheckContract, CoreConsumableThroughPublicValueFace)
     EXPECT_EQ(outcomes[0].record.verdict, VerdictKind::Feasible);
 }
 
+/// SEL-09 范围外契约（WP-19-T08）：经公共值面消费——移动关节轴的组合
+/// 产出零淘汰原因（不静默套用旋转传动）＋DataInsufficient 语义＋稳定码
+/// SEL-INPUT-AXIS-OUT-OF-SCOPE 缺口；词表映射同码（reasonTokenDiagCode
+/// 唯一映射点）——SEL-09 语义的机器可断言红线面。
+TEST(SelCombinationCheckContract, OutOfScopeAxisNeverYieldsRejectionReason)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-09"}, std::vector<std::string>{"AT-08"});  // R1——SEL-09 红线——范围外轴零淘汰原因＋DataInsufficient＋稳定码
+    const ComboFixture fx = makeComboFixture();
+    CombinationCheckCoreInput in;
+    in.snapshot = &fx.snapshot;
+    AxisWorkpointFacts facts;
+    facts.jointId = fx.axis;
+    facts.caseId = "case-1";
+    facts.jointKind = JointKind::Prismatic;  // 移动关节——范围外信号
+    // 超限旋转工作点（反证面——若套用旋转传动必产生淘汰原因）。
+    facts.jointTorquePeak = 999.0;   // N·m
+    facts.jointTorqueRms = 888.0;    // N·m
+    facts.jointSpeedPeak = 777.0;    // rad/s
+    in.axisFacts = {facts};
+    in.mappingBatch = contractMappingBatch(fx.combos[0], fx.axis);
+    in.criteria = ScreeningCriteria{};
+    const std::vector<CombinationCheckOutcome> outcomes = checkCombinations(in, nullptr);
+    ASSERT_EQ(outcomes.size(), std::size_t{1});
+    const FeasibilityRecord& rec = outcomes[0].record;
+    // 红线一：零淘汰原因（旋转传动维度未执行——含映射事实供给也不消费）。
+    EXPECT_TRUE(rec.reasons.empty())
+        << "移动关节轴不得产生任何旋转传动淘汰原因（SEL-09 不静默套用）";
+    // 红线二：DataInsufficient 语义（不是 Feasible——范围外不得当通过；
+    // 不是 Rejected——范围外是数据/边界类事实，不升级整机不可行）。
+    EXPECT_EQ(rec.verdict, VerdictKind::DataInsufficient);
+    // 红线三：范围外缺口携带登记表稳定码（词表映射唯一实现点同码）。
+    ASSERT_EQ(rec.gaps.size(), std::size_t{1});
+    EXPECT_EQ(rec.gaps[0].diagCode, std::string(kSelInputAxisOutOfScope));
+    EXPECT_EQ(reasonTokenDiagCode(ReasonToken::AxisOutOfScope),
+              kSelInputAxisOutOfScope);
+}
+
 /// 评估器经 IEngineeringEvaluator 接口分派可达（③端口被调方契约——
 /// 工厂 create 产出接口指针后按接口消费全流程）。
 TEST(SelCombinationCheckContract, EvaluatorInterfaceDispatchable)

@@ -39,6 +39,18 @@
  *   ⑨ AxisWorkpointFacts 为 P-SEL-1 提议契约的 v1 承载（dynamics 卡
  *     未产出——R-SEL-1）。
  *
+ * 移动关节范围外阻断的落位登记（WP-19-T08——单元卡 §19.3 T08 落位
+ * 细化，review 对照面）：
+ *   ① AxisWorkpointFacts.jointKind（JointKind 枚举，默认 Revolute）为
+ *     轴关节类型的值传递承载（§17.1 modeling/runtime→selection 交接行；
+ *     权威判定与链型支持矩阵归 modeling MDL-12——selection 只消费声明）；
+ *   ② Prismatic 轴在候选×轴遍历内先于全部维度判定输出"范围外"记录
+ *     （verdict=DataInsufficient、reasons 恒空、gaps 恰一条
+ *     axis-out-of-scope 缺口〔diagCode=SEL-INPUT-AXIS-OUT-OF-SCOPE〕）；
+ *     记录数不变量（候选×轴）保持——截断感知计数不受影响；
+ *   ③ 同轴多条 facts 的 jointKind 矛盾＝调用方契约违约 fail-fast
+ *     （轴类型是轴级属性——既旋转又移动属物理矛盾，§10.2 校验边界）。
+ *
  * 线程安全：全部为无状态纯函数（可重入——卡 §14.10）。
  */
 
@@ -254,9 +266,27 @@ void validateCriteria(const ScreeningCriteria& c)
 }
 
 /// 工作点事实合法性（调用方契约：present 的数值一律有限）。
-/// @throws std::invalid_argument 任一 present 字段非有限
+/// 另校验同轴 jointKind 一致性（WP-19-T08）：关节类型是轴级属性——
+/// 同一根轴既声明旋转又声明移动属物理矛盾（modeling MDL-12 链型判定的
+/// 上游数据被破坏），属调用方契约违约，在校验边界 fail-fast（§10.2
+/// 短路边界——致命输入错误整批拒绝），静默取首现会掩盖上游缺陷。
+/// @throws std::invalid_argument 任一 present 字段非有限／同轴 jointKind 矛盾
 void validateFacts(const std::vector<AxisWorkpointFacts>& facts)
 {
+    // 同轴 jointKind 一致性（O(n²) 逐对核对——facts 规模为轴×工况的
+    // 小集合，O(n²) 可接受且保持输入序无关的判定语义）。
+    for (std::size_t i = 0; i < facts.size(); ++i) {
+        for (std::size_t j = i + 1; j < facts.size(); ++j) {
+            if (facts[i].jointId == facts[j].jointId
+                && facts[i].jointKind != facts[j].jointKind) {
+                throw std::invalid_argument(
+                    "selection/screening: 同轴 jointKind 矛盾（轴 "
+                    + facts[i].jointId.toCanonical()
+                    + " 的多条事实声明了不同关节类型——轴类型是轴级属性，"
+                      "调用方契约违约）");
+            }
+        }
+    }
     for (const AxisWorkpointFacts& f : facts) {
         if (f.jointTorqueRms) { requireFinite(*f.jointTorqueRms, "jointTorqueRms"); }
         if (f.jointTorquePeak) { requireFinite(*f.jointTorquePeak, "jointTorquePeak"); }
@@ -306,6 +336,47 @@ std::vector<core::ObjectId> uniqueAxes(const std::vector<AxisWorkpointFacts>& fa
 bool cancellationRequested(const evidence::IEvaluationContext* ctx)
 {
     return ctx != nullptr && ctx->cancellationRequested();
+}
+
+// =====================================================================
+// 移动关节范围外阻断（WP-19-T08——SEL-09/卡 §2.2 R1 纪律/D-SEL-15）
+// =====================================================================
+
+/// 轴关节类型查询（同轴一致性已由 validateFacts 保证——取首条 facts
+/// 的声明；axes 列表来自同一 facts 的唯一轴收集，找不到属内部不变量
+/// 破坏，防御分支按 Revolute 处理不会放大错误——调用点在此之前已由
+/// validateFacts/uniqueAxes 保证轴必在 facts 中）。
+JointKind axisJointKindOf(const std::vector<AxisWorkpointFacts>& facts,
+                          const core::ObjectId& axis)
+{
+    for (const AxisWorkpointFacts& f : facts) {
+        if (f.jointId == axis) {
+            return f.jointKind;
+        }
+    }
+    return JointKind::Revolute;  // 防御分支（正常路径不可达）
+}
+
+/// 范围外记录构造（移动关节轴的逐候选记录——每候选×该轴恰一条，保持
+/// "记录数＝候选数×轴数"的截断感知不变量；记录内不执行任何 §7/§8
+/// 旋转传动维度——reasons 恒空、gaps 恰一条范围外缺口，verdict 由
+/// 汇总规则收敛为 DataInsufficient：范围外是数据/边界类事实，不是候选
+ /// 能力淘汰，不升级整机不可行——卡 §2.2/D-SEL-15）。
+FeasibilityRecord makeAxisOutOfScopeRecord(const ModelId& modelId,
+                                           const core::ObjectId& axis,
+                                           const CatalogIdentity& catalog,
+                                           DeviceKind kind)
+{
+    FeasibilityRecord rec;
+    rec.id = modelId + "|" + axis.toCanonical();  // 记录键口径同正常路径（T04 ①）
+    rec.deviceKind = kind;
+    rec.candidateModelId = modelId;
+    rec.axisId = axis;
+    rec.catalog = catalog;
+    // inputSliceId/mappingId 保持全零（T04 直调路径诚实标记——同正常路径）。
+    rec.gaps.push_back(makeAxisOutOfScopeGap(axis, std::string(kSelInputAxisOutOfScope)));
+    rec.verdict = summarize(rec.reasons, rec.gaps);  // ⇒ DataInsufficient
+    return rec;
 }
 
 }  // namespace
@@ -393,7 +464,7 @@ bool ScreeningCriteria::operator==(const ScreeningCriteria& o) const
 
 bool AxisWorkpointFacts::operator==(const AxisWorkpointFacts& o) const
 {
-    return jointId == o.jointId && caseId == o.caseId
+    return jointId == o.jointId && caseId == o.caseId && jointKind == o.jointKind
         && jointTorqueRms == o.jointTorqueRms && jointTorquePeak == o.jointTorquePeak
         && jointSpeedPeak == o.jointSpeedPeak && motorTorqueRms == o.motorTorqueRms
         && motorTorquePeak == o.motorTorquePeak && motorSpeedPeak == o.motorSpeedPeak
@@ -1114,6 +1185,16 @@ std::vector<FeasibilityRecord> HardConstraintSelector::screenMotors(
             continue;
         }
         for (const core::ObjectId& axis : axes) {
+            // WP-19-T08（SEL-09）：移动关节轴范围外——先于全部 §7 维度
+            // 判定输出"范围外"记录（不静默套用旋转传动：安装/转矩/转速/
+            // 功率等维度对直线轴无语义；即使调用方误供了工作点数值也
+            // 不消费——不伪造电机工作点）。每候选×该轴恰一条记录，
+            // 记录数不变量（候选×轴）保持——调用方按计数感知完整性。
+            if (axisJointKindOf(axisFacts, axis) == JointKind::Prismatic) {
+                records.push_back(makeAxisOutOfScopeRecord(
+                    motor.modelId, axis, motor.catalog, DeviceKind::Motor));
+                continue;
+            }
             // 同轴全部工况事实（组内保持输入序——逐工况独立判定后合并）。
             std::vector<RejectionReason> reasons;
             std::vector<DataGap> gaps;
@@ -1171,6 +1252,13 @@ std::vector<FeasibilityRecord> HardConstraintSelector::screenGearboxes(
             continue;  // §8.1 ①——防御路径（导入期保证不含 Invalid）
         }
         for (const core::ObjectId& axis : axes) {
+            // WP-19-T08（SEL-09）：移动关节轴范围外——同 screenMotors；
+            // 输入转速维的 ω_m＝ω_joint/c 换算对直线轴无语义，同样不执行。
+            if (axisJointKindOf(axisFacts, axis) == JointKind::Prismatic) {
+                records.push_back(makeAxisOutOfScopeRecord(
+                    gb.modelId, axis, gb.catalog, DeviceKind::Gearbox));
+                continue;
+            }
             std::vector<RejectionReason> reasons;
             std::vector<DataGap> gaps;
             for (const AxisWorkpointFacts& f : axisFacts) {

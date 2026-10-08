@@ -418,6 +418,48 @@ TEST(SelCombinationCheckEvaluator, UpstreamDiagnosticsPassThrough)
     ASSERT_TRUE(out.payload.has_value());
 }
 
+/// 评估器路径的移动关节范围外阻断（WP-19-T08——SEL-09）：轴事实包经
+/// canonical 字节面物化（J1 声明 Prismatic）→ 评估产出 payload 解码后
+/// 组合记录为 DataInsufficient＋恰一条范围外缺口（稳定码
+/// SEL-INPUT-AXIS-OUT-OF-SCOPE）、零淘汰原因、格非 Pass——③端口公共
+/// 接口路径的阻断语义钉扎（不留只测核心自由函数的盲区）。
+TEST(SelCombinationCheckEvaluator, EvaluatorPathBlocksPrismaticAxis)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-09"}, std::vector<std::string>{"AT-08"});  // R1——评估器路径范围外阻断——公共接口消费面
+    EvaluatorFixture fx(1);
+    // 重物化轴事实包：J1 声明移动关节（fixture 的切片身份确定性派生
+    // ——同锚 id 覆盖即替换消费面）。
+    for (const evidence::DependencyEntry& e : fx.request.slice.entries) {
+        if (e.key == kJointSeriesSelKey) {
+            const auto* p = std::get_if<evidence::UpstreamResultDependencyPayload>(
+                &e.payload);
+            AxisFactsBundle bundle = {
+                makeJointFacts(fx.axes.j1, "case-A", true),
+                makeJointFacts(fx.axes.j2, "case-A", false),
+            };
+            bundle[0].jointKind = JointKind::Prismatic;
+            fx.context.put(selUpstreamAnchor(p->upstreamSliceId),
+                           encodeAxisFactsBundle(bundle));
+        }
+    }
+    CombinationCheckEvaluator evaluator(fx.provider);
+    const evidence::EvaluationOutput out = evaluator.evaluate(fx.request, fx.context);
+    ASSERT_TRUE(out.payload.has_value());
+    const SelectionCheckResult result = decodeSelectionCheckResult(out.payload->canonicalBytes);
+    ASSERT_EQ(result.records.size(), std::size_t{1});
+    const FeasibilityRecord& rec = result.records[0];
+    // 阻断语义（与直调路径同判——评估器与核心共用同一 checkCombinations）。
+    EXPECT_EQ(rec.verdict, VerdictKind::DataInsufficient);
+    EXPECT_TRUE(rec.reasons.empty())
+        << "评估器路径同样不得产生移动关节轴的旋转淘汰原因";
+    ASSERT_EQ(rec.gaps.size(), std::size_t{1});
+    EXPECT_EQ(rec.gaps[0].dimension, "axis-out-of-scope");
+    EXPECT_EQ(rec.gaps[0].diagCode, std::string(kSelInputAxisOutOfScope));
+    ASSERT_EQ(result.coverage.size(), std::size_t{1});
+    EXPECT_EQ(result.coverage[0].verdict, VerdictKind::DataInsufficient);
+    EXPECT_NE(result.coverage[0].note.find("axis-out-of-scope"), std::string::npos);
+}
+
 // ---------------------------------------------------------------------
 // 工厂（IEvaluatorFactory 契约）
 // ---------------------------------------------------------------------

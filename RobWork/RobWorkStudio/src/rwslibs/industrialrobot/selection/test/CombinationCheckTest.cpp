@@ -23,6 +23,7 @@
 
 #include <sdurws/ird/selection/CatalogTypes.hpp>
 #include <sdurws/ird/selection/Combination.hpp>
+#include <sdurws/ird/selection/DiagCodes.hpp>   // kSelInputAxisOutOfScope——范围外缺口稳定码断言（WP-19-T08）
 #include <sdurws/ird/selection/Screening.hpp>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO
@@ -570,4 +571,140 @@ TEST(SelCombinationCheck, DeterministicForSameInput)
         EXPECT_EQ(first[i].totalMass, second[i].totalMass);
         EXPECT_EQ(first[i].inertiaRatioUnsettled, second[i].inertiaRatioUnsettled);
     }
+}
+
+// ---------------------------------------------------------------------
+// 移动关节范围外阻断（WP-19-T08——SEL-09/卡 §2.2 R1 纪律/D-SEL-15）
+// ---------------------------------------------------------------------
+
+/// 含移动关节轴的组合被阻断（链级范围外）：J2 声明 Prismatic → 黄金
+/// 可行组合 K1（全 M-A/G-10 面）转 DataInsufficient（非 Feasible——格
+/// 不得判 Pass；非 Rejected——不升级整机不可行）、零 RejectionReason
+/// （不静默套用旋转传动：J2 的映射事实即使供给也不消费）＋恰一条 J2
+/// 范围外缺口（稳定码 SEL-INPUT-AXIS-OUT-OF-SCOPE、caseId 空）；含旋转
+/// 超限轴的 K2/K3 保持既有 Rejected（范围外不覆盖淘汰原因），且其全部
+/// 原因定位在旋转轴 J1（移动轴 J2 零旋转原因）。
+TEST(SelCombinationCheck, PrismaticCombinationBlockedAtCombinationLevel)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-09", "MDL-12"}, std::vector<std::string>{"AT-08", "AT-17"});  // R1——含移动关节组合链级阻断——DataInsufficient＋SEL-INPUT-AXIS-OUT-OF-SCOPE
+    const GoldenCombos golden = makeGoldenCombos();
+    CatalogPackageSnapshot snapshot = goldenSnapshot();
+    CombinationCheckCoreInput in = makeCoreInput(snapshot, golden);
+    // J2 声明移动关节（黄金组合全含 J2——三组合全部携带范围外缺口）。
+    for (AxisWorkpointFacts& f : in.axisFacts) {
+        if (f.jointId == golden.axes.j2) {
+            f.jointKind = JointKind::Prismatic;
+        }
+    }
+    const std::vector<CombinationCheckOutcome> outcomes = checkCombinations(in, nullptr);
+    ASSERT_EQ(outcomes.size(), golden.combos.size());
+
+    // ---- K1（全 M-A/G-10——无旋转超限的基准面）：完整阻断形态。
+    const DeviceCombination* k1Combo =
+        findCombo(golden.combos, "M-A", "G-10", "M-A", "G-10");
+    ASSERT_TRUE(k1Combo != nullptr);
+    const CombinationCheckOutcome* k1 = findOutcome(outcomes, k1Combo->id);
+    ASSERT_TRUE(k1 != nullptr);
+    EXPECT_EQ(k1->record.verdict, VerdictKind::DataInsufficient)
+        << "含移动关节轴的组合不得判可行（SEL-09 链级阻断）";
+    // 零淘汰原因（旋转传动维度对 J2 未执行；J1 黄金可行也无原因）。
+    EXPECT_TRUE(k1->record.reasons.empty())
+        << "移动关节轴不得产生任何旋转传动淘汰原因（SEL-09）";
+    // 恰一条 J2 范围外缺口（逐轴恰一条、与工况无关）。
+    ASSERT_EQ(k1->record.gaps.size(), std::size_t{1});
+    EXPECT_EQ(k1->record.gaps[0].dimension, "axis-out-of-scope");
+    EXPECT_EQ(k1->record.gaps[0].diagCode, std::string(kSelInputAxisOutOfScope));
+    EXPECT_EQ(k1->record.gaps[0].axisId, golden.axes.j2);
+    EXPECT_TRUE(k1->record.gaps[0].caseId.empty());
+    // 资格矩阵格：非 Pass＋范围外标注（格聚合对该轴无记录可依——兜底）。
+    ASSERT_EQ(k1->coverage.size(), std::size_t{1});
+    EXPECT_EQ(k1->coverage[0].verdict, VerdictKind::DataInsufficient);
+    EXPECT_NE(k1->coverage[0].note.find("axis-out-of-scope"), std::string::npos);
+
+    // ---- K2（J1 面 M-A/G-20——旋转超限组合）：保持既有 Rejected；
+    // 全部原因定位 J1（移动轴零原因——不套用）；范围外缺口并存。
+    {
+        const DeviceCombination* k2Combo =
+            findCombo(golden.combos, "M-A", "G-20", "M-A", "G-10");
+        ASSERT_TRUE(k2Combo != nullptr);
+        const CombinationCheckOutcome* k2 = findOutcome(outcomes, k2Combo->id);
+        ASSERT_TRUE(k2 != nullptr);
+        EXPECT_EQ(k2->record.verdict, VerdictKind::Rejected)
+            << "旋转轴既有淘汰保持原样（范围外不覆盖判定）";
+        ASSERT_FALSE(k2->record.reasons.empty());
+        for (const RejectionReason& r : k2->record.reasons) {
+            EXPECT_EQ(r.axisId, golden.axes.j1)
+                << "全部淘汰原因定位在旋转轴 J1（移动轴 J2 零原因）";
+        }
+        bool hasOutOfScopeGap = false;
+        for (const DataGap& g : k2->record.gaps) {
+            if (g.dimension == "axis-out-of-scope") {
+                hasOutOfScopeGap = true;
+                EXPECT_EQ(g.axisId, golden.axes.j2);
+            }
+        }
+        EXPECT_TRUE(hasOutOfScopeGap) << "范围外缺口并存（多事实不互相覆盖）";
+    }
+}
+
+/// 混合链（J1 旋转超限＋J2 移动）：旋转轴的候选能力淘汰保持原样
+/// （Rejected 优先——范围外是数据/边界类事实，不覆盖既有淘汰原因），
+/// 组合级同时携带旋转轴淘汰原因与 J2 范围外缺口（多事实并存——§10.3
+/// "原因不被单一状态字段覆盖"）。
+TEST(SelCombinationCheck, MixedChainKeepsRotatingAxisRejection)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-09", "MDL-12"}, std::vector<std::string>{"AT-08"});  // R1——混合链：旋转轴淘汰与移动轴范围外并存——不互相覆盖
+    const GoldenCombos golden = makeGoldenCombos();
+    CatalogPackageSnapshot snapshot = goldenSnapshot();
+    CombinationCheckCoreInput in = makeCoreInput(snapshot, golden);
+    // J1 换用 M-B 面（连续/峰值转矩超限——黄金 K3 组合的淘汰面）：
+    // 用映射批全量黄金事实（M-B 超限值在 goldenMappingBatch 内），此处
+    // 只把 J2 声明为移动关节。
+    for (AxisWorkpointFacts& f : in.axisFacts) {
+        if (f.jointId == golden.axes.j2) {
+            f.jointKind = JointKind::Prismatic;
+        }
+    }
+    const std::vector<CombinationCheckOutcome> outcomes = checkCombinations(in, nullptr);
+    const DeviceCombination* k3Combo =
+        findCombo(golden.combos, "M-B", "G-10", "M-A", "G-10");
+    ASSERT_TRUE(k3Combo != nullptr);
+    const CombinationCheckOutcome* k3 = findOutcome(outcomes, k3Combo->id);
+    ASSERT_TRUE(k3 != nullptr);
+    // J1（旋转）超限 → 组合仍 Rejected（旋转轴淘汰优先——格 Rejected
+    // 保持原样，范围外不覆盖判定）。
+    EXPECT_EQ(k3->record.verdict, VerdictKind::Rejected);
+    bool hasTorqueReason = false;
+    bool hasOutOfScopeGap = false;
+    for (const RejectionReason& r : k3->record.reasons) {
+        if (r.token == ReasonToken::TorquePeakInsufficient
+            || r.token == ReasonToken::TorqueContinuousInsufficient) {
+            hasTorqueReason = true;
+            EXPECT_EQ(r.axisId, golden.axes.j1);  // 原因定位在旋转轴 J1。
+        }
+    }
+    for (const DataGap& g : k3->record.gaps) {
+        if (g.dimension == "axis-out-of-scope") {
+            hasOutOfScopeGap = true;
+            EXPECT_EQ(g.axisId, golden.axes.j2);
+            EXPECT_EQ(g.diagCode, std::string(kSelInputAxisOutOfScope));
+        }
+    }
+    EXPECT_TRUE(hasTorqueReason) << "旋转轴淘汰原因保持原样";
+    EXPECT_TRUE(hasOutOfScopeGap) << "移动轴范围外缺口并存";
+}
+
+/// 同轴 jointKind 矛盾在组合校核入口 fail-fast（物理矛盾——调用方契约
+/// 违约；显式校验的原因：全移动链不触发 T04 筛选器，矛盾须在入口拦截）。
+TEST(SelCombinationCheck, JointKindConflictFailsFastAtCore)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-09"}, std::vector<std::string>{"AT-08"});  // R1——同轴关节类型矛盾＝组合校核入口契约违约
+    const GoldenCombos golden = makeGoldenCombos();
+    CatalogPackageSnapshot snapshot = goldenSnapshot();
+    CombinationCheckCoreInput in = makeCoreInput(snapshot, golden);
+    // 同轴（J2）两条工况事实声明不同关节类型——物理矛盾。
+    AxisWorkpointFacts conflicting = makeJointFacts(golden.axes.j2, "case-B", false);
+    conflicting.jointKind = JointKind::Prismatic;
+    in.axisFacts.push_back(conflicting);
+    EXPECT_THROW((void)checkCombinations(in, nullptr), std::invalid_argument);
 }

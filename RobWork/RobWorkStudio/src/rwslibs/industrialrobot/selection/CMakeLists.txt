@@ -291,7 +291,13 @@ add_executable(sdurws_ird_selection_test
 #   test/CatalogDiffTest.cpp
     test/FeasibleSetTest.cpp
     test/PreferenceFilterTest.cpp
-    test/CatalogDiffTest.cpp)
+    test/CatalogDiffTest.cpp
+# T08 增列移动关节范围外诊断用例组（WP-19-T08 acceptance 1/2——SEL-09
+# 范围纪律：移动关节轴阻断〔DataInsufficient＋SEL-INPUT-AXIS-OUT-OF-SCOPE〕
+# ＋不静默套用旋转传动＋混合链逐轴独立＋同轴矛盾 fail-fast；接口路径
+# 钉扎：经 IHardConstraintSelector 接口引用消费）：
+#   test/AxisOutOfScopeTest.cpp
+    test/AxisOutOfScopeTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
