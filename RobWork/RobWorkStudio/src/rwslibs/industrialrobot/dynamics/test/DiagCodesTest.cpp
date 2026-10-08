@@ -7,7 +7,7 @@
  *         侧自证面）。
  *
  * 设计依据：
- *   - units/dynamics.md §9.4（拟注册清单 v1 设计基线——15 行：码/严重度/
+ *   - units/dynamics.md §9.4（拟注册清单设计基线——v1 15 行＋WP-17-T05 增行 16：码/严重度/
  *     比较型/用途四列；"码值权威归 StableCodeRegistry，本表为拟注册清单
  *     ——随 WP-17-T02/T03 提交"）、§3.2（DiagCodes.hpp 行——T02 落位）
  *   - units/diagnostics.md §4.3（分类词表）、§4.4（动作族映射）、§4.5
@@ -65,9 +65,10 @@ const char* kSection94FullTable[] = {
     "DYN-FRICTION-MISSING",                   // 行 13（摩擦参数缺失）
     "DYN-CONDITION-REF-MISSING",              // 行 14（工况引用缺失/空工况集合）
     "DYN-COUPLING-GATE-REJECTED",             // 行 15（耦合链防御拒绝）
+    "DYN-FD-NUMERIC-ANOMALY",                 // 行 16（WP-17-T05 增行——正动力学数值异常）
 };
 
-/// §9.4"严重度"列（与码清单同序——逐码登记值）：全表 9 error＋6 warning。
+/// §9.4"严重度"列（与码清单同序——逐码登记值）：全表 9 error＋7 warning。
 const bool kSection94IsError[] = {
     true,   // DYN-INPUT-INVALID                      error
     true,   // DYN-UPSTREAM-TRAJECTORY-INCOMPATIBLE   error
@@ -84,6 +85,7 @@ const bool kSection94IsError[] = {
     false,  // DYN-FRICTION-MISSING                   warning
     true,   // DYN-CONDITION-REF-MISSING              error
     true,   // DYN-COUPLING-GATE-REJECTED             error
+    false,  // DYN-FD-NUMERIC-ANOMALY                 warning（行 16）
 };
 
 /// 逐码分类/重试族/比较型登记值（与码清单同序；落值锚点＝DiagCodes.cpp
@@ -110,12 +112,13 @@ const ExpectedCategoryRow kExpectedCategoryRows[] = {
     {DiagnosticCategory::DataInsufficient, RetryKind::UserRetry, false},  // FRICTION-MISSING（supply-evidence）
     {DiagnosticCategory::InputInvalid,     RetryKind::UserRetry, false},  // CONDITION-REF-MISSING（fix-input）
     {DiagnosticCategory::FormatOrVersion,  RetryKind::UserRetry, false},  // COUPLING-GATE-REJECTED（跨版本快照 fix-input）
+    {DiagnosticCategory::ExecutionFailed,  RetryKind::UserRetry, false},  // FD-NUMERIC-ANOMALY（行 16——数值异常 retry-task）
 };
 
 }  // namespace
 
 /**
- * 工厂清单范围＝§9.4 登记表全表（15 行——acceptance 2"按
+ * 工厂清单范围＝§9.4 登记表全表（16 行——acceptance 2"按
  * units/dynamics.md 登记表"）：清单恰含全表且行序＝§9.4 表行序，多登
  * （登记卡面之外的码值——私造码）或少登（漏登记——装配数据源缺口）
  * 均失败；码值文本与卡面"码"列原文逐字一致；无重复码（键唯一——注册
@@ -155,7 +158,7 @@ TEST(DynDiagCodes, FactoryScopeIsSection94FullTable_WP17T02_ACC2)
 
 /**
  * 描述符逐字段＝§9.4 行登记值（acceptance 2——登记值可追溯到卡面）：
- * 严重度列 15 码逐位核对（error×9＋warning×6）；ownerUnit、文案键命名
+ * 严重度列 16 码逐位核对（error×9＋warning×7）；ownerUnit、文案键命名
  * 约定（diag.<code-lower>.title/.detail——注册期键形校验的预演核对）、
  * paramSchema 全表"[]"（不私造参数名）、确认/可见性/登记版本全表同值。
  */
@@ -210,7 +213,7 @@ TEST(DynDiagCodes, DescriptorFieldsMatchSection94Rows_WP17T02_ACC2)
  * diagnostics §4.3/§4.4 落值的机器核对面）：requiresComparison 恰三码
  * true（SAMPLE-GAP/DIMENSION-MISMATCH/FD-CONSISTENCY-FAILED——§9.4
  * "比较型"列点名）；SA-15 不变量（confirmable⇒requiresComparison）全表
- * 成立；15 行分类/重试族与 DiagCodes.cpp 逐码注释一一对应。
+ * 成立；16 行分类/重试族与 DiagCodes.cpp 逐码注释一一对应。
  */
 TEST(DynDiagCodes, CategoryAndRetryMappingMatchesAnchors_WP17T02_ACC2)
 {
@@ -249,7 +252,7 @@ TEST(DynDiagCodes, CategoryAndRetryMappingMatchesAnchors_WP17T02_ACC2)
 
 /**
  * 真实注册表注册成功且可查询（acceptance 2——"装配期注册"执行面的真实
- * 行为验证；kinematics P-KIN-7 处置同款）：注册后全表 15 码 find 命中且
+ * 行为验证；kinematics P-KIN-7 处置同款）：注册后全表 16 码 find 命中且
  * ownerUnit 归属正确、registeredCodes("dynamics") 反映全表、manifest 含
  * 全表。DYN 前缀已在 kPrefixOwners 在册——注册无前缀阻塞（与 DT 前缀
  * 的 P-DT-7 收编路径不同，kinematics KIN 同款在册形态）。
@@ -269,7 +272,7 @@ TEST(DynDiagCodes, RegistersIntoStableCodeRegistry_WP17T02_ACC2)
         EXPECT_EQ(found->ownerUnit, "dynamics") << code;
     }
 
-    // ownerUnit 反查反映全表（字典序由注册表侧承担——15 码无缺漏）。
+    // ownerUnit 反查反映全表（字典序由注册表侧承担——16 码无缺漏）。
     const auto codes = registry.registeredCodes("dynamics");
     ASSERT_EQ(codes.size(), std::size(kSection94FullTable));
     for (const char* code : kSection94FullTable) {

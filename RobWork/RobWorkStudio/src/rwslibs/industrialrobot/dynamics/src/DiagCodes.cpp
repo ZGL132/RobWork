@@ -1,25 +1,29 @@
 /**
  * @file   DiagCodes.cpp
- * @brief  dynamics 稳定诊断码工厂的实现——§9.4 登记表全表 15 码描述符
+ * @brief  dynamics 稳定诊断码工厂的实现——§9.4 登记表全表 16 码描述符
  *         清单（逐码落值依据）与装配注册函数。
  *
  * 设计依据：
- *   - units/dynamics.md §9.4（拟注册清单 v1 设计基线——15 行：码/严重度/
- *     比较型/用途四列；逐码登记值与锚点的唯一权威）、§4.3（轨迹消费契约
+ *   - units/dynamics.md §9.4（拟注册清单设计基线——v1 为 15 行，WP-17-T05
+ *     增量修订表尾增行 16〔DYN-FD-NUMERIC-ANOMALY〕：码/严重度/比较型/
+ *     用途四列；逐码登记值与锚点的唯一权威）、§4.3（轨迹消费契约
  *     ——上游兼容性校验三拒绝码）、§4.6（序列纪律与边界情形——缺样本/
  *     非有限/部分结果）、§5.5（摩擦符号约定与数据不足降级三层）、§5.6
  *     （数值稳定性、失败语义与耦合链防御）、§6（正动力学一致性——建议
- *     证据项三态）、§8.1（工况消费——空工况集合/引用缺失）
+ *     证据项三态与 DYN-FD-* 三码＋数值异常增码）、§8.1（工况消费——空
+ *     工况集合/引用缺失）
  *   - units/diagnostics.md §4.3（分类词表逐值语义锚点）、§4.4（分类—
  *     严重—动作族矩阵——retryable 机械映射）、§4.5（字段约束与"不私造
  *     参数名"展开登记纪律）
  *   - 先例：kinematics/src/DiagCodes.cpp（WP-15-T02 同款——依赖白名单含
  *     diagnostics 编译边的逐码注释登记落值依据形态；共字段抽取辅助
  *     makeDescriptor 同款）
- *   - 任务契约 tasks/foundation/WP-17-T02.json acceptance 2
+ *   - 任务契约 tasks/foundation/WP-17-T02.json acceptance 2（v1 全表）＋
+ *     tasks/foundation/WP-17-T05.json（行 16 增码随本批单元卡 §9.4 修订）
  *
  * 确定性（NFR-COR-02）：清单序＝§9.4 表行序；每次调用返回同序同值新
- * 清单（描述符为纯值聚合）；码值经 DiagCodes.hpp 常量引用（唯一书写点）。
+ * 清单（描述符为纯值聚合）；码值经 DiagCodes.hpp 常量引用（唯一书写点）；
+ * 增码只允许表尾追加——既有行不重排。
  */
 
 #include <sdurws/ird/dynamics/DiagCodes.hpp>
@@ -29,11 +33,11 @@ namespace sdurws::ird::dynamics {
 namespace {
 
 /**
- * @brief 单码描述符装配辅助：填入 15 码共用不变的字段（ownerUnit/键约定/
+ * @brief 单码描述符装配辅助：填入 16 码共用不变的字段（ownerUnit/键约定/
  * paramSchema/确认与可见性/登记版本），可变面（码值/分类/级别/比较标记/
  * 重试族）由调用点逐码实参给出。
  *
- * 抽取目的：共字段的登记口径只在函数体注释一处陈述，15 个调用点各自只
+ * 抽取目的：共字段的登记口径只在函数体注释一处陈述，16 个调用点各自只
  * 携带差异字段——落值依据可读性与"同码同口径"两得（不引入任何运行期
  * 开销——描述符构造本就是值聚合；kinematics 同款辅助先例）。
  *
@@ -44,7 +48,7 @@ namespace {
  *   - paramSchema＝"[]"（无参数显式声明——产码路径落地时按需增量登记
  *     并升 registryVersion，不私造参数名；比较型三要素走实例 comparison
  *     面，不占参数名）；
- *   - confirmable＝false（15 码均无 SA-15 确认流语义）；
+ *   - confirmable＝false（16 码均无 SA-15 确认流语义）；
  *   - userVisible/reportable/historical＝true（全部为用户级码——§4.5
  *     仅对 Dev 码强制三项 false）；
  *   - registryVersion＝1（首次登记）；deprecated=false；
@@ -64,7 +68,7 @@ diagnostics::CodeDescriptor makeDescriptor(std::string_view code,
                                            diagnostics::RetryKind retryable)
 {
     // 小写键派生与注册表 derivedTextKey 同一约定（diag.<code-lower>.段）
-    // ——此处以显式字面量书写，逐码测试断言全表 30 键（15×title/detail）
+    // ——此处以显式字面量书写，逐码测试断言全表 32 键（16×title/detail）
     // 与码值小写逐字一致，失同步即失败（不重复实现派生逻辑防两处漂移）。
     std::string lower{code};
     for (char& ch : lower) {
@@ -97,7 +101,7 @@ diagnostics::CodeDescriptor makeDescriptor(std::string_view code,
 
 std::vector<diagnostics::CodeDescriptor> dynamicsCodeDescriptors()
 {
-    // 清单序＝§9.4 表行序 1~15（确定性序；后续消费任务增码只允许表尾
+    // 清单序＝§9.4 表行序 1~16（确定性序；后续消费任务增码只允许表尾
     // 追加——既有行不重排）；逐码注释给出分类/重试族落值锚点（严重度与
     // 比较型直接取 §9.4 表列原值）。
     return {
@@ -259,6 +263,21 @@ std::vector<diagnostics::CodeDescriptor> dynamicsCodeDescriptors()
         makeDescriptor(kDynCouplingGateRejected,
                        diagnostics::DiagnosticCategory::FormatOrVersion,
                        diagnostics::DiagnosticSeverity::Error,
+                       false,
+                       diagnostics::RetryKind::UserRetry),
+
+        // ---- 行 16（WP-17-T05 表尾增行）：DYN-FD-NUMERIC-ANOMALY（warning）
+        //      ——正动力学数值异常 ----
+        // 分类 execution-failed：检查已执行但积分数值路径异常——质量阵
+        // 奇异/病态致线性求解失败（§6.1 ④"数值异常（刚性/溢出）"分支；
+        // 异常判据＝消元主元越相对下界 1e-14×‖M‖∞，P-DYN-7 落位锁定）。
+        // 不比较型：异常事实由 numericAnomaly 定位文本承载（首因/stage），
+        // 无"实际/期望"比较对。Failed 只进建议证据项 Invalid＋warning
+        // 诊断——不判定模型无效（§6.3.5）。fix-input（补全质量/惯量参数
+        // 或减小步长）→UserRetry。
+        makeDescriptor(kDynFdNumericAnomaly,
+                       diagnostics::DiagnosticCategory::ExecutionFailed,
+                       diagnostics::DiagnosticSeverity::Warning,
                        false,
                        diagnostics::RetryKind::UserRetry),
     };

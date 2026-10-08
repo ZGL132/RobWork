@@ -397,7 +397,15 @@ EndComponent extractEndComponent(const core::SourcedValue<double>& massF,
             c.estimated = true;
         }
     } else {
-        c.inertiaC = Mat3{};  // 点质量：对质心零转动惯量
+        // 点质量：对质心零转动惯量（D-DYN-6"低估惯性"——保守下界）。
+        // ★ 显式置零（WP-17-T05 修复——同连杆缺失分支：Mat3 默认构造为
+        //   单位阵〔旋转恒元语义〕，点质量路径若保留默认即"每个缺失惯量
+        //   的负载自带 1 kg·m² 惯量"的静默错误值；缺失语义＝零贡献）。
+        for (int r = 0; r < 3; ++r) {
+            for (int cc = 0; cc < 3; ++cc) {
+                c.inertiaC.at(r, cc) = 0.0;  // 零张量（点质量无转动惯量）
+            }
+        }
         c.estimated = true;
     }
     if (c.estimated) { outEstimated = true; }
@@ -475,6 +483,16 @@ RneaChain buildRneaChain(const runtime::CanonicalModel& model)
         // →0、质心→体系原点、惯量→零张量）——数值继续，证据经素材降级，
         // 不包装精确；与"必填负载 mass 非法即阻止"的 MDL-06 分域语义不同
         // （连杆物性在建模侧本为可选能力，缺失属能力缺失而非调用方违约）。
+        // ★ 惯量缺失分支必须显式置零（WP-17-T05 修复——T03 缺陷：RneaBody
+        //   的 Mat3 默认构造为单位阵〔旋转恒元语义〕，缺失分支不赋值即保留
+        //   单位阵＝"每个缺失连杆自带 1 kg·m² 惯量"的静默错误值；单位阵默
+        //   认值只为旋转变量设计，物性字段缺失语义＝零贡献，NFR-COR-03
+        //   "缺失≠伪造默认物理量"）。
+        for (int r = 0; r < 3; ++r) {
+            for (int cc = 0; cc < 3; ++cc) {
+                body.inertia.at(r, cc) = 0.0;  // 缺失＝零张量（无惯量贡献）
+            }
+        }
         if (const std::optional<double> m = link.mass.tryValue()) {
             body.mass = *m;                                   // 单位 kg
         }
