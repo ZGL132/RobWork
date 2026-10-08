@@ -5509,6 +5509,24 @@
       "registeredAt": "2026-10-08",
       "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
       "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
+    },
+    {
+      "id": "F-570",
+      "source": "WP-22-T08 实施期发现（实施者于 units/workflow.md §12.1/§14.5 与提交 68272418 三处声称『登记建议归治理任务』但 findings.json 无条目）＋WP-22-T08 验收（acc/wp-22-t08/1，2026-10-09）按 ACC §5 转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "ird_gates R-4 注释剥离正则引擎悬崖：/\\*([^*]|\\*[^/])*\\*/ 嵌套量词在超长连续块注释（约 300 星行量级，WP-22-T08 的 Lifecycle.hpp 头注释即触发）指数回溯栈溢出使门禁 FATAL——WP-22-T08 以『头注释拆为两个相邻块注释』临时规避（实测有效：验收者 ird_gates 复现 R-1~R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中），但后续任何文件出现超长块注释将复现",
+      "owner": "治理任务（ird_gates.cmake 不在 WP-22-T08 allowedFiles——实施者与验收者均无权修引擎）：注释剥离器改线性扫描或预裁剪长度上限，并复核实施者声称的『主仓库既有文件集不触发』范围；顺带核对实施者三处登记声明与登记库实况的同步纪律（本条即该缺口的补偿登记）"
+    },
+    {
+      "id": "F-571",
+      "source": "WP-22-T07 验收 S-1（acc/wp-22-t07/1，2026-10-08——记录内声明『须转登』未落账）＋WP-22-T08 验收（acc/wp-22-t08/1，2026-10-09）同型确认后按 ACC §5 合并转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "gtest 留痕双 report 口径漂移：WP-22-T07/T08 两任务 traceability/gtest-reports/ 仅契约目标有 ird-test-report JSON（total=36/43），模型目标（94/108 条）无 JSON 报告——AGENTS §4.2 DoD『gtest XML＋ird-test-report.json＋构建日志』三要素在模型半区仅 XML＋构建日志在案；与 WP-22-T05/T06 双文件口径（ird-test-report-model-test.json＋ird-test-report-contract-test.json）不一致（证据真实无粉饰——模型 XML 完整且验收者双模式重跑计数一致）",
+      "owner": "治理批次：统一双 report 口径（恢复 T05/T06 双文件先例），后续任务由脚本按测试目标分份生成 ird-test-report；连续两任务（T07/T08）沿袭单 json 后建议升级处置优先级"
     }
   ]
 }
