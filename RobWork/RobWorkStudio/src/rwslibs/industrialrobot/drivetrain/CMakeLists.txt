@@ -149,7 +149,8 @@ add_executable(sdurws_ird_drivetrain_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
-    test/MappingGoldenTest.cpp)
+    test/MappingGoldenTest.cpp
+    test/GoldenDtTest.cpp)
 
 target_compile_features(sdurws_ird_drivetrain_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_drivetrain_test PROPERTIES
@@ -225,10 +226,14 @@ ird_add_gtest(sdurws_ird_drivetrain_test)
 # 自有 main 同 _test 目标（报告设施接入）。
 # WP-18-T03 增列 contract_test/EvaluatorContractTest.cpp（业务对端面契约
 # ——evidence 评估器注册/切片依赖声明套件；卡 §4.2 contract_test 行）。
+# WP-18-T04 增列 contract_test/GoldenDatasetContractTest.cpp（黄金数据集
+# 登记契约——DatasetManifest 装载/完整性覆盖/交叉一致/档案通道与 P-DT-3
+# 保守纪律；testkit 数据资产真实装载，不桩化）。
 add_executable(sdurws_ird_drivetrain_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/EvaluatorContractTest.cpp)
+    contract_test/EvaluatorContractTest.cpp
+    contract_test/GoldenDatasetContractTest.cpp)
 
 target_compile_features(sdurws_ird_drivetrain_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_drivetrain_contract_test PROPERTIES

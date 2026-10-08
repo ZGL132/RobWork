@@ -1,0 +1,195 @@
+{
+  "schema": "dt-mapping-inputs/1",
+  "note": "传动映射黄金数据输入（WP-18-T04）——全部数值自包含；单位制：位置 rad、速度 rad/s、加速度 rad/s^2、力矩 N*m、功率 W、惯量 kg*m^2、时间 s；角度制式 rad。传动比口径 c＝Δq_joint/Δθ_motor（D-DT-4 全文唯一约定）。本文件是 generate/make_dt_mapping_golden.mjs（独立参考实现）与消费测试共用的唯一数据源。",
+  "models": {
+    "reducer-offset": {
+      "joints": [
+        { "id": "dtg-j0", "kind": "Revolute", "name": "joint1" }
+      ],
+      "motors": [
+        { "id": "dtg-m0", "jointIndex": 0 }
+      ],
+      "ratios": [0.01],
+      "ratioSources": ["ModelingField"],
+      "zeroOffset": [0.5],
+      "etaForward": [0.9],
+      "etaBackward": [0.7],
+      "etaSources": ["CatalogBackfill"],
+      "rotorInertia": [0.0001],
+      "ratedTorque": [null]
+    },
+    "triple-diag": {
+      "joints": [
+        { "id": "dtg-j0", "kind": "Revolute", "name": "joint1" },
+        { "id": "dtg-j1", "kind": "Revolute", "name": "joint2" },
+        { "id": "dtg-j2", "kind": "Revolute", "name": "joint3" }
+      ],
+      "motors": [
+        { "id": "dtg-m0", "jointIndex": 0 },
+        { "id": "dtg-m1", "jointIndex": 1 },
+        { "id": "dtg-m2", "jointIndex": 2 }
+      ],
+      "ratios": [0.01, 0.005, 0.02],
+      "ratioSources": ["ModelingField", "ModelingField", "ModelingField"],
+      "zeroOffset": [0.0, 0.0, 0.0],
+      "etaForward": [0.9, 0.9, 0.9],
+      "etaBackward": [0.7, 0.7, 0.7],
+      "etaSources": ["CatalogBackfill", "CatalogBackfill", "CatalogBackfill"],
+      "rotorInertia": [0.0001, 0.0001, 0.0001],
+      "ratedTorque": [null, null, null]
+    },
+    "single-drive": {
+      "joints": [
+        { "id": "dtg-j0", "kind": "Revolute", "name": "joint1" }
+      ],
+      "motors": [
+        { "id": "dtg-m0", "jointIndex": 0 }
+      ],
+      "ratios": [0.01],
+      "ratioSources": ["ModelingField"],
+      "zeroOffset": [0.0],
+      "etaForward": [0.9],
+      "etaBackward": [0.7],
+      "etaSources": ["CatalogBackfill"],
+      "rotorInertia": [0.0001],
+      "ratedTorque": [null]
+    },
+    "direct-drive": {
+      "joints": [
+        { "id": "dtg-j0", "kind": "Revolute", "name": "joint1" }
+      ],
+      "motors": [
+        { "id": "dtg-m0", "jointIndex": 0 }
+      ],
+      "ratios": [1.0],
+      "ratioSources": ["ModelingField"],
+      "zeroOffset": [0.0],
+      "etaForward": [0.9],
+      "etaBackward": [0.7],
+      "etaSources": ["CatalogBackfill"],
+      "rotorInertia": [0.0001],
+      "ratedTorque": [10.0]
+    },
+    "dual-inertia": {
+      "joints": [
+        { "id": "dtg-j0", "kind": "Revolute", "name": "joint1" },
+        { "id": "dtg-j1", "kind": "Revolute", "name": "joint2" }
+      ],
+      "motors": [
+        { "id": "dtg-m0", "jointIndex": 0 },
+        { "id": "dtg-m1", "jointIndex": 1 }
+      ],
+      "ratios": [0.01, 0.02],
+      "ratioSources": ["ModelingField", "ModelingField"],
+      "zeroOffset": [0.0, 0.0],
+      "etaForward": [0.9, 0.9],
+      "etaBackward": [0.7, 0.7],
+      "etaSources": ["CatalogBackfill", "CatalogBackfill"],
+      "rotorInertia": [0.0001, 0.0004],
+      "ratedTorque": [null, null]
+    }
+  },
+  "cases": [
+    {
+      "id": "analytic-single",
+      "model": "reducer-offset",
+      "caseId": "dtg-case-g1",
+      "upstream": "dtg-up-g1",
+      "goldenGroup": "DT-G1/G4（单轴正传动比解析＋零位偏置面）",
+      "samples": [
+        { "t": 0.0,   "q": 0.0,                  "qd": 0.6283185307179586,   "qdd": 0.0,                  "tauJoint": 2.0, "segmentId": "seg-A" },
+        { "t": 0.125, "q": 0.07071067811865475,  "qd": 0.44428829381583676,  "qdd": -2.7918228350867617, "tauJoint": 2.0, "segmentId": "seg-A" },
+        { "t": 0.25,  "q": 0.1,                  "qd": 3.898171832501377e-17, "qdd": -3.947841760435743,  "tauJoint": 2.0, "segmentId": "seg-A" },
+        { "t": 0.375, "q": 0.07071067811865476,  "qd": -0.44428829381583676, "qdd": -2.791822835086762,  "tauJoint": 2.0, "segmentId": "seg-A" },
+        { "t": 0.5,   "q": 1.2246467991473532e-17, "qd": -0.6283185307179586, "qdd": -4.836909530771047e-16, "tauJoint": 2.0, "segmentId": "seg-A" }
+      ],
+      "anchorsNote": "手算锚点（独立于参考实现的双路防同错）：t=0.25s 处 q=0.1、qd≈0、qdd=−0.4π²；theta=0.5+0.1/0.01=10.5；tauMotor=0.02+1e-4×(−394.7841760435743)=−0.01947841760435743。",
+      "anchors": {
+        "sampleIndex": 2,
+        "theta": 10.5,
+        "thetaDot": 0.0,
+        "thetaDDot": -394.7841760435743,
+        "tauIdeal": 0.02,
+        "tauMotor": -0.01947841760435743
+      }
+    },
+    {
+      "id": "virtualwork-multi",
+      "model": "triple-diag",
+      "caseId": "dtg-case-g5",
+      "upstream": "dtg-up-g5",
+      "goldenGroup": "DT-G5＋AT-38 R1 正命题（无耦合链＝对角映射；矩阵语义参考实现对照）",
+      "samples": [
+        { "t": 0.0,   "q": 0.0,                 "qd": 0.6283185307179586,  "qdd": 0.0,                 "tauJoint": 2.0, "segmentId": "seg-E" },
+        { "t": 0.125, "q": 0.07071067811865475, "qd": 0.44428829381583676, "qdd": -2.7918228350867617, "tauJoint": 2.0, "segmentId": "seg-E" },
+        { "t": 0.25,  "q": 0.1,                 "qd": 3.898171832501377e-17, "qdd": -3.947841760435743, "tauJoint": 2.0, "segmentId": "seg-E" },
+        { "t": 0.375, "q": 0.07071067811865476, "qd": -0.44428829381583676, "qdd": -2.791822835086762, "tauJoint": 2.0, "segmentId": "seg-E" }
+      ]
+    },
+    {
+      "id": "energy-bidirectional",
+      "model": "single-drive",
+      "caseId": "dtg-case-g6",
+      "upstream": "dtg-up-g6",
+      "goldenGroup": "DT-G6（双向效率与再生——E_loss>0 恒等式；正功段 2s＋再生段 2s，匀速 q̈=0）",
+      "samples": [
+        { "t": 0.0, "q": 0.0, "qd": 1.0, "qdd": 0.0, "tauJoint": 10.0,  "segmentId": "seg-drive" },
+        { "t": 1.0, "q": 1.0, "qd": 1.0, "qdd": 0.0, "tauJoint": 10.0,  "segmentId": "seg-drive" },
+        { "t": 2.0, "q": 2.0, "qd": 1.0, "qdd": 0.0, "tauJoint": -10.0, "segmentId": "seg-regen" },
+        { "t": 3.0, "q": 3.0, "qd": 1.0, "qdd": 0.0, "tauJoint": -10.0, "segmentId": "seg-regen" }
+      ]
+    },
+    {
+      "id": "dwell-zero",
+      "model": "direct-drive",
+      "caseId": "dtg-case-g7",
+      "upstream": "dtg-up-g7",
+      "goldenGroup": "DT-G7（零功率/驻留＋近零功率：效率不适用显式标记、RMS 含驻留、近零样本经 η⁺ 折算）",
+      "samples": [
+        { "t": 0.0, "q": 0.0, "qd": 0.0,   "qdd": 0.0, "tauJoint": 5.0, "segmentId": "seg-dwell" },
+        { "t": 1.0, "q": 1.0, "qd": 0.0,   "qdd": 0.0, "tauJoint": 5.0, "segmentId": "seg-dwell" },
+        { "t": 2.0, "q": 2.0, "qd": 1e-9,  "qdd": 0.0, "tauJoint": 3.0, "segmentId": "seg-move" },
+        { "t": 3.0, "q": 3.0, "qd": 2.0,   "qdd": 0.0, "tauJoint": 3.0, "segmentId": "seg-move" }
+      ],
+      "edgeNote": "样本 0/1＝零值（pJoint 精确零——效率不适用）；样本 2＝近零（q̇=1e-9 rad/s——近零功率仍按符号精确判据经 η⁺ 折算）；样本 2/3 构成正负对消前奏（τ 同号防歧义——符号抵消样例见 energy-bidirectional 的 E_joint）。"
+    },
+    {
+      "id": "inertia-golden",
+      "model": "dual-inertia",
+      "caseId": "dtg-case-g8",
+      "upstream": "dtg-up-g8",
+      "goldenGroup": "DT-G8（反射惯量 J/c² 与惯量比 c²·J_load/J_rotor；轴 1 负载缺失→惯量比不适用）",
+      "loadInertia": [0.5],
+      "loadInertiaSource": "UserProvided",
+      "samples": [
+        { "t": 0.0, "q": 0.0, "qd": 1.0, "qdd": 0.0, "tauJoint": 2.0, "segmentId": "seg-I" },
+        { "t": 1.0, "q": 1.0, "qd": 1.0, "qdd": 0.0, "tauJoint": 2.0, "segmentId": "seg-I" }
+      ]
+    }
+  ],
+  "at38R1Rejections": [
+    {
+      "id": "nondiag-2axis",
+      "goldenGroup": "AT-38 R1 反例（非对角输入阻断——不对角化、不拆轴）",
+      "nJoints": 2,
+      "chat": { "rows": 2, "cols": 2, "data": [0.01, 1e-06, 0.0, 0.02] },
+      "ratios": [0.01, 0.02],
+      "expectCode": "DT-MATRIX-NONDIAGONAL-LOCKED",
+      "expectCodeByR2Capability": "DT-MATRIX-NONDIAGONAL-LOCKED",
+      "r2Note": "本变体不携带耦合窗口——R2 能力位下经同一非对角结构检查阻断（码与 R1 相同，非对角阻断属结构语义与能力位无关）；R2 数值路径（通用矩阵求逆/交叉惯量）归 WP-18-T05，落位前窗口输入另经 DT-COUPLING-STAGE-LOCKED 阻断（见 coupling-window 变体）"
+    },
+    {
+      "id": "coupling-window",
+      "goldenGroup": "AT-38 R1 反例（耦合窗口输入被能力门控阻断——R2 数值路径归 WP-18-T05，不提前放开）",
+      "nJoints": 2,
+      "chat": { "rows": 2, "cols": 2, "data": [0.01, 0.0, 0.0, 0.02] },
+      "ratios": [0.01, 0.02],
+      "window": {
+        "C": { "rows": 2, "cols": 2, "data": [0.01, 0.0, 0.0, 0.02] },
+        "conditionNumber": 1.0
+      },
+      "expectCode": "DT-COUPLING-STAGE-LOCKED",
+      "expectCodeByR2Capability": "DT-COUPLING-STAGE-LOCKED"
+    }
+  ]
+}

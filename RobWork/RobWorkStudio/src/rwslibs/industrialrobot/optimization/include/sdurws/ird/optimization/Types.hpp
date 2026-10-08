@@ -15,12 +15,16 @@
  *   - 任务契约 tasks/foundation/WP-20-T03.json（allowedFiles/acceptance；
  *     knownPitfalls P-OPT-2/P-OPT-3/P-OPT-4）
  *
- * ★ 本批落位子集口径（诚实登记，防扩大）：§3.1 布局表把 CandidateStatus/
- *   MetricId/淘汰原因词表也列在 Types.hpp——三者分别是 Pareto（WP-20-T05）/
- *   指标（WP-20-T05）/管线淘汰（WP-20-T04/T06）的消费面，本任务不消费、
- *   不预建（NFR-MNT-04 不建无边界价值占位）；本批只落变量/补丁模型直接
- *   需要的 OptimizationStage、RandomSeed 与 OptimizationError。后续任务
- *   增补词表只允许表尾追加（枚举值序＝登记契约，确定性 NFR-COR-02）。
+ * ★ 落位范围口径（诚实登记，随任务推进更新）：§3.1 布局表把 CandidateStatus/
+ *   MetricId/淘汰原因词表也列在 Types.hpp——WP-20-T03 只落变量/补丁模型
+ *   直接需要的 OptimizationStage、RandomSeed 与 OptimizationError；
+ *   WP-20-T04 表尾追加 CandidateStatus 七值（§4.3 原文词表一次冻结——
+ *   管线消费 Infeasible/DataInsufficient/EvaluationFailed/Feasible 四值，
+ *   ScreenedOut/ParetoNondominated 归 T06/T05 只消费不扩表）。
+ *   WP-20-T05 表尾追加 MetricId 八值＋toToken（§4.3 原文词表一次冻结——
+ *   指标方向/来源键/阶段可算性等词表物化在 Objective.hpp；
+ *   ParetoNondominated 值随 T05 Pareto 层消费）。后续任务增补词表只允许
+ *   表尾追加（枚举值序＝登记契约，确定性 NFR-COR-02）。
  *
  * 背景说明（错误语义归类——AGENTS §2.5/卡 §6.6）：本域的错误分两轨——
  *   ① 调用方错误（研究定义非法、补丁触及锁定变量、值越界等）：fail-fast，
@@ -66,6 +70,50 @@ enum class OptimizationStage {
  * @return 稳定 token 视图（编译期字面量，生命周期静态——调用方无需释放）
  */
 std::string_view toToken(OptimizationStage s) noexcept;
+
+// =====================================================================
+// 候选状态词表（卡 §4.3 原文契约——WP-20-T04 表尾追加；T03 注预告的
+// "CandidateStatus 随 T04"的落位点。七值一次落全表：本任务管线消费
+// Infeasible/DataInsufficient/EvaluationFailed/Feasible 四值，ScreenedOut
+// 归 WP-20-T06 Quick 层、ParetoNondominated 归 WP-20-T05 消费——封闭枚举
+// 一次冻结避免后续任务再动本表；后续任务只消费不扩表）
+// =====================================================================
+
+/**
+ * @brief 候选在运行结果中的状态（卡 §4.3/§7.5——候选状态 ≠ 任务状态
+ *        ≠ 工程判定，三轴正交表）。
+ *
+ * 语义锚（卡 §7.5 判定流/区分表——管线映射契约）：
+ *   - Pending：评估尚未推进到该候选（批量编排面初始值）；
+ *   - ScreenedOut：Quick 层保守淘汰（WP-20-T06 产出——本任务不产出）；
+ *   - Infeasible：硬约束违例/任务级不可行证明成立——**不进入可行集**
+ *     （AT-09；淘汰原因逐约束记录）；
+ *   - DataInsufficient：证据缺失/搜索未果/覆盖不完备——**不进入可行集**
+ *     （C5/C8：搜索未果不判确定性不可行；限定语导出）；
+ *   - EvaluationFailed：评估器异常/编译链失败等环境错误——非工程判定，
+ *     不进入可行集（§7.5 区分表"评估器失败≠约束失败"）；
+ *   - Feasible：证据齐备且无违例（完整可行）——进入可行集（Pareto 前置）；
+ *   - ParetoNondominated：可行集内经支配筛选（WP-20-T05 产出——本任务
+ *     不产出）。
+ */
+enum class CandidateStatus {
+    Pending,             ///< 未评估（编排初始态）
+    ScreenedOut,         ///< Quick 保守淘汰（T06 产出）
+    Infeasible,          ///< 硬约束违例/有效不可行证明——不进可行集（AT-09）
+    DataInsufficient,    ///< 数据不足（含搜索未果 C5/C8）——不进可行集
+    EvaluationFailed,    ///< 评估环境失败（非工程判定）——不进可行集
+    Feasible,            ///< 完整可行——进入可行集
+    ParetoNondominated,  ///< 非支配集成员（T05 产出）
+};
+
+/**
+ * @brief 候选状态稳定 token（"pending"/"screened-out"/"infeasible"/
+ *        "data-insufficient"/"evaluation-failed"/"feasible"/
+ *        "pareto-nondominated"）——候选表/导出/审计的确定性书写。
+ * @param s [in] 候选状态枚举值
+ * @return 稳定 token 视图（编译期字面量，生命周期静态）
+ */
+std::string_view toToken(CandidateStatus s) noexcept;
 
 // =====================================================================
 // 随机种子（确定性来源之一；本任务仅承载别名——消费归 WP-20-T06 策略面）
@@ -118,6 +166,48 @@ public:
 private:
     std::string m_stableCode;  ///< 稳定码 token（构造后不可变——错误语义面）
 };
+
+// =====================================================================
+// 八项比较指标词表（卡 §4.3 原文契约——WP-20-T05 表尾追加；T03 头注预告
+// 的"MetricId 随 T05（指标消费面）"落位点。域内唯一指标 ID 定义点
+// （core.md §2.4 对照行）——八值一次落全表：可算性分阶段由
+// Objective.hpp MetricDefinition.computableInStageB 承载，词表本身不随
+// 阶段扩缩（OPT-07"全部展示"——八列固定呈现，B 期五项显示"—"）。
+// 后续任务只消费不扩表：八项之外无目标（§7.3——"局部改进"等过程性
+// 能力不设独立目标词表；OPT-D 联合指标面已全在本表，无 R2 增量）
+// =====================================================================
+
+/**
+ * @brief 八项比较指标词表（卡 §7.1 表全量——OPT-07"默认八项比较指标
+ *        全部展示"；枚举值序＝§7.1 表行序，即 canonical 序列化位图的
+ *        bit 序——值一经交付不得改动/插入，NFR-COR-02 确定性）。
+ *
+ * 方向与阶段可算性锚（卡 §7.1/§7.2——权威在 Objective.hpp
+ * metricDefinitions() 词表物化，本枚举只承载 ID 序）：
+ *   - 1~3（Envelope/StructuralMass/MinJointMargin）：OPT-B 可算（R1）；
+ *   - 4~8（CycleTime/DeviceCost/DeviceMass/JointPositiveWork/
+ *     MinDriveMargin）：可算性随阶段 C 各域交付，优化启用归 OPT-D
+ *     （REQUIREMENTS §15.0；阶段 C 不存在优化切片——F-02）。
+ */
+enum class MetricId {
+    Envelope,          ///< 1 尺寸包络（opt.metric.envelope；最小化——暂定口径见
+                       ///  Objective.hpp 包络注释；P-OPT-5 登记中）
+    StructuralMass,    ///< 2 结构质量（opt.metric.structural-mass；kg；最小化）
+    MinJointMargin,    ///< 3 最小关节裕量（opt.metric.min-joint-margin；最大化）
+    CycleTime,         ///< 4 节拍（opt.metric.cycle-time；s；最小化；StageB 恒"—"）
+    DeviceCost,        ///< 5 器件成本（opt.metric.device-cost；最小化；StageB 恒"—"）
+    DeviceMass,        ///< 6 器件质量（opt.metric.device-mass；kg；最小化；StageB 恒"—"）
+    JointPositiveWork, ///< 7 关节侧正机械功（opt.metric.joint-positive-work；J；最小化；StageB 恒"—"）
+    MinDriveMargin,    ///< 8 最小驱动裕量（opt.metric.min-drive-margin；最大化；StageB 恒"—"）
+};
+
+/**
+ * @brief 指标稳定 token（"opt.metric.<slug>"——卡 §7.1 表 MetricId 列的
+ *        稳定书写：指标事实/候选表/导出的确定性键）。
+ * @param m [in] 指标枚举值
+ * @return 稳定 token 视图（编译期字面量，生命周期静态）
+ */
+std::string_view toToken(MetricId m) noexcept;
 
 }  // namespace sdurws::ird::optimization
 

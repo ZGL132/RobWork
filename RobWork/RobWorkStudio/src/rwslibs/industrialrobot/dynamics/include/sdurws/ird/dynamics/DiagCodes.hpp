@@ -1,19 +1,21 @@
 /**
  * @file   DiagCodes.hpp
  * @brief  dynamics 稳定诊断码工厂——DYN-* 码的 CodeDescriptor 登记数据
- *         （units/dynamics.md §9.4 拟注册清单全表 15 码）与装配注册函数
+ *         （units/dynamics.md §9.4 拟注册清单全表 16 码）与装配注册函数
  *         （WP-17-T02 构建落位随批登记）。
  *
  * 设计依据：
- *   - units/dynamics.md §9.4（diagnostics 协作——DYN-* 拟注册清单 v1 设计
- *     基线 15 码：码/严重度/比较型/用途四列；"码值权威归 StableCodeRegistry，
- *     本表为拟注册清单——随 WP-17-T02/T03 提交"；§5.6（数值稳定性与失败
+ *   - units/dynamics.md §9.4（diagnostics 协作——DYN-* 拟注册清单设计
+ *     基线 v1 15 码＋WP-17-T05 增量修订表尾增行 1 码＝全表 16 码：码/严重
+ *     度/比较型/用途四列；"码值权威归 StableCodeRegistry，本表为拟注册
+ *     清单——随 WP-17-T02/T03/T05 提交"；§5.6（数值稳定性与失败
  *     语义——DYN-RNEA-FAILED/DYN-COUPLING-GATE-REJECTED 的触发条件）、
  *     §4.3（轨迹消费契约——DYN-UPSTREAM-TRAJECTORY-INCOMPATIBLE/
  *     DYN-TIME-PARAM-MISSING/DYN-SERIES-NON-MONOTONIC）、§4.6（序列纪律
  *     ——DYN-SAMPLE-GAP/非有限数）、§5.5（摩擦缺失降级——DYN-FRICTION-
  *     MISSING/DYN-PROPERTY-DOWNGRADED）、§6（正动力学一致性——DYN-FD-*
- *     三码）、§8.1（工况引用缺失——DYN-CONDITION-REF-MISSING））
+ *     三码＋DYN-FD-NUMERIC-ANOMALY）、§8.1（工况引用缺失——DYN-CONDITION-
+ *     REF-MISSING））
  *   - units/diagnostics.md §4.3（DiagnosticCategory 15 值词表——P-DIAG-3
  *     实现承载）、§4.4（分类—严重—动作族矩阵——retryable 机械映射依据）、
  *     §4.5（注册协议——句法/前缀-所有权/键唯一/paramSchema/字段不变量；
@@ -29,13 +31,13 @@
  *   - 任务契约 tasks/foundation/WP-17-T02.json acceptance 2（"DYN-* 域
  *     诊断码按 units/dynamics.md 登记表装配期注册"）
  *
- * ★ 登记范围口径（T02 与 T03/T05 的分界——诚实登记，防扩大）：本表物化
- *   的是卡面 §9.4 登记表**已具名**的 15 个具体码值。卡面其他章节行文提及
- *   但不在 §9.4 登记表的码（如 §6.1/§10.2 出现的 DYN-FD-NUMERIC-ANOMALY
- *   ——正动力学数值异常，其引擎选型与异常判据随 WP-17-T05 落位实测锁定
- *   ——P-DYN-7）不进本批清单：随其消费任务先走单元卡 §9.4 增量修订、
- *   再表尾追加（本头既有行不重排——清单序进入登记契约）。本任务不预建、
- *   不占位（NFR-MNT-04 不建无边界价值包装器）。
+ * ★ 登记范围口径（T02/T03 与 T05 的分界——诚实登记，防扩大）：本表物化
+ *   的是卡面 §9.4 登记表**已具名**的 16 个具体码值（v1 全表 15 码＋T05
+ *   表尾增行 DYN-FD-NUMERIC-ANOMALY——原为卡面 §6.1/§10.2 行文提及但
+ *   v1 表未具名的码，随其消费任务 WP-17-T05 先走单元卡 §9.4 增量修订、
+ *   再表尾追加——本头既有行不重排，清单序进入登记契约；后续增码同款
+ *   纪律）。本头不预建、不占位任何登记表之外码（NFR-MNT-04 不建无边界
+ *   价值包装器）。
  *
  * 背景说明（码值权威链）：稳定码的注册表唯一权威＝
  * diagnostics::StableCodeRegistry（PA-1/NFR-MNT-03）；DYN-* 码值的登记
@@ -129,6 +131,15 @@ inline constexpr std::string_view kDynConditionRefMissing = "DYN-CONDITION-REF-M
 /// 快照）时拒绝评估——绝不静默按独立关节链计算、绝不对角化/准静态替代
 /// ——DYN-04/M-12 红线的 dynamics 侧兜底）。
 inline constexpr std::string_view kDynCouplingGateRejected = "DYN-COUPLING-GATE-REJECTED";
+/// §9.4 行 16（WP-17-T05 增行——表尾追加，既有行不重排）：DYN-FD-NUMERIC-
+/// ANOMALY（warning——正动力学数值异常：质量阵奇异/病态致线性求解失败
+/// （刚性/全零物性链——§6.1 ④"数值异常（刚性/溢出）"分支；其引擎选型与
+/// 异常判据随 WP-17-T05 落位实测锁定——P-DYN-7）；Failed 只进建议证据项
+/// Invalid＋warning 诊断，不判定模型无效（§6.3.5）。本码原为卡面 §6.1/
+/// §10.2 行文提及但 §9.4 v1 表未具名的码——按 DiagCodes.hpp T02 登记范围
+/// 口径"先走单元卡 §9.4 增量修订、再表尾追加"执行，T05 批随单元卡 v0.5
+/// 同步增行）。
+inline constexpr std::string_view kDynFdNumericAnomaly = "DYN-FD-NUMERIC-ANOMALY";
 
 // =====================================================================
 // DYN-* 稳定诊断码描述符清单（§9.4 拟注册清单的物化——装配期注册进
@@ -136,7 +147,7 @@ inline constexpr std::string_view kDynCouplingGateRejected = "DYN-COUPLING-GATE-
 // =====================================================================
 
 /**
- * @brief 产出 dynamics §9.4 登记表全表（15 码）的稳定码描述符全集
+ * @brief 产出 dynamics §9.4 登记表全表（16 码）的稳定码描述符全集
  *        （契约 acceptance 2"DYN-* 域诊断码按 units/dynamics.md 登记表
  *        装配期注册"的执行面；后续消费任务增码只允许表尾追加，清单恒与
  *        卡面 §9.4 全表同长）。
@@ -145,17 +156,17 @@ inline constexpr std::string_view kDynCouplingGateRejected = "DYN-COUPLING-GATE-
  * 落值依据在 DiagCodes.cpp 逐码注释——diagnostics 卡"逐码落值依据，
  * 实现＝DiagCodes.cpp 内置表逐码注释"同款登记形态）：
  *   - 码值文本＝§9.4 表"码"列连字符串原样（不私定码值——P-IO-6 同款
- *     纪律；上方 15 个常量即唯一书写点）。
+ *     纪律；上方 16 个常量即唯一书写点）。
  *   - ownerUnit＝"dynamics"（§4.5 前缀-所有权表 DYN→dynamics；首段
  *     "DYN"与所有者声明域一致——注册期校验可通过）。
- *   - severity＝§9.4 表"严重度"列逐行原值（全表 9 error＋6 warning——
+ *   - severity＝§9.4 表"严重度"列逐行原值（全表 9 error＋7 warning——
  *     注册表对 Dev 强制三项 false，本表无 Dev 码）。
  *   - category＝diagnostics §4.3 词表 15 值内落值（P-DIAG-3 不新增词表
  *     值），逐码锚点：命中"输入/配置非法"→input-invalid；命中
  *     "DataInsufficient 轴（缺样本/摩擦缺失/估算降级/建议项缺失）"→
  *     data-insufficient；命中"outcome=Failed 轴（RNEA 失败/积分发散/
- *     一致性超限）"→execution-failed；命中"schema/契约不兼容（跨版本
- *     快照耦合结构）"→format-or-version。
+ *     一致性超限/数值异常）"→execution-failed；命中"schema/契约不兼容
+ *     （跨版本快照耦合结构）"→format-or-version。
  *   - retryable＝§4.4 分类动作族机械映射（fix-input/supply-evidence/
  *     retry-task 族→UserRetry；本表无 report-bug 族码——RNEA 失败定位
  *     齐备后按重试语义归类 retry-task，与 kinematics SOLVER-INTERNAL 的
@@ -165,7 +176,7 @@ inline constexpr std::string_view kDynCouplingGateRejected = "DYN-COUPLING-GATE-
  *     "各单元产码路径落地时按需增量登记并升 registryVersion，不私造
  *     参数名"；比较型三要素走 requiresComparison/实例 comparison 面，
  *     不占参数名）。
- *   - confirmable＝false（15 码均无"策略校验超限待用户显式确认"语义
+ *   - confirmable＝false（16 码均无"策略校验超限待用户显式确认"语义
  *     ——SA-15 确认流属 policy/modeling 域码；故 requiresComparison 的
  *     强制前件不触发）。requiresComparison 仅三码 true——§9.4"比较型"
  *     列点名：DYN-SAMPLE-GAP（缺口数/计划数/1）、DYN-DIMENSION-MISMATCH
@@ -183,14 +194,14 @@ inline constexpr std::string_view kDynCouplingGateRejected = "DYN-COUPLING-GATE-
 std::vector<diagnostics::CodeDescriptor> dynamicsCodeDescriptors();
 
 /**
- * @brief 将 §9.4 登记表全表（15 码）注册进稳定码注册表（卡 §9.4"注册
+ * @brief 将 §9.4 登记表全表（16 码）注册进稳定码注册表（卡 §9.4"注册
  *        协议：装配期 ownerUnit="dynamics" 注册"的执行面——L5 装配清单
  *        的调用入口；本函数不改动 diagnostics 单元文件，注册权威仍在
  *        StableCodeRegistry）。
  *
  * 前置：registry 未 seal、不含同码/同文案键冲突登记（重复注册→注册表抛
  * DiagnosticsError(DuplicateCode)——不捕获不吞，装配期 fail-fast）。
- * 后置：本头清单内全部 15 码可被 registry.find 命中；manifest 反映全表。
+ * 后置：本头清单内全部 16 码可被 registry.find 命中；manifest 反映全表。
  *
  * @param registry [in,out] 目标注册表（调用方持有——L5 装配的
  *                 diagnostics::StableCodeRegistry 实例；本函数不接管）

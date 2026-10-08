@@ -83,10 +83,20 @@ inline constexpr std::uint32_t kTrjEvaluatorContractVersion = 1U;
 /// 语义时必须递进并在单元卡登记）。
 inline constexpr char kTrjAlgorithmVersion[] = "trj-alg-1";
 
-/// 失败阶段 token：PTP 规划（§14.1.6 phase 词表首值——本批唯一产生面；
-/// 后续 plan-line/plan-avoid/smooth/recheck/time-param 随 T05~T08 各自
-/// 落位时增列常量，词表原文见卡 §14.1.6）。
+/// 失败阶段 token：PTP 规划（§14.1.6 phase 词表首值——T04 产生面；
+/// 后续 plan-avoid/smooth/recheck/time-param 随 T06~T08 各自落位时增列
+/// 常量，词表原文见卡 §14.1.6）。
 inline constexpr char kPhasePlanPtp[] = "plan-ptp";
+
+/// 失败阶段 token：笛卡尔直线段规划（§14.1.6 phase 词表第二值——
+/// WP-16-T05 产生面：planCartesianLine 的 BranchJump/SampleUnreachable
+/// 素材 phaseToken 取本常量）。
+inline constexpr char kPhasePlanLine[] = "plan-line";
+
+/// 失败阶段 token：避障路径搜索（§14.1.6 phase 词表第三值——WP-16-T06
+/// 产生面：planPtpWithObstacleAvoidance 的直连淘汰/搜索未果/规划器错误
+/// 素材 phaseToken 取本常量）。
+inline constexpr char kPhasePlanAvoid[] = "plan-avoid";
 
 // =====================================================================
 // 取消观测（§15.0 通用约定——一切长计算接口经注入取消观测）

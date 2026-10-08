@@ -106,8 +106,17 @@ add_library(sdurws_ird_trajectory STATIC
 
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_trajectory PRIVATE
-        src/Ptp.cpp       # §7 PTP 规划（Q 构造面——集成条件，见上）
-        src/Sequence.cpp) # §5.4 序列展开（Q 构造面——集成条件，见上）
+        src/Ptp.cpp           # §7 PTP 规划（Q 构造面——集成条件，见上）
+        src/Sequence.cpp      # §5.4 序列展开（Q 构造面——集成条件，见上）
+        src/CartesianLine.cpp # §8 笛卡尔直线段＋IK ③端口逐采样连续性
+                              #   （Q 构造面——WP-16-T05；集成条件，见上）
+        src/Continuity.cpp    # §9 段边界几何连续＋C2 适用双路（Q 构造面
+                              #   ——WP-16-T05；集成条件，见上）
+        src/Planner.cpp)      # §10 规划器适配＋避障重规划编排（消费
+                              #   sdurw_pathplanners 非模板符号 RRTPlanner/
+                              #   QConstraint 与 policy 会话——WP-16-T06；
+                              #   集成条件，见上；Planner.hpp 公共头对 rw/
+                              #   policy/runtime 仅前向声明，两模式皆可编译）
 endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
@@ -342,10 +351,21 @@ add_executable(sdurws_ird_trajectory_test
 # PtpSequenceTest 为集成模式条件源（同产品面 Ptp.cpp/Sequence.cpp 的 gating
 # 口径——用例构造 rw::math::Q 对象，冒烟模式无框架库符号可链；V-01/02/03
 # 解析算例的真实执行归集成模式测试运行）。
+# CartesianLineContinuityTest 同为条件源（WP-16-T05——V-04~V-07/V-09 与
+# C2 双路用例：构造 Transform3D/Q 对象＋端口假实现，真实执行归集成模式）。
+# PlannerAvoidanceTest 同为条件源（WP-16-T06——acceptance 1/2 全真实链路
+# 用例：真实 WorkCell/SerialDevice/RRTPlanner/QConstraint＋真实 policy 会
+# 话〔内置 ProximityStrategyRW〕；消费 rw 非模板符号，集成条件同因）。
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_trajectory_test PRIVATE
         test/PtpSequenceTest.cpp)    # WP-16-T04：TRJ-01（PTP 插值/构型选择/
                                      #   限位守卫/序列展开——V-01/02/03 面）
+    target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/CartesianLineContinuityTest.cpp)
+    target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/PlannerAvoidanceTest.cpp)  # WP-16-T06：TRJ-03（真实规划器基准/
+                                        #   C8 重规划/搜索未果素材轨/取消/
+                                        #   选型 fail-fast/④端口直穿）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
@@ -430,9 +450,20 @@ add_executable(sdurws_ird_trajectory_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
     contract_test/TrajectoryPluginAssemblyContractTest.cpp
-    contract_test/PlanConfigContractTest.cpp)  # WP-16-T04：config.trj 条目与
-                                               #   evidence::ConfigEntry 的跨
-                                               #   单元契约（§5.5 身份路径）
+    contract_test/PlanConfigContractTest.cpp
+    contract_test/PathPlannerContractTest.cpp)  # WP-16-T06：R-5/R-POL-2 产品面
+                                                #   零 proximity 静态扫描＋§15.5
+                                                #   接口面钉扎（纯文本扫描——非
+                                                #   条件源，两模式皆跑）
+
+# KinematicsPortContractTest 为集成模式条件源（WP-16-T05——③端口消费契
+# 约：R-1 源码扫描零 kinematics include／请求字段透传钉扎／确定性解序／
+# 端口错误传播；用例构造 CartesianLineRequest（rw::math::Q/Transform3D
+# 对象），冒烟模式无框架库符号可链——同 PtpSequenceTest gating 口径）。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_trajectory_contract_test PRIVATE
+        contract_test/KinematicsPortContractTest.cpp)
+endif()
 
 target_compile_features(sdurws_ird_trajectory_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_trajectory_contract_test PROPERTIES

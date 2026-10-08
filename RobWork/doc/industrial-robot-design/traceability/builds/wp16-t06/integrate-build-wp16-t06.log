@@ -1,0 +1,11 @@
+# WP-16-T06 集成模式构建留痕（增量重建，2026-10-08）
+# 命令: cmake --build build/pipeline-wt/build --config Release --target sdurws_ird_trajectory sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_trajectory
+  sdurws_ird_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_trajectory.lib
+  sdurws_ird_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_trajectory.lib
+  Automatic MOC for target sdurws_ird_trajectory_test
+  sdurws_ird_trajectory_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_test.exe
+  sdurws_ird_trajectory_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_trajectory_plugin.lib
+  Automatic MOC for target sdurws_ird_trajectory_contract_test
+  sdurws_ird_trajectory_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_contract_test.exe

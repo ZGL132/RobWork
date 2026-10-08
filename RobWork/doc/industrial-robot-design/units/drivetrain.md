@@ -230,20 +230,24 @@ L1  框架基线        RobWork(rw) │ RobWorkSim(rwsim) │ RobWorkStudio(rws)
 
 ## 4. 当前代码落位与目标布局
 
-### 4.1 当前落位（如实登记；2026-10-06 WP-18-T02 落位后刷新）
+### 4.1 当前落位（如实登记；2026-10-07 WP-18-T04 落位后刷新）
 
 | 项 | 状态 |
 | --- | --- |
-| `CMakeLists.txt` | **存在（WP-18-T02）**——`sdurws_ird_drivetrain` STATIC（C++17，PUBLIC 链 core＋evidence——§3.2 两登记边；别名 `RWS::ird::drivetrain` 仅集成模式）；配置期依赖红线守卫（两登记边/零 Qt/零 gtest·testkit 于产品目标）自持 |
-| `include/sdurws/ird/drivetrain/DiagCodes.hpp` | **存在（WP-18-T02）**——DT-* 19 码值常量＋登记行清单（§6.3 阻断面 8＋§7.2 矩阵 4＋§9 惯量 2＋§10 效率/统计 4＋§12.1 序列 1；装配期注册数据源——P-DT-7 收编前不进 diagnostics 全局装配，头内"码值权威链"注释） |
+| `CMakeLists.txt` | **存在（WP-18-T02，T04 增列两测试文件）**——`sdurws_ird_drivetrain` STATIC（C++17，PUBLIC 链 core＋evidence——§3.2 两登记边；别名 `RWS::ird::drivetrain` 仅集成模式）；配置期依赖红线守卫（两登记边/零 Qt/零 gtest·testkit 于产品目标）自持 |
+| `include/sdurws/ird/drivetrain/DiagCodes.hpp` | **存在（WP-18-T02；T03 表尾追加至 21 码）**——DT-* 码值常量＋登记行清单（§6.3 阻断面 8＋§7.2 矩阵 4＋§9 惯量 2＋§10 效率/统计 4＋§12.1 序列 1＋§12.4/§8.4 表尾追加 2；装配期注册数据源——P-DT-7 收编前不进 diagnostics 全局装配，头内"码值权威链"注释） |
 | `include/sdurws/ird/drivetrain/README.md` | 存在（落位说明版；原占位文案"指向卡 §9"偏差已随 T02 修正——§18.3 闭环） |
-| `src/DiagCodes.cpp` | **存在（WP-18-T02）**——19 码登记行清单实现（逐码出处/语义注释）；映射实现翻译单元随 T03 增列（§4.2 布局表） |
-| `test/`（TestMainReport/DiagCodesTest/BuildRedLineTest） | **存在（WP-18-T02）**——`sdurws_ird_drivetrain_test`：登记表全表/句法（经 core::DiagnosticRecord C-3 句法权威）/红线扫描（零 Qt＋两 include 面＋R-4＋@file 头注释）7 用例 |
-| `contract_test/`（ContractTestMain/BuildGraphContractTest） | **存在（WP-18-T02）**——`sdurws_ird_drivetrain_contract_test`：构建图边界契约（两登记边封闭性/存在性/无业务域＋表外平台边/testkit 仅测试目标/无 plugin·worker 形态/include 面同界）5 用例 |
+| `src/`（DiagCodes/MappingCore/DriveTrainCodec/Evaluator） | **存在（WP-18-T02＋T03）**——21 码登记行清单＋映射核心唯一实现（阻断面检查序/R1 对角精确虚功映射/一致性检查/反射惯量/效率折算/工作点统计）＋canonical 编解码＋③端口评估器适配 |
+| `test/`（TestMainReport/DiagCodesTest/BuildRedLineTest/MappingGoldenTest/**GoldenDtTest**） | **存在（WP-18-T02/T03；T04 增列 GoldenDtTest.cpp）**——`sdurws_ird_drivetrain_test`：登记表全表/句法/红线扫描＋映射黄金数据组（T03，DT-G1～G9/B1～B3/G12/G13 测试内参考实现面）＋**黄金数据集消费组（T04，DtGoldenMapping 6 用例——test/ 黄金数据文件经 GoldenFixture＋档案容差对照＋AT-38 R1 可验部分）** |
+| `contract_test/`（ContractTestMain/BuildGraphContractTest/EvaluatorContractTest/**GoldenDatasetContractTest**） | **存在（WP-18-T02/T03；T04 增列 GoldenDatasetContractTest.cpp）**——`sdurws_ird_drivetrain_contract_test`：构建图边界契约＋evidence 评估器注册/切片依赖声明套件＋**黄金数据集登记契约（T04，DtGoldenDatasetContract 5 用例——DatasetManifest 装载/完整性覆盖/交叉一致/档案通道与 P-DT-3 纪律）** |
+| `testdata/golden/dt-mapping-golden/1.0.0/` | **存在（WP-18-T04）**——黄金数据集（manifest.json 按 ird-golden-manifest/1 登记：kind=analytic-case、coveredRequirements 含 DYN-04、coveredAt 含 AT-38、integrity 全文件 SHA-256、generate 闭式脚本入库；inputs 5 算例＋AT-38 反例 2 变体，expected 独立参考实现产出）——契约 acceptance 2"testdata/golden/dt-* 按 DatasetManifest 登记"的落地面 |
+| `testdata/tolerance/dt-mapping/v1.0.0.json` | **存在（WP-18-T04）**——容差档案（ird-tolerance-profile/1；23 条目全部 appendixD-fixed、标量相对 1×10⁻⁹＋逐例 eps_abs 1×10⁻¹²——附录 D 第 9 项；能量 J 不入档案——测试侧恒等式通道，§18.3） |
 | 上级目标注册 | `sdurws_ird_drivetrain`＋`_test`＋`_contract_test` 已注册（industrialrobot/CMakeLists.txt——drivetrain 自 WP-18-T02 移出 IRD_MODULES 占位循环，add_subdirectory 挂载） |
 | plugin/worker | 不存在（**符合设计**——§2.3/§4.2 明文默认禁止创建〔无独立界面、worker 归 execution〕，如需走 P-DT-8；契约 acceptance 1"无插件目标"同口径） |
 
 > WP-18-T02 执行实录（2026-10-06）：集成模式三目标构建零错误＋ird_gates 零命中＋validate-docs PASS；独立冒烟配置＋全量构建零错误；gtest XML（7/7＋5/5，零失败）＋ird-test-report.json×2＋双模式构建日志留痕于 `traceability/builds/wp18-t02/`。真实 StableCodeRegistry 注册**未执行**（依赖白名单无 diagnostics 边〔§3.2 点名表外〕＋diagnostics 前缀表无 DT——P-DT-7 收编归 diagnostics 所有者，两处文件不在该任务 allowedFiles），登记表以 core 句法权威（DiagnosticRecord::make C-3）验证——不以桩伪造注册结论。
+>
+> WP-18-T04 执行实录（2026-10-07）：集成模式两测试目标构建零错误；`sdurws_ird_drivetrain_test` 30/30、`sdurws_ird_drivetrain_contract_test` 14/14 全部通过（gtest XML＋ird-test-report.json 留痕 `traceability/gtest-reports/wp18-t04/`——其中 DtGoldenMapping 6 用例经 GoldenFixture 真实装载黄金数据集〔完整性 SHA-256 校验＋档案容差〕，DtGoldenDatasetContract 5 用例以 testkit 装载器全量校验登记契约）；validate-docs PASS。独立冒烟与 ird_gates 结论见 §20（按真实执行结果登记）。
 
 ### 4.2 目标布局（全部为设计；落位动作归 WP-18-T02 及后续任务）
 
@@ -1129,6 +1133,11 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | **上游序列物化锚（WP-18-T03 实现提议）** | UpstreamResult 条目载荷＝UpstreamResultRef（无对象 id），而评估上下文读取原语为 `tryObjectBytes(objectId, version)`——本域约定组装方把序列字节物化在 `jointSeriesAnchor(upstreamSliceId)`（ObjectId＝上游切片身份摘要前 16 字节，确定性派生，规则单点在 Codec）对应对象下；P-DT-6 对齐后若 dynamics/evidence 冻结正式通道则退役 |
 | **E_loss 口径澄清（WP-18-T03 实现注记）** | §10.5 公式记 `E_loss＝∫(P_motor−P_joint)dt`；§10.3 的 P_motor 含转子功率项（pTransmission＋pRotor）——两式联立时该差不恒为正（转子往返段可负）。实现按"传动箱损耗"物理语义与"＞0 恒成立"约束取 `E_loss＝∫(pTransmission−pJoint)dt`（两方向折算均消耗——§10.2），转子项独立分项 `E_rotor` 另列（§8.2 分项不混写纪律）；§10.5 公式行的 P_motor 按 pTransmission（效率折算后传动功率）读 |
 | **DT-* 码表尾追加（WP-18-T03）** | `DT-EVALUATION-CANCELLED`（§12.4 取消行——批次边界取消不发布完整结果）、`DT-INTERNAL-INVARIANT`（§8.4 ②映射自检实现面守护码）两码按表尾追加纪律登记（19→21 码；既有行不重排）——实现侧 DiagCodes.hpp/cpp 与测试字面清单三处同步 |
+| **黄金数据集承载（WP-18-T04 实现登记）** | §14.1 黄金数据组落位 `testdata/golden/dt-mapping-golden/1.0.0/`（DatasetManifest：ird-golden-manifest/1、kind=analytic-case、coveredRequirements 含 DYN-04、coveredAt 含 AT-38；inputs 5 算例＋AT-38 反例 2 变体；expected 由 generate/make_dt_mapping_golden.mjs 独立参考实现〔node，标量闭式直算——与产品 C++ 零共享〕产出）。T03 的测试内黄金对照（MappingGoldenTest）保留为双路互证面，T04 消费测试（GoldenDtTest）改以数据文件为期望源——"装载→驱动产品入口→经档案容差对照"，测试侧不书写参考数值公式 |
+| **能量 J 恒等式通道（WP-18-T04 实现注记）** | §10.5 能量分项单位 J 不在 core 单位注册表（17 token 无 J）——容差档案条目 unit 须已注册，能量值不经档案通道；消费测试以**测试侧独立梯形积分重算**（仅取 inputs 序列＋η）＋恒等式断言（E_joint＝E_pos−E_regen、E_motor＝E_joint＋E_loss＋E_rotor、E_loss＞0）＋expected 数据文件值三方对照。档案通道只承载 14 注册量纲内的量（rad/rad·s⁻¹/…/N·m/W/kg·m²/1） |
+| **锚点侧（WP-18-T04 实现注记）** | 手算锚点（analytic-single t=0.25s 的 θ/θ̇/θ̈/τ 值）随 **inputs** 算例声明（anchors 字段——"输入侧钉子"），expected 由脚本生成不携带；消费测试以 EXPECT_NEAR 绝对容差钉扎，构成独立于"独立参考实现"的第三路（防两路同错） |
+| **AT-38 R1 反例码语义（WP-18-T04 实现登记）** | inputs.at38R1Rejections 两变体：nondiag-2axis（不携带窗口）在 R1/R2 两能力位下经**同一非对角结构检查**阻断（DT-MATRIX-NONDIAGONAL-LOCKED——结构语义与能力位无关）；coupling-window（携带窗口）两能力位下经能力门控 DT-COUPLING-STAGE-LOCKED 阻断（R2 数值路径归 T05，不提前放行）。T05 落位后 R2 能力位下非对角矩阵将转为合法输入——届时本数据集随 T05 增量修订（升版） |
+| **档案模板通配（WP-18-T04 实现注记）** | testkit resolve 的模板匹配按段进行：非 `*` 模板段须与具体段逐字符相等——`points[*]`/`samples[*]`/`axes[*]` 等含索引段必须带 `[*]` 通配（`cases[*].points.tauRms` 不命中 `points[0]`）；新增档案条目时逐段核对 |
 
 ### 18.4 风险登记（R-DT-x）
 
@@ -1149,6 +1158,7 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | v0.1 | 2026-10-06 | 首版草案（WP-18-T01 交付物）：基于 REQUIREMENTS v1.16、ARCHITECTURE v0.13、DTB v0.53 与 core/evidence/runtime/modeling 卡既有契约编写；R1/R2 边界、归一化模型与身份、R1 对角映射与阻断面、R2 耦合矩阵、虚功/功率一致性四口径、反射惯量与防重复计入、效率/能量/四象限、工作点与包络、五单元协作与最小依赖契约（dynamics/selection 卡未产出）、公共接口、验证方案与故障注入矩阵、任务拆分对齐、追踪矩阵、决策/风险/待裁决登记、自审与未执行声明 |
 | v0.2 | 2026-10-06 | WP-18-T02 构建落位随附同步：§4.1 落位表刷新（STATIC＋DiagCodes 19 码登记表＋_test/_contract_test 落位实录）；§18.3 占位 README 行闭环＋diagnostics 命名空间行补登记表落地/注册未执行现状；§20 执行状态按真实结果刷新（双模式构建零错误/ird_gates 零命中/12 用例通过留痕——映射实现与黄金数据集仍归 T03/T04 未实现）；传动比口径 c＝Δq_joint/Δθ_motor（P-DT-10 采用口径）已按任务契约 note 在 T02 公共头（DiagCodes.hpp）落笔 |
 | v0.3 | 2026-10-07 | WP-18-T03 实现增量登记（DTB §5.4）：①§18.3 增补实现偏差九则（评估键 `dt-mapping` kebab 词形／Profile 绑定 sel 域／config.dt-mapping 不入 R1 声明／矩阵承载自持行主序／ratedTorque 增量字段／JointSeriesView 消费面／上游序列物化锚／E_loss 传动损耗口径澄清／DT-* 两码表尾追加）；②实现落位面＝MappingTypes/Series/MappingCore/Facts/Codec/Evaluator 六公共头＋MappingCore/DriveTrainCodec/Evaluator 三实现（卡 §4.2 布局表兑现，R1 能力位——窗口输入保守阻止，R2 数值路径归 T05）；③黄金数据组（DT-G1～G9/B1～B3/G12/G13＋codec 往返＋Facts＋③端口注册闭环与端到端切片评估契约用例）全部真实执行通过（gtest XML＋ird-test-report.json 留痕 traceability/gtest-reports/wp-18-t03/——执行事实的登记，验收重跑归验收会话）；④R1 评估器的 UpstreamResult 依赖声明以提议键 `dyn.joint-series` 登记（P-DT-6 不变） |
+| v0.4 | 2026-10-07 | WP-18-T04 实现增量登记（DTB §5.4）：①黄金数据集外化落位——`testdata/golden/dt-mapping-golden/1.0.0/`（manifest 按 DatasetManifest 登记：analytic-case、coveredRequirements 含 DYN-04、coveredAt 含 AT-38、integrity 全文件 SHA-256、generate 闭式脚本入库）＋`testdata/tolerance/dt-mapping/v1.0.0.json` 档案（23 条 appendixD-fixed，附录 D 第 9 项）；②测试增量——test/GoldenDtTest.cpp（DtGoldenMapping 6 用例：黄金数据文件经 GoldenFixture＋档案容差消费＋AT-38 R1 可验部分＝无耦合链矩阵语义等价正命题＋R1 阻断反例，断言经 IDriveTrainMappingEvaluator/ICouplingMatrixValidator/IReflectedInertiaEvaluator 接口消费）与 contract_test/GoldenDatasetContractTest.cpp（DtGoldenDatasetContract 5 用例：DatasetManifest 装载/完整性覆盖/交叉一致/档案通道与 P-DT-3 保守纪律）；③§4.1 落位表与执行实录刷新、§18.3 增补 T04 注记五则（黄金承载/能量 J 恒等式通道/锚点输入侧/AT-38 反例码语义/档案模板通配）；④§20 执行状态按真实结果刷新 |
 
 ---
 
@@ -1196,12 +1206,12 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 
 | 类别 | 状态 |
 | --- | --- |
-| 产品源码/CMake/测试实现 | **部分实现（WP-18-T02 落位面）**——CMakeLists＋DiagCodes.hpp/cpp（19 码登记表）＋_test/_contract_test 已落地；映射实现（§13 接口/§4.2 布局表主体）与黄金数据集仍归 WP-18-T03/T04，**未实现** |
-| 集成模式构建 / 独立冒烟构建 | **已执行（WP-18-T02，2026-10-06）**——集成模式 sdurws_ird_drivetrain＋两测试目标构建零错误、ird_gates 目标退出 0；独立冒烟模式配置＋全量构建零错误；日志留痕 `traceability/builds/wp18-t02/` |
-| 单元测试 / 契约测试 / 黄金数据集 | **T02 面已执行**——sdurws_ird_drivetrain_test 7/7、sdurws_ird_drivetrain_contract_test 5/5 通过（gtest XML＋ird-test-report.json 留痕同上）；映射黄金数据集（§14.2 DT-G 组等）**未执行**（随 T03/T04） |
-| ird_gates 门禁 | **已执行（WP-18-T02）**——全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（含引擎自测 9 例） |
+| 产品源码/CMake/测试实现 | **已实现（截至 WP-18-T04）**——T02 构建落位＋T03 映射实现（§13 接口/§4.2 布局表主体，R1 能力位）＋T04 黄金数据集（`testdata/golden/dt-mapping-golden`＋tolerance 档案）与两测试文件（test/GoldenDtTest＋contract_test/GoldenDatasetContractTest）落地；R2 数值路径（通用矩阵求逆/交叉惯量/AT-38 高速联动端到端）仍归 WP-18-T05，**未实现** |
+| 集成模式构建 / 独立冒烟构建 | **已执行（WP-18-T04，2026-10-07）**——集成模式两测试目标（含 T04 新增文件）构建零错误；独立冒烟模式配置＋全量构建零错误（冒烟树直跑两测试 exe 同绿）；T02 日志留痕 `traceability/builds/wp18-t02/`，T04 测试留痕 `traceability/gtest-reports/wp18-t04/` |
+| 单元测试 / 契约测试 / 黄金数据集 | **T04 面全量已执行（2026-10-07）**——sdurws_ird_drivetrain_test 30/30、sdurws_ird_drivetrain_contract_test 14/14 全部通过（gtest XML＋ird-test-report.json 留痕 `traceability/gtest-reports/wp18-t04/`）；其中黄金数据集消费组（DtGoldenMapping 6 用例）经 GoldenFixture 真实装载 `dt-mapping-golden`（完整性 SHA-256＋档案容差对照），登记契约组（DtGoldenDatasetContract 5 用例）以 testkit 装载器全量校验；T03 黄金数据组（MappingGoldenTest 测试内参考实现面）与 T02 面用例随全量运行同绿 |
+| ird_gates 门禁 | **已执行（WP-18-T04，2026-10-07）**——`cmake --build build --target ird_gates` 退出 0，全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（含引擎自测；三次独立运行一致）。附 gate-all.ps1 全量一键口径实测：集成模式 21 个测试目标全部 PASS（两次运行一致）＋validate-docs PASS；冒烟段 19/21 通过，`sdurws_ird_modeling_gui_test`/`sdurws_ird_ui_gui_test` 在冒烟树 ctest 失败——冒烟树缺 RobWork 框架 DLL 运行环境（集成模式同两目标经 gate-all PASS），属 ui/modeling 单元的既有环境问题，与本单元无关（drivetrain 零 GUI——§14.4；drivetrain 两测试目标在冒烟树直跑全绿） |
 | 真实 StableCodeRegistry 注册 | **未执行（P-DT-7 待收编）**——依赖白名单无 diagnostics 边＋前缀表无 DT（见 §4.1 执行实录/§18.3）；登记表以 core 句法权威验证，不以桩伪造注册结论 |
-| 文档验证脚本 | **已执行（WP-18-T02）**——validate-docs.ps1 PASS（20 units, 12 trace entries, 307 task files） |
+| 文档验证脚本 | **已执行（WP-18-T04，2026-10-07）**——validate-docs.ps1 PASS（20 units, 12 trace entries, 311 task files） |
 | GUI 测试 | **不适用**（本单元无 plugin/GUI 目标，§14.4） |
 
 以上任何一项在后续任务中执行后，须按 DTB §5.4 与本卡 §18.5 登记真实结果；未执行项不得标注"通过"。

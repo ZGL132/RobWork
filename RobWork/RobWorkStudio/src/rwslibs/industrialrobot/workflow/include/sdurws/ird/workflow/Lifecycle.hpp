@@ -1,8 +1,12 @@
 /**
  * @file   Lifecycle.hpp
- * @brief  生命周期入口流程——新建项目三步向导（O4 子集）：步骤词表、
- *         向导输入值对象、输入校验、右侧实时步骤摘要组装、领域初始化
- *         提交端口与创建编排器（PM-01 的 workflow 编排面）。
+ * @brief  生命周期入口流程——新建项目三步向导（PM-01）＋打开协议编排
+ *         （PM-02 五步的 workflow 面）＋关闭/切换/退出统一确认编排
+ *         （PM-03——§7.3）＋方案分支切换（PM-12 零写入会话选择编排）
+ *         ＋最近项目管理（PM-10）＋无项目首页数据面（PM-10）：步骤/入口
+ *         词表、向导输入值对象、输入校验、右侧实时步骤摘要组装、领域
+ *         初始化提交端口、创建/打开/关闭编排器、最近项目服务与首页
+ *         入口禁用数据。
  *
  * 设计依据：
  *   - units/workflow.md §7.1（新建项目三步向导 PM-01——三步结构、确认后
@@ -18,10 +22,30 @@
  *     创建确认；右侧实时步骤摘要；取消或失败不留半成品；URDF 项目以
  *     不可修改基线修订保存，外部资源由用户选择复制入项目资源区或登记为
  *     外部引用记录（绝对路径＋内容哈希）；转正式固化 CON-03）、AT-20
+ *   - REQUIREMENTS.md §17 PM-02 原文（打开项目执行五步协议：路径预检→
+ *     目录形态与版本检查→加载与读校验→领域校验→激活与恢复诊断；支持
+ *     命令行打开 .rwdesign 目录或包文件、拖放打开与打开对话框格式识别；
+ *     失败显示具体文件且不动当前项目）、PM-10 原文（无项目首页新建/
+ *     打开/最近三入口与项目状态摘要；最近项目上限 10、按规范路径去重、
+ *     失效项保留并提示"项目位置不可用"＋重新选择＋移除；无项目时禁用
+ *     七阶段/运行/应用/报告入口——仅留项目菜单）
  *   - 任务契约 tasks/foundation/WP-22-T04.json acceptance 1/2/3（三步
  *     向导＋实时摘要；取消/失败不留半成品＋URDF 基线修订＋外部引用二选一
  *     处置用例；P-03 未冻结——向导不预填数值，模板/导入经 modeling 公共
  *     契约与①端口不直链）
+ *   - 任务契约 tasks/foundation/WP-22-T05.json acceptance 1/2/3（五步
+ *     打开协议 UI：命令行/拖放/对话框格式识别分流，失败显示具体文件且
+ *     不动当前项目——AT-20；无项目首页三入口＋最近项目 10 上限/去重/
+ *     失效项保留＋位置不可用提示＋移除＋无项目禁用七阶段/运行/应用/
+ *     报告入口；P-WF-5 未冻结期间按安全默认＋留痕）
+ *   - 任务契约 tasks/foundation/WP-22-T06.json acceptance 1/2/3（统一
+ *     确认对话框：未应用草稿三选〔保存/放弃/取消〕＋运行中任务二选
+ *     〔等待/协作取消〕＋任务清单 9 态短标签，取消可中止整个流程——
+ *     PM-03/AT-20/21；等待选项覆盖在途归档〔ARCH §6.8 A7：界面会话与
+ *     存储上下文分离，等待在途运行接纳归档＋草稿落盘完成〕、协作取消
+ *     即清理临时区、切换＝关闭后候选验证成功才切上下文；方案分支切换
+ *     〔PM-12〕零写入——不产生修订、不写文件含 HEAD；关闭编排三方契约
+ *     P-UI-6 冻结前按单元卡 §7.3 形态实现）
  *   - project.md §5.1（createNew＝PM-01 存储侧：同卷 .staging 组装→整体
  *     就位→失败清理目标目录）、§2.2 分工表（目录创建/初始修订/外部引用
  *     记录持久化归 project；向导 UI 归 workflow）、§13.2 workflow 行
@@ -60,11 +84,84 @@
  * ProjectWizard/openProject/requestClose/startSaveAsWizard/startPackage-
  * Wizard/startRelinkFlow）的宿主接线形态依赖 ui 宿主面对话框收集输入
  * （D-WF-6——workflow 只承诺状态数据与流程编排契约，宿主面归 ui），
- * 按单元卡 §3.1"Lifecycle.hpp 随 WP-22-T04~T08 增列"路线**本批不声明
- * 基线虚类**（NFR-MNT-04 不预建无消费者接口——本批消费面是本头的
- * NewProjectWizardFlow 编排器，L5/插件向导接线随 T05+ 任务增列基线虚类
- * 与其适配器）；本批落位范围＝新建向导子集（startNewProjectWizard 一项
- * 的可测编排核），偏差已登记单元卡 §14.5（DTB §5.4 口径）。
+ * 按单元卡 §3.1"Lifecycle.hpp 随 WP-22-T04~T08 增列"路线**基线虚类
+ * 仍不声明**（NFR-MNT-04 不预建无消费者接口——WP-22-T04 v0.5 同款口径
+ * 的延续：T06 落位后六方法中已有新建（T04）、打开（T05）与关闭/切换/
+ * 退出（本批 CloseFlow::run——requestClose 的编排核）三段有可测编排核
+ * 支撑，startSaveAsWizard/startPackageWizard/startRelinkFlow 三段编排核
+ * 随 T07~T08 落位；届时基线虚类与其 L5 适配器随首个宿主接线消费方任务
+ * 一并增列，避免虚类先于实现迫使实现方 stub 未落位方法）。T05 落位范围
+ * ＝打开协议子集（openProject 一项的可测编排核——OpenProjectFlow::run）
+ * ＋最近项目服务（IRecentProjectsService/RecentProjectsService）＋无项目
+ * 首页数据面（buildNoProjectHomeScreen）；T06 落位范围＝关闭/切换/退出
+ * 统一确认编排子集（requestClose 一项的可测编排核——CloseFlow::run）＋
+ * 方案分支切换会话选择编排（SchemeBranchSwitchFlow::run——PM-12），
+ * 偏差已登记单元卡 §14.5（DTB §5.4 口径）。
+ *
+ * 关闭/切换/退出统一确认编排（PM-03——§7.3；WP-22-T06）语义：
+ *   - 统一确认对话框（PM-03 原文）的数据面在此：未应用草稿三选
+ *     （DraftDisposition＝保存草稿/放弃/取消）＋运行中任务二选
+ *     （RunningTaskDecision＝等待/协作取消）＋对话框内嵌任务清单
+ *     （九态短标签——词表归 core::TaskState 冻结枚举，短标签 token 经
+ *     core::toToken 冻结表生成，本头零新增状态词——SA-12/D-WF-4）。
+ *     对话框控件呈现归 ui 宿主面（D-WF-6），本头只承诺决策词表与
+ *     呈现数据（CloseDialogData）；
+ *   - 取消可中止整个流程（PM-03）：任一决策点的"取消"（DraftDisposition::
+ *     Cancel／RunningTaskDecision::CancelFlow）＝编排立即终止（Aborted），
+ *     排空与存储上下文关闭均不发生——当前项目原状（取消不是错误，UX-03）；
+ *   - 等待语义（ARCH §6.8 A7 逐字承接——D-WF-9）：界面会话与存储上下文
+ *     分离——"等待"选项＝等待存储上下文排空完成（本实例在途运行接纳
+ *     归档完成＋草稿落盘完成）。实现锚点两面：调度面排空经 ICloseDrainPort::
+ *     waitDrain（shutdown(DrainPolicy::CancelQueuedAndWait)＋轮询 drained
+ *     ——execution.md §7.5"等待"分支）；存储面排空经 currentStore.
+ *     requestClose()→轮询 closed()（project §9.7 Draining 排空协议——
+ *     project.md"ui 关闭对话框'等待'分支轮询 closed()"明文）；
+ *   - 协作取消即清理临时区：协作取消分支经 ICloseDrainPort::
+ *     cooperativeCancel（对任务清单逐/批量 requestCancel 后走取消协议
+ *     ——execution.md §7.5"协作取消"分支；取消协议中 worker 回收＋临时
+ *     目录清理＋归档 abandon 由 execution 侧承载——N4 分工），编排核的
+ *     义务是取消路径必须走完排空（经归档检查点后结束——ARCH §6.8）；
+ *   - 切换＝关闭后候选验证成功才切上下文（§7.3 SWITCH 节点）：候选项目
+ *     经 ProjectStoreFactory::open 完整构造（激活前失败不影响当前项目
+ *     ——project §8.7）**先于**当前存储上下文的 requestClose——验证失败
+ *     时当前 store 未被触碰（Active 原状，"不动当前项目"），成功后才
+ *     排空当前并移交候选（S7 时序：界面会话切至新项目；旧项目存储上下文
+ *     排空释放）；
+ *   - 退出复用同一流程（PM-03 原文）：CloseKind::Exit 与 Close 走同一条
+ *     编排路径（kind 只作决策上下文与结果登记，不产生第二套流程）。
+ *
+ * 方案分支切换编排（PM-12——§7.3 注三条；WP-22-T06）语义：
+ *   - 会话选择语义（project.md §4.5 逐字）：切换分支**不产生修订、不写
+ *     任何文件（含 HEAD）**——HEAD 记录的是"最后一次提交所在分支"，
+ *     不是"当前活动分支"；活动分支记录在会话层；
+ *   - 零写入的结构性保证：SchemeBranchSwitchFlow::run 的签名**不接收**
+ *     任何存储上下文/写面（同 OpenProjectFlow"不动当前项目"的结构性
+ *     手法——T05 先例）——编排核只有草稿处置（PM-12 明文"分支切换前先
+ *     处置未应用草稿（PM-04 规则）"——用户显式决策的落盘，非切换写）
+ *     与决策收集两类端口；切换执行（活动分支登记）归宿主会话层经
+ *     project 会话接口（workflow 产出切换批准 Proceed）；
+ *   - URDF 基线修订只读（PM-12）：切换本身是会话选择、允许切至基线分支
+ *     查看；编辑禁令的强制归 project/modeling 侧（N3/N5 非所有权），
+ *     编排核不越权拒绝（PA-1）。
+ *
+ * 打开协议编排（PM-02——§7.2 表的 workflow 职责行）语义：
+ *   - 五步分工：①入口分流（命令行/拖放/对话框三入口的格式识别——
+ *     .rwdesign 目录→打开通道、.rwpack 包→包导入通道）归本头
+ *     classifyOpenTarget；②目录形态与版本检查、③加载与读校验、⑤激活
+ *     与恢复诊断归 project 服务侧（ProjectStoreFactory::open——PRJ-T08）；
+ *     ④领域校验汇总呈现归各域处理器（随阶段 B/C 落位；本编排核透传
+ *     RecoveryReport.diagnostics 作呈现材料——不自行校验）；
+ *   - 失败显示具体文件（PM-02/AT-20）：对端 StoreError 的开发诊断 detail
+ *     原文透传（其中含 "path=<文件>" 定位键——project 侧打开失败 detail
+ *     形态），编排器另提取定位文件入 OpenProjectFailure.file（呈现层
+ *     可单独展示"失败文件"行）；
+ *   - 不动当前项目（AT-20/PM-02）：结构性保证——编排器签名不接收当前
+ *     会话的存储上下文，open 协议本身"激活前失败不影响当前项目"（§8.7：
+ *     open 从不写当前项目，候选构造完整成功才返回）；失败路径只产
+ *     failure 值，调用方持有的当前 store 不被触碰；
+ *   - .rwpack 包分流：只做识别与路由登记（opened=false＋
+ *     targetKind=PackageFile＋零副作用——不解包不建目录），包导入向导
+ *     编排随 WP-22-T07（§7.4）落位后闭环；三入口识别本身是本批验收面。
  *
  * 取消/失败不留半成品（AT-20，PM-01 原文）的编排语义：
  *   - 取消＝用户在确认步之前放弃：本头词表内**确认前零副作用**——
@@ -78,12 +175,18 @@
  *     编排器零改写——重试直接再走 commit）。
  *
  * 线程约束：全部类型为纯值或会话内单线程编排面（§10.3"流程编排接口：
- * 主线程会话内（UI 流程）"）；NewProjectWizardFlow::commit 为静态函数
- * （无共享状态，但参数中的 store/端口对象非线程共享）。
+ * 主线程会话内（UI 流程）"）；NewProjectWizardFlow::commit 与
+ * OpenProjectFlow::run 为静态函数（无共享状态，但参数中的 store/端口
+ * 对象非线程共享）；RecentProjectsService 为会话内单线程服务（非线程
+ * 共享——首页/宿主单线程访问）；CloseFlow::run／SchemeBranchSwitchFlow::
+ * run 同为静态编排核（主线程会话内驱动——决策端口回调与排空轮询都在
+ * 调用线程上发生；排空等待依赖 execution/project 侧后台机制推进，编排
+ * 线程只轮询观察，不驱动状态迁移）。
  * 错误语义（§10.3）：调用方错误 fail-fast（WorkflowError）；环境/对端
- * 错误走值轨道呈现（NewProjectOutcome.failure——UX-03 三字段），本单元
- * 零新增稳定诊断码（D-WF-7：R1 零新增 WF- 码；对端码记录经 DomainInit-
- * Result.diagnostics 原样透传）。
+ * 错误走值轨道呈现（NewProjectOutcome.failure／OpenProjectOutcome.
+ * failure／CloseFlowOutcome.failure／SchemeBranchSwitchOutcome.failure
+ * ——UX-03 三字段），本单元零新增稳定诊断码（D-WF-7：R1 零新增
+ * WF- 码；对端码记录原样透传）。
  */
 
 #ifndef SDURWS_IRD_WORKFLOW_LIFECYCLE_HPP
@@ -97,8 +200,9 @@
 #include <vector>
 
 #include <sdurws/ird/core/Events.hpp>      // core::IDomainEventBus（createNew 事件注入透传——⑤端口装配面）
-#include <sdurws/ird/core/Identity.hpp>    // core::ProjectId/RevisionId（创建结果身份——core 强类型，本单元不生成新 ID）
-#include <sdurws/ird/project/ProjectStore.hpp>  // project::ProjectStore/ProjectStoreFactory（PM-01 存储侧唯一入口——白名单边）
+#include <sdurws/ird/core/Evaluation.hpp>  // core::TaskState（九态任务状态词表——PM-03 任务清单短标签数据源，词表归 core 零新增）
+#include <sdurws/ird/core/Identity.hpp>    // core::ProjectId/RevisionId/BranchId（创建结果/分支身份——core 强类型，本单元不生成新 ID）
+#include <sdurws/ird/project/ProjectStore.hpp>  // project::ProjectStore/ProjectStoreFactory（PM-01 存储侧唯一入口＋PM-03 存储上下文排空——白名单边）
 #include <sdurws/ird/project/StoreTypes.hpp>    // project::IDiagnosticsSink（诊断 sink 注入透传——P-PR-6 链路）
 #include <sdurws/ird/ui/UiTypes.hpp>       // ui::TextKey（文案键——UX-02 工程用语键半区）
 #include <sdurws/ird/workflow/Types.hpp>   // workflow::WorkflowError（调用方错误 fail-fast）
@@ -594,6 +698,878 @@ public:
                                     core::IDomainEventBus* eventBus = nullptr,
                                     project::IDiagnosticsSink* diagnosticsSink = nullptr);
 };
+
+// =====================================================================
+// 打开协议编排（PM-02 五步的 workflow 面——§7.2；WP-22-T05）
+// =====================================================================
+
+/**
+ * @brief 打开入口来源词表（PM-02：命令行打开、拖放打开与打开对话框——
+ *        §7.2 表①行"入口（命令行参数/拖放/对话框格式识别……）"）。
+ *
+ * 会话态枚举（§10.3"零新增持久化枚举"边界内——来源只存在于一次打开
+ * 编排的生命周期内，不写入任何持久化 schema）；三入口最终汇入同一条
+ * 五步协议，来源只作编排结果的登记面与失败呈现的上下文材料。
+ */
+enum class OpenSource : std::uint8_t {
+    CommandLine = 0, ///< 命令行打开（应用启动参数中的项目路径）
+    DragDrop = 1,    ///< 拖放打开（宿主窗口拖放入口）
+    Dialog = 2,      ///< 打开对话框（首页"打开"入口/文件菜单）
+};
+
+/**
+ * @brief 打开目标形态词表（格式识别分流结果——§7.2 表①行"识别
+ *        `.rwdesign` 目录与 `.rwpack` 包并分流"）。
+ */
+enum class OpenTargetKind : std::uint8_t {
+    ProjectDirectory = 0, ///< .rwdesign 项目目录（→ 五步协议打开通道）
+    PackageFile = 1,      ///< .rwpack 包文件（→ 包导入向导通道——WP-22-T07）
+    Unknown = 2,          ///< 不可识别（→ 失败呈现，零副作用）
+};
+
+/// 包文件扩展名 token（.rwpack——PM-02 传输封装格式词形；比较大小写
+/// 不敏感——Windows 词面惯例）。
+inline constexpr const char* kPackageExtensionToken = ".rwpack";
+
+/**
+ * @brief 打开入口格式识别（§7.2 表①行——入口分流的唯一判定点，纯函数）。
+ *
+ * 判定规则（先实测后词面，确定性 NFR-COR-02 同型——同一磁盘状态同结果，
+ * 环境事实除外）：
+ *   1. path 存在且为目录 → ProjectDirectory（.rwdesign 目录形态的细检
+ *      ——project.json 存在性/版本——归打开协议②步 not-a-project 判定，
+ *      入口分流不复制对端规则——PA-1 不越权）；
+ *   2. 否则按扩展名词面（大小写不敏感）等于 .rwpack → PackageFile
+ *      （包文件不必先实测存在——拖放/对话框给出的是用户词面，包不存在
+ *      的失败由导入通道呈现）；
+ *   3. 其余（空路径之外的普通文件、无扩展名、其他扩展名）→ Unknown。
+ *
+ * @param path [in] 待识别路径（用户词面——不规范化，词面识别；规范化归
+ *             打开协议①步 store 侧）
+ * @return 分流词表值（三值封闭集）
+ *
+ * @threadSafe const 纯函数（文件系统存在性检查除外——环境事实，同输入
+ *             不同时点可不同），可并发。
+ */
+OpenTargetKind classifyOpenTarget(const std::filesystem::path& path);
+
+/**
+ * @brief 打开失败呈现（UX-03 三字段＋具体文件定位——PM-02"失败显示
+ *        具体文件"的承载值类型）。
+ *
+ * 与 NewProjectFailure 同型的编排器直产呈现面（人读文本半区——键化
+ * 文案归 diagnostics/ui 文案体系；D-WF-7 零新增稳定码，对端 detail 原文
+ * 透传，零加工）。file 字段语义：从对端 detail 提取的失败定位文件
+ * （"path=<值>"/"file=<值>"键——project 侧打开失败 detail 形态）；
+ * 提取不到（如跨文件不一致类 detail 无定位键）时回退目标路径词面——
+ * 呈现层保证"具体文件"行恒非空（AT-20 观测点）。
+ */
+struct OpenProjectFailure {
+    std::string context;           ///< 对象/上下文（UX-03 半区一——目标路径词面）
+    std::string file;              ///< 失败定位文件（PM-02"显示具体文件"；恒非空——见类型注）
+    std::string cause;             ///< 原因（UX-03 半区二——对端 detail/what() 透传）
+    std::string recommendedAction; ///< 建议动作（UX-03 半区三——按对端稳定码分派）
+
+    bool operator==(const OpenProjectFailure& o) const
+    {
+        return context == o.context && file == o.file && cause == o.cause
+            && recommendedAction == o.recommendedAction;
+    }
+    bool operator!=(const OpenProjectFailure& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 打开项目编排结果（OpenProjectFlow::run 的唯一返回通道）。
+ *
+ * 不变量：opened==true ⇔ store 非空且 projectId/canonicalPath 有值；
+ * failure 与 opened 互斥；targetKind==PackageFile 时 opened==false 且
+ * failure==nullopt（分流不是错误——调用方路由包导入向导，本编排核
+ * 零副作用）。canonicalPath 语义：打开成功的项目目录规范形态
+ * （store.canonicalPath()——\\?\ 前缀最终路径，最近项目记录键与进程内
+ * 重复打开判定的同源形态，§9.3）。
+ */
+struct OpenProjectOutcome {
+    bool opened = false;                          ///< 是否打开成功（五步全过＋激活）
+    bool readonly = false;                        ///< 实际只读（Writable 请求被持锁降级——PM-07 不阻塞等待）
+    OpenSource source = OpenSource::Dialog;       ///< 入口来源（编排结果登记面——三入口识别的可断言证据）
+    OpenTargetKind targetKind = OpenTargetKind::ProjectDirectory; ///< 分流结果（PackageFile 时调用方路由包导入向导）
+    std::unique_ptr<project::ProjectStore> store; ///< 存储上下文（opened 时唯一非空——移交调用方激活会话）
+    std::optional<core::ProjectId> projectId;     ///< 项目身份（opened 时有值）
+    std::filesystem::path canonicalPath;          ///< 项目目录规范形态（opened 时非空——最近项目记录键）
+    project::RecoveryReport recovery;             ///< 恢复报告（⑤步产出——恢复横幅呈现材料，PM-15 呈现归 T09）
+    std::optional<OpenProjectFailure> failure;    ///< 失败呈现（失败时有值——UX-03 三字段＋file 定位）
+};
+
+/**
+ * @brief 打开项目五步协议的编排器（O4——§7.2 流程的 workflow 执行点）。
+ *
+ * 全静态接口（无会话状态——同 NewProjectWizardFlow 先例：入口事件驱动
+ * 的编排核，纯面可契约测试直调，WF-VER-205/206 的被测面）。
+ */
+class OpenProjectFlow {
+public:
+    OpenProjectFlow() = delete;
+
+    /**
+     * @brief 执行打开（PM-02 五步——①分流→②③⑤服务侧→呈现/激活材料）。
+     *
+     * 编排序（每段的失败语义独立成立，合取即"失败显示具体文件且不动
+     * 当前项目"）：
+     *   1 前置校验：path 为空 → WorkflowError（调用方契约违约 fail-fast
+     *     ——取消在宿主侧拦截（取消不是错误，UX-03），取消态不得进入
+     *     打开编排）。
+     *   2 协议①入口分流：classifyOpenTarget——Unknown → failure（三
+     *     字段＋file=目标路径词面）零副作用返回；PackageFile → 分流登记
+     *     返回（opened=false/failure=nullopt——包导入编排归 WP-22-T07）；
+     *     ProjectDirectory → 继续第 3 段。
+     *   3 协议②③⑤服务侧：ProjectStoreFactory::open(OpenStoreRequest)
+     *     ——目录形态与版本检查（PM-06 旧格式/未来版本稳定拒绝）、加载
+     *     与读校验（PM-02"失败显示具体文件"——store-corrupt 定位到文件）、
+     *     恢复扫描与孤儿草稿报告（PM-08——横幅呈现材料）。激活前失败
+     *     不影响当前项目（§8.7：候选构造完整成功才返回，open 从不写
+     *     当前项目）。
+     *   4 失败转呈现：StoreError → failure（cause=detail 原文透传——
+     *     D-WF-7 零加工；file=detail 定位键提取、缺键回退目标路径；
+     *     recommendedAction=按稳定码分派的建议词表——switch 封闭集）；
+     *     其他 std::exception → failure（cause=what() 透传）。
+     *   5 成功 → opened（store/projectId/canonicalPath/recovery 移交；
+     *     readonly=!result.writable——PM-07 降级只读的如实登记）。
+     *
+     * @param source [in] 入口来源（三入口词表——编排结果登记面）
+     * @param path [in] 目标路径（用户词面——非空；规范化归 store 侧）
+     * @param eventBus [in] 事件总线注入（透传 open——⑤端口装配面，可空）
+     * @param diagnosticsSink [in] 诊断 sink 注入（透传 open——project 侧
+     *                码记录登记面，可空）
+     * @return 编排结果（见 OpenProjectOutcome 不变量）
+     *
+     * @throws WorkflowError path 为空（调用方契约违约——fail-fast）
+     *
+     * @threadSafe 无共享状态（静态函数）；参数对象按 §10.3 会话内单线程
+     *            纪律使用。
+     * @determinism 无确定性承诺（§10.3"流程编排含用户交互/环境"行——
+     *              打开涉磁盘与锁；同成功路径的状态事实可复核）。
+     */
+    static OpenProjectOutcome run(OpenSource source,
+                                  const std::filesystem::path& path,
+                                  core::IDomainEventBus* eventBus = nullptr,
+                                  project::IDiagnosticsSink* diagnosticsSink = nullptr);
+};
+
+// =====================================================================
+// 关闭/切换/退出统一确认编排（PM-03——§7.3；ARCH §6.8 A7；WP-22-T06）
+// =====================================================================
+
+/**
+ * @brief 关闭/切换/退出的请求种类（PM-03 三入口——统一确认对话框共用）。
+ *
+ * 会话态枚举（§10.3"零新增持久化枚举"边界内——kind 只存在于一次关闭
+ * 编排的生命周期内，不写入任何持久化 schema）。三入口共用同一条编排
+ * 路径（§7.3 流程图 REQ 节点）：kind 的差异只体现在①决策对话框的
+ * 上下文呈现材料（CloseDialogData.scenarioKey）与②结果登记面——
+ * **退出复用同一流程**（PM-03 原文）即由 Exit 与 Close 同路径兑现。
+ */
+enum class CloseKind : std::uint8_t {
+    Close = 0, ///< 关闭项目（界面会话结束；存储上下文按 A7 排空后释放）
+    Switch = 1,///< 切换项目（候选验证成功才切上下文——SWITCH 节点）
+    Exit = 2,  ///< 退出应用（复用关闭流程——PM-03"退出复用同一流程"）
+};
+
+/**
+ * @brief 未应用草稿三选决策（PM-03"未应用草稿三选（保存草稿/放弃/取消）"
+ *        ——统一确认对话框第一决策点的用户回答词表）。
+ *
+ * 三值与 §7.3 流程图 C1 节点一一对应：保存草稿＝落盘 drafts/（PM-04
+ * 保存语义——不产生修订）后继续；放弃＝丢弃草稿后继续；取消＝中止
+ * 整个流程（PM-03"取消可中止"——AT-20/21 观测点）。
+ */
+enum class DraftDisposition : std::uint8_t {
+    Save = 0,   ///< 保存草稿（落盘 drafts/——PM-04；零修订）
+    Discard = 1,///< 放弃草稿（丢弃未应用修改——清理 drafts/ 对应文件）
+    Cancel = 2, ///< 取消（中止整个流程——零排空零关闭，当前项目原状）
+};
+
+/**
+ * @brief 运行中任务二选决策（PM-03"运行中任务二选（等待/协作取消）"
+ *        ——统一确认对话框第二决策点的用户回答词表）。
+ *
+ * 两值对应 §7.3 流程图 C2 节点的主选项；第三值 CancelFlow 是对话框
+ * 的"取消流程"出口（C2→ABORT 边——PM-03"取消可中止"在任务决策点的
+ * 同款语义）。等待＝等待存储上下文排空完成（ARCH §6.8 A7"等待"选项
+ * 即等待此完成）；协作取消＝逐任务 requestCancel 后再排空（§7.3
+ * CANCEL 节点——取消即清理临时区）。
+ */
+enum class RunningTaskDecision : std::uint8_t {
+    Wait = 0,             ///< 等待（在途运行接纳归档完成＋草稿落盘完成——A7）
+    CooperativeCancel = 1,///< 协作取消（逐任务 requestCancel→排空→清理临时区）
+    CancelFlow = 2,       ///< 取消流程（中止——不排空不关闭）
+};
+
+/// 关闭编排对话框场景文案键（PM-03 项目关闭族——键形
+/// "close.flow.<kind-token>"；值归 ui 文案资源——UX-02 键/值半区分工）。
+inline constexpr const char* kCloseFlowScenarioPrefix = "close.flow.";
+
+/// 方案分支切换的对话框场景文案键（PM-12 草稿处置前置——与项目切换
+/// 同用三选词表、场景键区分；键形固定——值归 ui 文案资源）。
+inline constexpr const char* kSchemeSwitchScenarioKey = "close.flow.scheme-switch";
+
+/**
+ * @brief 关闭场景文案键（CloseKind → 场景键——唯一映射点，NFR-MNT-03）。
+ *
+ * 键形："close.flow.close"／"close.flow.switch"／"close.flow.exit"
+ * （kCloseFlowScenarioPrefix＋kind token——token 与枚举值一一对应的
+ * 封闭集）。呈现文案值归 ui 文案资源（UX-02：键半区，零硬编码中文串）。
+ *
+ * @param kind [in] 关闭请求种类（三值封闭词表）
+ * @return 场景文案键（词表外值防御性返回空串——不伪造键）
+ */
+std::string closeScenarioKey(CloseKind kind);
+
+/**
+ * @brief 关闭编排的对话框呈现数据（PM-03 统一确认对话框的 workflow 侧
+ *        数据面——控件呈现归 ui 宿主面 D-WF-6，本值只携带决策所需事实）。
+ *
+ * 字段填充由编排核按流程图节点推进：草稿决策点（C1）填 draftModules
+ * （未应用草稿的模块清单——呈现"将丢失哪些编辑"）；任务决策点（C2）
+ * 填 taskStates（九态清单——对话框内嵌任务清单的短标签数据源，经
+ * closeTaskStateTokens 转短标签 token 呈现）。两类字段互斥使用（按
+ * 决策点裁剪——零占位行，同 buildNewProjectSummary 的裁剪纪律）。
+ */
+struct CloseDialogData {
+    CloseKind kind = CloseKind::Close;///< 请求种类（对话框标题上下文）
+    std::string scenarioKey;          ///< 场景文案键（closeScenarioKey／kSchemeSwitchScenarioKey）
+    std::vector<std::string> draftModules;///< 未应用草稿模块清单（C1 呈现；C2 时为空）
+    std::vector<core::TaskState> taskStates;///< 任务清单九态（C2 呈现；C1 时为空——词表归 core）
+
+    bool operator==(const CloseDialogData& o) const
+    {
+        return kind == o.kind && scenarioKey == o.scenarioKey
+            && draftModules == o.draftModules && taskStates == o.taskStates;
+    }
+    bool operator!=(const CloseDialogData& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 任务清单九态短标签构造（PM-03"对话框内嵌任务清单（9 态短标签）"
+ *        ——短标签 token 的唯一构造点）。
+ *
+ * 数据源纪律（§7.3 注二逐字）：任务清单短标签数据源＝execution 九态任务
+ * 状态（词表归 core/execution，workflow 只取数呈现）——本函数只把
+ * core::TaskState 冻结枚举经 core::toToken 冻结表（小写连字符词形，
+ * core.md §4.7 持久化契约）转为短标签 token，零新增状态词（SA-12/
+ * D-WF-4）、零重排序（输入序即输出序——呈现序归调用方）。
+ *
+ * @param states [in] 任务状态清单（core 九态词表——任意序、可含重复；
+ *               空清单＝空输出）
+ * @return 短标签 token 清单（与输入逐位对应——"queued"/"preparing"/
+ *         "running"/"paused"/"canceling"/"canceled"/"completed"/
+ *         "failed"/"interrupted"；UI 经 ui UiText 解析为用户文案）
+ *
+ * @threadSafe const 纯函数，可并发。
+ * @determinism 同输入同输出（NFR-COR-02 同型）。
+ */
+std::vector<std::string> closeTaskStateTokens(const std::vector<core::TaskState>& states);
+
+/**
+ * @brief 用户决策收集端口（统一确认对话框的宿主面接缝——PM-03 对话框
+ *        的 ui 侧实现点）。
+ *
+ * 谁实现：ui 宿主面/L5 装配层（D-WF-6——对话框控件与模态呈现归 ui；
+ * workflow 只承诺决策词表与呈现数据）。编排核在决策点同步调用本端口：
+ * 返回值即用户选择（模态对话框语义——调用阻塞至用户作答）。
+ *
+ * 为什么是接口而不是 std::function：与 IDomainInitSubmitter 同款纯接口
+ * 形态（可 mock 可契约测试、防依赖倒挂）；实现方的 Qt 消费面不进
+ * workflow 依赖图（R-3——计算库零 Qt）。
+ *
+ * 线程约束：主线程会话内调用（模态对话框——§10.3 流程编排行）。
+ */
+class ICloseDecisionPort {
+public:
+    virtual ~ICloseDecisionPort() = default;
+
+    /**
+     * @brief 收集草稿三选决策（§7.3 C1 决策点——hasUnappliedDraft 为真
+     *        时编排核调用；data.draftModules 已填充）。
+     *
+     * @param data [in] 对话框呈现数据（kind/scenarioKey/draftModules——
+     *             呈现层据此渲染三选对话框）
+     * @return 用户决策（Cancel＝中止整个流程——编排核立即终止，零后续
+     *         排空与关闭动作）
+     */
+    virtual DraftDisposition collectDraftDisposition(const CloseDialogData& data) = 0;
+
+    /**
+     * @brief 收集任务二选决策（§7.3 C2 决策点——hasActiveTask 为真时
+     *        编排核调用；data.taskStates 已填充——对话框内嵌任务清单）。
+     *
+     * @param data [in] 对话框呈现数据（kind/scenarioKey/taskStates——
+     *             呈现层据此渲染二选对话框＋9 态短标签清单）
+     * @return 用户决策（CancelFlow＝中止整个流程；Wait/CooperativeCancel
+     *         ＝按 A7 两分支排空）
+     */
+    virtual RunningTaskDecision collectRunningTaskDecision(const CloseDialogData& data) = 0;
+};
+
+/**
+ * @brief 草稿处置端口（未应用草稿查询与三选动作的执行接缝——PM-03
+ *        草稿三选的存储侧视图）。
+ *
+ * 谁实现：L5 装配层——它同时可见 project 公共头（DraftService：summarize/
+ * save/discard——PM-04 存储语义权威 N3）与编辑器会话的未保存草稿态
+ * （ui/project DraftController——§7.6"*＝有未应用修改"的数据权威），
+ * 职责＝把"有无未应用草稿"的会话事实与"保存/放弃"动作折叠为本端口的
+ * 三方法。workflow 不直连 DraftService 的内容面（草稿文档的组装归编辑
+ * 器会话——编排核零草稿内容知识）。
+ *
+ * 错误语义：三方法均为布尔轨道（false＝动作失败——环境/对端错误，编排
+ * 核转 Failed 呈现，零吞错零静默继续）；调用方错误（装配缺失等）由
+ * 实现方按各自契约 fail-fast。
+ *
+ * 线程约束：主线程会话内调用（与决策端口同序——编排核串行驱动）。
+ */
+class ICloseDraftPort {
+public:
+    virtual ~ICloseDraftPort() = default;
+
+    /**
+     * @brief 列出未应用草稿的模块清单（§7.3 D1 判定＋C1 呈现材料的合一
+     *        取数——空清单＝无未应用草稿；非空＝进入三选决策点）。
+     *
+     * 合一的理由：编排核判定"有无草稿"与填充对话框"将丢失哪些编辑"
+     * （CloseDialogData.draftModules）需要同一份事实——拆两个方法会引入
+     * 两拍之间的状态漂移窗口（判定有、呈现时空）。清单语义（模块 token，
+     * 如 "requirements"）由实现方从编辑器会话未保存态＋已落盘草稿投影
+     * 汇聚（§7.6"*＝有未应用修改"的权威数据面——ui/project DraftController）。
+     *
+     * @return 未应用草稿模块 token 清单（空＝无草稿——跳过 C1；顺序归
+     *         实现方语义，编排核零加工透传）
+     */
+    virtual std::vector<std::string> unappliedDraftModules() = 0;
+
+    /**
+     * @brief 保存草稿（三选之"保存草稿"——PM-04 保存语义：仅落 drafts/，
+     *        零修订）。
+     * @return true＝保存完成；false＝失败（编排核转 Failed——不带病排空）
+     */
+    virtual bool saveDrafts() = 0;
+
+    /**
+     * @brief 放弃草稿（三选之"放弃"——用户显式丢弃未应用修改）。
+     * @return true＝放弃完成；false＝失败（编排核转 Failed）
+     */
+    virtual bool discardDrafts() = 0;
+};
+
+/**
+ * @brief 任务排空端口（PM-03 任务二选的执行侧接缝——execution §7.5 的
+ *        workflow 侧视图）。
+ *
+ * 谁实现：L5 装配层——组合 execution 的 ITaskScheduler（tasksByProject
+ * 九态清单／shutdown(DrainPolicy) 排空——白名单边）与取消控制面
+ * （DrainCoordinator::requestCancelAll 批量协作取消），折叠为本端口的
+ * 四方法。编排核零 execution 头依赖（端口即接缝——R-1/R-2 纪律下编排
+ * 面与执行面的解耦点；两策略语义见 execution.md §7.5：等待＝
+ * CancelQueuedAndWait，协作取消＝逐/批量 requestCancel 后走取消协议）。
+ *
+ * 无永久等待（execution §7.5 承诺）：排空有界（取消协议 10 s＋归档有界
+ * 重试＋abandon 兜底——超阈值由 L5 关闭控制器强制 abandonAll）；两方法
+ * 返回 false＝排空未在承诺内有界完成（编排核转 Failed 呈现，不永久阻塞）。
+ *
+ * 线程约束：waitDrain/cooperativeCancel 内部等待 execution/project 侧
+ * 后台机制推进（worker 终态路径释放归档引用），本端口实现只轮询观察
+ * （drained()/closed() 均为无阻塞快照查询——execution §10.1 同款口径）；
+ * 调用线程＝编排核所在主线程。
+ */
+class ICloseDrainPort {
+public:
+    virtual ~ICloseDrainPort() = default;
+
+    /**
+     * @brief 查询项目是否有运行中（非终态）任务（§7.3 D2 判定——九态中
+     *        Queued/Preparing/Running/Paused/Canceling 之一即"运行中"）。
+     * @param project [in] 项目身份（任务清单过滤键——tasksByProject 同源）
+     * @return true＝有非终态任务（进入二选决策点）；false＝无（跳过 C2）
+     */
+    virtual bool hasActiveTask(core::ProjectId project) = 0;
+
+    /**
+     * @brief 取项目任务清单的九态投影（PM-03 任务清单数据源——编排核
+     *        填入 CloseDialogData.taskStates 呈现）。
+     * @param project [in] 项目身份（过滤键）
+     * @return 任务状态清单（core 九态透传——顺序与去重归实现方对端语义，
+     *         编排核零加工）
+     */
+    virtual std::vector<core::TaskState> taskStates(core::ProjectId project) = 0;
+
+    /**
+     * @brief 等待分支排空（PM-03"等待"——execution §7.5：shutdown(
+     *        DrainPolicy::CancelQueuedAndWait)：停止派发新任务、取消排队
+     *        任务、在途运行执行至归档完成）。
+     * @return true＝排空完成（drained）；false＝有界等待超限（编排核转
+     *         Failed——不永久阻塞）
+     */
+    virtual bool waitDrain() = 0;
+
+    /**
+     * @brief 协作取消分支排空（PM-03"协作取消"——execution §7.5：对任务
+     *        清单逐/批量 requestCancel 后走取消协议，再排空；取消协议中
+     *        worker 回收＋临时目录清理＋归档 abandon 即"取消即清理临时区"，
+     *        承载归 execution 取消协议——N4 分工）。
+     * @return true＝取消并排空完成；false＝有界等待超限（编排核转 Failed）
+     */
+    virtual bool cooperativeCancel() = 0;
+};
+
+/**
+ * @brief 关闭编排失败呈现（UX-03 三字段——与 NewProjectFailure 同型的
+ *        编排器直产呈现面；D-WF-7 零新增稳定码，对端 detail 原文透传）。
+ */
+struct CloseFlowFailure {
+    std::string context;           ///< 对象/上下文（UX-03 半区一——失败阶段与对象词面）
+    std::string cause;             ///< 原因（UX-03 半区二——端口失败事实/对端 what() 透传）
+    std::string recommendedAction; ///< 建议动作（UX-03 半区三——重试/检查/手动指引）
+
+    bool operator==(const CloseFlowFailure& o) const
+    {
+        return context == o.context && cause == o.cause
+            && recommendedAction == o.recommendedAction;
+    }
+    bool operator!=(const CloseFlowFailure& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 关闭编排的端口集与参数（CloseFlow::run 的注入面——纯值聚合）。
+ *
+ * 端口指针全部非 owning（调用方保证存活期覆盖 run 调用）；candidatePath
+ * 仅 kind==Switch 时消费（其余 kind 请求不得携带——携带即调用方装配
+ * 违约，fail-fast）。
+ */
+struct CloseFlowRequest {
+    core::ProjectId projectId;        ///< 当前项目身份（任务清单过滤键——D2/C2 判定与呈现）
+    std::filesystem::path candidatePath;///< 候选项目目录（仅 Switch——候选验证目标；空＝违约）
+    ICloseDecisionPort* decisions = nullptr;///< 用户决策收集端口（必填）
+    ICloseDraftPort* drafts = nullptr;///< 草稿处置端口（必填）
+    ICloseDrainPort* drain = nullptr; ///< 任务排空端口（必填）
+};
+
+/**
+ * @brief 关闭/切换/退出编排结果（CloseFlow::run 的唯一返回通道——§10.2
+ *        Draft 签名 CloseFlowResult 的值承载）。
+ *
+ * 不变量：result==Proceed ⇔ 存储上下文已排空关闭（closed()==true）且
+ * Switch 时 candidateStore 非空；result==Aborted ⇔ 排空/关闭零发生
+ * （取消中止——当前项目原状）；result==Failed ⇔ failure 有值且 store
+ * 的排空动作未发生或未完成（失败不带病关闭）。
+ * abortedAt/failure 互斥（Aborted 与 Failed 各有观测半区）。
+ */
+struct CloseFlowOutcome {
+    /**
+     * @brief 编排结果三值（§10.2 Draft @return：Proceed / Aborted（用户
+     *        取消）/ Failed（附对端诊断））。
+     */
+    enum class Result : std::uint8_t {
+        Proceed = 0, ///< 流程完成（存储上下文已排空；Switch 时候选已移交）
+        Aborted = 1, ///< 用户取消中止（排空/关闭零发生——当前项目原状）
+        Failed = 2,  ///< 失败（failure 有值——UX-03 三字段；当前项目未关闭）
+    };
+
+    Result result = Result::Proceed;///< 编排结果（见枚举注）
+
+    /**
+     * @brief 中止阶段观测（result==Aborted 时有值语义——取消发生在哪个
+     *        决策点；Proceed/Failed 时为 None）。
+     */
+    enum class AbortStage : std::uint8_t {
+        None = 0,       ///< 未中止（Proceed/Failed）
+        DraftPrompt = 1,///< 草稿三选点取消（C1——排空/关闭零发生）
+        TaskPrompt = 2, ///< 任务二选点取消（C2——草稿已处置、排空/关闭零发生）
+    };
+    AbortStage abortedAt = AbortStage::None;///< 中止阶段（上列语义）
+
+    std::optional<CloseFlowFailure> failure;///< 失败呈现（Failed 时有值——UX-03 三字段）
+    bool waitedForArchiveDrain = false;     ///< 是否走了等待排空分支（观测面——A7 承接证据）
+    bool cooperativeCancelled = false;      ///< 是否走了协作取消分支（观测面——AT-21 承接证据）
+    std::unique_ptr<project::ProjectStore> candidateStore;///< 候选存储上下文（Switch 且验证成功时唯一非空——移交调用方激活，切换上下文的材料）
+};
+
+/**
+ * @brief 关闭/切换/退出统一确认的编排器（O10——§7.3 流程图的执行点；
+ *        §10.2 Draft 签名 requestClose(CloseKind) 的可测编排核）。
+ *
+ * 全静态接口（无会话状态——同 NewProjectWizardFlow/OpenProjectFlow
+ * 先例：宿主事件驱动的编排核，纯面可契约测试直调，WF-VER-209~211 的
+ * 被测面）。
+ */
+class CloseFlow {
+public:
+    CloseFlow() = delete;
+
+    /**
+     * @brief 执行关闭编排（§7.3 流程 REQ→D1→C1→D2→C2→DRAIN→SWITCH/
+     *        EXIT 的逐步兑现）。
+     *
+     * 编排序（每段的失败/取消语义独立成立，合取即 PM-03 全语义）：
+     *   1 前置校验：三端口指针任一为空、或 kind==Switch 而 candidatePath
+     *     为空、或 kind!=Switch 而 candidatePath 非空 → WorkflowError
+     *     （调用方装配违约——fail-fast）。
+     *   2 草稿三选（D1/C1）：draftModules=drafts->unappliedDraftModules()
+     *     非空 → decisions->collectDraftDisposition(data{draftModules})——
+     *     Cancel → Aborted{DraftPrompt}（零排空零关闭——取消可中止，
+     *     PM-03）；Save → drafts->saveDrafts()（false → Failed——保存
+     *     失败不带病排空）；Discard → drafts->discardDrafts()（同上）；
+     *     为空 → 跳过（零决策调用）。
+     *   3 任务二选（D2/C2）：drain->hasActiveTask(projectId) 为真 →
+     *     states=drain->taskStates(projectId)（9 态短标签数据源）→
+     *     decisions->collectRunningTaskDecision(data{taskStates})——
+     *     CancelFlow → Aborted{TaskPrompt}；Wait → 记登记位（第 4 段
+     *     走 waitDrain）；CooperativeCancel → drain->cooperativeCancel()
+     *     （false → Failed；true → 记登记位，第 4 段免重复排空——取消
+     *     分支已含排空）；为假 → 跳过（第 4 段仍走幂等排空——流程图
+     *     D2"否"边直达 DRAIN 节点）。
+     *   4 调度排空（DRAIN 前半——execution §7.5）：协作取消分支已排空
+     *     则跳过；否则 drain->waitDrain()（false → Failed）。
+     *   5 候选验证（SWITCH——仅 Switch，且在存储上下文关闭**之前**）：
+     *     ProjectStoreFactory::open(candidatePath)——完整构造候选上下文
+     *     才算成功（激活前失败不影响当前项目，project §8.7）；失败 →
+     *     Failed（failure 自对端 detail 透传——当前 store 未被触碰，
+     *     "验证失败不动当前项目"）。
+     *   6 存储上下文排空（DRAIN 后半——A7 等待实现锚点，project §9.7）：
+     *     currentStore.requestClose()（幂等；返回在途引用数）→ 在途>0
+     *     时轮询 closed()（等待在途归档＋草稿落盘完成——"等待"选项即
+     *     等待此完成；轮询无上限是 A7 语义本身，有界性由 execution 终态
+     *     路径全部释放归档引用＋L5 关闭控制器 abandonAll 兜底保证）。
+     *   7 结果：Proceed（Switch 时 candidateStore 移交——切换上下文＝
+     *     调用方激活候选；Close/Exit ＝界面会话结束由调用方执行）。
+     *
+     * @param kind [in] 请求种类（Close/Switch/Exit——退出复用同一流程）
+     * @param currentStore [in] 当前项目存储上下文（非 owning——排空动作
+     *               的作用对象；Closed 态传入＝幂等重入，requestClose
+     *               返回当前在途数、轮询即刻满足）
+     * @param request [in] 端口集与参数（见类型注）
+     * @return 编排结果（见 CloseFlowOutcome 不变量）
+     *
+     * @throws WorkflowError 端口缺失/候选路径与 kind 不匹配（调用方装配
+     *         违约——fail-fast）
+     *
+     * @threadSafe 无共享状态（静态函数）；端口/store 按会话内单线程纪律
+     *            使用（决策回调与排空轮询都在调用线程上发生）。
+     * @determinism 无确定性承诺（§10.3"流程编排含用户交互"行——决策与
+     *              排空时序是环境事实；同成功路径的状态事实可复核：
+     *              观测登记位＋closed()==true＋candidate 非空）。
+     */
+    static CloseFlowOutcome run(CloseKind kind,
+                                project::ProjectStore& currentStore,
+                                const CloseFlowRequest& request);
+};
+
+// =====================================================================
+// 方案分支切换编排（PM-12——§7.3 注三条；零写入会话选择；WP-22-T06）
+// =====================================================================
+
+/**
+ * @brief 方案分支切换请求（PM-12——分支身份对＋场景呈现材料）。
+ *
+ * 分支身份＝core 强类型（brn- 规范文本——本单元不生成新 ID）；current
+ * 分支来自会话层登记（活动分支权威在会话层——project.md §4.5），target
+ * 分支来自方案分支清单（project ProjectMetadata 查询——§8.1 同源取数）。
+ */
+struct SchemeBranchSwitchRequest {
+    core::BranchId currentBranch;///< 当前活动分支（会话层登记——草稿查询键）
+    core::BranchId targetBranch; ///< 目标方案分支（切换批准的对象）
+};
+
+/**
+ * @brief 方案分支切换编排结果（SchemeBranchSwitchFlow::run 的唯一返回
+ *        通道）。
+ *
+ * Proceed＝切换批准（编排核零写入完成——会话选择由宿主会话层应用：
+ * 活动分支登记归会话层，project.md §4.5"切换＝纯会话选择"）；
+ * Aborted＝草稿处置点取消（切换零发生）；Failed＝草稿处置失败
+ * （failure 有值——UX-03 三字段）。
+ */
+struct SchemeBranchSwitchOutcome {
+    /**
+     * @brief 编排结果三值（与 CloseFlowOutcome::Result 同词表语义——
+     *        独立枚举避免跨编排的值混用）。
+     */
+    enum class Result : std::uint8_t {
+        Proceed = 0, ///< 切换批准（零写入——宿主会话层应用活动分支登记）
+        Aborted = 1, ///< 用户取消中止（草稿保留原状——切换零发生）
+        Failed = 2,  ///< 草稿处置失败（failure 有值）
+    };
+
+    Result result = Result::Proceed;///< 编排结果（见枚举注）
+    CloseFlowOutcome::AbortStage abortedAt = CloseFlowOutcome::AbortStage::None;///< 中止阶段（仅 Aborted 有值语义——方案切换只有草稿点）
+    std::optional<CloseFlowFailure> failure;///< 失败呈现（Failed 时有值——UX-03 三字段）
+};
+
+/**
+ * @brief 方案分支切换的编排器（PM-12——§7.3 注三条"切换入口在 workflow"
+ *        的可测编排核；WF-VER-212 零写入承载面）。
+ *
+ * 全静态接口（同 CloseFlow 先例）。**零写入的结构性保证**：run 签名不
+ * 接收任何存储上下文/写面（草稿处置经 ICloseDraftPort 端口触达——那是
+ * 用户显式决策的 PM-04 落盘，非切换写）——编排核不存在产生修订或写
+ * HEAD 的代码路径（契约测试以真实落盘项目＋HEAD 字节快照钉扎，
+ * WF-VER-212 观测点"修订/字节"）。
+ */
+class SchemeBranchSwitchFlow {
+public:
+    SchemeBranchSwitchFlow() = delete;
+
+    /**
+     * @brief 执行方案分支切换编排（PM-12：分支切换前先处置未应用草稿
+     *        （PM-04 规则）→切换批准）。
+     *
+     * 编排序：
+     *   1 前置校验：decisions/drafts 端口任一为空 → WorkflowError；
+     *     targetBranch 与 currentBranch 相同（含同规范文本）→
+     *     WorkflowError（同分支切换＝宿主装配缺陷——分支清单呈现层应
+     *     禁用当前分支项，到不了这里属违约 fail-fast）。
+     *   2 草稿处置前置（PM-12→PM-04 规则）：draftModules=drafts->
+     *     unappliedDraftModules() 非空 → decisions->collectDraftDisposition(
+     *     data{kind=Switch,scenarioKey=kSchemeSwitchScenarioKey,
+     *     draftModules})——Cancel → Aborted{DraftPrompt}（草稿原状——
+     *     切换零发生）；Save → drafts->saveDrafts()（在**原分支**落盘
+     *     ——PM-04"分支切换前可在原有效基线上应用"；false → Failed）；
+     *     Discard → drafts->discardDrafts()（false → Failed）；为空 →
+     *     跳过。
+     *   3 切换批准 → Proceed（零写入：编排核全程不触存储上下文——活动
+     *     分支登记由宿主会话层经 project 会话接口应用；不产生修订、
+     *     不写任何文件含 HEAD——project.md §4.5 逐字语义）。
+     *
+     * @param request [in] 分支身份对（见类型注）
+     * @param decisions [in] 用户决策收集端口（非 owning——三选复用
+     *                PM-03 词表；场景键＝kSchemeSwitchScenarioKey）
+     * @param drafts [in] 草稿处置端口（非 owning——同 CloseFlow 端口契约）
+     * @return 编排结果（见 SchemeBranchSwitchOutcome 注）
+     *
+     * @throws WorkflowError 端口缺失/同分支切换（调用方装配违约——
+     *         fail-fast）
+     *
+     * @threadSafe 无共享状态（静态函数）；端口按会话内单线程纪律使用。
+     * @determinism 同（request, 决策序列, 端口行为）同结果与观测位。
+     */
+    static SchemeBranchSwitchOutcome run(const SchemeBranchSwitchRequest& request,
+                                         ICloseDecisionPort& decisions,
+                                         ICloseDraftPort& drafts);
+};
+
+// =====================================================================
+// 最近项目管理（PM-10——§7.8；IRecentProjectsService §10.1 落位行）
+// =====================================================================
+
+/**
+ * @brief 最近项目容量上限（PM-10 冻结值 10——"最近项目上限 10"）。
+ *
+ * P-WF-5 留痕（契约 acceptance 3）：PM-10/PM-14 只冻结了上限 10；
+ * 路径脱敏等其余容量/脱敏参数的配置面未冻结（NFR-SEC-07"按配置脱敏"
+ * 的配置归属未定）——未冻结期间按安全默认执行：容量恒为需求冻结值 10
+ * （不发明更大列表），路径**不脱敏**（原样记录——脱敏若经裁决需要，
+ * 归 diagnostics/ui 呈现侧配置面，本服务只存规范路径事实）；裁决后需
+ * 同步本头 §7.7 增量登记（单元卡 P-WF-5 行）。
+ */
+inline constexpr std::size_t kRecentProjectsCapacity = 10;
+
+/**
+ * @brief 最近项目条目（PM-10 列表项——规范路径＋可用性事实）。
+ *
+ * locationAvailable 语义："项目位置不可用"（PM-10 原文提示）＝该路径
+ * 当前不是一个可进入的目录（不存在或被替换为普通文件）——**位置**事实，
+ * 不是项目有效性事实（目录在但 project.json 损坏的判定归打开协议②步，
+ * 本服务不复制对端规则——PA-1）。失效项**保留**在列表中（PM-10"失效项
+ * 保留"），由呈现层按 unavailable 标记提示并提供重新选择/移除动作。
+ */
+struct RecentProjectEntry {
+    /// 项目目录规范路径（去重键——record 侧 lexically_normal 词法收敛）。
+    std::filesystem::path canonicalPath;
+    /// 位置可用性（list() 时实时检查——环境事实，非持久化属性）。
+    bool locationAvailable = true;
+
+    bool operator==(const RecentProjectEntry& o) const
+    {
+        return canonicalPath == o.canonicalPath
+            && locationAvailable == o.locationAvailable;
+    }
+    bool operator!=(const RecentProjectEntry& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 最近项目管理服务接口（§10.2 Draft 签名——PM-10 的列表权威面）。
+ *
+ * 语义（§7.8）：上限 10（kRecentProjectsCapacity——PM-10 冻结）、按
+ * 规范路径去重（record 去重后置顶——LRU 序）、失效项保留（list 不剔除
+ * 不可用项，逐项带 locationAvailable 标记）。持久化归用户设置存储
+ * （PM-14——WP-22-T10 落位 Settings.hpp IUserSettingsStore 后接线；
+ * 本批为会话内内存服务——单元卡 §14.5 v0.6 边界登记）。
+ *
+ * 线程约束：会话内单线程（§10.3——首页/宿主单线程访问，非线程共享）。
+ */
+class IRecentProjectsService {
+public:
+    virtual ~IRecentProjectsService() = default;
+
+    /**
+     * @brief 最近项目列表（LRU 序——最近使用在前；失效项保留）。
+     * @return 条目清单（逐项带位置可用性实测标记；上限≤容量）
+     *
+     * @threadSafe const（实现侧无共享可变态的读取——本会话单线程纪律）。
+     */
+    [[nodiscard]] virtual std::vector<RecentProjectEntry> list() const = 0;
+
+    /**
+     * @brief 记录一次项目使用（去重后置顶；超容量淘汰最老——LRU）。
+     * @param canonicalPath [in] 项目目录规范路径（宜传
+     *        OpenProjectOutcome.canonicalPath／store.canonicalPath()；
+     *        服务内部再作 lexically_normal 词法收敛为去重键——大小写
+     *        收敛由上游规范路径来源保证，本服务不做文件系统级规范化）
+     *
+     * @throws WorkflowError canonicalPath 为空（空路径记录无意义——
+     *         调用方契约违约，fail-fast）
+     */
+    virtual void record(const std::string& canonicalPath) = 0;
+
+    /**
+     * @brief 移除一条最近项目（PM-10"移除"动作——首页失效项处置面）。
+     * @param canonicalPath [in] 待移除路径（同 record 的键收敛规则匹配）
+     *
+     * 幂等语义：路径不在列表时无操作不报错（首页呈现刷新与列表变化的
+     * 竞态容忍——移除是用户处置动作，不是需要仲裁的状态迁移）。
+     */
+    virtual void remove(const std::string& canonicalPath) = 0;
+};
+
+/**
+ * @brief 最近项目管理服务的标准实现（PM-10 全语义——容量/去重/失效
+ *        标记/移除；会话内内存态，持久化接线归 WP-22-T10）。
+ *
+ * P-WF-5 落地（契约 acceptance 3）：构造容量缺省＝kRecentProjectsCapacity
+ * （需求冻结值 10）；显式传入其他容量仅用于测试注入边界（生产装配用
+ * 默认值——P-WF-5 裁决前不发明第二容量）。脱敏：零脱敏行为（路径原样
+ * ——安全默认，见 kRecentProjectsCapacity 注）。
+ */
+class RecentProjectsService final : public IRecentProjectsService {
+public:
+    /**
+     * @brief 构造服务。
+     * @param maxEntries [in] 容量上限（≥1；缺省＝PM-10 冻结值 10——
+     *        P-WF-5 未冻结期间按需求值，不发明数值）
+     *
+     * @throws WorkflowError maxEntries==0（零容量列表无业务意义——
+     *         调用方契约违约，fail-fast）
+     */
+    explicit RecentProjectsService(
+        std::size_t maxEntries = kRecentProjectsCapacity);
+
+    std::vector<RecentProjectEntry> list() const override;
+    void record(const std::string& canonicalPath) override;
+    void remove(const std::string& canonicalPath) override;
+
+private:
+    std::size_t m_maxEntries;///< 容量上限（构造后不变——单位＝条目数，无物理单位）
+    /// LRU 序条目（首＝最近使用；上限 m_maxEntries——record 内维护）。
+    std::vector<RecentProjectEntry> m_entries;
+};
+
+/// 最近项目条目的去重键收敛（record/remove 共用的唯一规范化点——
+/// lexically_normal 词法规范化，不触盘、确定性）。
+std::filesystem::path recentProjectKey(const std::string& canonicalPath);
+
+// =====================================================================
+// 无项目首页数据面（PM-10——§7.8；呈现归 ui 宿主面，本面只产数据）
+// =====================================================================
+
+/// 首页入口语义键词表（会话态 token——呈现文案经 ui 文案键体系解析；
+/// UX-02 工程用语，零哈希/Schema/内部插件名）。
+inline constexpr const char* kHomeEntryNewProject      = "new-project";
+inline constexpr const char* kHomeEntryOpenProject     = "open-project";
+inline constexpr const char* kHomeEntryRecentProjects  = "recent-projects";
+inline constexpr const char* kHomeEntryProjectMenu     = "project-menu";
+inline constexpr const char* kHomeEntryStageNavigation = "stage-navigation";
+inline constexpr const char* kHomeEntryRun             = "run";
+inline constexpr const char* kHomeEntryApply           = "apply";
+inline constexpr const char* kHomeEntryReport          = "report";
+
+/// 项目状态摘要文案键（PM-10"项目状态摘要"的无项目态值——键半区；
+/// 值归 ui 文案资源，UX-10"空项目"状态的用户呈现词归 ui——§7.9 分工）。
+inline constexpr const char* kHomeStatusNoProjectKey = "home.status.no-project";
+
+/// 失效项"位置不可用"提示文案键（PM-10 原文提示语——键半区）。
+inline constexpr const char* kHomeRecentUnavailableKey =
+    "home.recent.location-unavailable";
+/// 失效项"重新选择"动作文案键（PM-10 原文动作——键半区）。
+inline constexpr const char* kHomeRecentReselectKey = "home.recent.reselect";
+/// 失效项"移除"动作文案键（PM-10 原文动作——键半区）。
+inline constexpr const char* kHomeRecentRemoveKey = "home.recent.remove";
+
+/**
+ * @brief 首页入口项（入口语义键＋无项目态可用位——呈现层的启用/禁用
+ *        渲染输入；PM-10"入口禁用数据"，呈现归 ui）。
+ */
+struct HomeEntry {
+    std::string key;      ///< 入口语义键（kHomeEntry* 词表——封闭集）
+    bool enabled = true;  ///< 无项目态可用性（禁用入口＝false——PM-10）
+
+    bool operator==(const HomeEntry& o) const
+    {
+        return key == o.key && enabled == o.enabled;
+    }
+    bool operator!=(const HomeEntry& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 首页最近项目项（recent-projects 入口的内容面——服务列表的
+ *        呈现透传，失效项保留）。
+ */
+struct RecentHomeItem {
+    std::filesystem::path canonicalPath;///< 项目目录规范路径（呈现词面）
+    bool locationAvailable = true;      ///< 位置可用性（false＝提示"项目位置不可用"）
+
+    bool operator==(const RecentHomeItem& o) const
+    {
+        return canonicalPath == o.canonicalPath
+            && locationAvailable == o.locationAvailable;
+    }
+    bool operator!=(const RecentHomeItem& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 无项目首页数据（PM-10——三入口＋项目状态摘要＋入口禁用数据）。
+ *
+ * entries 固定序（冻结——呈现布局稳定与测试确定性）：
+ *   1 new-project（enabled）2 open-project（enabled）
+ *   3 recent-projects（enabled）4 project-menu（enabled——"仅留项目
+ *   菜单"的"留"侧）5 stage-navigation（disabled）6 run（disabled）
+ *   7 apply（disabled）8 report（disabled）——PM-10"无项目时禁用七阶段/
+ *   运行/应用/报告入口"的逐项承载。
+ */
+struct HomeScreenData {
+    std::string statusKey;                  ///< 项目状态摘要键（kHomeStatusNoProjectKey）
+    std::vector<HomeEntry> entries;         ///< 入口清单（上列固定序八项）
+    std::vector<RecentHomeItem> recentItems;///< 最近项目（失效项保留透传）
+
+    bool operator==(const HomeScreenData& o) const
+    {
+        return statusKey == o.statusKey && entries == o.entries
+            && recentItems == o.recentItems;
+    }
+    bool operator!=(const HomeScreenData& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 组装无项目首页数据（PM-10——纯函数；有项目时不显示首页，本
+ *        函数语义即"无项目态"）。
+ *
+ * @param recentEntries [in] 最近项目列表（IRecentProjectsService::list()
+ *                的产出——逐项透传为 RecentHomeItem，失效项保留；可用性
+ *                标记沿用服务实测值，本函数不复查）
+ * @return 首页数据（statusKey/entries/recentItems——确定性同输入同输出）
+ *
+ * @threadSafe const 纯函数，可并发。
+ * @determinism 同输入同输出（NFR-COR-02 同型）。
+ */
+HomeScreenData buildNoProjectHomeScreen(
+    const std::vector<RecentProjectEntry>& recentEntries);
 
 }  // namespace workflow
 }  // namespace ird

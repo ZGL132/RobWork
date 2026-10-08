@@ -12,14 +12,18 @@
  *     N·m/移动 N 不可混用）、DYN-06（数据不足不包装精确）、MDL-16（摩擦
  *     参数建模层）、NFR-COR-02（稳定排序）/NFR-COR-03（非有限数拒绝）
  *   - 任务契约 tasks/foundation/WP-17-T03.json（RNEA 逆动力学评估器——
- *     本头即其样本行承载面）
+ *     本头即其样本行承载面）、tasks/foundation/WP-17-T04.json（输出序列
+ *     与峰值/RMS 包络——本头 T04 增列面）
  *
- * ★ 落地面口径（诚实登记，防扩大）：本头当前仅落地 WP-17-T03 消费的四个
- *   类型（DynJointType/SampleNumericState/DynamicsSample/DynamicsValidity）。
- *   §4.4 清单的其余类型（DynamicsSeries/PeakRecord/DynamicsEnvelope/
- *   PowerEnergySummary/OperatingConditionResult/DynamicsEvidence/
- *   JointSideSeriesPack）分别由其消费任务落位（T04 序列冻结与统计、T07
- *   包络合并、Handoff 交接面）——本任务不预建占位类型（NFR-MNT-04）；
+ * ★ 落地面口径（诚实登记，防扩大）：本头分批落地各消费任务所需的 §4.4
+ *   类型——WP-17-T03 落地 DynJointType/SampleNumericState/DynamicsSample/
+ *   DynamicsValidity 四类型；WP-17-T04 表尾增列 PeakRecord/DynamicsSeries/
+ *   PowerEnergySummary/OperatingConditionResult 四类型（序列冻结与统计的
+ *   直接承载——SeriesBuilder/Envelope/PowerEnergy 三公共头的消费面）。
+ *   §4.4 清单的其余类型：DynamicsEnvelope（连同跨工况 mergeEnvelope）随
+ *   WP-17-T07 包络合并落位（DTB §2.18 T07 行——多工况包络合并归 T07）；
+ *   DynamicsEvidence 随 T06/T10 证据装配落位；JointSideSeriesPack 随
+ *   drivetrain 交接任务落位——均不在本任务预建占位（NFR-MNT-04）；
  *   后续任务在同头文件表尾增列即可，既有类型不重排。
  *
  * 背景说明（值语义与线程约束）：全部类型为纯值（深拷贝安全、构造后按
@@ -34,8 +38,13 @@
 #define IRD_DYNAMICS_DYNTYPES_HPP
 
 #include <cstdint>
+#include <string>
+#include <vector>
 
-#include <sdurws/ird/core/Identity.hpp>  // core::ObjectId（对象级稳定身份——ARC-04）
+#include <sdurws/ird/core/DiagData.hpp> // core::DiagnosticRecord（工况级诊断素材——ERR-01）
+#include <sdurws/ird/core/Digest.hpp>   // core::ContentIdentity（序列内容身份——CON-05）
+#include <sdurws/ird/core/Identity.hpp> // core::ObjectId（对象级稳定身份——ARC-04）
+                                        //   ＋core::TaskIdentity（运行身份五元组）
 
 namespace sdurws::ird::dynamics {
 
@@ -163,6 +172,166 @@ struct DynamicsValidity {
      */
     enum class ForwardCheckState { NotRun, Passed, Failed, NotApplicable };
     ForwardCheckState forwardCheck = ForwardCheckState::NotRun;
+};
+
+// =====================================================================
+// 峰值记录（§4.4 PeakRecord——DYN-03：峰值必须报告持续时间窗和所在轨迹
+// 段；WP-17-T04 增列）。
+// =====================================================================
+
+/**
+ * @brief 单量峰值记录（§4.4 原文契约——DYN-03 硬性口径的三要素：值＋
+ *        发生时间＋所在轨迹段，外加持续时间窗与来源工况）。
+ *
+ * 持续时间窗定义（§7.2/D-DYN-8，全卡固定）：|value| 达到峰值的**连续
+ * 样本集合**的最小覆盖时间区间 [windowStartS, windowEndS]——样本级精确
+ * 定义，不引入任何比例阈值（窗的数值等值容差仅在黄金算例逐例声明——
+ * 测试对照口径，附录 D C7）；平顶峰值窗口自然覆盖整段平顶；孤立单样本
+ * 峰值窗宽为零（起点＝终点＝tPeakS）。
+ *
+ * value 的符号语义（按统计量分列，逐量注释——消费方必须按 token 读）：
+ *   - 力矩正向 τ_max⁺＝循环内 max(τ)（带符号实际值——若全循环无正力矩
+ *     则为最接近 0 的负值，信息不丢失）；
+ *   - 力矩反向 τ_max⁻＝循环内 max(−τ)＝|min(τ)| 的幅值形态（§7.2"反向
+ *     分列"——与 max 记号一致，包络跨工况合并对两者都取 max）；
+ *   - 速度/加速度峰值＝循环内 max|q̇|／max|q̈|（幅值，恒非负——§7.2 不
+ *     分列方向）；
+ *   - 功率正向 max(P)、功率反向 max(−P)（§7.2 分列；合并幅值
+ *     max(|P|) 仅用于 PowerEnergySummary.powerPeak 单记录位）。
+ * 值语义纯结构；线程安全。
+ */
+struct PeakRecord {
+    double value;                ///< 峰值（SI：N·m/N/rad·s⁻¹·m·s⁻¹/rad·s⁻²·m·s⁻²/W 等，
+                                 ///<   按量纲行说明与上方符号语义——符号语义逐统计量固定）
+    double tPeakS;               ///< 峰值发生时间，单位 s（首个达到峰值的样本时刻——
+                                 ///<   同值多样本时取时间轴首个，确定性口径）
+    std::uint32_t segmentIndex;  ///< 峰值所在轨迹段（0 基——上游段结构直通）
+    double windowStartS;         ///< 持续时间窗起点，单位 s（峰值样本连续等值 run 的首样本 t）
+    double windowEndS;           ///< 持续时间窗终点，单位 s（同 run 末样本 t）
+    core::ObjectId conditionId;  ///< 来源工况（包络跨工况合并时必填——单工况统计
+                                 ///<   内＝该序列自身工况，透传防丢失）
+};
+
+// =====================================================================
+// 单工况动力学序列（§4.4 DynamicsSeries——逐工况产出；身份块完整；
+// WP-17-T04 增列。构建唯一入口＝SeriesBuilder（SeriesBuilder.hpp）——
+// 排序/完整性/身份冻结/内容身份计算都在其 finalize 执行）。
+// =====================================================================
+
+/**
+ * @brief 单工况动力学序列（§4.4 原文字段序——身份块构造期一次冻结，
+ *        内容块由构建器组装）。
+ *
+ * 排序纪律（§4.6/NFR-COR-02）：samples 按 (conditionId, t 升序,
+ * jointIndex 升序) 稳定排序——单工况序列内 conditionId 恒同，行序由
+ * (t, jointIndex) 决定；同刻度逐关节行序固定。
+ *
+ * contentIdentity（CON-05）：canonical 内容身份（SHA-256）——身份块＋
+ * 有效性块＋全部样本行按固定字段序、固定小端字节编码进摘要（域分隔
+ * magic 起头，防跨域摘要混同）；同输入字节必得同摘要（NFR-COR-02 确
+ * 定性），任何一行任一字段变化都改变摘要（内容寻址失效判据）。
+ *
+ * 线程约束：并发只读安全；构造后不修改（值语义、深拷贝安全——§4.4
+ * "构造后不可变"）。
+ */
+struct DynamicsSeries {
+    // —— 身份块（构造期一次冻结；全部入 series 内容身份编码）——
+    core::ContentIdentity snapshotId;          ///< 绑定快照（评估输入的编译模型来源）
+    core::ContentIdentity sliceId;             ///< 绑定切片（当前性判据——evidence）
+    core::ContentIdentity trajectoryPayloadId; ///< 上游轨迹 payload 内容身份（Trajectory
+                                               ///<   内容身份——不等于轨迹 sliceId，轨迹
+                                               ///<   sliceId 另存于上游引用供失效比对）
+    core::ObjectId conditionId;                ///< 工况对象 ID（样本行 conditionId 的母值）
+    core::ObjectId toolObjectId;               ///< 工具对象 ID（无工具模型＝空 id）
+    std::uint32_t evaluatorContractVersion;    ///< 本域契约版本（kInverseDynContractVersion）
+    std::string   algorithmVersion;            ///< RNEA/统计实现版本 token（如 kRneaAlgorithmVersion）
+    std::string   dynConfigDigest;             ///< config.dyn 摘要（分析配置身份——进结果身份）
+    core::TaskIdentity task;                   ///< 运行身份五元组（TASK-03——结果归档关联键）
+    // —— 内容块 ——
+    std::vector<DynamicsSample> samples;       ///< 逐样本逐关节行（§4.6 排序纪律——见类注释）
+    DynamicsValidity validity;                 ///< 完整性/数值质量/来源摘要（§4.4）
+    std::vector<core::ObjectId> diagRefs;      ///< 诊断引用（对象级；条目本体随
+                                               ///<   EvaluationOutput.diagnostics——builder
+                                               ///<   防御性二次校验的标记也落此处）
+    core::ContentIdentity contentIdentity;     ///< series canonical 内容身份（SHA-256——
+                                               ///<   编码规则见类注释）
+};
+
+// =====================================================================
+// 功率与能量摘要（§4.4 PowerEnergySummary——建议证据项
+// dyn.power-energy-split 的数据面；WP-17-T04 增列）。
+// =====================================================================
+
+/**
+ * @brief 功率与能量摘要（§4.4 原文契约——计算唯一入口＝
+ *        PowerEnergyCalculator（PowerEnergy.hpp），§7.5 符号约定）。
+ *
+ * 能量量纲口径（§4.5 表能量行/P-DYN-9）：core UnitToken R1 表无 Energy
+ * 量纲——能量字段以 SI 真值 double＋本注释承载（单位 J），**不得**引入
+ * 产品侧相对校验容差（runtimeAbsoluteTolerance 无功率/能量/惯量/质量
+ * 默认——统计校验只能测试对照，黄金算例逐例声明）；强类型化若需补齐
+ * 走 core 卡增量修订。
+ *
+ * 无效语义（§4.6"无时间参数"行）：timeParamAvailable=false 时
+ * cycleDurationS/positiveEnergyJ/negativeEnergyJ/netEnergyJ/meanPowerW
+ * 全部显式无效（NaN 位模式）并列入缺失清单——**不伪造 0、不伪造积分**
+ * （NFR-COR-03）；调用方据 validity/样本数判空。
+ * 值语义纯结构；线程安全。
+ */
+struct PowerEnergySummary {
+    /**
+     * @brief 逐关节功率/能量分项行（§4.4 原文字段；量纲按关节类型——
+     *        转动/连续关节 W·s=J 与 N·m 力矩配套、移动关节 W 与 N 配套，
+     *        能量单位恒 J——§4.5 表，类型化不混算：逐关节独立积分）。
+     */
+    struct JointPowerEnergy {
+        std::uint32_t jointIndex;    ///< 关节序号（0 基，链序）
+        double positiveEnergyJ;      ///< E⁺=∫max(P,0)dt，单位 J（驱动/提升/加速——正功）
+        double negativeEnergyJ;      ///< E⁻=∫min(P,0)dt，单位 J（≤0；制动/下降/发电——负功）
+        double netEnergyJ;           ///< E_net=E⁺+E⁻，单位 J
+        double meanPowerW;           ///< 平均功率 E_net/T_cycle，单位 W
+        PeakRecord powerPeak;        ///< 功率峰值（含窗与段——幅值形态 max(|P|)，
+                                     ///<   见 PeakRecord 符号语义；单记录位取合并幅值）
+    };
+    std::vector<JointPowerEnergy> joints; ///< 逐关节行（jointIndex 升序——稳定序）
+    double cycleDurationS;           ///< 完整任务循环时长（含驻留），单位 s＝t_N−t₀
+                                     ///<   （积分边界全跨度）；缺失→NaN（NotProvided
+                                     ///<   语义，不伪造 0）
+    bool includesDwell;              ///< 驻留是否计入（Verified 必须 true——§7.3）。
+                                     ///<   统计器口径＝"积分已按序列全程时间轴执行"：
+                                     ///<   序列可积分（有效样本≥2 且跨度>0）即 true——
+                                     ///<   上游轨迹含驻留段时驻留自动计入（统计器无
+                                     ///<   段类型信息、不做任何速度阈值判定）；序列为
+                                     ///<   部分区间时调用方不得将本摘要当完整循环
+    bool timeParamAvailable;         ///< 时间参数可用性（false 时能量/平均功率字段无效
+                                     ///<   且显式标记——§4.6 不伪造）
+};
+
+// =====================================================================
+// 单工况结果（§4.4 OperatingConditionResult——payload 内聚合形态；
+// WP-17-T04 增列：类型面随统计落位，装配归编排层）。
+// =====================================================================
+
+/**
+ * @brief 单工况结果（§4.4 原文契约——序列＋工况级峰值＋功率能量摘要的
+ *        聚合形态；由编排层把 SeriesBuilder/EnvelopeCalculator/
+ *        PowerEnergyCalculator 的产出装配进来——本单元不提供编排器，
+ *        多工况循环归上层（§10.9））。
+ * 值语义纯结构；线程安全。
+ */
+struct OperatingConditionResult {
+    core::ObjectId conditionId;      ///< 工况 ID（与 series.conditionId 恒同）
+    std::vector<core::ObjectId> caseScope;  ///< 覆盖的 case 集（通常单工况自身；
+                                            ///<   EVI-02 关联——装配层填）
+    DynamicsSeries series;           ///< 序列（身份块见 DynamicsSeries）
+    std::vector<PeakRecord> peaks;   ///< 工况级峰值（逐关节逐量——
+                                     ///<   EnvelopeCalculator::computePeaks 产出；
+                                     ///<   行序＝(jointIndex 升序, 量纲 token 序)，
+                                     ///<   见 Envelope.hpp 的 token 表）
+    PowerEnergySummary powerEnergy;  ///< 功率/能量摘要（PowerEnergyCalculator 产出）
+    DynamicsValidity validity;       ///< 工况级完整性（＝series.validity 的编排层透传）
+    std::vector<core::DiagnosticRecord> diagnostics; ///< 工况级诊断（失败定位到
+                                     ///<   工况/段/样本——core::DiagnosticRecord 素材）
 };
 
 }  // namespace sdurws::ird::dynamics

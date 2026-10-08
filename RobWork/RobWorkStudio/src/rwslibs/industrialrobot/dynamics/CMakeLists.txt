@@ -77,12 +77,32 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # WP-17-T03 增列 src/InverseDynamics.cpp（RNEA 逆动力学评估器实现——卡
 # §3.2 布局表 InverseDynamics.hpp 行：模型提取/末端体合成/几何与力学双
 # 递推/摩擦叠加/样本行组装；自持 Vec3/Mat3 逐元素算术——零 rw 外联符号，
-# 冒烟 header-only 纪律同 runtime RT-T03 先例）。正动力学/统计等实现
-# 翻译单元随 WP-17-T04~T08 按卡 §3.2 布局表增列（ForwardDynamics/
-# SeriesBuilder/Envelope/…——不预建占位实现，NFR-MNT-04）。
+# 冒烟 header-only 纪律同 runtime RT-T03 先例）。
+# WP-17-T04 增列三实现 TU（卡 §3.2 布局表 SeriesBuilder/Envelope/
+# PowerEnergy 行——输出序列与峰值/RMS 统计面）：
+#   src/SeriesBuilder.cpp  §10.3 序列构建（排序/完整性/身份冻结/canonical
+#                          内容身份——SHA-256 编码唯一实现点）；
+#   src/Envelope.cpp       §10.4 统计面（工况级峰值含持续时间窗与所在段
+#                          ＋完整循环时间加权 RMS 含驻留；mergeEnvelope
+#                          多工况包络合并归 WP-17-T07——DTB §2.18 分界）；
+#   src/PowerEnergy.cpp    §10.5 功率/能量（§7.5 符号约定唯一实现点——
+#                          E⁺/E⁻ 分项梯形积分含驻留）。
+# WP-17-T05 增列实现 TU（卡 §3.2 布局表 ForwardDynamics 行——正动力学一致
+# 性检查面）：
+#   src/ForwardDynamics.cpp §6/§10.2 检查器（同源 τ_ref 产出＋单样本 RNEA
+#                          质量阵/偏置力提取＋固定步长 RK4＋误差四元组度量
+#                          ＋发散/数值异常检测＋四态判定——零 rw 外联符号，
+#                          双模式同源可链；引擎选型 P-DYN-7 落位锁定见该
+#                          文件头）。
+# 证据装配等实现翻译单元随 WP-17-T06~T10 按卡 §3.2 布局表增列
+# （Evidence/Evaluators/…——不预建占位实现，NFR-MNT-04）。
 add_library(sdurws_ird_dynamics STATIC
     src/DiagCodes.cpp
-    src/InverseDynamics.cpp)
+    src/InverseDynamics.cpp
+    src/SeriesBuilder.cpp
+    src/Envelope.cpp
+    src/PowerEnergy.cpp
+    src/ForwardDynamics.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：dynamics 公共头使用 C++17 设施（inline constexpr 变量
@@ -255,7 +275,7 @@ add_executable(sdurws_ird_dynamics_test
     test/TestMainReport.cpp
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
-    test/RneaTest.cpp)               # WP-17-T03：RNEA 评估器用例组（DynRnea——
+    test/RneaTest.cpp                # WP-17-T03：RNEA 评估器用例组（DynRnea——
                                      #   二连杆解析算例/静态重力矩含倒挂 AT-37/
                                      #   分项恒等式与 M·q̈ 科氏解析对照/摩擦
                                      #   sgn₀ 约定与 MDL-16 缺失降级/负载事件
@@ -264,6 +284,23 @@ add_executable(sdurws_ird_dynamics_test
                                      #   夹具 test/TwoLinkFixture.hpp（自持
                                      #   CanonicalModel 直构——R-2 不跨单元
                                      #   include 他单元测试私有头）
+    test/StatisticsTest.cpp          # WP-17-T04：序列与统计用例组（DynSeries/
+                                     #   DynEnvelope/DynPowerEnergy——峰值窗与
+                                     #   所在段黄金算例/时间加权 RMS 含驻留解析
+                                     #   对照（禁样本平均对照）/E⁺E⁻ 分项与
+                                     #   制动段符号/序列身份冻结与内容身份确定
+                                     #   性/类型化不混算/Empty 与无效显式 NaN/
+                                     #   fail-fast 边界/RNEA→序列→统计端到端）
+    test/ForwardDynamicsTest.cpp)    # WP-17-T05：正动力学一致性用例组（DynForward——
+                                     #   解析黄金算例〔伸直构型匀加速——τ_ref 恒
+                                     #   定，RK4 对二次多项式轨迹精确〕/四态判定
+                                     #   Passed/Failed/NotRun/NotApplicable/发散
+                                     #   检出 DYN-FD-DIVERGED/质量阵奇异 DYN-FD-
+                                     #   NUMERIC-ANOMALY/负载事件共源/取消语义/
+                                     #   确定性复现/fail-fast 前置——任务契约
+                                     #   acceptance 1 执行证明面）；夹具复用
+                                     #   test/TwoLinkFixture.hpp＋本地全零物性
+                                     #   模型直构（数值异常算例）
 
 target_compile_features(sdurws_ird_dynamics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_test PROPERTIES
@@ -345,11 +382,16 @@ add_executable(sdurws_ird_dynamics_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
     contract_test/DynamicsPluginAssemblyContractTest.cpp
-    contract_test/RneaBoundaryContractTest.cpp)  # WP-17-T03：RNEA 面单元边界
+    contract_test/RneaBoundaryContractTest.cpp      # WP-17-T03：RNEA 面单元边界
                                      #   契约（DynRneaBoundary——DYN-04 关节侧
                                      #   零传动映射消费符号词表扫描〔V-28/V-31
                                      #   静态精神〕＋产品面 include 白名单
                                      #   〔R-1/R-2——五登记边＋本单元〕）
+    contract_test/ForwardDynamicsBoundaryContractTest.cpp)  # WP-17-T05：正动力学
+                                     #   面单元边界契约（DynForwardBoundary——
+                                     #   P-DYN-7 落位选型静态钉扎〔零 rwsim
+                                     #   物理引擎消费符号词表扫描〕＋公共契约
+                                     #   形态编译期核对〔词表锁定值/四态同源〕）
 
 target_compile_features(sdurws_ird_dynamics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_contract_test PROPERTIES
