@@ -1,8 +1,9 @@
 /**
  * @file   Lifecycle.cpp
  * @brief  生命周期入口流程编排的实现——新建项目三步向导（PM-01）＋打开
- *         协议（PM-02 五步的 workflow 面）＋最近项目管理（PM-10）＋无
- *         项目首页数据面（PM-10）。
+ *         协议（PM-02 五步的 workflow 面）＋关闭/切换/退出统一确认编排
+ *         （PM-03——§7.3）＋方案分支切换（PM-12 零写入会话选择）＋最近
+ *         项目管理（PM-10）＋无项目首页数据面（PM-10）。
  *
  * 设计依据见公共头 Lifecycle.hpp 文件头（本实现文件只补充逐段实现口径；
  * 段落注释对应头注释的编排序——两处同步维护，改逻辑必改两处）。
@@ -20,9 +21,11 @@
 #include <sdurws/ird/workflow/Lifecycle.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <cctype>
 #include <exception>
 #include <system_error>
+#include <thread>
 #include <utility>
 
 namespace sdurws {
@@ -567,6 +570,332 @@ OpenProjectOutcome OpenProjectFlow::run(OpenSource source,
         outcome.failure = std::move(failure);
         return outcome;
     }
+}
+
+// =====================================================================
+// 关闭/切换/退出统一确认编排（PM-03——§7.3；WP-22-T06）
+// =====================================================================
+
+std::string closeScenarioKey(CloseKind kind)
+{
+    // 场景键＝前缀＋kind token（封闭集字面拼接——唯一映射点，NFR-MNT-03；
+    // 值归 ui 文案资源，UX-02 键/值半区分工）。
+    switch (kind) {
+    case CloseKind::Close:  return std::string(kCloseFlowScenarioPrefix) + "close";
+    case CloseKind::Switch: return std::string(kCloseFlowScenarioPrefix) + "switch";
+    case CloseKind::Exit:   return std::string(kCloseFlowScenarioPrefix) + "exit";
+    }
+    return {};  // 词表外值（三值枚举不可构造——防御性；空串暴露而非伪造键）
+}
+
+std::vector<std::string> closeTaskStateTokens(const std::vector<core::TaskState>& states)
+{
+    // 短标签数据源纪律（§7.3 注二）：词表归 core/execution，workflow 只
+    // 取数呈现——逐态经 core::toToken 冻结表（小写连字符，core.md §4.7）
+    // 转换，零新增状态词（SA-12）、零重排序（输入序即输出序）。
+    std::vector<std::string> tokens;
+    tokens.reserve(states.size());
+    for (const core::TaskState state : states) {
+        tokens.emplace_back(core::toToken(state));
+    }
+    return tokens;
+}
+
+namespace {
+
+/// 关闭失败的 UX-03 三字段装配（封闭槽位文案——编排器直产人读呈现面，
+/// 同 OpenProjectFlow::run 先例；D-WF-7 零新增稳定码：cause 透传对端
+/// detail 原文，码的用户文案归 diagnostics 供文案链路）。
+CloseFlowFailure makeCloseFailure(std::string context,
+                                  std::string cause,
+                                  std::string action)
+{
+    CloseFlowFailure failure;
+    failure.context = std::move(context);
+    failure.cause = std::move(cause);
+    failure.recommendedAction = std::move(action);
+    return failure;
+}
+
+/// 轮询等待存储上下文进入 Closed（A7"等待"选项的实现锚点——project §9.7
+/// Draining 排空协议：requestClose 拒绝新写并等待在途引用〔在途归档会话/
+/// 在途事务/草稿落盘〕归零后自动收尾；project.md"ui 关闭对话框'等待'
+/// 分支轮询 closed()"明文口径）。
+///
+/// 轮询无上限＝A7 语义本身（project.md §9.7："本契约不设超时参数，
+/// Draining 可能长期等待是'等待'选项的语义本身"）；有界性由 execution
+/// 终态路径全部释放归档引用（"不存在无 abandon 的终结路径"）＋L5 关闭
+/// 控制器超阈值强制 abandonAll 兜底保证——编排线程只观察不推进（睡眠
+/// 1 ms 一拍，避免忙等烧核；closed() 为内部互斥的快照查询，并发安全）。
+void awaitStoreClosed(project::ProjectStore& store)
+{
+    while (!store.closed()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+}
+
+/// 草稿三选的共用执行段（CloseFlow 与 SchemeBranchSwitchFlow 的 D1/C1
+/// 复用——两流程的三选词表与动作语义完全一致，PM-12 明文复用 PM-04 规则）。
+///
+/// @param kind          [in] 对话框上下文（Close/Switch/Exit）
+/// @param scenarioKey   [in] 场景文案键（项目关闭族／方案分支切换）
+/// @param draftModules  [in] 未应用草稿模块清单（非空前置——调用方保证）
+/// @param decisions     [in] 决策收集端口
+/// @param drafts        [in] 草稿处置端口
+/// @param contextText   [in] 失败呈现的上下文词面（场景描述）
+/// @return nullopt＝三选完成（保存/放弃成功——流程继续）；非空＝编排
+///         终止（Aborted/Failed＋中止阶段/失败呈现已装配进返回值对——
+///         first=是否中止〔true=用户取消〕，second=失败呈现〔仅 Failed〕）
+std::optional<std::pair<bool, std::optional<CloseFlowFailure>>>
+runDraftDispositionStage(CloseKind kind,
+                         const std::string& scenarioKey,
+                         std::vector<std::string> draftModules,
+                         ICloseDecisionPort& decisions,
+                         ICloseDraftPort& drafts,
+                         const std::string& contextText)
+{
+    // 决策点（C1）：呈现材料＝草稿模块清单（"将丢失哪些编辑"）＋场景键。
+    CloseDialogData data;
+    data.kind = kind;
+    data.scenarioKey = scenarioKey;
+    data.draftModules = std::move(draftModules);
+    const DraftDisposition disposition = decisions.collectDraftDisposition(data);
+
+    // 取消＝中止整个流程（PM-03"取消可中止"——AT-20/21 观测点）：编排
+    // 立即终止，草稿保持原状、零排空零关闭（取消不是错误——UX-03）。
+    if (disposition == DraftDisposition::Cancel) {
+        return std::make_pair(true, std::nullopt);
+    }
+
+    // 保存（PM-04 保存语义——仅落 drafts/ 零修订）或放弃：动作失败如实
+    // 呈现并终止（不带病排空——失败语义独立成立）。
+    const bool actionOk = (disposition == DraftDisposition::Save)
+                              ? drafts.saveDrafts()
+                              : drafts.discardDrafts();
+    if (!actionOk) {
+        return std::make_pair(
+            false,
+            std::make_optional(makeCloseFailure(
+                contextText,
+                "未应用草稿的保存/放弃动作未能完成",
+                "请检查磁盘可用性与项目写权限后重试关闭")));
+    }
+    return std::nullopt;  // 三选完成——流程继续
+}
+
+}  // namespace
+
+CloseFlowOutcome CloseFlow::run(CloseKind kind,
+                                project::ProjectStore& currentStore,
+                                const CloseFlowRequest& request)
+{
+    // ---- 第 1 段：前置校验（调用方装配违约 fail-fast）----
+    // 三端口缺一即无法编排（决策/草稿/排空各承担流程的一段）；候选路径
+    // 与 kind 的匹配约束见 CloseFlowRequest 注（Switch 必填、其余必空——
+    // 携带错位说明宿主把请求装配错了对象）。
+    if (request.decisions == nullptr || request.drafts == nullptr
+        || request.drain == nullptr) {
+        throw WorkflowError(
+            "CloseFlow::run: 决策/草稿/排空端口任一为空（装配违约）");
+    }
+    if (kind == CloseKind::Switch && request.candidatePath.empty()) {
+        throw WorkflowError(
+            "CloseFlow::run: Switch 请求缺少候选项目路径（装配违约）");
+    }
+    if (kind != CloseKind::Switch && !request.candidatePath.empty()) {
+        throw WorkflowError(
+            "CloseFlow::run: 非 Switch 请求携带了候选项目路径（装配违约）");
+    }
+
+    CloseFlowOutcome outcome;
+
+    // ---- 第 2 段：草稿三选（D1/C1——未应用草稿？）----
+    // 合一取数（空清单＝无草稿——跳过决策点，零决策调用）。
+    std::vector<std::string> draftModules =
+        request.drafts->unappliedDraftModules();
+    if (!draftModules.empty()) {
+        const auto stageResult = runDraftDispositionStage(
+            kind, closeScenarioKey(kind), std::move(draftModules),
+            *request.decisions, *request.drafts, "关闭项目");
+        if (stageResult.has_value()) {
+            if (stageResult->first) {
+                // 用户取消——中止整个流程（排空/关闭零发生，当前项目原状）。
+                outcome.result = CloseFlowOutcome::Result::Aborted;
+                outcome.abortedAt = CloseFlowOutcome::AbortStage::DraftPrompt;
+            } else {
+                // 草稿处置失败——Failed 呈现（不带病排空）。
+                outcome.result = CloseFlowOutcome::Result::Failed;
+                outcome.failure = std::move(stageResult->second);
+            }
+            return outcome;
+        }
+    }
+
+    // ---- 第 3 段：任务二选（D2/C2——运行中任务？）----
+    // 先取九态清单（对话框内嵌任务清单——PM-03"9 态短标签"数据源），
+    // 有非终态任务才进入决策点。
+    bool skipSchedulerDrain = false;  // 协作取消分支已含排空（免重复 shutdown）
+    if (request.drain->hasActiveTask(request.projectId)) {
+        CloseDialogData data;
+        data.kind = kind;
+        data.scenarioKey = closeScenarioKey(kind);
+        data.taskStates = request.drain->taskStates(request.projectId);
+        const RunningTaskDecision decision =
+            request.decisions->collectRunningTaskDecision(data);
+        switch (decision) {
+        case RunningTaskDecision::CancelFlow:
+            // 取消流程——中止（草稿已按用户决策处置；排空/关闭零发生）。
+            outcome.result = CloseFlowOutcome::Result::Aborted;
+            outcome.abortedAt = CloseFlowOutcome::AbortStage::TaskPrompt;
+            return outcome;
+        case RunningTaskDecision::CooperativeCancel:
+            // 协作取消（CANCEL 节点）：逐任务 requestCancel→取消协议
+            // （worker 回收＋临时目录清理＋归档 abandon——"取消即清理
+            // 临时区"，承载归 execution）→排空。失败如实呈现。
+            outcome.cooperativeCancelled = true;
+            if (!request.drain->cooperativeCancel()) {
+                outcome.result = CloseFlowOutcome::Result::Failed;
+                outcome.failure = std::make_optional(makeCloseFailure(
+                    "关闭项目",
+                    "协作取消未能在承诺窗口内完成排空",
+                    "请查看任务清单中的任务状态后重试关闭"));
+                return outcome;
+            }
+            skipSchedulerDrain = true;  // 取消分支已含排空——第 4 段免重复
+            break;
+        case RunningTaskDecision::Wait:
+            // 等待（A7"等待"选项）：排空动作统一在第 4 段执行——此处只
+            // 进入后续流程（观测位在第 4 段置位）。
+            break;
+        }
+    }
+
+    // ---- 第 4 段：调度排空（DRAIN 前半——execution §7.5）----
+    // 无任务（D2"否"边）与"等待"选择都走幂等排空（shutdown(
+    // CancelQueuedAndWait)＋轮询 drained——无任务时即刻满足）；协作取消
+    // 分支的排空已在其端口实现内完成（skipSchedulerDrain）。
+    if (!skipSchedulerDrain) {
+        outcome.waitedForArchiveDrain = true;
+        if (!request.drain->waitDrain()) {
+            outcome.result = CloseFlowOutcome::Result::Failed;
+            outcome.failure = std::make_optional(makeCloseFailure(
+                "关闭项目",
+                "任务排空未能在承诺窗口内完成（在途运行未全部终结）",
+                "请查看任务清单中的任务状态后重试关闭"));
+            return outcome;
+        }
+    }
+
+    // ---- 第 5 段：候选验证（SWITCH——仅 Switch；在存储上下文关闭之前）----
+    // 切换＝关闭后候选验证成功才切上下文（§7.3 SWITCH 节点）：候选经
+    // ProjectStoreFactory::open 完整构造才算成功（激活前失败不影响当前
+    // 项目——project §8.7；open 从不写当前项目）。验证失败时当前 store
+    // 未被触碰（第 6 段的 requestClose 尚未发生）——"验证失败不动当前
+    // 项目"在此为编排序保证（契约测试以真实落盘双项目复核）。
+    std::unique_ptr<project::ProjectStore> candidate;
+    if (kind == CloseKind::Switch) {
+        project::OpenStoreRequest openRequest;
+        openRequest.path = request.candidatePath;
+        openRequest.mode = project::OpenMode::Writable;  // 请求写权限；被持锁
+                                                         // 时服务侧降级只读
+                                                         // （PM-07 不阻塞等待）
+        try {
+            project::OpenStoreResult opened =
+                project::ProjectStoreFactory::open(openRequest);
+            candidate = std::move(opened.store);
+        } catch (const project::StoreError& e) {
+            // 候选打开失败——UX-03 呈现（cause＝detail 原文透传，含对端
+            // 稳定码语义与 path=/file= 定位键——D-WF-7 零加工）。
+            outcome.result = CloseFlowOutcome::Result::Failed;
+            outcome.failure = std::make_optional(makeCloseFailure(
+                request.candidatePath.u8string(), e.what(),
+                "当前项目保持原状；请解决候选项目的问题后重新发起切换"));
+            return outcome;
+        } catch (const std::exception& e) {
+            // 非对端分类的环境异常——同样值轨道呈现，不穿透编排器。
+            outcome.result = CloseFlowOutcome::Result::Failed;
+            outcome.failure = std::make_optional(makeCloseFailure(
+                request.candidatePath.u8string(), e.what(),
+                "当前项目保持原状；请检查候选项目目录后重新发起切换"));
+            return outcome;
+        }
+    }
+
+    // ---- 第 6 段：存储上下文排空（DRAIN 后半——A7 等待实现锚点）----
+    // requestClose：Active→Draining（拒绝新写），在途引用归零后自动收尾
+    // （在途归档完成＋草稿落盘完成＝A7 的排空完成定义）；幂等——Closed
+    // 态重入只返回当前在途数。在途>0 时轮询 closed()（"等待"选项即等待
+    // 此完成——见 awaitStoreClosed 注）。
+    (void)currentStore.requestClose();
+    awaitStoreClosed(currentStore);
+
+    // ---- 第 7 段：结果（Proceed——切换上下文的材料移交）----
+    // Switch：候选移交调用方激活（界面会话切至候选——S7 时序）；Close/
+    // Exit：界面会话结束由调用方执行（退出复用同一流程——kind 仅登记）。
+    outcome.result = CloseFlowOutcome::Result::Proceed;
+    if (kind == CloseKind::Switch) {
+        outcome.candidateStore = std::move(candidate);
+    }
+    return outcome;
+}
+
+// =====================================================================
+// 方案分支切换编排（PM-12——§7.3 注三条；零写入会话选择；WP-22-T06）
+// =====================================================================
+
+SchemeBranchSwitchOutcome SchemeBranchSwitchFlow::run(
+    const SchemeBranchSwitchRequest& request,
+    ICloseDecisionPort& decisions,
+    ICloseDraftPort& drafts)
+{
+    // ---- 第 1 段：前置校验（调用方装配违约 fail-fast）----
+    // 同分支切换＝宿主装配缺陷：分支清单呈现层应禁用当前分支项（选择面
+    // 已挡），到不了编排核——零写入承诺不覆盖这种无意义调用（fail-fast
+    // 暴露装配错误，不静默放行）。空目标用 isValid()（全零保留值纪律——
+    // core.md §4.1 U-1；toCanonical 对全零值产出"brn-"＋全零文本而非
+    // 空串，不能以空文本判空）。
+    const std::string currentText = request.currentBranch.toCanonical();
+    const std::string targetText = request.targetBranch.toCanonical();
+    if (!request.targetBranch.isValid() || targetText == currentText) {
+        throw WorkflowError(
+            "SchemeBranchSwitchFlow::run: 目标分支为空或与当前分支相同"
+            "（同分支切换＝装配违约）");
+    }
+
+    SchemeBranchSwitchOutcome outcome;
+
+    // ---- 第 2 段：草稿处置前置（PM-12→PM-04 规则）----
+    // 分支切换前先处置未应用草稿（PM-12 明文引用 PM-04 规则——三选词表
+    // 与动作语义复用 CloseFlow 同段；保存＝在原分支落盘）。注意：此处
+    // 的草稿落盘/放弃是**用户显式决策**的 PM-04 写，不属于"切换写"——
+    // PM-12 零写入承诺的对象是切换动作本身（无修订、不写 HEAD）。
+    std::vector<std::string> draftModules = drafts.unappliedDraftModules();
+    if (!draftModules.empty()) {
+        const auto stageResult = runDraftDispositionStage(
+            CloseKind::Switch, kSchemeSwitchScenarioKey,
+            std::move(draftModules), decisions, drafts, "切换方案分支");
+        if (stageResult.has_value()) {
+            if (stageResult->first) {
+                // 用户取消——切换零发生（草稿原状、活动分支不变）。
+                outcome.result = SchemeBranchSwitchOutcome::Result::Aborted;
+                outcome.abortedAt = CloseFlowOutcome::AbortStage::DraftPrompt;
+            } else {
+                outcome.result = SchemeBranchSwitchOutcome::Result::Failed;
+                outcome.failure = std::move(stageResult->second);
+            }
+            return outcome;
+        }
+    }
+
+    // ---- 第 3 段：切换批准（Proceed——零写入的结构性落点）----
+    // 编排核全程不触存储上下文（run 签名零 store 参数——不存在产生修订
+    // 或写 HEAD 的代码路径）；活动分支登记由宿主会话层经 project 会话
+    // 接口应用（project.md §4.5：切换＝纯会话选择——不产生修订、不写
+    // 任何文件含 HEAD；HEAD 记录的是"最后一次提交所在分支"）。URDF
+    // 基线修订只读的编辑禁令归 project/modeling 侧强制（N3/N5），切换
+    // 本身允许切至基线分支查看——编排核不越权拒绝（PA-1）。
+    outcome.result = SchemeBranchSwitchOutcome::Result::Proceed;
+    return outcome;
 }
 
 // =====================================================================

@@ -75,6 +75,12 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 # 失败呈现 UX-03＋具体文件定位）、IRecentProjectsService/RecentProjects-
 # Service（PM-10 上限 10/去重/失效标记/移除）、buildNoProjectHomeScreen
 # （入口禁用数据）；零业务域头（R-1）维持）。
+# WP-22-T06 增列（§7.3 关闭/切换/退出统一确认——同头追加：CloseFlow::run
+# 编排（PM-03 三选/二选/9 态短标签——决策/草稿/排空三端口接缝，存储
+# 上下文排空经 project requestClose/closed 白名单边；execution 侧排空经
+# ICloseDrainPort 端口承载——零 execution 头依赖）、SchemeBranchSwitchFlow::
+# run（PM-12 零写入会话选择——签名零 store 的结构性保证）；零业务域头
+# （R-1）维持）。
 add_library(sdurws_ird_workflow STATIC
     src/Workflow.cpp
     src/Types.cpp       # 词表与映射（§4.2 域↔阶段表／UX-02 文案键唯一构造点）
@@ -222,9 +228,12 @@ add_executable(sdurws_ird_workflow_test
     test/GateAdviceTest.cpp
     test/LifecycleTest.cpp  # 新建向导模型测试（WP-22-T04——词表/校验/摘要/
                             # P-03 零数值/commit 前置契约）
-    test/OpenWizardHomeTest.cpp)  # 打开分流/最近项目/首页模型测试（WP-22-T05——
+    test/OpenWizardHomeTest.cpp  # 打开分流/最近项目/首页模型测试（WP-22-T05——
                                   # PM-02 格式识别与失败呈现、PM-10 容量/去重/
                                   # 失效标记/移除、入口禁用数据）
+    test/CloseFlowTest.cpp)  # 关闭/切换/退出统一确认模型测试（WP-22-T06——
+                             # PM-03 三选/二选/9 态短标签/取消中止、PM-12
+                             # 零写入编排、前置 fail-fast；全桩直调编排核）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -312,9 +321,13 @@ add_executable(sdurws_ird_workflow_contract_test
                                                     # createNew＋①端口真实落盘
                                                     # 契约；领域处理器为测试桩，
                                                     # R-1 不链 modeling）
-    contract_test/OpenWizardContractTest.cpp)  # WF-VER-205/206（WP-22-T05——打开
-                                               # 五步协议三入口真实落盘＋失败
-                                               # 不动当前项目 Fault 契约）
+    contract_test/OpenWizardContractTest.cpp  # WF-VER-205/206（WP-22-T05——打开
+                                              # 五步协议三入口真实落盘＋失败
+                                              # 不动当前项目 Fault 契约）
+    contract_test/CloseFlowContractTest.cpp)  # WF-VER-209~212（WP-22-T06——统一
+                                              # 确认数据面＋取消中止＋A7 等待
+                                              # 排空＋协作取消＋PM-12 零写入＋
+                                              # 切换候选验证，真实落盘契约）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
