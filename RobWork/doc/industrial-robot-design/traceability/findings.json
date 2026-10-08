@@ -5473,6 +5473,15 @@
       "registeredAt": "2026-10-08",
       "title": "命令置灰的禁用原因呈现面缺口——draft.apply 因就绪阻断禁用时应携带原因键文案（applyDraftDisablement→reason.readiness-blocking→统一原因解析），所有者实测悬停无提示文字；ERR-01/可用性「禁用必带原因」体验口径下菜单动作的 disableReason→tooltip 传递链存在缺口（或该次禁用源于无原因键的其它门控——随 F-552 定位一并厘清）",
       "owner": "ui 呈现批次（disableReason→tooltip 传递链排查＋补齐；与 F-552 定位联动厘清禁用来源）"
+    },
+    {
+      "id": "F-554",
+      "source": "F-496 十步人工验收所有者执行实录（2026-10-08——首应用成功后「不论操作什么，应用草稿始终是灰色」；代码梳理定位宿主就绪门控五处空闭包上下文）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-08",
+      "title": "宿主需求就绪门控/就绪绑定的五处计算点全部以空 CheckContext（closureRefs 空）调用域检查器——首应用前根引用表四槽未回填（R0 闭包核对天然跳过）缺陷潜伏；首应用后四槽被 allocateNew 回填（槽有值），R0 以空闭包判定恒「根引用表槽指向的对象不在修订闭包中（悬空）」→Blocking→applyDraftDisablement 恒禁用＝应用草稿恒灰（首应用成功后不论做什么）。五处＝applyDraftDisablement 门控/wireRequirementsSession 首刷/setPostEditAction 编辑后重估/refreshRequirementsFromSession 重导线/空根初始化路径；面板校验页同源同误（呈现与门控一致地错误——自洽但均失真）。域检查器/域逻辑零缺陷（测试面传入正确闭包全绿）",
+      "owner": "UI-T75 返工段修复（currentRequirementsCheckContext() 现取 HEAD objectRefs 统一五处；十套件回归全绿）；待所有者换装新 exe 复验（首应用→二次编辑→应用应保持可用）后翻转 fixed。关联观察：requirements captureTcpAsFixedPoint 内 CheckContext{} 同形调用（需求域内部口径——是否需真闭包随 F-551/F-496 链路后续核对）"
     }
   ]
 }

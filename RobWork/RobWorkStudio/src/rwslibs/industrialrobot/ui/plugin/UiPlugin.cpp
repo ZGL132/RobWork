@@ -906,7 +906,7 @@ void IrdWorkbenchHostPlugin::initialize()
         }
         const requirements::RequirementReadinessReport report =
             m_requirementsReadinessChecker.check(
-                m_requirementsEditor.workingSet(), requirements::CheckContext{});
+                m_requirementsEditor.workingSet(), currentRequirementsCheckContext());
         if (report.hasBlocking()) {
             return ui::DisableReason{"reason.readiness-blocking"};
         }
@@ -2579,7 +2579,7 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
         // 语义在"根未挂载"场景是正确态——与提交回执回填衔接）。
         requirements.noteAppliedRevision(head.id, std::nullopt);
         requirements.bindReadiness(m_requirementsReadinessChecker.check(
-            m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+            m_requirementsEditor.workingSet(), currentRequirementsCheckContext()));
         if (m_diag.pipeline != nullptr) {
             m_diag.pipeline->logDev(
                 kPluginDevChannel,
@@ -2607,14 +2607,14 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
     // 最小校验（UI-T29）：首刷就绪报告——判定权威＝域侧 checker，本宿主
     // 取 check 产出直投会话态（P-REQ-6：呈现数据零判定）。
     requirements.bindReadiness(m_requirementsReadinessChecker.check(
-        m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+        m_requirementsEditor.workingSet(), currentRequirementsCheckContext()));
 
     // 编辑后动作：重估就绪→bindReadiness（注册表谓词按当前会话态求值
     // ——draft.apply 门控随之刷新）＋面板校验页经模块组合子以最新报告
     // refreshPanel（编辑态即时预检的呈现收口）。
     requirements.setPostEditAction([this, &requirements]() {
         requirements.bindReadiness(m_requirementsReadinessChecker.check(
-            m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+            m_requirementsEditor.workingSet(), currentRequirementsCheckContext()));
     });
 }
 
@@ -2628,6 +2628,20 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
  * 多分支选择器随收口任务）。状态行按遍历报告汇总（无草稿域计数＋提交
  * 结果），域级细节经 Dev 通道留痕。
  */
+requirements::CheckContext
+IrdWorkbenchHostPlugin::currentRequirementsCheckContext() const
+{
+    // 闭包上下文＝当前 HEAD 的 objectRefs（与 wireRequirementsSession 的
+    // HEAD 读取同源——store 查询端口现取）。F-554 根因修复的机制面：首应
+    // 用后根引用表槽位被回填，空上下文的 R0 闭包核对必误判「悬空」。
+    requirements::CheckContext ctx;
+    if (m_lastStoreAdapter != nullptr) {
+        ctx.closureRefs =
+            m_lastStoreAdapter->projectStore().query().head().objectRefs;
+    }
+    return ctx;
+}
+
 CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
     const std::vector<CommandParameter>& params)
 {
@@ -2864,7 +2878,7 @@ void IrdWorkbenchHostPlugin::refreshRequirementsFromSession()
     }
     auto& requirements = *m_domains->requirements;
     requirements.bindReadiness(m_requirementsReadinessChecker.check(
-        m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+        m_requirementsEditor.workingSet(), currentRequirementsCheckContext()));
     requirements.refreshFromSession();
 }
 
