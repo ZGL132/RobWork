@@ -19,12 +19,14 @@
  *   类型——WP-17-T03 落地 DynJointType/SampleNumericState/DynamicsSample/
  *   DynamicsValidity 四类型；WP-17-T04 表尾增列 PeakRecord/DynamicsSeries/
  *   PowerEnergySummary/OperatingConditionResult 四类型（序列冻结与统计的
- *   直接承载——SeriesBuilder/Envelope/PowerEnergy 三公共头的消费面）。
- *   §4.4 清单的其余类型：DynamicsEnvelope（连同跨工况 mergeEnvelope）随
- *   WP-17-T07 包络合并落位（DTB §2.18 T07 行——多工况包络合并归 T07）；
- *   DynamicsEvidence 随 T06/T10 证据装配落位；JointSideSeriesPack 随
- *   drivetrain 交接任务落位——均不在本任务预建占位（NFR-MNT-04）；
- *   后续任务在同头文件表尾增列即可，既有类型不重排。
+ *   直接承载——SeriesBuilder/Envelope/PowerEnergy 三公共头的消费面）；
+ *   WP-17-T06 表尾增列 DynamicsEvidence（证据装配视图——§10.6
+ *   IDynamicsEvidenceBuilder::build 的返回承载，§8.4 dyn Profile 域内
+ *   组织形态）。§4.4 清单的其余类型：DynamicsEnvelope（连同跨工况
+ *   mergeEnvelope）随 WP-17-T07 包络合并落位（DTB §2.18 T07 行——多工况
+ *   包络合并归 T07）；JointSideSeriesPack 随 drivetrain 交接任务落位——
+ *   均不在本任务预建占位（NFR-MNT-04）；后续任务在同头文件表尾增列即可，
+ *   既有类型不重排。
  *
  * 背景说明（值语义与线程约束）：全部类型为纯值（深拷贝安全、构造后按
  *   语义只读——DynamicsSample 构造后不修改）；并发只读安全、构建期单线程
@@ -332,6 +334,44 @@ struct OperatingConditionResult {
     DynamicsValidity validity;       ///< 工况级完整性（＝series.validity 的编排层透传）
     std::vector<core::DiagnosticRecord> diagnostics; ///< 工况级诊断（失败定位到
                                      ///<   工况/段/样本——core::DiagnosticRecord 素材）
+};
+
+// =====================================================================
+// 证据装配视图（§4.4 DynamicsEvidence——评估器出口 EvaluationOutput 的
+// 域内组织形态；WP-17-T06 增列：§10.6 IDynamicsEvidenceBuilder::build 的
+// 返回承载，§8.4 dyn Profile 六项的域内组织面）。
+// =====================================================================
+
+/**
+ * @brief 证据装配视图（§4.4 原文契约——dyn Profile 六项素材的域内组织
+ *        形态；本体为 evidence EvidenceItem（§6.2——itemId/status/
+ *        artifactDigest/caseScope/subject/notApplicableReason/
+ *        invalidReason），经 DynamicsEvidenceBuilder（EvidenceBuilder.hpp）
+ *        逐项装配产出，本结构仅组织域内素材、不替代证据项清单）。
+ *
+ * 组织口径（§8.4 dyn Profile 表逐行——必需四项/建议两项）：
+ *   - seriesRefs            ← dyn.joint-generalized-force-series（必需项 ①）
+ *   - statsRefs             ← dyn.peak-rms-statistics（必需项 ②）
+ *   - provenanceRefs        ← dyn.property-friction-provenance（必需项 ③——
+ *                             物性/摩擦来源标记；缺失按 DYN-06 降级并列入
+ *                             缺失清单）
+ *   - loadConditionRefs     ← dyn.load-condition-identity（必需项 ④）
+ *   - powerEnergyAvailable  ← dyn.power-energy-split（建议项——数据完整时 true）
+ *   - forwardCheckAvailable ← dyn.forward-dynamics-consistency（建议项）
+ *
+ * 各 refs 组只在对应证据项 Satisfied 时非空（引用＝该单工况的
+ * conditionId——域内素材按工况组织；Missing/Invalid/Unverified/NotApplicable
+ * 态的逐项状态、原因与产物摘要由 builder 的 evidenceItems() 逐项承载，
+ * 不在本结构重复——单一事实源）。
+ * 值语义纯结构；线程安全。
+ */
+struct DynamicsEvidence {
+    std::vector<core::ObjectId> seriesRefs;   ///< 关节侧广义力序列引用（必需项 ①）
+    std::vector<core::ObjectId> statsRefs;    ///< 峰值/RMS 统计引用（必需项 ②）
+    std::vector<core::ObjectId> provenanceRefs; ///< 物性/摩擦来源标记引用（必需项 ③）
+    std::vector<core::ObjectId> loadConditionRefs; ///< 负载工况标识引用（必需项 ④）
+    bool powerEnergyAvailable = false;        ///< 建议项：功率/能量分项（数据完整时产出）
+    bool forwardCheckAvailable = false;       ///< 建议项：正动力学一致性检查记录
 };
 
 }  // namespace sdurws::ird::dynamics

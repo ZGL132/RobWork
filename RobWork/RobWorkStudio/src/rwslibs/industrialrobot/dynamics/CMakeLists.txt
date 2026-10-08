@@ -94,15 +94,24 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #                          ＋发散/数值异常检测＋四态判定——零 rw 外联符号，
 #                          双模式同源可链；引擎选型 P-DYN-7 落位锁定见该
 #                          文件头）。
-# 证据装配等实现翻译单元随 WP-17-T06~T10 按卡 §3.2 布局表增列
-# （Evidence/Evaluators/…——不预建占位实现，NFR-MNT-04）。
+# WP-17-T06 增列实现 TU（卡 §3.2 布局表 Evidence 行——证据装配面）：
+#   src/EvidenceBuilder.cpp §10.6/§8.4/§5.5 证据装配器（dyn Profile 六项
+#                          状态判定＋数据不足降级表达〔必需项 Invalid/
+#                          Unverified＋DYN-FRICTION-MISSING/DYN-PROPERTY-
+#                          DOWNGRADED 稳定码诊断〕＋缺失清单全量组装＋
+#                          DYN-06 限定语单点判定＋产物摘要投影——DYN-06
+#                          降级经 evidence 证据表达的唯一执行点）。
+# 评估器注册等实现翻译单元随 WP-17-T07~T10 按卡 §3.2 布局表增列
+# （Evaluators/TrajectorySourcePort/Commands/Handoff——不预建占位实现，
+# NFR-MNT-04）。
 add_library(sdurws_ird_dynamics STATIC
     src/DiagCodes.cpp
     src/InverseDynamics.cpp
     src/SeriesBuilder.cpp
     src/Envelope.cpp
     src/PowerEnergy.cpp
-    src/ForwardDynamics.cpp)
+    src/ForwardDynamics.cpp
+    src/EvidenceBuilder.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：dynamics 公共头使用 C++17 设施（inline constexpr 变量
@@ -291,7 +300,7 @@ add_executable(sdurws_ird_dynamics_test
                                      #   制动段符号/序列身份冻结与内容身份确定
                                      #   性/类型化不混算/Empty 与无效显式 NaN/
                                      #   fail-fast 边界/RNEA→序列→统计端到端）
-    test/ForwardDynamicsTest.cpp)    # WP-17-T05：正动力学一致性用例组（DynForward——
+    test/ForwardDynamicsTest.cpp     # WP-17-T05：正动力学一致性用例组（DynForward——
                                      #   解析黄金算例〔伸直构型匀加速——τ_ref 恒
                                      #   定，RK4 对二次多项式轨迹精确〕/四态判定
                                      #   Passed/Failed/NotRun/NotApplicable/发散
@@ -301,6 +310,16 @@ add_executable(sdurws_ird_dynamics_test
                                      #   acceptance 1 执行证明面）；夹具复用
                                      #   test/TwoLinkFixture.hpp＋本地全零物性
                                      #   模型直构（数值异常算例）
+    test/EvidenceBuilderTest.cpp)    # WP-17-T06：证据装配用例组（DynEvidence——
+                                     #   dynProfile 表 4 对账与真实注册面/干净链
+                                     #   全 Satisfied 无限定语/摩擦缺失→provenance
+                                     #   项 Invalid＋DYN-FRICTION-MISSING＋缺失
+                                     #   清单对账〔V-09〕/估算物性→estimated 限
+                                     #   定语不包装精确〔V-10〕/缺失清单全量不短
+                                     #   路/正动力学四态映射/fail-fast 契约面/
+                                     #   Empty 与未 build 访问器——任务契约
+                                     #   acceptance 1/2 执行证明面）；夹具复用
+                                     #   test/TwoLinkFixture.hpp
 
 target_compile_features(sdurws_ird_dynamics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_test PROPERTIES
@@ -387,11 +406,18 @@ add_executable(sdurws_ird_dynamics_contract_test
                                      #   零传动映射消费符号词表扫描〔V-28/V-31
                                      #   静态精神〕＋产品面 include 白名单
                                      #   〔R-1/R-2——五登记边＋本单元〕）
-    contract_test/ForwardDynamicsBoundaryContractTest.cpp)  # WP-17-T05：正动力学
+    contract_test/ForwardDynamicsBoundaryContractTest.cpp  # WP-17-T05：正动力学
                                      #   面单元边界契约（DynForwardBoundary——
                                      #   P-DYN-7 落位选型静态钉扎〔零 rwsim
                                      #   物理引擎消费符号词表扫描〕＋公共契约
                                      #   形态编译期核对〔词表锁定值/四态同源〕）
+    contract_test/EvidenceBoundaryContractTest.cpp)  # WP-17-T06：证据面单元边界
+                                     #   契约（DynEvidenceBoundary——dyn Profile
+                                     #   六项 itemId 词表静态钉扎〔§8.4 实现落
+                                     #   位冻结列——漂移即对账断链〕＋DYN-06 限
+                                     #   定语 token 词表冻结与 trustQualifiers
+                                     #   三层映射契约〔RPT-05 不弱化的机器判读
+                                     #   面〕）
 
 target_compile_features(sdurws_ird_dynamics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_contract_test PROPERTIES
