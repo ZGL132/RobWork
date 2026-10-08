@@ -1,4 +1,4 @@
-# UI-T74 门禁实录（2026-10-07，分支 ui-t74）——零命中 exit 0
+# UI-T76 门禁实录（2026-10-08，分支 ui-t76）——零命中 exit 0
 适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
 
   ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）

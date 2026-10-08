@@ -14,7 +14,7 @@
 [ird-ui-plugin] [central-guard] 保留量未达成：中央 18 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）
 [ird-ui-smoke-mtour] started
 [ird-ui-smoke-mtour] step 1 create-open-project
-[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-mtour-demo-RyCrWn（可写：是）
+[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-mtour-demo-JCvWqa（可写：是）
 [ird-ui-smoke-mtour] pass step1 project-opened
 [ird-ui-smoke-mtour] pass step1 modeling-panel-present
 [ird-ui-smoke-mtour] pass step1 modeling-panel-visible (取证前提——非静窗)
@@ -38,7 +38,7 @@
 [ird-ui-smoke-mtour] snap mtour-4-structure.png
 [ird-ui-smoke-mtour] step 5 modeling-draft-apply
 [ird-ui-smoke-mtour] pass step5 modeling-apply-entry-present
-[ird-ui-smoke-mtour] step5 outcome=1 committed=1 rej=[] rev=[rev-20e41e9221fc612061fb474b5eb75a68]
+[ird-ui-smoke-mtour] step5 outcome=1 committed=1 rej=[] rev=[rev-0eaefaa222b4e337557eba338babf001]
 [ird-ui-smoke-mtour] pass step5 modeling-apply (committed=true rej=[])
 [ird-ui-smoke-mtour] pass step5 project-undo-irreversible-first-apply
 [ird-ui-smoke-mtour] snap mtour-5-applied.png

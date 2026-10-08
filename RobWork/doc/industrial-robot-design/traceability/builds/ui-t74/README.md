@@ -51,3 +51,16 @@ units/project.md v0.20 增量登记。
   SkipRegistered（既有登记跳过——非本批引入）。
 - 巡检驱动复跑会覆写被跟踪留痕目录——后续批次只使用本批目录驱动（事故先例
   三案在案：ui-t68/ui-t71/ui-t74）。
+
+## 返工补登二（2026-10-08 晚——新增工位退出第二层＋第三层根因修复）
+
+- **第二层（F-552）**：已打开会话下新建项目静默退出——openViaSessionController
+  入口统一双态防线（有会话→beginSwitch 切换确认编排；ui-t75@7cc052a1 并入）。
+- **第三层（F-554 链）**：新增工位即退出——RenderText（GLUT 承载件）构造期
+  位图字体度量在 freeglut 未初始化的进程内即崩（插桩定位：addRender 前最后
+  探针；WER c0000005 在案）。修复＝StudioMain 按 RWS_HAVE_GLUT 宏 glutInit
+  （框架 RobWorkStudioApp 同款先例）。
+- 验证：requirements-tour TOUR_PASS（39 轮绘制标记/标签全程构造成功）＋
+  modeling-tour MTOUR_PASS＋ird_gates 零命中＋ui_test 254/ui_contract 32。
+- 本目录 ird-gates.log 已被最新门禁实录覆盖（批次演进同一证据目录——批注见
+  本节）。

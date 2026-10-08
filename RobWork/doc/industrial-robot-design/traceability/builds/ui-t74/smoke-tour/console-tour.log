@@ -9,12 +9,12 @@
 [ird-ui-plugin] 工业项目树装配完成（多 Dock：项目树主 Dock＋属性/任务同级 Dock＋宿主状态栏投影＋Ctrl+Shift+P 命令面板；装载呈现自证在事件循环稍后执行）
 [ird-ui-plugin] 宿主事件桥接线完成（L3 frameSelectedEvent→反解编排；D8 stateChangedEvent→会话姿态桥）
 [ird-ui-plugin] 工业项目树多 Dock 已呈现（项目树主 Dock＋属性/任务 Dock＋宿主状态栏投影——装载呈现自证完成）
-[ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 259 px（受内容最小宽度钳制时如实留痕）
-[ird-ui-plugin] 工作台 Dock 宽度收束：目标 420 px，实际 420 px（受内容最小宽度钳制时如实留痕）
-[ird-ui-plugin] [central-guard] 保留量未达成：中央 296 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 453 px，实际 827 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] 工作台 Dock 宽度收束：目标 453 px，实际 827 px（受内容最小宽度钳制时如实留痕）
+[ird-ui-plugin] [central-guard] 保留量未达成：中央 18 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）
 [ird-ui-smoke-tour] started
 [ird-ui-smoke-tour] step 1 create-open-project
-[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-tour-demo-YnyoJE（可写：是）
+[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-tour-demo-rOSFgK（可写：是）
 [ird-ui-smoke-tour] pass step1 project-opened
 [ird-ui-smoke-tour] pass step1 panel-present
 [ird-ui-smoke-tour] pass step1 panel-visible (取证前提——非静窗)

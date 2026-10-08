@@ -73,6 +73,9 @@
 
 #include <QAction>
 #include <QApplication>
+#ifdef RW_HAVE_GLUT
+#include <GL/freeglut.h>  // GLUT 承载渲染件（RenderText 位图字体度量——F-554 链）
+#endif
 #include <QLibraryInfo>
 #include <QMenuBar>
 #include <QMenu>
@@ -230,6 +233,14 @@ int main (int argc, char** argv)
     Q_INIT_RESOURCE (rwstudio_resources);
 
     QApplication app (argc, argv);
+
+#ifdef RW_HAVE_GLUT
+    // GLUT 一次性初始化（框架 RobWorkStudioApp 同款先例——RenderText 等
+    // GLUT 承载渲染件依赖 freeglut 全局态；Qt 应用不自动初始化，缺位即
+    // 位图字体度量调用崩溃——所有者十步验收实录：新增工位后工位名标签
+    // 构造即进程退出，宿主 dev log 与 WER c0000005 偏移在案）。
+    glutInit (&argc, argv);
+#endif
 
     // ②b Qt 标准部件文案本地化（UI-T25——界面全中文口径的补齐面）：
     //   QFileDialog/QInputDialog/QMessageBox 等标准对话框的内置按钮
