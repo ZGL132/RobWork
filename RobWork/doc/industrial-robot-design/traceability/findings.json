@@ -5437,6 +5437,15 @@
       "registeredAt": "2026-10-07",
       "title": "requirements-tour.ps1 驱动头注「五帧截图」与实际七帧不符（UI-T68 E-4 扩增两帧后头注未随更——驱动谱系复制遗留）",
       "owner": "下一批触碰巡检驱动时顺手更正（本批 ui-t74 驱动头注已同步更正为七帧）"
+    },
+    {
+      "id": "F-550",
+      "source": "F-496 十步人工验收 runbook 所有者执行实录（2026-10-08——step6 三维视图无对象可拾取；备用路径六轴重置后同样无模型对象）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-08",
+      "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位",
+      "owner": "两分处置：①草稿三维预览通道＝需求语义候选（若所有者裁定「应用前应见模型」则立增量需求——评估/预览通道 UI-T64 形态参考）；②工位标记可见性复核＝UI-T33 链排查批次（宿主 bindStationMarkersSink 在位实证——渲染端 frameMarkers 呈现面待查）。F-496 十步执行顺序随本条更正：拾取/TCP 两步移至首应用之后（见 runbook v2）"
     }
   ]
 }
