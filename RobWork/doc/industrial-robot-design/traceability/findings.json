@@ -5482,6 +5482,15 @@
       "registeredAt": "2026-10-08",
       "title": "宿主需求就绪门控/就绪绑定的五处计算点全部以空 CheckContext（closureRefs 空）调用域检查器——首应用前根引用表四槽未回填（R0 闭包核对天然跳过）缺陷潜伏；首应用后四槽被 allocateNew 回填（槽有值），R0 以空闭包判定恒「根引用表槽指向的对象不在修订闭包中（悬空）」→Blocking→applyDraftDisablement 恒禁用＝应用草稿恒灰（首应用成功后不论做什么）。五处＝applyDraftDisablement 门控/wireRequirementsSession 首刷/setPostEditAction 编辑后重估/refreshRequirementsFromSession 重导线/空根初始化路径；面板校验页同源同误（呈现与门控一致地错误——自洽但均失真）。域检查器/域逻辑零缺陷（测试面传入正确闭包全绿）",
       "owner": "UI-T75 返工段修复（currentRequirementsCheckContext() 现取 HEAD objectRefs 统一五处；十套件回归全绿）；待所有者换装新 exe 复验（首应用→二次编辑→应用应保持可用）后翻转 fixed。关联观察：requirements captureTcpAsFixedPoint 内 CheckContext{} 同形调用（需求域内部口径——是否需真闭包随 F-551/F-496 链路后续核对）；【2026-10-08 返工补登——freeglut 初始化缺位（第三层）】F-550② 后端锚修复让绘制首次深入工位名标签构造（RenderText＝GLUT 承载件），产品主程序 StudioMain 缺 glutInit（框架 RobWorkStudioApp 同位有、产品路径未继承）→freeglut 全局态未初始化→位图字体度量即崩＝新增工位即退出的直接机理（插桩定位：addRender 前最后探针；WER c0000005 在案）。修复＝StudioMain 按 RWS_HAVE_GLUT 宏 glutInit（框架同款先例）；插桩探针已移除。复验=巡检 TOUR_PASS＋MTOUR_PASS（glutInit 后 39 轮绘制标记/标签全程构造成功）"
+    },
+    {
+      "id": "F-557",
+      "source": "F-496 十步人工验收所有者执行实录（2026-10-08——关闭项目弹红叉错误对话框「ui/text/unknown-key: 未登记文案键」＋进程退出；WorkbenchContent 空键解析定位）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-08",
+      "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
+      "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
     }
   ]
 }

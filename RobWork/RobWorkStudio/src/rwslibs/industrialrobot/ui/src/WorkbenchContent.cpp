@@ -1548,7 +1548,10 @@ void WorkbenchContentImpl::refreshCommandStates()
         // 禁用原因随按钮 tooltip 呈现（§7.4"禁用＋说明"——发现性保留）。
         button->setToolTip(
             a.enabled ? QString()
-                      : QString::fromStdString(resolveText(a.disableReasonKey)));
+                      : (a.disableReasonKey.empty()
+                             ? QString()
+                             : QString::fromStdString(
+                                 resolveText(a.disableReasonKey))));  // F-557 同面守卫
     }
     // 宿主层 chrome 同步（菜单动作/视图开关勾选态——未注册＝无 chrome，
     // 纯内容场景同样成立）。
@@ -1582,7 +1585,16 @@ void WorkbenchContentImpl::submitCommand(const std::string& commandId)
             QString::fromUtf8(u8"未知命令：") + QString::fromStdString(commandId), 4000);
         return;
     }
-    showStatusFeedback(QString::fromStdString(resolveText(a.disableReasonKey)), 4000);
+    // 拒因呈现（§7.4）：可用性禁用键优先。F-557（所有者十步验收实录——
+    // 关闭项目被处理器拒绝后空键解析即崩出）：处理器拒绝（非可用性禁用）
+    // 无禁用键——空键进 resolveText 按 fail-fast 设计即抛，穿透 Qt 事件循
+    // 环直达顶层 catch＝进程退出。空键＝诚实通用文案。
+    if (!a.disableReasonKey.empty()) {
+        showStatusFeedback(
+            QString::fromStdString(resolveText(a.disableReasonKey)), 4000);
+    } else {
+        showStatusFeedback(QString::fromUtf8("命令未执行"), 4000);
+    }
 }
 
 // =====================================================================
