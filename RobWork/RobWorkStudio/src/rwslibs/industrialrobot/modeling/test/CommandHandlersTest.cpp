@@ -294,6 +294,156 @@ TEST(MdlCommandPrepare, ReplaceApplyProducesSnapshotInversePayload)
     EXPECT_TRUE(inverse->objects[0].objectBytes == encodeVariant(oldDesign));
 }
 
+/// 合法工具装配（与 PartObjectCommandTest::makeValidTool 同形——一条 TCP＋
+/// SPD 物性 Provided，满足解码门 I-MDL-5/13；此处局部重建，避免依赖另一
+/// 用例文件匿名命名空间内的辅助）。
+inline ToolDefinition makeFixtureTool(const core::ObjectId& oid)
+{
+    ToolDefinition tool;
+    tool.objectId = oid;
+    tool.localName = "gripper-a";
+    tool.mountInterface = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(0.0, 0.0, 0.02),
+        rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
+                                     0.0, 1.0, 0.0,
+                                     0.0, 0.0, 1.0));  // T_flange_tool（m/rad）
+    TcpEntry tcp;
+    tcp.key = "tcp-center";
+    tcp.offset = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(0.0, 0.0, 0.15),
+        rw::math::Rotation3D<double>(1.0, 0.0, 0.0,
+                                     0.0, 1.0, 0.0,
+                                     0.0, 0.0, 1.0));  // T_tool_tcp（m/rad）
+    tool.tcpList = {tcp};  // ≥1（I-MDL-13）
+    tool.body.mass = core::SourcedValue<double>::provided(1.8, userProvenance());  // kg
+    return tool;
+}
+
+/// 基线装配（F-571 回归共用）：查询端口注入"根 r0（引用工具 T1＋defaultTcp
+/// 完整）＋工具 T1"闭包，返回根/工具身份。
+struct BaselineToolClosure
+{
+    core::ObjectId toolOid;
+    core::ObjectId rootOid;
+    TcpRef tcpRef;
+    RobotDesign root;
+
+    BaselineToolClosure(TestQueryPort& query)
+    {
+        toolOid = makeOid();
+        tcpRef.toolOid = toolOid;
+        tcpRef.tcpKey = "tcp-center";
+        root = makeSingleJointDesign(-1.0, 1.0);
+        root.toolRefs.push_back(toolOid);
+        root.defaultTcp = tcpRef;
+        rootOid = makeOid();
+        query.view = makeBaselineView(core::RevisionId::generate());
+        query.addObject(toolOid, std::string(kToolDefinitionObjectType),
+                        encodeVariant(makeFixtureTool(toolOid)));
+        query.addObject(rootOid, std::string(kRobotDesignObjectType),
+                        encodeVariant(root));
+    }
+};
+
+/**
+ * @brief 回归（F-571，P0——audit/unit-code-review-20261009）：基线闭包
+ *        含部件对象时，根替换应用曾被闭包断言全拒（候选未播种基线——
+ *        部件视图缺失，载荷根中的既有 toolRef 解析不了，全部产出
+ *        REF-MISSING 走 RejectedHardAssert——"基线含一个工具后任何根编辑
+ *        都无法提交"）。修复后候选＝基线底，闭包断言以完整部件闭包为
+ *        输入——根编辑恢复正常提交（§9.3 表行 1 的常规编辑形态）。
+ */
+TEST(MdlCommandPrepare, ReplaceApplyWithBaselineToolPlansClosureIntact_F571)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "MDL-13"},
+                  std::vector<std::string>{"AT-01"});
+
+    HandlerFixture f;
+    f.provider.policyToReturn.emplace(makePolicy(4.0 * kPi));  // ④端口应答（行程校验域）
+    BaselineToolClosure base(f.query);
+
+    // 替换载荷：同引用语境的新根（displayName 变化——非权威呈现字段）。
+    RobotDesign newRoot = base.root;
+    newRoot.displayName = "引用既有工具的根编辑";
+    f.bindNames(newRoot);  // 行程评估的 runtimeName 解析源（R-4 注入面）
+    CommandPayload payload;
+    payload.objects.push_back(
+        replaceSlot(base.rootOid, std::string(kRobotDesignObjectType), newRoot));
+
+    ApplyRobotDesignHandler handler(f.services);
+    project::HandlerContext ctx(f.query, &f.compile, nullptr);
+    project::CommandPlan plan;
+    std::vector<core::DiagnosticRecord> diags;
+    const auto outcome = handler.prepare(
+        ctx, makeEnvelope(f.query.view, std::string(kCmdApplyRobotDesign), payload),
+        f.query.view, plan, diags);
+
+    // 修复面：候选播种基线后闭包断言通过——Planned（修复前此处为
+    // RejectedHardAssert＋REF-MISSING 阻断，本用例即回归钉）。
+    ASSERT_EQ(outcome, project::PrepareOutcome::Planned);
+    ASSERT_EQ(plan.objectWrites.size(), std::size_t{1});  // 仅根写入（无部件槽）
+    EXPECT_EQ(plan.objectWrites[0].objectId, core::ObjectId(base.rootOid));
+    RobotDesignCodec codec;
+    const auto decoded = codec.decode(plan.objectWrites[0].payloadCanonical,
+                                      kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok()) << decoded.error().detail;
+    const RobotDesign& writtenRoot = std::get<RobotDesign>(decoded.get());
+    // 既有引用稳定：新根字节中的 toolRef/defaultTcp 与载荷一致（I-MDL-9）。
+    ASSERT_EQ(writtenRoot.toolRefs.size(), std::size_t{1});
+    EXPECT_EQ(writtenRoot.toolRefs[0], base.toolOid);
+    ASSERT_TRUE(writtenRoot.defaultTcp.has_value());
+    EXPECT_TRUE(*writtenRoot.defaultTcp == base.tcpRef);
+}
+
+/**
+ * @brief 回归（F-571，P0）第二面：既有部件替换槽可达性——基线含工具 T1
+ *        时，载荷携带"根替换＋T1 字节替换槽"应产出根＋工具两笔写入
+ *        （修复前 replacePartInCandidate 在空候选中查找恒 miss →
+ *        RejectedInvalidInput，显式 oid 替换功能整体不可达）。
+ */
+TEST(MdlCommandPrepare, ReplacePartSlotOnExistingToolPlans_F571)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06", "MDL-13"},
+                  std::vector<std::string>{"AT-01"});
+
+    HandlerFixture f;
+    f.provider.policyToReturn.emplace(makePolicy(4.0 * kPi));
+    BaselineToolClosure base(f.query);
+
+    // 根替换（引用语境不变）＋既有工具字节替换（localName 变化）。
+    RobotDesign newRoot = base.root;
+    newRoot.displayName = "根与部件同批替换";
+    f.bindNames(newRoot);
+    ToolDefinition newTool = makeFixtureTool(base.toolOid);
+    newTool.localName = "gripper-a-renamed";
+    CommandPayload payload;
+    payload.objects.push_back(
+        replaceSlot(base.rootOid, std::string(kRobotDesignObjectType), newRoot));
+    payload.objects.push_back(
+        replaceSlot(base.toolOid, std::string(kToolDefinitionObjectType), newTool));
+
+    ApplyRobotDesignHandler handler(f.services);
+    project::HandlerContext ctx(f.query, &f.compile, nullptr);
+    project::CommandPlan plan;
+    std::vector<core::DiagnosticRecord> diags;
+    const auto outcome = handler.prepare(
+        ctx, makeEnvelope(f.query.view, std::string(kCmdApplyRobotDesign), payload),
+        f.query.view, plan, diags);
+
+    ASSERT_EQ(outcome, project::PrepareOutcome::Planned);
+    // 计划面：根写入在首（处理器将根写入 insert 到部件写入之前）＋工具替换写入。
+    ASSERT_EQ(plan.objectWrites.size(), std::size_t{2});
+    EXPECT_EQ(plan.objectWrites[0].objectId, core::ObjectId(base.rootOid));
+    EXPECT_EQ(plan.objectWrites[1].objectId, core::ObjectId(base.toolOid));
+    RobotDesignCodec codec;
+    const auto decoded = codec.decode(plan.objectWrites[1].payloadCanonical,
+                                      kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok()) << decoded.error().detail;
+    // 替换字节如实入计划（std::get 失配即测试失败——槽 token 与变体一致）。
+    EXPECT_EQ(std::get<ToolDefinition>(decoded.get()).localName,
+              "gripper-a-renamed");
+}
+
 /**
  * @brief apply-named-poses：requiresDualCompile=false（不进 Description——
  *        §9.3 表行 4）＋根 poseSetRef 回填（"至多一份"）。

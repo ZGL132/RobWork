@@ -1350,6 +1350,19 @@ DecodeOutcome ApplyRobotDesignHandler::decodeAndPlan(project::HandlerContext& ct
         return decodeRestoreCommon(payload, baseline, out);
     }
     DecodeOutcome result;
+    // 候选＝基线底＋本次增量（与 ApplyToolDefinitionHandler 的 WP-13-T10
+    // 修复同款语义——本处理器当初漏改）。原实现 candidate 默认空构造、
+    // 基线部件视图（工具/场景/位姿集/传动）与根引用语境不随行，造成两类
+    // 必然故障：①既有部件替换槽在空候选中查找恒 miss（replacePartInCandidate
+    // 恒 false——显式 oid 替换功能整体不可达）；②基线闭包含任一部件对象时，
+    // 后续④段闭包断言（assertClosureReferences）解析不了载荷根中的既有
+    // 引用，全部产出 MDL-READINESS-REF-MISSING 走 RejectedHardAssert——
+    // 即"基线含一个工具后，任何根编辑都无法提交"。来源：全单元代码审查
+    // （audit/unit-code-review-20261009，findings F-571，P0 级）。
+    // 播种只补齐部件视图语境；根对象字节仍整体来自载荷（下方
+    // result.candidate.design = root 整体覆盖基线根，符合"根编辑＝根字节
+    // 全量替换"语义），rootObjectId 在两分支内按载荷身份显式赋值。
+    result.candidate = baseline;
     if (payload.objects.empty()) { return invalidInput(); }
 
     // ---- 根槽（首槽，token=robot-design）----
