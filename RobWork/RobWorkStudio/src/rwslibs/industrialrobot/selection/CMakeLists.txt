@@ -112,7 +112,20 @@ add_library(sdurws_ird_selection STATIC
 #                             稳定排序/diagRef 回填）＋§14.6 淘汰原因
 #                             构造＋§17.3 裕量计算＋Profile 实例化
     src/CombinationCheck.cpp
-    src/FeasibleSet.cpp)
+    src/FeasibleSet.cpp
+# T07 增列企业偏好分轨与目录差异比较实现翻译单元（卡 §3.1 组成表
+# CatalogDiff 行＋§13.6/§10.4 分轨——WP-19-T07 交付面"优选品牌/供应状态/
+# 系列限制＋目录差异比较＋项目锁定版本"；公共头 include/sdurws/ird/selection/
+# Preference.hpp 与 CatalogDiff.hpp——SEL-07 偏好过滤器＋SEL-08 结构化差异）：
+#   src/Preference.cpp        §10.2/§10.4 分轨（SEL-07——企业偏好配置/候选
+#                             企业标注/偏好过滤输出/PreferenceFilter 五步语义；
+#                             user-preference-filtered 独立 token 分轨，零改写
+#                             硬筛选记录）
+#   src/CatalogDiff.cpp       §13.6 目录差异比较（SEL-08——型号三态＋字段级
+#                             增量＋曲线点集增量＋兼容关系增量；D-SEL-14 会话
+#                             工具，不进③端口注册表）
+    src/Preference.cpp
+    src/CatalogDiff.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：selection 公共头使用 C++17 设施（inline constexpr 变量
@@ -268,7 +281,17 @@ add_executable(sdurws_ird_selection_test
 # T06 增列可行集/淘汰原因用例组（WP-19-T06 acceptance 1/2——SEL-06
 # 输出面＋EVI-02 多工况资格；接口路径钉扎：经 IFeasibleSetBuilder/
 # IRejectionReasonProvider 引用消费，不留只测自由函数的盲区）：
-    test/FeasibleSetTest.cpp)
+#   test/FeasibleSetTest.cpp
+# T07 增列企业偏好/目录差异用例组（WP-19-T07 acceptance 1/2——SEL-07
+# 分轨语义〔含"不改变硬能力判定"核心用例：经真实 HardConstraintSelector
+# 产出记录验证 apply 零改写〕＋SEL-08 三态差异/字段级/曲线点集/兼容增量
+# ＋锁定×比较历史隔离组合用例；接口路径钉扎：经 IRejectionReasonProvider
+# 注入计数 Provider 证明偏好原因的接口构造路径）：
+#   test/PreferenceFilterTest.cpp
+#   test/CatalogDiffTest.cpp
+    test/FeasibleSetTest.cpp
+    test/PreferenceFilterTest.cpp
+    test/CatalogDiffTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -358,7 +381,14 @@ add_executable(sdurws_ird_selection_contract_test
 # T06 增列可行集/淘汰原因契约用例组（WP-19-T06 acceptance 1/3——词表→
 # 稳定码映射封闭性＋sel 域 Profile 经真实 EvidenceProfileRegistry 注册
 # 闭环＋err-01 字段面契约）：
-    contract_test/FeasibleSetContractTest.cpp)
+#   contract_test/FeasibleSetContractTest.cpp
+# T07 增列偏好/差异契约用例组（WP-19-T07 acceptance 1/2/3——SEL-07 分轨
+# token 词表/稳定码/登记表三方同源＋偏好零侵入硬记录＋SEL-08 会话工具
+# static_assert 非评估器（D-SEL-14 不进③端口）＋CON-05 失效链＋锁定表
+# 只增历史隔离）：
+#   contract_test/PreferenceDiffContractTest.cpp
+    contract_test/FeasibleSetContractTest.cpp
+    contract_test/PreferenceDiffContractTest.cpp)
 
 target_compile_features(sdurws_ird_selection_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_contract_test PROPERTIES
