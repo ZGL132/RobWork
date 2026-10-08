@@ -20,9 +20,11 @@
  *   直接需要的 OptimizationStage、RandomSeed 与 OptimizationError；
  *   WP-20-T04 表尾追加 CandidateStatus 七值（§4.3 原文词表一次冻结——
  *   管线消费 Infeasible/DataInsufficient/EvaluationFailed/Feasible 四值，
- *   ScreenedOut/ParetoNondominated 归 T06/T05 只消费不扩表）。MetricId
- *   仍随 WP-20-T05（指标消费面）。后续任务增补词表只允许表尾追加
- *   （枚举值序＝登记契约，确定性 NFR-COR-02）。
+ *   ScreenedOut/ParetoNondominated 归 T06/T05 只消费不扩表）。
+ *   WP-20-T05 表尾追加 MetricId 八值＋toToken（§4.3 原文词表一次冻结——
+ *   指标方向/来源键/阶段可算性等词表物化在 Objective.hpp；
+ *   ParetoNondominated 值随 T05 Pareto 层消费）。后续任务增补词表只允许
+ *   表尾追加（枚举值序＝登记契约，确定性 NFR-COR-02）。
  *
  * 背景说明（错误语义归类——AGENTS §2.5/卡 §6.6）：本域的错误分两轨——
  *   ① 调用方错误（研究定义非法、补丁触及锁定变量、值越界等）：fail-fast，
@@ -164,6 +166,48 @@ public:
 private:
     std::string m_stableCode;  ///< 稳定码 token（构造后不可变——错误语义面）
 };
+
+// =====================================================================
+// 八项比较指标词表（卡 §4.3 原文契约——WP-20-T05 表尾追加；T03 头注预告
+// 的"MetricId 随 T05（指标消费面）"落位点。域内唯一指标 ID 定义点
+// （core.md §2.4 对照行）——八值一次落全表：可算性分阶段由
+// Objective.hpp MetricDefinition.computableInStageB 承载，词表本身不随
+// 阶段扩缩（OPT-07"全部展示"——八列固定呈现，B 期五项显示"—"）。
+// 后续任务只消费不扩表：八项之外无目标（§7.3——"局部改进"等过程性
+// 能力不设独立目标词表；OPT-D 联合指标面已全在本表，无 R2 增量）
+// =====================================================================
+
+/**
+ * @brief 八项比较指标词表（卡 §7.1 表全量——OPT-07"默认八项比较指标
+ *        全部展示"；枚举值序＝§7.1 表行序，即 canonical 序列化位图的
+ *        bit 序——值一经交付不得改动/插入，NFR-COR-02 确定性）。
+ *
+ * 方向与阶段可算性锚（卡 §7.1/§7.2——权威在 Objective.hpp
+ * metricDefinitions() 词表物化，本枚举只承载 ID 序）：
+ *   - 1~3（Envelope/StructuralMass/MinJointMargin）：OPT-B 可算（R1）；
+ *   - 4~8（CycleTime/DeviceCost/DeviceMass/JointPositiveWork/
+ *     MinDriveMargin）：可算性随阶段 C 各域交付，优化启用归 OPT-D
+ *     （REQUIREMENTS §15.0；阶段 C 不存在优化切片——F-02）。
+ */
+enum class MetricId {
+    Envelope,          ///< 1 尺寸包络（opt.metric.envelope；最小化——暂定口径见
+                       ///  Objective.hpp 包络注释；P-OPT-5 登记中）
+    StructuralMass,    ///< 2 结构质量（opt.metric.structural-mass；kg；最小化）
+    MinJointMargin,    ///< 3 最小关节裕量（opt.metric.min-joint-margin；最大化）
+    CycleTime,         ///< 4 节拍（opt.metric.cycle-time；s；最小化；StageB 恒"—"）
+    DeviceCost,        ///< 5 器件成本（opt.metric.device-cost；最小化；StageB 恒"—"）
+    DeviceMass,        ///< 6 器件质量（opt.metric.device-mass；kg；最小化；StageB 恒"—"）
+    JointPositiveWork, ///< 7 关节侧正机械功（opt.metric.joint-positive-work；J；最小化；StageB 恒"—"）
+    MinDriveMargin,    ///< 8 最小驱动裕量（opt.metric.min-drive-margin；最大化；StageB 恒"—"）
+};
+
+/**
+ * @brief 指标稳定 token（"opt.metric.<slug>"——卡 §7.1 表 MetricId 列的
+ *        稳定书写：指标事实/候选表/导出的确定性键）。
+ * @param m [in] 指标枚举值
+ * @return 稳定 token 视图（编译期字面量，生命周期静态）
+ */
+std::string_view toToken(MetricId m) noexcept;
 
 }  // namespace sdurws::ird::optimization
 

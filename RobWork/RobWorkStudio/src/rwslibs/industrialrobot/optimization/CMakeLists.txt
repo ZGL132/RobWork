@@ -84,12 +84,19 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #   src/CandidatePatch.cpp  canonical "IRDOPTP1" 序列化/CandidatePatchId/
 #                           CandidateId 身份链/补丁校验/round-half-even
 #                           量化/覆盖视图数据面（§4.2/§5.4/§5.5/§8.2/P-OPT-2）
+#   src/Constraint.cpp      §6.2 静态硬约束管线/阶段锁（WP-20-T04 增列）
+#   src/Objective.cpp       §7.1~§7.3 八项指标词表/目标集/canonical 目标段/
+#                           默认激活/校验/三项静态指标计算（WP-20-T05 增列）
+#   src/Pareto.cpp          §7.4 Pareto 非支配（容差支配/分层/去重/稳定排序——
+#                           WP-20-T05 增列）
 add_library(sdurws_ird_optimization STATIC
     src/DiagCodes.cpp
     src/Types.cpp
     src/Variable.cpp
     src/CandidatePatch.cpp
-    src/Constraint.cpp)
+    src/Constraint.cpp
+    src/Objective.cpp
+    src/Pareto.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -159,6 +166,37 @@ target_link_libraries(sdurws_ird_optimization PUBLIC
 # 别名（与骨架期行为一致，DTB §5.1）。
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     add_library(RWS::ird::optimization ALIAS sdurws_ird_optimization)
+endif()
+
+# ---- 冒烟分支：boost 头路径（WP-20-T05 增补——trajectory WP-16-T04 同款
+#      先例；WP-20-T05 Pareto 支配判定消费 core::closeWithin（§7.4 容差支
+#      配——比较公式 core 单点实现，消费不复制），Objective.hpp 随之 include
+#      core/Compare.hpp；该头在 rw/math/Q.hpp 可达时激活 rw::math::Q 重载
+#      分支，而本单元九边链 runtime——其冒烟分支（RT-T03 起）把 rw 源码树
+#      头路径 PUBLIC 传染至本目标，Q.hpp 的 boost/serialization include 随
+#      之可达但 boost 头不在框架链——C1083。boost 头随 vcpkg 经典模式安装
+#      （installed/x64-windows/include——gtest 同款安装根，DTB §5.5）；
+#      toolchain 已在独立冒烟命令行给定，vcpkg 根由 toolchain 路径上溯三级
+#      推导。同样只取 include 目录不入链接清单——Q.hpp 的序列化模板在冒烟
+#      编译只实例化声明级内联，不引用 boost 编译库（trajectory 先例同因同
+#      款口径）----
+if(NOT TARGET sdurw_kinematics)
+    if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+        message(FATAL_ERROR
+            "optimization 冒烟模式：必须带 vcpkg toolchain 参数（DTB §5.1/"
+            "CORE-T01 G-2 口径）——rw/math/Q.hpp 依赖 boost 头")
+    endif()
+    get_filename_component(IRO_VCPKG_ROOT "${CMAKE_TOOLCHAIN_FILE}" DIRECTORY)
+    get_filename_component(IRO_VCPKG_ROOT "${IRO_VCPKG_ROOT}" DIRECTORY)
+    get_filename_component(IRO_VCPKG_ROOT "${IRO_VCPKG_ROOT}" DIRECTORY)
+    set(IRO_BOOST_INC "${IRO_VCPKG_ROOT}/installed/x64-windows/include")
+    if(NOT EXISTS "${IRO_BOOST_INC}/boost/serialization/split_free.hpp")
+        message(FATAL_ERROR
+            "optimization 冒烟模式：未找到 boost 头（期望 ${IRO_BOOST_INC}/"
+            "boost/serialization/split_free.hpp）——rw/math/Q.hpp 序列化头"
+            "依赖（vcpkg 经典模式经典布局）")
+    endif()
+    target_include_directories(sdurws_ird_optimization PUBLIC "${IRO_BOOST_INC}")
 endif()
 
 # ---- 插件界面目标 sdurws_ird_optimization_plugin（WP-20-T02 落位——契约
@@ -253,7 +291,9 @@ add_executable(sdurws_ird_optimization_test
     test/BuildRedLineTest.cpp
     test/VariableTest.cpp
     test/CandidatePatchTest.cpp
-    test/ConstraintTest.cpp)
+    test/ConstraintTest.cpp
+    test/ObjectiveTest.cpp
+    test/ParetoTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -341,7 +381,8 @@ add_executable(sdurws_ird_optimization_contract_test
     contract_test/BuildGraphContractTest.cpp
     contract_test/OptimizationPluginAssemblyContractTest.cpp
     contract_test/VariableContractTest.cpp
-    contract_test/ConstraintContractTest.cpp)
+    contract_test/ConstraintContractTest.cpp
+    contract_test/ObjectiveParetoContractTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_contract_test PROPERTIES

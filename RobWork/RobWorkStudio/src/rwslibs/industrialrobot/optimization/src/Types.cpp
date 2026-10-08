@@ -1,10 +1,12 @@
 /**
  * @file   Types.cpp
- * @brief  optimization 基础词表实现——阶段 token、候选状态 token 与域异常
- *         （WP-20-T03 落位；WP-20-T04 表尾追加候选状态 token）。
+ * @brief  optimization 基础词表实现——阶段 token、候选状态 token、指标
+ *         token 与域异常（WP-20-T03 落位；WP-20-T04 表尾追加候选状态
+ *         token；WP-20-T05 表尾追加指标 token）。
  *
  * 设计依据：units/optimization.md §4.3（阶段 token "stage-b"/"stage-d"、
- * 候选状态七值词表——"候选状态 ≠ 任务状态 ≠ 工程判定"正交表）、§12.3
+ * 候选状态七值词表——"候选状态 ≠ 任务状态 ≠ 工程判定"正交表、MetricId
+ * 八值词表）、§7.1（指标 token "opt.metric.<slug>" 逐行原文）、§12.3
  * （错误语义——fail-fast 异常携带稳定码）；DiagCodes.hpp 码值常量
  * （唯一书写点——调用方传入，本文件不持码值字面量）。
  *
@@ -65,6 +67,33 @@ OptimizationError::OptimizationError(std::string_view stableCode, const std::str
     // 码值与消息都为构造期拷贝——异常对象不可变（可安全跨线程传递，§12.3）。
     // stableCode 的取值域契约（DiagCodes.hpp 常量）由调用方保证；此处不校验
     // 注册表（注册表查询归 diagnostics 工厂面，异常轨不依赖装配状态）。
+}
+
+std::string_view toToken(MetricId m) noexcept
+{
+    // 指标稳定 token（卡 §7.1 表 MetricId 列逐行原样——"opt.metric.<slug>"）。
+    // 枚举值序＝卡 §7.1 表行序（1~8），与 token 一一对应；token 进指标事实/
+    // 候选表/导出书写面，改名即消费面漂移——冻结（NFR-MNT-03 单一书写点）。
+    switch (m) {
+    case MetricId::Envelope:
+        return "opt.metric.envelope";
+    case MetricId::StructuralMass:
+        return "opt.metric.structural-mass";
+    case MetricId::MinJointMargin:
+        return "opt.metric.min-joint-margin";
+    case MetricId::CycleTime:
+        return "opt.metric.cycle-time";
+    case MetricId::DeviceCost:
+        return "opt.metric.device-cost";
+    case MetricId::DeviceMass:
+        return "opt.metric.device-mass";
+    case MetricId::JointPositiveWork:
+        return "opt.metric.joint-positive-work";
+    case MetricId::MinDriveMargin:
+        return "opt.metric.min-drive-margin";
+    }
+    // 不可达分支（同本文件既有 token 函数口径——防御式空串，不吞错）。
+    return {};
 }
 
 }  // namespace sdurws::ird::optimization
