@@ -5484,6 +5484,7 @@
       "owner": "UI-T75 返工段修复（currentRequirementsCheckContext() 现取 HEAD objectRefs 统一五处；十套件回归全绿）；待所有者换装新 exe 复验（首应用→二次编辑→应用应保持可用）后翻转 fixed。关联观察：requirements captureTcpAsFixedPoint 内 CheckContext{} 同形调用（需求域内部口径——是否需真闭包随 F-551/F-496 链路后续核对）；【2026-10-08 返工补登——freeglut 初始化缺位（第三层）】F-550② 后端锚修复让绘制首次深入工位名标签构造（RenderText＝GLUT 承载件），产品主程序 StudioMain 缺 glutInit（框架 RobWorkStudioApp 同位有、产品路径未继承）→freeglut 全局态未初始化→位图字体度量即崩＝新增工位即退出的直接机理（插桩定位：addRender 前最后探针；WER c0000005 在案）。修复＝StudioMain 按 RWS_HAVE_GLUT 宏 glutInit（框架同款先例）；插桩探针已移除。复验=巡检 TOUR_PASS＋MTOUR_PASS（glutInit 后 39 轮绘制标记/标签全程构造成功）"
     },
     {
+<<<<<<< HEAD
       "id": "F-557",
       "source": "F-496 十步人工验收所有者执行实录（2026-10-08——关闭项目弹红叉错误对话框「ui/text/unknown-key: 未登记文案键」＋进程退出；WorkbenchContent 空键解析定位）",
       "severity": "major",
@@ -5491,6 +5492,24 @@
       "registeredAt": "2026-10-08",
       "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
       "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
+=======
+      "id": "F-555",
+      "source": "F-496 十步人工验收所有者执行实录（2026-10-08——工位坐标改 0.5/0.5 后三维标记仍渲染在坐标原点；契约面核对实锤）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-08",
+      "title": "工位三维标记恒渲染于参考系原点——标记投影契约不携带位置数据：StationMarkerProjection={label,refFrame}（无 position 字段）、View3DFrameMarker={label,frameName}（同无）——后端只能把坐标轴挂到参考系帧上（World 根帧＝原点），工位坐标（站点要素本体）在三维投影链全程丢失。UI-T33 标记设计＝「参考系指示器」形态，未承载「带坐标的点位」语义——工位作为空间点位的要素在三维不可辨",
+      "owner": "三维预览批次（契约表尾追加 position 字段〔UI-T65 tint 同款追加纪律〕＋requirements 投影补位＋后端按 参考帧×位置 放置坐标轴；与 F-550 模型渲染/F-556 标签CJK 同属三维预览专项簇）"
+    },
+    {
+      "id": "F-556",
+      "source": "F-496 十步人工验收所有者执行实录（2026-10-08——工位标记标签中文显示乱码）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-08",
+      "title": "工位标记标签中文乱码——rwlibs::opengl::RenderText 用 GLUT 位图字体渲染（freeglut bitmap 字体仅 ASCII 位图集，无 CJK 字形），UTF-8 工位名（如「工位」）按字节映射拉丁字形即乱码。框架级限制（2009 年代 RobWork 件，无 Unicode 支持）——非本产品代码缺陷；CJK 标签需换非 GLUT 文本承载（Qt 纹理化文本/三维投影二维覆盖标签两方向）",
+      "owner": "三维预览批次所有者裁决（三选一：①ASCII 回退标签〔工位→Station-N，零中文——UX 让步〕；②Qt 纹理化文本 Render 替代件〔工作量大——GL 纹理＋unicode 排版〕；③三维投影二维覆盖标签〔宿主层 QLabel 覆盖——每帧位置同步成本〕）"
+>>>>>>> ui-t76
     }
   ]
 }
