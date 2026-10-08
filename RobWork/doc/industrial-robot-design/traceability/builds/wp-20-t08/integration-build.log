@@ -1,0 +1,16 @@
+=== WP-20-T08 集成构建留痕（增量，2026-10-09）===
+--- 配置确认 ---
+RWS_BUILD_INDUSTRIALROBOT:BOOL=ON
+--- 产品库 sdurws_ird_optimization ---
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_optimization
+  sdurws_ird_optimization.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_optimization.lib
+--- 测试目标 sdurws_ird_optimization_test ---
+  Automatic MOC for target sdurws_ird_optimization_test
+  sdurws_ird_optimization_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_test.exe
+--- 契约测试目标 sdurws_ird_optimization_contract_test ---
+  Automatic MOC for target sdurws_ird_optimization_contract_test
+  sdurws_ird_optimization_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_contract_test.exe
+--- ird_gates 门禁 ---
+  [ird_gates] 鎵弿鏍癸細D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================

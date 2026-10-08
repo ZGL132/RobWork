@@ -100,6 +100,9 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #   src/Applier.cpp         §10.1~§10.4 候选应用组装（§10.3 六项前置校验/
 #                           两步命令语义/差异预览 P-OPT-8 警告面——WP-20-T07
 #                           增列；组装不执行提交——①端口调用归执行编排）
+#   src/Preflight.cpp       §6.4 预检 20 检查项/五元组/allowances 五元组＋
+#                           §4.3 OptimizationRunSpec 校验（WP-20-T08 增列；
+#                           只读检查面——零 io 写路径，P-OPT-6 会话态承载）
 add_library(sdurws_ird_optimization STATIC
     src/DiagCodes.cpp
     src/Types.cpp
@@ -110,7 +113,8 @@ add_library(sdurws_ird_optimization STATIC
     src/Pareto.cpp
     src/EvaluatorPorts.cpp
     src/Run.cpp
-    src/Applier.cpp)
+    src/Applier.cpp
+    src/Preflight.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -310,7 +314,13 @@ add_executable(sdurws_ird_optimization_test
     test/ParetoTest.cpp
     test/EvaluatorPortsTest.cpp
     test/RunTest.cpp
-    test/ApplierTest.cpp)
+    test/ApplierTest.cpp
+    # WP-20-T08 增列——预检 20 检查项逐项定位/allowances 五元组/RunSpec
+    # fail-fast 面/P-OPT-6 纯函数只读（acceptance 1/3）：
+    test/PreflightTest.cpp
+    # WP-20-T08 增列——基线评估三语义面（同管线同基准/数据不足不伪造/
+    # 失败不包装淘汰——OPT-VER-134，acceptance 2）：
+    test/BaselineEvaluationTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -401,7 +411,10 @@ add_executable(sdurws_ird_optimization_contract_test
     contract_test/ConstraintContractTest.cpp
     contract_test/ObjectiveParetoContractTest.cpp
     contract_test/EvaluatorPortsContractTest.cpp
-    contract_test/ApplierContractTest.cpp)
+    contract_test/ApplierContractTest.cpp
+    # WP-20-T08 增列——真装配链阻塞可定位（OPT-VER-112/135 契约半区）＋
+    # P-OPT-6 持久化通道边界源码扫描（acceptance 1/3）：
+    contract_test/PreflightContractTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_contract_test PROPERTIES

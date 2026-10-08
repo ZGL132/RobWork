@@ -1,0 +1,11 @@
+=== WP-20-T08 独立冒烟构建留痕（2026-10-09）===
+--- 配置（vcpkg toolchain＋Qt 前缀——DTB §5.1/F-455）---
+-- Generating done (3.6s)
+-- Build files have been written to: D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/build-smoke
+--- 全量构建 ---
+error 行数: 0
+--- 冒烟面测试（130+34 同计数）---
+[==========] 130 tests from 12 test suites ran. (30 ms total)
+[  PASSED  ] 130 tests.
+[==========] 34 tests from 8 test suites ran. (721 ms total)
+[  PASSED  ] 34 tests.
