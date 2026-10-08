@@ -821,16 +821,30 @@ LockInfo ProjectStoreImpl::lockInfo() const
 
 core::ProjectId ProjectStoreImpl::projectId() const noexcept
 {
-    return m_head.projectId;  // 打开③跨文件一致性已保证三处同源
+    // F-575（P1）：m_head 在 executeCommit 的 writer 锁内整体前进，本
+    // accessor 可能与提交并发（归档 begin 归属校验、草稿落盘归属防线），
+    // 无锁读构成数据竞争（UB）。writer 锁内快照后取字段——与 QueryPort
+    // 权威元数据读面同款串行化域；projectId 跨修订是打开③一致性的不变
+    // 量，锁开销为无竞争互斥的纳秒级。
+    // noexcept 纪律：与 closed() 同款——互斥 lock 的理论 system_error
+    // 路径在此按不可达处理（锁损坏＝进程级故障，terminate 优于带病返回）。
+    const std::lock_guard<std::mutex> guard(m_writerMutex);
+    return m_head.projectId;
 }
 
 SchemaInfo ProjectStoreImpl::schema() const
 {
+    // F-575（P1）：同 projectId——writer 锁内快照（schemaVersion/formatId
+    // 跨修订不变量，锁内取值仅为消除与 m_head 整体赋值的并发面）。
+    const std::lock_guard<std::mutex> guard(m_writerMutex);
     return SchemaInfo{m_head.schemaVersion, m_head.formatId};
 }
 
 std::filesystem::path ProjectStoreImpl::canonicalPath() const
 {
+    // m_canonicalDirFs 打开协议期一次成形、此后只读（§9.3 存储实例身份）
+    // ——不与 m_head 同生命周期，无并发写面，无需加锁（F-575 仅涉
+    // m_head 承载字段）。
     return m_canonicalDirFs;
 }
 
