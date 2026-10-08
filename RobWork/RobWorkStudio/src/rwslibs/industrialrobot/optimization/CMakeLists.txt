@@ -89,6 +89,10 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #                           默认激活/校验/三项静态指标计算（WP-20-T05 增列）
 #   src/Pareto.cpp          §7.4 Pareto 非支配（容差支配/分层/去重/稳定排序——
 #                           WP-20-T05 增列）
+#   src/EvaluatorPorts.cpp  §4.3/§8.2/§8.4 config.opt 校验与 canonical
+#                           （"IRDOPTC1"）/确定性候选生成（seeded-lhs——
+#                           splitmix64 自持 PRNG）/Quick/Verified 两级批量
+#                           编排/会话缓存命中消费（WP-20-T06 增列）
 add_library(sdurws_ird_optimization STATIC
     src/DiagCodes.cpp
     src/Types.cpp
@@ -96,7 +100,8 @@ add_library(sdurws_ird_optimization STATIC
     src/CandidatePatch.cpp
     src/Constraint.cpp
     src/Objective.cpp
-    src/Pareto.cpp)
+    src/Pareto.cpp
+    src/EvaluatorPorts.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -293,7 +298,8 @@ add_executable(sdurws_ird_optimization_test
     test/CandidatePatchTest.cpp
     test/ConstraintTest.cpp
     test/ObjectiveTest.cpp
-    test/ParetoTest.cpp)
+    test/ParetoTest.cpp
+    test/EvaluatorPortsTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -382,7 +388,8 @@ add_executable(sdurws_ird_optimization_contract_test
     contract_test/OptimizationPluginAssemblyContractTest.cpp
     contract_test/VariableContractTest.cpp
     contract_test/ConstraintContractTest.cpp
-    contract_test/ObjectiveParetoContractTest.cpp)
+    contract_test/ObjectiveParetoContractTest.cpp
+    contract_test/EvaluatorPortsContractTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_contract_test PROPERTIES

@@ -1,14 +1,16 @@
 /**
  * @file   Types.cpp
  * @brief  optimization 基础词表实现——阶段 token、候选状态 token、指标
- *         token 与域异常（WP-20-T03 落位；WP-20-T04 表尾追加候选状态
- *         token；WP-20-T05 表尾追加指标 token）。
+ *         token、运行状态 token 与域异常（WP-20-T03 落位；WP-20-T04 表尾
+ *         追加候选状态 token；WP-20-T05 表尾追加指标 token；WP-20-T06 表尾
+ *         追加运行状态 token）。
  *
  * 设计依据：units/optimization.md §4.3（阶段 token "stage-b"/"stage-d"、
  * 候选状态七值词表——"候选状态 ≠ 任务状态 ≠ 工程判定"正交表、MetricId
- * 八值词表）、§7.1（指标 token "opt.metric.<slug>" 逐行原文）、§12.3
- * （错误语义——fail-fast 异常携带稳定码）；DiagCodes.hpp 码值常量
- * （唯一书写点——调用方传入，本文件不持码值字面量）。
+ * 八值词表、RunPhase 九值词表与 §4.4 状态机）、§7.1（指标 token
+ * "opt.metric.<slug>" 逐行原文）、§12.3（错误语义——fail-fast 异常携带
+ * 稳定码）；DiagCodes.hpp 码值常量（唯一书写点——调用方传入，本文件不持
+ * 码值字面量）。
  *
  * 确定性：token 为编译期字面量，与枚举值的对应关系恒定（NFR-COR-02）；
  * 候选状态 token 进候选表/导出/审计书写面，改名即消费面漂移——冻结。
@@ -91,6 +93,35 @@ std::string_view toToken(MetricId m) noexcept
         return "opt.metric.joint-positive-work";
     case MetricId::MinDriveMargin:
         return "opt.metric.min-drive-margin";
+    }
+    // 不可达分支（同本文件既有 token 函数口径——防御式空串，不吞错）。
+    return {};
+}
+
+std::string_view toToken(RunPhase p) noexcept
+{
+    // 运行状态稳定 token（卡 §4.3/§4.4 九值；kebab 词形）。枚举值序＝卡面
+    // 登记契约（Draft→…→Interrupted），与 token 一一对应；token 进运行
+    // 记录/导出/审计书写面——改名即消费面漂移，冻结（WP-20-T06 表尾追加）。
+    switch (p) {
+    case RunPhase::Draft:
+        return "draft";
+    case RunPhase::Preflight:
+        return "preflight";
+    case RunPhase::QuickScreening:
+        return "quick-screening";
+    case RunPhase::VerifiedReview:
+        return "verified-review";
+    case RunPhase::RobustnessReview:
+        return "robustness-review";
+    case RunPhase::Completed:
+        return "completed";
+    case RunPhase::Canceled:
+        return "canceled";
+    case RunPhase::Failed:
+        return "failed";
+    case RunPhase::Interrupted:
+        return "interrupted";
     }
     // 不可达分支（同本文件既有 token 函数口径——防御式空串，不吞错）。
     return {};

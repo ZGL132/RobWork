@@ -23,8 +23,12 @@
  *   ScreenedOut/ParetoNondominated 归 T06/T05 只消费不扩表）。
  *   WP-20-T05 表尾追加 MetricId 八值＋toToken（§4.3 原文词表一次冻结——
  *   指标方向/来源键/阶段可算性等词表物化在 Objective.hpp；
- *   ParetoNondominated 值随 T05 Pareto 层消费）。后续任务增补词表只允许
- *   表尾追加（枚举值序＝登记契约，确定性 NFR-COR-02）。
+ *   ParetoNondominated 值随 T05 Pareto 层消费）。WP-20-T06 表尾追加
+ *   RunPhase 九值＋toToken（§4.3/§4.4 原文词表一次冻结——两级编排的
+ *   运行状态产出面；config.opt 载荷类型 OptimizationConfiguration 等因
+ *   include 环不落本头〔Objective.hpp/Variable.hpp 反向依赖本头〕，落位
+ *   EvaluatorPorts.hpp——偏差随单元卡增量修订登记）。后续任务增补词表只
+ *   允许表尾追加（枚举值序＝登记契约，确定性 NFR-COR-02）。
  *
  * 背景说明（错误语义归类——AGENTS §2.5/卡 §6.6）：本域的错误分两轨——
  *   ① 调用方错误（研究定义非法、补丁触及锁定变量、值越界等）：fail-fast，
@@ -208,6 +212,54 @@ enum class MetricId {
  * @return 稳定 token 视图（编译期字面量，生命周期静态）
  */
 std::string_view toToken(MetricId m) noexcept;
+
+// =====================================================================
+// 运行目标状态词表（卡 §4.3/§4.4 原文契约——WP-20-T06 表尾追加；T05 头注
+// 预告的"RunPhase 随 T06 消费"落位点。九值一次落全表：本任务两级编排
+// 消费 QuickScreening/VerifiedReview/Completed/Canceled 四值，Draft/
+// Preflight 归 WP-20-T08 Preflight 面、RobustnessReview 归 WP-21（R2）、
+// Failed/Interrupted 词表保留（环境级失败＝异常传播由调用方处置；进程
+// 中断归 R2 检查点面——本编排不产出）。后续任务只消费不扩表。
+// =====================================================================
+
+/**
+ * @brief 优化运行目标状态（卡 §4.4 状态机——区别于 execution 九态任务
+ *        状态机与 core::TaskOutcome：本词表是**优化运行**的编排视角目标
+ *        状态，三轴正交（§7.5 正交表）。
+ *
+ * 语义锚（卡 §4.4 状态机转移）：
+ *   - Draft：组装 OptimizationRunSpec（研究定义编辑中——T08 Preflight 面）；
+ *   - Preflight：冻结输入快照并预检（T08）；
+ *   - QuickScreening：Quick 筛选任务执行中（本任务编排产出）；
+ *   - VerifiedReview：Verified 复核任务执行中（幸存集非空时进入——本任务）；
+ *   - RobustnessReview：R2 鲁棒性复核（P-04 冻结后——WP-21）；
+ *   - Completed：运行完成（含"幸存集为空→搜索空"的正常完成——OPT-SEARCH-
+ *     EMPTY 是 warning 非任务不可行，§8.2/OPT-VER-120）；
+ *   - Canceled：用户取消（TASK-01 协作取消——批边界粒度，本任务产出）；
+ *   - Failed：评估器/环境错误（R1 编排以异常传播承载，不产出该值——
+ *     候选级失败走结构化记录，§7.5 区分表）；
+ *   - Interrupted：进程中断（R2 可检查点恢复——本编排不产出）。
+ */
+enum class RunPhase {
+    Draft,             ///< 组装运行描述（研究定义编辑中）
+    Preflight,         ///< 预检执行中（T08）
+    QuickScreening,    ///< Quick 筛选执行中（T06 编排）
+    VerifiedReview,    ///< Verified 复核执行中（T06 编排——幸存集非空时）
+    RobustnessReview,  ///< 鲁棒性复核执行中（R2——WP-21，P-04 冻结后）
+    Completed,         ///< 运行完成（含搜索空——非任务不可行）
+    Canceled,          ///< 用户取消（协作取消——批边界）
+    Failed,            ///< 环境级失败（本编排以异常传播承载——不产出）
+    Interrupted,       ///< 进程中断（R2 检查点恢复——本编排不产出）
+};
+
+/**
+ * @brief 运行状态稳定 token（"draft"/"preflight"/"quick-screening"/
+ *        "verified-review"/"robustness-review"/"completed"/"canceled"/
+ *        "failed"/"interrupted"）——运行记录/导出/审计的确定性书写。
+ * @param p [in] 运行状态枚举值
+ * @return 稳定 token 视图（编译期字面量，生命周期静态）
+ */
+std::string_view toToken(RunPhase p) noexcept;
 
 }  // namespace sdurws::ird::optimization
 

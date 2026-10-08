@@ -361,6 +361,13 @@ inline constexpr std::string_view kRejectHardConstraintViolated
 /// 候选编译失败淘汰（§6.2 第 5 步；sourceId 携带透传的 RT-* 稳定码）。
 inline constexpr std::string_view kRejectCandidateCompileFailed
     = "opt.reject.candidate-compile-failed";
+/// Quick 保守淘汰·预算线（§8.4——Quick 批内目标序劣于幸存预算线的候选；
+/// WP-20-T06 表尾追加。注意语义边界：只有 Quick-Feasible 候选才可能因
+/// 预算线被筛为 ScreenedOut——Infeasible/DataInsufficient/EvaluationFailed
+/// 保持其自有状态不冒充 ScreenedOut（§7.5 区分表——状态词不同）；Quick
+/// 失败也不自动转确定性不可行（EvaluationFailed 独立，§8.4 表失败语义行））。
+inline constexpr std::string_view kRejectQuickScreenedBudget
+    = "opt.reject.quick-screen-budget";
 
 /**
  * @brief 淘汰原因记录（§8.3 第 9 步——{阶段, 约束/评估器 ID, 原因 token,
