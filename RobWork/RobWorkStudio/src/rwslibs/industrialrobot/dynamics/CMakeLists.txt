@@ -101,8 +101,18 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #                          DOWNGRADED 稳定码诊断〕＋缺失清单全量组装＋
 #                          DYN-06 限定语单点判定＋产物摘要投影——DYN-06
 #                          降级经 evidence 证据表达的唯一执行点）。
-# 评估器注册等实现翻译单元随 WP-17-T07~T10 按卡 §3.2 布局表增列
-# （Evaluators/TrajectorySourcePort/Commands/Handoff——不预建占位实现，
+# WP-17-T08 增列两实现 TU（DYN-08 数据面与命令面——卡 §9.5 三命令的
+# 领域承载；布局表 Commands.hpp 行＋Replay.hpp 为 §3.2 布局表外增头，
+# 增登见单元卡 §1.2 T08 注）：
+#   src/Replay.cpp         §9.5 数据面（show-curves 曲线联动投影＋
+#                          replay-at 回放数据构建与插值查表＋locate-peak
+#                          峰值定位查询〔消费 T04 computePeaks 行集零重
+#                          算〕——纯数据重组零动力学计算，UI 线程安全）；
+#   src/Commands.cpp       §10.7 领域命令适配器（§9.5 五命令词表查表＋
+#                          零修订会话契约应答——零计算逻辑，结构红线由
+#                          契约测试词表扫描钉住）。
+# 评估器注册等实现翻译单元随 WP-17-T09/T10 按卡 §3.2 布局表增列
+# （Evaluators/TrajectorySourcePort/Handoff——不预建占位实现，
 # NFR-MNT-04）。
 add_library(sdurws_ird_dynamics STATIC
     src/DiagCodes.cpp
@@ -111,7 +121,9 @@ add_library(sdurws_ird_dynamics STATIC
     src/Envelope.cpp
     src/PowerEnergy.cpp
     src/ForwardDynamics.cpp
-    src/EvidenceBuilder.cpp)
+    src/EvidenceBuilder.cpp
+    src/Replay.cpp
+    src/Commands.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：dynamics 公共头使用 C++17 设施（inline constexpr 变量
@@ -320,7 +332,7 @@ add_executable(sdurws_ird_dynamics_test
                                      #   Empty 与未 build 访问器——任务契约
                                      #   acceptance 1/2 执行证明面）；夹具复用
                                      #   test/TwoLinkFixture.hpp
-    test/EnvelopeMergeTest.cpp)      # WP-17-T07：多工况与包络合并用例组
+    test/EnvelopeMergeTest.cpp       # WP-17-T07：多工况与包络合并用例组
                                      #   （DynEnvelopeMerge——三工况手工黄金
                                      #   max 合并与来源归因〔并列峰值按
                                      #   conditionId 序〕/多负载＋保持设计工况
@@ -332,6 +344,18 @@ add_executable(sdurws_ird_dynamics_test
                                      #   NaN 不参与 max/fail-fast 装配契约七
                                      #   面——任务契约 acceptance 1/2 执行证明
                                      #   面）；夹具复用 test/TwoLinkFixture.hpp
+    test/ReplayCurveTest.cpp)        # WP-17-T08：DYN-08 数据面与命令面用例组
+                                     #   （DynCurveProjector/DynReplayData/
+                                     #   DynReplaySampler/DynPeakLocate/
+                                     #   DynCommands/DynDyn08Chain——曲线联动
+                                     #   五通道黄金投影/非 Ok 行剔除与计数/
+                                     #   回放帧重组黄金/插值查表中点黄金与
+                                     #   越界不外推/峰值定位逐 token 对账
+                                     #   computePeaks/五命令零修订受理〔AT-04
+                                     #   机器断言〕/峰值定位→游标跳转→三维
+                                     #   姿态同步全链联动——任务契约
+                                     #   acceptance 1/2 执行证明面）；夹具
+                                     #   复用 test/TwoLinkFixture.hpp
 
 target_compile_features(sdurws_ird_dynamics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_test PROPERTIES
@@ -430,7 +454,7 @@ add_executable(sdurws_ird_dynamics_contract_test
                                      #   定语 token 词表冻结与 trustQualifiers
                                      #   三层映射契约〔RPT-05 不弱化的机器判读
                                      #   面〕）
-    contract_test/EnvelopeBoundaryContractTest.cpp)  # WP-17-T07：包络面单元边界
+    contract_test/EnvelopeBoundaryContractTest.cpp   # WP-17-T07：包络面单元边界
                                      #   契约（DynEnvelopeBoundary——mergeEnvelope
                                      #   公共契约形态编译期核对〔§10.4 签名钉扎
                                      #   ＋包络摘要 magic IRDDYVE1 词面冻结＋
@@ -439,6 +463,16 @@ add_executable(sdurws_ird_dynamics_contract_test
                                      #   coversAllMandatory 与 envelopeComplete
                                      #   互相独立——包络合并不替代必验工况覆盖
                                      #   规则的机器判读面〕）
+    contract_test/CommandsBoundaryContractTest.cpp)  # WP-17-T08：命令面单元边界
+                                     #   契约（DynCommandsBoundary——§9.5 五命令
+                                     #   token 词表与零修订会话契约四值编译期
+                                     #   static_assert 钉扎〔跨版本命令契约＋
+                                     #   KIN-06/AT-04 同值对账锚〕＋命令面零动
+                                     #   力学计算红线源码级词表扫描〔§10.7 硬
+                                     #   边界——Commands TU 零评估器/统计器/
+                                     #   投影器消费符号〕＋受理结果与契约逐位
+                                     #   恒等行为契约——acceptance 2"零修订"
+                                     #   机器判读面）
 
 target_compile_features(sdurws_ird_dynamics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_contract_test PROPERTIES
