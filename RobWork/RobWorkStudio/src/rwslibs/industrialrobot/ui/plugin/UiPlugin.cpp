@@ -1161,8 +1161,15 @@ IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
         m_diskExecutor->stop();
     }
     // 呈现管道兜底收口（UI-T46）：桥先毁（观察者弱持有自动退订）→编译
-    // 端口后毁（query 指针随 store 适配器——成员声明逆序保证端口析构时
-    // 适配器仍在）。正常关闭路径已随 teardown 收口，此处兜底。
+    // 端口最后毁。正常关闭路径已随 teardown 收口，此处兜底。
+    // UI-T77（F-569）注释更正：成员声明序上 m_compilePort 在
+    // m_lastStoreAdapter **之前**（hpp:395 vs :428），C++ 逆序销毁＝
+    // adapter 先毁——「声明逆序保证端口析构时适配器仍在」的旧注释与真实
+    // 布局相反；现行的存活保障是**本显式 reset 序**（bridge→observer→
+    // compilePort 抢在成员销毁前执行）。若删除本显式 reset 或在
+    // HostModelCompilePort 析构新增 Deps.query 解引用（非 owning 裸指针
+    // ——适配器存活期锚），即成悬垂：改动前必须重建适配器/端口的销毁序
+    // （如把 m_lastStoreAdapter 声明移到 m_compilePort 之前）。
     m_publishBridge.reset();
     m_presentationObserver.reset();
     m_compilePort.reset();
@@ -3498,17 +3505,19 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                            : std::nullopt;
             };
         seams.sessionRevisionId;  // 会话基线对账键＝空（无基线语义已定义——捕获请求随域门如实降级）
-        // 会话闭包引用元数据（UI-T33——拾取写回浅核对的 CheckContext 来
-        // 源：宿主查询端口 head().objectRefs 现取零缓存；适配器缺位＝空
-        // 上下文——浅核对如实拒绝，不虚构通过）。
-        if (m_lastStoreAdapter != nullptr) {
-            app::StorePortAdapter* adapter = m_lastStoreAdapter.get();
-            seams.sessionClosureRefs = [adapter]()
-                -> std::vector<project::ObjectRef> {
-                if (adapter == nullptr) { return {}; }
-                return adapter->projectStore().query().head().objectRefs;
-            };
-        }
+        // 会话闭包引用元数据（UI-T33——拾取写回浅核对的 CheckContext 来源）。
+        // UI-T77（F-558）修复：改为**延迟现取**（捕 this→调用时经
+        // currentRequirementsCheckContext() 同源现取）。原实现按绑定时点的
+        // m_lastStoreAdapter 判空捕获裸指针——本函数在 initialize 装配段
+        // 执行（进程启动拍，任何项目均未打开、adapter 恒空），缝保持缺省
+        // 空 function 且此后无再绑定点→拾取浅核对拿空闭包恒误判「悬空」
+        // （F-554 空闭包家族第六处；F-550③ 骨架呈现让拾取链可达后即踩）。
+        // 延迟现取＝绑定时机无关，与 F-554 修复的面板就绪上下文同一机制
+        // 面；顺带消除裸 adapter 指针的跨项目存活隐患（adapter 被覆盖析构
+        // 后旧缝仍持悬垂指针的潜在 UAF 面）。
+        seams.sessionClosureRefs = [this]() -> std::vector<project::ObjectRef> {
+            return currentRequirementsCheckContext().closureRefs;
+        };
         m_domains->requirements->bindView3DSeams(std::move(seams));
 
         // ---- 会话预览双 sink 投影绑定（UI-T33 收口——acceptance 1/2/3
@@ -3579,7 +3588,17 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                         }
                         m_reqMarkers.push_back(ui::View3DFrameMarker{
                             marker.label, *frameName, worldPos});
-                    }  // 帧名不可解析＝该标记跳过（渲染端 unresolved 计数留痕）
+                    } else if (m_diag.pipeline) {
+                        // UI-T77（F-566）：帧名不可解析＝该标记不进投影集
+                        // （渲染端 unresolved 计数只覆盖已转发的挂帧形态
+                        // ——此处跳过的标记三面全空，工位数与标记数不一致
+                        // 不可观测）。对齐区域路径：Dev 留痕（工位名＋引
+                        // 用），静默消失变可观测。
+                        m_diag.pipeline->logDev(
+                            kPluginDevChannel,
+                            "view3d preview: 工位标记帧名不可解析——跳过（"
+                                + marker.label + "）");
+                    }
                 }
                 ui::View3DPreviewUpdate update;
                 update.frameMarkers = m_reqMarkers;
@@ -3589,10 +3608,34 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
             });
         m_domains->requirements->bindRegionPreviewSink(
             [this, resolveFrameName, studio](
-                const requirements::RequirementsPluginAssembly::RegionPreviewView& geo) {
+                const std::optional<requirements::RequirementsPluginAssembly::
+                                        RegionPreviewView>& geoOpt) {
+                // UI-T77（F-560）：区域集合空态（nullopt）＝框/格两层同拍
+                // 清除后合并投递——面板删除最后一个区域时三维残留的根治
+                // （只清标签不投递则宿主缓存残值被后续标记投递重挂）。
+                if (!geoOpt.has_value()) {
+                    m_reqBox.reset();
+                    m_reqGrid.reset();
+                    ui::View3DPreviewUpdate clearUpdate;
+                    clearUpdate.frameMarkers = m_reqMarkers;
+                    clearUpdate.boxOutline = m_reqBox;    // nullopt＝清框层
+                    clearUpdate.sampleGrid = m_reqGrid;   // nullopt＝清格层
+                    if (!m_view3dGateway->applyPreview(clearUpdate)
+                        && m_diag.pipeline) {
+                        // F-560 附带：applyPreview 返回值不再忽略（契约
+                        // 「false＝挂接失败——调用方诚实呈现」）——失败经
+                        // Dev 留痕，缓存与画面失配可观测。
+                        m_diag.pipeline->logDev(
+                            kPluginDevChannel,
+                            "view3d preview: 区域空态清除挂接失败（保留旧呈现）");
+                    }
+                    return;
+                }
+                const requirements::RequirementsPluginAssembly::RegionPreviewView&
+                    geo = *geoOpt;
                 // refFrame 系→世界系（宿主帧位姿——Kinematics::worldT；
-                // 参考系缺失＝框层清除＋Dev 留痕——acceptance 2 的失败
-                // 原因可见面在投影方摘要与 Dev 双承载）。
+                // 参考系缺失＝框/格两层同拍清除＋Dev 留痕——acceptance 2
+                // 的失败原因可见面在投影方摘要与 Dev 双承载）。
                 // F-550② 修复：World 缺省参考系（RequirementTypes.hpp
                 // kind 缺省值）的角点/格线本身就是世界系坐标——恒等变换
                 // 直投，不经宿主帧解析。这使区域框/采样格在首应用前（宿
@@ -3677,12 +3720,19 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                     box = outline;
                     m_reqGrid = grid;
                 } else if (m_diag.pipeline) {
+                    // UI-T77（F-561）：失败分支格层与框层**同拍清除**——
+                    // 此前只清框层、m_reqGrid 保持上一区域旧值合并投递，
+                    // 「半新半旧」在原子替换语义自家分支内复活。
+                    // UI-T77（F-565）：域侧摘要（regionPreviewGeometry 的
+                    // 失败可见面，如「格 未定」＝盒退化/采样间距非法）随
+                    // Dev 追注——此前全链透传到投影方后被静默丢弃。
+                    m_reqGrid.reset();
                     m_diag.pipeline->logDev(
                         kPluginDevChannel,
-                        "view3d preview: 区域参考系不可解析——框层清除（"
+                        "view3d preview: 区域参考系不可解析——框/格层清除（"
                             + (frameName.has_value() ? *frameName
                                                      : std::string("<无引用>"))
-                            + "）");
+                            + "）；域摘要：" + geo.summaryText);
                 }
                 m_reqBox = box;
                 // 着色采样点层已随上方合并投递（UI-T65——F-490① 消费卡
@@ -3691,7 +3741,14 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                 update.frameMarkers = m_reqMarkers;
                 update.boxOutline = m_reqBox;
                 update.sampleGrid = m_reqGrid;
-                m_view3dGateway->applyPreview(update);
+                if (!m_view3dGateway->applyPreview(update) && m_diag.pipeline) {
+                    // UI-T77（F-560 附带）：返回值不再忽略——失败＝渲染
+                    // 后端缺位/场景不可得（Dev 留痕可观测，网关保留旧
+                    // 呈现的事务语义不受影响）。
+                    m_diag.pipeline->logDev(
+                        kPluginDevChannel,
+                        "view3d preview: 区域层挂接失败（保留旧呈现）");
+                }
             });
     }
 
@@ -3989,11 +4046,12 @@ void IrdWorkbenchHostPlugin::refreshReadinessSummary()
 
 void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
 {
-    // 项目关闭统一清理（acceptance 4——八类对象逐类收口；清理序＝依赖
-    // 序：先退订消费者再清状态源，防止清理过程中的重入回调）。
+    // 项目关闭统一清理（acceptance 4——九类对象逐类收口〔UI-T77/F-559
+    // 增第九类：三维预览投影缓存〕；清理序＝依赖序：先退订消费者再清
+    // 状态源，防止清理过程中的重入回调）。
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
-                                "project close teardown: begin (8 object classes)");
+                                "project close teardown: begin (9 object classes)");
     }
 
     // ⑧运行中订阅：检查器模型的 SelectionService 订阅（RAII 句柄释放）
@@ -4051,10 +4109,25 @@ void IrdWorkbenchHostPlugin::teardownSharedSurfacesForClose()
     // ⑧运行中订阅（续）：修订事件订阅保持（总线随 store 关闭排空——
     //    旧项目事件在无绑定态被域模块按分支过滤丢弃，不污染新项目）。
 
+    // ⑨三维预览投影缓存（UI-T77——F-559 收口）：三缓存清零＋网关整组
+    //    摘除（幂等）。ird 项目关闭经 UiSessionController Draining→本函
+    //    数，不经过宿主框架 WorkCell 关闭拍（onSceneCleared→removePreview
+    //    不触发）——漏收口则 A 项目的框/格/标记缓存残值被 B 项目首个标
+    //    记投递合并重挂（跨项目串呈现，与「旧快照不跨会话残留」⑤同族
+    //    纪律）。先清缓存再 removePreview：即使摘除失败（场景不可得），
+    //    缓存已归零——新项目首投递携带的是空区域/空格层，不会重挂残值。
+    m_reqMarkers.clear();
+    m_reqBox.reset();
+    m_reqGrid.reset();
+    if (m_view3dGateway) {
+        m_view3dGateway->removePreview();
+    }
+
     if (m_diag.pipeline) {
         m_diag.pipeline->logDev(kPluginDevChannel,
                                 "project close teardown: done (selection cleared, "
                                 "tree/inspector reset, highlight cleared, "
+                                "preview caches cleared, "
                                 "presentation-side objects follow bridge assembly)");
     }
 }

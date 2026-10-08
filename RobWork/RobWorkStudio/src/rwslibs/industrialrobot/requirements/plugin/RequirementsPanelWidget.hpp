@@ -88,8 +88,12 @@ public:
     using EditTargetProvider = std::function<IRequirementEditor*()>;
     /// 区域三维预览出口（装配层注入——绑定 ui View3D 契约；不注入＝仅
     /// 文本摘要呈现。预览几何为呈现面——结果着色归 KIN-07，本面板零结果
-    /// 语义）。
-    using RegionPreviewSink = std::function<void(const RegionPreviewGeometry&)>;
+    /// 语义）。UI-T77（F-560）：签名改 optional——nullopt＝区域集合为空
+    /// 的空态投递（三维框/格层随「无区域」清除；与 View3D 契约
+    /// boxOutline/sampleGrid「nullopt＝清除该层」同构——空集合无投递则
+    /// 宿主缓存残值被后续标记投递重挂，删除区域后三维永残留）。
+    using RegionPreviewSink =
+        std::function<void(const std::optional<RegionPreviewGeometry>&)>;
 
     /**
      * @brief 构造需求域面板（UI 线程——§3.4）。

@@ -2776,6 +2776,12 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         }
     } else {
         m_regionPreviewLabel->setText(QString());
+        // UI-T77（F-560）：区域集合为空＝空态投递（nullopt）——三维框/格
+        // 层随「无区域」清除。只清面板标签不投递的话，宿主侧缓存残值会被
+        // 后续任一标记投递合并重挂（删除唯一区域后框/格/着色永残留）。
+        if (m_regionPreview) {
+            m_regionPreview(std::nullopt);
+        }
     }
 }
 

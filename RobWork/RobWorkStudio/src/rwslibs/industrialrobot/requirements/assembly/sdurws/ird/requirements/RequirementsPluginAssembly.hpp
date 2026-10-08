@@ -249,10 +249,13 @@ struct RequirementsPluginAssembly {
 
     /**
      * @brief 绑定区域预览出口（UI-T33——区域页投影时投递；未绑定＝预览
-     *        仅文本摘要。同上转换在门面实现）。
+     *        仅文本摘要。同上转换在门面实现）。UI-T77（F-560）：nullopt＝
+     *        区域集合为空的空态投递（投影方据此清除三维框/格层——与
+     *        View3D 契约「nullopt＝清除该层」同构；缺投递则宿主缓存残值
+     *        跨编辑/跨项目残留）。
      */
     void bindRegionPreviewSink(
-        std::function<void(const RegionPreviewView&)> sink);
+        std::function<void(const std::optional<RegionPreviewView>&)> sink);
 
     /**
      * @brief 会话刷新（宿主 bindReadiness 后的呈现收口——面板以会话最新

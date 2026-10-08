@@ -176,24 +176,30 @@ void RequirementsPluginAssembly::bindStationMarkersSink(
 }
 
 void RequirementsPluginAssembly::bindRegionPreviewSink(
-    std::function<void(const RegionPreviewView&)> sink)
+    std::function<void(const std::optional<RegionPreviewView>&)> sink)
 {
     // UI-T33——区域预览出口转发（同上转换纪律：几何角序零重排直投＋
-    // 参考系原值直投＋摘要直投）。
+    // 参考系原值直投＋摘要直投）。UI-T77（F-560）：nullopt＝区域集合空
+    // 态透传（不构造 View——空态无几何可转，投影方据此清除三维框/格层）。
     if (m_impl == nullptr) {
         return;
     }
     m_impl->bindRegionPreviewSink(
-        [forward = std::move(sink)](const RegionPreviewGeometry& geo) {
+        [forward = std::move(sink)](
+            const std::optional<RegionPreviewGeometry>& geo) {
+            if (!geo.has_value()) {
+                forward(std::nullopt);  // 空态直传（零构造零加工）
+                return;
+            }
             RegionPreviewView view;
-            view.corners = geo.corners;
-            view.refFrame = geo.refFrame;
-            view.summaryText = geo.summaryText;
-            view.gridLines = geo.gridLines;  // UI-T52——格线段直投（角序零重排）
+            view.corners = geo->corners;
+            view.refFrame = geo->refFrame;
+            view.summaryText = geo->summaryText;
+            view.gridLines = geo->gridLines;  // UI-T52——格线段直投（角序零重排）
             // UI-T65——区域锚与覆盖率目标透传（F-495 消费卡的投影过滤/
             // 框色对照输入；值直投零换算）。
-            view.regionObjectId = geo.regionObjectId;
-            view.minPositionCoverage = geo.minPositionCoverage;
+            view.regionObjectId = geo->regionObjectId;
+            view.minPositionCoverage = geo->minPositionCoverage;
             forward(view);
         });
 }
