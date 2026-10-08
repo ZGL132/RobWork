@@ -3,10 +3,11 @@
  * @brief  生命周期入口流程——新建项目三步向导（PM-01）＋打开协议编排
  *         （PM-02 五步的 workflow 面）＋关闭/切换/退出统一确认编排
  *         （PM-03——§7.3）＋方案分支切换（PM-12 零写入会话选择编排）
- *         ＋最近项目管理（PM-10）＋无项目首页数据面（PM-10）：步骤/入口
- *         词表、向导输入值对象、输入校验、右侧实时步骤摘要组装、领域
- *         初始化提交端口、创建/打开/关闭编排器、最近项目服务与首页
- *         入口禁用数据。
+ *         ＋另存为/包导出/包导入编排（PM-05——§7.4）＋最近项目管理
+ *         （PM-10）＋无项目首页数据面（PM-10）：步骤/入口词表、向导输入
+ *         值对象、输入校验、右侧实时步骤摘要组装、领域初始化提交端口、
+ *         创建/打开/关闭/另存/包编排器、复制内容勾选词表与流程取消/
+ *         进度基面、最近项目服务与首页入口禁用数据。
  *
  * 设计依据：
  *   - units/workflow.md §7.1（新建项目三步向导 PM-01——三步结构、确认后
@@ -46,10 +47,24 @@
  *     即清理临时区、切换＝关闭后候选验证成功才切上下文；方案分支切换
  *     〔PM-12〕零写入——不产生修订、不写文件含 HEAD；关闭编排三方契约
  *     P-UI-6 冻结前按单元卡 §7.3 形态实现）
+ *   - 任务契约 tasks/foundation/WP-22-T07.json acceptance 1/2/3（另存为
+ *     执行完整目录复制〔results/reports/drafts 勾选、记忆默认〕并换新
+ *     projectId 后按打开协议进入——PM-05/AT-20；包导出 .rwpack ZIP 传输
+ *     封装：后台进度可取消、取消即清理临时区；导入执行预算/路径穿越
+ *     防护与全量校验〔失败不留目标目录〕并给出校验报告；io 边注入形态
+ *     P-IO-1 裁决前与 reporting P-RPT-1 同案处理——本头零 io include、
+ *     零 io 类型，包/另存执行面全部经注入式端口触达）
  *   - project.md §5.1（createNew＝PM-01 存储侧：同卷 .staging 组装→整体
  *     就位→失败清理目标目录）、§2.2 分工表（目录创建/初始修订/外部引用
  *     记录持久化归 project；向导 UI 归 workflow）、§13.2 workflow 行
  *     （open/createNew/saveAs/package 服务调用序列＝向导编排）
+ *   - io.md §7（.rwpack 包导出/导入执行协议——§7.2 导出六步＋§7.3 导入
+ *     九步＋§7.4 威胁处置矩阵＋§7.7 责任切分：io 承接校验①~⑦与清理⑨、
+ *     发布⑧归 project〔io 侧 rename 发布被明确禁止——N-7〕；本头按
+ *     P-IO-1 注入形态以自有端口承载该执行面——零 io 头零 io 类型，
+ *     桥接归 L5 装配层，裁决补边后签名零改动——P-RPT-1 同案）、§4.5.2
+ *     （包导入预算四维硬限——规格值归执行面产品默认，workflow 编排面
+ *     零预算数值——I-WF-3 同精神：编排不含数值阈值）
  *   - modeling.md §5.1/§9.4.2（模板登记词形 generic-6r/generic-7r 与安装
  *     预设词形 ground/inverted/wall——本头词表常量与对端词形对照，见各
  *     常量注；P-03 未冻结前七轴模板 enabled=false，创建入口由对端阻止）
@@ -86,17 +101,60 @@
  * （D-WF-6——workflow 只承诺状态数据与流程编排契约，宿主面归 ui），
  * 按单元卡 §3.1"Lifecycle.hpp 随 WP-22-T04~T08 增列"路线**基线虚类
  * 仍不声明**（NFR-MNT-04 不预建无消费者接口——WP-22-T04 v0.5 同款口径
- * 的延续：T06 落位后六方法中已有新建（T04）、打开（T05）与关闭/切换/
- * 退出（本批 CloseFlow::run——requestClose 的编排核）三段有可测编排核
- * 支撑，startSaveAsWizard/startPackageWizard/startRelinkFlow 三段编排核
- * 随 T07~T08 落位；届时基线虚类与其 L5 适配器随首个宿主接线消费方任务
- * 一并增列，避免虚类先于实现迫使实现方 stub 未落位方法）。T05 落位范围
- * ＝打开协议子集（openProject 一项的可测编排核——OpenProjectFlow::run）
- * ＋最近项目服务（IRecentProjectsService/RecentProjectsService）＋无项目
- * 首页数据面（buildNoProjectHomeScreen）；T06 落位范围＝关闭/切换/退出
- * 统一确认编排子集（requestClose 一项的可测编排核——CloseFlow::run）＋
- * 方案分支切换会话选择编排（SchemeBranchSwitchFlow::run——PM-12），
- * 偏差已登记单元卡 §14.5（DTB §5.4 口径）。
+ * 的延续：T07 落位后六方法中已有新建（T04）、打开（T05）、关闭/切换/
+ * 退出（T06 CloseFlow::run）、另存为（本批 SaveAsFlow::run——
+ * startSaveAsWizard 的编排核）与包导出/导入（本批 PackageExportFlow::
+ * run／PackageImportFlow::run——startPackageWizard 的编排核）五段有
+ * 可测编排核支撑，startRelinkFlow 一段编排核随 T08 落位；届时基线虚类
+ * 与其 L5 适配器随首个宿主接线消费方任务一并增列，避免虚类先于实现迫
+ * 使实现方 stub 未落位方法）。T05 落位范围＝打开协议子集（openProject
+ * 一项的可测编排核——OpenProjectFlow::run）＋最近项目服务
+ * （IRecentProjectsService/RecentProjectsService）＋无项目首页数据面
+ * （buildNoProjectHomeScreen）；T06 落位范围＝关闭/切换/退出统一确认
+ * 编排子集（requestClose 一项的可测编排核——CloseFlow::run）＋方案分
+ * 支切换会话选择编排（SchemeBranchSwitchFlow::run——PM-12）；T07 落位
+ * 范围＝另存为编排（SaveAsFlow::run——完整目录复制编排＋勾选记忆默认
+ * ＋按打开协议进入）＋包导出/导入编排（PackageExportFlow::run／
+ * PackageImportFlow::run——后台进度可取消、取消即清理临时区、导入全量
+ * 校验失败不留目标目录并给出校验报告），偏差已登记单元卡 §14.5（DTB
+ * §5.4 口径）。
+ *
+ * 另存为/包导出/包导入编排（PM-05——§7.4；WP-22-T07）语义：
+ *   - 分工逐字（§7.4）：另存为的**复制执行归 project**（WP-04-T18 存储
+ *     侧契约未生成——编排面经 ISaveAsPort 端口触达，L5 装配层桥接 project
+ *     命令面/存储侧；契约 note 已豁免 dependsOn 边）；包导出/导入的
+ *     **执行归 io**（ZIP 封装/逐字节还原/预算/路径穿越防护/全量校验），
+ *     **发布归 project**（io.md §7.7 责任切分——io 侧 rename 发布被明确
+ *     禁止），workflow 只做编排与校验报告呈现。三段执行面在本头的形态
+ *     全部是**注入式端口**（P-IO-1 裁决前与 reporting P-RPT-1 同案——
+ *     本头零 io include 零 io 类型；端口实现由 L5 装配层桥接 io 真实
+ *     设施与 project 发布动作，裁决补边后签名零改动）；
+ *   - 勾选与记忆默认（PM-05"results/reports/drafts 勾选、记忆默认"）：
+ *     PackageSelectionFlags 三勾选位为另存与包导出共用词表（缺省全选＝
+ *     "完整目录复制"语义）；记忆默认＝上次确认的勾选作为下次向导初始
+ *     勾选（defaultSelectionOf 解析：有记忆用记忆、无记忆用全选缺省）。
+ *     勾选的**持久化**归用户设置存储（PM-14 §7.7——WP-22-T10 落位
+ *     Settings.hpp 后接线；本批编排面只承诺确认勾选随 Outcome.selection
+ *     回传登记，持久化半区归 T10——v0.6 最近项目服务同款边界）；
+ *   - 后台进度与取消（PM-05"导出/导入后台进度可取消，取消即清理临时区"
+ *     ＋AT-20）：进度经 FlowProgressCallback 回调上抛（呈现材料转发——
+ *     进度呈现归 ui 宿主面；"后台"的驱动线程归属 L5/宿主，编排核在调用
+ *     线程同步驱动，io 侧不建线程）；取消经 IFlowCancelToken 协作令牌
+ *     （检查点轮询语义——非抢占），取消不是错误（UX-03：Canceled 态
+ *     failure 置空、零诊断）；"取消即清理"是流程承诺：编排核消费端口
+ *     回传的清理观测位（temporaryAreaCleaned/targetLeftClean），观测位
+ *     为假（有残留）时如实转 Failed 呈现——不吞不粉饰（带病成功＝伪造
+ *     通过，违反验证纪律）；
+ *   - 导入"失败不留目标目录"（PM-05/NFR-SEC-01/02）：结构性保证在执行
+ *     面（io 九步协议校验先行、发布⑧只在校验全过后由 project 执行）；
+ *     编排核的义务是**零发布语义**——编排核签名不接收也不产生任何
+ *     rename/发布动作（发布折叠在 IPackageImportPort 端口语义内，由 L5
+ *     桥接 project 侧执行），失败/取消路径目标目录零写入由端口契约承诺、
+ *     编排核经 targetLeftClean 观测位复核；
+ *   - 导出"失败保证项目状态不变"（§7.4——MDL-20 同型口径）：结构性
+ *     保证＝编排核对源 store 只读消费（取身份/HEAD 组装传输封装元数据，
+ *     不调用任何写面）＋执行面原子替换（OverwriteAtomic——失败保留
+ *     先前输出，io §7.2⑥）；契约测试以源项目目录树字节快照复核。
  *
  * 关闭/切换/退出统一确认编排（PM-03——§7.3；WP-22-T06）语义：
  *   - 统一确认对话框（PM-03 原文）的数据面在此：未应用草稿三选
@@ -179,14 +237,18 @@
  * OpenProjectFlow::run 为静态函数（无共享状态，但参数中的 store/端口
  * 对象非线程共享）；RecentProjectsService 为会话内单线程服务（非线程
  * 共享——首页/宿主单线程访问）；CloseFlow::run／SchemeBranchSwitchFlow::
- * run 同为静态编排核（主线程会话内驱动——决策端口回调与排空轮询都在
+ * run／SaveAsFlow::run／PackageExportFlow::run／PackageImportFlow::run
+ * 同为静态编排核（主线程会话内驱动——决策端口回调与排空轮询都在
  * 调用线程上发生；排空等待依赖 execution/project 侧后台机制推进，编排
- * 线程只轮询观察，不驱动状态迁移）。
+ * 线程只轮询观察，不驱动状态迁移；另存/包流程的进度回调在编排调用
+ * 线程上同步发生——"后台"驱动线程归属 L5/宿主，io 侧不建线程）。
  * 错误语义（§10.3）：调用方错误 fail-fast（WorkflowError）；环境/对端
  * 错误走值轨道呈现（NewProjectOutcome.failure／OpenProjectOutcome.
  * failure／CloseFlowOutcome.failure／SchemeBranchSwitchOutcome.failure
- * ——UX-03 三字段），本单元零新增稳定诊断码（D-WF-7：R1 零新增
- * WF- 码；对端码记录原样透传）。
+ * ／SaveAsOutcome.failure／PackageExportOutcome.failure／
+ * PackageImportOutcome.failure——UX-03 三字段），本单元零新增稳定诊断码
+ * （D-WF-7：R1 零新增 WF- 码；对端码记录原样透传）；取消不是错误
+ * （UX-03——Canceled 态 failure 置空、诊断恒空）。
  */
 
 #ifndef SDURWS_IRD_WORKFLOW_LIFECYCLE_HPP
@@ -194,6 +256,7 @@
 
 #include <cstdint>
 #include <filesystem>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -1354,6 +1417,835 @@ public:
                                          ICloseDecisionPort& decisions,
                                          ICloseDraftPort& drafts);
 };
+
+// =====================================================================
+// 另存为与包导出/导入编排的公共基面（PM-05——§7.4；WP-22-T07）
+// =====================================================================
+
+/**
+ * @brief 复制内容勾选（PM-05"results/reports/drafts 勾选"——另存为与
+ *        包导出共用的三勾选词表）。
+ *
+ * 缺省全选＝"完整目录复制"语义（§7.4 行一"另存为执行完整目录复制"
+ * ——未做记忆/未做选择时复制全部可选树，不发明部分复制默认）。三树的
+ * 语义：results/＝评估结果树、reports/＝报告树、drafts/＝草稿树
+ * （.rwdesign 目录内的可选树清单——权威布局归 project/io，本结构只承载
+ * "是否随复制/随导出携带"的用户选择）。缺省 true 的取舍：与 io 导出
+ * 选项的缺省 false 不同——io 层默认保守（逐字段显式开启），workflow
+ * 层缺省＝向导语义（完整复制）；两层各自成立，L5 桥接时按本结构逐位
+ * 映射（不依赖 io 缺省值）。
+ *
+ * 勾选记忆（PM-05"记忆默认"）：确认后的本值随 SaveAsOutcome.selection
+ * 回传，由调用方登记入用户设置（PM-14"包导出默认勾选"——持久化半区
+ * 归 WP-22-T10 Settings.hpp；本批只承诺编排面回传）；下次打开向导时
+ * 经 defaultSelectionOf 解析初始勾选。
+ */
+struct PackageSelectionFlags {
+    /// results/ 评估结果树随复制/导出携带（缺省携带——完整复制语义）。
+    bool includeResults = true;
+    /// reports/ 报告树随复制/导出携带（缺省携带）。
+    bool includeReports = true;
+    /// drafts/ 草稿树随复制/导出携带（缺省携带）。
+    bool includeDrafts = true;
+
+    bool operator==(const PackageSelectionFlags& o) const
+    {
+        return includeResults == o.includeResults
+            && includeReports == o.includeReports
+            && includeDrafts == o.includeDrafts;
+    }
+    bool operator!=(const PackageSelectionFlags& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 勾选记忆默认解析（PM-05"记忆默认"——向导初始勾选的唯一判定点，
+ *        纯函数）。
+ *
+ * 解析规则：记忆有值（上次确认的勾选已登记）→ 原样采用（记忆默认——
+ * 用户上次的选择即本次初始值）；记忆无值（首次使用/设置被清）→ 全选
+ * 缺省（PackageSelectionFlags 缺省构造——完整复制语义）。
+ *
+ * @param remembered [in] 记忆的上次勾选（nullopt＝无记忆）
+ * @return 向导初始勾选（确定性——同输入同输出，NFR-COR-02 同型）
+ *
+ * @threadSafe const 纯函数，可并发。
+ * @determinism 同输入同输出。
+ */
+PackageSelectionFlags defaultSelectionOf(
+    const std::optional<PackageSelectionFlags>& remembered);
+
+/**
+ * @brief 流程取消令牌（另存/包导出/包导入编排的协作取消面——workflow
+ *        自有同形类型）。
+ *
+ * P-IO-1 注入形态声明（契约 acceptance 3——与 reporting P-RPT-1 同案）：
+ * 本接口是 workflow 侧的取消令牌词面，**零 io 类型**——L5 装配层桥接
+ * io 的 IoCancelToken（裁决补边后可原位替换、签名零改动，reporting
+ * §873 同款手法）。语义与 io 侧一致：协作式检查点轮询（非抢占——执行
+ * 面在既定检查点轮询 cancelRequested()，命中即停止并清理自身临时产物）；
+ * requestCancel() 由宿主（进度回调/UI 取消按钮）置位，幂等、一经真值
+ * 不再复位。
+ *
+ * 线程约束：requestCancel 可在进度回调线程（或 UI 线程）调用，
+ * cancelRequested 由执行线程轮询——实现须并发安全（原子量）。
+ */
+class IFlowCancelToken {
+public:
+    virtual ~IFlowCancelToken() = default;
+
+    /**
+     * @brief 查询取消标志（幂等；true 后恒 true——执行面依赖该契约
+     *        跳过后续步骤直接进入清理）。
+     * @return true＝已请求取消（执行面停止并清理）
+     */
+    virtual bool cancelRequested() const = 0;
+
+    /**
+     * @brief 请求取消（幂等置位——宿主/进度回调调用；非抢占，生效
+     *        时刻＝执行面下一个检查点）。
+     */
+    virtual void requestCancel() = 0;
+};
+
+/**
+ * @brief 流程进度快照（另存/包导出/包导入编排的进度呈现材料——workflow
+ *        自有同形类型，L5 桥接 io 的 IoProgress）。
+ *
+ * done/total 的计数单位随 phaseToken 语义而定（文件数/条目数——io 侧
+ * 各阶段自注明；本结构不规定统一单位——同 io IoProgress 口径）；
+ * total==0 表示总量未知（探测/流式阶段），此时 done 仍有效。同一阶段
+ * 内 done 不回退（执行面保证），跨阶段重置经 phaseToken 切换表达。
+ * phaseToken 为稳定英文短语 token（字面量生存期；本地化文案归 ui——
+ * UX-02 键/值半区分工，零哈希/Schema/内部插件名）。
+ */
+struct FlowProgressStage {
+    std::string phaseToken;   ///< 阶段短语 token（稳定英文词形——呈现文案归 ui）
+    std::uint64_t done = 0;   ///< 已完成单位数（单位随 phaseToken 语义）
+    std::uint64_t total = 0;  ///< 总量（0＝未知；已知时 done ≤ total）
+};
+
+/// 进度回调类型：编排核把执行面的进度逐拍转发给宿主（呈现归 ui 宿主面
+/// ——PM-05"后台进度"的呈现材料通道；回调在编排调用线程同步发生，
+/// 回调内只做呈现更新/取消置位，不做重入调用——io §9.13 同款纪律）。
+using FlowProgressCallback = std::function<void(const FlowProgressStage&)>;
+
+// =====================================================================
+// 另存为编排（PM-05——§7.4 行一；AT-20；WP-22-T07）
+// =====================================================================
+
+/// 另存为校验错误文案键前缀（键形 "wizard.save-as.error.<token>"——
+/// 值归 ui 文案资源，UX-02 键/值半区分工）。
+inline constexpr const char* kSaveAsErrorKeyPrefix = "wizard.save-as.error.";
+
+/**
+ * @brief 另存为向导输入校验（"开始复制"放行判定——PM-05 向导的纯函数
+ *        化，同 validateStep 纪律：呈现性前置而非权威，TOCTOU 窗口与
+ *        目标合法性的最终裁决在执行端口/project 存储侧——PA-1）。
+ *
+ * 校验集（键形 kSaveAsErrorKeyPrefix＋token，按下列序稳定输出）：
+ *   - target-empty（目标目录路径空）；
+ *   - target-same-as-source（目标与源项目目录相同——lexically_normal
+ *     词法相等；同目录另存无意义且会被执行侧拒绝）；
+ *   - target-exists-nonempty（目标已存在且非空——同 createNew @pre 的
+ *     前置呈现检查；存在且为空目录放行）。
+ *
+ * @param sourceDir [in] 源项目目录（源 store 的 canonicalPath——宿主面
+ *                  自会话取）
+ * @param targetDir [in] 目标项目目录（用户输入词面）
+ * @return 错误文案键清单（空＝放行）
+ *
+ * @threadSafe const 纯函数（文件系统存在性检查除外——环境事实），可并发。
+ * @determinism 键序确定（同输入同时点同输出）。
+ */
+std::vector<ui::TextKey> validateSaveAsInputs(const std::filesystem::path& sourceDir,
+                                              const std::filesystem::path& targetDir);
+
+/**
+ * @brief 另存为请求（向导确认值——目标目录＋复制内容勾选）。
+ */
+struct SaveAsRequest {
+    /// 目标项目目录（.rwdesign；须不存在或为空目录——validateSaveAsInputs
+    /// 前置呈现，最终裁决在执行端口/project 存储侧）。
+    std::filesystem::path targetDir;
+    /// 复制内容勾选（确认值——原样传执行端口；并随 Outcome.selection
+    /// 回传登记记忆，PM-05"记忆默认"）。
+    PackageSelectionFlags selection;
+
+    bool operator==(const SaveAsRequest& o) const
+    {
+        return targetDir == o.targetDir && selection == o.selection;
+    }
+    bool operator!=(const SaveAsRequest& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 另存为执行端口（§7.4 行一"复制执行归 project"的 workflow 侧
+ *        视图——PM-05 存储侧的接缝面）。
+ *
+ * 谁实现：L5 装配层——它同时可见 project 公共头与存储侧契约（WP-04-T18
+ * 另存存储侧契约未生成，本端口即豁免 dependsOn 边的触达面：契约 note
+ * 明文"经 PRJ 命令面触达"），职责＝按请求执行完整目录复制（含新
+ * projectId 的分配与写入——project.json 创建期一次写入归 project，
+ * Identity.hpp ProjectId 行"另存为换新 id（PM-05）；分配者＝project"）
+ * 并把执行事实折叠为本端口结果。
+ *
+ * 端口契约（实现方义务，编排核逐项复核）：
+ *   - 复制按请求勾选裁剪可选树（results/reports/drafts——未勾选树不得
+ *     出现在目标目录）；
+ *   - 取消（cancel 检查点命中）→ 停止复制、清理目标残留、cancelled=true
+ *     且 targetLeftClean=true（AT-20"取消不留半成品"；观测位为假＝
+ *     清理承诺破坏，编排核如实转 Failed 呈现）；
+ *   - 失败（环境/对端错误）→ copied=false＋cause/action（UX-03 半区）
+ *     ＋目标零残留（失败不留半成品——同 createNew"失败清理目标目录"
+ *     口径）；
+ *   - 成功 → copied=true（新 projectId 已由存储侧分配写入目标）。
+ *
+ * 错误语义：环境/对端错误走 Execution 值轨道（不抛出编排核——另存
+ * 失败是用户流程事件）；调用方错误（请求违约）由实现方 fail-fast。
+ *
+ * 线程约束：主线程会话内调用（向导确认动作——§10.3 流程编排行）；
+ * "后台"驱动的线程归属 L5（编排核在调用线程同步驱动——io 不建线程，
+ * 同款纪律）。
+ */
+class ISaveAsPort {
+public:
+    virtual ~ISaveAsPort() = default;
+
+    /**
+     * @brief 另存执行结果（执行事实的值承载——编排核逐项复核的观测面）。
+     */
+    struct Execution {
+        bool copied = false;          ///< 完整目录复制完成（含新 projectId 分配——存储侧）
+        bool cancelled = false;       ///< 命中取消（协作检查点——UX-03 非错误）
+        /// 取消/失败路径的目标清理观测位（true＝目标零残留——AT-20；
+        /// false＝清理承诺破坏，编排核转 Failed 如实呈现，不吞）。
+        bool targetLeftClean = false;
+        std::string cause;            ///< 失败原因（UX-03 半区二——copied=false 时承载）
+        std::string action;           ///< 建议动作（UX-03 半区三——可空串＝兜底自诊断）
+    };
+
+    /**
+     * @brief 执行另存复制（§7.4 行一"完整目录复制"的执行点）。
+     *
+     * @param source [in] 源项目存储上下文（非 owning——只读消费：目录
+     *               身份与快照读取；实现方不得经本引用写源项目）
+     * @param request [in] 另存请求（目标目录＋勾选）
+     * @param cancel [in] 取消令牌（null＝不可取消；检查点语义见类注）
+     * @param progress [in] 进度回调（可空——编排核原样贯通，呈现归 ui）
+     * @return 执行结果（见 Execution 注）
+     */
+    virtual Execution executeCopy(project::ProjectStore& source,
+                                  const SaveAsRequest& request,
+                                  IFlowCancelToken* cancel,
+                                  const FlowProgressCallback& progress) = 0;
+};
+
+/**
+ * @brief 另存为失败呈现（UX-03 三字段＋具体定位——与 OpenProjectFailure
+ *        同型的编排器直产呈现面；D-WF-7 零新增稳定码，对端原因透传）。
+ */
+struct SaveAsFailure {
+    std::string context;           ///< 对象/上下文（UX-03 半区一——目标目录词面）
+    std::string file;              ///< 失败定位文件（复制/进入失败的具体定位——恒非空）
+    std::string cause;             ///< 原因（UX-03 半区二——端口 cause/对端 what() 透传）
+    std::string recommendedAction; ///< 建议动作（UX-03 半区三）
+
+    bool operator==(const SaveAsFailure& o) const
+    {
+        return context == o.context && file == o.file && cause == o.cause
+            && recommendedAction == o.recommendedAction;
+    }
+    bool operator!=(const SaveAsFailure& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 另存为编排结果（SaveAsFlow::run 的唯一返回通道）。
+ *
+ * 不变量：result==Entered ⇔ store 非空且 projectId/canonicalPath 有值
+ * （已按打开协议进入新项目——PM-05"换新 projectId 后按打开协议进入"）；
+ * result==Canceled ⇔ failure 置空且 store 空（取消非错误——UX-03）；
+ * result==Failed ⇔ failure 有值且 store 空。selection 恒为确认勾选
+ * （记忆登记面——调用方持久化，PM-14/T10）。
+ */
+struct SaveAsOutcome {
+    /**
+     * @brief 编排结果三值（Proceed 语义在此具名为 Entered——另存流程的
+     *        完成态即"已进入新项目"；与 CloseFlowOutcome::Result 同词表
+     *        语义，独立枚举避免跨编排的值混用）。
+     */
+    enum class Result : std::uint8_t {
+        Entered = 0, ///< 复制完成并已按打开协议进入新项目
+        Canceled = 1,///< 用户取消（目标零残留——非错误，failure 空）
+        Failed = 2,  ///< 失败（failure 有值——UX-03 四字段）
+    };
+
+    Result result = Result::Entered;///< 编排结果（见枚举注）
+    PackageSelectionFlags selection;///< 确认勾选（记忆登记面——调用方持久化）
+    bool readonly = false;          ///< 进入的新项目实际只读（写锁降级——PM-07 登记）
+    std::unique_ptr<project::ProjectStore> store;///< 新项目存储上下文（Entered 时唯一非空——移交调用方激活会话）
+    std::optional<core::ProjectId> projectId;///< 新项目身份（Entered 时有值——存储侧另存时分配的新 id）
+    std::filesystem::path canonicalPath;///< 新项目目录规范形态（Entered 时非空——最近项目记录键）
+    std::optional<SaveAsFailure> failure;///< 失败呈现（Failed 时有值）
+};
+
+/**
+ * @brief 另存为编排器（O4——§7.4 行一的执行点；§10.2 Draft 签名
+ *        startSaveAsWizard 的可测编排核；WF-VER-213 的被测面）。
+ *
+ * 全静态接口（无会话状态——同 NewProjectWizardFlow/OpenProjectFlow
+ * 先例：宿主事件驱动的编排核，纯面可契约测试直调）。
+ */
+class SaveAsFlow {
+public:
+    SaveAsFlow() = delete;
+
+    /**
+     * @brief 执行另存编排（复制→换新 projectId→按打开协议进入）。
+     *
+     * 编排序（每段的失败/取消语义独立成立）：
+     *   1 前置校验：目标目录为空、或与源项目目录 lexically_normal 相同
+     *     → WorkflowError（调用方契约违约 fail-fast——validateSaveAsInputs
+     *     已挡呈现面，到不了这里属宿主装配缺陷）。
+     *   2 复制执行（PM-05 存储侧）：port.executeCopy——完整目录复制按
+     *     勾选裁剪（results/reports/drafts）、新 projectId 由存储侧分配。
+     *   3 取消分派：cancelled 且 targetLeftClean → Canceled（failure 空
+     *     ——取消非错误 UX-03）；cancelled 但 targetLeftClean==false →
+     *     Failed（"取消即清理"承诺破坏——残留事实如实呈现，不带病报
+     *     成功）。
+     *   4 复制失败：copied==false → Failed（failure.cause/action 自端口
+     *     Execution，file＝目标目录词面——UX-03 四字段）。
+     *   5 按打开协议进入（PM-05 原文——§7.2 五步复用）：OpenProjectFlow::
+     *     run(OpenSource::Dialog, targetDir)——复制产物经完整打开协议
+     *     校验后才算进入（产物损坏在此暴露为打开失败，不以"复制成功"
+     *     伪装进入成功）；opened → Entered（store/projectId/canonicalPath
+     *     移交；readonly 登记）；打开失败 → Failed（failure 自打开呈现
+     *     转录——cause/file 保持具体文件定位）。
+     *   6 selection 登记：Outcome.selection＝请求确认勾选（所有路径恒
+     *     携带——记忆登记面，PM-05"记忆默认"的编排半区）。
+     *
+     * @param source [in] 源项目存储上下文（非 owning——编排核只读消费）
+     * @param request [in] 另存请求（目标目录＋勾选）
+     * @param saveAsPort [in] 另存执行端口（复制执行面——L5 桥接）
+     * @param cancel [in] 取消令牌（可空——透传执行端口）
+     * @param progress [in] 进度回调（可空——透传执行端口）
+     * @param eventBus [in] 事件总线注入（透传打开协议——⑤端口装配面，
+     *               可空；新项目存储上下文与当前会话同总线）
+     * @param diagnosticsSink [in] 诊断 sink 注入（透传打开协议——
+     *               project 侧码记录登记面，可空）
+     * @return 编排结果（见 SaveAsOutcome 不变量）
+     *
+     * @throws WorkflowError 目标目录空/与源相同（调用方契约违约——fail-fast）
+     *
+     * @threadSafe 无共享状态（静态函数）；store/端口按会话内单线程纪律。
+     * @determinism 无确定性承诺（§10.3"流程编排含用户交互"行——复制涉
+     *              磁盘与身份分配；同成功路径的状态事实可复核）。
+     */
+    static SaveAsOutcome run(project::ProjectStore& source,
+                             const SaveAsRequest& request,
+                             ISaveAsPort& saveAsPort,
+                             IFlowCancelToken* cancel = nullptr,
+                             const FlowProgressCallback& progress = {},
+                             core::IDomainEventBus* eventBus = nullptr,
+                             project::IDiagnosticsSink* diagnosticsSink = nullptr);
+};
+
+// =====================================================================
+// 包导出编排（PM-05——§7.4 行二；WP-22-T07）
+// =====================================================================
+
+/// 包导出校验错误文案键前缀（键形 "wizard.package-export.error.<token>"）。
+inline constexpr const char* kPackageExportErrorKeyPrefix =
+    "wizard.package-export.error.";
+
+/**
+ * @brief 包导出向导输入校验（"开始导出"放行判定——呈现性前置；目标
+ *        可写性/占用的最终裁决在执行面——PA-1）。
+ *
+ * 校验集（键形 kPackageExportErrorKeyPrefix＋token，按序稳定输出）：
+ *   - target-empty（目标文件路径空）；
+ *   - target-extension（扩展名词面非 .rwpack——大小写不敏感；导出目标
+ *     已存在＝合法（原子覆盖 OverwriteAtomic 是导出默认——io §7.2⑥），
+ *     不做存在性校验）。
+ *
+ * @param targetFile [in] 导出目标文件路径（用户输入词面）
+ * @return 错误文案键清单（空＝放行）
+ *
+ * @threadSafe const 纯函数，可并发。
+ */
+std::vector<ui::TextKey> validatePackageExportInput(const std::filesystem::path& targetFile);
+
+/**
+ * @brief 包导出请求（向导确认值＋源元数据组装位）。
+ *
+ * sourceProjectId/headRevisionId 由编排核自源 store 组装（PackageExport-
+ * Flow::run 第 2 段——.rwpack 传输封装的 rwpack.json 契约要求源项目身份
+ * 与 HEAD 修订，io.md §7.1；编排面对"源元数据组装"负责，调用方只填
+ * targetFile/selection），请求值在调用方侧传入时两元数据字段留空即可，
+ * 编排核填充后原样传执行端口。
+ */
+struct PackageExportRequest {
+    /// .rwpack 目标文件（须 .rwpack 扩展名词面——validatePackageExportInput）。
+    std::filesystem::path targetFile;
+    /// 导出内容勾选（与另存共用词表——results/reports/drafts 可选树）。
+    PackageSelectionFlags selection;
+    /// 源项目 id 词形（编排核组装——ProjectId::toCanonical，"prj-<32hex>"）。
+    std::string sourceProjectId;
+    /// 源项目 HEAD 修订 id 词形（编排核组装——RevisionId::toCanonical）。
+    std::string headRevisionId;
+
+    bool operator==(const PackageExportRequest& o) const
+    {
+        return targetFile == o.targetFile && selection == o.selection
+            && sourceProjectId == o.sourceProjectId
+            && headRevisionId == o.headRevisionId;
+    }
+    bool operator!=(const PackageExportRequest& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 包导出执行端口（§7.4 行二"导出执行归 io"的 workflow 侧视图——
+ *        P-IO-1 注入形态的接缝面）。
+ *
+ * 谁实现：L5 装配层——桥接 io 的包导出器（IPackageExporter：一致快照源
+ * →逐文件暂存→manifest/rwpack canonical 写出→ZIP 压缩→完整性自检→
+ * 原子替换——io.md §7.2 协议）与 project 侧快照视图（ISnapshotFileSource
+ * 由 project 实现注入——io §7.2 图）。workflow 零 io 头零 io 类型
+ * （P-RPT-1 同案），本端口值类型全部 workflow 自有，桥接映射归 L5。
+ *
+ * 端口契约（实现方义务，编排核逐项复核）：
+ *   - 按请求勾选裁剪导出内容（io PackageExportOptions 三勾选位的语义）；
+ *   - 按请求源元数据写 rwpack.json（sourceProjectId/headRevisionId）；
+ *   - 取消（检查点命中）→ 停止导出、清理临时区、cancelled=true 且
+ *     temporaryAreaCleaned=true（PM-05"取消即清理临时区"；观测位为假＝
+ *     清理承诺破坏，编排核如实转 Failed）；
+ *   - 失败 → exported=false＋cause/action＋目标不变（原子替换未发生
+ *     ——先前输出完整保留，MDL-20 同型口径）＋源项目零写入；
+ *   - 成功 → exported=true＋entryCount/totalBytes（完整性自检通过）。
+ *
+ * 错误语义：环境/对端错误走 Execution 值轨道；"后台进度"的驱动线程
+ * 归属 L5/宿主（io 不建线程——编排核在调用线程同步驱动）。
+ */
+class IPackageExportPort {
+public:
+    virtual ~IPackageExportPort() = default;
+
+    /**
+     * @brief 包导出执行结果（执行事实的值承载——编排核逐项复核）。
+     */
+    struct Execution {
+        bool exported = false;          ///< 导出完成（完整性自检通过＋目标就位）
+        bool cancelled = false;         ///< 命中取消（协作检查点——UX-03 非错误）
+        /// 取消/失败路径的临时区清理观测位（true＝临时区已清理——PM-05
+        /// "取消即清理"；false＝清理承诺破坏，编排核转 Failed 呈现）。
+        bool temporaryAreaCleaned = false;
+        std::uint64_t entryCount = 0;   ///< 打包文件数（快照清单全量——成功时承载）
+        std::uint64_t totalBytes = 0;   ///< 累计字节（单位＝字节——成功时承载）
+        std::string cause;              ///< 失败原因（UX-03 半区二——exported=false 时承载）
+        std::string action;             ///< 建议动作（UX-03 半区三）
+    };
+
+    /**
+     * @brief 执行包导出（§7.2 导出协议的 workflow 侧触发点）。
+     *
+     * @param source [in] 源项目存储上下文（非 owning——只读消费；快照源
+     *               由实现方自本引用组装，导出过程零写源项目）
+     * @param request [in] 导出请求（目标/勾选/源元数据——编排核组装）
+     * @param cancel [in] 取消令牌（null＝不可取消；检查点＝逐文件）
+     * @param progress [in] 进度回调（可空——逐文件/逐阶段上抛）
+     * @return 执行结果（见 Execution 注）
+     */
+    virtual Execution exportPackage(project::ProjectStore& source,
+                                    const PackageExportRequest& request,
+                                    IFlowCancelToken* cancel,
+                                    const FlowProgressCallback& progress) = 0;
+};
+
+/**
+ * @brief 包导出失败呈现（UX-03 三字段——同 SaveAsFailure 形态；file＝
+ *        目标文件词面）。
+ */
+struct PackageExportFailure {
+    std::string context;           ///< 对象/上下文（UX-03 半区一——目标文件词面）
+    std::string file;              ///< 失败定位文件（目标文件——恒非空）
+    std::string cause;             ///< 原因（UX-03 半区二——端口 cause 透传）
+    std::string recommendedAction; ///< 建议动作（UX-03 半区三）
+
+    bool operator==(const PackageExportFailure& o) const
+    {
+        return context == o.context && file == o.file && cause == o.cause
+            && recommendedAction == o.recommendedAction;
+    }
+    bool operator!=(const PackageExportFailure& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 包导出编排结果（PackageExportFlow::run 的唯一返回通道）。
+ *
+ * 不变量：result==Completed ⇔ 目标 .rwpack 已就位（entryCount/totalBytes
+ * 承载自检通过的统计）；result==Canceled ⇔ failure 置空（取消非错误）；
+ * result==Failed ⇔ failure 有值（目标或为先前完整版本、或不存在——
+ * 原子替换承诺，MDL-20 同型口径）。
+ */
+struct PackageExportOutcome {
+    /**
+     * @brief 编排结果三值（与 SaveAsOutcome::Result 同词表语义——独立
+     *        枚举避免跨编排的值混用）。
+     */
+    enum class Result : std::uint8_t {
+        Completed = 0,///< 导出完成（目标 .rwpack 就位——完整性自检通过）
+        Canceled = 1, ///< 用户取消（临时区已清理——非错误，failure 空）
+        Failed = 2,   ///< 失败（failure 有值——目标保持先前状态）
+    };
+
+    Result result = Result::Completed;///< 编排结果（见枚举注）
+    std::uint64_t entryCount = 0;     ///< 打包文件数（Completed 时承载）
+    std::uint64_t totalBytes = 0;     ///< 累计字节（单位＝字节；Completed 时承载）
+    std::optional<PackageExportFailure> failure;///< 失败呈现（Failed 时有值）
+};
+
+/**
+ * @brief 包导出编排器（O4——§7.4 行二的执行点；§10.2 Draft 签名
+ *        startPackageWizard(Export) 的可测编排核；WF-VER-214 的被测面）。
+ *
+ * 全静态接口（同 SaveAsFlow 先例）。
+ */
+class PackageExportFlow {
+public:
+    PackageExportFlow() = delete;
+
+    /**
+     * @brief 执行包导出编排（源元数据组装→执行→取消/失败分派）。
+     *
+     * 编排序：
+     *   1 前置校验：目标文件空、或扩展名词面非 .rwpack（大小写不敏感）
+     *     → WorkflowError（调用方契约违约 fail-fast——呈现面已挡）。
+     *   2 源元数据组装（§7.1 rwpack.json 契约的 workflow 面）：request.
+     *     sourceProjectId＝source.projectId().toCanonical()、request.
+     *     headRevisionId＝source.query().head().id.toCanonical()——编排
+     *     核对源 store 只读消费（零写面调用——"导出失败保证项目状态
+     *     不变"的编排侧结构性保证）；读取异常 → Failed（cause＝what()
+     *     透传——环境错误值轨道）。
+     *   3 导出执行：port.exportPackage（ZIP 传输封装——执行面）。
+     *   4 取消分派：cancelled 且 temporaryAreaCleaned → Canceled（取消
+     *     非错误）；cancelled 但清理观测位为假 → Failed（"取消即清理
+     *     临时区"承诺破坏——残留事实如实呈现，不带病报成功）。
+     *   5 导出失败：exported==false → Failed（failure 自端口 Execution）。
+     *   6 成功 → Completed（entryCount/totalBytes 登记）。
+     *
+     * @param source [in] 源项目存储上下文（非 owning——只读消费）
+     * @param request [in] 导出请求（targetFile/selection 必填；元数据
+     *                两字段由编排核填充覆盖——调用方传入值被替换）
+     * @param exportPort [in] 包导出执行端口（L5 桥接 io）
+     * @param cancel [in] 取消令牌（可空——透传执行端口）
+     * @param progress [in] 进度回调（可空——透传执行端口）
+     * @return 编排结果（见 PackageExportOutcome 不变量）
+     *
+     * @throws WorkflowError 目标文件空/扩展名违约（调用方契约违约——fail-fast）
+     *
+     * @threadSafe 无共享状态（静态函数）；store/端口按会话内单线程纪律。
+     * @determinism 无确定性承诺（流程编排——涉磁盘与时间戳元数据）。
+     */
+    static PackageExportOutcome run(project::ProjectStore& source,
+                                    const PackageExportRequest& request,
+                                    IPackageExportPort& exportPort,
+                                    IFlowCancelToken* cancel = nullptr,
+                                    const FlowProgressCallback& progress = {});
+};
+
+// =====================================================================
+// 包导入编排（PM-05——§7.4 行三；WP-22-T07）
+// =====================================================================
+
+/// 包导入校验错误文案键前缀（键形 "wizard.package-import.error.<token>"）。
+inline constexpr const char* kPackageImportErrorKeyPrefix =
+    "wizard.package-import.error.";
+
+/// 包导入校验报告行键前缀（键形 "wizard.package-import.report.<token>"
+/// ——PM-05"给出校验报告"的呈现键半区；值归 ui 文案资源）。
+inline constexpr const char* kPackageImportReportKeyPrefix =
+    "wizard.package-import.report.";
+
+/**
+ * @brief 包导入请求（向导确认值——包文件＋发布目标目录）。
+ *
+ * 预算规格不进本请求（I-WF-3 同精神——编排面零数值阈值）：包导入的
+ * 四维预算硬限（ArchiveExpandedBytes/ArchiveRatio/FileCount/DirDepth）
+ * 是执行面的安全设施（io §4.5.2 产品默认强化档），由端口实现方持有
+ * 产品默认——workflow 编排核不复制、不传递预算数值（N8 非所有权：
+ * 包格式校验归 io）。
+ */
+struct PackageImportRequest {
+    /// .rwpack 包文件路径（须存在可读——执行面①步预检）。
+    std::filesystem::path packFile;
+    /// 发布目标目录（须不存在——validatePackageImportInput 前置呈现；
+    /// 发布动作归 project 侧⑧步，本请求只是目的地词面）。
+    std::filesystem::path targetDir;
+
+    bool operator==(const PackageImportRequest& o) const
+    {
+        return packFile == o.packFile && targetDir == o.targetDir;
+    }
+    bool operator!=(const PackageImportRequest& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 包导入向导输入校验（"开始导入"放行判定——呈现性前置；预算/
+ *        路径穿越/包结构的最终裁决在执行面全量校验——PA-1，编排面零
+ *        预算数值零包解析）。
+ *
+ * 校验集（键形 kPackageImportErrorKeyPrefix＋token，按序稳定输出）：
+ *   - pack-empty（包文件路径空）；
+ *   - target-empty（目标目录路径空）；
+ *   - pack-extension（扩展名词面非 .rwpack——大小写不敏感）；
+ *   - target-exists（目标目录已存在——导入目标必须不存在：发布语义为
+ *     NeverOverwrite（io §7.4 对目录不适用覆盖），已存在目标在执行面
+ *     预检即拒；此处为前置呈现）。
+ *
+ * @param request [in] 导入请求（包文件＋目标目录）
+ * @return 错误文案键清单（空＝放行）
+ *
+ * @threadSafe const 纯函数（文件系统存在性检查除外——环境事实），可并发。
+ */
+std::vector<ui::TextKey> validatePackageImportInput(const PackageImportRequest& request);
+
+/**
+ * @brief 包导入条目级结论行（校验报告的逐条目半区——清单序透传）。
+ */
+struct PackageImportEntryLine {
+    std::string path;///< 包内相对路径（manifest 条目词形——"payload/…"）
+    bool hashOk = false;///< 哈希复算结论（true＝逐字节还原一致）
+
+    bool operator==(const PackageImportEntryLine& o) const
+    {
+        return path == o.path && hashOk == o.hashOk;
+    }
+    bool operator!=(const PackageImportEntryLine& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 包导入诊断行（校验报告的结构化诊断半区——对端稳定码＋脱敏
+ *        详情的透传承载；D-WF-7 零加工零归码）。
+ *
+ * code 为对端（io）稳定码 token（"IO-*"词形——机器可判，用户文案归
+ * diagnostics 供文案链路）；message 为执行面给出的脱敏 display 文本
+ * （NFR-SEC-07 两级脱敏的第一层已在执行面完成——本行不再加工）。
+ * 取消路径上 diagnostics 恒为空（UX-03：取消不是错误，不落诊断）。
+ */
+struct PackageImportDiagnosticLine {
+    std::string code;   ///< 对端稳定码 token（"IO-*"——透传）
+    std::string message;///< 脱敏详情（执行面 display 形态——透传）
+
+    bool operator==(const PackageImportDiagnosticLine& o) const
+    {
+        return code == o.code && message == o.message;
+    }
+    bool operator!=(const PackageImportDiagnosticLine& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 包导入执行结果（校验报告材料＋执行事实的值承载）。
+ *
+ * 本结构即 PM-05"给出校验报告"的材料面：汇总计数（manifestEntries/
+ * verifiedEntries/totalBytes）＋逐条目结论（entryLines）＋结构化诊断
+ * （diagnostics）编排核零加工透传，呈现行集经 buildPackageImportReportView
+ * 组装。发布（⑧步）语义折叠在端口内（见 IPackageImportPort 类注）。
+ */
+struct PackageImportExecution {
+    bool verified = false;        ///< 全量校验通过（io 九步③~⑦——逐字节还原＋哈希复算＋镜像核对＋引用完整性）
+    bool published = false;       ///< 发布完成（⑧步——目标目录就位；成功路径为真）
+    bool cancelled = false;       ///< 命中取消（协作检查点——UX-03 非错误）
+    /// 失败/取消路径的目标与临时区清理观测位（true＝目标零残留＋临时区
+    /// 已清理——PM-05"失败不留目标目录"＋AT-20；false＝清理承诺破坏，
+    /// 编排核转 Failed 呈现）。
+    bool targetLeftClean = false;
+    std::uint64_t manifestEntries = 0;///< manifest 条目总数
+    std::uint64_t verifiedEntries = 0;///< 哈希复算通过条目数
+    std::uint64_t totalBytes = 0;     ///< 累计展开字节（单位＝字节）
+    std::vector<PackageImportEntryLine> entryLines;///< 条目级结论（清单序透传）
+    std::vector<PackageImportDiagnosticLine> diagnostics;///< 结构化诊断（取消恒空——UX-03）
+    std::string cause;            ///< 失败原因（UX-03 半区二——失败时承载）
+    std::string action;           ///< 建议动作（UX-03 半区三）
+
+    bool operator==(const PackageImportExecution& o) const
+    {
+        return verified == o.verified && published == o.published
+            && cancelled == o.cancelled && targetLeftClean == o.targetLeftClean
+            && manifestEntries == o.manifestEntries
+            && verifiedEntries == o.verifiedEntries && totalBytes == o.totalBytes
+            && entryLines == o.entryLines && diagnostics == o.diagnostics
+            && cause == o.cause && action == o.action;
+    }
+    bool operator!=(const PackageImportExecution& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 包导入执行端口（§7.4 行三"校验执行归 io、发布归 project"的
+ *        workflow 侧视图——P-IO-1 注入形态的接缝面）。
+ *
+ * 谁实现：L5 装配层——桥接 io 包导入器（begin→verifyThrough→cleanup：
+ * ①②包预检与临时区→③~⑦全量校验〔预算/路径穿越防护/逐条目展开＋
+ * 哈希复算/镜像核对/引用完整性/目标占用预检〕→⑨清理——io.md §7.3
+ * 九步协议）与 project 发布动作（⑧步：目标占用二次预检→同卷 rename
+ * →按打开协议进入的材料——io.md §7.7 责任切分"io 侧 rename 发布被
+ * 明确禁止"）。**校验与发布在本端口内折叠为一次调用**：接口形状取
+ * "校验全过才算成功、失败/取消目标零写入"的整体承诺（PM-05 的用户
+ * 语义面），⑧步的执行归属（project 存储侧）随 WP-04-T18 落位后由 L5
+ * 接线——本端口是 workflow 面的稳定形状，两侧演进不改签名。
+ *
+ * 端口契约（实现方义务，编排核逐项复核）：
+ *   - 全量校验（③~⑦）先于发布（⑧）——校验不过/取消＝零发布、目标
+ *     零写入（结构性：发布只在校验后——失败不留目标目录，PM-05/
+ *     NFR-SEC-01/02）；
+ *   - 取消（检查点命中）→ cancelled=true＋diagnostics 恒空（UX-03：
+ *     取消不落诊断）＋临时区清理（targetLeftClean=true）；
+ *   - 失败 → verified=false＋diagnostics 承载结构化定位（对端稳定码＋
+     脱敏详情）＋目标零残留（targetLeftClean=true）；
+ *   - 成功 → verified=true＋published=true＋报告计数/逐条目结论填充。
+ *
+ * 预算规格：实现方持有产品默认强化档（io §4.5.2 四维硬限）——编排面
+ * 零预算数值（PackageImportRequest 类型注）。
+ */
+class IPackageImportPort {
+public:
+    virtual ~IPackageImportPort() = default;
+
+    /**
+     * @brief 执行包导入（校验→发布→清理的端口内折叠——见类注）。
+     *
+     * @param request [in] 导入请求（包文件＋目标目录）
+     * @param cancel [in] 取消令牌（null＝不可取消；检查点＝每条目）
+     * @param progress [in] 进度回调（可空——逐条目/逐阶段上抛）
+     * @return 执行结果（校验报告材料——见 PackageImportExecution 注）
+     */
+    virtual PackageImportExecution importPackage(const PackageImportRequest& request,
+                                                 IFlowCancelToken* cancel,
+                                                 const FlowProgressCallback& progress) = 0;
+};
+
+/**
+ * @brief 包导入失败呈现（UX-03 三字段——file＝包文件或目标目录定位，
+ *        自失败事实取；诊断明细在 PackageImportExecution.diagnostics）。
+ */
+struct PackageImportFailure {
+    std::string context;           ///< 对象/上下文（UX-03 半区一——包文件词面）
+    std::string file;              ///< 失败定位（包文件/目标目录——恒非空）
+    std::string cause;             ///< 原因（UX-03 半区二——端口 cause 透传）
+    std::string recommendedAction; ///< 建议动作（UX-03 半区三）
+
+    bool operator==(const PackageImportFailure& o) const
+    {
+        return context == o.context && file == o.file && cause == o.cause
+            && recommendedAction == o.recommendedAction;
+    }
+    bool operator!=(const PackageImportFailure& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 包导入编排结果（PackageImportFlow::run 的唯一返回通道）。
+ *
+ * 不变量：execution 恒携带（所有路径——报告呈现面取数；取消路径
+ * diagnostics 恒空）；result==Completed ⇔ execution.verified 且
+ * execution.published（目标目录已就位）；result==Canceled ⇔ failure
+ * 置空；result==Failed ⇔ failure 有值且目标目录未就位。
+ */
+struct PackageImportOutcome {
+    /**
+     * @brief 编排结果三值（与 SaveAsOutcome::Result 同词表语义）。
+     */
+    enum class Result : std::uint8_t {
+        Completed = 0,///< 导入完成（全量校验通过＋目标目录就位）
+        Canceled = 1, ///< 用户取消（目标零残留＋诊断恒空——非错误）
+        Failed = 2,   ///< 失败（failure 有值＋校验报告材料在 execution）
+    };
+
+    Result result = Result::Completed;///< 编排结果（见枚举注）
+    PackageImportExecution execution;///< 执行结果（校验报告材料——恒携带，零加工透传）
+    std::optional<PackageImportFailure> failure;///< 失败呈现（Failed 时有值）
+};
+
+/**
+ * @brief 包导入编排器（O4——§7.4 行三的执行点；§10.2 Draft 签名
+ *        startPackageWizard(Import) 的可测编排核；WF-VER-215 的被测面）。
+ *
+ * 全静态接口（同 SaveAsFlow 先例）。**零发布语义的结构性保证**：编排
+ * 核签名不接收也不产生任何 rename/发布动作（发布折叠在端口内归
+ * project 侧——§7.7 责任切分），编排核只消费端口回传的执行事实。
+ */
+class PackageImportFlow {
+public:
+    PackageImportFlow() = delete;
+
+    /**
+     * @brief 执行包导入编排（校验→发布→报告呈现材料）。
+     *
+     * 编排序：
+     *   1 前置校验：包文件/目标目录空、或扩展名词面非 .rwpack →
+     *     WorkflowError（调用方契约违约 fail-fast——呈现面已挡）。
+     *   2 导入执行：port.importPackage（预算/路径穿越防护/全量校验/
+     *     发布/清理——端口内折叠，编排面零数值零解析）。
+     *   3 取消分派：cancelled 且 targetLeftClean → Canceled（failure 空
+     *     ——取消非错误，diagnostics 恒空）；cancelled 但清理观测位为
+     *     假 → Failed（"失败不留目标目录"承诺破坏——残留事实如实呈现）。
+     *   4 校验失败：verified==false → Failed（failure.cause/action 自
+     *     端口 Execution；校验报告材料恒在 Outcome.execution——呈现面
+     *     据此渲染报告与诊断明细）。
+     *   5 成功 → Completed（verified＋published——报告行集经
+     *     buildPackageImportReportView 组装呈现）。
+     *
+     * @param request [in] 导入请求（包文件＋目标目录）
+     * @param importPort [in] 包导入执行端口（L5 桥接 io/project）
+     * @param cancel [in] 取消令牌（可空——透传执行端口）
+     * @param progress [in] 进度回调（可空——透传执行端口）
+     * @return 编排结果（见 PackageImportOutcome 不变量）
+     *
+     * @throws WorkflowError 包文件/目标目录空或扩展名违约（调用方契约
+     *         违约——fail-fast）
+     *
+     * @threadSafe 无共享状态（静态函数）；端口按会话内单线程纪律。
+     * @determinism 无确定性承诺（流程编排——涉磁盘与哈希复算时序）。
+     */
+    static PackageImportOutcome run(const PackageImportRequest& request,
+                                    IPackageImportPort& importPort,
+                                    IFlowCancelToken* cancel = nullptr,
+                                    const FlowProgressCallback& progress = {});
+};
+
+/**
+ * @brief 校验报告行（PM-05"给出校验报告"的呈现行——标签文案键＋值
+ *        token/数字文本；同 WizardSummaryLine 形态）。
+ */
+struct PackageImportReportLine {
+    ui::TextKey labelKey;  ///< 标签文案键（kPackageImportReportKeyPrefix＋token）
+    std::string valueText; ///< 值文本（工程用语 token 或十进制数字——UX-02）
+
+    bool operator==(const PackageImportReportLine& o) const
+    {
+        return labelKey == o.labelKey && valueText == o.valueText;
+    }
+    bool operator!=(const PackageImportReportLine& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 组装包导入校验报告行集（PM-05"给出校验报告"——纯函数；呈现
+ *        归 ui 宿主面，本函数只产行集）。
+ *
+ * 行集（键形 kPackageImportReportKeyPrefix＋token，按固定序输出）：
+ *   1 final-state（"verified"|"canceled"|"failed"——终态 token）；
+ *   2 manifest-entries（manifest 条目总数，十进制）；
+ *   3 verified-entries（哈希复算通过条目数，十进制）；
+ *   4 total-bytes（累计展开字节，十进制——单位＝字节，键语义注明）；
+ *   5 diagnostics-count（仅 diagnostics 非空时——零占位行纪律）；
+ *   6 target-clean（"yes"|"no"——目标与临时区清理观测位）。
+ *
+ * @param execution [in] 导入执行结果（PackageImportFlow::run 产出的
+ *                  Outcome.execution——零加工取数）
+ * @return 报告行集（确定性同输入同输出）
+ *
+ * @threadSafe const 纯函数，可并发。
+ * @determinism 同输入同输出（NFR-COR-02 同型）。
+ */
+std::vector<PackageImportReportLine> buildPackageImportReportView(
+    const PackageImportExecution& execution);
 
 // =====================================================================
 // 最近项目管理（PM-10——§7.8；IRecentProjectsService §10.1 落位行）

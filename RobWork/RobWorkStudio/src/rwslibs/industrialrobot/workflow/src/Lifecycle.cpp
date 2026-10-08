@@ -2,8 +2,9 @@
  * @file   Lifecycle.cpp
  * @brief  生命周期入口流程编排的实现——新建项目三步向导（PM-01）＋打开
  *         协议（PM-02 五步的 workflow 面）＋关闭/切换/退出统一确认编排
- *         （PM-03——§7.3）＋方案分支切换（PM-12 零写入会话选择）＋最近
- *         项目管理（PM-10）＋无项目首页数据面（PM-10）。
+ *         （PM-03——§7.3）＋方案分支切换（PM-12 零写入会话选择）＋另存
+ *         为/包导出/包导入编排（PM-05——§7.4）＋最近项目管理（PM-10）
+ *         ＋无项目首页数据面（PM-10）。
  *
  * 设计依据见公共头 Lifecycle.hpp 文件头（本实现文件只补充逐段实现口径；
  * 段落注释对应头注释的编排序——两处同步维护，改逻辑必改两处）。
@@ -19,6 +20,8 @@
  */
 
 #include <sdurws/ird/workflow/Lifecycle.hpp>
+
+#include <sdurws/ird/project/QueryPort.hpp>  // project::IProjectQueryPort（包导出源元数据组装——HEAD 修订读取；白名单边公共头）
 
 #include <algorithm>
 #include <chrono>
@@ -896,6 +899,466 @@ SchemeBranchSwitchOutcome SchemeBranchSwitchFlow::run(
     // 本身允许切至基线分支查看——编排核不越权拒绝（PA-1）。
     outcome.result = SchemeBranchSwitchOutcome::Result::Proceed;
     return outcome;
+}
+
+// =====================================================================
+// 另存为与包导出/导入编排（PM-05——§7.4；WP-22-T07）
+// =====================================================================
+
+namespace {
+
+/// 词法规范化＋去尾分隔（同径判定的收敛形）。
+///
+/// 为什么不只 lexically_normal：按标准语义，以 dot/dot-dot 收尾的路径
+/// 规约后保留尾部分隔符（如 "a/b/.." → "a/"——最后 filename 已被删除，
+/// 分隔符作为"该路径指向目录"的痕迹保留），与 "a/b" 的规范化形不相等。
+/// 同径判定需要"无尾分隔"的收敛形：filename() 为空（以分隔符结尾）时
+/// 取一次 parent_path() 收尾。
+std::filesystem::path normalizedPathForCompare(const std::filesystem::path& p)
+{
+    std::filesystem::path n = p.lexically_normal();
+    if (!n.empty() && n.filename().empty()) {
+        n = n.parent_path();
+    }
+    return n;
+}
+
+/// 词面同径判定（normalizedPathForCompare 词法收敛——不触盘、不解析符号
+/// 链接；与 recentProjectKey 同款"词法收敛为键"纪律，用于"目标与源相同"
+/// 的前置呈现与 fail-fast 判定。大小写不收敛——Windows 词面大小写差异
+/// 的最终裁决在执行面/project 规范路径，本判定只拦明显同径词面）。
+bool samePathLexical(const std::filesystem::path& a, const std::filesystem::path& b)
+{
+    if (a.empty() || b.empty()) {
+        return false;  // 空路径不参与同径判定（空由各自的 empty 键呈现）
+    }
+    return normalizedPathForCompare(a) == normalizedPathForCompare(b);
+}
+
+/// .rwpack 扩展名词面（大小写不敏感——Windows 词面惯例，与
+/// classifyOpenTarget 的包识别同口径；PA-1：词面识别是入口面，包本体
+/// 合法性的最终裁决在执行面魔数/结构校验）。
+bool hasRwpackExtension(const std::filesystem::path& p)
+{
+    std::string extension = p.extension().string();
+    std::transform(extension.begin(), extension.end(), extension.begin(),
+                   [](unsigned char c) {
+                       return static_cast<char>(std::tolower(c));
+                   });
+    return extension == kPackageExtensionToken;
+}
+
+/// 目录存在且非空（前置呈现检查——TOCTOU 窗口的最终裁决在执行面；
+/// 错误码版 API 不抛：不可达→false 呈现为可放行，执行面再拒）。
+bool directoryExistsNonEmpty(const std::filesystem::path& p)
+{
+    std::error_code ec;
+    if (!std::filesystem::is_directory(p, ec) || ec) {
+        return false;  // 不存在/不可达＝不满足"已存在且非空"
+    }
+    return !std::filesystem::is_empty(p, ec) && !ec;
+}
+
+/// 生成"残留清理未完成"类失败的建议动作（AT-20 观测位为假的呈现半区
+/// ——残留事实如实呈现＋手动清理指引；三处编排共用同一文案，唯一映射点）。
+std::string leftoverCleanupAction()
+{
+    return "存在未清理的残留目录：请手动删除后重试（取消/失败流程会先尝试自动清理）";
+}
+
+}  // namespace
+
+PackageSelectionFlags defaultSelectionOf(
+    const std::optional<PackageSelectionFlags>& remembered)
+{
+    // 记忆有值→原样采用（PM-05"记忆默认"——上次确认的勾选即本次初始值）；
+    // 无值→全选缺省（完整目录复制语义——§7.4 行一，不发明部分复制默认）。
+    return remembered.value_or(PackageSelectionFlags{});
+}
+
+std::vector<ui::TextKey> validateSaveAsInputs(const std::filesystem::path& sourceDir,
+                                              const std::filesystem::path& targetDir)
+{
+    // 键序＝头文件声明序（target-empty → target-same-as-source →
+    // target-exists-nonempty）——确定性 NFR-COR-02 同型；键构造集中本处
+    // （NFR-MNT-03——调用方只消费键，不手拼）。
+    std::vector<ui::TextKey> keys;
+    if (targetDir.empty()) {
+        keys.push_back(ui::TextKey(std::string(kSaveAsErrorKeyPrefix) + "target-empty"));
+    } else if (samePathLexical(sourceDir, targetDir)) {
+        keys.push_back(
+            ui::TextKey(std::string(kSaveAsErrorKeyPrefix) + "target-same-as-source"));
+    }
+    if (directoryExistsNonEmpty(targetDir)) {
+        keys.push_back(
+            ui::TextKey(std::string(kSaveAsErrorKeyPrefix) + "target-exists-nonempty"));
+    }
+    return keys;
+}
+
+SaveAsOutcome SaveAsFlow::run(project::ProjectStore& source,
+                              const SaveAsRequest& request,
+                              ISaveAsPort& saveAsPort,
+                              IFlowCancelToken* cancel,
+                              const FlowProgressCallback& progress,
+                              core::IDomainEventBus* eventBus,
+                              project::IDiagnosticsSink* diagnosticsSink)
+{
+    // ---- 第 1 段：前置校验（调用方契约违约 fail-fast）----
+    // 呈现面校验（validateSaveAsInputs）已挡用户输入错误；到编排核仍
+    // 违约＝宿主装配缺陷（放行了不该放行的输入）——fail-fast 暴露，
+    // 不静默替用户重定向目标。
+    if (request.targetDir.empty()) {
+        throw WorkflowError("SaveAsFlow::run: 目标目录为空（取消应在宿主侧拦截）");
+    }
+    if (samePathLexical(source.canonicalPath(), request.targetDir)) {
+        throw WorkflowError(
+            "SaveAsFlow::run: 目标目录与源项目相同（同目录另存＝装配违约）");
+    }
+
+    SaveAsOutcome outcome;
+    // 记忆登记面：确认勾选在所有路径恒回传（PM-05"记忆默认"的编排半区
+    // ——调用方持久化归用户设置存储 PM-14/WP-22-T10）。
+    outcome.selection = request.selection;
+
+    // ---- 第 2 段：复制执行（PM-05 存储侧——§7.4 行一"复制执行归
+    // project"；WP-04-T18 契约未生成，经 ISaveAsPort 端口触达——契约
+    // note 豁免 dependsOn 边，L5 桥接 project 命令面/存储侧）。
+    const ISaveAsPort::Execution execution =
+        saveAsPort.executeCopy(source, request, cancel, progress);
+
+    // ---- 第 3 段：取消分派（取消不是错误——UX-03：Canceled 态 failure
+    // 置空零诊断；但"取消即清理"（AT-20）是流程承诺——清理观测位为假
+    // ＝有残留，如实转 Failed 呈现，不带病报取消成功）。
+    if (execution.cancelled) {
+        if (execution.targetLeftClean) {
+            outcome.result = SaveAsOutcome::Result::Canceled;
+            return outcome;
+        }
+        SaveAsFailure failure;
+        failure.context = openPathText(request.targetDir);
+        failure.file = openPathText(request.targetDir);
+        failure.cause = "取消后目标目录清理未完成，存在残留";
+        failure.recommendedAction = leftoverCleanupAction();
+        outcome.failure = std::move(failure);
+        outcome.result = SaveAsOutcome::Result::Failed;
+        return outcome;
+    }
+
+    // ---- 第 4 段：复制失败（环境/对端错误——值轨道呈现，UX-03 四字段；
+    // 目标零残留由端口契约承诺——"失败不留半成品"同 createNew 口径）。
+    if (!execution.copied) {
+        SaveAsFailure failure;
+        failure.context = openPathText(request.targetDir);
+        failure.file = openPathText(request.targetDir);
+        failure.cause = execution.cause.empty() ? "另存复制失败" : execution.cause;
+        failure.recommendedAction = execution.action.empty()
+            ? "请检查目标位置与磁盘状态后重试"
+            : execution.action;
+        outcome.failure = std::move(failure);
+        outcome.result = SaveAsOutcome::Result::Failed;
+        return outcome;
+    }
+
+    // ---- 第 5 段：按打开协议进入（PM-05 原文"换新 projectId 后按打开
+    // 协议进入"——§7.2 五步复用：复制产物经完整打开协议②③⑤校验后才
+    // 算进入；产物损坏在此暴露为打开失败，不以"复制成功"伪装进入成功）。
+    // "不动当前项目"结构性成立：open 激活前失败不影响当前项目（§8.7），
+    // 源 store 未被触碰（本编排核对源只读消费）。
+    OpenProjectOutcome opened = OpenProjectFlow::run(OpenSource::Dialog,
+                                                     request.targetDir,
+                                                     eventBus, diagnosticsSink);
+    if (opened.opened) {
+        outcome.result = SaveAsOutcome::Result::Entered;
+        outcome.readonly = opened.readonly;  // PM-07 降级只读如实登记
+        outcome.store = std::move(opened.store);
+        outcome.projectId = opened.projectId;  // 新项目身份（存储侧另存时分配的新 id）
+        outcome.canonicalPath = std::move(opened.canonicalPath);
+        return outcome;
+    }
+
+    // 打开失败转呈现（复制成功但进入失败＝环境失败——UX-03 四字段，
+    // cause/file 自打开呈现转录，保持具体文件定位）。
+    SaveAsFailure failure;
+    failure.context = openPathText(request.targetDir);
+    if (opened.failure.has_value()) {
+        failure.file = opened.failure->file;
+        failure.cause = opened.failure->cause;
+        failure.recommendedAction = opened.failure->recommendedAction;
+    } else {
+        failure.file = openPathText(request.targetDir);
+        failure.cause = "复制完成但按打开协议进入失败";
+        failure.recommendedAction = "请检查目标目录后重试";
+    }
+    outcome.failure = std::move(failure);
+    outcome.result = SaveAsOutcome::Result::Failed;
+    return outcome;
+}
+
+std::vector<ui::TextKey> validatePackageExportInput(
+    const std::filesystem::path& targetFile)
+{
+    // 键序＝头文件声明序（target-empty → target-extension）；导出目标已
+    // 存在＝合法（OverwriteAtomic 原子覆盖是导出默认——io §7.2⑥），不
+    // 做存在性校验。
+    std::vector<ui::TextKey> keys;
+    if (targetFile.empty()) {
+        keys.push_back(
+            ui::TextKey(std::string(kPackageExportErrorKeyPrefix) + "target-empty"));
+    } else if (!hasRwpackExtension(targetFile)) {
+        keys.push_back(
+            ui::TextKey(std::string(kPackageExportErrorKeyPrefix) + "target-extension"));
+    }
+    return keys;
+}
+
+PackageExportOutcome PackageExportFlow::run(project::ProjectStore& source,
+                                            const PackageExportRequest& request,
+                                            IPackageExportPort& exportPort,
+                                            IFlowCancelToken* cancel,
+                                            const FlowProgressCallback& progress)
+{
+    // ---- 第 1 段：前置校验（调用方契约违约 fail-fast——同 SaveAsFlow
+    // 口径：呈现面已挡用户输入错误，到编排核仍违约＝装配缺陷）。
+    if (request.targetFile.empty()) {
+        throw WorkflowError("PackageExportFlow::run: 目标文件为空");
+    }
+    if (!hasRwpackExtension(request.targetFile)) {
+        throw WorkflowError(
+            "PackageExportFlow::run: 目标文件扩展名非 .rwpack（呈现面已挡，"
+            "到编排核即违约）");
+    }
+
+    PackageExportOutcome outcome;
+
+    // ---- 第 2 段：源元数据组装（§7.1 rwpack.json 契约的 workflow 面——
+    // 源项目身份与 HEAD 修订；编排核对源 store 只读消费，零写面调用——
+    // "导出失败保证项目状态不变"（§7.4，MDL-20 同型口径）的编排侧结构
+    // 性保证。读取异常（store 已关闭等）→ 环境错误值轨道 Failed）。
+    PackageExportRequest filled = request;
+    try {
+        filled.sourceProjectId = source.projectId().toCanonical();
+        filled.headRevisionId = source.query().head().id.toCanonical();
+    } catch (const std::exception& e) {
+        PackageExportFailure failure;
+        failure.context = openPathText(request.targetFile);
+        failure.file = openPathText(request.targetFile);
+        failure.cause = e.what();
+        failure.recommendedAction = "请确认项目已打开且可读后重试";
+        outcome.failure = std::move(failure);
+        outcome.result = PackageExportOutcome::Result::Failed;
+        return outcome;
+    }
+
+    // ---- 第 3 段：导出执行（ZIP 传输封装归执行端口——P-IO-1 注入形态，
+    // L5 桥接 io 包导出器与 project 快照视图；编排面零 io 类型零解析）。
+    const IPackageExportPort::Execution execution =
+        exportPort.exportPackage(source, filled, cancel, progress);
+
+    // ---- 第 4 段：取消分派（取消不是错误——UX-03；"取消即清理临时区"
+    // （PM-05）是流程承诺——清理观测位为假＝临时区残留，如实转 Failed，
+    // 不带病报取消成功）。
+    if (execution.cancelled) {
+        if (execution.temporaryAreaCleaned) {
+            outcome.result = PackageExportOutcome::Result::Canceled;
+            return outcome;
+        }
+        PackageExportFailure failure;
+        failure.context = openPathText(request.targetFile);
+        failure.file = openPathText(request.targetFile);
+        failure.cause = "取消后导出临时区清理未完成，存在残留";
+        failure.recommendedAction = leftoverCleanupAction();
+        outcome.failure = std::move(failure);
+        outcome.result = PackageExportOutcome::Result::Failed;
+        return outcome;
+    }
+
+    // ---- 第 5 段：导出失败（目标保持先前状态——原子替换未发生；UX-03
+    // 四字段，cause/action 自端口 Execution）。
+    if (!execution.exported) {
+        PackageExportFailure failure;
+        failure.context = openPathText(request.targetFile);
+        failure.file = openPathText(request.targetFile);
+        failure.cause = execution.cause.empty() ? "包导出失败" : execution.cause;
+        failure.recommendedAction = execution.action.empty()
+            ? "请检查目标位置与磁盘状态后重试（原有文件未受影响）"
+            : execution.action;
+        outcome.failure = std::move(failure);
+        outcome.result = PackageExportOutcome::Result::Failed;
+        return outcome;
+    }
+
+    // ---- 第 6 段：成功（完整性自检通过的统计登记——目标 .rwpack 就位）。
+    outcome.result = PackageExportOutcome::Result::Completed;
+    outcome.entryCount = execution.entryCount;
+    outcome.totalBytes = execution.totalBytes;
+    return outcome;
+}
+
+std::vector<ui::TextKey> validatePackageImportInput(const PackageImportRequest& request)
+{
+    // 键序＝头文件声明序（pack-empty → target-empty → pack-extension →
+    // target-exists）；预算/路径穿越/包结构的最终裁决在执行面全量校验
+    // （PA-1——编排面零预算数值零包解析，I-WF-3 同精神）。
+    std::vector<ui::TextKey> keys;
+    if (request.packFile.empty()) {
+        keys.push_back(
+            ui::TextKey(std::string(kPackageImportErrorKeyPrefix) + "pack-empty"));
+    }
+    if (request.targetDir.empty()) {
+        keys.push_back(
+            ui::TextKey(std::string(kPackageImportErrorKeyPrefix) + "target-empty"));
+    }
+    if (!request.packFile.empty() && !hasRwpackExtension(request.packFile)) {
+        keys.push_back(
+            ui::TextKey(std::string(kPackageImportErrorKeyPrefix) + "pack-extension"));
+    }
+    if (!request.targetDir.empty()) {
+        std::error_code ec;
+        if (std::filesystem::exists(request.targetDir, ec) && !ec) {
+            // 目标已存在＝发布预检必拒（NeverOverwrite——io §7.4 对目录
+            // 不适用覆盖）——前置呈现，执行面仍兜底。
+            keys.push_back(
+                ui::TextKey(std::string(kPackageImportErrorKeyPrefix) + "target-exists"));
+        }
+    }
+    return keys;
+}
+
+PackageImportOutcome PackageImportFlow::run(const PackageImportRequest& request,
+                                            IPackageImportPort& importPort,
+                                            IFlowCancelToken* cancel,
+                                            const FlowProgressCallback& progress)
+{
+    // ---- 第 1 段：前置校验（调用方契约违约 fail-fast——同前两编排器）。
+    if (request.packFile.empty()) {
+        throw WorkflowError("PackageImportFlow::run: 包文件为空");
+    }
+    if (request.targetDir.empty()) {
+        throw WorkflowError("PackageImportFlow::run: 目标目录为空");
+    }
+    if (!hasRwpackExtension(request.packFile)) {
+        throw WorkflowError(
+            "PackageImportFlow::run: 包文件扩展名非 .rwpack（呈现面已挡，"
+            "到编排核即违约）");
+    }
+
+    PackageImportOutcome outcome;
+
+    // ---- 第 2 段：导入执行（校验→发布→清理在端口内折叠——§7.4 行三
+    // "校验执行归 io、发布归 project"；编排核零发布语义的结构性保证：
+    // 本签名无任何 rename/发布动作，只消费端口回传的执行事实）。
+    outcome.execution = importPort.importPackage(request, cancel, progress);
+    const PackageImportExecution& execution = outcome.execution;
+
+    // ---- 第 3 段：取消分派（取消不是错误——UX-03：Canceled 态 failure
+    // 置空且诊断恒空；"失败不留目标目录"（PM-05/NFR-SEC-01/02）是流程
+    // 承诺——清理观测位为假＝目标/临时区残留，如实转 Failed 呈现）。
+    if (execution.cancelled) {
+        if (execution.targetLeftClean) {
+            outcome.result = PackageImportOutcome::Result::Canceled;
+            return outcome;
+        }
+        PackageImportFailure failure;
+        failure.context = openPathText(request.packFile);
+        failure.file = openPathText(request.targetDir);
+        failure.cause = "取消后目标目录/临时区清理未完成，存在残留";
+        failure.recommendedAction = leftoverCleanupAction();
+        outcome.failure = std::move(failure);
+        outcome.result = PackageImportOutcome::Result::Failed;
+        return outcome;
+    }
+
+    // ---- 第 4 段：校验失败（防护拒绝/结构损坏/哈希不符——校验报告
+    // 材料恒在 Outcome.execution〔diagnostics 透传对端稳定码＋脱敏详情，
+    // D-WF-7 零加工〕；failure 承载 UX-03 半区，file＝包文件定位）。
+    if (!execution.verified) {
+        PackageImportFailure failure;
+        failure.context = openPathText(request.packFile);
+        failure.file = openPathText(request.packFile);
+        failure.cause = execution.cause.empty() ? "包导入全量校验未通过" : execution.cause;
+        failure.recommendedAction = execution.action.empty()
+            ? "请核对包文件来源与完整性后重试（目标目录未受影响）"
+            : execution.action;
+        outcome.failure = std::move(failure);
+        outcome.result = PackageImportOutcome::Result::Failed;
+        return outcome;
+    }
+
+    // ---- 第 5 段：校验通过但发布未完成（端口契约违约事实——校验与
+    // 发布在端口内折叠，两者必须同真；如实呈现差异，不伪造完成）。
+    if (!execution.published) {
+        PackageImportFailure failure;
+        failure.context = openPathText(request.packFile);
+        failure.file = openPathText(request.targetDir);
+        failure.cause = "包校验通过但发布未完成";
+        failure.recommendedAction = "请检查目标位置后重试";
+        outcome.failure = std::move(failure);
+        outcome.result = PackageImportOutcome::Result::Failed;
+        return outcome;
+    }
+
+    // ---- 第 6 段：成功（校验报告行集经 buildPackageImportReportView
+    // 组装呈现——目标目录已就位，进入项目由调用方经打开协议执行）。
+    outcome.result = PackageImportOutcome::Result::Completed;
+    return outcome;
+}
+
+std::vector<PackageImportReportLine> buildPackageImportReportView(
+    const PackageImportExecution& execution)
+{
+    // 行集固定序（头文件声明：final-state → manifest-entries →
+    // verified-entries → total-bytes → diagnostics-count〔仅非空〕 →
+    // target-clean）；值文本全部为工程用语 token 或十进制数字（UX-02——
+    // 零哈希/Schema/内部插件名；单位＝字节经键语义注明，值保持裸数字，
+    // 格式化修饰归 ui）。
+    std::vector<PackageImportReportLine> lines;
+
+    // 行 1：终态 token（verified|canceled|failed——机器可判词形）。
+    PackageImportReportLine finalState;
+    finalState.labelKey = ui::TextKey(std::string(kPackageImportReportKeyPrefix) + "final-state");
+    if (execution.verified) {
+        finalState.valueText = "verified";
+    } else if (execution.cancelled) {
+        finalState.valueText = "canceled";
+    } else {
+        finalState.valueText = "failed";
+    }
+    lines.push_back(std::move(finalState));
+
+    // 行 2~4：汇总计数（manifest 条目总数/哈希通过条目数/累计展开字节）。
+    PackageImportReportLine manifest;
+    manifest.labelKey = ui::TextKey(std::string(kPackageImportReportKeyPrefix) + "manifest-entries");
+    manifest.valueText = std::to_string(execution.manifestEntries);
+    lines.push_back(std::move(manifest));
+
+    PackageImportReportLine verified;
+    verified.labelKey = ui::TextKey(std::string(kPackageImportReportKeyPrefix) + "verified-entries");
+    verified.valueText = std::to_string(execution.verifiedEntries);
+    lines.push_back(std::move(verified));
+
+    PackageImportReportLine bytes;
+    bytes.labelKey = ui::TextKey(std::string(kPackageImportReportKeyPrefix) + "total-bytes");
+    bytes.valueText = std::to_string(execution.totalBytes);
+    lines.push_back(std::move(bytes));
+
+    // 行 5：诊断计数（仅 diagnostics 非空时——零占位行纪律，同
+    // buildNewProjectSummary 的行集裁剪）。
+    if (!execution.diagnostics.empty()) {
+        PackageImportReportLine diagCount;
+        diagCount.labelKey =
+            ui::TextKey(std::string(kPackageImportReportKeyPrefix) + "diagnostics-count");
+        diagCount.valueText = std::to_string(execution.diagnostics.size());
+        lines.push_back(std::move(diagCount));
+    }
+
+    // 行 6：清理观测（yes|no——目标与临时区清理承诺的如实登记）。
+    PackageImportReportLine clean;
+    clean.labelKey = ui::TextKey(std::string(kPackageImportReportKeyPrefix) + "target-clean");
+    clean.valueText = execution.targetLeftClean ? "yes" : "no";
+    lines.push_back(std::move(clean));
+
+    return lines;
 }
 
 // =====================================================================
