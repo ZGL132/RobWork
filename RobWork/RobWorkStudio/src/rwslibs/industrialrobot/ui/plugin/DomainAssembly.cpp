@@ -36,8 +36,13 @@ const char* const kPluginWhitelist[] = {
 /// token 文本，不加工语义——SA-12 权威分工）。
 constexpr const char* kAssemblyFailedCode = "UI-PLUGIN-ASSEMBLY-FAILED";
 
-/// UiText 文案解析的标准绑定（三域共用——resolveText 唯一出口；解析空/
-/// 失败回退键名原文——呈现面不空洞，建模装配既有先例逐字同源）。
+/// UiText 文案解析的标准绑定（三域共用——resolveText 唯一出口）。
+/// UI-T77（F-564）注释更正：resolveText 缺键**即抛** invalid_argument
+/// （UiText fail-fast 设计——键表与词表失同步在解析拍暴露），旧注释
+/// 「解析空/失败回退键名原文」与行为相悖（命中键值恒非空，empty 回退
+/// 是不可达死代码；F-557 修复纠正的正是「以为 resolveText 会回退」这一
+/// 误解）。键未登记＝装配/解析拍异常上抛——新增命令/键必须同步登记
+/// UiText 词表，这是契约不是缺陷；空串回退仅作登记值为空的防御面保留。
 std::function<QString(const std::string&)> standardTextResolver()
 {
     return [](const std::string& key) {

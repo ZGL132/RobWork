@@ -45,16 +45,41 @@ runtime::RevisionSummary toSummary(const project::RevisionView& view)
         e.contentVersion = ref.contentVersion;
         e.objectTypeToken = ref.objectTypeToken;
         // digest256 为 64 位小写十六进制（§4.3 引用图列——透传不重算）。
-        // 逐字节装配为 Digest256（解析失败＝清单数据违约——tryObject 的
-        // 存储侧首读摘要校验已保证读取一致，此处失败属存储数据缺陷，以
-        // 全零摘要如实投递、由编译器 S2 摘要复核拒绝——不静默伪造）。
+        // 逐字节装配为 Digest256。UI-T77（F-563）防御补齐：长度守卫之外
+        // 增**字母表校验**——64 字符含非 hex 字符时旧实现逐字符
+        // std::stoi 直接抛 invalid_argument（本函数是合成闭包装配第一
+        // 步、draft.apply 处理器链无 try/catch→异常穿透 Qt 事件循环＝
+        // 红叉对话框＋进程退出，F-557 家族），且注释自称的「解析失败＝
+        // 全零摘要如实投递」无实现支撑。现口径与注释一致：非 64 长度或
+        // 非小写 hex 字母表＝清单数据违约——全零摘要如实投递（不抛出
+        // 不伪造）：违约条目进入 S2④ 摘要核对面（非计划写入的
+        // robot-design 根）时按全零≠真实被拒；被计划写入覆盖的条目按
+        // 合成口径以计划载荷摘要自洽（§6.6——本文件 compileWorkCellAndDwc
+        // 第一步的覆盖语义）。触发面＝外部工具改写/损坏项目 manifest 的
+        // 摘要字段。
         const std::string& hex = ref.digest256;
-        if (hex.size() == 64) {
+        bool hexWellFormed = hex.size() == 64;
+        if (hexWellFormed) {
+            for (const char c : hex) {
+                const bool lowerHex =
+                    (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
+                if (!lowerHex) {
+                    hexWellFormed = false;  // 大写/其它字符＝违约（契约限定小写）
+                    break;
+                }
+            }
+        }
+        if (hexWellFormed) {
             for (std::size_t i = 0; i < 32; ++i) {
                 const int hi = std::stoi(std::string(hex.substr(i * 2, 1)), nullptr, 16);
                 const int lo = std::stoi(std::string(hex.substr(i * 2 + 1, 1)), nullptr, 16);
                 e.digest[i] = static_cast<std::uint8_t>((hi << 4) | lo);
             }
+        } else {
+            // 「全零摘要如实投递」的承载（Digest256＝std::array——默认
+            // 初始化值不确定，违约路径必须显式置零；S2 摘要复核按全零
+            // ≠真实摘要稳定拒绝，不伪造有效摘要）。
+            e.digest.fill(0);
         }
         s.objectRefs.push_back(std::move(e));
     }
