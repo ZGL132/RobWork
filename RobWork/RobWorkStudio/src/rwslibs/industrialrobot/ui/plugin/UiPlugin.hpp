@@ -404,6 +404,14 @@ private:
     /// ——借用契约。解析半区专用：碰撞评估面调用即 fail-fast，④行程校验
     /// 只走 resolvePolicy）。
     policy::SystemDefaultPolicyProvider m_systemDefaultPolicyProvider;
+
+    /// 需求就绪检查的闭包上下文现取（UI-T75 返工——F-554 根因修复）：上下
+    /// 文＝当前 HEAD 的 objectRefs（与 wireRequirementsSession 的 HEAD 读
+    /// 取同源——store 查询端口现取）。空上下文历史缺陷：首应用后根引用表
+    /// 四槽被 allocateNew 回填，R0 闭包核对以空集判定恒「悬空」→ Blocking
+    /// →应用草稿恒灰（所有者十步验收实录）。无适配器＝空上下文（预首应用
+    /// 态槽位未回填，R0 天然跳过——上下文内容不影响该态判定）。
+    requirements::CheckContext currentRequirementsCheckContext() const;
     std::unique_ptr<ui::HostRuntimeNameContext> m_runtimeNameContext; ///< 行程评估名称上下文（真值端口现取）
     /// 草稿名感知装饰上下文（UI-T74——F-546 出路①：发布真值＋草稿名补位；
     /// 装配在 m_runtimeNameContext 之后，HandlerServices 以其指针注入）。

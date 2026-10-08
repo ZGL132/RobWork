@@ -906,7 +906,7 @@ void IrdWorkbenchHostPlugin::initialize()
         }
         const requirements::RequirementReadinessReport report =
             m_requirementsReadinessChecker.check(
-                m_requirementsEditor.workingSet(), requirements::CheckContext{});
+                m_requirementsEditor.workingSet(), currentRequirementsCheckContext());
         if (report.hasBlocking()) {
             return ui::DisableReason{"reason.readiness-blocking"};
         }
@@ -2043,6 +2043,49 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
     // 打开五步协议（§5.2 Opening 态）：状态机推进归 UiSessionController，
     // 本插件只做触发编排（§11.5）。可写打开（锁竞争/介质只读→PM-07 降级
     // 只读是成功形态——横幅与只读徽标由内容装配面呈现）。
+    //
+    // F-552（UI-T74 验收实录——已打开会话下新建项目即静默退出）：打开协议
+    // 仅可在 NoProject 态触发（INV-SES-2——openProject 状态机防线，无守卫
+    // 直调即 logic_error 违约异常＋进程静默退出）。已打开会话的进入必须走
+    // beginSwitch 切换编排（§5.4 S2——与 openRecentProject 同款防线），此
+    // 处统一收口保护全部调用方（新建项目/打开项目/巡检通道）。
+    if (m_controller && m_controller->hasOpenSession()) {
+        try {
+            const CloseDialogData data =
+                m_controller->beginSwitch(canonicalPath, UiOpenMode::Writable);
+            const std::optional<CloseDecision> decision = presentCloseDialog(data);
+            if (!decision.has_value()) {
+                (void)m_controller->resolveCloseDialog(CloseDecision{});  // 取消
+                return false;  // 用户取消＝当前项目保持打开
+            }
+            const CloseDialogResolution resolution =
+                m_controller->resolveCloseDialog(*decision);
+            switch (resolution.status) {
+            case CloseDialogResolution::Status::Confirmed:
+                // A 转入 Draining 背景持有点＋B 已绑定（INV-SES-2/3）——A 排
+                // 空归防线轮询观测；B 记入最近项目（与切换流同口径）。
+                if (m_content) {
+                    m_content->noteRecentProject(canonicalPath);
+                }
+                startDrainWatch();
+                return true;
+            case CloseDialogResolution::Status::SaveFailed:
+                QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("切换已中止"),
+                                     QString::fromUtf8("草稿保存失败，当前项目保持打开。"));
+                return false;
+            case CloseDialogResolution::Status::CandidateRejected:
+                QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("无法切换项目"),
+                                     QString::fromUtf8("候选项目验证失败，当前项目保持打开。"));
+                return false;
+            case CloseDialogResolution::Status::Cancelled:
+                return false;
+            }
+            return false;  // 决议穷尽防御（不可达——Status 封闭词表）
+        } catch (const std::logic_error& error) {
+            reportLine(std::string("切换编排状态违约：") + error.what());
+            return false;
+        }
+    }
     const SessionOpenReport report =
         m_controller ? m_controller->openProject(canonicalPath, UiOpenMode::Writable)
                      : SessionOpenReport{};  // 防御：未装配＝必失败报告（装配缺陷另行走 DEV 留痕）
@@ -2579,7 +2622,7 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
         // 语义在"根未挂载"场景是正确态——与提交回执回填衔接）。
         requirements.noteAppliedRevision(head.id, std::nullopt);
         requirements.bindReadiness(m_requirementsReadinessChecker.check(
-            m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+            m_requirementsEditor.workingSet(), currentRequirementsCheckContext()));
         if (m_diag.pipeline != nullptr) {
             m_diag.pipeline->logDev(
                 kPluginDevChannel,
@@ -2607,14 +2650,14 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
     // 最小校验（UI-T29）：首刷就绪报告——判定权威＝域侧 checker，本宿主
     // 取 check 产出直投会话态（P-REQ-6：呈现数据零判定）。
     requirements.bindReadiness(m_requirementsReadinessChecker.check(
-        m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+        m_requirementsEditor.workingSet(), currentRequirementsCheckContext()));
 
     // 编辑后动作：重估就绪→bindReadiness（注册表谓词按当前会话态求值
     // ——draft.apply 门控随之刷新）＋面板校验页经模块组合子以最新报告
     // refreshPanel（编辑态即时预检的呈现收口）。
     requirements.setPostEditAction([this, &requirements]() {
         requirements.bindReadiness(m_requirementsReadinessChecker.check(
-            m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+            m_requirementsEditor.workingSet(), currentRequirementsCheckContext()));
     });
 }
 
@@ -2628,6 +2671,20 @@ void IrdWorkbenchHostPlugin::wireRequirementsSession(
  * 多分支选择器随收口任务）。状态行按遍历报告汇总（无草稿域计数＋提交
  * 结果），域级细节经 Dev 通道留痕。
  */
+requirements::CheckContext
+IrdWorkbenchHostPlugin::currentRequirementsCheckContext() const
+{
+    // 闭包上下文＝当前 HEAD 的 objectRefs（与 wireRequirementsSession 的
+    // HEAD 读取同源——store 查询端口现取）。F-554 根因修复的机制面：首应
+    // 用后根引用表槽位被回填，空上下文的 R0 闭包核对必误判「悬空」。
+    requirements::CheckContext ctx;
+    if (m_lastStoreAdapter != nullptr) {
+        ctx.closureRefs =
+            m_lastStoreAdapter->projectStore().query().head().objectRefs;
+    }
+    return ctx;
+}
+
 CommandOutcome IrdWorkbenchHostPlugin::orchestrateApplyDraft(
     const std::vector<CommandParameter>& params)
 {
@@ -2864,7 +2921,7 @@ void IrdWorkbenchHostPlugin::refreshRequirementsFromSession()
     }
     auto& requirements = *m_domains->requirements;
     requirements.bindReadiness(m_requirementsReadinessChecker.check(
-        m_requirementsEditor.workingSet(), requirements::CheckContext{}));
+        m_requirementsEditor.workingSet(), currentRequirementsCheckContext()));
     requirements.refreshFromSession();
 }
 
@@ -3463,7 +3520,13 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
             [this](const requirements::RequirementReference& ref)
             -> std::optional<std::string> {
             if (ref.kind == requirements::RequirementRefKind::World) {
-                return std::string("World");  // 宿主世界帧（RobWork 惯例名）
+                // 宿主世界帧名＝"WORLD"（全大写）——RobWork 根帧实名
+                // （StateStructure 构造即 FixedFrame("WORLD")），且
+                // WorkCell::findFrame 仅对 "WORLD" 特判返回根帧。曾误写
+                // 混合大小写 "World"（F-550② 登记）：状态树按名查找大小
+                // 写敏感，恒落空→工位标记全数跳过、区域框"参考系不可解
+                // 析"清除——三维预览空白的根因之一。
+                return std::string("WORLD");
             }
             if (ref.objectId.has_value() && m_nameMapPort != nullptr) {
                 return m_nameMapPort->resolveRuntimeName(*ref.objectId);
@@ -3493,18 +3556,33 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                 // refFrame 系→世界系（宿主帧位姿——Kinematics::worldT；
                 // 参考系缺失＝框层清除＋Dev 留痕——acceptance 2 的失败
                 // 原因可见面在投影方摘要与 Dev 双承载）。
+                // F-550② 修复：World 缺省参考系（RequirementTypes.hpp
+                // kind 缺省值）的角点/格线本身就是世界系坐标——恒等变换
+                // 直投，不经宿主帧解析。这使区域框/采样格在首应用前（宿
+                // 主尚无发布 WorkCell）即可经后端会话预览锚呈现；对象引
+                // 用系才需要宿主帧位姿（发布后帧树在位——帧不可解析＝
+                // 清除＋Dev 留痕，语义同前）。
                 std::optional<ui::View3DBoxOutline> box;
+                rw::math::Transform3D<> worldT =
+                    rw::math::Transform3D<>::identity();
+                bool refResolved = false;
                 const auto frameName = resolveFrameName(geo.refFrame);
-                rw::kinematics::Frame* frame = nullptr;
-                if (frameName.has_value() && studio != nullptr
-                    && !studio->getWorkCell().isNull()) {
-                    frame = studio->getWorkCell()->findFrame(*frameName);
-                }
-                if (frame != nullptr) {
-                    const rw::math::Transform3D<> worldT =
-                        rw::kinematics::Kinematics::worldTframe(
+                if (geo.refFrame.kind == requirements::RequirementRefKind::World) {
+                    refResolved = true;  // 世界系引用——恒等变换（见上注）
+                } else {
+                    rw::kinematics::Frame* frame = nullptr;
+                    if (frameName.has_value() && studio != nullptr
+                        && !studio->getWorkCell().isNull()) {
+                        frame = studio->getWorkCell()->findFrame(*frameName);
+                    }
+                    if (frame != nullptr) {
+                        worldT = rw::kinematics::Kinematics::worldTframe(
                             rw::core::Ptr<const rw::kinematics::Frame>(frame),
                             studio->getState());
+                        refResolved = true;
+                    }
+                }
+                if (refResolved) {
                     ui::View3DBoxOutline outline;
                     for (std::size_t i = 0; i < 8; ++i) {
                         outline.corners[i] = worldT * geo.corners[i];

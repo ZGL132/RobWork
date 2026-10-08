@@ -5444,7 +5444,7 @@
       "severity": "major",
       "status": "open",
       "registeredAt": "2026-10-08",
-      "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）",
+      "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）；【2026-10-08 修复落地（UI-T76——②工位标记/区域框会话预览链排查）】三处根因修复：①宿主世界帧名映射 World→WORLD（RobWork 根帧实名＝StateStructure FixedFrame「WORLD」，WorkCell::findFrame 仅对全大写特判返回根帧——混合大小写查找恒落空＝标记全数跳过/区域框「参考系不可解析」的直接原因）；②渲染后端增会话预览锚（宿主无发布 WorkCell 时装仅含根帧的场景层锚 WC「ird-session-preview」——studio 模型层零触碰不扰发布链 INV-B4 单入口；场景挂接 API 无 WC 即抛异常＝框架硬约束，「无锚不画」此前使草稿期三维恒空白）；③区域 World 引用系恒等直投（角点/格线本即世界系坐标，不经宿主帧解析）。修复后增工位/区域的三维标记/框/格在首应用前即可见；待所有者宿主复验后翻转 fixed。模型几何渲染与 ray-cast 拾取仍归 WP-10-T05（未实施——本修复不覆盖）",
       "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）"
     },
     {
@@ -5463,7 +5463,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "新建项目触发程序退出（crash）——项目已打开＋已应用修订＋草稿编辑态下点击 File→工业机器人项目→新建项目，进程直接终止（无错误对话框）。版本口径：所有者实例 exe 构建于 2f74ef03 基线（含 UI-T73/T74 主链修复；未含并行批次 WP-22-T05/T06 的关闭/切换统一确认编排——定位时须区分既有缺陷/新增装配析构顺序〔UI-T73/T74 新增成员 m_systemDefaultPolicyProvider/m_draftAwareNameContext/注入的 attachCompilePort 在项目切换 teardown 的存活期〕/WP-22-T06 已修面）。另同实例置灰「应用草稿」悬停无提示文字（禁用原因呈现面缺口——ERR-01 禁用必带原因口径）",
-      "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）"
+      "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）；【2026-10-08 修复落地——dev log 定性钉扎】宿主实例 dev log（ird-ui-plugin-logs）捕获违约原文：ui/session: openProject 仅可在 NoProject 态调用（当前态非无项目——已打开会话的切换走 beginSwitch，§5.4 S2）＝新建项目流程无会话状态守卫直调 openProject（INV-SES-2 违约）。修复＝openViaSessionController 入口统一收口双态防线（有会话→beginSwitch 切换编排〔确认对话框/决议四态/Draining——与 openRecentProject 同款已证防线〕；无会话→原打开协议）——全部调用方一并受保护。修复待所有者复验（新建项目于已打开项目态→应呈现切换确认对话框而非退出）后翻转"
     },
     {
       "id": "F-553",
@@ -5473,6 +5473,15 @@
       "registeredAt": "2026-10-08",
       "title": "命令置灰的禁用原因呈现面缺口——draft.apply 因就绪阻断禁用时应携带原因键文案（applyDraftDisablement→reason.readiness-blocking→统一原因解析），所有者实测悬停无提示文字；ERR-01/可用性「禁用必带原因」体验口径下菜单动作的 disableReason→tooltip 传递链存在缺口（或该次禁用源于无原因键的其它门控——随 F-552 定位一并厘清）",
       "owner": "ui 呈现批次（disableReason→tooltip 传递链排查＋补齐；与 F-552 定位联动厘清禁用来源）"
+    },
+    {
+      "id": "F-554",
+      "source": "F-496 十步人工验收所有者执行实录（2026-10-08——首应用成功后「不论操作什么，应用草稿始终是灰色」；代码梳理定位宿主就绪门控五处空闭包上下文）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-08",
+      "title": "宿主需求就绪门控/就绪绑定的五处计算点全部以空 CheckContext（closureRefs 空）调用域检查器——首应用前根引用表四槽未回填（R0 闭包核对天然跳过）缺陷潜伏；首应用后四槽被 allocateNew 回填（槽有值），R0 以空闭包判定恒「根引用表槽指向的对象不在修订闭包中（悬空）」→Blocking→applyDraftDisablement 恒禁用＝应用草稿恒灰（首应用成功后不论做什么）。五处＝applyDraftDisablement 门控/wireRequirementsSession 首刷/setPostEditAction 编辑后重估/refreshRequirementsFromSession 重导线/空根初始化路径；面板校验页同源同误（呈现与门控一致地错误——自洽但均失真）。域检查器/域逻辑零缺陷（测试面传入正确闭包全绿）",
+      "owner": "UI-T75 返工段修复（currentRequirementsCheckContext() 现取 HEAD objectRefs 统一五处；十套件回归全绿）；待所有者换装新 exe 复验（首应用→二次编辑→应用应保持可用）后翻转 fixed。关联观察：requirements captureTcpAsFixedPoint 内 CheckContext{} 同形调用（需求域内部口径——是否需真闭包随 F-551/F-496 链路后续核对）；【2026-10-08 返工补登——freeglut 初始化缺位（第三层）】F-550② 后端锚修复让绘制首次深入工位名标签构造（RenderText＝GLUT 承载件），产品主程序 StudioMain 缺 glutInit（框架 RobWorkStudioApp 同位有、产品路径未继承）→freeglut 全局态未初始化→位图字体度量即崩＝新增工位即退出的直接机理（插桩定位：addRender 前最后探针；WER c0000005 在案）。修复＝StudioMain 按 RWS_HAVE_GLUT 宏 glutInit（框架同款先例）；插桩探针已移除。复验=巡检 TOUR_PASS＋MTOUR_PASS（glutInit 后 39 轮绘制标记/标签全程构造成功）"
     }
   ]
 }
