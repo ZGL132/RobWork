@@ -5509,6 +5509,33 @@
       "registeredAt": "2026-10-08",
       "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
       "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
+    },
+    {
+      "id": "F-570",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P0-1）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "URDF <origin> 属性部分缺省被误判数值非法——xyz/rpy 缺一即 originIllegal→valueIllegal→submittable=false，规范合法写法（只写 xyz 不写 rpy）导入即不可提交",
+      "resolution": "修复（分支 audit-p0-fixes）：Import.cpp 新增 parseOriginAttributes——属性缺失按 URDF 语义补零（defaulted 标志随行，joint/inertial/visual/collision 四处扫描点统一走该助手），映射段把补零事实入默认补全清单（NFR-COR-03 不静默）；属性存在但语法非法仍走原非法值面（容错不改值）。ImportTest 增 F570 正反两用例；红灯验证：撤修复后正例失败、反向例保持通过。"
+    },
+    {
+      "id": "F-571",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P0-2）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ApplyRobotDesignHandler 候选工作集未播种基线——既有部件替换槽恒失败（replacePartInCandidate 在空候选恒 miss）；基线闭包含任一部件对象后根编辑被闭包断言全拒（REF-MISSING→RejectedHardAssert）——WP-13-T10 同类缺陷在本处理器的复制修复遗漏",
+      "resolution": "修复（分支 audit-p0-fixes）：decodeAndPlan Apply 分支开头 result.candidate = baseline（与 ApplyToolDefinitionHandler 的 WP-13-T10 修复同款语义）；根对象字节仍整体来自载荷（design 整体覆盖不变）。CommandHandlersTest 增 F571 两用例（基线含工具的根替换恢复提交＋既有工具字节替换槽可达）；红灯验证：撤修复后两用例恰好失败。"
+    },
+    {
+      "id": "F-572",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P0-3）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "CsvFieldChars 预算维被按行累计记账——『CSV 单字段字符数（默认 64 KiB｜硬 1 MiB）』契约下，累计字段内容超 64 KiB 的常规 CSV 在读取中途被 IO-SEC-BUDGET-FIELD 误拒；真正的单字段限额从未生效，防御上限错误三要素 limit（65536）与实际拦截点（1 MiB+4KiB）也不一致",
+      "resolution": "修复（分支 audit-p0-fixes）：Csv.cpp 交付行改逐字段与生效限额（limitOf(CsvFieldChars)）比较，超限以比较型三要素（actual＝涉事字段字节数/limit＝生效限额/unit=chars）拒读；移除逐行累计 charge（该维语义是上限判定不是累计账目）；扫描期防御上限的三要素 limit 改取实际拦截点 kFieldScanCapBytes。CsvTest 增 F572 两用例（单字段 70KiB 拒读＋800 行小字段正常读完）；红灯验证通过。"
     }
   ]
 }
