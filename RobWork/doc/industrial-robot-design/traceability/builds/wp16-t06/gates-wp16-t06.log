@@ -1,0 +1,9 @@
+# WP-16-T06 ird_gates 门禁留痕（2026-10-08）
+# 命令: cmake --build build/pipeline-wt/build --config Release --target ird_gates
+# 完整输出末段（GBK 控制台编码）：
+#   [ird_gates] 自测 pass_clean：干净夹具通过（无误报）
+#   [ird_gates] 自测 fail_r1/fail_t1/fail_r5/fail_sub/fail_r3/fail_r4/fail_t2：按预期检出（门禁引擎自测）
+#   [ird_gates] 扫描根：.../industrialrobot
+#   [ird_gates] 全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中
+# 下行 IRD-GATE 字样计数 7＝自测 fail_* 七项的按预期检出行（引擎自测，非产品树命中）；产品树扫描零命中。
+7

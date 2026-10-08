@@ -1,0 +1,6 @@
+# WP-16-T06 独立冒烟模式构建留痕（2026-10-08）
+# 命令: cmake --build build/pipeline-wt/build-smoke --config Release
+0
+（上行=error 字样计数，0=零错误）
+  sdurws_ird_workflow_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_contract_test.exe
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_test.exe

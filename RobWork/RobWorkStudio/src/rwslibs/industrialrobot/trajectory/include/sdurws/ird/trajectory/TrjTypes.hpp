@@ -93,6 +93,11 @@ inline constexpr char kPhasePlanPtp[] = "plan-ptp";
 /// 素材 phaseToken 取本常量）。
 inline constexpr char kPhasePlanLine[] = "plan-line";
 
+/// 失败阶段 token：避障路径搜索（§14.1.6 phase 词表第三值——WP-16-T06
+/// 产生面：planPtpWithObstacleAvoidance 的直连淘汰/搜索未果/规划器错误
+/// 素材 phaseToken 取本常量）。
+inline constexpr char kPhasePlanAvoid[] = "plan-avoid";
+
 // =====================================================================
 // 取消观测（§15.0 通用约定——一切长计算接口经注入取消观测）
 // =====================================================================
