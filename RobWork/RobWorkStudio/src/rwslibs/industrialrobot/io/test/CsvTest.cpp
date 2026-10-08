@@ -1119,6 +1119,76 @@ TEST_F(IoCsvTest, RowBudgetChargedThroughReaderChannel)
 }
 
 /**
+ * 回归（F-572，P0——audit/unit-code-review-20261009）第一面：单字段限额
+ * 真实生效。§4.5.1 权威定义"CSV **单字段**字符数（默认 64 KiB）"——
+ * productDefault scope 下单个 70 KiB 字段应以 IO-SEC-BUDGET-FIELD 拒读，
+ * 比较型三要素 actual＝涉事字段字节数、limit＝生效限额（64 KiB）、
+ * unit=chars（修复前该限额从未被执行——仅 1 MiB＋4 KiB 扫描期防御上限
+ * 在起作用，本用例在修复前会读出成功）。
+ */
+TEST_F(IoCsvTest, FieldBudgetSingleFieldEnforced_F572)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
+
+    // 单行单字段 70 KiB（>默认限额 64 KiB＝65536，< 硬 1 MiB——确保
+    // 触发的是配置维检查点而非扫描期防御上限）。
+    const std::string bigField(70 * 1024, 'x');
+    const fs::path single = m_dir / "field_budget_single.csv";
+    writeFileBytes(single, "a,b\n" + bigField + ",tail\n");
+
+    const IBudgetGuardPtr guard = makeBudgetGuard();
+    const BudgetScopeId scope =
+        guard->openScope(BudgetSpec::productDefault()).value;  // 默认 64 KiB 档
+
+    auto reader = makeCsvReader();
+    const IoResult<RawTable> r = reader->read(single, CsvReadOptions{}, nullptr,
+                                              guard.get(), nullptr, {}, scope);
+    ASSERT_FALSE(r) << "单字段超限必须拒读（§4.5.1 CsvFieldChars）";
+    EXPECT_EQ(r.error.code, IoErrorCode::SecBudgetField) << r.error.detail;
+    EXPECT_EQ(paramOf(r.error, "actual"), std::to_string(70 * 1024))
+        << "三要素·实际值＝涉事字段字节数";
+    EXPECT_EQ(paramOf(r.error, "limit"), "65536") << "三要素·上限＝生效限额";
+    EXPECT_EQ(paramOf(r.error, "unit"), "chars");
+}
+
+/**
+ * 回归（F-572，P0）第二面：该维不再按行累计记账。累计字段内容超 64 KiB
+ * 但每个字段都很小的常规表格（800 行×2 列×约 50 字节 ≈ 80 KiB）必须
+ * 读完——原实现把每行字段总和逐行 charge 本维，此类文件在读取中途被
+ * 误拒（生产装配恒传 guard，属常规使用即触发）。
+ */
+TEST_F(IoCsvTest, FieldBudgetNotRowCumulative_F572)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
+
+    // 800 行×2 列，每格约 50 字节——累计约 80 KiB＞64 KiB（旧行为在约
+    // 第 655 行触发误拒），单格 50 字节≪64 KiB（新语义合法）。
+    std::string body;
+    const std::string cellA(50, 'a');
+    const std::string cellB(50, 'b');
+    for (int i = 0; i < 800; ++i) {
+        body += cellA + "," + cellB + "\n";
+    }
+    const fs::path many = m_dir / "field_budget_rows.csv";
+    writeFileBytes(many, "a,b\n" + body);
+
+    const IBudgetGuardPtr guard = makeBudgetGuard();
+    const BudgetScopeId scope =
+        guard->openScope(BudgetSpec::productDefault()).value;
+
+    auto reader = makeCsvReader();
+    CsvReadOptions options;
+    options.headerRow = 1;      // 首行声明为表头（交付行＝800 条数据行）
+    options.retainRows = true;  // 交付行拷贝（行数断言面）
+    const IoResult<RawTable> r = reader->read(many, options, nullptr,
+                                              guard.get(), nullptr, {}, scope);
+    ASSERT_TRUE(r) << "单格合规的常规表格不得因累计体量被拒：" << r.error.detail;
+    EXPECT_EQ(r.value.rows.size(), std::size_t{800});
+}
+
+/**
  * 数据-only（acceptance 4/§12 IO-T03 禁止项"无公式/命令执行路径"）的
  * 源级断言：CSV 通道源文件零进程执行/命令解释入口 token（system、
  * popen、exec 族、CreateProcess、ShellExecute、WinExec 等）——解析路

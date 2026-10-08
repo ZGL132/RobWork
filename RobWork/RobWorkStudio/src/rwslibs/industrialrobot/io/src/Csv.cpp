@@ -1456,15 +1456,19 @@ private:
 
             // ---- 防御上限（字段超长/字段数超限）→ IO-SEC-BUDGET-FIELD
             // （Budget.hpp SecBudgetField 注"单元格长度/字段数超限"）。
+            // 三要素 limit＝实际拦截点（扫描期防御上限常量），不再取
+            // limitOf(CsvFieldChars)——后者是配置维限额（默认 64 KiB），
+            // 与本拦截点（1 MiB＋4 KiB）不同面，混用会使诊断 limit 与
+            // 实际拦截值矛盾（F-572 附带面）。
             if (scanner.fieldOverCap() || scanner.rowFieldsOverCap()) {
                 const std::uint64_t hardCap = scanner.fieldOverCap()
-                    ? budgetScope.limitOf(BudgetDimension::CsvFieldChars)
+                    ? static_cast<std::uint64_t>(kFieldScanCapBytes)
                     : kRowFieldsCap;
                 IoResult<RawTable> r;
                 r.error = makeComparativeError(
                     IoErrorCode::SecBudgetField,
                     scanner.fieldOverCap() ? scanner.overCapFieldLen() : kRowFieldsCap,
-                    hardCap != 0 ? hardCap : kFieldScanCapBytes,
+                    hardCap,
                     scanner.fieldOverCap() ? "chars" : "count",
                     "csv read: field/fields defensive cap exceeded (units/io.md E8)");
                 return r;
@@ -1475,16 +1479,31 @@ private:
                 progress(IoProgress{rowNo, 0, "csv-read"});
             }
 
-            // ---- 行字符记账（本行各字段总长——字段维检查点）。
-            std::uint64_t rowChars = 0;
-            for (const std::string& f : fields) {
-                rowChars += f.size();
-            }
-            if (rowChars > 0) {
-                if (const IoResult<void> r =
-                        budgetScope.charge(BudgetDimension::CsvFieldChars, rowChars);
-                    !r) {
-                    return readFail(r.error);
+            // ---- 单字段预算检查点（§4.5.1"CSV 单字段字符数"——该维是
+            // **单字段**上限：默认 64 KiB｜硬 1 MiB，Budget.hpp 权威定义）。
+            // 原实现把每行全部字段的字节**总和**逐行 charge 本维，语义错位
+            // ——累计内容超 64 KiB 的常规表格（几百行任务点表即达）在读取
+            // 中途被 IO-SEC-BUDGET-FIELD 误拒，而真正的单字段限额从未生效
+            // （F-572，P0；audit/unit-code-review-20261009）。修复口径：
+            // ①本维改为**逐字段**与生效限额比较（超限字段以比较型三要素
+            // 拒读——actual＝涉事字段字节数，limit＝会话限额）；②不再向
+            // 会话累计 charge（该维语义是上限判定，不是累计账目）；③维未
+            // 配置（limitOf==0＝调用方未设限口径，仅外部 scope 可达）时本
+            // 检查点跳过——内存安全仍由上方扫描期防御上限（kFieldScanCapBytes，
+            // 硬 1 MiB 档）兜底，无换行巨型单字段不会绕过拦截。
+            if (const std::uint64_t fieldLimit =
+                    budgetScope.limitOf(BudgetDimension::CsvFieldChars);
+                fieldLimit != 0) {
+                for (const std::string& f : fields) {
+                    if (f.size() > fieldLimit) {
+                        IoResult<RawTable> r;
+                        r.error = makeComparativeError(
+                            IoErrorCode::SecBudgetField, f.size(), fieldLimit,
+                            "chars",
+                            "csv read: single field exceeds CsvFieldChars budget "
+                            "(units/io.md §4.5.1)");
+                        return r;
+                    }
                 }
             }
 
