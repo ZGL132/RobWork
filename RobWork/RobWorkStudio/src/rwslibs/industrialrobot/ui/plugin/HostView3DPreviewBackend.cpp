@@ -15,6 +15,7 @@
 
 #include <rw/graphics/DrawableNode.hpp>
 #include <rw/graphics/Render.hpp>
+#include <rw/graphics/SceneViewer.hpp>  // setWorldNode（世界节点重同步——F-550②）
 #include <rw/graphics/WorkCellScene.hpp>
 #include <rw/kinematics/Frame.hpp>
 #include <rwlibs/opengl/DrawableUtil.hpp>
@@ -22,6 +23,7 @@
 #include <rwlibs/opengl/rwgl.hpp>  // GL 聚合头（框架 RenderFrame 同款——平台 glext 由其内部处理）
 
 #include <rws/RobWorkStudio.hpp>
+#include <rws/RWStudioView3D.hpp>  // getView→getSceneViewer（F-550② 世界节点重同步）
 
 #include <cstdio>
 
@@ -191,15 +193,29 @@ HostView3DPreviewBackend::HostView3DPreviewBackend(rws::RobWorkStudio* studio)
 
 bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
 {
-    // 场景与工作 cell 现取（studio 公开 API 直供——getView 中介零需要；
-    // world 帧＝workcell 的世界帧——线框/格线挂接锚）。
+    // 场景现取（studio 公开 API 直供——getView 中介零需要）。
     if (m_studio == nullptr) {
         return false;
     }
     WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
-    const rw::models::WorkCell::Ptr workcell = m_studio->getWorkCell();
-    if (scene.isNull() || workcell.isNull()) {
+    if (scene.isNull()) {
         return false;
+    }
+    // 挂接锚 WorkCell 三级现取（F-550② 修复——会话预览是会话编辑面
+    // 〔PM-11/协议头注〕，草稿期（首应用前）就必须可见；此前实现把
+    // "宿主已有发布 WorkCell"当前置，新项目增工位/区域后三维恒空白）：
+    //   ①宿主 WorkCell（发布链 setWorkCell 后——常态路径）；
+    //   ②场景当前 WorkCell（宿主装载，或上次装入的会话预览锚——复用）；
+    //   ③新建会话预览锚装入场景（ensureSessionPreviewAnchor——仅场景
+    //     层，studio 模型层零触碰）。
+    // "无锚不画"是框架硬约束（场景挂接 API 在场景无 WorkCell 时抛异常
+    // ——WorkCellScene::addDrawable 防御），修复让锚恒在位而非放弃渲染。
+    rw::models::WorkCell::Ptr workcell = m_studio->getWorkCell();
+    if (workcell.isNull()) {
+        workcell = ensureSessionPreviewAnchor(*scene);
+    }
+    if (workcell.isNull()) {
+        return false;  // 锚不可得（视图缺位等装配降级——诚实失败）
     }
     Frame* const world = workcell->getWorldFrame();
     if (world == nullptr) {
@@ -213,11 +229,12 @@ bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
     // 零重投；帧不可解析＝跳过并追加失败定位到标签——失败可见面）＋
     // 标签 RenderText（UI-T52——F-490② 消账：工位名随帧浮动文本；
     // RenderText 构造期持帧——同帧同组随动）。
+    // 帧解析锚＝上方现取的挂接锚 WC（F-550②——发布前＝会话预览锚，
+    // "WORLD" 别名经 WorkCell::findFrame 特判命中其根帧；发布后＝编译
+    // 产物 WC，同一别名命中发布根帧——两态查找语义一致）。
     int unresolved = 0;
     for (const View3DFrameMarker& marker : update.frameMarkers) {
-        Frame* const frame = m_studio->getWorkCell() != nullptr
-                                 ? m_studio->getWorkCell()->findFrame(marker.frameName)
-                                 : nullptr;
+        Frame* const frame = workcell->findFrame(marker.frameName);
         if (frame == nullptr) {
             ++unresolved;  // 失败可见面在投影方摘要——此处计数不虚构坐标轴
             continue;
@@ -264,6 +281,42 @@ bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
         m_nodeNames.push_back(nodeName);  // 名单留痕（无渲染体——诊断锚）
     }
     return true;
+}
+
+rw::core::Ptr<rw::models::WorkCell>
+HostView3DPreviewBackend::ensureSessionPreviewAnchor(WorkCellScene& scene)
+{
+    // ①场景已挂 WorkCell＝原样复用（宿主装载/发布链/上次锚——幂等；
+    // 重复 setWorkCell 会无谓重建场景节点树并触发查看器世界节点再同步，
+    // 见下②注）。成员同步持有当前场景锚（可读性——所有权本身由场景
+    // 共享属主保证）。
+    if (!scene.getWorkCell().isNull()) {
+        m_sessionAnchor = scene.getWorkCell();
+        return m_sessionAnchor;
+    }
+    // ②新建会话预览锚 WC：仅含框架根帧的空 WorkCell（名＝ird 前缀族
+    // 约定——诊断可辨识；WC 名不入任何身份/缓存键，runtime §8.2 同口
+    // 径）。模型层隔离：studio->getWorkCell() 保持空——发布链"WorkCell
+    // 即编译产物本体"（HostPresentationAdapters INV-B4 宿主单入口）与
+    // TreeView 等订阅 studio 工作单元事件的宿主组件，对本锚零感知零干扰。
+    // 查看器先行校验（不半装）：世界节点重同步是装入的必要半区——查看
+    // 器缺位（headless 等装配降级）＝装了也渲染不出，如实返回空交调用
+    // 方按"锚不可得"处理；实践中 scene 可取得则查看器必在位（同一
+    // RWStudioView3D 持有），本分支为防御面。
+    if (m_studio->getView() == nullptr
+        || m_studio->getView()->getSceneViewer() == nullptr) {
+        return nullptr;
+    }
+    m_sessionAnchor = rw::core::ownedPtr(
+        new rw::models::WorkCell("ird-session-preview"));
+    scene.setWorkCell(m_sessionAnchor);
+    // 世界节点重同步（框架硬契约）：WorkCellScene::setWorkCell 会重建
+    // 场景世界节点（旧节点从根摘除、新节点按锚 WC 帧树生成），而查看器
+    // 缓存的是旧节点引用——框架自身路径（RWStudioView3D::setWorkCell/
+    // clear 尾段）都在装 WC 后补 setWorldNode，本直连场景的装配路径必须
+    // 同款补挂，否则新节点树不进渲染。
+    m_studio->getView()->getSceneViewer()->setWorldNode(scene.getWorldNode());
+    return m_sessionAnchor;
 }
 
 void HostView3DPreviewBackend::clear()

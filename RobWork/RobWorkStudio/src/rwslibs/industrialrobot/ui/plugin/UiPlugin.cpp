@@ -3463,7 +3463,13 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
             [this](const requirements::RequirementReference& ref)
             -> std::optional<std::string> {
             if (ref.kind == requirements::RequirementRefKind::World) {
-                return std::string("World");  // 宿主世界帧（RobWork 惯例名）
+                // 宿主世界帧名＝"WORLD"（全大写）——RobWork 根帧实名
+                // （StateStructure 构造即 FixedFrame("WORLD")），且
+                // WorkCell::findFrame 仅对 "WORLD" 特判返回根帧。曾误写
+                // 混合大小写 "World"（F-550② 登记）：状态树按名查找大小
+                // 写敏感，恒落空→工位标记全数跳过、区域框"参考系不可解
+                // 析"清除——三维预览空白的根因之一。
+                return std::string("WORLD");
             }
             if (ref.objectId.has_value() && m_nameMapPort != nullptr) {
                 return m_nameMapPort->resolveRuntimeName(*ref.objectId);
@@ -3493,18 +3499,33 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                 // refFrame 系→世界系（宿主帧位姿——Kinematics::worldT；
                 // 参考系缺失＝框层清除＋Dev 留痕——acceptance 2 的失败
                 // 原因可见面在投影方摘要与 Dev 双承载）。
+                // F-550② 修复：World 缺省参考系（RequirementTypes.hpp
+                // kind 缺省值）的角点/格线本身就是世界系坐标——恒等变换
+                // 直投，不经宿主帧解析。这使区域框/采样格在首应用前（宿
+                // 主尚无发布 WorkCell）即可经后端会话预览锚呈现；对象引
+                // 用系才需要宿主帧位姿（发布后帧树在位——帧不可解析＝
+                // 清除＋Dev 留痕，语义同前）。
                 std::optional<ui::View3DBoxOutline> box;
+                rw::math::Transform3D<> worldT =
+                    rw::math::Transform3D<>::identity();
+                bool refResolved = false;
                 const auto frameName = resolveFrameName(geo.refFrame);
-                rw::kinematics::Frame* frame = nullptr;
-                if (frameName.has_value() && studio != nullptr
-                    && !studio->getWorkCell().isNull()) {
-                    frame = studio->getWorkCell()->findFrame(*frameName);
-                }
-                if (frame != nullptr) {
-                    const rw::math::Transform3D<> worldT =
-                        rw::kinematics::Kinematics::worldTframe(
+                if (geo.refFrame.kind == requirements::RequirementRefKind::World) {
+                    refResolved = true;  // 世界系引用——恒等变换（见上注）
+                } else {
+                    rw::kinematics::Frame* frame = nullptr;
+                    if (frameName.has_value() && studio != nullptr
+                        && !studio->getWorkCell().isNull()) {
+                        frame = studio->getWorkCell()->findFrame(*frameName);
+                    }
+                    if (frame != nullptr) {
+                        worldT = rw::kinematics::Kinematics::worldTframe(
                             rw::core::Ptr<const rw::kinematics::Frame>(frame),
                             studio->getState());
+                        refResolved = true;
+                    }
+                }
+                if (refResolved) {
                     ui::View3DBoxOutline outline;
                     for (std::size_t i = 0; i < 8; ++i) {
                         outline.corners[i] = worldT * geo.corners[i];

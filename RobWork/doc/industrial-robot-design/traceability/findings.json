@@ -5444,7 +5444,7 @@
       "severity": "major",
       "status": "open",
       "registeredAt": "2026-10-08",
-      "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）",
+      "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）；【2026-10-08 修复落地（UI-T76——②工位标记/区域框会话预览链排查）】三处根因修复：①宿主世界帧名映射 World→WORLD（RobWork 根帧实名＝StateStructure FixedFrame「WORLD」，WorkCell::findFrame 仅对全大写特判返回根帧——混合大小写查找恒落空＝标记全数跳过/区域框「参考系不可解析」的直接原因）；②渲染后端增会话预览锚（宿主无发布 WorkCell 时装仅含根帧的场景层锚 WC「ird-session-preview」——studio 模型层零触碰不扰发布链 INV-B4 单入口；场景挂接 API 无 WC 即抛异常＝框架硬约束，「无锚不画」此前使草稿期三维恒空白）；③区域 World 引用系恒等直投（角点/格线本即世界系坐标，不经宿主帧解析）。修复后增工位/区域的三维标记/框/格在首应用前即可见；待所有者宿主复验后翻转 fixed。模型几何渲染与 ray-cast 拾取仍归 WP-10-T05（未实施——本修复不覆盖）",
       "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）"
     },
     {
