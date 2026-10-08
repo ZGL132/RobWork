@@ -543,7 +543,12 @@ struct LoggingPipeline::Impl {
     std::map<std::pair<std::uint64_t, core::TaskIdentity>, WorkerStream> streams;  ///< 重放流
     std::uint64_t overflowDrops = 0;   ///< 队列满丢弃计数（§9.6——Dev 计数行消费）
     std::uint64_t staleDrops = 0;      ///< 陈旧/重复批次丢弃计数（§7.5 幂等重放）
-    std::uint64_t writeFailures = 0;   ///< 写失败累计（§7.6 降级计数——failure 行承载）
+    /// 写失败累计（§7.6 降级计数——failure 行承载）。atomic：日志线程在
+    /// writeLine/flushDirty/轮转路径递增（本线程私有状态设计），而
+    /// flush() 排空成功后的冲刷失败分支在**调用方线程**读（此窗口并发
+    /// log() 可唤醒日志线程同拍递增）——普通 uint64 构成数据竞争（UB；
+    /// audit F-574）。relaxed 序足够：仅计数呈现，不参与同步。
+    std::atomic<std::uint64_t> writeFailures{0};
     std::uint32_t linesSinceFlush = 0; ///< flush 行窗计数（§7.3⑤ N=256）
     std::chrono::system_clock::time_point lastFlush{};  ///< flush 时间窗基线（T=2 s）
     bool finalizing = false;           ///< 关闭收尾中（自产行改为直接渲染——队列不再消费）
