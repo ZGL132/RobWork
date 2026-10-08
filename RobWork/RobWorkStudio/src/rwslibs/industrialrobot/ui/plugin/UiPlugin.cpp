@@ -3541,7 +3541,7 @@ void IrdWorkbenchHostPlugin::assembleView3DGateway()
                     const auto frameName = resolveFrameName(marker.refFrame);
                     if (frameName.has_value()) {
                         m_reqMarkers.push_back(ui::View3DFrameMarker{
-                            marker.label, *frameName});
+                            marker.label, *frameName, marker.position});
                     }  // 帧名不可解析＝该标记跳过（渲染端 unresolved 计数留痕）
                 }
                 ui::View3DPreviewUpdate update;

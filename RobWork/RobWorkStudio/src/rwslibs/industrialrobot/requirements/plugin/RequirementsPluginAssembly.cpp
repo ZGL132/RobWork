@@ -164,7 +164,10 @@ void RequirementsPluginAssembly::bindStationMarkersSink(
             std::vector<StationMarkerView> views;
             views.reserve(markers.size());
             for (const auto& marker : markers) {
-                views.push_back(StationMarkerView{marker.label, marker.refFrame});
+                // 位置随投影直传（UI-T76/F-555——refFrame 系坐标，值面
+                // 中性；世界系变换归投影方 ui 侧）。
+                views.push_back(StationMarkerView{
+                    marker.label, marker.refFrame, marker.position});
             }
             forward(views);
         });
