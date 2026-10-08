@@ -22,11 +22,11 @@
  *   直接承载——SeriesBuilder/Envelope/PowerEnergy 三公共头的消费面）；
  *   WP-17-T06 表尾增列 DynamicsEvidence（证据装配视图——§10.6
  *   IDynamicsEvidenceBuilder::build 的返回承载，§8.4 dyn Profile 域内
- *   组织形态）。§4.4 清单的其余类型：DynamicsEnvelope（连同跨工况
- *   mergeEnvelope）随 WP-17-T07 包络合并落位（DTB §2.18 T07 行——多工况
- *   包络合并归 T07）；JointSideSeriesPack 随 drivetrain 交接任务落位——
- *   均不在本任务预建占位（NFR-MNT-04）；后续任务在同头文件表尾增列即可，
- *   既有类型不重排。
+ *   组织形态）；WP-17-T07 表尾增列 DynamicsEnvelope（多工况包络——连同
+ *   跨工况 mergeEnvelope 落位于 Envelope.hpp/Envelope.cpp，DTB §2.18 T07
+ *   行）。§4.4 清单的其余类型：JointSideSeriesPack 随 drivetrain 交接任务
+ *   落位——不在本任务预建占位（NFR-MNT-04）；后续任务在同头文件表尾增列
+ *   即可，既有类型不重排。
  *
  * 背景说明（值语义与线程约束）：全部类型为纯值（深拷贝安全、构造后按
  *   语义只读——DynamicsSample 构造后不修改）；并发只读安全、构建期单线程
@@ -372,6 +372,91 @@ struct DynamicsEvidence {
     std::vector<core::ObjectId> loadConditionRefs; ///< 负载工况标识引用（必需项 ④）
     bool powerEnergyAvailable = false;        ///< 建议项：功率/能量分项（数据完整时产出）
     bool forwardCheckAvailable = false;       ///< 建议项：正动力学一致性检查记录
+};
+
+// =====================================================================
+// 多工况包络（§4.4 DynamicsEnvelope——DYN-07 合并产物；WP-17-T07 增列：
+// 类型面随包络合并落位，计算唯一入口＝EnvelopeCalculator::mergeEnvelope
+// （Envelope.hpp）——统计呈现，不替代逐工况、不自动形成工程判定）。
+// =====================================================================
+
+/**
+ * @brief 多工况包络（§4.4 原文契约——跨工况逐关节逐量峰值的合并呈现面；
+ *        WP-17-T07 落位）。
+ *
+ * 合并规则（§7.4 原文口径，计算唯一入口 mergeEnvelope）：逐关节逐量纲，
+ * 跨工况取 max⁺/max⁻（方向分列——力矩正/反两字段；速度/加速度幅值；
+ * 功率单记录位取合并幅值 max(|P|)，与 PowerEnergySummary.powerPeak 幅值
+ * 形态同口径）；PeakRecord.conditionId 记录来源工况；contributingConditions
+ * 稳定排序（ObjectId 字典序——NFR-COR-02）。
+ *
+ * 边界纪律（§7.4/§7.6 原文）：
+ *   - 包络只属于统计结果，不自动形成工程判定；多工况包络不能替代全部
+ *     必验工况（EVI-02：覆盖矩阵逐工况 Executed 仍必需——coversAllMandatory
+ *     仅为呈现参考，判定归 evidence 覆盖矩阵）；
+ *   - 数据不足时不输出看似完整的包络：任一来源工况 Partial/Failed→该
+ *     关节 envelopeComplete=false＋来源清单；空集合（无已完成工况）→
+ *     包络不产出（joints 空＝Empty 语义，绝不返回 0 或默认通过——
+ *     NFR-COR-03）；
+ *   - 不得把单一工况外推为全部工况（包络必须携带来源工况集与完整性
+ *     标记——逐关节 contributingConditions＋envelopeComplete）。
+ *
+ * rmsTau 合并口径（WP-17-T07 实现登记，单元卡 §1.2）：跨工况取各工况
+ *   computeRms 的 max（包络＝最坏工况呈现；RMS 不可跨工况时间加权合并
+ *   ——各工况任务循环时长/轴不同，无定义的组合公式，max 是唯一的
+ *   无新语义合并）；某工况 RMS 无效（NaN——如无时间区间）不参与 max，
+ *   全部无效→NaN（显式无效，不伪造 0——§7.3）。
+ *
+ * 值语义纯结构；并发只读安全；contentIdentity 见 mergeEnvelope 契约。
+ */
+struct DynamicsEnvelope {
+    /**
+     * @brief 逐关节包络行（§4.4 原文字段序——六量峰值跨工况合并＋RMS＋
+     *        来源工况集＋完整性标记）。
+     */
+    struct JointEnvelope {
+        std::uint32_t jointIndex;    ///< 关节序号（0 基，链序——行序按本字段升序）
+        core::ObjectId jointObjectId; ///< 关节稳定对象 ID（ARC-04——取该关节
+                                     ///<   样本行的 jointObjectId；同关节行恒同值）
+        PeakRecord tauMaxPositive;   ///< 正向力矩/力峰值包络（跨工况取 max(τ)——
+                                     ///<   N·m 或 N 按 jointType，§4.5 类型化）
+        PeakRecord tauMaxNegative;   ///< 反向力矩/力峰值包络（跨工况取 max(−τ)——
+                                     ///<   反向幅值形态，符号语义同 PeakRecord 注释）
+        PeakRecord velocityPeak;     ///< 速度峰值包络（跨工况取 max|q̇|，rad/s 或 m/s）
+        PeakRecord accelerationPeak; ///< 加速度峰值包络（跨工况取 max|q̈|，
+                                     ///<   rad/s² 或 m/s²）
+        PeakRecord powerPeak;        ///< 机械功率峰值包络（W——§4.4"含正负"单记录
+                                     ///<   位＝合并幅值 max(|P|)：逐工况取 max(max(P),
+                                     ///<   max(−P)) 再跨工况取 max，幅值恒非负——
+                                     ///<   PowerEnergySummary.powerPeak 同口径）
+        double rmsTau;               ///< 完整任务循环力矩 RMS 包络（含驻留；时间
+                                     ///<   加权，§7.3——跨工况取 max，见结构注释；
+                                     ///<   量纲随 jointType：转动/连续 N·m、移动 N；
+                                     ///<   无效→NaN 显式无效）
+        std::vector<core::ObjectId> contributingConditions; ///< 包络来源工况集
+                                     ///<   （该关节峰值行有贡献的工况——ObjectId
+                                     ///<   字典序升序＝稳定排序，NFR-COR-02）
+        bool envelopeComplete;       ///< 该关节包络完整性（任一来源工况 Partial/
+                                     ///<   Failed→false＋contributingConditions
+                                     ///<   来源清单——§7.4"不输出看似完整的包络"；
+                                     ///<   全部来源 Complete→true）
+    };
+    std::vector<JointEnvelope> joints; ///< 逐关节行（jointIndex 升序——稳定序；
+                                       ///<   空＝Empty 语义"包络不产出"）
+    std::size_t conditionCount;        ///< 参与合并的工况数（＝mergeEnvelope 入参
+                                       ///<   results 条数——含未产出统计行的工况，
+                                       ///<   计数如实）
+    bool coversAllMandatory;           ///< 是否覆盖全部启用必验工况（呈现参考；
+                                       ///<   覆盖判定归 evidence 覆盖矩阵——EVI-02；
+                                       ///<   分母＝快照冻结 RequiredCaseSet 的
+                                       ///<   enabled∧mandatory 条目，分子＝results
+                                       ///<   中 completeness≠Empty 的工况集；空
+                                       ///<   分母→true＝平凡完备〔P-EV-7——保守
+                                       ///<   处置归 evidence 汇总判定层〕）
+    core::ContentIdentity contentIdentity; ///< envelope canonical 内容身份
+                                       ///<   （SHA-256——编码规则见
+                                       ///<   EnvelopeCalculator::mergeEnvelope
+                                       ///<   契约；同输入必得同摘要，NFR-COR-02）
 };
 
 }  // namespace sdurws::ird::dynamics

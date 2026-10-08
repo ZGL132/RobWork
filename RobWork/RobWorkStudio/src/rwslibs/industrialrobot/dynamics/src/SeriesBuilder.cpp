@@ -42,6 +42,9 @@
 #include <sdurws/ird/dynamics/SeriesBuilder.hpp>
 
 #include <sdurws/ird/dynamics/DiagCodes.hpp> // DYN-* 码值常量（唯一书写点——产码共用）
+#include "CanonicalDigest.hpp"               // 域内私有摘要流写入器（WP-17-T07 自
+                                             //   文件局部抽取为 src/ 私有头——包络
+                                             //   摘要同用一套编码工具，防两套漂移）
 
 #include <algorithm>
 #include <array>
@@ -55,78 +58,8 @@ namespace sdurws::ird::dynamics {
 
 namespace {
 
-// =====================================================================
-// 摘要流写入助手（canonical 小端编码——见文件头编码规则）。
-// =====================================================================
-
-/// 摘要流包装：update 转发＋各标量类型的显式小端编码（唯一编码实现点）。
-class DigestWriter {
-public:
-    /// 构造（持有调用方摘要器引用——生命周期覆盖本写入器使用区间）。
-    explicit DigestWriter(core::ContentDigester& d) : mDigest(d) {}
-
-    /// 原始字节追加（magic/已编码块用）。
-    void raw(const void* data, std::size_t n) { mDigest.update(data, n); }
-
-    /// 固定文本（magic——长度隐含于调用点，不写长度前缀）。
-    void magic(const char* text, std::size_t n) { raw(text, n); }
-
-    /// u8（枚举底层值/布尔——bool 以 0/1 编码）。
-    void u8(unsigned v) { mDigest.update(&v, 1); }
-
-    /// u32 显式小端（4 字节）。
-    void u32(std::uint32_t v)
-    {
-        const unsigned char b[4] = {static_cast<unsigned char>(v & 0xFFu),
-                                    static_cast<unsigned char>((v >> 8) & 0xFFu),
-                                    static_cast<unsigned char>((v >> 16) & 0xFFu),
-                                    static_cast<unsigned char>((v >> 24) & 0xFFu)};
-        mDigest.update(b, 4);
-    }
-
-    /// u64 显式小端（8 字节——计数类字段用）。
-    void u64(std::uint64_t v)
-    {
-        const unsigned char b[8] = {static_cast<unsigned char>(v & 0xFFu),
-                                    static_cast<unsigned char>((v >> 8) & 0xFFu),
-                                    static_cast<unsigned char>((v >> 16) & 0xFFu),
-                                    static_cast<unsigned char>((v >> 24) & 0xFFu),
-                                    static_cast<unsigned char>((v >> 32) & 0xFFu),
-                                    static_cast<unsigned char>((v >> 40) & 0xFFu),
-                                    static_cast<unsigned char>((v >> 48) & 0xFFu),
-                                    static_cast<unsigned char>((v >> 56) & 0xFFu)};
-        mDigest.update(b, 8);
-    }
-
-    /// f64＝IEEE-754 位模式的 u64 小端编码（memcpy 取位——无别名违例）。
-    void f64(double v)
-    {
-        std::uint64_t bits = 0;
-        static_assert(sizeof(bits) == sizeof(v), "double 必须 64 位（IEEE-754）");
-        std::memcpy(&bits, &v, sizeof(bits));
-        u64(bits);
-    }
-
-    /// 长度前缀字符串（u32 长度＋UTF-8 字节——无终结符）。
-    void str(const std::string& s)
-    {
-        u32(static_cast<std::uint32_t>(s.size()));
-        raw(s.data(), s.size());
-    }
-
-    /// 16 字节强类型 id（ObjectId——Identity.hpp bytes 直通）。
-    void id16(const core::ObjectId& oid) { raw(oid.bytes.data(), oid.bytes.size()); }
-
-    /// 16 字节强类型 id 的字节面通用口（TaskIdentity 五元组等 Id128 家族
-    /// ——各 id 为独立强类型、与 ObjectId 无隐式转换，统一走 bytes）。
-    void idBytes(const std::array<std::uint8_t, 16>& bytes) { raw(bytes.data(), bytes.size()); }
-
-    /// 32 字节内容身份（ContentIdentity——Digest.hpp bytes 直通）。
-    void cid32(const core::ContentIdentity& cid) { raw(cid.bytes.data(), cid.bytes.size()); }
-
-private:
-    core::ContentDigester& mDigest; ///< 调用方摘要器（不接管所有权）
-};
+using canonical_detail::DigestWriter; ///< 编码工具（私有头单点维护——见
+                                      ///   CanonicalDigest.hpp 文件头抽取说明）
 
 /// DynamicsSample 单行的 canonical 编码（字段序＝DynTypes.hpp 原文序——
 /// 文件头编码规则 2；单位/语义见 DynTypes.hpp 逐字段注释）。

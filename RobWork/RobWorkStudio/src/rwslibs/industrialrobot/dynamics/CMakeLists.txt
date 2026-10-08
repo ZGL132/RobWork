@@ -310,7 +310,7 @@ add_executable(sdurws_ird_dynamics_test
                                      #   acceptance 1 执行证明面）；夹具复用
                                      #   test/TwoLinkFixture.hpp＋本地全零物性
                                      #   模型直构（数值异常算例）
-    test/EvidenceBuilderTest.cpp)    # WP-17-T06：证据装配用例组（DynEvidence——
+    test/EvidenceBuilderTest.cpp     # WP-17-T06：证据装配用例组（DynEvidence——
                                      #   dynProfile 表 4 对账与真实注册面/干净链
                                      #   全 Satisfied 无限定语/摩擦缺失→provenance
                                      #   项 Invalid＋DYN-FRICTION-MISSING＋缺失
@@ -320,6 +320,18 @@ add_executable(sdurws_ird_dynamics_test
                                      #   Empty 与未 build 访问器——任务契约
                                      #   acceptance 1/2 执行证明面）；夹具复用
                                      #   test/TwoLinkFixture.hpp
+    test/EnvelopeMergeTest.cpp)      # WP-17-T07：多工况与包络合并用例组
+                                     #   （DynEnvelopeMerge——三工况手工黄金
+                                     #   max 合并与来源归因〔并列峰值按
+                                     #   conditionId 序〕/多负载＋保持设计工况
+                                     #   统一 RNEA 端到端〔P-DYN-4 不自设构造
+                                     #   语义〕/Partial 来源完整性传播〔V-26〕/
+                                     #   覆盖分母＝冻结 RequiredCaseSet〔V-25/
+                                     #   EVI-02——disabled 不参与/空分母平凡
+                                     #   完备/漂亮包络≠覆盖〕/Empty 语义/ RMS
+                                     #   NaN 不参与 max/fail-fast 装配契约七
+                                     #   面——任务契约 acceptance 1/2 执行证明
+                                     #   面）；夹具复用 test/TwoLinkFixture.hpp
 
 target_compile_features(sdurws_ird_dynamics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_test PROPERTIES
@@ -411,13 +423,22 @@ add_executable(sdurws_ird_dynamics_contract_test
                                      #   P-DYN-7 落位选型静态钉扎〔零 rwsim
                                      #   物理引擎消费符号词表扫描〕＋公共契约
                                      #   形态编译期核对〔词表锁定值/四态同源〕）
-    contract_test/EvidenceBoundaryContractTest.cpp)  # WP-17-T06：证据面单元边界
+    contract_test/EvidenceBoundaryContractTest.cpp   # WP-17-T06：证据面单元边界
                                      #   契约（DynEvidenceBoundary——dyn Profile
                                      #   六项 itemId 词表静态钉扎〔§8.4 实现落
                                      #   位冻结列——漂移即对账断链〕＋DYN-06 限
                                      #   定语 token 词表冻结与 trustQualifiers
                                      #   三层映射契约〔RPT-05 不弱化的机器判读
                                      #   面〕）
+    contract_test/EnvelopeBoundaryContractTest.cpp)  # WP-17-T07：包络面单元边界
+                                     #   契约（DynEnvelopeBoundary——mergeEnvelope
+                                     #   公共契约形态编译期核对〔§10.4 签名钉扎
+                                     #   ＋包络摘要 magic IRDDYVE1 词面冻结＋
+                                     #   token 常量〕＋EVI-02 覆盖分母口径行为
+                                     #   契约〔分母＝冻结 RequiredCaseSet；
+                                     #   coversAllMandatory 与 envelopeComplete
+                                     #   互相独立——包络合并不替代必验工况覆盖
+                                     #   规则的机器判读面〕）
 
 target_compile_features(sdurws_ird_dynamics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_contract_test PROPERTIES
