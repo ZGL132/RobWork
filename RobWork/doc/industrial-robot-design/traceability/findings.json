@@ -5441,11 +5441,11 @@
     {
       "id": "F-550",
       "source": "F-496 十步人工验收 runbook 所有者执行实录（2026-10-08——step6 三维视图无对象可拾取；备用路径六轴重置后同样无模型对象）",
-      "severity": "minor",
+      "severity": "major",
       "status": "open",
       "registeredAt": "2026-10-08",
-      "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位",
-      "owner": "两分处置：①草稿三维预览通道＝需求语义候选（若所有者裁定「应用前应见模型」则立增量需求——评估/预览通道 UI-T64 形态参考）；②工位标记可见性复核＝UI-T33 链排查批次（宿主 bindStationMarkersSink 在位实证——渲染端 frameMarkers 呈现面待查）。F-496 十步执行顺序随本条更正：拾取/TCP 两步移至首应用之后（见 runbook v2）"
+      "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）",
+      "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）"
     },
     {
       "id": "F-551",
