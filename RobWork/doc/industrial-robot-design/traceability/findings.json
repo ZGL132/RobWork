@@ -5509,6 +5509,114 @@
       "registeredAt": "2026-10-08",
       "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
       "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
+    },
+    {
+      "id": "F-558",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——所有者指令『查找是否还有这种 bug』；RequirementsView3DFlowTest gui 用例手工绑缝故测试通过、产品装配序实证）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "requirements.pick-feature 的会话闭包引用缝在产品装配序下恒为空——assembleView3DGateway（initialize 装配段，进程启动拍，产品全文件唯一 bindView3DSeams 调用点）执行时任何项目均未打开、m_lastStoreAdapter 恒空，seams.sessionClosureRefs 保持缺省空 function 且此后无任何再绑定点（wireRequirementsSession 重导线的是面板就绪上下文、不触三维缝）——RequirementsCommandFlows 拾取流 if(view3d->sessionClosureRefs) 恒 false→CheckContext.closureRefs 空→域闭包核对恒 miss→拾取写回 100% 被误判「悬空」拒绝。F-554 空闭包家族第六处（前三层修复的 currentRequirementsCheckContext 不覆盖此缝）；F-550③ 骨架呈现让场景出现可拾取 drawable 后，该流从结构性不可达变为可达即踩",
+      "owner": "三维预览修复批次（缝改延迟现取：sessionClosureRefs 捕 this→调用时经 currentRequirementsCheckContext() 同源现取——绑定时机无关，顺带消除现实现按裸 adapter 指针捕获的跨项目存活隐患；回归＝产品序拾取写回姿态规则）。关联：F-554 三处 CheckContext{} 形态之一 captureTcpAsFixedPoint 同族（当前流恒 World refFrame 检查点不可达——潜在）"
+    },
+    {
+      "id": "F-559",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——teardownSharedSurfacesForClose 八类收口清单逐项核对；UiPlugin 全文件 m_reqBox/m_reqGrid 写点清点）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "宿主三维投影三层缓存（UiPlugin m_reqMarkers/m_reqBox/m_reqGrid）不在任何项目关闭拍清理——teardownSharedSurfacesForClose 清了选择/高亮/树/检查器/发布桥/NameMap/编译端口八类，同族（会话呈现面缓存）的三预览缓存漏清；ird 项目关闭经 UiSessionController Draining→syncDomainModulesToContext 不经过宿主框架 WorkCell 关闭拍→网关 onSceneCleared→removePreview 不触发。跨项目串数据：A 项目呈现区域框/采样格/标记→关闭→打开 B→首个 markers sink 合并投递时以 A 残值（m_reqBox/m_reqGrid）重挂——B 项目三维出现 A 的框/格/着色（与 F-550② 修复「不残留旧呈现」纪律同族漏拍）",
+      "owner": "三维预览修复批次（teardownSharedSurfacesForClose 增第九类收口：三缓存清零＋m_view3dGateway->removePreview()；markers sink 现缓存值合并投递语义随之自洽）"
+    },
+    {
+      "id": "F-560",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——renderRegionPage 空集合分支核对）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "删除最后一个区域后三维框/格/着色层永不清除——RequirementsPanelWidget renderRegionPage 区域集合为空分支只清面板标签文本、不向 m_regionPreview 投递空投影；UiPlugin 侧 m_reqBox/m_reqGrid 原值保留，且后续任一 markers sink 合并投递都以旧值重新挂回（update.boxOutline=m_reqBox 原子替换语义在「空集合」态无生产者）。触发：唯一区域被删除或撤销到无区域→三维残留直到关项目（叠加 F-559 则跨项目残留）",
+      "owner": "三维预览修复批次（空集合分支投递空语义——与后端三层「空＝清除该层」契约对齐：boxOutline=nullopt/sampleGrid=nullopt 合并投递）"
+    },
+    {
+      "id": "F-561",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——bindRegionPreviewSink 参考系不可解析分支逐行核对；与 3517 行自述「原子替换语义」对读）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "区域参考系不可解析分支只清框层不清格层——refResolved=false 时 box 置 nullopt（框清除）而 m_reqGrid 保持上一区域旧值并合并整组投递，logDev 文本自称「框层清除」实际格层（骨架线＋着色采样点）跨区域/跨参考系漂浮——「半新半旧」形态在原子替换语义的自家实现分支内复活。触发：选中区域切到参考系不可解析的区域（引用对象被删/未发布），或区域 refFrame 从 World 改指对象系且宿主无发布 WC",
+      "owner": "三维预览修复批次（失败分支同拍 m_reqGrid=nullopt——格层与框层同源清除；区域切换语义＝两层同进退）"
+    },
+    {
+      "id": "F-562",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——RegionOutlineRender 边表与 PanelRegionModel 角序契约逐点对账；UI-T33 以来既有缺陷）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "区域框 12 棱边表与八角点二进制角序不符——生产者角序契约（PanelRegionModel「索引 i 的 bit0→+sx、bit1→+sy、bit2→+sz」）下 index1=(+x,−y,−z)、index2=(−x,+y,−z) 相差两位＝面对角线，而渲染边表底/顶面按「0→1→2→3 循环」假设（格雷/循环序）连边：实际画出 4 条 x 向棱＋4 条面对角线（上下两面呈蝴蝶结交叉）＋4 条立柱，y 向四条棱（0-2/1-3/4-6/5-7）完全缺失——线框非方盒，任何区域预览必现。边表注释「角序与 requirements 侧同款零重排直投」与实现相悖",
+      "owner": "三维预览修复批次（边表改正为二进制序 12 棱：x 向 {0,1}{2,3}{4,5}{6,7}＋y 向 {0,2}{1,3}{4,6}{5,7}＋z 向 {0,4}{1,5}{2,6}{3,7}；视觉回归＝区域预览方盒形态）"
+    },
+    {
+      "id": "F-563",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——HostCompilePort toSummary 十六进制解析路径核对；F-557 异常穿透家族）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "HostCompilePort digest256 十六进制解析只防长度不防字母表——hex.size()==64 守卫内逐字符 std::stoi(...,16)，64 字符含非 hex 字符时抛 std::invalid_argument 且调用链（draft.apply 命令处理器→compileWorkCellAndDwc）无 try/catch→异常穿透 Qt 事件循环直达 StudioMain 顶层＝红叉对话框＋进程退出。注释自称「解析失败＝清单数据违约……以全零摘要如实投递、由编译器 S2 摘要复核拒绝」但实现无任何 catch 支撑该口径——防御姿态自相矛盾（若上游无条件可信则长度守卫也多余）",
+      "owner": "编译链修复批次（字母表校验补齐：非 hex 字符按注释既定口径走「全零摘要如实投递」→S2 摘要复核拒绝——不静默伪造也不崩出；触发面＝外部工具改写/损坏项目 manifest 的 digest256 字段）"
+    },
+    {
+      "id": "F-564",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——UiText resolveText 调用面全量对账：120 登记键 vs 全库调用键；F-557 同根误解存活面排查）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "三处「解析失败回退键名原文」死代码/误导注释——resolveText 缺键即抛 invalid_argument（UiText fail-fast 设计）、命中键值恒非空，故 DomainAssembly standardTextResolver（三域共用标题解析绑定）的 text.empty()?key:text 回退永不发生、注释「解析空/失败回退键名原文——呈现面不空洞」与行为相悖；ModelingPanelWidget 构造期 tooltip 循环与 setCommandTitleResolver/refreshCommandEnablement 两处同款死回退＋「解析空回退命令 id 原文」注释。当前生产键全部已登记不触发——任一域新增命令/键漏登记 UiText 即装配期或解析拍异常穿透（建模面板构造在装配链内＝startup 退出）。F-557 修复纠正的正是「以为 resolveText 会回退」这一误解，同误解仍存活于此三处",
+      "owner": "文案解析统一批次（与 F-557 修复口径统一：改真回退〔try/catch 或查询前白名单核对〕或修注释为 fail-fast 明示——两案择一所有者裁决；建议随 UiText 休眠未登记键簇〔ui.session.readonly.banner 等裸中文字面量第二文案源债〕一并治理）"
+    },
+    {
+      "id": "F-565",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——RegionPreviewView 六字段透传逐字段消费面核对）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "RegionPreviewView.summaryText 全链透传后被投影方静默丢弃——域侧 regionPreviewGeometry 产出失败语义摘要（如「格 未定」＝盒退化/采样间距非法）、门面「摘要直投」透传，UiPlugin bindRegionPreviewSink 对该字段零引用（失败可见面另起炉灶写死「区域参考系不可解析」Dev 文本）——契约头注「失败可见面承载——投影方追注」的承诺在投影半区落空：区域盒退化时三维只见框线无格无原因，Dev 通道也拿不到域侧摘要",
+      "owner": "三维预览修复批次（投影方消费 summaryText：随 logDev 追注或经 Dev 通道透传——失败可见面兑现；零三维契约变更）"
+    },
+    {
+      "id": "F-566",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——markers sink 帧名不可解析分支与渲染端 unresolved 计数的职责面对读）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "对象引用系工位标记解析失败被静默跳过无任何可观测面——bindStationMarkersSink 中 resolveFrameName 落空的 marker 直接不进 update.frameMarkers，注释声称「渲染端 unresolved 计数留痕」但后端计数只统计已转发挂帧形态的 findFrame 失败，此处跳过的标记三面（后端计数/Dev 通道/协议摘要）全空；对比区域路径同场景有 logDev。触发：首应用前（NameMap 未发布）或引用对象删除后，对象系工位从三维无声消失，工位总数与标记数不一致不可观测",
+      "owner": "三维预览修复批次（对齐区域路径：解析失败 logDev 留痕〔工位名＋引用〕；UI-T77 已落地的 position 降级路径〔帧不可解析＝position 置空回落挂帧形态〕语义保持）"
+    },
+    {
+      "id": "F-567",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——teardownSharedSurfacesForClose「先退订消费者再清状态源」序与两域 detachSelectionService 调用面核对）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "modeling 侧选择适配器拆卸拍不退订 SelectionService——requirements 侧 onSessionDetached 显式调 detachSelectionService，modeling 侧 ModelingUiModule::detachSelectionService 与门面转发为生产代码零调用死 API、onSessionDetached 不清订阅：teardown「先退订防重入」序被打破，m_selection->clearSelection() 的空选中广播在拆卸中重入 ModelingSelectionAdapter→面板 focusObject(nullopt)→树清选＋属性重投影恰好发生在拆卸过程内；modeling 面板选中锚只能靠这次意外重入间接清掉（与 requirements 显式 reset 不对称）",
+      "owner": "建模装配批次（modeling onSessionDetached 补调 detachSelectionService——与 requirements 同款显式纪律；死 API 激活或删除二选一随修）"
+    },
+    {
+      "id": "F-568",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——KinEvaluationChannel 账面失效路径与采样格投影对账门核对）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "覆盖评估账面不随需求草稿编辑失效——账面失效仅挂快照换绑（attachView 纪元推进），需求侧编辑区域盒（尺寸/中心/采样计数）零失效路径：三维投影门（snapshotId+epoch 双核对）放行旧账面，格线/框角点来自当前工作集现算几何而着色采样点/tint 来自评估期旧几何——改小盒＝彩色点悬浮框外、改大盒＝旧点阵被误读为新区域结果、框色 tint 按旧计数比。同族潜在：KinChannelCoverageResult.configDigest 对账键声明而未核对（submit 校验只对 snapshotId、setConfiguration 不清账面——配置基线当前冻结无编辑面故不触发，一旦配置可编辑即两屏口径分叉）",
+      "owner": "运动学/需求联合批次（域级核对在先：需求编辑是否应触发 CON-02 结果失效语义——若域已有失效面则本条收窄为三维投影未跟随；configDigest 核对随配置编辑面任务一并落）"
+    },
+    {
+      "id": "F-569",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——UiPlugin 析构兜底注释与成员声明序逐项核对；「新增成员 teardown 存活期」嫌疑家族复查）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "UiPlugin 析构兜底注释与成员声明序相悖——注释称「编译端口后毁（query 指针随 store 适配器——成员声明逆序保证端口析构时适配器仍在）」，实际 m_compilePort（hpp:395）声明在 m_lastStoreAdapter（hpp:428）之前→逆序销毁是 adapter 先毁，注释描述的保障机制与真实布局相反；现行安全仅因析构体显式 reset 序（bridge→observer→compilePort）抢在成员销毁前执行。HostCompilePort Deps.query 为非 owning 裸指针——后续若删显式 reset 或在端口析构新增 query 解引用即悬垂",
+      "owner": "宿主装配批次（注释更正为显式 reset 序描述；或将 m_lastStoreAdapter 声明移至 m_compilePort 之前使文档假设成立——低风险文档性修正，随下次触碰该文件批次搭车）"
     }
   ]
 }
