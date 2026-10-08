@@ -712,6 +712,48 @@ TEST_F(ResourceGovernanceSchedulerTest, ThrottleStopsDispatchThenExhaustDiagnost
 }
 
 // =====================================================================
+// 派发闸接线（F-576 回归——audit/unit-code-review-20261009）
+// =====================================================================
+
+/**
+ * 回归（F-576，P1）：TaskScheduler 构造期未向 Controller 接线派发闸
+ * （setDispatchGate 生产代码零调用点）——排队任务被取消后残留等待队列，
+ * 同拍 dispatchOne 出队对终态状态机申请 DispatchDequeued（转移表无
+ * （DispatchDequeued, Canceled）行）抛 ExecutionError(InvalidState) 逃逸
+ * tick：调度循环每拍抛异常，或调用方捕获后队头永不弹出＝派发停摆。
+ *
+ * 修复面：构造期 setDispatchGate(this)（stopDispatch 把被取消任务移出
+ * 等待队列）＋出队前非 Queued 队头防御剔除。本用例在修复前于 tick 处
+ * 必抛（回归钉）。
+ */
+TEST_F(ResourceGovernanceSchedulerTest, QueuedCancelDoesNotPoisonDispatch_F576)
+{
+    makeScheduler();
+    // 提交后不 tick：任务保持排队（无内联执行体＋未派发）。
+    const SubmitResult r = m_scheduler->submit(baseSubmission());
+    ASSERT_TRUE(r.accepted);
+    const TaskId id = *r.task;
+    ASSERT_EQ(m_scheduler->tryTask(id)->state, core::TaskState::Queued);
+
+    // 排队取消：命令入队（accepted），状态推进发生在本拍 poll（T3 直达
+    // 取消——§7.1"；闸回调 stopDispatch 移出等待队列）。
+    ASSERT_TRUE(m_taskController->requestCancel(id).accepted);
+
+    // 修复面：本拍不再抛（修复前 ExecutionError(InvalidState) 逃逸 tick），
+    // 任务收敛 Canceled。
+    EXPECT_NO_THROW(tickAfterInterval());
+    ASSERT_TRUE(m_scheduler->tryTask(id).has_value());
+    EXPECT_EQ(m_scheduler->tryTask(id)->state, core::TaskState::Canceled);
+
+    // 队列未被毒化：后续任务正常派发（残留队头若未剔除，本拍必失步）。
+    const SubmitResult r2 = m_scheduler->submit(baseSubmission());
+    ASSERT_TRUE(r2.accepted);
+    tickAfterInterval();
+    ASSERT_TRUE(m_scheduler->tryTask(*r2.task).has_value());
+    EXPECT_EQ(m_scheduler->tryTask(*r2.task)->state, core::TaskState::Preparing);
+}
+
+// =====================================================================
 // 预算转发（EX-T05 登记"ResourceController 消费"的兑现——单一用户入口）
 // =====================================================================
 
