@@ -5463,7 +5463,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "新建项目触发程序退出（crash）——项目已打开＋已应用修订＋草稿编辑态下点击 File→工业机器人项目→新建项目，进程直接终止（无错误对话框）。版本口径：所有者实例 exe 构建于 2f74ef03 基线（含 UI-T73/T74 主链修复；未含并行批次 WP-22-T05/T06 的关闭/切换统一确认编排——定位时须区分既有缺陷/新增装配析构顺序〔UI-T73/T74 新增成员 m_systemDefaultPolicyProvider/m_draftAwareNameContext/注入的 attachCompilePort 在项目切换 teardown 的存活期〕/WP-22-T06 已修面）。另同实例置灰「应用草稿」悬停无提示文字（禁用原因呈现面缺口——ERR-01 禁用必带原因口径）",
-      "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）"
+      "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）；【2026-10-08 修复落地——dev log 定性钉扎】宿主实例 dev log（ird-ui-plugin-logs）捕获违约原文：ui/session: openProject 仅可在 NoProject 态调用（当前态非无项目——已打开会话的切换走 beginSwitch，§5.4 S2）＝新建项目流程无会话状态守卫直调 openProject（INV-SES-2 违约）。修复＝openViaSessionController 入口统一收口双态防线（有会话→beginSwitch 切换编排〔确认对话框/决议四态/Draining——与 openRecentProject 同款已证防线〕；无会话→原打开协议）——全部调用方一并受保护。修复待所有者复验（新建项目于已打开项目态→应呈现切换确认对话框而非退出）后翻转"
     },
     {
       "id": "F-553",
