@@ -93,6 +93,13 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #                           （"IRDOPTC1"）/确定性候选生成（seeded-lhs——
 #                           splitmix64 自持 PRNG）/Quick/Verified 两级批量
 #                           编排/会话缓存命中消费（WP-20-T06 增列）
+#   src/Run.cpp             §4.2 运行身份 OptimizationRunId（"opt-run-"+
+#                           32hex，本域自有）/归档阶段 token/聚合工厂
+#                           assembleRunResult（WP-20-T07 增列——候选归属
+#                           容器 OptimizationRunResult 的身份/投影/资格位面）
+#   src/Applier.cpp         §10.1~§10.4 候选应用组装（§10.3 六项前置校验/
+#                           两步命令语义/差异预览 P-OPT-8 警告面——WP-20-T07
+#                           增列；组装不执行提交——①端口调用归执行编排）
 add_library(sdurws_ird_optimization STATIC
     src/DiagCodes.cpp
     src/Types.cpp
@@ -101,7 +108,9 @@ add_library(sdurws_ird_optimization STATIC
     src/Constraint.cpp
     src/Objective.cpp
     src/Pareto.cpp
-    src/EvaluatorPorts.cpp)
+    src/EvaluatorPorts.cpp
+    src/Run.cpp
+    src/Applier.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -299,7 +308,9 @@ add_executable(sdurws_ird_optimization_test
     test/ConstraintTest.cpp
     test/ObjectiveTest.cpp
     test/ParetoTest.cpp
-    test/EvaluatorPortsTest.cpp)
+    test/EvaluatorPortsTest.cpp
+    test/RunTest.cpp
+    test/ApplierTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -389,7 +400,8 @@ add_executable(sdurws_ird_optimization_contract_test
     contract_test/VariableContractTest.cpp
     contract_test/ConstraintContractTest.cpp
     contract_test/ObjectiveParetoContractTest.cpp
-    contract_test/EvaluatorPortsContractTest.cpp)
+    contract_test/EvaluatorPortsContractTest.cpp
+    contract_test/ApplierContractTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_contract_test PROPERTIES
