@@ -231,9 +231,13 @@ add_executable(sdurws_ird_workflow_test
     test/OpenWizardHomeTest.cpp  # 打开分流/最近项目/首页模型测试（WP-22-T05——
                                   # PM-02 格式识别与失败呈现、PM-10 容量/去重/
                                   # 失效标记/移除、入口禁用数据）
-    test/CloseFlowTest.cpp)  # 关闭/切换/退出统一确认模型测试（WP-22-T06——
-                             # PM-03 三选/二选/9 态短标签/取消中止、PM-12
-                             # 零写入编排、前置 fail-fast；全桩直调编排核）
+    test/CloseFlowTest.cpp  # 关闭/切换/退出统一确认模型测试（WP-22-T06——
+                            # PM-03 三选/二选/9 态短标签/取消中止、PM-12
+                            # 零写入编排、前置 fail-fast；全桩直调编排核）
+    test/SaveAsPackageTest.cpp)  # 另存为/包导出/包导入模型测试（WP-22-T07——
+                                 # PM-05 记忆默认/取消即清理观测位/失败呈现
+                                 # UX-03/校验报告行集/前置 fail-fast；三执行
+                                 # 端口脚本化桩直调编排核）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -324,10 +328,18 @@ add_executable(sdurws_ird_workflow_contract_test
     contract_test/OpenWizardContractTest.cpp  # WF-VER-205/206（WP-22-T05——打开
                                               # 五步协议三入口真实落盘＋失败
                                               # 不动当前项目 Fault 契约）
-    contract_test/CloseFlowContractTest.cpp)  # WF-VER-209~212（WP-22-T06——统一
-                                              # 确认数据面＋取消中止＋A7 等待
-                                              # 排空＋协作取消＋PM-12 零写入＋
-                                              # 切换候选验证，真实落盘契约）
+    contract_test/CloseFlowContractTest.cpp  # WF-VER-209~212（WP-22-T06——统一
+                                             # 确认数据面＋取消中止＋A7 等待
+                                             # 排空＋协作取消＋PM-12 零写入＋
+                                             # 切换候选验证，真实落盘契约）
+    contract_test/SaveAsPackageContractTest.cpp)  # WF-VER-213~215（WP-22-T07——
+                                                  # 另存真实复制勾选裁剪＋打开
+                                                  # 协议进入＋取消零残留；包导出
+                                                  # 真实 ZIP 产物＋源零写＋取消
+                                                  # 不产出；包导入越界路径真实
+                                                  # 拒绝＋失败不留目标目录＋导出
+                                                  # 导入回路，真实落盘契约——
+                                                  # 与 io 真实包设施联合）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
