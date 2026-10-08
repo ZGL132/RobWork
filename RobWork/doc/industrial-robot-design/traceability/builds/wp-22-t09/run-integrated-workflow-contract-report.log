@@ -1,0 +1,157 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  Automatic MOC for target sdurws_ird_diagnostics
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_diagnostics.lib
+  Automatic MOC for target sdurws_ird_evidence
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_evidence.lib
+  Automatic MOC for target sdurws_ird_project
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_project.lib
+  Automatic MOC for target sdurws_ird_execution
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_execution.lib
+  Automatic MOC for target sdurws_ird_io
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_io.lib
+  Automatic MOC for target sdurws_ird_reporting
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_reporting.lib
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Automatic MOC for target sdurws_ird_ui
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_ui.lib
+  Automatic MOC for target sdurws_ird_workflow
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_workflow.lib
+  Automatic MOC for target sdurws_ird_workflow_plugin
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\libs\Release\sdurws_ird_workflow_plugin.lib
+  Automatic MOC for target sdurws_ird_workflow_contract_test
+  sdurws_ird_workflow_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_contract_test.exe
+  ird: run sdurws_ird_workflow_contract_test and write gtest XML report
+  [==========] Running 46 tests from 9 test suites.
+  [----------] Global test environment set-up.
+  [----------] 5 tests from WfBuildGraph
+  [ RUN      ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1
+  [       OK ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1
+  [       OK ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2
+  [       OK ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2 (0 ms)
+  [ RUN      ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1
+  [       OK ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2
+  [       OK ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2 (4 ms)
+  [----------] 5 tests from WfBuildGraph (6 ms total)
+  
+  [----------] 3 tests from WfPluginRegistration
+  [ RUN      ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1 (0 ms)
+  [----------] 3 tests from WfPluginRegistration (0 ms total)
+  
+  [----------] 4 tests from WfGateContract
+  [ RUN      ] WfGateContract.GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112
+  [       OK ] WfGateContract.GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112 (9 ms)
+  [ RUN      ] WfGateContract.WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3
+  [       OK ] WfGateContract.WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3 (4 ms)
+  [ RUN      ] WfGateContract.ProjectionOwnershipStaysWithUi_WP22T03_ACC3
+  [       OK ] WfGateContract.ProjectionOwnershipStaysWithUi_WP22T03_ACC3 (4 ms)
+  [ RUN      ] WfGateContract.InvalidationHintIsPureValueData_WP22T03_ACC1
+  [       OK ] WfGateContract.InvalidationHintIsPureValueData_WP22T03_ACC1 (0 ms)
+  [----------] 4 tests from WfGateContract (18 ms total)
+  
+  [----------] 8 tests from NewProjectWizardContract
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_TemplateMainlineCreatesBaselineRevision
+  [       OK ] NewProjectWizardContract.WF_VER_201_TemplateMainlineCreatesBaselineRevision (43 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_UrdfSourceRegistersReadOnlyBaseline
+  [       OK ] NewProjectWizardContract.WF_VER_201_UrdfSourceRegistersReadOnlyBaseline (41 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_BlankMainlineStopsAtR0
+  [       OK ] NewProjectWizardContract.WF_VER_201_BlankMainlineStopsAtR0 (17 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_202_CancelBeforeConfirmLeavesNothing
+  [       OK ] NewProjectWizardContract.WF_VER_202_CancelBeforeConfirmLeavesNothing (0 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_203_DomainInitFailureCleansAndKeepsInputs
+  [       OK ] NewProjectWizardContract.WF_VER_203_DomainInitFailureCleansAndKeepsInputs (62 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_203_CreateNewFailurePresentsAndRetries
+  [       OK ] NewProjectWizardContract.WF_VER_203_CreateNewFailurePresentsAndRetries (43 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_204_ExternalHandlingBothWaysForwarded
+  [       OK ] NewProjectWizardContract.WF_VER_204_ExternalHandlingBothWaysForwarded (82 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_Port_ModelingNotDirectlyLinked
+  [       OK ] NewProjectWizardContract.WF_VER_Port_ModelingNotDirectlyLinked (3 ms)
+  [----------] 8 tests from NewProjectWizardContract (294 ms total)
+  
+  [----------] 3 tests from OpenWizardContract
+  [ RUN      ] OpenWizardContract.WF_VER_205_FiveStepProtocolAllThreeSources
+  [       OK ] OpenWizardContract.WF_VER_205_FiveStepProtocolAllThreeSources (34 ms)
+  [ RUN      ] OpenWizardContract.WF_VER_206_CorruptProjectFailsWithConcreteFileAndCurrentUntouched
+  [       OK ] OpenWizardContract.WF_VER_206_CorruptProjectFailsWithConcreteFileAndCurrentUntouched (39 ms)
+  [ RUN      ] OpenWizardContract.WF_VER_206_NotAProjectPresentsContextAndGuidance
+  [       OK ] OpenWizardContract.WF_VER_206_NotAProjectPresentsContextAndGuidance (1 ms)
+  [----------] 3 tests from OpenWizardContract (74 ms total)
+  
+  [----------] 7 tests from CloseFlowContract
+  [ RUN      ] CloseFlowContract.WF_VER_209_DialogDataPlaneAndCancelAbortsOverRealDrafts
+  [       OK ] CloseFlowContract.WF_VER_209_DialogDataPlaneAndCancelAbortsOverRealDrafts (26 ms)
+  [ RUN      ] CloseFlowContract.WF_VER_210_WaitOptionDrainsArchiveThenContextClosed
+  [       OK ] CloseFlowContract.WF_VER_210_WaitOptionDrainsArchiveThenContextClosed (49 ms)
+  [ RUN      ] CloseFlowContract.WF_VER_211_CooperativeCancelReachesDrainedClose
+  [       OK ] CloseFlowContract.WF_VER_211_CooperativeCancelReachesDrainedClose (20 ms)
+  [ RUN      ] CloseFlowContract.WF_VER_212_SchemeSwitchCancelPathZeroWrite
+  [       OK ] CloseFlowContract.WF_VER_212_SchemeSwitchCancelPathZeroWrite (27 ms)
+  [ RUN      ] CloseFlowContract.WF_VER_212_SchemeSwitchProceedPathZeroWrite
+  [       OK ] CloseFlowContract.WF_VER_212_SchemeSwitchProceedPathZeroWrite (23 ms)
+  [ RUN      ] CloseFlowContract.SwitchCandidateSuccessClosesCurrentAndHandsOver
+  [       OK ] CloseFlowContract.SwitchCandidateSuccessClosesCurrentAndHandsOver (45 ms)
+  [ RUN      ] CloseFlowContract.SwitchCandidateCorruptFailsAndCurrentUntouched
+  [       OK ] CloseFlowContract.SwitchCandidateCorruptFailsAndCurrentUntouched (48 ms)
+  [----------] 7 tests from CloseFlowContract (241 ms total)
+  
+  [----------] 6 tests from SaveAsPackageContract
+  [ RUN      ] SaveAsPackageContract.SaveAs_EntersNewProject_ViaOpenProtocol_P05_AT20
+  [       OK ] SaveAsPackageContract.SaveAs_EntersNewProject_ViaOpenProtocol_P05_AT20 (55 ms)
+  [ RUN      ] SaveAsPackageContract.SaveAs_Cancelled_TargetLeftClean_AT20
+  [       OK ] SaveAsPackageContract.SaveAs_Cancelled_TargetLeftClean_AT20 (20 ms)
+  [ RUN      ] SaveAsPackageContract.Export_RealZipArtifact_SourceUntouched_P05
+  [       OK ] SaveAsPackageContract.Export_RealZipArtifact_SourceUntouched_P05 (50 ms)
+  [ RUN      ] SaveAsPackageContract.Export_Cancelled_TargetUntouched_P05
+  [       OK ] SaveAsPackageContract.Export_Cancelled_TargetUntouched_P05 (19 ms)
+  [ RUN      ] SaveAsPackageContract.Import_PathTraversalRejected_NoTarget_P05
+  [       OK ] SaveAsPackageContract.Import_PathTraversalRejected_NoTarget_P05 (10 ms)
+  [ RUN      ] SaveAsPackageContract.Import_ExportedPackRoundTrip_VerifiedPublished_P05
+  [       OK ] SaveAsPackageContract.Import_ExportedPackRoundTrip_VerifiedPublished_P05 (69 ms)
+  [----------] 6 tests from SaveAsPackageContract (225 ms total)
+  
+  [----------] 7 tests from ReconnectReadOnlyContract
+  [ RUN      ] ReconnectReadOnlyContract.LegacySchemaVersion_Rejected_GuidanceDiag_FileUntouched_P06_AT20
+  [       OK ] ReconnectReadOnlyContract.LegacySchemaVersion_Rejected_GuidanceDiag_FileUntouched_P06_AT20 (22 ms)
+  [ RUN      ] ReconnectReadOnlyContract.FutureSchemaVersion_Rejected_ThreeKeysGuidance_P06
+  [       OK ] ReconnectReadOnlyContract.FutureSchemaVersion_Rejected_ThreeKeysGuidance_P06 (24 ms)
+  [ RUN      ] ReconnectReadOnlyContract.LegacyRwprojFile_RoutedUnknown_ZeroSideEffect_P06
+  [       OK ] ReconnectReadOnlyContract.LegacyRwprojFile_RoutedUnknown_ZeroSideEffect_P06 (1 ms)
+  [ RUN      ] ReconnectReadOnlyContract.SecondWriterDegradesReadOnly_PidNotice_SubmitRejected_P07
+  [       OK ] ReconnectReadOnlyContract.SecondWriterDegradesReadOnly_PidNotice_SubmitRejected_P07 (22 ms)
+  [ RUN      ] ReconnectReadOnlyContract.LockRelease_RestoresWritable_P07
+  [       OK ] ReconnectReadOnlyContract.LockRelease_RestoresWritable_P07 (24 ms)
+  [ RUN      ] ReconnectReadOnlyContract.Relink_ExplicitCommit_ProducesNewRevision_P09_AT21
+  [       OK ] ReconnectReadOnlyContract.Relink_ExplicitCommit_ProducesNewRevision_P09_AT21 (45 ms)
+  [ RUN      ] ReconnectReadOnlyContract.RelinkFailedOrNotNeeded_NoProjectMutation_P09
+  [       OK ] ReconnectReadOnlyContract.RelinkFailedOrNotNeeded_NoProjectMutation_P09 (19 ms)
+  [----------] 7 tests from ReconnectReadOnlyContract (160 ms total)
+  
+  [----------] 3 tests from StatusBannerContract
+  [ RUN      ] StatusBannerContract.ThreeScenarios_RealRecovery_CatalogFolded_BannerData_P15_AT21
+  [       OK ] StatusBannerContract.ThreeScenarios_RealRecovery_CatalogFolded_BannerData_P15_AT21 (25 ms)
+  [ RUN      ] StatusBannerContract.TitleSources_FromRealStore_QueryFace_P11
+  [       OK ] StatusBannerContract.TitleSources_FromRealStore_QueryFace_P11 (18 ms)
+  [ RUN      ] StatusBannerContract.ReadOnlyDegraded_TitleSuffix_DiscardGate_P11_P15
+  [       OK ] StatusBannerContract.ReadOnlyDegraded_TitleSuffix_DiscardGate_P11_P15 (27 ms)
+  [----------] 3 tests from StatusBannerContract (71 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 46 tests from 9 test suites ran. (1160 ms total)
+  [  PASSED  ] 46 tests.

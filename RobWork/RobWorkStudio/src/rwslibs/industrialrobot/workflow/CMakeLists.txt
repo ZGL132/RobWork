@@ -86,8 +86,10 @@ add_library(sdurws_ird_workflow STATIC
     src/Types.cpp       # 词表与映射（§4.2 域↔阶段表／UX-02 文案键唯一构造点）
     src/Gate.cpp        # 七阶段门控（§4.4 状态机重放）＋级联失效映射（§4.3）
     src/Advice.cpp      # 下一步建议引擎（§6.3 八规则——UX-01 四要素）
-    src/Lifecycle.cpp)  # 新建向导（§7.1 PM-01）＋打开协议（§7.2 PM-02）＋
+    src/Lifecycle.cpp   # 新建向导（§7.1 PM-01）＋打开协议（§7.2 PM-02）＋
                         # 最近项目/无项目首页（§7.8 PM-10）编排面
+    src/Projection.cpp) # 标题栏/状态栏与恢复横幅状态投影（§7.6 PM-11/PM-15——
+                        # WP-22-T09：O9 服务＋两取数端口接缝＋纯函数组装核）
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：workflow 公共头（T03+ 落位）使用 C++17 设施，消费者编译
@@ -238,10 +240,15 @@ add_executable(sdurws_ird_workflow_test
                                 # PM-05 记忆默认/取消即清理观测位/失败呈现
                                 # UX-03/校验报告行集/前置 fail-fast；三执行
                                 # 端口脚本化桩直调编排核）
-    test/ReconnectReadOnlyTest.cpp)  # 旧格式升级指引/只读会话/重关联模型测试
-                                     # （WP-22-T08——PM-06 指引三键提取、PM-07
-                                     # 只读会话数据面、PM-09 编排核全分支；
-                                     # 端口脚本化桩直调编排核）
+    test/ReconnectReadOnlyTest.cpp  # 旧格式升级指引/只读会话/重关联模型测试
+                                    # （WP-22-T08——PM-06 指引三键提取、PM-07
+                                    # 只读会话数据面、PM-09 编排核全分支；
+                                    # 端口脚本化桩直调编排核）
+    test/StatusProjectionTest.cpp)  # 标题栏/状态栏与恢复横幅模型测试（WP-22-T09——
+                                    # WF-VER-217 标题格式逐组合黄金串、PM-11 五路
+                                    # 来源透传、P-UI-2 结果状态选键、PM-15 三场景
+                                    # 择一序/动作可用位/空集不渲染、接口消费路径
+                                    # 钉扎；纯函数直调＋端口脚本化桩）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -344,13 +351,21 @@ add_executable(sdurws_ird_workflow_contract_test
                                                  # 拒绝＋失败不留目标目录＋导出
                                                  # 导入回路，真实落盘契约——
                                                  # 与 io 真实包设施联合）
-    contract_test/ReconnectReadOnlyContractTest.cpp)  # WF-VER-207/208/216（WP-22-T08——
-                                                      # 旧格式稳定拒绝＋升级指引
-                                                      # ＋原文件不动；双实例只读
-                                                      # 降级＋PID 提示＋提交/草稿
-                                                      # 写轨拒绝；重关联显式提交
-                                                      # 真实产生新修订＋失败零写
-                                                      # 盘面复核，真实落盘契约）
+    contract_test/ReconnectReadOnlyContractTest.cpp  # WF-VER-207/208/216（WP-22-T08——
+                                                     # 旧格式稳定拒绝＋升级指引
+                                                     # ＋原文件不动；双实例只读
+                                                     # 降级＋PID 提示＋提交/草稿
+                                                     # 写轨拒绝；重关联显式提交
+                                                     # 真实产生新修订＋失败零写
+                                                     # 盘面复核，真实落盘契约）
+    contract_test/StatusBannerContractTest.cpp)  # WF-VER-217/218（WP-22-T09——标题栏
+                                                 # 来源真实链〔显示名/分支/只读位
+                                                 # 经真实 store 取数〕＋恢复横幅
+                                                 # 三场景真实落盘〔.staging 残留/
+                                                 # 孤儿草稿真实 open 产出＋execution
+                                                 # 真实 T14 重建〕＋统一诊断目录
+                                                 # 集成〔真实 DiagCatalog 折叠〕，
+                                                 # 真实落盘契约）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
