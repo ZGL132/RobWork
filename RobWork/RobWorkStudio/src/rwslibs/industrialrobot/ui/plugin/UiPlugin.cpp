@@ -2043,6 +2043,49 @@ bool IrdWorkbenchHostPlugin::openViaSessionController(const std::string& canonic
     // 打开五步协议（§5.2 Opening 态）：状态机推进归 UiSessionController，
     // 本插件只做触发编排（§11.5）。可写打开（锁竞争/介质只读→PM-07 降级
     // 只读是成功形态——横幅与只读徽标由内容装配面呈现）。
+    //
+    // F-552（UI-T74 验收实录——已打开会话下新建项目即静默退出）：打开协议
+    // 仅可在 NoProject 态触发（INV-SES-2——openProject 状态机防线，无守卫
+    // 直调即 logic_error 违约异常＋进程静默退出）。已打开会话的进入必须走
+    // beginSwitch 切换编排（§5.4 S2——与 openRecentProject 同款防线），此
+    // 处统一收口保护全部调用方（新建项目/打开项目/巡检通道）。
+    if (m_controller && m_controller->hasOpenSession()) {
+        try {
+            const CloseDialogData data =
+                m_controller->beginSwitch(canonicalPath, UiOpenMode::Writable);
+            const std::optional<CloseDecision> decision = presentCloseDialog(data);
+            if (!decision.has_value()) {
+                (void)m_controller->resolveCloseDialog(CloseDecision{});  // 取消
+                return false;  // 用户取消＝当前项目保持打开
+            }
+            const CloseDialogResolution resolution =
+                m_controller->resolveCloseDialog(*decision);
+            switch (resolution.status) {
+            case CloseDialogResolution::Status::Confirmed:
+                // A 转入 Draining 背景持有点＋B 已绑定（INV-SES-2/3）——A 排
+                // 空归防线轮询观测；B 记入最近项目（与切换流同口径）。
+                if (m_content) {
+                    m_content->noteRecentProject(canonicalPath);
+                }
+                startDrainWatch();
+                return true;
+            case CloseDialogResolution::Status::SaveFailed:
+                QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("切换已中止"),
+                                     QString::fromUtf8("草稿保存失败，当前项目保持打开。"));
+                return false;
+            case CloseDialogResolution::Status::CandidateRejected:
+                QMessageBox::warning(m_dockBody.data(), QString::fromUtf8("无法切换项目"),
+                                     QString::fromUtf8("候选项目验证失败，当前项目保持打开。"));
+                return false;
+            case CloseDialogResolution::Status::Cancelled:
+                return false;
+            }
+            return false;  // 决议穷尽防御（不可达——Status 封闭词表）
+        } catch (const std::logic_error& error) {
+            reportLine(std::string("切换编排状态违约：") + error.what());
+            return false;
+        }
+    }
     const SessionOpenReport report =
         m_controller ? m_controller->openProject(canonicalPath, UiOpenMode::Writable)
                      : SessionOpenReport{};  // 防御：未装配＝必失败报告（装配缺陷另行走 DEV 留痕）
