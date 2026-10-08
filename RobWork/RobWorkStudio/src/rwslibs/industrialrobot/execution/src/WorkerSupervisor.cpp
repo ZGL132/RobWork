@@ -49,6 +49,12 @@ core::DiagnosticRecord launchFailedDiag(std::string detail)
         "检查 worker 可执行部署位置（bin 同目录，NFR-DEP-02）与评估器装配清单");
 }
 
+/// Broken 分支的退出收尾有界等待（F-579）：覆盖"写端关闭→进程对象置位"
+/// 的正常收尾竞争窗（毫秒级）；超时＝病态 worker（关管道但不退出），转
+/// 强杀兜底。取值 2 s——读线程收尾路径无更紧的实时约束，取足余量避免
+/// 慢速清理（临时目录删除等）被误判病态。
+inline constexpr DWORD kBrokenExitSettleWaitMs = 2000;
+
 }  // namespace
 
 // =====================================================================
@@ -233,6 +239,10 @@ WorkerLaunchResult WorkerSupervisor::launch(const WorkerAssignment& assignment)
 
     // 池查找：Idle 且握手完成且 manifest 一致（worker 进程的装配在启动时
     // 固定——manifest 不同的派发不能复用，必须新进程，§6.4 池化边界）。
+    // F-577 注：阶段 A（worker 一派发一退出，见 processExit 注）下 Idle
+    // 池恒空——本分支为"进程保活跨任务复用"模型预留；!exitProcessed/
+    // !protocolFailed 双条件保证即便未来接入保活模型，已终结/协议违约的
+    // 记录也绝不可达复用（fail-safe 方向）。
     for (auto& [id, record] : m_workers) {
         (void)id;
         if (record->phase == WorkerStatus::Phase::Idle && record->handshakeDone
@@ -510,9 +520,14 @@ std::uint64_t WorkerSupervisor::aggregateJobMemoryBytes() const
     for (const auto& [id, record] : m_workers) {
         // 参与聚合的资格＝作业对象有效且主进程未终结（processHandle 非空
         // ——Dead/已出清记录的作业句柄已随 RAII 关闭，job.valid() 为假或
-        // 查询必失败）。查询失败的条目计 0：尽力求和不毒化整体读数——
-        // "半读数"的防混淆语义由采样器层的整体失败通道承担（其注）。
-        if (record->job.valid() && record->processHandle != nullptr) {
+        // 查询必失败）。F-577 防御半区：退出已处理（exitProcessed——进程
+        // 已死、等 poll 尾清账的记录）不再参与聚合——作业峰值是单调量，
+        // 死进程的峰值若计入会永久抬高整体读数（ResourceController 误判
+        // 内存压力；原实现经"死记录回池 Idle"长期踩中，本分支防同样窗口）。
+        // 查询失败的条目计 0：尽力求和不毒化整体读数——"半读数"的防混淆
+        // 语义由采样器层的整体失败通道承担（其注）。
+        if (record->job.valid() && record->processHandle != nullptr
+            && !record->exitProcessed) {
             std::uint64_t jobBytes = 0;
             if (win32::queryJobPeakCommittedBytes(record->job.handle(), jobBytes)) {
                 total += jobBytes;
@@ -1033,22 +1048,20 @@ void WorkerSupervisor::processExit(WorkerRecord& record, std::uint32_t exitCode)
         // 回收路径的自然退出：整体销毁（pendingDestroy——poll 尾清账）。
         record.pendingDestroy = true;
     } else {
-        // 正常终结：回池判定（Idle——可跨任务复用，§6.4 池化）；池满则
-        // 销毁（容量治理——实现参数 poolCapacity）。池容量检查在状态锁
-        // 内完成（m_statusView 与 list()/status() 并发读的纪律）。
-        bool poolHasRoom = false;
-        {
-            std::lock_guard<std::mutex> lock(m_statusMutex);
-            poolHasRoom = m_statusView.size() <= m_config.poolCapacity;
-        }
-        if (poolHasRoom) {
-            record.phase = WorkerStatus::Phase::Idle;
-            record.idleSince = clockNow(m_clock);
-            std::lock_guard<std::mutex> lock(m_statusMutex);
-            m_statusView[record.id.value].phase = WorkerStatus::Phase::Idle;
-        } else {
-            record.pendingDestroy = true;
-        }
+        // 正常终结：**不回池，整体销毁**（pendingDestroy——poll 尾清账）。
+        // F-577（P1——audit/unit-code-review-20261009）：原实现把已退出的
+        // worker 记录置 Idle"回池待复用"，但复用面（reuseIdleWorker）向
+        // **死进程**的管道写派发必然失败（通道断裂→按启动失败处置），
+        // 且回池门禁（launch 的 !exitProcessed 条件）使该复用本就不可达
+        // ——Idle 池沦为只进不出的僵尸记录滞留区：进程句柄/通道对保留
+        // 到监督器析构、死进程的作业峰值被 aggregateJobMemoryBytes 永久
+        // 计入（ResourceController 据此长期误判内存压力）。
+        // 阶段 A 事实（worker/main.cpp 主线程模型"握手→等派发→脚本→退
+        // 出"）：一进程一派发，正常终结即销毁；Idle 池为后续"进程保活
+        // 跨任务复用"模型预留（WorkerSupervisor.hpp Config.poolCapacity
+        // 注），当前实现恒空——回池语义随保活 worker 落位再启（届时由
+        // 完成路径置 Idle＋本分支恢复回池判定）。
+        record.pendingDestroy = true;
     }
 
     WorkerEvent event;
@@ -1193,14 +1206,33 @@ void WorkerSupervisor::readerLoop(WorkerRecord& record)
             return;
         }
         case ChannelPair::WaitResult::Broken: {
-            // 数据管道先断而进程句柄未 signaled（worker 自关写端的边缘
-            // 形态）：以退出码现状终结（STILL_ACTIVE→约定集外→Crashed，
-            // 保守方向）。
-            DWORD exitCode = 0xFFFFFFFFu;
+            // 数据管道先断（读事件下标 0——正常退出收尾"写端句柄关闭先于
+            // 进程对象置位"的微秒级竞争窗同样落入本分支，非仅"worker 自关
+            // 写端"的边缘形态）。F-579（P1）：此处必须先**有界等待进程真
+            // 正终结**再取退出码——等待窗内的 GetExitCodeProcess 返回
+            // STILL_ACTIVE(259)（约定集外），原实现直接取值会把"FinalOutput
+            // 已完整送达、退出码 0"的成功任务误判 Crashed（走 EX-WKR-
+            // CRASHED 失败路径）。等待超时＝真实"关管道但不退出"的病态
+            // worker——强杀兜底后取最终退出码（约定集外 0xDEAD10CE→按
+            // 保守方向 Crashed 分类，与 §6.4 约定集表口径一致）。
             if (record.processHandle != nullptr) {
-                ::GetExitCodeProcess(record.processHandle, &exitCode);
+                if (::WaitForSingleObject(record.processHandle,
+                                          kBrokenExitSettleWaitMs)
+                    == WAIT_TIMEOUT) {
+                    record.job.terminate(win32::kForceTerminateExitCode);
+                    ::WaitForSingleObject(record.processHandle,
+                                          kBrokenExitSettleWaitMs);
+                }
             }
-            pushExit(static_cast<std::uint32_t>(exitCode));
+            DWORD exitCode = 0xFFFFFFFFu;
+            if (record.processHandle != nullptr
+                && ::GetExitCodeProcess(record.processHandle, &exitCode)) {
+                pushExit(static_cast<std::uint32_t>(exitCode));
+            } else {
+                // 取不到退出码（句柄异常——理论不可达）：按约定集外值
+                // 处理（分类 Crashed——保守方向，NFR-REL-02）。
+                pushExit(0xFFFFFFFFu);
+            }
             return;
         }
         case ChannelPair::WaitResult::Error:

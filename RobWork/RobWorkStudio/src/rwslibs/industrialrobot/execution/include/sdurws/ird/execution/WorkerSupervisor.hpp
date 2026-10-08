@@ -322,6 +322,10 @@ public:
         std::chrono::milliseconds idleRecycleAfter{120000};
         /// 池容量上限（Idle 相位记录的最大数；满则正常退出即销毁——
         /// 阶段 A 保守默认 2；内存预算治理归 EX-T07 ResourceController）。
+        /// F-577 口径登记：阶段 A 的 worker 是"一派发一进程"（worker/
+        /// main.cpp 主线程模型——脚本完成即退出），正常终结不回池（直接
+        /// 销毁，见 processExit 注）——本容量在保活 worker（跨任务复用）
+        /// 落位前不构成约束，为该模型预留。
         std::size_t poolCapacity = 2;
         /// 读线程有界等待片（单位 ms——poll 响应性与唤醒开销的折中；
         /// 25 ms 对任务级时序无观测影响）。
