@@ -3,8 +3,9 @@
  * @brief  生命周期入口流程编排的实现——新建项目三步向导（PM-01）＋打开
  *         协议（PM-02 五步的 workflow 面）＋关闭/切换/退出统一确认编排
  *         （PM-03——§7.3）＋方案分支切换（PM-12 零写入会话选择）＋另存
- *         为/包导出/包导入编排（PM-05——§7.4）＋最近项目管理（PM-10）
- *         ＋无项目首页数据面（PM-10）。
+ *         为/包导出/包导入编排（PM-05——§7.4）＋旧格式升级指引数据面/
+ *         只读会话数据面/外部源重关联编排（PM-06/07/09——§7.5）＋最近
+ *         项目管理（PM-10）＋无项目首页数据面（PM-10）。
  *
  * 设计依据见公共头 Lifecycle.hpp 文件头（本实现文件只补充逐段实现口径；
  * 段落注释对应头注释的编排序——两处同步维护，改逻辑必改两处）。
@@ -364,35 +365,29 @@ std::string openPathText(const std::filesystem::path& p)
 }
 
 /**
- * @brief 从对端 detail 提取失败定位文件（PM-02"失败显示具体文件"）。
+ * @brief 从机器可读键值串 detail 中提取指定键的值（通用提取点——
+ *        失败定位键与升级指引三键共用）。
  *
  * project 侧打开失败 detail 是机器可读键值串（"project/<域>: <原因>
- * key=value ..."），定位键为 "path=<路径>" 或 "file=<路径>"。提取规则：
- * 取**最后一次**出现的定位键（失败链的最后落点最具体），值域到串尾或
- * 下一个 " <词>=" 键边界为止。这是**尽力呈现**而非协议解析：找不到定位
- * 键返回空串（调用方回退目标路径词面——file 恒非空的呈现承诺不变）；
- * 含空格路径仅在下一条键存在时可能被截断（cause 全文始终透传兜底）。
+ * key=value ..."）。提取规则：取**最后一次**出现的 " <键>=" 词形
+ * （失败链/多键场景的最后落点最具体），值域到串尾或下一个 " <词>="
+ * 键边界为止。这是**尽力呈现**而非协议解析：找不到键返回空串（调用方
+ * 按各自兜底口径处理——file 回退目标路径、升级指引留空不伪造）；含
+ * 空格值仅在下一条键存在时可能被截断（cause 全文始终透传兜底）。
  *
- * @param detail [in] 对端 detail 原文（StoreError::what()）
- * @return 定位文件串（空＝detail 无定位键）
+ * @param detail   [in] 对端 detail 原文（StoreError::what()）
+ * @param keyProbe [in] 键探针词（含前导空格与 '='，如 " path="、
+ *                  " document="——前导空格防止同形子串误配，如
+ *                  " document=" 不会匹配 " document-format-id="）
+ * @return 键值串（空＝detail 无该键）
  */
-std::string extractDetailLocation(const std::string& detail)
+std::string detailValueAfter(const std::string& detail, const std::string& keyProbe)
 {
-    // 定位键扫描：两个候选键取更靠后者（最后落点最具体——如 manifest
-    // 解析失败的 "path=<清单文件> detail=..." 链尾）。
-    const std::size_t pathKey = detail.rfind(" path=");
-    const std::size_t fileKey = detail.rfind(" file=");
-    std::size_t keyPos = std::string::npos;
-    if (pathKey != std::string::npos
-        && (fileKey == std::string::npos || pathKey > fileKey)) {
-        keyPos = pathKey;
-    } else {
-        keyPos = fileKey;  // 两键都缺时为 npos——下方统一短路返回空
-    }
+    const std::size_t keyPos = detail.rfind(keyProbe);
     if (keyPos == std::string::npos) {
         return {};
     }
-    const std::size_t valueStart = keyPos + 6;  // 跳过 " path="/" file="（6 字节）
+    const std::size_t valueStart = keyPos + keyProbe.size();
 
     // 值域终点：其后第一个 " <词>=" 键边界（键词为字母/数字/连字符——
     // project 侧键词表 path/file/detail/revision/schemaVersion/...）。
@@ -414,6 +409,34 @@ std::string extractDetailLocation(const std::string& detail)
         }
     }
     return detail.substr(valueStart, valueEnd - valueStart);
+}
+
+/**
+ * @brief 从对端 detail 提取失败定位文件（PM-02"失败显示具体文件"）。
+ *
+ * 定位键为 "path=<路径>" 或 "file=<路径>"——两键取更靠后者（最后落点
+ * 最具体）；键提取逻辑委托 detailValueAfter（通用规则见其注）。
+ *
+ * @param detail [in] 对端 detail 原文（StoreError::what()）
+ * @return 定位文件串（空＝detail 无定位键——调用方回退目标路径词面，
+ *         file 恒非空的呈现承诺不变）
+ */
+std::string extractDetailLocation(const std::string& detail)
+{
+    // 定位键扫描：两个候选键取更靠后者（如 manifest 解析失败的
+    // "path=<清单文件> detail=..." 链尾）。rfind 取各自最后一次出现，
+    // 位置大者即链上更后的落点；两键都缺时 npos 短路返回空。
+    const std::size_t pathKey = detail.rfind(" path=");
+    const std::size_t fileKey = detail.rfind(" file=");
+    if (pathKey == std::string::npos && fileKey == std::string::npos) {
+        return {};
+    }
+    const std::string& probe =
+        (pathKey != std::string::npos
+         && (fileKey == std::string::npos || pathKey > fileKey))
+            ? std::string(" path=")
+            : std::string(" file=");
+    return detailValueAfter(detail, probe);
 }
 
 /**
@@ -560,6 +583,15 @@ OpenProjectOutcome OpenProjectFlow::run(OpenSource source,
             failure.file = openPathText(path);
         }
         failure.recommendedAction = recommendActionFor(e.code());
+        // PM-06 升级指引数据面（§7.5 行一）：仅旧格式/未来版本两稳定码
+        // 失败时自 detail 提取三键（document/supported/upgrade——零加工
+        // 透传，parseUpgradeGuidance）；其余码（not-a-project/store-
+        // corrupt/锁类）无升级语义，字段恒 nullopt。"不自动升级"的结构
+        // 性保证＝本编排器无任何写入口，呈现面之外无升级动作路径。
+        if (e.code() == project::StoreErrorCode::FormatLegacy
+            || e.code() == project::StoreErrorCode::SchemaFuture) {
+            failure.upgradeGuidance = parseUpgradeGuidance(e.what());
+        }
         outcome.failure = std::move(failure);
         return outcome;  // opened=false——零副作用（服务侧已保证无半构造上下文）
     } catch (const std::exception& e) {
@@ -573,6 +605,51 @@ OpenProjectOutcome OpenProjectFlow::run(OpenSource source,
         outcome.failure = std::move(failure);
         return outcome;
     }
+}
+
+// =====================================================================
+// 旧格式/未来版本升级指引数据面（PM-06——§7.5 行一；WP-22-T08）
+// =====================================================================
+
+UpgradeGuidance parseUpgradeGuidance(const std::string& detail)
+{
+    // 三键独立提取（detailValueAfter 通用规则——" <键>=" 词形取值，值域
+    // 到下一键边界）。键探针带前导空格与 '='：" document=" 不会误配
+    // " document-format-id="（第 10 字符 '-' ≠ '='）——formatId 不符
+    // 形态的 format-legacy detail 中 document 字段如实留空。
+    // 找不到的键留空串（尽力呈现——不伪造数值/入口，PM-06 升级指引
+    // 数据面的零加工纪律，D-WF-7）。
+    UpgradeGuidance guidance;
+    guidance.documentVersion = detailValueAfter(detail, " document=");
+    guidance.supportedVersion = detailValueAfter(detail, " supported=");
+    guidance.upgradeToolEntry = detailValueAfter(detail, " upgrade=");
+    return guidance;
+}
+
+// =====================================================================
+// 只读会话呈现数据面（PM-07——§7.5 行二；WP-22-T08）
+// =====================================================================
+
+ReadOnlySessionNotice buildReadOnlySessionNotice(const project::LockInfo& lockInfo)
+{
+    // 降级语义的裁决面归 project（Writable 请求被 OS 锁竞争拒绝时降级
+    // ReadOnly——PM-07 不阻塞等待）；本组装点只做呈现数据折叠：
+    //   - 持有者三值原样透传（PID 0＝未知口径不重写——撕裂读容忍，
+    //     LockHolderRecord 注释；呈现层按"未知"呈现而非显示 PID=0）；
+    //   - lockHeldByOther＝非本上下文持有且持有者 PID 非零（有可提示的
+    //     他方记录）——显式只读打开/介质只读形态无他方记录（isSelf=
+    //     false 且 pid=0），走 explicit 提示键；
+    //   - editingDisabled/applyCommitDisabled 恒 true（PM-07"禁编辑与
+    //     应用提交"的入口禁用数据——写路径权威拒绝归 project 收口，
+    //     本面不复制权限判定，PA-1）。
+    ReadOnlySessionNotice notice;
+    notice.holderPid = lockInfo.holder.pid;
+    notice.holderHost = lockInfo.holder.host;
+    notice.holderHeartbeatUtc = lockInfo.holder.heartbeatUtc;
+    notice.lockHeldByOther = !lockInfo.isSelf && lockInfo.holder.pid != 0;
+    notice.noticeKey = notice.lockHeldByOther ? kReadOnlyLockHeldKey
+                                              : kReadOnlyExplicitKey;
+    return notice;  // readOnly/editingDisabled/applyCommitDisabled 取默认 true
 }
 
 // =====================================================================
@@ -1359,6 +1436,138 @@ std::vector<PackageImportReportLine> buildPackageImportReportView(
     lines.push_back(std::move(clean));
 
     return lines;
+}
+
+// =====================================================================
+// 外部源重关联编排（PM-09——§7.5 行三；WP-22-T08）
+// =====================================================================
+
+namespace {
+
+/// 重关联失败的 UX-03 三字段装配（封闭槽位文案——编排器直产人读呈现
+/// 面，同 OpenProjectFlow::run 先例；D-WF-7 零新增稳定码：cause 透传
+/// 对端原因原文，码的用户文案归 diagnostics 供文案链路）。
+RelinkFailure makeRelinkFailure(std::string context,
+                                std::string cause,
+                                std::string action)
+{
+    RelinkFailure failure;
+    failure.context = std::move(context);
+    failure.cause = std::move(cause);
+    failure.recommendedAction = std::move(action);
+    return failure;
+}
+
+/// 重关联资源定位词形（RelinkFailure.context 半区——对象身份规范文本
+/// ＋登记路径的人读组合；UX-03"对象/上下文"半区，路径为空只出身份）。
+std::string relinkContextText(const RelinkRequest& request,
+                              const ExternalSourceStatus& status)
+{
+    std::string text = request.resource.isValid()
+                           ? request.resource.toCanonical()
+                           : std::string();
+    if (!status.absolutePath.empty()) {
+        text += "（" + status.absolutePath + "）";
+    }
+    return text;
+}
+
+}  // namespace
+
+RelinkOutcome RelinkFlow::run(const RelinkRequest& request,
+                              IExternalRelinkPort& relinkPort,
+                              IRelinkDecisionPort& decisionPort)
+{
+    // ---- 第 1 段：前置校验（调用方契约违约 fail-fast）----
+    // 全零 ObjectId＝保留值"未设置"（core Identity.hpp 保留值纪律）——
+    // 宿主把无效资源传到重关联入口属装配缺陷（对话框应先选定资源），
+    // fail-fast 暴露而非静默 NotNeeded 掩盖。
+    if (!request.resource.isValid()) {
+        throw WorkflowError("RelinkFlow::run: 资源对象身份无效（全零保留值"
+                            "——重关联入口须携带有效资源 ObjectId）");
+    }
+
+    RelinkOutcome outcome;
+
+    // ---- 第 2 段：检测（io 数据透传——NFR-REL-04）。
+    // 缺失/变化检测执行归 io（登记基准与现路径内容比对），编排核只透传
+    // 结论与对照材料；检测是纯读面（零写入零提交）。probe 抛＝环境失败
+    // ——值轨道折叠（重关联失败是用户流程事件，不是进程故障）。
+    try {
+        outcome.status = relinkPort.probe(request);
+    } catch (const std::exception& e) {
+        outcome.result = RelinkOutcome::Result::Failed;
+        outcome.failure = makeRelinkFailure(
+            request.resource.toCanonical(), e.what(),
+            "请检查外部源所在存储介质与访问权限后重试");
+        return outcome;
+    }
+
+    // ---- 第 3 段：无事实早退（NotNeeded——零确认零提交）。
+    // 外部源在位且内容与登记基准一致（state==Ok）＝无重关联事实——
+    // 此时提交新修订只会产生无语义的历史噪音，与"显式提交"语义相悖
+    // （PM-09：重关联提交承载的是"外部源事实变化后的重新关联"，不是
+    // 无条件的修订制造）；status 照常回传供入口呈现。
+    if (outcome.status.state == ExternalSourceState::Ok) {
+        outcome.result = RelinkOutcome::Result::NotNeeded;
+        return outcome;
+    }
+
+    // ---- 第 4 段：用户显式确认（PM-09"显式提交"的编排兑现——无用户
+    // 确认不提交）。呈现材料＝检测状态（缺失/变化＋登记/现内容对照）。
+    // 取消＝放弃（零提交零诊断——取消非错误，UX-03）；确认收集抛＝
+    // 宿主面故障，值轨道折叠。
+    try {
+        const RelinkDisposition disposition =
+            decisionPort.confirmRelink(outcome.status);
+        if (disposition == RelinkDisposition::Cancel) {
+            outcome.result = RelinkOutcome::Result::Canceled;
+            return outcome;  // failure 空、revisionId 空——零提交
+        }
+    } catch (const std::exception& e) {
+        outcome.result = RelinkOutcome::Result::Failed;
+        outcome.failure = makeRelinkFailure(
+            relinkContextText(request, outcome.status), e.what(),
+            "请重试重关联操作；若反复失败请重启应用");
+        return outcome;
+    }
+
+    // ---- 第 5 段：显式提交执行（端口内折叠 project ①命令端口 submit
+    // ——重关联命令 token/载荷归 project 存储侧 WP-04-T17，编排核零
+    // 命令知识）。提交抛＝环境失败，值轨道折叠。
+    IExternalRelinkPort::RelinkExecution execution;
+    try {
+        execution = relinkPort.relink(request, outcome.status);
+    } catch (const std::exception& e) {
+        outcome.result = RelinkOutcome::Result::Failed;
+        outcome.failure = makeRelinkFailure(
+            relinkContextText(request, outcome.status), e.what(),
+            "重关联提交失败：请检查项目写权限后重试（当前项目未受影响）");
+        return outcome;
+    }
+
+    // ---- 第 6 段：结果分派。"提交成功必须有修订"是编排承诺（AT-21
+    // 观测点"显式提交产生新修订"）——端口报成功但修订身份无效＝端口
+    // 实现违约，如实转 Failed 呈现（不带病报成功，同 T07 清理观测位
+    // 纪律）。
+    if (execution.relinked && execution.revisionId.isValid()) {
+        outcome.result = RelinkOutcome::Result::Relinked;
+        outcome.revisionId = execution.revisionId;  // 新修订——AT-21 回传
+        return outcome;
+    }
+    outcome.result = RelinkOutcome::Result::Failed;
+    std::string action = execution.action;
+    if (action.empty()) {
+        // 兜底自诊断（UX-03 三字段永不缺位——端口未给建议时给通用指引）。
+        action = "请重试重关联操作；若反复失败请检查外部源可读性与项目"
+                 "写权限（当前项目未受影响）";
+    }
+    outcome.failure = makeRelinkFailure(
+        relinkContextText(request, outcome.status),
+        execution.cause.empty() ? "重关联未完成（执行端口未报告成功）"
+                                : execution.cause,
+        std::move(action));
+    return outcome;
 }
 
 // =====================================================================

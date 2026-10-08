@@ -3,11 +3,13 @@
  * @brief  生命周期入口流程——新建项目三步向导（PM-01）＋打开协议编排
  *         （PM-02 五步的 workflow 面）＋关闭/切换/退出统一确认编排
  *         （PM-03——§7.3）＋方案分支切换（PM-12 零写入会话选择编排）
- *         ＋另存为/包导出/包导入编排（PM-05——§7.4）＋最近项目管理
- *         （PM-10）＋无项目首页数据面（PM-10）：步骤/入口词表、向导输入
- *         值对象、输入校验、右侧实时步骤摘要组装、领域初始化提交端口、
- *         创建/打开/关闭/另存/包编排器、复制内容勾选词表与流程取消/
- *         进度基面、最近项目服务与首页入口禁用数据。
+ *         ＋另存为/包导出/包导入编排（PM-05——§7.4）＋旧格式升级指引
+ *         数据面/只读会话数据面/外部源重关联编排（PM-06/07/09——§7.5）
+ *         ＋最近项目管理（PM-10）＋无项目首页数据面（PM-10）：步骤/入口
+ *         词表、向导输入值对象、输入校验、右侧实时步骤摘要组装、领域
+ *         初始化提交端口、创建/打开/关闭/另存/包/重关联编排器、复制
+ *         内容勾选词表与流程取消/进度基面、升级指引与只读会话呈现
+ *         数据面、最近项目服务与首页入口禁用数据。
  *
  * 设计依据：
  *   - units/workflow.md §7.1（新建项目三步向导 PM-01——三步结构、确认后
@@ -101,13 +103,13 @@
  * （D-WF-6——workflow 只承诺状态数据与流程编排契约，宿主面归 ui），
  * 按单元卡 §3.1"Lifecycle.hpp 随 WP-22-T04~T08 增列"路线**基线虚类
  * 仍不声明**（NFR-MNT-04 不预建无消费者接口——WP-22-T04 v0.5 同款口径
- * 的延续：T07 落位后六方法中已有新建（T04）、打开（T05）、关闭/切换/
- * 退出（T06 CloseFlow::run）、另存为（本批 SaveAsFlow::run——
- * startSaveAsWizard 的编排核）与包导出/导入（本批 PackageExportFlow::
- * run／PackageImportFlow::run——startPackageWizard 的编排核）五段有
- * 可测编排核支撑，startRelinkFlow 一段编排核随 T08 落位；届时基线虚类
- * 与其 L5 适配器随首个宿主接线消费方任务一并增列，避免虚类先于实现迫
- * 使实现方 stub 未落位方法）。T05 落位范围＝打开协议子集（openProject
+ * 的延续：T08 落位后六方法编排核已全部齐备——新建（T04）、打开（T05）、
+ * 关闭/切换/退出（T06 CloseFlow::run）、另存为（T07 SaveAsFlow::run）、
+ * 包导出/导入（T07 PackageExportFlow::run／PackageImportFlow::run）、
+ * 重关联（本批 RelinkFlow::run——startRelinkFlow 的编排核）；但虚类的
+ * 消费者＝L5 宿主接线适配器（ui 宿主面任务）仍未存在——此刻声明纯虚
+ * 类属"预建无消费者接口"（NFR-MNT-04），虚类与其 L5 适配器随首个宿主
+ * 接线消费方任务一并增列）。T05 落位范围＝打开协议子集（openProject
  * 一项的可测编排核——OpenProjectFlow::run）＋最近项目服务
  * （IRecentProjectsService/RecentProjectsService）＋无项目首页数据面
  * （buildNoProjectHomeScreen）；T06 落位范围＝关闭/切换/退出统一确认
@@ -116,8 +118,55 @@
  * 范围＝另存为编排（SaveAsFlow::run——完整目录复制编排＋勾选记忆默认
  * ＋按打开协议进入）＋包导出/导入编排（PackageExportFlow::run／
  * PackageImportFlow::run——后台进度可取消、取消即清理临时区、导入全量
- * 校验失败不留目标目录并给出校验报告），偏差已登记单元卡 §14.5（DTB
- * §5.4 口径）。
+ * 校验失败不留目标目录并给出校验报告）；T08 落位范围＝§7.5 三流程——
+ * 旧格式/未来版本升级指引数据面（UpgradeGuidance＋parseUpgradeGuidance
+ * ＋OpenProjectFailure.upgradeGuidance 增补字段）、只读会话呈现数据面
+ * （ReadOnlySessionNotice＋buildReadOnlySessionNotice——PM-07 锁被持
+ * PID 提示＋禁编辑与应用提交的入口禁用数据）与外部源重关联编排
+ * （RelinkFlow::run——startRelinkFlow 的可测编排核＋检测/提交/决策三
+ * 端口接缝），偏差已登记单元卡 §14.5（DTB §5.4 口径）。
+ */
+/*
+ * 旧格式拒绝/只读打开/重关联编排（PM-06/07/09——§7.5；WP-22-T08）语义：
+ *   - 旧格式/未来版本（PM-06 原文："旧格式（.rwproj 等）稳定只读拒绝并
+ *     给出诊断码，原文件不动；未来 schemaVersion 只读拒绝并提供升级指引
+ *     〔显示当前版本、项目版本、升级工具入口，不自动升级〕"）：拒绝与
+ *     稳定码（PRJ-FORMAT-LEGACY/PRJ-SCHEMA-FUTURE）的判定面归 project
+ *     打开②步（StoreError FormatLegacy/SchemaFuture——原文件不动的
+ *     结构性保证在 project 侧"打开路径零写入"），workflow 承接**升级
+ *     指引数据面**：UpgradeGuidance 三字段（项目版本 document＝文档自报
+ *     版本、当前支持版本 supported、升级工具入口 upgrade）从对端
+ *     StoreError detail 的机器可读键值串提取（parseUpgradeGuidance——
+ *     零加工透传，D-WF-7 零新增码）；随 OpenProjectFailure 增补可选
+ *     字段交付（format-legacy 通常缺 upgrade 键——字段空串如实呈现，
+ *     不伪造）；"不自动升级"＝编排面无任何升级动作路径（结构性：打开
+ *     编排器零写入口）；
+ *   - 只读打开（PM-07 原文："项目锁被持〔提示持有进程 PID〕或介质只读
+ *     时 writable=false，可查看、禁编辑与应用提交；双实例第二写者不
+ *     阻塞等待"）：降级语义的裁决面归 project（Writable 请求被 OS 锁
+ *     竞争拒绝时降级 ReadOnly——不阻塞等待；PM-07），workflow 承接
+ *     **只读会话呈现数据面**：buildReadOnlySessionNotice 自 LockInfo
+ *     组装 ReadOnlySessionNotice（持有者 PID/host/心跳——PID 0＝未知
+ *     呈现口径〔撕裂读容忍，LockHolderRecord 注释〕；lockHeldByOther
+ *     区分"锁被持"与"显式只读/介质只读"两类提示文案；editingDisabled/
+ *     applyCommitDisabled 恒 true＝PM-07"禁编辑与应用提交"的入口禁用
+ *     数据——呈现与入口裁剪归 ui 宿主面，D-WF-6）。写入口拒绝的权威
+ *     裁决归 project 收口（S1 形式校验 not-writable＋门卫稳定码——
+ *     §9.6），编排面不复制权限判定（PA-1）；
+ *   - 外部源重关联（PM-09 原文："提供重新关联入口，重关联经显式提交
+ *     产生新修订"）：编排核 RelinkFlow::run 承接入口流程——检测（io
+ *     提供缺失/变化数据——NFR-REL-04；经 IExternalRelinkPort::probe
+ *     透传，本单元零 io 知识）→ 用户显式确认（IRelinkDecisionPort::
+ *     confirmRelink——"显式"所在：无用户确认不提交）→ 显式提交执行
+ *     （IExternalRelinkPort::relink——L5 桥接 project ①命令端口
+ *     submit，重关联命令 token/载荷归 project 存储侧 WP-04-T17，本
+ *     编排核零命令 token 知识——P-PR-9 未裁决，不私自预置任何命令
+ *     词形）→ 新修订回传（RelinkOutcome.revisionId——AT-21 观测点）。
+ *     "流程失败不动当前项目"（§7.5 行三）＝结构性保证：编排核签名不
+ *     接收任何存储上下文/写面（同 T05 打开编排"不动当前项目"手法），
+ *     检测与提交都折叠在端口内；检测态 Ok（无缺失无变化）→ NotNeeded
+ *     零提交（无重关联事实不产生无意义修订——显式提交语义的边界）；
+ *     取消非错误（UX-03——Canceled 态 failure 空、零提交）。
  *
  * 另存为/包导出/包导入编排（PM-05——§7.4；WP-22-T07）语义：
  *   - 分工逐字（§7.4）：另存为的**复制执行归 project**（WP-04-T18 存储
@@ -816,6 +865,69 @@ inline constexpr const char* kPackageExtensionToken = ".rwpack";
  */
 OpenTargetKind classifyOpenTarget(const std::filesystem::path& path);
 
+// =====================================================================
+// 旧格式/未来版本升级指引数据面（PM-06——§7.5 行一；WP-22-T08）
+// =====================================================================
+
+/**
+ * @brief 升级指引数据（PM-06"显示当前版本、项目版本、升级工具入口，
+ *        不自动升级"的三字段呈现数据——打开②步稳定拒绝后的升级工具
+ *        入口面）。
+ *
+ * 背景说明（数据从哪来、谁展示）：拒绝判定与稳定码（PRJ-FORMAT-LEGACY/
+ * PRJ-SCHEMA-FUTURE）归 project 打开②步（Codec §8.11 版本判定），其
+ * StoreError detail 以机器可读键值串携带三键——document（文档自报版本
+ * ＝"项目版本"展示源）、supported（当前支持版本）、upgrade（升级工具
+ * 入口 token；format-legacy 通常缺省——旧格式无"升级到新版本"语义，
+ * 修复路径是"用旧版本导出/联系支持"，字段空串如实呈现不伪造）。本
+ * 结构只承载提取结果（parseUpgradeGuidance 的产物），呈现归 ui 宿主面
+ * （D-WF-6）；"不自动升级"＝本面无任何升级动作路径（纯数据）。
+ *
+ * 字段全部为透传词形（std::string；空串＝detail 未携带该键——尽力
+ * 呈现，不伪造数值）。线程安全：纯值类型。
+ */
+struct UpgradeGuidance {
+    /// 项目版本（detail "document=" 键——文档自报 schemaVersion 词形，
+    /// 如 "20000"；formatId 不符形态无此键——空串）。
+    std::string documentVersion;
+    /// 当前支持版本（detail "supported=" 键——本实现支持的版本词形，
+    /// 如 "10000"；formatId 不符形态为格式标识词 "rwdesign"——对端
+    /// 键值原样透传，本面零归一化）。
+    std::string supportedVersion;
+    /// 升级工具入口 token（detail "upgrade=" 键——如
+    /// "ISchemaUpgrader-stage-b"；缺省＝空串，呈现层按"无升级入口"
+    /// 呈现〔PM-06 升级指引不伪造〕）。
+    std::string upgradeToolEntry;
+
+    bool operator==(const UpgradeGuidance& o) const noexcept
+    {
+        return documentVersion == o.documentVersion
+            && supportedVersion == o.supportedVersion
+            && upgradeToolEntry == o.upgradeToolEntry;
+    }
+    bool operator!=(const UpgradeGuidance& o) const noexcept { return !(*this == o); }
+};
+
+/**
+ * @brief 从对端 StoreError detail 提取升级指引三键（PM-06 数据面唯一
+ *        提取点——纯函数）。
+ *
+ * 提取规则（尽力呈现而非协议解析——同 extractDetailLocation 纪律）：
+ * detail 是机器可读键值串（"project/<域>: <原因> key=value ..."），本
+ * 函数按 " <键>=" 词形取 document/supported/upgrade 三键的值（值域到
+ * 串尾或下一个 " <词>=" 键边界）。找不到的键留空串（不伪造）——
+ * format-legacy 的 formatId 不符形态（"document-format-id=..." 键形）
+ * 不会被误读为 document（" document=" 与 " document-format-id=" 是
+ * 不同词形）；schema-future 三键齐备。
+ *
+ * @param detail [in] 对端 detail 原文（StoreError::what()；任意串安全）
+ * @return 升级指引数据（三字段透传——零加工零归一化，D-WF-7）
+ *
+ * @threadSafe const 纯函数，可并发。
+ * @determinism 同输入同输出（NFR-COR-02 同型）。
+ */
+UpgradeGuidance parseUpgradeGuidance(const std::string& detail);
+
 /**
  * @brief 打开失败呈现（UX-03 三字段＋具体文件定位——PM-02"失败显示
  *        具体文件"的承载值类型）。
@@ -826,17 +938,28 @@ OpenTargetKind classifyOpenTarget(const std::filesystem::path& path);
  * （"path=<值>"/"file=<值>"键——project 侧打开失败 detail 形态）；
  * 提取不到（如跨文件不一致类 detail 无定位键）时回退目标路径词面——
  * 呈现层保证"具体文件"行恒非空（AT-20 观测点）。
+ *
+ * v0.9 增补（WP-22-T08——DTB §5.4 口径，增补非语义变更，v0.4
+ * GateDecision.unlocked 便利位同款先例）：upgradeGuidance 可选字段承载
+ * PM-06 升级指引数据面——旧格式（FormatLegacy）/未来版本（SchemaFuture）
+ * 失败时由编排器自对端 detail 提取填充（parseUpgradeGuidance）；其他
+ * 稳定码失败恒 nullopt。三字段（项目版本/当前支持版本/升级工具入口）
+ * 语义见 UpgradeGuidance 类型注。
  */
 struct OpenProjectFailure {
     std::string context;           ///< 对象/上下文（UX-03 半区一——目标路径词面）
     std::string file;              ///< 失败定位文件（PM-02"显示具体文件"；恒非空——见类型注）
     std::string cause;             ///< 原因（UX-03 半区二——对端 detail/what() 透传）
     std::string recommendedAction; ///< 建议动作（UX-03 半区三——按对端稳定码分派）
+    /// PM-06 升级指引数据（仅 FormatLegacy/SchemaFuture 失败时有值——
+    /// 升级工具入口呈现数据；不自动升级＝编排面无升级动作路径）。
+    std::optional<UpgradeGuidance> upgradeGuidance;
 
     bool operator==(const OpenProjectFailure& o) const
     {
         return context == o.context && file == o.file && cause == o.cause
-            && recommendedAction == o.recommendedAction;
+            && recommendedAction == o.recommendedAction
+            && upgradeGuidance == o.upgradeGuidance;
     }
     bool operator!=(const OpenProjectFailure& o) const { return !(*this == o); }
 };
@@ -917,6 +1040,94 @@ public:
                                   core::IDomainEventBus* eventBus = nullptr,
                                   project::IDiagnosticsSink* diagnosticsSink = nullptr);
 };
+
+// =====================================================================
+// 只读会话呈现数据面（PM-07——§7.5 行二；WP-22-T08）
+// =====================================================================
+
+/// 只读会话提示文案键（锁被持——"项目被 PID=<n> 持有"的键半区；PID 等
+/// 参数化值经 ReadOnlySessionNotice 字段，文案值归 ui 文案资源——UX-02
+/// 键/值半区分工）。
+inline constexpr const char* kReadOnlyLockHeldKey = "readonly.notice.lock-held";
+
+/// 只读会话提示文案键（显式只读打开/介质只读——无他方持有者可提示的
+/// 形态；同上键值半区分工）。
+inline constexpr const char* kReadOnlyExplicitKey = "readonly.notice.explicit";
+
+/**
+ * @brief 只读会话呈现数据（PM-07"writable=false，可查看、禁编辑与应用
+ *        提交"的入口禁用与提示数据——只读会话的宿主面装配材料）。
+ *
+ * 背景说明（数据从哪来、边界在哪）：降级语义的裁决面归 project——
+ * Writable 请求被 OS 锁竞争拒绝时降级 ReadOnly（不阻塞等待——PM-07），
+ * OpenProjectOutcome.readonly 已如实登记该事实（T05 落位）。本结构是
+ * 打开成功后的**会话呈现数据**：宿主（L5/ui）自只读 store 取 lockInfo
+ * 组装本面，据此裁剪编辑/应用提交入口并呈现持有者提示。写入口拒绝的
+ * 权威裁决归 project 收口（S1 形式校验 not-writable＋门卫稳定码——
+ * project §9.6），本面只是入口禁用数据，不复制权限判定（PA-1）。
+ *
+ * 标题栏"（只读）"后缀的呈现归 PM-11/§7.6（Projection.hpp——WP-22-T09
+ * 消费本面同源事实），本面不重复承载标题栏字段。
+ *
+ * 线程安全：纯值类型。
+ */
+struct ReadOnlySessionNotice {
+    /// 恒 true（本结构仅只读会话构造——字段自明，测试可断言防误用）。
+    bool readOnly = true;
+    /// 锁持有进程 PID（单位＝OS PID；0＝未知——撕裂读/记录空的
+    /// LockHolderRecord 口径，呈现层须按"未知"呈现而非显示 PID=0）。
+    std::uint32_t holderPid = 0;
+    /// 持有者主机名（诊断呈现；空＝未知）。
+    std::string holderHost;
+    /// 持有者心跳时间戳（ISO-8601 UTC 带毫秒；仅诊断——不作为接管或
+    /// 权限判据，SA-17/D-03；空＝未知）。
+    std::string holderHeartbeatUtc;
+    /// 是否锁被他方持有（true＝"锁被持"形态——holderPid 可提示；
+    /// false＝显式只读打开/介质只读——无他方持有者信息）。
+    bool lockHeldByOther = false;
+    /// 恒 true——禁编辑入口（PM-07"禁编辑"；裁剪呈现归 ui，D-WF-6）。
+    bool editingDisabled = true;
+    /// 恒 true——禁应用提交入口（PM-07"禁应用提交"；写路径权威拒绝
+    /// 归 project S1 门卫——本位只是入口禁用数据，PA-1 不越权）。
+    bool applyCommitDisabled = true;
+    /// 提示文案键（lock-held/explicit 二选一——kReadOnlyLockHeldKey/
+    /// kReadOnlyExplicitKey；键值半区分工同上）。
+    std::string noticeKey;
+
+    bool operator==(const ReadOnlySessionNotice& o) const noexcept
+    {
+        return readOnly == o.readOnly && holderPid == o.holderPid
+            && holderHost == o.holderHost
+            && holderHeartbeatUtc == o.holderHeartbeatUtc
+            && lockHeldByOther == o.lockHeldByOther
+            && editingDisabled == o.editingDisabled
+            && applyCommitDisabled == o.applyCommitDisabled
+            && noticeKey == o.noticeKey;
+    }
+    bool operator!=(const ReadOnlySessionNotice& o) const noexcept
+    {
+        return !(*this == o);
+    }
+};
+
+/**
+ * @brief 自锁信息组装只读会话呈现数据（PM-07 数据面唯一组装点——纯函数）。
+ *
+ * 组装规则：holder 字段三值原样透传（PID 0＝未知口径不重写——呈现层
+ * 处理）；lockHeldByOther＝非本上下文持有（!isSelf）且持有者 PID 非零
+ * （有可提示的他方记录）；noticeKey 按 lockHeldByOther 二选一。本函数
+ * 不触 store（调用方自 store->lockInfo() 取值传入——纯函数面，模型
+ * 测试可直调）。
+ *
+ * @param lockInfo [in] 锁信息视图（只读上下文的 store->lockInfo()——
+ *                撕裂容忍解析产物；零值字段＝未知）
+ * @return 只读会话呈现数据（readOnly/editingDisabled/applyCommitDisabled
+ *         恒 true——PM-07 语义的字段自明面）
+ *
+ * @threadSafe const 纯函数，可并发。
+ * @determinism 同输入同输出（NFR-COR-02 同型）。
+ */
+ReadOnlySessionNotice buildReadOnlySessionNotice(const project::LockInfo& lockInfo);
 
 // =====================================================================
 // 关闭/切换/退出统一确认编排（PM-03——§7.3；ARCH §6.8 A7；WP-22-T06）
@@ -2246,6 +2457,292 @@ struct PackageImportReportLine {
  */
 std::vector<PackageImportReportLine> buildPackageImportReportView(
     const PackageImportExecution& execution);
+
+// =====================================================================
+// 外部源重关联编排（PM-09——§7.5 行三；AT-21；WP-22-T08）
+// =====================================================================
+
+/**
+ * @brief 外部源检测状态词表（NFR-REL-04"缺失或变化可检测"的会话态
+ *        呈现词——重关联入口的检测结论三值）。
+ *
+ * 会话态枚举（§10.3"零新增持久化枚举"边界内——状态只存在于一次重关联
+ * 编排的生命周期内，不写入任何持久化 schema；检测**执行**归 io
+ * （NFR-REL-04 规范正文），本词表只是其结论的编排面承载）。
+ */
+enum class ExternalSourceState : std::uint8_t {
+    Ok = 0,      ///< 无缺失无变化（外部源在位且内容与登记基准一致）
+    Missing = 1, ///< 缺失（登记路径不可读——文件不存在/被移除）
+    Changed = 2, ///< 变化（现内容哈希与登记基准不符——外部被修改）
+};
+
+/**
+ * @brief 外部源检测状态（重关联入口的呈现材料——io 检测数据的透传值）。
+ *
+ * 背景说明（数据从哪来、谁判定）：缺失/变化检测的规范正文归 NFR-REL-04
+ * （检测实现归 io——与 ExternalRefRecord 登记基准〔绝对路径＋内容哈希
+ * ＋字节数，PersistenceFormat.hpp §4.4.5〕比对现路径内容），本结构是
+ * 该检测结论的**编排面透传值**：全部字段由检测端口（IExternalRelinkPort::
+ * probe——L5 桥接 io）填充，编排核零加工透传（登记基准与现内容并列
+ * 呈现，用户可对照"变了什么"）。workflow 不做检测比对本身（N8 非所有权
+ * ——CSV/JSON 底层解析与内容哈希比对归 io）。
+ *
+ * 线程安全：纯值类型。
+ */
+struct ExternalSourceStatus {
+    ExternalSourceState state = ExternalSourceState::Ok;///< 检测结论（三值词表）
+    std::string externalRefId;      ///< 记录 id（ExternalRefRecord.externalRefId 透传——关联键）
+    std::string absolutePath;       ///< 登记路径原文（ExternalRefRecord.absolutePath 透传）
+    std::string recordedHash256;    ///< 登记时内容 SHA-256 hex（登记基准——变化对照材料）
+    std::uint64_t recordedSizeBytes = 0;///< 登记时字节数（单位＝字节；登记基准）
+    std::string currentHash256;     ///< 现内容 SHA-256 hex（Missing 时空串——无现内容）
+    std::uint64_t currentSizeBytes = 0; ///< 现内容字节数（单位＝字节；Missing 时 0）
+
+    bool operator==(const ExternalSourceStatus& o) const noexcept
+    {
+        return state == o.state && externalRefId == o.externalRefId
+            && absolutePath == o.absolutePath
+            && recordedHash256 == o.recordedHash256
+            && recordedSizeBytes == o.recordedSizeBytes
+            && currentHash256 == o.currentHash256
+            && currentSizeBytes == o.currentSizeBytes;
+    }
+    bool operator!=(const ExternalSourceStatus& o) const noexcept
+    {
+        return !(*this == o);
+    }
+};
+
+/**
+ * @brief 重关联请求（入口编排的输入值——资源定位＋重定向路径）。
+ *
+ * resource 语义（§10.2 Draft 签名 startRelinkFlow(core::ObjectId
+ * resource) 的编排核承载）：待重关联的资源对象身份（跨修订稳定——
+ * ARC-04；外部引用登记在哪个对象上，重关联就作用于哪个对象）。
+ * newPath 空＝保持登记路径重连（外部文件回到原位——重新可读即可）；
+ * 非空＝重定向到新路径（外部文件被挪走——指向新位置）。
+ */
+struct RelinkRequest {
+    /// 资源对象身份（core 强类型——本单元不生成新 ID；编排核 @pre
+    /// isValid()，违约＝调用方错误 fail-fast）。
+    core::ObjectId resource{};
+    /// 重定向新路径（空＝保持登记路径重连；词面透传——规范化归对端）。
+    std::filesystem::path newPath;
+
+    bool operator==(const RelinkRequest& o) const
+    {
+        return resource == o.resource && newPath == o.newPath;
+    }
+    bool operator!=(const RelinkRequest& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 重关联用户确认决策词表（显式提交的"显式"所在——PM-09）。
+ *
+ * 会话态二值：Proceed＝用户看过检测材料后确认重关联（编排核随即执行
+ * 提交）；Cancel＝用户放弃（零提交零诊断——取消非错误，UX-03）。
+ * 呈现材料（检测状态）由编排核经决策端口传入（ui 宿主面据以渲染确认
+ * 对话框——D-WF-6）。
+ */
+enum class RelinkDisposition : std::uint8_t {
+    Proceed = 0, ///< 确认重关联（显式提交执行）
+    Cancel = 1,  ///< 放弃（零提交——取消非错误）
+};
+
+/**
+ * @brief 重关联用户确认收集端口（ui 宿主面实现——D-WF-6 接缝面）。
+ *
+ * 谁实现：L5 装配层/ui 宿主面——检测状态对话框（"外部源已缺失/已变化，
+ * 是否重新关联？"）的用户决策收集。编排核在**显式提交之前**必经本
+ * 端口（无用户确认不提交——PM-09"显式提交"的编排兑现）。
+ */
+class IRelinkDecisionPort {
+public:
+    /// 虚析构：经接口引用多态消费的常规保障。
+    virtual ~IRelinkDecisionPort() = default;
+
+    /**
+     * @brief 收集重关联确认决策（阻塞式——编排核在调用线程同步等待
+     *        用户回答，同 CloseFlow 决策端口纪律）。
+     *
+     * @param status [in] 检测状态（呈现材料——state/登记基准/现内容
+     *               对照；ui 渲染确认对话框的取数源）
+     * @return 用户决策（Proceed/Cancel——RelinkDisposition 词表）
+     */
+    virtual RelinkDisposition confirmRelink(const ExternalSourceStatus& status) = 0;
+};
+
+/**
+ * @brief 外部源重关联执行端口（§7.5 行三"检测数据由 io 提供＋显式提交
+ *        经 project"的 workflow 侧视图——双对端折叠接缝）。
+ *
+ * 谁实现：L5 装配层——probe 半区桥接 io 的缺失/变化检测（NFR-REL-04；
+ * 与 ExternalRefRecord 登记基准比对），relink 半区桥接 project ①命令
+ * 端口（组装重关联命令载荷经 store.commands().submit() 显式提交——
+ * 重关联命令 token/载荷归 project 存储侧 WP-04-T17，契约 note 同
+ * ISaveAsPort 先例豁免 dependsOn 边；**P-PR-9 未裁决，本端口与编排核
+ * 零命令 token 知识，不私自预置任何命令词形**）。
+ *
+ * 端口契约（实现方义务，编排核逐项复核）：
+ *   - probe：纯检测（零写入零提交）——按请求资源定位登记记录并比对
+ *     现路径内容；定位失败（资源无外部引用记录）＝Missing＋材料字段
+ *     尽力填充（或按实现方契约抛——两形态编排核都承接）；
+ *   - relink：仅在用户确认后被编排核调用——显式提交成功＝relinked=
+ *     true 且 revisionId 为提交产生的新修订（isValid）；提交未成功＝
+ *     relinked=false＋cause/action（UX-03 半区）；本方法失败不得留下
+ *     半提交状态（命令七步事务由 project 保证——要么新修订要么无）；
+ *   - 两方法都可能抛（环境失败）——编排核按值轨道折叠为 Failed。
+ *
+ * 错误语义：环境/对端错误走 RelinkExecution/异常值轨道（重关联失败是
+ * 用户流程事件）；调用方错误（请求违约）由实现方 fail-fast。
+ *
+ * 线程约束：主线程会话内调用（重关联入口动作——§10.3 流程编排行）。
+ */
+class IExternalRelinkPort {
+public:
+    /// 虚析构：经接口引用多态消费的常规保障。
+    virtual ~IExternalRelinkPort() = default;
+
+    /**
+     * @brief 显式提交执行结果（执行事实的值承载——编排核逐项复核）。
+     */
+    struct RelinkExecution {
+        bool relinked = false;        ///< 显式提交成功（新修订已产生）
+        core::RevisionId revisionId{};///< 新修订身份（relinked 时须 isValid——编排核复核，违约转 Failed）
+        std::string cause;            ///< 失败原因（UX-03 半区二——relinked=false 时承载）
+        std::string action;           ///< 建议动作（UX-03 半区三——可空串＝兜底自诊断）
+    };
+
+    /**
+     * @brief 检测外部源缺失/变化（NFR-REL-04 数据面的编排触达点）。
+     *
+     * @param request [in] 重关联请求（资源定位——probe 按此定位登记
+     *                记录；newPath 不参与检测——检测只看登记路径）
+     * @return 检测状态（三值词表＋登记基准/现内容对照材料）
+     */
+    virtual ExternalSourceStatus probe(const RelinkRequest& request) = 0;
+
+    /**
+     * @brief 执行重关联（显式提交——产生新修订；仅在用户确认后由
+     *        编排核调用）。
+     *
+     * @param request [in] 重关联请求（资源定位＋重定向路径）
+     * @param status  [in] 检测状态（probe 产物原样回传——实现方可据
+     *                status 组装提交载荷；编排核保证其来自同一次 run
+     *                的 probe，未经篡改）
+     * @return 执行结果（见 RelinkExecution 注）
+     */
+    virtual RelinkExecution relink(const RelinkRequest& request,
+                                   const ExternalSourceStatus& status) = 0;
+};
+
+/**
+ * @brief 重关联失败呈现（UX-03 三字段——与 SaveAsFailure 同型的编排器
+ *        直产呈现面；D-WF-7 零新增稳定码，对端原因透传）。
+ *
+ * context 语义：重关联资源定位词形（"obj-...（<登记路径>）"——对象
+ * 身份＋登记路径的人读组合；重关联失败面无独立"文件"定位字段——
+ * 资源对象即失败对象，UX-03 三字段在此以 context 承载对象定位）。
+ */
+struct RelinkFailure {
+    std::string context;           ///< 对象/上下文（UX-03 半区一——资源定位词形）
+    std::string cause;             ///< 原因（UX-03 半区二——端口 cause/what() 透传）
+    std::string recommendedAction; ///< 建议动作（UX-03 半区三）
+
+    bool operator==(const RelinkFailure& o) const
+    {
+        return context == o.context && cause == o.cause
+            && recommendedAction == o.recommendedAction;
+    }
+    bool operator!=(const RelinkFailure& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 重关联编排结果（RelinkFlow::run 的唯一返回通道）。
+ *
+ * 不变量：Relinked ⇔ revisionId 有值且 isValid（显式提交产生新修订
+ * ——AT-21 观测点"修订"）；NotNeeded/Canceled ⇔ failure 置空且
+ * revisionId 空（零提交——检测无事实/用户取消都不是错误，UX-03）；
+ * Failed ⇔ failure 有值且 revisionId 空（失败呈现 UX-03 三字段——
+ * 失败不带病报成功）。status 恒为检测状态回传（呈现/日志材料——
+ * NotNeeded/Failed 路径也有值供呈现）。
+ */
+struct RelinkOutcome {
+    /**
+     * @brief 编排结果四值（Proceed 语义在此具名为 Relinked——重关联
+     *        流程的完成态即"已重新关联并产生新修订"；NotNeeded 为
+     *        检测无事实的早退态）。
+     */
+    enum class Result : std::uint8_t {
+        Relinked = 0,  ///< 显式提交成功（revisionId 有值——新修订）
+        NotNeeded = 1, ///< 检测无缺失无变化（零提交零确认——无重关联事实）
+        Canceled = 2,  ///< 用户取消（零提交零诊断——UX-03 非错误）
+        Failed = 3,    ///< 失败（failure 有值——UX-03 三字段）
+    };
+
+    Result result = Result::Relinked;///< 编排结果（见枚举注）
+    /// 新修订身份（Relinked 时有值——显式提交产物；其余态恒空）。
+    std::optional<core::RevisionId> revisionId;
+    /// 检测状态回传（全部路径恒有——入口呈现/日志材料；Failed 时为
+    /// probe 成功产物或默认值〔probe 本身失败——无检测材料〕）。
+    ExternalSourceStatus status;
+    std::optional<RelinkFailure> failure;///< 失败呈现（Failed 时有值）
+};
+
+/**
+ * @brief 外部源重关联编排器（O4——§7.5 行三的执行点；§10.2 Draft 签名
+ *        startRelinkFlow(core::ObjectId resource) 的可测编排核；
+ *        WF-VER-216 的被测面）。
+ *
+ * 全静态接口（无会话状态——同 OpenProjectFlow/SaveAsFlow 先例：宿主
+ * 事件驱动的编排核，纯面可契约测试直调）。
+ */
+class RelinkFlow {
+public:
+    RelinkFlow() = delete;
+
+    /**
+     * @brief 执行重关联编排（检测→显式确认→显式提交→新修订回传）。
+     *
+     * 编排序（每段的失败/取消语义独立成立；"流程失败不动当前项目"
+     * ＝结构性保证——本编排核签名不接收任何存储上下文/写面，检测与
+     * 提交都折叠在端口内，失败只产 failure 值）：
+     *   1 前置校验：resource 无效（!isValid——全零保留值）→
+     *     WorkflowError（调用方契约违约 fail-fast）。
+     *   2 检测（io 数据透传）：relinkPort.probe——缺失/变化结论与
+     *     登记/现内容对照材料（NFR-REL-04）。probe 抛（环境失败）→
+     *     Failed（cause=what() 透传——status 保持默认值）。
+     *   3 无事实早退：state==Ok → NotNeeded（零确认零提交——无重关联
+     *     事实不产生无意义修订，"显式提交"语义的边界；status 照常
+     *     回传供呈现）。
+     *   4 用户显式确认（PM-09"显式"所在）：decisionPort.confirmRelink
+     *     （呈现材料＝检测状态）——Cancel → Canceled（failure 空、
+     *     零提交；取消非错误 UX-03）。确认收集抛（宿主面故障）→
+     *     Failed（cause=what() 透传）。
+     *   5 显式提交执行：relinkPort.relink——relinked 且 revisionId
+     *     有效 → Relinked（revisionId 回传——AT-21 观测点）；relinked
+     *     但 revisionId 无效 → Failed（"提交成功必须有修订"的编排
+     *     承诺被端口破坏——如实呈现不带病报成功，同 T07 清理观测位
+     *     纪律）；relinked=false → Failed（cause/action 自端口）。
+     *     提交抛（环境失败）→ Failed（cause=what() 透传）。
+     *
+     * @param request [in] 重关联请求（resource 须 isValid）
+     * @param relinkPort [in] 检测/提交执行端口（L5 桥接 io 与 project
+     *                   命令面——非 owning）
+     * @param decisionPort [in] 用户确认收集端口（ui 宿主面——非 owning）
+     * @return 编排结果（见 RelinkOutcome 不变量）
+     *
+     * @throws WorkflowError resource 无效（调用方契约违约——fail-fast）
+     *
+     * @threadSafe 无共享状态（静态函数）；端口对象按 §10.3 会话内单线程
+     *            纪律使用。
+     * @determinism 无确定性承诺（§10.3"流程编排含用户交互"行——检测/
+     *              提交涉磁盘与命令事务；同成功路径的状态事实可复核）。
+     */
+    static RelinkOutcome run(const RelinkRequest& request,
+                             IExternalRelinkPort& relinkPort,
+                             IRelinkDecisionPort& decisionPort);
+};
 
 // =====================================================================
 // 最近项目管理（PM-10——§7.8；IRecentProjectsService §10.1 落位行）
