@@ -1,0 +1,28 @@
+lint: 字典 192 个需求 ID（RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/requirements-ids.json）
+lint-ok: dt-mapping-golden/1.0.0
+lint-ok: dyn-two-link-analytic/1.0.0
+lint-ok: ev-slice-fixture/1.0.0
+lint-ok: kin-coverage/1.0.0
+lint-ok: kin-fk-analytic/1.0.0
+lint-ok: kin-ik-dedup/1.0.0
+lint-ok: kin-search-outcomes/1.0.0
+lint-ok: mdl-dh-equivalence/1.0.0
+lint-ok: mdl-not-expressible/1.0.0
+lint-ok: mdl-template-6r/1.0.0
+lint-ok: mdl-urdf-import/1.0.0
+lint-ok: opt-adopt-golden/1.0.0
+lint-ok: opt-lhs-golden/1.0.0
+lint-ok: opt-pareto-golden/1.0.0
+lint-ok: pol-collision-analytic/1.0.0
+lint-ok: pol-policy-codec-fixture/1.0.0
+lint-ok: req-partial-pose/1.0.0
+lint-ok: req-payload-events/1.0.0
+lint-ok: req-region-sampling/1.0.0
+lint-ok: req-transport-task/1.0.0
+lint-ok: rt-fk-equation/1.0.0
+lint-ok: rt-namemap-roundtrip/1.0.0
+lint-ok: sel-backfill-golden/1.0.0
+lint-fail: sel-catalog-golden/1.0.0: coveredRequirements ID 不在字典: AT-08
+lint-ok: sel-combo-golden/1.0.0
+lint-ok: sel-screening-golden/1.0.0
+lint: 扫描 26 个数据集版本，违规 1

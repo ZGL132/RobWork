@@ -1,0 +1,8 @@
+== integration build ==
+0
+^ird-errors
+gates-exit=0
+docs-exit=0
+== smoke build ==
+0
+^smoke-errors

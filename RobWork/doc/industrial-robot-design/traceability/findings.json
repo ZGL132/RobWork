@@ -5490,7 +5490,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "工位三维标记恒渲染于参考系原点——标记投影契约不携带位置数据：StationMarkerProjection={label,refFrame}（无 position 字段）、View3DFrameMarker={label,frameName}（同无）——后端只能把坐标轴挂到参考系帧上（World 根帧＝原点），工位坐标（站点要素本体）在三维投影链全程丢失。UI-T33 标记设计＝「参考系指示器」形态，未承载「带坐标的点位」语义——工位作为空间点位的要素在三维不可辨",
-      "owner": "三维预览批次（契约表尾追加 position 字段〔UI-T65 tint 同款追加纪律〕＋requirements 投影补位＋后端按 参考帧×位置 放置坐标轴；与 F-550 模型渲染/F-556 标签CJK 同属三维预览专项簇）"
+      "owner": "三维预览批次（契约表尾追加 position 字段〔UI-T65 tint 同款追加纪律〕＋requirements 投影补位＋后端按 参考帧×位置 放置坐标轴；与 F-550 模型渲染/F-556 标签CJK 同属三维预览专项簇）〔所有者预裁决 2026-10-09：双实现归一——ui-t77 合流 redesign-main 时以 ui-t77 版 8597c135 为准，audit-p1a-fixes 上误落的 1a9b5523 实现随之弃用（acc/audit-p0-p1d/1 合并提交 438986b2 说明已登记）；本条状态翻转随 ui-t77 合流批次办理〕"
     },
     {
       "id": "F-556",
@@ -5499,7 +5499,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "工位标记标签中文乱码——rwlibs::opengl::RenderText 用 GLUT 位图字体渲染（freeglut bitmap 字体仅 ASCII 位图集，无 CJK 字形），UTF-8 工位名（如「工位」）按字节映射拉丁字形即乱码。框架级限制（2009 年代 RobWork 件，无 Unicode 支持）——非本产品代码缺陷；CJK 标签需换非 GLUT 文本承载（Qt 纹理化文本/三维投影二维覆盖标签两方向）",
-      "owner": "三维预览批次所有者裁决（三选一：①ASCII 回退标签〔工位→Station-N，零中文——UX 让步〕；②Qt 纹理化文本 Render 替代件〔工作量大——GL 纹理＋unicode 排版〕；③三维投影二维覆盖标签〔宿主层 QLabel 覆盖——每帧位置同步成本〕）"
+      "owner": "三维预览批次所有者裁决（三选一：①ASCII 回退标签〔工位→Station-N，零中文——UX 让步〕；②Qt 纹理化文本 Render 替代件〔工作量大——GL 纹理＋unicode 排版〕；③三维投影二维覆盖标签〔宿主层 QLabel 覆盖——每帧位置同步成本〕）〔所有者预裁决 2026-10-09：同 F-555——以 ui-t77 版 8597c135 为准，1a9b5523 随之弃用〕"
     },
     {
       "id": "F-557",
@@ -5905,7 +5905,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "诊断面 schema 演进：DiagnosticRecord 增设级别字段（警告/错误）、builder 按级别拒绝——消除警告与错误共用注册码必然相撞的结构性根因（F-593 取专用警告码①先行止血，本条为治本排期项）",
-      "owner": "runtime/diagnostics 所有者：诊断面 schema 演进批次排期（涉及公共契约，波及全部生产者/消费者，须增量修订单元卡后实施）"
+      "owner": "runtime/diagnostics 所有者：诊断面 schema 演进批次排期（涉及公共契约，波及全部生产者/消费者，须增量修订单元卡后实施）〔所有者排期 2026-10-09：audit-p2 合入后的独立批次实施——先增量修订 diagnostics/runtime 单元卡（公共契约面）再动代码；audit-p2 引入的 RT-BOUNDS-MAGNITUDE 覆盖码面随本批次收编〕"
     },
     {
       "id": "F-619",
@@ -5942,6 +5942,24 @@
       "registeredAt": "2026-10-09",
       "title": "fresh 树集成构建因 DTB §5.1 排除面（RWSimulatorPlugin/bt_plugin）失败返回 exit=1 时，ALL_BUILD 后段的 _test 目标不产出——验收/实施者须显式 --target 逐个补建测试 exe；该口径未登记于 DTB §5.1，fresh 树操作者易误判为工业robot目标构建失败",
       "owner": "DTB 所有者：§5.1 fresh 树运行时前置行补记「排除面失败后测试目标需显式 --target 构建」的复现口径（或提供绕过排除面的目标级构建顺序建议）"
+    },
+    {
+      "id": "F-623",
+      "source": "audit-p2 合入后复验（2026-10-09，audit-p2-merge 树实测）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "VS 生成器增量构建陷阱：合并引入新测试目标时 ZERO_CHECK 重生成 vcxproj 但陈旧 solution 不含之——cmake --build 静默跳过新目标（audit-p2 合流后 sdurws_ird_optimization_test 集成面实测缺位，显式重配后生成并全绿），验证面可能无声缩水",
+      "owner": "构建/门禁所有者：合并收尾后的复验前强制显式重配（cmake -S -B 全参数），或改用 Ninja/旧版生成器口径评估；本条与 F-622 同属合并复验工具面"
+    },
+    {
+      "id": "F-624",
+      "source": "audit-p2 合入后复验（2026-10-09，testdata lint 26 集扫描）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "sel-catalog-golden/1.0.0 coveredRequirements 引用 AT-08 不在需求 ID 字典（192 项）——WP-19-T11 交付内容与字典失配（lint 为 CI 独立运行面，tick 门禁不含，随合流进入主线后被复验扫出）",
+      "owner": "selection 黄金集交付方＋字典维护者：二选一——dataset 补对齐字典既有 ID，或字典增补 AT-08（核对 REQUIREMENTS 原文后定）；修后 lint 须 26/26 零违规"
     }
   ]
 }
