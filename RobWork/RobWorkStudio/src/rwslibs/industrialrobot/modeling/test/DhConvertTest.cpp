@@ -213,9 +213,10 @@ bool hasDiagnostic(const std::vector<core::DiagnosticRecord>& diags,
 
 /**
  * ACC1 无损展开主用例：三关节非平凡 DH 链（含非零 θ 偏置与零位偏置）——
- * 逐级累乘得 origin=T_parent_joint（当前步相对变换）、axis=z_i=
- * T_{0,i}·(0,0,1) 归一化单位向量；身份/名称/类型/zeroOffset/限位透传；
- * axis 范数恒 1（§9.4.7 @post）。
+ * 逐级累乘得 origin=T_parent_joint（当前步相对变换）、axis=Rx(−α)·ez
+ * （关节系内方向——F-591：物理旋转轴 z_{i-1} 在关节帧内的坐标，解析元素
+ * (0, sinα, cosα)）；身份/名称/类型/zeroOffset/限位透传；axis 范数恒 1
+ * （§9.4.7 @post）。
  *
  * F-590 重钉：展开几何为零位烘焙纪律下的 q_model=0 位姿——参考步进取
  * Rot_z(θ)（zeroOffset 不入几何；权威零位旋转的唯一烘焙归口在
@@ -236,17 +237,11 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
 
     // 独立参考：逐级累乘（期望值——测试内另行实现，同一卡面公式；
     // q0 恒传 0——展开几何不含 zeroOffset，F-590）。
-    rw::math::Transform3D<double> acc =
-        rw::math::Transform3D<double>(rw::math::Vector3D<double>(0, 0, 0),
-                                      rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
-    std::vector<rw::math::Transform3D<double>> refAccum;
     std::vector<rw::math::Transform3D<double>> refStepT;
     for (const DhChainJoint& j : chain.joints) {
         const rw::math::Transform3D<double> step =
             refStep(j.dh.thetaOffset, 0.0, j.dh.d, j.dh.a, j.dh.alpha);
         refStepT.push_back(step);
-        acc = refTransformMul(acc, step);
-        refAccum.push_back(acc);
     }
 
     std::vector<core::DiagnosticRecord> diags;
@@ -261,13 +256,10 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
         // origin＝当前步相对变换 T_parent_joint（非累积值——core.md §4.6）。
         expectPoseNear(e.origin.value(), refStepT[i], 1e-12,
                        (std::string("joints[") + std::to_string(i) + "] origin").c_str());
-        // axis＝归一化 T_{0,i}·(0,0,1)（§7.4 z_i 原文）。
-        const rw::math::Rotation3D<double>& r = refAccum[i].R();
-        const rw::math::Vector3D<double> zRaw(r(0, 2), r(1, 2), r(2, 2));
-        const double zNorm = zRaw.norm2();
+        // axis＝Rx(−α)·ez（关节系内方向——F-591；解析元素 (0,sinα,cosα)）。
         expectVecNear(e.axis.value(),
-                      rw::math::Vector3D<double>(zRaw[0] / zNorm, zRaw[1] / zNorm,
-                                                 zRaw[2] / zNorm),
+                      rw::math::Vector3D<double>(0.0, std::sin(chain.joints[i].dh.alpha),
+                                                 std::cos(chain.joints[i].dh.alpha)),
                       1e-12,
                       (std::string("joints[") + std::to_string(i) + "] axis").c_str());
         EXPECT_NEAR(e.axis.value().norm2(), 1.0, 1e-12) << "axis 须为单位向量（@post）";

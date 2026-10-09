@@ -269,7 +269,9 @@ rw::math::Vector3D<double> normalized(const rw::math::Vector3D<double>& v)
     return rw::math::Vector3D<double>(v[0] / n, v[1] / n, v[2] / n);
 }
 
-/// 累乘链帧的 z 轴方向（§7.4"轴线 z_i＝T_{0,i}·(0,0,1)"，归一化输出）。
+/// 累乘链帧的世界系 z 轴方向（归一化输出）——F-591 后仅作求解目标面使用
+/// （显式链累积帧的世界 z_i 与 DH 重建 z_i 的残差/偏差对照）；展开产物的
+/// axis 字段不再是该值（axis 输出＝关节系内方向 Rx(−α)·ez，见 expandDhChain）。
 rw::math::Vector3D<double> zAxisOf(const rw::math::Transform3D<double>& t)
 {
     const rw::math::Rotation3D<double>& r = t.R();
@@ -967,15 +969,24 @@ ExpandOutcome expandDhChain(const DhChain& chain)
         // 本身仍按"两态均权威"原样透传（限位平移等消费方依赖）。
         const rw::math::Transform3D<double> step = dhStepTransform(
             joint.dh.thetaOffset, joint.dh.d, joint.dh.a, joint.dh.alpha);
-        acc = transformMul(acc, step);  // T_{0,i}（基座→关节 i 累积——z_i 的载体）
-        // 步③ 产物装配：axis=归一化 z_i（§9.4.7 @post 单位向量）；origin=
-        // 当前步相对变换（T_parent_joint——core.md §4.6 读法）。
+        acc = transformMul(acc, step);  // T_{0,i}（基座→关节 i 累积——origin 载体）
+        // 步③ 产物装配：origin=当前步相对变换（T_parent_joint——core.md §4.6
+        // 读法）；axis=关节系内方向的关节轴（audit F-591——见下）。
         JointEntry entry;
         entry.objectId = joint.objectId;
         entry.localName = joint.localName;
         entry.type = joint.type;
+        // axis＝Rx(−α)·ez（关节系内方向——audit F-591 修复）：关节 i 的物理
+        // 旋转轴是 DH 的 z_{i−1}（父帧 z），它在关节帧 i（步进旋转
+        // Rz(θ)Rx(α) 之后）内的坐标＝Rx(−α)·ez。runtime 按"关节系内方向"
+        // 消费（世界轴向＝origin.R·axis＝R_{0,i−1}·ez＝真实 DH 关节轴）。
+        // 原实现输出 z_i＝T_{0,i}·ez（帧 i 的 z——α≠0 时与 z_{i−1} 差一个
+        // Rx(α) 扭转），被 runtime 按关节系方向解读后物理轴错误（α≠0 链
+        // 工业常态）。解析元素：Rx(−α)·ez＝(0, sinα, cosα)（Rx 不动 x 分量
+        // ——归一化为防御性，数学上恒为单位向量）。
         entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
-            zAxisOf(acc),
+            normalized(rw::math::Vector3D<double>(
+                0.0, std::sin(joint.dh.alpha), std::cos(joint.dh.alpha))),
             core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
                                         std::nullopt, std::nullopt,
                                         std::string("dh-to-explicit")));

@@ -70,8 +70,8 @@
     },
     {
       "path": "expected/expansion.json",
-      "sha256": "e480952dd5113bcb395325c867b8f0560b9ee7b855127c7d23f1b954083457d1",
-      "sizeBytes": 10156
+      "sha256": "a654c0d681e2a0b1d51597582a67d63276ec531b143b8c17b8e507f81e3ae244",
+      "sizeBytes": 9957
     },
     {
       "path": "expected/roundtrip.json",
@@ -80,8 +80,8 @@
     },
     {
       "path": "generate/make_dh_equivalence.mjs",
-      "sha256": "7733def2d96574240485627f67b57591b71f39b3a568fdab308a888f386703f9",
-      "sizeBytes": 6011
+      "sha256": "4f3b130e4303a8390375241e7016cbe579d79fac630a3981b9bc7ada96a71971",
+      "sizeBytes": 6076
     }
   ],
   "generator": {
@@ -101,6 +101,13 @@
       "version": "1.0.0",
       "date": "2026-10-09",
       "change": "audit F-590 重制（分支 audit-p2-fixes）：展开闭式期望按 §7.4 v0.42 零位烘焙纪律重制——Rot_z(theta)（zeroOffset 不入几何/不入累计轴），generate 脚本与 expected/expansion.json 同步重生成（roundtrip 期望不变——重解面输入即期望）；manifest 完整性哈希随文件更新",
+      "reReviewedBy": "audit-p2-fixes 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "audit F-591 重制（分支 audit-p2-fixes）：展开轴期望改为关节系内方向 Rx(−α)·ez=(0,sinα,cosα)（原 R_{0,i}·ez 为基座系子帧 z——α≠0 链被 runtime 按关节系方向误读），generate 脚本与 expected/expansion.json 同步重生成（origin/roundtrip 期望不变）；manifest 完整性哈希随文件更新",
       "reReviewedBy": "audit-p2-fixes 实施会话（验收段独立复核待验收者留痕）",
       "supersededBy": ""
     }
