@@ -1,0 +1,300 @@
+{
+  "dataset": "opt-pareto-golden@1.0.0",
+  "contract": "units/optimization.md §7.4/§7.5 Pareto 非支配与不可行不入可行集黄金面（WP-20-T11，AT-09）",
+  "config": {
+    "schemaVersion": 1,
+    "stage": "stage-b",
+    "seed": 90210,
+    "strategyId": "opt.strategy.seeded-lhs",
+    "budget": {
+      "maxCandidates": 9,
+      "maxVerifiedCandidates": 6,
+      "maxGenerations": 1
+    }
+  },
+  "variables": [
+    {
+      "bindingId": "mdl.joint[2].dh.a",
+      "kind": "continuous",
+      "unit": "m",
+      "lowerBound": 0.2,
+      "upperBound": 0.8,
+      "step": 0,
+      "enumValues": [],
+      "defaultValue": 0.5,
+      "defaultValueIndex": 0,
+      "locked": false,
+      "authorized": true,
+      "authorityFieldPath": "robot-design/joints[2]/dh/a",
+      "diagSubject": "obj-000000000000000000000000000000b2"
+    },
+    {
+      "bindingId": "mdl.joint[3].dh.a",
+      "kind": "continuous",
+      "unit": "m",
+      "lowerBound": 0.15,
+      "upperBound": 0.65,
+      "step": 0,
+      "enumValues": [],
+      "defaultValue": 0.4,
+      "defaultValueIndex": 0,
+      "locked": false,
+      "authorized": true,
+      "authorityFieldPath": "robot-design/joints[3]/dh/a",
+      "diagSubject": "obj-000000000000000000000000000000b3"
+    }
+  ],
+  "dimensionOrder": [
+    "mdl.joint[2].dh.a",
+    "mdl.joint[3].dh.a"
+  ],
+  "baseline": {
+    "objectOid": "obj-000000000000000000000000000000b1",
+    "contentVersion": "cv-00000000000000000000000000000000000000000000000000000000000000be",
+    "label": "baseline"
+  },
+  "jointLimits": {
+    "qminRad": -1,
+    "qmaxRad": 1
+  },
+  "candidateFacts": [
+    {
+      "key": "baseline",
+      "kind": "feasible",
+      "envelope": {
+        "xMin": -0.5,
+        "xMax": 0.5,
+        "yMin": -0.5,
+        "yMax": 0.5,
+        "zMin": 0,
+        "zMax": 0.5
+      },
+      "linkMassesKg": [
+        5.5,
+        6.5
+      ],
+      "margins": [
+        0.31,
+        0.44
+      ],
+      "jointSampleRad": 0
+    },
+    {
+      "key": "c1",
+      "kind": "feasible",
+      "envelope": {
+        "xMin": -0.5,
+        "xMax": 0.5,
+        "yMin": -0.5,
+        "yMax": 0.5,
+        "zMin": 0,
+        "zMax": 0.4
+      },
+      "linkMassesKg": [
+        5,
+        6
+      ],
+      "margins": [
+        0.35,
+        0.47
+      ],
+      "jointSampleRad": 0
+    },
+    {
+      "key": "c2",
+      "kind": "feasible",
+      "envelope": {
+        "xMin": -0.5,
+        "xMax": 0.5,
+        "yMin": -0.5,
+        "yMax": 0.5,
+        "zMin": 0,
+        "zMax": 0.4
+      },
+      "linkMassesKg": [
+        4.5,
+        5.5
+      ],
+      "margins": [
+        0.3,
+        0.52
+      ],
+      "jointSampleRad": 0
+    },
+    {
+      "key": "c3",
+      "kind": "feasible",
+      "envelope": {
+        "xMin": -0.5,
+        "xMax": 0.5,
+        "yMin": -0.3,
+        "yMax": 0.3,
+        "zMin": 0,
+        "zMax": 0.4
+      },
+      "linkMassesKg": [
+        5.25,
+        5.25
+      ],
+      "margins": [
+        0.28,
+        0.39
+      ],
+      "jointSampleRad": 0
+    },
+    {
+      "key": "c4",
+      "kind": "feasible",
+      "envelope": {
+        "xMin": -0.4,
+        "xMax": 0.4,
+        "yMin": -0.4,
+        "yMax": 0.4,
+        "zMin": 0,
+        "zMax": 0.2
+      },
+      "linkMassesKg": [
+        6,
+        6
+      ],
+      "margins": [
+        0.4,
+        0.55
+      ],
+      "jointSampleRad": 0
+    },
+    {
+      "key": "c5",
+      "kind": "feasible",
+      "envelope": {
+        "xMin": -0.7,
+        "xMax": 0.7,
+        "yMin": -0.5,
+        "yMax": 0.5,
+        "zMin": 0,
+        "zMax": 0.5
+      },
+      "linkMassesKg": [
+        6.25,
+        6.25
+      ],
+      "margins": [
+        0.29,
+        0.36
+      ],
+      "jointSampleRad": 0
+    },
+    {
+      "key": "v1",
+      "kind": "limit-violation",
+      "envelope": {
+        "xMin": -0.6,
+        "xMax": 0.6,
+        "yMin": -0.6,
+        "yMax": 0.6,
+        "zMin": 0,
+        "zMax": 0.6
+      },
+      "linkMassesKg": [
+        5,
+        5
+      ],
+      "margins": [
+        0.33,
+        0.41
+      ],
+      "jointSampleRad": 3
+    },
+    {
+      "key": "v2",
+      "kind": "limit-violation",
+      "envelope": {
+        "xMin": -0.55,
+        "xMax": 0.55,
+        "yMin": -0.55,
+        "yMax": 0.55,
+        "zMin": 0,
+        "zMax": 0.55
+      },
+      "linkMassesKg": [
+        5.1,
+        5.1
+      ],
+      "margins": [
+        0.32,
+        0.43
+      ],
+      "jointSampleRad": -2.5
+    },
+    {
+      "key": "m1",
+      "kind": "margin-missing",
+      "envelope": {
+        "xMin": -0.45,
+        "xMax": 0.45,
+        "yMin": -0.45,
+        "yMax": 0.45,
+        "zMin": 0,
+        "zMax": 0.45
+      },
+      "linkMassesKg": [
+        4.8,
+        4.8
+      ],
+      "margins": [],
+      "jointSampleRad": 0
+    }
+  ],
+  "objectivesZeroTolerance": [
+    {
+      "metricId": "opt.metric.envelope",
+      "direction": "min",
+      "tolerance": {
+        "relative": 0,
+        "absolute": 0
+      }
+    },
+    {
+      "metricId": "opt.metric.structural-mass",
+      "direction": "min",
+      "tolerance": {
+        "relative": 0,
+        "absolute": 0
+      }
+    },
+    {
+      "metricId": "opt.metric.min-joint-margin",
+      "direction": "max",
+      "tolerance": {
+        "relative": 0,
+        "absolute": 0
+      }
+    }
+  ],
+  "objectivesExplicitTolerance": [
+    {
+      "metricId": "opt.metric.envelope",
+      "direction": "min",
+      "tolerance": {
+        "relative": 0,
+        "absolute": 0.25
+      }
+    },
+    {
+      "metricId": "opt.metric.structural-mass",
+      "direction": "min",
+      "tolerance": {
+        "relative": 0,
+        "absolute": 0
+      }
+    },
+    {
+      "metricId": "opt.metric.min-joint-margin",
+      "direction": "max",
+      "tolerance": {
+        "relative": 0,
+        "absolute": 0.05
+      }
+    }
+  ]
+}

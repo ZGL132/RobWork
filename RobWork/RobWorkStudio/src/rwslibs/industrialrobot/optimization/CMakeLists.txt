@@ -344,7 +344,13 @@ add_executable(sdurws_ird_optimization_test
     # Gui 十组——就绪投影/变量表/约束页/取消协作与进度漏斗〔AT-34〕/
     # 候选表与对比/阶段锁横幅/文案守卫/装配登记面/GUI envUnavailable；
     # acceptance 1/2 的执行证明面）：
-    test/OptPluginPanelTest.cpp)
+    test/OptPluginPanelTest.cpp
+    # WP-20-T11 增列——黄金数据集消费套件（OptGoldenLhs/Pareto/Adopt 三组
+    # ——同种子确定性复算批与身份链黄金对照＋红实验两则＋编排终态黄金
+    # 〔不可行不入可行集/审计计数/指标档案容差〕＋Pareto 集合等价经
+    # SetMatchTraits 域侧特化＋显式容差支配翻转＋采用守卫两步语义与基线
+    # 字节不变——acceptance 1/3，OPT-VER-122/130/132/143~145 黄金面）：
+    test/OptGoldenDatasetTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -454,7 +460,13 @@ add_executable(sdurws_ird_optimization_contract_test
     # WP-20-T09 增列——导出面契约：三元组阻断跨单元语义（RP-CUR-2 同源）/
     # P-RPT-1 注入形态源码扫描（零自有转义/零自有 canonical/零 fstream）/
     # 审计口径 G-1 头注与实现一致性扫描（acceptance 2/3）：
-    contract_test/ExportContractTest.cpp)
+    contract_test/ExportContractTest.cpp
+    # WP-20-T11 增列——黄金数据集登记契约：三数据集 load 全量校验构造性
+    # 证明＋integrity 覆盖关系＋容差档案通道与保守纪律（不含支配容差语义
+    # ——P-OPT-5 分界）＋数据根布局＋黄金状态词表与 CandidateStatus token
+    # 词形一致＋SetMatchTraits 域侧特化通道直证（acceptance 2；selection
+    # SelGoldenDatasetContractTest 同款形态）：
+    contract_test/OptGoldenDatasetContractTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_contract_test PROPERTIES

@@ -1,0 +1,430 @@
+{
+  "dataset": "opt-lhs-golden@1.0.0",
+  "contract": "§8.2 冻结算法独立复算批（batch 序＝生成序：基线恒批首＋cand-<i>）——patchId 为 §5.5 canonical 字节 SHA-256（node crypto 独立计算）",
+  "seed": 424242,
+  "dimensionOrder": [
+    "mdl.joint[2].dh.a",
+    "mdl.joint[3].dh.d",
+    "mdl.link[4].material",
+    "mdl.link[4].section.size"
+  ],
+  "layerTable": [
+    {
+      "bindingId": "mdl.joint[2].dh.a",
+      "layers": [
+        10,
+        2,
+        3,
+        0,
+        6,
+        9,
+        4,
+        11,
+        8,
+        1,
+        5,
+        7
+      ]
+    },
+    {
+      "bindingId": "mdl.joint[3].dh.d",
+      "layers": [
+        10,
+        4,
+        1,
+        0,
+        7,
+        6,
+        8,
+        2,
+        11,
+        3,
+        9,
+        5
+      ]
+    },
+    {
+      "bindingId": "mdl.link[4].material",
+      "layers": [
+        2,
+        4,
+        11,
+        3,
+        0,
+        10,
+        9,
+        1,
+        6,
+        7,
+        5,
+        8
+      ]
+    },
+    {
+      "bindingId": "mdl.link[4].section.size",
+      "layers": [
+        7,
+        6,
+        0,
+        2,
+        11,
+        5,
+        1,
+        10,
+        9,
+        4,
+        3,
+        8
+      ]
+    }
+  ],
+  "batch": [
+    {
+      "label": "baseline",
+      "isBaseline": true,
+      "patchId": "cid-703247783b5307c83479c5907b121f2e51e33380fbae535de464912b32d94b90",
+      "items": []
+    },
+    {
+      "label": "cand-0",
+      "isBaseline": false,
+      "patchId": "cid-07204cb49f1405853ea90bfd992b9b4480062f23163556b64003b3305e1e2c5c",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.7470700139352726
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0.05
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 0,
+          "enumValue": "steel"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.18802280192952295
+        }
+      ]
+    },
+    {
+      "label": "cand-1",
+      "isBaseline": false,
+      "patchId": "cid-80b879cb00acd6de1f540b4df9016263b7307802e3d1ec8f039508245f34cb31",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.3136727745041109
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 4,
+          "enumValue": "engineering-plastic"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.16457018205544394
+        }
+      ]
+    },
+    {
+      "label": "cand-2",
+      "isBaseline": false,
+      "patchId": "cid-3e1d6c4338cda14cb9f93a8bbbaae4acd4c70f53724d4aec4e04617d05844f90",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.37170518193530777
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": -0.05
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 0,
+          "enumValue": "steel"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.03843064434660853
+        }
+      ]
+    },
+    {
+      "label": "cand-3",
+      "isBaseline": false,
+      "patchId": "cid-aae69205fd557544f545e50ca7bb695422cbbf3a4056878d9334ad509b867339",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.23233357987601116
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": -0.05
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 3,
+          "enumValue": "titanium-alloy"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.07237412137038635
+        }
+      ]
+    },
+    {
+      "label": "cand-4",
+      "isBaseline": false,
+      "patchId": "cid-a7334ccee7896d9caa23358e1c5959ed6ae740a5bd0acb76544cd195bc52cce9",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.5410618401580327
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 0,
+          "enumValue": "steel"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.2896315503870504
+        }
+      ]
+    },
+    {
+      "label": "cand-5",
+      "isBaseline": false,
+      "patchId": "cid-66ce687af01cbc868f7d6187ac27bf5ef9bc55f2a44ccc69754b91792f4b23a8",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.683727041925895
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 3,
+          "enumValue": "titanium-alloy"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.14085012673320976
+        }
+      ]
+    },
+    {
+      "label": "cand-6",
+      "isBaseline": false,
+      "patchId": "cid-9b9c9511a4e32770fc58eebc123c2c983512c65fda068f584897869f6ccdf172",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.4480018721148703
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 4,
+          "enumValue": "engineering-plastic"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.04721364803834541
+        }
+      ]
+    },
+    {
+      "label": "cand-7",
+      "isBaseline": false,
+      "patchId": "cid-bc8596a5cc3c2f7d0de8166e8148ed95fb575821f0eda33958443ec8c22a7ef8",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.7960911323571287
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": -0.05
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 1,
+          "enumValue": "aluminum"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.26182895063571093
+        }
+      ]
+    },
+    {
+      "label": "cand-8",
+      "isBaseline": false,
+      "patchId": "cid-952fabe2768731a20504730ef331eca89fe6273cb14602adc92a58bd3274ce83",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.6480586966126125
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0.05
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 0,
+          "enumValue": "steel"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.2311909211516092
+        }
+      ]
+    },
+    {
+      "label": "cand-9",
+      "isBaseline": false,
+      "patchId": "cid-eca787590827ee013e3201f47bcb930568bc6339f8275d11c2d7ac86825acd27",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.29119869392649855
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 2,
+          "enumValue": "cast-iron"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.13614363679111008
+        }
+      ]
+    },
+    {
+      "label": "cand-10",
+      "isBaseline": false,
+      "patchId": "cid-8173a2548ace080be8ff958323749af77beb5bb14d23d6f1fb8d8f25428e03a8",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.4543957933962654
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0.05
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 3,
+          "enumValue": "titanium-alloy"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.09917411778675565
+        }
+      ]
+    },
+    {
+      "label": "cand-11",
+      "isBaseline": false,
+      "patchId": "cid-2c68e450bb62114b9cef22ca1415d29e88013ab2ad2542a87b9c02bf0d1092a7",
+      "items": [
+        {
+          "bindingId": "mdl.joint[2].dh.a",
+          "kind": "continuous",
+          "scalarValue": 0.5998361234030104
+        },
+        {
+          "bindingId": "mdl.joint[3].dh.d",
+          "kind": "quantized",
+          "scalarValue": 0
+        },
+        {
+          "bindingId": "mdl.link[4].material",
+          "kind": "enumeration",
+          "enumIndex": 2,
+          "enumValue": "cast-iron"
+        },
+        {
+          "bindingId": "mdl.link[4].section.size",
+          "kind": "continuous",
+          "scalarValue": 0.21604130522384404
+        }
+      ]
+    }
+  ],
+  "audit": {
+    "candidatesGenerated": 13,
+    "nonBaselineCount": 12,
+    "samplingDimensionCount": 4
+  }
+}

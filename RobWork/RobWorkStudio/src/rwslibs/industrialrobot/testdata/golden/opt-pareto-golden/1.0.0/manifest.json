@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "opt-pareto-golden",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "optimization/pareto-golden",
+  "coveredRequirements": [
+    "OPT-03",
+    "OPT-04",
+    "OPT-06",
+    "OPT-07",
+    "CON-05",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-09"
+  ],
+  "toleranceProfile": {
+    "id": "opt-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/pareto-inputs.json"
+  ],
+  "expected": [
+    "expected/pareto-expected.json"
+  ],
+  "parameters": {
+    "contract": "optimization Pareto 非支配与不可行不入可行集黄金面——WP-20-T11 主数据载体之一。9 候选（基线＋8 采样：5 可行＋2 限位违例不可行＋1 裕量缺失数据不足）：期望状态按 §7.5 判定流/§7.4 编排执行点封闭推导，期望前沿由 generate 脚本按 §7.4 定义式独立复算（支配判定/NSGA 逐层/稳定排序三键——默认零容差集＋显式容差集双场景）。",
+    "entryFaces": {
+      "candidates": "expected/candidates[*]——逐候选 patchId/candidateId（§4.2/§5.5 SHA-256 身份链独立复算：CandidateId＝SHA-256(基线根对象 16B‖内容版本 32B‖补丁身份 32B)）＋expectedStatus＋三项静态指标黄金值（§7.1 行 1~3 封闭换算：包络＝AABB 三向尺寸和/质量＝Σ/裕量＝min；缺失为 null——不按 0 合成）",
+      "run": "expected/run——编排终态黄金（可行集/非支配集/稳定序 entries〔rank＋paretoNondominated＋isBaseline〕/审计计数——零筛选设计：Quick-Feasible 6 ≤ maxVerifiedCandidates 6，幸存集＝全部 Quick-Feasible）",
+      "explicitToleranceScenario": "expected/explicitToleranceScenario——显式配置容差（包络 ε_abs 0.25/裕量 ε_abs 0.05，声明序不变）下的前沿复算＋支配关系翻转记录（gained/lost——容差只进支配判定不进排序键；零容差默认面由 run 承载对照）"
+    },
+    "consumptionDiscipline": "消费测试经两级编排器公共接口（TwoStageEvaluationOrchestrator.run）与 Pareto 构建接口（IParetoFrontBuilder.buildFront）驱动；不可行/数据不足候选的集合排除断言（OPT-VER-122 黄金面）；Pareto 集断言经 testkit SetMatchTraits 域侧特化（testkit 零 Pareto 逻辑——§5.4 业务规则归域红线）"
+  },
+  "units": {
+    "length": "m",
+    "mass": "kg",
+    "dimensionless": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "包络几何为基座系 {B} AABB（§7.1 行 1 暂定口径——P-OPT-5 登记中）；质量/裕量为标量（裕量 D-KIN-2 归一化无量纲承载值）"
+  },
+  "referenceSource": {
+    "method": "independent-program",
+    "scope": "§7.4 支配定义两式（含 core::closeWithin C4 公式逐元素展开）＋NSGA 逐层非支配分层＋稳定排序三键＋§7.5/§7.4 候选状态封闭推导＋§7.1 三项静态指标封闭换算＋§4.2 身份链",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_opt_pareto_golden.mjs——支配判定/分层/排序/指标换算直写冻结公式，SHA-256 身份链经 node crypto；与产品 Pareto.cpp/Objective.cpp/Run.cpp 零共享代码）推导"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.x",
+    "algorithmId": "opt-pareto-golden-nsga-closed-form",
+    "solverConfig": {
+      "dominance": "∀i 不劣于（min: a≤b∨closeWithin；max: a≥b∨closeWithin）∧∃j 严格优于（差异超容差）",
+      "layering": "剩余集内互不支配者为当前层（与产品 buildFront 第 3 步同构）",
+      "stableOrder": "rank 升序→声明序目标严格字典序（无容差）→CandidateId 字典序终键"
+    },
+    "seed": 90210,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "inputs/candidateFacts[baseline/v1 除外各可行行].jointSampleRad＝0.0（零值合法构型——限位区间中点零值面）",
+      "expected/explicitToleranceScenario——c1/c2 裕量近差 0.05 恰在显式容差 ε_abs 0.05 边界（closeWithin 含等号——近零差支配翻转主角：cnd-c2693a34…→cnd-d33630a8… gained 首记录）",
+      "inputs/candidateFacts[v1].jointSampleRad＝+3.0 与 [v2].jointSampleRad＝−2.5（限位 ±1 rad 双向出界——正负抵消的 Must 违例面，状态均 Infeasible 不入可行集）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/pareto-inputs.json",
+      "sha256": "afa780c82b9da053f6d750e562409f2f068ecfb3605d08351e41d603a71046d7",
+      "sizeBytes": 5809
+    },
+    {
+      "path": "expected/pareto-expected.json",
+      "sha256": "4daa3ede7ec734717725688ce13ef7465eb2b764182f5d95fa7268b26f2fd352",
+      "sizeBytes": 8791
+    },
+    {
+      "path": "generate/make_opt_pareto_golden.mjs",
+      "sha256": "df5970b8ab0ae2001ef537e7955a852ecb4fa1543e8cee91bc7fc88ec5fff932",
+      "sizeBytes": 21535
+    }
+  ],
+  "generator": {
+    "script": "generate/make_opt_pareto_golden.mjs",
+    "invocation": "node generate/make_opt_pareto_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "首版：Pareto 非支配与不可行不入可行集黄金（9 候选三状态×两套目标集——身份链/编排终态/显式容差翻转独立复算——AT-09 黄金面）——WP-20-T11 交付物",
+      "reReviewedBy": "WP-20-T11 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

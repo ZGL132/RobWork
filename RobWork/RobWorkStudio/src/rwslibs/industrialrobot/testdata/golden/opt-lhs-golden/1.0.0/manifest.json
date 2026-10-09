@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "opt-lhs-golden",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "optimization/lhs-golden",
+  "coveredRequirements": [
+    "OPT-01",
+    "OPT-02",
+    "OPT-06",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-09"
+  ],
+  "toleranceProfile": {
+    "id": "opt-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/lhs-inputs.json"
+  ],
+  "expected": [
+    "expected/lhs-expected.json"
+  ],
+  "parameters": {
+    "contract": "optimization 确定性候选生成（opt.strategy.seeded-lhs）同种子确定性黄金面——WP-20-T11 主数据载体之一。四变量（连续×2＋量化×1＋枚举×1）×13 候选（基线恒批首＋cand-0..cand-11）：期望批由 generate 脚本按 units/optimization.md §8.2 冻结算法独立复算（自持 splitmix64 黄金常数＋Fisher-Yates 层置换＋层内均匀点＋量化域收缩与 round-half-even 对齐），与产品 C++ 实现零共享代码。",
+    "entryFaces": {
+      "batch": "expected/batch[*]——逐候选补丁项（bindingId/kind/scalarValue 或 enumIndex）；消费测试经 generateSeededLhsCandidates 公共接口复算同批后按集合等价＋稳定序对照（testkit SetMatchTraits 域侧特化——值经容差档案）",
+      "patchId": "expected/batch[*].patchId——补丁 canonical 字节（magic IRDOPTP1＋codecVersion 1＋字典序项编码）的 SHA-256 十六进制（node crypto 独立计算）；消费测试经 patchIdentity 公共接口对照",
+      "layerTable": "expected/layerTable——每维度 n 层层序置换（Fisher-Yates 消费序诊断面——拉丁超立方正交性的独立可核对记录）",
+      "audit": "expected/audit——生成面审计口径（candidatesGenerated/nonBaselineCount/samplingDimensionCount）"
+    },
+    "determinism": "同种子（424242）同配置双跑逐字节同批（I-OPT-3/NFR-COR-02——PRNG 自持不依赖 STL/libc；消费测试另以编排器双跑等价集合与稳定排序佐证 AT-09~11）"
+  },
+  "units": {
+    "length": "m",
+    "dimensionless": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "本数据集全部为变量绑定标量值（SI 真值——DH 长度/偏置 m、材料枚举键非几何量）；无位姿/无世界系量——base 声明为上游序列约定归属，不参与任何数值"
+  },
+  "referenceSource": {
+    "method": "independent-program",
+    "scope": "§8.2 冻结采样算法全量复算（splitmix64 产出序/Fisher-Yates 层置换/层内均匀点/量化域收缩与 round-half-even 对齐/枚举下标钳制）＋§5.5 补丁 canonical 编码与 SHA-256 身份",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_opt_lhs_golden.mjs——BigInt 精确 64 位无符号环绕运算复刻 splitmix64 黄金常数语义，Buffer 逐字节复刻补丁 canonical 编码；与产品 EvaluatorPorts.cpp/CandidatePatch.cpp 零共享代码）推导"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.x",
+    "algorithmId": "opt-lhs-golden-splitmix64-lhs",
+    "solverConfig": {
+      "splitmix64Constants": [
+        "0x9E3779B97F4A7C15",
+        "0xBF58476D1CE4E5B9",
+        "0x94D049BB133111EB"
+      ],
+      "unitMapping": "u64>>11 × 2^-53（53 位尾数无损）",
+      "quantize": "round-half-even（k=value/step 最近整数格，恰半格取偶）"
+    },
+    "seed": 424242,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/batch[cand-1].items[mdl.joint[3].dh.d].scalarValue＝0.0（量化网格恰含零点——对齐后零值合法面）",
+      "expected/batch[cand-0]/batch[cand-2].items[mdl.joint[3].dh.d].scalarValue＝±0.05（近零值＋同维度正负两侧——量化步长 0.05 网格）",
+      "expected/batch[cand-1].items[mdl.link[4].material].enumIndex＝4（枚举值域末位下标——钳制边界的可达面）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/lhs-inputs.json",
+      "sha256": "d9dfc1f89b0fb5776434c81728ca02b3aed07570fa77b2e5b633c7723b24fb7e",
+      "sizeBytes": 2346
+    },
+    {
+      "path": "expected/lhs-expected.json",
+      "sha256": "4e92811b320b97ff0d19d862be945fd1ec91d1ab464fd646afd7687af5ec323c",
+      "sizeBytes": 10635
+    },
+    {
+      "path": "generate/make_opt_lhs_golden.mjs",
+      "sha256": "43b63d1005567bb2a806a14ad879f7a87589d8114f15698073eabe86ecf8c434",
+      "sizeBytes": 14909
+    }
+  ],
+  "generator": {
+    "script": "generate/make_opt_lhs_golden.mjs",
+    "invocation": "node generate/make_opt_lhs_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "首版：确定性候选生成黄金（四变量三类别×13 候选——基线恒批首＋splitmix64/Fisher-Yates/量化对齐独立复算＋补丁身份链——AT-09 同种子确定性黄金面）——WP-20-T11 交付物",
+      "reReviewedBy": "WP-20-T11 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

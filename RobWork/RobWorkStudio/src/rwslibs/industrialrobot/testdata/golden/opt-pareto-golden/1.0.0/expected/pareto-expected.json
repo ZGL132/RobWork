@@ -1,0 +1,247 @@
+{
+  "dataset": "opt-pareto-golden@1.0.0",
+  "contract": "状态＝§7.5/§7.4 封闭推导；前沿＝§7.4 定义式独立复算（node——与产品零共享代码）；身份链＝§4.2/§5.5 SHA-256 独立复算",
+  "candidates": [
+    {
+      "index": -1,
+      "label": "baseline",
+      "factKey": "baseline",
+      "isBaseline": true,
+      "patchId": "cid-703247783b5307c83479c5907b121f2e51e33380fbae535de464912b32d94b90",
+      "candidateId": "cnd-b6af9bea1ab2c66b911a23eb68b67ddbcdcfca1f63dc53166a527e38bd6d8136",
+      "expectedStatus": "feasible",
+      "metrics": {
+        "envelope": 2.5,
+        "structuralMass": 12,
+        "minJointMargin": 0.31
+      }
+    },
+    {
+      "index": 0,
+      "label": "cand-0",
+      "factKey": "c1",
+      "isBaseline": false,
+      "patchId": "cid-e03658b23392f705f7a0f8da01ad5286389193cf274afdf32c9fe221c7c6f63a",
+      "candidateId": "cnd-d33630a8e9b65be3cbcde86d5fc5d5165b9823b27108ce8ef4feea9b44e9d9c4",
+      "expectedStatus": "feasible",
+      "metrics": {
+        "envelope": 2.4,
+        "structuralMass": 11,
+        "minJointMargin": 0.35
+      }
+    },
+    {
+      "index": 1,
+      "label": "cand-1",
+      "factKey": "c2",
+      "isBaseline": false,
+      "patchId": "cid-c91effee7a91c368d8537a379702172627431a053dd67ceeefa27c8cc4bb6f6f",
+      "candidateId": "cnd-c2693a34f2cd63c97ee7ca62747ddebe7311a3659b2f8670a4174004b9b92653",
+      "expectedStatus": "feasible",
+      "metrics": {
+        "envelope": 2.4,
+        "structuralMass": 10,
+        "minJointMargin": 0.3
+      }
+    },
+    {
+      "index": 2,
+      "label": "cand-2",
+      "factKey": "c3",
+      "isBaseline": false,
+      "patchId": "cid-68232d68910864aea74c32626591d74c98632da053e0551a39fe33bf90ce0376",
+      "candidateId": "cnd-111b2c44fd4636ab9bef14aadedcce24a1d2dfda3c9b0bed059ca5b2050f528f",
+      "expectedStatus": "feasible",
+      "metrics": {
+        "envelope": 2,
+        "structuralMass": 10.5,
+        "minJointMargin": 0.28
+      }
+    },
+    {
+      "index": 3,
+      "label": "cand-3",
+      "factKey": "c4",
+      "isBaseline": false,
+      "patchId": "cid-dfa0dcf4697fc302c2af8fccdce0d28f268d9eb79d7fa7eb7b96456939692d91",
+      "candidateId": "cnd-b019a00b7c7b5c45a0dc17d982e1cf45ac8e49a72a63be71c73c5d64c6a6a1fe",
+      "expectedStatus": "feasible",
+      "metrics": {
+        "envelope": 1.8,
+        "structuralMass": 12,
+        "minJointMargin": 0.4
+      }
+    },
+    {
+      "index": 4,
+      "label": "cand-4",
+      "factKey": "c5",
+      "isBaseline": false,
+      "patchId": "cid-c0d0e28f2a905e9a4644e78ee263d2003dab877f1a3187e3746a2d1f0ba7ca51",
+      "candidateId": "cnd-b98ca92bc4a51f1caea8666e46075f112717661b6957ed3e52fea2ce2beec0d0",
+      "expectedStatus": "feasible",
+      "metrics": {
+        "envelope": 2.9,
+        "structuralMass": 12.5,
+        "minJointMargin": 0.29
+      }
+    },
+    {
+      "index": 5,
+      "label": "cand-5",
+      "factKey": "v1",
+      "isBaseline": false,
+      "patchId": "cid-b3507cf6cdb9e9e9675088d8ba4d8dcdb67273d4506b6bb20375c37a16b2c7cb",
+      "candidateId": "cnd-896f862a48f5b32e4e8c99fae8e03358b016dbcc28f9136a463896b57b086260",
+      "expectedStatus": "infeasible",
+      "metrics": {
+        "envelope": 3,
+        "structuralMass": 10,
+        "minJointMargin": 0.33
+      }
+    },
+    {
+      "index": 6,
+      "label": "cand-6",
+      "factKey": "v2",
+      "isBaseline": false,
+      "patchId": "cid-f8dc2a723bcf22f8199a9ce818bdb123d49c9bb7e5ebba102b9b98726ca42757",
+      "candidateId": "cnd-1886ea5db52bda3c65a8aba2d475989be1c697dae94dd6247b98e145f6fbd440",
+      "expectedStatus": "infeasible",
+      "metrics": {
+        "envelope": 2.75,
+        "structuralMass": 10.2,
+        "minJointMargin": 0.32
+      }
+    },
+    {
+      "index": 7,
+      "label": "cand-7",
+      "factKey": "m1",
+      "isBaseline": false,
+      "patchId": "cid-037fc12ec56d8c0449d49710cca1efb4c5fb7cb149b49b86625a64584513c25f",
+      "candidateId": "cnd-5347787d98b13d5b090eafe81170ecfebdbe2cfa61d063537f767f6ca8e39825",
+      "expectedStatus": "data-insufficient",
+      "metrics": {
+        "envelope": 2.25,
+        "structuralMass": 9.6,
+        "minJointMargin": null
+      }
+    }
+  ],
+  "audit": {
+    "candidatesGenerated": 9,
+    "quickEvaluated": 9,
+    "quickScreenedOut": 0,
+    "verifiedEvaluated": 6,
+    "cacheLookups": 0,
+    "duplicatesDropped": 0
+  },
+  "run": {
+    "feasibleIds": [
+      "cnd-b019a00b7c7b5c45a0dc17d982e1cf45ac8e49a72a63be71c73c5d64c6a6a1fe",
+      "cnd-111b2c44fd4636ab9bef14aadedcce24a1d2dfda3c9b0bed059ca5b2050f528f",
+      "cnd-c2693a34f2cd63c97ee7ca62747ddebe7311a3659b2f8670a4174004b9b92653",
+      "cnd-d33630a8e9b65be3cbcde86d5fc5d5165b9823b27108ce8ef4feea9b44e9d9c4",
+      "cnd-b6af9bea1ab2c66b911a23eb68b67ddbcdcfca1f63dc53166a527e38bd6d8136",
+      "cnd-b98ca92bc4a51f1caea8666e46075f112717661b6957ed3e52fea2ce2beec0d0"
+    ],
+    "nondominatedIds": [
+      "cnd-b019a00b7c7b5c45a0dc17d982e1cf45ac8e49a72a63be71c73c5d64c6a6a1fe",
+      "cnd-111b2c44fd4636ab9bef14aadedcce24a1d2dfda3c9b0bed059ca5b2050f528f",
+      "cnd-c2693a34f2cd63c97ee7ca62747ddebe7311a3659b2f8670a4174004b9b92653",
+      "cnd-d33630a8e9b65be3cbcde86d5fc5d5165b9823b27108ce8ef4feea9b44e9d9c4"
+    ],
+    "entries": [
+      {
+        "candidateId": "cnd-b019a00b7c7b5c45a0dc17d982e1cf45ac8e49a72a63be71c73c5d64c6a6a1fe",
+        "isBaseline": false,
+        "nondominationRank": 0,
+        "paretoNondominated": true
+      },
+      {
+        "candidateId": "cnd-111b2c44fd4636ab9bef14aadedcce24a1d2dfda3c9b0bed059ca5b2050f528f",
+        "isBaseline": false,
+        "nondominationRank": 0,
+        "paretoNondominated": true
+      },
+      {
+        "candidateId": "cnd-c2693a34f2cd63c97ee7ca62747ddebe7311a3659b2f8670a4174004b9b92653",
+        "isBaseline": false,
+        "nondominationRank": 0,
+        "paretoNondominated": true
+      },
+      {
+        "candidateId": "cnd-d33630a8e9b65be3cbcde86d5fc5d5165b9823b27108ce8ef4feea9b44e9d9c4",
+        "isBaseline": false,
+        "nondominationRank": 0,
+        "paretoNondominated": true
+      },
+      {
+        "candidateId": "cnd-b6af9bea1ab2c66b911a23eb68b67ddbcdcfca1f63dc53166a527e38bd6d8136",
+        "isBaseline": true,
+        "nondominationRank": 1,
+        "paretoNondominated": false
+      },
+      {
+        "candidateId": "cnd-b98ca92bc4a51f1caea8666e46075f112717661b6957ed3e52fea2ce2beec0d0",
+        "isBaseline": false,
+        "nondominationRank": 2,
+        "paretoNondominated": false
+      }
+    ],
+    "duplicatesDropped": 0
+  },
+  "explicitToleranceScenario": {
+    "entries": [
+      {
+        "candidateId": "cnd-b019a00b7c7b5c45a0dc17d982e1cf45ac8e49a72a63be71c73c5d64c6a6a1fe",
+        "isBaseline": false,
+        "nondominationRank": 0,
+        "paretoNondominated": true
+      },
+      {
+        "candidateId": "cnd-111b2c44fd4636ab9bef14aadedcce24a1d2dfda3c9b0bed059ca5b2050f528f",
+        "isBaseline": false,
+        "nondominationRank": 0,
+        "paretoNondominated": true
+      },
+      {
+        "candidateId": "cnd-c2693a34f2cd63c97ee7ca62747ddebe7311a3659b2f8670a4174004b9b92653",
+        "isBaseline": false,
+        "nondominationRank": 0,
+        "paretoNondominated": true
+      },
+      {
+        "candidateId": "cnd-d33630a8e9b65be3cbcde86d5fc5d5165b9823b27108ce8ef4feea9b44e9d9c4",
+        "isBaseline": false,
+        "nondominationRank": 1,
+        "paretoNondominated": false
+      },
+      {
+        "candidateId": "cnd-b6af9bea1ab2c66b911a23eb68b67ddbcdcfca1f63dc53166a527e38bd6d8136",
+        "isBaseline": true,
+        "nondominationRank": 2,
+        "paretoNondominated": false
+      },
+      {
+        "candidateId": "cnd-b98ca92bc4a51f1caea8666e46075f112717661b6957ed3e52fea2ce2beec0d0",
+        "isBaseline": false,
+        "nondominationRank": 3,
+        "paretoNondominated": false
+      }
+    ],
+    "nondominatedIds": [
+      "cnd-b019a00b7c7b5c45a0dc17d982e1cf45ac8e49a72a63be71c73c5d64c6a6a1fe",
+      "cnd-111b2c44fd4636ab9bef14aadedcce24a1d2dfda3c9b0bed059ca5b2050f528f",
+      "cnd-c2693a34f2cd63c97ee7ca62747ddebe7311a3659b2f8670a4174004b9b92653"
+    ],
+    "dominancePairsGainedUnderTolerance": [
+      "cnd-111b2c44fd4636ab9bef14aadedcce24a1d2dfda3c9b0bed059ca5b2050f528f->cnd-b6af9bea1ab2c66b911a23eb68b67ddbcdcfca1f63dc53166a527e38bd6d8136",
+      "cnd-111b2c44fd4636ab9bef14aadedcce24a1d2dfda3c9b0bed059ca5b2050f528f->cnd-b98ca92bc4a51f1caea8666e46075f112717661b6957ed3e52fea2ce2beec0d0",
+      "cnd-c2693a34f2cd63c97ee7ca62747ddebe7311a3659b2f8670a4174004b9b92653->cnd-b6af9bea1ab2c66b911a23eb68b67ddbcdcfca1f63dc53166a527e38bd6d8136",
+      "cnd-c2693a34f2cd63c97ee7ca62747ddebe7311a3659b2f8670a4174004b9b92653->cnd-d33630a8e9b65be3cbcde86d5fc5d5165b9823b27108ce8ef4feea9b44e9d9c4"
+    ],
+    "dominancePairsLostUnderTolerance": []
+  }
+}
