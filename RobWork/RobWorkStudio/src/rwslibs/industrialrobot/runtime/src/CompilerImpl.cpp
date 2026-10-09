@@ -341,9 +341,14 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
             continue;  // 硬失败统一收集后抛出（见下——全量列出，不短路）
         }
         // 警告级（§4.4 量级抽样——给警告不阻断）：随模型诊断块发布
-        // （§4.3.5"诊断块仅警告级"），code 取归属码的注册码单点。
+        // （§4.3.5"诊断块仅警告级"）。码面：优先取问题的专用注册码覆盖
+        // （audit F-593——警告码与 error 级硬失败码集分离，如限位量级
+        // 抽样的 RT-BOUNDS-MAGNITUDE）；无覆盖时取归属码的注册码单点。
         tx.m_warnings.push_back(warningRecord(
-            std::string{registryCode(issue.code)}, robotEntry->objectId,
+            issue.registryCodeOverride.empty()
+                ? std::string{registryCode(issue.code)}
+                : issue.registryCodeOverride,
+            robotEntry->objectId,
             std::string{"S3 结构与单位校验警告（不阻断——§4.4 量级抽样纪律）"},
             issue.detail,
             std::string{"复核建模输入的单位制（SI 真值）后重编译"}));

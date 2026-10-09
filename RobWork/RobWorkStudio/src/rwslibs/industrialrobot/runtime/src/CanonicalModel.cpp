@@ -314,9 +314,11 @@ void requireValidInertia(const rw::math::InertiaMatrix<double>& m, const std::st
  * 即意味对应段已失败、按 MDL-06 原子性不应有发布产物；带着它们构造模型
  * 属调用方契约违约。
  * 不在集内：Cancelled（非错误路径——UX-03/D-11）、RT-CAPABILITY-MISSING 与
- * RT-ROBWORK-ERROR（诊断事件码——警告/转译路径）、UnknownObject/ContextReleased
- * （fail-fast 轨不发稳定码）、以及未来新增的警告类码（码值权威归 diagnostics，
- * 本单元不私裁收窄）。
+ * RT-ROBWORK-ERROR（诊断事件码——警告/转译路径）、RT-BOUNDS-MAGNITUDE 与
+ * RT-RESOURCE-RECORDED（专用警告码——audit F-593 起 S3 量级抽样警告不再
+ * 复用集内 UnitMismatch，"警告不阻断"承诺恢复；RT-RESOURCE-RECORDED 同为
+ * 警告类先例）、UnknownObject/ContextReleased（fail-fast 轨不发稳定码）、
+ * 以及未来新增的警告类码（码值权威归 diagnostics，本单元不私裁收窄）。
  */
 bool isHardErrorDiagCode(const std::string& code) noexcept
 {

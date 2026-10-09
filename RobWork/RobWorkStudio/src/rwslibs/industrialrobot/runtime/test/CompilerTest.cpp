@@ -1064,6 +1064,36 @@ TEST(CompilerTest, RecordedResourceWarnsNotBlocked)
     EXPECT_TRUE(hasDiagnostic(out.diagnostics, "RT-RESOURCE-RECORDED"));
 }
 
+/**
+ * 限位量级抽样警告专用码（audit F-593 回归钉）：deg 误作 rad 的模型
+ * （限位 ±360——|360| > 4π×10 rad 抽样阈）发布成功（"警告不阻断"承诺），
+ * 且诊断块含专用警告码 RT-BOUNDS-MAGNITUDE、不再复用 error 级硬失败码集
+ * 内的 RT-UNIT-MISMATCH。修复前警告携带 UnitMismatch——builder 第 10 步
+ * isHardErrorDiagCode 命中即抛 InputInvalid，合法模型整次编译硬失败。
+ */
+TEST(CompilerTest, BoundsMagnitudeWarningPublishesWithDedicatedCode_F593)
+{
+    Harness h = makeHarness(/*richPhysics=*/true);
+    // deg 误作 rad 的典型读数（±360 deg 数值直接填入 rad 字段——S3 量级
+    // 抽样阈 4π×10≈125.7 rad，±360 触发；序仍合法 qmin<qmax）。
+    h.description.joints.at(0).lower = val(-360.0);  // rad 位（量级异常）
+    h.description.joints.at(0).upper = val(360.0);   // rad 位（量级异常）
+
+    ScriptedReader reader(h.description);
+    CompileRequest req = makeRequest(h, h.store, h.store, reader);
+
+    CanonicalModelCompiler compiler;
+    const CompileOutcome out = compiler.compile(req);
+    ASSERT_EQ(out.status, CompileStatus::Published)
+        << "量级抽样警告不得阻断发布（§4.4\"警告不阻断\"承诺）";
+    ASSERT_NE(out.snapshot, nullptr);
+    EXPECT_TRUE(hasDiagnostic(out.diagnostics, "RT-BOUNDS-MAGNITUDE"))
+        << "专用警告码随模型诊断块发布";
+    EXPECT_FALSE(hasDiagnostic(out.diagnostics,
+                               std::string{registryCode(RuntimeErrorCode::UnitMismatch)}))
+        << "不得再复用 error 级硬失败码集内的 UnitMismatch（F-593 相撞根因）";
+}
+
 // =====================================================================
 // 用例：编译只读与调用方违约（RT-CONT-2 / §3.4 总纲）。
 // =====================================================================
