@@ -90,9 +90,16 @@ add_library(sdurws_ird_workflow STATIC
                         # 最近项目/无项目首页（§7.8 PM-10）编排面
     src/Projection.cpp  # 标题栏/状态栏与恢复横幅状态投影（§7.6 PM-11/PM-15——
                         # WP-22-T09：O9 服务＋两取数端口接缝＋纯函数组装核）
-    src/Settings.cpp)   # 用户设置持久化（§7.7 PM-14——WP-22-T10：
+    src/Settings.cpp   # 用户设置持久化（§7.7 PM-14——WP-22-T10：
                         # IUserSettingsStore/UserSettingsStore＋canonical JSON
                         # 经 io 通道；首次消费 io 边——白名单八边既登记）
+    src/Comparison.cpp) # 方案比较视图编排（§8.1/§8.2 UX-13——WP-22-T11：
+                        # ISchemeComparisonController Draft 逐字＋两取数端口
+                        # 接缝（ISchemeMetricPort 指标投影／IComparisonDiffPort
+                        # diff 投影——零 modeling 编译边，字符串化同构投影）＋
+                        # 纯函数组装核（高亮行/分组块）＋EVI-02/RPT-04 基准
+                        # 一致性检查经 evidence 公共契约消费（白名单八边既
+                        # 登记——evidence 边首消费）＋P-OPT-8 警告透传不虚构
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：workflow 公共头（T03+ 落位）使用 C++17 设施，消费者编译
@@ -252,10 +259,15 @@ add_executable(sdurws_ird_workflow_test
                                     # 来源透传、P-UI-2 结果状态选键、PM-15 三场景
                                     # 择一序/动作可用位/空集不渲染、接口消费路径
                                     # 钉扎；纯函数直调＋端口脚本化桩）
-    test/SettingsTest.cpp)  # 用户设置持久化模型测试（WP-22-T10——WF-VER-221：
+    test/SettingsTest.cpp  # 用户设置持久化模型测试（WP-22-T10——WF-VER-221：
                             # canonical 黄金字节/损坏变体矩阵＋诊断/I-WF-5
                             # 分析配置字段双向隔离/P-WF-5 容量截断与零脱敏/
                             # 接口消费路径钉扎；真实落盘临时目录直调存储面）
+    test/ComparisonTest.cpp)  # 方案比较视图模型测试（WP-22-T11——值渲染黄金串/
+                              # 维度键词表/高亮行组装〔同构违约/不可算"—"/零容差
+                              # 高亮〕/diff 分组分拣〔未知 token fail-fast/通道
+                              # 不可用降级/P-OPT-8 警告透传零补造〕/编排核前置
+                              # fail-fast 三面/拒绝与接受互斥/接口消费路径钉扎）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -373,13 +385,23 @@ add_executable(sdurws_ird_workflow_contract_test
                                                  # 真实 T14 重建〕＋统一诊断目录
                                                  # 集成〔真实 DiagCatalog 折叠〕，
                                                  # 真实落盘契约）
-    contract_test/SettingsContractTest.cpp)  # WF-VER-221 契约半区（WP-22-T10——
-                                             # 设置 canonical 字节 io 通道交叉复核
-                                             # 〔store 二次幂等＋io 语法 reader 独立
-                                             # 读回〕＋Win32 独占锁注入的原子保留
-                                             # 〔失败先前文件原样＋暂存零残留〕＋
-                                             # 诊断通道词形，真实落盘契约——与 io
-                                             # 真实 JSON 设施联合）
+    contract_test/SettingsContractTest.cpp  # WF-VER-221 契约半区（WP-22-T10——
+                                            # 设置 canonical 字节 io 通道交叉复核
+                                            # 〔store 二次幂等＋io 语法 reader 独立
+                                            # 读回〕＋Win32 独占锁注入的原子保留
+                                            # 〔失败先前文件原样＋暂存零残留〕＋
+                                            # 诊断通道词形，真实落盘契约——与 io
+                                            # 真实 JSON 设施联合）
+    contract_test/ComparisonContractTest.cpp)  # WF-VER-224/225（WP-22-T11——方案
+                                               # 比较 2~4 方案真实编排契约：与真实
+                                               # project store 联合〔createNew＋建支
+                                               # 命令族桩产生方案分支〕＋分支 label
+                                               # 经 branchTips 真实取数＋指标/diff
+                                               # 端口为 L5 装配桥接的测试等价物
+                                               # 〔R-1 零 modeling 边〕＋EVI-02 基准
+                                               # 不一致真实拒绝〔evidence 公共契约
+                                               # 检查〕＋P-OPT-8 警告透传零虚构＋
+                                               # 接口消费路径钉扎）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
