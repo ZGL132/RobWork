@@ -381,3 +381,69 @@ TEST(ReqCodec, ProfileNeverEncodedVariantClosed_WP14T03_ACC2)
     // 覆盖汇总：唯一区域 minPositionCoverage＝0.8。
     EXPECT_DOUBLE_EQ(p1.minPositionCoverage, 0.8);
 }
+
+/**
+ * F-586/F-616 独立字节伪造回归钉：Invalid 态（state=3）＋空原串（len=0）
+ * 的手工拼装字节——decode 就地按结构损坏拒读（MalformedPayload、不抛）。
+ *
+ * 背景：Invalid 态原串在内存面经工厂保证非空（SourcedValue::invalid("")
+ * 抛 CoreError）；encode 永不产出"state=3＋len=0"形态——该字节只能来自
+ * 外部/损坏/恶意输入，decode 是其唯一闸口（F-586 修复，Codec.cpp
+ * readSourcedState）。既有畸形字节族未覆盖该形态（F-586 resolution 自认
+ * 事项）——本钉以完整合法对象头＋Provided 槽位原位改造补独立专钉。
+ */
+TEST(ReqCodec, InvalidStateEmptyRawForgeryRejectedInPlace_F616)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    const RequirementCodec codec;
+    // 健康工况集：payload.mass＝Provided(12.5)——f64 位模式定位槽位。
+    // （OperatingCondition 是集合条目、非变体备择——按 roundtrip 同款
+    //  双参聚合装满配 ConditionSet。）
+    const ConditionSet in{kReqConditionSetSchemaVersion, {makeCondition()}};
+    auto healthy = codec.encode(RequirementObjectVariant{in},
+                                kCurrentRequirementFormatVersion);
+    ASSERT_TRUE(healthy.ok());
+    const RequirementBytes& good = healthy.get();
+
+    // 12.5 的 IEEE754 小端 8 字节（0x4029_0000_0000_0000）。
+    const std::uint8_t massLe[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x29, 0x40};
+    const std::size_t kNotFound = static_cast<std::size_t>(-1);  // 未命中哨兵
+    std::size_t f64Pos = kNotFound;
+    for (std::size_t i = 1; i + 8 <= good.size(); ++i) {
+        bool match = true;
+        for (std::size_t k = 0; k < 8; ++k) {
+            if (good[i + static_cast<std::size_t>(k)] != massLe[k]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) { f64Pos = i; break; }
+    }
+    ASSERT_NE(f64Pos, kNotFound) << "夹具槽位定位失败（12.5 f64 未命中）";
+    const std::size_t statePos = f64Pos - 1;
+    ASSERT_EQ(good[statePos], 0u) << "槽位前一字节须为 Provided 态（state=0）";
+
+    // 手工拼装：state 0→3（Invalid）；Provided 的 f64 槽换为 u32 len=0
+    // （Invalid 形态无 f64、无 provenance 块）。其后健康剩余字节全部裁去
+    // ——闸口在继续消费任何字节前命中，裁剪同时排除"截断错误"误命中，
+    // 使断言精确锚定 F-586 闸口（detail 带"原串为空"）。
+    RequirementBytes forged;
+    forged.insert(forged.end(), good.begin(),
+                  good.begin() + static_cast<std::ptrdiff_t>(statePos));
+    forged.push_back(0x03);  // FieldState::Invalid（四态词表第 4 值）
+    const std::uint8_t lenZero[4] = {0x00, 0x00, 0x00, 0x00};  // 原串长度 0（小端 u32）
+    forged.insert(forged.end(), lenZero, lenZero + 4);
+
+    // 契约面：decode 不抛（查询轨 Expected err——"decode 不抛"契约本身
+    // 即被伪造字节考验）；就地把该字节按结构损坏拒绝。
+    EXPECT_NO_THROW({
+        auto decoded = codec.decode(forged, kCurrentRequirementFormatVersion);
+        ASSERT_FALSE(decoded.ok()) << "state=3＋len=0 伪造字节必须被拒读";
+        EXPECT_EQ(decoded.error().code, RequirementErrorCode::MalformedPayload)
+            << "按结构损坏归类（非版本/词表面）";
+        EXPECT_NE(decoded.error().detail.find("原串为空"), std::string::npos)
+            << "detail 锚定 F-586 闸口（非一般截断/越界错误）";
+    });
+}
