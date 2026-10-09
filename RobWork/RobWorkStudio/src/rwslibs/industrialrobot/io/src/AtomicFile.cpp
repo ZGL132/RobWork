@@ -279,11 +279,23 @@ public:
         if (!ok) {
             const DWORD err = ::GetLastError();
             // 句柄已关而替换失败：暂存文件仍在（内容完好）——会话转非活
-            // 动态并报错；调用方重试 commit 已不可行（句柄关闭），应 abort
-            // 清理暂存。此处如实报环境错误，不静默重开（§1.4 失败上抛面）。
+            // 动态并报错；调用方重试 commit 已不可行（句柄关闭）。此处如实
+            // 报环境错误，不静默重开（§1.4 失败上抛面）。F-598：commit 失
+            // 败路径**就地删除暂存**——原实现仅置非活动态并把清理责任推给
+            // "调用方应 abort"，但 abort 对非活动会话幂等返回、析构兜底也
+            // 只在活动态删除：暂存文件（内容可达预算上限）从此无任何路径
+            // 清理，目标目录随每次替换失败堆积一个 .tmp 泄漏。删除失败
+            // （极瑞：杀软/占用）不吞——残留在与错误码附于 detail 如实上报。
             impl.active = false;
+            std::error_code rmEc;
+            std::filesystem::remove(impl.temp, rmEc);
             out.error = platform::makeOsError(err, true, impl.target,
                                               "原子替换失败（§4.6 ReplaceFile/MoveFileEx）");
+            if (rmEc) {
+                out.error.detail += "；暂存清理失败（残留在: "
+                                    + platform::displayOf(impl.temp)
+                                    + "，ec=" + rmEc.message() + "）";
+            }
             return out;
         }
         impl.active = false;   // 终态：目标＝本次内容；暂存位已被顶替/挪用
