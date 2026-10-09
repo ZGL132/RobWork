@@ -5929,37 +5929,41 @@
       "id": "F-621",
       "source": "acc/audit-p2/1（audit-p2 验收 attempt 1，2026-10-09）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "治理脚本/门禁在 Windows 控制台捕获的输出留痕存在 GBK 乱码（ird_gates 的中文进度行在实施者 gates.txt 与验收者复现捕获中均呈 mojibake）——内容可辨但影响留痕可读性与人工 review 效率",
-      "owner": "治理脚本所有者：pwsh 调用侧统一 [Console]::OutputEncoding/OutputEncoding 为 UTF-8 或脚本内显式设置，验证留痕生成前落盘编码检查"
+      "owner": "治理脚本所有者：pwsh 调用侧统一 [Console]::OutputEncoding/OutputEncoding 为 UTF-8 或脚本内显式设置，验证留痕生成前落盘编码检查",
+      "resolution": "治理登记（2026-10-10）：DTB §5.1「回归留痕全集口径」行补门禁/测试留痕一律 UTF-8 落盘口径。"
     },
     {
       "id": "F-622",
       "source": "acc/audit-p2/1（audit-p2 验收 attempt 1，2026-10-09）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "fresh 树集成构建因 DTB §5.1 排除面（RWSimulatorPlugin/bt_plugin）失败返回 exit=1 时，ALL_BUILD 后段的 _test 目标不产出——验收/实施者须显式 --target 逐个补建测试 exe；该口径未登记于 DTB §5.1，fresh 树操作者易误判为工业robot目标构建失败",
-      "owner": "DTB 所有者：§5.1 fresh 树运行时前置行补记「排除面失败后测试目标需显式 --target 构建」的复现口径（或提供绕过排除面的目标级构建顺序建议）"
+      "owner": "DTB 所有者：§5.1 fresh 树运行时前置行补记「排除面失败后测试目标需显式 --target 构建」的复现口径（或提供绕过排除面的目标级构建顺序建议）",
+      "resolution": "治理登记（2026-10-10）：DTB §5.1 新增「合并后复验与排除面口径」行——排除面失败不阻断但受影响/新增目标须显式 --target 构建验证。"
     },
     {
       "id": "F-623",
       "source": "audit-p2 合入后复验（2026-10-09，audit-p2-merge 树实测）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "VS 生成器增量构建陷阱：合并引入新测试目标时 ZERO_CHECK 重生成 vcxproj 但陈旧 solution 不含之——cmake --build 静默跳过新目标（audit-p2 合流后 sdurws_ird_optimization_test 集成面实测缺位，显式重配后生成并全绿），验证面可能无声缩水",
-      "owner": "构建/门禁所有者：合并收尾后的复验前强制显式重配（cmake -S -B 全参数），或改用 Ninja/旧版生成器口径评估；本条与 F-622 同属合并复验工具面"
+      "owner": "构建/门禁所有者：合并收尾后的复验前强制显式重配（cmake -S -B 全参数），或改用 Ninja/旧版生成器口径评估；本条与 F-622 同属合并复验工具面",
+      "resolution": "治理登记（2026-10-10）：DTB §5.1 同行登记——合并后复验前强制显式重配，防陈旧 solution 静默缺新测试目标。"
     },
     {
       "id": "F-624",
       "source": "audit-p2 合入后复验（2026-10-09，testdata lint 26 集扫描）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "sel-catalog-golden/1.0.0 coveredRequirements 引用 AT-08 不在需求 ID 字典（192 项）——WP-19-T11 交付内容与字典失配（lint 为 CI 独立运行面，tick 门禁不含，随合流进入主线后被复验扫出）",
-      "owner": "selection 黄金集交付方＋字典维护者：二选一——dataset 补对齐字典既有 ID，或字典增补 AT-08（核对 REQUIREMENTS 原文后定）；修后 lint 须 26/26 零违规"
+      "owner": "selection 黄金集交付方＋字典维护者：二选一——dataset 补对齐字典既有 ID，或字典增补 AT-08（核对 REQUIREMENTS 原文后定）；修后 lint 须 26/26 零违规",
+      "resolution": "修复（2026-10-10）：字典增补 AT-01~AT-38 共 38 项（count 192→230，source 注明增补依据＝REQUIREMENTS 行头核实——AT-08 为器件选型行头，WP-19-T11 数据集引用合法）；lint 26/26 零违规。"
     }
   ]
 }
