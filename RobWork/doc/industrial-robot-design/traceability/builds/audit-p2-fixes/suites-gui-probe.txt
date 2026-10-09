@@ -1,0 +1,13 @@
+== GUI 套件（剪贴板预探生效现场——本环境剪贴板被 MATLAB 占用＝F-620）==
+--- sdurws_ird_modeling_gui_test
+clipboard blocked by external owner (F-620)——系统剪贴板写读往返失败（环境面跳过，非代码缺陷）
+[  SKIPPED ] ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59 (555 ms)
+[  PASSED  ] 41 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59
+--- sdurws_ird_ui_gui_test
+clipboard blocked by external owner (F-620)——系统剪贴板写读往返失败（环境面跳过，非代码缺陷）
+[  SKIPPED ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1 (533 ms)
+[  PASSED  ] 77 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] ParamTablePanelGuiTest.BatchPasteImpactDetail_UI_T08_ACC1

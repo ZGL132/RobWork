@@ -1,0 +1,41 @@
+== 受影响套件直跑（集成模式，2026-10-09 收尾复验）==
+--- sdurws_ird_runtime_test
+[==========] 269 tests from 56 test suites ran. (185 ms total)
+[  PASSED  ] 268 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] ContractSuite.ChildProcessWorker_RT_ID_1
+--- sdurws_ird_dynamics_test
+[==========] 105 tests from 23 test suites ran. (128 ms total)
+[  PASSED  ] 104 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable
+--- sdurws_ird_dynamics_contract_test
+
+[----------] Global test environment tear-down
+[==========] 26 tests from 9 test suites ran. (29 ms total)
+[  PASSED  ] 26 tests.
+--- sdurws_ird_modeling_test
+
+[----------] Global test environment tear-down
+[==========] 346 tests from 41 test suites ran. (388 ms total)
+[  PASSED  ] 346 tests.
+--- sdurws_ird_modeling_contract_test
+
+[----------] Global test environment tear-down
+[==========] 17 tests from 5 test suites ran. (25 ms total)
+[  PASSED  ] 17 tests.
+--- sdurws_ird_requirements_test
+[==========] 206 tests from 25 test suites ran. (101 ms total)
+[  PASSED  ] 205 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] GuiRegistration.V22RegisteredNotExecuted_ACC1
+--- sdurws_ird_requirements_contract_test
+
+[----------] Global test environment tear-down
+[==========] 16 tests from 7 test suites ran. (45 ms total)
+[  PASSED  ] 16 tests.
+--- sdurws_ird_ui_test
+
+[----------] Global test environment tear-down
+[==========] 255 tests from 25 test suites ran. (1619 ms total)
+[  PASSED  ] 255 tests.
