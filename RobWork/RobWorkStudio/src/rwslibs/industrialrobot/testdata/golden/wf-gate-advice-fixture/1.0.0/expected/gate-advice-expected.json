@@ -1,0 +1,1089 @@
+{
+  "schema": "wf-gate-advice-expected/1",
+  "note": "workflow 门控/建议/级联映射黄金期望——由本生成器按 units/workflow.md §4.3/§4.4/§5.2/§6.3 冻结语义独立重实现产出（与产品 C++ 双实现互证）。判定面全部为布尔/枚举/键串事实：status 词形＝ui §6.4 token；键形＝workflow §6.3 词表；staleHints/级联提示输出序＝(阶段序, 域键字典序)；原因词条按 evidence 词表值透传（value/key 词形）。throws=true＝期望 WorkflowError 拒绝（I-WF-4 旧投影水位违约——消费测试断言异常轨）。",
+  "cases": [
+    {
+      "id": "all-ready",
+      "gating": {
+        "throws": false,
+        "epoch": 100,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 100
+          },
+          {
+            "stage": "requirements",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 100
+          },
+          {
+            "stage": "kinematics",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 100
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 100
+          },
+          {
+            "stage": "selection",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 100
+          },
+          {
+            "stage": "optimization",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 100
+          },
+          {
+            "stage": "reporting",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 100
+          }
+        ]
+      },
+      "advice": [
+        {
+          "id": "adv-run",
+          "goalKey": "stage.modeling.goal",
+          "missingItemKeys": [],
+          "problemKeys": [],
+          "steps": [
+            {
+              "actionKey": "run-evaluation",
+              "targetStage": "modeling",
+              "targetObjectId": "",
+              "titleKey": "advice.run-evaluation.title",
+              "detailKeys": []
+            }
+          ]
+        },
+        {
+          "id": "adv-ro",
+          "goalKey": "stage.modeling.goal",
+          "missingItemKeys": [],
+          "problemKeys": [],
+          "steps": [
+            {
+              "actionKey": "run-evaluation",
+              "targetStage": "modeling",
+              "targetObjectId": "",
+              "titleKey": "advice.run-evaluation.title",
+              "detailKeys": []
+            },
+            {
+              "actionKey": "readonly-notice",
+              "targetStage": "modeling",
+              "targetObjectId": "",
+              "titleKey": "advice.readonly-notice.title",
+              "detailKeys": []
+            }
+          ]
+        }
+      ],
+      "invalidation": null,
+      "replayDeterministic": true
+    },
+    {
+      "id": "missing-kinematics",
+      "gating": {
+        "throws": false,
+        "epoch": 101,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 101
+          },
+          {
+            "stage": "requirements",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 101
+          },
+          {
+            "stage": "kinematics",
+            "status": "blocked",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.blocked"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [
+              "stage.kinematics.missing.robot-definition",
+              "stage.kinematics.missing.joint-limits"
+            ],
+            "staleHints": [],
+            "epoch": 101
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 101
+          },
+          {
+            "stage": "selection",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 101
+          },
+          {
+            "stage": "optimization",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 101
+          },
+          {
+            "stage": "reporting",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 101
+          }
+        ]
+      },
+      "advice": [
+        {
+          "id": "adv-fix",
+          "goalKey": "stage.kinematics.goal",
+          "missingItemKeys": [
+            "stage.kinematics.missing.robot-definition",
+            "stage.kinematics.missing.joint-limits"
+          ],
+          "problemKeys": [
+            "stage.kinematics.gate.blocked"
+          ],
+          "steps": [
+            {
+              "actionKey": "fix-inputs",
+              "targetStage": "kinematics",
+              "targetObjectId": "",
+              "titleKey": "advice.fix-inputs.title",
+              "detailKeys": [
+                "stage.kinematics.missing.robot-definition",
+                "stage.kinematics.missing.joint-limits"
+              ]
+            }
+          ]
+        }
+      ],
+      "invalidation": null,
+      "replayDeterministic": true
+    },
+    {
+      "id": "domain-absent-trajectory",
+      "gating": {
+        "throws": false,
+        "epoch": 102,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 102
+          },
+          {
+            "stage": "requirements",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 102
+          },
+          {
+            "stage": "kinematics",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 102
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "unavailable",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.trajectory-dynamics.gate.domain-unavailable",
+              "stage.trajectory-dynamics.gate.missing-domain.trajectory"
+            ],
+            "unlockHintKey": "stage.trajectory-dynamics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 102
+          },
+          {
+            "stage": "selection",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 102
+          },
+          {
+            "stage": "optimization",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 102
+          },
+          {
+            "stage": "reporting",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 102
+          }
+        ]
+      },
+      "advice": [],
+      "invalidation": null,
+      "replayDeterministic": true
+    },
+    {
+      "id": "aggregate-partial-missing",
+      "gating": {
+        "throws": false,
+        "epoch": 103,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 103
+          },
+          {
+            "stage": "requirements",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 103
+          },
+          {
+            "stage": "kinematics",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 103
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "blocked",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.trajectory-dynamics.gate.blocked"
+            ],
+            "unlockHintKey": "stage.trajectory-dynamics.gate.unlock",
+            "missingItemKeys": [
+              "stage.trajectory-dynamics.missing.dynamics-payload"
+            ],
+            "staleHints": [],
+            "epoch": 103
+          },
+          {
+            "stage": "selection",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.trajectory-dynamics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.trajectory-dynamics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 103
+          },
+          {
+            "stage": "optimization",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.trajectory-dynamics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.trajectory-dynamics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 103
+          },
+          {
+            "stage": "reporting",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.trajectory-dynamics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.trajectory-dynamics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 103
+          }
+        ]
+      },
+      "advice": [],
+      "invalidation": null,
+      "replayDeterministic": true
+    },
+    {
+      "id": "active-task-in-progress",
+      "gating": {
+        "throws": false,
+        "epoch": 105,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 105
+          },
+          {
+            "stage": "requirements",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 105
+          },
+          {
+            "stage": "kinematics",
+            "status": "in-progress",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 105
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 105
+          },
+          {
+            "stage": "selection",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 105
+          },
+          {
+            "stage": "optimization",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 105
+          },
+          {
+            "stage": "reporting",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 105
+          }
+        ]
+      },
+      "advice": [
+        {
+          "id": "adv-review",
+          "goalKey": "stage.kinematics.goal",
+          "missingItemKeys": [],
+          "problemKeys": [],
+          "steps": [
+            {
+              "actionKey": "review-active-task",
+              "targetStage": "kinematics",
+              "targetObjectId": "",
+              "titleKey": "advice.review-active-task.title",
+              "detailKeys": []
+            }
+          ]
+        }
+      ],
+      "invalidation": null,
+      "replayDeterministic": true
+    },
+    {
+      "id": "archived-then-invalidated",
+      "gating": {
+        "throws": false,
+        "epoch": 104,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 104
+          },
+          {
+            "stage": "requirements",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 104
+          },
+          {
+            "stage": "kinematics",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [
+              {
+                "stage": "kinematics",
+                "domainKey": "kinematics",
+                "reasons": [
+                  "object-content-changed",
+                  "upstream-result-changed"
+                ],
+                "actionKey": "recompute-downstream"
+              }
+            ],
+            "epoch": 104
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 104
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 104
+          },
+          {
+            "stage": "optimization",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 104
+          },
+          {
+            "stage": "reporting",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 104
+          }
+        ]
+      },
+      "advice": [
+        {
+          "id": "adv-stale",
+          "goalKey": "stage.kinematics.goal",
+          "missingItemKeys": [],
+          "problemKeys": [
+            "stage.kinematics.gate.results-stale"
+          ],
+          "steps": [
+            {
+              "actionKey": "recompute-downstream",
+              "targetStage": "kinematics",
+              "targetObjectId": "kinematics",
+              "titleKey": "advice.recompute-downstream.title",
+              "detailKeys": [
+                "stage.kinematics.gate.results-stale"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "adv-down-keep",
+          "goalKey": "stage.selection.goal",
+          "missingItemKeys": [],
+          "problemKeys": [],
+          "steps": []
+        }
+      ],
+      "invalidation": {
+        "hints": [
+          {
+            "stage": "kinematics",
+            "domainKey": "kinematics",
+            "reasons": [
+              "object-content-changed",
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "domainKey": "dynamics",
+            "reasons": [
+              "object-content-changed",
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "domainKey": "trajectory",
+            "reasons": [
+              "object-content-changed",
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "selection",
+            "domainKey": "selection",
+            "reasons": [
+              "object-content-changed",
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "optimization",
+            "domainKey": "optimization",
+            "reasons": [
+              "object-content-changed",
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "reporting",
+            "domainKey": "reporting",
+            "reasons": [
+              "object-content-changed",
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          }
+        ]
+      },
+      "replayDeterministic": true
+    },
+    {
+      "id": "blocked-with-stale",
+      "gating": {
+        "throws": false,
+        "epoch": 106,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 106
+          },
+          {
+            "stage": "requirements",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 106
+          },
+          {
+            "stage": "kinematics",
+            "status": "blocked",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.blocked"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [
+              "stage.kinematics.missing.robot-definition"
+            ],
+            "staleHints": [
+              {
+                "stage": "kinematics",
+                "domainKey": "kinematics",
+                "reasons": [
+                  "object-content-changed"
+                ],
+                "actionKey": "recompute-downstream"
+              }
+            ],
+            "epoch": 106
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 106
+          },
+          {
+            "stage": "selection",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 106
+          },
+          {
+            "stage": "optimization",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 106
+          },
+          {
+            "stage": "reporting",
+            "status": "not-started",
+            "unlocked": false,
+            "reasonKeys": [
+              "stage.kinematics.gate.not-reached"
+            ],
+            "unlockHintKey": "stage.kinematics.gate.unlock",
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 106
+          }
+        ]
+      },
+      "advice": [
+        {
+          "id": "adv-prio",
+          "goalKey": "stage.kinematics.goal",
+          "missingItemKeys": [
+            "stage.kinematics.missing.robot-definition"
+          ],
+          "problemKeys": [
+            "stage.kinematics.gate.blocked",
+            "stage.kinematics.gate.results-stale",
+            "diag.preflight.kin-verify-blocked"
+          ],
+          "steps": [
+            {
+              "actionKey": "recover-session",
+              "targetStage": "kinematics",
+              "targetObjectId": "",
+              "titleKey": "advice.recover-session.title",
+              "detailKeys": [
+                "banner.recovery.draft-detected"
+              ]
+            },
+            {
+              "actionKey": "resolve-findings",
+              "targetStage": "kinematics",
+              "targetObjectId": "",
+              "titleKey": "advice.resolve-findings.title",
+              "detailKeys": [
+                "diag.preflight.kin-verify-blocked"
+              ]
+            },
+            {
+              "actionKey": "fix-inputs",
+              "targetStage": "kinematics",
+              "targetObjectId": "",
+              "titleKey": "advice.fix-inputs.title",
+              "detailKeys": [
+                "stage.kinematics.missing.robot-definition"
+              ]
+            },
+            {
+              "actionKey": "recompute-downstream",
+              "targetStage": "kinematics",
+              "targetObjectId": "kinematics",
+              "titleKey": "advice.recompute-downstream.title",
+              "detailKeys": [
+                "stage.kinematics.gate.results-stale"
+              ]
+            }
+          ]
+        }
+      ],
+      "invalidation": null,
+      "replayDeterministic": true
+    },
+    {
+      "id": "epoch-behind",
+      "gating": {
+        "throws": true
+      },
+      "advice": [],
+      "invalidation": null,
+      "replayDeterministic": true
+    },
+    {
+      "id": "partial-completed",
+      "gating": {
+        "throws": false,
+        "epoch": 107,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 107
+          },
+          {
+            "stage": "requirements",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 107
+          },
+          {
+            "stage": "kinematics",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 107
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 107
+          },
+          {
+            "stage": "selection",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 107
+          },
+          {
+            "stage": "optimization",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 107
+          },
+          {
+            "stage": "reporting",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 107
+          }
+        ]
+      },
+      "advice": [
+        {
+          "id": "adv-advance",
+          "goalKey": "stage.trajectory-dynamics.goal",
+          "missingItemKeys": [],
+          "problemKeys": [],
+          "steps": [
+            {
+              "actionKey": "advance-stage",
+              "targetStage": "selection",
+              "targetObjectId": "",
+              "titleKey": "advice.advance-stage.title",
+              "detailKeys": []
+            }
+          ]
+        },
+        {
+          "id": "adv-none",
+          "goalKey": "stage.reporting.goal",
+          "missingItemKeys": [],
+          "problemKeys": [],
+          "steps": []
+        }
+      ],
+      "invalidation": null,
+      "replayDeterministic": true
+    },
+    {
+      "id": "map-cascade",
+      "gating": {
+        "throws": false,
+        "epoch": 108,
+        "decisions": [
+          {
+            "stage": "modeling",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 108
+          },
+          {
+            "stage": "requirements",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 108
+          },
+          {
+            "stage": "kinematics",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 108
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "status": "not-started",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 108
+          },
+          {
+            "stage": "selection",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 108
+          },
+          {
+            "stage": "optimization",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 108
+          },
+          {
+            "stage": "reporting",
+            "status": "completed",
+            "unlocked": true,
+            "reasonKeys": [],
+            "unlockHintKey": null,
+            "missingItemKeys": [],
+            "staleHints": [],
+            "epoch": 108
+          }
+        ]
+      },
+      "advice": [],
+      "invalidation": {
+        "hints": [
+          {
+            "stage": "trajectory-dynamics",
+            "domainKey": "dynamics",
+            "reasons": [
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "trajectory-dynamics",
+            "domainKey": "trajectory",
+            "reasons": [
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "selection",
+            "domainKey": "selection",
+            "reasons": [
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "optimization",
+            "domainKey": "optimization",
+            "reasons": [
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          },
+          {
+            "stage": "reporting",
+            "domainKey": "reporting",
+            "reasons": [
+              "upstream-result-changed"
+            ],
+            "actionKey": "recompute-downstream"
+          }
+        ]
+      },
+      "replayDeterministic": true
+    }
+  ]
+}

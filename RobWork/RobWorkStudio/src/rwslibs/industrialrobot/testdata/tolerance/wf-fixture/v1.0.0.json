@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "wf-fixture",
+  "version": "1.0.0",
+  "basis": "workflow 门控/建议/级联映射黄金夹具（wf-gate-advice-fixture，WP-22-T13）为布尔/枚举/键串事实数据集（units/workflow.md §11.0——golden wf-* 登记；I-WF-3 零领域阈值同源）：全部断言为状态词/解锁位/文案键/对象键的精确等值对照——不涉任何数值近似。本档案不承载放宽的数值容差；唯一条目以 absolute 0 的零宽容差登记重放事实等值面的档案化引用点（语义＝精确等值，非数值近似）——直接消费请使用字段级精确等值断言，不经本档案数值通道。保守纪律（selection sel-golden 档案同款声明）：本档案只服务测试侧黄金对照，不引入任何运行时阈值语义。",
+  "entries": [
+    {
+      "fieldPath": "fixture.replay.fact-equality",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.0 },
+      "source": "dataset-declared",
+      "allowedMax": { "relative": 0.0, "absolute": 0.0 },
+      "sourceNote": "dataset-declared：零宽容差即精确等值的档案化表达（门控/建议判定面无浮点——宽于零＝伪造近似等值）；本夹具的实际断言为状态/键串字段级等值，不经本档案数值通道"
+    }
+  ]
+}
