@@ -85,6 +85,25 @@ std::vector<QuantityFieldSpec> fixtureFields()
     return fields;
 }
 
+
+/// 剪贴板可用性预探（audit F-617/F-620）：剪贴板型 GUI 用例对系统剪贴板
+/// 占用敏感——他进程持有全局剪贴板时（实测 MATLAB pid 持有，OleSetClipboard
+/// COM 0x800401d0/CLIPBRD_E_CANT_OPEN），Qt 重试耗尽后 setText/text 往返
+/// 失败，属环境面而非代码缺陷。探针＝哨兵写读往返一次，返回往返是否一致；
+/// 调用方（用例体内）不一致时 GTEST_SKIP 并输出 F-620 归因字样（门禁聚账
+/// 归因；F-617 正式在册项）——skip 必须在用例体内发生（GTEST_SKIP 的
+/// return 只能退出用例体本身，helper 内调用不终止用例）。健康环境往返
+/// 一致、用例照常真实执行——探针不吞真失败（用例内断言照常生效）。
+/// 非线程安全：仅 GUI 测试主线程使用。
+bool clipboardUsable()
+{
+    const QString sentinel =
+        QStringLiteral("ird-clip-probe-%1").arg(QCoreApplication::applicationPid());
+    QApplication::clipboard()->setText(sentinel);
+    QApplication::processEvents();
+    return QApplication::clipboard()->text() == sentinel;
+}
+
 class ParamTablePanelGuiTest : public ::testing::Test {
 protected:
     void SetUp() override
@@ -309,6 +328,12 @@ TEST_F(ParamTablePanelGuiTest, CancelRestore_UI_T08_ACC1)
 TEST_F(ParamTablePanelGuiTest, BatchPasteImpactDetail_UI_T08_ACC1)
 {
     IRD_TEST_INFO("UX-05", {}, std::nullopt);
+    // 剪贴板预探（F-617/F-620）——被占用环境跳过（用例体内 skip），
+    // 健康环境照常执行。
+    if (!clipboardUsable()) {
+        GTEST_SKIP() << "clipboard blocked by external owner (F-620)"
+                     << "——系统剪贴板写读往返失败（环境面跳过，非代码缺陷）";
+    }
     makePanel(true);
     QGuiApplication::clipboard()->setText(
         QString::fromUtf8("solver-max-iterations\t150\nno-such-key\t1\n"));
