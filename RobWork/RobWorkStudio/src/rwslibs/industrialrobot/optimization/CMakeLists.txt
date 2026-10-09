@@ -103,6 +103,11 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 #   src/Preflight.cpp       §6.4 预检 20 检查项/五元组/allowances 五元组＋
 #                           §4.3 OptimizationRunSpec 校验（WP-20-T08 增列；
 #                           只读检查面——零 io 写路径，P-OPT-6 会话态承载）
+#   src/Export.cpp          §11.4 一站式导出六工件数据面/契约三元组校验与
+#                           正式导出阻断（OPT-EXPORT-CONTRACT-STALE）/资格
+#                           终判与限定语强制/io canonical 写出编排（WP-20-T09
+#                           增列；零自有文件写路径——P-RPT-1 注入端口驱动
+#                           io 设施，N10）
 add_library(sdurws_ird_optimization STATIC
     src/DiagCodes.cpp
     src/Types.cpp
@@ -114,7 +119,8 @@ add_library(sdurws_ird_optimization STATIC
     src/EvaluatorPorts.cpp
     src/Run.cpp
     src/Applier.cpp
-    src/Preflight.cpp)
+    src/Preflight.cpp
+    src/Export.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：optimization 公共头使用 C++17 设施（inline constexpr 变量
@@ -320,7 +326,11 @@ add_executable(sdurws_ird_optimization_test
     test/PreflightTest.cpp
     # WP-20-T08 增列——基线评估三语义面（同管线同基准/数据不足不伪造/
     # 失败不包装淘汰——OPT-VER-134，acceptance 2）：
-    test/BaselineEvaluationTest.cpp)
+    test/BaselineEvaluationTest.cpp
+    # WP-20-T09 增列——一站式导出六工件数据面/三元组校验与正式导出阻断/
+    # 限定语强制/io canonical 写出编排/G-1 审计口径钉扎（acceptance 1/2/3，
+    # OPT-VER-141/142/148/AT-34）：
+    test/ExportTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -414,7 +424,11 @@ add_executable(sdurws_ird_optimization_contract_test
     contract_test/ApplierContractTest.cpp
     # WP-20-T08 增列——真装配链阻塞可定位（OPT-VER-112/135 契约半区）＋
     # P-OPT-6 持久化通道边界源码扫描（acceptance 1/3）：
-    contract_test/PreflightContractTest.cpp)
+    contract_test/PreflightContractTest.cpp
+    # WP-20-T09 增列——导出面契约：三元组阻断跨单元语义（RP-CUR-2 同源）/
+    # P-RPT-1 注入形态源码扫描（零自有转义/零自有 canonical/零 fstream）/
+    # 审计口径 G-1 头注与实现一致性扫描（acceptance 2/3）：
+    contract_test/ExportContractTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_contract_test PROPERTIES

@@ -41,8 +41,10 @@
 #include <sdurws/ird/execution/CacheCoordinator.hpp>
 #include <sdurws/ird/execution/RunRegistry.hpp>
 #include <sdurws/ird/optimization/DiagCodes.hpp>
+#include <sdurws/ird/optimization/Export.hpp>
 #include <sdurws/ird/optimization/Objective.hpp>
 #include <sdurws/ird/optimization/Pareto.hpp>
+#include <sdurws/ird/optimization/Run.hpp>
 #include <sdurws/ird/optimization/Types.hpp>
 #include <sdurws/ird/optimization/Variable.hpp>
 #include <sdurws/ird/project/ArchivePort.hpp>
@@ -659,6 +661,19 @@ TEST(OptEvaluatorPortsContract, SessionCacheFullHitSkipsReEvaluation_WP20T06_ACC
                                      + second.verifiedRecords.size());
     EXPECT_EQ(second.audit.cacheLookups, expectedLookups);
     EXPECT_EQ(second.audit.cacheFullHits, expectedLookups) << "命中计数+1（逐请求记账）";
+    // 审计口径（G-1 前批验收登记义务——本批对齐钉扎）：quickEvaluated/
+    // verifiedEvaluated＝"实际评估数（命中回放不计）"——第二跑全部记录为
+    // FullHit 回放 ⇒ 实际评估数不增（仍为各自批的记录数只出现在首跑）；
+    // 回放单计入 cacheFullHits，两计数器分账不重叠（AT-34 对账口径唯一）。
+    EXPECT_EQ(second.audit.quickEvaluated, 0U)
+        << "全命中回放 ⇒ 实际评估数不计（G-1：命中回放不计）";
+    EXPECT_EQ(second.audit.verifiedEvaluated, 0U)
+        << "Verified 同口径（G-1）";
+    EXPECT_EQ(first.audit.quickEvaluated,
+              static_cast<std::uint32_t>(first.quickRecords.size()))
+        << "首跑无回放 ⇒ 实际评估数＝批记录数";
+    EXPECT_EQ(first.audit.verifiedEvaluated,
+              static_cast<std::uint32_t>(first.verifiedRecords.size()));
     for (const auto& rec : second.quickRecords) {
         EXPECT_TRUE(rec.cacheHit) << "命中记录带 cacheHit 标记（审计）";
     }
@@ -813,4 +828,102 @@ TEST(OptEvaluatorPortsContract, ChangedConfigYieldsSliceMismatchRecalc_WP20T06_A
     EXPECT_NE(std::find(verdict.reasons.begin(), verdict.reasons.end(),
                         evidence::CacheMissReason::ContractMismatch),
               verdict.reasons.end());
+}
+
+// =====================================================================
+// AT-34 导出面：审计 CSV 与重放统计一致（WP-20-T09 acceptance 1 的
+// 重放半区——宿主于本文件的缓存底座：真协调器＋真重放链）
+// =====================================================================
+
+TEST(OptExportContract, AuditCsvConsistentWithReplayStatistics_WP20T09)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-12"}, std::vector<std::string>{"AT-34"});
+
+    // AT-34 字面"审计计数与重放一致"的重放对账：同会话双跑（第二跑全量
+    // FullHit 回放）→ 回放统计组装运行聚合 → 导出审计 CSV → 逐行值与
+    // 重放统计逐一相等（quick/verified 实际评估数因回放而为 0——G-1 对齐
+    // 后的口径；命中数＝批记录数）。判定唯一归 evidence/存储唯一归
+    // execution 的边界在 OPT-VER-137 用例已钉，此处只对账导出面。
+    CacheOrchestratorFixture f;
+    const auto cfg = f.makeConfig(4, 2, 41);
+    auto request = f.readyRequest(cfg);
+    TwoStageEvaluationOrchestrator orch(OptimizationStage::StageB, f.deps());
+
+    const TwoStageRunResult first = orch.run(request, f.ctx);
+    ASSERT_FALSE(first.quickRecords.empty());
+    for (const auto& rec : first.quickRecords) {
+        f.admitCacheEntry(core::EvaluationMode::Quick, rec.sliceId,
+                          request.snapshot.snapshotId);
+    }
+    for (const auto& rec : first.verifiedRecords) {
+        f.admitCacheEntry(core::EvaluationMode::Verified, rec.sliceId,
+                          request.snapshot.snapshotId);
+    }
+    const TwoStageRunResult replay = orch.run(request, f.ctx);
+    // 重放统计基线（G-1 口径——回放不计实际评估数）。
+    ASSERT_EQ(replay.runPhase, optimization::RunPhase::Completed);
+    EXPECT_EQ(replay.audit.quickEvaluated, 0U);
+    EXPECT_EQ(replay.audit.verifiedEvaluated, 0U);
+    EXPECT_EQ(replay.audit.cacheFullHits,
+              static_cast<std::uint32_t>(replay.quickRecords.size()
+                                         + replay.verifiedRecords.size()));
+
+    // 回放统计 → 运行聚合（归档态）→ 一站式导出（限定语请求）。
+    const optimization::OptimizationRunResult run = optimization::assembleRunResult(
+        optimization::OptimizationRunId::generate(), request.task.project,
+        request.task.branch, request.task.revision, request.snapshot.snapshotId,
+        request.baselineRoot, request.baselineCv, request.config, replay, {},
+        optimization::ArchivePhase::Archived);
+    optimization::ExportRequest exportReq;
+    exportReq.run = run;
+    exportReq.spec.project = request.task.project;
+    exportReq.spec.branch = request.task.branch;
+    exportReq.spec.revision = request.task.revision;
+    exportReq.spec.snapshotId = request.snapshot.snapshotId;
+    exportReq.spec.config = request.config;
+    exportReq.spec.profile.profileId = "opt";
+    exportReq.spec.profile.version = "1.0";
+    exportReq.spec.profile.contentIdentity
+        = core::ContentIdentity::fromCanonical(std::string("cid-")
+                                               + std::string(62, '0') + "d1");
+    optimization::validateRunSpec(exportReq.spec);
+    exportReq.currentProfile = exportReq.spec.profile;
+    exportReq.evaluatorContractVersionAtRun
+        = optimization::kOptStaticScreenContractVersion;
+    exportReq.exportContractVersionAtRun = optimization::kOptExportContractVersion;
+    exportReq.formal = false;
+    optimization::OptimizationExportProvider provider;
+    const optimization::ExportBundleData bundle = provider.buildExportBundle(exportReq);
+
+    // 审计 CSV 逐行值 ↔ 重放统计（count_name → value 检索对账）。
+    std::vector<std::pair<std::string, std::int64_t>> audit;
+    for (const auto& row : bundle.auditCsvRows) {
+        ASSERT_EQ(row.size(), 3U);
+        if (row[1].kind == io::CsvCell::Kind::Int) {
+            audit.emplace_back(row[0].text, row[1].integer);
+        }
+    }
+    const auto valueOf = [&audit](const std::string& name) -> std::int64_t {
+        for (const auto& kv : audit) {
+            if (kv.first == name) {
+                return kv.second;
+            }
+        }
+        return -1;
+    };
+    EXPECT_EQ(valueOf("quick_evaluated"),
+              static_cast<std::int64_t>(replay.audit.quickEvaluated))
+        << "审计 CSV＝重放统计（实际评估数——回放不计，AT-34）";
+    EXPECT_EQ(valueOf("verified_evaluated"),
+              static_cast<std::int64_t>(replay.audit.verifiedEvaluated));
+    EXPECT_EQ(valueOf("cache_full_hits"),
+              static_cast<std::int64_t>(replay.audit.cacheFullHits))
+        << "命中数分账对账";
+    EXPECT_EQ(valueOf("cache_lookups"),
+              static_cast<std::int64_t>(replay.audit.cacheLookups));
+    EXPECT_EQ(valueOf("candidates_generated"),
+              static_cast<std::int64_t>(replay.audit.candidatesGenerated));
+    EXPECT_EQ(valueOf("duplicates_dropped"),
+              static_cast<std::int64_t>(replay.pareto.duplicatesDropped))
+        << "去重数（T05 审计入口）对账";
 }

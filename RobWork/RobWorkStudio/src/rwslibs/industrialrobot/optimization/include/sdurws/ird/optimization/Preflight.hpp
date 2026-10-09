@@ -433,8 +433,10 @@ struct PreflightInputs {
  *     已装配完成（L5 装配期后——未装配时检查 7/9 如实阻塞，不是前置违约）；
  *   - @post 不修改任何项目状态；不产生诊断目录条目以外副作用（纯函数——
  *     P-OPT-6 会话态承载的检查面表达：零写盘、零项目修订）；
- *   - @throws std::invalid_argument spec 字段非法（调用方契约违约，
- *     fail-fast）；
+ *   - @throws OptimizationError(kOptInputInvalid) spec 字段非法（调用方
+ *     契约违约，fail-fast——本域异常轨；与下方 preflight() 方法注同轨，
+ *     G-ACC-T08-1 对齐：类注草拟的 std::invalid_argument 与实现不符，
+ *     本域唯一异常类型＝OptimizationError，Types.hpp）；
  *   - @threadSafe 是（只读消费查询端口与注册表清单）；
  *   - @cancellation 预检为轻量纯检查（<1 s），不提供取消；
  *   - @determinism 同输入同结论（纯函数面）。

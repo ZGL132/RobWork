@@ -717,7 +717,16 @@ TwoStageRunResult TwoStageEvaluationOrchestrator::run(const TwoStageRunRequest& 
         TwoStageRunRecord record = evaluateCandidate(
             core::EvaluationMode::Quick, /*screeningOnly=*/true, request, patch, slice,
             projection, request.quickCoverage, ctx, result.audit);
-        result.audit.quickEvaluated += 1;
+        // 审计口径（G-1 对齐——前批验收登记义务）：quickEvaluated＝"Quick 批
+        // 实际评估数（命中回放不计）"——缓存 FullHit 短路径回放的记录带
+        // cacheHit 标记，复用的是首次评估的原始结论，未发生"实际评估"，
+        // 不重复计入评估数（回放已单计入 cacheFullHits——两计数器各记各的
+        // 账，审计 CSV 与重放对账时口径唯一，AT-34）。FullHit 但会话内无
+        // 载荷（cacheReplayUnavailable）时记录真实走了管线，cacheHit=false，
+        // 照常计入。
+        if (!record.cacheHit) {
+            result.audit.quickEvaluated += 1;
+        }
         result.quickRecords.push_back(std::move(record));
     }
 
@@ -831,7 +840,12 @@ TwoStageRunResult TwoStageEvaluationOrchestrator::run(const TwoStageRunRequest& 
         TwoStageRunRecord record = evaluateCandidate(
             core::EvaluationMode::Verified, /*screeningOnly=*/false, request, patch, slice,
             projection, request.coverage, ctx, result.audit);
-        result.audit.verifiedEvaluated += 1;
+        // 审计口径（G-1 对齐——与 Quick 批同款）：verifiedEvaluated＝"Verified
+        // 批实际评估数（命中回放不计）"——同键复核请求命中会话底账时不重复
+        // 计入（回放单计入 cacheFullHits；AT-34 审计对账口径唯一）。
+        if (!record.cacheHit) {
+            result.audit.verifiedEvaluated += 1;
+        }
         result.verifiedRecords.push_back(std::move(record));
     }
 
