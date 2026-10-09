@@ -655,7 +655,8 @@ public:
         return *this;
     }
 
-    /// 设置诊断块（§4.3.5——仅警告级；error 级稳定码出现→构造拒绝）。
+    /// 设置诊断块（§4.3.5——仅警告级；F-618 起按 record.level 拒绝：
+    /// error 级记录（含 core 工厂缺省 Error 的未声明记录）出现→构造拒绝）。
     CanonicalModelBuilder& setDiagnostics(std::vector<core::DiagnosticRecord> diagnostics)
     {
         m_diagnostics = std::move(diagnostics);

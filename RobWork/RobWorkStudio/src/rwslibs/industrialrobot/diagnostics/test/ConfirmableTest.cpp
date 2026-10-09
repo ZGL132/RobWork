@@ -72,6 +72,7 @@ void sealRegistryWithConfirmableCode(StableCodeRegistry& registry)
     confirmable.ownerUnit = "modeling";
     confirmable.category = DiagnosticCategory::Confirmable;   // §4.3："策略校验超限待用户显式确认"
     confirmable.severity = DiagnosticSeverity::Warning;       // §4.3：Warning"含可确认类"
+    confirmable.level = core::DiagnosticLevel::Warning;       // F-618：映射一致（Warning⇒Warning）
     confirmable.titleKey = "diag.mdl-06-travel-limit.title";  // P-DIAG-9 键约定
     confirmable.detailKey = "diag.mdl-06-travel-limit.detail";
     confirmable.paramSchema = "[]";                            // 无参数（必填字段——显式声明）

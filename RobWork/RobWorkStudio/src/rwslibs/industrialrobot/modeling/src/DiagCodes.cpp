@@ -99,6 +99,7 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     branchSelection.ownerUnit = "modeling";
     branchSelection.category = diagnostics::DiagnosticCategory::InputInvalid;
     branchSelection.severity = diagnostics::DiagnosticSeverity::Info;   // §9.5"导入/info"
+    branchSelection.level = core::DiagnosticLevel::Warning;  // F-618：非 Error severity ⇒ Warning
     branchSelection.titleKey = "diag.mdl-import-branch-selection.title";
     branchSelection.detailKey = "diag.mdl-import-branch-selection.detail";
     branchSelection.paramSchema = R"(["branch-count","branch-roots"])";
@@ -148,6 +149,7 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     pendingConfirm.ownerUnit = "modeling";
     pendingConfirm.category = diagnostics::DiagnosticCategory::InputInvalid;
     pendingConfirm.severity = diagnostics::DiagnosticSeverity::Warning;   // §9.5"导入/Warning"
+    pendingConfirm.level = core::DiagnosticLevel::Warning;  // F-618：非 Error severity ⇒ Warning
     pendingConfirm.titleKey = "diag.mdl-import-pending-confirm.title";
     pendingConfirm.detailKey = "diag.mdl-import-pending-confirm.detail";
     pendingConfirm.paramSchema = R"(["item-kind","subject"])";
@@ -177,6 +179,7 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     templateRange.ownerUnit = "modeling";
     templateRange.category = diagnostics::DiagnosticCategory::InfeasibilityProof;
     templateRange.severity = diagnostics::DiagnosticSeverity::Info;   // 增登行"导入/info"
+    templateRange.level = core::DiagnosticLevel::Warning;  // F-618：非 Error severity ⇒ Warning
     templateRange.titleKey = "diag.mdl-import-template-range.title";
     templateRange.detailKey = "diag.mdl-import-template-range.detail";
     templateRange.paramSchema = R"(["movable-axes","prismatic-present"])";
@@ -239,6 +242,7 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     templateDisabled.ownerUnit = "modeling";
     templateDisabled.category = diagnostics::DiagnosticCategory::InfeasibilityProof;
     templateDisabled.severity = diagnostics::DiagnosticSeverity::Info;   // 增登行"模板/info"
+    templateDisabled.level = core::DiagnosticLevel::Warning;  // F-618：非 Error severity ⇒ Warning
     templateDisabled.titleKey = "diag.mdl-template-disabled.title";
     templateDisabled.detailKey = "diag.mdl-template-disabled.detail";
     templateDisabled.paramSchema = R"(["template-id","freeze-gate"])";
@@ -274,6 +278,7 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     travelLimit.ownerUnit = "modeling";
     travelLimit.category = diagnostics::DiagnosticCategory::Confirmable;
     travelLimit.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.5"比较型/Warning"
+    travelLimit.level = core::DiagnosticLevel::Warning;  // F-618：非 Error severity ⇒ Warning
     travelLimit.titleKey = "diag.mdl-06-travel-limit.title";
     travelLimit.detailKey = "diag.mdl-06-travel-limit.detail";
     travelLimit.paramSchema = "[]";
@@ -429,6 +434,7 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     resourceState.ownerUnit = "modeling";
     resourceState.category = diagnostics::DiagnosticCategory::ResourceMissing;
     resourceState.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.5"校验/Warning"
+    resourceState.level = core::DiagnosticLevel::Warning;  // F-618：非 Error severity ⇒ Warning
     resourceState.titleKey = "diag.mdl-readiness-resource-state.title";
     resourceState.detailKey = "diag.mdl-readiness-resource-state.detail";
     resourceState.paramSchema = "[]";
@@ -454,6 +460,7 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     physicsMissing.ownerUnit = "modeling";
     physicsMissing.category = diagnostics::DiagnosticCategory::DataInsufficient;
     physicsMissing.severity = diagnostics::DiagnosticSeverity::Warning;  // §8.2 L5"Warning（缺失）"
+    physicsMissing.level = core::DiagnosticLevel::Warning;  // F-618：非 Error severity ⇒ Warning
     physicsMissing.titleKey = "diag.mdl-readiness-physics-missing.title";
     physicsMissing.detailKey = "diag.mdl-readiness-physics-missing.detail";
     physicsMissing.paramSchema = "[]";
@@ -512,6 +519,7 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     dhApproximate.ownerUnit = "modeling";
     dhApproximate.category = diagnostics::DiagnosticCategory::InfeasibilityProof;
     dhApproximate.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.5"转换/Warning"
+    dhApproximate.level = core::DiagnosticLevel::Warning;  // F-618：非 Error severity ⇒ Warning
     dhApproximate.titleKey = "diag.mdl-dh-approximate.title";
     dhApproximate.detailKey = "diag.mdl-dh-approximate.detail";
     dhApproximate.paramSchema = "[]";

@@ -5902,10 +5902,12 @@
       "id": "F-618",
       "source": "所有者裁决 2026-10-09（F-593 方向②，另立治理项）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "诊断面 schema 演进：DiagnosticRecord 增设级别字段（警告/错误）、builder 按级别拒绝——消除警告与错误共用注册码必然相撞的结构性根因（F-593 取专用警告码①先行止血，本条为治本排期项）",
-      "owner": "runtime/diagnostics 所有者：诊断面 schema 演进批次排期（涉及公共契约，波及全部生产者/消费者，须增量修订单元卡后实施）〔所有者排期 2026-10-09：audit-p2 合入后的独立批次实施——先增量修订 diagnostics/runtime 单元卡（公共契约面）再动代码；audit-p2 引入的 RT-BOUNDS-MAGNITUDE 覆盖码面随本批次收编〕"
+      "owner": "runtime/diagnostics 所有者：诊断面 schema 演进批次排期（涉及公共契约，波及全部生产者/消费者，须增量修订单元卡后实施）〔所有者排期 2026-10-09：audit-p2 合入后的独立批次实施——先增量修订 diagnostics/runtime 单元卡（公共契约面）再动代码；audit-p2 引入的 RT-BOUNDS-MAGNITUDE 覆盖码面随本批次收编〕",
+      "resolution": "修复（分支 diag-schema-level，先单元卡后代码）：①三卡先行——core.md v0.12 增列 DiagnosticLevel 词表（Error/Warning）与 DiagnosticRecord.level（表尾追加、缺省 Error 的 fail-closed 语义＋序列化尾追加兼容口径），diagnostics.md v0.14 增列 CodeDescriptor.level（注册期验证强制 severity==Error ⇔ level==Error、其余 severity ⇒ level==Warning——severity 为映射唯一语义源）并收编 RT-BOUNDS-MAGNITUDE（87→88 码，warning 级正式注册，runtime.md §10.11 v0.19 待收编注闭合），runtime.md v0.20 诊断块拒绝判据改按 record.level（硬失败码集 isHardErrorDiagCode 废除）＋编码升版 canonical-model/1.1（诊断记录尾追加 level 字节，kVersionMinor 0→1；全字段编码仅存续于会话内 worker 物化通道不入 .rwdesign、诊断块不入身份域——无跨版本存量字节）；②实现——DiagnosticRecord.level＋make() 尾参缺省 Error（238 处既有构造调用零改写）、RT-Codec 序列化往返、StableCodeRegistry 第⑨检查（level-severity 映射一致）＋manifest 编码升 IRDDCM1→IRDDCM2、CanonicalModel builder 第 10 步按级别拒绝、runtime 四处警告产码点（warningRecord/RT-CAPABILITY-MISSING/RT-CANCELLED/RT-NAME-DISAMBIGUATED）显式 Warning；③域消费面——8 处产码点（dynamics/kinematics/trajectory/optimization/io 的 makeDescriptor＋modeling 8 码＋requirements 7 码＋ui ShellSupport 行表）按 severity 派生 level；④钉——core DiagRecordLevel.DefaultErrorAndEquality_F618、runtime CodecTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618（级别往返＋词表外字节拒绝）、CanonicalModelTest.RejectsErrorLevelDiagnostics 重写（UnitMismatch error 级仍阻断＋同码 Warning 级放行＝级别是唯一判据的物证＋Cancelled Warning 放行）、CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593 改按 level 断言、StableCodeRegistryTest F618_LevelMappingAcrossBuiltinTable＋F618_LevelSeverityMismatchRejected。复验：集成 40 套件直跑 8448 用例 0 失败 0 错误 9 设计性跳过；双模式构建 sdurws_ird_* 零错误（排除面 RWSimulatorPlugin/bt_plugin 73 错误照 DTB §5.1 不入验收面）；ird_gates 7 命中与 wp22-t05 基线逐码一致（全为自测预期检出）；validate-docs PASS。留痕 traceability/builds/diag-schema-level/。",
+      "fixedAt": "2026-10-10"
     },
     {
       "id": "F-619",

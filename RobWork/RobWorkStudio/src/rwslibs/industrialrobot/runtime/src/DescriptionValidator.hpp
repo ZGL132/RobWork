@@ -84,12 +84,15 @@ struct ValidationIssue {
                                    ///<  者不看设计文档也能定位问题）
     std::optional<ValidationComparison> comparison; ///< 比较型三要素
                                    ///<  （比较型诊断必带——M-6/M-12/正交性偏差）
-    /// 警告级专用注册码覆盖（audit F-593）：非空时 S3 警告转译以该码发布
-    /// （替代 registryCode(code)）——专用警告码不与 error 级硬失败码集共用
-    /// 注册码（UnitMismatch 在 builder 的硬失败码集内，警告复用必相撞）。
-    /// 比照 RT-RESOURCE-RECORDED 先例：诊断事件码面、无 RuntimeErrorCode
-    /// 枚举对应（§10.11 冻结关系不扩）；Error 级问题恒空（fail-fast 码面
-    /// 单一来源）。当前唯一产出点＝限位量级抽样警告 RT-BOUNDS-MAGNITUDE。
+    /// 警告级专用注册码覆盖（audit F-593 引入；F-618 起为已注册警告码的
+    /// 承载通道）：非空时 S3 警告转译以该码发布（替代 registryCode(code)）。
+    /// RT-BOUNDS-MAGNITUDE 已在 diagnostics 内置表正式注册（severity=Warning/
+    /// level=Warning，diagnostics.md §4.6 RT 行 2026-10-10 收编）——本字段
+    /// 保留的原因＝RuntimeErrorCode 枚举冻结（§10.11 关系不扩）：警告码无
+    /// 枚举对应，覆盖码面是其唯一承载通道。builder 拒绝已改按 record.level
+    /// （F-618——码集判定废除），本字段不再承担"与硬失败码集分离"的止血
+    /// 职责，只承担码面命名。Error 级问题恒空（fail-fast 码面单一来源）。
+    /// 当前唯一产出点＝限位量级抽样警告 RT-BOUNDS-MAGNITUDE。
     std::string registryCodeOverride;
 };
 
@@ -119,8 +122,8 @@ struct ValidationReport {
  *     非方阵/维度失配/奇异/病态（条件数 >1×10⁸——P-RT-7 设计默认）；
  *   - 单位量级抽样（警告不阻断——§4.4）：旋转限位 |q|>4π×10 rad、移动限位
  *     |q|>1×10² m（典型 deg/mm 误作 SI 的量级）——专用警告码
- *     RT-BOUNDS-MAGNITUDE（audit F-593：与 error 级硬失败码集内的
- *     UnitMismatch 分离，"警告不阻断"承诺）。
+ *     RT-BOUNDS-MAGNITUDE（audit F-593 引入；F-618 起在 diagnostics 正式
+ *     注册且 builder 拒绝改按 record.level——"警告不阻断"由级别承载）。
  *
  * 不覆盖面（归属其他段，防止越权）：
  *   - 资源清单与摘要一致性→S4（RT-T11）；重复 ObjectId/引用闭包→S2/S5

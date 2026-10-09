@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdint>
+#include <cstring>  // std::memcmp（F-618 级别字节定位）
 #include <string>
 #include <vector>
 
@@ -78,6 +79,53 @@ TEST(CodecRoundtripTest, RichModelPreservesIdentityExcludedFields)
     EXPECT_EQ(parsed.get().world().installPreset.provenance(), f.world.installPreset.provenance());
     ASSERT_EQ(parsed.get().diagnostics().size(), 1u);
     EXPECT_EQ(parsed.get().diagnostics().front(), m.diagnostics().front());
+}
+
+/**
+ * 诊断级别（F-618）往返＋未知级别字节拒绝：
+ *  ①夹具警告记录（level=Warning）编码→解码后级别保真（记录尾追加字节的
+ *    往返；operator== 含 level——全字段等值在此钉住）；
+ *  ②把该记录的级别字节原位改为词表外的 0x02→parse 拒绝（枚举值域校验——
+ *    未知值不静默映射，防编码面漂移；级别字节经确定位找到：夹具警告记录
+ *    是诊断块唯一记录，其布局以 action 串＋comparison presence(0) 结尾，
+ *    紧随的 1 字节即 level）。
+ */
+TEST(CodecRoundtripTest, DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618)
+{
+    const CanonicalModel m = richFixture().build();
+    ASSERT_EQ(m.diagnostics().size(), 1u);
+    ASSERT_EQ(m.diagnostics().front().level, core::DiagnosticLevel::Warning)
+        << "夹具前置：rich 夹具唯一诊断应为警告级（F-618 适配）";
+
+    // ①级别往返保真。
+    const std::vector<std::uint8_t> bytes = rtcodec::encode(m);
+    const auto parsed = rtcodec::parse(bytes);
+    ASSERT_TRUE(parsed.ok()) << "解码失败：" << parsed.error().what();
+    ASSERT_EQ(parsed.get().diagnostics().size(), 1u);
+    EXPECT_EQ(parsed.get().diagnostics().front().level, core::DiagnosticLevel::Warning)
+        << "级别随记录尾字节往返保真（F-618）";
+
+    // ②未知级别字节原位拒绝：定位＝action 串末字节之后的 presence(0)＋level。
+    //    action 串＝"建模侧补全后重编译"（夹具唯一警告的建议动作——UTF-8 定
+    //    长已知），找其末字节，其后第 2 字节即 level（第 1 字节为 comparison
+    //    的 presence=0）。
+    const std::string actionTail = "\xE9\x87\x8D\xE7\xBC\x96\xE8\xAF\x91";  // "重编译"
+    std::size_t pos = std::string::npos;
+    for (std::size_t i = 0; i + actionTail.size() <= bytes.size(); ++i) {
+        if (std::memcmp(bytes.data() + i, actionTail.data(), actionTail.size()) == 0) {
+            pos = i + actionTail.size();  // action 串结束处
+            break;                        // 夹具唯一出现点（首个命中即目标）
+        }
+    }
+    ASSERT_NE(pos, std::string::npos) << "定位失败：夹具 action 串不在编码中";
+    ASSERT_EQ(bytes.at(pos), 0x00u) << "布局锚失配：action 后应为 comparison presence=0";
+    ASSERT_EQ(bytes.at(pos + 1), 0x01u) << "布局锚失配：presence 后应为 level=Warning(1)";
+
+    std::vector<std::uint8_t> flipped = bytes;
+    flipped.at(pos + 1) = 0x02;  // 词表外值（Error=0/Warning=1 之外）
+    const auto rejected = rtcodec::parse(flipped);
+    EXPECT_FALSE(rejected.ok())
+        << "未知级别字节必须拒绝（枚举值域校验——不静默映射，NFR-COR-03）";
 }
 
 /** 稀疏夹具往返：presence=0 路径全覆盖（无工具/场景/耦合/工作范围/摩擦，
@@ -277,10 +325,12 @@ TEST(RT_ID_3_DisplayFieldExclusion, DiagnosticsDoNotAffectIdentity)
 {
     const CanonicalModel a = minimalFixture().build();
     Fixture fb = minimalFixture();
+    // F-618：级别显式 Warning（警告类夹具数据——缺省 Error 会被 builder
+    // 按级别拒绝，模型构造不出）。
     fb.diagnostics.push_back(core::DiagnosticRecord::make(
         std::string{"RT-CAPABILITY-MISSING"}, std::nullopt, std::string{"joint_1"},
         std::string{}, std::string{"能力缺失警告"}, std::string{"maxAcceleration 未提供"},
-        std::string{"建模侧补全后重编译"}));
+        std::string{"建模侧补全后重编译"}, std::nullopt, core::DiagnosticLevel::Warning));
     const CanonicalModel b = fb.build();
 
     EXPECT_EQ(a.contentIdentity(), b.contentIdentity());

@@ -306,34 +306,21 @@ void requireValidInertia(const rw::math::InertiaMatrix<double>& m, const std::st
 }
 
 /**
- * @brief 发布模型诊断块的 error 级稳定码拒绝集（§4.3.5"仅警告级……error 级
- *        ＝编译失败，不进模型"）。
+ * @brief 诊断块级别判据的历史注（§4.3.5"仅警告级……error 级＝编译失败，
+ *        不进模型"——F-618 起按 record.level 判定，级别是唯一判据）。
  *
- * 成员＝十段编译链的硬失败码（§10.11 冻结注册码，经 Errors.hpp 的
- * registryCode() 取得——单一事实来源，不复制字符串字面量）：这些码出现
- * 即意味对应段已失败、按 MDL-06 原子性不应有发布产物；带着它们构造模型
- * 属调用方契约违约。
- * 不在集内：Cancelled（非错误路径——UX-03/D-11）、RT-CAPABILITY-MISSING 与
- * RT-ROBWORK-ERROR（诊断事件码——警告/转译路径）、RT-BOUNDS-MAGNITUDE 与
- * RT-RESOURCE-RECORDED（专用警告码——audit F-593 起 S3 量级抽样警告不再
- * 复用集内 UnitMismatch，"警告不阻断"承诺恢复；RT-RESOURCE-RECORDED 同为
- * 警告类先例）、UnknownObject/ContextReleased（fail-fast 轨不发稳定码）、
- * 以及未来新增的警告类码（码值权威归 diagnostics，本单元不私裁收窄）。
+ * 历史形态（runtime.md v0.20 前的事件码面登记）：本判据曾是"码 ∈ 硬失败
+ * 码集"（isHardErrorDiagCode 十码枚举表：INPUT-INVALID/STRUCTURE-INVALID/
+ * UNIT-MISMATCH/RESOURCE-MISSING・CHANGED・BUDGET/WC-DWC-COMPILE-FAILED/
+ * NAME-CONFLICT/BASE-WORLD-INCONSISTENT）——警告与错误共用注册码时必然
+ * 相撞的结构性根因（F-593：警告复用 UnitMismatch 被整次编译硬失败）。
+ * F-618 为 DiagnosticRecord 增设 level 字段（core 缺省 Error，fail-closed）
+ * 后，拒绝判据改按级别：error 级记录（含缺省未声明的记录）出现在发布
+ * 模型＝调用方契约违约；warning 级记录放行进诊断块。码值不再参与阻断
+ * 判定——码值权威归 diagnostics StableCodeRegistry（PA-1），本单元不私裁
+ * 收窄（Cancel/能力缺失/资源提醒等警告与事件类码照旧不在此面）。
  */
-bool isHardErrorDiagCode(const std::string& code) noexcept
-{
-    const RuntimeErrorCode hardErrors[] = {
-        RuntimeErrorCode::InputInvalid,          RuntimeErrorCode::StructureInvalid,
-        RuntimeErrorCode::UnitMismatch,          RuntimeErrorCode::ResourceMissing,
-        RuntimeErrorCode::ResourceChanged,       RuntimeErrorCode::ResourceBudget,
-        RuntimeErrorCode::WorkCellCompileFailed, RuntimeErrorCode::DwcCompileFailed,
-        RuntimeErrorCode::NameConflict,          RuntimeErrorCode::BaseWorldInconsistent,
-    };
-    for (const RuntimeErrorCode e : hardErrors) {
-        if (code == registryCode(e)) { return true; }
-    }
-    return false;
-}
+constexpr core::DiagnosticLevel kPublishedDiagLevel = core::DiagnosticLevel::Error;
 
 /// 规范化排序＋相邻重复检测（集合稳定键——§4.5；重复键＝调用方装配违约）。
 template <typename Range, typename KeyFn>
@@ -760,11 +747,15 @@ CanonicalModel CanonicalModelBuilder::build() const
         }
     }
 
-    // ---- 第 10 步：诊断块（§4.3.5——error 级稳定码出现＝编译失败却试图发布）----
+    // ---- 第 10 步：诊断块（§4.3.5——仅警告级；error 级＝编译失败却试图发布）----
+    // F-618：拒绝判据＝record.level==kPublishedDiagLevel（Error；级别是唯一
+    // 判据，码值不参与——见上方历史注）。core 工厂缺省 Error（fail-closed）：
+    // 未显式声明 Warning 的记录一律被拒——警告产生路径漏标在此可见地暴露，
+    // 不静默放行破坏"仅警告级"不变量。
     for (const core::DiagnosticRecord& d : diagnostics) {
-        if (isHardErrorDiagCode(d.code)) {
-            throw inputInvalid("diagnostics：含 error 级稳定码 " + d.code
-                               + "（§4.3.5——发布模型仅警告级，构造拒绝）");
+        if (d.level == kPublishedDiagLevel) {
+            throw inputInvalid("diagnostics：含 error 级记录（level=Error, 码 " + d.code
+                               + "；§4.3.5——发布模型仅警告级〔F-618 按级别拒绝〕，构造拒绝）");
         }
     }
 

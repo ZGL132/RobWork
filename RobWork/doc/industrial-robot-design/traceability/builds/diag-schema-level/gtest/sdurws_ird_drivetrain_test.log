@@ -1,0 +1,77 @@
+[==========] Running 30 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from DtDiagCodes
+[ RUN      ] DtDiagCodes.FullTableMatchesUnitCard_WP18T02_ACC2
+[       OK ] DtDiagCodes.FullTableMatchesUnitCard_WP18T02_ACC2 (0 ms)
+[ RUN      ] DtDiagCodes.CodeSyntaxViaCoreContract_WP18T02_ACC2
+[       OK ] DtDiagCodes.CodeSyntaxViaCoreContract_WP18T02_ACC2 (0 ms)
+[ RUN      ] DtDiagCodes.EntriesCarryCardProvenance_WP18T02_ACC2
+[       OK ] DtDiagCodes.EntriesCarryCardProvenance_WP18T02_ACC2 (0 ms)
+[----------] 3 tests from DtDiagCodes (0 ms total)
+
+[----------] 4 tests from DtBuildRedLine
+[ RUN      ] DtBuildRedLine.ProductFaceHasZeroQtIncludes_WP18T02_ACC1
+[       OK ] DtBuildRedLine.ProductFaceHasZeroQtIncludes_WP18T02_ACC1 (3 ms)
+[ RUN      ] DtBuildRedLine.IncludeFaceRestrictedToTwoRegisteredEdges_WP18T02_ACC2
+[       OK ] DtBuildRedLine.IncludeFaceRestrictedToTwoRegisteredEdges_WP18T02_ACC2 (2 ms)
+[ RUN      ] DtBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP18T02_ACC2
+[       OK ] DtBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP18T02_ACC2 (2 ms)
+[ RUN      ] DtBuildRedLine.ProductFaceFilesNonEmpty_WP18T02_ACC1
+[       OK ] DtBuildRedLine.ProductFaceFilesNonEmpty_WP18T02_ACC1 (2 ms)
+[----------] 4 tests from DtBuildRedLine (10 ms total)
+
+[----------] 17 tests from DtMappingGolden
+[ RUN      ] DtMappingGolden.DiagonalMappingAnalytic_WP18T03_ACC1
+[       OK ] DtMappingGolden.DiagonalMappingAnalytic_WP18T03_ACC1 (0 ms)
+[ RUN      ] DtMappingGolden.NegativeRatioSignPreserved_WP18T03_ACC1
+[       OK ] DtMappingGolden.NegativeRatioSignPreserved_WP18T03_ACC1 (0 ms)
+[ RUN      ] DtMappingGolden.MultiAxisDiagonalIndependence_WP18T03_ACC1
+[       OK ] DtMappingGolden.MultiAxisDiagonalIndependence_WP18T03_ACC1 (0 ms)
+[ RUN      ] DtMappingGolden.VirtualWorkAndIdealPowerConsistency_WP18T03_ACC2
+[       OK ] DtMappingGolden.VirtualWorkAndIdealPowerConsistency_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.MatrixFormEquivalentToDiagonal_WP18T03_ACC2
+[       OK ] DtMappingGolden.MatrixFormEquivalentToDiagonal_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.BlockFaceRejections_WP18T03_ACC2
+[       OK ] DtMappingGolden.BlockFaceRejections_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.FactoryValueValidation_WP18T03_ACC2
+[       OK ] DtMappingGolden.FactoryValueValidation_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.RotorSingleInclusionAndNoExtraFriction_WP18T03_ACC2
+[       OK ] DtMappingGolden.RotorSingleInclusionAndNoExtraFriction_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.BidirectionalEfficiencyEnergy_WP18T03_ACC2
+[       OK ] DtMappingGolden.BidirectionalEfficiencyEnergy_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.DwellAndZeroPower_WP18T03_ACC2
+[       OK ] DtMappingGolden.DwellAndZeroPower_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.ReflectedInertiaAndInertiaRatio_WP18T03_ACC2
+[       OK ] DtMappingGolden.ReflectedInertiaAndInertiaRatio_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.PeakAndRmsMultiSegment_WP18T03_ACC2
+[       OK ] DtMappingGolden.PeakAndRmsMultiSegment_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.QuadrantCoverage_WP18T03_ACC2
+[       OK ] DtMappingGolden.QuadrantCoverage_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.DataInsufficientDegradation_WP18T03_ACC2
+[       OK ] DtMappingGolden.DataInsufficientDegradation_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.CancellationAtBatchBoundary_WP18T03_ACC2
+[       OK ] DtMappingGolden.CancellationAtBatchBoundary_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.CodecRoundtrip_WP18T03_ACC2
+[       OK ] DtMappingGolden.CodecRoundtrip_WP18T03_ACC2 (0 ms)
+[ RUN      ] DtMappingGolden.FactsExtraction_WP18T03_ACC2
+[       OK ] DtMappingGolden.FactsExtraction_WP18T03_ACC2 (0 ms)
+[----------] 17 tests from DtMappingGolden (0 ms total)
+
+[----------] 6 tests from DtGoldenMapping
+[ RUN      ] DtGoldenMapping.AnalyticSingleGolden_WP18T04_ACC1
+[       OK ] DtGoldenMapping.AnalyticSingleGolden_WP18T04_ACC1 (5 ms)
+[ RUN      ] DtGoldenMapping.VirtualWorkMatrixEquivalence_At38R1_WP18T04_ACC1
+[       OK ] DtGoldenMapping.VirtualWorkMatrixEquivalence_At38R1_WP18T04_ACC1 (3 ms)
+[ RUN      ] DtGoldenMapping.At38R1RejectionCounterexamples_WP18T04_ACC1
+[       OK ] DtGoldenMapping.At38R1RejectionCounterexamples_WP18T04_ACC1 (2 ms)
+[ RUN      ] DtGoldenMapping.BidirectionalEnergyGolden_WP18T04_ACC1
+[       OK ] DtGoldenMapping.BidirectionalEnergyGolden_WP18T04_ACC1 (3 ms)
+[ RUN      ] DtGoldenMapping.DwellZeroGolden_WP18T04_ACC1
+[       OK ] DtGoldenMapping.DwellZeroGolden_WP18T04_ACC1 (3 ms)
+[ RUN      ] DtGoldenMapping.ReflectedInertiaGolden_WP18T04_ACC1
+[       OK ] DtGoldenMapping.ReflectedInertiaGolden_WP18T04_ACC1 (2 ms)
+[----------] 6 tests from DtGoldenMapping (20 ms total)
+
+[----------] Global test environment tear-down
+[==========] 30 tests from 4 test suites ran. (31 ms total)
+[  PASSED  ] 30 tests.

@@ -1,0 +1,62 @@
+[==========] Running 21 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from TrjBuildGraph
+[ RUN      ] TrjBuildGraph.UnitEdgesSevenRegisteredAndClosed_WP16T03_ACC1
+[       OK ] TrjBuildGraph.UnitEdgesSevenRegisteredAndClosed_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjBuildGraph.PluginTargetPresent_WP16T03_ACC1
+[       OK ] TrjBuildGraph.PluginTargetPresent_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjBuildGraph.SevenRegisteredEdgesPresent_WP16T03_ACC1
+[       OK ] TrjBuildGraph.SevenRegisteredEdgesPresent_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP16T03_ACC2
+[       OK ] TrjBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP16T03_ACC2 (0 ms)
+[ RUN      ] TrjBuildGraph.NoTestkitEdgeOnProductTarget_WP16T03_ACC1
+[       OK ] TrjBuildGraph.NoTestkitEdgeOnProductTarget_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjBuildGraph.IncludeFaceMatchesRegisteredEdges_WP16T03_ACC2
+[       OK ] TrjBuildGraph.IncludeFaceMatchesRegisteredEdges_WP16T03_ACC2 (5 ms)
+[----------] 6 tests from TrjBuildGraph (8 ms total)
+
+[----------] 3 tests from TrjPluginAssembly
+[ RUN      ] TrjPluginAssembly.DescriptorMatchesUiRegistrations_WP16T03_ACC1
+[       OK ] TrjPluginAssembly.DescriptorMatchesUiRegistrations_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjPluginAssembly.PluginFaceHasZeroComputationSymbols_WP16T03_ACC2
+[       OK ] TrjPluginAssembly.PluginFaceHasZeroComputationSymbols_WP16T03_ACC2 (0 ms)
+[ RUN      ] TrjPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP16T03_ACC2
+[       OK ] TrjPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP16T03_ACC2 (0 ms)
+[----------] 3 tests from TrjPluginAssembly (0 ms total)
+
+[----------] 3 tests from TrjPlanConfigContract
+[ RUN      ] TrjPlanConfigContract.EntryMatchesSnapshotFreezeContract_WP16T04_ACC2
+[       OK ] TrjPlanConfigContract.EntryMatchesSnapshotFreezeContract_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfigContract.EntryIdentitySensitiveToConfigChange_WP16T04_ACC2
+[       OK ] TrjPlanConfigContract.EntryIdentitySensitiveToConfigChange_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfigContract.EntryRejectedForIllegalConfig_WP16T04_ACC2
+[       OK ] TrjPlanConfigContract.EntryRejectedForIllegalConfig_WP16T04_ACC2 (0 ms)
+[----------] 3 tests from TrjPlanConfigContract (0 ms total)
+
+[----------] 2 tests from TrjPathPlannerContract
+[ RUN      ] TrjPathPlannerContract.ProductFaceHasZeroProximity_WP16T06_R5
+[       OK ] TrjPathPlannerContract.ProductFaceHasZeroProximity_WP16T06_R5 (9 ms)
+[ RUN      ] TrjPathPlannerContract.PlannerHeaderPinsDeliveredFace_WP16T06_ACC1
+[       OK ] TrjPathPlannerContract.PlannerHeaderPinsDeliveredFace_WP16T06_ACC1 (0 ms)
+[----------] 2 tests from TrjPathPlannerContract (10 ms total)
+
+[----------] 7 tests from TrjKinPortContract
+[ RUN      ] TrjKinPortContract.ProductFaceHasZeroKinematicsIncludes_WP16T05_ACC2
+[       OK ] TrjKinPortContract.ProductFaceHasZeroKinematicsIncludes_WP16T05_ACC2 (3 ms)
+[ RUN      ] TrjKinPortContract.PortHeaderDeclaresInjectedInterface_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortHeaderDeclaresInjectedInterface_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PlanProjectsRequestFieldsIntoPort_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PlanProjectsRequestFieldsIntoPort_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.SameSeedSameConfigEquivalentRequestSequence_WP16T05_ACC2
+[       OK ] TrjKinPortContract.SameSeedSameConfigEquivalentRequestSequence_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PortErrorSurfacesWithStableTokenPrefix_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortErrorSurfacesWithStableTokenPrefix_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PortCancelPropagatesAsNonError_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortCancelPropagatesAsNonError_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.FkRequestCarriesBranchSolution_WP16T05_ACC2
+[       OK ] TrjKinPortContract.FkRequestCarriesBranchSolution_WP16T05_ACC2 (0 ms)
+[----------] 7 tests from TrjKinPortContract (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 21 tests from 5 test suites ran. (23 ms total)
+[  PASSED  ] 21 tests.

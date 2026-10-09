@@ -302,10 +302,13 @@ inline Fixture richFixture()
     f.drivetrain.ratioPerJoint = {val(1.0), val(1.0)};
 
     // ---- 诊断（警告级——非硬错误码；全字段往返/排除用例的承载）----
+    // F-618：级别显式声明 Warning（core 工厂缺省 Error＝阻断级，会被 builder
+    // 第 10 步按级别拒绝——警告类夹具数据必须声明真实级别）。
     core::DiagnosticRecord warn = core::DiagnosticRecord::make(
         std::string{"RT-CAPABILITY-MISSING"}, std::nullopt, std::string{"joint_1"},
         std::string{}, std::string{"能力缺失警告（测试夹具）"},
-        std::string{"maxAcceleration 未提供"}, std::string{"建模侧补全后重编译"});
+        std::string{"maxAcceleration 未提供"}, std::string{"建模侧补全后重编译"},
+        std::nullopt, core::DiagnosticLevel::Warning);
     f.diagnostics.push_back(warn);
     return f;
 }

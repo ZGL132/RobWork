@@ -151,6 +151,9 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     frameUnk.ownerUnit = "requirements";
     frameUnk.category = diagnostics::DiagnosticCategory::InputInvalid;
     frameUnk.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.6"级别"列：warning
+    // F-618：阻断轴级别随 severity 机械派生（Warning ⇒ Warning——注册期
+    // 验证第⑨检查强制同一映射）。
+    frameUnk.level = core::DiagnosticLevel::Warning;
     frameUnk.titleKey = "diag.req-import-frame-unknown.title";
     frameUnk.detailKey = "diag.req-import-frame-unknown.detail";
     // paramSchema 三键：行号/列名/引用原文（待解析目标——闭包核对阶段的
@@ -245,6 +248,8 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     noRequiredCase.ownerUnit = "requirements";
     noRequiredCase.category = diagnostics::DiagnosticCategory::InputInvalid;
     noRequiredCase.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.6"级别"列：warning
+    // F-618：阻断轴级别随 severity 机械派生（Warning ⇒ Warning）。
+    noRequiredCase.level = core::DiagnosticLevel::Warning;
     noRequiredCase.titleKey = "diag.req-ready-no-required-case.title";
     noRequiredCase.detailKey = "diag.req-ready-no-required-case.detail";
     // paramSchema 两键：工况总数/必验计数（恒 0——清单形状自描述）。
@@ -307,6 +312,8 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     planMissing.ownerUnit = "requirements";
     planMissing.category = diagnostics::DiagnosticCategory::InputInvalid;
     planMissing.severity = diagnostics::DiagnosticSeverity::Warning;  // 预告级（增登依据见头注）
+    // F-618：阻断轴级别随 severity 机械派生（Warning ⇒ Warning）。
+    planMissing.level = core::DiagnosticLevel::Warning;
     planMissing.titleKey = "diag.req-ready-plan-missing.title";
     planMissing.detailKey = "diag.req-ready-plan-missing.detail";
     // paramSchema 两键：区域计数/计划计数（0——预告的形状自描述）。
@@ -337,6 +344,8 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     captureStale.ownerUnit = "requirements";
     captureStale.category = diagnostics::DiagnosticCategory::ResourceMissing;
     captureStale.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.6"级别"列：warning
+    // F-618：阻断轴级别随 severity 机械派生（Warning ⇒ Warning）。
+    captureStale.level = core::DiagnosticLevel::Warning;
     captureStale.titleKey = "diag.req-capture-state-stale.title";
     captureStale.detailKey = "diag.req-capture-state-stale.detail";
     // paramSchema 两键：捕获时会话基线修订 id/草稿基线修订 id（错位
@@ -375,6 +384,8 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     mirrorPending.ownerUnit = "requirements";
     mirrorPending.category = diagnostics::DiagnosticCategory::ResourceMissing;
     mirrorPending.severity = diagnostics::DiagnosticSeverity::Warning;  // §9.6"级别"列：warning
+    // F-618：阻断轴级别随 severity 机械派生（Warning ⇒ Warning）。
+    mirrorPending.level = core::DiagnosticLevel::Warning;
     mirrorPending.titleKey = "diag.req-derive-mirror-pending.title";
     mirrorPending.detailKey = "diag.req-derive-mirror-pending.detail";
     // paramSchema 三键：派生条目名/姿态规则种类/缺失目标。
@@ -396,6 +407,8 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     regenConflict.ownerUnit = "requirements";
     regenConflict.category = diagnostics::DiagnosticCategory::ResourceMissing;
     regenConflict.severity = diagnostics::DiagnosticSeverity::Warning;
+    // F-618：阻断轴级别随 severity 机械派生（Warning ⇒ Warning）。
+    regenConflict.level = core::DiagnosticLevel::Warning;
     regenConflict.titleKey = "diag.req-derive-regenerate-conflict.title";
     regenConflict.detailKey = "diag.req-derive-regenerate-conflict.detail";
     // paramSchema 两键：手改条目名/批次实例标识（重生成定位键）。
@@ -418,6 +431,8 @@ std::vector<diagnostics::CodeDescriptor> requirementCodeDescriptors()
     sourceRemoved.ownerUnit = "requirements";
     sourceRemoved.category = diagnostics::DiagnosticCategory::ResourceMissing;
     sourceRemoved.severity = diagnostics::DiagnosticSeverity::Warning;
+    // F-618：阻断轴级别随 severity 机械派生（Warning ⇒ Warning）。
+    sourceRemoved.level = core::DiagnosticLevel::Warning;
     sourceRemoved.titleKey = "diag.req-derive-source-removed.title";
     sourceRemoved.detailKey = "diag.req-derive-source-removed.detail";
     // paramSchema 两键：被删源条目名/剩余 linked 派生计数。

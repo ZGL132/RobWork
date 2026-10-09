@@ -18,7 +18,8 @@
  * 项目历史与报告后必须永久可解释（"码值一经注册并进入任何持久化产物即不
  * 再改义、不改拼"——§4.5 持久化契约）。各协作单元（project/runtime/policy/
  * evidence/reporting/execution）的卡内码表仅为**建议值**，全量收编进本注册
- * 表的内置装配清单（§4.6，87 码）；任何单元不得以字符串字面量临时拼码构造
+ * 表的内置装配清单（§4.6，88 码＝阶段 A 收编 87 码＋F-618 收编
+ * RT-BOUNDS-MAGNITUDE〔2026-10-10〕）；任何单元不得以字符串字面量临时拼码构造
  * 诊断（工厂只接受已注册码——§4.5，异常文本仅可经 ErrorCodeTranslator 的
  * 已登记类型映射转译，DT-REG-4）。manifest() 摘要供主进程/worker 握手比对
  * （与 evidence EvaluatorRegistry manifest 同模式——跨进程码表一致是"同一
@@ -149,12 +150,14 @@ std::string_view retryKindToken(RetryKind kind) noexcept;
 // =====================================================================
 
 /**
- * @brief 稳定诊断码的注册项（§4.5 字段表 16 字段，逐字段约束见成员注释）。
+ * @brief 稳定诊断码的注册项（§4.5 字段表 17 字段〔F-618 尾追加 level——
+ *        16＋1，卡 diagnostics.md v0.14〕，逐字段约束见成员注释）。
  *
  * 值语义聚合（构造后不可变——注册表内以整值替换承载元数据演进，§4.5
  * "码元数据演进＝装配清单变更"）；无 setter（类型层面杜绝——§9.2"非法
  * 调用"行同款纪律）。字段顺序＝§4.5 表行序（canonical 编码依赖此序，
- * 只允许表尾追加字段并升 registryVersion/codec 版本）。
+ * 只允许表尾追加字段并升 registryVersion/codec 版本——F-618 即按此纪律
+ * 尾追加 level 并升 manifest 家族版本位 IRDDCM1→IRDDCM2）。
  *
  * 线程安全：纯值类型（并发只读安全）。
  */
@@ -206,6 +209,13 @@ struct CodeDescriptor {
     /// 迁移目标（§4.5.1：supersededBy 指向新码；历史产物不重写（PA-2）——
     /// 呈现侧遇 deprecated 码按 tombstone 映射到新码文案键并保留原码原文）。
     std::optional<core::DiagCode> supersededBy;
+    /// 阻断轴级别（F-618，2026-10-10 尾追加——§4.5 字段表同步增列；card
+    /// diagnostics.md v0.14）：该码发布的诊断记录在"是否阻断发布"轴上的
+    /// 级别（runtime 模型诊断块按 record.level==Error 拒绝——runtime §4.3.5）。
+    /// 与 severity（呈现轴）的映射唯一合法形态：severity==Error ⇔ level==
+    /// Error、其余 severity ⇒ level==Warning——注册期验证强制（见下），防
+    /// 两轴漂移；内置表由 severity 机械派生（DiagCodes.cpp makeBuiltin 单点）。
+    core::DiagnosticLevel level = core::DiagnosticLevel::Error;
 
     /// 成员精确等值（测试/装配核对用；跨进程一致性判定以 manifest 摘要为准）。
     bool operator==(const CodeDescriptor& o) const;
@@ -239,7 +249,8 @@ bool isValidDiagCodeSyntax(std::string_view code) noexcept;
  *        清单及其 SHA-256 摘要——core ContentDigester，CR-02 唯一算法）。
  *
  * 确定性（NFR-COR-02）：entries 按 code 字典序升序；digest 为清单的
- * canonical 编码摘要（magic "IRDDCM1"＋逐条目规范编码——实现见
+ * canonical 编码摘要（magic "IRDDCM2"〔F-618 起升位——字段表尾追加 level〕
+ * ＋逐条目规范编码——实现见
  * src/DiagCodes.cpp 头注释；非往返载体，唯一消费方式＝摘要比对）。
  * 同一注册集（任意注册顺序、含 tombstone）必得同一 entries 序与同一
  * digest——manifest() 两次计算稳定（DT-REG-1 观测点）。
@@ -293,7 +304,9 @@ public:
      * 注册期验证（§4.5 行为表"注册期验证"行，任一失败即拒绝并指明字段）：
      * 句法（isValidDiagCodeSyntax）、前缀-所有权一致、titleKey/detailKey
      * 唯一、confirmable⇒requiresComparison、Dev 码 userVisible/reportable/
-     * historical=false、paramSchema 必填且参数名合法。
+     * historical=false、paramSchema 必填且参数名合法、level 与 severity 映射
+     * 一致（severity==Error ⇔ level==Error，其余 severity ⇒ level==Warning
+     * ——F-618 增列）。
      *
      * @param descriptor [in] 注册项（值语义拷贝存入；调用方此后对其的修改
      *                   与注册表无关）
@@ -414,12 +427,12 @@ private:
 };
 
 // =====================================================================
-// 内置码表（§4.6 阶段 A 收编清单——87 码全量：PRJ 10/RT 14/POLICY 23/
+// 内置码表（§4.6 阶段 A 收编清单——88 码全量：PRJ 10/RT 15/POLICY 23/
 // EVI 7/EX 18/RPT 8/DIAG 7；码值不重排各卡已登记建议值——dtb WP-09-T03）
 // =====================================================================
 
 /**
- * @brief 返回 §4.6 内置码表全量描述符（87 项；行序＝§4.6 表行序，行内＝
+ * @brief 返回 §4.6 内置码表全量描述符（88 项；行序＝§4.6 表行序，行内＝
  *        收编清单原文序——非字典序，manifest 排序由 manifest() 承担）。
  *
  * 纯函数（每次调用返回新值——表数据编译期固定，登记值逐码注释见
@@ -434,7 +447,7 @@ std::vector<CodeDescriptor> builtinCodeDescriptors();
  *
  * 前置：registry 未 seal 且为空/不含与内置表冲突的码（任何冲突＝
  * DuplicateCode 中止——内置表是装配清单权威，混入同码他义描述符属装配
- * 错误，fail-fast 不跳过）。后置：87 码全部可 find；manifest 反映全表。
+ * 错误，fail-fast 不跳过）。后置：88 码全部可 find；manifest 反映全表。
  *
  * @param registry [in,out] 目标注册表（调用方持有——本函数不接管）
  * @throws DiagnosticsError 逐条注册的注册期验证错误（含 DuplicateCode——

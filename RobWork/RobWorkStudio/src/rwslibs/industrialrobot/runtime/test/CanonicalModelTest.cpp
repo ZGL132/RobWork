@@ -390,9 +390,11 @@ TEST(CanonicalModelBuilderTest, DefaultTcpSurvivesToolSorting_F584)
         << "换位夹具下 Description 首项排序后应居下标 1（非 0）";
 }
 
-/** error 级诊断码拒绝（§4.3.5"仅警告级"）——警告码放行。 */
+/** error 级记录拒绝（§4.3.5"仅警告级"）——F-618 起按 record.level 判定。 */
 TEST(CanonicalModelBuilderTest, RejectsErrorLevelDiagnostics)
 {
+    // ①缺省级别（Error）的 error 级码记录→拒绝（core 工厂缺省 Error——
+    // 未显式声明 Warning 的记录一律阻断级，fail-closed）。
     Fixture err = minimalFixture();
     err.diagnostics.push_back(core::DiagnosticRecord::make(
         std::string{registryCode(RuntimeErrorCode::InputInvalid)}, std::nullopt, std::string{},
@@ -400,12 +402,37 @@ TEST(CanonicalModelBuilderTest, RejectsErrorLevelDiagnostics)
     expectBuildThrows(err.toBuilder(), RuntimeErrorCode::InputInvalid,
                       "error 级诊断入模");
 
-    // 取消码（非错误路径——UX-03/D-11）与未知码不拒绝（码值权威归 diagnostics）。
+    // ②error 级码 UnitMismatch 仍阻断（F-618 钉：十段链硬失败码标定 error 级，
+    // 按级别拒绝后依旧不进发布模型——本例兼作"码集判定废除但阻断面不变"的
+    // 回归锚：拒绝原因是 level=Error，而非码集成员资格）。
+    Fixture mismatch = minimalFixture();
+    mismatch.diagnostics.push_back(core::DiagnosticRecord::make(
+        std::string{registryCode(RuntimeErrorCode::UnitMismatch)}, std::nullopt, std::string{},
+        std::string{}, std::string{"上下文"}, std::string{"原因"}, std::string{"建议"}));
+    expectBuildThrows(mismatch.toBuilder(), RuntimeErrorCode::InputInvalid,
+                      "error 级 UnitMismatch 入模");
+
+    // ③警告级记录放行——码值不参与阻断判定（F-618 新语义钉）：同一个
+    // UnitMismatch 码，显式声明 level=Warning 即随诊断块发布。老机制（码集）
+    // 下该记录必被拒——本断言即"级别是唯一判据"的物证。
+    Fixture warnMismatch = minimalFixture();
+    warnMismatch.diagnostics.push_back(core::DiagnosticRecord::make(
+        std::string{registryCode(RuntimeErrorCode::UnitMismatch)}, std::nullopt, std::string{},
+        std::string{}, std::string{"上下文"}, std::string{"原因"}, std::string{"建议"},
+        std::nullopt, core::DiagnosticLevel::Warning));
+    ASSERT_NO_THROW(warnMismatch.build()) << "警告级记录放行（F-618 按级别拒绝）";
+    ASSERT_EQ(warnMismatch.build().diagnostics().size(), 1u);
+    EXPECT_EQ(warnMismatch.build().diagnostics().front().level,
+              core::DiagnosticLevel::Warning);
+
+    // ④取消码＋warning 级→放行（取消非错误路径——UX-03/D-11；码值权威归
+    // diagnostics，runtime 不按码私裁）。
     Fixture cancelled = minimalFixture();
     cancelled.diagnostics.push_back(core::DiagnosticRecord::make(
         std::string{registryCode(RuntimeErrorCode::Cancelled)}, std::nullopt, std::string{},
-        std::string{}, std::string{"取消（非错误）"}, std::string{"用户取消"}, std::string{"无"}));
-    EXPECT_NO_THROW(cancelled.build()) << "Cancelled 非错误路径——不在拒绝集";
+        std::string{}, std::string{"取消（非错误）"}, std::string{"用户取消"}, std::string{"无"},
+        std::nullopt, core::DiagnosticLevel::Warning));
+    EXPECT_NO_THROW(cancelled.build()) << "Cancelled 警告级记录——不拒绝";
 }
 
 // =====================================================================

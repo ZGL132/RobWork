@@ -856,6 +856,8 @@ CompileOutcome cancelledOutcome()
     CompileOutcome out;
     out.status = CompileStatus::Cancelled;
     // 码面：RT-CANCELLED（registryCode(Cancelled) 单点——PA-1 不私裁码值）。
+    // F-618：级别显式 Warning（协作取消为正常控制流非错误——码表 severity=Info，
+    // 阻断轴归 Warning 侧；core 工厂缺省 Error 语义不符，显式声明）。
     out.diagnostics.push_back(core::DiagnosticRecord::make(
         std::string{registryCode(RuntimeErrorCode::Cancelled)},
         std::nullopt,
@@ -863,7 +865,9 @@ CompileOutcome cancelledOutcome()
         std::nullopt,
         std::string{"runtime 编译链取消（段边界轮询——协作取消为正常控制流，非错误）"},
         std::string{token(RuntimeErrorCode::Cancelled)},
-        std::string{"重新发起编译（无半成品残留，可直接重试——§5.5 可重入）"}));
+        std::string{"重新发起编译（无半成品残留，可直接重试——§5.5 可重入）"},
+        std::nullopt,
+        core::DiagnosticLevel::Warning));
     return out;
 }
 
@@ -901,6 +905,8 @@ std::vector<core::DiagnosticRecord> translateNameMapNotices(const RuntimeNameMap
     std::vector<core::DiagnosticRecord> out;
     out.reserve(map.notices().size());
     for (const RuntimeNameNotice& n : map.notices()) {
+        // F-618：级别显式 Warning（§7.2 消歧/空名警告不阻断——core 工厂缺省
+        // Error 语义不符，按事实声明）。
         out.push_back(core::DiagnosticRecord::make(
             std::string{kNameDisambiguatedCode},
             n.objectId,
@@ -912,7 +918,9 @@ std::vector<core::DiagnosticRecord> translateNameMapNotices(const RuntimeNameMap
                               "的规则面保留分支）"}
                 : std::string{"同名消歧：["} + n.originalLocalName + "] → ["
                       + n.runtimeLocalName + "]（按 ObjectId 序加后缀）",
-            std::string{"经⑥端口以消歧后运行时名引用该对象（AT-18 往返不变）"}));
+            std::string{"经⑥端口以消歧后运行时名引用该对象（AT-18 往返不变）"},
+            std::nullopt,
+            core::DiagnosticLevel::Warning));
     }
     return out;
 }

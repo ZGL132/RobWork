@@ -94,13 +94,18 @@ std::string oidText(const core::ObjectId& id)
 
 /// S3/S4 警告级诊断的统一转译（码面取 registryCode 单点——PA-1 不私裁码值；
 /// 比较型三要素的 warning 面仅量级抽样〔无 comparison〕，故不携带比较字段）。
+/// F-618：本函数是全部"随模型发布的警告"的唯一产码点——显式声明
+/// level=Warning（core 工厂缺省 Error＝阻断级，漏标会被 builder 第 10 步
+/// 可见地拒绝；S3 量级抽样 RT-BOUNDS-MAGNITUDE 与 S4 固化提醒
+/// RT-RESOURCE-RECORDED 两条路径均经此处，缺标即测试暴露）。
 core::DiagnosticRecord warningRecord(const std::string& code, const core::ObjectId& subject,
                                      std::string context, std::string cause,
                                      std::string action)
 {
     return core::DiagnosticRecord::make(code, subject, std::nullopt, std::nullopt,
                                         std::move(context), std::move(cause),
-                                        std::move(action));
+                                        std::move(action), std::nullopt,
+                                        core::DiagnosticLevel::Warning);
 }
 
 /**
@@ -341,9 +346,11 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
             continue;  // 硬失败统一收集后抛出（见下——全量列出，不短路）
         }
         // 警告级（§4.4 量级抽样——给警告不阻断）：随模型诊断块发布
-        // （§4.3.5"诊断块仅警告级"）。码面：优先取问题的专用注册码覆盖
-        // （audit F-593——警告码与 error 级硬失败码集分离，如限位量级
-        // 抽样的 RT-BOUNDS-MAGNITUDE）；无覆盖时取归属码的注册码单点。
+        // （§4.3.5"诊断块仅警告级"——F-618 起按 record.level 拒绝，警告
+        // 级经 warningRecord 显式声明 Warning 后放行）。码面：优先取问题
+        // 的专用注册码覆盖（F-593 引入、F-618 起为已注册警告码的承载
+        // 通道——RT-BOUNDS-MAGNITUDE 已在 diagnostics 内置表注册，级别
+        // Warning；无覆盖时取归属码的注册码单点）。
         tx.m_warnings.push_back(warningRecord(
             issue.registryCodeOverride.empty()
                 ? std::string{registryCode(issue.code)}

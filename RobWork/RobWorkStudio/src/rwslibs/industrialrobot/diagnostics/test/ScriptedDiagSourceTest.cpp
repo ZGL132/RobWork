@@ -128,6 +128,7 @@ void sealRegistry(StableCodeRegistry& registry)
     confirmable.ownerUnit = "modeling";
     confirmable.category = DiagnosticCategory::Confirmable;
     confirmable.severity = DiagnosticSeverity::Warning;
+    confirmable.level = core::DiagnosticLevel::Warning;  // F-618：映射一致（Warning⇒Warning）
     confirmable.titleKey = "diag.mdl-06-travel-limit.title";   // P-DIAG-9 键约定
     confirmable.detailKey = "diag.mdl-06-travel-limit.detail";
     confirmable.paramSchema = "[]";                             // 无参数（必填字段显式声明）

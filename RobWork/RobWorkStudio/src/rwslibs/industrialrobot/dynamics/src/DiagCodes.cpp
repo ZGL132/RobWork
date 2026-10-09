@@ -82,6 +82,12 @@ diagnostics::CodeDescriptor makeDescriptor(std::string_view code,
     d.ownerUnit = "dynamics";                                    // §4.5 前缀-所有权表
     d.category = category;                                       // §4.3 词表落值（调用点锚点）
     d.severity = severity;                                       // §9.4"严重度"列
+    // F-618：阻断轴级别随 severity 机械派生（severity==Error ⇒ Error、
+    // 其余 ⇒ Warning——注册期验证第⑨检查强制同一映射，与 diagnostics
+    // 内置表 makeBuiltin 派生单点同规则）。
+    d.level = severity == diagnostics::DiagnosticSeverity::Error
+                  ? core::DiagnosticLevel::Error
+                  : core::DiagnosticLevel::Warning;
     d.titleKey = "diag." + lower + ".title";                     // P-DIAG-9 命名约定
     d.detailKey = "diag." + lower + ".detail";                   // （键/值分离，值归文案资源）
     d.paramSchema = "[]";                                        // 无参数显式声明（不私造参数名）

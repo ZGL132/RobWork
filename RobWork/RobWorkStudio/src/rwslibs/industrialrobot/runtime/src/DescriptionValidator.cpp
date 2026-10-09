@@ -65,12 +65,12 @@ constexpr double kAngleMagnitudeWarn = 4.0 * 3.14159265358979323846 * 10.0;
 /// 特征）。警告级不阻断、非 P-RT-7 类阻止边界（本单元抽样设计默认）。
 constexpr double kLengthMagnitudeWarn = 1e2;
 
-/// 限位量级抽样警告的专用注册码（audit F-593）：比照 RT-RESOURCE-RECORDED
-/// 先例按 PA-1 登记的专用警告码（建议码面待 diagnostics 收编〔PA-1 登记
-/// 面〕；诊断事件码、无 RuntimeErrorCode 枚举对应——§10.11 冻结关系不扩）。
-/// 原实现复用 RT-UNIT-MISMATCH，而该码在 builder 的 error 级硬失败码集内
-/// （CanonicalModel isHardErrorDiagCode）——本应"发布＋警告"的合法模型被
-/// 整次编译硬失败（"警告不阻断"承诺失效）；专用码与硬失败码集不再相撞。
+/// 限位量级抽样警告的专用注册码（audit F-593 引入；F-618 收编——2026-10-10
+/// 起在 diagnostics 内置表正式注册：input-invalid/Warning/level=Warning，
+/// diagnostics.md §4.6 RT 行）。诊断事件码、无 RuntimeErrorCode 枚举对应
+/// （§10.11 冻结关系不扩）；经 ValidationIssue::registryCodeOverride 携带
+/// 发布。builder 拒绝已改按 record.level（F-618），本码不再有与阻断码面
+/// 相撞的结构性风险——级别（Warning）与码面（专用注册码）各司其职。
 constexpr char kBoundsMagnitudeWarnCode[] = "RT-BOUNDS-MAGNITUDE";
 
 /// 对称 Jacobi 最大扫描轮数：收敛上界保护（正规小矩阵 6～10 轮内收敛；
@@ -134,8 +134,8 @@ void addWarning(ValidationReport& report, RuntimeErrorCode code, std::string fie
     report.issues.push_back(std::move(issue));
 }
 
-/// 报告一条带专用注册码覆盖的警告级问题（audit F-593——警告码与 error 级
-/// 硬失败码集分离；覆盖码语义见 ValidationIssue::registryCodeOverride 注）。
+/// 报告一条带专用注册码覆盖的警告级问题（audit F-593 引入——警告携专用
+/// 码面而非复用归属码；覆盖码语义见 ValidationIssue::registryCodeOverride 注）。
 void addWarning(ValidationReport& report, RuntimeErrorCode code, std::string fieldPath,
                 std::string detail, std::string registryCodeOverride)
 {
@@ -547,9 +547,10 @@ void checkBoundMagnitude(ValidationReport& report, JointType type,
         const auto v = value.tryValue();
         if (!v || !finite(*v)) { return; }
         if (std::fabs(*v) > warn) {
-            // 专用警告码（audit F-593）：registryCodeOverride 携带
-            // RT-BOUNDS-MAGNITUDE——S3 警告转译按覆盖码发布，不再复用
-            // error 级硬失败码集内的 UnitMismatch（"警告不阻断"承诺）。
+            // 专用警告码（F-593 引入、F-618 收编）：registryCodeOverride 携带
+            // 已注册警告码 RT-BOUNDS-MAGNITUDE——S3 警告转译按覆盖码发布；
+            // builder 拒绝改按 record.level 后，"警告不阻断"由级别承载
+            // （转译点 warningRecord 显式声明 level=Warning）。
             addWarning(report, RuntimeErrorCode::UnitMismatch, path,
                        path + "：限位量级异常（|" + std::to_string(*v) + "| > "
                            + std::to_string(warn) + " " + unit + "）——疑似 deg/mm"
