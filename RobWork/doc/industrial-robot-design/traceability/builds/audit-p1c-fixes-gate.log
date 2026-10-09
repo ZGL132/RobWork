@@ -1,0 +1,662 @@
+  -> PASS
+  [ird_gates] Èë∑ÓÅÖÁ•?fail_r4ÈîõÊ∞≠ÂØúÊ£∞Âã¨Êπ°Â¶´‚Ç¨Èç?IRD-GATE-R4
+  [ird_gates] Èë∑ÓÅÖÁ•?fail_t2ÈîõÊ∞≠ÂØúÊ£∞Âã¨Êπ°Â¶´‚Ç¨Èç?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] ÈéµÓÇ£ÂºøÈèçÁô∏Á¥∞D:/10_Source_Repos/21_robot/RobWork-audit/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] Èçè„Ñ©ÂÑ¥Â¶´‚Ç¨Èèå„É©‚Ç¨Ê∞≥ÁπÉÈîõÊ≠ä-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 ÈóÜË∑∫Êá°Ê∂ì?==============================================================
+  -> PASS
+  -> PASS
+  Automatic MOC for target sdurws_ird_core_test
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.35 sec
+  -> PASS
+  DiagContractCheckTest.cpp
+  sdurws_ird_diagnostics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_diagnostics_test
+  sdurws_ird_diagnostics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.41 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_drivetrain_contract_test
+  sdurws_ird_drivetrain_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_contract_test.exe
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.23 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_drivetrain_test
+  sdurws_ird_drivetrain_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_test.exe
+Label Time Summary:
+ird    =   0.21 sec*proc (1 test)
+
+Total Test time (real) =   0.21 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_dynamics_contract_test
+  sdurws_ird_dynamics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_contract_test.exe
+Label Time Summary:
+ird    =   0.23 sec*proc (1 test)
+
+Total Test time (real) =   0.24 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_dynamics_test
+  sdurws_ird_dynamics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_test.exe
+Label Time Summary:
+ird    =   0.28 sec*proc (1 test)
+
+Total Test time (real) =   0.29 sec
+  -> PASS
+  EnvelopeAccessorContractTest.cpp
+  sdurws_ird_evidence_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.20 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_evidence_test
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.24 sec
+  -> PASS
+  
+  sdurws_ird_execution_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_execution_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.81 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_execution_test
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.17 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_io_contract_test
+  sdurws_ird_io_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_io_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.69 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_io_test
+  sdurws_ird_io_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_io_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.34 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_kinematics_contract_test
+  sdurws_ird_kinematics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_contract_test.exe
+Label Time Summary:
+ird    =   0.28 sec*proc (1 test)
+
+Total Test time (real) =   0.30 sec
+  -> PASS
+D:\10_Source_Repos\21_robot\RobWork-audit\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp(1215,45): warning C4804: ‚Ä?‚Ä? Âú®Êìç‰Ωú‰∏≠‰ΩøÁî®Á±ªÂûã‚Äúbool‚Äù‰∏çÂÆâÂÖ® [D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\sdurws_ird_kinematics_test.vcxproj]
+  sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+Label Time Summary:
+ird    =  11.33 sec*proc (1 test)
+
+Total Test time (real) =  11.33 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_modeling_contract_test
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+Label Time Summary:
+ird    =   0.24 sec*proc (1 test)
+
+Total Test time (real) =   0.25 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_modeling_gui_test
+  sdurws_ird_modeling_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_gui_test.exe
+
+The following tests FAILED:
+	  2 - sdurws_ird_modeling_gui_test (Failed)             ird_gui
+Errors while running CTest
+  -> FAIL : ctest  ß∞‹£®ÕÀ≥ˆ¬Î 8£©
+  Automatic MOC for target sdurws_ird_modeling_test
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_test.exe
+Label Time Summary:
+ird    =   0.64 sec*proc (1 test)
+
+Total Test time (real) =   0.64 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_optimization_contract_test
+  sdurws_ird_optimization_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_contract_test.exe
+Label Time Summary:
+ird    =   0.39 sec*proc (1 test)
+
+Total Test time (real) =   0.39 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_optimization_test
+  sdurws_ird_optimization_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_test.exe
+Label Time Summary:
+ird    =   0.14 sec*proc (1 test)
+
+Total Test time (real) =   0.14 sec
+  -> PASS
+  
+  sdurws_ird_policy_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.20 sec
+  -> PASS
+  DiagnosticsTest.cpp
+  sdurws_ird_policy_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.14 sec
+  -> PASS
+  Tx2DiagnosticRecordContractTest.cpp
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   7.03 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_project_test
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   8.96 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_reporting_contract_test
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.34 sec
+  -> PASS
+  ReportingContractSuiteTest.cpp
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.43 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_requirements_contract_test
+  sdurws_ird_requirements_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
+Label Time Summary:
+ird    =   0.43 sec*proc (1 test)
+
+Total Test time (real) =   0.44 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_requirements_gui_test
+  sdurws_ird_requirements_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_gui_test.exe
+Label Time Summary:
+ird_gui    =   2.54 sec*proc (1 test)
+
+Total Test time (real) =   2.55 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_requirements_test
+  sdurws_ird_requirements_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
+Label Time Summary:
+ird    =   0.42 sec*proc (1 test)
+
+Total Test time (real) =   0.42 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_runtime_test
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+Label Time Summary:
+ird    =   0.56 sec*proc (1 test)
+
+Total Test time (real) =   0.57 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_selection_contract_test
+  sdurws_ird_selection_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_selection_contract_test.exe
+Label Time Summary:
+ird    =   0.18 sec*proc (1 test)
+
+Total Test time (real) =   0.19 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_selection_test
+  sdurws_ird_selection_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_selection_test.exe
+Label Time Summary:
+ird    =   0.25 sec*proc (1 test)
+
+Total Test time (real) =   0.25 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_testkit_test
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.24 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_trajectory_contract_test
+  sdurws_ird_trajectory_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_contract_test.exe
+Label Time Summary:
+ird    =   0.18 sec*proc (1 test)
+
+Total Test time (real) =   0.19 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_trajectory_test
+  sdurws_ird_trajectory_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_test.exe
+Label Time Summary:
+ird    =   0.49 sec*proc (1 test)
+
+Total Test time (real) =   0.50 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_ui_contract_test
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+Label Time Summary:
+ird    =   0.76 sec*proc (1 test)
+
+Total Test time (real) =   0.76 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_ui_gui_test
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+
+The following tests FAILED:
+	  3 - sdurws_ird_ui_gui_test (Failed)                   ird_gui
+Errors while running CTest
+  -> FAIL : ctest  ß∞‹£®ÕÀ≥ˆ¬Î 8£©
+  Automatic MOC for target sdurws_ird_ui_test
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+Label Time Summary:
+ird    =   2.00 sec*proc (1 test)
+
+Total Test time (real) =   2.01 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_workflow_contract_test
+  sdurws_ird_workflow_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_contract_test.exe
+Label Time Summary:
+ird    =   0.90 sec*proc (1 test)
+
+Total Test time (real) =   0.92 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_workflow_test
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_test.exe
+Label Time Summary:
+ird    =   0.17 sec*proc (1 test)
+
+Total Test time (real) =   0.18 sec
+  -> PASS
+  -> PASS
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\core\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\core\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.35 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\diagnostics\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\diagnostics\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.17 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_diagnostics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\diagnostics\Release\sdurws_ird_diagnostics_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.51 sec
+  -> PASS
+  sdurws_ird_drivetrain_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\drivetrain\Release\sdurws_ird_drivetrain_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\drivetrain\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.12 sec*proc (1 test)
+
+Total Test time (real) =   0.12 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_drivetrain_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\drivetrain\Release\sdurws_ird_drivetrain_test.exe
+Label Time Summary:
+ird    =   0.17 sec*proc (1 test)
+
+Total Test time (real) =   0.17 sec
+  -> PASS
+  sdurws_ird_dynamics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\dynamics\Release\sdurws_ird_dynamics_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\dynamics\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.16 sec*proc (1 test)
+
+Total Test time (real) =   0.16 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_dynamics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\dynamics\Release\sdurws_ird_dynamics_test.exe
+Label Time Summary:
+ird    =   0.26 sec*proc (1 test)
+
+Total Test time (real) =   0.27 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\evidence\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\evidence\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.17 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_evidence_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\evidence\Release\sdurws_ird_evidence_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.15 sec
+  -> PASS
+  sdurws_ird_execution_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\execution\Release\sdurws_ird_execution_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\execution\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   3.40 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_execution_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\execution\Release\sdurws_ird_execution_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.39 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\bz2.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\io\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\z.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\io\Release\z.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.69 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_io_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\io\Release\sdurws_ird_io_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.53 sec
+  -> PASS
+  sdurws_ird_kinematics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\kinematics\Release\sdurws_ird_kinematics_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\kinematics\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.18 sec*proc (1 test)
+
+Total Test time (real) =   0.19 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_kinematics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\kinematics\Release\sdurws_ird_kinematics_test.exe
+Label Time Summary:
+ird    =  10.85 sec*proc (1 test)
+
+Total Test time (real) =  10.86 sec
+  -> PASS
+  sdurws_ird_modeling_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\modeling\Release\sdurws_ird_modeling_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\modeling\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.14 sec*proc (1 test)
+
+Total Test time (real) =   0.14 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_modeling_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\modeling\Release\sdurws_ird_modeling_gui_test.exe
+
+The following tests FAILED:
+	  2 - sdurws_ird_modeling_gui_test (Failed)             ird_gui
+Errors while running CTest
+  -> FAIL : ctest  ß∞‹£®ÕÀ≥ˆ¬Î 8£©
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\bz2.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\modeling\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\z.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\modeling\Release\z.dll done
+Label Time Summary:
+ird    =   0.78 sec*proc (1 test)
+
+Total Test time (real) =   0.78 sec
+  -> PASS
+  sdurws_ird_optimization_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\optimization\Release\sdurws_ird_optimization_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\optimization\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.41 sec*proc (1 test)
+
+Total Test time (real) =   0.41 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_optimization_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\optimization\Release\sdurws_ird_optimization_test.exe
+Label Time Summary:
+ird    =   0.19 sec*proc (1 test)
+
+Total Test time (real) =   0.20 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\policy\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\policy\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.21 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_policy_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\policy\Release\sdurws_ird_policy_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.18 sec
+  -> PASS
+  sdurws_ird_project_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\project\Release\sdurws_ird_project_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\project\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   7.85 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_project_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\project\Release\sdurws_ird_project_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =  14.12 sec
+  -> PASS
+  sdurws_ird_reporting_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\reporting\Release\sdurws_ird_reporting_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\reporting\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_reporting_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\reporting\Release\sdurws_ird_reporting_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.47 sec
+  -> PASS
+  sdurws_ird_requirements_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\requirements\Release\sdurws_ird_requirements_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\requirements\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.23 sec*proc (1 test)
+
+Total Test time (real) =   0.24 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_requirements_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\requirements\Release\sdurws_ird_requirements_gui_test.exe
+Label Time Summary:
+ird_gui    =   2.11 sec*proc (1 test)
+
+Total Test time (real) =   2.11 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_requirements_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\requirements\Release\sdurws_ird_requirements_test.exe
+Label Time Summary:
+ird    =   0.27 sec*proc (1 test)
+
+Total Test time (real) =   0.27 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\runtime\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\runtime\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.18 sec*proc (1 test)
+
+Total Test time (real) =   0.18 sec
+  -> PASS
+  sdurws_ird_selection_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\selection\Release\sdurws_ird_selection_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\selection\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.14 sec*proc (1 test)
+
+Total Test time (real) =   0.14 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_selection_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\selection\Release\sdurws_ird_selection_test.exe
+Label Time Summary:
+ird    =   0.17 sec*proc (1 test)
+
+Total Test time (real) =   0.17 sec
+  -> PASS
+  sdurws_ird_testkit_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\testkit\Release\sdurws_ird_testkit_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\testkit\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.56 sec
+  -> PASS
+  sdurws_ird_trajectory_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\trajectory\Release\sdurws_ird_trajectory_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\trajectory\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.15 sec*proc (1 test)
+
+Total Test time (real) =   0.16 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_trajectory_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\trajectory\Release\sdurws_ird_trajectory_test.exe
+Label Time Summary:
+ird    =   0.13 sec*proc (1 test)
+
+Total Test time (real) =   0.13 sec
+  -> PASS
+  sdurws_ird_ui_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\ui\Release\sdurws_ird_ui_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\ui\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.19 sec*proc (1 test)
+
+Total Test time (real) =   0.20 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_ui_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\ui\Release\sdurws_ird_ui_gui_test.exe
+
+The following tests FAILED:
+	  3 - sdurws_ird_ui_gui_test (Failed)                   ird_gui
+Errors while running CTest
+  -> FAIL : ctest  ß∞‹£®ÕÀ≥ˆ¬Î 8£©
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_ui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\ui\Release\sdurws_ird_ui_test.exe
+Label Time Summary:
+ird    =   1.82 sec*proc (1 test)
+
+Total Test time (real) =   1.82 sec
+  -> PASS
+  sdurws_ird_workflow_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\workflow\Release\sdurws_ird_workflow_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork-audit\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\workflow\Release\gtest.dll done
+Label Time Summary:
+ird    =   1.29 sec*proc (1 test)
+
+Total Test time (real) =   1.29 sec
+  -> PASS
+  Ê≠£Âú®ÁîüÊàê‰ª£Á†Å...
+  sdurws_ird_workflow_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke\workflow\Release\sdurws_ird_workflow_test.exe
+Label Time Summary:
+ird    =   0.21 sec*proc (1 test)
+
+Total Test time (real) =   0.21 sec
+  -> PASS
+√∞—Ãœ÷≥°±£¡Ù: C:\Users\zgl18\AppData\Local\Temp\ird-gate-smoke
+
+================ gate-all ª„◊‹ ================
+PASS  ºØ≥… ˜ª∫¥Ê»∑»œ£®RWS_BUILD_INDUSTRIALROBOT=ON “—‘⁄Œª£©
+PASS  ird_gates£®“¿¿µ∫Ïœﬂ/≤π∂°√≈Ω˚£©
+PASS  ºØ≥…ƒ£ Ω≤‚ ‘∑¢œ÷£®40 ∏ˆ◊¢≤·: sdurws_ird_core_test, sdurws_ird_diagnostics_contract_test, sdurws_ird_diagnostics_test, sdurws_ird_drivetrain_contract_test, sdurws_ird_drivetrain_test, sdurws_ird_dynamics_contract_test, sdurws_ird_dynamics_test, sdurws_ird_evidence_contract_test, sdurws_ird_evidence_test, sdurws_ird_execution_contract_test, sdurws_ird_execution_test, sdurws_ird_io_contract_test, sdurws_ird_io_test, sdurws_ird_kinematics_contract_test, sdurws_ird_kinematics_test, sdurws_ird_modeling_contract_test, sdurws_ird_modeling_gui_test, sdurws_ird_modeling_test, sdurws_ird_optimization_contract_test, sdurws_ird_optimization_test, sdurws_ird_policy_contract_test, sdurws_ird_policy_test, sdurws_ird_project_contract_test, sdurws_ird_project_test, sdurws_ird_reporting_contract_test, sdurws_ird_reporting_test, sdurws_ird_requirements_contract_test, sdurws_ird_requirements_gui_test, sdurws_ird_requirements_test, sdurws_ird_runtime_test, sdurws_ird_selection_contract_test, sdurws_ird_selection_test, sdurws_ird_testkit_test, sdurws_ird_trajectory_contract_test, sdurws_ird_trajectory_test, sdurws_ird_ui_contract_test, sdurws_ird_ui_gui_test, sdurws_ird_ui_test, sdurws_ird_workflow_contract_test, sdurws_ird_workflow_test£©
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_core_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_diagnostics_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_diagnostics_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_drivetrain_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_drivetrain_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_dynamics_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_dynamics_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_evidence_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_evidence_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_execution_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_execution_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_io_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_io_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_kinematics_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_kinematics_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_modeling_contract_test
+FAIL  ºØ≥…≤‚ ‘ sdurws_ird_modeling_gui_test : ctest  ß∞‹£®ÕÀ≥ˆ¬Î 8£©
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_modeling_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_optimization_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_optimization_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_policy_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_policy_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_project_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_project_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_reporting_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_reporting_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_requirements_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_requirements_gui_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_requirements_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_runtime_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_selection_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_selection_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_testkit_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_trajectory_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_trajectory_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_ui_contract_test
+FAIL  ºØ≥…≤‚ ‘ sdurws_ird_ui_gui_test : ctest  ß∞‹£®ÕÀ≥ˆ¬Î 8£©
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_ui_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_workflow_contract_test
+PASS  ºØ≥…≤‚ ‘ sdurws_ird_workflow_test
+PASS  √∞—Ã ˜≈‰÷√£®standalone smoke£¨toolchain ‘⁄Œª£©
+PASS  √∞—Ãƒ£ Ω≤‚ ‘∑¢œ÷£®40 ∏ˆ◊¢≤·£©
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_core_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_diagnostics_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_diagnostics_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_drivetrain_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_drivetrain_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_dynamics_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_dynamics_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_evidence_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_evidence_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_execution_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_execution_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_io_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_io_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_kinematics_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_kinematics_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_modeling_contract_test
+FAIL  √∞—Ã≤‚ ‘ sdurws_ird_modeling_gui_test : ctest  ß∞‹£®ÕÀ≥ˆ¬Î 8£©
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_modeling_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_optimization_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_optimization_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_policy_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_policy_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_project_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_project_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_reporting_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_reporting_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_requirements_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_requirements_gui_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_requirements_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_runtime_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_selection_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_selection_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_testkit_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_trajectory_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_trajectory_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_ui_contract_test
+FAIL  √∞—Ã≤‚ ‘ sdurws_ird_ui_gui_test : ctest  ß∞‹£®ÕÀ≥ˆ¬Î 8£©
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_ui_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_workflow_contract_test
+PASS  √∞—Ã≤‚ ‘ sdurws_ird_workflow_test
+================================================
+Ω·π˚: 81/85 Õ®π˝
+¥Ê‘⁄ ß∞‹œÓ°™°™±æµÿ“ªº¸√≈º˜Œ¥π˝£¨Ω˚÷πÃ·Ωª£®∆ı‘º acceptance 1£©
+EXIT=1

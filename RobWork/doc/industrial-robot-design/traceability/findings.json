@@ -5725,6 +5725,87 @@
       "registeredAt": "2026-10-09",
       "title": "S3 限位量级抽样警告复用 UnitMismatch 注册码进入模型诊断块，而 builder 的 error 级硬失败码集恰含 UnitMismatch——本应\"发布＋警告\"的合法模型（限位 rad 位 ±360 一类 deg 误作 rad）整次编译硬失败（\"警告不阻断\"承诺失效；根因＝DiagnosticRecord 无级别字段，警告与错误共用码必然相撞）",
       "resolution": "批次 B 延后（需所有者裁决承载方式）：修复方向二选一——专用警告码（比照 RT-RESOURCE-RECORDED 先例按 PA-1 登记），或让 DiagnosticRecord 承载级别、builder 按级别拒绝。修复点：DescriptionValidator.cpp:524-533、CompilerImpl.cpp:345-349、CanonicalModel.cpp:323-332。"
+    },
+    {
+      "id": "F-594",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·testkit）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "SetCheck 歧义探测移除配对后裸增广——Kuhn 首扫按索引序原样配回被释放的 ri 并返回 true：任何阶段 2 数值配对下首次探测必误报 ambiguousMatch=true（唯一匹配与真歧义无法区分，审计字段失真）",
+      "resolution": "修复（分支 audit-p1c-fixes）：重写为 M-交错圈判定——从 li 沿\"未匹配边(r≠ri)＋匹配边(→owner)\"做左点闭包，闭包内 l'≠li 存在未匹配边 (l',ri) 即存在替代完美匹配。原审查建议的\"屏蔽 ri\"浅修被实现期证伪：完美匹配下无自由右点、增广恒 false，2×2 全同值交换形态的真歧义漏报——双向回归钉（唯一匹配 false＋真歧义 true）防止两方向回退。sdurws_ird_testkit_test 101/101 通过。"
+    },
+    {
+      "id": "F-595",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·testkit）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ProcessRunner 空串参数原样返回——命令行只多一个空格，子进程 argv 丢失该参数且后续参数整体前移（位置型参数全部错位）",
+      "resolution": "修复（分支 audit-p1c-fixes）：空串参数发射 \"\"（规范形态）。回归钉 EmptyArgEmitsQuotedEmpty_F595。sdurws_ird_testkit_test 101/101 通过。"
+    },
+    {
+      "id": "F-596",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·testkit）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ProcessRunner 命令行引号转义反斜杠数量错误——引号前 N 个反斜杠发射 N+1 个（Windows 解析规则应为 2N+1）：含 \\\" 序列的参数在子进程端被吞掉一半反斜杠且转义引号被当分隔符——参数碎裂、引号状态翻转",
+      "resolution": "修复（分支 audit-p1c-fixes）：改 2N+1 发射；quoteWindowsArg 上移 testkit::detail 命名空间（hpp 声明）为可测试性接缝。回归钉 BackslashQuoteEscapingTwoNPlusOne_F596 四断言（\\\"序列/纯反斜杠/结尾反斜杠/普通空格——发射文本精确钉住，旧 N+1 逻辑必不满足）。sdurws_ird_testkit_test 101/101 通过。"
+    },
+    {
+      "id": "F-597",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·testkit）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "checkEnvelopeCombination 漏检表 3 第四规则（终态非完成 ⇒ 不得携带正式结论）——hasFormalConclusion 访问器文档列为 Accessors 必备成员却从未被调用：违规包络静默放行＝契约测试假绿",
+      "resolution": "修复（分支 audit-p1b/p1c-fixes）：补第四判断＋违例④与同形态无结论反钉（CombinationRules 用例）。sdurws_ird_testkit_test 101/101 通过。"
+    },
+    {
+      "id": "F-598",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·io）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "AtomicFile commit 替换失败后仅置非活动态并把清理责任推给\"调用方应 abort\"——abort 对非活动会话幂等返回、析构兜底也只在活动态删除：每次替换失败永久泄漏一个可达预算上限的 .tmp 暂存文件",
+      "resolution": "修复（分支 audit-p1c-fixes）：commit 失败路径就地删除暂存（删除失败不吞——残留路径与 ec 附于错误 detail）。sdurws_ird_io_test 122/122 通过。"
+    },
+    {
+      "id": "F-599",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·io）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ResourceIo 固化缓存并发双未命中竞态——map[键] 直赋的 move 赋值释放对方已通过 okView 暴露给调用方的缓冲（视图悬空＝UAF，违反\"缓冲一经暴露永不改写\"裁决）",
+      "resolution": "修复（分支 audit-p1c-fixes）：改 emplace 语义——键已存在保留既有条目（同 id 对象库字节唯一，保留首份即正确事实）。sdurws_ird_io_test 122/122 通过。"
+    },
+    {
+      "id": "F-600",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·project）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "UndoRedoServiceImpl redo 可用性以\"栈顶记录 undoRevision==tip\"为门槛——多级撤销后首次 redo 推进 tip，次栈顶记录永不匹配：canRedo 恒 false、redo 抛前置违约，\"撤销两次→重做两次\"标准语义断裂，重做栈退化单槽且无路径恢复",
+      "resolution": "修复（分支 audit-p1c-fixes）：redo 前置/status canRedo/成功弹出三处同基准改判为本服务观察点 lastServiceTip（§6.9\"新命令清空 redo\"的既有检测基准——外部命令推进由 syncOnEntry 清栈兜底，语义完整）。sdurws_ird_project_test 254/254 通过（单级 undo→redo 两基准等价，行为不变）。"
+    },
+    {
+      "id": "F-601",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·project）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ObjectStore cacheInsert 不查\"键已缓存\"——tryObject 锁外读盘/publishObject 共享去重两个 check-then-act 窗口产生同键双节点：第二节点覆盖索引、第一节点失索引滞留链表，逐出循环 m_index.erase(end()) 为未定义行为，stats/LRU 序虚增",
+      "resolution": "修复（分支 audit-p1c-fixes）：cacheInsert 入口幂等化——键已存在 splice 到 LRU 尾（触碰）并返回。sdurws_ird_project_test 254/254 通过。"
+    },
+    {
+      "id": "F-602",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·diagnostics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "错误转译兜底路径（未登记类型→DIAG-REGISTRY-UNKNOWN-CODE）经 create 全链产出，而兜底码 paramSchema 为零参数——调用方携带非空 params（为预期目标码准备）时以 ParamSchemaMismatch 抛出，违反\"兜底路径恒不抛\"契约（转译通常发生在 catch 块内）",
+      "resolution": "修复（分支 audit-p1c-fixes）：兜底产出改用清空 params 的上下文副本（兜底码 schema 本不接受调用方参数——语义无信息丢失）。sdurws_ird_diagnostics_test 115/115 通过。"
     }
   ]
 }
