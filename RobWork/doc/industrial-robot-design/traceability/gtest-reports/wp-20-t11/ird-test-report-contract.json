@@ -1,0 +1,1654 @@
+{
+  "schemaVersion": "ird-test-report/1",
+  "summary": {
+    "total": 46,
+    "passed": 46,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "tests": [
+    {
+      "testId": "OptBuildGraph.UnitEdgesNineRegisteredAndClosed_WP20T02_ACC1",
+      "requirementIds": [
+        "ARC-02",
+        "NFR-MNT-01"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptBuildGraph.PluginTargetPresent_WP20T02_ACC1",
+      "requirementIds": [
+        "NFR-MNT-01"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptBuildGraph.NineRegisteredEdgesPresent_WP20T02_ACC1",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP20T02_ACC2",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptBuildGraph.NoTestkitEdgeOnProductTarget_WP20T02_ACC1",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptBuildGraph.IncludeFaceMatchesRegisteredEdges_WP20T02_ACC2",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 10
+    },
+    {
+      "testId": "OptPluginAssembly.DescriptorMatchesUiRegistrations_WP20T02_ACC1",
+      "requirementIds": [
+        "NFR-MNT-01"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptPluginAssembly.PluginFaceHasZeroComputationSymbols_WP20T02_ACC2",
+      "requirementIds": [
+        "NFR-MNT-01"
+      ],
+      "atIds": [
+        "OPT-04",
+        "OPT-06"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 2
+    },
+    {
+      "testId": "OptPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP20T02_ACC2",
+      "requirementIds": [
+        "ARC-02"
+      ],
+      "atIds": [
+        "AT-12"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 1
+    },
+    {
+      "testId": "OptPluginAssembly.PluginFaceHasNoR2PauseResumeSurface_WP20T10_ACC2",
+      "requirementIds": [
+        "OPT-06"
+      ],
+      "atIds": [
+        "AT-35"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 1
+    },
+    {
+      "testId": "OptPluginAssembly.PluginIdAlignsHostWhitelistVocabulary_WP20T10_ACC1",
+      "requirementIds": [
+        "SA-01",
+        "UX-12"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptVariableContract.StageBKeepsRatioEditableWhilePerformanceStaysStageD_WP20T03_ACC2",
+      "requirementIds": [
+        "OPT-02"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptVariableContract.RatioValueDomainPositiveFiniteEnforced_WP20T03_ACC2",
+      "requirementIds": [
+        "OPT-02"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptVariableContract.BindingValidationConsumesSnapshotClosureContract_WP20T03_ACC1",
+      "requirementIds": [
+        "OPT-02"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptVariableContract.DiffCandidatePatchViaProviderInterface_WP20T03_B1",
+      "requirementIds": [
+        "OPT-02",
+        "I-OPT-10"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptVariableContract.SectionTypeEntryKeptRegisteredButDisabledInBothStages_WP20T03_G1",
+      "requirementIds": [
+        "OPT-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptConstraintContract.Port3ConsumptionPathThroughRealRegistry_WP20T04_ACC1",
+      "requirementIds": [
+        "OPT-03"
+      ],
+      "atIds": [
+        "AT-19"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptConstraintContract.StageBJointFamilyRejectionIsLaunchBlockNotCandidateRejection_WP20T04_ACC2",
+      "requirementIds": [
+        "OPT-03"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptConstraintContract.NoCollisionAlgorithmInUnitSources_WP20T04_ACC1",
+      "requirementIds": [
+        "OPT-03"
+      ],
+      "atIds": [
+        "AT-19"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptConstraintContract.VerdictTraceShapeReferencesEvidenceCurrentForm_WP20T04_ACC4",
+      "requirementIds": [
+        "EVI-01"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptObjectiveParetoContract.MetricVocabularyAndDefaultActivation",
+      "requirementIds": [
+        "OPT-07"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptObjectiveParetoContract.ToleranceConfigCarriedIntoConfigOpt",
+      "requirementIds": [
+        "OPT-04"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptObjectiveParetoContract.NoWeightedScoreInProductSources",
+      "requirementIds": [
+        "OPT-04"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 360
+    },
+    {
+      "testId": "OptEvaluatorPortsContract.QuickCacheNeverUpgradesToVerified_WP20T06_ACC1",
+      "requirementIds": [
+        "OPT-06",
+        "CON-04"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptEvaluatorPortsContract.SessionCacheFullHitSkipsReEvaluation_WP20T06_ACC2",
+      "requirementIds": [
+        "OPT-06",
+        "CON-04"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptEvaluatorPortsContract.CacheHitIsNotCurrentness_WP20T06_ACC2",
+      "requirementIds": [
+        "CON-04",
+        "CON-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptEvaluatorPortsContract.PartialResultNeverFormalCacheHit_WP20T06_ACC2",
+      "requirementIds": [
+        "CON-04"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptEvaluatorPortsContract.ChangedConfigYieldsSliceMismatchRecalc_WP20T06_ACC2",
+      "requirementIds": [
+        "OPT-06",
+        "CON-04"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptExportContract.AuditCsvConsistentWithReplayStatistics_WP20T09",
+      "requirementIds": [
+        "OPT-12"
+      ],
+      "atIds": [
+        "AT-34"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptExportContract.FileLayerViaIoWritersOnly_WP20T09_ACC3",
+      "requirementIds": [
+        "OPT-12",
+        "NFR-MNT-01"
+      ],
+      "atIds": [
+        "AT-34"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 1
+    },
+    {
+      "testId": "OptExportContract.PreflightClassCommentThrowsAligned_GACCT08_1",
+      "requirementIds": [],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptExportContract.AuditCountersGuardedByCacheHitFlag_G1",
+      "requirementIds": [
+        "OPT-06"
+      ],
+      "atIds": [
+        "AT-34"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "ApplierContractFixture.TwoStepApplyCreatesBranchAndRevision_WP20T07_ACC2",
+      "requirementIds": [
+        "OPT-08",
+        "PM-12"
+      ],
+      "atIds": [
+        "AT-12"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 97
+    },
+    {
+      "testId": "ApplierContractFixture.BaselineRevisionBytesImmutable_WP20T07_ACC2",
+      "requirementIds": [
+        "OPT-08",
+        "MDL-08"
+      ],
+      "atIds": [
+        "AT-12"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 91
+    },
+    {
+      "testId": "ApplierContractFixture.AssembleAndPreviewDoNotTouchStore_WP20T07_ACC1",
+      "requirementIds": [
+        "OPT-08"
+      ],
+      "atIds": [
+        "AT-12"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 39
+    },
+    {
+      "testId": "ApplierContractFixture.StaleRevisionRejectedCandidatePreserved_WP20T07_ACC3",
+      "requirementIds": [
+        "OPT-08",
+        "PM-04"
+      ],
+      "atIds": [
+        "AT-12"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 100
+    },
+    {
+      "testId": "ApplierContractFixture.UndoRedoOwnedByProject_WP20T07_ACC3",
+      "requirementIds": [
+        "OPT-08",
+        "PM-18"
+      ],
+      "atIds": [
+        "AT-12"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 132
+    },
+    {
+      "testId": "OptPreflightContract.BlocksLocatableOnRealAssembly_OPTVER112_135",
+      "requirementIds": [
+        "OPT-11"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptPreflightContract.CompleteAssemblyAllowsFormalExport_WP20T08",
+      "requirementIds": [
+        "OPT-11"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptPreflightContract.SessionStateNoPersistenceChannel_WP20T08_ACC3",
+      "requirementIds": [
+        "OPT-11"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptGoldenDatasetContract.ManifestsRegistered_WP20T11_ACC2",
+      "requirementIds": [
+        "OPT-01",
+        "OPT-02",
+        "OPT-03",
+        "OPT-04",
+        "OPT-06",
+        "OPT-08",
+        "NFR-COR-01"
+      ],
+      "atIds": [
+        "AT-09",
+        "AT-12"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 1
+    },
+    {
+      "testId": "OptGoldenDatasetContract.IntegrityCoversAllFiles_WP20T11_ACC2",
+      "requirementIds": [
+        "CON-05"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 1
+    },
+    {
+      "testId": "OptGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP20T11_ACC2",
+      "requirementIds": [
+        "NFR-COR-01"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptGoldenDatasetContract.DataRootLayout_WP20T11_ACC2",
+      "requirementIds": [
+        "NFR-COR-01"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptGoldenDatasetContract.GoldenStatusesUseCandidateStatusTokens_WP20T11_ACC2",
+      "requirementIds": [
+        "OPT-03",
+        "NFR-COR-03"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    },
+    {
+      "testId": "OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2",
+      "requirementIds": [
+        "NFR-COR-01"
+      ],
+      "atIds": [
+        "AT-09"
+      ],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 0
+    }
+  ]
+}

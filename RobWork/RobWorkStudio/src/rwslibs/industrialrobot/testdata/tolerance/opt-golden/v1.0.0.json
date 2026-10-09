@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "opt-golden",
+  "version": "1.0.0",
+  "basis": "appendixD#9 (黄金算例解析对照——标量相对 1e-9) —— optimization 黄金数据集（opt-*）测试侧对照容差。P-OPT 纪律：本档案只服务黄金数据对照（候选采样值/三项静态指标——封闭代数与自持 PRNG 无截断误差，容差只吸收双实现浮点路径差），不构成任何运行时数值一致性校验阈值；也不承载 Pareto 支配容差语义——支配容差唯一来自 config.opt 显式配置（ObjectiveEntry.tolerance，DOPT-5 默认零容差），与档案通道无涉。候选身份链（patchId/candidateId/payload 摘要）为离散十六进制面——不经本档案，测试侧精确断言。",
+  "entries": [
+    {
+      "fieldPath": "batch.items.value",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "metrics.envelope",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "metrics.structuralMass",
+      "quantityKind": "mass",
+      "unit": "kg",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "metrics.minJointMargin",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    }
+  ]
+}

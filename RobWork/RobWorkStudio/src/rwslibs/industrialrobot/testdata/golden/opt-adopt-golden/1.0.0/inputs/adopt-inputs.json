@@ -1,0 +1,75 @@
+{
+  "dataset": "opt-adopt-golden@1.0.0",
+  "contract": "units/optimization.md §10.1~§10.4 采用守卫组装面黄金（WP-20-T11，AT-12）——两步命令语义/身份链/物化缝字节/闭式差异",
+  "identity": {
+    "project": "prj-000000000000000000000000000000c1",
+    "branch": "brn-000000000000000000000000000000c2",
+    "revision": "rev-000000000000000000000000000000c3",
+    "snapshot": "cid-00000000000000000000000000000000000000000000000000000000000000c4",
+    "baselineRoot": "obj-000000000000000000000000000000c5",
+    "baselineCv": "cv-00000000000000000000000000000000000000000000000000000000000000c6"
+  },
+  "baselineStates": {
+    "current": {
+      "tip": "rev-000000000000000000000000000000c3",
+      "writable": true
+    },
+    "stale": {
+      "tip": "rev-000000000000000000000000000000c9",
+      "writable": true
+    }
+  },
+  "variables": [
+    {
+      "bindingId": "mdl.drivetrain.ratio[1]",
+      "kind": "continuous",
+      "unit": "1",
+      "lowerBound": 80,
+      "upperBound": 160,
+      "step": 0,
+      "defaultValue": 120,
+      "authorized": true,
+      "locked": false,
+      "authorityFieldPath": "robot-drivetrain/ratioPerJoint[j]",
+      "diagSubject": "obj-000000000000000000000000000000c7",
+      "designField": "ratioPerJoint[1]"
+    },
+    {
+      "bindingId": "mdl.joint[2].dh.a",
+      "kind": "continuous",
+      "unit": "m",
+      "lowerBound": 0.2,
+      "upperBound": 0.4,
+      "step": 0,
+      "defaultValue": 0.3,
+      "authorized": true,
+      "locked": false,
+      "authorityFieldPath": "robot-design/joints[2]/dh/a",
+      "diagSubject": "obj-000000000000000000000000000000c8",
+      "designField": "dhA[2]"
+    }
+  ],
+  "patchItems": [
+    {
+      "bindingId": "mdl.drivetrain.ratio[1]",
+      "kind": "continuous",
+      "scalarValue": 100
+    },
+    {
+      "bindingId": "mdl.joint[2].dh.a",
+      "kind": "continuous",
+      "scalarValue": 0.25
+    }
+  ],
+  "baselineDesignTable": {
+    "dhA[2]": 0.3,
+    "linkMass[1]": 5.5,
+    "ratioPerJoint[1]": 120,
+    "reach[1]": 0.85
+  },
+  "designFormat": {
+    "magic": "IRDDSGN1",
+    "version": 1,
+    "encoding": "u32 版本＋u16 字段数＋每字段（u16 名称长＋名称 UTF-8＋f64 小端 SI 值）按名称字典序"
+  }
+}

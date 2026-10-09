@@ -1,0 +1,60 @@
+{
+  "dataset": "opt-adopt-golden@1.0.0",
+  "contract": "身份链＝§4.2/§5.5 SHA-256 独立复算；物化摘要＝迷你规范格式 SHA-256；命令语义＝§10.2/§10.3 组装面封闭声明",
+  "patchId": "cid-b16aa3213c06bd2102df745f68c0a1fb610732ed6b9797c214494fa1b838c98d",
+  "candidateId": "cnd-316934c06c5ff3015d5631d37927137f693691305863e1ef7ed0a9be6b1d791c",
+  "defaultBranchLabel": "方案 316934c06c5f",
+  "plan": {
+    "allowApply": true,
+    "expectedStaleBaseline": false,
+    "recalcRequired": true,
+    "step2": {
+      "commandToken": "apply-robot-design",
+      "payloadSha256": "8b9a8f6fdfea916fb779c7d04aa7fd5f5580697f41fed82788a8096fc56bbd82",
+      "expectedRevisionEqualsRunRevision": true,
+      "requiresDualCompile": true
+    },
+    "createBranch": {
+      "baseRevisionEqualsRunRevision": true,
+      "copiesObjects": false
+    },
+    "diffPreview": {
+      "entries": [
+        {
+          "group": "parameters",
+          "kind": "modified",
+          "objectId": "obj-000000000000000000000000000000c5",
+          "subjectPath": "dhA[2]",
+          "field": "dhA[2]",
+          "valueChanged": true,
+          "provenanceChanged": false,
+          "baselineText": "0.300000",
+          "candidateText": "0.250000"
+        },
+        {
+          "group": "parameters",
+          "kind": "modified",
+          "objectId": "obj-000000000000000000000000000000c5",
+          "subjectPath": "ratioPerJoint[1]",
+          "field": "ratioPerJoint[1]",
+          "valueChanged": true,
+          "provenanceChanged": false,
+          "baselineText": "120.000000",
+          "candidateText": "100.000000"
+        }
+      ],
+      "warnings": []
+    }
+  },
+  "staleScenario": {
+    "baselineState": {
+      "tip": "rev-000000000000000000000000000000c9",
+      "writable": true
+    },
+    "expectedStaleBaseline": true,
+    "allowApplyUnchanged": true
+  },
+  "baselineInvariance": {
+    "baselineBytesSha256": "52de828a41b4022b815fdc54d107e733375709aa445fbe7ec12db587fe86b108"
+  }
+}

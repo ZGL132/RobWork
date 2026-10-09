@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "opt-adopt-golden",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "optimization/adopt-golden",
+  "coveredRequirements": [
+    "OPT-08",
+    "PM-12",
+    "CON-05",
+    "NFR-COR-02"
+  ],
+  "coveredAt": [
+    "AT-12"
+  ],
+  "toleranceProfile": {
+    "id": "opt-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/adopt-inputs.json"
+  ],
+  "expected": [
+    "expected/adopt-expected.json"
+  ],
+  "parameters": {
+    "contract": "optimization 采用守卫组装面黄金——WP-20-T11 主数据载体之一。双变量复合候选（传动比 c 口径无量纲＋DH 长度 m）在固定身份面（project/branch/revision/snapshot/基线根对象/内容版本 canonical 文本）下的两步命令组合语义、候选设计物化字节摘要与闭式差异预览。",
+    "entryFaces": {
+      "identityChain": "expected/patchId＋candidateId——§4.2/§5.5 SHA-256 身份链独立复算（补丁 canonical \"IRDOPTP1\"→CandidatePatchId→CandidateId＝SHA-256(基线根对象 16B‖内容版本 32B‖补丁身份 32B)）；defaultBranchLabel＝\"方案 \"＋候选 id 文本前 12 位（组装面默认命名锚）",
+      "plan": "expected/plan——两步命令组合语义黄金：step1 建支（baseRevisionId＝运行输入修订、不复制对象）＋step2 应用（token＝modeling 既有注册面 apply-robot-design〔DOPT-6 只引用不注册〕/payload 摘要/expectedRevision＝运行输入修订/双编译恒声明〔MDL-06〕）＋完整复算提示恒位＋过期基线仅标记不阻塞（staleScenario）",
+      "materialization": "expected/plan.step2.payloadSha256——候选设计字节（物化缝迷你规范格式 \"IRDDSGN1\"：u32 版本＋u16 字段数＋每字段〔u16 名称长＋名称 UTF-8＋f64 小端〕按名称字典序；候选表＝基线表＋补丁覆盖）的 SHA-256；P-OPT-3 裁决前测试以注入缝同式构造后逐字节对账",
+      "diffPreview": "expected/plan.diffPreview——基线表 vs 候选表闭式差异（modified 条目按字段名字典序；传动比条目在场→零警告——P-OPT-8\"不虚构差异\"的对照锚）",
+      "baselineInvariance": "expected/baselineInvariance.baselineBytesSha256——组装前后基线设计字节摘要不变（AT-12 基线保护的黄金锚；组装为 const 纯函数——预览候选不得修改基线）"
+    },
+    "consumptionDiscipline": "消费测试经候选应用组装公共接口（IOptimizationCandidateApplier::buildApplyPlan）驱动；提交执行（①端口两次 submit）不在本数据集承载——两步命令组合的提交面归 WP-20-T07 契约测试（project CommandPlan 声明面），本数据集只钉组装语义与身份链"
+  },
+  "units": {
+    "length": "m",
+    "mass": "kg",
+    "dimensionless": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "本数据集全部为设计表标量值（SI 真值——DH 长度 m/传动比 c 口径无量纲/连杆质量 kg/臂展 reach m）与身份文本；无位姿/无世界系量——base 声明为上游序列约定归属，不参与任何数值"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "§4.2/§5.5 SHA-256 身份链＋迷你规范格式物化字节与摘要＋§10.2/§10.3 两步命令语义封闭声明＋§10.4 闭式差异",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_opt_adopt_golden.mjs——身份链经 node crypto、设计表字节经 Buffer 逐字节编码；与产品 Applier.cpp/CandidatePatch.cpp/Run.cpp 零共享代码）推导"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.x",
+    "algorithmId": "opt-adopt-golden-identity-chain",
+    "solverConfig": {
+      "patchCanonical": "magic IRDOPTP1＋u32 codecVersion 1＋u32 项数＋字典序项编码（§5.5）",
+      "designFormat": "magic IRDDSGN1＋u32 版本 1＋u16 字段数＋名称字典序字段编码（物化缝黄金格式——inputs.designFormat 声明）"
+    },
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
+  },
+  "integrity": [
+    {
+      "path": "inputs/adopt-inputs.json",
+      "sha256": "2f36c0b31817e35151d335c51ceffd10644703afe3eed07e1d959c27ca79134e",
+      "sizeBytes": 2246
+    },
+    {
+      "path": "expected/adopt-expected.json",
+      "sha256": "f876ee46a81c1b4a7b561d96e6a1ae9119adb1165426775effe71be722d4d338",
+      "sizeBytes": 2005
+    },
+    {
+      "path": "generate/make_opt_adopt_golden.mjs",
+      "sha256": "3fbf3052274d62821494321f158d40ea0aa245576d097eb9d462908675f29336",
+      "sizeBytes": 12037
+    }
+  ],
+  "generator": {
+    "script": "generate/make_opt_adopt_golden.mjs",
+    "invocation": "node generate/make_opt_adopt_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "首版：采用守卫组装面黄金（双变量复合候选——两步命令语义/身份链/物化缝字节摘要/闭式差异/基线字节不变锚——AT-12 黄金面）——WP-20-T11 交付物",
+      "reReviewedBy": "WP-20-T11 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}
