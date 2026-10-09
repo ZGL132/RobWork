@@ -232,8 +232,12 @@ UndoRedoStatus UndoRedoServiceImpl::status(core::BranchId branch) const noexcept
             // PM-18"空历史明确稳定提示"的可用侧表达）。
             result.undoSummary = tipView->commandSummary;
         }
+        // F-600：canRedo 判定与 redo 前置同基准——栈非空且本服务观察点
+        // 仍与权威 tip 一致（外部命令推进→syncOnEntry 清栈；多级 redo 中
+        // 间态 lastServiceTip==tip 而栈顶 undoRevision≠tip——原实现此处
+        // 恒 false，与 redo 的前置违约同源）。
         if (!state.redoStack.empty()
-            && state.redoStack.back().undoRevision == *tip) {
+            && state.lastServiceTip == *tip) {
             result.canRedo = true;
             // 将被重做的命令＝撤销时点记录的被撤销命令摘要。
             result.redoSummary = state.redoStack.back().undoneSummary;
@@ -367,35 +371,42 @@ CommandResult UndoRedoServiceImpl::redo(core::BranchId branch,
             syncOnEntry(state, tipView.id);
             tip = tipView.id;
 
-            // ---- 栈顶一致性：重做只针对"最近一次撤销"（栈顶记录的
-            //      undoRevision 必须正是当前 tip——否则被撤销命令已不是
-            //      tip 的直接前驱，重放将脱离会话语义）。空栈或错位＝
-            //      前置违约（调用方未先经 status() 判定）。
+            // ---- 一致性（F-600）：redo 可用性＝**本服务观察点仍与权威
+            //      tip 一致**（syncOnEntry 已在外部命令推进时清空 redo 栈
+            //      ——能到达此处且栈非空，即 tip==lastServiceTip、栈顶记
+            //      录可重放）。原实现要求"栈顶记录 undoRevision==tip"：
+            //      多级撤销后只能重做一次——首次 redo 提交推进 tip 后，
+            //      次栈顶记录的 undoRevision 永不等于新 tip（canRedo 恒
+            //      false、redo 抛前置违约），"撤销两次→重做两次"的线性
+            //      undo/redo 标准语义断裂且无路径恢复。lastServiceTip 基
+            //      准在外部命令面由 syncOnEntry 清栈兜底，语义完整。
+            //      空栈（含被清空）＝前置违约（调用方未先经 status() 判定）。
             if (state.redoStack.empty()
-                || state.redoStack.back().undoRevision != tip) {
+                || state.lastServiceTip != tip) {
                 throw std::invalid_argument(
-                    "project/undoredo: redo 前置违约——会话 redo 栈为空或栈顶"
-                    "记录与当前 tip 不一致（redo 仅会话内有效——D-11；先 "
+                    "project/undoredo: redo 前置违约——会话 redo 栈为空或本服务"
+                    "观察点与当前 tip 不一致（redo 仅会话内有效——D-11；先 "
                     "status() 判定可用性，§6.9） branch=" + branch.toCanonical());
             }
 
             // ---- 组装信封（§6.9"redo＝重放原始载荷产生新修订"）：三元
             //      组取自会话记录（撤销时点拷贝的处理器声明面——project
-            //      不构造业务命令，§6.5）。
+            //      不构造业务命令，§6.5）；expectedRevision＝当前 tip（重
+            //      放落在重做链的当前修订上——含多级 redo 的中间修订）。
             envelope = buildRedoEnvelope(branch, state.redoStack.back(), tip);
         }
         // 锁外提交（同 undo——锁序纪律与 S2 竞争裁决）。
         CommandResult result = m_host.commands().submit(envelope, interaction);
 
         // ---- 会话栈维护（只在提交成功后弹出——失败路径栈不动，重做可
-        //      重试）。防并发错弹：仅当栈顶仍是本次重做的记录时弹出
-        //      （并发窗口内另一线程可能已重构栈——错位时保留现场，交由
-        //      下次进入的惰性同步收敛）。
+        //      重试）。F-600：提交成功＝本次重放赢得了 S2 竞争（预期修订
+        //      已被本提交顶替——外部并发提交必被拒绝），被重放记录仍居
+        //      栈顶，弹出不再以 undoRevision==tip 为门槛（新 tip 是重做修
+        //      订，原门槛使多级 redo 的次栈顶永久滞留——见 redo 前置注释）。
         if (result.committed() && result.newRevision.has_value()) {
             std::lock_guard<std::mutex> guard(m_mutex);
             BranchUndoState& state = m_branches[branch];
-            if (!state.redoStack.empty()
-                && state.redoStack.back().undoRevision == tip) {
+            if (!state.redoStack.empty()) {
                 state.redoStack.pop_back();
             }
             // 观察点推进到重做修订；stale 说明随成功路径消费（同 undo）。

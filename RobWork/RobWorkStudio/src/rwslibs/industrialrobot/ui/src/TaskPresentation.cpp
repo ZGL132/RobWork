@@ -369,20 +369,35 @@ public:
             row.snap = std::move(snap);
             row.stateLabelKey = ui::taskStateLabelKey(row.snap.state);   // §6.3 键
             // 进度基线并入：已展示值按三规则守恒（refresh 不回退显示——
-            // 乱序快照不得倒退进度条，与 pollOnce 同纪律）。
-            if (row.snap.progress.has_value()) {
-                const auto decision = mergeProgressDecision(
-                    std::nullopt, row.snap.attempt, row.snap.attempt,
-                    *row.snap.progress);
-                (void)decision;   // 首并入恒 Accept——显式标注无未用告警意图
-                row.progress = row.snap.progress;
-            }
-            // 已有展示进度的新快照若无进度（清零竞态）——保留旧值不回退。
-            for (const auto& existing : m_active) {
-                if (existing.snap.identity == row.snap.identity
-                    && !row.progress.has_value()) {
-                    row.progress = existing.progress;
+            // 乱序快照不得倒退进度条）。F-610：合并基准改为**已展示行**的
+            // 旧值/旧 attempt（原实现传 nullopt 使守恒逻辑空转、无条件接
+            // 受——回退快照落在事件触发刷新路径时进度条倒退，违 §9.4 单
+            // 调纪律）；守恒保留旧值时**连 attempt 轴一并保留**（F-611：
+            // 新 attempt 清零竞态窗内旧进度挂在旧 attempt 上，后续轮询才
+            // 能按 AttemptReset 正确归零重计，而非误判回退持续丢弃）。
+            const TaskRow* existing = nullptr;
+            for (const auto& e : m_active) {
+                if (e.snap.identity == row.snap.identity) {
+                    existing = &e;
+                    break;
                 }
+            }
+            if (row.snap.progress.has_value()) {
+                const auto decision = existing != nullptr
+                    ? mergeProgressDecision(existing->progress, existing->snap.attempt,
+                                            row.snap.attempt, *row.snap.progress)
+                    : ProgressMergeDecision::Accept;   // 首并入——无基线可守恒
+                if (decision == ProgressMergeDecision::Accept
+                    || decision == ProgressMergeDecision::AttemptReset) {
+                    row.progress = row.snap.progress;
+                } else {
+                    row.progress = existing->progress;  // DropRegression：保留旧值
+                    // Dev 观察面与 pollOnce 同口径（回退丢弃不静默）。
+                }
+            } else if (existing != nullptr && existing->progress.has_value()
+                       && existing->snap.attempt == row.snap.attempt) {
+                // 同 attempt 的无进度快照（清零竞态）——保留旧值＋旧轴。
+                row.progress = existing->progress;
             }
             rows.push_back(std::move(row));
         }

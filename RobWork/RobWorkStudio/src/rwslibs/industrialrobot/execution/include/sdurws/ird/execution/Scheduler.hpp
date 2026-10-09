@@ -213,6 +213,13 @@ public:
      * 在途任务进入 §7.1 完整取消协议（后续由 TaskController::poll 推进）；
      * 排队任务直达 Canceled。返回受理数（终态任务的拒绝不计——UX-03：
      * 关闭触发的取消不产生任何错误诊断）。
+     *
+     * @note 线程约束（F-578 契约升格）：本方法遍历 Controller 任务表但
+     *        **不自带互斥**——必须运行在 TaskScheduler 主锁串行域内
+     *        （现网唯一调用点 shutdown 路径已满足）。独立装配形态
+     *        （测试直构 DrainCoordinator）须外部串行化：Controller 的
+     *        m_tasks 为无锁 unordered_map，与并发 attachTask（submit）
+     *        并发遍历＝迭代器失效 UB。
      */
     std::size_t requestCancelAll();
 
@@ -225,6 +232,11 @@ public:
      * 终止＋T13；无 worker→取消直达）。排队任务不在处置面（KeepQueued
      * 保留语义不被兜底破坏；CancelQueuedAndWait 的排队已清空）。返回
      * 处置数（幂等 no-op 不计）。
+     *
+     * @note 线程约束（F-578 契约升格）：同 requestCancelAll——不自带
+     *        互斥，必须在 TaskScheduler 主锁串行域内调用（现网唯一调用
+     *        点＝poll 的超阈值自动兜底，tick 段 b/c 主锁内）。独立装配
+     *        形态须外部串行化。
      */
     std::size_t abandonAllForced();
 

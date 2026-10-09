@@ -890,3 +890,59 @@ TEST(UiText, TransitionalLabelsRouteThroughUiText_UI_T09_ACC2)
 }
 
 }  // namespace
+
+// =====================================================================
+// F-613 回归（audit/unit-code-review-20261009）
+// =====================================================================
+
+/**
+ * 回归（F-613，P1）：三观察者＋中段退订后，其余观察者的记录指针因
+ * deque 中段 erase 失效——旧实现的句柄/通知按裸指针地址在容器里反查，
+ * 悬垂地址反查错位（静默去注册/重复通知，极端时 use-after-free）。
+ * 修复：登记改 shared_ptr 堆持有——deque 中段摘除不影响堆地址，退订
+ * 幂等（removed 位）＋通知分发全程按 shared_ptr 走。
+ *
+ * 排布：O1/O2/O3 依次订阅→导航一次（三者各收一次通知）→O2 退订→再导
+ * 航一次（O1/O3 各再收一次、O2 不收）→O1/O3 依次退订（中段/尾部混合
+ * 摘除）→容器清空。全程零崩溃＋计数精确。
+ */
+TEST(StageNavModel, MidDequeUnsubscribeKeepsSiblingRecordsStable_F613)
+{
+    IRD_TEST_INFO("UX-12", {}, std::nullopt);
+
+    StubStageGate gate;
+    SessionFakes session;
+    gate.nextDecision = allowDecision();
+    auto model = ui::createStageNavigationModel(makeDeps(gate, session));
+    RecordingObserver o1;
+    RecordingObserver o2;
+    RecordingObserver o3;
+    auto s1 = model->subscribe(o1);
+    auto s2 = model->subscribe(o2);
+    auto s3 = model->subscribe(o3);
+
+    // 首次导航：三者各收一次通知。
+    (void)model->requestNavigate(StageId::Kinematics);
+    EXPECT_EQ(o1.calls, 1U);
+    EXPECT_EQ(o2.calls, 1U);
+    EXPECT_EQ(o3.calls, 1U);
+
+    // O2（中段记录）退订。
+    s2.reset();
+
+    // 二次导航：仅 O1/O3 各收一次（O2 已摘除——removed 位跳过）。
+    (void)model->requestNavigate(StageId::Reporting);
+    EXPECT_EQ(o1.calls, 2U);
+    EXPECT_EQ(o2.calls, 1U) << "退订后不得再收通知";
+    EXPECT_EQ(o3.calls, 2U);
+
+    // O1（头部记录）退订——尾部 O3 的记录指针不失效（修复前中段 erase
+    // 使 O3 的 deque 元素引用失效，后续退订按悬垂地址反查＝UB）。
+    s1.reset();
+    (void)model->requestNavigate(StageId::Modeling);
+    EXPECT_EQ(o3.calls, 3U);
+
+    // 全部退订：容器清空（零滞留记录）。
+    s3.reset();
+    EXPECT_EQ(o3.calls, 3U);
+}

@@ -153,7 +153,19 @@ bool upsertEntry(std::vector<Entry>& entries, Entry incoming, const char* subjec
         err = std::move(*e);
         return false;
     }
-    // ②集合级唯一性：名称唯一（I-REQ-3——除自身外核对）＋id 唯一（集合内）。
+    // ②集合级唯一性：名称非空＋名称唯一（I-REQ-3——除自身外核对）＋id
+    // 唯一（集合内）。F-583：空名此前漏检——服务构造（checkNameAgainstSiblings）
+    // 与解码门都拒空名，唯独编辑器 upsert 只查重名，空名条目入集后破坏
+    // "工作集恒为可编码形态"承诺（下一次就绪预检抛 invalid_argument——
+    // 值面拒绝退化成 fail-fast）。此处与 Services 同口径拒绝。
+    if (incoming.name.empty()) {
+        err = RequirementError{};
+        err.code = RequirementErrorCode::DuplicateName;
+        err.detail = std::string("requirements/editor: 条目名称为空（§8.1 R0")
+                   + " 非空——名称是报告/覆盖清单定位依据；构造边界拒绝，"
+                     "不静默加后缀，NFR-COR-03）";
+        return false;
+    }
     for (std::size_t i = 0; i < entries.size(); ++i) {
         const bool sameId = entries[i].objectId == incoming.objectId;
         if (!sameId && entries[i].name == incoming.name) {
@@ -284,6 +296,12 @@ EditOutcome RequirementEditor::applyEdit(const RequirementEdit& edit)
                                                 + id.toCanonical() + "）");
                         return false;
                     }
+                    // F-585：eraseEntry 会把元素从 vector 抹除（后继左移）
+                    // ——此后 target 悬垂（UB）。摘要/诊断所需的名称在删除
+                    // 前快照（删除后一律用快照——原实现删除后解引用
+                    // target->name：删非末位条目时读到的是后继条目的名字，
+                    // 摘要与诊断张冠李戴，末位时读到失效遗留串）。
+                    const std::string targetName = target->name;
                     for (const auto& c : ws_.conditions.entries) {
                         for (const auto& s : c.appliesTo.stations) {
                             if (s == id) {
@@ -315,7 +333,7 @@ EditOutcome RequirementEditor::applyEdit(const RequirementEdit& edit)
                     }
                     removed = eraseEntry(ws_.points.entries, id);
                     if (removed) {
-                        line = "任务点 " + target->name + " 已删除";
+                        line = "任务点 " + targetName + " 已删除";  // F-585 快照（target 已悬垂）
                         // 删除保护提示（§7.2 删除保护行——源删除**允许**，
                         // 但若仍有 linked 派生条目引用该源（参数快照
                         // "source-id"），产 REQ-DERIVE-SOURCE-REMOVED
@@ -337,7 +355,7 @@ EditOutcome RequirementEditor::applyEdit(const RequirementEdit& edit)
                             out.diagnostics.push_back(core::DiagnosticRecord::make(
                                 std::string{kReqDeriveSourceRemoved},
                                 std::nullopt, std::nullopt, std::nullopt,
-                                "entry=" + target->name + "; linked-derived="
+                                "entry=" + targetName + "; linked-derived="  // F-585 快照
                                     + std::to_string(linkedDerived),
                                 "该源仍有 " + std::to_string(linkedDerived)
                                     + " 条 linked 派生（派生条目独立性不受影响；"
@@ -355,11 +373,12 @@ EditOutcome RequirementEditor::applyEdit(const RequirementEdit& edit)
                                                 + id.toCanonical() + "）");
                         return false;
                     }
+                    const std::string targetName = target->name;  // F-585 快照（同任务点分支）
                     // 被采样计划 regionRef 引用（§9.7 关系图——计划→区域
                     // 子条目引用；删除前先删/改计划）。
                     for (const auto& p : ws_.plans.entries) {
                         if (p.regionRef == id) {
-                            out.error = loadFailure("区域 " + target->name
+                            out.error = loadFailure("区域 " + targetName
                                                     + " 被采样计划引用（§9.7——先解除"
                                                       "计划绑定）");
                             return false;
@@ -367,7 +386,7 @@ EditOutcome RequirementEditor::applyEdit(const RequirementEdit& edit)
                     }
                     removed = eraseEntry(ws_.regions.entries, id);
                     if (removed) {
-                        line = "工作区域 " + target->name + " 已删除";
+                        line = "工作区域 " + targetName + " 已删除";  // F-585 快照（target 已悬垂）
                     }
                     break;
                 }
@@ -485,6 +504,15 @@ EditOutcome RequirementEditor::applyEdit(const EditBatch& batch)
     // ---- ②新条目逐条校验＋批内互斥名预检（任一失败＝整批拒绝，不落半批）。
     std::vector<std::string> batchNames;  // 批内新条目名（互斥核对）
     for (const auto& p : batch.newPoints) {
+        // F-583：批次新条目与 upsert 同口径拒空名（I-REQ-3/§8.1 R0——
+        // 服务构造/解码门都拒，批次路径此前只查重名）。
+        if (p.name.empty()) {
+            out.error = RequirementError{};
+            out.error.code = RequirementErrorCode::DuplicateName;
+            out.error.detail = "requirements/editor: 批次条目名称为空（I-REQ-3"
+                               "——批次整批拒绝，不静默改写，NFR-COR-03）";
+            return out;
+        }
         if (auto e = validateTaskPoint(p)) {
             out.error = std::move(*e);
             out.error.detail = "requirements/editor: 批次条目 " + p.name

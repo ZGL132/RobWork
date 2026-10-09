@@ -397,3 +397,35 @@ TEST(EventWatchPath, EmptyNeedleThrowsUsage)
         EXPECT_EQ(e.kind(), TestKitErrorKind::Usage);
     }
 }
+
+// =====================================================================
+// F-595/F-596 回归（audit/unit-code-review-20261009）——命令行引号规则
+// =====================================================================
+
+/**
+ * 回归（F-596）：引号前 N 个反斜杠必须按 **2N+1** 发射——原实现 N+1 在
+ * 子进程端吞掉一半反斜杠并把转义引号当分隔符（参数碎裂）。以\"序列、
+ * 纯反斜杠、结尾反斜杠三个解析约定黄金形态钉住发射文本。
+ */
+TEST(ProcessRunnerQuote, BackslashQuoteEscapingTwoNPlusOne_F596)
+{
+    namespace detail = sdurws::ird::testkit::detail;
+    // 含 \" 序列：arg=[a\"b]（a、\、"、b）→ 发射 "a\\\"b"——解析还原 [a"b]。
+    EXPECT_EQ(detail::quoteWindowsArg(L"a\\\"b"), L"\"a\\\\\\\"b\"");
+    // 纯反斜杠无引号：不加引号、原样（无分隔符风险）。
+    EXPECT_EQ(detail::quoteWindowsArg(L"C:\dir\file"), L"C:\dir\file");
+    // 带空格＋结尾反斜杠：整体加引号且结尾反斜杠翻倍（收尾引号紧邻规则）。
+    EXPECT_EQ(detail::quoteWindowsArg(L"C:\dir a\\"), L"\"C:\dir a\\\\\"");
+    // 普通带空格参数：整体加引号、内部无转义。
+    EXPECT_EQ(detail::quoteWindowsArg(L"hello world"), L"\"hello world\"");
+}
+
+/**
+ * 回归（F-595）：空串参数必须发射 ""——原实现原样返回空串，命令行只多
+ * 一个空格，子进程 argv 丢该参数且后续参数整体前移。
+ */
+TEST(ProcessRunnerQuote, EmptyArgEmitsQuotedEmpty_F595)
+{
+    namespace detail = sdurws::ird::testkit::detail;
+    EXPECT_EQ(detail::quoteWindowsArg(L""), L"\"\"");
+}

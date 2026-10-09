@@ -648,7 +648,14 @@ TEST_F(WorkerProcessContractTest, WorkerCompletesViaHandshakeAndNineStepAdmissio
     const WorkerEvent* exited = m_events.firstOf(WorkerEvent::Kind::WorkerExited);
     EXPECT_EQ(exited->exit, ExitClassification::NormalCompletion);
     EXPECT_EQ(exited->exitCode, 0u);
-    EXPECT_EQ(supervisor->status(launched.worker).phase, WorkerStatus::Phase::Idle);
+    // F-577（阶段 A 口径重钉）：worker 为"一派发一进程"（worker/main.cpp
+    // 主线程模型），正常终结不回池——记录随 poll 尾自动出清（原钉
+    // "终结→Idle 回池"是修复前病态实现的产物：Idle 池只进不出、复用面
+    // 对死进程不可达）。事件面（分类/退出码）不变——编排协议零漂移；
+    // 保活池化随 worker 迭代落位后在此重钉 Idle 语义。
+    ASSERT_TRUE(pumpUntil(*supervisor, [&supervisor, &launched] {
+        return supervisor->status(launched.worker).id.value == 0;
+    })) << "正常终结记录随 poll 尾出清（阶段 A 不回池——F-577）";
 }
 
 // =====================================================================
@@ -1134,14 +1141,17 @@ TEST_F(WorkerProcessContractTest, LauncherClosesInheritedHandleDuplicates_R3)
 // 半区＋§6.1"降低并行度（回收空闲 worker）"的真进程实证面）
 // =====================================================================
 
-TEST_F(WorkerProcessContractTest, AggregateJobMemoryCoversRealWorkerAndReclaimShrinksIdlePool)
+TEST_F(WorkerProcessContractTest, AggregateJobMemoryCoversLiveWorkerAndAutoReclaimsOnExit_F577)
 {
-    // 排布：launch 一个真 worker 跑完 final 脚本（正常退出→回池 Idle）→
-    // aggregateJobMemoryBytes 读到非零作业内存（该 worker 的作业里确实
-    // 跑过进程——§6.6 QueryInformationJobObject 峰值口径的真值面）→
-    // reclaimIdleWorkers 即时回收空闲 worker（Draining→自然退出→记录
-    // 出清），聚合读数归零。登记面不参与本用例（监督器不查登记——
-    // 进程层与接纳层的边界，EX-T06 头注"不越权声明"）。
+    // 排布（F-577 阶段 A 口径重钉）：launch 一个真 worker 跑 final 脚本→
+    // **存活窗**内 aggregateJobMemoryBytes 读到非零作业内存（该 worker 的
+    // 作业里确实跑着进程——§6.6 QueryInformationJobObject 峰值口径的真值
+    // 面，EX-T07 acceptance 2）→ 正常退出后记录随 poll 尾**自动出清**
+    // （阶段 A"一派发一进程"不回池），聚合读数归零（exitProcessed 记录
+    // 不再计入——死进程作业峰值不得永久抬高读数）。登记面不参与本用例
+    // （监督器不查登记——进程层与接纳层的边界，EX-T06 头注"不越权声明"）。
+    // 原"终结→Idle 回池＋reclaim 缩池"排布钉的是修复前病态行为（Idle
+    // 池只进不出、复用面不可达）——保活 worker 落位后重钉池化语义。
     core::TaskIdentity id;
     id.project = m_store->projectId();
     id.branch = core::BranchId::generate();
@@ -1155,31 +1165,30 @@ TEST_F(WorkerProcessContractTest, AggregateJobMemoryCoversRealWorkerAndReclaimSh
     const WorkerLaunchResult launched = supervisor->launch(assignment);
     ASSERT_TRUE(launched.ok) << "worker 进程启动＋Job Scope 绑定应成功";
 
-    // 空池基线：launch 前聚合为 0（未启动任何 worker——对照真读数）。
-    // 正常完成：FinalOutput 已收＋进程退出码 0→回池 Idle（§6.4 池化）。
-    ASSERT_TRUE(pumpUntil(*supervisor, [this, &supervisor, &launched] {
-        return supervisor->status(launched.worker).phase == WorkerStatus::Phase::Idle
-            && m_events.countOf(WorkerEvent::Kind::WorkerExited) >= 1;
-    })) << "worker 应正常退出并回池（Idle）";
+    // 真值面（存活窗）：worker 进程起来即提交内存——聚合 >0（任何进程
+    // 都提交内存，§6.6 JobMemory 口径；作业峰值单调，读数在存活期内
+    // 稳定非零，轮询粒度下无采样竞争）。
+    ASSERT_TRUE(pumpUntil(*supervisor, [&supervisor] {
+        return supervisor->aggregateJobMemoryBytes() > 0;
+    })) << "§6.6 内存汇总的 worker 半区：真 worker 作业内存峰值应被覆盖（EX-T07 acceptance 2）";
 
-    // 真值面：worker 的作业提交内存峰值合计 >0（任何进程都提交内存——
-    // 峰值单调不回落，进程退出后仍可读，§6.6 JobMemory 口径）。
-    const std::uint64_t aggregate = supervisor->aggregateJobMemoryBytes();
-    EXPECT_GT(aggregate, 0u)
-        << "§6.6 内存汇总的 worker 半区：真 worker 作业内存峰值应被覆盖（EX-T07 acceptance 2）";
-
-    // 即时缩池（§6.1"降低并行度（回收空闲 worker）"——EX-T07 增量方法）：
-    // 唯一 Idle worker 的进程已随任务终结退出（阶段 A worker 模型）——
-    // 回收直接出清该池槽（join→关资源→双表 erase），聚合读数归零。
-    const std::size_t reclaimed = supervisor->reclaimIdleWorkers();
-    EXPECT_EQ(reclaimed, 1u);
+    // 正常完成：FinalOutput 已收＋进程退出码 0（事件面不变）。
+    ASSERT_TRUE(pumpUntil(*supervisor, [this] {
+        const WorkerEvent* exited = m_events.firstOf(WorkerEvent::Kind::WorkerExited);
+        return exited != nullptr
+            && exited->exit == ExitClassification::NormalCompletion;
+    })) << "worker 应正常退出（分类 NormalCompletion）";
+    // F-577：终结记录随 poll 尾自动出清（记录域与状态投影双清）。
     ASSERT_TRUE(pumpUntil(*supervisor, [&supervisor, &launched] {
         return supervisor->workerCount() == 0
             && supervisor->status(launched.worker).id.value == 0;
-    })) << "回收后池槽立即出清（记录域与状态投影双清）";
+    })) << "正常终结记录随 poll 尾出清（阶段 A 不回池）";
+
+    // 聚合归零：记录已出清＋exitProcessed 不计入（死进程峰值不再永久
+    // 抬高读数——ResourceController 采样源不受污染）。
     EXPECT_EQ(supervisor->aggregateJobMemoryBytes(), 0u)
         << "出清后聚合归零（无活 worker＝无 worker 内存占用）";
-    // 第二次回收：无可回收空闲（幂等空转——返回 0 不报错）。
+    // 阶段 A 无 Idle 池：回收入口幂等空转（返回 0 不报错）。
     EXPECT_EQ(supervisor->reclaimIdleWorkers(), 0u);
 }
 

@@ -2026,9 +2026,21 @@ public:
                     return r;
                 }
                 std::lock_guard<std::mutex> lock(m_mutex);
-                CacheEntry& entry = m_solidified[{resourceId, kAccessVersion}];
-                entry.bytes = std::move(copy);
-                entry.digest = bytes.value.digest;
+                // F-599：并发双未命中竞态防御——emplace 语义，键已存在（对
+                // 线程先于本线程完成插入）时**保留既有条目**：原地 move 赋
+                // 值会释放对方已经通过 okView 暴露给其调用方的缓冲（视图
+                // 引用悬空＝use-after-free，违反"缓冲一经暴露永不改写"裁
+                // 决）。摘要校验各自通过且内容同源（同一 resourceId 的对象
+                // 库字节唯一），保留首份即正确事实。
+                const auto inserted = m_solidified.emplace(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(resourceId, kAccessVersion),
+                    std::forward_as_tuple());
+                CacheEntry& entry = inserted.first->second;
+                if (inserted.second) {
+                    entry.bytes = std::move(copy);
+                    entry.digest = bytes.value.digest;
+                }
                 return okView(entry.bytes, entry.digest);
             }
             if (bytes.error.code != IoErrorCode::ResNotFound) {

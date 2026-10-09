@@ -129,6 +129,25 @@ private:
     Impl* impl_ = nullptr;   ///< start() 建立、析构释放；未 start 时恒为空
 };
 
+namespace detail {
+
+/**
+ * @brief 按 Windows 命令行引号规则包裹单个参数（实现内部面——暴露给
+ *        单元测试钉住转义规则的唯一目的，非消费契约；F-595/F-596）。
+ *
+ * 规则（CreateProcess 命令行解析约定）：
+ *   - 空串参数发射 ""；
+ *   - 参数含空格/制表符/引号时整体加引号；
+ *   - 参数内引号转义为 \"：引号前 N 个反斜杠按 **2N+1** 发射；紧邻引号
+ *     （或结尾）的连续反斜杠翻倍。
+ *
+ * @param arg [in] UTF-16 参数原文
+ * @return 可直接拼入命令行的参数串
+ */
+std::wstring quoteWindowsArg(const std::wstring& arg);
+
+}  // namespace detail
+
 }  // namespace sdurws::ird::testkit
 
 #endif  // SDURWS_IRD_TESTKIT_PROCESSRUNNER_HPP

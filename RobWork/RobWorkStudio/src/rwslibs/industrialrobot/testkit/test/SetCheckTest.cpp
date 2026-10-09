@@ -167,3 +167,38 @@ TEST(SetGuard, ScaleLimitThrows_UT_SET)
                                     SetMatchTraits<DemoElem>{}),
                  TestKitError);
 }
+
+// =====================================================================
+// F-594 回归（audit/unit-code-review-20261009）
+// =====================================================================
+
+/**
+ * 回归（F-594，P1）：歧义探测移除配对后未屏蔽被释放的 ri——Kuhn 首扫
+ * 按索引序原样配回并返回 true，任何阶段 2 数值配对下首次探测必误报
+ * ambiguousMatch=true（唯一匹配与真歧义无法区分，审计字段失真）。
+ * 唯一可行匹配必须报告 false。
+ */
+TEST(SetNumeric, AmbiguityProbeRequiresAlternativePartner_F594)
+{
+    const std::vector<DemoElem> expected{elem("", 1.0, 2.0), elem("", 5.0, 6.0)};
+    const std::vector<DemoElem> actual{elem("", 1.0, 2.0), elem("", 5.0, 6.0)};
+    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+                                      SetMatchTraits<DemoElem>{});
+    ASSERT_TRUE(r.equivalent);
+    EXPECT_FALSE(r.ambiguousMatch)
+        << "每点仅一个可行伙伴——不得误报歧义（修复前恒 true）";
+}
+
+/**
+ * 配对反面钉：真歧义（两期望点数值相同——任一点都有两个可行伙伴）必须
+ * 仍被检出，防把探测修死（屏蔽 ri 后替代伙伴存在路径必须可达）。
+ */
+TEST(SetNumeric, TrueAmbiguityStillDetected_F594)
+{
+    const std::vector<DemoElem> expected{elem("", 1.0, 2.0), elem("", 1.0, 2.0)};
+    const std::vector<DemoElem> actual{elem("", 1.0, 2.0), elem("", 1.0, 2.0)};
+    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+                                      SetMatchTraits<DemoElem>{});
+    ASSERT_TRUE(r.equivalent);
+    EXPECT_TRUE(r.ambiguousMatch) << "存在替代配对＝真歧义（探测必须检出）";
+}

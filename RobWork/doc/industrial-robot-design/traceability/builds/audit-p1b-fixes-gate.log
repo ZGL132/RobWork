@@ -1,0 +1,349 @@
+  -> FAIL : vcpkg toolchain 不存在: D:\10_Source_Repos\21_robot\RobWork-audit/vcpkg/scripts/buildsystems/vcpkg.cmake
+  -> PASS
+  [ird_gates] 閼奉亝绁?fail_t2閿涙碍瀵滄０鍕埂濡偓閸?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 閹殿偅寮块弽鐧哥窗D:/10_Source_Repos/21_robot/RobWork-audit/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 閸忋劑鍎村Λ鈧弻銉┾偓姘崇箖閿涙瓓-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闂嗚泛鎳℃稉?==============================================================
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork-audit/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+  -> PASS
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.43 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.17 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_diagnostics_test
+  sdurws_ird_diagnostics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.74 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_drivetrain_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_contract_test.exe
+Label Time Summary:
+ird    =   0.17 sec*proc (1 test)
+
+Total Test time (real) =   0.18 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_drivetrain_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_test.exe
+Label Time Summary:
+ird    =   0.19 sec*proc (1 test)
+
+Total Test time (real) =   0.19 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_dynamics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_contract_test.exe
+Label Time Summary:
+ird    =   0.15 sec*proc (1 test)
+
+Total Test time (real) =   0.16 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_dynamics_test
+  sdurws_ird_dynamics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_test.exe
+Label Time Summary:
+ird    =   0.17 sec*proc (1 test)
+
+Total Test time (real) =   0.17 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.23 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.17 sec
+  -> PASS
+D:\10_Source_Repos\21_robot\RobWork-audit\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(718,26): warning C4834: 鏀惧純鍏锋湁 [[nodiscard]] 灞炴�х殑鍑芥暟鐨勮繑鍥炲�?[D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+  sdurws_ird_execution_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_execution_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.91 sec
+  -> PASS
+D:\10_Source_Repos\21_robot\RobWork-audit\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1258,26): warning C4834: 鏀惧純鍏锋湁 [[nodiscard]] 灞炴�х殑鍑芥暟鐨勮繑鍥炲�?[D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+  sdurws_ird_execution_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.73 sec
+  -> PASS
+D:\10_Source_Repos\21_robot\RobWork-audit\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\io\contract_test\PackageContractTest.cpp(719,63): warning C4129: 鈥?锛? 涓嶅彲璇嗗埆鐨勫瓧绗﹁浆涔夊簭鍒?[D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\src\rwslibs\industrialrobot\io\sdurws_ird_io_contract_test.vcxproj]
+  sdurws_ird_io_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_io_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.65 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_io_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_io_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.56 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_kinematics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_contract_test.exe
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.23 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_kinematics_test
+  sdurws_ird_kinematics_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+Label Time Summary:
+ird    =  10.50 sec*proc (1 test)
+
+Total Test time (real) =  10.51 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_modeling_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+Label Time Summary:
+ird    =   0.25 sec*proc (1 test)
+
+Total Test time (real) =   0.25 sec
+  -> PASS
+D:\10_Source_Repos\21_robot\RobWork-audit\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(851,31): warning C4018: 鈥?鈥? 鏈夌鍙?鏃犵鍙蜂笉鍖归厤 [D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\src\rwslibs\industrialrobot\modeling\sdurws_ird_modeling_gui_test.vcxproj]
+  sdurws_ird_modeling_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_gui_test.exe
+Label Time Summary:
+ird_gui    =   1.23 sec*proc (1 test)
+
+Total Test time (real) =   1.23 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_modeling_test
+  sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_test.exe
+Label Time Summary:
+ird    =   0.52 sec*proc (1 test)
+
+Total Test time (real) =   0.52 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_optimization_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_contract_test.exe
+Label Time Summary:
+ird    =   0.40 sec*proc (1 test)
+
+Total Test time (real) =   0.42 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_optimization_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_test.exe
+Label Time Summary:
+ird    =   0.21 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  
+  sdurws_ird_policy_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.24 sec
+  -> PASS
+  
+  sdurws_ird_policy_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.15 sec
+  -> PASS
+  
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   7.11 sec
+  -> PASS
+  
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.52 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.27 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.52 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
+Label Time Summary:
+ird    =   0.27 sec*proc (1 test)
+
+Total Test time (real) =   0.28 sec
+  -> PASS
+  
+  sdurws_ird_requirements_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_gui_test.exe
+Label Time Summary:
+ird_gui    =   1.71 sec*proc (1 test)
+
+Total Test time (real) =   1.71 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_requirements_test
+  sdurws_ird_requirements_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+Label Time Summary:
+ird    =   0.50 sec*proc (1 test)
+
+Total Test time (real) =   0.50 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_selection_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_selection_contract_test.exe
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_selection_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_selection_test.exe
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_testkit_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.53 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_trajectory_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_contract_test.exe
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_trajectory_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_test.exe
+Label Time Summary:
+ird    =   0.46 sec*proc (1 test)
+
+Total Test time (real) =   0.47 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+Label Time Summary:
+ird    =   0.43 sec*proc (1 test)
+
+Total Test time (real) =   0.43 sec
+  -> PASS
+D:\10_Source_Repos\21_robot\RobWork-audit\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(172,23): warning C4996: 'QApplication::setActiveWindow': Use QWidget::activateWindow() instead. [D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_gui_test.vcxproj]
+  sdurws_ird_ui_gui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+Label Time Summary:
+ird_gui    =   4.41 sec*proc (1 test)
+
+Total Test time (real) =   4.42 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+
+The following tests FAILED:
+	  1 - sdurws_ird_ui_test (Exit code 0xc0000135)         ird
+Errors while running CTest
+  -> FAIL : ctest 失败（退出码 8）
+D:\10_Source_Repos\21_robot\RobWork-audit\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp(702,26): warning C4834: 鏀惧純鍏锋湁 [[nodiscard]] 灞炴�х殑鍑芥暟鐨勮繑鍥炲�?[D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+  sdurws_ird_workflow_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_contract_test.exe
+Label Time Summary:
+ird    =   0.85 sec*proc (1 test)
+
+Total Test time (real) =   0.85 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork-audit\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_test.exe
+Label Time Summary:
+ird    =   0.21 sec*proc (1 test)
+
+Total Test time (real) =   0.21 sec
+  -> PASS
+CMake Error at D:/software/CMake/share/cmake-4.3/Modules/CMakeDetermineSystem.cmake:159 (message):
+  Could not find toolchain file:
+
+   "D:\10_Source_Repos\21_robot\RobWork-audit/vcpkg/scripts/buildsystems/vcpkg.cmake"
+Call Stack (most recent call first):
+  CMakeLists.txt:70 (project)
+
+
+  -> FAIL : 独立冒烟配置失败（必须带 vcpkg toolchain——DTB §5.5/F-002）（配置参数在位仍失败——检查 Qt/vcpkg 路径有效性）
+
+================ gate-all 汇总 ================
+FAIL  环境自检 : vcpkg toolchain 不存在: D:\10_Source_Repos\21_robot\RobWork-audit/vcpkg/scripts/buildsystems/vcpkg.cmake
+PASS  集成树缓存确认（RWS_BUILD_INDUSTRIALROBOT=ON 已在位）
+PASS  ird_gates（依赖红线/补丁门禁）
+PASS  集成模式测试发现（40 个注册: sdurws_ird_core_test, sdurws_ird_diagnostics_contract_test, sdurws_ird_diagnostics_test, sdurws_ird_drivetrain_contract_test, sdurws_ird_drivetrain_test, sdurws_ird_dynamics_contract_test, sdurws_ird_dynamics_test, sdurws_ird_evidence_contract_test, sdurws_ird_evidence_test, sdurws_ird_execution_contract_test, sdurws_ird_execution_test, sdurws_ird_io_contract_test, sdurws_ird_io_test, sdurws_ird_kinematics_contract_test, sdurws_ird_kinematics_test, sdurws_ird_modeling_contract_test, sdurws_ird_modeling_gui_test, sdurws_ird_modeling_test, sdurws_ird_optimization_contract_test, sdurws_ird_optimization_test, sdurws_ird_policy_contract_test, sdurws_ird_policy_test, sdurws_ird_project_contract_test, sdurws_ird_project_test, sdurws_ird_reporting_contract_test, sdurws_ird_reporting_test, sdurws_ird_requirements_contract_test, sdurws_ird_requirements_gui_test, sdurws_ird_requirements_test, sdurws_ird_runtime_test, sdurws_ird_selection_contract_test, sdurws_ird_selection_test, sdurws_ird_testkit_test, sdurws_ird_trajectory_contract_test, sdurws_ird_trajectory_test, sdurws_ird_ui_contract_test, sdurws_ird_ui_gui_test, sdurws_ird_ui_test, sdurws_ird_workflow_contract_test, sdurws_ird_workflow_test）
+PASS  集成测试 sdurws_ird_core_test
+PASS  集成测试 sdurws_ird_diagnostics_contract_test
+PASS  集成测试 sdurws_ird_diagnostics_test
+PASS  集成测试 sdurws_ird_drivetrain_contract_test
+PASS  集成测试 sdurws_ird_drivetrain_test
+PASS  集成测试 sdurws_ird_dynamics_contract_test
+PASS  集成测试 sdurws_ird_dynamics_test
+PASS  集成测试 sdurws_ird_evidence_contract_test
+PASS  集成测试 sdurws_ird_evidence_test
+PASS  集成测试 sdurws_ird_execution_contract_test
+PASS  集成测试 sdurws_ird_execution_test
+PASS  集成测试 sdurws_ird_io_contract_test
+PASS  集成测试 sdurws_ird_io_test
+PASS  集成测试 sdurws_ird_kinematics_contract_test
+PASS  集成测试 sdurws_ird_kinematics_test
+PASS  集成测试 sdurws_ird_modeling_contract_test
+PASS  集成测试 sdurws_ird_modeling_gui_test
+PASS  集成测试 sdurws_ird_modeling_test
+PASS  集成测试 sdurws_ird_optimization_contract_test
+PASS  集成测试 sdurws_ird_optimization_test
+PASS  集成测试 sdurws_ird_policy_contract_test
+PASS  集成测试 sdurws_ird_policy_test
+PASS  集成测试 sdurws_ird_project_contract_test
+PASS  集成测试 sdurws_ird_project_test
+PASS  集成测试 sdurws_ird_reporting_contract_test
+PASS  集成测试 sdurws_ird_reporting_test
+PASS  集成测试 sdurws_ird_requirements_contract_test
+PASS  集成测试 sdurws_ird_requirements_gui_test
+PASS  集成测试 sdurws_ird_requirements_test
+PASS  集成测试 sdurws_ird_runtime_test
+PASS  集成测试 sdurws_ird_selection_contract_test
+PASS  集成测试 sdurws_ird_selection_test
+PASS  集成测试 sdurws_ird_testkit_test
+PASS  集成测试 sdurws_ird_trajectory_contract_test
+PASS  集成测试 sdurws_ird_trajectory_test
+PASS  集成测试 sdurws_ird_ui_contract_test
+PASS  集成测试 sdurws_ird_ui_gui_test
+FAIL  集成测试 sdurws_ird_ui_test : ctest 失败（退出码 8）
+PASS  集成测试 sdurws_ird_workflow_contract_test
+PASS  集成测试 sdurws_ird_workflow_test
+FAIL  冒烟树配置 : 独立冒烟配置失败（必须带 vcpkg toolchain——DTB §5.5/F-002）（配置参数在位仍失败——检查 Qt/vcpkg 路径有效性）
+================================================
+结果: 42/45 通过
+存在失败项——本地一键门槛未过，禁止提交（契约 acceptance 1）
+EXIT=1

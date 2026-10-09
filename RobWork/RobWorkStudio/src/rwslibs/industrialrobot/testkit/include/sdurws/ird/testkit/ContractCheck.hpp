@@ -91,6 +91,17 @@ CheckResult checkEnvelopeCombination(const EnvelopeT& e, Accessors a)
             return d;
         }());
     }
+    // F-597：表 3 第四规则补钉——终态非完成 ⇒ **无正式结论字段**。原实现
+    // 只查三条，hasFormalConclusion 访问器在 Accessors 文档中列为必备成员
+    // 却从未被调用：违规包络（终态非完成却携带正式结论）静默放行＝契约
+    // 测试假绿。
+    if (terminalNonComplete && a.hasFormalConclusion(e)) {
+        result.failures.push_back([] {
+            CompareDetail d;
+            d.fieldPath = "formalConclusion: 取消/失败/中断 ⇒ 不得携带正式结论（表 3）";
+            return d;
+        }());
+    }
     if (outcome == core::TaskOutcome::Completed && !a.hasEvidenceList(e)) {
         result.failures.push_back([] {
             CompareDetail d;

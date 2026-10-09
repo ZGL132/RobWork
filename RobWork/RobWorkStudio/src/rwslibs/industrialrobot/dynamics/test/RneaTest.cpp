@@ -187,6 +187,154 @@ TEST(DynRnea, StaticGravityTwoLinkAnalytic)
 }
 
 // =====================================================================
+// 用例 1b：移动关节滑移臂（F-580 回归——audit/unit-code-review-20261009）
+// =====================================================================
+
+/**
+ * @brief 组装"近端回转＋沿臂滑移"两关节混合链（构建器直构——模式同
+ *        StatisticsTest 混合链夹具）。
+ *
+ * 几何（基座系，q0=0）：关节 0＝Revolute（axis=+Y，原点＝基座原点）；
+ * 关节 1＝Prismatic（axis=+X，原点＝(L1,0,0)——滑移沿臂方向）。物性复用
+ * 二连杆夹具常量：m1=kM1（质心距关节 0 原 kC1，沿 x̂）、m2=kM2（质心距
+ * 关节 1 原 kC2，沿 x̂）。静力解析（重力 (0,0,−g)，滑移 d＝q1）：
+ *   τ0（绕 +Y）＝ −g·(m1·L1 ＋ m2·(L1＋d＋c2))——**d 项＝滑移臂贡献**
+ *   （体 2 质心在关节 1 原点之外 d+c2 处，其重力对关节 0 的矩经关节 1
+ *   内力/内矩上传时必须计及滑移平移）；
+ *   τ1（沿 +X）＝ 0（重力与轴正交——移动关节广义力取沿轴内力）。
+ */
+inline CanonicalModel makePrismArmModel()
+{
+    CanonicalModelHeader header;
+    header.project = idFrom<core::ProjectId>("arm-prj");
+    header.branch = idFrom<core::BranchId>("arm-brn");
+    header.revision = idFrom<core::RevisionId>("arm-rev-1");
+    header.revisionSeq = 1;
+    header.descriptionContractVersion = 1;
+    header.compilerContractVersion = 1;
+    header.builtFrom = digestOf("arm-description-bytes");
+
+    const ObjectId robot = idFrom<ObjectId>("arm-robot");
+    const ObjectId j0 = idFrom<ObjectId>("arm-j0");
+    const ObjectId j1 = idFrom<ObjectId>("arm-j1");
+    const ObjectId l0 = idFrom<ObjectId>("arm-l0");
+    const ObjectId l1 = idFrom<ObjectId>("arm-l1");
+    const ObjectId l2 = idFrom<ObjectId>("arm-l2");
+    auto addRef = [&header](const ObjectId& id, const char* seed, const char* token) {
+        ObjectRefEntry e;
+        e.objectId = id;
+        e.contentVersion = cvFrom(seed);
+        e.objectTypeToken = token;
+        e.digest = digestOf(std::string{seed} + "-bytes");
+        header.objectRefs.push_back(e);
+    };
+    addRef(robot, "arm-robot", "robot-design");
+    addRef(j0, "arm-j0", "joint");
+    addRef(j1, "arm-j1", "joint");
+    addRef(l0, "arm-l0", "link");
+    addRef(l1, "arm-l1", "link");
+    addRef(l2, "arm-l2", "link");
+
+    RobotChain chain;
+    chain.robotObjectId = robot;
+    chain.robotLocalName = "DYN_ARM_PRISM";
+    chain.deviceName = "DYN_ARM_PRISM";
+
+    // 关节 0：近端回转（axis=+Y——重力矩非退化轴；原点＝基座原点）。
+    CanonicalJoint joint0;
+    joint0.objectId = j0;
+    joint0.localName = "shoulder";
+    joint0.type = JointType::Revolute;
+    joint0.axis = rw::math::Vector3D<double>(0.0, 1.0, 0.0);  // 关节系单位向量
+    joint0.bounds = JointBounds{-3.14159265358979323846, 3.14159265358979323846};
+    joint0.maxVelocity = val(3.0);  // rad/s
+    joint0.origin = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(0.0, 0.0, 0.0), identityRotation());
+    chain.joints.push_back(joint0);
+
+    // 关节 1：沿臂滑移（axis=+X；原点＝(L1,0,0)——关节 0 伸臂端）。
+    CanonicalJoint joint1;
+    joint1.objectId = j1;
+    joint1.localName = "extend";
+    joint1.type = JointType::Prismatic;
+    joint1.axis = rw::math::Vector3D<double>(1.0, 0.0, 0.0);  // 关节系单位向量
+    joint1.bounds = JointBounds{0.0, 1.0};                    // m
+    joint1.maxVelocity = val(1.0);                            // m/s
+    joint1.origin = rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(kL1, 0.0, 0.0), identityRotation());
+    chain.joints.push_back(joint1);
+
+    // 连杆（links[0]＝基座体不参与动力学；links[i] 为关节 i 的父体）。
+    CanonicalLink baseLink;
+    baseLink.objectId = l0;
+    baseLink.localName = "arm_base";
+    chain.links.push_back(baseLink);
+
+    CanonicalLink link1;
+    link1.objectId = l1;
+    link1.localName = "arm_link1";
+    link1.mass = val(kM1);  // kg
+    link1.centerOfMass = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(kC1, 0.0, 0.0), userProv());  // m（沿 x̂）
+    link1.inertia = core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+        diagInertia(0.01, 0.01, 0.01), userProv());  // 质心系，kg·m²
+    chain.links.push_back(link1);
+
+    CanonicalLink link2;
+    link2.objectId = l2;
+    link2.localName = "arm_link2";
+    link2.mass = val(kM2);  // kg
+    link2.centerOfMass = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(kC2, 0.0, 0.0), userProv());  // m（滑移向前）
+    link2.inertia = core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+        diagInertia(0.001, 0.001, 0.001), userProv());  // 质心系，kg·m²
+    chain.links.push_back(link2);
+
+    return CanonicalModelBuilder()
+        .setHeader(header)
+        .setWorld(groundWorld())
+        .setChain(chain)
+        .setTools({})
+        .build();
+}
+
+/**
+ * 回归（F-580，P1）：移动关节内向递推质心力臂原直接用 comOffset（体原
+ * 点→质心），丢失滑移臂 (d·z)×F 贡献——近端回转关节的静态重力矩差
+ * m2·g·d（本例 3.924 N·m）。四通道共用同一错误力臂，五分项恒等式
+ * （V-03）对此不可见，只有解析对照能暴露——本用例即解析对照钉。
+ */
+TEST(DynRnea, PrismaticSlipArmGravityMoment_F580)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-01"},
+                  std::vector<std::string>{"AT-37"});
+
+    const CanonicalModel model = makePrismArmModel();
+    const ObjectId condition = idFrom<ObjectId>("cond-prism-static");
+    constexpr double kSlipD = 0.4;  // 滑移量（m；bounds (0,1) 内）
+
+    InverseDynRequest req = makeRequest(model, condition,
+                                        {sampleAt(0.0, {0.0, kSlipD}, {0.0, 0.0}, {0.0, 0.0})});
+    FakeContext ctx;
+    const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+
+    ASSERT_EQ(out.samples.size(), 2u);
+    EXPECT_EQ(out.samples[0].jointIndex, 0u);
+    EXPECT_EQ(out.samples[1].jointIndex, 1u);
+
+    // 解析面：τ0＝−g·(m1·c1＋m2·(L1＋d＋c2))。修复前 τ0 丢 m2·g·d 项
+    // （＝−kG·(m1·c1＋m2·(L1＋c2))），本断言即回归钉。
+    const double expectedTau0 =
+        -kG * (kM1 * kC1 + kM2 * (kL1 + kSlipD + kC2));  // N·m
+    expectNearRel(out.samples[0].tauGravity, expectedTau0, "关节 0 静态重力矩（含滑移臂）");
+    expectNearRel(out.samples[0].tauTotal, expectedTau0, "关节 0 静态总力矩");
+    // 移动关节广义力＝沿轴内力（重力与 +X 轴正交）。
+    EXPECT_NEAR(out.samples[1].tauTotal, 0.0, 1e-12);
+    EXPECT_EQ(out.samples[0].numericState, SampleNumericState::Ok);
+    EXPECT_EQ(out.validity.completeness, DynamicsValidity::Completeness::Complete);
+}
+
+// =====================================================================
 // 用例 2：倒挂静态重力矩（AT-37 动力侧）——重力投影消费同一基座—世界
 // 编译变换（R_world_base），符号翻转、量值相等，禁止任何下游二次旋转。
 // 解析：倒挂 g_base＝R_x(π)ᵀ·g_world＝(0,0,+g) ⇒ τ1=+g(m1c1+m2(L1+c2))。

@@ -131,6 +131,7 @@ public:
     struct StationMarkerProjection {
         std::string label;                          ///< 工位名（场景节点名后缀——UX-02）
         RequirementReference refFrame;              ///< 参考系原值（投影方解析宿主帧名）
+    rw::math::Vector3D<double> position;       ///< 标记位置（m；refFrame 系——UI-T74/F-555 增补：工位坐标进三维投影）
     };
     /// 工位标记出口（随面板重载全量投递——会话编辑/选择刷新的承接点）。
     using StationMarkersSink =

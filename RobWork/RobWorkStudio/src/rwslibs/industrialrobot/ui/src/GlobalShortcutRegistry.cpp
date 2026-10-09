@@ -25,6 +25,7 @@
 
 #include <sdurws/ird/ui/IGlobalShortcutRegistry.hpp>
 
+#include <QPointer>
 #include <QShortcut>
 #include <QWidget>  // 完整类型（QShortcut 父控件入参的 QObject 转换需要——attach 宿主面）
 #include <QtGlobal>
@@ -418,8 +419,11 @@ private:
     std::vector<HotkeyBinding> m_userBindings; ///< User 绑定（改绑序——持久化载荷）
     std::map<QString, CommandId> m_byKey;      ///< 规范化键→命令（全局唯一映射）
     std::vector<diagnostics::IDiagObserver*> m_feedObservers; ///< 冲突流观察者表
-    QWidget* m_shortcutParent = nullptr;       ///< attach 宿主（非拥有——Qt 树管理）
-    std::map<CommandId, QShortcut*> m_shortcutByCommand; ///< 命令→物理键（本表创建）
+    /// attach 宿主（非拥有——Qt 树管理）。F-609：QPointer 化——宿主窗口销毁后自动置空，detach/rebind 不再对悬垂父子指针调用。
+    QPointer<QWidget> m_shortcutParent;
+    /// 命令→物理键（本表创建）。QPointer：宿主窗口先销毁时条目自动置空——
+    /// detach()/rebind 的 deleteLater 不再触碰已析构 QShortcut（F-609）。
+    std::map<CommandId, QPointer<QShortcut>> m_shortcutByCommand;
 };
 
 }  // namespace

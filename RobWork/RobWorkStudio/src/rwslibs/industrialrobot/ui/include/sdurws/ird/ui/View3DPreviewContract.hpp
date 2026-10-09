@@ -58,10 +58,16 @@ struct View3DFrameMarker {
     /// 挂接帧名（宿主 WorkCell 帧名——工位参考帧；渲染层 findFrame
     /// 挂接，坐标轴随帧位姿动）。
     std::string frameName;
+    /// 标记位置（m；refFrame 系——World 缺省系即世界坐标；渲染层经
+    /// DrawableNode::setTransform 放置于帧内该偏移点。UI-T76/F-555
+    /// 增补——标记从「参考系指示器」升级为「带坐标的点位」；尾追加
+    /// 向后兼容：缺省零向量＝帧原点，与历史行为一致）。
+    rw::math::Vector3D<> position;
 
     bool operator==(const View3DFrameMarker& o) const
     {
-        return label == o.label && frameName == o.frameName;
+        return label == o.label && frameName == o.frameName
+               && position == o.position;
     }
     bool operator!=(const View3DFrameMarker& o) const { return !(*this == o); }
 };

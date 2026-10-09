@@ -43,16 +43,6 @@
       "resolution": "随后续单元落位任务评估目标级 CMAKE_AUTOMOC OFF 的构建收益（NFR-MNT-01 语义下倾向显式关闭）；涉及框架构建面时按 SA-02 先登记后改。"
     },
     {
-      "id": "F-463",
-      "source": "UI-T41 批次A 收尾门禁核查（2026-10-03）——gate-all.ps1 -QtPrefix 通道 ird_gates 项 FAIL；基线归因实测：checkout 基点 295d60e0 的本批改动路径后 ird_gates 目标仍 FATAL 命中 98 处，先于本批存在",
-      "severity": "major",
-      "status": "open",
-      "registeredAt": "2026-10-03",
-      "title": "ird_gates cmake 目标在 redesign-main 现况命中 98 处恒 FATAL（gate-all 通道恒红）——与验收通道『ird_gates 引擎直跑＋归一化比对零新增』口径分叉：命中集含 kinematics->ui〔sdurws_ird_kinematics_plugin〕等已按 DTB §4.5 登记的许可边与测试目标同单元链接行，cmake 通道未消费该登记口径",
-      "owner": "治理会话（WP-01-T03 门禁白名单/引擎口径统一裁决）",
-      "resolution": "UI-T41 实测归因：基点 295d60e0 即 98 命中（本批改动路径 checkout 后复跑），本批曾新增第 99 处（modeling_test→sdurws_ird_ui）已随后续提交回退归零——本批净增零命中。修复方向：cmake 通道消费 DTB §4.5 登记许可集或补齐白名单文件与 dependency-graph.json 的一致性。"
-    },
-    {
       "id": "F-005",
       "source": "units/core.md 文末（本次 v1.3 治理修复中发现）",
       "severity": "suggestion",
@@ -4473,16 +4463,6 @@
       "resolution": "送验/自查统一主树全量构建口径，或排查前先全量追平主树。编号顺延自 F-447。"
     },
     {
-      "id": "F-459",
-      "source": "UI-T38 验收 attempt 1（2026-10-02——冷构建树首跑 sdurws_ird_studio.exe 报 0xC0000135）",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-10-02",
-      "title": "冷构建树（独立 configure 的集成树）产出的 studio 运行时缺 DLL 前置：需追加主构建树各 bin（RobWork/RobWorkSim/RobWorkStudio 的 bin+libs）到 PATH 才可启动——F-007（配置期 toolchain/Qt 前缀）/F-009（gate-all 非主树环境）同族的运行时半区；主树增量运行不受影响，验收复现配方已按此规避（acc-smoke 驱动内联主树 bin 兜底）。",
-      "owner": "构建脚本/交付侧（候选：ui CMakeLists 运行时 DLL 汇集或验收驱动模板固化 PATH 配方）",
-      "resolution": "建议与 F-007 一并治理（冷树配方文档化或 CMake 侧运行时自包含）；编号为收尾合并预留（evidence 分支基点编号止于 F-448），落库于 UI-T38 合入收尾提交。"
-    },
-    {
       "id": "F-449",
       "source": "所有者 2026-10-01 界面任务书（UI-T36 立项承接——图 1/图 2 截证的窗口缩放/切换期 z-order 错乱与遮挡穿透指控）",
       "severity": "suggestion",
@@ -4588,6 +4568,16 @@
       "resolution": "随遍历批次提交闭环（tour-6 步向导段＋gui 32/32 回归）；验收记录 attempt5 的 acceptance 4 向导项由注入缝承载的口径以此勘误——宿主形态行为随本批补齐。编号顺延自 F-457。"
     },
     {
+      "id": "F-459",
+      "source": "UI-T38 验收 attempt 1（2026-10-02——冷构建树首跑 sdurws_ird_studio.exe 报 0xC0000135）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "冷构建树（独立 configure 的集成树）产出的 studio 运行时缺 DLL 前置：需追加主构建树各 bin（RobWork/RobWorkSim/RobWorkStudio 的 bin+libs）到 PATH 才可启动——F-007（配置期 toolchain/Qt 前缀）/F-009（gate-all 非主树环境）同族的运行时半区；主树增量运行不受影响，验收复现配方已按此规避（acc-smoke 驱动内联主树 bin 兜底）。",
+      "owner": "构建脚本/交付侧（候选：ui CMakeLists 运行时 DLL 汇集或验收驱动模板固化 PATH 配方）",
+      "resolution": "建议与 F-007 一并治理（冷树配方文档化或 CMake 侧运行时自包含）；编号为收尾合并预留（evidence 分支基点编号止于 F-448），落库于 UI-T38 合入收尾提交。"
+    },
+    {
       "id": "F-460",
       "source": "UI-T39 审核返工轮（2026-10-02——生产装配注册需求域命令处理器后首次真实 committed，requirements-tour step9 二连应用探针暴露）",
       "severity": "blocking",
@@ -4617,6 +4607,16 @@
       "title": "WritableSwitchRefreshesAll_UI_T39 用例对『setWritable 不再全量刷新生命周期按钮』的变异不敏感：使能断言疑似被空态互斥显隐等其他呈现路径掩盖——setWritable 全量刷新契约（L-R12 切换后按钮态零残留）缺一记直接红验的强断言。",
       "owner": "requirements gui 测试（UI-T40 序列候选：拆分生命周期刷新为可独立驱动面或补『使能位直接受 setWritable 驱动』的强断言——变异记录见 acc/ui-t39/1 验收记录 4.5 节）",
       "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T39 合入。编号顺延自 F-461。"
+    },
+    {
+      "id": "F-463",
+      "source": "UI-T41 批次A 收尾门禁核查（2026-10-03）——gate-all.ps1 -QtPrefix 通道 ird_gates 项 FAIL；基线归因实测：checkout 基点 295d60e0 的本批改动路径后 ird_gates 目标仍 FATAL 命中 98 处，先于本批存在",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "ird_gates cmake 目标在 redesign-main 现况命中 98 处恒 FATAL（gate-all 通道恒红）——与验收通道『ird_gates 引擎直跑＋归一化比对零新增』口径分叉：命中集含 kinematics->ui〔sdurws_ird_kinematics_plugin〕等已按 DTB §4.5 登记的许可边与测试目标同单元链接行，cmake 通道未消费该登记口径",
+      "owner": "治理会话（WP-01-T03 门禁白名单/引擎口径统一裁决）",
+      "resolution": "UI-T41 实测归因：基点 295d60e0 即 98 命中（本批改动路径 checkout 后复跑），本批曾新增第 99 处（modeling_test→sdurws_ird_ui）已随后续提交回退归零——本批净增零命中。修复方向：cmake 通道消费 DTB §4.5 登记许可集或补齐白名单文件与 dependency-graph.json 的一致性。"
     },
     {
       "id": "F-464",
@@ -4923,62 +4923,6 @@
       "resolution": "UI-T52 合入段治理提交随批修复闭环（2026-10-04）。"
     },
     {
-      "id": "F-503",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-1（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "fixed",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 契约 allowedFiles 与 outputs 不一致：附带修复文件 requirements/plugin/RequirementsCommandFlows.cpp 按 outputs 第 8 条登记但字面越出 allowedFiles（允许面仅 modeling/**＋文档链）；验收实测改动与登记逐字一致（一处呈现辅助＋include、语义零变化）——登记滞后非越权改动。后续契约卡 allowedFiles 应把 outputs 登记的附带修复面同步入列（或在契约模板注明附带修复的登记路径）。",
-      "owner": "治理侧（契约模板口径澄清；UI-T53 已合入不追改）"
-    },
-    {
-      "id": "F-504",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-2（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "fixed",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 契约 allowedFiles 未列契约自身路径（tasks/foundation/UI-T53.json——验收请求前置补 acceptance 数组的提交触及自身）；UI-T50 先例卡含自身路径。后续契约卡模板统一补列自身路径。",
-      "owner": "治理侧（契约模板口径）"
-    },
-    {
-      "id": "F-505",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-3（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "closed",
-      "registeredAt": "2026-10-04",
-      "title": "F-480 同族修复已落库待消账登记：requirements/plugin/RequirementsCommandFlows.cpp 的 rw::math::RPY 外联符号（UI-T33 引入——requirements_test/gui_test 独立冒烟链接失败 LNK2019）经 UI-T53 附带修复换 rotationToRpyPresentation 逐元素反解；本条为该修复的消账登记锚（原缺陷未单独立条，故本条兼作发现登记＋修复闭环记录）。",
-      "owner": "已随 UI-T53 修复（requirements 冒烟链接实证恢复）；本条目闭合该发现",
-      "resolution": "UI-T53 附带修复闭环（2026-10-04 合入——acc/ui-t53/1 验收 4.2 冒烟段实证）。"
-    },
-    {
-      "id": "F-506",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-4（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 第二提交（任务卡补 acceptance）正文中 requirements 测试行数字错置（test 写 42 实测 201 含 1skip、gui 写 16 实测 42——两数字互错位）；方向一致无失败掩盖、非粉饰（验收 4.9 判定 pass 附本条）。教训：提交正文的套件数字应在发送前对照当次运行输出逐一复核。",
-      "owner": "已随本条登记（错置随已推送提交不可改写——协议 §6.3 禁改写已推送历史；教训条目即处置）"
-    },
-    {
-      "id": "F-507",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-5（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 实施留痕 ird_gates 口径偏差：builds/ui-t53/README 与 DTB 行记\"75 条\"（暖构建树欠计数）且 ird-gates-hits 留痕存在中文编码截断损坏（45 行串行）；验收者以全新配置 worktree 独立双侧复跑实测 base/head 各 101 项（SUB 54/R3 30/R1 6/LIB 6/T1 4/R4 1）多重集全等——零新增结论不受影响，但留痕数字与实测口径不符。教训：ird_gates 留痕须以全新（或至少同状态）配置树双侧复跑为准，且 hits 导出须经编码归一（UTF-8 显式）。",
-      "owner": "留痕文件保持原样（验收记录已含实测口径与比对文件）；本条登记口径教训",
-      "resolution": "验收者独立复跑结论（101/101 全等）已载 acc/ui-t53/1@bb0cc913，作为 UI-T53 门禁项的权威证据（2026-10-04）。"
-    },
-    {
-      "id": "F-508",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-6（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 实施留痕 gtest XML 落盘覆盖面窄于先例（仅 modeling_test/gui 两套件——T48 先例为受影响套件全量落盘；首次落盘时 --gtest_output 相对路径误写致 XML 缺失，补跑仅覆盖两套件）；验收复现已补齐该面。后续任务留痕：受影响套件 XML 全量落盘为留痕完成判据。",
-      "owner": "验收侧已补（acc/ui-t53/1 记录）；本条登记留痕口径教训"
-    },
-    {
       "id": "F-494",
       "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-1",
       "severity": "blocking",
@@ -5066,6 +5010,62 @@
       "owner": "已随 2026-10-04 呈现批次①闭环（建模卡 v0.33）：低频诊断六命令收进『更多操作』折叠区（默认收起——压缩纵向长度；命令集合/id/使能逻辑零变化；复位 Home/Zero 常驻常用层）＋六轴重置确认分段知情文案（逐项列替换/清空面＋项目历史语义＋草稿期无撤销栈如实告知，默认按钮保持『否』）",
       "resolution": "呈现批次①提交（2026-10-04）：modeling_gui 18/18（新增 MoreActionsCollapse_DefaultCollapsedAndToggle_F502）＋modeling_test 322 全绿；语义零变化。",
       "fixedAt": "2026-10-04"
+    },
+    {
+      "id": "F-503",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-1（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 契约 allowedFiles 与 outputs 不一致：附带修复文件 requirements/plugin/RequirementsCommandFlows.cpp 按 outputs 第 8 条登记但字面越出 allowedFiles（允许面仅 modeling/**＋文档链）；验收实测改动与登记逐字一致（一处呈现辅助＋include、语义零变化）——登记滞后非越权改动。后续契约卡 allowedFiles 应把 outputs 登记的附带修复面同步入列（或在契约模板注明附带修复的登记路径）。",
+      "owner": "治理侧（契约模板口径澄清；UI-T53 已合入不追改）"
+    },
+    {
+      "id": "F-504",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-2（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 契约 allowedFiles 未列契约自身路径（tasks/foundation/UI-T53.json——验收请求前置补 acceptance 数组的提交触及自身）；UI-T50 先例卡含自身路径。后续契约卡模板统一补列自身路径。",
+      "owner": "治理侧（契约模板口径）"
+    },
+    {
+      "id": "F-505",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-3（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-04",
+      "title": "F-480 同族修复已落库待消账登记：requirements/plugin/RequirementsCommandFlows.cpp 的 rw::math::RPY 外联符号（UI-T33 引入——requirements_test/gui_test 独立冒烟链接失败 LNK2019）经 UI-T53 附带修复换 rotationToRpyPresentation 逐元素反解；本条为该修复的消账登记锚（原缺陷未单独立条，故本条兼作发现登记＋修复闭环记录）。",
+      "owner": "已随 UI-T53 修复（requirements 冒烟链接实证恢复）；本条目闭合该发现",
+      "resolution": "UI-T53 附带修复闭环（2026-10-04 合入——acc/ui-t53/1 验收 4.2 冒烟段实证）。"
+    },
+    {
+      "id": "F-506",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-4（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 第二提交（任务卡补 acceptance）正文中 requirements 测试行数字错置（test 写 42 实测 201 含 1skip、gui 写 16 实测 42——两数字互错位）；方向一致无失败掩盖、非粉饰（验收 4.9 判定 pass 附本条）。教训：提交正文的套件数字应在发送前对照当次运行输出逐一复核。",
+      "owner": "已随本条登记（错置随已推送提交不可改写——协议 §6.3 禁改写已推送历史；教训条目即处置）"
+    },
+    {
+      "id": "F-507",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-5（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 实施留痕 ird_gates 口径偏差：builds/ui-t53/README 与 DTB 行记\"75 条\"（暖构建树欠计数）且 ird-gates-hits 留痕存在中文编码截断损坏（45 行串行）；验收者以全新配置 worktree 独立双侧复跑实测 base/head 各 101 项（SUB 54/R3 30/R1 6/LIB 6/T1 4/R4 1）多重集全等——零新增结论不受影响，但留痕数字与实测口径不符。教训：ird_gates 留痕须以全新（或至少同状态）配置树双侧复跑为准，且 hits 导出须经编码归一（UTF-8 显式）。",
+      "owner": "留痕文件保持原样（验收记录已含实测口径与比对文件）；本条登记口径教训",
+      "resolution": "验收者独立复跑结论（101/101 全等）已载 acc/ui-t53/1@bb0cc913，作为 UI-T53 门禁项的权威证据（2026-10-04）。"
+    },
+    {
+      "id": "F-508",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-6（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 实施留痕 gtest XML 落盘覆盖面窄于先例（仅 modeling_test/gui 两套件——T48 先例为受影响套件全量落盘；首次落盘时 --gtest_output 相对路径误写致 XML 缺失，补跑仅覆盖两套件）；验收复现已补齐该面。后续任务留痕：受影响套件 XML 全量落盘为留痕完成判据。",
+      "owner": "验收侧已补（acc/ui-t53/1 记录）；本条登记留痕口径教训"
     },
     {
       "id": "F-509",
@@ -5509,6 +5509,348 @@
       "registeredAt": "2026-10-08",
       "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
       "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
+    },
+    {
+      "id": "F-570",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P0-1）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "URDF <origin> 属性部分缺省被误判数值非法——xyz/rpy 缺一即 originIllegal→valueIllegal→submittable=false，规范合法写法（只写 xyz 不写 rpy）导入即不可提交",
+      "resolution": "修复（分支 audit-p0-fixes）：Import.cpp 新增 parseOriginAttributes——属性缺失按 URDF 语义补零（defaulted 标志随行，joint/inertial/visual/collision 四处扫描点统一走该助手），映射段把补零事实入默认补全清单（NFR-COR-03 不静默）；属性存在但语法非法仍走原非法值面（容错不改值）。ImportTest 增 F570 正反两用例；红灯验证：撤修复后正例失败、反向例保持通过。"
+    },
+    {
+      "id": "F-571",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P0-2）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ApplyRobotDesignHandler 候选工作集未播种基线——既有部件替换槽恒失败（replacePartInCandidate 在空候选恒 miss）；基线闭包含任一部件对象后根编辑被闭包断言全拒（REF-MISSING→RejectedHardAssert）——WP-13-T10 同类缺陷在本处理器的复制修复遗漏",
+      "resolution": "修复（分支 audit-p0-fixes）：decodeAndPlan Apply 分支开头 result.candidate = baseline（与 ApplyToolDefinitionHandler 的 WP-13-T10 修复同款语义）；根对象字节仍整体来自载荷（design 整体覆盖不变）。CommandHandlersTest 增 F571 两用例（基线含工具的根替换恢复提交＋既有工具字节替换槽可达）；红灯验证：撤修复后两用例恰好失败。"
+    },
+    {
+      "id": "F-572",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P0-3）",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "CsvFieldChars 预算维被按行累计记账——『CSV 单字段字符数（默认 64 KiB｜硬 1 MiB）』契约下，累计字段内容超 64 KiB 的常规 CSV 在读取中途被 IO-SEC-BUDGET-FIELD 误拒；真正的单字段限额从未生效，防御上限错误三要素 limit（65536）与实际拦截点（1 MiB+4KiB）也不一致",
+      "resolution": "修复（分支 audit-p0-fixes）：Csv.cpp 交付行改逐字段与生效限额（limitOf(CsvFieldChars)）比较，超限以比较型三要素（actual＝涉事字段字节数/limit＝生效限额/unit=chars）拒读；移除逐行累计 charge（该维语义是上限判定不是累计账目）；扫描期防御上限的三要素 limit 改取实际拦截点 kFieldScanCapBytes。CsvTest 增 F572 两用例（单字段 70KiB 拒读＋800 行小字段正常读完）；红灯验证通过。"
+    },
+    {
+      "id": "F-573",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "CommandInteractionBridge::m_revisionEpoch 为普通 uint64——noteRevisionCommitted（UI 线程）递增与 requestConfirmations（命令执行线程）读构成数据竞争（同文件 m_alive 已是 atomic，本成员遗漏）",
+      "resolution": "修复（分支 audit-p1a-fixes）：改 std::atomic<std::uint64_t>（relaxed 序——仅作修订发生与否的标注判别）。sdurws_ird_ui_test 254/254 通过。"
+    },
+    {
+      "id": "F-574",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·diagnostics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "LoggingPipeline 写失败计数 writeFailures：日志线程递增（writeLine/flushDirty/轮转）而 flush() 冲刷失败分支在调用方线程读——并发 log() 同拍递增构成数据竞争（UB）",
+      "resolution": "修复（分支 audit-p1a-fixes）：改 std::atomic<std::uint64_t>（relaxed 序，仅计数呈现）。sdurws_ird_diagnostics_test 115/115 通过。"
+    },
+    {
+      "id": "F-575",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·project）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ProjectStoreImpl 身份查询面（projectId/schema）无锁读 m_head——与 executeCommit writer 锁内的 m_head 整体前进构成数据竞争（公共头承诺\"并发安全——内部互斥\"未兑现）",
+      "resolution": "修复（分支 audit-p1a-fixes）：m_writerMutex 加 mutable，projectId()/schema() 改 writer 锁内快照（与 QueryPort 权威元数据读面同款串行域；写侧同锁无新锁序）；canonicalPath() 维持无锁（打开期一次成形只读，登记依据）。调用点核实：归档 begin/草稿 save 等内部调用均在锁外面。sdurws_ird_project_test 254/254 通过。"
+    },
+    {
+      "id": "F-576",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·execution）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "TaskScheduler 从未向 Controller 接线派发闸（setDispatchGate 生产代码零调用点）——排队任务被取消后残留等待队列，同拍 dispatchOne 出队对 Canceled 状态机申请 DispatchDequeued（转移表无此行）抛 ExecutionError：调度循环每拍抛异常或派发停摆",
+      "resolution": "修复（分支 audit-p1a-fixes）：构造期 setDispatchGate(this)＋析构摘闸＋dispatchOne 出队前非 Queued 队头防御剔除。回归用例 QueuedCancelDoesNotPoisonDispatch_F576 红灯验证（撤修复抛 ExecutionError 矩阵外转换）。sdurws_ird_execution_test 150/150 通过。"
+    },
+    {
+      "id": "F-577",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·execution）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "WorkerSupervisor::processExit 把已退出的 worker 记录置 Idle 回池——复用面向死进程管道写派发必然失败且回池门禁（!exitProcessed）使复用本就不可达：Idle 池为僵尸滞留区（句柄滞留至析构＋死进程作业峰值被 aggregateJobMemoryBytes 永久计入→ResourceController 长期误判内存压力）",
+      "resolution": "修复（分支 audit-p1a-fixes）：按阶段 A 事实（worker 一派发一进程）正常终结改 pendingDestroy 直接销毁（Idle 池为保活模型预留，hpp Config.poolCapacity 登记口径）；聚合资格补 !exitProcessed。sdurws_ird_execution_test 150/150 通过。"
+    },
+    {
+      "id": "F-578",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·execution——原报\"requestCancelAll/abandonAllForced 绕主锁数据竞争\"）",
+      "severity": "major",
+      "status": "closed",
+      "registeredAt": "2026-10-09",
+      "title": "DrainCoordinator::requestCancelAll/abandonAllForced 公开方法遍历 Controller 任务表不自带互斥——原审查定性为与并发 submit 的数据竞争",
+      "resolution": "改判（分支 audit-p1a-fixes 核实）：逐调用点证明现网全部触达路径均在 TaskScheduler 主锁串行域内——abandonAllForced 唯一生产调用点＝poll 超阈值自动兜底（tick 段 b/c 主锁内）；requestCancelAll 生产代码零调用（shutdown 的 CancelQueuedAndWait 分支在 TaskScheduler::shutdown 主锁内自带排队取消遍历）——不构成现行竞争。处置：两方法接口注释升格线程约束为显式契约（必须主锁域内；独立装配须外部串行化），不引入防御性改锁（DrainCoordinator 独立构造，注锁为侵入式且破坏测试装配形态）。"
+    },
+    {
+      "id": "F-579",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·execution）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "WorkerSupervisor 读线程 Broken 分支未等进程终结即取退出码——正常退出收尾（写端关闭先于进程对象置位）窗内取到 STILL_ACTIVE(259) 被约定集外判 Crashed：成功任务被误报崩溃；活进程场景无兜杀成孤儿",
+      "resolution": "修复（分支 audit-p1a-fixes）：Broken 分支先有界等待（2 s）进程终结再取退出码；超时＝病态 worker，强杀兜底后按保守方向 Crashed 分类（约定集口径不变）。sdurws_ird_execution_test 150/150 通过。"
+    },
+    {
+      "id": "F-580",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·dynamics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "RNEA 内向递推质心力臂用错参考点——comOffset 是体原点→质心而矩参考点是关节 i 原点：移动关节丢失滑移臂 (d·z)×F，近端回转关节力矩系统性错误（四通道同错，五分项恒等式校验不可见）",
+      "resolution": "修复（分支 audit-p1b-fixes）：内向递推力臂改 comOffset＋(linkOrigin[i+1]−jointOrigin[i])（类型统一式——旋转关节第二项恰为零向量）；SampleGeometry 注释纠偏（comOffset 实为体原点→质心；外向递推传输用法本就正确）。回归钉 PrismaticSlipArmGravityMoment_F580（静力解析对照：修复前 τ0 实得 −10.3005 恰缺 m2·g·d=3.924 N·m）。sdurws_ird_dynamics_test 60/60 通过。"
+    },
+    {
+      "id": "F-581",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·dynamics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "正动力学对逆动力学部分产出按满网格下标 at(j*n+i) 取行——§5.6 失败截断（该样本起后续样本不产出）时 std::out_of_range（非契约异常）穿出 validate；M/h 单样本提取面同病",
+      "resolution": "修复（分支 audit-p1b-fixes）：callRneaSample 增加 usable 出参（行数≠n 或行态非 Ok＝不可用→DYN-FD-NUMERIC-ANOMALY 值面，失败原因 reasonOut 带出替代三处硬编码单因文案）；τ_ref 批量提取改按时刻 t 匹配的游标消费（行耗尽/不足＝样本不可信不参与仿真）。回归钉 RneaPartialRowsDoNotEscapeContract_F581（红灯：撤修复实抛 std::out_of_range）。sdurws_ird_dynamics_test 60/60 通过。"
+    },
+    {
+      "id": "F-582",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "镜像反射 reflectRpy 万向锁分支 pitch'=+π/2 时 yaw 提取符号写反（对两种 pitch 符号统一取 atan2(−R12,R11)）——工具竖直朝下（−90°）经镜像恰变 +90° 即触发：镜像工位姿态要求静默转反",
+      "resolution": "修复（分支 audit-p1b-fixes）：yaw 提取随 pitch 符号分支（+90° 侧 atan2(+R12,R11)）。回归钉 MirrorGimbalPositivePitchKeepsYaw_F582（源 (0,−π/2,+π/4) 法向 Z 镜像→(0,+π/2,+π/4)；红灯验证撤修复误取 −π/4）。sdurws_ird_requirements_test 203/203 通过。"
+    },
+    {
+      "id": "F-583",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "编辑器 upsert 与批次路径漏检空名条目（服务构造/解码门都拒，唯独编辑器只查重名）——空名入集破坏\"工作集恒为可编码形态\"承诺（下次就绪预检抛 invalid_argument，值面拒绝退化成 fail-fast）",
+      "resolution": "修复（分支 audit-p1b-fixes）：upsertEntry 模板与 applyEdit(EditBatch) 批次循环补空名拒绝（DuplicateName 同口径）。回归钉 EmptyNameRejectedAtEditorBoundary_F583（upsert＋批次两面拒绝＋零写入；红灯验证撤修复空名被接受）。sdurws_ird_requirements_test 203/203 通过。"
+    },
+    {
+      "id": "F-584",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·runtime）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "编译器默认 TCP 下标 0 在工具规范化排序之前选定、排序之后原样保留——≥2 个工具时 defaultTcpIndex 指向排序后 ObjectId 最小者而非 Description 首项：默认 TCP 被静默调换（MDL-13/KIN-14 权威语义丢失）",
+      "resolution": "批次 B 延后（下一批修复）：修复需多工具 Description 夹具＋排序后按 ObjectId 重定位下标＋编译面回归钉；已定位修复点（CompilerImpl.cpp:555 选下标处或 CanonicalModel.cpp:776 排序后重定位），待独立批次实施。"
+    },
+    {
+      "id": "F-585",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "编辑器 Remove 分支在 eraseEntry 之后解引用已悬垂的 target 指针（UB）——删非末位条目时摘要/诊断读到后继条目的名字（张冠李戴），末位时读失效遗留串",
+      "resolution": "修复（分支 audit-p1b-fixes）：任务点/区域两分支均在 eraseEntry 前快照条目名（targetName），删除后一律用快照。回归钉 RemoveNonLastEntrySummaryUsesDeletedName_F585（红灯验证撤修复摘要写出后继名 P-BETA）。sdurws_ird_requirements_test 203/203 通过。"
+    },
+    {
+      "id": "F-586",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "需求编解码 readSourcedState 的 Invalid 态接受空原串字节（state=3＋len=0）——内存面工厂 invalid(\"\") 抛 CoreError，异常穿出\"decode 不抛\"契约（encode 永不产出该形态，仅外部/损坏字节可达——正是 decode 闸口的防御对象）",
+      "resolution": "修复（分支 audit-p1b-fixes）：Invalid 分支补非空校验，空原串就地 malformedAt 按结构损坏拒绝（值面）。独立字节伪造用例待编码器测试批次补钉（本批以 4 行闸口＋既有畸形字节族回归覆盖，203/203 通过）。"
+    },
+    {
+      "id": "F-587",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·modeling）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "URDF axis 分量平方和上溢（‖axis‖²≈1e400→+Inf）——\"normSq > 0\"判不住 Inf，x/Inf=0 后把 (0,0,0) 以 Provided 零轴静默落盘（实现注释\"溢出/下溢同样落入非有限/零判\"仅下溢方向成立）",
+      "resolution": "修复（分支 audit-p1b-fixes）：norm² 判定补 !isfinite(normSq) 上溢检出——与零轴/非有限同走 Invalid 面保留原串＋ZERO-AXIS 诊断＋不可提交。回归钉 AxisNormSqOverflow_ReportInvalidNotSubmittable_F587（axis xyz=\"1e200 0 0\"）。sdurws_ird_modeling_test 344/344 通过。"
+    },
+    {
+      "id": "F-588",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·kinematics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "导出 collisionPairCount 直填成对展平列表元素数（=2×对数）——与 Export.hpp 字段契约\"碰撞对象对数量\"不符，JSON/CSV 交付值按契约语义翻倍",
+      "resolution": "修复（分支 audit-p1b-fixes）：取 size()/2 对齐契约；既有用例期望 4U→2U 按契约语义重钉。sdurws_ird_kinematics_test 182/182 通过（交付值纠正——下游按旧展平口径解析者需知悉）。"
+    },
+    {
+      "id": "F-589",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·dynamics）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "Envelope/PowerEnergy 缺口区间按梯形插值积分——两公共头登记口径为\"缺口不插值、贡献 0（RMS 保守低估）\"，实现（跨缺口 Δt×相邻有效行值）与行内注释、公共头三方矛盾（Partial 序列能量/RMS 高于登记的保守值）",
+      "resolution": "批次 B 延后（需所有者裁决口径）：二选一——按登记口径实现分段积分（Partial 序列数值变化，需核对黄金/统计面既有钉），或修订公共头登记为\"相邻有效行梯形延拓\"。修复点已定位（Envelope.cpp:186-191、PowerEnergy.cpp:89-91）。"
+    },
+    {
+      "id": "F-590",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·modeling——与既有登记交叉验证同源）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "DhConvert expandDhChain 把 zeroOffset 烘入 origin 且透传字段，CanonicalBridge mapJoint 再折叠一次——DH 派生模型零位构型多转 R_axis(q0)（运动学全程错误）；显式链权威切换被假拒绝。等价验证两侧同折叠误差相消，现有测试不可见",
+      "resolution": "批次 B 延后（需所有者裁决归属）：修复方向二选一——expandDhChain 改产 q_auth=0 位姿（需同步 C-5 展开语义与零位对齐用例），或 mapJoint 对 DH 派生关节跳过折叠；须与 CanonicalBridge 同步修（两处同构）并修订单元卡 §7.4 公式行。修复点：DhConvert.cpp:959-961/1384-1388、CanonicalBridge.cpp:434-438。"
+    },
+    {
+      "id": "F-591",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·modeling）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "dhToExplicit 输出 axis＝基座系子帧 z（zAxisOf(T_0,i)），runtime 按\"关节系内方向\"消费（T_static=R_parent·R(axis,q0)…、世界轴向=R_0,i·axis 字段）——α≠0 链（工业六轴臂常态）编译出的关节物理轴错误（单关节反例：真轴 (0,0,1) 被解读为 (0,0,−1)）；零位 FK 对照结构性失明",
+      "resolution": "批次 B 延后（需所有者裁决参考系口径）：单元卡 §7.4 公式行（axis=z_i＝T_0,i·(0,0,1)）与 runtime 关节系消费语义冲突——修复为关节系表达 Rx(−α)·ez 或在 Description 映射补 origin.Rᵀ·axis 变换，须同步修订单元卡。修复点：DhConvert.cpp:273-277/969-973。"
+    },
+    {
+      "id": "F-592",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "命令 Restore（快照逆放）路径完全缺失\"槽身份须存在于基线\"校验（applySlotsValid 仅 Apply 模式调用；cpp 注释谎称基类已校验）——注入基线外根槽可造双根对象：该修订上一切命令 prepare 抛 logic_error（修订永久毒化）且无前版字节不可回收",
+      "resolution": "批次 B 延后（下一批修复）：修复需把 BaselineSnapshot 传入 decodeRestoreCommon 或在基类对 Restore 复用 applySlotsValid 存在性半区＋token 一致核对，并修正失实注释。修复点：CommandHandlers.cpp:595-600/823-828。"
+    },
+    {
+      "id": "F-593",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·runtime）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "S3 限位量级抽样警告复用 UnitMismatch 注册码进入模型诊断块，而 builder 的 error 级硬失败码集恰含 UnitMismatch——本应\"发布＋警告\"的合法模型（限位 rad 位 ±360 一类 deg 误作 rad）整次编译硬失败（\"警告不阻断\"承诺失效；根因＝DiagnosticRecord 无级别字段，警告与错误共用码必然相撞）",
+      "resolution": "批次 B 延后（需所有者裁决承载方式）：修复方向二选一——专用警告码（比照 RT-RESOURCE-RECORDED 先例按 PA-1 登记），或让 DiagnosticRecord 承载级别、builder 按级别拒绝。修复点：DescriptionValidator.cpp:524-533、CompilerImpl.cpp:345-349、CanonicalModel.cpp:323-332。"
+    },
+    {
+      "id": "F-594",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·testkit）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "SetCheck 歧义探测移除配对后裸增广——Kuhn 首扫按索引序原样配回被释放的 ri 并返回 true：任何阶段 2 数值配对下首次探测必误报 ambiguousMatch=true（唯一匹配与真歧义无法区分，审计字段失真）",
+      "resolution": "修复（分支 audit-p1c-fixes）：重写为 M-交错圈判定——从 li 沿\"未匹配边(r≠ri)＋匹配边(→owner)\"做左点闭包，闭包内 l'≠li 存在未匹配边 (l',ri) 即存在替代完美匹配。原审查建议的\"屏蔽 ri\"浅修被实现期证伪：完美匹配下无自由右点、增广恒 false，2×2 全同值交换形态的真歧义漏报——双向回归钉（唯一匹配 false＋真歧义 true）防止两方向回退。sdurws_ird_testkit_test 101/101 通过。"
+    },
+    {
+      "id": "F-595",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·testkit）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ProcessRunner 空串参数原样返回——命令行只多一个空格，子进程 argv 丢失该参数且后续参数整体前移（位置型参数全部错位）",
+      "resolution": "修复（分支 audit-p1c-fixes）：空串参数发射 \"\"（规范形态）。回归钉 EmptyArgEmitsQuotedEmpty_F595。sdurws_ird_testkit_test 101/101 通过。"
+    },
+    {
+      "id": "F-596",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·testkit）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ProcessRunner 命令行引号转义反斜杠数量错误——引号前 N 个反斜杠发射 N+1 个（Windows 解析规则应为 2N+1）：含 \\\" 序列的参数在子进程端被吞掉一半反斜杠且转义引号被当分隔符——参数碎裂、引号状态翻转",
+      "resolution": "修复（分支 audit-p1c-fixes）：改 2N+1 发射；quoteWindowsArg 上移 testkit::detail 命名空间（hpp 声明）为可测试性接缝。回归钉 BackslashQuoteEscapingTwoNPlusOne_F596 四断言（\\\"序列/纯反斜杠/结尾反斜杠/普通空格——发射文本精确钉住，旧 N+1 逻辑必不满足）。sdurws_ird_testkit_test 101/101 通过。"
+    },
+    {
+      "id": "F-597",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·testkit）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "checkEnvelopeCombination 漏检表 3 第四规则（终态非完成 ⇒ 不得携带正式结论）——hasFormalConclusion 访问器文档列为 Accessors 必备成员却从未被调用：违规包络静默放行＝契约测试假绿",
+      "resolution": "修复（分支 audit-p1b/p1c-fixes）：补第四判断＋违例④与同形态无结论反钉（CombinationRules 用例）。sdurws_ird_testkit_test 101/101 通过。"
+    },
+    {
+      "id": "F-598",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·io）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "AtomicFile commit 替换失败后仅置非活动态并把清理责任推给\"调用方应 abort\"——abort 对非活动会话幂等返回、析构兜底也只在活动态删除：每次替换失败永久泄漏一个可达预算上限的 .tmp 暂存文件",
+      "resolution": "修复（分支 audit-p1c-fixes）：commit 失败路径就地删除暂存（删除失败不吞——残留路径与 ec 附于错误 detail）。sdurws_ird_io_test 122/122 通过。"
+    },
+    {
+      "id": "F-599",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·io）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ResourceIo 固化缓存并发双未命中竞态——map[键] 直赋的 move 赋值释放对方已通过 okView 暴露给调用方的缓冲（视图悬空＝UAF，违反\"缓冲一经暴露永不改写\"裁决）",
+      "resolution": "修复（分支 audit-p1c-fixes）：改 emplace 语义——键已存在保留既有条目（同 id 对象库字节唯一，保留首份即正确事实）。sdurws_ird_io_test 122/122 通过。"
+    },
+    {
+      "id": "F-600",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·project）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "UndoRedoServiceImpl redo 可用性以\"栈顶记录 undoRevision==tip\"为门槛——多级撤销后首次 redo 推进 tip，次栈顶记录永不匹配：canRedo 恒 false、redo 抛前置违约，\"撤销两次→重做两次\"标准语义断裂，重做栈退化单槽且无路径恢复",
+      "resolution": "修复（分支 audit-p1c-fixes）：redo 前置/status canRedo/成功弹出三处同基准改判为本服务观察点 lastServiceTip（§6.9\"新命令清空 redo\"的既有检测基准——外部命令推进由 syncOnEntry 清栈兜底，语义完整）。sdurws_ird_project_test 254/254 通过（单级 undo→redo 两基准等价，行为不变）。"
+    },
+    {
+      "id": "F-601",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·project）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ObjectStore cacheInsert 不查\"键已缓存\"——tryObject 锁外读盘/publishObject 共享去重两个 check-then-act 窗口产生同键双节点：第二节点覆盖索引、第一节点失索引滞留链表，逐出循环 m_index.erase(end()) 为未定义行为，stats/LRU 序虚增",
+      "resolution": "修复（分支 audit-p1c-fixes）：cacheInsert 入口幂等化——键已存在 splice 到 LRU 尾（触碰）并返回。sdurws_ird_project_test 254/254 通过。"
+    },
+    {
+      "id": "F-602",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·diagnostics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "错误转译兜底路径（未登记类型→DIAG-REGISTRY-UNKNOWN-CODE）经 create 全链产出，而兜底码 paramSchema 为零参数——调用方携带非空 params（为预期目标码准备）时以 ParamSchemaMismatch 抛出，违反\"兜底路径恒不抛\"契约（转译通常发生在 catch 块内）",
+      "resolution": "修复（分支 audit-p1c-fixes）：兜底产出改用清空 params 的上下文副本（兜底码 schema 本不接受调用方参数——语义无信息丢失）。sdurws_ird_diagnostics_test 115/115 通过。"
+    },
+    {
+      "id": "F-609",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "首页最近项目点击判别条件写反——UserRole 存 available，可用项点击无反应（PM-10 打开入口失效）、失效项点击反而触发打开",
+      "resolution": "修复（分支 audit-p1d-fixes）：去掉 ! 取反——可用项（toBool==true）触发 project.open。WorkbenchContent.cpp 同文件同步改动见 F-610/F-611。"
+    },
+    {
+      "id": "F-610",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "TaskPresentation::refresh() 进度基线并入传 nullopt 使三规则守恒空转、无条件接受——回退快照落在事件触发刷新路径时进度条倒退（违 §9.4 同 attempt 内 percent 单调）；且保留旧基线时丢失 attempt 轴——新 attempt 首帧被误判回退持续丢弃（进度条冻结在旧值）",
+      "resolution": "修复（分支 audit-p1d-fixes）：refresh 合并基准改为已展示行旧值/旧 attempt 调 mergeProgressDecision（Accept/AttemptReset 才更新，DropRegression 保留旧值）；无进度快照的旧值保留加 attempt 相同前置——新 attempt 不再继承旧轴（AttemptReset 可达）。"
+    },
+    {
+      "id": "F-611",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui——与 F-610 同函数）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "StageNavigationModel 观察者登记 deque<ObserverRecord>（值语义）——中段退订 erase 使其余记录引用/句柄失效：退订幂等（removed 位）与通知分发按裸地址在容器里反查会错位（静默去注册/重复通知，极端时 use-after-free）",
+      "resolution": "修复（分支 audit-p1d-fixes）：登记改 shared_ptr 堆持有（records_ 存槽位、句柄/快照持 shared_ptr）——deque 中段摘除不影响堆地址，退订/通知全程按 shared_ptr 走，removed 位跳过。回归钉 MidDequeUnsubscribeKeepsSiblingRecordsStable_F613（三观察者中段退订→混合摘除→计数精确）。sdurws_ird_ui_test 255/255 通过。"
+    },
+    {
+      "id": "F-612",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "项目树 itemSelectionChanged 空选中分支不写回 SelectionService——用户 Ctrl+点击取消选中后树与服务脱节（检查器继续显示已取消对象，refresh 把该对象重新选回树中逆转用户操作）",
+      "resolution": "修复（分支 audit-p1d-fixes）：空选中分支补 clearSelection 写回（suppress 守卫跳过程序性清空）；refresh() 的 m_tree->clear() 加 suppress 守卫（保存→恢复语境不被程序性清空打断）。"
+    },
+    {
+      "id": "F-613",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "GlobalShortcutRegistry m_shortcutByCommand 存 QShortcut* 裸指针且无 QPointer/destroyed 跟踪——接口头明文允许\"随宿主窗口销毁自动失效\"时序：宿主窗口先销毁后 detach()/attach() 对已析构 QShortcut 调 deleteLater（悬垂 UB/崩溃）",
+      "resolution": "修复（分支 audit-p1d-fixes）：m_shortcutParent/m_shortcutByCommand 改 QPointer（宿主/条目销毁自动置空）——detach 对空条目跳过、rebind 在悬垂父上跳过 new QShortcut。sdurws_ird_ui_test 255/255 通过。"
     },
     {
       "id": "F-614",

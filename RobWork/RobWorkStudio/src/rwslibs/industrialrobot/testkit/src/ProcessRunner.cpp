@@ -53,6 +53,55 @@
 #include <utility>
 #include <vector>
 
+namespace sdurws::ird::testkit::detail {
+
+/**
+ * @brief 按 Windows 命令行引号规则包裹单个参数（实现内部面——声明见
+ *        ProcessRunner.hpp detail 节；F-595/F-596）。
+ *
+ * @param arg [in] UTF-16 参数原文
+ * @return 可直接拼入命令行的参数串
+ */
+std::wstring quoteWindowsArg(const std::wstring& arg)
+{
+    // F-595：空串参数必须发射 ""——原实现原样返回空串，命令行里只留下
+    // 一个空格，子进程 argv 丢失该参数且后续参数整体前移（位置型参数
+    // 全部错位）。
+    if (arg.empty()) {
+        return L"\"\"";  // 空参数的规范形态（带引号的空串）
+    }
+    const bool needQuote = arg.find_first_of(L" \t\"") != std::wstring::npos;
+    if (!needQuote) {
+        return arg;  // 无特殊字符：原样拼接（绝大多数测试参数走此捷径）
+    }
+    std::wstring out{L'"'};
+    size_t pendingBackslashes = 0;  // 当前连续反斜杠计数（遇非反斜杠或结尾时结算）
+    for (const wchar_t c : arg) {
+        if (c == L'\\') {
+            ++pendingBackslashes;  // 先攒着——是否翻倍取决于后一个字符
+            continue;
+        }
+        if (c == L'"') {
+            // F-596：Windows 解析规则为 2N+1——引号前 N 个反斜杠全部翻
+            // 倍（2N）再加一个转义引号的反斜杠（+1）。原实现发 N+1：
+            // 含 \" 序列的参数（N≥1）在子进程端被吞掉一半反斜杠且引号
+            // 被当分隔符——参数碎裂、引号状态翻转。
+            out.append(2 * pendingBackslashes + 1, L'\\');
+            out.push_back(L'"');
+        } else {
+            out.append(pendingBackslashes, L'\\');  // 普通字符：反斜杠原样
+            out.push_back(c);
+        }
+        pendingBackslashes = 0;
+    }
+    // 结尾反斜杠也要翻倍（后面紧跟收尾引号，规则同"紧邻引号"）
+    out.append(pendingBackslashes * 2, L'\\');
+    out.push_back(L'"');
+    return out;
+}
+
+}  // namespace sdurws::ird::testkit::detail
+
 namespace {
 
 using namespace sdurws::ird::testkit;
@@ -131,47 +180,8 @@ std::wstring utf8ToWide(const std::string& s)
     return wide;
 }
 
-/**
- * @brief 按 Windows 命令行引号规则包裹单个参数。
- *
- * 规则（CreateProcess 命令行解析约定）：
- *   - 参数含空格/制表符/引号时整体加引号；
- *   - 参数内的引号转义为 \"；紧邻引号（或结尾）的连续反斜杠翻倍——否则
- *     解析器会把 \" 里的反斜杠吞掉一半，参数在子进程端碎裂。
- * 本项目测试参数（路径、文件名、短标记）通常不触发这些形态，但按完整规则
- * 实现，避免未来用例踩坑时静默出错。
- *
- * @param arg [in] UTF-16 参数原文
- * @return 可直接拼入命令行的参数串
- */
-std::wstring quoteWindowsArg(const std::wstring& arg)
-{
-    const bool needQuote = arg.find_first_of(L" \t\"") != std::wstring::npos;
-    if (!needQuote) {
-        return arg;  // 无特殊字符：原样拼接（绝大多数测试参数走此捷径）
-    }
-    std::wstring out{L'"'};
-    size_t pendingBackslashes = 0;  // 当前连续反斜杠计数（遇非反斜杠或结尾时结算）
-    for (const wchar_t c : arg) {
-        if (c == L'\\') {
-            ++pendingBackslashes;  // 先攒着——是否翻倍取决于后一个字符
-            continue;
-        }
-        if (c == L'"') {
-            // 引号前的反斜杠全部翻倍，再加 \" 转义引号本身
-            out.append(pendingBackslashes + 1, L'\\');
-            out.push_back(L'"');
-        } else {
-            out.append(pendingBackslashes, L'\\');  // 普通字符：反斜杠原样
-            out.push_back(c);
-        }
-        pendingBackslashes = 0;
-    }
-    // 结尾反斜杠也要翻倍（后面紧跟收尾引号，规则同"紧邻引号"）
-    out.append(pendingBackslashes * 2, L'\\');
-    out.push_back(L'"');
-    return out;
-}
+// quoteWindowsArg 已上移至 sdurws::ird::testkit::detail（本文件顶部——
+// F-595/F-596 修复时为可测试性移出匿名命名空间，声明见 ProcessRunner.hpp）。
 
 /**
  * @brief 构造"父环境＋spec.env 覆盖"的合并环境块。
@@ -333,10 +343,10 @@ void TestProcessRunner::start(const ProcessSpec& spec, std::filesystem::path wor
     // ---- 第 3 步：拼命令行与合并环境块（零继承句柄——事件同步走文件标记）----
     // bInheritHandles=FALSE 的原因：§6.5 把跨进程同步判据限定为可观察文件，
     // 子进程不需要继承任何句柄；不继承也杜绝了句柄泄漏进子进程的面。
-    std::wstring cmdLine = quoteWindowsArg(spec.executable.wstring());
+    std::wstring cmdLine = detail::quoteWindowsArg(spec.executable.wstring());
     for (const std::string& rawArg : spec.args) {
         cmdLine += L' ';
-        cmdLine += quoteWindowsArg(utf8ToWide(rawArg));
+        cmdLine += detail::quoteWindowsArg(utf8ToWide(rawArg));
     }
     std::wstring envBlock = buildEnvironmentBlock(spec.env);
 

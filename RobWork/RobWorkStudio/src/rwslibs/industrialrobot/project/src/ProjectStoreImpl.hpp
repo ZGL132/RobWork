@@ -447,8 +447,11 @@ private:
     std::uint32_t m_pending{0};           ///< 在途引用计数（票据存活数）
     std::vector<ICloseObserver*> m_observers;  ///< 关闭回调订阅者（非 owning）
 
-    /// writer 互斥（§9.8）：全部变更性文件操作的串行化点。
-    std::mutex m_writerMutex;
+    /// writer 互斥（§9.8）：全部变更性文件操作的串行化点。mutable：身份
+    /// 查询面（projectId/schema）在 const 方法内取本锁快照 m_head——
+    /// m_head 在 executeCommit 的 writer 锁内整体前进，无锁读构成与提交
+    /// 线程的数据竞争（audit F-575；QueryPort 的 const 读面同款先例）。
+    mutable std::mutex m_writerMutex;
 
     std::unique_ptr<win32::StoreLock> m_lock;  ///< 写锁（空＝只读上下文）
     LockInfo m_lockView;     ///< 打开时点锁视图（lockInfo 的持有期动态化基座）

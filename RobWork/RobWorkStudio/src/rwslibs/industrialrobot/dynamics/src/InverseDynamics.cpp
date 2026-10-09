@@ -650,15 +650,19 @@ void composeEndEffector(RneaChain& chain, const std::vector<EndComponent>& mount
  *
  * 参考系全部为基座系：linkOrigin[k] 为连杆 k 系原点位置（单位 m）；
  * jointOrigin[i]＝关节 i 原点位置（单位 m）；zAxis[i]＝关节 i 轴（基座系
- * 单位向量）；comOffset[i]＝关节 i 原点→体 links[i+1] 质心的向量（单位
- * m，基座系）；bodyR[i]＝体 links[i+1] 系→基座系旋转。
+ * 单位向量）；comOffset[i]＝**体 links[i+1] 原点→质心**的向量（单位
+ * m，基座系——旋转关节体原点与关节原点重合故两说一致，移动关节二者
+ * 相差滑移臂 d·z，消费方按参考点自行补正，见内向递推 F-580）；bodyR[i]
+ * ＝体 links[i+1] 系→基座系旋转。
  * 值语义纯结构；每样本构建一次（栈上小对象——零堆分配预热面）。
  */
 struct SampleGeometry {
     std::vector<Vec3> linkOrigin;   ///< 连杆 k 系原点（k=0..n；单位 m）
     std::vector<Vec3> jointOrigin;  ///< 关节 i 原点（i=0..n-1；单位 m）
     std::vector<Vec3> zAxis;        ///< 关节轴（基座系单位向量）
-    std::vector<Vec3> comOffset;    ///< 关节 i 原点→体质心（单位 m）
+    std::vector<Vec3> comOffset;    ///< 体 links[i+1] 原点→质心（单位 m；
+                                    ///< 旋转关节与"关节 i 原点→质心"重合，
+                                    ///< 移动关节差滑移臂——消费方按参考点补正）
     std::vector<Mat3> bodyR;        ///< 体 links[i+1] 姿态（体系→基座系）
 };
 
@@ -793,7 +797,9 @@ void rneaTorques(const RneaChain& chain, const SampleGeometry& geom,
             aBodyOrigin = aPivot;                // 旋转关节体原点＝关节原点
         }
         // 步骤 C：质心加速度与合力/合力矩。
-        const Vec3 rc = geom.comOffset[i];       ///< 关节 i 原点→质心（m）
+        // rc＝体原点→质心（基座系）——刚体加速度传输定理的自身体内向量，
+        // 与关节类型无关（质心固连于体，体原点为传输基点）。
+        const Vec3 rc = geom.comOffset[i];
         const Vec3 aCom = aBodyOrigin + cross(alBody, rc) + cross(wBody, cross(wBody, rc));
         const Mat3 R = geom.bodyR[i];
         const Mat3 IBase = mul(mul(R, j.body.inertia), transpose(R));  ///< 惯量→基座系
@@ -809,7 +815,16 @@ void rneaTorques(const RneaChain& chain, const SampleGeometry& geom,
     Vec3 nNext = Vec3{};  ///< 关节 i+1 处内矩（N·m）
     for (std::size_t ii = n; ii-- > 0;) {
         const std::size_t i = ii;
-        const Vec3 rc = geom.comOffset[i];
+        // 质心力臂（关节 i 原点→体 i+1 质心，基座系）＝"体原点→质心"
+        //（comOffset）＋"关节 i 原点→体原点"。旋转/连续关节体原点＝关节
+        // 原点（第二项恰为零向量——类型统一写法）；**移动关节**体原点＝
+        // 关节原点＋d·z（沿轴滑移），第二项即滑移臂。F-580（P1——audit/
+        // unit-code-review-20261009）：原实现直接用 comOffset 当力臂，
+        // 移动关节近端各转动关节丢失 (d·z)×F 贡献——静力反例：竖直滑移
+        // d 的移动关节近端回转关节，重力矩差 m·g·d（外向/内向四通道共用
+        // 同一错误力臂，五分项恒等式校验对此不可见，仅解析对照可暴露）。
+        const Vec3 rc = geom.comOffset[i]
+                      + (geom.linkOrigin[i + 1] - geom.jointOrigin[i]);
         // 平移定理：关节 i+1 内力对关节 i 原点取矩的力臂＝两关节原点差
         // （末端体侧 f_next＝0，力臂不参与——置零向量避免未定义读取）。
         const Vec3 arm = (i + 1 < n) ? (geom.jointOrigin[i + 1] - geom.jointOrigin[i])

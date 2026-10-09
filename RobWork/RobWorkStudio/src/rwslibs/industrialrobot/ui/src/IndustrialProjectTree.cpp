@@ -278,7 +278,12 @@ public:
         const std::vector<core::ObjectId> previousSelection =
             m_deps.selection->selectedObjectIds();
 
+        // F-610：clear() 触发 itemSelectionChanged（选中集变空）——阻断
+        // 信号回流，防止把服务侧刚记住的选中当场清掉（保存→恢复语境：
+        // 程序性清空不是用户取消选中）。
+        m_suppressSelectionWrite = true;
         m_tree->clear();
+        m_suppressSelectionWrite = false;
         for (std::uint8_t g = 0; g < kProjectTreeGroupCount; ++g) {
             // 组行：五分组封闭清单的可视不变量（组数恒为 5——空组也呈现
             // 组头，用户能看到结构存在；INV-B1 呈现面断言锚）。组行不携带
@@ -370,9 +375,21 @@ private:
         // 检查器刷新。树不持选中状态（INV-B3）——每次 Qt 选中变化都
         // 立即写入 SelectionService（唯一汇聚点），由服务广播给消费者。
         // 组行过滤：组行不可选中（flags 已清），此处按数据键二次防御）。
+        // F-610：空选中（用户 Ctrl+点击取消选中——SingleSelection 合法
+        // 操作）必须写回服务 clearSelection——否则服务保留已取消对象（检
+        // 查器继续显示已取消对象），且 refresh() 会把该对象重新选回树中
+        // （逆转用户操作）。程序性清空（refresh 的 clear）经
+        // m_suppressSelectionWrite 阻断，不落此分支。
         QObject::connect(m_tree, &QTreeWidget::itemSelectionChanged,
                          m_tree, [this]() {
                     QList<QTreeWidgetItem*> selected = m_tree->selectedItems();
+                    if (selected.isEmpty()) {
+                        if (!m_suppressSelectionWrite) {
+                            m_deps.selection->clearSelection(
+                                SelectionSource::ProjectTree);
+                        }
+                        return;
+                    }
                     for (QTreeWidgetItem* item : selected) {
                         const QVariant idText = item->data(0, kNodeIdRole);
                         if (!idText.isValid() || idText.toString().isEmpty()) {

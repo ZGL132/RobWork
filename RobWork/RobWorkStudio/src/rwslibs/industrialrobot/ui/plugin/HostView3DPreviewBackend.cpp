@@ -233,6 +233,7 @@ bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
     // "WORLD" 别名经 WorkCell::findFrame 特判命中其根帧；发布后＝编译
     // 产物 WC，同一别名命中发布根帧——两态查找语义一致）。
     int unresolved = 0;
+    int markerSeq = 0;  // 标记序号（F-556：非 ASCII 名的 3D 标签派生）
     for (const View3DFrameMarker& marker : update.frameMarkers) {
         Frame* const frame = workcell->findFrame(marker.frameName);
         if (frame == nullptr) {
@@ -242,16 +243,32 @@ bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
         const rw::core::Ptr<Frame> framePtr(frame);  // 非 owning 包装（场景树持有帧存活）
         const std::string axisName =
             std::string(kPreviewPrefix) + "marker-" + marker.label;
-        scene->addFrameAxis(axisName, 0.25, frame);  // 轴长 0.25 m（工位尺度）
+        DrawableNode::Ptr axisNode = scene->addFrameAxis(axisName, 0.25, frame);  // 轴长 0.25 m（工位尺度）
+        // F-555：标记位置（refFrame 系）经节点变换放置——drawable 变换相
+        // 对挂接帧（World/锚＝世界系时即世界坐标；非 World 引用系＝帧内
+        // 偏移语义同投影契约）。零向量＝帧原点（未设位置的历史行为）。
+        axisNode->setTransform(rw::math::Transform3D<>(marker.position));
         m_nodeNames.push_back(axisName);
         // 标签（框架 RenderText——文本直投；标签名独立命名空间防与轴同名
         // 冲突——removeDrawable 按名逐个删互不干扰）。
+        // F-556：GLUT 位图字体无 CJK 字形（freeglut bitmap 仅 ASCII 集），
+        // 非 ASCII 名派生「S<序号>」序列标签（ASCII 安全——乱码消除）；
+        // 工位中文名仍以需求树/面板呈现为准。三维中文承载随 F-556 owner
+        // 裁决另立。
+        std::string labelText = marker.label;
+        if (!std::all_of(labelText.begin(), labelText.end(),
+                         [](unsigned char c) { return c < 0x80; })) {
+            labelText = "S" + std::to_string(markerSeq);
+        }
         const std::string labelName =
-            std::string(kPreviewPrefix) + "label-" + marker.label;
-        scene->addRender(labelName,
-                         rw::core::ownedPtr(
-                             new rwlibs::opengl::RenderText(marker.label, framePtr)),
-                         frame);
+            std::string(kPreviewPrefix) + "label-" + labelText;
+        DrawableNode::Ptr labelNode = scene->addRender(
+            labelName,
+            rw::core::ownedPtr(
+                new rwlibs::opengl::RenderText(labelText, framePtr)),
+            frame);
+        // F-555：标签节点同轴变换（标签随标记位姿——节点变换下保持）。
+        labelNode->setTransform(rw::math::Transform3D<>(marker.position));
         m_nodeNames.push_back(labelName);
     }
 

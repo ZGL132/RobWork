@@ -1228,3 +1228,41 @@ TEST(ReqTemplateArray, LocalUndoAndCommandPathSeparation_WP14T07_ACC5)
     EXPECT_TRUE(editor.draftStatus().dirty);
     EXPECT_EQ(editor.workingSet().points.entries.size(), 3U);
 }
+
+// =====================================================================
+// F-582 回归（audit/unit-code-review-20261009）
+// =====================================================================
+
+/**
+ * 回归（F-582，P1）：镜像反射的万向锁分支 pitch'=+π/2 时 yaw 提取符号
+ * 写反（对两种 pitch 符号统一取 atan2(−R12,R11)——−90° 侧恰对、+90°
+ * 侧转反）。工具竖直朝下（pitch=−π/2）是拾取类工位最常见姿态，经镜像
+ * 恰变 pitch'=+π/2 即触发：源 (0,−π/2,+π/4) 法向 Z 镜像，正确结果
+ * (0,+π/2,+π/4)（绕法向轴旋转分量对易不变），修复前产出 (0,+π/2,−π/4)
+ * ——姿态要求静默转反。
+ */
+TEST(ReqTemplateArray, MirrorGimbalPositivePitchKeepsYaw_F582)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-11"},
+                  std::vector<std::string>{"ACC1-mirror-gimbal"});
+
+    TemplateArrayService service;
+    TaskPoint src = makeSourcePoint("P-DOWN", rw::math::Vector3D<double>(1.0, 2.0, 3.0));
+    src.pose.orientation.kind = OrientationRuleKind::Fixed;
+    src.pose.orientation.fixedRpy = rw::math::Vector3D<double>(
+        0.0, -3.14159265358979323846 / 2.0, 3.14159265358979323846 / 4.0);  // rad
+
+    const EditBatch batch = service.applyMirror({src}, worldPlane(
+        rw::math::Vector3D<double>(0.0, 0.0, 1.0)));
+    ASSERT_EQ(batch.newPoints.size(), 1U);
+
+    const TaskPoint& d = batch.newPoints[0];
+    ASSERT_EQ(d.pose.orientation.kind, OrientationRuleKind::Fixed);
+    // 黄金解析（法向 Z：M·R·M 共轭——pitch 翻号、yaw 绕法向轴不变）。
+    EXPECT_NEAR(d.pose.orientation.fixedRpy[0], 0.0, kGoldenEpsilon);
+    EXPECT_NEAR(d.pose.orientation.fixedRpy[1],
+                3.14159265358979323846 / 2.0, kGoldenEpsilon) << "pitch −π/2→+π/2";
+    EXPECT_NEAR(d.pose.orientation.fixedRpy[2],
+                3.14159265358979323846 / 4.0, kGoldenEpsilon)
+        << "yaw 必须保持 +π/4（修复前万向锁 +90° 侧误取 −π/4——本断言即回归钉）";
+}

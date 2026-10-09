@@ -322,7 +322,13 @@ void RequirementsPanelWidget::emitStationMarkers(const RequirementWorkingSet& ws
         if (!point.enabled) {
             continue;  // 禁用工位不进三维（acceptance 1 词面——诚实呈现）
         }
-        markers.push_back(StationMarkerProjection{point.name, point.refFrame});
+        // 位置随标记投影（UI-T74/F-555——工位坐标进三维：标记渲染于
+        // refFrame 系该偏移点，不再恒钉参考系原点；未设位置＝零向量）。
+        const rw::math::Vector3D<double> markerPos =
+            point.pose.position.tryValue().value_or(
+                rw::math::Vector3D<double>(0.0, 0.0, 0.0));
+        markers.push_back(
+            StationMarkerProjection{point.name, point.refFrame, markerPos});
     }
     m_stationMarkersSink(markers);
 }

@@ -322,19 +322,41 @@ SetCheckResult checkSetEquivalent(const std::vector<T>& expected,
                 if (actualFreeIdx[ri] == pair.actualIndex) { break; }
             }
             if (!foundPos || ri >= nR) { continue; }
-            // 移除配对→尝试为 li 寻找其他 ri（存在＝歧义）。
-            matchL[li] = static_cast<std::size_t>(-1);
-            matchR[ri] = static_cast<std::size_t>(-1);
-            std::vector<bool> visited(nR, false);
-            if (tryAugment(li, visited)) {
-                r.ambiguousMatch = true;
-                // 恢复原配对（保持见证配对一致——歧义报告不改判）。
-                matchL[li] = ri;
-                matchR[ri] = li;
-                break;
+            // F-594：歧义＝存在经过配对 (li,ri) 的 M-交错圈（等价于存在另
+            // 一个完美匹配——§5.4.4 歧义本义）。检测：从 li 沿"未匹配边
+            // (l→r，r≠ri)＋匹配边 (r→matchR[r])"做左点闭包；闭包内任一
+            // l'≠li 存在未匹配边 (l',ri) 即与 (li,ri) 构成交错圈（圈＝
+            // li→…→l'→ri→li）。原实现（移除配对后裸增广）方向性双错：
+            // 不屏蔽 ri 时 Kuhn 首扫原样配回恒 true（唯一匹配误报歧义）；
+            // 屏蔽 ri 后完美匹配下无自由右点、增广恒 false（2×2 全同值
+            // 交换形态的真歧义漏报）——两版都与歧义定义无关，改为交错圈
+            // 判定。本探测无副作用（不增广不回滚，配对保持原状）。
+            std::vector<bool> inClosure(nL, false);
+            inClosure[li] = true;
+            bool closureChanged = true;
+            while (closureChanged) {
+                closureChanged = false;
+                for (std::size_t l = 0; l < nL; ++l) {
+                    if (!inClosure[l]) { continue; }
+                    for (std::size_t r2 = 0; r2 < nR; ++r2) {
+                        if (r2 == ri || !edge(l, r2)) { continue; }
+                        const std::size_t lNext = matchR[r2];
+                        if (lNext != static_cast<std::size_t>(-1)
+                            && !inClosure[lNext]) {
+                            inClosure[lNext] = true;   // l —(r2 未匹配)— lNext
+                            closureChanged = true;
+                        }
+                    }
+                }
             }
-            matchL[li] = ri;
-            matchR[ri] = li;
+            bool alternative = false;
+            for (std::size_t l = 0; l < nL && !alternative; ++l) {
+                if (l != li && inClosure[l] && edge(l, ri)) { alternative = true; }
+            }
+            if (alternative) {
+                r.ambiguousMatch = true;
+                break;   // 首个歧义配对即置位（确定性——matched 记录序）
+            }
         }
     }
 

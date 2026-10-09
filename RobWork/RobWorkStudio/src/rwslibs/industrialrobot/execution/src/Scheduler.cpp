@@ -97,9 +97,25 @@ TaskScheduler::TaskScheduler(TaskController& controller, DrainCoordinator& drain
     , m_config(std::move(config))
     , m_clock(std::move(clock))
 {
+    // F-576（P1——audit/unit-code-review-20261009）：向 Controller 接线
+    // 派发闸（本对象即 IDispatchGate 实现——任务进入 Canceling 时
+    // enterCanceling 回调 stopDispatch 把它移出派发就绪集）。原实现从未
+    // 接线（全仓生产代码零调用点，仅测试以自有替身自装）——排队任务被
+    // 取消后残留等待队列，dispatchOne 出队对终态状态机申请
+    // DispatchDequeued 转移表无此行必抛 ExecutionError(InvalidState)：
+    // 调度循环每拍抛异常，或（调用方捕获后）队头永不弹出＝派发停摆。
+    // 装配期单线程约定与 setEventBus 同口径（L5 装配序，无并发窗）；
+    // 析构摘闸见 ~TaskScheduler。
+    m_controller.setDispatchGate(this);
 }
 
-TaskScheduler::~TaskScheduler() = default;
+TaskScheduler::~TaskScheduler()
+{
+    // 摘闸先于成员析构：Controller 为非所有权引用（EX-T03——组合存活期
+    // 长于调度器的装配形态），不摘闸则关闭期取消经悬垂闸指针调用
+    // stopDispatch（UB）。setDispatchGate 为 noexcept 存取，无异常面。
+    m_controller.setDispatchGate(nullptr);
+}
 
 void TaskScheduler::setEventBus(core::IDomainEventBus* bus) noexcept
 {
@@ -536,6 +552,15 @@ void TaskScheduler::dispatchOne(std::unique_lock<std::mutex>& lock)
         return;
     }
     ScheduledTask& entry = entryIt->second;
+    // F-576 防御半区：队头状态机已非 Queued（取消竞态残留——闸失效或
+    // 未覆盖的时序面）时不得对其申请 DispatchDequeued（转移表无
+    // （DispatchDequeued，非 Queued）行→ExecutionError 逃逸 tick）。剔除
+    // 坏队头放弃本拍，下一拍取后继队头；闸接线后 stopDispatch 已移除
+    // 被取消任务，本分支正常路径不可达——纯防御。
+    if (entry.machine->state() != TaskState::Queued) {
+        queue.pop_front();
+        return;
+    }
     const TaskRecord& record = entry.machine->record();
 
     // ---- 额度闸 3：同项目正式任务上限（§6.1 防单项目独占；Preview 不

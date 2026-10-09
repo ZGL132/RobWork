@@ -259,7 +259,10 @@ std::vector<KinFilteredSolutionExportRow> buildFilteredSolutionExportRows(
         row.orientationResidual = r.orientationResidual;
         row.minimumJointMargin = r.minimumJointMargin;
         row.manipulability = r.manipulability;
-        row.collisionPairCount = r.objectIdPairs.size();
+        // F-588：字段契约（Export.hpp"碰撞对象对数量"）——objectIdPairs 是
+        // 成对展平列表（[a1,b1,a2,b2,…]，1 对占 2 元素），计数取一半。原
+        // 实现直填展平元素数（=2×对数），JSON/CSV 交付值按契约语义翻倍。
+        row.collisionPairCount = r.objectIdPairs.size() / 2U;
         for (const core::ObjectId& oid : r.objectIdPairs) {
             if (!row.collisionPairs.empty()) {
                 row.collisionPairs += '|';

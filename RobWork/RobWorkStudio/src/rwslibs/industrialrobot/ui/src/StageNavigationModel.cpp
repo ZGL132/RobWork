@@ -72,6 +72,9 @@ struct ObserverRecord
 {
     IStageViewObserver* observer = nullptr;  ///< 弱引用——观察者自管生命期（§10.2）
     bool removed = false;                    ///< 幂等退订标记（重复 unsubscribe 不二次移除）
+
+    ObserverRecord(IStageViewObserver* obs, bool isRemoved)
+        : observer(obs), removed(isRemoved) {}
 };
 
 /**
@@ -86,8 +89,9 @@ struct ObserverRecord
 class StageViewSubscription final : public core::IEventSubscription
 {
 public:
-    StageViewSubscription(StageNavigationModel* model, ObserverRecord* record)
-        : model_(model), record_(record) {}
+    explicit StageViewSubscription(StageNavigationModel* model,
+                                   std::shared_ptr<ObserverRecord> record)
+        : model_(model), record_(std::move(record)) {}
 
     /// @brief RAII 语义（§10.2"订阅句柄 RAII"）：析构＝退订。
     ~StageViewSubscription() override { unsubscribe(); }
@@ -97,7 +101,9 @@ public:
 
 private:
     StageNavigationModel* model_;  ///< 借用——模型归壳（不接管所有权）
-    ObserverRecord* record_;       ///< 登记记录（模型持有清单的元素）
+    /// F-611：shared 持有登记记录——deque 中段摘除后记录堆地址仍稳定，
+    /// 句柄退订/快照重查读 removed 位不依赖容器槽位存活。
+    std::shared_ptr<ObserverRecord> record_;
 };
 
 // ---------------------------------------------------------------------
@@ -225,12 +231,15 @@ public:
     subscribe(IStageViewObserver& observer) override
     {
         // 登记弱引用（观察者自管生命期——§10.2"观察者弱引用"）；登记与
-        // 通知同在 UI 线程（M-1），无并发登记面。登记容器为 deque：尾部
-        // 追加不失效元素引用——句柄持有的 ObserverRecord 指针因此保持
-        // 有效（vector 增长会重排元素使句柄悬垂，禁用）。
-        records_.push_back(ObserverRecord{&observer, false});
+        // 通知同在 UI 线程（M-1），无并发登记面。F-611：登记记录改为堆上
+        // shared_ptr 持有——deque 中段 erase 后其余记录的堆地址不受影响
+        // （deque 元素重排只搬容器内槽位，不影响堆本体），句柄/通知快照
+        // 持有的 ObserverRecord 指针全程稳定；退订把记录从容器的槽位摘
+        // 除并置 removed，记录本体由句柄与容器 shared 持有至双方放弃。
+        auto record = std::make_shared<ObserverRecord>(&observer, false);
+        records_.push_back(record);
         return std::unique_ptr<core::IEventSubscription>(
-            new StageViewSubscription(this, &records_.back()));
+            new StageViewSubscription(this, std::move(record)));
     }
 
     // ---- IStageNavigationModel（任意线程面）--------------------------
@@ -264,12 +273,15 @@ public:
             return;  // 重复退订幂等（§10.2 契约表）
         }
         record->removed = true;
+        // F-611：records_ 存 shared_ptr 槽位——按指针找槽摘除；记录本体
+        // 由句柄/快照 shared 持有至双方放弃（erase 不影响堆地址，句柄后
+        // 续读 removed 位安全）。
         const auto it = std::find_if(records_.begin(), records_.end(),
-                                     [record](const ObserverRecord& r) {
-                                         return &r == record;
+                                     [record](const std::shared_ptr<ObserverRecord>& r) {
+                                         return r.get() == record;
                                      });
         if (it != records_.end()) {
-            records_.erase(it);  // 向量元素地址失效——句柄此后只依赖 removed 兜底
+            records_.erase(it);
         }
     }
 
@@ -332,19 +344,16 @@ private:
         // 逐个回调前**重查该记录仍在登记清单**——回调内若发生退订（乃至
         // 观察者随句柄析构），已摘除/已失效的记录被跳过；记录本体由
         // deque 持有，未摘除的记录地址恒稳定（见 subscribe 注释）。
-        std::vector<ObserverRecord*> snapshot;
+        std::vector<std::shared_ptr<ObserverRecord>> snapshot;
         snapshot.reserve(records_.size());
         for (auto& record : records_) {
-            snapshot.push_back(&record);
+            snapshot.push_back(record);
         }
-        for (ObserverRecord* record : snapshot) {
-            const bool stillRegistered
-                = std::find_if(records_.begin(), records_.end(),
-                               [record](const ObserverRecord& r) {
-                                   return &r == record;
-                               }) != records_.end();
-            if (!stillRegistered) {
-                continue;  // 回调内已退订（观察者可能已析构——不得触达）
+        for (const auto& record : snapshot) {
+            // F-611：快照持 shared_ptr——记录本体全程存活；退订（容器摘
+            // 除＋removed 置位）后跳过（观察者可能已析构——不得触达）。
+            if (record->removed) {
+                continue;
             }
             record->observer->onStageViewsChanged(*this);
         }
@@ -361,16 +370,17 @@ private:
     StageId current_;                ///< 当前激活阶段（会话态——仅 UI 线程读写）
     /// 观察者登记（仅 UI 线程触碰；deque 保证尾部追加不失效元素引用——
     /// 订阅句柄长期持有记录指针，见 subscribe 注释）。
-    std::deque<ObserverRecord> records_;
+    std::deque<std::shared_ptr<ObserverRecord>> records_;
 };
 
 void StageViewSubscription::unsubscribe()
 {
     // 幂等兜底：模型可能已析构（装配契约要求壳先清句柄——违约场景下
-    // record_ 指针随之失效，此处无法安全兜底；removed 位覆盖的是"模型
-    // 存活、重复退订"的正常幂等路径，§10.2 契约表）。
+    // record_ 随之失效，此处无法安全兜底；removed 位覆盖的是"模型存活、
+    // 重复退订"的正常幂等路径，§10.2 契约表）。F-611：record_ 为
+    // shared_ptr——模型存活期内核对 removed 位安全（堆地址稳定）。
     if (model_ != nullptr && record_ != nullptr) {
-        model_->removeRecord(record_);
+        model_->removeRecord(record_.get());
     }
     model_ = nullptr;
     record_ = nullptr;

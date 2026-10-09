@@ -600,6 +600,16 @@ void ObjectStore::cacheInsert(
 {
     const std::size_t size = bytes->size();  // 记账口径＝负载字节数
     std::lock_guard<std::mutex> lock(m_mutex);
+    // F-601：幂等入口——键已在缓存时触碰（移到 LRU 尾）并返回。两个插入
+    // 点存在 check-then-act 窗口（tryObject 锁外读盘后插入；publishObject
+    // 共享去重分支无条件插入），并发/序列下同键可能双节点：第二节点覆盖
+    // 索引、第一节点失去索引滞留链表——逐出循环对失索引节点 find 落空，
+    // erase(end()) 为未定义行为，且 stats/LRU 序虚增。缓存是纯加速层，
+    // 已缓存字节的重复插入无信息增益，触碰即正确语义。
+    if (const auto it = m_index.find(key); it != m_index.end()) {
+        m_lru.splice(m_lru.end(), m_lru, it->second);
+        return;
+    }
     // 单条目超预算＝整条不缓存（预算语义从简：逐出后立即再插会抖动，
     // 且对象读取本来就不依赖缓存存在——缓存是纯加速层）。预算为 0 时
     // 一切条目走本分支＝缓存整体停用，语义自洽。
