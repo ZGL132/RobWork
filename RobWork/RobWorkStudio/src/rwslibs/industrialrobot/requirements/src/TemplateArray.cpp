@@ -313,12 +313,18 @@ rw::math::Vector3D<double> reflectRpy(const rw::math::Vector3D<double>& rpy,
         const double yaw = std::atan2(rp[1][0], rp[0][0]);
         return rw::math::Vector3D<double>(roll, pitch, yaw);
     }
-    // 万向锁退化：roll'=0、pitch'=±π/2、yaw' 取 −R12/R11 的反正切
-    // （cp=0 时 R11=cy'·cr、R12=−sy'·cr（cr=roll'=0 时为 1）——重构
-    // R(0,±π/2,yaw') 与 R' 逐元素相等）。
+    // 万向锁退化：roll'=0、pitch'=±π/2。yaw' 提取随 pitch 符号分支——
+    // cp=0 时按本文件 rotationFromRpy 展开：R11=cosψ、R12=sinψ·sign(pitch)
+    // （roll'=0 消去 roll 项）——pitch=+π/2 时 R12=+sinψ（重建取
+    // atan2(+R12,R11)）、pitch=−π/2 时 R12=−sinψ（atan2(−R12,R11)）。
+    // F-582（P1——audit/unit-code-review-20261009）：原实现对两种符号统一
+    // 取负——+90° 侧重建矩阵与反射结果逐元素不等（镜像工位姿态要求静默
+    // 转反；工具竖直朝下〔pitch=−π/2〕是最常见姿态、经镜像恰变 +90° 即
+    // 触发，而 −90° 侧恰好正确故极具隐蔽性）。
     const double pitch = (sp > 0.0 ? 3.14159265358979323846 : -3.14159265358979323846) / 2.0;
     const double roll = 0.0;
-    const double yaw = std::atan2(-rp[1][2], rp[1][1]);
+    const double yaw = (sp > 0.0) ? std::atan2(rp[1][2], rp[1][1])
+                                  : std::atan2(-rp[1][2], rp[1][1]);
     return rw::math::Vector3D<double>(roll, pitch, yaw);
 }
 
