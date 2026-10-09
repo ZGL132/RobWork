@@ -1,0 +1,41 @@
+Note: Google Test filter = ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (操作成功完成。)
+OleSetClipboard: Failed to set mime data (text/plain) on clipboard: COM error 0x800401d0: OpenClipboard ??? (操作成功完成。)
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+C:\Users\zgl18\AppData\Local\Temp\audit-merge-main\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(1612): error: Expected equality of these values:
+  QApplication::clipboard()->text()
+    Which is: {}
+  preview->toPlainText()
+    Which is: { 2-byte object <84-98>, 2-byte object <C8-89>, 2-byte object <0D-4E>, 2-byte object <EF-53>, 2-byte object <28-75>, 2-byte object <1A-FF>, 2-byte object <1A-5C>, 2-byte object <E0-65>, 2-byte object <F2-5D>, 2-byte object <94-5E>, 2-byte object <28-75>, 2-byte object <EE-4F>, 2-byte object <A2-8B>, 2-byte object <84-76>, 2-byte object <16-7F>, 2-byte object <D1-8B>, 2-byte object <A7-4E>, 2-byte object <69-72>, 2-byte object <14-20>, 2-byte object <14-20>, 2-byte object <F7-8B>, 2-byte object <48-51>, 2-byte object <CF-7E>, 2-byte object <76-98>, 2-byte object <0F-68>, 2-byte object <0E-30>, 2-byte object <94-5E>, 2-byte object <28-75>, 2-byte object <49-83>, 2-byte object <3F-7A>, 2-byte object <0F-30>, 2-byte object <D0-63>, ... }
+
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Retrying to obtain clipboard.
+qt.qpa.mime: Unable to obtain clipboard.
+[  FAILED  ] ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59 (1127 ms)
+[----------] 1 test from ModelingPanelGuiTest (1127 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1127 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59
+
+ 1 FAILED TEST

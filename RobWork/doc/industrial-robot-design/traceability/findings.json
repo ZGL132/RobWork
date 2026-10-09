@@ -5643,7 +5643,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "编译器默认 TCP 下标 0 在工具规范化排序之前选定、排序之后原样保留——≥2 个工具时 defaultTcpIndex 指向排序后 ObjectId 最小者而非 Description 首项：默认 TCP 被静默调换（MDL-13/KIN-14 权威语义丢失）",
-      "resolution": "批次 B 延后（下一批修复）：修复需多工具 Description 夹具＋排序后按 ObjectId 重定位下标＋编译面回归钉；已定位修复点（CompilerImpl.cpp:555 选下标处或 CanonicalModel.cpp:776 排序后重定位），待独立批次实施。"
+      "resolution": "所有者裁决（2026-10-09）：按登记方案实施——排序后按 ObjectId 重定位 defaultTcpIndex（恢复 Description 首项权威语义）＋多工具 Description 夹具＋编译面回归钉，纳入下一修复批。修复点：CompilerImpl.cpp:555 选下标处或 CanonicalModel.cpp:776 排序后重定位。"
     },
     {
       "id": "F-585",
@@ -5688,7 +5688,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "Envelope/PowerEnergy 缺口区间按梯形插值积分——两公共头登记口径为\"缺口不插值、贡献 0（RMS 保守低估）\"，实现（跨缺口 Δt×相邻有效行值）与行内注释、公共头三方矛盾（Partial 序列能量/RMS 高于登记的保守值）",
-      "resolution": "批次 B 延后（需所有者裁决口径）：二选一——按登记口径实现分段积分（Partial 序列数值变化，需核对黄金/统计面既有钉），或修订公共头登记为\"相邻有效行梯形延拓\"。修复点已定位（Envelope.cpp:186-191、PowerEnergy.cpp:89-91）。"
+      "resolution": "所有者裁决（2026-10-09）：取①按公共头登记口径改实现——缺口不插值、贡献 0（RMS 保守低估），同步重钉 Partial 序列黄金/统计面既有钉；修订公共头为梯形延拓的方案②否决。修复点：Envelope.cpp:186-191、PowerEnergy.cpp:89-91。"
     },
     {
       "id": "F-590",
@@ -5697,7 +5697,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "DhConvert expandDhChain 把 zeroOffset 烘入 origin 且透传字段，CanonicalBridge mapJoint 再折叠一次——DH 派生模型零位构型多转 R_axis(q0)（运动学全程错误）；显式链权威切换被假拒绝。等价验证两侧同折叠误差相消，现有测试不可见",
-      "resolution": "批次 B 延后（需所有者裁决归属）：修复方向二选一——expandDhChain 改产 q_auth=0 位姿（需同步 C-5 展开语义与零位对齐用例），或 mapJoint 对 DH 派生关节跳过折叠；须与 CanonicalBridge 同步修（两处同构）并修订单元卡 §7.4 公式行。修复点：DhConvert.cpp:959-961/1384-1388、CanonicalBridge.cpp:434-438。"
+      "resolution": "所有者裁决（2026-10-09）：取①生产侧归一——expandDhChain 改产 q_auth=0 位姿（同步 C-5 展开语义与零位对齐用例），CanonicalBridge mapJoint 保持单一折叠语义不按来源特判；两处同批修＋单元卡 §7.4 公式行修订。修复点：DhConvert.cpp:959-961/1384-1388、CanonicalBridge.cpp:434-438。"
     },
     {
       "id": "F-591",
@@ -5706,7 +5706,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "dhToExplicit 输出 axis＝基座系子帧 z（zAxisOf(T_0,i)），runtime 按\"关节系内方向\"消费（T_static=R_parent·R(axis,q0)…、世界轴向=R_0,i·axis 字段）——α≠0 链（工业六轴臂常态）编译出的关节物理轴错误（单关节反例：真轴 (0,0,1) 被解读为 (0,0,−1)）；零位 FK 对照结构性失明",
-      "resolution": "批次 B 延后（需所有者裁决参考系口径）：单元卡 §7.4 公式行（axis=z_i＝T_0,i·(0,0,1)）与 runtime 关节系消费语义冲突——修复为关节系表达 Rx(−α)·ez 或在 Description 映射补 origin.Rᵀ·axis 变换，须同步修订单元卡。修复点：DhConvert.cpp:273-277/969-973。"
+      "resolution": "所有者裁决（2026-10-09）：取①关节系表达——dhToExplicit 输出 axis=Rx(−α)·ez，runtime 消费语义（T_static=R_parent·R(axis,q0)）不变；Description 映射补 origin.Rᵀ·axis 变换的方案②否决；单元卡 §7.4 公式行同步修订。修复点：DhConvert.cpp:273-277/969-973。"
     },
     {
       "id": "F-592",
@@ -5715,7 +5715,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "命令 Restore（快照逆放）路径完全缺失\"槽身份须存在于基线\"校验（applySlotsValid 仅 Apply 模式调用；cpp 注释谎称基类已校验）——注入基线外根槽可造双根对象：该修订上一切命令 prepare 抛 logic_error（修订永久毒化）且无前版字节不可回收",
-      "resolution": "批次 B 延后（下一批修复）：修复需把 BaselineSnapshot 传入 decodeRestoreCommon 或在基类对 Restore 复用 applySlotsValid 存在性半区＋token 一致核对，并修正失实注释。修复点：CommandHandlers.cpp:595-600/823-828。"
+      "resolution": "所有者裁决（2026-10-09）：按登记方案实施——把 BaselineSnapshot 传入 decodeRestoreCommon（或基类对 Restore 复用 applySlotsValid 存在性半区＋token 一致核对）＋修正失实注释，纳入下一修复批。修复点：CommandHandlers.cpp:595-600/823-828。"
     },
     {
       "id": "F-593",
@@ -5724,7 +5724,7 @@
       "status": "open",
       "registeredAt": "2026-10-09",
       "title": "S3 限位量级抽样警告复用 UnitMismatch 注册码进入模型诊断块，而 builder 的 error 级硬失败码集恰含 UnitMismatch——本应\"发布＋警告\"的合法模型（限位 rad 位 ±360 一类 deg 误作 rad）整次编译硬失败（\"警告不阻断\"承诺失效；根因＝DiagnosticRecord 无级别字段，警告与错误共用码必然相撞）",
-      "resolution": "批次 B 延后（需所有者裁决承载方式）：修复方向二选一——专用警告码（比照 RT-RESOURCE-RECORDED 先例按 PA-1 登记），或让 DiagnosticRecord 承载级别、builder 按级别拒绝。修复点：DescriptionValidator.cpp:524-533、CompilerImpl.cpp:345-349、CanonicalModel.cpp:323-332。"
+      "resolution": "所有者裁决（2026-10-09）：取①专用警告码止血（比照 RT-RESOURCE-RECORDED 先例按 PA-1 登记），恢复「警告不阻断」承诺；②DiagnosticRecord 承载级别字段作为诊断面 schema 演进另立治理项（F-618），由所有者排期。修复点：DescriptionValidator.cpp:524-533、CompilerImpl.cpp:345-349、CanonicalModel.cpp:323-332。"
     },
     {
       "id": "F-594",
@@ -5887,6 +5887,33 @@
       "registeredAt": "2026-10-09",
       "title": "GUI 剪贴板基线用例对系统剪贴板占用敏感：ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59 等用例断言 QApplication::clipboard()->text()，系统剪贴板被他进程占用时 OleSetClipboard 报 COM 0x800401d0（CLIPBRD_E_CANT_OPEN）、Qt 重试耗尽后断言失败——批跑语境下间歇失败（验收三次批跑两次复现；链上门禁历史多次登记；基线既有非某链引入）",
       "owner": "ui/modeling 单元所有者＋治理脚本维护者：为剪贴板断言加有界重试/占用跳过登记，或在 gate-note 层固化已知环境面清单（含失败现场归因特征串）"
+    },
+    {
+      "id": "F-618",
+      "source": "所有者裁决 2026-10-09（F-593 方向②，另立治理项）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "诊断面 schema 演进：DiagnosticRecord 增设级别字段（警告/错误）、builder 按级别拒绝——消除警告与错误共用注册码必然相撞的结构性根因（F-593 取专用警告码①先行止血，本条为治本排期项）",
+      "owner": "runtime/diagnostics 所有者：诊断面 schema 演进批次排期（涉及公共契约，波及全部生产者/消费者，须增量修订单元卡后实施）"
+    },
+    {
+      "id": "F-619",
+      "source": "audit-p0-p1d 合入后全量复验（2026-10-09，acc-audit-merge-verify）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "gate-all 在 fresh 树对 sdurws_ird_ui_test 套件的 ctest 调用挂起（两次独立复现：ctest 进程零 CPU、无子进程、无输出；同一 exe 直跑 255/255 全绿且 1.6~2.2s 完成，工作目录假设已排除）——疑似 ctest×pwsh 管道或该套件在 ctest 环境的启动交互问题",
+      "owner": "testkit/门禁所有者：排查 ctest 对该套件的启动路径（workaround＝直跑 exe，本次复验已用该口径并留痕）"
+    },
+    {
+      "id": "F-620",
+      "source": "audit-p0-p1d 合入后全量复验（2026-10-09，acc-audit-merge-verify）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "剪贴板型 GUI 用例受桌面全局剪贴板占用阻断（实锤：clip.exe 系统级拒绝访问＋GetClipboardOwner=MATLAB pid 26828；PreviewPane_MultiTypeChain_UI_T59 断言中 preview 内容正确仅剪贴板往返失败、BatchPasteImpactDetail_UI_T08_ACC1 以 clipboard()->setText 为输入通道落空）——历史批次 D/验收的「GUI 剪贴板竞争」同源",
+      "owner": "门禁所有者：为剪贴板型用例增加可用性预探（clip 写读探针）与失败自动归因标注，避免环境失败误判为代码缺陷"
     }
   ]
 }
