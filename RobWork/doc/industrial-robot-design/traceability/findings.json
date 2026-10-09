@@ -5509,6 +5509,42 @@
       "registeredAt": "2026-10-08",
       "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
       "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
+    },
+    {
+      "id": "F-614",
+      "source": "acc/audit-p0-p1d/1 独立验收（2026-10-09，verdict=pass——4.8 文档同步项发现；audit-p0-p1d 修复链已合入面）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "units/execution.md §worker 生命周期行（约 :570）仍写「终结（正常退出回收池／异常退出销毁）」——描述保活 worker 落位后的设计目标，未按 DTB §5.4 增量登记 audit F-577 修复后的阶段 A 实际口径（worker 一派发一进程：正常终结随 poll 尾 pendingDestroy 直接销毁；Idle 池为保活模型预留、当前恒空）——文档与实现存在语义落差",
+      "owner": "execution 单元所有者：补一行单元卡增量修订登记阶段 A 实际口径（衔接点已在 WorkerSupervisor.hpp Config.poolCapacity 注与契约测试 EX_WKR_1 重钉注释双侧指明）；随保活 worker 落位任务一并复核"
+    },
+    {
+      "id": "F-615",
+      "source": "acc/audit-p0-p1d/1 独立验收（2026-10-09，verdict=pass——4.4/4.7 项发现）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "批次 D 测试命名错位：F-611（StageNavigationModel 观察者登记 deque 中段悬垂）的回归钉命名为 MidDequeUnsubscribeKeepsSiblingRecordsStable_F613，而 findings F-613 实为 GlobalShortcutRegistry 快捷键悬垂 UAF 项——追溯后缀与 findings 编号不一致（findings F-611 resolution 亦引用 _F613 用例名）；另 RequirementsPluginAssembly.hpp StationMarkerView.position 新增行缩进与邻行不一致（纯格式）",
+      "owner": "ui 单元所有者：后续批次改名（或加注释登记映射关系）；顺带修 position 行缩进"
+    },
+    {
+      "id": "F-616",
+      "source": "acc/audit-p0-p1d/1 独立验收（2026-10-09，verdict=pass——4.4 项发现；与链上 F-586 resolution 自认事项同一面，本条为跟踪登记不重复修复面）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "audit F-586（需求编解码 Invalid 态空原串就地拒读）修复缺独立回归钉——resolution 自认「独立字节伪造用例（state=3＋len=0）因需完整对象格式手工拼装，随后续编码器测试批次补钉」，现以 4 行源码闸口＋既有畸形字节族回归覆盖",
+      "owner": "requirements 单元所有者：编码器测试批次补独立字节伪造用例（decode 契约为唯一闸口，该输入面值得专钉）"
+    },
+    {
+      "id": "F-617",
+      "source": "acc/audit-p0-p1d/1 独立验收（2026-10-09，verdict=pass——4.2 项发现；链上门禁留痕 audit-p0/p1c/p1d 已多次登记同款环境失败，本条转正式在册）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "GUI 剪贴板基线用例对系统剪贴板占用敏感：ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59 等用例断言 QApplication::clipboard()->text()，系统剪贴板被他进程占用时 OleSetClipboard 报 COM 0x800401d0（CLIPBRD_E_CANT_OPEN）、Qt 重试耗尽后断言失败——批跑语境下间歇失败（验收三次批跑两次复现；链上门禁历史多次登记；基线既有非某链引入）",
+      "owner": "ui/modeling 单元所有者＋治理脚本维护者：为剪贴板断言加有界重试/占用跳过登记，或在 gate-note 层固化已知环境面清单（含失败现场归因特征串）"
     }
   ]
 }

@@ -1,0 +1,21 @@
+Note: Google Test filter = *AxisNormSqOverflow*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlImport
+[ RUN      ] MdlImport.AxisNormSqOverflow_ReportInvalidNotSubmittable_F587
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp(1497): error: Expected equality of these values:
+  outcome.draft->joints[0].axis.state()
+    Which is: 4-byte object <00-00 00-00>
+  FieldState::Invalid
+    Which is: 4-byte object <03-00 00-00>
+
+[  FAILED  ] MdlImport.AxisNormSqOverflow_ReportInvalidNotSubmittable_F587 (0 ms)
+[----------] 1 test from MdlImport (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlImport.AxisNormSqOverflow_ReportInvalidNotSubmittable_F587
+
+ 1 FAILED TEST

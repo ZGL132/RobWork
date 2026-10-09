@@ -1,0 +1,319 @@
+  -> FAIL : vcpkg toolchain ������: C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro/vcpkg/scripts/buildsystems/vcpkg.cmake
+  -> PASS
+  [ird_gates] 鑷�?fail_t2锛氭寜棰勬湡妫€�?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細C:/Users/zgl18/AppData/Local/Temp/acc-audit-p0-p1d/wt-repro/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/acc-audit-p0-p1d/wt-repro/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+  -> PASS
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.94 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.18 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.67 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_drivetrain_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_contract_test.exe
+Label Time Summary:
+ird    =   0.21 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_drivetrain_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_test.exe
+Label Time Summary:
+ird    =   0.23 sec*proc (1 test)
+
+Total Test time (real) =   0.23 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_dynamics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_contract_test.exe
+Label Time Summary:
+ird    =   0.20 sec*proc (1 test)
+
+Total Test time (real) =   0.21 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_dynamics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_test.exe
+Label Time Summary:
+ird    =   0.25 sec*proc (1 test)
+
+Total Test time (real) =   0.25 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.21 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.16 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(718,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回�?[C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+  sdurws_ird_execution_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_execution_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   3.52 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1258,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回�?[C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+  sdurws_ird_execution_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   4.09 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\bz2.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\z.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\z.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.97 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_io_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_io_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.19 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_kinematics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_contract_test.exe
+Label Time Summary:
+ird    =   0.21 sec*proc (1 test)
+
+Total Test time (real) =   0.21 sec
+  -> PASS
+  
+  sdurws_ird_kinematics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+Label Time Summary:
+ird    =  10.11 sec*proc (1 test)
+
+Total Test time (real) =  10.12 sec
+  -> PASS
+  sdurws_ird_modeling_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\pugixml.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\pugixml.dll done
+Label Time Summary:
+ird    =   0.30 sec*proc (1 test)
+
+Total Test time (real) =   0.31 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(851,31): warning C4018: �?�? 有符�?无符号不匹配 [C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\src\rwslibs\industrialrobot\modeling\sdurws_ird_modeling_gui_test.vcxproj]
+  sdurws_ird_modeling_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_gui_test.exe
+Label Time Summary:
+ird_gui    =   1.50 sec*proc (1 test)
+
+Total Test time (real) =   1.50 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\xerces-c_3_3.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\xerces-c_3_3.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\freeglut.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\freeglut.dll done
+Label Time Summary:
+ird    =   2.41 sec*proc (1 test)
+
+Total Test time (real) =   2.41 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_optimization_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_contract_test.exe
+Label Time Summary:
+ird    =   0.43 sec*proc (1 test)
+
+Total Test time (real) =   0.44 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_optimization_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_test.exe
+Label Time Summary:
+ird    =   0.24 sec*proc (1 test)
+
+Total Test time (real) =   0.25 sec
+  -> PASS
+  
+  sdurws_ird_policy_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.18 sec
+  -> PASS
+  
+  sdurws_ird_policy_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.02 sec
+  -> PASS
+  
+  sdurws_ird_project_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   7.73 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1048,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回�?[C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  sdurws_ird_project_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =  15.53 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.33 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.60 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
+Label Time Summary:
+ird    =   0.28 sec*proc (1 test)
+
+Total Test time (real) =   0.28 sec
+  -> PASS
+  
+  sdurws_ird_requirements_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_gui_test.exe
+Label Time Summary:
+ird_gui    =   2.06 sec*proc (1 test)
+
+Total Test time (real) =   2.06 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
+Label Time Summary:
+ird    =   0.63 sec*proc (1 test)
+
+Total Test time (real) =   0.63 sec
+  -> PASS
+  
+  sdurws_ird_runtime_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+Label Time Summary:
+ird    =   2.14 sec*proc (1 test)
+
+Total Test time (real) =   2.14 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_selection_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_selection_contract_test.exe
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.23 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_selection_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_selection_test.exe
+Label Time Summary:
+ird    =   0.24 sec*proc (1 test)
+
+Total Test time (real) =   0.24 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(418,5): warning C4129: “d�? 不可识别的字符转义序�?[C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\src\rwslibs\industrialrobot\testkit\sdurws_ird_testkit_test.vcxproj]
+  sdurws_ird_testkit_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.69 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_trajectory_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_contract_test.exe
+Label Time Summary:
+ird    =   0.92 sec*proc (1 test)
+
+Total Test time (real) =   0.92 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_trajectory_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_test.exe
+Label Time Summary:
+ird    =   1.30 sec*proc (1 test)
+
+Total Test time (real) =   1.31 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+Label Time Summary:
+ird    =   0.26 sec*proc (1 test)
+
+Total Test time (real) =   0.26 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(172,23): warning C4996: 'QApplication::setActiveWindow': Use QWidget::activateWindow() instead. [C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_gui_test.vcxproj]
+  sdurws_ird_ui_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+Label Time Summary:
+ird_gui    =   6.17 sec*proc (1 test)
+
+Total Test time (real) =   6.17 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+
+The following tests FAILED:
+	  1 - sdurws_ird_ui_test (Exit code 0xc0000135)         ird
+Errors while running CTest
+  -> FAIL : ctest ʧ�ܣ��˳��� 8��
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\CloseFlowContractTest.cpp(702,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回�?[C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+  sdurws_ird_workflow_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_contract_test.exe
+Label Time Summary:
+ird    =   1.48 sec*proc (1 test)
+
+Total Test time (real) =   1.49 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_workflow_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_test.exe
+Label Time Summary:
+ird    =   0.21 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  -> PASS
+  -> PASS
+  C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\smoke\core\Release\gtest_main.dll done
+  C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\smoke\core\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.49 sec
+  -> PASS
+  C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\smoke\diagnostics\Release\gtest_main.dll done
+  C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\smoke\diagnostics\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.20 sec
+  -> PASS
+  正在生成代码...
+  sdurws_ird_diagnostics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\smoke\diagnostics\Release\sdurws_ird_diagnostics_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.75 sec
+  -> PASS
+  sdurws_ird_drivetrain_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\smoke\drivetrain\Release\sdurws_ird_drivetrain_contract_test.exe
+  C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\smoke\drivetrain\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.23 sec*proc (1 test)
+
+Total Test time (real) =   0.23 sec
+  -> PASS
