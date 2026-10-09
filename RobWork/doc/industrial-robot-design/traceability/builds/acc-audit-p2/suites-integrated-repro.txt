@@ -1,0 +1,27 @@
+--- sdurws_ird_runtime_test
+[==========] 269 tests from 56 test suites ran. (210 ms total)
+[  PASSED  ] 268 tests.
+[  SKIPPED ] ContractSuite.ChildProcessWorker_RT_ID_1
+--- sdurws_ird_dynamics_test
+[==========] 105 tests from 23 test suites ran. (142 ms total)
+[  PASSED  ] 104 tests.
+[  SKIPPED ] DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable
+--- sdurws_ird_dynamics_contract_test
+[==========] 26 tests from 9 test suites ran. (33 ms total)
+[  PASSED  ] 26 tests.
+--- sdurws_ird_modeling_test
+[==========] 346 tests from 41 test suites ran. (299 ms total)
+[  PASSED  ] 346 tests.
+--- sdurws_ird_modeling_contract_test
+[==========] 17 tests from 5 test suites ran. (33 ms total)
+[  PASSED  ] 17 tests.
+--- sdurws_ird_requirements_test
+[==========] 206 tests from 25 test suites ran. (136 ms total)
+[  PASSED  ] 205 tests.
+[  SKIPPED ] GuiRegistration.V22RegisteredNotExecuted_ACC1
+--- sdurws_ird_requirements_contract_test
+[==========] 16 tests from 7 test suites ran. (51 ms total)
+[  PASSED  ] 16 tests.
+--- sdurws_ird_ui_test
+[==========] 255 tests from 25 test suites ran. (1632 ms total)
+[  PASSED  ] 255 tests.

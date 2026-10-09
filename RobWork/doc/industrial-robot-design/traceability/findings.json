@@ -5914,6 +5914,24 @@
       "registeredAt": "2026-10-09",
       "title": "剪贴板型 GUI 用例受桌面全局剪贴板占用阻断（实锤：clip.exe 系统级拒绝访问＋GetClipboardOwner=MATLAB pid 26828；PreviewPane_MultiTypeChain_UI_T59 断言中 preview 内容正确仅剪贴板往返失败、BatchPasteImpactDetail_UI_T08_ACC1 以 clipboard()->setText 为输入通道落空）——历史批次 D/验收的「GUI 剪贴板竞争」同源",
       "owner": "门禁所有者：为剪贴板型用例增加可用性预探（clip 写读探针）与失败自动归因标注，避免环境失败误判为代码缺陷"
+    },
+    {
+      "id": "F-621",
+      "source": "acc/audit-p2/1（audit-p2 验收 attempt 1，2026-10-09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "治理脚本/门禁在 Windows 控制台捕获的输出留痕存在 GBK 乱码（ird_gates 的中文进度行在实施者 gates.txt 与验收者复现捕获中均呈 mojibake）——内容可辨但影响留痕可读性与人工 review 效率",
+      "owner": "治理脚本所有者：pwsh 调用侧统一 [Console]::OutputEncoding/OutputEncoding 为 UTF-8 或脚本内显式设置，验证留痕生成前落盘编码检查"
+    },
+    {
+      "id": "F-622",
+      "source": "acc/audit-p2/1（audit-p2 验收 attempt 1，2026-10-09）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "fresh 树集成构建因 DTB §5.1 排除面（RWSimulatorPlugin/bt_plugin）失败返回 exit=1 时，ALL_BUILD 后段的 _test 目标不产出——验收/实施者须显式 --target 逐个补建测试 exe；该口径未登记于 DTB §5.1，fresh 树操作者易误判为工业robot目标构建失败",
+      "owner": "DTB 所有者：§5.1 fresh 树运行时前置行补记「排除面失败后测试目标需显式 --target 构建」的复现口径（或提供绕过排除面的目标级构建顺序建议）"
     }
   ]
 }

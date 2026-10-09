@@ -1,0 +1,8 @@
+--- smoke sdurws_ird_modeling_test
+[==========] 285 tests from 28 test suites ran. (364 ms total)
+--- smoke sdurws_ird_dynamics_test
+[==========] 105 tests from 23 test suites ran. (149 ms total)
+--- smoke sdurws_ird_runtime_test
+[==========] 177 tests from 47 test suites ran. (52 ms total)
+--- smoke sdurws_ird_requirements_test
+[==========] 206 tests from 25 test suites ran. (114 ms total)
