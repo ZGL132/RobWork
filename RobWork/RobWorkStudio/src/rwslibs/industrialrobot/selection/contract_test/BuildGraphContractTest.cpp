@@ -179,14 +179,16 @@ TEST(SelBuildGraph, UnitEdgesTwoRegisteredAndClosed_WP19T02_ACC1)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：两条登记边＋本单元四目标（产品/插件/测试/契约测试——T02
-    // 契约 acceptance 1 明文同批创建）＋sdurws_ird_testkit（报告设施
+    // 白名单：两条登记边＋本单元五目标（产品/插件/两测试——T02 契约
+    // acceptance 1 明文同批创建；开发验证 harness _app——WP-19-T10 增
+    // 登，dynamics_app WP-17-T09 同款）＋sdurws_ird_testkit（报告设施
     // ——T-1 允许形态＝仅测试目标可链，产品目标由 NoTestkitEdge 用例
     // 钉住）。
     std::set<std::string> allowed = {"sdurws_ird_selection",
                                      "sdurws_ird_selection_plugin",
                                      "sdurws_ird_selection_test",
                                      "sdurws_ird_selection_contract_test",
+                                     "sdurws_ird_selection_app",
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(std::string("sdurws_ird_") + u);

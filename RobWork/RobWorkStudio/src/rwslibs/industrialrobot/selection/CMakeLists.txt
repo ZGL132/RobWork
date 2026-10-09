@@ -222,8 +222,25 @@ endif()
 # WP-19-T10 落位时引入），故不开 AUTOMOC；首个 Q_OBJECT 类落位任务按
 # modeling/requirements 先例置 AUTOMOC ON（DTB §5.1 v0.17 行口径）。
 add_library(sdurws_ird_selection_plugin STATIC
-    plugin/SelectionPluginAssembly.cpp)   # 装配门面实现（assembly/
-                                          #   公共头的私有实现）
+    plugin/SelectionPluginAssembly.cpp   # 装配门面实现（assembly/
+                                         #   公共头的私有实现——WP-19-T10
+                                         #   扩展：描述符现产＋模块装配 API）
+# T10 增列插件界面源（卡 §16 WP-19-T10 行——工作流页/目录管理页/候选表
+# 页的模型半区＋呈现本体；全部零 Q_OBJECT，AUTOMOC 保持 OFF——DTB §5.1
+# v0.17 行口径）：
+#   plugin/SelPanelTypes.hpp        零 Qt 值类型半区（服务缝聚合/会话态/
+#                                   呈现 DTO——头文件-only）
+#   plugin/SelPanelModel.hpp/.cpp   零 Qt 模型层流 L-S1~L-S5（就绪投影/
+#                                   行集归一/回填提交/文案守卫）
+#   plugin/SelPanelCommandCatalog.hpp/.cpp  域命令目录（回填入口一条——
+#                                   token 自持常量，契约测试对账钉住）
+#   plugin/SelPanelModule.hpp       模块（缝/会话态/面板引用——头文件-
+#                                   only；createPanel 实现在门面 TU）
+#   plugin/SelCatalogPanelWidget.hpp/.cpp  主面板（三页合一 Tab——零业务
+#                                   计算，数据消费全经模型层与缝）
+    plugin/SelPanelModel.cpp
+    plugin/SelPanelCommandCatalog.cpp
+    plugin/SelCatalogPanelWidget.cpp)
 set_target_properties(sdurws_ird_selection_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -327,7 +344,14 @@ add_executable(sdurws_ird_selection_test
 # commandType/currentPayloadVersion——prepare 壳需 HandlerContext〔构造
 # 符号在 project 库〕，单元内经内核方法全覆盖，见 BackfillTest 文件头注）：
 #   test/BackfillTest.cpp
-    test/BackfillTest.cpp)
+    test/BackfillTest.cpp
+# T10 增列界面链路模型层用例组（WP-19-T10 acceptance 1/2——工作流页/
+# 目录管理页/候选表页的 L-S1~L-S5 流＋装配登记面值断言＋回填提交流
+# 三态＋文案守卫；接口路径钉扎：经 SelectionPluginAssembly 门面引用
+# 消费 setServices/bind*/session/module——不留只测自由函数的盲区；
+# GUI 呈现归 sdurws_ird_selection_app 通道，envUnavailable 如实登记）：
+#   test/SelPluginPanelTest.cpp
+    test/SelPluginPanelTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -344,12 +368,15 @@ endif()
 # 测试链接产品库 sdurws_ird_selection 同时验证"公共头可被正常 include
 # ＋库可链接"（两登记边 PUBLIC 传染链随目标自动到达——core/evidence 的
 # 链接语义经本链路在链接器层面自证）。
+# T10 增链 sdurws_ird_selection_plugin＋Qt6::Core/Gui（dynamics WP-17-T09
+# 同款——界面链路用例 SelPluginPanelTest 消费 plugin/ 呈现模型半区与
+# 装配门面；模型层流零 Qt 消费，Qt 链接为 _plugin 符号解析的 DLL 面；
+# 产品面红线扫描用例面不受影响——扫描域为 include/＋src/ 产品源码）。
 # sdurws_ird_testkit＝报告/追溯设施消费面（RecordListener/IRD_TEST_INFO
 # ——T-1 允许形态：仅测试目标链 testkit，产品目标不链）。单行链接语句
 # ＝契约测试 T-1 扫描的登记形态约束（testkit 与测试目标名同行可见——
-# kinematics/reporting/drivetrain/workflow 同款）。本目标零 Qt（红线
-# 扫描用例面——不链 _plugin）。
-target_link_libraries(sdurws_ird_selection_test PRIVATE sdurws_ird_selection sdurws_ird_testkit GTest::gtest)
+# kinematics/reporting/drivetrain/workflow 同款）。
+target_link_libraries(sdurws_ird_selection_test PRIVATE sdurws_ird_selection sdurws_ird_selection_plugin sdurws_ird_testkit GTest::gtest Qt6::Core Qt6::Gui)
 
 # 源码树位置注入：红线扫描用例在运行期扫描 selection 源码核对红线
 # （零 Qt/零表外 include——卡 §3.2/§14.0）。经编译定义传 industrialrobot
@@ -357,6 +384,12 @@ target_link_libraries(sdurws_ird_selection_test PRIVATE sdurws_ird_selection sdu
 # 前缀，扫描面随单元自包含）。
 target_compile_definitions(sdurws_ird_selection_test PRIVATE
     IRD_SELECTION_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+# 插件私有头解析（T10：测试消费 plugin/ 呈现模型头 SelPanelModel 等——
+# 同单元 PRIVATE 面；plugin/ 子目录直指——裸名 include 解析；dynamics
+# WP-17-T09 先例同款）。
+target_include_directories(sdurws_ird_selection_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/plugin)
 
 # vcpkg 的 gtest:x64-windows 是动态库（gtest.dll/gtest_main.dll）：把测试
 # 可执行文件的运行期 DLL 拷到其输出目录，保证不经 PATH 配置即可直接运行
@@ -465,11 +498,62 @@ add_custom_command(TARGET sdurws_ird_selection_contract_test POST_BUILD
 
 ird_add_gtest(sdurws_ird_selection_contract_test)
 
+# ---- 开发验证 harness：sdurws_ird_selection_app（WP-19-T10——单元卡
+#      §15.3 GUI 手动验证通道载体）----
+# 先例＝dynamics_app（WP-17-T09）/kinematics_app（WP-15-T12）/modeling_app
+# （WP-13-T15）；_app 后缀＝ird_gates 分类面 Qt 合法形态；源码在 app/
+# 子目录（产品扫描域零触碰）；本目标非测试（不入 ctest 标签）、非产品
+# 交付路径（真实宿主装配层挂位归装配批次收口——P-SEL-10 登记缺口，
+# 插件面零改动）。无人值守门禁不做 GUI 运行验证：本目标的**构建**属
+# 交付留痕，**运行**属手动点验流程（§15.3——一次只启动一个 GUI 可执行
+# 文件、不用 offscreen），未启动如实登记不标注通过（AGENTS §4.2）。
+add_executable(sdurws_ird_selection_app
+    app/HarnessMain.cpp)
+
+target_compile_features(sdurws_ird_selection_app PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_selection_app PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_selection_app PRIVATE /utf-8)
+endif()
+
+# app/ 需解析本单元插件私有头（plugin/SelPanelTypes.hpp 等——同单元内
+# 消费，R-2 不跨单元；单元根 include 目录 PRIVATE 注入）。
+target_include_directories(sdurws_ird_selection_app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 单行链接语句＝构建图契约测试的登记形态约束（dynamics_app 同款）。
+target_link_libraries(sdurws_ird_selection_app PRIVATE sdurws_ird_selection_plugin)
+
+# 运行期 DLL 就位（dynamics_app 同款）：TARGET_RUNTIME_DLLS 复制 Qt
+# 三件套等共享库到 exe 旁——绝对路径启动免 PATH 依赖。
+add_custom_command(TARGET sdurws_ird_selection_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_selection_app>
+            $<TARGET_FILE_DIR:sdurws_ird_selection_app>
+    COMMAND_EXPAND_LISTS)
+
+# ---- Qt 平台插件定位（dynamics_app 同款坑位修复）：Qt6 官方发行版
+#      DLL 为可重定位前缀形态，从副本位置推导的插件目录不成立（qwindows
+#      找不到即启动失败）——configure 期从 Qt6_DIR 推导真实 Qt 安装前缀
+#      生成 qt.conf 复制到 exe 旁（构建期生成物，不入库）。
+set(_ird_sel_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_sel_qt_prefix "${_ird_sel_qt_prefix}/../../.." ABSOLUTE)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/sel-harness-qt.conf"
+     "[Paths]\nPrefix=${_ird_sel_qt_prefix}\n")
+add_custom_command(TARGET sdurws_ird_selection_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/sel-harness-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_selection_app>/qt.conf")
+
 # ---- ctest LABELS "ird"（modeling/ui/requirements/kinematics/workflow/
 #      drivetrain 落位同款）----
 # 验收过滤口径：ctest -L "^ird$"——两测试（模型层、进程内、确定性）同
-# 标签；_gui_test 形态本单元无（GUI 用例随 WP-19-T10/T11——卡 §15.3，
-# 本批次无 GUI 载体用例）。
+# 标签；_gui_test 形态本单元无——GUI 呈现归 sdurws_ird_selection_app
+# harness 手动验证通道（WP-19-T10 落位；卡 §15.3 流程，本次未启动如实
+# 登记）＋模型层链路用例（SelPluginPanelTest）承载界面链路。
 set_tests_properties(sdurws_ird_selection_test sdurws_ird_selection_contract_test
     PROPERTIES LABELS "ird")
 

@@ -10,17 +10,22 @@
  *     （插件依赖仅本计算库＋Qt Widgets——无 ui 编译边）、§3.4（插件零
  *     计算红线——①插件翻译单元不含筛选/插值/校核/排序算法〔静态扫描：
  *     筛选词表函数符号零命中〕；②插件不直接读文件、不直接写项目、不
- *     直接调用 io/project 实现〔经端口〕）
- *   - units/ui.md §11.1（白名单 token "selection"）、§3.5（键族
- *     plugin.<id>.title）
+ *     直接调用 io/project 实现〔经端口〕）、§16（WP-19-T10 行——工作
+ *     流页/目录管理/候选表登记面）
+ *   - units/ui.md §11.1（白名单八 token 词表）、§3.5（键族
+ *     plugin.<id>.title／cmd.<id>.title）、§6.4（七阶段词表）、§6.5
+ *     （域注册键）
  *   - 先例：workflow/contract_test/PluginRegistrationContractTest.cpp
- *     （WP-22-T02"最小可注册实现"的执行证明同位面）——差异（诚实登记，
- *     非遗漏）：workflow 门面实现 ui::IPluginUiModule 并以真实
+ *     （WP-22-T02"最小可注册实现"的执行证明同位面）与 dynamics/
+ *     contract_test（WP-17-T09 白名单自持词表对账同款）——差异（诚实
+ *     登记，非遗漏）：workflow 门面实现 ui::IPluginUiModule 并以真实
  *     IPluginUiRegistrar 校验序三查承载"可注册"；selection 卡 §3.2 无
- *     ui 编译边（树/属性页协议列运行时注入列），T02 门面为自持描述符
- *     ——本组用例以描述符登记出处自证＋零计算词表扫描承载同位纪律，
- *     真实宿主注册契约随 WP-19-T10 对接 UI-T21/T22 协议时落位。
- *   - 任务契约 tasks/foundation/WP-19-T02.json acceptance 1/2
+ *     ui 编译边（树/属性页协议列运行时注入列），门面为自持描述符——
+ *     本组用例以描述符登记出处自证＋白名单八 token 自持词表对账＋零
+ *     计算词表扫描承载同位纪律，真实宿主注册契约归宿主装配批次收口
+ *     （缺口登记＝单元卡 P-SEL-10——WP-17-T09 P-DYN-8 同款 B 方案）。
+ *   - 任务契约 tasks/foundation/WP-19-T02.json acceptance 1/2、
+ *     tasks/foundation/WP-19-T10.json acceptance 1/2
  */
 
 #include <sdurws/ird/selection/SelectionPluginAssembly.hpp>
@@ -37,6 +42,11 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+
+// 契约测试不在插件面扫描域——计算库公共头在此消费（插件面零 project
+// 包含的纪律不因本包含破坏：扫描域仅 plugin/＋assembly/）。回填命令
+// token 权威常量经此对账（插件面自持常量与之逐字相等——见对账用例）。
+#include <sdurws/ird/selection/Backfill.hpp>
 
 namespace fs = std::filesystem;
 
@@ -117,9 +127,10 @@ constexpr std::array<const char*, 6> kDirectAccessSymbols{
 }  // namespace
 
 /**
- * 描述符登记出处自证（acceptance 1——最小可注册形态的值面）：工厂产物
- * 两字段必须逐字等于 ui.md 登记值——pluginId＝"selection"（§11.1 白名单
- * 第 6 token）、titleKey＝"plugin.selection.title"（§3.5 键族
+ * 描述符登记出处自证（acceptance 1——最小可注册形态的值面；WP-19-T10
+ * 起工厂返回装配载体，两字段取值路径随载体调整、登记值逐字不动）：工厂
+ * 产物两字段必须逐字等于 ui.md 登记值——pluginId＝"selection"（§11.1
+ * 白名单第 6 token）、titleKey＝"plugin.selection.title"（§3.5 键族
  * plugin.<id>.title，id 词表＝白名单 token）。多次调用同值（纯值工厂
  ——无缓存无状态）。
  */
@@ -128,7 +139,8 @@ TEST(SelPluginAssembly, DescriptorMatchesUiRegistrations_WP19T02_ACC1)
     IRD_TEST_INFO(std::vector<std::string>{"NFR-MNT-01"},
                   std::vector<std::string>{});
 
-    const auto descriptor = sdurws::ird::selection::createSelectionPluginAssembly();
+    const auto bundle = sdurws::ird::selection::createSelectionPluginAssembly();
+    const auto& descriptor = bundle.descriptor;
     EXPECT_EQ(descriptor.pluginId, "selection")
         << "pluginId 必须＝ui.md §11.1 白名单 token（显示名永不替代身份——ARC-04）";
     EXPECT_EQ(descriptor.titleKey, "plugin.selection.title")
@@ -136,8 +148,89 @@ TEST(SelPluginAssembly, DescriptorMatchesUiRegistrations_WP19T02_ACC1)
 
     // 纯值工厂：两次调用产生同值实例（无共享状态——文件头线程模型注）。
     const auto again = sdurws::ird::selection::createSelectionPluginAssembly();
-    EXPECT_EQ(again.pluginId, descriptor.pluginId);
-    EXPECT_EQ(again.titleKey, descriptor.titleKey);
+    EXPECT_EQ(again.descriptor.pluginId, descriptor.pluginId);
+    EXPECT_EQ(again.descriptor.titleKey, descriptor.titleKey);
+}
+
+/**
+ * T10 登记面值断言（acceptance 1——工作流页/目录管理/候选表的挂位与
+ * 命令登记面）：阶段 token＝ui.md §6.4 七阶段第 5、域注册键＝§6.5、
+ * 命令恰一条（回填入口——键族 cmd.<token>.title）、面板恰一条主面板
+ * （advanced=false、三页键族）。
+ */
+TEST(SelPluginAssembly, RegistrationFaceMatchesUiVocabularies_WP19T10_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-02"},
+                  std::vector<std::string>{});
+
+    const auto bundle = sdurws::ird::selection::createSelectionPluginAssembly();
+    // 挂位/域键（§6.4 七阶段第 5 token"selection"／§6.5 域注册键）。
+    EXPECT_EQ(bundle.descriptor.stageToken, "selection")
+        << "阶段 token 必须＝ui.md §6.4 七阶段词表第 5（宿主挂位位）";
+    EXPECT_EQ(bundle.descriptor.readinessDomainKey, "selection")
+        << "域注册键必须＝ui.md §6.5 域注册词表（宿主汇聚对账锚）";
+    // 命令登记面（回填入口恰一条——titleKey 按 §3.5 键族派生）。
+    ASSERT_EQ(bundle.descriptor.commands.size(), 1u);
+    EXPECT_EQ(bundle.descriptor.commands[0].token, "apply-device-backfill");
+    EXPECT_EQ(bundle.descriptor.commands[0].titleKey,
+              "cmd.apply-device-backfill.title")
+        << "titleKey 必须＝§3.5 键族 cmd.<token>.title";
+    // 面板登记面（恰一条主面板——三页合一 Tab 的呈现形态）。
+    ASSERT_EQ(bundle.descriptor.panels.size(), 1u);
+    EXPECT_EQ(bundle.descriptor.panels[0].stageToken, "selection");
+    EXPECT_EQ(bundle.descriptor.panels[0].titleKey,
+              "plugin.selection.panel.workflow.title")
+        << "主面板标题键＝工作流页键（目录管理/候选表为页半区）";
+    EXPECT_FALSE(bundle.descriptor.panels[0].advanced)
+        << "主面板位（UX-04 非 advanced）";
+    EXPECT_TRUE(static_cast<bool>(bundle.descriptor.panels[0].factory))
+        << "面板工厂闭包非空（宿主装配批次按字段翻译注册）";
+}
+
+/**
+ * 白名单八 token 自持词表对账（WP-17-T09 dynamics 同款——B 方案的
+ * 对账半区）：ui.md §11.1 静态白名单为编译期/装配期常量（L5 应用壳
+ * 固定），本单元白名单文件不在任务 allowedFiles 不可消费——以测试
+ * 自持词表钉住 pluginId 在册（真实 PluginUiRegistrar::whitelist()
+ * 对账归宿主装配批次，P-SEL-10）。
+ */
+TEST(SelPluginAssembly, WhitelistTokenReconciliation_WP19T10_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-02"},
+                  std::vector<std::string>{});
+
+    // ui.md §11.1 白名单八 token（自持词表——装配顺序＝词表序）。
+    constexpr std::array<const char*, 8> kPluginUiWhitelist{
+        "modeling", "requirements", "kinematics", "trajectory",
+        "dynamics", "selection",    "optimization", "workflow"};
+    const auto bundle = sdurws::ird::selection::createSelectionPluginAssembly();
+    EXPECT_TRUE(std::any_of(std::begin(kPluginUiWhitelist),
+                            std::end(kPluginUiWhitelist),
+                            [&bundle](const char* token) {
+                                return bundle.descriptor.pluginId == token;
+                            }))
+        << "pluginId 必须在 ui.md §11.1 白名单八 token 词表内（白名单外"
+           "注册被拒绝——§11.1）";
+}
+
+/**
+ * 回填命令 token 对账（T10 命令自持常量↔计算库冻结词表）：插件面零
+ * project 包含（直接访问词表钉住），故 token 以自持常量承载同一词面
+ * ——本用例在契约测试面（非插件扫描域）消费计算库权威常量逐字对账，
+ * 两处漂移即失败（无第二词表静默漂移空间）。
+ */
+TEST(SelPluginAssembly, BackfillTokenReconcilesWithComputeHeader_WP19T10_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-10"},
+                  std::vector<std::string>{});
+
+    const auto bundle = sdurws::ird::selection::createSelectionPluginAssembly();
+    ASSERT_EQ(bundle.descriptor.commands.size(), 1u);
+    // 逐字对账：登记面 token↔计算库回填公共头冻结常量。
+    EXPECT_EQ(bundle.descriptor.commands[0].token,
+              std::string(sdurws::ird::selection::kBackfillCommandToken))
+        << "插件面自持 token 必须与计算库冻结词表逐字相等（对账口径见"
+           " SelPanelCommandCatalog.hpp 文件头注）";
 }
 
 /**
