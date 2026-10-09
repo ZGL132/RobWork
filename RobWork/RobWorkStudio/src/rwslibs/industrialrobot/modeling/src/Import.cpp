@@ -1657,9 +1657,12 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                 const bool finite = std::isfinite(src.ax) && std::isfinite(src.ay)
                                     && std::isfinite(src.az);
                 const double normSq = src.ax * src.ax + src.ay * src.ay + src.az * src.az;
-                // 非有限或零轴（norm²==0；极端量级经 IEEE 溢出/下溢同样落入
-                // 非有限/零判——确定性不受影响）→ Invalid 面（保留原串）。
-                if (!finite || !(normSq > 0.0)) {
+                // 非有限或零轴（norm²==0）。F-587：norm² **上溢为 +Inf** 时
+                // "normSq > 0"判不住（Inf>0 为真），随后 x/Inf＝0——原实现
+                // 把 (0,0,0) 以 Provided 零轴静默落盘（注释声称"溢出/下溢
+                // 同样落入非有限/零判"仅下溢方向成立）。修复：上溢显式判
+                // 定（!isfinite(normSq)）同样走 Invalid 面保留原串。
+                if (!finite || !std::isfinite(normSq) || !(normSq > 0.0)) {
                     axisBlocked = true;
                     entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::invalid(
                         src.axisRaw);
@@ -1669,7 +1672,8 @@ ImportOutcome ModelImportMapper::mapUrdf(const ValidatedSource& source,
                     ImportErrorItem item;
                     item.kind = "value-illegal";
                     item.subject = "joint '" + name + "'.axis";
-                    item.detail = "轴分量非有限或零向量（原文保留: " + src.axisRaw + "）";
+                    item.detail = "轴分量非有限/零向量/量级溢出（norm² 超 double 上限，"
+                                  "原文保留: " + src.axisRaw + "）";
                     item.span = src.axisSpan;
                     report.errors.push_back(std::move(item));
                     pushImportDiag(diagEntries, diagSeq++, kMdlImportZeroAxis,

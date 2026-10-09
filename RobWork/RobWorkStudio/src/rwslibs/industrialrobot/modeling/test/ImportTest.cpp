@@ -1461,3 +1461,44 @@ TEST(MdlImport, InertialRpy_RotatesInertiaToLinkFrame_WP13T05_ACC2)
     EXPECT_NEAR(outcome.draft->links[1].body.inertia.value().iyy, 1.0, 1e-12);
     EXPECT_NEAR(outcome.draft->links[1].body.inertia.value().izz, 1.0, 1e-12);
 }
+
+// =====================================================================
+// F-587 回归（audit/unit-code-review-20261009）
+// =====================================================================
+
+/**
+ * 回归（F-587，P1）：axis 分量平方和**上溢**（‖axis‖²≈1e400 超 double 上
+ * 限→+Inf）——原实现"normSq > 0"判不住 Inf，x/Inf＝0 后把 (0,0,0) 以
+ * Provided 零轴静默落盘（注释声称"溢出/下溢同样落入非有限/零判"仅下
+ * 溢方向成立）。修复后与零轴/非有限同口径：Invalid 面保留原串＋
+ * ZERO-AXIS 诊断＋不可提交。
+ */
+TEST(MdlImport, AxisNormSqOverflow_ReportInvalidNotSubmittable_F587)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-03"},
+                  std::vector<std::string>{});
+
+    const ModelImportMapper mapper;
+    const char* urdf = R"(<?xml version="1.0"?>
+<robot name="n">
+  <link name="base"/>
+  <link name="l"/>
+  <joint name="j" type="revolute">
+    <parent link="base"/>
+    <child link="l"/>
+    <axis xyz="1e200 0 0"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+</robot>
+)";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value()) << "上溢轴仅报告——草稿仍产出";
+    ASSERT_EQ(outcome.draft->joints[0].axis.state(), FieldState::Invalid);
+    EXPECT_EQ(outcome.draft->joints[0].axis.invalidRawInput(), "1e200 0 0")
+        << "轴原串保留（NFR-COR-03 不静默转零）";
+    EXPECT_TRUE(hasDiag(diags, kMdlImportZeroAxis));
+    ASSERT_TRUE(outcome.error.has_value());
+    EXPECT_EQ(outcome.error->code, ImportErrorCode::ZeroAxisReported);
+    EXPECT_FALSE(outcome.report.submittable) << "量级上溢轴不得静默成零轴提交";
+}
