@@ -145,7 +145,9 @@ rw::math::Transform3D<double> refTransformMul(const rw::math::Transform3D<double
     return rw::math::Transform3D<double>(p, r);
 }
 
-/// 单步 DH 变换 T_{i-1,i}(q=0)＝Rot_z(θ+q0)·Trans_z(d)·Trans_x(a)·Rot_x(α)。
+/// 单步 DH 变换 T_{i-1,i}(q_model=0)＝Rot_z(θ)·Trans_z(d)·Trans_x(a)·
+/// Rot_x(α)（F-590 零位烘焙纪律：zeroOffset 不入几何——q0 参数保留是为
+/// 参考实现可复用于"含零位旋转"的对照面，展开期望恒传 0）。
 rw::math::Transform3D<double> refStep(double thetaOffset, double q0, double d,
                                       double a, double alpha)
 {
@@ -214,6 +216,10 @@ bool hasDiagnostic(const std::vector<core::DiagnosticRecord>& diags,
  * 逐级累乘得 origin=T_parent_joint（当前步相对变换）、axis=z_i=
  * T_{0,i}·(0,0,1) 归一化单位向量；身份/名称/类型/zeroOffset/限位透传；
  * axis 范数恒 1（§9.4.7 @post）。
+ *
+ * F-590 重钉：展开几何为零位烘焙纪律下的 q_model=0 位姿——参考步进取
+ * Rot_z(θ)（zeroOffset 不入几何；权威零位旋转的唯一烘焙归口在
+ * modeling→Description 映射的单一折叠）。
  */
 TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
 {
@@ -228,7 +234,8 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
     chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J3",
                                        1.1, 0.25, 0.10, -kPi / 4, 0.20));
 
-    // 独立参考：逐级累乘（期望值——测试内另行实现，同一卡面公式）。
+    // 独立参考：逐级累乘（期望值——测试内另行实现，同一卡面公式；
+    // q0 恒传 0——展开几何不含 zeroOffset，F-590）。
     rw::math::Transform3D<double> acc =
         rw::math::Transform3D<double>(rw::math::Vector3D<double>(0, 0, 0),
                                       rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
@@ -236,7 +243,7 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
     std::vector<rw::math::Transform3D<double>> refStepT;
     for (const DhChainJoint& j : chain.joints) {
         const rw::math::Transform3D<double> step =
-            refStep(j.dh.thetaOffset, j.zeroOffset, j.dh.d, j.dh.a, j.dh.alpha);
+            refStep(j.dh.thetaOffset, 0.0, j.dh.d, j.dh.a, j.dh.alpha);
         refStepT.push_back(step);
         acc = refTransformMul(acc, step);
         refAccum.push_back(acc);
@@ -265,7 +272,7 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
                       (std::string("joints[") + std::to_string(i) + "] axis").c_str());
         EXPECT_NEAR(e.axis.value().norm2(), 1.0, 1e-12) << "axis 须为单位向量（@post）";
         // 透传字段：身份/名称/类型/零位（θ_offset 与 zeroOffset 分离——
-        // 几何含 q0 旋转，但 zeroOffset 字段原样保留）。
+        // 几何不含 q0 旋转（F-590 零位烘焙纪律），zeroOffset 字段原样保留）。
         EXPECT_TRUE(e.objectId == chain.joints[i].objectId);
         EXPECT_EQ(e.localName, chain.joints[i].localName);
         EXPECT_EQ(e.type, JointType::Revolute);
@@ -279,9 +286,12 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
 }
 
 /**
- * ACC1 零位对齐：q=0（RobWork 零位）时显式位姿==DH 派生位姿——显式链
- * 累积位姿与参考 DH 累积（Rot_z(θ+q0) 含权威零位旋转）逐位一致；
- * θ_offset 与 zeroOffset 字段显式分离（zeroOffset 不并入 θ 字段）。
+ * ACC1 零位对齐：q_model=0（＝DH 变量零位——q_authoritative = q_model −
+ * zeroOffset 的建模域坐标）时显式位姿==DH 派生位姿——显式链累积位姿与
+ * 参考 DH 累积（Rot_z(θ)，zeroOffset 不入几何——F-590 零位烘焙纪律：
+ * 权威零位旋转的唯一烘焙归口在 modeling→Description 映射的单一折叠
+ * origin·R(axis, zeroOffset)）逐位一致；θ_offset 与 zeroOffset 字段显式
+ * 分离（zeroOffset 不并入 θ 字段、不预烘入 origin）。
  */
 TEST(MdlDhConvert, DhToExplicitZeroAlignment_WP13T09_ACC1)
 {
@@ -298,7 +308,8 @@ TEST(MdlDhConvert, DhToExplicitZeroAlignment_WP13T09_ACC1)
     const std::vector<JointEntry> joints = expandedExplicitJoints(chain, diags);
     ASSERT_EQ(joints.size(), 2U);
 
-    // q=0 显式 FK＝origin 累积；与参考 DH 累积（含 zeroOffset 旋转）比对。
+    // q_model=0 显式 FK＝origin 累积；与参考 DH 累积（θ_offset 原值、
+    // 不含 zeroOffset 旋转——F-590）比对。
     rw::math::Transform3D<double> explicitAcc =
         rw::math::Transform3D<double>(rw::math::Vector3D<double>(0, 0, 0),
                                       rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
@@ -307,9 +318,9 @@ TEST(MdlDhConvert, DhToExplicitZeroAlignment_WP13T09_ACC1)
         explicitAcc = refTransformMul(explicitAcc, static_cast<rw::math::Transform3D<double>>(
                                             joints[i].origin.value()));
         const DhChainJoint& j = chain.joints[i];
-        refAcc = refTransformMul(refAcc, refStep(j.dh.thetaOffset, j.zeroOffset, j.dh.d,
+        refAcc = refTransformMul(refAcc, refStep(j.dh.thetaOffset, 0.0, j.dh.d,
                                                  j.dh.a, j.dh.alpha));
-        // 逐关节：显式累积位姿 == DH 派生位姿（q=0 零位对齐——MDL-10）。
+        // 逐关节：显式累积位姿 == DH 派生位姿（q_model=0 零位对齐——MDL-10）。
         expectPoseNear(JointPose(explicitAcc), refAcc, 1e-12,
                        (std::string("q=0 累积位姿 joints[") + std::to_string(i) + "]").c_str());
         // 分离性：zeroOffset 独立成字段，θ_offset 不被并入。

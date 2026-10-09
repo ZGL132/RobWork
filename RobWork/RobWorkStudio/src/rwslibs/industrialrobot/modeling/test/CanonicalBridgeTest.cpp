@@ -414,8 +414,10 @@ TEST(MdlCanonicalBridge, JointsExplicitMappingWithZeroOffsetFold_WP13T12_ACC1)
 
 /**
  * @brief ACC1 行 3（DH 权威先经 §7.4 展开）：单关节标准 DH 链（θ_offset/
- *        d/a/α 手算期望——T_{i-1,i} = Rot_z(θ+q0)·Trans_z(d)·Trans_x(a)·
- *        Rot_x(α)），展开产物经同一零位折叠纪律映射（T09 等价验证同规）。
+ *        d/a/α 手算期望——F-590 零位烘焙纪律：展开几何＝Rot_z(θ)·Trans_z(d)·
+ *        Trans_x(a)·Rot_x(α)（q_model=0 位姿，zeroOffset 不入几何），
+ *        经同一零位折叠纪律映射（origin_desc = origin·R(axis, q0)——
+ *        唯一烘焙归口，T09 等价验证同规）。
  */
 TEST(MdlCanonicalBridge, JointsDhAuthorityExpandsToExplicit_WP13T12_ACC1)
 {
@@ -426,7 +428,10 @@ TEST(MdlCanonicalBridge, JointsDhAuthorityExpandsToExplicit_WP13T12_ACC1)
     const double q0 = 0.2;      // zeroOffset，rad（权威零位——显式分离）
     const double dM = 0.15;     // 连杆偏距，m
     const double aM = 0.4;      // 连杆长度，m
-    const double alpha = 0.25;  // 扭转角，rad
+    // α＝0（本钉聚焦零位烘焙单一性——绝对旋转断言 Rz(θ+q0)·Rx(α) 在
+    // α≠0 时与展开轴约定（F-591 关节系轴修复）耦合，该面由 F-591 的
+    // 世界轴向逐关节断言承载；α=0 时折叠轴＝ez，绝对断言精确）。
+    const double alpha = 0.0;   // 扭转角，rad
 
     const core::ObjectId jid = makeOid();
     RobotDesign design;
@@ -445,19 +450,19 @@ TEST(MdlCanonicalBridge, JointsDhAuthorityExpandsToExplicit_WP13T12_ACC1)
     ASSERT_EQ(built.get().joints.size(), 1u);
     const runtime::JointDescription& jd = built.get().joints.front();
 
-    // 手算期望（§7.4 原文公式逐步）：相对变换 T = Rot_z(θ+q0)·Trans_z(d)·
-    // Trans_x(a)·Rot_x(α)——平移＝Rz(θ+q0)·(a,0,d)；旋转＝Rz(θ+q0)·Rx(α)。
-    // 零位折叠后：origin_desc = T·R(axis=展开轴, q0)（同规折叠）。
-    const double thetaTotal = theta + q0;
-    const rwmath::Rotation3D<double> rz(std::cos(thetaTotal), -std::sin(thetaTotal), 0.0,
-                                        std::sin(thetaTotal), std::cos(thetaTotal), 0.0,
+    // 手算期望（§7.4 公式逐步，F-590 纪律）：展开几何 T = Rot_z(θ)·
+    // Trans_z(d)·Trans_x(a)·Rot_x(α)——平移＝Rz(θ)·(a,0,d)；旋转＝
+    // Rz(θ)·Rx(α)。零位折叠后：origin_desc = T·R(axis=展开轴, q0)
+    // （单一烘焙——无预烘叠加）。
+    const rwmath::Rotation3D<double> rz(std::cos(theta), -std::sin(theta), 0.0,
+                                        std::sin(theta), std::cos(theta), 0.0,
                                         0.0, 0.0, 1.0);
     const rwmath::Rotation3D<double> rx(1.0, 0.0, 0.0,
                                         0.0, std::cos(alpha), -std::sin(alpha),
                                         0.0, std::sin(alpha), std::cos(alpha));
-    // Rot_z·(a,0,d)：x'＝a·cosθ总、y'＝a·sinθ总、z'＝d。
-    const rwmath::Vector3D<double> expectP(aM * std::cos(thetaTotal),
-                                           aM * std::sin(thetaTotal), dM);
+    // Rot_z(θ)·(a,0,d)：x'＝a·cosθ、y'＝a·sinθ、z'＝d。
+    const rwmath::Vector3D<double> expectP(aM * std::cos(theta),
+                                           aM * std::sin(theta), dM);
     const rwmath::Rotation3D<double> t = expectedRotMul(rz, rx);
     // 展开轴＝T_{0,i}·(0,0,1)＝旋转阵第三列（单关节：T_base_joint1＝T）。
     const rwmath::Vector3D<double> expectAxis(t(0, 2), t(1, 2), t(2, 2));
@@ -482,6 +487,142 @@ TEST(MdlCanonicalBridge, JointsDhAuthorityExpandsToExplicit_WP13T12_ACC1)
     ASSERT_EQ(jd.lower.state(), core::FieldState::Provided);
     EXPECT_DOUBLE_EQ(jd.lower.value(), -1.0 - q0);
     EXPECT_DOUBLE_EQ(jd.upper.value(), 1.0 - q0);
+
+    // ---- F-590 回归钉（权威零位旋转单一烘焙的判别面）：折叠后旋转必须
+    // 精确等于 Rz(θ+q0)·Rx(α)（q_auth=0 的 DH 权威零位构型旋转）。修复前
+    // 展开预烘 q0、映射再折叠一次，旋转多出 R_axis(q0)——该断言即失败。
+    const double thetaAuthZero = theta + q0;
+    const rwmath::Rotation3D<double> rzAuth(std::cos(thetaAuthZero),
+                                            -std::sin(thetaAuthZero), 0.0,
+                                            std::sin(thetaAuthZero),
+                                            std::cos(thetaAuthZero), 0.0,
+                                            0.0, 0.0, 1.0);
+    const rwmath::Rotation3D<double> expectAuthZero = expectedRotMul(rzAuth, rx);
+    for (std::size_t r = 0; r < 3; ++r) {
+        for (std::size_t c = 0; c < 3; ++c) {
+            EXPECT_NEAR(jd.origin.R()(r, c), expectAuthZero(r, c), 1e-12)
+                << "权威零位旋转 Rz(θ+q0)·Rx(α) (" << r << "," << c << ")";
+        }
+    }
+}
+
+/**
+ * @brief F-590 零位对齐回归钉：DH 派生模型与显式直写模型经同一映射后
+ *        逐元素相等（MDL-13 零位语义单一）。
+ *
+ * 双通道构造同一物理链（两关节、θ_offset/d/a/α/zeroOffset 全非零）：
+ *   ① DH 权威——dhDerived 落参，经 §7.4 展开（q_model=0 位姿，zeroOffset
+ *     不入几何）；
+ *   ② 显式直写——按卡面公式独立手写 origin＝Rot_z(θ)·Tz(d)·Tx(a)·Rx(α)、
+ *     axis＝T_{0,i}(θ-only)·z、zeroOffset 原值（建模域表示约定）。
+ * 两 Description 逐关节 origin（平移＋旋转）/axis/限位逐元素相等——修复前
+ * DH 侧 origin 预烘 q0、映射再折叠，与显式直写侧发散（多转 R_axis(q0)）。
+ */
+TEST(MdlCanonicalBridge, DhDerivedMatchesExplicitAuthoredAtAuthoritativeZero_F590)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-02", "MDL-10"},
+                  std::vector<std::string>{});
+
+    // 非平凡两关节参数（全字段非零——零位旋转/扭转/偏距/偏置全激活）。
+    struct DhRow {
+        double theta;  // rad
+        double d;      // m
+        double a;      // m
+        double alpha;  // rad
+        double q0;     // rad
+    };
+    const DhRow rows[2] = {{0.4, 0.12, 0.30, kPi / 2, 0.25},
+                           {-0.7, 0.20, 0.15, 0.6, -0.15}};
+
+    // 独立参考（卡面公式——测试内另行实现）：q_model=0 单步与累积。
+    auto refRz = [](double ang) {
+        return rwmath::Rotation3D<double>(std::cos(ang), -std::sin(ang), 0.0,
+                                          std::sin(ang), std::cos(ang), 0.0,
+                                          0.0, 0.0, 1.0);
+    };
+    auto refRx = [](double ang) {
+        return rwmath::Rotation3D<double>(1.0, 0.0, 0.0,
+                                          0.0, std::cos(ang), -std::sin(ang),
+                                          0.0, std::sin(ang), std::cos(ang));
+    };
+    rwmath::Rotation3D<double> accR = rwmath::Rotation3D<double>(
+        1, 0, 0, 0, 1, 0, 0, 0, 1);  // T_{0,i} 旋转累积（轴载体）
+
+    // ① DH 权威工作集。
+    RobotDesign dhDesign;
+    dhDesign.displayName = "bot";
+    dhDesign.authority = AuthorityMode::StandardDH;
+    // ② 显式直写工作集（逐字段按建模域表示约定手写——与①同物理链）。
+    RobotDesign explicitDesign;
+    explicitDesign.displayName = "bot";
+    explicitDesign.authority = AuthorityMode::Explicit;
+
+    for (int i = 0; i < 2; ++i) {
+        const DhRow& row = rows[i];
+        const core::ObjectId jid = makeOid();
+
+        JointEntry dhJoint = makeRevoluteJoint(jid, "J" + std::to_string(i + 1),
+                                               -1.5, 1.5, row.q0);
+        dhJoint.dhDerived = DhParameters{row.theta, row.d, row.a, row.alpha};
+        dhDesign.joints.push_back(std::move(dhJoint));
+
+        // 显式直写：origin＝Rot_z(θ)·Tz(d)·Tx(a)·Rx(α)（q_model=0 位姿）；
+        // 平移＝Rz(θ)·(a,0,d)，旋转＝Rz(θ)·Rx(α)。
+        JointEntry exJoint = makeRevoluteJoint(jid, "J" + std::to_string(i + 1),
+                                               -1.5, 1.5, row.q0);
+        const rwmath::Rotation3D<double> stepR = expectedRotMul(refRz(row.theta),
+                                                                refRx(row.alpha));
+        const rwmath::Vector3D<double> stepP(row.a * std::cos(row.theta),
+                                             row.a * std::sin(row.theta), row.d);
+        exJoint.origin = core::SourcedValue<JointPose>::provided(
+            JointPose(rwmath::Transform3D<double>(stepP, stepR)), userProv());
+        // axis＝T_{0,i}(θ-only)·(0,0,1)（旋转阵第三列——卡面 §7.4 公式）。
+        accR = expectedRotMul(accR, stepR);
+        exJoint.axis = core::SourcedValue<rwmath::Vector3D<double>>::provided(
+            rwmath::Vector3D<double>(accR(0, 2), accR(1, 2), accR(2, 2)),
+            userProv());
+        explicitDesign.joints.push_back(std::move(exJoint));
+    }
+    for (int i = 0; i < 3; ++i) {
+        const std::string name = "L" + std::to_string(i);
+        dhDesign.links.push_back(makeLink(makeOid(), name));
+        explicitDesign.links.push_back(makeLink(makeOid(), name));
+    }
+
+    BridgeClosure dhClosure;
+    putRoot(dhClosure, dhDesign);
+    auto dhBuilt = buildFrom(dhClosure);
+    ASSERT_TRUE(dhBuilt.ok()) << dhBuilt.error().detail;
+
+    BridgeClosure exClosure;
+    putRoot(exClosure, explicitDesign);
+    auto exBuilt = buildFrom(exClosure);
+    ASSERT_TRUE(exBuilt.ok()) << exBuilt.error().detail;
+
+    // 逐元素相等（DH 派生 vs 显式直写——零位对齐的判别面）。
+    ASSERT_EQ(dhBuilt.get().joints.size(), exBuilt.get().joints.size());
+    for (std::size_t i = 0; i < dhBuilt.get().joints.size(); ++i) {
+        const runtime::JointDescription& a = dhBuilt.get().joints[i];
+        const runtime::JointDescription& b = exBuilt.get().joints[i];
+        for (std::size_t k = 0; k < 3; ++k) {
+            EXPECT_NEAR(a.origin.P()[k], b.origin.P()[k], 1e-12)
+                << "joints[" << i << "] P[" << k << "]";
+            EXPECT_NEAR(a.axis[k], b.axis[k], 1e-12)
+                << "joints[" << i << "] axis[" << k << "]";
+        }
+        for (std::size_t r = 0; r < 3; ++r) {
+            for (std::size_t c = 0; c < 3; ++c) {
+                EXPECT_NEAR(a.origin.R()(r, c), b.origin.R()(r, c), 1e-12)
+                    << "joints[" << i << "] R(" << r << "," << c << ")";
+            }
+        }
+        ASSERT_EQ(a.lower.state(), b.lower.state());
+        ASSERT_EQ(a.upper.state(), b.upper.state());
+        EXPECT_DOUBLE_EQ(a.lower.value(), b.lower.value())
+            << "joints[" << i << "] lower";
+        EXPECT_DOUBLE_EQ(a.upper.value(), b.upper.value())
+            << "joints[" << i << "] upper";
+    }
 }
 
 /**
