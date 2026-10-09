@@ -199,7 +199,9 @@ TEST(KinExport, FilteredRowsCarryReasonTokenAndCollisionPairs_WP15T09_ACC2)
 
     ASSERT_EQ(rows.size(), 1U);
     EXPECT_EQ(rows[0].reason, "collision") << "Collision→词表 token 一一映射";
-    EXPECT_EQ(rows[0].collisionPairCount, 4U);
+    // F-588：字段契约＝"碰撞对象**对**数量"（Export.hpp）——展平列表
+    // [c,d,e,f] 为 2 对（原实现直填展平元素数 4，交付值按契约语义翻倍）。
+    EXPECT_EQ(rows[0].collisionPairCount, 2U);
     // 对象对成对展平为 canonical 文本（竖线分隔——R-4：身份直出无拼接）。
     EXPECT_EQ(rows[0].collisionPairs,
               makeOid(0xc).toCanonical() + "|" + makeOid(0xd).toCanonical() + "|"
