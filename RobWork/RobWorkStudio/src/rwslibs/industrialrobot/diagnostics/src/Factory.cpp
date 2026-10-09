@@ -304,7 +304,11 @@ DiagnosticEntry DiagnosticsFactory::translateDispatch(const TranslationInput& in
     if (!matched) {
         // ④未登记类型→DIAG-REGISTRY-UNKNOWN-CODE 兜底条目（§8.1 规则 2/§9.2
         // "不抛"）：保留原始来源（类型名）与安全摘要（消息截断）；该码为
-        // 内置 Dev 级——subject 边界天然满足，本路径恒不抛。
+        // 内置 Dev 级——subject 边界天然满足，本路径恒不抛。F-602：兜底
+        // 码 paramSchema 为空（零参数）——context.params 非空时 create 的
+        // 参数模式校验会以 ParamSchemaMismatch 抛出，把"恒不抛"的转译兜
+        // 底变成新失败点（转译通常发生在 catch 块内）。兜底条目不承载调
+        // 用方参数——清空后再产出。
         core::DiagnosticRecord fallback = core::DiagnosticRecord::make(
             "DIAG-REGISTRY-UNKNOWN-CODE",
             /*subject=*/{}, /*localName=*/{}, /*runtimeName=*/{},
@@ -312,7 +316,9 @@ DiagnosticEntry DiagnosticsFactory::translateDispatch(const TranslationInput& in
             /*cause=*/input.message.empty() ? std::string("（消息不可得——非 std::exception 体系）")
                                             : safeMessage(input.message),
             /*recommendedAction=*/"核对 ErrorCodeTranslator 装配清单（类型映射禁字符串匹配——§8.1）");
-        DiagnosticEntry entry = create(fallback, context);
+        DiagContext fallbackContext = context;
+        fallbackContext.params.clear();
+        DiagnosticEntry entry = create(fallback, fallbackContext);
         if (root != nullptr) {
             entry.causedBy = root->entryId;      // 兜底条目同样不丢根因（§6.3）
         }
