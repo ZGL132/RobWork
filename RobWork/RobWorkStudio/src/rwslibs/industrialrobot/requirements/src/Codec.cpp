@@ -971,6 +971,15 @@ bool readSourcedState(Reader& r, RequirementError& err, core::FieldState& st,
     } else if (st == core::FieldState::Invalid) {
         auto raw = readString(r, err);
         if (!raw) { return false; }
+        if (raw->empty()) {
+            // F-586：Invalid 态原串在内存面经工厂保证非空（invalid("")
+            // 抛 CoreError）——decode 是"外部字节唯一闸口"，空原串字节在
+            // 此就地按结构损坏拒绝，不让工厂异常穿出"decode 不抛"契约
+            // （encode 永不产出该形态：仅外部/损坏/恶意字节可达——正是
+            // 本闸口的防御对象）。
+            err = malformedAt(r.pos, "Invalid 态原串为空（内存面工厂保证非空——结构损坏）");
+            return false;
+        }
         *invalidRaw = *raw;
     }
     return true;
