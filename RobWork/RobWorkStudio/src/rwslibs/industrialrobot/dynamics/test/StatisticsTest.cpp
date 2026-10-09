@@ -624,19 +624,23 @@ TEST(DynEnvelope, RmsTimeWeightedWithDwellGolden)
 }
 
 /**
- * 用例 9：非 Ok 行不进统计（NFR-COR-03——NaN 不污染峰值、RMS 跳行后
- * 与手算梯形一致）。
+ * 用例 9：非 Ok 行不进统计（NFR-COR-03——NaN 不污染峰值、RMS 缺口区间
+ * 零贡献与手算分段积分一致；audit F-589 重钉——原钉编码"跨缺口梯形插值"
+ * 旧实现，与公共头"缺口不插值、贡献 0"契约相悖，已按契约口径重钉）。
  *
  * 网格：t=0..1 步 0.1、τ 恒 2，仅 t=0.3 行标 NonFiniteInput（τ=NaN）。
  * 期望：峰值仍 2（NaN 行被剔除）；速度峰窗在等值 run 处被非 Ok 行切断
- * （t=0.2 的窗只到自身）；RMS=2（τ 恒 2、跳行后相邻有效对 dt 补齐 1s）。
+ * （t=0.2 的窗只到自身）；RMS²=3.2——9 个正常区间对 ½(4+4)×0.1 累加
+ * ＝3.6，跨缺口对 (0.2,0.4) 零贡献（若插值则该对贡献 0.8、RMS²=4），
+ * T_cycle 仍取有效行全跨度 1 ⇒ RMS=sqrt(3.2)（保守低估——完整循环
+ * 统计以 Complete 序列为准，公共头 computeRms 契约原文）。
  */
 TEST(DynEnvelope, NonOkRowsExcludedFromStatistics)
 {
     IRD_TEST_INFO(std::vector<std::string>{"DYN-03", "NFR-COR-03"},
                   std::vector<std::string>{});
     // 本用例验证：非 Ok 行（NonFiniteInput）不进峰值与 RMS——NaN 不
-    // 静默转 0、不污染统计；等值窗以 Ok 行连续性为准。
+    // 静默转 0、不污染统计；等值窗以 Ok 行连续性为准；RMS 缺口零贡献。
     DynamicsSeriesBuilder b;
     for (int k = 0; k < 11; ++k) {
         DynamicsSample r = rowAt(0.1 * k, 0, 0, DynJointType::Revolute, 0.0, 0.5, 0.0,
@@ -658,10 +662,79 @@ TEST(DynEnvelope, NonOkRowsExcludedFromStatistics)
     EXPECT_DOUBLE_EQ(peaks[0].value, 2.0) << "τ_max⁺ 不受 NaN 行污染";
     EXPECT_DOUBLE_EQ(peaks[4].value, 1.0) << "功率正向峰不受 NaN 行污染";
 
-    // RMS：τ 恒 2（Ok 行）——跳过 t=0.3 后相邻有效对时差补齐（0.2→0.4
-    // 的 dt=0.2），Σ=½(4+4)×1.0=4，T=1 ⇒ RMS=2。
+    // RMS：缺口区间零贡献（F-589）——正常区间 Σ=½(4+4)×0.8=3.2（9 对×
+    // dt=0.1，跨缺口对 (0.2,0.4) 不加项），T=1 ⇒ RMS²=3.2。同时钉扎与
+    // 旧插值口径（RMS²=4）的双向可区分性：断言落在零贡献侧（两口径
+    // 中点 3.6 以下——插值口径 4.0 不可能通过）。
     const double rms = calc.computeRms(series, 0);
-    expectNearRel(rms, 2.0, "跳行后 RMS 与手算梯形一致");
+    expectNearRel(rms * rms, 3.2, "缺口零贡献分段积分 Σ/T_cycle（F-589 口径）");
+    EXPECT_LT(rms * rms, 3.6)
+        << "实值须落在零贡献侧（RMS²=3.2），排除旧插值口径（RMS²=4.0）";
+}
+
+/**
+ * 用例 9b：缺口零贡献专项钉（audit F-589——非恒值网格下与插值口径的
+ * 正向区分；用例 9 的 τ 恒值网格只能区分总量，本用例用跳变 τ/P 使
+ * "插值补值"与"零贡献"的差被显式放大并逐项断言）。
+ *
+ * 网格：t=0,0.1,0.2,(0.3 缺口),0.4,0.5；τ=[2,2,2,NaN,4,4] N·m、
+ * qd=[1,1,1,NaN,−0.5,−0.5] rad/s（P=τ·qd=[2,2,2,NaN,−2,−2] W——行内
+ * 恒等式自洽）。
+ *   RMS²：正常对 (0,0.1)(0.1,0.2) 各 ½(4+4)×0.1=0.4、对 (0.4,0.5)
+ *   ½(16+16)×0.1=1.6、跨缺口对 (0.2,0.4) 零贡献 ⇒ Σ=2.4，T=0.5
+ *   ⇒ RMS²=4.8（插值口径该对=½(4+16)×0.2=2.0 ⇒ Σ=4.4、RMS²=8.8——
+ *   断言两侧可区分）；
+ *   E⁺：0.2+0.2+0+0=0.4 J（插值口径缺口对 ½(2+0)×0.2=0.2 ⇒ 0.6 J）；
+ *   E⁻：0+0+0+(−0.2)=−0.2 J（插值口径缺口对 ½(0−2)×0.2=−0.2 ⇒ −0.4 J）；
+ *   T_cycle=0.5 s（缺口时长保留在分母——meanPower=E_net/T=0.4 W）。
+ */
+TEST(DynEnvelope, GapZeroContributionNotInterpolated_F589)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-03", "NFR-COR-03"},
+                  std::vector<std::string>{});
+    // 本用例验证：跨缺口区间不按相邻有效行插值补值——RMS 分段积分与
+    // 功率能量分项的缺口区间贡献均为 0（公共头契约原文口径），缺口时长
+    // 仍计入分母 T_cycle（保守低估）。
+    const double t[5] = {0.0, 0.1, 0.2, 0.4, 0.5};         // s（0.3 为缺口位）
+    const double tau[5] = {2.0, 2.0, 2.0, 4.0, 4.0};       // N·m
+    const double qd[5] = {1.0, 1.0, 1.0, -0.5, -0.5};      // rad/s
+
+    DynamicsSeriesBuilder b;
+    for (int k = 0; k < 6; ++k) {   // 时间升序逐行喂入（构建器拒绝时间倒退）
+        if (k == 3) {
+            // t=0.3 缺口行（NonFiniteInput——τ/P 均为 NaN，占位值不入统计）。
+            DynamicsSample gap = rowAt(0.3, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0,
+                                       std::numeric_limits<double>::quiet_NaN(),
+                                       std::numeric_limits<double>::quiet_NaN());
+            gap.numericState = SampleNumericState::NonFiniteInput;
+            b.addSample(gap);
+            continue;
+        }
+        // Ok 行下标映射：k∈{0,1,2}→t[k]、k∈{4,5}→t[k−1]（0.4/0.5 两个
+        // 位置——数组 t/tau/qd 前 3 项与末 2 项为 Ok 行数据）。
+        const std::size_t ok = (k < 3) ? static_cast<std::size_t>(k)
+                                       : static_cast<std::size_t>(k - 1);
+        b.addSample(rowAt(t[ok], 0, 0, DynJointType::Revolute, 0.0, qd[ok], 0.0, tau[ok],
+                          tau[ok] * qd[ok]));
+    }
+    const DynamicsSeries series = b.finalize(makeIdentity("gap-pin", 6));
+    ASSERT_EQ(series.validity.completeness, DynamicsValidity::Completeness::Partial);
+
+    const DynamicsEnvelopeCalculator env;
+    const double rms = env.computeRms(series, 0);
+    expectNearRel(rms * rms, 4.8, "缺口零贡献 RMS²=Σ/T=2.4/0.5（F-589）");
+    EXPECT_LT(rms * rms, 6.8)
+        << "实值须远离插值口径 RMS²=8.8（两口径中点 6.8 以下）";
+
+    PowerEnergyCalculator pe;
+    const PowerEnergySummary sum = pe.compute(series);
+    ASSERT_EQ(sum.joints.size(), 1u);
+    EXPECT_TRUE(sum.timeParamAvailable);
+    expectNearRel(sum.joints[0].positiveEnergyJ, 0.4, "E⁺ 缺口区间零贡献");
+    expectNearRel(sum.joints[0].negativeEnergyJ, -0.2, "E⁻ 缺口区间零贡献");
+    expectNearRel(sum.joints[0].netEnergyJ, 0.2, "E_net=E⁺+E⁻ 恒等式保持");
+    EXPECT_NEAR(sum.cycleDurationS, 0.5, 1e-12)
+        << "缺口时长保留在分母 T_cycle（保守低估口径——不剔除时间）";
 }
 
 /**
