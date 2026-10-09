@@ -554,6 +554,10 @@ CanonicalModel CanonicalModelCompiler::runStagesOneToFive(const CompileRequest& 
     }
     // 默认 TCP＝首项（MDL-13/04：tools 首项为默认 TCP——确定性下标 0；
     // tools 为空时 nullopt（builder 约束：与 tools 空判一致）。
+    // 注意：此下标在 S5 此刻按 Description 声明序选定（权威语义锚定）；
+    // builder 第 11 步按 ObjectId 排序 tools 后会以"排序前被指工具的
+    // ObjectId"重定位该下标（audit F-584）——排序只改存储序，不改
+    // "默认 TCP＝Description 首项"这一 MDL-13/KIN-14 权威语义。
     const std::optional<std::uint32_t> defaultTcpIndex =
         tools.empty() ? std::optional<std::uint32_t>{} : std::optional<std::uint32_t>{0u};
 
