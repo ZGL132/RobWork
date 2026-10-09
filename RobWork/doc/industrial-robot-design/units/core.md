@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.11（CORE-T10 文档与门禁同步；v0.4~v0.10＝CORE-T02~T08 落位登记；v0.2/v0.3＝FOUNDATION-CR-01 契约审查与 P-ENV-1 消账；v0.1＝首版草案） |
+| 文档版本 | v0.12（F-618 诊断面 schema 演进——§4.8 DiagnosticLevel 词表＋DiagnosticRecord.level 字段增列（尾追加，缺省 Error）＋序列化兼容口径＋§5.7 签名同步；v0.11＝CORE-T10 文档与门禁同步；v0.4~v0.10＝CORE-T02~T08 落位登记；v0.2/v0.3＝FOUNDATION-CR-01 契约审查与 P-ENV-1 消账；v0.1＝首版草案） |
 | 日期 | 2026-09-11 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-CORE |
@@ -420,6 +420,8 @@ core **不持有**任何业务阈值：第 1/2/3 项（IK 容差，分析配置�
 | `.context` | `std::string` | 是 | 上下文描述（用户可见文案的措辞权威在 diagnostics/ui；本字段为承载） |
 | `.cause`、`.recommendedAction` | `std::string` | 是 | 原因、建议动作（同上） |
 | `.comparison` | `std::optional<ComparativeFields>` | 条件 | 比较型校验必填（UX-03 三要素）；非比较型为空 |
+| `.level` | `DiagnosticLevel` | 否（缺省 `Error`） | **级别（F-618，2026-10-10 增列——字段表尾追加，既有字段语义零改写）**：阻断轴级别，词表两值 `Error`/`Warning`。`Error`＝阻断级（发布模型诊断块拒绝——runtime §4.3.5 按级别拒绝）；`Warning`＝警告级（不阻断，随模型诊断块发布）。**缺省语义＝`Error`**（fail-closed：警告产生路径必须显式声明 `Warning`，漏标在 builder 可见地被拒而非静默放行——警告误标为错误的失败方向是"该发的发不出"，不是"该拦的没拦"）。级别与 diagnostics `DiagnosticSeverity`（4 值呈现轴）正交：注册表 severity=Error ⇒ level=Error，其余 severity ⇒ level=Warning（映射在 diagnostics 注册期验证强制，core 不承载映射） |
+| `DiagnosticLevel` | 枚举（core 承载） | — | `Error`/`Warning` 两值（F-618 词表冻结；一经交付只允许表尾追加并走单元卡增量修订）。置于 core 的依据：runtime builder 按 `record.level` 拒绝（§4.3.5），而 runtime 不链接 diagnostics（只经 core 契约承载）——级别承载必须可达 runtime |
 | `ComparativeValue.quantity` | `SourcedValue<double>` | 是 | 实际/期望侧数值：可 `NotApplicable`（不适用显式标记）或 `Invalid`（保留原输入） |
 | `ComparativeValue.unit` | `UnitToken` | 是 | 已注册 token（显示单位；经 core 单位表产生标签） |
 | `ComparativeFields.actual/.expected` | `ComparativeValue` | 是 | 实际值/期望值两侧 |
@@ -435,6 +437,8 @@ core **不持有**任何业务阈值：第 1/2/3 项（IK 容差，分析配置�
 - C-3：`DiagnosticRecord` 工厂校验 code 句法与必填串非空。
 
 数据边界：确认**决策记录**随命令摘要持久化（project）；凭据的真伪/重放校验归 project 命令服务；core 不存任何确认状态机之外的状态（`Rejected` 的后续处置——阻止应用——归 project，§7.1）。
+
+序列化兼容口径（F-618 登记）：`DiagnosticRecord` 进入的 canonical/持久化布局（模型诊断块等）**新增字段一律记录尾追加**，读取方按各编码面自身的版本纪律处置（runtime RT-Codec：结构版本 minor 升版承载，版本不符显式拒绝——见 runtime §4.5；消费方自持布局同口径：尾追加＋版本面升版，不做就地插位）。
 
 ### 4.9 共享事件与端口基础契约（`Events.hpp`）
 
@@ -683,7 +687,9 @@ struct DiagnosticRecord {
     std::optional<std::string> localName, runtimeName;
     std::string context, cause, recommendedAction;
     std::optional<ComparativeFields> comparison;
-    static DiagnosticRecord make(/*上列字段*/);      // C-3 校验；违约抛 CoreError
+    DiagnosticLevel level = DiagnosticLevel::Error;  // F-618 增列（尾追加；缺省 Error）
+    static DiagnosticRecord make(/*上列字段*/, DiagnosticLevel level = DiagnosticLevel::Error);
+                                                     // C-3 校验；违约抛 CoreError
 };
 
 enum class ConfirmationState { Pending, Confirmed, Rejected };
@@ -985,6 +991,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 | v0.9 | 2026-09-11 | CORE-T07（≙WP-03-T07）落位登记：§4.8/§5.7 DiagCode 句法（^[A-Z0-9]+(-[A-Z0-9]+)*\$ ≤64）＋DiagnosticRecord 工厂（C-3 必填串非空）＋ComparativeFields/ComparativeValue（SourcedValue 承载复用——不适用/非法侧语义不另设）＋ConfirmableFinding（C-1 比较型强制＋C-2 凭据一致性＋状态机前置）按原文契约实现，接口零偏差；CR-08 遵守（core 仅承载句法——码值权威归 diagnostics StableCodeRegistry） |
 | v0.10 | 2026-09-11 | CORE-T08（≙WP-03-T08）落位登记：①§4.9/§5.8 四类领域事件（RevisionCommitted/DependencyInvalidated/TaskStatusChanged/ResultArchived——token 冻结）＋四载荷（首修订无 parent；失效不携带对象清单；归档不携带路径——防 DTO 膨胀）＋DomainEvent 工厂（kind↔variant 一致性由构造路径保证）＋访问守卫（错配抛 core/events/kind-payload）按原文契约实现；②总线/sink/订阅接口归 core，实现归 execution·ui（L5 注入）；③测试内参考总线 ReferenceEventBus（FIFO/幂等退订/多订阅）为 §5.8 语义钉子——不进产品链接面（T-1 由生产面扫描钉住） |
 | v0.11 | 2026-09-11 | CORE-T10（≙WP-03-T10）文档与门禁同步：①README 落位状态更新（九公共头模块＋测试体清单——任务指向零偏差核对）；②§10.2 P-D-1/P-AR-3 事实性关闭（五消费卡交叉核对＋evidence §3.4 回复落卡，引用 governance-log §1.1/O-24 同源）；③UT-BUILD 并入 CI 建议：已由 WP-01-T02 交付的 gate-all.ps1＋ci/ 模板承载（红线扫描与 UT-BUILD 同源——消账至 wp01-t02 交付记录，WP-01-T02 已 done 无需再提交）；④P-AR-1/P-AR-2 维持 open（架构所有者）；⑤head 公共头清单：Errors/Identity/Digest/Provenance/Units/Compare/Evaluation/DiagData/Events 九模块 |
+| v0.12 | 2026-10-10 | F-618 诊断面 schema 演进（所有者裁决 2026-10-09 排期；分支 diag-schema-level，先单元卡后代码）：§4.8 增列 `DiagnosticLevel` 词表（`Error`/`Warning` 两值）与 `DiagnosticRecord.level` 字段（表尾追加，既有字段语义零改写——PA-2），**缺省语义＝`Error`**（fail-closed：警告产生路径须显式声明 `Warning`，漏标在 runtime builder 可见地被拒——§4.3.5 按级别拒绝的失败方向取舍）；工厂 `make()` 尾参缺省 `Error`，既有构造路径源码兼容零改写；登记序列化兼容口径（记录尾追加＋各编码面版本纪律，core §4.8 新增段）；级别轴与 diagnostics `DiagnosticSeverity` 呈现轴正交、映射归 diagnostics 注册期验证（core 不承载映射——CR-08 同精神）；§5.7 签名同步。实现落位与消费面适配登记见 diagnostics.md/runtime.md 同批版本 |
 
 ### 12.3 自审记录（v0.1 交付前逐项检查；自审≠实现测试≠正式验收）
 
