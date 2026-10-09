@@ -5806,6 +5806,51 @@
       "registeredAt": "2026-10-09",
       "title": "错误转译兜底路径（未登记类型→DIAG-REGISTRY-UNKNOWN-CODE）经 create 全链产出，而兜底码 paramSchema 为零参数——调用方携带非空 params（为预期目标码准备）时以 ParamSchemaMismatch 抛出，违反\"兜底路径恒不抛\"契约（转译通常发生在 catch 块内）",
       "resolution": "修复（分支 audit-p1c-fixes）：兜底产出改用清空 params 的上下文副本（兜底码 schema 本不接受调用方参数——语义无信息丢失）。sdurws_ird_diagnostics_test 115/115 通过。"
+    },
+    {
+      "id": "F-609",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "首页最近项目点击判别条件写反——UserRole 存 available，可用项点击无反应（PM-10 打开入口失效）、失效项点击反而触发打开",
+      "resolution": "修复（分支 audit-p1d-fixes）：去掉 ! 取反——可用项（toBool==true）触发 project.open。WorkbenchContent.cpp 同文件同步改动见 F-610/F-611。"
+    },
+    {
+      "id": "F-610",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "TaskPresentation::refresh() 进度基线并入传 nullopt 使三规则守恒空转、无条件接受——回退快照落在事件触发刷新路径时进度条倒退（违 §9.4 同 attempt 内 percent 单调）；且保留旧基线时丢失 attempt 轴——新 attempt 首帧被误判回退持续丢弃（进度条冻结在旧值）",
+      "resolution": "修复（分支 audit-p1d-fixes）：refresh 合并基准改为已展示行旧值/旧 attempt 调 mergeProgressDecision（Accept/AttemptReset 才更新，DropRegression 保留旧值）；无进度快照的旧值保留加 attempt 相同前置——新 attempt 不再继承旧轴（AttemptReset 可达）。"
+    },
+    {
+      "id": "F-611",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui——与 F-610 同函数）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "StageNavigationModel 观察者登记 deque<ObserverRecord>（值语义）——中段退订 erase 使其余记录引用/句柄失效：退订幂等（removed 位）与通知分发按裸地址在容器里反查会错位（静默去注册/重复通知，极端时 use-after-free）",
+      "resolution": "修复（分支 audit-p1d-fixes）：登记改 shared_ptr 堆持有（records_ 存槽位、句柄/快照持 shared_ptr）——deque 中段摘除不影响堆地址，退订/通知全程按 shared_ptr 走，removed 位跳过。回归钉 MidDequeUnsubscribeKeepsSiblingRecordsStable_F613（三观察者中段退订→混合摘除→计数精确）。sdurws_ird_ui_test 255/255 通过。"
+    },
+    {
+      "id": "F-612",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "项目树 itemSelectionChanged 空选中分支不写回 SelectionService——用户 Ctrl+点击取消选中后树与服务脱节（检查器继续显示已取消对象，refresh 把该对象重新选回树中逆转用户操作）",
+      "resolution": "修复（分支 audit-p1d-fixes）：空选中分支补 clearSelection 写回（suppress 守卫跳过程序性清空）；refresh() 的 m_tree->clear() 加 suppress 守卫（保存→恢复语境不被程序性清空打断）。"
+    },
+    {
+      "id": "F-613",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "GlobalShortcutRegistry m_shortcutByCommand 存 QShortcut* 裸指针且无 QPointer/destroyed 跟踪——接口头明文允许\"随宿主窗口销毁自动失效\"时序：宿主窗口先销毁后 detach()/attach() 对已析构 QShortcut 调 deleteLater（悬垂 UB/崩溃）",
+      "resolution": "修复（分支 audit-p1d-fixes）：m_shortcutParent/m_shortcutByCommand 改 QPointer（宿主/条目销毁自动置空）——detach 对空条目跳过、rebind 在悬垂父上跳过 new QShortcut。sdurws_ird_ui_test 255/255 通过。"
     }
   ]
 }
