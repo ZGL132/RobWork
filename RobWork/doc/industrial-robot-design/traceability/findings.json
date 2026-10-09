@@ -5536,6 +5536,69 @@
       "registeredAt": "2026-10-09",
       "title": "CsvFieldChars 预算维被按行累计记账——『CSV 单字段字符数（默认 64 KiB｜硬 1 MiB）』契约下，累计字段内容超 64 KiB 的常规 CSV 在读取中途被 IO-SEC-BUDGET-FIELD 误拒；真正的单字段限额从未生效，防御上限错误三要素 limit（65536）与实际拦截点（1 MiB+4KiB）也不一致",
       "resolution": "修复（分支 audit-p0-fixes）：Csv.cpp 交付行改逐字段与生效限额（limitOf(CsvFieldChars)）比较，超限以比较型三要素（actual＝涉事字段字节数/limit＝生效限额/unit=chars）拒读；移除逐行累计 charge（该维语义是上限判定不是累计账目）；扫描期防御上限的三要素 limit 改取实际拦截点 kFieldScanCapBytes。CsvTest 增 F572 两用例（单字段 70KiB 拒读＋800 行小字段正常读完）；红灯验证通过。"
+    },
+    {
+      "id": "F-573",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·ui）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "CommandInteractionBridge::m_revisionEpoch 为普通 uint64——noteRevisionCommitted（UI 线程）递增与 requestConfirmations（命令执行线程）读构成数据竞争（同文件 m_alive 已是 atomic，本成员遗漏）",
+      "resolution": "修复（分支 audit-p1a-fixes）：改 std::atomic<std::uint64_t>（relaxed 序——仅作修订发生与否的标注判别）。sdurws_ird_ui_test 254/254 通过。"
+    },
+    {
+      "id": "F-574",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·diagnostics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "LoggingPipeline 写失败计数 writeFailures：日志线程递增（writeLine/flushDirty/轮转）而 flush() 冲刷失败分支在调用方线程读——并发 log() 同拍递增构成数据竞争（UB）",
+      "resolution": "修复（分支 audit-p1a-fixes）：改 std::atomic<std::uint64_t>（relaxed 序，仅计数呈现）。sdurws_ird_diagnostics_test 115/115 通过。"
+    },
+    {
+      "id": "F-575",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·project）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "ProjectStoreImpl 身份查询面（projectId/schema）无锁读 m_head——与 executeCommit writer 锁内的 m_head 整体前进构成数据竞争（公共头承诺\"并发安全——内部互斥\"未兑现）",
+      "resolution": "修复（分支 audit-p1a-fixes）：m_writerMutex 加 mutable，projectId()/schema() 改 writer 锁内快照（与 QueryPort 权威元数据读面同款串行域；写侧同锁无新锁序）；canonicalPath() 维持无锁（打开期一次成形只读，登记依据）。调用点核实：归档 begin/草稿 save 等内部调用均在锁外面。sdurws_ird_project_test 254/254 通过。"
+    },
+    {
+      "id": "F-576",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·execution）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "TaskScheduler 从未向 Controller 接线派发闸（setDispatchGate 生产代码零调用点）——排队任务被取消后残留等待队列，同拍 dispatchOne 出队对 Canceled 状态机申请 DispatchDequeued（转移表无此行）抛 ExecutionError：调度循环每拍抛异常或派发停摆",
+      "resolution": "修复（分支 audit-p1a-fixes）：构造期 setDispatchGate(this)＋析构摘闸＋dispatchOne 出队前非 Queued 队头防御剔除。回归用例 QueuedCancelDoesNotPoisonDispatch_F576 红灯验证（撤修复抛 ExecutionError 矩阵外转换）。sdurws_ird_execution_test 150/150 通过。"
+    },
+    {
+      "id": "F-577",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·execution）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "WorkerSupervisor::processExit 把已退出的 worker 记录置 Idle 回池——复用面向死进程管道写派发必然失败且回池门禁（!exitProcessed）使复用本就不可达：Idle 池为僵尸滞留区（句柄滞留至析构＋死进程作业峰值被 aggregateJobMemoryBytes 永久计入→ResourceController 长期误判内存压力）",
+      "resolution": "修复（分支 audit-p1a-fixes）：按阶段 A 事实（worker 一派发一进程）正常终结改 pendingDestroy 直接销毁（Idle 池为保活模型预留，hpp Config.poolCapacity 登记口径）；聚合资格补 !exitProcessed。sdurws_ird_execution_test 150/150 通过。"
+    },
+    {
+      "id": "F-578",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·execution——原报\"requestCancelAll/abandonAllForced 绕主锁数据竞争\"）",
+      "severity": "major",
+      "status": "closed",
+      "registeredAt": "2026-10-09",
+      "title": "DrainCoordinator::requestCancelAll/abandonAllForced 公开方法遍历 Controller 任务表不自带互斥——原审查定性为与并发 submit 的数据竞争",
+      "resolution": "改判（分支 audit-p1a-fixes 核实）：逐调用点证明现网全部触达路径均在 TaskScheduler 主锁串行域内——abandonAllForced 唯一生产调用点＝poll 超阈值自动兜底（tick 段 b/c 主锁内）；requestCancelAll 生产代码零调用（shutdown 的 CancelQueuedAndWait 分支在 TaskScheduler::shutdown 主锁内自带排队取消遍历）——不构成现行竞争。处置：两方法接口注释升格线程约束为显式契约（必须主锁域内；独立装配须外部串行化），不引入防御性改锁（DrainCoordinator 独立构造，注锁为侵入式且破坏测试装配形态）。"
+    },
+    {
+      "id": "F-579",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·execution）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "WorkerSupervisor 读线程 Broken 分支未等进程终结即取退出码——正常退出收尾（写端关闭先于进程对象置位）窗内取到 STILL_ACTIVE(259) 被约定集外判 Crashed：成功任务被误报崩溃；活进程场景无兜杀成孤儿",
+      "resolution": "修复（分支 audit-p1a-fixes）：Broken 分支先有界等待（2 s）进程终结再取退出码；超时＝病态 worker，强杀兜底后按保守方向 Crashed 分类（约定集口径不变）。sdurws_ird_execution_test 150/150 通过。"
     }
   ]
 }
