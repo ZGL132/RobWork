@@ -124,8 +124,22 @@ add_library(sdurws_ird_selection STATIC
 #   src/CatalogDiff.cpp       §13.6 目录差异比较（SEL-08——型号三态＋字段级
 #                             增量＋曲线点集增量＋兼容关系增量；D-SEL-14 会话
 #                             工具，不进③端口注册表）
+# T09 增列回填实现翻译单元（卡 §3.1 组成表 Backfill 行——WP-19-T09 交付
+# 面"回填命令与合成（§12；ProjectCommandService；壳体/转子区分不重复；
+# 复算提示；StaleRevisionRejected）"；公共头 include/sdurws/ird/selection/
+# Backfill.hpp——§14.8 处理器＋§3.1 回填数据组装＋§12.4 合成内核）：
+#   src/Backfill.cpp          §12.4 物性合成（平行轴五步＋MDL-06①~③同语义
+#                             断言——壳体进合成/转子独立登记不重复计入）＋
+#                             命令/记录载荷 canonical 编解码（IRDSBFP1/
+#                             IRDSBFV1）＋回填数据组装＋§14.8 处理器
+#                             （planFromEnvelope 内核＋prepare 直通壳——
+#                             include project 公共头实现 ICommandHandler
+#                             接口、零 project 实现符号引用，链接面不变；
+#                             卡 §3.2 增量修订与两红线测试同步——见
+#                             Backfill.hpp 文件头"依赖形态登记"）
     src/Preference.cpp
-    src/CatalogDiff.cpp)
+    src/CatalogDiff.cpp
+    src/Backfill.cpp)
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：selection 公共头使用 C++17 设施（inline constexpr 变量
@@ -151,8 +165,16 @@ endif()
 # Combination/FeasibleSet/ResultFacts/Backfill）随 T03+ 任务增列。R-2
 # 红线：私有实现头不得置于 include/——本目录是 selection 唯一对外
 # 的头暴露位，实现细节头（若有）只能放 src/ 并以相对路径被实现文件包含。
+# T09 增列：project 公共头 include 路径（PUBLIC——Backfill.hpp 的
+# #include <sdurws/ird/project/CommandService.hpp> 是公共头的传递依赖，
+# 消费者必须可解析）。注意边界：这是 **include 路径不是链接边**——
+# 卡 §3.2 零 project 编译链接边不变（下方依赖红线守卫与 ird_gates SUB
+# 双面钉住链接面；ird_gates 第 3 步只拒私有面〔src/test〕路径，公共面
+# include 路径合规）。零实现符号引用纪律见 Backfill.hpp 文件头
+# "依赖形态登记"。
 target_include_directories(sdurws_ird_selection PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../project/include>)
 
 # 编译依赖：core＋evidence（卡 §3.2 边表两条编译链接边——ARCH §3.5"各
 # 业务域单元→L2/L3 公共接口"许可方向的实例化，ird_gates_whitelist.cmake
@@ -297,7 +319,15 @@ add_executable(sdurws_ird_selection_test
 # ＋不静默套用旋转传动＋混合链逐轴独立＋同轴矛盾 fail-fast；接口路径
 # 钉扎：经 IHardConstraintSelector 接口引用消费）：
 #   test/AxisOutOfScopeTest.cpp
-    test/AxisOutOfScopeTest.cpp)
+    test/AxisOutOfScopeTest.cpp
+# T09 增列回填用例组（WP-19-T09 acceptance 1/2——SEL-10/MDL-16/AT-30：
+# 合成黄金数值＋壳体/转子分轨不重复计入＋MDL-06①~③断言失败拒绝＋载荷
+# 往返＋组装拒绝族＋计划内核三态＋复算提示＋token 无点词形；接口路径
+# 钉扎：经 IDeviceBackfillCommandHandler 接口引用消费 planFromEnvelope/
+# commandType/currentPayloadVersion——prepare 壳需 HandlerContext〔构造
+# 符号在 project 库〕，单元内经内核方法全覆盖，见 BackfillTest 文件头注）：
+#   test/BackfillTest.cpp
+    test/BackfillTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -393,8 +423,15 @@ add_executable(sdurws_ird_selection_contract_test
 # static_assert 非评估器（D-SEL-14 不进③端口）＋CON-05 失效链＋锁定表
 # 只增历史隔离）：
 #   contract_test/PreferenceDiffContractTest.cpp
+# T09 增列回填契约用例组（WP-19-T09 acceptance 1/3——P-SEL-3 token 无点
+# 词形钉扎〔project §4.4.4 冻结语法 ^[a-z0-9-]{3,64}〕＋T09 批 9 码登记表
+# 表尾追加与句法权威校验＋处理器契约面（commandType/payload 版本唯一性）
+# ＋记录对象编解码契约（确定性/严格解码）＋AT-30 复算提示与不沿用标志
+# 的记录面契约）：
+#   contract_test/BackfillContractTest.cpp
     contract_test/FeasibleSetContractTest.cpp
-    contract_test/PreferenceDiffContractTest.cpp)
+    contract_test/PreferenceDiffContractTest.cpp
+    contract_test/BackfillContractTest.cpp)
 
 target_compile_features(sdurws_ird_selection_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_contract_test PROPERTIES

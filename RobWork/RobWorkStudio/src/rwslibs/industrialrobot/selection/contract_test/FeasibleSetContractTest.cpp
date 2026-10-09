@@ -74,7 +74,7 @@ TEST(SelFeasibleSetContract, TokenDiagCodeMappingClosed_WP19T06_ACC1)
     IRD_TEST_INFO(std::vector<std::string>{"SEL-06", "ERR-01", "NFR-MNT-03"},
                   std::vector<std::string>{"AT-08"});  // R1——词表↔稳定码映射封闭性
     const std::vector<DiagnosticEntry> entries = selectionCodeEntries();
-    ASSERT_EQ(entries.size(), std::size_t{45}) << "登记表全表 45 码（T02 批 17＋T06 批 28）";
+    ASSERT_EQ(entries.size(), std::size_t{54}) << "登记表全表 54 码（T02 批 17＋T06 批 28＋T09 批 9）";
 
     // 全遍历（kReasonTokenCount＝词表规模冻结值——封闭词表遍历上界）。
     for (int i = 0; i < kReasonTokenCount; ++i) {
@@ -303,11 +303,16 @@ TEST(SelFeasibleSetContract, RegistryTableT06BatchAnchors_WP19T06_ACC1)
     IRD_TEST_INFO(std::vector<std::string>{"NFR-MNT-03"},
                   std::vector<std::string>{});  // R1——T06 批登记锚（双防线冗余）
     const std::vector<DiagnosticEntry> entries = selectionCodeEntries();
-    ASSERT_EQ(entries.size(), std::size_t{45});
+    ASSERT_EQ(entries.size(), std::size_t{54});
     // T06 批首行（表尾追加起点——词表电机组首 token 码）。
     EXPECT_EQ(entries[17].code, kSelMotorTorqueContinuousInsufficient);
-    // 全表尾行（词表边界/偏好组末 token 码）。
-    EXPECT_EQ(entries.back().code, kSelUserPreferenceFiltered);
-    // T06 批码数＝28（45−17）。
-    EXPECT_EQ(entries.size() - std::size_t{17}, std::size_t{28});
+    // T06 批尾行（词表边界/偏好组末 token 码——表尾追加纪律下位置不变，
+    // 后续批次只在其后追加）。
+    EXPECT_EQ(entries[44].code, kSelUserPreferenceFiltered);
+    // T09 批首/尾锚（WP-19-T09 表尾追加 9 码——§12 回填判定序）。
+    EXPECT_EQ(entries[45].code, kSelBackfillPayloadMalformed);
+    EXPECT_EQ(entries.back().code, kSelBackfillSynthesisAssertFailed);
+    // T06 批码数＝28（45−17——T09 批追加不改变 T06 批区间）；T09 批码数＝9。
+    EXPECT_EQ(entries.size() - std::size_t{17} - std::size_t{9}, std::size_t{28});
+    EXPECT_EQ(entries.size() - std::size_t{45}, std::size_t{9});
 }

@@ -88,12 +88,17 @@ std::string readFile(const fs::path& path)
                        std::istreambuf_iterator<char>()};
 }
 
-/// selection 计算库允许 include 的他单元清单＝两条登记边（卡 §3.2 边表
-/// ——core＋evidence；白名单 "selection->…" 两行同源——表外单元 include
-/// 在此暴露，含卡面"运行时注入/端口"列点名的 policy/io/project/
-/// diagnostics/ui/runtime/drivetrain——七单元协作经端口/注入，零编译边）。
+/// selection 计算库允许 include 的他单元清单（卡 §3.2 边表——两条登记
+/// 编译链接边 core＋evidence，白名单 "selection->…" 两行同源；WP-19-T09
+/// 增列 "project"＝§14.8 回填处理器的接口实现形态消费——include project
+/// 公共头（CommandService.hpp）实现 ICommandHandler 接口，**零链接边**
+/// （产品库不链接 sdurws_ird_project——配置期守卫与本文件链接面扫描
+/// 钉住；零 project 实现符号引用的纪律见 Backfill.hpp 文件头"依赖形态
+/// 登记"，单元卡 §3.2 增量修订同步）。其余表外单元（policy/io/
+/// diagnostics/ui/runtime/drivetrain 等）的 include 仍在此暴露——协作
+/// 经端口/注入，零编译边。
 constexpr const char* kAllowedUnits[] = {
-    "core", "evidence",
+    "core", "evidence", "project",
 };
 
 /// 线性单遍注释剥离器：返回仅含"非注释字符"的文本（注释内容被空格
@@ -200,13 +205,15 @@ TEST(SelBuildRedLine, ProductFaceHasZeroQtIncludes_WP19T02_ACC1)
 }
 
 /**
- * include 面限于两条登记边（acceptance 2——卡 §3.2；R-2 跨单元只经公共
- * 头）：产品面 #include <sdurws/ird/<unit>/…> 的 <unit> 只允许 selection
- * 自身＋两条登记边单元（core/evidence）；其他单元一经出现即越界——业务
- * 域单元（modeling/requirements/kinematics/trajectory/dynamics/
- * optimization；R-1 面——selection 自身是业务域单元，不在此列）、卡面
- * "运行时注入/端口"列七单元（policy/io/project/diagnostics/ui/runtime/
- * drivetrain；SUB 面——协作经端口/注入不落编译边）。
+ * include 面限于登记集合（acceptance 2——卡 §3.2 及其 T09 增量修订；
+ * R-2 跨单元只经公共头）：产品面 #include <sdurws/ird/<unit>/…> 的
+ * <unit> 只允许 selection 自身＋两条登记边单元（core/evidence）＋
+ * project（WP-19-T09 增列——§14.8 回填处理器的接口实现形态消费，零
+ * 链接边）；其他单元一经出现即越界——业务域单元（modeling/requirements/
+ * kinematics/trajectory/dynamics/optimization；R-1 面——selection 自身
+ * 是业务域单元，不在此列）、卡面"运行时注入/端口"列其余单元（policy/
+ * io/diagnostics/ui/runtime/drivetrain；SUB 面——协作经端口/注入不落
+ * 编译边）。
  */
 TEST(SelBuildRedLine, IncludeFaceRestrictedToTwoRegisteredEdges_WP19T02_ACC2)
 {

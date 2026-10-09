@@ -1,6 +1,6 @@
 /**
  * @file   DiagCodesTest.cpp
- * @brief  selection 稳定诊断码登记表用例组（SelDiagCodes）——SEL-* 45 码
+ * @brief  selection 稳定诊断码登记表用例组（SelDiagCodes）——SEL-* 54 码
  *         全表清单纪律（T02 批 17＋T06 批表尾追加 28）、码值句法（经 core
  *         契约权威校验）与登记出处完整性（任务契约 WP-19-T02 acceptance 2
  *         ＋WP-19-T06 acceptance 1 的实现侧自证面）。
@@ -103,10 +103,22 @@ const char* kUnitCardFullTable[] = {
     "SEL-COMPUTE-FAILED",                        // （计算失败）
     "SEL-R2-CAPABILITY-DISABLED",                // 词表行 5（R2 能力未启用）
     "SEL-USER-PREFERENCE-FILTERED",              // （用户优选过滤）
+    // ---- T09 批（9 码——§12 器件回填的拒绝/定位族；批内序＝§12.1 S3
+    //      判定序：载荷结构→载荷版本→域输入→目录/安装→数据缺失→数值
+    //      范围→锁定引用→合成断言）----
+    "SEL-BACKFILL-PAYLOAD-MALFORMED",            // §12.1/§12.3（载荷结构非法）
+    "SEL-BACKFILL-PAYLOAD-VERSION-UNSUPPORTED",  // §12.3（载荷版本不受理）
+    "SEL-BACKFILL-INPUT-INVALID",                // §12.1/§12.2（域输入非法）
+    "SEL-BACKFILL-UNKNOWN-DEVICE",               // §12.1（型号不在快照主表）
+    "SEL-BACKFILL-MOUNT-MISMATCH",               // §12.2（安装关系与兼容表不一致）
+    "SEL-BACKFILL-DATA-INSUFFICIENT",            // §12.4（壳体物性缺失——整体失败）
+    "SEL-BACKFILL-RANGE-INVALID",                // §12.4（数值范围/非有限）
+    "SEL-BACKFILL-LOCK-REF-MISMATCH",            // §12.1/§12.2（锁定引用与基线不一致）
+    "SEL-BACKFILL-SYNTHESIS-ASSERT-FAILED",      // §12.4（MDL-06①~③断言失败）
 };
 
-/// 登记表码数（T02 批 17＋T06 批 28＝45——实现清单与本清单同长断言的
-/// 期望值；后续任务增码在两清单表尾同步追加）。
+/// 登记表码数（T02 批 17＋T06 批 28＋T09 批 9＝54——实现清单与本清单
+/// 同长断言的期望值；后续任务增码在两清单表尾同步追加）。
 constexpr std::size_t kExpectedCodeCount
     = sizeof(kUnitCardFullTable) / sizeof(kUnitCardFullTable[0]);
 
@@ -196,13 +208,15 @@ TEST(SelDiagCodes, CodeSyntaxViaCoreContract_WP19T02_ACC2)
 
     // 唯一书写点：常量与登记清单逐字一致（禁字符串拼码/第二处字面量
     // ——T03+ 产码路径引用常量，登记表引用同一常量，两处失同步即实现
-    // 缺陷）。抽首/中/尾三行锚定（T02 批首行/T06 批首行/全表尾行——
-    // 批边界漂移即失败）。
+    // 缺陷）。抽首/中/尾四行锚定（T02 批首行/T06 批首行/T09 批首行/
+    // 全表尾行——批边界漂移即失败）。
     EXPECT_EQ(entries[0].code, sdurws::ird::selection::kSelInputAxisOutOfScope);
     EXPECT_EQ(entries[17].code,
               sdurws::ird::selection::kSelMotorTorqueContinuousInsufficient);
+    EXPECT_EQ(entries[45].code,
+              sdurws::ird::selection::kSelBackfillPayloadMalformed);
     EXPECT_EQ(entries.back().code,
-              sdurws::ird::selection::kSelUserPreferenceFiltered);
+              sdurws::ird::selection::kSelBackfillSynthesisAssertFailed);
 }
 
 /**

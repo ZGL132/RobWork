@@ -1,8 +1,8 @@
 /**
  * @file   DiagCodes.cpp
- * @brief  selection 稳定诊断码登记表的实现——SEL-* 全表 45 码登记行清单
- *         （逐码出处与语义登记；T02 批 17 码＋T06 批表尾追加 28 码）与
- *         ReasonToken→稳定码唯一映射函数。
+ * @brief  selection 稳定诊断码登记表的实现——SEL-* 全表 54 码登记行清单
+ *         （逐码出处与语义登记；T02 批 17 码＋T06 批表尾追加 28 码＋T09
+ *         批表尾追加 9 码）与 ReasonToken→稳定码唯一映射函数。
  *
  * 设计依据：
  *   - units/selection.md §2.2（移动关节范围外纪律）、§5.3（目录业务校验
@@ -272,6 +272,38 @@ std::vector<DiagnosticEntry> selectionCodeEntries()
         {kSelUserPreferenceFiltered,
          "units/selection.md §10.3/§10.2",
          "用户优选过滤：偏好呈现结果、非工程结论——与硬能力淘汰分开（SEL-07 分轨）"},
+
+        // ---- T09 批（WP-19-T09）：§12 器件回填的拒绝/定位族（9 码）----
+        // 批内序＝§12.1 S3 判定序（载荷结构→载荷版本→域输入→目录/安装
+        // →数据缺失→数值范围→锁定引用→合成断言）；组装期与 prepare 期
+        // 共用同码（同一拒绝语义不分阶段私设第二码——NFR-MNT-03）。
+        {kSelBackfillPayloadMalformed,
+         "units/selection.md §12.1/§12.3",
+         "回填载荷结构非法：magic/截断/残余/非法标志——解码面拒绝，不产出半成品"},
+        {kSelBackfillPayloadVersionUnsupported,
+         "units/selection.md §12.3",
+         "回填载荷版本不受理：NFR-DEP-04 拒绝不猜测——升级指引面"},
+        {kSelBackfillInputInvalid,
+         "units/selection.md §12.1/§12.2",
+         "回填域输入非法：参考系词表外/轴身份保留值/同轴重复/空轴表——组装与 prepare 共用同码"},
+        {kSelBackfillUnknownDevice,
+         "units/selection.md §12.1",
+         "型号不在目录快照主表：电机或减速器查找落空——候选存在判定的组装侧"},
+        {kSelBackfillMountMismatch,
+         "units/selection.md §12.2",
+         "安装关系与兼容表不一致：§12.2 纪律 4——记录 mountKind 须与目录兼容记录一致"},
+        {kSelBackfillDataInsufficient,
+         "units/selection.md §12.4",
+         "壳体物性缺失：合成不可得→整体失败零修订（P-SEL-6 保守口径——不允许部分回填）"},
+        {kSelBackfillRangeInvalid,
+         "units/selection.md §12.4",
+         "回填数值范围非法：传动比/质量/非有限物性——NFR-COR-03 不静默置零（I-MDL-11 同口径）"},
+        {kSelBackfillLockRefMismatch,
+         "units/selection.md §12.1/§12.2",
+         "目录锁定引用与基线闭包不一致：lockObject/lockVersion 失配——引用完整性破坏"},
+        {kSelBackfillSynthesisAssertFailed,
+         "units/selection.md §12.4",
+         "合成物性断言失败：MDL-06 断言①～③同语义任一违约——回填失败零修订（硬断言轨）"},
     };
 }
 

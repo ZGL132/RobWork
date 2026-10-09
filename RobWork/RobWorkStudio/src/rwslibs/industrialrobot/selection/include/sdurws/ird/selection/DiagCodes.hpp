@@ -1,10 +1,11 @@
 /**
  * @file   DiagCodes.hpp
- * @brief  selection 稳定诊断码登记表——SEL-* 码值常量（45 码：T02 批
+ * @brief  selection 稳定诊断码登记表——SEL-* 码值常量（54 码：T02 批
  *         17 码〔卡 §2.2 范围外 1 码＋§5.3 目录业务校验 8 码＋§6.2 插值
  *         外推 1 码＋§6.3 曲线校验 4 码〔其中 REF-DANGLING 与 §5.3 同码〕
  *         ＋§9.3 组合校核 3 码〔IDENTITY-MISMATCH 两行同码〕〕＋T06 批
- *         表尾追加 28 码〔§10.3 淘汰原因词表的逐 token 稳定码建议值〕）
+ *         表尾追加 28 码〔§10.3 淘汰原因词表的逐 token 稳定码建议值〕
+ *         ＋T09 批表尾追加 9 码〔§12 器件回填的拒绝/定位族〕）
  *         与登记清单函数、ReasonToken→稳定码唯一映射函数。
  *
  * 设计依据：
@@ -291,6 +292,62 @@ inline constexpr std::string_view kSelUserPreferenceFiltered =
     "SEL-USER-PREFERENCE-FILTERED";
 
 // =====================================================================
+// T09 批（WP-19-T09）：§12 器件回填的拒绝/定位码——9 码表尾追加（登记行
+// 见 selectionCodeEntries() 表尾 T09 区块）。
+//
+// 码值构造规则（登记于单元卡 §19.3 T09 落位细化）：回填域码一律
+// SEL-BACKFILL-<语义 kebab 大写>；拒绝分类与 §12.1 S3 判定序一一对应
+// （载荷结构→载荷版本→域输入→目录/安装→数据缺失→数值范围→锁定引用
+// →合成断言）；组装期与 prepare 期共用同码（同一拒绝语义不分阶段私设
+// 第二码——NFR-MNT-03）。全部码值经 core §4.8 句法由 DiagCodesTest 校验。
+//
+// 清单序纪律不变：T09 批 9 行全部位于既有 45 行之后（表尾追加），批内
+// 序＝上方判定序，既有行不重排。
+// =====================================================================
+
+// ---- §12 回填拒绝/定位族（SEL-BACKFILL- 族）----
+
+/// payload-malformed：命令载荷结构非法（magic 头不符/截断/字节残余/非法
+/// 标志位——解码面拒绝；§12.1 S3"回填数据合法性"的载荷结构半区）。
+inline constexpr std::string_view kSelBackfillPayloadMalformed =
+    "SEL-BACKFILL-PAYLOAD-MALFORMED";
+/// payload-version-unsupported：载荷格式版本不受理（处理器受理集合外
+/// ——NFR-DEP-04 拒绝不猜测；§12.3 payload 版本策略的回填域落点）。
+inline constexpr std::string_view kSelBackfillPayloadVersionUnsupported =
+    "SEL-BACKFILL-PAYLOAD-VERSION-UNSUPPORTED";
+/// input-invalid：域输入非法（参考系词表外/轴身份保留值/同轴重复/空轴表
+/// ——组装面与 prepare 面共用同码）。
+inline constexpr std::string_view kSelBackfillInputInvalid =
+    "SEL-BACKFILL-INPUT-INVALID";
+/// unknown-device：型号不在目录快照主表（电机或减速器查找落空——§12.1
+/// S3"候选存在"的组装侧判定）。
+inline constexpr std::string_view kSelBackfillUnknownDevice =
+    "SEL-BACKFILL-UNKNOWN-DEVICE";
+/// mount-mismatch：安装关系与目录兼容表不一致（(motor, gearbox, mountKind)
+/// 无记录或不一致——§12.2 纪律 4"记录安装关系"的一致性前提）。
+inline constexpr std::string_view kSelBackfillMountMismatch =
+    "SEL-BACKFILL-MOUNT-MISMATCH";
+/// data-insufficient：壳体物性缺失（电机壳体惯量无补充/减速器壳体惯量目
+/// 录缺失且无补充——§12.4 缺失处理：合成不可得→整体失败零修订，P-SEL-6
+/// 保守口径）。
+inline constexpr std::string_view kSelBackfillDataInsufficient =
+    "SEL-BACKFILL-DATA-INSUFFICIENT";
+/// range-invalid：数值范围非法（传动比 ≤0 或非有限、质量 ≤0、非有限
+/// 物性——NFR-COR-03；I-MDL-11 ratio 口径同源）。
+inline constexpr std::string_view kSelBackfillRangeInvalid =
+    "SEL-BACKFILL-RANGE-INVALID";
+/// lock-ref-mismatch：目录锁定引用与基线闭包不一致（lockObject/lockVersion
+/// 不在基线修订 objectRefs 中或值失配——§12.1 S2/S3"目录版本存在"的
+/// 基线侧判定；引用完整性破坏＝调用方错误轨拒绝）。
+inline constexpr std::string_view kSelBackfillLockRefMismatch =
+    "SEL-BACKFILL-LOCK-REF-MISMATCH";
+/// synthesis-assert-failed：合成物性断言失败（MDL-06 断言①～③同语义
+/// ——m>0/SPD/三角不等式任一违约；§12.4 断言行"失败即回填失败零修订"
+/// ——prepare 硬断言轨，RejectedHardAssert）。
+inline constexpr std::string_view kSelBackfillSynthesisAssertFailed =
+    "SEL-BACKFILL-SYNTHESIS-ASSERT-FAILED";
+
+// =====================================================================
 // ReasonToken → 稳定码唯一映射（§10.3"SEL-* 稳定码建议值随 WP-19-T06
 // 注册"的执行点——词表 34 token 全表映射；RejectionReasonProvider.make
 // 回填 diagRef 与 FeasibleSetBuilder 输出回填共用本函数，禁第二处映射）
@@ -332,15 +389,18 @@ struct DiagnosticEntry {
 };
 
 /**
- * @brief 产出 SEL-* 全表（45 码＝T02 批 17＋T06 批表尾追加 28）的登记行
- *        清单（units/selection.md 登记表的物化——装配期注册进 diagnostics
- *        StableCodeRegistry 的数据源；WP-19-T03+ 产码路径的码值语义对照面）。
+ * @brief 产出 SEL-* 全表（54 码＝T02 批 17＋T06 批表尾追加 28＋T09 批
+ *        表尾追加 9）的登记行清单（units/selection.md 登记表的物化——
+ *        装配期注册进 diagnostics StableCodeRegistry 的数据源；
+ *        WP-19-T03+ 产码路径的码值语义对照面）。
  *
  * 清单序＝卡面章节序（§2.2 一码 → §5.3 表行序八码〔REF-DANGLING 兼并
  * §6.3 曲线缺失行〕→ §6.2 一码 → §6.3 表行序四码 → §9.3 表行序三码
  * 〔IDENTITY-MISMATCH 兼并行 12〕→ T06 批 28 码〔批内序＝ReasonToken
  * 词表组序：电机 11→减速器 9→组合/一致性 1→上游/数据 5→边界/偏好 2〕
- * ——确定性序，NFR-COR-02）；每次调用
+ * → T09 批 9 码〔§12 回填判定序：载荷结构→载荷版本→域输入→目录/安装
+ * →数据缺失→数值范围→锁定引用→合成断言〕——确定性序，NFR-COR-02）；
+ * 每次调用
  * 返回同序同值新清单（纯值聚合）。追加纪律：后续任务新增码只允许表尾
  * 追加并走单元卡增量修订（kinematics §9.6 行序纪律同款）——既有行
  * 不重排。

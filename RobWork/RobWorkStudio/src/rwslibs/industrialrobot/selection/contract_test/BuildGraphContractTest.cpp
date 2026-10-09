@@ -149,10 +149,13 @@ constexpr const char* kBusinessUnits[] = {
     "dynamics", "optimization",
 };
 
-/// 表外平台单元（两条登记边之外的全部平台/编排单元——卡 §3.2"运行时
+/// 表外平台单元（零编译链接边的全部平台/编排单元——卡 §3.2"运行时
 /// 注入/端口"列点名的 policy/io/project/diagnostics/ui/runtime/
-/// drivetrain 七单元＝零编译边〔SUB 面〕；其余平台单元同禁）。testkit
-/// 由 NoTestkitEdge 用例单独钉住产品面。
+/// drivetrain 七单元〔SUB 面〕；其余平台单元同禁）。本表约束的是
+/// **链接边**（target_link_libraries 目标引用）；include 面另行按
+/// IncludeFaceMatchesRegisteredEdges 的登记集合判定（project 自
+/// WP-19-T09 起允许接口实现形态的公共头 include——零链接边不变）。
+/// testkit 由 NoTestkitEdge 用例单独钉住产品面。
 constexpr const char* kExtraPlatformUnits[] = {
     "policy", "io", "project", "diagnostics", "runtime",
     "drivetrain", "reporting", "workflow",
@@ -331,10 +334,13 @@ TEST(SelBuildGraph, NoTestkitEdgeOnProductTarget_WP19T02_ACC1)
 /**
  * include 面与构建图同界（acceptance 2——源码面半区）：include/＋src/
  * 的 #include 指令行出现的单元段只允许 selection 自身＋两条登记边单元
- * （与 BuildRedLineTest 的两边界白名单同判据；此处以"集合封闭"口径复核
- * ——两个独立实现的同界断言互为防线）。业务对端面契约（evidence 评估
- * 器注册/切片依赖声明 fake 套件）随 WP-19-T03+ 在测试面建立，不改产品
- * 编译边。
+ * ＋project（WP-19-T09 增列——§14.8 回填处理器 include project 公共头
+ * 实现 ICommandHandler 接口，零链接边；与 BuildRedLineTest 的白名单
+ * 同判据；此处以"集合封闭"口径复核——两个独立实现的同界断言互为防
+ * 线）。链接面不变：project 仍属零编译链接边（本文件目标引用扫描与
+ * CMakeLists 配置期守卫钉住——单元卡 §3.2 T09 增量修订同步）。业务对
+ * 端面契约（evidence 评估器注册/切片依赖声明 fake 套件）随 WP-19-T03+
+ * 在测试面建立，不改产品编译边。
  */
 TEST(SelBuildGraph, IncludeFaceMatchesRegisteredEdges_WP19T02_ACC2)
 {
@@ -342,12 +348,12 @@ TEST(SelBuildGraph, IncludeFaceMatchesRegisteredEdges_WP19T02_ACC2)
                   std::vector<std::string>{});
 
     const auto included = collectIncludedUnits();
-    std::set<std::string> allowed = {"selection"};
+    std::set<std::string> allowed = {"selection", "project"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(u);
     }
     for (const auto& unit : included) {
         EXPECT_NE(allowed.find(unit), allowed.end())
-            << "产品面 include 越界单元（两条登记边外——R-1/R-2）: " << unit;
+            << "产品面 include 越界单元（登记集合外——R-1/R-2）: " << unit;
     }
 }
