@@ -1,0 +1,7 @@
+ird-catalog-v1
+curve_id,owner_kind,owner_model_id,x_quantity,x_unit,y_quantity,y_unit,x_value,y_value,point_index
+c101-power,motor,M-101,speed,rad/s,power,W,100,800,0
+c101-power,motor,M-101,speed,rad/s,power,W,200,1600,1
+c101-power,motor,M-101,speed,rad/s,power,W,300,2400,2
+c201-torque,gearbox,M-999,speed,rad/s,torque,N*m,50,150,0
+c201-torque,gearbox,M-999,speed,rad/s,torque,N*m,300,90,1

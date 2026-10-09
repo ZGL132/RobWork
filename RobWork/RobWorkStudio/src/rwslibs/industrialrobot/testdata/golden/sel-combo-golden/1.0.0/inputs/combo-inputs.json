@@ -1,0 +1,175 @@
+{
+  "schema": "sel-combo-inputs/1",
+  "note": "组合校核黄金输入——黄金目录业务模型（与 sel-catalog/sel-screening 同源）＋组合指派表＋关节侧工作点事实＋筛选条件（全不启用）。电机侧映射事实由生成脚本按 c＝1/n 解析换算（expected 侧同源推导；本 inputs 不重复承载——消费测试从 expected.cases[].mappingFacts 读取并组装 MappingBatchFacts，防止双处漂移）。",
+  "identity": {
+    "catalogId": "cat-sel-golden",
+    "version": "1.0.0",
+    "source": "黄金器件目录（selection 契约测试同源数据——WP-19-T11）"
+  },
+  "axes": {
+    "j3": "obj-00000000000000000000000000000303",
+    "j4": "obj-00000000000000000000000000000404"
+  },
+  "motors": [
+    {
+      "modelId": "M-101",
+      "ratedTorque": 8,
+      "peakTorque": 20,
+      "ratedSpeed": 150,
+      "maxSpeed": 300,
+      "ratedPower": 2200,
+      "mass": 5.5,
+      "rotorInertia": 0.012,
+      "powerCurveId": "c101-power"
+    },
+    {
+      "modelId": "M-102",
+      "ratedTorque": 3,
+      "peakTorque": 8,
+      "ratedSpeed": 150,
+      "maxSpeed": 250,
+      "ratedPower": 600,
+      "mass": 3.2,
+      "rotorInertia": 0.02,
+      "powerCurveId": null
+    }
+  ],
+  "gearboxes": [
+    {
+      "modelId": "G-201",
+      "ratedOutputTorque": 120,
+      "peakOutputTorque": 240,
+      "maxInputSpeed": 300,
+      "ratio": 50,
+      "efficiency": 0.92,
+      "mass": 6.5
+    },
+    {
+      "modelId": "G-202",
+      "ratedOutputTorque": 60,
+      "peakOutputTorque": 120,
+      "maxInputSpeed": 250,
+      "ratio": 100,
+      "efficiency": 0.8,
+      "mass": 3
+    }
+  ],
+  "compatPairs": [
+    {
+      "motorId": "M-101",
+      "gearboxId": "G-201"
+    },
+    {
+      "motorId": "M-101",
+      "gearboxId": "G-202"
+    },
+    {
+      "motorId": "M-101",
+      "gearboxId": "G-203"
+    },
+    {
+      "motorId": "M-102",
+      "gearboxId": "G-201"
+    },
+    {
+      "motorId": "M-103",
+      "gearboxId": "G-201"
+    }
+  ],
+  "combos": [
+    {
+      "id": "K1",
+      "axes": [
+        {
+          "axis": "j3",
+          "motor": "M-101",
+          "gearbox": "G-201"
+        },
+        {
+          "axis": "j4",
+          "motor": "M-101",
+          "gearbox": "G-201"
+        }
+      ]
+    },
+    {
+      "id": "K2",
+      "axes": [
+        {
+          "axis": "j3",
+          "motor": "M-101",
+          "gearbox": "G-202"
+        },
+        {
+          "axis": "j4",
+          "motor": "M-101",
+          "gearbox": "G-202"
+        }
+      ]
+    },
+    {
+      "id": "K3",
+      "axes": [
+        {
+          "axis": "j3",
+          "motor": "M-102",
+          "gearbox": "G-201"
+        },
+        {
+          "axis": "j4",
+          "motor": "M-102",
+          "gearbox": "G-201"
+        }
+      ]
+    },
+    {
+      "id": "K4",
+      "axes": [
+        {
+          "axis": "j3",
+          "motor": "M-102",
+          "gearbox": "G-202"
+        },
+        {
+          "axis": "j4",
+          "motor": "M-101",
+          "gearbox": "G-201"
+        }
+      ]
+    }
+  ],
+  "jointFacts": {
+    "j3": {
+      "caseId": "case-A",
+      "jointTorqueRms": 40,
+      "jointTorquePeak": 100,
+      "jointSpeedPeak": 5.5,
+      "atTime": 1.5,
+      "segmentId": "seg-A"
+    },
+    "j4": {
+      "caseId": "case-A",
+      "jointTorqueRms": 8,
+      "jointTorquePeak": 20,
+      "jointSpeedPeak": 5,
+      "atTime": 1.5,
+      "segmentId": "seg-A"
+    }
+  },
+  "criteria": {
+    "note": "全不启用（SF=1.0；工作制/电压/温度/回隙/寿命/效率/速比范围均未配置）",
+    "safetyFactor": 1,
+    "requiredDutyClass": ""
+  },
+  "inertiaRule": {
+    "referenceMaxRatio": null,
+    "source": ""
+  },
+  "mappingBatchIdentity": {
+    "mappingContractVersion": 1,
+    "mappingAlgorithmVersion": 1,
+    "upstreamSliceId": "0000000000000000000000000000000000000000000000000000000000000000",
+    "completeness": "Complete",
+    "mappingFailed": false
+  }
+}

@@ -1,0 +1,7 @@
+ird-catalog-v1
+motor_model_id,gearbox_model_id,mount_kind
+M-101,G-201,flange-mount
+M-101,G-202,flange-mount
+M-101,G-203,flange-mount
+M-102,G-201,flange-mount
+M-103,G-201,flange-mount

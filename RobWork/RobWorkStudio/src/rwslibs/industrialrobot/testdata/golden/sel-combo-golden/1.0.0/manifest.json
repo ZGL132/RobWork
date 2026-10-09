@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "sel-combo-golden",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "sel/combo-golden",
+  "coveredRequirements": [
+    "SEL-05",
+    "SEL-06",
+    "DYN-04",
+    "NFR-COR-01",
+    "NFR-COR-02"
+  ],
+  "coveredAt": [
+    "AT-08",
+    "AT-38"
+  ],
+  "toleranceProfile": {
+    "id": "sel-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/combo-inputs.json"
+  ],
+  "expected": [
+    "expected/combo-expected.json"
+  ],
+  "parameters": {
+    "contract": "组合校核黄金算例（SEL-05 经共享映射校核——黄金联动面）——WP-19-T11 主数据载体之一。四组合：K1（双轴 M-101+G-201 全维通过——Feasible＋格 note 惯量比未判定标注）、K2（c=0.01 下电机峰值转速/减速器输入转速双超限——Rejected）、K3（J3 轴 275>250 超限与 J4 轴 250=250 恰好满足并存）、K4（J3 轴 M-102+G-202 兼容表无记录——ComboIncompatible 双保险核对面）。",
+    "entryFaces": {
+      "mappingFacts": "expected/cases[*].mappingFacts[]——逐组合逐轴电机侧映射事实（消费测试组装 MappingBatchFacts 的数值事实源；c＝1/n 解析换算 τ_m＝c·τ_joint、ω_m＝ω_joint/c、P＝τ_m·ω_m；ω_m_rms/惯量比/反射惯量 J_rotor/c² 为给定事实——黄金联动单点在生成脚本）",
+      "check": "expected/cases[*].check——组合级黄金（verdict/reasons 稳定排序/组合兼容原因 actualText=M+G 词面/coverage 逐格 verdict 与 note/totalMass 质量核算）",
+      "identity": "AT-38 三方身份一致：直调路径 upstreamSliceId 全零（诚实标记——无映射切片身份可携带）；组合目录身份与快照一致（CatalogVersionIncompatible 反例由 T05 既有单测承载）",
+      "inertia": "惯量比规则未配置（R1 默认态——O-11/P-POL-3 未裁决）：inertiaRatioUnsettled=true＋Feasible 格 note 追加 inertia-ratio-policy-unsettled——不产生淘汰原因不阻断（§11.3）"
+    }
+  },
+  "units": {
+    "torque": "N*m",
+    "speed": "rad/s",
+    "power": "W",
+    "inertia": "kg*m^2",
+    "mass": "kg",
+    "time": "s",
+    "ratio": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "本数据集全部量为关节轴系/电机轴系标量（单元卡 §13.0——本卡无世界系量）；轴对象以固定 canonical ID（obj-…0303/0404）承载"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "组合级判定复算（§9.3 清单——组合兼容/轴级能力维度/格聚合/质量核算/verdict 汇总）与映射事实解析换算（c＝1/n——drivetrain 卡 §5.3 归一化传动比口径）",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_combo_golden.mjs——组合级规则按 §9 直写＋映射事实按 c＝1/n 封闭代数直算，与产品 CombinationCheck.cpp（零映射公式）及 drivetrain 映射核心均零共享代码）推导"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.x",
+    "algorithmId": "sel-combo-golden-closed-form",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/combo-expected.json#cases[K1].check（全维通过零原因零缺口——Feasible 基准面）",
+      "expected/combo-expected.json#cases[K3].check.coverage（J4 轴 250=250 恰好满足边界——C7 角速度容差内格 Pass；J3 轴 275>250 格 Fail——同组合双轴正反面并存）",
+      "expected/combo-expected.json#cases[K4].check.reasons[2]（ComboIncompatible——组合级原因 actualText=M-102+G-202 词面、与轴级能力原因稳定排序并存）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/combo-inputs.json",
+      "sha256": "f2b9193a50ceae615cb4bd31a6a9a484aac8e58b7534192096f2d710f0d401ae",
+      "sizeBytes": 3928
+    },
+    {
+      "path": "expected/combo-expected.json",
+      "sha256": "00e4c67a280058e1c13f84c1c2795a27eb03a27525a97ed17edcd489e8d5811e",
+      "sizeBytes": 10680
+    },
+    {
+      "path": "generate/make_sel_combo_golden.mjs",
+      "sha256": "2c9e2fb2f9f1d66cffa0864e78f7c1bd51da69b6e17bffa3c0a07a64dd9b9ff8",
+      "sizeBytes": 19691
+    }
+  ],
+  "generator": {
+    "script": "generate/make_sel_combo_golden.mjs",
+    "invocation": "node generate/make_sel_combo_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "首版：组合校核黄金算例（四组合——Feasible 基准/转速超限/恰好满足边界/兼容双保险；totalMass 经容差档案对照）——WP-19-T11 交付物",
+      "reReviewedBy": "WP-19-T11 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

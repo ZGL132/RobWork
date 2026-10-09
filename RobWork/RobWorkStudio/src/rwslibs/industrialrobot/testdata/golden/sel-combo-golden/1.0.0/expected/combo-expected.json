@@ -1,0 +1,358 @@
+{
+  "schema": "sel-combo-expected/1",
+  "note": "组合校核黄金——由 generate/make_sel_combo_golden.mjs 按 §9.3/§9.4 冻结语义复算（组合级原因 token 词表序稳定排序；格聚合原因优先→缺口次之；惯量比未配置＝未判定态——Feasible 格 note 追加 inertia-ratio-policy-unsettled；totalMass＝Σ 各轴电机＋减速器质量）。mappingFacts 为消费测试组装 MappingBatchFacts 的数值事实源（c＝1/n 解析换算——黄金联动单点在本脚本）。",
+  "cases": [
+    {
+      "id": "K1",
+      "mappingFacts": [
+        {
+          "combinationId": "K1",
+          "axisRef": "j3",
+          "caseId": "case-A",
+          "motorTorqueRms": 0.8,
+          "motorTorquePeak": 2,
+          "motorSpeedPeak": 275,
+          "motorSpeedRms": 100,
+          "motorPowerPeak": 550,
+          "motorPowerRms": 80,
+          "peakDuration": 2,
+          "peakAtTime": 1.5,
+          "peakSegmentId": "seg-A",
+          "inertiaRatio": 3,
+          "reflectedInertia": 30,
+          "efficiencyApplied": true
+        },
+        {
+          "combinationId": "K1",
+          "axisRef": "j4",
+          "caseId": "case-A",
+          "motorTorqueRms": 0.16,
+          "motorTorquePeak": 0.4,
+          "motorSpeedPeak": 250,
+          "motorSpeedRms": 110,
+          "motorPowerPeak": 100,
+          "motorPowerRms": 17.6,
+          "peakDuration": 1,
+          "peakAtTime": 1.5,
+          "peakSegmentId": "seg-A",
+          "inertiaRatio": 1.5,
+          "reflectedInertia": 30,
+          "efficiencyApplied": true
+        }
+      ],
+      "check": {
+        "combinationId": "K1",
+        "verdict": "Feasible",
+        "totalMass": 24,
+        "reasons": [],
+        "gaps": [],
+        "inertiaRatioUnsettled": true,
+        "coverage": [
+          {
+            "combinationId": "K1",
+            "caseId": "case-A",
+            "verdict": "Feasible",
+            "axisRef": null,
+            "atTime": 0,
+            "segmentId": "",
+            "note": "pass;inertia-ratio-policy-unsettled"
+          }
+        ]
+      }
+    },
+    {
+      "id": "K2",
+      "mappingFacts": [
+        {
+          "combinationId": "K2",
+          "axisRef": "j3",
+          "caseId": "case-A",
+          "motorTorqueRms": 0.4,
+          "motorTorquePeak": 1,
+          "motorSpeedPeak": 550,
+          "motorSpeedRms": 100,
+          "motorPowerPeak": 550,
+          "motorPowerRms": 40,
+          "peakDuration": 2,
+          "peakAtTime": 1.5,
+          "peakSegmentId": "seg-A",
+          "inertiaRatio": 3,
+          "reflectedInertia": 120,
+          "efficiencyApplied": true
+        },
+        {
+          "combinationId": "K2",
+          "axisRef": "j4",
+          "caseId": "case-A",
+          "motorTorqueRms": 0.08,
+          "motorTorquePeak": 0.2,
+          "motorSpeedPeak": 500,
+          "motorSpeedRms": 110,
+          "motorPowerPeak": 100,
+          "motorPowerRms": 8.8,
+          "peakDuration": 1,
+          "peakAtTime": 1.5,
+          "peakSegmentId": "seg-A",
+          "inertiaRatio": 1.5,
+          "reflectedInertia": 120,
+          "efficiencyApplied": true
+        }
+      ],
+      "check": {
+        "combinationId": "K2",
+        "verdict": "Rejected",
+        "totalMass": 17,
+        "reasons": [
+          {
+            "token": "SpeedInsufficient",
+            "tokenOrdinal": 2,
+            "candidateModelId": "M-101",
+            "axisRef": "j3",
+            "caseId": "case-A",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "actual": 550,
+            "required": 300,
+            "unit": "rad/s",
+            "thresholdSource": "目录 max_speed（最高转速）"
+          },
+          {
+            "token": "SpeedInsufficient",
+            "tokenOrdinal": 2,
+            "candidateModelId": "M-101",
+            "axisRef": "j4",
+            "caseId": "case-A",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "actual": 500,
+            "required": 300,
+            "unit": "rad/s",
+            "thresholdSource": "目录 max_speed（最高转速）"
+          },
+          {
+            "token": "InputSpeedExceeded",
+            "tokenOrdinal": 13,
+            "candidateModelId": "G-202",
+            "axisRef": "j3",
+            "caseId": "case-A",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "actual": 550,
+            "required": 250,
+            "unit": "rad/s",
+            "thresholdSource": "目录 max_input_speed（允许输入转速；ω_m 来源：映射工作点事实 motorSpeedPeak）"
+          },
+          {
+            "token": "InputSpeedExceeded",
+            "tokenOrdinal": 13,
+            "candidateModelId": "G-202",
+            "axisRef": "j4",
+            "caseId": "case-A",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "actual": 500,
+            "required": 250,
+            "unit": "rad/s",
+            "thresholdSource": "目录 max_input_speed（允许输入转速；ω_m 来源：映射工作点事实 motorSpeedPeak）"
+          }
+        ],
+        "gaps": [
+          {
+            "dimension": "power-curve",
+            "caseId": "case-A",
+            "diagCode": "SEL-CURVE-EXTRAPOLATION-DENIED"
+          },
+          {
+            "dimension": "power-curve",
+            "caseId": "case-A",
+            "diagCode": "SEL-CURVE-EXTRAPOLATION-DENIED"
+          }
+        ],
+        "inertiaRatioUnsettled": true,
+        "coverage": [
+          {
+            "combinationId": "K2",
+            "caseId": "case-A",
+            "verdict": "Rejected",
+            "axisRef": "j3",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "note": "speed-insufficient"
+          }
+        ]
+      }
+    },
+    {
+      "id": "K3",
+      "mappingFacts": [
+        {
+          "combinationId": "K3",
+          "axisRef": "j3",
+          "caseId": "case-A",
+          "motorTorqueRms": 0.8,
+          "motorTorquePeak": 2,
+          "motorSpeedPeak": 275,
+          "motorSpeedRms": 100,
+          "motorPowerPeak": 550,
+          "motorPowerRms": 80,
+          "peakDuration": 2,
+          "peakAtTime": 1.5,
+          "peakSegmentId": "seg-A",
+          "inertiaRatio": 3,
+          "reflectedInertia": 50,
+          "efficiencyApplied": true
+        },
+        {
+          "combinationId": "K3",
+          "axisRef": "j4",
+          "caseId": "case-A",
+          "motorTorqueRms": 0.16,
+          "motorTorquePeak": 0.4,
+          "motorSpeedPeak": 250,
+          "motorSpeedRms": 110,
+          "motorPowerPeak": 100,
+          "motorPowerRms": 17.6,
+          "peakDuration": 1,
+          "peakAtTime": 1.5,
+          "peakSegmentId": "seg-A",
+          "inertiaRatio": 1.5,
+          "reflectedInertia": 50,
+          "efficiencyApplied": true
+        }
+      ],
+      "check": {
+        "combinationId": "K3",
+        "verdict": "Rejected",
+        "totalMass": 19.4,
+        "reasons": [
+          {
+            "token": "SpeedInsufficient",
+            "tokenOrdinal": 2,
+            "candidateModelId": "M-102",
+            "axisRef": "j3",
+            "caseId": "case-A",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "actual": 275,
+            "required": 250,
+            "unit": "rad/s",
+            "thresholdSource": "目录 max_speed（最高转速）"
+          }
+        ],
+        "gaps": [],
+        "inertiaRatioUnsettled": true,
+        "coverage": [
+          {
+            "combinationId": "K3",
+            "caseId": "case-A",
+            "verdict": "Rejected",
+            "axisRef": "j3",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "note": "speed-insufficient"
+          }
+        ]
+      }
+    },
+    {
+      "id": "K4",
+      "mappingFacts": [
+        {
+          "combinationId": "K4",
+          "axisRef": "j3",
+          "caseId": "case-A",
+          "motorTorqueRms": 0.4,
+          "motorTorquePeak": 1,
+          "motorSpeedPeak": 550,
+          "motorSpeedRms": 100,
+          "motorPowerPeak": 550,
+          "motorPowerRms": 40,
+          "peakDuration": 2,
+          "peakAtTime": 1.5,
+          "peakSegmentId": "seg-A",
+          "inertiaRatio": 3,
+          "reflectedInertia": 200,
+          "efficiencyApplied": true
+        },
+        {
+          "combinationId": "K4",
+          "axisRef": "j4",
+          "caseId": "case-A",
+          "motorTorqueRms": 0.16,
+          "motorTorquePeak": 0.4,
+          "motorSpeedPeak": 250,
+          "motorSpeedRms": 110,
+          "motorPowerPeak": 100,
+          "motorPowerRms": 17.6,
+          "peakDuration": 1,
+          "peakAtTime": 1.5,
+          "peakSegmentId": "seg-A",
+          "inertiaRatio": 1.5,
+          "reflectedInertia": 30,
+          "efficiencyApplied": true
+        }
+      ],
+      "check": {
+        "combinationId": "K4",
+        "verdict": "Rejected",
+        "totalMass": 18.2,
+        "reasons": [
+          {
+            "token": "SpeedInsufficient",
+            "tokenOrdinal": 2,
+            "candidateModelId": "M-102",
+            "axisRef": "j3",
+            "caseId": "case-A",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "actual": 550,
+            "required": 250,
+            "unit": "rad/s",
+            "thresholdSource": "目录 max_speed（最高转速）"
+          },
+          {
+            "token": "InputSpeedExceeded",
+            "tokenOrdinal": 13,
+            "candidateModelId": "G-202",
+            "axisRef": "j3",
+            "caseId": "case-A",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "actual": 550,
+            "required": 250,
+            "unit": "rad/s",
+            "thresholdSource": "目录 max_input_speed（允许输入转速；ω_m 来源：映射工作点事实 motorSpeedPeak）"
+          },
+          {
+            "token": "ComboIncompatible",
+            "tokenOrdinal": 20,
+            "candidateModelId": "M-102",
+            "axisRef": "j3",
+            "caseId": "",
+            "atTime": 0,
+            "segmentId": "",
+            "actual": 0,
+            "required": 0,
+            "unit": "",
+            "actualText": "M-102+G-202",
+            "requiredText": "compatibility 表存在该型号对记录",
+            "thresholdSource": "compatibility.csv"
+          }
+        ],
+        "gaps": [],
+        "inertiaRatioUnsettled": true,
+        "coverage": [
+          {
+            "combinationId": "K4",
+            "caseId": "case-A",
+            "verdict": "Rejected",
+            "axisRef": "j3",
+            "atTime": 1.5,
+            "segmentId": "seg-A",
+            "note": "speed-insufficient"
+          }
+        ]
+      }
+    }
+  ]
+}

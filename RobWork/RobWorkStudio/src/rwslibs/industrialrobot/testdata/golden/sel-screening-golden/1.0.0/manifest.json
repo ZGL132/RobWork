@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "sel-screening-golden",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "sel/screening-golden",
+  "coveredRequirements": [
+    "SEL-03",
+    "SEL-04",
+    "SEL-06",
+    "SEL-09",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "coveredAt": [
+    "AT-08"
+  ],
+  "toleranceProfile": {
+    "id": "sel-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/screening-inputs.json"
+  ],
+  "expected": [
+    "expected/screening-expected.json"
+  ],
+  "parameters": {
+    "contract": "可行/不可行电机与减速器黄金表（AT-08 硬筛选面：每个淘汰项含实际值和阈值——ERR-01 比较四要素齐备）——WP-19-T11 主数据载体之一。四算例：case-heavy（全维度启用的重载工况——逐维淘汰/缺口黄金）、case-light（全维度不启用的轻载工况——六候选基准可行面）、sf-edge（安全系数复判——恰好满足边界＋加严不足）、axis-oos（移动关节轴范围外——SEL-09 阻断）。",
+    "entryFaces": {
+      "records": "expected/cases[*].records[]——逐候选×逐轴记录（id＝<modelId>|<jointCanonical>；verdict 三态；reasons 逐条 token/caseId/atTime/actual/required/unit/thresholdSource——稳定排序 token 词表序→caseId→atTime；gaps 逐条 dimension/caseId/diagCode——维度执行序）",
+      "thresholdSource": "阈值来源为登记呈现词面（筛选实现单点登记——如 目录 rated_torque_nm（额定连续转矩）/能力曲线 c101-power（speed→power，工作点转速查询））——对照断言按字面比较",
+      "tolerance": "阈值比较容差＝附录 D C7 core runtimeAbsoluteTolerance（torque/角速度 1e-9、angle/dimensionless 1e-12、其余 0）——actual/required 为工作点/能力值直取，测试侧精确相等断言不经容差档案",
+      "cancellation": "取消截断语义由 T04 既有单测承载——黄金面为完整（无截断）运行"
+    }
+  },
+  "units": {
+    "torque": "N*m",
+    "speed": "rad/s",
+    "power": "W",
+    "voltage": "V",
+    "mass": "kg",
+    "time": "s",
+    "angle": "rad",
+    "ratio": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "本数据集全部量为关节轴系/电机轴系标量工作点（无世界系量）；轴对象以固定 canonical ID（obj-…0101/0202）承载——记录键的确定性锚"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "逐维度判定复算（§7.1/§8.1 全维度——阈值比较/曲线插值/温度降额档位/外载荷力臂核算/SF 复判/verdict 汇总/稳定排序）与手算锚点（曲线插值 @130→1040 W、力臂核算 500×0.05/0.10→250 N、SF 边界 240×1.25→300 rad/s）",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_screening_golden.mjs——按单元卡 §7/§8 冻结语义逐维直写，与产品 Screening.cpp 零共享代码）推导；inputs 内另附解析锚点（第三路——防参考实现与产品实现两路同错，消费测试独立断言）"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.x",
+    "algorithmId": "sel-screening-golden-closed-form",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/screening-expected.json#cases[axis-oos].records[*].gaps[0]（零供给面——移动关节轴全部工作点 nullopt 且 atTime=0）",
+      "expected/screening-expected.json#cases[sf-edge].records[M-101]（恰好满足边界——240×1.25=300.0 与 maxSpeed 相等，C7 容差内不误淘汰）",
+      "expected/screening-expected.json#cases[case-heavy].records[M-101].reasons[2]（BrakeInsufficient actual=28>required=25 与 G-202 EfficiencyInsufficient actual=0.80<required=0.85 的正反两向比较并存）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/screening-inputs.json",
+      "sha256": "ce01c8a10ae66743a7586f546bd92e28031ad9aae0bc0c5c0da303630b1a21dd",
+      "sizeBytes": 3952
+    },
+    {
+      "path": "expected/screening-expected.json",
+      "sha256": "7a3631b845eef539e100b20d82b7ba6ac5373488ab5e6e562cc9b350c8b2a173",
+      "sizeBytes": 29293
+    },
+    {
+      "path": "generate/make_sel_screening_golden.mjs",
+      "sha256": "cb64bddcf47596d41575c07f2c18b0507fe9a290271248429c0cabd0c2c19fbb",
+      "sizeBytes": 32844
+    }
+  ],
+  "generator": {
+    "script": "generate/make_sel_screening_golden.mjs",
+    "invocation": "node generate/make_sel_screening_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "首版：可行/不可行型号黄金表（四算例 24 记录 33 原因 13 缺口——每个淘汰项含实际值/阈值/单位/阈值来源，AT-08 硬筛选面＋SEL-09 范围外面）——WP-19-T11 交付物",
+      "reReviewedBy": "WP-19-T11 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

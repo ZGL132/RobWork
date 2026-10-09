@@ -1,0 +1,226 @@
+{
+  "schema": "sel-backfill-inputs/1",
+  "note": "回填黄金输入——黄金目录引用（电机 mass/rotor、减速器 mass/housing、兼容对、锁定引用）＋逐算例组装源。全部几何量在轴连杆坐标系下表示（kBackfillFrameLink=link-frame）、全部 SI（kg/m/kg·m²）；appliedRatio 无量纲 c＝1/n。",
+  "identity": {
+    "catalogId": "cat-sel-golden",
+    "version": "1.0.0",
+    "source": "黄金器件目录（selection 契约测试同源数据——WP-19-T11）"
+  },
+  "axes": {
+    "j5": "obj-00000000000000000000000000000505",
+    "j6": "obj-00000000000000000000000000000606"
+  },
+  "lockObject": "obj-00000000000000000000000000000b01",
+  "lockVersion": 7,
+  "motor101": {
+    "modelId": "M-101",
+    "mass": 5.5,
+    "rotorInertia": 0.012
+  },
+  "gearbox201": {
+    "modelId": "G-201",
+    "mass": 6.5,
+    "housingInertia": 0.012
+  },
+  "mountKind": "flange-mount",
+  "cases": {
+    "assembled": {
+      "axisRef": "j5",
+      "motorModelId": "M-101",
+      "gearboxModelId": "G-201",
+      "mountKind": "flange-mount",
+      "linkMassKg": 12,
+      "linkComM": {
+        "x": 0.05,
+        "y": -0.02,
+        "z": 0.3
+      },
+      "linkInertia": {
+        "ixx": 0.35,
+        "iyy": 0.4,
+        "izz": 0.2,
+        "ixy": 0.01,
+        "ixz": -0.02,
+        "iyz": 0.015
+      },
+      "motorComAnchorM": {
+        "x": 0,
+        "y": 0.06,
+        "z": 0.12
+      },
+      "motorHousingInertiaSupplement": {
+        "ixx": 0.045,
+        "iyy": 0.05,
+        "izz": 0.03,
+        "ixy": 0,
+        "ixz": 0,
+        "iyz": 0
+      },
+      "gearboxComAnchorM": {
+        "x": 0,
+        "y": 0,
+        "z": 0.05
+      },
+      "appliedRatio": 0.02
+    },
+    "missingSupplement": {
+      "axisRef": "j5",
+      "motorModelId": "M-101",
+      "gearboxModelId": "G-201",
+      "mountKind": "flange-mount",
+      "linkMassKg": 12,
+      "linkComM": {
+        "x": 0.05,
+        "y": -0.02,
+        "z": 0.3
+      },
+      "linkInertia": {
+        "ixx": 0.35,
+        "iyy": 0.4,
+        "izz": 0.2,
+        "ixy": 0.01,
+        "ixz": -0.02,
+        "iyz": 0.015
+      },
+      "motorComAnchorM": {
+        "x": 0,
+        "y": 0.06,
+        "z": 0.12
+      },
+      "motorHousingInertiaSupplement": null,
+      "gearboxComAnchorM": {
+        "x": 0,
+        "y": 0,
+        "z": 0.05
+      },
+      "appliedRatio": 0.02
+    },
+    "mountMismatch": {
+      "axisRef": "j5",
+      "motorModelId": "M-101",
+      "gearboxModelId": "G-201",
+      "mountKind": "shaft-mount",
+      "linkMassKg": 12,
+      "linkComM": {
+        "x": 0.05,
+        "y": -0.02,
+        "z": 0.3
+      },
+      "linkInertia": {
+        "ixx": 0.35,
+        "iyy": 0.4,
+        "izz": 0.2,
+        "ixy": 0.01,
+        "ixz": -0.02,
+        "iyz": 0.015
+      },
+      "motorComAnchorM": {
+        "x": 0,
+        "y": 0.06,
+        "z": 0.12
+      },
+      "motorHousingInertiaSupplement": {
+        "ixx": 0.045,
+        "iyy": 0.05,
+        "izz": 0.03,
+        "ixy": 0,
+        "ixz": 0,
+        "iyz": 0
+      },
+      "gearboxComAnchorM": {
+        "x": 0,
+        "y": 0,
+        "z": 0.05
+      },
+      "appliedRatio": 0.02
+    },
+    "multiAxisAtomic": {
+      "axes": [
+        {
+          "axisRef": "j5",
+          "motorModelId": "M-101",
+          "gearboxModelId": "G-201",
+          "mountKind": "flange-mount",
+          "linkMassKg": 12,
+          "linkComM": {
+            "x": 0.05,
+            "y": -0.02,
+            "z": 0.3
+          },
+          "linkInertia": {
+            "ixx": 0.35,
+            "iyy": 0.4,
+            "izz": 0.2,
+            "ixy": 0.01,
+            "ixz": -0.02,
+            "iyz": 0.015
+          },
+          "motorComAnchorM": {
+            "x": 0,
+            "y": 0.06,
+            "z": 0.12
+          },
+          "motorHousingInertiaSupplement": {
+            "ixx": 0.045,
+            "iyy": 0.05,
+            "izz": 0.03,
+            "ixy": 0,
+            "ixz": 0,
+            "iyz": 0
+          },
+          "gearboxComAnchorM": {
+            "x": 0,
+            "y": 0,
+            "z": 0.05
+          },
+          "appliedRatio": 0.02
+        },
+        {
+          "axisRef": "j6",
+          "motorModelId": "M-101",
+          "gearboxModelId": "G-201",
+          "mountKind": "flange-mount",
+          "linkMassKg": 8,
+          "linkComM": {
+            "x": 0.02,
+            "y": 0,
+            "z": 0.2
+          },
+          "linkInertia": {
+            "ixx": 0.2,
+            "iyy": 0.22,
+            "izz": 0.12,
+            "ixy": 0,
+            "ixz": 0,
+            "iyz": 0
+          },
+          "motorComAnchorM": {
+            "x": 0,
+            "y": 0.05,
+            "z": 0.1
+          },
+          "motorHousingInertiaSupplement": null,
+          "gearboxComAnchorM": {
+            "x": 0,
+            "y": 0,
+            "z": 0.04
+          },
+          "appliedRatio": 0.02
+        }
+      ]
+    }
+  },
+  "recalcNotice": {
+    "domains": {
+      "kinematics": true,
+      "dynamics": true,
+      "selection": true,
+      "optimization": true
+    },
+    "retainPriorConclusion": false
+  },
+  "analyticAnchors": {
+    "comZ": 0.19104166666666667,
+    "mass": 24
+  }
+}

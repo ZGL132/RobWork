@@ -1,0 +1,399 @@
+{
+  "schema": "sel-catalog-expected/1",
+  "note": "目录包黄金期望——由 generate/make_sel_catalog_golden.mjs 按单元卡 §4.1/§5.1/§5.3/§6.3 冻结语义封闭推导（行号＝firstDataRowNo(3)＋数据行序；比较型字段＝源数据字面值），与产品 CatalogValidation/CatalogTypes 实现零共享。identity.contentIdentity 为产品装配入口计算面（§4.2）——输入侧全零占位，测试断言装配回填非零且确定性。",
+  "valid": {
+    "motors": [
+      {
+        "modelId": "M-101",
+        "ratedTorque": 8,
+        "peakTorque": 20,
+        "ratedSpeed": 150,
+        "maxSpeed": 300,
+        "ratedPower": 2200,
+        "overload": {
+          "torque": 20,
+          "duration": 12
+        },
+        "dutyClass": "S1",
+        "ratedVoltage": 220,
+        "thermal": {
+          "refTemp": 60,
+          "factorPerRef": 0.9
+        },
+        "brakeTorque": 25,
+        "holdingTorque": 30,
+        "rotorInertia": 0.012,
+        "mass": 5.5,
+        "mounting": {
+          "flangeKind": "flangeA",
+          "shaftKind": "shaftB"
+        },
+        "curveRefs": [
+          "c101-power"
+        ],
+        "missing": [],
+        "status": "Valid"
+      },
+      {
+        "modelId": "M-102",
+        "ratedTorque": 3,
+        "peakTorque": 8,
+        "ratedSpeed": 150,
+        "maxSpeed": 250,
+        "ratedPower": 600,
+        "overload": {
+          "torque": 8,
+          "duration": 6
+        },
+        "dutyClass": "S1",
+        "ratedVoltage": 220,
+        "thermal": null,
+        "brakeTorque": 10,
+        "holdingTorque": 12,
+        "rotorInertia": 0.02,
+        "mass": 3.2,
+        "mounting": {
+          "flangeKind": "flangeA",
+          "shaftKind": "shaftB"
+        },
+        "curveRefs": [],
+        "missing": [
+          {
+            "column": "thermal_ref_temp",
+            "reason": "cell-empty"
+          },
+          {
+            "column": "thermal_factor_per_ref",
+            "reason": "cell-empty"
+          }
+        ],
+        "status": "Partial"
+      },
+      {
+        "modelId": "M-103",
+        "ratedTorque": 10,
+        "peakTorque": 25,
+        "ratedSpeed": 200,
+        "maxSpeed": 400,
+        "ratedPower": 3500,
+        "overload": {
+          "torque": 25,
+          "duration": 15
+        },
+        "dutyClass": "S2",
+        "ratedVoltage": 380,
+        "thermal": null,
+        "brakeTorque": null,
+        "holdingTorque": null,
+        "rotorInertia": 0.03,
+        "mass": 7,
+        "mounting": {
+          "flangeKind": "flangeC",
+          "shaftKind": "shaftB"
+        },
+        "curveRefs": [],
+        "missing": [
+          {
+            "column": "brake_torque_nm",
+            "reason": "cell-empty"
+          },
+          {
+            "column": "holding_torque_nm",
+            "reason": "cell-empty"
+          },
+          {
+            "column": "thermal_ref_temp",
+            "reason": "cell-empty"
+          },
+          {
+            "column": "thermal_factor_per_ref",
+            "reason": "cell-empty"
+          }
+        ],
+        "status": "Partial"
+      }
+    ],
+    "gearboxes": [
+      {
+        "modelId": "G-201",
+        "ratedOutputTorque": 120,
+        "peakOutputTorque": 240,
+        "maxInputSpeed": 300,
+        "ratio": 50,
+        "efficiency": 0.92,
+        "backlash": 0.0015,
+        "ratedLife": 6000,
+        "mountingOrientation": "any",
+        "extLoad": {
+          "radial": 1300,
+          "axial": 800,
+          "distance": 0.16
+        },
+        "mass": 6.5,
+        "housingInertia": 0.012,
+        "mounting": {
+          "flangeKind": "flangeA",
+          "shaftKind": "shaftB"
+        },
+        "curveRefs": [
+          "c201-torque"
+        ],
+        "missing": [],
+        "status": "Valid"
+      },
+      {
+        "modelId": "G-202",
+        "ratedOutputTorque": 60,
+        "peakOutputTorque": 120,
+        "maxInputSpeed": 250,
+        "ratio": 100,
+        "efficiency": 0.8,
+        "backlash": 0.003,
+        "ratedLife": 4000,
+        "mountingOrientation": "any",
+        "extLoad": {
+          "radial": 500,
+          "axial": 600,
+          "distance": 0.05
+        },
+        "mass": 3,
+        "housingInertia": 0.006,
+        "mounting": {
+          "flangeKind": "flangeA",
+          "shaftKind": "shaftB"
+        },
+        "curveRefs": [],
+        "missing": [],
+        "status": "Valid"
+      },
+      {
+        "modelId": "G-203",
+        "ratedOutputTorque": 200,
+        "peakOutputTorque": 400,
+        "maxInputSpeed": 300,
+        "ratio": 30,
+        "efficiency": 0.95,
+        "backlash": null,
+        "ratedLife": 8000,
+        "mountingOrientation": "up",
+        "extLoad": null,
+        "mass": 9,
+        "housingInertia": 0.02,
+        "mounting": {
+          "flangeKind": "flangeA",
+          "shaftKind": "shaftB"
+        },
+        "curveRefs": [],
+        "missing": [
+          {
+            "column": "backlash",
+            "reason": "cell-empty"
+          },
+          {
+            "column": "external_load_radial_n",
+            "reason": "cell-empty"
+          },
+          {
+            "column": "external_load_axial_n",
+            "reason": "cell-empty"
+          },
+          {
+            "column": "external_load_dist_m",
+            "reason": "cell-empty"
+          }
+        ],
+        "status": "Partial"
+      }
+    ],
+    "curves": [
+      {
+        "curveId": "c101-power",
+        "ownerKind": "motor",
+        "ownerModelId": "M-101",
+        "xQuantity": "speed",
+        "xUnit": "rad/s",
+        "yQuantity": "power",
+        "yUnit": "W",
+        "points": [
+          {
+            "x": 100,
+            "y": 800
+          },
+          {
+            "x": 200,
+            "y": 1600
+          },
+          {
+            "x": 300,
+            "y": 2400
+          }
+        ]
+      },
+      {
+        "curveId": "c201-torque",
+        "ownerKind": "gearbox",
+        "ownerModelId": "G-201",
+        "xQuantity": "speed",
+        "xUnit": "rad/s",
+        "yQuantity": "torque",
+        "yUnit": "N*m",
+        "points": [
+          {
+            "x": 50,
+            "y": 150
+          },
+          {
+            "x": 300,
+            "y": 90
+          }
+        ]
+      }
+    ],
+    "compatibility": [
+      {
+        "motorId": "M-101",
+        "gearboxId": "G-201",
+        "mountKind": "flange-mount"
+      },
+      {
+        "motorId": "M-101",
+        "gearboxId": "G-202",
+        "mountKind": "flange-mount"
+      },
+      {
+        "motorId": "M-101",
+        "gearboxId": "G-203",
+        "mountKind": "flange-mount"
+      },
+      {
+        "motorId": "M-102",
+        "gearboxId": "G-201",
+        "mountKind": "flange-mount"
+      },
+      {
+        "motorId": "M-103",
+        "gearboxId": "G-201",
+        "mountKind": "flange-mount"
+      }
+    ],
+    "identity": {
+      "catalogId": "cat-sel-golden",
+      "version": "1.0.0",
+      "source": "黄金器件目录（selection 契约测试同源数据——WP-19-T11）"
+    }
+  },
+  "invalidCases": [
+    {
+      "id": "range-motors",
+      "file": "range-motors.csv",
+      "note": "rated_torque_nm=-3.0（数值范围违约）",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-RANGE-INVALID",
+          "file": "motors.csv",
+          "rowNo": 4,
+          "column": "rated_torque_nm",
+          "modelId": "M-102",
+          "actualValue": -3,
+          "expectedValue": 0,
+          "unit": "N*m"
+        }
+      ]
+    },
+    {
+      "id": "duplicate-motors",
+      "file": "duplicate-motors.csv",
+      "note": "M-101 行内容全同追加（重复型号行）",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-DUPLICATE-MODEL",
+          "file": "motors.csv",
+          "rowNo": 6,
+          "column": "model_id",
+          "modelId": "M-101"
+        }
+      ]
+    },
+    {
+      "id": "dangling-curves",
+      "file": "dangling-curves.csv",
+      "note": "c201-torque owner=M-999 悬空（逐行）＋G-201 curve_ref 随组清空",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-REF-DANGLING",
+          "file": "capability_curves.csv",
+          "rowNo": 6,
+          "column": "owner_model_id",
+          "modelId": "M-999",
+          "actualText": "M-999"
+        },
+        {
+          "code": "SEL-CATALOG-REF-DANGLING",
+          "file": "capability_curves.csv",
+          "rowNo": 7,
+          "column": "owner_model_id",
+          "modelId": "M-999",
+          "actualText": "M-999"
+        },
+        {
+          "code": "SEL-CATALOG-REF-DANGLING",
+          "file": "gearboxes.csv",
+          "rowNo": 3,
+          "column": "curve_ref",
+          "modelId": "G-201"
+        }
+      ]
+    },
+    {
+      "id": "unordered-curves",
+      "file": "unordered-curves.csv",
+      "note": "c101-power 点序 100→300→200（下降）",
+      "issues": [
+        {
+          "code": "SEL-CURVE-UNORDERED",
+          "file": "capability_curves.csv",
+          "rowNo": 5,
+          "column": "x_value",
+          "modelId": "c101-power"
+        }
+      ]
+    },
+    {
+      "id": "missing-motors",
+      "file": "missing-motors.csv",
+      "note": "M-103 duty_class 空（必填缺失）",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-FIELD-MISSING",
+          "file": "motors.csv",
+          "rowNo": 5,
+          "column": "duty_class",
+          "modelId": "M-103"
+        }
+      ]
+    },
+    {
+      "id": "unit-curves",
+      "file": "unit-curves.csv",
+      "note": "c201-torque x_unit=rpm（未注册单位）",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-UNIT-INVALID",
+          "file": "capability_curves.csv",
+          "rowNo": 6,
+          "column": "x_unit",
+          "modelId": "c201-torque",
+          "actualText": "rpm"
+        },
+        {
+          "code": "SEL-CATALOG-UNIT-INVALID",
+          "file": "capability_curves.csv",
+          "rowNo": 7,
+          "column": "x_unit",
+          "modelId": "c201-torque",
+          "actualText": "rpm"
+        }
+      ]
+    }
+  ]
+}

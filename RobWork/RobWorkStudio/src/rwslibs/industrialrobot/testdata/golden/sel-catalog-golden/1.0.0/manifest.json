@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "sel-catalog-golden",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "sel/catalog-golden",
+  "coveredRequirements": [
+    "SEL-01",
+    "SEL-02",
+    "NFR-COR-01",
+    "NFR-COR-03",
+    "AT-08"
+  ],
+  "coveredAt": [
+    "AT-08"
+  ],
+  "toleranceProfile": {
+    "id": "sel-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/valid/manifest.json",
+    "inputs/valid/motors.csv",
+    "inputs/valid/gearboxes.csv",
+    "inputs/valid/capability_curves.csv",
+    "inputs/valid/compatibility.csv",
+    "inputs/invalid/range-motors.csv",
+    "inputs/invalid/duplicate-motors.csv",
+    "inputs/invalid/dangling-curves.csv",
+    "inputs/invalid/unordered-curves.csv",
+    "inputs/invalid/missing-motors.csv",
+    "inputs/invalid/unit-curves.csv"
+  ],
+  "expected": [
+    "expected/catalog-expected.json"
+  ],
+  "parameters": {
+    "contract": "目录包正/误样例（AT-08 导入面：目录导入/错误字段/版本锁定）——WP-19-T11 主数据载体之一。正例＝v1 合法目录包五文件（方言标识行 ird-catalog-v1＋表头＋数据自物理行 3 起）；误例＝六个单点变异表（其余表由消费测试取正例同款表组装）。",
+    "entryFaces": {
+      "valid": "expected/valid——装配黄金面：逐电机/减速器条目业务模型字段值＋missing 清单（cell-empty 显式标记——ERR-01）＋status（Valid/Partial）＋装配序（modelId/curveId/兼容对升序）＋曲线点集",
+      "invalidCases": "expected/invalidCases[]——逐误例期望校验报告（SEL-CATALOG-RANGE-INVALID/DUPLICATE-MODEL/REF-DANGLING/SEL-CURVE-UNORDERED/FIELD-MISSING/UNIT-INVALID——逐 issue 码/文件/行/列/型号/比较字段）",
+      "lock": "版本锁定语义（锁定后只增不可变/重复锁定拒绝/摘要不符拒绝）由消费测试按卡 §4.2 断言——无哈希值黄金面（包内容身份＝产品装配入口计算面，输入侧全零占位）"
+    },
+    "identityNote": "identity.contentIdentity＝SHA-256(canonicalPackageText(snapshot))（§4.2——CON-05），由产品装配入口计算回填；黄金输入侧全零占位不伪造，测试断言装配回填非零且同输入恒同值"
+  },
+  "units": {
+    "torque": "N*m",
+    "speed": "rad/s",
+    "power": "W",
+    "voltage": "V",
+    "inertia": "kg*m^2",
+    "mass": "kg",
+    "length": "m",
+    "time": "s",
+    "angle": "rad",
+    "ratio": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "本数据集全部为目录条目字段值（无位姿/无世界系量）；安装接口为词表值（flangeA/flangeC/shaftB）非几何量——base 声明为上游序列的安装约定归属，不参与任何数值"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "正例装配面（条目字段映射/missing 清单/装配序——§4.1/§5.1 冻结语义的封闭推导）与误例校验报告（§5.3 八码族＋§6.3 四码族的逐条文字规则推导——行号＝firstDataRowNo(3)＋数据行序）",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_catalog_golden.mjs）按单元卡文字规则直写推导，与产品实现（selection/src/CatalogValidation.cpp＋CatalogTypes.cpp）零共享代码——独立性由规则来源层面保证（两侧各自对照单元卡原文）"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.x",
+    "algorithmId": "sel-catalog-golden-closed-form",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/catalog-expected.json#invalidCases[dangling-curves].issues[0..1]（引用悬空逐行定位——数据类拒绝零静默）",
+      "expected/catalog-expected.json#valid.motors[M-102].missing（可缺失列 cell-empty 显式标记——不伪造数值）",
+      "expected/catalog-expected.json#invalidCases[range-motors].issues[0].actualValue=-3.0（越界实际值与边界 expectedValue=0.0 并存——ERR-01 比较三要素）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/valid/manifest.json",
+      "sha256": "09d1575a7ba71bc074fce5de4d1b7ef588cc15f448ad48056c835fcdd3e9a8ca",
+      "sizeBytes": 10166
+    },
+    {
+      "path": "inputs/valid/motors.csv",
+      "sha256": "7373b04baf11b922786ee646a1dacbbca3a38055cd44cbb7acea969ad0da01f0",
+      "sizeBytes": 617
+    },
+    {
+      "path": "inputs/valid/gearboxes.csv",
+      "sha256": "61f6822645c2ecffadf9f0804d41fa069c96a65d65c1290cd2da8c698a59f215",
+      "sizeBytes": 594
+    },
+    {
+      "path": "inputs/valid/capability_curves.csv",
+      "sha256": "d52a96ee53a6ed391256ea54bdb9c60489f99ff1ecda8483195a6a591d4d8c4f",
+      "sizeBytes": 391
+    },
+    {
+      "path": "inputs/valid/compatibility.csv",
+      "sha256": "f189bb346055c5fb20d48fcef1b15e9f9e4f9aca363de66ad8ad69df20684a0d",
+      "sizeBytes": 183
+    },
+    {
+      "path": "inputs/invalid/range-motors.csv",
+      "sha256": "9249c72556c3a0e4150a20dc9b1276012c65d838a7fb7befffc51eb7551ab581",
+      "sizeBytes": 618
+    },
+    {
+      "path": "inputs/invalid/duplicate-motors.csv",
+      "sha256": "10684bc59e540c077353f94ba983d65db2564790316e76bcc75a471cd1eff777",
+      "sizeBytes": 726
+    },
+    {
+      "path": "inputs/invalid/dangling-curves.csv",
+      "sha256": "9feff55719a545ee2876af54e0bf42bddde6d3e6155ceeb1b18c4d5a2e40d805",
+      "sizeBytes": 391
+    },
+    {
+      "path": "inputs/invalid/unordered-curves.csv",
+      "sha256": "63a88e35ff62d367d7c39344690dad4f5885039deb0bb93f5f2501e13de3efe0",
+      "sizeBytes": 391
+    },
+    {
+      "path": "inputs/invalid/missing-motors.csv",
+      "sha256": "d61ea95e676605cdacf0241f4c0d9bbd91c51cd2a4429227f2e302c62d0bd0fe",
+      "sizeBytes": 615
+    },
+    {
+      "path": "inputs/invalid/unit-curves.csv",
+      "sha256": "28e101b0cd93ff1c8413893463822032b776234eab66ca87e2488129106ce854",
+      "sizeBytes": 387
+    },
+    {
+      "path": "expected/catalog-expected.json",
+      "sha256": "d3926ee993e3c8439778d6c963098cc46a5c9ffaccecbd3a72834ab938c6491c",
+      "sizeBytes": 9985
+    },
+    {
+      "path": "generate/make_sel_catalog_golden.mjs",
+      "sha256": "b3ef0375b815b136f6254257d490389c6f6533e07567a7d29f3f01c6b58357f0",
+      "sizeBytes": 22695
+    }
+  ],
+  "generator": {
+    "script": "generate/make_sel_catalog_golden.mjs",
+    "invocation": "node generate/make_sel_catalog_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "首版：目录包正/误样例黄金（v1 合法包五文件＋六误例单点变异表＋装配面与校验报告期望——AT-08 导入面）——WP-19-T11 交付物（testdata/golden/sel-* 按 DatasetManifest 登记）",
+      "reReviewedBy": "WP-19-T11 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

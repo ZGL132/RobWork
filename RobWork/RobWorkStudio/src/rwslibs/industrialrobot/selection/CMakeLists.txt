@@ -351,7 +351,16 @@ add_executable(sdurws_ird_selection_test
 # 消费 setServices/bind*/session/module——不留只测自由函数的盲区；
 # GUI 呈现归 sdurws_ird_selection_app 通道，envUnavailable 如实登记）：
 #   test/SelPluginPanelTest.cpp
-    test/SelPluginPanelTest.cpp)
+# T11 增列黄金数据集消费用例组（WP-19-T11 acceptance 1/2——AT-08/AT-30
+# 主链路面：目录包正/误样例＋硬筛选黄金表＋组合校核黄金＋回填合成黄金；
+# 期望值全部经 testkit GoldenFixture 从 testdata/golden/sel-* 数据文件
+# 装载（独立参考实现产物——与产品实现零共享），本测试只做"装载→驱动
+# 产品入口→黄金对照"；接口路径钉扎：经 ICatalogValidator/ICatalogProvider/
+# IHardConstraintSelector/checkCombinations/IFeasibleSetBuilder/
+# assembleDeviceBackfill/IDeviceBackfillCommandHandler 公共类消费）：
+#   test/SelGoldenDatasetTest.cpp
+    test/SelPluginPanelTest.cpp
+    test/SelGoldenDatasetTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -462,9 +471,15 @@ add_executable(sdurws_ird_selection_contract_test
 # ＋记录对象编解码契约（确定性/严格解码）＋AT-30 复算提示与不沿用标志
 # 的记录面契约）：
 #   contract_test/BackfillContractTest.cpp
+# T11 增列黄金数据集登记契约用例组（WP-19-T11 acceptance 2/3——sel-* 四
+# 数据集 DatasetManifest 装载全量校验＋登记字段/AT 锚点/独立性声明＋
+# integrity 覆盖关系＋sel-golden 容差档案通道与保守纪律；drivetrain
+# GoldenDatasetContractTest 同款形态）：
+#   contract_test/SelGoldenDatasetContractTest.cpp
     contract_test/FeasibleSetContractTest.cpp
     contract_test/PreferenceDiffContractTest.cpp
-    contract_test/BackfillContractTest.cpp)
+    contract_test/BackfillContractTest.cpp
+    contract_test/SelGoldenDatasetContractTest.cpp)
 
 target_compile_features(sdurws_ird_selection_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_contract_test PROPERTIES
