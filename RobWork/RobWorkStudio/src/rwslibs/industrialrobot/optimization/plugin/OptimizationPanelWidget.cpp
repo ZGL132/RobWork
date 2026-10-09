@@ -29,7 +29,7 @@
 namespace sdurws::ird::optimization {
 namespace {
 
-/// 双精度屏读数书写（呈现面文本转换—— six 位有效数字；"—"＝缺槽位）。
+/// 双精度屏读数书写（呈现面文本转换——6 位有效数字；"—"＝缺槽位）。
 /// 这是纯文本格式化（QString::number）——非数值判定，零容差语义。
 QString metricText(const std::optional<double>& value)
 {

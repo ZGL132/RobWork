@@ -1,4 +1,4 @@
-== WP-20-T10 ird_gates 门禁（构建目标 ird_gates，Release）
+== WP-20-T10 ird_gates 门禁（构建目标 ird_gates，Release）——返工轮重跑（2026-10-09，命令：cmake --build <worktree>/build --config Release --target ird_gates）
 适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
 
   ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）
@@ -12,4 +12,4 @@
   ==============================================================
   [ird_gates] 鎵弿鏍癸細D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
   [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
-gates_exit=0
+== ird_gates exit=0（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 全部通过零命中）

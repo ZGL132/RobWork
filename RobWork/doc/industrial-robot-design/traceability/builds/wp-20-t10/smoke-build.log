@@ -1,5 +1,6 @@
-== WP-20-T10 独立冒烟模式构建（Release，增量）
-== configure: cmake -S <unit>/industrialrobot -B <worktree>/build-smoke -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=<mainrepo>/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（2026-10-09 增量重配成功）
+== WP-20-T10 独立冒烟模式构建（Release，增量）——返工轮重跑（acc/wp-20-t10/1 B-1 处置：以本批代码〔含 G-1 注释修正〕重建冒烟树，随后以该树两 exe 实测重制冒烟留痕）
+== configure: cmake -S <unit>/industrialrobot -B <worktree>/build-smoke -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=<mainrepo>/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64（2026-10-09 返工轮增量构建成功，配置沿用首跑）
+== build: cmake --build <worktree>/build-smoke --config Release（2026-10-09 18:47 返工轮增量，OptimizationPanelWidget.cpp 因 G-1 注释修正重编——见第 47 行）
 适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
 
   sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
@@ -46,6 +47,7 @@
   sdurws_ird_modeling_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\modeling\Release\sdurws_ird_modeling_test.exe
   sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
   sdurws_ird_optimization.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\optimization\Release\sdurws_ird_optimization.lib
+  OptimizationPanelWidget.cpp
   sdurws_ird_optimization_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\optimization\Release\sdurws_ird_optimization_plugin.lib
   sdurws_ird_optimization_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\optimization\Release\sdurws_ird_optimization_contract_test.exe
   sdurws_ird_optimization_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\optimization\Release\sdurws_ird_optimization_test.exe
