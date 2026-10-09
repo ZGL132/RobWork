@@ -41,7 +41,8 @@ DiagnosticRecord DiagnosticRecord::make(DiagCode code, std::optional<ObjectId> s
                                         std::optional<std::string> runtimeName,
                                         std::string context, std::string cause,
                                         std::string recommendedAction,
-                                        std::optional<ComparativeFields> comparison)
+                                        std::optional<ComparativeFields> comparison,
+                                        DiagnosticLevel level)
 {
     // C-3①：code 句法（§4.8 DiagCode 行——前缀 core/diag/code）。
     if (!codeSyntaxOk(code)) {
@@ -61,15 +62,20 @@ DiagnosticRecord DiagnosticRecord::make(DiagCode code, std::optional<ObjectId> s
     r.cause = std::move(cause);
     r.recommendedAction = std::move(recommendedAction);
     r.comparison = std::move(comparison);
+    // 级别（F-618 尾参——缺省 Error 由声明处缺省实参承载；此处照抄入值，
+    // 不做词表校验：DiagnosticLevel 仅两值且为强类型枚举，无第三态可错）。
+    r.level = level;
     return r;
 }
 
 bool DiagnosticRecord::operator==(const DiagnosticRecord& o) const noexcept
 {
+    // level 参与等值（F-618）：级别是记录语义的一部分——同码同级不同级别
+    // 的两记录不等（序列化往返 parse(encode(x))==x 的全字段等值依赖此点）。
     return code == o.code && subject == o.subject && localName == o.localName
         && runtimeName == o.runtimeName && context == o.context
         && cause == o.cause && recommendedAction == o.recommendedAction
-        && comparison == o.comparison;
+        && comparison == o.comparison && level == o.level;
 }
 
 ConfirmableFinding ConfirmableFinding::make(DiagnosticRecord record)

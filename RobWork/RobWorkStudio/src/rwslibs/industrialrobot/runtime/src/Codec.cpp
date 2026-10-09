@@ -367,6 +367,11 @@ void writeResourceRef(Writer& w, const ResourceRef& r, bool identityDomain)
 }
 
 /// DiagnosticRecord（§4.3.5 诊断块——全字段域专用）。
+///
+/// 布局（F-618 起 canonical-model/1.1）：记录字段按 core 声明序，level 为
+/// F-618 尾追加字段——编码在其记录尾部落一个 u8 词表字节（0=Error/1=Warning）。
+/// 尾追加纪律：不改既有字段位次（旧读取方语义面零变化的能力由版本检查兜底
+/// ——本编码版本不符即拒绝，不做就地插位）。
 void writeDiagnostic(Writer& w, const core::DiagnosticRecord& d)
 {
     w.str(d.code);
@@ -393,6 +398,9 @@ void writeDiagnostic(Writer& w, const core::DiagnosticRecord& d)
             w.str(std::string{side->unit.symbol()});
         }
     }
+    // 级别（F-618 尾追加字节）：枚举声明序整数值编码（与全文件枚举纪律一致
+    // ——读入口 enumByte 值域校验，未知值拒绝防编码面漂移）。
+    w.u8(static_cast<std::uint8_t>(d.level));
 }
 
 /// RuntimeCapability（§9.6——全字段域专用；派生投影冗余存储）。
@@ -664,11 +672,19 @@ bool readDiagnostic(Reader& r, core::DiagnosticRecord& d)
         }
         comparison = std::move(cmp);
     }
+    // 级别（F-618 尾追加字节——读取载体；经 enumByte 值域校验后随工厂重建）。
+    core::DiagnosticLevel levelOut = core::DiagnosticLevel::Error;
+    // 级别（F-618 尾追加字节——读序＝写序，位于记录末尾）。
+    // enumByte 以 DiagnosticLevel::Warning（声明序最大值）为值域上界：
+    // 0=Error/1=Warning 之外的字节＝非法编码，就地拒绝（不静默映射）。
+    if (!r.enumByte(levelOut, static_cast<std::uint8_t>(core::DiagnosticLevel::Warning))) {
+        return false;
+    }
     // 经 core 工厂重建（C-3 校验——code 句法/必填串非法的字节在此被拒；
     // CoreError 由 parse 外层转译为 err，不外逃）。
     d = core::DiagnosticRecord::make(std::move(code), std::move(subject), std::move(localName),
                                      std::move(runtimeName), std::move(context), std::move(cause),
-                                     std::move(action), std::move(comparison));
+                                     std::move(action), std::move(comparison), levelOut);
     return true;
 }
 

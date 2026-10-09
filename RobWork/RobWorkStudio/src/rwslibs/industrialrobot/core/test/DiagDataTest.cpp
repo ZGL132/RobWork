@@ -171,4 +171,34 @@ TEST(DiagRecordEquality, FullFieldCompare_UT_DIAG)
     auto c = a;
     EXPECT_TRUE(a == c);
 }
+
+/**
+ * F-618（core.md v0.12）：级别字段缺省语义与等值参与——
+ *  ①工厂缺省＝Error（fail-closed：警告面须显式声明，漏标在消费侧可见地被拒）；
+ *  ②显式 Warning 声明被如实承载；
+ *  ③level 参与等值：同码同 subject 不同级别的两记录不等（序列化全字段
+ *    往返等值的语义前提）。
+ */
+TEST(DiagRecordLevel, DefaultErrorAndEquality_F618)
+{
+    // ①缺省 Error（不传尾参——既有构造路径的兼容形态）。
+    const auto def = DiagnosticRecord::make(
+        "RT-INPUT-INVALID", std::nullopt, std::nullopt, std::nullopt,
+        "ctx", "cause", "action");
+    EXPECT_EQ(def.level, DiagnosticLevel::Error)
+        << "缺省级别＝Error（F-618 fail-closed 缺省语义）";
+
+    // ②显式 Warning 声明被如实承载。
+    const auto warn = DiagnosticRecord::make(
+        "RT-INPUT-INVALID", std::nullopt, std::nullopt, std::nullopt,
+        "ctx", "cause", "action", std::nullopt, DiagnosticLevel::Warning);
+    EXPECT_EQ(warn.level, DiagnosticLevel::Warning);
+
+    // ③level 参与等值（其余字段全同、仅级别不同→不等）。
+    EXPECT_FALSE(def == warn) << "级别不同＝记录不等（F-618 全字段等值面）";
+    const auto warn2 = DiagnosticRecord::make(
+        "RT-INPUT-INVALID", std::nullopt, std::nullopt, std::nullopt,
+        "ctx", "cause", "action", std::nullopt, DiagnosticLevel::Warning);
+    EXPECT_TRUE(warn == warn2) << "同码同级同字段→相等";
+}
 }  // namespace
