@@ -214,7 +214,7 @@ struct RequirementsPluginAssembly {
     struct StationMarkerView {
         std::string label;              ///< 工位名（场景节点名后缀——UX-02）
         RequirementReference refFrame;  ///< 参考系原值（World 缺省合法）
-    rw::math::Vector3D<double> position{};  ///< 标记位置（m；refFrame 系——UI-T76/F-555 增补：工位坐标进三维投影）
+        rw::math::Vector3D<double> position{};  ///< 标记位置（m；refFrame 系——UI-T76/F-555 增补：工位坐标进三维投影）
     };
 
     /// 区域预览投影值（中性公共面——refFrame 系几何＋参考系原值；世界系

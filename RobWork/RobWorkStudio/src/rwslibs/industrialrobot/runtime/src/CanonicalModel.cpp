@@ -314,9 +314,11 @@ void requireValidInertia(const rw::math::InertiaMatrix<double>& m, const std::st
  * 即意味对应段已失败、按 MDL-06 原子性不应有发布产物；带着它们构造模型
  * 属调用方契约违约。
  * 不在集内：Cancelled（非错误路径——UX-03/D-11）、RT-CAPABILITY-MISSING 与
- * RT-ROBWORK-ERROR（诊断事件码——警告/转译路径）、UnknownObject/ContextReleased
- * （fail-fast 轨不发稳定码）、以及未来新增的警告类码（码值权威归 diagnostics，
- * 本单元不私裁收窄）。
+ * RT-ROBWORK-ERROR（诊断事件码——警告/转译路径）、RT-BOUNDS-MAGNITUDE 与
+ * RT-RESOURCE-RECORDED（专用警告码——audit F-593 起 S3 量级抽样警告不再
+ * 复用集内 UnitMismatch，"警告不阻断"承诺恢复；RT-RESOURCE-RECORDED 同为
+ * 警告类先例）、UnknownObject/ContextReleased（fail-fast 轨不发稳定码）、
+ * 以及未来新增的警告类码（码值权威归 diagnostics，本单元不私裁收窄）。
  */
 bool isHardErrorDiagCode(const std::string& code) noexcept
 {
@@ -773,8 +775,38 @@ CanonicalModel CanonicalModelBuilder::build() const
     sortAndRejectDuplicates(
         header.objectRefs, [](const ObjectRefEntry& e) { return e.objectId.toCanonical(); },
         "header.objectRefs");
+    // 默认 TCP 下标的排序后重定位（audit F-584）：defaultTcpIndex 的权威语义
+    // 是"Description tools 首项"（MDL-13/KIN-14——S5 编译器在排序前以下标 0
+    // 选定）。本步排序会重排 tools——若不重定位，排序后下标 0 指向的已是
+    // ObjectId 字典序最小者，默认 TCP 被静默调换。故排序前先记下被指工具的
+    // ObjectId，排序后按该 ObjectId 重找新下标："指向同一个工具"跨排序保持
+    // 不变。第 8 步已保证全模型 ObjectId 唯一（tools 内部重复由
+    // sortAndRejectDuplicates 再拦一层），重找必然命中；未命中属内部不变量
+    // 被破坏，按结构违约 fail-fast（不静默产出错位模型）。
+    // 注意：build() 为 const（§4.3 builder 契约——可重复调用），重定位写入
+    // 在本地副本上进行，builder 成员保持只读。
+    std::optional<std::uint32_t> defaultTcpIndex = m_defaultTcpIndex;
+    std::optional<core::ObjectId> defaultTcpObjectId;
+    if (defaultTcpIndex.has_value()) {
+        // 前提：第 6 步已校验 *defaultTcpIndex < tools.size()，at() 不会越界。
+        defaultTcpObjectId = tools.at(*defaultTcpIndex).objectId;
+    }
     sortAndRejectDuplicates(
         tools, [](const CanonicalTool& t) { return t.objectId.toCanonical(); }, "tools");
+    if (defaultTcpObjectId.has_value()) {
+        const auto it = std::find_if(tools.begin(), tools.end(),
+                                     [&defaultTcpObjectId](const CanonicalTool& t) {
+                                         return t.objectId == *defaultTcpObjectId;
+                                     });
+        if (it == tools.end()) {
+            throw structureInvalid("defaultTcpIndex 重定位失败：排序后未找到被指工具 "
+                                   + defaultTcpObjectId->toCanonical()
+                                   + "（内部不变量违约—— ObjectId 唯一性被绕过）");
+        }
+        // 新下标落本地副本——第 12 步组装时写入模型。
+        defaultTcpIndex =
+            static_cast<std::uint32_t>(std::distance(tools.begin(), it));
+    }
     sortAndRejectDuplicates(
         scene, [](const CanonicalSceneObject& s) { return s.objectId.toCanonical(); }, "scene");
 
@@ -784,7 +816,7 @@ CanonicalModel CanonicalModelBuilder::build() const
     model.m_world = std::move(world);
     model.m_chain = std::move(chain);
     model.m_tools = std::move(tools);
-    model.m_defaultTcpIndex = m_defaultTcpIndex;
+    model.m_defaultTcpIndex = defaultTcpIndex;  // 排序后已重定位（F-584——无值时与成员原值一致）
     model.m_scene = std::move(scene);
     model.m_drivetrain = std::move(drivetrain);
     model.m_resourceManifest = std::move(manifest);

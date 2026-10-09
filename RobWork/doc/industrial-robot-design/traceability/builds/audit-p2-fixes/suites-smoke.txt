@@ -1,0 +1,13 @@
+== 冒烟模式（独立树；runtime 目录级重建后）==
+--- smoke/runtime sdurws_ird_runtime_test
+[----------] Global test environment tear-down
+[==========] 177 tests from 47 test suites ran. (47 ms total)
+[  PASSED  ] 177 tests.
+--- smoke/modeling sdurws_ird_modeling_test
+[----------] Global test environment tear-down
+[==========] 285 tests from 28 test suites ran. (280 ms total)
+[  PASSED  ] 285 tests.
+--- smoke/dynamics sdurws_ird_dynamics_test
+[  PASSED  ] 104 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable

@@ -13,7 +13,10 @@
  *
  * 实现要点：
  *   1. 单遍扫描：按行序（时间升序）逐 Ok 行推进每关节的 (E⁺, E⁻, 峰)
- *      三条累加链——梯形累加序＝时间序（确定性，NFR-COR-02）；
+ *      三条累加链——梯形累加序＝时间序（确定性，NFR-COR-02）；缺口区间
+ *      零贡献（本关节非 Ok 行标记缺口证据——相邻 Ok 行跨缺口时不做梯形
+ *      插值，缺口时长仍保留在分母 T_cycle 中，保守低估——audit F-589
+ *      与公共头契约对齐）；
  *   2. 功率峰值＝max(|P|)（幅值形态——PowerEnergySummary.powerPeak 单
  *      记录位的合并口径；等值窗与 tPeakS/segmentIndex 语义同
  *      EnvelopeCalculator::computePeaks——D-DYN-8 无阈值等值 run）；
@@ -42,6 +45,8 @@ struct JointAccumulator {
     double prevP = 0.0;         ///< 前一有效行功率，W（梯形累加状态）
     bool havePrev = false;      ///< 梯形状态就绪位（首行只记边界不积分）
     bool havePeak = false;      ///< 幅值峰值已捕获位（首行无条件捕获——含 NaN 显性传播）
+    bool gapSincePrevOk = false; ///< 前一 Ok 行之后是否出现过本关节非 Ok 行
+                                 ///<  （缺口证据——缺口区间零贡献标记，F-589）
     double positiveJ = 0.0;     ///< E⁺ 累加，J（∫max(P,0)dt）
     double negativeJ = 0.0;     ///< E⁻ 累加，J（∫min(P,0)dt——恒 ≤0）
     double peakAbsW = 0.0;      ///< max(|P|) 幅值峰值，W（powerPeak.value 候选）
@@ -64,7 +69,16 @@ PowerEnergySummary PowerEnergyCalculator::compute(const DynamicsSeries& series) 
     for (std::size_t k = 0; k < series.samples.size(); ++k) {
         const DynamicsSample& r = series.samples[k];
         if (r.numericState != SampleNumericState::Ok) {
-            continue;  // 非 Ok 行（NonFiniteInput/Output/Overflow）不进积分
+            // 非 Ok 行（NonFiniteInput/Output/Overflow）不进积分；但它是
+            // 该关节的"缺口证据"——其所在关节若已有累加链，须标记"上一
+            // Ok 行之后出现缺口"（缺口区间零贡献，公共头契约"缺口不插
+            // 值、贡献 0"——audit F-589 修复；尚无累加链的关节无须标记：
+            // 其首个 Ok 行只是积分下界，下界之前的区间本就不积分）。
+            const auto it = std::lower_bound(jointIds.begin(), jointIds.end(), r.jointIndex);
+            if (it != jointIds.end() && *it == r.jointIndex) {
+                accs[static_cast<std::size_t>(it - jointIds.begin())].gapSincePrevOk = true;
+            }
+            continue;
         }
         const std::uint32_t j = r.jointIndex;
         auto it = std::lower_bound(jointIds.begin(), jointIds.end(), j);
@@ -81,17 +95,23 @@ PowerEnergySummary PowerEnergyCalculator::compute(const DynamicsSeries& series) 
 
         // 时间加权分项积分（§7.5）：E⁺ 用 max(P,0)、E⁻ 用 min(P,0)
         // 分别梯形——正负功拆分的数学形态（ crest 因子：同一区间 P 换
-        // 号时两侧各取其半段贡献）。
+        // 号时两侧各取其半段贡献）。缺口区间例外：上一 Ok 行与当前 Ok
+        // 行之间存在本关节非 Ok 行时，该区间零贡献（无数据不插值——
+        // 假设 P 线性过渡属高估；缺口时长仍保留在分母 T_cycle 中，
+        // 保守低估，完整循环统计以 Complete 序列为准）。
         if (!a.havePrev) {
             a.firstT = r.t;      // 积分下界（首有效行）
             a.havePrev = true;
+        } else if (a.gapSincePrevOk) {
+            // 缺口区间——E⁺/E⁻ 均不加梯形项（零贡献），只推进梯形状态。
         } else {
-            const double dt = r.t - a.lastT;  // s（相邻有效行时差——缺口时长保留）
+            const double dt = r.t - a.lastT;  // s（相邻有效行时差——正常采样区间）
             a.positiveJ += 0.5 * (std::max(a.prevP, 0.0) + std::max(p, 0.0)) * dt;
             a.negativeJ += 0.5 * (std::min(a.prevP, 0.0) + std::min(p, 0.0)) * dt;
         }
         a.prevP = p;
         a.lastT = r.t;
+        a.gapSincePrevOk = false;  // 缺口证据已消费（首个 Ok 行亦在此清除）
 
         // 功率幅值峰值（首个达到者保留——严格大于才替换，确定性口径；
         // 首行无条件捕获：NaN 位模式经此显性传播到峰值输出，不静默）。

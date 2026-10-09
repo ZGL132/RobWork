@@ -182,26 +182,46 @@ double DynamicsEnvelopeCalculator::computeRms(const DynamicsSeries& series,
                                               std::uint32_t jointIndex) const
 {
     // ---- 第 1 步：收集该关节 Ok 行（§4.6：非 Ok 行不进统计；缺口不
-    //      插值——缺口时长保留在相邻有效行的 Δt 中）----
+    //      插值——缺口区间零贡献，缺口时长仍保留在有效行全跨度分母中）----
     double firstT = 0.0;             // 有效行首时刻，s
     double lastT = 0.0;              // 有效行末时刻，s
     double prevTau = 0.0;            // 前一有效行 τ_total²（梯形累加状态）
     bool havePrev = false;           // 梯形状态就绪位
-    double weightedSum = 0.0;        // ∫τ²dt 的梯形累加（单位 量纲²·s）
+    bool gapSincePrevOk = false;     // 前一 Ok 行之后是否出现过本关节非 Ok 行
+                                     //  （缺口证据——缺口区间零贡献标记）
+    double weightedSum = 0.0;        // ∫τ²dt 的分段累加（单位 量纲²·s）
     for (const DynamicsSample& r : series.samples) {
-        if (r.jointIndex != jointIndex || r.numericState != SampleNumericState::Ok) {
-            continue;  // 非本关节行 / 非 Ok 行——不进统计（NFR-COR-03）
+        if (r.jointIndex != jointIndex) {
+            continue;  // 非本关节行——与本关节统计无关（其他关节的非 Ok 行
+                       //  不构成本关节的缺口证据：多关节行按 (t,jointIndex)
+                       //  交错是正常采样形态，不是缺口）
+        }
+        if (r.numericState != SampleNumericState::Ok) {
+            // 本关节缺口行（NFR-COR-03）：不进统计，但作为"缺口证据"标记
+            // ——下一 Ok 行与上一 Ok 行之间的区间不得再按梯形插值补值。
+            gapSincePrevOk = true;
+            continue;
         }
         const double tau2 = r.tauTotal * r.tauTotal;  // v_i(t)²——τ_total 为统计量（§7.3）
         if (!havePrev) {
-            // 首个有效行＝积分下界 t₀（驻留段在序列头部同样进入边界）。
+            // 首个有效行＝积分下界 t₀（驻留段在序列头部同样进入边界；
+            //  下界之前的缺口区间本就不在积分域内——清除证据标记）。
             firstT = r.t;
             prevTau = tau2;
             havePrev = true;
+            gapSincePrevOk = false;
+        } else if (gapSincePrevOk) {
+            // 缺口区间零贡献（公共头 computeRms 契约原文"缺口区间不插值，
+            // 无数据贡献 0"——audit F-589 修复：原实现按
+            // ½(τ_k²＋τ_{k−1}²)·Δt 跨缺口梯形插值，等于假设 τ 在无数据
+            // 区间线性过渡，与登记口径相悖且高估 RMS）。分母 T_cycle 仍取
+            // 有效行全跨度——缺口时长保留在分母中，RMS 保守低估（完整
+            // 循环统计以 Complete 序列为准）。
+            prevTau = tau2;
+            gapSincePrevOk = false;
         } else {
-            // 梯形时间加权：½(τ_k²＋τ_{k−1}²)·Δt——相邻**有效**行对；
-            // 缺口/非 Ok 行被跳过但其时间差计入 Δt（无数据贡献 0——
-            // 保守低估，公共头 computeRms 注释口径）。
+            // 正常采样区间梯形时间加权：½(τ_k²＋τ_{k−1}²)·Δt——相邻有效
+            // 行对（中间无本关节缺口行）。
             weightedSum += 0.5 * (prevTau + tau2) * (r.t - lastT);
             prevTau = tau2;
         }

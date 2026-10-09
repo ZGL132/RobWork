@@ -428,9 +428,13 @@ runtime::Expected<runtime::JointDescription, ModelingError>
 
     // ---- origin：必备输入（全关节类型皆需 T_parent_joint——链几何结构）。
     if (const auto origin = src.origin.tryValue(); origin.has_value()) {
-        // a) 零位折叠：origin_desc = origin · R(axis, zeroOffset)（旋转在
-        // 关节局部轴上——与 runtime jointStaticTransform 的
-        // T_parent_joint·R_axis(zeroOffset)·R_align 同侧同序，T09 同款）。
+        // a) 零位折叠（权威零位旋转的唯一烘焙归口——audit F-590）：
+        //    origin_desc = origin · R(axis, zeroOffset)（旋转在关节局部轴上
+        //    ——与 runtime jointStaticTransform 的
+        //    T_parent_joint·R_axis(zeroOffset)·R_align 同侧同序，T09 同款）。
+        //    显式直写与 DH 展开（§7.4 q_model=0 位姿——zeroOffset 不入几何）
+        //    两来源同规折叠一次，不按来源特判；原展开侧预烘 zeroOffset 的
+        //    双重折叠已随 F-590 移除。
         const rw::math::Transform3D<double> originModel =
             static_cast<rw::math::Transform3D<double>>(*origin);
         const rw::math::Rotation3D<double> folded =

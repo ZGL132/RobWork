@@ -269,7 +269,9 @@ rw::math::Vector3D<double> normalized(const rw::math::Vector3D<double>& v)
     return rw::math::Vector3D<double>(v[0] / n, v[1] / n, v[2] / n);
 }
 
-/// 累乘链帧的 z 轴方向（§7.4"轴线 z_i＝T_{0,i}·(0,0,1)"，归一化输出）。
+/// 累乘链帧的世界系 z 轴方向（归一化输出）——F-591 后仅作求解目标面使用
+/// （显式链累积帧的世界 z_i 与 DH 重建 z_i 的残差/偏差对照）；展开产物的
+/// axis 字段不再是该值（axis 输出＝关节系内方向 Rx(−α)·ez，见 expandDhChain）。
 rw::math::Vector3D<double> zAxisOf(const rw::math::Transform3D<double>& t)
 {
     const rw::math::Rotation3D<double>& r = t.R();
@@ -325,7 +327,8 @@ std::string formatDouble(double v)
 struct SolverTargets {
     std::vector<rw::math::Vector3D<double>> originPositions;  ///< T_{0,i} 原点（m）
     std::vector<rw::math::Vector3D<double>> axisDirections;   ///< z_i 单位向量（无量纲）
-    std::vector<double> zeroOffsets;                          ///< 逐关节零位偏置（rad——固定输入）
+    // zeroOffsets 字段已随 F-590 零位烘焙纪律移除：重建/种子均不再消费
+    // （θ_offset 单独入几何，zeroOffset 不在求解相位内）。
     std::size_t size() const noexcept { return originPositions.size(); }
 };
 
@@ -363,10 +366,11 @@ std::vector<double> flattenParameters(const std::vector<DhParameters>& params)
  * @brief 残差向量（§7.5 目标函数——确定性固定运算序）。
  *
  * 重建规则与 dhToExplicit 逐位同式（单一语义源——展开/求解/等价验证三面
- * 共用，NFR-MNT-04 精神）：originRec_i = Rot_z(θ_i＋q0_i)·Trans_z(d_i)·
- * Trans_x(a_i)·Rot_x(α_i)；T_{0,i} = Π originRec_k；残差每关节六分量：
- *   [T_{0,i}.p − P_i]（原点位置，m）＋ [cross(z_i^rec, A_i)]（轴偏差的
- *   垂直分量＝sin(角偏差)·法向——近解区线性度好，最小二乘收敛快）。
+ * 共用，NFR-MNT-04 精神）：originRec_i = Rot_z(θ_i)·Trans_z(d_i)·
+ * Trans_x(a_i)·Rot_x(α_i)（zeroOffset 不入几何——F-590 零位烘焙纪律，
+ * 与展开产物 q_model=0 位姿同规）；T_{0,i} = Π originRec_k；残差每关节
+ * 六分量：[T_{0,i}.p − P_i]（原点位置，m）＋ [cross(z_i^rec, A_i)]（轴偏差
+ * 的垂直分量＝sin(角偏差)·法向——近解区线性度好，最小二乘收敛快）。
  */
 std::vector<double> residualOf(const std::vector<double>& x, const SolverTargets& targets)
 {
@@ -374,9 +378,10 @@ std::vector<double> residualOf(const std::vector<double>& x, const SolverTargets
     r.reserve(targets.size() * 6);
     rw::math::Transform3D<double> acc = identityTransform();
     for (std::size_t i = 0; i < targets.size(); ++i) {
-        // 第 i 步：重建相对变换并累乘（与 expandDhChain 同式——含 zeroOffset）。
+        // 第 i 步：重建相对变换并累乘（与 expandDhChain 同式——θ_offset
+        // 单独入几何，zeroOffset 不参与——F-590 同步）。
         const rw::math::Transform3D<double> step = dhStepTransform(
-            x[4 * i] + targets.zeroOffsets[i], x[4 * i + 1], x[4 * i + 2], x[4 * i + 3]);
+            x[4 * i], x[4 * i + 1], x[4 * i + 2], x[4 * i + 3]);
         acc = transformMul(acc, step);
         // 原点位置残差（3 分量，m）。
         r.push_back(acc.P()[0] - targets.originPositions[i][0]);
@@ -681,8 +686,10 @@ std::vector<DhJointDeviation> deviationsOf(const std::vector<double>& x,
     out.reserve(targets.size());
     rw::math::Transform3D<double> acc = identityTransform();
     for (std::size_t i = 0; i < targets.size(); ++i) {
+        // 第 i 步：重建相对变换并累乘（与 residualOf/expandDhChain 同式——
+        // θ_offset 单独入几何，F-590 同步）。
         const rw::math::Transform3D<double> step = dhStepTransform(
-            x[4 * i] + targets.zeroOffsets[i], x[4 * i + 1], x[4 * i + 2], x[4 * i + 3]);
+            x[4 * i], x[4 * i + 1], x[4 * i + 2], x[4 * i + 3]);
         acc = transformMul(acc, step);
         DhJointDeviation dev;
         dev.jointIndex = i;
@@ -807,10 +814,10 @@ std::vector<double> canonicalForm(const std::vector<double>& x)
 
 /**
  * @brief SolverTargets 的扩展载体：显式侧累积链的完整目标帧（原点＋全旋转
- *        ＋z 轴＋零位）——解析种子需要全旋转读取 θ 的帧相位。
+ *        ＋z 轴）——解析种子需要全旋转读取 θ 的帧相位。
  */
 struct SolverFrameTargets {
-    SolverTargets base;                                    ///< 原点/轴/零位（求解残差用）
+    SolverTargets base;                                    ///< 原点/轴（求解残差用）
     std::vector<rw::math::Rotation3D<double>> rotations;   ///< T_{0,i} 全旋转（种子用）
     std::size_t size() const noexcept { return base.size(); }
 };
@@ -827,7 +834,6 @@ SolverFrameTargets targetsFromExplicit(const std::vector<JointEntry>& joints)
     SolverFrameTargets t;
     t.base.originPositions.reserve(joints.size());
     t.base.axisDirections.reserve(joints.size());
-    t.base.zeroOffsets.reserve(joints.size());
     t.rotations.reserve(joints.size());
     rw::math::Transform3D<double> acc = identityTransform();
     for (const JointEntry& joint : joints) {
@@ -835,7 +841,6 @@ SolverFrameTargets targetsFromExplicit(const std::vector<JointEntry>& joints)
         acc = transformMul(acc, static_cast<rw::math::Transform3D<double>>(joint.origin.value()));
         t.base.originPositions.push_back(acc.P());
         t.base.axisDirections.push_back(zAxisOf(acc));
-        t.base.zeroOffsets.push_back(joint.zeroOffset);
         t.rotations.push_back(acc.R());
     }
     return t;
@@ -855,7 +860,9 @@ SolverFrameTargets targetsFromExplicit(const std::vector<JointEntry>& joints)
  *   局部目标帧 L = R_{i-1}ᵀ·R_i^target（对一致链恰＝Rz(θ')·Rx(α)）；
  *   局部平移 t = R_{i-1}ᵀ·(P_i − O_{i-1})（对一致链恰＝Rz(θ')·(a,0,d)）。
  *   直接读出：θ' = atan2(L(1,0), L(0,0))；α = atan2(−L(1,2), L(2,2))；
- *             a = t_x·cosθ' + t_y·sinθ'；d = t_z；θ_offset = θ' − zeroOffset。
+ *             a = t_x·cosθ' + t_y·sinθ'；d = t_z；θ_offset = θ'
+ *             （F-590 后目标几何为零位烘焙纪律下的 q_model=0 位姿——
+ *             θ' 即 θ_offset 本身，zeroOffset 不在几何相位内）。
  *   ★ 用**全旋转**（而非仅 z 轴）读取 θ/α：末关节（及一切零偏距关节）的
  *     帧内相位不受轴/原点目标约束——仅凭 z 轴定 θ 会落入相位差 π 的等价
  *     支，被 §7.6 全帧 FK 对照正确拒绝（相位差是真实的法兰相位差异）。
@@ -892,7 +899,7 @@ std::vector<double> analyticSeed(const SolverFrameTargets& targets)
             || !std::isfinite(d)) {
             return {};
         }
-        seed[4 * i] = thetaTotal - targets.base.zeroOffsets[i];
+        seed[4 * i] = thetaTotal;  // θ_offset＝θ'（F-590：目标几何不含 zeroOffset 相位）
         seed[4 * i + 1] = d;
         seed[4 * i + 2] = a;
         seed[4 * i + 3] = alpha;
@@ -952,22 +959,34 @@ ExpandOutcome expandDhChain(const DhChain& chain)
     out.joints.reserve(chain.joints.size());
     rw::math::Transform3D<double> acc = identityTransform();
     for (const DhChainJoint& joint : chain.joints) {
-        // 步② 当前步相对变换：Rot_z(θ_offset＋zeroOffset)·Trans_z(d)·
-        // Trans_x(a)·Rot_x(α)——Rot_z 内含 zeroOffset 即"q=0 零位对齐"的
-        // 几何落点（q_rw=0 时显式位姿＝DH 派生位姿，θ_offset 与 zeroOffset
-        // 字段保持分离、zeroOffset 原样透传）。
+        // 步② 当前步相对变换：Rot_z(θ_offset)·Trans_z(d)·Trans_x(a)·Rot_x(α)
+        // ——★ 零位烘焙纪律（audit F-590）：展开产物是 q_model=0（＝DH 变量
+        // 零位）位姿，zeroOffset **不烘入几何**——权威零位旋转的折叠唯一归口
+        // 在 modeling→Description 映射的单一折叠（origin·R(axis, zeroOffset)，
+        // CanonicalBridge mapJoint / 等价验证映射同规）。原实现在此预烘
+        // zeroOffset、映射再折叠一次，DH 派生模型零位构型多转 R_axis(q0)
+        // （权威 FK 全程错误、显式链权威切换被假拒绝）。zeroOffset 字段
+        // 本身仍按"两态均权威"原样透传（限位平移等消费方依赖）。
         const rw::math::Transform3D<double> step = dhStepTransform(
-            joint.dh.thetaOffset + joint.zeroOffset, joint.dh.d, joint.dh.a,
-            joint.dh.alpha);
-        acc = transformMul(acc, step);  // T_{0,i}（基座→关节 i 累积——z_i 的载体）
-        // 步③ 产物装配：axis=归一化 z_i（§9.4.7 @post 单位向量）；origin=
-        // 当前步相对变换（T_parent_joint——core.md §4.6 读法）。
+            joint.dh.thetaOffset, joint.dh.d, joint.dh.a, joint.dh.alpha);
+        acc = transformMul(acc, step);  // T_{0,i}（基座→关节 i 累积——origin 载体）
+        // 步③ 产物装配：origin=当前步相对变换（T_parent_joint——core.md §4.6
+        // 读法）；axis=关节系内方向的关节轴（audit F-591——见下）。
         JointEntry entry;
         entry.objectId = joint.objectId;
         entry.localName = joint.localName;
         entry.type = joint.type;
+        // axis＝Rx(−α)·ez（关节系内方向——audit F-591 修复）：关节 i 的物理
+        // 旋转轴是 DH 的 z_{i−1}（父帧 z），它在关节帧 i（步进旋转
+        // Rz(θ)Rx(α) 之后）内的坐标＝Rx(−α)·ez。runtime 按"关节系内方向"
+        // 消费（世界轴向＝origin.R·axis＝R_{0,i−1}·ez＝真实 DH 关节轴）。
+        // 原实现输出 z_i＝T_{0,i}·ez（帧 i 的 z——α≠0 时与 z_{i−1} 差一个
+        // Rx(α) 扭转），被 runtime 按关节系方向解读后物理轴错误（α≠0 链
+        // 工业常态）。解析元素：Rx(−α)·ez＝(0, sinα, cosα)（Rx 不动 x 分量
+        // ——归一化为防御性，数学上恒为单位向量）。
         entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
-            zAxisOf(acc),
+            normalized(rw::math::Vector3D<double>(
+                0.0, std::sin(joint.dh.alpha), std::cos(joint.dh.alpha))),
             core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
                                         std::nullopt, std::nullopt,
                                         std::string("dh-to-explicit")));
@@ -1368,8 +1387,8 @@ std::optional<runtime::RobotDesignDescription> buildChainDescription(
     // q_authoritative 即 q_rw"，units/runtime.md §15.4 v0.12 登记）。故
     // modeling→Description 映射必须完成折叠：
     //   a) origin_desc = origin_模型 · R(axis, zeroOffset)——权威零位旋转
-    //      入几何（q_rw=0 构型＝权威零位构型——与 §7.4 展开式 Rot_z(θ+q0)
-    //      的零位对齐语义一致）；
+    //      入几何（q_rw=0 构型＝权威零位构型——与 §7.4 展开式 Rot_z(θ)
+    //      q_model=0 位姿＋本折叠＝权威零位的单一烘焙纪律一致，F-590）；
     //   b) bounds/workingRange 平移 −zeroOffset（权威 q→RobWork q）。
     for (std::size_t i = 0; i < geometry.size(); ++i) {
         const JointEntry& src = geometry[i];

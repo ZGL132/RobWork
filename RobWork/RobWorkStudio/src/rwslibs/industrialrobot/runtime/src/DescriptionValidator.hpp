@@ -84,6 +84,13 @@ struct ValidationIssue {
                                    ///<  者不看设计文档也能定位问题）
     std::optional<ValidationComparison> comparison; ///< 比较型三要素
                                    ///<  （比较型诊断必带——M-6/M-12/正交性偏差）
+    /// 警告级专用注册码覆盖（audit F-593）：非空时 S3 警告转译以该码发布
+    /// （替代 registryCode(code)）——专用警告码不与 error 级硬失败码集共用
+    /// 注册码（UnitMismatch 在 builder 的硬失败码集内，警告复用必相撞）。
+    /// 比照 RT-RESOURCE-RECORDED 先例：诊断事件码面、无 RuntimeErrorCode
+    /// 枚举对应（§10.11 冻结关系不扩）；Error 级问题恒空（fail-fast 码面
+    /// 单一来源）。当前唯一产出点＝限位量级抽样警告 RT-BOUNDS-MAGNITUDE。
+    std::string registryCodeOverride;
 };
 
 /**
@@ -110,8 +117,10 @@ struct ValidationReport {
  *     非正交（容差 1×10⁻¹²）与反射（det≤0）、qmin≥qmax、m≤0、惯量非
  *     对称/非正定、负限速、Custom 缺 EAA、传动比/摩擦非正、耦合矩阵
  *     非方阵/维度失配/奇异/病态（条件数 >1×10⁸——P-RT-7 设计默认）；
- *   - 单位量级抽样（UnitMismatch 警告，不阻断——§4.4）：旋转限位
- *     |q|>4π×10 rad、移动限位 |q|>1×10² m（典型 deg/mm 误作 SI 的量级）。
+ *   - 单位量级抽样（警告不阻断——§4.4）：旋转限位 |q|>4π×10 rad、移动限位
+ *     |q|>1×10² m（典型 deg/mm 误作 SI 的量级）——专用警告码
+ *     RT-BOUNDS-MAGNITUDE（audit F-593：与 error 级硬失败码集内的
+ *     UnitMismatch 分离，"警告不阻断"承诺）。
  *
  * 不覆盖面（归属其他段，防止越权）：
  *   - 资源清单与摘要一致性→S4（RT-T11）；重复 ObjectId/引用闭包→S2/S5

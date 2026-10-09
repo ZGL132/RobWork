@@ -334,6 +334,62 @@ TEST(CanonicalModelBuilderTest, RejectsDefaultTcpViolations)
                       "无工具却设默认 TCP");
 }
 
+/**
+ * 默认 TCP 的排序不变性（audit F-584——MDL-13/KIN-14 权威语义）：≥2 工具且
+ * ObjectId 字典序与声明序相反时，builder 第 11 步排序后 defaultTcpIndex 必须
+ * 重定位到"排序前被指的那个工具"（Description 首项），而不是留在下标 0
+ * （排序后下标 0＝ObjectId 最小者——不重定位即默认 TCP 被静默调换）。
+ *
+ * 夹具动态选序：t1/t2 的字典序由 SHA-256 派生无法字面预知，用例按实际比较
+ * 结果构造"声明首项＝字典序较大者"，保证排序必然换位（否则断言前置自检
+ * 先行失败，防止夹具失效退化为恒真）。
+ */
+TEST(CanonicalModelBuilderTest, DefaultTcpSurvivesToolSorting_F584)
+{
+    Fixture f = richFixture();  // 已含工具 t1（Description 首项、defaultTcp=0）
+    const core::ObjectId t1 = idFrom<core::ObjectId>("t1");
+    const core::ObjectId t2 = idFrom<core::ObjectId>("t2");
+    ASSERT_FALSE(t1 == t2) << "测试种子派生 id 冲突——夹具失效";
+
+    // 追加第二个工具（物性齐备——builder 第 5 步 mass 必须 Provided＞0）。
+    CanonicalTool tool2;
+    tool2.objectId = t2;
+    tool2.localName = "tool_2";
+    tool2.mass = val(2.5);  // 单位 kg
+    tool2.centerOfMass = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(0.0, 0.0, 0.05), userProv());
+    tool2.inertia = core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+        diagInertia(0.001, 0.001, 0.002), userProv());
+    f.tools.push_back(tool2);
+    // CM-0：新工具对象登记进修订闭包引用清单。
+    ObjectRefEntry ref2;
+    ref2.objectId = t2;
+    ref2.contentVersion = cvFrom("t2");
+    ref2.objectTypeToken = "tool";
+    ref2.digest = digestOf("t2-bytes");
+    f.header.objectRefs.push_back(ref2);
+
+    // 声明序自检：若 t1 已是字典序较小者（排序后仍居首），交换声明序——
+    // 保证"Description 首项 ≠ 排序后下标 0"（用例真正要打的面）。
+    if (t1.toCanonical() < t2.toCanonical()) {
+        std::swap(f.tools[0], f.tools[1]);
+    }
+    // 此刻声明首项（defaultTcp=0 所指）＝字典序较大者；排序后它必须落在下标 1。
+    const core::ObjectId declaredFirst = f.tools.front().objectId;
+    const CanonicalModel m = f.build();
+
+    // 前置自检：排序确实换位（tools()[0]＝声明次项）。
+    ASSERT_EQ(m.tools().size(), 2u);
+    ASSERT_EQ(m.tools().front().objectId, f.tools.at(1).objectId)
+        << "夹具应使排序换位——否则本用例未覆盖 F-584 面";
+    // 核心断言：默认 TCP 恒为 Description 首项（跨排序保持同一工具）。
+    ASSERT_TRUE(m.defaultTcpIndex().has_value());
+    EXPECT_EQ(m.tools().at(*m.defaultTcpIndex()).objectId, declaredFirst)
+        << "排序后 defaultTcpIndex 须重定位回 Description 首项（MDL-13/KIN-14）";
+    EXPECT_EQ(*m.defaultTcpIndex(), 1u)
+        << "换位夹具下 Description 首项排序后应居下标 1（非 0）";
+}
+
 /** error 级诊断码拒绝（§4.3.5"仅警告级"）——警告码放行。 */
 TEST(CanonicalModelBuilderTest, RejectsErrorLevelDiagnostics)
 {

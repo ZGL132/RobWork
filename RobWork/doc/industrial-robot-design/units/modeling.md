@@ -4,6 +4,8 @@
 
 | 字段 | 值 |
 | --- | --- |
+| 文档版本 | v0.43（2026-10-09，audit F-591 修复落位——§7.4 DH→显式 axis 公式行增量修订：axis 改为关节系内方向 Rx(−αᵢ)·ez＝(0, sinαᵢ, cosαᵢ)（物理旋转轴 z_{i-1} 在关节帧内坐标；runtime 世界轴向＝origin.R·axis＝R_{0,i-1}·ez）——原 z_i=T_{0,i}·(0,0,1) 为基座系子帧 z，α≠0 链按关节系方向消费后物理轴错误；runtime 消费语义不变、黄金数据集轴期望与域用例同步重制——新增 DhDerivedWorldAxesMatchDhConvention_F591（六轴工业链世界轴逐关节断言＋(0,0,1)≠(0,0,−1) 判别反例）；前一版 v0.42＝audit F-590 零位烘焙纪律）|
+| 文档版本 | v0.42（2026-10-09，audit F-590 修复落位——§7.4 零位烘焙纪律增量修订：DH→显式展开几何改为 q_model=0 位姿（Rot_z(θᵢ_offset)，zeroOffset 不烘入几何），权威零位旋转的唯一烘焙归口＝modeling→Description 映射的单一折叠 origin·R(axis, zeroOffset)〔CanonicalBridge mapJoint 与等价验证映射同规、不按来源特判〕；求解方向重建式/解析种子同步（zeroOffset 不入求解相位）；零位对齐语义与 roundtrip 口径随公式行更新——修复前展开预烘 zeroOffset＋映射再折叠，DH 派生模型零位构型多转 R_axis(q0)；域用例两钉重钉＋新增 DhDerivedMatchesExplicitAuthoredAtAuthoritativeZero_F590；前一版 v0.41＝UI-T74 装配缝增量登记）|
 | 文档版本 | v0.41（2026-10-07，UI-T74 装配缝增量登记——ModelingPluginAssembly 门面＋ModelingUiModule 增 tryDraftObjectName（object→当前草稿工作集内名称：design.joints/links＋toolObjects/sceneObjects 逐行 localName；闭包外 false 不猜测 ARC-04；仅读投影零修订）——宿主草稿名感知名称上下文的模块侧执行器（F-546 出路①）；§9.7 门面/模块面公开契约零变化。前一版 v0.40：UI-T63 从零创建批次落位）|
 | 文档版本 | v0.40（2026-10-05，UI-T63 从零创建批次落位——§5.1 模板创建参数化：new-from-template 分流〔generic-6r 重种子现行为｜custom-chain 六轴逐轴声明〕——声明经既有域原语组合落草稿（createDraft 1 轴种子→addJointAt 补齐→applyJointFieldEdit Axis/ZeroOffset/Bounds/Origin UserProvided；插件零计算逻辑）；R1 合规创建面＝六轴全旋转（类型锁 Revolute），4/5 轴与含 prismatic 链创建确认仍受 creationEntryGuard 红线〔AT-20/§6.4——本批不新增放行〕；前一版 v0.39＝UI-T61 规范包清单预览） |
 | 文档版本 | v0.39（2026-10-05，UI-T61 规范包清单预览类型批次落位——§6.8 清单文本渲染面：packageChecklistText〔roundtripChecklist 单一实现的确定性文本渲染——NFR-MNT-04 渲染侧单点；首行标题＋条目计数行＋逐行 group | path | valueText 管道分隔；纯函数同输入同字节〕——ui 预览页'规范包清单'类型的域侧数据面〔F-498 余项收尾：预览六类全量落位〕；消费面＝已应用修订闭包的草稿值视图〔基线定格内容——D-MDL-10〕；前一版 v0.38＝UI-T60 位姿集/传动编辑页） |
@@ -714,15 +716,15 @@ modeling 拥有的持久化对象类型（objectTypeToken，登记于 `ObjectTyp
 
 ### 7.4 DH 约定与转换公式（标准 DH／Schilling 约定，MDL-02）
 
-- 参数（逐关节 i）：关节角 θᵢ（rad，含零位偏置）、连杆偏距 dᵢ（m）、连杆长度 aᵢ（m）、扭转角 αᵢ（rad）。连杆变换（标准/远置约定）：
+- 参数（逐关节 i）：关节角 θᵢ（rad，**含偏置前**的几何参数）、连杆偏距 dᵢ（m）、连杆长度 aᵢ（m）、扭转角 αᵢ（rad）。连杆变换（标准/远置约定）：
 
 ```
 T_{i-1,i} = Rot_z(θᵢ + qᵢ) · Trans_z(dᵢ) · Trans_x(aᵢ) · Rot_x(αᵢ)      （qᵢ 为关节变量）
 ```
 
 - 基座与工具变换**不在 DH 参数内**：基座安装走 BasePlacement（§7.7 隔离）；法兰后工具走 ToolDefinition——DH 只参数化关节链（MDL-02 范围）。
-- 零位对齐：权威零位语义由 `zeroOffset` 承载（`q_authoritative = q_zeroOffset + q_rw`，runtime 口径）；DH 的 θᵢ 定义为**含偏置前**的几何参数，θᵢ_offset 与 zeroOffset 在转换中显式分离，roundtrip 验证含零位（q=0 时显式位姿==DH 派生位姿）。
-- **DH→显式（权威展开，无损）**：逐级累乘得 `T_base_jointi` 与轴线 `z_i`（`T_{0,i}·(0,0,1)`），构造 `origin=T_{parent,i}`、`axis=z_i`；数值误差仅浮点累乘（对照附录 D 第 4 项容差验证，实测应远优于 1×10⁻⁹）。
+- 零位对齐（**v0.42 增量修订——audit F-590 零位烘焙纪律**）：权威零位语义由 `zeroOffset` 承载（`q_authoritative = q_zeroOffset + q_rw`，runtime 口径）；DH 的 θᵢ_offset 与 zeroOffset 在转换中显式分离，**zeroOffset 不烘入展开几何**——权威零位旋转的唯一烘焙归口在 modeling→Description 映射的单一折叠 `origin_desc = origin · R(axis, zeroOffset)`（CanonicalBridge mapJoint 与等价验证映射同规，不按来源特判）。展开产物为 q_model=0（＝DH 变量零位；建模域坐标 `q_authoritative = q_model − zeroOffset`）位姿；roundtrip 验证含零位（q_model=0 时显式位姿==DH 派生位姿 Rot_z(θᵢ)；映射后 q_authoritative=0 构型==DH 派生位姿 Rot_z(θᵢ+zeroOffset)——修复前展开预烘 zeroOffset、映射再折叠一次，零位构型多转 R_axis(q0)）。求解方向（§7.5）重建式同规：Rot_z(θᵢ)（zeroOffset 不入几何、不入求解相位）。
+- **DH→显式（权威展开，无损）**：逐级累乘（步进＝Rot_z(θᵢ_offset)，无 zeroOffset）得 `T_base_jointi`，构造 `origin=T_{parent,i}`、`axis=Rx(−αᵢ)·ez`（**v0.43 增量修订——audit F-591**：axis 为**关节系内方向**＝物理旋转轴 z_{i-1} 在关节帧 i 内的坐标，解析元素 (0, sinαᵢ, cosαᵢ)；runtime 世界轴向＝origin.R·axis＝R_{0,i-1}·ez 即真实 DH 关节轴。原式 `axis=z_i=T_{0,i}·(0,0,1)` 为基座系子帧 z，α≠0 链被 runtime 按关节系方向消费后物理轴错误——真轴 (0,0,1) 可被解读为 (0,0,−1)）；数值误差仅浮点累乘（对照附录 D 第 4 项容差验证，实测应远优于 1×10⁻⁹）。
 - **变换方向图**：
 
 ```
@@ -1536,6 +1538,8 @@ DoD 沿 DTB §5.2：双模式构建零错误、`ird_gates` 零命中、验收用
 
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
+| v0.43 | 2026-10-09 | audit F-591 修复（分支 audit-p2-fixes）——§7.4 DH→显式 axis 公式行：expandDhChain 轴输出改关节系内方向 Rx(−αᵢ)·ez（原 z_i＝T_{0,i}·(0,0,1) 为基座系子帧 z，α≠0 链被 runtime 按"关节系内方向"消费后物理轴错误）；runtime 消费语义不动（锁定①）；黄金数据集 mdl-dh-equivalence 轴期望与 manifest 哈希同步重制；DhConvertTest ACC1 轴期望重钉、JointsDhAuthorityExpandsToExplicit 恢复 α≠0 面并闭合 Rz(θ+q0)Rx(α) 绝对断言、新增 DhDerivedWorldAxesMatchDhConvention_F591（六轴世界轴逐关节＋判别反例）；求解器目标面为世界系累积 z 与本修复正交，经核实不改 |
+| v0.42 | 2026-10-09 | audit F-590 修复（分支 audit-p2-fixes）——§7.4 零位烘焙纪律：expandDhChain 展开几何改产 q_model=0 位姿（Rot_z(θᵢ_offset)，zeroOffset 不入几何）；权威零位旋转唯一烘焙归口＝modeling→Description 映射单一折叠（mapJoint/等价验证映射同规）；显式→DH 求解重建式（residualOf/deviationsOf）与解析种子同步去 zeroOffset 相位（SolverTargets.zeroOffsets 字段随迁移除）；CanonicalBridge/DhConvert 折叠处注释同步；重钉 DhToExplicitAccumulatesCardFormula/DhToExplicitZeroAlignment/JointsDhAuthorityExpandsToExplicit，新增 DhDerivedMatchesExplicitAuthoredAtAuthoritativeZero_F590（DH 派生 vs 显式直写逐元素相等＋权威零位旋转 Rz(θ+q0)Rx(α) 绝对断言）；黄金数据集 mdl-dh-equivalence 为 roundtrip 自洽面（输入即期望），两侧同步改后逐条核实不受影响 |
 | v0.1 | 2026-09-22 | 首版草案（WP-13-T01 承接）：14 章全量——上游基线登记（REQUIREMENTS v1.16／ARCHITECTURE v0.12／九单元卡 Draft 系）、拥有/消费/不拥有边界、五对象类型数据模型、模板/参数化/物性估算、URDF/Xacro/WorkCell 导入映射、双权威与 DH 五状态转换、传动耦合与分层就绪校验、CanonicalModel 交接（含 P-RT-5 reader 决议）与 8+9 公共接口契约、19 个稳定诊断码登记表、30 行故障注入矩阵、WP-13-T01～T19 任务排序、阶段 C/D 承接与双向交接清单、追踪矩阵、11 项设计决策/6 项风险/8 项待裁决＋6 项引用裁决、12 项交付前自审。状态 `Draft`，待评审 |
 | v0.2 | 2026-09-22 | 响应评审两问：①新增 §2.5 旧代码（`old/src/rwslibs/robotmodelbuilder`，28 文件约 1.84 万行）功能范围对照表（23 行逐项映射，按附录 A 口径仅作范围对照不继承实现）——确认需求级功能全覆盖；4 项架构重定位（策略草稿输入、导出预览/发布、DHJoint 导出、指纹/侧车取代）与 2 项有意不承接（编辑态即时 XML 预览、场景层级挂载/DAF）注明理由与替代语义；②新增 §9.7 插件界面设计与界面逻辑（五区面板信息架构、十条控件↔计算库数据流、域命令登记清单、线程/刷新约束）——消除 v0.1 仅登记插件目标与任务行、未展开界面设计的缺口；③§5.2 增补几何生成辅助（占位圆柱/碰撞引用复制），§14.4 登记项 +1；同步更新 §3.1/§11/§13/V-30/§14.5；文档头版本升 v0.2 |
 | v0.3 | 2026-09-22 | WP-13-T02 构建落位登记（文档同步）：①§1.2 构建落位行同步——`modeling/CMakeLists.txt` 新建（`sdurws_ird_modeling` INTERFACE 占位→STATIC、目标名/别名不变、C++17、零 Qt、配置期红线守卫随文件自持）＋`_test`/`_contract_test` 两测试目标（自持 ird_add_gtest 宏：add_test＋`<target>_report` XML、ctest LABELS "ird"——core/io 同款）；`_plugin` 不随本任务（本卡 §3.2 原文"随 WP-13-T15 落位"——DTB §2.14 T02 产出列含"_plugin 注册"与本卡的偏差按本卡执行，DTB §5.4 增量修订消账归治理侧）；②门禁白名单六边登记完成（`IRD_ALLOWED_UNIT_EDGES` 增 modeling→core/diagnostics/project/runtime/policy/io 六行＋`IRD_EXTRA_EDGE_REFS` 成对登记出处——dependency-graph.json 机器镜像刷新归 traceability 维护任务）；③公共头三件落位（§3.3 表 T02 行）：`ObjectTypes.hpp`（五对象 objectTypeToken——robot-design 以 using 引入 runtime::kRobotDesignObjectType 同一实体、不另设第二常量；SceneObjectRole 词表五值建模侧正式登记，token 串与 policy 消费侧镜像逐值同串）＋`Errors.hpp`（ModelingErrorCode 全表 12 值＝§9.4 已登记域错误名收编、ModelingError 值类型、域错误→稳定码映射数据——当前仅 SchemaVersionUnsupported→MDL-READINESS-SCHEMA-UNSUPPORTED 已登记行，其余随生产者任务登记不私定）＋`DiagCodes.hpp`（MDL-* 码描述符工厂——按 §9.5 分批纪律只登记 T02 行 MDL-READINESS-SCHEMA-UNSUPPORTED，其余 18 行随各自任务表尾追加不预建；真实 StableCodeRegistry 注册验证通过）；④对象 schema 版本常量不在本任务（§3.3 该行 T02/T03 双承载，消费者随 T03 codec 落位——无消费者不预建）；⑤测试目标门禁命中登记：`sdurws_ird_modeling_test`/`sdurws_ird_modeling_contract_test`→`sdurws_ird_testkit` 两处 IRD-GATE-SUB 与 F-051/F-072 同根因（引擎 SUB 形态一对测试目标→testkit 边未豁免），已按 EV-T11 先例自登记 findings；产品目标零 testkit 边、modeling 产品面零命中（GATE 命中集 base..branch diff 仅此 2 条新增，留痕 traceability/builds/wp13-t02/）。文档头版本升 v0.3 |

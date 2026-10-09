@@ -892,11 +892,14 @@ TEST(UiText, TransitionalLabelsRouteThroughUiText_UI_T09_ACC2)
 }  // namespace
 
 // =====================================================================
-// F-613 回归（audit/unit-code-review-20261009）
+// F-611 回归（audit/unit-code-review-20261009；v1.1 改名——原后缀 _F613
+// 与 findings 编号错位：本项＝F-611 StageNavigationModel 观察者登记
+// deque 中段悬垂，findings F-613 实为 GlobalShortcutRegistry 快捷键悬垂
+// UAF 项，acc/audit-p0-p1d-20261009 §F-615 登记）
 // =====================================================================
 
 /**
- * 回归（F-613，P1）：三观察者＋中段退订后，其余观察者的记录指针因
+ * 回归（F-611，P1）：三观察者＋中段退订后，其余观察者的记录指针因
  * deque 中段 erase 失效——旧实现的句柄/通知按裸指针地址在容器里反查，
  * 悬垂地址反查错位（静默去注册/重复通知，极端时 use-after-free）。
  * 修复：登记改 shared_ptr 堆持有——deque 中段摘除不影响堆地址，退订
@@ -906,7 +909,7 @@ TEST(UiText, TransitionalLabelsRouteThroughUiText_UI_T09_ACC2)
  * 航一次（O1/O3 各再收一次、O2 不收）→O1/O3 依次退订（中段/尾部混合
  * 摘除）→容器清空。全程零崩溃＋计数精确。
  */
-TEST(StageNavModel, MidDequeUnsubscribeKeepsSiblingRecordsStable_F613)
+TEST(StageNavModel, MidDequeUnsubscribeKeepsSiblingRecordsStable_F611)
 {
     IRD_TEST_INFO("UX-12", {}, std::nullopt);
 

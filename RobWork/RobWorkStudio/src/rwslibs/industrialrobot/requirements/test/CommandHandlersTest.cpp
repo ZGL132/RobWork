@@ -651,6 +651,87 @@ TEST(ReqReqCommands, RestorePathWritesBytesVerbatim_ACC6)
 }
 
 /**
+ * Restore 槽身份基线校验（audit F-592 回归钉——值面拒绝）：注入基线外
+ * 根槽的 Restore 被拒（RejectedInvalidInput、零写入计划——不产生毒化修
+ * 订）；基线内 oid 但 token 与基线条目不符同拒；基线内合法 Restore 照常
+ * 放行（校验不误伤合法逆放的对照面）。修复前该载荷直达写入装配（双根
+ * 对象入修订——该修订上一切命令 prepare 抛 logic_error 永久毒化）。
+ */
+TEST(ReqReqCommands, RestoreSlotsMustExistInBaseline_F592)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-06", "ARC-01"},
+                  std::vector<std::string>{});
+
+    // ---- 基线装配：根＋点集 ----
+    TestQueryPort port;
+    const requirements::PointSet baselinePoints = makeHealthyPointSet();
+    const std::vector<std::uint8_t> pointBytes =
+        encodeObject(requirements::RequirementObjectVariant(baselinePoints));
+    const core::ObjectId rootOid = makeOid();
+    const core::ObjectId pointSetOid = makeOid();
+    requirements::RequirementSet root;
+    root.name = "基线需求集";
+    root.pointSetRef = pointSetOid;
+    const std::vector<std::uint8_t> rootBytes =
+        encodeObject(requirements::RequirementObjectVariant(root));
+    port.addObject(rootOid, std::string(requirements::kReqSetObjectType), rootBytes);
+    port.addObject(pointSetOid, std::string(requirements::kReqPointSetObjectType),
+                   pointBytes);
+
+    ApplyRequirementSetHandler handler;
+    std::vector<core::DiagnosticRecord> diags;
+
+    // ---- ① 基线外根槽（合法编码字节、oid 不在闭包）→值面拒绝、零写入 ----
+    {
+        RequirementCommandPayload payload;
+        payload.mode = RequirementCommandPayload::Mode::Restore;
+        payload.objects.push_back(RequirementPayloadSlot{
+            false, makeOid(),  // 基线外根身份（注入面——F-592）
+            std::string(requirements::kReqSetObjectType), rootBytes});
+        project::CommandPlan plan;
+        const project::PrepareOutcome outcome =
+            runPrepare(handler, port, payload, plan, diags);
+        EXPECT_EQ(outcome, project::PrepareOutcome::RejectedInvalidInput)
+            << "基线外根槽 Restore 必须在值面被拒";
+        EXPECT_TRUE(plan.objectWrites.empty())
+            << "拒绝态计划零写入（不产生毒化修订）";
+    }
+
+    // ---- ② 基线内 oid 但 token 与基线条目不符 →同拒 ----
+    {
+        RequirementCommandPayload payload;
+        payload.mode = RequirementCommandPayload::Mode::Restore;
+        payload.objects.push_back(RequirementPayloadSlot{
+            false, pointSetOid,  // 基线内 oid……
+            std::string(requirements::kReqSetObjectType),  // ……token 不符
+            pointBytes});
+        project::CommandPlan plan;
+        const project::PrepareOutcome outcome =
+            runPrepare(handler, port, payload, plan, diags);
+        EXPECT_EQ(outcome, project::PrepareOutcome::RejectedInvalidInput)
+            << "token 与基线条目不符的 Restore 必须被拒";
+        EXPECT_TRUE(plan.objectWrites.empty());
+    }
+
+    // ---- ③ 对照面：基线内合法 Restore 照常放行（校验不误伤合法逆放）----
+    {
+        RequirementCommandPayload payload;
+        payload.mode = RequirementCommandPayload::Mode::Restore;
+        payload.objects.push_back(RequirementPayloadSlot{
+            false, rootOid, std::string(requirements::kReqSetObjectType), rootBytes});
+        payload.objects.push_back(RequirementPayloadSlot{
+            false, pointSetOid, std::string(requirements::kReqPointSetObjectType),
+            pointBytes});
+        project::CommandPlan plan;
+        const project::PrepareOutcome outcome =
+            runPrepare(handler, port, payload, plan, diags);
+        EXPECT_EQ(outcome, project::PrepareOutcome::Planned)
+            << "基线内显式槽逆放不受新校验影响";
+        EXPECT_EQ(plan.objectWrites.size(), 2U);
+    }
+}
+
+/**
  * 防御性复核与形状违约拒绝（ACC6 防线纵深）：expectedRevision 与基线
  * 不一致＝调用方契约违约 fail-fast；根 allocateNew 而闭包已有根＝无效
  * 载荷；显式集合槽挂载失配＝无效载荷。

@@ -549,6 +549,73 @@ TEST(CompilerTest, InvertedPresetResolvedIntoWorldTransform_S5Assembly)
     EXPECT_DOUBLE_EQ(t.P()(2), 2.0);  // 吊装高度，单位 m
 }
 
+/**
+ * 默认 TCP 编译面回归（audit F-584——MDL-13/KIN-14 权威语义）：≥2 工具的
+ * Description 经产品编译器全链发布后，defaultTcpIndex 必须指向 Description
+ * tools 首项（S5 在排序前以下标 0 选定、builder 排序后按 ObjectId 重定位），
+ * 而不是排序后 ObjectId 字典序最小者。夹具动态构造"声明首项＝字典序较大者"
+ * 保证排序必然换位；前置自检失败＝夹具退化（不覆盖 F-584 面）。
+ */
+TEST(CompilerTest, DefaultTcpStaysDescriptionFirstAfterToolSort_F584)
+{
+    Harness h = makeHarness(/*richPhysics=*/true);
+
+    // ---- 两个工具对象（闭包登记＋Description 声明——声明序动态定为换位序）----
+    const core::ObjectId tA = idFrom<core::ObjectId>("rtt11-toolA");
+    const core::ObjectId tB = idFrom<core::ObjectId>("rtt11-toolB");
+    ASSERT_FALSE(tA == tB) << "测试种子派生 id 冲突——夹具失效";
+    auto addToolItem = [&h](const core::ObjectId& id) {
+        InMemoryRevisionSource::Item it;
+        it.id = id;
+        it.token = "tool";
+        core::ContentVersion cv;
+        cv.bytes = digestOf("tool-cv");
+        it.cv = cv;
+        it.digest = digestBytes(h.robotBytes);
+        it.bytes = h.robotBytes;
+        h.store.items.push_back(std::move(it));
+    };
+    addToolItem(tA);
+    addToolItem(tB);
+
+    // 工具声明的公共字段（mass 必须 Provided＞0——builder 第 5 步）。
+    auto makeTool = [](const core::ObjectId& id, const char* name) {
+        ToolDescription t;
+        t.objectId = id;
+        t.localName = name;
+        t.mass = val(1.5);  // 单位 kg
+        return t;
+    };
+    // 声明序自安排：首项＝字典序较大者（排序后被换到下标 1——F-584 的面）。
+    if (tA.toCanonical() > tB.toCanonical()) {
+        h.description.tools.push_back(makeTool(tA, "tool_heavy"));
+        h.description.tools.push_back(makeTool(tB, "tool_light"));
+    } else {
+        h.description.tools.push_back(makeTool(tB, "tool_heavy"));
+        h.description.tools.push_back(makeTool(tA, "tool_light"));
+    }
+    const core::ObjectId declaredFirst = h.description.tools.front().objectId;
+
+    ScriptedReader reader(h.description);
+    CompileRequest req = makeRequest(h, h.store, h.store, reader);
+
+    CanonicalModelCompiler compiler;
+    const CompileOutcome out = compiler.compile(req);
+    ASSERT_EQ(out.status, CompileStatus::Published) << "多工具 Description 应发布（诊断："
+        << (out.diagnostics.empty() ? std::string{} : out.diagnostics.front().cause) << "）";
+    ASSERT_NE(out.snapshot, nullptr);
+
+    const CanonicalModel& model = out.snapshot->model();
+    ASSERT_EQ(model.tools().size(), 2u);
+    // 前置自检：排序确实换位（存储首项＝声明次项）——否则断言退化为恒真。
+    ASSERT_EQ(model.tools().front().objectId, h.description.tools.at(1).objectId)
+        << "夹具应使 ObjectId 排序换位——否则本用例未覆盖 F-584 面";
+    // 核心断言：发布模型默认 TCP＝Description 首项（排序重定位后）。
+    ASSERT_TRUE(model.defaultTcpIndex().has_value());
+    EXPECT_EQ(model.tools().at(*model.defaultTcpIndex()).objectId, declaredFirst)
+        << "默认 TCP 须为 Description 首项（MDL-13/KIN-14）——不得被排序调换";
+}
+
 // =====================================================================
 // 用例：事务状态机失败转移与回滚（acceptance 1/3——各段失败→Failed 无
 // 快照；S6 之后各段在产品输入面为"实现缺陷类"不可达（§5.3 原文），其
@@ -995,6 +1062,36 @@ TEST(CompilerTest, RecordedResourceWarnsNotBlocked)
     const CompileOutcome out = compiler.compile(req);
     ASSERT_EQ(out.status, CompileStatus::Published) << "Recorded 只警告不阻断（§8.6）";
     EXPECT_TRUE(hasDiagnostic(out.diagnostics, "RT-RESOURCE-RECORDED"));
+}
+
+/**
+ * 限位量级抽样警告专用码（audit F-593 回归钉）：deg 误作 rad 的模型
+ * （限位 ±360——|360| > 4π×10 rad 抽样阈）发布成功（"警告不阻断"承诺），
+ * 且诊断块含专用警告码 RT-BOUNDS-MAGNITUDE、不再复用 error 级硬失败码集
+ * 内的 RT-UNIT-MISMATCH。修复前警告携带 UnitMismatch——builder 第 10 步
+ * isHardErrorDiagCode 命中即抛 InputInvalid，合法模型整次编译硬失败。
+ */
+TEST(CompilerTest, BoundsMagnitudeWarningPublishesWithDedicatedCode_F593)
+{
+    Harness h = makeHarness(/*richPhysics=*/true);
+    // deg 误作 rad 的典型读数（±360 deg 数值直接填入 rad 字段——S3 量级
+    // 抽样阈 4π×10≈125.7 rad，±360 触发；序仍合法 qmin<qmax）。
+    h.description.joints.at(0).lower = val(-360.0);  // rad 位（量级异常）
+    h.description.joints.at(0).upper = val(360.0);   // rad 位（量级异常）
+
+    ScriptedReader reader(h.description);
+    CompileRequest req = makeRequest(h, h.store, h.store, reader);
+
+    CanonicalModelCompiler compiler;
+    const CompileOutcome out = compiler.compile(req);
+    ASSERT_EQ(out.status, CompileStatus::Published)
+        << "量级抽样警告不得阻断发布（§4.4\"警告不阻断\"承诺）";
+    ASSERT_NE(out.snapshot, nullptr);
+    EXPECT_TRUE(hasDiagnostic(out.diagnostics, "RT-BOUNDS-MAGNITUDE"))
+        << "专用警告码随模型诊断块发布";
+    EXPECT_FALSE(hasDiagnostic(out.diagnostics,
+                               std::string{registryCode(RuntimeErrorCode::UnitMismatch)}))
+        << "不得再复用 error 级硬失败码集内的 UnitMismatch（F-593 相撞根因）";
 }
 
 // =====================================================================

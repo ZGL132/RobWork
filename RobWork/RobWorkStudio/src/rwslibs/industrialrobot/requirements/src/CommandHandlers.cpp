@@ -375,6 +375,39 @@ bool applySlotsValid(const RequirementCommandPayload& payload,
 }
 
 /**
+ * @brief Restore 载荷的槽存在性校验（基类职责——audit F-592 修复新增）。
+ *
+ * 背景（为什么基类必须管 Restore）：Restore（快照逆放）钩子
+ * decodeRestoreCommon 只拿到解码后的工作集（RequirementWorkingSet——无
+ * 基线条目面），无法自行核对"槽身份须存在于基线"；原实现该校验完全缺失
+ * 且注释谎称基类已校验——注入基线外根槽的 Restore 可造出双根对象，该
+ * 修订上一切命令 prepare 抛 logic_error（修订永久毒化）且无前版字节不可
+ * 回收。本函数复用 applySlotsValid 的存在性半区（③ 显式槽身份存在＋
+ * token 一致），只做 Restore 语义所需的面：不查根槽数（逆放可只触集合
+ * 对象——部分撤销的合法形态）、不接受 allocateNew（逆放槽显式身份）。
+ *
+ * @param payload  [in] Restore 模式载荷（槽集只读）
+ * @param baseline [in] 基线条目快照（rebuildRequirementBaseline 产物）
+ * @return true＝全部槽存在于基线且 token 一致；false＝任一槽显式身份
+ *         无效/allocateNew/基线无此 oid/token 不符（无效载荷）
+ */
+bool restoreSlotsExistInBaseline(const RequirementCommandPayload& payload,
+                                 const BaselineSnapshot& baseline)
+{
+    for (const RequirementPayloadSlot& slot : payload.objects) {
+        // 逆放槽契约：显式身份（allocateNew 在逆放语义无意义——与钩子内
+        // 形状检查同面，此处基线面先行拦截）。
+        if (slot.allocateNew || !slot.objectId.isValid()) { return false; }
+        // 存在性＋token 一致（applySlotsValid ③ 同面——基线条目核对）。
+        const BaselineEntry* entry = findBaselineEntry(baseline, slot.objectId);
+        if (entry == nullptr || entry->token != slot.objectTypeToken) {
+            return false;
+        }
+    }
+    return !payload.objects.empty();  // 空槽集在钩子内已拒——防御性同拒
+}
+
+/**
  * @brief 候选闭包后像装配（就绪 R1/R8 浅校验的 CheckContext 数据面）：
  *        基线 objectRefs 按本次计划写入增改（同 oid 替换、新 oid 追加）。
  *
@@ -592,10 +625,16 @@ project::PrepareOutcome IRequirementCommandHandler::prepare(
     const RequirementCodec codec;
     BaselineSnapshot baseline = rebuildRequirementBaseline(ctx, envelope, baseSnapshot);
 
-    // ---- ②.5 Apply 通用槽校验（需要基线条目面——基类职责，见文件头
-    //      实现决策登记；Restore 槽校验在钩子内同面执行）----
+    // ---- ②.5 通用槽校验（需要基线条目面——基类职责，见文件头实现决策
+    //      登记）：Apply＝全量形状校验；Restore＝存在性＋token 一致半区
+    //      （audit F-592——原实现 Restore 无任何基线校验，注释谎称基类已
+    //      校验；基线外根槽注入可造双根对象永久毒化修订）----
     if (payload->mode == RequirementCommandPayload::Mode::Apply
         && !applySlotsValid(*payload, baseline)) {
+        return project::PrepareOutcome::RejectedInvalidInput;
+    }
+    if (payload->mode == RequirementCommandPayload::Mode::Restore
+        && !restoreSlotsExistInBaseline(*payload, baseline)) {
         return project::PrepareOutcome::RejectedInvalidInput;
     }
 
@@ -806,8 +845,12 @@ RequirementDecodeOutcome decodeApplyCommon(project::HandlerContext& ctx,
 
 /**
  * @brief Restore 模式共用装配体（快照逆放——§6.9 同源）：全部槽显式身
- *        份且存在于基线（基类已校验存在性；此处复核模式面）；写入＝载
- *        荷携带的前一版本 canonical 字节原样直写（位级保真，不重编码）。
+ *        份；写入＝载荷携带的前一版本 canonical 字节原样直写（位级保真，
+ *        不重编码）。
+ *
+ * 槽身份存在性＋token 一致由基类 prepare ②.5 的 restoreSlotsExistInBaseline
+ * 校验（audit F-592 修复——本钩子签名只有解码后工作集、无基线条目面，
+ * 无法自行核对；原注释"基类已校验存在性"在该修复前失实，已随修复订正）。
  */
 RequirementDecodeOutcome decodeRestoreCommon(const RequirementCommandPayload& payload,
                                              const RequirementWorkingSet& baseline,

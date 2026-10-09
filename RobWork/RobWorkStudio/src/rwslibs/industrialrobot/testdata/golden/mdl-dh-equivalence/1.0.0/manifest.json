@@ -25,7 +25,7 @@
     "expected/roundtrip.json"
   ],
   "parameters": {
-    "conventions": "T_{i-1,i}=Rot_z(theta+zeroOffset)*Trans_z(d)*Trans_x(a)*Rot_x(alpha)（§7.4；零位对齐 q_rw=0）",
+    "conventions": "T_{i-1,i}=Rot_z(theta)*Trans_z(d)*Trans_x(a)*Rot_x(alpha)（§7.4；F-590 零位烘焙纪律——q_model=0 位姿，zeroOffset 不入几何，权威零位旋转唯一烘焙归口＝Description 映射单一折叠）",
     "consumedFields": "dh[*].origin.x/y/z、dh[*].axis.x/y/z（展开闭式期望——第 5 项）、dh-solve[*].thetaOffset/d/a/alpha（roundtrip 参数级——第 5 项）、fk.max-position-deviation、fk.max-orientation-deviation（编译链 FK 对照——第 4 项）",
     "freeCoordinateRule": "exact-non-unique 的期望解按 §7.5 字典序规则定值（自由 theta 钉中性值 0）——合同规则而非几何闭式，见 generate 脚本注"
   },
@@ -50,7 +50,7 @@
     "solverConfig": {},
     "seed": null,
     "threadCount": 1,
-    "generatedAtUtc": "2026-09-25T00:00:00Z"
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
   },
   "edgeCases": {
     "zeroValue": true,
@@ -70,8 +70,8 @@
     },
     {
       "path": "expected/expansion.json",
-      "sha256": "ae0b36119ff4e96638f7a1e73a4fcf064a607eff38a189a70096d301ec95540a",
-      "sizeBytes": 9810
+      "sha256": "a654c0d681e2a0b1d51597582a67d63276ec531b143b8c17b8e507f81e3ae244",
+      "sizeBytes": 9957
     },
     {
       "path": "expected/roundtrip.json",
@@ -80,8 +80,8 @@
     },
     {
       "path": "generate/make_dh_equivalence.mjs",
-      "sha256": "8398b0f77fdfa6d779064eb92e36043353b0c1e7cb9ac3b4dc39ba63d48f0ec2",
-      "sizeBytes": 5705
+      "sha256": "4f3b130e4303a8390375241e7016cbe579d79fac630a3981b9bc7ada96a71971",
+      "sizeBytes": 6076
     }
   ],
   "generator": {
@@ -95,6 +95,20 @@
       "date": "2026-09-25",
       "change": "首版：七个样本（exact 五族含零值/近零/正负抵消边角样例＋exact-non-unique 退化族两例）的闭式展开与 roundtrip 期望——WP-13-T16 §10.1 数据集 2/4（AT-16 载体；V-11 roundtrip 双一致面）",
       "reReviewedBy": "WP-13-T16 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "audit F-590 重制（分支 audit-p2-fixes）：展开闭式期望按 §7.4 v0.42 零位烘焙纪律重制——Rot_z(theta)（zeroOffset 不入几何/不入累计轴），generate 脚本与 expected/expansion.json 同步重生成（roundtrip 期望不变——重解面输入即期望）；manifest 完整性哈希随文件更新",
+      "reReviewedBy": "audit-p2-fixes 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "audit F-591 重制（分支 audit-p2-fixes）：展开轴期望改为关节系内方向 Rx(−α)·ez=(0,sinα,cosα)（原 R_{0,i}·ez 为基座系子帧 z——α≠0 链被 runtime 按关节系方向误读），generate 脚本与 expected/expansion.json 同步重生成（origin/roundtrip 期望不变）；manifest 完整性哈希随文件更新",
+      "reReviewedBy": "audit-p2-fixes 实施会话（验收段独立复核待验收者留痕）",
       "supersededBy": ""
     }
   ]

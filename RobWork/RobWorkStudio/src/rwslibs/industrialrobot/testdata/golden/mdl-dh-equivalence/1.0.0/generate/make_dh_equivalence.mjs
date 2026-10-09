@@ -8,11 +8,15 @@
  * 以本脚本产物（expected/*.json）反查 DhExplicitConverter——实现漂移在
  * 附录 D 第 5 项容差判定处显性失败。
  *
- * 数学口径（§7.4 原文，零位对齐——q_rw=0）：
- *   T_{i-1,i} = Rot_z(θ_i + q0_i) · Trans_z(d_i) · Trans_x(a_i) · Rot_x(α_i)
- *   origin_i  = T_{i-1,i}（关节系相对父连杆系；position = Rz(θ+q0)·(a,0,d)，
- *               rotation = Rz(θ+q0)·Rx(α)）
- *   axis_i    = R_{0,i}·(0,0,1)（累计旋转第三列）
+ * 数学口径（§7.4 原文，F-590 零位烘焙纪律——q_model=0）：
+ *   T_{i-1,i} = Rot_z(θ_i) · Trans_z(d_i) · Trans_x(a_i) · Rot_x(α_i)
+ *   （zeroOffset 不烘入展开几何——权威零位旋转的唯一烘焙归口在
+ *   modeling→Description 映射的单一折叠 origin·R(axis, q0)）
+ *   origin_i  = T_{i-1,i}（关节系相对父连杆系；position = Rz(θ)·(a,0,d)，
+ *               rotation = Rz(θ)·Rx(α)）
+ *   axis_i    = Rx(−α_i)·(0,0,1) = (0, sinα_i, cosα_i)（关节系内方向——
+ *               F-591：物理旋转轴 z_{i-1} 在关节帧 i 内的坐标；世界轴＝
+ *               origin.R·axis＝R_{0,i-1}·ez）
  *   R_z(t) = [c,-s,0; s,c,0; 0,0,1]，R_x(a) = [1,0,0; 0,c,-s; 0,s,c]
  *
  * roundtrip 期望（expected/roundtrip.json）：
@@ -60,7 +64,7 @@ const inputs = JSON.parse(
 const samples = inputs.samples.map((sample) => {
   // 第一遍：逐关节相对原点 T_{i-1,i}（origin 半部——§7.4 单步公式）。
   const rows = sample.joints.map((j) => {
-    const rz = rotZ(j.thetaOffset + j.zeroOffset);
+    const rz = rotZ(j.thetaOffset);  // F-590：θ_offset 单独入几何（zeroOffset 不烘入）
     const rx = rotX(j.alpha);
     // origin_i = Rot_z(θ+q0)·Trans_z(d)·Trans_x(a)·Rot_x(α)：旋转半部
     // ＝Rz·Rx；平移半部＝Rz·(a,0,d)（Trans_z(d)·Trans_x(a) 的平移向量
@@ -71,23 +75,20 @@ const samples = inputs.samples.map((sample) => {
         position: matVec(rz, [j.a, 0.0, j.d]),
         rotation: matMul(rz, rx).flat(),
       },
-      axis: [0.0, 0.0, 0.0],  // 占位——累计轴在下方第二遍循环填入
+      axis: [0.0, 0.0, 0.0],  // 占位——轴半部在下方循环按 F-591 公式填入
     };
   });
-  // 第二遍：累计旋转 R_{0,i}（i 从 1 起）→ axis_i = R_{0,i}·ez。
-  let accR = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
+  // 轴半部：axis_i = Rx(−α_i)·ez = (0, sinα_i, cosα_i)（F-591——关节系内
+  // 方向，仅依赖本关节扭转角；无累计项）。
   sample.joints.forEach((j, idx) => {
-    const rz = rotZ(j.thetaOffset + j.zeroOffset);
-    const rx = rotX(j.alpha);
-    accR = matMul(accR, matMul(rz, rx));
-    rows[idx].axis = matVec(accR, [0.0, 0.0, 1.0]);
+    rows[idx].axis = [0.0, Math.sin(j.alpha), Math.cos(j.alpha)];
   });
   return { id: sample.id, family: sample.family, joints: rows };
 });
 
 const expansion = {
   schemaVersion: 'mdl-dh-equivalence-expansion/1',
-  note: '闭式展开期望（§7.4 公式；origin.position/rotation 为 T_{i-1,i} 的平移与旋转半部；axis 为 R_{0,i}·ez 累计轴——单位向量；消费比较走档案 mdl-dh 条目 dh[*].origin.*/dh[*].axis.*，附录 D 第 5 项 1e-9）',
+  note: '闭式展开期望（§7.4 公式，F-590 零位烘焙纪律——zeroOffset 不入几何；origin.position/rotation 为 T_{i-1,i} 的平移与旋转半部；axis 为 Rx(−α)·ez 关节系内单位轴（F-591）——单位向量；消费比较走档案 mdl-dh 条目 dh[*].origin.*/dh[*].axis.*，附录 D 第 5 项 1e-9）',
   samples,
 };
 
