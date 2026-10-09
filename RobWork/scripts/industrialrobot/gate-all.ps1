@@ -21,6 +21,16 @@
 #                         CMAKE_PREFIX_PATH；全新树配置口径见 findings F-007：
 #                         需 vcpkg toolchain＋Qt 前缀＋双 ini 模板，模板供给
 #                         已由 ci/ 目录的 CI 模板内嵌，本地全新树需操作员补齐）
+#     -Toolchain <路径>   vcpkg toolchain 文件（vcpkg.cmake）路径，集成与冒烟
+#                         两处配置共用。缺省回落 <仓库根>/vcpkg/scripts/
+#                         buildsystems/vcpkg.cmake——该目录不入库，worktree
+#                         场景依赖 junction 供给，历史上两次清理穿透事故
+#                         （2026-10-09/10-10，findings F-628）均源于此；
+#                         系统性对策＝worktree 调用显式传**主仓 vcpkg 的绝对
+#                         路径**（如 -Toolchain D:/<主仓>/vcpkg/scripts/
+#                         buildsystems/vcpkg.cmake），从根上消除对 junction
+#                         的依赖。主仓或已建 junction 的树不传参时缺省行为
+#                         与历史版本完全一致。
 #
 # 退出码：0＝全部门禁与测试通过；非 0＝存在失败项（逐项输出定位）。
 # =====================================================================
@@ -28,7 +38,9 @@
 param(
     [string]$BuildDir = "",
     [string]$SmokeDir = "",
-    [string]$QtPrefix = ""
+    [string]$QtPrefix = "",
+    # vcpkg toolchain 显式供给（F-628）：空串＝未传参，回落仓库根推定路径（见下方赋值处）
+    [string]$Toolchain = ""
 )
 $ErrorActionPreference = 'Continue'   # 门禁脚本要收集全部失败再汇总，不在第一个错误中断
 
@@ -47,7 +59,14 @@ if (-not (Test-Path "$RepoRoot/RobWork/scripts/industrialrobot")) {
 }
 if (-not $BuildDir) { $BuildDir = "$RepoRoot/build" }
 $IndustrialSrc = "$RepoRoot/RobWork/RobWorkStudio/src/rwslibs/industrialrobot"
-$Toolchain = "$RepoRoot/vcpkg/scripts/buildsystems/vcpkg.cmake"
+# vcpkg toolchain 供给（F-628）：有参用参（worktree 场景直引主仓 vcpkg 绝对
+# 路径，消除 junction 依赖）；无参回落既有推定路径 <仓库根>/vcpkg/...（主仓或
+# 已建 junction 的树，缺省行为不变）。赋值必须在仓库根自检**之后**——回落路径
+# 依赖 $RepoRoot，既有自检逻辑顺序保持不动。该值被三处消费：
+#   ①第 0 步环境自检 Test-Path $Toolchain；
+#   ②第 1 步集成树（重新）配置 -DCMAKE_TOOLCHAIN_FILE=$Toolchain；
+#   ③第 4 步冒烟树配置 -DCMAKE_TOOLCHAIN_FILE=$Toolchain。
+if (-not $Toolchain) { $Toolchain = "$RepoRoot/vcpkg/scripts/buildsystems/vcpkg.cmake" }
 
 # 门禁结果收集：每步一行结论，最后汇总（结论二元可判——契约 verify 口径）
 $script:Results = [System.Collections.Generic.List[string]]::new()

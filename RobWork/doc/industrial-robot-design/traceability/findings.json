@@ -5998,10 +5998,12 @@
       "id": "F-628",
       "source": "diag-schema-level 合入复验（2026-10-10，第二次 vcpkg 穿透事故后登记）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "gate-all 对 worktree 的 vcpkg 供给依赖 junction（脚本按自身位置推 RepoRoot/vcpkg 路径）——任一会话清理穿透 junction 即全环境瘫痪（2026-10-09/10-10 两次实测，均靠缓存重组恢复）；系统性消除＝gate-all 增 -Toolchain 可选参数（绝对路径直引主仓 vcpkg，缺省行为不变，零 Python 约束不变）",
-      "owner": "门禁所有者：评审后为 gate-all.ps1 增 -Toolchain 参数并在 DTB §5.1 同步口径；过渡纪律＝子会话一律不做 junction/工作树清理（编排者统一执行）"
+      "owner": "门禁所有者：评审后为 gate-all.ps1 增 -Toolchain 参数并在 DTB §5.1 同步口径；过渡纪律＝子会话一律不做 junction/工作树清理（编排者统一执行）〔所有者评审通过授权 2026-10-10，批次 gate-toolchain-param〕",
+      "resolution": "修复（分支 gate-toolchain-param，基于 redesign-main@ebf86026）：①gate-all.ps1——param 块增 [string]$Toolchain = \"\"，原推定路径赋值改为「有参用参、无参回落 $RepoRoot/vcpkg/scripts/buildsystems/vcpkg.cmake」的条件赋值（赋值位置在仓库根三段式自检之后，自检逻辑顺序不动）；头部用法注释同步增补 -Toolchain 说明；消费点三处全数吃参——第 0 步环境自检 Test-Path、第 1 步集成树（重）配置 -DCMAKE_TOOLCHAIN_FILE、第 4 步冒烟树配置 -DCMAKE_TOOLCHAIN_FILE（grep 逐处核对，无其他硬编码 vcpkg 路径）；零 Python 约束不变，检查逻辑/计数/口径零改动。②DTB §5.1「fresh 树运行时前置」行补 ⑥vcpkg toolchain 供给口径（worktree 优先 -Toolchain 绝对路径直引主仓 vcpkg；junction 退为缺省行为下兼容手段，清理必先核 LinkType）＋头部 v0.56 变更记录行。验证口径＝无 junction 独立工作树（无 vcpkg/、无预配置、无预建 build/smoke）以 -Toolchain 直引主仓 vcpkg 跑 gate-all 全量（集成配置＋ird_gates＋集成逐目标构建测试＋冒烟配置构建测试），toolchain 供给仅来自 -Toolchain 参数；实测数据与冒烟配置行证据落 traceability/builds/gate-toolchain-param/（随留痕提交登记）。",
+      "fixedAt": "2026-10-10"
     }
   ]
 }
