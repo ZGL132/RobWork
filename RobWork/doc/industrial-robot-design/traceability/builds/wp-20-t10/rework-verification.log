@@ -1,0 +1,57 @@
+== WP-20-T10 返工轮验证汇总（2026-10-09，acc/wp-20-t10/1 判 fail 后返工交付前门禁自检）
+== 返工输入：B-1（冒烟模式测试留痕失实——旧批次文件冒充本批冒烟运行产物）＋建议级 G-1（注释中英混杂）。
+== 本文件逐条登记返工轮实际执行的验证命令与实测结果；计数一律以本轮实测产物为准。
+
+---- ① 冒烟构建树增量重构建（含 G-1 修改，确保 exe 为本批代码）----
+命令：cmake --build <worktree>/build-smoke --config Release
+实测：exit=0，零错误；OptimizationPanelWidget.cpp 因 G-1 注释修正重编（日志第 47 行）；
+      四个 optimization 目标产物齐备（详见 smoke-build.log 本轮主体）。
+
+---- ② 集成构建树两测试目标构建（含 G-1 修改）----
+命令：cmake --build <worktree>/build --config Release --target sdurws_ird_optimization_test sdurws_ird_optimization_contract_test
+实测：exit=0，零错误；OptimizationPanelWidget.cpp 重编。
+
+---- ③ 集成门禁：两 _report 目标（构建＋真实运行＋gtest XML）----
+命令：cmake --build <worktree>/build --config Release --target sdurws_ird_optimization_test_report sdurws_ird_optimization_contract_test_report
+实测：exit=0；
+  sdurws_ird_optimization_test          ：160 tests ran，159 PASSED＋1 SKIPPED（OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable——envUnavailable 诚实登记，不计通过）＋0 FAILED；
+  sdurws_ird_optimization_contract_test ：40 tests ran，40 PASSED＋0 FAILED。
+构建树 gtest_reports/ 两份 XML 根节点：tests="160" failures="0"／tests="40" failures="0"。
+
+---- ④ ird_gates 门禁 ----
+命令：cmake --build <worktree>/build --config Release --target ird_gates
+实测：exit=0，R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 全部通过零命中（详见 ird_gates.log 本轮主体）。
+
+---- ⑤ 冒烟两 exe 实测运行（B-1 核心返工项——留痕重制）----
+运行方式：直接运行冒烟树产物 exe（build-smoke/optimization/Release/ 下，运行时 DLL 随构建拷贝于同目录），
+  --gtest_output=xml 与 --ird_report 直写 traceability/gtest-reports/wp-20-t10/（listener 原生产物，零手工合成）：
+  A. sdurws_ird_optimization_test.exe
+     控制台实测：[==========] 160 tests from 23 test suites ran. / [  PASSED  ] 159 tests. / [  SKIPPED ] 1 test
+                （OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable——GTEST_SKIP，理由 envUnavailable）／进程退出码 0。
+     产物：sdurws_ird_optimization_test-smoke.xml（tests="160" failures="0"）
+           ird-test-report-smoke.json（total=160，passed=159，failed=0，skipped=1，envUnavailable=0，decisive=true；23 套件全量＝T02~T10）
+  B. sdurws_ird_optimization_contract_test.exe
+     控制台实测：[==========] 40 tests from 9 test suites ran. / [  PASSED  ] 40 tests. ／进程退出码 0。
+     产物：sdurws_ird_optimization_contract_test-smoke.xml（tests="40" failures="0"）
+           ird-test-report-contract-smoke.json（total=40，passed=40，failed=0，decisive=true；9 套件＝OptPluginAssembly 5 含 T10 新增 2 例）
+
+---- ⑥ 集成两 exe 实测运行（集成四件留痕同批重制——原 ird-test-report-integration.json 仅含契约半区 40 条、
+        缺模型半区，随返工一并修正为模型/契约分文件全量实测）----
+运行方式：集成树 exe（build/RobWorkStudio/bin/Release/ 下），参数同⑤直写 traceability：
+  A. sdurws_ird_optimization_test.exe            ：160 ran＝159 PASSED＋1 SKIPPED，退出码 0
+     → sdurws_ird_optimization_test-integration.xml（tests="160" failures="0"）
+     → ird-test-report-integration.json（total=160，passed=159，skipped=1，decisive=true）
+  B. sdurws_ird_optimization_contract_test.exe   ：40 ran＝40 PASSED，退出码 0
+     → sdurws_ird_optimization_contract_test-integration.xml（tests="40" failures="0"）
+     → ird-test-report-contract-integration.json（total=40，passed=40，decisive=true）
+
+---- ⑦ validate-docs ----
+命令：pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1（工作树根执行）
+实测：见本文件追加段（执行后登记）。
+
+== 结论：冒烟模式实测计数＝集成模式同计数（模型 160＝159 PASSED＋1 SKIPPED／契约 40＝40 PASSED），
+   首跑提交中"独立冒烟模式构建零错误且两 exe 同计数全绿（159+1skip／40）"的结论经本轮真实运行达成留痕支撑；
+   首跑留痕产物（tests=130/34 的 T08 批次改名复制件＋total=31 旧契约面 json）已全部以本轮实测产物替换。
+---- ⑦ validate-docs 实测 ----
+命令：pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1（工作树根执行）
+实测：exit=0，输出：validate-docs: PASS (20 units, 12 trace entries, 312 task files)

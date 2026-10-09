@@ -237,8 +237,15 @@ endif()
 # AUTOMOC；首个 Q_OBJECT 类落位任务按 modeling/requirements 先例置
 # AUTOMOC ON（DTB §5.1 v0.17 行口径）。
 add_library(sdurws_ird_optimization_plugin STATIC
-    plugin/OptimizationPluginAssembly.cpp)  # 装配门面实现（assembly/
-                                            #   公共头的私有实现）
+    plugin/OptimizationPluginAssembly.cpp  # 装配门面实现（assembly/
+                                           #   公共头的私有实现）
+    # WP-20-T10 增列——界面面三实现 TU（四页合一 Tab 主面板；卡 §3.1
+    # 布局表 plugin/ 行的 T10 交付面）：
+    plugin/OptPanelModel.cpp               # 模型层流 L-O1~L-O9（零 Qt 可测
+                                           #   半区——界面链路用例主被测面）
+    plugin/OptimizationPanelWidget.cpp)    # 四页主面板（变量表/约束页/
+                                           #   运行控制〔取消/进度漏斗〕/
+                                           #   候选表与对比——Qt Widgets）
 set_target_properties(sdurws_ird_optimization_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -305,8 +312,9 @@ endif()
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
 # PRJ-T15/selection/dynamics/trajectory 同款先例；IRD_TEST_INFO 携带
-# 需求/AT 追溯字段）。零 QCoreApplication 构造（trajectory T03 同款诚实
-# 登记）：_test 目标零 Qt 消费（不链 _plugin），测试面无 Qt 类型。
+# 需求/AT 追溯字段）。零 QCoreApplication 构造（dynamics T09 同款诚实
+# 登记）：测试源码零 Qt 类型消费〔模型层零 Qt——WP-20-T10 起链 _plugin
+# 仅为被测面符号解析，Qt 链接面经 plugin 目标 PUBLIC 传播〕。
 enable_testing()
 
 add_executable(sdurws_ird_optimization_test
@@ -330,7 +338,13 @@ add_executable(sdurws_ird_optimization_test
     # WP-20-T09 增列——一站式导出六工件数据面/三元组校验与正式导出阻断/
     # 限定语强制/io canonical 写出编排/G-1 审计口径钉扎（acceptance 1/2/3，
     # OPT-VER-141/142/148/AT-34）：
-    test/ExportTest.cpp)
+    test/ExportTest.cpp
+    # WP-20-T10 增列——界面链路模型层用例组（OptPanelReadiness/Variables/
+    # Constraints/RunControl/Candidates/Compare/StageLock/Text/Catalog/
+    # Gui 十组——就绪投影/变量表/约束页/取消协作与进度漏斗〔AT-34〕/
+    # 候选表与对比/阶段锁横幅/文案守卫/装配登记面/GUI envUnavailable；
+    # acceptance 1/2 的执行证明面）：
+    test/OptPluginPanelTest.cpp)
 
 target_compile_features(sdurws_ird_optimization_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_optimization_test PROPERTIES
@@ -351,8 +365,20 @@ endif()
 # （RecordListener/IRD_TEST_INFO——T-1 允许形态：仅测试目标链 testkit，
 # 产品目标不链）。单行链接语句＝契约测试 T-1 扫描的登记形态约束（testkit
 # 与测试目标名同行可见——kinematics/selection/dynamics/trajectory 同款）。
-# 本目标零 Qt（红线扫描用例面——不链 _plugin）。
-target_link_libraries(sdurws_ird_optimization_test PRIVATE sdurws_ird_optimization sdurws_ird_testkit GTest::gtest)
+# WP-20-T10 起增链 sdurws_ird_optimization_plugin（同单元被测插件目标
+# ——模型层链路用例 OptPluginPanelTest 消费 plugin/ 呈现模型半区；链接
+# 面 Qt 经 plugin 目标 PUBLIC 传播＋显式 Qt6::Core/Gui 两行，测试源码零
+# Qt 类型消费〔QCoreApplication 级以下——模型层零 Qt〕；dynamics
+# WP-17-T09 同款形态）。原 T02"零 Qt 不链 _plugin"口径随 T10 界面面
+# 落位被替代（诚实登记——模型层用例的被测面即插件目标，红线扫描用例
+# 的产品面扫描域 include/**＋src/** 不受影响）。
+target_link_libraries(sdurws_ird_optimization_test PRIVATE sdurws_ird_optimization sdurws_ird_optimization_plugin sdurws_ird_testkit GTest::gtest Qt6::Core Qt6::Gui)
+
+# 插件私有头解析（测试消费 plugin/ 呈现模型头 OptPanelModel 等——同
+# 单元 PRIVATE 面；plugin/ 子目录直指——裸名 include 解析；dynamics
+# WP-17-T09 先例同款）。
+target_include_directories(sdurws_ird_optimization_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/plugin)
 
 # 源码树位置注入：红线扫描用例在运行期扫描 optimization 源码核对红线
 # （零 Qt/零表外 include——卡 §3.1/§3.2）。经编译定义传 industrialrobot
