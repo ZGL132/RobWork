@@ -5964,6 +5964,33 @@
       "title": "sel-catalog-golden/1.0.0 coveredRequirements 引用 AT-08 不在需求 ID 字典（192 项）——WP-19-T11 交付内容与字典失配（lint 为 CI 独立运行面，tick 门禁不含，随合流进入主线后被复验扫出）",
       "owner": "selection 黄金集交付方＋字典维护者：二选一——dataset 补对齐字典既有 ID，或字典增补 AT-08（核对 REQUIREMENTS 原文后定）；修后 lint 须 26/26 零违规",
       "resolution": "修复（2026-10-10）：字典增补 AT-01~AT-38 共 38 项（count 192→230，source 注明增补依据＝REQUIREMENTS 行头核实——AT-08 为器件选型行头，WP-19-T11 数据集引用合法）；lint 26/26 零违规。"
+    },
+    {
+      "id": "F-625",
+      "source": "traceability/acceptance/diag-schema-level-20261010.md（独立子会话对抗式验收 attempt 1，2026-10-10）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "Codec.cpp parse 版本拒绝文案硬编码\"本编码器＝1.0\"——F-618 将 kVersionMinor 0→1（canonical-model/1.1）后该用户可见诊断串失实（拒绝判定本身用常量比较、功能不受影响，仅文案谎报编码器版本）",
+      "owner": "runtime 单元：升版时同步动态化（拼 kVersionMajor.kVersionMinor）或修正该串；随下次 runtime 批次顺带修复，修后核对 CodecNegativeTest 语境文案断言"
+    },
+    {
+      "id": "F-626",
+      "source": "traceability/acceptance/diag-schema-level-20261010.md（独立子会话对抗式验收 attempt 1，2026-10-10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "kVersionMinor 0→1 的\"旧 minor=0 字节显式拒绝\"有实现（parse 版本门 major!=kVersionMajor||minor!=kVersionMinor 同分支）与三卡写实声明，但无 minor 专项钉——CodecNegativeTest.RejectsMalformedEncodings 仅翻 major 字节（bad.at(8)），minor 位（bytes 10-11）旧值拒绝行为缺直接回归物证",
+      "owner": "runtime 单元：CodecNegativeTest 增翻 minor 字节用例（bad.at(10) 归零→断言 InputInvalid 版本不受支持）；与 F-625 同批顺带"
+    },
+    {
+      "id": "F-627",
+      "source": "traceability/acceptance/diag-schema-level-20261010.md（独立子会话对抗式验收 attempt 1，2026-10-10）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "diag-schema-level 批次复验留痕用例总数簿记双加：README 与本册 F-618 resolution 声称集成 8448/冒烟 7748 用例，验收者独立直跑实测集成 4224/冒烟 3874（恰为 2 倍——root testsuites 属性与 testsuite 子行双重累加）；0 失败/0 错误/跳过数等实质结论经独立复现成立，仅总数登记失实",
+      "owner": "diag-schema-level 实施者：builds/diag-schema-level/README.md 与本册 F-618 resolution 的用例总数更正为实测数（4224/3874），并核对聚合脚本口径（避免 root+children 双加）"
     }
   ]
 }

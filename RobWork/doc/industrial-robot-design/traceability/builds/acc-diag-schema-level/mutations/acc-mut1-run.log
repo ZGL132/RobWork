@@ -1,0 +1,23 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CompilerTest
+[ RUN      ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593
+C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(1089): error: Expected equality of these values:
+  out.status
+    Which is: 4-byte object <01-00 00-00>
+  CompileStatus::Published
+    Which is: 4-byte object <00-00 00-00>
+量级抽样警告不得阻断发布（§4.4"警告不阻断"承诺）
+
+[  FAILED  ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593 (1 ms)
+[----------] 1 test from CompilerTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (2 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593
+
+ 1 FAILED TEST

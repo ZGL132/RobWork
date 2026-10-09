@@ -1,0 +1,21 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CodecRoundtripTest
+[ RUN      ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618
+C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CodecTest.cpp(127): error: Value of: rejected.ok()
+  Actual: true
+Expected: false
+未知级别字节必须拒绝（枚举值域校验——不静默映射，NFR-COR-03）
+
+[  FAILED  ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618 (1 ms)
+[----------] 1 test from CodecRoundtripTest (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618
+
+ 1 FAILED TEST

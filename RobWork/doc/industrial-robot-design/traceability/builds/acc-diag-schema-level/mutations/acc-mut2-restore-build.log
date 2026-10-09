@@ -1,0 +1,119 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\ZERO_CHECK.vcxproj]
+  1>Checking Build System
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\core\sdurw_core.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_core.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_core.exp
+  sdurw_core.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_core.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\common\sdurw_common.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_common.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_common.exp
+  sdurw_common.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_common.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\math\sdurw_math.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_math.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_math.exp
+  sdurw_math.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_math.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\kinematics\sdurw_kinematics.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_kinematics.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_kinematics.exp
+  sdurw_kinematics.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_kinematics.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\geometry\sdurw_geometry.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_geometry.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_geometry.exp
+  sdurw_geometry.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_geometry.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\sensor\sdurw_sensor.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_sensor.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_sensor.exp
+  sdurw_sensor.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_sensor.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\models\sdurw_models.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_models.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_models.exp
+  sdurw_models.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_models.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rwlibs\control\sdurw_control.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_control.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_control.exp
+  sdurw_control.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_control.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\graphics\sdurw_graphics.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_graphics.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_graphics.exp
+  sdurw_graphics.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_graphics.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\proximity\sdurw_proximity.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_proximity.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_proximity.exp
+  sdurw_proximity.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_proximity.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rwlibs\simulation\sdurw_simulation.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_simulation.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_simulation.exp
+  sdurw_simulation.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_simulation.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\trajectory\sdurw_trajectory.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_trajectory.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_trajectory.exp
+  sdurw_trajectory.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_trajectory.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\loaders\sdurw_loaders.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_loaders.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_loaders.exp
+  sdurw_loaders.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_loaders.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rwlibs\task\sdurw_task.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_task.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_task.exp
+  sdurw_task.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_task.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkStudio\src\rwslibs\industrialrobot\core\sdurws_ird_core.vcxproj]
+  Automatic MOC for target sdurws_ird_core
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\ext\rwpqp\PQP\pqp.vcxproj]
+  pqp.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\libs\Release\pqp.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\invkin\sdurw_invkin.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_invkin.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_invkin.exp
+  sdurw_invkin.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_invkin.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rwlibs\algorithms\sdurw_algorithms.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_algorithms.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_algorithms.exp
+  sdurw_algorithms.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_algorithms.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\graspplanning\sdurw_graspplanning.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_graspplanning.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_graspplanning.exp
+  sdurw_graspplanning.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_graspplanning.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\pathplanning\sdurw_pathplanning.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_pathplanning.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_pathplanning.exp
+  sdurw_pathplanning.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_pathplanning.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rw\plugin\sdurw_plugin.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_plugin.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_plugin.exp
+  sdurw_plugin.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_plugin.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rwlibs\assembly\sdurw_assembly.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_assembly.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_assembly.exp
+  sdurw_assembly.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_assembly.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rwlibs\opengl\sdurw_opengl.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_opengl.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_opengl.exp
+  sdurw_opengl.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_opengl.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rwlibs\pathplanners\sdurw_pathplanners.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_pathplanners.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_pathplanners.exp
+  sdurw_pathplanners.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_pathplanners.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\ext\rwyaobi\yaobi.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/RobWork/RobWork/ext/rwyaobi/CMakeLists.txt
+  yaobi.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\libs\Release\yaobi.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\src\rwlibs\proximitystrategies\sdurw_proximitystrategies.vcxproj]
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_proximitystrategies.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWork/libs/Release/sdurw_proximitystrategies.exp
+  sdurw_proximitystrategies.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWork\bin\Release\sdurw_proximitystrategies.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkSim\src\rwsim\sdurwsim.vcxproj]
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+    正在创建库 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWorkSim/libs/Release/sdurwsim.lib 和对象 C:/Users/zgl18/AppData/Local/Temp/acc-dsl-repro/build/RobWorkSim/libs/Release/sdurwsim.exp
+  sdurwsim.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkSim\bin\Release\sdurwsim.dll
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime.vcxproj]
+  Automatic MOC for target sdurws_ird_runtime
+  Codec.cpp
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkStudio\src\rwslibs\industrialrobot\testkit\sdurws_ird_testkit.vcxproj]
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+  Automatic MOC for target sdurws_ird_runtime_test
+  sdurws_ird_runtime_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\acc-dsl-repro\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
