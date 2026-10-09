@@ -956,9 +956,12 @@ QWidget* WorkbenchContentImpl::buildHomePage()
     m_homeRecentList->setObjectName("ird_home_recent_list");
     // 可用项点击＝打开入口（重新打开该项目）；失效项仅右键操作（重新选择
     // ／移除）——双击不触发（PM-10 失效项提示语义）。
+    // F-609：判别条件修复——UserRole 存的是 available（refreshRecentList
+    // 写入"点击判别的可用位"），可用项点击应触发打开。原实现取反（!toBool）
+    // 使可用项点击无反应、失效项点击反而触发打开（条件写反）。
     QObject::connect(m_homeRecentList, &QListWidget::itemClicked, m_homeRecentList,
             [this](QListWidgetItem* item) {
-                if (!item->data(Qt::UserRole).toBool()) {
+                if (item->data(Qt::UserRole).toBool()) {
                     submitCommand("project.open");  // 可用项：打开该项目的入口
                 }
             });
