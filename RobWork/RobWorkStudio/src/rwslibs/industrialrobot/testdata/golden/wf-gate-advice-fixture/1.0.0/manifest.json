@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "wf-gate-advice-fixture",
+  "version": "1.0.0",
+  "kind": "contract-fixture",
+  "scenarioCategory": "workflow/gate-advice-mapping-fixture",
+  "coveredRequirements": [
+    "UX-12",
+    "UX-01",
+    "UX-02",
+    "NFR-COR-02",
+    "PM-01",
+    "PM-18"
+  ],
+  "coveredAt": [],
+  "toleranceProfile": {
+    "id": "wf-fixture",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/gate-advice-fixtures.json"
+  ],
+  "expected": [
+    "expected/gate-advice-expected.json"
+  ],
+  "parameters": {
+    "contract": "workflow 七阶段门控/下一步建议/级联失效映射纯函数面的固定投影夹具（units/workflow.md §11.0——golden wf-* 随 WP-22-T13 登记）：固定投影板＋事件窗口＋建议会话态附加事实→门控七阶段判定/建议四要素/级联提示的确定性重放期望。判定面全部为布尔/枚举/键串事实（I-WF-3 零领域阈值）——零浮点输入，期望为精确值对照。",
+    "entryFaces": {
+      "gating": "expected/cases[*].gating——七阶段判定（decisions 按冻结序：stage/status〔ui §6.4 token 词形五产出值〕/unlocked/reasonKeys/unlockHintKey/missingItemKeys/staleHints/epoch＝max 快照纪元）；gating.throws=true＝期望 WorkflowError 拒绝（I-WF-4 旧投影水位违约——消费测试断言异常轨）",
+      "advice": "expected/cases[*].advice[*]——UX-01 四要素（goalKey/missingItemKeys/problemKeys/steps）；steps 按 §6.3 优先级 R7>R5>R1>R4>R3>R2>R8>R6 装配，产出全部命中规则",
+      "invalidation": "expected/cases[*].invalidation.hints——级联失效映射（受影响域＋下游 Completed 逐聚合域级联；输出序＝(阶段序, 域键字典序)；原因词条按 evidence 词表值透传零加工）",
+      "determinism": "replayDeterministic=true＝纯函数面同输入双跑输出全等（NFR-COR-02 同型）——消费测试逐算例以值相等复核"
+    },
+    "eventReplay": "事件窗口按发布序重放（§5.2）：result-archived＝本阶段聚合域有归档结果并清空既有失效提示；dependency-invalidated＝仅对已有结果阶段产逐域提示（原因透传）——同 (阶段,域) 键覆盖＝最新原因"
+  },
+  "units": {},
+  "frames": {
+    "base": "robot-base",
+    "note": "门控/建议判定面为会话投影事实（布尔/枚举/键串），无坐标系语义（frames 仅为 manifest schema 必填项的空声明——ev-slice-fixture 同款处理）"
+  },
+  "referenceSource": {
+    "method": "hand-built",
+    "scope": "七阶段门控五规则序贯判定（§4.4）、事件窗口重放（§5.2）、建议八规则优先级装配（§6.3）、级联失效映射（§4.3 D-WF-2）与文案键形（§6.3/ui §3.5）——按单元卡冻结语义直写",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_wf_gate_advice_fixture.mjs——按单元卡 §4.2/§4.3/§4.4/§5.2/§6.2/§6.3 冻结语义逐条直写，与产品 Gate.cpp/Advice.cpp/Types.cpp 零共享代码）推导；双实现互证：任一侧漂移即消费测试（GateAdviceFixtureContractTest）显性失败"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "wf-gate-advice-fixture-doc-direct",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-10T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": false,
+    "nearZero": false,
+    "signCancellation": false,
+    "sampleRefs": [
+      "expected/gate-advice-expected.json#cases[epoch-behind].gating.throws（异常轨期望——I-WF-4 水位违约拒判）",
+      "expected/gate-advice-expected.json#cases[blocked-with-stale].gating.decisions[kinematics].staleHints（缺项与结果过期并存——§4.4 输入回退转移双事实）",
+      "expected/gate-advice-expected.json#cases[map-cascade].invalidation.hints（聚合阶段双域受影响＋下游逐域级联——5 条黄金清单）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/gate-advice-fixtures.json",
+      "sha256": "1343f9b335b8230af60bfc16712d81985d3dc8b6e5a4728403cea24223df3f6d",
+      "sizeBytes": 18408
+    },
+    {
+      "path": "expected/gate-advice-expected.json",
+      "sha256": "167b657da0be2d53cbf6105718c4944c603d6927a0890a5117b8d99bad0ccde8",
+      "sizeBytes": 31271
+    },
+    {
+      "path": "generate/make_wf_gate_advice_fixture.mjs",
+      "sha256": "4feb9899991dc77bedca136347650babd2262843646693ca3fa7d4152111bc2c",
+      "sizeBytes": 17883
+    }
+  ],
+  "generator": {
+    "script": "generate/make_wf_gate_advice_fixture.mjs",
+    "invocation": "node generate/make_wf_gate_advice_fixture.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-10",
+      "change": "首版：门控/建议/级联映射固定投影夹具（10 算例——全就绪/缺项锁定/域未装配/聚合缺项/计算中/归档失效级联/缺项过期并存/旧纪元拒判/部分完成前进/映射级联；建议黄金 9 条覆盖八规则 7 种触发组合）——WP-22-T13 交付物（§11.0 golden wf-* 登记）",
+      "reReviewedBy": "WP-22-T13 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

@@ -423,7 +423,7 @@ add_executable(sdurws_ird_workflow_contract_test
                                                # 不一致真实拒绝〔evidence 公共契约
                                                # 检查〕＋P-OPT-8 警告透传零虚构＋
                                                # 接口消费路径钉扎）
-    contract_test/CommandsContractTest.cpp)  # WF-VER-222/223/226（WP-22-T12——命令
+    contract_test/CommandsContractTest.cpp  # WF-VER-222/223/226（WP-22-T12——命令
                                               # 集真实注册与端到端契约：真实 ui
                                               # CommandRegistry 注册 14 条＋命令面板
                                               # 模糊搜索可达 ≥10 条〔UX-13/F5——过
@@ -438,6 +438,30 @@ add_executable(sdurws_ird_workflow_contract_test
                                               # IWorkflowCommandContributor 经接口
                                               # 虚派发钉扎——插件目标链接供
                                               # WorkflowCommandCatalog 消费）
+    contract_test/GateAdviceFixtureContractTest.cpp  # golden wf-* 黄金夹具（WP-22-T13——
+                                                      # §11.0 contract-fixture 登记契约
+                                                      # ＋门控/建议/映射纯函数面固定投影
+                                                      # 夹具确定性重放〔真 testkit 装载器
+                                                      # ＋独立生成器双实现互证〕＋档案零
+                                                      # 容差通道；经 IStageGateService&/
+                                                      # INextStepAdvisor& 接口虚派发消费）
+    contract_test/InFlightArchiveContractTest.cpp  # WF-VER-210 端到端在途归档（WP-22-T13——
+                                                    # wp22-t06 划归的执行半区：真实
+                                                    # execution 全链〔TaskController/
+                                                    # DrainCoordinator/TaskScheduler/
+                                                    # DomainEventBusImpl〕＋ICloseDrainPort
+                                                    # 真实桥〔tasksByProject 投影＋
+                                                    # shutdown(CancelQueuedAndWait)＋
+                                                    # drained 有界轮询〕；A7 等待期间
+                                                    # 存储上下文保持＋归档完成事件锚定
+                                                    # 原修订＋协作取消对照腿）
+    contract_test/LifeCycleMainlineContractTest.cpp)  # WF-VER-227 全主线回归（WP-22-T13——
+                                                       # 新建→编辑→应用→撤销/重做→包
+                                                       # 导出导入→另存单用例串接〔AT-20/
+                                                       # 29——真实 store 全程＋真实 ui
+                                                       # CommandRegistry 统一 submit 路径
+                                                       # ＋真实 io 导出/导入器＋另存真实
+                                                       # 复制；修订链黄金序列 2→3→4→5〕）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
