@@ -393,6 +393,44 @@ TEST(DynForward, NumericAnomalySingularMassMatrix_DYN05)
 }
 
 /**
+ * 回归（F-581，P1——audit/unit-code-review-20261009）：τ_ref 批量逆动力
+ * 学在某样本数值失败时按 §5.6 截断后续产出（总行数＝(失败样本序+1)×n
+ * ＜样本数×n）——原实现按满网格下标 at(j*n+i) 提取，截断发生即
+ * std::out_of_range（非契约异常类型）穿出 validate；M/h 单样本提取面
+ * （callRneaSample）同步加 usable 通道（行数≠n 或行态非 Ok＝不可用，
+ * 走 DYN-FD-NUMERIC-ANOMALY 值面）。
+ *
+ * 注入：第 2 样本（j=1）qd[0]＝1e200（有限输入——离心项 w²·r≈1e400 溢
+ * 出为 Inf，两关节力矩同拍非有限；§5.6"该样本起本工况失败记录，后续
+ * 样本不产出"→产出行数＝n＜51×n）。
+ */
+TEST(DynForward, RneaPartialRowsDoNotEscapeContract_F581)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-05"},
+                  std::vector<std::string>{});
+    const runtime::CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+
+    ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
+    r.model = &model;
+    // 首样本保持有限（过初始状态检查）——失败面钉在第 2 样本。
+    r.samples[1].qd[0] = 1e200;  // rad/s（有限；RNEA 输出必非有限）
+
+    FakeContext ctx;
+    ForwardDynamicsValidator validator;
+    ForwardCheckOutcome o;
+    // 修复面：截断按"样本不可信"值面消费——异常不再穿出（修复前此处
+    // std::out_of_range 逃逸 validate，本断言即回归钉）。
+    EXPECT_NO_THROW(o = validator.validate(r, ctx));
+    EXPECT_FALSE(o.cancelled);
+    // 截断语义：j=1 起 τ_ref 不可信——仿真至多完成区间 0，比较数据不
+    // 完整（不伪造全程通过）。
+    EXPECT_LT(o.comparedSamples, static_cast<std::size_t>(kSampleCount - 1))
+        << "截断后比较样本数必须小于完整区间数";
+    EXPECT_NE(o.state, DynamicsValidity::ForwardCheckState::Passed)
+        << "τ_ref 截断（部分比较数据）不得判定 Passed";
+}
+
+/**
  * 初始状态缺失→NotRun（V-14 执行面）：样本数 <2（无仿真区间）→ NotRun＋
  * DYN-FD-INITIAL-STATE-MISSING 素材——建议证据项缺失不阻断、不伪造
  * Passed（§6.2/§6.3.4）。

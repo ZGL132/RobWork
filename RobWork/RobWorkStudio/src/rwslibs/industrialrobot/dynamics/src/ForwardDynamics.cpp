@@ -99,6 +99,12 @@ constexpr double kSingularPivotRelative = 1e-14;
  * @param tauInertia[out] 惯性通道 M(q)·q̈（同上量纲；长度 n——M 列提取用）
  * @param cancelled [out] 观测到宿主取消置 true（evaluate 单样本取消——
  *                  空产出返回）
+ * @param usable    [out] 本样本行提取可用（F-581）：evaluate 行数＝n 且
+ *                  全行 Ok 才为 true；RNEA 数值失败时逆动力学按 §5.6 只
+ *                  产**失败关节**的行并可截断后续样本——行数＜n 时原实现
+ *                  的 .at() 满取以 std::out_of_range（非契约异常）穿出。
+ *                  不可用时缓冲保持零填充，调用方走
+ *                  DYN-FD-NUMERIC-ANOMALY 值面（§6.3.5 部分失败语义）。
  *
  * @throws DynamicsError 透传 evaluate 的调用方错误（物性复检等——与 τ_ref
  *         主调用同模型，理论不可达；防御性传播不吞错）
@@ -109,7 +115,7 @@ void callRneaSample(const InverseDynRequest& base, double t,
                     const InverseDynamicsEvaluator& evaluator,
                     evidence::IEvaluationContext& context,
                     std::vector<double>& tauTotal, std::vector<double>& tauInertia,
-                    bool& cancelled)
+                    bool& cancelled, bool& usable)
 {
     // 请求基座拷贝：身份/模型引用/重力/负载池/事件时间线原样透传（共源），
     // 仅样本列替换为本调用构造的单样本（segmentIndex=0——内部调用无段语义）。
@@ -125,16 +131,25 @@ void callRneaSample(const InverseDynRequest& base, double t,
 
     const InverseDynOutcome out = evaluator.evaluate(req, context);
     cancelled = out.cancelled;
-    if (cancelled) { return; }  // 取消＝空产出（调用方检查 cancelled 位）
+    if (cancelled) {
+        usable = false;
+        return;  // 取消＝空产出（调用方检查 cancelled 位）
+    }
 
-    // 行提取：单样本产出按 (t, jointIndex 升序) 排序（evaluate §4.6 纪律），
-    // 前 n 行即本样本逐关节行；tauTotal/tauInertia 逐行搬运。
+    // 行提取：单样本产出按 (t, jointIndex 升序) 排序（evaluate §4.6 纪律）。
+    // F-581：行数必须恰为 n 且全行 Ok 才可用——RNEA 数值失败时逆动力学
+    // 只产失败关节的行（§5.6 部分产出），.at() 满取在行数＜n 时以
+    // std::out_of_range（非契约异常类型）穿出。不可用＝零填充缓冲返回。
     const std::size_t n = q.size();
     tauTotal.assign(n, 0.0);
     tauInertia.assign(n, 0.0);
-    for (std::size_t i = 0; i < n; ++i) {
-        tauTotal[i] = out.samples.at(i).tauTotal;
-        tauInertia[i] = out.samples.at(i).tauInertia;
+    usable = (out.samples.size() == n);
+    for (std::size_t i = 0; usable && i < n; ++i) {
+        tauTotal[i] = out.samples[i].tauTotal;
+        tauInertia[i] = out.samples[i].tauInertia;
+        if (out.samples[i].numericState != SampleNumericState::Ok) {
+            usable = false;  // 行态非 Ok（NonFiniteInput/Output）——τ 不可信
+        }
     }
 }
 
@@ -386,7 +401,12 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
     }
 
     // τ_ref 逐时刻提取（evaluate 产出按 (t 升序, jointIndex 升序) 排序——
-    // §4.6；行指针移动法：每 n 行为一时刻）。
+    // §4.6）。F-581：RNEA 数值失败时逆动力学按 §5.6 只产**失败关节**的行
+    // 并**自该样本起截断后续产出**——总行数可小于 nSample×n。原实现的
+    // 满网格下标 at(j*n+i) 在截断发生时以 std::out_of_range（非契约异常
+    // 类型）穿出。改为按时刻 t 匹配的游标消费：本样本行不足 n 行、或
+    // 产出耗尽、或行态非 Ok＝该样本 τ_ref 不可信（不参与仿真/比较，样
+    // 本级处置 §4.6——诊断已由 evaluate 透传，此处不重复产码）。
     const std::size_t n = rneaRequest.samples.front().q.size();  // 可动关节数
     struct SampleTorque {
         std::vector<double> tauTotal;          ///< 逐关节全量 τ_ref（N·m 或 N）
@@ -395,20 +415,29 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
     };
     std::vector<SampleTorque> tauRef;
     tauRef.reserve(nSample);
+    std::size_t rowCursor = 0;  // 产出行游标（跨样本单调推进——产出行序即请求样本序）
     for (std::size_t j = 0; j < nSample; ++j) {
         SampleTorque st;
         st.t = rneaRequest.samples[j].t;
         st.numericState = SampleNumericState::Ok;
         st.tauTotal.assign(n, 0.0);
-        for (std::size_t i = 0; i < n; ++i) {
-            const DynamicsSample& row = rneaOut.samples.at(j * n + i);
-            st.tauTotal[i] = row.tauTotal;
+        std::size_t rowsTaken = 0;
+        while (rowsTaken < n && rowCursor < rneaOut.samples.size()
+               && rneaOut.samples[rowCursor].t == st.t) {
+            // 行填装按消费序写入（产出行本样本内即 jointIndex 升序；行态
+            // 非 Ok 时整个样本标记不可信——tauTotal 数值不再被消费）。
+            const DynamicsSample& row = rneaOut.samples[rowCursor];
+            st.tauTotal[rowsTaken] = row.tauTotal;
             if (row.numericState != SampleNumericState::Ok) {
-                // 非有限输入/输出样本：τ_ref 行不可信——该样本不参与仿真/比较
-                // （样本级处置，§4.6；诊断已由 evaluate 透传 DYN-NON-FINITE/
-                // DYN-RNEA-FAILED——此处不重复产码）。
                 st.numericState = row.numericState;
             }
+            ++rowsTaken;
+            ++rowCursor;
+        }
+        if (rowsTaken < n && st.numericState == SampleNumericState::Ok) {
+            // 行数不足却无任何非 Ok 行标记（产出与请求失步——防御面）：
+            // 同样按不可信处置，不把缺行当零力矩消费。
+            st.numericState = SampleNumericState::NonFiniteOutput;
         }
         tauRef.push_back(std::move(st));
     }
@@ -441,8 +470,9 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
     extractBase.events = request.events;
 
     // 动力学右端 f(q,q̇)＝M(q)⁻¹·(τ_ctrl − h_f(q,q̇)) 的单次求值。
-    // 返回 false＝质量阵奇异/病态（数值异常——调用方产 DYN-FD-NUMERIC-
-    // ANOMALY 并终止仿真）。
+    // 返回 false＝数值异常（质量阵奇异/病态，或 F-581 的 RNEA 部分产出
+    // ——调用方产 DYN-FD-NUMERIC-ANOMALY 并终止仿真）；失败原因经
+    // reasonOut 带出（调用方入 anomalyDetail——首因定位）。
     const std::vector<double> zeroVec(n, 0.0);
     std::vector<double> tauTotalBuf, tauInertiaBuf;  // 单样本调用输出缓冲
     std::vector<double> hVec(n, 0.0);                // h_f(q,q̇)（N·m 或 N）
@@ -452,14 +482,23 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
     auto evalAcceleration = [&](const std::vector<double>& qv,
                                 const std::vector<double>& qdv, double tIntervalStart,
                                 const std::vector<double>& tauCtrl, bool& cancelledOut,
-                                bool& singularOut) {
+                                bool& singularOut, std::string& reasonOut) {
         cancelledOut = false;
         singularOut = false;
         // h_f 提取：单样本 evaluate(q, q̇, q̈=0) 的全量通道＝G＋C·q̇＋摩擦
         // （q̈=0 时惯性通道为零——全量恰为偏置力＋摩擦之和）。
+        bool rneaUsable = false;
         callRneaSample(extractBase, tIntervalStart, qv, qdv, zeroVec, evaluator,
-                       context, tauTotalBuf, tauInertiaBuf, cancelledOut);
+                       context, tauTotalBuf, tauInertiaBuf, cancelledOut, rneaUsable);
         if (cancelledOut) { return false; }
+        if (!rneaUsable) {
+            // F-581：RNEA 部分产出（数值失败只产失败关节行）＝本样本不可
+            // 用——走数值异常值面（不以契约外异常穿出）。
+            singularOut = true;
+            reasonOut = "RNEA 输出非有限（逆动力学部分产出——M/偏置力提取样本不可用）：t="
+                        + std::to_string(tIntervalStart) + " s";
+            return false;
+        }
         hVec = tauTotalBuf;
 
         // M 逐列提取：惯性通道 (g=0, q̇=0, q̈=e_i)＝M·e_i（纯惯量——不叠
@@ -468,8 +507,16 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
             std::vector<double> e = zeroVec;
             e[i] = 1.0;  // 单位向量（第 i 列激励——rad/s² 或 m/s² 的 1 单位）
             callRneaSample(extractBase, tIntervalStart, qv, zeroVec, e, evaluator,
-                           context, tauTotalBuf, tauInertiaBuf, cancelledOut);
+                           context, tauTotalBuf, tauInertiaBuf, cancelledOut,
+                           rneaUsable);
             if (cancelledOut) { return false; }
+            if (!rneaUsable) {
+                singularOut = true;
+                reasonOut = "RNEA 输出非有限（逆动力学部分产出——M 第 "
+                            + std::to_string(i) + " 列提取样本不可用）：t="
+                            + std::to_string(tIntervalStart) + " s";
+                return false;
+            }
             for (std::size_t r = 0; r < n; ++r) {
                 massFlat[r * n + i] = tauInertiaBuf[r];  // 行主序 M(r,i)
             }
@@ -484,6 +531,10 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
         std::vector<double> b = rhs;
         const bool solved = solveLinearSystem(a, b, qdd);
         singularOut = !solved;
+        if (!solved) {
+            reasonOut = "质量矩阵线性求解失败（奇异或病态）：t="
+                        + std::to_string(tIntervalStart) + " s";
+        }
         return solved;
     };
 
@@ -543,14 +594,15 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
             //      时刻 tBegin 提取变体——采样保持语义见文件头）----
             bool cancelledNow = false;
             bool singularNow = false;
+            std::string failReason;  // F-581：失败原因带出（奇异或 RNEA 部分产出）
 
             // k1 ＝ f(y_j)
             std::vector<double> k1q = qd;  // q̇（状态一阶分量恒为速度）
-            if (!evalAcceleration(q, qd, tBegin, tauCtrl, cancelledNow, singularNow)) {
+            if (!evalAcceleration(q, qd, tBegin, tauCtrl, cancelledNow, singularNow,
+                                  failReason)) {
                 if (cancelledNow) { out.cancelled = true; break; }
                 singular = true;
-                anomalyDetail = "质量矩阵线性求解失败（奇异或病态）：t="
-                    + std::to_string(tCur) + " s，RK4 stage 1";
+                anomalyDetail = failReason + "，RK4 stage 1";
                 break;
             }
             const std::vector<double> k1qd = qdd;
@@ -561,11 +613,11 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
                 q2[i] = q[i] + 0.5 * h * k1q[i];
                 qd2[i] = qd[i] + 0.5 * h * k1qd[i];
             }
-            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow)) {
+            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+                                  failReason)) {
                 if (cancelledNow) { out.cancelled = true; break; }
                 singular = true;
-                anomalyDetail = "质量矩阵线性求解失败（奇异或病态）：t="
-                    + std::to_string(tCur) + " s，RK4 stage 2";
+                anomalyDetail = failReason + "，RK4 stage 2";
                 break;
             }
             const std::vector<double> k2q = qd2;
@@ -576,11 +628,11 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
                 q2[i] = q[i] + 0.5 * h * k2q[i];
                 qd2[i] = qd[i] + 0.5 * h * k2qd[i];
             }
-            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow)) {
+            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+                                  failReason)) {
                 if (cancelledNow) { out.cancelled = true; break; }
                 singular = true;
-                anomalyDetail = "质量矩阵线性求解失败（奇异或病态）：t="
-                    + std::to_string(tCur) + " s，RK4 stage 3";
+                anomalyDetail = failReason + "，RK4 stage 3";
                 break;
             }
             const std::vector<double> k3q = qd2;
@@ -591,11 +643,11 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
                 q2[i] = q[i] + h * k3q[i];
                 qd2[i] = qd[i] + h * k3qd[i];
             }
-            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow)) {
+            if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+                                  failReason)) {
                 if (cancelledNow) { out.cancelled = true; break; }
                 singular = true;
-                anomalyDetail = "质量矩阵线性求解失败（奇异或病态）：t="
-                    + std::to_string(tCur) + " s，RK4 stage 4";
+                anomalyDetail = failReason + "，RK4 stage 4";
                 break;
             }
             const std::vector<double> k4q = qd2;
