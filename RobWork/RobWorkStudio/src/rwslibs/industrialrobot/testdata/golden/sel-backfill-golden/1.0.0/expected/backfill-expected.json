@@ -1,0 +1,50 @@
+{
+  "schema": "sel-backfill-expected/1",
+  "note": "回填黄金——由 generate/make_sel_backfill_golden.mjs 按 §12.4 五步规则标量直算（合成项＝连杆＋电机壳体＋减速器壳体；转子独立登记不重复计入；复算提示＝四域全量＋复核前不沿用原通过结论）。拒绝算例登记组装分类 kind 词面（Assembled/DataInsufficient/MountIncompatible/InvalidInput）。",
+  "assembled": {
+    "axisRef": "j5",
+    "kind": "Assembled",
+    "synthesis": {
+      "massKg": 24,
+      "comM": {
+        "x": 0.025000000000000005,
+        "y": 0.0037499999999999986,
+        "z": 0.19104166666666667
+      },
+      "inertia": {
+        "ixx": 0.7307864583333333,
+        "iyy": 0.7765239583333332,
+        "izz": 0.28126249999999997,
+        "ixy": 0.02425,
+        "ixz": -0.08537499999999999,
+        "iyz": 0.06459374999999999
+      },
+      "rotorInertiaKgM2": 0.012
+    },
+    "appliedRatio": 0.02,
+    "mountKind": "flange-mount",
+    "catalogRef": {
+      "catalogId": "cat-sel-golden",
+      "catalogVersion": "1.0.0",
+      "motorModelId": "M-101",
+      "gearboxModelId": "G-201"
+    }
+  },
+  "rejections": [
+    {
+      "id": "missing-supplement",
+      "kind": "DataInsufficient",
+      "note": "电机壳体惯量补充缺席（P-SEL-7 数据面缺口——§12.4 缺失处理整体失败）"
+    },
+    {
+      "id": "mount-mismatch",
+      "kind": "MountIncompatible",
+      "note": "安装关系 shaft-mount 不在兼容表（SEL-BACKFILL-MOUNT-MISMATCH 语义面）"
+    },
+    {
+      "id": "multi-axis-atomic",
+      "kind": "DataInsufficient",
+      "note": "双轴整体原子：第二轴壳体惯量缺失 → 整体失败零产出（§12.2 纪律 3）"
+    }
+  ]
+}

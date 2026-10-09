@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "sel-backfill-golden",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "sel/backfill-golden",
+  "coveredRequirements": [
+    "SEL-10",
+    "MDL-16",
+    "MDL-05",
+    "NFR-COR-01"
+  ],
+  "coveredAt": [
+    "AT-30"
+  ],
+  "toleranceProfile": {
+    "id": "sel-golden",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/backfill-inputs.json"
+  ],
+  "expected": [
+    "expected/backfill-expected.json"
+  ],
+  "parameters": {
+    "contract": "回填事务样例（AT-30：应用选型→壳体/转子惯量回填不重复计入→复算提示；复核前不沿用原通过结论）——WP-19-T11 主数据载体之一。四算例：assembled（单轴回填黄金——合成值逐分量＋转子独立登记＋复算提示）、missing-supplement（电机壳体惯量补充缺席——组装整体失败）、mount-mismatch（安装关系与兼容表不一致——组装拒绝）、multi-axis-atomic（双轴整体原子——第二轴缺失整体失败零产出）。",
+    "entryFaces": {
+      "synthesis": "expected/assembled.synthesis——§12.4 五步合成黄金（massKg/comM 三分量/inertia 六分量经容差档案 sel-golden 对照；rotorInertiaKgM2 独立登记——与 inertia 分轨的记录面证明）",
+      "rejections": "expected/rejections[]——组装拒绝分类 kind 词面（DataInsufficient/MountIncompatible——与 BackfillAssemblyOutcome 枚举对位；detail 中文定位不进黄金断言面）",
+      "recalc": "复算提示（BackfillRecalcNotice）：domains 四域全量 true＋retainPriorConclusion=false（复核前不沿用原通过结论——AT-30 记录面恒值，由消费测试对回填记录对象断言）",
+      "command": "命令链路（assembleDeviceBackfill→encodeBackfillPayload→planFromEnvelope→Planned＋恰一 ObjectWrite token=sel-device-backfill）由消费测试按 §12.1 断言——命令 token 无点词形（P-SEL-3）与载荷往返确定性为测试面结构断言，无哈希黄金值（canonical 字节含固定身份为确定性承载，哈希申报无独立正确性意义）"
+    }
+  },
+  "units": {
+    "mass": "kg",
+    "length": "m",
+    "inertia": "kg*m^2",
+    "ratio": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "全部几何量在轴连杆坐标系 {L} 下表示（kBackfillFrameLink=link-frame——§12.4 参考系声明；质心/惯量绕连杆系原点与合成质心）；base 声明为上游序列的安装约定归属，不参与任何数值"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "§12.4 五步合成逐分量（平行轴迁移 I^O＝I＋m·(|c|²E₃−c·cᵀ)／质量加权质心／向合成质心回迁）与组装拒绝分类（壳体惯量齐备性/安装关系核对/多轴整体原子）",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_sel_backfill_golden.mjs——五步标量直算，与产品 Backfill.cpp synthesizeAxisBodyProperties 零共享代码）推导；inputs 内另附手算锚点（质心 z 分量分数算术 4.585/24 与合成质量 24 kg）"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.x",
+    "algorithmId": "sel-backfill-golden-closed-form",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/backfill-expected.json#assembled.synthesis.comM.x=0.025（锚点 x=0 的零分量面——电机壳体质心 x=0）",
+      "expected/backfill-expected.json#assembled.synthesis.inertia.ixy=0.02425 与 ixz=-0.0854（惯性积正负并存——连杆负 y 坐标与正 x 的符号抵消）",
+      "expected/backfill-expected.json#rejections[multi-axis-atomic]（双轴整体原子——第二轴缺失整体失败零产出）"
+    ]
+  },
+  "integrity": [
+    { "path": "inputs/backfill-inputs.json", "sha256": "c35875edf4311c061e31c86a6dfddf550751658c38e6a29736492983dc03acf3", "sizeBytes": 5182 },
+    { "path": "expected/backfill-expected.json", "sha256": "d67459519fd3068d663f26d5725db129af9bb94a9fbbb54271f61d0d1266be8b", "sizeBytes": 1730 },
+    { "path": "generate/make_sel_backfill_golden.mjs", "sha256": "71c617d1be9e092e9713e90ac2ab9802636c1ba3b1f2cd8d28049c8171705928", "sizeBytes": 11544 }
+  ],
+  "generator": {
+    "script": "generate/make_sel_backfill_golden.mjs",
+    "invocation": "node generate/make_sel_backfill_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "首版：回填事务样例（单轴合成黄金＋三类组装拒绝＋复算提示恒值面——AT-30）——WP-19-T11 交付物",
+      "reReviewedBy": "WP-19-T11 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}

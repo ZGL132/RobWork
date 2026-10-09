@@ -1,0 +1,910 @@
+{
+  "schema": "sel-screening-expected/1",
+  "note": "硬筛选黄金表——由 generate/make_sel_screening_golden.mjs 按单元卡 §7.1/§7.2/§8.1/§8.2 冻结语义逐维独立复算产出（阈值容差＝附录 D C7；原因稳定排序＝token 词表序→caseId→atTime；记录序＝候选 modelId 升序×轴 facts 首现序；缺口序＝维度执行序）。每个淘汰项含 actual/required/unit/thresholdSource 全字段（ERR-01）。thresholdSource 为登记呈现词面（DiagCodes/筛选实现单点登记）——对照断言按字面比较。",
+  "cases": [
+    {
+      "id": "case-heavy",
+      "criteria": {
+        "safetyFactor": 1,
+        "requiredDutyClass": "S1",
+        "requiredVoltage": 220,
+        "voltageRelativeTolerance": 0.05,
+        "ambientTemp": 55,
+        "maxBacklash": 0.002,
+        "requiredLife": 5000,
+        "minEfficiency": 0.85,
+        "ratioRange": {
+          "min": 20,
+          "max": 120
+        }
+      },
+      "facts": [
+        {
+          "axisRef": "j1",
+          "caseId": "case-A",
+          "jointKind": "revolute",
+          "motorTorqueRms": 6,
+          "motorTorquePeak": 15,
+          "motorSpeedPeak": 320,
+          "motorSpeedRms": 130,
+          "motorPowerPeak": 5200,
+          "motorPowerRms": 1000,
+          "peakDuration": 14,
+          "jointTorqueRms": 55,
+          "jointTorquePeak": 130,
+          "jointSpeedPeak": 6.4,
+          "requiredHoldingTorque": 28,
+          "mountRequirement": {
+            "flangeKind": "flangeA",
+            "shaftKind": "shaftB",
+            "orientation": "any"
+          },
+          "externalLoad": {
+            "radial": 1000,
+            "axial": 500,
+            "distance": 0.1
+          },
+          "atTime": 2.5,
+          "segmentId": "seg-A1"
+        }
+      ],
+      "records": [
+        {
+          "id": "M-101|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-101",
+          "axisRef": "j1",
+          "verdict": "Rejected",
+          "reasons": [
+            {
+              "token": "SpeedInsufficient",
+              "tokenOrdinal": 2,
+              "candidateModelId": "M-101",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 320,
+              "required": 300,
+              "unit": "rad/s",
+              "thresholdSource": "目录 max_speed（最高转速）"
+            },
+            {
+              "token": "OverloadTimeInsufficient",
+              "tokenOrdinal": 4,
+              "candidateModelId": "M-101",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 14,
+              "required": 12,
+              "unit": "s",
+              "thresholdSource": "目录 overload_duration_s（过载持续时间）"
+            },
+            {
+              "token": "BrakeInsufficient",
+              "tokenOrdinal": 8,
+              "candidateModelId": "M-101",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 28,
+              "required": 25,
+              "unit": "N*m",
+              "thresholdSource": "目录 brake_torque_nm（制动能力）"
+            }
+          ],
+          "gaps": [
+            {
+              "dimension": "power-curve",
+              "caseId": "case-A",
+              "diagCode": "SEL-CURVE-EXTRAPOLATION-DENIED"
+            }
+          ]
+        },
+        {
+          "id": "M-102|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-102",
+          "axisRef": "j1",
+          "verdict": "Rejected",
+          "reasons": [
+            {
+              "token": "TorqueContinuousInsufficient",
+              "tokenOrdinal": 0,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 6,
+              "required": 3,
+              "unit": "N*m",
+              "thresholdSource": "目录 rated_torque_nm（额定连续转矩）"
+            },
+            {
+              "token": "TorquePeakInsufficient",
+              "tokenOrdinal": 1,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 15,
+              "required": 8,
+              "unit": "N*m",
+              "thresholdSource": "目录 peak_torque_nm（峰值转矩）"
+            },
+            {
+              "token": "SpeedInsufficient",
+              "tokenOrdinal": 2,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 320,
+              "required": 250,
+              "unit": "rad/s",
+              "thresholdSource": "目录 max_speed（最高转速）"
+            },
+            {
+              "token": "PowerInsufficient",
+              "tokenOrdinal": 3,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 5200,
+              "required": 600,
+              "unit": "W",
+              "thresholdSource": "目录 rated_power_w（额定功率——固定额定值口径）"
+            },
+            {
+              "token": "PowerInsufficient",
+              "tokenOrdinal": 3,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 1000,
+              "required": 600,
+              "unit": "W",
+              "thresholdSource": "目录 rated_power_w（额定功率——固定额定值口径）"
+            },
+            {
+              "token": "OverloadTimeInsufficient",
+              "tokenOrdinal": 4,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 14,
+              "required": 6,
+              "unit": "s",
+              "thresholdSource": "目录 overload_duration_s（过载持续时间）"
+            },
+            {
+              "token": "BrakeInsufficient",
+              "tokenOrdinal": 8,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 28,
+              "required": 10,
+              "unit": "N*m",
+              "thresholdSource": "目录 brake_torque_nm（制动能力）"
+            },
+            {
+              "token": "HoldingInsufficient",
+              "tokenOrdinal": 9,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 28,
+              "required": 12,
+              "unit": "N*m",
+              "thresholdSource": "目录 holding_torque_nm（保持能力）"
+            }
+          ],
+          "gaps": [
+            {
+              "dimension": "thermal-derating",
+              "caseId": "case-A",
+              "diagCode": null
+            }
+          ]
+        },
+        {
+          "id": "M-103|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-103",
+          "axisRef": "j1",
+          "verdict": "Rejected",
+          "reasons": [
+            {
+              "token": "PowerInsufficient",
+              "tokenOrdinal": 3,
+              "candidateModelId": "M-103",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 5200,
+              "required": 3500,
+              "unit": "W",
+              "thresholdSource": "目录 rated_power_w（额定功率——固定额定值口径）"
+            },
+            {
+              "token": "DutyMismatch",
+              "tokenOrdinal": 5,
+              "candidateModelId": "M-103",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 0,
+              "required": 0,
+              "unit": "",
+              "thresholdSource": "目录 duty_class（工作制词表值）",
+              "actualText": "S2",
+              "requiredText": "S1"
+            },
+            {
+              "token": "VoltageMismatch",
+              "tokenOrdinal": 6,
+              "candidateModelId": "M-103",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 380,
+              "required": 220,
+              "unit": "V",
+              "thresholdSource": "目录 rated_voltage_v（额定电压；匹配容差＝筛选条件相对容差）"
+            },
+            {
+              "token": "MountingIncompatible",
+              "tokenOrdinal": 18,
+              "candidateModelId": "M-103",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 0,
+              "required": 0,
+              "unit": "",
+              "thresholdSource": "关节安装关系（轴侧事实 mountRequirement.flangeKind）",
+              "actualText": "flangeC",
+              "requiredText": "flangeA"
+            }
+          ],
+          "gaps": [
+            {
+              "dimension": "thermal-derating",
+              "caseId": "case-A",
+              "diagCode": null
+            },
+            {
+              "dimension": "brake",
+              "caseId": "case-A",
+              "diagCode": null
+            },
+            {
+              "dimension": "holding",
+              "caseId": "case-A",
+              "diagCode": null
+            }
+          ]
+        },
+        {
+          "id": "G-201|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-201",
+          "axisRef": "j1",
+          "verdict": "Rejected",
+          "reasons": [
+            {
+              "token": "InputSpeedExceeded",
+              "tokenOrdinal": 13,
+              "candidateModelId": "G-201",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 320,
+              "required": 300,
+              "unit": "rad/s",
+              "thresholdSource": "目录 max_input_speed（允许输入转速；ω_m 来源：映射工作点事实 motorSpeedPeak）"
+            }
+          ],
+          "gaps": []
+        },
+        {
+          "id": "G-202|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-202",
+          "axisRef": "j1",
+          "verdict": "Rejected",
+          "reasons": [
+            {
+              "token": "GearboxPeakTorqueInsufficient",
+              "tokenOrdinal": 12,
+              "candidateModelId": "G-202",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 130,
+              "required": 120,
+              "unit": "N*m",
+              "thresholdSource": "目录 peak_output_torque_nm（峰值输出转矩）"
+            },
+            {
+              "token": "InputSpeedExceeded",
+              "tokenOrdinal": 13,
+              "candidateModelId": "G-202",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 320,
+              "required": 250,
+              "unit": "rad/s",
+              "thresholdSource": "目录 max_input_speed（允许输入转速；ω_m 来源：映射工作点事实 motorSpeedPeak）"
+            },
+            {
+              "token": "EfficiencyInsufficient",
+              "tokenOrdinal": 15,
+              "candidateModelId": "G-202",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 0.8,
+              "required": 0.85,
+              "unit": "1",
+              "thresholdSource": "筛选条件 min_efficiency（最低效率要求）"
+            },
+            {
+              "token": "BacklashExceeded",
+              "tokenOrdinal": 16,
+              "candidateModelId": "G-202",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 0.003,
+              "required": 0.002,
+              "unit": "rad",
+              "thresholdSource": "目录 backlash（回程间隙，SI rad）vs 筛选条件 max_backlash"
+            },
+            {
+              "token": "LifeInsufficient",
+              "tokenOrdinal": 17,
+              "candidateModelId": "G-202",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 4000,
+              "required": 5000,
+              "unit": "1",
+              "thresholdSource": "目录 rated_life（额定寿命，循环数）vs 筛选条件 required_life"
+            },
+            {
+              "token": "ExternalLoadExceeded",
+              "tokenOrdinal": 19,
+              "candidateModelId": "G-202",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 1000,
+              "required": 250,
+              "unit": "N",
+              "thresholdSource": "目录 external_load_radial_n @ external_load_dist_m（作用点力臂核算 F_allow＝F_rated×L_rated/L_actual）"
+            }
+          ],
+          "gaps": []
+        },
+        {
+          "id": "G-203|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-203",
+          "axisRef": "j1",
+          "verdict": "Rejected",
+          "reasons": [
+            {
+              "token": "InputSpeedExceeded",
+              "tokenOrdinal": 13,
+              "candidateModelId": "G-203",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 320,
+              "required": 300,
+              "unit": "rad/s",
+              "thresholdSource": "目录 max_input_speed（允许输入转速；ω_m 来源：映射工作点事实 motorSpeedPeak）"
+            },
+            {
+              "token": "MountingIncompatible",
+              "tokenOrdinal": 18,
+              "candidateModelId": "G-203",
+              "axisRef": "j1",
+              "caseId": "case-A",
+              "atTime": 2.5,
+              "segmentId": "seg-A1",
+              "actual": 0,
+              "required": 0,
+              "unit": "",
+              "thresholdSource": "目录 mounting_orientation（安装方向词表值）vs 关节安装关系",
+              "actualText": "up",
+              "requiredText": "any"
+            }
+          ],
+          "gaps": [
+            {
+              "dimension": "backlash",
+              "caseId": "case-A",
+              "diagCode": null
+            },
+            {
+              "dimension": "external-load",
+              "caseId": "case-A",
+              "diagCode": null
+            }
+          ]
+        }
+      ],
+      "analyticAnchors": {
+        "powerCurveAt130": 1040,
+        "radialAllowG202": 250,
+        "sfEdgeSpeedPeak": 300
+      }
+    },
+    {
+      "id": "case-light",
+      "criteria": {
+        "safetyFactor": 1,
+        "requiredDutyClass": "",
+        "requiredVoltage": null,
+        "voltageRelativeTolerance": 0,
+        "ambientTemp": null,
+        "maxBacklash": null,
+        "requiredLife": null,
+        "minEfficiency": null,
+        "ratioRange": null
+      },
+      "facts": [
+        {
+          "axisRef": "j1",
+          "caseId": "case-B",
+          "jointKind": "revolute",
+          "motorTorqueRms": 2,
+          "motorTorquePeak": 5,
+          "motorSpeedPeak": 150,
+          "motorSpeedRms": 110,
+          "motorPowerPeak": 450,
+          "motorPowerRms": 240,
+          "peakDuration": 2,
+          "jointTorqueRms": 12,
+          "jointTorquePeak": 28,
+          "jointSpeedPeak": 3,
+          "requiredHoldingTorque": null,
+          "mountRequirement": null,
+          "externalLoad": null,
+          "atTime": 1,
+          "segmentId": "seg-B1"
+        }
+      ],
+      "records": [
+        {
+          "id": "M-101|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-101",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "M-102|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-102",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "M-103|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-103",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "G-201|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-201",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "G-202|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-202",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "G-203|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-203",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        }
+      ],
+      "analyticAnchors": {}
+    },
+    {
+      "id": "sf-edge",
+      "criteria": {
+        "safetyFactor": 1.25,
+        "requiredDutyClass": "",
+        "requiredVoltage": null,
+        "voltageRelativeTolerance": 0,
+        "ambientTemp": null,
+        "maxBacklash": null,
+        "requiredLife": null,
+        "minEfficiency": null,
+        "ratioRange": null
+      },
+      "facts": [
+        {
+          "axisRef": "j1",
+          "caseId": "case-C",
+          "jointKind": "revolute",
+          "motorTorqueRms": 6,
+          "motorTorquePeak": 15,
+          "motorSpeedPeak": 240,
+          "motorSpeedRms": 120,
+          "motorPowerPeak": 1500,
+          "motorPowerRms": 700,
+          "peakDuration": 3,
+          "jointTorqueRms": 20,
+          "jointTorquePeak": 45,
+          "jointSpeedPeak": 4,
+          "requiredHoldingTorque": null,
+          "mountRequirement": null,
+          "externalLoad": null,
+          "atTime": 0.5,
+          "segmentId": "seg-C1"
+        }
+      ],
+      "records": [
+        {
+          "id": "M-101|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-101",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "M-102|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-102",
+          "axisRef": "j1",
+          "verdict": "Rejected",
+          "reasons": [
+            {
+              "token": "TorqueContinuousInsufficient",
+              "tokenOrdinal": 0,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 6,
+              "required": 3,
+              "unit": "N*m",
+              "thresholdSource": "目录 rated_torque_nm（额定连续转矩）"
+            },
+            {
+              "token": "TorquePeakInsufficient",
+              "tokenOrdinal": 1,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 15,
+              "required": 8,
+              "unit": "N*m",
+              "thresholdSource": "目录 peak_torque_nm（峰值转矩）"
+            },
+            {
+              "token": "PowerInsufficient",
+              "tokenOrdinal": 3,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 1500,
+              "required": 600,
+              "unit": "W",
+              "thresholdSource": "目录 rated_power_w（额定功率——固定额定值口径）"
+            },
+            {
+              "token": "PowerInsufficient",
+              "tokenOrdinal": 3,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 700,
+              "required": 600,
+              "unit": "W",
+              "thresholdSource": "目录 rated_power_w（额定功率——固定额定值口径）"
+            },
+            {
+              "token": "SafetyFactorInsufficient",
+              "tokenOrdinal": 10,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 7.5,
+              "required": 3,
+              "unit": "N*m",
+              "thresholdSource": "安全系数条件（SF=1.250000）复判——目录 rated_torque_nm"
+            },
+            {
+              "token": "SafetyFactorInsufficient",
+              "tokenOrdinal": 10,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 18.75,
+              "required": 8,
+              "unit": "N*m",
+              "thresholdSource": "安全系数条件（SF=1.250000）复判——目录 peak_torque_nm"
+            },
+            {
+              "token": "SafetyFactorInsufficient",
+              "tokenOrdinal": 10,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 300,
+              "required": 250,
+              "unit": "rad/s",
+              "thresholdSource": "安全系数条件（SF=1.250000）复判——目录 max_speed"
+            },
+            {
+              "token": "SafetyFactorInsufficient",
+              "tokenOrdinal": 10,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 1875,
+              "required": 600,
+              "unit": "W",
+              "thresholdSource": "安全系数条件（SF=1.250000）复判——目录 rated_power_w（额定功率——固定额定值口径）"
+            },
+            {
+              "token": "SafetyFactorInsufficient",
+              "tokenOrdinal": 10,
+              "candidateModelId": "M-102",
+              "axisRef": "j1",
+              "caseId": "case-C",
+              "atTime": 0.5,
+              "segmentId": "seg-C1",
+              "actual": 875,
+              "required": 600,
+              "unit": "W",
+              "thresholdSource": "安全系数条件（SF=1.250000）复判——目录 rated_power_w（额定功率——固定额定值口径）"
+            }
+          ],
+          "gaps": []
+        },
+        {
+          "id": "M-103|obj-00000000000000000000000000000101",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-103",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "G-201|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-201",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "G-202|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-202",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        },
+        {
+          "id": "G-203|obj-00000000000000000000000000000101",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-203",
+          "axisRef": "j1",
+          "verdict": "Feasible",
+          "reasons": [],
+          "gaps": []
+        }
+      ],
+      "analyticAnchors": {}
+    },
+    {
+      "id": "axis-oos",
+      "criteria": {
+        "safetyFactor": 1,
+        "requiredDutyClass": "",
+        "requiredVoltage": null,
+        "voltageRelativeTolerance": 0,
+        "ambientTemp": null,
+        "maxBacklash": null,
+        "requiredLife": null,
+        "minEfficiency": null,
+        "ratioRange": null
+      },
+      "facts": [
+        {
+          "axisRef": "j2",
+          "caseId": "case-B",
+          "jointKind": "prismatic",
+          "motorTorqueRms": null,
+          "motorTorquePeak": null,
+          "motorSpeedPeak": null,
+          "motorSpeedRms": null,
+          "motorPowerPeak": null,
+          "motorPowerRms": null,
+          "peakDuration": null,
+          "jointTorqueRms": null,
+          "jointTorquePeak": null,
+          "jointSpeedPeak": null,
+          "requiredHoldingTorque": null,
+          "mountRequirement": null,
+          "externalLoad": null,
+          "atTime": 0,
+          "segmentId": ""
+        }
+      ],
+      "records": [
+        {
+          "id": "M-101|obj-00000000000000000000000000000202",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-101",
+          "axisRef": "j2",
+          "verdict": "DataInsufficient",
+          "reasons": [],
+          "gaps": [
+            {
+              "dimension": "axis-out-of-scope",
+              "caseId": "",
+              "diagCode": "SEL-INPUT-AXIS-OUT-OF-SCOPE"
+            }
+          ]
+        },
+        {
+          "id": "M-102|obj-00000000000000000000000000000202",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-102",
+          "axisRef": "j2",
+          "verdict": "DataInsufficient",
+          "reasons": [],
+          "gaps": [
+            {
+              "dimension": "axis-out-of-scope",
+              "caseId": "",
+              "diagCode": "SEL-INPUT-AXIS-OUT-OF-SCOPE"
+            }
+          ]
+        },
+        {
+          "id": "M-103|obj-00000000000000000000000000000202",
+          "deviceKind": "Motor",
+          "candidateModelId": "M-103",
+          "axisRef": "j2",
+          "verdict": "DataInsufficient",
+          "reasons": [],
+          "gaps": [
+            {
+              "dimension": "axis-out-of-scope",
+              "caseId": "",
+              "diagCode": "SEL-INPUT-AXIS-OUT-OF-SCOPE"
+            }
+          ]
+        },
+        {
+          "id": "G-201|obj-00000000000000000000000000000202",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-201",
+          "axisRef": "j2",
+          "verdict": "DataInsufficient",
+          "reasons": [],
+          "gaps": [
+            {
+              "dimension": "axis-out-of-scope",
+              "caseId": "",
+              "diagCode": "SEL-INPUT-AXIS-OUT-OF-SCOPE"
+            }
+          ]
+        },
+        {
+          "id": "G-202|obj-00000000000000000000000000000202",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-202",
+          "axisRef": "j2",
+          "verdict": "DataInsufficient",
+          "reasons": [],
+          "gaps": [
+            {
+              "dimension": "axis-out-of-scope",
+              "caseId": "",
+              "diagCode": "SEL-INPUT-AXIS-OUT-OF-SCOPE"
+            }
+          ]
+        },
+        {
+          "id": "G-203|obj-00000000000000000000000000000202",
+          "deviceKind": "Gearbox",
+          "candidateModelId": "G-203",
+          "axisRef": "j2",
+          "verdict": "DataInsufficient",
+          "reasons": [],
+          "gaps": [
+            {
+              "dimension": "axis-out-of-scope",
+              "caseId": "",
+              "diagCode": "SEL-INPUT-AXIS-OUT-OF-SCOPE"
+            }
+          ]
+        }
+      ],
+      "analyticAnchors": {}
+    }
+  ]
+}

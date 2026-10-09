@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "sel-golden",
+  "version": "1.0.0",
+  "basis": "appendixD#9 (黄金算例解析对照——标量相对 1e-9，数据集逐例声明 eps_abs 1e-12) —— selection 黄金数据集（sel-*）测试侧对照容差。P-SEL 纪律：本档案只服务黄金数据对照（组合质量核算/回填物性合成——封闭代数无截断误差，容差只吸收双实现浮点路径差），不构成任何运行时数值一致性校验阈值（运行侧保持精确判据，附录 D C7——core runtimeAbsoluteTolerance 单点）。筛选判据值（actual/required 回显）与 verdict/token 离散面不经本档案——测试侧精确断言。",
+  "entries": [
+    {
+      "fieldPath": "combos[*].totalMass",
+      "quantityKind": "mass",
+      "unit": "kg",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.massKg",
+      "quantityKind": "mass",
+      "unit": "kg",
+      "tolerance": { "relative": 0.0, "absolute": 1e-9 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.comM.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.comM.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.comM.z",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.inertia.ixx",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.inertia.iyy",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.inertia.izz",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.inertia.ixy",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.inertia.ixz",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.inertia.iyz",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "backfill.axes[*].synthesis.rotorInertiaKgM2",
+      "quantityKind": "inertia",
+      "unit": "kg*m^2",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 0.0, "absolute": 1e-9 }
+    }
+  ]
+}

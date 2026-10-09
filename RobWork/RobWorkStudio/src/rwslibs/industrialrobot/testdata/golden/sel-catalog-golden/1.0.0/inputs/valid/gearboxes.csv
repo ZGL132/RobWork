@@ -1,0 +1,5 @@
+ird-catalog-v1
+model_id,vendor,display_name,rated_output_torque_nm,peak_output_torque_nm,max_input_speed,ratio,efficiency,backlash,rated_life,mounting_orientation,external_load_radial_n,external_load_axial_n,external_load_dist_m,mass_kg,housing_inertia_kgm2,mounting_flange_kind,mounting_shaft_kind,curve_ref
+G-201,Nabtesco,RV-201,120,240,300,50,0.92,0.0015,6000,any,1300,800,0.16,6.5,0.012,flangeA,shaftB,c201-torque
+G-202,Nabtesco,RV-202,60,120,250,100,0.80,0.003,4000,any,500,600,0.05,3.0,0.006,flangeA,shaftB,
+G-203,Nabtesco,RV-203,200,400,300,30,0.95,,8000,up,,,,9.0,0.020,flangeA,shaftB,

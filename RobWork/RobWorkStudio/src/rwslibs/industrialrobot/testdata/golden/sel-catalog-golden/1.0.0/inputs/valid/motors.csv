@@ -1,0 +1,5 @@
+ird-catalog-v1
+model_id,vendor,display_name,rated_torque_nm,peak_torque_nm,rated_speed,max_speed,rated_power_w,overload_torque_nm,overload_duration_s,duty_class,rated_voltage_v,thermal_ref_temp,thermal_factor_per_ref,brake_torque_nm,holding_torque_nm,rotor_inertia_kgm2,mass_kg,mounting_flange_kind,mounting_shaft_kind,curve_ref
+M-101,Sinotech,SG-101,8.0,20.0,150,300,2200,20.0,12,S1,220,60,0.90,25,30,0.012,5.5,flangeA,shaftB,c101-power
+M-102,Sinotech,SG-102,3.0,8.0,150,250,600,8.0,6,S1,220,,,10,12,0.020,3.2,flangeA,shaftB,
+M-103,Sinotech,SG-103,10.0,25.0,200,400,3500,25.0,15,S2,380,,,,,0.030,7.0,flangeC,shaftB,
