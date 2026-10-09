@@ -41,8 +41,9 @@
 #      acceptance 1 明文创建）：最小可注册实现＝assembly/ 自持描述符
 #      门面（pluginId/titleKey 两字段均有 ui.md §11.1/§3.5 登记出处），
 #      零业务计算逻辑（卡 §9.5"UI 线程不得执行动力学计算"——契约测试
-#      词表扫描钉住）。界面面（曲线联动/峰值定位/时刻回放面板与
-#      dynamics.* 命令族注册）随 WP-17-T09；
+#      词表扫描钉住）。界面面（工作流页＋曲线视图面板与 dynamics.* 命令
+#      族登记面）已随 WP-17-T09 落位（零 ui 编译边的自持同构承载——见
+#      插件目标段落位裁决登记）；
 #   3. 测试目标 sdurws_ird_dynamics_test 与
 #      sdurws_ird_dynamics_contract_test（自持 ird_add_gtest 宏：
 #      add_test＋<target>_report XML——core/io/kinematics/selection 同款；
@@ -216,21 +217,49 @@ if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     add_library(RWS::ird::dynamics ALIAS sdurws_ird_dynamics)
 endif()
 
-# ---- 插件界面目标 sdurws_ird_dynamics_plugin（WP-17-T02 落位——契约
-#      acceptance 1 明文创建；卡 §3.2 目标布局）----
-# 最小可注册实现（零业务计算逻辑——卡 §9.5）：DynamicsPluginAssembly
-# ＝自持描述符装配门面（assembly/ 公共头——pluginId/titleKey 均有
-# ui.md §11.1/§3.5 登记出处；selection WP-19-T02 同款先例）。源码布局＝
-# plugin/ 目录（门禁 R-3 产品面扫描域为 include/**＋src/**，plugin/ 不在
-# 扫描域——Qt 红线的文件域隔离，selection/modeling 同款先例）；装配
-# 契约头＝assembly/（plugin 目标的 PUBLIC include 面——宿主装配层只见
-# 门面头，零插件私有头依赖——R-2；workflow O-45 教训前移，落位即建）。
-# 本批次零 Q_OBJECT 类（界面控件随 WP-17-T09 落位时引入），故不开
-# AUTOMOC；首个 Q_OBJECT 类落位任务按 modeling/requirements 先例置
-# AUTOMOC ON（DTB §5.1 v0.17 行口径）。
+# ---- 插件界面目标 sdurws_ird_dynamics_plugin（WP-17-T02 落位＋
+#      WP-17-T09 界面面落位——契约 acceptance 1 明文；卡 §3.2/§9.5）----
+# WP-17-T09 界面面（工作流页＋曲线视图）：呈现模型半区（零 Qt——
+# DynPanelTypes/DynPanelModel/DynPanelCommandCatalog：行集/命令目录/
+# 服务缝）＋Qt 呈现半区（DynCurveChartView/DynamicsPanelWidget：自绘
+# 曲线视图＋两页 Tab 主面板，均 QWidget 派生纯虚 override——**零
+# Q_OBJECT**，无信号槽/动态属性需求，AUTOMOC 保持 OFF〔DTB §5.1
+# v0.17 口径的反向登记：本目标不因 Qt 消费自动开 moc〕）＋模块/门面
+# （DynPanelModule/DynamicsPluginAssembly——缝/会话态归属与装配 API）。
+# 源码布局＝plugin/ 目录（门禁 R-3 产品面扫描域为 include/**＋src/**，
+# plugin/ 不在扫描域——Qt 红线的文件域隔离，modeling/kinematics 同款
+# 先例）；装配契约头＝assembly/（plugin 目标的 PUBLIC include 面——
+# 宿主装配层只见门面头，零插件私有头依赖——R-2；workflow O-45 教训
+# 前移，落位即建）。
+# ★ 零 ui 编译边（WP-17-T09 落位裁决登记——DTB §5.4 精神，单元卡
+#   §1.2 同步登记）：本插件消费的登记面（面板/命令描述符/就绪投影行）
+#   以字段同构的自持值承载（assembly/DynamicsPluginAssembly.hpp），
+#   不 include ui 单元公共头、不链 sdurws_ird_ui——本单元依赖白名单
+#   （卡 §3.2 五条登记边）与 ird_gates 机器面（IRD_ALLOWED_UNIT_EDGES）
+#   均无 dynamics->ui 边，白名单文件不在本任务 allowedFiles 内不可增
+#   登；真实注册端口（IPluginUiRegistrar）消费归宿主装配批次收口时按
+#   治理程序增登（缺口登记＝单元卡 P-DYN-8）。自边：ird_gates 引擎按
+#   "插件目标链接本单元产品目标"装配自边豁免放行〔2a 形态二
+#   _self_edge 分支〕，与 selection/modeling/kinematics 五 plugin 同款。
 add_library(sdurws_ird_dynamics_plugin STATIC
-    plugin/DynamicsPluginAssembly.cpp)   # 装配门面实现（assembly/
-                                         #   公共头的私有实现）
+    plugin/DynPanelTypes.hpp           # 零 Qt 值类型（服务缝/会话态/峰值
+                                       #   跳转值——呈现模型半区）
+    plugin/DynPanelModel.hpp           # 模型层流 L-D1~L-D6（零 Qt——界面
+                                       #   链路用例主被测面）
+    plugin/DynPanelModel.cpp
+    plugin/DynPanelCommandCatalog.hpp  # 装配登记目录现产函数（零 Qt——
+                                       #   五命令描述符/域注册键）
+    plugin/DynPanelCommandCatalog.cpp
+    plugin/DynCurveChartView.hpp       # 自绘曲线视图（Qt Widgets——零
+                                       #   Q_OBJECT，呈现变换零业务计算）
+    plugin/DynCurveChartView.cpp
+    plugin/DynamicsPanelWidget.hpp     # 工作流页＋曲线视图主面板（Qt
+                                       #   Widgets——零 Q_OBJECT）
+    plugin/DynamicsPanelWidget.cpp
+    plugin/DynPanelModule.hpp          # 插件模块（缝/会话态归属＋面板工厂
+                                       #   落点——零 Qt 值类型）
+    plugin/DynamicsPluginAssembly.cpp) # 装配门面实现（assembly/ 公共头的
+                                       #   私有实现＋模块方法落点）
 set_target_properties(sdurws_ird_dynamics_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -287,9 +316,14 @@ endif()
 #                                 四用例）
 # 测试 main 自持＝testkit 报告设施（TestMainReport.cpp 安装 TestRecord
 # Listener——ird-test-report.json 用例级明细与 gtest XML 并存；IO-T07/
-# PRJ-T15/selection 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。零
-# QCoreApplication 构造（selection T02 同款诚实登记）：_test 目标零 Qt
-# 消费（不链 _plugin），测试面无 Qt 类型。
+# PRJ-T15/selection 同款先例；IRD_TEST_INFO 携带需求/AT 追溯字段）。
+# WP-17-T09 起链 sdurws_ird_dynamics_plugin（同单元被测插件目标——模型
+# 层链路用例 DynPluginPanelTest 消费 plugin/ 呈现模型半区；链接面 Qt
+# 经 plugin 目标 PUBLIC 传播，测试源码零 Qt 类型消费〔QCoreApplication
+# 级以下——模型层零 Qt〕；kinematics WP-15-T12 PluginPanelTest 同款
+# 形态）。原 T02"零 Qt 不链 _plugin"口径随 T09 界面面落位被替代（诚实
+# 登记——模型层用例的被测面即插件目标，红线扫描用例的产品面扫描域
+# include/**＋src/** 不受影响）。
 enable_testing()
 
 add_executable(sdurws_ird_dynamics_test
@@ -344,7 +378,7 @@ add_executable(sdurws_ird_dynamics_test
                                      #   NaN 不参与 max/fail-fast 装配契约七
                                      #   面——任务契约 acceptance 1/2 执行证明
                                      #   面）；夹具复用 test/TwoLinkFixture.hpp
-    test/ReplayCurveTest.cpp)        # WP-17-T08：DYN-08 数据面与命令面用例组
+    test/ReplayCurveTest.cpp         # WP-17-T08：DYN-08 数据面与命令面用例组
                                      #   （DynCurveProjector/DynReplayData/
                                      #   DynReplaySampler/DynPeakLocate/
                                      #   DynCommands/DynDyn08Chain——曲线联动
@@ -356,6 +390,16 @@ add_executable(sdurws_ird_dynamics_test
                                      #   姿态同步全链联动——任务契约
                                      #   acceptance 1/2 执行证明面）；夹具
                                      #   复用 test/TwoLinkFixture.hpp
+    test/DynPluginPanelTest.cpp)     # WP-17-T09：界面链路模型层用例组
+                                     #   （DynPanelWorkflow/DynPanelCurves/
+                                     #   DynPanelReplay/DynPanelCatalog/
+                                     #   DynPanelText——L-D1~L-D6 六流＋装配
+                                     #   登记面值断言＋五命令零修订呈现链〔
+                                     #   AT-04/UX-02/UX-10〕＋GUI 呈现
+                                     #   envUnavailable 登记——GUI 手动验证
+                                     #   通道归 sdurws_ird_dynamics_app
+                                     #   harness〔§11.5〕）；夹具复用
+                                     #   test/TwoLinkFixture.hpp
 
 target_compile_features(sdurws_ird_dynamics_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_test PROPERTIES
@@ -375,9 +419,16 @@ endif()
 # sdurws_ird_testkit＝报告/追溯设施消费面（RecordListener/IRD_TEST_INFO
 # ——T-1 允许形态：仅测试目标链 testkit，产品目标不链）。单行链接语句
 # ＝契约测试 T-1 扫描的登记形态约束（testkit 与测试目标名同行可见——
-# kinematics/selection/drivetrain 同款）。本目标零 Qt（红线扫描用例面
-# ——不链 _plugin）。
-target_link_libraries(sdurws_ird_dynamics_test PRIVATE sdurws_ird_dynamics sdurws_ird_testkit GTest::gtest)
+# kinematics/selection/drivetrain 同款）。WP-17-T09 增链
+# sdurws_ird_dynamics_plugin（同单元被测插件目标——模型层链路用例；
+# 其 PUBLIC 面携带 Qt 传染，测试源码零 Qt 类型消费——模型层零 Qt）。
+target_link_libraries(sdurws_ird_dynamics_test PRIVATE sdurws_ird_dynamics sdurws_ird_dynamics_plugin sdurws_ird_testkit GTest::gtest Qt6::Core Qt6::Gui)
+
+# 插件私有头解析（测试消费 plugin/ 呈现模型头 DynPanelModel 等——同
+# 单元 PRIVATE 面；plugin/ 子目录直指——裸名 include 解析；kinematics
+# PluginPanelTest 先例同款）。
+target_include_directories(sdurws_ird_dynamics_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/plugin)
 
 # 源码树位置注入：红线扫描用例在运行期扫描 dynamics 源码核对红线
 # （零 Qt/零表外 include——卡 §3.2）。经编译定义传 industrialrobot 根
@@ -506,11 +557,61 @@ add_custom_command(TARGET sdurws_ird_dynamics_contract_test POST_BUILD
 
 ird_add_gtest(sdurws_ird_dynamics_contract_test)
 
+# ---- 开发验证 harness：sdurws_ird_dynamics_app（WP-17-T09——单元卡
+#      §11.5 GUI 手动验证通道载体）----
+# 先例＝kinematics_app（WP-15-T12）/modeling_app（WP-13-T15）；_app 后缀
+# ＝ird_gates 分类面 Qt 合法形态；源码在 app/ 子目录（产品扫描域零触
+# 碰）；本目标非测试（不入 ctest 标签）、非产品交付路径（真实宿主装配
+# 层挂位归装配批次收口——P-DYN-8 登记缺口，插件面零改动）。无人值守
+# 门禁不做 GUI 运行验证：本目标的**构建**属交付留痕，**运行**属手动
+# 点验流程（§11.5），未启动如实登记不标注通过（AGENTS §4.2）。
+add_executable(sdurws_ird_dynamics_app
+    app/HarnessMain.cpp)
+
+target_compile_features(sdurws_ird_dynamics_app PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_dynamics_app PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_dynamics_app PRIVATE /utf-8)
+endif()
+
+# app/ 需解析本单元插件私有头（plugin/DynPanelTypes.hpp 等——同单元内
+# 消费，R-2 不跨单元；单元根 include 目录 PRIVATE 注入）。
+target_include_directories(sdurws_ird_dynamics_app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 单行链接语句＝构建图契约测试的登记形态约束（kinematics_app 同款）。
+target_link_libraries(sdurws_ird_dynamics_app PRIVATE sdurws_ird_dynamics_plugin)
+
+# 运行期 DLL 就位（kinematics_app 同款）：TARGET_RUNTIME_DLLS 复制 Qt
+# 三件套等共享库到 exe 旁——绝对路径启动免 PATH 依赖。
+add_custom_command(TARGET sdurws_ird_dynamics_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_dynamics_app>
+            $<TARGET_FILE_DIR:sdurws_ird_dynamics_app>
+    COMMAND_EXPAND_LISTS)
+
+# ---- Qt 平台插件定位（kinematics_app 同款坑位修复）：Qt6 官方发行版
+#      DLL 为可重定位前缀形态，从副本位置推导的插件目录不成立（qwindows
+#      找不到即启动失败）——configure 期从 Qt6_DIR 推导真实 Qt 安装前缀
+#      生成 qt.conf 复制到 exe 旁（构建期生成物，不入库）。
+set(_ird_dyn_qt_prefix "${Qt6_DIR}")
+get_filename_component(_ird_dyn_qt_prefix "${_ird_dyn_qt_prefix}/../../.." ABSOLUTE)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/dyn-harness-qt.conf"
+     "[Paths]\nPrefix=${_ird_dyn_qt_prefix}\n")
+add_custom_command(TARGET sdurws_ird_dynamics_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_CURRENT_BINARY_DIR}/dyn-harness-qt.conf"
+            "$<TARGET_FILE_DIR:sdurws_ird_dynamics_app>/qt.conf")
+
 # ---- ctest LABELS "ird"（modeling/ui/requirements/kinematics/selection
 #      落位同款）----
 # 验收过滤口径：ctest -L "^ird$"——两测试（模型层、进程内、确定性）同
-# 标签；_gui_test 形态本单元无（GUI 手动验证通道随 WP-17-T09——卡 §11.5，
-# 本批次无 GUI 载体用例）。
+# 标签；_gui_test 形态本单元无——GUI 呈现归 sdurws_ird_dynamics_app
+# harness 手动验证通道（WP-17-T09 落位；卡 §11.5 流程，本次未启动如实
+# 登记）＋模型层链路用例（DynPluginPanelTest）承载界面链路。
 set_tests_properties(sdurws_ird_dynamics_test sdurws_ird_dynamics_contract_test
     PROPERTIES LABELS "ird")
 

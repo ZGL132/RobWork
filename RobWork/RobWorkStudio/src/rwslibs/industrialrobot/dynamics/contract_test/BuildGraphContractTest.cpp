@@ -161,11 +161,12 @@ constexpr const char* kExtraPlatformUnits[] = {
 
 /**
  * 构建图封闭性：dynamics 的 CMake 目标引用集合仅含五条登记边＋本单元
- * 四目标（产品/插件/两测试——T02 契约 acceptance 1 明文同批创建；单元
- * 内部引用不构成跨单元边）＋testkit（报告设施——T-1 允许形态，仅测试
- * 目标）。出现任何其他目标引用（业务域单元＝R-1 面；表外平台单元＝SUB
- * 面；_worker＝卡 §3.3 明文不创建——如需走架构变更通道）即构建图越界
- * （acceptance 2"二分结构扫描"的单元内复核面）。
+ * 五目标（产品/插件/两测试/harness——T02 契约 acceptance 1 明文同批
+ * 创建＋WP-17-T09 harness 载体；单元内部引用不构成跨单元边）＋testkit
+ * （报告设施——T-1 允许形态，仅测试目标）。出现任何其他目标引用（业务
+ * 域单元＝R-1 面；表外平台单元＝SUB 面；_worker＝卡 §3.3 明文不创建
+ * ——如需走架构变更通道）即构建图越界（acceptance 2"二分结构扫描"
+ * 的单元内复核面）。
  */
 TEST(DynBuildGraph, UnitEdgesFiveRegisteredAndClosed_WP17T02_ACC1)
 {
@@ -175,14 +176,16 @@ TEST(DynBuildGraph, UnitEdgesFiveRegisteredAndClosed_WP17T02_ACC1)
     const auto refs = collectTargetRefs(readCMakeLists());
     ASSERT_FALSE(refs.empty()) << "CMakeLists 未引用任何 ird 目标（扫描失效）";
 
-    // 白名单：五条登记边＋本单元四目标（产品/插件/测试/契约测试——T02
-    // 契约 acceptance 1 明文同批创建）＋sdurws_ird_testkit（报告设施
-    // ——T-1 允许形态＝仅测试目标可链，产品目标由 NoTestkitEdge 用例
-    // 钉住）。
+    // 白名单：五条登记边＋本单元五目标（产品/插件/测试/契约测试——T02
+    // 契约 acceptance 1 明文同批创建；开发验证 harness _app——WP-17-T09
+    // 单元卡 §11.5 GUI 手动验证通道载体，ird_gates 分类面 Qt 合法形态）
+    // ＋sdurws_ird_testkit（报告设施——T-1 允许形态＝仅测试目标可链，
+    // 产品目标由 NoTestkitEdge 用例钉住）。
     std::set<std::string> allowed = {"sdurws_ird_dynamics",
                                      "sdurws_ird_dynamics_plugin",
                                      "sdurws_ird_dynamics_test",
                                      "sdurws_ird_dynamics_contract_test",
+                                     "sdurws_ird_dynamics_app",
                                      "sdurws_ird_testkit"};
     for (const char* u : kEdgeUnits) {
         allowed.insert(std::string("sdurws_ird_") + u);

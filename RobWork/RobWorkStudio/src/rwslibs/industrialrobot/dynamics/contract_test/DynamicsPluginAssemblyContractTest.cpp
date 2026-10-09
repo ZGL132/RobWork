@@ -22,6 +22,7 @@
  */
 
 #include <sdurws/ird/dynamics/DynamicsPluginAssembly.hpp>
+#include <sdurws/ird/dynamics/Commands.hpp>
 
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记（testkit §7.3）
 
@@ -127,16 +128,16 @@ TEST(DynPluginAssembly, DescriptorMatchesUiRegistrations_WP17T02_ACC1)
     IRD_TEST_INFO(std::vector<std::string>{"NFR-MNT-01"},
                   std::vector<std::string>{});
 
-    const auto descriptor = sdurws::ird::dynamics::createDynamicsPluginAssembly();
-    EXPECT_EQ(descriptor.pluginId, "dynamics")
+    const auto bundle = sdurws::ird::dynamics::createDynamicsPluginAssembly();
+    EXPECT_EQ(bundle.descriptor.pluginId, "dynamics")
         << "pluginId 必须＝ui.md §11.1 白名单 token（显示名永不替代身份——ARC-04）";
-    EXPECT_EQ(descriptor.titleKey, "plugin.dynamics.title")
+    EXPECT_EQ(bundle.descriptor.titleKey, "plugin.dynamics.title")
         << "titleKey 必须＝ui.md §3.5 键族 plugin.<id>.title（UX-02：值归 ui 文案资源）";
 
     // 纯值工厂：两次调用产生同值实例（无共享状态——文件头线程模型注）。
     const auto again = sdurws::ird::dynamics::createDynamicsPluginAssembly();
-    EXPECT_EQ(again.pluginId, descriptor.pluginId);
-    EXPECT_EQ(again.titleKey, descriptor.titleKey);
+    EXPECT_EQ(again.descriptor.pluginId, bundle.descriptor.pluginId);
+    EXPECT_EQ(again.descriptor.titleKey, bundle.descriptor.titleKey);
 }
 
 /**
@@ -185,4 +186,80 @@ TEST(DynPluginAssembly, PluginFaceHasNoDirectFileOrProjectAccess_WP17T02_ACC2)
                    "卡 §9.1）: " << symbol << " @ " << file.string();
         }
     }
+}
+
+/**
+ * 装配描述符承载完整登记面（WP-17-T09 acceptance 1——T02 两字段逐字
+ * 保留＋挂位/域键/命令/面板登记面的值面断言）：工作流页＋曲线视图
+ * 合一主面板恰一条登记记录（advanced=false），五命令描述符与 §9.5 词表
+ * 逐位一致，键族形态 cmd.<token>.title（ui.md §3.5 派生规则单一）。
+ */
+TEST(DynPluginAssembly, DescriptorCarriesRegistrationFace_WP17T09_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-02", "UX-10", "DYN-08"},
+                  std::vector<std::string>{"AT-04"});
+
+    namespace dyn = sdurws::ird::dynamics;
+    const auto bundle = dyn::createDynamicsPluginAssembly();
+
+    // T02 登记值逐字保留（WP-17-T02 契约测试同口径——扩展不漂移）。
+    EXPECT_EQ(bundle.descriptor.pluginId, "dynamics");
+    EXPECT_EQ(bundle.descriptor.titleKey, "plugin.dynamics.title");
+
+    // 挂位阶段/域注册键（ui.md §6.4 七阶段第 4 token／§6.5 域注册键）。
+    EXPECT_EQ(bundle.descriptor.stageToken, "trajectory-dynamics");
+    EXPECT_EQ(bundle.descriptor.readinessDomainKey, "dynamics");
+
+    // 命令登记面：五条、与 §9.5 词表逐位一致（行序＝表行序）、键族派生。
+    ASSERT_EQ(bundle.descriptor.commands.size(), dyn::kCommandTokens.size());
+    for (std::size_t i = 0; i < bundle.descriptor.commands.size(); ++i) {
+        EXPECT_EQ(bundle.descriptor.commands[i].token, dyn::kCommandTokens[i])
+            << "token 与词表逐位一致（跨版本命令契约——改动即断链）";
+        EXPECT_EQ(bundle.descriptor.commands[i].titleKey,
+                  "cmd." + std::string(dyn::kCommandTokens[i]) + ".title")
+            << "标题键＝键族派生（值归宿主文案资源——UX-02 零文案值）";
+    }
+
+    // 面板登记面：恰一条主面板记录（工作流页＋曲线视图合一 Tab——
+    // 同数据双实例的呈现漂移防御，见 assembly 头"面板面形态"）。
+    ASSERT_EQ(bundle.descriptor.panels.size(), 1u);
+    EXPECT_EQ(bundle.descriptor.panels[0].stageToken, "trajectory-dynamics");
+    EXPECT_EQ(bundle.descriptor.panels[0].titleKey,
+              "plugin.dynamics.panel.workflow.title");
+    EXPECT_FALSE(bundle.descriptor.panels[0].advanced)
+        << "主面板位（UX-04 非 advanced——高级位本域无第二面板）";
+    EXPECT_TRUE(static_cast<bool>(bundle.descriptor.panels[0].factory))
+        << "面板工厂闭包非空（§10.9 InvalidDescriptor 防御面）";
+}
+
+/**
+ * 白名单 token 对账（WP-17-T09 acceptance 1"白名单挂位"的词表半区）：
+ * pluginId 落于 ui.md §11.1 八 token 编译期词表（测试自持词表常量对账
+ * ——真实运行时载体＝宿主注册端口的 whitelist()，本单元零 ui 编译边
+ * 〔登记缺口＝单元卡 P-DYN-8，归宿主装配批次收口〕；两侧同源文档
+ * §11.1——值漂移即本用例或 ui 侧词表用例失败）。
+ */
+TEST(DynPluginAssembly, PluginIdAlignsHostWhitelistVocabulary_WP17T09_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-02"},
+                  std::vector<std::string>{});
+
+    namespace dyn = sdurws::ird::dynamics;
+    // ui.md §11.1 八 token 词表（静态白名单——宿主 pluginUiWhitelist
+    // 与注册端口 whitelist() 的同源值；测试侧自持对账锚）。
+    constexpr std::array<const char*, 8> kUiWhitelist{
+        "modeling", "requirements", "kinematics", "trajectory",
+        "dynamics", "selection", "optimization", "workflow"};
+
+    const auto descriptor = dyn::createDynamicsPluginAssembly();
+    bool whitelisted = false;
+    for (const char* token : kUiWhitelist) {
+        whitelisted = whitelisted || descriptor.descriptor.pluginId == token;
+    }
+    EXPECT_TRUE(whitelisted)
+        << "pluginId 必须落于 ui.md §11.1 白名单词表（白名单外注册在宿主"
+           "端口被拒——NotWhitelisted）";
+    // 挂位阶段 token 亦属宿主词表（§6.4 七阶段——挂位断链防御）。
+    const char* stage = descriptor.descriptor.stageToken.c_str();
+    EXPECT_STREQ(stage, "trajectory-dynamics");
 }
