@@ -226,6 +226,7 @@ TEST_F(DiagCatalogFactory, DtDiag1_ComparisonRequiredAndNotApplicableMarker)
     travel.ownerUnit = "kinematics";
     travel.category = DiagnosticCategory::Confirmable;
     travel.severity = DiagnosticSeverity::Warning;
+    travel.level = core::DiagnosticLevel::Warning;  // F-618：映射一致（Warning⇒Warning）
     travel.titleKey = "diag." + codeLower(travel.code) + ".title";
     travel.detailKey = "diag." + codeLower(travel.code) + ".detail";
     travel.paramSchema = "[]";

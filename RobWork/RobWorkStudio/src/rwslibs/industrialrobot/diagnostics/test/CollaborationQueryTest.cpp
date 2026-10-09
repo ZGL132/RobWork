@@ -131,6 +131,7 @@ protected:
         confirmable.ownerUnit = "modeling";
         confirmable.category = DiagnosticCategory::Confirmable;
         confirmable.severity = DiagnosticSeverity::Warning;
+        confirmable.level = core::DiagnosticLevel::Warning;  // F-618：映射一致（Warning⇒Warning）
         confirmable.titleKey = "diag.mdl-06-travel-limit.title";
         confirmable.detailKey = "diag.mdl-06-travel-limit.detail";
         confirmable.paramSchema = "[]";

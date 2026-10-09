@@ -47,6 +47,7 @@
 namespace {
 
 using namespace sdurws::ird::diagnostics;
+namespace core = sdurws::ird::core;   // F-618：core::DiagnosticLevel 断言用别名
 
 // ---------------------------------------------------------------------
 // 夹具辅助：以最小合法字段构造描述符（注册期验证链的"正例基线"——
@@ -107,7 +108,8 @@ void expectThrowsWithCode(Fn&& fn, DiagnosticsErrorCode expected, const char* wh
 // 漂移/重排；拼写逐字来自 units/diagnostics.md §4.6 各行清单）。
 // ---------------------------------------------------------------------
 
-/// §4.6 全量 87 码（行序＝§4.6 表行序、行内＝收编清单原文序）。
+/// §4.6 全量 88 码（行序＝§4.6 表行序、行内＝收编清单原文序；RT-BOUNDS-
+/// MAGNITUDE＝F-618 收编〔2026-10-10，diagnostics.md §4.6 RT 行尾〕）。
 const std::vector<const char*>& builtinCodeLiterals()
 {
     static const std::vector<const char*> kCodes{
@@ -116,11 +118,12 @@ const std::vector<const char*>& builtinCodeLiterals()
         "PRJ-RECOVERY-ORPHAN-DRAFT", "PRJ-RECOVERY-DANGLING-OBJECTS", "PRJ-SCHEMA-FUTURE",
         "PRJ-FORMAT-LEGACY", "PRJ-STALE-REVISION-REJECTED", "PRJ-ARCHIVE-CONFLICT",
         "PRJ-WRITE-AUTHORITY-LOST",
-        // RT 14
+        // RT 15（14 收编＋F-618 RT-BOUNDS-MAGNITUDE）
         "RT-INPUT-INVALID", "RT-STRUCTURE-INVALID", "RT-UNIT-MISMATCH", "RT-RESOURCE-MISSING",
         "RT-RESOURCE-CHANGED", "RT-RESOURCE-BUDGET", "RT-WC-COMPILE-FAILED",
         "RT-DWC-COMPILE-FAILED", "RT-NAME-CONFLICT", "RT-BASE-WORLD-INCONSISTENT",
         "RT-CAPABILITY-MISSING", "RT-ROBWORK-ERROR", "RT-CACHE-INCOMPATIBLE", "RT-CANCELLED",
+        "RT-BOUNDS-MAGNITUDE",
         // POLICY 23
         "POLICY-SCHEMA-UNKNOWN-FIELD", "POLICY-SCHEMA-VERSION-FUTURE",
         "POLICY-SCHEMA-VERSION-UNKNOWN", "POLICY-THRESHOLD-NON-FINITE",
@@ -179,11 +182,11 @@ TEST(DiagCodesRegistry, DtReg1_BuiltinTableRegistersFullyAndManifestStable)
     // ---- 空注册表＋全量注册（矩阵行前置"空注册表"）----
     StableCodeRegistry registry;
     EXPECT_FALSE(registry.sealed());
-    registerBuiltinCodes(registry);   // 不抛＝87 项全部通过注册期验证
+    registerBuiltinCodes(registry);   // 不抛＝88 项全部通过注册期验证
 
-    // ---- registeredCodes 计数＝§4.6 清单（10/14/23/7/18/8/7）----
+    // ---- registeredCodes 计数＝§4.6 清单（10/15/23/7/18/8/7）----
     EXPECT_EQ(registry.registeredCodes("project").size(), 10u);
-    EXPECT_EQ(registry.registeredCodes("runtime").size(), 14u);
+    EXPECT_EQ(registry.registeredCodes("runtime").size(), 15u);
     EXPECT_EQ(registry.registeredCodes("policy").size(), 23u);
     EXPECT_EQ(registry.registeredCodes("evidence").size(), 7u);
     EXPECT_EQ(registry.registeredCodes("execution").size(), 18u);
@@ -204,7 +207,7 @@ TEST(DiagCodesRegistry, DtReg1_BuiltinTableRegistersFullyAndManifestStable)
     // ---- manifest 摘要两次计算稳定（矩阵行"manifest 摘要稳定"）----
     const CodeTableManifest first = registry.manifest();
     const CodeTableManifest second = registry.manifest();
-    EXPECT_EQ(first.entries.size(), 87u);
+    EXPECT_EQ(first.entries.size(), 88u);
     ASSERT_EQ(first.entries.size(), second.entries.size());
     for (std::size_t i = 0; i < first.entries.size(); ++i) {
         EXPECT_TRUE(first.entries[i] == second.entries[i])
@@ -475,7 +478,7 @@ TEST(DiagCodesRegistry, DtReg5_ParamSchemaValidation)
         EXPECT_NE(r.find("RT-SCHEMA-TEST"), nullptr);
     }
 
-    // 内置表逐码 paramSchema 均为合法形（87 码全部通过注册即证明——此处
+    // 内置表逐码 paramSchema 均为合法形（88 码全部通过注册即证明——此处
     // 显式抽查 §9.2 示例码的参数面）。
     const auto builtin = makeBuiltinRegistry();
     EXPECT_EQ(builtin->find("PRJ-LOCK-HELD")->paramSchema, std::string("[\"pid\",\"host\"]"));
@@ -581,7 +584,7 @@ TEST(DiagCodesRegistry, DtReg5_RuntimeMutationRejectedAfterSeal)
 
     // 查询路径在运行期可用（"运行期 find/manifest 并发只读安全"）。
     EXPECT_NE(registry.find("RT-INPUT-INVALID"), nullptr);
-    EXPECT_EQ(registry.manifest().entries.size(), 87u);
+    EXPECT_EQ(registry.manifest().entries.size(), 88u);
 }
 
 // =====================================================================
@@ -634,7 +637,8 @@ TEST(DiagCodesVocabulary, DtPdiag3_Category15Severity4TokensFrozen)
     EXPECT_EQ(categories.size(), 15u);
 }
 
-/** P-DIAG-3 补充：内置 87 码的码元数据登记面（category/severity/retryable/
+/** P-DIAG-3 补充：内置 88 码的码元数据登记面（category/severity/level/
+ * retryable/
  *  flags）逐码落值——词表承载进码表（"随码元数据登记"acceptance 原文）。 */
 TEST(DiagCodesVocabulary, DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata)
 {
@@ -663,6 +667,75 @@ TEST(DiagCodesVocabulary, DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata)
         if (d.confirmable) {
             EXPECT_TRUE(d.requiresComparison) << "可确认码须比较型（SA-15）: " << d.code;
         }
+    }
+}
+
+// =====================================================================
+// F-618（diagnostics.md v0.14）：level 属性——全表映射一致＋注册期验证
+// 拒绝错标＋RT-BOUNDS-MAGNITUDE 正式注册面。
+// =====================================================================
+
+/** F-618①：内置表 level 全表机械派生一致（severity==Error ⇔ level==Error、
+ *  其余 severity ⇒ level==Warning——severity 为映射唯一语义源），且
+ *  RT-BOUNDS-MAGNITUDE 以 warning 级正式注册（F-593 覆盖码面过渡形态收编）。 */
+TEST(DiagCodesLevel, F618_LevelMappingAcrossBuiltinTable)
+{
+    const auto registry = makeBuiltinRegistry();
+
+    for (const CodeDescriptor& d : registry->manifest().entries) {
+        const core::DiagnosticLevel expected =
+            d.severity == DiagnosticSeverity::Error ? core::DiagnosticLevel::Error
+                                                    : core::DiagnosticLevel::Warning;
+        ASSERT_EQ(d.level, expected)
+            << "内置表 level 偏离 severity 派生: " << d.code;
+    }
+
+    // RT-BOUNDS-MAGNITUDE：已注册、warning 级、ownerUnit=runtime（RT 前缀
+    // 所有权——注册期验证面）。
+    const CodeDescriptor* bounds = registry->find("RT-BOUNDS-MAGNITUDE");
+    ASSERT_NE(bounds, nullptr) << "F-618 收编码未注册";
+    EXPECT_EQ(bounds->ownerUnit, "runtime");
+    EXPECT_EQ(bounds->severity, DiagnosticSeverity::Warning);
+    EXPECT_EQ(bounds->level, core::DiagnosticLevel::Warning);
+    EXPECT_EQ(bounds->category, DiagnosticCategory::InputInvalid);
+    EXPECT_FALSE(bounds->deprecated) << "正式注册非 tombstone";
+}
+
+/** F-618②：level 与 severity 映射不一致的登记在注册边界拒绝（Usage——
+ *  阻断轴错标会改变"警告不阻断"承诺，装配面拦截；检查序⑨在重复注册⑧
+ *  之后——既有检查序零变化）。 */
+TEST(DiagCodesLevel, F618_LevelSeverityMismatchRejected)
+{
+    // ①severity=Warning 配 level=Error（把警告错标为阻断）→拒绝。
+    {
+        StableCodeRegistry registry;
+        CodeDescriptor bad = makeValidDescriptor("RT-LEVEL-WARN-AS-ERR");
+        bad.severity = DiagnosticSeverity::Warning;
+        bad.level = core::DiagnosticLevel::Error;
+        expectThrowsWithCode([&] { registry.registerCode(bad); },
+                             DiagnosticsErrorCode::Usage,
+                             "Warning 码标 Error 级应 Usage 拒绝（F-618 映射验证）");
+    }
+    // ②severity=Error 配 level=Warning（把错误错标为放行——更危险方向）→拒绝。
+    {
+        StableCodeRegistry registry;
+        CodeDescriptor bad = makeValidDescriptor("RT-LEVEL-ERR-AS-WARN");
+        bad.level = core::DiagnosticLevel::Warning;
+        expectThrowsWithCode([&] { registry.registerCode(bad); },
+                             DiagnosticsErrorCode::Usage,
+                             "Error 码标 Warning 级应 Usage 拒绝（F-618 映射验证）");
+    }
+    // ③映射一致的合法登记（severity=Warning＋level=Warning）→通过。
+    {
+        StableCodeRegistry registry;
+        CodeDescriptor good = makeValidDescriptor("RT-LEVEL-OK-PAIR");
+        good.severity = DiagnosticSeverity::Warning;
+        good.level = core::DiagnosticLevel::Warning;
+        EXPECT_NO_THROW(registry.registerCode(good))
+            << "映射一致的登记放行（severity 是唯一语义源，level 照声明核验）";
+        ASSERT_NE(registry.find("RT-LEVEL-OK-PAIR"), nullptr);
+        EXPECT_EQ(registry.find("RT-LEVEL-OK-PAIR")->level,
+                  core::DiagnosticLevel::Warning);
     }
 }
 

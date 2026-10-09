@@ -1,7 +1,8 @@
 /**
  * @file   DiagCodes.cpp
  * @brief  稳定码注册表实现——词表 token、注册期验证、manifest 摘要与内置
- *         码表全量收编（§4.6 87 码）。
+ *         码表全量收编（§4.6 88 码——阶段 A 收编 87 码＋F-618 收编
+ *         RT-BOUNDS-MAGNITUDE，2026-10-10）。
  *
  * 设计依据：
  *   - units/diagnostics.md §4.3/§4.5/§4.5.1/§4.6/§9.1（见头注释）；
@@ -25,20 +26,24 @@
  *      ＋§4.4"结论呈现（RPT-05 评审记录）"锚点）与 confirmable（SA-15
  *      确认流自省码）——不新增词表值（P-DIAG-3"不私裁"约束）。
  *   上述展开只决定码元数据的 category/severity 登记值；**码值集合本身
- *   （87 码、拼写、前缀）与 §4.6 逐字一致，无任何重排**（dtb WP-09-T03
+ *   （87＋1 码、拼写、前缀）与 §4.6 逐字一致，无任何重排**（dtb WP-09-T03
  *   约束）。若所有者对个别消歧点另有裁决，返工面＝对应表行两列值＋
  *   registryVersion 递增，码值不动。
  *
  * ◆ manifest 摘要 canonical 编码（CodeTableManifest.digest——非往返身份
  *   投影，唯一消费方式＝摘要比对）：
- *     "IRDDCM1"（7 字节 magic＋codec 版本位）
+ *     "IRDDCM2"（7 字节 magic＋codec 版本位；1→2＝F-618 编码布局演进——
+ *       CodeDescriptor 字段表尾追加 level，字段序即编码序，按"只允许表尾
+ *       追加字段并升 codec 版本"纪律升位；无持久化摘要存量——摘要只在
+ *       主/worker 握手时同二进制比对）
  *     之后逐条目（entries 已按 code 字典序）：
  *       逐字符串字段（code/ownerUnit/categoryToken/severityToken/titleKey/
  *         detailKey/paramSchema/retryKindToken/supersededBy?）＝
  *         u32le(长度)＋原始字节；
  *       u8 × 7＝confirmable/requiresComparison/userVisible/reportable/
  *         historical/deprecated/hasSupersededBy（0/1）；
- *       u32le＝registryVersion。
+ *       u32le＝registryVersion；
+ *       u8＝level（枚举声明序整数值——F-618 尾追加；0=Error/1=Warning）。
  *   确定性：全部字段为编译期/注册期定值，编码无环境依赖——同表同摘要
  *   （NFR-COR-02；DT-REG-1"两次计算相等"观测点）。
  *
@@ -209,7 +214,16 @@ std::string derivedTextKey(std::string_view code, std::string_view suffix)
 }
 
 /// 由表行构造完整描述符（flags/registryVersion/retryable/文案键按 §4.5
-/// 机械规则派生——单点派生保证 87 码一致性；Dev 码 flags 强制 false）。
+/// 机械规则派生——单点派生保证全表一致性；Dev 码 flags 强制 false）。
+/// F-618：level 由 severity 机械派生（呈现轴→阻断轴映射单点）——
+/// severity==Error ⇒ Error、其余（Warning/Info/Dev）⇒ Warning；注册期
+/// 验证对非内置登记强制同一映射（两轴一致，禁其他组合）。
+core::DiagnosticLevel levelFromSeverity(DiagnosticSeverity severity) noexcept
+{
+    return severity == DiagnosticSeverity::Error ? core::DiagnosticLevel::Error
+                                                 : core::DiagnosticLevel::Warning;
+}
+
 CodeDescriptor makeBuiltin(const BuiltinSpec& spec)
 {
     CodeDescriptor d;
@@ -232,14 +246,15 @@ CodeDescriptor makeBuiltin(const BuiltinSpec& spec)
     d.historical = !dev;
     d.registryVersion = 1;          // 首次登记
     d.deprecated = false;           // tombstone 只经 deprecate()／清单显式修订产生
+    d.level = levelFromSeverity(spec.severity);  // F-618 派生（单点——见上）
     return d;
 }
 
 /// §4.6 内置表数据（行序＝§4.6 表行序，行内＝收编清单原文序；逐码注释为
 /// 分类/严重的登记依据——展开规则 R1~R4 见文件头）。
-const std::array<BuiltinSpec, 87>& builtinSpecs()
+const std::array<BuiltinSpec, 88>& builtinSpecs()
 {
-    static const std::array<BuiltinSpec, 87> kSpecs{{
+    static const std::array<BuiltinSpec, 88> kSpecs{{
         // ---- PRJ（project §5.0 收编，10 项；分类串"权限/内部/权限/权限/
         //      内部/版本/输入/执行/权限"9 项对 10 码——R2 补第 7 位）----
         {"PRJ-LOCK-HELD", DiagnosticCategory::PermissionOrLock, DiagnosticSeverity::Warning,
@@ -301,6 +316,16 @@ const std::array<BuiltinSpec, 87>& builtinSpecs()
          DiagnosticSeverity::Error, "[]"},        // ⑬版本；§4.3 格式/版本典型码
         {"RT-CANCELLED", DiagnosticCategory::Canceled,
          DiagnosticSeverity::Info, "[]"},         // ⑭取消(Info)——UX-03 正常取消非错误
+        {"RT-BOUNDS-MAGNITUDE", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Warning, "[]"},      // ⑮F-618 收编（2026-10-10；表尾追加
+                                                  // ——audit-p2 随 F-593 以覆盖码面过渡
+                                                  // 引入的专用警告码正式注册）：S3 限位
+                                                  // 量级抽样警告（|q|>4π×10 rad 等 deg/mm
+                                                  // 误作 SI 的量级特征）——"给警告不阻断"
+                                                  // （runtime §4.4 抽样纪律），level 由
+                                                  // severity 派生＝Warning（不阻断）；
+                                                  // 无 RuntimeErrorCode 枚举对应（事件码
+                                                  // ——runtime §10.11 冻结关系不扩）
 
         // ---- POLICY（policy §9.6 收编，23 项；串"版本×3/输入×8/版本×2/
         //      数据不足/策略拒绝×4（…归执行失败）/资源/输入/策略拒绝/信息"
@@ -537,7 +562,8 @@ bool CodeDescriptor::operator==(const CodeDescriptor& o) const
         && historical == o.historical
         && registryVersion == o.registryVersion
         && deprecated == o.deprecated
-        && supersededBy == o.supersededBy;
+        && supersededBy == o.supersededBy
+        && level == o.level;   // F-618 尾追加字段参与等值（manifest 条目稳定性核对面）
 }
 
 bool isValidDiagCodeSyntax(std::string_view code) noexcept
@@ -671,6 +697,22 @@ void StableCodeRegistry::registerCode(const CodeDescriptor& descriptor)
                                "重复注册（码 " + descriptor.code + "）——不覆盖不静默（NFR-MNT-03）");
     }
 
+    // ⑨级别-严重映射一致（F-618，2026-10-10 增列——追加于检查链尾，既有
+    // 检查序零变化）：severity 是映射唯一语义源，level 只允许机械派生值——
+    // severity==Error ⇔ level==Error、其余 severity ⇒ level==Warning。禁止
+    // 其他组合（如 severity=Warning 配 level=Error）＝两轴漂移的注册期拦截
+    // ——阻断轴级别驱动 runtime 发布拒绝（runtime §4.3.5），错标会改变
+    // "警告不阻断"承诺，必须在装配边界拒绝。
+    const core::DiagnosticLevel expectedLevel =
+        descriptor.severity == DiagnosticSeverity::Error ? core::DiagnosticLevel::Error
+                                                         : core::DiagnosticLevel::Warning;
+    if (descriptor.level != expectedLevel) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段不变量违约：level 与 severity 映射不一致（码 "
+                                   + descriptor.code + "）——severity==Error ⇔ level==Error、"
+                                   "其余 severity ⇒ level==Warning（F-618）");
+    }
+
     // 全部验证通过：登记（值拷贝入表——调用方此后修改 descriptor 与表无关）。
     m_codes.emplace(descriptor.code, descriptor);
     m_textKeys.emplace(descriptor.titleKey, descriptor.code);
@@ -715,7 +757,7 @@ CodeTableManifest StableCodeRegistry::manifest() const
     // canonical 编码（规则见文件头"manifest 摘要 canonical 编码"）：
     // magic 后逐条目按字段表序编码——字段序即 CodeDescriptor 声明序。
     core::ContentDigester digester;
-    digester.update("IRDDCM1", 7);
+    digester.update("IRDDCM2", 7);   // 家族版本位 1→2（F-618：字段表尾追加 level）
     for (const CodeDescriptor& d : result.entries) {
         feedString(digester, d.code);
         feedString(digester, d.ownerUnit);
@@ -738,6 +780,10 @@ CodeTableManifest StableCodeRegistry::manifest() const
         } else {
             feedBool(digester, false);
         }
+        // 级别（F-618 尾追加——枚举声明序整数值单字节；与 RT-Codec 枚举编码
+        // 同纪律：值域封闭，无第三态可错）。
+        const std::uint8_t levelByte = static_cast<std::uint8_t>(d.level);
+        digester.update(&levelByte, 1);
     }
     result.digest.bytes = digester.finalize();
     return result;
@@ -779,7 +825,7 @@ void StableCodeRegistry::deprecate(std::string_view code,
 }
 
 // =====================================================================
-// 内置码表装配（§4.6——87 码全量收编）
+// 内置码表装配（§4.6——88 码全量收编：阶段 A 87 码＋F-618 RT-BOUNDS-MAGNITUDE）
 // =====================================================================
 
 std::vector<CodeDescriptor> builtinCodeDescriptors()
