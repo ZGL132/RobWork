@@ -1,0 +1,22 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618:CanonicalModelBuilderTest.RejectsErrorLevelDiagnostics:CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593
+[==========] Running 3 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from CanonicalModelBuilderTest
+[ RUN      ] CanonicalModelBuilderTest.RejectsErrorLevelDiagnostics
+[       OK ] CanonicalModelBuilderTest.RejectsErrorLevelDiagnostics (0 ms)
+[----------] 1 test from CanonicalModelBuilderTest (0 ms total)
+
+[----------] 1 test from CodecRoundtripTest
+[ RUN      ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618
+[       OK ] CodecRoundtripTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618 (0 ms)
+[----------] 1 test from CodecRoundtripTest (0 ms total)
+
+[----------] 1 test from CompilerTest
+[ RUN      ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593
+[       OK ] CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593 (0 ms)
+[----------] 1 test from CompilerTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 3 test suites ran. (1 ms total)
+[  PASSED  ] 3 tests.
