@@ -243,9 +243,13 @@ add_library(sdurws_ird_optimization_plugin STATIC
     # 布局表 plugin/ 行的 T10 交付面）：
     plugin/OptPanelModel.cpp               # 模型层流 L-O1~L-O9（零 Qt 可测
                                            #   半区——界面链路用例主被测面）
-    plugin/OptimizationPanelWidget.cpp)    # 四页主面板（变量表/约束页/
+    plugin/OptimizationPanelWidget.cpp     # 四页主面板（变量表/约束页/
                                            #   运行控制〔取消/进度漏斗〕/
                                            #   候选表与对比——Qt Widgets）
+    plugin/OptUiModule.hpp                 # §11.2 界面模块（真实 IPluginUiModule
+                                           #   继承实现——ASM-PLUG 收口批，
+                                           #   P-OPT-10 消账形态的模块半区）
+    plugin/OptUiModule.cpp)
 set_target_properties(sdurws_ird_optimization_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -264,23 +268,25 @@ target_include_directories(sdurws_ird_optimization_plugin PRIVATE
 target_include_directories(sdurws_ird_optimization_plugin PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/assembly>)
 
-# 链接面（卡 §3.2 二分结构——"Qt Widgets 界面"例外载体面；dynamics/
-# selection/trajectory 同款两行形态）：
+# 链接面（卡 §3.2 二分结构——"Qt Widgets 界面"例外载体面；modeling/
+# requirements/kinematics 三先例的"→本计算库＋sdurws_ird_ui"形态）：
 #   - sdurws_ird_optimization＝本计算库（门面/后续面板消费域设施的唯一来
 #     源；自边：ird_gates 引擎按"插件目标链接本单元产品目标"装配自边
 #     豁免放行〔ird_gates.cmake 2a 形态二 _self_edge 分支〕，与 dynamics/
 #     selection/trajectory/modeling/requirements/kinematics/workflow 七
 #     plugin 同款形态）；
+#   - sdurws_ird_ui＝ui 公共面（ASM-PLUG 收口批——P-OPT-10 消账：真实
+#     注册面 IPluginUiRegistrar/IPluginUiModule/PluginUiDescriptor/
+#     StageId 消费；单元边 optimization->ui 已随本批登记于
+#     ird_gates_whitelist.cmake IRD_ALLOWED_UNIT_EDGES＋dependency-
+#     graph.json 双面留痕——"零 sdurws_ird_ui"旧口径就此作废，见单元卡
+#     §16.3 P-OPT-10 收口登记）；
 #   - Qt 三件套＝plugin 分类面（ird_gates R-3 仅查 product/worker 形态；
 #     T02 源码零 Qt 类消费，链接面先行建立——WP-20-T10 面板批次直接
-#     增列源文件即可）；
-#   - 零 sdurws_ird_ui（与 modeling/requirements/kinematics 插件的
-#     "→本计算库＋sdurws_ird_ui"三边形态不同：selection/dynamics/
-#     trajectory 落位批已立"自持描述符、零 ui 编译边"先例——optimization
-#     插件界面随 WP-20-T10 以真实 ui 类型落位，届时若需 ui 编译边，先走
-#     单元卡增量修订＋白名单增登）。
+#     增列源文件即可）。
 target_link_libraries(sdurws_ird_optimization_plugin PUBLIC
     sdurws_ird_optimization
+    sdurws_ird_ui
     Qt6::Core Qt6::Gui Qt6::Widgets)
 
 # 别名（集成模式）：供其余单元以 RWS::ird::optimization_plugin 消费；冒烟
@@ -483,8 +489,11 @@ endif()
 # sdurws_ird_optimization_plugin＝同单元插件目标（装配门面——可注册契约
 # 用例的被测面；"测试目标仅允许同单元产品目标"纪律下 plugin face 亦属
 # 同单元许可集——dynamics/selection/trajectory/workflow 先例同款；其
-# PUBLIC 面携带 Qt 传染，供后续批次注册端口符号解析预备）。
-target_link_libraries(sdurws_ird_optimization_contract_test PRIVATE sdurws_ird_optimization sdurws_ird_optimization_plugin sdurws_ird_testkit GTest::gtest)
+# PUBLIC 面携带 Qt 传染）。
+# sdurws_ird_ui＝ASM-PLUG 收口批增链（跨单元测试链接面——ird_gates 白名
+# 单 IRD_TEST_TARGET_EDGES 已登记该边；真实注册端口 createPluginUiRegistrar
+# 黑盒校验序自证与 ui::PluginUiDescriptor 词表类型消费面）。
+target_link_libraries(sdurws_ird_optimization_contract_test PRIVATE sdurws_ird_optimization sdurws_ird_optimization_plugin sdurws_ird_testkit sdurws_ird_ui GTest::gtest)
 
 # 源码树位置注入（构建图/插件面扫描用例同 _test 口径）。
 target_compile_definitions(sdurws_ird_optimization_contract_test PRIVATE

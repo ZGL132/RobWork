@@ -240,7 +240,11 @@ add_library(sdurws_ird_selection_plugin STATIC
 #                                   计算，数据消费全经模型层与缝）
     plugin/SelPanelModel.cpp
     plugin/SelPanelCommandCatalog.cpp
-    plugin/SelCatalogPanelWidget.cpp)
+    plugin/SelCatalogPanelWidget.cpp
+    plugin/SelUiModule.hpp             # §11.2 界面模块（真实 IPluginUiModule
+                                       #   继承实现——ASM-PLUG 收口批，
+                                       #   P-SEL-10 消账形态的模块半区）
+    plugin/SelUiModule.cpp)
 set_target_properties(sdurws_ird_selection_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -259,22 +263,25 @@ target_include_directories(sdurws_ird_selection_plugin PRIVATE
 target_include_directories(sdurws_ird_selection_plugin PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/assembly>)
 
-# 链接面（卡 §3.2 插件两行——"插件目标→本计算库〔单元内依赖，非跨单元
+# 链接面（卡 §3.2 插件行——"插件目标→本计算库〔单元内依赖，非跨单元
 # 边〕"＋"→Qt Widgets 允许〔R-3 例外边界＝插件目标〕"）：
 #   - sdurws_ird_selection＝本计算库（门面/后续面板消费域设施的唯一来源；
 #     自边 selection->selection 不进 §3.5 单元级依赖表（表语义＝单元间
 #     边）——ird_gates 引擎按"插件目标链接本单元产品目标"装配自边豁免
 #     放行〔ird_gates.cmake 2a 形态二 _self_edge 分支〕，与 modeling/
 #     requirements/kinematics/workflow 四 plugin 同款形态）；
+#   - sdurws_ird_ui＝ui 公共面（ASM-PLUG 收口批——P-SEL-10 消账：真实
+#     注册面 IPluginUiRegistrar/IPluginUiModule/PluginUiDescriptor/
+#     StageId/CommandDescriptor 消费；单元边 selection->ui 已随本批登记
+#     于 ird_gates_whitelist.cmake IRD_ALLOWED_UNIT_EDGES＋dependency-
+#     graph.json 双面留痕——"零 sdurws_ird_ui"旧口径就此作废，见单元卡
+#     §19.5 P-SEL-10 收口登记）；
 #   - Qt 三件套＝plugin 分类面（ird_gates R-3 仅查 product/worker 形态；
 #     T02 源码零 Qt 类消费，链接面先行建立——WP-19-T10 面板批次直接
-#     增列源文件即可）；
-#   - 零 sdurws_ird_ui（卡 §3.2 无 ui 编译边——与 modeling/requirements/
-#     kinematics 插件的"→本计算库＋sdurws_ird_ui"三边形态不同：selection
-#     树/属性页协议归运行时注入列，宿主注册随 WP-19-T10 以 UI-T21/T22
-#     协议落位；届时若需 ui 编译边，先走单元卡增量修订＋白名单增登）。
+#     增列源文件即可）。
 target_link_libraries(sdurws_ird_selection_plugin PUBLIC
     sdurws_ird_selection
+    sdurws_ird_ui
     Qt6::Core Qt6::Gui Qt6::Widgets)
 
 # 别名（集成模式）：供其余单元以 RWS::ird::selection_plugin 消费；冒烟
@@ -496,8 +503,11 @@ endif()
 # sdurws_ird_selection_plugin＝同单元插件目标（装配门面——可注册契约
 # 用例的被测面；"测试目标仅允许同单元产品目标"纪律下 plugin face 亦属
 # 同单元许可集——modeling WP-13-T15/workflow WP-22-T02 先例同款；其
-# PUBLIC 面携带 Qt 传染，供后续批次注册端口符号解析预备）。
-target_link_libraries(sdurws_ird_selection_contract_test PRIVATE sdurws_ird_selection sdurws_ird_selection_plugin sdurws_ird_testkit GTest::gtest)
+# PUBLIC 面携带 Qt 传染）。
+# sdurws_ird_ui＝ASM-PLUG 收口批增链（跨单元测试链接面——ird_gates 白名
+# 单 IRD_TEST_TARGET_EDGES 已登记该边；真实注册端口 createPluginUiRegistrar
+# 黑盒校验序自证与 ui::PluginUiDescriptor 词表类型消费面）。
+target_link_libraries(sdurws_ird_selection_contract_test PRIVATE sdurws_ird_selection sdurws_ird_selection_plugin sdurws_ird_testkit sdurws_ird_ui GTest::gtest)
 
 # 源码树位置注入（构建图/插件面扫描用例同 _test 口径）。
 target_compile_definitions(sdurws_ird_selection_contract_test PRIVATE

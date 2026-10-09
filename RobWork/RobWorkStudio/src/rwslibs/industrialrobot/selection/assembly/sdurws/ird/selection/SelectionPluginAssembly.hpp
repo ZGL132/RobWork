@@ -26,15 +26,20 @@
  *     tasks/foundation/WP-19-T10.json（acceptance 1/2）
  *
  * ★ 落地面口径（诚实登记，DTB §5.4 精神——单元卡 §1.2 同步登记）：
- *   1. **契约编译期缺口按 WP-17-T09 先例 B 方案落位**：acceptance 1
- *      "经 IPluginUiRegistrar 白名单挂位"需 selection->ui 编译边，本
- *      单元依赖白名单（卡 §3.2 两登记边）与 ird_gates 机器面均无该边，
- *      且白名单文件不在本任务 allowedFiles 不可增登——装配面以**字段
- *      同构自持描述符**承载（与 ui::PluginUiDescriptor 逐一对应、零增
- *      删），白名单 token 对账以契约测试自持词表（ui.md §11.1 八
- *      token）钉住，真实注册端口消费归宿主装配批次收口（缺口登记＝
- *      单元卡 P-SEL-10）。UI-T21/T22 树/属性页域供给协议同因零 ui 边
- *      不在本批落位——同登记 P-SEL-10 收口。
+ *   1. **契约编译期缺口按 WP-17-T09 先例 B 方案落位＋ASM-PLUG 收口
+ *      （P-SEL-10 消账）**：acceptance 1"经 IPluginUiRegistrar 白名单
+ *      挂位"需 selection->ui 编译边，WP-19-T10 批次时本单元依赖白名单
+ *      （卡 §3.2 两登记边）与 ird_gates 机器面均无该边、白名单文件不
+ *      在该任务 allowedFiles 不可增登——装配面当时以**字段同构自持描
+ *      述符**承载（与 ui::PluginUiDescriptor 逐一对应、零增删）。
+ *      **ASM-PLUG 收口批（2026-10-10，所有者授权宿主装配批次）已兑现
+ *      翻译注册**：单元边 selection->ui 已按治理程序增登（ird_gates_
+ *      whitelist.cmake＋dependency-graph.json 双面留痕），本头尾部
+ *      translatePluginUiDescriptor/registerWithHostRegistrar 即翻译注
+ *      册落点（字段同构缺口随真实编译边由编译器校验——"无 ui 侧编译
+ *      期校验"的登记警告解除；§11.2 模块半区＝plugin/SelUiModule）。
+ *      UI-T21/T22 树/属性页域供给协议仍归其装配批次（P-SEL-10 剩余
+ *      面——本批不涉）。
  *   2. **面板面形态**：本域工作流页、目录管理页、候选表页（含淘汰
  *      原因明细区）承载于**同一主面板**（Tab 容器三页——回填入口/
  *      就绪投影是工作流页命令的直达呈现面，候选表与淘汰原因同数据
@@ -71,11 +76,23 @@
 #include <string>
 #include <vector>
 
+// ASM-PLUG 收口批（P-SEL-10 消账）：本头新增真实注册面——消费 ui 单元
+// 公共类型（§10.9 装配描述符/登记结果、§7 命令描述符）。包含面纪律同
+// workflow/kinematics 装配门面先例：ICommandRegistry.hpp 须显式包含
+// （IPluginUiRegistrar.hpp 对 CommandDescriptor 仅前向声明，而本头携带
+// 的翻译函数签名与消费 TU 中 vector 成员析构需完整类型——声明点解析一
+// 致义务）。单元边 selection->ui 已随本批登记（ird_gates_whitelist.cmake
+// IRD_ALLOWED_UNIT_EDGES＋traceability/dependency-graph.json 双面留痕）。
+#include <sdurws/ird/ui/ICommandRegistry.hpp>    // ui::CommandDescriptor 完整类型（翻译函数签名面）
+#include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // ui::PluginUiDescriptor/RegistrationOutcome/注册端口
+
 class QWidget;  // 前置声明：面板工厂产物（全局域——本头不拖入 Widgets）
 
 namespace sdurws::ird::selection {
 
 class SelPanelModule;         // 前置声明（unique_ptr 成员——析构在 cpp）
+class SelUiModule;            // 前置声明（§11.2 模块半区——unique_ptr 成
+                              //   员，析构在 cpp；ASM-PLUG 收口批新增）
 struct SelPanelServices;      // 前置声明（setServices 引用入参——完整
                               //   类型在 plugin/SelPanelTypes.hpp）
 struct SelModuleSessionState; // 前置声明（session() 返回引用）
@@ -257,12 +274,25 @@ public:
     /// 经 setServices/bind* 即可，零触模块内部）。
     SelPanelModule* module() noexcept { return m_module.get(); }
 
+    /// §11.2 界面模块访问（ASM-PLUG 收口批——激活路径创建的模块半区；
+    /// 未激活＝空。接口面承载：宿主装配层与测试只见 ui 公共接口，不触
+    /// 插件私有实现类——R-2 装配纪律；上行转换在实现 TU 完成——完整
+    /// 类型可见处）。
+    ui::IPluginUiModule* uiModule() noexcept;
+
 private:
     // 工厂是描述符现产＋模块创建的唯一装配点（同 TU——访问私有成员的
-    // 友元豁免；dynamics 工厂同款形态）。
+    // 友元豁免；dynamics 工厂同款形态）。激活函数同豁免：挂载 §11.2
+    // 模块半区需要触达两个 unique_ptr 成员（同 TU 实现面）。
     friend SelectionPluginAssembly createSelectionPluginAssembly();
+    friend ui::RegistrationOutcome registerWithHostRegistrar(
+        SelectionPluginAssembly& assembly, ui::IPluginUiRegistrar* registrar);
 
     std::unique_ptr<SelPanelModule> m_module;  ///< 模块（缝/会话态/面板引用）
+    std::unique_ptr<SelUiModule> m_uiModule;   ///< §11.2 模块半区（激活路径
+                                               ///<   创建——unique_ptr 不完整
+                                               ///<   类型，析构在实现 TU；
+                                               ///<   ASM-PLUG 收口批新增）
 };
 
 /**
@@ -276,6 +306,68 @@ private:
  * @return 装配门面（零业务计算——纯值聚合＋工厂闭包转接）
  */
 SelectionPluginAssembly createSelectionPluginAssembly();
+
+// =====================================================================
+// ASM-PLUG 收口批（P-SEL-10 消账）——真实注册面：自持描述符翻译为
+// ui::PluginUiDescriptor 并经宿主注册端口登记（§10.9 装配期一次）。
+// 字段同构缺口随真实编译边建立而由编译器校验（字段名/类型漂移即编
+// 译错误），"无 ui 侧编译期校验"的登记警告就此解除。
+// =====================================================================
+
+/**
+ * @brief 自持描述符 → ui::PluginUiDescriptor 逐字段翻译（纯值函数）。
+ *
+ * 翻译规则（与 ui.md §10.9 冻结形状逐一对应，零增删；dynamics 同名函
+ * 数同构——三域一体收口）：
+ *   - pluginId/titleKey：逐字直拷（§11.1 白名单 token／§3.5 键族）；
+ *   - stages：stageToken 经词表翻译为 ui::StageId（恰一阶段——本域单
+ *     挂位面；词表外 token＝装配期数据违约，fail-fast）；
+ *   - capabilities：providesStagePanel＝panels 非空、registersCommands＝
+ *     commands 非空、providesReadonlyProjection＝true（域行经 SelUiModule
+ *     自报——§6.5 汇聚源；能力声明"描述性，非判定性"）；
+ *   - commands：逐条翻译（id＝token、ownerUnit＝pluginId、titleKey 直拷、
+ *     其余字段取 §7.1 缺省。回填命令是写命令——只读门控含"只读项目拒
+ *     绝"由宿主可用性判定统一承载（卡 §12.2 纪律 9），插件零本地判定，
+ *     readOnlyAllowed 保持缺省 true 由宿主上下文门控）；
+ *   - panels：逐条翻译（stage 经词表翻译、titleKey/advanced 直拷、
+ *     factory 闭包原样转接——std::function<QWidget*()> 同型）。
+ *
+ * @param descriptor [in] 自持描述符（工厂现产值——只读）
+ * @return ui 装配描述符（值拷贝——调用方可即弃原描述符）
+ *
+ * @throws std::invalid_argument stageToken 落于 ui.md §6.4 七阶段词表外
+ *         （装配期数据违约——调用方错误，fail-fast）
+ */
+ui::PluginUiDescriptor translatePluginUiDescriptor(
+    const SelectionPluginDescriptor& descriptor);
+
+/**
+ * @brief 激活注册：向宿主注册端口登记本插件（§10.9 装配期一次——
+ *        P-SEL-10 明文义务"真实 IPluginUiRegistrar/PluginUiRegistrar::
+ *        whitelist() 端口消费归宿主装配批次收口"的兑现落点）。
+ *
+ * 执行序：①registrar 空检查（无注册端口实现＝调用方装配违约，fail-fast
+ * ——宿主装配批次必传端口，不静默吞）；②创建/复用门面持有的 §11.2 模
+ * 块半区（SelUiModule——首次激活创建，重复调用复用同实例保证 registrar
+ * 弱引用稳定）；③描述符翻译（translatePluginUiDescriptor）；④
+ * registrar->registerPluginUi(descriptor, *module)——白名单/重复/描述
+ * 符合法性校验全走宿主实现（域侧零本地判定），登记结果四值如实透传
+ * （NotWhitelisted/DuplicatePlugin/InvalidDescriptor 不抛不吞——§11.3
+ * 失败隔离归宿主呈现）。
+ *
+ * 线程模型：装配线程调用（§10.9 同期）；registrar 弱引用的存活期由装
+ * 配层保证（宿主保持门面存活至壳拆除——§10.9 所有权行）。
+ *
+ * @param assembly  [in,out] 装配门面（模块半区挂载其上——宿主保持存活）
+ * @param registrar [in] 宿主注册端口（接口注入——运行期宿主传参属 ui
+ *                   宿主面；空指针＝调用方装配违约）
+ * @return 登记结果（§10.9 四值——Ok/白名单外/重复/描述符非法）
+ *
+ * @throws std::invalid_argument registrar 为空（无 registrar 实现即
+ *         fail-fast——不虚构登记成功）
+ */
+ui::RegistrationOutcome registerWithHostRegistrar(
+    SelectionPluginAssembly& assembly, ui::IPluginUiRegistrar* registrar);
 
 }  // namespace sdurws::ird::selection
 

@@ -258,8 +258,13 @@ add_library(sdurws_ird_dynamics_plugin STATIC
     plugin/DynamicsPanelWidget.cpp
     plugin/DynPanelModule.hpp          # 插件模块（缝/会话态归属＋面板工厂
                                        #   落点——零 Qt 值类型）
+    plugin/DynUiModule.hpp             # §11.2 界面模块（真实 IPluginUiModule
+                                       #   继承实现——ASM-PLUG 收口批，
+                                       #   P-DYN-8 消账形态的模块半区）
+    plugin/DynUiModule.cpp
     plugin/DynamicsPluginAssembly.cpp) # 装配门面实现（assembly/ 公共头的
-                                       #   私有实现＋模块方法落点）
+                                       #   私有实现＋模块方法落点＋ASM-PLUG
+                                       #   收口批的描述符翻译/宿主注册激活）
 set_target_properties(sdurws_ird_dynamics_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -278,22 +283,24 @@ target_include_directories(sdurws_ird_dynamics_plugin PRIVATE
 target_include_directories(sdurws_ird_dynamics_plugin PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/assembly>)
 
-# 链接面（卡 §3.2 二分结构——"Qt Widgets 插件"例外载体面；selection
-# 同款两行形态）：
+# 链接面（卡 §3.2 二分结构——"Qt Widgets 插件"例外载体面；modeling/
+# requirements/kinematics 三先例的"→本计算库＋sdurws_ird_ui"三边形态）：
 #   - sdurws_ird_dynamics＝本计算库（门面/后续面板消费域设施的唯一来源；
 #     自边：ird_gates 引擎按"插件目标链接本单元产品目标"装配自边豁免
 #     放行〔ird_gates.cmake 2a 形态二 _self_edge 分支〕，与 selection/
 #     modeling/requirements/kinematics/workflow 五 plugin 同款形态）；
+#   - sdurws_ird_ui＝ui 公共面（ASM-PLUG 收口批——P-DYN-8 消账：真实
+#     注册面 IPluginUiRegistrar/IPluginUiModule/PluginUiDescriptor/
+#     StageId/CommandDescriptor 消费；单元边 dynamics->ui 已随本批登记
+#     于 ird_gates_whitelist.cmake IRD_ALLOWED_UNIT_EDGES＋dependency-
+#     graph.json 双面留痕——"零 sdurws_ird_ui"旧口径就此作废，见单元卡
+#     §15.2 P-DYN-8 收口登记）；
 #   - Qt 三件套＝plugin 分类面（ird_gates R-3 仅查 product/worker 形态；
 #     T02 源码零 Qt 类消费，链接面先行建立——WP-17-T09 面板批次直接
-#     增列源文件即可）；
-#   - 零 sdurws_ird_ui（与 modeling/requirements/kinematics 插件的
-#     "→本计算库＋sdurws_ird_ui"三边形态不同：selection T02 已立"自持
-#     描述符、零 ui 编译边"先例——dynamics 插件界面随 WP-17-T09 以
-#     真实 ui 类型落位，届时若需 ui 编译边，先走单元卡增量修订＋白名单
-#     增登）。
+#     增列源文件即可）。
 target_link_libraries(sdurws_ird_dynamics_plugin PUBLIC
     sdurws_ird_dynamics
+    sdurws_ird_ui
     Qt6::Core Qt6::Gui Qt6::Widgets)
 
 # 别名（集成模式）：供其余单元以 RWS::ird::dynamics_plugin 消费；冒烟
@@ -576,9 +583,11 @@ endif()
 # ＝契约测试 T-1 扫描的登记形态约束，同 _test 目标口径）。
 # sdurws_ird_dynamics_plugin＝同单元插件目标（装配门面——可注册契约
 # 用例的被测面；"测试目标仅允许同单元产品目标"纪律下 plugin face 亦属
-# 同单元许可集——selection/workflow 先例同款；其 PUBLIC 面携带 Qt 传染，
-# 供后续批次注册端口符号解析预备）。
-target_link_libraries(sdurws_ird_dynamics_contract_test PRIVATE sdurws_ird_dynamics sdurws_ird_dynamics_plugin sdurws_ird_testkit GTest::gtest)
+# 同单元许可集——selection/workflow 先例同款；其 PUBLIC 面携带 Qt 传染）。
+# sdurws_ird_ui＝ASM-PLUG 收口批增链（跨单元测试链接面——ird_gates 白名
+# 单 IRD_TEST_TARGET_EDGES 已登记该边；真实注册端口 createPluginUiRegistrar
+# 黑盒校验序自证与 ui::PluginUiDescriptor 词表类型消费面）。
+target_link_libraries(sdurws_ird_dynamics_contract_test PRIVATE sdurws_ird_dynamics sdurws_ird_dynamics_plugin sdurws_ird_testkit sdurws_ird_ui GTest::gtest)
 
 # 源码树位置注入（构建图/插件面扫描用例同 _test 口径）。
 target_compile_definitions(sdurws_ird_dynamics_contract_test PRIVATE

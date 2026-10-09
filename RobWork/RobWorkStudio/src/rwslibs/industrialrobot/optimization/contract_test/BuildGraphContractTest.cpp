@@ -135,12 +135,16 @@ std::set<std::string> collectIncludedUnits()
     return units;
 }
 
-/// 九条登记边单元（卡 §3.2 依赖白名单——与白名单 "optimization->…" 九行
-/// 同源；九边属 ARCH §3.5"各业务域单元→L2/L3 公共接口"许可方向的
-/// 实例化，dependency-graph.json 随本任务同步刷新）。
+/// 登记边单元（卡 §3.2 依赖白名单——与白名单 "optimization->…" 各行
+/// 同源；core/evidence/runtime/policy/execution/project/io/reporting/
+/// diagnostics 九边属 ARCH §3.5"各业务域单元→L2/L3 公共接口"许可方向
+/// 的实例化，dependency-graph.json 随本任务同步刷新）。ASM-PLUG 收口批
+/// 增登第十边 "ui"（P-OPT-10 消账——插件装配面边，units/optimization.md
+/// §16.3 收口义务；用例名保持 T02 批历史登记值不回改，增量以本注登记
+/// ——dynamics WP-17-T09 批 allowed 集增登的同款处理）。
 constexpr const char* kEdgeUnits[] = {
     "core", "evidence", "runtime", "policy", "execution",
-    "project", "io", "reporting", "diagnostics",
+    "project", "io", "reporting", "diagnostics", "ui",
 };
 
 /// 业务域单元清单（R-1 判定集合——whitelist IRD_BUSINESS_UNITS 及
@@ -151,11 +155,12 @@ constexpr const char* kBusinessUnits[] = {
     "trajectory", "dynamics", "selection",
 };
 
-/// 表外平台单元（九条登记边之外的平台/编排单元——ui/workflow 均零编译
-/// 边〔SUB 面——ui 协作经插件面/L5 装配、workflow 经端口〕；testkit 由
-/// NoTestkitEdge 用例单独钉住产品面）。
+/// 表外平台单元（登记边之外的平台/编排单元——workflow 零编译边〔SUB
+/// 面——经端口〕；testkit 由 NoTestkitEdge 用例单独钉住产品面）。
+/// ASM-PLUG 收口批将 "ui" 移出本表：ui 随第十登记边（kEdgeUnits——
+/// P-OPT-10 消账的插件装配面边）入白名单，不再是表外面。
 constexpr const char* kExtraPlatformUnits[] = {
-    "ui", "workflow",
+    "workflow",
 };
 
 }  // namespace

@@ -33,8 +33,48 @@
 #include "OptPanelTypes.hpp"       // OptPanelServices/OptModuleSessionState
                                    //   （API 签名完整型）
 #include "OptimizationPanelWidget.hpp" // OptimizationPanelWidget（面板工厂产物）
+#include "OptUiModule.hpp"         // OptUiModule（§11.2 模块半区——激活
+                                   //   路径创建；ASM-PLUG 收口批）
+
+#include <stdexcept>  // std::invalid_argument（词表外 token／空 registrar
+                      //   的 fail-fast——调用方装配违约，不静默吞）
 
 namespace sdurws::ird::optimization {
+
+namespace {
+
+/**
+ * @brief 挂位阶段 token → ui::StageId 词表翻译（装配期单点；dynamics/
+ *        selection 同名函数同构——三域一体收口，词表保留全七行承载通
+ *        用形态）。
+ *
+ * 词表＝ui.md §6.4 七阶段 token（宿主挂位位的唯一权威）；本域恰一挂位
+ * 面（"optimization"——七阶段第 6）。
+ *
+ * @param token [in] 挂位阶段 token（§6.4 词表值——assembly 头常量）
+ * @return 对应 ui::StageId（§6.4 词表序）
+ *
+ * @throws std::invalid_argument token 不在七阶段词表（装配期数据违约
+ *         ——调用方错误，fail-fast；宿主挂位断链宁可显式失败不静默）
+ */
+ui::StageId stageTokenToStageId(const std::string& token)
+{
+    // 查表翻译（词表序＝ui.md §6.4 冻结呈现序——UX-12）。
+    if (token == "modeling")              { return ui::StageId::Modeling; }
+    if (token == "requirements")          { return ui::StageId::Requirements; }
+    if (token == "kinematics")            { return ui::StageId::Kinematics; }
+    if (token == "trajectory-dynamics")   { return ui::StageId::TrajectoryDynamics; }
+    if (token == "selection")             { return ui::StageId::Selection; }
+    if (token == "optimization")          { return ui::StageId::Optimization; }
+    if (token == "reporting")             { return ui::StageId::Reporting; }
+    // 词表外 token＝装配期数据违约（宿主挂位位断链——显式失败不静默；
+    // 错误归类：调用方错误 fail-fast，非环境错误）。
+    throw std::invalid_argument(
+        "optimization 装配面：挂位阶段 token 不在 ui.md §6.4 七阶段词表"
+        "（宿主挂位断链——装配期数据违约）: " + token);
+}
+
+}  // namespace
 
 // =====================================================================
 // 门面装配 API（转发模块——dynamics 先例同款转发纪律：门面零业务
@@ -150,6 +190,95 @@ OptimizationPluginAssembly createOptimizationPluginAssembly()
     };
     descriptor.panels.push_back(std::move(panel));
     return result;
+}
+
+// =====================================================================
+// ASM-PLUG 收口批（P-OPT-10 消账）——真实注册面实现（翻译＋激活；
+// dynamics/selection 同构三件套）。设计依据：units/ui.md §10.9
+// （PluginUiDescriptor 冻结形状/registerPluginUi 校验序）、§6.4/§6.5
+// （StageId/域键词表）；units/optimization.md §16.3 P-OPT-10（宿主注册
+// 端口消费义务）＋文件头注 2（命令面缺席＝诚实缺席——翻译产物
+// commands 恒空，不预建占位）。
+// =====================================================================
+
+ui::IPluginUiModule* OptimizationPluginAssembly::uiModule() noexcept
+{
+    // §11.2 模块半区接口面（上行转换在此完成——OptUiModule 完整类型
+    // 经 OptUiModule.hpp 可见；未激活＝unique_ptr 空 → 接口指针空）。
+    return m_uiModule.get();
+}
+
+ui::PluginUiDescriptor translatePluginUiDescriptor(
+    const OptimizationPluginDescriptor& descriptor)
+{
+    ui::PluginUiDescriptor translated;
+
+    // ---- 身份两字段（§11.1 白名单 token／§3.5 键族——逐字直拷，零改写；
+    //      登记值唯一书写点仍是 assembly 头常量与工厂）。 -----------------
+    translated.pluginId = descriptor.pluginId;
+    translated.titleKey = descriptor.titleKey;
+
+    // ---- 覆盖阶段清单（恰一阶段——本域单挂位面；token→StageId 词表
+    //      翻译，词表外 fail-fast——见 stageTokenToStageId 类注）。 -------
+    translated.stages.push_back(stageTokenToStageId(descriptor.stageToken));
+
+    // ---- 能力声明（§10.9"描述性，非判定性"——按描述符现状如实声明：
+    //      面板非空＝提供阶段面板；本域无命令面〔文件头注 2 诚实缺席
+    //      ——R1 域命令词表未随卡面登记〕＝登记命令恒 false；域就绪投
+    //      影行恒经 §11.2 模块自报（L-O1 透传流）＝参与汇聚）。 --------
+    translated.capabilities.providesStagePanel = !descriptor.panels.empty();
+    translated.capabilities.registersCommands = false;
+    translated.capabilities.providesReadonlyProjection = true;
+    // 命令登记面：本域恒空（不预建占位——NFR-MNT-04；SA-16 命令入口权
+    // 威归 ui，运行启动/取消经宿主绑定缝、候选应用经宿主编排，零私造
+    // 词表）——translated.commands 保持缺省空向量。
+
+    // ---- 面板登记面（逐条翻译：stage 经词表翻译；titleKey/advanced 直
+    //      拷；factory 闭包原样转接——std::function<QWidget*()> 同型，
+    //      模块指针存活期由装配层保证的既有纪律随闭包语义不变）。 -----
+    translated.panels.reserve(descriptor.panels.size());
+    for (const OptPanelRegistration& panel : descriptor.panels) {
+        ui::PanelRegistration uiPanel;
+        uiPanel.stage = stageTokenToStageId(panel.stageToken);
+        uiPanel.titleKey = panel.titleKey;
+        uiPanel.factory = panel.factory;
+        uiPanel.advanced = panel.advanced;
+        translated.panels.push_back(std::move(uiPanel));
+    }
+    return translated;
+}
+
+ui::RegistrationOutcome registerWithHostRegistrar(
+    OptimizationPluginAssembly& assembly, ui::IPluginUiRegistrar* registrar)
+{
+    // 第一步：无 registrar 实现＝调用方装配违约（宿主装配批次必传注册
+    // 端口——P-OPT-10 义务面）。显式 fail-fast，不静默吞、不虚构登记成
+    // 功（错误归类：调用方错误——装配程序缺陷，非环境错误）。
+    if (registrar == nullptr) {
+        throw std::invalid_argument(
+            "optimization 装配激活：宿主注册端口为空（无 registrar 实现即 "
+            "fail-fast——§10.9 装配期一次的登记契约无端口不可履行）");
+    }
+
+    // 第二步：§11.2 模块半区（OptUiModule）创建/复用——首次激活创建并
+    // 归门面 unique_ptr 持有；重复调用复用同实例（registrar 弱引用稳定，
+    // 不因重入悬垂；§11.1"每插件恰好一次"下重入本身会被宿主判重复，
+    // 这里保证的是弱引用不悬垂的防御面）。
+    if (assembly.m_uiModule == nullptr) {
+        // 面板模块指针此时必非空（工厂构造即建模块——null 属装配程序
+        // 缺陷，唯一 ptr 契约保证）。
+        assembly.m_uiModule = std::make_unique<OptUiModule>(assembly.m_module.get());
+    }
+
+    // 第三步：描述符翻译（纯值函数——字段逐一对应，词表外 token 在此
+    // fail-fast 透出）。
+    const ui::PluginUiDescriptor translated =
+        translatePluginUiDescriptor(assembly.descriptor);
+
+    // 第四步：宿主登记（§10.9 校验序——白名单→重复→描述符合法性全走
+    // 宿主实现，域侧零本地判定；登记结果四值如实透传给调用方——失败
+    // 隔离与呈现归宿主，§11.3）。
+    return registrar->registerPluginUi(translated, *assembly.m_uiModule);
 }
 
 }  // namespace sdurws::ird::optimization

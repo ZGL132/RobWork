@@ -134,12 +134,16 @@ std::set<std::string> collectIncludedUnits()
     return units;
 }
 
-/// 五条登记边单元（卡 §3.2 CMake 行边集——与白名单 "dynamics->…" 五行
-/// 同源；五边属 ARCH §3.5"各业务域单元→L2/L3 公共接口"许可方向的
-/// 实例化〔O-07 的 dynamics 侧承接＝卡 §3.1/§3.2 明文 runtime 接口依赖
-/// ——WP-17-T01 卡面登记〕，dependency-graph.json 随本任务同步刷新）。
+/// 登记边单元（卡 §3.2 CMake 行边集——与白名单 "dynamics->…" 各行同源；
+/// 五边属 ARCH §3.5"各业务域单元→L2/L3 公共接口"许可方向的实例化〔O-07
+/// 的 dynamics 侧承接＝卡 §3.1/§3.2 明文 runtime 接口依赖——WP-17-T01
+/// 卡面登记〕，dependency-graph.json 随本任务同步刷新）。ASM-PLUG 收口
+/// 批增登第六边 "ui"（P-DYN-8 消账——插件装配面边，units/dynamics.md
+/// §9.5 落位登记注＋§15.2 P-DYN-8 收口义务；用例名保持 WP-17-T02 历史
+/// 登记值〔"Five"＝T02 批五边〕不回改，增量以本注登记——WP-17-T09 批
+/// allowed 集增登 _app 的同款处理）。
 constexpr const char* kEdgeUnits[] = {
-    "core", "evidence", "runtime", "execution", "diagnostics",
+    "core", "evidence", "runtime", "execution", "diagnostics", "ui",
 };
 
 /// 业务域单元清单（R-1 判定集合——whitelist IRD_BUSINESS_UNITS 及
@@ -150,11 +154,13 @@ constexpr const char* kBusinessUnits[] = {
     "selection", "optimization",
 };
 
-/// 表外平台单元（五条登记边之外的全部平台/编排单元——policy/io/project/
-/// ui/reporting/workflow 均零编译边〔SUB 面〕；testkit 由 NoTestkitEdge
-/// 用例单独钉住产品面）。
+/// 表外平台单元（登记边之外的全部平台/编排单元——policy/io/project/
+/// reporting/workflow 均零编译边〔SUB 面〕；testkit 由 NoTestkitEdge
+/// 用例单独钉住产品面）。ASM-PLUG 收口批将 "ui" 移出本表：ui 随第六登
+/// 记边（kEdgeUnits——P-DYN-8 消账的插件装配面边）入白名单，不再是表
+/// 外面。
 constexpr const char* kExtraPlatformUnits[] = {
-    "policy", "io", "project", "ui", "reporting", "workflow",
+    "policy", "io", "project", "reporting", "workflow",
 };
 
 }  // namespace
@@ -286,9 +292,10 @@ TEST(DynBuildGraph, NoBusinessUnitOrExtraPlatformEdge_WP17T02_ACC2)
             << "业务域互链禁止（R-1 无例外——SA-10；卡 §3.1）: "
                "dynamics→" << business;
     }
-    // SUB 面：五条登记边之外的平台/注入列单元（policy＝AT-19 零碰撞零
-    // policy 消费；project＝只读修订查询经装配面；ui/reporting/workflow/
-    // io＝协作经端口——testkit 由 NoTestkitEdge 用例单独钉住产品面）。
+    // SUB 面：登记边之外的平台/注入列单元（policy＝AT-19 零碰撞零
+    // policy 消费；project＝只读修订查询经装配面；reporting/workflow/
+    // io＝协作经端口——testkit 由 NoTestkitEdge 用例单独钉住产品面；
+    // ui 已随 ASM-PLUG 收口批移入登记边集，不再是表外面）。
     for (const char* platform : kExtraPlatformUnits) {
         EXPECT_EQ(refs.find(std::string("sdurws_ird_") + platform), refs.end())
             << "表外平台边（白名单外——构建失败面）: dynamics→" << platform;

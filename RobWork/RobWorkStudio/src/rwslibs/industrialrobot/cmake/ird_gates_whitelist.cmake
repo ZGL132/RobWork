@@ -159,6 +159,9 @@ set(IRD_ALLOWED_UNIT_EDGES
     "modeling->ui"          # WP-22-T02 返工回填（modeling.md §3.2"插件目标→本计算库＋sdurws_ird_ui"明文——WP-13-T15 落位的装配面边；WP-15-T02 附件"逐条具名登记——登记册回填归 WP-01-T03"的执行）
     "requirements->ui"      # WP-22-T02 返工回填（requirements.md §3.2 同款插件装配面边——WP-14-T08 落位）
     "kinematics->ui"        # WP-22-T02 返工回填（kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位）
+    "dynamics->ui"          # ASM-PLUG 收口登记（2026-10-10，所有者授权宿主装配批次）：units/dynamics.md §9.5 落位登记注＋§15.2 P-DYN-8 明文义务"真实 IPluginUiRegistrar 注册归宿主装配批次收口"——WP-17-T09 落位的字段同构自持描述符按本边翻译注册；dependency-graph.json 已随本任务同步刷新（双面留痕）
+    "selection->ui"         # ASM-PLUG 收口登记（2026-10-10，同批）：units/selection.md §19.5 P-SEL-10 明文义务同款——WP-19-T10 落位的自持描述符翻译注册；dependency-graph.json 已随本任务同步刷新（双面留痕）
+    "optimization->ui"      # ASM-PLUG 收口登记（2026-10-10，同批）：units/optimization.md §16.3 P-OPT-10 明文义务同款——WP-20-T10 落位的自持描述符翻译注册；dependency-graph.json 已随本任务同步刷新（双面留痕）
     "studio->ui"            # WP-22-T02 返工回填（DTB §4.5 WP-24-T08 行 2026-09-28 生效：studio 装配基座 ui 边——正式产品主程序 SA-18 D1）
     "studio->project"       # WP-22-T02 返工回填（DTB §4.5 WP-24-T08 行生效：ui_plugin 先例同款适配边）
     "studio->modeling"      # WP-22-T02 返工回填（DTB §4.5 WP-24-T08 行生效：DomainAssembly 建模装配门面消费边）
@@ -242,6 +245,9 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "modeling->ui"
     "requirements->ui"
     "kinematics->ui"
+    "dynamics->ui"
+    "selection->ui"
+    "optimization->ui"
     "studio->ui"
     "studio->project"
     "studio->modeling"
@@ -300,6 +306,9 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-22-T02 返工回填（2026-10-06）：units/modeling.md §3.2 插件目标行\"→本计算库＋sdurws_ird_ui\"——WP-13-T15 落位的装配面边（WP-15-T02 附件\"逐条具名登记——登记册回填归 WP-01-T03\"的机器面执行；dependency-graph.json 已随本任务同步刷新——双面留痕）"
     "WP-22-T02 返工回填（2026-10-06）：units/requirements.md §3.2 同款插件装配面边——WP-14-T08 落位（dependency-graph.json 已随本任务同步刷新）"
     "WP-22-T02 返工回填（2026-10-06）：units/kinematics.md §3.2 同款插件装配面边——WP-15-T12 落位（dependency-graph.json 已随本任务同步刷新）"
+    "ASM-PLUG 收口登记（2026-10-10）：units/dynamics.md §9.5 落位登记注＋§15.2 P-DYN-8 收口义务——WP-17-T09 落位的字段同构自持描述符经真实 IPluginUiRegistrar 翻译注册的装配面边（modeling/requirements/kinematics→ui 既有行同款插件装配面边；dependency-graph.json 已随本任务同步刷新——双面留痕）"
+    "ASM-PLUG 收口登记（2026-10-10）：units/selection.md §19.5 P-SEL-10 收口义务——WP-19-T10 落位的自持描述符同款翻译注册装配面边（dependency-graph.json 已随本任务同步刷新）"
+    "ASM-PLUG 收口登记（2026-10-10）：units/optimization.md §16.3 P-OPT-10 收口义务——WP-20-T10 落位的自持描述符同款翻译注册装配面边（dependency-graph.json 已随本任务同步刷新）"
     "WP-22-T02 返工回填（2026-10-06）：DTB §4.5 WP-24-T08 行（2026-09-28 生效）——sdurws_ird_studio 装配基座 ui/project/modeling 三边；studio 为正式产品主程序目标（SA-18 D1）非 20 单元节点，不入 dependency-graph.json（图节点集＝单元），出处登记于本表（ui/CMakeLists studio 段同源）"
     "WP-22-T02 返工回填（2026-10-06）：同上——studio->project"
     "WP-22-T02 返工回填（2026-10-06）：同上——studio->modeling"
@@ -454,7 +463,13 @@ set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint")
 #     三域集成批次（UI-T23 宿主集成收口与后续装配批次——域模块消费面）；
 #   - ui_test→requirements/modeling_plugin/kinematics_plugin：UI-T64（登记
 #     册 traceability/wp10-t64-gate-registrations.md——执行器消费通道值面
-#     与 SamplingPlanBuilder::digest 切片消费）。
+#     与 SamplingPlanBuilder::digest 切片消费）；
+#   - 三域 contract_test→sdurws_ird_ui：ASM-PLUG 收口批（2026-10-10，所有
+#     者授权宿主装配批次——P-DYN-8/P-SEL-10/P-OPT-10 三卡义务行明文"真实
+#     IPluginUiRegistrar 注册归宿主装配批次收口"）：三域装配契约测试消费
+#     真实注册端口（createPluginUiRegistrar——黑盒校验序自证）与 ui 公共
+#     词表类型（PluginUiDescriptor/StageId），同 ui.md §3.1 v0.4"测试目标
+#     链接面按本表承载，不属 ARCH §3.5 产品边管辖"的既有承载形态。
 # 产品库链接块不受本表影响（各单元产品面守卫/LinkageContractTest 硬断言
 # 不变——本表仅属测试目标）。
 # ---------------------------------------------------------------------
@@ -468,7 +483,10 @@ set(IRD_TEST_TARGET_EDGES
     "sdurws_ird_ui_contract_test->sdurws_ird_requirements_plugin"
     "sdurws_ird_ui_test->sdurws_ird_requirements"
     "sdurws_ird_ui_test->sdurws_ird_modeling_plugin"
-    "sdurws_ird_ui_test->sdurws_ird_kinematics_plugin")
+    "sdurws_ird_ui_test->sdurws_ird_kinematics_plugin"
+    "sdurws_ird_dynamics_contract_test->sdurws_ird_ui"      # ASM-PLUG 收口批（2026-10-10）——真实注册端口消费面
+    "sdurws_ird_selection_contract_test->sdurws_ird_ui"     # ASM-PLUG 收口批（2026-10-10）——同款
+    "sdurws_ird_optimization_contract_test->sdurws_ird_ui") # ASM-PLUG 收口批（2026-10-10）——同款
 
 # ---------------------------------------------------------------------
 # IRD_TARGET_LEVEL_EDGES —— 装配层特权边的【目标级】登记（引擎形态二放行
@@ -489,7 +507,13 @@ set(IRD_TEST_TARGET_EDGES
 #     sdurws_ird_kinematics_plugin：UI-T23 三域装配边（ui_plugin 链接段
 #     注——登记提交件 traceability/wp10-t23-gate-registrations.md；消费面
 #     仅 O-45 补建 requirements 装配门面与 WP-15-T18 出线的 kinematics 装
-#     配门面，域私有头零触碰）。
+#     配门面，域私有头零触碰）；
+#   - sdurws_ird_ui_plugin->sdurws_ird_dynamics_plugin／
+#     sdurws_ird_selection_plugin／sdurws_ird_optimization_plugin：
+#     ASM-PLUG 收口批（2026-10-10，所有者授权宿主装配批次）——宿主装配
+#     层（ui_plugin）按上述三先例消费三域装配门面（公共 assembly/ 头，
+#     域私有头零触碰）的目标级登记边；ui_plugin 链接段源面修改归 ui 宿主
+#     面批次（本批只登记边数据——边是放行面，提前登记零命中）。
 # （ui->ui 自边两处——ui_app/ui_plugin 链接本单元产品库——由引擎同单元
 # 装配自边豁免承载，不入本表。）
 # ---------------------------------------------------------------------
@@ -498,4 +522,7 @@ set(IRD_TARGET_LEVEL_EDGES
     "sdurws_ird_ui_plugin->sdurws_ird_project"
     "sdurws_ird_ui_plugin->sdurws_ird_modeling_plugin"
     "sdurws_ird_ui_plugin->sdurws_ird_requirements_plugin"
-    "sdurws_ird_ui_plugin->sdurws_ird_kinematics_plugin")
+    "sdurws_ird_ui_plugin->sdurws_ird_kinematics_plugin"
+    "sdurws_ird_ui_plugin->sdurws_ird_dynamics_plugin"      # ASM-PLUG 收口批（2026-10-10）——宿主装配层消费三域门面（ui_plugin 链接面修改归 ui 宿主面批次）
+    "sdurws_ird_ui_plugin->sdurws_ird_selection_plugin"     # ASM-PLUG 收口批（2026-10-10）——同款
+    "sdurws_ird_ui_plugin->sdurws_ird_optimization_plugin") # ASM-PLUG 收口批（2026-10-10）——同款
