@@ -1,0 +1,10 @@
+== 集成构建（fresh A 树，--config Release）==
+exit=1（框架侧两插件失败所致——DTB §5.1 排除面）：
+     71 RWSimulatorPlugin.vcxproj
+      2 rwplugin.vcxproj
+sdurws_ird_* 目标错误数：0（16 个目标全部产出：core/diagnostics/evidence/execution/io/kinematics(+plugin)/modeling(+plugin)/policy/project/requirements(+plugin)/runtime/ui(+plugin)）
+
+== 冒烟构建（--config Release）==
+exit=0，error 计数：0；42 个测试 exe 产出
+
+== 注：默认 ALL_BUILD 因排除面失败会中断后续测试目标产出，测试 exe 需显式 --target 构建（验收复现口径）

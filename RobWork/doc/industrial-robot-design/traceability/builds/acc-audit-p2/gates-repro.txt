@@ -1,0 +1,8 @@
+== ird_gates（验收者复现，A 树 acc-p2-repro @ c0bdd020，2026-10-09）==
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  [ird_gates] 鎵弿鏍癸細C:/Users/zgl18/AppData/Local/Temp/acc-p2-repro/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+
+== validate-docs（验收者复现）==
+validate-docs: PASS (20 units, 12 trace entries, 312 task files)

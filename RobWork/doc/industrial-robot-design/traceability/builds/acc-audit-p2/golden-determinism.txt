@@ -1,0 +1,3 @@
+== 黄金重制确定性（node make_dh_equivalence.mjs 于 A 树）==
+输出：mdl-dh-equivalence: expected/expansion.json + expected/roundtrip.json 已生成
+git status --porcelain testdata/：空（零漂移）——确定性通过
