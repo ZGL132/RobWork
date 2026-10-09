@@ -1,0 +1,488 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_test.exe
+  ird: run sdurws_ird_workflow_test and write gtest XML report
+  [==========] Running 139 tests from 13 test suites.
+  [----------] Global test environment set-up.
+  [----------] 4 tests from WfBuildRedLine
+  [ RUN      ] WfBuildRedLine.ProductFaceHasZeroQtIncludes_WP22T02_ACC1
+  [       OK ] WfBuildRedLine.ProductFaceHasZeroQtIncludes_WP22T02_ACC1 (8 ms)
+  [ RUN      ] WfBuildRedLine.IncludeFaceRestrictedToEightRegisteredEdges_WP22T02_ACC2
+  [       OK ] WfBuildRedLine.IncludeFaceRestrictedToEightRegisteredEdges_WP22T02_ACC2 (8 ms)
+  [ RUN      ] WfBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP22T02_ACC2
+  [       OK ] WfBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP22T02_ACC2 (6 ms)
+  [ RUN      ] WfBuildRedLine.ProductFaceFilesNonEmpty_WP22T02_ACC1
+  [       OK ] WfBuildRedLine.ProductFaceFilesNonEmpty_WP22T02_ACC1 (4 ms)
+  [----------] 4 tests from WfBuildRedLine (27 ms total)
+  
+  [----------] 10 tests from WfGate
+  [ RUN      ] WfGate.SevenStageUnlockSequence_WP22T03_ACC1_UX12_WFVER101
+  [       OK ] WfGate.SevenStageUnlockSequence_WP22T03_ACC1_UX12_WFVER101 (0 ms)
+  [ RUN      ] WfGate.MissingItemsLockedWithTransparency_WP22T03_ACC1_WFVER102
+  [       OK ] WfGate.MissingItemsLockedWithTransparency_WP22T03_ACC1_WFVER102 (0 ms)
+  [ RUN      ] WfGate.DomainAbsentReportsUnavailable_WP22T03_ACC1_WFVER103
+  [       OK ] WfGate.DomainAbsentReportsUnavailable_WP22T03_ACC1_WFVER103 (0 ms)
+  [ RUN      ] WfGate.AggregateStagePartialReady_WP22T03_ACC1_WFVER104
+  [       OK ] WfGate.AggregateStagePartialReady_WP22T03_ACC1_WFVER104 (0 ms)
+  [ RUN      ] WfGate.CascadeInvalidationHints_WP22T03_ACC1_UX12_WFVER105
+  [       OK ] WfGate.CascadeInvalidationHints_WP22T03_ACC1_UX12_WFVER105 (1 ms)
+  [ RUN      ] WfGate.CascadeSkipsDownstreamWithoutResults_WP22T03_ACC1
+  [       OK ] WfGate.CascadeSkipsDownstreamWithoutResults_WP22T03_ACC1 (0 ms)
+  [ RUN      ] WfGate.StaleClearedByFreshResult_WP22T03_ACC1
+  [       OK ] WfGate.StaleClearedByFreshResult_WP22T03_ACC1 (0 ms)
+  [ RUN      ] WfGate.EpochWatermarkRejected_WP22T03_ACC2_WFVER106
+  [       OK ] WfGate.EpochWatermarkRejected_WP22T03_ACC2_WFVER106 (0 ms)
+  [ RUN      ] WfGate.BoardStageMismatchRejected_WP22T03_ACC2
+  [       OK ] WfGate.BoardStageMismatchRejected_WP22T03_ACC2 (0 ms)
+  [ RUN      ] WfGate.DeterministicReplay_WP22T03_ACC2_WFVER107
+  [       OK ] WfGate.DeterministicReplay_WP22T03_ACC2_WFVER107 (0 ms)
+  [----------] 10 tests from WfGate (1 ms total)
+  
+  [----------] 6 tests from WfAdvice
+  [ RUN      ] WfAdvice.RulePriorityOrder_WP22T03_ACC2_WFVER108
+  [       OK ] WfAdvice.RulePriorityOrder_WP22T03_ACC2_WFVER108 (0 ms)
+  [ RUN      ] WfAdvice.Ux01FourElementsPresent_WP22T03_ACC2_UX01_WFVER109
+  [       OK ] WfAdvice.Ux01FourElementsPresent_WP22T03_ACC2_UX01_WFVER109 (0 ms)
+  [ RUN      ] WfAdvice.RunEvaluationWhenReadyWithoutResult_WP22T03_ACC2
+  [       OK ] WfAdvice.RunEvaluationWhenReadyWithoutResult_WP22T03_ACC2 (0 ms)
+  [ RUN      ] WfAdvice.AdvanceStageAfterCompletion_WP22T03_ACC2
+  [       OK ] WfAdvice.AdvanceStageAfterCompletion_WP22T03_ACC2 (0 ms)
+  [ RUN      ] WfAdvice.ReadonlyNoticeAndReviewTask_WP22T03_ACC2
+  [       OK ] WfAdvice.ReadonlyNoticeAndReviewTask_WP22T03_ACC2 (0 ms)
+  [ RUN      ] WfAdvice.EngineeringWordingKeys_WP22T03_ACC2_UX02_WFVER111
+  [       OK ] WfAdvice.EngineeringWordingKeys_WP22T03_ACC2_UX02_WFVER111 (0 ms)
+  [----------] 6 tests from WfAdvice (0 ms total)
+  
+  [----------] 1 test from WfTypes
+  [ RUN      ] WfTypes.DomainStageMapping_WP22T03_ACC3
+  [       OK ] WfTypes.DomainStageMapping_WP22T03_ACC3 (0 ms)
+  [----------] 1 test from WfTypes (0 ms total)
+  
+  [----------] 13 tests from WfLifecycle
+  [ RUN      ] WfLifecycle.StepSequenceFrozen_PM01_ACC1
+  [       OK ] WfLifecycle.StepSequenceFrozen_PM01_ACC1 (0 ms)
+  [ RUN      ] WfLifecycle.TokenMappingExactForms_ACC1
+  [       OK ] WfLifecycle.TokenMappingExactForms_ACC1 (0 ms)
+  [ RUN      ] WfLifecycle.ValidateProjectInfoStep_KeysAndPass
+  [       OK ] WfLifecycle.ValidateProjectInfoStep_KeysAndPass (2 ms)
+  [ RUN      ] WfLifecycle.ValidateInitialSourceStep_KeysAndPass
+  [       OK ] WfLifecycle.ValidateInitialSourceStep_KeysAndPass (0 ms)
+  [ RUN      ] WfLifecycle.ValidateConfirmStep_UnionAndStableOrder
+  [       OK ] WfLifecycle.ValidateConfirmStep_UnionAndStableOrder (0 ms)
+  [ RUN      ] WfLifecycle.ValidateStepOutOfRange_FailFast
+  [       OK ] WfLifecycle.ValidateStepOutOfRange_FailFast (0 ms)
+  [ RUN      ] WfLifecycle.SummaryTemplateSource_FiveLinesExact
+  [       OK ] WfLifecycle.SummaryTemplateSource_FiveLinesExact (0 ms)
+  [ RUN      ] WfLifecycle.SummaryUrdfSource_FiveLinesAndHandling
+  [       OK ] WfLifecycle.SummaryUrdfSource_FiveLinesAndHandling (0 ms)
+  [ RUN      ] WfLifecycle.SummaryBlankSource_ThreeLines
+  [       OK ] WfLifecycle.SummaryBlankSource_ThreeLines (0 ms)
+  [ RUN      ] WfLifecycle.SummaryDeterministicReplay
+  [       OK ] WfLifecycle.SummaryDeterministicReplay (0 ms)
+  [ RUN      ] WfLifecycle.WizardHeaderHasNoNumericPrefill_P03
+  [       OK ] WfLifecycle.WizardHeaderHasNoNumericPrefill_P03 (1 ms)
+  [ RUN      ] WfLifecycle.CommitRejectsInvalidInputs_FailFast
+  [       OK ] WfLifecycle.CommitRejectsInvalidInputs_FailFast (0 ms)
+  [ RUN      ] WfLifecycle.CommitRequiresDomainInitSubmitterForTemplateSource
+  [       OK ] WfLifecycle.CommitRequiresDomainInitSubmitterForTemplateSource (0 ms)
+  [----------] 13 tests from WfLifecycle (4 ms total)
+  
+  [----------] 6 tests from WfOpenWizard
+  [ RUN      ] WfOpenWizard.ClassifyExistingDirectoryGoesToProjectChannel
+  [       OK ] WfOpenWizard.ClassifyExistingDirectoryGoesToProjectChannel (0 ms)
+  [ RUN      ] WfOpenWizard.ClassifyRwpackLexemeGoesToPackageChannel
+  [       OK ] WfOpenWizard.ClassifyRwpackLexemeGoesToPackageChannel (0 ms)
+  [ RUN      ] WfOpenWizard.ClassifyUnknownLexemeIsRejected
+  [       OK ] WfOpenWizard.ClassifyUnknownLexemeIsRejected (0 ms)
+  [ RUN      ] WfOpenWizard.RunUnknownPathFailsWithConcreteFileAndNoSideEffect
+  [       OK ] WfOpenWizard.RunUnknownPathFailsWithConcreteFileAndNoSideEffect (0 ms)
+  [ RUN      ] WfOpenWizard.RunPackageLexemeDispatchsWithoutSideEffectAllThreeSources
+  [       OK ] WfOpenWizard.RunPackageLexemeDispatchsWithoutSideEffectAllThreeSources (0 ms)
+  [ RUN      ] WfOpenWizard.RunEmptyPathIsCallerContractViolation
+  [       OK ] WfOpenWizard.RunEmptyPathIsCallerContractViolation (0 ms)
+  [----------] 6 tests from WfOpenWizard (3 ms total)
+  
+  [----------] 6 tests from WfRecent
+  [ RUN      ] WfRecent.RecordDedupsAndMovesToTopViaInterface
+  [       OK ] WfRecent.RecordDedupsAndMovesToTopViaInterface (0 ms)
+  [ RUN      ] WfRecent.RecordNormalizesLexicallyToSingleKey
+  [       OK ] WfRecent.RecordNormalizesLexicallyToSingleKey (0 ms)
+  [ RUN      ] WfRecent.CapacityIsTenOldestEvicted
+  [       OK ] WfRecent.CapacityIsTenOldestEvicted (0 ms)
+  [ RUN      ] WfRecent.MissingLocationKeptAndMarkedUnavailable
+  [       OK ] WfRecent.MissingLocationKeptAndMarkedUnavailable (0 ms)
+  [ RUN      ] WfRecent.RemoveIdempotentAndContractViolationsFailFast
+  [       OK ] WfRecent.RemoveIdempotentAndContractViolationsFailFast (0 ms)
+  [ RUN      ] WfRecent.Pwf5SafeDefaultsCapacityAndNoRedaction
+  [       OK ] WfRecent.Pwf5SafeDefaultsCapacityAndNoRedaction (0 ms)
+  [----------] 6 tests from WfRecent (0 ms total)
+  
+  [----------] 3 tests from WfHome
+  [ RUN      ] WfHome.NoProjectThreeEntriesEnabledWithStatusSummary
+  [       OK ] WfHome.NoProjectThreeEntriesEnabledWithStatusSummary (0 ms)
+  [ RUN      ] WfHome.NoProjectDisablesStageRunApplyReportKeepsProjectMenu
+  [       OK ] WfHome.NoProjectDisablesStageRunApplyReportKeepsProjectMenu (0 ms)
+  [ RUN      ] WfHome.RecentItemsPassthroughWithUnavailableHintAndDeterminism
+  [       OK ] WfHome.RecentItemsPassthroughWithUnavailableHintAndDeterminism (0 ms)
+  [----------] 3 tests from WfHome (0 ms total)
+  
+  [----------] 21 tests from WfClose
+  [ RUN      ] WfClose.ScenarioKeyVocabulary
+  [       OK ] WfClose.ScenarioKeyVocabulary (0 ms)
+  [ RUN      ] WfClose.TaskStateShortLabelsAllNineStates
+  [       OK ] WfClose.TaskStateShortLabelsAllNineStates (0 ms)
+  [ RUN      ] WfClose.NoDraftNoTaskProceedsAndClosesStore
+  [       OK ] WfClose.NoDraftNoTaskProceedsAndClosesStore (0 ms)
+  [ RUN      ] WfClose.DraftCancelAbortsWholeFlow
+  [       OK ] WfClose.DraftCancelAbortsWholeFlow (0 ms)
+  [ RUN      ] WfClose.DraftSaveContinuesToDrainAndClose
+  [       OK ] WfClose.DraftSaveContinuesToDrainAndClose (0 ms)
+  [ RUN      ] WfClose.DraftDiscardContinuesToDrainAndClose
+  [       OK ] WfClose.DraftDiscardContinuesToDrainAndClose (0 ms)
+  [ RUN      ] WfClose.DraftActionFailureFailsWithoutClosing
+  [       OK ] WfClose.DraftActionFailureFailsWithoutClosing (0 ms)
+  [ RUN      ] WfClose.TaskPromptCarriesNineStateList
+  [       OK ] WfClose.TaskPromptCarriesNineStateList (0 ms)
+  [ RUN      ] WfClose.TaskWaitDrainsThenCloses
+  [       OK ] WfClose.TaskWaitDrainsThenCloses (0 ms)
+  [ RUN      ] WfClose.TaskCooperativeCancelCancelsAndDrains
+  [       OK ] WfClose.TaskCooperativeCancelCancelsAndDrains (0 ms)
+  [ RUN      ] WfClose.TaskCancelFlowAbortsAfterDraftStage
+  [       OK ] WfClose.TaskCancelFlowAbortsAfterDraftStage (0 ms)
+  [ RUN      ] WfClose.CooperativeCancelFailureFailsWithoutClosing
+  [       OK ] WfClose.CooperativeCancelFailureFailsWithoutClosing (0 ms)
+  [ RUN      ] WfClose.WaitDrainFailureFailsWithoutClosing
+  [       OK ] WfClose.WaitDrainFailureFailsWithoutClosing (0 ms)
+  [ RUN      ] WfClose.ExitReusesSameFlowAsClose
+  [       OK ] WfClose.ExitReusesSameFlowAsClose (0 ms)
+  [ RUN      ] WfClose.SwitchCandidateFailureLeavesCurrentUntouched
+  [       OK ] WfClose.SwitchCandidateFailureLeavesCurrentUntouched (0 ms)
+  [ RUN      ] WfClose.PreconditionViolationsFailFast
+  [       OK ] WfClose.PreconditionViolationsFailFast (0 ms)
+  [ RUN      ] WfClose.SchemeSwitchPreconditionViolationsFailFast
+  [       OK ] WfClose.SchemeSwitchPreconditionViolationsFailFast (0 ms)
+  [ RUN      ] WfClose.SchemeSwitchDraftCancelAborts
+  [       OK ] WfClose.SchemeSwitchDraftCancelAborts (0 ms)
+  [ RUN      ] WfClose.SchemeSwitchDraftSaveProceeds
+  [       OK ] WfClose.SchemeSwitchDraftSaveProceeds (0 ms)
+  [ RUN      ] WfClose.SchemeSwitchNoDraftProceedsWithoutDecisions
+  [       OK ] WfClose.SchemeSwitchNoDraftProceedsWithoutDecisions (0 ms)
+  [ RUN      ] WfClose.SchemeSwitchDraftFailureFails
+  [       OK ] WfClose.SchemeSwitchDraftFailureFails (0 ms)
+  [----------] 21 tests from WfClose (0 ms total)
+  
+  [----------] 24 tests from WfSaveAsPackage
+  [ RUN      ] WfSaveAsPackage.DefaultSelection_MemoryOrDefault_P05
+  [       OK ] WfSaveAsPackage.DefaultSelection_MemoryOrDefault_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.SaveAsValidate_KeySequence_P05
+  [       OK ] WfSaveAsPackage.SaveAsValidate_KeySequence_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ExportValidate_KeySequence_P05
+  [       OK ] WfSaveAsPackage.ExportValidate_KeySequence_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ImportValidate_KeySequence_P05
+  [       OK ] WfSaveAsPackage.ImportValidate_KeySequence_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.SaveAsFlow_Preconditions_FailFast_P05
+  [       OK ] WfSaveAsPackage.SaveAsFlow_Preconditions_FailFast_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.SaveAsFlow_Cancelled_CleanTarget_NonError_P05
+  [       OK ] WfSaveAsPackage.SaveAsFlow_Cancelled_CleanTarget_NonError_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.SaveAsFlow_Cancelled_Leftover_Failed_AT20
+  [       OK ] WfSaveAsPackage.SaveAsFlow_Cancelled_Leftover_Failed_AT20 (0 ms)
+  [ RUN      ] WfSaveAsPackage.SaveAsFlow_CopyFailed_UX03
+  [       OK ] WfSaveAsPackage.SaveAsFlow_CopyFailed_UX03 (0 ms)
+  [ RUN      ] WfSaveAsPackage.SaveAsFlow_CopyOk_OpenFails_Failed_P05
+  [       OK ] WfSaveAsPackage.SaveAsFlow_CopyOk_OpenFails_Failed_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.SaveAsFlow_PortReceivesCancelAndProgress_P05
+  [       OK ] WfSaveAsPackage.SaveAsFlow_PortReceivesCancelAndProgress_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ExportFlow_Preconditions_FailFast_P05
+  [       OK ] WfSaveAsPackage.ExportFlow_Preconditions_FailFast_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ExportFlow_Completed_MetaAssembled_P05
+  [       OK ] WfSaveAsPackage.ExportFlow_Completed_MetaAssembled_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ExportFlow_Cancelled_Cleaned_Canceled_P05
+  [       OK ] WfSaveAsPackage.ExportFlow_Cancelled_Cleaned_Canceled_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ExportFlow_Cancelled_Leftover_Failed_P05
+  [       OK ] WfSaveAsPackage.ExportFlow_Cancelled_Leftover_Failed_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ExportFlow_ExportFailed_UX03
+  [       OK ] WfSaveAsPackage.ExportFlow_ExportFailed_UX03 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ExportFlow_MetaReadFails_Failed_UX03
+  [       OK ] WfSaveAsPackage.ExportFlow_MetaReadFails_Failed_UX03 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ImportFlow_Preconditions_FailFast_P05
+  [       OK ] WfSaveAsPackage.ImportFlow_Preconditions_FailFast_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ImportFlow_Verified_ExecPassedThrough_P05
+  [       OK ] WfSaveAsPackage.ImportFlow_Verified_ExecPassedThrough_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ImportFlow_VerifyFailed_ReportsDiagnostics_UX03
+  [       OK ] WfSaveAsPackage.ImportFlow_VerifyFailed_ReportsDiagnostics_UX03 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ImportFlow_Cancelled_NoDiagnostics_UX03
+  [       OK ] WfSaveAsPackage.ImportFlow_Cancelled_NoDiagnostics_UX03 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ImportFlow_Cancelled_Leftover_Failed_P05
+  [       OK ] WfSaveAsPackage.ImportFlow_Cancelled_Leftover_Failed_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ImportFlow_VerifiedNotPublished_Failed_P05
+  [       OK ] WfSaveAsPackage.ImportFlow_VerifiedNotPublished_Failed_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.ImportReportView_LinesFixedSequence_P05
+  [       OK ] WfSaveAsPackage.ImportReportView_LinesFixedSequence_P05 (0 ms)
+  [ RUN      ] WfSaveAsPackage.CancelToken_IdempotentLatching_P05
+  [       OK ] WfSaveAsPackage.CancelToken_IdempotentLatching_P05 (0 ms)
+  [----------] 24 tests from WfSaveAsPackage (0 ms total)
+  
+  [----------] 14 tests from WfReconnect
+  [ RUN      ] WfReconnect.ParseGuidance_SchemaFuture_ThreeKeys_P06
+  [       OK ] WfReconnect.ParseGuidance_SchemaFuture_ThreeKeys_P06 (0 ms)
+  [ RUN      ] WfReconnect.ParseGuidance_LegacyVersion_TwoKeys_P06
+  [       OK ] WfReconnect.ParseGuidance_LegacyVersion_TwoKeys_P06 (0 ms)
+  [ RUN      ] WfReconnect.ParseGuidance_LegacyFormatId_NotMisread_P06
+  [       OK ] WfReconnect.ParseGuidance_LegacyFormatId_NotMisread_P06 (0 ms)
+  [ RUN      ] WfReconnect.ParseGuidance_NoKeys_EmptyFields_P06
+  [       OK ] WfReconnect.ParseGuidance_NoKeys_EmptyFields_P06 (0 ms)
+  [ RUN      ] WfReconnect.ReadOnlyNotice_LockHeld_FieldsAndKeys_P07
+  [       OK ] WfReconnect.ReadOnlyNotice_LockHeld_FieldsAndKeys_P07 (0 ms)
+  [ RUN      ] WfReconnect.ReadOnlyNotice_ZeroPid_ExplicitKey_P07
+  [       OK ] WfReconnect.ReadOnlyNotice_ZeroPid_ExplicitKey_P07 (0 ms)
+  [ RUN      ] WfReconnect.ReadOnlyNotice_SelfHeld_NotReportedAsOther_P07
+  [       OK ] WfReconnect.ReadOnlyNotice_SelfHeld_NotReportedAsOther_P07 (0 ms)
+  [ RUN      ] WfReconnect.RelinkFlow_InvalidResource_FailFast_P09
+  [       OK ] WfReconnect.RelinkFlow_InvalidResource_FailFast_P09 (0 ms)
+  [ RUN      ] WfReconnect.RelinkFlow_Ok_NotNeeded_ZeroCommit_P09
+  [       OK ] WfReconnect.RelinkFlow_Ok_NotNeeded_ZeroCommit_P09 (0 ms)
+  [ RUN      ] WfReconnect.RelinkFlow_Missing_Proceed_Committed_P09_AT21
+  [       OK ] WfReconnect.RelinkFlow_Missing_Proceed_Committed_P09_AT21 (0 ms)
+  [ RUN      ] WfReconnect.RelinkFlow_Cancel_NoCommit_UX03_P09
+  [       OK ] WfReconnect.RelinkFlow_Cancel_NoCommit_UX03_P09 (0 ms)
+  [ RUN      ] WfReconnect.RelinkFlow_SubmitRejected_UX03Folded_P09
+  [       OK ] WfReconnect.RelinkFlow_SubmitRejected_UX03Folded_P09 (0 ms)
+  [ RUN      ] WfReconnect.RelinkFlow_SuccessWithoutRevision_TransparentFail_P09
+  [       OK ] WfReconnect.RelinkFlow_SuccessWithoutRevision_TransparentFail_P09 (0 ms)
+  [ RUN      ] WfReconnect.RelinkFlow_PortThrows_FoldedToFailed_P09
+  [       OK ] WfReconnect.RelinkFlow_PortThrows_FoldedToFailed_P09 (0 ms)
+  [----------] 14 tests from WfReconnect (0 ms total)
+  
+  [----------] 16 tests from WfProjection
+  [ RUN      ] WfProjection.TitleText_FourCombinations_GoldenStrings_P11
+  [       OK ] WfProjection.TitleText_FourCombinations_GoldenStrings_P11 (0 ms)
+  [ RUN      ] WfProjection.TitleText_NoProject_EmptyString_P11
+  [       OK ] WfProjection.TitleText_NoProject_EmptyString_P11 (0 ms)
+  [ RUN      ] WfProjection.TitleStatus_FactsSourceMapping_P11
+  [       OK ] WfProjection.TitleStatus_FactsSourceMapping_P11 (0 ms)
+  [ RUN      ] WfProjection.ResultsStatusLabelKey_ThreeStates_PUI2
+  [       OK ] WfProjection.ResultsStatusLabelKey_ThreeStates_PUI2 (0 ms)
+  [ RUN      ] WfProjection.RecoverySummaryKey_WordTableGolden_P15
+  [       OK ] WfProjection.RecoverySummaryKey_WordTableGolden_P15 (0 ms)
+  [ RUN      ] WfProjection.Banner_ScenarioIgnoredSave_Alone_P15
+  [       OK ] WfProjection.Banner_ScenarioIgnoredSave_Alone_P15 (0 ms)
+  [ RUN      ] WfProjection.Banner_ScenarioInterrupted_Alone_P15
+  [       OK ] WfProjection.Banner_ScenarioInterrupted_Alone_P15 (0 ms)
+  [ RUN      ] WfProjection.Banner_ScenarioOrphanDraft_Writable_BothActions_P15
+  [       OK ] WfProjection.Banner_ScenarioOrphanDraft_Writable_BothActions_P15 (0 ms)
+  [ RUN      ] WfProjection.Banner_ThreeScenarios_PriorityOrderAndDetailFallback_P15
+  [       OK ] WfProjection.Banner_ThreeScenarios_PriorityOrderAndDetailFallback_P15 (0 ms)
+  [ RUN      ] WfProjection.Banner_EmptyFacts_NoBanner_P15
+  [       OK ] WfProjection.Banner_EmptyFacts_NoBanner_P15 (0 ms)
+  [ RUN      ] WfProjection.Banner_ReadOnly_DiscardDisabled_RestoreEnabled_P15
+  [       OK ] WfProjection.Banner_ReadOnly_DiscardDisabled_RestoreEnabled_P15 (0 ms)
+  [ RUN      ] WfProjection.Banner_DeterministicReplay_NFRCOR02
+  [       OK ] WfProjection.Banner_DeterministicReplay_NFRCOR02 (0 ms)
+  [ RUN      ] WfProjection.Banner_ZeroCountScenario_FailFast
+  [       OK ] WfProjection.Banner_ZeroCountScenario_FailFast (0 ms)
+  [ RUN      ] WfProjection.Banner_DuplicateScenario_FailFast
+  [       OK ] WfProjection.Banner_DuplicateScenario_FailFast (0 ms)
+  [ RUN      ] WfProjection.Provider_InterfaceTitleStatus_P11
+  [       OK ] WfProjection.Provider_InterfaceTitleStatus_P11 (0 ms)
+  [ RUN      ] WfProjection.Provider_InterfaceRecoveryBanner_P15
+  [       OK ] WfProjection.Provider_InterfaceRecoveryBanner_P15 (0 ms)
+  [----------] 16 tests from WfProjection (0 ms total)
+  
+  [----------] 15 tests from WfSettings
+  [ RUN      ] WfSettings.MissingFileYieldsDefaultsWithoutDiagnostic
+  [       OK ] WfSettings.MissingFileYieldsDefaultsWithoutDiagnostic (0 ms)
+  [ RUN      ] WfSettings.RoundTripAllFieldsViaInterface
+  [       OK ] WfSettings.RoundTripAllFieldsViaInterface (2 ms)
+  [ RUN      ] WfSettings.StoredFileIsCanonicalGoldenBytes_Defaults
+  [       OK ] WfSettings.StoredFileIsCanonicalGoldenBytes_Defaults (7 ms)
+  [ RUN      ] WfSettings.StoredFileIsCanonicalGoldenBytes_FullFields
+  [       OK ] WfSettings.StoredFileIsCanonicalGoldenBytes_FullFields (16 ms)
+  [ RUN      ] WfSettings.CorruptedGarbageYieldsDefaultsWithDiagnostic
+  [       OK ] WfSettings.CorruptedGarbageYieldsDefaultsWithDiagnostic (1 ms)
+  [ RUN      ] WfSettings.CorruptedVariantsAllSafe
+  [       OK ] WfSettings.CorruptedVariantsAllSafe (29 ms)
+  [ RUN      ] WfSettings.AnalysisConfigFieldRejected_IWF5
+  [       OK ] WfSettings.AnalysisConfigFieldRejected_IWF5 (19 ms)
+  [ RUN      ] WfSettings.TopLevelKeySetFrozen_IWF5
+  [       OK ] WfSettings.TopLevelKeySetFrozen_IWF5 (2 ms)
+  [ RUN      ] WfSettings.RecentProjectsTruncatedToCapacityWithDiagnostic_PWF5
+  [       OK ] WfSettings.RecentProjectsTruncatedToCapacityWithDiagnostic_PWF5 (1 ms)
+  [ RUN      ] WfSettings.PathsVerbatimNoRedaction_PWF5
+  [       OK ] WfSettings.PathsVerbatimNoRedaction_PWF5 (2 ms)
+  [ RUN      ] WfSettings.SelectionMemoryTriState
+  [       OK ] WfSettings.SelectionMemoryTriState (4 ms)
+  [ RUN      ] WfSettings.StoreCreatesMissingParentDirectories
+  [       OK ] WfSettings.StoreCreatesMissingParentDirectories (1 ms)
+  [ RUN      ] WfSettings.StoreFailureThrowsWorkflowError
+  [       OK ] WfSettings.StoreFailureThrowsWorkflowError (2 ms)
+  [ RUN      ] WfSettings.EmptyPathConstructorFailsFast
+  [       OK ] WfSettings.EmptyPathConstructorFailsFast (0 ms)
+  [ RUN      ] WfSettings.DefaultFilePathPrefersUserDirectory
+  [       OK ] WfSettings.DefaultFilePathPrefersUserDirectory (0 ms)
+  [----------] 15 tests from WfSettings (91 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 139 tests from 13 test suites ran. (133 ms total)
+  [  PASSED  ] 139 tests.
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_reporting.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\reporting\Release\sdurws_ird_reporting.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_ui.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\ui\Release\sdurws_ird_ui.lib
+  sdurws_ird_workflow.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow.lib
+  sdurws_ird_workflow_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_plugin.lib
+  sdurws_ird_workflow_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\workflow\Release\sdurws_ird_workflow_contract_test.exe
+  ird: run sdurws_ird_workflow_contract_test and write gtest XML report
+  [==========] Running 51 tests from 10 test suites.
+  [----------] Global test environment set-up.
+  [----------] 5 tests from WfBuildGraph
+  [ RUN      ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1
+  [       OK ] WfBuildGraph.UnitEdgesEightRegisteredAndClosed_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1
+  [       OK ] WfBuildGraph.EightRegisteredEdgesPresent_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2
+  [       OK ] WfBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP22T02_ACC2 (0 ms)
+  [ RUN      ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1
+  [       OK ] WfBuildGraph.NoTestkitEdgeOnProductTarget_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2
+  [       OK ] WfBuildGraph.IncludeFaceMatchesRegisteredEdges_WP22T02_ACC2 (6 ms)
+  [----------] 5 tests from WfBuildGraph (8 ms total)
+  
+  [----------] 3 tests from WfPluginRegistration
+  [ RUN      ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.AssemblyRegistersOkOnWhitelist_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.DescriptorMatchesMinimalForm_WP22T02_ACC1 (0 ms)
+  [ RUN      ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1
+  [       OK ] WfPluginRegistration.WhitelistAndDuplicateRejected_WP22T02_ACC1 (0 ms)
+  [----------] 3 tests from WfPluginRegistration (0 ms total)
+  
+  [----------] 4 tests from WfGateContract
+  [ RUN      ] WfGateContract.GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112
+  [       OK ] WfGateContract.GateConsumesOnlySnapshotAndEvents_WP22T03_ACC2_WFVER112 (7 ms)
+  [ RUN      ] WfGateContract.WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3
+  [       OK ] WfGateContract.WordTableZeroAdditionAndPwf2Shape_WP22T03_ACC3 (11 ms)
+  [ RUN      ] WfGateContract.ProjectionOwnershipStaysWithUi_WP22T03_ACC3
+  [       OK ] WfGateContract.ProjectionOwnershipStaysWithUi_WP22T03_ACC3 (3 ms)
+  [ RUN      ] WfGateContract.InvalidationHintIsPureValueData_WP22T03_ACC1
+  [       OK ] WfGateContract.InvalidationHintIsPureValueData_WP22T03_ACC1 (0 ms)
+  [----------] 4 tests from WfGateContract (23 ms total)
+  
+  [----------] 8 tests from NewProjectWizardContract
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_TemplateMainlineCreatesBaselineRevision
+  [       OK ] NewProjectWizardContract.WF_VER_201_TemplateMainlineCreatesBaselineRevision (41 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_UrdfSourceRegistersReadOnlyBaseline
+  [       OK ] NewProjectWizardContract.WF_VER_201_UrdfSourceRegistersReadOnlyBaseline (58 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_201_BlankMainlineStopsAtR0
+  [       OK ] NewProjectWizardContract.WF_VER_201_BlankMainlineStopsAtR0 (25 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_202_CancelBeforeConfirmLeavesNothing
+  [       OK ] NewProjectWizardContract.WF_VER_202_CancelBeforeConfirmLeavesNothing (0 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_203_DomainInitFailureCleansAndKeepsInputs
+  [       OK ] NewProjectWizardContract.WF_VER_203_DomainInitFailureCleansAndKeepsInputs (65 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_203_CreateNewFailurePresentsAndRetries
+  [       OK ] NewProjectWizardContract.WF_VER_203_CreateNewFailurePresentsAndRetries (35 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_204_ExternalHandlingBothWaysForwarded
+  [       OK ] NewProjectWizardContract.WF_VER_204_ExternalHandlingBothWaysForwarded (70 ms)
+  [ RUN      ] NewProjectWizardContract.WF_VER_Port_ModelingNotDirectlyLinked
+  [       OK ] NewProjectWizardContract.WF_VER_Port_ModelingNotDirectlyLinked (3 ms)
+  [----------] 8 tests from NewProjectWizardContract (301 ms total)
+  
+  [----------] 3 tests from OpenWizardContract
+  [ RUN      ] OpenWizardContract.WF_VER_205_FiveStepProtocolAllThreeSources
+  [       OK ] OpenWizardContract.WF_VER_205_FiveStepProtocolAllThreeSources (31 ms)
+  [ RUN      ] OpenWizardContract.WF_VER_206_CorruptProjectFailsWithConcreteFileAndCurrentUntouched
+  [       OK ] OpenWizardContract.WF_VER_206_CorruptProjectFailsWithConcreteFileAndCurrentUntouched (33 ms)
+  [ RUN      ] OpenWizardContract.WF_VER_206_NotAProjectPresentsContextAndGuidance
+  [       OK ] OpenWizardContract.WF_VER_206_NotAProjectPresentsContextAndGuidance (1 ms)
+  [----------] 3 tests from OpenWizardContract (66 ms total)
+  
+  [----------] 7 tests from CloseFlowContract
+  [ RUN      ] CloseFlowContract.WF_VER_209_DialogDataPlaneAndCancelAbortsOverRealDrafts
+  [       OK ] CloseFlowContract.WF_VER_209_DialogDataPlaneAndCancelAbortsOverRealDrafts (20 ms)
+  [ RUN      ] CloseFlowContract.WF_VER_210_WaitOptionDrainsArchiveThenContextClosed
+  [       OK ] CloseFlowContract.WF_VER_210_WaitOptionDrainsArchiveThenContextClosed (39 ms)
+  [ RUN      ] CloseFlowContract.WF_VER_211_CooperativeCancelReachesDrainedClose
+  [       OK ] CloseFlowContract.WF_VER_211_CooperativeCancelReachesDrainedClose (17 ms)
+  [ RUN      ] CloseFlowContract.WF_VER_212_SchemeSwitchCancelPathZeroWrite
+  [       OK ] CloseFlowContract.WF_VER_212_SchemeSwitchCancelPathZeroWrite (20 ms)
+  [ RUN      ] CloseFlowContract.WF_VER_212_SchemeSwitchProceedPathZeroWrite
+  [       OK ] CloseFlowContract.WF_VER_212_SchemeSwitchProceedPathZeroWrite (16 ms)
+  [ RUN      ] CloseFlowContract.SwitchCandidateSuccessClosesCurrentAndHandsOver
+  [       OK ] CloseFlowContract.SwitchCandidateSuccessClosesCurrentAndHandsOver (36 ms)
+  [ RUN      ] CloseFlowContract.SwitchCandidateCorruptFailsAndCurrentUntouched
+  [       OK ] CloseFlowContract.SwitchCandidateCorruptFailsAndCurrentUntouched (36 ms)
+  [----------] 7 tests from CloseFlowContract (187 ms total)
+  
+  [----------] 6 tests from SaveAsPackageContract
+  [ RUN      ] SaveAsPackageContract.SaveAs_EntersNewProject_ViaOpenProtocol_P05_AT20
+  [       OK ] SaveAsPackageContract.SaveAs_EntersNewProject_ViaOpenProtocol_P05_AT20 (38 ms)
+  [ RUN      ] SaveAsPackageContract.SaveAs_Cancelled_TargetLeftClean_AT20
+  [       OK ] SaveAsPackageContract.SaveAs_Cancelled_TargetLeftClean_AT20 (16 ms)
+  [ RUN      ] SaveAsPackageContract.Export_RealZipArtifact_SourceUntouched_P05
+  [       OK ] SaveAsPackageContract.Export_RealZipArtifact_SourceUntouched_P05 (43 ms)
+  [ RUN      ] SaveAsPackageContract.Export_Cancelled_TargetUntouched_P05
+  [       OK ] SaveAsPackageContract.Export_Cancelled_TargetUntouched_P05 (16 ms)
+  [ RUN      ] SaveAsPackageContract.Import_PathTraversalRejected_NoTarget_P05
+  [       OK ] SaveAsPackageContract.Import_PathTraversalRejected_NoTarget_P05 (10 ms)
+  [ RUN      ] SaveAsPackageContract.Import_ExportedPackRoundTrip_VerifiedPublished_P05
+  [       OK ] SaveAsPackageContract.Import_ExportedPackRoundTrip_VerifiedPublished_P05 (52 ms)
+  [----------] 6 tests from SaveAsPackageContract (176 ms total)
+  
+  [----------] 7 tests from ReconnectReadOnlyContract
+  [ RUN      ] ReconnectReadOnlyContract.LegacySchemaVersion_Rejected_GuidanceDiag_FileUntouched_P06_AT20
+  [       OK ] ReconnectReadOnlyContract.LegacySchemaVersion_Rejected_GuidanceDiag_FileUntouched_P06_AT20 (23 ms)
+  [ RUN      ] ReconnectReadOnlyContract.FutureSchemaVersion_Rejected_ThreeKeysGuidance_P06
+  [       OK ] ReconnectReadOnlyContract.FutureSchemaVersion_Rejected_ThreeKeysGuidance_P06 (21 ms)
+  [ RUN      ] ReconnectReadOnlyContract.LegacyRwprojFile_RoutedUnknown_ZeroSideEffect_P06
+  [       OK ] ReconnectReadOnlyContract.LegacyRwprojFile_RoutedUnknown_ZeroSideEffect_P06 (0 ms)
+  [ RUN      ] ReconnectReadOnlyContract.SecondWriterDegradesReadOnly_PidNotice_SubmitRejected_P07
+  [       OK ] ReconnectReadOnlyContract.SecondWriterDegradesReadOnly_PidNotice_SubmitRejected_P07 (21 ms)
+  [ RUN      ] ReconnectReadOnlyContract.LockRelease_RestoresWritable_P07
+  [       OK ] ReconnectReadOnlyContract.LockRelease_RestoresWritable_P07 (23 ms)
+  [ RUN      ] ReconnectReadOnlyContract.Relink_ExplicitCommit_ProducesNewRevision_P09_AT21
+  [       OK ] ReconnectReadOnlyContract.Relink_ExplicitCommit_ProducesNewRevision_P09_AT21 (37 ms)
+  [ RUN      ] ReconnectReadOnlyContract.RelinkFailedOrNotNeeded_NoProjectMutation_P09
+  [       OK ] ReconnectReadOnlyContract.RelinkFailedOrNotNeeded_NoProjectMutation_P09 (15 ms)
+  [----------] 7 tests from ReconnectReadOnlyContract (144 ms total)
+  
+  [----------] 3 tests from StatusBannerContract
+  [ RUN      ] StatusBannerContract.ThreeScenarios_RealRecovery_CatalogFolded_BannerData_P15_AT21
+  [       OK ] StatusBannerContract.ThreeScenarios_RealRecovery_CatalogFolded_BannerData_P15_AT21 (23 ms)
+  [ RUN      ] StatusBannerContract.TitleSources_FromRealStore_QueryFace_P11
+  [       OK ] StatusBannerContract.TitleSources_FromRealStore_QueryFace_P11 (16 ms)
+  [ RUN      ] StatusBannerContract.ReadOnlyDegraded_TitleSuffix_DiscardGate_P11_P15
+  [       OK ] StatusBannerContract.ReadOnlyDegraded_TitleSuffix_DiscardGate_P11_P15 (21 ms)
+  [----------] 3 tests from StatusBannerContract (61 ms total)
+  
+  [----------] 5 tests from WfSettingsContract
+  [ RUN      ] WfSettingsContract.CanonicalBytesMatchIoCanonicalize
+  [       OK ] WfSettingsContract.CanonicalBytesMatchIoCanonicalize (3 ms)
+  [ RUN      ] WfSettingsContract.RoundTripViaIoSyntaxReader
+  [       OK ] WfSettingsContract.RoundTripViaIoSyntaxReader (1 ms)
+  [ RUN      ] WfSettingsContract.WriteFailurePreservesPreviousFileAtomically
+  [       OK ] WfSettingsContract.WriteFailurePreservesPreviousFileAtomically (3 ms)
+  [ RUN      ] WfSettingsContract.StoreLeavesNoResidueInDirectory
+  [       OK ] WfSettingsContract.StoreLeavesNoResidueInDirectory (2 ms)
+  [ RUN      ] WfSettingsContract.LoadDiagnosticsCarryWorkflowChannel
+  [       OK ] WfSettingsContract.LoadDiagnosticsCarryWorkflowChannel (1 ms)
+  [----------] 5 tests from WfSettingsContract (12 ms total)
+  
+  [----------] Global test environment tear-down
+  [==========] 51 tests from 10 test suites ran. (1028 ms total)
+  [  PASSED  ] 51 tests.

@@ -88,8 +88,11 @@ add_library(sdurws_ird_workflow STATIC
     src/Advice.cpp      # 下一步建议引擎（§6.3 八规则——UX-01 四要素）
     src/Lifecycle.cpp   # 新建向导（§7.1 PM-01）＋打开协议（§7.2 PM-02）＋
                         # 最近项目/无项目首页（§7.8 PM-10）编排面
-    src/Projection.cpp) # 标题栏/状态栏与恢复横幅状态投影（§7.6 PM-11/PM-15——
+    src/Projection.cpp  # 标题栏/状态栏与恢复横幅状态投影（§7.6 PM-11/PM-15——
                         # WP-22-T09：O9 服务＋两取数端口接缝＋纯函数组装核）
+    src/Settings.cpp)   # 用户设置持久化（§7.7 PM-14——WP-22-T10：
+                        # IUserSettingsStore/UserSettingsStore＋canonical JSON
+                        # 经 io 通道；首次消费 io 边——白名单八边既登记）
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：workflow 公共头（T03+ 落位）使用 C++17 设施，消费者编译
@@ -244,11 +247,15 @@ add_executable(sdurws_ird_workflow_test
                                     # （WP-22-T08——PM-06 指引三键提取、PM-07
                                     # 只读会话数据面、PM-09 编排核全分支；
                                     # 端口脚本化桩直调编排核）
-    test/StatusProjectionTest.cpp)  # 标题栏/状态栏与恢复横幅模型测试（WP-22-T09——
+    test/StatusProjectionTest.cpp  # 标题栏/状态栏与恢复横幅模型测试（WP-22-T09——
                                     # WF-VER-217 标题格式逐组合黄金串、PM-11 五路
                                     # 来源透传、P-UI-2 结果状态选键、PM-15 三场景
                                     # 择一序/动作可用位/空集不渲染、接口消费路径
                                     # 钉扎；纯函数直调＋端口脚本化桩）
+    test/SettingsTest.cpp)  # 用户设置持久化模型测试（WP-22-T10——WF-VER-221：
+                            # canonical 黄金字节/损坏变体矩阵＋诊断/I-WF-5
+                            # 分析配置字段双向隔离/P-WF-5 容量截断与零脱敏/
+                            # 接口消费路径钉扎；真实落盘临时目录直调存储面）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -358,7 +365,7 @@ add_executable(sdurws_ird_workflow_contract_test
                                                      # 写轨拒绝；重关联显式提交
                                                      # 真实产生新修订＋失败零写
                                                      # 盘面复核，真实落盘契约）
-    contract_test/StatusBannerContractTest.cpp)  # WF-VER-217/218（WP-22-T09——标题栏
+    contract_test/StatusBannerContractTest.cpp  # WF-VER-217/218（WP-22-T09——标题栏
                                                  # 来源真实链〔显示名/分支/只读位
                                                  # 经真实 store 取数〕＋恢复横幅
                                                  # 三场景真实落盘〔.staging 残留/
@@ -366,6 +373,13 @@ add_executable(sdurws_ird_workflow_contract_test
                                                  # 真实 T14 重建〕＋统一诊断目录
                                                  # 集成〔真实 DiagCatalog 折叠〕，
                                                  # 真实落盘契约）
+    contract_test/SettingsContractTest.cpp)  # WF-VER-221 契约半区（WP-22-T10——
+                                             # 设置 canonical 字节 io 通道交叉复核
+                                             # 〔store 二次幂等＋io 语法 reader 独立
+                                             # 读回〕＋Win32 独占锁注入的原子保留
+                                             # 〔失败先前文件原样＋暂存零残留〕＋
+                                             # 诊断通道词形，真实落盘契约——与 io
+                                             # 真实 JSON 设施联合）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
