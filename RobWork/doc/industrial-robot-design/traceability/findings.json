@@ -5599,6 +5599,132 @@
       "registeredAt": "2026-10-09",
       "title": "WorkerSupervisor 读线程 Broken 分支未等进程终结即取退出码——正常退出收尾（写端关闭先于进程对象置位）窗内取到 STILL_ACTIVE(259) 被约定集外判 Crashed：成功任务被误报崩溃；活进程场景无兜杀成孤儿",
       "resolution": "修复（分支 audit-p1a-fixes）：Broken 分支先有界等待（2 s）进程终结再取退出码；超时＝病态 worker，强杀兜底后按保守方向 Crashed 分类（约定集口径不变）。sdurws_ird_execution_test 150/150 通过。"
+    },
+    {
+      "id": "F-580",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·dynamics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "RNEA 内向递推质心力臂用错参考点——comOffset 是体原点→质心而矩参考点是关节 i 原点：移动关节丢失滑移臂 (d·z)×F，近端回转关节力矩系统性错误（四通道同错，五分项恒等式校验不可见）",
+      "resolution": "修复（分支 audit-p1b-fixes）：内向递推力臂改 comOffset＋(linkOrigin[i+1]−jointOrigin[i])（类型统一式——旋转关节第二项恰为零向量）；SampleGeometry 注释纠偏（comOffset 实为体原点→质心；外向递推传输用法本就正确）。回归钉 PrismaticSlipArmGravityMoment_F580（静力解析对照：修复前 τ0 实得 −10.3005 恰缺 m2·g·d=3.924 N·m）。sdurws_ird_dynamics_test 60/60 通过。"
+    },
+    {
+      "id": "F-581",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·dynamics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "正动力学对逆动力学部分产出按满网格下标 at(j*n+i) 取行——§5.6 失败截断（该样本起后续样本不产出）时 std::out_of_range（非契约异常）穿出 validate；M/h 单样本提取面同病",
+      "resolution": "修复（分支 audit-p1b-fixes）：callRneaSample 增加 usable 出参（行数≠n 或行态非 Ok＝不可用→DYN-FD-NUMERIC-ANOMALY 值面，失败原因 reasonOut 带出替代三处硬编码单因文案）；τ_ref 批量提取改按时刻 t 匹配的游标消费（行耗尽/不足＝样本不可信不参与仿真）。回归钉 RneaPartialRowsDoNotEscapeContract_F581（红灯：撤修复实抛 std::out_of_range）。sdurws_ird_dynamics_test 60/60 通过。"
+    },
+    {
+      "id": "F-582",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "镜像反射 reflectRpy 万向锁分支 pitch'=+π/2 时 yaw 提取符号写反（对两种 pitch 符号统一取 atan2(−R12,R11)）——工具竖直朝下（−90°）经镜像恰变 +90° 即触发：镜像工位姿态要求静默转反",
+      "resolution": "修复（分支 audit-p1b-fixes）：yaw 提取随 pitch 符号分支（+90° 侧 atan2(+R12,R11)）。回归钉 MirrorGimbalPositivePitchKeepsYaw_F582（源 (0,−π/2,+π/4) 法向 Z 镜像→(0,+π/2,+π/4)；红灯验证撤修复误取 −π/4）。sdurws_ird_requirements_test 203/203 通过。"
+    },
+    {
+      "id": "F-583",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "编辑器 upsert 与批次路径漏检空名条目（服务构造/解码门都拒，唯独编辑器只查重名）——空名入集破坏\"工作集恒为可编码形态\"承诺（下次就绪预检抛 invalid_argument，值面拒绝退化成 fail-fast）",
+      "resolution": "修复（分支 audit-p1b-fixes）：upsertEntry 模板与 applyEdit(EditBatch) 批次循环补空名拒绝（DuplicateName 同口径）。回归钉 EmptyNameRejectedAtEditorBoundary_F583（upsert＋批次两面拒绝＋零写入；红灯验证撤修复空名被接受）。sdurws_ird_requirements_test 203/203 通过。"
+    },
+    {
+      "id": "F-584",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·runtime）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "编译器默认 TCP 下标 0 在工具规范化排序之前选定、排序之后原样保留——≥2 个工具时 defaultTcpIndex 指向排序后 ObjectId 最小者而非 Description 首项：默认 TCP 被静默调换（MDL-13/KIN-14 权威语义丢失）",
+      "resolution": "批次 B 延后（下一批修复）：修复需多工具 Description 夹具＋排序后按 ObjectId 重定位下标＋编译面回归钉；已定位修复点（CompilerImpl.cpp:555 选下标处或 CanonicalModel.cpp:776 排序后重定位），待独立批次实施。"
+    },
+    {
+      "id": "F-585",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "编辑器 Remove 分支在 eraseEntry 之后解引用已悬垂的 target 指针（UB）——删非末位条目时摘要/诊断读到后继条目的名字（张冠李戴），末位时读失效遗留串",
+      "resolution": "修复（分支 audit-p1b-fixes）：任务点/区域两分支均在 eraseEntry 前快照条目名（targetName），删除后一律用快照。回归钉 RemoveNonLastEntrySummaryUsesDeletedName_F585（红灯验证撤修复摘要写出后继名 P-BETA）。sdurws_ird_requirements_test 203/203 通过。"
+    },
+    {
+      "id": "F-586",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "需求编解码 readSourcedState 的 Invalid 态接受空原串字节（state=3＋len=0）——内存面工厂 invalid(\"\") 抛 CoreError，异常穿出\"decode 不抛\"契约（encode 永不产出该形态，仅外部/损坏字节可达——正是 decode 闸口的防御对象）",
+      "resolution": "修复（分支 audit-p1b-fixes）：Invalid 分支补非空校验，空原串就地 malformedAt 按结构损坏拒绝（值面）。独立字节伪造用例待编码器测试批次补钉（本批以 4 行闸口＋既有畸形字节族回归覆盖，203/203 通过）。"
+    },
+    {
+      "id": "F-587",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·modeling）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "URDF axis 分量平方和上溢（‖axis‖²≈1e400→+Inf）——\"normSq > 0\"判不住 Inf，x/Inf=0 后把 (0,0,0) 以 Provided 零轴静默落盘（实现注释\"溢出/下溢同样落入非有限/零判\"仅下溢方向成立）",
+      "resolution": "修复（分支 audit-p1b-fixes）：norm² 判定补 !isfinite(normSq) 上溢检出——与零轴/非有限同走 Invalid 面保留原串＋ZERO-AXIS 诊断＋不可提交。回归钉 AxisNormSqOverflow_ReportInvalidNotSubmittable_F587（axis xyz=\"1e200 0 0\"）。sdurws_ird_modeling_test 344/344 通过。"
+    },
+    {
+      "id": "F-588",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·kinematics）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-09",
+      "title": "导出 collisionPairCount 直填成对展平列表元素数（=2×对数）——与 Export.hpp 字段契约\"碰撞对象对数量\"不符，JSON/CSV 交付值按契约语义翻倍",
+      "resolution": "修复（分支 audit-p1b-fixes）：取 size()/2 对齐契约；既有用例期望 4U→2U 按契约语义重钉。sdurws_ird_kinematics_test 182/182 通过（交付值纠正——下游按旧展平口径解析者需知悉）。"
+    },
+    {
+      "id": "F-589",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·dynamics）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "Envelope/PowerEnergy 缺口区间按梯形插值积分——两公共头登记口径为\"缺口不插值、贡献 0（RMS 保守低估）\"，实现（跨缺口 Δt×相邻有效行值）与行内注释、公共头三方矛盾（Partial 序列能量/RMS 高于登记的保守值）",
+      "resolution": "批次 B 延后（需所有者裁决口径）：二选一——按登记口径实现分段积分（Partial 序列数值变化，需核对黄金/统计面既有钉），或修订公共头登记为\"相邻有效行梯形延拓\"。修复点已定位（Envelope.cpp:186-191、PowerEnergy.cpp:89-91）。"
+    },
+    {
+      "id": "F-590",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·modeling——与既有登记交叉验证同源）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "DhConvert expandDhChain 把 zeroOffset 烘入 origin 且透传字段，CanonicalBridge mapJoint 再折叠一次——DH 派生模型零位构型多转 R_axis(q0)（运动学全程错误）；显式链权威切换被假拒绝。等价验证两侧同折叠误差相消，现有测试不可见",
+      "resolution": "批次 B 延后（需所有者裁决归属）：修复方向二选一——expandDhChain 改产 q_auth=0 位姿（需同步 C-5 展开语义与零位对齐用例），或 mapJoint 对 DH 派生关节跳过折叠；须与 CanonicalBridge 同步修（两处同构）并修订单元卡 §7.4 公式行。修复点：DhConvert.cpp:959-961/1384-1388、CanonicalBridge.cpp:434-438。"
+    },
+    {
+      "id": "F-591",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·modeling）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "dhToExplicit 输出 axis＝基座系子帧 z（zAxisOf(T_0,i)），runtime 按\"关节系内方向\"消费（T_static=R_parent·R(axis,q0)…、世界轴向=R_0,i·axis 字段）——α≠0 链（工业六轴臂常态）编译出的关节物理轴错误（单关节反例：真轴 (0,0,1) 被解读为 (0,0,−1)）；零位 FK 对照结构性失明",
+      "resolution": "批次 B 延后（需所有者裁决参考系口径）：单元卡 §7.4 公式行（axis=z_i＝T_0,i·(0,0,1)）与 runtime 关节系消费语义冲突——修复为关节系表达 Rx(−α)·ez 或在 Description 映射补 origin.Rᵀ·axis 变换，须同步修订单元卡。修复点：DhConvert.cpp:273-277/969-973。"
+    },
+    {
+      "id": "F-592",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·requirements）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "命令 Restore（快照逆放）路径完全缺失\"槽身份须存在于基线\"校验（applySlotsValid 仅 Apply 模式调用；cpp 注释谎称基类已校验）——注入基线外根槽可造双根对象：该修订上一切命令 prepare 抛 logic_error（修订永久毒化）且无前版字节不可回收",
+      "resolution": "批次 B 延后（下一批修复）：修复需把 BaselineSnapshot 传入 decodeRestoreCommon 或在基类对 Restore 复用 applySlotsValid 存在性半区＋token 一致核对，并修正失实注释。修复点：CommandHandlers.cpp:595-600/823-828。"
+    },
+    {
+      "id": "F-593",
+      "source": "audit/unit-code-review-20261009（全单元代码审查，P1·runtime）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "S3 限位量级抽样警告复用 UnitMismatch 注册码进入模型诊断块，而 builder 的 error 级硬失败码集恰含 UnitMismatch——本应\"发布＋警告\"的合法模型（限位 rad 位 ±360 一类 deg 误作 rad）整次编译硬失败（\"警告不阻断\"承诺失效；根因＝DiagnosticRecord 无级别字段，警告与错误共用码必然相撞）",
+      "resolution": "批次 B 延后（需所有者裁决承载方式）：修复方向二选一——专用警告码（比照 RT-RESOURCE-RECORDED 先例按 PA-1 登记），或让 DiagnosticRecord 承载级别、builder 按级别拒绝。修复点：DescriptionValidator.cpp:524-533、CompilerImpl.cpp:345-349、CanonicalModel.cpp:323-332。"
     }
   ]
 }
