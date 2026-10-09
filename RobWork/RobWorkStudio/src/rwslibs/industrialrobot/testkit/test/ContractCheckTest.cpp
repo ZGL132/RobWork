@@ -184,5 +184,17 @@ TEST(ContractEnvelope, CombinationRules_UT_CTR)
     Envelope badMissing{core::TaskOutcome::Completed,
                         core::EngineeringStatus::DataInsufficient, true, false, true};
     EXPECT_FALSE(checkEnvelopeCombination(badMissing, Accessors{}).passed);
+
+    // F-597：违例④（第四规则补钉）——终态非完成却携带正式结论字段
+    // （hasFormalConclusion=true）。原实现漏检本形态（访问器从未被调用）
+    // ＝契约测试假绿。
+    Envelope badFormal{core::TaskOutcome::Failed,
+                       core::EngineeringStatus::NotApplicable, true, true, true};
+    EXPECT_FALSE(checkEnvelopeCombination(badFormal, Accessors{}).passed)
+        << "终态非完成 ⇒ 不得携带正式结论（表 3 第四规则）";
+    // 同形态但无正式结论：保持通过（规则不误伤合法终态包络）。
+    Envelope okTerminal{core::TaskOutcome::Canceled,
+                        core::EngineeringStatus::NotApplicable, true, true, false};
+    EXPECT_TRUE(checkEnvelopeCombination(okTerminal, Accessors{}).passed);
 }
 }  // namespace
