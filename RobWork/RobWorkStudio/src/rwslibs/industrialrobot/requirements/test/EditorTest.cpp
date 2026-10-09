@@ -464,3 +464,81 @@ TEST(ReqEditor, EmptyRootRemoveNonexistentRejected_UI_T35)
                                          WorkingSetMember::Points));
     EXPECT_FALSE(r.accepted) << "空集合删除不应接受";
 }
+
+// =====================================================================
+// F-583/F-585 回归（audit/unit-code-review-20261009）
+// =====================================================================
+
+/**
+ * 回归（F-583，P1）：编辑器边界拒空名——upsert 与批次两条路径此前只查
+ * 重名，空名条目入集破坏"工作集恒为可编码形态"承诺（下一次就绪预检
+ * 抛 invalid_argument——值面拒绝退化成 fail-fast）。服务构造/解码门
+ * 早已拒空名，本钉补齐第三生产者。
+ */
+TEST(ReqEditor, EmptyNameRejectedAtEditorBoundary_F583)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"I-REQ-3"},
+                  std::vector<std::string>{});
+
+    MapClosure closure;
+    fillBaseline(closure, PointSet{}, RegionSet{}, ConditionSet{}, PlanSet{});
+    RequirementEditor editor;
+    ASSERT_TRUE(editor.loadBaseline(closure).ok);
+
+    // upsert 面：空名任务点拒绝（DuplicateName 同口径——服务构造一致）。
+    TaskPoint unnamed = makePoint("P-TEMP");
+    unnamed.name.clear();
+    auto e = editor.applyEdit(RequirementEdit{unnamed});
+    EXPECT_FALSE(e.accepted) << "空名条目必须被编辑边界拒绝";
+    EXPECT_EQ(e.error.code, RequirementErrorCode::DuplicateName);
+    EXPECT_EQ(editor.workingSet().points.entries.size(), 0U) << "拒绝面零写入";
+
+    // 批次面：空名新条目整批拒绝（批次原子性——零部分写入）。
+    EditBatch batch;
+    batch.newPoints.push_back(makePoint("P-OK"));
+    TaskPoint unnamedBatch = makePoint("P-TEMP2");
+    unnamedBatch.name.clear();
+    batch.newPoints.push_back(unnamedBatch);
+    auto b = editor.applyEdit(batch);
+    EXPECT_FALSE(b.accepted) << "批次含空名条目必须整批拒绝";
+    EXPECT_EQ(editor.workingSet().points.entries.size(), 0U) << "批次拒绝零写入";
+}
+
+/**
+ * 回归（F-585，P1）：删除非末位条目后摘要/诊断解引用已悬垂的 target
+ * 指针——删非末位时读到的是后继条目的名字（张冠李戴），末位时读失效
+ * 遗留串（UB）。修复：删除前快照名称。
+ */
+TEST(ReqEditor, RemoveNonLastEntrySummaryUsesDeletedName_F585)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"I-REQ-3"},
+                  std::vector<std::string>{});
+
+    MapClosure closure;
+    fillBaseline(closure, PointSet{}, RegionSet{}, ConditionSet{}, PlanSet{});
+    RequirementEditor editor;
+    ASSERT_TRUE(editor.loadBaseline(closure).ok);
+
+    auto e1 = editor.applyEdit(RequirementEdit{makePoint("P-ALPHA")});
+    auto e2 = editor.applyEdit(RequirementEdit{makePoint("P-BETA")});
+    ASSERT_TRUE(e1.accepted);
+    ASSERT_TRUE(e2.accepted);
+    ASSERT_EQ(editor.workingSet().points.entries.size(), 2U);
+
+    // 取 P-ALPHA 的 id（按 objectId 排序后它可能非末位——删除非末位条目
+    // 才触发"后继左移覆盖 target 槽位"的悬垂面）。
+    core::ObjectId alphaId;
+    for (const auto& p : editor.workingSet().points.entries) {
+        if (p.name == "P-ALPHA") { alphaId = p.objectId; }
+    }
+    ASSERT_TRUE(alphaId.isValid());
+
+    auto rm = editor.applyEdit(removeEdit(alphaId, WorkingSetMember::Points));
+    ASSERT_TRUE(rm.accepted) << rm.error.detail;
+    // 摘要必须引用被删条目自己的名字（修复前非末位删除读到的是后继名
+    // "P-BETA"——张冠李戴；本断言即回归钉）。
+    EXPECT_NE(rm.changeSummary.find("P-ALPHA"), std::string::npos)
+        << "删除摘要应引用被删条目名（实际：" << rm.changeSummary << "）";
+    EXPECT_EQ(editor.workingSet().points.entries.size(), 1U);
+    EXPECT_EQ(editor.workingSet().points.entries[0].name, "P-BETA");
+}
