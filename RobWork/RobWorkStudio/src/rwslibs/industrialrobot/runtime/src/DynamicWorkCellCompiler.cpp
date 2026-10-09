@@ -186,7 +186,10 @@ DynamicWorkCellCompileOutcome compileDynamicWorkCell(
 
             // RT-CAPABILITY-MISSING＝§10.11 v0.3 冻结的警告级事件码（无枚举
             // 对应——与 RT-ROBWORK-ERROR 同类，字面串按冻结清单使用，码值
-            // 权威归 diagnostics StableCodeRegistry，PA-1）。firstMissing
+            // 权威归 diagnostics StableCodeRegistry，PA-1）。F-618：级别显式
+            // 声明 Warning（能力缺失＝警告不阻断——core 工厂缺省 Error 会
+            // 被发布模型诊断块拒绝；本记录随快照诊断面发布而非模型诊断块，
+            // 但级别语义是记录自身的属性，按事实声明）。firstMissing
             // 非空由 !gate ⟺ missingLinks 非空保证（上方互核已锁定）。
             outcome.warnings.push_back(core::DiagnosticRecord::make(
                 std::string{"RT-CAPABILITY-MISSING"},
@@ -197,7 +200,9 @@ DynamicWorkCellCompileOutcome compileDynamicWorkCell(
                 std::string{"链连杆质量/质心/惯量未提供（NotProvided）——"
                             "hasDynamicWorkCell=false，DWC 跳过构造（能力事实，非失败）"},
                 std::string{"建模侧补全连杆物性后重新编译；下游按能力声明处置"
-                            "（dynamics→DYN-06 DataInsufficient 域判定）"}));
+                            "（dynamics→DYN-06 DataInsufficient 域判定）"},
+                std::nullopt,
+                core::DiagnosticLevel::Warning));
             return outcome;
         }
 

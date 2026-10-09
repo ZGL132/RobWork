@@ -1065,11 +1065,13 @@ TEST(CompilerTest, RecordedResourceWarnsNotBlocked)
 }
 
 /**
- * 限位量级抽样警告专用码（audit F-593 回归钉）：deg 误作 rad 的模型
- * （限位 ±360——|360| > 4π×10 rad 抽样阈）发布成功（"警告不阻断"承诺），
- * 且诊断块含专用警告码 RT-BOUNDS-MAGNITUDE、不再复用 error 级硬失败码集
- * 内的 RT-UNIT-MISMATCH。修复前警告携带 UnitMismatch——builder 第 10 步
- * isHardErrorDiagCode 命中即抛 InputInvalid，合法模型整次编译硬失败。
+ * 限位量级抽样警告专用码（audit F-593 回归钉；F-618 收编后按 level 断言）：
+ * deg 误作 rad 的模型（限位 ±360——|360| > 4π×10 rad 抽样阈）发布成功
+ * （"警告不阻断"承诺），且诊断块含专用警告码 RT-BOUNDS-MAGNITUDE（F-618 起
+ * 已在 diagnostics 内置表正式注册，warning 级）、不复用 RT-UNIT-MISMATCH。
+ * 修复前警告携带 UnitMismatch——builder 第 10 步按码集判据命中即抛
+ * InputInvalid，合法模型整次编译硬失败；F-618 起拒绝判据改按 record.level，
+ * 本用例的级别断言即"警告级承载不阻断"的直接物证。
  */
 TEST(CompilerTest, BoundsMagnitudeWarningPublishesWithDedicatedCode_F593)
 {
@@ -1087,11 +1089,26 @@ TEST(CompilerTest, BoundsMagnitudeWarningPublishesWithDedicatedCode_F593)
     ASSERT_EQ(out.status, CompileStatus::Published)
         << "量级抽样警告不得阻断发布（§4.4\"警告不阻断\"承诺）";
     ASSERT_NE(out.snapshot, nullptr);
-    EXPECT_TRUE(hasDiagnostic(out.diagnostics, "RT-BOUNDS-MAGNITUDE"))
-        << "专用警告码随模型诊断块发布";
+    // F-618：诊断块逐条断言——量级警告以专用码发布且级别＝Warning（不阻断
+    // 的机制承载；快照模型诊断块内逐条核验，防"码对级错"的漏标面）。
+    const auto& model = out.snapshot->model();
+    bool foundBoundsWarning = false;
+    for (const core::DiagnosticRecord& d : model.diagnostics()) {
+        if (d.code == "RT-BOUNDS-MAGNITUDE") {
+            foundBoundsWarning = true;
+            EXPECT_EQ(d.level, core::DiagnosticLevel::Warning)
+                << "量级警告必须声明 Warning 级（F-618 按级别拒绝的警告面）";
+        } else {
+            // 发布模型的诊断块只允许警告级记录（§4.3.5 不变量——builder 已
+            // 强制，此处冗余核验与 F-593 断言互补）。
+            EXPECT_EQ(d.level, core::DiagnosticLevel::Warning)
+                << "发布模型诊断块出现非警告级记录: " << d.code;
+        }
+    }
+    EXPECT_TRUE(foundBoundsWarning) << "专用警告码随模型诊断块发布";
     EXPECT_FALSE(hasDiagnostic(out.diagnostics,
                                std::string{registryCode(RuntimeErrorCode::UnitMismatch)}))
-        << "不得再复用 error 级硬失败码集内的 UnitMismatch（F-593 相撞根因）";
+        << "不得复用 UnitMismatch（F-593 相撞根因——警告有自己的专用码）";
 }
 
 // =====================================================================
