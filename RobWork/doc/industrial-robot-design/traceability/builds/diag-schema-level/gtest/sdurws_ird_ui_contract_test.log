@@ -1,0 +1,93 @@
+[==========] Running 32 tests from 8 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from UiLinkage
+[ RUN      ] UiLinkage.ArchEdgesCoreDiagnosticsOnly_UI_CTR
+[       OK ] UiLinkage.ArchEdgesCoreDiagnosticsOnly_UI_CTR (0 ms)
+[ RUN      ] UiLinkage.TestkitOnlyLinkedByTestTargets_UI_CTR
+[       OK ] UiLinkage.TestkitOnlyLinkedByTestTargets_UI_CTR (0 ms)
+[ RUN      ] UiLinkage.ThreeTestTargetsAndLabels_UI_CTR
+[       OK ] UiLinkage.ThreeTestTargetsAndLabels_UI_CTR (0 ms)
+[----------] 3 tests from UiLinkage (1 ms total)
+
+[----------] 6 tests from SessionContract
+[ RUN      ] SessionContract.StoreCloseProtocolTimingAndCounts
+[       OK ] SessionContract.StoreCloseProtocolTimingAndCounts (0 ms)
+[ RUN      ] SessionContract.TaskPortPerTaskAddressing
+[       OK ] SessionContract.TaskPortPerTaskAddressing (0 ms)
+[ RUN      ] SessionContract.SwitchKeepsOldStoreContextUntilArchiveDone
+[       OK ] SessionContract.SwitchKeepsOldStoreContextUntilArchiveDone (0 ms)
+[ RUN      ] SessionContract.ExitPendingOnlyForExitIntent
+[       OK ] SessionContract.ExitPendingOnlyForExitIntent (0 ms)
+[ RUN      ] SessionContract.TForceThresholdsAssemblyConfigurable
+[       OK ] SessionContract.TForceThresholdsAssemblyConfigurable (0 ms)
+[ RUN      ] SessionContract.O31SessionFacesAreUiOwnedInterfaces
+[       OK ] SessionContract.O31SessionFacesAreUiOwnedInterfaces (0 ms)
+[----------] 6 tests from SessionContract (0 ms total)
+
+[----------] 3 tests from DraftContractTest
+[ RUN      ] DraftContractTest.StorePortRoundTripAnchorsDraftServiceSemantics
+[       OK ] DraftContractTest.StorePortRoundTripAnchorsDraftServiceSemantics (0 ms)
+[ RUN      ] DraftContractTest.StaleDetailPassesThroughProjectedInterfaces
+[       OK ] DraftContractTest.StaleDetailPassesThroughProjectedInterfaces (0 ms)
+[ RUN      ] DraftContractTest.CloseDialogSaveCompletesSynchronouslyOnDiskThread
+[       OK ] DraftContractTest.CloseDialogSaveCompletesSynchronouslyOnDiskThread (0 ms)
+[----------] 3 tests from DraftContractTest (0 ms total)
+
+[----------] 5 tests from InteractionTaskContractTest
+[ RUN      ] InteractionTaskContractTest.BridgeImplementsUiInteractionPort_O31
+[       OK ] InteractionTaskContractTest.BridgeImplementsUiInteractionPort_O31 (0 ms)
+[ RUN      ] InteractionTaskContractTest.PresenterInvokedOnUiThreadOnly_M_1
+[       OK ] InteractionTaskContractTest.PresenterInvokedOnUiThreadOnly_M_1 (0 ms)
+[ RUN      ] InteractionTaskContractTest.TaskPortControlOrderAndProgressProtocol
+[       OK ] InteractionTaskContractTest.TaskPortControlOrderAndProgressProtocol (0 ms)
+[ RUN      ] InteractionTaskContractTest.ControlRequestsAreFireAndForget_NFR_PERF_02
+[       OK ] InteractionTaskContractTest.ControlRequestsAreFireAndForget_NFR_PERF_02 (0 ms)
+[ RUN      ] InteractionTaskContractTest.FindingQueryPortFeedsBridgeEnrichment
+[       OK ] InteractionTaskContractTest.FindingQueryPortFeedsBridgeEnrichment (2 ms)
+[----------] 5 tests from InteractionTaskContractTest (2 ms total)
+
+[----------] 4 tests from PeerBridge
+[ RUN      ] PeerBridge.ContractTestDirectLinkFaceRegistered_O31_UI_T14
+[       OK ] PeerBridge.ContractTestDirectLinkFaceRegistered_O31_UI_T14 (0 ms)
+[ RUN      ] PeerBridge.CommandInteractionL5AdapterBridgesUiPort_UI_T14
+[       OK ] PeerBridge.CommandInteractionL5AdapterBridgesUiPort_UI_T14 (0 ms)
+[ RUN      ] PeerBridge.SchedulerFakeFeedsPresentationPortViaFaultInterceptor_UI_T14
+[       OK ] PeerBridge.SchedulerFakeFeedsPresentationPortViaFaultInterceptor_UI_T14 (0 ms)
+[ RUN      ] PeerBridge.RedactionPolicyValueFaceBindsDiagnosticsHeader_UI_T14
+[       OK ] PeerBridge.RedactionPolicyValueFaceBindsDiagnosticsHeader_UI_T14 (0 ms)
+[----------] 4 tests from PeerBridge (0 ms total)
+
+[----------] 1 test from Section12Registry
+[ RUN      ] Section12Registry.AllAcceptanceFamilyCasesRegistered_UI_T14
+[       OK ] Section12Registry.AllAcceptanceFamilyCasesRegistered_UI_T14 (11 ms)
+[----------] 1 test from Section12Registry (11 ms total)
+
+[----------] 1 test from PresentationBridgeContract
+[ RUN      ] PresentationBridgeContract.FactoryRejectsNullSnapshot_UI_T20_CTR
+[       OK ] PresentationBridgeContract.FactoryRejectsNullSnapshot_UI_T20_CTR (0 ms)
+[----------] 1 test from PresentationBridgeContract (0 ms total)
+
+[----------] 9 tests from HostIntegrationContractTest
+[ RUN      ] HostIntegrationContractTest.RunDomainApply_SkipsNoDraftModules_AndCounts
+[       OK ] HostIntegrationContractTest.RunDomainApply_SkipsNoDraftModules_AndCounts (0 ms)
+[ RUN      ] HostIntegrationContractTest.RunDomainApply_SubmitsDraftModule_FullChain
+[       OK ] HostIntegrationContractTest.RunDomainApply_SubmitsDraftModule_FullChain (0 ms)
+[ RUN      ] HostIntegrationContractTest.RunDomainApply_MultiDomainCombination_WithTestModule
+[       OK ] HostIntegrationContractTest.RunDomainApply_MultiDomainCombination_WithTestModule (0 ms)
+[ RUN      ] HostIntegrationContractTest.RunDomainApply_DomainExceptionIsolated_OthersProceed
+[       OK ] HostIntegrationContractTest.RunDomainApply_DomainExceptionIsolated_OthersProceed (0 ms)
+[ RUN      ] HostIntegrationContractTest.ThreeDomainSharedSurface_TreeRebuildWithDomainNodes
+[       OK ] HostIntegrationContractTest.ThreeDomainSharedSurface_TreeRebuildWithDomainNodes (0 ms)
+[ RUN      ] HostIntegrationContractTest.L1_TreeSelectToInspector_E2EPerDomain
+[       OK ] HostIntegrationContractTest.L1_TreeSelectToInspector_E2EPerDomain (0 ms)
+[ RUN      ] HostIntegrationContractTest.L2L3_LinkageContract_FullCases
+[       OK ] HostIntegrationContractTest.L2L3_LinkageContract_FullCases (0 ms)
+[ RUN      ] HostIntegrationContractTest.DomainAssemblyFailure_IsolationStateSurface
+[       OK ] HostIntegrationContractTest.DomainAssemblyFailure_IsolationStateSurface (0 ms)
+[ RUN      ] HostIntegrationContractTest.ProjectCloseTeardown_ComponentLevelAssertions
+[       OK ] HostIntegrationContractTest.ProjectCloseTeardown_ComponentLevelAssertions (0 ms)
+[----------] 9 tests from HostIntegrationContractTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 32 tests from 8 test suites ran. (18 ms total)
+[  PASSED  ] 32 tests.

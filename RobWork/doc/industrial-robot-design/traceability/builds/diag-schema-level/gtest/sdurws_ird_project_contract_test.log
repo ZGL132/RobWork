@@ -1,0 +1,88 @@
+[==========] Running 28 tests from 9 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from ProjectLinkage
+[ RUN      ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2
+[       OK ] ProjectLinkage.UnitEdgeOnlyCore_DT_BUILD_R1_R2 (0 ms)
+[ RUN      ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1
+[       OK ] ProjectLinkage.NoTestkitEdge_DT_BUILD_T1 (0 ms)
+[ RUN      ] ProjectLinkage.CoreEdgePresent_DT_BUILD
+[       OK ] ProjectLinkage.CoreEdgePresent_DT_BUILD (0 ms)
+[ RUN      ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD
+[       OK ] ProjectLinkage.DiagnosticsEdgeInjectionNotLink_DT_BUILD (0 ms)
+[ RUN      ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09
+[       OK ] ProjectLinkage.NoIoCompileTimeConsumption_DT_BUILD_O09 (10 ms)
+[----------] 5 tests from ProjectLinkage (12 ms total)
+
+[----------] 5 tests from LockContractTest
+[ RUN      ] LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07
+[       OK ] LockContractTest.SecondInstance_ReadOnlyDegrade_ReportsHolderPid_PM07 (4048 ms)
+[ RUN      ] LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03
+[       OK ] LockContractTest.StalledHeartbeat_NeverEnablesTakeover_D03 (454 ms)
+[ RUN      ] LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02
+[       OK ] LockContractTest.CrashThenConcurrentTakeover_SingleWinner_D02 (637 ms)
+[ RUN      ] LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03
+[       OK ] LockContractTest.LockFileIdentity_StableAcrossCrashTakeover_D03 (98 ms)
+[ RUN      ] LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused
+[       OK ] LockContractTest.SameProjectMultiPathOpen_CrossSpelling_Refused (78 ms)
+[----------] 5 tests from LockContractTest (5316 ms total)
+
+[----------] 2 tests from CommandContractTx1
+[ RUN      ] CommandContractTx1.TwoConcurrentSubmits_SerializedExactlyOneRevisionEach
+[       OK ] CommandContractTx1.TwoConcurrentSubmits_SerializedExactlyOneRevisionEach (211 ms)
+[ RUN      ] CommandContractTx1.StaleBaseline_RejectedStaleRevisionNoRevision
+[       OK ] CommandContractTx1.StaleBaseline_RejectedStaleRevisionNoRevision (199 ms)
+[----------] 2 tests from CommandContractTx1 (410 ms total)
+
+[----------] 3 tests from CommandContractTx3
+[ RUN      ] CommandContractTx3.WcFail_NoRevisionNoPublishTmpCleaned
+[       OK ] CommandContractTx3.WcFail_NoRevisionNoPublishTmpCleaned (78 ms)
+[ RUN      ] CommandContractTx3.DwcFail_NoRevisionNoPublishTmpCleaned
+[       OK ] CommandContractTx3.DwcFail_NoRevisionNoPublishTmpCleaned (79 ms)
+[ RUN      ] CommandContractTx3.BothOk_ExactlyOneRevision
+[       OK ] CommandContractTx3.BothOk_ExactlyOneRevision (187 ms)
+[----------] 3 tests from CommandContractTx3 (344 ms total)
+
+[----------] 3 tests from ArchiveContractTest
+[ RUN      ] ArchiveContractTest.PRJ_TX8_ContextSurvivesUntilFinalizeThenClosed
+[       OK ] ArchiveContractTest.PRJ_TX8_ContextSurvivesUntilFinalizeThenClosed (114 ms)
+[ RUN      ] ArchiveContractTest.PRJ_TX8_CrossProjectEventNotWritten
+[       OK ] ArchiveContractTest.PRJ_TX8_CrossProjectEventNotWritten (171 ms)
+[ RUN      ] ArchiveContractTest.Ppr4_ConcurrentSessionsSerializedByWriterMutex
+[       OK ] ArchiveContractTest.Ppr4_ConcurrentSessionsSerializedByWriterMutex (152 ms)
+[----------] 3 tests from ArchiveContractTest (438 ms total)
+
+[----------] 1 test from Tx8ArchiveProcessKill
+[ RUN      ] Tx8ArchiveProcessKill.KillWhileArchiveInFlight_NoManifestRunNotListed
+[       OK ] Tx8ArchiveProcessKill.KillWhileArchiveInFlight_NoManifestRunNotListed (142 ms)
+[----------] 1 test from Tx8ArchiveProcessKill (143 ms total)
+
+[----------] 3 tests from Tx7ProcessLock
+[ RUN      ] Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid
+[       OK ] Tx7ProcessLock.SecondInstanceChildDegradesReadOnly_ReportsHolderPid (191 ms)
+[ RUN      ] Tx7ProcessLock.AliveHolderNeverTakenOver_KillEnablesTakeover
+[       OK ] Tx7ProcessLock.AliveHolderNeverTakenOver_KillEnablesTakeover (188 ms)
+[ RUN      ] Tx7ProcessLock.CrashThenConcurrentTakeover_SingleWinner
+[       OK ] Tx7ProcessLock.CrashThenConcurrentTakeover_SingleWinner (163 ms)
+[----------] 3 tests from Tx7ProcessLock (543 ms total)
+
+[----------] 1 test from Tx2DiagnosticContract
+[ RUN      ] Tx2DiagnosticContract.FourRejectionPaths_DiagnosticRecordsPassContractCheck
+[       OK ] Tx2DiagnosticContract.FourRejectionPaths_DiagnosticRecordsPassContractCheck (297 ms)
+[----------] 1 test from Tx2DiagnosticContract (297 ms total)
+
+[----------] 5 tests from TransactionBoundaries/F8ProcessCrash
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T1_Uncommitted
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T1_Uncommitted (131 ms)
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T2T3_Uncommitted
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T2T3_Uncommitted (169 ms)
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T4_Uncommitted
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T4_Uncommitted (198 ms)
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T5_Committed
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T5_Committed (242 ms)
+[ RUN      ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T6_Committed
+[       OK ] TransactionBoundaries/F8ProcessCrash.KillAtBoundary_RecoveryReportAndByteInvariants/T6_Committed (262 ms)
+[----------] 5 tests from TransactionBoundaries/F8ProcessCrash (1003 ms total)
+
+[----------] Global test environment tear-down
+[==========] 28 tests from 9 test suites ran. (8521 ms total)
+[  PASSED  ] 28 tests.

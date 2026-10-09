@@ -1,0 +1,142 @@
+[==========] Running 55 tests from 9 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from SelBuildGraph
+[ RUN      ] SelBuildGraph.UnitEdgesTwoRegisteredAndClosed_WP19T02_ACC1
+[       OK ] SelBuildGraph.UnitEdgesTwoRegisteredAndClosed_WP19T02_ACC1 (0 ms)
+[ RUN      ] SelBuildGraph.PluginTargetPresent_WP19T02_ACC1
+[       OK ] SelBuildGraph.PluginTargetPresent_WP19T02_ACC1 (0 ms)
+[ RUN      ] SelBuildGraph.TwoRegisteredEdgesPresent_WP19T02_ACC1
+[       OK ] SelBuildGraph.TwoRegisteredEdgesPresent_WP19T02_ACC1 (0 ms)
+[ RUN      ] SelBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP19T02_ACC2
+[       OK ] SelBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP19T02_ACC2 (0 ms)
+[ RUN      ] SelBuildGraph.NoTestkitEdgeOnProductTarget_WP19T02_ACC1
+[       OK ] SelBuildGraph.NoTestkitEdgeOnProductTarget_WP19T02_ACC1 (0 ms)
+[ RUN      ] SelBuildGraph.IncludeFaceMatchesRegisteredEdges_WP19T02_ACC2
+[       OK ] SelBuildGraph.IncludeFaceMatchesRegisteredEdges_WP19T02_ACC2 (12 ms)
+[----------] 6 tests from SelBuildGraph (15 ms total)
+
+[----------] 6 tests from SelPluginAssembly
+[ RUN      ] SelPluginAssembly.DescriptorMatchesUiRegistrations_WP19T02_ACC1
+[       OK ] SelPluginAssembly.DescriptorMatchesUiRegistrations_WP19T02_ACC1 (0 ms)
+[ RUN      ] SelPluginAssembly.RegistrationFaceMatchesUiVocabularies_WP19T10_ACC1
+[       OK ] SelPluginAssembly.RegistrationFaceMatchesUiVocabularies_WP19T10_ACC1 (0 ms)
+[ RUN      ] SelPluginAssembly.WhitelistTokenReconciliation_WP19T10_ACC1
+[       OK ] SelPluginAssembly.WhitelistTokenReconciliation_WP19T10_ACC1 (0 ms)
+[ RUN      ] SelPluginAssembly.BackfillTokenReconcilesWithComputeHeader_WP19T10_ACC1
+[       OK ] SelPluginAssembly.BackfillTokenReconcilesWithComputeHeader_WP19T10_ACC1 (0 ms)
+[ RUN      ] SelPluginAssembly.PluginFaceHasZeroComputationSymbols_WP19T02_ACC2
+[       OK ] SelPluginAssembly.PluginFaceHasZeroComputationSymbols_WP19T02_ACC2 (1 ms)
+[ RUN      ] SelPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP19T02_ACC2
+[       OK ] SelPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP19T02_ACC2 (1 ms)
+[----------] 6 tests from SelPluginAssembly (3 ms total)
+
+[----------] 4 tests from SelCatalogIoBoundary
+[ RUN      ] SelCatalogIoBoundary.ProductFaceHasZeroIoIncludes
+[       OK ] SelCatalogIoBoundary.ProductFaceHasZeroIoIncludes (8 ms)
+[ RUN      ] SelCatalogIoBoundary.PackageFileSchemaRegisteredFiveEntries
+[       OK ] SelCatalogIoBoundary.PackageFileSchemaRegisteredFiveEntries (0 ms)
+[ RUN      ] SelCatalogIoBoundary.ValidationChainConsumesPureParsedDataOnly
+[       OK ] SelCatalogIoBoundary.ValidationChainConsumesPureParsedDataOnly (0 ms)
+[ RUN      ] SelCatalogIoBoundary.ValidatorAssertsIoLayerPrecondition
+[       OK ] SelCatalogIoBoundary.ValidatorAssertsIoLayerPrecondition (0 ms)
+[----------] 4 tests from SelCatalogIoBoundary (9 ms total)
+
+[----------] 9 tests from SelHardScreeningContract
+[ RUN      ] SelHardScreeningContract.MotorScreeningReachableThroughInterface
+[       OK ] SelHardScreeningContract.MotorScreeningReachableThroughInterface (0 ms)
+[ RUN      ] SelHardScreeningContract.GearboxScreeningReachableThroughInterface
+[       OK ] SelHardScreeningContract.GearboxScreeningReachableThroughInterface (0 ms)
+[ RUN      ] SelHardScreeningContract.ReasonTokenVocabularyIsClosedAndWellFormed
+[       OK ] SelHardScreeningContract.ReasonTokenVocabularyIsClosedAndWellFormed (0 ms)
+[ RUN      ] SelHardScreeningContract.RejectionReasonFieldsCompleteByTrack
+[       OK ] SelHardScreeningContract.RejectionReasonFieldsCompleteByTrack (0 ms)
+[ RUN      ] SelHardScreeningContract.CancellationTruncatesAtCandidateBoundary
+[       OK ] SelHardScreeningContract.CancellationTruncatesAtCandidateBoundary (0 ms)
+[ RUN      ] SelHardScreeningContract.NoCancellationReturnsFullSet
+[       OK ] SelHardScreeningContract.NoCancellationReturnsFullSet (0 ms)
+[ RUN      ] SelHardScreeningContract.EmptySnapshotYieldsEmptyRecordsNoThrow
+[       OK ] SelHardScreeningContract.EmptySnapshotYieldsEmptyRecordsNoThrow (0 ms)
+[ RUN      ] SelHardScreeningContract.EmptyAxisFactsYieldEmptyRecords
+[       OK ] SelHardScreeningContract.EmptyAxisFactsYieldEmptyRecords (0 ms)
+[ RUN      ] SelHardScreeningContract.ContractViolationFailsFastThroughInterface
+[       OK ] SelHardScreeningContract.ContractViolationFailsFastThroughInterface (0 ms)
+[----------] 9 tests from SelHardScreeningContract (0 ms total)
+
+[----------] 11 tests from SelCombinationCheckContract
+[ RUN      ] SelCombinationCheckContract.BuilderInterfaceDispatchable
+[       OK ] SelCombinationCheckContract.BuilderInterfaceDispatchable (0 ms)
+[ RUN      ] SelCombinationCheckContract.CoreConsumableThroughPublicValueFace
+[       OK ] SelCombinationCheckContract.CoreConsumableThroughPublicValueFace (0 ms)
+[ RUN      ] SelCombinationCheckContract.OutOfScopeAxisNeverYieldsRejectionReason
+[       OK ] SelCombinationCheckContract.OutOfScopeAxisNeverYieldsRejectionReason (0 ms)
+[ RUN      ] SelCombinationCheckContract.EvaluatorInterfaceDispatchable
+[       OK ] SelCombinationCheckContract.EvaluatorInterfaceDispatchable (0 ms)
+[ RUN      ] SelCombinationCheckContract.ProductFaceHasNoCrossUnitIncludes
+[       OK ] SelCombinationCheckContract.ProductFaceHasNoCrossUnitIncludes (4 ms)
+[ RUN      ] SelCombinationCheckContract.ProductFaceHasNoMappingFormulaTokens
+[       OK ] SelCombinationCheckContract.ProductFaceHasNoMappingFormulaTokens (5 ms)
+[ RUN      ] SelCombinationCheckContract.RatioConversionIsSingleSite
+[       OK ] SelCombinationCheckContract.RatioConversionIsSingleSite (4 ms)
+[ RUN      ] SelCombinationCheckContract.InertiaRatioNeverBlocksVerdict
+[       OK ] SelCombinationCheckContract.InertiaRatioNeverBlocksVerdict (0 ms)
+[ RUN      ] SelCombinationCheckContract.UnsettledTokenTextIsStable
+[       OK ] SelCombinationCheckContract.UnsettledTokenTextIsStable (0 ms)
+[ RUN      ] SelCombinationCheckContract.ComboDiagCodesRegistered
+[       OK ] SelCombinationCheckContract.ComboDiagCodesRegistered (0 ms)
+[ RUN      ] SelCombinationCheckContract.ComboReasonsCarryComparativeFields
+[       OK ] SelCombinationCheckContract.ComboReasonsCarryComparativeFields (0 ms)
+[----------] 11 tests from SelCombinationCheckContract (14 ms total)
+
+[----------] 5 tests from SelFeasibleSetContract
+[ RUN      ] SelFeasibleSetContract.TokenDiagCodeMappingClosed_WP19T06_ACC1
+[       OK ] SelFeasibleSetContract.TokenDiagCodeMappingClosed_WP19T06_ACC1 (0 ms)
+[ RUN      ] SelFeasibleSetContract.BuilderBackfillsDiagRefOnOutput_WP19T06_ACC1
+[       OK ] SelFeasibleSetContract.BuilderBackfillsDiagRefOnOutput_WP19T06_ACC1 (0 ms)
+[ RUN      ] SelFeasibleSetContract.SelProfileValidatesAndRegisters_WP19T06_ACC3
+[       OK ] SelFeasibleSetContract.SelProfileValidatesAndRegisters_WP19T06_ACC3 (0 ms)
+[ RUN      ] SelFeasibleSetContract.SelProfileCompletenessAgainstEvaluatorOutput_WP19T06_ACC3
+[       OK ] SelFeasibleSetContract.SelProfileCompletenessAgainstEvaluatorOutput_WP19T06_ACC3 (0 ms)
+[ RUN      ] SelFeasibleSetContract.RegistryTableT06BatchAnchors_WP19T06_ACC1
+[       OK ] SelFeasibleSetContract.RegistryTableT06BatchAnchors_WP19T06_ACC1 (0 ms)
+[----------] 5 tests from SelFeasibleSetContract (0 ms total)
+
+[----------] 4 tests from SelPreferenceDiffContract
+[ RUN      ] SelPreferenceDiffContract.UserPreferenceFilteredTokenRegisteredFace
+[       OK ] SelPreferenceDiffContract.UserPreferenceFilteredTokenRegisteredFace (0 ms)
+[ RUN      ] SelPreferenceDiffContract.PreferenceOutcomeNeverWritesBackHardRecords
+[       OK ] SelPreferenceDiffContract.PreferenceOutcomeNeverWritesBackHardRecords (0 ms)
+[ RUN      ] SelPreferenceDiffContract.CatalogDiffPureFunctionAndIdentityChain
+[       OK ] SelPreferenceDiffContract.CatalogDiffPureFunctionAndIdentityChain (0 ms)
+[ RUN      ] SelPreferenceDiffContract.LockTableAppendOnlyUnderCatalogUpdate
+[       OK ] SelPreferenceDiffContract.LockTableAppendOnlyUnderCatalogUpdate (0 ms)
+[----------] 4 tests from SelPreferenceDiffContract (0 ms total)
+
+[----------] 6 tests from SelBackfillContract
+[ RUN      ] SelBackfillContract.CommandTokenDotlessFrozenSyntax_PSEL3
+[       OK ] SelBackfillContract.CommandTokenDotlessFrozenSyntax_PSEL3 (0 ms)
+[ RUN      ] SelBackfillContract.HandlerDerivesProjectCommandHandler
+[       OK ] SelBackfillContract.HandlerDerivesProjectCommandHandler (0 ms)
+[ RUN      ] SelBackfillContract.T09BatchCodeEntriesTailAppendedAndSyntaxValid
+[       OK ] SelBackfillContract.T09BatchCodeEntriesTailAppendedAndSyntaxValid (0 ms)
+[ RUN      ] SelBackfillContract.RecordObjectCodecDeterminismAndStrictness
+[       OK ] SelBackfillContract.RecordObjectCodecDeterminismAndStrictness (0 ms)
+[ RUN      ] SelBackfillContract.RecalcNoticeFourDomainsAndNoPriorConclusion_AT30
+[       OK ] SelBackfillContract.RecalcNoticeFourDomainsAndNoPriorConclusion_AT30 (0 ms)
+[ RUN      ] SelBackfillContract.RecordKeepsRotorFieldIndependent_SEL10
+[       OK ] SelBackfillContract.RecordKeepsRotorFieldIndependent_SEL10 (0 ms)
+[----------] 6 tests from SelBackfillContract (0 ms total)
+
+[----------] 4 tests from SelGoldenDatasetContract
+[ RUN      ] SelGoldenDatasetContract.ManifestsRegistered_WP19T11_ACC2
+[       OK ] SelGoldenDatasetContract.ManifestsRegistered_WP19T11_ACC2 (4 ms)
+[ RUN      ] SelGoldenDatasetContract.IntegrityCoversAllFiles_WP19T11_ACC2
+[       OK ] SelGoldenDatasetContract.IntegrityCoversAllFiles_WP19T11_ACC2 (2 ms)
+[ RUN      ] SelGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP19T11_ACC2
+[       OK ] SelGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP19T11_ACC2 (0 ms)
+[ RUN      ] SelGoldenDatasetContract.DataRootLayout_WP19T11_ACC2
+[       OK ] SelGoldenDatasetContract.DataRootLayout_WP19T11_ACC2 (0 ms)
+[----------] 4 tests from SelGoldenDatasetContract (6 ms total)
+
+[----------] Global test environment tear-down
+[==========] 55 tests from 9 test suites ran. (51 ms total)
+[  PASSED  ] 55 tests.

@@ -1,0 +1,84 @@
+[==========] Running 26 tests from 9 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from DynBuildGraph
+[ RUN      ] DynBuildGraph.UnitEdgesFiveRegisteredAndClosed_WP17T02_ACC1
+[       OK ] DynBuildGraph.UnitEdgesFiveRegisteredAndClosed_WP17T02_ACC1 (0 ms)
+[ RUN      ] DynBuildGraph.PluginTargetPresent_WP17T02_ACC1
+[       OK ] DynBuildGraph.PluginTargetPresent_WP17T02_ACC1 (0 ms)
+[ RUN      ] DynBuildGraph.FiveRegisteredEdgesPresent_WP17T02_ACC1
+[       OK ] DynBuildGraph.FiveRegisteredEdgesPresent_WP17T02_ACC1 (0 ms)
+[ RUN      ] DynBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP17T02_ACC2
+[       OK ] DynBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP17T02_ACC2 (0 ms)
+[ RUN      ] DynBuildGraph.NoTestkitEdgeOnProductTarget_WP17T02_ACC1
+[       OK ] DynBuildGraph.NoTestkitEdgeOnProductTarget_WP17T02_ACC1 (0 ms)
+[ RUN      ] DynBuildGraph.IncludeFaceMatchesRegisteredEdges_WP17T02_ACC2
+[       OK ] DynBuildGraph.IncludeFaceMatchesRegisteredEdges_WP17T02_ACC2 (6 ms)
+[----------] 6 tests from DynBuildGraph (10 ms total)
+
+[----------] 5 tests from DynPluginAssembly
+[ RUN      ] DynPluginAssembly.DescriptorMatchesUiRegistrations_WP17T02_ACC1
+[       OK ] DynPluginAssembly.DescriptorMatchesUiRegistrations_WP17T02_ACC1 (0 ms)
+[ RUN      ] DynPluginAssembly.PluginFaceHasZeroComputationSymbols_WP17T02_ACC2
+[       OK ] DynPluginAssembly.PluginFaceHasZeroComputationSymbols_WP17T02_ACC2 (3 ms)
+[ RUN      ] DynPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP17T02_ACC2
+[       OK ] DynPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP17T02_ACC2 (2 ms)
+[ RUN      ] DynPluginAssembly.DescriptorCarriesRegistrationFace_WP17T09_ACC1
+[       OK ] DynPluginAssembly.DescriptorCarriesRegistrationFace_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPluginAssembly.PluginIdAlignsHostWhitelistVocabulary_WP17T09_ACC1
+[       OK ] DynPluginAssembly.PluginIdAlignsHostWhitelistVocabulary_WP17T09_ACC1 (0 ms)
+[----------] 5 tests from DynPluginAssembly (5 ms total)
+
+[----------] 2 tests from DynRneaBoundary
+[ RUN      ] DynRneaBoundary.ProductFaceZeroDrivetrainMappingSymbols
+[       OK ] DynRneaBoundary.ProductFaceZeroDrivetrainMappingSymbols (6 ms)
+[ RUN      ] DynRneaBoundary.ProductFaceIncludeAllowlist
+[       OK ] DynRneaBoundary.ProductFaceIncludeAllowlist (5 ms)
+[----------] 2 tests from DynRneaBoundary (12 ms total)
+
+[----------] 2 tests from DynForwardBoundary
+[ RUN      ] DynForwardBoundary.ForwardDynamicsFaceZeroRwsimEngineSymbols_WP17T05
+[       OK ] DynForwardBoundary.ForwardDynamicsFaceZeroRwsimEngineSymbols_WP17T05 (0 ms)
+[ RUN      ] DynForwardBoundary.ForwardDynamicsPublicContractShape_WP17T05
+[       OK ] DynForwardBoundary.ForwardDynamicsPublicContractShape_WP17T05 (0 ms)
+[----------] 2 tests from DynForwardBoundary (0 ms total)
+
+[----------] 2 tests from DynEvidenceBoundary
+[ RUN      ] DynEvidenceBoundary.DynProfileItemIdsFrozen_WP17T06
+[       OK ] DynEvidenceBoundary.DynProfileItemIdsFrozen_WP17T06 (0 ms)
+[ RUN      ] DynEvidenceBoundary.TrustQualifierTokensFrozenAndLayered_WP17T06
+[       OK ] DynEvidenceBoundary.TrustQualifierTokensFrozenAndLayered_WP17T06 (0 ms)
+[----------] 2 tests from DynEvidenceBoundary (0 ms total)
+
+[----------] 2 tests from DynEnvelopeBoundary
+[ RUN      ] DynEnvelopeBoundary.MergeContractShapeAndMagicFrozen_WP17T07
+[       OK ] DynEnvelopeBoundary.MergeContractShapeAndMagicFrozen_WP17T07 (0 ms)
+[ RUN      ] DynEnvelopeBoundary.CoverageDenominatorAndIndependenceContract_WP17T07
+[       OK ] DynEnvelopeBoundary.CoverageDenominatorAndIndependenceContract_WP17T07 (0 ms)
+[----------] 2 tests from DynEnvelopeBoundary (0 ms total)
+
+[----------] 3 tests from DynCommandsBoundary
+[ RUN      ] DynCommandsBoundary.CommandVocabularyAndOutcomeDefaults
+[       OK ] DynCommandsBoundary.CommandVocabularyAndOutcomeDefaults (0 ms)
+[ RUN      ] DynCommandsBoundary.CommandFaceHasZeroComputationSymbols
+[       OK ] DynCommandsBoundary.CommandFaceHasZeroComputationSymbols (0 ms)
+[ RUN      ] DynCommandsBoundary.OutcomeMatchesZeroRevisionContractOnAccept
+[       OK ] DynCommandsBoundary.OutcomeMatchesZeroRevisionContractOnAccept (0 ms)
+[----------] 3 tests from DynCommandsBoundary (0 ms total)
+
+[----------] 2 tests from DynAt07
+[ RUN      ] DynAt07.FullCycleEnvelopeAndNoMissedMandatory_WP17T10_ACC1
+[       OK ] DynAt07.FullCycleEnvelopeAndNoMissedMandatory_WP17T10_ACC1 (2 ms)
+[ RUN      ] DynAt07.DataInsufficientDegradation_WP17T10_ACC1
+[       OK ] DynAt07.DataInsufficientDegradation_WP17T10_ACC1 (2 ms)
+[----------] 2 tests from DynAt07 (5 ms total)
+
+[----------] 2 tests from DynHandoffBoundary
+[ RUN      ] DynHandoffBoundary.UpstreamKeyFrozenToPeerCardRegistration_WP17T10_ACC3
+[       OK ] DynHandoffBoundary.UpstreamKeyFrozenToPeerCardRegistration_WP17T10_ACC3 (0 ms)
+[ RUN      ] DynHandoffBoundary.PayloadFieldFaceAlignmentRegistered_WP17T10_ACC3
+[       OK ] DynHandoffBoundary.PayloadFieldFaceAlignmentRegistered_WP17T10_ACC3 (0 ms)
+[----------] 2 tests from DynHandoffBoundary (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 26 tests from 9 test suites ran. (35 ms total)
+[  PASSED  ] 26 tests.
