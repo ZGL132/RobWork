@@ -390,7 +390,7 @@ add_executable(sdurws_ird_dynamics_test
                                      #   姿态同步全链联动——任务契约
                                      #   acceptance 1/2 执行证明面）；夹具
                                      #   复用 test/TwoLinkFixture.hpp
-    test/DynPluginPanelTest.cpp)     # WP-17-T09：界面链路模型层用例组
+    test/DynPluginPanelTest.cpp      # WP-17-T09：界面链路模型层用例组
                                      #   （DynPanelWorkflow/DynPanelCurves/
                                      #   DynPanelReplay/DynPanelCatalog/
                                      #   DynPanelText——L-D1~L-D6 六流＋装配
@@ -399,6 +399,19 @@ add_executable(sdurws_ird_dynamics_test
                                      #   envUnavailable 登记——GUI 手动验证
                                      #   通道归 sdurws_ird_dynamics_app
                                      #   harness〔§11.5〕）；夹具复用
+                                     #   test/TwoLinkFixture.hpp
+    test/DynGoldenDatasetTest.cpp)   # WP-17-T10：黄金数据集消费用例组
+                                     #   （DynGolden——manifest 登记面钉扎/
+                                     #   静态重力矩地面与倒挂〔AT-37 符号翻
+                                     #   转〕/完整任务循环〔AT-07：逐样本五
+                                     #   分项＋峰值窗＋时间加权 RMS 含驻留
+                                     #   ＋E⁺E⁻ 正负抵消＋零值近零样例〕/
+                                     #   三工况包络合并参考对照＋内容身份确
+                                     #   定性/条件 id 派生对账——数据集
+                                     #   testdata/golden/dyn-two-link-analytic
+                                     #   经 GoldenFixture 六步生命周期消费，
+                                     #   容差经 dyn-two-link 档案，期望值来
+                                     #   自拉格朗日独立参考实现）；夹具复用
                                      #   test/TwoLinkFixture.hpp
 
 target_compile_features(sdurws_ird_dynamics_test PRIVATE cxx_std_17)
@@ -514,7 +527,7 @@ add_executable(sdurws_ird_dynamics_contract_test
                                      #   coversAllMandatory 与 envelopeComplete
                                      #   互相独立——包络合并不替代必验工况覆盖
                                      #   规则的机器判读面〕）
-    contract_test/CommandsBoundaryContractTest.cpp)  # WP-17-T08：命令面单元边界
+    contract_test/CommandsBoundaryContractTest.cpp  # WP-17-T08：命令面单元边界
                                      #   契约（DynCommandsBoundary——§9.5 五命令
                                      #   token 词表与零修订会话契约四值编译期
                                      #   static_assert 钉扎〔跨版本命令契约＋
@@ -524,6 +537,30 @@ add_executable(sdurws_ird_dynamics_contract_test
                                      #   投影器消费符号〕＋受理结果与契约逐位
                                      #   恒等行为契约——acceptance 2"零修订"
                                      #   机器判读面）
+    contract_test/At07CoverageContractTest.cpp      # WP-17-T10：AT-07 三面契约
+                                     #   （DynAt07——完整循环包络×多工况不漏验
+                                     #   〔V-24 正面/V-25 漏验呈现/V-26 漂亮包
+                                     #   络≠覆盖/disabled Must 不进分母/
+                                     #   conditionCount 与覆盖分子两在场口径
+                                     #   钉扎——EVI-02〕＋数据不足降级〔黄金
+                                     #   degradationFace：frictionMissing＋
+                                     #   DYN-FRICTION-MISSING＋provenance 项
+                                     #   Invalid＋data-insufficient 限定语＋
+                                     #   干净链对照——DYN-06 不包装精确〕；
+                                     #   数据面＝dyn-two-link-analytic 黄金数
+                                     #   据集经 GoldenFixture 消费）；夹具复用
+                                     #   test/TwoLinkFixture.hpp
+    contract_test/HandoffBoundaryContractTest.cpp)  # WP-17-T10：关节侧交接面对账
+                                     #   契约（DynHandoffBoundary——P-DYN-2/
+                                     #   P-DYN-5 载荷对齐钉扎：对端卡〔
+                                     #   drivetrain §12.1/P-DT-6、selection
+                                     #   §9.1〕登记消费键 dyn.joint-series 与
+                                     #   本卡 §8.4 产出身份 token 词面冻结
+                                     #   〔T08 View3D 契约同款对账模式〕＋
+                                     #   §4.4 JointSideSeriesPack 字段面与对
+                                     #   端 §12.1 提议 DTO 六行字段级对应表
+                                     #   〔载荷对齐登记——DTO 物化随交接任务，
+                                     #   NFR-MNT-04 零预建〕）
 
 target_compile_features(sdurws_ird_dynamics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_dynamics_contract_test PROPERTIES

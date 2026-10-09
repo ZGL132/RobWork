@@ -1,0 +1,1272 @@
+{
+  "schema": "dyn-two-link-expected/1",
+  "note": "二连杆解析算例黄金期望值——由 generate/make_dyn_two_link_golden.mjs 独立参考实现产出（平面二连杆拉格朗日封闭式 M/C/G 标量直算＋§7.2/§7.3/§7.5 统计口径＋§7.4 包络合并参考，与产品 RNEA/统计 C++ 实现零共享）。锚点（手算第三路——静力矩平衡 r×F）登记于 inputs 各算例 anchors，由消费测试以 EXPECT_NEAR 独立钉扎量级（防参考实现与产品实现两路同错）。",
+  "cases": [
+    {
+      "id": "static-ground",
+      "samples": [
+        {
+          "t": 0,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 0,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -10.300500000000001,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -10.290500000000002,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": 0,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -1.4715,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -1.4615,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            }
+          ]
+        },
+        {
+          "t": 0.3,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 0.5235987755982988,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -8.38188829001281,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -8.37188829001281,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": 0.5235987755982988,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -0.7357500000000001,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -0.7257500000000001,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            }
+          ]
+        },
+        {
+          "t": 0.6,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 1.5707963267948966,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -6.307237177308655e-16,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 0.009999999999999369,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": 0,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -9.010338824726652e-17,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 0.00999999999999991,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            }
+          ]
+        },
+        {
+          "t": 0.8999999999999999,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 3.141592653589793,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": 9.564750000000002,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 9.574750000000002,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": -1.0471975511965976,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": 0.7357500000000003,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 0.7457500000000004,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "plannedSampleCount": 4,
+        "cycleDurationS": 0.8999999999999999,
+        "peaks": [
+          {
+            "jointIndex": 0,
+            "token": 0,
+            "value": 9.574750000000002,
+            "tPeakS": 0.8999999999999999,
+            "segmentIndex": 0,
+            "windowStartS": 0.8999999999999999,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 0,
+            "token": 1,
+            "value": 10.290500000000002,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 0,
+            "token": 2,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 0,
+            "token": 3,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 0,
+            "token": 4,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 0,
+            "token": 5,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 1,
+            "token": 0,
+            "value": 0.7457500000000004,
+            "tPeakS": 0.8999999999999999,
+            "segmentIndex": 0,
+            "windowStartS": 0.8999999999999999,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 1,
+            "token": 1,
+            "value": 1.4615,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 1,
+            "token": 2,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 1,
+            "token": 3,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 1,
+            "token": 4,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          },
+          {
+            "jointIndex": 1,
+            "token": 5,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+          }
+        ],
+        "rmsTau": [
+          {
+            "jointIndex": 0,
+            "rmsTau": 7.502748995017396
+          },
+          {
+            "jointIndex": 1,
+            "rmsTau": 0.7901214503163423
+          }
+        ],
+        "powerEnergy": {
+          "joints": [
+            {
+              "jointIndex": 0,
+              "positiveEnergyJ": 0,
+              "negativeEnergyJ": 0,
+              "netEnergyJ": 0,
+              "meanPowerW": 0,
+              "powerPeak": {
+                "value": 0,
+                "tPeakS": 0,
+                "segmentIndex": 0,
+                "windowStartS": 0,
+                "windowEndS": 0.8999999999999999
+              }
+            },
+            {
+              "jointIndex": 1,
+              "positiveEnergyJ": 0,
+              "negativeEnergyJ": 0,
+              "netEnergyJ": 0,
+              "meanPowerW": 0,
+              "powerPeak": {
+                "value": 0,
+                "tPeakS": 0,
+                "segmentIndex": 0,
+                "windowStartS": 0,
+                "windowEndS": 0.8999999999999999
+              }
+            }
+          ],
+          "includesDwell": true,
+          "timeParamAvailable": true
+        }
+      },
+      "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+    },
+    {
+      "id": "static-inverted",
+      "samples": [
+        {
+          "t": 0,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 0,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": 10.300500000000001,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 10.310500000000001,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": 0,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": 1.4715,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 1.4815,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            }
+          ]
+        },
+        {
+          "t": 0.3,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 0.5235987755982988,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": 8.38188829001281,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 8.39188829001281,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": 0.5235987755982988,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": 0.7357500000000001,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 0.7457500000000001,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            }
+          ]
+        },
+        {
+          "t": 0.6,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 1.5707963267948966,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": 6.307237177308655e-16,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 0.010000000000000632,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": 0,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": 9.010338824726652e-17,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": 0.01000000000000009,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            }
+          ]
+        },
+        {
+          "t": 0.8999999999999999,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 3.141592653589793,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -9.564750000000002,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -9.554750000000002,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": -1.0471975511965976,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -0.7357500000000003,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -0.7257500000000003,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "plannedSampleCount": 4,
+        "cycleDurationS": 0.8999999999999999,
+        "peaks": [
+          {
+            "jointIndex": 0,
+            "token": 0,
+            "value": 10.310500000000001,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 0,
+            "token": 1,
+            "value": 9.554750000000002,
+            "tPeakS": 0.8999999999999999,
+            "segmentIndex": 0,
+            "windowStartS": 0.8999999999999999,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 0,
+            "token": 2,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 0,
+            "token": 3,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 0,
+            "token": 4,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 0,
+            "token": 5,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 1,
+            "token": 0,
+            "value": 1.4815,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 1,
+            "token": 1,
+            "value": 0.7257500000000003,
+            "tPeakS": 0.8999999999999999,
+            "segmentIndex": 0,
+            "windowStartS": 0.8999999999999999,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 1,
+            "token": 2,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 1,
+            "token": 3,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 1,
+            "token": 4,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          },
+          {
+            "jointIndex": 1,
+            "token": 5,
+            "value": 0,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0.8999999999999999,
+            "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+          }
+        ],
+        "rmsTau": [
+          {
+            "jointIndex": 0,
+            "rmsTau": 7.510519688594662
+          },
+          {
+            "jointIndex": 1,
+            "rmsTau": 0.7993790754391813
+          }
+        ],
+        "powerEnergy": {
+          "joints": [
+            {
+              "jointIndex": 0,
+              "positiveEnergyJ": 0,
+              "negativeEnergyJ": 0,
+              "netEnergyJ": 0,
+              "meanPowerW": 0,
+              "powerPeak": {
+                "value": 0,
+                "tPeakS": 0,
+                "segmentIndex": 0,
+                "windowStartS": 0,
+                "windowEndS": 0.8999999999999999
+              }
+            },
+            {
+              "jointIndex": 1,
+              "positiveEnergyJ": 0,
+              "negativeEnergyJ": 0,
+              "netEnergyJ": 0,
+              "meanPowerW": 0,
+              "powerPeak": {
+                "value": 0,
+                "tPeakS": 0,
+                "segmentIndex": 0,
+                "windowStartS": 0,
+                "windowEndS": 0.8999999999999999
+              }
+            }
+          ],
+          "includesDwell": true,
+          "timeParamAvailable": true
+        }
+      },
+      "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+    },
+    {
+      "id": "motion-dwell",
+      "samples": [
+        {
+          "t": 0,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 0,
+              "qd": 4.934802200544679,
+              "qdd": 0,
+              "tauGravity": -10.22482066106065,
+              "tauInertia": -0.07839846379955023,
+              "tauCoriolisCentrifugal": -0.2451968353459876,
+              "tauFriction": 0.35674011002723394,
+              "tauExternal": 0,
+              "tauTotal": -10.191675850178953,
+              "mechanicalPower": -50.29390441270116,
+              "energyIntegralJ": 0
+            },
+            {
+              "jointIndex": 1,
+              "q": 0.3221088436188455,
+              "qd": 0.9541348227109762,
+              "qdd": -0.7947717151525904,
+              "tauGravity": -1.3958206610606503,
+              "tauInertia": -0.021856222166696235,
+              "tauCoriolisCentrifugal": 0.5781856295987212,
+              "tauFriction": 0.15770674113554883,
+              "tauExternal": 0,
+              "tauTotal": -0.6817845124930765,
+              "mechanicalPower": -0.6505143449546709,
+              "energyIntegralJ": 0
+            }
+          ]
+        },
+        {
+          "t": 0.4,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 1.8465818304904567,
+              "qd": 3.9923388441195327,
+              "qdd": -4.556258040295064,
+              "tauGravity": 3.5406547607964463,
+              "tauInertia": -2.4026434858732144,
+              "tauCoriolisCentrifugal": -0.142042040802008,
+              "tauFriction": 0.3096169422059767,
+              "tauExternal": 0,
+              "tauTotal": 1.3055861763272005,
+              "mechanicalPower": 5.212342406096576,
+              "energyIntegralJ": -9.016312401320917
+            },
+            {
+              "jointIndex": 1,
+              "q": 0.6067255566908205,
+              "qd": 0.3963213657021243,
+              "qdd": -1.8713170727784845,
+              "tauGravity": 1.1364929718385652,
+              "tauInertia": -0.45748740795973397,
+              "tauCoriolisCentrifugal": 0.6815981682603727,
+              "tauFriction": 0.12981606828510622,
+              "tauExternal": 0,
+              "tauTotal": 1.49041980042431,
+              "mechanicalPower": 0.5906852107736501,
+              "energyIntegralJ": -0.011965826836204153
+            }
+          ]
+        },
+        {
+          "t": 0.8,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 2.9878321647415556,
+              "qd": 1.5249377438471934,
+              "qdd": -7.3721803707124005,
+              "tauGravity": 10.048472286509817,
+              "tauInertia": -3.7907582533886433,
+              "tauCoriolisCentrifugal": 0.045732687785850705,
+              "tauFriction": 0.18624688719235968,
+              "tauExternal": 0,
+              "tauTotal": 6.489693608099383,
+              "mechanicalPower": 9.896378728994625,
+              "energyIntegralJ": -5.994568174302676
+            },
+            {
+              "jointIndex": 1,
+              "q": 0.6058996572381341,
+              "qd": -0.404790948470043,
+              "qdd": -1.9349920861854757,
+              "tauGravity": 1.323635701968786,
+              "tauInertia": -0.7104366741569028,
+              "tauCoriolisCentrifugal": 0.09932546439025579,
+              "tauFriction": -0.11023954742350216,
+              "tauExternal": 0,
+              "tauTotal": 0.6022849447786369,
+              "mechanicalPower": -0.2437994940461719,
+              "energyIntegralJ": 0.057411316509291495
+            }
+          ]
+        },
+        {
+          "t": 1,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 3.141592653589793,
+              "qd": 3.021694859661178e-16,
+              "qdd": -7.751569170074954,
+              "tauGravity": 10.128399030272307,
+              "tauInertia": -4.019079841007684,
+              "tauCoriolisCentrifugal": -0.02010982086088904,
+              "tauFriction": 0.11000000000000001,
+              "tauExternal": 0,
+              "tauTotal": 6.199209368403735,
+              "mechanicalPower": 1.8732119082468982e-15,
+              "energyIntegralJ": -5.004930301403214
+            },
+            {
+              "jointIndex": 1,
+              "q": 0.48848711082022633,
+              "qd": -0.7558795536560425,
+              "qdd": -1.5324278940647553,
+              "tauGravity": 1.299399030272305,
+              "tauInertia": -0.7686830824995246,
+              "tauCoriolisCentrifugal": 3.21369174764207e-33,
+              "tauFriction": -0.12779397768280212,
+              "tauExternal": 0,
+              "tauTotal": 0.40292197008997843,
+              "mechanicalPower": -0.30456047890982624,
+              "energyIntegralJ": 0.002575319213691696
+            }
+          ]
+        },
+        {
+          "t": 1.2,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 2.987832164741556,
+              "qd": -1.5249377438471927,
+              "qdd": -7.372180370712401,
+              "tauGravity": 10.178293704390752,
+              "tauInertia": -3.852142904606494,
+              "tauCoriolisCentrifugal": -0.09315206637154995,
+              "tauFriction": -0.16624688719235964,
+              "tauExternal": 0,
+              "tauTotal": 6.066751846220349,
+              "mechanicalPower": -9.25141887285605,
+              "energyIntegralJ": -5.930072188688819
+            },
+            {
+              "jointIndex": 1,
+              "q": 0.31051951551673196,
+              "qd": -1.0029629545037841,
+              "qdd": -0.9091391077276927,
+              "tauGravity": 1.453457119849718,
+              "tauInertia": -0.7542067011480591,
+              "tauCoriolisCentrifugal": 0.05329083642679719,
+              "tauFriction": -0.14014814772518921,
+              "tauExternal": 0,
+              "tauTotal": 0.6123931074032668,
+              "mechanicalPower": -0.6142076003189336,
+              "energyIntegralJ": -0.08930148870918427
+            }
+          ]
+        },
+        {
+          "t": 1.6,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 1.846581830490457,
+              "qd": -3.992338844119532,
+              "qdd": -4.556258040295065,
+              "tauGravity": 2.626689752475568,
+              "tauInertia": -2.2937224413261905,
+              "tauCoriolisCentrifugal": 0.08979173924947756,
+              "tauFriction": -0.2896169422059766,
+              "tauExternal": 0,
+              "tauTotal": 0.13314210819287836,
+              "mechanicalPower": -0.5315484103263937,
+              "energyIntegralJ": -7.886665645325309
+            },
+            {
+              "jointIndex": 1,
+              "q": -0.12397783736150936,
+              "qd": -1.0693114555315333,
+              "qdd": 0.5778346732333551,
+              "tauGravity": 0.22252796351768317,
+              "tauInertia": -0.4485031583593152,
+              "tauCoriolisCentrifugal": -0.1478246922746434,
+              "tauFriction": -0.14346557277657668,
+              "tauExternal": 0,
+              "tauTotal": -0.5172654598928521,
+              "mechanicalPower": 0.5531178818142136,
+              "energyIntegralJ": -0.10151943241012827
+            }
+          ]
+        },
+        {
+          "t": 2,
+          "segmentIndex": 0,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 3.8473413874435795e-16,
+              "qd": -4.934802200544679,
+              "qdd": -9.492934372501597e-16,
+              "tauGravity": -10.139534439733856,
+              "tauInertia": 0.15346833141363653,
+              "tauCoriolisCentrifugal": 0.21452108716072887,
+              "tauFriction": -0.3367401100272339,
+              "tauExternal": 0,
+              "tauTotal": -10.108285131186724,
+              "mechanicalPower": 49.8823877091133,
+              "energyIntegralJ": 1.9835022144320718
+            },
+            {
+              "jointIndex": 1,
+              "q": -0.47210884361884553,
+              "qd": -0.6007056491821244,
+              "qdd": 1.6275195864945051,
+              "tauGravity": -1.3105344397338525,
+              "tauInertia": 0.044756788628598804,
+              "tauCoriolisCentrifugal": -0.830592930167872,
+              "tauFriction": -0.12003528245910623,
+              "tauExternal": 0,
+              "tauTotal": -2.216405863732232,
+              "mechanicalPower": 1.3314075232243376,
+              "energyIntegralJ": 0.27538564859758186
+            }
+          ]
+        },
+        {
+          "t": 2.4,
+          "segmentIndex": 1,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 3.8473413874435795e-16,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -10.139534439733856,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -10.129534439733856,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 11.95997975625473
+            },
+            {
+              "jointIndex": 1,
+              "q": -0.47210884361884553,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -1.3105344397338525,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -1.3005344397338525,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0.5416671532424493
+            }
+          ]
+        },
+        {
+          "t": 2.8,
+          "segmentIndex": 1,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 3.8473413874435795e-16,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -10.139534439733856,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -10.129534439733856,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 11.95997975625473
+            },
+            {
+              "jointIndex": 1,
+              "q": -0.47210884361884553,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -1.3105344397338525,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -1.3005344397338525,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0.5416671532424493
+            }
+          ]
+        },
+        {
+          "t": 3.2,
+          "segmentIndex": 1,
+          "joints": [
+            {
+              "jointIndex": 0,
+              "q": 3.8473413874435795e-16,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -10.139534439733856,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -10.129534439733856,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 11.95997975625473
+            },
+            {
+              "jointIndex": 1,
+              "q": -0.47210884361884553,
+              "qd": 0,
+              "qdd": 0,
+              "tauGravity": -1.3105344397338525,
+              "tauInertia": 0,
+              "tauCoriolisCentrifugal": 0,
+              "tauFriction": 0.01,
+              "tauExternal": 0,
+              "tauTotal": -1.3005344397338525,
+              "mechanicalPower": 0,
+              "energyIntegralJ": 0.5416671532424493
+            }
+          ]
+        }
+      ],
+      "stats": {
+        "plannedSampleCount": 10,
+        "cycleDurationS": 3.2,
+        "peaks": [
+          {
+            "jointIndex": 0,
+            "token": 0,
+            "value": 6.489693608099383,
+            "tPeakS": 0.8,
+            "segmentIndex": 0,
+            "windowStartS": 0.8,
+            "windowEndS": 0.8,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 0,
+            "token": 1,
+            "value": 10.191675850178953,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 0,
+            "token": 2,
+            "value": 4.934802200544679,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 0,
+            "token": 3,
+            "value": 7.751569170074954,
+            "tPeakS": 1,
+            "segmentIndex": 0,
+            "windowStartS": 1,
+            "windowEndS": 1,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 0,
+            "token": 4,
+            "value": 49.8823877091133,
+            "tPeakS": 2,
+            "segmentIndex": 0,
+            "windowStartS": 2,
+            "windowEndS": 2,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 0,
+            "token": 5,
+            "value": 50.29390441270116,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 1,
+            "token": 0,
+            "value": 1.49041980042431,
+            "tPeakS": 0.4,
+            "segmentIndex": 0,
+            "windowStartS": 0.4,
+            "windowEndS": 0.4,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 1,
+            "token": 1,
+            "value": 2.216405863732232,
+            "tPeakS": 2,
+            "segmentIndex": 0,
+            "windowStartS": 2,
+            "windowEndS": 2,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 1,
+            "token": 2,
+            "value": 1.0693114555315333,
+            "tPeakS": 1.6,
+            "segmentIndex": 0,
+            "windowStartS": 1.6,
+            "windowEndS": 1.6,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 1,
+            "token": 3,
+            "value": 1.9349920861854757,
+            "tPeakS": 0.8,
+            "segmentIndex": 0,
+            "windowStartS": 0.8,
+            "windowEndS": 0.8,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 1,
+            "token": 4,
+            "value": 1.3314075232243376,
+            "tPeakS": 2,
+            "segmentIndex": 0,
+            "windowStartS": 2,
+            "windowEndS": 2,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          },
+          {
+            "jointIndex": 1,
+            "token": 5,
+            "value": 0.6505143449546709,
+            "tPeakS": 0,
+            "segmentIndex": 0,
+            "windowStartS": 0,
+            "windowEndS": 0,
+            "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+          }
+        ],
+        "rmsTau": [
+          {
+            "jointIndex": 0,
+            "rmsTau": 7.8323033635126125
+          },
+          {
+            "jointIndex": 1,
+            "rmsTau": 1.2498380762558339
+          }
+        ],
+        "powerEnergy": {
+          "joints": [
+            {
+              "jointIndex": 0,
+              "positiveEnergyJ": 25.006805664782334,
+              "negativeEnergyJ": -13.046825908527607,
+              "netEnergyJ": 11.959979756254727,
+              "meanPowerW": 3.737493673829602,
+              "powerPeak": {
+                "value": 50.29390441270116,
+                "tPeakS": 0,
+                "segmentIndex": 0,
+                "windowStartS": 0,
+                "windowEndS": 0
+              }
+            },
+            {
+              "jointIndex": 1,
+              "positiveEnergyJ": 0.9900842463248805,
+              "negativeEnergyJ": -0.44841709308243105,
+              "netEnergyJ": 0.5416671532424494,
+              "meanPowerW": 0.16927098538826543,
+              "powerPeak": {
+                "value": 1.3314075232243376,
+                "tPeakS": 2,
+                "segmentIndex": 0,
+                "windowStartS": 2,
+                "windowEndS": 2
+              }
+            }
+          ],
+          "includesDwell": true,
+          "timeParamAvailable": true
+        }
+      },
+      "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+    }
+  ],
+  "envelopeMerge": {
+    "conditionCount": 3,
+    "coversAllMandatory": true,
+    "joints": [
+      {
+        "jointIndex": 0,
+        "tauMaxPositive": {
+          "jointIndex": 0,
+          "token": 0,
+          "value": 10.310500000000001,
+          "tPeakS": 0,
+          "segmentIndex": 0,
+          "windowStartS": 0,
+          "windowEndS": 0,
+          "conditionIdHex": "11537b4b8d6ce0fa6e519dd99e62af3a"
+        },
+        "tauMaxNegative": {
+          "jointIndex": 0,
+          "token": 1,
+          "value": 10.290500000000002,
+          "tPeakS": 0,
+          "segmentIndex": 0,
+          "windowStartS": 0,
+          "windowEndS": 0,
+          "conditionIdHex": "024fb5a58009c2251551b22a4446ceef"
+        },
+        "velocityPeak": {
+          "jointIndex": 0,
+          "token": 2,
+          "value": 4.934802200544679,
+          "tPeakS": 0,
+          "segmentIndex": 0,
+          "windowStartS": 0,
+          "windowEndS": 0,
+          "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+        },
+        "accelerationPeak": {
+          "jointIndex": 0,
+          "token": 3,
+          "value": 7.751569170074954,
+          "tPeakS": 1,
+          "segmentIndex": 0,
+          "windowStartS": 1,
+          "windowEndS": 1,
+          "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+        },
+        "powerPeak": {
+          "jointIndex": 0,
+          "token": 5,
+          "value": 50.29390441270116,
+          "tPeakS": 0,
+          "segmentIndex": 0,
+          "windowStartS": 0,
+          "windowEndS": 0,
+          "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+        },
+        "rmsTau": 7.8323033635126125,
+        "contributingConditionHexes": [
+          "024fb5a58009c2251551b22a4446ceef",
+          "11537b4b8d6ce0fa6e519dd99e62af3a",
+          "889fb585d35a6624f5808cdc3d4fbcd8"
+        ],
+        "envelopeComplete": true
+      },
+      {
+        "jointIndex": 1,
+        "tauMaxPositive": {
+          "jointIndex": 1,
+          "token": 0,
+          "value": 1.49041980042431,
+          "tPeakS": 0.4,
+          "segmentIndex": 0,
+          "windowStartS": 0.4,
+          "windowEndS": 0.4,
+          "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+        },
+        "tauMaxNegative": {
+          "jointIndex": 1,
+          "token": 1,
+          "value": 2.216405863732232,
+          "tPeakS": 2,
+          "segmentIndex": 0,
+          "windowStartS": 2,
+          "windowEndS": 2,
+          "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+        },
+        "velocityPeak": {
+          "jointIndex": 1,
+          "token": 2,
+          "value": 1.0693114555315333,
+          "tPeakS": 1.6,
+          "segmentIndex": 0,
+          "windowStartS": 1.6,
+          "windowEndS": 1.6,
+          "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+        },
+        "accelerationPeak": {
+          "jointIndex": 1,
+          "token": 3,
+          "value": 1.9349920861854757,
+          "tPeakS": 0.8,
+          "segmentIndex": 0,
+          "windowStartS": 0.8,
+          "windowEndS": 0.8,
+          "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+        },
+        "powerPeak": {
+          "jointIndex": 1,
+          "token": 4,
+          "value": 1.3314075232243376,
+          "tPeakS": 2,
+          "segmentIndex": 0,
+          "windowStartS": 2,
+          "windowEndS": 2,
+          "conditionIdHex": "889fb585d35a6624f5808cdc3d4fbcd8"
+        },
+        "rmsTau": 1.2498380762558339,
+        "contributingConditionHexes": [
+          "024fb5a58009c2251551b22a4446ceef",
+          "11537b4b8d6ce0fa6e519dd99e62af3a",
+          "889fb585d35a6624f5808cdc3d4fbcd8"
+        ],
+        "envelopeComplete": true
+      }
+    ]
+  }
+}

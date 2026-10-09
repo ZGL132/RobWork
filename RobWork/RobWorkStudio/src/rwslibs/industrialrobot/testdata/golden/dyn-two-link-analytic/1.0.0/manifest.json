@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "dyn-two-link-analytic",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "dyn/two-link-analytic",
+  "coveredRequirements": [
+    "DYN-01",
+    "DYN-02",
+    "DYN-03",
+    "DYN-06",
+    "MDL-22",
+    "NFR-COR-01"
+  ],
+  "coveredAt": [
+    "AT-07",
+    "AT-37"
+  ],
+  "toleranceProfile": {
+    "id": "dyn-two-link",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/dyn-two-link-inputs.json"
+  ],
+  "expected": [
+    "expected/dyn-two-link-expected.json"
+  ],
+  "parameters": {
+    "contract": "动力学二连杆解析算例黄金数据（DYN-01/02/03——WP-17-T10 主数据载体；AT-07 完整任务循环包络/数据不足降级/多工况不漏验契约测试与黄金对照的公共数据源）",
+    "entryFaces": {
+      "staticGround": "expected/cases[static-ground]——静态重力矩（地面安装；q̇=q̈=0 逐姿态解析 τ_gravity，零速摩擦＝bias——sgn₀(0)=0 黄金面；含 q=(π/2,0) 近零重力矩样例与惯性/科氏/功率/能量精确零样例）",
+      "staticInverted": "expected/cases[static-inverted]——倒挂静态重力矩（AT-37 动力侧——同一冻结链仅安装姿态编译差异，g_base=(0,0,+9.81)，τ 逐样本反号量值相等）",
+      "motionDwell": "expected/cases[motion-dwell]——完整任务循环（非均匀采样运动段＋驻留段：逐样本五分项＋功率＋能量积分、逐关节六 token 峰值含持续时间窗与所在段、时间加权 RMS 含驻留、E⁺/E⁻ 正负功分项）",
+      "envelopeMerge": "expected/envelopeMerge——三工况包络合并参考（§7.4/T07 登记口径：conditionId 字典序处理＋严格大于替换＋幅值 powerPeak＋RMS 跨工况 max＋来源工况集）；包络侧 coversAllMandatory 分母口径由消费测试以快照冻结 RequiredCaseSet 显式驱动（三必验全在→true；漏一→false）",
+      "degradationFace": "inputs/degradationFace——数据不足降级对照面（摩擦三元组全缺→frictionMissing＋DYN-FRICTION-MISSING＋DYN-06 证据不包装精确；同链唯一差异面）",
+      "anchors": "inputs/cases[*].anchors——手算锚点（第三路：静力矩平衡 r×F=τ=-mg·x_com，不依赖拉格朗日 M/C/G 公式）以 EXPECT_NEAR 独立钉扎量级，防参考实现与产品实现两路同错",
+      "energyNote": "能量分项单位 J（core 单位表无 J token——P-DYN-9）：档案通道不承载，消费测试以独立梯形积分重算＋恒等式断言（E_net=E⁺+E⁻、逐样本 energyIntegralJ 末值=E_net）复核 expected 能量值"
+    },
+    "signConvention": "关节轴沿基座系 +Y、平面 XZ 机构；正 q 使臂尖沿 −Z；重力唯一入口＝基座系投影 gz（地面 −9.81、倒挂 +9.81——R_x(π)ᵀ·g_world 编译投影，D-DYN-3 零二次旋转）"
+  },
+  "units": {
+    "time": "s",
+    "angle": "rad",
+    "velocity": "rad/s",
+    "acceleration": "rad/s^2",
+    "torque": "N*m",
+    "power": "W",
+    "inertia": "kg*m^2",
+    "mass": "kg",
+    "length": "m",
+    "gravity": "m/s^2"
+  },
+  "frames": {
+    "base": "robot-base（平面 XZ、关节轴 +Y——静态重力矩绕 +Y 非零，适合解析对照）",
+    "world": "installation（重力世界系恒 (0,0,−9.81)——安装姿态经 T_world_base 编译投影，MDL-22 单一变换）",
+    "tcp": "不适用（本数据集无工具/负载——纯两连杆链；工具负载合成面由 T03 单元用例承载）"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "逐样本五分项广义力（拉格朗日封闭式 M(q)·q̈ / 科氏-离心 h 项 / G(q)=∂V/∂q）/机械功率/能量积分状态、逐关节六 token 峰值（值/发生时间/所在段/位等值持续时间窗）、时间加权 RMS（梯形含驻留）、E⁺/E⁻/E_net/meanPower/幅值功率峰、三工况包络合并参考（§7.4/T07 登记口径）",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_dyn_two_link_golden.mjs——平面二连杆拉格朗日解析力学封闭式标量直算）推导，与产品实现（dynamics/src/InverseDynamics.cpp 的 RNEA 递归牛顿—欧拉＋src/Envelope.cpp 统计面）零共享代码——独立性由推导路线层面保证（拉格朗日 vs 牛顿—欧拉两条路线各自对照单元卡冻结口径；另有 inputs 内手算锚点〔静力矩平衡 r×F 第三路〕双路防同错）"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "dyn-two-link-analytic-closed-form",
+    "solverConfig": {},
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-09T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/dyn-two-link-expected.json#cases[motion-dwell].samples[7..9]（零值——驻留行 q̇=q̈=0：机械功率/惯性/科氏分项精确 0；摩擦＝bias——库仑项 sgn₀(0)=0 零贡献）",
+      "expected/dyn-two-link-expected.json#cases[static-ground].samples[0]（零值——静态工况 tauInertia/tauCoriolisCentrifugal/mechanicalPower/energyIntegralJ 精确 0；tauFriction＝bias）",
+      "expected/dyn-two-link-expected.json#cases[motion-dwell].samples[3].joints[0].qd（近零——q̇₁=(π²/2)·cos(π/2)≈3.02e-16 rad/s 噪声级速度，机械功率≈1.84e-15 W 近零）",
+      "expected/dyn-two-link-expected.json#cases[static-ground].samples[2].joints[*].tauGravity（近零——q=(π/2,0) 臂竖直悬挂，重力矩噪声级）",
+      "expected/dyn-two-link-expected.json#cases[motion-dwell].samples[6].joints[0].qd（近零——段边界 q̇₁ 与 t=0 精确镜像等值，|q̇| 峰并列取时间轴首个）",
+      "expected/dyn-two-link-expected.json#cases[motion-dwell].stats.powerEnergy.joints[0]（正负抵消——E⁺=+25.0 J>0 与 E⁻=−13.0 J<0 并存，E_net=E⁺+E⁻=+12.0 J；τ⁺/τ⁻ 双向幅值并存）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/dyn-two-link-inputs.json",
+      "sha256": "23e9c42ef0554db877bd4444167688c12fe9da80e976b4a059cab9456b816694",
+      "sizeBytes": 9051
+    },
+    {
+      "path": "expected/dyn-two-link-expected.json",
+      "sha256": "b4ff5cc668816075ba41b988098b3a53c5b3d8a4e23f15008834cbd3eb0bbd99",
+      "sizeBytes": 39489
+    },
+    {
+      "path": "generate/make_dyn_two_link_golden.mjs",
+      "sha256": "e49d9e85fc41f568673aa1d2c9885dd21555646d169faa903b78acdd3b5f4cef",
+      "sizeBytes": 14649
+    }
+  ],
+  "generator": {
+    "script": "generate/make_dyn_two_link_golden.mjs",
+    "invocation": "node generate/make_dyn_two_link_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-09",
+      "change": "首版：动力学二连杆解析算例黄金数据（静态重力矩地面/倒挂〔AT-37〕/完整任务循环运动＋驻留〔AT-07〕三算例＋包络合并参考＋数据不足降级对照面；零值/近零/正负抵消样例齐备；手算锚点第三路）——WP-17-T10 交付物（testdata/golden/dyn-* 按 DatasetManifest 登记）",
+      "reReviewedBy": "WP-17-T10 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}
