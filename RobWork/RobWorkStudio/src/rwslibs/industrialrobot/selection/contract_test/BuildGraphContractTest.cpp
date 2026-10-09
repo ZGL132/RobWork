@@ -134,11 +134,15 @@ std::set<std::string> collectIncludedUnits()
     return units;
 }
 
-/// 两条登记边单元（卡 §3.2 边表编译链接列——与白名单 "selection->…"
-/// 两行同源；两边属 ARCH §3.5"各业务域单元→L2/L3 公共接口"许可方向的
-/// 实例化，dependency-graph.json 随本任务同步刷新）。
+/// 登记边单元（卡 §3.2 边表编译链接列——与白名单 "selection->…" 各行
+/// 同源；core/evidence 两边属 ARCH §3.5"各业务域单元→L2/L3 公共接口"
+/// 许可方向的实例化，dependency-graph.json 随本任务同步刷新）。
+/// ASM-PLUG 收口批增登第三边 "ui"（P-SEL-10 消账——插件装配面边，
+/// units/selection.md §19.2/§19.5 收口义务；用例名保持 T02 批历史登记
+/// 值不回改，增量以本注登记——dynamics WP-17-T09 批 allowed 集增登的
+/// 同款处理）。
 constexpr const char* kEdgeUnits[] = {
-    "core", "evidence",
+    "core", "evidence", "ui",
 };
 
 /// 业务域单元清单（R-1 判定集合——whitelist IRD_BUSINESS_UNITS 及
@@ -149,13 +153,14 @@ constexpr const char* kBusinessUnits[] = {
     "dynamics", "optimization",
 };
 
-/// 表外平台单元（零编译链接边的全部平台/编排单元——卡 §3.2"运行时
-/// 注入/端口"列点名的 policy/io/project/diagnostics/ui/runtime/
-/// drivetrain 七单元〔SUB 面〕；其余平台单元同禁）。本表约束的是
-/// **链接边**（target_link_libraries 目标引用）；include 面另行按
-/// IncludeFaceMatchesRegisteredEdges 的登记集合判定（project 自
-/// WP-19-T09 起允许接口实现形态的公共头 include——零链接边不变）。
-/// testkit 由 NoTestkitEdge 用例单独钉住产品面。
+/// 表外平台单元（零编译链接边的平台/编排单元——卡 §3.2"运行时注入/
+/// 端口"列点名的 policy/io/project/diagnostics/runtime/drivetrain 等
+/// 〔SUB 面〕；其余平台单元同禁）。本表约束的是**链接边**（target_link_
+/// libraries 目标引用）；include 面另行按 IncludeFaceMatchesRegisteredEdges
+/// 的登记集合判定（project 自 WP-19-T09 起允许接口实现形态的公共头
+/// include——零链接边不变）。testkit 由 NoTestkitEdge 用例单独钉住产品
+/// 面。ASM-PLUG 收口批将 "ui" 移出本表：ui 随第三登记边（kEdgeUnits
+/// ——P-SEL-10 消账的插件装配面边）入白名单，不再是表外面。
 constexpr const char* kExtraPlatformUnits[] = {
     "policy", "io", "project", "diagnostics", "runtime",
     "drivetrain", "reporting", "workflow",

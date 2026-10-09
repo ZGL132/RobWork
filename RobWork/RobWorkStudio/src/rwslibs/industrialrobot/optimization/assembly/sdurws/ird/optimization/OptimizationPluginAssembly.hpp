@@ -25,16 +25,17 @@
  *   - 任务契约 tasks/foundation/WP-20-T10.json（acceptance 1/2/3）
  *
  * ★ 落地面口径（诚实登记，DTB §5.4 精神——单元卡 §1.3 同步登记）：
- *   1. **自持描述符（B 方案——编排侧既有裁决先例）**：T02 两字段
- *      （pluginId/titleKey）逐字保留（登记值不动、既有契约值断言保留）；
- *      本批新增阶段挂位 token、域注册键与一条面板登记记录的同构字段。
- *      字段与 ui::PluginUiDescriptor 对应子集一一对应、零增删——宿主
- *      装配批次收口时按字段翻译注册。**缺口登记**："经 IPluginUiRegistrar
- *      白名单挂位"需要 optimization→ui 编译边，本单元依赖白名单（卡
- *      §3.2 九条登记边）与 ird_gates 机器面均无该边、白名单文件不在
- *      本任务 allowedFiles 内不可增登——ui 单元公共类型本批零消费；
- *      白名单 token 对账以测试自持词表（ui.md §11.1 八 token）钉住
- *      （WP-17-T09 同款先例，P-OPT-10 承接登记见单元卡）。
+ *   1. **自持描述符（B 方案——编排侧既有裁决先例）＋ASM-PLUG 收口
+ *      （P-OPT-10 消账）**：T02 两字段（pluginId/titleKey）逐字保留
+ *      （登记值不动、既有契约值断言保留）；T10 批新增阶段挂位 token、
+ *      域注册键与一条面板登记记录的同构字段。字段与 ui::PluginUi-
+ *      Descriptor 对应子集一一对应、零增删。**ASM-PLUG 收口批（2026-
+ *      10-10，所有者授权宿主装配批次）已兑现翻译注册**：单元边
+ *      optimization->ui 已按治理程序增登（ird_gates_whitelist.cmake＋
+ *      dependency-graph.json 双面留痕），本头尾部 translatePluginUi-
+ *      Descriptor/registerWithHostRegistrar 即翻译注册落点（字段同构
+ *      缺口随真实编译边由编译器校验——"无 ui 侧编译期校验"的登记警
+ *      告解除；§11.2 模块半区＝plugin/OptUiModule）。
  *   2. **命令登记面缺席（诚实缺席非遗漏）**：本描述符**不携带命令
  *      清单字段**——R1 域命令词表未随卡面登记（卡 §10.2 候选应用经
  *      project 命令组合、运行启动/取消经宿主绑定的运行控制缝直达，
@@ -72,11 +73,25 @@
 #include <string>
 #include <vector>
 
+// ASM-PLUG 收口批（P-OPT-10 消账）：本头新增真实注册面——消费 ui 单元
+// 公共类型（§10.9 装配描述符/登记结果）。包含面纪律同 workflow/kinematics
+// 装配门面先例：ICommandRegistry.hpp 须显式包含（IPluginUiRegistrar.hpp
+// 对 CommandDescriptor 仅前向声明，而 ui::PluginUiDescriptor 的 commands
+// vector 成员析构在每个消费 TU 实例化——本头虽无命令翻译面〔描述符零
+// 命令字段，文件头注 2〕，携带 ui::PluginUiDescriptor 值成员的签名/成
+// 员即需完整类型——声明点解析一致义务）。
+// 单元边 optimization->ui 已随本批登记（ird_gates_whitelist.cmake
+// IRD_ALLOWED_UNIT_EDGES＋traceability/dependency-graph.json 双面留痕）。
+#include <sdurws/ird/ui/ICommandRegistry.hpp>    // ui::CommandDescriptor 完整类型（commands vector 成员析构）
+#include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // ui::PluginUiDescriptor/RegistrationOutcome/注册端口
+
 class QWidget;  // 前置声明：面板工厂产物（全局域——本头不拖入 Widgets）
 
 namespace sdurws::ird::optimization {
 
 class OptPanelModule;         // 前置声明（unique_ptr 成员——析构在 cpp）
+class OptUiModule;            // 前置声明（§11.2 模块半区——unique_ptr 成
+                              //   员，析构在 cpp；ASM-PLUG 收口批新增）
 struct OptPanelServices;      // 前置声明（setServices 引用入参——完整
                               //   类型在 plugin/OptPanelTypes.hpp）
 struct OptModuleSessionState; // 前置声明（session() 返回引用）
@@ -234,12 +249,25 @@ public:
     /// 经 setServices/bind* 即可，零触模块内部）。
     OptPanelModule* module() noexcept { return m_module.get(); }
 
+    /// §11.2 界面模块访问（ASM-PLUG 收口批——激活路径创建的模块半区；
+    /// 未激活＝空。接口面承载：宿主装配层与测试只见 ui 公共接口，不触
+    /// 插件私有实现类——R-2 装配纪律；上行转换在实现 TU 完成——完整
+    /// 类型可见处）。
+    ui::IPluginUiModule* uiModule() noexcept;
+
 private:
     // 工厂是描述符现产＋模块创建的唯一装配点（同 TU——访问私有成员的
-    // 友元豁免；dynamics 工厂同款形态）。
+    // 友元豁免；dynamics 工厂同款形态）。激活函数同豁免：挂载 §11.2
+    // 模块半区需要触达两个 unique_ptr 成员（同 TU 实现面）。
     friend OptimizationPluginAssembly createOptimizationPluginAssembly();
+    friend ui::RegistrationOutcome registerWithHostRegistrar(
+        OptimizationPluginAssembly& assembly, ui::IPluginUiRegistrar* registrar);
 
     std::unique_ptr<OptPanelModule> m_module;  ///< 模块（缝/会话态/面板引用）
+    std::unique_ptr<OptUiModule> m_uiModule;   ///< §11.2 模块半区（激活路径
+                                               ///<   创建——unique_ptr 不完整
+                                               ///<   类型，析构在实现 TU；
+                                               ///<   ASM-PLUG 收口批新增）
 };
 
 /**
@@ -253,6 +281,67 @@ private:
  * @return 装配门面（零业务计算——纯值聚合＋工厂闭包转接）
  */
 OptimizationPluginAssembly createOptimizationPluginAssembly();
+
+// =====================================================================
+// ASM-PLUG 收口批（P-OPT-10 消账）——真实注册面：自持描述符翻译为
+// ui::PluginUiDescriptor 并经宿主注册端口登记（§10.9 装配期一次）。
+// 字段同构缺口随真实编译边建立而由编译器校验（字段名/类型漂移即编
+// 译错误），"无 ui 侧编译期校验"的登记警告就此解除。
+// =====================================================================
+
+/**
+ * @brief 自持描述符 → ui::PluginUiDescriptor 逐字段翻译（纯值函数）。
+ *
+ * 翻译规则（与 ui.md §10.9 冻结形状的对应子集逐一对应，零增删——本域
+ * 描述符无命令字段〔文件头注 2 的诚实缺席登记〕，commands 翻译产物恒
+ * 空向量＝不预建占位；dynamics/selection 同名函数同构——三域一体收口）：
+ *   - pluginId/titleKey：逐字直拷（§11.1 白名单 token／§3.5 键族）；
+ *   - stages：stageToken 经词表翻译为 ui::StageId（恰一阶段——本域单
+ *     挂位面；词表外 token＝装配期数据违约，fail-fast）；
+ *   - capabilities：providesStagePanel＝panels 非空、registersCommands＝
+ *     commands 面（本域恒 false——R1 域命令词表未随卡面登记，运行启动/
+ *     取消经宿主绑定缝直达、候选应用经宿主编排两步组合，均不经 ui 命
+ *     令注册表）、providesReadonlyProjection＝true（域行经 OptUiModule
+ *     自报——§6.5 汇聚源；能力声明"描述性，非判定性"）；
+ *   - panels：逐条翻译（stage 经词表翻译、titleKey/advanced 直拷、
+ *     factory 闭包原样转接——std::function<QWidget*()> 同型）。
+ *
+ * @param descriptor [in] 自持描述符（工厂现产值——只读）
+ * @return ui 装配描述符（值拷贝——调用方可即弃原描述符）
+ *
+ * @throws std::invalid_argument stageToken 落于 ui.md §6.4 七阶段词表外
+ *         （装配期数据违约——调用方错误，fail-fast）
+ */
+ui::PluginUiDescriptor translatePluginUiDescriptor(
+    const OptimizationPluginDescriptor& descriptor);
+
+/**
+ * @brief 激活注册：向宿主注册端口登记本插件（§10.9 装配期一次——
+ *        P-OPT-10 明文义务"真实注册端口消费归宿主装配批次收口"的兑现
+ *        落点）。
+ *
+ * 执行序：①registrar 空检查（无注册端口实现＝调用方装配违约，fail-fast
+ * ——宿主装配批次必传端口，不静默吞）；②创建/复用门面持有的 §11.2 模
+ * 块半区（OptUiModule——首次激活创建，重复调用复用同实例保证 registrar
+ * 弱引用稳定）；③描述符翻译（translatePluginUiDescriptor）；④
+ * registrar->registerPluginUi(descriptor, *module)——白名单/重复/描述
+ * 符合法性校验全走宿主实现（域侧零本地判定），登记结果四值如实透传
+ * （NotWhitelisted/DuplicatePlugin/InvalidDescriptor 不抛不吞——§11.3
+ * 失败隔离归宿主呈现）。
+ *
+ * 线程模型：装配线程调用（§10.9 同期）；registrar 弱引用的存活期由装
+ * 配层保证（宿主保持门面存活至壳拆除——§10.9 所有权行）。
+ *
+ * @param assembly  [in,out] 装配门面（模块半区挂载其上——宿主保持存活）
+ * @param registrar [in] 宿主注册端口（接口注入——运行期宿主传参属 ui
+ *                   宿主面；空指针＝调用方装配违约）
+ * @return 登记结果（§10.9 四值——Ok/白名单外/重复/描述符非法）
+ *
+ * @throws std::invalid_argument registrar 为空（无 registrar 实现即
+ *         fail-fast——不虚构登记成功）
+ */
+ui::RegistrationOutcome registerWithHostRegistrar(
+    OptimizationPluginAssembly& assembly, ui::IPluginUiRegistrar* registrar);
 
 }  // namespace sdurws::ird::optimization
 
