@@ -93,13 +93,21 @@ add_library(sdurws_ird_workflow STATIC
     src/Settings.cpp   # 用户设置持久化（§7.7 PM-14——WP-22-T10：
                         # IUserSettingsStore/UserSettingsStore＋canonical JSON
                         # 经 io 通道；首次消费 io 边——白名单八边既登记）
-    src/Comparison.cpp) # 方案比较视图编排（§8.1/§8.2 UX-13——WP-22-T11：
+    src/Comparison.cpp  # 方案比较视图编排（§8.1/§8.2 UX-13——WP-22-T11：
                         # ISchemeComparisonController Draft 逐字＋两取数端口
                         # 接缝（ISchemeMetricPort 指标投影／IComparisonDiffPort
                         # diff 投影——零 modeling 编译边，字符串化同构投影）＋
                         # 纯函数组装核（高亮行/分组块）＋EVI-02/RPT-04 基准
                         # 一致性检查经 evidence 公共契约消费（白名单八边既
                         # 登记——evidence 边首消费）＋P-OPT-8 警告透传不虚构
+    src/Commands.cpp)   # 命令集编排核（§8.3/§8.4 UX-13——WP-22-T12：
+                        # 14 条命令 id 词表＋五类执行分流（修订经①端口/
+                        # 会话零修订 KIN-06/向导触发/碰撞检查 P-WF-3 最小
+                        # 语义/报告导出编排 reporting 服务——reporting 边
+                        # 产品面首次 include 消费）＋五端口接缝（纯接口，
+                        # L5 装配桥接）；计算库零 Qt——ui::CommandDescriptor
+                        # 组装与 IWorkflowCommandContributor 兑现在 plugin/
+                        # 目录（R-3 文件域隔离——§10.2 v1.3 偏差登记）
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：workflow 公共头（T03+ 落位）使用 C++17 设施，消费者编译
@@ -177,6 +185,13 @@ target_link_libraries(sdurws_ird_workflow PUBLIC
 add_library(sdurws_ird_workflow_plugin STATIC
     plugin/WorkflowUiModule.hpp           # §11.2 三方法最小实现（诚实空态）
     plugin/WorkflowUiModule.cpp
+    plugin/WorkflowCommandCatalog.hpp     # 命令贡献目录（WP-22-T12——§8.3：
+                                          #   14 条描述符冻结行＋IWorkflowCommand-
+                                          #   Contributor Draft 兑现〔§10.2 v1.3
+                                          #   落位偏差：ui::CommandDescriptor 携带
+                                          #   QKeySequence，零 Qt 计算库头不可承载〕
+                                          #   ＋处理器薄适配＋注册装配函数）
+    plugin/WorkflowCommandCatalog.cpp
     plugin/WorkflowPluginAssembly.cpp)    # §10.9 装配门面实现（assembly/
                                           #   公共头的私有实现）
 set_target_properties(sdurws_ird_workflow_plugin PROPERTIES
@@ -263,11 +278,17 @@ add_executable(sdurws_ird_workflow_test
                             # canonical 黄金字节/损坏变体矩阵＋诊断/I-WF-5
                             # 分析配置字段双向隔离/P-WF-5 容量截断与零脱敏/
                             # 接口消费路径钉扎；真实落盘临时目录直调存储面）
-    test/ComparisonTest.cpp)  # 方案比较视图模型测试（WP-22-T11——值渲染黄金串/
+    test/ComparisonTest.cpp  # 方案比较视图模型测试（WP-22-T11——值渲染黄金串/
                               # 维度键词表/高亮行组装〔同构违约/不可算"—"/零容差
                               # 高亮〕/diff 分组分拣〔未知 token fail-fast/通道
                               # 不可用降级/P-OPT-8 警告透传零补造〕/编排核前置
                               # fail-fast 三面/拒绝与接受互斥/接口消费路径钉扎）
+    test/CommandsTest.cpp)  # 命令集编排核模型测试（WP-22-T12——WF-VER-222 词表/
+                            # 分流黄金表＋WF-VER-223 模型半区〔复位关节零修订端
+                            # 口触达〕＋五类编排分流〔修订经①端口/会话/向导/
+                            # 碰撞 P-WF-3 最小语义触达隔离/报告导出编排〕＋
+                            # fail-fast 装配违约＋接口消费路径钉扎；零 Qt——
+                            # 描述符/注册/模糊搜索可达面在契约测试目标）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -392,7 +413,7 @@ add_executable(sdurws_ird_workflow_contract_test
                                             # 〔失败先前文件原样＋暂存零残留〕＋
                                             # 诊断通道词形，真实落盘契约——与 io
                                             # 真实 JSON 设施联合）
-    contract_test/ComparisonContractTest.cpp)  # WF-VER-224/225（WP-22-T11——方案
+    contract_test/ComparisonContractTest.cpp  # WF-VER-224/225（WP-22-T11——方案
                                                # 比较 2~4 方案真实编排契约：与真实
                                                # project store 联合〔createNew＋建支
                                                # 命令族桩产生方案分支〕＋分支 label
@@ -402,6 +423,21 @@ add_executable(sdurws_ird_workflow_contract_test
                                                # 不一致真实拒绝〔evidence 公共契约
                                                # 检查〕＋P-OPT-8 警告透传零虚构＋
                                                # 接口消费路径钉扎）
+    contract_test/CommandsContractTest.cpp)  # WF-VER-222/223/226（WP-22-T12——命令
+                                              # 集真实注册与端到端契约：真实 ui
+                                              # CommandRegistry 注册 14 条＋命令面板
+                                              # 模糊搜索可达 ≥10 条〔UX-13/F5——过
+                                              # 渡中文/关键字子序列命中〕＋重复 id
+                                              # 注册边界拒绝〔ui 设施行为——不覆盖
+                                              # 不静默〕＋复位关节经注册表 submit
+                                              # 端到端零修订〔KIN-06——真实 store
+                                              # 修订链/branchTips/目录树盘面复核〕＋
+                                              # 撤销/重做主线〔PM-18/AT-29——真实
+                                              # UndoRedoService 逆命令恰好一新修订、
+                                              # 历史只增不改、空历史稳定提示〕；
+                                              # IWorkflowCommandContributor 经接口
+                                              # 虚派发钉扎——插件目标链接供
+                                              # WorkflowCommandCatalog 消费）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
@@ -412,6 +448,13 @@ set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
 if(MSVC)
     target_compile_options(sdurws_ird_workflow_contract_test PRIVATE /utf-8)
 endif()
+
+# 插件私有头解析（WP-22-T12——CommandsContractTest 消费 plugin/ 目录的
+# WorkflowCommandCatalog.hpp：单元根 PRIVATE include，modeling test 消费
+# plugin/PanelCommandCatalog.hpp 同款先例；仅测试目标可达，产品面不外溢
+# ——R-2 红线不受影响）。
+target_include_directories(sdurws_ird_workflow_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 # 链接面与 _test 同款（testkit＝报告设施——T-1 允许形态；单行链接语句
 # ＝契约测试 T-1 扫描的登记形态约束，同 _test 目标口径）。
