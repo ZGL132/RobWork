@@ -1,0 +1,27 @@
+Note: Google Test filter = *PrismaticSlipArm*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DynRnea
+[ RUN      ] DynRnea.PrismaticSlipArmGravityMoment_F580
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(121): error: The difference between actual and expected is 3.924000000000003, which exceeds tol, where
+actual evaluates to -10.3005,
+expected evaluates to -14.224500000000003, and
+tol evaluates to 1.4224500000000003e-08.
+关节 0 静态重力矩（含滑移臂）（实得 -10.3005，期望 -14.224500000000003）
+
+C:\Users\zgl18\AppData\Local\Temp\acc-audit-p0-p1d\wt-repro\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(121): error: The difference between actual and expected is 3.924000000000003, which exceeds tol, where
+actual evaluates to -10.3005,
+expected evaluates to -14.224500000000003, and
+tol evaluates to 1.4224500000000003e-08.
+关节 0 静态总力矩（实得 -10.3005，期望 -14.224500000000003）
+
+[  FAILED  ] DynRnea.PrismaticSlipArmGravityMoment_F580 (1 ms)
+[----------] 1 test from DynRnea (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DynRnea.PrismaticSlipArmGravityMoment_F580
+
+ 1 FAILED TEST

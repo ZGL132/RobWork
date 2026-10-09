@@ -1,0 +1,11 @@
+Note: Google Test filter = *PrismaticSlipArm*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DynRnea
+[ RUN      ] DynRnea.PrismaticSlipArmGravityMoment_F580
+[       OK ] DynRnea.PrismaticSlipArmGravityMoment_F580 (0 ms)
+[----------] 1 test from DynRnea (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
