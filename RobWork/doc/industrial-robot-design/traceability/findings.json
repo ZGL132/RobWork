@@ -5993,6 +5993,15 @@
       "registeredAt": "2026-10-10",
       "title": "diag-schema-level 批次复验留痕用例总数簿记双加：README 与本册 F-618 resolution 声称集成 8448/冒烟 7748 用例，验收者独立直跑实测集成 4224/冒烟 3874（恰为 2 倍——root testsuites 属性与 testsuite 子行双重累加）；0 失败/0 错误/跳过数等实质结论经独立复现成立，仅总数登记失实",
       "owner": "diag-schema-level 实施者：builds/diag-schema-level/README.md 与本册 F-618 resolution 的用例总数更正为实测数（4224/3874），并核对聚合脚本口径（避免 root+children 双加）"
+    },
+    {
+      "id": "F-628",
+      "source": "diag-schema-level 合入复验（2026-10-10，第二次 vcpkg 穿透事故后登记）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "gate-all 对 worktree 的 vcpkg 供给依赖 junction（脚本按自身位置推 RepoRoot/vcpkg 路径）——任一会话清理穿透 junction 即全环境瘫痪（2026-10-09/10-10 两次实测，均靠缓存重组恢复）；系统性消除＝gate-all 增 -Toolchain 可选参数（绝对路径直引主仓 vcpkg，缺省行为不变，零 Python 约束不变）",
+      "owner": "门禁所有者：评审后为 gate-all.ps1 增 -Toolchain 参数并在 DTB §5.1 同步口径；过渡纪律＝子会话一律不做 junction/工作树清理（编排者统一执行）"
     }
   ]
 }
