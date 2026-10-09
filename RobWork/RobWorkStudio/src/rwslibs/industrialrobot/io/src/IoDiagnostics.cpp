@@ -163,6 +163,12 @@ diagnostics::CodeDescriptor makeDescriptor(
     d.ownerUnit = "io";                             // 前缀-所有权表 IO→io（§4.5）
     d.category = category;
     d.severity = severity;
+    // F-618：阻断轴级别随 severity 机械派生（severity==Error ⇒ Error、
+    // 其余 ⇒ Warning——注册期验证第⑨检查强制同一映射，与 diagnostics
+    // 内置表 makeBuiltin 派生单点同规则）。
+    d.level = severity == diagnostics::DiagnosticSeverity::Error
+                  ? core::DiagnosticLevel::Error
+                  : core::DiagnosticLevel::Warning;
     const std::string lower = codeToLower(code);
     d.titleKey = "diag." + lower + ".title";        // 文案键命名约定（键归注册表、值归 ui——UX-02）
     d.detailKey = "diag." + lower + ".detail";

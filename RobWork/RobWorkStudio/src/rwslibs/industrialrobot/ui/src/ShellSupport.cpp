@@ -459,6 +459,12 @@ std::vector<diagnostics::CodeDescriptor> buildUiCodeDescriptors()
         }
         d.registryVersion = 1;  // 首次登记（§4.5：元数据演进才递增）
         d.deprecated = false;
+        // F-618：阻断轴级别随 severity 机械派生（severity==Error ⇒ Error、
+        // 其余 ⇒ Warning——注册期验证第⑨检查强制同一映射，与 diagnostics
+        // 内置表 makeBuiltin 派生单点同规则）。
+        d.level = row.severity == diagnostics::DiagnosticSeverity::Error
+                      ? core::DiagnosticLevel::Error
+                      : core::DiagnosticLevel::Warning;
         out.push_back(std::move(d));
     }
     return out;
