@@ -694,3 +694,36 @@ TEST(DynForward, FailFastContractViolations_DYN05)
         EXPECT_THROW(validator.validate(r, ctx), DynamicsError);
     }
 }
+
+/**
+ * 初始状态 q/qd 长度不一致→input-invalid（F-644）：长度错配的样本若落在
+ * 首样本（初始状态），原实现的非有限扫描会以 q 的长度索引 qd 越界读取
+ * （未定义行为）——修正后入口防线按"自由度不匹配"拒绝，消息含两个长度
+ * 的比较数据；正常路径回归由全套件承载（本文件黄金算例用例组）。
+ */
+TEST(DynForward, InitialStateQLengthMismatchInputInvalid_F644)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-05"}, std::vector<std::string>{});
+    // 本用例验证（F-644）：首样本 q 长度 2、qd 长度 1（自由度不匹配）——
+    // validate 前置防线抛 DynamicsError（不越界、不产出半成品）。
+    const runtime::CanonicalModel model =
+        makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    ForwardCheckRequest r = goldenRequest(1e-9, 1e-9);
+    r.model = &model;
+    r.samples.front().qd = {0.3};  // rad/s（长度 1≠q 长度 2——错配注入）
+
+    FakeContext ctx;
+    ForwardDynamicsValidator validator;
+    try {
+        const ForwardCheckOutcome o = validator.validate(r, ctx);
+        (void)o;
+        FAIL() << "q/qd 长度不一致未抛出 DynamicsError";
+    } catch (const DynamicsError& e) {
+        EXPECT_NE(std::string(e.what()).find("input-invalid"), std::string::npos)
+            << "token 前缀缺失：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("自由度不匹配"), std::string::npos)
+            << "消息未说明自由度不匹配：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("qd 长度 1"), std::string::npos)
+            << "消息缺长度比较数据：" << e.what();
+    }
+}
