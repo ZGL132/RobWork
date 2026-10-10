@@ -102,6 +102,11 @@ inline constexpr char kPhasePlanAvoid[] = "plan-avoid";
 /// 面：smooth 的几何保持失败素材 phaseToken 取本常量）。
 inline constexpr char kPhaseSmooth[] = "smooth";
 
+/// 失败阶段 token：TRJ-04 复检（§14.1.6 phase 词表第五值——WP-16-T07 产
+/// 生面：recheckSegment 的预算耗尽/验证器缺失/检出违例素材 phaseToken 取
+/// 本常量）。
+inline constexpr char kPhaseRecheck[] = "recheck";
+
 // =====================================================================
 // 取消观测（§15.0 通用约定——一切长计算接口经注入取消观测）
 // =====================================================================
