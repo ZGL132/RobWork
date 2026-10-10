@@ -134,10 +134,11 @@ TEST(SelBackfillContract, HandlerDerivesProjectCommandHandler)
 // =====================================================================
 
 /**
- * T09 批 9 码登记行契约：全表 54 行、尾部 9 行恰为 SEL-BACKFILL- 族、
- * 行序＝判定序（载荷结构→版本→域输入→目录/安装→数据缺失→范围→锁定
- * 引用→合成断言）、每码经 core::DiagnosticRecord::make 句法权威校验
- * （C-3——码值合法性权威在 core 句法＋diagnostics 注册面）。
+ * T09 批 9 码登记行契约：全表 58 行〔T12 批表尾追加 4——WP-19-T12〕、
+ * T09 批 9 行恰为 SEL-BACKFILL- 族、行序＝判定序（载荷结构→版本→域输入
+ * →目录/安装→数据缺失→范围→锁定引用→合成断言）、每码经
+ * core::DiagnosticRecord::make 句法权威校验（C-3——码值合法性权威在
+ * core 句法＋diagnostics 注册面）。
  */
 TEST(SelBackfillContract, T09BatchCodeEntriesTailAppendedAndSyntaxValid)
 {
@@ -145,8 +146,9 @@ TEST(SelBackfillContract, T09BatchCodeEntriesTailAppendedAndSyntaxValid)
                   std::vector<std::string>{});
 
     const std::vector<DiagnosticEntry> entries = selectionCodeEntries();
-    // 全表 54 行（T02 批 17＋T06 批 28＋T09 批 9——登记纪律：只增不重排）。
-    ASSERT_EQ(entries.size(), 54u);
+    // 全表 58 行（T02 批 17＋T06 批 28＋T09 批 9＋T12 批 4——登记纪律：
+    // 只增不重排；T12 批在其后追加不影响 T09 批区间）。
+    ASSERT_EQ(entries.size(), 58u);
 
     // 尾部 9 行＝T09 批（表尾追加纪律的机器面）。
     const DiagnosticEntry* t09[] = {

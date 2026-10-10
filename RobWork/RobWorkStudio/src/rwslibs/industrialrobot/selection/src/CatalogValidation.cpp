@@ -170,23 +170,74 @@ const std::vector<ColumnContract>& compatColumns()
     return kCols;
 }
 
-/// 按文件名取 v1 列契约；非 CSV 目录文件返回 nullptr（manifest 无列契约）。
-const std::vector<ColumnContract>* contractFor(const std::string& fileName)
+/// 直线传动器件主表 v2 列契约（WP-19-T12——SEL-09-S1 目录模板）。
+///
+/// 列集设计（登记单元卡 §19.3 T12 落位细化）：公共能力面（推力/速度/
+/// 功率/效率/行程/质量/安装/曲线引用）——四类器件各自的传动几何参数
+/// （丝杠传动常数等）是 drivetrain 直线映射的输入侧参数，不属器件能力
+/// 目录，**零映射参数列**（selection 不自实现直线映射红线的结构性承载）。
+/// 单位全部 SI（N/m/s/W/kg——core Units 已注册 token，登记 3 词表实测）。
+const std::vector<ColumnContract>& linearDriveColumns()
+{
+    static const std::vector<ColumnContract> kCols = {
+        {"model_id",      true,  core::QuantityKind::Dimensionless, "",  true },
+        {"vendor",        true,  core::QuantityKind::Dimensionless, "",  true },
+        {"display_name",  true,  core::QuantityKind::Dimensionless, "",  true },
+        {"drive_kind",    true,  core::QuantityKind::Dimensionless, "",  true },
+        {"rated_force_n", false, core::QuantityKind::Force,         "N", true },
+        {"peak_force_n",  false, core::QuantityKind::Force,         "N", true },
+        {"max_speed_ms",  false, core::QuantityKind::LinearVelocity, "m/s", true },
+        {"rated_power_w", false, core::QuantityKind::Power,         "W", true },
+        {"efficiency",    false, core::QuantityKind::Dimensionless, "1", false},
+        {"stroke_m",      false, core::QuantityKind::Length,        "m", false},
+        {"mass_kg",       false, core::QuantityKind::Mass,          "kg", true },
+        {"mounting_flange_kind", true,  core::QuantityKind::Dimensionless, "", false},
+        {"mounting_shaft_kind",  true,  core::QuantityKind::Dimensionless, "", false},
+        {"curve_ref",     true,  core::QuantityKind::Dimensionless, "",  false},
+    };
+    return kCols;
+}
+
+/// 按文件名取列契约（schema 版本感知——WP-19-T12 v2 第六表分派点）；
+/// 非 CSV 目录文件返回 nullptr（manifest 无列契约）。
+///
+/// @param fileName [in] CSV 文件名（kCatalogFile* 常量值）
+/// @param v2       [in] 是否按 v2 schema 分派（true＝接受第六表契约）
+const std::vector<ColumnContract>* contractFor(const std::string& fileName, bool v2)
 {
     if (fileName == kCatalogFileMotors)        { return &motorColumns(); }
     if (fileName == kCatalogFileGearboxes)     { return &gearboxColumns(); }
     if (fileName == kCatalogFileCurves)        { return &curveColumns(); }
     if (fileName == kCatalogFileCompatibility) { return &compatColumns(); }
+    if (v2 && fileName == kCatalogFileLinearDrives) { return &linearDriveColumns(); }
     return nullptr;
 }
 
-/// 量纲 token → 期望 SI 单位 token（v1 quantity 词表——卡 §6.1；登记 5）。
-const char* siTokenForQuantity(std::string_view quantity)
+/// 量纲 token → 期望 SI 单位 token（quantity 词表——卡 §6.1；登记 5）。
+///
+/// @param quantity [in] 量纲 token（x_quantity/y_quantity 列值）
+/// @param v2       [in] 是否启用 v2 词表（WP-19-T12：linear-speed/load/
+///                 force 三 token——卡 §17.2"曲线量纲词表扩展"；v1 输入
+///                 面保持三 token 词表零变化）
+const char* siTokenForQuantity(std::string_view quantity, bool v2 = false)
 {
     if (quantity == kQuantitySpeed)  { return "rad/s"; }
     if (quantity == kQuantityTorque) { return "N*m"; }
     if (quantity == kQuantityPower)  { return "W"; }
+    if (v2) {
+        // v2 直线传动曲线量纲（卡 §17.2：横坐标速度〔m/s〕/载荷〔N〕，
+        // 纵坐标力〔N〕/功率〔W〕——功率已在上行 v1 分支命中）。
+        if (quantity == kQuantityLinearSpeed) { return "m/s"; }
+        if (quantity == kQuantityLoad)        { return "N"; }
+        if (quantity == kQuantityForce)       { return "N"; }
+    }
     return nullptr;
+}
+
+/// v2 schema 判定（formatVersion 分派单点——"1"/"2" 为已注册版本）。
+bool isV2Schema(std::string_view formatVersion)
+{
+    return formatVersion == kCatalogFormatVersionV2;
 }
 
 // =====================================================================
@@ -304,12 +355,20 @@ std::string rowSignature(const ParsedFileTable& t, std::size_t rowIdx)
 // =====================================================================
 
 /// 必备解析表存在性（io 文件层前置——ParsedCatalogInput 契约，见头注）。
-void requireParsedTables(const ParsedCatalogInput& parsed)
+///
+/// @param parsed        [in] io 解析后的目录包数据
+/// @param formatVersion [in] manifest 声明的 schema 版本（v2 增第六必备表
+///                      linear_drives.csv——WP-19-T12；v1 面零变化）
+void requireParsedTables(const ParsedCatalogInput& parsed, std::string_view formatVersion)
 {
-    for (const std::string& f : {std::string{kCatalogFileMotors},
-                                 std::string{kCatalogFileGearboxes},
-                                 std::string{kCatalogFileCurves},
-                                 std::string{kCatalogFileCompatibility}}) {
+    std::vector<std::string> required = {std::string{kCatalogFileMotors},
+                                         std::string{kCatalogFileGearboxes},
+                                         std::string{kCatalogFileCurves},
+                                         std::string{kCatalogFileCompatibility}};
+    if (isV2Schema(formatVersion)) {
+        required.push_back(std::string{kCatalogFileLinearDrives});
+    }
+    for (const std::string& f : required) {
         if (parsed.find(f) == nullptr) {
             // io §7.8 清单核对应已拦下必备文件缺失——收到不完整输入＝
             // 调用方装配违约（卡 §5.1 分工：文件层归 io；selection 不重复
@@ -326,11 +385,15 @@ CatalogValidationReport checkManifest(const CatalogManifest& manifest)
 {
     CatalogValidationReport rep;
 
-    // ① 格式版本：未知版本拒绝＋升级指引（卡 §5.2——不自动升级，PM-06
+    // ① 格式版本：未注册版本拒绝＋升级指引（卡 §5.2——不自动升级，PM-06
     // 精神）。版本未知则字典语义/列布局全部失去前提——schema 级抛出。
-    if (manifest.formatVersion != kCatalogFormatVersion) {
+    // 已注册版本：v1（五表基线）与 v2（WP-19-T12 增第六表 linear_drives.csv
+    // ——SEL-09-S1 直线传动目录模板）；其余一律拒绝。
+    const bool v2 = isV2Schema(manifest.formatVersion);
+    if (manifest.formatVersion != kCatalogFormatVersion && !v2) {
         failSchema("未知 formatVersion \"" + manifest.formatVersion
-                   + "\"（本实现支持 v" + kCatalogFormatVersion
+                   + "\"（本实现支持 v" + kCatalogFormatVersion + "/v"
+                   + kCatalogFormatVersionV2
                    + "；拒绝导入并给出升级指引——不自动升级，卡 §5.2/PM-06）");
     }
 
@@ -350,14 +413,17 @@ CatalogValidationReport checkManifest(const CatalogManifest& manifest)
                                        "来源信息缺失（SEL-01：目录包必须携带企业来源描述）"));
     }
 
-    // ④ 字段字典覆盖四 CSV 且与 v1 契约逐列一致（列名/单位/必填性）。
-    // 字典权威＝selection v1 列契约（业务 schema 归 selection——卡 §5.1
+    // ④ 字段字典覆盖必备 CSV 且与列契约逐列一致（列名/单位/必填性）。
+    // 字典权威＝selection 列契约（业务 schema 归 selection——卡 §5.1
     // 分工；C-6 注册面）。字典未覆盖必备文件＝装配层违约，抛出；字典
     // 列值与契约不符＝schema 不匹配，入报告（定位 manifest.json）。
-    for (const std::string& f : {std::string{kCatalogFileMotors},
-                                 std::string{kCatalogFileGearboxes},
-                                 std::string{kCatalogFileCurves},
-                                 std::string{kCatalogFileCompatibility}}) {
+    // v2 必备面＝v1 四表＋linear_drives.csv（WP-19-T12）；v1 面零变化。
+    std::vector<std::string> dictFiles = {std::string{kCatalogFileMotors},
+                                          std::string{kCatalogFileGearboxes},
+                                          std::string{kCatalogFileCurves},
+                                          std::string{kCatalogFileCompatibility}};
+    if (v2) { dictFiles.push_back(std::string{kCatalogFileLinearDrives}); }
+    for (const std::string& f : dictFiles) {
         const FieldDictionary* dict = nullptr;
         for (const FieldDictionary& d : manifest.fieldDictionary) {
             if (d.targetFile == f) { dict = &d; break; }
@@ -366,13 +432,14 @@ CatalogValidationReport checkManifest(const CatalogManifest& manifest)
             failSchema("字段字典未覆盖必备文件 " + f
                        + "（装配层违约——SEL-01 字段字典必备面）");
         }
-        const std::vector<ColumnContract>* contract = contractFor(f);
+        const std::vector<ColumnContract>* contract = contractFor(f, v2);
         if (dict->fields.size() != contract->size()) {
             // 列数不符＝schema 不匹配（定位到文件级；逐位噪音无定位价值）。
             rep.issues.push_back(makeIssue(
                 std::string{kSelCatalogSchemaMismatch}, kCatalogFileManifest, 0, f,
                 "字段字典列数 " + std::to_string(dict->fields.size())
-                    + " 与 v1 契约 " + std::to_string(contract->size()) + " 不符"));
+                    + " 与 schema 版本 " + manifest.formatVersion + " 列契约 "
+                    + std::to_string(contract->size()) + " 不符"));
             continue;
         }
         for (std::size_t i = 0; i < contract->size(); ++i) {
@@ -390,7 +457,8 @@ CatalogValidationReport checkManifest(const CatalogManifest& manifest)
                 rep.issues.push_back(makeIssue(
                     std::string{kSelCatalogSchemaMismatch}, kCatalogFileManifest, 0,
                     spec.column.empty() ? f : spec.column,
-                    "字段字典第 " + std::to_string(i + 1) + " 列与 v1 契约不符（期望列 "
+                    "字段字典第 " + std::to_string(i + 1) + " 列与 schema 版本 "
+                        + manifest.formatVersion + " 列契约不符（期望列 "
                         + cc.column + "；单位 \"" + cc.unit + "\"；必填 "
                         + (cc.required ? "是" : "否") + "）"));
                 break;   // 首个差异定位即停
@@ -744,6 +812,142 @@ void validateGearboxRows(const ParsedFileTable& t,
 }
 
 // =====================================================================
+// 行级校验——直线传动器件主表（v2 第六表——WP-19-T12/SEL-09-S1）
+// =====================================================================
+
+/// 直线传动器件主表行级校验（v2 专用；schema 已通过）。校验清单与电机/
+/// 减速器主表同一校验器同一口径（卡 §5.3 八码族——SEL-01/02 既有通道）：
+/// 必填缺失/稳定 ID 唯一性/数值范围/词表/交叉范围；返回 (modelId → 行
+/// 内容签名) 供曲线表 owner 存在性校验使用。
+void validateLinearDriveRows(const ParsedFileTable& t,
+                             std::map<std::string, std::string>& modelIdsOut,
+                             CatalogValidationReport& rep)
+{
+    const auto colIdx = buildColumnIndex(t);
+    std::map<std::string, std::uint64_t> seenRow;   // modelId → 首现行号（查重）
+    std::map<std::string, std::string> seenSig;     // modelId → 首现行签名（重复行判别）
+
+    for (std::size_t r = 0; r < rowCountOf(t); ++r) {
+        const std::uint64_t rowNo = t.firstDataRowNo + r;
+        // 主键列：缺失即无法归属（级联校验无定位价值）——报缺失后跳过该行。
+        const std::string_view idV = trimView(cellAt(t, r, colIdx.at("model_id")));
+        if (idV.empty()) {
+            rep.issues.push_back(makeIssue(std::string{kSelCatalogFieldMissing}, t.fileName,
+                                           rowNo, "model_id", "必填字段缺失（空白单元格）"));
+            continue;
+        }
+        const std::string modelId(idV);
+
+        // 唯一性（卡 §5.3 行 4——与电机/减速器主表同款两码分配：行内容全同
+        // ＝重复型号 DUPLICATE-MODEL；同 ID 异内容＝稳定 ID 重复 DUPLICATE-ID）。
+        const std::string sig = rowSignature(t, r);
+        const auto seen = seenRow.find(modelId);
+        if (seen != seenRow.end()) {
+            const bool identical = seenSig[modelId] == sig;
+            rep.issues.push_back(makeIssue(
+                identical ? std::string{kSelCatalogDuplicateModel}
+                          : std::string{kSelCatalogDuplicateId},
+                t.fileName, rowNo, "model_id",
+                identical ? "重复型号行（同 modelId 行内容全同）"
+                          : "稳定 ID 重复（同 modelId 行内容不同——主键唯一性破坏）"));
+            rep.issues.back().modelId = modelId;
+            continue;   // 重复行不再逐列校验（避免同因多报）
+        }
+        seenRow[modelId] = rowNo;
+        seenSig[modelId] = sig;
+        modelIdsOut[modelId] = sig;
+
+        // 可缺失字段清单（显式标记——ERR-01）随行收集。
+        std::vector<MissingField> missing;
+
+        // 数值列逐列校验（契约序；范围谓词显式展开便于逐列对照卡面）。
+        double ratedForce = 0, peakForce = 0, maxSpeed = 0;
+        bool hasRatedForce = false, hasPeakForce = false, hasMaxSpeed = false;
+
+        for (const ColumnContract& cc : linearDriveColumns()) {
+            if (cc.text) {
+                // 文本列：必填非空 / 可选缺失入清单；drive_kind 词表校验在
+                // 下方文本取值后执行（数值循环先走完契约序）。
+                const std::string_view v = trimView(cellAt(t, r, colIdx.at(cc.column)));
+                if (v.empty()) {
+                    if (cc.required) {
+                        rep.issues.push_back(makeIssue(
+                            std::string{kSelCatalogFieldMissing}, t.fileName, rowNo,
+                            cc.column, "必填字段缺失（空白单元格）"));
+                        rep.issues.back().modelId = modelId;
+                    } else {
+                        missing.push_back({cc.column, "cell-empty"});
+                    }
+                }
+                continue;
+            }
+            // 数值列：解析＋范围谓词（同电机主表入口——错误三要素齐备）。
+            double val = 0.0;
+            const bool has = validateNumberCell(t, r, rowNo, cc, colIdx, modelId,
+                                                &missing, val, rep);
+            if (!has) { continue; }
+            if (cc.column == std::string("rated_force_n")) {
+                ratedForce = val; hasRatedForce = true;
+                checkRange(t, rowNo, cc.column, modelId, val, val > 0.0, 0.0, "N",
+                           "rated_force_n > 0（N）", rep);
+            } else if (cc.column == std::string("peak_force_n")) {
+                peakForce = val; hasPeakForce = true;
+                checkRange(t, rowNo, cc.column, modelId, val, val > 0.0, 0.0, "N",
+                           "peak_force_n > 0（N）", rep);
+            } else if (cc.column == std::string("max_speed_ms")) {
+                maxSpeed = val; hasMaxSpeed = true;
+                checkRange(t, rowNo, cc.column, modelId, val, val > 0.0, 0.0, "m/s",
+                           "max_speed_ms > 0（m/s）", rep);
+            } else if (cc.column == std::string("rated_power_w")) {
+                checkRange(t, rowNo, cc.column, modelId, val, val > 0.0, 0.0, "W",
+                           "rated_power_w > 0（W）", rep);
+            } else if (cc.column == std::string("efficiency")) {
+                checkRange(t, rowNo, cc.column, modelId, val,
+                           val > 0.0 && val <= 1.0, 1.0, "1",
+                           "efficiency ∈ (0,1]（无量纲）", rep);
+            } else if (cc.column == std::string("stroke_m")) {
+                checkRange(t, rowNo, cc.column, modelId, val, val > 0.0, 0.0, "m",
+                           "stroke_m > 0（m）", rep);
+            } else if (cc.column == std::string("mass_kg")) {
+                checkRange(t, rowNo, cc.column, modelId, val, val > 0.0, 0.0, "kg",
+                           "mass_kg > 0（kg）", rep);
+            }
+        }
+
+        // drive_kind 词表（四类器件——linearDriveKindText 词表；违约＝无法
+        // 分类，归 schema 族——词表语义由字段字典声明列承载）。
+        const std::string kindText(
+            trimView(cellAt(t, r, colIdx.at("drive_kind"))));
+        bool kindOk = false;
+        for (int i = 0; i < kLinearDriveKindCount; ++i) {
+            if (kindText == linearDriveKindText(static_cast<LinearDriveKind>(i))) {
+                kindOk = true;
+                break;
+            }
+        }
+        if (!kindOk) {
+            CatalogIssue iss = makeIssue(
+                std::string{kSelCatalogSchemaMismatch}, t.fileName, rowNo, "drive_kind",
+                "drive_kind 词表违约（四类词表：ball-screw|rack-pinion|timing-belt|"
+                "linear-motor）");
+            iss.modelId = modelId;
+            iss.actualText = kindText;
+            iss.expectedText = "ball-screw|rack-pinion|timing-belt|linear-motor";
+            rep.issues.push_back(std::move(iss));
+        }
+
+        // 交叉范围：峰值推力≥额定推力（推力两档——与电机峰值/额定转矩同构）。
+        if (hasRatedForce && hasPeakForce) {
+            checkRange(t, rowNo, "peak_force_n", modelId, peakForce,
+                       peakForce >= ratedForce, ratedForce, "N",
+                       "peak_force_n >= rated_force_n（N）", rep);
+        }
+        (void)maxSpeed;
+        (void)hasMaxSpeed;
+    }
+}
+
+// =====================================================================
 // 行级校验——能力曲线表（§6.3 四码＋词表/单位/引用存在性；组内点序）
 // =====================================================================
 
@@ -777,10 +981,18 @@ struct CurveGroup {
 
 /// 曲线表行级校验：词表/单位/点值/点序/组形态全表；返回 curveId→组映射
 /// （引用校验与装配共用；空 map＝表无数据行——合法，卡 §5.2）。
+///
+/// @param allowLinearOwner [in] 是否启用 linear-drive owner 词表与 v2 曲线
+///                         量纲词表（WP-19-T12——v2 包 true；v1 包 false，
+///                         owner 与量纲词表面零变化）
+/// @param linearIds        [in] 直线器件主表 modelId 集合（allowLinearOwner
+///                         时用于 owner_model_id 存在性校验）
 std::map<std::string, CurveGroup> validateCurveRows(
     const ParsedFileTable& t,
     const std::map<std::string, std::string>& motorIds,
     const std::map<std::string, std::string>& gearboxIds,
+    bool allowLinearOwner,
+    const std::map<std::string, std::string>& linearIds,
     CatalogValidationReport& rep)
 {
     const auto colIdx = buildColumnIndex(t);
@@ -862,30 +1074,42 @@ std::map<std::string, CurveGroup> validateCurveRows(
         row.yVal = yv;
         row.pointIdx = pi;
 
-        // owner_kind 词表（motor|gearbox——卡 §5.2 列清单；违约＝owner 无法
-        // 归属，归引用语义族，登记 3）。
-        if (row.ownerKind != kCurveOwnerMotor && row.ownerKind != kCurveOwnerGearbox) {
+        // owner_kind 词表（v1：motor|gearbox——卡 §5.2 列清单；v2 表尾追加
+        // linear-drive——WP-19-T12/§17.2；违约＝owner 无法归属，归引用语义
+        // 族，登记 3。v1 输入面词表零变化——allowLinearOwner 分派）。
+        const bool ownerOk = row.ownerKind == kCurveOwnerMotor
+            || row.ownerKind == kCurveOwnerGearbox
+            || (allowLinearOwner && row.ownerKind == kCurveOwnerLinearDrive);
+        if (!ownerOk) {
+            const char* expected = allowLinearOwner ? "motor|gearbox|linear-drive"
+                                                    : "motor|gearbox";
             CatalogIssue iss = makeIssue(std::string{kSelCatalogRefDangling}, t.fileName,
                                          rowNo, "owner_kind",
-                                         "owner_kind 词表违约（期望 motor|gearbox——无法归属）");
+                                         std::string("owner_kind 词表违约（期望 ")
+                                             + expected + "——无法归属）");
             iss.actualText = row.ownerKind;
-            iss.expectedText = "motor|gearbox";
+            iss.expectedText = expected;
             iss.modelId = row.curveId;
             rep.issues.push_back(std::move(iss));
             continue;
         }
 
         // 量纲 token 词表（§6.1"字段字典词表：speed/torque/power/…"——
-        // 词表违约归 schema 族，登记 3）。
+        // 词表违约归 schema 族，登记 3；v2 扩展 linear-speed|load|force——
+        // 卡 §17.2"曲线量纲词表扩展"，v1 面零变化）。
         for (const auto& [token, colName] :
              {std::pair<const std::string*, const char*>{&row.xQuantity, "x_quantity"},
               std::pair<const std::string*, const char*>{&row.yQuantity, "y_quantity"}}) {
-            if (siTokenForQuantity(*token) == nullptr) {
+            if (siTokenForQuantity(*token, allowLinearOwner) == nullptr) {
+                const char* expected = allowLinearOwner
+                    ? "speed|torque|power|linear-speed|load|force"
+                    : "speed|torque|power";
                 CatalogIssue iss = makeIssue(std::string{kSelCatalogSchemaMismatch},
                                              t.fileName, rowNo, colName,
-                                             "量纲 token 词表违约（v1 词表：speed|torque|power）");
+                                             std::string("量纲 token 词表违约（词表：")
+                                                 + expected + "）");
                 iss.actualText = *token;
-                iss.expectedText = "speed|torque|power";
+                iss.expectedText = expected;
                 iss.modelId = row.curveId;
                 rep.issues.push_back(std::move(iss));
             }
@@ -910,12 +1134,12 @@ std::map<std::string, CurveGroup> validateCurveRows(
                 rep.issues.push_back(std::move(iss));
                 continue;
             }
-            const char* expectedSi = siTokenForQuantity(quantity);
+            const char* expectedSi = siTokenForQuantity(quantity, allowLinearOwner);
             if (expectedSi != nullptr && token != expectedSi) {
                 // 期望＝量纲对应 SI 本位（登记 5）；v1 拒绝非 SI 本位声明。
                 CatalogIssue iss = makeIssue(std::string{kSelCatalogUnitInvalid}, t.fileName,
                                              rowNo, colName,
-                                             "单位与量纲不符或非 SI 本位（v1 冻结 SI 口径）");
+                                             "单位与量纲不符或非 SI 本位（SI 冻结口径）");
                 iss.modelId = row.curveId;
                 iss.actualText = token;
                 iss.expectedText = expectedSi;
@@ -924,9 +1148,12 @@ std::map<std::string, CurveGroup> validateCurveRows(
         }
 
         // owner_model_id 存在性（引用语义——对应主表必须已有该型号行；
-        // 卡 §5.3 行 6 语义层）。
-        const std::map<std::string, std::string>& ownerTable =
-            row.ownerKind == kCurveOwnerMotor ? motorIds : gearboxIds;
+        // 卡 §5.3 行 6 语义层；v2 直线器件主表同面——WP-19-T12）。
+        const std::map<std::string, std::string>* ownerTablePtr =
+            row.ownerKind == kCurveOwnerMotor ? &motorIds
+            : row.ownerKind == kCurveOwnerGearbox ? &gearboxIds
+                                                  : &linearIds;
+        const std::map<std::string, std::string>& ownerTable = *ownerTablePtr;
         if (ownerTable.find(row.ownerModelId) == ownerTable.end()) {
             CatalogIssue iss = makeIssue(std::string{kSelCatalogRefDangling}, t.fileName,
                                          rowNo, "owner_model_id",
@@ -1244,14 +1471,20 @@ CatalogValidationReport CatalogImporter::validate(const ParsedCatalogInput& pars
                                                   const CatalogManifest& manifest) const
 {
     // 第一段：schema 级前置（致命项抛出；清单级 issue 收入报告）。
+    // 版本分派：v1 五表基线 / v2 六表（linear_drives.csv——WP-19-T12）；
+    // v1 输入面的行为与报告序零变化。
+    const bool v2 = isV2Schema(manifest.formatVersion);
     CatalogValidationReport rep = checkManifest(manifest);
-    requireParsedTables(parsed);
+    requireParsedTables(parsed, manifest.formatVersion);
 
-    // 取四表与字典（requireParsedTables/checkManifest 已保证存在）。
+    // 取表与字典（requireParsedTables/checkManifest 已保证存在；v2 第六表
+    // 仅在 v2 分派时取用——v1 包中同名多余表不在必备面，与既有对未知文件
+    // 名的处理一致：不取不校验，文件层归 io 清单核对）。
     const ParsedFileTable* motors = parsed.find(kCatalogFileMotors);
     const ParsedFileTable* gearboxes = parsed.find(kCatalogFileGearboxes);
     const ParsedFileTable* curves = parsed.find(kCatalogFileCurves);
     const ParsedFileTable* compat = parsed.find(kCatalogFileCompatibility);
+    const ParsedFileTable* linear = v2 ? parsed.find(kCatalogFileLinearDrives) : nullptr;
     const auto dictFor = [&manifest](const std::string& f) -> const FieldDictionary& {
         for (const FieldDictionary& d : manifest.fieldDictionary) {
             if (d.targetFile == f) { return d; }
@@ -1265,18 +1498,26 @@ CatalogValidationReport CatalogImporter::validate(const ParsedCatalogInput& pars
     // 避免级联噪音；报告保留定位）。
     std::map<std::string, std::string> motorIds;    // modelId → 行签名
     std::map<std::string, std::string> gearboxIds;
+    std::map<std::string, std::string> linearIds;   // v2 直线器件 modelId → 行签名
     const bool motorsOk = checkTableSchema(*motors, dictFor(kCatalogFileMotors), rep);
     const bool gearboxesOk = checkTableSchema(*gearboxes, dictFor(kCatalogFileGearboxes), rep);
     const bool curvesOk = checkTableSchema(*curves, dictFor(kCatalogFileCurves), rep);
     const bool compatOk = checkTableSchema(*compat, dictFor(kCatalogFileCompatibility), rep);
+    // v2 第六表列比对（v1 时 linear 为 nullptr——短路，零额外行为）。
+    const bool linearOk = linear != nullptr
+        && checkTableSchema(*linear, dictFor(kCatalogFileLinearDrives), rep);
 
     // 第三段：行级校验（ID 集先行——曲线/兼容表的引用校验依赖主表 ID 集；
     // 主表各自独立，顺序＝文件清单序，确定性）。
     if (motorsOk)    { validateMotorRows(*motors, motorIds, rep); }
     if (gearboxesOk) { validateGearboxRows(*gearboxes, gearboxIds, rep); }
+    if (linearOk)    { validateLinearDriveRows(*linear, linearIds, rep); }
     std::map<std::string, CurveGroup> curveGroups;
     if (curvesOk) {
-        curveGroups = validateCurveRows(*curves, motorIds, gearboxIds, rep);
+        // v2 启用直线 owner 词表与 v2 曲线量纲词表（§17.2 词表扩展——
+        // 速度/载荷/力；v1 输入面词表零变化——布尔分派）。
+        curveGroups = validateCurveRows(*curves, motorIds, gearboxIds,
+                                        v2, linearIds, rep);
     }
     if (compatOk) {
         validateCompatRows(*compat, motorIds, gearboxIds, rep);
@@ -1290,6 +1531,11 @@ CatalogValidationReport CatalogImporter::validate(const ParsedCatalogInput& pars
     }
     if (gearboxesOk && curvesOk) {
         validateEntryCurveRefs(*gearboxes, curveGroups, kCurveOwnerGearbox, rep);
+    }
+    if (linearOk && curvesOk) {
+        // 直线器件条目的曲线引用（owner=linear-drive——推力-速度曲线：
+        // 横坐标 linear-speed〔m/s〕、纵坐标 force〔N〕，卡 §17.2）。
+        validateEntryCurveRefs(*linear, curveGroups, kCurveOwnerLinearDrive, rep);
     }
 
     // 第五段：报告稳定序（file → rowNo → column → code——NFR-COR-02；
@@ -1577,6 +1823,97 @@ CatalogPackageSnapshot CatalogImporter::assemble(const ParsedCatalogInput& parse
         snap.compatibility.push_back(std::move(rec));
     }
 
+    // ---- 直线传动器件条目映射（v2 第六表——WP-19-T12/SEL-09-S1）。
+    // v1 包该表不存在（validate 分派保证）——linearDrives 保持空，v1 快照
+    // 零新行为；v2 包逐行装配（缺失列入 missing 清单——与电机/减速器同款
+    // ERR-01 显式标记纪律）。
+    if (const ParsedFileTable* linear = parsed.find(kCatalogFileLinearDrives);
+        linear != nullptr && isV2Schema(manifest.formatVersion)) {
+        const auto linearCols = buildColumnIndex(*linear);
+        for (std::size_t r = 0; r < rowCountOf(*linear); ++r) {
+            LinearDriveCatalogEntry d;
+            d.modelId =
+                std::string(trimView(cellAt(*linear, r, linearCols.at("model_id"))));
+            d.vendor =
+                std::string(trimView(cellAt(*linear, r, linearCols.at("vendor"))));
+            d.displayName =
+                std::string(trimView(cellAt(*linear, r, linearCols.at("display_name"))));
+            d.ratedForce = assembleNumber(*linear, r, linearCols, "rated_force_n");
+            d.peakForce = assembleNumber(*linear, r, linearCols, "peak_force_n");
+            d.maxLinearSpeed = assembleNumber(*linear, r, linearCols, "max_speed_ms");
+            d.ratedPower = assembleNumber(*linear, r, linearCols, "rated_power_w");
+            d.mass = assembleNumber(*linear, r, linearCols, "mass_kg");
+
+            // 器件类别（validate 已验词表——此处按词表文本反查枚举值；
+            // 未命中＝内部一致性破坏，防御拒绝——NFR-COR-03 不静默）。
+            const std::string kindText(
+                trimView(cellAt(*linear, r, linearCols.at("drive_kind"))));
+            bool kindMapped = false;
+            for (int i = 0; i < kLinearDriveKindCount; ++i) {
+                const auto kind = static_cast<LinearDriveKind>(i);
+                if (kindText == linearDriveKindText(kind)) {
+                    d.kind = kind;
+                    kindMapped = true;
+                    break;
+                }
+            }
+            if (!kindMapped) {
+                throw std::invalid_argument(
+                    "SEL-CATALOG(assemble): drive_kind \"" + kindText
+                    + "（ModelId " + d.modelId + "）在校验通过后无法映射（内部一致性"
+                    "破坏——防御拒绝）");
+            }
+
+            // 可缺失字段（validate 已放行缺失——逐一显式标记）。
+            const auto optionalNum = [&](const char* col) -> std::optional<double> {
+                const std::string_view v = trimView(cellAt(*linear, r, linearCols.at(col)));
+                if (v.empty()) {
+                    d.missing.push_back({col, "cell-empty"});
+                    return std::nullopt;
+                }
+                return assembleNumber(*linear, r, linearCols, col);
+            };
+            d.efficiency = optionalNum("efficiency");
+            d.stroke = optionalNum("stroke_m");
+            {
+                const std::string_view fk =
+                    trimView(cellAt(*linear, r, linearCols.at("mounting_flange_kind")));
+                const std::string_view sk =
+                    trimView(cellAt(*linear, r, linearCols.at("mounting_shaft_kind")));
+                if (fk.empty()) { d.missing.push_back({"mounting_flange_kind", "cell-empty"}); }
+                if (sk.empty()) { d.missing.push_back({"mounting_shaft_kind", "cell-empty"}); }
+                d.mounting.flangeKind = std::string(fk);
+                d.mounting.shaftKind = std::string(sk);
+            }
+
+            // 曲线引用（分号分隔——分词逻辑与电机/减速器同构；validate 已验
+            // 存在/owner/歧义，此处直接映射并携带量纲声明）。
+            const std::string refText(
+                trimView(cellAt(*linear, r, linearCols.at("curve_ref"))));
+            if (!refText.empty()) {
+                std::size_t begin = 0;
+                while (begin <= refText.size()) {
+                    const std::size_t sep = refText.find(';', begin);
+                    const std::string token = std::string(trimView(std::string_view(refText)
+                        .substr(begin, sep == std::string::npos ? std::string::npos
+                                                                : sep - begin)));
+                    if (sep == std::string::npos && token.empty()) { break; }
+                    if (!token.empty()) {
+                        const auto& meta = curveMeta.at(token);   // validate 已保证存在
+                        d.curves.push_back({token, meta[2], meta[3]});
+                    }
+                    if (sep == std::string::npos) { break; }
+                    begin = sep + 1;
+                }
+            }
+
+            d.catalog = manifest.identity;
+            d.status = d.missing.empty() ? ValidationStatus::Valid
+                                         : ValidationStatus::Partial;
+            snap.linearDrives.push_back(std::move(d));
+        }
+    }
+
     // ---- 确定性排序（快照内存序＝canonical 序——NFR-COR-02；身份关系
     // 表的稳定 ID 序，卡 §4.3）。
     std::sort(snap.motors.begin(), snap.motors.end(),
@@ -1596,6 +1933,10 @@ CatalogPackageSnapshot CatalogImporter::assemble(const ParsedCatalogInput& parse
                   if (a.motorId != b.motorId) { return a.motorId < b.motorId; }
                   if (a.gearboxId != b.gearboxId) { return a.gearboxId < b.gearboxId; }
                   return a.mountKind < b.mountKind;
+              });
+    std::sort(snap.linearDrives.begin(), snap.linearDrives.end(),
+              [](const LinearDriveCatalogEntry& a, const LinearDriveCatalogEntry& b) {
+                  return a.modelId < b.modelId;   // 直线器件按稳定 ID 升序（同款纪律）
               });
 
     // ---- 内容身份回填（包身份＝业务数据 canonical 摘要——canonical 文本

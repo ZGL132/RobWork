@@ -1,6 +1,6 @@
 /**
  * @file   DiagCodesTest.cpp
- * @brief  selection 稳定诊断码登记表用例组（SelDiagCodes）——SEL-* 54 码
+ * @brief  selection 稳定诊断码登记表用例组（SelDiagCodes）——SEL-* 58 码
  *         全表清单纪律（T02 批 17＋T06 批表尾追加 28）、码值句法（经 core
  *         契约权威校验）与登记出处完整性（任务契约 WP-19-T02 acceptance 2
  *         ＋WP-19-T06 acceptance 1 的实现侧自证面）。
@@ -115,10 +115,16 @@ const char* kUnitCardFullTable[] = {
     "SEL-BACKFILL-RANGE-INVALID",                // §12.4（数值范围/非有限）
     "SEL-BACKFILL-LOCK-REF-MISMATCH",            // §12.1/§12.2（锁定引用与基线不一致）
     "SEL-BACKFILL-SYNTHESIS-ASSERT-FAILED",      // §12.4（MDL-06①~③断言失败）
+    // ---- T12 批（4 码——§17.2 直线传动硬筛选能力不足族；批内序＝
+    //      ReasonToken 词表 T12 组序：连续推力→峰值推力→速度→功率）----
+    "SEL-LINEAR-FORCE-CONTINUOUS-INSUFFICIENT",  // §17.2（直线连续推力不足）
+    "SEL-LINEAR-FORCE-PEAK-INSUFFICIENT",        // §17.2（直线峰值推力不足）
+    "SEL-LINEAR-SPEED-INSUFFICIENT",             // §17.2（直线速度不足）
+    "SEL-LINEAR-POWER-INSUFFICIENT",             // §17.2（直线功率不足）
 };
 
-/// 登记表码数（T02 批 17＋T06 批 28＋T09 批 9＝54——实现清单与本清单
-/// 同长断言的期望值；后续任务增码在两清单表尾同步追加）。
+/// 登记表码数（T02 批 17＋T06 批 28＋T09 批 9＋T12 批 4＝58——实现清单
+/// 与本清单同长断言的期望值；后续任务增码在两清单表尾同步追加）。
 constexpr std::size_t kExpectedCodeCount
     = sizeof(kUnitCardFullTable) / sizeof(kUnitCardFullTable[0]);
 
@@ -208,15 +214,18 @@ TEST(SelDiagCodes, CodeSyntaxViaCoreContract_WP19T02_ACC2)
 
     // 唯一书写点：常量与登记清单逐字一致（禁字符串拼码/第二处字面量
     // ——T03+ 产码路径引用常量，登记表引用同一常量，两处失同步即实现
-    // 缺陷）。抽首/中/尾四行锚定（T02 批首行/T06 批首行/T09 批首行/
-    // 全表尾行——批边界漂移即失败）。
+    // 缺陷）。抽首/中/尾五行锚定（T02 批首行/T06 批首行/T09 批首行/
+    // T09 批尾行〔T12 批前末行——表尾追加纪律下位置不变〕/全表尾行＝
+    // T12 批尾行——批边界漂移即失败）。
     EXPECT_EQ(entries[0].code, sdurws::ird::selection::kSelInputAxisOutOfScope);
     EXPECT_EQ(entries[17].code,
               sdurws::ird::selection::kSelMotorTorqueContinuousInsufficient);
     EXPECT_EQ(entries[45].code,
               sdurws::ird::selection::kSelBackfillPayloadMalformed);
-    EXPECT_EQ(entries.back().code,
+    EXPECT_EQ(entries[53].code,
               sdurws::ird::selection::kSelBackfillSynthesisAssertFailed);
+    EXPECT_EQ(entries.back().code,
+              sdurws::ird::selection::kSelLinearPowerInsufficient);
 }
 
 /**

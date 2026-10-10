@@ -61,18 +61,21 @@
 #include <sdurws/ird/evidence/Evaluator.hpp>   // evidence::IEvaluationContext——取消查询
                                                //   既有形态（卡 §14.9"已有形态则复用"）
 #include <sdurws/ird/selection/CatalogTypes.hpp>
+#include <sdurws/ird/selection/LinearDrive.hpp> // LinearAxisWorkpointFacts——直线轴
+                                               //   类型化广义量工作点事实（WP-19-T12
+                                               //   接口扩展消费类型；drivetrain §16.2
+                                               //   扩展端口消费承载——提议契约 v1）
 
 namespace sdurws::ird::selection {
 
 // =====================================================================
 // 域内 ID 别名（落位细化——卡 §10.1 写 core::StableId/core::CaseId，
 // core 未落位该二类型：ModelId 沿用 T03 承载；CaseId 以 std::string
-// 强语义别名落位，dynamics 侧收编后不改语义。登记于单元卡 §19.3 T04 ①）
+// 强语义别名落位，dynamics 侧收编后不改语义。登记于单元卡 §19.3 T04 ①；
+// ★ WP-19-T12 上移：CaseId 别名定义移至 CatalogTypes.hpp"强语义 ID 别名"
+// 区——直线传动工作点事实类型（LinearDrive.hpp）与本头共用该别名，上移
+// 消除两头循环 include，本头经 CatalogTypes.hpp 继续可见，语义零变化）
 // =====================================================================
-
-/// 工况 ID（dynamics 上游工况分组的稳定标识——值传递；同轴多工况经
-/// 本 ID 区分，淘汰原因按工况定位，卡 §9.4/EVI-02）。
-using CaseId = std::string;
 
 // =====================================================================
 // §10.3 淘汰原因词表（ReasonToken 封闭词表的物化）
@@ -133,10 +136,23 @@ enum class ReasonToken {
     AxisOutOfScope,                 ///< 轴范围外（R1 移动关节——WP-19-T08 消费）
     R2CapabilityDisabled,           ///< R2 能力未启用
     UserPreferenceFiltered,         ///< 用户优选过滤（与硬能力失败分离——SEL-07 分轨）
+
+    // ---- 直线传动能力组（卡 §10.3 表尾追加组——WP-19-T12/§17.2
+    //      SEL-09-S1；4 token——四类直线器件共用能力维度）----
+    LinearForceContinuousInsufficient, ///< 直线连续推力不足（工作点推力 RMS
+                                       ///  ＞目录额定推力 rated_force_n）
+    LinearForcePeakInsufficient,       ///< 直线峰值推力不足（工作点峰值推力
+                                       ///  ＞目录峰值推力 peak_force_n 或推力-
+                                       ///  速度曲线插值上限——禁外推分轨见 §6.2）
+    LinearSpeedInsufficient,           ///< 直线速度不足（工作点峰值线速度
+                                       ///  ＞目录最高线速度 max_speed_ms，m/s）
+    LinearPowerInsufficient,           ///< 直线功率不足（工作点峰值/RMS 功率
+                                       ///  ＞目录额定功率 rated_power_w，W）
 };
 
-/// 词表全表行数（封闭词表的规模冻结——遍历上界；追加 token 时同步更新）。
-inline constexpr int kReasonTokenCount = 34;
+/// 词表全表行数（封闭词表的规模冻结——遍历上界；追加 token 时同步更新。
+/// T12 批表尾追加 4：34→38——WP-19-T12；既有 34 项枚举值零变化）。
+inline constexpr int kReasonTokenCount = 38;
 
 /**
  * @brief ReasonToken → 词表文本（卡 §10.3 token 字符串的唯一映射点）。
@@ -169,7 +185,9 @@ enum class VerdictKind {
 enum class DeviceKind {
     Motor,      ///< 电机候选（screenMotors 产出）
     Gearbox,    ///< 减速器候选（screenGearboxes 产出）
-    Combination ///< 器件组合（组合校核产出——WP-19-T05；组合级记录的类别标记）
+    Combination, ///< 器件组合（组合校核产出——WP-19-T05；组合级记录的类别标记）
+    LinearDrive ///< 直线传动器件候选（screenLinearDrives 产出——WP-19-T12/
+                ///  SEL-09-S1 选型层；表尾追加：既有三值零变化）
 };
 
 /**
@@ -570,6 +588,55 @@ public:
         const std::vector<AxisWorkpointFacts>& axisFacts,
         const ScreeningCriteria& criteria,
         const evidence::IEvaluationContext* ctx) const = 0;
+
+    /**
+     * @brief 直线传动器件硬筛选（卡 §17.2 SEL-09-S1 选型层——WP-19-T12
+     *        表尾追加；四类直线器件共用能力维度）。
+     *
+     * 维度集（对快照 linearDrives 表逐候选执行；facts 未供给的量产生
+     * 数据缺口——不伪造工作点，与旋转侧同款纪律）：
+     *   ①连续推力：forceRms ≤ rated_force_n（单位 N）；
+     *   ②峰值推力：forcePeak ≤ peak_force_n（单位 N）；
+     *   ③峰值推力-曲线口径：目录声明推力-速度曲线（owner=linear-drive、
+     *     横坐标 linear-speed、纵坐标 force）时以 linearSpeedPeak 为查询
+     *     点插值力上限——曲线查询拒绝〔含区间外外推拒绝 SEL-CURVE-
+     *     EXTRAPOLATION-DENIED〕＝数据缺口（禁外推不放宽——§6.2 插值
+     *     失败≠候选能力不足的分轨语义零变化）；插值成功且 forcePeak 超
+     *     曲线上限＝峰值推力不足（阈值来源＝曲线 ID）；
+     *   ④直线速度：linearSpeedPeak ≤ max_speed_ms（单位 m/s）；
+     *   ⑤直线功率：powerPeak/powerRms ≤ rated_power_w（单位 W）；
+     *   ⑥安全系数复判：criteria.safetyFactor＞1 时力/速度/功率 ×SF 后
+     *     复判（与旋转侧同款语义——卡 §7.1）。
+     *
+     * @param snapshot  [in] 目录快照（linearDrives 表＝候选集；v1 包恒空
+     *                  ——返回空集，v1 行为零变化）
+     * @param axisFacts [in] 直线轴工作点事实（每条＝单轴单工况；类型化
+     *                  广义量——drivetrain §16.2 扩展端口消费承载，值传递）
+     * @param criteria  [in] 筛选条件（复用 ScreeningCriteria——直线通道
+     *                  消费 safetyFactor；其余条件维度与直线能力面正交，
+     *                  不消费不产生原因）
+     * @param ctx       [in] 取消查询（可空 nullptr；候选条目边界查询——
+     *                  语义同 screenMotors）
+     * @return 逐候选×逐轴 FeasibilityRecord（deviceKind＝LinearDrive；
+     *         记录数＝唯一轴数 × 候选直线器件数；候选序＝快照 linearDrives
+     *         序〔modelId 升序——装配保证〕、轴序＝facts 首现序——确定性；
+     *         原因稳定排序同 §10.4）
+     *
+     * @throws std::invalid_argument 致命输入错误（事实数值非有限/同轴
+     *         多条 facts 矛盾无〔直线 facts 无轴级类型字段〕——非有限
+     *         校验同 screenMotors 口径；筛选条件非有限/安全系数＜1）
+     *
+     * @note 纯函数；同输入恒同输出（NFR-COR-01/02）；可重入。
+     * @note 分期边界：本方法输出**选型层资格事实**——MDL-12-S1（产品链
+     *       正式计算）仍 R2 未启用；不产生 DeviceCombination（组合构造
+     *       直线轴通道为卡 §17.2 预留）；既有旋转通道与组合校核对移动
+     *       关节轴的范围外阻断零变化（SEL-09 R1 口径不放宽）。
+     */
+    virtual std::vector<FeasibilityRecord> screenLinearDrives(
+        const CatalogPackageSnapshot& snapshot,
+        const std::vector<LinearAxisWorkpointFacts>& axisFacts,
+        const ScreeningCriteria& criteria,
+        const evidence::IEvaluationContext* ctx) const = 0;
 };
 
 /**
@@ -589,6 +656,14 @@ public:
     std::vector<FeasibilityRecord> screenGearboxes(
         const CatalogPackageSnapshot& snapshot,
         const std::vector<AxisWorkpointFacts>& axisFacts,
+        const ScreeningCriteria& criteria,
+        const evidence::IEvaluationContext* ctx) const override;
+
+    // 直线传动器件硬筛选（WP-19-T12——实现见 src/LinearDrive.cpp；维度集
+    // 与分期边界见接口注）。
+    std::vector<FeasibilityRecord> screenLinearDrives(
+        const CatalogPackageSnapshot& snapshot,
+        const std::vector<LinearAxisWorkpointFacts>& axisFacts,
         const ScreeningCriteria& criteria,
         const evidence::IEvaluationContext* ctx) const override;
 };

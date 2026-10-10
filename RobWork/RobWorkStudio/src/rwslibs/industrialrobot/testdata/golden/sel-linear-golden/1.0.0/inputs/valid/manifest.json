@@ -1,0 +1,111 @@
+{
+  "formatVersion": "2",
+  "identity": {
+    "catalogId": "cat-sel-linear-golden",
+    "version": "1.0.0",
+    "contentIdentity": "",
+    "source": "SEL-09-S1 直线传动目录模板黄金样例（WP-19-T12 教学样例包——四类器件各一）"
+  },
+  "files": [
+    { "fileName": "manifest.json", "role": "manifest", "required": true, "sha256Hex": "" },
+    { "fileName": "motors.csv", "role": "motors", "required": true, "sha256Hex": "" },
+    { "fileName": "gearboxes.csv", "role": "gearboxes", "required": true, "sha256Hex": "" },
+    { "fileName": "capability_curves.csv", "role": "curves", "required": true, "sha256Hex": "" },
+    { "fileName": "compatibility.csv", "role": "compatibility", "required": true, "sha256Hex": "" },
+    { "fileName": "linear_drives.csv", "role": "linear-drives", "required": true, "sha256Hex": "" }
+  ],
+  "fieldDictionary": [
+    {
+      "targetFile": "motors.csv",
+      "fields": [
+        { "column": "model_id", "semantic": "稳定型号 ID", "unit": "", "required": true },
+        { "column": "vendor", "semantic": "厂商", "unit": "", "required": true },
+        { "column": "display_name", "semantic": "型号显示名", "unit": "", "required": true },
+        { "column": "rated_torque_nm", "semantic": "额定连续转矩", "unit": "N*m", "required": true },
+        { "column": "peak_torque_nm", "semantic": "峰值转矩", "unit": "N*m", "required": true },
+        { "column": "rated_speed", "semantic": "额定转速", "unit": "rad/s", "required": true },
+        { "column": "max_speed", "semantic": "最高转速", "unit": "rad/s", "required": true },
+        { "column": "rated_power_w", "semantic": "额定功率", "unit": "W", "required": true },
+        { "column": "overload_torque_nm", "semantic": "过载转矩", "unit": "N*m", "required": false },
+        { "column": "overload_duration_s", "semantic": "过载持续时间", "unit": "s", "required": false },
+        { "column": "duty_class", "semantic": "工作制", "unit": "", "required": true },
+        { "column": "rated_voltage_v", "semantic": "额定电压", "unit": "V", "required": false },
+        { "column": "thermal_ref_temp", "semantic": "温度降额参考档位", "unit": "1", "required": false },
+        { "column": "thermal_factor_per_ref", "semantic": "每档能力系数", "unit": "1", "required": false },
+        { "column": "brake_torque_nm", "semantic": "制动能力", "unit": "N*m", "required": false },
+        { "column": "holding_torque_nm", "semantic": "保持能力", "unit": "N*m", "required": false },
+        { "column": "rotor_inertia_kgm2", "semantic": "转子惯量", "unit": "kg*m^2", "required": true },
+        { "column": "mass_kg", "semantic": "质量", "unit": "kg", "required": true },
+        { "column": "mounting_flange_kind", "semantic": "法兰接口词表值", "unit": "", "required": false },
+        { "column": "mounting_shaft_kind", "semantic": "轴伸接口词表值", "unit": "", "required": false },
+        { "column": "curve_ref", "semantic": "能力曲线引用（分号分隔）", "unit": "", "required": false }
+      ]
+    },
+    {
+      "targetFile": "gearboxes.csv",
+      "fields": [
+        { "column": "model_id", "semantic": "稳定型号 ID", "unit": "", "required": true },
+        { "column": "vendor", "semantic": "厂商", "unit": "", "required": true },
+        { "column": "display_name", "semantic": "型号显示名", "unit": "", "required": true },
+        { "column": "rated_output_torque_nm", "semantic": "额定输出转矩", "unit": "N*m", "required": true },
+        { "column": "peak_output_torque_nm", "semantic": "峰值输出转矩", "unit": "N*m", "required": true },
+        { "column": "max_input_speed", "semantic": "允许输入转速", "unit": "rad/s", "required": true },
+        { "column": "ratio", "semantic": "速比", "unit": "1", "required": true },
+        { "column": "efficiency", "semantic": "效率", "unit": "1", "required": true },
+        { "column": "backlash", "semantic": "回程间隙", "unit": "rad", "required": false },
+        { "column": "rated_life", "semantic": "额定寿命（循环数）", "unit": "1", "required": false },
+        { "column": "mounting_orientation", "semantic": "安装方向词表值", "unit": "", "required": true },
+        { "column": "external_load_radial_n", "semantic": "允许径向力", "unit": "N", "required": false },
+        { "column": "external_load_axial_n", "semantic": "允许轴向力", "unit": "N", "required": false },
+        { "column": "external_load_dist_m", "semantic": "外载荷作用点距离", "unit": "m", "required": false },
+        { "column": "mass_kg", "semantic": "质量", "unit": "kg", "required": true },
+        { "column": "housing_inertia_kgm2", "semantic": "壳体惯量", "unit": "kg*m^2", "required": false },
+        { "column": "mounting_flange_kind", "semantic": "法兰接口词表值", "unit": "", "required": false },
+        { "column": "mounting_shaft_kind", "semantic": "轴伸接口词表值", "unit": "", "required": false },
+        { "column": "curve_ref", "semantic": "能力曲线引用（分号分隔）", "unit": "", "required": false }
+      ]
+    },
+    {
+      "targetFile": "capability_curves.csv",
+      "fields": [
+        { "column": "curve_id", "semantic": "曲线稳定 ID", "unit": "", "required": true },
+        { "column": "owner_kind", "semantic": "owner 类别（motor|gearbox|linear-drive）", "unit": "", "required": true },
+        { "column": "owner_model_id", "semantic": "owner 型号 ID", "unit": "", "required": true },
+        { "column": "x_quantity", "semantic": "横坐标量纲 token", "unit": "", "required": true },
+        { "column": "x_unit", "semantic": "横坐标 SI 单位 token", "unit": "", "required": true },
+        { "column": "y_quantity", "semantic": "纵坐标量纲 token", "unit": "", "required": true },
+        { "column": "y_unit", "semantic": "纵坐标 SI 单位 token", "unit": "", "required": true },
+        { "column": "x_value", "semantic": "横坐标采样值", "unit": "", "required": true },
+        { "column": "y_value", "semantic": "纵坐标采样值", "unit": "", "required": true },
+        { "column": "point_index", "semantic": "组内点序", "unit": "1", "required": true }
+      ]
+    },
+    {
+      "targetFile": "compatibility.csv",
+      "fields": [
+        { "column": "motor_model_id", "semantic": "电机型号 ID", "unit": "", "required": true },
+        { "column": "gearbox_model_id", "semantic": "减速器型号 ID", "unit": "", "required": true },
+        { "column": "mount_kind", "semantic": "安装关系词表值", "unit": "", "required": true }
+      ]
+    },
+    {
+      "targetFile": "linear_drives.csv",
+      "fields": [
+        { "column": "model_id", "semantic": "稳定型号 ID", "unit": "", "required": true },
+        { "column": "vendor", "semantic": "厂商", "unit": "", "required": true },
+        { "column": "display_name", "semantic": "型号显示名", "unit": "", "required": true },
+        { "column": "drive_kind", "semantic": "器件类别（ball-screw|rack-pinion|timing-belt|linear-motor）", "unit": "", "required": true },
+        { "column": "rated_force_n", "semantic": "额定连续推力", "unit": "N", "required": true },
+        { "column": "peak_force_n", "semantic": "峰值推力", "unit": "N", "required": true },
+        { "column": "max_speed_ms", "semantic": "最高直线速度", "unit": "m/s", "required": true },
+        { "column": "rated_power_w", "semantic": "额定功率", "unit": "W", "required": true },
+        { "column": "efficiency", "semantic": "效率", "unit": "1", "required": false },
+        { "column": "stroke_m", "semantic": "额定行程", "unit": "m", "required": false },
+        { "column": "mass_kg", "semantic": "质量", "unit": "kg", "required": true },
+        { "column": "mounting_flange_kind", "semantic": "法兰接口词表值", "unit": "", "required": false },
+        { "column": "mounting_shaft_kind", "semantic": "轴伸接口词表值", "unit": "", "required": false },
+        { "column": "curve_ref", "semantic": "能力曲线引用（分号分隔）", "unit": "", "required": false }
+      ]
+    }
+  ]
+}

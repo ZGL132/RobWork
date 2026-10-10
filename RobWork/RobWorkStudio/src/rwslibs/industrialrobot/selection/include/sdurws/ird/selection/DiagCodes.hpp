@@ -1,11 +1,12 @@
 /**
  * @file   DiagCodes.hpp
- * @brief  selection 稳定诊断码登记表——SEL-* 码值常量（54 码：T02 批
+ * @brief  selection 稳定诊断码登记表——SEL-* 码值常量（58 码：T02 批
  *         17 码〔卡 §2.2 范围外 1 码＋§5.3 目录业务校验 8 码＋§6.2 插值
  *         外推 1 码＋§6.3 曲线校验 4 码〔其中 REF-DANGLING 与 §5.3 同码〕
  *         ＋§9.3 组合校核 3 码〔IDENTITY-MISMATCH 两行同码〕〕＋T06 批
  *         表尾追加 28 码〔§10.3 淘汰原因词表的逐 token 稳定码建议值〕
- *         ＋T09 批表尾追加 9 码〔§12 器件回填的拒绝/定位族〕）
+ *         ＋T09 批表尾追加 9 码〔§12 器件回填的拒绝/定位族〕＋T12 批
+ *         表尾追加 4 码〔§17.2 直线传动硬筛选能力不足族——SEL-09-S1〕）
  *         与登记清单函数、ReasonToken→稳定码唯一映射函数。
  *
  * 设计依据：
@@ -348,8 +349,45 @@ inline constexpr std::string_view kSelBackfillSynthesisAssertFailed =
     "SEL-BACKFILL-SYNTHESIS-ASSERT-FAILED";
 
 // =====================================================================
+// T12 批（WP-19-T12）：§17.2 直线传动硬筛选的能力不足码——4 码表尾追加
+// （登记行见 selectionCodeEntries() 表尾 T12 区块）。
+//
+// 码值构造规则（登记于单元卡 §19.3 T12 落位细化）：直线传动能力码一律
+// SEL-LINEAR-<语义 kebab 大写>；维度与 ReasonToken 词表 T12 批 4 token
+// 一一对应（连续推力/峰值推力/速度/功率——词表序＝码序）。筛选层"直线
+// 映射失败/工作点未供给"不新造码：复用既有 SEL-DRIVETRAIN-MISSING/
+// SEL-CURVE-EXTRAPOLATION-DENIED（数据缺口分轨语义不变——§10.3 上游/
+// 数据组词表零扩展）。
+//
+// 清单序纪律不变：T12 批 4 行全部位于既有 54 行之后（表尾追加），批内
+// 序＝ReasonToken 词表 T12 组序，既有行不重排。
+// =====================================================================
+
+// ---- §17.2 直线传动能力不足族（SEL-LINEAR- 族；四类器件共用——能力
+//      维度按器件公共能力面定义，与器件类别正交）----
+
+/// linear-force-continuous-insufficient：连续推力不足（工作点推力 RMS
+/// ＞目录额定推力——SEL-09-S1 直线传动筛选；阈值来源＝目录 rated_force_n）。
+inline constexpr std::string_view kSelLinearForceContinuousInsufficient =
+    "SEL-LINEAR-FORCE-CONTINUOUS-INSUFFICIENT";
+/// linear-force-peak-insufficient：峰值推力不足（工作点峰值推力＞目录
+/// 峰值推力或推力-速度曲线插值上限——阈值来源＝目录 peak_force_n 或
+/// linear-drive 曲线）。
+inline constexpr std::string_view kSelLinearForcePeakInsufficient =
+    "SEL-LINEAR-FORCE-PEAK-INSUFFICIENT";
+/// linear-speed-insufficient：直线速度不足（工作点峰值线速度＞目录最高
+/// 线速度——阈值来源＝目录 max_speed_ms，单位 m/s）。
+inline constexpr std::string_view kSelLinearSpeedInsufficient =
+    "SEL-LINEAR-SPEED-INSUFFICIENT";
+/// linear-power-insufficient：直线功率不足（工作点峰值/RMS 功率＞目录
+/// 额定功率——阈值来源＝目录 rated_power_w，单位 W）。
+inline constexpr std::string_view kSelLinearPowerInsufficient =
+    "SEL-LINEAR-POWER-INSUFFICIENT";
+
+// =====================================================================
 // ReasonToken → 稳定码唯一映射（§10.3"SEL-* 稳定码建议值随 WP-19-T06
-// 注册"的执行点——词表 34 token 全表映射；RejectionReasonProvider.make
+// 注册"的执行点——词表 38 token 全表映射〔T12 批表尾追加 4——WP-19-T12〕；
+// RejectionReasonProvider.make
 // 回填 diagRef 与 FeasibleSetBuilder 输出回填共用本函数，禁第二处映射）
 // =====================================================================
 
@@ -361,7 +399,7 @@ inline constexpr std::string_view kSelBackfillSynthesisAssertFailed =
  *         按构造规则命名）；token 越界（词表外整数值）返回空串（防御分支
  *         ——调用方以空串判"无码可引"，diagRef 保持 nullopt，不私造码值）
  *
- * @note 纯函数；确定性（NFR-COR-02）。全表 34 token 的映射封闭性由
+ * @note 纯函数；确定性（NFR-COR-02）。全表 38 token 的映射封闭性由
  *       FeasibleSetContractTest 全遍历钉住（逐 token 非空＋句法权威校验）。
  */
 std::string_view reasonTokenDiagCode(ReasonToken token);
@@ -389,17 +427,18 @@ struct DiagnosticEntry {
 };
 
 /**
- * @brief 产出 SEL-* 全表（54 码＝T02 批 17＋T06 批表尾追加 28＋T09 批
- *        表尾追加 9）的登记行清单（units/selection.md 登记表的物化——
- *        装配期注册进 diagnostics StableCodeRegistry 的数据源；
- *        WP-19-T03+ 产码路径的码值语义对照面）。
+ * @brief 产出 SEL-* 全表（58 码＝T02 批 17＋T06 批表尾追加 28＋T09 批
+ *        表尾追加 9＋T12 批表尾追加 4）的登记行清单（units/selection.md
+ *        登记表的物化——装配期注册进 diagnostics StableCodeRegistry 的
+ *        数据源；WP-19-T03+ 产码路径的码值语义对照面）。
  *
  * 清单序＝卡面章节序（§2.2 一码 → §5.3 表行序八码〔REF-DANGLING 兼并
  * §6.3 曲线缺失行〕→ §6.2 一码 → §6.3 表行序四码 → §9.3 表行序三码
  * 〔IDENTITY-MISMATCH 兼并行 12〕→ T06 批 28 码〔批内序＝ReasonToken
  * 词表组序：电机 11→减速器 9→组合/一致性 1→上游/数据 5→边界/偏好 2〕
  * → T09 批 9 码〔§12 回填判定序：载荷结构→载荷版本→域输入→目录/安装
- * →数据缺失→数值范围→锁定引用→合成断言〕——确定性序，NFR-COR-02）；
+ * →数据缺失→数值范围→锁定引用→合成断言〕→ T12 批 4 码〔§17.2 直线
+ * 传动能力序：连续推力→峰值推力→速度→功率〕——确定性序，NFR-COR-02）；
  * 每次调用
  * 返回同序同值新清单（纯值聚合）。追加纪律：后续任务新增码只允许表尾
  * 追加并走单元卡增量修订（kinematics §9.6 行序纪律同款）——既有行

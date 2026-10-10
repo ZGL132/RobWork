@@ -1,0 +1,169 @@
+{
+  "schema": "sel-linear-screening-inputs/1",
+  "note": "直线传动筛选黄金输入——黄金目录业务模型（与 valid 包 linear_drives.csv 同源）＋固定 canonical 轴 ID＋逐算例筛选条件与直线轴类型化广义量工作点事实。工作点由调用方（本数据集）值传递供给——drivetrain §16.2 扩展端口产出的消费承载形态（提议契约 v1，P-SEL-1 同款纪律；不自算映射量——selection 零直线映射公式红线）。",
+  "identity": {
+    "catalogId": "cat-sel-linear-golden",
+    "version": "1.0.0",
+    "source": "SEL-09-S1 直线传动目录模板黄金样例（WP-19-T12）"
+  },
+  "axes": {
+    "l1": "obj-00000000000000000000000000000301"
+  },
+  "drives": [
+    {
+      "modelId": "LD-BS-001",
+      "kind": "ball-screw",
+      "ratedForce": 9000,
+      "peakForce": 15000,
+      "maxLinearSpeed": 0.8,
+      "ratedPower": 4500,
+      "efficiency": 0.92,
+      "stroke": 2.4,
+      "mass": 12.5,
+      "flangeKind": "flangeB",
+      "shaftKind": "shaftC",
+      "curveRefs": ["bs-force"]
+    },
+    {
+      "modelId": "LD-RP-001",
+      "kind": "rack-pinion",
+      "ratedForce": 12000,
+      "peakForce": 20000,
+      "maxLinearSpeed": 2.0,
+      "ratedPower": 9000,
+      "efficiency": 0.95,
+      "stroke": 8.0,
+      "mass": 38.0,
+      "flangeKind": "flangeB",
+      "shaftKind": "shaftC",
+      "curveRefs": ["rp-load-power"]
+    },
+    {
+      "modelId": "LD-TB-001",
+      "kind": "timing-belt",
+      "ratedForce": 4000,
+      "peakForce": 6500,
+      "maxLinearSpeed": 3.5,
+      "ratedPower": 5200,
+      "efficiency": null,
+      "stroke": 5.0,
+      "mass": 9.8,
+      "flangeKind": "flangeB",
+      "shaftKind": "shaftC",
+      "curveRefs": []
+    },
+    {
+      "modelId": "LD-LM-001",
+      "kind": "linear-motor",
+      "ratedForce": 5200,
+      "peakForce": 11000,
+      "maxLinearSpeed": 4.0,
+      "ratedPower": 6800,
+      "efficiency": null,
+      "stroke": null,
+      "mass": 14.2,
+      "flangeKind": "flangeB",
+      "shaftKind": "shaftC",
+      "curveRefs": ["lm-force"]
+    }
+  ],
+  "curves": {
+    "bs-force": {
+      "ownerKind": "linear-drive",
+      "ownerModelId": "LD-BS-001",
+      "xQuantity": "linear-speed",
+      "xUnit": "m/s",
+      "yQuantity": "force",
+      "yUnit": "N",
+      "points": [
+        { "x": 0.2, "y": 14000 },
+        { "x": 0.5, "y": 12000 },
+        { "x": 0.8, "y": 9000 }
+      ]
+    },
+    "rp-load-power": {
+      "ownerKind": "linear-drive",
+      "ownerModelId": "LD-RP-001",
+      "xQuantity": "load",
+      "xUnit": "N",
+      "yQuantity": "power",
+      "yUnit": "W",
+      "points": [
+        { "x": 2000, "y": 4000 },
+        { "x": 8000, "y": 9000 }
+      ]
+    },
+    "lm-force": {
+      "ownerKind": "linear-drive",
+      "ownerModelId": "LD-LM-001",
+      "xQuantity": "linear-speed",
+      "xUnit": "m/s",
+      "yQuantity": "force",
+      "yUnit": "N",
+      "points": [
+        { "x": 0.5, "y": 11000 },
+        { "x": 1.0, "y": 9500 },
+        { "x": 2.0, "y": 8000 },
+        { "x": 4.0, "y": 5000 }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "name": "nominal-and-overload",
+      "axis": "l1",
+      "safetyFactor": 1.0,
+      "drives": ["LD-BS-001", "LD-RP-001", "LD-TB-001", "LD-LM-001"],
+      "factsByAxis": {
+        "l1": [
+          {
+            "caseId": "case-nominal",
+            "forceRms": 6000,
+            "forcePeak": 10500,
+            "linearSpeedPeak": 0.65,
+            "powerPeak": 3800,
+            "powerRms": 2600,
+            "displacementPeak": 1.2,
+            "accelerationPeak": 2.5,
+            "atTime": 1.5,
+            "segmentId": "seg-nom"
+          },
+          {
+            "caseId": "case-overload",
+            "forceRms": 9500,
+            "forcePeak": 16000,
+            "linearSpeedPeak": 0.9,
+            "powerPeak": 5200,
+            "powerRms": 4800,
+            "displacementPeak": 1.6,
+            "accelerationPeak": 3.0,
+            "atTime": 4.2,
+            "segmentId": "seg-ovl"
+          }
+        ]
+      }
+    },
+    {
+      "name": "safety-factor-derating",
+      "axis": "l1",
+      "safetyFactor": 1.25,
+      "drives": ["LD-BS-001"],
+      "factsByAxis": {
+        "l1": [
+          {
+            "caseId": "case-nominal",
+            "forceRms": 6000,
+            "forcePeak": 10500,
+            "linearSpeedPeak": 0.65,
+            "powerPeak": 3800,
+            "powerRms": 2600,
+            "displacementPeak": 1.2,
+            "accelerationPeak": 2.5,
+            "atTime": 1.5,
+            "segmentId": "seg-nom"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -56,6 +56,7 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <sdurws/ird/core/Digest.hpp>     // core::ContentIdentity——包/曲线内容身份
@@ -74,6 +75,14 @@ using ModelId = std::string;
 
 /// 能力曲线稳定 ID（包内唯一；capability_curves.csv 的 curve_id 列）。
 using CurveId = std::string;
+
+/// 工况 ID（dynamics 上游工况分组的稳定标识——值传递；同轴多工况经本 ID
+/// 区分，淘汰原因按工况定位，卡 §9.4/EVI-02）。WP-19-T12 自 Screening.hpp
+/// 上移至本头（落位细化登记）：直线传动工作点事实类型（LinearDrive.hpp）
+/// 与旋转侧工作点事实类型（Screening.hpp）共用同一工况 ID 别名——上移
+/// 消除两头的循环 include（LinearDrive.hpp → Screening.hpp → LinearDrive.hpp
+/// 在 include guard 下会使后含者类型不可见），语义零变化。
+using CaseId = std::string;
 
 // =====================================================================
 // §4.1 目录身份与来源（显示名称永不替代身份——ARC-04/CON-01）
@@ -393,6 +402,88 @@ struct CompatibilityRecord {
 };
 
 // =====================================================================
+// §17.2 直线传动器件目录（v2 第六表——WP-19-T12/SEL-09-S1 选型层）
+// =====================================================================
+
+/**
+ * @brief 直线传动器件类别（卡 §17.2 四类——SEL-09-S1 目录模板的器件
+ *        分类词表；REQUIREMENTS SEL-09-S1 行"滚珠丝杠、齿条、同步带、
+ *        直线电机"的枚举物化）。
+ *
+ * 词表纪律：封闭枚举——追加只允许表尾（ReasonToken 同款纪律），既有
+ * 四项不重排/不删除；词表文本经 linearDriveKindText() 取得（唯一映射
+ * 点——禁止在校验/筛选实现里第二处书写词面字符串字面量）。
+ *
+ * 边界登记（重要——V12-03/MDL-12-S1 分期口径）：本枚举是**目录条目的
+ * 器件分类**，不表示移动关节链已在产品链启用——MDL-12-S1（产品链正式
+ * 计算）仍为 R2 未启用，4/5 轴阻断不受影响；SEL-09-S1 只交付选型层
+ * （目录模板＋能力曲线＋工作点映射消费），启用顺序见卡 §17.2。
+ */
+enum class LinearDriveKind {
+    BallScrew,    ///< 滚珠丝杠（旋转电机＋丝杠螺母副——直线推力输出）
+    RackPinion,   ///< 齿条齿轮（旋转电机＋齿条小齿轮——长行程直线输出）
+    TimingBelt,   ///< 同步带（旋转电机＋带轮——高速直线输出）
+    LinearMotor,  ///< 直线电机（无旋转中间环节——直接直线推力输出）
+};
+
+/**
+ * @brief LinearDriveKind → 词表文本（唯一映射点——词表纪律同
+ *        reasonTokenText；越界返回 "unknown-linear-drive-kind" 防御值）。
+ *
+ * @param kind [in] 直线传动器件类别
+ * @return 词表文本（linear_drives.csv drive_kind 列的合法值——kebab
+ *         小写词形，与目录 CSV 逐字符匹配）
+ *
+ * @note 纯函数；确定性。
+ */
+std::string_view linearDriveKindText(LinearDriveKind kind);
+
+/// 词表全表行数（封闭枚举的规模冻结——遍历上界；追加类别时同步更新）。
+inline constexpr int kLinearDriveKindCount = 4;
+
+/**
+ * @brief 直线传动器件型号主表行（v2 linear_drives.csv 的业务模型——
+ *        卡 §17.2"线性位移/速度/加速度/力单位进字段字典"的条目承载）。
+ *
+ * 与电机/减速器条目同构的纪律（卡 §4.1 基线）：数值单位全部 SI（推力
+ * N、线速度 m/s、功率 W、质量 kg——卡 §4.4 单位表"R2 移动关节扩展"
+ * 行）；缺失字段显式入 missing 清单（不伪造数值——ERR-01）；display
+ * 名称不参与身份（modelId 才是稳定 ID——卡 §4.3）。
+ *
+ * 字段集设计口径（登记单元卡 §19.3 T12 落位细化）：承载四类器件的
+ * **公共能力面**（推力/速度/功率/效率）——四类各自的专用几何参数
+ * （丝杠的传动常数、齿条齿轮副的节圆半径等）是 drivetrain 直线映射
+ * 的输入侧参数，属传动模型而非器件能力目录，**不在本表承载**（selection
+ * 不自实现直线映射——映射参数归属随 drivetrain 扩展端口收编，本表
+ * 零映射参数列是"零自实现"红线的结构性承载之一）。
+ */
+struct LinearDriveCatalogEntry {
+    ModelId modelId;            ///< 稳定型号 ID（包内唯一）
+    std::string vendor;         ///< 厂商（显示用；不参与身份）
+    std::string displayName;    ///< 型号显示名（可重复——不参与身份）
+    CatalogIdentity catalog;    ///< 所属目录版本（装配时回填＝manifest.identity）
+    LinearDriveKind kind = LinearDriveKind::BallScrew; ///< 器件类别（四类词表）
+    double ratedForce = 0.0;    ///< 额定连续推力，单位 N（>0——范围校验）
+    double peakForce = 0.0;     ///< 峰值推力，单位 N（>0 且 >= 额定推力）
+    double maxLinearSpeed = 0.0; ///< 最高直线速度，单位 m/s（>0）
+    double ratedPower = 0.0;    ///< 额定功率，单位 W（>0）
+    std::optional<double> efficiency; ///< 效率（无量纲 (0,1]；可缺失→missing 标记——
+                                      ///   直线电机常以推力常数直接出力，效率可缺）
+    std::optional<double> stroke;     ///< 额定行程，单位 m（>0；可缺失→missing 标记——
+                                      ///   组件类器件〔如丝杠轴身〕按配套截取，无固定行程）
+    double mass = 0.0;          ///< 质量，单位 kg（>0；报告/BOM 消费面）
+    MountSpec mounting;         ///< 安装接口（可缺失字段——兼容性筛选用）
+    std::vector<CurveRef> curves;    ///< 能力曲线引用（§6；owner=linear-drive——
+                                     ///   推力-速度曲线：横坐标 linear-speed〔m/s〕、
+                                     ///   纵坐标 force〔N〕，卡 §17.2 曲线 schema）
+    std::vector<MissingField> missing; ///< 缺失字段清单（显式标记——ERR-01）
+    ValidationStatus status = ValidationStatus::Valid; ///< 条目校验状态
+
+    bool operator==(const LinearDriveCatalogEntry& o) const;
+    bool operator!=(const LinearDriveCatalogEntry& o) const { return !(*this == o); }
+};
+
+// =====================================================================
 // §6.1 能力曲线模型
 // =====================================================================
 
@@ -448,13 +539,20 @@ struct CatalogPackageSnapshot {
     std::vector<GearboxCatalogEntry> gearboxes;      ///< 减速器主表（modelId 升序）
     std::vector<PerformanceCurve> curves;            ///< 能力曲线（curveId 升序）
     std::vector<CompatibilityRecord> compatibility;  ///< 兼容关系（motorId→gearboxId→mountKind 升序）
+    /// 直线传动器件主表（v2 第六表——WP-19-T12；modelId 升序；v1 包恒空）。
+    /// 表尾追加纪律：成员只允许在既有五成员之后追加——v1 快照在本成员为空
+    /// 时 canonical 文本逐字节不变（空段零字节——包内容身份零漂移，黄金
+    /// 零回归的序列化承载），见 canonicalPackageText 尾段注释。
+    std::vector<LinearDriveCatalogEntry> linearDrives;
     core::ContentIdentity contentIdentity;           ///< 包 canonical 序列化摘要（装配入口计算回填）
 
-    /// 快照相等＝五成员全等（内容身份一致性由 canonical 文本派生保证）。
+    /// 快照相等＝六成员全等（内容身份一致性由 canonical 文本派生保证；
+    /// linearDrives 为表尾追加成员——v1 快照恒空、相等语义零变化）。
     bool operator==(const CatalogPackageSnapshot& o) const
     {
         return manifest == o.manifest && motors == o.motors && gearboxes == o.gearboxes
             && curves == o.curves && compatibility == o.compatibility
+            && linearDrives == o.linearDrives
             && contentIdentity == o.contentIdentity;
     }
     bool operator!=(const CatalogPackageSnapshot& o) const { return !(*this == o); }
@@ -560,6 +658,16 @@ struct CatalogValidationReport {
 /// v1 目录包 schema 版本（NFR-DEP-04 精神——未知版本拒绝＋升级指引）。
 inline constexpr const char* kCatalogFormatVersion = "1";
 
+/// v2 目录包 schema 版本（WP-19-T12——SEL-09-S1 直线传动目录模板）。
+///
+/// v2＝v1 五表＋第六表 linear_drives.csv（直线传动器件主表——滚珠丝杠/
+/// 齿条/同步带/直线电机四类）。版本分派纪律：校验器按 formatVersion
+/// 分派注册面（v1 五表 / v2 六表）——v1 输入面的行为、校验清单与包
+/// 内容身份逐字节零变化（"不改变六/七轴全旋转链现有行为"，V12-03
+/// 收窄——直线通道是纯新增表，不动既有四表语义）；"999" 等未注册
+/// 版本仍拒绝并给升级指引（不自动升级——PM-06 纪律不变）。
+inline constexpr const char* kCatalogFormatVersionV2 = "2";
+
 /// 包清单文件名（io JSON 通道）。
 inline constexpr const char* kCatalogFileManifest = "manifest.json";
 /// 电机型号主表文件名（io CSV 通道）。
@@ -570,15 +678,29 @@ inline constexpr const char* kCatalogFileGearboxes = "gearboxes.csv";
 inline constexpr const char* kCatalogFileCurves = "capability_curves.csv";
 /// 兼容关系表文件名（可含零数据行＝无预声明兼容对——卡 §5.2）。
 inline constexpr const char* kCatalogFileCompatibility = "compatibility.csv";
+/// 直线传动器件主表文件名（v2 新增第六表——WP-19-T12/SEL-09-S1；v1 包
+/// 不含本表。必备、可零数据行——零行＝该包无直线传动器件，合法）。
+inline constexpr const char* kCatalogFileLinearDrives = "linear_drives.csv";
 
-/// 能力曲线 owner 类别词表（capability_curves.csv owner_kind 列——卡 §5.2）。
+/// 能力曲线 owner 类别词表（capability_curves.csv owner_kind 列——卡 §5.2；
+/// v2 表尾追加 linear-drive——WP-19-T12；既有两值零变化）。
 inline constexpr const char* kCurveOwnerMotor = "motor";
 inline constexpr const char* kCurveOwnerGearbox = "gearbox";
+inline constexpr const char* kCurveOwnerLinearDrive = "linear-drive";
 
 /// 量纲 token 词表（v1——卡 §6.1"字段字典词表：speed/torque/power/…"）。
 inline constexpr const char* kQuantitySpeed = "speed";    ///< 角速度（SI rad/s）
 inline constexpr const char* kQuantityTorque = "torque";  ///< 转矩（SI N·m）
 inline constexpr const char* kQuantityPower = "power";    ///< 功率（SI W）
+
+// ---- v2 曲线量纲词表扩展（WP-19-T12——卡 §17.2"曲线量纲词表扩展"）----
+// 直线传动能力曲线的坐标量纲（卡 §17.2：横坐标速度/载荷〔m/s、N〕，
+// 纵坐标力/功率〔N、W〕；功率复用 v1 的 kQuantityPower）。token 词形
+// 遵守既有 kebab 小写约定；SI 单位均为 core Units 已注册 token
+// （"m/s"、"N"、"W"——v1 目录模板落位登记 3 的词表实测）。
+inline constexpr const char* kQuantityLinearSpeed = "linear-speed"; ///< 线速度（SI m/s）
+inline constexpr const char* kQuantityLoad = "load";               ///< 载荷（SI N）
+inline constexpr const char* kQuantityForce = "force";             ///< 力（SI N）
 
 // =====================================================================
 // 规范序列化与内容身份（卡 §4.2——CON-05 内容寻址）

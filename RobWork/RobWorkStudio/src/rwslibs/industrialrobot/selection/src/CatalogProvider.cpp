@@ -119,6 +119,8 @@ std::vector<ManifestEntry> catalogPackageFileSchema()
     // 表允许零数据行但文件必须在包内——卡 §5.2 必备性列）。role 词表值
     // ＝本域冻结（io 清单核对框架按 role/required 执行文件层核对——
     // io 卡 §7.8；sha256 由 io 在核对期填装，注册形态留空承载位）。
+    // v1 冻结面：本函数返回值零变化（WP-19-T12 的 v2 扩展走独立函数——
+    // 既有装配消费方行为零漂移）。
     return {
         {kCatalogFileManifest,      "manifest",      true, ""},
         {kCatalogFileMotors,        "motors",        true, ""},
@@ -126,6 +128,18 @@ std::vector<ManifestEntry> catalogPackageFileSchema()
         {kCatalogFileCurves,        "curves",        true, ""},
         {kCatalogFileCompatibility, "compatibility", true, ""},
     };
+}
+
+std::vector<ManifestEntry> catalogPackageFileSchemaV2()
+{
+    // v2＝v1 五文件＋linear_drives.csv（WP-19-T12/SEL-09-S1 直线传动器件
+    // 主表——必备、允许零数据行：零行＝包内无直线传动器件，合法）。序＝
+    // v1 行序后表尾追加（确定性序；role 词表值同款冻结——"linear-drives"）。
+    // P-IO-7 同款注册义务：io 清单核对框架按本表执行文件层核对（本卡不
+    // 直接修改 io.md——同步登记随装配动作进行，卡 §5.2 注）。
+    auto entries = catalogPackageFileSchema();
+    entries.push_back({kCatalogFileLinearDrives, "linear-drives", true, ""});
+    return entries;
 }
 
 }  // namespace sdurws::ird::selection
