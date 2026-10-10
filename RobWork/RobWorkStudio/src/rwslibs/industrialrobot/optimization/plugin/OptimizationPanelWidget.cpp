@@ -37,16 +37,6 @@ QString metricText(const std::optional<double>& value)
                              : QStringLiteral("—");
 }
 
-/// 候选状态 token→状态词键（状态词直译——呈现层词表查表，零判定）。
-QString statusText(const std::string& statusToken,
-                   const std::function<std::string(const std::string&)>& resolve)
-{
-    // 状态词键＝"plugin.optimization.status.<token>" 键族——值归宿主
-    // 文案资源；解析结果经 L-O9 守卫（哈希形态回退键名）。
-    return QString::fromStdString(resolve("plugin.optimization.status."
-                                          + statusToken));
-}
-
 }  // namespace
 
 // =====================================================================
@@ -425,8 +415,12 @@ void OptimizationPanelWidget::refreshCandidatePage()
             new QTableWidgetItem(QString::fromStdString(row.displayLabel)));
         m_candidateTable->setItem(
             r, 1,
-            new QTableWidgetItem(
-                statusText(row.statusToken, m_module.services.textResolver)));
+            new QTableWidgetItem(QString::fromStdString(
+                // 候选状态词列（F-635 收口）：经模型层 candidateStatusText
+                // 走 L-O9 唯一解析流（空缝兜底键名原文＋哈希泄漏回退）——
+                // 不再直调可空 textResolver 缝（空缝装配态渲染候选表即
+                // bad_function_call 崩 UI 线程的缺陷面已消除）。
+                candidateStatusText(m_module.services, row.statusToken))));
         m_candidateTable->setItem(
             r, 2,
             new QTableWidgetItem(row.isBaseline ? QStringLiteral("是") : QStringLiteral("否")));

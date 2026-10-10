@@ -517,6 +517,36 @@ std::string resolvePanelText(const OptPanelServices& services,
                              const std::string& titleKey,
                              bool* outFellBack = nullptr);
 
+/// 候选状态词键族前缀（§3.5——plugin.optimization.status.<状态 token>；
+/// 值归宿主文案资源。本常量为插件面内该键族的**唯一书写点**——widget
+/// 与测试均经 candidateStatusText 消费，零字面复制）。
+inline constexpr const char* kOptCandidateStatusKeyPrefix =
+    "plugin.optimization.status.";
+
+/**
+ * @brief L-O9 候选状态词解析（statusToken→用户文本；空缝兜底键名原文）。
+ *
+ * 键拼装＝键族前缀＋状态 token（OptCandidateRow.statusToken——§4.3 词表
+ * toToken 值），解析全程走 resolvePanelText（L-O9 同款守卫：空缝兜底键名
+ * ＋哈希形态回退键名）。
+ *
+ * 为什么收口到模型层（F-635，缺陷草案号）：候选表状态列曾是面板文本中
+ * 唯一直调可空 textResolver std::function 的入口——空缝装配态（开发
+ * harness 未注入宿主解析器）渲染候选表即 bad_function_call 崩溃 UI 线程，
+ * 而面板其余文本全部经 resolvePanelText 空缝守卫。收口后状态列与其余
+ * 面板文本同走唯一解析流：空缝不崩、显示键名原文（对齐 L-O9 兜底语义），
+ * 哈希泄漏守卫随之生效。
+ *
+ * @param services    [in] 服务缝聚合（textResolver 缝——可空装配态合法）
+ * @param statusToken [in] 候选状态 token（§4.3 词表值，如 "feasible"）
+ * @return 用户文本（宿主工程用语——或 "plugin.optimization.status.<token>"
+ *         键名兜底）
+ *
+ * 纯函数；线程安全（只读消费缝聚合）。
+ */
+std::string candidateStatusText(const OptPanelServices& services,
+                                const std::string& statusToken);
+
 }  // namespace sdurws::ird::optimization
 
 #endif  // IRD_OPTIMIZATION_PLUGIN_OPTPANELMODEL_HPP
