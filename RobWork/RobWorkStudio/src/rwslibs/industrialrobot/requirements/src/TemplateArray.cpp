@@ -733,6 +733,23 @@ EditBatch TemplateArrayService::applyMirror(const std::vector<TaskPoint>& source
         return errorBatch("axis-normal", "镜像面法向非法（非零且有限——零法向"
                                           "不定义平面）");
     }
+    // F-646（P2）：分量有限 ≠ 模长可计算——1e200 级法向分量虽各自有限，
+    // 平方求和即上溢 +Inf，随后 sqrt(Inf)=Inf、x/Inf=0，单位化法向退化为
+    // 零向量：反射 p' = p − 2(n·p)n 中 n·p≡0，位置/目标点原样返回，姿态
+    // 共轭亦失效——镜像静默 no-op 且 ok=true，违背 NFR-COR-03 不静默。
+    // 修复：归一化前显式判定 norm² 有限性（与上方零法向/非有限同走
+    // axis-normal 参数非法面），错误详情携原值（formatVec3 %.17g 无损
+    // 往返文本——调用方可在报告里直接比对源文件写法）。normSq 就地计算
+    // 一次，下方归一化直接复用（纯算术提升，无行为变化）。
+    const double normSq = plane.axisNormal[0] * plane.axisNormal[0]
+                          + plane.axisNormal[1] * plane.axisNormal[1]
+                          + plane.axisNormal[2] * plane.axisNormal[2];
+    if (!std::isfinite(normSq)) {
+        return errorBatch("axis-normal", "镜像面法向量级溢出（分量平方和超 "
+                                         "double 上限——归一化将失真为非有限/"
+                                         "零向量；原值: "
+                                         + formatVec3(plane.axisNormal) + "）");
+    }
     if (!plane.refFrame.wellFormed()) {
         return errorBatch("ref-frame", "镜像面参考系引用结构违约（I-REQ-4 结构半区）");
     }
@@ -748,9 +765,9 @@ EditBatch TemplateArrayService::applyMirror(const std::vector<TaskPoint>& source
     }
 
     // ---- 单位化法向（除以模长——IEEE754 确定除法）----
-    const double norm = std::sqrt(plane.axisNormal[0] * plane.axisNormal[0]
-                                  + plane.axisNormal[1] * plane.axisNormal[1]
-                                  + plane.axisNormal[2] * plane.axisNormal[2]);
+    // normSq 已在参数校验段判定有限（F-646）且 >0（零法向已拒）——此处
+    // sqrt/除法不可能产出 Inf/NaN，镜像几何闭式可计算。
+    const double norm = std::sqrt(normSq);
     const rw::math::Vector3D<double> nUnit(plane.axisNormal[0] / norm,
                                            plane.axisNormal[1] / norm,
                                            plane.axisNormal[2] / norm);

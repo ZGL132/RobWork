@@ -407,6 +407,47 @@ TEST(ReqTemplateArray, MirrorGoldenNormalZ_WP14T07_ACC1)
 }
 
 /**
+ * 回归（F-646，P2——audit r2a 批次）：镜像面法向含 1e200 级分量——每个
+ * 分量各自有限（能通过 finiteVec3＋非零检查），但分量平方和 ≈1e400 超出
+ * double 上限（~1.8e308）上溢为 +Inf：sqrt(Inf)=Inf、x/Inf=0，单位化法向
+ * 退化为零向量，反射 p' = p − 2(n·p)n 中 n·p≡0——位置/目标点原样返回，
+ * 姿态共轭同失效，镜像静默 no-op 且 ok=true（违背 NFR-COR-03 不静默）。
+ * 修复后：归一化前 norm² 有限性显式判定，上溢与零法向同走 axis-normal
+ * 参数非法面（IllegalTolerance，详情携原值）——命令被拒，不产派生条目。
+ */
+TEST(ReqTemplateArray, MirrorNormalOverflowRejected_F646)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-11"},
+                  std::vector<std::string>{});
+
+    TemplateArrayService service;
+    TaskPoint src = makeSourcePoint("P1", rw::math::Vector3D<double>(1.0, 2.0, 3.0));
+
+    // 法向 (1e200,0,0)：有限非零，但 1e200² = 1e400 → +Inf——原校验的
+    // 精确盲区（分量级检查判不住平方级上溢）。
+    const EditBatch batch = service.applyMirror({src}, worldPlane(
+        rw::math::Vector3D<double>(1e200, 0.0, 0.0)));
+    ASSERT_FALSE(batch.ok) << "norm² 上溢的法向必须拒绝（修复前静默 no-op）";
+    EXPECT_EQ(batch.error.code, RequirementErrorCode::IllegalTolerance);
+    EXPECT_EQ(batch.newPoints.size(), 0U) << "被拒批次不得产出派生条目";
+    // 域定位参数：field=axis-normal（与零法向/非有限同一错误面）。
+    bool axisNormalField = false;
+    for (const auto& kv : batch.error.params) {
+        if (kv.first == "field" && kv.second == "axis-normal") {
+            axisNormalField = true;
+        }
+    }
+    EXPECT_TRUE(axisNormalField);
+    // 详情携原值："原值:" 标记＋量级指数（源写 1e200，%.17g 输出最近可
+    // 表示 double 的 17 位往返文本 9.999…e+199——断言对齐指数面而非尾数
+    // 全文，NFR-COR-03 报告可定位源写法）。
+    EXPECT_NE(batch.error.detail.find("原值"), std::string::npos)
+        << batch.error.detail;
+    EXPECT_NE(batch.error.detail.find("e+199"), std::string::npos)
+        << batch.error.detail;
+}
+
+/**
  * PointAtTarget/ToolRollFree 正常镜像（ACC1——§7.2"Fixed/PointAtTarget
  * 正常镜像"）：目标点反射（非零目标反射后仍非零——等距性）；滚转区间
  * 反手性翻转 [min,max]→[−max,−min]。
