@@ -54,3 +54,9 @@
 - **取消/超时/崩溃链（V-35～V-39）与上游门禁面（V-05/07/15/16/32）**：仍为设计未执行——任务通道归 execution、上游门禁归 modeling/runtime（dynamics 侧防御面已由既有用例承载）。
 - **ctest 注册树列表**：沿用仓库已知缺陷口径，一律以 `_report` 目标为准（本批全部经 `_report` 目标执行）。
 - **正式验收**：未发起、未通过——按 acceptance-protocol.md 由独立上下文执行。
+
+---
+
+## 勘误注（2026-10-10 追加，GOV-DOC 治理批；原始记录行不改写——证据留痕不可改写）
+
+- §1 表「黄金生成复跑」行中「sha256sum 前后同值实测：expected **79c9906b**…→复跑后同值」的哈希前缀**有笔误**，应为 **b4ff5cc6**…。权威依据＝入库黄金数据集 manifest 的 integrity 申报：`testdata/golden/dyn-two-link-analytic/1.0.0/` → `expected/dyn-two-link-expected.json` 的 sha256＝`b4ff5cc668816075ba41b988098b3a53c5b3d8a4e23f15008834cbd3eb0bbd99`（manifest.json integrity 段申报值，验收时实测逐字节一致并以此复红/复绿——见本文件 §3 还原层记录「与入库版逐字节一致——sha256 同值」，其指向的即该 manifest 申报值）。本勘误仅更正执行日志中的哈希前缀抄写笔误，「复跑产出与入库版逐字节一致」的结论本身不受影响；原始行按留痕纪律保持原样。处置出处＝GOV-DOC 治理批任务依据⑥。
