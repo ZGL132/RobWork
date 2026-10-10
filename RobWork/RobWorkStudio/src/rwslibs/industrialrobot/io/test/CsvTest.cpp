@@ -1189,6 +1189,74 @@ TEST_F(IoCsvTest, FieldBudgetNotRowCumulative_F572)
 }
 
 /**
+ * F-639——未标记 CSV 双遍读的 SingleFileBytes 单文件维不再双计。未标记
+ * 文件走"嗅探遍＋交付遍"两遍读同一文件：嗅探遍只应记 TotalBytes（会话
+ * 累计维），单文件维由交付遍收尾按交付遍实际值一次性入账（deliver 收尾
+ * 注释「SingleFile 以交付遍实际值入账」的登记口径——原实现经
+ * chargePassBytes 两遍各记一笔，单文件维 ≈2×文件大小，贴近上限的未标记
+ * CSV 在嗅探遍收尾即被 SecBudgetFile 误拒）。
+ *
+ * 注入方式（F-639 验收注"缩小预算上限注入"）：不构造 256 MiB 级大文件
+ * ——tighten 把 SingleFileBytes 压到 1 MiB，构造 0.68×限额的未标记文件：
+ * 修复态单文件维 716800 ≤ 1 MiB（放行）；缺陷态两遍合计 ≥1.4 MiB＞限额
+ * （SecBudgetFile 误拒）。对照面：真超限（1.125×限额）仍须 SecBudgetFile
+ * 拒绝——双计修复不得弱化单文件维账本本身。F-650（单字段维限额整遍快
+ * 照一次）由本用例与上方 F-572 用例共同回归（快照语义不变——限额在
+ * scope 会话内为配置常量，逐行快照与整遍快照同值）。
+ */
+TEST_F(IoCsvTest, SingleFileBudgetNotDoubleCountedAcrossPasses_F639)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-02"},
+                  std::vector<std::string>{});
+
+    // 行式内容构造：每行恰 64 字节（两个 31 字符字段＋','＋换行）——
+    // 行数×64 即文件字节数的确定函数（无引号转义变量，尺寸账面精确）；
+    // 双列保证嗅探器有分隔符可判（单列文件会被 §5.2 判 DIALECT 不定）。
+    const std::string left(31, 'a');
+    const std::string right(31, 'b');
+    const std::string row = left + "," + right + "\n";
+
+    // ---- 主面：716800 字节（11200 行）＝0.68×1 MiB 限额。
+    std::string body;
+    body.reserve(11200 * 64);
+    for (int i = 0; i < 11200; ++i) {
+        body += row;
+    }
+    const fs::path near = m_dir / "single_file_budget_near.csv";
+    writeFileBytes(near, body);
+
+    BudgetSpec spec = BudgetSpec::productDefault();
+    spec.tighten(BudgetDimension::SingleFileBytes, 1024ull * 1024);  // 1 MiB
+    const IBudgetGuardPtr guard = makeBudgetGuard();
+    const BudgetScopeId scope = guard->openScope(spec).value;
+
+    auto reader = makeCsvReader();
+    CsvReadOptions options;
+    options.retainRows = true;  // 交付行拷贝（行数断言面）
+    const IoResult<RawTable> r = reader->read(near, options, nullptr, guard.get(),
+                                              nullptr, {}, scope);
+    ASSERT_TRUE(r) << "贴近单文件限额的未标记 CSV 不得因双遍双计被误拒："
+                   << r.error.detail;
+    EXPECT_EQ(r.value.rows.size(), std::size_t{11200});
+
+    // ---- 对照面：真超限（1179648 字节＝1.125×限额）仍须拒读——账本语
+    //      义不被本修复弱化（错误码 SecBudgetFile＝单文件维三要素通道）。
+    std::string overBody;
+    overBody.reserve(18432 * 64);
+    for (int i = 0; i < 18432; ++i) {
+        overBody += row;
+    }
+    const fs::path over = m_dir / "single_file_budget_over.csv";
+    writeFileBytes(over, overBody);
+    const IBudgetGuardPtr guard2 = makeBudgetGuard();
+    const BudgetScopeId scope2 = guard2->openScope(spec).value;
+    const IoResult<RawTable> r2 = reader->read(over, CsvReadOptions{}, nullptr,
+                                               guard2.get(), nullptr, {}, scope2);
+    ASSERT_FALSE(r2) << "超限文件仍须拒绝——单文件维不得因双计修复而失效";
+    EXPECT_EQ(r2.error.code, IoErrorCode::SecBudgetFile) << r2.error.detail;
+}
+
+/**
  * 数据-only（acceptance 4/§12 IO-T03 禁止项"无公式/命令执行路径"）的
  * 源级断言：CSV 通道源文件零进程执行/命令解释入口 token（system、
  * popen、exec 族、CreateProcess、ShellExecute、WinExec 等）——解析路

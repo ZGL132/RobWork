@@ -152,8 +152,8 @@ struct RequirementsPluginAssembly {
 
     /**
      * @brief 应用回执回写（draft.apply 提交 Committed 后——基线前移＋根
-     *        身份回填；语义同 modeling 门面 noteAppliedRevision——转发模块
-     *        会话态字段）。
+     *        身份回填＋工作集根引用表回填；语义同 modeling 门面
+     *        noteAppliedRevision——转发模块同名词柄）。
      *
      * @param newBase      [in] 新基线修订（tip）
      * @param rootObjectId [in] 根对象存储身份（nullopt＝未回填〔首应用前〕）

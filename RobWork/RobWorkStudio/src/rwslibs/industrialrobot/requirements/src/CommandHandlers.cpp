@@ -206,6 +206,24 @@ std::optional<RequirementCommandPayload> tryDecodeRequirementCommandPayload(
     payload.mode =
         (mode == 1u) ? RequirementCommandPayload::Mode::Restore
                      : RequirementCommandPayload::Mode::Apply;
+    // F-637：reserve 上限——count 是载荷自报值（至多 0xFFFFFFFF），无上限
+    // 的 reserve 会让畸形/恶意载荷把预分配放大成 4G 槽（每槽含 oid 串/
+    // token 串/字节向量，sizeof 数十字节——合计数百 GB 的分配请求，以
+    // bad_alloc/length_error 或整进程内存挤压的方式拒绝服务）。cap 基准
+    // ＝reader 剩余可读字节的理论最小槽位：每槽物理上至少消耗 1 字节
+    // allocate 标志＋三个 u32 长度前缀（oid 串/token 串/对象字节——
+    // readString/readBytes 均为 4 字节小端长度前缀＋内容，内容允许为空）
+    // ＝13 字节。count 超出"剩余字节÷最小槽耗"即载荷自相矛盾（字节体里
+    // 不可能装得下这么多槽）＝破损面，与本函数其余畸形面同口径返回
+    // nullopt（不抛——decode 属数据侧拒绝，调用方按 nullopt 处置）。
+    // 对照先例：同单元 Codec.cpp 既有 capped reserve（条目计数按固定
+    // 65536 上界钳位）；本处负载为"每槽至少 13 字节"的强约束，可直接以
+    // 剩余字节精确上界拒绝，比固定帽更紧。
+    constexpr std::size_t kMinSlotBytes = 1 + 4 + 4 + 4;  // allocate＋3×u32 前缀
+    const std::size_t remainingBytes = reader.size - reader.pos;
+    if (static_cast<std::size_t>(count) > remainingBytes / kMinSlotBytes) {
+        return std::nullopt;
+    }
     payload.objects.reserve(count);
     for (std::uint32_t i = 0; i < count; ++i) {
         RequirementPayloadSlot slot;
@@ -337,14 +355,35 @@ BaselineSnapshot rebuildRequirementBaseline(project::HandlerContext& ctx,
  *      token 至多一槽；
  *   ③ 显式槽：身份有效且存在于基线闭包、token 一致；
  *   ④ 根槽 allocateNew：基线闭包须无 req-set 对象（恰一根——重复建根
- *      =身份冲突违约）。
+ *      =身份冲突违约）；
+ *   ⑤ 集合槽挂载一致性（F-460 增列——根引用表核对基类面）：allocateNew
+ *      槽须未挂载（首挂载）、显式槽须恰挂载该 oid（§9.7 引用稳定性——
+ *      字节替换只对已挂载对象成立，重挂载走根字节）。
+ *
+ * @param payload  [in] Apply 模式载荷（槽集只读）
+ * @param baseline [in] 基线快照（ws.root 根引用表＝⑤的挂载事实源）
+ * @param diags    [out] 逐项诊断（⑤失配时产出一条稳定码定位记录；①~④
+ *                 维持形状违约静默 false 的既有口径——形状面无定位语义）
+ * @return true＝全部槽可通过；false＝任一违约（diags 可能携带 ⑤ 定位）
  */
 bool applySlotsValid(const RequirementCommandPayload& payload,
-                     const BaselineSnapshot& baseline)
+                     const BaselineSnapshot& baseline,
+                     std::vector<core::DiagnosticRecord>& diags)
 {
     if (payload.objects.empty()) {
         return false;  // ①
     }
+    // ⑤ 的挂载事实源（基线根引用表按 token 路由——与 decodeApplyCommon
+    // 的 baselineMountOf 同一面；此处自带一份最小路由，避免为引用顺序
+    // 重排文件局部帮助函数）。
+    auto mountOf = [&baseline](std::string_view token)
+        -> const std::optional<core::ObjectId>* {
+        if (token == kReqPointSetObjectType) { return &baseline.ws.root.pointSetRef; }
+        if (token == kReqRegionSetObjectType) { return &baseline.ws.root.regionSetRef; }
+        if (token == kReqConditionSetObjectType) { return &baseline.ws.root.conditionSetRef; }
+        if (token == kReqPlanSetObjectType) { return &baseline.ws.root.planSetRef; }
+        return nullptr;
+    };
     std::size_t rootSlots = 0;
     for (std::size_t i = 0; i < payload.objects.size(); ++i) {
         const RequirementPayloadSlot& slot = payload.objects[i];
@@ -367,6 +406,56 @@ bool applySlotsValid(const RequirementCommandPayload& payload,
             if (!slot.objectId.isValid()) { return false; }
             const BaselineEntry* entry = findBaselineEntry(baseline, slot.objectId);
             if (entry == nullptr || entry->token != slot.objectTypeToken) {
+                return false;
+            }
+        }
+        // ⑤ 集合槽挂载一致性（根引用表——F-460 诊断面）：此前该失配仅
+        // 在钩子 decodeApplyCommon 内零诊断拒绝（prepare 出口只剩
+        // invalid-payload token，逐项原因无处可查——audit 二轮 C 批指认
+        // 面）。按"需要根引用表＝基类职责"归位到此（diags 在 prepare
+        // 现场可回传——CommandServiceImpl S3 拒绝分支原样上交
+        // result.diagnostics）；钩子内同名核对保留为防线纵深（本门生效
+        // 后对 prepare 路径不可达）。
+        // 稳定码择用说明：REQ-READY-REF-MISSING（§9.6 T05 行——本单元
+        // "引用失配"语义的同面既有码）。挂载失配＝槽身份与根引用表挂载
+        // 事实失配，属引用一致性域；新增专用码须单元卡 §9.6 表登记修订，
+        // 超出本缺陷修复面——按"不新增码"纪律复用同面码并在本注释留痕。
+        if (slot.objectTypeToken != kReqSetObjectType) {
+            const std::optional<core::ObjectId>* mount =
+                mountOf(slot.objectTypeToken);
+            if (mount == nullptr) {
+                return false;  // 未知 token——形状违约（与②③同口径静默）
+            }
+            if (slot.allocateNew) {
+                if (mount->has_value()) {
+                    // 该集合已在基线挂载——首挂载取号与存储事实失配（典
+                    // 型＝应用回执未回填工作集根引用表的二连 draft.apply，
+                    // F-460 缺陷链④的命令侧表现）。
+                    diags.push_back(core::DiagnosticRecord::make(
+                        std::string(kReqReadyRefMissing),
+                        std::nullopt, slot.objectTypeToken, std::nullopt,
+                        std::string("draft.apply 集合槽挂载核对"),
+                        std::string("集合槽 allocateNew＝首挂载取号，但基线根引用表"
+                                    "该槽已挂载——重挂载须经根对象字节，集合槽侧"
+                                    "换挂被拒（§9.7 引用稳定性）"),
+                        std::string("以应用回执回填后的工作集根引用表重新组装草稿"
+                                    "后重试")));
+                    return false;
+                }
+            } else if (!mount->has_value() || !(*mount == slot.objectId)) {
+                // 显式槽但基线该槽未挂载/挂载他值——字节替换只对已挂载
+                // 对象成立（§9.7）。
+                diags.push_back(core::DiagnosticRecord::make(
+                    std::string(kReqReadyRefMissing),
+                    slot.objectId.isValid()
+                        ? std::optional<core::ObjectId>(slot.objectId)
+                        : std::nullopt,
+                    slot.objectTypeToken, std::nullopt,
+                    std::string("draft.apply 集合槽挂载核对"),
+                    std::string("集合槽显式身份与基线根引用表挂载不符（该槽未挂载"
+                                "或挂载他值）——字节替换只对已挂载对象成立"
+                                "（§9.7 引用稳定性）"),
+                    std::string("核对集合槽身份与根引用表挂载态后重新组装草稿")));
                 return false;
             }
         }
@@ -630,7 +719,7 @@ project::PrepareOutcome IRequirementCommandHandler::prepare(
     //      （audit F-592——原实现 Restore 无任何基线校验，注释谎称基类已
     //      校验；基线外根槽注入可造双根对象永久毒化修订）----
     if (payload->mode == RequirementCommandPayload::Mode::Apply
-        && !applySlotsValid(*payload, baseline)) {
+        && !applySlotsValid(*payload, baseline, diags)) {
         return project::PrepareOutcome::RejectedInvalidInput;
     }
     if (payload->mode == RequirementCommandPayload::Mode::Restore

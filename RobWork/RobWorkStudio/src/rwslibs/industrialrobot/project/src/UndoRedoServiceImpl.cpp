@@ -358,6 +358,9 @@ CommandResult UndoRedoServiceImpl::redo(core::BranchId branch,
 {
     try {
         core::RevisionId tip{};
+        // F-636：被重放记录的身份（入口锁内赋值，维护段消费——函数作用域
+        // 声明：其生命周期必须跨越锁外提交段，同 tip 的形态）。
+        core::RevisionId replayedUndoRevision{};
         CommandEnvelope envelope;
         {
             std::lock_guard<std::mutex> guard(m_mutex);
@@ -394,24 +397,51 @@ CommandResult UndoRedoServiceImpl::redo(core::BranchId branch,
             //      不构造业务命令，§6.5）；expectedRevision＝当前 tip（重
             //      放落在重做链的当前修订上——含多级 redo 的中间修订）。
             envelope = buildRedoEnvelope(branch, state.redoStack.back(), tip);
+            // F-636：捕获被重放记录的身份（undoRevision＝该记录入栈时那次
+            // 撤销提交的修订，全局唯一——修订只增 PA-2，不存在重值）。弹
+            // 出门槛用它而非"预期的 tip"：首次 redo 时二者恰相等（被重放
+            // 记录的 undoRevision 就是捕获 tip——其入栈即上一次 undo 的落
+            // 账修订，与观察点同源），但多级 redo 自第二级起预期 tip＝上
+            // 一级的重做修订、与记录身份分叉——若仍以 tip 为门槛，次栈顶
+            // 记录将永久滞留（F-600 修复前的老病灶）。以记录身份为门槛：
+            // 无并发干预时栈顶就是被重放记录（守卫恒过——多级 redo 逐级
+            // 弹出，F-600 语义保持）；有并发干预时栈顶是他人记录（守卫失
+            // 配——见维护段 F-636 注释）。
+            replayedUndoRevision = state.redoStack.back().undoRevision;
         }
         // 锁外提交（同 undo——锁序纪律与 S2 竞争裁决）。
         CommandResult result = m_host.commands().submit(envelope, interaction);
 
         // ---- 会话栈维护（只在提交成功后弹出——失败路径栈不动，重做可
-        //      重试）。F-600：提交成功＝本次重放赢得了 S2 竞争（预期修订
-        //      已被本提交顶替——外部并发提交必被拒绝），被重放记录仍居
-        //      栈顶，弹出不再以 undoRevision==tip 为门槛（新 tip 是重做修
-        //      订，原门槛使多级 redo 的次栈顶永久滞留——见 redo 前置注释）。
+        //      重试）。F-600：提交成功＝本次重放对同一预期修订的 S2 竞争
+        //      胜出（同预期修订的竞争提交被拒——但对"后续修订"的提交不
+        //      受此限），被重放记录在无并发干预时仍居栈顶，故逐级弹出而
+        //      不以 undoRevision==新 tip 为门槛（新 tip 是重做修订，原门
+        //      槛使多级 redo 的次栈顶永久滞留——见 redo 前置注释）。
+        //      F-636：弹出以"栈顶仍是本次重放的那条记录"（入口锁内捕获
+        //      的记录身份）为门槛。它防的是一条**真实合法**的并发路径：
+        //      undo 与 redo 同为本服务的落账路径（原注释"外部并发提交必
+        //      被拒绝"论据有误——S2 只拒同预期修订的竞争者；本提交落地
+        //      后分支 tip 已前移，窗口内另一线程的 undo 以新 tip 为预期
+        //      合法落账），该 undo 的入口 syncOnEntry 会清空旧栈（含被重
+        //      放记录）并推入它自己的记录 X、观察点指向它的撤销修订。此
+        //      时栈顶已是 X——若仍无条件弹出，误删的正是 X，且观察点被
+        //      本重做的修订**回退**（B 的 redo 路径静默丢失，下次入口还
+        //      会把 X 当"外部推进"再次清空）。门槛失配＝栈顶已易主：本
+        //      提交的簿记整体让位——不弹（保护 B 的记录）、不回写观察点
+        //      /stale 旗标（B 的落账面已把状态收敛自洽），被重放记录本
+        //      身已随 B 的入口清栈离场，无需也无法在此补弹。
         if (result.committed() && result.newRevision.has_value()) {
             std::lock_guard<std::mutex> guard(m_mutex);
             BranchUndoState& state = m_branches[branch];
-            if (!state.redoStack.empty()) {
+            if (!state.redoStack.empty()
+                && state.redoStack.back().undoRevision
+                       == replayedUndoRevision) {
                 state.redoStack.pop_back();
+                // 观察点推进到重做修订；stale 说明随成功路径消费（同 undo）。
+                state.lastServiceTip = *result.newRevision;
+                state.redoClearedStale = false;
             }
-            // 观察点推进到重做修订；stale 说明随成功路径消费（同 undo）。
-            state.lastServiceTip = *result.newRevision;
-            state.redoClearedStale = false;
         }
         return result;
     } catch (const StoreError& e) {

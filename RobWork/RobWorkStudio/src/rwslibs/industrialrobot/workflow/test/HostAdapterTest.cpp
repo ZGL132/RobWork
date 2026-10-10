@@ -28,11 +28,13 @@
 
 #include "plugin/WorkflowHostAdapters.hpp"  // 被测面（plugin/ 装配面——同单元 PRIVATE include，R-2 不外溢）
 
+#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <memory>
 #include <string>
 #include <system_error>
+#include <thread>
 #include <utility>
 #include <vector>
 
@@ -749,6 +751,71 @@ TEST_F(HostAdapter, CloseSupervisorConfigValidationAndImmediateClosed)
         EXPECT_FALSE(supervisor.abandonDiagObserved());
         EXPECT_FALSE(supervisor.gaveUp());
     }
+}
+
+/**
+ * F-638——start 的 join 序（运行态重复 start 不阻塞）：修复前 start 先
+ * join joinable 线程再查 running 位——监督进行中的重复 start 会阻塞在
+ * 运行中线程上（直至循环退出，最长阈值＋宽限），违背幂等 no-op 契约。
+ * 修复后 running 位先判（运行态直接返回），join 收割移入非运行分支。
+ *
+ * 用例三面（写法从简、避免 flaky——计时断言只设"行为面"宽上限）：
+ * ①运行态重复 start 立即返回（计时上限 2 s——修复后为原子读＋返回的
+ *   微秒级；缺陷态在本配置下阻塞至 120 s 阈值面，相差 3 个数量级以上）；
+ * ②stop 收敛后可重启（收割 joinable 线程对象——join 序的非运行分支）；
+ * ③监督中 store 自然闭合（①路径线程自清 running、对象保持 joinable），
+ *   随后 start 先收割再重启——join 只发生在非运行态（不 std::terminate）。
+ */
+TEST_F(HostAdapter, CloseSupervisorRepeatedStartWhileRunningIsNonBlocking_F638)
+{
+    auto store = makeBlankStore("supervisor-restart");
+    ASSERT_TRUE(store != nullptr);
+
+    // 调度器轻量装配（监督器构造需要引用——无任务场景零推进需求）。
+    execution::TaskController controller(execution::TaskController::Config{});
+    execution::DrainCoordinator drain(controller, execution::DrainCoordinator::Config{});
+    execution::TaskScheduler::Collaboration collab;
+    execution::TaskScheduler scheduler(controller, drain, collab);
+
+    // 长阈值：监督循环在用例窗口内既不闭合也不放弃——运行态稳定成立
+    // （store 未 requestClose，closed() 恒 false；阈值面 120 s 远超断言窗，
+    // 缺陷态若复现即表现为用例在此挂起至阈值而非误报通过）。
+    StoreCloseSupervisor::Config config;
+    config.abandonThreshold = std::chrono::seconds{60};
+    config.giveUpGrace = std::chrono::seconds{60};
+    StoreCloseSupervisor supervisor(*store, scheduler, config);
+
+    // ---- ①运行态重复 start：立即返回且监督不被扰动。
+    supervisor.start();
+    ASSERT_TRUE(supervisor.running());
+    const auto t0 = std::chrono::steady_clock::now();
+    supervisor.start();
+    supervisor.start();  // 重复触发同面（关闭入口重入形态）
+    const auto elapsed = std::chrono::steady_clock::now() - t0;
+    EXPECT_LT(elapsed, std::chrono::seconds{2})
+        << "运行态重复 start 阻塞——join 序回归（F-638）";
+    EXPECT_TRUE(supervisor.running()) << "重复 start 不得终止进行中的监督";
+
+    // ---- ②stop 收敛后重启：非运行分支的 join 收割＋重拉。
+    supervisor.stop();
+    EXPECT_FALSE(supervisor.running());
+    supervisor.start();
+    EXPECT_TRUE(supervisor.running());
+
+    // ---- ③自然退出收割：监督中同步闭合 store（①路径——线程自清
+    //      running、线程对象保持 joinable），随后 start 先收割再重启。
+    EXPECT_EQ(store->requestClose(), 0u);  // 无在途引用——同步收尾
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds{2};
+    while (supervisor.running()
+           && std::chrono::steady_clock::now() < deadline) {
+        std::this_thread::sleep_for(std::chrono::milliseconds{1});
+    }
+    ASSERT_FALSE(supervisor.running()) << "闭合观测后线程应自然退出";
+    EXPECT_TRUE(supervisor.storeClosedObserved());
+    supervisor.start();  // 收割 joinable 对象并重启（缺陷态此处 terminate/阻塞）
+    EXPECT_TRUE(supervisor.running());
+    supervisor.stop();
+    EXPECT_FALSE(supervisor.running());
 }
 
 // =====================================================================

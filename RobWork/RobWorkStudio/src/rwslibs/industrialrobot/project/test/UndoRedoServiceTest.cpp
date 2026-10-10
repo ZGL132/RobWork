@@ -595,4 +595,133 @@ TEST_F(UndoRedoServiceTest, Ppr1_SessionTypesAreCoreContractIdentities)
     EXPECT_TRUE(s.canRedo);
 }
 
+// =====================================================================
+// F-600 语义回归钉＋F-636 弹出门槛的正常路径面：多级撤销→连续重做，每
+// 级重做弹出的恰是本次重放的那条记录（LIFO 逐级弹出）。
+//
+// 背景（F-636——audit/unit-code-review）：成功维护段的弹栈若以"预期
+// tip"为门槛（back().undoRevision==捕获 tip），多级 redo 自第二级起必
+// 然失配（预期 tip＝上一级重做修订，而次栈顶记录的 undoRevision＝更早
+// 的撤销修订）——次栈顶滞留即 F-600 修复前的老病灶。修复后的门槛＝被
+// 重放记录的身份（undoRevision，入口锁内捕获）：无并发干预时栈顶就是
+// 被重放记录，守卫恒过——本用例钉住该正常路径不被门槛改变。
+// =====================================================================
+
+TEST_F(UndoRedoServiceTest, MultiLevelUndoConsecutiveRedoPopsReplayedRecordPerLevel)
+{
+    registerUndoFamily();
+    auto& store = *fx.opened.store;
+    auto& query = store.query();
+    auto& undoRedo = store.undoRedo();
+    const core::BranchId main = fx.primaryBranch();
+
+    // ---- 前置：单条可逆命令（对称声明族下撤销链可级联——undo 的对象是
+    //      当前 tip 的命令，撤销修订自身可逆，undo 可连续施加）。
+    const CommandResult applied = fx.commands().submit(fx.appendEnvelope("alpha-1", main));
+    ASSERT_TRUE(applied.committed()) << "前置提交失败——用例前提不成立";
+    const RevisionView v1 = query.revision(*applied.newRevision);
+
+    // ---- 连续三级撤销：每级恰一新修订、父链相接；中间态 canRedo 恒真
+    //      （栈非空且观察点与 tip 一致——F-600 基准）且无 spurious stale。
+    core::RevisionId tip = v1.id;
+    for (int level = 1; level <= 3; ++level) {
+        const CommandResult undone = undoRedo.undo(main);
+        ASSERT_TRUE(undone.committed()) << "第 " << level << " 级撤销";
+        ASSERT_TRUE(undone.newRevision.has_value());
+        const RevisionView view = query.revision(*undone.newRevision);
+        EXPECT_EQ(view.parent, tip) << "第 " << level << " 级撤销父链";
+        tip = view.id;
+        const UndoRedoStatus s = undoRedo.status(main);
+        EXPECT_TRUE(s.canRedo) << "第 " << level << " 级撤销后";
+        EXPECT_FALSE(s.blockedReason.has_value()) << "第 " << level << " 级撤销后";
+    }
+
+    // ---- 连续三级重做：各级 redoSummary 取自栈顶记录的 undoneSummary、
+    //      重做修订的 commandSummary＝被重放命令的摘要——两级逐字比对即
+    //      "弹出恰是被重放记录（LIFO 逐级）"的可观测序列。摘要推导：撤
+    //      销链 r1→u1（append-undo）、u1→u2（append——undo 的对象是当前
+    //      tip 命令）、u2→u3（append-undo）；重做 LIFO 逆序为
+    //      R3（重放 append）、R2（重放 append-undo）、R1（重放 append）。
+    const std::vector<std::string> redoSummaries = {
+        "test append object", "test append undo", "test append object"};
+    core::RevisionId redoTip = tip;
+    for (std::size_t level = 0; level < redoSummaries.size(); ++level) {
+        const UndoRedoStatus before = undoRedo.status(main);
+        ASSERT_TRUE(before.canRedo) << "第 " << level + 1 << " 级重做前";
+        EXPECT_EQ(before.redoSummary, std::optional<std::string>{redoSummaries[level]})
+            << "第 " << level + 1 << " 级重做前";
+        const CommandResult redone = undoRedo.redo(main);
+        ASSERT_TRUE(redone.committed()) << "第 " << level + 1 << " 级重做";
+        ASSERT_TRUE(redone.newRevision.has_value());
+        const RevisionView view = query.revision(*redone.newRevision);
+        EXPECT_EQ(view.parent, redoTip) << "第 " << level + 1 << " 级重做父链";
+        EXPECT_EQ(view.commandSummary, redoSummaries[level])
+            << "第 " << level + 1 << " 级重放命令";
+        redoTip = view.id;
+    }
+
+    // ---- 栈已逐级耗尽：canRedo=false、无 blockedReason（门槛若误以"预
+    //      期 tip"为基准，第二级起次栈顶滞留——此处将表现为 canRedo 恒
+    //      真或 spurious stale，二者都被本断言组钉住）；链末端仍可撤销。
+    const UndoRedoStatus drained = undoRedo.status(main);
+    EXPECT_FALSE(drained.canRedo);
+    EXPECT_FALSE(drained.blockedReason.has_value());
+    EXPECT_TRUE(drained.canUndo);
+}
+
+// =====================================================================
+// F-636 会话簿记契约面：redo 落账之后才入栈的 undo 记录（F-636 场景中
+// "B 的记录 X"的会话位）是下一次 redo 的合法重放对象——此前 redo 的簿
+// 记不得吞噬它、观察点不得被回退。
+//
+// 说明：F-636 的真实竞态窗口（A 的 redo 提交落地与重入锁弹出之间，B 的
+// undo 完整落账）无法经公共接口确定性注入——命令执行槽贯穿 submit 全
+// 程，B 的 undo 提交必须等槽，而槽由 A 持有至 submit 返回；事件订阅面
+// 虽在窗口内但重入 undo 同样死锁。故本用例以服务接口两步构造等价会话
+// 态（B 的记录在栈顶＋观察点指向 B 的撤销修订），钉修复的语义契约：
+// B 的记录存活（成为重放对象）、观察点全程不回退（任一步失准都会在此
+// 后的 status() 上表现为 spurious stale 清栈）。
+// =====================================================================
+
+TEST_F(UndoRedoServiceTest, RedoBookkeepingDoesNotClobberSubsequentUndoRecord)
+{
+    registerUndoFamily();
+    auto& store = *fx.opened.store;
+    auto& query = store.query();
+    auto& undoRedo = store.undoRedo();
+    const core::BranchId main = fx.primaryBranch();
+
+    // ---- 构造→撤销→重做：第一条 redo 的簿记（弹出 R1、观察点推进）。
+    const CommandResult applied = fx.commands().submit(fx.appendEnvelope("alpha-1", main));
+    ASSERT_TRUE(applied.committed()) << "前置提交失败——用例前提不成立";
+    const CommandResult undone = undoRedo.undo(main);
+    ASSERT_TRUE(undone.committed());
+    const CommandResult redone = undoRedo.redo(main);
+    ASSERT_TRUE(redone.committed());
+    const RevisionView redoRev = query.revision(*redone.newRevision);
+
+    // ---- "B 的落账"：redo 之后的 undo——入口读到的 tip 是重做修订，其
+    //      记录（X）入栈成为新栈顶，观察点指向 X 的撤销修订。
+    const CommandResult undoneAgain = undoRedo.undo(main);
+    ASSERT_TRUE(undoneAgain.committed());
+    const core::RevisionId bUndoRevision = *undoneAgain.newRevision;
+    const UndoRedoStatus afterB = undoRedo.status(main);
+    ASSERT_TRUE(afterB.canRedo);
+    // B 的记录在栈顶：redoSummary＝B 撤销的那条命令（重做修订）的摘要。
+    EXPECT_EQ(afterB.redoSummary, std::optional<std::string>{redoRev.commandSummary});
+
+    // ---- 重放 B 的记录：提交成功且弹出恰是它（栈空——canRedo=false），
+    //      观察点跟随到重做修订（若此前任何一级簿记回退了观察点，本处
+    //      status 的 syncOnEntry 将清栈并给出 spurious stale 说明）。
+    const CommandResult redoneAgain = undoRedo.redo(main);
+    ASSERT_TRUE(redoneAgain.committed());
+    ASSERT_TRUE(redoneAgain.newRevision.has_value());
+    EXPECT_GT(query.revision(*redoneAgain.newRevision).seq,
+              query.revision(bUndoRevision).seq);
+    const UndoRedoStatus drained = undoRedo.status(main);
+    EXPECT_FALSE(drained.canRedo);
+    EXPECT_FALSE(drained.blockedReason.has_value());
+    EXPECT_TRUE(drained.canUndo);
+}
+
 }  // namespace

@@ -1282,3 +1282,204 @@ TEST(PluginPanel, DraftSourceRoundtrip_ACC4)
     ASSERT_TRUE(restoreModule.session().baseRevision.has_value());
     EXPECT_FALSE(restoreModule.session().restoredDraftPending);
 }
+
+// =====================================================================
+// F-460——应用回执的工作集根引用表回填（audit 二轮 C 批：需求域二连
+// draft.apply 必拒的四点链主线面）。
+//
+// 缺陷机理（链①②）：首应用回执只回填会话态（noteAppliedRevision＝锚
+// 前移＋根身份），编辑器工作集根引用表四槽不回填——第二次 draft.apply
+// 组装时集合槽仍按"未挂载"取 allocateNew，与存储端已挂载事实失配，被
+// prepare 挂载核对拒绝。本组用例钉住修复主线：回执（模块
+// noteAppliedRevision）把落库修订的四集合身份回填进工作集根引用表，
+// 二连组装转为显式替换槽。
+// =====================================================================
+
+/// 空项目根闭包（wireRequirementsSession 空项目初始化同态——根引用表
+/// 四槽全空、四集合未建；UI-T35 P1-1"内存空根"的测试形态）。
+RequirementEditor makeEmptyProjectEditor()
+{
+    MapClosure closure;
+    RequirementSet root;
+    root.name = "空项目需求集";  // refs 全缺省＝未挂载（合法空根）
+    closure.put(std::string{kReqSetObjectType}, RequirementObjectVariant{root});
+    return makeLoadedEditor(closure);
+}
+
+/// 二连应用主线：首应用回执回填工作集四槽→第二次组装按落库身份显式
+/// 替换（不再 allocateNew——prepare 挂载核对可受理）＋内容零丢失。
+TEST(PluginPanel, AppliedReceiptRewiresWorksetRefs_SecondApplyExplicit_F460)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"PM-04"},
+                  std::vector<std::string>{"F-460", "second-apply"});
+
+    // ---- 空项目首应用前形态：编辑器载入空根闭包＋一次编辑（工作集有
+    //      条目、根引用表四槽全空——挂载增量此刻只存在于"将来的命令候
+    //      选根"，这正是缺陷链①的工作集形态）。
+    RequirementEditor editor = makeEmptyProjectEditor();
+    ASSERT_TRUE(editor.applyEdit(makePoint("P1")).accepted);
+    RequirementsUiModule module;
+    module.attachEditor(&editor);
+
+    // 会话闭包引用元数据缝替身（宿主绑定语义：回执时刻返回本次应用落库
+    // 修订的 objectRefs——测试以可控向量承载，宿主侧生产绑定＝查询端口
+    // head().objectRefs 现取）。
+    std::vector<sdurws::ird::project::ObjectRef> headRefs;
+    sdurws::ird::requirements::RequirementsView3DSeams seams;
+    seams.sessionClosureRefs = [&headRefs]() { return headRefs; };
+    module.bindView3DSeams(std::move(seams));
+
+    // 首次组装（首应用形态）：根槽＋四集合槽全部 allocateNew。
+    const auto envelope1 = module.buildDraftCommand("requirements");
+    ASSERT_TRUE(envelope1.has_value());
+    const auto payload1 =
+        tryDecodeRequirementCommandPayload(envelope1.value().payloadCanonical);
+    ASSERT_TRUE(payload1.has_value());
+    ASSERT_EQ(payload1.value().objects.size(), std::size_t(5));
+    EXPECT_TRUE(payload1.value().objects[0].allocateNew);  // 根取号（PA-1）
+    for (std::size_t i = 1; i < 5; ++i) {
+        EXPECT_TRUE(payload1.value().objects[i].allocateNew)
+            << "集合槽 " << i << " 应按未挂载取号";
+    }
+
+    // ---- 首应用回执（宿主 onCommitted 同款调用序）：落库身份＝固定规范
+    //      身份（可复现），缝替身同步为落库修订的 objectRefs。
+    const core::ObjectId rootOid =
+        core::ObjectId::fromCanonical("obj-a0000000000000000000000000000001");
+    const core::ObjectId pointSetOid =
+        core::ObjectId::fromCanonical("obj-a0000000000000000000000000000002");
+    const core::ObjectId regionSetOid =
+        core::ObjectId::fromCanonical("obj-a0000000000000000000000000000003");
+    const core::ObjectId conditionSetOid =
+        core::ObjectId::fromCanonical("obj-a0000000000000000000000000000004");
+    const core::ObjectId planSetOid =
+        core::ObjectId::fromCanonical("obj-a0000000000000000000000000000005");
+    auto refOf = [](const core::ObjectId& oid, const char* token) {
+        sdurws::ird::project::ObjectRef ref;
+        ref.objectId = oid;
+        ref.objectTypeToken = token;
+        return ref;
+    };
+    headRefs.push_back(refOf(rootOid, std::string{kReqSetObjectType}.c_str()));
+    headRefs.push_back(refOf(pointSetOid, std::string{kReqPointSetObjectType}.c_str()));
+    headRefs.push_back(refOf(regionSetOid, std::string{kReqRegionSetObjectType}.c_str()));
+    headRefs.push_back(refOf(conditionSetOid, std::string{kReqConditionSetObjectType}.c_str()));
+    headRefs.push_back(refOf(planSetOid, std::string{kReqPlanSetObjectType}.c_str()));
+    const core::RevisionId rev1 =
+        core::RevisionId::fromCanonical("rev-b0000000000000000000000000000001");
+    module.noteAppliedRevision(rev1, rootOid);
+
+    // 断言①：会话态回填（原语义不回归——基线前移＋根身份）。
+    ASSERT_TRUE(module.session().baseRevision.has_value());
+    EXPECT_EQ(module.session().baseRevision.value(), rev1);
+    ASSERT_TRUE(module.session().rootObjectId.has_value());
+    EXPECT_EQ(module.session().rootObjectId.value(), rootOid);
+
+    // 断言②（F-460 主线）：工作集根引用表四槽＝落库身份。
+    EXPECT_EQ(editor.workingSet().root.pointSetRef, pointSetOid);
+    EXPECT_EQ(editor.workingSet().root.regionSetRef, regionSetOid);
+    EXPECT_EQ(editor.workingSet().root.conditionSetRef, conditionSetOid);
+    EXPECT_EQ(editor.workingSet().root.planSetRef, planSetOid);
+
+    // 断言③：回填重建零内容丢失（P1 仍在——回填只升级根引用表身份）。
+    ASSERT_EQ(editor.workingSet().points.entries.size(), std::size_t(1));
+    EXPECT_EQ(editor.workingSet().points.entries.front().name, "P1");
+
+    // 断言④：应用即消费——编辑计数随重建归零，无新编辑＝无可应用内容
+    // （不产出同内容空修订——buildDraftCommand 门如实 nullopt）。
+    EXPECT_EQ(editor.draftStatus().edits, std::uint64_t(0));
+    EXPECT_FALSE(module.buildDraftCommand("requirements").has_value());
+
+    // ---- 第二次编辑＋组装（修复断言核心）：根槽显式根身份、四集合槽按
+    //      落库身份显式替换——prepare 挂载核对（§9.7 引用稳定性）可受理，
+    //      二连 draft.apply 不再被拒。
+    ASSERT_TRUE(editor.applyEdit(makePoint("P2")).accepted);
+    const auto envelope2 = module.buildDraftCommand("requirements");
+    ASSERT_TRUE(envelope2.has_value());
+    const auto payload2 =
+        tryDecodeRequirementCommandPayload(envelope2.value().payloadCanonical);
+    ASSERT_TRUE(payload2.has_value());
+    ASSERT_EQ(payload2.value().objects.size(), std::size_t(5));
+    EXPECT_FALSE(payload2.value().objects[0].allocateNew);
+    EXPECT_EQ(payload2.value().objects[0].objectId, rootOid);
+    // 槽序＝§4.1 表行序：points/regions/conditions/plans。
+    EXPECT_FALSE(payload2.value().objects[1].allocateNew);
+    EXPECT_EQ(payload2.value().objects[1].objectId, pointSetOid);
+    EXPECT_FALSE(payload2.value().objects[2].allocateNew);
+    EXPECT_EQ(payload2.value().objects[2].objectId, regionSetOid);
+    EXPECT_FALSE(payload2.value().objects[3].allocateNew);
+    EXPECT_EQ(payload2.value().objects[3].objectId, conditionSetOid);
+    EXPECT_FALSE(payload2.value().objects[4].allocateNew);
+    EXPECT_EQ(payload2.value().objects[4].objectId, planSetOid);
+}
+
+/// 一致性免重建：工作集挂载已与落库修订同态时的回执（宿主重导线路径的
+/// 回执／第二次应用回执）零重建——不重置撤销栈/编辑计数（重置会误清未
+/// 应用编辑的局部撤销历史）。
+TEST(PluginPanel, AppliedReceiptConsistentClosureSkipsRewire_F460)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"PM-04"},
+                  std::vector<std::string>{"F-460", "idempotent-rewire"});
+    RequirementEditor editor = makeEmptyProjectEditor();
+    RequirementsUiModule module;
+    module.attachEditor(&editor);
+    std::vector<sdurws::ird::project::ObjectRef> headRefs;
+    sdurws::ird::requirements::RequirementsView3DSeams seams;
+    seams.sessionClosureRefs = [&headRefs]() { return headRefs; };
+    module.bindView3DSeams(std::move(seams));
+
+    // 首应用回执（四槽空→落库身份——触发回填）。
+    const core::ObjectId rootOid =
+        core::ObjectId::fromCanonical("obj-a0000000000000000000000000000001");
+    const core::ObjectId pointSetOid =
+        core::ObjectId::fromCanonical("obj-a0000000000000000000000000000002");
+    sdurws::ird::project::ObjectRef rootRef;
+    rootRef.objectId = rootOid;
+    rootRef.objectTypeToken = std::string{kReqSetObjectType};
+    sdurws::ird::project::ObjectRef pointSetRef;
+    pointSetRef.objectId = pointSetOid;
+    pointSetRef.objectTypeToken = std::string{kReqPointSetObjectType};
+    headRefs = {rootRef, pointSetRef};  // 其余三集合未落库（空项目最小修订面）
+    const core::RevisionId rev1 =
+        core::RevisionId::fromCanonical("rev-b0000000000000000000000000000001");
+    module.noteAppliedRevision(rev1, rootOid);
+    ASSERT_EQ(editor.workingSet().root.pointSetRef, pointSetOid);  // 回填已生效
+
+    // 一次新编辑（编辑计数 1——未应用编辑在账）后，同挂载事实的再次回执
+    // （HEAD objectRefs 未变——内容替换型修订不改挂载）。
+    ASSERT_TRUE(editor.applyEdit(makePoint("P1")).accepted);
+    ASSERT_EQ(editor.draftStatus().edits, std::uint64_t(1));
+    const core::RevisionId rev2 =
+        core::RevisionId::fromCanonical("rev-b0000000000000000000000000000002");
+    module.noteAppliedRevision(rev2, rootOid);
+
+    // 免重建断言：编辑计数保持 1（栈未复位——未应用编辑的局部撤销历史
+    // 不被一致性回执误清）＋会话基线照常前移。
+    EXPECT_EQ(editor.draftStatus().edits, std::uint64_t(1));
+    ASSERT_TRUE(module.session().baseRevision.has_value());
+    EXPECT_EQ(module.session().baseRevision.value(), rev2);
+}
+
+/// 降级面：会话闭包引用元数据缝未绑定（宿主装配降级形态）——回执零回填
+/// 零抛出，工作集保持原挂载态（诚实降级＝修复前行为，不虚构不剥蚀）。
+TEST(PluginPanel, AppliedReceiptWithoutClosureSeamSkipsRewire_F460)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"PM-04"},
+                  std::vector<std::string>{"F-460", "seam-absent-degradation"});
+    RequirementEditor editor = makeEmptyProjectEditor();
+    ASSERT_TRUE(editor.applyEdit(makePoint("P1")).accepted);
+    RequirementsUiModule module;
+    module.attachEditor(&editor);  // 缝未绑定——bindView3DSeams 不调用
+
+    const core::ObjectId rootOid =
+        core::ObjectId::fromCanonical("obj-a0000000000000000000000000000001");
+    const core::RevisionId rev1 =
+        core::RevisionId::fromCanonical("rev-b0000000000000000000000000000001");
+    module.noteAppliedRevision(rev1, rootOid);  // 不抛
+
+    // 会话态半区照常回填（①不受降级影响）＋工作集半区诚实跳过（refs 仍
+    // 未挂载——二连应用维持修复前的拒绝行为，不 worse）。
+    EXPECT_EQ(module.session().baseRevision, rev1);
+    EXPECT_EQ(module.session().rootObjectId, rootOid);
+    EXPECT_FALSE(editor.workingSet().root.pointSetRef.has_value());
+}

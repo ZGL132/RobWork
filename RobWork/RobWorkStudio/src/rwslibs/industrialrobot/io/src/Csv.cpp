@@ -1352,9 +1352,18 @@ public:
                         return r;
                     }
                     delim = sniff.delim;
-                    // 嗅探遍读入字节计入会话预算（TotalBytes 累计语义）。
+                    // 嗅探遍读入字节入账——只记 TotalBytes（会话累计维）。
+                    // F-639：不记 SingleFileBytes——该维语义是"单文件实际
+                    // 字节"，未标记文件两遍读的是同一文件，交付遍收尾按交
+                    // 付遍实际值一次性入账（deliver 收尾注释「SingleFile
+                    // 以交付遍实际值入账」的登记意图）。原实现经
+                    // chargePassBytes 在嗅探遍与交付遍各记一笔＝单文件维
+                    // 双计（≈2×文件大小），贴近 SingleFileBytes 上限的未标
+                    // 记 CSV 被误拒。对照：probe() 单遍路径（本类上方）无
+                    // 交付遍，单文件维就地入账——与本处不同面。
                     if (const IoResult<void> r =
-                            chargePassBytes(probeScope, probeStream.rawConsumed());
+                            probeScope.charge(BudgetDimension::TotalBytes,
+                                              probeStream.rawConsumed());
                         !r) {
                         return readFail(r.error);
                     }
@@ -1422,6 +1431,13 @@ private:
         // 物理行号（1 起；标识行占行 1——§5.6"含标识行偏移"口径）：
         // marked 时首物理行已被 prologue 消费，行号从 2 起；未 marked 从 1 起。
         std::uint64_t rowNo = marked ? 1 : 0;
+        // F-650：单字段维限额整遍快照一次——limitOf 每次调用都向 guard 取
+        // 完整账本快照（16 维）再线性找维，逐行调用把该成本乘上行数；限额
+        // 在 scope 会话内是配置面常量（charge 只动已用额不动限额），行循环
+        // 内只需要纯比较。0＝该维未配置（调用方未设限口径）——检查点跳过
+        // 的语义与原逐行取值完全一致。
+        const std::uint64_t fieldLimit
+            = budgetScope.limitOf(BudgetDimension::CsvFieldChars);
 
         for (;;) {
             // ---- 取消检查点（每行——§9.3 取消行为行）。取消是状态不是
@@ -1488,12 +1504,11 @@ private:
             // ①本维改为**逐字段**与生效限额比较（超限字段以比较型三要素
             // 拒读——actual＝涉事字段字节数，limit＝会话限额）；②不再向
             // 会话累计 charge（该维语义是上限判定，不是累计账目）；③维未
-            // 配置（limitOf==0＝调用方未设限口径，仅外部 scope 可达）时本
-            // 检查点跳过——内存安全仍由上方扫描期防御上限（kFieldScanCapBytes，
-            // 硬 1 MiB 档）兜底，无换行巨型单字段不会绕过拦截。
-            if (const std::uint64_t fieldLimit =
-                    budgetScope.limitOf(BudgetDimension::CsvFieldChars);
-                fieldLimit != 0) {
+            // 配置（fieldLimit==0＝调用方未设限口径，仅外部 scope 可达）时
+            // 本检查点跳过——内存安全仍由上方扫描期防御上限
+            // （kFieldScanCapBytes，硬 1 MiB 档）兜底，无换行巨型单字段不
+            // 会绕过拦截。限额值取自行循环外的整遍快照（F-650）。
+            if (fieldLimit != 0) {
                 for (const std::string& f : fields) {
                     if (f.size() > fieldLimit) {
                         IoResult<RawTable> r;

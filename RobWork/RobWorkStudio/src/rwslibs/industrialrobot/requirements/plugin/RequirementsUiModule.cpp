@@ -137,6 +137,193 @@ void RequirementsUiModule::noteBaselineReloaded()
     }
 }
 
+void RequirementsUiModule::noteAppliedRevision(
+    const core::RevisionId& newBase,
+    const std::optional<core::ObjectId>& rootObjectId)
+{
+    m_guard.assertOnUiThread();
+
+    // ①会话态回填（原门面直写三字段——语义原样收编进模块方法，与
+    //   modeling 门面 noteAppliedRevision 的"模块级回执"同构）：基线前移
+    //   （下一轮信封 expectedRevision＝新 tip）、根对象身份回填（下一轮
+    //   根槽走"既有对象替换"——allocateNew 不再重复建根，恰一根不变量）、
+    //   恢复草稿资格位清位（应用即消费——RequirementsModuleSessionState
+    //   字段注释的装配层动作落点随转发链到达此处）。
+    m_session.baseRevision = newBase;
+    m_session.rootObjectId = rootObjectId;
+    m_session.restoredDraftPending = false;
+
+    // ②工作集根引用表回填（F-460 主线——缺陷机理：首应用回执只回填会话
+    //   态，编辑器工作集根引用表四槽仍停留在首应用前的"未挂载"态；第二
+    //   次 draft.apply 组装时集合槽按 allocateNew 取号，与存储端已挂载事
+    //   实失配，被命令 prepare 挂载核对拒绝——需求域二连 draft.apply 必
+    //   拒。回填归属：refs 的权威载体是编辑器工作集（§4.2），故修正落在
+    //   载体内，不在会话态另设第二份根引用表副本——结构性防第二真值）。
+    rewireWorksetRootRefsAfterApply();
+}
+
+void RequirementsUiModule::rewireWorksetRootRefsAfterApply()
+{
+    // ---- 前置守卫（诚实降级面——两态，零虚构零剥蚀）----
+    // 编辑器未注入＝装配间隙（无会话即无工作集——零回填对象）；三维缝
+    // 未绑定或缝内闭包引用元数据缺省＝宿主装配降级形态（UI-T33 缺省＝
+    // 诚实降级语义）——四集合落库身份无从读取，跳过回填。此降级态下二
+    // 连应用维持修复前的拒绝行为（不 worse），且不抛：缝缺位是装配事实，
+    // 不是数据缺陷。
+    if (m_editor == nullptr) {
+        return;
+    }
+    if (!m_view3dSeamsBound || !m_view3dSeams.sessionClosureRefs) {
+        return;
+    }
+
+    // ---- 会话当前基线的根引用表读取 ----
+    // 数据来源＝宿主绑定的会话闭包引用元数据缝（sessionClosureRefs——
+    // 生产绑定＝查询端口 head().objectRefs，F-558 修复后延迟现取：绑定
+    // 时机无关）。回执时刻 HEAD＝本次应用落库的新修订，objectRefs 即
+    // "应用后修订中五对象（根＋四集合）的实际 ObjectId"——正是回填内容
+    // 所需。域内既有同源消费先例：RequirementsCommandFlows 拾取写回的
+    // CheckContext 组装（本缝即"会话闭包引用元数据"的现取事实源）。
+    const std::vector<project::ObjectRef> closureRefs =
+        m_view3dSeams.sessionClosureRefs();
+    if (closureRefs.empty()) {
+        // 空闭包（无打开项目等）＝无核对基准——跳过：拿空表当权威会误
+        // 剥蚀工作集既有挂载（防剥蚀优先于回填）。
+        return;
+    }
+
+    // 按 token 路由四集合落库身份（对象类型 token 是修订视图内对象种类
+    // 的唯一路由键——与 buildDraftCommand 槽路由、宿主根扫描同源）。
+    auto refOfToken = [&closureRefs](std::string_view token)
+        -> std::optional<core::ObjectId> {
+        for (const project::ObjectRef& ref : closureRefs) {
+            if (ref.objectTypeToken == token) {
+                return ref.objectId;
+            }
+        }
+        return std::nullopt;
+    };
+    const std::optional<core::ObjectId> appliedPointsRef =
+        refOfToken(kReqPointSetObjectType);
+    const std::optional<core::ObjectId> appliedRegionsRef =
+        refOfToken(kReqRegionSetObjectType);
+    const std::optional<core::ObjectId> appliedConditionsRef =
+        refOfToken(kReqConditionSetObjectType);
+    const std::optional<core::ObjectId> appliedPlansRef =
+        refOfToken(kReqPlanSetObjectType);
+
+    // ---- 一致性门（免重建）----
+    // 四槽逐一比对：全一致＝工作集挂载已与落库修订同态（宿主重导线路径
+    // 的回执、第二次及以后的回执——refs 不随内容替换变化），零重建返回；
+    // 存在"工作集未挂载（或挂载他值）而落库已挂载"的缺口＝F-460 失配态，
+    // 进入回填。方向性说明：只对"闭包有身份"的槽判失配——闭包缺席（集
+    // 合对象未落库）而工作集有挂载的组合属外部修订删除场景，归 Rewire
+    // FromHead 重导线语义（RevisionSyncPolicy 三分岔），不在本回执回填
+    // 职责内（回填只升级、不剥蚀）。
+    const RequirementWorkingSet& ws = m_editor->workingSet();
+    const bool needsRewire =
+        (appliedPointsRef.has_value() && ws.root.pointSetRef != appliedPointsRef)
+        || (appliedRegionsRef.has_value()
+            && ws.root.regionSetRef != appliedRegionsRef)
+        || (appliedConditionsRef.has_value()
+            && ws.root.conditionSetRef != appliedConditionsRef)
+        || (appliedPlansRef.has_value() && ws.root.planSetRef != appliedPlansRef);
+    if (!needsRewire) {
+        return;
+    }
+
+    // ---- 回填闭包装配（既有 ws 更新入口的输入面）----
+    // 字节源＝编辑器当前工作集自身（同一内容刚在命令提交时刻通过编码与
+    // 校验链；重编码确定性 NFR-COR-02）。编码失败＝模型非法（schema 违
+    // 约），fail-fast 不吞——不产出残缺闭包冒充回填基线。
+    const RequirementCodec codec;
+    auto encodeOrThrow = [&codec](const RequirementObjectVariant& object) {
+        const auto encoded = codec.encode(object, kCurrentRequirementFormatVersion);
+        if (!encoded.ok()) {
+            throw std::runtime_error(
+                "requirements 应用回执：工作集回填闭包编码失败（"
+                + encoded.error().detail + "）——不虚构可用工作集");
+        }
+        return encoded.get();
+    };
+
+    // 候选根＝工作集根副本＋四槽身份升级（只升级不剥蚀：闭包缺席的槽保
+    // 持工作集现值——理由同一致性门的方向性说明）。挂载增量的权威对齐：
+    // 落库修订事实在此刻覆盖工作集旧值，工作集仍是根引用表的唯一权威载
+    // 体（PA-1——修正载体内的值，不另设第二真值）。
+    RequirementSet patchedRoot = ws.root;
+    if (appliedPointsRef.has_value()) {
+        patchedRoot.pointSetRef = appliedPointsRef;
+    }
+    if (appliedRegionsRef.has_value()) {
+        patchedRoot.regionSetRef = appliedRegionsRef;
+    }
+    if (appliedConditionsRef.has_value()) {
+        patchedRoot.conditionSetRef = appliedConditionsRef;
+    }
+    if (appliedPlansRef.has_value()) {
+        patchedRoot.planSetRef = appliedPlansRef;
+    }
+
+    // 内存闭包视图（本 TU 匿名域 RestoredClosureView 同形复用——byToken
+    // 路由根＋四集合、byId 承载根引用表解引用）。集合 oid 取"落库身份优
+    // 先、工作集现值兜底"；双缺席槽不登记——引用缺席＝空集合对象未建
+    // （loadBaseline 合法跳过该槽，工作集槽位保持默认空——与首应用前该
+    // 集合本就为空的语义一致）。
+    RestoredClosureView closure;
+    // 聚合类型初始化沿用 adoptRestoredDocument 既有写法（push_back＋大括
+    // 号——RequirementClosureObject 无双参构造，emplace 转发不可用）。
+    closure.byToken.push_back(
+        RequirementClosureObject{std::string(kReqSetObjectType),
+                                 encodeOrThrow(RequirementObjectVariant{patchedRoot})});
+    auto pushSet = [&](std::string_view token,
+                       const std::optional<core::ObjectId>& appliedRef,
+                       const std::optional<core::ObjectId>& wsRef,
+                       const RequirementObjectVariant& object) {
+        const std::vector<std::uint8_t> bytes = encodeOrThrow(object);
+        closure.byToken.push_back(
+            RequirementClosureObject{std::string(token), bytes});
+        const std::optional<core::ObjectId>& oid =
+            appliedRef.has_value() ? appliedRef : wsRef;
+        if (oid.has_value()) {
+            closure.byId.emplace_back(
+                oid.value(), RequirementClosureObject{std::string(token), bytes});
+        }
+    };
+    pushSet(kReqPointSetObjectType, appliedPointsRef, ws.root.pointSetRef,
+            RequirementObjectVariant{ws.points});
+    pushSet(kReqRegionSetObjectType, appliedRegionsRef, ws.root.regionSetRef,
+            RequirementObjectVariant{ws.regions});
+    pushSet(kReqConditionSetObjectType, appliedConditionsRef,
+            ws.root.conditionSetRef, RequirementObjectVariant{ws.conditions});
+    pushSet(kReqPlanSetObjectType, appliedPlansRef, ws.root.planSetRef,
+            RequirementObjectVariant{ws.plans});
+
+    // ---- 经既有 ws 更新入口重建（loadBaseline——唯一能改根引用表的公
+    //      开入口；工作集/撤销栈/编辑计数重置为基线态）----
+    // 为什么栈清零可接受：应用即消费（modeling 回执清 changes 账面同构）
+    // ——已应用编辑的撤销归项目级"撤销上次应用"，局部栈的历史使命随修
+    // 订落库终结；编辑计数归零同时修正"应用后无新编辑仍可组装同内容空
+    // 修订"的边缘（buildDraftCommand 门随 edits==0 如实 nullopt）。快照
+    // 内容安全性：回填闭包取自当前工作集，重建前后五对象内容逐字节一致
+    // （仅根引用表身份升级），无任何用户内容丢失。
+    const RequirementLoadOutcome load = m_editor->loadBaseline(closure);
+    if (!load.ok) {
+        // 失败＝闭包违约（字节源来自同一工作集，正常流不可达）——按实
+        // 现/数据缺陷 fail-fast：会话与存储已失配时宁可崩溃暴露，不允许
+        // 静默停留在失配态（loadBaseline 失败时编辑器保持原状，回执语义
+        // 其余半区不受影响——上抛交宿主装配层处置）。
+        throw std::runtime_error("requirements 应用回执：工作集根引用表回填失败（"
+                                 + load.error.detail + "）——不吞基线级失败");
+    }
+
+    // 撤销记账随栈复位归零（面板撤销键同步——漏登记＝"幽灵可撤销"）。
+    // 面板内容刷新不在此处：回填只改根引用表身份、内容与回执前一致，宿
+    // 主 SkipSelfApplied/committed 收口的 refreshRequirementsFromSession
+    // 随后覆盖呈现面（事件驱动刷新的应答半区归宿主编排——PA-1）。
+    noteBaselineReloaded();
+}
+
 void RequirementsUiModule::resetPanelForDetach()
 {
     // 会话脱离的面板复位转发（UI-T39——项目关闭/切换的旧态清理）。

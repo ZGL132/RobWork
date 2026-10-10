@@ -241,6 +241,36 @@ public:
     void noteBaselineReloaded();
 
     /**
+     * @brief 应用回执（draft.apply 提交 Committed 的域侧对账——modeling
+     *        门面 noteAppliedRevision 同名方法语义同构，两件事）：
+     *
+     *   ①会话态回填：基线前移（下一轮信封 expectedRevision＝新 tip）＋根
+     *     对象身份回填（下一轮根槽走"既有对象替换"——allocateNew 不再重
+     *     复建根，恰一根不变量）＋恢复草稿资格位清位（应用即消费）；
+     *   ②工作集根引用表回填（F-460）：把本次修订落库的四集合存储身份回
+     *     填进编辑器工作集根引用表（rewireWorksetRootRefsAfterApply）。
+     *
+     *   为什么②必须存在：buildDraftCommand 的集合槽挂载态取工作集根引用
+     *   表（§4.2——refs 是集合 oid 的权威），而首应用前的合法工作集是
+     *   "集合有条目、refs 全空"（挂载增量只存在于命令候选根，落库后回
+     *   流仅达会话态）。②缺席时第二次 draft.apply 仍按"未挂载"组装
+     *   allocateNew 槽，与存储端已挂载事实失配——被 prepare 挂载核对拒
+     *   绝（F-460 阻断：需求域二连 draft.apply 必拒）。
+     *
+     * @param newBase      [in] 新基线修订（tip）
+     * @param rootObjectId [in] 根对象存储身份（nullopt＝未回填〔首应用前〕）
+     *
+     * @throws std::runtime_error 工作集回填的基线重建失败（实现/数据缺陷
+     *               ——回填闭包取自编辑器当前工作集自身，提交时刻已通过
+     *               编码与校验链；fail-fast 不吞，与会话态回填的静默语义
+     *               有意区分——②失败意味着会话与存储失配，宁可崩溃暴露）
+     *
+     * 仅 UI 线程（§3.4——会话态与编辑器工作集均为 UI 线程权威态）。
+     */
+    void noteAppliedRevision(const core::RevisionId& newBase,
+                             const std::optional<core::ObjectId>& rootObjectId);
+
+    /**
      * @brief 会话脱离的面板复位（项目关闭/切换的呈现收口——转发面板
      *        resetForSessionDetached：会话选中锚/撤销记账归零＋控件投影
      *        收拢为无会话空态。面板缺位＝空操作）。
@@ -362,6 +392,18 @@ private:
     /// 编辑后组合子挂面板（UI-T29——宿主重估先行＋最新报告 refreshPanel；
     /// 面板缺位＝仅暂存，attachPanel 时补挂）。
     void wirePanelPostEdit();
+
+    /**
+     * @brief 应用回执的工作集根引用表回填（F-460——noteAppliedRevision
+     *        第二半；私有实现细节见 .cpp 同名函数注释）。
+     *
+     * 数据来源＝宿主绑定的会话闭包引用元数据缝（m_view3dSeams.
+     * sessionClosureRefs——生产绑定＝查询端口 head().objectRefs，F-558
+     * 延迟现取）；缝缺位/空闭包＝诚实跳过（不虚构、不剥蚀既有挂载——
+     * 与缝未绑定时二连应用维持修复前行为的降级语义一致）。
+     */
+    void rewireWorksetRootRefsAfterApply();
+
     IRequirementEditor* m_editor = nullptr;      ///< 编辑器引用（非 owning——工作集权威）
     ui::IWorkbenchShell* m_shell = nullptr;      ///< 壳门面引用（非 owning——§10.9 生命周期）
 
