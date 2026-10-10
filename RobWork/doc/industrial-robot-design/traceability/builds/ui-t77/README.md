@@ -47,3 +47,11 @@
   （自适应尺寸随文本渲染基建任务演进）。
 - 宿主端到端复验（增工位→标记渲染于坐标点；中文标签正常显示；应用草稿→三维出现模型骨架）
   待所有者换装新 exe 后执行，findings 翻转 fixed 以复验为准。
+
+## 合流复验（2026-10-10，merge aa9f7aa3 后）
+
+- 显式重配（F-623：防 VS 增量构建新目标静默缺位）`RWS_BUILD_INDUSTRIALROBOT:BOOL=ON` → 全量构建零错误；
+- 七套件直跑全过（ui/requirements×3/modeling×2/kinematics——exit=0）；
+- gate-all **85/85**（`-QtPrefix D:/software/Qt/6.11.1/msvc2022_64`，日志 logs/gate-post-merge-85of85.log）；
+- findings.json F-555/F-556 按所有者预裁决（「状态翻转随 ui-t77 合流批次办理」）翻 fixed（fixedAt=2026-10-10）；
+- 验收记录：traceability/acceptance/UI-T77-20261010.md（acc/ui-t77/1@3b5ffa97，verdict=pass——独立子会话对抗式验收）。
