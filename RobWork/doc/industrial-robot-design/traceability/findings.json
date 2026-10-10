@@ -6991,6 +6991,24 @@
       "registeredAt": "2026-10-10",
       "title": "ui_gui_test 5 个 WorkbenchShell 布局类用例依赖真实窗口管理器——QT_QPA_PLATFORM=offscreen 下失败、真实平台全绿（失败用例的实现文件 ui/src/ 本批零触碰＝非送验缺陷）；套件无平台敏感性标注机制，offscreen 环境（验收/CI 常态）系统性误报",
       "owner": "testkit 批次（平台敏感性标注或跳过机制——如用例级标注〔offscreen 期望失败/SKIP+归因〕或 testkit 探测 QT_QPA_PLATFORM 后自动归因；参照 F-617 剪贴板可用性预探先例）"
+    },
+    {
+      "id": "F-717",
+      "source": "acc/wp-19-t12/1 验收记录（attempt 1，verdict=pass）清单 5/协议 4.8——验收者复现（2026-10-11）：sdurws_ird_selection_contract_test 64/64＝基线 58＋6，XML testcase 计数 6 个 WP19T12 契约用例",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "WP-19-T12 登记文案 SelLinearDriveContract「5 用例」与实际 TEST 数 6 不一致——execution-log.md §3、单元卡 §1.2/§19.5/§21、commit 正文均写 5；实际 LinearDriveContractTest.cpp 含 6 个 TEST（T12TokenVocabularyAndDiagCodes 与 LinearDriveKindVocabularyClosed 为两个独立 TEST——「词表/稳定码封闭」与「器件类别/量纲封闭」拆两条）；留痕 XML 本身准确（tests=64），仅文字叙述少计 1",
+      "owner": "selection 批次（随下次单元卡/留痕修订把用例数更正为 6，或按叙述维度拆分口径注明——验收记录 wp-19-t12-20261011.md §建议级 1）"
+    },
+    {
+      "id": "F-718",
+      "source": "acc/wp-19-t12/1 验收记录（attempt 1，verdict=pass）清单 5——验收者复现（2026-10-11）：sdurws_ird_selection_test 283 运行＝282 通过＋1 SKIP，与留痕 XML tests=\"283\" failures=\"0\" 一致",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "WP-19-T12 留痕文字 _test 运行数「282 运行＝281 通过＋1 SKIP」与 gtest 实际输出/留痕 XML（283 ran＝282 passed＋1 skipped）差 1——execution-log §1/§3 与单元卡 §21 两处；单元卡 §21 同行「T11 既有 277＋新增 6」（＝283）自洽面反证 282/281 为笔误；XML 留痕准确，实现与测试无缺陷",
+      "owner": "selection 批次（随下次留痕修订更正运行数数字为 283/282/1——验收记录 wp-19-t12-20261011.md §建议级 2）"
     }
   ]
 }
