@@ -909,7 +909,9 @@ Expected<CanonicalModel, RuntimeError> parse(const std::vector<std::uint8_t>& by
             return Expected<CanonicalModel, RuntimeError>::err(RuntimeError{
                 RuntimeErrorCode::InputInvalid,
                 "codec/parse：编码版本 " + std::to_string(major) + "." + std::to_string(minor)
-                    + " 不受支持（本编码器＝1.0）——编码升版为破坏性变更，拒绝而非猜测"});
+                    + " 不受支持（本编码器＝" + std::to_string(kVersionMajor) + "."
+                    + std::to_string(kVersionMinor)
+                    + "）——编码升版为破坏性变更，拒绝而非猜测"});
         }
         if (domain != kDomainFull) {
             return Expected<CanonicalModel, RuntimeError>::err(RuntimeError{

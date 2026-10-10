@@ -128,6 +128,44 @@ TEST(CodecRoundtripTest, DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618)
         << "未知级别字节必须拒绝（枚举值域校验——不静默映射，NFR-COR-03）";
 }
 
+/**
+ * 旧 minor 版本字节拒绝专项钉（F-626）：kVersionMinor 0→1 升版后，历史
+ * minor=0 字节必须被「版本不符」检查显式拒绝——audit F-626 指出升版时
+ * 该路径仅有 major 翻转钉，minor 单独翻转缺专项证据，本钉补齐。
+ * 头布局锚：magic（7 字节）后即 u16 major＋u16 minor（小端）。
+ * 附带断言拒绝文案的「本编码器＝x.y」随常量取值（F-625——文案曾硬编码
+ * 1.0 失实，改由常量拼装后此处钉住其真实性，升版时与本钉同步更新）。
+ */
+TEST(CodecRoundtripTest, OldMinorVersionBytesRejected_F626)
+{
+    const CanonicalModel m = richFixture().build();
+    std::vector<std::uint8_t> bytes = rtcodec::encode(m);
+
+    // 头布局锚：magic 7 字节后即 major(2)＋minor(2)，大端（Writer::u16 网络序）。
+    ASSERT_GE(bytes.size(), 11u);
+    const std::size_t minorLo = 7 + 2;  // minor 双字节起始偏移（高字节在前）
+    ASSERT_EQ(bytes.at(minorLo), (rtcodec::kVersionMinor >> 8) & 0xFFu)
+        << "布局锚失配：minor 高字节应等于 kVersionMinor 高字节";
+    ASSERT_EQ(bytes.at(minorLo + 1), rtcodec::kVersionMinor & 0xFFu)
+        << "布局锚失配：minor 低字节应等于 kVersionMinor 低字节";
+
+    // 原位把 minor 回拨为历史值 0（升版前的 1.0 字节形态），其余不动。
+    bytes.at(minorLo) = 0x00;
+    bytes.at(minorLo + 1) = 0x00;
+    const auto rejected = rtcodec::parse(bytes);
+    ASSERT_FALSE(rejected.ok())
+        << "旧 minor=0 字节必须被版本不符检查显式拒绝（F-626）";
+
+    // 拒绝文案如实报告本编码器当前版本（F-625——不再硬编码失实字面量）。
+    const std::string what = rejected.error().what();
+    const std::string expectedEncoder = "本编码器＝" + std::to_string(rtcodec::kVersionMajor)
+        + "." + std::to_string(rtcodec::kVersionMinor);
+    EXPECT_NE(what.find("不受支持"), std::string::npos)
+        << "文案应表达「版本不符即拒绝」语义";
+    EXPECT_NE(what.find(expectedEncoder), std::string::npos)
+        << "文案的本编码器版本应随常量取值（当前 " << expectedEncoder << "）";
+}
+
 /** 稀疏夹具往返：presence=0 路径全覆盖（无工具/场景/耦合/工作范围/摩擦，
  *  限速 NotProvided）——nullopt ≠ 零值（NFR-COR-03）。 */
 TEST(CodecRoundtripTest, SparseOptionalsRoundtripAsAbsent)

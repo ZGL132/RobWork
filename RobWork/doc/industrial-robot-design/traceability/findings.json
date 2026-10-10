@@ -5922,10 +5922,11 @@
       "id": "F-620",
       "source": "audit-p0-p1d 合入后全量复验（2026-10-09，acc-audit-merge-verify）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-09",
       "title": "剪贴板型 GUI 用例受桌面全局剪贴板占用阻断（实锤：clip.exe 系统级拒绝访问＋GetClipboardOwner=MATLAB pid 26828；PreviewPane_MultiTypeChain_UI_T59 断言中 preview 内容正确仅剪贴板往返失败、BatchPasteImpactDetail_UI_T08_ACC1 以 clipboard()->setText 为输入通道落空）——历史批次 D/验收的「GUI 剪贴板竞争」同源",
-      "owner": "门禁所有者：为剪贴板型用例增加可用性预探（clip 写读探针）与失败自动归因标注，避免环境失败误判为代码缺陷"
+      "owner": "门禁所有者：为剪贴板型用例增加可用性预探（clip 写读探针）与失败自动归因标注，避免环境失败误判为代码缺陷",
+      "resolution": "落地（分支 audit-p2-fixes，F-617 同载体）：剪贴板型 GUI 用例经 clipboardUsable() 预探，不可用时 SKIPPED 并输出 F-620 归因——audit-p2 合入后 40/40 sweep 实测零环境性失败（2026-10-10 收口翻 fixed）。"
     },
     {
       "id": "F-621",

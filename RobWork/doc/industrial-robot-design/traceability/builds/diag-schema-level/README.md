@@ -20,12 +20,12 @@
   无该目标，枚举误列；最终 40 套件全产出）：零编译/链接错误。
 - `gtest/`——集成模式 40 套件逐一**直跑**（gate-all 的 ctest 调用对 ui_test
   挂起——F-619 已登记，直跑为登记口径）：`run-all-exitcodes.txt` 40 唯一套件
-  全 EXIT=0；XML 汇总 **8448 用例 / 0 失败 / 0 错误 / 9 skipped**（设计性跳过：
+  全 EXIT=0；XML 汇总 **4224 用例 / 0 失败 / 0 错误 / 9 skipped**〔F-627 更正：原登记 8448 为集成＋冒烟双计〕（设计性跳过：
   ContractSuite.ChildProcessWorker_RT_ID_1 子进程形态＋F-620 剪贴板占用归因
   SKIPPED——预期形态非失败）。
 - `gtest-smoke/`＋`build-smoke.log`＋`smoke-configure.log`——独立冒烟模式
   （按 DTB §5.1 口径配置，vcpkg toolchain＋Qt 前缀）：构建 EXIT=0 零错误；
-  40 套件直跑全 EXIT=0，**7748 用例 / 0 失败 / 0 错误 / 8 skipped**。
+  40 套件直跑全 EXIT=0，**3874 用例 / 0 失败 / 0 错误 / 8 skipped**〔F-627 更正：原登记 7748 为双计〕。
 - `gates-ird-gates-target.log`——`ird_gates` 目标 EXIT=0；7 命中
   （IRD-GATE-R1/R3/R4/R5/SUB/T1/T2）与 wp22-t05 基线**逐码一致**，全部为门禁
   自测的预期检出（fail_r\*/fail_t\*/fail_sub），零新增。注：控制台捕获链路的
