@@ -11,6 +11,18 @@
 #
 # 零 Python 约束（契约 acceptance 第 2 条）：本脚本只用 pwsh＋cmake＋ctest＋git。
 #
+# ★ 运行时长与构成（wp22-t13 S2 消账，2026-10-10）：本脚本名字带"gate"但
+#   【不是】分钟级静态门禁——除 ird_gates 静态扫描外，它包含两棵构建树的
+#   全量动作，无人值守实测约 10+ 分钟（多核机器量级；首次全新配置更久）：
+#   第 1~2 步 集成树缓存确认＋ird_gates（含引擎自测子进程）——约 1 分钟内；
+#   第 3 步   集成模式【逐个】构建并执行全部 _test/_contract_test/_gui_test
+#             注册目标（约 40+ 目标，MSVC 增量编译＋gtest 全量执行）；
+#   第 4 步   冒烟模式【全新独立配置】（$env:TEMP/ird-gate-smoke，每次删除
+#             重建——含 vcpkg toolchain＋Qt 前缀解析、全部测试目标冒烟构建
+#             与执行）——本步占总时长的大头。
+#   调用方（CI/本地提交前自查）须按此预算预留时长，勿按"静态扫描"预期
+#   设超时；只要静态门禁时请直接用第 2 步的 ird_gates 目标单跑。
+#
 # 用法（仓库根或任意子目录）：
 #   pwsh -File RobWork/scripts/industrialrobot/gate-all.ps1
 #   可选参数：

@@ -1,0 +1,17 @@
+IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/project/ProjectStore.hpp（公共头未在对方 include/ 下命中）
+IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/project/StoreTypes.hpp（公共头未在对方 include/ 下命中）
+IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/ui/UiTypes.hpp（公共头未在对方 include/ 下命中）
+IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/workflow/Types.hpp（公共头未在对方 include/ 下命中）
+==============================================================
+[ird_gates] 扫描根：C:/Users/zgl18/AppData/Local/Temp/gov-gate-probe/lifefixture
+[ird_gates] 命中 4 项：
+[ird_gates] IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/project/ProjectStore.hpp（公共头未在对方 include/ 下命中）
+[ird_gates] IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/project/StoreTypes.hpp（公共头未在对方 include/ 下命中）
+[ird_gates] IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/ui/UiTypes.hpp（公共头未在对方 include/ 下命中）
+[ird_gates] IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/workflow/Types.hpp（公共头未在对方 include/ 下命中）
+==============================================================
+CMake Error at D:/10_Source_Repos/21_robot/RobWork/build/pipeline-wt/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake:1000 (message):
+  [ird_gates] 依赖红线/补丁门禁存在 4 处命中——按 ARCH §3.2
+  SA-10 判构建失败；例外只经 DTB §4.5 登记册
+
+

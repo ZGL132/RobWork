@@ -1,0 +1,8 @@
+PROBE-1 SUBSTRING(-1)=remainder: OK
+PROBE-2 语料等价: 32 例, 不一致 0 例
+PROBE-2b 320 星行长注释等价: OK (新输出长度  
+int k = 1;
+)
+PROBE-2c 未闭合星串块等价: OK
+PROBE-2d 真实产品面 541 文件: 剥离输出不一致 0 文件（其中命中 R4 词面的 6 文件）
+PROBE 全部通过

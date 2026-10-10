@@ -40,8 +40,6 @@
 
 #include <gtest/gtest.h>
 
-#include <QString>  // （占位对齐——本文件无默认键断言；保持与 CommandsContract 同 include 纪律可读性）
-
 #include <sdurws/ird/core/Digest.hpp>   // core::ContentDigester（导入桥摘要复算面——io 桥内部）
 #include <sdurws/ird/io/Budget.hpp>     // io::BudgetSpec::packImportHardened
 #include <sdurws/ird/io/IoDiagnostics.hpp>  // io::errorCodeToken
