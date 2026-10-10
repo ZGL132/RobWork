@@ -505,6 +505,93 @@ void AssertionSuite::assertReferenceProtection(
     }
 }
 
+void AssertionSuite::assertDrivetrainCoupling(const ModelingWorkingSet& candidate,
+                                              CouplingStage stage,
+                                              std::vector<core::DiagnosticRecord>& blockers) const
+{
+    // 无传动对象＝耦合面无事实可查（就绪 L9 缺省预告面另行承载——此处
+    // 不伪造缺项诊断，传动对象缺席是合法态：动力学走 DataInsufficient
+    // 降级，DYN-06）。
+    if (!candidate.drivetrainObject.has_value()
+        || !candidate.drivetrainObject->coupling.has_value()) {
+        return;
+    }
+    const DrivetrainDesign& drivetrain = *candidate.drivetrainObject;
+    const CouplingDesign& coupling = *drivetrain.coupling;
+
+    // ---- I-MDL-12（R1 耦合阶段锁）：存在即阻断（"不提前放开 R1 阻断"
+    // 红线——MDL-12/21 R1 口径；§9.5 T18 行）。无值可比——非比较型。
+    // （传动对象无 localName 字段——§4.7"不经名称映射"如实从卡；诊断
+    // 定位走 subject=objectId＋context，localName 传空串＝nullopt 口径。）
+    if (stage == CouplingStage::R1Locked) {
+        blockers.push_back(makeRecord(
+            kMdl21CouplingStageLocked, drivetrain.objectId, std::string(),
+            std::string("耦合阶段锁（I-MDL-12——robot-drivetrain.coupling）"),
+            "当前程序阶段为 R1：耦合矩阵禁止配置（存在即阻断——MDL-21 于"
+            "阶段 D 启用；mimic/planar/floating/闭环阻断不因线性耦合放开"
+            "而放松——M-6）",
+            "阶段 D 启用前移除该耦合矩阵配置",
+            std::nullopt));
+        return;  // 阶段锁即终判——R1 态不做数值校验（不重复报）
+    }
+
+    // ---- I-MDL-11（R2 数值校验）：checkCouplingMatrix 重算复核（单一
+    // 判定面——编辑边界/prepare/L9 三处共用，NFR-MNT-04；判定数学唯一
+    // 在 Parts 层，本方法只做"值事实→诊断记录"换轨）。
+    const CouplingMatrixCheck check =
+        checkCouplingMatrix(coupling, candidate.design.joints.size());
+    if (check.ok()) { return; }  // 合法 C：放行（申报值不参与判定——T18 增注）
+
+    // 违例种类→比较型三要素（ERR-01：actual/expected/unit——真实可比面
+    // 逐档选择，不伪造 κ；单位 "1"＝core 注册的无量纲 token）。
+    std::optional<core::ComparativeFields> cmp;
+    if (check.violationKind == "singular") {
+        // 奇异档：κ 可下溢为无穷——以有限比值承载（actual=σmin/σmax、
+        // expected=奇异分界之上）。
+        cmp = comparison(check.singularSigmaRatio, "1",
+                         1e-12, "1");
+    } else if (check.violationKind == "ill-conditioned") {
+        // 病态档：actual=重算条件数、expected=上限 1×10⁸（P-RT-7 单点）。
+        cmp = comparison(check.recomputedConditionNumber, "1",
+                         1e8, "1");
+    } else if (check.violationKind == "not-square") {
+        // 结构档：行数须等于列数（真实可比计数面——无量纲）。
+        cmp = comparison(static_cast<double>(coupling.rows), "1",
+                         static_cast<double>(coupling.cols), "1");
+    } else if (check.violationKind == "element-not-finite") {
+        // 结构档：非有限元素计数须为 0。
+        std::size_t nonFinite = 0;
+        for (const double v : coupling.c) {
+            if (!std::isfinite(v)) { ++nonFinite; }
+        }
+        cmp = comparison(static_cast<double>(nonFinite), "1", 0.0, "1");
+    } else if (check.violationKind == "window-mismatch"
+               || check.violationKind == "window-out-of-range") {
+        // 结构档：窗口计数（j−i+1）须等于方阵阶 n。
+        const double windowCount =
+            coupling.jointRangeLast >= coupling.jointRangeFirst
+                ? static_cast<double>(coupling.jointRangeLast
+                                      - coupling.jointRangeFirst + 1u)
+                : 0.0;
+        cmp = comparison(windowCount, "1", static_cast<double>(coupling.rows), "1");
+    }
+    // （各档三要素已覆盖全部 violationKind——未知 kind 防御面＝实现缺陷，
+    // cmp 留空不伪造。）
+
+    // cause 文案先落局部串（数值插值档位化——比较型三要素在 cmp；此处
+    // 是人读归因面，cause 复用 check.detail 的定位细节）。
+    const std::string cause = check.violationKind + "：" + check.detail
+        + "（重算复核为准——申报条件数不参与判定；奇异/病态经比较型"
+          "诊断阻止成模，M-12 不降级不静默）";
+
+    blockers.push_back(makeRecord(
+        kMdl21CouplingInvalid, drivetrain.objectId, std::string(),
+        std::string("耦合矩阵数值校验（I-MDL-11——robot-drivetrain.coupling）"),
+        cause,
+        "修正耦合矩阵（维度/窗口/可逆性/条件数 ≤1×10⁸）后重新提交",
+        std::move(cmp)));
+}
+
 void AssertionSuite::checkResourceStates(const RobotDesign& design,
                                          std::vector<core::DiagnosticRecord>& warnings) const
 {
@@ -1088,6 +1175,7 @@ project::PrepareOutcome IModelingCommandHandler::prepare(
     m_suite.assertSchemaVersions(dec.candidate, blockers);
     m_suite.assertClosureReferences(dec.candidate.design, dec.candidate, blockers);
     m_suite.assertDefaultTcp(dec.candidate.design, dec.candidate, blockers);
+    m_suite.assertDrivetrainCoupling(dec.candidate, m_services.couplingStage, blockers);
     m_suite.assertJointLimitIntervals(dec.candidate.design, blockers);
     for (const LinkEntry& link : dec.candidate.design.links) {
         m_suite.assertBodyPhysical(link.objectId, link.localName, link.body,

@@ -12,14 +12,16 @@
  *   - 先例：io/src/IoDiagnostics.cpp（ioCodeDescriptors 逐字段登记口径）
  *   - 任务契约 tasks/foundation/WP-13-T02.json acceptance 4
  *
- * 背景说明：清单当前 24 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
+ * 背景说明：清单当前 26 项（§9.5 任务列含 T02 的行＋WP-13-T05 登记的
  * T05 行五码＋WP-13-T06 实现期增登的 T06 行一码＋WP-13-T07 实现期增登
  * 的 T07 行一码＋WP-13-T08 登记的 T08 行九码——八条卡面行＋一条 v0.9
  * 实现期增登行 MDL-READINESS-PHYSICS-MISSING＋WP-13-T09 登记的 T09 行
  * 三码 MDL-DH-{NOT-EXPRESSIBLE,APPROXIMATE,ANALYSIS-FAILED}＋WP-13-T10
  * 实现期增登的 T10 行两码 MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-TCP-
  * INCOMPLETE＋WP-13-T13 登记的 T13 行两码 MDL-IMPORT-PACKAGE-UNKNOWN/
- * MDL-EXPORT-FAILED）——分批注册
+ * MDL-EXPORT-FAILED＋WP-13-T18（R2）登记的 T18 行两码
+ * MDL-21-COUPLING-STAGE-LOCKED（卡面行）＋MDL-21-COUPLING-INVALID
+ * （v0.45 实现期增登行））——分批注册
  * 纪律（"不预建无消费者条目"）的执行口径见
  * 头文件 DiagCodes.hpp 文件头注；其余行随各自任务在**本清单表尾追加**
  * （表尾追加＝登记簿纪律，不重排既有项）。
@@ -662,6 +664,68 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
     exportFailed.deprecated = false;
     // supersededBy 保持 nullopt。
 
+    // ---- §9.5 T18 行两码（WP-13-T18（R2）登记，§14.6 v0.45——传动耦合
+    // 矩阵族；表行序追加于表尾——登记簿纪律不重排既有行）----
+    // T18 行共用口径：分类/severity 逐码取 §9.5"类别/级别"列的
+    // diagnostics §4.3 词表投影；paramSchema "[]"（定位走 subject＋
+    // localName、三要素走 comparison、维度/窗口/κ 实测值走 cause 文本
+    // ——T08/T09 行同款数据面）。"不提前放开 R1 阻断"红线（契约 note）
+    // 的诊断承载＝STAGE-LOCKED；R2 数值非法族的比较型阻止＝INVALID。
+
+    // ---- MDL-21-COUPLING-STAGE-LOCKED（校验/error——§9.5 卡面行）----
+    // R1 能力位下配置耦合矩阵→阶段 D 启用前移除（I-MDL-12 阶段锁；
+    // MDL-12/21 R1 口径——mimic/planar/floating/闭环维持阻断同属 R1
+    // 阻断面，M-6 不因线性耦合放开而放松）。分类 InfeasibilityProof＝
+    // diagnostics §4.3 词表"有效工程结论而非错误"族：耦合能力在当前
+    // 程序阶段（R1）不可用是能力边界结论（TEMPLATE-DISABLED 同判例——
+    // 冻结/启用门未过，非输入字节损坏）。
+    diagnostics::CodeDescriptor couplingStageLocked;
+    couplingStageLocked.code = std::string(kMdl21CouplingStageLocked);
+    couplingStageLocked.ownerUnit = "modeling";
+    couplingStageLocked.category = diagnostics::DiagnosticCategory::InfeasibilityProof;
+    couplingStageLocked.severity = diagnostics::DiagnosticSeverity::Error;  // §9.5"级别"列：error
+    couplingStageLocked.titleKey = "diag.mdl-21-coupling-stage-locked.title";
+    couplingStageLocked.detailKey = "diag.mdl-21-coupling-stage-locked.detail";
+    couplingStageLocked.paramSchema = "[]";
+    couplingStageLocked.confirmable = false;          // §9.5 行：false（阶段启用非会话内可放行——无确认分支）
+    couplingStageLocked.requiresComparison = false;   // 阶段锁无数值比对面（ERR-01 不伪造数值）
+    couplingStageLocked.retryable = diagnostics::RetryKind::UserRetry;  // "阶段 D 启用前移除"＝fix-input 族
+    couplingStageLocked.userVisible = true;           // 编辑/应用阻断提示（AT-38 R1 阻断反例观测面）
+    couplingStageLocked.reportable = true;
+    couplingStageLocked.historical = true;
+    couplingStageLocked.registryVersion = 1;
+    couplingStageLocked.deprecated = false;
+    // supersededBy 保持 nullopt。
+
+    // ---- MDL-21-COUPLING-INVALID（校验/error；v0.45 实现期增登）----
+    // R2 下耦合矩阵数值非法（I-MDL-11 重算复核——checkCouplingMatrix
+    // 单一判定面；§8.1"病态/非常矩阵"行）：非方阵/元素非有限/窗口失配/
+    // 窗口越界/奇异（σmin≤σmax×1×10⁻¹²）/病态（重算条件数 >1×10⁸，
+    // P-RT-7 设计默认——阈值单点 CouplingMath，P-MDL-7）任一命中即阻止
+    // 成模（M-12 不降级不静默；V-18 反例——奇异阵/条件数 1×10⁹）。分类
+    // InputInvalid＝diagnostics §4.3 词表"输入非法"族（矩阵数值事实在
+    // 合法域之外）；requiresComparison=true（acceptance 1"经比较型诊断
+    // 阻止"——逐实例携带真实可比三要素：奇异档 actual=σmin/σmax 比值/
+    // 病态档 actual=重算 κ、expected=阈值、单位 "1" 无量纲；结构档以
+    // 行/列/窗口计数为真实可比面——ERR-01 不伪造 κ）。
+    diagnostics::CodeDescriptor couplingInvalid;
+    couplingInvalid.code = std::string(kMdl21CouplingInvalid);
+    couplingInvalid.ownerUnit = "modeling";
+    couplingInvalid.category = diagnostics::DiagnosticCategory::InputInvalid;
+    couplingInvalid.severity = diagnostics::DiagnosticSeverity::Error;  // §9.5"级别"列：error
+    couplingInvalid.titleKey = "diag.mdl-21-coupling-invalid.title";
+    couplingInvalid.detailKey = "diag.mdl-21-coupling-invalid.detail";
+    couplingInvalid.paramSchema = "[]";
+    couplingInvalid.confirmable = false;          // 矩阵须修正（数值事实不可确认放行——M-12）
+    couplingInvalid.requiresComparison = true;    // 比较型强制（见类型注——逐实例三要素）
+    couplingInvalid.retryable = diagnostics::RetryKind::UserRetry;  // "修正矩阵（维度/窗口/可逆性/条件数）"＝fix-input 族
+    couplingInvalid.userVisible = true;
+    couplingInvalid.reportable = true;
+    couplingInvalid.historical = true;
+    couplingInvalid.registryVersion = 1;
+    couplingInvalid.deprecated = false;
+    // supersededBy 保持 nullopt。
+
     return {d, unsupportedJoint, branchSelection, zeroAxis, pendingConfirm,
             templateRange, xacroUnresolved, templateDisabled,
             travelLimit, massNonpositive, inertiaNotSpd, inertiaTriangle,
@@ -669,7 +733,8 @@ std::vector<diagnostics::CodeDescriptor> modelingCodeDescriptors()
             physicsMissing,
             dhNotExpressible, dhApproximate, dhAnalysisFailed,
             refProtected, defaultTcpIncomplete,
-            packageUnknown, exportFailed};
+            packageUnknown, exportFailed,
+            couplingStageLocked, couplingInvalid};
 }
 
 void registerModelingCodes(diagnostics::IDiagnosticRegistry& registry)

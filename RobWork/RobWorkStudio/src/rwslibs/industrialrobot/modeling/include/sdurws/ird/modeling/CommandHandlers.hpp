@@ -81,6 +81,15 @@
  * 两枚 T10 行稳定码（MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-TCP-
  * INCOMPLETE）随本任务在 §9.5 表尾登记（实现期增登先例——v0.6～v0.9）。
  *
+ * T18 增量（WP-13-T18，§8.1 传动耦合——单元卡 §14.6 v0.45 登记）：
+ * AssertionSuite 新增 assertDrivetrainCoupling（I-MDL-12 阶段锁＋I-MDL-11
+ * 数值校验——与就绪校验 L9 共用单一判定面；R1 阻断码
+ * MDL-21-COUPLING-STAGE-LOCKED＋R2 比较型阻断码 MDL-21-COUPLING-INVALID，
+ * 两码随本任务在 §9.5 表尾登记）；HandlerServices 新增 couplingStage
+ * 能力位（默认 R1Locked——"不提前放开 R1 阻断"红线；R2/阶段 D 启用
+ * 裁决后装配翻转）；prepare 公共段④接线：候选传动对象存在即核查（与
+ * 其他命令的候选继承面一致——防御纵深）。钩子契约不变。
+ *
  * 线程约束（§9.4.8 原文）：处理器由 ProjectCommandService 在命令执行
  * 线程串行调用，内部无需加锁；跨上下文共享实例时处理器状态视为不可变。
  * 合法调用：仅 project 命令服务（装配注册后由 registry 分发）；业务/UI
@@ -376,6 +385,41 @@ public:
                                    const std::vector<core::ObjectId>& removedOids,
                                    std::vector<core::DiagnosticRecord>& blockers) const;
 
+    // ---- 耦合矩阵阶段锁与数值校验（I-MDL-11/12——WP-13-T18；§8.1/§8.2 L9）----
+
+    /**
+     * @brief 传动耦合面断言（I-MDL-12 阶段锁＋I-MDL-11 数值校验——
+     *        WP-13-T18；§8.2 L9"传动可用"与命令 prepare 断言的唯一共同
+     *        实现，与就绪校验共用同一判定面（NFR-MNT-04——不出现两套
+     *        判定））。
+     *
+     * 检查面（候选工作集的传动对象存在且配置了 coupling 时；判定数学
+     * 唯一来自 Parts 层——checkInvariants 值面＋checkCouplingMatrix 重算
+     * 复核，本方法只做"值事实→定位诊断记录"的换轨）：
+     *   - stage==R1Locked 且 coupling 已配置 →
+     *     MDL-21-COUPLING-STAGE-LOCKED（§9.5 T18 行：R1 配置耦合矩阵→
+     *     阶段 D 启用前移除；I-MDL-12 存在即阻断——"不提前放开 R1 阻断"
+     *     红线的诊断承载；无值可比——非比较型）；
+     *   - stage==R2Enabled → checkCouplingMatrix（非方阵/元素非有限/
+     *     窗口失配/窗口越界/奇异/病态，任一命中）→
+     *     MDL-21-COUPLING-INVALID（比较型三要素：奇异档 actual=σmin/σmax
+     *     比值、病态档 actual=重算条件数、expected=阈值、单位 "1" 无量
+     *     纲；结构档以行/列/窗口计数为真实可比面——ERR-01 不伪造 κ；
+     *     M-12 不降级不静默）；
+     *   - R2 且校验通过/无 coupling → 通过（合法 C 可入修订——MDL-21
+     *     启用面；申报值 conditionNumber 不参与判定）。
+     *
+     * @param candidate [in] 候选工作集（只读——传动对象来源）
+     * @param stage     [in] 当前耦合阶段（能力位——装配注入，程序默认
+     *                  R1Locked；见 HandlerServices::couplingStage 注）
+     * @param blockers  [out] 违例追加（非空＝应用被阻止——硬断言语义）
+     *
+     * 纯函数；线程安全；确定性。
+     */
+    void assertDrivetrainCoupling(const ModelingWorkingSet& candidate,
+                                  CouplingStage stage,
+                                  std::vector<core::DiagnosticRecord>& blockers) const;
+
     // ---- 资源状态面（§8.2 L6——Warning 不阻断）----
 
     /**
@@ -576,6 +620,15 @@ struct HandlerServices {
     /// 编译分段探针（§7.6 等价验证注入面——verifyEquivalent 经此走
     /// runtime buildCanonicalModel S1～S5 只读分段；装配语义同上）。
     const CompileProbe* dhCompileProbe = nullptr;
+
+    // ---- T18 增量（WP-13-T18，§8.1 耦合阶段位——表尾追加，向后兼容）----
+    /// 耦合阶段能力位（I-MDL-11/12 断言与就绪 L9 的阶段输入——装配注入；
+    /// **默认 R1Locked＝"不提前放开 R1 阻断"红线**：coupling 配置在 R1
+    /// 能力位下即 MDL-21-COUPLING-STAGE-LOCKED 阻断。R2/阶段 D 启用裁决
+    /// 到位后由 L5 装配翻转为 R2Enabled——翻转只放行 R2 数值校验路径
+    /// （I-MDL-11 重算复核），mimic/planar/floating/闭环阻断不随动（M-6，
+    /// 阻断判定在导入域固定、不消费本能力位）。单元卡 §15 v0.45 登记）。
+    CouplingStage couplingStage = CouplingStage::R1Locked;
 };
 
 /**

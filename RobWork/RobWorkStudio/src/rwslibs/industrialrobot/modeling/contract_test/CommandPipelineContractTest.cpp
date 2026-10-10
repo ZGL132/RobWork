@@ -330,9 +330,24 @@ TEST(MdlCommandPipelineContract, StableCodesRegisteredWithoutPrebuilding_WP13T09
     ASSERT_NE(exportFailed, nullptr) << "T13 行码未注册: MDL-EXPORT-FAILED";
     EXPECT_EQ(exportFailed->ownerUnit, "modeling");
     EXPECT_FALSE(exportFailed->confirmable);
-    // —— 未到任务行不预建（仅余 T18 行缺席；T09/T13 行已随 WP-13-T09/T13
-    //    登记在册——见上两段在册断言）。——
-    EXPECT_EQ(registry.find("MDL-21-COUPLING-STAGE-LOCKED"), nullptr);  // T18（R2——契约 note ④）
+    // —— T18 行在册断言（WP-13-T18（R2）登记——"T18 行不预建"钉住断言随
+    //    本任务合法登记过期，改为在册断言——T09/T13 行同款推进先例）：
+    //    STAGE-LOCKED 为阶段锁语义（不可确认——"不提前放开 R1 阻断"红线
+    //    的码面，无放行分支）；INVALID 为 R2 数值校验码（比较型强制——
+    //    acceptance 1"经比较型诊断阻止成模"，M-12）。——
+    const diagnostics::CodeDescriptor* couplingStageLocked =
+        registry.find(kMdl21CouplingStageLocked);
+    ASSERT_NE(couplingStageLocked, nullptr)
+        << "T18 行码未注册: MDL-21-COUPLING-STAGE-LOCKED";
+    EXPECT_EQ(couplingStageLocked->ownerUnit, "modeling");
+    EXPECT_FALSE(couplingStageLocked->confirmable);
+    const diagnostics::CodeDescriptor* couplingInvalid =
+        registry.find(kMdl21CouplingInvalid);
+    ASSERT_NE(couplingInvalid, nullptr)
+        << "T18 行实现期增登码未注册: MDL-21-COUPLING-INVALID";
+    EXPECT_EQ(couplingInvalid->ownerUnit, "modeling");
+    EXPECT_FALSE(couplingInvalid->confirmable);
+    EXPECT_TRUE(couplingInvalid->requiresComparison);
 
     // —— 重复注册＝边界拒绝（码唯一键——注册表纪律）。——
     diagnostics::CodeDescriptor duplicate;

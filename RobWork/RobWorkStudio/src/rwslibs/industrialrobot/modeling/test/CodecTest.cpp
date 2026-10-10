@@ -27,6 +27,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <limits>
 #include <optional>
 #include <string>
 #include <vector>
@@ -40,6 +41,7 @@ using sdurws::ird::core::ValueProvenance;
 using sdurws::ird::modeling::AuthorityMode;
 using sdurws::ird::modeling::Bytes;
 using sdurws::ird::modeling::CatalogBackfill;
+using sdurws::ird::modeling::CouplingDesign;
 using sdurws::ird::modeling::CouplingStage;
 using sdurws::ird::modeling::DrivetrainDesign;
 using sdurws::ird::modeling::DhParameters;
@@ -595,4 +597,84 @@ TEST(MdlCodec, DecodeRejectsBytesViolatingInvariants_WP13T03_ACC4)
     ASSERT_FALSE(result.ok());
     EXPECT_EQ(result.error().code, ModelingErrorCode::MalformedPayload);
     EXPECT_NE(result.error().detail.find("I-MDL-1"), std::string::npos);
+}
+
+// =====================================================================
+// WP-13-T18——coupling 一等字段 canonical 编码往返（acceptance 3：canonical
+// 编码往返一致——coupling 矩阵入 RobotDesign 编码面按 §5/§4.8 规范化纪律；
+// 字节进入 ContentVersion 即入修订与编译内容，PA-1/PA-2）
+// =====================================================================
+
+/// 带 coupling 的传动对象编码往返逐字段一致＋确定性（同对象两编同字节）＋
+/// 无 coupling 形态字节相异（字段入编译身份面——矩阵字节变化产生新修订的
+/// 编码前提）。
+TEST(MdlCodec, DrivetrainCouplingCanonicalRoundtrip_WP13T18_ACC3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "CON-05"},
+                  std::vector<std::string>{"NFR-COR-02"});
+
+    DrivetrainDesign dt = makeCanonicalDrivetrain();
+    CouplingDesign cp;
+    cp.rows = 3;
+    cp.cols = 3;
+    cp.c = {2.0, 0.0, 0.0,
+            0.0, 3.0, 0.0,
+            0.0, 0.0, 1.0};  // 行主序，无量纲
+    cp.jointRangeFirst = 3;
+    cp.jointRangeLast = 5;
+    cp.conditionNumber = 3.0;  // 申报值随对象持久化（判定以重算为准）
+    dt.coupling = cp;
+
+    const RobotDesignCodec codec;
+    // ---- 往返逐字段一致（§4.8 确定性序列化——字段定序/小端/无填充）----
+    const Bytes bytes = encodedOf(ObjectVariant(dt));
+    const auto decoded = codec.decode(bytes, kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok());
+    const DrivetrainDesign& back = std::get<DrivetrainDesign>(decoded.get());
+    ASSERT_TRUE(back.coupling.has_value());
+    EXPECT_EQ(back.coupling->rows, 3u);
+    EXPECT_EQ(back.coupling->cols, 3u);
+    EXPECT_EQ(back.coupling->c, cp.c) << "行主序元素逐位保真";
+    EXPECT_EQ(back.coupling->jointRangeFirst, 3u);
+    EXPECT_EQ(back.coupling->jointRangeLast, 5u);
+    EXPECT_DOUBLE_EQ(back.coupling->conditionNumber, 3.0);
+    EXPECT_EQ(back, dt);
+
+    // ---- 确定性：同对象重复编码逐字节相等（NFR-COR-02）----
+    EXPECT_EQ(encodedOf(ObjectVariant(dt)), encodedOf(ObjectVariant(dt)));
+
+    // ---- 矩阵字节入编译身份：有无 coupling／矩阵元素变化的字节相异
+    //（ContentVersion 随对象字节计算——"变更产生新修订"PA-1/PA-2 的
+    //  编码前提；§8.1"矩阵字节进入 CanonicalModel 编译内容"行）----
+    DrivetrainDesign withoutCoupling = dt;
+    withoutCoupling.coupling = std::nullopt;
+    EXPECT_NE(encodedOf(ObjectVariant(withoutCoupling)), bytes);
+
+    DrivetrainDesign changed = dt;
+    changed.coupling->c[0] = 2.5;  // 单元素变化——字节必异
+    EXPECT_NE(encodedOf(ObjectVariant(changed)), bytes);
+}
+
+/// 解码门拒绝非有限耦合元素（§4.8"任何非法值不得被静默修复"——编码器
+/// 忠实编码非法值，合法性闸在 decode 防御面；I-MDL-3 经校验链自动强制）。
+TEST(MdlCodec, DrivetrainCouplingDecodeRejectsNonFinite_WP13T18_ACC3)
+{
+    IRD_TEST_INFO("I-MDL-3", {}, std::nullopt);
+
+    DrivetrainDesign dt = makeCanonicalDrivetrain();
+    CouplingDesign cp;
+    cp.rows = 1;
+    cp.cols = 1;
+    cp.c = {std::numeric_limits<double>::quiet_NaN()};  // 非有限元素
+    cp.jointRangeFirst = 0;
+    cp.jointRangeLast = 0;
+    cp.conditionNumber = 1.0;
+    dt.coupling = cp;
+
+    const RobotDesignCodec codec;
+    // encode 忠实编码（内部类型化数据不复核）；decode 闸拒绝。
+    const Bytes bytes = encodedOf(ObjectVariant(dt));
+    const auto decoded = codec.decode(bytes, kCurrentFormatVersion);
+    ASSERT_FALSE(decoded.ok());
+    EXPECT_EQ(decoded.error().code, ModelingErrorCode::MalformedPayload);
 }

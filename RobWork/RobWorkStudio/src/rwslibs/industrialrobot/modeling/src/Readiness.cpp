@@ -215,13 +215,22 @@ ModelReadinessReport ModelReadinessChecker::check(const ModelingWorkingSet& ws,
                           "基座安装违例（custom 缺 customEaa/旋转非正交）", true);
     };
     auto runL9 = [&] {
-        // L9 传动可用（I-MDL-11/12 呈现级＋缺省预告）。
+        // L9 传动可用（I-MDL-11/12——WP-13-T18 起阶段位参数化＋coded 化）。
         if (ws.drivetrainObject.has_value()) {
+            // 值面不变量（checkInvariants——I-MDL-11 自洽/I-MDL-12 R1 锁；
+            // 阶段位＝ctx.couplingStage——默认 R1Locked，"不提前放开 R1
+            // 阻断"红线）。
             for (const InvariantViolation& v :
-                 checkInvariants(*ws.drivetrainObject, CouplingStage::R1Locked)) {
+                 checkInvariants(*ws.drivetrainObject, ctx.couplingStage)) {
                 addNote(ReadinessLayer::L9Drivetrain, v.subject,
                         std::string("传动不变量违例（I-MDL-11/12）：") + v.subject, true);
             }
+            // coded 断言（与 prepare 断言共用同一实现——NFR-MNT-04；
+            // R1 阶段锁 MDL-21-COUPLING-STAGE-LOCKED／R2 数值校验
+            // MDL-21-COUPLING-INVALID 比较型，L9 Blocking 面的登记码承载
+            // ——L7 assertDefaultTcp 同款 coded 化先例）。
+            suite.assertDrivetrainCoupling(ws, ctx.couplingStage,
+                                           layerBlockers[layerIndex(ReadinessLayer::L9Drivetrain)]);
         } else {
             addNote(ReadinessLayer::L9Drivetrain, "drivetrainRef",
                     "传动设计未配置（缺省——动力学评估将走缺省/降级预告）", false);

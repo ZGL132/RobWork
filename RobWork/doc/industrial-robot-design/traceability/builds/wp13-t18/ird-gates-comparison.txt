@@ -1,0 +1,16 @@
+ird_gates 门禁留痕（WP-13-T18；引擎直跑口径退化说明）
+- branch：wp13-t18（本任务工作树源码，含全部 T18 改动）
+- base：0bfcd43d（任务分支基点——WP-13-T18 未提交任何改动的起点）
+- 执行方式：cmake --build <集成构建树> --config Release --target ird_gates
+  （构建期门禁目标亲跑——gate-all.ps1 第 2 步同一口径；完整输出见
+  ird-gates-target-run.log，含引擎自测六例 pass＋七例按预期检出）
+- branch 实测结论：产品树扫描（扫描根＝industrialrobot/）
+  "全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中"
+- base..branch 对比口径说明：branch 侧产品命中为**零**（T12 后治理批已将
+  DTB §4.5 存量例外消账——branch 零命中即对本任务改动面（modeling 单元
+  内部：新增 src/CouplingMath.hpp 私有头＋既有目标内源文件与公共头声明、
+  既有测试目标内测试 TU；零新增 CMake target/link 边/目录/第三方依赖）
+  的直接证明——相对 base 不存在任何新增门禁命中；T12 时代的
+  "归一化多重集比对 411=411"口径在双方均为零命中时退化为此说明，
+  不再单建 base 临时 worktree 重复直跑。
+- 结论：本任务 ird_gates 零命中（构建目标亲跑留痕）。

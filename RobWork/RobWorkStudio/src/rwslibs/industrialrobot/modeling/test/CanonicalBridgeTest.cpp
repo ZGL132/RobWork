@@ -1630,3 +1630,65 @@ TEST(MdlCanonicalBridge, FixedJointAxisNeutralFill_WP13T12_ACC1)
     EXPECT_EQ(fj.lower.state(), core::FieldState::NotProvided);
     EXPECT_EQ(fj.upper.state(), core::FieldState::NotProvided);
 }
+
+// =====================================================================
+// WP-13-T18——coupling 编译链消费面（R2）：合法 C 经 reader/builder 映射进
+// runtime DrivetrainDescription.coupling——闭区间→半开区间换算、行主序
+// 扁平数据原样、申报条件数透传（校验器重算为准）＝"编译链消费同一编译
+// 产物"的建模侧输入面（四消费者同源——AT-38 联合观测的 modeling 半边）。
+// =====================================================================
+
+/// R2 合法 C 映射（§9.1 行 8 的 R2 半段——耦合矩阵入 Description）：窗口
+/// [first,last]（闭区间）→JointIndexRange[first, count)（半开）；矩阵元素
+/// 逐位透传；同闭包重建（ACC2 同源）产出相同 coupling 内容身份面。
+TEST(MdlCanonicalBridge, DrivetrainCouplingR2Mapping_WP13T18)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21"},
+                  std::vector<std::string>{"AT-38"});
+
+    const core::ObjectId did = makeOid();
+    RobotDesign design;
+    design.displayName = "bot";
+    // 六关节链（腕部窗口 [3,5] 可指——MDL-21 典型形态）。
+    for (int i = 0; i < 6; ++i) {
+        design.joints.push_back(makeRevoluteJoint(makeOid(), "J" + std::to_string(i + 1)));
+    }
+    for (int i = 0; i < 7; ++i) {
+        design.links.push_back(makeLink(makeOid(), "L" + std::to_string(i)));
+    }
+    design.drivetrainRef = did;
+
+    DrivetrainDesign dt;
+    dt.objectId = did;
+    CouplingDesign cp;
+    cp.rows = 3;
+    cp.cols = 3;
+    cp.c = {2.0, 0.0, 0.0,
+            0.0, 3.0, 0.0,
+            0.0, 0.0, 1.0};  // 行主序，无量纲
+    cp.jointRangeFirst = 3;
+    cp.jointRangeLast = 5;
+    cp.conditionNumber = 3.0;  // 申报值透传（判定以编译侧重算为准）
+    dt.coupling = cp;
+
+    BridgeClosure closure;
+    putRoot(closure, design);
+    closure.put(did, std::string(kRobotDrivetrainObjectType), encode(dt));
+    auto built = buildFrom(closure);
+    ASSERT_TRUE(built.ok()) << built.error().detail;
+
+    // ---- R2 映射面：耦合矩阵入 Description（同一编译产物的输入面）----
+    ASSERT_TRUE(built.get().drivetrain.coupling.has_value());
+    const runtime::CouplingMatrix& cm = *built.get().drivetrain.coupling;
+    EXPECT_EQ(cm.rows, 3u);
+    EXPECT_EQ(cm.cols, 3u);
+    ASSERT_EQ(cm.c.size(), std::size_t{9});
+    EXPECT_DOUBLE_EQ(cm.c[0], 2.0);   // 行主序逐位透传
+    EXPECT_DOUBLE_EQ(cm.c[4], 3.0);
+    EXPECT_DOUBLE_EQ(cm.c[8], 1.0);
+    // 闭区间 [3,5]→半开 [3, 6)：firstIndex=3、count=3（方阵阶一致）。
+    EXPECT_EQ(cm.jointRange.firstIndex, 3u);
+    EXPECT_EQ(cm.jointRange.count, 3u);
+    EXPECT_DOUBLE_EQ(cm.conditionNumber.value_or(0.0), 3.0)
+        << "申报条件数透传（编译校验器一律重算为准——Description.hpp 注）";
+}

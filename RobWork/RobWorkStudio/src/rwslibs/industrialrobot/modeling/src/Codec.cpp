@@ -1361,9 +1361,22 @@ Expected<ObjectVariant> RobotDesignCodec::decode(const Bytes& bytes,
             return Expected<ObjectVariant>::err(
                 malformedAt(r.offset(), "robot-drivetrain schemaVersion 与编解码头不一致"));
         }
-        // 传动不变量按 R1 锁定口径复核（当前程序阶段——R1 下含 coupling
-        // 的字节＝数据错误，就地拒绝；MDL-21-COUPLING-STAGE-LOCKED 语义）
-        for (const InvariantViolation& v : checkInvariants(dt, CouplingStage::R1Locked)) {
+        // 传动不变量复核（WP-13-T18 起字节/能力两面正交——阶段锁移出解码门）：
+        // 解码门是**字节自洽面**（I-MDL-11 值面：方阵容量/申报条件数/窗口
+        // 不倒序）——coupling 存在的字节按 R2 自洽口径复核（保证耦合字段
+        // 的字节结构合法才可类型化）；coupling 缺席按 R1 口径（无耦合面
+        // 可查，与旧口径等价）。
+        // 阶段锁（R1 禁配置——I-MDL-12）是**程序能力面**而非字节事实：
+        // 硬编码在解码门会封死 R2 时代读回 R2 字节的通道（基线重建/导入/
+        // 编译链消费全部经 decode——历史修订闭包字节必须可读，CON-02/PA-2），
+        // 且 L5 装配态能力位无法传入无状态 decode。R1 红线（"不提前放开
+        // R1 阻断"）由应用面三层承载：编辑原语 applyDrivetrainCouplingEdit
+        // 值面拒绝＋prepare 断言 MDL-21-COUPLING-STAGE-LOCKED＋就绪 L9
+        // Blocking——R1 下用户无法经任何合法通道把 coupling 写入修订。
+        const CouplingStage decodeStage = dt.coupling.has_value()
+            ? CouplingStage::R2Enabled
+            : CouplingStage::R1Locked;
+        for (const InvariantViolation& v : checkInvariants(dt, decodeStage)) {
             return Expected<ObjectVariant>::err(malformedInvariant(invariantIdToken(v.id), v.subject));
         }
         object = std::move(dt);

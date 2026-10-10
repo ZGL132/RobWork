@@ -748,3 +748,225 @@ TEST(MdlParts, DrivetrainEdits_RatioFrictionTorque_UI_T60)
     EXPECT_EQ(drivetrainEditErrorCodeToken(DrivetrainEditErrorCode::ValueNotFinite),
               "value-not-finite");
 }
+
+// =====================================================================
+// WP-13-T18——传动耦合矩阵建模（MDL-21/R2）：checkCouplingMatrix 数值校验
+// 全档位（acceptance 1：常矩阵/方阵/可逆/条件数 ≤1×10⁸——非常矩阵/奇异/
+// 病态/非有限经比较型诊断阻止成模，M-12）与 coupling 一等字段编辑流
+// （acceptance 1/2：R1 阻断保留＋R2 编辑/持久化/清除＋权威守卫语义）。
+// =====================================================================
+
+using sdurws::ird::modeling::CouplingEditErrorCode;
+using sdurws::ird::modeling::CouplingMatrixCheck;
+using sdurws::ird::modeling::AuthorityMode;
+using sdurws::ird::modeling::applyDrivetrainCouplingEdit;
+using sdurws::ird::modeling::checkCouplingMatrix;
+using sdurws::ird::modeling::couplingEditErrorCodeToken;
+
+namespace {
+
+/// 腕部 3×3 对角耦合阵（窗口 [3,5]——六轴链腕部三关节；对角良态 κ=3，
+/// 期望值手算不引实现常量——TemplateTest 同款纪律）。
+CouplingDesign makeWristCoupling()
+{
+    CouplingDesign cp;
+    cp.rows = 3;
+    cp.cols = 3;
+    cp.c = {2.0, 0.0, 0.0,
+            0.0, 3.0, 0.0,
+            0.0, 0.0, 1.0};  // 行主序，无量纲——C 常矩阵
+    cp.jointRangeFirst = 3;
+    cp.jointRangeLast = 5;   // 闭区间 [3,5]——计数 3＝方阵阶
+    cp.conditionNumber = 3.0;  // 申报值（判定以重算为准——申报失真不构成绕过）
+    return cp;
+}
+
+}  // namespace
+
+/**
+ * checkCouplingMatrix 全档位（WP-13-T18 acceptance 1——I-MDL-11 重算复核；
+ * §8.1"病态/非常矩阵"行）：合法阵通过（重算 κ 与手算一致——对角阵解析
+ * κ=3）；非方阵/元素非有限/窗口失配/窗口越界/奇异/病态逐档命中且 kind/
+ * 比较要素符合预期（病态反例＝条件数 1×10⁹——V-18 的建模侧输入面）。
+ */
+TEST(MdlParts, CouplingMatrixCheck_FullKindCoverage_WP13T18_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21"},
+                  std::vector<std::string>{"I-MDL-11", "I-MDL-12"});
+
+    // ---- 合法阵：通过＋重算 κ=σmax/σmin=3.0（对角阵解析值——手算期望）----
+    const CouplingMatrixCheck ok = checkCouplingMatrix(makeWristCoupling(), 6);
+    EXPECT_TRUE(ok.ok());
+    EXPECT_TRUE(ok.violationKind.empty());
+    EXPECT_DOUBLE_EQ(ok.recomputedConditionNumber, 3.0);
+
+    // ---- 非方阵（2×3——I-MDL-11"方阵"半段）----
+    CouplingDesign notSquare = makeWristCoupling();
+    notSquare.rows = 2;
+    notSquare.cols = 3;
+    const CouplingMatrixCheck square = checkCouplingMatrix(notSquare, 6);
+    EXPECT_FALSE(square.ok());
+    EXPECT_EQ(square.violationKind, "not-square");
+
+    // ---- 元素非有限（I-MDL-3——不静默置 0）----
+    CouplingDesign notFinite = makeWristCoupling();
+    notFinite.c[4] = std::numeric_limits<double>::quiet_NaN();
+    const CouplingMatrixCheck finite = checkCouplingMatrix(notFinite, 6);
+    EXPECT_FALSE(finite.ok());
+    EXPECT_EQ(finite.violationKind, "element-not-finite");
+
+    // ---- 窗口失配（3×3 阵配计数 1 窗口——MDL-21"方阵 n×n〔窗口与
+    // 电机轴同序〕"一致性半段）----
+    CouplingDesign mismatch = makeWristCoupling();
+    mismatch.jointRangeLast = 3;  // [3,3] 计数 1 ≠ 阶 3
+    const CouplingMatrixCheck win = checkCouplingMatrix(mismatch, 6);
+    EXPECT_FALSE(win.ok());
+    EXPECT_EQ(win.violationKind, "window-mismatch");
+
+    // ---- 窗口越界（[4,6]：起点 4＋阶 3＝7 > 根关节表 6）----
+    CouplingDesign outOfRange = makeWristCoupling();
+    outOfRange.jointRangeFirst = 4;
+    outOfRange.jointRangeLast = 6;
+    const CouplingMatrixCheck range = checkCouplingMatrix(outOfRange, 6);
+    EXPECT_FALSE(range.ok());
+    EXPECT_EQ(range.violationKind, "window-out-of-range");
+
+    // ---- 奇异（全 1 矩阵 rank 1——σmin≈0，不可逆；比较要素＝σ 比值
+    // 有限承载，ERR-01 不伪造 κ）----
+    CouplingDesign singular = makeWristCoupling();
+    singular.c = {1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0};
+    singular.conditionNumber = 1.0;  // 申报失真不构成绕过（重算为准）
+    const CouplingMatrixCheck sing = checkCouplingMatrix(singular, 6);
+    EXPECT_FALSE(sing.ok());
+    EXPECT_EQ(sing.violationKind, "singular");
+    EXPECT_GE(sing.singularSigmaRatio, 0.0);
+    EXPECT_LE(sing.singularSigmaRatio, 1e-12) << "奇异档 σmin/σmax ≤ 分界 1×10⁻¹²";
+
+    // ---- 病态（κ=1×10⁹ > 上限 1×10⁸——V-18 反例值；P-RT-7 单点阈值）----
+    CouplingDesign ill = makeWristCoupling();
+    ill.c = {1.0, 0.0, 0.0,
+             0.0, 1.0, 0.0,
+             0.0, 0.0, 1e9};  // 对角 (1,1,1e9)——κ=1×10⁹
+    const CouplingMatrixCheck cond = checkCouplingMatrix(ill, 6);
+    EXPECT_FALSE(cond.ok());
+    EXPECT_EQ(cond.violationKind, "ill-conditioned");
+    // 重算 κ 与解析值一致（对角阵奇异值＝|对角元|——1×10⁹/1）。
+    EXPECT_DOUBLE_EQ(cond.recomputedConditionNumber, 1e9);
+
+    // ---- 申报值失真不构成绕过：申报 κ=1.0 的病态阵仍被拒（重算为准）----
+    CouplingDesign lying = ill;
+    lying.conditionNumber = 1.0;
+    EXPECT_EQ(checkCouplingMatrix(lying, 6).violationKind, "ill-conditioned");
+
+    // ---- token 词表（编辑流错误码对账——表尾追加七值）----
+    EXPECT_EQ(couplingEditErrorCodeToken(CouplingEditErrorCode::StageLocked),
+              "stage-locked");
+    EXPECT_EQ(couplingEditErrorCodeToken(CouplingEditErrorCode::NotSquare),
+              "not-square");
+    EXPECT_EQ(couplingEditErrorCodeToken(CouplingEditErrorCode::ElementNotFinite),
+              "element-not-finite");
+    EXPECT_EQ(couplingEditErrorCodeToken(CouplingEditErrorCode::WindowMismatch),
+              "window-mismatch");
+    EXPECT_EQ(couplingEditErrorCodeToken(CouplingEditErrorCode::WindowOutOfRange),
+              "window-out-of-range");
+    EXPECT_EQ(couplingEditErrorCodeToken(CouplingEditErrorCode::Singular),
+              "singular");
+    EXPECT_EQ(couplingEditErrorCodeToken(CouplingEditErrorCode::IllConditioned),
+              "ill-conditioned");
+}
+
+/**
+ * coupling 一等字段编辑流（WP-13-T18 acceptance 1/2——§4.7"编辑与持久化"
+ * ＋I-MDL-12 阶段锁保留）：R1 能力位下配置即拒绝（工作集字节不变——
+ * "不提前放开 R1 阻断"红线）；R2 合法 C 接受并持久化（对象值＋恰一条
+ * 变更记录）；R2 非法档拒绝（零半成品）；清除面两态放行；缺席传动对象
+ * 的确保创建面。
+ */
+TEST(MdlParts, CouplingEdit_R1LockedAndR2AcceptAndClear_WP13T18_ACC1_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21"},
+                  std::vector<std::string>{"I-MDL-11", "I-MDL-12"});
+
+    const RobotDesignTemplateFactory factory;
+    std::vector<DiagnosticRecord> diags;
+    ModelingWorkingSet ws = factory.createDraft(
+        TemplateId{kTemplateIdGeneric6R},
+        InstallationPresetToken::Ground, "demo", diags).get();
+
+    // ---- R1 能力位（程序默认）：配置即拒绝＋工作集字节不变（I-MDL-12
+    // "不提前放开 R1 阻断"红线——契约 acceptance 2）----
+    const ModelingWorkingSet beforeR1 = ws;
+    const auto locked = applyDrivetrainCouplingEdit(
+        ws, CouplingStage::R1Locked, makeWristCoupling());
+    ASSERT_TRUE(locked.has_value());
+    EXPECT_EQ(locked->code, CouplingEditErrorCode::StageLocked);
+    EXPECT_EQ(ws, beforeR1) << "R1 拒绝路径工作集字节不变";
+
+    // ---- R2 合法 C：接受＋持久化（对象值＋根引用确保＋恰一条变更记录）----
+    ASSERT_FALSE(applyDrivetrainCouplingEdit(
+        ws, CouplingStage::R2Enabled, makeWristCoupling()).has_value());
+    ASSERT_TRUE(ws.drivetrainObject.has_value());
+    ASSERT_TRUE(ws.design.drivetrainRef.has_value());
+    ASSERT_TRUE(ws.drivetrainObject->coupling.has_value());
+    EXPECT_EQ(*ws.drivetrainObject->coupling, makeWristCoupling());
+    ASSERT_EQ(ws.changes.size(), std::size_t{1});
+    EXPECT_EQ(ws.changes.back().subject, "drivetrain.coupling");
+
+    // ---- R2 非法档拒绝（病态——V-18 反例）：零半成品（工作集不变）----
+    const ModelingWorkingSet beforeBad = ws;
+    CouplingDesign ill = makeWristCoupling();
+    ill.c[8] = 1e9;  // 对角 (2,3,1e9)——κ≈5×10⁸ >1×10⁸
+    const auto rejected = applyDrivetrainCouplingEdit(
+        ws, CouplingStage::R2Enabled, ill);
+    ASSERT_TRUE(rejected.has_value());
+    EXPECT_EQ(rejected->code, CouplingEditErrorCode::IllConditioned);
+    EXPECT_EQ(ws, beforeBad) << "R2 非法矩阵拒绝路径工作集字节不变";
+
+    // ---- R2 替换为合法奇异反例：拒绝（singular 档——数值事实不可放行）----
+    CouplingDesign singular = makeWristCoupling();
+    singular.c = {1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0};
+    const auto singularRejected = applyDrivetrainCouplingEdit(
+        ws, CouplingStage::R2Enabled, singular);
+    ASSERT_TRUE(singularRejected.has_value());
+    EXPECT_EQ(singularRejected->code, CouplingEditErrorCode::Singular);
+    EXPECT_EQ(ws, beforeBad) << "奇异阵拒绝路径零半成品";
+
+    // ---- 清除面（nullopt）：两态均放行（"阶段 D 启用前移除"修复动作）----
+    ASSERT_FALSE(applyDrivetrainCouplingEdit(
+        ws, CouplingStage::R1Locked, std::nullopt).has_value());
+    EXPECT_FALSE(ws.drivetrainObject->coupling.has_value()) << "R1 下清除放行";
+    ASSERT_FALSE(applyDrivetrainCouplingEdit(
+        ws, CouplingStage::R2Enabled, std::nullopt).has_value());
+}
+
+/**
+ * 权威编辑守卫语义（WP-13-T18 acceptance 2——"authorityEditGuard 同一
+ * C-1 单一判定"的域内钉扎面）：coupling 是传动对象字段，不在
+ * AuthorityLockedField 受管字段轴内（RobotDesign.hpp 注"两态均权威不在
+ * 管辖内"同族——§7.2 参数来源表）；本原语不发明第二套权威拒绝语义——
+ * StandardDH 权威态下合法 C 照常入修订（不因权威模式拒绝）。
+ */
+TEST(MdlParts, CouplingEdit_AuthorityModeDoesNotBlock_WP13T18_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "MDL-02"},
+                  std::vector<std::string>{"I-MDL-11"});
+
+    const RobotDesignTemplateFactory factory;
+    std::vector<DiagnosticRecord> diags;
+    ModelingWorkingSet ws = factory.createDraft(
+        TemplateId{kTemplateIdGeneric6R},
+        InstallationPresetToken::Ground, "demo", diags).get();
+    // 切到 StandardDH 权威态（若模板默认 Explicit——权威模式只影响关节
+    // 受管字段 axis/origin/dhDerived 的编辑权，不影响传动字段）。
+    ws.design.authority = AuthorityMode::StandardDH;
+
+    ASSERT_FALSE(applyDrivetrainCouplingEdit(
+        ws, CouplingStage::R2Enabled, makeWristCoupling()).has_value())
+        << "StandardDH 态合法 C 不被权威模式拒绝（C-1 受管字段轴不含传动字段）";
+    ASSERT_TRUE(ws.drivetrainObject.has_value());
+    ASSERT_TRUE(ws.drivetrainObject->coupling.has_value());
+}

@@ -4,13 +4,16 @@
  *         SceneObject（scene-object）/ PoseSet（named-pose-set）/
  *         DrivetrainDesign（robot-drivetrain）（§4.4～§4.7）＋部件级
  *         不变量核查（工具物性 I-MDL-5"断言①②③同连杆"；传动 I-MDL-11/
- *         I-MDL-12）。
+ *         I-MDL-12）＋耦合矩阵数值校验与编辑流（WP-13-T18——§4.7
+ *         coupling 一等字段的 R2 编辑/持久化入口与 I-MDL-11 重算复核）。
  *
  * 设计依据：
  *   - units/modeling.md §4.4（ToolDefinition，MDL-13）、§4.5（SceneObject，
  *     MDL-15）、§4.6（PoseSet，MDL-17）、§4.7（DrivetrainDesign，MDL-16/21、
  *     SEL-10）、§4.2（对象分解——五对象表的后四行）、§4.8（身份/版本/
- *     引用约束）、§4.10（I-MDL-11/I-MDL-12）、§14.2 D-MDL-1/D-MDL-2
+ *     引用约束）、§4.10（I-MDL-11/I-MDL-12）、§8.1（传动与耦合模型输入
+ *     ——WP-13-T18 落位：非方阵/奇异/病态经比较型诊断阻止成模，M-12）、
+ *     §14.2 D-MDL-1/D-MDL-2
  *   - units/policy.md §4.3（SceneObjectRole 词表"归建模语义，policy 消费"
  *     ——词表本体在 ObjectTypes.hpp，本头只消费）
  *   - 需求 MDL-13（工具定义引用不复制）、MDL-15（场景对象）、MDL-16
@@ -20,7 +23,10 @@
  *     schema——Parts.hpp 行）、acceptance 3（R1 下 coupling 配置拒绝）；
  *     tasks/foundation/WP-13-T10.json acceptance 1/3/4（§3.3 Parts.hpp
  *     T10 行"编辑流"：工具 tcpList≥1 与 T_flange_tool、场景约束、命名
- *     位姿合并/保留键/关节序——文末"部件编辑流"节）
+ *     位姿合并/保留键/关节序——文末"部件编辑流"节）；
+ *     tasks/foundation/WP-13-T18.json acceptance 1/2（coupling 编辑与
+ *     持久化——applyDrivetrainCouplingEdit；R1 阻断保留——StageLocked
+ *     值面＋MDL-21-COUPLING-STAGE-LOCKED 码面）
  *
  * 背景说明（为什么这四个对象独立成对象而连杆不是——§4.2 表"独立成对象
  * 的理由"列）：工具被任务/负载跨域引用（不复制几何）、场景对象被 REQ-04
@@ -242,6 +248,12 @@ struct PoseSet {
  * 扁平存储）；conditionNumber 为矩阵条件数（无量纲，正实数——≤1×10⁸
  * 上限见 P-RT-7 设计默认，值来源登记 P-MDL-7）。R1 下本结构**禁止配置**
  * （存在即阻断——I-MDL-12）。
+ *
+ * WP-13-T18 增注（R2 数值校验语义）：conditionNumber 字段是建模侧的
+ * **申报/缓存参考**——合法性判定一律以重算值为准（申报值失真不构成绕过
+ * 病态阻止的通道；重算复核见 checkCouplingMatrix——I-MDL-11"可逆、条件
+ * 数 ≤1×10⁸"以 C 的奇异值分解实测为判据，runtime 编译校验同口径重算兜
+ * 底，两处判定互为防线纵深）。
  */
 struct CouplingDesign {
     std::uint32_t rows = 0;      ///< 矩阵行数（＝适用关节窗口高）
@@ -249,7 +261,7 @@ struct CouplingDesign {
     std::vector<double> c;       ///< C 矩阵元素（行主序，无量纲；rows*cols 个）
     std::uint32_t jointRangeFirst = 0;  ///< 适用关节窗口起点 i（闭区间，0 起关节序）
     std::uint32_t jointRangeLast = 0;   ///< 适用关节窗口终点 j（闭区间）
-    double conditionNumber = 1.0;       ///< 条件数（无量纲；≤1×10⁸——I-MDL-11）
+    double conditionNumber = 1.0;       ///< 条件数（无量纲；申报值——判定以重算为准，见类型注）
 
     bool operator==(const CouplingDesign& o) const
     {
@@ -398,6 +410,74 @@ std::vector<InvariantViolation> checkInvariants(const ToolDefinition& tool);
  */
 std::vector<InvariantViolation> checkInvariants(const DrivetrainDesign& drivetrain,
                                                 CouplingStage stage);
+
+// =====================================================================
+// 耦合矩阵数值校验（I-MDL-11 重算复核——WP-13-T18；§8.1"病态/非常矩阵"
+// 行：非方阵、奇异、条件数超限→编辑边界比较型诊断＋应用阻断，M-12 不降
+// 级不静默。就绪校验 L9、命令 prepare 断言与编辑原语三处共用同一判定
+// ——NFR-MNT-04 单一判定面）
+// =====================================================================
+
+/**
+ * @brief 耦合矩阵数值校验结果（值事实面——比较型诊断的三要素素材由
+ *        violationKind 与 recomputedConditionNumber 承载，诊断记录组装
+ *        归产码点：AssertionSuite::assertDrivetrainCoupling）。
+ *
+ * 线程安全：纯值类型。
+ */
+struct CouplingMatrixCheck {
+    /// 违例种类稳定 token（""＝通过；其余值见 checkCouplingMatrix 逐档注）。
+    std::string violationKind;
+    /// 重算条件数 κ=σmax/σmin（无量纲）。通过时为实测 κ（≥1）；数值
+    /// 奇异（σmin≤σmax×1×10⁻¹²）时为实测 κ（≥1×10¹²，有限——判档比值
+    /// 层面）；结构非法（非方阵/非有限元素/窗口失配）时无 κ 可言，承载
+    /// 0（调用方按 violationKind 选择比较要素，不用本值伪造 κ）。
+    double recomputedConditionNumber = 0.0;
+    /// 奇异分档比值 σmin/σmax（无量纲，(0,1]；仅奇异档有效——比较型
+    /// 诊断 actual 侧的有限承载值，ERR-01：κ 下溢为无穷时不伪造有限 κ）。
+    double singularSigmaRatio = 0.0;
+    /// 中文定位细节（元素下标/维度/窗口计数等——诊断 context/cause 素材）。
+    std::string detail;
+
+    bool ok() const noexcept { return violationKind.empty(); }  ///< 通过判定
+};
+
+/**
+ * @brief 耦合矩阵数值校验（I-MDL-11 重算复核；§8.1；MDL-21/M-12）。
+ *
+ * 校验序（固定——确定性；先结构后数值，短路返回首个违例）：
+ *   ① "not-square"——非方阵：rows≠cols，或扁平存储容量 rows×cols 与
+ *      元素数不一致（行主序承载自洽面）；
+ *   ② "element-not-finite"——任一元素 NaN/±Inf（I-MDL-3：非法值不静默
+ *      置 0；比较要素 actual=非有限元素计数、expected=0）；
+ *   ③ "window-mismatch"——适用关节窗口计数（j−i+1）≠ 方阵阶 n（MDL-21
+ *      "方阵 n×n〔适用关节窗口与对应电机轴同序〕"的窗口一致性半段；
+ *      比较要素 actual=窗口计数、expected=阶数）；
+ *   ④ "window-out-of-range"——窗口超出根关节表（first+n > jointCount；
+ *      关闭：jointCount 为根对象关节表长度，编辑流传入——窗口须指向
+ *      存在的关节；比较要素同 ③ 形态）；
+ *   ⑤ "singular"——σmin ≤ σmax×1×10⁻¹²（数值奇异分界——κ≥1×10¹² 档，
+ *      det≈0 不可逆；比较要素 actual=σmin/σmax 比值、expected=1×10⁻¹²
+ *      之上——κ 在该档可下溢为无穷，以有限比值承载，ERR-01 不伪造）；
+ *   ⑥ "ill-conditioned"——重算 κ > 1×10⁸（P-RT-7 设计默认——阈值单点
+ *      kCouplingConditionNumberLimit，P-MDL-7；比较要素 actual=重算 κ、
+ *      expected=1×10⁸、单位 "1" 无量纲）；
+ *   ⑦ 通过——ok()，recomputedConditionNumber＝实测 κ。
+ *
+ * 申报值（coupling.conditionNumber）不参与任何判定（见 CouplingDesign
+ * 类型注——申报失真不构成绕过通道）。
+ *
+ * @param coupling   [in] 待校验耦合设计（只读）
+ * @param jointCount [in] 根对象关节表长度（窗口越界判据——窗口起点＋阶数
+ *                    不得超过该值；无根上下文传入 0 时任何非空窗口均判
+ *                    越界——窗口必须指向存在的关节）
+ * @return 校验结果（见结构注；kind 空串＝通过）
+ *
+ * 纯函数；线程安全；确定性（SVD 固定扫描序/收敛阈/轮数上限——同输入
+ * 逐位同输出，NFR-COR-02）。
+ */
+CouplingMatrixCheck checkCouplingMatrix(const CouplingDesign& coupling,
+                                        std::size_t jointCount);
 
 // =====================================================================
 // 部件编辑流（§3.3 Parts.hpp T10 行——WP-13-T10；构造/编辑边界的值面
@@ -831,6 +911,96 @@ std::optional<DrivetrainEditError> applyDrivetrainTorqueLimitEdit(ModelingWorkin
                                                                   std::size_t jointIndex,
                                                                   double rated,
                                                                   double peak);
+
+// =====================================================================
+// 耦合矩阵编辑流（WP-13-T18——§4.7 coupling 行"一等字段"的编辑边界；
+// MDL-21/R2：C 编辑与持久化；R1 能力位下配置即拒绝——I-MDL-12）
+// =====================================================================
+
+/**
+ * @brief 耦合矩阵编辑错误码（局部错误轨道——DrivetrainEditErrorCode
+ *        同款先例；与 CouplingMatrixCheck 的 violationKind 一一对应，
+ *        另加阶段锁——编辑边界的值面）。
+ */
+enum class CouplingEditErrorCode {
+    /// "stage-locked"——R1 能力位下配置 coupling（I-MDL-12 存在即阻断；
+    /// 稳定诊断码 MDL-21-COUPLING-STAGE-LOCKED 在命令 prepare 断言面产
+    /// 出——编辑边界为值面拒绝，诊断产码唯一经工厂，PA-1）
+    StageLocked,
+    /// "not-square"——非方阵（行数≠列数或存储容量不一致——I-MDL-11）
+    NotSquare,
+    /// "element-not-finite"——元素含 NaN/Inf（I-MDL-3）
+    ElementNotFinite,
+    /// "window-mismatch"——窗口计数≠方阵阶（MDL-21"方阵 n×n〔适用关节
+    /// 窗口与对应电机轴同序〕"）
+    WindowMismatch,
+    /// "window-out-of-range"——窗口超出根关节表（first+n>jointCount）
+    WindowOutOfRange,
+    /// "singular"——数值奇异（σmin≤σmax×1×10⁻¹²——不可逆，I-MDL-11）
+    Singular,
+    /// "ill-conditioned"——病态（重算 κ>1×10⁸——P-RT-7/P-MDL-7 单点阈值）
+    IllConditioned,
+};
+
+/// @brief 耦合编辑错误码稳定 token（枚举成员连字符串——UT 判别与变更
+///        摘要承载）。纯函数；确定性。
+std::string_view couplingEditErrorCodeToken(CouplingEditErrorCode code) noexcept;
+
+/**
+ * @brief 耦合矩阵编辑拒绝值（局部错误面：码＋定位细节——同 DrivetrainEditError 形态）。
+ */
+struct CouplingEditError {
+    CouplingEditErrorCode code = CouplingEditErrorCode::StageLocked;  ///< 稳定错误码
+    std::string detail;  ///< 定位细节（UTF-8；维度/窗口/κ 实测值）
+
+    bool operator==(const CouplingEditError& o) const
+    {
+        return code == o.code && detail == o.detail;
+    }
+    bool operator!=(const CouplingEditError& o) const { return !(*this == o); }
+};
+
+/**
+ * @brief 应用一次腕部关节窗口线性耦合矩阵配置（§4.7 coupling 行——
+ *        WP-13-T18；MDL-21/R2 一等字段编辑＋持久化入口）。
+ *
+ * 规则（按检查序；拒绝时工作集**字节不变**——§9.4.1 拒绝语义的域内核）：
+ *   ① 阶段锁（I-MDL-12）：stage==R1Locked 且提交面携带 coupling（非
+ *      nullopt）→StageLocked 拒绝——R1 能力位下 coupling 配置即阻断，
+ *      "不提前放开 R1 阻断"红线（MDL-12/21 R1 口径；本任务红线原文）。
+ *      清除面（nullopt）两态均放行（移除配置不是"配置"——R1 下允许
+ *      清除，阶段 D 启用前移除的修复动作即经此面）；
+ *   ② 权威编辑守卫语义（C-1 单一判定）：coupling 是传动对象字段，不在
+ *      AuthorityLockedField 受管字段轴内（RobotDesign.hpp 注："type/
+ *      zeroOffset/bounds 两态均权威，不在管辖内"——coupling 同族：两种
+ *      权威模式下均为权威可编辑字段）。本原语**不发明第二套权威拒绝
+ *      语义**——不做 StandardDH 态拒绝（那会是 authorityEditGuard 词表
+ *      之外私设的 C-1 变体）；测试面钉扎：StandardDH 权威态下合法 C 照
+ *      常入修订（AuthorityMode 不阻断本编辑）；
+ *   ③ 传动对象确保（ensureDrivetrainEditTarget 同款前置——对象缺席→
+ *      草稿确定性句柄创建＋根 drivetrainRef 写入）；
+ *   ④ 数值校验（checkCouplingMatrix——I-MDL-11 重算复核；jointCount＝
+ *      根关节表长度）：not-square/element-not-finite/window-mismatch/
+ *      window-out-of-range/singular/ill-conditioned 任一命中即拒绝
+ *      （比较型三要素素材随错误 detail 承载——不降级不静默，M-12）；
+ *   ⑤ 提交：coupling 整体写入传动对象＋恰一条变更记录（append-only；
+ *      摘要含窗口与阶数定位）。
+ *
+ * @param ws        [in,out] 目标工作集（拒绝时保证不变——先校验后提交）
+ * @param stage     [in] 当前耦合阶段（R1 锁定/R2 启用——能力位由装配/
+ *                  面板侧注入，程序默认 R1Locked）
+ * @param coupling  [in] 提交面（nullopt＝清除配置；有值＝整体替换）
+ * @return nullopt＝接受（工作集已更新＋一条变更记录）；非空＝拒绝
+ *         （局部错误面——工作集不变）
+ *
+ * @throws 无（全部经返回值错误面——调用方输入属可恢复错误轨；传动编辑
+ *         前置的越界面不适用——本原语无下标入参）
+ *
+ * 非线程安全（编辑态仅 UI 线程——ModelingWorkingSet 注）；确定性。
+ */
+std::optional<CouplingEditError> applyDrivetrainCouplingEdit(ModelingWorkingSet& ws,
+                                                             CouplingStage stage,
+                                                             std::optional<CouplingDesign> coupling);
 
 }  // namespace sdurws::ird::modeling
 

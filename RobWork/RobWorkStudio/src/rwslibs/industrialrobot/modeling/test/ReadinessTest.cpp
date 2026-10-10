@@ -420,3 +420,129 @@ TEST(MdlReadinessTravelLimit, BoundaryTravelAndConfiguredThresholdPass)
     EXPECT_TRUE(configured.confirmables.empty());
     EXPECT_EQ(readinessStatusToken(configured.status), "ReadyWithNotes");
 }
+
+// =====================================================================
+// WP-13-T18——L9 传动可用（I-MDL-11/12 阶段锁＋数值校验；§8.2 L9 行
+// "R1 无 coupling；R2 矩阵方阵/可逆/条件数阈值"）：与 prepare 断言共用
+// 同一判定面（assertDrivetrainCoupling——NFR-MNT-04）
+// =====================================================================
+
+namespace {
+
+/// 腕部 3×3 对角耦合阵（良态 κ=3——手算期望不引实现常量）。
+CouplingDesign t18WristCoupling()
+{
+    CouplingDesign cp;
+    cp.rows = 3;
+    cp.cols = 3;
+    cp.c = {2.0, 0.0, 0.0,
+            0.0, 3.0, 0.0,
+            0.0, 0.0, 1.0};  // 行主序，无量纲
+    cp.jointRangeFirst = 3;
+    cp.jointRangeLast = 5;
+    cp.conditionNumber = 3.0;
+    return cp;
+}
+
+/// 六关节根（腕部窗口 [3,5] 可指）＋携带 coupling 的传动对象工作集。
+ModelingWorkingSet t18SixAxisWorkset(std::optional<CouplingDesign> coupling)
+{
+    RobotDesign design;
+    for (int i = 0; i < 6; ++i) {
+        design.joints.push_back(
+            makeRevoluteJoint(makeOid(), "J" + std::to_string(i + 1), -1.0, 1.0));
+    }
+    for (int i = 0; i < 7; ++i) {
+        design.links.push_back(makeLink(makeOid(), "L" + std::to_string(i)));
+    }
+    DrivetrainDesign dt;
+    dt.objectId = makeOid();
+    dt.coupling = std::move(coupling);
+    ModelingWorkingSet ws;
+    ws.design = std::move(design);
+    ws.drivetrainObject = std::move(dt);
+    return ws;
+}
+
+}  // namespace
+
+/// L9 三态（WP-13-T18 acceptance 1/2）：默认 ctx（R1Locked）下 coupling
+/// 存在→L9 Blocking＋MDL-21-COUPLING-STAGE-LOCKED（"不提前放开 R1 阻断"
+/// 红线的就绪侧承载）；R2 能力位合法 C→通过；R2 病态（κ=1×10⁹——V-18
+/// 反例）→L9 Blocking＋MDL-21-COUPLING-INVALID＋比较三要素。
+TEST(MdlReadiness, L9CouplingStageLockAndR2NumericCheck_WP13T18)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21"},
+                  std::vector<std::string>{"I-MDL-11", "I-MDL-12"});
+
+    ReadinessFixture f;
+    // 策略可解析（L11 行程面——六关节 ±1 rad 行程 2π<4π 合规，不干扰 L9）。
+    const policy::EngineeringPolicySet policy = makePolicy(4.0 * kPi);
+
+    // ---- ① 默认能力位（R1Locked——CheckContext 默认成员）：配置即阻断----
+    {
+        const ModelingWorkingSet ws = t18SixAxisWorkset(t18WristCoupling());
+        const ModelReadinessReport report = f.checker.check(ws, CheckContext{});
+        bool found = false;
+        for (const auto& b : report.blockers) {
+            if (b.code == std::string(kMdl21CouplingStageLocked)) { found = true; }
+        }
+        EXPECT_TRUE(found) << "R1 能力位下 coupling 配置须产 STAGE-LOCKED 阻断";
+        EXPECT_EQ(readinessStatusToken(report.status), "NotReady");
+        EXPECT_FALSE(report.layers[9].passed) << "L9 层阻断（下标 9）";
+    }
+
+    // ---- ② R2 能力位＋合法 C：L9 通过（MDL-21 启用面——合法 C 可入修订）----
+    {
+        const ModelingWorkingSet ws = t18SixAxisWorkset(t18WristCoupling());
+        CheckContext ctx;
+        ctx.resolvedPolicy = &policy;
+        ctx.couplingStage = CouplingStage::R2Enabled;
+        const ModelReadinessReport report = f.checker.check(ws, ctx);
+        for (const auto& b : report.blockers) {
+            EXPECT_NE(b.code, std::string(kMdl21CouplingInvalid)) << "合法 C 不产 INVALID";
+            EXPECT_NE(b.code, std::string(kMdl21CouplingStageLocked))
+                << "R2 位不再产阶段锁";
+        }
+        EXPECT_TRUE(report.layers[9].passed) << "R2 合法 C 的 L9 层通过";
+    }
+
+    // ---- ③ R2 能力位＋病态阵（κ=1×10⁹——V-18 反例）：L9 Blocking＋
+    // 比较三要素（actual=重算 κ、expected=1×10⁸、单位 "1"）----
+    {
+        CouplingDesign ill = t18WristCoupling();
+        ill.c[8] = 1e9;  // 对角 (2,3,1e9)——κ=5×10⁸ >1×10⁸
+        const ModelingWorkingSet ws = t18SixAxisWorkset(ill);
+        CheckContext ctx;
+        ctx.resolvedPolicy = &policy;
+        ctx.couplingStage = CouplingStage::R2Enabled;
+        const ModelReadinessReport report = f.checker.check(ws, ctx);
+        const core::DiagnosticRecord* invalid = nullptr;
+        for (const auto& b : report.blockers) {
+            if (b.code == std::string(kMdl21CouplingInvalid)) { invalid = &b; }
+        }
+        ASSERT_NE(invalid, nullptr) << "R2 病态阵须产 INVALID 阻断";
+        ASSERT_TRUE(invalid->comparison.has_value()) << "INVALID 为比较型（M-12）";
+        EXPECT_DOUBLE_EQ(invalid->comparison->actual.quantity.tryValue().value_or(0.0),
+                         5e8) << "actual=重算条件数（对角解析 1e9/2）";
+        EXPECT_DOUBLE_EQ(invalid->comparison->expected.quantity.tryValue().value_or(0.0),
+                         1e8) << "expected=上限 1×10⁸（P-RT-7 单点）";
+        EXPECT_EQ(readinessStatusToken(report.status), "NotReady");
+        EXPECT_FALSE(report.layers[9].passed);
+    }
+
+    // ---- ④ 无 coupling 的 R2 工作集：L9 无耦合阻断（传动对象存在但
+    // 未配置耦合＝合法态——ratio 面照旧）----
+    {
+        const ModelingWorkingSet ws = t18SixAxisWorkset(std::nullopt);
+        CheckContext ctx;
+        ctx.resolvedPolicy = &policy;
+        ctx.couplingStage = CouplingStage::R2Enabled;
+        const ModelReadinessReport report = f.checker.check(ws, ctx);
+        for (const auto& b : report.blockers) {
+            EXPECT_NE(b.code, std::string(kMdl21CouplingStageLocked));
+            EXPECT_NE(b.code, std::string(kMdl21CouplingInvalid));
+        }
+        EXPECT_TRUE(report.layers[9].passed);
+    }
+}

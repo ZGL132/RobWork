@@ -118,17 +118,28 @@ const char* kT13Section95Codes[] = {
     "MDL-EXPORT-FAILED",
 };
 
+/// §9.5 任务列含 T18 的行的应登记码面（WP-13-T18（R2）登记——单元卡
+/// §14.6 v0.45；传动耦合族两码：MDL-21-COUPLING-STAGE-LOCKED 为卡面行
+/// （R1 阶段锁——"不提前放开 R1 阻断"红线的码面），MDL-21-COUPLING-
+/// INVALID 为实现期增登行（R2 矩阵数值非法族——比较型强制）；表行序
+/// 追加于表尾——登记簿纪律不重排既有行）。
+const char* kT18Section95Codes[] = {
+    "MDL-21-COUPLING-STAGE-LOCKED",
+    "MDL-21-COUPLING-INVALID",
+};
+
 }  // namespace
 
 /**
  * 工厂清单分批封闭性（acceptance 4——"按 §9.5 注册纪律只登记有消费者
  * 条目，不预建"）：清单恰含 §9.5 任务列含 T02/T05/T06/T07/T08/T09/T10/
- * T13 的行——其余行（T14/T18 任务列）提前出现即"预建"违约；逐码等于卡面
- * 字面清单（不私定码值），清单序＝§9.5 表行序。分期登记随任务推进
- * 表尾追加（T05/T06/T07/T08/T09/T10/T13 历次登记同款推进口径；T13 行钉住
- * 断言随 WP-13-T13 合法登记同步——T10 先例/T09 attempt 1 B-1 返工先例）。
+ * T13/T18 的行——其余行（T14/T17/T19 任务列）提前出现即"预建"违约；逐码
+ * 等于卡面字面清单（不私定码值），清单序＝§9.5 表行序。分期登记随任务
+ * 推进表尾追加（T05/T06/T07/T08/T09/T10/T13/T18 历次登记同款推进口径；
+ * T18 行钉住断言随 WP-13-T18（R2）合法登记同步——T13 先例/T10 先例/
+ * T09 attempt 1 B-1 返工先例）。
  */
-TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T13)
+TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T18)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ERR-01", "MDL-06"},
                   std::vector<std::string>{});
@@ -141,9 +152,10 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T13)
                                       + std::size(kT08Section95Codes)
                                       + std::size(kT09Section95Codes)
                                       + std::size(kT10Section95Codes)
-                                      + std::size(kT13Section95Codes);
+                                      + std::size(kT13Section95Codes)
+                                      + std::size(kT18Section95Codes);
     ASSERT_EQ(descriptors.size(), expectedCount)
-        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08/T09/T10/T13 任务行（分批纪律：其余行随"
+        << "工厂清单应恰含 §9.5 T02/T05/T06/T07/T08/T09/T10/T13/T18 任务行（分批纪律：其余行随"
            "各自任务登记——不预建）";
     // 清单序＝§9.5 表行序（实现期增登行表尾追加）：T02 行在前，
     // T05/T06/T07/T08/T09/T10 行按登记序随后。
@@ -192,6 +204,12 @@ TEST(MdlDiagCodes, FactoryScopeIsStagedRows_WP13T13)
         EXPECT_EQ(descriptors[offset + i].code,
                   std::string(kT13Section95Codes[i]))
             << "T13 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
+    }
+    offset += std::size(kT13Section95Codes);
+    for (std::size_t i = 0; i < std::size(kT18Section95Codes); ++i) {
+        EXPECT_EQ(descriptors[offset + i].code,
+                  std::string(kT18Section95Codes[i]))
+            << "T18 清单序 " << i << " 与 §9.5 卡面字面不符（不私定码值）";
     }
 }
 
@@ -445,6 +463,32 @@ TEST(MdlDiagCodes, DescriptorFieldsMatchSection95Row_WP13T02_ACC4)
             EXPECT_FALSE(d.requiresComparison);
             EXPECT_NE(d.paramSchema.find("\"stage\""), std::string::npos);
             EXPECT_NE(d.paramSchema.find("\"io-code\""), std::string::npos);
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-21-COUPLING-STAGE-LOCKED") {
+            // T18 行（R2 批登记）"校验/error"→InfeasibilityProof/Error（耦合
+            // 能力在当前程序阶段（R1）不可用＝能力边界结论——TEMPLATE-
+            // DISABLED 同判例："不提前放开 R1 阻断"红线的码面，MDL-12/21
+            // R1 口径）；paramSchema "[]"（定位走 subject＋context）；非比较
+            // 型（阶段锁无数值比对面——ERR-01 不伪造数值）；UserRetry
+            //（"阶段 D 启用前移除"＝fix-input 族）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InfeasibilityProof);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_FALSE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
+            EXPECT_EQ(d.retryable, RetryKind::UserRetry);
+        } else if (d.code == "MDL-21-COUPLING-INVALID") {
+            // T18 行实现期增登（v0.45）"校验/error"→InputInvalid/Error（R2
+            // 矩阵数值非法族——非方阵/非有限/窗口失配/越界/奇异/病态，
+            // I-MDL-11 重算复核；M-12 比较型阻止）；paramSchema "[]"（三
+            // 要素走 comparison——奇异档 σ 比值/病态档重算 κ、expected=
+            // 阈值、单位 "1"）；比较型强制（acceptance 1"经比较型诊断
+            // 阻止"）；UserRetry（"修正矩阵"）。
+            EXPECT_EQ(d.category, DiagnosticCategory::InputInvalid);
+            EXPECT_EQ(d.severity, DiagnosticSeverity::Error);
+            EXPECT_FALSE(d.confirmable);
+            EXPECT_TRUE(d.requiresComparison);
+            EXPECT_EQ(d.paramSchema, "[]");
             EXPECT_EQ(d.retryable, RetryKind::UserRetry);
         } else {
             FAIL() << "未登记的码面出现（分批纪律——不预建）: " << d.code;

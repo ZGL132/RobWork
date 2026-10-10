@@ -229,6 +229,15 @@ struct CheckContext {
     /// 应用预检的基线修订（有值＝应用预检口径——tip 相等性强制在 project
     /// S2/prepare 复核；nullopt＝编辑态/草稿态预检）。
     std::optional<core::RevisionId> baseRevision;
+    /// 耦合阶段能力位（L9 传动可用——WP-13-T18 表尾追加，向后兼容；
+    /// 装配注入，**默认 R1Locked＝"不提前放开 R1 阻断"红线**：R1 下
+    /// coupling 配置即 L9 Blocking（MDL-21-COUPLING-STAGE-LOCKED）；
+    /// R2 下走 I-MDL-11 重算复核（非法矩阵 L9 Blocking——
+    /// MDL-21-COUPLING-INVALID 比较型）。判定面与 prepare 断言共用
+    /// （AssertionSuite::assertDrivetrainCoupling——NFR-MNT-04）；能力位
+    /// 翻转只放行 R2 数值路径，mimic/planar/floating/闭环阻断不随动
+    /// （M-6）。单元卡 §15 v0.45 登记）。
+    CouplingStage couplingStage = CouplingStage::R1Locked;
 };
 
 // =====================================================================
@@ -262,8 +271,10 @@ struct CheckContext {
  *     Warning——不阻断；Solidified 通过；缺失/变化探测归 io/runtime）；
  *   - L7：工具物性（AssertionSuite::assertBodyPhysical——工具）＋defaultTcp
  *     的 tcpKey 在被引工具 tcpList 中的存在性（闭包视图可判半段）；
- *   - L9：checkInvariants(DrivetrainDesign, R1Locked)（I-MDL-11/12——
- *     构造层保证域＋传动缺失预告）；stage 恒 R1Locked（R2 启用随 T18）；
+ *   - L9：checkInvariants(DrivetrainDesign, ctx.couplingStage) 值面＋
+ *     AssertionSuite::assertDrivetrainCoupling（I-MDL-11/12——R1 阶段锁
+ *     MDL-21-COUPLING-STAGE-LOCKED／R2 数值校验 MDL-21-COUPLING-INVALID
+ *     比较型，WP-13-T18；能力位默认 R1Locked）＋传动缺失预告；
  *   - L10：schema 主版本受支持（MDL-READINESS-SCHEMA-UNSUPPORTED）＋
  *     Explicit 权威下可动关节 axis/origin 已提供（Description 构造的字段
  *     集完整半段——缺失为呈现级阻断；DH 权威的派生重算归 T09）；

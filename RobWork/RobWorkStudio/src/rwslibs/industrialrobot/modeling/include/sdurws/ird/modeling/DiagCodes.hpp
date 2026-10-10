@@ -28,13 +28,13 @@
  * 不私定任何卡面之外的码值。
  *
  * 阶段纪律（acceptance 4"只登记有消费者条目，不预建"的执行口径）：
- * §9.5 表 19 行按"任务"列分批注册——本任务（WP-13-T02）只登记任务列
- * 含 T02 的行，当前恰为 1 行：MDL-READINESS-SCHEMA-UNSUPPORTED（T02/T03
- * ——对象 schema 主版本门，与 ObjectTypes.hpp 的对象类型登记同批消费）。
- * 其余 18 行的登记随各自任务落位（T05 导入族/T08 断言与就绪族/T09 转换
- * 族/T13 包族/T18 R2 耦合族），届时在本头工厂清单**表尾追加**对应
- * 描述符并同步单元卡——不提前预建（WP-13-T08 契约注记"MDL-21-COUPLING-
- * STAGE-LOCKED 码登记行随 T18（R2）不预建"即本纪律的契约侧先例）。
+ * §9.5 表按"任务"列分批注册——历次落位（T02→T05→T06→T07→T08→T09→T10
+ * →T13→T18）逐批在工厂清单**表尾追加**对应描述符并同步单元卡；本任务
+ * （WP-13-T18，R2 解冻批）登记 T18 行：MDL-21-COUPLING-STAGE-LOCKED
+ * （阶段锁——"不提前放开 R1 阻断"红线的码面）＋MDL-21-COUPLING-INVALID
+ * （R2 矩阵数值非法族——实现期增登）；其余未到任务行（T14/T17/T19 等）
+ * 仍随各自任务落位（WP-13-T08 契约注记"MDL-21-COUPLING-STAGE-LOCKED 码
+ * 登记行随 T18（R2）不预建"——本批即该纪律的兑现）。
  *
  * P-MDL-8 处置锚点（契约 knownPitfalls）：本头消费的 diagnostics
  * CodeDescriptor/IDiagnosticRegistry 契约为 Draft-Structured 未冻结——
@@ -200,13 +200,30 @@ inline constexpr std::string_view kMdlImportPackageUnknown = "MDL-IMPORT-PACKAGE
 /// §14.6 v0.15）。
 inline constexpr std::string_view kMdlExportFailed = "MDL-EXPORT-FAILED";
 
+/// §9.5 T18 行：MDL-21-COUPLING-STAGE-LOCKED（校验/error——R1 能力位下
+/// 配置耦合矩阵→阶段 D 启用前移除；I-MDL-12 阶段锁的稳定码面——"不提前
+/// 放开 R1 阻断"红线的诊断承载，MDL-12/21 R1 口径。WP-13-T18（R2）登记，
+/// §14.6 v0.45）。
+inline constexpr std::string_view kMdl21CouplingStageLocked =
+    "MDL-21-COUPLING-STAGE-LOCKED";
+
+/// §9.5 T18 行（v0.45 实现期增登）：MDL-21-COUPLING-INVALID（校验/error
+/// ——R2 下耦合矩阵数值非法族：非方阵/元素非有限/窗口失配/窗口越界/
+/// 奇异/病态，任一命中即阻止成模（I-MDL-11 重算复核；§8.1"病态/非常
+/// 矩阵"行——M-12 比较型诊断不降级不静默）。比较型强制：奇异档
+/// actual=σmin/σmax 比值、病态档 actual=重算条件数、expected=阈值、
+/// 单位 "1" 无量纲（ERR-01 三要素；结构档以行/列/窗口计数为真实可比面
+/// ——不伪造 κ）。原表缺行，沿实现期增登先例（v0.6～v0.15）登记，
+/// §14.6 v0.45）。
+inline constexpr std::string_view kMdl21CouplingInvalid = "MDL-21-COUPLING-INVALID";
+
 // =====================================================================
 // MDL-* 稳定诊断码描述符清单（§9.5 已到任务行的物化；分批纪律见文件头注）
 // =====================================================================
 
 /**
  * @brief 产出 modeling 已到注册任务行的 MDL-* 稳定码描述符全集（当前
- *        20 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
+ *        26 项：MDL-READINESS-SCHEMA-UNSUPPORTED——§9.5 T02/T03 行；外加
  *        WP-13-T05 登记的 T05 行 MDL-IMPORT-{UNSUPPORTED-JOINT,
  *        BRANCH-SELECTION,ZERO-AXIS,PENDING-CONFIRM,TEMPLATE-RANGE}
  *        五码；外加 WP-13-T06 实现期增登的 T06 行 MDL-IMPORT-XACRO-
@@ -216,9 +233,15 @@ inline constexpr std::string_view kMdlExportFailed = "MDL-EXPORT-FAILED";
  *        LIMIT-INTERVAL,RANGE-NOT-FINITE}/MDL-READINESS-{REF-MISSING,
  *        RESOURCE-STATE}＋v0.9 实现期增登行 MDL-READINESS-PHYSICS-
  *        MISSING；外加 WP-13-T09 登记的 T09 行三码 MDL-DH-{NOT-
- *        EXPRESSIBLE,APPROXIMATE,ANALYSIS-FAILED}——清单序＝§9.5 表行序
- *        （实现期增登行表尾追加）；TEMPLATE-RANGE/XACRO-UNRESOLVED/
- *        TEMPLATE-DISABLED 为实现期增登行，§14.6 v0.6/v0.7/v0.8 登记）。
+ *        EXPRESSIBLE,APPROXIMATE,ANALYSIS-FAILED}；外加 WP-13-T10 实现
+ *        期增登的 T10 行两码 MDL-REF-PROTECTED/MDL-READINESS-DEFAULT-
+ *        TCP-INCOMPLETE；外加 WP-13-T13 登记的 T13 行两码 MDL-IMPORT-
+ *        PACKAGE-UNKNOWN/MDL-EXPORT-FAILED；外加 WP-13-T18（R2）登记的
+ *        T18 行两码 MDL-21-COUPLING-STAGE-LOCKED＋实现期增登行
+ *        MDL-21-COUPLING-INVALID——清单序＝§9.5 表行序（实现期增登行
+ *        表尾追加）；TEMPLATE-RANGE/XACRO-UNRESOLVED/TEMPLATE-DISABLED/
+ *        REF-PROTECTED/DEFAULT-TCP-INCOMPLETE/COUPLING-INVALID 为实现
+ *        期增登行，§14.6 v0.6/v0.7/v0.8/v0.12/v0.45 登记）。
  *
  * 逐字段登记口径（全部可追溯到卡面/diagnostics 卡，io ioCodeDescriptors
  * 同款自证结构）：

@@ -997,3 +997,211 @@ TEST(MdlPartObjectCommands, PoseSetContentAbsentFromRootBytes)
     EXPECT_EQ(*roundTripped.poseSetRef, poseSetOid);
     EXPECT_TRUE(roundTripped.joints.size() == std::size_t{1});  // 其余字段与位姿无关
 }
+
+// =====================================================================
+// WP-13-T18——apply-drivetrain-design 的耦合面（acceptance 1/2/3）：
+// R1 阶段锁阻断（MDL-21-COUPLING-STAGE-LOCKED——"不提前放开 R1 阻断"
+// 红线的命令侧承载）；R2 病态比较型阻断（MDL-21-COUPLING-INVALID——
+// V-18 反例 κ=1×10⁹）；R2 合法 C 入修订计划（requiresDualCompile=true
+// ＋inverse 前版字节＝MDL-06 双编译原子性计划面＋编译链消费同一编译产物
+// 的写入面）。
+// =====================================================================
+
+namespace {
+
+/// 六关节根＋既有传动对象基线装配（腕部窗口 [3,5] 可指；根 drivetrainRef
+/// 指向基线传动——替换路径才有 inverse 前版字节）。
+struct CouplingCommandFixture {
+    PartObjectFixture base;
+    core::ObjectId rootOid = makeOid();
+    core::ObjectId drivetrainOid = makeOid();
+    RobotDesign root;
+
+    CouplingCommandFixture()
+    {
+        for (int i = 0; i < 6; ++i) {
+            root.joints.push_back(
+                makeRevoluteJoint(makeOid(), "J" + std::to_string(i + 1), -1.0, 1.0));
+        }
+        for (int i = 0; i < 7; ++i) {
+            root.links.push_back(makeLink(makeOid(), "L" + std::to_string(i)));
+        }
+        root.drivetrainRef = drivetrainOid;
+        base.query.view = makeBaselineView(core::RevisionId::generate());
+        // 基线传动对象字节须携带与引用一致的内嵌身份（值模型自述身份＝
+        // 闭包引用身份——resolvePartSlot 的防错位装配面）。
+        base.query.addObject(drivetrainOid, std::string(kRobotDrivetrainObjectType),
+                             encodeVariant(ObjectVariant(baselineDrivetrain(drivetrainOid))));
+        base.query.addObject(rootOid, std::string(kRobotDesignObjectType),
+                             encodeVariant(root));
+    }
+
+    /// 基线传动对象（带身份——字节替换路径的槽身份）。
+    static DrivetrainDesign baselineDrivetrain(const core::ObjectId& oid)
+    {
+        DrivetrainDesign dt;
+        dt.objectId = oid;
+        return dt;
+    }
+};
+
+/// 腕部 3×3 对角耦合阵（良态变体 κ=3）／病态变体（对角 (2,3,1×10⁹)——
+/// 对角阵奇异值＝|对角元|：σmax=1×10⁹、σmin=2 → 重算 κ=5×10⁸，超
+/// 1×10⁸ 上限——V-18 反例同档，手算期望不引实现常量）。
+CouplingDesign wristCoupling(bool illConditioned)
+{
+    CouplingDesign cp;
+    cp.rows = 3;
+    cp.cols = 3;
+    if (illConditioned) {
+        // 对角 (2,3,1e9)：σ=3e9/2/1e9 → κ=3e9/1e9=3？——错；对角阵奇异值
+        // ＝|对角元|：σmax=3e9、σmin=1 → κ=3×10⁹（>>1×10⁸ 上限——病态档）。
+        cp.c = {2.0, 0.0, 0.0,
+                0.0, 3.0, 0.0,
+                0.0, 0.0, 1e9};
+    } else {
+        cp.c = {2.0, 0.0, 0.0,
+                0.0, 3.0, 0.0,
+                0.0, 0.0, 1.0};
+    }
+    cp.jointRangeFirst = 3;
+    cp.jointRangeLast = 5;
+    cp.conditionNumber = illConditioned ? 1.0 : 3.0;
+    return cp;
+}
+
+}  // namespace
+
+/// R1 能力位（HandlerServices 默认 couplingStage=R1Locked）：coupling 载荷
+/// →RejectedHardAssert＋MDL-21-COUPLING-STAGE-LOCKED＋零写入（V-18 R1 分支
+/// ——阻断诊断可观察；修订拒绝面）。
+TEST(MdlPartObjectCommands, DrivetrainCoupling_R1StageLockedBlocked_WP13T18_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21"},
+                  std::vector<std::string>{"I-MDL-12", "AT-38"});
+
+    CouplingCommandFixture f;
+    DrivetrainDesign payloadDrivetrain =
+        CouplingCommandFixture::baselineDrivetrain(f.drivetrainOid);
+    payloadDrivetrain.coupling = wristCoupling(false);  // 矩阵本身合法——挡在阶段锁
+    CommandPayload payload;
+    payload.objects.push_back(
+        replaceSlot(f.drivetrainOid, std::string(kRobotDrivetrainObjectType),
+                    payloadDrivetrain));
+
+    ApplyDrivetrainDesignHandler handler(f.base.services);  // 默认 R1Locked
+    project::HandlerContext ctx(f.base.query, &f.base.compile, nullptr);
+    project::CommandPlan plan;
+    std::vector<core::DiagnosticRecord> diags;
+    const auto outcome = handler.prepare(
+        ctx, makeEnvelope(f.base.query.view, std::string(kCmdApplyDrivetrainDesign),
+                          payload),
+        f.base.query.view, plan, diags);
+
+    ASSERT_EQ(outcome, project::PrepareOutcome::RejectedHardAssert);
+    bool stageLockedFound = false;
+    for (const auto& d : diags) {
+        if (d.code == std::string(kMdl21CouplingStageLocked)) { stageLockedFound = true; }
+    }
+    EXPECT_TRUE(stageLockedFound) << "R1 配置耦合→MDL-21-COUPLING-STAGE-LOCKED 阻断";
+    EXPECT_TRUE(plan.objectWrites.empty()) << "拒绝零写入（无修订——V-18 观测点）";
+}
+
+/// R2 能力位＋病态阵（对角 (2,3,1×10⁹)——重算 κ=σmax/σmin=5×10⁸，V-18
+/// 反例"条件数 1×10⁹"同档）：比较型阻断（actual=重算 κ、expected=1×10⁸、
+/// 单位 "1"——ERR-01 三要素；M-12 不降级不静默）。
+TEST(MdlPartObjectCommands, DrivetrainCoupling_R2IllConditionedComparisonBlocked_WP13T18_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21"},
+                  std::vector<std::string>{"I-MDL-11", "ERR-01"});
+
+    CouplingCommandFixture f;
+    f.base.services.couplingStage = CouplingStage::R2Enabled;  // R2 能力位注入
+    DrivetrainDesign payloadDrivetrain =
+        CouplingCommandFixture::baselineDrivetrain(f.drivetrainOid);
+    payloadDrivetrain.coupling = wristCoupling(true);
+    CommandPayload payload;
+    payload.objects.push_back(
+        replaceSlot(f.drivetrainOid, std::string(kRobotDrivetrainObjectType),
+                    payloadDrivetrain));
+
+    ApplyDrivetrainDesignHandler handler(f.base.services);
+    project::HandlerContext ctx(f.base.query, &f.base.compile, nullptr);
+    project::CommandPlan plan;
+    std::vector<core::DiagnosticRecord> diags;
+    const auto outcome = handler.prepare(
+        ctx, makeEnvelope(f.base.query.view, std::string(kCmdApplyDrivetrainDesign),
+                          payload),
+        f.base.query.view, plan, diags);
+
+    ASSERT_EQ(outcome, project::PrepareOutcome::RejectedHardAssert);
+    const core::DiagnosticRecord* invalid = nullptr;
+    for (const auto& d : diags) {
+        if (d.code == std::string(kMdl21CouplingInvalid)) { invalid = &d; }
+    }
+    ASSERT_NE(invalid, nullptr) << "R2 病态阵须产 INVALID 比较型阻断";
+    ASSERT_TRUE(invalid->comparison.has_value());
+    EXPECT_DOUBLE_EQ(invalid->comparison->actual.quantity.tryValue().value_or(0.0),
+                     5e8) << "actual=重算 κ（对角解析 1×10⁹/2）";
+    EXPECT_DOUBLE_EQ(invalid->comparison->expected.quantity.tryValue().value_or(0.0),
+                     1e8) << "expected=上限 1×10⁸";
+    EXPECT_TRUE(plan.objectWrites.empty()) << "拒绝零写入";
+}
+
+/// R2 能力位＋合法 C：Planned＋requiresDualCompile=true（§9.3 表行 5——
+/// 耦合入 Description 触发双编译＝MDL-06 原子性的计划面声明）＋inverse
+/// 含传动对象前版字节（快照逆放素材——编译失败回退的建模侧承诺）＋写入
+/// 字节含 coupling（编译链消费同一编译产物——reader 经闭包读同一对象
+/// 字节，CanonicalBridge 映射见 CanonicalBridgeTest R2 行）。
+TEST(MdlPartObjectCommands, DrivetrainCoupling_R2ValidPlansDualCompileAndInverse_WP13T18_ACC3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "MDL-06"},
+                  std::vector<std::string>{"AT-38"});
+
+    CouplingCommandFixture f;
+    f.base.services.couplingStage = CouplingStage::R2Enabled;
+    DrivetrainDesign payloadDrivetrain =
+        CouplingCommandFixture::baselineDrivetrain(f.drivetrainOid);
+    payloadDrivetrain.coupling = wristCoupling(false);
+    CommandPayload payload;
+    payload.objects.push_back(
+        replaceSlot(f.drivetrainOid, std::string(kRobotDrivetrainObjectType),
+                    payloadDrivetrain));
+
+    ApplyDrivetrainDesignHandler handler(f.base.services);
+    project::HandlerContext ctx(f.base.query, &f.base.compile, nullptr);
+    project::CommandPlan plan;
+    std::vector<core::DiagnosticRecord> diags;
+    const auto outcome = handler.prepare(
+        ctx, makeEnvelope(f.base.query.view, std::string(kCmdApplyDrivetrainDesign),
+                          payload),
+        f.base.query.view, plan, diags);
+
+    ASSERT_EQ(outcome, project::PrepareOutcome::Planned);
+    EXPECT_TRUE(plan.requiresDualCompile)
+        << "耦合入 Description——requiresDualCompile=true（MDL-06 计划面）";
+    ASSERT_EQ(plan.objectWrites.size(), std::size_t{1});
+    const DrivetrainDesign written =
+        decodePartWrite<DrivetrainDesign>(plan.objectWrites[0]);
+    ASSERT_TRUE(written.coupling.has_value());
+    EXPECT_EQ(*written.coupling, wristCoupling(false))
+        << "写入字节携带 coupling（编译链经闭包消费同一对象字节）";
+
+    // inverse 快照逆放素材：传动对象前一版本 canonical 字节（D-MDL-9——
+    // 双编译失败不提交修订、撤销回到前版的建模侧承诺）。
+    ASSERT_TRUE(plan.inverseCommandType.has_value());
+    ASSERT_TRUE(plan.inversePayloadCanonical.has_value());
+    const auto inverse = tryDecodeCommandPayload(*plan.inversePayloadCanonical);
+    ASSERT_TRUE(inverse.has_value());
+    ASSERT_EQ(inverse->mode, CommandPayload::Mode::Restore);
+    ASSERT_EQ(inverse->objects.size(), std::size_t{1});
+    EXPECT_EQ(inverse->objects[0].objectId, f.drivetrainOid);
+    EXPECT_EQ(inverse->objects[0].objectTypeToken,
+              std::string(kRobotDrivetrainObjectType));
+    const RobotDesignCodec codec;
+    const auto restored = codec.decode(inverse->objects[0].objectBytes,
+                                       kCurrentFormatVersion);
+    ASSERT_TRUE(restored.ok());
+    EXPECT_FALSE(std::get<DrivetrainDesign>(restored.get()).coupling.has_value())
+        << "inverse 字节＝基线（未配置耦合）版本——原子性回退面";
+}

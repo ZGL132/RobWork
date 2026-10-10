@@ -1,0 +1,8 @@
+  [ird_gates] 鑷祴 fail_r1锛氭寜棰勬湡妫€鍑?IRD-GATE-R1
+  [ird_gates] 鑷祴 fail_r3锛氭寜棰勬湡妫€鍑?IRD-GATE-R3
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_r5锛氭寜棰勬湡妫€鍑?IRD-GATE-R5
+  [ird_gates] 鑷祴 fail_sub锛氭寜棰勬湡妫€鍑?IRD-GATE-SUB
+  [ird_gates] 鑷祴 fail_t1锛氭寜棰勬湡妫€鍑?IRD-GATE-T1
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  [ird_gates] 鑷祴 pass_clean锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4comment锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 pass_r4cliff锛氬共鍑€澶瑰叿閫氳繃锛堟棤璇姤锛?[ird_gates] 鑷祴 fail_r4cliff锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
