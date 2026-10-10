@@ -1,0 +1,275 @@
+GATE_START_ISO=2026-10-10T07:29:04.9222940+08:00
+GATE_WORKTREE=C:/Users/zgl18/AppData/Local/Temp/gate-tc-work
+GATE_JUNCTION_CHECK=vcpkg dir absent expected (no junction supplied)
+  -> PASS
+  [ird_gates] 鑷祴 fail_r4锛氭寜棰勬湡妫€鍑?IRD-GATE-R4
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細C:/Users/zgl18/AppData/Local/Temp/gate-tc-work/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+  -> PASS
+  -> PASS
+  Automatic MOC for target sdurws_ird_core_test
+  sdurws_ird_core_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_core_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.18 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_diagnostics_contract_test
+  sdurws_ird_diagnostics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.20 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_diagnostics_test
+  sdurws_ird_diagnostics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.71 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_drivetrain_contract_test
+  sdurws_ird_drivetrain_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_contract_test.exe
+Label Time Summary:
+ird    =   0.07 sec*proc (1 test)
+
+Total Test time (real) =   0.07 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_drivetrain_test
+  sdurws_ird_drivetrain_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_test.exe
+Label Time Summary:
+ird    =   0.10 sec*proc (1 test)
+
+Total Test time (real) =   0.11 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_dynamics_contract_test
+  sdurws_ird_dynamics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_contract_test.exe
+Label Time Summary:
+ird    =   0.12 sec*proc (1 test)
+
+Total Test time (real) =   0.12 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_dynamics_test
+  sdurws_ird_dynamics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_test.exe
+Label Time Summary:
+ird    =   0.20 sec*proc (1 test)
+
+Total Test time (real) =   0.20 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_evidence_contract_test
+  sdurws_ird_evidence_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.05 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_evidence_test
+  sdurws_ird_evidence_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.10 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_execution_contract_test
+  sdurws_ird_execution_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_execution_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   3.00 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_execution_test
+  sdurws_ird_execution_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.34 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_io_contract_test
+  sdurws_ird_io_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_io_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.64 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_io_test
+  sdurws_ird_io_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_io_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.26 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_kinematics_contract_test
+  sdurws_ird_kinematics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_contract_test.exe
+Label Time Summary:
+ird    =   0.19 sec*proc (1 test)
+
+Total Test time (real) =   0.19 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_kinematics_test
+  sdurws_ird_kinematics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+Label Time Summary:
+ird    =  11.57 sec*proc (1 test)
+
+Total Test time (real) =  11.57 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_modeling_contract_test
+  sdurws_ird_modeling_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+Label Time Summary:
+ird    =   0.08 sec*proc (1 test)
+
+Total Test time (real) =   0.08 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_modeling_gui_test
+  sdurws_ird_modeling_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_gui_test.exe
+Label Time Summary:
+ird_gui    =   1.87 sec*proc (1 test)
+
+Total Test time (real) =   1.87 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_modeling_test
+  sdurws_ird_modeling_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_test.exe
+Label Time Summary:
+ird    =   2.37 sec*proc (1 test)
+
+Total Test time (real) =   2.38 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_optimization_contract_test
+  sdurws_ird_optimization_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_contract_test.exe
+Label Time Summary:
+ird    =   1.59 sec*proc (1 test)
+
+Total Test time (real) =   1.60 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_optimization_test
+  sdurws_ird_optimization_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_test.exe
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_policy_contract_test
+  sdurws_ird_policy_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.96 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_policy_test
+  sdurws_ird_policy_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.04 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_project_contract_test
+  sdurws_ird_project_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.02 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_project_test
+  sdurws_ird_project_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =  17.50 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_reporting_contract_test
+  sdurws_ird_reporting_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.09 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_reporting_test
+  sdurws_ird_reporting_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.33 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_requirements_contract_test
+  sdurws_ird_requirements_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
+Label Time Summary:
+ird    =   0.11 sec*proc (1 test)
+
+Total Test time (real) =   0.11 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_requirements_gui_test
+  sdurws_ird_requirements_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_gui_test.exe
+Label Time Summary:
+ird_gui    =   2.01 sec*proc (1 test)
+
+Total Test time (real) =   2.02 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_requirements_test
+  sdurws_ird_requirements_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
+Label Time Summary:
+ird    =   0.18 sec*proc (1 test)
+
+Total Test time (real) =   0.19 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_runtime_test
+  sdurws_ird_runtime_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+Label Time Summary:
+ird    =   1.30 sec*proc (1 test)
+
+Total Test time (real) =   1.30 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_selection_contract_test
+  sdurws_ird_selection_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_selection_contract_test.exe
+Label Time Summary:
+ird    =   0.10 sec*proc (1 test)
+
+Total Test time (real) =   0.10 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_selection_test
+  sdurws_ird_selection_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_selection_test.exe
+Label Time Summary:
+ird    =   0.12 sec*proc (1 test)
+
+Total Test time (real) =   0.13 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_testkit_test
+  sdurws_ird_testkit_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.45 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_trajectory_contract_test
+  sdurws_ird_trajectory_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_contract_test.exe
+Label Time Summary:
+ird    =   0.84 sec*proc (1 test)
+
+Total Test time (real) =   0.84 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_trajectory_test
+  sdurws_ird_trajectory_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_test.exe
+Label Time Summary:
+ird    =   1.24 sec*proc (1 test)
+
+Total Test time (real) =   1.24 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_ui_contract_test
+  sdurws_ird_ui_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+Label Time Summary:
+ird    =   0.11 sec*proc (1 test)
+
+Total Test time (real) =   0.12 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_ui_gui_test
+  sdurws_ird_ui_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+Label Time Summary:
+ird_gui    =   6.62 sec*proc (1 test)
+
+Total Test time (real) =   6.63 sec
+  -> PASS
+  Automatic MOC for target sdurws_ird_ui_test
+  sdurws_ird_ui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+Test project C:/Users/zgl18/AppData/Local/Temp/gate-tc-work/build/RobWorkStudio/src/rwslibs/industrialrobot/ui
+    Start 1: sdurws_ird_ui_test
+  -> FAIL : ctest 失败（退出码 -1）
