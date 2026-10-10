@@ -92,6 +92,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include <sdurws/ird/core/Evaluation.hpp>      // core::EvaluationMode——模式效力面
@@ -654,9 +655,24 @@ public:
 private:
     OptimizationStage m_stage;        ///< 编排阶段（构造定型）
     TwoStageOrchestratorDeps m_deps;  ///< 依赖注入面（构造后只读）
-    /// 会话记录底账（sliceId → 记录——缓存 FullHit 短路径的进程内回放
-    /// 载荷；R1 会话内命中承诺的承载面，跨 run() 复用、实例私有）。
-    std::map<core::ContentIdentity, TwoStageRunRecord> m_sessionRecords;
+    /// 会话记录底账（(sliceId, mode) 复合键 → 记录——缓存 FullHit 短路径
+    /// 的进程内回放载荷；R1 会话内命中承诺的承载面，跨 run() 复用、实例
+    /// 私有）。
+    ///
+    /// 键为何含 mode（F-640，实现口径登记）：同候选的 Quick 批与 Verified
+    /// 批共用同一 sliceId——切片身份（buildCandidateSlice）的键要素只有
+    /// config.opt canonical＋补丁身份＋契约版本＋Profile 身份，**不含
+    /// mode**（mode 是缓存判定面四要素之一、在 sliceId 之外——D-13 不升
+    /// 降级）。若底账按 sliceId 单键索引，后评估的 Verified 记录会覆盖
+    /// Quick 记录，后续运行的 Quick FullHit 回放将取出 screeningOnly=
+    /// false 的 Verified 记录混入 quickRecords（EVI-01 效力面击穿）。键补
+    /// mode 维度后底账与缓存判定语义同构（同键请求＝同 (sliceId, mode)）；
+    /// screeningOnly 在本编排内由 mode 唯一决定（Quick→true／Verified→
+    /// false——run() 两批的字面量实参），复合键即完整的效力面键，回放无
+    /// 需再核对记录 mode（登记与查找同处一个 mode 参数作用域，结构性
+    /// 一致）。
+    std::map<std::pair<core::ContentIdentity, core::EvaluationMode>,
+             TwoStageRunRecord> m_sessionRecords;
 
     // ---- 锁-free 私有步骤（run() 内单线程顺序调用）----
     /// 冻结单候选评估切片（config.opt canonical＋补丁身份进条目——缓存键

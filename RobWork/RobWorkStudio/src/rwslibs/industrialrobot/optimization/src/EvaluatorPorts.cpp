@@ -591,7 +591,15 @@ TwoStageEvaluationOrchestrator::evaluateCandidate(core::EvaluationMode mode, boo
             // 不伪造回放）。WaitForInFlightRun 形态 R1 不可达（单线程串行、
             // 无并发派发——若出现按 miss 同轨推进，注释登记）。
             audit.cacheFullHits += 1;
-            const auto it = m_sessionRecords.find(slice.sliceId);
+            // 回放查找按 (sliceId, mode) 复合键（F-640）：同候选 Quick/
+            // Verified 两批共用 sliceId，底账键必须带 mode 才能取回与本
+            // 请求同效力面的记录——单键查找在此会取出另一批的记录（例：
+            // 上一轮 Verified 批登记的记录覆盖 Quick 记录后，Quick 回放
+            // 拿到 screeningOnly=false 的记录混入 quickRecords）。键含
+            // mode 后无需再核对记录字段：登记（下方）与查找共用同一 mode
+            // 参数，结构性一致。
+            const auto it
+                = m_sessionRecords.find({slice.sliceId, mode});
             if (it != m_sessionRecords.end()) {
                 TwoStageRunRecord replayed = it->second;  // 回放＝首次评估的原始记录
                 replayed.cacheHit = true;                  // 复用记账（命中≠Current——
@@ -668,8 +676,11 @@ TwoStageEvaluationOrchestrator::evaluateCandidate(core::EvaluationMode mode, boo
     }
 
     // ---- 会话底账登记（缓存 FullHit 短路径的进程内回放载荷——同键后续
-    //      请求命中时从此处取"首次评估的原始记录"，不重算）。
-    m_sessionRecords[slice.sliceId] = record;
+    //      请求命中时从此处取"首次评估的原始记录"，不重算）。键＝
+    //      (sliceId, mode) 复合键（F-640——见成员注与回放查找处注）：同
+    //      sliceId 的 Quick/Verified 两批记录并存不互相覆盖，回放永远取
+    //      同 mode 记录。
+    m_sessionRecords[{slice.sliceId, mode}] = record;
     return record;
 }
 
