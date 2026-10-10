@@ -6991,6 +6991,33 @@
       "registeredAt": "2026-10-10",
       "title": "ui_gui_test 5 个 WorkbenchShell 布局类用例依赖真实窗口管理器——QT_QPA_PLATFORM=offscreen 下失败、真实平台全绿（失败用例的实现文件 ui/src/ 本批零触碰＝非送验缺陷）；套件无平台敏感性标注机制，offscreen 环境（验收/CI 常态）系统性误报",
       "owner": "testkit 批次（平台敏感性标注或跳过机制——如用例级标注〔offscreen 期望失败/SKIP+归因〕或 testkit 探测 QT_QPA_PLATFORM 后自动归因；参照 F-617 剪贴板可用性预探先例）"
+    },
+    {
+      "id": "F-717",
+      "source": "acc/wp-16-t07/1 验收记录（attempt 1，verdict=pass）§14.1——单元卡 §17.1 T07 执行状态注与实际落位文件对照（2026-10-11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "units/trajectory.md §17.1 WP-16-T07 执行状态注把测试面写作「test/SmoothRecheckTest.cpp（20 用例）」——SmoothRecheckTest 实为 gtest 套件名（TEST 第一参数），实际落位为 test/SmoothTest.cpp（10 用例）＋test/RecheckTest.cpp（10 用例）两文件；contract_test/RecheckContractTest.cpp 文件头注同句亦然。用例总数与追溯链正确，仅文件名表述失准",
+      "owner": "trajectory 批次（下批文档修订把两处文件名改为 SmoothTest.cpp＋RecheckTest.cpp 实名；或统一「套件 SmoothRecheckTest（文件 SmoothTest.cpp/RecheckTest.cpp）」表述口径）"
+    },
+    {
+      "id": "F-718",
+      "source": "acc/wp-16-t07/1 验收记录（attempt 1，verdict=pass）§14.2——Smooth.cpp:654 失败素材构造审查（2026-10-11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "平滑几何保持失败（偏差超容差作废）的素材 reasonToken 复用 TRJ-LIMIT-EXCEEDED——该码卡面语义为「速度/加速度/限位超标」（§14.4 行 5），语义错位；TRJ-* 12 码词表无平滑专用码、卡面亦未规定平滑失败码，实现以现码＋cause 文案自描述（「平滑几何保持失败：…」）＋比较型三要素齐备兜底，结论与账目不受影响",
+      "owner": "需求所有者＋trajectory 批次（需求变更增补 TRJ-SMOOTH-TOLERANCE 类专用码并同步 DiagCodes 登记表；或在 §14.4 行 5 语义注中显式扩展「平滑几何保持偏差超容差」承载口径）"
+    },
+    {
+      "id": "F-719",
+      "source": "acc/wp-16-t07/1 验收记录（attempt 1，verdict=pass）§14.3——Recheck.cpp:447/459-464 预算耗尽素材单位审查（2026-10-11）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "复检预算耗尽（BudgetExhausted）的比较型素材 actual.unit 硬编码 rad、expected 恒取 maxJointStepRevolute——当最严不满足轴为移动轴（m）或细分由笛卡尔界驱动时，comparison 的单位/对照对象与实测失配（budget.actualMaxJointStep/actualMaxCartesianStep 分字段账目本身正确、cause 文案双值并列含单位；RecheckBudgetExhausted 测试仅锁定关节驱动场景，该分支未被负例覆盖）",
+      "owner": "trajectory 批次（按细分停止层最严轴的 axisKind 取 axisUnitToken、expected 按驱动界取对应步长字段；补一条移动轴/笛卡尔驱动的预算耗尽负例用例锁定素材单位）"
     }
   ]
 }
