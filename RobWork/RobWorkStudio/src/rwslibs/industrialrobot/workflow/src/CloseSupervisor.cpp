@@ -54,15 +54,21 @@ StoreCloseSupervisor::~StoreCloseSupervisor()
 
 void StoreCloseSupervisor::start()
 {
-    // 收割上一轮已自然退出（①/④/⑤路径 return）的线程对象——thread
-    // 赋值前必须 join，否则 std::terminate；join 后 running 位必已被
-    // 线程自身清除（见 superviseLoop 收尾）。
-    if (m_thread.joinable()) {
-        m_thread.join();
-    }
-    // 幂等（线程仍在监督中 no-op）——宿主重复触发（如关闭入口重入）安全。
+    // 幂等先判（F-638）：线程仍在监督中＝直接 no-op——宿主重复触发（如
+    // 关闭入口重入）安全。运行态检查必须先于 join：join 收割语义仅在
+    // **非运行态**成立，若先 join 则运行态重复 start 会阻塞在运行中线程
+    // 上（直至监督循环退出——最长可达阈值＋宽限），既违背幂等 no-op 语
+    // 义，又把调用线程无辜挂住。
     if (m_running.load(std::memory_order_acquire)) {
         return;
+    }
+    // 收割上一轮已自然退出（①/③/④路径 return）的线程对象——thread 赋
+    // 值前必须 join，否则 std::terminate。可达此处即非运行态（上判已滤
+    // 运行态）：线程要么从未启动（不 joinable＝天然跳过）、要么已自然
+    // 退出（joinable＝收割；join 后 running 位必已被线程自身清除——见
+    // superviseLoop 收尾，acquire 读到 false 与线程的 release 清位配对）。
+    if (m_thread.joinable()) {
+        m_thread.join();
     }
     // 复位本次监督的过程态（观测位不在此复位——历史事实保留，见 stop 注；
     // 过程位与线程状态配对复位，保证 start/stop 多轮使用语义清晰）。
