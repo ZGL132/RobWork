@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "实现简化平滑与碰撞复检协议",
-  "status": "blocked",
+  "status": "ready",
   "dependsOn": ["WP-16-T05", "WP-16-T06", "WP-16-T02"],
   "requirements": ["TRJ-04", "EVI-01"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "安全间距阈值消费 policy 工程策略（ARC-05），无私有线宽/阈值；验证器缺失段判 DataInsufficient（KIN-05 口径）",
     "平滑/复检按卡内任务拆分为两提交（规模 L）；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §11/§18；P-06 数值以 WP-16-T02 冻结产物为准，未冻结不得启用复检。状态修正 ready→blocked（2026-10-10，GOV-DOC 治理批）：dependsOn 含 blocked 的 WP-16-T02（P-06 轨迹碰撞复检协议数值冻结——需求所有者签署动作，见该契约 note「未冻结不得启用复检」），本任务复检实现以冻结值为准，实际不可执行。出处＝六单元领域实现流水线（第二批）排批核查 medium finding（「契约状态失准：WP-16-T07 status=ready 但 dependsOn 含 blocked 的 WP-16-T02……T08/T09 传递依赖 T07，trajectory 链自 T07 起整段受卡，影响 7 个任务」——evidence＝WP-16-T07 dependsOn 核查＋WP-16-T02/T08/T09 状态实读）。解冻条件＝WP-16-T02 完成 P-06 数值冻结（需求所有者签署，REQUIREMENTS 附录 C 冻结前置）后本卡恢复 ready。解冻程序进展注（2026-10-10，GOV-UNFROZEN 批）：P-06 链解冻程序已启动——《P-06 建议值草案》见 DTB §2.28（REQUIREMENTS 附录 C P-06 行已加启动注），前置＝WP-16-T02 冻结落位（所有者确认签署）；本卡维持 blocked，前置未完成前实际不可执行。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §11/§18；P-06 数值以 WP-16-T02 冻结产物为准，未冻结不得启用复检。状态修正 ready→blocked（2026-10-10，GOV-DOC 治理批）：dependsOn 含 blocked 的 WP-16-T02（P-06 轨迹碰撞复检协议数值冻结——需求所有者签署动作，见该契约 note「未冻结不得启用复检」），本任务复检实现以冻结值为准，实际不可执行。出处＝六单元领域实现流水线（第二批）排批核查 medium finding（「契约状态失准：WP-16-T07 status=ready 但 dependsOn 含 blocked 的 WP-16-T02……T08/T09 传递依赖 T07，trajectory 链自 T07 起整段受卡，影响 7 个任务」——evidence＝WP-16-T07 dependsOn 核查＋WP-16-T02/T08/T09 状态实读）。解冻条件＝WP-16-T02 完成 P-06 数值冻结（需求所有者签署，REQUIREMENTS 附录 C 冻结前置）后本卡恢复 ready。解冻程序进展注（2026-10-10，GOV-UNFROZEN 批）：P-06 链解冻程序已启动——《P-06 建议值草案》见 DTB §2.28（REQUIREMENTS 附录 C P-06 行已加启动注），前置＝WP-16-T02 冻结落位（所有者确认签署）；本卡维持 blocked，前置未完成前实际不可执行。解冻登记（2026-10-10，FREEZE-P06 批）：WP-16-T02 已执行 P-06 数值冻结并随本提交落位——所有者 2026-10-10 确认《P-06 建议值草案》，四类数值按草案原样（零修改）正式并入 REQUIREMENTS 附录 C（P-06 行『已冻结』注＋《P-06 冻结数值表》，REQUIREMENTS v1.18；O-29 翻转已冻结）；本卡 status blocked→ready，依赖满足（dependsOn 三项 T05/T06 已实现、T02 冻结落位），复检实现以冻结数值表为数值唯一来源（实现侧读取顺序 EngineeringPolicySet→P-06 冻结默认值，trajectory 卡 §11.2 纪律不变）。"
 }

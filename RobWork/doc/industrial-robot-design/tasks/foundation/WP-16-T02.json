@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "冻结 P-06 轨迹碰撞复检协议数值（与需求所有者协同）",
-  "status": "blocked",
+  "status": "ready",
   "dependsOn": [],
   "requirements": ["P-06"],
   "designRefs": [
@@ -13,6 +13,39 @@
     "units/trajectory.md#11",
     "development-task-breakdown.md#2.17"
   ],
-  "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
-  "note": "DOC-T15 编译（2026-10-06）。blocked：P-06 冻结属需求变更，须经需求所有者签署（REQUIREMENTS 附录 C 冻结前置；WP-16-T07 复检实现以冻结值为准，未冻结不得启用）。解冻后补齐 ready 必备字段（allowedFiles/outputs/acceptance/branch/interUnit）。解冻程序已启动（2026-10-10，GOV-UNFROZEN 治理批——所有者『13 个契约任务解冻』指令）：WP-16 起草的《P-06 建议值草案》（四类数值——关节/笛卡尔最大步长默认值与细分上界、细分预算最大层数与子段数、碰撞几何代表点集生成规则；逐项注依据）登记于 DTB §2.28 解冻批登记，REQUIREMENTS 附录 C P-06 行已加『解冻程序启动（2026-10-10）』注；待所有者确认后解冻执行——确认动作归本卡执行冻结（正式并入附录 C＋冻结留痕），本卡维持 blocked 至该签署动作完成。"
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T02.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T07.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T08.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T09.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T10.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T11.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T12.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T13.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T14.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T15.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T16.json",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**"
+  ],
+  "outputs": ["doc-freeze", "traceability-update"],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-16-T02.json"
+  ],
+  "branch": "wp16-t02",
+  "interUnit": true,
+  "knownPitfalls": ["P-TRJ-1"],
+  "acceptance": [
+    "①数值按《P-06 建议值草案》（DTB §2.28）原样冻结零修改——四类数值：关节空间最大步长旋转默认 0.05 rad／移动默认 0.005 m、细分上界旋转 0.2 rad／移动 0.02 m（4×默认值封顶）；笛卡尔最大步长默认 0.005 m、上界 0.02 m（TCP 参考点＋代表点集最大位移口径，关节/笛卡尔双上界取严）；细分预算最大层数 10（二分）／单段最大子段数 1024；代表点集＝TCP＋全部参与碰撞验证几何（解析原语全部顶点＋各棱中点、mesh 全部顶点），帧集合与细分采样一致（段端点必含）——若执行中发现草案与 TRJ-04 v1.11/v1.12 原文语义冲突，如实上报不得擅自改值",
+    "②REQUIREMENTS 附录 C P-06 行：『解冻程序启动』注转已冻结（2026-10-10，需求所有者确认草案）＋四类数值正式并入（附录 D P-01 先例形态：数值表＋类别〔固定/工程策略默认可放宽上界〕＋『修订走需求变更并留痕』注）＋v1.18 修订记录行",
+    "③DTB：§4.3 O-29 状态行『未冻结』→『已冻结（2026-10-10）』；§2.28 草案行加『已确认（2026-10-10 所有者指令）』注＋本批（FREEZE-P06）批次登记行",
+    "④units/trajectory.md :117（TRJ-04 行 P-06 登记）与 :137（附录 C 行）同步『已冻结』注（:1174 复检前置守卫语义随之成立，核对零改动）"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）。冻结执行登记（2026-10-10，FREEZE-P06 批——所有者授权装配任务：所有者 2026-10-10 对 DTB §2.28《P-06 建议值草案》回复『确认』，冻结生效条件齐备）：status blocked→ready＋补齐 ready 必备字段（allowedFiles＝本批文档面＋traceability/**、forbiddenFiles＝产品源码树〔零产品源码改动〕、outputs、acceptance＝①数值原样冻结零修改②附录 C P-06 行转已冻结＋冻结数值表＋v1.18 修订记录③DTB O-29/§2.28 双处登记④trajectory 卡 :117/:137 引用行同步、branch、interUnit）。interUnit＝true（横切 REQUIREMENTS/DTB/trajectory 卡/契约面），knownPitfalls 登记 P-TRJ-1（P-06 数值语义陷阱——本卡执行冻结后其『未冻结』半区解除，运行时承载位 EngineeringPolicySet 扩展字段仍待 policy 卡随批，陷阱登记不因本卡撤销）。依赖 WP-16-T07 实现复检（本卡冻结为 T07 解锁前置，随本提交落位）；轨迹卡 §21.2 P-TRJ-1 登记行状态列翻转归该卡增量修订权限，不在本卡 allowedFiles 内。验证＝validate-docs PASS＋validate-task PASS（含本契约与 T07~T16 十份）＋ird_gates 零命中＋trajectory 双测试目标回归全绿（零源码基线）＋双 report 留痕 traceability/gtest-reports/freeze-p06/。"
 }
