@@ -673,6 +673,99 @@ TEST(MdlImport, IllegalOriginTextStillRejected_F570)
 }
 
 /**
+ * 回归（F-633，P1——audit r2a 批次）：URDF origin 数值写 "nan" 字面量曾被
+ * 放行——parseDoubleStable 底层 std::from_chars 接受 "nan"/"inf"（其契约
+ * 明言"有限性由调用方按字段语义判定"），而 origin 路径没有判定点，NaN
+ * 位姿以 Provided＋submittable=true 落草稿（下游旋转矩阵/位姿组合被 NaN
+ * 污染且零报告面）。修复后与同文件轴路径 F-587 有限性判定同族：任一分量
+ * 非有限→originIllegal→value-illegal 错误项（原串保留）＋submittable=false。
+ *
+ * 用例 ①：关节 origin xyz="nan 0 0"（rpy 合法）——必须走 Invalid 面。
+ */
+TEST(MdlImport, NonFiniteOriginXyzNan_Rejected_F633)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-03"},
+                  std::vector<std::string>{});
+
+    const ModelImportMapper mapper;
+    const char* urdf = R"(<?xml version="1.0"?>
+<robot name="n">
+  <link name="base"/>
+  <link name="l"/>
+  <joint name="j" type="revolute">
+    <parent link="base"/>
+    <child link="l"/>
+    <origin xyz="nan 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+</robot>
+)";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+    // "nan" 语法可解析（from_chars 接受该拼写）但非有限——必须走 Invalid
+    // 面（修复前 Provided 带 NaN 值）。
+    EXPECT_FALSE(outcome.draft->joints[0].origin.tryValue().has_value());
+    EXPECT_EQ(outcome.draft->joints[0].origin.state(), FieldState::Invalid);
+    // 错误详情携原串（originRaw＝xyz/rpy 属性原文拼接——报告可定位源文件
+    // 写法，NFR-COR-03 非法值不静默改写）。
+    bool hasOriginError = false;
+    for (const auto& item : outcome.report.errors) {
+        if (item.kind == "value-illegal"
+            && item.subject.find("joint 'j'.origin") != std::string::npos
+            && item.detail.find("nan") != std::string::npos) {
+            hasOriginError = true;
+        }
+    }
+    EXPECT_TRUE(hasOriginError) << "错误详情必须保留 nan 原串";
+    EXPECT_FALSE(outcome.report.submittable);
+}
+
+/**
+ * 回归（F-633）用例 ②：origin 只写 rpy="inf 0 1"——一属性缺省（xyz 按
+ * URDF 语义补零，F-570 面）＋另一属性非有限→整体拒绝。两项既有语义一次
+ * 锁定：缺省补零不因非有限复检失效（缺省分支不触碰 ok），非有限判定不因
+ * 另一属性缺省而短路放行。
+ */
+TEST(MdlImport, NonFiniteOriginRpyInf_Rejected_F633)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-03"},
+                  std::vector<std::string>{});
+
+    const ModelImportMapper mapper;
+    const char* urdf = R"(<?xml version="1.0"?>
+<robot name="n">
+  <link name="base"/>
+  <link name="l"/>
+  <joint name="j" type="revolute">
+    <parent link="base"/>
+    <child link="l"/>
+    <origin rpy="inf 0 1"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0" upper="1"/>
+  </joint>
+</robot>
+)";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome = mapper.mapUrdf(makeSource(urdf), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+    // xyz 缺省补零不挽救 rpy 的 inf——整体 originIllegal（一缺一非法≠放行）。
+    EXPECT_FALSE(outcome.draft->joints[0].origin.tryValue().has_value());
+    EXPECT_EQ(outcome.draft->joints[0].origin.state(), FieldState::Invalid);
+    bool hasOriginError = false;
+    for (const auto& item : outcome.report.errors) {
+        if (item.kind == "value-illegal"
+            && item.subject.find("joint 'j'.origin") != std::string::npos
+            && item.detail.find("inf") != std::string::npos) {
+            hasOriginError = true;
+        }
+    }
+    EXPECT_TRUE(hasOriginError) << "错误详情必须保留 inf 原串";
+    EXPECT_FALSE(outcome.report.submittable);
+}
+
+/**
  * 物理合法性错误项（acceptance 2——"已提供但 m≤0/非 SPD→导入报告错误项
  * （应用将被断言阻断）"）：m=0→mass-nonpositive；零张量→inertia-not-spd；
  * diag(10,1,1)→inertia-triangle；三者皆置 submittable=false。
