@@ -6002,6 +6002,15 @@
       "registeredAt": "2026-10-10",
       "title": "gate-all 对 worktree 的 vcpkg 供给依赖 junction（脚本按自身位置推 RepoRoot/vcpkg 路径）——任一会话清理穿透 junction 即全环境瘫痪（2026-10-09/10-10 两次实测，均靠缓存重组恢复）；系统性消除＝gate-all 增 -Toolchain 可选参数（绝对路径直引主仓 vcpkg，缺省行为不变，零 Python 约束不变）",
       "owner": "门禁所有者：评审后为 gate-all.ps1 增 -Toolchain 参数并在 DTB §5.1 同步口径；过渡纪律＝子会话一律不做 junction/工作树清理（编排者统一执行）"
+    },
+    {
+      "id": "F-629",
+      "source": "acc/gate-toolchain-param/1 独立子会话对抗式验收复现（2026-10-10，所有者 2026-10-10 指令授权）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "sdurws_ird_testkit_test 计时敏感用例在门禁负载下间歇失败：验收复现三轮 gate-all 中集成段 2 次失败（冷/暖构建各一，ctest 退出码 8），同批冒烟段执行与空闲直跑复测 5 次全 PASS——ProcessRunnerTest 树终止用例孙进程观察窗 3500ms 对延迟 3000ms 仅 500ms 余量（源注释自述余量只计落盘开销），Defender 实时防护对 relink 后首次执行的扫描延迟可吃尽余量；与本批 diff 无关（gate-toolchain-param 零触碰产品代码，testkit 源码与 redesign-main 基线一致），不影响该批 verdict",
+      "owner": "testkit 单元所有者：评估 ProcessRunnerTest 树终止用例观察窗余量（3500-3000=500ms）在防病毒扫描/构建负载下的充分性——加余量或登记门禁重跑口径"
     }
   ]
 }
