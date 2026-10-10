@@ -86,22 +86,37 @@ std::vector<QuantityFieldSpec> fixtureFields()
 }
 
 
-/// 剪贴板可用性预探（audit F-617/F-620）：剪贴板型 GUI 用例对系统剪贴板
-/// 占用敏感——他进程持有全局剪贴板时（实测 MATLAB pid 持有，OleSetClipboard
-/// COM 0x800401d0/CLIPBRD_E_CANT_OPEN），Qt 重试耗尽后 setText/text 往返
-/// 失败，属环境面而非代码缺陷。探针＝哨兵写读往返一次，返回往返是否一致；
-/// 调用方（用例体内）不一致时 GTEST_SKIP 并输出 F-620 归因字样（门禁聚账
-/// 归因；F-617 正式在册项）——skip 必须在用例体内发生（GTEST_SKIP 的
-/// return 只能退出用例体本身，helper 内调用不终止用例）。健康环境往返
-/// 一致、用例照常真实执行——探针不吞真失败（用例内断言照常生效）。
-/// 非线程安全：仅 GUI 测试主线程使用。
+/// 剪贴板可用性预探（audit F-617/F-620；wp17-t08 建议①补重试半区）：
+/// 剪贴板型 GUI 用例对系统剪贴板占用敏感——他进程持有全局剪贴板时（实测
+/// MATLAB pid 持有，OleSetClipboard COM 0x800401d0/CLIPBRD_E_CANT_OPEN），
+/// Qt 重试耗尽后 setText/text 往返失败，属环境面而非代码缺陷。探针＝哨兵
+/// 写读往返，返回往返是否一致；不一致时在 bounded 窗口内【重试】至多
+/// kClipProbeAttempts 次（wp17-t08 建议①的重试通道：CLIPBRD_E_CANT_OPEN
+/// 常为毫秒级瞬态占用——持有着进程释放后立即可打开；逐次 processEvents
+/// 让 Qt 剪贴板层的内部重试与事件派发落地，避免把瞬态占用误判为持久
+/// 占用而多跳过）。重试耗尽仍不一致才判不可用：调用方（用例体内）
+/// GTEST_SKIP 并输出 F-620 归因字样（门禁聚账归因；F-617 正式在册项）
+/// ——skip 必须在用例体内发生（GTEST_SKIP 的 return 只能退出用例体本身，
+/// helper 内调用不终止用例）。健康环境首轮往返即一致、用例照常真实执行
+/// ——探针不吞真失败（用例内断言照常生效）。非线程安全：仅 GUI 测试
+/// 主线程使用。重试次数为固定常数（无退避延时——占用的释放时机不可
+/// 预期，指数退避对毫秒级瞬态无收益，徒增无人值守时长）。
 bool clipboardUsable()
 {
+    // 重试窗口：首轮＋2 次重试。实测瞬态占用在数百毫秒内释放（MATLAB
+    // 持有场景为持久占用，重试不掩盖——重试耗尽仍 skip 并归因）。
+    constexpr int kClipProbeAttempts = 3;
     const QString sentinel =
         QStringLiteral("ird-clip-probe-%1").arg(QCoreApplication::applicationPid());
-    QApplication::clipboard()->setText(sentinel);
-    QApplication::processEvents();
-    return QApplication::clipboard()->text() == sentinel;
+    for (int attempt = 0; attempt < kClipProbeAttempts; ++attempt) {
+        QApplication::clipboard()->setText(sentinel);
+        QApplication::processEvents();
+        if (QApplication::clipboard()->text() == sentinel) {
+            return true;    // 哨兵写读一致＝剪贴板可用（健康环境首轮即返回）
+        }
+        QApplication::processEvents();  // 重试前先泵一轮事件（释放窗口）
+    }
+    return false;   // bounded 窗口耗尽仍不一致＝持久占用，交由调用方 skip
 }
 
 class ParamTablePanelGuiTest : public ::testing::Test {

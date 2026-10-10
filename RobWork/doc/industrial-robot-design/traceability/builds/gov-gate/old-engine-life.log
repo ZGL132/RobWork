@@ -1,0 +1,4 @@
+IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/project/ProjectStore.hpp（公共头未在对方 include/ 下命中）
+IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/project/StoreTypes.hpp（公共头未在对方 include/ 下命中）
+IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/ui/UiTypes.hpp（公共头未在对方 include/ 下命中）
+IRD-GATE-R2: core 产品面文件包含他单元非公共头 sdurws/ird/workflow/Types.hpp（公共头未在对方 include/ 下命中）
