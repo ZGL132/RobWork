@@ -107,13 +107,18 @@ namespace sdurws::ird::selection {
 // =====================================================================
 
 /**
- * @brief 回填命令注册 token（§12.3 建议值——无点形态）。
+ * @brief 回填命令注册 token（§12.3 冻结值——无点形态，终态）。
  *
- * P-SEL-3 处置：project 命令 token 语法存在 P-PR-9 争议（§4.4.4 冻结
- * ^[a-z0-9-]{3,64} 不含点 vs §6.5 含点示例），裁决前以无点保守形态占位
- * （与 modeling 卡 D-MDL-6/O-35 同案——DTB §4 2026-09-22 裁决"采用无点
- * 形态＝服从现行冻结语法"）；P-PR-9 裁决含点后随增量任务迁移（迁移属
- * 破坏性变更，须同步 payload 版本语义——本项目 v1 不适用）。
+ * P-SEL-3 已销案（RUL-TOK 所有者授权裁决批 2026-10-10；P-PR-9 同案
+ * 销案）：project 命令 token 语法裁决采纳无点形态＝服从 §4.4.4 冻结
+ * 语法 ^[a-z0-9-]{3,64}（O-35 登记的同一裁决——DTB §4 2026-09-22），
+ * 本常量即终态冻结、非占位（逐字符钉扎契约测试
+ * CommandTokenDotlessFrozenSyntax_PSEL3 保持零变化）。注意本 token 是
+ * project 命令面的词形——selection 自持描述符中回填命令的 ui 命令
+ * id 为点分词形 selection.apply-device-backfill（ui.md §7.1/§7.2 既
+ * 冻句法；书写点＝plugin/SelPanelCommandCatalog.hpp
+ * kSelBackfillUiCommandId），双词形各自服从既有冻结、对齐关系由契约
+ * 测试逐段对账钉住。
  */
 inline constexpr std::string_view kBackfillCommandToken = "apply-device-backfill";
 
@@ -736,7 +741,7 @@ class DeviceBackfillCommandHandler final : public IDeviceBackfillCommandHandler 
 public:
     DeviceBackfillCommandHandler() = default;
 
-    /// 注册 token（kBackfillCommandToken——无点，P-SEL-3 保守形态）。
+    /// 注册 token（kBackfillCommandToken——无点冻结终态，P-SEL-3 销案）。
     [[nodiscard]] std::string commandType() const override;
 
     /// 受理载荷版本（kBackfillPayloadFormatVersion）。

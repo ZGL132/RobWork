@@ -599,13 +599,15 @@ TEST_F(HostIntegrationContractTest, ProjectCloseTeardown_ComponentLevelAssertion
  *
  * 测试面链接边约束（诚实登记，units/ui.md §13 ASM-UI 行）：本目标已登记
  * 的跨单元测试边仅覆盖三旧域 plugin（IRD_TEST_TARGET_EDGES——UI-T23 三
- * 条）；三新域（dynamics/selection/optimization）门面的真实注册激活钉
- * 扎在三域各自 contract_test（ASM-PLUG 批 ActivationPassesRealRegistrar
- * Port 系用例——真实 registrar 传经 registerWithHostRegistrar 激活路径
- * ＋selection InvalidDescriptor 诚实拒绝断言〔P-SEL-3 不本地绕过〕），
- * ui_plugin 目标自身的六域装配承接（ExtraDomainAssembly TU）为集成树
- * MODULE 面，无人值守测试目标不可链接（CMake 禁链接 MODULE）——运行验
- * 证通道＝开发期插件实机装载与 GUI 冒烟（ui.md §12.2 通道，不在本门禁）。
+ * 条；ASM-STUDIO 批起增登三新域 plugin——六域聚合直测见下方
+ * ASMSTUDIO_ACC1 用例）；三新域（dynamics/selection/optimization）门面
+ * 的真实注册激活钉扎在三域各自 contract_test（ASM-PLUG 批
+ * ActivationPassesRealRegistrarPort 系用例——真实 registrar 传经
+ * registerWithHostRegistrar 激活路径；selection 断言已随 RUL-TOK 裁决
+ * 销案批翻转为宿主三查全过 Ok——P-SEL-3 销案兑现），ui_plugin 目标自身
+ * 的六域装配承接（ExtraDomainAssembly TU）为集成树 MODULE 面，无人值守
+ * 测试目标不可链接（CMake 禁链接 MODULE）——运行验证通道＝开发期插件
+ * 实机装载与 GUI 冒烟（ui.md §12.2 通道，不在本门禁）。
  */
 TEST_F(HostIntegrationContractTest, HostRegistrarAssemblySequence_Snapshot_ASMUI_ACC2)
 {
@@ -713,10 +715,19 @@ TEST_F(HostIntegrationContractTest, HostRegistrarAssemblySequence_Snapshot_ASMUI
  * Plugins 不被调用），三新域经真实 IPluginUiRegistrar 在本用例与三旧域
  * 同机聚合。
  *
+ * RUL-TOK 裁决销案批（2026-10-10）断言翻转登记：本用例原钉扎 selection
+ * 注册被宿主按 §7.2 点分句法权威拒绝（InvalidDescriptor 不入列——聚合
+ * 快照五 Ok）的诚实承载〔P-SEL-3/P-PR-9 待所有者裁决面〕；所有者裁决
+ * 双词形并存（project token 无点＝O-35＋ui 命令 id 点分＝§7.1/§7.2 既
+ * 冻句法）后，selection 域侧把自持描述符的回填命令 ui 命令 id 修订为
+ * selection.apply-device-backfill——asm-ui/asm-studio 登记"裁决后翻译
+ * 产物自然过校验零改动"兑现，selection 注册 Ok 入列（聚合快照五 Ok→
+ * 六 Ok，白名单序保持；宿主承接 TU 与校验序零改动——裁决在域侧生效）。
+ *
  * 需求/验收追溯：SA-01（静态白名单装配——八 token 词表）、UX-14（关于
  * 清单＝白名单∩报告——快照聚合面）、units/ui.md §10.9（注册协议：Ok 才
- * 入列）、§11.1（装配顺序＝白名单序）、§11.3（失败隔离——selection 的
- * InvalidDescriptor 诚实拒绝不入列）；acc/asm-ui/1 建议级 1。
+ * 入列）、§11.1（装配顺序＝白名单序）、§11.3（失败隔离通道对异常域保持
+ * 在案——六域全 Ok 形态下零失败行）；acc/asm-ui/1 建议级 1。
  *
  * MODULE 不可链的诚实边界（保留 asm-ui 登记形态）：ui_plugin 目标本身
  * 仍不可被测试目标链接（CMake 禁止 executable 链接 MODULE），其
@@ -764,15 +775,14 @@ TEST_F(HostIntegrationContractTest,
 
     // ③三新域经宿主承接 TU 激活（被测面本体——assembleExtraDomains：
     //   门面创建→文案绑定→registerWithHostRegistrar 真实 registrar 传经
-    //   域装配激活路径；selection 预期 InvalidDescriptor 诚实拒绝——
-    //   P-SEL-3/P-PR-9 待所有者裁决面，零 token 改写零本地绕过）。
+    //   域装配激活路径；selection 注册 Ok——RUL-TOK 裁决销案后域侧已把
+    //   ui 命令 id 修订为点分词形，宿主校验序零改动的自然结果）。
     std::vector<std::string> reportLines;
     std::shared_ptr<ui::ExtraDomainAssemblies> extraProducts =
         ui::assembleExtraDomains(bundle, reportLines);
 
-    // ④三新域产物容器在册（装配缺席≠注册拒绝——§11.3 两态分立：三域
-    //   门面均创建成功〔optional 均有值〕，selection 仅登记被宿主权威
-    //   拒绝）。
+    // ④三新域产物容器在册（三域门面均创建成功〔optional 均有值〕——
+    //   装配与注册两态对六域全 Ok 形态一致）。
     ASSERT_NE(extraProducts, nullptr)
         << "承接 TU 返回空容器（装配序违约——非 §11.3 隔离形态）";
     EXPECT_TRUE(extraProducts->dynamics.has_value())
@@ -783,8 +793,8 @@ TEST_F(HostIntegrationContractTest,
         << "optimization 装配产物缺席（§11.3 隔离形态——非本用例预期）";
 
     // ⑤域装配状态面（白名单序三态——statusOf 公共接口消费钉扎）：三新域
-    //   各一态；dynamics/optimization ok、selection ok=false（InvalidDesc
-    //   riptor 的如实承载——不虚构登记成功）；本 bundle 未跑三旧域装配段
+    //   各一态且全 ok（selection 注册 Ok——P-SEL-3 销案兑现，detail 恒
+    //   空＝成功态不携带失败原因）；本 bundle 未跑三旧域装配段
     //   （statuses 仅承接 TU 填充），未登记域键查态＝nullptr（接口的
     //   调用方防御语义）。
     ASSERT_EQ(bundle.statuses.size(), std::size_t{3})
@@ -801,8 +811,11 @@ TEST_F(HostIntegrationContractTest,
     const ui::DomainPluginAssembly::DomainAssemblyStatus* selectionStatus =
         bundle.statusOf("selection");
     ASSERT_NE(selectionStatus, nullptr);
-    EXPECT_FALSE(selectionStatus->ok)
-        << "selection 登记被宿主权威拒绝——ok=false 如实承载（P-SEL-3 待裁决）";
+    EXPECT_TRUE(selectionStatus->ok)
+        << "selection 注册 Ok（RUL-TOK 裁决销案兑现——点分 ui 命令 id 过"
+           "宿主 §7.2 校验；原 InvalidDescriptor 断言的翻转面）";
+    EXPECT_TRUE(selectionStatus->detail.empty())
+        << "成功态不携带失败原因（错误语义归失败态——不混淆）";
     const ui::DomainPluginAssembly::DomainAssemblyStatus* optimizationStatus =
         bundle.statusOf("optimization");
     ASSERT_NE(optimizationStatus, nullptr);
@@ -810,46 +823,56 @@ TEST_F(HostIntegrationContractTest,
     EXPECT_EQ(bundle.statusOf("modeling"), nullptr)
         << "未登记域键查态＝nullptr（调用方防御——不虚构默认态）";
 
-    // ⑥登记表（draft.apply 遍历输入）：仅登记成功的域入表——dynamics/
-    //    optimization 两条（selection 拒绝不入），闭包全空＝无草稿域形态
-    //    （buildDraftCommand 恒 nullopt 的接口面消费——遍历记 NoDraft 行
-    //    零域知识）；module 裸指针与产物容器的存活期链（extraAssemblies
-    //    挂 bundle——本用例断言指针非空即消费面自证）。
-    ASSERT_EQ(bundle.applyEntries.size(), std::size_t{2})
-        << "登记表恰两条（selection 拒绝不入表——§11.3）";
+    // ⑥登记表（draft.apply 遍历输入）：仅登记成功的域入表——三新域全
+    //    Ok 即三条（selection 注册 Ok 后入表；登记序＝白名单序），闭包
+    //    全空＝无草稿域形态（buildDraftCommand 恒 nullopt 的接口面消费
+    //    ——遍历记 NoDraft 行零域知识）；module 裸指针与产物容器的存活
+    //    期链（extraAssemblies 挂 bundle——本用例断言指针非空即消费面
+    //    自证）。
+    ASSERT_EQ(bundle.applyEntries.size(), std::size_t{3})
+        << "登记表恰三条（三新域全 Ok 入表——白名单序）";
     EXPECT_EQ(bundle.applyEntries[0].moduleId, "dynamics");
     EXPECT_NE(bundle.applyEntries[0].module, nullptr);
     EXPECT_FALSE(bundle.applyEntries[0].bindAnchor)
         << "dynamics 无锚闭包（无草稿域——空闭包形态）";
-    EXPECT_EQ(bundle.applyEntries[1].moduleId, "optimization");
+    EXPECT_EQ(bundle.applyEntries[1].moduleId, "selection");
     EXPECT_NE(bundle.applyEntries[1].module, nullptr);
+    EXPECT_FALSE(bundle.applyEntries[1].bindAnchor)
+        << "selection 无锚闭包（无草稿域——空闭包形态）";
     EXPECT_FALSE(bundle.applyEntries[1].onResult)
+        << "selection 无回执闭包（无草稿域——空闭包形态）";
+    EXPECT_EQ(bundle.applyEntries[2].moduleId, "optimization");
+    EXPECT_NE(bundle.applyEntries[2].module, nullptr);
+    EXPECT_FALSE(bundle.applyEntries[2].onResult)
         << "optimization 无回执闭包（无草稿域——空闭包形态）";
 
     // ⑦六域聚合注册快照（本用例的核心聚合断言）：三旧域直注＋三新域经
-    //    承接 TU——六域全尝试，Ok 五条按白名单序入列；selection 的
-    //    InvalidDescriptor 不入列（§10.9"Ok 才入列"）＝§11.3 缺位语义。
+    //    承接 TU——六域全尝试，Ok 六条按白名单序入列（RUL-TOK 裁决销案
+    //    兑现：selection 注册 Ok 入列，聚合快照五 Ok→六 Ok；§10.9"Ok
+    //    才入列"协议不变）。
     const std::vector<ui::PluginAssemblyReport> allReports =
         bundle.registrar->assemblyReports();
-    ASSERT_EQ(allReports.size(), std::size_t{5})
-        << "装配报告恰五条（六域尝试：五 Ok 入列＋selection 诚实拒绝）";
-    const char* const expectedOrder[5] = {
+    ASSERT_EQ(allReports.size(), std::size_t{6})
+        << "装配报告恰六条（六域全尝试全 Ok——白名单序入列）";
+    const char* const expectedOrder[6] = {
         "modeling", "requirements", "kinematics", "dynamics",
-        "optimization"};
-    const std::size_t expectedPanels[5] = {
+        "selection", "optimization"};
+    const std::size_t expectedPanels[6] = {
         modelingDomain.descriptor.panels.size(),
         requirementsDomain.descriptor.panels.size(),
         kinematicsDomain.descriptor.panels.size(),
         extraProducts->dynamics->descriptor.panels.size(),
+        extraProducts->selection->descriptor.panels.size(),
         extraProducts->optimization->descriptor.panels.size()};
-    const std::size_t expectedCommands[5] = {
+    const std::size_t expectedCommands[6] = {
         modelingDomain.descriptor.commands.size(),
         requirementsDomain.descriptor.commands.size(),
         kinematicsDomain.descriptor.commands.size(),
         extraProducts->dynamics->descriptor.commands.size(),
+        extraProducts->selection->descriptor.commands.size(),
         0};  // optimization 描述符无命令字段（诚实缺席——承接 TU 报告行
              // 恒传 0 的同源值；NFR-MNT-04 不预建占位）
-    for (std::size_t i = 0; i < 5; ++i) {
+    for (std::size_t i = 0; i < 6; ++i) {
         EXPECT_EQ(allReports[i].pluginId, expectedOrder[i])
             << "第 " << i << " 行 pluginId（快照序＝白名单注册序）";
         EXPECT_TRUE(allReports[i].ok) << expectedOrder[i] << " 应 ok";
@@ -869,21 +892,22 @@ TEST_F(HostIntegrationContractTest,
     EXPECT_EQ(dynamics::registerWithHostRegistrar(
                   *extraProducts->dynamics, bundle.registrar.get()),
               ui::RegistrationOutcome::DuplicatePlugin);
-    EXPECT_EQ(bundle.registrar->assemblyReports().size(), std::size_t{5})
+    EXPECT_EQ(bundle.registrar->assemblyReports().size(), std::size_t{6})
         << "拒绝注册不增长快照（静态白名单无运行期改写）";
 
-    // ⑨报告行（承接 TU 的 Dev 通道观测面）：逐域恰一行；dynamics/
-    //    optimization 为 ok=1 行；selection 为失败行——携带 §11.3 稳定码
-    //    UI-PLUGIN-ASSEMBLY-FAILED＋InvalidDescriptor 数值明细（诚实失败
-    //    可见面——F-565/566 失败可见面同族纪律）。
+    // ⑨报告行（承接 TU 的 Dev 通道观测面）：逐域恰一行；三新域全为
+    //    ok=1 行（RUL-TOK 裁决销案兑现——selection 报告行从携带
+    //    §11.3 稳定码 UI-PLUGIN-ASSEMBLY-FAILED 的失败行翻转为 ok 形
+    //    态；失败隔离通道对异常域保持在案，六域全 Ok 形态零失败行）。
     ASSERT_EQ(reportLines.size(), std::size_t{3})
         << "承接 TU 报告行恰三条（三新域逐域一行）";
     EXPECT_NE(reportLines[0].find("plugin=dynamics ok=1"), std::string::npos)
         << "dynamics 报告行应为 ok 形态";
-    EXPECT_NE(reportLines[1].find("plugin=selection"), std::string::npos);
-    EXPECT_NE(reportLines[1].find("UI-PLUGIN-ASSEMBLY-FAILED"),
+    EXPECT_NE(reportLines[1].find("plugin=selection ok=1"), std::string::npos)
+        << "selection 报告行应为 ok 形态（P-SEL-3 销案兑现翻转面）";
+    EXPECT_EQ(reportLines[1].find("UI-PLUGIN-ASSEMBLY-FAILED"),
               std::string::npos)
-        << "selection 报告行应携带 §11.3 失败稳定码（诚实钉扎的可观测面）";
+        << "selection 报告行零失败稳定码（六域全 Ok——失败行通道不触发）";
     EXPECT_NE(reportLines[2].find("plugin=optimization ok=1"),
               std::string::npos)
         << "optimization 报告行应为 ok 形态";

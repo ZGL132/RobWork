@@ -17,13 +17,16 @@ std::vector<SelCommandDescriptor> selDomainCommands()
 {
     // 一条描述符（回填入口——§16 T10 行；本域零会话命令，与 dynamics
     // 五会话命令的差异登记于 SelCommandDescriptor 类型注）。
-    // 标题键按 ui.md §3.5 键族程序化派生："cmd." + <token> + ".title"
-    // ——派生规则单一、零字面复制（token 改名时键随词表联动，不会
-    // 出现键与 token 漂移；词表改动本身即跨版本契约变更，必须走单元
-    // 卡增量修订——自持常量注）。
+    // token 承载回填命令的 ui 命令 id（点分 selection.apply-device-
+    // backfill——RUL-TOK 批词形修订；翻译 id＝token 逐字、宿主 §7.2
+    // 句法校验自然过验）。标题键按 ui.md §3.5 键族程序化派生："cmd."
+    // + <ui 命令 id> + ".title"——派生规则单一、零字面复制（id 改名
+    // 时键随词表联动，不会出现键与 id 漂移；词形改动本身即跨版本契
+    // 约变更，必须走单元卡增量修订——先例 modeling cmd.modeling.*.
+    // title 十键同构）。
     std::vector<SelCommandDescriptor> commands;
     SelCommandDescriptor descriptor;
-    descriptor.token = std::string(kSelBackfillCommandToken);
+    descriptor.token = std::string(kSelBackfillUiCommandId);
     descriptor.titleKey = "cmd." + descriptor.token + ".title";
     commands.push_back(std::move(descriptor));
     return commands;

@@ -26,8 +26,8 @@
 #include <vector>
 
 #include "SelPanelModule.hpp"  // 模块（缝/会话态——构造入参完整型）
-#include "SelPanelCommandCatalog.hpp" // kSelBackfillCommandToken（回填提交
-                                      //   词表——自持常量唯一书写点）
+#include "SelPanelCommandCatalog.hpp" // kSelBackfillUiCommandId（回填命令
+                                      //   ui 命令 id——点分词形唯一书写点）
 
 namespace sdurws::ird::selection {
 namespace {
@@ -165,7 +165,10 @@ void SelCatalogPanelWidget::submitBackfillCommand()
 {
     // 模型层 L-S4 提交流（空缝/不可用拒绝在模型层三态归一——面板零
     // 本地判定）；提交后整面刷新（最近提交清单随会话缓冲更新）。
-    const std::string token(kSelBackfillCommandToken);
+    // 意图 token＝回填命令的 ui 命令 id（点分词形——与登记目录/宿主
+    // 命令注册表同词面；真实 project 命令信封组装归宿主提交缝，
+    // commandType 无点词形在彼侧换轨——插件零事务知识）。
+    const std::string token(kSelBackfillUiCommandId);
     submitBackfill(m_module.session, m_module.services, token);
     refreshFromSession();
 }
@@ -438,9 +441,13 @@ void SelCatalogPanelWidget::refreshFromSession()
     m_recentEdit->setPlainText(recent);
 
     // ---- 回填按钮文本与可用性（可用性权威在宿主缝——空缝按可用
-    //      呈现，点击时经 L-S4 空缝语义如实反馈）。 --------------------
-    m_backfillButton->setText(panelText("cmd.apply-device-backfill.title"));
-    const std::string token(kSelBackfillCommandToken);
+    //      呈现，点击时经 L-S4 空缝语义如实反馈）。标题键按 §3.5 键族
+    //      从 ui 命令 id 程序化派生（与登记目录单一书写点同源——零
+    //      字面复制，词形修订时随常量联动）。
+    m_backfillButton->setText(panelText("cmd."
+                                        + std::string(kSelBackfillUiCommandId)
+                                        + ".title"));
+    const std::string token(kSelBackfillUiCommandId);
     const bool available =
         !static_cast<bool>(m_module.services.backfillAvailability)
         || m_module.services.backfillAvailability(token);

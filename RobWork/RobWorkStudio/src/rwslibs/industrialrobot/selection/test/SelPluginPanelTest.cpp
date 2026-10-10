@@ -51,7 +51,7 @@
 using namespace sdurws::ird::selection;
 
 // 模型层流与词表（被测主面——具名引入，与被测头同一命名空间可读性）。
-using sdurws::ird::selection::kSelBackfillCommandToken;
+using sdurws::ird::selection::kSelBackfillUiCommandId;
 using sdurws::ird::selection::kSelVerdictKeyDataInsufficient;
 using sdurws::ird::selection::kSelVerdictKeyFeasible;
 using sdurws::ird::selection::kSelVerdictKeyRejected;
@@ -215,7 +215,7 @@ TEST(SelPanelWorkflow, BackfillSubmitAcceptsAndRecordsNotice_WP19T10_ACC1)
 
     const SelBackfillRecord record =
         submitBackfill(module.session, services,
-                       std::string(kSelBackfillCommandToken));
+                       std::string(kSelBackfillUiCommandId));
     EXPECT_TRUE(record.accepted) << "空可用性缝＋有出口缝＝按可用受理";
     EXPECT_EQ(submitCount, 1) << "提交出口恰被调一次（token→宿主管线）";
     EXPECT_TRUE(record.rejectionKey.empty()) << "受理行零拒绝键";
@@ -230,7 +230,7 @@ TEST(SelPanelWorkflow, BackfillSubmitAcceptsAndRecordsNotice_WP19T10_ACC1)
     // 会话记录追加（呈现史——token 逐字）。
     ASSERT_FALSE(module.session.recentBackfills.empty());
     EXPECT_EQ(module.session.recentBackfills.back().commandToken,
-              std::string(kSelBackfillCommandToken));
+              std::string(kSelBackfillUiCommandId));
     EXPECT_EQ(module.session.recentBackfills.size(), 1u);
 }
 
@@ -248,7 +248,7 @@ TEST(SelPanelWorkflow, BackfillSubmitRejectsAndTruncatesRecordBuffer_WP19T10_ACC
     SelPanelServices bare;
     const SelBackfillRecord missing =
         submitBackfill(module.session, bare,
-                       std::string(kSelBackfillCommandToken));
+                       std::string(kSelBackfillUiCommandId));
     EXPECT_FALSE(missing.accepted);
     EXPECT_EQ(missing.rejectionKey, "backfill-outlet-missing");
     EXPECT_FALSE(missing.notice.retainPriorConclusion)
@@ -262,7 +262,7 @@ TEST(SelPanelWorkflow, BackfillSubmitRejectsAndTruncatesRecordBuffer_WP19T10_ACC
     gated.backfillAvailability = [](const std::string&) { return false; };
     const SelBackfillRecord unavailable =
         submitBackfill(module.session, gated,
-                       std::string(kSelBackfillCommandToken));
+                       std::string(kSelBackfillUiCommandId));
     EXPECT_FALSE(unavailable.accepted);
     EXPECT_EQ(unavailable.rejectionKey, "backfill-unavailable");
     EXPECT_EQ(submitCount, 0) << "不可用拦截在出口缝之前（零提交调用）";
@@ -272,7 +272,7 @@ TEST(SelPanelWorkflow, BackfillSubmitRejectsAndTruncatesRecordBuffer_WP19T10_ACC
     ok.backfillSubmit = [](const std::string&) {};
     for (int i = 0; i < 12; ++i) {
         submitBackfill(module.session, ok,
-                       std::string(kSelBackfillCommandToken));
+                       std::string(kSelBackfillUiCommandId));
     }
     EXPECT_EQ(module.session.recentBackfills.size(),
               sdurws::ird::selection::kSelBackfillRecordCapacity);
@@ -473,9 +473,9 @@ TEST(SelPanelAssembly, DescriptorRegistrationValues_WP19T10_ACC1)
     // 命令登记面（恰一条——回填入口；token 自持常量＋键族派生）。
     ASSERT_EQ(bundle.descriptor.commands.size(), 1u);
     EXPECT_EQ(bundle.descriptor.commands[0].token,
-              std::string(kSelBackfillCommandToken));
+              std::string(kSelBackfillUiCommandId));
     EXPECT_EQ(bundle.descriptor.commands[0].titleKey,
-              "cmd.apply-device-backfill.title");
+              "cmd.selection.apply-device-backfill.title");
     // 面板登记面（恰一条主面板——advanced=false；工厂闭包可调用形态）。
     ASSERT_EQ(bundle.descriptor.panels.size(), 1u);
     EXPECT_EQ(bundle.descriptor.panels[0].stageToken, "selection");
@@ -516,7 +516,7 @@ TEST(SelPanelAssembly, AssemblyBindsDriveModuleServices_WP19T10_ACC1)
     bundle.setServices(services);
     bundle.bindBackfillAvailability(
         [](const std::string& token) {
-            return token == std::string(kSelBackfillCommandToken);
+            return token == std::string(kSelBackfillUiCommandId);
         });
     bundle.bindTextResolver(
         [](const std::string& key) { return "覆盖:" + key; });
@@ -524,14 +524,14 @@ TEST(SelPanelAssembly, AssemblyBindsDriveModuleServices_WP19T10_ACC1)
     ASSERT_TRUE(static_cast<bool>(bundle.module()->services.backfillSubmit));
     ASSERT_TRUE(static_cast<bool>(bundle.module()->services.textResolver));
     bundle.module()->services.backfillSubmit(
-        std::string(kSelBackfillCommandToken));
+        std::string(kSelBackfillUiCommandId));
     EXPECT_EQ(submitCount, 1) << "提交缝经 bind 转发生效";
     EXPECT_EQ(bundle.module()->services.textResolver("k"), "覆盖:k")
         << "后绑定覆盖整体注入（bind 语义）";
     ASSERT_TRUE(
         static_cast<bool>(bundle.module()->services.backfillAvailability));
     EXPECT_TRUE(bundle.module()->services.backfillAvailability(
-        std::string(kSelBackfillCommandToken)));
+        std::string(kSelBackfillUiCommandId)));
     EXPECT_FALSE(bundle.module()->services.backfillAvailability("other"));
 
     // 会话刷新（面板未创建＝空操作——不崩溃）。
@@ -549,8 +549,8 @@ TEST(SelPanelAssembly, CommandCatalogMatchesDescriptor_WP19T10_ACC1)
 
     const std::vector<SelCommandDescriptor> commands = selDomainCommands();
     ASSERT_EQ(commands.size(), 1u) << "本域零会话命令——回填入口恰一条";
-    EXPECT_EQ(commands[0].token, std::string(kSelBackfillCommandToken));
-    EXPECT_EQ(commands[0].titleKey, "cmd.apply-device-backfill.title");
+    EXPECT_EQ(commands[0].token, std::string(kSelBackfillUiCommandId));
+    EXPECT_EQ(commands[0].titleKey, "cmd.selection.apply-device-backfill.title");
     // 域注册键便利形态（与投影行 domainKey 对账——宿主汇聚锚）。
     EXPECT_EQ(selReadinessDomainKey(), "selection");
 }
@@ -584,9 +584,9 @@ TEST(SelPanelText, ResolveTextFallsBackAndGuardsDigestLeak_WP19T10_ACC1)
     // 空缝→键名兜底（开发态可见缺口——dynamics 同纪律）。
     SelPanelServices bare;
     fellBack = false;
-    EXPECT_EQ(resolvePanelText(bare, "cmd.apply-device-backfill.title",
+    EXPECT_EQ(resolvePanelText(bare, "cmd.selection.apply-device-backfill.title",
                                &fellBack),
-              "cmd.apply-device-backfill.title");
+              "cmd.selection.apply-device-backfill.title");
     EXPECT_TRUE(fellBack);
 
     // 解析结果哈希形态→回退键名（泄漏守卫）。
