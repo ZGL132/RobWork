@@ -43,6 +43,16 @@
       "resolution": "随后续单元落位任务评估目标级 CMAKE_AUTOMOC OFF 的构建收益（NFR-MNT-01 语义下倾向显式关闭）；涉及框架构建面时按 SA-02 先登记后改。"
     },
     {
+      "id": "F-463",
+      "source": "UI-T41 批次A 收尾门禁核查（2026-10-03）——gate-all.ps1 -QtPrefix 通道 ird_gates 项 FAIL；基线归因实测：checkout 基点 295d60e0 的本批改动路径后 ird_gates 目标仍 FATAL 命中 98 处，先于本批存在",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-03",
+      "title": "ird_gates cmake 目标在 redesign-main 现况命中 98 处恒 FATAL（gate-all 通道恒红）——与验收通道『ird_gates 引擎直跑＋归一化比对零新增』口径分叉：命中集含 kinematics->ui〔sdurws_ird_kinematics_plugin〕等已按 DTB §4.5 登记的许可边与测试目标同单元链接行，cmake 通道未消费该登记口径",
+      "owner": "治理会话（WP-01-T03 门禁白名单/引擎口径统一裁决）",
+      "resolution": "UI-T41 实测归因：基点 295d60e0 即 98 命中（本批改动路径 checkout 后复跑），本批曾新增第 99 处（modeling_test→sdurws_ird_ui）已随后续提交回退归零——本批净增零命中。修复方向：cmake 通道消费 DTB §4.5 登记许可集或补齐白名单文件与 dependency-graph.json 的一致性。"
+    },
+    {
       "id": "F-005",
       "source": "units/core.md 文末（本次 v1.3 治理修复中发现）",
       "severity": "suggestion",
@@ -4463,6 +4473,16 @@
       "resolution": "送验/自查统一主树全量构建口径，或排查前先全量追平主树。编号顺延自 F-447。"
     },
     {
+      "id": "F-459",
+      "source": "UI-T38 验收 attempt 1（2026-10-02——冷构建树首跑 sdurws_ird_studio.exe 报 0xC0000135）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-02",
+      "title": "冷构建树（独立 configure 的集成树）产出的 studio 运行时缺 DLL 前置：需追加主构建树各 bin（RobWork/RobWorkSim/RobWorkStudio 的 bin+libs）到 PATH 才可启动——F-007（配置期 toolchain/Qt 前缀）/F-009（gate-all 非主树环境）同族的运行时半区；主树增量运行不受影响，验收复现配方已按此规避（acc-smoke 驱动内联主树 bin 兜底）。",
+      "owner": "构建脚本/交付侧（候选：ui CMakeLists 运行时 DLL 汇集或验收驱动模板固化 PATH 配方）",
+      "resolution": "建议与 F-007 一并治理（冷树配方文档化或 CMake 侧运行时自包含）；编号为收尾合并预留（evidence 分支基点编号止于 F-448），落库于 UI-T38 合入收尾提交。"
+    },
+    {
       "id": "F-449",
       "source": "所有者 2026-10-01 界面任务书（UI-T36 立项承接——图 1/图 2 截证的窗口缩放/切换期 z-order 错乱与遮挡穿透指控）",
       "severity": "suggestion",
@@ -4568,16 +4588,6 @@
       "resolution": "随遍历批次提交闭环（tour-6 步向导段＋gui 32/32 回归）；验收记录 attempt5 的 acceptance 4 向导项由注入缝承载的口径以此勘误——宿主形态行为随本批补齐。编号顺延自 F-457。"
     },
     {
-      "id": "F-459",
-      "source": "UI-T38 验收 attempt 1（2026-10-02——冷构建树首跑 sdurws_ird_studio.exe 报 0xC0000135）",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-10-02",
-      "title": "冷构建树（独立 configure 的集成树）产出的 studio 运行时缺 DLL 前置：需追加主构建树各 bin（RobWork/RobWorkSim/RobWorkStudio 的 bin+libs）到 PATH 才可启动——F-007（配置期 toolchain/Qt 前缀）/F-009（gate-all 非主树环境）同族的运行时半区；主树增量运行不受影响，验收复现配方已按此规避（acc-smoke 驱动内联主树 bin 兜底）。",
-      "owner": "构建脚本/交付侧（候选：ui CMakeLists 运行时 DLL 汇集或验收驱动模板固化 PATH 配方）",
-      "resolution": "建议与 F-007 一并治理（冷树配方文档化或 CMake 侧运行时自包含）；编号为收尾合并预留（evidence 分支基点编号止于 F-448），落库于 UI-T38 合入收尾提交。"
-    },
-    {
       "id": "F-460",
       "source": "UI-T39 审核返工轮（2026-10-02——生产装配注册需求域命令处理器后首次真实 committed，requirements-tour step9 二连应用探针暴露）",
       "severity": "blocking",
@@ -4607,16 +4617,6 @@
       "title": "WritableSwitchRefreshesAll_UI_T39 用例对『setWritable 不再全量刷新生命周期按钮』的变异不敏感：使能断言疑似被空态互斥显隐等其他呈现路径掩盖——setWritable 全量刷新契约（L-R12 切换后按钮态零残留）缺一记直接红验的强断言。",
       "owner": "requirements gui 测试（UI-T40 序列候选：拆分生命周期刷新为可独立驱动面或补『使能位直接受 setWritable 驱动』的强断言——变异记录见 acc/ui-t39/1 验收记录 4.5 节）",
       "resolution": "验收发现转登（ACC §5 v1.2 建议级强制闭环）；不阻塞 UI-T39 合入。编号顺延自 F-461。"
-    },
-    {
-      "id": "F-463",
-      "source": "UI-T41 批次A 收尾门禁核查（2026-10-03）——gate-all.ps1 -QtPrefix 通道 ird_gates 项 FAIL；基线归因实测：checkout 基点 295d60e0 的本批改动路径后 ird_gates 目标仍 FATAL 命中 98 处，先于本批存在",
-      "severity": "major",
-      "status": "open",
-      "registeredAt": "2026-10-03",
-      "title": "ird_gates cmake 目标在 redesign-main 现况命中 98 处恒 FATAL（gate-all 通道恒红）——与验收通道『ird_gates 引擎直跑＋归一化比对零新增』口径分叉：命中集含 kinematics->ui〔sdurws_ird_kinematics_plugin〕等已按 DTB §4.5 登记的许可边与测试目标同单元链接行，cmake 通道未消费该登记口径",
-      "owner": "治理会话（WP-01-T03 门禁白名单/引擎口径统一裁决）",
-      "resolution": "UI-T41 实测归因：基点 295d60e0 即 98 命中（本批改动路径 checkout 后复跑），本批曾新增第 99 处（modeling_test→sdurws_ird_ui）已随后续提交回退归零——本批净增零命中。修复方向：cmake 通道消费 DTB §4.5 登记许可集或补齐白名单文件与 dependency-graph.json 的一致性。"
     },
     {
       "id": "F-464",
@@ -4923,6 +4923,62 @@
       "resolution": "UI-T52 合入段治理提交随批修复闭环（2026-10-04）。"
     },
     {
+      "id": "F-503",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-1（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 契约 allowedFiles 与 outputs 不一致：附带修复文件 requirements/plugin/RequirementsCommandFlows.cpp 按 outputs 第 8 条登记但字面越出 allowedFiles（允许面仅 modeling/**＋文档链）；验收实测改动与登记逐字一致（一处呈现辅助＋include、语义零变化）——登记滞后非越权改动。后续契约卡 allowedFiles 应把 outputs 登记的附带修复面同步入列（或在契约模板注明附带修复的登记路径）。",
+      "owner": "治理侧（契约模板口径澄清；UI-T53 已合入不追改）"
+    },
+    {
+      "id": "F-504",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-2（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 契约 allowedFiles 未列契约自身路径（tasks/foundation/UI-T53.json——验收请求前置补 acceptance 数组的提交触及自身）；UI-T50 先例卡含自身路径。后续契约卡模板统一补列自身路径。",
+      "owner": "治理侧（契约模板口径）"
+    },
+    {
+      "id": "F-505",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-3（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-04",
+      "title": "F-480 同族修复已落库待消账登记：requirements/plugin/RequirementsCommandFlows.cpp 的 rw::math::RPY 外联符号（UI-T33 引入——requirements_test/gui_test 独立冒烟链接失败 LNK2019）经 UI-T53 附带修复换 rotationToRpyPresentation 逐元素反解；本条为该修复的消账登记锚（原缺陷未单独立条，故本条兼作发现登记＋修复闭环记录）。",
+      "owner": "已随 UI-T53 修复（requirements 冒烟链接实证恢复）；本条目闭合该发现",
+      "resolution": "UI-T53 附带修复闭环（2026-10-04 合入——acc/ui-t53/1 验收 4.2 冒烟段实证）。"
+    },
+    {
+      "id": "F-506",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-4（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 第二提交（任务卡补 acceptance）正文中 requirements 测试行数字错置（test 写 42 实测 201 含 1skip、gui 写 16 实测 42——两数字互错位）；方向一致无失败掩盖、非粉饰（验收 4.9 判定 pass 附本条）。教训：提交正文的套件数字应在发送前对照当次运行输出逐一复核。",
+      "owner": "已随本条登记（错置随已推送提交不可改写——协议 §6.3 禁改写已推送历史；教训条目即处置）"
+    },
+    {
+      "id": "F-507",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-5（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 实施留痕 ird_gates 口径偏差：builds/ui-t53/README 与 DTB 行记\"75 条\"（暖构建树欠计数）且 ird-gates-hits 留痕存在中文编码截断损坏（45 行串行）；验收者以全新配置 worktree 独立双侧复跑实测 base/head 各 101 项（SUB 54/R3 30/R1 6/LIB 6/T1 4/R4 1）多重集全等——零新增结论不受影响，但留痕数字与实测口径不符。教训：ird_gates 留痕须以全新（或至少同状态）配置树双侧复跑为准，且 hits 导出须经编码归一（UTF-8 显式）。",
+      "owner": "留痕文件保持原样（验收记录已含实测口径与比对文件）；本条登记口径教训",
+      "resolution": "验收者独立复跑结论（101/101 全等）已载 acc/ui-t53/1@bb0cc913，作为 UI-T53 门禁项的权威证据（2026-10-04）。"
+    },
+    {
+      "id": "F-508",
+      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-6（UI-T53 独立子会话对抗式验收 2026-10-04）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-04",
+      "title": "UI-T53 实施留痕 gtest XML 落盘覆盖面窄于先例（仅 modeling_test/gui 两套件——T48 先例为受影响套件全量落盘；首次落盘时 --gtest_output 相对路径误写致 XML 缺失，补跑仅覆盖两套件）；验收复现已补齐该面。后续任务留痕：受影响套件 XML 全量落盘为留痕完成判据。",
+      "owner": "验收侧已补（acc/ui-t53/1 记录）；本条登记留痕口径教训"
+    },
+    {
       "id": "F-494",
       "source": "traceability/reviews/owner-review-20261004-ui-gaps.md#R-1",
       "severity": "blocking",
@@ -5010,62 +5066,6 @@
       "owner": "已随 2026-10-04 呈现批次①闭环（建模卡 v0.33）：低频诊断六命令收进『更多操作』折叠区（默认收起——压缩纵向长度；命令集合/id/使能逻辑零变化；复位 Home/Zero 常驻常用层）＋六轴重置确认分段知情文案（逐项列替换/清空面＋项目历史语义＋草稿期无撤销栈如实告知，默认按钮保持『否』）",
       "resolution": "呈现批次①提交（2026-10-04）：modeling_gui 18/18（新增 MoreActionsCollapse_DefaultCollapsedAndToggle_F502）＋modeling_test 322 全绿；语义零变化。",
       "fixedAt": "2026-10-04"
-    },
-    {
-      "id": "F-503",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-1（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "fixed",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 契约 allowedFiles 与 outputs 不一致：附带修复文件 requirements/plugin/RequirementsCommandFlows.cpp 按 outputs 第 8 条登记但字面越出 allowedFiles（允许面仅 modeling/**＋文档链）；验收实测改动与登记逐字一致（一处呈现辅助＋include、语义零变化）——登记滞后非越权改动。后续契约卡 allowedFiles 应把 outputs 登记的附带修复面同步入列（或在契约模板注明附带修复的登记路径）。",
-      "owner": "治理侧（契约模板口径澄清；UI-T53 已合入不追改）"
-    },
-    {
-      "id": "F-504",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-2（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "fixed",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 契约 allowedFiles 未列契约自身路径（tasks/foundation/UI-T53.json——验收请求前置补 acceptance 数组的提交触及自身）；UI-T50 先例卡含自身路径。后续契约卡模板统一补列自身路径。",
-      "owner": "治理侧（契约模板口径）"
-    },
-    {
-      "id": "F-505",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-3（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "closed",
-      "registeredAt": "2026-10-04",
-      "title": "F-480 同族修复已落库待消账登记：requirements/plugin/RequirementsCommandFlows.cpp 的 rw::math::RPY 外联符号（UI-T33 引入——requirements_test/gui_test 独立冒烟链接失败 LNK2019）经 UI-T53 附带修复换 rotationToRpyPresentation 逐元素反解；本条为该修复的消账登记锚（原缺陷未单独立条，故本条兼作发现登记＋修复闭环记录）。",
-      "owner": "已随 UI-T53 修复（requirements 冒烟链接实证恢复）；本条目闭合该发现",
-      "resolution": "UI-T53 附带修复闭环（2026-10-04 合入——acc/ui-t53/1 验收 4.2 冒烟段实证）。"
-    },
-    {
-      "id": "F-506",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-4（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 第二提交（任务卡补 acceptance）正文中 requirements 测试行数字错置（test 写 42 实测 201 含 1skip、gui 写 16 实测 42——两数字互错位）；方向一致无失败掩盖、非粉饰（验收 4.9 判定 pass 附本条）。教训：提交正文的套件数字应在发送前对照当次运行输出逐一复核。",
-      "owner": "已随本条登记（错置随已推送提交不可改写——协议 §6.3 禁改写已推送历史；教训条目即处置）"
-    },
-    {
-      "id": "F-507",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-5（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 实施留痕 ird_gates 口径偏差：builds/ui-t53/README 与 DTB 行记\"75 条\"（暖构建树欠计数）且 ird-gates-hits 留痕存在中文编码截断损坏（45 行串行）；验收者以全新配置 worktree 独立双侧复跑实测 base/head 各 101 项（SUB 54/R3 30/R1 6/LIB 6/T1 4/R4 1）多重集全等——零新增结论不受影响，但留痕数字与实测口径不符。教训：ird_gates 留痕须以全新（或至少同状态）配置树双侧复跑为准，且 hits 导出须经编码归一（UTF-8 显式）。",
-      "owner": "留痕文件保持原样（验收记录已含实测口径与比对文件）；本条登记口径教训",
-      "resolution": "验收者独立复跑结论（101/101 全等）已载 acc/ui-t53/1@bb0cc913，作为 UI-T53 门禁项的权威证据（2026-10-04）。"
-    },
-    {
-      "id": "F-508",
-      "source": "acc/ui-t53/1@bb0cc913 验收记录 S-6（UI-T53 独立子会话对抗式验收 2026-10-04）",
-      "severity": "suggestion",
-      "status": "open",
-      "registeredAt": "2026-10-04",
-      "title": "UI-T53 实施留痕 gtest XML 落盘覆盖面窄于先例（仅 modeling_test/gui 两套件——T48 先例为受影响套件全量落盘；首次落盘时 --gtest_output 相对路径误写致 XML 缺失，补跑仅覆盖两套件）；验收复现已补齐该面。后续任务留痕：受影响套件 XML 全量落盘为留痕完成判据。",
-      "owner": "验收侧已补（acc/ui-t53/1 记录）；本条登记留痕口径教训"
     },
     {
       "id": "F-509",
@@ -5445,7 +5445,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）；【2026-10-08 修复落地（UI-T76——②工位标记/区域框会话预览链排查）】三处根因修复：①宿主世界帧名映射 World→WORLD（RobWork 根帧实名＝StateStructure FixedFrame「WORLD」，WorkCell::findFrame 仅对全大写特判返回根帧——混合大小写查找恒落空＝标记全数跳过/区域框「参考系不可解析」的直接原因）；②渲染后端增会话预览锚（宿主无发布 WorkCell 时装仅含根帧的场景层锚 WC「ird-session-preview」——studio 模型层零触碰不扰发布链 INV-B4 单入口；场景挂接 API 无 WC 即抛异常＝框架硬约束，「无锚不画」此前使草稿期三维恒空白）；③区域 World 引用系恒等直投（角点/格线本即世界系坐标，不经宿主帧解析）。修复后增工位/区域的三维标记/框/格在首应用前即可见；待所有者宿主复验后翻转 fixed。模型几何渲染与 ray-cast 拾取仍归 WP-10-T05（未实施——本修复不覆盖）",
-      "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）"
+      "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）；【2026-10-08 修复落地（UI-T77——三维预览专项：发布后模型骨架呈现）】挂接点＝HostWorkCellPresentationObject::apply（发布链宿主单入口 setWorkCell 之后的呈现半区）：编译产物 WC 装入宿主后，按帧树/SerialDevice 挂「ird-model-skeleton-」组——①全帧小轴阵（0.12 m，WORLD 根帧除外）②每台 SerialDevice 基座→关节→末端连杆链线（DeviceChainRender 挂基座、按 info._state 实时 worldT 取位姿——关节运动链形即时跟随）③设备基座/末端 Qt 纹理化标签（F-556 承载件复用）。**边界如实登记＝本交付是骨架示意（帧结构/运动链可视化，使发布后模型三维可见），真实网格几何渲染（visual/collision mesh）仍归 WP-10-T05 资源链**——建模域 GeometryRef 只存引用＋resourceManifest 本体（io 字节读取已就位、mesh 解析加载器/GeometryRef.localTransform 编译域透传/S6 挂接/L5 装配四段缺口），且当前模板模型 resourceManifest 为空（mesh 数据面不存在——骨架呈现与资源链互不依赖）。生命周期＝drawable 挂发布 WC 场景节点，setWorkCell 换 WC 随旧节点树整体收口（零残留零清理名单）；onSceneCleared 既有收口不受影响。待所有者宿主复验（应用草稿后三维应出现模型骨架——轴/链线/标签，关节示教时链形跟随）后翻转 fixed"
     },
     {
       "id": "F-551",
@@ -5487,19 +5487,21 @@
       "id": "F-555",
       "source": "F-496 十步人工验收所有者执行实录（2026-10-08——工位坐标改 0.5/0.5 后三维标记仍渲染在坐标原点；契约面核对实锤）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-08",
       "title": "工位三维标记恒渲染于参考系原点——标记投影契约不携带位置数据：StationMarkerProjection={label,refFrame}（无 position 字段）、View3DFrameMarker={label,frameName}（同无）——后端只能把坐标轴挂到参考系帧上（World 根帧＝原点），工位坐标（站点要素本体）在三维投影链全程丢失。UI-T33 标记设计＝「参考系指示器」形态，未承载「带坐标的点位」语义——工位作为空间点位的要素在三维不可辨",
-      "owner": "三维预览批次（契约表尾追加 position 字段〔UI-T65 tint 同款追加纪律〕＋requirements 投影补位＋后端按 参考帧×位置 放置坐标轴；与 F-550 模型渲染/F-556 标签CJK 同属三维预览专项簇）〔所有者预裁决 2026-10-09：双实现归一——ui-t77 合流 redesign-main 时以 ui-t77 版 8597c135 为准，audit-p1a-fixes 上误落的 1a9b5523 实现随之弃用（acc/audit-p0-p1d/1 合并提交 438986b2 说明已登记）；本条状态翻转随 ui-t77 合流批次办理〕"
+      "owner": "三维预览批次（契约表尾追加 position 字段〔UI-T65 tint 同款追加纪律〕＋requirements 投影补位＋后端按 参考帧×位置 放置坐标轴；与 F-550 模型渲染/F-556 标签CJK 同属三维预览专项簇）〔所有者预裁决 2026-10-09：双实现归一——ui-t77 合流 redesign-main 时以 ui-t77 版 8597c135 为准，audit-p1a-fixes 上误落的 1a9b5523 实现随之弃用（acc/audit-p0-p1d/1 合并提交 438986b2 说明已登记）；本条状态翻转随 ui-t77 合流批次办理〕；【2026-10-08 修复落地（UI-T77——三维预览专项集中修改）】五层纵贯补齐：①契约 View3DFrameMarker 表尾追加 optional position（**世界系** m——契约头注「投影方负责参考系变换」既有约定，区域框角点同款纪律；nullopt＝挂帧指示器旧语义零破坏）；②面板 StationMarkerProjection 表尾追加 position（TaskPoint.pose.position 四态 tryValue——缺失不转零）；③门面 StationMarkerView 同构直转；④宿主投影绑定（UiPlugin）World 恒等直投/对象引用系 findFrame＋worldTframe 变换（帧不可解析＝position 置空诚实降级回落挂帧形态）；⑤渲染后端 position 形态＝自绘 StationMarkerRender（三轴＋Qt 文本标签一体）挂 WORLD 根帧渲染于世界系点位。测试：View3DPreviewContract 追加纪律钉住＋RequirementsView3DFlow 投影链用例（Provided 透传/NotProvided nullopt/禁用过滤），ui_test 255＋requirements_gui 46＋requirements_test 200＋requirements_contract 16 全绿。待所有者宿主复验（工位坐标改 0.5/0.5 后标记应渲染于该点而非原点）后翻转 fixed",
+      "fixedAt": "2026-10-10"
     },
     {
       "id": "F-556",
       "source": "F-496 十步人工验收所有者执行实录（2026-10-08——工位标记标签中文显示乱码）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-08",
       "title": "工位标记标签中文乱码——rwlibs::opengl::RenderText 用 GLUT 位图字体渲染（freeglut bitmap 字体仅 ASCII 位图集，无 CJK 字形），UTF-8 工位名（如「工位」）按字节映射拉丁字形即乱码。框架级限制（2009 年代 RobWork 件，无 Unicode 支持）——非本产品代码缺陷；CJK 标签需换非 GLUT 文本承载（Qt 纹理化文本/三维投影二维覆盖标签两方向）",
-      "owner": "三维预览批次所有者裁决（三选一：①ASCII 回退标签〔工位→Station-N，零中文——UX 让步〕；②Qt 纹理化文本 Render 替代件〔工作量大——GL 纹理＋unicode 排版〕；③三维投影二维覆盖标签〔宿主层 QLabel 覆盖——每帧位置同步成本〕）〔所有者预裁决 2026-10-09：同 F-555——以 ui-t77 版 8597c135 为准，1a9b5523 随之弃用〕"
+      "owner": "三维预览批次所有者裁决（三选一：①ASCII 回退标签〔工位→Station-N，零中文——UX 让步〕；②Qt 纹理化文本 Render 替代件〔工作量大——GL 纹理＋unicode 排版〕；③三维投影二维覆盖标签〔宿主层 QLabel 覆盖——每帧位置同步成本〕）〔所有者预裁决 2026-10-09：同 F-555——以 ui-t77 版 8597c135 为准，1a9b5523 随之弃用〕；【2026-10-08 修复落地（UI-T77）——裁决选方案②】新件 QtTextBillboard/QtTextBillboardRender（ui/plugin 共享承载——QImage＋QPainter 离屏排版〔QFont 默认应用字体，Windows 下 CJK 字形经系统字体回退；QString UTF-8 原生解码〕→GL 纹理〔进程级缓存＋上下文更换防御〕→面向相机四边形〔billboard 手法仿框架 RenderText〕；标签色经 UiTheme kMarkerLabel 词表单一供色点）。替代范围＝会话预览两形态标签（挂帧形态 QtTextBillboardRender 替换 RenderText 用法＋点值形态 StationMarkerRender 内嵌）＋发布模型骨架标签（F-550）——产品代码 RenderText 用法清零；框架件本体不动（SA-02）。字色＝工程蓝词表值。待所有者宿主复验（中文工位名标签应正常显示）后翻转 fixed",
+      "fixedAt": "2026-10-10"
     },
     {
       "id": "F-557",
@@ -5509,6 +5511,114 @@
       "registeredAt": "2026-10-08",
       "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
       "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
+    },
+    {
+      "id": "F-558",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——所有者指令『查找是否还有这种 bug』；RequirementsView3DFlowTest gui 用例手工绑缝故测试通过、产品装配序实证）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "requirements.pick-feature 的会话闭包引用缝在产品装配序下恒为空——assembleView3DGateway（initialize 装配段，进程启动拍，产品全文件唯一 bindView3DSeams 调用点）执行时任何项目均未打开、m_lastStoreAdapter 恒空，seams.sessionClosureRefs 保持缺省空 function 且此后无任何再绑定点（wireRequirementsSession 重导线的是面板就绪上下文、不触三维缝）——RequirementsCommandFlows 拾取流 if(view3d->sessionClosureRefs) 恒 false→CheckContext.closureRefs 空→域闭包核对恒 miss→拾取写回 100% 被误判「悬空」拒绝。F-554 空闭包家族第六处（前三层修复的 currentRequirementsCheckContext 不覆盖此缝）；F-550③ 骨架呈现让场景出现可拾取 drawable 后，该流从结构性不可达变为可达即踩",
+      "owner": "三维预览修复批次（缝改延迟现取：sessionClosureRefs 捕 this→调用时经 currentRequirementsCheckContext() 同源现取——绑定时机无关，顺带消除现实现按裸 adapter 指针捕获的跨项目存活隐患；回归＝产品序拾取写回姿态规则）。关联：F-554 三处 CheckContext{} 形态之一 captureTcpAsFixedPoint 同族（当前流恒 World refFrame 检查点不可达——潜在）；【2026-10-09 修复落地（UI-T77）】已按延迟现取修复（UiPlugin assembleView3DGateway——缝捕 this 经 currentRequirementsCheckContext() 现取，裸 adapter 捕获同步消除）；HostCompilePipelineTest 七用例回归全绿；待所有者宿主复验（产品序拾取写回姿态规则应通过浅核对）后翻转 fixed"
+    },
+    {
+      "id": "F-559",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——teardownSharedSurfacesForClose 八类收口清单逐项核对；UiPlugin 全文件 m_reqBox/m_reqGrid 写点清点）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "宿主三维投影三层缓存（UiPlugin m_reqMarkers/m_reqBox/m_reqGrid）不在任何项目关闭拍清理——teardownSharedSurfacesForClose 清了选择/高亮/树/检查器/发布桥/NameMap/编译端口八类，同族（会话呈现面缓存）的三预览缓存漏清；ird 项目关闭经 UiSessionController Draining→syncDomainModulesToContext 不经过宿主框架 WorkCell 关闭拍→网关 onSceneCleared→removePreview 不触发。跨项目串数据：A 项目呈现区域框/采样格/标记→关闭→打开 B→首个 markers sink 合并投递时以 A 残值（m_reqBox/m_reqGrid）重挂——B 项目三维出现 A 的框/格/着色（与 F-550② 修复「不残留旧呈现」纪律同族漏拍）",
+      "owner": "三维预览修复批次（teardownSharedSurfacesForClose 增第九类收口：三缓存清零＋m_view3dGateway->removePreview()；markers sink 现缓存值合并投递语义随之自洽）；【2026-10-09 修复落地（UI-T77）】已按第九类收口修复（teardownSharedSurfacesForClose——先清三缓存再 removePreview，日志 8→9 object classes）；待所有者宿主复验（A 项目呈现后关闭、B 项目三维应零残留）后翻转 fixed"
+    },
+    {
+      "id": "F-560",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——renderRegionPage 空集合分支核对）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "删除最后一个区域后三维框/格/着色层永不清除——RequirementsPanelWidget renderRegionPage 区域集合为空分支只清面板标签文本、不向 m_regionPreview 投递空投影；UiPlugin 侧 m_reqBox/m_reqGrid 原值保留，且后续任一 markers sink 合并投递都以旧值重新挂回（update.boxOutline=m_reqBox 原子替换语义在「空集合」态无生产者）。触发：唯一区域被删除或撤销到无区域→三维残留直到关项目（叠加 F-559 则跨项目残留）",
+      "owner": "三维预览修复批次（空集合分支投递空语义——与后端三层「空＝清除该层」契约对齐：boxOutline=nullopt/sampleGrid=nullopt 合并投递）；【2026-10-09 修复落地（UI-T77）】已修复：RegionPreviewSink 签名改 optional（nullopt＝空态投递，与「nullopt＝清除该层」契约同构）——面板空集合分支投递 nullopt、门面空态直传、UiPlugin 空态分支清两缓存合并投递；新增 gui 用例 RegionPreviewSink_EmptySetDeliversNullopt_UI_T77；待所有者宿主复验（删除唯一区域后三维框/格应即清）后翻转 fixed"
+    },
+    {
+      "id": "F-561",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——bindRegionPreviewSink 参考系不可解析分支逐行核对；与 3517 行自述「原子替换语义」对读）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "区域参考系不可解析分支只清框层不清格层——refResolved=false 时 box 置 nullopt（框清除）而 m_reqGrid 保持上一区域旧值并合并整组投递，logDev 文本自称「框层清除」实际格层（骨架线＋着色采样点）跨区域/跨参考系漂浮——「半新半旧」形态在原子替换语义的自家实现分支内复活。触发：选中区域切到参考系不可解析的区域（引用对象被删/未发布），或区域 refFrame 从 World 改指对象系且宿主无发布 WC",
+      "owner": "三维预览修复批次（失败分支同拍 m_reqGrid=nullopt——格层与框层同源清除；区域切换语义＝两层同进退）；【2026-10-09 修复落地（UI-T77）】已修复（refResolved=false 分支同拍 m_reqGrid.reset()，logDev 文本更正「框/格层清除」）；待所有者宿主复验后翻转 fixed"
+    },
+    {
+      "id": "F-562",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——RegionOutlineRender 边表与 PanelRegionModel 角序契约逐点对账；UI-T33 以来既有缺陷）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "区域框 12 棱边表与八角点二进制角序不符——生产者角序契约（PanelRegionModel「索引 i 的 bit0→+sx、bit1→+sy、bit2→+sz」）下 index1=(+x,−y,−z)、index2=(−x,+y,−z) 相差两位＝面对角线，而渲染边表底/顶面按「0→1→2→3 循环」假设（格雷/循环序）连边：实际画出 4 条 x 向棱＋4 条面对角线（上下两面呈蝴蝶结交叉）＋4 条立柱，y 向四条棱（0-2/1-3/4-6/5-7）完全缺失——线框非方盒，任何区域预览必现。边表注释「角序与 requirements 侧同款零重排直投」与实现相悖",
+      "owner": "三维预览修复批次（边表改正为二进制序 12 棱：x 向 {0,1}{2,3}{4,5}{6,7}＋y 向 {0,2}{1,3}{4,6}{5,7}＋z 向 {0,4}{1,5}{2,6}{3,7}；视觉回归＝区域预览方盒形态）；【2026-10-09 修复落地（UI-T77）】已修复（RegionOutlineRender 边表改正为二进制序回路 0→1→3→2→0/4→5→7→6→4＋z 向立柱，注释同步角序契约）；待所有者宿主复验（区域预览应为方盒线框——无对角线蝴蝶结）后翻转 fixed"
+    },
+    {
+      "id": "F-563",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——HostCompilePort toSummary 十六进制解析路径核对；F-557 异常穿透家族）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "HostCompilePort digest256 十六进制解析只防长度不防字母表——hex.size()==64 守卫内逐字符 std::stoi(...,16)，64 字符含非 hex 字符时抛 std::invalid_argument 且调用链（draft.apply 命令处理器→compileWorkCellAndDwc）无 try/catch→异常穿透 Qt 事件循环直达 StudioMain 顶层＝红叉对话框＋进程退出。注释自称「解析失败＝清单数据违约……以全零摘要如实投递、由编译器 S2 摘要复核拒绝」但实现无任何 catch 支撑该口径——防御姿态自相矛盾（若上游无条件可信则长度守卫也多余）",
+      "owner": "编译链修复批次（字母表校验补齐：非 hex 字符按注释既定口径走「全零摘要如实投递」→S2 摘要复核拒绝——不静默伪造也不崩出；触发面＝外部工具改写/损坏项目 manifest 的 digest256 字段）；【2026-10-09 修复落地（UI-T77）】已修复（字母表校验＋违约路径 e.digest.fill(0) 显式置零——Digest256=std::array 默认初始化值不确定）；行为语义经测试实证澄清：draft.apply 流中根对象条目被计划写入同 oid 覆盖（digest 按计划载荷自洽重算——§6.6 合成口径），违约主链照常、进入 S2④ 核对面（非计划写入根）即被拒；新增 ui_test 用例 CompilePort_CorruptedDigestDoesNotCrash（修复前此路径 toSummary 逐字符 stoi 即抛）；待所有者复验后翻转 fixed"
+    },
+    {
+      "id": "F-564",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——UiText resolveText 调用面全量对账：120 登记键 vs 全库调用键；F-557 同根误解存活面排查）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "三处「解析失败回退键名原文」死代码/误导注释——resolveText 缺键即抛 invalid_argument（UiText fail-fast 设计）、命中键值恒非空，故 DomainAssembly standardTextResolver（三域共用标题解析绑定）的 text.empty()?key:text 回退永不发生、注释「解析空/失败回退键名原文——呈现面不空洞」与行为相悖；ModelingPanelWidget 构造期 tooltip 循环与 setCommandTitleResolver/refreshCommandEnablement 两处同款死回退＋「解析空回退命令 id 原文」注释。当前生产键全部已登记不触发——任一域新增命令/键漏登记 UiText 即装配期或解析拍异常穿透（建模面板构造在装配链内＝startup 退出）。F-557 修复纠正的正是「以为 resolveText 会回退」这一误解，同误解仍存活于此三处",
+      "owner": "文案解析统一批次（与 F-557 修复口径统一：改真回退〔try/catch 或查询前白名单核对〕或修注释为 fail-fast 明示——两案择一所有者裁决；建议随 UiText 休眠未登记键簇〔ui.session.readonly.banner 等裸中文字面量第二文案源债〕一并治理）；【2026-10-09 修复落地（UI-T77）】选案=修注释为 fail-fast 明示（保留空串回退仅作登记值为空的防御面——改真回退会把键表失同步从解析拍暴露降级为运行期静默键名显示，违背 fail-fast）：standardTextResolver/ModelingPanelWidget 构造期 tooltip/setCommandTitleResolver 三处注释已与 resolveText 行为对齐；休眠未登记键簇治理仍挂账本条尾注"
+    },
+    {
+      "id": "F-565",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——RegionPreviewView 六字段透传逐字段消费面核对）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "RegionPreviewView.summaryText 全链透传后被投影方静默丢弃——域侧 regionPreviewGeometry 产出失败语义摘要（如「格 未定」＝盒退化/采样间距非法）、门面「摘要直投」透传，UiPlugin bindRegionPreviewSink 对该字段零引用（失败可见面另起炉灶写死「区域参考系不可解析」Dev 文本）——契约头注「失败可见面承载——投影方追注」的承诺在投影半区落空：区域盒退化时三维只见框线无格无原因，Dev 通道也拿不到域侧摘要",
+      "owner": "三维预览修复批次（投影方消费 summaryText：随 logDev 追注或经 Dev 通道透传——失败可见面兑现；零三维契约变更）；【2026-10-09 修复落地（UI-T77）】已修复（参考系不可解析分支 logDev 追注域摘要——面板标签呈现面既有〔m_regionPreviewLabel〕不变）；待所有者复验后翻转 fixed"
+    },
+    {
+      "id": "F-566",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——markers sink 帧名不可解析分支与渲染端 unresolved 计数的职责面对读）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "对象引用系工位标记解析失败被静默跳过无任何可观测面——bindStationMarkersSink 中 resolveFrameName 落空的 marker 直接不进 update.frameMarkers，注释声称「渲染端 unresolved 计数留痕」但后端计数只统计已转发挂帧形态的 findFrame 失败，此处跳过的标记三面（后端计数/Dev 通道/协议摘要）全空；对比区域路径同场景有 logDev。触发：首应用前（NameMap 未发布）或引用对象删除后，对象系工位从三维无声消失，工位总数与标记数不一致不可观测",
+      "owner": "三维预览修复批次（对齐区域路径：解析失败 logDev 留痕〔工位名＋引用〕；UI-T77 已落地的 position 降级路径〔帧不可解析＝position 置空回落挂帧形态〕语义保持）；【2026-10-09 修复落地（UI-T77）】已修复（markers sink 帧名不可解析分支 logDev 留痕〔工位名〕——静默消失变可观测）；待所有者复验后翻转 fixed"
+    },
+    {
+      "id": "F-567",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——teardownSharedSurfacesForClose「先退订消费者再清状态源」序与两域 detachSelectionService 调用面核对）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "modeling 侧选择适配器拆卸拍不退订 SelectionService——requirements 侧 onSessionDetached 显式调 detachSelectionService，modeling 侧 ModelingUiModule::detachSelectionService 与门面转发为生产代码零调用死 API、onSessionDetached 不清订阅：teardown「先退订防重入」序被打破，m_selection->clearSelection() 的空选中广播在拆卸中重入 ModelingSelectionAdapter→面板 focusObject(nullopt)→树清选＋属性重投影恰好发生在拆卸过程内；modeling 面板选中锚只能靠这次意外重入间接清掉（与 requirements 显式 reset 不对称）",
+      "owner": "建模装配批次（modeling onSessionDetached 补调 detachSelectionService——与 requirements 同款显式纪律；死 API 激活或删除二选一随修）；【2026-10-09 修复落地（UI-T77）】已修复（ModelingUiModule::onSessionDetached 开头补调 detachSelectionService——「先退订再清源」序对齐，死 API 激活）；待所有者复验后翻转 fixed"
+    },
+    {
+      "id": "F-568",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——KinEvaluationChannel 账面失效路径与采样格投影对账门核对）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "覆盖评估账面不随需求草稿编辑失效——账面失效仅挂快照换绑（attachView 纪元推进），需求侧编辑区域盒（尺寸/中心/采样计数）零失效路径：三维投影门（snapshotId+epoch 双核对）放行旧账面，格线/框角点来自当前工作集现算几何而着色采样点/tint 来自评估期旧几何——改小盒＝彩色点悬浮框外、改大盒＝旧点阵被误读为新区域结果、框色 tint 按旧计数比。同族潜在：KinChannelCoverageResult.configDigest 对账键声明而未核对（submit 校验只对 snapshotId、setConfiguration 不清账面——配置基线当前冻结无编辑面故不触发，一旦配置可编辑即两屏口径分叉）",
+      "owner": "运动学/需求联合批次（域级核对在先：需求编辑是否应触发 CON-02 结果失效语义——若域已有失效面则本条收窄为三维投影未跟随；configDigest 核对随配置编辑面任务一并落）；【2026-10-09 处置（UI-T77）】本条**不做呈现面小修**——修复前置＝域语义裁决（需求编辑×评估失效的 CON-02 语义归属，涉及 KIN-07 账面失效机制或账面增区域几何摘要，跨域任务）；所有者裁决后按裁决开域任务，呈现面跟随修复随域任务搭车"
+    },
+    {
+      "id": "F-569",
+      "source": "UI-T77 三维预览专项同族缺陷审计（2026-10-09——UiPlugin 析构兜底注释与成员声明序逐项核对；「新增成员 teardown 存活期」嫌疑家族复查）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-09",
+      "title": "UiPlugin 析构兜底注释与成员声明序相悖——注释称「编译端口后毁（query 指针随 store 适配器——成员声明逆序保证端口析构时适配器仍在）」，实际 m_compilePort（hpp:395）声明在 m_lastStoreAdapter（hpp:428）之前→逆序销毁是 adapter 先毁，注释描述的保障机制与真实布局相反；现行安全仅因析构体显式 reset 序（bridge→observer→compilePort）抢在成员销毁前执行。HostCompilePort Deps.query 为非 owning 裸指针——后续若删显式 reset 或在端口析构新增 query 解引用即悬垂",
+      "owner": "宿主装配批次（注释更正为显式 reset 序描述；或将 m_lastStoreAdapter 声明移至 m_compilePort 之前使文档假设成立——低风险文档性修正，随下次触碰该文件批次搭车）；【2026-10-09 修复落地（UI-T77）】已修复（析构兜底注释更正——明示显式 reset 序为现行保障、声明序实态与改动前提；声明序迁移未做〔搭车条件未触发〕）"
     },
     {
       "id": "F-570",

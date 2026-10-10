@@ -595,6 +595,13 @@ void ModelingUiModule::recomputeReadiness()
 void ModelingUiModule::onSessionDetached()
 {
     m_guard.assertOnUiThread();
+    // UI-T77（F-567）：先退订选择适配器再清状态源（teardown「先退订消
+    // 费者再清状态源，防清理过程重入回调」序的对齐面）——requirements
+    // 侧 onSessionDetached 显式调 detachSelectionService，本域此前漏调：
+    // teardownSharedSurfacesForClose 的 clearSelection 空选中广播会在拆
+    // 卸中重入本域适配器→面板 focusObject(nullopt) 树清选/属性重投影恰
+    // 发生在拆卸过程内，选中锚只能靠这次意外重入间接清掉。
+    detachSelectionService();
     // §8.6 表"模块表/局部栈清空"的模块状态半区：会话内存态整体复位——
     // 分支锚清空（Stale 判据随锚消失，旧会话不可能污染新会话——§6.2
     // 纪元过滤的模块对位）、草稿工作集复位、就绪报告作废。磁盘草稿零

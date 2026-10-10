@@ -345,14 +345,14 @@ TEST(RequirementsView3DFlow, RegionPreviewSink_ForwardsGridLines_UI_T52)
         << "区域未入工作集（token 路由覆盖缺口——投影无从触发）";
 
     // ②门面装配＋编辑器注入＋绑定接收＋会话刷新触发投影（面板 regions
-    // 非空→front 区域投递——RegionPreview 触发语义）。
+    // 非空→front 区域投递——RegionPreview 触发语义）。UI-T77（F-560）：
+    // sink 形态改 optional——接收侧同步，nullopt 语义见下方空态用例。
     RequirementsPluginAssembly assembly = createRequirementsPluginAssembly();
     assembly.attachEditor(&editor);
     std::optional<RequirementsPluginAssembly::RegionPreviewView> received;
     assembly.bindRegionPreviewSink(
-        [&](const RequirementsPluginAssembly::RegionPreviewView& view) {
-            received = view;
-        });
+        [&](const std::optional<RequirementsPluginAssembly::RegionPreviewView>&
+                view) { received = view; });
     // 面板工厂调用（descriptor.panels[0].factory——惰性创建：调用发生前
     // m_panel 为空，bindRegionPreviewSink 走模块暂存、本调用经 attachPanel
     // 时序即注入。产物归本用例持有〔unique_ptr——测试尾随析构〕）。
@@ -382,4 +382,120 @@ TEST(RequirementsView3DFlow, RegionPreviewSink_ForwardsGridLines_UI_T52)
     ASSERT_TRUE(received->minPositionCoverage.has_value());
     EXPECT_DOUBLE_EQ(*received->minPositionCoverage, 0.8)
         << "覆盖率目标失实（域默认 0.8 直投面）";
+}
+
+/// 工位标记投影 position 直投（UI-T77——F-555 修复）：Provided 态位置
+/// 随标记原值透传（refFrame 系——世界系变换归 ui 投影方）、NotProvided
+/// 态诚实降级为 nullopt（缺失不转零——MDL-06 四态纪律；投影链无坐标
+/// 可虚构）、禁用工位不入标记集（acceptance 1 词面不变）。面板→门面
+/// 两层转换（emitStationMarkers→StationMarkerView 同构直转）一体断言。
+TEST(RequirementsView3DFlow, StationMarkersCarryPositionWhenProvided_UI_T77)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-01"},
+                  std::vector<std::string>{});
+
+    // ①预置三点基线：tp-a 位置 Provided(0.5,0.5,0.0)／tp-b 位置未提供
+    // （makePoint 不设 position——SourcedValue 缺省 NotProvided）／
+    // tp-c-off 禁用（不入标记集——enabled 过滤回归面）。
+    MapClosure closure;
+    PointSet points;
+    TaskPoint provided = makePoint("tp-a");
+    provided.pose.position =
+        core::SourcedValue<rw::math::Vector3D<double>>::provided(
+            rw::math::Vector3D<double>(0.5, 0.5, 0.0),
+            core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    points.entries.push_back(provided);
+    points.entries.push_back(makePoint("tp-b"));  // 位置 NotProvided
+    TaskPoint disabled = makePoint("tp-c-off");
+    disabled.enabled = false;
+    points.entries.push_back(disabled);
+    fillBaseline(closure, points);
+
+    RequirementEditor editor;
+    ASSERT_TRUE(editor.loadBaseline(closure).ok);
+    ASSERT_EQ(editor.workingSet().points.entries.size(), std::size_t{3});
+
+    // ②门面装配＋面板工厂＋sink 捕获＋会话刷新触发投影（emitStation
+    // Markers 在 refreshPanel 尾部全量投递——UI-T33 承接点）。
+    RequirementsPluginAssembly assembly = createRequirementsPluginAssembly();
+    assembly.attachEditor(&editor);
+    std::vector<RequirementsPluginAssembly::StationMarkerView> received;
+    assembly.bindStationMarkersSink(
+        [&](const std::vector<RequirementsPluginAssembly::StationMarkerView>&
+                markers) { received = markers; });
+    ASSERT_FALSE(assembly.descriptor.panels.empty()) << "面板工厂未登记";
+    std::unique_ptr<QWidget> panelHolder(assembly.descriptor.panels.front().factory());
+    ASSERT_NE(panelHolder, nullptr) << "面板工厂未产面板";
+    assembly.bindReadiness(RequirementReadinessReport{});
+    assembly.refreshFromSession();
+
+    // ③断言：禁用点过滤＋位置原值透传＋缺失诚实降级。标记序＝工作集
+    // 条目序（Codec 按 ObjectId 稳定排序——generate 随机 id，测试按
+    // label 匹配断言，不依赖随机序）。
+    ASSERT_EQ(received.size(), std::size_t{2})
+        << "标记集应恰为两个启用工位（禁用点不入——acceptance 1 词面）";
+    const RequirementsPluginAssembly::StationMarkerView* withPosition = nullptr;
+    const RequirementsPluginAssembly::StationMarkerView* withoutPosition = nullptr;
+    for (const auto& marker : received) {
+        if (marker.label == "tp-a") {
+            withPosition = &marker;
+        } else if (marker.label == "tp-b") {
+            withoutPosition = &marker;
+        }
+    }
+    ASSERT_NE(withPosition, nullptr) << "tp-a 应入标记集";
+    ASSERT_NE(withoutPosition, nullptr) << "tp-b 应入标记集";
+    ASSERT_TRUE(withPosition->position.has_value())
+        << "Provided 位置应随标记投递（F-555 投影链补位）";
+    EXPECT_DOUBLE_EQ((*withPosition->position)[0], 0.5) << "位置 X 失实";
+    EXPECT_DOUBLE_EQ((*withPosition->position)[1], 0.5) << "位置 Y 失实";
+    EXPECT_DOUBLE_EQ((*withPosition->position)[2], 0.0) << "位置 Z 失实";
+    EXPECT_FALSE(withoutPosition->position.has_value())
+        << "NotProvided 不得转零（缺失→nullopt——MDL-06 诚实投影，"
+           "渲染端据此回落挂帧指示器形态）";
+}
+
+/// 区域集合空态投递（UI-T77——F-560 修复）：区域集合为空时面板向区域
+/// 预览出口投递 nullopt（空态显式化）——投影方据此清除三维框/格层。
+/// 修复前面板只清文本标签不投递，宿主缓存残值被后续标记投递重挂＝删除
+/// 唯一区域后三维框/格/着色永残留。空集合的空区域基线（fillBaseline 带
+/// PointSet{} 同款零区域）驱动 refreshPanel 全链。
+TEST(RequirementsView3DFlow, RegionPreviewSink_EmptySetDeliversNullopt_UI_T77)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-03"},
+                  std::vector<std::string>{});
+
+    // ①预置：零区域基线（regionSet 对象在但 entries 空——合法空态）。
+    MapClosure closure;
+    fillBaseline(closure, PointSet{});
+    const core::ObjectId regionSetId =
+        core::ObjectId::fromCanonical("obj-20000000000000000000000000000002");
+    closure.put(std::string{kReqRegionSetObjectType},
+                RequirementObjectVariant{RegionSet{}});
+    closure.putById(regionSetId, std::string{kReqRegionSetObjectType},
+                    RequirementObjectVariant{RegionSet{}});
+
+    RequirementEditor editor;
+    ASSERT_TRUE(editor.loadBaseline(closure).ok);
+    ASSERT_TRUE(editor.workingSet().regions.entries.empty())
+        << "空区域基线未成立（用例前置失实）";
+
+    // ②门面装配＋空态接收＋会话刷新触发投影。
+    RequirementsPluginAssembly assembly = createRequirementsPluginAssembly();
+    assembly.attachEditor(&editor);
+    std::optional<RequirementsPluginAssembly::RegionPreviewView> received =
+        RequirementsPluginAssembly::RegionPreviewView{};  // 预置非空——验证被覆盖
+    assembly.bindRegionPreviewSink(
+        [&](const std::optional<RequirementsPluginAssembly::RegionPreviewView>&
+                view) { received = view; });
+    ASSERT_FALSE(assembly.descriptor.panels.empty()) << "面板工厂未登记";
+    std::unique_ptr<QWidget> panelHolder(assembly.descriptor.panels.front().factory());
+    ASSERT_NE(panelHolder, nullptr) << "面板工厂未产面板";
+    assembly.bindReadiness(RequirementReadinessReport{});
+    assembly.refreshFromSession();
+
+    // ③断言：空态 nullopt 抵达投影方（清除语义的空态生产者——F-560）。
+    ASSERT_FALSE(received.has_value())
+        << "区域空集合应投递 nullopt（三维框/格层清除语义——缺投递＝宿主"
+           "缓存残值被后续标记投递重挂）";
 }

@@ -77,6 +77,29 @@ inline constexpr float kRegionTintDefaultGl[3] = {0.25f, 0.45f, 1.0f};
 /// 区域框缺省蓝（图例"当前选中区域"色块；与 kRegionTintDefaultGl 同源
 /// 换算：0.25×255≈64=0x40、0.45×255≈115=0x73、1.0×255=255=0xFF）。
 inline constexpr const char* kRegionTintDefaultHex = "#4073FF";
+
+// ---- 三维标记标签色（UI-T77——F-556 Qt 纹理化文本标签的唯一供色点；
+//      GL 与 hex 两形态同源换算，三维后端禁止硬编码）----
+
+/// 工位/模型标签工程蓝（GL 三元组——Qt 纹理化文本标签字色；主色同源：
+/// #1E5AA8 换算 0x1E=30/255≈0.118、0x5A=90/255≈0.353、0xA8=168/255≈0.659）。
+inline constexpr float kMarkerLabelGl[3] = {0.118f, 0.353f, 0.659f};
+/// 工位/模型标签工程蓝（Qt 呈现面——QPainter 字色；与 kMarkerLabelGl
+/// 同源＝palette::kPrimary 词表值，禁止第二色值源）。
+inline constexpr const char* kMarkerLabelHex = "#1E5AA8";
+
+// ---- 三维坐标轴指示色（UI-T77——工位点位标记自绘三轴的供色词表；
+//      RobWork 坐标轴惯例语义色〔X 红/Y 绿/Z 蓝——框架 addFrameAxis
+//      同款三色语义〕：属空间方位语义色、非 F-495 判定呈现色，词表化
+//      仅为维持"三维后端零硬编码色值"字面纪律；与采样/区域词表值偶合
+//      系惯例色值域重叠，语义互相独立）----
+
+/// X 轴红（GL 三元组——点位标记自绘三轴 X 分量）。
+inline constexpr float kAxisXGl[3] = {0.90f, 0.15f, 0.15f};
+/// Y 轴绿（GL 三元组——点位标记自绘三轴 Y 分量）。
+inline constexpr float kAxisYGl[3] = {0.15f, 0.85f, 0.25f};
+/// Z 轴蓝（GL 三元组——点位标记自绘三轴 Z 分量）。
+inline constexpr float kAxisZGl[3] = {0.25f, 0.45f, 1.0f};
 }
 
 /**

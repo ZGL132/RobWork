@@ -33,8 +33,14 @@ namespace ui {
 /// token 文本，不加工语义——SA-12 权威分工）。
 inline constexpr const char* kAssemblyFailedCode = "UI-PLUGIN-ASSEMBLY-FAILED";
 
-/// UiText 文案解析的标准绑定（多域共用——resolveText 唯一出口；解析空/
-/// 失败回退键名原文——呈现面不空洞，建模装配既有先例逐字同源）。
+/// UiText 文案解析的标准绑定（多域共用——resolveText 唯一出口）。
+/// UI-T77（F-564）注释更正（ASM 批次把本件迁自 DomainAssembly.cpp——
+/// 修正随符号走）：resolveText 缺键**即抛** invalid_argument（UiText
+/// fail-fast 设计——键表与词表失同步在解析拍暴露），旧注释「解析空/
+/// 失败回退键名原文」与行为相悖（命中键值恒非空，empty 回退是不可达
+/// 死代码；F-557 修复纠正的正是「以为 resolveText 会回退」这一误解）。
+/// 键未登记＝解析拍异常上抛——新增命令/键必须同步登记 UiText 词表；
+/// 空串回退仅作登记值为空的防御面保留。
 /// QString 版＝modeling/kinematics 门面 bindTextResolver 的签名面
 /// （ModelingPluginAssembly.hpp:94 同款——两代门面的 resolver 签名分叉
 /// 如实承载：QString 版承载既有消费，std::string 版承载 ASM-UI 三新域）。
@@ -49,7 +55,9 @@ inline std::function<QString(const std::string&)> standardTextResolver()
 /// UiText 文案解析的标准绑定（std::string 版——dynamics/selection/
 /// optimization 三新域门面 bindTextResolver 的签名面
 /// 〔如 DynamicsPluginAssembly.hpp bindTextResolver 注〕；同一 resolveText
-/// 出口同一回退语义——零第二文案语义源，UX-02）。
+/// 出口同一语义——零第二文案语义源）。UI-T77（F-564）同款注释更正：
+/// resolveText 缺键**即抛**（见上方 QString 版注——「同一回退语义」的
+/// 旧表述不成立，empty 回退仅为登记值为空的防御面）。
 inline std::function<std::string(const std::string&)> standardTextResolverUtf8()
 {
     return [](const std::string& key) {

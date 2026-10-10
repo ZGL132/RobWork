@@ -88,8 +88,12 @@ public:
     using EditTargetProvider = std::function<IRequirementEditor*()>;
     /// 区域三维预览出口（装配层注入——绑定 ui View3D 契约；不注入＝仅
     /// 文本摘要呈现。预览几何为呈现面——结果着色归 KIN-07，本面板零结果
-    /// 语义）。
-    using RegionPreviewSink = std::function<void(const RegionPreviewGeometry&)>;
+    /// 语义）。UI-T77（F-560）：签名改 optional——nullopt＝区域集合为空
+    /// 的空态投递（三维框/格层随「无区域」清除；与 View3D 契约
+    /// boxOutline/sampleGrid「nullopt＝清除该层」同构——空集合无投递则
+    /// 宿主缓存残值被后续标记投递重挂，删除区域后三维永残留）。
+    using RegionPreviewSink =
+        std::function<void(const std::optional<RegionPreviewGeometry>&)>;
 
     /**
      * @brief 构造需求域面板（UI 线程——§3.4）。
@@ -128,10 +132,16 @@ public:
     /// 工位标记投影值（UI-T33 收口——非禁用工位的挂帧标记；enabled 过滤
     /// 在面板——投影值集合即呈现集合）。refFrame 原值直投（宿主帧名解析
     /// 归投影方——World/ModelFrame 的宿主帧名映射在装配层全缝侧）。
+    /// UI-T77（F-555）表尾追加 position：refFrame 系受约束位置原值直投
+    /// （世界系变换归投影方——与 refFrame 解析同缝）；nullopt＝工位未
+    /// 提供位置值（core::SourcedValue 四态——MDL-06 缺失不转零，投影
+    /// 链诚实降级为挂帧指示器形态）。
     struct StationMarkerProjection {
         std::string label;                          ///< 工位名（场景节点名后缀——UX-02）
         RequirementReference refFrame;              ///< 参考系原值（投影方解析宿主帧名）
-    rw::math::Vector3D<double> position;       ///< 标记位置（m；refFrame 系——UI-T74/F-555 增补：工位坐标进三维投影）
+        /// 受约束位置（UI-T77——F-555；m，refFrame 系；四态字段仅
+        /// Provided 态有值——缺失不转零）。
+        std::optional<rw::math::Vector3D<double>> position;
     };
     /// 工位标记出口（随面板重载全量投递——会话编辑/选择刷新的承接点）。
     using StationMarkersSink =

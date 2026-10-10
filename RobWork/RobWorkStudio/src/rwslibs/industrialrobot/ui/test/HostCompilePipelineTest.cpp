@@ -275,6 +275,36 @@ TEST_F(HostCompilePipelineTest, CompilePort_FailsWithDiagnosticsOnGarbageBytes)
     EXPECT_EQ(port.lastPublishedSnapshot(), nullptr) << "失败不发布（无半成品）";
 }
 
+/// 引用图摘要字母表违约面（UI-T77——F-563 修复）：digest256 长度合法
+/// （64）但含非 hex 字符——旧实现 toSummary（合成闭包装配第一步）逐字符
+/// std::stoi 抛 invalid_argument（draft.apply 处理器链无捕获→异常穿透
+/// ＝进程退出，F-557 家族崩出面）。修复后违约＝全零摘要如实投递不抛：
+/// 本流根对象被计划写入同 oid 覆盖（digest 按计划载荷自洽重算——§6.6
+/// 合成口径），主链照常发布。第一断言＝不崩（修复前此路径在合成第一步
+/// 即抛，测试进程直接带出）；次断言＝主链不受违约条目影响（覆盖自洽）。
+TEST_F(HostCompilePipelineTest, CompilePort_CorruptedDigestDoesNotCrash)
+{
+    // 损坏引用图摘要（64 字符全 'g'——长度守卫内的字母表违约形态）。
+    ASSERT_FALSE(m_query->view.objectRefs.empty());
+    m_query->view.objectRefs.front().digest256.assign(64, 'g');
+
+    HostModelCompilePort port(HostModelCompilePort::Deps{
+        m_query.get(), core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType), nullptr});
+
+    const project::CompileResult result =
+        port.compileWorkCellAndDwc(makeCompileRequest());
+    if (!result.ok) {
+        for (const auto& diag : result.diagnostics) {
+            std::cerr << "  [diag] " << diag.code << ": " << diag.cause << "\n";
+        }
+    }
+    EXPECT_TRUE(result.ok)
+        << "违约条目被计划写入覆盖自洽——主链照常（修复前此路径抛 "
+           "invalid_argument＝进程崩出）；若本断言失败且诊断含摘要复核"
+           "拒绝，说明覆盖语义被破坏";
+}
+
 // =====================================================================
 // ACC2——名称映射真值二态（空→绑定→正/反解）
 // =====================================================================

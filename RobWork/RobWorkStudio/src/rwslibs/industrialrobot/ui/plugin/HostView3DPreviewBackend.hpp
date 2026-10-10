@@ -13,9 +13,12 @@
  *
  * 渲染编排（draw 的原子替换语义——网关 applyPreview 契约的落地）：
  *   ①按名清除旧组（ird-req-preview 前缀——节点名清单逐个删）；
- *   ②工位标记：逐 marker findFrame 挂 FrameAxis（坐标轴随帧动——
- *     会话/示教移动零重投；帧不可解析＝跳过并计数，summaryText 追加
- *     失败可见面）；
+ *   ②工位标记（UI-T77——F-555 双形态）：position 有值＝点值形态（轴＋
+ *     标签一体 StationMarkerRender 挂 WORLD——世界系空间点可辨）；空＝
+ *     挂帧形态（findFrame 挂 FrameAxis——坐标轴随帧动；帧不可解析＝
+ *     跳过并计数，summaryText 追加失败可见面）；两形态标签统一 Qt 纹
+ *     理化文本（QtTextBillboard——F-556：GLUT 位图字体无 CJK 乱码的
+ *     替代承载）；
  *   ③区域边界框：八角点 12 棱线框（RegionOutlineRender——世界系挂
  *     world 帧）；
  *   ④采样格：格线＋逐点着色（SampleGridRender——Good 绿/Weak 黄/

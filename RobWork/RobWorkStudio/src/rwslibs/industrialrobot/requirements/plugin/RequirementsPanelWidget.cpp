@@ -322,13 +322,12 @@ void RequirementsPanelWidget::emitStationMarkers(const RequirementWorkingSet& ws
         if (!point.enabled) {
             continue;  // 禁用工位不进三维（acceptance 1 词面——诚实呈现）
         }
-        // 位置随标记投影（UI-T74/F-555——工位坐标进三维：标记渲染于
-        // refFrame 系该偏移点，不再恒钉参考系原点；未设位置＝零向量）。
-        const rw::math::Vector3D<double> markerPos =
-            point.pose.position.tryValue().value_or(
-                rw::math::Vector3D<double>(0.0, 0.0, 0.0));
-        markers.push_back(
-            StationMarkerProjection{point.name, point.refFrame, markerPos});
+        // UI-T77（F-555）：工位受约束位置随标记投递——tryValue 仅 Provided
+        // 态有值（四态字段的诚实投影：NotProvided/NotApplicable/Invalid 均
+        // 为 nullopt，缺失不转零〔MDL-06〕——投影方据此回落挂帧指示器
+        // 形态，渲染链无坐标可虚构）。
+        markers.push_back(StationMarkerProjection{
+            point.name, point.refFrame, point.pose.position.tryValue()});
     }
     m_stationMarkersSink(markers);
 }
@@ -2777,6 +2776,12 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
         }
     } else {
         m_regionPreviewLabel->setText(QString());
+        // UI-T77（F-560）：区域集合为空＝空态投递（nullopt）——三维框/格
+        // 层随「无区域」清除。只清面板标签不投递的话，宿主侧缓存残值会被
+        // 后续任一标记投递合并重挂（删除唯一区域后框/格/着色永残留）。
+        if (m_regionPreview) {
+            m_regionPreview(std::nullopt);
+        }
     }
 }
 

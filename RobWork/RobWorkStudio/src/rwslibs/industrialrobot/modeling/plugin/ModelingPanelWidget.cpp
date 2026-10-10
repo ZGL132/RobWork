@@ -470,7 +470,11 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
         btn->setObjectName(QStringLiteral("ird_modeling_cmd_")
                            + QString::fromStdString(m_commands[i].id));
         // UI-T41 批次B（B4）：悬停文案＝UiText tooltip 键（工程中文，UX-02——
-        // 去裸命令 id 呈现）；解析空回退命令 id 原文（对账兜底，不虚构文案）。
+        // 去裸命令 id 呈现）。UI-T77（F-564）注释更正：resolveText 缺键
+        // **即抛**（UiText fail-fast——新增命令漏登记 tooltip 键＝构造期
+        // 异常上抛，装配链内即 startup 暴露）；空串回退命令 id 原文仅作
+        // 登记值为空的防御面（命中键值恒非空——「解析失败回退」不可达，
+        // 不虚构回退语义）。
         const std::string tooltipText =
             ui::resolveText("cmd." + m_commands[i].id + ".tooltip");
         btn->setToolTip(QString::fromStdString(
@@ -527,8 +531,11 @@ void ModelingPanelWidget::setPostEditAction(PostEditAction action)
 void ModelingPanelWidget::setCommandTitleResolver(CommandTitleResolver resolver)
 {
     m_titleResolver = std::move(resolver);
-    // 绑定即时重渲染既有按钮（装配序无关——解析器可在面板创建后注入）；
-    // 解析失败（空串）回退键名原文——呈现面不空洞、不伪造文案。
+    // 绑定即时重渲染既有按钮（装配序无关——解析器可在面板创建后注入）。
+    // UI-T77（F-564）注释更正：注入的 standardTextResolver 内部走
+    // resolveText——缺键**即抛**（UiText fail-fast；键表失同步在解析拍
+    // 暴露），不存在「解析失败（空串）回退」路径；空串回退键名原文仅作
+    // 登记值为空的防御面——不虚构回退语义。
     for (std::size_t i = 0; i < m_commandButtons.size() && i < m_commands.size(); ++i) {
         if (!m_titleResolver) { break; }
         const std::string key = m_commands[i].titleKey;
