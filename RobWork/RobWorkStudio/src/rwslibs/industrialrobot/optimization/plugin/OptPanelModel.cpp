@@ -458,4 +458,15 @@ std::string resolvePanelText(const OptPanelServices& services,
     return titleKey;
 }
 
+std::string candidateStatusText(const OptPanelServices& services,
+                                const std::string& statusToken)
+{
+    // 键族前缀＋状态 token 拼装后走 L-O9 唯一解析流（守卫单点——F-635
+    // 收口：候选状态列不再直调可空缝，空缝装配态兜底键名原文、哈希泄漏
+    // 回退同款生效；键族前缀常量为插件面内唯一书写点，widget 零字面复制）。
+    return resolvePanelText(services,
+                            std::string(kOptCandidateStatusKeyPrefix)
+                                + statusToken);
+}
+
 }  // namespace sdurws::ird::optimization

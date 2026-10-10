@@ -353,6 +353,134 @@ TEST(OptApplier, RejectsQuickScreeningOnlyRecord_WP20T07)
     EXPECT_TRUE(thrown);
 }
 
+TEST(OptApplier, MergedQuickVerifiedRecordsSelectVerifiedData_WP20T07_F630)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-08"}, std::vector<std::string>{});
+
+    // F-630（缺陷草案号）：OPT-08 采用 API 对合并形态必然失败。Run.cpp
+    // 第 5 步候选合并序＝Quick 批在前＋Verified 批在后，且 Verified 复核批
+    // 复用 Quick 批的 candidateId（同补丁同基线 ⇒ 同身份——§4.2 内容寻址
+    // 的复用形态）；旧检索"首见即用"必先命中 Quick 记录、随后被
+    // screeningOnly 效力闸拒绝——合并形态下任何 Verified 候选都无法采用。
+    // 修复后检索两段式（Verified 优先）：本用例构造合并形态（同 candidateId
+    // 的 Quick 记录在前＋Verified 记录在后，两记录 status/formalPassEligible
+    // 有区分度），buildApplyPlan 必须成功且走 Verified 记录的效力面——若
+    // 检索错取 Quick 记录，必在效力闸（screeningOnly）或状态闸（ScreenedOut）
+    // 失败，成功本身即"选中 Verified 记录"的证明。
+    const CandidatePatch patch{};  // 空补丁（基线候选形态——RunFixture 同款）
+    RunFixture f{patch};           // 借用其身份常量（project/branch/revision/
+                                   //  snapshot/baselineRoot/baselineCv）
+    TwoStageRunResult done;
+    done.runPhase = RunPhase::Completed;
+    done.runCompleted = true;
+
+    // Quick 记录（screeningOnly=true、ScreenedOut、无资格——Quick 批记录
+    // 的真实效力面；status 与资格位是与 Verified 记录的区分度字段）。
+    TwoStageRunRecord quick = makeApplicableRecord(patch, f.baselineRoot, f.baselineCv);
+    quick.mode = core::EvaluationMode::Quick;
+    quick.screeningOnly = true;
+    quick.status = optimization::CandidateStatus::ScreenedOut;
+    quick.formalPassEligible = false;  // Quick 记录恒无资格（mode-not-verified）
+
+    // Verified 记录（同 candidateId——同补丁同基线；makeApplicableRecord
+    // 默认即 Verified/Feasible/资格 true 的可采用形态）。
+    TwoStageRunRecord verified = makeApplicableRecord(patch, f.baselineRoot, f.baselineCv);
+    ASSERT_EQ(quick.candidateId, verified.candidateId)
+        << "同补丁同基线必得同 CandidateId（合并形态的前提——§4.2）";
+    done.quickRecords = {quick};
+    done.verifiedRecords = {verified};
+
+    OptimizationRunResult run = optimization::assembleRunResult(
+        OptimizationRunId::generate(), f.project, f.branch, f.revision, f.snapshot,
+        f.baselineRoot, f.baselineCv, optimization::OptimizationConfiguration{}, done);
+    run.config.variables = {makeRatioBinding(), makeDhBinding()};
+
+    // 合并投影核对（Run.cpp 第 5 步纪律：quickRecords 在前、verifiedRecords
+    // 在后——检索的第一段必须越过首条 Quick 记录取到 Verified 记录）。
+    ASSERT_EQ(run.candidates.size(), 2U);
+    EXPECT_TRUE(run.candidates[0].screeningOnly);
+    EXPECT_FALSE(run.candidates[1].screeningOnly);
+    EXPECT_EQ(run.candidates[0].candidateId, run.candidates[1].candidateId);
+
+    ApplyCandidateRequest req;
+    req.run = run;
+    req.candidateId = run.candidates.front().candidateId;  // 合并序首条＝Quick
+                                                           //  记录身份（缺陷
+                                                           //  形态的检索入口）
+    req.baseline.branch = f.branch;
+    req.baseline.tip = f.revision;
+    req.baseline.writable = true;
+    req.baselineDesignCanonical = {0x01};
+
+    ScriptedMaterializer materializer({0x43, 0x41, 0x4E, 0x44});
+    OptimizationCandidateApplier applier({&materializer, nullptr});
+
+    // 修复前：此处抛 kOptApplyPlanInvalid（"Quick 筛选记录"）——OPT-08
+    // 采用 API 对合并形态必然失败；修复后：两段式检索命中 Verified 记录，
+    // 组装成功且可应用。
+    const CandidateApplyPlan plan = applier.buildApplyPlan(req);
+    EXPECT_TRUE(plan.allowApply);
+    EXPECT_TRUE(plan.blockedReasons.empty());
+    // 计划携带 Verified 记录的效力数据：状态闸以 Verified 的 Feasible 通过
+    // （Quick 记录的 ScreenedOut 若被选中必在状态闸失败）；step2 载荷＝
+    // Verified 记录补丁的物化字节（同身份 ⇒ 同补丁 ⇒ 同载荷——确定性）。
+    ASSERT_TRUE(plan.applyDesign.has_value());
+    EXPECT_EQ(plan.applyDesign->payloadCanonical,
+              std::vector<std::uint8_t>({0x43, 0x41, 0x4E, 0x44}));
+    EXPECT_EQ(plan.createBranch.baseRevisionId, f.revision);
+    EXPECT_TRUE(plan.recalcRequired);
+}
+
+TEST(OptApplier, QuickOnlyCandidateStillRejectedByScreeningGuard_WP20T07_F630)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-08", "EVI-01"}, std::vector<std::string>{});
+
+    // F-630 修复的守卫不回退半区：仅有 Quick 记录（无 Verified 复核——该
+    // 候选从未被复核）的候选仍拒。两段式检索的第二段回退到同身份 Quick
+    // 记录，效力闸产出**精确**的"Quick 筛选记录"拒绝语义——不是"候选不在
+    // 源运行结果中"（后者是异运行/不存在形态；两者混淆会丢失 ERR-01 比较
+    // 型定位精度，调用方无法区分"未复核"与"拿错运行"）。
+    const CandidatePatch patch{};
+    RunFixture f{patch};
+    TwoStageRunResult done;
+    done.runPhase = RunPhase::Completed;
+    done.runCompleted = true;
+    TwoStageRunRecord quick = makeApplicableRecord(patch, f.baselineRoot, f.baselineCv);
+    quick.mode = core::EvaluationMode::Quick;
+    quick.screeningOnly = true;
+    quick.status = optimization::CandidateStatus::Feasible;  // 即便 Quick-Feasible
+    quick.formalPassEligible = false;                        // 也不支撑采用
+    done.quickRecords = {quick};
+    OptimizationRunResult run = optimization::assembleRunResult(
+        OptimizationRunId::generate(), f.project, f.branch, f.revision, f.snapshot,
+        f.baselineRoot, f.baselineCv, optimization::OptimizationConfiguration{}, done);
+    run.config.variables = {makeRatioBinding(), makeDhBinding()};
+
+    ApplyCandidateRequest req;
+    req.run = run;
+    req.candidateId = run.candidates.front().candidateId;
+    req.baseline.branch = f.branch;
+    req.baseline.tip = f.revision;
+    req.baseline.writable = true;
+    req.baselineDesignCanonical = {0x01};
+
+    ScriptedMaterializer materializer({0x01});
+    OptimizationCandidateApplier applier({&materializer, nullptr});
+
+    bool thrown = false;
+    try {
+        static_cast<void>(applier.buildApplyPlan(req));
+    } catch (const optimization::OptimizationError& e) {
+        thrown = true;
+        EXPECT_EQ(e.stableCode(),
+                  std::string(optimization::kOptApplyPlanInvalid));
+        EXPECT_NE(std::string(e.what()).find("Quick 筛选记录"), std::string::npos)
+            << "Quick-only 形态必须命中 screeningOnly 守卫（不是"
+               "「不在源运行结果中」——ERR-01 定位精度）";
+    }
+    EXPECT_TRUE(thrown);
+}
+
 TEST(OptApplier, RejectsInfeasibleAndIneligibleCandidates_WP20T07)
 {
     IRD_TEST_INFO(std::vector<std::string>{"OPT-08", "RPT-05"}, std::vector<std::string>{"AT-09"});

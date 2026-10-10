@@ -83,6 +83,18 @@ VariableBinding makeDhBinding(double lower, double upper)
     return b;
 }
 
+/// 实例化一个已授权的量化 DH 长度绑定（词表 Continuous 条目＋绑定声明
+/// Quantized——"量化＝连续变量的网格化使用形态"，kindCompatible 放行；
+/// step 单位 m。F-634 验界序用例的主角变量——dh.a 无 valueMustBePositive
+/// 约束，正性检查不干扰下界拒绝语义的隔离断言）。
+VariableBinding makeQuantizedDhBinding(double lower, double upper, double step)
+{
+    VariableBinding b = makeDhBinding(lower, upper);
+    b.kind = VariableKind::Quantized;
+    b.step = step;  // m（与值同量纲——卡 §5.2 步长语义）
+    return b;
+}
+
 }  // namespace
 
 // =====================================================================
@@ -359,4 +371,141 @@ TEST(OptCandidatePatch, CanonicalByteLayoutGoldenCheck_WP20T03_ACC3)
         expected.push_back(static_cast<std::uint8_t>((bits >> (8 * i)) & 0xFFu));
     }
     EXPECT_EQ(optimization::canonicalize(patch), expected);
+}
+
+// =====================================================================
+// F-634：量化项验界序——先按 step 网格 round-half-even 对齐再验边界
+//（hpp ⑧ 契约原文；对齐幂等保证两入口〔LHS 原始样本／规范化补丁复验〕
+// 语义统一）
+// =====================================================================
+
+TEST(OptCandidatePatch, QuantizedValueValidatedAfterAlignment_WP20T03_F634)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-02", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    // 缺陷形态钉扎：bounds[0,1]、step=0.6、原始 0.9——原始值在界内，但对齐
+    // 0.9/0.6=1.5 恰在半格，round-half-even 舍入到偶数格 2 → 1.2 越上界。
+    // 旧实现按原始值验界放行、构造期才对齐 → 越界值 1.2 进补丁 canonical
+    // （违反"不静默截断"与 hpp ⑧ 契约）；修复后对齐后值判界必须拒绝。
+    const std::vector<VariableBinding> study = {makeQuantizedDhBinding(0.0, 1.0, 0.6)};
+    const std::vector<PatchItem> items = {{"mdl.joint[2].dh.a", 0.9, 0, {}}};
+
+    // 对齐语义自证（测试预期值的独立复核——半格舍偶：0.9/0.6=1.5 → 格 2）。
+    EXPECT_DOUBLE_EQ(optimization::quantizeToStepHalfEven(0.9, 0.6), 1.2);
+
+    // 诊断轨：validatePatchItems 拒绝，消息含「越界」（⑧ 契约的拒绝词形）。
+    const auto report
+        = optimization::validatePatchItems(study, OptimizationStage::StageB, items);
+    EXPECT_FALSE(report.ok()) << "对齐后越界（1.2>1.0）必须拒绝——不静默截断";
+    ASSERT_EQ(report.issues.size(), 1U);
+    EXPECT_EQ(report.issues[0].code, std::string(kIllegal));
+    EXPECT_NE(report.issues[0].detail.find("越界"), std::string::npos)
+        << "消息必须携带「越界」（ERR-01 比较型定位）";
+
+    // fail-fast 轨：makeCandidatePatch 同面拒绝（构造期无第二道界检——
+    // 校验所见即构造所得）。
+    bool thrown = false;
+    try {
+        static_cast<void>(
+            optimization::makeCandidatePatch(study, OptimizationStage::StageB, items));
+    } catch (const OptimizationError& e) {
+        thrown = true;
+        EXPECT_EQ(e.stableCode(), std::string(kIllegal));
+    }
+    EXPECT_TRUE(thrown) << "构造轨同面拦截（对齐后越界不放行）";
+}
+
+TEST(OptCandidatePatch, QuantizedAlignedBelowLowerBoundRejected_WP20T03_F634)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-02", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    // 下界方向：bounds[0.1,1.0]、step=0.25、原始 0.05——0.05/0.25=0.2 向下
+    // 取整到格 0 → 对齐值 0.0 低于下界 0.1，拒绝。主角绑定 dh.a 无
+    // valueMustBePositive 约束（词表事实——§5.3 #2 无值域硬约束），本用例
+    // 只断言下界拒绝（隔离正性语义——"按实际词表构造"）。
+    const std::vector<VariableBinding> study = {makeQuantizedDhBinding(0.1, 1.0, 0.25)};
+    const std::vector<PatchItem> items = {{"mdl.joint[2].dh.a", 0.05, 0, {}}};
+
+    EXPECT_DOUBLE_EQ(optimization::quantizeToStepHalfEven(0.05, 0.25), 0.0);
+
+    const auto report
+        = optimization::validatePatchItems(study, OptimizationStage::StageB, items);
+    EXPECT_FALSE(report.ok()) << "对齐后 0.0 < 下界 0.1 必须拒绝";
+    ASSERT_EQ(report.issues.size(), 1U);
+    EXPECT_EQ(report.issues[0].code, std::string(kIllegal));
+    EXPECT_NE(report.issues[0].detail.find("越界"), std::string::npos)
+        << "无正性约束时唯一拒绝面是下界越界（语义隔离）";
+
+    // 对照半区：词表正性条目（I-MDL-11 传动比）配量化使用形态——对齐 0.0
+    // 时正性检查先于边界（检查序⑧：非有限→对齐→正性→边界），消息为
+    // 「违反词表值域」。正性同样按对齐后值判（对齐值即 canonical 有效值）。
+    VariableBinding ratio = makeRatioBinding(0.5, 2.0);
+    ratio.kind = VariableKind::Quantized;
+    ratio.step = 1.0;  // 1（无量纲步长——对齐 0.4 → 格 0）
+    const std::vector<VariableBinding> ratioStudy = {ratio};
+    const std::vector<PatchItem> ratioItems = {{"mdl.drivetrain.ratio[1]", 0.4, 0, {}}};
+    const auto ratioReport = optimization::validatePatchItems(
+        ratioStudy, OptimizationStage::StageB, ratioItems);
+    EXPECT_FALSE(ratioReport.ok());
+    ASSERT_EQ(ratioReport.issues.size(), 1U);
+    EXPECT_NE(ratioReport.issues[0].detail.find("词表值域"), std::string::npos)
+        << "正性按对齐后值判（对齐 0.0 非 >0——I-MDL-11）";
+}
+
+TEST(OptCandidatePatch, QuantizedBoundaryValueOnGridStillAccepted_WP20T03_F634)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-02", "NFR-COR-02"},
+                  std::vector<std::string>{});
+
+    // 边界值不回归：原始值恰在下界且在网格上（0.25 与 0.25 步长——二进制
+    // 精确表示）→ 对齐后不变 → 放行（旧实现的正确面保持）。
+    const std::vector<VariableBinding> study = {makeQuantizedDhBinding(0.25, 1.0, 0.25)};
+    const std::vector<PatchItem> items = {{"mdl.joint[2].dh.a", 0.25, 0, {}}};
+
+    const auto report
+        = optimization::validatePatchItems(study, OptimizationStage::StageB, items);
+    EXPECT_TRUE(report.ok()) << "下界网格值对齐后仍在界内——放行（不回归）";
+
+    const CandidatePatch patch
+        = optimization::makeCandidatePatch(study, OptimizationStage::StageB, items);
+    ASSERT_EQ(patch.items.size(), 1U);
+    EXPECT_DOUBLE_EQ(patch.items[0].scalarValue, 0.25);
+
+    // 两入口语义统一（对齐幂等）③：规范化补丁（值已对齐 0.25）再走复验
+    // 路径 buildCandidateDesignOverlay（内部对 patch.items 重跑
+    // validatePatchItems——量化分支再次对齐）不得误拒——round-half-even
+    // 最近格对齐幂等：网格值 0.25 的商恰为整数格，再次对齐位型不变。
+    const auto overlay
+        = optimization::buildCandidateDesignOverlay(study, OptimizationStage::StageB, patch);
+    ASSERT_EQ(overlay.entries.size(), 1U);
+    EXPECT_DOUBLE_EQ(overlay.entries[0].scalarValue, 0.25);
+}
+
+TEST(OptCandidatePatch, QuantizeToStepHalfEvenIdempotent_WP20T03_F634)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-02", "NFR-COR-02"},
+                  std::vector<std::string>{});
+
+    // 对齐幂等直接钉扎（两入口语义统一的数学前提）：quantize(quantize(x))
+    // == quantize(x)——含半格舍偶形态（0.9/0.6→1.2）与商表示误差形态
+    // （0.3/0.1 的商 2.999…→3·0.1，再对齐商 3.000…4 → 同格）。
+    const double stepA = 0.6;
+    const double onceA = optimization::quantizeToStepHalfEven(0.9, stepA);
+    EXPECT_DOUBLE_EQ(onceA, 1.2);
+    EXPECT_DOUBLE_EQ(optimization::quantizeToStepHalfEven(onceA, stepA), onceA)
+        << "已对齐值 1.2 再次对齐不变（幂等）";
+
+    const double stepB = 0.1;
+    const double onceB = optimization::quantizeToStepHalfEven(0.3, stepB);
+    EXPECT_DOUBLE_EQ(optimization::quantizeToStepHalfEven(onceB, stepB), onceB)
+        << "商表示误差形态的幂等（最近舍入下回到同一整数格）";
+
+    const double stepC = 0.25;
+    for (double raw : {0.05, 0.13, 0.37, 0.9, 1.1}) {
+        const double once = optimization::quantizeToStepHalfEven(raw, stepC);
+        EXPECT_DOUBLE_EQ(optimization::quantizeToStepHalfEven(once, stepC), once)
+            << "raw=" << raw << " 对齐后幂等";
+    }
 }

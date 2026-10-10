@@ -236,8 +236,12 @@ struct PatchValidationReport {
  *   错配＝OPT-PATCH-ILLEGAL）；⑥ 重复 bindingId＝OPT-PATCH-ILLEGAL；
  *   ⑦ 绑定锁定（locked 或未授权 authorized==false——同一语义的防御面，
  *   §5.4）＝OPT-VAR-LOCKED（比较型定位：bindingId＋diagSubject）；⑧ 值
- *   检查：非有限＝OPT-PATCH-ILLEGAL；量化项先按 step 网格 round-half-even
- *   对齐再验边界（对齐后越界仍拒绝——不截断）；连续项越 [lower,upper] 界
+ *   检查：非有限＝OPT-PATCH-ILLEGAL（按原始值判、先于对齐——对齐原语对
+ *   非有限值抛 kOptInputInvalid，错误归类不得漂移）；量化项先按 step 网格
+ *   round-half-even 对齐再验边界（**正性与边界均按对齐后值判**——对齐值
+ *   即进补丁 canonical 的有效值；对齐后越界仍拒绝——不截断；round-half-
+ *   even 最近格对齐幂等，规范化补丁〔值已对齐〕复验结论与原始值构造结论
+ *   一致）；连续项越 [lower,upper] 界
  *   ＝OPT-PATCH-ILLEGAL；词表 valueMustBePositive 条目值≤0＝OPT-PATCH-ILLEGAL
  *   （I-MDL-11 传动比值域）；⑨ 枚举下标越 enumValues 界＝OPT-PATCH-ILLEGAL；
  *   ⑩ 离散引用空串＝OPT-PATCH-ILLEGAL。

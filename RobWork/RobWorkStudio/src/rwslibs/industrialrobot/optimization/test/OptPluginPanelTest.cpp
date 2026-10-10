@@ -1331,6 +1331,73 @@ TEST(OptPanelText, ResolveTextFallsBackAndGuardsDigestLeak_WP20T10_ACC1)
     EXPECT_TRUE(fellBack) << "哈希形态解析值不进用户文本";
 }
 
+/**
+ * @brief L-O9 候选状态词列防空（F-635）：textResolver 为空的装配态下，
+ *        候选表状态列解析不崩、显示键名原文。缺陷形态：widget 状态列曾
+ *        直调可空 textResolver（std::function）——空缝即 bad_function_call
+ *        崩 UI 线程，是面板文本中唯一绕过 L-O9 守卫的入口。修复：状态列
+ *        收口到模型层 candidateStatusText（键族拼装＋resolvePanelText 全
+ *        守卫语义）——本用例以候选表行集驱动（模型层等价于 widget 刷新
+ *        循环），空缝逐行解析不崩、恒键名原文。
+ */
+TEST(OptPanelText, CandidateStatusTextEmptyResolverFallsBackToKey_WP20T10_F635)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-02"}, std::vector<std::string>{});
+
+    // 空缝装配态（开发 harness 形态——宿主未注入文案解析器）：单 token
+    // 解析兜底键名原文（键族前缀＋token 无分隔差异——前缀常量唯一书写点）。
+    sdurws::ird::optimization::OptPanelServices bare;
+    EXPECT_EQ(sdurws::ird::optimization::candidateStatusText(bare, "feasible"),
+              std::string("plugin.optimization.status.feasible"))
+        << "空缝兜底键名原文（F-635 缺陷形态——不崩、键名呈现）";
+    EXPECT_EQ(sdurws::ird::optimization::candidateStatusText(bare, "screened-out"),
+              std::string("plugin.optimization.status.screened-out"));
+
+    // 候选表整面空缝渲染（模型层等价于 widget refreshCandidatePage 的
+    // 行循环）：两候选行集（基线 Feasible＋Quick 淘汰 ScreenedOut）逐行
+    // 解析状态词——不崩、恒键名原文（token 即 §4.3 词表值）。
+    std::vector<TwoStageRunRecord> records;
+    records.push_back(makeRecord(
+        true, CandidateStatus::Feasible,
+        makeMetrics({{std::nullopt, std::nullopt, std::nullopt, std::nullopt,
+                      std::nullopt, std::nullopt, std::nullopt, std::nullopt}})));
+    records.push_back(makeRecord(
+        false, CandidateStatus::ScreenedOut,
+        makeMetrics({{std::nullopt, std::nullopt, std::nullopt, std::nullopt,
+                      std::nullopt, std::nullopt, std::nullopt, std::nullopt}}),
+        true));
+    const OptimizationRunResult result = makeRunResult(std::move(records));
+    const auto rows = candidateTableRows(result);
+    ASSERT_EQ(rows.size(), 2U);
+    for (const auto& row : rows) {
+        EXPECT_EQ(sdurws::ird::optimization::candidateStatusText(bare,
+                                                                 row.statusToken),
+                  std::string("plugin.optimization.status.") + row.statusToken)
+            << "空缝装配态候选表渲染不崩、显示键名原文（row token="
+            << row.statusToken << "）";
+    }
+
+    // 缝在位→经缝解析（守卫不改变正常路径——宿主工程用语直出）。
+    sdurws::ird::optimization::OptPanelServices host;
+    host.textResolver = [](const std::string& key) {
+        return key == "plugin.optimization.status.feasible" ? std::string("可行")
+                                                            : key;
+    };
+    EXPECT_EQ(sdurws::ird::optimization::candidateStatusText(host, "feasible"),
+              "可行");
+
+    // 哈希泄漏守卫随收口生效（L-O9 全语义——宿主解析器返回摘要形态时
+    // 回退键名，UX-02"零哈希进用户文本"）。
+    sdurws::ird::optimization::OptPanelServices leaky;
+    leaky.textResolver = [](const std::string&) {
+        return std::string(
+            "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef");
+    };
+    EXPECT_EQ(sdurws::ird::optimization::candidateStatusText(leaky, "feasible"),
+              std::string("plugin.optimization.status.feasible"))
+        << "哈希形态解析值回退键名（泄漏守卫）";
+}
+
 // =====================================================================
 // OptPanelCatalog 组——装配登记面（描述符/门面绑定/键族）。
 // =====================================================================

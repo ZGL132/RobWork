@@ -334,6 +334,35 @@ public:
     }
 };
 
+// ---- 会话缓存替身（F-640 用例——IExecutionCacheCoordinator 脚本化）----
+
+/// 脚本化会话缓存协调器（§10.7 四方法最小实现）：判定面归 evidence 的
+/// 生产语义由脚本开关表达——fullHit=false 恒 DispatchNormal（首轮全重算）；
+/// true 恒 ShortPath（后续轮全命中，倒逼会话底账回放路径）。查询模式序
+/// 记账供断言（底账键补 mode 的查找面观测）。
+class ScriptedSessionCache final : public execution::IExecutionCacheCoordinator {
+public:
+    bool fullHit = false;  ///< 脚本开关（true ⇒ lookup 一律 ShortPath）
+    int lookups = 0;       ///< lookup 累计次数（观测面）
+    std::vector<core::EvaluationMode> queriedModes;  ///< 查询模式序（按发生序）
+
+    execution::CacheLookup lookup(const execution::CacheLookupQuery& query) override
+    {
+        ++lookups;
+        queriedModes.push_back(query.requestedMode);
+        execution::CacheLookup look;  // 默认 DispatchNormal（未命中形态）
+        if (fullHit) {
+            look.guidance = execution::CacheLookup::Guidance::ShortPath;
+        }
+        return look;
+    }
+
+    // 登记治理归 execution 生产面（编排器不消费本面——替身空实现）。
+    void storeResult(core::RunId) override {}
+    void setEvictionPolicy(const execution::EvictionPolicy&) override {}
+    execution::CacheStats stats() const noexcept override { return {}; }
+};
+
 // ---- 编排装配 fixture ----
 
 /// 两级编排完整依赖面（真注册表＋替身探针/编译/投影＋T05 Pareto——
@@ -965,4 +994,85 @@ TEST(OptEvaluatorPorts, CancellationPreservesPartialBatch_WP20T06_ACC3)
     const std::size_t partial = result.quickRecords.size();
     EXPECT_GE(partial, 1U);
     EXPECT_LT(partial, 5U) << "取消后不得派发全部候选（批边界停止）";
+}
+
+// =====================================================================
+// F-640：会话底账键补 mode 维度（Quick/Verified 同 sliceId 不互覆）
+// =====================================================================
+
+TEST(OptEvaluatorPorts, SessionLedgerReplayIsModeAware_WP20T06_F640)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"OPT-06", "EVI-01"},
+                  std::vector<std::string>{});
+
+    // F-640（缺陷草案号）：会话底账曾以 sliceId 单键索引——同候选 Quick/
+    // Verified 两批共用 sliceId（切片键要素只有 config/补丁/契约/Profile，
+    // 不含 mode），后评估的 Verified 记录覆盖 Quick 记录；带缓存会话的
+    // 第二次 run() 中 Quick FullHit 回放取出 screeningOnly=false 的
+    // Verified 记录混入 quickRecords（EVI-01"Quick 不得产生正式效力"被
+    // 击穿）。修复：底账键补 mode 维度（(sliceId, mode) 复合键——与缓存
+    // 判定面 D-13"不升降级"同构），回放永远取同 mode 记录。
+    OrchestratorFixture f;
+    ScriptedSessionCache cache;
+    TwoStageOrchestratorDeps d = f.deps();
+    d.cache = &cache;
+    auto cfg = makeConfig(/*maxCandidates=*/4, /*maxVerified=*/2);
+    auto request = readyRequest(f, cfg);
+
+    TwoStageEvaluationOrchestrator orch(OptimizationStage::StageB, d);
+
+    // ---- 第一轮（DispatchNormal 脚本）：全重算并登记底账。 -------------
+    // 同候选两条记录（Quick 效力面＋Verified 正式面）同 sliceId 并存——
+    // 缺陷形态下后者覆盖前者。
+    const TwoStageRunResult first = orch.run(request, f.ctx);
+    ASSERT_TRUE(first.runCompleted);
+    ASSERT_EQ(first.quickRecords.size(), 4U);
+    ASSERT_EQ(first.verifiedRecords.size(), 2U);
+    EXPECT_EQ(first.audit.cacheFullHits, 0U) << "首轮无命中（全重算）";
+    EXPECT_EQ(first.audit.cacheLookups, 6U) << "4 Quick＋2 Verified 查找";
+    for (const auto& rec : first.quickRecords) {
+        EXPECT_TRUE(rec.screeningOnly);
+        EXPECT_FALSE(rec.cacheHit);
+    }
+
+    // ---- 第二轮（ShortPath 脚本）：全部 FullHit 走会话底账回放。 -------
+    cache.fullHit = true;
+    const TwoStageRunResult second = orch.run(request, f.ctx);
+    ASSERT_TRUE(second.runCompleted);
+    ASSERT_EQ(second.quickRecords.size(), 4U);
+    for (const auto& rec : second.quickRecords) {
+        // 缺陷断言核心：Quick 回放必须取回 Quick 记录——不得混入同
+        // sliceId 的 Verified 记录（缺陷形态下 screeningOnly/mode/资格
+        // 三位全是 Verified 记录的值）。
+        EXPECT_TRUE(rec.cacheHit) << "Quick 批 FullHit 回放（缓存有效性不回归）";
+        EXPECT_TRUE(rec.screeningOnly)
+            << "quickRecords 不得混入 Verified 记录（F-640 缺陷形态）";
+        EXPECT_EQ(rec.mode, core::EvaluationMode::Quick);
+        EXPECT_FALSE(rec.formalPassEligible)
+            << "回放的 Quick 记录保持无正式资格（mode-not-verified）";
+    }
+    // 正向半区：Verified 批同键回放仍 FullHit（同 (sliceId, Verified) 键
+    // 命中——mode 维度不影响既有缓存有效性）。
+    ASSERT_EQ(second.verifiedRecords.size(), 2U);
+    for (const auto& rec : second.verifiedRecords) {
+        EXPECT_TRUE(rec.cacheHit);
+        EXPECT_FALSE(rec.screeningOnly);
+        EXPECT_EQ(rec.mode, core::EvaluationMode::Verified);
+    }
+    // 审计对账（G-1）：FullHit＝两批查找总数；回放不计实际评估；零
+    // "回放不可用"（同 mode 键全部可取——修复语义的正向面）。
+    EXPECT_EQ(second.audit.cacheLookups, 6U);
+    EXPECT_EQ(second.audit.cacheFullHits, 6U);
+    EXPECT_EQ(second.audit.quickEvaluated, 0U);
+    EXPECT_EQ(second.audit.verifiedEvaluated, 0U);
+    EXPECT_EQ(second.audit.cacheReplayUnavailable, 0U);
+    // 查找模式序＝4 Quick 在前＋2 Verified 在后（两批编排序——底账键的
+    // mode 维度与请求模式一一对应）。
+    ASSERT_EQ(cache.queriedModes.size(), 12U);  // 两轮各 6 次
+    for (std::size_t i = 0; i < 4U; ++i) {
+        EXPECT_EQ(cache.queriedModes[6U + i], core::EvaluationMode::Quick);
+    }
+    for (std::size_t i = 4U; i < 6U; ++i) {
+        EXPECT_EQ(cache.queriedModes[6U + i], core::EvaluationMode::Verified);
+    }
 }
