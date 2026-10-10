@@ -266,26 +266,45 @@ enum class CompletenessState : std::uint8_t {
  * jReflectedJointSide＝J_rotor/c²（kg·m²，关节轴系——DYN-04 记法 J·i²，
  * i＝1/c 换算）。inertiaRatio＝c²·J_load@joint/J_rotor（无量纲；
  * P-DT-2：阈值判定归 selection，本卡只输出数值）。
+ * windowProjected（R2，WP-18-T05）：窗口轴的对角视图是**投影值**——完整
+ * 反射惯量矩阵含交叉惯量项（§9.3），单轴比值为投影值须附本限定标记
+ * （§9.5"窗口内存在交叉项、单轴比值为投影值"）；自由轴恒 false。
  */
 struct ReflectedInertiaAxis {
     std::size_t jointIndex = 0;      ///< 对应关节轴下标
-    double jReflectedJointSide = 0.0;///< 反射惯量 J_rotor/c²（kg·m²，关节轴系）
+    double jReflectedJointSide = 0.0;///< 反射惯量（kg·m²，关节轴系对角视图）
     /// 惯量比（无量纲；nullopt＝负载折算惯量缺失→不适用——§10.7 显式标记）。
     std::optional<double> inertiaRatio{};
+    bool windowProjected = false;    ///< R2 窗口轴投影限定（§9.5；R1 恒 false）
 
     bool operator==(const ReflectedInertiaAxis& o) const
     {
         return jointIndex == o.jointIndex && jReflectedJointSide == o.jReflectedJointSide
-            && inertiaRatio == o.inertiaRatio;
+            && inertiaRatio == o.inertiaRatio && windowProjected == o.windowProjected;
     }
     bool operator!=(const ReflectedInertiaAxis& o) const { return !(*this == o); }
 };
 
-/// 反射惯量评估结果（逐电机轴——§13.4 IReflectedInertiaEvaluator 输出面）。
+/**
+ * @brief 反射惯量评估结果（逐电机轴——§13.4 IReflectedInertiaEvaluator
+ *        输出面）。
+ *
+ * jointSideFullMatrix（R2，WP-18-T05）：关节轴系**完整**反射惯量矩阵
+ * J_ref＝(C⁻¹)ᵀ·diag(J_rotor)·C⁻¹（§9.3——对称正定，含交叉惯量项；
+ * n×n，行列均按关节串联序）。§9.3 纪律：反射惯量不默认对角化——交叉项
+ * 保留在完整矩阵中随结果归档（selection 只需单轴数值时消费 axes 对角
+ * 视图，不因单轴消费丢弃交叉项）。R1 无耦合链无交叉项可丢——保持无值
+ * （nullopt），对角视图即完整口径。
+ */
 struct ReflectedInertiaResult {
     std::vector<ReflectedInertiaAxis> axes{}; ///< 逐电机轴结果（下标＝电机轴序）
+    /// R2 完整关节轴系反射惯量矩阵（kg·m²；§9.3——R1 恒 nullopt）。
+    std::optional<RowMatrix> jointSideFullMatrix{};
 
-    bool operator==(const ReflectedInertiaResult& o) const { return axes == o.axes; }
+    bool operator==(const ReflectedInertiaResult& o) const
+    {
+        return axes == o.axes && jointSideFullMatrix == o.jointSideFullMatrix;
+    }
     bool operator!=(const ReflectedInertiaResult& o) const { return !(*this == o); }
 };
 

@@ -32,10 +32,16 @@ namespace {
 
 /// 魔数与 codec 版本（版本演进＝尾部数字递增；解码端严格匹配——版本不符
 /// 即拒绝，不做多版本兼容读：CON-04 契约版本化纪律的字节承载侧）。
-constexpr char kMagicModel[] = "IRDDTD1";   // DriveTrainModel 载荷
-constexpr char kMagicSeries[] = "IRDDTJ1";  // JointSeriesView 载荷
-constexpr char kMagicOutput[] = "IRDDTO1";  // DriveTrainMappingOutput 载荷
-constexpr std::uint32_t kCodecVersion = 1;
+/// WP-18-T05：输出载荷升级 v2（反射惯量段增补窗口投影标记＋R2 完整关节
+/// 轴系反射惯量矩阵——§9.3/§9.5）；模型/序列载荷无字段变化保持 v1
+/// （窗口字段自 T03 起已在 v1 形态内——仅值域从"恒缺省"扩展为"R2 合法"，
+/// 字节布局不变）。
+constexpr char kMagicModel[] = "IRDDTD1";   // DriveTrainModel 载荷（v1——布局不变）
+constexpr char kMagicSeries[] = "IRDDTJ1";  // JointSeriesView 载荷（v1——布局不变）
+constexpr char kMagicOutput[] = "IRDDTO2";  // DriveTrainMappingOutput 载荷（v2）
+constexpr std::uint32_t kModelCodecVersion = 1;   // 模型载荷版本（v1）
+constexpr std::uint32_t kSeriesCodecVersion = 1;  // 序列载荷版本（v1）
+constexpr std::uint32_t kOutputCodecVersion = 2;  // 输出载荷版本（v2——T05 增补字段）
 
 /// 编码写入器（容量按需增长；无共享状态）。
 class ByteWriter {
@@ -386,7 +392,7 @@ std::vector<std::uint8_t> encodeDriveTrainModel(const DriveTrainModel& model)
     ByteWriter w;
     w.reserve(256 + model.jointAxes.size() * 64);
     w.putBytes(reinterpret_cast<const std::uint8_t*>(kMagicModel), 7);
-    w.putU32(kCodecVersion);
+    w.putU32(kModelCodecVersion);
 
     // 轴表（串联序；localName 仅诊断呈现——进编码保持往返完整性）。
     w.putU32(static_cast<std::uint32_t>(model.jointAxes.size()));
@@ -460,7 +466,7 @@ DriveTrainModel decodeDriveTrainModel(const std::vector<std::uint8_t>& bytes)
     for (std::size_t i = 0; i < 7; ++i) {
         (void)reader.getU8();
     }
-    if (reader.getU32() != kCodecVersion) {
+    if (reader.getU32() != kModelCodecVersion) {
         throw std::invalid_argument("drivetrain codec：DriveTrainModel 载荷版本不符"
                                     "（拒绝多版本兼容读——CON-04 契约版本化）");
     }
@@ -546,7 +552,7 @@ std::vector<std::uint8_t> encodeJointSeries(const JointSeriesView& series)
     ByteWriter w;
     w.reserve(64 + series.samples.size() * 48);
     w.putBytes(reinterpret_cast<const std::uint8_t*>(kMagicSeries), 7);
-    w.putU32(kCodecVersion);
+    w.putU32(kSeriesCodecVersion);
 
     w.putU32(static_cast<std::uint32_t>(series.jointIds.size()));
     for (const core::ObjectId& id : series.jointIds) {
@@ -582,7 +588,7 @@ JointSeriesView decodeJointSeries(const std::vector<std::uint8_t>& bytes)
     for (std::size_t i = 0; i < 7; ++i) {
         (void)reader.getU8();
     }
-    if (reader.getU32() != kCodecVersion) {
+    if (reader.getU32() != kSeriesCodecVersion) {
         throw std::invalid_argument("drivetrain codec：JointSeriesView 载荷版本不符"
                                     "（拒绝多版本兼容读——CON-04 契约版本化）");
     }
@@ -621,7 +627,7 @@ std::vector<std::uint8_t> encodeMappingOutput(const DriveTrainMappingOutput& out
     ByteWriter w;
     w.reserve(512);
     w.putBytes(reinterpret_cast<const std::uint8_t*>(kMagicOutput), 7);
-    w.putU32(kCodecVersion);
+    w.putU32(kOutputCodecVersion);
 
     // 身份块（§6.2 结果身份——消费方核对同一矩阵内容身份）。
     putIdentity(w, output.identity);
@@ -635,7 +641,7 @@ std::vector<std::uint8_t> encodeMappingOutput(const DriveTrainMappingOutput& out
         w.putString(item);
     }
 
-    // 反射惯量（§9——逐轴数值事实）。
+    // 反射惯量（§9——逐轴数值事实；v2 增补窗口投影标记——§9.5 限定语）。
     w.putU32(static_cast<std::uint32_t>(output.inertia.axes.size()));
     for (const ReflectedInertiaAxis& ax : output.inertia.axes) {
         w.putU64(ax.jointIndex);
@@ -645,6 +651,23 @@ std::vector<std::uint8_t> encodeMappingOutput(const DriveTrainMappingOutput& out
         if (ax.inertiaRatio.has_value()) {
             requireFinite(*ax.inertiaRatio, "inertia.inertiaRatio");
             w.putF64(*ax.inertiaRatio);
+        }
+        w.putU8(ax.windowProjected ? 1 : 0); // v2——窗口投影限定（R1 恒 0）
+    }
+    // v2 增补：R2 完整关节轴系反射惯量矩阵（§9.3——含交叉惯量项；R1 恒
+    // 缺省）。optional<RowMatrix>＝u8 有无标志＋有值时 rows/cols/逐元素。
+    w.putU8(output.inertia.jointSideFullMatrix.has_value() ? 1 : 0);
+    if (output.inertia.jointSideFullMatrix.has_value()) {
+        const RowMatrix& jref = *output.inertia.jointSideFullMatrix;
+        if (!jref.wellFormed()) {
+            throw std::invalid_argument("drivetrain codec：inertia.jointSideFullMatrix"
+                                        " 结构失配（rows*cols != data.size()）");
+        }
+        w.putU64(jref.rows);
+        w.putU64(jref.cols);
+        for (double v : jref.data) {
+            requireFinite(v, "inertia.jointSideFullMatrix");
+            w.putF64(v);
         }
     }
 
@@ -734,7 +757,7 @@ DriveTrainMappingOutput decodeMappingOutput(const std::vector<std::uint8_t>& byt
     for (std::size_t i = 0; i < 7; ++i) {
         (void)reader.getU8();
     }
-    if (reader.getU32() != kCodecVersion) {
+    if (reader.getU32() != kOutputCodecVersion) {
         throw std::invalid_argument("drivetrain codec：MappingOutput 载荷版本不符"
                                     "（拒绝多版本兼容读——CON-04 契约版本化）");
     }
@@ -763,7 +786,22 @@ DriveTrainMappingOutput decodeMappingOutput(const std::vector<std::uint8_t>& byt
         if (reader.getU8() != 0) {
             ax.inertiaRatio = reader.getF64();
         }
+        ax.windowProjected = (reader.getU8() != 0); // v2——窗口投影限定
         output.inertia.axes.push_back(std::move(ax));
+    }
+    // v2 增补：R2 完整关节轴系反射惯量矩阵（optional——u8 有无标志）。
+    if (reader.getU8() != 0) {
+        RowMatrix jref;
+        jref.rows = reader.getU64();
+        jref.cols = reader.getU64();
+        const std::uint64_t nElems = jref.rows * jref.cols;
+        jref.data.reserve(nElems);
+        for (std::uint64_t e = 0; e < nElems; ++e) {
+            const double v = reader.getF64();
+            requireFinite(v, "inertia.jointSideFullMatrix");
+            jref.data.push_back(v);
+        }
+        output.inertia.jointSideFullMatrix = std::move(jref);
     }
 
     const std::uint32_t nSeries = reader.getU32();

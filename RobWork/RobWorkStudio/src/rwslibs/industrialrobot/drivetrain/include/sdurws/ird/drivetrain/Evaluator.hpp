@@ -98,10 +98,18 @@ inline constexpr std::string_view kMappingProfileVersion = "1";
  *
  * 实例内部仅持映射核心与 Facts 提供器的无状态实现——实例可共享
  * （stateless=true 的实例级语义由 descriptor 声明，调用方按声明决策）。
+ *
+ * ★ 能力位注入（WP-18-T05）：构造参数 stage 声明本实例的映射能力位
+ * （默认 R1——既有构造面与 L5 装配行为零变化）。能力由装配清单与算法
+ * 版本决定（卡 §6.3——UI/配置标签不改变能力），宿主装配按清单选择：
+ * R1 装配下窗口输入仍被 DT-COUPLING-STAGE-LOCKED 阻断（R1 阻断反例
+ * 保留——AT-38）；R2 装配下窗口输入经 §7.2 矩阵检查后进入块对角映射。
  */
 class DriveTrainMappingEvaluator final : public evidence::IEngineeringEvaluator {
 public:
-    DriveTrainMappingEvaluator();
+    /// @param stage [in] 映射能力位（默认 R1——对角路径；R2 装配显式传入）。
+    explicit DriveTrainMappingEvaluator(
+        StageCapability stage = StageCapability::R1Capability);
 
     /// 描述符（注册期已验证；运行期只读——返回引用指向实例成员稳定存储）。
     const evidence::EvaluatorDescriptor& descriptor() const override;
@@ -137,6 +145,7 @@ public:
 
 private:
     evidence::EvaluatorDescriptor m_descriptor; ///< 稳定存储（descriptor() 引用所指）
+    StageCapability m_stage;                    ///< 本实例映射能力位（构造注入——卡 §6.3）
 };
 
 /**

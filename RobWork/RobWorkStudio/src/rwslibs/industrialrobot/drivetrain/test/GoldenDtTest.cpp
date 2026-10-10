@@ -576,12 +576,17 @@ TEST_F(DtGoldenMapping, VirtualWorkMatrixEquivalence_At38R1_WP18T04_ACC1)
 /**
  * inputs.at38R1Rejections 声明的两个反例（AT-38"R1 阻断反例仍给诊断"——
  * M-6）：
- *   - nondiag-2axis：非对角元素 1e-6 非零的 Ĉ——evaluate fail-fast
- *     （DT-MATRIX-NONDIAGONAL-LOCKED）；R2 能力位下同阻（R2 数值路径归
- *     WP-18-T05——保守阻止，期望码 DT-COUPLING-STAGE-LOCKED）。
- *   - coupling-window：对角 Ĉ＋R2 耦合窗口——能力门控第一检查
- *     （DT-COUPLING-STAGE-LOCKED；R1/R2 能力位同拒——UI/配置标签不改变
- *     计算能力）。
+ *   - nondiag-2axis：非对角元素 1e-6 非零的 Ĉ（无窗口）——evaluate
+ *     fail-fast（DT-MATRIX-NONDIAGONAL-LOCKED）；R2 能力位下同阻（交叉
+ *     耦合必须经窗口声明——码与能力位无关，结构语义）。
+ *   - coupling-window：对角 Ĉ＋R2 耦合窗口——R1 能力位下能力门控阻断
+ *     （DT-COUPLING-STAGE-LOCKED）。★WP-18-T05 起本变体在 R2 能力位下
+ *     转为**合法输入**（C＝对角传动比——数值路径落位后经 §7.2 全表检查
+ *     通过），并构成"C＝对角时与既有对角路径逐项一致"的黄金回归锚：
+ *     R2 映射输出与同一数值的无窗口 R1 基线相对 1×10⁻⁹ 逐项一致（数据
+ *     文件中的 expectCodeByR2Capability 字段为本命题的 T04 历史值，已被
+ *     T05 语义取代——数据集升版不在本任务 allowedFiles，登记单元卡
+ *     §18.3 待同步）。
  * 双路径核对：evaluate（抛 invalid_argument，消息以码开头——卡 §13.8）＋
  * ICouplingMatrixValidator&（accepted=false 且首诊断码匹配）。反例输入
  * 不伪装"传动不可行"——阻断语义由码面承载（判定权在消费域，卡 §6.3）。
@@ -606,8 +611,8 @@ TEST_F(DtGoldenMapping, At38R1RejectionCounterexamples_WP18T04_ACC1)
         const dt::DriveTrainModel model = rawModelFrom(rej);
         const dt::JointSeriesView series = rejectionSeries(model);
         const std::string codeR1 = expectCodeOf(rej, "expectCode");
-        const std::string codeR2 = expectCodeOf(rej, "expectCodeByR2Capability");
         ASSERT_FALSE(codeR1.empty());
+        const bool hasWindow = (rej.find("window") != nullptr && rej.find("window")->isObject());
 
         // ---- evaluate 路径：R1 能力下阻断 fail-fast（消息以码开头）。
         try {
@@ -624,16 +629,56 @@ TEST_F(DtGoldenMapping, At38R1RejectionCounterexamples_WP18T04_ACC1)
         ASSERT_FALSE(gateR1.diagnostics.empty());
         EXPECT_EQ(gateR1.diagnostics.front().code, codeR1);
 
-        // ---- R2 能力位（保守面）：R2 数值路径未落位（WP-18-T05 承接），
-        // 同样不提前放行——期望码由 inputs 声明（coupling-window 与 R1
-        // 同码；nondiag 变体按能力门控码 DT-COUPLING-STAGE-LOCKED——窗口
-        // 未携带时门控在非对角检查前不适用……以 inputs 声明为准核对）。
-        if (!codeR2.empty()) {
+        if (!hasWindow) {
+            // ---- 未声明窗口的非对角变体（nondiag-2axis）：R2 能力位下
+            // 同码阻断——交叉耦合必须经窗口声明，非对角阻断属结构语义、
+            // 与能力位无关（T05 落位后语义不变）。
+            const std::string codeR2 = expectCodeOf(rej, "expectCodeByR2Capability");
+            if (!codeR2.empty()) {
+                const dt::CouplingValidationResult gateR2
+                    = validator.validate(model, dt::StageCapability::R2Capability);
+                EXPECT_FALSE(gateR2.accepted);
+                ASSERT_FALSE(gateR2.diagnostics.empty());
+                EXPECT_EQ(gateR2.diagnostics.front().code, codeR2);
+            }
+        } else {
+            // ---- 窗口变体（coupling-window）：T05 起在 R2 能力位下合法
+            // ——§7.2 全表检查通过（C＝diag(0.01,0.02)、κ＝2 深良态），并
+            // 构成 R1 等价回归锚：与同一数值的无窗口 R1 基线逐项一致
+            // （相对 1×10⁻⁹——矩阵路径与标量路径求值序不同的黄金容差）。
             const dt::CouplingValidationResult gateR2
                 = validator.validate(model, dt::StageCapability::R2Capability);
-            EXPECT_FALSE(gateR2.accepted);
-            ASSERT_FALSE(gateR2.diagnostics.empty());
-            EXPECT_EQ(gateR2.diagnostics.front().code, codeR2);
+            EXPECT_TRUE(gateR2.accepted)
+                << "合法耦合窗口在 R2 能力位下必须被接受（WP-18-T05 数值路径）";
+            EXPECT_GT(gateR2.conditionNumber, 0.0);
+
+            dt::DriveTrainModel baseline = model;
+            baseline.window.reset(); // 同一数值的对角形态（chat＝diag＝C_w）
+            const dt::DriveTrainMappingOutput outR2 = evaluator.evaluate(
+                model, series, nullptr, dt::StageCapability::R2Capability);
+            const dt::DriveTrainMappingOutput outR1 = evaluator.evaluate(baseline, series, nullptr);
+            ASSERT_EQ(outR1.motorSeries.size(), outR2.motorSeries.size());
+            for (std::size_t k = 0; k < outR2.motorSeries.size(); ++k) {
+                ASSERT_EQ(outR1.motorSeries[k].samples.size(),
+                          outR2.motorSeries[k].samples.size());
+                for (std::size_t i = 0; i < outR2.motorSeries[k].samples.size(); ++i) {
+                    const dt::MotorDriveSample& r1 = outR1.motorSeries[k].samples[i];
+                    const dt::MotorDriveSample& r2 = outR2.motorSeries[k].samples[i];
+                    EXPECT_PRED_FORMAT2(closeRel, r2.theta, r1.theta);
+                    EXPECT_PRED_FORMAT2(closeRel, r2.thetaDot, r1.thetaDot);
+                    EXPECT_PRED_FORMAT2(closeRel, r2.thetaDDot, r1.thetaDDot);
+                    EXPECT_PRED_FORMAT2(closeRel, r2.tauIdeal, r1.tauIdeal);
+                    EXPECT_PRED_FORMAT2(closeRel, r2.tauMotor, r1.tauMotor);
+                    EXPECT_PRED_FORMAT2(closeRel, r2.pJoint, r1.pJoint);
+                    EXPECT_PRED_FORMAT2(closeRel, r2.pMotor, r1.pMotor);
+                }
+                // 工作点统计一致（完整循环 RMS——黄金容差内）。
+                ASSERT_EQ(outR1.points.size(), outR2.points.size());
+                EXPECT_PRED_FORMAT2(closeRel, outR2.points[k].tauRms,
+                                    outR1.points[k].tauRms);
+                EXPECT_PRED_FORMAT2(closeRel, outR2.points[k].omegaRms,
+                                    outR1.points[k].omegaRms);
+            }
         }
     }
 }

@@ -3,7 +3,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 单元 | drivetrain（**L2 共享计算服务**——ARCHITECTURE §2.3/§3.1：非业务域单元、非 L4 插件；dynamics 与 selection 之间的唯一共享传动计算服务） |
-| 文档版本 | v0.5（2026-10-10，GOV-UNFROZEN 治理批——§15 WP-18-T05 任务行加"R2 解冻启动"注：MDL-21 耦合矩阵消费侧 R2 内容开发提前启动（REQUIREMENTS v1.17 解冻注），承载契约 WP-18-T05.json 已 ready（dependsOn＝WP-18-T03＋WP-13-T18——契约依赖边单向 WP-18-T05→WP-13-T18，建模侧先行）；R1 阻断反例保留与"不提前放开 R1 阻断"红线不变；阶段 D 启动裁决仍为领取前置；v0.1 首版草案 2026-10-06，v0.2~v0.4＝T02～T04 落位登记——全记录见 §18.5） |
+| 文档版本 | v0.6（2026-10-11，WP-18-T05 实现增量登记——R2 耦合矩阵数值路径落位：§7.2 全表矩阵检查＋块对角精确映射〔τ_motor＝Cᵀ·τ_joint＋J_rotor·θ̈_motor、θ̈_motor＝C⁺·q̈_joint〕＋R2 反射惯量完整矩阵/窗口投影＋三方矩阵内容身份核对原语；R1 阻断反例保留不变；实现偏差与口径澄清逐条见 §18.3，v0.1 首版草案 2026-10-06，v0.2~v0.5＝T02~T04/治理批登记——全记录见 §18.5） |
 | 文档状态 | **`Draft`**（未冻结；本文只做详细设计，不自行宣布任何验收通过） |
 | 主 WP | WP-18（DYN-04 唯一映射实现；DYN-04 映射不归 dynamics 自行实现） |
 | 上游 | `REQUIREMENTS.md` v1.16（`Accepted`，唯一需求权威）、`ARCHITECTURE.md` v0.13（`Draft`）、`development-task-breakdown.md` v0.53 |
@@ -230,17 +230,17 @@ L1  框架基线        RobWork(rw) │ RobWorkSim(rwsim) │ RobWorkStudio(rws)
 
 ## 4. 当前代码落位与目标布局
 
-### 4.1 当前落位（如实登记；2026-10-07 WP-18-T04 落位后刷新）
+### 4.1 当前落位（如实登记；2026-10-11 WP-18-T05 落位后刷新）
 
 | 项 | 状态 |
 | --- | --- |
-| `CMakeLists.txt` | **存在（WP-18-T02，T04 增列两测试文件）**——`sdurws_ird_drivetrain` STATIC（C++17，PUBLIC 链 core＋evidence——§3.2 两登记边；别名 `RWS::ird::drivetrain` 仅集成模式）；配置期依赖红线守卫（两登记边/零 Qt/零 gtest·testkit 于产品目标）自持 |
-| `include/sdurws/ird/drivetrain/DiagCodes.hpp` | **存在（WP-18-T02；T03 表尾追加至 21 码）**——DT-* 码值常量＋登记行清单（§6.3 阻断面 8＋§7.2 矩阵 4＋§9 惯量 2＋§10 效率/统计 4＋§12.1 序列 1＋§12.4/§8.4 表尾追加 2；装配期注册数据源——P-DT-7 收编前不进 diagnostics 全局装配，头内"码值权威链"注释） |
+| `CMakeLists.txt` | **存在（WP-18-T02，T04/T05 增列测试文件）**——`sdurws_ird_drivetrain` STATIC（C++17，PUBLIC 链 core＋evidence——§3.2 两登记边；别名 `RWS::ird::drivetrain` 仅集成模式）；配置期依赖红线守卫（两登记边/零 Qt/零 gtest·testkit 于产品目标）自持 |
+| `include/sdurws/ird/drivetrain/DiagCodes.hpp` | **存在（WP-18-T02；T03 表尾追加至 21 码；T05 零新增码——§7.2 四码与 §9.3 一码 T02 已登记，T05 首次产码）**——DT-* 码值常量＋登记行清单（§6.3 阻断面 8＋§7.2 矩阵 4＋§9 惯量 2＋§10 效率/统计 4＋§12.1 序列 1＋§12.4/§8.4 表尾追加 2；装配期注册数据源——P-DT-7 收编前不进 diagnostics 全局装配，头内"码值权威链"注释） |
 | `include/sdurws/ird/drivetrain/README.md` | 存在（落位说明版；原占位文案"指向卡 §9"偏差已随 T02 修正——§18.3 闭环） |
-| `src/`（DiagCodes/MappingCore/DriveTrainCodec/Evaluator） | **存在（WP-18-T02＋T03）**——21 码登记行清单＋映射核心唯一实现（阻断面检查序/R1 对角精确虚功映射/一致性检查/反射惯量/效率折算/工作点统计）＋canonical 编解码＋③端口评估器适配 |
-| `test/`（TestMainReport/DiagCodesTest/BuildRedLineTest/MappingGoldenTest/**GoldenDtTest**） | **存在（WP-18-T02/T03；T04 增列 GoldenDtTest.cpp）**——`sdurws_ird_drivetrain_test`：登记表全表/句法/红线扫描＋映射黄金数据组（T03，DT-G1～G9/B1～B3/G12/G13 测试内参考实现面）＋**黄金数据集消费组（T04，DtGoldenMapping 6 用例——test/ 黄金数据文件经 GoldenFixture＋档案容差对照＋AT-38 R1 可验部分）** |
-| `contract_test/`（ContractTestMain/BuildGraphContractTest/EvaluatorContractTest/**GoldenDatasetContractTest**） | **存在（WP-18-T02/T03；T04 增列 GoldenDatasetContractTest.cpp）**——`sdurws_ird_drivetrain_contract_test`：构建图边界契约＋evidence 评估器注册/切片依赖声明套件＋**黄金数据集登记契约（T04，DtGoldenDatasetContract 5 用例——DatasetManifest 装载/完整性覆盖/交叉一致/档案通道与 P-DT-3 纪律）** |
-| `testdata/golden/dt-mapping-golden/1.0.0/` | **存在（WP-18-T04）**——黄金数据集（manifest.json 按 ird-golden-manifest/1 登记：kind=analytic-case、coveredRequirements 含 DYN-04、coveredAt 含 AT-38、integrity 全文件 SHA-256、generate 闭式脚本入库；inputs 5 算例＋AT-38 反例 2 变体，expected 独立参考实现产出）——契约 acceptance 2"testdata/golden/dt-* 按 DatasetManifest 登记"的落地面 |
+| `src/`（DiagCodes/MappingCore/DriveTrainCodec/Evaluator） | **存在（WP-18-T02＋T03＋T05）**——21 码登记行清单＋映射核心唯一实现（阻断面检查序/R1 对角精确虚功映射/**R2 块对角矩阵映射〔§7.1 公式组：τ_motor＝Cᵀ·τ_joint＋J_rotor·θ̈_motor、θ̈_motor＝C⁺·q̈_joint；交叉耦合逐元素保留〕**/R2 数值核〔单侧 Jacobi SVD＋Gauss-Jordan 求逆——确定性〕/R2 反射惯量完整矩阵＋窗口投影/一致性检查/效率折算/工作点统计/R2 耦合模型工厂/矩阵内容身份核对原语）＋canonical 编解码（输出载荷 v2）＋③端口评估器适配（能力位构造注入） |
+| `test/`（TestMainReport/DiagCodesTest/BuildRedLineTest/MappingGoldenTest/MappingR2GoldenTest/GoldenDtTest） | **存在（WP-18-T02/T03；T04 增列 GoldenDtTest.cpp；T05 增列 MappingR2GoldenTest.cpp）**——`sdurws_ird_drivetrain_test` 37 用例：登记表全表/句法/红线扫描＋映射黄金数据组（T03）＋**R2 黄金组（T05，DtMappingR2Golden 6 用例——耦合窗口解析映射/高速多轴联动交叉项保留/R1 等价回归锚/R1 阻断反例保留/§7.2 全表阻断/R2 反射惯量完整矩阵/三方矩阵内容身份）**＋黄金数据集消费组（T04，DtGoldenMapping 6 用例；T05 修订 At38 用例——窗口变体 R2 位转正命题） |
+| `contract_test/`（ContractTestMain/BuildGraphContractTest/EvaluatorContractTest/GoldenDatasetContractTest） | **存在（WP-18-T02/T03/T04；T05 增补 EndToEndCoupledSliceEvaluation 用例——15 用例）**——`sdurws_ird_drivetrain_contract_test`：构建图边界契约＋evidence 评估器注册/切片依赖声明套件＋黄金数据集登记契约＋**R2 端到端切片评估（T05——能力位注入适配器全链）** |
+| `testdata/golden/dt-mapping-golden/1.0.0/` | **存在（WP-18-T04）**——黄金数据集（manifest.json 按 ird-golden-manifest/1 登记：kind=analytic-case、coveredRequirements 含 DYN-04、coveredAt 含 AT-38、integrity 全文件 SHA-256、generate 闭式脚本入库；inputs 5 算例＋AT-38 反例 2 变体，expected 独立参考实现产出）——契约 acceptance 2"testdata/golden/dt-* 按 DatasetManifest 登记"的落地面。**T05 注**：at38R1Rejections.coupling-window 的 `expectCodeByR2Capability` 字段已被 T05 语义取代（§18.3——数据集升版不在该任务 allowedFiles，待同步） |
 | `testdata/tolerance/dt-mapping/v1.0.0.json` | **存在（WP-18-T04）**——容差档案（ird-tolerance-profile/1；23 条目全部 appendixD-fixed、标量相对 1×10⁻⁹＋逐例 eps_abs 1×10⁻¹²——附录 D 第 9 项；能量 J 不入档案——测试侧恒等式通道，§18.3） |
 | 上级目标注册 | `sdurws_ird_drivetrain`＋`_test`＋`_contract_test` 已注册（industrialrobot/CMakeLists.txt——drivetrain 自 WP-18-T02 移出 IRD_MODULES 占位循环，add_subdirectory 挂载） |
 | plugin/worker | 不存在（**符合设计**——§2.3/§4.2 明文默认禁止创建〔无独立界面、worker 归 execution〕，如需走 P-DT-8；契约 acceptance 1"无插件目标"同口径） |
@@ -248,6 +248,8 @@ L1  框架基线        RobWork(rw) │ RobWorkSim(rwsim) │ RobWorkStudio(rws)
 > WP-18-T02 执行实录（2026-10-06）：集成模式三目标构建零错误＋ird_gates 零命中＋validate-docs PASS；独立冒烟配置＋全量构建零错误；gtest XML（7/7＋5/5，零失败）＋ird-test-report.json×2＋双模式构建日志留痕于 `traceability/builds/wp18-t02/`。真实 StableCodeRegistry 注册**未执行**（依赖白名单无 diagnostics 边〔§3.2 点名表外〕＋diagnostics 前缀表无 DT——P-DT-7 收编归 diagnostics 所有者，两处文件不在该任务 allowedFiles），登记表以 core 句法权威（DiagnosticRecord::make C-3）验证——不以桩伪造注册结论。
 >
 > WP-18-T04 执行实录（2026-10-07）：集成模式两测试目标构建零错误；`sdurws_ird_drivetrain_test` 30/30、`sdurws_ird_drivetrain_contract_test` 14/14 全部通过（gtest XML＋ird-test-report.json 留痕 `traceability/gtest-reports/wp18-t04/`——其中 DtGoldenMapping 6 用例经 GoldenFixture 真实装载黄金数据集〔完整性 SHA-256 校验＋档案容差〕，DtGoldenDatasetContract 5 用例以 testkit 装载器全量校验登记契约）；validate-docs PASS。独立冒烟与 ird_gates 结论见 §20（按真实执行结果登记）。
+>
+> WP-18-T05 执行实录（2026-10-11）：集成模式产品库＋两测试目标构建零错误；`sdurws_ird_drivetrain_test` **37/37**、`sdurws_ird_drivetrain_contract_test` **15/15** 全部通过（gtest XML＋ird-test-report.json×2＋双模式构建日志留痕 `traceability/builds/wp18-t05/` 与 `traceability/gtest-reports/wp-18-t05/`）；独立冒烟模式全量构建零错误＋冒烟树直跑两测试 exe 同绿（37/37＋15/15）；ird_gates 全部检查通过（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中）；validate-task PASS。R2 数值路径自本任务起可用（R2 能力位注入——R1 阻断反例保留不变）。
 
 ### 4.2 目标布局（全部为设计；落位动作归 WP-18-T02 及后续任务）
 
@@ -801,18 +803,26 @@ E_rotor,j   ＝ ∫ J_rotor·θ̈·θ̇ dt                 （转子动能往返
 class IDriveTrainMappingEvaluator {
 public:
     virtual ~IDriveTrainMappingEvaluator() = default;
-    /// @brief 执行一次完整映射评估。
+    /// @brief 执行一次完整映射评估（带能力位——WP-18-T05 落位形态）。
     /// @param[in] model  归一化传动模型（构造入口已过结构校验；调用方持有）
     /// @param[in] series 关节侧序列（12.1 契约；调用方持有；本函数不修改）
     /// @param[in] ctx    取消查询回调（可为 nullptr＝不可取消；批次边界查询）
+    /// @param[in] stage  阶段能力位（R1＝对角路径＋窗口拒绝——R1 阻断反例保留；
+    ///                   R2＝§7 矩阵路径；能力由装配清单与算法版本决定，
+    ///                   调用方注入——UI/配置标签不改变能力）
     /// @return 映射输出（§11 工作点序列＋统计＋事实 DTO；逐工况分组）
     /// @throws std::invalid_argument 结构非法（§6.3 阻断面/§7.2 矩阵形态——附 DT-* 码语义）
     /// @pre  model.identity 与 series.identity 无冲突（不同传动配置/不同序列混用＝调用方错误）
     /// @post 纯函数零副作用；同输入等价输出（NFR-COR-02）
-    /// @note R1/R2：能力由 model.window 是否存在与装配能力版本共同决定（§6.3 能力门控）
     virtual DriveTrainMappingOutput evaluate(const DriveTrainModel& model,
                                              const JointSeriesView& series,
-                                             ICancellation* ctx) = 0;
+                                             ICancellation* ctx,
+                                             StageCapability stage) = 0;
+    /// 三参形态＝R1 能力（语义冻结——既有调用方行为零变化；R2 消费必须
+    /// 显式经四参形态声明能力位，无隐式能力提升——WP-18-T05 落位注）。
+    DriveTrainMappingOutput evaluate(const DriveTrainModel& model,
+                                     const JointSeriesView& series,
+                                     ICancellation* ctx);
 };
 ```
 
@@ -1013,7 +1023,7 @@ drivetrain 无 plugin 目标（§2.3），**无 GUI 测试**；Windows GUI 测�
 | **WP-18-T02** | `ird/drivetrain/CMakeLists.txt`（新）：STATIC（链 core＋evidence）；注册 `_test`/`_contract_test`；占位 README 文案修正 | T01、WP-03-T01 | 双模式构建零错误；红线扫描零命中（ird_gates） | 零 Qt；依赖仅 core+evidence（§3.5） |
 | **WP-18-T03** | DriveTrainMappingEvaluator 唯一实现：电机侧工作点 τ/ω/P、η⁺/η⁻、反射惯量 J·i²、惯量比、能量分项、四象限统计；R1 对角传动；R2 矩阵扩展接口（§7 设计落位为编译期隔离的能力门控）；非法矩阵诊断；不重复计入转子惯量 | T02、WP-05-T10（③端口） | 传动映射黄金数据（双向效率/反射惯量/摩擦不重复计入）用例通过；常矩阵 C 下与对角传动比等价验证 | 禁止与壳体质量重复计入转子惯量 |
 | **WP-18-T04** | `drivetrain/test/*`＋`contract_test/*`＋`testdata/golden/dt-*`（§14.2 矩阵 R1 组） | T03、WP-02 | 全部用例通过并留痕（gtest XML＋ird-test-report.json）；ird_gates 零命中 | 未执行测试不得标注通过 |
-| **WP-18-T05**（R2/D） | 耦合矩阵 C 全链消费：SEL-03/04/05 同一口径；限位经映射校验（MDL-21 消费面）；AT-38 高速多轴联动交叉耦合验证；R1 无耦合链等价对角映射用例〔**R2 解冻启动注（2026-10-10，GOV-UNFROZEN 批；REQUIREMENTS v1.17 MDL-21 行解冻注）**：R2 内容开发提前启动——承载契约 tasks/foundation/WP-18-T05.json 已 ready（dependsOn＝WP-18-T03＋WP-13-T18；契约依赖边单向 WP-18-T05→WP-13-T18——建模侧先行〔编辑/持久化/阻断口径〕、本侧消费〔映射〕，DTB §2.14 行勘误注同口径）；R1 阻断反例保留（§6.3 能力门控与 `DT-COUPLING-STAGE-LOCKED`）；阶段 D 启动裁决仍为领取前置；"不提前放开 R1 阻断"红线不变〕 | T03、WP-13-T18 | R2 用例通过并留痕 | 不提前放开 R1 阻断 |
+| **WP-18-T05**（R2/D） | 耦合矩阵 C 全链消费：SEL-03/04/05 同一口径；限位经映射校验（MDL-21 消费面）；AT-38 高速多轴联动交叉耦合验证；R1 无耦合链等价对角映射用例〔**R2 解冻启动注（2026-10-10，GOV-UNFROZEN 批；REQUIREMENTS v1.17 MDL-21 行解冻注）**：R2 内容开发提前启动——承载契约 tasks/foundation/WP-18-T05.json 已 ready（dependsOn＝WP-18-T03＋WP-13-T18；契约依赖边单向 WP-18-T05→WP-13-T18——建模侧先行〔编辑/持久化/阻断口径〕、本侧消费〔映射〕，DTB §2.14 行勘误注同口径）；R1 阻断反例保留（§6.3 能力门控与 `DT-COUPLING-STAGE-LOCKED`）；阶段 D 启动裁决仍为所有者前置事项；"不提前放开 R1 阻断"红线不变〕〔**落位注（2026-10-11）**：本任务已按契约实施——R2 数值路径/矩阵检查/反射惯量/身份核对原语落位（§4.1/§18.3/§20 实录），"不提前放开 R1 阻断"红线复验保留；正式验收与合入按三段式程序（DTB §5.7），交付仍绑 R2/阶段 D 独立验收（V13-02/V12-03 分期口径不变）〕 | T03、WP-13-T18 | R2 用例通过并留痕 | 不提前放开 R1 阻断 |
 
 **跨单元同步说明（必须随任务登记）**：
 
@@ -1138,6 +1148,17 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | **锚点侧（WP-18-T04 实现注记）** | 手算锚点（analytic-single t=0.25s 的 θ/θ̇/θ̈/τ 值）随 **inputs** 算例声明（anchors 字段——"输入侧钉子"），expected 由脚本生成不携带；消费测试以 EXPECT_NEAR 绝对容差钉扎，构成独立于"独立参考实现"的第三路（防两路同错） |
 | **AT-38 R1 反例码语义（WP-18-T04 实现登记）** | inputs.at38R1Rejections 两变体：nondiag-2axis（不携带窗口）在 R1/R2 两能力位下经**同一非对角结构检查**阻断（DT-MATRIX-NONDIAGONAL-LOCKED——结构语义与能力位无关）；coupling-window（携带窗口）两能力位下经能力门控 DT-COUPLING-STAGE-LOCKED 阻断（R2 数值路径归 T05，不提前放行）。T05 落位后 R2 能力位下非对角矩阵将转为合法输入——届时本数据集随 T05 增量修订（升版） |
 | **档案模板通配（WP-18-T04 实现注记）** | testkit resolve 的模板匹配按段进行：非 `*` 模板段须与具体段逐字符相等——`points[*]`/`samples[*]`/`axes[*]` 等含索引段必须带 `[*]` 通配（`cases[*].points.tauRms` 不命中 `points[0]`）；新增档案条目时逐段核对 |
+| **R2 能力位开放（WP-18-T05 实现登记）** | §6.3 能力门控语义收窄为 **R1 专属阻断**：窗口存在＋R1 能力→`DT-COUPLING-STAGE-LOCKED`（阻断反例保留——AT-38，红线不变）；窗口存在＋R2 能力→§7.2 全表矩阵检查通过后进入块对角映射（本卡 §7 数值路径落位）。能力注入面＝`IDriveTrainMappingEvaluator::evaluate` 四参形态（StageCapability）；**三参形态语义冻结恒为 R1**（既有调用方零变化——无隐式能力提升）；③端口适配层 `DriveTrainMappingEvaluator` 构造参数注入能力位（默认 R1——L5 装配行为零变化，R2 装配显式传入）。卡 §13.1/§13.3 签名按此落位（接口演进登记） |
+| **窗口轴 pJoint 虚功元素口径（WP-18-T05 实现澄清）** | §8.2 口径②逐元素恒等在耦合窗口的有效粒度为**窗口和**：Σ_{k∈W} τ_ideal,k·θ̇_k＝τ_wᵀ·q̇_w（τ_ideal＝C_wᵀτ_w、θ̇＝C_w⁻¹q̇_w 代入恒等——虚功原理）。耦合窗口内单轴的"对应关节功率"无唯一定义，电机侧序列 pJoint,k 取**虚功元素** τ_ideal,k·θ̇_k 承载方向语义（窗口和恒等于窗口关节功率——黄金算例逐样本断言）；自由轴保持 τ·q̇ 原式（位等回归锚）。IVirtualWorkConsistencyChecker 同口径（力矩逐元素按 C_wᵀ；功率按窗口和），§18.3 一并登记 |
+| **窗口轴对角投影视图（WP-18-T05 实现澄清）** | §5.2 ratios"对角口径逐轴视图（c_j＝chat(j,j)）"在窗口轴上是**投影值**：chat(k,k)＝C_w(i,i) 可为 0（置换形耦合合法），**不受 DT-RATIO-ZERO 约束**（该码只作用于对角路径与 R2 自由轴——窗口映射按 C_w 全矩阵执行，可逆性由 §7.2 奇异检查把守）；DT-RATIO-ZERO 的卡面"对角元素含 0"触发条件按"对角路径对角元/自由轴传动比"读 |
+| **奇异分界与阈值同源（WP-18-T05 留痕）** | §7.3 奇异判定 σmin≤σmax×1×10⁻¹² 与病态阈值 κ＞1×10⁸ 在本单元的承载：`kDtSingularSigmaRatio`/`kWellConditionedLimit`（MappingCore——唯一书写点）。两值与 runtime 编译校验器（DescriptionValidator kSingularSigmaRatio＝1e-12）及 modeling 重算复核（CouplingMath kCouplingSingularSigmaRatio＝1e-12、kCouplingConditionNumberLimit＝1e8）**同族同值**——P-DT-2 纪律（依赖白名单无 runtime/modeling 边，本单元内以同一设计默认单点承载，裁决变更时三处同步）；映射入口检查为编译侧之后的第二道防线（§7.3 原文口径） |
+| **时变矩阵触发载体（WP-18-T05 实现注记）** | §7.2 `DT-MATRIX-TIME-VARYING-UNSUPPORTED` 在本值形态中**结构性无触发面**：DriveTrainModel 的窗口字段是单一常矩阵（无按工况/时变结构载体）——常矩阵前提由表示形态保证；该码值保留给未来按工况变化矩阵的扩展形态（触发条件与码值登记不变） |
+| **空窗口退化声明（WP-18-T05 实现澄清）** | 0×0 矩阵＋空 jointRange 的"空窗口"在方阵判定的空真语义下会滑过形态检查——R2 路径显式拦截为 `DT-INPUT-DIMENSION-MISMATCH`（阻断不降级）；R1 能力下空窗口仍按能力门控 `DT-COUPLING-STAGE-LOCKED` 阻断（先于一切矩阵检查）。T04 阻断用例（MappingGoldenTest DT-B3）随本澄清修订：R2 位期望码由能力门控码改为维度违约码——阻断语义不变、码面更精确 |
+| **codec 输出载荷 v2（WP-18-T05 实现登记）** | MappingOutput 载荷升级 v2（magic `IRDDTO2`/kOutputCodecVersion＝2）：反射惯量段增补窗口投影标记（逐轴 u8）＋R2 完整关节轴系反射惯量矩阵（optional rows/cols/逐元素）；模型/序列载荷无字段变化保持 v1（窗口字段自 T03 起已在 v1 布局内——仅值域扩展，字节布局不变）。解码严格匹配版本（CON-04 契约版本化——不做多版本兼容读） |
+| **矩阵内容身份核对原语（WP-18-T05 实现登记）** | §7.4-4"三方切片各自携带 robot-drivetrain 对象 ContentVersion，接纳层核对一致"的本域落位＝`checkMatrixContentIdentityAlignment`（MappingTypes——值比较面：字节等值、空清单按不一致处置、firstDivergence 定位）。权威边界（PA-1）：接纳层判定权归 evidence，本原语不判定证据有效性；三方消费切片的同一性以契约用例钉扎（编码字节三方解码逐字节一致——DtMappingR2Golden.SameMatrixIdentityThreeConsumers＋③端口端到端用例） |
+| **R2 反射惯量缺失降级（WP-18-T05 实现注记）** | §9.3 完整矩阵以 diag(J_rotor)≻0 为构造前提：窗口内任一转子条目缺失时完整矩阵**不产出**（部分数据下的"完整"矩阵会以零对角元破坏正定性——不伪造）；窗口轴对角视图投影需要全部窗口转子条目，缺任一条目时该轴视图按缺失降级（保持 0——与缺条目同轨）；Cholesky 正定守护在构造保证下为防御面（失败→`DT-INERTIA-NOT-POSITIVE-DEFINITE`，合法输入不可达——如实登记不以桩触发） |
+| **黄金数据集 AT-38 字段被 T05 取代（WP-18-T05 待同步）** | `testdata/golden/dt-mapping-golden/1.0.0/inputs` 的 at38R1Rejections.coupling-window 变体 `expectCodeByR2Capability`（历史值 DT-COUPLING-STAGE-LOCKED）已被 T05 语义取代：该变体（C＝diag(0.01,0.02) 合法良态）在 R2 能力位下为**合法输入**，消费测试（GoldenDtTest.At38R1RejectionCounterexamples）已按"R1 阻断保留＋R2 转正命题（与 R1 对角基线逐项一致的黄金回归锚）"修订。数据集升版（含 manifest integrity SHA-256 重算）不在本任务 allowedFiles（industrialrobot/testdata/ 在 drivetrain/** 之外）——**待后续治理/数据集任务同步升版**，此前以测试侧注释与本行登记为准 |
+| **R1/R2 校验分派重构（WP-18-T05 实现注记）** | validate() 按"公共前段（R1 窗口门控→空轴表→Prismatic）＋窗口形态分派（对角路径 validateDiagonalModel／R2 矩阵路径 validateCoupledWindow）"重构——对角路径检查序与诊断语义**逐条原样保留**（T03/T04 全部既有断言零变化复验通过）；R2 矩阵路径检查序：非方→空窗口→窗口集合→chat 维度→轴序→**非有限（先于一致性比较——NaN 使等值比较无歧义，与对角路径同纪律）**→块对角一致性→自由轴 c=0→奇异→病态（首个命中即阻止——确定性首错） |
 
 ### 18.4 风险登记（R-DT-x）
 
@@ -1160,6 +1181,7 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | v0.3 | 2026-10-07 | WP-18-T03 实现增量登记（DTB §5.4）：①§18.3 增补实现偏差九则（评估键 `dt-mapping` kebab 词形／Profile 绑定 sel 域／config.dt-mapping 不入 R1 声明／矩阵承载自持行主序／ratedTorque 增量字段／JointSeriesView 消费面／上游序列物化锚／E_loss 传动损耗口径澄清／DT-* 两码表尾追加）；②实现落位面＝MappingTypes/Series/MappingCore/Facts/Codec/Evaluator 六公共头＋MappingCore/DriveTrainCodec/Evaluator 三实现（卡 §4.2 布局表兑现，R1 能力位——窗口输入保守阻止，R2 数值路径归 T05）；③黄金数据组（DT-G1～G9/B1～B3/G12/G13＋codec 往返＋Facts＋③端口注册闭环与端到端切片评估契约用例）全部真实执行通过（gtest XML＋ird-test-report.json 留痕 traceability/gtest-reports/wp-18-t03/——执行事实的登记，验收重跑归验收会话）；④R1 评估器的 UpstreamResult 依赖声明以提议键 `dyn.joint-series` 登记（P-DT-6 不变） |
 | v0.4 | 2026-10-07 | WP-18-T04 实现增量登记（DTB §5.4）：①黄金数据集外化落位——`testdata/golden/dt-mapping-golden/1.0.0/`（manifest 按 DatasetManifest 登记：analytic-case、coveredRequirements 含 DYN-04、coveredAt 含 AT-38、integrity 全文件 SHA-256、generate 闭式脚本入库）＋`testdata/tolerance/dt-mapping/v1.0.0.json` 档案（23 条 appendixD-fixed，附录 D 第 9 项）；②测试增量——test/GoldenDtTest.cpp（DtGoldenMapping 6 用例：黄金数据文件经 GoldenFixture＋档案容差消费＋AT-38 R1 可验部分＝无耦合链矩阵语义等价正命题＋R1 阻断反例，断言经 IDriveTrainMappingEvaluator/ICouplingMatrixValidator/IReflectedInertiaEvaluator 接口消费）与 contract_test/GoldenDatasetContractTest.cpp（DtGoldenDatasetContract 5 用例：DatasetManifest 装载/完整性覆盖/交叉一致/档案通道与 P-DT-3 保守纪律）；③§4.1 落位表与执行实录刷新、§18.3 增补 T04 注记五则（黄金承载/能量 J 恒等式通道/锚点输入侧/AT-38 反例码语义/档案模板通配）；④§20 执行状态按真实结果刷新 |
 | v0.5 | 2026-10-10 | GOV-UNFROZEN 治理批同步注（纯文档治理，零源码/设计语义变化）：§15 WP-18-T05 任务行加"R2 解冻启动注"——MDL-21 耦合矩阵消费侧 R2 内容开发提前启动（REQUIREMENTS v1.17 五条目解冻注：TRJ-08-S1～S3/SEL-09-S1/MDL-21），承载契约 WP-18-T05.json 状态 blocked→ready（dependsOn＝WP-18-T03＋WP-13-T18；契约依赖边单向 WP-18-T05→WP-13-T18——建模侧先行〔编辑/持久化/阻断口径〕、本侧消费〔映射〕，与 DTB §2.14 行勘误注同口径）；§6.3 能力门控、`DT-COUPLING-STAGE-LOCKED`/`DT-MATRIX-NONDIAGONAL-LOCKED` 阻断语义、R1 阻断反例保留全部不变；"不提前放开 R1 阻断"红线不变；阶段 D 启动裁决仍为领取前置；头表版本行同步 v0.5 |
+| v0.6 | 2026-10-11 | WP-18-T05 实现增量登记（DTB §5.4）：①R2 数值路径落位——§7.2 全表矩阵检查（非方/奇异/病态/非有限/维度/时变载体注记——奇异分界 σmin/σmax＝1×10⁻¹² 与病态阈值 1×10⁸ 同族设计默认留痕）＋§7.1 块对角精确映射（自由轴标量公式与 R1 逐位一致；窗口轴 θ＝θ_off＋C⁻¹q、θ̇＝C⁻¹q̇、θ̈＝C⁺q̈、τ_ideal＝Cᵀτ、τ_m＝τ_ideal＋J_rotor·θ̈_motor——交叉耦合逐元素保留，高速多轴联动黄金算例断言交叉项可测贡献）；②R2 反射惯量——(C⁻¹)ᵀ·diag(J_rotor)·C⁻¹ 完整矩阵＋对角视图＋窗口投影标记（§9.3/§9.5；缺失降级口径登记）；③三方矩阵内容身份核对原语＋契约用例（§7.4-4）；④能力位注入面（四参 evaluate/三参恒 R1 语义冻结/适配层构造参数——R1 阻断反例保留不变）；⑤R2 耦合模型工厂 makeCoupledDriveTrainModel（构造即结构校验）；⑥codec 输出载荷 v2；⑦测试增量——DtMappingR2Golden 6 用例＋契约 EndToEndCoupledSliceEvaluation＋At38 用例窗口变体 R2 位转正命题（黄金回归锚）；⑧§18.3 实现偏差/口径澄清十二则；⑨§4.1 落位表与执行实录、§20 执行状态按真实结果刷新（37/37＋15/15 双模式全绿、ird_gates 零命中、validate-task PASS）；头表版本行同步 v0.6 |
 
 ---
 
@@ -1207,12 +1229,12 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 
 | 类别 | 状态 |
 | --- | --- |
-| 产品源码/CMake/测试实现 | **已实现（截至 WP-18-T04）**——T02 构建落位＋T03 映射实现（§13 接口/§4.2 布局表主体，R1 能力位）＋T04 黄金数据集（`testdata/golden/dt-mapping-golden`＋tolerance 档案）与两测试文件（test/GoldenDtTest＋contract_test/GoldenDatasetContractTest）落地；R2 数值路径（通用矩阵求逆/交叉惯量/AT-38 高速联动端到端）仍归 WP-18-T05，**未实现** |
-| 集成模式构建 / 独立冒烟构建 | **已执行（WP-18-T04，2026-10-07）**——集成模式两测试目标（含 T04 新增文件）构建零错误；独立冒烟模式配置＋全量构建零错误（冒烟树直跑两测试 exe 同绿）；T02 日志留痕 `traceability/builds/wp18-t02/`，T04 测试留痕 `traceability/gtest-reports/wp18-t04/` |
-| 单元测试 / 契约测试 / 黄金数据集 | **T04 面全量已执行（2026-10-07）**——sdurws_ird_drivetrain_test 30/30、sdurws_ird_drivetrain_contract_test 14/14 全部通过（gtest XML＋ird-test-report.json 留痕 `traceability/gtest-reports/wp18-t04/`）；其中黄金数据集消费组（DtGoldenMapping 6 用例）经 GoldenFixture 真实装载 `dt-mapping-golden`（完整性 SHA-256＋档案容差对照），登记契约组（DtGoldenDatasetContract 5 用例）以 testkit 装载器全量校验；T03 黄金数据组（MappingGoldenTest 测试内参考实现面）与 T02 面用例随全量运行同绿 |
-| ird_gates 门禁 | **已执行（WP-18-T04，2026-10-07）**——`cmake --build build --target ird_gates` 退出 0，全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（含引擎自测；三次独立运行一致）。附 gate-all.ps1 全量一键口径实测：集成模式 21 个测试目标全部 PASS（两次运行一致）＋validate-docs PASS；冒烟段 19/21 通过，`sdurws_ird_modeling_gui_test`/`sdurws_ird_ui_gui_test` 在冒烟树 ctest 失败——冒烟树缺 RobWork 框架 DLL 运行环境（集成模式同两目标经 gate-all PASS），属 ui/modeling 单元的既有环境问题，与本单元无关（drivetrain 零 GUI——§14.4；drivetrain 两测试目标在冒烟树直跑全绿） |
+| 产品源码/CMake/测试实现 | **已实现（截至 WP-18-T05）**——T02 构建落位＋T03 映射实现（§13 接口/§4.2 布局表主体）＋T04 黄金数据集与两测试文件＋**T05 R2 数值路径（§7.2 全表矩阵检查/块对角映射/R2 反射惯量完整矩阵/R2 耦合模型工厂/矩阵内容身份核对原语/codec v2/能力位注入面）与 DtMappingR2Golden 6 用例＋契约 R2 端到端用例**；本卡设计面内未实现项＝直线传动扩展（§16.2——SEL-09-S1/MDL-12-S1 承接，独立任务）、真实 StableCodeRegistry 注册（P-DT-7 收编） |
+| 集成模式构建 / 独立冒烟构建 | **已执行（WP-18-T05，2026-10-11）**——集成模式产品库＋两测试目标构建零错误；独立冒烟模式全量构建零错误；日志留痕 `traceability/builds/wp18-t05/`（integration-build-drivetrain.log/smoke-build-drivetrain.log，grep error 零命中） |
+| 单元测试 / 契约测试 / 黄金数据集 | **T05 面全量已执行（2026-10-11）**——`sdurws_ird_drivetrain_test` **37/37**、`sdurws_ird_drivetrain_contract_test` **15/15** 双模式全部通过（gtest XML＋ird-test-report.json 留痕 `traceability/builds/wp18-t05/` 与 `traceability/gtest-reports/wp-18-t05/`；登记计数以最终实测为准）。R2 黄金组（DtMappingR2Golden 6 用例：耦合窗口解析映射〔测试侧解析逆双路求值＋手算锚点〕/高速多轴联动交叉项保留/R1 等价回归锚〔自由轴逐位相等＋窗口轴黄金容差逐项一致〕/R1 阻断反例保留/§7.2 全表阻断/R2 反射惯量完整矩阵/三方矩阵内容身份）；黄金数据集消费组（DtGoldenMapping 6 用例）经 GoldenFixture 真实装载——At38 用例窗口变体在 R2 位转正命题（与 R1 对角基线逐项一致）；契约组（15 用例）含 R2 端到端切片评估（能力位注入适配器全链＋默认 R1 同切片拒绝） |
+| ird_gates 门禁 | **已执行（WP-18-T05，2026-10-11）**——`cmake --build build --target ird_gates` 退出 0，全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（含引擎自测；留痕 `traceability/builds/wp18-t05/ird-gates-target-run.log`） |
 | 真实 StableCodeRegistry 注册 | **未执行（P-DT-7 待收编）**——依赖白名单无 diagnostics 边＋前缀表无 DT（见 §4.1 执行实录/§18.3）；登记表以 core 句法权威验证，不以桩伪造注册结论 |
-| 文档验证脚本 | **已执行（WP-18-T04，2026-10-07）**——validate-docs.ps1 PASS（20 units, 12 trace entries, 311 task files） |
+| 文档验证脚本 | **已执行（WP-18-T05，2026-10-11）**——validate-task.ps1（本任务契约）PASS（留痕 `traceability/builds/wp18-t05/validate-task.log`）；validate-docs 全仓口径随治理任务批次执行 |
 | GUI 测试 | **不适用**（本单元无 plugin/GUI 目标，§14.4） |
 
 以上任何一项在后续任务中执行后，须按 DTB §5.4 与本卡 §18.5 登记真实结果；未执行项不得标注"通过"。

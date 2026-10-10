@@ -150,6 +150,7 @@ add_executable(sdurws_ird_drivetrain_test
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
     test/MappingGoldenTest.cpp
+    test/MappingR2GoldenTest.cpp
     test/GoldenDtTest.cpp)
 
 target_compile_features(sdurws_ird_drivetrain_test PRIVATE cxx_std_17)

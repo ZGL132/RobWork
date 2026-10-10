@@ -111,8 +111,9 @@ evidence::EvaluatorDescriptor makeMappingDescriptor()
 // 评估器实例
 // =====================================================================
 
-DriveTrainMappingEvaluator::DriveTrainMappingEvaluator()
+DriveTrainMappingEvaluator::DriveTrainMappingEvaluator(StageCapability stage)
     : m_descriptor(makeMappingDescriptor())
+    , m_stage(stage)
 {
 }
 
@@ -247,8 +248,12 @@ evidence::EvaluationOutput DriveTrainMappingEvaluator::evaluate(
         evidence::IEvaluationContext& m_ctx;
     } cancellation(context);
 
+    // 能力位经构造注入（WP-18-T05——装配清单决定 R1/R2；四参入口显式
+    // 声明，无隐式能力提升）。核心内含阻断面/一致性自检/统计——同一算法
+    // 路径（③端口形态与注入形态同一算法——D-DT-2）。
     DriveTrainMappingOutput mapping = DriveTrainMappingCore().evaluate(model, series,
-                                                                       &cancellation);
+                                                                       &cancellation,
+                                                                       m_stage);
     out.diagnostics = mapping.diagnostics;
     // 映射完整性（Complete/Partial）随 payload 内的映射输出承载——
     // EvaluationOutput 顶层无该字段（evidence 冻结字段面；消费方按

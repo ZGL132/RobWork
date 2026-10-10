@@ -491,22 +491,35 @@ TEST(DtMappingGolden, BlockFaceRejections_WP18T03_ACC2)
     ASSERT_FALSE(nondiagGate.diagnostics.empty());
     EXPECT_EQ(nondiagGate.diagnostics.front().code, dt::kDtMatrixNondiagonalLocked);
 
-    // ---- DT-B3：耦合窗口输入被能力门控阻断（R1 与 R2 能力位同样——
-    // R2 数值路径归 T05；UI/配置 R2 标签不改变能力）。
+    // ---- DT-B3：耦合窗口输入被能力门控阻断（R1 能力——"不提前放开 R1
+    // 阻断"红线在 T05 落位后继续生效：三参 evaluate 恒按 R1 语义）。R2
+    // 能力位下窗口进入 §7.2 矩阵路径（WP-18-T05）——退化空窗口按维度
+    // 违约拒绝（仍阻断、不降级，码面更精确； MappingR2GoldenTest 承载
+    // R2 合法窗口的正命题面）。
     dt::DriveTrainModel windowed = good;
     windowed.window = dt::CouplingWindow{};
-    for (const dt::StageCapability stage :
-         {dt::StageCapability::R1Capability, dt::StageCapability::R2Capability}) {
+    {
+        // R1 语义（三参 evaluate——恒 R1；validator R1 位）：
         try {
             (void)coreImpl.evaluate(windowed, series, nullptr);
-            FAIL() << "耦合窗口输入必须被阻断（DT-COUPLING-STAGE-LOCKED）";
+            FAIL() << "R1 能力下耦合窗口输入必须被阻断（DT-COUPLING-STAGE-LOCKED）";
         } catch (const std::invalid_argument& ex) {
             EXPECT_TRUE(messageStartsWith(ex, dt::kDtCouplingStageLocked)) << ex.what();
         }
-        const dt::CouplingValidationResult gate = coreImpl.validate(windowed, stage);
-        EXPECT_FALSE(gate.accepted);
-        ASSERT_FALSE(gate.diagnostics.empty());
-        EXPECT_EQ(gate.diagnostics.front().code, dt::kDtCouplingStageLocked);
+        const dt::CouplingValidationResult gateR1
+            = coreImpl.validate(windowed, dt::StageCapability::R1Capability);
+        EXPECT_FALSE(gateR1.accepted);
+        ASSERT_FALSE(gateR1.diagnostics.empty());
+        EXPECT_EQ(gateR1.diagnostics.front().code, dt::kDtCouplingStageLocked);
+
+        // R2 能力位（T05 矩阵路径）：空窗口＝退化声明——DT-INPUT-DIMENSION-
+        // MISMATCH（阻断不降级；不再是能力门控码——能力已启用，问题在
+        // 输入形态）。
+        const dt::CouplingValidationResult gateR2
+            = coreImpl.validate(windowed, dt::StageCapability::R2Capability);
+        EXPECT_FALSE(gateR2.accepted);
+        ASSERT_FALSE(gateR2.diagnostics.empty());
+        EXPECT_EQ(gateR2.diagnostics.front().code, dt::kDtInputDimensionMismatch);
     }
 
     // ---- DT-B2：prismatic 轴范围外（不静默套用旋转传动）。工厂构造入口

@@ -1,0 +1,44 @@
+[==========] Running 15 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from DtBuildGraph
+[ RUN      ] DtBuildGraph.UnitEdgesTwoRegisteredAndClosed_WP18T02_ACC1
+[       OK ] DtBuildGraph.UnitEdgesTwoRegisteredAndClosed_WP18T02_ACC1 (0 ms)
+[ RUN      ] DtBuildGraph.TwoRegisteredEdgesPresent_WP18T02_ACC1
+[       OK ] DtBuildGraph.TwoRegisteredEdgesPresent_WP18T02_ACC1 (0 ms)
+[ RUN      ] DtBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP18T02_ACC2
+[       OK ] DtBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP18T02_ACC2 (0 ms)
+[ RUN      ] DtBuildGraph.NoTestkitEdgeOnProductTarget_WP18T02_ACC1
+[       OK ] DtBuildGraph.NoTestkitEdgeOnProductTarget_WP18T02_ACC1 (0 ms)
+[ RUN      ] DtBuildGraph.IncludeFaceMatchesRegisteredEdges_WP18T02_ACC2
+[       OK ] DtBuildGraph.IncludeFaceMatchesRegisteredEdges_WP18T02_ACC2 (4 ms)
+[----------] 5 tests from DtBuildGraph (7 ms total)
+
+[----------] 5 tests from DtMappingEvalContract
+[ RUN      ] DtMappingEvalContract.DescriptorMatchesSection1310_WP18T03_ACC1
+[       OK ] DtMappingEvalContract.DescriptorMatchesSection1310_WP18T03_ACC1 (0 ms)
+[ RUN      ] DtMappingEvalContract.RegistryRegistrationClosesLoop_WP18T03_ACC1
+[       OK ] DtMappingEvalContract.RegistryRegistrationClosesLoop_WP18T03_ACC1 (0 ms)
+[ RUN      ] DtMappingEvalContract.EndToEndSliceEvaluation_WP18T03_ACC1
+[       OK ] DtMappingEvalContract.EndToEndSliceEvaluation_WP18T03_ACC1 (0 ms)
+[ RUN      ] DtMappingEvalContract.EndToEndCoupledSliceEvaluation_WP18T05_ACC2
+[       OK ] DtMappingEvalContract.EndToEndCoupledSliceEvaluation_WP18T05_ACC2 (0 ms)
+[ RUN      ] DtMappingEvalContract.DispatchAndDataErrorTracks_WP18T03_ACC1
+[       OK ] DtMappingEvalContract.DispatchAndDataErrorTracks_WP18T03_ACC1 (0 ms)
+[----------] 5 tests from DtMappingEvalContract (0 ms total)
+
+[----------] 5 tests from DtGoldenDatasetContract
+[ RUN      ] DtGoldenDatasetContract.ManifestRegistration_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.ManifestRegistration_WP18T04_ACC2 (0 ms)
+[ RUN      ] DtGoldenDatasetContract.IntegrityCoversAllFiles_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.IntegrityCoversAllFiles_WP18T04_ACC2 (0 ms)
+[ RUN      ] DtGoldenDatasetContract.InputsExpectedCrossConsistency_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.InputsExpectedCrossConsistency_WP18T04_ACC2 (1 ms)
+[ RUN      ] DtGoldenDatasetContract.ToleranceProfileChannelAndPdt3_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.ToleranceProfileChannelAndPdt3_WP18T04_ACC2 (0 ms)
+[ RUN      ] DtGoldenDatasetContract.DataRootLayout_WP18T04_ACC2
+[       OK ] DtGoldenDatasetContract.DataRootLayout_WP18T04_ACC2 (0 ms)
+[----------] 5 tests from DtGoldenDatasetContract (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 15 tests from 3 test suites ran. (10 ms total)
+[  PASSED  ] 15 tests.

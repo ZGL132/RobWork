@@ -369,6 +369,106 @@ TEST(DtMappingEvalContract, EndToEndSliceEvaluation_WP18T03_ACC1)
 }
 
 // =====================================================================
+// R2 端到端切片评估（能力位注入——WP-18-T05；③端口形态同一算法）
+// =====================================================================
+
+/**
+ * 耦合窗口模型经③端口全链消费（WP-18-T05 acceptance 2——"SEL-03/04/05
+ * 消费同一口径"的端口级承载）：R2 能力位适配器评估成功，payload 解码回
+ * 读与核心直调（四参 R2 入口）产出相等（③端口形态与注入形态同一算法
+ * ——D-DT-2）；默认 R1 适配器对同一切片仍以 DT-COUPLING-STAGE-LOCKED
+ * 拒绝（能力由装配决定——R1 阻断反例在端口面保留，AT-38）。
+ */
+TEST(DtMappingEvalContract, EndToEndCoupledSliceEvaluation_WP18T05_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "DYN-04"},
+                  std::vector<std::string>{"AT-38"});
+
+    // 耦合黄金模型（2×2 上三角窗口——交叉项 0.004 非零；κ≈2.3 良态）。
+    dt::JointDriveAxis j0;
+    j0.jointId = idFrom<core::ObjectId>("dt-ct-joint-0");
+    j0.kind = dt::JointKind::Revolute;
+    j0.localName = "joint1";
+    dt::JointDriveAxis j1 = j0;
+    j1.jointId = idFrom<core::ObjectId>("dt-ct-joint-1");
+    j1.localName = "joint2";
+    dt::MotorDriveAxis m0;
+    m0.motorId = idFrom<core::ObjectId>("dt-ct-motor-0");
+    m0.jointIndex = 0;
+    dt::MotorDriveAxis m1;
+    m1.motorId = idFrom<core::ObjectId>("dt-ct-motor-1");
+    m1.jointIndex = 1;
+    dt::RowMatrix cw;
+    cw.rows = 2;
+    cw.cols = 2;
+    cw.data = {0.02, 0.004, 0.0, 0.01}; // 无量纲（rad/rad）
+    const dt::DriveTrainModel coupled = dt::makeCoupledDriveTrainModel(
+        {j0, j1}, {m0, m1}, {0, 1}, cw, {}, {0.0, 0.0}, testIdentity(),
+        {dt::EfficiencyModel{0.9, 0.7, dt::SourcedValueTag::CatalogBackfill},
+         dt::EfficiencyModel{0.9, 0.7, dt::SourcedValueTag::CatalogBackfill}},
+        {dt::RotorInertiaModel{1e-4, dt::SourcedValueTag::CatalogBackfill},
+         dt::RotorInertiaModel{1e-4, dt::SourcedValueTag::CatalogBackfill}});
+
+    // 两关节匀速序列（q̈=0——转子项恰零；τ=2 N·m 常值激励）。
+    dt::JointSeriesView series;
+    series.jointIds = {j0.jointId, j1.jointId};
+    series.caseId = idFrom<core::ObjectId>("dt-ct-case");
+    series.upstreamSliceId = upstreamSlice();
+    for (int i = 0; i < 2; ++i) {
+        dt::JointDriveSample sample;
+        sample.t = static_cast<double>(i); // s
+        sample.qd = 1.0;                   // rad/s
+        sample.tauJoint = 2.0;             // N·m
+        sample.segmentId = "seg-ct-r2";
+        series.samples.push_back(sample);
+    }
+
+    HostContext context;
+    evidence::EvaluationRequest req = makeRequest(coupled, series);
+    materialize(context, coupled, series); // 组装方物化（模型＋序列锚对象）
+
+    // ---- R2 能力位适配器：评估成功（无诊断；payload 就位）。
+    {
+        dt::DriveTrainMappingEvaluator evaluator(dt::StageCapability::R2Capability);
+        evidence::EvaluationOutput out = evaluator.evaluate(req, context);
+        EXPECT_TRUE(out.diagnostics.empty());
+        ASSERT_TRUE(out.payload.has_value());
+
+        // payload 解码回读＝核心直调（四参 R2 入口）同算法产出。
+        const dt::DriveTrainMappingOutput decoded
+            = dt::decodeMappingOutput(out.payload->canonicalBytes);
+        dt::DriveTrainMappingCore coreImpl;
+        const dt::DriveTrainMappingOutput direct = coreImpl.evaluate(
+            coupled, series, nullptr, dt::StageCapability::R2Capability);
+        EXPECT_EQ(decoded, direct);
+
+        // 数值锚点（交叉项进入力矩映射——AT-38）：τ_ideal,1＝C(0,1)·τ＋
+        // C(1,1)·τ＝0.004·2＋0.01·2＝0.028 N·m；θ̇_0＝(50−20)·1＝30 rad/s
+        // （解析逆行组合）。
+        ASSERT_EQ(decoded.motorSeries.size(), 2U);
+        EXPECT_NEAR(decoded.motorSeries[1].samples[0].tauIdeal, 0.028, 1e-12);
+        EXPECT_NEAR(decoded.motorSeries[0].samples[0].thetaDot, 30.0, 1e-9);
+    }
+
+    // ---- 默认 R1 适配器：同一切片仍被能力门控拒绝（R1 阻断反例在端口
+    // 面保留——"不提前放开 R1 阻断"红线）。
+    {
+        HostContext contextR1;
+        evidence::EvaluationRequest reqR1 = makeRequest(coupled, series);
+        materialize(contextR1, coupled, series);
+        dt::DriveTrainMappingEvaluator evaluatorR1; // 默认 R1 能力位
+        try {
+            (void)evaluatorR1.evaluate(reqR1, contextR1);
+            FAIL() << "R1 能力位适配器必须拒绝耦合窗口切片";
+        } catch (const std::invalid_argument& ex) {
+            EXPECT_NE(std::string(ex.what()).find(dt::kDtCouplingStageLocked),
+                      std::string::npos)
+                << ex.what();
+        }
+    }
+}
+
+// =====================================================================
 // 派发违约与数据类降级（错误轨两分法——Evaluator.hpp 文件头约定）
 // =====================================================================
 

@@ -200,14 +200,18 @@ struct TransmissionRatio {
 };
 
 /**
- * @brief R2 耦合矩阵值类型（MDL-21——本任务仅类型面落位；R1 收到即阻断）。
+ * @brief R2 耦合矩阵值类型（MDL-21——R2 数值路径已随 WP-18-T05 落位）。
  *
- * 卡 §5.2：C 的行＝适用关节（窗口内串联序）、列＝对应电机轴；R1 能力下
- * 出现本类型（模型 window 有值）→映射入口 DT-COUPLING-STAGE-LOCKED
- * （能力门控第一检查，卡 §6.3 行 1——显示/配置标签不改变计算能力）。
+ * 卡 §5.2/§7.1：C 的行＝适用关节（窗口内串联序）、列＝对应电机轴；C 须为
+ * 方阵（维度＝适用关节数＝对应电机轴数）、有限、可逆、良态（卡 §7.4 使用
+ * 前提）。R1 能力下出现本类型（模型 window 有值）→映射入口
+ * DT-COUPLING-STAGE-LOCKED（能力门控第一检查，卡 §6.3 行 1——显示/配置
+ * 标签不改变计算能力）；R2 能力下按 §7.2 全表检查（非方/奇异/病态/非有限
+ * 阻止不降级——WP-18-T05 落位的第二道防线）。
  * conditionNumber 为编译期/映射期检查用实测条件数（无量纲；阈值来源
- * P-RT-7 对齐——卡 §7.3；通用矩阵条件数算法随 T05 落位，本类型先承载
- * 组装方申报值的传递面）。
+ * P-RT-7 对齐——卡 §7.3；本字段承载**组装方申报值**的传递面，映射入口
+ * 的良态判定以本单元 SVD 重算值为准、不消费申报值——申报值只进诊断素材，
+ * 防"申报失真绕过"，与 modeling I-MDL-11 重算复核同纪律）。
  */
 struct CouplingMatrix {
     RowMatrix C{};                              ///< 耦合矩阵（行＝窗口关节，列＝电机轴）
@@ -221,7 +225,8 @@ struct CouplingMatrix {
     bool operator!=(const CouplingMatrix& o) const { return !(*this == o); }
 };
 
-/// R2 耦合窗口（卡 §5.2 DriveTrainModel.window 字段——R1 下存在即阻断）。
+/// R2 耦合窗口（卡 §5.2 DriveTrainModel.window 字段——R1 下存在即阻断；
+/// R2 下经 §7.2 矩阵检查后进入数值路径——WP-18-T05）。
 using CouplingWindow = CouplingMatrix;
 
 /**
@@ -322,9 +327,9 @@ struct DriveTrainIdentity {
 struct DriveTrainModel {
     std::vector<JointDriveAxis> jointAxes{};   ///< 关节轴表（按关节串联序——卡 §5.3 轴序表）
     std::vector<MotorDriveAxis> motorAxes{};   ///< 电机轴表（排列规则同轴序表）
-    RowMatrix chat{};                          ///< 归一化矩阵 Ĉ（无量纲；R1＝对角方阵）
-    std::vector<TransmissionRatio> ratios{};   ///< 对角口径逐轴视图（c_j＝chat(j,j)）
-    std::optional<CouplingWindow> window{};    ///< R2 耦合窗口（R1 禁止出现——存在即 DT-COUPLING-STAGE-LOCKED）
+    RowMatrix chat{};                          ///< 归一化矩阵 Ĉ（无量纲；R1＝对角方阵；R2＝块对角组合 diag(c_free)⊕C_w——卡 §7.1）
+    std::vector<TransmissionRatio> ratios{};   ///< 对角口径逐轴视图（c_j＝chat(j,j)；R2 窗口轴为**对角投影**——映射按 C_w 全矩阵执行，投影值可为 0，不受 DT-RATIO-ZERO 约束）
+    std::optional<CouplingWindow> window{};    ///< R2 耦合窗口（R1 禁止出现——存在即 DT-COUPLING-STAGE-LOCKED；R2 数值路径 WP-18-T05）
     std::vector<EfficiencyModel> efficiency{}; ///< 逐电机轴效率（**下标配对**；缺失条目＝降级语义）
     std::vector<RotorInertiaModel> rotor{};    ///< 逐电机轴转子惯量（**下标配对**；缺失＝DT-ROTOR-MISSING 降级）
     std::vector<double> zeroOffsetMotor{};     ///< 电机零位偏置 θ_off（rad；长度＝电机轴数）
@@ -422,6 +427,103 @@ DriveTrainModel makeDiagonalDriveTrainModel(
     std::vector<EfficiencyModel> efficiency = {},
     std::vector<RotorInertiaModel> rotor = {},
     std::vector<std::optional<double>> ratedTorque = {});
+
+// =====================================================================
+// 耦合归一化模型工厂（R2 构造入口——WP-18-T05；构造即校验）
+// =====================================================================
+
+/**
+ * @brief 构造 R2 块对角归一化传动模型（卡 §7.1：Ĉ＝diag(c_free)⊕C_w——
+ *        自由轴逐轴对角、窗口内交叉耦合；构造入口完成全部**结构**校验，
+ *        卡 §13.0"构造校验 fail-fast"）。
+ *
+ * 轴集合划分（卡 §7.1 块对角组合行）：窗口关节集合 windowJointIndices
+ * 与自由轴集合**不得重叠**（互补划分——重叠/越界/乱序→
+ * DT-INPUT-DIMENSION-MISMATCH）；自由轴逐轴 1:1 对角传动，窗口内按 C_w
+ * 全矩阵映射（交叉耦合逐元素保留——AT-38）。
+ *
+ * 校验集（每项注明触发码——消息文本以 DT-* 码开头）：
+ *   1. jointAxes/motorAxes 非空且尺寸相等、无 Prismatic、轴序纪律
+ *      motorAxes[k].jointIndex==k——同对角工厂（DT-INPUT-EMPTY/
+ *      DT-INPUT-DIMENSION-MISMATCH/DT-AXIS-TYPE-OUT-OF-SCOPE/
+ *      DT-INPUT-AXIS-ORDER-MISMATCH）；
+ *   2. windowJointIndices 非空、严格升序、逐项＜轴数且互不相同
+ *      （DT-INPUT-DIMENSION-MISMATCH）；
+ *   3. windowMatrix 结构自洽（wellFormed 且为方阵、维度＝窗口关节数）
+ *      ——（DT-MATRIX-NONSQUARE/DT-INPUT-DIMENSION-MISMATCH）；
+ *   4. 全部元素有限（C_w 与自由轴 c——DT-MATRIX-NONFINITE）；
+ *   5. 自由轴 c≠0（DT-RATIO-ZERO——窗口轴对角投影值可为 0，不适用本码：
+ *      窗口映射按 C_w 全矩阵执行，可逆性由 §7.2 数值检查面在映射入口把守）；
+ *   6. zeroOffsetMotor/efficiency/rotor/ratedTorque/identity 值面校验
+ *      ——同对角工厂校验 5～9。
+ *
+ * ★ 数值良态检查（奇异/病态——SVD 条件数）**不在工厂**：归卡 §7.3"映射
+ *   入口检查"（ICouplingMatrixValidator＋evaluate 门控同一实现路径）——
+ *   工厂只做精确判据的结构校验（无阈值），数值阈值面单点在映射入口。
+ *
+ * @param jointAxes         [in] 关节轴表（串联序；非空）
+ * @param motorAxes         [in] 电机轴表（对应关节串联序；尺寸＝关节轴数）
+ * @param windowJointIndices [in] 窗口关节的全局下标（升序非空；与自由轴互补）
+ * @param windowMatrix      [in] 窗口耦合矩阵 C_w（w×w；行＝窗口关节串联序，
+ *                          列＝对应电机轴；无量纲）
+ * @param freeAxisRatios    [in] 自由轴带符号传动比（尺寸＝轴数−窗口数，
+ *                          按自由轴全局下标升序排列；c 有限≠0）
+ * @param zeroOffsetMotor   [in] 电机零位偏置 θ_off（rad；尺寸＝轴数）
+ * @param identity          [in] 传动配置内容身份（版本字段须＞0）
+ * @param efficiency        [in] 逐电机轴效率条目（可空/短于轴数＝缺失降级）
+ * @param rotor             [in] 逐电机轴转子惯量条目（可空/短＝降级）
+ * @param ratedTorque       [in] 逐电机轴额定/参考力矩（N·m；可空）
+ *
+ * @return 结构合法的归一化模型（不可变共享——卡 §13.9）
+ *
+ * @throws std::invalid_argument 上述任一校验失败（调用方契约违约 fail-fast）
+ *
+ * 线程安全：纯函数（可重入）。
+ */
+DriveTrainModel makeCoupledDriveTrainModel(
+    std::vector<JointDriveAxis> jointAxes,
+    std::vector<MotorDriveAxis> motorAxes,
+    std::vector<std::size_t> windowJointIndices,
+    RowMatrix windowMatrix,
+    std::vector<TransmissionRatio> freeAxisRatios,
+    std::vector<double> zeroOffsetMotor,
+    DriveTrainIdentity identity,
+    std::vector<EfficiencyModel> efficiency = {},
+    std::vector<RotorInertiaModel> rotor = {},
+    std::vector<std::optional<double>> ratedTorque = {});
+
+// =====================================================================
+// 矩阵内容身份核对原语（§7.4 第 4 步——三方消费同一矩阵内容身份）
+// =====================================================================
+
+/**
+ * @brief 矩阵内容身份核对结果（§7.4-4——接纳层核对素材的本域半区）。
+ */
+struct MatrixIdentityAlignment {
+    bool aligned = false;             ///< 全部消费切片身份一致
+    std::size_t firstDivergence = 0;  ///< aligned=false 时首个不一致切片下标（0 起）
+};
+
+/**
+ * @brief 核对一组消费切片携带的传动配置身份是否同源（§7.4 第 4 步：
+ *        "dynamics、drivetrain、selection 三方消费同一矩阵身份——三方切片
+ *        各自携带 model.drivetrain 对象 ContentVersion，接纳层核对该身份
+ *        一致"；AT-38/MDL-21/DYN-04）。
+ *
+ * 权威边界（PA-1 诚实登记）：接纳层语义归 evidence；本函数是**身份值比较
+ * 原语**（字节等值——evidence"三种等价"纪律，数值容差严禁作为身份等价
+ * 关系），供接纳层/契约测试消费，不替 evidence 判定证据有效性。
+ *
+ * @param consumedIdentities [in] 各消费切片携带的身份（如 SEL-03 电机侧
+ *        序列/SEL-04 反射惯量/SEL-05 工作点三方切片）
+ * @return aligned=true＝全部一致；false＝存在分歧（firstDivergence 指向
+ *         首个与第 0 切片不一致的切片）。**空清单按不一致处置**（无消费
+ *         切片可核对——防调用方误用空集放行）。
+ *
+ * 线程安全：纯函数（可重入）。
+ */
+MatrixIdentityAlignment checkMatrixContentIdentityAlignment(
+    const std::vector<DriveTrainIdentity>& consumedIdentities);
 
 }  // namespace sdurws::ird::drivetrain
 

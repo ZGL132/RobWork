@@ -60,18 +60,16 @@ namespace sdurws::ird::drivetrain {
 /**
  * @brief 阶段能力位（卡 §13.3 ICouplingMatrixValidator stage 参数）。
  *
- * R1Capability＝阶段 C 承诺面（旋转对角传动；窗口/非对角输入阻断）；
- * R2Capability＝阶段 D（MDL-21 耦合矩阵全链——WP-18-T05 承接）。能力由
- * 装配清单与算法版本决定，UI/配置中的 R2 标签不改变计算能力（卡 §6.3
- * 行 1 原文纪律）。本任务（T03）落位能力门控接口形态：R2Capability 下
- * 通用非对角矩阵数值路径（求逆/交叉惯量/条件数通用算法）未在本任务
- * 交付面，窗口输入同样以 DT-COUPLING-STAGE-LOCKED 阻止（诊断文案区分
- * "能力未启用"与"算法版本未含通用矩阵路径"）——不提前放开 R1 阻断
- * （卡 §15 T05 红线的 T03 侧保守执行）。
+ * R1Capability＝阶段 C 承诺面（旋转对角传动；窗口/非对角输入阻断——
+ * R1 阻断反例保留，AT-38）；R2Capability＝阶段 D（MDL-21 耦合矩阵全链——
+ * §7 数值路径已随 WP-18-T05 落位：窗口输入经 §7.2 全表矩阵检查后进入
+ * 块对角精确映射，交叉耦合逐元素保留）。能力由装配清单与算法版本决定，
+ * UI/配置中的 R2 标签不改变计算能力（卡 §6.3 行 1 原文纪律）；本枚举是
+ * 该能力的注入面（③端口适配层按装配清单选择构造参数——默认 R1）。
  */
 enum class StageCapability : std::uint8_t {
-    R1Capability, ///< 阶段 C：旋转对角传动（R1 阻断面全量生效）
-    R2Capability, ///< 阶段 D：耦合矩阵（T03 仅门控形态——数值路径归 T05）
+    R1Capability, ///< 阶段 C：旋转对角传动（R1 阻断面全量生效——含窗口拒绝）
+    R2Capability, ///< 阶段 D：耦合矩阵数值路径（§7 全表检查＋块对角映射——WP-18-T05）
 };
 
 /**
@@ -154,22 +152,43 @@ struct CouplingValidationResult {
 /**
  * @brief 矩阵良态校验器（§13.3——§6.3 阻断面全表＋§7.2 矩阵形态表）。
  *
- * 检查序＝卡 §6.3 表序（**首个命中即阻止**——确定性首错，NFR-COR-02）：
- *   ①能力门控（window 存在→DT-COUPLING-STAGE-LOCKED，含 R2Capability 下
- *     通用矩阵路径未落位的保守阻止——枚举注释）；
- *   ②非对角（chat 任一非对角元素≠0→DT-MATRIX-NONDIAGONAL-LOCKED——不得
- *     对角化绕过/静默拆轴）；
- *   ③链型/关节类型（Prismatic→DT-AXIS-TYPE-OUT-OF-SCOPE）；
- *   ④结构有效性（方阵维度→DT-INPUT-DIMENSION-MISMATCH；对角元 0→
- *     DT-RATIO-ZERO；非有限→DT-MATRIX-NONFINITE；轴序→
- *     DT-INPUT-AXIS-ORDER-MISMATCH）；
- *   ⑤空输入（轴表空→DT-INPUT-EMPTY）；
- *   ⑥良态条件数（对角解析值＞kWellConditionedLimit→DT-MATRIX-ILL-
- *     CONDITIONED，比较型：实际/阈值/无量纲）。
+ * 检查序（**首个命中即阻止**——确定性首错，NFR-COR-02）：
+ *   公共前段：
+ *   ①能力门控（R1 能力下 window 存在→DT-COUPLING-STAGE-LOCKED——R1 阻断
+ *     反例保留，AT-38；显示/配置标签不改变能力）；
+ *   ②空轴表（→DT-INPUT-EMPTY——轴表空时后续检查不可判定）；
+ *   ③链型/关节类型（Prismatic→DT-AXIS-TYPE-OUT-OF-SCOPE——R1/R2 同拒，
+ *     直线传动属 §16.2 扩展）；
+ *   分支（按 window 是否存在与能力位）：
+ *   ④a 对角路径（无窗口——R1/R2 同构检查）：维度/轴序→DT-INPUT-DIMENSION-
+ *     MISMATCH/DT-INPUT-AXIS-ORDER-MISMATCH；非有限→DT-MATRIX-NONFINITE；
+ *     非对角→DT-MATRIX-NONDIAGONAL-LOCKED（R2 能力下未声明窗口的非对角
+ *     结构同样阻断——交叉耦合必须经窗口声明，不静默拆轴）；对角元 0→
+ *     DT-RATIO-ZERO；条件数（对角解析式 max|c|/min|c|）→
+ *     DT-MATRIX-ILL-CONDITIONED（比较型）；
+ *   ④b R2 矩阵路径（窗口存在——仅 R2 能力可达，WP-18-T05）：窗口结构
+ *     （方阵→DT-MATRIX-NONSQUARE；关节窗口合法/互斥→DT-INPUT-DIMENSION-
+ *     MISMATCH）；chat 维度→DT-INPUT-DIMENSION-MISMATCH；轴序→
+ *     DT-INPUT-AXIS-ORDER-MISMATCH；非有限→DT-MATRIX-NONFINITE（先于
+ *     一致性比较——NaN 使等值比较无歧义）；chat 与块对角组合一致性→
+ *     DT-INPUT-DIMENSION-MISMATCH；自由轴 c=0→DT-RATIO-ZERO（窗口轴
+ *     对角投影不适用本码）；奇异（σmin≤σmax×1×10⁻¹²→DT-MATRIX-SINGULAR，
+ *     比较型：σmin/σmax 比值——不得以伪逆放行）；病态（κ＞
+ *     kWellConditionedLimit→DT-MATRIX-ILL-CONDITIONED，比较型：实际
+ *     条件数/阈值/无量纲）。
+ *
+ * ★ 常矩阵前提（§7.1）与 P-DT-2：条件数阈值单点 kWellConditionedLimit
+ *   （P-RT-7 设计默认 1×10⁸，与 modeling/runtime 编译校验同族设计默认，
+ *   奇异分界 σmin/σmax＝1×10⁻¹² 同源——裁决前按同一设计默认执行并留痕）；
+ *   本值形态（DriveTrainModel 单一常矩阵字段）结构性排除时变矩阵
+ *   （§7.2 DT-MATRIX-TIME-VARYING-UNSUPPORTED 在本表示中无触发载体，
+ *   码值保留给未来按工况变化矩阵的扩展形态）。
  *
  * @param model [in] 归一化模型（调用方持有）
  * @param stage [in] 阶段能力位（能力门控第一检查——显示/配置标签不改变能力）
- * @return 校验结果（accepted==false 时 diagnostics 非空且首项＝首个命中码）
+ * @return 校验结果（accepted==false 时 diagnostics 非空且首项＝首个命中码；
+ *         accepted==true 时 conditionNumber＝实测条件数——对角解析式或
+ *         R2 SVD 谱条件数，无量纲）
  *
  * 线程安全：可重入纯函数。
  */
@@ -235,8 +254,9 @@ struct IVirtualWorkConsistencyChecker {
 // =====================================================================
 
 /**
- * @brief 反射惯量评估器（§13.4——R1 对角 J/c²；R2 (C⁻¹)ᵀ·J_rotor·C⁻¹ 归
- *        T05；交叉项保留原则的 R1 对角形态无交叉项可丢）。
+ * @brief 反射惯量评估器（§13.4——R1 对角 J/c²；R2 (C⁻¹)ᵀ·J_rotor·C⁻¹ 完整
+ *        矩阵＋对角视图（交叉项保留不对角化输出——§9.3）＋窗口投影标记
+ *        （§9.5）——WP-18-T05 落位）。
  *
  * @param model [in] 归一化模型（须已过矩阵校验——§13.4 @throws 语义）
  * @param load  [in] 负载折算惯量输入（逐电机轴下标配对；缺失条目→该轴
@@ -319,25 +339,44 @@ public:
     virtual ~IDriveTrainMappingEvaluator() = default;
 
     /**
-     * @brief 执行一次完整映射评估（单工况序列——多工况按视图逐次调用）。
+     * @brief 执行一次完整映射评估（带能力位——WP-18-T05 起的唯一虚入口）。
      *
      * @param model  [in] 归一化传动模型（构造入口已过结构校验；调用方持有）
      * @param series [in] 关节侧序列（§12.1 契约；调用方持有；本函数不修改）
      * @param ctx    [in] 取消查询回调（可为 nullptr＝不可取消；批次边界查询）
-     * @return 映射输出（§11 工作点＋§10 统计＋§9 反射惯量＋诊断；单工况）
+     * @param stage  [in] 阶段能力位——R1＝对角路径（窗口输入阻断，R1 阻断
+     *               反例保留）；R2＝§7 矩阵路径（窗口输入经 §7.2 全表检查后
+     *               块对角精确映射，交叉耦合逐元素保留）。能力由装配清单与
+     *               算法版本决定（卡 §6.3），由调用方（评估器适配层按装配
+     *               清单）注入——UI/配置标签不改变能力。
+     * @return 映射输出（§11 工作点＋§10 统计＋§9 反射惯量＋诊断；单工况；
+     *         R2 时反射惯量含完整矩阵与窗口投影标记）
      *
      * @throws std::invalid_argument 结构非法（§6.3 阻断面/§7.2 矩阵形态/
      *         空输入/维度/轴序/非有限样本值——消息以 DT-* 码开头）
      * @pre  model.identity 与 series 无冲突（不同传动配置混用＝调用方错误）
      * @post 纯函数零副作用；同输入等价输出（NFR-COR-02）
-     * @note R1/R2：能力由 model.window 是否存在与装配能力版本共同决定
-     *       （§6.3 能力门控）；本核心按 R1 能力执行（窗口输入即阻断）。
      *
      * 线程安全：可重入纯函数（ConcurrentReadOnly——卡 §13.9）。
      */
     virtual DriveTrainMappingOutput evaluate(const DriveTrainModel& model,
                                              const JointSeriesView& series,
-                                             ICancellation* ctx) = 0;
+                                             ICancellation* ctx,
+                                             StageCapability stage) = 0;
+
+    /**
+     * @brief 执行一次完整映射评估（R1 能力——既有三参调用面的便捷形态）。
+     *
+     * 语义冻结说明：本形态恒按 R1Capability 执行（卡 §15 T05 红线——R1
+     * 阻断语义不因 T05 落位而改变；既有调用方行为零变化）。R2 消费必须
+     * 显式经四参形态声明能力位——无隐式能力提升。
+     */
+    DriveTrainMappingOutput evaluate(const DriveTrainModel& model,
+                                     const JointSeriesView& series,
+                                     ICancellation* ctx)
+    {
+        return evaluate(model, series, ctx, StageCapability::R1Capability);
+    }
 };
 
 /**
@@ -345,15 +384,24 @@ public:
  *
  * 管线（§13.10 evaluate() 分解——本类实现前四段，统计与适配面由调用方
  * 组合）：结构校验（ICouplingMatrixValidator 同路径检查——首个命中即
- * fail-fast）→ 逐样本逐轴对角映射（§6.2 全列——位置/速度/加速度/理想
- * 力矩/含转子项力矩/功率）→ 效率折算（§10.2/§10.3——数据类降级）→
- * 反射惯量（§9）→ 一致性自检（τ_m 的理想部分与 c·τ_j 位等核对——§8.4
- * ②映射自检形态，结果恒通过【同表达式路径】；独立数据对照经
- * IVirtualWorkConsistencyChecker 供测试与诊断定位）→ 工作点统计
- * （§10.4/§10.6/§11）。
+ * fail-fast）→ 逐样本映射：
+ *   - R1 对角路径（§6.2 全列——位置/速度/加速度/理想力矩/含转子项力矩/
+ *     功率，逐轴标量封闭代数）；
+ *   - R2 矩阵路径（WP-18-T05，§7.1 公式组冻结口径）：自由轴同 R1 标量
+ *     公式；窗口轴 θ＝θ_off＋C_w⁻¹·q、θ̇＝C_w⁻¹·q̇、θ̈＝C_w⁺·q̈（方阵良态下
+ *     C⁺≡C⁻¹——§7.3 使用前提）、τ_ideal＝C_wᵀ·τ_joint、τ_motor＝τ_ideal＋
+ *     J_rotor·θ̈_motor——交叉耦合项逐元素非零保留，不对角化/准静态等效
+ *     绕过（AT-38 M-12）；
+ *   → 效率折算（§10.2/§10.3——数据类降级）→ 反射惯量（§9；R2 输出完整
+ *     矩阵＋对角视图＋窗口投影标记）→ 一致性自检（τ_ideal 与映射公式
+ *     重算位等核对——§8.4 ②映射自检形态；独立数据对照经
+ *     IVirtualWorkConsistencyChecker 供测试与诊断定位）→ 工作点统计
+ *     （§10.4/§10.6/§11）。
  *
- * 确定性：无隐藏状态、无时钟/随机源；并行归约（多工况能量汇总，如未来
- * 消费方组合）满足附录 D 第 8 项相对容差 1×10⁻¹²（卡 §13.0）。
+ * 确定性：无隐藏状态、无时钟/随机源；R2 数值核（单侧 Jacobi SVD/Gauss-
+ * Jordan 求逆）固定扫描序/主元选择，同输入必得位等输出（NFR-COR-02）。
+ * 并行归约（多工况能量汇总，如未来消费方组合）满足附录 D 第 8 项相对
+ * 容差 1×10⁻¹²（卡 §13.0）。
  */
 class DriveTrainMappingCore final
     : public IDriveTrainMappingEvaluator,
@@ -366,10 +414,16 @@ class DriveTrainMappingCore final
 public:
     DriveTrainMappingCore() = default;
 
-    // ---- IDriveTrainMappingEvaluator（§13.1 主入口）----
+    // ---- IDriveTrainMappingEvaluator（§13.1 主入口——能力位注入）----
     DriveTrainMappingOutput evaluate(const DriveTrainModel& model,
                                      const JointSeriesView& series,
-                                     ICancellation* ctx) override;
+                                     ICancellation* ctx,
+                                     StageCapability stage) override;
+    /// 三参形态＝R1 能力（语义冻结——基类便捷形态的本类镜像，既有调用
+    /// 方行为零变化；R2 消费必须显式走四参形态）。
+    DriveTrainMappingOutput evaluate(const DriveTrainModel& model,
+                                     const JointSeriesView& series,
+                                     ICancellation* ctx);
 
     // ---- ITransmissionInputValidator（§13.2）----
     TransmissionValidationResult validate(const DriveTrainModel& model,
@@ -406,6 +460,12 @@ public:
         const std::vector<MotorSeries>& motorSeries,
         std::vector<core::DiagnosticRecord>& diagnostics,
         std::vector<std::string>& missingItems) const override;
+
+private:
+    // ---- 校验分支实现（validate 的两路载体——公共前段后按窗口形态分派；
+    // 分拆只为可读性，检查序与诊断语义以 MappingCore.cpp 内注释为准）。
+    CouplingValidationResult validateDiagonalModel(const DriveTrainModel& model) const;
+    CouplingValidationResult validateCoupledWindow(const DriveTrainModel& model) const;
 };
 
 }  // namespace sdurws::ird::drivetrain
