@@ -117,6 +117,16 @@ rwmath::Rotation3D<double> expectedRotMul(const rwmath::Rotation3D<double>& a,
     return out;
 }
 
+/// R·v（逐元素——期望值平移合成用）。
+rwmath::Vector3D<double> expectedRotVec(const rwmath::Rotation3D<double>& a,
+                                        const rwmath::Vector3D<double>& v)
+{
+    return rwmath::Vector3D<double>(
+        a(0, 0) * v[0] + a(0, 1) * v[1] + a(0, 2) * v[2],
+        a(1, 0) * v[0] + a(1, 1) * v[1] + a(1, 2) * v[2],
+        a(2, 0) * v[0] + a(2, 1) * v[1] + a(2, 2) * v[2]);
+}
+
 // =====================================================================
 // 装配与取回辅助
 // =====================================================================
@@ -575,19 +585,39 @@ TEST(MdlCanonicalBridge, DhDerivedMatchesExplicitAuthoredAtAuthoritativeZero_F59
         dhJoint.dhDerived = DhParameters{row.theta, row.d, row.a, row.alpha};
         dhDesign.joints.push_back(std::move(dhJoint));
 
-        // 显式直写：origin＝Rot_z(θ)·Tz(d)·Tx(a)·Rx(α)（q_model=0 位姿）；
-        // 平移＝Rz(θ)·(a,0,d)，旋转＝Rz(θ)·Rx(α)。
+        // 显式直写（F-631 拆分语义，q_model=0 位姿）：
+        //   origin_i ＝ [Tx(a_{i-1})Rx(α_{i-1})]（i>0 头部静段）
+        //              ·Rz(θ_i)·Tz(d_i)·[末关：Tx(a_i)Rx(α_i)]（链尾静段）。
         JointEntry exJoint = makeRevoluteJoint(jid, "J" + std::to_string(i + 1),
                                                -1.5, 1.5, row.q0);
-        const rwmath::Rotation3D<double> stepR = expectedRotMul(refRz(row.theta),
-                                                                refRx(row.alpha));
-        const rwmath::Vector3D<double> stepP(row.a * std::cos(row.theta),
-                                             row.a * std::sin(row.theta), row.d);
+        const bool isLast = (i == 1);
+        rwmath::Rotation3D<double> originR = expectedRotMul(refRz(row.theta),
+                                                            refRx(0.0));
+        rwmath::Vector3D<double> originP(0.0, 0.0, row.d);
+        if (i > 0) {
+            // 头部静段 S_{i-1}＝Tx(a_{i-1})Rx(α_{i-1})：旋转 Rx 左乘，平移
+            // (a_{i-1},0,0) 经 Rx 旋转后前置。
+            const rwmath::Rotation3D<double> headR = refRx(rows[i - 1].alpha);
+            originR = expectedRotMul(headR, originR);
+            originP = expectedRotVec(headR, originP)
+                      + rwmath::Vector3D<double>(rows[i - 1].a, 0.0, 0.0);
+        }
+        if (isLast) {
+            // 链尾静段 S_i＝Tx(a_i)Rx(α_i)：旋转 Rx 右乘，平移经合成旋转
+            // 左乘（4×4 语义的 3×3/平移分解）。
+            originR = expectedRotMul(originR, refRx(row.alpha));
+            originP = originP + expectedRotVec(originR, rwmath::Vector3D<double>(
+                                                    row.a, 0.0, 0.0));
+        }
         exJoint.origin = core::SourcedValue<JointPose>::provided(
-            JointPose(rwmath::Transform3D<double>(stepP, stepR)), userProv());
-        // axis＝Rx(−α)·ez＝(0, sinα, cosα)（关节系内方向——F-591 卡面公式）。
+            JointPose(rwmath::Transform3D<double>(originP, originR)), userProv());
+        // axis＝关节系内转轴方向：中间关节 ez（头部静段 Rx(α_{i-1}) 与累积
+        // 回拉相消）；末关节 (0,sinα,cosα)（尾部静段 Rx(α_i) 由 axis 吸收
+        // ——F-631/F-591 卡面公式）。
         exJoint.axis = core::SourcedValue<rwmath::Vector3D<double>>::provided(
-            rwmath::Vector3D<double>(0.0, std::sin(row.alpha), std::cos(row.alpha)),
+            isLast ? rwmath::Vector3D<double>(0.0, std::sin(row.alpha),
+                                              std::cos(row.alpha))
+                   : rwmath::Vector3D<double>(0.0, 0.0, 1.0),
             userProv());
         explicitDesign.joints.push_back(std::move(exJoint));
     }
@@ -717,9 +747,12 @@ TEST(MdlCanonicalBridge, DhDerivedWorldAxesMatchDhConvention_F591)
         ASSERT_TRUE(built.ok()) << built.error().detail;
         ASSERT_EQ(built.get().joints.size(), 6u);
 
-        // 独立参考：R_{0,i-1}（前 i−1 步 Rz(θ)Rx(α) 世界累积——真实 DH 轴
-        // z_{i-1} 的载体）；逐关节世界轴＝origin.R·axis 对照（1e-12）。
+        // 独立参考（F-631 拆分语义）：parentR 累积**显式链帧**旋转
+        // R(E_i)＝Π[Rx(α_{i-1})·Rz(θ_i)·(末关：Rx(α_i))]；逐关节世界轴＝
+        // parentR·(origin.R·axis)＝parentR·Rx(α_{i-1})·ez——由 E＝D·S^{-1}
+        // 恒等式恰等于真实 DH 轴 z_{i-1}（R_{0,i-1}·ez，1e-12 对照）。
         rwmath::Rotation3D<double> parentR(1, 0, 0, 0, 1, 0, 0, 0, 1);
+        double prevAlpha = 0.0;  // α_{i-1}（初始 S_{-1}＝恒等——无扭转）
         auto refRz = [](double ang) {
             return rwmath::Rotation3D<double>(std::cos(ang), -std::sin(ang), 0.0,
                                               std::sin(ang), std::cos(ang), 0.0,
@@ -732,9 +765,12 @@ TEST(MdlCanonicalBridge, DhDerivedWorldAxesMatchDhConvention_F591)
         };
         for (int i = 0; i < 6; ++i) {
             const runtime::JointDescription& jd = built.get().joints[i];
-            // 真实 DH 轴 z_{i-1}（世界系）＝父帧旋转第三列。
-            const rwmath::Vector3D<double> expectWorld(parentR(0, 2), parentR(1, 2),
-                                                       parentR(2, 2));
+            // 真实 DH 轴 z_{i-1}（世界系）＝显式链父帧旋转·Rx(α_{i-1}) 的
+            // 第三列（头部静段半边）。
+            const rwmath::Rotation3D<double> headWorld =
+                expectedRotMul(parentR, refRx(prevAlpha));
+            const rwmath::Vector3D<double> expectWorld(headWorld(0, 2), headWorld(1, 2),
+                                                       headWorld(2, 2));
             // 世界轴＝父帧累积旋转·（origin.R·axis）——origin 为父连杆系下
             // 相对位姿，世界方向须左乘父帧旋转（origin.R·axis 只是父系内
             // 方向）。
@@ -744,9 +780,12 @@ TEST(MdlCanonicalBridge, DhDerivedWorldAxesMatchDhConvention_F591)
                 EXPECT_NEAR(world[k], expectWorld[k], 1e-12)
                     << "六轴链 J" << (i + 1) << " 世界轴[" << k << "]";
             }
-            // 推进父帧旋转（本步 Rz(θ)Rx(α)——下一关节的参考载体）。
-            parentR = expectedRotMul(parentR, expectedRotMul(refRz(rows[i].theta),
-                                                             refRx(rows[i].alpha)));
+            // 推进显式链帧旋转（本步 Rx(α_{i-1})·Rz(θ)·[末关：Rx(α)]——下一
+            // 关节的参考载体）。
+            parentR = expectedRotMul(parentR, refRx(prevAlpha));
+            parentR = expectedRotMul(parentR, refRz(rows[i].theta));
+            if (i == 5) { parentR = expectedRotMul(parentR, refRx(rows[i].alpha)); }
+            prevAlpha = rows[i].alpha;
         }
     }
 }

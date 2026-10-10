@@ -1,171 +1,69 @@
 {
   "schemaVersion": "mdl-dh-equivalence-roundtrip/1",
-  "note": "显式→DH 重解期望（family=exact：输入参数即唯一解——链规范形态下闭式逆；family=exact-non-unique：字典序规则定值——自由 theta 钉 0，d/a/alpha 几何回收＝输入值；比较走档案条目 dh-solve[*].*，附录 D 第 5 项 1e-9）",
+  "note": "显式→DH 重解期望（audit F-631 拆分语义：判定/自由坐标由独立数值雅可比贪心列消元在真值参数处导出——(a_i,α_i) 前移入下一关节头部后，部分精确链出现一阶自由族（如末关节 a/α 经上游 θ/α 补偿），该等价补偿族为真实规范自由度；本期望只承载判定与自由坐标清单（合同稳定面）——选定解的参数值为一阶自由族内成员（依赖求解器路径，不作黄金期望），其几何一致性由消费测试的 FK 半区（真实编译链对照）与程序化用例（钉值拒绝时参数保持真值）承载；附录 D 第 5 项 1e-9）",
   "samples": [
     {
       "id": "general-2r",
       "family": "exact",
-      "freeCoordinates": [],
-      "parameters": [
-        {
-          "name": "J1",
-          "thetaOffset": 0.3,
-          "d": 0.15,
-          "a": 0.4,
-          "alpha": 1.5707963267948966
-        },
-        {
-          "name": "J2",
-          "thetaOffset": -0.2,
-          "d": 0.25,
-          "a": 0.3,
-          "alpha": -1.0471975511965976
-        }
+      "determination": "ExactNonUnique",
+      "freeCoordinates": [
+        6,
+        7
       ]
     },
     {
       "id": "general-3r",
       "family": "exact",
-      "freeCoordinates": [],
-      "parameters": [
-        {
-          "name": "J1",
-          "thetaOffset": 1.1,
-          "d": 0.25,
-          "a": 0.1,
-          "alpha": -0.7853981633974483
-        },
-        {
-          "name": "J2",
-          "thetaOffset": -0.4,
-          "d": 0.05,
-          "a": 0.35,
-          "alpha": 1.0471975511965976
-        },
-        {
-          "name": "J3",
-          "thetaOffset": -0.9,
-          "d": 0.15,
-          "a": 0.2,
-          "alpha": -1.5707963267948966
-        }
+      "determination": "ExactNonUnique",
+      "freeCoordinates": [
+        10,
+        11
       ]
     },
     {
       "id": "zero-anchor",
       "family": "exact",
-      "freeCoordinates": [],
-      "parameters": [
-        {
-          "name": "J1",
-          "thetaOffset": 0,
-          "d": 0.2,
-          "a": 0.3,
-          "alpha": 0
-        },
-        {
-          "name": "J2",
-          "thetaOffset": 0,
-          "d": 0,
-          "a": 0.25,
-          "alpha": 1.5707963267948966
-        },
-        {
-          "name": "J3",
-          "thetaOffset": 0,
-          "d": 0.15,
-          "a": 0.2,
-          "alpha": 0
-        }
+      "determination": "ExactNonUnique",
+      "freeCoordinates": [
+        10,
+        11
       ]
     },
     {
       "id": "near-zero",
       "family": "exact",
-      "freeCoordinates": [],
-      "parameters": [
-        {
-          "name": "J1",
-          "thetaOffset": 1e-12,
-          "d": 0.2,
-          "a": 0.3,
-          "alpha": -1e-13
-        },
-        {
-          "name": "J2",
-          "thetaOffset": -2e-12,
-          "d": 0.1,
-          "a": 0.25,
-          "alpha": 1e-12
-        }
+      "determination": "ExactNonUnique",
+      "freeCoordinates": [
+        4,
+        6,
+        7
       ]
     },
     {
       "id": "sign-cancel",
       "family": "exact",
-      "freeCoordinates": [],
-      "parameters": [
-        {
-          "name": "J1",
-          "thetaOffset": 0.35,
-          "d": 0.15,
-          "a": 0.3,
-          "alpha": 1.5707963267948966
-        },
-        {
-          "name": "J2",
-          "thetaOffset": -0.5,
-          "d": 0.2,
-          "a": 0.25,
-          "alpha": -1.5707963267948966
-        }
+      "determination": "ExactNonUnique",
+      "freeCoordinates": [
+        6,
+        7
       ]
     },
     {
       "id": "coincident-axes",
       "family": "exact-non-unique",
+      "determination": "ExactNonUnique",
       "freeCoordinates": [
         0,
         4
-      ],
-      "parameters": [
-        {
-          "name": "J1",
-          "thetaOffset": 0,
-          "d": 0.3,
-          "a": 0,
-          "alpha": 0
-        },
-        {
-          "name": "J2",
-          "thetaOffset": 0,
-          "d": 0.25,
-          "a": 0,
-          "alpha": 0
-        }
       ]
     },
     {
       "id": "parallel-axes",
       "family": "exact-non-unique",
+      "determination": "ExactNonUnique",
       "freeCoordinates": [
-        4
-      ],
-      "parameters": [
-        {
-          "name": "J1",
-          "thetaOffset": 0.4,
-          "d": 0.1,
-          "a": 0.3,
-          "alpha": 0
-        },
-        {
-          "name": "J2",
-          "thetaOffset": 0,
-          "d": 0.2,
-          "a": 0,
-          "alpha": 0
-        }
+        4,
+        6
       ]
     }
   ]

@@ -405,11 +405,15 @@ TEST(MdlDhEquivalence, RoundtripDoubleConsistency_WP13T09_ACC4)
     const DhChain chain = makeTwoJointChain();
     const ModelingWorkingSet baseline = makeExplicitBaseline(chain);
 
-    // 再求 DH（展开产物→五状态求解）。
+    // 再求 DH（展开产物→五状态求解）。F-631 拆分语义：一般两关节链存在
+    // 一阶自由族（末关节 a/α 经上游 θ/α 补偿，E 帧（原点+z 轴）不变的
+    // 等价重参数化）——判定 ExactNonUnique；钉值重解被零位折叠一致性门
+    // 拒绝（RobWork 零位构型随 α 偏转），选定解保持真值参数（下断言）。
     const DhExplicitConverter converter;
     std::vector<core::DiagnosticRecord> diags;
     const DhConversionResult solved = converter.explicitToDh(baseline.design.joints, diags);
-    ASSERT_EQ(solved.determination, DhDetermination::Exact);
+    ASSERT_EQ(solved.determination, DhDetermination::ExactNonUnique);
+    ASSERT_FALSE(solved.freeCoordinates.empty());
     ASSERT_TRUE(diags.empty());
 
     // 参数级一致：逐关节逐项 ≤第 5 项上界（附录 D C3）。
@@ -455,7 +459,9 @@ TEST(MdlDhEquivalence, AuthoritySwitchDomainGatePreparesCandidate_WP13T09_ACC5)
         prepareAuthoritySwitch(baseline, baseline, converter, probe, diags);
 
     ASSERT_TRUE(decision.allowed) << "四道门应全过";
-    EXPECT_EQ(decision.determination, DhDetermination::Exact);
+    // F-631 拆分语义：判定 ExactNonUnique（一阶自由族——零位折叠一致性
+    // 门拒绝钉值重解，选定解保持真值参数，门④ FK 等价照常通过）。
+    EXPECT_EQ(decision.determination, DhDetermination::ExactNonUnique);
     ASSERT_TRUE(decision.equivalence.equivalent);
     // 候选：StandardDH 权威＋dhDerived 落地（判定选定解）＋无未决编辑。
     EXPECT_EQ(decision.candidate.design.authority, AuthorityMode::StandardDH);
