@@ -112,11 +112,14 @@ if(TARGET sdurw_kinematics)
                               #   （Q 构造面——WP-16-T05；集成条件，见上）
         src/Continuity.cpp    # §9 段边界几何连续＋C2 适用双路（Q 构造面
                               #   ——WP-16-T05；集成条件，见上）
-        src/Planner.cpp)      # §10 规划器适配＋避障重规划编排（消费
+        src/Planner.cpp       # §10 规划器适配＋避障重规划编排（消费
                               #   sdurw_pathplanners 非模板符号 RRTPlanner/
                               #   QConstraint 与 policy 会话——WP-16-T06；
                               #   集成条件，见上；Planner.hpp 公共头对 rw/
                               #   policy/runtime 仅前向声明，两模式皆可编译）
+        src/Smooth.cpp)       # §11.4 简化/平滑＋§15.7 管线（五次 Hermite
+                              #   ＋λ 收缩重试——WP-16-T07 平滑半区；Q 构造
+                              #   面——集成条件，见上）
 endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
@@ -366,6 +369,11 @@ if(TARGET sdurw_kinematics)
         test/PlannerAvoidanceTest.cpp)  # WP-16-T06：TRJ-03（真实规划器基准/
                                         #   C8 重规划/搜索未果素材轨/取消/
                                         #   选型 fail-fast/④端口直穿）
+    target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/SmoothTest.cpp)            # WP-16-T07 平滑半区：TRJ-04（解析黄
+                                        #   金算例/四态词表/TCP 派生维门控/
+                                        #   FK 端口错误传播——零 policy 装
+                                        #   置，两提交拆分的平滑侧测试面）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
