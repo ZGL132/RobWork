@@ -1,19 +1,20 @@
 /**
  * @file   DomainAssembly.cpp
- * @brief  域插件装配实现（UI-T23 三域集成收口形态＋ASM-UI 六域承接）——
- *         registrar 装配＋域门面消费＋域模块登记表填充＋单域失败隔离＋
- *         UiText 文案接线＋关于框数据源实装（消费面＝DomainAssembly.hpp
- *         契约）。前三域（modeling/requirements/kinematics）随本 TU 编入
- *         ui_plugin 与 studio 两同源目标；三新域（dynamics/selection/
- *         optimization）承接段由 IRD_UI_PLUGIN_EXTRA_DOMAINS 编译定义
- *         区分——仅 ui_plugin 目标编译（定义 TU＝ExtraDomainAssembly.cpp，
- *         asm-plug 预登记边的运行期消费），studio 维持三域装配不变。
+ * @brief  域插件装配实现（UI-T23 三域集成收口形态＋ASM-UI/ASM-STUDIO 六域
+ *         承接）——registrar 装配＋域门面消费＋域模块登记表填充＋单域
+ *         失败隔离＋UiText 文案接线＋关于框数据源实装（消费面＝Domain
+ *         Assembly.hpp 契约）。前三域（modeling/requirements/kinematics）
+ *         随本 TU 编入 ui_plugin 与 studio 两同源目标；三新域（dynamics/
+ *         selection/optimization）承接段由 IRD_UI_PLUGIN_EXTRA_DOMAINS
+ *         编译定义区分——两宿主目标（ASM-STUDIO 批起 studio 同样携带该
+ *         定义）与测试目标直编形态（无定义——直调 assembleExtraDomains）
+ *         的装配段单一书写点。
  */
 
 #include "DomainAssembly.hpp"
 
 #ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
-#include "ExtraDomainAssembly.hpp"  // ASM-UI 三新域承接（仅 ui_plugin 目标编入的定义 TU）
+#include "ExtraDomainAssembly.hpp"  // ASM-UI/ASM-STUDIO 三新域承接（携带本编译定义的宿主目标编入的定义 TU）
 #endif
 
 #include <QString>
@@ -290,10 +291,11 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
     // asm-plug 预登记边 IRD_TARGET_LEVEL_EDGES 三条的运行期消费）：门面
     // 创建→文案绑定→registerWithHostRegistrar（真实 IPluginUiRegistrar
     // 传经三域装配激活路径——UI-T23 同机制）→登记表/状态/报告行，详见
-    // ExtraDomainAssembly TU。该 TU 仅编入本目标（sdurws_ird_ui_plugin）
-    // ——studio 目标（同源编入本文件）无此编译定义，维持 UI-T23 三域装
-    // 配不变（studio→三新域 unit 级边未登记——本批白名单零新边约束，
-    // studio 承接随边增登批次收口，登记 ui.md §13 ASM-UI 行）。产物容
+    // ExtraDomainAssembly TU。该 TU 编入携带本定义的两同源宿主目标
+    // （sdurws_ird_ui_plugin——ASM-UI 批；sdurws_ird_studio——ASM-STUDIO
+    // 承接批 2026-10-10 起，studio→三新域三条 unit 级白名单边随该批增
+    // 登后的编入，六域在正式主程序装配齐备，登记 ui.md §13 ASM-UI/
+    // ASM-STUDIO 行）。产物容
     // 器挂 extraAssemblies（类型擦除——三域类型依赖收敛在承接 TU 内，
     // 本 TU 所在两目标共享的本结构只见句柄）；三新域均按 §11.3 隔离域
     // 承载（失败登记状态不中止，selection 的注册被宿主权威拒绝＝P-SEL-3

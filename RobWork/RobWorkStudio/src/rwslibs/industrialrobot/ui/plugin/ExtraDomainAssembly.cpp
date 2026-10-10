@@ -3,9 +3,13 @@
  * @brief  三新域（dynamics/selection/optimization）宿主装配承接的实现
  *         （ASM-UI 收口批——消费面＝ExtraDomainAssembly.hpp 契约）。
  *
- * ★ 编入目标：仅 sdurws_ird_ui_plugin（集成树 MODULE——白名单
- *   IRD_TARGET_LEVEL_EDGES 三条预登记边的运行期消费 TU；studio 不编入
- *   也不可见本头，边界见头文件"落位边界"）。
+ * ★ 编入目标：sdurws_ird_ui_plugin（集成树 MODULE——白名单
+ *   IRD_TARGET_LEVEL_EDGES 三条预登记边的运行期消费 TU；ASM-UI 批）与
+ *   sdurws_ird_studio（正式产品主程序——ASM-STUDIO 承接批 2026-10-10
+ *   起，studio→三新域三条 unit 级白名单边随该批增登后的编入；六域在
+ *   正式主程序装配齐备）；另有 sdurws_ird_ui_contract_test 测试目标同
+ *   源直编（ASM-STUDIO 批分布钉扎消账——六域聚合注册断言的无人值守
+ *   直测通道）。边界详见头文件"落位边界"。
  */
 
 #include "ExtraDomainAssembly.hpp"

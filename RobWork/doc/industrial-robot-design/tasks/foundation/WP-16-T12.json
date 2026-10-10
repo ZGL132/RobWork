@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "实现 trajectory 插件界面",
-  "status": "ready",
+  "status": "blocked",
   "dependsOn": ["WP-16-T09", "WP-16-T10", "WP-16-T11", "UI-T08"],
   "requirements": ["UX-02", "UX-10"],
   "designRefs": [
@@ -33,5 +33,5 @@
     "轨迹工作流页＋曲线视图入口（经 IPluginUiRegistrar 白名单挂位）界面链路用例通过",
     "插件零计算逻辑（二分结构扫描）；结果呈现守只读投影纪律；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §14/§16/§18。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §14/§16/§18。状态修正 ready→blocked（2026-10-10，ASM-STUDIO 承接批——acc/gov-doc/1 建议 S-2 消账）：dependsOn 含 blocked 的 WP-16-T09/T10/T11（三者均直接或传递依赖 blocked 的 WP-16-T07——P-06 数值冻结链，见 T07 契约 note），本卡评估器接线以三前置产物为输入，传递受卡实际不可执行。出处＝acc/gov-doc/1 建议级 S-2（T08~T13 六契约同型状态失准——T07 已于 GOV-DOC 批修正 blocked 而传递依赖面未同步；evidence＝各契约 dependsOn 与状态实读）。解冻条件＝WP-16-T07 解冻（即 WP-16-T02 完成 P-06 数值冻结）后本卡恢复 ready。"
 }

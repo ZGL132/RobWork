@@ -167,6 +167,9 @@ set(IRD_ALLOWED_UNIT_EDGES
     "studio->modeling"      # WP-22-T02 返工回填（DTB §4.5 WP-24-T08 行生效：DomainAssembly 建模装配门面消费边）
     "studio->kinematics"    # WP-22-T02 返工回填（WP-24-T08 行后装配面增量——studio 链接面实测边，ui/CMakeLists studio 段；出处登记 EXTRA_EDGE_REFS）
     "studio->requirements"  # WP-22-T02 返工回填（同上——studio 链接面实测增量边）
+    "studio->dynamics"      # ASM-STUDIO 承接批（2026-10-10，所有者授权 studio 承接收口批次）：正式产品主程序三新域装配承接边（DTB §2.27 studio 承接批预登记行的落地——asm-ui 批"studio 三新域承接缺口随白名单三 unit 级边增登批次收口"登记的兑现；ui/CMakeLists studio 段链接面实测边——同源编入 ExtraDomainAssembly.cpp 的链接承载）；studio 为正式产品主程序目标（SA-18 D1）非 20 单元节点，不入 dependency-graph.json，出处登记 EXTRA_EDGE_REFS
+    "studio->selection"     # ASM-STUDIO 承接批（2026-10-10，同批）：同款三新域装配承接边（selection 注册被宿主权威拒绝的诚实钉扎不变——P-SEL-3 待裁决面零本地绕过）
+    "studio->optimization"  # ASM-STUDIO 承接批（2026-10-10，同批）：同款三新域装配承接边
 )
 
 # ---------------------------------------------------------------------
@@ -252,7 +255,10 @@ set(IRD_EXTRA_EDGE_REFS_EDGES
     "studio->project"
     "studio->modeling"
     "studio->kinematics"
-    "studio->requirements")
+    "studio->requirements"
+    "studio->dynamics"
+    "studio->selection"
+    "studio->optimization")
 set(IRD_EXTRA_EDGE_REFS_NOTES
     "ARCH §3.5 补登（O-21 消账，2026-09-10）；testkit.md §2.4 T-2 允许形态"
     "WP-13-T02 落位登记（2026-09-22）：units/modeling.md §3.2 边表——ARCH §3.5 业务域→L2/L3 公共接口许可方向的实例化（身份/SourcedValue/单位/比较/诊断契约/事件）"
@@ -313,7 +319,10 @@ set(IRD_EXTRA_EDGE_REFS_NOTES
     "WP-22-T02 返工回填（2026-10-06）：同上——studio->project"
     "WP-22-T02 返工回填（2026-10-06）：同上——studio->modeling"
     "WP-22-T02 返工回填（2026-10-06）：WP-24-T08 行后装配面增量（ui/CMakeLists studio 链接段实测）——studio->kinematics；同前不入 dependency-graph.json"
-    "WP-22-T02 返工回填（2026-10-06）：同上——studio->requirements")
+    "WP-22-T02 返工回填（2026-10-06）：同上——studio->requirements"
+    "ASM-STUDIO 承接批落位登记（2026-10-10，所有者授权 studio 承接收口批次——DTB §2.27 studio 承接批预登记行的实施消账）：sdurws_ird_studio 三新域（dynamics/selection/optimization）装配承接三边——asm-ui 批 ui.md §13 行明文登记的\"studio 三新域承接缺口随白名单三 unit 级边增登批次收口\"的本批兑现（ui/CMakeLists studio 段同源编入 ExtraDomainAssembly.cpp 的链接承载——UI-T23/ui_plugin 同款装配机制）；studio 为正式产品主程序目标（SA-18 D1）非 20 单元节点，不入 dependency-graph.json（同前五行口径），出处登记于本表"
+    "ASM-STUDIO 承接批落位登记（2026-10-10，同批）：同上——studio->selection（selection 注册被宿主权威拒绝的诚实钉扎保持——P-SEL-3/P-PR-9 待裁决不本地绕过）"
+    "ASM-STUDIO 承接批落位登记（2026-10-10，同批）：同上——studio->optimization")
 
 # ---------------------------------------------------------------------
 # 业务域单元清单（R-1 的判定范围；来源 AGENTS.md §5 架构红线 2）
@@ -470,6 +479,18 @@ set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint")
 #     真实注册端口（createPluginUiRegistrar——黑盒校验序自证）与 ui 公共
 #     词表类型（PluginUiDescriptor/StageId），同 ui.md §3.1 v0.4"测试目标
 #     链接面按本表承载，不属 ARCH §3.5 产品边管辖"的既有承载形态。
+#   - ui_contract_test→dynamics/selection/optimization_plugin：ASM-STUDIO
+#     承接批（2026-10-10，所有者授权 studio 承接收口批次）——acc/asm-ui/1
+#     建议级 1"六域注册钉扎两半分布"的分布钉扎消账：三新域 plugin 为
+#     STATIC（CMake 合法可链目标——ui_plugin 为 MODULE 的不可链结构性
+#     限制不波及三域 _plugin 目标），ui_contract_test 直编宿主承接 TU
+#     （plugin/ExtraDomainAssembly.cpp＋bundle 符号面 DomainAssembly.cpp
+#     ——HostCompilePort/KinEvaluationChannel 被测 TU 同源直编先例形态）
+#     使六域聚合注册断言（三旧域 registerPluginUi＋三新域 assembleExtra
+#     Domains 经真实 IPluginUiRegistrar）获得无人值守直测通道。ui_test 零
+#     消费零增登（不虚构测试面）；ui_plugin MODULE 本身的运行期验证通道
+#     维持 asm-ui 登记形态（开发期插件实机装载——§12.2，不在无人值守
+#     门禁）。
 # 产品库链接块不受本表影响（各单元产品面守卫/LinkageContractTest 硬断言
 # 不变——本表仅属测试目标）。
 # ---------------------------------------------------------------------
@@ -486,7 +507,10 @@ set(IRD_TEST_TARGET_EDGES
     "sdurws_ird_ui_test->sdurws_ird_kinematics_plugin"
     "sdurws_ird_dynamics_contract_test->sdurws_ird_ui"      # ASM-PLUG 收口批（2026-10-10）——真实注册端口消费面
     "sdurws_ird_selection_contract_test->sdurws_ird_ui"     # ASM-PLUG 收口批（2026-10-10）——同款
-    "sdurws_ird_optimization_contract_test->sdurws_ird_ui") # ASM-PLUG 收口批（2026-10-10）——同款
+    "sdurws_ird_optimization_contract_test->sdurws_ird_ui"  # ASM-PLUG 收口批（2026-10-10）——同款
+    "sdurws_ird_ui_contract_test->sdurws_ird_dynamics_plugin"     # ASM-STUDIO 承接批（2026-10-10）——六域聚合注册断言直测面（acc/asm-ui/1 建议级 1 分布钉扎消账）
+    "sdurws_ird_ui_contract_test->sdurws_ird_selection_plugin"    # ASM-STUDIO 承接批（2026-10-10）——同款
+    "sdurws_ird_ui_contract_test->sdurws_ird_optimization_plugin") # ASM-STUDIO 承接批（2026-10-10）——同款
 
 # ---------------------------------------------------------------------
 # IRD_TARGET_LEVEL_EDGES —— 装配层特权边的【目标级】登记（引擎形态二放行
