@@ -42,6 +42,7 @@
 #include <sdurws/ird/ui/IndustrialProjectTree.hpp> // 树模型/SelectionService（共享面集成）
 #include <sdurws/ird/ui/PropertyInspector.hpp>     // 检查器模型（L1 呈现末端）
 #include <sdurws/ird/ui/UiProjections.hpp>         // CommandResultProjection（回执投影值）
+#include <sdurws/ird/ui/UiText.hpp>                // resolveText/registeredTextKeys（FIX-PANEL——六域描述符承载键 ⊆ 登记面现产对账）
 
 // 被测编排（ui/plugin 层——测试目标直编源码：CMake target_sources 同源
 // 编入，与 modeling_test 先例〔plugin 源入测试目标〕同型；头经 ui 目录
@@ -955,6 +956,74 @@ TEST_F(HostIntegrationContractTest,
         << "optimization 面板标题键非空（§3.5 键族——文案资源键）";
     EXPECT_FALSE(extraProducts->optimization->descriptor.panels.front().advanced)
         << "optimization 主面板位（advanced=false——UX-04 非高级面板）";
+
+    // ⑪六域描述符承载键 ⊆ UiText 登记面（FIX-PANEL 批 2026-10-10——面板
+    //    工厂构造期解析键 fail-fast 的现产对账半区）：三域面板工厂的文案
+    //    解析经 standardTextResolverUtf8→resolveText（唯一出口，缺键即
+    //    抛——ASM-PANEL 实机启动崩溃根因），因此**描述符上现产的全部
+    //    titleKey**（插件标题键＋命令标题键＋面板标题键——含键族程序化
+    //    派生值如 cmd.dynamics.<token>.title）必须在 UiText 登记。本段从
+    //    六域描述符现产值逐键对账（与 ui_test 的测试内冻结清单互为两道
+    //    防线：彼处钉"引用键穷举面"，此处钉"产品现产值"——描述符加键
+    //    而漏登记时本用例先行红，不留到实机装配拍暴露）。
+    //    需求/验收追溯：UX-02（文本经唯一出口）、NFR-MNT-03（单一文案
+    //    出口——键表完备性）、ui.md §3.5 键族纪律／FIX-PANEL 键族⑩。
+    {
+        const std::vector<ui::TextKey> registeredKeys = ui::registeredTextKeys();
+        const auto expectRegistered = [&registeredKeys](
+                                          const std::string& titleKey,
+                                          const std::string& owner) {
+            EXPECT_TRUE(std::find(registeredKeys.begin(), registeredKeys.end(),
+                                  ui::TextKey(titleKey))
+                        != registeredKeys.end())
+                << owner << " 描述符承载键未登记（UiText 键表与域面板引用面"
+                           "漂移——FIX-PANEL 现产对账）: " << titleKey;
+        };
+        // 六域插件标题键（§3.5 键族 plugin.<id>.title——现产值逐域对账）。
+        expectRegistered(modelingDomain.descriptor.titleKey, "modeling");
+        expectRegistered(requirementsDomain.descriptor.titleKey, "requirements");
+        expectRegistered(kinematicsDomain.descriptor.titleKey, "kinematics");
+        expectRegistered(extraProducts->dynamics->descriptor.titleKey, "dynamics");
+        expectRegistered(extraProducts->selection->descriptor.titleKey, "selection");
+        expectRegistered(extraProducts->optimization->descriptor.titleKey,
+                         "optimization");
+        // 六域命令标题键（cmd.<id>.title——描述符命令面现产值；optimization
+        // 描述符无命令字段如实跳过——ASM-PLUG 诚实缺席形态）。
+        for (const auto& command : modelingDomain.descriptor.commands) {
+            expectRegistered(command.titleKey, "modeling command");
+        }
+        for (const auto& command : requirementsDomain.descriptor.commands) {
+            expectRegistered(command.titleKey, "requirements command");
+        }
+        for (const auto& command : kinematicsDomain.descriptor.commands) {
+            expectRegistered(command.titleKey, "kinematics command");
+        }
+        for (const auto& command : extraProducts->dynamics->descriptor.commands) {
+            expectRegistered(command.titleKey, "dynamics command");
+        }
+        for (const auto& command : extraProducts->selection->descriptor.commands) {
+            expectRegistered(command.titleKey, "selection command");
+        }
+        // 六域面板标题键（plugin.<id>.panel.<page>.title——面板面现产值）。
+        for (const auto& panel : modelingDomain.descriptor.panels) {
+            expectRegistered(panel.titleKey, "modeling panel");
+        }
+        for (const auto& panel : requirementsDomain.descriptor.panels) {
+            expectRegistered(panel.titleKey, "requirements panel");
+        }
+        for (const auto& panel : kinematicsDomain.descriptor.panels) {
+            expectRegistered(panel.titleKey, "kinematics panel");
+        }
+        for (const auto& panel : extraProducts->dynamics->descriptor.panels) {
+            expectRegistered(panel.titleKey, "dynamics panel");
+        }
+        for (const auto& panel : extraProducts->selection->descriptor.panels) {
+            expectRegistered(panel.titleKey, "selection panel");
+        }
+        for (const auto& panel : extraProducts->optimization->descriptor.panels) {
+            expectRegistered(panel.titleKey, "optimization panel");
+        }
+    }
 }
 
 // =====================================================================

@@ -838,6 +838,180 @@ TEST(UiText, PanelSelfNavNotesRetired_UX02_UI_T36)
 }
 
 /**
+ * 三新域面板引用键覆盖钉扎（FIX-PANEL 批 2026-10-10——ASM-PANEL 实机启动
+ * 崩溃的防复发闸；键族⑩完备性用例）。
+ *
+ * 根因链与钉扎语义：三域面板插件（dynamics/selection/optimization）的
+ * 文案值按 P-DIAG-9/PA-1 归 ui 文案面，域侧只持键（描述符 titleKey／
+ * 页键常量／模型层产出键常量／§3.5 键族程序化派生）；ASM-PANEL 批宿主
+ * 首次真实调用三域面板工厂，构造期经 resolveText（唯一出口）解析引用键
+ * 时撞"未登记文案键"fail-fast（实测三键＝cmd.dynamics.analyze.title／
+ * plugin.selection.panel.workflow.title／plugin.optimization.panel.
+ * variables.title），三域 Dock 缺席连锁触发宿主辅助键未登记异常——主
+ * 窗口不呈现。本用例把"三域 plugin 源码全部文案键引用"清单在测试内
+ * 冻结（穷举来源：DynamicsPanelWidget/DynamicsPluginAssembly.hpp 常量
+ * ＋DynPanelCommandCatalog 键族派生；SelCatalogPanelWidget 字面＋
+ * SelPanelModel.hpp 产出键常量＋SelPanelCommandCatalog 派生；
+ * OptimizationPanelWidget 字面＋OptPanelModel.cpp 词表常量＋Types.hpp
+ * toToken 词表），逐键断言 ⊆ UiText 登记面——域面板新增键面引用而不
+ * 登记时，本用例在模型层先行给出可定位失败（防再漂移）。无人值守可
+ * 运行（QCoreApplication 级——resolveText 纯查表）。
+ *
+ * 需求/验收追溯：UX-02（工程用语——文本经唯一出口解析）、NFR-MNT-03
+ * （单一文案出口——键表完备性约束）、ui.md §3.5 键族纪律。
+ */
+TEST(UiText, ExtraDomainPanelKeysRegistered_UX02_FIXPANEL_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-02", "NFR-MNT-03"},
+                  std::vector<std::string>{});
+
+    // ---- 三域面板引用键清单（87 键＝键族⑩三新域 83＋键族⑩d 描述符承载
+    //      键补登 3＋既有判定词补钉 1——在测试内冻结，与域源码穷举差集
+    //      一致；键序按域分组便于失败定位）。 --------------------------
+    const std::array<const char*, 87> panelKeys{{
+        // —— dynamics（7：五命令标题＋两页标题）——
+        "cmd.dynamics.analyze.title",
+        "cmd.dynamics.show-curves.title",
+        "cmd.dynamics.locate-peak.title",
+        "cmd.dynamics.replay-at.title",
+        "cmd.dynamics.export-curve-data.title",
+        "plugin.dynamics.panel.workflow.title",
+        "plugin.dynamics.panel.curves.title",
+        // —— selection（26：三页标题＋就绪行＋目录/公共词＋回填行＋
+        //     回填命令标题＋模型层产出键＋判定词三补键）——
+        "plugin.selection.panel.workflow.title",
+        "plugin.selection.panel.catalog.title",
+        "plugin.selection.panel.candidates.title",
+        "plugin.selection.readiness.summary",
+        "plugin.selection.readiness.incomplete",
+        "plugin.selection.readiness.active-task",
+        "plugin.selection.readiness.missing",
+        "plugin.selection.catalog.not-assembled",
+        "plugin.selection.catalog.empty",
+        "plugin.selection.common.yes",
+        "plugin.selection.common.no",
+        "plugin.selection.common.not-applicable",
+        "plugin.selection.backfill.accepted",
+        "plugin.selection.backfill.recalc",
+        "plugin.selection.backfill.rejected",
+        "cmd.selection.apply-device-backfill.title",
+        "backfill-outlet-missing",
+        "backfill-unavailable",
+        "kinematics",
+        "dynamics",
+        "selection",
+        "optimization",
+        "axis-out-of-scope",
+        "state.feasible.label",
+        "state.engineering-infeasible.label",
+        "state.not-applicable.label",
+        // —— optimization（50：四页标题＋就绪行＋运行相位九值＋随行
+        //     提示＋启动/取消动作反馈＋漏斗八段＋横幅＋候选状态七值）——
+        "plugin.optimization.panel.variables.title",
+        "plugin.optimization.panel.constraints.title",
+        "plugin.optimization.panel.run-control.title",
+        "plugin.optimization.panel.candidates.title",
+        "plugin.optimization.readiness.prefix",
+        "plugin.optimization.readiness.complete",
+        "plugin.optimization.readiness.incomplete",
+        "plugin.optimization.run.phase.draft",
+        "plugin.optimization.run.phase.preflight",
+        "plugin.optimization.run.phase.quick-screening",
+        "plugin.optimization.run.phase.verified-review",
+        "plugin.optimization.run.phase.robustness-review",
+        "plugin.optimization.run.phase.completed",
+        "plugin.optimization.run.phase.canceled",
+        "plugin.optimization.run.phase.failed",
+        "plugin.optimization.run.phase.interrupted",
+        "plugin.optimization.run.cancel-pending",
+        "plugin.optimization.run.formal-available",
+        "plugin.optimization.run.no-active-task",
+        "plugin.optimization.action.start.accepted",
+        "plugin.optimization.action.start.not-assembled",
+        "plugin.optimization.action.start.read-only",
+        "plugin.optimization.action.start.active-task",
+        "plugin.optimization.action.start.cancel-pending",
+        "plugin.optimization.action.start.blocked",
+        "plugin.optimization.action.start.rejected-by-host",
+        "plugin.optimization.action.cancel.accepted",
+        "plugin.optimization.action.cancel.not-assembled",
+        "plugin.optimization.action.cancel.no-active-task",
+        "plugin.optimization.action.cancel.already-requested",
+        "plugin.optimization.action.cancel.rejected-by-host",
+        "plugin.optimization.phase.preflight.title",
+        "plugin.optimization.phase.generate.title",
+        "plugin.optimization.phase.compile.title",
+        "plugin.optimization.phase.hard-constraints.title",
+        "plugin.optimization.phase.evaluate-quick.title",
+        "plugin.optimization.phase.evaluate-verified.title",
+        "plugin.optimization.phase.pareto.title",
+        "plugin.optimization.phase.export.title",
+        "plugin.optimization.banner.not-checked",
+        "plugin.optimization.banner.none",
+        "plugin.optimization.banner.stage-locked.title",
+        "plugin.optimization.banner.blocked.title",
+        "plugin.optimization.status.pending",
+        "plugin.optimization.status.screened-out",
+        "plugin.optimization.status.infeasible",
+        "plugin.optimization.status.data-insufficient",
+        "plugin.optimization.status.evaluation-failed",
+        "plugin.optimization.status.feasible",
+        "plugin.optimization.status.pareto-nondominated",
+        // —— 键族⑩d 描述符承载键补登（现产对账追加发现的既有漏登三键：
+        //     kinematics 面板两登记记录键＋optimization 面板级键）——
+        "stage.kinematics.panel.pose-metrics.title",
+        "stage.kinematics.panel.solver-config.title",
+        "plugin.optimization.panel.title",
+        // —— selection 判定词第四值（state.data-insufficient.label——
+        //     既有键族②登记，四值映射面完整性在本清单一并钉住）——
+        "state.data-insufficient.label",
+    }};
+
+    // ---- 盘点面：逐键 ∈ registeredTextKeys（漏登记先在此给出可定位失败
+    //      ——resolveText 的 fail-fast 在缺键时同样上抛，盘点断言让失败
+    //      指向"哪个键漏登记"而非首个构造期异常）。 --------------------
+    const std::vector<ui::TextKey> registered = ui::registeredTextKeys();
+    for (const char* rawKey : panelKeys) {
+        const ui::TextKey key(rawKey);
+        EXPECT_TRUE(std::find(registered.begin(), registered.end(), key)
+                    != registered.end())
+            << "三新域面板引用键未登记（键族⑩——FIX-PANEL 防复发闸）: "
+            << key;
+    }
+
+    // ---- 解析面：逐键可解析、值非空、不回显键名（UX-02 中文语义名）。
+    for (const char* rawKey : panelKeys) {
+        const std::string text = ui::resolveText(ui::TextKey(rawKey));
+        EXPECT_FALSE(text.empty()) << "键解析为空文案: " << rawKey;
+        EXPECT_NE(text, std::string(rawKey))
+            << "键解析值回显键名（缺值形态）: " << rawKey;
+        EXPECT_NO_THROW(ui::ensureNoInternalIdentity(text))
+            << "键解析值含内部身份形态（UX-02）: " << rawKey;
+    }
+
+    // ---- 实测失败三键种子（ASM-PANEL 实机装配报告逐字键——修复验证
+    //      锚：三键值与域内既有中文工程用语一致，防"登记了但值漂移"）。
+    EXPECT_EQ(ui::resolveText(ui::TextKey("cmd.dynamics.analyze.title")),
+              "执行分析");
+    EXPECT_EQ(
+        ui::resolveText(ui::TextKey("plugin.selection.panel.workflow.title")),
+        "工作流");
+    EXPECT_EQ(
+        ui::resolveText(ui::TextKey("plugin.optimization.panel.variables.title")),
+        "变量表");
+    // 判定词四值映射面（selection 就绪行 verdict 映射——同判定同词，
+    // NFR-COR-02）：data-insufficient 既有值不动，三补键与 verdict 表
+    // 同语义对齐。
+    EXPECT_EQ(ui::resolveText(ui::TextKey("state.feasible.label")), "可行");
+    EXPECT_EQ(ui::resolveText(ui::TextKey("state.engineering-infeasible.label")),
+              "工程不可行");
+    EXPECT_EQ(ui::resolveText(ui::TextKey("state.data-insufficient.label")),
+              "数据不足");
+    EXPECT_EQ(ui::resolveText(ui::TextKey("state.not-applicable.label")),
+              "无判定（尚未评估）");
+}
+
+/**
  * 过渡标签值源切换回归（acceptance 3——P-UI-1 词表未改一字）：三个过渡
  * 标签函数的值经 UiText 解析且与键一一对应（UI-T04 钉住的中文值逐字不变
  * ——键不变、值同源迁移至 UiText 内建表，"一切文本经 UiText::resolve"）。

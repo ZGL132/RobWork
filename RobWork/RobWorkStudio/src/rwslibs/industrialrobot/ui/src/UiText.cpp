@@ -23,7 +23,11 @@
  * （plugin.<id>.title 八键＋plugin.assembly.<state>.label 三键——UI-T10
  * 关于框清单的呈现值，§11.4/UX-02：token 不进用户文本，用户见中文名）。
  * 键族⑨（panel.<domain>.self-nav.note 三键）已随 UI-T36 退役：三域自持
- * 导航 deprecated 横幅移除后无消费方，键表同步删行。
+ * 导航 deprecated 横幅移除后无消费方，键表同步删行。⑩三新域面板呈现键
+ * （FIX-PANEL 批 2026-10-10——dynamics/selection/optimization 三域面板
+ * 引用键穷举差集 83 键：命令/页标题＋就绪/回填/运行控制/横幅/状态词等
+ * 呈现素材＋selection 模型层产出键；键面完备性由 ui_test 具名用例钉住
+ * ——族注详见表处）。
  * 值迁移到资源文件时仅替换本表的值源，键不变——调用方与测试零改动
  * （UI-T03 文案表同案）。
  *
@@ -77,7 +81,9 @@ constexpr std::array<TextRow, 7> kStageTitleTable{{
 /// UI-T41 批次B 增行：建模十条命令的 tooltip 键（cmd.<id>.tooltip——B4 去
 /// 裸命令 id 悬停文案）＋建模面板呈现键（panel.modeling.*——B7 复合行指引
 /// ／B2 诊断历史标题；值＝工程用语中文，UX-02）。
-constexpr std::array<TextRow, 42> kDomainCommandTitleTable{{
+/// FIX-PANEL 批增行：kinematics 域八命令标题（既有漏登——六域描述符承载
+/// 键现产对账抓到后随批补齐；族注见表尾 kinematics 段）。
+constexpr std::array<TextRow, 50> kDomainCommandTitleTable{{
     { "cmd.modeling.new-from-template.title",          "从模板新建"       },
     { "cmd.modeling.import-urdf.title",                "导入 URDF"        },
     { "cmd.modeling.import-xacro.title",               "导入 Xacro"       },
@@ -130,6 +136,21 @@ constexpr std::array<TextRow, 42> kDomainCommandTitleTable{{
     { "panel.modeling.history.title",                  "诊断历史" },
     { "panel.modeling.history.tooltip",                "展开本会话最近 20 条命令回执与编辑原因（不清空覆盖）" },
     { "panel.modeling.tree.accessible",                "建模结构树" },
+    // —— kinematics 域八命令标题（FIX-PANEL 批随批补登——键族①b 完备性
+    //    的既有缺口：六域描述符承载键现产对账（ui_contract_test FIX-PANEL
+    //    段）抓到 cmd.kinematics.*.title 八键此前漏出登记面。同族缺陷＝
+    //    命令面板/宿主菜单解析该键族即撞 unknown-key fail-fast（ASM-PANEL
+    //    实测三新域崩溃的 kinematics 版隐患）。值＝kinematics.md §9.8 命令
+    //    表语义行的工程用语短句，与域面板本地用语对齐——行序＝kCommandIds
+    //    词表序（KinPanelCommandCatalog.cpp 派生源）——
+    { "cmd.kinematics.analyze-pose.title",             "分析当前位姿" },
+    { "cmd.kinematics.solve-ik.title",                 "求解 IK" },
+    { "cmd.kinematics.validate-task-points.title",     "批量验证任务点" },
+    { "cmd.kinematics.evaluate-coverage.title",        "评估区域覆盖" },
+    { "cmd.kinematics.set-default-tcp.title",          "设默认 TCP" },
+    { "cmd.kinematics.set-default-device.title",       "设默认设备" },
+    { "cmd.kinematics.export-results.title",           "导出结果" },
+    { "cmd.kinematics.reset-session-pose.title",       "复位会话姿态" },
 }};
 /// 键族①c：需求面板卡片文案（UI-T37——卡片标题＋"?"帮助位；值＝设计规格
 /// 2026-10-01 §3/§4 卡片化分组词表；键前缀 panel.requirements.card.*）。
@@ -324,6 +345,171 @@ constexpr std::array<TextRow, 32> kPresentationTable{{
 // resolveText 上抛的 fail-fast 语义反向充当退役守卫——回归断言见
 // StageNavigationModelTest 的键退役守卫用例）。
 
+// ---------------------------------------------------------------------
+// 键族⑩：三新域（dynamics/selection/optimization）面板呈现键（FIX-PANEL
+// 批 2026-10-10——ASM-PANEL 实机启动崩溃修复的补键面）。
+//
+// 背景（为什么一次性补三域全量）：三域面板插件的文案值按 P-DIAG-9/PA-1
+// 归 ui 文案面（域侧零文案值，键在域 assembly/plugin 头与模型层常量、
+// 派生规则见 DynPanelCommandCatalog.cpp 等）；ASM-PANEL 批宿主首次真实
+// 调用三域面板工厂时，工厂构造期经 standardTextResolverUtf8（单一出口
+// resolveText）解析面板引用键，而本表此前只登记了三域 plugin.<id>.title
+// 三键——面板构造第一拍即以
+//   ui/uitext/unknown-key: 未登记文案键 cmd.dynamics.analyze.title
+// 等三行失败（§11.3 隔离留痕），三域 Dock 缺席并连锁触发宿主辅助键
+// 未登记异常（主窗口不呈现）。本批按"三域 plugin 源码全部文案键引用
+// 穷举差集"一次补齐，键面完备性由 ui_test 具名用例
+// UiText.ExtraDomainPanelKeysRegistered_UX02_FIXPANEL_ACC1 钉住（清单在
+// 测试内冻结——防键表与域面板引用面再漂移）；六域描述符承载键（各
+// titleKey 字段）另由 ui_contract_test 六域聚合用例从产品现产值对账。
+// 值＝工程用语中文（UX-02），与域面板既有本地字面/域内测试替身值保持
+// 一致（如 dynamics.locate-peak 对齐面板"峰值定位"按钮、
+// plugin.optimization.panel.variables.title 对齐域内测试替身"变量表"）。
+// ---------------------------------------------------------------------
+
+/// 键族⑩a：dynamics 面板键——五命令标题（cmd.dynamics.<token>.title，
+/// DynPanelCommandCatalog 按 §3.5 键族从 Commands.hpp kCommandTokens 派生）
+/// ＋两页标题（plugin.dynamics.panel.<page>.title——DynamicsPluginAssembly.hpp
+/// kDyn*PageKey 常量；DynamicsPanelWidget Tab 页标题消费）。
+constexpr std::array<TextRow, 7> kDynamicsPanelTextTable{{
+    { "cmd.dynamics.analyze.title",           "执行分析" },
+    { "cmd.dynamics.show-curves.title",       "显示曲线" },
+    { "cmd.dynamics.locate-peak.title",       "峰值定位" },
+    { "cmd.dynamics.replay-at.title",         "时刻回放" },
+    { "cmd.dynamics.export-curve-data.title", "导出曲线数据" },
+    { "plugin.dynamics.panel.workflow.title", "工作流"   },
+    { "plugin.dynamics.panel.curves.title",   "曲线视图" },
+}};
+
+/// 键族⑩b：selection 面板键——三页标题（kSel*PageKey）＋就绪投影行
+/// （readiness.*——SelCatalogPanelWidget::refreshReadiness 的拼接素材）
+/// ＋判定词 state.<token>.label 四值中的三补键（core::EngineeringStatus
+/// 词形；data-insufficient 一值已在键族②七态表——四值映射面完整由
+/// ui_test 钉扎用例核对）＋目录/候选空态与公共词（catalog.*/common.*）
+/// ＋回填入口命令标题与最近提交行素材（backfill.*／cmd.selection.
+/// apply-device-backfill.title——kSelBackfillUiCommandId 派生）＋模型层
+/// 产出键（SelPanelModel.hpp 常量经 panelText 解析：回填拒绝键两值、
+/// AT-30 复算提示四域标签、范围外轴呈现键——单段词形键，词形唯一
+/// 书写点在彼侧常量，本表只承载值）。
+constexpr std::array<TextRow, 26> kSelectionPanelTextTable{{
+    { "plugin.selection.panel.workflow.title",       "工作流" },
+    { "plugin.selection.panel.catalog.title",        "目录管理" },
+    { "plugin.selection.panel.candidates.title",     "候选表" },
+    { "plugin.selection.readiness.summary",          "选型就绪：" },
+    { "plugin.selection.readiness.incomplete",       "输入不完整" },
+    { "plugin.selection.readiness.active-task",      "计算中（在途任务存在）" },
+    { "plugin.selection.readiness.missing",          "缺项：" },
+    { "plugin.selection.catalog.not-assembled",      "选型目录未装配（数据通道未接线）" },
+    { "plugin.selection.catalog.empty",              "暂无目录版本记录" },
+    { "plugin.selection.common.yes",                 "是" },
+    { "plugin.selection.common.no",                  "否" },
+    { "plugin.selection.common.not-applicable",      "不适用" },
+    { "plugin.selection.backfill.accepted",          "已受理" },
+    { "plugin.selection.backfill.recalc",            "相关域结果需复算：" },
+    { "plugin.selection.backfill.rejected",          "不受理" },
+    { "cmd.selection.apply-device-backfill.title",   "应用器件回填" },
+    // —— 模型层产出键（SelPanelModel 常量——panelText 解析消费）——
+    { "backfill-outlet-missing",                     "回填出口未装配" },
+    { "backfill-unavailable",                        "回填当前不可用" },
+    { "kinematics",                                  "运动学" },
+    { "dynamics",                                    "动力学" },
+    { "selection",                                   "选型"   },
+    { "optimization",                                "优化"   },
+    { "axis-out-of-scope",                           "轴范围外" },
+    // —— 判定词 state.<token>.label 三补键（EngineeringStatus 词形；
+    //      值与键族⑦a verdict 表同语义对齐——NFR-COR-02 同判定同词）——
+    { "state.feasible.label",                        "可行" },
+    { "state.engineering-infeasible.label",          "工程不可行" },
+    { "state.not-applicable.label",                  "无判定（尚未评估）" },
+}};
+
+/// 键族⑩c：optimization 面板键——四页标题（kOptPanelPageKeys）＋就绪行
+/// （readiness.*）＋运行相位行（run.phase.<token> 九值——RunPhase 词表
+/// toToken）＋运行随行提示（cancel-pending/formal-available/no-active-
+/// task）＋启动/取消动作反馈（action.start|cancel.<rejectionToken>——
+/// 拒因 token 词表＝OptPanelModel requestRunStart/requestRunCancel 检查
+/// 序产出值＋accepted 受理词）＋漏斗八段标题（phase.<token>.title——
+/// kOptProgressPhaseTokens 词表）＋阻塞横幅（banner.*——尚未检查/无阻
+/// 塞空态与阶段锁/预检阻塞两标题）＋候选状态词（status.<token> 七值——
+/// CandidateStatus 词表 toToken；值与键族⑦a/②判定词族同语义对齐）。
+constexpr std::array<TextRow, 50> kOptimizationPanelTextTable{{
+    // —— 四页标题（页序＝DTB WP-20-T10 输出列序）——
+    { "plugin.optimization.panel.variables.title",     "变量表" },
+    { "plugin.optimization.panel.constraints.title",   "约束" },
+    { "plugin.optimization.panel.run-control.title",   "运行控制" },
+    { "plugin.optimization.panel.candidates.title",    "候选与对比" },
+    // —— 就绪行（变量页首行拼接素材）——
+    { "plugin.optimization.readiness.prefix",          "优化就绪：" },
+    { "plugin.optimization.readiness.complete",        "输入完整" },
+    { "plugin.optimization.readiness.incomplete",      "输入不完整" },
+    // —— 运行相位行（RunPhase 词表九值——toToken 词形逐字）——
+    { "plugin.optimization.run.phase.draft",           "草稿" },
+    { "plugin.optimization.run.phase.preflight",       "预检" },
+    { "plugin.optimization.run.phase.quick-screening", "快速筛选" },
+    { "plugin.optimization.run.phase.verified-review", "验证复核" },
+    { "plugin.optimization.run.phase.robustness-review", "稳健性复核" },
+    { "plugin.optimization.run.phase.completed",       "已完成" },
+    { "plugin.optimization.run.phase.canceled",        "已取消" },
+    { "plugin.optimization.run.phase.failed",          "失败" },
+    { "plugin.optimization.run.phase.interrupted",     "已中断" },
+    // —— 运行随行提示 ——
+    { "plugin.optimization.run.cancel-pending",        "取消已请求（批边界生效）" },
+    { "plugin.optimization.run.formal-available",      "正式导出可用" },
+    { "plugin.optimization.run.no-active-task",        "无在途任务" },
+    // —— 启动动作反馈（accepted＋六拒因＝requestRunStart 检查序词表）——
+    { "plugin.optimization.action.start.accepted",       "已提交检查并计算" },
+    { "plugin.optimization.action.start.not-assembled",  "运行出口未装配" },
+    { "plugin.optimization.action.start.read-only",      "项目只读，不能启动计算" },
+    { "plugin.optimization.action.start.active-task",    "已有在途任务，不能重复启动" },
+    { "plugin.optimization.action.start.cancel-pending", "取消协作中，请等待批边界" },
+    { "plugin.optimization.action.start.blocked",        "存在启动阻塞项，请先处理约束页横幅" },
+    { "plugin.optimization.action.start.rejected-by-host", "运行请求被宿主拒绝" },
+    // —— 取消动作反馈（accepted＋四拒因＝requestRunCancel 检查序词表）——
+    { "plugin.optimization.action.cancel.accepted",        "已请求取消计算" },
+    { "plugin.optimization.action.cancel.not-assembled",   "取消出口未装配" },
+    { "plugin.optimization.action.cancel.no-active-task",  "无在途任务可取消" },
+    { "plugin.optimization.action.cancel.already-requested", "取消已请求，请勿重复提交" },
+    { "plugin.optimization.action.cancel.rejected-by-host",  "取消请求被宿主拒绝" },
+    // —— 漏斗八段标题（§9.1 词表序＝执行推进序）——
+    { "plugin.optimization.phase.preflight.title",       "预检" },
+    { "plugin.optimization.phase.generate.title",        "生成" },
+    { "plugin.optimization.phase.compile.title",         "编译" },
+    { "plugin.optimization.phase.hard-constraints.title", "硬约束" },
+    { "plugin.optimization.phase.evaluate-quick.title",  "快速评估" },
+    { "plugin.optimization.phase.evaluate-verified.title", "验证评估" },
+    { "plugin.optimization.phase.pareto.title",          "帕累托" },
+    { "plugin.optimization.phase.export.title",          "导出" },
+    // —— 阻塞横幅（§6.5 横幅区——空态两词＋两标题）——
+    { "plugin.optimization.banner.not-checked",          "尚未检查（无预检报告）" },
+    { "plugin.optimization.banner.none",                 "无启动阻塞项" },
+    { "plugin.optimization.banner.stage-locked.title",   "阶段锁定" },
+    { "plugin.optimization.banner.blocked.title",        "启动阻塞" },
+    // —— 候选状态词（CandidateStatus 词表七值——toToken 词形逐字）——
+    { "plugin.optimization.status.pending",              "待处理" },
+    { "plugin.optimization.status.screened-out",         "已筛除" },
+    { "plugin.optimization.status.infeasible",           "不可行" },
+    { "plugin.optimization.status.data-insufficient",    "数据不足" },
+    { "plugin.optimization.status.evaluation-failed",    "评估失败" },
+    { "plugin.optimization.status.feasible",             "可行" },
+    { "plugin.optimization.status.pareto-nondominated",  "帕累托非支配" },
+}};
+
+/// 键族⑩d：域面板标题键补登（FIX-PANEL 批——六域描述符承载键现产对账
+/// 追加发现的既有漏登三键）：宿主渲染面板标题（§10.9 PanelRegistration
+/// .titleKey 的呈现消费）时经 resolveText 解析，缺键即撞 unknown-key
+/// fail-fast（与键族⑩同根因）。值＝工程用语中文，与宿主 chrome／面板
+/// 既有本地用语对齐。
+constexpr std::array<TextRow, 3> kDomainPanelTitleBackfillTable{{
+    // kinematics 面板表两登记记录（§9.8 五行→两 PanelRegistration 映射——
+    // KinematicsPluginAssembly 门面：行 1~4 合一主面板取行 1 键、行 5
+    // 高级面板取行 5 键；值与视图菜单"IRD 运动学（求解配置）面板"同语）。
+    { "stage.kinematics.panel.pose-metrics.title",   "位姿指标" },
+    { "stage.kinematics.panel.solver-config.title",  "求解配置" },
+    // optimization 主面板级键（kOptPanelTitleKey——面板级形态，区别于
+    // 键族⑩c 四页键；值与宿主 chrome"IRD 优化"同语）。
+    { "plugin.optimization.panel.title",             "优化面板" },
+}};
+
 /// 全表拼接视图（查找入口——各键族数组顺序拼接，避免维护一份重复大表）。
 /// 注意 state.failed.label 在键族②与③中重复登记（七态与九态同键同值
 /// "失败"——§6.3 两表原文即同文），查找取先命中者，值一致故无歧义。
@@ -368,6 +554,20 @@ const TextRow* findRow(const TextKey& key)
         if (key == row.key) { return &row; }
     }
     for (const auto& row : kPresentationTable) {
+        if (key == row.key) { return &row; }
+    }
+    // 键族⑩（FIX-PANEL 批——三新域面板键三族；与上方各键族同序遍历，
+    // "登记即盘点"纪律：findRow 与 registeredTextKeys 的族清单必须一致）。
+    for (const auto& row : kDynamicsPanelTextTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kSelectionPanelTextTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kOptimizationPanelTextTable) {
+        if (key == row.key) { return &row; }
+    }
+    for (const auto& row : kDomainPanelTitleBackfillTable) {
         if (key == row.key) { return &row; }
     }
     return nullptr;
@@ -523,11 +723,14 @@ std::vector<TextKey> registeredTextKeys()
 {
     // 按各族登记序拼接；state.failed.label 双族重复登记只输出一次
     // （集合语义——键清单是"已登记键"的盘点，不是物理行清单）。
-    // 计数：7（阶段标题）＋20（域命令①b——UI-T24 起含需求域九键）＋7（七态）
-    // ＋9（九态，去重后 8）＋2＋2＋8＋3＋32＋3（键族⑨——UI-T25，三域）＝92
-    // （reserve 供读面参考，非精确）。
+    // 计数：7（阶段标题）＋50（域命令①b——UI-T24 起含需求域九键＋UI-T41
+    // 建模 tooltip/面板键＋FIX-PANEL kinematics 八键补登）＋18＋13（需求
+    // 面板卡/控件）＋7（七态）＋9（九态，去重后 8）＋2＋2＋8＋3＋4＋32＋86
+    // （键族⑩——FIX-PANEL：三新域面板键 83〔dyn 7＋sel 26＋opt 50〕＋
+    // 键族⑩d 描述符承载键补登 3）＝241（reserve 供读面参考，非精确——
+    // 集合去重后以实测为准，完备性由 ui_test 钉扎用例核对）。
     std::vector<TextKey> keys;
-    keys.reserve(92);
+    keys.reserve(241);
     for (const auto& row : kStageTitleTable) {
         keys.emplace_back(row.key);
     }
@@ -566,6 +769,20 @@ std::vector<TextKey> registeredTextKeys()
         keys.emplace_back(row.key);
     }
     for (const auto& row : kPresentationTable) {
+        keys.emplace_back(row.key);
+    }
+    // 键族⑩（FIX-PANEL 批——三新域面板键；单段词形键〔如 "dynamics"〕
+    // 与既有键无全键冲突——findRow 全键精确匹配，登记面集合语义不重）。
+    for (const auto& row : kDynamicsPanelTextTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kSelectionPanelTextTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kOptimizationPanelTextTable) {
+        keys.emplace_back(row.key);
+    }
+    for (const auto& row : kDomainPanelTitleBackfillTable) {
         keys.emplace_back(row.key);
     }
     return keys;

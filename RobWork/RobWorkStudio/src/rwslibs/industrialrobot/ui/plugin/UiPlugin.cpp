@@ -1382,6 +1382,29 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
         // （shared_ptr<void> 的删除器在 assembleExtraDomains 构造点绑定
         // ExtraDomainAssemblies 实型——static_pointer_cast 还原即原类型，
         // 析构安全随句柄语义保持）。
+        // FIX-PANEL 缺席忍耐挂位拍辅助（半区①——消费方忍耐的登记镜像）：
+        // 把"该域辅助可见性键已在内容装配层登记"的事实镜像到对应视图菜单
+        // 开关的使能位上——挂位成功（setAuxVisibilityTarget 已调用）＝开关
+        // 保持可用；挂位缺席（容器缺席/取件空/工厂抛出）＝开关置灰。镜像
+        // 判据在本 TU 单点维护（setAuxVisibilityTarget 的全部调用点都在
+        // buildDockBody——登记与镜像同拍同步，无跨文件漂移面）；消费点
+        // （refreshHostMenuActions 勾选态回写／视图菜单 toggle 触发 lambda）
+        // 以 action->isEnabled() 为缺席判据跳过 auxVisible 查询——
+        // WorkbenchContent::auxVisible 的"未登记键 out_of_range fail-fast"
+        // 契约本体不动（登记面不弱化），忍耐在消费方按缺席语义跳过。
+        // 时序前提：视图菜单开关在 registerHostMenus（setupMenu 拍）已全部
+        // 入列（m_hostAuxToggles 七项），本拍晚于其构建——按键查得即置灰。
+        const auto disableAuxToggle = [this](const char* auxKey) {
+            for (auto& [key, action] : m_hostAuxToggles) {
+                if (key == auxKey) {
+                    // 置灰＋勾选位归零：缺席域无可见性可翻转（disabled 动作
+                    // 不触发 triggered——触发 lambda 的第二道防线）。
+                    action->setEnabled(false);
+                    action->setChecked(false);
+                    return;
+                }
+            }
+        };
         if (!m_domains->extraAssemblies) {
             // 容器缺席＝装配序违约（assembleDomainPlugins 尾段未执行——
             // 宿主装配缺陷），Dev 留痕不虚构挂位，其余域照常。
@@ -1391,6 +1414,15 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
                                         "buildDockBody：extraAssemblies 缺席"
                                         "（IRD_UI_PLUGIN_EXTRA_DOMAINS 宿主"
                                         "形态下不应发生）");
+            }
+            // 三域辅助开关同步置灰——三域 Dock 均未创建、辅助可见性键未
+            // 登记（setAuxVisibilityTarget 未调用），开关保持可点会让
+            // refreshHostMenuActions 的勾选态回写撞 auxVisible 未登记
+            // fail-fast（ASM-PANEL 实机启动崩溃根因链）；置灰＝缺席的
+            // 用户可见诚实呈现，不虚构可呼出能力。
+            for (const char* auxKey : {kAuxKeyDynamicsDock, kAuxKeySelectionDock,
+                                       kAuxKeyOptimizationDock}) {
+                disableAuxToggle(auxKey);
             }
         } else {
             const auto extra = std::static_pointer_cast<ExtraDomainAssemblies>(
@@ -1428,6 +1460,23 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
                     // 非 owning——Dock setWidget 接管父子树托管）。
                     QWidget* extraPanel = spec.pickup(*extra);
                     if (extraPanel == nullptr) {
+                        // FIX-PANEL 缺席留痕：取件空（描述符空/门面缺席的
+                        // §11.3 防御面）此前静默 continue——装配报告对该域
+                        // 无任何行，缺席不可观测。补 §11.3 稳定码报告行＋
+                        // Dev 通道一行（语义零变化：单域缺席其余域照常——
+                        // 与下方异常分支同族，只是无异常对象可携带原因）。
+                        const std::string absentLine =
+                            std::string("domain panel assembly: plugin=") +
+                            spec.domainKey + " " + kAssemblyFailedCode +
+                            " detail=面板取件缺席（失败隔离——工厂返回空）";
+                        reportLine(absentLine);
+                        if (m_diag.pipeline) {
+                            m_diag.pipeline->logDev(kPluginDevChannel,
+                                                    absentLine);
+                        }
+                        // 辅助开关同步置灰（缺席忍耐挂位拍——见上方
+                        // disableAuxToggle 注：该域辅助键未登记）。
+                        disableAuxToggle(spec.auxKey);
                         continue;  // 失败隔离缺席域——不建空 Dock 不虚构
                     }
                     *spec.dockSlot = new QDockWidget(
@@ -1453,6 +1502,11 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
                     if (m_diag.pipeline) {
                         m_diag.pipeline->logDev(kPluginDevChannel, failedLine);
                     }
+                    // FIX-PANEL：工厂抛出域的辅助键同样未登记——辅助开关
+                    // 同步置灰（与取件空分支同语义；否则回写拍对该开关查
+                    // auxVisible 未登记键即抛，单域面板失败升级为主窗口
+                    // 不呈现——ASM-PANEL 实证根因链）。
+                    disableAuxToggle(spec.auxKey);
                 }
             }
         }
@@ -1471,22 +1525,42 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
     // 尚未入宿主主窗口——可见位只是父子树上的标记，呈现落定在装载呈现
     // 自证拍的 addDockWidget＋setVisible 对齐）。activate 的记忆装载拍会
     // 再对齐一次（登记在 buildDockBody、装载在 activate——时序覆盖）。
+    // FIX-PANEL 缺席忍耐对齐：Dock 缺席（共享树装配失败）的域辅助键同样
+    // 不登记——对应视图菜单开关同步置灰（与三新域段同语义；否则回写拍
+    // 撞 auxVisible 未登记 fail-fast 的根因链对四域同样成立）。
+    const auto disableAuxToggleTail = [this](const char* auxKey) {
+        for (auto& [key, action] : m_hostAuxToggles) {
+            if (key == auxKey) {
+                action->setEnabled(false);
+                action->setChecked(false);
+                return;
+            }
+        }
+    };
     if (m_modelingDock != nullptr) {
         m_content->setAuxVisibilityTarget(kAuxKeyModelingDock, m_modelingDock,
                                           /*factoryVisible=*/false);
+    } else {
+        disableAuxToggleTail(kAuxKeyModelingDock);
     }
     if (m_requirementsDock != nullptr) {
         m_content->setAuxVisibilityTarget(kAuxKeyRequirementsDock, m_requirementsDock,
                                           /*factoryVisible=*/false);
+    } else {
+        disableAuxToggleTail(kAuxKeyRequirementsDock);
     }
     if (m_kinematicsDock != nullptr) {
         m_content->setAuxVisibilityTarget(kAuxKeyKinematicsDock, m_kinematicsDock,
                                           /*factoryVisible=*/false);
+    } else {
+        disableAuxToggleTail(kAuxKeyKinematicsDock);
     }
     if (m_kinematicsAdvancedDock != nullptr) {
         m_content->setAuxVisibilityTarget(kAuxKeyKinematicsAdvancedDock,
                                           m_kinematicsAdvancedDock,
                                           /*factoryVisible=*/false);
+    } else {
+        disableAuxToggleTail(kAuxKeyKinematicsAdvancedDock);
     }
 
     // 命令状态观察：内容装配层每次刷新使能态后同步框架菜单动作（§7.6
@@ -1689,8 +1763,13 @@ void IrdWorkbenchHostPlugin::addAuxDockToggle(QMenu* target, const char* title,
     action->setParent(this);
     action->setCheckable(true);
     const std::string key(auxKey);
-    QObject::connect(action, &QAction::triggered, this, [this, key] {
-        if (m_content) {
+    // FIX-PANEL 缺席忍耐消费点②（视图菜单 toggle 触发 lambda）：缺席域
+    // 开关（挂位拍置灰——disabled 动作用户点不出 triggered，程序化
+    // trigger() 对 disabled 动作亦不发射）此处再按使能位防线跳过——
+    // 未登记键不查询 auxVisible/setAuxVisible（两法对未登记键均
+    // out_of_range fail-fast），登记面契约本体不弱化，忍耐在消费方。
+    QObject::connect(action, &QAction::triggered, this, [this, key, action] {
+        if (m_content && action->isEnabled()) {
             m_content->setAuxVisible(key, !m_content->auxVisible(key));
         }
     });
@@ -1759,7 +1838,18 @@ void IrdWorkbenchHostPlugin::refreshHostMenuActions()
     }
     // 辅助 Dock 开关勾选态＝当前有效可见性（UI-T24 P1——记忆位非实测位，
     // 与五区开关同语义；不回环）。
+    // FIX-PANEL 缺席忍耐消费点①（勾选态回写）：缺席域开关（挂位拍置灰
+    // ——面板工厂缺席/异常使辅助可见性键未登记）跳过 auxVisible 查询、
+    // 勾选位保持归零——未登记键查询＝out_of_range fail-fast（ASM-PANEL
+    // 实机启动主窗口不呈现的根因行），缺席按"无可见性可回写"处理。
+    // enabled 判据的镜像维护点＝buildDockBody 挂位拍（disableAuxToggle）
+    // ——登记与镜像同拍同步（单一 TU），WorkbenchContent::auxVisible 的
+    // 登记面 fail-fast 契约本体不动。
     for (auto& [key, action] : m_hostAuxToggles) {
+        if (!action->isEnabled()) {
+            action->setChecked(false);  // 缺席域开关——无可回写，显式归零
+            continue;
+        }
         action->setChecked(m_content->auxVisible(key));
     }
 }
@@ -4651,6 +4741,15 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
             check(m_hostAuxToggles.size() == std::size_t{7},
                   "view-menu-aux-toggles=7 (cur="
                       + std::to_string(m_hostAuxToggles.size()) + ")");
+            // FIX-PANEL 缺席忍耐挂位拍断言（实机冒烟通道——面板创建成功
+            // 的正常装配形态下七开关全部可用：缺席置灰只在面板失败隔离时
+            // 发生；此处把"缺席误伤可用开关"转为显式红。注意勾选态回写与
+            // 触发 lambda 对 disabled 开关的忍耐由挂位拍置灰保证——本断言
+            // 钉的是"六域全装配时无开关被误置灰"的正常态）。
+            for (auto& [auxKey, auxAction] : m_hostAuxToggles) {
+                check(auxAction->isEnabled(),
+                      std::string("aux-toggle-enabled:") + auxKey);
+            }
 
             // 截图①净室默认布局全景（宿主主窗口整窗）。
             snapPng(hostWindow, "1-default-layout.png");
