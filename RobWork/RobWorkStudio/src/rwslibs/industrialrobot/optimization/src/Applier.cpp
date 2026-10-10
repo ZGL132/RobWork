@@ -87,25 +87,49 @@ CandidateApplyPlan OptimizationCandidateApplier::buildApplyPlan(
     }
 
     // ---- §10.3 第 2 项：目标候选可用性（检索＋记录效力＋状态＋正式资格）。
-    //  检索：候选身份在聚合的 candidates 内（Quick＋Verified 合并序——
-    //  Run.hpp 投影纪律）；线性扫描即可（R1 预算 ≤256 候选，无性能顾虑）。
+    //  检索（F-630 两段式）：聚合的 candidates 是 Quick＋Verified 合并序
+    //  （Run.cpp 第 5 步投影纪律：quickRecords 在前、verifiedRecords 在后），
+    //  且 Verified 复核批复用 Quick 批的 candidateId（同补丁同基线 ⇒ 同身份
+    //  ——§4.2 内容寻址的天然复用形态）。旧实现"首见即用"在合并形态下必先
+    //  命中 Quick 记录，随后被 screeningOnly 效力闸拒绝——Verified 候选
+    //  永远无法采用（OPT-08 采用 API 对合并形态必然失败）。修复后分两段：
+    //  第一段只找 candidateId 匹配**且 screeningOnly==false** 的首条记录
+    //  （Verified 记录优先）；线性扫描即可（R1 预算 ≤256 候选，无性能顾虑）。
     const TwoStageRunRecord* record = nullptr;
     for (const TwoStageRunRecord& c : request.run.candidates) {
-        if (c.candidateId == request.candidateId) {
+        if (c.candidateId == request.candidateId && !c.screeningOnly) {
             record = &c;
-            break;  // 首见即用——同身份重复记录（理论上去重保证唯一）取首见，
-                    //  与 Pareto 去重"保留首次评估"口径一致（§7.4）
+            break;  // Verified 首见即用——同身份重复 Verified 记录（理论上
+                    //  去重保证唯一）取首见，与 Pareto 去重"保留首次评估"
+                    //  口径一致（§7.4）
         }
     }
     if (record == nullptr) {
-        throw OptimizationError(
-            kOptApplyPlanInvalid,
-            "optimization/applier: 目标候选不在源运行结果中（CandidateId="
-            + request.candidateId.toCanonical()
-            + "）——候选只能从其归属运行采用（OPT-08 归属语义）");
+        //  第二段：Verified 记录缺位时回退同身份任意记录——让下方既有
+        //  效力闸产出**精确**的拒绝语义：仅有 Quick 记录 ⇒ screeningOnly
+        //  拒绝（"Quick 筛选记录"消息，守卫语义不回退）；全无同身份记录
+        //  ⇒ 保持既有「候选不在源运行结果中」错误（消息不变）。若在此
+        //  直接抛"不在运行中"，Quick-only 形态会被错报为"候选不存在"，
+        //  丢失 ERR-01 比较型定位精度（调用方无法区分"没复核"与"异运行"）。
+        for (const TwoStageRunRecord& c : request.run.candidates) {
+            if (c.candidateId == request.candidateId) {
+                record = &c;
+                break;
+            }
+        }
+        if (record == nullptr) {
+            throw OptimizationError(
+                kOptApplyPlanInvalid,
+                "optimization/applier: 目标候选不在源运行结果中（CandidateId="
+                + request.candidateId.toCanonical()
+                + "）——候选只能从其归属运行采用（OPT-08 归属语义）");
+        }
     }
     //  记录效力：Quick 记录（screeningOnly==true）绝不支撑采用——
     //  "Quick 不得单独支撑正式通过"（EVI-01/P-EV-8）在采用面的最后一道闸。
+    //  F-630 后本闸只在"检索回退命中 Quick 记录"（Quick-only 形态——该
+    //  候选无任何 Verified 记录）时触发；合并形态（Quick＋Verified 并存）
+    //  已由两段式检索优先选中 Verified 记录，不进本分支。
     if (record->screeningOnly) {
         throw OptimizationError(
             kOptApplyPlanInvalid,

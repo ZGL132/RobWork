@@ -462,6 +462,16 @@ public:
  * 非支配子集标记——§7.5；T06 编排产出 Verified-Feasible 记录后经 Pareto
  * 阶段可能被标记）；Infeasible/DataInsufficient/EvaluationFailed/ScreenedOut/
  * Pending 一概不可应用。
+ *
+ * 第 2 项检索语义（F-630，实现口径）：聚合的 candidates 为 Quick＋Verified
+ * 合并序（Quick 批在前、Verified 批在后——Run.hpp 投影纪律），且 Verified
+ * 复核批复用 Quick 批的 candidateId（同补丁同基线 ⇒ 同身份，§4.2）。检索
+ * 两段式：先找 candidateId 匹配**且 screeningOnly==false**（Verified 记录）
+ * 的首条记录，命中即用；无 Verified 记录时回退同身份任意记录——仅有 Quick
+ * 记录走 screeningOnly 拒绝（守卫语义），全无同身份记录保持「候选不在源
+ * 运行结果中」错误。即：**Verified 记录优先于 Quick 记录**，合并形态下
+ * （同 candidateId 的 Quick＋Verified 并存）计划必然携带 Verified 记录的
+ * 效力数据，Quick-only 形态仍被拒。
  */
 class OptimizationCandidateApplier final : public IOptimizationCandidateApplier {
 public:
