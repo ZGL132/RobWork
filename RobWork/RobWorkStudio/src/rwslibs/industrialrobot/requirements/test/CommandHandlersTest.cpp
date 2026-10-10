@@ -357,6 +357,65 @@ TEST(ReqReqCommands, PayloadRoundtripAndDamageRejection_ACC6)
 }
 
 /**
+ * F-637——reserve 上限（拒绝服务防线）：槽计数是载荷自报值，无上限的
+ * reserve(count) 会被畸形/恶意载荷放大成 4G 槽预分配（数百 GB 分配请求
+ * ——bad_alloc/length_error 拒绝服务）。修复后以"剩余字节÷最小槽耗
+ * （1 字节 allocate＋3 个 u32 长度前缀＝13 字节）"为可行上界，超限按
+ * 破损面返回 nullopt（不抛——与本函数其余畸形面同口径）。
+ *
+ * 用例钉两面：①count=0xFFFFFFFF＋空体→nullopt 且不抛（修复前此处会以
+ * 巨量 reserve 冲击进程内存）；②正常小载荷编解码不受钳位影响（回归面
+ * ——合法载荷的自报 count 恒不超上界）。
+ */
+TEST(ReqReqCommands, DecodeRejectsReserveCountBeyondRemainingBytes_F637)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-06"},
+                  std::vector<std::string>{});
+
+    // 帧头手工装配面（magic 为实现内文件局部常量，测试侧按编码格式拼装
+    // ——magic "IRDRCM1\0"＋version=1＋mode=0 的小端 u32×2）。
+    auto frameWithCount = [](std::uint32_t count,
+                             const std::vector<std::uint8_t>& body)
+        -> std::vector<std::uint8_t> {
+        std::vector<std::uint8_t> bytes{'I', 'R', 'D', 'R', 'C', 'M', '1', '\0'};
+        const std::uint32_t version = requirements::kRequirementCommandPayloadVersion;
+        const std::uint32_t mode = 0u;  // Apply
+        for (const std::uint32_t v : {version, mode, count}) {
+            bytes.push_back(static_cast<std::uint8_t>(v & 0xFFu));
+            bytes.push_back(static_cast<std::uint8_t>((v >> 8) & 0xFFu));
+            bytes.push_back(static_cast<std::uint8_t>((v >> 16) & 0xFFu));
+            bytes.push_back(static_cast<std::uint8_t>((v >> 24) & 0xFFu));
+        }
+        bytes.insert(bytes.end(), body.begin(), body.end());
+        return bytes;
+    };
+
+    // ---- 极端自报值：count=0xFFFFFFFF＋空体——剩余 0 字节不可容纳任何
+    //      槽（最小槽耗 13 字节），必须在 reserve 前拒绝（EXPECT_NO_THROW
+    //      钉"不抛"口径——修复前的巨量 reserve 在低内存环境可能以异常
+    //      形态逃逸）。
+    EXPECT_NO_THROW({
+        const auto decoded =
+            requirements::tryDecodeRequirementCommandPayload(
+                frameWithCount(0xFFFFFFFFu, {}));
+        EXPECT_FALSE(decoded.has_value()) << "自报槽数超剩余字节上界应拒绝";
+    });
+
+    // ---- 非零剩余但不足一槽：1 字节体÷13＝0 槽可行，count=1 仍超限。
+    EXPECT_FALSE(requirements::tryDecodeRequirementCommandPayload(
+                     frameWithCount(1u, {0x01}))
+                     .has_value());
+
+    // ---- 回归面：正常小载荷（自报 count 与槽内字节自洽）解码不受影响。
+    const RequirementCommandPayload payload = makeFirstApplyPayload();
+    const std::vector<std::uint8_t> bytes =
+        requirements::encodeRequirementCommandPayload(payload);
+    const auto decoded = requirements::tryDecodeRequirementCommandPayload(bytes);
+    ASSERT_TRUE(decoded.has_value());
+    EXPECT_TRUE(*decoded == payload);
+}
+
+/**
  * 首次应用（ACC6——prepare 管线正例）：空基线闭包＋根/点集/工况集全
  * allocateNew→Planned；写入恰三对象；confirmableFindings 恒空（SA-15
  * 不私设）；requiresDualCompile=false（零编译影响面）；首次应用无前版
@@ -862,4 +921,79 @@ TEST(ReqReqCommands, CandidateReevaluatedAgainstBaselineDrift_ACC6)
     EXPECT_EQ(outcome, project::PrepareOutcome::RejectedHardAssert)
         << "基线健康而候选悬空——现场重估以候选整体拦截（防基线漂移）";
     EXPECT_TRUE(hasDiagCode(diags, "REQ-READY-REF-MISSING"));
+}
+
+/**
+ * F-460 诊断面（audit 二轮 C 批——挂载失配分支零诊断）：集合槽与基线根
+ * 引用表挂载事实失配时，prepare 拒绝须携带稳定码定位诊断（此前仅在钩子
+ * decodeApplyCommon 内零诊断拒绝，呈现面只剩 invalid-payload token）。
+ * 两失配向：
+ *   A. allocateNew 槽但基线已挂载——F-460 真实缺陷形态（首应用回执未回
+ *      填工作集根引用表→二连 draft.apply 仍按首挂载取号）；
+ *   B. 显式槽但基线根未挂载该 oid——防御形态（集合对象落库而根引用表
+ *      未挂载的历史/半提交数据）。
+ * 本用例验证基类 applySlotsValid ⑤（诊断在 prepare 现场回传）——钩子内
+ * 同名核对保留为防线纵深。
+ */
+TEST(ReqReqCommands, MountMismatchRejectedWithStableCode_F460)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"REQ-06"},
+                  std::vector<std::string>{"F-460", "mount-mismatch-diag"});
+    ApplyRequirementSetHandler handler;
+
+    // ---- A：allocateNew 集合槽 vs 已挂载基线（F-460 二连应用失配态）----
+    TestQueryPort port;
+    const core::ObjectId rootOid = makeOid();
+    const core::ObjectId pointSetOid = makeOid();
+    requirements::RequirementSet root;
+    root.name = "已挂载基线";
+    root.pointSetRef = pointSetOid;  // 根引用表：点集已挂载
+    port.addObject(rootOid, std::string(requirements::kReqSetObjectType),
+                   encodeObject(requirements::RequirementObjectVariant(root)));
+    port.addObject(pointSetOid, std::string(requirements::kReqPointSetObjectType),
+                   encodeObject(requirements::RequirementObjectVariant(
+                       makeHealthyPointSet())));
+    RequirementCommandPayload payloadA;
+    payloadA.mode = RequirementCommandPayload::Mode::Apply;
+    payloadA.objects.push_back(RequirementPayloadSlot{
+        false, rootOid, std::string(requirements::kReqSetObjectType),
+        encodeObject(requirements::RequirementObjectVariant(root))});
+    // 缺陷载荷：点集槽仍按"未挂载"取号（回执未回填的工作集形态）。
+    payloadA.objects.push_back(RequirementPayloadSlot{
+        true, core::ObjectId{}, std::string(requirements::kReqPointSetObjectType),
+        encodeObject(requirements::RequirementObjectVariant(makeHealthyPointSet()))});
+    project::CommandPlan planA;
+    std::vector<core::DiagnosticRecord> diagsA;
+    EXPECT_EQ(runPrepare(handler, port, payloadA, planA, diagsA),
+              project::PrepareOutcome::RejectedInvalidInput)
+        << "已挂载槽不得再按首挂载取号（§9.7 引用稳定性）";
+    EXPECT_TRUE(hasDiagCode(diagsA, "REQ-READY-REF-MISSING"))
+        << "拒绝须携带稳定码定位（逐项原因可查——F-460 诊断面）";
+    EXPECT_TRUE(planA.objectWrites.empty()) << "拒绝态计划不可消费";
+
+    // ---- B：显式集合槽 vs 根引用表未挂载（防御形态）----
+    TestQueryPort orphanPort;
+    const core::ObjectId orphanRootOid = makeOid();
+    const core::ObjectId orphanSetOid = makeOid();
+    requirements::RequirementSet orphanRoot;
+    orphanRoot.name = "根未挂载集合";  // refs 全空——集合对象在闭包但未挂载
+    orphanPort.addObject(orphanRootOid, std::string(requirements::kReqSetObjectType),
+                         encodeObject(requirements::RequirementObjectVariant(orphanRoot)));
+    orphanPort.addObject(orphanSetOid, std::string(requirements::kReqPointSetObjectType),
+                         encodeObject(requirements::RequirementObjectVariant(
+                             makeHealthyPointSet())));
+    RequirementCommandPayload payloadB;
+    payloadB.mode = RequirementCommandPayload::Mode::Apply;
+    payloadB.objects.push_back(RequirementPayloadSlot{
+        false, orphanRootOid, std::string(requirements::kReqSetObjectType),
+        encodeObject(requirements::RequirementObjectVariant(orphanRoot))});
+    payloadB.objects.push_back(RequirementPayloadSlot{
+        false, orphanSetOid, std::string(requirements::kReqPointSetObjectType),
+        encodeObject(requirements::RequirementObjectVariant(makeHealthyPointSet()))});
+    project::CommandPlan planB;
+    std::vector<core::DiagnosticRecord> diagsB;
+    EXPECT_EQ(runPrepare(handler, orphanPort, payloadB, planB, diagsB),
+              project::PrepareOutcome::RejectedInvalidInput)
+        << "字节替换只对已挂载对象成立（根引用表未挂载＝显式槽失配）";
+    EXPECT_TRUE(hasDiagCode(diagsB, "REQ-READY-REF-MISSING"));
 }
