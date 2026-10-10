@@ -191,6 +191,16 @@ struct OriginParseOutcome {
  * **存在但语法非法**→ok=false，调用方维持 originIllegal 原面（非法值
  * 不静默改写）。
  *
+ * F-633（P1）：语法合法 ≠ 数值可用——parseDoubleStable 的底层
+ * std::from_chars 接受 "nan"/"inf" 字面量（其契约明言"有限性由调用方
+ * 按字段语义另行判定"），本函数即该判定的责任点。URDF origin 的数值域
+ * 为实数（xyz 单位 m、rpy 单位 rad），NaN/Inf 无几何语义；若放行，非有限
+ * 位姿将以 Provided＋submittable=true 落草稿（下游旋转矩阵/位姿组合被
+ * NaN 污染且无任何报告面）。修复：解析成功后逐分量 std::isfinite 复检
+ * （对齐同文件轴路径 F-587 的有限性判定同族先例），任一非有限→ok=false
+ * 走既有 originIllegal 非法值面——原串已由各调用点先行存入 originRaw，
+ * 错误详情可追溯（NFR-COR-03 非法值不静默改写）。
+ *
  * 纯函数；确定性。
  */
 OriginParseOutcome parseOriginAttributes(const pugi::xml_node& origin)
@@ -198,15 +208,23 @@ OriginParseOutcome parseOriginAttributes(const pugi::xml_node& origin)
     OriginParseOutcome out;
     const pugi::xml_attribute xyz = origin.attribute("xyz");
     const pugi::xml_attribute rpy = origin.attribute("rpy");
+    // F-633：三分量有限性复检（isfinite 对 NaN/±Inf 均为 false）——只在
+    // 语法成功后调用；语法失败路径不必看值（ok 已为 false，残值不会被
+    // 任何消费面读取——调用点全部先判 originIllegal 再用数值）。
+    const auto allFinite = [](double a, double b, double c) {
+        return std::isfinite(a) && std::isfinite(b) && std::isfinite(c);
+    };
     if (xyz) {
-        if (!parseVec3Stable(xyz.as_string(""), &out.ox, &out.oy, &out.oz)) {
+        if (!parseVec3Stable(xyz.as_string(""), &out.ox, &out.oy, &out.oz)
+            || !allFinite(out.ox, out.oy, out.oz)) {
             out.ok = false;
         }
     } else {
         out.xyzDefaulted = true;   // 缺省＝零向量（成员已零初始化）
     }
     if (rpy) {
-        if (!parseVec3Stable(rpy.as_string(""), &out.roll, &out.pitch, &out.yaw)) {
+        if (!parseVec3Stable(rpy.as_string(""), &out.roll, &out.pitch, &out.yaw)
+            || !allFinite(out.roll, out.pitch, out.yaw)) {
             out.ok = false;
         }
     } else {

@@ -147,7 +147,8 @@ rw::math::Transform3D<double> refTransformMul(const rw::math::Transform3D<double
 
 /// 单步 DH 变换 T_{i-1,i}(q_model=0)＝Rot_z(θ)·Trans_z(d)·Trans_x(a)·
 /// Rot_x(α)（F-590 零位烘焙纪律：zeroOffset 不入几何——q0 参数保留是为
-/// 参考实现可复用于"含零位旋转"的对照面，展开期望恒传 0）。
+/// 参考实现可复用于"含零位旋转"的对照面，展开期望恒传 0；F-631 后本式
+/// 仍为"标准 DH 级联"的解析参考——一般位姿 FK 对照的级联侧）。
 rw::math::Transform3D<double> refStep(double thetaOffset, double q0, double d,
                                       double a, double alpha)
 {
@@ -155,6 +156,80 @@ rw::math::Transform3D<double> refStep(double thetaOffset, double q0, double d,
     return rw::math::Transform3D<double>(
         refRotVec(refRotZ(thetaOffset + q0), rw::math::Vector3D<double>(a, 0.0, d)),
         refRotMul(refRotZ(thetaOffset + q0), refRotX(alpha)));
+}
+
+/// 纯 z 螺旋核心 Rz(θ)·Tz(d)（F-631 拆分语义——测试参考实现：平移恒
+/// (0,0,d)，Rz 不动 z 轴点；与产品 dhCoreTransform 同式、无共享代码）。
+rw::math::Transform3D<double> refCore(double theta, double d)
+{
+    return rw::math::Transform3D<double>(
+        refRotVec(refRotZ(theta), rw::math::Vector3D<double>(0.0, 0.0, d)),
+        refRotZ(theta));
+}
+
+/// 连杆静段 Tx(a)·Rx(α)（F-631 拆分语义——平移 (a,0,0)、旋转 Rx(α)；
+/// 与产品 dhStaticSegment 同式、无共享代码）。
+rw::math::Transform3D<double> refStatic(double a, double alpha)
+{
+    return rw::math::Transform3D<double>(
+        rw::math::Vector3D<double>(a, 0.0, 0.0), refRotX(alpha));
+}
+
+/// Rodrigues 轴角旋转 R(k,ψ)（k 单位向量、ψ rad——一般位姿 FK 对照的
+/// 运行时组合序参考；逐元素 Rodrigues 公式，与产品 axisAngleRotation
+/// 同式、无共享代码）。
+rw::math::Rotation3D<double> refAxisAngle(const rw::math::Vector3D<double>& k,
+                                          double psi)
+{
+    const double c = std::cos(psi);
+    const double s = std::sin(psi);
+    const double t = 1.0 - c;
+    const double kx = k[0];
+    const double ky = k[1];
+    const double kz = k[2];
+    return rw::math::Rotation3D<double>(
+        c + t * kx * kx,      t * kx * ky - s * kz, t * kx * kz + s * ky,
+        t * kx * ky + s * kz, c + t * ky * ky,      t * ky * kz - s * kx,
+        t * kx * kz - s * ky, t * ky * kz + s * kx, c + t * kz * kz);
+}
+
+/**
+ * F-631 拆分语义的闭式期望（测试内另行实现——与产品无共享代码）：
+ *   origin_i = [Tx(a_{i-1})Rx(α_{i-1})]·Rz(θ_i)·Tz(d_i)
+ *              ·[i＝末关：Tx(a_i)Rx(α_i)]
+ *   axis_i   = (0,0,1)（中间关节——头部静段 Rx(α_{i-1}) 与累积回拉
+ *              Rx(−α_{i-1}) 相消）｜(0, sinα_i, cosα_i)（末关节——尾部
+ *              静段 Rx(α_i) 由 axis 吸收）。
+ * 推导依据：运行时 origin·R(axis,ψ) 转轴过 origin 平移后的点，标准 DH
+ * 单步转轴 z_{i-1} 过父帧原点——origin 平移必须沿转轴本身；链尾静段落
+ * 末关节尾部使零位累积 Π origin 严格等于标准级联（units/modeling.md
+ * §7.4 F-631 增量修订）。
+ */
+void refSplitExpansion(const DhChain& chain,
+                       std::vector<rw::math::Transform3D<double>>& refOrigin,
+                       std::vector<rw::math::Vector3D<double>>& refAxis)
+{
+    const std::size_t n = chain.joints.size();
+    rw::math::Transform3D<double> prevStatic(
+        rw::math::Vector3D<double>(0.0, 0.0, 0.0),
+        rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
+    refOrigin.clear();
+    refAxis.clear();
+    for (std::size_t i = 0; i < n; ++i) {
+        const DhChainJoint& j = chain.joints[i];
+        const bool isLast = (i + 1 == n);
+        rw::math::Transform3D<double> origin = prevStatic;
+        origin = refTransformMul(origin, refCore(j.dh.thetaOffset, j.dh.d));
+        if (isLast) {
+            origin = refTransformMul(origin, refStatic(j.dh.a, j.dh.alpha));
+        }
+        refOrigin.push_back(origin);
+        refAxis.push_back(isLast ? rw::math::Vector3D<double>(
+                                       0.0, std::sin(j.dh.alpha),
+                                       std::cos(j.dh.alpha))
+                                 : rw::math::Vector3D<double>(0.0, 0.0, 1.0));
+        prevStatic = refStatic(j.dh.a, j.dh.alpha);
+    }
 }
 
 /// 位姿逐元素近似相等（gtest 辅助——附录 D C4 逐元素比较精神）。
@@ -213,12 +288,12 @@ bool hasDiagnostic(const std::vector<core::DiagnosticRecord>& diags,
 
 /**
  * ACC1 无损展开主用例：三关节非平凡 DH 链（含非零 θ 偏置与零位偏置）——
- * 逐级累乘得 origin=T_parent_joint（当前步相对变换）、axis=Rx(−α)·ez
- * （关节系内方向——F-591：物理旋转轴 z_{i-1} 在关节帧内的坐标，解析元素
- * (0, sinα, cosα)）；身份/名称/类型/zeroOffset/限位透传；axis 范数恒 1
+ * F-631 拆分语义闭式期望逐关节对照：origin=[Tx(a_{i-1})Rx(α_{i-1})]·
+ * Rz(θ)·Tz(d)·[末关：Tx(a_i)Rx(α_i)]、axis=ez（中间）｜(0,sinα,cosα)
+ * （末关节）；身份/名称/类型/zeroOffset/限位透传；axis 范数恒 1
  * （§9.4.7 @post）。
  *
- * F-590 重钉：展开几何为零位烘焙纪律下的 q_model=0 位姿——参考步进取
+ * F-590 重钉：展开几何为零位烘焙纪律下的 q_model=0 位姿——参考核心取
  * Rot_z(θ)（zeroOffset 不入几何；权威零位旋转的唯一烘焙归口在
  * modeling→Description 映射的单一折叠）。
  */
@@ -235,14 +310,11 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
     chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J3",
                                        1.1, 0.25, 0.10, -kPi / 4, 0.20));
 
-    // 独立参考：逐级累乘（期望值——测试内另行实现，同一卡面公式；
-    // q0 恒传 0——展开几何不含 zeroOffset，F-590）。
-    std::vector<rw::math::Transform3D<double>> refStepT;
-    for (const DhChainJoint& j : chain.joints) {
-        const rw::math::Transform3D<double> step =
-            refStep(j.dh.thetaOffset, 0.0, j.dh.d, j.dh.a, j.dh.alpha);
-        refStepT.push_back(step);
-    }
+    // 独立参考：F-631 拆分语义闭式期望（refSplitExpansion——测试内另行
+    // 实现，q0 恒 0——展开几何不含 zeroOffset，F-590）。
+    std::vector<rw::math::Transform3D<double>> refOrigin;
+    std::vector<rw::math::Vector3D<double>> refAxis;
+    refSplitExpansion(chain, refOrigin, refAxis);
 
     std::vector<core::DiagnosticRecord> diags;
     const DhExplicitConverter converter;
@@ -254,13 +326,10 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
     for (std::size_t i = 0; i < out.joints.size(); ++i) {
         const JointEntry& e = out.joints[i];
         // origin＝当前步相对变换 T_parent_joint（非累积值——core.md §4.6）。
-        expectPoseNear(e.origin.value(), refStepT[i], 1e-12,
+        expectPoseNear(e.origin.value(), refOrigin[i], 1e-12,
                        (std::string("joints[") + std::to_string(i) + "] origin").c_str());
-        // axis＝Rx(−α)·ez（关节系内方向——F-591；解析元素 (0,sinα,cosα)）。
-        expectVecNear(e.axis.value(),
-                      rw::math::Vector3D<double>(0.0, std::sin(chain.joints[i].dh.alpha),
-                                                 std::cos(chain.joints[i].dh.alpha)),
-                      1e-12,
+        // axis＝关节系内转轴方向（ez 中间｜(0,sinα,cosα) 末关节——F-631）。
+        expectVecNear(e.axis.value(), refAxis[i], 1e-12,
                       (std::string("joints[") + std::to_string(i) + "] axis").c_str());
         EXPECT_NEAR(e.axis.value().norm2(), 1.0, 1e-12) << "axis 须为单位向量（@post）";
         // 透传字段：身份/名称/类型/零位（θ_offset 与 zeroOffset 分离——
@@ -278,12 +347,12 @@ TEST(MdlDhConvert, DhToExplicitAccumulatesCardFormula_WP13T09_ACC1)
 }
 
 /**
- * ACC1 零位对齐：q_model=0（＝DH 变量零位——q_authoritative = q_model −
- * zeroOffset 的建模域坐标）时显式位姿==DH 派生位姿——显式链累积位姿与
- * 参考 DH 累积（Rot_z(θ)，zeroOffset 不入几何——F-590 零位烘焙纪律：
- * 权威零位旋转的唯一烘焙归口在 modeling→Description 映射的单一折叠
- * origin·R(axis, zeroOffset)）逐位一致；θ_offset 与 zeroOffset 字段显式
- * 分离（zeroOffset 不并入 θ 字段、不预烘入 origin）。
+ * ACC1 零位对齐＋零位级联还原：q_model=0（＝DH 变量零位——q_authoritative
+ * = q_model − zeroOffset 的建模域坐标）时——F-631 拆分语义下中间关节的
+ * 显式累积位姿＝参考 DH 级联·本关节静段逆 S_i⁻¹（链帧相对 DH 帧的回拉），
+ * **末关节累积＝参考级联逐位还原**（链尾静段落末关节尾部——全链 FK 严格
+ * 等于标准 DH 的可执行形态）；θ_offset 与 zeroOffset 字段显式分离
+ * （zeroOffset 不并入 θ 字段、不预烘入 origin——F-590）。
  */
 TEST(MdlDhConvert, DhToExplicitZeroAlignment_WP13T09_ACC1)
 {
@@ -300,8 +369,9 @@ TEST(MdlDhConvert, DhToExplicitZeroAlignment_WP13T09_ACC1)
     const std::vector<JointEntry> joints = expandedExplicitJoints(chain, diags);
     ASSERT_EQ(joints.size(), 2U);
 
-    // q_model=0 显式 FK＝origin 累积；与参考 DH 累积（θ_offset 原值、
-    // 不含 zeroOffset 旋转——F-590）比对。
+    // q_model=0 显式 FK＝origin 累积；与参考 DH 级联（θ_offset 原值、
+    // 不含 zeroOffset 旋转——F-590）比对：中间关节差链帧回拉 S_i⁻¹、
+    // 末关节逐位还原（F-631 拆分语义——链尾静段落末关节尾部）。
     rw::math::Transform3D<double> explicitAcc =
         rw::math::Transform3D<double>(rw::math::Vector3D<double>(0, 0, 0),
                                       rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
@@ -312,8 +382,19 @@ TEST(MdlDhConvert, DhToExplicitZeroAlignment_WP13T09_ACC1)
         const DhChainJoint& j = chain.joints[i];
         refAcc = refTransformMul(refAcc, refStep(j.dh.thetaOffset, 0.0, j.dh.d,
                                                  j.dh.a, j.dh.alpha));
-        // 逐关节：显式累积位姿 == DH 派生位姿（q_model=0 零位对齐——MDL-10）。
-        expectPoseNear(JointPose(explicitAcc), refAcc, 1e-12,
+        // 链帧回拉 S_i⁻¹＝Rx(−α_i)·Tx(−a_i)（平移 (−a_i,0,0)——Rx 不动 x
+        // 轴点；末关节 i+1==n 时 S_i⁻¹＝恒等——级联逐位还原）。
+        const bool isLast = (i + 1 == joints.size());
+        const rw::math::Transform3D<double> pullBack =
+            isLast ? rw::math::Transform3D<double>(
+                         rw::math::Vector3D<double>(0, 0, 0),
+                         rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1))
+                   : rw::math::Transform3D<double>(
+                         rw::math::Vector3D<double>(-j.dh.a, 0.0, 0.0),
+                         refRotX(-j.dh.alpha));
+        const rw::math::Transform3D<double> expected
+            = refTransformMul(refAcc, pullBack);
+        expectPoseNear(JointPose(explicitAcc), expected, 1e-12,
                        (std::string("q=0 累积位姿 joints[") + std::to_string(i) + "]").c_str());
         // 分离性：zeroOffset 独立成字段，θ_offset 不被并入。
         EXPECT_DOUBLE_EQ(joints[i].zeroOffset, j.zeroOffset);
@@ -462,14 +543,23 @@ TEST(MdlDhConvert, ExplicitToDhExactOnDhDerivedChain_WP13T09_ACC2)
     std::vector<core::DiagnosticRecord> diags;
     const DhConversionResult result = converter.explicitToDh(joints, diags);
 
-    // 判定：Exact（解唯一——去重容差内无可辨识第二解）。
-    EXPECT_EQ(result.determination, DhDetermination::Exact);
-    EXPECT_EQ(dhDeterminationToken(result.determination), "Exact");
-    EXPECT_TRUE(result.solutionSet.empty());
-    EXPECT_TRUE(result.freeCoordinates.empty());
+    // 判定：ExactNonUnique（F-631 拆分语义下的诚实一阶结论——该腕部构型
+    // （J5 的 α=−π/2 与 J6 的 a/d 结构）使末关节 θ 与倒数第二关节 a 在
+    // （原点+z 轴）目标集下一阶不可分：δ=(θ_5+=ε, a_4−=a_5·ε) 为雅可比
+    // 零方向；二阶残差 ~a·ε² 在 ε≈1e-4 时 ≈2.5e-10＜1e-9——容差内存在
+    // 可分辨第二解，按 §7.5 判据归 ExactNonUnique；字典序钉值重解因二阶
+    // 残差超差被拒（接受门＝语义门），选定解保持真值参数（下断言）。
+    EXPECT_EQ(result.determination, DhDetermination::ExactNonUnique);
+    EXPECT_EQ(dhDeterminationToken(result.determination), "ExactNonUnique");
+    EXPECT_FALSE(result.solutionSet.empty());
+    // 自由坐标＝{末关节 θ（坐标 20）、末关节 α（坐标 23）}（4×关节＋
+    // {0:θ,1:d,2:a,3:α} 字典序——5 号关节的 θ/α 槽）。
+    ASSERT_EQ(result.freeCoordinates.size(), 2U);
+    EXPECT_EQ(result.freeCoordinates[0], 20U);
+    EXPECT_EQ(result.freeCoordinates[1], 23U);
     EXPECT_EQ(result.convergence, DhConvergenceState::Converged);
-    // 逐关节逐项回收（参数级 ≤ 第 5 项上界——roundtrip 参数级一致性的
-    // 单侧验证；δθ/δd/δa/δα 逐项独立断言）。
+    // 参数级回收（roundtrip 参数级一致性的单侧验证——钉值重解被语义门
+    // 拒绝后选定解保持真值；δθ/δd/δa/δα 逐项独立断言）。
     ASSERT_EQ(result.parameters.size(), 6U);
     for (std::size_t i = 0; i < 6; ++i) {
         const DhParameters& p = result.parameters[i];
@@ -566,12 +656,23 @@ TEST(MdlDhConvert, ExplicitToDhExactNonUniqueParallelAxes_WP13T09_ACC3)
 
     EXPECT_EQ(result.determination, DhDetermination::ExactNonUnique);
     EXPECT_FALSE(result.freeCoordinates.empty()) << "平行相邻轴（末级 a=0）必存在自由族";
+    // 自由坐标（F-631 拆分语义）：θ2（坐标 4——绕公共轴旋转不改变目标，
+    // 经典自由族）＋a2（坐标 6——a_1 前移入末步头部后，θ_1/a_2 等构成绕
+    // 公共轴的等价补偿族，字典序贪心取 a_2 为自由代表；a_2 输入即 0，
+    // 钉值平凡接受）。θ1 由 E_1 位置目标钉死（a_0=0.3≠0 断开 θ_0 族）。
+    ASSERT_EQ(result.freeCoordinates.size(), 2U);
+    EXPECT_EQ(result.freeCoordinates[0], 4U);  // θ2（字典序在前）
+    EXPECT_EQ(result.freeCoordinates[1], 6U);  // a2（F-631 新增自由代表）
     // 字典序定值：自由坐标取中性值 0。
     for (const std::size_t coord : result.freeCoordinates) {
         const std::size_t joint = coord / 4;
         const std::size_t k = coord % 4;
-        ASSERT_EQ(k, 0U) << "本样例自由坐标应为 θ（k=0）";
-        EXPECT_DOUBLE_EQ(result.parameters[joint].thetaOffset, 0.0);
+        if (k == 0U) {
+            EXPECT_DOUBLE_EQ(result.parameters[joint].thetaOffset, 0.0);
+        } else {
+            ASSERT_EQ(k, 2U) << "本样例自由坐标应为 θ（k=0）或 a（k=2）";
+            EXPECT_DOUBLE_EQ(result.parameters[joint].a, 0.0);
+        }
     }
     // 几何回收：间距（a）与偏距（d）在容差内。
     EXPECT_NEAR(result.parameters[0].a, 0.30, 1e-9);
@@ -681,4 +782,229 @@ TEST(MdlDhConvert, ExplicitToDhAnalysisFailedNotSemantic_WP13T09_ACC3)
     // 诊断：MDL-DH-ANALYSIS-FAILED。
     ASSERT_EQ(diags.size(), 1U);
     EXPECT_EQ(diags[0].code, std::string(kMdlDhAnalysisFailed));
+}
+
+// =====================================================================
+// F-631 一般位姿 FK 等价（审计二轮最高优先修复的自证面——拆分语义下
+ // explicit 链 FK 对照标准 DH 解析式级联；修复前转轴过子原点、一般位姿
+// 位置误差 2a·sin(θ/2)，a=0 时逐位一致故既有用例不可检出）
+// =====================================================================
+
+/**
+ * 一般位姿 FK 组合序（F-631 拆分语义的显式链 FK 消费面）：逐关节
+ * acc·=origin_i·R(ez, zeroOffset_i+q_i)，其中**末关节 origin 拆分**为
+ * [纯段]·R(ez,ψ)·[尾段]（纯段/尾段由展开 origin 与输入静段的分解一致
+ * 性先行校验；旋转统一绕纯段关节系 z——推导 pure⁻¹·级联·tail⁻¹＝Rz(ψ)）
+ * ——全链恒等于标准级联 Π Rz(θ_total)Tz(d)Tx(a)Rx(α)。
+ *
+ * 语义边界注：末关节存储 axis＝Rx(−α)·ez 服务运行时未拆分组合
+ * origin·R(axis,ψ) 的物理转轴方向（世界系＝z_{n-1}，F-591 口径）；拆分序
+ * 的全链 FK 恢复路径绕纯段 z 旋转（本 helper）——两者的差异即运行时单
+ * 关节表达的定理性残差（用例④量化为 2a·sin(q/2)）。
+ */
+rw::math::Transform3D<double> refSplitFk(
+    const DhChain& chain, const std::vector<JointEntry>& joints,
+    const std::vector<double>& q)
+{
+    const std::size_t n = chain.joints.size();
+    rw::math::Transform3D<double> acc(
+        rw::math::Vector3D<double>(0.0, 0.0, 0.0),
+        rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
+    for (std::size_t i = 0; i < n; ++i) {
+        const DhChainJoint& j = chain.joints[i];
+        const bool isLast = (i + 1 == n);
+        acc = refTransformMul(acc, static_cast<rw::math::Transform3D<double>>(
+                                        joints[i].origin.value()));
+        if (isLast) {
+            // 末关节拆分：先把已乘入的 origin 中的尾部静段撤出（左乘其逆
+            // ——Tx(a)Rx(α) 的逆＝Rx(−α)Tx(−a)），旋转后再补回（组合序＝
+            // [纯段]·R·[尾段]）。
+            const rw::math::Transform3D<double> tailInverse(
+                rw::math::Vector3D<double>(-j.dh.a, 0.0, 0.0),
+                refRotX(-j.dh.alpha));
+            acc = refTransformMul(acc, tailInverse);
+        }
+        const rw::math::Rotation3D<double> rot = refAxisAngle(
+            rw::math::Vector3D<double>(0.0, 0.0, 1.0), j.zeroOffset + q[i]);
+        acc = refTransformMul(
+            acc, rw::math::Transform3D<double>(rw::math::Vector3D<double>(0, 0, 0), rot));
+        if (isLast) {
+            acc = refTransformMul(acc, refStatic(j.dh.a, j.dh.alpha));
+        }
+    }
+    return acc;
+}
+
+/**
+ * F-631 ①单关节一般位姿 FK：a=0.5、d=0.2、α=π/3、θ_offset=0.3，q∈
+ * {0, 0.5, 1.1, π}——展开 origin 拆分（纯段 Rz·Tz＋尾段 Tx·Rx）后按一般
+ * 位姿组合序对照标准 DH 解析式 T＝Rz(θ_offset+zeroOffset+q)·Tz(d)·Tx(a)·
+ * Rx(α) 级联：位置与姿态误差各 <1e-12。修复机理自证：原实现把 Tx(a)Rx(α)
+ * 烘入 origin 尾部，运行时 origin·R(axis,q) 组合转轴过子原点——本用例在
+ * a≠0 一般位姿处锁定拆分语义严格还原级联（AT-16/MDL-10；audit F-631）。
+ */
+TEST(MdlDhConvert, F631SingleJointGeneralQFkMatchesCascade)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-10", "MDL-02"},
+                  std::vector<std::string>{"AT-16"});
+
+    DhChain chain;
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J1",
+                                       0.3, 0.2, 0.5, kPi / 3, 0.0));
+
+    std::vector<core::DiagnosticRecord> diags;
+    const std::vector<JointEntry> joints = expandedExplicitJoints(chain, diags);
+    ASSERT_EQ(joints.size(), 1U);
+
+    // 拆分一致性前置：展开 origin 必须恰为 [纯段 Rz·Tz]·[尾段 Tx·Rx]——
+    // 一般位姿组合序的可分解性由展开几何保证（F-631 落位推导）。
+    const DhChainJoint& j = chain.joints[0];
+    const rw::math::Transform3D<double> expectedOrigin = refTransformMul(
+        refCore(j.dh.thetaOffset, j.dh.d), refStatic(j.dh.a, j.dh.alpha));
+    expectPoseNear(joints[0].origin.value(), expectedOrigin, 1e-12,
+                   "单关节 origin＝纯段·尾段（F-631 拆分存储）");
+
+    const double qs[] = {0.0, 0.5, 1.1, kPi};
+    for (const double q : qs) {
+        SCOPED_TRACE((std::string("q=") + std::to_string(q)).c_str());
+        // 显式链 FK（拆分组合序——末关节撤尾/旋转/补尾）。
+        const rw::math::Transform3D<double> fk = refSplitFk(chain, joints, {q});
+        // 标准 DH 解析级联（θ 总＝θ_offset+zeroOffset+q——零位分离 F-590）。
+        const rw::math::Transform3D<double> cascade
+            = refStep(j.dh.thetaOffset + j.zeroOffset + q, 0.0, j.dh.d,
+                      j.dh.a, j.dh.alpha);
+        expectPoseNear(JointPose(fk), cascade, 1e-12, "单关节一般位姿 FK 对照级联");
+    }
+}
+
+/**
+ * F-631 ②两关节一般位姿 FK：a₁=a₂=0.3、非平凡 θ/d/α（含 π/2 扭转），
+ * 一般 q 组合 {(0.2,−0.4), (1.0,0.7), (π/2,π/3)}——拆分组合序 FK 对照
+ * 标准级联级联 <1e-12（位置/姿态）。中间静段经 origin 头部落位、链尾
+ * 静段落末关节尾部——全链逐关节严格还原级联（audit F-631）。
+ */
+TEST(MdlDhConvert, F631TwoJointGeneralQFkMatchesCascade)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-10", "MDL-02"},
+                  std::vector<std::string>{"AT-16"});
+
+    DhChain chain;
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J1",
+                                       0.2, 0.15, 0.3, kPi / 2, 0.05));
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J2",
+                                       -0.4, 0.25, 0.3, -kPi / 3, -0.05));
+
+    std::vector<core::DiagnosticRecord> diags;
+    const std::vector<JointEntry> joints = expandedExplicitJoints(chain, diags);
+    ASSERT_EQ(joints.size(), 2U);
+
+    const double qSets[][2] = {{0.2, -0.4}, {1.0, 0.7}, {kPi / 2, kPi / 3}};
+    for (const auto& qs : qSets) {
+        SCOPED_TRACE((std::string("q=(") + std::to_string(qs[0]) + ","
+                      + std::to_string(qs[1]) + ")").c_str());
+        const rw::math::Transform3D<double> fk
+            = refSplitFk(chain, joints, {qs[0], qs[1]});
+        // 标准级联：逐步 Rz(θ_total)·Tz(d)·Tx(a)·Rx(α) 左乘累乘。
+        rw::math::Transform3D<double> cascade(
+            rw::math::Vector3D<double>(0.0, 0.0, 0.0),
+            rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
+        for (std::size_t i = 0; i < 2; ++i) {
+            const DhChainJoint& j = chain.joints[i];
+            cascade = refTransformMul(
+                cascade, refStep(j.dh.thetaOffset + j.zeroOffset + qs[i], 0.0,
+                                 j.dh.d, j.dh.a, j.dh.alpha));
+        }
+        expectPoseNear(JointPose(fk), cascade, 1e-12, "两关节一般位姿 FK 对照级联");
+    }
+}
+
+/**
+ * F-631 ③a=0 链零漂移：全 a=0、α=0 链（重合轴族形态）的展开 origin/axis
+ * 与**修复前黄金闭式**（Rz(θ)·Tz(d)·Tx(0)·Rx(0)——旧 dhStepTransform 同式
+ * 参考逐位复算）逐位一致（EXPECT_DOUBLE_EQ 全分量）。机理：a=0 时原实现
+ * 转轴过子原点与过父原点重合（2a·sin=0）、静段 Tx(0)Rx(0)＝精确恒等不
+ * 改变乘积——拆分后逐位不变是本修复的零回归底线（audit F-631）。
+ */
+TEST(MdlDhConvert, F631ZeroADriftFreeAgainstPreFixGolden)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-10", "NFR-COR-01"},
+                  std::vector<std::string>{"AT-16"});
+
+    DhChain chain;
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J1",
+                                       0.7, 0.30, 0.0, 0.0, 0.0));
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J2",
+                                       1.1, 0.25, 0.0, 0.0, 0.0));
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J3",
+                                       -0.4, 0.15, 0.0, 0.0, 0.0));
+
+    std::vector<core::DiagnosticRecord> diags;
+    const std::vector<JointEntry> joints = expandedExplicitJoints(chain, diags);
+    ASSERT_EQ(joints.size(), 3U);
+
+    for (std::size_t i = 0; i < joints.size(); ++i) {
+        const DhChainJoint& j = chain.joints[i];
+        // 修复前闭式（旧 dhStepTransform 同式参考——a=0、α=0）。
+        const rw::math::Transform3D<double> preFix
+            = refStep(j.dh.thetaOffset, 0.0, j.dh.d, j.dh.a, j.dh.alpha);
+        const rw::math::Transform3D<double> origin
+            = static_cast<rw::math::Transform3D<double>>(joints[i].origin.value());
+        SCOPED_TRACE((std::string("joints[") + std::to_string(i) + "]").c_str());
+        for (int c = 0; c < 3; ++c) {
+            EXPECT_EQ(origin.P()[c], preFix.P()[c]) << "origin 平移逐位（分量 " << c << "）";
+        }
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                EXPECT_EQ(origin.R()(r, c), preFix.R()(r, c))
+                    << "origin 旋转逐位（" << r << "," << c << "）";
+            }
+        }
+        // axis：修复前 (0, sinα, cosα)＝(0,0,1)（α=0 精确）——逐位不变。
+        const auto axis = joints[i].axis.value();
+        EXPECT_EQ(axis[0], 0.0);
+        EXPECT_EQ(axis[1], std::sin(j.dh.alpha));  // sin(0)=+0.0 精确
+        EXPECT_EQ(axis[2], std::cos(j.dh.alpha));  // cos(0)=1.0 精确
+    }
+}
+
+/**
+ * F-631 ④0.5227 复现对照：a=0.5 单关节 q=1.1 的新拆分序法兰世界原点与
+ * 旧实现偏差恰为 2a·sin(q/2)。推导：旧实现把 Tx(a)Rx(α) 烘入 origin 尾部
+ * ——法兰系原点＝origin 旧平移＝Rz(θ_off)·(a,0,d)，对关节角 q 定常（旋转
+ * 绕自身原点）；新拆分序法兰原点＝Rz(θ_off+q)·(a,0,d)（绕 z_{i-1} 轨摆
+ * ——DH 语义）。两式同乘 Rz(−θ_off) 后偏差＝|u−Rz(q)·u|（u＝(a,0,d)）＝
+ * |(a,0,d)−(a·cosq, a·sinq, d)|＝a·|(1−cosq, sinq, 0)|＝2a·sin(q/2)——
+ * 与 d、θ_off 无关（本例 2·0.5·sin(0.55)≈0.5227 m，audit F-631 实测值）。
+ */
+TEST(MdlDhConvert, F631FlangeOrbitDeviation2aSinHalfQ)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-10", "MDL-02"},
+                  std::vector<std::string>{"AT-16"});
+
+    const double a = 0.5;
+    const double d = 0.2;
+    const double thetaOffset = 0.3;
+    const double alpha = 0.4;
+    const double q = 1.1;
+
+    DhChain chain;
+    chain.joints.push_back(makeDhEntry(core::ObjectId::generate(), "J1",
+                                       thetaOffset, d, a, alpha, 0.0));
+
+    std::vector<core::DiagnosticRecord> diags;
+    const std::vector<JointEntry> joints = expandedExplicitJoints(chain, diags);
+    ASSERT_EQ(joints.size(), 1U);
+
+    // 新拆分序法兰原点（[纯段]·R·[尾段] 的平移分量）。
+    const rw::math::Transform3D<double> newFk = refSplitFk(chain, joints, {q});
+    // 旧实现法兰原点：origin 旧闭式（Rz·Tz·Tx·Rx）的平移＝Rz(θ_off)·(a,0,d)
+    // ——旋转 R(axis 旧,q) 绕自身原点、不动原点（旧组合 origin·R(axis,q)）。
+    const rw::math::Transform3D<double> oldOrigin = refStep(thetaOffset, 0.0, d, a, alpha);
+    const double deviation
+        = (newFk.P() - oldOrigin.P()).norm2();
+
+    // 期望＝2a·sin(q/2)（推导见用例注；1e-9 吸收双精度乘积序噪声）。
+    const double expected = 2.0 * a * std::sin(q / 2.0);
+    EXPECT_NEAR(deviation, expected, 1e-9)
+        << "新拆分序与旧实现法兰原点偏差须恰为 2a·sin(q/2)（F-631 复现）";
 }

@@ -330,6 +330,24 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
             throw DynamicsError("input-invalid", "负载对象 ID 为空——素材不可定位");
         }
     }
+    // F-644 前置防线：样本 q/qd 长度一致性（调用方契约违约——fail-fast）。
+    // 为什么必须在入口拦截：第 1 步的初始状态非有限扫描（下方）在 τ_ref
+    // 主调用（其内部有 DYN-DIMENSION-MISMATCH 全量防线）**之前**执行——
+    // 若 q/qd 长度不一致，该扫描以 q 的长度索引 qd 会越界读取（未定义
+    // 行为）。q 与 qd 是同一样本同一自由度向量的位置/速度列，长度不一致
+    // 属组装错误，按既有 input-invalid 异常面拒绝，消息说明自由度不匹配；
+    // qdd 及各向量对模型自由度 n 的匹配性由 τ_ref 主调用既有防线承载
+    // （此处不重复——前置只补"本函数先于主调用触碰数据"的缺口）。
+    for (std::size_t k = 0; k < request.samples.size(); ++k) {
+        const InverseDynSampleInput& s = request.samples[k];
+        if (s.q.size() != s.qd.size()) {
+            throw DynamicsError("input-invalid",
+                                "样本状态向量长度不一致——自由度不匹配（样本序 "
+                                    + std::to_string(k) + "：q 长度 "
+                                    + std::to_string(s.q.size()) + "，qd 长度 "
+                                    + std::to_string(s.qd.size()) + "，调用方契约违约）");
+        }
+    }
 
     // ---- 第 1 步：数据充足性（§6.2——初始状态缺失→NotRun＋素材，建议项
     //      语义不阻断、不伪造 Passed；样本数 <2＝无仿真区间＝参考段无可用
@@ -350,10 +368,18 @@ ForwardCheckOutcome ForwardDynamicsValidator::validate(
     }
     {
         // 初始状态非有限（q₀/q̇₀ 任一分量 NaN/Inf）——不可积分起点，NotRun。
+        // F-644 纵深防御：q 与 qd 各按**自身**长度索引（入口一致性防线之上
+        // 的保险——若防线将来被移除，本扫描也不得越界读取）。
         const InverseDynSampleInput& s0 = request.samples.front();
         bool initialNonFinite = false;
         for (std::size_t i = 0; i < s0.q.size(); ++i) {
-            if (!std::isfinite(s0.q[i]) || !std::isfinite(s0.qd[i])) {
+            if (!std::isfinite(s0.q[i])) {
+                initialNonFinite = true;
+                break;
+            }
+        }
+        for (std::size_t i = 0; i < s0.qd.size(); ++i) {
+            if (!std::isfinite(s0.qd[i])) {
                 initialNonFinite = true;
                 break;
             }

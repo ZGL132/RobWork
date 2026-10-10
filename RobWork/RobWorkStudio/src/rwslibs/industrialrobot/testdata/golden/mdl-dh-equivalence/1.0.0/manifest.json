@@ -25,9 +25,9 @@
     "expected/roundtrip.json"
   ],
   "parameters": {
-    "conventions": "T_{i-1,i}=Rot_z(theta)*Trans_z(d)*Trans_x(a)*Rot_x(alpha)（§7.4；F-590 零位烘焙纪律——q_model=0 位姿，zeroOffset 不入几何，权威零位旋转唯一烘焙归口＝Description 映射单一折叠）",
-    "consumedFields": "dh[*].origin.x/y/z、dh[*].axis.x/y/z（展开闭式期望——第 5 项）、dh-solve[*].thetaOffset/d/a/alpha（roundtrip 参数级——第 5 项）、fk.max-position-deviation、fk.max-orientation-deviation（编译链 FK 对照——第 4 项）",
-    "freeCoordinateRule": "exact-non-unique 的期望解按 §7.5 字典序规则定值（自由 theta 钉中性值 0）——合同规则而非几何闭式，见 generate 脚本注"
+    "conventions": "T_{i-1,i}=Rot_z(theta)*Trans_z(d)*Trans_x(a)*Rot_x(alpha)（§7.4；F-590 零位烘焙纪律——q_model=0 位姿，zeroOffset 不入几何，权威零位旋转唯一烘焙归口＝Description 映射单一折叠；audit F-631 拆分语义——展开 origin=[Tx(a_{i-1})Rx(alpha_{i-1})]·Rz·Tz·[末关：Tx(a_i)Rx(alpha_i)]，零位累积 Pi origin 严格等于标准级联）",
+    "consumedFields": "dh[*].origin.x/y/z、dh[*].axis.x/y/z（展开闭式期望——第 5 项）、dh-solve[*].determination、dh-solve[*].freeCoordinates（roundtrip 判定/自由坐标面——F-631）、fk.max-position-deviation、fk.max-orientation-deviation（编译链 FK 对照——第 4 项）",
+    "freeCoordinateRule": "判定/自由坐标由期望侧独立数值雅可比贪心列消元在真值参数处导出（§7.5 字典序规则的独立可执行形态；中心差分 1e-6、主元相对容差 1e-8）——F-631 拆分语义下 (a_i,alpha_i) 前移使部分精确链出现一阶自由族；该族二阶残差超差，字典序钉值重解被语义门拒绝，parameters 保持输入值（V-11 参数级 roundtrip 一致性不变），见 generate 脚本注"
   },
   "units": {
     "angle": "rad",
@@ -65,23 +65,23 @@
   "integrity": [
     {
       "path": "inputs/samples.json",
-      "sha256": "afb36a3c644bbfb18edf6e7b3200eb44b00e36fff727b7107eed7d78e5fddbe3",
-      "sizeBytes": 5373
+      "sha256": "7e906fe05146c1a886e18e879184f3e840c28bcfcc21c753423381a23103c565",
+      "sizeBytes": 5869
     },
     {
       "path": "expected/expansion.json",
-      "sha256": "a654c0d681e2a0b1d51597582a67d63276ec531b143b8c17b8e507f81e3ae244",
-      "sizeBytes": 9957
+      "sha256": "4f5d5697592fc8c8b5dc7f76f2e1aa54de5dfbf568d995c41a2cd6ea574846dd",
+      "sizeBytes": 9708
     },
     {
       "path": "expected/roundtrip.json",
-      "sha256": "be669d87418e9919123b0feef6ba1d205c760a0e30108a7441c08b2508f8b7a8",
-      "sizeBytes": 3623
+      "sha256": "2a3e1242ad4e0dbad644b17cd80dee681c861b3e5a9e7c024e4e66c5c1cd7686",
+      "sizeBytes": 1914
     },
     {
       "path": "generate/make_dh_equivalence.mjs",
-      "sha256": "4f3b130e4303a8390375241e7016cbe579d79fac630a3981b9bc7ada96a71971",
-      "sizeBytes": 6076
+      "sha256": "e0b2b8ce68f31170112b92d37553b04648092246f420de92ba9380e6c8ab2a31",
+      "sizeBytes": 9829
     }
   ],
   "generator": {
@@ -109,6 +109,13 @@
       "date": "2026-10-09",
       "change": "audit F-591 重制（分支 audit-p2-fixes）：展开轴期望改为关节系内方向 Rx(−α)·ez=(0,sinα,cosα)（原 R_{0,i}·ez 为基座系子帧 z——α≠0 链被 runtime 按关节系方向误读），generate 脚本与 expected/expansion.json 同步重生成（origin/roundtrip 期望不变）；manifest 完整性哈希随文件更新",
       "reReviewedBy": "audit-p2-fixes 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-10-10",
+      "change": "audit F-631 重制（分支 audit-r2a-fixes，草案号 F-631——正式编号转登前沿用并注明）：一般位姿位置发散修复（标准 DH 单步转轴 z_{i-1} 过父原点，原实现把 Tx(a)Rx(α) 烘入本关节 origin 尾部致运行时转轴过子原点、位置误差 2a·sin(θ/2)）——展开语义改为拆分式：Tx(a_i)Rx(α_i) 前移入下一关节 origin 头部、链尾静段落末关节 origin 尾部（零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}，全链 FK 严格还原）；axis 中间关节＝ez、末关节＝Rx(−α)·ez；a=0 且 α=0 链逐位零漂移。roundtrip 期望按新语义重制：判定/自由坐标由 generate 脚本内独立数值雅可比贪心列消元导出（拆分语义下部分精确链呈 ExactNonUnique——一阶自由族二阶残差超差、字典序钉值被语义门拒绝，选定解保持真值参数，参数级 roundtrip 一致性 V-11 不变）；generate 脚本、expected/expansion.json、expected/roundtrip.json、inputs/samples.json（conventions 自述同步）重生成；manifest 完整性哈希随文件更新",
+      "reReviewedBy": "audit-r2a-fixes 实施会话（验收段独立复核待验收者留痕）",
       "supersededBy": ""
     }
   ]

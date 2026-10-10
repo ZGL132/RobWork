@@ -21,8 +21,10 @@
  *   ③ mounting-incompatible 为电机/减速器共用安装兼容 token（词表分组
  *     读法——减速器组 token 均带 gearbox- 前缀而本 token 无，语义通用）；
  *   ④ 温度降额 v1 档位公式：超出档数 n＝ceil(max(0, T_env−T_ref))（档距
- *     ＝1 档位单位），折减系数 f＝factorPerRef^n（f<1 时对连续/峰值转矩
- *     复判——折减后能力＝目录值×f）；
+ *     ＝1 档位单位；实现侧对 n 设 2e9 上界钳位——F-641 整型溢出防线，
+ *     极端大值饱和至极限降额 f→0，正常工程温度不触及），折减系数
+ *     f＝factorPerRef^n（f<1 时对连续/峰值转矩复判——折减后能力＝目录
+ *     值×f）；
  *   ⑤ 功率维度能力口径：条目声明 speed→power 能力曲线时以工作点转速
  *     查询曲线（曲线口径优先）；无曲线时退固定额定值口径（目录
  *     rated_power_w——§6.4 显式来源，不伪造曲线点）；曲线查询拒绝＝
@@ -201,11 +203,22 @@ double deratingFactor(const ThermalDerating& thermal, double ambientTemp)
 {
     const double over = ambientTemp - thermal.refTemp; // 超出参考档位的量，档位单位
     if (over <= 0.0) {
-        return 1.0;  // 环境不高于参考档位——能力不折减
+        return 1.0;  // 环境不高于参考档位——能力不折减（over>0 保证档数恒正）
     }
-    // 超出档数（半档保守向上取整）；factorPerRef ∈ (0,1]，指数增大只会
-    // 让系数单调趋 0（double 下溢为 0，无未定义行为——极限降额语义成立）。
-    const int steps = static_cast<int>(std::ceil(over));
+    // F-641 防线：档数上界钳位——ambientTemp 是 double 档位值，调用方契约
+    // 只保证有限（validateCriteria），1e30 级极端值经 ceil 后远超 int 可表
+    // 示域，static_cast<int> 溢出是未定义行为（MSVC/x64 下饱和为 INT_MIN
+    // ＝负档数），经 pow(factorPerRef, 负档数) 会把折减系数反转为 ≫1 的
+    // 放大因子——"极端高温反而通过筛选"，违反降额单调性语义。
+    // 钳位值依据：kMaxOverSteps=2e9 取 int 精确整域上限（2³¹−1≈2.147e9）
+    // 之下的安全值——ceil(2e9)=2e9 可被 double 精确表示、cast 不溢出；且
+    // factorPerRef∈(0,1] 时 0.9^2e9 早已下溢为 0（IEEE754 定义行为＝极限
+    // 降额饱和），正常工程温度（|over|≤1e4 量级）完全不触及钳位。
+    constexpr double kMaxOverSteps = 2e9;  // 档数上限（无量纲——档位单位）
+    const double clampedOver = std::min(over, kMaxOverSteps);
+    // 超出档数（半档保守向上取整）；饱和路径 factorPerRef^2e9 → 0（double
+    // 下溢为 0，无未定义行为——极限降额语义成立，能力折减只会更严）。
+    const int steps = static_cast<int>(std::ceil(clampedOver));
     return std::pow(thermal.factorPerRef, steps);
 }
 

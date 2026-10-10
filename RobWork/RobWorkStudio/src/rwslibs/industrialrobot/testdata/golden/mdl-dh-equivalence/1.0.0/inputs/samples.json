@@ -1,9 +1,9 @@
 {
-  "note": "mdl-dh-equivalence 输入样本集（DH 链逐关节四元组＋零位偏置；单位 rad/m——DhParameters 注）。family=exact 的链全部满足 a>0（θ 可由位置唯一钉死——非退化）且参数已处规范形态（d>0、θ/alpha∈(-pi,pi]——§7.5 输出面规范分支的恒等输入）；family=exact-non-unique 为退化族样例（相邻 a=0——绕公共轴旋转不可分辨）。",
+  "note": "mdl-dh-equivalence 输入样本集（DH 链逐关节四元组＋零位偏置；单位 rad/m——DhParameters 注）。family=exact 的链全部满足 a>0（精确可表达且参数已处规范形态：d>0、θ/alpha∈(-pi,pi]——§7.5 输出面规范分支的恒等输入；audit F-631 拆分语义下部分链存在一阶自由族，判定/自由坐标以 expected/roundtrip.json 的独立雅可比贪心导出为准）；family=exact-non-unique 为退化族样例（相邻 a=0——绕公共轴旋转不可分辨）。",
   "conventions": {
-    "step": "T_{i-1,i} = Rot_z(thetaOffset+zeroOffset) * Trans_z(d) * Trans_x(a) * Rot_x(alpha)  (units/modeling.md §7.4)",
-    "origin": "origin_i = T_{i-1,i}（关节系相对父连杆系——core.md §4.6 读法）",
-    "axis": "axis_i = R_{0,i} * (0,0,1)（累计旋转第三列，单位向量）",
+    "step": "T_{i-1,i} = Rot_z(thetaOffset) * Trans_z(d) * Trans_x(a) * Rot_x(alpha)  (units/modeling.md §7.4；F-590 零位烘焙纪律——zeroOffset 不入几何)",
+    "origin": "origin_i = [Trans_x(a_{i-1})*Rot_x(alpha_{i-1})] * Rot_z(theta_i) * Trans_z(d_i) * [末关：Trans_x(a_i)*Rot_x(alpha_i)]（audit F-631 拆分语义；关节系相对父连杆系——core.md §4.6 读法；零位累积 Pi origin 严格等于标准级联 Pi T_{i-1,i}）",
+    "axis": "axis_i = (0,0,1)（中间关节——头部静段 Rx(alpha_{i-1}) 与累积回拉相消）｜(0, sin(alpha_i), cos(alpha_i))（末关节——尾部静段 Rx(alpha_i) 由 axis 吸收；关节系内单位向量）",
     "angleUnit": "rad",
     "lengthUnit": "m"
   },

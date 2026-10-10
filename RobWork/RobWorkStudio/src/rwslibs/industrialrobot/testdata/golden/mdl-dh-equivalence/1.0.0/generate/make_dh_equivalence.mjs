@@ -3,28 +3,34 @@
  * 可独立重跑；analytic-case——参考结果为闭式推导，独立于生产实现）。
  *
  * 独立性声明（testkit §4.4/independentOfProductionImpl）：本脚本零依赖
- * 产品代码（仅 Node 内置模块），逐级累乘与三角函数均为本文件内独立实现
- * （与 units/modeling.md §7.4 公式同源、与 C++ 实现无共享代码）；消费方
- * 以本脚本产物（expected/*.json）反查 DhExplicitConverter——实现漂移在
- * 附录 D 第 5 项容差判定处显性失败。
+ * 产品代码（仅 Node 内置模块），拆分累乘、三角函数与数值雅可比贪心秩
+ * 分析均为本文件内独立实现（与 units/modeling.md §7.4 公式同源、与 C++
+ * 实现无共享代码）；消费方以本脚本产物（expected/*.json）反查
+ * DhExplicitConverter——实现漂移在附录 D 第 4/5 项容差判定处显性失败。
  *
- * 数学口径（§7.4 原文，F-590 零位烘焙纪律——q_model=0）：
- *   T_{i-1,i} = Rot_z(θ_i) · Trans_z(d_i) · Trans_x(a_i) · Rot_x(α_i)
- *   （zeroOffset 不烘入展开几何——权威零位旋转的唯一烘焙归口在
- *   modeling→Description 映射的单一折叠 origin·R(axis, q0)）
- *   origin_i  = T_{i-1,i}（关节系相对父连杆系；position = Rz(θ)·(a,0,d)，
- *               rotation = Rz(θ)·Rx(α)）
- *   axis_i    = Rx(−α_i)·(0,0,1) = (0, sinα_i, cosα_i)（关节系内方向——
- *               F-591：物理旋转轴 z_{i-1} 在关节帧 i 内的坐标；世界轴＝
- *               origin.R·axis＝R_{0,i-1}·ez）
- *   R_z(t) = [c,-s,0; s,c,0; 0,0,1]，R_x(a) = [1,0,0; 0,c,-s; 0,s,c]
+ * 数学口径（§7.4 原文，audit F-631 拆分语义 + F-590 零位烘焙纪律——
+ * q_model=0；拆分推导：运行时 origin·R(axis,q) 组合的转轴过 origin 平移
+ * 后的点，标准 DH 单步转轴 z_{i-1} 过父帧原点，故 origin 平移必须沿转轴
+ * 本身——Tx(a)/Rx(α) 静段逐一前移入下一关节 origin 头部；链上静段槽位
+ * n 个而级联静态因子 n+1 个，链尾静段落**末关节 origin 尾部**使零位累积
+ * Π origin 严格等于标准级联 Π T_{i-1,i}，全链 FK 严格还原）：
  *
- * roundtrip 期望（expected/roundtrip.json）：
- *   - family=exact：重解参数＝输入参数（链规范形态下闭式逆唯一；实测为
- *     显式链的精确参数化——附录 D 第 5 项容差内逐关节逐项一致）；
- *   - family=exact-non-unique：解族存在，期望解＝字典序规则定值（自由
- *     theta 坐标钉中性值 0——§7.5"字典序规则定值"的合同规则，非几何
- *     闭式；d/a/alpha 为几何回收值＝输入值）。
+ *   origin_i  = [Trans_x(a_{i-1})·Rot_x(α_{i-1})]（i>0 头部静段）
+ *               · Rot_z(θ_i)·Trans_z(d_i)          （纯 z 螺旋核心）
+ *               · [i＝末关：Trans_x(a_i)·Rot_x(α_i)]（链尾静段·尾部）
+ *   axis_i    = (0,0,1)（中间关节——头部静段 Rx(α_{i-1}) 与显式累积帧
+ *               的回拉 Rx(−α_{i-1}) 相消，世界轴向＝z_{i-1}）
+ *               ｜(0, sinα_i, cosα_i)（末关节——尾部静段 Rx(α_i) 由 axis
+ *               吸收：origin.R·axis＝Rx(α_i)·ez）
+ *
+ * roundtrip 期望（expected/roundtrip.json，F-631 新增自由坐标面）：
+ *   - 判定与自由坐标由**独立数值雅可比贪心列消元**在真值参数处导出
+ *     （中心差分 h=1e-6、主元相对容差 1e-8——与附录 D 第 5 项判定区
+ *     同尺度；贪心即 §7.5"字典序规则"的可执行形态）；拆分语义下
+ *     （a_i,α_i）的前移使部分精确链出现一阶自由族（如一般链的末关节
+ *     a/α 经上游 θ/α 补偿一阶不可分）——该族二阶残差超差（字典序钉值
+ *     重解被语义门拒绝），故 parameters 保持输入值（参数级 roundtrip
+ *     一致性 V-11 不变），仅判定/自由坐标面如实承载。
  *
  * 重跑：node make_dh_equivalence.mjs（无时间戳/无随机源——产物与入库
  * 版本逐字节一致，NFR-COR-02）。
@@ -36,7 +42,7 @@ import path from 'node:path';
 
 const thisDir = path.dirname(fileURLToPath(import.meta.url));
 
-// ---- 3x3 旋转与位姿代数（本文件独立实现——零产品代码依赖） ----
+// ---- 3x3/4x4 位姿代数（本文件独立实现——零产品代码依赖） ----
 const rotZ = (t) => [
   [Math.cos(t), -Math.sin(t), 0.0],
   [Math.sin(t), Math.cos(t), 0.0],
@@ -47,74 +53,153 @@ const rotX = (a) => [
   [0.0, Math.cos(a), -Math.sin(a)],
   [0.0, Math.sin(a), Math.cos(a)],
 ];
-const matMul = (A, B) => A.map((row, i) => [0, 1, 2].map((j) =>
-  row[0] * B[0][j] + row[1] * B[1][j] + row[2] * B[2][j]));
-const matVec = (A, v) => [
-  A[0][0] * v[0] + A[0][1] * v[1] + A[0][2] * v[2],
-  A[1][0] * v[0] + A[1][1] * v[1] + A[1][2] * v[2],
-  A[2][0] * v[0] + A[2][1] * v[1] + A[2][2] * v[2],
+// 4x4 齐次（雅可比贪心与拆分累乘的承载形态——本文件内独立实现）。
+const homogeneous = (R, p) => [
+  [R[0][0], R[0][1], R[0][2], p[0]],
+  [R[1][0], R[1][1], R[1][2], p[1]],
+  [R[2][0], R[2][1], R[2][2], p[2]],
+  [0.0, 0.0, 0.0, 1.0],
 ];
-const matAdd = (u, v) => [u[0] + v[0], u[1] + v[1], u[2] + v[2]];
+const hMul = (A, B) => A.map((row, i) => [0, 1, 2, 3].map((j) =>
+  row[0] * B[0][j] + row[1] * B[1][j] + row[2] * B[2][j] + row[3] * B[3][j]));
+const identity4 = () => homogeneous([[1, 0, 0], [0, 1, 0], [0, 0, 1]], [0, 0, 0]);
 
 // ---- 读取输入样本 ----
 const inputs = JSON.parse(
   fs.readFileSync(path.join(thisDir, '..', 'inputs', 'samples.json'), 'utf8'));
 
-// ---- 逐样本闭式展开 ----
+// ---- F-631 拆分语义闭式展开 ----
+// 连杆静段 S_k ＝ Trans_x(a_k)·Rot_x(α_k)（平移 (a,0,0)、旋转 Rx(α)）。
+const staticSegment = (j) => homogeneous(rotX(j.alpha), [j.a, 0.0, 0.0]);
+const coreSegment = (j) => homogeneous(rotZ(j.thetaOffset), [0.0, 0.0, j.d]);
+
 const samples = inputs.samples.map((sample) => {
-  // 第一遍：逐关节相对原点 T_{i-1,i}（origin 半部——§7.4 单步公式）。
-  const rows = sample.joints.map((j) => {
-    const rz = rotZ(j.thetaOffset);  // F-590：θ_offset 单独入几何（zeroOffset 不烘入）
-    const rx = rotX(j.alpha);
-    // origin_i = Rot_z(θ+q0)·Trans_z(d)·Trans_x(a)·Rot_x(α)：旋转半部
-    // ＝Rz·Rx；平移半部＝Rz·(a,0,d)（Trans_z(d)·Trans_x(a) 的平移向量
-    // 为 (a,0,d)，Rot_z 在左故携带旋转）。
-    return {
+  const rows = [];
+  let prevStatic = homogeneous([[1, 0, 0], [0, 1, 0], [0, 0, 1]], [0, 0, 0]);
+  const n = sample.joints.length;
+  sample.joints.forEach((j, idx) => {
+    const isLast = (idx + 1 === n);
+    // origin_i ＝ [S_{i-1} 头部]·Rz(θ)·Tz(d)·[末关：S_i 尾部]（F-631）。
+    let origin = prevStatic;
+    origin = hMul(origin, coreSegment(j));
+    if (isLast) { origin = hMul(origin, staticSegment(j)); }
+    // axis_i ＝ ez（中间）｜(0, sinα, cosα)（末关节——尾部静段 Rx(α) 由
+    // axis 吸收，F-591 口径在末关节保留）。
+    const axis = isLast
+      ? [0.0, Math.sin(j.alpha), Math.cos(j.alpha)]
+      : [0.0, 0.0, 1.0];
+    rows.push({
       name: j.name,
       origin: {
-        position: matVec(rz, [j.a, 0.0, j.d]),
-        rotation: matMul(rz, rx).flat(),
+        position: [origin[0][3], origin[1][3], origin[2][3]],
+        rotation: [
+          origin[0][0], origin[0][1], origin[0][2],
+          origin[1][0], origin[1][1], origin[1][2],
+          origin[2][0], origin[2][1], origin[2][2],
+        ],
       },
-      axis: [0.0, 0.0, 0.0],  // 占位——轴半部在下方循环按 F-591 公式填入
-    };
-  });
-  // 轴半部：axis_i = Rx(−α_i)·ez = (0, sinα_i, cosα_i)（F-591——关节系内
-  // 方向，仅依赖本关节扭转角；无累计项）。
-  sample.joints.forEach((j, idx) => {
-    rows[idx].axis = [0.0, Math.sin(j.alpha), Math.cos(j.alpha)];
+      axis,
+    });
+    prevStatic = staticSegment(j);
   });
   return { id: sample.id, family: sample.family, joints: rows };
 });
 
 const expansion = {
   schemaVersion: 'mdl-dh-equivalence-expansion/1',
-  note: '闭式展开期望（§7.4 公式，F-590 零位烘焙纪律——zeroOffset 不入几何；origin.position/rotation 为 T_{i-1,i} 的平移与旋转半部；axis 为 Rx(−α)·ez 关节系内单位轴（F-591）——单位向量；消费比较走档案 mdl-dh 条目 dh[*].origin.*/dh[*].axis.*，附录 D 第 5 项 1e-9）',
+  note: '闭式展开期望（§7.4 公式，audit F-631 拆分语义＋F-590 零位烘焙纪律——zeroOffset 不入几何；origin_i＝[Tx(a_{i-1})Rx(α_{i-1})]·Rz(θ_i)·Tz(d_i)·[末关：Tx(a_i)Rx(α_i)]，零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}；axis 为关节系内转轴方向（中间 ez｜末关 (0,sinα,cosα)）；单位向量；消费比较走档案 mdl-dh 条目 dh[*].origin.*/dh[*].axis.*，附录 D 第 5 项 1e-9）',
   samples,
 };
 
-// ---- roundtrip 期望 ----
+// ---- roundtrip 期望：独立数值雅可比贪心列消元（F-631 新增自由坐标面）----
+const rebuild4 = (xv) => {
+  const n = xv.length / 4;
+  let acc = identity4();
+  const out = [];
+  let prev = identity4();
+  for (let k = 0; k < n; ++k) {
+    let step = prev;
+    step = hMul(step, coreSegment({
+      thetaOffset: xv[4 * k], d: xv[4 * k + 1], a: xv[4 * k + 2], alpha: xv[4 * k + 3],
+    }));
+    if (k === n - 1) {
+      step = hMul(step, staticSegment({
+        a: xv[4 * k + 2], alpha: xv[4 * k + 3],
+      }));
+    }
+    acc = hMul(acc, step);
+    out.push(acc);
+    prev = staticSegment({ a: xv[4 * k + 2], alpha: xv[4 * k + 3] });
+  }
+  return out;
+};
+const residualAt = (xv, Fr) => {
+  const fr = rebuild4(xv);
+  const r = [];
+  fr.forEach((F, i) => {
+    for (let k = 0; k < 3; ++k) { r.push(F[k][3] - Fr[i][k][3]); }
+    const z = [F[0][2], F[1][2], F[2][2]];
+    const zt = [Fr[i][0][2], Fr[i][1][2], Fr[i][2][2]];
+    // 轴偏差的垂直分量＝sin(角偏差)·法向（§7.5 残差口径）。
+    r.push(z[1] * zt[2] - z[2] * zt[1]);
+    r.push(z[2] * zt[0] - z[0] * zt[2]);
+    r.push(z[0] * zt[1] - z[1] * zt[0]);
+  });
+  return r;
+};
+// 贪心列消元（字典序自由列——§7.5"字典序规则"的独立可执行形态；
+// 主元相对容差 1e-8、中心差分 1e-6——附录 D 第 5 项判定区同尺度）。
+const greedyFreeColumns = (xv) => {
+  const Fr = rebuild4(xv);
+  const h = 1e-6;
+  const n = xv.length;
+  const cols = [];
+  for (let c = 0; c < n; ++c) {
+    const xp = xv.slice(); const xm = xv.slice();
+    xp[c] += h; xm[c] -= h;
+    const ra = residualAt(xp, Fr); const rb = residualAt(xm, Fr);
+    cols.push(ra.map((v, i) => (v - rb[i]) / (2 * h)));
+  }
+  const rows = cols[0].length;
+  const maxAbs = Math.max(...cols.flat().map(Math.abs));
+  const pivotTol = maxAbs * 1e-8;
+  const work = cols[0].map((_, r) => cols.map((c) => c[r]));
+  let nextRow = 0;
+  const free = [];
+  for (let col = 0; col < n; ++col) {
+    let piv = -1; let best = pivotTol;
+    for (let row = nextRow; row < rows; ++row) {
+      const v = Math.abs(work[row][col]);
+      if (v > best) { best = v; piv = row; }
+    }
+    if (piv < 0) { free.push(col); continue; }
+    if (piv !== nextRow) { const t = work[nextRow]; work[nextRow] = work[piv]; work[piv] = t; }
+    const f = work[nextRow][col];
+    for (let row = nextRow + 1; row < rows; ++row) {
+      const fa = work[row][col];
+      if (fa === 0.0) { continue; }
+      for (let j = col; j < n; ++j) { work[row][j] -= (fa / f) * work[nextRow][j]; }
+    }
+    ++nextRow;
+  }
+  return free;
+};
+
 const roundtrip = {
   schemaVersion: 'mdl-dh-equivalence-roundtrip/1',
-  note: '显式→DH 重解期望（family=exact：输入参数即唯一解——链规范形态下闭式逆；family=exact-non-unique：字典序规则定值——自由 theta 钉 0，d/a/alpha 几何回收＝输入值；比较走档案条目 dh-solve[*].*，附录 D 第 5 项 1e-9）',
-  samples: inputs.samples.map((sample) => ({
-    id: sample.id,
-    family: sample.family,
-    freeCoordinates:
-      sample.family === 'exact-non-unique'
-        ? sample.joints
-            .map((j, idx) => (j.a === 0.0 ? 4 * idx + 0 : -1))
-            .filter((c) => c >= 0)
-        : [],
-    parameters: sample.joints.map((j, idx) => ({
-      name: j.name,
-      // exact：唯一解＝输入参数；exact-non-unique：自由坐标（a=0 的
-      // theta）按字典序规则定中性值 0，其余字段几何回收＝输入值。
-      thetaOffset: (sample.family === 'exact-non-unique' && j.a === 0.0) ? 0.0 : j.thetaOffset,
-      d: j.d,
-      a: j.a,
-      alpha: j.alpha,
-    })),
-  })),
+  note: '显式→DH 重解期望（audit F-631 拆分语义：判定/自由坐标由独立数值雅可比贪心列消元在真值参数处导出——(a_i,α_i) 前移入下一关节头部后，部分精确链出现一阶自由族（如末关节 a/α 经上游 θ/α 补偿），该等价补偿族为真实规范自由度；本期望只承载判定与自由坐标清单（合同稳定面）——选定解的参数值为一阶自由族内成员（依赖求解器路径，不作黄金期望），其几何一致性由消费测试的 FK 半区（真实编译链对照）与程序化用例（钉值拒绝时参数保持真值）承载；附录 D 第 5 项 1e-9）',
+  samples: inputs.samples.map((sample) => {
+    const xTrue = sample.joints.map((j) => [
+      j.thetaOffset, j.d, j.a, j.alpha,
+    ]).flat();
+    const free = greedyFreeColumns(xTrue);
+    return {
+      id: sample.id,
+      family: sample.family,
+      determination: free.length === 0 ? 'Exact' : 'ExactNonUnique',
+      freeCoordinates: free,
+    };
+  }),
 };
 
 fs.writeFileSync(

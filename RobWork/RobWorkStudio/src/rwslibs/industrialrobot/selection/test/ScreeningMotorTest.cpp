@@ -625,6 +625,46 @@ TEST(SelScreeningMotor, ThermalDeratingHalfStepRoundsUp)
                      3.24);  // 4.0×0.9²（黄金解析值——半档取整证据）
 }
 
+/**
+ * 极端环境温度饱和不反转（F-641）：ambientTemp=1e30（调用方契约只保证
+ * 有限）→ 超出档数经 2e9 上界钳位饱和、f＝0.9^(2e9) 下溢为 0——折减后
+ * 能力 0.0：维度照常判不足，能力系数不被反转放大。原实现
+ * static_cast<int>(ceil(1e30)) 溢出是未定义行为（x64 饱和为 INT_MIN＝负
+ * 档数 → pow 反转 ≫1 → 极端高温反而通过筛选——降额单调性被破坏）。
+ */
+TEST(SelScreeningMotor, ThermalDeratingExtremeAmbientSaturatesNoInversion_F641)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SEL-03"}, std::vector<std::string>{"AT-08"});
+
+    Fixture fx = makeFixture();
+    fx.facts.motorTorqueRms = 3.8;   // N·m（工作点恒定——单点变异只动环境温度维）
+    fx.criteria.ambientTemp = 1e30;  // 档位值（°C 语义——极端大值）
+    HardConstraintSelector selector;
+    const std::vector<FeasibilityRecord> recs
+        = selector.screenMotors(fx.snapshot, {fx.facts}, fx.criteria, nullptr);
+    ASSERT_EQ(recs.size(), 1U);
+    // 期望：降额维照常判不足（溢出不放行——饱和至极限降额而非反转）。
+    // f＝0 使连续与峰值两个转矩维同时不足（逐维独立不短路——§7.2），
+    // 同 token 两条原因（稳定序＝产生序）。
+    expectRecordShape(recs[0], VerdictKind::Rejected,
+                      {ReasonToken::ThermalDeratingInsufficient,
+                       ReasonToken::ThermalDeratingInsufficient},
+                      0U, "M-GOLD");
+    const std::optional<RejectionReason> r
+        = findReason(recs[0], ReasonToken::ThermalDeratingInsufficient);
+    ASSERT_TRUE(r.has_value());
+    EXPECT_DOUBLE_EQ(r->actual, 3.8);
+    // 折减后能力饱和至 0（0.9^(2e9) 下溢——IEEE754 定义行为），恒不高于
+    // 额定 4.0（单调性保险丝：档数增大只让能力不变或更低，绝不升高）。
+    EXPECT_DOUBLE_EQ(r->required, 0.0);
+    EXPECT_LE(r->required, 4.0);
+    // 峰值转矩维同饱和（工作点 7.0 N·m vs 能力 10.0×0＝0——同码两条）。
+    ASSERT_EQ(recs[0].reasons.size(), 2U);
+    EXPECT_DOUBLE_EQ(recs[0].reasons[1].actual, 7.0);
+    EXPECT_DOUBLE_EQ(recs[0].reasons[1].required, 0.0);
+    EXPECT_LE(recs[0].reasons[1].required, 10.0);
+}
+
 /** 环境不高于参考档位（20 ≤ 25）——不折减（f=1）、无降额原因。 */
 TEST(SelScreeningMotor, ThermalDeratingBelowReferenceNoDerating)
 {

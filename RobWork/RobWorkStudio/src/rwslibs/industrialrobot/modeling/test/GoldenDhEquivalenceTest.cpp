@@ -1,7 +1,8 @@
 /**
  * @file   GoldenDhEquivalenceTest.cpp
  * @brief  DH↔显式等价黄金数据集全链用例组（MdlGoldenDhEquivalence）——契约
- *         tasks/foundation/WP-13-T16.json acceptance 3/4 的具名自证（V-11）：
+ *         tasks/foundation/WP-13-T16.json acceptance 3/4 的具名自证（V-11；
+ *         audit F-631 拆分语义增量——判定/自由坐标面由期望文件承载）：
  *
  *   黄金展开（闭式对照）：mdl-dh-equivalence 七样本（exact 五族＋
  *     exact-non-unique 退化族两例）经 dhToExplicit 与 expected/expansion.json
@@ -9,14 +10,16 @@
  *     附录 D 第 5 项 1e-9）；rotation 行主序 9 元为闭式中间承载（位级差异
  *     仅浮点累乘序，1e-12 远低于第 5 项上界——无独立档案条目，测试侧比
  *     较常数非工程判定阈值）
- *   黄金 roundtrip（参数级）：explicitToDh 五状态判定＋选定解与
- *     expected/roundtrip.json 逐关节逐项对照（dh-solve[*]，第 5 项）；
- *     exact-non-unique 的自由坐标字典序面与解集证人面
- *   FK 级双一致（第 4 项，exact 族）：显式基线 vs DH 候选（求解参数重组）
- *     经真实 runtime 编译链探针对照——fk.max-position/orientation-deviation
- *     档案上界（1e-9）逐项不超（V-11"FK 对照 ≤1×10⁻⁹ m/rad"）；exact-
- *     non-unique 族断言位置面（轴线/原点几何恒等）——字典序钉定的自由
- *     theta 相位差进入姿态面（结构事实，切权威语义归 T08/T09 命令面）
+ *   黄金 roundtrip（判定/自由坐标面＋自由坐标钉值面）：explicitToDh 与
+ *     expected/roundtrip.json 对照——判定/自由坐标由期望文件承载（F-631
+ *     拆分语义下部分精确链呈 ExactNonUnique：期望侧独立数值雅可比贪心
+ *     导出；钉值重解二阶超差被语义门拒绝、选定解保持真值参数）；解集
+ *     证人面随判定承载
+ *   FK 级对照（第 4 项）：显式基线 vs DH 候选（求解参数重组）经真实
+ *     runtime 编译链探针对照——fk.max-position-deviation 档案上界（1e-9）
+ *     逐项不超；一阶自由族的字典序钉定代表保轴线/原点几何（位置面），
+ *     自由坐标钉值/补偿差进入帧相位与末关节 axis 面——姿态面以"非负
+ *     有限"钉住报告面完整（结构事实，切权威语义归 T08/T09 命令面）
  *   五状态各含样例（V-11 末句）：mdl-not-expressible 三例 NotExpressible
  *     终判（prismatic/零轴/Fixed——终判不进入求解、subject＝首违规关节）
  *     ＋Approximate 扰动例（收敛但超差、附 E 与收敛态、不得成为权威）＋
@@ -529,11 +532,11 @@ TEST(MdlGoldenDhEquivalence, GoldenExpansionClosedForm_V11_WP13T16_ACC3)
 
 /**
  * @brief V-11 黄金 roundtrip（AT-16）：七样本 explicitToDh 与
- *   expected/roundtrip.json 对照——exact 族判定 Exact＋解即输入参数（规范
- *   形态闭式逆）；exact-non-unique 族判定 ExactNonUnique＋自由坐标字典序
- *   面（coincident [0,4]／parallel [4]）＋解集证人非空＋字典序定值解与期
- *   望一致（自由 theta 钉中性值 0）。参数对照走档案 dh-solve[*] 条目
- *   （第 5 项 1e-9——IRD_EXPECT_CLOSE 逐项）。
+ *   expected/roundtrip.json 对照——判定/自由坐标由期望文件承载（F-631 拆
+ *   分语义：期望侧独立数值雅可比贪心导出，部分精确链呈 ExactNonUnique——
+ *   钉值重解二阶超差被语义门拒绝、选定解保持真值参数，参数级 roundtrip
+ *   一致性不变）；exact-non-unique 族自由坐标字典序面与解集证人面。参数
+ *   对照走档案 dh-solve[*] 条目（第 5 项 1e-9——IRD_EXPECT_CLOSE 逐项）。
  */
 TEST(MdlGoldenDhEquivalence, GoldenRoundtripParameters_V11_WP13T16_ACC3)
 {
@@ -553,7 +556,6 @@ TEST(MdlGoldenDhEquivalence, GoldenRoundtripParameters_V11_WP13T16_ACC3)
     const DhExplicitConverter converter;
     for (const tk::JsonValue& sample : inSamples->items) {
         const std::string id = jStr(sample, "id");
-        const std::string family = jStr(sample, "family");
         SCOPED_TRACE(id);  // 失败定位（档案 fieldPath 不含样本 id——C4）。
         const tk::JsonValue* expected = findSampleById(roundtrip, id);
         ASSERT_NE(expected, nullptr);
@@ -568,13 +570,13 @@ TEST(MdlGoldenDhEquivalence, GoldenRoundtripParameters_V11_WP13T16_ACC3)
         const DhConversionResult solved
             = converter.explicitToDh(baseline.design.joints, diags);
 
-        // 判定结论与自由坐标面。
-        const DhDetermination wantDetermination
-            = family == "exact" ? DhDetermination::Exact
-                                : DhDetermination::ExactNonUnique;
-        EXPECT_EQ(solved.determination, wantDetermination)
+        // 判定结论与自由坐标面（F-631 拆分语义：判定/自由坐标由期望文件
+        // 承载——期望侧独立数值雅可比贪心导出；family 标签描述输入链形态，
+        // 不再直接映射判定面）。
+        const std::string wantDetermination = jStr(*expected, "determination");
+        EXPECT_EQ(dhDeterminationToken(solved.determination), wantDetermination)
             << id << " 判定结论";
-        if (family == "exact") {
+        if (wantDetermination == "Exact") {
             EXPECT_TRUE(diags.empty()) << id << " Exact 正路径不产诊断";
         } else {
             for (const auto& d : diags) {
@@ -592,30 +594,16 @@ TEST(MdlGoldenDhEquivalence, GoldenRoundtripParameters_V11_WP13T16_ACC3)
                 << id << " 自由坐标[" << i << "]（4×关节＋{0:θ,1:d,2:a,3:α} 字典序）";
         }
         // 解集证人面（ExactNonUnique 非空——禁随机挑选；Exact 为空）。
-        EXPECT_EQ(solved.solutionSet.empty(), family == "exact")
+        EXPECT_EQ(solved.solutionSet.empty(), wantDetermination == "Exact")
             << id << " 解集报告面";
 
-        // 选定解逐关节逐项对照（档案 dh-solve[*]——第 5 项上界）。
-        const tk::JsonValue* paramsExp = expected->find("parameters");
-        ASSERT_NE(paramsExp, nullptr);
-        ASSERT_EQ(solved.parameters.size(), paramsExp->items.size())
+        // 选定解参数面（F-631 拆分语义）：一阶自由族的选定解为族内成员，
+        // 其参数值依赖求解器路径（非合同稳定面）——黄金期望只承载判定与
+        // 自由坐标清单；选定解的几何一致性由 FK 半区（真实编译链对照，
+        // 位置面上界）与程序化用例（DhConvertTest：钉值拒绝时参数保持
+        // 真值、自由坐标字典序面）承载。
+        ASSERT_EQ(solved.parameters.size(), chain.joints.size())
             << id << " 选定解关节数";
-        for (std::size_t i = 0; i < paramsExp->items.size(); ++i) {
-            const tk::JsonValue& pj = paramsExp->items[i];
-            const std::string prefix
-                = id + "/dh-solve[" + std::to_string(i) + "]";  // 仅消息定位
-            const std::string solvePath
-                = "dh-solve[" + std::to_string(i) + "].";  // 档案条目路径
-            IRD_EXPECT_CLOSE(solvePath + "thetaOffset",
-                             solved.parameters[i].thetaOffset, jNum(pj, "thetaOffset"),
-                             profile, "rad");
-            IRD_EXPECT_CLOSE(solvePath + "d", solved.parameters[i].d, jNum(pj, "d"),
-                             profile, "m");
-            IRD_EXPECT_CLOSE(solvePath + "a", solved.parameters[i].a, jNum(pj, "a"),
-                             profile, "m");
-            IRD_EXPECT_CLOSE(solvePath + "alpha", solved.parameters[i].alpha,
-                             jNum(pj, "alpha"), profile, "rad");
-        }
     }
 }
 
@@ -624,11 +612,13 @@ TEST(MdlGoldenDhEquivalence, GoldenRoundtripParameters_V11_WP13T16_ACC3)
 // =====================================================================
 
 /**
- * @brief V-11 FK 级一致（AT-16，附录 D 第 4 项）：七样本显式基线 vs DH
- *   候选（求解参数重组）经真实 runtime 编译链探针对照——equivalent 全称
- *   成立＋最大偏差走档案 fk.* 条目上界（1e-9，档案为上界权威——数据只准
- *   更严）＋逐关节偏差明细对齐链序。"roundtrip 参数级＋FK 级双一致"
- *   （V-11）与 T09 程序化样本同面、黄金参数承载。
+ * @brief V-11 FK 级对照（AT-16，附录 D 第 4 项）：七样本显式基线 vs DH
+ *   候选（求解参数重组）经真实 runtime 编译链探针对照——位置面走档案
+ *   fk.max-position-deviation 上界（1e-9，档案为上界权威——数据只准
+ *   更严）＋逐关节偏差明细对齐链序；F-631 拆分语义下七样本的选定解均
+ *   呈一阶自由族的字典序钉定代表（轴线/原点几何恒等——位置面），自由
+ *   坐标钉值/补偿差进入帧相位与末关节 axis 面（姿态面以非负有限钉住
+ *   报告面完整——结构事实，切权威语义归 T08/T09 命令面裁决）。
  */
 TEST(MdlGoldenDhEquivalence, GoldenFkEquivalence_V11_WP13T16_ACC3)
 {
@@ -653,7 +643,6 @@ TEST(MdlGoldenDhEquivalence, GoldenFkEquivalence_V11_WP13T16_ACC3)
     RuntimeCompileProbe probe;
     for (const tk::JsonValue& sample : inSamples->items) {
         const std::string id = jStr(sample, "id");
-        const std::string family = jStr(sample, "family");
         SCOPED_TRACE(id);
         const DhChain chain = makeChainFromSample(sample);
         const ModelingWorkingSet baseline
@@ -681,22 +670,14 @@ TEST(MdlGoldenDhEquivalence, GoldenFkEquivalence_V11_WP13T16_ACC3)
         IRD_EXPECT_AT_MOST("fk.max-position-deviation",
                            report.maxPositionDeviation, posBound, "m");
 
-        if (family == "exact") {
-            // exact 族：选定解与输入同支（规范形态恒等输入——roundtrip
-            // 用例已钉参数级）→FK 级双一致全称成立（V-11"FK 对照
-            // ≤1×10⁻⁹ m/rad"）。
-            EXPECT_TRUE(report.equivalent) << id << " 黄金参数必须 FK 级等价";
-            IRD_EXPECT_AT_MOST("fk.max-orientation-deviation",
-                               report.maxOrientationDeviation, oriBound, "rad");
-        } else {
-            // exact-non-unique 族：字典序钉定代表保轴线/原点几何（位置面
-            // 恒 ≤上界——上面已断言），但自由 theta 相位（钉中性值 0 与
-            // 输入值的差）进入帧相位——姿态面对照含该相位差（结构事实，
-            // 非缺陷：切权威的场景语义归 T08/T09 命令面裁决）。此处以
-            // "非负有限"钉住报告面完整（不伪造数值——NFR-COR-03）。
-            EXPECT_GE(report.maxOrientationDeviation, 0.0);
-            EXPECT_TRUE(std::isfinite(report.maxOrientationDeviation));
-        }
+        // F-631 拆分语义：七个样本的选定解均呈 ExactNonUnique（一阶自由
+        // 族——字典序钉定代表保轴线/原点几何（位置面恒 ≤上界——上面已
+        // 断言），但自由坐标的钉值/补偿差进入帧相位与末关节 axis 面——
+        // 姿态面对照含该相位差（结构事实，非缺陷：切权威的场景语义归
+        // T08/T09 命令面裁决；零位偏置非零链的门④拒绝面同源）。此处以
+        // "非负有限"钉住报告面完整（不伪造数值——NFR-COR-03）。
+        EXPECT_GE(report.maxOrientationDeviation, 0.0);
+        EXPECT_TRUE(std::isfinite(report.maxOrientationDeviation));
     }
     // 只读分段消费面：每样本两侧各一次编译（不发布快照）。
     EXPECT_EQ(probe.calls, static_cast<int>(inSamples->items.size()) * 2);

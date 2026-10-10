@@ -30,8 +30,9 @@
  *
  * 背景说明（第一读者须知——三个方法各自动什么）：
  *   1. dhToExplicit＝权威展开（MDL-10"DH→通用关节必须无损"，C-5 无条件
- *      允许）：把 DH 参数链按 §7.4 公式逐级累乘展开为显式关节（origin=
- *      T_parent_joint 相对变换、axis=T_{0,i}·(0,0,1) 归一化）——§7.1 变换
+ *      允许）：把 DH 参数链按 §7.4 公式拆分展开为显式关节（origin=
+ *      T_parent_joint 相对变换、axis=关节系内转轴方向，世界系转轴恒等于
+ *      DH 的 z_{i-1}；静段拆分语义见下方算法注——F-631）——§7.1 变换
  *      方向图左侧"展开"边；
  *   2. explicitToDh＝受控求解（§7.5 五状态）：显式权威关节链→结构适用性
  *      检查（终判）→确定性非线性最小二乘→逐关节逐项上界判定→Exact/
@@ -146,10 +147,12 @@ std::string_view dhErrorCodeToken(DhErrorCode code) noexcept;
  * 单位与分离纪律：dh.thetaOffset/alpha 为 rad、d/a 为 m（DhParameters 注）；
  * zeroOffset 为 rad（转动关节）——θ_offset 与 zeroOffset 显式分离（§7.4
  * 零位对齐原文）：θ_offset 是几何参数、zeroOffset 是权威零位语义
- * （q_authoritative = q_zeroOffset + q_rw，runtime 口径），展开时两者都
- * 进入几何（origin 含 Rot_z(θ_offset＋zeroOffset)——q=0 零位对齐的落点），
- * 但字段保持分离、zeroOffset 原样传入展开产物（权威零位不随权威模式切换，
- * §7.2 参数来源表"type/zeroOffset 两态均权威"行）。
+ * （q_authoritative = q_zeroOffset + q_rw，runtime 口径），展开时
+ * **仅 θ_offset 入几何**（F-590 零位烘焙纪律：zeroOffset 不烘入——权威
+ * 零位旋转的唯一烘焙归口在 modeling→Description 映射的单一折叠
+ * origin·R(axis, zeroOffset)），字段保持分离、zeroOffset 原样传入展开
+ * 产物（权威零位不随权威模式切换，§7.2 参数来源表"type/zeroOffset 两态
+ * 均权威"行）。
  */
 struct DhChainJoint {
     DhParameters dh;          ///< DH 四元组（θ 偏置 rad／d m／a m／α rad）
@@ -427,19 +430,29 @@ public:
      * @brief DH 权威→显式表示（无损展开；§7.4——MDL-10"DH→通用关节必须
      *        无损"、C-5 无条件允许）。
      *
-     * 算法（§7.4 原文逐步）：
+     * 算法（§7.4 原文逐步；静段拆分＝F-631 增量修订，推导见实现注与
+     *     units/modeling.md §7.4）：
      *   步① 输入契约检查：链空→ChainEmpty；mixedInBaseTransform 非空→
      *       DegenerateBase（基座—世界隔离，M-11）；
-     *   步② 逐级累乘：T_{0,i} = Π_{k≤i} [Rot_z(θ_k＋zeroOffset_k)·
-     *       Trans_z(d_k)·Trans_x(a_k)·Rot_x(α_k)]——Rot_z 内的
-     *       (θ_offset＋zeroOffset) 即"q=0 零位对齐"的落点（q_rw=0 时
-     *       显式位姿＝DH 派生位姿——权威零位旋转已入几何，zeroOffset
-     *       字段原样透传保持分离）；
-     *   步③ 构造产物：origin_i = T_parent_joint（当前步的相对变换——
-     *       Rot_z(θᵢ＋q0ᵢ)·Trans_z(dᵢ)·Trans_x(aᵢ)·Rot_x(αᵢ)，core.md
-     *       §4.6"joint 系相对 parent 系"读法）；axis_i = 归一化
-     *       (T_{0,i}·(0,0,1))——§7.4"轴线 z_i"原文；单位向量后置
-     *       （§9.4.7 @post）。
+     *   步② 拆分装配（origin 为 T_parent_joint 相对变换——F-590 零位
+     *       烘焙纪律：几何只含 θ_offset、zeroOffset 不入几何）：
+     *       origin_i = [Tx(a_{i-1})·Rx(α_{i-1})]        （上一关节静段·头部；
+     *                                                   i=0 无——S_{-1}=I）
+     *                  · Rz(θ_offset,i)·Tz(d_i)          （纯 z 螺旋核心）
+     *                  · [i＝末关：Tx(a_i)·Rx(α_i)]      （链尾静段·尾部）。
+     *       推导：运行时 origin·R(axis, zeroOffset+q) 的转轴过 origin 平移
+     *       后的点，标准 DH 单步转轴 z_{i-1} 过父帧原点——origin 平移必须
+     *       沿转轴本身（Tz 不改轴线），Tx/Rx 静段前移入下一关节头部；链上
+     *       静段槽位 n 个而级联静态因子 n+1 个，链尾静段落末关节尾部使
+     *       零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}（全链 FK 严格
+     *       还原——一般位姿组合序＝各关节 origin·R(axis,ψ) 直乘、末关节
+     *       拆 [纯段]·R(axis,ψ)·[尾段]）；丢弃链尾静段将使 (a,α) 末槽在
+     *       §7.5 目标中结构性不可观测（Exact/V-11 崩塌）——不可丢弃；
+     *   步③ 构造产物：origin_i＝步② 相对变换（core.md §4.6"joint 系相对
+     *       parent 系"读法）；axis_i＝关节系内转轴方向（世界系恒等于
+     *       z_{i-1}）：中间关节＝ez（头部静段 Rx(α_{i-1}) 与累积回拉
+     *       Rx(−α_{i-1}) 相消）；末关节＝Rx(−α_i)·ez＝(0, sinα_i, cosα_i)
+     *       （尾部静段 Rx(α_i) 由 axis 吸收）；单位向量后置（§9.4.7 @post）。
      *
      * 数值纪律：数值误差仅浮点累乘（§7.4——实测远优于第 4 项容差）；
      * 展开不引入迭代、不读环境。

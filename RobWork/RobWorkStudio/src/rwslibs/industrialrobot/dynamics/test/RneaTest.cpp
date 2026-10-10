@@ -32,6 +32,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <limits>
 #include <optional>
 #include <string>
 #include <vector>
@@ -139,6 +140,27 @@ void analyticMassMatrix(double q2, double m11[1], double* m12, double* m22)
          + kI2Yy;
     *m12 = kM2 * (kC2 * kC2 + kL1 * kC2 * std::cos(q2)) + kI2Yy;
     *m22 = kM2 * kC2 * kC2 + kI2Yy;
+}
+
+// =====================================================================
+// 防御面注入助手（F-632/F-645 用例组——跨版本快照防御的触达方式）。
+// =====================================================================
+
+/**
+ * 取模型链的非 const 视图（防御面注入用）。
+ *
+ * 为什么需要它：CanonicalModel 构造后无公共 setter（唯一构造路径
+ * CanonicalModelBuilder 已封口），而其构建器校验（摩擦 Provided 须有限
+ * 正值、惯量须对称）会把非法值拒在建模侧——dynamics 的防御复检恰是为
+ * "绕过当日编译器的跨版本快照/反序列化物化"准备的下游防线，测试必须
+ * 在构建器下游注入才能触达它（这正是被检对象的真实存在形态）。
+ * const_cast 合法性：模型是本测试持有的非 const 值副本，经访问器返回
+ * 的 const 视图回写不修改任何 const 对象（policy 单元
+ * CollisionEvaluationTest 同款先例）。
+ */
+RobotChain& mutableChain(CanonicalModel& model)
+{
+    return const_cast<RobotChain&>(model.chain());
 }
 
 }  // namespace
@@ -556,6 +578,171 @@ TEST(DynRnea, FrictionMissingTriggersDyn06Material)
     }
     EXPECT_EQ(frictionDiags, 2);  // 两关节各一条
     EXPECT_EQ(out.validity.completeness, DynamicsValidity::Completeness::Complete);
+}
+
+// =====================================================================
+// 用例 6b：摩擦参数已提供但非有限→提取处 fail-fast（F-632——"缺失"走
+// 用例 6 的 DYN-06 降级分轨；"已提供却非法"不是缺失，拒绝进入模型，
+// 防止 NaN 绕过样本级非有限判定污染摩擦叠加）。
+// =====================================================================
+
+/**
+ * fv（黏性系数）Provided-NaN→DynamicsError：input-invalid 前缀＋消息
+ * 定位"摩擦"并区分"已提供但非有限"（F-632；MDL-16 四态语义的非法值面）。
+ */
+TEST(DynRnea, FrictionViscousProvidedNanRejected_F632)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-02", "MDL-16"}, std::vector<std::string>{});
+    // 本用例验证（F-632）：提取源头逐分量有限性复检——fv=NaN 在进入模型
+    // 前被拒（评估抛 DynamicsError，不产出半成品样本序列）。
+    const FrictionSpec fric{true, 0.05, 0.10, 0.01};  // 合法三元组（构建器合法域）
+    CanonicalModel model = makeTwoLinkModel(groundWorld(), fric, std::nullopt);
+    // 构建器下游投毒（注入助手注释——跨版本快照防御面的触达方式）：
+    mutableChain(model).joints.at(0).friction.viscous =
+        val(std::numeric_limits<double>::quiet_NaN());  // fv，单位 N·m·s/rad（非法）
+    const ObjectId condition = idFrom<ObjectId>("cond-fric-nan-fv");
+    const InverseDynRequest req =
+        makeRequest(model, condition, {sampleAt(0.0, {0.1, -0.2}, {0.3, 0.4}, {0.0, 0.0})});
+    FakeContext ctx;
+    try {
+        const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+        (void)out;
+        FAIL() << "fv Provided-NaN 未抛出 DynamicsError";
+    } catch (const DynamicsError& e) {
+        EXPECT_NE(std::string(e.what()).find("input-invalid"), std::string::npos)
+            << "token 前缀缺失：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("摩擦"), std::string::npos)
+            << "消息未定位到摩擦参数：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("非有限"), std::string::npos)
+            << "消息未区分「已提供但非有限」：" << e.what();
+    }
+}
+
+/** fc（库仑系数）Provided-NaN→同上拒绝面（F-632 三分量独立防线）。 */
+TEST(DynRnea, FrictionCoulombProvidedNanRejected_F632)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-02", "MDL-16"}, std::vector<std::string>{});
+    // 本用例验证（F-632）：fc=NaN 同样在提取处拒绝——三分量各自设防，
+    // 不因其余两分量合法而放行。
+    const FrictionSpec fric{true, 0.05, 0.10, 0.01};
+    CanonicalModel model = makeTwoLinkModel(groundWorld(), fric, std::nullopt);
+    mutableChain(model).joints.at(0).friction.coulomb =
+        val(std::numeric_limits<double>::quiet_NaN());  // fc，单位 N·m（非法）
+    const ObjectId condition = idFrom<ObjectId>("cond-fric-nan-fc");
+    const InverseDynRequest req =
+        makeRequest(model, condition, {sampleAt(0.0, {0.1, -0.2}, {0.3, 0.4}, {0.0, 0.0})});
+    FakeContext ctx;
+    try {
+        const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+        (void)out;
+        FAIL() << "fc Provided-NaN 未抛出 DynamicsError";
+    } catch (const DynamicsError& e) {
+        EXPECT_NE(std::string(e.what()).find("input-invalid"), std::string::npos)
+            << "token 前缀缺失：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("摩擦"), std::string::npos)
+            << "消息未定位到摩擦参数：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("非有限"), std::string::npos)
+            << "消息未区分「已提供但非有限」：" << e.what();
+    }
+}
+
+/** bias（偏置）Provided-NaN→同上拒绝面（F-632 三分量独立防线）。 */
+TEST(DynRnea, FrictionBiasProvidedNanRejected_F632)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"DYN-02", "MDL-16"}, std::vector<std::string>{});
+    // 本用例验证（F-632）：bias=NaN 同样在提取处拒绝；缺失降级与非法值
+    // 拒绝两轨语义由用例 6 与本用例组共同钉扎。
+    const FrictionSpec fric{true, 0.05, 0.10, 0.01};
+    CanonicalModel model = makeTwoLinkModel(groundWorld(), fric, std::nullopt);
+    mutableChain(model).joints.at(0).friction.bias =
+        val(std::numeric_limits<double>::quiet_NaN());  // bias，单位 N·m（非法）
+    const ObjectId condition = idFrom<ObjectId>("cond-fric-nan-bias");
+    const InverseDynRequest req =
+        makeRequest(model, condition, {sampleAt(0.0, {0.1, -0.2}, {0.3, 0.4}, {0.0, 0.0})});
+    FakeContext ctx;
+    try {
+        const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+        (void)out;
+        FAIL() << "bias Provided-NaN 未抛出 DynamicsError";
+    } catch (const DynamicsError& e) {
+        EXPECT_NE(std::string(e.what()).find("input-invalid"), std::string::npos)
+            << "token 前缀缺失：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("摩擦"), std::string::npos)
+            << "消息未定位到摩擦参数：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("非有限"), std::string::npos)
+            << "消息未区分「已提供但非有限」：" << e.what();
+    }
+}
+
+// =====================================================================
+// 用例 6c：惯量对称性**相对**容差两面（F-645——附录 D 第 6 项口径修正：
+// 原实现注释称"相对"实为绝对差比较；修正后 ‖Δ‖∞/‖(I+Iᵀ)/2‖F ≤ 1e-12）。
+// =====================================================================
+
+/**
+ * 大模长张量＋微小非对称→放行（F-645 相对口径的判别面）：‖I‖F≈173、
+ * Δ=1e-11 → 相对比值 5.8e-14 ≤ 1e-12 通过评估；旧绝对口径将误拒
+ * （1e-11 > 1e-12）——本用例钉扎相对语义。
+ */
+TEST(DynRnea, InertiaSymmetryRelativeToleranceAcceptsLargeTensor_F645)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06"}, std::vector<std::string>{});
+    // 本用例验证（F-645）：大幅值部件（飞轮级 100 kg·m² 对角）的 1e-11
+    // 非对称（双精度表示噪声量级——相对仅 5.8e-14）不被防御复检误拒。
+    CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    // 构建器下游投毒（构建器绝对口径会拒绝 1e-11——相对口径差异正是
+    // 本用例的验证对象）：连杆 1 惯量＝diag(100,100,100)＋Δ=1e-11，
+    // 单位 kg·m²（质心系）。
+    mutableChain(model).links.at(1).inertia =
+        core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            rw::math::InertiaMatrix<double>(100.0, 1e-11, 0.0,
+                                            0.0, 100.0, 0.0,
+                                            0.0, 0.0, 100.0),
+            userProv());
+    const ObjectId condition = idFrom<ObjectId>("cond-sym-rel-pass");
+    const InverseDynRequest req =
+        makeRequest(model, condition, {sampleAt(0.0, {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0})});
+    FakeContext ctx;
+    // 相对口径下评估完整通过（不抛、样本正常产出）。
+    const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+    ASSERT_EQ(out.samples.size(), 2u);
+    EXPECT_EQ(out.samples[0].numericState, SampleNumericState::Ok);
+}
+
+/**
+ * 小模长张量＋构建器可放行的非对称→拒绝（F-645 相对口径的严格面）：
+ * ‖I‖F≈0.037、Δ=9e-13（≤ 建模侧绝对口径 1e-12）→ 相对比值 2.4e-11
+ * ＞ 1e-12，防御复检以 input-invalid 拒绝——相对语义对微小张量更严，
+ * 消息携带比较数据（偏差/上限）。
+ */
+TEST(DynRnea, InertiaSymmetryRelativeToleranceRejectsSmallTensor_F645)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-06"}, std::vector<std::string>{});
+    // 本用例验证（F-645）：小幅值连杆（0.01 级）上 9e-13 的非对称相对已
+    // 达 2.4e-11——按需求相对口径拒绝，不因绝对值低于 1e-12 而放行。
+    CanonicalModel model = makeTwoLinkModel(groundWorld(), FrictionSpec{}, std::nullopt);
+    // 构建器下游投毒（构建器绝对口径会放行 9e-13）：连杆 1 惯量
+    // ＝diag(0.02,0.01,0.03)＋I(0,1)−I(1,0)=9e-13，单位 kg·m²（质心系）。
+    mutableChain(model).links.at(1).inertia =
+        core::SourcedValue<rw::math::InertiaMatrix<double>>::provided(
+            rw::math::InertiaMatrix<double>(0.02, 9e-13, 0.0,
+                                            0.0, 0.01, 0.0,
+                                            0.0, 0.0, 0.03),
+            userProv());
+    const ObjectId condition = idFrom<ObjectId>("cond-sym-rel-reject");
+    const InverseDynRequest req =
+        makeRequest(model, condition, {sampleAt(0.0, {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0})});
+    FakeContext ctx;
+    try {
+        const InverseDynOutcome out = InverseDynamicsEvaluator().evaluate(req, ctx);
+        (void)out;
+        FAIL() << "相对口径超差的非对称惯量未抛出 DynamicsError";
+    } catch (const DynamicsError& e) {
+        EXPECT_NE(std::string(e.what()).find("input-invalid"), std::string::npos)
+            << "token 前缀缺失：" << e.what();
+        EXPECT_NE(std::string(e.what()).find("非对称"), std::string::npos)
+            << "消息未定位到惯量对称性：" << e.what();
+    }
 }
 
 // =====================================================================

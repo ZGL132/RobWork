@@ -11,6 +11,15 @@
  *     常量定义于 DhConvert.hpp 唯一书写点）
  *   - 任务契约 tasks/foundation/WP-13-T09.json acceptance 1～5
  *
+ * 展开拆分语义（audit F-631——本文件当前几何口径）：标准 DH 单步
+ * T_{i-1,i}＝Rz(θ)Tz(d)Tx(a)Rx(α) 的转轴 z_{i-1} 过父帧原点，而运行时
+ * origin·R(axis,q) 组合的转轴过 origin 平移后的点——原实现把 Tx(a)Rx(α)
+ * 烘入本关节 origin 尾部使转轴过子原点（一般位姿位置误差 2a·sin(θ/2)）。
+ * 修复后 Tx(a_k)Rx(α_k) 前移入下一关节 origin 头部、链尾静段落末关节
+ * origin 尾部（零位累积 Π origin 严格等于标准级联，全链 FK 严格还原；
+ * 静段落位推导与一般位姿组合序见 expandDhChain/dhRebuildStep 注及
+ * units/modeling.md §7.4 F-631 增量修订）。
+ *
  * 实现纪律（确定性——NFR-COR-01/02）：
  *   - 求解器为确定性 Levenberg-Marquardt：固定初值（单位参数＝中性恒等
  *     θ=d=a=α=0）、固定数值微分步长与迭代上限、固定阻尼界限与停滞判据；
@@ -222,17 +231,80 @@ rw::math::Rotation3D<double> axisAngleRotation(const rw::math::Vector3D<double>&
         t * kx * kz - s * ky, t * ky * kz + s * kx, c + t * kz * kz);
 }
 
-/// DH 单步变换 T_{i-1,i} = Rot_z(θ总)·Trans_z(d)·Trans_x(a)·Rot_x(α)
-/// （§7.4 原文公式；θ总＝θ_offset＋zeroOffset——零位对齐的几何落点）。
-rw::math::Transform3D<double> dhStepTransform(double thetaTotal, double d, double a,
-                                              double alpha)
+// =====================================================================
+// DH 单步分解（audit F-631 拆分语义——展开/求解重建的共享数学基元）
+// =====================================================================
+
+/**
+ * @brief DH 步的"纯 z 螺旋"核心：Rot_z(θ)·Trans_z(d)（audit F-631）。
+ *
+ * 背景（为什么只含这两项）：运行时按 origin·R(axis, zeroOffset+q) 组合，
+ * 关节转轴过 origin 平移后的点；标准 DH 单步 T_{i-1,i}＝Rz(θ)Tz(d)Tx(a)
+ * Rx(α) 的转轴 z_{i-1} 过**父**帧原点。Trans_z(d) 沿转轴本身的平移不改变
+ * 轴线（直线沿自身方向平移重合），而 Trans_x(a)/Rot_x(α) 会把关节系原点
+ * 挪离父轴线——故核心只保留 Rz·Tz，偏距/扭转静段 Tx(a)·Rx(α) 移出本步
+ * （进下一关节 origin 头部；末关节落末关节 origin 尾部——见 expandDhChain）。
+ *
+ * 平移恒为 Rz(θ)·(0,0,d)＝(0,0,d)（Rz 不动 z 轴点，逐分量恰为精确零——
+ * 与旧实现 rotVec(rotZ,(a,0,d)) 在 a=0 时逐位一致，audit F-631 零漂移前提）。
+ */
+rw::math::Transform3D<double> dhCoreTransform(double theta, double d)
 {
-    // 乘积分解：Rot_z·Trans_z·Trans_x 的平移＝Rz(θ总)·(a,0,d)（旋转在左
-    // ——平移被 Rot_z 携带），旋转部分＝Rz(θ总)·Rx(α)。运算序固定（确定性）。
-    const rw::math::Vector3D<double> p = rotVec(rotZ(thetaTotal),
-                                                rw::math::Vector3D<double>(a, 0.0, d));
-    const rw::math::Rotation3D<double> r = rotMul(rotZ(thetaTotal), rotX(alpha));
-    return rw::math::Transform3D<double>(p, r);
+    return rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.0, 0.0, d),
+                                         rotZ(theta));
+}
+
+/**
+ * @brief DH 连杆静段：Trans_x(a)·Rot_x(α)（连杆长度＋扭转的刚体偏置）。
+ *
+ * 平移＝(a,0,0)（Trans_x 在左、Rot_x 绕 x 不动 x 轴点）；旋转＝Rx(α)。
+ * 该静段在展开语义中的落位（下一关节 origin 头部／末关节 origin 尾部）
+ * 见 expandDhChain 与 units/modeling.md §7.4（F-631 增量修订）。
+ */
+rw::math::Transform3D<double> dhStaticSegment(double a, double alpha)
+{
+    return rw::math::Transform3D<double>(rw::math::Vector3D<double>(a, 0.0, 0.0),
+                                         rotX(alpha));
+}
+
+/**
+ * @brief 求解重建步（§7.5 重建式的单步——与 expandDhChain 同一分解，单一
+ *        语义源，NFR-MNT-04）：参数向量 x 中关节 j 的重建步
+ *
+ *   step_j = [j>0 : Trans_x(a_{j-1})·Rot_x(α_{j-1})]   （上一关节静段·头部）
+ *            · Rot_z(θ_j)·Trans_z(d_j)                 （纯 z 螺旋核心）
+ *            · [j＝末关 : Trans_x(a_j)·Rot_x(α_j)]     （本关节静段·链尾）
+ *
+ * 末关节尾部携带链尾静段的推导（F-631）：标准级联 Π T_{i-1,i} 含 n+1 个
+ * 静态因子位（S_0＝I 在链头、S_1..S_n 在各步旋转后），而 n 关节链的 origin
+ * 序列只能承载 n 个静段槽位；把 S_j 全部前移到下一关节头部后 S_n 无槽可落，
+ * 若丢弃则 (a_n,α_n) 在累积目标 E_i 中结构性不可观测（S_n 与末步相消）——
+ * Exact 判定与 roundtrip 参数级一致性（V-11）崩塌。故 S_n 落末关节 origin
+ * 尾部：零位累积 E_n＝Π origin 恰等于标准级联 D_n（全链 FK 严格还原），
+ * 且 (a_n,α_n) 经末步尾部进入求解雅可比（可观测、秩满）。
+ *
+ * @param x       [in] 参数向量（4×关节：θ_offset/d/a/α 逐关节链序）
+ * @param j       [in] 关节下标（0 基，须 < count）
+ * @param count   [in] 链长（末关节判定）
+ * @return 该步的相对变换（m/rad——θ/α rad、d/a m）
+ */
+rw::math::Transform3D<double> dhRebuildStep(const std::vector<double>& x,
+                                            std::size_t j, std::size_t count)
+{
+    // 头部静段：上一关节的 a/α（x[4(j-1)+2]、x[4(j-1)+3]）；j=0 无头部
+    // （S_{-1}＝恒等——基座侧不在 DH 参数内，§7.4）。
+    rw::math::Transform3D<double> step = identityTransform();
+    if (j > 0) {
+        step = transformMul(step, dhStaticSegment(x[4 * (j - 1) + 2], x[4 * (j - 1) + 3]));
+    }
+    // 纯 z 螺旋核心（θ_offset 单独入几何，zeroOffset 不入——F-590 同步）。
+    step = transformMul(step, dhCoreTransform(x[4 * j], x[4 * j + 1]));
+    // 链尾静段：仅末关节携带本关节 a/α（中间关节的静段已作为下一关节
+    // 头部落位——同一静段不重复入链）。
+    if (j + 1 == count) {
+        step = transformMul(step, dhStaticSegment(x[4 * j + 2], x[4 * j + 3]));
+    }
+    return step;
 }
 
 /// 向量是否逐分量有限（NaN/Inf 任一即 false——I-MDL-3 同口径）。
@@ -271,7 +343,8 @@ rw::math::Vector3D<double> normalized(const rw::math::Vector3D<double>& v)
 
 /// 累乘链帧的世界系 z 轴方向（归一化输出）——F-591 后仅作求解目标面使用
 /// （显式链累积帧的世界 z_i 与 DH 重建 z_i 的残差/偏差对照）；展开产物的
-/// axis 字段不再是该值（axis 输出＝关节系内方向 Rx(−α)·ez，见 expandDhChain）。
+/// axis 字段不再是该值（axis 输出＝关节系内方向：中间关节 ez、末关节
+/// Rx(−α)·ez——F-631 拆分语义，推导见 expandDhChain）。
 rw::math::Vector3D<double> zAxisOf(const rw::math::Transform3D<double>& t)
 {
     const rw::math::Rotation3D<double>& r = t.R();
@@ -365,12 +438,13 @@ std::vector<double> flattenParameters(const std::vector<DhParameters>& params)
 /**
  * @brief 残差向量（§7.5 目标函数——确定性固定运算序）。
  *
- * 重建规则与 dhToExplicit 逐位同式（单一语义源——展开/求解/等价验证三面
- * 共用，NFR-MNT-04 精神）：originRec_i = Rot_z(θ_i)·Trans_z(d_i)·
- * Trans_x(a_i)·Rot_x(α_i)（zeroOffset 不入几何——F-590 零位烘焙纪律，
- * 与展开产物 q_model=0 位姿同规）；T_{0,i} = Π originRec_k；残差每关节
- * 六分量：[T_{0,i}.p − P_i]（原点位置，m）＋ [cross(z_i^rec, A_i)]（轴偏差
- * 的垂直分量＝sin(角偏差)·法向——近解区线性度好，最小二乘收敛快）。
+ * 重建规则与 expandDhChain 逐位同式（单一语义源——展开/求解/等价验证三面
+ * 共用，NFR-MNT-04；F-631 拆分语义）：重建步
+ *   step_j = [j>0 : Tx(a_{j-1})·Rx(α_{j-1})]·Rz(θ_j)·Tz(d_j)
+ *            ·[j＝末关 : Tx(a_j)·Rx(α_j)]（零位烘焙纪律——zeroOffset 不入
+ * 几何，与展开产物 q_model=0 位姿同规，F-590）；T_{0,i} = Π step_k；残差
+ * 每关节六分量：[T_{0,i}.p − P_i]（原点位置，m）＋ [cross(z_i^rec, A_i)]
+ * （轴偏差的垂直分量＝sin(角偏差)·法向——近解区线性度好，最小二乘收敛快）。
  */
 std::vector<double> residualOf(const std::vector<double>& x, const SolverTargets& targets)
 {
@@ -379,9 +453,9 @@ std::vector<double> residualOf(const std::vector<double>& x, const SolverTargets
     rw::math::Transform3D<double> acc = identityTransform();
     for (std::size_t i = 0; i < targets.size(); ++i) {
         // 第 i 步：重建相对变换并累乘（与 expandDhChain 同式——θ_offset
-        // 单独入几何，zeroOffset 不参与——F-590 同步）。
-        const rw::math::Transform3D<double> step = dhStepTransform(
-            x[4 * i], x[4 * i + 1], x[4 * i + 2], x[4 * i + 3]);
+        // 单独入几何，zeroOffset 不参与——F-590；静段拆分落位见
+        // dhRebuildStep 注——F-631）。
+        const rw::math::Transform3D<double> step = dhRebuildStep(x, i, targets.size());
         acc = transformMul(acc, step);
         // 原点位置残差（3 分量，m）。
         r.push_back(acc.P()[0] - targets.originPositions[i][0]);
@@ -687,9 +761,8 @@ std::vector<DhJointDeviation> deviationsOf(const std::vector<double>& x,
     rw::math::Transform3D<double> acc = identityTransform();
     for (std::size_t i = 0; i < targets.size(); ++i) {
         // 第 i 步：重建相对变换并累乘（与 residualOf/expandDhChain 同式——
-        // θ_offset 单独入几何，F-590 同步）。
-        const rw::math::Transform3D<double> step = dhStepTransform(
-            x[4 * i], x[4 * i + 1], x[4 * i + 2], x[4 * i + 3]);
+        // θ_offset 单独入几何，F-590；静段拆分见 dhRebuildStep 注——F-631）。
+        const rw::math::Transform3D<double> step = dhRebuildStep(x, i, targets.size());
         acc = transformMul(acc, step);
         DhJointDeviation dev;
         dev.jointIndex = i;
@@ -706,6 +779,39 @@ bool withinExactTolerance(const std::vector<DhJointDeviation>& devs)
     for (const DhJointDeviation& dev : devs) {
         if (dev.axisAngleDeviation > kDhExactAxisAngleToleranceRad
             || dev.originPositionDeviation > kDhExactOriginPositionToleranceM) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/// 零位折叠一致性（audit F-631 钉值接受半门）：逐关节比较试解与当前解的
+/// 零位折叠旋转 R(axis, zeroOffset)——axis 为拆分语义展开轴（中间关节
+/// ez；末关节 (0,sinα,cosα)，α 取各自参数向量的值），zeroOffset 为权威
+/// 透传值；逐关节姿态偏差 ≤ 附录 D 第 5 项同尺度（1e-9 rad）判一致。
+/// 背景：拆分语义下 (a_i,α_i) 的一阶自由族成员虽 E 帧（原点+z 轴）等价，
+/// 其展开 axis 随 α_i 变化——零位折叠 origin·R(axis, zeroOffset) 的
+/// RobWork 零位构型随之偏转（权威零位构型改变，等价验证门④将拒绝该切
+/// 换）。钉值接受须同时满足本一致性，不可达中性值的坐标保留当前值。
+bool zeroFoldConsistent(const std::vector<double>& trial,
+                        const std::vector<double>& chosen,
+                        const std::vector<JointEntry>& joints)
+{
+    const std::size_t n = joints.size();
+    for (std::size_t j = 0; j < n; ++j) {
+        const double z0 = joints[j].zeroOffset;
+        if (z0 == 0.0) { continue; }  // 零位偏置为零：折叠旋转恒等，无须比较
+        const bool last = (j + 1 == n);
+        const auto axisOf = [&](const std::vector<double>& x) {
+            return last ? rw::math::Vector3D<double>(0.0, std::sin(x[4 * j + 3]),
+                                                     std::cos(x[4 * j + 3]))
+                        : rw::math::Vector3D<double>(0.0, 0.0, 1.0);
+        };
+        const rw::math::Rotation3D<double> rTrial =
+            axisAngleRotation(axisOf(trial), z0);
+        const rw::math::Rotation3D<double> rChosen =
+            axisAngleRotation(axisOf(chosen), z0);
+        if (rotationAngleBetween(rTrial, rChosen) > kDhExactAxisAngleToleranceRad) {
             return false;
         }
     }
@@ -856,16 +962,38 @@ SolverFrameTargets targetsFromExplicit(const std::vector<JointEntry>& joints)
  * 的 roundtrip 要求（DH→展开→再求 DH 参数级一致 ≤第 5 项容差）隐含
  * "对 DH 可表达链必须全局收敛"。
  *
- * 构造（逐关节，父帧局部坐标——对 DH 一致目标**逐位精确**）：
- *   局部目标帧 L = R_{i-1}ᵀ·R_i^target（对一致链恰＝Rz(θ')·Rx(α)）；
- *   局部平移 t = R_{i-1}ᵀ·(P_i − O_{i-1})（对一致链恰＝Rz(θ')·(a,0,d)）。
- *   直接读出：θ' = atan2(L(1,0), L(0,0))；α = atan2(−L(1,2), L(2,2))；
- *             a = t_x·cosθ' + t_y·sinθ'；d = t_z；θ_offset = θ'
- *             （F-590 后目标几何为零位烘焙纪律下的 q_model=0 位姿——
- *             θ' 即 θ_offset 本身，zeroOffset 不在几何相位内）。
- *   ★ 用**全旋转**（而非仅 z 轴）读取 θ/α：末关节（及一切零偏距关节）的
- *     帧内相位不受轴/原点目标约束——仅凭 z 轴定 θ 会落入相位差 π 的等价
- *     支，被 §7.6 全帧 FK 对照正确拒绝（相位差是真实的法兰相位差异）。
+ * 构造（逐关节，父帧局部坐标——对 DH 一致目标**逐位精确**；F-631 拆分
+ * 语义下的新推导——局部步＝[Tx(a_{j-1})Rx(α_{j-1})]·Rz(θ_j)·Tz(d_j)
+ * ·[末关节：Tx(a_j)Rx(α_j)]，故）：
+ *   局部平移 t_j = R_{j-1}ᵀ·(P_j − O_{j-1})——中间步恰为
+ *             t_j = (a_{j-1}, −d_j·sinα_{j-1}, d_j·cosα_{j-1})
+ *     （S_{j-1} 静段携带 (a_{j-1},α_{j-1})，核心只沿 z 平移 d_j）：
+ *     直接读出 a_{j-1}＝t_x、α_{j-1}＝atan2(−t_y, t_z)、d_j＝hypot(t_y,t_z)
+ *     （d≥0 与规范分支一致——canonicalForm）；
+ *   局部旋转 L_j = R_{j-1}ᵀ·R_j = Rx(α_{j-1})·Rz(θ_j)（中间步）：
+ *     θ_j 由**第 0 行**读出（Rx 不改 Rz 的行 0：L(0,:)＝(cosθ, −sinθ, 0)）
+ *     ——θ＝atan2(−L(0,1), L(0,0))，精确无分支、与 α 无关；
+ *     α_{j-1} 由旋转信息最大的列读出：列 0/列 1 的 1、2 行元＝
+ *     (L(1,j),L(2,j))＝k·(cosα,sinα)（k＝sinθ 或 cosθ，取 |k| 大者对应
+ *     列 j*），α＝atan2(L(2,j*)·sign(k), L(1,j*)·sign(k))——k 的符号
+ *     已由 θ 确定，精确无二义（**不从平移差读 α**——d_j＝0 时 α 在 t 中
+ *     不可观测（零偏距关节工业常态），旋转面恒可观测）；
+ *   末关节（j＝n−1）：t/L 混入链尾静段 S_j（落末关节 origin 尾部——
+ *     dhRebuildStep 注），改用联合闭式：
+ *     L_j＝Rx(A)·Rz(θ)·Rx(B)（A＝α_{j-1}, B＝α_j）：行 0＝Rz(θ)Rx(B) 的
+ *     行 0（Rx 不改行 0）＝(cosθ, −sinθ·cosB, sinθ·sinB)——|sinθ|＝
+ *     hypot(L(0,1),L(0,2)) 与 |cosθ|＝|L(0,0)| 与 A、B 无关；sinθ 的符号
+ *     是二义自由度（与 B 联动，等价于 DH 恒等式 T(θ,d,a,α)＝
+ *     T(θ+π,−d,−a,α+π)）——对 σ∈{+1,−1} 两支各做全参数提取：
+ *     θ＝atan2(σ·|sinθ|, |L(0,0)|)（|L(0,0)|≤1e-6 时取 |L(0,0)|——真实
+ *     c_θ≈0 处防 L00 噪声符号翻转象限）；A 由第 0 列＝sinθ·(cosA,sinA)
+ *     带符号读出；B 由 M＝Rx(−A)·L＝Rz(θ)Rx(B) 读出
+ *     （B＝atan2(−M(1,2), M(2,2))）；平移侧 [t_y;t_z]＝Rot(A)·[a·sinθ; d]、
+ *     t_x＝a_{j-1}＋a·cosθ：d＝−sinA·t_y＋cosA·t_z、a＝u/sinθ（u＝
+ *     cosA·t_y＋sinA·t_z；|sinθ| 过小时退化为种子启发值 0——仅种子面，
+ *     LM 相位 2 精化）、a_{j-1}＝t_x−a·cosθ。按**规范分支判据**（d≥0；
+ *     d≈0 时 a≥0——与 canonicalForm 镜像）取支：σ 翻转恰使 (A,θ)→
+ *     (A+π,θ+π)（|sinθ|,|cosθ| 不变）从而 d→−d，两支恰一支规范。
  *   对非一致（近似）目标：读出值仍为确定性合理起点（LM 相位 2 精化）。
  *
  * @param targets [in] 显式侧累积链目标（含全旋转）
@@ -876,33 +1004,128 @@ std::vector<double> analyticSeed(const SolverFrameTargets& targets)
 {
     const std::size_t n = targets.size();
     std::vector<double> seed(4 * n, 0.0);
-    for (std::size_t i = 0; i < n; ++i) {
-        // 前一帧：i=0 用基座恒等帧（原点 0）；i>0 用前一目标帧（与求解
+    // 上一关节静段 (a_{j-1}, α_{j-1})：j=0 时恒 0（S_{-1}＝恒等——基座侧
+    // 不在 DH 参数内）；其后每步由局部平移差回收（F-631 拆分语义）。
+    double aPrev = 0.0;
+    double alphaPrev = 0.0;
+    for (std::size_t j = 0; j < n; ++j) {
+        // 前一帧：j=0 用基座恒等帧（原点 0）；j>0 用前一目标帧（与求解
         // 目标同源——逐位确定性）。
         const rw::math::Rotation3D<double> rPrev =
-            (i == 0) ? identityRotation() : targets.rotations[i - 1];
+            (j == 0) ? identityRotation() : targets.rotations[j - 1];
         const rw::math::Vector3D<double> oPrev =
-            (i == 0) ? rw::math::Vector3D<double>(0.0, 0.0, 0.0)
-                     : targets.base.originPositions[i - 1];
+            (j == 0) ? rw::math::Vector3D<double>(0.0, 0.0, 0.0)
+                     : targets.base.originPositions[j - 1];
         const rw::math::Vector3D<double> localT = rotateTranspose(
-            rPrev, targets.base.originPositions[i] - oPrev);
+            rPrev, targets.base.originPositions[j] - oPrev);
         const rw::math::Rotation3D<double> localFrame = rotateTransposeFrame(
-            rPrev, targets.rotations[i]);
+            rPrev, targets.rotations[j]);
         if (!isFinite(localT)) { return {}; }
-        // θ' 与 α：一致链的局部帧＝Rz(θ')Rx(α)——逐元素读出（确定性）。
-        const double thetaTotal = std::atan2(localFrame(1, 0), localFrame(0, 0));
-        const double alpha = std::atan2(-localFrame(1, 2), localFrame(2, 2));
-        const double a = localT[0] * std::cos(thetaTotal)
-                         + localT[1] * std::sin(thetaTotal);
-        const double d = localT[2];
-        if (!std::isfinite(thetaTotal) || !std::isfinite(alpha) || !std::isfinite(a)
+
+        double theta = 0.0;
+        double d = 0.0;
+        double aCur = 0.0;
+        double alphaCur = 0.0;
+        if (j + 1 < n) {
+            // ---- 中间步：t_j＝(a_{j-1}, −d sinα_{j-1}, d cosα_{j-1}) ----
+            // θ_j：行 0 精确读出（Rx 不改 Rz 行 0——与 α 无关、无分支）。
+            theta = std::atan2(-localFrame(0, 1), localFrame(0, 0));
+            // α_{j-1}：取 |k| 大的列（k＝sinθ 或 cosθ——两列的 1、2 行元
+            // ＝k·(cosα,sinα)），k 的符号由 θ 已知——sign(k) 归一后 atan2
+            // 精确无二义（d_j＝0 时 t 面不可观测而旋转面恒可观测）。
+            const double sTheta = std::sin(theta);
+            const double cTheta = std::cos(theta);
+            const bool useCol0 = std::abs(sTheta) >= std::abs(cTheta);
+            const double kSign = useCol0 ? (sTheta >= 0.0 ? 1.0 : -1.0)
+                                         : (cTheta >= 0.0 ? 1.0 : -1.0);
+            const std::size_t col = useCol0 ? 0U : 1U;
+            alphaPrev = std::atan2(localFrame(2, col) * kSign,
+                                   localFrame(1, col) * kSign);
+            aPrev = localT[0];
+            // d_j＝‖(t_y,t_z)‖（与 α 无关——t 的 yz 分量恰为 d 的旋转坐标；
+            // d≥0 与规范分支一致，canonicalForm 同向）。
+            d = rw::math::Vector3D<double>(localT[1], localT[2], 0.0).norm2();
+        } else {
+            // ---- 末关节：t/L 混入链尾静段——联合闭式（见函数注推导）----
+            // 行 0 与 A、B 无关：|sinθ|＝hypot(L(0,1),L(0,2))、|cosθ|＝
+            // |L(0,0)|。sinθ 的符号是与链尾静段联动的规范自由度（σ 两支＝
+            // DH 恒等式 T(θ,d,a,α)＝T(θ+π,−d,−a,α+π) 的两支，d 翻号）——
+            // 对 σ∈{+1,−1} 全参数提取后按规范分支判据（d≥0；d≈0 时 a≥0）
+            // 取支。j=0（单关节链）无头部静段：A 恒 0，单支。
+            const double absSin = std::hypot(localFrame(0, 1), localFrame(0, 2));
+            const double absCos = std::abs(localFrame(0, 0));
+            // c_θ≈0（真实 θ≈±π/2）时 L00 的符号是纯噪声——取 |L00| 防象限
+            // 翻转；|L00| 可信时用原符号（覆盖 θ∈(π/2,π] 半平面）。
+            const double cArg = (absCos > 1e-6) ? localFrame(0, 0) : absCos;
+            bool haveWinner = false;
+            for (int branch = 0; branch < 2 && !haveWinner; ++branch) {
+                const double sigma = (branch == 0) ? 1.0 : -1.0;
+                const double th = (j > 0 || absSin > 0.0)
+                                      ? std::atan2(sigma * absSin, cArg)
+                                      : 0.0;
+                const double sinTh = std::sin(th);
+                // A＝α_{j-1}：第 0 列＝sinθ·(cosA,sinA)——带符号归一读出；
+                // |sinθ|≈0 时 A 与 B 仅以和可观测（Rx(A)Rx(B) 合流）——
+                // 退化为 A=0（仅种子面），B 吸收全角。
+                double candA = 0.0;
+                if (j > 0 && std::abs(sinTh) > 1e-8) {
+                    candA = std::atan2(localFrame(2, 0) * (sinTh > 0.0 ? 1.0 : -1.0),
+                                       localFrame(1, 0) * (sinTh > 0.0 ? 1.0 : -1.0));
+                }
+                const rw::math::Rotation3D<double> m = (j > 0)
+                    ? rotateTransposeFrame(rotX(candA), localFrame)
+                    : localFrame;
+                // B：M＝Rz(θ)Rx(B) 的第 2 列＝(sinB·sinθ, −sinB·cosθ, cosB)
+                // ——sinB＝−M(1,2)/cosθ（cosθ 已由 θ 确定；|cosθ|≈0 时该列
+                // 的 M(1,2) 本身≈0，退回未除形式仍精确）。
+                const double cTh = std::cos(th);
+                const double bl = (std::abs(cTh) > 1e-8)
+                                      ? std::atan2(-m(1, 2) / cTh, m(2, 2))
+                                      : std::atan2(-m(1, 2), m(2, 2));
+                const double dd = -std::sin(candA) * localT[1]
+                                  + std::cos(candA) * localT[2];
+                const double uu = std::cos(candA) * localT[1]
+                                  + std::sin(candA) * localT[2];
+                const double vv = localT[0] - aPrev;
+                const double aa = (std::abs(sinTh) > 1e-8) ? uu / sinTh : 0.0;
+                // 规范分支判据（镜像 canonicalForm：d<−tol 翻转；d≈0 时
+                // a<0 翻转）——首支即规范（或两支等价）即取。
+                const bool canonical = (dd >= -kBranchToleranceM)
+                                       && !(std::abs(dd) <= kBranchToleranceM
+                                            && aa < 0.0);
+                if (canonical || branch == 1) {
+                    alphaPrev = candA;
+                    theta = th;
+                    alphaCur = bl;
+                    d = dd;
+                    aCur = aa;
+                    aPrev = vv - aa * std::cos(th);  // 回收 a_{j-1}（供槽位发射）
+                    haveWinner = true;
+                }
+            }
+        }
+        if (!std::isfinite(theta) || !std::isfinite(alphaCur) || !std::isfinite(aCur)
             || !std::isfinite(d)) {
             return {};
         }
-        seed[4 * i] = thetaTotal;  // θ_offset＝θ'（F-590：目标几何不含 zeroOffset 相位）
-        seed[4 * i + 1] = d;
-        seed[4 * i + 2] = a;
-        seed[4 * i + 3] = alpha;
+        // 上一关节静段槽位 (a_{j-1}, α_{j-1})：j=0 无（恒 0 已初始化）；
+        // 中间步来自 t_j 提取、末关节步来自上面的联合闭式。
+        if (j > 0) {
+            seed[4 * (j - 1) + 2] = aPrev;
+            seed[4 * (j - 1) + 3] = alphaPrev;
+        }
+        // 本步 (θ_j, d_j) 落槽。
+        seed[4 * j] = theta;
+        seed[4 * j + 1] = d;
+        // 末关节自身的 a/α 槽位在本步闭式内直接产出（没有 j+1 步回收）。
+        if (j + 1 == n) {
+            seed[4 * j + 2] = aCur;
+            seed[4 * j + 3] = alphaCur;
+        }
+        // 携带进下一轮的"上一静段"＝本关节 (a_j, α_j)：中间步的下一轮会在
+        // 其 t_{j+1} 提取处覆写（此处赋值为确定性兜底）；末关节步无下一轮。
+        alphaPrev = alphaCur;
+        aPrev = aCur;
     }
     return seed;
 }
@@ -917,6 +1140,12 @@ constexpr double kWitnessProjectionOffset = 0.1;
 /**
  * @brief DH 链展开为显式关节（§7.4 算法的单一实现——IDhExplicitConverter::
  *        dhToExplicit 与 DH 权威侧 Description 构造共用，NFR-MNT-04）。
+ *
+ * 展开语义（units/modeling.md §7.4，audit F-631 拆分语义增量修订）：
+ *   origin_k = [Tx(a_{k-1})Rx(α_{k-1})]·Rz(θ_offset,k)·Tz(d_k)
+ *              ·[k＝末关：Tx(a_k)Rx(α_k)]（静段落位推导见步②注）；
+ *   axis_k   = ez（中间关节）｜Rx(−α_k)·ez（末关节）——世界系转轴恒等于
+ *              z_{k-1}；零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}。
  *
  * 错误语义与公共接口版一致：ChainEmpty/DegenerateBase 走错误态；关节类型
  * 非 DH 可参数化（Prismatic/Fixed）与值非有限＝调用方契约违约→fail-fast
@@ -953,45 +1182,78 @@ ExpandOutcome expandDhChain(const DhChain& chain)
         }
     }
 
-    // 步②③ 逐级累乘＋构造产物（§7.4 原文：origin=相对变换、axis=T_{0,i}·z）。
+    // 步②③ 逐级装配（§7.4 展开的 F-631 拆分语义——见下逐项注）。
     ExpandOutcome out;
     out.ok = true;
     out.joints.reserve(chain.joints.size());
-    rw::math::Transform3D<double> acc = identityTransform();
-    for (const DhChainJoint& joint : chain.joints) {
-        // 步② 当前步相对变换：Rot_z(θ_offset)·Trans_z(d)·Trans_x(a)·Rot_x(α)
+    // 上一关节的连杆静段 S_{j-1}＝Tx(a_{j-1})·Rx(α_{j-1})（初始＝恒等：
+    // 基座侧不在 DH 参数内，§7.4）——作为当前关节 origin 的头部落位。
+    rw::math::Transform3D<double> prevStatic = identityTransform();
+    const std::size_t jointCount = chain.joints.size();
+    for (std::size_t k = 0; k < jointCount; ++k) {
+        const DhChainJoint& joint = chain.joints[k];
+        // 步② 当前步相对变换（F-631 拆分语义）：
+        //   origin_k = [S_{k-1}（头部——上一关节静段）]
+        //            · Rz(θ_offset_k)·Tz(d_k)            （纯 z 螺旋核心）
+        //            · [S_k（尾部——仅末关节携带链尾静段）]
         // ——★ 零位烘焙纪律（audit F-590）：展开产物是 q_model=0（＝DH 变量
         // 零位）位姿，zeroOffset **不烘入几何**——权威零位旋转的折叠唯一归口
         // 在 modeling→Description 映射的单一折叠（origin·R(axis, zeroOffset)，
-        // CanonicalBridge mapJoint / 等价验证映射同规）。原实现在此预烘
-        // zeroOffset、映射再折叠一次，DH 派生模型零位构型多转 R_axis(q0)
-        // （权威 FK 全程错误、显式链权威切换被假拒绝）。zeroOffset 字段
+        // CanonicalBridge mapJoint / 等价验证映射同规）。zeroOffset 字段
         // 本身仍按"两态均权威"原样透传（限位平移等消费方依赖）。
-        const rw::math::Transform3D<double> step = dhStepTransform(
-            joint.dh.thetaOffset, joint.dh.d, joint.dh.a, joint.dh.alpha);
-        acc = transformMul(acc, step);  // T_{0,i}（基座→关节 i 累积——origin 载体）
+        // ★ 静段落位推导（audit F-631）：运行时按 origin·R(axis, zeroOffset
+        // ＋q) 组合，转轴过 origin 平移后的点；标准 DH 单步的转轴 z_{k-1}
+        // 过父帧原点——origin 的平移必须沿转轴本身（Tz(d) 沿 z 平移不改变
+        // 轴线），故 Tx(a)/Rx(α) 不能留在本关节 origin 内（原实现烘入尾部，
+        // 转轴被挪到子原点，一般位姿位置误差 2a·sin(θ/2)）。Tx(a_k)Rx(α_k)
+        // 逐一前移入下一关节 origin 头部后，链上只剩末静段 S_{n-1} 无槽：
+        // 丢弃则 (a,α) 在累积目标中结构性不可观测（Exact 判定/V-11 roundtrip
+        // 崩塌，MDL-10 无损性破坏），故 S_{n-1} 落**末关节 origin 尾部**——
+        // 零位累积 Π origin 严格等于标准级联 Π T_{i-1,i}（全链 FK 逐位还原；
+        // 一般位姿全链 FK 组合序＝各关节 origin·R(axis,ψ) 直乘、末关节拆
+        // [纯段]·R(axis,ψ)·[尾段]，恒等于级联——units/modeling.md §7.4
+        // F-631 增量修订）。运行时对末关节 origin 不拆分单关节组合的残差
+        // 是该表达面的定理性极限（转轴必过自身关节系原点），以本拆分序为
+        // 全链 FK 的恢复路径。
+        const bool isLast = (k + 1 == jointCount);
+        rw::math::Transform3D<double> origin = prevStatic;
+        origin = transformMul(origin, dhCoreTransform(joint.dh.thetaOffset,
+                                                      joint.dh.d));
+        if (isLast) {
+            origin = transformMul(origin, dhStaticSegment(joint.dh.a,
+                                                          joint.dh.alpha));
+        }
         // 步③ 产物装配：origin=当前步相对变换（T_parent_joint——core.md §4.6
-        // 读法）；axis=关节系内方向的关节轴（audit F-591——见下）。
+        // 读法）；axis=关节系内方向（audit F-591/F-631——见下）。
         JointEntry entry;
         entry.objectId = joint.objectId;
         entry.localName = joint.localName;
         entry.type = joint.type;
-        // axis＝Rx(−α)·ez（关节系内方向——audit F-591 修复）：关节 i 的物理
-        // 旋转轴是 DH 的 z_{i−1}（父帧 z），它在关节帧 i（步进旋转
-        // Rz(θ)Rx(α) 之后）内的坐标＝Rx(−α)·ez。runtime 按"关节系内方向"
-        // 消费（世界轴向＝origin.R·axis＝R_{0,i−1}·ez＝真实 DH 关节轴）。
-        // 原实现输出 z_i＝T_{0,i}·ez（帧 i 的 z——α≠0 时与 z_{i−1} 差一个
-        // Rx(α) 扭转），被 runtime 按关节系方向解读后物理轴错误（α≠0 链
-        // 工业常态）。解析元素：Rx(−α)·ez＝(0, sinα, cosα)（Rx 不动 x 分量
-        // ——归一化为防御性，数学上恒为单位向量）。
-        entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
-            normalized(rw::math::Vector3D<double>(
-                0.0, std::sin(joint.dh.alpha), std::cos(joint.dh.alpha))),
-            core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
-                                        std::nullopt, std::nullopt,
-                                        std::string("dh-to-explicit")));
+        // axis＝关节系内的物理转轴方向（世界系转轴须严格等于 z_{k-1}）：
+        //   中间关节（k<n−1）：origin 头部静段 S_{k-1} 携带扭转 Rx(α_{k-1})，
+        //   而显式累积帧相对 DH 帧的回拉恰为 Rx(−α_{k-1})——两者相消，关节
+        //   系内方向＝ez＝(0,0,1)（世界轴向＝累积帧 R·origin.R·ez，展开后
+        //   ＝R_{0,k-1}·ez＝z_{k-1}，F-591 口径不变）；
+        //   末关节：本关节静段 S_k 的 Rx(α_k) 留在本关节 origin 旋转尾部，
+        //   须由 axis 吸收：origin.R·axis＝Rx(α_k)·ez ⇒
+        //   axis＝Rx(−α_k)·ez＝(0, sinα_k, cosα_k)（解析元素；归一化为
+        //   防御性，数学上恒为单位向量）。
+        if (isLast) {
+            entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+                normalized(rw::math::Vector3D<double>(
+                    0.0, std::sin(joint.dh.alpha), std::cos(joint.dh.alpha))),
+                core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
+                                            std::nullopt, std::nullopt,
+                                            std::string("dh-to-explicit")));
+        } else {
+            entry.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+                rw::math::Vector3D<double>(0.0, 0.0, 1.0),
+                core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
+                                            std::nullopt, std::nullopt,
+                                            std::string("dh-to-explicit")));
+        }
         entry.origin = core::SourcedValue<JointPose>::provided(
-            JointPose(step),
+            JointPose(origin),
             core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly,
                                         std::nullopt, std::nullopt,
                                         std::string("dh-to-explicit")));
@@ -1000,6 +1262,8 @@ ExpandOutcome expandDhChain(const DhChain& chain)
         entry.workingRange = joint.workingRange;
         entry.dhDerived = joint.dh;           // 派生展示值（Explicit 态不入编码——D-MDL-5）
         out.joints.push_back(std::move(entry));
+        // 静段前移：本关节的 S_k 成为下一关节 origin 的头部（F-631 拆分）。
+        prevStatic = dhStaticSegment(joint.dh.a, joint.dh.alpha);
     }
     return out;
 }
@@ -1131,20 +1395,20 @@ DhConversionResult DhExplicitConverter::explicitToDh(
     // 收敛判据"＋V-11 roundtrip 的全局收敛要求；§15 v0.10 登记）----
     // 相位 1：从单位参数（中性恒等）出发的确定性 LM——§7.5 固定初值策略
     // 的字面执行；
-    // 相位 2：仅当相位 1 未达第 5 项上界时启用——解析种子（确定性闭式
-    // 构造，见 analyticSeed 注）作初值的 LM 精化。两相位均无迭代随机性、
-    // 不读时钟/环境——同输入同解（NFR-COR-02）；择优规则确定（达容差者
-    // 优，其次 E 小者优，平手取相位 2——种子更接近结构一致解）。
+    // 相位 2：从解析种子（确定性闭式构造，见 analyticSeed 注）出发的 LM
+    // 精化——**两相位恒跑**（audit F-631 增量）：相位 1 可能收敛在退化族的
+    // "退化成员"（如重合轴链的全零解 θ=0）——该成员处重建雅可比出现家族
+    // 之外的局部秩亏（a 槽经 Tx(ε)…Tx(−ε) 反向对消），唯一性判定会多报
+    // 自由坐标、字典序定值解偏离规范成员；相位 2 收敛到种子定位的规范成
+    // 员。择优规则确定（收敛者优，其次 E 小者优，平手取相位 2——种子更
+    // 接近结构一致解），不读时钟/环境——同输入同解（NFR-COR-02）。
     const SolverFrameTargets fullTargets = targetsFromExplicit(explicitJoints);
     const SolverTargets& targets = fullTargets.base;
     const std::vector<bool> allOptimizable(4 * explicitJoints.size(), true);
     const LmResult phase1 = lmSolve(targets, std::vector<double>(4 * explicitJoints.size(), 0.0),
                                     allOptimizable);
     LmResult chosen = phase1;
-    if (phase1.status == DhConvergenceState::Converged
-        && withinExactTolerance(deviationsOf(phase1.x, targets))) {
-        // 相位 1 已达第 5 项上界——无需相位 2（固定初值策略充分）。
-    } else {
+    {
         const std::vector<double> seed = analyticSeed(fullTargets);
         if (!seed.empty()) {
             const LmResult phase2 = lmSolve(targets, seed, allOptimizable);
@@ -1159,7 +1423,6 @@ DhConversionResult DhExplicitConverter::explicitToDh(
                 chosen = phase2;
             }
         }
-        // 种子不可得（目标溢出）→保持相位 1 结论。
     }
     if (chosen.status != DhConvergenceState::Converged) {
         // 求解器数值失败：不收敛/发散/资源异常→AnalysisFailed（不构成
@@ -1251,8 +1514,18 @@ DhConversionResult DhExplicitConverter::explicitToDh(
         // 接受门＝语义门（残差在附录 D 第 5 项容差内）：定值重解从已达
         // 最优的解出发，LM 可能因预算耗尽返回 Diverged 而解仍然有效——
         // 判定只看残差事实（NaN/Inf 经 withinExactTolerance 比较天然拒绝）。
+        // ★ 零位折叠一致性半门（audit F-631）：拆分语义下 (a_i,α_i) 的一阶
+        // 自由族成员虽 E 帧（原点+z 轴）等价，但其展开 axis 随 α_i 变化——
+        // 零位折叠 origin·R(axis, zeroOffset) 的 RobWork 零位构型随之偏转
+        // （权威零位构型改变，等价验证门④将拒绝该切换）。钉值接受须同时
+        // 满足零位折叠一致：R(axis_trial, zeroOffset)＝R(axis_chosen,
+        // zeroOffset) 逐关节成立——不可达中性值（二阶超差或零位折叠偏转）
+        // 一律保留当前值。
         if (!withinExactTolerance(deviationsOf(trial.x, targets))) {
             continue;  // 该坐标在全局约束下不可达中性值——保留当前值（保守）
+        }
+        if (!zeroFoldConsistent(trial.x, canonical, explicitJoints)) {
+            continue;  // 零位折叠偏转（axis 随 α_i 变化）——保留当前值
         }
         // 定值生效：与定值前解可分辨（>去重容差）才追加约束解证人。
         if (maxAbsDiff(trial.x, canonical) > kSolutionDeduplicationTolerance) {
