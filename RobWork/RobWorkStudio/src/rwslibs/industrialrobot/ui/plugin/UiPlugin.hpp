@@ -424,6 +424,17 @@ private:
     QDockWidget* m_requirementsDock = nullptr;   ///< "IRD 需求"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
     QDockWidget* m_kinematicsDock = nullptr;     ///< "IRD 运动学"Dock（Left 区——UI-T23 三域挂位，窗口树托管）
     QDockWidget* m_kinematicsAdvancedDock = nullptr; ///< "IRD 运动学（求解配置）"Dock（Right 区高级面板位——UX-04）
+    // 三新域面板 Dock（ASM-PANEL 收口批 2026-10-10——六域面板全部可见；
+    // Left 区宿主侧承载＝ui.md §16.7 v1.15 WP-24-T03 首版登记④"中央区
+    // CentralAreaHost 挂位〔首版＝宿主侧 Left Dock 承载〕"的同一首版形态，
+    // Dock objectName 按 ird_<domain>_dock 词形与 ird_modeling_dock 同族）。
+    // 成员无条件声明（QDockWidget 前置声明零开销——本 TU 编入的两宿主
+    // 目标 ui_plugin/studio 均携带 IRD_UI_PLUGIN_EXTRA_DOMAINS 定义，挂位
+    // 段的 #ifdef 区分在 UiPlugin.cpp 实现内；契约测试等无定义目标不编
+    // 本 TU）。
+    QDockWidget* m_dynamicsDock = nullptr;     ///< "IRD 动力学"Dock（Left 区——ASM-PANEL 挂位，窗口树托管）
+    QDockWidget* m_selectionDock = nullptr;    ///< "IRD 选型"Dock（Left 区——ASM-PANEL 挂位，窗口树托管）
+    QDockWidget* m_optimizationDock = nullptr; ///< "IRD 优化"Dock（Left 区——ASM-PANEL 挂位，窗口树托管）
     QStatusBar* m_hostStatusBar = nullptr; ///< 宿主状态栏（UI-T18 状态投影面——PM-11 永久位＋瞬态消息）
     std::shared_ptr<app::StorePortAdapter> m_lastStoreAdapter; ///< 最近打开的存储适配器（T03b-2——apply 网关命令端口来源）
     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）

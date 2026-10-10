@@ -99,6 +99,18 @@
 #include "HostCompilePort.hpp"                   // 宿主编译端口（UI-T46——十段链适配＋快照缓存＋分段探针）
 #include "HostPresentationAdapters.hpp"          // 呈现装配适配器族（UI-T46——映射真值/挂接对象/构造源）
 
+// ASM-PANEL 收口批（2026-10-10）：三新域面板取件面（宿主挂位段消费三域
+// 描述符在册的面板工厂——六域面板全部可见）。携带 IRD_UI_PLUGIN_EXTRA_
+// DOMAINS 定义的宿主目标（ui_plugin／studio——ui/CMakeLists 两段同款
+// 单一书写点）才编入 ExtraDomainAssembly TU 并链接三新域 plugin，本
+// include 与下方三域挂位段以同一宏区分——两同源目标防漂移的既有形态
+// （DomainAssembly.cpp 尾段承接段同款）。
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+#include "ExtraDomainAssembly.hpp"      // dynamicsPanelWidget 等（三域取件——ASM-PANEL）
+#include "DomainAssemblyShared.hpp"     // kAssemblyFailedCode（§11.3 稳定码文本单点）
+#include <memory>                       // std::static_pointer_cast（extraAssemblies 类型擦除句柄还原）
+#endif
+
 #include <sdurws/ird/modeling/ModelingPluginAssembly.hpp>  // modeling::isAssembledModelingCommand（UI-T42——F-466 路由判定出线）
 #include <sdurws/ird/modeling/CommandHandlers.hpp>  // registerModelingCommandHandlers/HandlerServices（UI-T46——F-461 modeling 半区装配）
 #include <sdurws/ird/modeling/DhConvert.hpp>     // DhExplicitConverter（UI-T46——HandlerServices 转换器注入）
@@ -262,6 +274,15 @@ constexpr const char* kAuxKeyModelingDock = "domain.modeling";
 constexpr const char* kAuxKeyRequirementsDock = "domain.requirements";
 constexpr const char* kAuxKeyKinematicsDock = "domain.kinematics";
 constexpr const char* kAuxKeyKinematicsAdvancedDock = "domain.kinematicsAdvanced";
+
+// 三新域辅助记忆键（ASM-PANEL 收口批——六域面板全部可见的可见性半区；
+// 词形 "domain.<token>" 与上方四键同族。工厂默认＝不呈现〔净室默认布局
+// 收敛，UI-T24 P1 同口径〕——用户经"视图"菜单呼出后跨会话记忆优先）。
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+constexpr const char* kAuxKeyDynamicsDock = "domain.dynamics";
+constexpr const char* kAuxKeySelectionDock = "domain.selection";
+constexpr const char* kAuxKeyOptimizationDock = "domain.optimization";
+#endif
 
 /// 中央区最小可见保留宽（UI-T24 P2），单位 px。取值依据：§4.4 最小窗口
 /// 1280 宽下，左栏 240＋右栏 280 两栏取其内容最小尺寸后中央仍应保有约
@@ -1344,6 +1365,98 @@ bool IrdWorkbenchHostPlugin::buildDockBody()
             m_kinematicsAdvancedDock->setObjectName("ird_kinematics_advanced_dock");
             m_kinematicsAdvancedDock->setWidget(kinematicsAdvanced);
         }
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+        // 三新域面板挂位（ASM-PANEL 收口批 2026-10-10——六域面板全部可见；
+        // 收口余量兑现：ui.md §16.7 v1.15 WP-24-T03 登记④"中央区 Central
+        // AreaHost 挂位〔首版＝宿主侧 Left Dock 承载〕——随装配收口任务
+        // 兑现"的首版形态延伸至三新域，与 modeling/requirements/kinematics
+        // 同列 Left 区）。宿主装配路径在此**真实消费**三域描述符在册的面板
+        // 工厂（dynamics DynamicsPanelWidget／selection SelCatalogPanel
+        // Widget／optimization OptimizationPanelWidget——装配门面创建时
+        // 转接模块 createPanel 的闭包），此前三域仅注册计数、widget 实体
+        // 从未创建（用户实机点验"三域面板不可见"的缺口在本段闭合）。
+        //
+        // 单一书写点：本段与 include 以 IRD_UI_PLUGIN_EXTRA_DOMAINS 区分
+        // （ui_plugin/studio 两宿主目标同款定义——ui/CMakeLists 两段同源，
+        // 防两份装配序列漂移）；三域产物容器经类型擦除句柄还原实型
+        // （shared_ptr<void> 的删除器在 assembleExtraDomains 构造点绑定
+        // ExtraDomainAssemblies 实型——static_pointer_cast 还原即原类型，
+        // 析构安全随句柄语义保持）。
+        if (!m_domains->extraAssemblies) {
+            // 容器缺席＝装配序违约（assembleDomainPlugins 尾段未执行——
+            // 宿主装配缺陷），Dev 留痕不虚构挂位，其余域照常。
+            reportLine("三新域装配容器缺席（装配序违约，如实留痕）");
+            if (m_diag.pipeline) {
+                m_diag.pipeline->logDev(kPluginDevChannel,
+                                        "buildDockBody：extraAssemblies 缺席"
+                                        "（IRD_UI_PLUGIN_EXTRA_DOMAINS 宿主"
+                                        "形态下不应发生）");
+            }
+        } else {
+            const auto extra = std::static_pointer_cast<ExtraDomainAssemblies>(
+                m_domains->extraAssemblies);
+            // 逐域挂位规格表（域序＝白名单序 dynamics→selection→
+            // optimization——与 assembleExtraDomains 装配序一致）：域键/
+            // Dock 标题/objectName（ird_<domain>_dock 词形，与
+            // ird_modeling_dock 同族——宿主状态 blob 与排障日志定位面）/
+            // 辅助记忆键/成员 Dock 槽/取件函数六项逐域显式登记，取件函数
+            // 内部承载 §11.3 缺席防御（返回 nullptr＝跳过）。
+            struct ExtraPanelDockSpec {
+                const char* domainKey;   ///< 域键（白名单 token——日志定位）
+                const char* dockTitle;   ///< Dock chrome 标题（字面常量）
+                const char* objectName;  ///< Dock objectName（同族词形）
+                const char* auxKey;      ///< 辅助可见性记忆键（domain.<token>）
+                QDockWidget** dockSlot;  ///< 成员 Dock 槽（非 owning——窗口树托管）
+                QWidget* (*pickup)(const ExtraDomainAssemblies&);  ///< 面板取件函数
+            };
+            const ExtraPanelDockSpec specs[3] = {
+                {"dynamics", kDynamicsDockTitle, "ird_dynamics_dock",
+                 kAuxKeyDynamicsDock, &m_dynamicsDock, dynamicsPanelWidget},
+                {"selection", kSelectionDockTitle, "ird_selection_dock",
+                 kAuxKeySelectionDock, &m_selectionDock, selectionPanelWidget},
+                {"optimization", kOptimizationDockTitle, "ird_optimization_dock",
+                 kAuxKeyOptimizationDock, &m_optimizationDock,
+                 optimizationPanelWidget},
+            };
+            for (const ExtraPanelDockSpec& spec : specs) {
+                // 逐域 try/catch（§11.3 失败隔离——单域面板工厂抛出不传染
+                // 其余域：该域 Dock 缺席＋UI-PLUGIN-ASSEMBLY-FAILED 稳定码
+                // 留痕〔statuses 注册态不受影响——面板创建是注册后的独立
+                // 装配步骤，两态分立如实承载〕，下一域照常）。
+                try {
+                    // 面板工厂现调（缺席域＝nullptr——跳过挂位，§11.3；
+                    // 非 owning——Dock setWidget 接管父子树托管）。
+                    QWidget* extraPanel = spec.pickup(*extra);
+                    if (extraPanel == nullptr) {
+                        continue;  // 失败隔离缺席域——不建空 Dock 不虚构
+                    }
+                    *spec.dockSlot = new QDockWidget(
+                        QString::fromUtf8(spec.dockTitle), this);
+                    (*spec.dockSlot)->setObjectName(spec.objectName);
+                    (*spec.dockSlot)->setWidget(extraPanel);
+                    // 辅助可见性登记（UI-T24 P1 同口径：工厂默认不呈现——
+                    // 净室默认布局收敛；呈现落定在装载呈现自证拍的
+                    // addDockWidget＋setVisible 对齐，见
+                    // reassertEmbeddedPresentation）。
+                    m_content->setAuxVisibilityTarget(spec.auxKey,
+                                                      *spec.dockSlot,
+                                                      /*factoryVisible=*/false);
+                } catch (const std::exception& extraPanelError) {
+                    // §11.3 稳定码＋原因一行（Dev 通道＋控制台——与装配段
+                    // 报告行同族；该域面板降级为缺席〔共享树占位承担〕，
+                    // 不中止其余域）。
+                    const std::string failedLine =
+                        std::string("domain panel assembly: plugin=") +
+                        spec.domainKey + " " + kAssemblyFailedCode +
+                        " detail=" + extraPanelError.what();
+                    reportLine(failedLine);
+                    if (m_diag.pipeline) {
+                        m_diag.pipeline->logDev(kPluginDevChannel, failedLine);
+                    }
+                }
+            }
+        }
+#endif
     }
 
     // 可见性目标登记（chrome 安放在 activate 之前——两段装配时序契约；
@@ -1524,6 +1637,14 @@ void IrdWorkbenchHostPlugin::registerHostMenus()
     addAuxDockToggle(viewMenu, "IRD 运动学面板", kAuxKeyKinematicsDock, m_kinematicsDock);
     addAuxDockToggle(viewMenu, "IRD 运动学（求解配置）面板", kAuxKeyKinematicsAdvancedDock,
                      m_kinematicsAdvancedDock);
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+    // 三新域面板开关（ASM-PANEL 收口批——六域面板全部可见的用户呼出半区；
+    // Dock 缺席〔失败隔离〕时 addAuxDockToggle 内部跳过——与上方四项
+    // 同机制，勾选项不呈现）。
+    addAuxDockToggle(viewMenu, "IRD 动力学面板", kAuxKeyDynamicsDock, m_dynamicsDock);
+    addAuxDockToggle(viewMenu, "IRD 选型面板", kAuxKeySelectionDock, m_selectionDock);
+    addAuxDockToggle(viewMenu, "IRD 优化面板", kAuxKeyOptimizationDock, m_optimizationDock);
+#endif
     viewMenu->addSeparator();
     addCommandAction(viewMenu, "恢复默认布局", "view.resetLayout");
     QAction* beforeView = nullptr;
@@ -1735,6 +1856,27 @@ void IrdWorkbenchHostPlugin::reassertEmbeddedPresentation()
             m_kinematicsAdvancedDock->setVisible(
                 m_content->auxVisible(kAuxKeyKinematicsAdvancedDock));
         }
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+        // 三新域 Dock 入宿主（ASM-PANEL 收口批——六域面板全部可见的呈现
+        // 落定拍；Left 区同列＝ui.md §16.7 v1.15 首版登记④"宿主侧 Left
+        // Dock 承载"的同一形态）。呈现位与前三域同口径：工厂默认不呈现
+        // （净室默认收敛），可见性由辅助记忆半区决定（视图菜单呼出后跨
+        // 会话记忆优先——PM-14；blob 对域 Dock 无效故记忆自持）。缺席域
+        // （失败隔离）跳过——挂位形态与前三域一致。
+        if (m_dynamicsDock != nullptr) {
+            hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_dynamicsDock);
+            m_dynamicsDock->setVisible(m_content->auxVisible(kAuxKeyDynamicsDock));
+        }
+        if (m_selectionDock != nullptr) {
+            hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_selectionDock);
+            m_selectionDock->setVisible(m_content->auxVisible(kAuxKeySelectionDock));
+        }
+        if (m_optimizationDock != nullptr) {
+            hostWindow->addDockWidget(Qt::LeftDockWidgetArea, m_optimizationDock);
+            m_optimizationDock->setVisible(
+                m_content->auxVisible(kAuxKeyOptimizationDock));
+        }
+#endif
         m_propsDock->show();
         m_tasksDock->show();
         // 区域旗标重施（UI-T18——PM-14 跨会话记忆不被装载重显夺回）：三区
@@ -4478,6 +4620,13 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                 {"requirements", m_requirementsDock},
                 {"kinematics", m_kinematicsDock},
                 {"kinematics-advanced", m_kinematicsAdvancedDock},
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+                // 三新域面板 Dock（ASM-PANEL 批——工厂默认不呈现同口径；
+                // 宿主形态 always 在册，无需宏区分的冒烟面用同一容器）。
+                {"dynamics", m_dynamicsDock},
+                {"selection", m_selectionDock},
+                {"optimization", m_optimizationDock},
+#endif
                 {"tasks", m_tasksDock},
             };
             for (const auto& [name, dock] : auxDocks) {
@@ -4496,10 +4645,11 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
             } else {
                 check(false, "central-widget-present");
             }
-            // 视图菜单呼出通道在册（四个辅助开关动作——P1"经视图菜单可勾选
-            // 呼出"的结构前提）。
-            check(m_hostAuxToggles.size() == std::size_t{4},
-                  "view-menu-aux-toggles=4 (cur="
+            // 视图菜单呼出通道在册（辅助开关动作——P1"经视图菜单可勾选
+            // 呼出"的结构前提；数量＝四域自持面板＋运动学高级＋ASM-PANEL
+            // 三新域三域＝7）。
+            check(m_hostAuxToggles.size() == std::size_t{7},
+                  "view-menu-aux-toggles=7 (cur="
                       + std::to_string(m_hostAuxToggles.size()) + ")");
 
             // 截图①净室默认布局全景（宿主主窗口整窗）。
@@ -4860,6 +5010,16 @@ void IrdWorkbenchHostPlugin::maybeRunLayoutSmoke()
                   "memory-modeling-still-hidden");
             check(m_kinematicsDock == nullptr || !m_kinematicsDock->isVisible(),
                   "memory-kinematics-still-hidden");
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+            // 三新域面板从未呼出——跨会话保持默认隐藏（ASM-PANEL 批同口径；
+            // 宿主目标恒带定义，断言面随域面板在册同步扩展）。
+            check(m_dynamicsDock == nullptr || !m_dynamicsDock->isVisible(),
+                  "memory-dynamics-still-hidden");
+            check(m_selectionDock == nullptr || !m_selectionDock->isVisible(),
+                  "memory-selection-still-hidden");
+            check(m_optimizationDock == nullptr || !m_optimizationDock->isVisible(),
+                  "memory-optimization-still-hidden");
+#endif
             if (central != nullptr) {
                 lines.push_back("central cur=" + std::to_string(central->width())
                                 + "x" + std::to_string(central->height()));

@@ -1,0 +1,11 @@
+Note: Google Test filter = *ASM_PANEL*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from HostIntegrationContractTest
+[ RUN      ] HostIntegrationContractTest.ExtraDomainPanelPickup_FailureIsolationAbsentReturnsNull_ASM_PANEL_ACC1
+[       OK ] HostIntegrationContractTest.ExtraDomainPanelPickup_FailureIsolationAbsentReturnsNull_ASM_PANEL_ACC1 (0 ms)
+[----------] 1 test from HostIntegrationContractTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.

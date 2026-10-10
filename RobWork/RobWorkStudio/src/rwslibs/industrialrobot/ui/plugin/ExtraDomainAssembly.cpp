@@ -78,12 +78,12 @@ std::shared_ptr<ExtraDomainAssemblies> assembleExtraDomains(
                              status.detail);
     }
 
-    // ②selection（隔离域）：同上形态。★ 预期 InvalidDescriptor（诚实
-    //    钉扎——P-SEL-3/P-PR-9 待所有者裁决）：回填命令 token 无点
-    //    kebab 词形不满足 §7.2 点分句法，宿主权威拒绝、报告不入列；
-    //    本承接面零 token 改写零本地判定（asm-plug 建议级 1 口径保持
-    //    ——裁决后翻译产物自然过校验，本函数零改动）。status.ok=false
-    //    ＝§11.3 失败隔离的如实承载（不虚构装配成功）。
+    // ②selection（隔离域）：同上形态。★ RUL-TOK 命名词形裁决销案批
+    //    （2026-10-10，units/ui.md §16.7 v1.92）后注册 Ok——selection
+    //    域侧已把回填命令 ui 命令 id 修订为点分 selection.apply-device-
+    //    backfill（§7.2 点分句法），翻译函数零改动自然过宿主校验（原
+    //    "预期 InvalidDescriptor"诚实钉扎兑现翻转；六域注册全 Ok 形态，
+    //    本承接面零 token 改写零本地判定的纪律保持）。
     try {
         products->selection = selection::createSelectionPluginAssembly();
         products->selection->bindTextResolver(standardTextResolverUtf8());
@@ -151,6 +151,57 @@ std::shared_ptr<ExtraDomainAssemblies> assembleExtraDomains(
     }
 
     return products;
+}
+
+// =====================================================================
+// ASM-PANEL 收口批（2026-10-10，所有者授权装配批次）——三新域面板取件
+// 实现（消费面＝ExtraDomainAssembly.hpp 尾部三声明；UiPlugin buildDock
+// Body 挂位段调用——ui_plugin/studio 两宿主目标同源 TU，单一书写点）。
+// 形态先例：DomainAssembly.cpp 的 modelingPanelWidget/
+// requirementsPanelWidget（前三域取件——bundle 成员直取 descriptors
+// panels.front().factory）；本组函数的容器形态差异见各函数注。
+// =====================================================================
+
+/// 动力学面板 Dock 标题（chrome 字面——UiText plugin.dynamics.title 值
+/// "动力学"同源，见头注；定义点＝取件函数同 TU 单一书写）。
+const char* const kDynamicsDockTitle = "IRD 动力学";
+/// 选型面板 Dock 标题（同上——plugin.selection.title 值"选型"同源）。
+const char* const kSelectionDockTitle = "IRD 选型";
+/// 优化面板 Dock 标题（同上——plugin.optimization.title 值"优化"同源）。
+const char* const kOptimizationDockTitle = "IRD 优化";
+
+QWidget* dynamicsPanelWidget(const ExtraDomainAssemblies& extra)
+{
+    // 失败隔离缺席＝nullptr（§11.3——宿主跳过挂位，占位呈现由共享树
+    // 承担；不虚构空面板不抛异常）。三域面板记录恰一条（主面板——
+    // 装配门面工厂注释"面板面形态"；空集＝描述符结构违约的防御面，
+    // 与 requirementsPanelWidget 同款口径）。
+    if (!extra.dynamics.has_value()
+        || extra.dynamics->descriptor.panels.empty()) {
+        return nullptr;
+    }
+    return extra.dynamics->descriptor.panels.front().factory();
+}
+
+QWidget* selectionPanelWidget(const ExtraDomainAssemblies& extra)
+{
+    // 缺席/空面板防御语义同上（selection 注册 Ok——RUL-TOK 销案兑现，
+    // 正常态与 dynamics/optimization 一致）。
+    if (!extra.selection.has_value()
+        || extra.selection->descriptor.panels.empty()) {
+        return nullptr;
+    }
+    return extra.selection->descriptor.panels.front().factory();
+}
+
+QWidget* optimizationPanelWidget(const ExtraDomainAssemblies& extra)
+{
+    // 缺席/空面板防御语义同上。
+    if (!extra.optimization.has_value()
+        || extra.optimization->descriptor.panels.empty()) {
+        return nullptr;
+    }
+    return extra.optimization->descriptor.panels.front().factory();
 }
 
 }  // namespace ui

@@ -911,6 +911,116 @@ TEST_F(HostIntegrationContractTest,
     EXPECT_NE(reportLines[2].find("plugin=optimization ok=1"),
               std::string::npos)
         << "optimization 报告行应为 ok 形态";
+
+    // ⑩三新域面板工厂在册（ASM-PANEL 收口批 2026-10-10——宿主装配路径
+    //    消费三域面板工厂的供体面钉扎）：每域描述符恰一条主面板记录、
+    //    工厂闭包在册（std::function 布尔转换——宿主挂位段
+    //    dynamicsPanelWidget/selectionPanelWidget/optimizationPanelWidget
+    //    现调的供体；absent 工厂＝挂位面结构性缺席）、标题键非空、
+    //    advanced=false（主面板位——UX-04；与前三域主面板同形态）。
+    //    三域自持描述符的面板记录类型各异（DynPanelRegistration/
+    //    SelPanelRegistration/OptPanelRegistration——各门面头的字段同构
+    //    值），逐域展开断言零类型擦除。
+    //    ★ QCoreApplication 级结构性限制（如实登记 units/ui.md §13
+    //    ASM-PANEL 行）：工厂闭包的**调用**（创建 QWidget 实体）须
+    //    QApplication——本通道不可直调，工厂被宿主消费的运行期端到端
+    //    呈现归 §12.2 实机装载通道（所有者人工点验）；本段以"工厂在册
+    //    ＋登记计数一致"的可执行面钉扎供体语义，不伪造 GUI 断言
+    //    （ASM-UI 先例同口径）。
+    ASSERT_EQ(extraProducts->dynamics->descriptor.panels.size(), std::size_t{1})
+        << "dynamics 面板记录恰一条（主面板——装配门面的面板面形态）";
+    EXPECT_TRUE(extraProducts->dynamics->descriptor.panels.front().factory)
+        << "dynamics 面板工厂在册（宿主挂位消费的供体面）";
+    EXPECT_FALSE(extraProducts->dynamics->descriptor.panels.front().titleKey.empty())
+        << "dynamics 面板标题键非空（§3.5 键族——文案资源键）";
+    EXPECT_FALSE(extraProducts->dynamics->descriptor.panels.front().advanced)
+        << "dynamics 主面板位（advanced=false——UX-04 非高级面板）";
+
+    ASSERT_EQ(extraProducts->selection->descriptor.panels.size(), std::size_t{1})
+        << "selection 面板记录恰一条（主面板——装配门面的面板面形态）";
+    EXPECT_TRUE(extraProducts->selection->descriptor.panels.front().factory)
+        << "selection 面板工厂在册（宿主挂位消费的供体面）";
+    EXPECT_FALSE(extraProducts->selection->descriptor.panels.front().titleKey.empty())
+        << "selection 面板标题键非空（§3.5 键族——文案资源键）";
+    EXPECT_FALSE(extraProducts->selection->descriptor.panels.front().advanced)
+        << "selection 主面板位（advanced=false——UX-04 非高级面板）";
+
+    ASSERT_EQ(extraProducts->optimization->descriptor.panels.size(),
+              std::size_t{1})
+        << "optimization 面板记录恰一条（主面板——装配门面的面板面形态）";
+    EXPECT_TRUE(extraProducts->optimization->descriptor.panels.front().factory)
+        << "optimization 面板工厂在册（宿主挂位消费的供体面）";
+    EXPECT_FALSE(
+        extraProducts->optimization->descriptor.panels.front().titleKey.empty())
+        << "optimization 面板标题键非空（§3.5 键族——文案资源键）";
+    EXPECT_FALSE(extraProducts->optimization->descriptor.panels.front().advanced)
+        << "optimization 主面板位（advanced=false——UX-04 非高级面板）";
+}
+
+// =====================================================================
+// 三新域面板取件 API——失败隔离缺席语义（ASM-PANEL 收口批）
+// =====================================================================
+
+/**
+ * ASM-PANEL 验收项②（units/ui.md §11.3 失败隔离——挂位半区的接口面）：
+ * 宿主挂位段（UiPlugin buildDockBody）经 ExtraDomainAssembly.hpp 尾部三
+ * 取件函数消费三域面板工厂，取件函数对**失败隔离缺席形态**必须返回
+ * nullptr（跳过挂位——不虚构空面板不抛异常，与 requirementsPanelWidget
+ * 先例同款口径）。本用例钉扎该缺席语义的三个可无人值守执行的形态：
+ *   1. 容器默认构造（三域 optional 全空＝装配异常隔离的缺席形态）——
+ *      三取件函数全 nullptr；
+ *   2. 单域显式置空（optional reset——单域隔离域缺席、其余域在册）——
+ *      缺席域取件 nullptr（其余域的取件**不在本通道调用**：非缺席调用
+ *      会实例化 QWidget——QCoreApplication 下致命，结构性限制见上方
+ *      ASMSTUDIO_ACC1 用例⑩段登记，如实不伪造）；
+ *   3. 在册但面板记录空（描述符结构违约防御面——默认构造门面的
+ *      descriptor.panels 空集）——取件 nullptr（不越界不抛）。
+ *
+ * 需求/验收追溯：units/ui.md §11.3（装配失败失败隔离——缺席域跳过挂位、
+ * 其余域照常）、§13 ASM-PANEL 行（取件 API 缺席语义＋QCoreApplication
+ * 结构性限制登记）。
+ */
+TEST_F(HostIntegrationContractTest,
+       ExtraDomainPanelPickup_FailureIsolationAbsentReturnsNull_ASM_PANEL_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"UX-14"},
+                  std::vector<std::string>{"units/ui.md §13 ASM-PANEL"});
+
+    // 形态 1：容器全空（§11.3 装配异常隔离缺席——三域全跳过挂位）。
+    ui::ExtraDomainAssemblies emptyExtra;
+    EXPECT_EQ(ui::dynamicsPanelWidget(emptyExtra), nullptr)
+        << "dynamics 缺席＝nullptr（跳过挂位——不虚构空面板）";
+    EXPECT_EQ(ui::selectionPanelWidget(emptyExtra), nullptr)
+        << "selection 缺席＝nullptr（跳过挂位——不虚构空面板）";
+    EXPECT_EQ(ui::optimizationPanelWidget(emptyExtra), nullptr)
+        << "optimization 缺席＝nullptr（跳过挂位——不虚构空面板）";
+
+    // 形态 2：单域缺席（单域隔离域缺席、其余域在册——逐域 reset 后仅
+    // 对缺席域断言；在册域取件的 QWidget 实例化面不在 QCoreApplication
+    // 通道执行——结构性限制如实登记，见用例头注）。
+    ui::ExtraDomainAssemblies partialExtra;
+    partialExtra.selection.reset();
+    EXPECT_EQ(ui::selectionPanelWidget(partialExtra), nullptr)
+        << "单域缺席（selection reset）＝该域 nullptr（失败隔离不传染——"
+           "宿主跳过该域挂位，其余域挂位面不受影响）";
+
+    // 形态 3：在册但面板记录空（描述符结构违约防御——默认构造门面的
+    // panels 空集；三域门面均可默认构造〔轻量值聚合——零激活依赖〕，
+    // 取件路径只读 descriptor 不触模块）。
+    ui::ExtraDomainAssemblies emptyDescriptorExtra;
+    emptyDescriptorExtra.dynamics = dynamics::createDynamicsPluginAssembly();
+    emptyDescriptorExtra.dynamics->descriptor.panels.clear();
+    emptyDescriptorExtra.selection = selection::createSelectionPluginAssembly();
+    emptyDescriptorExtra.selection->descriptor.panels.clear();
+    emptyDescriptorExtra.optimization =
+        optimization::createOptimizationPluginAssembly();
+    emptyDescriptorExtra.optimization->descriptor.panels.clear();
+    EXPECT_EQ(ui::dynamicsPanelWidget(emptyDescriptorExtra), nullptr)
+        << "dynamics 面板记录空＝nullptr（结构违约防御——不越界）";
+    EXPECT_EQ(ui::selectionPanelWidget(emptyDescriptorExtra), nullptr)
+        << "selection 面板记录空＝nullptr（结构违约防御——不越界）";
+    EXPECT_EQ(ui::optimizationPanelWidget(emptyDescriptorExtra), nullptr)
+        << "optimization 面板记录空＝nullptr（结构违约防御——不越界）";
 }
 
 }  // namespace

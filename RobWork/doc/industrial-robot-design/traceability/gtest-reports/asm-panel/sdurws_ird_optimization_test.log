@@ -1,0 +1,416 @@
+[==========] Running 164 tests from 26 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from OptDiagCodes
+[ RUN      ] OptDiagCodes.FactoryScopeIsSection66FullTable_WP20T02_ACC2
+[       OK ] OptDiagCodes.FactoryScopeIsSection66FullTable_WP20T02_ACC2 (0 ms)
+[ RUN      ] OptDiagCodes.StageLockedCodeFallsAtOptPrefix_WP20T02_POPT1
+[       OK ] OptDiagCodes.StageLockedCodeFallsAtOptPrefix_WP20T02_POPT1 (0 ms)
+[ RUN      ] OptDiagCodes.DescriptorFieldsMatchSection66Rows_WP20T02_ACC2
+[       OK ] OptDiagCodes.DescriptorFieldsMatchSection66Rows_WP20T02_ACC2 (0 ms)
+[ RUN      ] OptDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP20T02_ACC2
+[       OK ] OptDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP20T02_ACC2 (0 ms)
+[ RUN      ] OptDiagCodes.RegistersIntoStableCodeRegistry_WP20T02_ACC2
+[       OK ] OptDiagCodes.RegistersIntoStableCodeRegistry_WP20T02_ACC2 (0 ms)
+[ RUN      ] OptDiagCodes.DuplicateRegistrationRejected_WP20T02_ACC2
+[       OK ] OptDiagCodes.DuplicateRegistrationRejected_WP20T02_ACC2 (0 ms)
+[----------] 6 tests from OptDiagCodes (0 ms total)
+
+[----------] 4 tests from OptBuildRedLine
+[ RUN      ] OptBuildRedLine.ProductFaceHasZeroQtIncludes_WP20T02_ACC1
+[       OK ] OptBuildRedLine.ProductFaceHasZeroQtIncludes_WP20T02_ACC1 (13 ms)
+[ RUN      ] OptBuildRedLine.IncludeFaceRestrictedToNineRegisteredEdges_WP20T02_ACC2
+[       OK ] OptBuildRedLine.IncludeFaceRestrictedToNineRegisteredEdges_WP20T02_ACC2 (7 ms)
+[ RUN      ] OptBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP20T02_ACC2
+[       OK ] OptBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP20T02_ACC2 (6 ms)
+[ RUN      ] OptBuildRedLine.ProductFaceFilesNonEmpty_WP20T02_ACC1
+[       OK ] OptBuildRedLine.ProductFaceFilesNonEmpty_WP20T02_ACC1 (5 ms)
+[----------] 4 tests from OptBuildRedLine (33 ms total)
+
+[----------] 10 tests from OptVariables
+[ RUN      ] OptVariables.NewModelInitializationUnlocksAllBindings_WP20T03_ACC1
+[       OK ] OptVariables.NewModelInitializationUnlocksAllBindings_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.RefitInitializationLocksUnauthorizedByDefault_WP20T03_ACC1
+[       OK ] OptVariables.RefitInitializationLocksUnauthorizedByDefault_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.PatchTouchingLockedBindingRejectedWithVarLocked_WP20T03_ACC1
+[       OK ] OptVariables.PatchTouchingLockedBindingRejectedWithVarLocked_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.ContinuousValueOutOfRangeRejectedNotClamped_WP20T03_ACC1
+[       OK ] OptVariables.ContinuousValueOutOfRangeRejectedNotClamped_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.QuantizedValueAlignedHalfEvenIntoCanonical_WP20T03_ACC1
+[       OK ] OptVariables.QuantizedValueAlignedHalfEvenIntoCanonical_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.MaterialEnumOutOfBoundsRejectedValidSwitchOverlaid_WP20T03_ACC1
+[       OK ] OptVariables.MaterialEnumOutOfBoundsRejectedValidSwitchOverlaid_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.StageBActivationOfMotorKeyRejectedWithStageLocked_WP20T03_ACC1
+[       OK ] OptVariables.StageBActivationOfMotorKeyRejectedWithStageLocked_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.AuthorityMutexGroupsRejectedOnDuplicateActivation_WP20T03_ACC1
+[       OK ] OptVariables.AuthorityMutexGroupsRejectedOnDuplicateActivation_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.BindingValidationRejectsMalformedResearchDefinition_WP20T03_ACC1
+[       OK ] OptVariables.BindingValidationRejectsMalformedResearchDefinition_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptVariables.BindingSubjectMustResideInSnapshotClosure_WP20T03_ACC1
+[       OK ] OptVariables.BindingSubjectMustResideInSnapshotClosure_WP20T03_ACC1 (0 ms)
+[----------] 10 tests from OptVariables (0 ms total)
+
+[----------] 7 tests from OptCandidatePatch
+[ RUN      ] OptCandidatePatch.IdenticalPatchesProduceIdenticalIdentity_WP20T03_ACC3
+[       OK ] OptCandidatePatch.IdenticalPatchesProduceIdenticalIdentity_WP20T03_ACC3 (0 ms)
+[ RUN      ] OptCandidatePatch.CandidateIdDependsOnBaselineAndPatchOnly_WP20T03_ACC3
+[       OK ] OptCandidatePatch.CandidateIdDependsOnBaselineAndPatchOnly_WP20T03_ACC3 (0 ms)
+[ RUN      ] OptCandidatePatch.EmptyPatchIsLegalBaselineCandidate_WP20T03_ACC3
+[       OK ] OptCandidatePatch.EmptyPatchIsLegalBaselineCandidate_WP20T03_ACC3 (0 ms)
+[ RUN      ] OptCandidatePatch.MalformedPatchItemsRejected_WP20T03_ACC3
+[       OK ] OptCandidatePatch.MalformedPatchItemsRejected_WP20T03_ACC3 (0 ms)
+[ RUN      ] OptCandidatePatch.DiffReportsStableOrderedEntries_WP20T03_ACC1
+[       OK ] OptCandidatePatch.DiffReportsStableOrderedEntries_WP20T03_ACC1 (0 ms)
+[ RUN      ] OptCandidatePatch.StageBRatioPassesStageLockAndCompilesIntoOverlay_WP20T03_ACC2
+[       OK ] OptCandidatePatch.StageBRatioPassesStageLockAndCompilesIntoOverlay_WP20T03_ACC2 (0 ms)
+[ RUN      ] OptCandidatePatch.CanonicalByteLayoutGoldenCheck_WP20T03_ACC3
+[       OK ] OptCandidatePatch.CanonicalByteLayoutGoldenCheck_WP20T03_ACC3 (0 ms)
+[----------] 7 tests from OptCandidatePatch (0 ms total)
+
+[----------] 23 tests from OptConstraint
+[ RUN      ] OptConstraint.ConstraintTokensFollowRegisteredVocabulary_WP20T04_ACC1
+[       OK ] OptConstraint.ConstraintTokensFollowRegisteredVocabulary_WP20T04_ACC1 (0 ms)
+[ RUN      ] OptConstraint.StageBPlanFollowsPipelineOrder_WP20T04_ACC1
+[       OK ] OptConstraint.StageBPlanFollowsPipelineOrder_WP20T04_ACC1 (0 ms)
+[ RUN      ] OptConstraint.StageDConstraintRequestThrowsStageLocked_WP20T04_ACC2
+[       OK ] OptConstraint.StageDConstraintRequestThrowsStageLocked_WP20T04_ACC2 (0 ms)
+[ RUN      ] OptConstraint.StageBRequestingJointFamiliesThrowsStageLocked_WP20T04_ACC2
+[       OK ] OptConstraint.StageBRequestingJointFamiliesThrowsStageLocked_WP20T04_ACC2 (0 ms)
+[ RUN      ] OptConstraint.UnknownConstraintTokenThrowsInputInvalid_WP20T04_ACC2
+[       OK ] OptConstraint.UnknownConstraintTokenThrowsInputInvalid_WP20T04_ACC2 (0 ms)
+[ RUN      ] OptConstraint.PipelineStageDRequestThrowsStageLocked_WP20T04_ACC2
+[       OK ] OptConstraint.PipelineStageDRequestThrowsStageLocked_WP20T04_ACC2 (0 ms)
+[ RUN      ] OptConstraint.LockedBindingPatchRejectedBeforePipeline_WP20T04_ACC3
+[       OK ] OptConstraint.LockedBindingPatchRejectedBeforePipeline_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.CompileFailureYieldsEvaluationFailedWithRtPassthrough_WP20T04_ACC3
+[       OK ] OptConstraint.CompileFailureYieldsEvaluationFailedWithRtPassthrough_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.TopologyOutOfScopeMakesInfeasible_WP20T04_ACC1
+[       OK ] OptConstraint.TopologyOutOfScopeMakesInfeasible_WP20T04_ACC1 (0 ms)
+[ RUN      ] OptConstraint.JointLimitMustFindingMakesInfeasible_WP20T04_ACC3
+[       OK ] OptConstraint.JointLimitMustFindingMakesInfeasible_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.JointLimitNearLimitWarnsButDoesNotBlock_WP20T04_ACC3
+[       OK ] OptConstraint.JointLimitNearLimitWarnsButDoesNotBlock_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.JointLimitProbeFailureYieldsEvaluationFailed_WP20T04_ACC3
+[       OK ] OptConstraint.JointLimitProbeFailureYieldsEvaluationFailed_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.ReachabilityMustViolationMakesInfeasibleViaPort3_WP20T04_ACC1
+[       OK ] OptConstraint.ReachabilityMustViolationMakesInfeasibleViaPort3_WP20T04_ACC1 (0 ms)
+[ RUN      ] OptConstraint.SearchExhaustedIsDataInsufficientNeverInfeasible_WP20T04_ACC3
+[       OK ] OptConstraint.SearchExhaustedIsDataInsufficientNeverInfeasible_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.MissingPortEvaluatorFailsFast_WP20T04_ACC1
+[       OK ] OptConstraint.MissingPortEvaluatorFailsFast_WP20T04_ACC1 (0 ms)
+[ RUN      ] OptConstraint.CollisionConfigLevelFilteredNotTaskInfeasible_WP20T04_ACC1
+[       OK ] OptConstraint.CollisionConfigLevelFilteredNotTaskInfeasible_WP20T04_ACC1 (0 ms)
+[ RUN      ] OptConstraint.CollisionDisabledIsNotApplicable_WP20T04_ACC1
+[       OK ] OptConstraint.CollisionDisabledIsNotApplicable_WP20T04_ACC1 (0 ms)
+[ RUN      ] OptConstraint.MissedMandatoryCaseNeverFormalPass_WP20T04_ACC3
+[       OK ] OptConstraint.MissedMandatoryCaseNeverFormalPass_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.EmptyRequiredCaseSetConservativeDataInsufficient_WP20T04_ACC4
+[       OK ] OptConstraint.EmptyRequiredCaseSetConservativeDataInsufficient_WP20T04_ACC4 (0 ms)
+[ RUN      ] OptConstraint.FullyFeasibleCandidateIsFormalEligible_WP20T04_ACC3
+[       OK ] OptConstraint.FullyFeasibleCandidateIsFormalEligible_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.SameInputYieldsIdenticalRecord_WP20T04_ACC3
+[       OK ] OptConstraint.SameInputYieldsIdenticalRecord_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.InvalidCandidateIdFailsFast_WP20T04_ACC3
+[       OK ] OptConstraint.InvalidCandidateIdFailsFast_WP20T04_ACC3 (0 ms)
+[ RUN      ] OptConstraint.DepsMissingRequiredMemberFailsAtConstruction_WP20T04_ACC1
+[       OK ] OptConstraint.DepsMissingRequiredMemberFailsAtConstruction_WP20T04_ACC1 (0 ms)
+[----------] 23 tests from OptConstraint (0 ms total)
+
+[----------] 12 tests from OptObjective
+[ RUN      ] OptObjective.MetricDefinitionsGoldenTable
+[       OK ] OptObjective.MetricDefinitionsGoldenTable (0 ms)
+[ RUN      ] OptObjective.DefaultObjectivesStageSplit
+[       OK ] OptObjective.DefaultObjectivesStageSplit (0 ms)
+[ RUN      ] OptObjective.ValidateStageLockRejectsStageDMetrics
+[       OK ] OptObjective.ValidateStageLockRejectsStageDMetrics (0 ms)
+[ RUN      ] OptObjective.ValidateEvaluatorRegistration
+[       OK ] OptObjective.ValidateEvaluatorRegistration (0 ms)
+[ RUN      ] OptObjective.ValidateRejectsEmptyAndDuplicate
+[       OK ] OptObjective.ValidateRejectsEmptyAndDuplicate (0 ms)
+[ RUN      ] OptObjective.MakeObjectiveSetFailFast
+[       OK ] OptObjective.MakeObjectiveSetFailFast (0 ms)
+[ RUN      ] OptObjective.CanonicalSegmentGoldenLayout
+[       OK ] OptObjective.CanonicalSegmentGoldenLayout (0 ms)
+[ RUN      ] OptObjective.StaticMetricsGoldenValues
+[       OK ] OptObjective.StaticMetricsGoldenValues (0 ms)
+[ RUN      ] OptObjective.StageBFiveDMetricsNotComputableNotInfeasible
+[       OK ] OptObjective.StageBFiveDMetricsNotComputableNotInfeasible (0 ms)
+[ RUN      ] OptObjective.MissingSourcesAreNotZero
+[       OK ] OptObjective.MissingSourcesAreNotZero (0 ms)
+[ RUN      ] OptObjective.JointMarginPartialDataSemantics
+[       OK ] OptObjective.JointMarginPartialDataSemantics (0 ms)
+[ RUN      ] OptObjective.NonFiniteInputsNotSilentlyFixed
+[       OK ] OptObjective.NonFiniteInputsNotSilentlyFixed (0 ms)
+[----------] 12 tests from OptObjective (0 ms total)
+
+[----------] 9 tests from OptPareto
+[ RUN      ] OptPareto.DominatesStrictZeroTolerance
+[       OK ] OptPareto.DominatesStrictZeroTolerance (0 ms)
+[ RUN      ] OptPareto.DominatesToleranceExplicitConfig
+[       OK ] OptPareto.DominatesToleranceExplicitConfig (0 ms)
+[ RUN      ] OptPareto.DominatesMaxDirectionAndToleranceReference
+[       OK ] OptPareto.DominatesMaxDirectionAndToleranceReference (0 ms)
+[ RUN      ] OptPareto.BuildFrontStableOrderInputOrderIndependent
+[       OK ] OptPareto.BuildFrontStableOrderInputOrderIndependent (0 ms)
+[ RUN      ] OptPareto.BuildFrontDedupKeepsFirstOccurrence
+[       OK ] OptPareto.BuildFrontDedupKeepsFirstOccurrence (0 ms)
+[ RUN      ] OptPareto.BuildFrontLayeredRanksCascade
+[       OK ] OptPareto.BuildFrontLayeredRanksCascade (0 ms)
+[ RUN      ] OptPareto.DefaultZeroToleranceKeepsFloatTotalOrder
+[       OK ] OptPareto.DefaultZeroToleranceKeepsFloatTotalOrder (0 ms)
+[ RUN      ] OptPareto.BuildFrontRejectsContractViolations
+[       OK ] OptPareto.BuildFrontRejectsContractViolations (0 ms)
+[ RUN      ] OptPareto.BuildFrontDeterministicAndBaselineFlag
+[       OK ] OptPareto.BuildFrontDeterministicAndBaselineFlag (0 ms)
+[----------] 9 tests from OptPareto (0 ms total)
+
+[----------] 15 tests from OptEvaluatorPorts
+[ RUN      ] OptEvaluatorPorts.RunPhaseTokensFollowVocabulary_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.RunPhaseTokensFollowVocabulary_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.ZeroSeedRejectedWithoutSubstitution_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.ZeroSeedRejectedWithoutSubstitution_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.ParallelBeyondStageBPromiseRejected_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.ParallelBeyondStageBPromiseRejected_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.ConfigContradictionsRejected_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.ConfigContradictionsRejected_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.CanonicalConfigDeterministicAndFieldSensitive_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.CanonicalConfigDeterministicAndFieldSensitive_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.SeededGenerationReproducibleAndSeedSensitive_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.SeededGenerationReproducibleAndSeedSensitive_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.SeededGenerationRespectsLocksBoundsEnums_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.SeededGenerationRespectsLocksBoundsEnums_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.BaselineCandidateAlwaysFirstAndEmpty_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.BaselineCandidateAlwaysFirstAndEmpty_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.QuickScreenedOutWithReasonAndScreeningOnly_WP20T06_ACC1
+[       OK ] OptEvaluatorPorts.QuickScreenedOutWithReasonAndScreeningOnly_WP20T06_ACC1 (0 ms)
+[ RUN      ] OptEvaluatorPorts.VerifiedSurvivorsProducePareto_WP20T06_ACC1
+[       OK ] OptEvaluatorPorts.VerifiedSurvivorsProducePareto_WP20T06_ACC1 (0 ms)
+[ RUN      ] OptEvaluatorPorts.QuickFailureStaysEvaluationFailed_WP20T06_ACC1
+[       OK ] OptEvaluatorPorts.QuickFailureStaysEvaluationFailed_WP20T06_ACC1 (0 ms)
+[ RUN      ] OptEvaluatorPorts.SearchEmptyCompletedNotInfeasible_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.SearchEmptyCompletedNotInfeasible_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.SameSeedSameConfigEquivalentSetAndStableOrder_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.SameSeedSameConfigEquivalentSetAndStableOrder_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.MissingActiveMetricNeverEntersPareto_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.MissingActiveMetricNeverEntersPareto_WP20T06_ACC3 (0 ms)
+[ RUN      ] OptEvaluatorPorts.CancellationPreservesPartialBatch_WP20T06_ACC3
+[       OK ] OptEvaluatorPorts.CancellationPreservesPartialBatch_WP20T06_ACC3 (0 ms)
+[----------] 15 tests from OptEvaluatorPorts (1 ms total)
+
+[----------] 8 tests from OptRun
+[ RUN      ] OptRun.RunIdGenerateValidCanonicalRoundtrip_WP20T07
+[       OK ] OptRun.RunIdGenerateValidCanonicalRoundtrip_WP20T07 (0 ms)
+[ RUN      ] OptRun.RunIdStrictParseAndReservedValue_WP20T07
+[       OK ] OptRun.RunIdStrictParseAndReservedValue_WP20T07 (0 ms)
+[ RUN      ] OptRun.ArchivePhaseTokens_WP20T07
+[       OK ] OptRun.ArchivePhaseTokens_WP20T07 (0 ms)
+[ RUN      ] OptRun.AssembleCompletedOwnsCandidatesAndFormalEligible_WP20T07_ACC1
+[       OK ] OptRun.AssembleCompletedOwnsCandidatesAndFormalEligible_WP20T07_ACC1 (0 ms)
+[ RUN      ] OptRun.AssembleCanceledNeverFormalEligible_WP20T07
+[       OK ] OptRun.AssembleCanceledNeverFormalEligible_WP20T07 (0 ms)
+[ RUN      ] OptRun.AssembleRejectsNonTerminalPhase_WP20T07
+[       OK ] OptRun.AssembleRejectsNonTerminalPhase_WP20T07 (0 ms)
+[ RUN      ] OptRun.AssembleRejectsReservedIdentities_WP20T07
+[       OK ] OptRun.AssembleRejectsReservedIdentities_WP20T07 (0 ms)
+[ RUN      ] OptRun.IsSearchEmptyProjection_WP20T07
+[       OK ] OptRun.IsSearchEmptyProjection_WP20T07 (0 ms)
+[----------] 8 tests from OptRun (0 ms total)
+
+[----------] 14 tests from OptApplier
+[ RUN      ] OptApplier.BuildPlanHappyPathTwoStepSemantics_WP20T07_ACC2
+[       OK ] OptApplier.BuildPlanHappyPathTwoStepSemantics_WP20T07_ACC2 (0 ms)
+[ RUN      ] OptApplier.BuildPlanDefaultLabelDerivedFromCandidateId_WP20T07
+[       OK ] OptApplier.BuildPlanDefaultLabelDerivedFromCandidateId_WP20T07 (0 ms)
+[ RUN      ] OptApplier.RejectsNonCompletedRun_WP20T07
+[       OK ] OptApplier.RejectsNonCompletedRun_WP20T07 (0 ms)
+[ RUN      ] OptApplier.RejectsQuickScreeningOnlyRecord_WP20T07
+[       OK ] OptApplier.RejectsQuickScreeningOnlyRecord_WP20T07 (0 ms)
+[ RUN      ] OptApplier.RejectsInfeasibleAndIneligibleCandidates_WP20T07
+[       OK ] OptApplier.RejectsInfeasibleAndIneligibleCandidates_WP20T07 (0 ms)
+[ RUN      ] OptApplier.RejectsForeignOrMissingCandidate_WP20T07
+[       OK ] OptApplier.RejectsForeignOrMissingCandidate_WP20T07 (0 ms)
+[ RUN      ] OptApplier.RejectsMalformedRequestStructure_WP20T07
+[       OK ] OptApplier.RejectsMalformedRequestStructure_WP20T07 (0 ms)
+[ RUN      ] OptApplier.StaleBaselineFlaggedNotBlocking_WP20T07
+[       OK ] OptApplier.StaleBaselineFlaggedNotBlocking_WP20T07 (0 ms)
+[ RUN      ] OptApplier.ChannelizesMissingMaterializer_WP20T07
+[       OK ] OptApplier.ChannelizesMissingMaterializer_WP20T07 (0 ms)
+[ RUN      ] OptApplier.ChannelizesReadOnlyProject_WP20T07
+[       OK ] OptApplier.ChannelizesReadOnlyProject_WP20T07 (0 ms)
+[ RUN      ] OptApplier.RatioPatchWithoutDiffEntryWarnsNotFabricates_WP20T07_ACC3
+[       OK ] OptApplier.RatioPatchWithoutDiffEntryWarnsNotFabricates_WP20T07_ACC3 (0 ms)
+[ RUN      ] OptApplier.RatioPatchWithDiffEntryNoWarning_WP20T07
+[       OK ] OptApplier.RatioPatchWithDiffEntryNoWarning_WP20T07 (0 ms)
+[ RUN      ] OptApplier.PreviewDegradedWhenSourceOrInputMissing_WP20T07
+[       OK ] OptApplier.PreviewDegradedWhenSourceOrInputMissing_WP20T07 (0 ms)
+[ RUN      ] OptApplier.BuildPlanPureFunctionInputUntouched_WP20T07_ACC1
+[       OK ] OptApplier.BuildPlanPureFunctionInputUntouched_WP20T07_ACC1 (0 ms)
+[----------] 14 tests from OptApplier (0 ms total)
+
+[----------] 19 tests from OptPreflight
+[ RUN      ] OptPreflight.CleanStudyPassesWithAllowances_WP20T08_ACC1
+[       OK ] OptPreflight.CleanStudyPassesWithAllowances_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.StaleTipAndMissingBranchLocated_WP20T08_ACC1
+[       OK ] OptPreflight.StaleTipAndMissingBranchLocated_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.BudgetInvalidReportedNotThrown_WP20T08_ACC1
+[       OK ] OptPreflight.BudgetInvalidReportedNotThrown_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.UnregisteredAndStageLockedBindings_WP20T08_ACC1
+[       OK ] OptPreflight.UnregisteredAndStageLockedBindings_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.StageLockedObjectiveLocated_WP20T08_ACC1
+[       OK ] OptPreflight.StageLockedObjectiveLocated_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.MissingArtifactsLocated_WP20T08_ACC1
+[       OK ] OptPreflight.MissingArtifactsLocated_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.DisabledRequiredCasesBlock_WP20T08_ACC1
+[       OK ] OptPreflight.DisabledRequiredCasesBlock_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.MissingEvaluatorAndContractMismatch_WP20T08_ACC1
+[       OK ] OptPreflight.MissingEvaluatorAndContractMismatch_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.MissingPolicyAndProfile_WP20T08_ACC1
+[       OK ] OptPreflight.MissingPolicyAndProfile_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.StageDBlockedByP04AndJointEvaluator_WP20T08_ACC2
+[       OK ] OptPreflight.StageDBlockedByP04AndJointEvaluator_WP20T08_ACC2 (0 ms)
+[ RUN      ] OptPreflight.IdentityMismatchDetected_WP20T08_ACC1
+[       OK ] OptPreflight.IdentityMismatchDetected_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.UnsupportedChainBlocks_WP20T08_ACC1
+[       OK ] OptPreflight.UnsupportedChainBlocks_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.UnsolidifiedExternalResourceBlocks_WP20T08_ACC1
+[       OK ] OptPreflight.UnsolidifiedExternalResourceBlocks_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.EnumEstimateOverBudgetWarns_WP20T08_ACC1
+[       OK ] OptPreflight.EnumEstimateOverBudgetWarns_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.VersionCompatibilityHints_WP20T08_ACC1
+[       OK ] OptPreflight.VersionCompatibilityHints_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.FindingsSortedAndCountsConsistent_WP20T08_ACC1
+[       OK ] OptPreflight.FindingsSortedAndCountsConsistent_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.ValidateRunSpecFailFast_WP20T08_ACC1
+[       OK ] OptPreflight.ValidateRunSpecFailFast_WP20T08_ACC1 (0 ms)
+[ RUN      ] OptPreflight.PreflightIsPureAndReadonly_WP20T08_ACC3
+[       OK ] OptPreflight.PreflightIsPureAndReadonly_WP20T08_ACC3 (0 ms)
+[ RUN      ] OptPreflight.LevelTokens_WP20T08
+[       OK ] OptPreflight.LevelTokens_WP20T08 (0 ms)
+[----------] 19 tests from OptPreflight (0 ms total)
+
+[----------] 3 tests from OptBaselineEvaluation
+[ RUN      ] OptBaselineEvaluation.BaselineSamePipelineAndBasis_WP20T08_ACC2
+[       OK ] OptBaselineEvaluation.BaselineSamePipelineAndBasis_WP20T08_ACC2 (0 ms)
+[ RUN      ] OptBaselineEvaluation.BaselineInsufficientNotFabricated_WP20T08_ACC2
+[       OK ] OptBaselineEvaluation.BaselineInsufficientNotFabricated_WP20T08_ACC2 (0 ms)
+[ RUN      ] OptBaselineEvaluation.BaselineFailureNotScreenedOut_WP20T08_ACC2
+[       OK ] OptBaselineEvaluation.BaselineFailureNotScreenedOut_WP20T08_ACC2 (0 ms)
+[----------] 3 tests from OptBaselineEvaluation (0 ms total)
+
+[----------] 9 tests from OptExport
+[ RUN      ] OptExport.FormalSixArtifactsEndToEnd_WP20T09_ACC1
+[       OK ] OptExport.FormalSixArtifactsEndToEnd_WP20T09_ACC1 (23 ms)
+[ RUN      ] OptExport.AuditCsvMatchesRunRecord_WP20T09_ACC1
+[       OK ] OptExport.AuditCsvMatchesRunRecord_WP20T09_ACC1 (0 ms)
+[ RUN      ] OptExport.ContractStaleBlocksFormalExport_WP20T09_ACC2
+[       OK ] OptExport.ContractStaleBlocksFormalExport_WP20T09_ACC2 (0 ms)
+[ RUN      ] OptExport.CanceledInsufficientNeverFormal_WP20T09_ACC2
+[       OK ] OptExport.CanceledInsufficientNeverFormal_WP20T09_ACC2 (0 ms)
+[ RUN      ] OptExport.CurrentnessProjectionConsumed_WP20T09
+[       OK ] OptExport.CurrentnessProjectionConsumed_WP20T09 (0 ms)
+[ RUN      ] OptExport.RequestValidationFailFast_WP20T09
+[       OK ] OptExport.RequestValidationFailFast_WP20T09 (0 ms)
+[ RUN      ] OptExport.BundleByteDeterministic_WP20T09
+[       OK ] OptExport.BundleByteDeterministic_WP20T09 (0 ms)
+[ RUN      ] OptExport.WritePortAssemblyViolationFailsFast_WP20T09_ACC3
+[       OK ] OptExport.WritePortAssemblyViolationFailsFast_WP20T09_ACC3 (0 ms)
+[ RUN      ] OptExport.WriteFailureSurfacesPerArtifact_WP20T09_ACC3
+[       OK ] OptExport.WriteFailureSurfacesPerArtifact_WP20T09_ACC3 (5 ms)
+[----------] 9 tests from OptExport (32 ms total)
+
+[----------] 1 test from OptPanelReadiness
+[ RUN      ] OptPanelReadiness.ReadinessProjectionTransfersSessionFacts_WP20T10_ACC1
+[       OK ] OptPanelReadiness.ReadinessProjectionTransfersSessionFacts_WP20T10_ACC1 (0 ms)
+[----------] 1 test from OptPanelReadiness (0 ms total)
+
+[----------] 2 tests from OptPanelVariables
+[ RUN      ] OptPanelVariables.VariableRowsTransferBindingsAndStageEnable_WP20T10_ACC1
+[       OK ] OptPanelVariables.VariableRowsTransferBindingsAndStageEnable_WP20T10_ACC1 (0 ms)
+[ RUN      ] OptPanelVariables.VariableRowsEmptyAndOrderStable_WP20T10_ACC1
+[       OK ] OptPanelVariables.VariableRowsEmptyAndOrderStable_WP20T10_ACC1 (0 ms)
+[----------] 2 tests from OptPanelVariables (0 ms total)
+
+[----------] 3 tests from OptPanelConstraints
+[ RUN      ] OptPanelConstraints.StageBPlanRowsTransferInExecutionOrder_WP20T10_ACC1
+[       OK ] OptPanelConstraints.StageBPlanRowsTransferInExecutionOrder_WP20T10_ACC1 (0 ms)
+[ RUN      ] OptPanelConstraints.StageDShowsStageLockBannerNotElimination_WP20T10_ACC2
+[       OK ] OptPanelConstraints.StageDShowsStageLockBannerNotElimination_WP20T10_ACC2 (0 ms)
+[ RUN      ] OptPanelConstraints.NotAssembledPlanShowsEmptyState_WP20T10_ACC1
+[       OK ] OptPanelConstraints.NotAssembledPlanShowsEmptyState_WP20T10_ACC1 (0 ms)
+[----------] 3 tests from OptPanelConstraints (0 ms total)
+
+[----------] 5 tests from OptPanelRunControl
+[ RUN      ] OptPanelRunControl.ProgressFunnelEightPhasesGolden_WP20T10_ACC2
+[       OK ] OptPanelRunControl.ProgressFunnelEightPhasesGolden_WP20T10_ACC2 (0 ms)
+[ RUN      ] OptPanelRunControl.FunnelEmptyStateAndUnknownTokenFailFast_WP20T10_ACC2
+[       OK ] OptPanelRunControl.FunnelEmptyStateAndUnknownTokenFailFast_WP20T10_ACC2 (0 ms)
+[ RUN      ] OptPanelRunControl.RunStartGatesOrderAndSeamForwarding_WP20T10_ACC1
+[       OK ] OptPanelRunControl.RunStartGatesOrderAndSeamForwarding_WP20T10_ACC1 (0 ms)
+[ RUN      ] OptPanelRunControl.RunCancelGatesAndNeverErrors_WP20T10_ACC2
+[       OK ] OptPanelRunControl.RunCancelGatesAndNeverErrors_WP20T10_ACC2 (0 ms)
+[ RUN      ] OptPanelRunControl.CancelCooperationChainPreservesPartialRuns_WP20T10_ACC2
+[       OK ] OptPanelRunControl.CancelCooperationChainPreservesPartialRuns_WP20T10_ACC2 (0 ms)
+[----------] 5 tests from OptPanelRunControl (0 ms total)
+
+[----------] 2 tests from OptPanelCandidates
+[ RUN      ] OptPanelCandidates.CandidateRowsTransferInOrchestrationOrder_WP20T10_ACC1
+[       OK ] OptPanelCandidates.CandidateRowsTransferInOrchestrationOrder_WP20T10_ACC1 (0 ms)
+[ RUN      ] OptPanelCandidates.RejectionDomainDisjointFromStageLock_WP20T10_ACC2
+[       OK ] OptPanelCandidates.RejectionDomainDisjointFromStageLock_WP20T10_ACC2 (0 ms)
+[----------] 2 tests from OptPanelCandidates (0 ms total)
+
+[----------] 2 tests from OptPanelCompare
+[ RUN      ] OptPanelCompare.ComparisonRowsGoldenDeltaDirectionAndMissing_WP20T10_ACC1
+[       OK ] OptPanelCompare.ComparisonRowsGoldenDeltaDirectionAndMissing_WP20T10_ACC1 (0 ms)
+[ RUN      ] OptPanelCompare.ComparisonInvalidIndicesFailFast_WP20T10_ACC1
+[       OK ] OptPanelCompare.ComparisonInvalidIndicesFailFast_WP20T10_ACC1 (0 ms)
+[----------] 2 tests from OptPanelCompare (0 ms total)
+
+[----------] 1 test from OptPanelStageLock
+[ RUN      ] OptPanelStageLock.BlockingFindingsBecomeBannerItems_WP20T10_ACC2
+[       OK ] OptPanelStageLock.BlockingFindingsBecomeBannerItems_WP20T10_ACC2 (0 ms)
+[----------] 1 test from OptPanelStageLock (0 ms total)
+
+[----------] 1 test from OptPanelText
+[ RUN      ] OptPanelText.ResolveTextFallsBackAndGuardsDigestLeak_WP20T10_ACC1
+[       OK ] OptPanelText.ResolveTextFallsBackAndGuardsDigestLeak_WP20T10_ACC1 (0 ms)
+[----------] 1 test from OptPanelText (0 ms total)
+
+[----------] 3 tests from OptPanelCatalog
+[ RUN      ] OptPanelCatalog.AssemblyDescriptorCarriesRegistrationFace_WP20T10_ACC1
+[       OK ] OptPanelCatalog.AssemblyDescriptorCarriesRegistrationFace_WP20T10_ACC1 (0 ms)
+[ RUN      ] OptPanelCatalog.PanelPageKeysFollowKeyFamily_WP20T10_ACC1
+[       OK ] OptPanelCatalog.PanelPageKeysFollowKeyFamily_WP20T10_ACC1 (0 ms)
+[ RUN      ] OptPanelCatalog.AssemblyBindsDriveModuleServices_WP20T10_ACC1
+[       OK ] OptPanelCatalog.AssemblyBindsDriveModuleServices_WP20T10_ACC1 (0 ms)
+[----------] 3 tests from OptPanelCatalog (0 ms total)
+
+[----------] 1 test from OptPanelGui
+[ RUN      ] OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\optimization\test\OptPluginPanelTest.cpp(1467): Skipped
+envUnavailable：无人值守门禁不做 GUI 运行验证——四页主面板（变量表/约束页/运行控制/候选表与对比）的呈现与交互由宿主装配批次的开发 harness 手动点验承载（units/optimization.md §13.3 GUI 约束），本次未启动，如实登记不标注通过
+
+[  SKIPPED ] OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable (0 ms)
+[----------] 1 test from OptPanelGui (0 ms total)
+
+[----------] 1 test from OptGoldenLhs
+[ RUN      ] OptGoldenLhs.SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1
+[       OK ] OptGoldenLhs.SeededBatchMatchesGoldenAndReplays_WP20T11_ACC1 (4 ms)
+[----------] 1 test from OptGoldenLhs (4 ms total)
+
+[----------] 2 tests from OptGoldenPareto
+[ RUN      ] OptGoldenPareto.OrchestratorRunMatchesGolden_WP20T11_ACC1
+[       OK ] OptGoldenPareto.OrchestratorRunMatchesGolden_WP20T11_ACC1 (3 ms)
+[ RUN      ] OptGoldenPareto.ExplicitToleranceFlipsFront_WP20T11_ACC3
+[       OK ] OptGoldenPareto.ExplicitToleranceFlipsFront_WP20T11_ACC3 (1 ms)
+[----------] 2 tests from OptGoldenPareto (4 ms total)
+
+[----------] 1 test from OptGoldenAdopt
+[ RUN      ] OptGoldenAdopt.AdoptGuardPlanMatchesGolden_WP20T11_ACC1
+[       OK ] OptGoldenAdopt.AdoptGuardPlanMatchesGolden_WP20T11_ACC1 (2 ms)
+[----------] 1 test from OptGoldenAdopt (2 ms total)
+
+[----------] Global test environment tear-down
+[==========] 164 tests from 26 test suites ran. (83 ms total)
+[  PASSED  ] 163 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable

@@ -1,0 +1,289 @@
+[==========] Running 105 tests from 23 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from DynDiagCodes
+[ RUN      ] DynDiagCodes.FactoryScopeIsSection94FullTable_WP17T02_ACC2
+[       OK ] DynDiagCodes.FactoryScopeIsSection94FullTable_WP17T02_ACC2 (0 ms)
+[ RUN      ] DynDiagCodes.DescriptorFieldsMatchSection94Rows_WP17T02_ACC2
+[       OK ] DynDiagCodes.DescriptorFieldsMatchSection94Rows_WP17T02_ACC2 (0 ms)
+[ RUN      ] DynDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP17T02_ACC2
+[       OK ] DynDiagCodes.CategoryAndRetryMappingMatchesAnchors_WP17T02_ACC2 (0 ms)
+[ RUN      ] DynDiagCodes.RegistersIntoStableCodeRegistry_WP17T02_ACC2
+[       OK ] DynDiagCodes.RegistersIntoStableCodeRegistry_WP17T02_ACC2 (0 ms)
+[ RUN      ] DynDiagCodes.DuplicateRegistrationRejected_WP17T02_ACC2
+[       OK ] DynDiagCodes.DuplicateRegistrationRejected_WP17T02_ACC2 (0 ms)
+[----------] 5 tests from DynDiagCodes (0 ms total)
+
+[----------] 4 tests from DynBuildRedLine
+[ RUN      ] DynBuildRedLine.ProductFaceHasZeroQtIncludes_WP17T02_ACC1
+[       OK ] DynBuildRedLine.ProductFaceHasZeroQtIncludes_WP17T02_ACC1 (8 ms)
+[ RUN      ] DynBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP17T02_ACC2
+[       OK ] DynBuildRedLine.IncludeFaceRestrictedToFiveRegisteredEdges_WP17T02_ACC2 (5 ms)
+[ RUN      ] DynBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP17T02_ACC2
+[       OK ] DynBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP17T02_ACC2 (4 ms)
+[ RUN      ] DynBuildRedLine.ProductFaceFilesNonEmpty_WP17T02_ACC1
+[       OK ] DynBuildRedLine.ProductFaceFilesNonEmpty_WP17T02_ACC1 (3 ms)
+[----------] 4 tests from DynBuildRedLine (22 ms total)
+
+[----------] 15 tests from DynRnea
+[ RUN      ] DynRnea.StaticGravityTwoLinkAnalytic
+[       OK ] DynRnea.StaticGravityTwoLinkAnalytic (0 ms)
+[ RUN      ] DynRnea.PrismaticSlipArmGravityMoment_F580
+[       OK ] DynRnea.PrismaticSlipArmGravityMoment_F580 (0 ms)
+[ RUN      ] DynRnea.InvertedMountGravitySignFlipViaBaseProjection
+[       OK ] DynRnea.InvertedMountGravitySignFlipViaBaseProjection (0 ms)
+[ RUN      ] DynRnea.StaticGravityWithToolAndPayloadComposition
+[       OK ] DynRnea.StaticGravityWithToolAndPayloadComposition (0 ms)
+[ RUN      ] DynRnea.SplitChannelsMatchAnalyticModelAndSumIdentity
+[       OK ] DynRnea.SplitChannelsMatchAnalyticModelAndSumIdentity (0 ms)
+[ RUN      ] DynRnea.FrictionSignConventionAndZeroSpeedCoulomb
+[       OK ] DynRnea.FrictionSignConventionAndZeroSpeedCoulomb (0 ms)
+[ RUN      ] DynRnea.FrictionMissingTriggersDyn06Material
+[       OK ] DynRnea.FrictionMissingTriggersDyn06Material (0 ms)
+[ RUN      ] DynRnea.PayloadEventTimelineVariants
+[       OK ] DynRnea.PayloadEventTimelineVariants (0 ms)
+[ RUN      ] DynRnea.ExternalWrenchConstantlyZeroNotApplicable
+[       OK ] DynRnea.ExternalWrenchConstantlyZeroNotApplicable (0 ms)
+[ RUN      ] DynRnea.DimensionMismatchFailFast
+[       OK ] DynRnea.DimensionMismatchFailFast (0 ms)
+[ RUN      ] DynRnea.NonMonotonicTimeFailFast
+[       OK ] DynRnea.NonMonotonicTimeFailFast (0 ms)
+[ RUN      ] DynRnea.NullModelAndEmptyConditionFailFast
+[       OK ] DynRnea.NullModelAndEmptyConditionFailFast (0 ms)
+[ RUN      ] DynRnea.NonFiniteInputMarkedAndEvaluationContinues
+[       OK ] DynRnea.NonFiniteInputMarkedAndEvaluationContinues (0 ms)
+[ RUN      ] DynRnea.JointSideResultIndependentOfDrivetrain
+[       OK ] DynRnea.JointSideResultIndependentOfDrivetrain (0 ms)
+[ RUN      ] DynRnea.CancelReturnsPartialWithoutError
+[       OK ] DynRnea.CancelReturnsPartialWithoutError (0 ms)
+[----------] 15 tests from DynRnea (1 ms total)
+
+[----------] 6 tests from DynSeries
+[ RUN      ] DynSeries.IdentityFreezeOrderingAndCompleteCounting
+[       OK ] DynSeries.IdentityFreezeOrderingAndCompleteCounting (0 ms)
+[ RUN      ] DynSeries.ContentIdentityDeterministicAndSensitive
+[       OK ] DynSeries.ContentIdentityDeterministicAndSensitive (0 ms)
+[ RUN      ] DynSeries.TimeBackwardsFailsFast
+[       OK ] DynSeries.TimeBackwardsFailsFast (0 ms)
+[ RUN      ] DynSeries.DuplicateRowMarkedAtFinalize
+[       OK ] DynSeries.DuplicateRowMarkedAtFinalize (0 ms)
+[ RUN      ] DynSeries.IdentityMissingFailsFast
+[       OK ] DynSeries.IdentityMissingFailsFast (0 ms)
+[ RUN      ] DynSeries.EmptySemanticsAndGapCounting
+[       OK ] DynSeries.EmptySemanticsAndGapCounting (0 ms)
+[----------] 6 tests from DynSeries (0 ms total)
+
+[----------] 5 tests from DynEnvelope
+[ RUN      ] DynEnvelope.PeakGoldenFlatTopWindowSegmentAndTokenOrder
+[       OK ] DynEnvelope.PeakGoldenFlatTopWindowSegmentAndTokenOrder (0 ms)
+[ RUN      ] DynEnvelope.RmsTimeWeightedWithDwellGolden
+[       OK ] DynEnvelope.RmsTimeWeightedWithDwellGolden (0 ms)
+[ RUN      ] DynEnvelope.NonOkRowsExcludedFromStatistics
+[       OK ] DynEnvelope.NonOkRowsExcludedFromStatistics (0 ms)
+[ RUN      ] DynEnvelope.GapZeroContributionNotInterpolated_F589
+[       OK ] DynEnvelope.GapZeroContributionNotInterpolated_F589 (0 ms)
+[ RUN      ] DynEnvelope.EmptyAndDegenerateExplicitInvalid
+[       OK ] DynEnvelope.EmptyAndDegenerateExplicitInvalid (0 ms)
+[----------] 5 tests from DynEnvelope (0 ms total)
+
+[----------] 3 tests from DynPowerEnergy
+[ RUN      ] DynPowerEnergy.EnergySplitGoldenWithDwellAndNetMatch
+[       OK ] DynPowerEnergy.EnergySplitGoldenWithDwellAndNetMatch (0 ms)
+[ RUN      ] DynPowerEnergy.BrakingSignAndMultiRunPeakWindow
+[       OK ] DynPowerEnergy.BrakingSignAndMultiRunPeakWindow (0 ms)
+[ RUN      ] DynPowerEnergy.DegenerateTimeExplicitInvalid
+[       OK ] DynPowerEnergy.DegenerateTimeExplicitInvalid (0 ms)
+[----------] 3 tests from DynPowerEnergy (0 ms total)
+
+[----------] 3 tests from DynStatsIntegration
+[ RUN      ] DynStatsIntegration.RneaStaticCycleEndToEnd
+[       OK ] DynStatsIntegration.RneaStaticCycleEndToEnd (0 ms)
+[ RUN      ] DynStatsIntegration.MixedJointTypeTypingGolden
+[       OK ] DynStatsIntegration.MixedJointTypeTypingGolden (0 ms)
+[ RUN      ] DynStatsIntegration.OperatingConditionResultAggregationShape
+[       OK ] DynStatsIntegration.OperatingConditionResultAggregationShape (0 ms)
+[----------] 3 tests from DynStatsIntegration (0 ms total)
+
+[----------] 12 tests from DynForward
+[ RUN      ] DynForward.AnalyticStraightConfigurationPassed_DYN05
+[       OK ] DynForward.AnalyticStraightConfigurationPassed_DYN05 (19 ms)
+[ RUN      ] DynForward.ConsistencyFailedBelowMachinePrecision_DYN05
+[       OK ] DynForward.ConsistencyFailedBelowMachinePrecision_DYN05 (19 ms)
+[ RUN      ] DynForward.DivergenceDetected_DYN05
+[       OK ] DynForward.DivergenceDetected_DYN05 (0 ms)
+[ RUN      ] DynForward.NumericAnomalySingularMassMatrix_DYN05
+[       OK ] DynForward.NumericAnomalySingularMassMatrix_DYN05 (0 ms)
+[ RUN      ] DynForward.RneaPartialRowsDoNotEscapeContract_F581
+[       OK ] DynForward.RneaPartialRowsDoNotEscapeContract_F581 (0 ms)
+[ RUN      ] DynForward.NotRunEmptyAndSingleSample_DYN05
+[       OK ] DynForward.NotRunEmptyAndSingleSample_DYN05 (0 ms)
+[ RUN      ] DynForward.NotRunNonFiniteInitialState_DYN05
+[       OK ] DynForward.NotRunNonFiniteInitialState_DYN05 (0 ms)
+[ RUN      ] DynForward.NotApplicableWhenSkipped_DYN05
+[       OK ] DynForward.NotApplicableWhenSkipped_DYN05 (0 ms)
+[ RUN      ] DynForward.CancelledReturnsNotRunZeroError_DYN05_UX03
+[       OK ] DynForward.CancelledReturnsNotRunZeroError_DYN05_UX03 (0 ms)
+[ RUN      ] DynForward.DeterministicRepeat_NFR_COR_02
+[       OK ] DynForward.DeterministicRepeat_NFR_COR_02 (35 ms)
+[ RUN      ] DynForward.PayloadEventSameSourceConsistency_DYN05
+[       OK ] DynForward.PayloadEventSameSourceConsistency_DYN05 (20 ms)
+[ RUN      ] DynForward.FailFastContractViolations_DYN05
+[       OK ] DynForward.FailFastContractViolations_DYN05 (0 ms)
+[----------] 12 tests from DynForward (96 ms total)
+
+[----------] 8 tests from DynEvidence
+[ RUN      ] DynEvidence.ProfileMatchesDynTableAndRegisters_WP17T06
+[       OK ] DynEvidence.ProfileMatchesDynTableAndRegisters_WP17T06 (0 ms)
+[ RUN      ] DynEvidence.CleanChainAllSatisfiedNoQualifier_WP17T06
+[       OK ] DynEvidence.CleanChainAllSatisfiedNoQualifier_WP17T06 (0 ms)
+[ RUN      ] DynEvidence.FrictionMissingDowngradesProvenanceItem_WP17T06
+[       OK ] DynEvidence.FrictionMissingDowngradesProvenanceItem_WP17T06 (0 ms)
+[ RUN      ] DynEvidence.EstimatedPropertyKeepsQualifier_WP17T06
+[       OK ] DynEvidence.EstimatedPropertyKeepsQualifier_WP17T06 (0 ms)
+[ RUN      ] DynEvidence.MissingListExhaustiveNotShortCircuit_WP17T06
+[       OK ] DynEvidence.MissingListExhaustiveNotShortCircuit_WP17T06 (0 ms)
+[ RUN      ] DynEvidence.ForwardCheckStatusMapping_WP17T06
+[       OK ] DynEvidence.ForwardCheckStatusMapping_WP17T06 (0 ms)
+[ RUN      ] DynEvidence.BuilderFailsFastContractViolations_WP17T06
+[       OK ] DynEvidence.BuilderFailsFastContractViolations_WP17T06 (0 ms)
+[ RUN      ] DynEvidence.EmptySeriesMissingAndUnbuiltAccessors_WP17T06
+[       OK ] DynEvidence.EmptySeriesMissingAndUnbuiltAccessors_WP17T06 (0 ms)
+[----------] 8 tests from DynEvidence (0 ms total)
+
+[----------] 7 tests from DynEnvelopeMerge
+[ RUN      ] DynEnvelopeMerge.ThreeConditionGoldenMaxMergeAndAttribution
+[       OK ] DynEnvelopeMerge.ThreeConditionGoldenMaxMergeAndAttribution (0 ms)
+[ RUN      ] DynEnvelopeMerge.MultiPayloadAndHoldConditionsUnifiedRneaEndToEnd
+[       OK ] DynEnvelopeMerge.MultiPayloadAndHoldConditionsUnifiedRneaEndToEnd (0 ms)
+[ RUN      ] DynEnvelopeMerge.PartialSourceMarksEnvelopeIncompleteIndependently
+[       OK ] DynEnvelopeMerge.PartialSourceMarksEnvelopeIncompleteIndependently (0 ms)
+[ RUN      ] DynEnvelopeMerge.CoverageDenominatorIsFrozenRequiredCaseSet
+[       OK ] DynEnvelopeMerge.CoverageDenominatorIsFrozenRequiredCaseSet (0 ms)
+[ RUN      ] DynEnvelopeMerge.EmptySemanticsAndEmptySourceCoverage
+[       OK ] DynEnvelopeMerge.EmptySemanticsAndEmptySourceCoverage (0 ms)
+[ RUN      ] DynEnvelopeMerge.RmsNaNExcludedFromMaxAndAllInvalidNan
+[       OK ] DynEnvelopeMerge.RmsNaNExcludedFromMaxAndAllInvalidNan (0 ms)
+[ RUN      ] DynEnvelopeMerge.AssemblyContractFailsFast
+[       OK ] DynEnvelopeMerge.AssemblyContractFailsFast (0 ms)
+[----------] 7 tests from DynEnvelopeMerge (0 ms total)
+
+[----------] 4 tests from DynCurveProjector
+[ RUN      ] DynCurveProjector.ProjectsPerJointFiveChannelsGolden
+[       OK ] DynCurveProjector.ProjectsPerJointFiveChannelsGolden (0 ms)
+[ RUN      ] DynCurveProjector.ExcludesNonOkRowsAndCountsThem
+[       OK ] DynCurveProjector.ExcludesNonOkRowsAndCountsThem (0 ms)
+[ RUN      ] DynCurveProjector.RejectsBackwardTimeAndDuplicateJointRows
+[       OK ] DynCurveProjector.RejectsBackwardTimeAndDuplicateJointRows (0 ms)
+[ RUN      ] DynCurveProjector.EmptySeriesYieldsEmptyProjection
+[       OK ] DynCurveProjector.EmptySeriesYieldsEmptyProjection (0 ms)
+[----------] 4 tests from DynCurveProjector (0 ms total)
+
+[----------] 3 tests from DynReplayData
+[ RUN      ] DynReplayData.GroupsRowsIntoFramesGolden
+[       OK ] DynReplayData.GroupsRowsIntoFramesGolden (0 ms)
+[ RUN      ] DynReplayData.MarksIncompleteFramesForMissingRows
+[       OK ] DynReplayData.MarksIncompleteFramesForMissingRows (0 ms)
+[ RUN      ] DynReplayData.EmptySeriesYieldsNoFrames
+[       OK ] DynReplayData.EmptySeriesYieldsNoFrames (0 ms)
+[----------] 3 tests from DynReplayData (0 ms total)
+
+[----------] 4 tests from DynReplaySampler
+[ RUN      ] DynReplaySampler.ExactHitCopiesFrame
+[       OK ] DynReplaySampler.ExactHitCopiesFrame (0 ms)
+[ RUN      ] DynReplaySampler.MidpointInterpolationGolden
+[       OK ] DynReplaySampler.MidpointInterpolationGolden (0 ms)
+[ RUN      ] DynReplaySampler.RejectsOutOfRangeAndNonFiniteTime
+[       OK ] DynReplaySampler.RejectsOutOfRangeAndNonFiniteTime (0 ms)
+[ RUN      ] DynReplaySampler.EmptyDataAndPartialFrameInterpolation
+[       OK ] DynReplaySampler.EmptyDataAndPartialFrameInterpolation (0 ms)
+[----------] 4 tests from DynReplaySampler (0 ms total)
+
+[----------] 3 tests from DynPeakLocate
+[ RUN      ] DynPeakLocate.LocatesEveryTokenAgainstComputePeaks
+[       OK ] DynPeakLocate.LocatesEveryTokenAgainstComputePeaks (0 ms)
+[ RUN      ] DynPeakLocate.ReturnsNulloptForJointWithoutOkRows
+[       OK ] DynPeakLocate.ReturnsNulloptForJointWithoutOkRows (0 ms)
+[ RUN      ] DynPeakLocate.RejectsTokenOutOfRangeAndMismatchedPeaks
+[       OK ] DynPeakLocate.RejectsTokenOutOfRangeAndMismatchedPeaks (0 ms)
+[----------] 3 tests from DynPeakLocate (0 ms total)
+
+[----------] 3 tests from DynCommands
+[ RUN      ] DynCommands.AcceptsAllFiveTokensWithZeroRevisionContract
+[       OK ] DynCommands.AcceptsAllFiveTokensWithZeroRevisionContract (0 ms)
+[ RUN      ] DynCommands.RejectsUnknownAndMismatchedPayloadTokens
+[       OK ] DynCommands.RejectsUnknownAndMismatchedPayloadTokens (0 ms)
+[ RUN      ] DynCommands.SessionPoseContractValuesFrozen
+[       OK ] DynCommands.SessionPoseContractValuesFrozen (0 ms)
+[----------] 3 tests from DynCommands (0 ms total)
+
+[----------] 1 test from DynDyn08Chain
+[ RUN      ] DynDyn08Chain.PeakLocateDrivesReplayPoseChain
+[       OK ] DynDyn08Chain.PeakLocateDrivesReplayPoseChain (0 ms)
+[----------] 1 test from DynDyn08Chain (0 ms total)
+
+[----------] 3 tests from DynPanelWorkflow
+[ RUN      ] DynPanelWorkflow.ReadinessProjectionTransfersSessionFacts_WP17T09_ACC1
+[       OK ] DynPanelWorkflow.ReadinessProjectionTransfersSessionFacts_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPanelWorkflow.AcceptsAllFiveCommandsWithZeroRevision_WP17T09_ACC2
+[       OK ] DynPanelWorkflow.AcceptsAllFiveCommandsWithZeroRevision_WP17T09_ACC2 (0 ms)
+[ RUN      ] DynPanelWorkflow.RejectsUnknownTokenAndTruncatesRecordBuffer_WP17T09_ACC2
+[       OK ] DynPanelWorkflow.RejectsUnknownTokenAndTruncatesRecordBuffer_WP17T09_ACC2 (0 ms)
+[----------] 3 tests from DynPanelWorkflow (0 ms total)
+
+[----------] 3 tests from DynPanelCurves
+[ RUN      ] DynPanelCurves.ChannelRowsGoldenTwoJointsFiveChannels_WP17T09_ACC1
+[       OK ] DynPanelCurves.ChannelRowsGoldenTwoJointsFiveChannels_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPanelCurves.ChannelRowsCarryNonOkCountAndEmptySemantics_WP17T09_ACC1
+[       OK ] DynPanelCurves.ChannelRowsCarryNonOkCountAndEmptySemantics_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPanelCurves.PeakJumpFlowDrivesCursorTargetGolden_WP17T09_ACC1
+[       OK ] DynPanelCurves.PeakJumpFlowDrivesCursorTargetGolden_WP17T09_ACC1 (0 ms)
+[----------] 3 tests from DynPanelCurves (0 ms total)
+
+[----------] 2 tests from DynPanelReplay
+[ RUN      ] DynPanelReplay.ReplaySampleAtMidpointAndBoundaryGolden_WP17T09_ACC1
+[       OK ] DynPanelReplay.ReplaySampleAtMidpointAndBoundaryGolden_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPanelReplay.ReplayQueryLeavesSessionUntouched_WP17T09_ACC2
+[       OK ] DynPanelReplay.ReplayQueryLeavesSessionUntouched_WP17T09_ACC2 (0 ms)
+[----------] 2 tests from DynPanelReplay (0 ms total)
+
+[----------] 3 tests from DynPanelCatalog
+[ RUN      ] DynPanelCatalog.DomainCommandsMatchTokenVocabulary_WP17T09_ACC1
+[       OK ] DynPanelCatalog.DomainCommandsMatchTokenVocabulary_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPanelCatalog.AssemblyDescriptorCarriesRegistrationFace_WP17T09_ACC1
+[       OK ] DynPanelCatalog.AssemblyDescriptorCarriesRegistrationFace_WP17T09_ACC1 (0 ms)
+[ RUN      ] DynPanelCatalog.AssemblyBindsDriveModuleServices_WP17T09_ACC1
+[       OK ] DynPanelCatalog.AssemblyBindsDriveModuleServices_WP17T09_ACC1 (0 ms)
+[----------] 3 tests from DynPanelCatalog (0 ms total)
+
+[----------] 1 test from DynPanelText
+[ RUN      ] DynPanelText.ResolveTextFallsBackAndGuardsDigestLeak_WP17T09_ACC1
+[       OK ] DynPanelText.ResolveTextFallsBackAndGuardsDigestLeak_WP17T09_ACC1 (0 ms)
+[----------] 1 test from DynPanelText (0 ms total)
+
+[----------] 1 test from DynPanelGui
+[ RUN      ] DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable
+D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\DynPluginPanelTest.cpp(708): Skipped
+envUnavailable：无人值守门禁不做 GUI 运行验证——曲线视图/工作流页的呈现与交互由 sdurws_ird_dynamics_app harness 手动点验承载（units/dynamics.md §11.5 流程），本次未启动，留痕见 traceability/builds/wp17-t09/ 登记
+
+[  SKIPPED ] DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable (0 ms)
+[----------] 1 test from DynPanelGui (0 ms total)
+
+[----------] 6 tests from DynGolden
+[ RUN      ] DynGolden.DatasetRegistrationFace_WP17T10_ACC2
+[       OK ] DynGolden.DatasetRegistrationFace_WP17T10_ACC2 (5 ms)
+[ RUN      ] DynGolden.StaticGroundAnalyticGolden_WP17T10_ACC2
+[       OK ] DynGolden.StaticGroundAnalyticGolden_WP17T10_ACC2 (2 ms)
+[ RUN      ] DynGolden.StaticInvertedGoldenAt37_WP17T10_ACC2
+[       OK ] DynGolden.StaticInvertedGoldenAt37_WP17T10_ACC2 (2 ms)
+[ RUN      ] DynGolden.MotionDwellFullCycleGolden_WP17T10_ACC1
+[       OK ] DynGolden.MotionDwellFullCycleGolden_WP17T10_ACC1 (3 ms)
+[ RUN      ] DynGolden.EnvelopeMergeGolden_WP17T10_ACC1
+[       OK ] DynGolden.EnvelopeMergeGolden_WP17T10_ACC1 (2 ms)
+[ RUN      ] DynGolden.ConditionIdDerivationMatchesGenerator_WP17T10_ACC2
+[       OK ] DynGolden.ConditionIdDerivationMatchesGenerator_WP17T10_ACC2 (2 ms)
+[----------] 6 tests from DynGolden (18 ms total)
+
+[----------] Global test environment tear-down
+[==========] 105 tests from 23 test suites ran. (143 ms total)
+[  PASSED  ] 104 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] DynPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable

@@ -38,13 +38,18 @@
  *      的 bundle 结构，携带三域类型成员会把三域头拖进无定义 TU 的编译
  *      面——容器类型与本头同收敛，bundle 只见擦除句柄（析构删除器在
  *      构造点绑定实型）。
- *   3. **selection 注册被宿主权威拒绝的诚实钉扎**（asm-plug 验收建议
- *      级 1 保持不本地绕过）：selection 回填命令 token
- *      apply-device-backfill 为无点 kebab 词形（P-SEL-3/P-PR-9 待所有
- *      者裁决），不满足 ui.md §7.2 命令 id 点分句法——registerWithHost
- *      Registrar 如实透传 RegistrationOutcome::InvalidDescriptor，本
- *      承接面按 §11.3 失败隔离登记（status.ok=false＋稳定码报告行），
- *      **零 token 改写、零本地判定**（裁决后翻译产物自然过校验）。
+ *   3. **selection 注册词形已随 RUL-TOK 裁决销案合规**（2026-10-10 批——
+ *      原登记"无点 kebab 词形被宿主权威拒绝"的诚实钉扎兑现翻转）：所有
+ *      者裁决双词形并存（project token 无点＝O-35；ui 命令 id 点分＝
+ *      §7.1/§7.2 既冻句法），selection 域侧把回填命令 ui 命令 id 修订
+ *      为点分 selection.apply-device-backfill——本承接面与翻译函数零
+ *      改动，注册自然 Ok（六域注册全 Ok 形态，§11.3 失败隔离通道对
+ *      异常域保持在案——本面承载语义不变，详见 units/ui.md §16.7 v1.92）。
+ *   4. **三新域面板取件面（ASM-PANEL 收口批 2026-10-10）**：本头尾部
+ *      dynamicsPanelWidget/selectionPanelWidget/optimizationPanelWidget
+ *      三函数——宿主装配序列（UiPlugin buildDockBody 挂位段）消费三域
+ *      描述符在册的面板工厂实现"六域面板全部可见"；缺席域＝nullptr
+ *      （§11.3 失败隔离挂位形态——跳过不虚构）。
  *
  * 线程模型：全部函数 UI 线程（initialize 装配线程——§10.9 同口径）。
  */
@@ -62,9 +67,21 @@
 
 #include "DomainAssembly.hpp"  // DomainPluginAssembly（bundle 聚合体——宿主持有）
 
+class QWidget;  // 前置声明：面板取件函数返回类型（面板工厂产物——完整
+                // 类型在 Qt Widgets，本头不拖入；消费 TU 自行 include）
+
 namespace sdurws {
 namespace ird {
 namespace ui {
+
+/// 动力学面板 Dock 的标题（宿主 chrome 文案——与 kModelingDockTitle 同族
+/// 形态：字面常量直用不走 resolveText——Dock 级标题为装配层呈现面惯例，
+/// ASM-PANEL 批；域名词"动力学"与 UiText plugin.dynamics.title 值同源）。
+extern const char* const kDynamicsDockTitle;
+/// 选型面板 Dock 的标题（同上——域名词与 plugin.selection.title 同源）。
+extern const char* const kSelectionDockTitle;
+/// 优化面板 Dock 的标题（同上——域名词与 plugin.optimization.title 同源）。
+extern const char* const kOptimizationDockTitle;
 
 /**
  * @brief 三新域装配产物容器（ASM-UI——类型随本头收敛在 ui_plugin 编译
@@ -72,9 +89,9 @@ namespace ui {
  *        期＝bundle 存活期〔宿主持有至壳拆除〕——registrar 弱引用与
  *        登记表 module 裸指针的存活期由此保证，§10.9 所有权行）。
  *
- * 产物形态与前三域一致（§11.3 隔离域值语义）：装配异常缺席＝nullopt；
- * selection 注册被宿主权威拒绝（InvalidDescriptor——P-SEL-3 待裁决面）
- * ＝装配在册但登记未 Ok（status.ok=false，报告不入列）。
+ * 产物形态与前三域一致（§11.3 隔离域值语义）：装配异常缺席＝nullopt。
+ * ASM-PANEL 批起三域描述符在册的面板工厂经尾部三取件函数供宿主挂位
+ * 消费（六域面板全部可见——units/ui.md §13 ASM-PANEL 行）。
  */
 struct ExtraDomainAssemblies {
     /// 动力学装配产物（缺席＝装配异常隔离）。
@@ -96,8 +113,9 @@ struct ExtraDomainAssemblies {
  * §11.3，与 DomainAssembly.cpp ③④段同构）：
  *   ①dynamics：门面→UiText 文案绑定→registerWithHostRegistrar（真实
  *     registrar 传经域装配激活路径）→登记表/状态；
- *   ②selection：门面→文案绑定→registerWithHostRegistrar→**预期
- *     InvalidDescriptor**（P-SEL-3 待裁决面——诚实登记不本地绕过）；
+ *   ②selection：门面→文案绑定→registerWithHostRegistrar→登记表/状态
+ *     （RUL-TOK 裁决销案后注册 Ok——原"预期 InvalidDescriptor"钉扎兑现
+ *     翻转，见文件头落位边界第 3 条）；
  *   ③optimization：门面→文案绑定→registerWithHostRegistrar→登记表/
  *     状态（无命令域——描述符零命令字段的诚实缺席随门面承载）。
  *   ④报告行输出（逐域一行，失败域附 UI-PLUGIN-ASSEMBLY-FAILED 稳定码
@@ -118,6 +136,39 @@ struct ExtraDomainAssemblies {
  */
 std::shared_ptr<ExtraDomainAssemblies> assembleExtraDomains(
     DomainPluginAssembly& bundle, std::vector<std::string>& reportLines);
+
+// =====================================================================
+// ASM-PANEL 收口批（2026-10-10，所有者授权装配批次）——三新域面板取件
+// 面：宿主装配序列（UiPlugin buildDockBody 挂位段）经本组函数消费三域
+// 描述符在册的面板工厂（descriptor.panels.front().factory——装配门面
+// 创建时转接模块 createPanel 的闭包），实现"六域面板全部可见"的宿主
+// 挂位半区。取件形态与 DomainAssembly.hpp 的 modelingPanelWidget/
+// requirementsPanelWidget 先例同构（单文件域收敛在 ExtraDomainAssembly
+// ——三域类型依赖不进两同源宿主目标共享的 DomainAssembly.hpp，边界注
+// 见该头 bundle 结构注释）。
+// =====================================================================
+
+/**
+ * @brief 取动力学面板（bundle 内工厂现调——宿主 Dock setWidget 挂位）。
+ *
+ * 每次调用新建面板 widget（工厂契约——归调用方 Dock 接管；仅 UI 线程
+ * 调用，ui.md §10.9 线程行）。失败隔离缺席＝nullptr（宿主跳过挂位，
+ * §11.3——不虚构空面板不抛异常）。
+ *
+ * @param extra [in] 三新域装配产物容器（assembleExtraDomains 产物；
+ *              QCoreApplication 级测试环境**只可消费缺席形态**——非缺席
+ *              调用会实例化 QWidget，须 QApplication，结构性限制登记
+ *              units/ui.md §13 ASM-PANEL 行）
+ * @return 面板 widget（非 owning——调用方 Dock 接管）；域缺席（optional
+ *         空＝装配异常隔离）或面板记录空（描述符结构违约防御）＝nullptr
+ */
+QWidget* dynamicsPanelWidget(const ExtraDomainAssemblies& extra);
+
+/// @brief 取选型面板（语义与缺席形态同 dynamicsPanelWidget——上方注）。
+QWidget* selectionPanelWidget(const ExtraDomainAssemblies& extra);
+
+/// @brief 取优化面板（语义与缺席形态同 dynamicsPanelWidget——上方注）。
+QWidget* optimizationPanelWidget(const ExtraDomainAssemblies& extra);
 
 }  // namespace ui
 }  // namespace ird
