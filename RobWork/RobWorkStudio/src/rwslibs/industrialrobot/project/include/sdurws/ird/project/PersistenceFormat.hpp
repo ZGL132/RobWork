@@ -502,8 +502,14 @@ struct ConfirmationRecord {
  * 线程安全：纯值类型。
  */
 struct CommandRecord {
-    /// 处理器注册 token，语法 ^[a-z0-9-]{3,64}（§4.4.4 表冻结；如
-    /// "project.create-branch"——§6.5 project 内置元数据命令族）。
+    /// 处理器注册 token，语法 ^[a-z0-9-]{3,64}（§4.4.4 表冻结——仅小写
+    /// 字母/数字/连字符，不含点；Codec 按此冻结拒绝语义）。无点 kebab
+    /// 形态示例："create-branch"。
+    /// 注意：§6.5 project 内置元数据命令族的正式 token 待 P-PR-9 裁决后
+    /// 落位（units/project.md §15.3，注册面二选一属所有者裁决）——本字段
+    /// 历史注释中的带点示例 "project.create-branch" 不满足冻结语法，系
+    /// 注释勘误项（GOV-FIND 批；acc/wp-20-t07/1 验收范围外观察消账），
+    /// 勿再以带点形态引用。
     std::string commandType;
     /// 处理器自有负载版本（无单位——格式版本号；§6.4：处理器演进用）。
     std::uint32_t payloadFormatVersion = 0;

@@ -6014,6 +6014,846 @@
       "registeredAt": "2026-10-10",
       "title": "sdurws_ird_testkit_test 计时敏感用例在门禁负载下间歇失败：验收复现三轮 gate-all 中集成段 2 次失败（冷/暖构建各一，ctest 退出码 8），同批冒烟段执行与空闲直跑复测 5 次全 PASS——ProcessRunnerTest 树终止用例孙进程观察窗 3500ms 对延迟 3000ms 仅 500ms 余量（源注释自述余量只计落盘开销），Defender 实时防护对 relink 后首次执行的扫描延迟可吃尽余量；与本批 diff 无关（gate-toolchain-param 零触碰产品代码，testkit 源码与 redesign-main 基线一致），不影响该批 verdict",
       "owner": "testkit 单元所有者：评估 ProcessRunnerTest 树终止用例观察窗余量（3500-3000=500ms）在防病毒扫描/构建负载下的充分性——加余量或登记门禁重跑口径"
+    },
+    {
+      "id": "F-630",
+      "source": "acc/IO-T02/1 验收记录（doc/industrial-robot-design/traceability/acceptance/IO-T02-20260917.md @ c356e9638d9d3a1cbdc67974ce02d85339107e58，验收日期 2026-09-17）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] IO-T02（acc/IO-T02/1，attempt 1，verdict fail）：阻断 B-1＝提交正文与 ird-test-report.json 按名引用的 8 份日志类留痕被 .gitignore 全局 *.log 吞、未入送验冻结对象（幻影清单；CORE-T02 attempt1 同型判例）——实质结论经验收者独立复跑为真；建议级 4 条转登（卡头版本滞后/文件清单幻影/§3.1 行未兑现/标题名词短语开头）＋O-1 P-IO-6 diagnostics 收编提请",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/IO-T02/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/IO-T02-20260917.md，记录提交 c356e9638d9d3a1cbdc67974ce02d85339107e58）；轮内具体建议级问题已按当轮转登在册（F-182～F-185），不在此重复登记；本条为轮次索引指针（taskId=IO-T02，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-631",
+      "source": "acc/IO-T03/1 验收记录（doc/industrial-robot-design/traceability/acceptance/IO-T03-20260917.md @ 3bf11e04408819599b9523434de4fadcd6fcc6fb，验收日期 2026-09-17）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] IO-T03（acc/IO-T03/1，attempt 1，verdict fail）：阻断 B-1＝units/io.md 落位同步缺失——本任务 ≥4 处 §9.0 等价调整与 §3.1/§1.2 行未按 DTB §5.4 增量修订登记（AGENTS §6.1『代码先行、文档失实』）；建议级 1 条转登（io.md 文末落款行滞后残留，先于本任务存在）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/IO-T03/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/IO-T03-20260917.md，记录提交 3bf11e04408819599b9523434de4fadcd6fcc6fb）；轮内具体建议级问题已按当轮转登在册（F-188），不在此重复登记；本条为轮次索引指针（taskId=IO-T03，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-632",
+      "source": "acc/IO-T06/1 验收记录（doc/industrial-robot-design/traceability/acceptance/IO-T06-20260917.md @ a0a212b08bcba8b704be3b0df9b01df7b8900c96，验收日期 2026-09-17）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] IO-T06（acc/IO-T06/1，attempt 1，verdict fail）：阻断 B-1＝验证留痕日志未入库而提交信息声称已入库（返工＝以现产日志 git add -f 补交＋同步刷新 ird-test-report.json 引用）；建议级 2 条转登（writeBytesToFile/AtomicTarget DWORD 4GiB 截断纵深防御缺口/IO-V19 取消令牌注入仅覆盖展开阶段单样例）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/IO-T06/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/IO-T06-20260917.md，记录提交 a0a212b08bcba8b704be3b0df9b01df7b8900c96）；轮内具体建议级问题已按当轮转登在册（F-198/F-199），不在此重复登记；本条为轮次索引指针（taskId=IO-T06，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-633",
+      "source": "acc/EX-T01/1 验收记录（doc/industrial-robot-design/traceability/acceptance/EX-T01-20260918.md @ d27833a31c34079909c8722afdab50272e71a86f，验收日期 2026-09-18）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] EX-T01（acc/EX-T01/1，attempt 1，verdict fail）：阻断 1 项＝九件验证日志声称按先例入库而实际 0 件在库（.gitignore *.log 吞没未 git add -f），且提交信息声称 14 文件与实际 5 件不符（4.9 留痕陈述失实＋4.10 落位缺失同一事实两面）——技术实现/构建/测试/红线零缺陷，返工面仅留痕补交；建议级 1 条转登（提交标题名词短语开头家族再现）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/EX-T01/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/EX-T01-20260918.md，记录提交 d27833a31c34079909c8722afdab50272e71a86f）；轮内具体建议级问题已按当轮转登在册（F-206），不在此重复登记；本条为轮次索引指针（taskId=EX-T01，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-634",
+      "source": "acc/EX-T09/1 验收记录（doc/industrial-robot-design/traceability/acceptance/EX-T09-20260919.md @ 93819ac0e129b9831401a8358e180ddafd47b549，验收日期 2026-09-19）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] EX-T09（acc/EX-T09/1，attempt 1，verdict fail）：阻断 B-1＝9 件验证 .log 留痕被 .gitignore 吞且未 git add -f，提交正文声称的留痕清单与在库不符（该同族问题第四次；实质结论独立复跑证实为真，返工仅补证）；建议级 2 条转登（提交标题名词开头/.gitignore 与留痕要求结构性冲突已四次重演的治理建议）＋G-2 为对所有者裁决请求非新发现",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/EX-T09/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/EX-T09-20260919.md，记录提交 93819ac0e129b9831401a8358e180ddafd47b549）；轮内具体建议级问题已按当轮转登在册（F-222/F-223），不在此重复登记；本条为轮次索引指针（taskId=EX-T09，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-635",
+      "source": "acc/UI-T03/1 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T03-20260920.md @ e5f27bf37708334f7e3037e828c3fdf850069e56，验收日期 2026-09-20）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T03（acc/UI-T03/1，attempt 1，verdict fail）：阻断 B-1＝14 份构建/测试/门禁/校验日志在实施端存在但未随冻结对象 dd9ff626 入库（.gitignore:87 吞没、git add 静默跳过），提交信息声称路径与实际入库 9 件不符；建议级 3 条转登（UI-SES-1 门控断言盲区——reasonKey 不区分且 readOnlyAllowed 命令未覆盖/提交标题名词开头/侧栏折叠有实现无自动化用例）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/UI-T03/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T03-20260920.md，记录提交 e5f27bf37708334f7e3037e828c3fdf850069e56）；轮内具体建议级问题已按当轮转登在册（F-260～F-262），不在此重复登记；本条为轮次索引指针（taskId=UI-T03，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-636",
+      "source": "acc/UI-T16/1 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T16-20260924.md @ 2558984de63b195ecb5a8bae018705314c96c10d，验收日期 2026-09-24）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T16（acc/UI-T16/1，attempt 1，verdict fail）：阻断 B-1＝acceptance 3 未达成：嵌入式宿主形态集成缺陷（五区工作台面板不可见/PM-11 状态栏投影缺失/lock 心跳与新建落盘未刷新/布局菜单落空）；B-2＝两件 -r2『独立复跑实录』为既有日志逐字节拷贝（时长逐位相同）且 final-r2 内容与提交表述矛盾；建议级 3 条转登（ui.md 两处宿主交互表述强于实证/失实复跑载体登记面 blocking 等）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/UI-T16/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T16-20260924.md，记录提交 2558984de63b195ecb5a8bae018705314c96c10d）；轮内具体建议级问题已按当轮转登在册（F-318～F-320），不在此重复登记；本条为轮次索引指针（taskId=UI-T16，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-637",
+      "source": "acc/UI-T17/1 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T17-20260924.md @ c216d6c89f92d5a895d05d46656ed6e11dc70ee1，验收日期 2026-09-24）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T17（acc/UI-T17/1，attempt 1，verdict fail）：阻断 B-1＝宿主 GUI 冒烟的关闭确认流/Draining 收口/保存草稿落盘三行为无宿主实证（验证面缺口而非产品缺陷——代码与单测/契约/GUI 测试面全过，取证管线受 F-324/F-325 拖累未走完，未完成半区按纪律不标注通过）；建议级转登（宿主自动装载 ini 通道失效＋交接手册自相矛盾等取证管线族）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/UI-T17/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T17-20260924.md，记录提交 c216d6c89f92d5a895d05d46656ed6e11dc70ee1）；轮内具体建议级问题已按当轮转登在册（F-324～F-327），不在此重复登记；本条为轮次索引指针（taskId=UI-T17，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-638",
+      "source": "acc/UI-T17/2 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T17-20260924-r2.md @ 4f7a814fe29799ba4107d6faf3d887a2676e57e7，验收日期 2026-09-24）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T17（acc/UI-T17/2，attempt 2，verdict pass）：attempt2：无阻断——attempt1 的 B-1 宿主半区按 §2 专章裁定通过（机制级在库实证＋所有者情节级确证＋缺口如实登记）；建议级 3 条转登（r4 冒烟登记时间线归属解码错误——机制证明力反因查证增强/r4 取证现场证据卫生——帧清理与个人屏幕内容帧处置/同会话重开已打开项目 UX 语义随 F-321 同批考量）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/UI-T17/2 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T17-20260924-r2.md，记录提交 4f7a814fe29799ba4107d6faf3d887a2676e57e7）；轮内具体建议级问题已按当轮转登在册（F-328～F-330），不在此重复登记；本条为轮次索引指针（taskId=UI-T17，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-639",
+      "source": "acc/UI-T18/1 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T18-20260924.md @ d3ee81672fd7ec838980af6694ce8decc1913fda，验收日期 2026-09-24）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T18（acc/UI-T18/1，attempt 1，verdict fail）：阻断 B-1＝范围越界：仓库根 traceability/ 3 件 r2 代 XML 在 allowedFiles 外（v1.13-r2 已更正过的同类缺陷复发）；B-2＝宿主 GUI 冒烟未执行（verify 4 零真机实证）；实现面与测试面本身零缺陷检出（154/22/35 全绿＋门禁 63↔63 差集 0）；建议级 4 条转登（越界件登记面 blocking/§16.7 口径未随注⑥同步/三文件头未随增量更新/私有头死包含 QStatusBar）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/UI-T18/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T18-20260924.md，记录提交 d3ee81672fd7ec838980af6694ce8decc1913fda）；轮内具体建议级问题已按当轮转登在册（F-331～F-334），不在此重复登记；本条为轮次索引指针（taskId=UI-T18，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-640",
+      "source": "acc/WP-13-T09/1 验收记录（doc/industrial-robot-design/traceability/acceptance/WP-13-T09-20260925.md @ 05b0265551b22ee77a8adbd59bdecc98d154565d，验收日期 2026-09-25）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-13-T09（acc/WP-13-T09/1，attempt 1，verdict fail）：阻断 B-1（blocking）＝契约测试 T08 时代『T09 行不预建』钉住断言未随 T09 登记同步，冻结源码全新构建 contract_test 8/9 失败，在库 integration XML 不可复现；建议级 4 条转登（契约 verify 数组缺 contract_test 构建行家族复发/DiagCodes.hpp 计数注释失实复发/ird-test-report 缺 modeling_test 159 条/DhConvert.cpp 残留 IRD_DH_DEBUG 调试块）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/WP-13-T09/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/WP-13-T09-20260925.md，记录提交 05b0265551b22ee77a8adbd59bdecc98d154565d）；轮内具体建议级问题已按当轮转登在册（F-337～F-341），不在此重复登记；本条为轮次索引指针（taskId=WP-13-T09，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-641",
+      "source": "acc/WP-13-T15-APP/1 验收记录（doc/industrial-robot-design/traceability/acceptance/WP-13-T15-APP-20260926.md @ a9dbdd53df236438f9daec509984893202eeaa8f，验收日期 2026-09-26）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-13-T15-APP（acc/WP-13-T15-APP/1，attempt 1，verdict pass）：增量（开发验证 harness）验收 pass，无阻断；建议级 2 条留档（harness 就绪条为演示条目——真判定需 AssertionSuite L5 注入、随 WP-24-T03b 接线后可复用同常量/启动期观测 T15 呈现面 QFormLayout::takeRow: Invalid row 0 警告一次功能无碍）——均已在文件头/单元卡登记",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/WP-13-T15-APP/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/WP-13-T15-APP-20260926.md，记录提交 a9dbdd53df236438f9daec509984893202eeaa8f）；本条为轮次索引指针（taskId=WP-13-T15-APP，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-642",
+      "source": "acc/WP-24-T01/1 验收记录（doc/industrial-robot-design/traceability/acceptance/WP-24-T01-20260926.md @ c666016fbdda7f3213fd71fa5f1c6a4c79305ff7，验收日期 2026-09-26）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-24-T01（acc/WP-24-T01/1，attempt 1，verdict pass）：基线 v1.0 验收 pass，无阻断；建议级 2 条留档（RW_VERSION 构建宏为配置期动态产物建议治理面登记其非权威地位防误用/阶段 E 复核项为基线预留缺口按设计即如此）——baseline.md §1/§7 已登记",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/WP-24-T01/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/WP-24-T01-20260926.md，记录提交 c666016fbdda7f3213fd71fa5f1c6a4c79305ff7）；本条为轮次索引指针（taskId=WP-24-T01，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-643",
+      "source": "acc/WP-24-T03A/1 验收记录（doc/industrial-robot-design/traceability/acceptance/WP-24-T03a-20260926.md @ 30488716b02131ff90df41c272c0edbf12385fad，验收日期 2026-09-26）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-24-T03A（acc/WP-24-T03A/1，attempt 1，verdict pass）：首版装配验收 pass；建议级 2 条留档（命令提交出口首版为状态栏受理反馈——域执行面随 T03b/ICommandService 网关装配，使用方不得误读为命令已执行/建模 Dock 为宿主侧 Left 区承载——中央区 StageId 挂位未落位）——ui.md v1.15④ 收口余量清单登记",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/WP-24-T03A/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/WP-24-T03a-20260926.md，记录提交 30488716b02131ff90df41c272c0edbf12385fad）；本条为轮次索引指针（taskId=WP-24-T03A，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-644",
+      "source": "acc/RT-T14/1 验收记录（doc/industrial-robot-design/traceability/acceptance/RT-T14-20260927.md @ 62951fb59a464a106db8e698b8539e64808b1ad9，验收日期 2026-09-27）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] RT-T14（acc/RT-T14/1，attempt 1，verdict pass）：pass，无新增建议级问题；4.5 双负例实测（身份生成/工厂 fail-fast 两处破坏性注入均实测变红后还原复绿）；单会话独立性降级声明；既有相关项 F-019（门禁存量红）/F-415（runtime masterWp 家族漂移）沿袭惯例随家族治理",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/RT-T14/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/RT-T14-20260927.md，记录提交 62951fb59a464a106db8e698b8539e64808b1ad9）；本条为轮次索引指针（taskId=RT-T14，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-645",
+      "source": "acc/UI-T19/1 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T19-20260927.md @ e0cff0eda134e9987cea11643c0177069473e572，验收日期 2026-09-27）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T19（acc/UI-T19/1，attempt 1，verdict pass）：pass；建议级 2 条转登（IWorkbenchContent 新增纯虚 commandRegistry() 属公共接口破坏性面增量——当前外部实现类为零实际零破坏，建议接口增量以非纯虚或版本化措辞/GUI 测试需 QT_QPA_PLATFORM＋QT_PLUGIN_PATH 环境前置，建议随 gate-all GUI 步骤统一内化）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/UI-T19/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T19-20260927.md，记录提交 e0cff0eda134e9987cea11643c0177069473e572）；轮内具体建议级问题已按当轮转登在册（F-418/F-419），不在此重复登记；本条为轮次索引指针（taskId=UI-T19，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-646",
+      "source": "acc/WP-13-T20/1 验收记录（doc/industrial-robot-design/traceability/acceptance/WP-13-T20-20260929.md @ e22bac97408cf44335abb99db4c1d66011885b31，验收日期 2026-09-29）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-13-T20（acc/WP-13-T20/1，attempt 1，verdict pass）：pass，无阻断；建议级 1 条转登（建模迁移检查器页冻结文案与 deprecated 导航标记以 TU 局部常量承载未挂 ui::UiText 键系——F-430/F-432 同族第三例，归 ui/呈现文案治理侧随 P-DIAG-9 批次或 UI-T23 收口）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/WP-13-T20/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/WP-13-T20-20260929.md，记录提交 e22bac97408cf44335abb99db4c1d66011885b31）；轮内具体建议级问题已按当轮转登在册（F-433），不在此重复登记；本条为轮次索引指针（taskId=WP-13-T20，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-647",
+      "source": "acc/UI-T27/1 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T27-20260930.md @ 74ba3c9ab5dda51696bf020a9cfd11dfc05735c9，验收日期 2026-09-30）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T27（acc/UI-T27/1，attempt 1，verdict fail）：三阻断——B-1 范围越界（4 件 assembly 文件改动 allowedFiles 白名单外且 DTB §5.4 登记义务未履行）/B-2 契约承诺测试面缺失（sdurws_ird_modeling_gui_test 目标不存在、assembled=false 用例与具名用例证据全缺）/B-3 留痕目录不存在（测试真实跑过但留痕义务未履行）；建议级 2 条转登（未装配命令回退文案混用 modeling 专用键＋裸 commandId 直出/RobWorkSim 冷启编译失败阻断冷启验收全量口径）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/UI-T27/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T27-20260930.md，记录提交 74ba3c9ab5dda51696bf020a9cfd11dfc05735c9）；轮内具体建议级问题已按当轮转登在册（F-442/F-443），不在此重复登记；本条为轮次索引指针（taskId=UI-T27，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-648",
+      "source": "acc/ui-t36/1 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T36-20261001.md @ a0fdc2b4b825ffd7dc89a194c7144141c473998b，验收日期 2026-10-01）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T36（acc/ui-t36/1，attempt 1，verdict fail）：阻断 B-1＝40d7d8b3 触碰 modeling/plugin×2＋kinematics/plugin×2，forbiddenFiles 明列两域、allowedFiles 未增补；建议级 2 条转登（LifecycleButton_NoVerticalClipping 对边距回归变异存活——夹具恒满高致断言盲区/契约条目 4『根因实测』修复前探针数据未随批留痕）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/ui-t36/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T36-20261001.md，记录提交 a0fdc2b4b825ffd7dc89a194c7144141c473998b）；轮内具体建议级问题已按当轮转登在册（F-450/F-451），不在此重复登记；本条为轮次索引指针（taskId=UI-T36，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-649",
+      "source": "acc/ui-t36/2 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T36-20261001-r2.md @ cf1b2fa356274624b5a9f2ea44c60dffb08d6bc1，验收日期 2026-10-01）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T36（acc/ui-t36/2，attempt 2，verdict pass）：attempt2：返工后全量重验，阻断无、建议级无新增；attempt1 的 G-1 已实证闭合（M2 中和后翻红）、G-2 实测口径已登记——F-450/F-451 状态翻转随合入收尾提交执行（F-446 先例同轨）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/ui-t36/2 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T36-20261001-r2.md，记录提交 cf1b2fa356274624b5a9f2ea44c60dffb08d6bc1）；本条为轮次索引指针（taskId=UI-T36，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-650",
+      "source": "acc/ui-t37/1 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002.md @ 55266f3e39795d951e2b5d9a672731217ebc2b66，验收日期 2026-10-02）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T37（acc/ui-t37/1，attempt 1，verdict pass）：attempt1 pass（两轮呈现层现代化——冷启全量复现/双变异翻红）；建议级 1 条转登（规范§2 顶部命令栏四组组名标注未随批——按钮集合/可达性零变化，呈现余量建议后续微批承接）；登记偏差三条（语义标签映射源/过滤行词表/向导缝形态——均 ui.md v1.42 落位注在册）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/ui-t37/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002.md，记录提交 55266f3e39795d951e2b5d9a672731217ebc2b66）；轮内具体建议级问题已按当轮转登在册（F-452），不在此重复登记；本条为轮次索引指针（taskId=UI-T37，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-651",
+      "source": "acc/ui-t37/2 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002-r2.md @ d7dede4132ad1e819a1df409086700d0f05519b7，验收日期 2026-10-02）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T37（acc/ui-t37/2，attempt 2，verdict pass）：attempt2 pass：F-453 崩溃修复返工后全量重验（队列化提交轨/风格对齐复验）；教训随 F-453 在册——同步提交链删发射控件的形态必须队列化排除，gui 夹具通过不能证明真实宿主无 UB",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/ui-t37/2 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002-r2.md，记录提交 d7dede4132ad1e819a1df409086700d0f05519b7）；轮内具体建议级问题已按当轮转登在册（F-453），不在此重复登记；本条为轮次索引指针（taskId=UI-T37，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-652",
+      "source": "acc/ui-t37/3 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002-r3.md @ 19659f0cfacdb2dbf4d6d6e7951dcef4c768da87，验收日期 2026-10-02）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T37（acc/ui-t37/3，attempt 3，verdict pass）：attempt3 pass：返工②③后全量重验（下拉统一/联动修复/动作阶段复合行复验）；所有者实测反馈三项闭环均有具名回归用例；F-452 维持 open；登记偏差三条同 attempt1",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/ui-t37/3 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002-r3.md，记录提交 19659f0cfacdb2dbf4d6d6e7951dcef4c768da87）；本条为轮次索引指针（taskId=UI-T37，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-653",
+      "source": "acc/ui-t37/4 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002-r4.md @ 4d92e57c661dbf17417baf1fb8045f888c4c6685，验收日期 2026-10-02）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T37（acc/ui-t37/4，attempt 4，verdict pass）：attempt4 pass：返工④后全量重验（工况页单表整合/详情卡/三变异实证/命中集逐条一致）；gate-all 并发假阳性实录如实登记（GUI 用例非并发安全、隔离复扫全绿）；F-454/F-455/F-456 fixed＋F-457 open 随批登记（gate-all 第 2 步退出码期望与登记例外模型失配）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/ui-t37/4 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002-r4.md，记录提交 4d92e57c661dbf17417baf1fb8045f888c4c6685）；轮内具体建议级问题已按当轮转登在册（F-457），不在此重复登记；本条为轮次索引指针（taskId=UI-T37，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-654",
+      "source": "acc/ui-t37/5 验收记录（doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002-r5.md @ cd0f267649da05f92adfd7e130b04bd2be5e6874，验收日期 2026-10-02）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T37（acc/ui-t37/5，attempt 5，verdict pass）：attempt5 pass：返工⑤后全量重验（卡片折叠三角/空态体验/导入下拉/三变异实证）；ird_gates 冷启直跑 71 行归一化后与基线 diff 空集＝零新增；F-457 维持 open（gate-all 重构另批处置）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/ui-t37/5 :: RobWork/doc/industrial-robot-design/traceability/acceptance/UI-T37-20261002-r5.md，记录提交 cd0f267649da05f92adfd7e130b04bd2be5e6874）；本条为轮次索引指针（taskId=UI-T37，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-655",
+      "source": "acc/ui-t39/1 验收记录（doc/industrial-robot-design/traceability/acceptance/ui-t39-20261002.md @ 70d14c0942350e290be00ec7ed7ee277e7c72541，验收日期 2026-10-02）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] UI-T39（acc/ui-t39/1，attempt 1，verdict pass）：pass（冻结 SHA a398d55a；验收侧冷树复现——gtest 39 套件 2743 例零失败/冒烟四通道零 FAIL/双变异翻红）；建议级 G-1 转登 F-462（WritableSwitchRefreshesAll 对『setWritable 内生命周期刷新被移除』变异不敏感——呈现路径掩盖断言，建议 UI-T40 补强断言）；单会话顺序执行独立性降级声明",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/ui-t39/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/ui-t39-20261002.md，记录提交 70d14c0942350e290be00ec7ed7ee277e7c72541）；轮内具体建议级问题已按当轮转登在册（F-462），不在此重复登记；本条为轮次索引指针（taskId=UI-T39，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-656",
+      "source": "acc/WP-16-T01/1 验收记录（doc/industrial-robot-design/traceability/acceptance/WP-16-T01-20261004.md @ 6591ee99f43bff72e5b909c14b79cd3f8571e014，验收日期 2026-10-04）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-16-T01（acc/WP-16-T01/1，attempt 1，verdict pass）：pass——三条件 acceptance 全落位、零阻断、零语义偏差（九项冻结树取证＋DTB 逐行对齐＋上游原文回查；变异 N/A 文档卡如实声明）；单会话顺序执行独立性降级声明",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/WP-16-T01/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/WP-16-T01-20261004.md，记录提交 6591ee99f43bff72e5b909c14b79cd3f8571e014）；本条为轮次索引指针（taskId=WP-16-T01，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-657",
+      "source": "acc/wp-17-t02/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t02-20261006.md @ 377664e622ec4a204ee1cf522b29b75d63287ee9，验收日期 2026-10-06）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T02（acc/wp-17-t02/1，attempt 1，verdict pass）：构建落位（登记面）验收 pass；建议级 2 条（集成留痕保存的是增量复跑输出而非全量首跑日志——后续以首跑为主体/构建与门禁日志 MSBuild＋pwsh 中文输出 UTF-8 查看下呈 GBK 乱码——建议留痕脚本统一 UTF-8 编码）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t02/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t02-20261006.md，记录提交 377664e622ec4a204ee1cf522b29b75d63287ee9）；本条为轮次索引指针（taskId=WP-17-T02，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-658",
+      "source": "acc/wp-18-t02/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-18-t02-20261006.md @ 666f91c3e90a66d29c258e2c42d6ee2dc2b3455d，验收日期 2026-10-06）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-18-T02（acc/wp-18-t02/1，attempt 1，verdict pass）：pass；建议级 2 项（DT-*『装配期注册』字面闭环依赖 P-DT-7 diagnostics 所有者收编——真实 StableCodeRegistry 注册不在 allowedFiles，已四处诚实登记边界/本地 redesign-main 引用落后 origin 两个提交——建议基线比对统一用 origin 引用防口径误报）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-18-t02/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-18-t02-20261006.md，记录提交 666f91c3e90a66d29c258e2c42d6ee2dc2b3455d）；本条为轮次索引指针（taskId=WP-18-T02，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-659",
+      "source": "acc/wp-19-t02/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t02-20261006.md @ 2c798c2a73b682bf9196e893961ab539d9aeef6a，验收日期 2026-10-06）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T02（acc/wp-19-t02/1，attempt 1，verdict pass）：pass；建议级 2 条（S-1 收编入库的 wp18-t02 ird-test-report.json 目录语义混杂——WP-18-T02 验证期遗留补全留痕，建议按任务目录归档/S-2 ask 给定的本地 redesign-main 比对基准落后混入前置提交——建议流水线统一 origin/redesign-main）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t02/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t02-20261006.md，记录提交 2c798c2a73b682bf9196e893961ab539d9aeef6a）；本条为轮次索引指针（taskId=WP-19-T02，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-660",
+      "source": "acc/wp-22-t02/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t02-20261006.md @ 30de2684634ed5f7305e4e26f036fbb8ca465b6c，验收日期 2026-10-06）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T02（acc/wp-22-t02/1，attempt 1，verdict pass）：pass；建议级 G-1＝F-227（ird_gates _gui_test 形态识别等）修复已由返工提交兑现但 findings 状态未随手翻转——建议治理批翻转并回链；观察 2 条（contract_test 链接同单元 plugin 的 Qt 传染——POST_BUILD DLL 拷贝兜底＋先例登记/TestMainReport 不构造 QCoreApplication 已诚实登记）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t02/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t02-20261006.md，记录提交 30de2684634ed5f7305e4e26f036fbb8ca465b6c）；本条为轮次索引指针（taskId=WP-22-T02，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-661",
+      "source": "acc/wp-16-t03/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-16-t03-20261007.md @ b639af77236715de281f39f0d45657b00ed58827，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-16-T03（acc/wp-16-t03/1，attempt 1，verdict pass）：pass；建议级 2 条留档（装配门面公共头落位 assembly/ 而非 include/——CMake 注释与单元卡已载理由且四单元同款先例，留档提示后续读者/冒烟模式本会话未亲手重跑——依验收请求口径采信流水线复验＋留痕日志，口径说明非缺陷）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-16-t03/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t03-20261007.md，记录提交 b639af77236715de281f39f0d45657b00ed58827）；本条为轮次索引指针（taskId=WP-16-T03，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-662",
+      "source": "acc/wp-16-t04/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-16-t04-20261007.md @ 284b1ad11f585664c9177d79805a5d167c32a218，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-16-T04（acc/wp-16-t04/1，attempt 1，verdict pass）：pass；建议级 3 条（G-1 PlanConfig.cpp encode() 行内偏移注释自枚举行起系统性少 1 字节共 9 处——纯注释失准、实现写序正确/G-2 测试注释 78 字节应为 79＋断言 GE 90U 宽于真实最小 91 建议收紧/G-3 单元卡用例数登记漂移——实测 16/23 写成 12/24，F-543 同型）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-16-t04/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t04-20261007.md，记录提交 284b1ad11f585664c9177d79805a5d167c32a218）；本条为轮次索引指针（taskId=WP-16-T04，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-663",
+      "source": "acc/wp-17-t03/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t03-20261007.md @ 2ea29be8108f183e445e8d59cfd5df324d31993f，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T03（acc/wp-17-t03/1，attempt 1，verdict pass）：pass；建议级 5 条留后续闭环（InverseDynamics.cpp 前置校验 continue 空操作死代码/连杆物性 NotProvided 无承载面——下游无法分辨真 0 与缺失按 0/Prismatic·Continuous 分支零运行验证——建议黄金数据集补移动关节对照/样本中间取消组合未直接断言/畸形链经 vector::at 抛 out_of_range 非 DynamicsError——不可达观察项）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t03/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t03-20261007.md，记录提交 2ea29be8108f183e445e8d59cfd5df324d31993f）；本条为轮次索引指针（taskId=WP-17-T03，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-664",
+      "source": "acc/wp-17-t04/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t04-20261007.md @ b4fd4809aaae51b58c3213d155a456b868e3f510，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T04（acc/wp-17-t04/1，attempt 1，verdict pass）：pass；建议级 1 条＝SeriesBuilder finalize 对同一 (t,jointIndex) 三重以上重复时 diagRefs 编码为多重集，与文件头『清单等价于集合』表述有细节出入（身份块以其余字段为主键、同多重集仍得同摘要，仅字面失准）——建议注释补『重复条目按多重集编码』或去重后编码",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t04/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t04-20261007.md，记录提交 b4fd4809aaae51b58c3213d155a456b868e3f510）；本条为轮次索引指针（taskId=WP-17-T04，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-665",
+      "source": "acc/wp-18-t03/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-18-t03-20261007.md @ f39d6baf9e58f369eb972915222840dd4e660d3a，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-18-T03（acc/wp-18-t03/1，attempt 1，verdict fail）：阻断 B-1＝单元卡实现偏差登记（§18.3 十则＋§18.5 v0.2 行）未进入送验分支、仅存在于主仓库工作树未提交修改中，而提交 e6e67fa5 信息明确声称随提交交付——『代码先行、文档失实』＋提交信息与内容不符（功能/测试/红线/留痕全部真实可复现，33 用例亲手重跑全绿）；建议级 2 条（构建现场留痕不可考/契约 verify 源码面绑定建议）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-18-t03/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-18-t03-20261007.md，记录提交 f39d6baf9e58f369eb972915222840dd4e660d3a）；本条为轮次索引指针（taskId=WP-18-T03，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-666",
+      "source": "acc/wp-18-t03/2 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-18-t03-20261007.md @ d22e6c817c7d7d0d6a7f13a0d7debbbdfbd7588a，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-18-T03（acc/wp-18-t03/2，attempt 2，verdict pass）：attempt2 pass：B-1 返工闭环——登记以卡面原文为权威落回 wp18-t03 分支（62edfec9，对源码零改动），主仓库工作树清净；建议级 2 项（主管线惯量比注入面留待 P-DT-4 裁决——建议补端到端用例/偏差登记『十则 vs 九则』计数口径统一建议）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-18-t03/2 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-18-t03-20261007.md，记录提交 d22e6c817c7d7d0d6a7f13a0d7debbbdfbd7588a）；本条为轮次索引指针（taskId=WP-18-T03，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-667",
+      "source": "acc/wp-18-t04/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-18-t04-20261007.md @ 93a5463d9d57be29fa9d158f859e25e40d5ecf74，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-18-T04（acc/wp-18-t04/1，attempt 1，verdict pass）：pass；建议级 1 条＝留痕登记路径笔误——提交正文与单元卡写 traceability/gtest-reports/wp18-t04/（无连字符），实际目录 wp-18-t04/（证据真实可寻不构成阻断，随下次单元卡修订更正两处文字）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-18-t04/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-18-t04-20261007.md，记录提交 93a5463d9d57be29fa9d158f859e25e40d5ecf74）；本条为轮次索引指针（taskId=WP-18-T04，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-668",
+      "source": "acc/wp-19-t03/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t03-20261007.md @ 49f03ade9cc82c3e97e85c994edb8be69ec33a7d，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T03（acc/wp-19-t03/1，attempt 1，verdict pass）：pass；建议级观察 3 项（ICatalogValidator::validate 第二参数与卡面签名字面不一致——经 §19.3 登记 2 折算成立，建议 core::StableId 收编时核对卡面/canonicalPackageText 不含字段字典——v2 字典可变语义时须重新裁决是否进包身份/配对可缺失列半规格语义缝隙——单侧有值被静默丢弃，建议 T04 消费前补配对列缺失语义登记）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t03/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t03-20261007.md，记录提交 49f03ade9cc82c3e97e85c994edb8be69ec33a7d）；本条为轮次索引指针（taskId=WP-19-T03，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-669",
+      "source": "acc/wp-19-t04/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t04-20261007.md @ 2c275afb42dd814cad258df98e9e8723715b5518，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T04（acc/wp-19-t04/1，attempt 1，verdict pass）：pass；建议级 3 条（ird-test-report.json 仅聚合单元测试目标、契约测试 22 条由独立 XML 承载——建议治理侧统一口径/变异做红受只读约束未执行——以断言强度审查＋语义互斥双向钉扎替代，建议放开后补一次复红/kReasonTokenCount=34 手工常量双点同步取舍登记备查）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t04/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t04-20261007.md，记录提交 2c275afb42dd814cad258df98e9e8723715b5518）；本条为轮次索引指针（taskId=WP-19-T04，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-670",
+      "source": "acc/wp-20-t02/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t02-20261007.md @ 1bc16469a189d59266a1e75515a203edd8f453be，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T02（acc/wp-20-t02/1，attempt 1，verdict pass）：pass，建议级为零；两条非问题观察留档（分支区间 diff 含堆叠前序任务改动——流水线串行堆叠已知编排形态，按单提交核验/本地分支未设 upstream 跟踪但远程引用指向送验 SHA，推送事实成立）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t02/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t02-20261007.md，记录提交 1bc16469a189d59266a1e75515a203edd8f453be）；本条为轮次索引指针（taskId=WP-20-T02，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-671",
+      "source": "acc/wp-20-t03/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t03-20261007.md @ 9c9b67a7719a809e9339afad0311f263c69fd972，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T03（acc/wp-20-t03/1，attempt 1，verdict fail）：阻断 B-1＝diffCandidatePatch 成员函数体内递归调用自身＝无限自递归（MSVC C4717 编译告警指向送验原始代码；应调自由函数 optimization::diffCandidatePatch）——27 个用例全部走自由函数、公共接口实现路径零测试覆盖，必然崩溃的实现以『全绿』交付（运行期实证 exit 127 栈溢出）；另两变异做红证核心断言非恒真",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t03/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t03-20261007.md，记录提交 9c9b67a7719a809e9339afad0311f263c69fd972）；本条为轮次索引指针（taskId=WP-20-T03，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-672",
+      "source": "acc/wp-20-t03/2 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t03-20261007.md @ 40d39370eedb3ea74f5dc50aae993af740f28c89，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T03（acc/wp-20-t03/2，attempt 2，verdict pass）：attempt2 pass：B-1 修复经三重实证（C4717 消失/运行期栈溢出复现/回归变异做红精确归因）；建议级 2 条转登（G-3 单元卡 T03 执行计数未随返工刷新——3 例/12 应为 5 例/14，登记数字保守于实况/G-4 canonical 枚举形态缺字节级黄金钉扎且下标 0 编码口径仅在代码注释）；前轮 G-2 维持 open",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t03/2 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t03-20261007.md，记录提交 40d39370eedb3ea74f5dc50aae993af740f28c89）；本条为轮次索引指针（taskId=WP-20-T03，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-673",
+      "source": "acc/wp-22-t03/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t03-20261007.md @ f6de22713d7940a262476f201cf4b7b81e967fdc，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T03（acc/wp-22-t03/1，attempt 1，verdict pass）：pass；建议级 3 条（用例数登记失实三处同源——GateAdviceTest 实测 17 个 TEST 而单元卡三处写 16/32/commit 正文『T02 既有 5 用例』实为 4/WF-VER-105 期望注释计数依赖 stageDomains 词表序——有序 map 保证，保持现状登记备查）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t03/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t03-20261007.md，记录提交 f6de22713d7940a262476f201cf4b7b81e967fdc）；本条为轮次索引指针（taskId=WP-22-T03，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-674",
+      "source": "acc/wp-22-t04/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t04-20261007.md @ af3b581c133517f9e19ae67b70a0d8d76f4d2abf，验收日期 2026-10-07）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T04（acc/wp-22-t04/1，attempt 1，verdict pass）：pass；建议级 S-1＝单元卡 §11.2 WF-VER-203 行『注入创建失败（io Fault）』与实际落位形态（①提交端口 failMode 注入＋②目标位置文件占用）未同步微调——同文档两处口径出入；观察 2 条（F-536 同族『端口无实现→静默空转』风险——建议接线任务以无实现即 fail-fast 为核查点/WF-VER-204 记录实体归 io/project 承载非缺口）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t04/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t04-20261007.md，记录提交 af3b581c133517f9e19ae67b70a0d8d76f4d2abf）；本条为轮次索引指针（taskId=WP-22-T04，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-675",
+      "source": "acc/wp-16-t05/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-16-t05-20261007.md @ 0bf871c7b932f729776c1a67ccec253d3ee57e92，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-16-T05（acc/wp-16-t05/1，attempt 1，verdict pass）：pass（69/69＋19/19 全绿、双变异真红、ird_gates 零命中亲跑）；建议级 S-1＝Slerp 大弧样例（Rz350°→Rz10°）不击中 dot<0 翻转分支——Quaternion(Rotation3D) 构造规范化产出 w≥0 所致，断言本身仍属验收语义且有效（走长弧会红）；建议后续补构造 w<0 输入的样例或卡面澄清覆盖口径",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-16-t05/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t05-20261007.md，记录提交 0bf871c7b932f729776c1a67ccec253d3ee57e92）；本条为轮次索引指针（taskId=WP-16-T05，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-676",
+      "source": "acc/wp-16-t06/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-16-t06-20261008.md @ 8bd10e85b50e2b2f4cd848d0a51ee9e5eb07bf77，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-16-T06（acc/wp-16-t06/1，attempt 1，verdict pass）：pass；建议级 3 条（§22 修订历史 T06 行版本号误写 v0.4 与 T05 行重复致卡头 v0.5 悬空/ird-test-report.json 仅覆盖契约 21 条、模型 76 条无 JSON 报告——多套件先例为双 JSON 分留/PathPlannerContractTest:189 与注释以卡面旧名 makeRobWorkPathPlannerAdapter 指称实现名 makePathPlannerAdapter——建议注释补偏差指引）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-16-t06/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t06-20261008.md，记录提交 8bd10e85b50e2b2f4cd848d0a51ee9e5eb07bf77）；本条为轮次索引指针（taskId=WP-16-T06，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-677",
+      "source": "acc/wp-17-t05/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t05-20261008.md @ 6bd5ea7e3b740fef426b07741730678d253f731a，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T05（acc/wp-17-t05/1，attempt 1，verdict pass）：pass；建议级 2 条（relTolerance 为记录性字段——固定步长 RK4 下无数值消费点，换自适应积分器时须接手语义并考虑升算法版本 token，已有登记仅提示/奇异判据注释 ‖M‖∞（行和）与实现逐元素最大绝对值 ‖M‖max 记号不一致——SPD 质量阵同阶不影响检出语义，建议统一记号）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t05/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t05-20261008.md，记录提交 6bd5ea7e3b740fef426b07741730678d253f731a）；本条为轮次索引指针（taskId=WP-17-T05，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-678",
+      "source": "acc/wp-17-t06/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t06-20261008.md @ 77570365daf49f9c4e45427af1f3d708c686a522，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T06（acc/wp-17-t06/1，attempt 1，verdict pass）：pass；建议级 2 条（S-1 EvidenceBuilder『实例 build 后可复用』声明不可达——build 只清产物缓存未清已注入素材、addSeries 二次注入即抛——注释误导建议改『单工况一次性装配』或补 reset 语义/S-2 留痕三件套不全——无 ird-test-report.json 且 builds/ 无目录，T03/T04 有 T05/本任务无先例不一，本验收已亲手复验真实性不受影响）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t06/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t06-20261008.md，记录提交 77570365daf49f9c4e45427af1f3d708c686a522）；本条为轮次索引指针（taskId=WP-17-T06，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-679",
+      "source": "acc/wp-17-t07/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t07-20261008.md @ 45450be9f95d725efde41c9712cea8cb69c7f6fc，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T07（acc/wp-17-t07/1，attempt 1，verdict pass）：pass（65/65＋17/17 全绿、黄金数值独立手算一致）；建议级 2 条（S-1 包络 canonical 摘要登记注未逐字列出关节行数前缀字节——确定性无害的定界做法，建议顺手补登记/S-2 conditionCount 与 coversAllMandatory『在场』口径不同——Partial 无 Ok 行工况计入计数却不产出关节行，提示 T10 消费时注意）；观察 O-1 主仓库 ui-t74 遗留与本任务无关",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t07/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t07-20261008.md，记录提交 45450be9f95d725efde41c9712cea8cb69c7f6fc）；本条为轮次索引指针（taskId=WP-17-T07，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-680",
+      "source": "acc/wp-19-t05/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t05-20261008.md @ 0fe04fa6d70a77068af2c0fe025d0c7c58250306，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T05（acc/wp-19-t05/1，attempt 1，verdict pass）：pass；建议级 3 条（RatioConversionIsSingleSite 单点计数按全文件文本扫描——注释同文本亦计入，强度低于 AST 级、另有零映射词表扫描兜底/ird-test-report 仅 _test 目标、契约结果在独立 XML——沿用 T04 口径建议后续统一/③端口运行期全链行使未执行——P-SEL-1/R-SEL-1 登记随 T06/L5 闭合，按已登记边界豁免）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t05/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t05-20261008.md，记录提交 0fe04fa6d70a77068af2c0fe025d0c7c58250306）；本条为轮次索引指针（taskId=WP-19-T05，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-681",
+      "source": "acc/wp-19-t06/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t06-20261008.md @ 72079a4d46328fd60dd200d7845e964e16133829，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T06（acc/wp-19-t06/1，attempt 1，verdict pass）：pass——8 项清单零阻断、acceptance 3/3 有亲手复现运行证据、零新增建议级问题（P-SEL-4 确已规避）；集成全量与冒烟为流水线确定性复验结论，本会话按验收指令引用未重复执行（如实标注）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t06/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t06-20261008.md，记录提交 72079a4d46328fd60dd200d7845e964e16133829）；本条为轮次索引指针（taskId=WP-19-T06，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-682",
+      "source": "acc/wp-19-t07/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t07-20261008.md @ d60b21a2d4256f7c76cb5ab9bcf349835b757761，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T07（acc/wp-19-t07/1，attempt 1，verdict pass）：pass（mergeEnvelope 落位）——协议 §4.1~§4.11 全部通过且无阻断级问题，建议级问题为零（无 findings 转登项）；验收对象为冻结 SHA a13c8c7e",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t07/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t07-20261008.md，记录提交 d60b21a2d4256f7c76cb5ab9bcf349835b757761）；本条为轮次索引指针（taskId=WP-19-T07，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-683",
+      "source": "acc/wp-20-t04/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t04-20261008.md @ 22fd06c67d8f4130c30fe8bf488778a062629ba5，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T04（acc/wp-20-t04/1，attempt 1，verdict pass）：pass——四条 acceptance 全满足；建议级 1 条＝ConstraintTest:866-869 对 input.manifest.profileContentIdentity 连续两次相同赋值（冗余无害）——建议返工窗口顺手清理",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t04/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t04-20261008.md，记录提交 22fd06c67d8f4130c30fe8bf488778a062629ba5）；本条为轮次索引指针（taskId=WP-20-T04，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-684",
+      "source": "acc/wp-20-t05/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t05-20261008.md @ 6955298159a1168a51f110f7acb929cddce77982，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T05（acc/wp-20-t05/1，attempt 1，verdict pass）：pass，建议级为零；观察留档 2 条（容差注入首试不变红经分析系 strictlyBetter 的 !closeWithin 守卫独立保证『近似相等⇒互不支配』——防线冗余正确，改破坏后即红/契约测试 stripComments 对字符串字面量内注释符存在理论误剥——测试注释已论证不影响判定方向）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t05/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t05-20261008.md，记录提交 6955298159a1168a51f110f7acb929cddce77982）；本条为轮次索引指针（taskId=WP-20-T05，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-685",
+      "source": "acc/wp-20-t06/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t06-20261008.md @ 1b841e55694535029c1b2612006c3805a9eb0c4a，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T06（acc/wp-20-t06/1，attempt 1，verdict pass）：pass；建议级 3 条（G-1 quickEvaluated/verifiedEvaluated 注释『命中回放不计』与 run() 侧无条件 +=1 失实——T09 消费前须二选一修正/G-2 run() @throws 声明 std::invalid_argument 与实现 OptimizationError(kOptInputInvalid) 不符——建议修正注释/G-3 ScreenedOut 状态行单独变异仍绿——缺 status 与 evaluation.status 双字段正向断言）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t06/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t06-20261008.md，记录提交 1b841e55694535029c1b2612006c3805a9eb0c4a）；本条为轮次索引指针（taskId=WP-20-T06，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-686",
+      "source": "acc/wp-20-t07/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t07-20261008.md @ 260966009cc2e44b352688204c587ddd633be5e1，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T07（acc/wp-20-t07/1，attempt 1，verdict pass）：pass（108＋31 全绿、双变异真红）；范围外观察 1 条＝project 单元 PersistenceFormat.hpp:506 CommandRecord.commandType 注释示例 \"project.create-branch\"（带点）与同条冻结语法 ^[a-z0-9-]{3,64}（无点）自相矛盾——属 project 既有注释勘误项，由 GOV-FIND 批次勘误消账（对应本登记册勘误提交）；设计内状态＝建支替身 token 口径已在单元卡诚实登记",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t07/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t07-20261008.md，记录提交 260966009cc2e44b352688204c587ddd633be5e1）；本条为轮次索引指针（taskId=WP-20-T07，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-687",
+      "source": "acc/wp-22-t05/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t05-20261008.md @ e9825919cd647b0527b2ff76776ad203a16951e4，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T05（acc/wp-22-t05/1，attempt 1，verdict pass）：pass；建议级 S-1＝OpenWizardHomeTest:316~318 用例头注声称『恢复目录后恢复可用标记（实测性）』但用例体无恢复→复测 locationAvailable 断言段（注释描述超出实际覆盖，保留＋标记＋移除三段均真实断言）——建议随下批补齐断言段或收敛注释；观察＝ird-test-report-model-test.json 文件名与目标名字面不一系 wp22-t04 起批次命名惯例非新问题",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t05/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t05-20261008.md，记录提交 e9825919cd647b0527b2ff76776ad203a16951e4）；本条为轮次索引指针（taskId=WP-22-T05，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-688",
+      "source": "acc/wp-22-t06/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t06-20261008.md @ 7ea0cb83993113e07e0012ebfc1e6439061d8ee1，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T06（acc/wp-22-t06/1，attempt 1，verdict pass）：pass；建议级 2 条（CloseFlowContractTest 4 处 C4834 丢弃 store->requestClose() [[nodiscard]] 返回值——测试收尾释放写锁调用，建议 (void) 化/awaitStoreClosed 轮询无上限为设计内决策——project.md §9.7 明文＋L5 abandonAll 兜底登记，兜底控制器未落位前编排核依赖对端终态保证）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t06/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t06-20261008.md，记录提交 7ea0cb83993113e07e0012ebfc1e6439061d8ee1）；本条为轮次索引指针（taskId=WP-22-T06，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-689",
+      "source": "acc/wp-22-t07/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t07-20261008.md @ 6bff5f257e03495f4d12da7aca861e287a391ffa，验收日期 2026-10-08）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T07（acc/wp-22-t07/1，attempt 1，verdict pass）：pass（另存为/包导出导入编排）；建议级 2 条（S-1 留痕口径——仅契约目标有 ird-test-report JSON、模型 94 条无 JSON 条目与 T06 双文件口径不一致——聚合不全非计数失实/S-2 另存『换新 projectId』当前观测为身份装载自目标 project.json——真换新分配验证依赖 WP-04-T18 存储侧落位后桩替换，建议届时补『新 id≠源 id』断言）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t07/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t07-20261008.md，记录提交 6bff5f257e03495f4d12da7aca861e287a391ffa）；本条为轮次索引指针（taskId=WP-22-T07，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-690",
+      "source": "acc/wp-17-t08/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t08-20261009.md @ 5364b81373dcfa135b52ea2ffa1dc103aa36763d，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T08（acc/wp-17-t08/1，attempt 1，verdict pass）：pass；建议级 2 条（sdurws_ird_ui_gui_test 存在环境敏感用例——BatchPasteImpactDetail 在无人值守会话因剪贴板打开被拒假红（COM 0x800401d0），与本任务零因果，建议剪贴板类用例加 skip/重试通道/ird_gates 缺独立纯扫描入口——建议提供跳过构建冒烟的扫描-only 开关降低验收复验成本）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t08/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t08-20261009.md，记录提交 5364b81373dcfa135b52ea2ffa1dc103aa36763d）；本条为轮次索引指针（taskId=WP-17-T08，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-691",
+      "source": "acc/wp-17-t09/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t09-20261009.md @ f42716bbdf3a14be3f0e58d77f7377275279260c，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T09（acc/wp-17-t09/1，attempt 1，verdict pass）：pass；建议级 4 条（O1 P-DYN-8 收编时须增登 dynamics→ui 白名单边并以真实 registrar 翻译注册＋字段同构机器对账/O2 §11.5 GUI 手动点验流程未人工执行无截图留痕/O3 曲线视图 Qt tr() 内联中文与 verdictText 硬编码映射——与文案键值分离口径双轨，宜归宿主文案资源/O4 replay 会话态零触断言由签名结构性保证近恒真——留档仍有守卫价值）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t09/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t09-20261009.md，记录提交 f42716bbdf3a14be3f0e58d77f7377275279260c）；本条为轮次索引指针（taskId=WP-17-T09，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-692",
+      "source": "acc/wp-17-t10/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-17-t10-20261009.md @ a5b95be4b7e793ea5bb2f75c987d307ff26bdb69，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-17-T10（acc/wp-17-t10/1，attempt 1，verdict pass）：pass；建议级 3 条（G-1 execution-log.md:21 留痕哈希字面与实物不符——誊写笔误，核心结论逐字节一致经独立复现为真/G-2 收编 WP-19-T10 的 stray 留痕跨任务混入——allowedFiles 内且如实披露，宜独立小提交/G-3 ird-test-report 仅契约 26 用例——不构成口径违约，完整覆盖可作治理建议）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-17-t10/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-17-t10-20261009.md，记录提交 a5b95be4b7e793ea5bb2f75c987d307ff26bdb69）；本条为轮次索引指针（taskId=WP-17-T10，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-693",
+      "source": "acc/wp-19-t08/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t08-20261009.md @ 8e0cdc67f4b051d5fd8b6479e01489172cde794e，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T08（acc/wp-19-t08/1，attempt 1，verdict pass）：pass（SEL-09 范围外诊断）；建议级观察 3 条（主仓库 ui-t74 遗留日志建议归属会话收尾/两处『找不到轴返回 Revolute』防御分支注释已声明不可达理由——重构校验序时须同步复核/组合级范围外缺口一次性登记＋格循环外去重——提示 reporting 接入时注意格 note 与组合级 gaps 双面呈现一致性）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t08/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t08-20261009.md，记录提交 8e0cdc67f4b051d5fd8b6479e01489172cde794e）；本条为轮次索引指针（taskId=WP-19-T08，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-694",
+      "source": "acc/wp-19-t09/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t09-20261009.md @ 5a0d53ef475525521b5f98214bbfa71eb0397446，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T09（acc/wp-19-t09/1，attempt 1，verdict pass）：pass（254＋48 真实运行一致）；建议级 3 条（ird-test-report.json 为契约面口径而 selection 近族六任务均为单元测试口径——json 面与近族相反易误读，建议统一或双文件分留/Backfill.cpp:1168 注释『保守取首个并登记诊断』与实现仅 break 未 push 诊断不符——行为保守安全，建议补诊断或修注释/单元卡 §21 用例组分布笔误——Synthesis 8 与 Plan 7 实为 7/8 互换，总数正确）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t09/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t09-20261009.md，记录提交 5a0d53ef475525521b5f98214bbfa71eb0397446）；本条为轮次索引指针（taskId=WP-19-T09，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-695",
+      "source": "acc/wp-19-t10/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t10-20261009.md @ 760ed9b948b108b075f88155d69a408f54bbb624，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T10（acc/wp-19-t10/1，attempt 1，verdict pass）：pass；建议级 2 条（P-SEL-10『经 IPluginUiRegistrar 白名单挂位』以 B 方案字段同构承载、真实 registrar 消费归宿主装配批次——豁免已按先例登记，提请合入时知悉仍在册/sdurws_ird_selection_app GUI harness 仅构建留痕未启动运行——envUnavailable 如实登记符合约定，建议宿主装配或人工点验时补截图）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t10/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t10-20261009.md，记录提交 760ed9b948b108b075f88155d69a408f54bbb624）；本条为轮次索引指针（taskId=WP-19-T10，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-696",
+      "source": "acc/wp-19-t11/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t11-20261009.md @ 264894d269899b276def9f3a150cc9b8cca3a364，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T11（acc/wp-19-t11/1，attempt 1，verdict pass）：attempt1 pass：阻断级无、建议级无（无 findings 转登项）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t11/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t11-20261009.md，记录提交 264894d269899b276def9f3a150cc9b8cca3a364）；本条为轮次索引指针（taskId=WP-19-T11，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-697",
+      "source": "acc/wp-20-t08/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t08-20261009.md @ 5076018acfdc242cc83db3c21d191066e862d0ed，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T08（acc/wp-20-t08/1，attempt 1，verdict pass）：pass（送验对象 bf85e817）；建议级 1 条（G-ACC-T08-1＝Preflight.hpp:436 接口类实现契约注释 @throws std::invalid_argument 与同文件虚函数注释及实际实现 OptimizationError(kOptInputInvalid) 不一致——同一头文件两处 @throws 描述相左，§12.3 并列合法承载下非行为违约，建议澄清接口头注或按 DTB §5.4 登记口径）；观察＝主仓库他任务在途修改与本任务无关",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t08/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t08-20261009.md，记录提交 5076018acfdc242cc83db3c21d191066e862d0ed）；本条为轮次索引指针（taskId=WP-20-T08，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-698",
+      "source": "acc/wp-20-t09/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t09-20261009.md @ 60738f4826dbfad6527d7d8f6be302d6646ad82e，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T09（acc/wp-20-t09/1，attempt 1，verdict pass）：pass；建议级观察 3 条（复现口径陷阱——主仓库 build/ 树源码随主工作树浮动，直跑 exe 得非送验对象结果（实测 86/26 vs 送验 139/38），建议验收指令固定送验自绑定构建树/gate-all 裸调用缺 -QtPrefix 在冒烟配置项报 FAIL 40/44——调用参数缺失非代码缺陷/CanceledInsufficientNeverFormal 未单独构造 Failed/Interrupted 相位 fixture——阻断判据为单一布尔位分支级覆盖充分，语义分化时再补）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t09/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t09-20261009.md，记录提交 60738f4826dbfad6527d7d8f6be302d6646ad82e）；本条为轮次索引指针（taskId=WP-20-T09，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-699",
+      "source": "acc/wp-20-t10/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t10-20261009.md @ e2b52662d7e8a239c5e65973d311a5600bab2901，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T10（acc/wp-20-t10/1，attempt 1，verdict fail）：阻断 B-1＝冒烟模式测试留痕失实（伪留痕）——两份『T10 冒烟 XML』与 wp-20-t08 批次为同一 git 对象（blob 哈希完全相同、旧文件改名复制），计数停留 T08 时点且 timestamp 相差半天，冒烟构建虽真实执行但『测试运行全绿』声明不可采信；集成模式证据全部真实且亲手复现；建议级 G-1＝OptimizationPanelWidget.cpp:29 注释『six 位有效数字』中英混杂",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t10/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t10-20261009.md，记录提交 e2b52662d7e8a239c5e65973d311a5600bab2901）；本条为轮次索引指针（taskId=WP-20-T10，verdict=fail），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-700",
+      "source": "acc/wp-20-t10/2 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t10-20261009.md @ 9ca42d3cee7f0b3247c42dbc8be7ff0718ea49c6，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T10（acc/wp-20-t10/2，attempt 2，verdict pass）：attempt2 pass：B-1 以本批代码真实运行冒烟两 exe 重制四件留痕后通过；观察 2 条（O-1 主仓库 ui-t74 遗留留痕建议归属线处置/O-2 测试替身 Stub* 前缀被偷懒扫描命中——标准注入物非占位实现，如需零噪声可改 Fake*/Scripted* 纯命名建议）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t10/2 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t10-20261009.md，记录提交 9ca42d3cee7f0b3247c42dbc8be7ff0718ea49c6）；本条为轮次索引指针（taskId=WP-20-T10，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-701",
+      "source": "acc/wp-20-t11/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-20-t11-20261009.md @ 84178e42a5f78c0b3a180e45857ea24f76a0e229，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-20-T11（acc/wp-20-t11/1，attempt 1，verdict pass）：pass（黄金数据集）；建议级 2 条（G-1 OptGoldenDatasetTest goldenEnumCount 只统计后 (void) 丢弃未与产品侧对照——枚举行为已由循环内逐项断言闭环，死变量整洁问题/G-2 契约测试状态词形断言循环对在场 token 仅 SUCCEED 近似恒真——实质语义由其后核心三态强断言承担，建议收紧为逐 token 显式期望）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-20-t11/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t11-20261009.md，记录提交 84178e42a5f78c0b3a180e45857ea24f76a0e229）；本条为轮次索引指针（taskId=WP-20-T11，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-702",
+      "source": "acc/wp-22-t08/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t08-20261009.md @ 2a5117173596c0094bca4f8ebb08cc9ca0806306，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T08（acc/wp-22-t08/1，attempt 1，verdict pass）：pass；建议级 2 条转登（F-570＝ird_gates 注释剥离正则嵌套量词在超长块注释触发指数回溯栈溢出——实施者三处声称『登记归治理』而 findings 无条目，登记声明未落账的新发现，本任务以拆分头注释规避；F-571＝ird-test-report 单契约口径 T07 同型连续两任务未消化）；编号自 F-557 跳号 F-570 起——避让主仓库 ui-t77 治理批已占用的 F-558~F-569",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t08/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t08-20261009.md，记录提交 2a5117173596c0094bca4f8ebb08cc9ca0806306）；轮内具体建议级问题已按当轮转登在册（F-570/F-571），不在此重复登记；本条为轮次索引指针（taskId=WP-22-T08，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-703",
+      "source": "acc/wp-22-t09/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t09-20261009.md @ fe71e663df4eeff270fa23d962c97b4501334b59，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T09（acc/wp-22-t09/1，attempt 1，verdict pass）：pass（124/46 全绿亲手复跑）；建议级 3 条（S1 Projection.hpp:62 实现口径说明称 recoveryBanner 非 const 而接口 Draft 签名实为 const——语义与 §10.3 一致仅措辞失准/S2 文件头概述与 §10.3 原文出入同根/S3 TitleStatusData::operator== 未含 resultsCurrentness 字段且无『有意省略』注释——值相等语义不完整建议补字段或注明理由）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t09/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t09-20261009.md，记录提交 fe71e663df4eeff270fa23d962c97b4501334b59）；本条为轮次索引指针（taskId=WP-22-T09，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-704",
+      "source": "acc/wp-22-t10/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t10-20261009.md @ c350b3fd1a80664e74ef6681965aec92e974a42e，验收日期 2026-10-09）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T10（acc/wp-22-t10/1，attempt 1，verdict pass）：pass；建议级 3 条（S1 SettingsContractTest 用例名/头注宣称与 io canonicalizeJson 逐字节比对而实际断言仅为二次 store 字节幂等——canonical 语义由模型侧黄金字节＋io reader 独立读回支撑，建议更名或补真比对/S2 缺省工厂深路径注释示例含 RobWork 段与实现及『产品面零 RobWork 字面量』口径相悖/S3 devLog 死变量构造后未接线即 (void) 压警告）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t10/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t10-20261009.md，记录提交 c350b3fd1a80664e74ef6681965aec92e974a42e）；本条为轮次索引指针（taskId=WP-22-T10，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-705",
+      "source": "acc/asm-plug/1 验收记录（doc/industrial-robot-design/traceability/acceptance/asm-plug-20261010.md @ 4417260b3a5141a168c067a21fb82951dea3161d，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] ASM-PLUG（acc/asm-plug/1，attempt 1，verdict pass）：pass（dynamics/selection/optimization 三域装配收口）；建议级 3 条（selection 回填 token apply-device-backfill 宿主权威判 InvalidDescriptor——P-SEL-3 待裁决联动的诚实钉扎非缺陷/ui_plugin 宿主链接面修改归 ui 宿主面批次的授权分期——后续收口勿漏消费/三 _app harness GUI 实机点验未执行——envUnavailable 如实留痕归所有者实机流程）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/asm-plug/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/asm-plug-20261010.md，记录提交 4417260b3a5141a168c067a21fb82951dea3161d）；本条为轮次索引指针（taskId=ASM-PLUG，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-706",
+      "source": "acc/asm-ui/1 验收记录（doc/industrial-robot-design/traceability/acceptance/asm-ui-20261010.md @ 3c5535c769bb514b73c944addfda39f60fb0d525，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] ASM-UI（acc/asm-ui/1，attempt 1，verdict pass）：pass（ui 宿主面收口：ui_plugin 三新域承接＋workflow 宿主适配器两缺陷修复＋11 必填桥参数化）；建议级 4 条（六域注册钉扎『两半分布』形态——建议后续增登 ui 测试面测试边使宿主承接路径获无人值守直测/提交信息 Why 段建议级编号笔误①③④应①②④——无登记面失实/workflow.md v1.6『增 3 用例』计数歧义——实为改造 1＋新增 2/ui_plugin 实机装载点验未执行归所有者流程）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/asm-ui/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/asm-ui-20261010.md，记录提交 3c5535c769bb514b73c944addfda39f60fb0d525）；本条为轮次索引指针（taskId=ASM-UI，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-707",
+      "source": "acc/asm-wf/1 验收记录（doc/industrial-robot-design/traceability/acceptance/asm-wf-20261010.md @ ac9169473622f8fa5c7cf8fd5610fa57ccfcf3f3，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] ASM-WF（acc/asm-wf/1，attempt 1，verdict pass）：pass（workflow 宿主适配层）；建议级 4 条（openProject .rwpack 分流收集缝双重调用嫌疑——替身缝幂等不构成缺陷级证据，建议注入真实对话框缝时复核/必填桥反例为抽样式仅两代表桥——presentFailure 已覆盖，建议后续逐一参数化/selection 卡 P-SEL-9 状态列同步义务属后续批次/Switch 候选激活使用切换前 projectId——CloseFlowOutcome 无 candidateProjectId 字段，建议宿主实现内以 store 身份复核）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/asm-wf/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/asm-wf-20261010.md，记录提交 ac9169473622f8fa5c7cf8fd5610fa57ccfcf3f3）；本条为轮次索引指针（taskId=ASM-WF，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-708",
+      "source": "acc/gov-doc/1 验收记录（doc/industrial-robot-design/traceability/acceptance/gov-doc-20261010.md @ 538831b9e24b06a22d9d4deb93c3b73cb51b77d3，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] GOV-DOC（acc/gov-doc/1，attempt 1，verdict pass）：pass（任务依据①~⑦全满足）；建议级 3 条（S-1 任务依据⑤章节定位笔误——P-SEL-9 实在 §19.2 待裁决项而依据写 §19.1，勘误内容落点正确非实施者偏差/S-2 传递失准任务 T08~T13 状态同样失准但不在本批 scope——建议流水线排批器统一修正/S-3 留痕单模式四件非八件全集——零源码改动批有如实登记理由，全量批次仍须八件形态）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/gov-doc/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/gov-doc-20261010.md，记录提交 538831b9e24b06a22d9d4deb93c3b73cb51b77d3）；本条为轮次索引指针（taskId=GOV-DOC，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-709",
+      "source": "acc/gov-gate/1 验收记录（doc/industrial-robot-design/traceability/acceptance/gov-gate-20261010.md @ cd42e3566ff9aaefaa9d5c9fcd40d444641528f3，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] GOV-GATE（acc/gov-gate/1，attempt 1，verdict pass）：pass（ird_gates R-4 注释剥离正则栈溢出悬崖修复等门禁三收口）；建议级/观察 4 条（red-case 空 0 字节日志证据强度依赖 execution-log 转述——退出码 127 已内联记录视为覆盖/XML 留痕既有用例名含 Placeholder 字样——界面占位符业务语义非偷懒代码/commit 时点未跑冒烟与流水线补验并存——以流水线结论为准/两 GUI 测试文件注释微小文字差异——同形复制手误级）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/gov-gate/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/gov-gate-20261010.md，记录提交 cd42e3566ff9aaefaa9d5c9fcd40d444641528f3）；本条为轮次索引指针（taskId=GOV-GATE，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-710",
+      "source": "acc/wp-19-t11/2 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-19-t11-20261010.md @ c86a7e6dae59f6e33c308cc3aeea8dd615b30de6，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-19-T11（acc/wp-19-t11/2，attempt 2，verdict pass）：attempt2 pass（二次验收）：阻断级无、建议级无（无 findings 转登项）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-19-t11/2 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-19-t11-20261010.md，记录提交 c86a7e6dae59f6e33c308cc3aeea8dd615b30de6）；本条为轮次索引指针（taskId=WP-19-T11，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-711",
+      "source": "acc/wp-22-t11/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t11-20261010.md @ 083eb3ca298af43e46623ba46405d9971001357d，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T11（acc/wp-22-t11/1，attempt 1，verdict pass）：pass（对比视图）；建议级 2 条（ComparisonContractTest byBranchBaselines 只写不读——残留辅助字段行为不受影响，建议触碰时清除/模型测试夹具 makeBaseline 的 branch 形参 (void) 空置——可简化签名纯整洁建议）；流水线复验引用项（集成全量/冒烟/ird_gates/validate-docs）如实标注未独立重跑",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t11/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t11-20261010.md，记录提交 083eb3ca298af43e46623ba46405d9971001357d）；本条为轮次索引指针（taskId=WP-22-T11，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-712",
+      "source": "acc/wp-22-t12/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t12-20261010.md @ 8c1fcecab284e7ef5fc6b4b55c0382a0e9f95339，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T12（acc/wp-22-t12/1，attempt 1，verdict pass）：pass；建议级 S-1＝WorkflowCommandCatalog.hpp:162-167 融合形态接线注释的覆写位覆盖面表述可再精确——WorkbenchContentDeps 逐命令覆写位仅 7 条、workflow 词表其余 8 条无同名单独覆写位需走 domainCommandEntries 通道——属 L5 宿主装配接线路径说明非行为缺陷，建议宿主装配任务在单元卡增补通道选择澄清",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t12/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t12-20261010.md，记录提交 8c1fcecab284e7ef5fc6b4b55c0382a0e9f95339）；本条为轮次索引指针（taskId=WP-22-T12，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-713",
+      "source": "acc/wp-22-t13/1 验收记录（doc/industrial-robot-design/traceability/acceptance/wp-22-t13-20261010.md @ d7e44ac04c380f711789d49439dee6718d13ecd8，验收日期 2026-10-10）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "[验收索引] WP-22-T13（acc/wp-22-t13/1，attempt 1，verdict pass）：pass；建议级 2 条（S1 LifeCycleMainlineContractTest.cpp:43 死 include <QString>——为 include 纪律对齐保留的未使用头，属无效果编译耦合建议移除，不构成红线违反/S2 流程提示——gate-all.ps1 含独立冒烟全量构建的重操作与『不重复冒烟构建』验收指令冲突，建议头注或 README 显著标注约 10+ 分钟）",
+      "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t13/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t13-20261010.md，记录提交 d7e44ac04c380f711789d49439dee6718d13ecd8）；本条为轮次索引指针（taskId=WP-22-T13，verdict=pass），不承载新的待办问题。",
+      "fixedAt": "2026-10-10"
     }
   ]
 }
