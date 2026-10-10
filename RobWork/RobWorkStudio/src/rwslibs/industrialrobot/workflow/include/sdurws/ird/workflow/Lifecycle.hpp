@@ -1466,6 +1466,13 @@ struct CloseFlowOutcome {
     std::unique_ptr<project::ProjectStore> candidateStore;///< 候选存储上下文（Switch 且验证成功时唯一非空——移交调用方激活，切换上下文的材料）
 };
 
+/// §10.2 Draft 签名 `requestClose(CloseKind)` 的返回类型名词逐字兑现
+/// （ASM-WF 宿主收口批次）：CloseFlowResult 是 CloseFlowOutcome 的别名
+/// （v0.7 偏差登记"CloseFlowOutcome 即其 Draft @return 的值承载"——别名
+/// 让基线虚类签名与 Draft 块逐字一致，值承载不变；类型同一，消费方两种
+/// 名词写法可互换）。
+using CloseFlowResult = CloseFlowOutcome;
+
 /**
  * @brief 关闭/切换/退出统一确认的编排器（O10——§7.3 流程图的执行点；
  *        §10.2 Draft 签名 requestClose(CloseKind) 的可测编排核）。
@@ -2959,6 +2966,119 @@ struct HomeScreenData {
  */
 HomeScreenData buildNoProjectHomeScreen(
     const std::vector<RecentProjectEntry>& recentEntries);
+
+// =====================================================================
+// 包导出/导入向导种类词表（§10.2 Draft 签名 startPackageWizard(kind) 的
+// kind 参数——WP-22-T08 v0.8 偏差登记"会话态枚举留待 L5 宿主接线任务
+// 按需引入"；ASM-WF 宿主收口批次即该任务，随基线虚类一并引入）
+// =====================================================================
+
+/**
+ * @brief 包向导种类（PM-05 行二/行三——§10.2 Draft 签名
+ *        startPackageWizard(PackageFlowKind kind) 的 kind 词表）。
+ *
+ * v0.8 登记口径的兑现（DTB §5.4）：T07 落位时以 PackageExportFlow::run／
+ * PackageImportFlow::run 两编排器分立承载，未新增词表；本批（宿主收口）
+ * 声明基线虚类，Draft 签名逐字兑现需要本枚举——两值与两编排器一一对应
+ * （Export→PackageExportFlow::run、Import→PackageImportFlow::run）。
+ * 会话态枚举（§10.3"零新增持久化枚举"边界内——kind 只存在于一次向导
+ * 触发的生命周期内，不写入任何持久化 schema）。
+ */
+enum class PackageFlowKind : std::uint8_t {
+    Export = 0, ///< 包导出向导（.rwpack 传输封装——PM-05 行二）
+    Import = 1, ///< 包导入向导（全量校验＋发布——PM-05 行三）
+};
+
+// =====================================================================
+// 基线虚类 ILifecycleFlowController（§10.2 Draft 签名逐字兑现——O4/O10；
+// ASM-WF 宿主收口批次：v0.9 收口性登记"六方法编排核已齐，随首个宿主
+// 消费方任务增列"的兑现点）
+// =====================================================================
+
+/**
+ * @brief 生命周期流程控制器基线虚类（§10.2 Draft 签名逐字兑现——O4/O10：
+ *        新建/打开/关闭切换退出/另存/包/重关联六入口的宿主消费面）。
+ *
+ * 背景说明（为什么本批才声明——v0.5~v0.9 偏差登记链的收口）：T04~T08
+ * 按"接口随消费方任务落位"纪律（NFR-MNT-04）逐步落位六方法的**可测
+ * 编排核**（NewProjectWizardFlow::commit／OpenProjectFlow::run／
+ * CloseFlow::run／SaveAsFlow::run／PackageExportFlow::run／
+ * PackageImportFlow::run／RelinkFlow::run），基线虚类一直未声明（v0.9
+ * 收口性登记：编排核已齐，虚类随首个宿主消费方任务增列）。本批（ASM-WF
+ * 宿主收口）即该消费方任务：落位本虚类＋plugin/ 装配面的宿主实现
+ * （WorkflowLifecycleController——六方法各自把宿主缝收集的用户输入交给
+ * 对应编排核，见 plugin/WorkflowHostAdapters.hpp）。
+ *
+ * 谁实现：L5 装配层（workflow/plugin/ 装配面提供标准实现；真实 ui 宿主
+ * 对话框缝由宿主装配注入）。谁消费：ui 宿主面/应用壳——菜单"新建/打开/
+ * 关闭/另存为/包导出导入/重关联"入口的统一触发点（D-WF-6：宿主面归 ui、
+ * 流程编排归 workflow——本接口即两权分立的接缝）。
+ *
+ * 签名与 Draft 块的逐字关系：
+ *   - requestClose 返回类型 CloseFlowResult＝CloseFlowOutcome 的别名
+ *     （Draft 名词逐字兑现；值承载＝v0.7 登记的 CloseFlowOutcome——
+ *     Proceed/Aborted（用户取消）/Failed（附对端诊断）三态）；
+ *   - startPackageWizard 的 PackageFlowKind 为本批引入（v0.8 预留）；
+ *   - 其余四方法签名与 Draft 块逐字一致。
+ *
+ * 线程约束：主线程会话内（§10.3"流程编排接口：主线程会话内（UI 流程）"
+ * 行——六方法全部是模态用户流程，决策回调在调用线程同步发生）。
+ */
+class ILifecycleFlowController {
+public:
+    /// 虚析构：经接口引用多态消费的常规保障。
+    virtual ~ILifecycleFlowController() = default;
+
+    /**
+     * @brief 启动新建项目向导（PM-01 三步；取消/失败不留半成品）。
+     *
+     * 编排核：NewProjectWizardFlow::commit（确认动作的执行点——步骤推进
+     * 与实时摘要是宿主面事件驱动的输入演进，本入口只承载"确认"时刻）。
+     * 取消＝确认前放弃（确认前零副作用——不留半成品的编排语义）；
+     * 失败＝commit 产物 failure（输入保留供重试）。
+     */
+    virtual void startNewProjectWizard() = 0;
+
+    /**
+     * @brief 打开项目（PM-02 五步协议编排；source=CommandLine|DragDrop|Dialog）。
+     * @post 失败显示具体文件且不动当前项目。
+     *
+     * 编排核：OpenProjectFlow::run（入口分流/失败呈现/不动当前项目的
+     * 全语义承载）；Dialog 来源的路径选择对话框归宿主缝。
+     */
+    virtual void openProject(OpenSource source, std::string path) = 0;
+
+    /**
+     * @brief 关闭/切换/退出统一确认（PM-03；drain 等待在途归档——A7）。
+     * @return 流程结果：Proceed / Aborted（用户取消）/ Failed（附对端诊断）。
+     *
+     * 编排核：CloseFlow::run（三选/二选/9 态短标签/候选验证切换/存储
+     * 上下文排空——三端口 decisions/drafts/drain 由装配注入）。
+     */
+    virtual CloseFlowResult requestClose(CloseKind kind) = 0;
+
+    /**
+     * @brief 另存为向导（PM-05；勾选记忆默认经 IUserSettingsStore）。
+     *
+     * 编排核：SaveAsFlow::run（复制执行端口/记忆默认/按打开协议进入）。
+     */
+    virtual void startSaveAsWizard() = 0;
+
+    /**
+     * @brief 包导出/导入向导（后台进度可取消、取消清理临时区）。
+     *
+     * 编排核：kind==Export → PackageExportFlow::run；kind==Import →
+     * PackageImportFlow::run（两编排器 v0.8 分立承载的 kind 分派点）。
+     */
+    virtual void startPackageWizard(PackageFlowKind kind) = 0;
+
+    /**
+     * @brief 外部源重关联入口（PM-09；显式提交产生新修订）。
+     *
+     * 编排核：RelinkFlow::run（检测→显式确认→显式提交→新修订回传）。
+     */
+    virtual void startRelinkFlow(core::ObjectId resource) = 0;
+};
 
 }  // namespace workflow
 }  // namespace ird

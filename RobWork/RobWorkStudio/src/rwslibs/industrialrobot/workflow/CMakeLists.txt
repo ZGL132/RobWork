@@ -100,7 +100,7 @@ add_library(sdurws_ird_workflow STATIC
                         # 纯函数组装核（高亮行/分组块）＋EVI-02/RPT-04 基准
                         # 一致性检查经 evidence 公共契约消费（白名单八边既
                         # 登记——evidence 边首消费）＋P-OPT-8 警告透传不虚构
-    src/Commands.cpp)   # 命令集编排核（§8.3/§8.4 UX-13——WP-22-T12：
+    src/Commands.cpp    # 命令集编排核（§8.3/§8.4 UX-13——WP-22-T12：
                         # 14 条命令 id 词表＋五类执行分流（修订经①端口/
                         # 会话零修订 KIN-06/向导触发/碰撞检查 P-WF-3 最小
                         # 语义/报告导出编排 reporting 服务——reporting 边
@@ -108,6 +108,14 @@ add_library(sdurws_ird_workflow STATIC
                         # L5 装配桥接）；计算库零 Qt——ui::CommandDescriptor
                         # 组装与 IWorkflowCommandContributor 兑现在 plugin/
                         # 目录（R-3 文件域隔离——§10.2 v1.3 偏差登记）
+    # ASM-WF 宿主收口批次增列（零 Qt——两件均消费八边内对端）：
+    src/BackfillTranslate.cpp  # P-SEL-9 转译编排核（selection 回填记录→
+                               # modeling apply-drivetrain-design 权威写入
+                               # 经①端口——两端口接缝承载跨域消费〔R-1：
+                               # 零 selection/modeling 头，token 字面引用〕）
+    src/CloseSupervisor.cpp)   # L5 关闭控制器（project §9.7 兜底义务——
+                               # awaitStoreClosed 无上限轮询的超阈值监督：
+                               # poll 复合驱动＋Dev 日志告知＋不阻塞进程退出）
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
 # PUBLIC 传播：workflow 公共头（T03+ 落位）使用 C++17 设施，消费者编译
@@ -192,6 +200,14 @@ add_library(sdurws_ird_workflow_plugin STATIC
                                           #   QKeySequence，零 Qt 计算库头不可承载〕
                                           #   ＋处理器薄适配＋注册装配函数）
     plugin/WorkflowCommandCatalog.cpp
+    plugin/WorkflowHostAdapters.hpp       # 宿主装配面（ASM-WF——§10.2 v0.5~v1.2
+                                          #   九端口适配器＋三执行端口委托适配器
+                                          #   ＋ILifecycleFlowController 宿主实现
+                                          #   WorkflowLifecycleController＋装配核查
+                                          #   assembleWorkflowLifecycleController
+                                          #   〔F-536 同族：端口无实现即 fail-fast〕；
+                                          #   零 Qt 实现以便测试目标直链消费）
+    plugin/WorkflowHostAdapters.cpp
     plugin/WorkflowPluginAssembly.cpp)    # §10.9 装配门面实现（assembly/
                                           #   公共头的私有实现）
 set_target_properties(sdurws_ird_workflow_plugin PROPERTIES
@@ -283,12 +299,18 @@ add_executable(sdurws_ird_workflow_test
                               # 高亮〕/diff 分组分拣〔未知 token fail-fast/通道
                               # 不可用降级/P-OPT-8 警告透传零补造〕/编排核前置
                               # fail-fast 三面/拒绝与接受互斥/接口消费路径钉扎）
-    test/CommandsTest.cpp)  # 命令集编排核模型测试（WP-22-T12——WF-VER-222 词表/
+    test/CommandsTest.cpp  # 命令集编排核模型测试（WP-22-T12——WF-VER-222 词表/
                             # 分流黄金表＋WF-VER-223 模型半区〔复位关节零修订端
                             # 口触达〕＋五类编排分流〔修订经①端口/会话/向导/
                             # 碰撞 P-WF-3 最小语义触达隔离/报告导出编排〕＋
                             # fail-fast 装配违约＋接口消费路径钉扎；零 Qt——
                             # 描述符/注册/模糊搜索可达面在契约测试目标）
+    test/HostAdapterTest.cpp)  # 宿主装配面模型测试（ASM-WF——装配核查 F-536
+                                # 逐端口缺失 fail-fast／九端口适配器经接口虚
+                                # 派发消费〔store 半区真实桥＋脚本缝〕／
+                                # WorkflowLifecycleController 六方法缝编排／
+                                # StoreCloseSupervisor 监督循环／P-SEL-9 编排核
+                                # 全分支〔替身 handler 真实提交〕）
 
 target_compile_features(sdurws_ird_workflow_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_test PROPERTIES
@@ -304,11 +326,23 @@ endif()
 
 # 测试链接产品库 sdurws_ird_workflow 同时验证"公共头可被正常 include
 # ＋库可链接"（八边 PUBLIC 传染链随目标自动到达）。
+# sdurws_ird_workflow_plugin＝同单元插件目标（ASM-WF——宿主装配面适配器
+# 族/控制器/装配核查为被测面；同单元测试目标链同单元 plugin 目标＝规则
+# ①同单元许可形态〔ird_gates 测试边规则①——selection_test 先例〕；其
+# PUBLIC 面携带 ui→Qt 传染，运行期 DLL 拷贝段已覆盖）。
 # sdurws_ird_testkit＝报告/追溯设施消费面（RecordListener/IRD_TEST_INFO——
 # T-1 允许形态：仅测试目标链 testkit，产品目标不链）。单行链接语句＝契约
 # 测试 T-1 扫描的登记形态约束（testkit 与测试目标名同行可见——modeling/
-# reporting/requirements/kinematics 同款）。本目标零 Qt（红线扫描用例面）。
-target_link_libraries(sdurws_ird_workflow_test PRIVATE sdurws_ird_workflow sdurws_ird_testkit GTest::gtest)
+# reporting/requirements/kinematics 同款）。红线扫描用例面扫描 include/＋
+# src/ 零 Qt——plugin/ 不在扫描域（R-3 文件域隔离），适配器零 Qt 实现不
+# 影响扫描结论。
+target_link_libraries(sdurws_ird_workflow_test PRIVATE sdurws_ird_workflow sdurws_ird_workflow_plugin sdurws_ird_testkit GTest::gtest)
+
+# 插件私有头解析（ASM-WF——HostAdapterTest 消费 plugin/ 目录的
+# WorkflowHostAdapters.hpp：单元根 PRIVATE include，contract_test 消费
+# plugin/ 头同款先例；仅测试目标可达，产品面不外溢——R-2 红线不受影响）。
+target_include_directories(sdurws_ird_workflow_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 # 源码树位置注入：红线扫描用例在运行期扫描 workflow 源码核对红线
 # （零 Qt/八边 include 面——卡 §3.2）。经编译定义传 industrialrobot 根
@@ -455,13 +489,24 @@ add_executable(sdurws_ird_workflow_contract_test
                                                     # drained 有界轮询〕；A7 等待期间
                                                     # 存储上下文保持＋归档完成事件锚定
                                                     # 原修订＋协作取消对照腿）
-    contract_test/LifeCycleMainlineContractTest.cpp)  # WF-VER-227 全主线回归（WP-22-T13——
+    contract_test/LifeCycleMainlineContractTest.cpp  # WF-VER-227 全主线回归（WP-22-T13——
                                                        # 新建→编辑→应用→撤销/重做→包
                                                        # 导出导入→另存单用例串接〔AT-20/
                                                        # 29——真实 store 全程＋真实 ui
                                                        # CommandRegistry 统一 submit 路径
                                                        # ＋真实 io 导出/导入器＋另存真实
                                                        # 复制；修订链黄金序列 2→3→4→5〕）
+    contract_test/HostAssemblyContractTest.cpp)  # 宿主装配面端到端契约（ASM-WF——
+                                                  # 装配核查后控制器经 ILifecycleFlow-
+                                                  # Controller& 接口六方法真实驱动
+                                                  # 〔真实 store 落盘：requestClose 全链
+                                                  # Proceed＋closed 复核／打开分流激活〕
+                                                  # ＋P-SEL-9 转译链 token 路由真实提交
+                                                  # 〔替身 apply-drivetrain-design 处理器
+                                                  # 经 handlerRegistry 注册→Committed
+                                                  # 新修订〕＋StoreCloseSupervisor 兜底
+                                                  # 端到端〔真实 execution 阻塞在途→
+                                                  # 超阈值兜底→closed 达成＋Dev 日志〕）
 
 target_compile_features(sdurws_ird_workflow_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_workflow_contract_test PROPERTIES
