@@ -6964,6 +6964,33 @@
       "title": "[验收索引] WP-22-T13（acc/wp-22-t13/1，attempt 1，verdict pass）：pass；建议级 2 条（S1 LifeCycleMainlineContractTest.cpp:43 死 include <QString>——为 include 纪律对齐保留的未使用头，属无效果编译耦合建议移除，不构成红线违反/S2 流程提示——gate-all.ps1 含独立冒烟全量构建的重操作与『不重复冒烟构建』验收指令冲突，建议头注或 README 显著标注约 10+ 分钟）",
       "resolution": "GOV-FIND 索引式收编：该轮验收的建议级/偏差详情以验收记录全文为准（origin/acc/wp-22-t13/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-22-t13-20261010.md，记录提交 d7e44ac04c380f711789d49439dee6718d13ecd8）；本条为轮次索引指针（taskId=WP-22-T13，verdict=pass），不承载新的待办问题。",
       "fixedAt": "2026-10-10"
+    },
+    {
+      "id": "F-714",
+      "source": "acc/ui-t77/1 验收记录（attempt 1，verdict=pass）§14.1——独立子会话 fresh worktree 全量构建实测（2026-10-10）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "框架示例插件 RWSimulatorPlugin 在 fresh 树全量构建下编译失败——windows.h 的 min/max 宏污染 rw/math Math.hpp（warning C4003→error C2059），主树存量构建树同样无该产物（既有缺位非本批引入）；任何 fresh 树/CI 全量构建都会在此中断后续目标构建",
+      "owner": "框架补丁批次（修复属框架源码面——SA-02：须先在 industrialrobot/patches/PATCHES.md 登记 patch 再改；修法候选＝该示例插件 TU 的 include 序调整或 NOMINMAX 定义，逐字核对后择一）"
+    },
+    {
+      "id": "F-715",
+      "source": "acc/ui-t77/1 验收记录（attempt 1，verdict=pass）§14.2——gate-all worktree 实测 3 个测试目标 0xc0000135 误报（2026-10-10）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "gate-all.ps1 未内化 fresh 树运行时 PATH 前置——worktree/CI 场景下测试目标因 python313.dll（0xc0000135）被判 FAIL（DTB §5.1「fresh 树运行时前置」已登记该手工步骤，但脚本未探测/注入，验收与 CI 场景系统性误报）",
+      "owner": "门禁脚本批次（gate-all 增运行时 PATH 探测/前置校验提示——如探测 python313.dll 不可达时对受影响目标输出 SKIP+归因而非 FAIL，或显式注入 Miniconda PATH；与 F-628 的 -Toolchain 参数化同族收口）"
+    },
+    {
+      "id": "F-716",
+      "source": "acc/ui-t77/1 验收记录（attempt 1，verdict=pass）§14.3——ui_gui_test offscreen 与真实平台双跑对照（2026-10-10：offscreen 73/78、真实平台 78/78）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "ui_gui_test 5 个 WorkbenchShell 布局类用例依赖真实窗口管理器——QT_QPA_PLATFORM=offscreen 下失败、真实平台全绿（失败用例的实现文件 ui/src/ 本批零触碰＝非送验缺陷）；套件无平台敏感性标注机制，offscreen 环境（验收/CI 常态）系统性误报",
+      "owner": "testkit 批次（平台敏感性标注或跳过机制——如用例级标注〔offscreen 期望失败/SKIP+归因〕或 testkit 探测 QT_QPA_PLATFORM 后自动归因；参照 F-617 剪贴板可用性预探先例）"
     }
   ]
 }
