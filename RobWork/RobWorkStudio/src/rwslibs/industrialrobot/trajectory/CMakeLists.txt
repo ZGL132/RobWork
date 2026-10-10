@@ -120,10 +120,13 @@ if(TARGET sdurw_kinematics)
         src/Smooth.cpp        # §11.4 简化/平滑＋§15.7 管线（五次 Hermite
                               #   ＋λ 收缩重试——WP-16-T07 第一提交；Q 构造
                               #   面——集成条件，见上）
-        src/Recheck.cpp)      # §11.1 复检协议＋§15.6 管线（细分双上界/预算
-                              #   /PathSequence/三态结论——WP-16-T07 第二提
-                              #   交；Q 构造面＋policy 会话消费——集成条
-                              #   件，见上）
+        src/Recheck.cpp        # §11.1 复检协议＋§15.6 管线（细分双上界/预算
+                               #   /PathSequence/三态结论——WP-16-T07 第二提
+                               #   交；Q 构造面＋policy 会话消费——集成条
+                               #   件，见上）
+        src/TimeParam.cpp)     # §12 时间参数化与节拍（五次样条 C²＋限速
+                               #   缩放＋节拍输出——WP-16-T08；Q 构造面
+                               #   ＋IPathGeometry 消费——集成条件，见上）
 endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
@@ -382,6 +385,12 @@ if(TARGET sdurw_kinematics)
         test/RecheckTest.cpp)           # WP-16-T07 复检半区：TRJ-04（细分双
                                         #   上界＋预算＋AT-06 三反例真实会话
                                         #   链路＋限位检出＋重规划闭环）
+    target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/TimeParamTest.cpp)         # WP-16-T08：TRJ-05（五次样条 C² 结点
+                                        #   匹配黄金算例＋限速/加速度缩放收
+                                        #   敛＋附录 D 第 10 项容差边缘＋驻
+                                        #   留/节拍输出＋V-16/17/18 词表与素
+                                        #   材轨＋取消/确定性/前置违约族）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
