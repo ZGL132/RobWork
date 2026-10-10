@@ -117,9 +117,13 @@ if(TARGET sdurw_kinematics)
                               #   QConstraint 与 policy 会话——WP-16-T06；
                               #   集成条件，见上；Planner.hpp 公共头对 rw/
                               #   policy/runtime 仅前向声明，两模式皆可编译）
-        src/Smooth.cpp)       # §11.4 简化/平滑＋§15.7 管线（五次 Hermite
-                              #   ＋λ 收缩重试——WP-16-T07 平滑半区；Q 构造
+        src/Smooth.cpp        # §11.4 简化/平滑＋§15.7 管线（五次 Hermite
+                              #   ＋λ 收缩重试——WP-16-T07 第一提交；Q 构造
                               #   面——集成条件，见上）
+        src/Recheck.cpp)      # §11.1 复检协议＋§15.6 管线（细分双上界/预算
+                              #   /PathSequence/三态结论——WP-16-T07 第二提
+                              #   交；Q 构造面＋policy 会话消费——集成条
+                              #   件，见上）
 endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
@@ -374,6 +378,10 @@ if(TARGET sdurw_kinematics)
                                         #   金算例/四态词表/TCP 派生维门控/
                                         #   FK 端口错误传播——零 policy 装
                                         #   置，两提交拆分的平滑侧测试面）
+    target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/RecheckTest.cpp)           # WP-16-T07 复检半区：TRJ-04（细分双
+                                        #   上界＋预算＋AT-06 三反例真实会话
+                                        #   链路＋限位检出＋重规划闭环）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
@@ -459,10 +467,12 @@ add_executable(sdurws_ird_trajectory_contract_test
     contract_test/BuildGraphContractTest.cpp
     contract_test/TrajectoryPluginAssemblyContractTest.cpp
     contract_test/PlanConfigContractTest.cpp
-    contract_test/PathPlannerContractTest.cpp)  # WP-16-T06：R-5/R-POL-2 产品面
-                                                #   零 proximity 静态扫描＋§15.5
-                                                #   接口面钉扎（纯文本扫描——非
-                                                #   条件源，两模式皆跑）
+    contract_test/PathPlannerContractTest.cpp
+    contract_test/RecheckContractTest.cpp)  # WP-16-T07：P-06 冻结数值表物化
+                                            #   对照＋R-POL-5 结构防覆盖（零私
+                                            #   有阈值字段）＋AT-06 三反例素材
+                                            #   词表锁定（纯文本/inline 值面
+                                            #   ——非条件源，两模式皆跑）
 
 # KinematicsPortContractTest 为集成模式条件源（WP-16-T05——③端口消费契
 # 约：R-1 源码扫描零 kinematics include／请求字段透传钉扎／确定性解序／
