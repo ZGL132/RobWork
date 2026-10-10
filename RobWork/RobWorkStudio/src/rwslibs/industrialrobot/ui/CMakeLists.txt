@@ -726,6 +726,7 @@ if(TARGET sdurws)
     add_library(sdurws_ird_ui_plugin MODULE
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
+        plugin/ExtraDomainAssembly.cpp  # ASM-UI——dynamics/selection/optimization 三新域承接（仅本目标编入；studio 不编入——三条 unit 级边未登记，承接随边增登批次）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（上行拾取/呈现出口/TCP 源）
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（WorkCellScene 原语编排）
@@ -745,13 +746,24 @@ if(TARGET sdurws)
         target_compile_options(sdurws_ird_ui_plugin PRIVATE /utf-8)
     endif()
 
+    # ASM-UI 承接段编译定义（单一书写点）：DomainAssembly.cpp 以本定义
+    # 区分两同源目标的装配段——ui_plugin（定义在位）追加三新域承接
+    # （assembleExtraDomains 调用），studio（无定义）维持 UI-T23 三域装
+    # 配。目标级区分取代源码复制——防两份装配序列漂移。
+    target_compile_definitions(sdurws_ird_ui_plugin PRIVATE
+        IRD_UI_PLUGIN_EXTRA_DOMAINS=1)
+
     # 插件私有头（plugin/）经 ui 目录根解析（"app/PortAdapters.hpp" 等
     # 同单元装配面头——PRIVATE，不外溢消费者）。
     target_include_directories(sdurws_ird_ui_plugin PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR})
 
     # 链接面（ird_gates 命中集登记面——traceability/wp10-t16-gate-registrations.md；
-    # UI-T23 增量见 traceability/wp10-t23-gate-registrations.md）：
+    # UI-T23 增量见 traceability/wp10-t23-gate-registrations.md；ASM-UI
+    # 增量＝三新域 plugin 三条预登记边转消费——ird_gates_whitelist.cmake
+    # IRD_TARGET_LEVEL_EDGES 的 ui_plugin→dynamics/selection/optimization_
+    # plugin 三行〔ASM-PLUG 收口批 2026-10-10 预登记，明文"ui_plugin 链
+    # 接面修改归 ui 宿主面批次"——本批即该批次，零新边〕）：
     #   - sdurws_ird_ui／sdurws_ird_project＝装配层特权边（ui->ui 自边＋
     #     ui->project 宿主集成边——DTB §4.5 SUB 登记行，UI-T15 同款模式）；
     #   - sdurws_ird_modeling_plugin＝WP-24-T03 首版装配边（ui->modeling
@@ -763,6 +775,12 @@ if(TARGET sdurws)
     #     ——消费面仅 O-45 补建的 requirements 装配门面与 kinematics 装配
     #     门面〔WP-15-T18 出线〕，域私有头零触碰——R-2 门面纪律延伸；
     #     B1-SPEC §5.1 三接入面与 §6 链尾收口的装配承载）；
+    #   - sdurws_ird_dynamics_plugin／sdurws_ird_selection_plugin／
+    #     sdurws_ird_optimization_plugin＝ASM-UI 三新域装配边（预登记边转
+    #     消费——消费面仅三域公共 assembly/ 门面头的
+    #     create*PluginAssembly/registerWithHostRegistrar 激活路径，域私
+    #     有头零触碰；selection 注册被宿主权威拒绝〔P-SEL-3 待裁决——
+    #     InvalidDescriptor 如实透传，§11.3 隔离承载〕）；
     #   - sdurws＝框架 RobWorkStudio 库（RobWorkStudioPlugin 基类；DTB §4.6
     #     框架基线白名单 "sdurw" 前缀族）；
     #   - Qt 三件套＝plugin 分类面（Qt 链接合法——ird_gates R-3 仅查
@@ -773,6 +791,9 @@ if(TARGET sdurws)
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
         sdurws_ird_kinematics_plugin
+        sdurws_ird_dynamics_plugin
+        sdurws_ird_selection_plugin
+        sdurws_ird_optimization_plugin
         sdurws
         Qt6::Core
         Qt6::Gui

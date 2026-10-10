@@ -70,13 +70,19 @@ class IUiAboutDataSource;   // 前向声明（bundleAboutSource 返回类型—�
 /**
  * @brief 域插件装配产物（bundle——宿主插件持有，模块存活至壳拆除＝§10.9 前置）。
  *
- * 域成员形态（UI-T23 三域推广）：
+ * 域成员形态（UI-T23 三域推广→ASM-UI 六域承接）：
  *   - modeling 保持**值成员**（首版语义——建模装配失败＝宿主装配失败
  *     fail-fast，维持 WP-24-T03 既有行为零回归；UiPlugin 既有调用点
  *     m_domains->modeling 不变）；
  *   - requirements/kinematics 为 **optional**（§11.3 多域失败隔离：单域
  *     create/register 异常被捕获登记为失败状态，缺席不中止其余域——
- *     acceptance 3 的注入面；成功时值语义同 modeling）。
+ *     acceptance 3 的注入面；成功时值语义同 modeling）；
+ *   - dynamics/selection/optimization 三新域产物**不进本结构**（类型
+ *     擦除承载于 extraAssemblies——ASM-UI 承接 TU 仅编入 sdurws_ird_
+ *     ui_plugin 目标，本头被 studio 目标同源消费而三新域门面头在
+ *     studio 的 include 面不可达〔studio 不链三域 plugin：三条 unit 级
+ *     边未登记，白名单本批零新边〕，故三域类型依赖收敛在 ExtraDomain-
+ *     Assembly.hpp 内的独立容器类型；本结构只见类型擦除句柄）。
  */
 struct DomainPluginAssembly {
     /// 析构（cpp 定义——aboutSource 的删除器实例化需要 IUiAboutDataSource
@@ -88,6 +94,13 @@ struct DomainPluginAssembly {
     std::optional<requirements::RequirementsPluginAssembly> requirements;
     /// 运动学装配产物（失败隔离缺席＝nullopt——同上）。
     std::optional<kinematics::KinematicsPluginAssembly> kinematics;
+    /// ASM-UI 三新域（dynamics/selection/optimization）装配产物容器——
+    /// 类型擦除句柄（实型＝ExtraDomainAssemblies，见 ExtraDomainAssembly
+    /// .hpp；仅 ui_plugin 目标的 assembleExtraDomains 填充，studio 恒空）。
+    /// shared_ptr<void> 的删除器在构造点绑定实型——析构安全；存活期随
+    /// bundle（宿主持有至壳拆除——§10.9 所有权行，registrar 弱引用与
+    /// 登记表 module 裸指针的存活期由此保证）。
+    std::shared_ptr<void> extraAssemblies;
     std::unique_ptr<class IUiAboutDataSource> aboutSource;  ///< 关于框数据源（惰性构造——bundleAboutSource）
 
     /**
@@ -100,15 +113,19 @@ struct DomainPluginAssembly {
         std::string detail;     ///< 失败原因（异常 what——Dev 留痕/占位文案素材）
     };
 
-    /// 三域装配状态（登记序＝白名单序——modeling/requirements/kinematics
-    /// 恰三条；测试断言与占位呈现的输入）。
+    /// 域装配状态（登记序＝白名单序——UI-T23 三域＋ASM-UI 三新域；
+    /// 测试断言与占位呈现的输入。六域在产承接口径：前三域随 Domain-
+    /// Assembly.cpp〔两目标同源〕，三新域随 ExtraDomainAssembly.cpp
+    /// 〔仅 ui_plugin〕——studio 目标的状态表恰三条，ui_plugin 恰六条）。
     std::vector<DomainAssemblyStatus> statuses;
 
     /// 已登记域模块条目（draft.apply 遍历输入——acceptance 2；仅登记成功
     /// 的域入表，登记序＝白名单序。条目的域闭包由装配序填充：modeling 含
     /// 锚绑定/回执回写/锚前移全套，requirements 含锚绑定/锚前移〔草稿源
-    /// 挂接未接续——onResult 空，见文件头诚实边界〕，kinematics 全空闭包
-    /// 〔无草稿域——buildDraftCommand 恒 nullopt 的接口面消费〕）。
+    /// 挂接未接续——onResult 空，见文件头诚实边界〕，kinematics/dynamics/
+    /// selection/optimization 全空闭包〔无草稿域——buildDraftCommand 恒
+    /// nullopt 的接口面消费，遍历记 NoDraft 行零域知识〕；三新域条目仅
+    /// ui_plugin 目标入表，module 裸指针的存活期由 extraAssemblies 保证）。
     std::vector<DomainModuleEntry> applyEntries;
 
     /// @brief 按域键查装配状态（未登记域键＝nullopt——调用方防御）。

@@ -536,6 +536,14 @@ private:
     /// 无项目会话被调用＝宿主装配缺陷，F-536 拒绝面）。
     project::ProjectStore& requireCurrentStore();
 
+    /// 包导入向导的预填包文件（ASM-UI 修复③——收集一次语义的会话内
+    /// 承载位）：openProject 的 .rwpack 分流把目标包路径登记于此后转
+    /// startPackageWizard(Import)；后者构造请求时消费并**立即清空**
+    /// （一次性——不跨流程残留）。此前形态＝分流段与向导段各调一次
+    /// collectPackageImport（用户被问两次且首次预填丢失——asm-wf 验收
+    /// 建议级①）。空值＝直接入口（无预填，收集缝自行补齐）。
+    std::optional<std::filesystem::path> m_pendingImportPackFile;
+
     WorkflowHostPorts m_ports;    ///< 端口集（非 owning 指针集）
     WorkflowHostBridges m_bridges;///< 宿主会话桥（函数对象集）
 };

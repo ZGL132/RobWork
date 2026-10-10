@@ -589,11 +589,16 @@ void WorkflowLifecycleController::openProject(OpenSource source, std::string pat
     // 第 3 段：结果分派——.rwpack 分流→路由包导入向导（packFile 预填，
     // 宿主收集缝补目标目录）；成功→激活；失败→呈现。
     if (outcome.targetKind == OpenTargetKind::PackageFile) {
-        PackageImportRequest importRequest;
-        importRequest.packFile = target;
-        if (m_bridges.collectPackageImport(importRequest)) {
-            startPackageWizard(PackageFlowKind::Import);  // 收集成功后走导入向导编排
-        }
+        // ASM-UI 修复③（asm-wf 验收建议级①）：分流段**只登记预填、不
+        // 收集**——收集动作统一归 startPackageWizard(Import) 恰一次执行。
+        // 此前形态＝分流段先 collectPackageImport（预填 packFile）收集
+        // 一次、向导段再 collectPackageImport（空请求——预填丢失）收集
+        // 第二次：真实宿主对话框场景下用户面对两次输入收集。修复后收
+        // 集**恰一次**且预填保留（§7.2 打开协议分流零副作用＋§7.4 向导
+        // 一次收集的语义复合——用户意图流"打开 .rwpack→导入向导→进
+        // 目标"只含一次向导交互）。
+        m_pendingImportPackFile = target;
+        startPackageWizard(PackageFlowKind::Import);  // 路由导入向导编排
         return;
     }
     if (outcome.opened && outcome.store != nullptr && outcome.projectId.has_value()) {
@@ -646,9 +651,19 @@ CloseFlowResult WorkflowLifecycleController::requestClose(CloseKind kind)
     // Failed→呈现（Aborted 的取消呈现归宿主决策缝自身——编排零副作用）。
     if (outcome.result == CloseFlowOutcome::Result::Proceed
         && kind == CloseKind::Switch && outcome.candidateStore != nullptr) {
-        if (m_bridges.activateStore && m_bridges.currentProjectId) {
+        if (m_bridges.activateStore) {
+            // ASM-UI 修复④（asm-wf 验收建议级④）：候选项目身份以**候选
+            // store 自身**权威取值，不再复用切换前的会话桥 currentProjectId。
+            // 此前形态＝activateStore(候选 store, currentProjectId())——
+            // 把旧项目的身份登记给新 store（宿主会话层的激活身份与存储
+            // 身份错配：任务过滤键/标题栏投影按错误项目取数）。候选身份
+            // 权威＝ProjectStore::projectId()（打开③步已与 project.json/
+            // HEAD 校验一致——project.md 身份行），move 前取值（移出后
+            // 指针失效）。激活面契约不变量随取值同源成立：激活的 store
+            // 与 projectId 恒同一项目。
+            const core::ProjectId candidateId = outcome.candidateStore->projectId();
             m_bridges.activateStore(std::move(outcome.candidateStore),
-                                    m_bridges.currentProjectId());
+                                    candidateId);
         }
     }
     if (outcome.result == CloseFlowOutcome::Result::Failed
@@ -725,13 +740,23 @@ void WorkflowLifecycleController::startPackageWizard(PackageFlowKind kind)
         return;
     }
 
-    // Import：请求收集（packFile 可由打开分流预填——第 1 段已承载）→
+    // Import：请求收集（packFile 可由打开分流预填——ASM-UI 修复③：预填
+    // 自 m_pendingImportPackFile 消费，消费即清空＝一次性承载）→
     // 导入编排（校验/发布/清理端口内折叠）→完成即按打开协议进入目标
     // 目录（PM-05"按打开协议进入"同源语义——复用 openProject 的编排核）。
+    // 收集恰一次：无论本方法由打开分流路由而来（预填在位）还是直接入口
+    // （无预填），collectPackageImport 在本流程内只被调用一次——用户只
+    // 面对一次输入收集。
     if (!m_bridges.collectPackageImport) {
         throw WorkflowError("宿主装配缺陷：包导入收集缝未装配");
     }
     PackageImportRequest request;
+    if (m_pendingImportPackFile.has_value()) {
+        // 打开分流预填消费（移动取出＋立即清空——会话内不跨流程残留；
+        // 用户在收集缝取消后再次直接打开包向导＝全新流程零预填残留）。
+        request.packFile = std::move(*m_pendingImportPackFile);
+        m_pendingImportPackFile.reset();
+    }
     if (!m_bridges.collectPackageImport(request)) {
         return;  // 取消（非错误）
     }

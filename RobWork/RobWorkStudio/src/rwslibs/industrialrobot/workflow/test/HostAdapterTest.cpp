@@ -29,6 +29,7 @@
 #include "plugin/WorkflowHostAdapters.hpp"  // 被测面（plugin/ 装配面——同单元 PRIVATE include，R-2 不外溢）
 
 #include <filesystem>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <system_error>
@@ -203,6 +204,12 @@ struct ReadyBridges
     int noticeCount = 0;                      ///< presentNotice 捕获计数
     std::string lastNotice;
 
+    // ---- 包导入收集缝观测（ASM-UI 修复③钉扎——收集恰一次＋预填透传）----
+    int collectImportCalls = 0;               ///< collectPackageImport 调用计数
+    std::vector<fs::path> collectedImportPacks;///< 每次调用收到的请求预填值
+                                               ///<   （序＝调用序；预填丢失
+                                               ///<   即空路径——断言面）
+
     WorkflowHostBridges bridges()
     {
         WorkflowHostBridges b;
@@ -231,6 +238,8 @@ struct ReadyBridges
             return collectExportOk;
         };
         b.collectPackageImport = [this](PackageImportRequest& r) {
+            ++collectImportCalls;                 // 观测：调用次数（修复③——恰一次）
+            collectedImportPacks.push_back(r.packFile);  // 观测：预填透传
             if (r.packFile.empty()) {
                 r.packFile = workDir / "in.rwpack";
             }
@@ -373,33 +382,68 @@ TEST_F(HostAdapter, AssembleFailsFastNamingEachMissingPort)
 }
 
 /**
- * 装配核查反例：必填会话桥缺失即 WorkflowError（呈现缝缺失＝失败静默
- * ——失败可见面强制；收集缝缺失＝入口不可用空转）。
+ * 装配核查反例：11 必填会话桥逐一缺失即 WorkflowError 且消息点名桥名
+ * （ASM-UI 收口——asm-wf 验收建议级②"抽样式两代表桥"补全为逐一参数化，
+ * 与端口侧 13/13 逐一形态对齐）。逐桥语义：
+ *   - currentStore/currentProjectId/activateStore＝会话状态桥（无项目
+ *     会话的入口拒绝面／激活身份面）；
+ *   - collect* 五缝＋select* 两缝＝收集缝（缺失＝入口不可用空转）；
+ *   - presentFailure＝呈现缝（缺失＝失败静默伪造成功——F-565/566 失败
+ *     可见面强制，装配核查最关键项）。
+ * 可空缝 presentNotice 不在清单（缺省合法——类注）。
  */
 TEST_F(HostAdapter, AssembleFailsFastOnMissingRequiredBridges)
 {
-    IRD_TEST_INFO(std::vector<std::string>{"ARC-04"}, std::vector<std::string>{});
+    IRD_TEST_INFO(std::vector<std::string>{"ARC-04", "PM-03"},
+                  std::vector<std::string>{});
 
-    ReadyHost host;
-    ReadyBridges bridgeState;
-    bridgeState.workDir = workDir;
-    WorkflowHostBridges bridges = bridgeState.bridges();
+    // 11 必填桥的清空器与点名子串（错误消息必须含桥名——F-536 修复装配
+    // 而非捕获后继续的可定位性；单变量隔离：每次只清空当前桥，其余保持
+    // 就绪——与 13 端口参数化用例同型）。
+    const std::vector<std::pair<std::string,
+                                std::function<void(WorkflowHostBridges&)>>>
+        clearing = {
+            {"currentStore",
+             [](WorkflowHostBridges& b) { b.currentStore = nullptr; }},
+            {"currentProjectId",
+             [](WorkflowHostBridges& b) { b.currentProjectId = nullptr; }},
+            {"activateStore",
+             [](WorkflowHostBridges& b) { b.activateStore = nullptr; }},
+            {"collectNewProjectInputs",
+             [](WorkflowHostBridges& b) { b.collectNewProjectInputs = nullptr; }},
+            {"selectOpenPath",
+             [](WorkflowHostBridges& b) { b.selectOpenPath = nullptr; }},
+            {"selectCandidateProjectPath",
+             [](WorkflowHostBridges& b) {
+                 b.selectCandidateProjectPath = nullptr;
+             }},
+            {"collectSaveAsRequest",
+             [](WorkflowHostBridges& b) { b.collectSaveAsRequest = nullptr; }},
+            {"collectPackageExport",
+             [](WorkflowHostBridges& b) { b.collectPackageExport = nullptr; }},
+            {"collectPackageImport",
+             [](WorkflowHostBridges& b) { b.collectPackageImport = nullptr; }},
+            {"selectRelinkPath",
+             [](WorkflowHostBridges& b) { b.selectRelinkPath = nullptr; }},
+            {"presentFailure",
+             [](WorkflowHostBridges& b) { b.presentFailure = nullptr; }},
+        };
+    ASSERT_EQ(clearing.size(), std::size_t{11})
+        << "必填桥清单与装配核查清单（11 项）失配——同步义务";
 
-    // 逐项清空必填缝（可空缝 presentNotice 不在清单——缺省合法）。
-    bridges.currentStore = nullptr;
-    try {
-        (void)assembleWorkflowLifecycleController(host.ports(), bridges);
-        FAIL() << "缺失 currentStore 未被拒绝";
-    } catch (const WorkflowError&) {
-    }
-
-    bridges = bridgeState.bridges();
-    bridges.presentFailure = nullptr;
-    try {
-        (void)assembleWorkflowLifecycleController(host.ports(), bridges);
-        FAIL() << "缺失 presentFailure 未被拒绝（失败可见面）";
-    } catch (const WorkflowError& e) {
-        EXPECT_NE(std::string(e.what()).find("presentFailure"), std::string::npos);
+    for (const auto& [name, clear] : clearing) {
+        ReadyHost host;
+        ReadyBridges bridgeState;
+        bridgeState.workDir = workDir;
+        WorkflowHostBridges bridges = bridgeState.bridges();
+        clear(bridges);  // 清空当前桥（其余保持就绪——单变量隔离）
+        try {
+            (void)assembleWorkflowLifecycleController(host.ports(), bridges);
+            FAIL() << "缺失必填桥 " << name << " 未被装配核查拒绝";
+        } catch (const WorkflowError& e) {
+            EXPECT_NE(std::string(e.what()).find(name), std::string::npos)
+                << "装配核查消息未点名缺失桥 " << name << ": " << e.what();
+        }
     }
 }
 
@@ -1069,4 +1113,102 @@ TEST_F(HostAdapter, ControllerPackageImportEntersViaOpenProtocol)
     bridgeState.collectImportOk = true;
     flow.startPackageWizard(PackageFlowKind::Import);
     EXPECT_GE(bridgeState.failureCount, 1);  // 失败可见（F-565/566 同族纪律）
+}
+
+/**
+ * ASM-UI 修复③钉扎（asm-wf 验收建议级①）：openProject 的 .rwpack 分流
+ * 后导入收集缝**恰调用一次**且 packFile 预填透传（此前形态＝分流段与
+ * 向导段各收集一次〔==2〕且第二次预填丢失——用户面对两次输入收集）。
+ * 分流词面（classifyOpenTarget 扩展名分流）真实触发——空 .rwpack 文件
+ * 即可分流（编排①段不读内容）。经 ILifecycleFlowController& 虚派发消费。
+ */
+TEST_F(HostAdapter, ControllerOpenProjectPackRoute_CollectsImportOnce_WithPrefill)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"PM-02", "PM-05"},
+                  std::vector<std::string>{"AT-20"});
+
+    // 分流目标：.rwpack 词面文件（空内容——分流只看扩展名，io 侧校验归
+    // 导入执行端口）。
+    const fs::path packFile = workDir / "route-target.rwpack";
+    {
+        std::ofstream out(packFile, std::ios::binary);
+        ASSERT_TRUE(out.good()) << "包词面文件创建失败（夹具前置）";
+    }
+
+    ReadyHost host;
+    ReadyBridges bridgeState;
+    bridgeState.workDir = workDir;
+    bridgeState.openPath = packFile;  // Dialog 来源路径收集脚本
+    WorkflowLifecycleController controller =
+        assembleWorkflowLifecycleController(host.ports(), bridgeState.bridges());
+    ILifecycleFlowController& flow = controller;
+
+    flow.openProject(OpenSource::Dialog, "");  // 空路径→选择缝→包路径分流
+
+    // 收集恰一次（修复前＝2：分流段＋向导段各一次）。
+    EXPECT_EQ(bridgeState.collectImportCalls, 1)
+        << ".rwpack 分流后导入收集缝必须恰调用一次（asm-wf 建议级①）";
+    // 预填透传：收集请求携带分流目标包路径（修复前第二次调用请求为空
+    // ——预填丢失）。
+    ASSERT_EQ(bridgeState.collectedImportPacks.size(), std::size_t{1});
+    EXPECT_EQ(bridgeState.collectedImportPacks.front(), packFile);
+    // 分流零副作用：普通存储激活零发生（包路径不走打开③步）。
+    EXPECT_TRUE(bridgeState.activatedStores.empty());
+    // 收集成功→导入编排（替身执行端口失败轨）→失败可见（不吞错）。
+    EXPECT_GE(bridgeState.failureCount, 1);
+}
+
+/**
+ * ASM-UI 修复④钉扎（asm-wf 验收建议级④）：requestClose(Switch) Proceed
+ * 后激活的**候选项目身份**以候选 store 自身 projectId() 取值（此前形态
+ * ＝复用切换前的会话桥 currentProjectId——旧项目身份登记给新 store 的
+ * 错配）。真实落盘双项目：候选先建后关（释放写锁——编排内候选验证重新
+ * 打开），当前项目经 CloseFlow 全链（无草稿无任务→Proceed）。
+ */
+TEST_F(HostAdapter, ControllerSwitchClose_ActivatesCandidateStoreIdentity)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"PM-03"}, std::vector<std::string>{"AT-20"});
+
+    // 候选项目：真实建盘拿身份与目录，随后关闭释放锁（候选验证＝编排内
+    // 重新 open——同一目录的第二实例）。
+    fs::path candidateDir;
+    core::ProjectId candidateId{};
+    {
+        std::unique_ptr<project::ProjectStore> candidate =
+            makeBlankStore("switch-candidate");
+        ASSERT_NE(candidate, nullptr);
+        candidateId = candidate->projectId();
+        candidateDir = workDir / "switch-candidate.rwdesign";
+        // 显式关闭（编排外释放写锁——否则候选验证 open 与本实例锁冲突）。
+        candidate->requestClose();
+    }
+
+    // 当前项目：真实 store（bridgeState.store 注入——会话桥脚本面）。
+    std::unique_ptr<project::ProjectStore> current = makeBlankStore("switch-current");
+    ASSERT_NE(current, nullptr);
+
+    ReadyHost host;
+    ReadyBridges bridgeState;
+    bridgeState.workDir = workDir;
+    bridgeState.store = current.get();
+    bridgeState.projectId = current->projectId();
+    bridgeState.candidatePath = candidateDir;  // 切换候选脚本
+    WorkflowLifecycleController controller =
+        assembleWorkflowLifecycleController(host.ports(), bridgeState.bridges());
+    ILifecycleFlowController& flow = controller;
+
+    const CloseFlowResult outcome = flow.requestClose(CloseKind::Switch);
+    EXPECT_EQ(outcome.result, CloseFlowOutcome::Result::Proceed)
+        << "双 blank 项目全链（无草稿无任务）应 Proceed";
+
+    // 候选激活：恰一次，且身份＝候选 store 自身身份（修复前＝旧项目身份
+    // ——错配钉扎）。
+    ASSERT_EQ(bridgeState.activatedStores.size(), std::size_t{1});
+    ASSERT_EQ(bridgeState.activatedIds.size(), std::size_t{1});
+    EXPECT_EQ(bridgeState.activatedIds.back(), candidateId)
+        << "激活身份必须＝候选项目身份（asm-wf 建议级④——store 身份权威）";
+    ASSERT_NE(bridgeState.activatedStores.back(), nullptr);
+    // 激活面契约不变量：store 与身份同一项目（取值同源的结构性复核）。
+    EXPECT_EQ(bridgeState.activatedStores.back()->projectId(),
+              bridgeState.activatedIds.back());
 }

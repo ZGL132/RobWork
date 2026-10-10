@@ -24,6 +24,9 @@
 
 #include <QCoreApplication>
 
+#include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求追溯登记（ASM-UI 用例起接入）
+
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <optional>
@@ -35,6 +38,7 @@
 #include <sdurws/ird/core/Identity.hpp>            // core::ObjectId::generate 等（身份值面）
 #include <sdurws/ird/project/CommandService.hpp>   // project::CommandEnvelope/CommandResult（提交面值）
 #include <sdurws/ird/ui/IPluginUiModule.hpp>       // ui::IPluginUiModule（测试注册模块实现的接口）
+#include <sdurws/ird/ui/IPluginUiRegistrar.hpp>    // ui::createPluginUiRegistrar/RegistrationOutcome（ASM-UI 注册快照钉扎）
 #include <sdurws/ird/ui/IndustrialProjectTree.hpp> // 树模型/SelectionService（共享面集成）
 #include <sdurws/ird/ui/PropertyInspector.hpp>     // 检查器模型（L1 呈现末端）
 #include <sdurws/ird/ui/UiProjections.hpp>         // CommandResultProjection（回执投影值）
@@ -568,6 +572,124 @@ TEST_F(HostIntegrationContractTest, ProjectCloseTeardown_ComponentLevelAssertion
     const auto viewBefore = inspectorModel.view();
     selection.selectBusiness({ids.front()}, ui::SelectionSource::Command);
     EXPECT_EQ(inspectorModel.view().kind, viewBefore.kind);  // 无刷新（未订阅）
+}
+
+// =====================================================================
+// 宿主注册端口装配序列（ASM-UI 收口批——注册快照/描述符断言）
+// =====================================================================
+
+/**
+ * ASM-UI 验收项②（asm-plug 建议级 2 承接）：宿主注册端口（真实
+ * IPluginUiRegistrar——§10.9）的装配序列语义钉扎：
+ *   1. 白名单八 token 全在册（§11.1 词表——六业务域〔modeling/requirements/
+ *      kinematics/dynamics/selection/optimization〕＋trajectory/workflow
+ *      占位；六域注册的词表承载面）；
+ *   2. 三旧域门面经宿主同机制（registerPluginUi(descriptor, module)——
+ *      UI-T23 装配机制）注册返回 Ok，装配报告快照逐条对位（pluginId/
+ *      ok/panelsLoaded/commandsRegistered 与门面描述符一致——注册快照/
+ *      描述符断言）；
+ *   3. 重复注册被宿主权威拒绝（DuplicatePlugin——§7.2 冲突规则；快照
+ *      不增长不覆盖）；
+ *   4. 未注册域不入报告（§11.3 缺位占位语义——快照只含已 Ok 域）。
+ *
+ * 测试面链接边约束（诚实登记，units/ui.md §13 ASM-UI 行）：本目标已登记
+ * 的跨单元测试边仅覆盖三旧域 plugin（IRD_TEST_TARGET_EDGES——UI-T23 三
+ * 条）；三新域（dynamics/selection/optimization）门面的真实注册激活钉
+ * 扎在三域各自 contract_test（ASM-PLUG 批 ActivationPassesRealRegistrar
+ * Port 系用例——真实 registrar 传经 registerWithHostRegistrar 激活路径
+ * ＋selection InvalidDescriptor 诚实拒绝断言〔P-SEL-3 不本地绕过〕），
+ * ui_plugin 目标自身的六域装配承接（ExtraDomainAssembly TU）为集成树
+ * MODULE 面，无人值守测试目标不可链接（CMake 禁链接 MODULE）——运行验
+ * 证通道＝开发期插件实机装载与 GUI 冒烟（ui.md §12.2 通道，不在本门禁）。
+ */
+TEST_F(HostIntegrationContractTest, HostRegistrarAssemblySequence_Snapshot_ASMUI_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"SA-01", "UX-14", "ARC-04"},
+                  std::vector<std::string>{});
+
+    // ①真实注册端口（§10.9 工厂——白名单由本测试充当装配层固定，与
+    //   DomainAssembly.cpp kPluginWhitelist 同一 §11.1 词表字面）。
+    auto registrar = ui::createPluginUiRegistrar(
+        {"modeling", "requirements", "kinematics", "trajectory",
+         "dynamics", "selection", "optimization", "workflow"});
+    ASSERT_NE(registrar, nullptr) << "注册端口工厂返回空（ui 库装配违约）";
+
+    // 白名单承载断言：六业务域 token 全在册（六域注册的词表面——ASM-UI
+    // 三新域承接的宿主词表前提）＋恰八条（SA-01 静态白名单）。
+    const std::vector<std::string> whitelist = registrar->whitelist();
+    ASSERT_EQ(whitelist.size(), std::size_t{8});
+    for (const char* const token :
+         {"modeling", "requirements", "kinematics", "dynamics",
+          "selection", "optimization"}) {
+        EXPECT_NE(std::find(whitelist.begin(), whitelist.end(),
+                            std::string(token)),
+                  whitelist.end())
+            << "白名单缺少业务域 token: " << token;
+    }
+
+    // ②三旧域门面经宿主同机制注册（真实门面符号——已登记测试边）。
+    modeling::ModelingPluginAssembly modelingDomain =
+        modeling::createModelingPluginAssembly();
+    requirements::RequirementsPluginAssembly requirementsDomain =
+        requirements::createRequirementsPluginAssembly();
+    requirementsDomain.attachEditor(nullptr);  // 显式无会话（诚实二态）
+    kinematics::KinematicsPluginAssembly kinematicsDomain =
+        kinematics::createKinematicsPluginAssembly();
+
+    EXPECT_EQ(registrar->registerPluginUi(modelingDomain.descriptor,
+                                          *modelingDomain.module),
+              ui::RegistrationOutcome::Ok);
+    EXPECT_EQ(registrar->registerPluginUi(requirementsDomain.descriptor,
+                                          *requirementsDomain.module),
+              ui::RegistrationOutcome::Ok);
+    EXPECT_EQ(registrar->registerPluginUi(kinematicsDomain.descriptor,
+                                          *kinematicsDomain.module),
+              ui::RegistrationOutcome::Ok);
+
+    // ③注册快照逐条对位（§10.9 后置条件——Ok 才入列；panelsLoaded/
+    //    commandsRegistered 与描述符一致＝描述符断言的快照面）。
+    const std::vector<ui::PluginAssemblyReport> reports =
+        registrar->assemblyReports();
+    ASSERT_EQ(reports.size(), std::size_t{3})
+        << "装配报告恰三条（三域 Ok 各一；未注册域不入列——§11.3 缺位）";
+    const ui::PluginAssemblyReport* reportOf[3] = {
+        &reports[0], &reports[1], &reports[2]};
+    const std::string expectedIds[3] = {"modeling", "requirements",
+                                        "kinematics"};
+    const std::size_t expectedPanels[3] = {
+        modelingDomain.descriptor.panels.size(),
+        requirementsDomain.descriptor.panels.size(),
+        kinematicsDomain.descriptor.panels.size()};
+    const std::size_t expectedCommands[3] = {
+        modelingDomain.descriptor.commands.size(),
+        requirementsDomain.descriptor.commands.size(),
+        kinematicsDomain.descriptor.commands.size()};
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_EQ(reportOf[i]->pluginId, expectedIds[i]) << "第 " << i << " 行";
+        EXPECT_TRUE(reportOf[i]->ok) << expectedIds[i] << " 应 ok";
+        EXPECT_EQ(reportOf[i]->panelsLoaded, expectedPanels[i])
+            << expectedIds[i] << " 面板计数与描述符一致";
+        EXPECT_EQ(reportOf[i]->commandsRegistered, expectedCommands[i])
+            << expectedIds[i] << " 命令计数与描述符一致";
+        EXPECT_TRUE(reportOf[i]->failureDiagnostics.empty())
+            << expectedIds[i] << " 无失败诊断";
+    }
+
+    // ④重复注册被宿主权威拒绝（§7.2 冲突规则——不覆盖不静默）。
+    EXPECT_EQ(registrar->registerPluginUi(modelingDomain.descriptor,
+                                          *modelingDomain.module),
+              ui::RegistrationOutcome::DuplicatePlugin);
+    EXPECT_EQ(registrar->assemblyReports().size(), std::size_t{3})
+        << "拒绝注册不增长快照（静态白名单无运行期改写）";
+
+    // ⑤未注册域缺席（§11.3 缺位＝占位呈现的数据面——快照只含已 Ok 域；
+    //   ASM-UI 三新域在 ui_plugin 装配面的承接由 ExtraDomainAssembly TU
+    //   承载，其快照语义即本用例钉扎的同机制延伸）。
+    for (const ui::PluginAssemblyReport& report : reports) {
+        EXPECT_NE(report.pluginId, "dynamics");
+        EXPECT_NE(report.pluginId, "selection");
+        EXPECT_NE(report.pluginId, "optimization");
+    }
 }
 
 }  // namespace

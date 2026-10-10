@@ -1,11 +1,20 @@
 /**
  * @file   DomainAssembly.cpp
- * @brief  域插件装配实现（UI-T23 三域集成收口形态）——registrar 装配＋
- *         三域门面消费＋域模块登记表填充＋单域失败隔离＋UiText 文案接线
- *         ＋关于框数据源实装（消费面＝DomainAssembly.hpp 契约）。
+ * @brief  域插件装配实现（UI-T23 三域集成收口形态＋ASM-UI 六域承接）——
+ *         registrar 装配＋域门面消费＋域模块登记表填充＋单域失败隔离＋
+ *         UiText 文案接线＋关于框数据源实装（消费面＝DomainAssembly.hpp
+ *         契约）。前三域（modeling/requirements/kinematics）随本 TU 编入
+ *         ui_plugin 与 studio 两同源目标；三新域（dynamics/selection/
+ *         optimization）承接段由 IRD_UI_PLUGIN_EXTRA_DOMAINS 编译定义
+ *         区分——仅 ui_plugin 目标编译（定义 TU＝ExtraDomainAssembly.cpp，
+ *         asm-plug 预登记边的运行期消费），studio 维持三域装配不变。
  */
 
 #include "DomainAssembly.hpp"
+
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+#include "ExtraDomainAssembly.hpp"  // ASM-UI 三新域承接（仅 ui_plugin 目标编入的定义 TU）
+#endif
 
 #include <QString>
 #include <QWidget>
@@ -16,7 +25,8 @@
 #include <sdurws/ird/ui/IPluginUiModule.hpp>     // ui::IPluginUiModule 完整类型（§11.2）
 #include <sdurws/ird/ui/IPluginUiRegistrar.hpp>  // createPluginUiRegistrar/RegistrationOutcome（§10.9）
 #include <sdurws/ird/ui/UiPorts.hpp>             // ui::IUiAboutDataSource 完整类型（§11.4 数据源端口）
-#include <sdurws/ird/ui/UiText.hpp>              // ui::resolveText（§3.5 唯一文案出口——UX-02）
+
+#include "DomainAssemblyShared.hpp"  // 报告行/文案绑定共享原语（ASM-UI 拆出——与 ExtraDomainAssembly 单一书写点）
 
 namespace sdurws {
 namespace ird {
@@ -30,21 +40,6 @@ const char* const kPluginWhitelist[] = {
     "modeling", "requirements", "kinematics", "trajectory",
     "dynamics", "selection", "optimization", "workflow",
 };
-
-/// 装配失败隔离的稳定诊断码文本（§11.3 冻结码——失败域报告行与共享树
-/// 占位文案共用；登记面 diagnostics StableCodeRegistry，本文件只引用
-/// token 文本，不加工语义——SA-12 权威分工）。
-constexpr const char* kAssemblyFailedCode = "UI-PLUGIN-ASSEMBLY-FAILED";
-
-/// UiText 文案解析的标准绑定（三域共用——resolveText 唯一出口；解析空/
-/// 失败回退键名原文——呈现面不空洞，建模装配既有先例逐字同源）。
-std::function<QString(const std::string&)> standardTextResolver()
-{
-    return [](const std::string& key) {
-        const std::string text = resolveText(key);
-        return QString::fromStdString(text.empty() ? key : text);
-    };
-}
 
 /**
  * @brief 关于框数据源（§11.4 IUiAboutDataSource 的装配报告半区实装——
@@ -83,30 +78,6 @@ public:
 private:
     const IPluginUiRegistrar* m_registrar;  ///< 注册端口（非 owning——见类注释）
 };
-
-/**
- * @brief 登记/报告行的统一输出（三域装配的收尾步骤——ok 与失败两形态
- *        逐域一行；失败行携带稳定码文本——§11.3 失败隔离的可观测面）。
- */
-void emitDomainReportLine(std::vector<std::string>& reportLines,
-                          const std::string& domainKey,
-                          bool ok,
-                          std::size_t panels,
-                          std::size_t commands,
-                          const std::string& failureDetail)
-{
-    if (ok) {
-        reportLines.push_back("domain assembly: plugin=" + domainKey +
-                              " ok=1 panels=" + std::to_string(panels) +
-                              " commands=" + std::to_string(commands));
-    } else {
-        // §11.3 失败隔离：登记失败不中止启动——稳定码＋原因一行留痕
-        // （该域不进关于框交集呈现——§11.4 报告对位充实以 ok 行为准）。
-        reportLines.push_back("domain assembly: plugin=" + domainKey + " " +
-                              std::string(kAssemblyFailedCode) + " detail=" +
-                              failureDetail);
-    }
-}
 
 }  // namespace
 
@@ -313,6 +284,22 @@ std::unique_ptr<DomainPluginAssembly> assembleDomainPlugins(
         emitDomainReportLine(reportLines, "kinematics", false, 0, 0,
                              status.detail);
     }
+
+#ifdef IRD_UI_PLUGIN_EXTRA_DOMAINS
+    // ⑤~⑦dynamics/selection/optimization 三新域承接（ASM-UI 收口批——
+    // asm-plug 预登记边 IRD_TARGET_LEVEL_EDGES 三条的运行期消费）：门面
+    // 创建→文案绑定→registerWithHostRegistrar（真实 IPluginUiRegistrar
+    // 传经三域装配激活路径——UI-T23 同机制）→登记表/状态/报告行，详见
+    // ExtraDomainAssembly TU。该 TU 仅编入本目标（sdurws_ird_ui_plugin）
+    // ——studio 目标（同源编入本文件）无此编译定义，维持 UI-T23 三域装
+    // 配不变（studio→三新域 unit 级边未登记——本批白名单零新边约束，
+    // studio 承接随边增登批次收口，登记 ui.md §13 ASM-UI 行）。产物容
+    // 器挂 extraAssemblies（类型擦除——三域类型依赖收敛在承接 TU 内，
+    // 本 TU 所在两目标共享的本结构只见句柄）；三新域均按 §11.3 隔离域
+    // 承载（失败登记状态不中止，selection 的注册被宿主权威拒绝＝P-SEL-3
+    // 待裁决面的诚实钉扎，不本地绕过）。
+    bundle->extraAssemblies = assembleExtraDomains(*bundle, reportLines);
+#endif
 
     return bundle;
 }
