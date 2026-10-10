@@ -294,33 +294,62 @@ Mat3 toMat(const rw::math::InertiaMatrix<double>& I)
 // =====================================================================
 
 /**
- * @brief 物性复检：值有限＋惯量张量对称性相对容差 1×10⁻¹²。
+ * @brief 物性复检：值有限＋惯量张量对称性**相对**容差 1×10⁻¹²。
  *
- * 对称性容差出处：附录 D 第 6 项（卡 §5.3 点名"dynamics 防御性复检可执
- * 行"的那一项）——与 runtime 编译链 kOrthoTolerance 同源同值口径。SPD
- * （对称正定）完整复检不在此重复——建模侧 MDL-06 断言②已强制（Provided
- * 值非 SPD 在 CanonicalModelBuilder::build() 即拒绝），本域不实现第二套
- * SPD 判定（登记于单元卡 §1.2 实现口径）。
+ * 对称性口径出处：需求附录 D 第 6 项原文「惯量张量对称性数值容差＝相对
+ * 1×10⁻¹²」（单元卡 §6.4 两处同口径）。F-645 修正：原实现注释称"相对
+ * 容差"实为绝对差 |I_ij−I_ji| > 1e-12 比较——绝对口径对大幅值张量过严
+ * （100 kg·m² 级大惯量部件的 1e-11 双精度表示噪声会被误拒）、对微小
+ * 张量过松（0.01 级连杆上 5e-13 偏差的相对比值已达 5×10⁻¹¹、超容差
+ * 50 倍却放行），均偏离需求语义，本实现改为
+ * ‖Δ‖_∞ / ‖(I+Iᵀ)/2‖_F ≤ tol 的真相对比较。
  *
- * @throws DynamicsError 含非有限分量/对称性偏差超容差（比较型 detail——
- *         输入非法，调用方错误轨）
+ * 建模侧分工：SPD 完整复检不在此重复——建模侧 MDL-06 断言②已强制
+ * （Provided 值非 SPD 在 CanonicalModelBuilder::build() 即拒绝），本域不
+ * 实现第二套 SPD 判定（登记于单元卡 §1.2 实现口径）。注意建模侧
+ * （runtime 单元 requireValidInertia）的对称性实现现为绝对差口径——与本域
+ * 相对口径存在层面差异；该差异属 runtime 单元的登记事项，本批次任务面
+ * 仅限 dynamics 单元，不代改他单元源码。
+ *
+ * @throws DynamicsError 含非有限分量/对称性偏差超相对容差（比较型
+ *         detail——输入非法，调用方错误轨）
  */
 void assertPropertiesFiniteAndSymmetric(const RneaBody& body, const std::string& subject)
 {
     if (!std::isfinite(body.mass) || !allFinite(body.com) || !allFinite(body.inertia)) {
         throw DynamicsError("input-invalid", "物性防御复检失败（含非有限分量）：" + subject);
     }
-    constexpr double kSymmetryTolerance = 1e-12;  // 附录 D 第 6 项（无量纲——张量元素同量纲差）
+    // 对称性相对容差（附录 D 第 6 项——无量纲比值上限；元素单位 kg·m²）。
+    constexpr double kSymmetryRelTolerance = 1e-12;
+    // 第一步：求参考模长＝对称化张量 (I+Iᵀ)/2 的 Frobenius 范数（单位
+    // kg·m²）。分母取对称部分而非整张量：待检对象是反对称偏差，若整张量
+    // 入模，偏差自身会放大分母（大幅值反对称分量稀释自身比值）——对称
+    // 部分才是惯量的物理名义主体。
+    double symNormSq = 0.0;  // ‖(I+Iᵀ)/2‖_F²，单位 (kg·m²)²
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            const double s = 0.5 * (body.inertia.at(i, j) + body.inertia.at(j, i));
+            symNormSq += s * s;
+        }
+    }
+    // 第二步：求最大反对称偏差 ‖Δ‖_∞＝max|I_ij−I_ji|（单位 kg·m²）。
     double worst = 0.0;
     for (int i = 0; i < 3; ++i) {
         for (int j = i + 1; j < 3; ++j) {
             worst = std::max(worst, std::abs(body.inertia.at(i, j) - body.inertia.at(j, i)));
         }
     }
-    if (worst > kSymmetryTolerance) {
+    // 第三步：相对比较。退化防线：对称部分范数为 0（零张量/纯反对称注入）
+    // 时相对比值无定义——退回绝对容差比较（零张量 worst=0 自然通过；纯
+    // 反对称注入 worst>0 必拒），不做 0 除。
+    const double symNorm = std::sqrt(symNormSq);  // 单位 kg·m²
+    const double limit =
+        (symNorm > 0.0) ? kSymmetryRelTolerance * symNorm : kSymmetryRelTolerance;
+    if (worst > limit) {
         throw DynamicsError("input-invalid",
                             "物性防御复检失败（惯量张量非对称，最大偏差 " + std::to_string(worst)
-                                + " > 容差 1e-12）：" + subject);
+                                + " 超容差上限 " + std::to_string(limit)
+                                + "＝相对 1e-12×‖(I+Iᵀ)/2‖_F）：" + subject);
     }
 }
 
@@ -516,16 +545,46 @@ RneaChain buildRneaChain(const runtime::CanonicalModel& model)
         rj.body = body;
 
         // ---- 摩擦三元组（MDL-16——四态独立解析，任一缺失即 frictionMissing）----
+        // F-632 防线（提取源头拦截）：Provided 值逐分量 std::isfinite 复检。
+        // 为什么在提取处拒绝而不是放行给下游：两类"坏数据"语义不同——
+        //   ①分量**缺失**＝能力缺失，走 §5.5 第 1 层降级（数值按 0 继续＋
+        //     frictionMissing 标记，语义保持不变，见下方缺失分支）；
+        //   ②分量**已提供但非有限**（NaN/±Inf）＝数据非法，不是缺失——
+        //     若放行进入模型，下游摩擦叠加（frictionTerm，样本行组装段）
+        //     位于样本级非有限判定（NonFiniteInput 通道——只覆盖 q/q/qdd
+        //     输入与 RNEA 四通道输出）之后，NaN 会先污染 τ_friction/τ_total
+        //     再被检出，防线顺序存在缺口。
+        // 处置面按同函数连杆物性先例（上方 assertPropertiesFiniteAndSymmetric
+        // 的"防御复检失败"语义）：input-invalid fail-fast 异常轨（调用方
+        // 错误），消息区分"已提供但非有限"，可定位到关节。
         JointFriction f;
         if (const std::optional<double> v = cj.friction.viscous.tryValue()) {
+            if (!std::isfinite(*v)) {
+                throw DynamicsError("input-invalid",
+                                    "摩擦参数防御复检失败：黏性系数 fv 已提供但非有限"
+                                    "（N·m·s/rad，关节 " + cj.localName + "，"
+                                        + cj.objectId.toCanonical() + "）——拒绝进入模型");
+            }
             f.viscousPresent = true;
             f.viscous = *v;   // 单位 N·m·s/rad（移动关节 N·s/m）
         }
         if (const std::optional<double> cc = cj.friction.coulomb.tryValue()) {
+            if (!std::isfinite(*cc)) {
+                throw DynamicsError("input-invalid",
+                                    "摩擦参数防御复检失败：库仑系数 fc 已提供但非有限"
+                                    "（N·m，关节 " + cj.localName + "，"
+                                        + cj.objectId.toCanonical() + "）——拒绝进入模型");
+            }
             f.coulombPresent = true;
             f.coulomb = *cc;  // 单位 N·m（移动关节 N）
         }
         if (const std::optional<double> b = cj.friction.bias.tryValue()) {
+            if (!std::isfinite(*b)) {
+                throw DynamicsError("input-invalid",
+                                    "摩擦参数防御复检失败：偏置 bias 已提供但非有限"
+                                    "（N·m，关节 " + cj.localName + "，"
+                                        + cj.objectId.toCanonical() + "）——拒绝进入模型");
+            }
             f.biasPresent = true;
             f.bias = *b;      // 单位 N·m（移动关节 N）
         }
