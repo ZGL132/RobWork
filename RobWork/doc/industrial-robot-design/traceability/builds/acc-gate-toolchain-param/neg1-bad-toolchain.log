@@ -1,0 +1,34 @@
+  -> FAIL : vcpkg toolchain 不存在: D:/nonexistent/vcpkg.cmake
+CMake Error at D:/software/CMake/share/cmake-4.3/Modules/CMakeDetermineSystem.cmake:159 (message):
+  Could not find toolchain file:
+
+   "D:/nonexistent/vcpkg.cmake"
+Call Stack (most recent call first):
+  CMakeLists.txt:5 (project)
+
+
+  -> FAIL : cmake 配置失败（全新树口径见 F-007：Qt 前缀/ini 模板）
+閫傜敤浜?.NET Framework MSBuild 鐗堟湰 17.12.6+db5f6012c
+MSBUILD : error MSB1009: 椤圭洰鏂囦欢涓嶅瓨鍦ㄣ?
+寮鍏?ird_gates.vcxproj
+  -> FAIL : 门禁目标构建失败（退出码 1）
+  -> FAIL : CTestTestfile 扫描为空（构建子树损坏或未配置）
+CMake Error at D:/software/CMake/share/cmake-4.3/Modules/CMakeDetermineSystem.cmake:159 (message):
+  Could not find toolchain file:
+
+   "D:/nonexistent/vcpkg.cmake"
+Call Stack (most recent call first):
+  CMakeLists.txt:70 (project)
+
+
+  -> FAIL : 独立冒烟配置失败（必须带 vcpkg toolchain——DTB §5.5/F-002）（配置参数在位仍失败——检查 Qt/vcpkg 路径有效性）
+
+================ gate-all 汇总 ================
+FAIL  环境自检 : vcpkg toolchain 不存在: D:/nonexistent/vcpkg.cmake
+FAIL  集成树配置 : cmake 配置失败（全新树口径见 F-007：Qt 前缀/ini 模板）
+FAIL  ird_gates : 门禁目标构建失败（退出码 1）
+FAIL  集成模式测试发现 : CTestTestfile 扫描为空（构建子树损坏或未配置）
+FAIL  冒烟树配置 : 独立冒烟配置失败（必须带 vcpkg toolchain——DTB §5.5/F-002）（配置参数在位仍失败——检查 Qt/vcpkg 路径有效性）
+================================================
+结果: 0/5 通过
+存在失败项——本地一键门槛未过，禁止提交（契约 acceptance 1）
