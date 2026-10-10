@@ -98,6 +98,10 @@ inline constexpr char kPhasePlanLine[] = "plan-line";
 /// 素材 phaseToken 取本常量）。
 inline constexpr char kPhasePlanAvoid[] = "plan-avoid";
 
+/// 失败阶段 token：简化/平滑（§14.1.6 phase 词表第四值——WP-16-T07 产生
+/// 面：smooth 的几何保持失败素材 phaseToken 取本常量）。
+inline constexpr char kPhaseSmooth[] = "smooth";
+
 // =====================================================================
 // 取消观测（§15.0 通用约定——一切长计算接口经注入取消观测）
 // =====================================================================
