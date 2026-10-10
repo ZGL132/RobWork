@@ -2,7 +2,7 @@
  * @file   SelGoldenDatasetContractTest.cpp
  * @brief  selection 黄金数据集的登记契约用例组（SelGoldenDatasetContract）
  *         ——WP-19-T11 acceptance 2"testdata/golden/sel-* 按 DatasetManifest
- *         登记"的契约自证面：四个数据集（sel-catalog/sel-screening/
+ *         登记"的契约自证面：五个数据集（sel-catalog/sel-screening/
  *         sel-combo/sel-backfill）经 GoldenDataset::load 全量校验（schema→
  *         完整性→交叉校验）通过、manifest 字段契约（登记要求/AT 锚点/独立
  *         性声明/边角三布尔/生成器入库）、integrity 覆盖关系、容差档案通
@@ -45,7 +45,7 @@ namespace tk = sdurws::ird::testkit;
 
 namespace {
 
-/// 四数据集引用（被测契约对象——WP-19-T11 登记的 sel-* 全集）。
+/// 五数据集引用（被测契约对象——WP-19-T11 登记四套＋WP-19-T12 增登 sel-linear-golden）。
 struct GoldenRef {
     const char* datasetId;
     const char* version;
@@ -61,9 +61,16 @@ const GoldenRef* goldenRefs()
         {"sel-screening-golden", "1.0.0", true, "AT-08"},
         {"sel-combo-golden", "1.0.0", true, "AT-08"},
         {"sel-backfill-golden", "1.0.0", true, "AT-30"},
+        // T12 批增登（WP-19-T12——SEL-09-S1 直线传动目录模板与筛选黄金；
+        // contract-fixture：装配/校验/筛选期望面——独立性声明在
+        // parameters.referenceSource 顶层登记〔closed-form/独立=true〕）。
+        {"sel-linear-golden", "1.0.0", false, "AT-36"},
     };
     return refs;
 }
+
+/// 登记数据集数（goldenRefs 数组规模——新增数据集同步扩展）。
+constexpr std::size_t kGoldenRefCount = 5;
 
 constexpr const char* kProfileId = "sel-golden";
 constexpr const char* kProfileVersion = "1.0.0";
@@ -71,7 +78,7 @@ constexpr const char* kProfileVersion = "1.0.0";
 }  // namespace
 
 // =====================================================================
-// 登记契约：四数据集 GoldenDataset::load 全量校验通过＋manifest 字段落值
+// 登记契约：五数据集 GoldenDataset::load 全量校验通过＋manifest 字段落值
 // =====================================================================
 
 /**
@@ -90,7 +97,7 @@ TEST(SelGoldenDatasetContract, ManifestsRegistered_WP19T11_ACC2)
                                             "NFR-COR-01"}),
                   (std::vector<std::string>{"AT-08", "AT-30"}));
 
-    for (std::size_t gi = 0; gi < 4; ++gi) {
+    for (std::size_t gi = 0; gi < kGoldenRefCount; ++gi) {
         const GoldenRef& ref = goldenRefs()[gi];
         SCOPED_TRACE(ref.datasetId);
         // ---- 全量装载（任何校验失败抛 TestKitError——数据资产缺陷即失败）。
@@ -116,7 +123,7 @@ TEST(SelGoldenDatasetContract, ManifestsRegistered_WP19T11_ACC2)
                   m.coveredAt.end())
             << "黄金数据集必须登记 " << ref.at;
 
-        // ---- 档案引用（统一 sel-golden@1.0.0——四数据集共享一条档案）。
+        // ---- 档案引用（统一 sel-golden@1.0.0——五数据集共享一条档案）。
         EXPECT_EQ(m.toleranceProfileId, std::string(kProfileId));
         EXPECT_EQ(m.toleranceProfileVersion, std::string(kProfileVersion));
 
@@ -159,7 +166,7 @@ TEST(SelGoldenDatasetContract, IntegrityCoversAllFiles_WP19T11_ACC2)
     IRD_TEST_INFO((std::vector<std::string>{"CON-05"}),
                   std::vector<std::string>{});
 
-    for (std::size_t gi = 0; gi < 4; ++gi) {
+    for (std::size_t gi = 0; gi < kGoldenRefCount; ++gi) {
         const GoldenRef& ref = goldenRefs()[gi];
         SCOPED_TRACE(ref.datasetId);
         const tk::GoldenDataset ds = tk::GoldenDataset::load({ref.datasetId, ref.version});
@@ -243,7 +250,7 @@ TEST(SelGoldenDatasetContract, ToleranceProfileChannelAndConservatism_WP19T11_AC
 // =====================================================================
 
 /**
- * 消费链定位契约：sel-* 四数据集与 sel-golden 档案位于同一数据根
+ * 消费链定位契约：sel-* 五数据集与 sel-golden 档案位于同一数据根
  * （TestPaths 唯一入口——任何单元不得自行拼装数据根路径，testkit §4.6）；
  * 本用例钉扎"黄金数据目录布局"（golden/<id>/<version>/manifest.json）的
  * selection 侧落位一致性。
@@ -254,7 +261,7 @@ TEST(SelGoldenDatasetContract, DataRootLayout_WP19T11_ACC2)
                   std::vector<std::string>{});
 
     const auto root = tk::goldenDataRoot();
-    for (std::size_t gi = 0; gi < 4; ++gi) {
+    for (std::size_t gi = 0; gi < kGoldenRefCount; ++gi) {
         const GoldenRef& ref = goldenRefs()[gi];
         const auto manifestPath = root / "golden" / ref.datasetId / ref.version
                                   / "manifest.json";

@@ -1,0 +1,6 @@
+ird-catalog-v1
+model_id,vendor,display_name,drive_kind,rated_force_n,peak_force_n,max_speed_ms,rated_power_w,efficiency,stroke_m,mass_kg,mounting_flange_kind,mounting_shaft_kind,curve_ref
+LD-BS-001,Kuguro,KS-250,ball-screwX,9000,15000,0.8,4500,0.92,2.4,12.5,flangeB,shaftC,bs-force
+LD-RP-001,Kuguro,KR-400,rack-pinion,12000,20000,2.0,9000,0.95,8.0,38.0,flangeB,shaftC,rp-load-power
+LD-TB-001,Beltway,BT-120,timing-belt,4000,6500,3.5,5200,,5.0,9.8,flangeB,shaftC,
+LD-LM-001,LinDriv,LX-800,linear-motor,5200,11000,4.0,6800,,,14.2,flangeB,shaftC,lm-force

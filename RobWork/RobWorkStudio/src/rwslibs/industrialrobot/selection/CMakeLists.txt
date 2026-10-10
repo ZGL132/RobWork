@@ -366,8 +366,18 @@ add_executable(sdurws_ird_selection_test
 # IHardConstraintSelector/checkCombinations/IFeasibleSetBuilder/
 # assembleDeviceBackfill/IDeviceBackfillCommandHandler 公共类消费）：
 #   test/SelGoldenDatasetTest.cpp
+# T12 增列直线传动选型层用例组（WP-19-T12 acceptance 1/2/3——AT-36 选型
+# 侧：四类器件 v2 目录包经既有导入校验通道的正/误例黄金对照＋v1 面零变化
+# 与版本分派＋直线筛选黄金表〔可行/不可行样例含实际值/阈值/原因〕＋旋转
+# 链零回归钉扎〔V12-03〕＋移动关节 R1 语义不放宽；期望值经 testkit
+# GoldenFixture 从 testdata/golden/sel-linear-golden 数据文件装载；接口
+# 路径钉扎：经 ICatalogValidator/IHardConstraintSelector 公共类消费）：
+#   test/LinearDriveCatalogTest.cpp
+#   test/LinearDriveScreeningTest.cpp
     test/SelPluginPanelTest.cpp
-    test/SelGoldenDatasetTest.cpp)
+    test/SelGoldenDatasetTest.cpp
+    test/LinearDriveCatalogTest.cpp
+    test/LinearDriveScreeningTest.cpp)
 
 target_compile_features(sdurws_ird_selection_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_test PROPERTIES
@@ -483,10 +493,16 @@ add_executable(sdurws_ird_selection_contract_test
 # integrity 覆盖关系＋sel-golden 容差档案通道与保守纪律；drivetrain
 # GoldenDatasetContractTest 同款形态）：
 #   contract_test/SelGoldenDatasetContractTest.cpp
+# T12 增列直线传动选型层契约用例组（WP-19-T12 acceptance 2/3——零 drivetrain
+# 编译边与零直线映射公式词表机器可断言面〔含注释域全文扫描〕＋T12 批
+# token/稳定码/器件类别/曲线量纲词表封闭＋v2 schema 注册面钉扎＋v1 注册面
+# 零变化＋经 IHardConstraintSelector 接口分派消费可达性）：
+#   contract_test/LinearDriveContractTest.cpp
     contract_test/FeasibleSetContractTest.cpp
     contract_test/PreferenceDiffContractTest.cpp
     contract_test/BackfillContractTest.cpp
-    contract_test/SelGoldenDatasetContractTest.cpp)
+    contract_test/SelGoldenDatasetContractTest.cpp
+    contract_test/LinearDriveContractTest.cpp)
 
 target_compile_features(sdurws_ird_selection_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_selection_contract_test PROPERTIES

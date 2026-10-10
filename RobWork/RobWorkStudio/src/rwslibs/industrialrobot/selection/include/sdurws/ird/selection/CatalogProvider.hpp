@@ -238,6 +238,18 @@ std::optional<PerformanceCurve> tryMakePerformanceCurve(
  */
 std::vector<ManifestEntry> catalogPackageFileSchema();
 
+/**
+ * @brief v2 目录包文件清单注册数据（WP-19-T12——SEL-09-S1 直线传动目录
+ *        模板的 P-IO-7 同款注册面）。
+ *
+ * v2＝v1 五文件＋linear_drives.csv（必备、允许零数据行——零行＝包内无
+ * 直线传动器件）。序＝v1 行序后表尾追加（确定性）。v1 注册面
+ * （catalogPackageFileSchema）返回值零变化——既有装配消费方零漂移。
+ *
+ * @return 清单条目集（六文件；调用方持有）
+ */
+std::vector<ManifestEntry> catalogPackageFileSchemaV2();
+
 }  // namespace sdurws::ird::selection
 
 #endif  // IRD_SELECTION_CATALOGPROVIDER_HPP

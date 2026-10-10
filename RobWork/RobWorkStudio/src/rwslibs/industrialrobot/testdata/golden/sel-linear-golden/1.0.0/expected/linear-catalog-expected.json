@@ -1,0 +1,305 @@
+{
+  "schema": "sel-linear-catalog-expected/1",
+  "note": "直线传动目录模板黄金期望——由 generate/make_sel_linear_golden.mjs 按单元卡 §4.1/§5.1/§5.3/§6.3/§17.2 冻结语义封闭推导（行号＝firstDataRowNo(3)＋数据行序），与产品实现零共享。identity.contentIdentity 为产品装配入口计算面（§4.2）——输入侧全零占位。",
+  "valid": {
+    "linearDrives": [
+      {
+        "modelId": "LD-BS-001",
+        "vendor": "Kuguro",
+        "displayName": "KS-250",
+        "kind": "ball-screw",
+        "ratedForce": 9000,
+        "peakForce": 15000,
+        "maxLinearSpeed": 0.8,
+        "ratedPower": 4500,
+        "efficiency": 0.92,
+        "stroke": 2.4,
+        "mass": 12.5,
+        "mounting": {
+          "flangeKind": "flangeB",
+          "shaftKind": "shaftC"
+        },
+        "curveRefs": [
+          "bs-force"
+        ],
+        "missing": [],
+        "status": "Valid"
+      },
+      {
+        "modelId": "LD-LM-001",
+        "vendor": "LinDriv",
+        "displayName": "LX-800",
+        "kind": "linear-motor",
+        "ratedForce": 5200,
+        "peakForce": 11000,
+        "maxLinearSpeed": 4,
+        "ratedPower": 6800,
+        "efficiency": null,
+        "stroke": null,
+        "mass": 14.2,
+        "mounting": {
+          "flangeKind": "flangeB",
+          "shaftKind": "shaftC"
+        },
+        "curveRefs": [
+          "lm-force"
+        ],
+        "missing": [
+          {
+            "column": "efficiency",
+            "reason": "cell-empty"
+          },
+          {
+            "column": "stroke_m",
+            "reason": "cell-empty"
+          }
+        ],
+        "status": "Partial"
+      },
+      {
+        "modelId": "LD-RP-001",
+        "vendor": "Kuguro",
+        "displayName": "KR-400",
+        "kind": "rack-pinion",
+        "ratedForce": 12000,
+        "peakForce": 20000,
+        "maxLinearSpeed": 2,
+        "ratedPower": 9000,
+        "efficiency": 0.95,
+        "stroke": 8,
+        "mass": 38,
+        "mounting": {
+          "flangeKind": "flangeB",
+          "shaftKind": "shaftC"
+        },
+        "curveRefs": [
+          "rp-load-power"
+        ],
+        "missing": [],
+        "status": "Valid"
+      },
+      {
+        "modelId": "LD-TB-001",
+        "vendor": "Beltway",
+        "displayName": "BT-120",
+        "kind": "timing-belt",
+        "ratedForce": 4000,
+        "peakForce": 6500,
+        "maxLinearSpeed": 3.5,
+        "ratedPower": 5200,
+        "efficiency": null,
+        "stroke": 5,
+        "mass": 9.8,
+        "mounting": {
+          "flangeKind": "flangeB",
+          "shaftKind": "shaftC"
+        },
+        "curveRefs": [],
+        "missing": [
+          {
+            "column": "efficiency",
+            "reason": "cell-empty"
+          }
+        ],
+        "status": "Partial"
+      }
+    ],
+    "curves": [
+      {
+        "curveId": "bs-force",
+        "ownerKind": "linear-drive",
+        "ownerModelId": "LD-BS-001",
+        "xQuantity": "linear-speed",
+        "xUnit": "m/s",
+        "yQuantity": "force",
+        "yUnit": "N",
+        "points": [
+          {
+            "x": 0.2,
+            "y": 14000
+          },
+          {
+            "x": 0.5,
+            "y": 12000
+          },
+          {
+            "x": 0.8,
+            "y": 9000
+          }
+        ]
+      },
+      {
+        "curveId": "lm-force",
+        "ownerKind": "linear-drive",
+        "ownerModelId": "LD-LM-001",
+        "xQuantity": "linear-speed",
+        "xUnit": "m/s",
+        "yQuantity": "force",
+        "yUnit": "N",
+        "points": [
+          {
+            "x": 0.5,
+            "y": 11000
+          },
+          {
+            "x": 1,
+            "y": 9500
+          },
+          {
+            "x": 2,
+            "y": 8000
+          },
+          {
+            "x": 4,
+            "y": 5000
+          }
+        ]
+      },
+      {
+        "curveId": "rp-load-power",
+        "ownerKind": "linear-drive",
+        "ownerModelId": "LD-RP-001",
+        "xQuantity": "load",
+        "xUnit": "N",
+        "yQuantity": "power",
+        "yUnit": "W",
+        "points": [
+          {
+            "x": 2000,
+            "y": 4000
+          },
+          {
+            "x": 8000,
+            "y": 9000
+          }
+        ]
+      }
+    ],
+    "motors": [
+      {
+        "modelId": "M-201",
+        "ratedTorque": 6,
+        "peakTorque": 15,
+        "mass": 4.8
+      }
+    ],
+    "gearboxes": [
+      {
+        "modelId": "G-201",
+        "ratio": 50,
+        "efficiency": 0.95
+      }
+    ]
+  },
+  "invalidCases": [
+    {
+      "name": "range-linear.csv",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-RANGE-INVALID",
+          "file": "linear_drives.csv",
+          "rowNo": 3,
+          "column": "peak_force_n",
+          "modelId": "LD-BS-001",
+          "actualValue": 8000,
+          "expectedValue": 9000,
+          "unit": "N"
+        },
+        {
+          "code": "SEL-CATALOG-RANGE-INVALID",
+          "file": "linear_drives.csv",
+          "rowNo": 5,
+          "column": "mass_kg",
+          "modelId": "LD-TB-001",
+          "actualValue": -1,
+          "expectedValue": 0,
+          "unit": "kg"
+        }
+      ]
+    },
+    {
+      "name": "kind-linear.csv",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-SCHEMA-MISMATCH",
+          "file": "linear_drives.csv",
+          "rowNo": 3,
+          "column": "drive_kind",
+          "modelId": "LD-BS-001",
+          "actualText": "ball-screwX",
+          "expectedText": "ball-screw|rack-pinion|timing-belt|linear-motor"
+        }
+      ]
+    },
+    {
+      "name": "dup-linear.csv",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-DUPLICATE-MODEL",
+          "file": "linear_drives.csv",
+          "rowNo": 7,
+          "column": "model_id",
+          "modelId": "LD-TB-001"
+        }
+      ]
+    },
+    {
+      "name": "missing-linear.csv",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-FIELD-MISSING",
+          "file": "linear_drives.csv",
+          "rowNo": 6,
+          "column": "rated_force_n",
+          "modelId": "LD-LM-001"
+        }
+      ]
+    },
+    {
+      "name": "dangling-linear.csv",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-REF-DANGLING",
+          "file": "linear_drives.csv",
+          "rowNo": 6,
+          "column": "curve_ref",
+          "modelId": "LD-LM-001",
+          "actualText": "lm-forceX"
+        }
+      ]
+    },
+    {
+      "name": "unit-curves-linear.csv",
+      "issues": [
+        {
+          "code": "SEL-CATALOG-SCHEMA-MISMATCH",
+          "file": "capability_curves.csv",
+          "rowNo": 4,
+          "column": "curve_id",
+          "modelId": "bs-force"
+        },
+        {
+          "code": "SEL-CATALOG-UNIT-INVALID",
+          "file": "capability_curves.csv",
+          "rowNo": 4,
+          "column": "x_unit",
+          "modelId": "bs-force",
+          "actualText": "rad/s",
+          "expectedText": "m/s"
+        }
+      ]
+    },
+    {
+      "name": "unordered-curves-linear.csv",
+      "issues": [
+        {
+          "code": "SEL-CURVE-UNORDERED",
+          "file": "capability_curves.csv",
+          "rowNo": 9,
+          "column": "x_value",
+          "modelId": "lm-force"
+        }
+      ]
+    }
+  ]
+}

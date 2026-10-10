@@ -174,7 +174,8 @@ TEST(SelHardScreeningContract, GearboxScreeningReachableThroughInterface)
  * 全表遍历：kReasonTokenCount 个 token 的文本非空、两两不同、格式
  * ^[a-z][a-z0-9-]*$（不以 '-' 结尾、无连续 '--'）——词表文本进入报告
  * 与序列化，格式破坏即呈现契约破坏；词表序（枚举序）锚点行钉住
- * （首行电机连续转矩、末行用户优选过滤——追加只允许表尾的次序契约）。
+ * （首行电机连续转矩、T12 批前末行用户优选过滤、现行末行直线功率——
+ * 追加只允许表尾的次序契约；T12 批 4 token 为 WP-19-T12 表尾追加）。
  */
 TEST(SelHardScreeningContract, ReasonTokenVocabularyIsClosedAndWellFormed)
 {
@@ -204,8 +205,13 @@ TEST(SelHardScreeningContract, ReasonTokenVocabularyIsClosedAndWellFormed)
     }
     // 词表序锚点（枚举序＝词表序＝稳定排序键——次序契约钉扎）。
     EXPECT_EQ(reasonTokenText(static_cast<ReasonToken>(0)), "torque-continuous-insufficient");
-    EXPECT_EQ(reasonTokenText(static_cast<ReasonToken>(kReasonTokenCount - 1)),
+    // T12 批前末行（边界/偏好组末 token——表尾追加纪律下位置不变，
+    // 距词表尾恰 4 个 T12 token——WP-19-T12）。
+    EXPECT_EQ(reasonTokenText(static_cast<ReasonToken>(kReasonTokenCount - 5)),
               "user-preference-filtered");
+    // 现行末行（T12 批尾 token——直线传动能力组末项）。
+    EXPECT_EQ(reasonTokenText(static_cast<ReasonToken>(kReasonTokenCount - 1)),
+              "linear-power-insufficient");
     // 越界防御（枚举外整数——不抛、返回占位文本）。
     EXPECT_EQ(reasonTokenText(static_cast<ReasonToken>(kReasonTokenCount)),
               "unknown-reason-token");

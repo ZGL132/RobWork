@@ -1,0 +1,3 @@
+ird-catalog-v1
+model_id,vendor,display_name,rated_output_torque_nm,peak_output_torque_nm,max_input_speed,ratio,efficiency,backlash,rated_life,mounting_orientation,external_load_radial_n,external_load_axial_n,external_load_dist_m,mass_kg,housing_inertia_kgm2,mounting_flange_kind,mounting_shaft_kind,curve_ref
+G-201,Sinotech,PG-201,80.0,160.0,300,50,0.95,0.001,20000,any,600,300,0.05,2.1,0.0004,flangeA,shaftB,

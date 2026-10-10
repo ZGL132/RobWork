@@ -422,6 +422,13 @@ std::string_view reasonTokenText(ReasonToken token)
         case ReasonToken::AxisOutOfScope:               return "axis-out-of-scope";
         case ReasonToken::R2CapabilityDisabled:         return "r2-capability-disabled";
         case ReasonToken::UserPreferenceFiltered:       return "user-preference-filtered";
+        // ---- 直线传动能力组（T12 批——WP-19-T12/§17.2；表尾追加序＝
+        //      枚举追加序；词表文本 kebab 小写与既有组同款词形）----
+        case ReasonToken::LinearForceContinuousInsufficient:
+            return "linear-force-continuous-insufficient";
+        case ReasonToken::LinearForcePeakInsufficient:  return "linear-force-peak-insufficient";
+        case ReasonToken::LinearSpeedInsufficient:      return "linear-speed-insufficient";
+        case ReasonToken::LinearPowerInsufficient:      return "linear-power-insufficient";
     }
     // 枚举外整数值（防御分支——正常路径不可达；词表封闭性由测试钉住）。
     return "unknown-reason-token";
@@ -1275,6 +1282,344 @@ std::vector<FeasibilityRecord> HardConstraintSelector::screenGearboxes(
             rec.candidateModelId = gb.modelId;
             rec.axisId = axis;
             rec.catalog = gb.catalog;
+            sortReasons(reasons);
+            rec.reasons = std::move(reasons);
+            rec.gaps = std::move(gaps);
+            rec.verdict = summarize(rec.reasons, rec.gaps);
+            records.push_back(std::move(rec));
+        }
+    }
+    return records;
+}
+
+// =====================================================================
+// 直线传动器件硬筛选（§17.2 SEL-09-S1 选型层——WP-19-T12；实现置于本
+// 翻译单元＝复用上方匿名命名空间工具〔阈值比较容差/原因与缺口构造/
+// 稳定排序/条件校验〕，禁第二套实现——NFR-MNT-03 单一权威）
+// =====================================================================
+
+namespace {
+
+/// 直线轴去重（facts 首现序——与旋转侧 uniqueAxes 同款确定性纪律；
+/// 模板类型不同故独立实现，遍历序语义一致）。
+std::vector<core::ObjectId> uniqueLinearAxes(const std::vector<LinearAxisWorkpointFacts>& facts)
+{
+    std::vector<core::ObjectId> axes;
+    for (const LinearAxisWorkpointFacts& f : facts) {
+        bool seen = false;
+        for (const core::ObjectId& a : axes) {
+            if (a == f.jointId) { seen = true; break; }
+        }
+        if (!seen) { axes.push_back(f.jointId); }
+    }
+    return axes;
+}
+
+/// 直线事实数值校验（校验边界快速拒绝——§10.2：非有限＝调用方契约违约
+/// fail-fast；present 值逐一检查，nullopt 合法＝该量未供给→维度缺口）。
+void validateLinearFacts(const std::vector<LinearAxisWorkpointFacts>& facts)
+{
+    for (const LinearAxisWorkpointFacts& f : facts) {
+        // 定位文本（诊断消息携带轴/工况——错误可定位，ERR-01 精神）。
+        const std::string where = "（jointId=" + f.jointId.toCanonical()
+                                + "，caseId=" + f.caseId + "）";
+        if (f.forceRms)      { requireFinite(*f.forceRms, ("forceRms" + where).c_str()); }
+        if (f.forcePeak)     { requireFinite(*f.forcePeak, ("forcePeak" + where).c_str()); }
+        if (f.linearSpeedPeak) {
+            requireFinite(*f.linearSpeedPeak, ("linearSpeedPeak" + where).c_str());
+        }
+        if (f.powerPeak)     { requireFinite(*f.powerPeak, ("powerPeak" + where).c_str()); }
+        if (f.powerRms)      { requireFinite(*f.powerRms, ("powerRms" + where).c_str()); }
+        // 位移/加速度为承载不判定字段——仍属输入事实，非有限同样违约
+        // （不因"不判定"放松输入校验——NFR-COR-03 全输入面一致）。
+        if (f.displacementPeak) {
+            requireFinite(*f.displacementPeak, ("displacementPeak" + where).c_str());
+        }
+        if (f.accelerationPeak) {
+            requireFinite(*f.accelerationPeak, ("accelerationPeak" + where).c_str());
+        }
+        if (!std::isfinite(f.atTime)) {
+            throw std::invalid_argument(
+                "selection/screening: 非有限输入（atTime" + where
+                + "）——调用方契约违约（NFR-COR-03 fail-fast）");
+        }
+    }
+}
+
+/// 推力-速度曲线查询（§17.2 曲线口径——直线侧的双口径与旋转侧
+/// motorPowerLimit 同构：曲线优先、固定额定值兜底）。
+///
+/// 曲线契约（卡 §17.2）：owner=linear-drive、横坐标 linear-speed（m/s）、
+/// 纵坐标 force（N）——条目 curves 中该 quantity 组合唯一（导入期歧义
+/// 拒绝；此处按首条匹配即可）。查询点＝工作点峰值线速度（m/s）。
+/// 查询拒绝（含区间外外推拒绝）＝数据缺口分轨——**禁外推不放宽**
+/// （SEL-CURVE-EXTRAPOLATION-DENIED 随缺口登记，不伪装成淘汰，§6.2）。
+///
+/// @param drive    [in] 候选直线器件条目
+/// @param snapshot [in] 目录快照（曲线表查源）
+/// @param speed    [in] 工作点峰值线速度（查询横坐标，m/s）
+/// @param limit    [out] 能力值（N——曲线插值 y）
+/// @param source   [out] 阈值来源描述（入淘汰原因 thresholdSource）
+/// @param gap      [out] 查询拒绝时的缺口（数据不足分轨）
+/// @param hasCurve [out] 条目是否声明推力-速度曲线（调用方区分"无曲线
+///                 →固定额定值口径"与"有曲线但查询失败→缺口"）
+/// @return true＝取得能力值（曲线口径或额定口径）；false＝数据不足
+bool linearForceCurveLimit(const LinearDriveCatalogEntry& drive,
+                           const CatalogPackageSnapshot& snapshot,
+                           double speed, double& limit, std::string& source,
+                           DataGap& gap, bool& hasCurve)
+{
+    hasCurve = false;
+    // 在条目曲线引用中找 linear-speed→force 曲线（推力-速度能力曲线）。
+    for (const CurveRef& ref : drive.curves) {
+        if (ref.xQuantity != kQuantityLinearSpeed || ref.yQuantity != kQuantityForce) {
+            continue;  // 非推力-速度曲线（如载荷-功率曲线）——本维度不消费
+        }
+        hasCurve = true;
+        const PerformanceCurve* curve = nullptr;
+        for (const PerformanceCurve& c : snapshot.curves) {
+            if (c.curveId == ref.curveId) {
+                curve = &c;
+                break;
+            }
+        }
+        if (curve == nullptr) {
+            // 防御分支：导入期 REF-DANGLING 已拒绝悬空引用；直接构造的
+            // 快照可能绕过导入——按数据不足处理，不猜测能力值。
+            gap = makeGap("linear-force-curve",
+                          "条目引用的推力-速度曲线在快照中不存在（curveId="
+                              + ref.curveId + "）",
+                          core::ObjectId{}, CaseId{},
+                          std::string(kSelCurveExtrapolationDenied));
+            return false;
+        }
+        LinearCurveEvaluator evaluator;
+        const CurveQueryResult qr = evaluator.evaluate(*curve, speed);
+        if (!qr.ok()) {
+            // 曲线区间外/坏曲线＝数据不足（分轨——不是能力不足；外推
+            // 拒绝码随缺口登记——SEL-02"默认禁止外推"不放宽，§6.2）。
+            gap = makeGap("linear-force-curve",
+                          "推力-速度曲线查询被拒绝：" + qr.rejectMessage,
+                          core::ObjectId{}, CaseId{},
+                          std::string(kSelCurveExtrapolationDenied));
+            return false;
+        }
+        limit = qr.value;
+        source = "能力曲线 " + ref.curveId + "（linear-speed→force，工作点速度查询）";
+        return true;
+    }
+    // 无推力-速度曲线——固定额定值口径（§6.4：来源显式＝目录峰值推力
+    // 列，不伪造曲线点）。
+    limit = drive.peakForce;
+    source = "目录 peak_force_n（峰值推力——固定额定值口径，无曲线）";
+    return true;
+}
+
+/// 直线器件单工况全维度判定（§17.2——逐维独立执行，全部维度跑完才汇总；
+/// 任一维度失败不阻断后续维度——§7.2 同款纪律）。
+///
+/// 维度执行序（固定——同 token 多条原因的稳定次序来源，§10.4）：
+///   1 连续推力 → 2 峰值推力（额定口径）→ 3 峰值推力（曲线口径，声明
+///   曲线时）→ 4 直线速度 → 5 直线功率（峰值/RMS 两子项）→ 6 安全系数
+///   复判并入各维度（×SF 后比较——与旋转侧"工作点×SF"口径一致）。
+void screenLinearDriveCase(const LinearDriveCatalogEntry& drive,
+                           const LinearAxisWorkpointFacts& f,
+                           const ScreeningCriteria& criteria,
+                           const CatalogPackageSnapshot& snapshot,
+                           std::vector<RejectionReason>& reasons,
+                           std::vector<DataGap>& gaps)
+{
+    const CatalogIdentity& catalog = drive.catalog;
+    // 安全系数（validateCriteria 已保证 ≥1 且有限；1.0＝不启用复判——
+    // 复用旋转侧 SF 语义：工作点 ×SF 后与能力值比较，卡 §7.1）。
+    const double sf = criteria.safetyFactor;
+
+    // ---- 维度 1：连续推力（forceRms ×SF ≤ rated_force_n，单位 N）----
+    if (!f.forceRms) {
+        gaps.push_back(makeGap("linear-force-rms",
+                               "直线轴推力 RMS 工作点未供给（映射事实缺失）",
+                               f.jointId, f.caseId));
+    } else if (exceedsLimit(*f.forceRms * sf, drive.ratedForce,
+                            core::QuantityKind::Force)) {
+        RejectionReason r = makeReason(
+            ReasonToken::LinearForceContinuousInsufficient, drive.modelId,
+            f.jointId, f.caseId, f.atTime, f.segmentId,
+            *f.forceRms * sf, drive.ratedForce, "N",
+            std::string("目录 rated_force_n（额定连续推力）")
+                + (sf > 1.0 ? "——含安全系数复判" : ""),
+            catalog);
+        r.suggestion = "更换额定推力更大的直线传动器件型号";
+        reasons.push_back(std::move(r));
+    }
+
+    // ---- 维度 2+3：峰值推力（额定口径＋曲线口径——曲线声明时以插值
+    //      上限复判；两口径任一超限即独立记因，词表共用 peak token）----
+    if (!f.forcePeak) {
+        gaps.push_back(makeGap("linear-force-peak",
+                               "直线轴峰值推力工作点未供给（映射事实缺失）",
+                               f.jointId, f.caseId));
+    } else {
+        const double demanded = *f.forcePeak * sf;   // 需求侧（×SF 复判）
+        if (exceedsLimit(demanded, drive.peakForce, core::QuantityKind::Force)) {
+            RejectionReason r = makeReason(
+                ReasonToken::LinearForcePeakInsufficient, drive.modelId,
+                f.jointId, f.caseId, f.atTime, f.segmentId,
+                demanded, drive.peakForce, "N",
+                std::string("目录 peak_force_n（峰值推力）")
+                    + (sf > 1.0 ? "——含安全系数复判" : ""),
+                catalog);
+            r.suggestion = "更换峰值推力更大的直线传动器件型号";
+            reasons.push_back(std::move(r));
+        }
+        // 曲线口径（**仅在条目声明推力-速度曲线时执行**——声明曲线即
+        // "曲线口径加判"：以工作点速度查询能力上限复判；无曲线条目的
+        // 固定额定值口径已由上方维度 2 承担，此处跳过——避免同阈值
+        // 双报〔thresholdSource 相同的两条原因〕，§6.4 单口径语义）。
+        const bool declaresForceCurve = [&] {
+            for (const CurveRef& ref : drive.curves) {
+                if (ref.xQuantity == kQuantityLinearSpeed
+                    && ref.yQuantity == kQuantityForce) {
+                    return true;
+                }
+            }
+            return false;
+        }();
+        if (declaresForceCurve && f.linearSpeedPeak) {
+            double limit = 0.0;
+            std::string source;
+            DataGap qgap;
+            bool hasCurve = false;
+            if (linearForceCurveLimit(drive, snapshot, *f.linearSpeedPeak,
+                                      limit, source, qgap, hasCurve) && hasCurve) {
+                if (exceedsLimit(demanded, limit, core::QuantityKind::Force)) {
+                    RejectionReason r = makeReason(
+                        ReasonToken::LinearForcePeakInsufficient, drive.modelId,
+                        f.jointId, f.caseId, f.atTime, f.segmentId,
+                        demanded, limit, "N",
+                        source + (sf > 1.0 ? "——含安全系数复判" : ""),
+                        catalog);
+                    r.suggestion = "更换工作速度段推力能力更高的器件型号"
+                                   "或降低该轴峰值速度需求";
+                    reasons.push_back(std::move(r));
+                }
+            } else if (hasCurve) {
+                // 查询拒绝（区间外/悬空/坏曲线）＝数据缺口（分轨）；
+                // 轴/工况定位由调用方上下文回填（本缺口有工况语境）。
+                qgap.axisId = f.jointId;
+                qgap.caseId = f.caseId;
+                gaps.push_back(std::move(qgap));
+            }
+        }
+        // 速度工作点缺失且有曲线：曲线口径需查询点——缺口登记（不默认
+        // 额定口径通过——§7.2"缺失不默认通过"；额定口径的维度 2 已判定）。
+        if (!f.linearSpeedPeak && declaresForceCurve) {
+            gaps.push_back(makeGap(
+                "linear-force-curve",
+                "曲线口径峰值推力维度缺查询点（峰值线速度未供给——不默认"
+                "以额定口径替代曲线口径通过）",
+                f.jointId, f.caseId));
+        }
+    }
+
+    // ---- 维度 4：直线速度（linearSpeedPeak ×SF ≤ max_speed_ms，m/s）----
+    if (!f.linearSpeedPeak) {
+        gaps.push_back(makeGap("linear-speed",
+                               "直线轴峰值线速度工作点未供给（映射事实缺失）",
+                               f.jointId, f.caseId));
+    } else if (exceedsLimit(*f.linearSpeedPeak * sf, drive.maxLinearSpeed,
+                            core::QuantityKind::LinearVelocity)) {
+        RejectionReason r = makeReason(
+            ReasonToken::LinearSpeedInsufficient, drive.modelId,
+            f.jointId, f.caseId, f.atTime, f.segmentId,
+            *f.linearSpeedPeak * sf, drive.maxLinearSpeed, "m/s",
+            std::string("目录 max_speed_ms（最高直线速度）")
+                + (sf > 1.0 ? "——含安全系数复判" : ""),
+            catalog);
+        r.suggestion = "更换最高速度更高的直线传动器件型号";
+        reasons.push_back(std::move(r));
+    }
+
+    // ---- 维度 5：直线功率（powerPeak/powerRms 两子项独立——额定口径，
+    //      单位 W；功率是扩展端口产出的独立量，不自算 F×速度）----
+    for (int which = 0; which < 2; ++which) {
+        const std::optional<double>& p = (which == 0) ? f.powerPeak : f.powerRms;
+        const char* gapDim = (which == 0) ? "linear-power-peak" : "linear-power-rms";
+        const char* gapMsg = (which == 0) ? "直线轴峰值功率工作点未供给（映射事实缺失）"
+                                          : "直线轴 RMS 功率工作点未供给（映射事实缺失）";
+        if (!p) {
+            gaps.push_back(makeGap(gapDim, gapMsg, f.jointId, f.caseId));
+            continue;
+        }
+        if (exceedsLimit(*p * sf, drive.ratedPower, core::QuantityKind::Power)) {
+            RejectionReason r = makeReason(
+                ReasonToken::LinearPowerInsufficient, drive.modelId,
+                f.jointId, f.caseId, f.atTime, f.segmentId,
+                *p * sf, drive.ratedPower, "W",
+                std::string("目录 rated_power_w（额定功率）")
+                    + (sf > 1.0 ? "——含安全系数复判" : ""),
+                catalog);
+            r.suggestion = "更换额定功率更大的直线传动器件型号";
+            reasons.push_back(std::move(r));
+        }
+    }
+
+    // ---- 位移/加速度：承载不判定（四量完整性承载——判定维度随 R2 需求
+    //      细化；不据此产生原因或缺口，不伪造判定——见 LinearDrive.hpp 注）----
+    (void)f.displacementPeak;
+    (void)f.accelerationPeak;
+}
+
+}  // namespace
+
+std::vector<FeasibilityRecord> HardConstraintSelector::screenLinearDrives(
+    const CatalogPackageSnapshot& snapshot,
+    const std::vector<LinearAxisWorkpointFacts>& axisFacts,
+    const ScreeningCriteria& criteria,
+    const evidence::IEvaluationContext* ctx) const
+{
+    // 校验边界（§10.2——致命输入错误快速拒绝：条件非有限/安全系数＜1/
+    // 事实数值非有限；候选能力筛选不短路不受影响）。
+    validateCriteria(criteria);
+    validateLinearFacts(axisFacts);
+
+    std::vector<FeasibilityRecord> records;
+    const std::vector<core::ObjectId> axes = uniqueLinearAxes(axisFacts);
+    if (axes.empty() || snapshot.linearDrives.empty()) {
+        // v1 包 linearDrives 恒空——恒返回空集（v1 行为零变化，V12-03）。
+        return records;
+    }
+    records.reserve(snapshot.linearDrives.size() * axes.size());
+
+    // 候选×轴遍历（候选序＝快照 linearDrives 序〔modelId 升序——装配
+    // 保证〕、轴序＝facts 首现序——双确定性，NFR-COR-02）。取消查询在
+    // 候选边界（语义同 screenMotors——观测到取消即截断返回）。
+    for (const LinearDriveCatalogEntry& drive : snapshot.linearDrives) {
+        if (cancellationRequested(ctx)) {
+            break;  // 截断语义：返回已完成记录（调用方以计数感知）
+        }
+        // 身份与校验状态检查（§7.1 ①同款）：Invalid 条目不参选——导入期
+        // 保证快照内不含 Invalid，本分支为直接构造快照的防御路径。
+        if (drive.status == ValidationStatus::Invalid) {
+            continue;
+        }
+        for (const core::ObjectId& axis : axes) {
+            // 同轴全部工况事实（组内保持输入序——逐工况独立判定后合并）。
+            std::vector<RejectionReason> reasons;
+            std::vector<DataGap> gaps;
+            for (const LinearAxisWorkpointFacts& f : axisFacts) {
+                if (!(f.jointId == axis)) {
+                    continue;
+                }
+                screenLinearDriveCase(drive, f, criteria, snapshot, reasons, gaps);
+            }
+            // 汇总（落位细化 ⑦同款三态收敛）＋原因稳定排序（§10.4）＋
+            // 记录键（候选×轴——与旋转侧同构）。
+            FeasibilityRecord rec;
+            rec.id = drive.modelId + "|" + axis.toCanonical();
+            rec.deviceKind = DeviceKind::LinearDrive;
+            rec.candidateModelId = drive.modelId;
+            rec.axisId = axis;
+            rec.catalog = drive.catalog;
             sortReasons(reasons);
             rec.reasons = std::move(reasons);
             rec.gaps = std::move(gaps);

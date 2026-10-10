@@ -1,0 +1,11 @@
+ird-catalog-v1
+curve_id,owner_kind,owner_model_id,x_quantity,x_unit,y_quantity,y_unit,x_value,y_value,point_index
+bs-force,linear-drive,LD-BS-001,linear-speed,m/s,force,N,0.2,14000,0
+bs-force,linear-drive,LD-BS-001,linear-speed,m/s,force,N,0.5,12000,1
+bs-force,linear-drive,LD-BS-001,linear-speed,m/s,force,N,0.8,9000,2
+rp-load-power,linear-drive,LD-RP-001,load,N,power,W,2000,4000,0
+rp-load-power,linear-drive,LD-RP-001,load,N,power,W,8000,9000,1
+lm-force,linear-drive,LD-LM-001,linear-speed,m/s,force,N,0.5,11000,0
+lm-force,linear-drive,LD-LM-001,linear-speed,m/s,force,N,0.1,9500,1
+lm-force,linear-drive,LD-LM-001,linear-speed,m/s,force,N,2.0,8000,2
+lm-force,linear-drive,LD-LM-001,linear-speed,m/s,force,N,4.0,5000,3

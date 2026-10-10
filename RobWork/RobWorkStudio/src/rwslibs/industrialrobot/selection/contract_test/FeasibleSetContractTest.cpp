@@ -1,7 +1,8 @@
 /**
  * @file   FeasibleSetContractTest.cpp
  * @brief  可行集与淘汰原因输出契约用例组（SelFeasibleSetContract）——
- *         ReasonToken→SEL-* 稳定码映射封闭性（词表 34 token 全遍历＋core
+ *         ReasonToken→SEL-* 稳定码映射封闭性（词表 38 token 全遍历〔T12
+ *         批表尾追加 4——WP-19-T12〕＋core
  *         句法权威＋登记表同源）、sel 域 RequiredEvidenceProfile 注册闭环
  *         （validateEvidenceProfile＋真实 EvidenceProfileRegistry 注册/
  *         解析/重复拒绝——EVI-01"Profile 注册在前、评估器注册在后"时序的
@@ -67,14 +68,15 @@ bool codeRegistered(const std::string& code,
 // acceptance 1：词表→稳定码映射封闭性（逐项淘汰原因的 diagRef 面）
 // ---------------------------------------------------------------------
 
-/// 词表 34 token 全遍历：映射非空＋core 句法权威校验＋码值全部在登记表
-/// ＋复用码锚（不新造同义码——组合不兼容/范围外/身份族三锚）。
+/// 词表 38 token 全遍历（T12 批表尾追加 4——WP-19-T12）：映射非空＋core
+/// 句法权威校验＋码值全部在登记表＋复用码锚（不新造同义码——组合不兼容/
+/// 范围外/身份族三锚；直线传动 4 token 为新码族 SEL-LINEAR-）。
 TEST(SelFeasibleSetContract, TokenDiagCodeMappingClosed_WP19T06_ACC1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"SEL-06", "ERR-01", "NFR-MNT-03"},
                   std::vector<std::string>{"AT-08"});  // R1——词表↔稳定码映射封闭性
     const std::vector<DiagnosticEntry> entries = selectionCodeEntries();
-    ASSERT_EQ(entries.size(), std::size_t{54}) << "登记表全表 54 码（T02 批 17＋T06 批 28＋T09 批 9）";
+    ASSERT_EQ(entries.size(), std::size_t{58}) << "登记表全表 58 码（T02 批 17＋T06 批 28＋T09 批 9＋T12 批 4——WP-19-T12）";
 
     // 全遍历（kReasonTokenCount＝词表规模冻结值——封闭词表遍历上界）。
     for (int i = 0; i < kReasonTokenCount; ++i) {
@@ -303,7 +305,9 @@ TEST(SelFeasibleSetContract, RegistryTableT06BatchAnchors_WP19T06_ACC1)
     IRD_TEST_INFO(std::vector<std::string>{"NFR-MNT-03"},
                   std::vector<std::string>{});  // R1——T06 批登记锚（双防线冗余）
     const std::vector<DiagnosticEntry> entries = selectionCodeEntries();
-    ASSERT_EQ(entries.size(), std::size_t{54});
+    // 58＝T02 批 17＋T06 批 28＋T09 批 9＋T12 批 4（WP-19-T12 表尾追加——
+    // §17.2 直线传动能力族；追加纪律下既有行位置零变化）。
+    ASSERT_EQ(entries.size(), std::size_t{58});
     // T06 批首行（表尾追加起点——词表电机组首 token 码）。
     EXPECT_EQ(entries[17].code, kSelMotorTorqueContinuousInsufficient);
     // T06 批尾行（词表边界/偏好组末 token 码——表尾追加纪律下位置不变，
@@ -311,8 +315,15 @@ TEST(SelFeasibleSetContract, RegistryTableT06BatchAnchors_WP19T06_ACC1)
     EXPECT_EQ(entries[44].code, kSelUserPreferenceFiltered);
     // T09 批首/尾锚（WP-19-T09 表尾追加 9 码——§12 回填判定序）。
     EXPECT_EQ(entries[45].code, kSelBackfillPayloadMalformed);
-    EXPECT_EQ(entries.back().code, kSelBackfillSynthesisAssertFailed);
-    // T06 批码数＝28（45−17——T09 批追加不改变 T06 批区间）；T09 批码数＝9。
-    EXPECT_EQ(entries.size() - std::size_t{17} - std::size_t{9}, std::size_t{28});
-    EXPECT_EQ(entries.size() - std::size_t{45}, std::size_t{9});
+    EXPECT_EQ(entries[53].code, kSelBackfillSynthesisAssertFailed);
+    // T12 批首/尾锚（WP-19-T12 表尾追加 4 码——§17.2 直线传动能力序：
+    // 连续推力→峰值推力→速度→功率）。
+    EXPECT_EQ(entries[54].code, kSelLinearForceContinuousInsufficient);
+    EXPECT_EQ(entries.back().code, kSelLinearPowerInsufficient);
+    // T06 批码数＝28（45−17——后续批次追加不改变 T06 批区间）；
+    // T09 批码数＝9；T12 批码数＝4。
+    EXPECT_EQ(entries.size() - std::size_t{17} - std::size_t{9} - std::size_t{4},
+              std::size_t{28});
+    EXPECT_EQ(entries.size() - std::size_t{45} - std::size_t{4}, std::size_t{9});
+    EXPECT_EQ(entries.size() - std::size_t{54}, std::size_t{4});
 }

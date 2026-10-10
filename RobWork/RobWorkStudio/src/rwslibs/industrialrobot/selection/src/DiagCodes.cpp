@@ -1,8 +1,9 @@
 /**
  * @file   DiagCodes.cpp
- * @brief  selection 稳定诊断码登记表的实现——SEL-* 全表 54 码登记行清单
+ * @brief  selection 稳定诊断码登记表的实现——SEL-* 全表 58 码登记行清单
  *         （逐码出处与语义登记；T02 批 17 码＋T06 批表尾追加 28 码＋T09
- *         批表尾追加 9 码）与 ReasonToken→稳定码唯一映射函数。
+ *         批表尾追加 9 码＋T12 批表尾追加 4 码〔§17.2 直线传动能力族——
+ *         SEL-09-S1〕）与 ReasonToken→稳定码唯一映射函数。
  *
  * 设计依据：
  *   - units/selection.md §2.2（移动关节范围外纪律）、§5.3（目录业务校验
@@ -304,12 +305,31 @@ std::vector<DiagnosticEntry> selectionCodeEntries()
         {kSelBackfillSynthesisAssertFailed,
          "units/selection.md §12.4",
          "合成物性断言失败：MDL-06 断言①～③同语义任一违约——回填失败零修订（硬断言轨）"},
+
+        // ---- T12 批（WP-19-T12）：§17.2 直线传动硬筛选的能力不足族
+        //      （4 码）——批内序＝ReasonToken 词表 T12 组序（连续推力→
+        //      峰值推力→速度→功率）；筛选层直线工作点缺失/曲线外推拒绝
+        //      不新造码（复用 SEL-DRIVETRAIN-MISSING/SEL-CURVE-*
+        //      ——数据缺口分轨语义不变）。
+        {kSelLinearForceContinuousInsufficient,
+         "units/selection.md §17.2/§10.3",
+         "直线连续推力不足：工作点推力 RMS＞目录额定推力——逐项淘汰原因（SEL-09-S1 选型层）"},
+        {kSelLinearForcePeakInsufficient,
+         "units/selection.md §17.2/§10.3",
+         "直线峰值推力不足：工作点峰值推力＞目录峰值或推力-速度曲线插值上限——逐项淘汰原因"},
+        {kSelLinearSpeedInsufficient,
+         "units/selection.md §17.2/§10.3",
+         "直线速度不足：工作点峰值线速度＞目录最高线速度（m/s）——逐项淘汰原因"},
+        {kSelLinearPowerInsufficient,
+         "units/selection.md §17.2/§10.3",
+         "直线功率不足：工作点峰值/RMS 功率＞目录额定功率（W）——逐项淘汰原因"},
     };
 }
 
 // =====================================================================
 // ReasonToken → 稳定码唯一映射（DiagCodes.hpp 声明的唯一实现——全表
-// 34 token；复用码分支引用既有常量、新码分支引用 T06 批常量，禁第二处
+// 38 token〔T12 批表尾追加 4——WP-19-T12〕；复用码分支引用既有常量、
+// 新码分支引用 T06/T12 批常量，禁第二处
 // 字面量）。分支序＝ReasonToken 枚举序＝词表序（与 switch 可读序一致；
 // 映射值与 selectionCodeEntries 登记行同源——两处皆引用同一常量，失同
 // 步由 FeasibleSetContractTest 全遍历＋DiagCodesTest 机械比对双面钉住）。
@@ -397,6 +417,17 @@ std::string_view reasonTokenDiagCode(ReasonToken token)
         return kSelR2CapabilityDisabled;
     case ReasonToken::UserPreferenceFiltered:
         return kSelUserPreferenceFiltered;
+
+    // ---- 直线传动能力组（T12 批——§17.2 SEL-09-S1；4 token→SEL-LINEAR-
+    //      族新码；批内序＝词表追加序）----
+    case ReasonToken::LinearForceContinuousInsufficient:
+        return kSelLinearForceContinuousInsufficient;
+    case ReasonToken::LinearForcePeakInsufficient:
+        return kSelLinearForcePeakInsufficient;
+    case ReasonToken::LinearSpeedInsufficient:
+        return kSelLinearSpeedInsufficient;
+    case ReasonToken::LinearPowerInsufficient:
+        return kSelLinearPowerInsufficient;
     }
     // 词表外整数值（防御分支——不抛不私造）：返回空串，调用方以空串判
     // "无码可引"，diagRef 保持 nullopt（NFR-MNT-03 不伪造码值）。

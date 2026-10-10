@@ -77,6 +77,36 @@ bool PerformanceCurve::operator==(const PerformanceCurve& o) const
         && catalog == o.catalog && contentIdentity == o.contentIdentity;
 }
 
+bool LinearDriveCatalogEntry::operator==(const LinearDriveCatalogEntry& o) const
+{
+    // 逐字段比较（业务身份＝字段值全体——与电机/减速器条目同款纪律；
+    // kind 为封闭枚举值比较，missing 清单参与相等〔显式标记是业务事实，
+    // 卡 §4.1 ERR-01〕）。
+    return modelId == o.modelId && vendor == o.vendor && displayName == o.displayName
+        && catalog == o.catalog && kind == o.kind
+        && ratedForce == o.ratedForce && peakForce == o.peakForce
+        && maxLinearSpeed == o.maxLinearSpeed && ratedPower == o.ratedPower
+        && efficiency == o.efficiency && stroke == o.stroke
+        && mass == o.mass && mounting == o.mounting
+        && curves == o.curves && missing == o.missing && status == o.status;
+}
+
+// =====================================================================
+// §17.2 直线传动器件类别词表文本（唯一映射点——WP-19-T12）
+// =====================================================================
+
+std::string_view linearDriveKindText(LinearDriveKind kind)
+{
+    switch (kind) {
+        case LinearDriveKind::BallScrew:   return "ball-screw";   ///< 滚珠丝杠
+        case LinearDriveKind::RackPinion:  return "rack-pinion";  ///< 齿条齿轮
+        case LinearDriveKind::TimingBelt:  return "timing-belt";  ///< 同步带
+        case LinearDriveKind::LinearMotor: return "linear-motor"; ///< 直线电机
+    }
+    // 枚举外整数值（防御分支——正常路径不可达；词表封闭性由测试钉住）。
+    return "unknown-linear-drive-kind";
+}
+
 bool CatalogIssue::operator==(const CatalogIssue& o) const
 {
     return code == o.code && file == o.file && rowNo == o.rowNo && column == o.column
@@ -228,6 +258,43 @@ void appendGearbox(std::string& out, const GearboxCatalogEntry& g)
           : g.status == ValidationStatus::Partial ? "P" : "I");
 }
 
+/// 直线传动器件条目 canonical 行（v2 第六表——WP-19-T12；字段序＝
+/// LinearDriveCatalogEntry 成员序——单一书写点纪律同电机/减速器行）。
+void appendLinearDrive(std::string& out, const LinearDriveCatalogEntry& d)
+{
+    appendText(out, d.modelId);        out += '|';
+    appendText(out, d.vendor);         out += '|';
+    appendText(out, d.displayName);    out += '|';
+    appendText(out, d.catalog.catalogId); out += '|';
+    appendText(out, d.catalog.version);   out += '|';
+    // 词表文本经唯一映射点取得（string_view→std::string 显式承载——
+    // canonical 输入是 const std::string&）。
+    appendText(out, std::string(linearDriveKindText(d.kind))); out += '|';
+    appendNumber(out, d.ratedForce);   out += '|';
+    appendNumber(out, d.peakForce);    out += '|';
+    appendNumber(out, d.maxLinearSpeed); out += '|';
+    appendNumber(out, d.ratedPower);   out += '|';
+    if (d.efficiency) { appendNumber(out, *d.efficiency); } else { out += '~'; }
+    out += '|';
+    if (d.stroke) { appendNumber(out, *d.stroke); } else { out += '~'; }
+    out += '|';
+    appendNumber(out, d.mass);         out += '|';
+    appendText(out, d.mounting.flangeKind); out += '|';
+    appendText(out, d.mounting.shaftKind);  out += '|';
+    for (const CurveRef& c : d.curves) {        // 引用按向量序（构造序——同款纪律）
+        out += 'R'; appendText(out, c.curveId); out += '/';
+        appendText(out, c.xQuantity); out += '/';
+        appendText(out, c.yQuantity); out += ';';
+    }
+    for (const MissingField& mf : d.missing) {  // 缺失清单进身份（显式标记是业务事实）
+        out += 'M'; appendText(out, mf.column); out += '/';
+        appendText(out, mf.reason); out += ';';
+    }
+    out += "|S";
+    out += (d.status == ValidationStatus::Valid ? "V"
+          : d.status == ValidationStatus::Partial ? "P" : "I");
+}
+
 }  // namespace
 
 std::string canonicalPackageText(const CatalogPackageSnapshot& snapshot)
@@ -238,6 +305,7 @@ std::string canonicalPackageText(const CatalogPackageSnapshot& snapshot)
     std::vector<GearboxCatalogEntry> gearboxes = snapshot.gearboxes;
     std::vector<PerformanceCurve> curves = snapshot.curves;
     std::vector<CompatibilityRecord> compat = snapshot.compatibility;
+    std::vector<LinearDriveCatalogEntry> linearDrives = snapshot.linearDrives;
 
     std::sort(motors.begin(), motors.end(),
               [](const MotorCatalogEntry& a, const MotorCatalogEntry& b) {
@@ -257,6 +325,10 @@ std::string canonicalPackageText(const CatalogPackageSnapshot& snapshot)
                   if (a.motorId != b.motorId) { return a.motorId < b.motorId; }
                   if (a.gearboxId != b.gearboxId) { return a.gearboxId < b.gearboxId; }
                   return a.mountKind < b.mountKind;
+              });
+    std::sort(linearDrives.begin(), linearDrives.end(),
+              [](const LinearDriveCatalogEntry& a, const LinearDriveCatalogEntry& b) {
+                  return a.modelId < b.modelId;   // 直线器件按稳定 ID 升序（同款纪律）
               });
 
     std::string out;
@@ -306,6 +378,16 @@ std::string canonicalPackageText(const CatalogPackageSnapshot& snapshot)
         appendText(out, r.motorId); out += '>';
         appendText(out, r.gearboxId); out += '>';
         appendText(out, r.mountKind);
+        out += '\n';
+    }
+
+    // 直线传动器件段（v2 第六表——WP-19-T12；追加在兼容段之后）。
+    // ★ v1 身份零漂移的序列化承载：空表（v1 包恒空——linearDrives 无
+    //   条目）时本循环体零次执行，不向文本追加任何字节——v1 快照的
+    //   canonical 文本与本扩展引入前逐字节一致，包内容身份零漂移
+    //   （sel-catalog-golden 黄金身份断言零回归的机制保证）。
+    for (const LinearDriveCatalogEntry& d : linearDrives) {
+        appendLinearDrive(out, d);
         out += '\n';
     }
     return out;

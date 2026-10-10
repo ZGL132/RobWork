@@ -1,0 +1,250 @@
+{
+  "schema": "sel-linear-screening-expected/1",
+  "note": "直线传动筛选黄金期望——§17.2 维度集（连续/峰值推力＋曲线口径＋速度＋功率＋SF 复判）与 §10.4 稳定排序的闭式推导；插值锚点：bs-force 0.65 m/s→10500 N（0.5→0.8 段）、lm-force 0.65 m/s→10550 N（0.5→1.0 段）、lm-force 0.9 m/s→9800 N；区间外（0.9 m/s 对 bs-force 上界 0.8）＝EXTRAPOLATION-DENIED 数据缺口——禁外推不放宽。",
+  "records": [
+    {
+      "id": "LD-BS-001|obj-00000000000000000000000000000301",
+      "candidateModelId": "LD-BS-001",
+      "axis": "l1",
+      "verdict": "Rejected",
+      "reasons": [
+        {
+          "token": "linear-force-continuous-insufficient",
+          "caseId": "case-overload",
+          "actual": 9500,
+          "required": 9000,
+          "unit": "N",
+          "thresholdSource": "目录 rated_force_n（额定连续推力）"
+        },
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-overload",
+          "actual": 16000,
+          "required": 15000,
+          "unit": "N",
+          "thresholdSource": "目录 peak_force_n（峰值推力）"
+        },
+        {
+          "token": "linear-speed-insufficient",
+          "caseId": "case-overload",
+          "actual": 0.9,
+          "required": 0.8,
+          "unit": "m/s",
+          "thresholdSource": "目录 max_speed_ms（最高直线速度）"
+        },
+        {
+          "token": "linear-power-insufficient",
+          "caseId": "case-overload",
+          "actual": 5200,
+          "required": 4500,
+          "unit": "W",
+          "thresholdSource": "目录 rated_power_w（额定功率）"
+        },
+        {
+          "token": "linear-power-insufficient",
+          "caseId": "case-overload",
+          "actual": 4800,
+          "required": 4500,
+          "unit": "W",
+          "thresholdSource": "目录 rated_power_w（额定功率）"
+        }
+      ],
+      "gaps": [
+        {
+          "dimension": "linear-force-curve",
+          "caseId": "case-overload",
+          "diagCode": "SEL-CURVE-EXTRAPOLATION-DENIED"
+        }
+      ]
+    },
+    {
+      "id": "LD-LM-001|obj-00000000000000000000000000000301",
+      "candidateModelId": "LD-LM-001",
+      "axis": "l1",
+      "verdict": "Rejected",
+      "reasons": [
+        {
+          "token": "linear-force-continuous-insufficient",
+          "caseId": "case-nominal",
+          "actual": 6000,
+          "required": 5200,
+          "unit": "N",
+          "thresholdSource": "目录 rated_force_n（额定连续推力）"
+        },
+        {
+          "token": "linear-force-continuous-insufficient",
+          "caseId": "case-overload",
+          "actual": 9500,
+          "required": 5200,
+          "unit": "N",
+          "thresholdSource": "目录 rated_force_n（额定连续推力）"
+        },
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-overload",
+          "actual": 16000,
+          "required": 11000,
+          "unit": "N",
+          "thresholdSource": "目录 peak_force_n（峰值推力）"
+        },
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-overload",
+          "actual": 16000,
+          "required": 9800,
+          "unit": "N",
+          "thresholdSource": "能力曲线 lm-force（linear-speed→force，工作点速度查询）"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "id": "LD-RP-001|obj-00000000000000000000000000000301",
+      "candidateModelId": "LD-RP-001",
+      "axis": "l1",
+      "verdict": "Feasible",
+      "reasons": [],
+      "gaps": []
+    },
+    {
+      "id": "LD-TB-001|obj-00000000000000000000000000000301",
+      "candidateModelId": "LD-TB-001",
+      "axis": "l1",
+      "verdict": "Rejected",
+      "reasons": [
+        {
+          "token": "linear-force-continuous-insufficient",
+          "caseId": "case-nominal",
+          "actual": 6000,
+          "required": 4000,
+          "unit": "N",
+          "thresholdSource": "目录 rated_force_n（额定连续推力）"
+        },
+        {
+          "token": "linear-force-continuous-insufficient",
+          "caseId": "case-overload",
+          "actual": 9500,
+          "required": 4000,
+          "unit": "N",
+          "thresholdSource": "目录 rated_force_n（额定连续推力）"
+        },
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-nominal",
+          "actual": 10500,
+          "required": 6500,
+          "unit": "N",
+          "thresholdSource": "目录 peak_force_n（峰值推力）"
+        },
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-overload",
+          "actual": 16000,
+          "required": 6500,
+          "unit": "N",
+          "thresholdSource": "目录 peak_force_n（峰值推力）"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "id": "LD-BS-001|obj-00000000000000000000000000000301",
+      "candidateModelId": "LD-BS-001",
+      "axis": "l1",
+      "verdict": "Rejected",
+      "reasons": [
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-nominal",
+          "actual": 13125,
+          "required": 10500,
+          "unit": "N",
+          "thresholdSource": "能力曲线 bs-force（linear-speed→force，工作点速度查询）——含安全系数复判"
+        },
+        {
+          "token": "linear-speed-insufficient",
+          "caseId": "case-nominal",
+          "actual": 0.8125,
+          "required": 0.8,
+          "unit": "m/s",
+          "thresholdSource": "目录 max_speed_ms（最高直线速度）——含安全系数复判"
+        },
+        {
+          "token": "linear-power-insufficient",
+          "caseId": "case-nominal",
+          "actual": 4750,
+          "required": 4500,
+          "unit": "W",
+          "thresholdSource": "目录 rated_power_w（额定功率）——含安全系数复判"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "id": "LD-LM-001|obj-00000000000000000000000000000301",
+      "candidateModelId": "LD-LM-001",
+      "axis": "l1",
+      "verdict": "Rejected",
+      "reasons": [
+        {
+          "token": "linear-force-continuous-insufficient",
+          "caseId": "case-nominal",
+          "actual": 7500,
+          "required": 5200,
+          "unit": "N",
+          "thresholdSource": "目录 rated_force_n（额定连续推力）——含安全系数复判"
+        },
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-nominal",
+          "actual": 13125,
+          "required": 11000,
+          "unit": "N",
+          "thresholdSource": "目录 peak_force_n（峰值推力）——含安全系数复判"
+        },
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-nominal",
+          "actual": 13125,
+          "required": 10550,
+          "unit": "N",
+          "thresholdSource": "能力曲线 lm-force（linear-speed→force，工作点速度查询）——含安全系数复判"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "id": "LD-RP-001|obj-00000000000000000000000000000301",
+      "candidateModelId": "LD-RP-001",
+      "axis": "l1",
+      "verdict": "Feasible",
+      "reasons": [],
+      "gaps": []
+    },
+    {
+      "id": "LD-TB-001|obj-00000000000000000000000000000301",
+      "candidateModelId": "LD-TB-001",
+      "axis": "l1",
+      "verdict": "Rejected",
+      "reasons": [
+        {
+          "token": "linear-force-continuous-insufficient",
+          "caseId": "case-nominal",
+          "actual": 7500,
+          "required": 4000,
+          "unit": "N",
+          "thresholdSource": "目录 rated_force_n（额定连续推力）——含安全系数复判"
+        },
+        {
+          "token": "linear-force-peak-insufficient",
+          "caseId": "case-nominal",
+          "actual": 13125,
+          "required": 6500,
+          "unit": "N",
+          "thresholdSource": "目录 peak_force_n（峰值推力）——含安全系数复判"
+        }
+      ],
+      "gaps": []
+    }
+  ]
+}
