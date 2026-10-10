@@ -865,10 +865,11 @@ TEST(UiText, ExtraDomainPanelKeysRegistered_UX02_FIXPANEL_ACC1)
     IRD_TEST_INFO(std::vector<std::string>{"UX-02", "NFR-MNT-03"},
                   std::vector<std::string>{});
 
-    // ---- 三域面板引用键清单（87 键＝键族⑩三新域 83＋键族⑩d 描述符承载
-    //      键补登 3＋既有判定词补钉 1——在测试内冻结，与域源码穷举差集
-    //      一致；键序按域分组便于失败定位）。 --------------------------
-    const std::array<const char*, 87> panelKeys{{
+    // ---- 三域面板引用键清单（89 键＝键族⑩三新域 85〔dyn 7＋sel 26＋
+    //      opt 52——返工轮补候选页空态两键〕＋键族⑩d 描述符承载键补登 3
+    //      ＋既有判定词补钉 1——在测试内冻结，与域源码穷举差集一致；键序
+    //      按域分组便于失败定位）。 ------------------------------------
+    const std::array<const char*, 89> panelKeys{{
         // —— dynamics（7：五命令标题＋两页标题）——
         "cmd.dynamics.analyze.title",
         "cmd.dynamics.show-curves.title",
@@ -905,8 +906,9 @@ TEST(UiText, ExtraDomainPanelKeysRegistered_UX02_FIXPANEL_ACC1)
         "state.feasible.label",
         "state.engineering-infeasible.label",
         "state.not-applicable.label",
-        // —— optimization（50：四页标题＋就绪行＋运行相位九值＋随行
-        //     提示＋启动/取消动作反馈＋漏斗八段＋横幅＋候选状态七值）——
+        // —— optimization（52：四页标题＋就绪行＋运行相位九值＋随行
+        //     提示＋启动/取消动作反馈＋漏斗八段＋横幅＋候选状态七值＋
+        //     候选页空态两键〔返工轮 acc/fix-panel/1 B-1 补登〕）——
         "plugin.optimization.panel.variables.title",
         "plugin.optimization.panel.constraints.title",
         "plugin.optimization.panel.run-control.title",
@@ -957,6 +959,12 @@ TEST(UiText, ExtraDomainPanelKeysRegistered_UX02_FIXPANEL_ACC1)
         "plugin.optimization.status.evaluation-failed",
         "plugin.optimization.status.feasible",
         "plugin.optimization.status.pareto-nondominated",
+        // —— 候选页空态两键（FIX-PANEL 返工轮 acc/fix-panel/1 B-1——首轮
+        //     穷举差集漏网：字面键直接写在 OptimizationPanelWidget 构造尾拍
+        //     refreshCandidatePage 刷新路径，宿主首启装配报告行逐字在案；
+        //     本清单扩入后钉住，防同族漂移第三次发生）——
+        "plugin.optimization.candidates.not-assembled",
+        "plugin.optimization.candidates.none",
         // —— 键族⑩d 描述符承载键补登（现产对账追加发现的既有漏登三键：
         //     kinematics 面板两登记记录键＋optimization 面板级键）——
         "stage.kinematics.panel.pose-metrics.title",
@@ -999,6 +1007,15 @@ TEST(UiText, ExtraDomainPanelKeysRegistered_UX02_FIXPANEL_ACC1)
     EXPECT_EQ(
         ui::resolveText(ui::TextKey("plugin.optimization.panel.variables.title")),
         "变量表");
+    // 返工轮失败种子两键值锚（acc/fix-panel/1 B-1 证据②装配报告行逐字键
+    // ——optimization 候选页空态：缝空＝未装配态、缝在无结果＝无结果态；
+    // 值与键族⑩b selection 目录页空态两键同构〔UX-03 空态显性化〕）。
+    EXPECT_EQ(ui::resolveText(
+                  ui::TextKey("plugin.optimization.candidates.not-assembled")),
+              "候选结果未装配（数据通道未接线）");
+    EXPECT_EQ(
+        ui::resolveText(ui::TextKey("plugin.optimization.candidates.none")),
+        "暂无计算结果");
     // 判定词四值映射面（selection 就绪行 verdict 映射——同判定同词，
     // NFR-COR-02）：data-insufficient 既有值不动，三补键与 verdict 表
     // 同语义对齐。

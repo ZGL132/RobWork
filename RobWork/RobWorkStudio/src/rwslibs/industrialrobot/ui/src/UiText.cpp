@@ -27,7 +27,10 @@
  * （FIX-PANEL 批 2026-10-10——dynamics/selection/optimization 三域面板
  * 引用键穷举差集 83 键：命令/页标题＋就绪/回填/运行控制/横幅/状态词等
  * 呈现素材＋selection 模型层产出键；键面完备性由 ui_test 具名用例钉住
- * ——族注详见表处）。
+ * ——族注详见表处）。FIX-PANEL 返工轮（同日，acc/fix-panel/1 B-1 判定）
+ * 追加补登 optimization 候选页空态两键（穷举复核漏网——字面键直接写在
+ * OptimizationPanelWidget 构造刷新路径上，键族⑩增至 85 键：见键族⑩c
+ * 返工注）。
  * 值迁移到资源文件时仅替换本表的值源，键不变——调用方与测试零改动
  * （UI-T03 文案表同案）。
  *
@@ -347,7 +350,8 @@ constexpr std::array<TextRow, 32> kPresentationTable{{
 
 // ---------------------------------------------------------------------
 // 键族⑩：三新域（dynamics/selection/optimization）面板呈现键（FIX-PANEL
-// 批 2026-10-10——ASM-PANEL 实机启动崩溃修复的补键面）。
+// 批 2026-10-10——ASM-PANEL 实机启动崩溃修复的补键面；同日返工轮按
+// acc/fix-panel/1 B-1 追加 optimization 候选页空态两键——键族合计 85）。
 //
 // 背景（为什么一次性补三域全量）：三域面板插件的文案值按 P-DIAG-9/PA-1
 // 归 ui 文案面（域侧零文案值，键在域 assembly/plugin 头与模型层常量、
@@ -432,7 +436,16 @@ constexpr std::array<TextRow, 26> kSelectionPanelTextTable{{
 /// kOptProgressPhaseTokens 词表）＋阻塞横幅（banner.*——尚未检查/无阻
 /// 塞空态与阶段锁/预检阻塞两标题）＋候选状态词（status.<token> 七值——
 /// CandidateStatus 词表 toToken；值与键族⑦a/②判定词族同语义对齐）。
-constexpr std::array<TextRow, 50> kOptimizationPanelTextTable{{
+/// FIX-PANEL 返工轮增补（acc/fix-panel/1 B-1——首轮穷举差集漏网两键）：
+/// 候选页空态两键 candidates.not-assembled/none——字面键直接写在
+/// OptimizationPanelWidget 构造尾拍 refreshFromSession→refreshCandidatePage
+/// 刷新路径（OptimizationPanelWidget.cpp 候选页 L-O6 空态分支），宿主
+/// 首次真实创建面板即解析，缺键即构造期 fail-fast（实测装配报告行
+/// plugin=optimization UI-PLUGIN-ASSEMBLY-FAILED detail=unknown-key 逐字
+/// 在案）。值＝工程用语中文，与键族⑩b selection 目录页空态两键同构
+/// （"未装配（数据通道未接线）"缝缺席态／"暂无"无记录态——UX-03 空态
+/// 显性化，不伪造行）。
+constexpr std::array<TextRow, 52> kOptimizationPanelTextTable{{
     // —— 四页标题（页序＝DTB WP-20-T10 输出列序）——
     { "plugin.optimization.panel.variables.title",     "变量表" },
     { "plugin.optimization.panel.constraints.title",   "约束" },
@@ -492,6 +505,11 @@ constexpr std::array<TextRow, 50> kOptimizationPanelTextTable{{
     { "plugin.optimization.status.evaluation-failed",    "评估失败" },
     { "plugin.optimization.status.feasible",             "可行" },
     { "plugin.optimization.status.pareto-nondominated",  "帕累托非支配" },
+    // —— 候选页空态两键（FIX-PANEL 返工轮补登——见上方键族⑩c 返工注；
+    //      L-O6 空态语义：缝空→未装配态提示、缝在而无结果→无结果提示，
+    //      均不伪造行。值与键族⑩b selection 目录页空态两键同构）——
+    { "plugin.optimization.candidates.not-assembled",    "候选结果未装配（数据通道未接线）" },
+    { "plugin.optimization.candidates.none",             "暂无计算结果" },
 }};
 
 /// 键族⑩d：域面板标题键补登（FIX-PANEL 批——六域描述符承载键现产对账
@@ -725,12 +743,13 @@ std::vector<TextKey> registeredTextKeys()
     // （集合语义——键清单是"已登记键"的盘点，不是物理行清单）。
     // 计数：7（阶段标题）＋50（域命令①b——UI-T24 起含需求域九键＋UI-T41
     // 建模 tooltip/面板键＋FIX-PANEL kinematics 八键补登）＋18＋13（需求
-    // 面板卡/控件）＋7（七态）＋9（九态，去重后 8）＋2＋2＋8＋3＋4＋32＋86
-    // （键族⑩——FIX-PANEL：三新域面板键 83〔dyn 7＋sel 26＋opt 50〕＋
-    // 键族⑩d 描述符承载键补登 3）＝241（reserve 供读面参考，非精确——
-    // 集合去重后以实测为准，完备性由 ui_test 钉扎用例核对）。
+    // 面板卡/控件）＋7（七态）＋9（九态，去重后 8）＋2＋2＋8＋3＋4＋32＋88
+    // （键族⑩——FIX-PANEL：三新域面板键 85〔dyn 7＋sel 26＋opt 52——
+    // 返工轮补候选页空态两键〕＋键族⑩d 描述符承载键补登 3）＝243
+    // （reserve 供读面参考，非精确——集合去重后以实测为准，完备性由
+    // ui_test 钉扎用例核对）。
     std::vector<TextKey> keys;
-    keys.reserve(241);
+    keys.reserve(243);
     for (const auto& row : kStageTitleTable) {
         keys.emplace_back(row.key);
     }
