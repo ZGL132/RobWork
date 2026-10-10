@@ -62,14 +62,13 @@ void RequirementsPluginAssembly::noteAppliedRevision(
     const std::optional<core::ObjectId>& rootObjectId)
 {
     if (m_impl != nullptr) {
-        // 应用回执三件事（modeling 门面 noteAppliedRevision 同构）：
-        // 基线前移＋根身份回填＋恢复草稿资格位清位（draft.apply 后由
-        // 装配层清位——RequirementsModuleSessionState 字段注释的装配层
-        // 动作落点即本方法）。
-        auto& session = m_impl->session();
-        session.baseRevision = newBase;
-        session.rootObjectId = rootObjectId;
-        session.restoredDraftPending = false;
+        // 应用回执转发（modeling 门面同构先例——ModelingPluginAssembly::
+        // noteAppliedRevision 同款单行转发模块同名词柄）。原直写实现收编
+        // 进模块方法（F-460）：会话态回填（基线前移＋根身份回填＋恢复草
+        // 稿资格位清位）＋工作集根引用表回填（二连 draft.apply 失配根因
+        // 的修复面）——"只出线不重写"门面纪律：回执语义唯一权威落点在
+        // 模块，本层零业务语义。
+        m_impl->noteAppliedRevision(newBase, rootObjectId);
     }
 }
 
