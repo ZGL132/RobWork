@@ -1,0 +1,457 @@
+GATE_START_ISO=2026-10-10T06:27:33.4540653+08:00
+GATE_WORKTREE=C:/Users/zgl18/AppData/Local/Temp/gate-tc-work
+GATE_JUNCTION_CHECK=vcpkg dir absent expected (no junction supplied)
+CMake Warning (dev) at RobWork/cmake/RobWorkMacros.cmake:497 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+Call Stack (most recent call first):
+  RobWork/ext/csgjs/src/CMakeLists.txt:13 (rw_add_includes)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkStudio/cmake/RobWorkStudioSetup.cmake:50 (find_package)
+  RobWorkStudio/CMakeLists.txt:89 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkStudio/cmake/RobWorkStudioSetup.cmake:51 (find_package)
+  RobWorkStudio/CMakeLists.txt:89 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at RobWorkStudio/ext/qtpropertybrowser/CMakeLists.txt:66 (install):
+  Policy CMP0177 is not set: install() DESTINATION paths are normalized.  Run
+  "cmake --help-policy CMP0177" for policy details.  Use the cmake_policy
+  command to set the policy and suppress this warning.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Deprecation Warning at RobWorkStudio/ext/QCodeEditor/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:34 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:35 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  RobWorkSim/cmake/RobWorkSimSetup.cmake:41 (find_package)
+  RobWorkSim/CMakeLists.txt:71 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+  -> PASS
+  [ird_gates] 鑷祴 fail_t2锛氭寜棰勬湡妫€鍑?IRD-GATE-T2
+  ==============================================================
+  [ird_gates] 鎵弿鏍癸細C:/Users/zgl18/AppData/Local/Temp/gate-tc-work/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+  [ird_gates] 鍏ㄩ儴妫€鏌ラ€氳繃锛歊-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 闆跺懡涓?==============================================================
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/gate-tc-work/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+  -> PASS
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.36 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.25 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_diagnostics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_diagnostics_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.78 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_drivetrain_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_contract_test.exe
+Label Time Summary:
+ird    =   0.34 sec*proc (1 test)
+
+Total Test time (real) =   0.34 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_drivetrain_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_drivetrain_test.exe
+Label Time Summary:
+ird    =   0.26 sec*proc (1 test)
+
+Total Test time (real) =   0.27 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_dynamics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_contract_test.exe
+Label Time Summary:
+ird    =   0.40 sec*proc (1 test)
+
+Total Test time (real) =   0.41 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_dynamics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_dynamics_test.exe
+Label Time Summary:
+ird    =   0.37 sec*proc (1 test)
+
+Total Test time (real) =   0.37 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.36 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_evidence_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_evidence_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.27 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp(718,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_contract_test.vcxproj]
+  sdurws_ird_execution_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_execution_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   3.68 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1258,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\src\rwslibs\industrialrobot\execution\sdurws_ird_execution_test.vcxproj]
+  sdurws_ird_execution_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_execution_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.98 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\bz2.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\z.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\z.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.66 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_io_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_io_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.04 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_kinematics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_contract_test.exe
+Label Time Summary:
+ird    =   0.27 sec*proc (1 test)
+
+Total Test time (real) =   0.28 sec
+  -> PASS
+  
+  sdurws_ird_kinematics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_kinematics_test.exe
+Label Time Summary:
+ird    =   9.78 sec*proc (1 test)
+
+Total Test time (real) =   9.78 sec
+  -> PASS
+  sdurws_ird_modeling_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\pugixml.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\pugixml.dll done
+Label Time Summary:
+ird    =   0.40 sec*proc (1 test)
+
+Total Test time (real) =   0.41 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(869,31): warning C4018: “<”: 有符号/无符号不匹配 [C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\src\rwslibs\industrialrobot\modeling\sdurws_ird_modeling_gui_test.vcxproj]
+  sdurws_ird_modeling_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_modeling_gui_test.exe
+Label Time Summary:
+ird_gui    =   1.85 sec*proc (1 test)
+
+Total Test time (real) =   1.86 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\xerces-c_3_3.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\xerces-c_3_3.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\freeglut.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\freeglut.dll done
+Label Time Summary:
+ird    =   2.34 sec*proc (1 test)
+
+Total Test time (real) =   2.35 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_optimization_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_contract_test.exe
+Label Time Summary:
+ird    =   1.72 sec*proc (1 test)
+
+Total Test time (real) =   1.73 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_optimization_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_optimization_test.exe
+Label Time Summary:
+ird    =   0.23 sec*proc (1 test)
+
+Total Test time (real) =   0.24 sec
+  -> PASS
+  
+  sdurws_ird_policy_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_policy_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.06 sec
+  -> PASS
+  
+  sdurws_ird_policy_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_policy_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   1.16 sec
+  -> PASS
+  
+  sdurws_ird_project_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_project_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   8.35 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\DraftServiceTest.cpp(1048,5): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\src\rwslibs\industrialrobot\project\sdurws_ird_project_test.vcxproj]
+  sdurws_ird_project_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_project_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =  15.32 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_contract_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.49 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_reporting_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_reporting_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.64 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_contract_test.exe
+Label Time Summary:
+ird    =   0.56 sec*proc (1 test)
+
+Total Test time (real) =   0.56 sec
+  -> PASS
+  
+  sdurws_ird_requirements_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_gui_test.exe
+Label Time Summary:
+ird_gui    =   1.86 sec*proc (1 test)
+
+Total Test time (real) =   1.86 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_requirements_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_requirements_test.exe
+Label Time Summary:
+ird    =   0.71 sec*proc (1 test)
+
+Total Test time (real) =   0.72 sec
+  -> PASS
+  
+  sdurws_ird_runtime_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_runtime_test.exe
+Label Time Summary:
+ird    =   1.74 sec*proc (1 test)
+
+Total Test time (real) =   1.74 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_selection_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_selection_contract_test.exe
+Label Time Summary:
+ird    =   0.36 sec*proc (1 test)
+
+Total Test time (real) =   0.36 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_selection_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_selection_test.exe
+Label Time Summary:
+ird    =   0.27 sec*proc (1 test)
+
+Total Test time (real) =   0.28 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\test\ProcessRunnerTest.cpp(418,5): warning C4129: “d：: 不可识别的字符转义序列 [C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\src\rwslibs\industrialrobot\testkit\sdurws_ird_testkit_test.vcxproj]
+  sdurws_ird_testkit_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_testkit_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.58 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_trajectory_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_contract_test.exe
+Label Time Summary:
+ird    =   0.56 sec*proc (1 test)
+
+Total Test time (real) =   0.56 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_trajectory_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_trajectory_test.exe
+Label Time Summary:
+ird    =   1.43 sec*proc (1 test)
+
+Total Test time (real) =   1.43 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_ui_contract_test.exe
+Label Time Summary:
+ird    =   0.69 sec*proc (1 test)
+
+Total Test time (real) =   0.69 sec
+  -> PASS
+C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\gui_test\CommandPaletteGuiTest.cpp(172,23): warning C4996: 'QApplication::setActiveWindow': Use QWidget::activateWindow() instead. [C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\src\rwslibs\industrialrobot\ui\sdurws_ird_ui_gui_test.vcxproj]
+  sdurws_ird_ui_gui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_ui_gui_test.exe
+Label Time Summary:
+ird_gui    =   7.53 sec*proc (1 test)
+
+Total Test time (real) =   7.54 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_ui_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_ui_test.exe
+
+The following tests FAILED:
+	  1 - sdurws_ird_ui_test (Exit code 0xc0000135)         ird
+Errors while running CTest
+  -> FAIL : ctest 失败（退出码 8）
+C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\workflow\contract_test\LifeCycleMainlineContractTest.cpp(911,32): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\src\rwslibs\industrialrobot\workflow\sdurws_ird_workflow_contract_test.vcxproj]
+  sdurws_ird_workflow_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_contract_test.exe
+Label Time Summary:
+ird    =   3.96 sec*proc (1 test)
+
+Total Test time (real) =   3.96 sec
+  -> PASS
+  mocs_compilation_Release.cpp
+  sdurws_ird_workflow_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\build\RobWorkStudio\bin\Release\sdurws_ird_workflow_test.exe
+Label Time Summary:
+ird    =   0.44 sec*proc (1 test)
+
+Total Test time (real) =   0.44 sec
+  -> PASS
+  -> PASS
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\core\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\core\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.40 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\diagnostics\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\diagnostics\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.14 sec
+  -> PASS
+  正在生成代码...
+  sdurws_ird_diagnostics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\diagnostics\Release\sdurws_ird_diagnostics_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.76 sec
+  -> PASS
+  sdurws_ird_drivetrain_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\drivetrain\Release\sdurws_ird_drivetrain_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\drivetrain\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.13 sec*proc (1 test)
+
+Total Test time (real) =   0.13 sec
+  -> PASS
+  正在生成代码...
+  sdurws_ird_drivetrain_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\drivetrain\Release\sdurws_ird_drivetrain_test.exe
+Label Time Summary:
+ird    =   0.14 sec*proc (1 test)
+
+Total Test time (real) =   0.14 sec
+  -> PASS
+  sdurws_ird_dynamics_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\dynamics\Release\sdurws_ird_dynamics_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\dynamics\Release\gtest.dll done
+Label Time Summary:
+ird    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec
+  -> PASS
+  正在生成代码...
+  sdurws_ird_dynamics_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\dynamics\Release\sdurws_ird_dynamics_test.exe
+Label Time Summary:
+ird    =   0.32 sec*proc (1 test)
+
+Total Test time (real) =   0.33 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\evidence\Release\gtest_main.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\evidence\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.23 sec
+  -> PASS
+  正在生成代码...
+  sdurws_ird_evidence_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\evidence\Release\sdurws_ird_evidence_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.20 sec
+  -> PASS
+  sdurws_ird_execution_contract_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\execution\Release\sdurws_ird_execution_contract_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\execution\Release\gtest.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   4.04 sec
+  -> PASS
+  正在生成代码...
+  sdurws_ird_execution_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\execution\Release\sdurws_ird_execution_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.17 sec
+  -> PASS
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\bz2.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\io\Release\bz2.dll done
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\z.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\io\Release\z.dll done
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.89 sec
+  -> PASS
+  正在生成代码...
+  sdurws_ird_io_test.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\io\Release\sdurws_ird_io_test.exe
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.21 sec
+  -> PASS

@@ -1,0 +1,29 @@
+F-628 批次 -Toolchain 参数消费证据汇总（gate-toolchain-param）
+=====================================================================
+生成：2026-10-10（gate-all run 3 全绿之后汇总）
+工作树：C:/Users/zgl18/AppData/Local/Temp/gate-tc-work
+前提：工作树无 vcpkg/ 目录、无 junction、无预配置——不存在 -Toolchain 之外的
+      任何 vcpkg 供给路径（这也是逻辑闭环：配置若未吃到参数供给的路径，
+      find_package(GTest CONFIG REQUIRED) 必然失败，门禁不可能全绿）。
+
+一、集成树 CMakeCache.txt 记录值（gate-tc-work/build/CMakeCache.txt，run 1
+   全新配置时由 -Toolchain 参数写入）：
+   CMAKE_TOOLCHAIN_FILE:FILEPATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+二、gate-all.log（run 1，全新配置）配置阶段输出中的 toolchain 路径（grep 计
+   数 5 处，样例）：
+   CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package):
+
+三、gate-all-run3.log 构建期消费主仓 vcpkg installed 树的证据行（grep 计数
+   29 处，集成与冒烟两侧，样例——冒烟侧如下）：
+   D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest_main.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\core\Release\gtest_main.dll done
+   D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\gate-tc-work\smoke\core\Release\gtest.dll done
+
+四、smoke-config-evidence.log（gate-all 第 4 步冒烟配置命令的复现探针——
+   门禁日志中配置输出经 | Out-Null 吞掉且全绿后冒烟目录被清理，故全绿后
+   于工作树之外以相同命令行独立复现并留存 CMakeCache 记录）：
+   命令行：cmake -S <工作树>/industrialrobot -B <探针目录> -G 'Visual Studio 17 2022' -A x64
+           -DCMAKE_TOOLCHAIN_FILE=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake
+           -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64
+   PROBE_CONFIG_EXIT=0
+   CMakeCache 记录：CMAKE_TOOLCHAIN_FILE:FILEPATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake
