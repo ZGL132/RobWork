@@ -182,11 +182,14 @@ TEST(SelPluginAssembly, RegistrationFaceMatchesUiVocabularies_WP19T10_ACC1)
     EXPECT_EQ(bundle.descriptor.readinessDomainKey, "selection")
         << "域注册键必须＝ui.md §6.5 域注册词表（宿主汇聚对账锚）";
     // 命令登记面（回填入口恰一条——titleKey 按 §3.5 键族派生）。
+    // RUL-TOK 裁决销案批：ui 命令 id 修订为点分 <域前缀>.<kebab> 词形
+    // （ui.md §7.1/§7.2 既冻句法——宿主校验序零改动的域侧对齐）。
     ASSERT_EQ(bundle.descriptor.commands.size(), 1u);
-    EXPECT_EQ(bundle.descriptor.commands[0].token, "apply-device-backfill");
+    EXPECT_EQ(bundle.descriptor.commands[0].token,
+              "selection.apply-device-backfill");
     EXPECT_EQ(bundle.descriptor.commands[0].titleKey,
-              "cmd.apply-device-backfill.title")
-        << "titleKey 必须＝§3.5 键族 cmd.<token>.title";
+              "cmd.selection.apply-device-backfill.title")
+        << "titleKey 必须＝§3.5 键族 cmd.<ui 命令 id>.title";
     // 面板登记面（恰一条主面板——三页合一 Tab 的呈现形态）。
     ASSERT_EQ(bundle.descriptor.panels.size(), 1u);
     EXPECT_EQ(bundle.descriptor.panels[0].stageToken, "selection");
@@ -226,10 +229,15 @@ TEST(SelPluginAssembly, WhitelistTokenReconciliation_WP19T10_ACC1)
 }
 
 /**
- * 回填命令 token 对账（T10 命令自持常量↔计算库冻结词表）：插件面零
- * project 包含（直接访问词表钉住），故 token 以自持常量承载同一词面
- * ——本用例在契约测试面（非插件扫描域）消费计算库权威常量逐字对账，
- * 两处漂移即失败（无第二词表静默漂移空间）。
+ * 回填命令双词形对账（T10 命令自持常量↔计算库冻结词表；RUL-TOK 批
+ * 对账口径随裁决销案更新）：P-SEL-3 销案后回填命令存在**两个词形各
+ * 异**的具名常量——ui 命令 id（插件面自持 kSelBackfillUiCommandId，
+ * 点分 selection.apply-device-backfill）与 project 命令 token（计算
+ * 库冻结 kBackfillCommandToken，无点——零变化）。插件面零 project
+ * 包含（直接访问词表钉住）的纪律不变，故 ui id 词形仍以自持常量承
+ * 载；本用例在契约测试面（非插件扫描域）消费计算库权威常量，钉住
+ * 两词形的对齐关系——前缀＝pluginId＋"."、尾段＝project token，
+ * 任一书写点漂移即失败（无第二词表静默漂移空间）。
  */
 TEST(SelPluginAssembly, BackfillTokenReconcilesWithComputeHeader_WP19T10_ACC1)
 {
@@ -238,11 +246,25 @@ TEST(SelPluginAssembly, BackfillTokenReconcilesWithComputeHeader_WP19T10_ACC1)
 
     const auto bundle = sdurws::ird::selection::createSelectionPluginAssembly();
     ASSERT_EQ(bundle.descriptor.commands.size(), 1u);
-    // 逐字对账：登记面 token↔计算库回填公共头冻结常量。
-    EXPECT_EQ(bundle.descriptor.commands[0].token,
+    // 对账第一步：ui 命令 id 必须以"<pluginId>."为前缀（§7.2 owner
+    // 白名单的词面对位——点分段的第一段即域 token）。
+    const std::string uiId = bundle.descriptor.commands[0].token;
+    const std::string expectedPrefix =
+        bundle.descriptor.pluginId + ".";
+    ASSERT_GE(uiId.size(), expectedPrefix.size()) << "ui 命令 id 过短";
+    EXPECT_EQ(uiId.substr(0, expectedPrefix.size()), expectedPrefix)
+        << "ui 命令 id 必须以 <pluginId>. 为前缀（点分句法 §7.1/§7.2）";
+    // 对账第二步：ui 命令 id 的尾段必须与计算库回填公共头冻结常量
+    // 逐字相等（project 命令 token 词形——§4.4.4 无点语法，P-SEL-3
+    // 销案后的终态冻结）。
+    EXPECT_EQ(uiId.substr(expectedPrefix.size()),
               std::string(sdurws::ird::selection::kBackfillCommandToken))
-        << "插件面自持 token 必须与计算库冻结词表逐字相等（对账口径见"
-           " SelPanelCommandCatalog.hpp 文件头注）";
+        << "ui id 尾段必须与计算库冻结 token 逐字相等（双词形单一书写"
+           "点，对账口径见 SelPanelCommandCatalog.hpp 文件头注）";
+    // 对账第三步：ui 命令 id 必含点（ui.md §7.2 句法——宿主校验序
+    // 第 1 步的同款判据；无点词形在域侧即被拒绝，不进宿主装配）。
+    EXPECT_NE(uiId.find('.'), std::string::npos)
+        << "ui 命令 id 必含点分段（必含点——§7.2 冻结句法）";
 }
 
 /**
@@ -414,6 +436,14 @@ TEST(SelPluginRegistration, TranslatedDescriptorMatchesSelfHeldFace_ASMPLUG_ACC2
  * §11.1 八 token 编译期词表）。同时经接口消费钉扎 §11.2 模块公共交付面：
  * 激活产物 readonlyProjections() 返回单行且 domainKey＝"selection"（§6.5
  * 汇聚对账锚）。
+ *
+ * RUL-TOK 裁决销案批（2026-10-10）断言翻转登记：本用例原以
+ * InvalidDescriptor 断言诚实钉扎 P-SEL-3/P-PR-9 待裁决面（无点 token 被
+ * 宿主按 §7.2 点分句法权威拒绝——asm-plug 批登记）；所有者裁决双词形
+ * 并存（O-35 无点＝project token 面＋ui 命令 id 面＝点分）后，域侧把描
+ * 述符 ui 命令 id 修订为 selection.apply-device-backfill——翻译函数零
+ * 改动（id＝token 逐字直拷），登记动作兑现为宿主校验序三查全过返回
+ * Ok，本断言随之翻转（宿主校验序零改动——裁决在域侧生效）。
  */
 TEST(SelPluginRegistration, ActivationPassesRealRegistrarPort_ASMPLUG_ACC2)
 {
@@ -430,21 +460,29 @@ TEST(SelPluginRegistration, ActivationPassesRealRegistrarPort_ASMPLUG_ACC2)
 
     auto assembly = sel::createSelectionPluginAssembly();
     const auto outcome = sel::registerWithHostRegistrar(assembly, registrar.get());
-    // ★ P-SEL-3 待裁决面的宿主权威判定（ASM-PLUG 诚实登记——非实现缺
-    // 陷）：回填命令 token 词形＝无点 kebab（T09 登记的"无点建议值占位"
-    // ——P-PR-9"project 冻结语法 vs 含点示例"争议未裁决），而 ui §7.2
-    // 第 1 步命令 id 句法要求点分小写且必含点——翻译按字段同构纪律零
-    // 改写（id＝token 逐字），宿主权威判 InvalidDescriptor（§10.9 四值
-    // 如实透传——激活路径完成的登记动作被宿主校验拒绝，失败隔离 §11.3
-    // 归宿主呈现）。裁决后（token 改点分或句法放宽）翻译产物即自然过
-    // 校验——翻译函数零改动；登记于单元卡 P-SEL-10 收口登记注。
-    EXPECT_EQ(outcome, sdurws::ird::ui::RegistrationOutcome::InvalidDescriptor)
-        << "无点 token 不满足 §7.2 点分句法——宿主权威拒绝（P-SEL-3 待裁"
-           "决面；插件零本地判定、零私改词表）";
-    // 白名单/重复两查已过（拒绝来自第三查描述符合法性）；报告不入列
-    // （§10.9——Ok 才入列）。
-    EXPECT_TRUE(registrar->assemblyReports().empty())
-        << "校验拒绝＝装配报告不入列（§10.9 后置条件）";
+    // ★ P-SEL-3 销案后的宿主权威判定（asm-plug 登记"裁决后翻译产物
+    // 自然过校验"的兑现翻转）：回填命令 ui 命令 id 已为点分
+    // selection.apply-device-backfill（ui.md §7.1/§7.2 既冻句法的域侧
+    // 对齐），宿主校验序白名单/重复/描述符三查全过返回 Ok（插件零本
+    // 地判定、零私改词表纪律不变；project 命令 token 无点词形在计算
+    // 库冻结常量零变化——双词形各自服从既有冻结）。
+    EXPECT_EQ(outcome, sdurws::ird::ui::RegistrationOutcome::Ok)
+        << "点分 ui 命令 id 满足 §7.2 句法——宿主校验序三查全过（P-SEL-3 "
+           "销案兑现；翻译函数零改动）";
+    // 三查全过＝装配报告恰一条且 ok=true（§10.9 后置条件——Ok 才入
+    // 列）；面板/命令计数与描述符一致（快照对位面）。
+    const auto reports = registrar->assemblyReports();
+    ASSERT_EQ(reports.size(), 1u)
+        << "登记 Ok＝装配报告恰一条入列（§10.9 后置条件）";
+    EXPECT_EQ(reports[0].pluginId, "selection");
+    EXPECT_TRUE(reports[0].ok) << "登记成功态如实入列";
+    EXPECT_EQ(reports[0].panelsLoaded, assembly.descriptor.panels.size())
+        << "面板计数与描述符一致";
+    EXPECT_EQ(reports[0].commandsRegistered,
+              assembly.descriptor.commands.size())
+        << "命令计数与描述符一致";
+    EXPECT_TRUE(reports[0].failureDiagnostics.empty())
+        << "成功登记零失败诊断";
 
     // 接口消费钉扎（公共交付面——§11.2 三方法的 readonlyProjections 半
     // 区）：经 ui 接口指针调用，投影行 domainKey 恒 "selection"（L-S1
