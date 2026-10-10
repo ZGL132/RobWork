@@ -537,16 +537,36 @@ endif()
 # 同因先例）。ird_gates SUB 增量（ui_contract_test->三域 plugin 三条
 # 测试面边）随任务登记（traceability/wp10-t23-gate-registrations.md
 # ——责任方 WP-01-T03）。
+# ---- ASM-STUDIO 承接批增列（2026-10-10——分布钉扎消账，acc/asm-ui/1
+# 建议级 1 的兑现）----
+# 六域聚合注册断言的无人值守直测通道：plugin/DomainAssembly.cpp（bundle
+# 符号面——DomainPluginAssembly out-of-line 析构/statusOf 的链接承载，
+# HostCompilePort 同源直编先例形态）＋plugin/ExtraDomainAssembly.cpp
+# （宿主三新域承接 TU——被测面本体）同源直编进测试目标；链接面增链三
+# 新域 plugin（STATIC——IRD_TEST_TARGET_EDGES 三行随本批增登的消费面）。
+# 此前"两半分布"的另一半（三新域注册钉扎散在三域各自 contract_test）
+# 由新用例 SixDomainHostAssemblySequence_Snapshot_ASMSTUDIO_ACC1 聚合：
+# 三旧域 registerPluginUi＋三新域 assembleExtraDomains 经同一真实
+# IPluginUiRegistrar——六域全尝试、五 Ok 入列、selection 诚实拒绝的
+# 聚合快照断言。ui_plugin（MODULE）不可链的结构性限制仍在：其目标级
+# 装配全链（UiPlugin::initialize→assembleDomainPlugins）不经本通道直
+# 测（assembleDomainPlugins 需 QDockWidget——QCoreApplication 级测试
+# 不实例化），运行期验证通道维持 asm-ui 登记形态（§12.2 实机装载）。
 if(TARGET sdurws)
     target_sources(sdurws_ird_ui_contract_test PRIVATE
         contract_test/HostIntegrationContractTest.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainModuleRunner.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainModuleRunner.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/DomainAssembly.cpp  # ASM-STUDIO——bundle 符号面（析构/statusOf out-of-line）；本 TU 内 assembleDomainPlugins 不被调用（QDockWidget 依赖），仅链接承载
+        ${CMAKE_CURRENT_SOURCE_DIR}/plugin/ExtraDomainAssembly.cpp)  # ASM-STUDIO——宿主三新域承接 TU（被测面本体）
     target_include_directories(sdurws_ird_ui_contract_test PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR})
     target_link_libraries(sdurws_ird_ui_contract_test PRIVATE
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
-        sdurws_ird_kinematics_plugin)
+        sdurws_ird_kinematics_plugin
+        sdurws_ird_dynamics_plugin      # ASM-STUDIO——六域聚合注册断言直测面（IRD_TEST_TARGET_EDGES 三边转消费）
+        sdurws_ird_selection_plugin
+        sdurws_ird_optimization_plugin)
 endif()
 
 # ---- GUI 测试目标 sdurws_ird_ui_gui_test（§12.1 第三层，单列）----
@@ -728,7 +748,7 @@ if(TARGET sdurws)
     add_library(sdurws_ird_ui_plugin MODULE
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
-        plugin/ExtraDomainAssembly.cpp  # ASM-UI——dynamics/selection/optimization 三新域承接（仅本目标编入；studio 不编入——三条 unit 级边未登记，承接随边增登批次）
+        plugin/ExtraDomainAssembly.cpp  # ASM-UI——dynamics/selection/optimization 三新域承接（ASM-STUDIO 批起本目标与 studio 两同源目标均编入——studio 三条 unit 级边已随该批增登）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（上行拾取/呈现出口/TCP 源）
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（WorkCellScene 原语编排）
@@ -750,9 +770,10 @@ if(TARGET sdurws)
     endif()
 
     # ASM-UI 承接段编译定义（单一书写点）：DomainAssembly.cpp 以本定义
-    # 区分两同源目标的装配段——ui_plugin（定义在位）追加三新域承接
-    # （assembleExtraDomains 调用），studio（无定义）维持 UI-T23 三域装
-    # 配。目标级区分取代源码复制——防两份装配序列漂移。
+    # 区分装配段——ui_plugin（定义在位）追加三新域承接（assembleExtra
+    # Domains 调用）。ASM-STUDIO 承接批起 studio 同源目标同样携带本定义
+    # （其三条 unit 级白名单边已随该批增登）——两同源目标装配序列保持
+    # 单一书写点，防漂移形态不变。
     target_compile_definitions(sdurws_ird_ui_plugin PRIVATE
         IRD_UI_PLUGIN_EXTRA_DOMAINS=1)
 
@@ -818,7 +839,14 @@ endif()
 # 完全同源（零新装配语义）：
 #   - plugin/UiPlugin.cpp＋plugin/DomainAssembly.cpp＝WP-24-T03 T03a/T03b
 #     装配基座同 TU 复用（静态白名单八 token 登记＋建模插件挂位＋宿主 Dock
-#     控制器簇＋About 接线）；app/PortAdapters.cpp＋app/DiagnosticsAssembly.cpp
+#     控制器簇＋About 接线）；plugin/ExtraDomainAssembly.cpp＝ASM-STUDIO
+#     承接批增编（2026-10-10——studio→dynamics/selection/optimization 三
+#     条 unit 级白名单边随本批增登〔ird_gates_whitelist.cmake
+#     IRD_ALLOWED_UNIT_EDGES，DTB §2.27 studio 承接批预登记行的落地〕，
+#     编入该 TU＋IRD_UI_PLUGIN_EXTRA_DOMAINS 编译定义使 DomainAssembly.cpp
+#     尾段的三新域承接段在 studio 同样生效——六域在正式主程序装配齐备，
+#     与 ui_plugin 防两份装配序列漂移的单一书写点形态不变）；
+#     app/PortAdapters.cpp＋app/DiagnosticsAssembly.cpp
 #     ＝装配层适配器与诊断栈（与 harness/插件同一序列，防漂移的单一权威）。
 #     同源复用采用"同源码编入本目标"形态——sdurws_ird_ui_plugin（MODULE）
 #     仍为开发期动态加载验证通道原样保留（D13，退役归 WP-24-T09），两目标
@@ -844,6 +872,7 @@ if(TARGET sdurws)
         studio/StudioMain.cpp
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
+        plugin/ExtraDomainAssembly.cpp  # ASM-STUDIO——三新域承接（studio→三域 unit 级边本批增登后编入；与插件目标同源，IRD_UI_PLUGIN_EXTRA_DOMAINS 定义区分段生效）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历（与插件目标同源）
         plugin/HostView3DGateway.cpp  # UI-T45——宿主三维网关（与插件目标同源）
         plugin/HostView3DPreviewBackend.cpp  # UI-T33——会话预览渲染后端（与插件目标同源）
@@ -864,6 +893,14 @@ if(TARGET sdurws)
         target_compile_options(sdurws_ird_studio PRIVATE /utf-8)
     endif()
 
+    # ASM-STUDIO 承接段编译定义（与 sdurws_ird_ui_plugin 同款单一书写点）：
+    # DomainAssembly.cpp 以本定义区分两同源目标的装配段——studio（定义在
+    # 位）与 ui_plugin 同样在尾段追加三新域承接（assembleExtraDomains 调
+    # 用），六域在正式主程序装配齐备（ASM-STUDIO 承接批——三条 unit 级白
+    # 名单边随本批增登后的既定落位动作）。
+    target_compile_definitions(sdurws_ird_studio PRIVATE
+        IRD_UI_PLUGIN_EXTRA_DOMAINS=1)
+
     # 装配面私有头（plugin/、app/）经 ui 目录根解析——与插件目标同款
     # PRIVATE include（不外溢消费者）。
     target_include_directories(sdurws_ird_studio PRIVATE
@@ -873,6 +910,13 @@ if(TARGET sdurws)
     #   - sdurws_ird_ui／sdurws_ird_project／sdurws_ird_modeling_plugin＝
     #     装配层特权边（ui->ui 自边＋ui->project 宿主集成边＋ui->modeling
     #     宿主集成边——DTB §4.5 登记模式，与 sdurws_ird_ui_plugin 逐一同构）；
+    #   - sdurws_ird_dynamics_plugin／sdurws_ird_selection_plugin／
+    #     sdurws_ird_optimization_plugin＝ASM-STUDIO 承接批三新域装配边
+    #     （studio->dynamics/selection/optimization 三条 unit 级白名单边
+    #     随本批增登——ird_gates_whitelist.cmake IRD_ALLOWED_UNIT_EDGES
+    #     ＋EXTRA_EDGE_REFS 出处登记；消费面仅三域公共 assembly/ 门面头
+    #     〔经 ExtraDomainAssembly.hpp〕，域私有头零触碰——R-2；selection
+    #     注册被宿主权威拒绝的诚实钉扎随承接 TU 保持——P-SEL-3 待裁决）；
     #   - sdurws＝框架 RobWorkStudio 库（RobWorkStudioPlugin 基类＋宿主
     #     主窗口本体——B1-SPEC §2.1"链接框架 rws 公共库"）；
     #   - sdurws_treeview/sdurws_jog/sdurws_playback/sdurws_log＝宿主官方
@@ -886,6 +930,9 @@ if(TARGET sdurws)
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
         sdurws_ird_kinematics_plugin
+        sdurws_ird_dynamics_plugin
+        sdurws_ird_selection_plugin
+        sdurws_ird_optimization_plugin
         sdurws
         sdurws_treeview
         sdurws_jog

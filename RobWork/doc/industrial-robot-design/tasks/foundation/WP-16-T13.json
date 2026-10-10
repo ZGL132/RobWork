@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "契约测试与轨迹黄金数据集",
-  "status": "ready",
+  "status": "blocked",
   "dependsOn": ["WP-16-T12"],
   "requirements": ["TRJ-01", "TRJ-02", "TRJ-03", "TRJ-04", "TRJ-05", "TRJ-06"],
   "designRefs": [
@@ -34,5 +34,5 @@
     "testdata/golden/trj-* 按 DatasetManifest（ird-golden-manifest/1）登记：coveredRequirements 逐项 lint、容差档案、producer/edgeCases 字段齐备",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §17/§18。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §17/§18。状态修正 ready→blocked（2026-10-10，ASM-STUDIO 承接批——acc/gov-doc/1 建议 S-2 消账）：dependsOn 含 blocked 的 WP-16-T12（其经 T09/T10/T11 传递依赖 blocked 的 WP-16-T07——P-06 数值冻结链，见 T07 契约 note），本卡集成与文档以 T12 产物为输入，传递受卡实际不可执行。出处＝acc/gov-doc/1 建议级 S-2（T08~T13 六契约同型状态失准——T07 已于 GOV-DOC 批修正 blocked 而传递依赖面未同步；evidence＝各契约 dependsOn 与状态实读）。解冻条件＝WP-16-T07 解冻（即 WP-16-T02 完成 P-06 数值冻结）后本卡恢复 ready。"
 }

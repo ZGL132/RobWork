@@ -96,7 +96,8 @@ struct DomainPluginAssembly {
     std::optional<kinematics::KinematicsPluginAssembly> kinematics;
     /// ASM-UI 三新域（dynamics/selection/optimization）装配产物容器——
     /// 类型擦除句柄（实型＝ExtraDomainAssemblies，见 ExtraDomainAssembly
-    /// .hpp；仅 ui_plugin 目标的 assembleExtraDomains 填充，studio 恒空）。
+    /// .hpp；由携带 IRD_UI_PLUGIN_EXTRA_DOMAINS 定义的宿主目标——ui_plugin
+    /// 与 ASM-STUDIO 批起含 studio——的 assembleExtraDomains 填充）。
     /// shared_ptr<void> 的删除器在构造点绑定实型——析构安全；存活期随
     /// bundle（宿主持有至壳拆除——§10.9 所有权行，registrar 弱引用与
     /// 登记表 module 裸指针的存活期由此保证）。
@@ -116,7 +117,8 @@ struct DomainPluginAssembly {
     /// 域装配状态（登记序＝白名单序——UI-T23 三域＋ASM-UI 三新域；
     /// 测试断言与占位呈现的输入。六域在产承接口径：前三域随 Domain-
     /// Assembly.cpp〔两目标同源〕，三新域随 ExtraDomainAssembly.cpp
-    /// 〔仅 ui_plugin〕——studio 目标的状态表恰三条，ui_plugin 恰六条）。
+    /// 〔两宿主目标同源编入——ASM-STUDIO 批起 studio 同样承接〕——
+    /// ui_plugin 与 studio 的状态表均恰六条）。
     std::vector<DomainAssemblyStatus> statuses;
 
     /// 已登记域模块条目（draft.apply 遍历输入——acceptance 2；仅登记成功
@@ -124,8 +126,8 @@ struct DomainPluginAssembly {
     /// 锚绑定/回执回写/锚前移全套，requirements 含锚绑定/锚前移〔草稿源
     /// 挂接未接续——onResult 空，见文件头诚实边界〕，kinematics/dynamics/
     /// selection/optimization 全空闭包〔无草稿域——buildDraftCommand 恒
-    /// nullopt 的接口面消费，遍历记 NoDraft 行零域知识〕；三新域条目仅
-    /// ui_plugin 目标入表，module 裸指针的存活期由 extraAssemblies 保证）。
+    /// nullopt 的接口面消费，遍历记 NoDraft 行零域知识〕；三新域条目随
+    /// 承接 TU 编入目标入表，module 裸指针的存活期由 extraAssemblies 保证）。
     std::vector<DomainModuleEntry> applyEntries;
 
     /// @brief 按域键查装配状态（未登记域键＝nullopt——调用方防御）。

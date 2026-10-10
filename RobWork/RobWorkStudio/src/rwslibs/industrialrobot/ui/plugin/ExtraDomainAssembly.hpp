@@ -18,22 +18,26 @@
  *     IPluginUiRegistrar 传经域装配路径的同机制；本 TU 为其三新域
  *     推广，消费面仅三域公共 assembly/ 门面头，域私有头零触碰——R-2）。
  *
- * ★ 落位边界（诚实登记，登记 units/ui.md §13 ASM-UI 行）：
- *   1. **本头与实现 TU 仅编入/仅被 sdurws_ird_ui_plugin 目标消费**
- *      （集成树专属 MODULE）。正式产品主程序 sdurws_ird_studio 同源消
- *      费 DomainAssembly.* 但**不见本头**（include 收敛在 DomainAssembly
- *      .cpp 的 IRD_UI_PLUGIN_EXTRA_DOMAINS 编译定义段内）——studio 的
- *      装配序列维持 UI-T23 三域不变：studio→dynamics/selection/
- *      optimization 三条 unit 级白名单边未登记（本批白名单零新边约束，
- *      asm-plug 预登记仅覆盖 ui_plugin 目标级三条），studio 的三新域
- *      承接随该三条边的登记批次收口（登记义务见单元卡）。三域门面头
- *      的 include 面由此收敛（studio 编译单元无三域头路径——不链接三
- *      域 plugin 即无传递 include 面）。
+ * ★ 落位边界（诚实登记，登记 units/ui.md §13 ASM-UI/ASM-STUDIO 行）：
+ *   1. **本头与实现 TU 编入两同源宿主目标**：sdurws_ird_ui_plugin（集成
+ *      树 MODULE——ASM-UI 批承接）与 sdurws_ird_studio（正式产品主程序
+ *      ——ASM-STUDIO 承接批 2026-10-10 起编入：studio→dynamics/
+ *      selection/optimization 三条 unit 级白名单边已随该批增登
+ *      〔ird_gates_whitelist.cmake IRD_ALLOWED_UNIT_EDGES，DTB §2.27
+ *      studio 承接批预登记行的落地〕，studio 目标以同款
+ *      IRD_UI_PLUGIN_EXTRA_DOMAINS 编译定义使 DomainAssembly.cpp 尾段
+ *      承接段生效——六域在正式主程序装配齐备，两同源目标装配序列保持
+ *      单一书写点防漂移）。另有第三消费面＝sdurws_ird_ui_contract_test
+ *      的测试目标同源直编（ASM-STUDIO 批分布钉扎消账——六域聚合注册
+ *      断言的无人值守直测通道，acc/asm-ui/1 建议级 1；HostCompilePort
+ *      被测 TU 同源直编先例形态）。ui_plugin 为 MODULE 的"测试目标不可
+ *      链接"结构性限制不波及本 TU（直编≠链接）。
  *   2. **三域产物容器独立于 DomainPluginAssembly**（ExtraDomainAssem
  *      blies——本头定义；经 shared_ptr<void> 类型擦除挂 bundle.
- *      extraAssemblies）：.DomainPluginAssembly 被 studio 同源消费，
- *      携带三域类型成员会把三域头拖进 studio 编译面——容器类型与本头
- *      同收敛，bundle 只见擦除句柄（析构删除器在构造点绑定实型）。
+ *      extraAssemblies）：DomainPluginAssembly 是两同源宿主目标共享
+ *      的 bundle 结构，携带三域类型成员会把三域头拖进无定义 TU 的编译
+ *      面——容器类型与本头同收敛，bundle 只见擦除句柄（析构删除器在
+ *      构造点绑定实型）。
  *   3. **selection 注册被宿主权威拒绝的诚实钉扎**（asm-plug 验收建议
  *      级 1 保持不本地绕过）：selection 回填命令 token
  *      apply-device-backfill 为无点 kebab 词形（P-SEL-3/P-PR-9 待所有
@@ -82,8 +86,11 @@ struct ExtraDomainAssemblies {
 };
 
 /**
- * @brief 执行三新域插件装配（ASM-UI——initialize 装配期恰调一次，仅在
- *        sdurws_ird_ui_plugin 目标的 DomainAssembly.cpp 尾段被调用）。
+ * @brief 执行三新域插件装配（ASM-UI——initialize 装配期恰调一次，在
+ *        携带 IRD_UI_PLUGIN_EXTRA_DOMAINS 编译定义的宿主目标（ui_plugin
+ *        ／ASM-STUDIO 批起含 studio）的 DomainAssembly.cpp 尾段被调用；
+ *        另有 ui_contract_test 测试目标直调（六域聚合注册断言——直测
+ *        通道）。
  *
  * 步骤（白名单序 dynamics→selection→optimization；单域失败隔离——
  * §11.3，与 DomainAssembly.cpp ③④段同构）：
