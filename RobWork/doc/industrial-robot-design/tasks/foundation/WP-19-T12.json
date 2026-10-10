@@ -4,14 +4,38 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现直线传动目录与映射（R2）",
-  "status": "blocked",
+  "status": "ready",
   "dependsOn": ["WP-19-T05"],
   "requirements": ["SEL-09-S1"],
   "designRefs": [
+    "units/selection.md#17.2",
     "units/selection.md#17",
     "REQUIREMENTS.md#17.1",
     "development-task-breakdown.md#2.20"
   ],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_selection_test"],
-  "note": "DOC-T15 编译（2026-10-06）。blocked：SEL-09-S1（P1/R2 分期子项，选型层）——直线传动目录模板与映射；R2 启动且 MDL-12-S1 前置链（选型层先行）明确后解冻。解冻后补齐 ready 必备字段（drivetrain 协作依赖另登记）。"
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/**",
+    "RobWork/doc/industrial-robot-design/units/selection.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_selection_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-19-T12.json"
+  ],
+  "branch": "wp19-t12",
+  "interUnit": true,
+  "knownPitfalls": ["P-SEL-1", "P-SEL-2"],
+  "acceptance": [
+    "四类直线传动目录模板（滚珠丝杠/齿条/同步带/直线电机）经既有目录包导入校验通道通过（SEL-01/02 同一校验器——引用/单位/必填/唯一性/范围；直线传动能力曲线横坐标速度/载荷〔m/s、N〕纵坐标力/功率〔N、W〕，禁外推不放宽）；可行与不可行样例齐备，不可行项含实际值/阈值/原因（SEL-06 口径）",
+    "直线传动工作点映射经 drivetrain §16.2 扩展端口消费（类型化广义量：位移 m/速度 m/s/加速度 m/s²/力 N）——selection 只消费不自实现直线映射公式（drivetrain 唯一映射实现纪律）；经既有评估器/组合校核接口面消费（R-1/R-2：零 drivetrain include、零映射公式词表，契约测试扫描锁定）",
+    "不改变六/七轴全旋转链现有行为（V12-03 收窄——回归用例证明既有旋转链输出逐项不变）；移动关节范围外诊断口径（SEL-09 R1 语义）不因本任务放宽；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）。解冻登记（2026-10-10，GOV-UNFROZEN 治理批——所有者『13 个契约任务解冻』指令）：status blocked→ready＋补齐 ready 必备字段。依据＝①R2 启动登记（REQUIREMENTS v1.17 SEL-09-S1 行『R2 解冻（2026-10-10）』注——R2 内容开发提前启动，交付仍绑 R2/阶段 D 独立验收）；②selection 卡 §17.2 SEL-09-S1 设计面（选型层先行、drivetrain 扩展端口消费、V12-03 收窄）＋§16 WP-19-T12 行解冻启动注；③DTB §2.20 行。dependsOn 按实际协作依赖如实挂＝WP-19-T05（已实现——组合校核与硬筛选为直线传动轴筛选的直接前置）；drivetrain 协作经 §17.2 扩展端口消费不构成契约依赖（interUnit=true＋knownPitfalls 登记 P-SEL-1〔映射批载荷对齐提议契约〕/P-SEL-2〔③端口不落编译边〕）。MDL-12-S1（产品链正式计算）不随动仍 R2——前置本子项交付；阶段 D 启动裁决仍为领取前置。"
 }

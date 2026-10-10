@@ -14,5 +14,5 @@
     "development-task-breakdown.md#2.17"
   ],
   "verify": ["pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1"],
-  "note": "DOC-T15 编译（2026-10-06）。blocked：P-06 冻结属需求变更，须经需求所有者签署（REQUIREMENTS 附录 C 冻结前置；WP-16-T07 复检实现以冻结值为准，未冻结不得启用）。解冻后补齐 ready 必备字段（allowedFiles/outputs/acceptance/branch/interUnit）。"
+  "note": "DOC-T15 编译（2026-10-06）。blocked：P-06 冻结属需求变更，须经需求所有者签署（REQUIREMENTS 附录 C 冻结前置；WP-16-T07 复检实现以冻结值为准，未冻结不得启用）。解冻后补齐 ready 必备字段（allowedFiles/outputs/acceptance/branch/interUnit）。解冻程序已启动（2026-10-10，GOV-UNFROZEN 治理批——所有者『13 个契约任务解冻』指令）：WP-16 起草的《P-06 建议值草案》（四类数值——关节/笛卡尔最大步长默认值与细分上界、细分预算最大层数与子段数、碰撞几何代表点集生成规则；逐项注依据）登记于 DTB §2.28 解冻批登记，REQUIREMENTS 附录 C P-06 行已加『解冻程序启动（2026-10-10）』注；待所有者确认后解冻执行——确认动作归本卡执行冻结（正式并入附录 C＋冻结留痕），本卡维持 blocked 至该签署动作完成。"
 }

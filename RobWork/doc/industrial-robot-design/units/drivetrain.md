@@ -3,7 +3,7 @@
 | 字段 | 值 |
 | --- | --- |
 | 单元 | drivetrain（**L2 共享计算服务**——ARCHITECTURE §2.3/§3.1：非业务域单元、非 L4 插件；dynamics 与 selection 之间的唯一共享传动计算服务） |
-| 文档版本 | v0.1（2026-10-06，首版草案，WP-18-T01 交付物） |
+| 文档版本 | v0.5（2026-10-10，GOV-UNFROZEN 治理批——§15 WP-18-T05 任务行加"R2 解冻启动"注：MDL-21 耦合矩阵消费侧 R2 内容开发提前启动（REQUIREMENTS v1.17 解冻注），承载契约 WP-18-T05.json 已 ready（dependsOn＝WP-18-T03＋WP-13-T18——契约依赖边单向 WP-18-T05→WP-13-T18，建模侧先行）；R1 阻断反例保留与"不提前放开 R1 阻断"红线不变；阶段 D 启动裁决仍为领取前置；v0.1 首版草案 2026-10-06，v0.2~v0.4＝T02～T04 落位登记——全记录见 §18.5） |
 | 文档状态 | **`Draft`**（未冻结；本文只做详细设计，不自行宣布任何验收通过） |
 | 主 WP | WP-18（DYN-04 唯一映射实现；DYN-04 映射不归 dynamics 自行实现） |
 | 上游 | `REQUIREMENTS.md` v1.16（`Accepted`，唯一需求权威）、`ARCHITECTURE.md` v0.13（`Draft`）、`development-task-breakdown.md` v0.53 |
@@ -1013,7 +1013,7 @@ drivetrain 无 plugin 目标（§2.3），**无 GUI 测试**；Windows GUI 测�
 | **WP-18-T02** | `ird/drivetrain/CMakeLists.txt`（新）：STATIC（链 core＋evidence）；注册 `_test`/`_contract_test`；占位 README 文案修正 | T01、WP-03-T01 | 双模式构建零错误；红线扫描零命中（ird_gates） | 零 Qt；依赖仅 core+evidence（§3.5） |
 | **WP-18-T03** | DriveTrainMappingEvaluator 唯一实现：电机侧工作点 τ/ω/P、η⁺/η⁻、反射惯量 J·i²、惯量比、能量分项、四象限统计；R1 对角传动；R2 矩阵扩展接口（§7 设计落位为编译期隔离的能力门控）；非法矩阵诊断；不重复计入转子惯量 | T02、WP-05-T10（③端口） | 传动映射黄金数据（双向效率/反射惯量/摩擦不重复计入）用例通过；常矩阵 C 下与对角传动比等价验证 | 禁止与壳体质量重复计入转子惯量 |
 | **WP-18-T04** | `drivetrain/test/*`＋`contract_test/*`＋`testdata/golden/dt-*`（§14.2 矩阵 R1 组） | T03、WP-02 | 全部用例通过并留痕（gtest XML＋ird-test-report.json）；ird_gates 零命中 | 未执行测试不得标注通过 |
-| **WP-18-T05**（R2/D） | 耦合矩阵 C 全链消费：SEL-03/04/05 同一口径；限位经映射校验（MDL-21 消费面）；AT-38 高速多轴联动交叉耦合验证；R1 无耦合链等价对角映射用例 | T03、WP-13-T18 | R2 用例通过并留痕 | 不提前放开 R1 阻断 |
+| **WP-18-T05**（R2/D） | 耦合矩阵 C 全链消费：SEL-03/04/05 同一口径；限位经映射校验（MDL-21 消费面）；AT-38 高速多轴联动交叉耦合验证；R1 无耦合链等价对角映射用例〔**R2 解冻启动注（2026-10-10，GOV-UNFROZEN 批；REQUIREMENTS v1.17 MDL-21 行解冻注）**：R2 内容开发提前启动——承载契约 tasks/foundation/WP-18-T05.json 已 ready（dependsOn＝WP-18-T03＋WP-13-T18；契约依赖边单向 WP-18-T05→WP-13-T18——建模侧先行〔编辑/持久化/阻断口径〕、本侧消费〔映射〕，DTB §2.14 行勘误注同口径）；R1 阻断反例保留（§6.3 能力门控与 `DT-COUPLING-STAGE-LOCKED`）；阶段 D 启动裁决仍为领取前置；"不提前放开 R1 阻断"红线不变〕 | T03、WP-13-T18 | R2 用例通过并留痕 | 不提前放开 R1 阻断 |
 
 **跨单元同步说明（必须随任务登记）**：
 
@@ -1159,6 +1159,7 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | v0.2 | 2026-10-06 | WP-18-T02 构建落位随附同步：§4.1 落位表刷新（STATIC＋DiagCodes 19 码登记表＋_test/_contract_test 落位实录）；§18.3 占位 README 行闭环＋diagnostics 命名空间行补登记表落地/注册未执行现状；§20 执行状态按真实结果刷新（双模式构建零错误/ird_gates 零命中/12 用例通过留痕——映射实现与黄金数据集仍归 T03/T04 未实现）；传动比口径 c＝Δq_joint/Δθ_motor（P-DT-10 采用口径）已按任务契约 note 在 T02 公共头（DiagCodes.hpp）落笔 |
 | v0.3 | 2026-10-07 | WP-18-T03 实现增量登记（DTB §5.4）：①§18.3 增补实现偏差九则（评估键 `dt-mapping` kebab 词形／Profile 绑定 sel 域／config.dt-mapping 不入 R1 声明／矩阵承载自持行主序／ratedTorque 增量字段／JointSeriesView 消费面／上游序列物化锚／E_loss 传动损耗口径澄清／DT-* 两码表尾追加）；②实现落位面＝MappingTypes/Series/MappingCore/Facts/Codec/Evaluator 六公共头＋MappingCore/DriveTrainCodec/Evaluator 三实现（卡 §4.2 布局表兑现，R1 能力位——窗口输入保守阻止，R2 数值路径归 T05）；③黄金数据组（DT-G1～G9/B1～B3/G12/G13＋codec 往返＋Facts＋③端口注册闭环与端到端切片评估契约用例）全部真实执行通过（gtest XML＋ird-test-report.json 留痕 traceability/gtest-reports/wp-18-t03/——执行事实的登记，验收重跑归验收会话）；④R1 评估器的 UpstreamResult 依赖声明以提议键 `dyn.joint-series` 登记（P-DT-6 不变） |
 | v0.4 | 2026-10-07 | WP-18-T04 实现增量登记（DTB §5.4）：①黄金数据集外化落位——`testdata/golden/dt-mapping-golden/1.0.0/`（manifest 按 DatasetManifest 登记：analytic-case、coveredRequirements 含 DYN-04、coveredAt 含 AT-38、integrity 全文件 SHA-256、generate 闭式脚本入库）＋`testdata/tolerance/dt-mapping/v1.0.0.json` 档案（23 条 appendixD-fixed，附录 D 第 9 项）；②测试增量——test/GoldenDtTest.cpp（DtGoldenMapping 6 用例：黄金数据文件经 GoldenFixture＋档案容差消费＋AT-38 R1 可验部分＝无耦合链矩阵语义等价正命题＋R1 阻断反例，断言经 IDriveTrainMappingEvaluator/ICouplingMatrixValidator/IReflectedInertiaEvaluator 接口消费）与 contract_test/GoldenDatasetContractTest.cpp（DtGoldenDatasetContract 5 用例：DatasetManifest 装载/完整性覆盖/交叉一致/档案通道与 P-DT-3 保守纪律）；③§4.1 落位表与执行实录刷新、§18.3 增补 T04 注记五则（黄金承载/能量 J 恒等式通道/锚点输入侧/AT-38 反例码语义/档案模板通配）；④§20 执行状态按真实结果刷新 |
+| v0.5 | 2026-10-10 | GOV-UNFROZEN 治理批同步注（纯文档治理，零源码/设计语义变化）：§15 WP-18-T05 任务行加"R2 解冻启动注"——MDL-21 耦合矩阵消费侧 R2 内容开发提前启动（REQUIREMENTS v1.17 五条目解冻注：TRJ-08-S1～S3/SEL-09-S1/MDL-21），承载契约 WP-18-T05.json 状态 blocked→ready（dependsOn＝WP-18-T03＋WP-13-T18；契约依赖边单向 WP-18-T05→WP-13-T18——建模侧先行〔编辑/持久化/阻断口径〕、本侧消费〔映射〕，与 DTB §2.14 行勘误注同口径）；§6.3 能力门控、`DT-COUPLING-STAGE-LOCKED`/`DT-MATRIX-NONDIAGONAL-LOCKED` 阻断语义、R1 阻断反例保留全部不变；"不提前放开 R1 阻断"红线不变；阶段 D 启动裁决仍为领取前置；头表版本行同步 v0.5 |
 
 ---
 

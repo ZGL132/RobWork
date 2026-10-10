@@ -4,14 +4,38 @@
   "unit": "drivetrain",
   "masterWp": "WP-G",
   "title": "实现耦合矩阵 C 全链消费（R2/D）",
-  "status": "blocked",
-  "dependsOn": ["WP-18-T03"],
+  "status": "ready",
+  "dependsOn": ["WP-18-T03", "WP-13-T18"],
   "requirements": ["MDL-21", "DYN-04"],
   "designRefs": [
     "units/drivetrain.md#7",
+    "units/drivetrain.md#16.1",
     "REQUIREMENTS.md#13",
     "development-task-breakdown.md#2.19"
   ],
-  "verify": ["cmake --build build --config Release --target sdurws_ird_drivetrain_test"],
-  "note": "DOC-T15 编译（2026-10-06）。blocked：MDL-21（R2/阶段 D）启用前置未满足——建模侧承载任务 WP-13-T18 契约尚未生成（foundation 目录无该文件），且耦合矩阵属 R2 分期（P1/R2，AT-38 全量）。解冻条件＝MDL-21 契约批次落地＋R2 启动；解冻后补齐 ready 必备字段（依赖 WP-13-T18）。"
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/doc/industrial-robot-design/units/drivetrain.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_drivetrain_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-18-T05.json"
+  ],
+  "branch": "wp18-t05",
+  "interUnit": true,
+  "knownPitfalls": ["P-DT-2", "P-DT-5"],
+  "acceptance": [
+    "耦合矩阵 C 全链消费（R2 数值路径）：归一化模型含耦合窗口时非对角常矩阵映射精确执行（τ_motor＝Cᵀ·τ_joint＋J_rotor·θ̈_motor、θ̈_motor＝C⁺·q̈_joint——§7.1 公式组冻结口径；交叉耦合项逐元素非零保留，不对角化/准静态等效绕过）；高速多轴联动工况黄金算例验证交叉项贡献（AT-38 M-12 口径）",
+    "SEL-03/04/05 消费同一矩阵内容身份（三方切片各自携带 robot-drivetrain 对象 ContentVersion，接纳层核对一致——§7.4 第 4 步）；限位经映射校验属消费域（本卡只产出电机侧序列与映射关系，不判定限位通过/超限——§6.4 交接边界）",
+    "R1 无耦合链等价对角映射用例通过（C＝对角传动比时与既有对角路径输出逐项一致——回归锚）；R1 阻断反例保留：R1 能力位下含耦合窗口输入仍经 §6.3 能力门控产出 DT-COUPLING-STAGE-LOCKED/DT-MATRIX-NONDIAGONAL-LOCKED 阻断（不提前放开 R1 阻断）；矩阵检查前提重申（§7.4：常矩阵/方阵/可逆/良态/有限；非方/奇异/病态阻止不降级）；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "DOC-T15 编译（2026-10-06）。解冻登记（2026-10-10，GOV-UNFROZEN 治理批——所有者『13 个契约任务解冻』指令）：status blocked→ready＋补齐 ready 必备字段。原 blocked 原因两项均已解除——①建模侧承载契约 WP-13-T18.json 已新建（ready，dependsOn=WP-13-T03 已 done；契约依赖边单向 WP-18-T05→WP-13-T18——建模侧先行〔编辑/持久化/阻断口径〕、本侧消费〔映射〕，DTB §2.14 行勘误注同口径）；②R2 启动登记完成（REQUIREMENTS v1.17 MDL-21 行『R2 解冻（2026-10-10）』注——R2 内容开发提前启动，交付仍绑 R2/阶段 D 独立验收）。dependsOn 按实际协作依赖如实挂＝WP-18-T03（已实现——映射评估器唯一实现）＋WP-13-T18（ready——robot-drivetrain.coupling 编辑/持久化/编译链口径先行）。knownPitfalls 登记 P-DT-2〔O-11/P-RT-7 条件数阈值 1×10⁸ 归属——引用 runtime 单源不私设〕/P-DT-5〔R1 负传动比经 R2 矩阵通道表达、R1 不放开〕。阶段 D 启动裁决仍为领取前置。"
 }

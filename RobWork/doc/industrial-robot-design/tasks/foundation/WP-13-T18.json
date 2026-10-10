@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-13-T18",
+  "unit": "modeling",
+  "masterWp": "WP-D",
+  "title": "实现传动耦合矩阵建模（R2/D）",
+  "status": "ready",
+  "dependsOn": ["WP-13-T03"],
+  "requirements": ["MDL-21"],
+  "designRefs": [
+    "units/modeling.md#8.1",
+    "units/modeling.md#4",
+    "REQUIREMENTS.md#9",
+    "development-task-breakdown.md#2.14"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/**"
+  ],
+  "outputs": ["implementation", "unit-tests", "traceability-update"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_test",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-13-T18.json"
+  ],
+  "branch": "wp13-t18",
+  "interUnit": true,
+  "knownPitfalls": ["P-MDL-7"],
+  "acceptance": [
+    "腕部关节窗口线性耦合矩阵 C 编辑与持久化（robot-drivetrain.coupling 一等字段——§4.7/§8.1：C 常矩阵〔建模期不可含时变/工况项〕、方阵 n×n〔适用关节窗口与对应电机轴同序〕、可逆、条件数≤1×10⁸〔P-MDL-7：引用 runtime/常量单源不私设，P-RT-7 冻结时同步〕；非常矩阵/奇异/病态/非有限经比较型诊断阻止成模——M-12 口径，不降级不静默）",
+    "R1 阻断反例保留：coupling 字段在 R1 能力位下配置即阻断＋稳定诊断 MDL-21-COUPLING-STAGE-LOCKED（I-MDL-12 阶段锁；mimic/planar/floating/闭环在目标链上阻止成模维持 R1 口径——M-6，不因线性耦合放开而放松）；合法 C 经权威编辑守卫（authorityEditGuard 同一 C-1 单一判定）入修订，编译链消费同一编译产物（MDL-21 待同步消费者口径——runtime/drivetrain/selection 三方消费同一矩阵内容身份）",
+    "canonical 编码往返一致（coupling 矩阵入 RobotDesign 编码面按 §5 规范化纪律）；双编译原子性不受新字段破坏（MDL-06）；ird_gates 零命中；未执行测试不得标注通过"
+  ],
+  "note": "新建契约（2026-10-10，GOV-UNFROZEN 治理批——所有者『13 个契约任务解冻』指令；DTB §2.14 行为纲＋modeling 卡 MDL-21 章节〔§4.7 coupling 字段/§8.1 传动与耦合模型输入/I-MDL-12 R1 阶段锁〕为据）。status＝ready：R2 启动登记完成（REQUIREMENTS v1.17 MDL-21 行『R2 解冻（2026-10-10）』注——R2 内容开发提前启动，交付仍绑 R2/阶段 D 独立验收），dependsOn＝WP-13-T03（RobotDesign 领域对象与双权威参数化——已 done）。DTB §2.14 行依赖列 WP-18-T05 系『阶段 D 启动时序』语义而非契约依赖——建模侧先行（编辑/持久化/阻断口径）、drivetrain 侧消费（映射），契约依赖边单向 WP-18-T05→WP-13-T18（该契约已同步挂本卡；DTB 行勘误注同批登记）。knownPitfalls 登记 P-MDL-7〔耦合矩阵条件数阈值 1×10⁸ 为 runtime P-RT-7 设计默认、非附录 D 冻结值——引用单源不私设〕。阶段 D 启动裁决仍为领取前置；『不提前放开 R1 阻断』红线不变。"
+}

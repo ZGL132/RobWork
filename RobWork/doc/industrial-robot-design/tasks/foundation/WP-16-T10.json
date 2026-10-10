@@ -31,5 +31,5 @@
     "轨迹动画、曲线查看、路点局部重规划与标准轨迹导出（TRJ-07）用例通过",
     "动画/导出不产生项目修订（AT-04 会话/研究态零修订）；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §13/§16/§18。状态修正 ready→blocked（2026-10-10，ASM-STUDIO 承接批——acc/gov-doc/1 建议 S-2 消账）：dependsOn 含 blocked 的 WP-16-T08（其又直接依赖 blocked 的 WP-16-T07——P-06 数值冻结链，见 T07/T08 契约 note），本卡导出链以时间参数化产物为输入，传递受卡实际不可执行。出处＝acc/gov-doc/1 建议级 S-2（T08~T13 六契约同型状态失准——T07 已于 GOV-DOC 批修正 blocked 而传递依赖面未同步；evidence＝各契约 dependsOn 与状态实读）。解冻条件＝WP-16-T07 解冻（即 WP-16-T02 完成 P-06 数值冻结）后本卡恢复 ready。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §13/§16/§18。状态修正 ready→blocked（2026-10-10，ASM-STUDIO 承接批——acc/gov-doc/1 建议 S-2 消账）：dependsOn 含 blocked 的 WP-16-T08（其又直接依赖 blocked 的 WP-16-T07——P-06 数值冻结链，见 T07/T08 契约 note），本卡导出链以时间参数化产物为输入，传递受卡实际不可执行。出处＝acc/gov-doc/1 建议级 S-2（T08~T13 六契约同型状态失准——T07 已于 GOV-DOC 批修正 blocked 而传递依赖面未同步；evidence＝各契约 dependsOn 与状态实读）。解冻条件＝WP-16-T07 解冻（即 WP-16-T02 完成 P-06 数值冻结）后本卡恢复 ready。解冻程序进展注（2026-10-10，GOV-UNFROZEN 批）：P-06 链解冻程序已启动——《P-06 建议值草案》见 DTB §2.28（REQUIREMENTS 附录 C P-06 行已加启动注），前置＝WP-16-T02 冻结落位（所有者确认签署）；本卡维持 blocked，前置未完成前实际不可执行。"
 }
