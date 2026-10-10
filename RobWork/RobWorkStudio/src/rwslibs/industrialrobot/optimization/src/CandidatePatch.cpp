@@ -286,17 +286,53 @@ PatchValidationReport validatePatchItems(const std::vector<VariableBinding>& bin
         // ⑧⑨⑩ 值检查（按值形态分派；全部不静默截断——NFR-COR-03）。
         const PatchValueTag tag = valueTagOf(*binding);
         if (tag == PatchValueTag::Scalar) {
-            const double v = item.scalarValue;
+            // F-634（缺陷草案号）：验界序与 hpp ⑧ 契约对齐——"量化项先按
+            // step 网格 round-half-even 对齐再验边界（对齐后越界仍拒绝）"。
+            // 旧实现在此按**原始值**验界、构造期（makeCandidatePatch）才
+            // 对齐——原始值在界内但对齐后越界的形态（例 bounds[0,1]、
+            // step=0.6、原始 0.9 → 对齐 1.2 越界）会漏检进补丁 canonical，
+            // 违反契约与"不静默截断"（NFR-COR-03）。
+            //
+            // 检查序（三分，与 hpp ⑧ 逐条对应）：
+            //   a. 非有限检查按**原始值**判、先于对齐——quantizeToStepHalfEven
+            //      对非有限值抛 kOptInputInvalid，若先对齐会把词表语义的
+            //      "补丁值非有限"（OPT-PATCH-ILLEGAL，⑧ 第一条）混成调用方
+            //      输入违约，错误归类漂移；
+            //   b. 正性与边界检查按**对齐后值**判——对齐值才是进补丁
+            //      canonical 的有效值（构造期对齐后不再有第二道界检）。
+            //
+            // 两入口语义统一（对齐幂等）：本函数有两个上游入口——①搜索/
+            // LHS 生成器产出**未对齐**原始样本（EvaluatorPorts.cpp 量化维度，
+            // 靠本函数对齐后验界兜住）；②规范化补丁的复验路径
+            // （buildCandidateDesignOverlay 对 makeCandidatePatch 产物重跑
+            // 本函数——其量化项已是网格标量，CandidatePatch.cpp valueTagOf
+            // 注"量化值已是对齐后网格标量"）。round-half-even 最近格对齐
+            // 天然幂等：网格值 k·step 的商 k·step/step 在 IEEE 754 最近舍入
+            // 下回到同一整数格（乘除往返相对误差 ≤2 ulp，远小于半格 0.5），
+            // 输出位型不变——已对齐值再次对齐结果不变，②入口复验结论与
+            // ①入口构造结论必然一致（确定性 NFR-COR-02；本幂等性由
+            // CandidatePatchTest 量化用例钉住）。
+            double v = item.scalarValue;
             if (!std::isfinite(v)) {
                 addIssue(kOptPatchIllegal, binding->diagSubject,
                          "补丁值非有限（NaN/±Inf 拒绝——I-OPT-9 不静默截断）");
-            } else if (d->valueMustBePositive && !(v > 0.0)) {
-                // 词表值域硬约束（I-MDL-11 传动比 >0 且有限——非发明阈值）。
-                addIssue(kOptPatchIllegal, binding->diagSubject,
-                         "补丁值违反词表值域（须 >0——I-MDL-11）");
-            } else if (v < binding->lowerBound || v > binding->upperBound) {
-                addIssue(kOptPatchIllegal, binding->diagSubject,
-                         "补丁值越界（[lower,upper] 闭区间外——不截断，NFR-COR-03）");
+            } else {
+                if (binding->kind == VariableKind::Quantized) {
+                    // 量化对齐（step>0 由绑定校验保证——异常绑定 step≤0 在
+                    // 此按 kOptInputInvalid 最后防线拒绝，与绑定校验同一
+                    // 错误归类）。
+                    v = quantizeToStepHalfEven(v, binding->step);
+                }
+                if (d->valueMustBePositive && !(v > 0.0)) {
+                    // 词表值域硬约束（I-MDL-11 传动比 >0 且有限——非发明阈值）。
+                    addIssue(kOptPatchIllegal, binding->diagSubject,
+                             "补丁值违反词表值域（须 >0——I-MDL-11）");
+                } else if (v < binding->lowerBound || v > binding->upperBound) {
+                    // 对齐后值判界（闭区间外拒绝——不截断）：原始值在界内
+                    // 但对齐后越界的形态在此拦截（F-634 缺陷修复点）。
+                    addIssue(kOptPatchIllegal, binding->diagSubject,
+                             "补丁值越界（[lower,upper] 闭区间外——不截断，NFR-COR-03）");
+                }
             }
         } else if (tag == PatchValueTag::EnumIndex) {
             if (item.enumIndex >= binding->enumValues.size()) {
@@ -340,6 +376,11 @@ CandidatePatch makeCandidatePatch(const std::vector<VariableBinding>& bindings,
             n.enumIndex = 0;
             n.discreteRef.clear();
             if (binding->kind == VariableKind::Quantized) {
+                // F-634：此处再对齐是幂等重申——校验面（validatePatchItems
+                // ⑧）已按对齐后值验界，本步产出与校验所见同一网格值（已
+                // 对齐值再次 round-half-even 对齐位型不变——最近格对齐的
+                // 幂等性），保证"校验所见即构造所得"（两处对齐不产生第二
+                // 种值，NFR-COR-02 确定性）。
                 n.scalarValue = quantizeToStepHalfEven(n.scalarValue, binding->step);
             }
             if (n.scalarValue == 0.0) {
