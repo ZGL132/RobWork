@@ -78,7 +78,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "testId": "TrjBuildGraph.SevenRegisteredEdgesPresent_WP16T03_ACC1",
@@ -288,7 +288,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "testId": "TrjPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP16T03_ACC2",
@@ -322,7 +322,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "testId": "TrjPlanConfigContract.EntryMatchesSnapshotFreezeContract_WP16T04_ACC2",
@@ -463,7 +463,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 25
+      "durationMs": 22
     },
     {
       "testId": "TrjPathPlannerContract.PlannerHeaderPinsDeliveredFace_WP16T06_ACC1",
@@ -888,7 +888,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 60
+      "durationMs": 53
     },
     {
       "testId": "TrjEvaluationDimsContract.InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC1",

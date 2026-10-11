@@ -219,7 +219,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 12
+      "durationMs": 10
     },
     {
       "testId": "TrjBuildRedLine.IncludeFaceRestrictedToSevenRegisteredEdges_WP16T03_ACC2",
@@ -323,7 +323,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 8
+      "durationMs": 7
     },
     {
       "testId": "TrjPlanConfig.ValidBaselinePasses_WP16T04_ACC2",
