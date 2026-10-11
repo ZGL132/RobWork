@@ -54,7 +54,7 @@
     "softwareVersion": "node-v24.14.1",
     "algorithmId": "trj-at06-recheck-golden-closed-form",
     "solverConfig": {
-      "p06": "REQUIREMENTS 附录 C《P-06 冻结数值表》（v1.18，2026-10-10 冻结）行 1~8——八值经 inputs.protocol 声明，消费测试与 makeP06FrozenRecheckParameters 逐字段对照（物化对照锚）"
+      "p06": "REQUIREMENTS 附录 C《P-06 冻结数值表》（v1.18，2026-10-10 冻结）行 1~8——八值经 inputs.protocol 声明（行 1 旋转步长 0.05 rad/行 2 移动步长 0.005 m/行 3 旋转细分上界 0.2 rad/行 4 移动细分上界 0.02 m/行 5 笛卡尔步长 0.005 m/行 6 笛卡尔细分上界 0.02 m/行 7 预算层数 10/行 8 预算子段数 1024；其中行 2/行 4 两键系返工轮补齐——acc/wp-16-t13/1 阻断 B-1：首版 protocol 仅六键而登记宣称八值），消费测试 P06FrozenProtocolMaterialization 与 makeP06FrozenRecheckParameters 八字段逐字段对照（物化对照锚——任一侧漂移即显性失败）"
     },
     "seed": null,
     "threadCount": 1,
@@ -76,8 +76,8 @@
   "integrity": [
     {
       "path": "inputs/trj-at06-inputs.json",
-      "sha256": "a6457d6104cefec3e09c41d9695af3a2c919f80b4546e39f03a8b9102c1c69d7",
-      "sizeBytes": 2648
+      "sha256": "b8e64f25ccfbd3147667a6491fc0c58bf2a1f7ca66f3b1a307a27bd7bbf98a85",
+      "sizeBytes": 2730
     },
     {
       "path": "expected/trj-at06-expected.json",
@@ -99,7 +99,7 @@
     {
       "version": "1.0.0",
       "date": "2026-10-11",
-      "change": "首版：AT-06 轨迹链四反例黄金数据（段内碰撞检出/细分预算耗尽/初始路径碰撞重规划成功/限制超标定位——P-06 冻结数值表物化对照 inputs.protocol 八值；解析面 closed-form 独立参考实现，运行期真实链路反例归集成 _test 不重复宣称）——WP-16-T13 交付物（testdata/golden/trj-* 按 DatasetManifest 登记）",
+      "change": "首版：AT-06 轨迹链四反例黄金数据（段内碰撞检出/细分预算耗尽/初始路径碰撞重规划成功/限制超标定位——P-06 冻结数值表物化对照 inputs.protocol 八值；解析面 closed-form 独立参考实现，运行期真实链路反例归集成 _test 不重复宣称）——WP-16-T13 交付物（testdata/golden/trj-* 按 DatasetManifest 登记）。返工轮修正（acc/wp-16-t13/1 阻断 B-1 消账——首版登记宣称 protocol 八值实际仅六键、消费测试对照仅六字段）：inputs.protocol 补 P-06 冻结表行 2（移动关节最大步长默认 0.005 m）与行 4（移动关节细分上界 0.02 m）两键，本 manifest integrity 之 inputs SHA-256/sizeBytes 同步重算；expected 与 generate 脚本零改动（生成脚本不消费 prismatic 两键——重跑逐字节一致），版本维持 1.0.0（首版交付内登记更正，无下游消费基线被取代）",
       "reReviewedBy": "WP-16-T13 实施会话（验收段独立复核待验收者留痕）",
       "supersededBy": ""
     }

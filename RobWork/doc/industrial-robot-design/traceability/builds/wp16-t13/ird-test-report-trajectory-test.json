@@ -219,7 +219,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 12
+      "durationMs": 10
     },
     {
       "testId": "TrjBuildRedLine.IncludeFaceRestrictedToSevenRegisteredEdges_WP16T03_ACC2",
@@ -254,7 +254,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 10
+      "durationMs": 9
     },
     {
       "testId": "TrjBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP16T03_ACC2",
@@ -289,7 +289,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 9
+      "durationMs": 8
     },
     {
       "testId": "TrjBuildRedLine.ProductFaceFilesNonEmpty_WP16T03_ACC1",
@@ -323,7 +323,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 7
+      "durationMs": 6
     },
     {
       "testId": "TrjPlanConfig.ValidBaselinePasses_WP16T04_ACC2",
@@ -2639,7 +2639,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 13
+      "durationMs": 11
     },
     {
       "testId": "TrjPlannerAvoidance.BudgetExhaustedYieldsMaterialNotInfeasible_WP16T06_ACC2",
@@ -3180,7 +3180,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 7
+      "durationMs": 6
     },
     {
       "testId": "SmoothRecheckTest.SmoothAnalyticGoldenCase_WP16T07_NFRCOR01",
@@ -3780,7 +3780,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 78
+      "durationMs": 62
     },
     {
       "testId": "TimeParamFailureTest.UndefinedLimitNoFabricatedCycleTime",
@@ -3954,7 +3954,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "testId": "TimeParamCurveTest.OutOfRangeFailsFast",
@@ -4782,7 +4782,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "testId": "StandardExport.UnconfirmedOverwriteRejectedAndTargetUntouched",
@@ -4818,7 +4818,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "testId": "StandardExport.ConfirmedOverwriteReplacesContent",
@@ -4890,7 +4890,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "testId": "StandardExport.WriterFailureSurfacesIoToken",

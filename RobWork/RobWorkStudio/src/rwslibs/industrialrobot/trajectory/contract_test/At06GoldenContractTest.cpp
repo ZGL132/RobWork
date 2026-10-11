@@ -278,12 +278,16 @@ TEST(TrjAt06GoldenContract, IntegrityCoversAllFiles_WP16T13_ACC2)
 
 /**
  * P-06 冻结数值表物化对照（acceptance 1 提示句"——P-06 冻结数值表物化对
- * 照"的黄金数据面执行点）：inputs.protocol 六项协议数值（步长/上界/预算
- * ——行 9 代表点集规则为生成规则不经数值承载）逐字段等于产品物化点
- * makeP06FrozenRecheckParameters()（＝REQUIREMENTS 附录 C《P-06 冻结数值
- * 表》行 1~8 的唯一产品落点）。三方锚定关系：需求冻结表 ↔ 数据集协议参
- * 数 ↔ 产品物化函数——任一侧修订漂移（例如需求变更调整步长默认而数据集
- * 或实现未跟上）都在本用例显性失败（修订须走需求变更并同步三方）。
+ * 照"的黄金数据面执行点）：inputs.protocol 八项协议数值（冻结表行 1~8 的
+ * 步长/上界/预算逐行物化——行 9 代表点集规则为生成规则不经数值承载）逐
+ * 字段等于产品物化点 makeP06FrozenRecheckParameters()（＝REQUIREMENTS 附
+ * 录 C《P-06 冻结数值表》行 1~8 的唯一产品落点）。三方锚定关系：需求冻
+ * 结表 ↔ 数据集协议参数 ↔ 产品物化函数——任一侧修订漂移（例如需求变更
+ * 调整步长默认而数据集或实现未跟上）都在本用例显性失败（修订须走需求变
+ * 更并同步三方）。WP-16-T13 返工轮修正（acc/wp-16-t13/1 阻断 B-1 消账）：
+ * 首版本用例断言仅六字段、inputs.protocol 亦仅六键——prismatic 两值（行
+ * 2/行 4）的三方锚定空转，登记宣称与实际不符；返工轮数据集补齐两键、本
+ * 用例对照断言扩至八字段（断言顺序＝冻结表行序），八值覆盖为真。
  * 同时核对四反例案例 id 词表（inputs.cases 恰四案例、id 与反例语义一
  * 一对应——数据资产的结构完整性）。
  */
@@ -298,32 +302,53 @@ TEST(TrjAt06GoldenContract, P06FrozenProtocolMaterialization_WP16T13_ACC1)
     ASSERT_TRUE(inputs.isObject());
     const tk::JsonValue& protocol = mustObject(inputs, "protocol", "inputs.protocol");
 
-    // ---- 八值对照（数据集协议参数 ↔ 产品物化点——P-06 冻结表行 1~8）。
+    // ---- 八值对照（数据集协议参数 ↔ 产品物化点——P-06 冻结表行 1~8，
+    // 断言顺序＝冻结表行序；八字段缺一即本用例显性失败——返工轮 B-1 消
+    // 账：首版仅六字段断言，prismatic 两值的三方锚定空转）。
     const trj::RecheckParameters frozen = trj::makeP06FrozenRecheckParameters();
+    // 行 1：关节空间最大步长——旋转关节默认（0.05 rad，单位 rad）。
     EXPECT_DOUBLE_EQ(mustNumber(protocol, "maxJointStepRevolute", "protocol"),
                      frozen.maxJointStepRevolute)
         << "旋转关节步长默认漂移（P-06 行 1——冻结表/数据集/实现三方须一致）";
+    // 行 2：关节空间最大步长——移动关节默认（0.005 m，单位 m 不是 rad；
+    // 返工轮补齐的对照字段）。
+    EXPECT_DOUBLE_EQ(mustNumber(protocol, "maxJointStepPrismatic", "protocol"),
+                     frozen.maxJointStepPrismatic)
+        << "移动关节步长默认漂移（P-06 行 2——冻结表/数据集/实现三方须一致）";
+    // 行 3：关节空间细分上界——旋转关节（0.2 rad＝4×行 1 封顶）。
     EXPECT_DOUBLE_EQ(mustNumber(protocol, "jointSubdivisionCeilingRevolute",
                                 "protocol"),
                      frozen.jointSubdivisionCeilingRevolute)
         << "旋转细分上界漂移（P-06 行 3——4×默认封顶）";
+    // 行 4：关节空间细分上界——移动关节（0.02 m＝4×行 2 封顶；返工轮补
+    // 齐的对照字段）。
+    EXPECT_DOUBLE_EQ(mustNumber(protocol, "jointSubdivisionCeilingPrismatic",
+                                "protocol"),
+                     frozen.jointSubdivisionCeilingPrismatic)
+        << "移动细分上界漂移（P-06 行 4——4×默认封顶）";
+    // 行 5：笛卡尔最大步长默认（0.005 m——TCP 参考点＋代表点集最大位移）。
     EXPECT_DOUBLE_EQ(mustNumber(protocol, "maxCartesianStep", "protocol"),
                      frozen.maxCartesianStep)
         << "笛卡尔步长默认漂移（P-06 行 5）";
+    // 行 6：笛卡尔细分上界（0.02 m＝4×行 5 封顶）。
     EXPECT_DOUBLE_EQ(mustNumber(protocol, "cartesianSubdivisionCeiling",
                                 "protocol"),
                      frozen.cartesianSubdivisionCeiling)
         << "笛卡尔细分上界漂移（P-06 行 6）";
+    // 行 7：细分预算——最大层数（10 层二分，无量纲计数）。
     EXPECT_DOUBLE_EQ(mustNumber(protocol, "maxSubdivisionDepth", "protocol"),
                      static_cast<double>(frozen.maxSubdivisionDepth))
         << "细分预算层数漂移（P-06 行 7）";
+    // 行 8：细分预算——单段最大子段数（1024＝2^10，无量纲计数）。
     EXPECT_DOUBLE_EQ(mustNumber(protocol, "maxSubsegments", "protocol"),
                      static_cast<double>(frozen.maxSubsegments))
         << "细分预算子段数漂移（P-06 行 8——2^10）";
-    // 冻结表自洽（上界＝4×默认——表行 3~6 括注）与合法性（validate 必过
-    // ——协议参数可真实驱动复检）。
+    // 冻结表自洽（上界＝4×默认——表行 3~6 括注；旋转/移动/笛卡尔三对逐
+    // 对核对）与合法性（validate 必过——协议参数可真实驱动复检）。
     EXPECT_DOUBLE_EQ(frozen.jointSubdivisionCeilingRevolute,
                      4.0 * frozen.maxJointStepRevolute);
+    EXPECT_DOUBLE_EQ(frozen.jointSubdivisionCeilingPrismatic,
+                     4.0 * frozen.maxJointStepPrismatic);
     EXPECT_DOUBLE_EQ(frozen.cartesianSubdivisionCeiling,
                      4.0 * frozen.maxCartesianStep);
     EXPECT_NO_THROW(trj::validateRecheckParameters(frozen));
