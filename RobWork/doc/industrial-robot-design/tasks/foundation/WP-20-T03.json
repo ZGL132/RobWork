@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现变量与候选补丁模型",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-20-T02", "RT-T04"],
   "requirements": ["OPT-01", "OPT-02"],
   "designRefs": [
@@ -33,5 +33,5 @@
     "CandidatePatch 确定性序列化：相同补丁必得相同 CandidatePatchId；候选身份不含显示单位/UI 状态；补丁触及锁定变量生成阶段拒绝（OPT-VAR-LOCKED）；ird_gates 零命中",
     "候选物化通道（P-OPT-2）与应用物化命令面（P-OPT-3）裁决前：研究定义/导出/应用组装面先行，评估链路联调随裁决"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §5/§14；RT-T04≙runtime 视图消费面。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §5/§14；RT-T04≙runtime 视图消费面。合入收尾（2026-10-12，全库对账批）：实现提交 7fbfff88，验收记录 RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t03-20261007.md（在验收分支 origin/acc/wp-20-t03/2，未合入 redesign-main）——ready→done。"
 }

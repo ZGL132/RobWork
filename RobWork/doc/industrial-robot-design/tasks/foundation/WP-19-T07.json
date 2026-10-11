@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现优选品牌与目录版本管理",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T03"],
   "requirements": ["SEL-07", "SEL-08"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "目录差异比较与项目锁定版本（SEL-08，catalog/<id>/<ver>/ 写入即锁定、只增）；目录更新不静默改变历史结果用例通过",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §4/§5/§16。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §4/§5/§16。合入收尾（2026-10-12，全库对账批）：实现提交 a13c8c7e，验收记录 traceability/acceptance/wp-19-t07-20261008.md（载体：验收分支 acc/wp-19-t07/1，本地＋origin 在案）——ready→done。"
 }

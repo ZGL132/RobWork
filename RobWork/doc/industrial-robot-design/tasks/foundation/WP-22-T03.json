@@ -4,7 +4,7 @@
   "unit": "workflow",
   "masterWp": "WP-I",
   "title": "实现七阶段门控与下一步建议",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-22-T02", "UI-T09"],
   "requirements": ["UX-01", "UX-12"],
   "designRefs": [
@@ -33,5 +33,5 @@
     "门控判定只消费 StageReadinessSnapshot＋事件（不重算领域就绪、无领域阈值——运行断言锁定）；门控/建议纯函数面同输入同输出；建议八规则优先级与可跳过（UX-01 四要素）",
     "阶段状态投影归 ui 不双权威（DTB 禁止项）；门控数据形状按 P-WF-2 谈判起点（ui §6.5）实现，词表零新增；ird_gates 零命中"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §4/§5/§6/§12；UI-T09≙StageStatusModel 汇聚。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §4/§5/§6/§12；UI-T09≙StageStatusModel 汇聚。合入收尾（2026-10-12，全库对账批）：实现提交 e93e4629，验收记录 ../findings.json（acc/wp-22-t03/1, attempt 1, verdict pass 等价治理登记）——ready→done。"
 }

@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "构建落位：selection 占位转真实库＋插件目标",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01"],
   "designRefs": [
@@ -38,5 +38,5 @@
     "二分结构扫描通过（ird_gates 零命中）；SEL-* 域诊断码按 units/selection.md 登记表装配期注册",
     "gtest XML＋ird-test-report.json＋构建日志留痕齐全"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §3/§16；前置 WP-19-T01（卡任务）已落盘。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §3/§16；前置 WP-19-T01（卡任务）已落盘。合入收尾（2026-10-12，全库对账批）：实现提交 646e5cd2，验收记录 traceability/acceptance/wp-19-t02-20261006.md（载体：验收分支 acc/wp-19-t02/1，本地＋origin 在案）——ready→done。"
 }

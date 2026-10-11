@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "实现数据不足降级与可信等级",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-17-T03"],
   "requirements": ["DYN-06"],
   "designRefs": [
@@ -31,5 +31,5 @@
     "物性或摩擦数据不足时标记可信等级（DYN-06），降级经 evidence 证据表达（缺失项全量列入清单，DataInsufficient）",
     "不把估算结果包装成精确结论（限定语纪律）用例通过；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §8/§12。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §8/§12。合入收尾（2026-10-12，全库对账批）：实现提交 5e06d28a，验收记录 traceability/acceptance/wp-17-t06-20261008.md（全文在 acc/wp-17-t06/1 分支，记录提交 77570365；主线在案载体 traceability/findings.json F-678 验收索引）——ready→done。"
 }

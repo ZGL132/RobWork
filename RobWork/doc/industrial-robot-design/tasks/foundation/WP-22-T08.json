@@ -4,7 +4,7 @@
   "unit": "workflow",
   "masterWp": "WP-I",
   "title": "实现旧格式拒绝/只读/重关联流程",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-22-T02", "PRJ-T03"],
   "requirements": ["PM-06", "PM-07", "PM-09"],
   "designRefs": [
@@ -34,5 +34,5 @@
     "只读打开：锁被持提示 PID（writable=false 禁编辑与应用提交）；双实例第二写者不阻塞等待（PM-07）用例通过",
     "外部源重关联入口：经显式提交产生新修订（PM-09/AT-21）用例通过；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.5/§12；PRJ-T03≙写锁。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.5/§12；PRJ-T03≙写锁。合入收尾（2026-10-12，全库对账批）：实现提交 68272418，验收记录 ../findings.json（acc/wp-22-t08/1, attempt 1, verdict pass 等价治理登记）——ready→done。"
 }

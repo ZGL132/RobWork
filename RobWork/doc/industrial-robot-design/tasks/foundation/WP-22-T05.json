@@ -4,7 +4,7 @@
   "unit": "workflow",
   "masterWp": "WP-I",
   "title": "实现打开向导与无项目首页",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-22-T02", "PRJ-T08"],
   "requirements": ["PM-02", "PM-10"],
   "designRefs": [
@@ -34,5 +34,5 @@
     "无项目首页三入口（新建/打开/最近）：最近项目 10 上限、规范路径去重、失效项保留＋\"位置不可用\"提示＋移除；无项目禁用七阶段/运行/应用/报告入口（PM-10）用例通过",
     "最近项目/设置容量与脱敏参数（P-WF-5）未冻结期间按安全默认＋留痕；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.2/§7.8/§12；PRJ-T08≙打开协议服务侧。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.2/§7.8/§12；PRJ-T08≙打开协议服务侧。合入收尾（2026-10-12，全库对账批）：实现提交 6cd42b00，验收记录 ../findings.json（acc/wp-22-t05/1, attempt 1, verdict pass 等价治理登记；另有 builds/wp22-t05/ 留痕）——ready→done。"
 }

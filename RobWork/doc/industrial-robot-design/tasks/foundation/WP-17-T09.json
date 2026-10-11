@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "实现 dynamics 插件界面",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-17-T05", "WP-17-T06", "WP-17-T07", "WP-17-T08", "UI-T08"],
   "requirements": ["UX-02", "UX-10"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "动力学工作流页＋曲线视图（经 IPluginUiRegistrar 白名单挂位）界面链路用例通过",
     "插件零计算逻辑（二分结构扫描）；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §9/§12。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §9/§12。合入收尾（2026-10-12，全库对账批）：实现提交 f7988489，验收记录 traceability/acceptance/wp-17-t09-20261009.md（全文在 acc/wp-17-t09/1 分支，记录提交 f42716bb；主线在案载体 traceability/findings.json F-691 验收索引）——ready→done。"
 }

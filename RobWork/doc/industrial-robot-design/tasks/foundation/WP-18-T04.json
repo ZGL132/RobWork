@@ -4,7 +4,7 @@
   "unit": "drivetrain",
   "masterWp": "WP-G",
   "title": "契约测试与传动映射黄金数据集",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-18-T03"],
   "requirements": ["DYN-04"],
   "designRefs": [
@@ -35,5 +35,5 @@
     "testdata/golden/dt-* 按 DatasetManifest 登记；运行时数值一致性阈值（P-DT-3）未冻结期间保守不引入",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.19 行＋units/drivetrain.md §14/§15。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.19 行＋units/drivetrain.md §14/§15。合入收尾（2026-10-12，全库对账批）：实现提交 cf1f626a，验收记录 traceability/findings.json（GOV 批等价登记 acc/wp-18-t04/1 attempt1 pass；验收 .md wp-18-t04-20261007.md 未合入主线，仅存 origin acc/wp-18-t04/1 分支 93a5463d）——ready→done。"
 }

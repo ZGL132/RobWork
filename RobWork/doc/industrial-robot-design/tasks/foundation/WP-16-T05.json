@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "实现笛卡尔段与段内 IK 连续性检查",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-16-T04", "WP-15-T04"],
   "requirements": ["TRJ-02"],
   "designRefs": [
@@ -31,5 +31,5 @@
     "IK 经③端口消费（IKinematicsComputePort 透传 kin.task-point-ik/kin.pose-metrics），不直链 kinematics（R-1）；分支跳变/奇异邻域判定与 units/trajectory.md §8 一致",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §8/§18；WP-15-T04≙③端口 IK 协作面。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §8/§18；WP-15-T04≙③端口 IK 协作面。合入收尾（2026-10-12，全库对账批）：实现提交 c8746842，验收记录 origin/acc/wp-16-t05/1 :: traceability/acceptance/wp-16-t05-20261007.md——ready→done。"
 }

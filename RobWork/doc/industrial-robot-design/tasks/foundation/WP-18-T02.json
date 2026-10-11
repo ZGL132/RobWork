@@ -4,7 +4,7 @@
   "unit": "drivetrain",
   "masterWp": "WP-G",
   "title": "构建落位：drivetrain 占位转真实库",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01"],
   "designRefs": [
@@ -38,5 +38,5 @@
     "红线扫描零命中（不直链 proximity、无业务域边）；DT-* 域诊断码按 units/drivetrain.md 登记表装配期注册",
     "gtest XML＋ird-test-report.json＋构建日志留痕齐全"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.19 行＋units/drivetrain.md §4/§15；传动比口径在公共头注释按 c＝Δq_joint/Δθ_motor 落笔（P-DT-10 本卡采用口径）。前置 WP-18-T01（卡任务）已落盘。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.19 行＋units/drivetrain.md §4/§15；传动比口径在公共头注释按 c＝Δq_joint/Δθ_motor 落笔（P-DT-10 本卡采用口径）。前置 WP-18-T01（卡任务）已落盘。合入收尾（2026-10-12，全库对账批）：实现提交 da1d372f，验收记录 traceability/findings.json（GOV 批等价登记 acc/wp-18-t02/1 attempt1 pass；验收 .md wp-18-t02-20261006.md 未合入主线，仅存 origin acc/wp-18-t02/1 分支 666f91c3）——ready→done。"
 }

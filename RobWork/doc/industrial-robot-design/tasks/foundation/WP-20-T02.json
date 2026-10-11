@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "构建落位：optimization 占位转真实库＋插件目标",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01"],
   "designRefs": [
@@ -38,5 +38,5 @@
     "二分结构扫描通过（ird_gates 零命中）：计算库零 Widgets、无业务域互链边；OPT-* 15 码按 units/optimization.md §6.6 登记表装配期注册（diagnostics §4.5 协议）",
     "gtest XML＋ird-test-report.json＋构建日志留痕齐全"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §3/§14；前置 WP-20-T01（卡任务）已落盘（f59e4eb4..15469f70 批次）。阶段锁码落位 OPT-STAGE-LOCKED（P-OPT-1 对应关系登记于卡内）。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §3/§14；前置 WP-20-T01（卡任务）已落盘（f59e4eb4..15469f70 批次）。阶段锁码落位 OPT-STAGE-LOCKED（P-OPT-1 对应关系登记于卡内）。合入收尾（2026-10-12，全库对账批）：实现提交 1d68faf9，验收记录 RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t02-20261007.md（在验收分支 origin/acc/wp-20-t02/1，未合入 redesign-main）——ready→done。"
 }

@@ -4,7 +4,7 @@
   "unit": "workflow",
   "masterWp": "WP-I",
   "title": "实现另存为与包导出/导入向导",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-22-T02"],
   "requirements": ["PM-05"],
   "designRefs": [
@@ -34,5 +34,5 @@
     "包导出 .rwpack ZIP 传输封装：后台进度可取消、取消即清理临时区；导入执行预算/路径穿越防护与全量校验（失败不留目标目录）并给出校验报告",
     "io 边注入形态（P-IO-1）裁决前与 reporting P-RPT-1 同案处理；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.4/§12；DTB 前置 WP-04-T18（另存存储侧）契约未生成——经 PRJ 命令面触达，不设 dependsOn 边。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.4/§12；DTB 前置 WP-04-T18（另存存储侧）契约未生成——经 PRJ 命令面触达，不设 dependsOn 边。合入收尾（2026-10-12，全库对账批）：实现提交 43521089，验收记录 ../findings.json（acc/wp-22-t07/1, attempt 1, verdict pass 等价治理登记）——ready→done。"
 }

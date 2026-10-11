@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现优化证据一站式导出",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-20-T06", "RPT-T05", "IO-T03", "IO-T04"],
   "requirements": ["OPT-12"],
   "designRefs": [
@@ -31,5 +31,5 @@
     "契约过期阻断正式导出（Profile/评估器/导出契约三元组校验，OPT-EXPORT-CONTRACT-STALE）用例通过；取消/失败/中断/数据不足不得冒充完整正式导出",
     "文件层经 io canonical 写出（ICsvWriter/IJsonWriter/IAtomicFileWriter）＋reporting 共用规则（canonical/原子/限定语），本单元只定义字段契约（P-RPT-1 注入形态）；ird_gates 零命中"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §11/§14；RPT-T05≙共用导出规则；口径未冻结项（P-OPT-5）按\"—\"/待裁决口径导出。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §11/§14；RPT-T05≙共用导出规则；口径未冻结项（P-OPT-5）按\"—\"/待裁决口径导出。合入收尾（2026-10-12，全库对账批）：实现提交 fbfd71e8，验收记录 RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t09-20261009.md（在验收分支 origin/acc/wp-20-t09/1，未合入 redesign-main）——ready→done。"
 }

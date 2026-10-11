@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "实现曲线联动与峰值定位/回放数据",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-17-T04"],
   "requirements": ["DYN-08"],
   "designRefs": [
@@ -30,5 +30,5 @@
     "各关节曲线联动、峰值定位和三维轨迹时刻回放数据（DYN-08）用例通过",
     "联动与回放不产生项目修订（会话/研究态零修订，AT-04 同口径）；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §9/§12。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §9/§12。合入收尾（2026-10-12，全库对账批）：实现提交 6545834e，验收记录 traceability/acceptance/wp-17-t08-20261009.md（全文在 acc/wp-17-t08/1 分支，记录提交 5364b813；主线在案载体 traceability/findings.json F-690 验收索引）——ready→done。"
 }

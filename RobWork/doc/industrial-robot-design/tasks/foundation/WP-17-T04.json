@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "实现输出序列与峰值/RMS 包络",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-17-T03"],
   "requirements": ["DYN-03"],
   "designRefs": [
@@ -31,5 +31,5 @@
     "峰值必须报告持续时间窗与所在轨迹段；RMS 基于完整任务循环含驻留（时间加权，禁样本平均）——用例通过",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §7/§12；能量量纲运行容差默认缺位（P-DYN-9）不得预填。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §7/§12；能量量纲运行容差默认缺位（P-DYN-9）不得预填。合入收尾（2026-10-12，全库对账批）：实现提交 72fe8327，验收记录 traceability/acceptance/wp-17-t04-20261007.md（全文在 acc/wp-17-t04/1 分支，记录提交 b4fd4809；主线在案载体 traceability/findings.json F-664 验收索引）——ready→done。"
 }

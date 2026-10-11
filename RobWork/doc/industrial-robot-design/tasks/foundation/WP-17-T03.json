@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "实现 RNEA 逆动力学评估器",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-17-T02", "RT-T08", "RT-T09"],
   "requirements": ["DYN-01", "DYN-02"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "倒挂工况重力矩（AT-37 动力侧）消费同一基座—世界编译变换（R_world_base），禁止任何下游二次旋转；摩擦参数输入链对接 MDL-16（缺失触发 DYN-06 降级）",
     "关节侧结果与候选传动无关（DYN-04 边界——映射归 drivetrain）；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §5/§12；RT-T08/T09≙runtime 双编译与重力投影消费面。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §5/§12；RT-T08/T09≙runtime 双编译与重力投影消费面。合入收尾（2026-10-12，全库对账批）：实现提交 1faefec4，验收记录 traceability/acceptance/wp-17-t03-20261007.md（全文在 acc/wp-17-t03/1 分支，记录提交 2ea29be8；主线在案载体 traceability/findings.json F-663 验收索引）——ready→done。"
 }

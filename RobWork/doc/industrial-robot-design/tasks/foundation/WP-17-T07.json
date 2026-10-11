@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "实现多工况与包络合并",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-17-T04"],
   "requirements": ["DYN-07", "EVI-02"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "包络合并不替代必验工况覆盖规则（EVI-02；覆盖矩阵分母口径按快照冻结 RequiredCaseSet）用例通过；ird_gates 零命中",
     "急停/保持工况模板结构（P-DYN-4）未冻结期间按统一 RNEA 评估给定工况，不自行定义构造语义"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §8/§12。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §8/§12。合入收尾（2026-10-12，全库对账批）：实现提交 bfcddd58，验收记录 traceability/acceptance/wp-17-t07-20261008.md（全文在 acc/wp-17-t07/1 分支，记录提交 45450be9；主线在案载体 traceability/findings.json F-679 验收索引）——ready→done。"
 }

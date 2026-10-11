@@ -4,7 +4,7 @@
   "unit": "workflow",
   "masterWp": "WP-I",
   "title": "实现关闭/切换/退出统一确认",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-22-T02", "EX-T06", "PRJ-T12"],
   "requirements": ["PM-03", "PM-12"],
   "designRefs": [
@@ -35,5 +35,5 @@
     "等待选项覆盖在途归档（ARCH §6.8 A7：界面会话与存储上下文分离，等待在途运行接纳归档＋草稿落盘完成）；协作取消即清理临时区；切换＝关闭后候选验证成功才切上下文",
     "方案分支切换（PM-12）零写入（不产生修订、不写文件含 HEAD）；关闭编排三方契约（P-UI-6）冻结前按本卡 §7.3 形态实现；ird_gates 零命中"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.3/§12；EX-T06≙worker 通道，PRJ-T12≙存储上下文排空语义。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.3/§12；EX-T06≙worker 通道，PRJ-T12≙存储上下文排空语义。合入收尾（2026-10-12，全库对账批）：实现提交 3253e6ac，验收记录 ../findings.json（acc/wp-22-t06/1, attempt 1, verdict pass 等价治理登记）——ready→done。"
 }

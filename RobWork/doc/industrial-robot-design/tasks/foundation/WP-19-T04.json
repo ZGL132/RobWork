@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现电机/减速器硬筛选",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T03"],
   "requirements": ["SEL-03", "SEL-04"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "可行/不可行型号黄金表用例通过——每个淘汰项含实际值和阈值",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §7/§8/§16；惯量比阈值归属（P-POL-3/P-DT-2）未裁决期间不内嵌阈值。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §7/§8/§16；惯量比阈值归属（P-POL-3/P-DT-2）未裁决期间不内嵌阈值。合入收尾（2026-10-12，全库对账批）：实现提交 42fbdf0b，验收记录 traceability/acceptance/wp-19-t04-20261007.md（载体：验收分支 acc/wp-19-t04/1，本地＋origin 在案）——ready→done。"
 }

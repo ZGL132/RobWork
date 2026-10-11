@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "契约测试与选型黄金数据集",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T10"],
   "requirements": ["SEL-03", "SEL-05", "SEL-06", "SEL-10"],
   "designRefs": [
@@ -34,5 +34,5 @@
     "testdata/golden/sel-* 按 DatasetManifest 登记（可行＋不可行样例，不可行项含实际值/阈值与原因）",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §15/§16。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §15/§16。合入收尾（2026-10-12，全库对账批）：实现提交 21fa8d58，验收记录 traceability/acceptance/wp-19-t11-20261009.md 与 wp-19-t11-20261010.md（载体：验收分支 acc/wp-19-t11/1、acc/wp-19-t11/2，本地＋origin 在案）——ready→done。"
 }

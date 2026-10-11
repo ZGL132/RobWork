@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现 selection 插件界面",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T07", "WP-19-T08", "WP-19-T09", "UI-T08"],
   "requirements": ["UX-02", "UX-10"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "选型工作流页＋目录管理＋候选表（经 IPluginUiRegistrar 白名单挂位）界面链路用例通过",
     "插件零计算逻辑（二分结构扫描）；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §13/§16。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §13/§16。合入收尾（2026-10-12，全库对账批）：实现提交 d6f9dcfc，验收记录 traceability/acceptance/wp-19-t10-20261009.md（载体：验收分支 acc/wp-19-t10/1，本地＋origin 在案）——ready→done。"
 }

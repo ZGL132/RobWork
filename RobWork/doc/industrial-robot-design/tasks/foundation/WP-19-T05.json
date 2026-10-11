@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现组合校核",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T04", "WP-18-T03"],
   "requirements": ["SEL-05", "DYN-04"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "不自建映射实现（SEL-05 红线：不重算传动比映射/耦合/虚功/电机侧力矩速度功率/反射惯量/交叉耦合）；惯量比阈值为可配置工程规则（SEL-05），P-POL-3/P-DT-2 未裁决期间输出\"未判定\"维度不整体阻断",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §9/§16。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §9/§16。合入收尾（2026-10-12，全库对账批）：实现提交 1b10f4c5，验收记录 traceability/acceptance/wp-19-t05-20261008.md（载体：验收分支 acc/wp-19-t05/1，本地＋origin 在案）——ready→done。"
 }

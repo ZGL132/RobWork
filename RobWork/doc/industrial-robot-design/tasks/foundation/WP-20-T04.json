@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现静态硬约束执行",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-20-T03", "WP-15-T03", "WP-15-T04", "WP-15-T05", "WP-15-T06", "WP-15-T07", "POL-T07"],
   "requirements": ["OPT-03", "EVI-01", "EVI-02"],
   "designRefs": [
@@ -34,5 +34,5 @@
     "漏一个启用必验工况不得出正式通过（AT-09 反例）；不可行候选不进入可行集；搜索未果/多初值未收敛不判任务级确定性不可行（C5/C8）；ird_gates 零命中",
     "空必验工况集合保守处置（P-EV-7 同源：Preflight 阻塞，绝不输出正式通过）；跨域汇总顺序引用 evidence 现状（P-EV-3 open）"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §6/§14；WP-15-T03~T07≙运动学评估器族（ Must 可达/区域覆盖/限位裕量/碰撞证据）。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §6/§14；WP-15-T03~T07≙运动学评估器族（ Must 可达/区域覆盖/限位裕量/碰撞证据）。合入收尾（2026-10-12，全库对账批）：实现提交 045deaa7，验收记录 RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t04-20261008.md（在验收分支 origin/acc/wp-20-t04/1，未合入 redesign-main）——ready→done。"
 }

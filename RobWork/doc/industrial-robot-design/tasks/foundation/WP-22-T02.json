@@ -4,7 +4,7 @@
   "unit": "workflow",
   "masterWp": "WP-I",
   "title": "构建落位：workflow 占位转真实库＋插件目标",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01"],
   "designRefs": [
@@ -38,5 +38,5 @@
     "R-1 扫描通过（无业务域直链边，ARCH §3.4）；ird_gates 零命中",
     "gtest XML＋ird-test-report.json＋构建日志留痕齐全"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §3/§12；前置 WP-22-T01（卡任务）已落盘。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §3/§12；前置 WP-22-T01（卡任务）已落盘。合入收尾（2026-10-12，全库对账批）：实现提交 31c56dcc，验收记录 ../findings.json（acc/wp-22-t02/1, attempt 1, verdict pass 等价治理登记；另有 builds/wp22-t02/ 门禁比对留痕）——ready→done。"
 }

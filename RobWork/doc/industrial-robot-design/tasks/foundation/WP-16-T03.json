@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "构建落位：trajectory 占位转真实库＋插件目标",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01"],
   "designRefs": [
@@ -38,5 +38,5 @@
     "二分结构扫描通过（ird_gates 零命中）：计算库零 Widgets、无业务域互链边、无跨单元私有头 include；R-1/R-2/R-3 红线门禁全绿",
     "TRJ-* 域诊断码按 units/trajectory.md 登记表在装配期注册（diagnostics §4.5 协议）；gtest XML＋ird-test-report.json＋构建日志留痕齐全"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §4/§18；前置 WP-16-T01（卡任务）已落盘为事实完成，CORE-T01≙WP-03-T01。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §4/§18；前置 WP-16-T01（卡任务）已落盘为事实完成，CORE-T01≙WP-03-T01。合入收尾（2026-10-12，全库对账批）：实现提交 0df494e7，验收记录 origin/acc/wp-16-t03/1 :: traceability/acceptance/wp-16-t03-20261007.md——ready→done。"
 }

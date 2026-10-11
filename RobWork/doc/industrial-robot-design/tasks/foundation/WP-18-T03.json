@@ -4,7 +4,7 @@
   "unit": "drivetrain",
   "masterWp": "WP-G",
   "title": "实现 DriveTrainMappingEvaluator 唯一实现",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-18-T02", "EV-T10"],
   "requirements": ["DYN-04", "NFR-COR-01"],
   "designRefs": [
@@ -33,5 +33,5 @@
     "传动映射黄金数据（双向效率/反射惯量/摩擦不重复计入）用例通过；常矩阵 C 下与对角传动比等价验证（NFR-COR-01）；C 非常矩阵/病态给诊断并阻止（DT-* 码）",
     "本卡只输出数值不判限位（校验归消费域）；惯量比阈值不内嵌（P-DT-2）；映射核心/工作点统计按卡内拆分为两提交（规模 L）；ird_gates 零命中"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.19 行＋units/drivetrain.md §6/§11/§15；EV-T10≙③端口注册表。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.19 行＋units/drivetrain.md §6/§11/§15；EV-T10≙③端口注册表。合入收尾（2026-10-12，全库对账批）：实现提交 8a911995+e6e67fa5，验收记录 traceability/findings.json（GOV 批等价登记 acc/wp-18-t03/1 fail→acc/wp-18-t03/2 attempt2 pass；验收 .md wp-18-t03-20261007.md 未合入主线，仅存 origin acc/wp-18-t03/1、/2 分支 f39d6baf/d22e6c81）——ready→done。"
 }

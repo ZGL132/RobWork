@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现可行集与淘汰原因输出",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T05"],
   "requirements": ["SEL-06", "EVI-01"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "多工况资格：组合仅在全部启用必验工况通过后进入可行集（EVI-02），任一工况数据不足整体 DataInsufficient 不漏验",
     "选型域 Profile（REQUIREMENTS §8.1 表 4 选型行）必需证据承载齐备；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §10/§16。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §10/§16。合入收尾（2026-10-12，全库对账批）：实现提交 da10b6f2，验收记录 traceability/acceptance/wp-19-t06-20261008.md（载体：验收分支 acc/wp-19-t06/1，本地＋origin 在案）——ready→done。"
 }

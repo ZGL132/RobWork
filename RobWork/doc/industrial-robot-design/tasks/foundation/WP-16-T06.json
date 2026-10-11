@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "实现避障路径搜索接入",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-16-T04", "POL-T07"],
   "requirements": ["TRJ-03"],
   "designRefs": [
@@ -31,5 +31,5 @@
     "碰撞消费 policy 共享评估器（④端口），候选路径碰撞＝该路径淘汰并触发重规划、不判任务不可行（§8.1 C8 作用域）用例通过",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §10/§18；P-TRJ-2（规划器适配归属）裁决前按卡内登记口径实现。POL-T07≙WP-07-T07 共享碰撞评估。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §10/§18；P-TRJ-2（规划器适配归属）裁决前按卡内登记口径实现。POL-T07≙WP-07-T07 共享碰撞评估。合入收尾（2026-10-12，全库对账批）：实现提交 d177e99b，验收记录 origin/acc/wp-16-t06/1 :: traceability/acceptance/wp-16-t06-20261008.md——ready→done。"
 }

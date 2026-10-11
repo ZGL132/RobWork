@@ -4,7 +4,7 @@
   "unit": "workflow",
   "masterWp": "WP-I",
   "title": "实现标题栏/状态栏与恢复横幅",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-22-T02", "UI-T04", "DIAG-T05"],
   "requirements": ["PM-11", "PM-15"],
   "designRefs": [
@@ -34,5 +34,5 @@
     "恢复横幅三场景（未完成保存已忽略/任务已中断/检测到未保存草稿）一句话汇总＋查看详情/恢复草稿/放弃用例通过（PM-15/AT-21）；经统一诊断目录集成",
     "诊断目录/日志容量工程默认（P-DIAG-7）未校准期间按保守默认＋留痕；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.6/§12；UI-T04≙公共状态投影。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §7.6/§12；UI-T04≙公共状态投影。合入收尾（2026-10-12，全库对账批）：实现提交 36d9594e，验收记录 ../findings.json（acc/wp-22-t09/1, attempt 1, verdict pass 等价治理登记；另有 builds/wp-22-t09/ 构建/门禁留痕）——ready→done。"
 }

@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现 OptimizationRunResult 与采用守卫",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-20-T05", "PRJ-T10"],
   "requirements": ["OPT-08"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "\"设为当前方案\"＝project.create-branch＋modeling.apply-robot-design 两步命令组合（经①端口；本单元不注册新命令 token——P-PR-9 规避）：创建方案分支（记录 baseRevisionId 不复制对象）＋新修订＋完整复算提示；基线对象字节不变（AT-12）用例通过",
     "过期基线 StaleRevisionRejected（PRJ-STALE-REVISION-REJECTED）候选保留；撤销/重做由 project 接管（本单元零自建栈）；候选差异预览消费 Model Diff（P-OPT-8 范围外项给警告不虚构）；ird_gates 零命中"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §10/§14；PRJ-T10≙命令服务。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §10/§14；PRJ-T10≙命令服务。合入收尾（2026-10-12，全库对账批）：实现提交 1167079c，验收记录 RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t07-20261008.md（在验收分支 origin/acc/wp-20-t07/1，未合入 redesign-main）——ready→done。"
 }

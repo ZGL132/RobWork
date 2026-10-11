@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现直线传动目录与映射（R2）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T05"],
   "requirements": ["SEL-09-S1"],
   "designRefs": [
@@ -37,5 +37,5 @@
     "直线传动工作点映射经 drivetrain §16.2 扩展端口消费（类型化广义量：位移 m/速度 m/s/加速度 m/s²/力 N）——selection 只消费不自实现直线映射公式（drivetrain 唯一映射实现纪律）；经既有评估器/组合校核接口面消费（R-1/R-2：零 drivetrain include、零映射公式词表，契约测试扫描锁定）",
     "不改变六/七轴全旋转链现有行为（V12-03 收窄——回归用例证明既有旋转链输出逐项不变）；移动关节范围外诊断口径（SEL-09 R1 语义）不因本任务放宽；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）。解冻登记（2026-10-10，GOV-UNFROZEN 治理批——所有者『13 个契约任务解冻』指令）：status blocked→ready＋补齐 ready 必备字段。依据＝①R2 启动登记（REQUIREMENTS v1.17 SEL-09-S1 行『R2 解冻（2026-10-10）』注——R2 内容开发提前启动，交付仍绑 R2/阶段 D 独立验收）；②selection 卡 §17.2 SEL-09-S1 设计面（选型层先行、drivetrain 扩展端口消费、V12-03 收窄）＋§16 WP-19-T12 行解冻启动注；③DTB §2.20 行。dependsOn 按实际协作依赖如实挂＝WP-19-T05（已实现——组合校核与硬筛选为直线传动轴筛选的直接前置）；drivetrain 协作经 §17.2 扩展端口消费不构成契约依赖（interUnit=true＋knownPitfalls 登记 P-SEL-1〔映射批载荷对齐提议契约〕/P-SEL-2〔③端口不落编译边〕）。MDL-12-S1（产品链正式计算）不随动仍 R2——前置本子项交付；阶段 D 启动裁决仍为领取前置。"
+  "note": "DOC-T15 编译（2026-10-06）。解冻登记（2026-10-10，GOV-UNFROZEN 治理批——所有者『13 个契约任务解冻』指令）：status blocked→ready＋补齐 ready 必备字段。依据＝①R2 启动登记（REQUIREMENTS v1.17 SEL-09-S1 行『R2 解冻（2026-10-10）』注——R2 内容开发提前启动，交付仍绑 R2/阶段 D 独立验收）；②selection 卡 §17.2 SEL-09-S1 设计面（选型层先行、drivetrain 扩展端口消费、V12-03 收窄）＋§16 WP-19-T12 行解冻启动注；③DTB §2.20 行。dependsOn 按实际协作依赖如实挂＝WP-19-T05（已实现——组合校核与硬筛选为直线传动轴筛选的直接前置）；drivetrain 协作经 §17.2 扩展端口消费不构成契约依赖（interUnit=true＋knownPitfalls 登记 P-SEL-1〔映射批载荷对齐提议契约〕/P-SEL-2〔③端口不落编译边〕）。MDL-12-S1（产品链正式计算）不随动仍 R2——前置本子项交付；阶段 D 启动裁决仍为领取前置。合入收尾（2026-10-12，全库对账批）：实现提交 7418a067，验收记录 traceability/acceptance/wp-19-t12-20261011.md（载体：验收分支 acc/wp-19-t12/1，本地＋origin 在案）——ready→done。"
 }

@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "构建落位：dynamics 占位转真实库＋插件目标",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["CORE-T01"],
   "requirements": ["NFR-MNT-01"],
   "designRefs": [
@@ -38,5 +38,5 @@
     "二分结构扫描通过（ird_gates 零命中）；DYN-* 域诊断码按 units/dynamics.md 登记表装配期注册",
     "gtest XML＋ird-test-report.json＋构建日志留痕齐全"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §3/§12；前置 WP-17-T01（卡任务）已落盘为事实完成，CORE-T01≙WP-03-T01。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §3/§12；前置 WP-17-T01（卡任务）已落盘为事实完成，CORE-T01≙WP-03-T01。合入收尾（2026-10-12，全库对账批）：实现提交 9b6873a1，验收记录 traceability/acceptance/wp-17-t02-20261006.md（全文在 acc/wp-17-t02/1 分支，记录提交 377664e6；主线在案载体 traceability/findings.json F-657 验收索引）——ready→done。"
 }

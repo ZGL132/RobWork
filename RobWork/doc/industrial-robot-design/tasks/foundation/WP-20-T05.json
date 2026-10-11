@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现 Pareto 非支配与八项指标分层",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-20-T04"],
   "requirements": ["OPT-04", "OPT-07"],
   "designRefs": [
@@ -31,5 +31,5 @@
     "三项静态指标可算（尺寸包络/结构质量/最小关节裕量），其余五项显示\"—\"：不显示为零、不参与 Pareto、不因空判动力学/器件不可行（OPT-07/ERR-01）用例通过",
     "禁止单一加权总分（需求附录 B 裁决排除）；稳定排序输出（rank→目标序→CandidateId 终键）与线程数无关；ird_gates 零命中"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §7/§14。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §7/§14。合入收尾（2026-10-12，全库对账批）：实现提交 e911c630，验收记录 RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t05-20261008.md（在验收分支 origin/acc/wp-20-t05/1，未合入 redesign-main）——ready→done。"
 }

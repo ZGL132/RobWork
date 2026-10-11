@@ -4,7 +4,7 @@
   "unit": "optimization",
   "masterWp": "WP-H",
   "title": "实现预检 Preflight 与基线评估",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-20-T03"],
   "requirements": ["OPT-11"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "Evaluate Baseline：基线候选（空补丁）与候选同管线同基准；基线数据不足不伪造完整比较、评估失败不包装为候选淘汰用例通过",
     "研究配置持久化通道（P-OPT-6）裁决前：会话态＋导出副本承载，不入 .rwdesign；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §6.4/§8.2/§14。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.21 行＋units/optimization.md §6.4/§8.2/§14。合入收尾（2026-10-12，全库对账批）：实现提交 bf85e817，验收记录 RobWork/doc/industrial-robot-design/traceability/acceptance/wp-20-t08-20261009.md（在验收分支 origin/acc/wp-20-t08/1，未合入 redesign-main）——ready→done。"
 }

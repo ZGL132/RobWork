@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "实现正动力学一致性检查",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-17-T03"],
   "requirements": ["DYN-05"],
   "designRefs": [
@@ -30,5 +30,5 @@
     "RobWorkSim 正动力学场景（明确控制输入、初始状态、步长和容差）响应一致性检查与异常检测（DYN-05）用例通过",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §6/§12。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.18 行＋units/dynamics.md §6/§12。合入收尾（2026-10-12，全库对账批）：实现提交 fce2efcc，验收记录 traceability/acceptance/wp-17-t05-20261008.md（全文在 acc/wp-17-t05/1 分支，记录提交 6bd5ea7e；主线在案载体 traceability/findings.json F-677 验收索引）——ready→done。"
 }

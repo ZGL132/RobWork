@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "实现关节空间 PTP 与作业序列路径",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-16-T03", "RT-T09"],
   "requirements": ["TRJ-01"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "路径数据模型与身份绑定（units/trajectory.md §6：snapshotId/sliceId/评估键六要素）与 §7 一致",
     "ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §6/§7/§18。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.17 行＋units/trajectory.md §6/§7/§18。合入收尾（2026-10-12，全库对账批）：实现提交 e02e42cb，验收记录 origin/acc/wp-16-t04/1 :: traceability/acceptance/wp-16-t04-20261007.md——ready→done。"
 }

@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现选型回填命令与合成",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T06", "PRJ-T10"],
   "requirements": ["SEL-10", "MDL-16"],
   "designRefs": [
@@ -31,5 +31,5 @@
     "回填产生新修订并提示实际依赖结果（运动学/动力学/选型/优化指标）需复算；复核完成前不沿用原通过结论（AT-30）用例通过",
     "回填命令 token 语法遵守 project 冻结词形（P-PR-9 裁决前取无点保守形态，与 modeling 卡 D-MDL-6 同案）；ird_gates 零命中"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §12/§16；PRJ-T10≙命令服务落位。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §12/§16；PRJ-T10≙命令服务落位。合入收尾（2026-10-12，全库对账批）：实现提交 4d53d026，验收记录 traceability/acceptance/wp-19-t09-20261009.md（载体：验收分支 acc/wp-19-t09/1，本地＋origin 在案）——ready→done。"
 }

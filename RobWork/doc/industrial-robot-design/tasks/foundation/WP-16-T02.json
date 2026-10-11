@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "冻结 P-06 轨迹碰撞复检协议数值（与需求所有者协同）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [],
   "requirements": ["P-06"],
   "designRefs": [
@@ -47,5 +47,5 @@
     "③DTB：§4.3 O-29 状态行『未冻结』→『已冻结（2026-10-10）』；§2.28 草案行加『已确认（2026-10-10 所有者指令）』注＋本批（FREEZE-P06）批次登记行",
     "④units/trajectory.md :117（TRJ-04 行 P-06 登记）与 :137（附录 C 行）同步『已冻结』注（:1174 复检前置守卫语义随之成立，核对零改动）"
   ],
-  "note": "DOC-T15 编译（2026-10-06）。冻结执行登记（2026-10-10，FREEZE-P06 批——所有者授权装配任务：所有者 2026-10-10 对 DTB §2.28《P-06 建议值草案》回复『确认』，冻结生效条件齐备）：status blocked→ready＋补齐 ready 必备字段（allowedFiles＝本批文档面＋traceability/**、forbiddenFiles＝产品源码树〔零产品源码改动〕、outputs、acceptance＝①数值原样冻结零修改②附录 C P-06 行转已冻结＋冻结数值表＋v1.18 修订记录③DTB O-29/§2.28 双处登记④trajectory 卡 :117/:137 引用行同步、branch、interUnit）。interUnit＝true（横切 REQUIREMENTS/DTB/trajectory 卡/契约面），knownPitfalls 登记 P-TRJ-1（P-06 数值语义陷阱——本卡执行冻结后其『未冻结』半区解除，运行时承载位 EngineeringPolicySet 扩展字段仍待 policy 卡随批，陷阱登记不因本卡撤销）。依赖 WP-16-T07 实现复检（本卡冻结为 T07 解锁前置，随本提交落位）；轨迹卡 §21.2 P-TRJ-1 登记行状态列翻转归该卡增量修订权限，不在本卡 allowedFiles 内。验证＝validate-docs PASS＋validate-task PASS（含本契约与 T07~T16 十份）＋ird_gates 零命中＋trajectory 双测试目标回归全绿（零源码基线）＋双 report 留痕 traceability/gtest-reports/freeze-p06/。"
+  "note": "DOC-T15 编译（2026-10-06）。冻结执行登记（2026-10-10，FREEZE-P06 批——所有者授权装配任务：所有者 2026-10-10 对 DTB §2.28《P-06 建议值草案》回复『确认』，冻结生效条件齐备）：status blocked→ready＋补齐 ready 必备字段（allowedFiles＝本批文档面＋traceability/**、forbiddenFiles＝产品源码树〔零产品源码改动〕、outputs、acceptance＝①数值原样冻结零修改②附录 C P-06 行转已冻结＋冻结数值表＋v1.18 修订记录③DTB O-29/§2.28 双处登记④trajectory 卡 :117/:137 引用行同步、branch、interUnit）。interUnit＝true（横切 REQUIREMENTS/DTB/trajectory 卡/契约面），knownPitfalls 登记 P-TRJ-1（P-06 数值语义陷阱——本卡执行冻结后其『未冻结』半区解除，运行时承载位 EngineeringPolicySet 扩展字段仍待 policy 卡随批，陷阱登记不因本卡撤销）。依赖 WP-16-T07 实现复检（本卡冻结为 T07 解锁前置，随本提交落位）；轨迹卡 §21.2 P-TRJ-1 登记行状态列翻转归该卡增量修订权限，不在本卡 allowedFiles 内。验证＝validate-docs PASS＋validate-task PASS（含本契约与 T07~T16 十份）＋ird_gates 零命中＋trajectory 双测试目标回归全绿（零源码基线）＋双 report 留痕 traceability/gtest-reports/freeze-p06/。合入收尾（2026-10-12，全库对账批）：实现提交 0bfcd43d，验收记录 origin/acc/freeze-p06/1 :: traceability/acceptance/freeze-p06-20261011.md——ready→done。"
 }

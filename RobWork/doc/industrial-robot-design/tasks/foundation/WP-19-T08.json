@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现移动关节范围外诊断",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T04"],
   "requirements": ["SEL-09"],
   "designRefs": [
@@ -32,5 +32,5 @@
     "含移动关节链阻断测试用例通过（与 §2.1 支持矩阵一致；MDL-12-S1/SEL-09-S1 启用前不放开）；ird_gates 零命中",
     "未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §8/§16。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §8/§16。合入收尾（2026-10-12，全库对账批）：实现提交 ddd7bdbc，验收记录 traceability/acceptance/wp-19-t08-20261009.md（载体：验收分支 acc/wp-19-t08/1，本地＋origin 在案）——ready→done。"
 }

@@ -4,7 +4,7 @@
   "unit": "selection",
   "masterWp": "WP-G",
   "title": "实现器件目录包模型与导入校验",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-19-T02", "IO-T03", "IO-T04"],
   "requirements": ["SEL-01", "SEL-02"],
   "designRefs": [
@@ -33,5 +33,5 @@
     "能力曲线分段线性插值、默认禁止外推（SEL-CURVE-EXTRAPOLATION-DENIED）用例通过",
     "文件层＝io（清单核对/路径与预算防护/CSV 通道）、业务层＝selection（字段字典/单位/必填/唯一性/范围/插值语义）分工不越界；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §4/§5/§6/§16；IO-T03/T04≙CSV/JSON 读写器落位。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.20 行＋units/selection.md §4/§5/§6/§16；IO-T03/T04≙CSV/JSON 读写器落位。合入收尾（2026-10-12，全库对账批）：实现提交 48251bc5，验收记录 traceability/acceptance/wp-19-t03-20261007.md（载体：验收分支 acc/wp-19-t03/1，本地＋origin 在案）——ready→done。"
 }

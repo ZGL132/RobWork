@@ -4,7 +4,7 @@
   "unit": "workflow",
   "masterWp": "WP-I",
   "title": "实现命令集注册与工业高频命令",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-22-T03", "WP-22-T04", "WP-22-T05", "WP-22-T06", "WP-22-T07", "WP-22-T08", "WP-22-T09", "UI-T06"],
   "requirements": ["UX-13"],
   "designRefs": [
@@ -35,5 +35,5 @@
     "复位关节不产生修订（KIN-06 会话语义）；全局快捷键经 ui 唯一注册点（SA-16），插件不私占；产生修订的命令经①端口",
     "\"运行碰撞检查\"保持会话级最小语义（O-26 三方契约裁决前，P-WF-3）；报告导出编排 reporting 服务（预览宿主 P-UI-9 缺位如实呈现）；ird_gates 零命中"
   ],
-  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §8/§12；UI-T06≙CommandRegistry。"
+  "note": "DOC-T15 编译（2026-10-06）：DTB §2.23 行＋units/workflow.md §8/§12；UI-T06≙CommandRegistry。合入收尾（2026-10-12，全库对账批）：实现提交 2306bfc4，验收记录 ../findings.json（acc/wp-22-t12/1, attempt 1, verdict pass 等价治理登记）——ready→done。"
 }
