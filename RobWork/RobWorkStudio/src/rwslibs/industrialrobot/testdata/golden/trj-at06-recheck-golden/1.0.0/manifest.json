@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "ird-golden-manifest/1",
+  "datasetId": "trj-at06-recheck-golden",
+  "version": "1.0.0",
+  "kind": "analytic-case",
+  "scenarioCategory": "trj/at06-recheck-counterexamples",
+  "coveredRequirements": [
+    "TRJ-01",
+    "TRJ-02",
+    "TRJ-03",
+    "TRJ-04",
+    "TRJ-05",
+    "TRJ-06"
+  ],
+  "coveredAt": [
+    "AT-06"
+  ],
+  "toleranceProfile": {
+    "id": "trj-at06",
+    "version": "1.0.0"
+  },
+  "inputs": [
+    "inputs/trj-at06-inputs.json"
+  ],
+  "expected": [
+    "expected/trj-at06-expected.json"
+  ],
+  "parameters": {
+    "contract": "AT-06 轨迹链四反例黄金数据（WP-16-T13 主数据载体）——段内碰撞检出（TRJ-04 复检检出＋段内定位）、细分预算耗尽（TRJ-04 R9：DataInsufficient 附实际步长与预算占用，不默认接受）、初始路径碰撞重规划成功（TRJ-03/C8：候选碰撞不判任务不可行）、限制超标定位（TRJ-06/TRJ-05：比较型素材三要素＋段内参数定位）——四反例与 P-06 冻结数值表物化对照（inputs.protocol 八值＝附录 C 冻结表行 1~8，消费测试与产品物化点 makeP06FrozenRecheckParameters 逐字段核对）",
+    "entryFaces": {
+      "recheckCollision": "expected/cases[recheck-collision]——1DOF 杆扫掠与障碍盒（角半径 α＝atan(w/L) 闭式投影）的碰撞参数区间＋P-06 双上界细分账目（层 7/子段 128/检查 255）＋首检出采样定位；运行期真实链路反例归集成 _test（SmoothRecheckTest.RecheckDetectsMidPathCollision，V-14）",
+      "budgetExhausted": "expected/cases[budget-exhausted]——60 rad 大行程纯关节界驱动至 10 层/1024 子段仍 0.05859375 rad＞0.05 rad → DataInsufficient(BudgetExhausted)＋零碰撞查询（不默认接受）；运行期真实链路反例归 SmoothRecheckTest.RecheckBudgetExhaustedDataInsufficient（V-19）",
+      "replanSuccess": "expected/cases[replan-success]——候选直线与 C-space 障碍带交叠区间＋绕行构型闭式 FK 与 C-space 裕量（存在性解析证明）；任务可行词表（候选淘汰不判任务不可行——C8）；种子化 RRT 重规划确定性重放归 SmoothRecheckTest.RecheckCollisionThenReplanSucceeds（V-10）",
+      "limitExceeded": "expected/cases[limit-exceeded]——平滑鼓包 q̃(s)＝0.5s＋0.2sin(πs) 内部极值闭式（s*＝acos(−0.5/(0.2π))/π）→ 越限 0.0176 rad＋比较型三要素（实际/限界/rad）＋段内定位 s*；零裕度边界（严格大于才违例）与近零探针（1e−6 rad 越限仍检出）；运行期真实链路反例归 SmoothRecheckTest.RecheckDetectsLimitViolation（V-15）"
+    },
+    "realBackendNote": "本数据集承载解析面（细分计划/几何投影/极值点——closed-form）；凡需真实 planner/碰撞后端的运行期反例（V-10/V-14/V-19——units/trajectory.md §17.3 清单）已随 T06/T07 在集成 _test 套件以真实 policy 会话（内置 ProximityStrategyRW）与真实 RRT-Connect 执行并通过，本集不重复宣称、不替代送验"
+  },
+  "units": {
+    "angle": "rad",
+    "length": "m",
+    "ratio": "1"
+  },
+  "frames": {
+    "base": "robot-base",
+    "note": "本数据集全部几何量在装置基座系 {B} 表达（Recheck.hpp 代表点集口径——T_world_base 之后；1DOF 杆扫掠角/2R 平面 FK 闭式均以基座原点为极点）；无世界系量，不声明 world。路径参数 s∈[0,1] 为无量纲段内定位键（TRJ-06 定位面），非坐标量"
+  },
+  "referenceSource": {
+    "method": "closed-form",
+    "scope": "P-06 双上界细分计划账目（层数/子段数/检查子段数/实际步长）、障碍盒扫掠角投影（atan 闭式）、线性插值与 C-space 带交叠（代数）、平面 2R 闭式 FK、平滑鼓包内部极值（acos 闭式）、零裕度与近零探针锚点",
+    "independentOfProductionImpl": true,
+    "description": "期望值由本仓库内 node 独立参考实现（generate/make_trj_at06_golden.mjs——units/trajectory.md §11.1/§11.5/§15.6 复检协议与 REQUIREMENTS 附录 C P-06 冻结数值表闭式直算）推导，与产品实现（trajectory/src/Recheck.cpp 等集成链路）零共享代码——独立性由公式来源层面保证（两侧各自对照单元卡与需求原文）；整数计数与浮点解析量分列（计数精确断言、解析量经容差档案 trj-at06@1.0.0 对照）"
+  },
+  "producer": {
+    "softwareVersion": "node-v24.14.1",
+    "algorithmId": "trj-at06-recheck-golden-closed-form",
+    "solverConfig": {
+      "p06": "REQUIREMENTS 附录 C《P-06 冻结数值表》（v1.18，2026-10-10 冻结）行 1~8——八值经 inputs.protocol 声明，消费测试与 makeP06FrozenRecheckParameters 逐字段对照（物化对照锚）"
+    },
+    "seed": null,
+    "threadCount": 1,
+    "generatedAtUtc": "2026-10-11T00:00:00Z"
+  },
+  "edgeCases": {
+    "zeroValue": true,
+    "nearZero": true,
+    "signCancellation": true,
+    "sampleRefs": [
+      "expected/trj-at06-expected.json#cases[budget-exhausted].netDisplacement（正负抵消兼零值——legUp＋legDown＝＋30＋(−30)＝0 rad 恒等式，行程度量 |＋30|＋|−30|＝60 rad 不受抵消掩盖）",
+      "expected/trj-at06-expected.json#cases[budget-exhausted].collisionQueriesExecuted（零值——预算耗尽不执行碰撞查询，R9 不默认接受的账目起点）",
+      "expected/trj-at06-expected.json#cases[recheck-collision].centerAngleDeviation（零值——路径中点采样与障碍区间中心角重合，检出记录零偏差锚点）",
+      "expected/trj-at06-expected.json#cases[limit-exceeded].zeroMarginAnchor.margin（零值——基准路径端点恰在限位上界，裕度精确零；严格大于才违例的边界语义）",
+      "expected/trj-at06-expected.json#cases[limit-exceeded].nearZeroProbe.exceed（近零——限位上界压至峰值下方 1e−6 rad，近零越限量仍必须检出不被容差吞掉）",
+      "expected/trj-at06-expected.json#cases[budget-exhausted].stepOverDefault（近零边际——8.59375e−3 rad 超出默认步长，达预算仍不满足的显式数值面）"
+    ]
+  },
+  "integrity": [
+    {
+      "path": "inputs/trj-at06-inputs.json",
+      "sha256": "a6457d6104cefec3e09c41d9695af3a2c919f80b4546e39f03a8b9102c1c69d7",
+      "sizeBytes": 2648
+    },
+    {
+      "path": "expected/trj-at06-expected.json",
+      "sha256": "7f3c6058adebb55d236593a55b4ea7cc54953bdbe0b9855b8244feb40143dc8b",
+      "sizeBytes": 3335
+    },
+    {
+      "path": "generate/make_trj_at06_golden.mjs",
+      "sha256": "06a10a688b0c18783eecef4c098ca4a2d7f6ebe56d03791d03e3303d106bcb44",
+      "sizeBytes": 14531
+    }
+  ],
+  "generator": {
+    "script": "generate/make_trj_at06_golden.mjs",
+    "invocation": "node make_trj_at06_golden.mjs",
+    "committed": true
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-10-11",
+      "change": "首版：AT-06 轨迹链四反例黄金数据（段内碰撞检出/细分预算耗尽/初始路径碰撞重规划成功/限制超标定位——P-06 冻结数值表物化对照 inputs.protocol 八值；解析面 closed-form 独立参考实现，运行期真实链路反例归集成 _test 不重复宣称）——WP-16-T13 交付物（testdata/golden/trj-* 按 DatasetManifest 登记）",
+      "reReviewedBy": "WP-16-T13 实施会话（验收段独立复核待验收者留痕）",
+      "supersededBy": ""
+    }
+  ]
+}
