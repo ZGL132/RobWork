@@ -19,7 +19,7 @@
     "units/modeling.md#9.7.2",
     "units/ui.md#13",
     "units/requirements.md#9.8",
-    "units/core.md#5.1",
+    "units/core.md#5.1"
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
