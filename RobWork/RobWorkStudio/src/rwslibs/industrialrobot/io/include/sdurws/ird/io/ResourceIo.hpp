@@ -2,9 +2,11 @@
  * @file   ResourceIo.hpp
  * @brief  资源导入服务与外部源检测——ResourceSnapshot/ResourceContentId、
  *         ExternalRefProbe 事实三态、IResourceReader（文件层读取：open/
- *         snapshot/identify/dependencyTree）、IResourceSnapshotter（段②
- *         检测 probe＋段③固化执行 solidifyToStaging）与 IRuntimeResource
- *         Adapter（runtime 资源读取桥——P-RT-6/P-IO-2 裁决落点）。
+ *         snapshot/identify/dependencyTree/openGenericXml——GenericXml 通用
+ *         XML 通道为 io.md §9.6 v0.10 冻结面，WP-13-T17 阶段 D 落位）、
+ *         IResourceSnapshotter（段②检测 probe＋段③固化执行 solidifyToStaging）
+ *         与 IRuntimeResourceAdapter（runtime 资源读取桥——P-RT-6/P-IO-2
+ *         裁决落点）。
  *
  * 设计依据：
  *   - units/io.md §6.1~§6.6（交接总则/URDF·Xacro include 边界/网格规模
@@ -354,6 +356,62 @@ struct ResourceDependencyTree {
 };
 
 // =====================================================================
+// GenericXml 通用 XML 通道值类型（io.md §9.6 v0.10 冻结——WP-13-T17 阶段
+// D 启用随批；MDL-18 .wc.xml 反向导入的读取面）
+// =====================================================================
+
+/**
+ * @brief 通用 XML 元素节点（io.md §9.6 v0.10 原文承载——WP-13-T17 阶段 D
+ *        启用随批冻结的值类型）。
+ *
+ * 语义（冻结口径逐条）：
+ *   - name：元素名**原文**（含命名空间前缀——本通道不用
+ *     XML_ParserCreateNS，前缀拆解不归 io：WorkCell 语义解释归 modeling，
+ *     io 只保真传递文档字面，§9.6 GenericXml 行"WorkCell 语义解释归
+ *     modeling"）。
+ *   - attrs：属性序＝**文档序**（expat 回调天然顺序——冻结行"有损提取
+ *     逐项对照需要"：modeling 按属性出现序对照源文件，重排会破坏逐项
+ *     可观察性）。同文档序纪律，重复属性名不做去重/合并（XML 良构性由
+ *     expat 拦截——重复属性名属良构违例，解析在此前已失败）。
+ *   - children：子元素文档序（递归嵌套）。
+ *   - text：**直接子文本**聚合（expat 字符数据回调按当前元素栈顶聚合；
+ *     不含子孙元素的文本——分层归各层自己的 text）。
+ *
+ * 所有权/生命周期：纯值类型（递归聚合），调用方所有；并发只读安全。
+ */
+struct GenericXmlNode {
+    IoString name;              ///< 元素名原文（含前缀；UTF-8——IoString 纪律）
+    /// 属性表（(名,值) 对；序＝文档序——冻结行语义见类注）
+    std::vector<std::pair<IoString, IoString>> attrs;
+    std::vector<GenericXmlNode> children;   ///< 子元素（文档序；递归）
+    IoString text;              ///< 直接子文本聚合（UTF-8；不含子孙文本）
+};
+
+/**
+ * @brief 通用 XML 解析结果（io.md §9.6 v0.10 原文承载）。
+ *
+ * 字段语义：
+ *   - root：文档根元素（良构 XML 恰一根——expat 保证）。
+ *   - totalBytes：源字节量（预算对账口径——与 snapshot.sizeBytes 同义；
+ *     单位：字节）。
+ *   - digest：内容摘要（**对源文件全字节的 SHA-256**——core ContentDigester
+ *     唯一算法，SA-12；内容身份口径同 snapshot.contentDigest——同文件同
+ *     快照同摘要）。★ 等价调整登记（io.md §9.0"签名均为实现建议……允许
+ *     等价调整、语义不变"条款）：卡面字段类型原文写作 core::ContentDigest，
+ *     该类型名在 core 公共头不存在（摘要值类型唯一＝core::Digest256——
+ *     Digest.hpp §4.2；ResourceSnapshot.contentDigest 同型先例），实现按
+ *     Digest256 落位——算法（ContentDigester）、字节宽度（32）、语义
+ *     （内容身份）与卡面完全一致，零语义变更；偏差随任务留痕上报。
+ *
+ * 所有权/生命周期：纯值类型，调用方所有；并发只读安全。
+ */
+struct GenericXmlDoc {
+    GenericXmlNode root;         ///< 文档根元素（良构恰一根）
+    std::size_t totalBytes = 0;  ///< 源字节量（单位：字节——预算对账口径）
+    core::Digest256 digest{};    ///< 全文件 SHA-256 摘要（core ContentDigester——SA-12）
+};
+
+// =====================================================================
 // IResourceReader（§9.6——无状态文件层读取服务）
 // =====================================================================
 
@@ -509,6 +567,40 @@ public:
                        IBudgetGuard* budget, IoCancelToken* cancel,
                        IoProgressCallback progress = {},
                        BudgetScopeId budgetScope = {}) = 0;
+
+    /**
+     * @brief GenericXml 通用 XML 通道（io.md §9.6 v0.10 冻结签名——R2/
+     *        阶段 D：MDL-18 .wc.xml 反向导入的读取面，WP-13-T17 消费）。
+     *
+     * 契约（io.md §9.6 GenericXml 行冻结口径，逐条）：
+     *   - 安全解析为结构树＋文本＋摘要：防护流程与 snapshot 同序（②
+     *     SafePath 规范化→③SingleFileBytes 预检先拒后开→④打开 SP-6
+     *     复核→⑤流式读取每块预算＋取消检查点→⑥core ContentDigester
+     *     SHA-256→解析产出）；
+     *   - 属性/子元素保文档序（有损提取逐项对照——GenericXmlNode 注）；
+     *   - 解析器自实现（expat 消费点同款——ResourceIo.cpp 内部，§3.3
+     *     登记行），**不引入框架 sdurw_loaders**（DTB §4.6 表行）；
+     *   - WorkCell 语义解释归 modeling（有损提取/不可表达判定）——io
+     *     不因语义不可解释判定工程不可行（§6.6）。
+     *
+     * 错误面（§9.6 错误类型行）：IO-SEC-PATH-\*（族）、IO-SEC-SYMLINK、
+     * IO-SEC-BUDGET-\*（族）、IO-RES-\*（四分类）、IO-FORMAT-XML-SYNTAX
+     * （良构性失败，params 携带行列——同依赖树语法码面）、IO-CANCELLED。
+     *
+     * 线程：并发安全（无状态服务——§9.6 线程约束行）。
+     *
+     * @param path   [in] XML 文档路径（P-1 用户源/P-5 区内/P-6 中转——
+     *               角色契约同 open）
+     * @param spec   [in] 角色与基点（ResourceOpenSpec）
+     * @param budget [in] 预算守卫（null＝自管内部 guard——产品默认规格）
+     * @param cancel [in] 取消令牌（null＝不可取消；检查点＝每读取块）
+     *
+     * @return 成功＝GenericXmlDoc{root 文档序结构树, totalBytes 实读字节,
+     *         digest 全文件 SHA-256}；失败＝上行错误面（无部分产物）
+     */
+    virtual IoResult<GenericXmlDoc>
+        openGenericXml(const std::filesystem::path& path, const ResourceOpenSpec& spec,
+                       IBudgetGuard* budget, IoCancelToken* cancel) = 0;
 };
 
 /// 读取服务指针别名（§9.11 IoRuntime::resourceReader() 访问器产物形态）。

@@ -697,4 +697,148 @@ TEST_F(IoResTest, ProjectResourceRefRoleSnapshotWorksWithBase)
     EXPECT_EQ(r.value.contentDigest, manualDigest(bytes));
 }
 
+// =====================================================================
+// GenericXml 通用 XML 通道（io.md §9.6 v0.10 冻结——WP-13-T17 阶段 D；
+// MDL-18 .wc.xml 反向导入的读取面）
+// =====================================================================
+
+/// 典型 .wc.xml 形态样例（结构树断言载体——元素/属性/嵌套/文本混合；
+/// 含命名空间前缀元素与嵌套子树，覆盖"前缀原文保留＋文档序保真"）。
+const char* kGenericWcXml =
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+    "<WorkCell name=\"demo\">\n"
+    "  <SerialDevice name=\"arm\">\n"
+    "    <Joint name=\"j1\" type=\"Revolute\">\n"
+    "      <Pos>0</Pos><Pos>0</Pos><Pos>0.2</Pos>\n"
+    "      <RPY>0</RPY><RPY>0</RPY><RPY>90</RPY>\n"
+    "    </Joint>\n"
+    "  </SerialDevice>\n"
+    "  <xacro:property name=\"q\" value=\"1\"/>\n"
+    "</WorkCell>\n";
+
+/// GenericXml 通道主契约（WP-13-T17 验收——io 读取面）：结构树文档序
+/// （子元素序＝文档序、属性序＝文档序）、文本聚合到宿主元素、命名空间
+/// 前缀原文保留、totalBytes＝实读字节、digest＝全文件 SHA-256（与
+/// snapshot 通道同算法同口径——内容身份可比）。
+TEST_F(IoResTest, GenericXmlChannelParsesDocumentOrderAndDigest)
+{
+    // 追溯登记（WP-13-T17——io.md §9.6 GenericXml 通道；需求 MDL-18）。
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18", "NFR-SEC-01"},
+                  std::vector<std::string>{"AT-33"});
+    const fs::path p = writeText("wc.xml", kGenericWcXml);
+
+    const IResourceReaderPtr reader = makeResourceReader();
+    ResourceOpenSpec s;
+    s.role = PathRole::UserSource;
+    const IoResult<sdurws::ird::io::GenericXmlDoc> r =
+        reader->openGenericXml(p, s, nullptr, nullptr);
+    ASSERT_TRUE(r) << "GenericXml 通道解析失败: " << r.error.detail;
+
+    // 摘要与字节量（内容身份口径同 snapshot——全文件 SHA-256）。
+    const std::vector<std::uint8_t> raw(kGenericWcXml, kGenericWcXml + std::strlen(kGenericWcXml));
+    EXPECT_EQ(r.value.digest, manualDigest(raw));
+    EXPECT_EQ(r.value.totalBytes, raw.size());
+
+    // 根元素（前缀无——原文"WorkCell"）＋name 属性。
+    EXPECT_EQ(r.value.root.name, "WorkCell");
+    ASSERT_EQ(r.value.root.attrs.size(), 1U);
+    EXPECT_EQ(r.value.root.attrs[0].first, "name");
+    EXPECT_EQ(r.value.root.attrs[0].second, "demo");
+
+    // 子元素文档序：SerialDevice（第 1）→ xacro:property（第 2，前缀原文）。
+    ASSERT_EQ(r.value.root.children.size(), 2U);
+    EXPECT_EQ(r.value.root.children[0].name, "SerialDevice");
+    EXPECT_EQ(r.value.root.children[1].name, "xacro:property");   // 前缀原文——io 不拆解
+
+    // 嵌套子树＋属性文档序（name 先于 type——XML 属性回调序＝文档序）。
+    const auto& device = r.value.root.children[0];
+    // 元素的直接子文本只含标签间缩进空白（子元素标签前后的换行/空格——
+    // 聚合语义"直接子文本"如实承载空白；语义消费方按需 trim）。
+    const auto allWhitespace = [](const std::string& t) {
+        for (const char c : t) {
+            if (c != ' ' && c != '\t' && c != '\r' && c != '\n') { return false; }
+        }
+        return true;
+    };
+    EXPECT_TRUE(allWhitespace(device.text)) << "SerialDevice 直接子文本应仅含缩进空白";
+    ASSERT_EQ(device.children.size(), 1U);
+    const auto& joint = device.children[0];
+    EXPECT_EQ(joint.name, "Joint");
+    ASSERT_EQ(joint.attrs.size(), 2U);
+    EXPECT_EQ(joint.attrs[0].first, "name");
+    EXPECT_EQ(joint.attrs[0].second, "j1");
+    EXPECT_EQ(joint.attrs[1].first, "type");
+    EXPECT_EQ(joint.attrs[1].second, "Revolute");
+
+    // 直接子文本聚合（空白缩进进宿主 text——语义消费方按需 trim）；
+    // Pos/RPY 文本各归其元素（分层——不混入 Joint 的 text）。
+    ASSERT_EQ(joint.children.size(), 6U);
+    EXPECT_EQ(joint.children[0].name, "Pos");
+    EXPECT_EQ(joint.children[0].text, "0");
+    EXPECT_EQ(joint.children[2].name, "Pos");
+    EXPECT_EQ(joint.children[2].text, "0.2");
+    EXPECT_EQ(joint.children[5].name, "RPY");
+    EXPECT_EQ(joint.children[5].text, "90");
+}
+
+/// GenericXml 通道良构性失败 → IO-FORMAT-XML-SYNTAX（params 携带行列——
+/// 同依赖树语法码面；无部分产物）。
+TEST_F(IoResTest, GenericXmlChannelMalformedReportsSyntaxWithLocation)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18"}, std::vector<std::string>{});
+    const fs::path p = writeText("bad.xml", "<WorkCell>\n  <Device>\n</WorkCell>\n");
+
+    const IResourceReaderPtr reader = makeResourceReader();
+    ResourceOpenSpec s;
+    s.role = PathRole::UserSource;
+    const IoResult<sdurws::ird::io::GenericXmlDoc> r =
+        reader->openGenericXml(p, s, nullptr, nullptr);
+    ASSERT_FALSE(r) << "良构违例必须拒绝（IO-FORMAT-XML-SYNTAX）";
+    EXPECT_EQ(r.error.code, IoErrorCode::FormatXmlSyntax);
+    EXPECT_FALSE(paramOf(r.error, "line").empty());     // 行列定位 params（解析器行列）
+    EXPECT_FALSE(paramOf(r.error, "column").empty());
+}
+
+/// GenericXml 通道错误面传递：P-1 目标缺失 → IO-RES-NOT-FOUND（§9.6 错误
+/// 类型行——通道复用资源读取防护核，环境错误四分类同源）。
+TEST_F(IoResTest, GenericXmlChannelMissingSourceIsNotFound)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01"}, std::vector<std::string>{});
+    const IResourceReaderPtr reader = makeResourceReader();
+    ResourceOpenSpec s;
+    s.role = PathRole::UserSource;
+    const IoResult<sdurws::ird::io::GenericXmlDoc> r =
+        reader->openGenericXml(dir / "no-such.wc.xml", s, nullptr, nullptr);
+    ASSERT_FALSE(r);
+    EXPECT_EQ(r.error.code, IoErrorCode::ResNotFound);
+}
+
+/// GenericXml 通道协作取消：取消令牌命中 → IO-CANCELLED（§9.6 取消行为
+/// 行——流读取每块检查点；取消是状态非错误，UX-03）。
+///
+/// 预算面说明（如实登记）：GenericXml 冻结签名无 budgetScope 尾参（与
+/// open 同形态——显式 guard 下自开产品默认子 scope），测试面无外部收紧
+/// 通道；SingleFileBytes/TotalBytes 预算入账在实现内每块执行（与 snapshot
+/// 同一 BudgetScopeSession 防护核），其超限拒绝面由 snapshot 通道预算
+/// 用例与 BudgetTest 承载同一核——本通道不重复造超限用例。
+TEST_F(IoResTest, GenericXmlChannelCancelReturnsCancelledState)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"NFR-SEC-01", "MDL-18"},
+                  std::vector<std::string>{});
+    const fs::path p = writeText("wc.xml", kGenericWcXml);
+
+    struct Cancelled final : sdurws::ird::io::IoCancelToken {
+        bool isCancelled() const override { return true; }
+    };
+    Cancelled token;
+
+    const IResourceReaderPtr reader = makeResourceReader();
+    ResourceOpenSpec s;
+    s.role = PathRole::UserSource;
+    const IoResult<sdurws::ird::io::GenericXmlDoc> r =
+        reader->openGenericXml(p, s, nullptr, &token);
+    ASSERT_FALSE(r) << "取消命中必须停止读取（协作式检查点——§4.4）";
+    EXPECT_EQ(r.error.code, IoErrorCode::Cancelled);
+}
+
 } // namespace

@@ -1,10 +1,13 @@
 /**
  * @file   ResourceIo.cpp
  * @brief  资源导入服务实现——IResourceReader（open/snapshot/identify/
- *         dependencyTree）：SafePath 规范化→预算预检→Win32 打开（reparse
- *         拒绝＋final-path 复核）→流式读取（每块预算/取消检查点）→SHA-256
- *         摘要（core ContentDigester）→快照产出；XML 依赖树经 expat
- *         （P-IO-3 冻结选型）抽取 include/mesh 边并执行循环/深度/缺失检测。
+ *         dependencyTree/openGenericXml）：SafePath 规范化→预算预检→Win32
+ *         打开（reparse 拒绝＋final-path 复核）→流式读取（每块预算/取消
+ *         检查点）→SHA-256 摘要（core ContentDigester）→快照产出；XML
+ *         依赖树经 expat（P-IO-3 冻结选型）抽取 include/mesh 边并执行
+ *         循环/深度/缺失检测；GenericXml 通用 XML 通道（io.md §9.6 v0.10
+ *         冻结——WP-13-T17 阶段 D）经 expat 自实现文档序结构树解析，
+ *         不引入框架 sdurw_loaders（DTB §4.6 表行）。
  *
  * 设计依据：
  *   - units/io.md §4.1~§4.5（角色/规范化/四分类/防护流程②→⑦）、§6.1~
@@ -616,6 +619,103 @@ XmlDeps parseXmlDeps(const std::uint8_t* data, std::size_t n)
 }
 
 // ---------------------------------------------------------------------
+// GenericXml 结构树解析（io.md §9.6 v0.10 冻结通道的实现核——expat 消费点
+// 同款自实现，不引入 sdurw_loaders——DTB §4.6；WP-13-T17 阶段 D）
+// ---------------------------------------------------------------------
+
+/// 结构树解析会话（expat 回调用户数据——下标路径维护文档序结构）。
+struct GenericXmlSession {
+    GenericXmlDoc doc;              ///< 产出容器（root＝文档根元素本身）
+    /// 当前开元素的**下标路径**（自 root 的 children 起——每层为该层元素
+    /// 在其父 children 容器中的下标；空路径＝当前开元素就是 root）。
+    /// 为什么不用元素指针栈：children 为冻结的 std::vector 类型，
+    /// push_back 扩容重分配会使指向既有节点的指针全部失效（悬垂 UB）；
+    /// 下标路径寻址每次 O(深度)——深度与文档规模均受预算有界（io §4.4
+    /// 已入账），总成本 O(元素数×深度) 可接受。
+    std::vector<std::size_t> path;
+    bool rootSeen = false;          ///< 首个起元素已消费（填 root 本身——恰一根由 expat 良构保证）
+    bool parseError = false;        ///< expat 良构性失败（→IO-FORMAT-XML-SYNTAX）
+    int errorLine = 0;              ///< 解析器定位行（1 起）
+    int errorColumn = 0;            ///< 解析器定位列（1 起）
+    std::string errorMessage;       ///< 解析器报错文本（detail 用）
+
+    /// 按下标路径寻址当前开元素（path 空＝root 自身）。
+    GenericXmlNode* current()
+    {
+        GenericXmlNode* node = &doc.root;
+        for (const std::size_t idx : path) {
+            node = &node->children[idx];
+        }
+        return node;
+    }
+};
+
+/// 起元素回调：首个元素填 root 本身；其余挂当前层末尾并压路径；属性按
+/// 回调序＝文档序记录。
+void XMLCALL genericOnStart(void* userData, const XML_Char* name, const XML_Char** atts)
+{
+    GenericXmlSession* s = static_cast<GenericXmlSession*>(userData);
+    GenericXmlNode* node = nullptr;
+    if (!s->rootSeen) {
+        s->rootSeen = true;                          // 文档根（良构 XML 恰一根）
+        node = &s->doc.root;                         // path 保持空——current() 即 root
+    } else {
+        GenericXmlNode* parent = s->current();
+        parent->children.emplace_back();             // 新节点入父容器（文档序追加）
+        s->path.push_back(parent->children.size() - 1);
+        node = s->current();                         // 重新寻址（前次引用已因扩容失效）
+    }
+    node->name = name;                               // 元素名原文（含前缀——io 保真不拆解）
+    // 属性序＝expat 回调序＝文档序（冻结行"有损提取逐项对照需要"）。
+    for (const XML_Char** a = atts; *a != nullptr; a += 2) {
+        node->attrs.emplace_back(a[0], a[1] != nullptr ? a[1] : "");
+    }
+}
+
+/// 终元素回调：弹路径（root 关闭时 path 已空——良构由 expat 拦截，纵深防御）。
+void XMLCALL genericOnEnd(void* userData, const XML_Char* /*name*/)
+{
+    GenericXmlSession* s = static_cast<GenericXmlSession*>(userData);
+    if (!s->path.empty()) {
+        s->path.pop_back();
+    }
+}
+
+/// 字符数据回调：聚合到当前栈顶元素的直接文本（分层——子孙文本归子孙节点）。
+void XMLCALL genericOnText(void* userData, const XML_Char* text, int len)
+{
+    GenericXmlSession* s = static_cast<GenericXmlSession*>(userData);
+    if (text != nullptr && len > 0) {
+        s->current()->text.append(text, static_cast<std::size_t>(len));
+    }
+}
+
+/// 内存全量解析为结构树（良构性失败→parseError＋行列——语法码面）。
+GenericXmlSession parseGenericXml(const std::uint8_t* data, std::size_t n)
+{
+    GenericXmlSession s;
+    XML_Parser parser = XML_ParserCreate(nullptr);
+    if (parser == nullptr) {
+        s.parseError = true;
+        s.errorMessage = "expat parser 创建失败";
+        return s;
+    }
+    XML_SetUserData(parser, &s);
+    XML_SetElementHandler(parser, genericOnStart, genericOnEnd);
+    XML_SetCharacterDataHandler(parser, genericOnText);
+    const XML_Status st = XML_Parse(parser, reinterpret_cast<const char*>(data),
+                                    static_cast<int>(n), 1);
+    if (st == XML_STATUS_ERROR) {
+        s.parseError = true;
+        s.errorLine = static_cast<int>(XML_GetCurrentLineNumber(parser));
+        s.errorColumn = static_cast<int>(XML_GetCurrentColumnNumber(parser));
+        s.errorMessage = XML_ErrorString(XML_GetErrorCode(parser));
+    }
+    XML_ParserFree(parser);
+    return s;
+}
+
+// ---------------------------------------------------------------------
 // 文本依赖抽取（OBJ mtllib→Material、MTL map_Kd→Texture——§6.5 边行）
 // ---------------------------------------------------------------------
 
@@ -959,6 +1059,115 @@ public:
             return out;
         }
         out.error = makeMeshUnknown(path, head, headLen);
+        return out;
+    }
+
+    // ---- openGenericXml（io.md §9.6 v0.10 冻结签名——GenericXml 通道） ----
+    // 防护流程与 snapshot 同序（②规范化→③预检→④打开 SP-6→⑤流式读→⑥
+    // 摘要），⑦为结构树解析（expat 自实现——GenericXml 通道实现核）。
+    // 本通道无网格族（.wc.xml 等 XML 文档）——无网格规模护栏分支。
+    IoResult<GenericXmlDoc> openGenericXml(const std::filesystem::path& path,
+                                           const ResourceOpenSpec& spec,
+                                           IBudgetGuard* budget,
+                                           IoCancelToken* cancel) override
+    {
+        IoResult<GenericXmlDoc> out;
+
+        // ①调用方契约检查：资源读取通道只有 P-1/P-5/P-6（ResourceOpenSpec 契约）。
+        if (!isResourceRole(spec.role)) {
+            out.error = internalError("openGenericXml 角色非法（资源读取仅 P-1/P-5/P-6）");
+            return out;
+        }
+        // ②SafePath 规范化（P-1 存在性→IO-RES-NOT-FOUND——§4.2.5 分类一）。
+        const IoResult<NormalizedPath> norm = normalizeForSpec(path, spec);
+        if (!norm) {
+            out.error = norm.error;
+            return out;
+        }
+        // 预算会话（budget 空＝自管内部 guard——冻结签名无 budgetScope 尾参，
+        // 自开产品默认子 scope，§9.3 同款；调用方 scope 共享经显式 guard 传入）。
+        BudgetScopeSession session;
+        if (IoResult<void> r = session.enter(budget, BudgetScopeId{}); !r) {
+            out.error = r.error;
+            return out;
+        }
+        if (checkCancelled(cancel, out.error)) {
+            return out;
+        }
+        // ③SingleFileBytes 预检（stat 大小先拒后开——§4.4"③在④前"）。
+        if (norm.value.fileSize.has_value()) {
+            if (IoResult<void> r = session.charge(BudgetDimension::SingleFileBytes,
+                                                  *norm.value.fileSize); !r) {
+                out.error = r.error;
+                return out;
+            }
+        }
+        // ④打开（reparse/final-path 复核随角色——SP-4/SP-6）。
+        IoResult<std::unique_ptr<ResourceStreamImpl>> opened =
+            openNormalized(norm.value.native, spec.role, norm.value.equivKey);
+        if (!opened) {
+            out.error = opened.error;
+            return out;
+        }
+        ResourceStreamImpl* impl = opened.value.get();
+
+        // ⑤⑥流式读取＋摘要（每块：取消/TotalBytes 合并检查点——§4.4⑤"一次
+        // 分支两查"；全字节留驻内存供⑦解析——字节量已过预算，与输入同阶）。
+        core::ContentDigester digester;
+        std::vector<std::uint8_t> bytes;
+        bytes.reserve(static_cast<std::size_t>(std::min<std::uint64_t>(
+            impl->sizeBytes + 1, 1ull << 30)));     // 预留按 stat 大小（封顶 1 GiB 防谎报巨预留）
+        std::vector<std::uint8_t> block(kResourceReadBlockBytes);
+        std::uint64_t totalRead = 0;
+        for (;;) {
+            if (checkCancelled(cancel, out.error)) {
+                return out;
+            }
+            IoResult<std::size_t> r = rawRead(impl->handle, impl->finalPath, block.data(),
+                                              block.size());
+            if (!r) {
+                out.error = r.error;
+                return out;
+            }
+            if (r.value == 0) {
+                break;                              // EOF
+            }
+            if (IoResult<void> c = session.charge(BudgetDimension::TotalBytes, r.value); !c) {
+                out.error = c.error;
+                return out;
+            }
+            digester.update(block.data(), r.value); // ⑥SHA-256（SA-12 唯一算法）
+            bytes.insert(bytes.end(), block.data(), block.data() + r.value);
+            totalRead += r.value;
+        }
+
+        // ⑦结构树解析（良构性失败→IO-FORMAT-XML-SYNTAX——params 携带行列，
+        // 同依赖树语法码面；解析失败＝无部分产物——IoResult 契约）。
+        GenericXmlSession parsed = parseGenericXml(bytes.data(), bytes.size());
+        if (parsed.parseError) {
+            out.error.code = IoErrorCode::FormatXmlSyntax;
+            out.error.params.emplace_back("line", std::to_string(parsed.errorLine));
+            out.error.params.emplace_back("column", std::to_string(parsed.errorColumn));
+            out.error.detail = "XML 良构性解析失败（GenericXml 通道——expat）: "
+                               + parsed.errorMessage;
+            return out;
+        }
+        if (!parsed.rootSeen) {
+            // 空文档（无任何元素）——XML 良构性要求恰一根（expat 对零元素
+            // 文档判 not well-formed，此为纵深防御分支）。
+            out.error.code = IoErrorCode::FormatXmlSyntax;
+            out.error.params.emplace_back("line", "1");
+            out.error.params.emplace_back("column", "1");
+            out.error.detail = "XML 文档无根元素（GenericXml 通道——恰一根违例）";
+            return out;
+        }
+        if (IoResult<void> r = session.leave(); !r) {
+            out.error = r.error;                    // 内部根 scope 关闭不可失败——防御
+            return out;
+        }
+        out.value.root = std::move(parsed.doc.root);  // 结构树移动转移（递归值类型逐层 O(n)）
+        out.value.totalBytes = totalRead;
+        out.value.digest = digester.finalize();
         return out;
     }
 

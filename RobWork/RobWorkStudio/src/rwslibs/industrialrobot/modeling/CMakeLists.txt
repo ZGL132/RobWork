@@ -160,6 +160,7 @@ add_library(sdurws_ird_modeling STATIC
     src/Codec.cpp
     src/PropertyEstimation.cpp
     src/Import.cpp
+    src/WorkCellReverseImport.cpp  # WP-13-T17——WorkCell 反向导入提取引擎（MDL-18/AT-33 R2；mapWorkCellXml 委托点）
     src/XacroExpand.cpp
     src/Template.cpp
     src/StructureEdit.cpp   # UI-T47——关节链结构编辑原语（§5.2 v0.28 四操作）
