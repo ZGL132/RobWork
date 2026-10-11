@@ -143,10 +143,14 @@ if(TARGET sdurw_kinematics)
                                #   构造面〔插值帧/样本表副本/段表产物〕＋
                                #   smooth/recheck/timeParameterize 复用——
                                #   集成条件，见上）
-        src/ProcessSpeed.cpp)  # 工艺速度约束校验（指定段 TCP 速度受限/恒
+        src/ProcessSpeed.cpp   # 工艺速度约束校验（指定段 TCP 速度受限/恒
                                #   定——TRJ-08-S2/WP-16-T15；经 ITimeCurve::
                                #   sampleAt 消费 Q 构造面＋FK 端口——集成条
                                #   件，见上）
+        src/ContinuousProcess.cpp)  # 连续工艺段边界行为校验（段间速度连续
+                               #   ＋驻留/不停驻切换明确断言——TRJ-08-S3/
+                               #   WP-16-T16；经 ITimeCurve::sampleAt 消费
+                               #   Q 构造面——集成条件，见上）
 endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
@@ -456,13 +460,21 @@ if(TARGET sdurw_kinematics)
                                         #   ＋复检强制边〕/标准导出黄金布局
                                         #   ＋读回往返＋确定性＋失败保留先前
                                         #   输出＋AT-04 零修订素材族）
-        test/ProcessSpeedTest.cpp)      # WP-16-T15：TRJ-08-S2（匀速/正弦/
+        test/ProcessSpeedTest.cpp       # WP-16-T15：TRJ-08-S2（匀速/正弦/
                                         #   静止解析黄金算例＋受限满足断言/
                                         #   超限比较型素材＋恒定带满足/越带
                                         #   诊断＋驻留口径＋端口 PortError/
                                         #   Canceled 分流＋取消＋违约族＋空
                                         #   段合法＋确定性＋多段观测/FK 直
                                         #   穿计数——Q 构造面，集成条件，同上）
+        test/ContinuousProcessTest.cpp) # WP-16-T16：TRJ-08-S3（连续切换/驻
+                                        #   留切换黄金断言＋隐式停驻反例〔真
+                                        #   实折返管线＋替身〕＋速度不连续反
+                                        #   例〔C¹ 破缺替身〕＋真实管线三段
+                                        #   混合序列＋取消＋违约族＋空边界合
+                                        #   法＋确定性＋ContinuousProcess 段
+                                        #   结构守卫——Q 构造面，集成条件，
+                                        #   同上）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
@@ -623,6 +635,16 @@ if(TARGET sdurw_kinematics)
                                         #   find）＋m/s 单位环境面＋违约 token
                                         #   前缀族＋v3 词表消费序（调用 check-
                                         #   ProcessSpeed 库符号——集成条件同上）
+    target_sources(sdurws_ird_trajectory_contract_test PRIVATE
+        contract_test/ContinuousProcessContractTest.cpp)  # WP-16-T16：TRJ-
+                                        #   08-S3 契约面——S3 启用后 TimedSample/
+                                        #   SegmentConstraint 本体零扩展守护
+                                        #   （SFINAE 编译期）＋SegmentSpaceType
+                                        #   三值词表消费＋违例码复用元数据（真实
+                                        #   StableCodeRegistry find）＋rad/s 单
+                                        #   位环境面＋违约 token 前缀族＋v4 词表
+                                        #   消费序（调用 checkProcessBoundaries
+                                        #   库符号——集成条件同上）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_contract_test PRIVATE cxx_std_17)

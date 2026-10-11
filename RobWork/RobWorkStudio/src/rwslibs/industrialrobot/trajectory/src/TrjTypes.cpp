@@ -38,7 +38,12 @@ void validateTrajectorySegment(const TrajectorySegment& segment)
         // 校验 2：双域互斥——JointLinear 段必带 q 不带 target，CartesianLine
         // 段必带 target 不带 q。§6.2"关节空间或笛卡尔空间二选一（variant
         // 承载；同一路点不得双域同时有效）"；域缺失同样违约（段类型已
-        // 声明，路点必须落到该域）。
+        // 声明，路点必须落到该域）。WP-16-T16 批（TRJ-08-S3）第三分支：
+        // ContinuousProcess 段要求**同段域一致**（全部 q 或全部 target——
+        // 连续工艺段是工艺语义标记而非第三种几何构造器，几何域由调用方
+        // 的几何求值器决定；混带/缺失＝段级 variant 违约，与既有两值同
+        // 源纪律）。分支穷举三词表值（无 default——词表扩值时此处编译
+        // 期不可达分支显性化，review 可见点）。
         const bool hasQ = wp.q.has_value();
         const bool hasTarget = wp.target.has_value();
         if (segment.spaceType == SegmentSpaceType::JointLinear) {
@@ -49,13 +54,32 @@ void validateTrajectorySegment(const TrajectorySegment& segment)
                         + std::to_string(i) + "：q=" + (hasQ ? "有" : "无")
                         + "，target=" + (hasTarget ? "有" : "无") + "）");
             }
-        } else {  // SegmentSpaceType::CartesianLine
+        } else if (segment.spaceType == SegmentSpaceType::CartesianLine) {
             if (!hasTarget || hasQ) {
                 throw TrajectoryError(
                     "trajectory/segment/domain-mismatch",
                     "CartesianLine 段路点须携带 target 且不携带 q（路点下标 "
                         + std::to_string(i) + "：q=" + (hasQ ? "有" : "无")
                         + "，target=" + (hasTarget ? "有" : "无") + "）");
+            }
+        } else {  // SegmentSpaceType::ContinuousProcess（词表第三值——TRJ-08-S3）
+            // 域一致性的锚＝首路点（i==0 已入循环——以"路点自身与其余
+            // 路点"的一致性表达：任一路点与其他路点域不同即混带。实现
+            // 上按"本段内全部路点同域"判——用首路点作参照，循环内逐点
+            // 对照（首点与自身对照恒真，零特判）。
+            const Waypoint& first = segment.waypoints.front();
+            const bool domainIsJoint = first.q.has_value();
+            const bool pointMatchesDomain =
+                domainIsJoint ? (hasQ && !hasTarget) : (hasTarget && !hasQ);
+            if (!pointMatchesDomain) {
+                throw TrajectoryError(
+                    "trajectory/segment/domain-mismatch",
+                    "ContinuousProcess 段路点域须同段一致（全部 q 或全部 "
+                        "target，不得混带或缺失；路点下标 "
+                        + std::to_string(i) + "：q=" + (hasQ ? "有" : "无")
+                        + "，target=" + (hasTarget ? "有" : "无")
+                        + "，段域=" + (domainIsJoint ? "关节" : "笛卡尔")
+                        + "）");
             }
         }
 

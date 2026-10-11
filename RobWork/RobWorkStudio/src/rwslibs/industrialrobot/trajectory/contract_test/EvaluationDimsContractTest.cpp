@@ -28,9 +28,9 @@
  * BuildGraphContractTest 同款基础设施（IRD_TRAJECTORY_UNIT_ROOT 注入源
  * 码树根，两模式皆可定位源码树）。
  *
- * 扫描口径说明（为什么不锁运动律 token 词形）：本头十词表值（payload
- * kindToken v3/v2/v1＋七 itemId——v3 递进批新增 v3 token 与工艺速度
- * 项）的**判定/注册语义**落在本头单点，字面量在产品面代码中出现第二次
+ * 扫描口径说明（为什么不锁运动律 token 词形）：本头十二词表值（payload
+ * kindToken v4/v3/v2/v1＋八 itemId——v4 递进批新增 v4 token 与连续工艺
+ * 边界项）的**判定/注册语义**落在本头单点，字面量在产品面代码中出现第二次
  * 即第二判定面（漂移通道）。运动律 token 的词表定义单点在 PlanConfig.
  * hpp（既有 T03/T08/T14 验收面），src/Playback.cpp 与 TimeParam.cpp 错
  * 误文案中的词形引用是文案呈现而非判定逻辑（不构成第二词表副本），故
@@ -177,11 +177,12 @@ std::string stripComments(const std::string& src)
 }
 
 /// 唯一书写点扫描的对象集（词表值字面量——各应在产品面代码中恰出现 1
-/// 次，且所在文件均为 EvaluationDims.hpp；行序无语义，仅清单。WP-16-T15
-/// 批递进：v3 token 为当前产出值、v2/v1 为历史已知值常量——三词形各恰
-/// 一处；工艺速度项为 v3 Profile 新增行）。
+/// 次，且所在文件均为 EvaluationDims.hpp；行序无语义，仅清单。WP-16-T16
+/// 批递进：v4 token 为当前产出值、v3/v2/v1 为历史已知值常量——四词形各
+/// 恰一处；连续工艺边界项为 v4 Profile 新增行）。
 constexpr const char* kSingleWriteSiteLiterals[] = {
-    "trj.sequence-plan.v3",           // 载荷 kindToken 当前产出（§6.6.1 二次递进）
+    "trj.sequence-plan.v4",           // 载荷 kindToken 当前产出（§6.6.1 三次递进）
+    "trj.sequence-plan.v3",           // 载荷 kindToken 历史已知值（WP-16-T16 批表尾追加）
     "trj.sequence-plan.v2",           // 载荷 kindToken 历史已知值（WP-16-T15 批表尾追加）
     "trj.sequence-plan.v1",           // 载荷 kindToken 历史已知值（PA-2）
     "trj.path-and-time-record",       // Profile v1 行 1（§13.3）
@@ -191,6 +192,7 @@ constexpr const char* kSingleWriteSiteLiterals[] = {
     "trj.animation-data",             // Profile v1 行 5
     "trj.jerk-limit-record",          // Profile v2 行 6（§12.7——TRJ-08-S1）
     "trj.process-speed-record",       // Profile v3 行 7（§12.7 点名词形族——TRJ-08-S2）
+    "trj.continuous-process-boundary",// Profile v4 行 8（§12.7 点名词形族——TRJ-08-S3）
 };
 
 /// 唯一书写点常量所在的头文件名（出现处断言的目标文件——文件名级断言
@@ -296,7 +298,19 @@ TEST(TrjEvaluationDimsContract, InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC
             << "v3 清单内项未过注册判定: " << item.itemId;
     }
 
-    // payload kindToken 词形与词表锚（当前产出值 v3——历史 v2/v1 词形经
+    // v4 递进集合同面钉扎（WP-16-T16 批——TRJ-08-S3 启用的词形/判定面/
+    // 集合封闭性；连续工艺边界项词形消费是本批 acceptance 2 的交付面）。
+    const std::array<trj::TrjEvidenceItemSpec, 8> itemsV4 =
+        trj::trjProfileV4Items();
+    ASSERT_EQ(itemsV4.size(), 8U);
+    for (const trj::TrjEvidenceItemSpec& item : itemsV4) {
+        EXPECT_TRUE(std::regex_match(std::string(item.itemId), itemIdShape))
+            << "v4 itemId 词形违约: " << item.itemId;
+        EXPECT_TRUE(trj::isTrjProfileV4ItemId(item.itemId))
+            << "v4 清单内项未过注册判定: " << item.itemId;
+    }
+
+    // payload kindToken 词形与词表锚（当前产出值 v4——历史 v3/v2/v1 词形经
     // kTrjPayloadKindTokenV2/V1 常量同面可读；词表只增不删）。
     EXPECT_TRUE(std::regex_match(std::string(trj::kTrjPayloadKindToken),
                                  kindTokenShape))
@@ -307,12 +321,17 @@ TEST(TrjEvaluationDimsContract, InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC
     EXPECT_TRUE(std::regex_match(std::string(trj::kTrjPayloadKindTokenV2),
                                  kindTokenShape))
         << "历史 kindToken 词形违约: " << trj::kTrjPayloadKindTokenV2;
-    EXPECT_EQ(trj::kTrjPayloadKindToken, "trj.sequence-plan.v3");
+    EXPECT_TRUE(std::regex_match(std::string(trj::kTrjPayloadKindTokenV3),
+                                 kindTokenShape))
+        << "历史 kindToken 词形违约: " << trj::kTrjPayloadKindTokenV3;
+    EXPECT_EQ(trj::kTrjPayloadKindToken, "trj.sequence-plan.v4");
     EXPECT_EQ(trj::kTrjPayloadKindTokenV1, "trj.sequence-plan.v1");
     EXPECT_EQ(trj::kTrjPayloadKindTokenV2, "trj.sequence-plan.v2");
+    EXPECT_EQ(trj::kTrjPayloadKindTokenV3, "trj.sequence-plan.v3");
     EXPECT_TRUE(trj::isKnownTrjPayloadKindToken(trj::kTrjPayloadKindToken));
     EXPECT_TRUE(trj::isKnownTrjPayloadKindToken(trj::kTrjPayloadKindTokenV1));
     EXPECT_TRUE(trj::isKnownTrjPayloadKindToken(trj::kTrjPayloadKindTokenV2));
+    EXPECT_TRUE(trj::isKnownTrjPayloadKindToken(trj::kTrjPayloadKindTokenV3));
 
     // Profile 标识词形（§13.3 profileId="trj"——单段小写）。
     EXPECT_EQ(trj::kTrjProfileId, "trj");
@@ -363,6 +382,10 @@ TEST(TrjEvaluationDimsContract, InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC
             // v1 清单不含该值（WP-16-T15 批表尾追加，v3 递进行承载）——
             // 同上全值覆盖完备性。
             break;
+        case trj::TrjEvidenceItemApplicability::ContinuousProcessSegment:
+            // v1 清单不含该值（WP-16-T16 批表尾追加，v4 递进行承载）——
+            // 同上全值覆盖完备性。
+            break;
         }
     }
     EXPECT_TRUE(sawRequired);
@@ -391,4 +414,16 @@ TEST(TrjEvaluationDimsContract, InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC
         }
     }
     EXPECT_TRUE(sawProcessSpeedConstrainedSegment);
+    // 新增条件值经 v4 清单真实承载（递进同批的机器断言——不只是枚举值
+    // 存在，而是有清单行消费它）。
+    bool sawContinuousProcessSegment = false;
+    for (const trj::TrjEvidenceItemSpec& item : itemsV4) {
+        if (item.applicability
+            == trj::TrjEvidenceItemApplicability::ContinuousProcessSegment) {
+            EXPECT_EQ(item.itemId,
+                      trj::kTrjItemIdContinuousProcessBoundary);
+            sawContinuousProcessSegment = true;
+        }
+    }
+    EXPECT_TRUE(sawContinuousProcessSegment);
 }
