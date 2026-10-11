@@ -194,12 +194,19 @@ void validateTrajectoryPlanConfiguration(const TrajectoryPlanConfiguration& conf
                                   + std::to_string(config.smoothToleranceTcp));
     }
 
-    // 10：运动律封闭词表（§5.5"封闭词表，当前唯一值＝唯一实现"；新增值
-    // 走卡面增量修订——代码面拒绝未知 token 即词表守卫）。
-    if (config.timeParamMethod != kTimeParamMethodQuinticSplineC2) {
+    // 10：运动律封闭词表（§5.5"封闭词表"；新增值走卡面增量修订——代码面
+    // 拒绝未知 token 即词表守卫）。WP-16-T14 批词表递进为两值：既有
+    // quintic-spline-c2（TRJ-05 运动律，语义零变化）＋新增 septic-spline-c3
+    // （TRJ-08-S1 jerk 限值运动律——§6.6.3"增量修订＋实现＋黄金算例四者
+    // 同批"）；词表外 token（含未来 v3 扩展词形）仍一律拒绝——静默接受
+    // 未知值会使"配置写了什么"与"算了什么"脱钩（NFR-COR-03）。
+    if (config.timeParamMethod != kTimeParamMethodQuinticSplineC2
+        && config.timeParamMethod != kTimeParamMethodSepticSplineC3) {
         throw TrajectoryError("trajectory/plan-config/time-param-method",
-                              "timeParamMethod 不在封闭词表（v1 仅 "
+                              "timeParamMethod 不在封闭词表（合法值 "
                                   + std::string(kTimeParamMethodQuinticSplineC2)
+                                  + " / "
+                                  + std::string(kTimeParamMethodSepticSplineC3)
                                   + "），实际 " + config.timeParamMethod);
     }
 

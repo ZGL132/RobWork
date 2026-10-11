@@ -86,11 +86,14 @@ inline constexpr std::string_view kTrjSingularNeighborhood
     = "TRJ-SINGULAR-NEIGHBORHOOD";
 /// §14.4 行 5：TRJ-LIMIT-EXCEEDED（error，比较型——实际/期望/单位）：
 /// 速度/加速度/限位超标（TRJ-06 限制超标；§12.2 限值校验唯一判定点的
-/// 产码面）。
+/// 产码面；WP-16-T14 批语义扩展：v2 运动律 jerk 超限同码复用——"限制超
+/// 标"语义本体，比较型以无量纲倍数承载〔core 单位注册表无 rad/s³ 词形，
+/// 见 TimeParam.cpp 头注登记〕；码表零 jerk 专属码守护不受影响）。
 inline constexpr std::string_view kTrjLimitExceeded = "TRJ-LIMIT-EXCEEDED";
 /// §14.4 行 6：TRJ-CONTINUITY-BROKEN（error，比较型——实际差/容差/单位）：
 /// 位置/姿态/速度/加速度连续性破坏（§9.2 诊断示例；§9.1"至少加速度
-/// 连续"R1 验收锚点的破坏记录）。
+/// 连续"R1 验收锚点的破坏记录；WP-16-T14 批语义扩展：v2 运动律 jerk
+/// 连续第三维守卫违约同码复用——C³ 结构承诺的回归拦截线）。
 inline constexpr std::string_view kTrjContinuityBroken = "TRJ-CONTINUITY-BROKEN";
 /// §14.4 行 7：TRJ-RECHECK-COLLISION（error——平滑后重新碰撞，段定位＋
 /// 对象对；§11.1 复检强制边"只要几何或采样发生变化就重新复检"的检出

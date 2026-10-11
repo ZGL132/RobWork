@@ -2,29 +2,34 @@
  * @file   TimeParam.hpp
  * @brief  时间参数化与节拍（§12/§15.8 TimeParameterize——TRJ-05"使用至少
  *         加速度连续的运动律按关节速度、加速度限制进行时间参数化，输出
- *         总节拍和分段时间"的唯一执行点；WP-16-T08 批）。
+ *         总节拍和分段时间"的唯一执行点；WP-16-T08 批；WP-16-T14 批经
+ *         §12.7 扩展点纳入 TRJ-08-S1 关节 jerk 限值约束）。
  *
  * 设计依据：
  *   - units/trajectory.md §12.1（运动律——R1 唯一实现＝关节空间五次样条，
  *     分段五次多项式、结点 C² 匹配；端点边界条件：起点/终点零速度零加
- *     速度；驻留结点两侧导数为零；jerk 连续属 R2 本卡不承诺）、§12.2
- *     （限值校验与时间缩放——唯一判定点：初值时间分配→构造样条→采样
- *     求峰值→峰值 vs 限值（限值＝CanonicalJoint.maxVelocity/maxAccele-
- *     ration×limitsScaleFactor，+inf 语义＝runtime 显式设值，本域零补
- *     值）→超限等比放大时间轴重算至满足或迭代上限；校验容差＝附录 D
- *     第 10 项相对 1×10⁻⁹（固定）经 core::closeWithin/allCloseWithin 逐
- *     元素判定＋C7 运行校验 ε_abs（速度/加速度按量纲 1×10⁻⁹）；超限定
- *     位入 FailedSegmentRecord）、§12.3（多段同步与驻留——段端边界条
- *     件衔接结点 C²；驻留段＝常值段，时间计入总节拍与分段时长）、
+ *     速度；驻留结点两侧导数为零；**jerk 连续属 R2（TRJ-08-S1）——
+ *     WP-16-T14 批经 §12.7 运动律词表递进落地：septic-spline-c3 七次样
+ *     条 C³**）、§12.2（限值校验与时间缩放——唯一判定点：初值时间分配
+ *     →构造样条→采样求峰值→峰值 vs 限值（限值＝CanonicalJoint.maxVe-
+ *     locity/maxAcceleration×limitsScaleFactor，+inf 语义＝runtime 显式
+ *     设值，本域零补值；**WP-16-T14 批 jerk 维度：限值视图增 jerkLimit
+ *     消费通道**）→超限等比放大时间轴重算至满足或迭代上限；校验容差＝
+ *     附录 D 第 10 项相对 1×10⁻⁹（固定）经 core::closeWithin/allClose-
+ *     Within 逐元素判定＋C7 运行校验 ε_abs（速度/加速度按量纲 1×10⁻⁹；
+ *     **jerk 纯相对——C7 量纲默认表无 jerk 条目，见实现 TU 头注登记**）；
+ *     超限定位入 FailedSegmentRecord）、§12.3（多段同步与驻留——段端边
+ *     界条件衔接结点 C²；驻留段＝常值段，时间计入总节拍与分段时长）、
  *     §12.4（节拍输出——totalDurationS＝全部段＋全部驻留；segmentDura-
  *     tionsS 逐段对齐；**无时间参数化结果时不得伪造节拍**——失败态不
  *     输出 0 或估计值，NFR-COR-03；为 OPT-D 节拍指标唯一来源）、§12.5
  *     （时间化后的契约义务——速度/加速度连续性检查在时间化完成后全链
- *     执行）、§12.6（超限与失败定位——迭代达上限仍超速→TRJ-TIME-PARAM-
- *     FAILED＋TRJ-LIMIT-EXCEEDED 比较型；限值未定义→+inf 语义→时间无
- *     界→TRJ-TIME-PARAM-FAILED 素材〔原因＝限值未定义；建议动作＝补模
- *     型限值〕，不伪造节拍）、§12.7（可扩展维度——motionLawToken 词表
- *     当前唯一值 quintic-spline-c2，分派点当前单分支零空分支）
+ *     执行；**v2 运动律追加 jerk 连续守卫**）、§12.6（超限与失败定位——
+ *     迭代达上限仍超速→TRJ-TIME-PARAM-FAILED＋TRJ-LIMIT-EXCEEDED 比较
+ *     型；限值未定义→+inf 语义→时间无界→TRJ-TIME-PARAM-FAILED 素材
+ *     〔原因＝限值未定义；建议动作＝补模型限值〕，不伪造节拍）、§12.7
+ *     （可扩展维度——motionLawToken 封闭词表 {quintic-spline-c2,
+ *     septic-spline-c3}；分派点按 token 分派、词表外 fail-fast 零空分支）
  *   - §15.8（TimeParameterize 接口基线——签名/输出三态 {Ok, LimitUnreach-
  *     able, LawFailed}、校验行"附录 D 第 10 项容差逐元素校验；速度/加
  *     速度连续性（§9.1）"、合法示例"五次样条 C² 结点匹配、峰值≤限值×
@@ -36,14 +41,17 @@
  *     调、端点对齐；驻留＝零速零加速度常值段）、§13.1（峰值统计口径——
  *     全轨迹逐关节最大绝对值）
  *   - 需求 TRJ-05（P0——本头即其 R1 承载面）、TRJ-06（限制超标定位——
- *     素材轨）、NFR-COR-01（解析算例对照——黄金算例独立书写公式）、
- *     NFR-COR-02（确定性——同输入等价输出：初值分配/中心差分/缩放序
- *     列全确定，零随机源）、NFR-COR-03（非法输入拒绝，不钳制不静默）、
- *     ARC-05（限值零私有副本——本域只做"限值视图×缩放系数"的即时计
- *     算，不落任何阈值常量）
+ *     素材轨）、**TRJ-08-S1（P1/R2——jerk 上限约束：时间参数化纳入关节
+ *     jerk 限值；验收＝限值满足断言＋超限段定位诊断）**、NFR-COR-01（解
+ *     析算例对照——黄金算例独立书写公式）、NFR-COR-02（确定性——同输
+ *     入等价输出：初值分配/中心差分/缩放序列全确定，零随机源）、
+ *     NFR-COR-03（非法输入拒绝，不钳制不静默）、ARC-05（限值零私有副
+ *     本——本域只做"限值视图×缩放系数"的即时计算，不落任何阈值常量）
  *   - 任务契约 tasks/foundation/WP-16-T08.json（acceptance 1/2——五次
  *     样条 C² 结点匹配用例；限速校验容差按附录 D 第 10 项；总节拍与分
- *     段时间输出〔含驻留〕为 OPT-D 节拍指标唯一来源）
+ *     段时间输出〔含驻留〕为 OPT-D 节拍指标唯一来源）、tasks/foundation/
+ *     WP-16-T14.json（acceptance 1——限值满足断言＋超限段定位诊断；
+ *     acceptance 2——扩展点消费经 EvaluationDims 词表、零空字段/零占位）
  *
  * 背景说明（时间参数化在轨迹链路中的位置——第一读者须知）：
  *   T04~T07 产出的段计划/平滑产物只有**几何**（路径形状），没有时间——
@@ -51,18 +59,30 @@
  *   几何不因限值改变"）：本头在冻结几何上叠加一条单调时间轴，使逐关节
  *   速度/加速度峰值不超限值（附录 D 第 10 项容差内），并输出总节拍与分
  *   段时间（TRJ-05 交付物；optimization 域 OPT-D 的节拍指标唯一来源——
- *   §19.2 接口交接行）。运动律（§12.1）＝关节空间五次样条：
+ *   §19.2 接口交接行）。运动律（§12.1）两形态，由请求的 motionLawToken
+ *   分派（§12.7 分派点——每 token 一个真实实现分支，词表外拒绝）：
  *
- *   - 结点（knot）：段边界＋段内关键路点＋驻留端点；结点值＝几何求值器
- *     在该处的构型（平滑产物经 IPathGeometry.sampleAt——T07 产物形态即
- *     本头输入形态，在既有形态上扩展不推翻）；
- *   - 分段五次 Hermite 多项式（h0000/h0010/h0001/h0011 四基——结点二阶
- *     导恒取 0，与 Smooth.cpp §11.4 同一数学纪律：相邻段在结点处二阶导
- *     同值 0→整体 C²，"至少加速度连续"结构性成立）；
- *   - 结点一阶导（对时间）：普通内部结点＝时间中心差分
- *     (q_{k+1}−q_{k−1})/(t_{k+1}−t_{k−1})；端点＝0（§12.1 边界条件）；
- *     驻留结点（与驻留段相邻的结点）＝0（§12.1"驻留结点两侧导数为零"
- *     ——驻留段自身是常值多项式，两端速度/加速度恒 0，§9.1）。
+ *   **quintic-spline-c2（R1，TRJ-05）**：分段五次 Hermite 多项式
+ *   （h0000/h0010/h0001/h0011 四基——结点二阶导恒取 0，与 Smooth.cpp
+ *   §11.4 同一数学纪律：相邻段在结点处二阶导同值 0→整体 C²，"至少加
+ *   速度连续"结构性成立）。限值校验二维（速度/加速度——TRJ-05 行原文
+ *   口径），jerk 限值不消费（请求携带有限 jerkLimit＝调用方契约违约，
+ *   fail-fast——拒绝优于静默忽略，NFR-COR-03）。
+ *
+ *   **septic-spline-c3（WP-16-T14 批，TRJ-08-S1）**：分段七次 Hermite
+ *   多项式（八基——结点二阶/三阶导恒取 0 的构造纪律：相邻段在结点处
+ *   二阶导同值 0→C²、三阶导同值 0→**整体 C³（jerk 连续）**，§12.1"jerk
+ *   连续属 R2"的结构性成立形态）。限值校验三维（速度/加速度/jerk——
+ *   TRJ-08-S1"时间参数化纳入关节 jerk 限值"）。
+ *
+ *   两形态共用的结点纪律：结点（knot）＝段边界＋段内关键路点＋驻留端
+ *   点；结点值＝几何求值器在该处的构型（平滑产物经 IPathGeometry.
+ *   sampleAt——T07 产物形态即本头输入形态，在既有形态上扩展不推翻）；
+ *   结点一阶导（对时间）：普通内部结点＝时间中心差分
+ *   (q_{k+1}−q_{k−1})/(t_{k+1}−t_{k−1})；端点＝0（§12.1 边界条件）；驻
+ *   留结点＝0（§12.1"驻留结点两侧导数为零"——驻留段自身是常值多项式，
+ *   两端速度/加速度恒 0，§9.1）。高阶导（二阶/三阶）恒 0——无自由度，
+ *   确定性补全（T08 批登记纪律的七次推广）。
  *
  *   时间自由度求解（§12.2）：初值时间分配（按段逐轴路径长度/最严关节
  *   估计）→构造样条→按采样计划求逐关节峰值→峰值超限则**等比放大时间
@@ -70,8 +90,8 @@
  *   非运动学量）→重算至达标或达迭代上限。缩放的数学性质（实现收敛性依
  *   据）：样条形状只依赖结点值与结点导数，等比缩放下结点导数精确 ÷α、
  *   段多项式（归一化参数 u=τ/h 下）不变→速度峰值精确 ÷α、加速度峰值精
- *   确 ÷α²——与采样密度无关，一轮缩放即精确达标，迭代循环实为"检测→
- *   缩放→复检"确认环。
+ *   确 ÷α²、**jerk 峰值精确 ÷α³**（三阶导链式法则 ÷h³）——与采样密度
+ *   无关，一轮缩放即精确达标，迭代循环实为"检测→缩放→复检"确认环。
  *
  * 头文件依赖纪律（冒烟模式安全——Smooth.hpp 同款）：本头对 rw 只消费
  * header-only 数学头（Q）；无 policy/runtime 依赖；timeParameterize 的
@@ -88,6 +108,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <string>
@@ -122,9 +143,10 @@ inline constexpr double kTimeParamLimitRelativeTolerance = 1e-9;
 // =====================================================================
 
 /**
- * @brief 单关节速度/加速度限值视图（§5.3"速度/加速度约束＝CanonicalJoint.
- *        maxVelocity/maxAcceleration（SourcedValue<double>，SI：rad/s、
- *        rad/s²；未显式设值＝+inf）"的时间化消费投影）。
+ * @brief 单关节速度/加速度/jerk 限值视图（§5.3"速度/加速度约束＝
+ *        CanonicalJoint.maxVelocity/maxAcceleration（SourcedValue<double>，
+ *        SI：rad/s、rad/s²；未显式设值＝+inf）"的时间化消费投影＋
+ *        TRJ-08-S1 jerk 限值消费通道）。
  *
  * 为什么是投影而不是模型引用：R-1 红线（业务域互链禁止——卡 §3.2）禁止
  * trajectory include runtime/modeling 头；宿主（评估装配面）把已解析模
@@ -134,21 +156,41 @@ inline constexpr double kTimeParamLimitRelativeTolerance = 1e-9;
  * 值语义），时间化遇 +inf 限值→LimitUnreachable（§12.6——时间无界，不
  * 伪造节拍）。
  *
- * 合法域：两字段或为有限正值（>0），或为 +inf（未设值）；NaN/负值/零→
+ * jerkLimit 的消费语义（WP-16-T14 批——TRJ-08-S1，§12.7 限值消费扩展）：
+ *   - septic-spline-c3（v2 运动律）：消费——有效限值＝jerkLimit×
+ *     limitsScaleFactor；+inf（未设值）→LimitUnreachable（与速度/加速
+ *     度缺限值同源纪律：时间参数化的目的是求"满足全部限值的最短时间"，
+ *     缺任一限值维度则"最短"无定义——§12.6 行 3 同源）；
+ *   - quintic-spline-c2（v1 运动律，TRJ-05 口径"按关节速度、加速度限制"）：
+ *     **不消费**——携带任何有限 jerkLimit＝调用方契约违约 fail-fast
+ *     （拒绝优于静默忽略：调用方显式要求 jerk 约束而运动律不支持，静默
+ *     忽略会使"配置写了什么"与"算了什么"脱钩，NFR-COR-03）。
+ *
+ * 默认值取舍：jerkLimit 默认 +inf（＝未设值）而 velocity/acceleration
+ * 默认 0.0（强制显式填）——既有调用方（聚合初始化两字段）在本字段引入
+ * 后语义自动为"未设 jerk 限值"，与 TRJ-08-S1 启用前的世界状态一致（
+ * CanonicalJoint 无 jerk 字段——模型侧数据链归 WP-10 支持批），零破坏
+ * 演进；0.0 不是合法限值（合法域见下），不能作默认。
+ *
+ * 合法域：各字段或为有限正值（>0），或为 +inf（未设值）；NaN/负值/零→
  * 调用方契约违约（fail-fast，投影面数据违约）。单位：转动关节 rad/s、
- * rad/s²；移动关节 m/s、m/s²（逐轴按关节类型，SI 真值）。值语义纯结构；
- * 线程安全。
+ * rad/s²、rad/s³；移动关节 m/s、m/s²、m/s³（逐轴按关节类型，SI 真值）。
+ * 值语义纯结构；线程安全。
  */
 struct JointDynamicLimits {
     /// 关节速度限值（rad/s 或 m/s，逐轴按关节类型；+inf＝模型未设值）。
     double velocityLimit = 0.0;
     /// 关节加速度限值（rad/s² 或 m/s²，逐轴按关节类型；+inf＝模型未设值）。
     double accelerationLimit = 0.0;
+    /// 关节 jerk 限值（rad/s³ 或 m/s³，逐轴按关节类型；+inf＝模型未设值
+    /// ——本结构默认，消费语义见结构注"jerkLimit 的消费语义"）。
+    double jerkLimit = std::numeric_limits<double>::infinity();
 
     bool operator==(const JointDynamicLimits& o) const noexcept
     {
         return velocityLimit == o.velocityLimit
-            && accelerationLimit == o.accelerationLimit;
+            && accelerationLimit == o.accelerationLimit
+            && jerkLimit == o.jerkLimit;
     }
     bool operator!=(const JointDynamicLimits& o) const noexcept
     {
@@ -196,11 +238,11 @@ struct TimedSample {
 
 /**
  * @brief 时间参数化产物（§6.2 TimeParameterization 行——运动律系数＋采
- *        样视图；"运动律词表当前仅 quintic-spline-c2"）。
+ *        样视图；"运动律词表"＝§12.7 封闭词表两值）。
  *
  * 不变量（实现保证，测试钉扎）：
- *   - motionLawToken 恒等于请求的合法 token（当前唯一值
- *     kTimeParamMethodQuinticSplineC2——§12.7 单分支分派）；
+ *   - motionLawToken 恒等于请求的合法 token（词表两值之一——§12.7 按
+ *     token 分派，词表外请求在校验即拒绝，产物不携带词表外值）；
  *   - knotTimesS 严格递增、首元素＝0、末元素＝totalDurationS（端点对齐
  *     段边界——§9.1 时间边界行）；结点集合＝段边界＋段内关键路点＋驻
  *     留端点（§12.1 结点集语义）；
@@ -215,8 +257,9 @@ struct TimedSample {
  * 同源（同一样条求值）。值语义纯结构；线程安全（并发只读）。
  */
 struct TimeParameterization {
-    /// 运动律 token（封闭词表："quintic-spline-c2"——当前唯一实现值，
-    /// §12.7；新值＝单元卡增量修订＋实现＋黄金算例四者同批）。
+    /// 运动律 token（§12.7 封闭词表两值之一："quintic-spline-c2"（TRJ-05
+    /// ／"septic-spline-c3"（TRJ-08-S1，WP-16-T14 批）——回填请求值，
+    /// 消费面据此选择连续求值面与证据语义）。
     std::string motionLawToken;
     /// 结点时刻（s；严格递增，端点对齐段边界——见结构注不变量）。
     std::vector<double> knotTimesS;
@@ -330,7 +373,9 @@ struct TimeParamSegment {
  *     重；驻留段 geometry 空、dwellDurationS>0 有限；相邻运动段端点构
  *     型**位级相等**（几何连续性的最强关节维契约——段连接检查归 Conti-
  *     nuity（§9.3 即时检查），本头作为守卫位级拒绝，不静默缝合）；
- *   - jointLimits 与段几何同维度（关节数）；逐轴合法域见 JointDynamicLimits；
+ *   - jointLimits 与段几何同维度（关节数）；逐轴合法域见 JointDynamicLimits
+ *     （速度/加速度/jerk 三维同规——>0 有限或 +inf；jerk 的 token 相关
+ *     消费语义见 JointDynamicLimits 注：v2 消费、v1 拒绝有限值）；
  *   - limitsScaleFactor ∈ (0,1] 且有限（§5.5——保守缩放，1.0＝全限值）；
  *   - motionLawToken ∈ 封闭词表（当前唯一合法值
  *     kTimeParamMethodQuinticSplineC2——§12.7 单分支分派点，无空分支）；
@@ -349,14 +394,16 @@ struct TimeParamRequest {
     /// 结几何）"）。
     std::vector<TimeParamSegment> segments;
     /// 逐关节限值视图（CanonicalJoint 投影——JointDynamicLimits 注；
-    /// 维度＝段几何关节数）。
+    /// 维度＝段几何关节数；jerk 维度消费语义 token 相关——v2 消费、v1
+    /// 拒绝有限值，见该结构注）。
     std::vector<JointDynamicLimits> jointLimits;
     /// 限值使用比例（无量纲，(0,1]；§5.5 limitsScaleFactor——有效限值＝
     /// 视图值×本系数，+inf 视图值保持 +inf〔未设值语义不被缩放掩盖〕）。
     double limitsScaleFactor = 1.0;
-    /// 运动律 token（§12.7 封闭词表——当前唯一合法值
-    /// kTimeParamMethodQuinticSplineC2；调用方自 config.trj.timeParamMethod
-    /// 传入，本域复检一致性）。
+    /// 运动律 token（§12.7 封闭词表——合法值 {kTimeParamMethodQuinticSplineC2,
+    /// kTimeParamMethodSepticSplineC3}；调用方自 config.trj.timeParamMethod
+    /// 传入，本域复检一致性；分派点按 token 分派到对应实现分支，词表外
+    /// fail-fast）。
     std::string motionLawToken{kTimeParamMethodQuinticSplineC2};
     /// 采样步长上限（s；>0 有限——事件对齐点〔全部结点〕必含＋均匀步
     /// 长填充，§6.2"等步长或事件对齐，采样计划入身份"）。
@@ -417,7 +464,8 @@ enum class TimeParamStatus : std::uint8_t {
  *   - Ok：timeParam 非空（§6.2 产物）、segmentDurationsS 与请求段序列逐
  *     条目对齐（运动段＝样条时长、驻留段＝请求时长原值——§12.4 分段时
  *     间逐段对齐含驻留）、峰值统计有效（全轨迹逐关节最大绝对值，§13.1
- *     口径）、timeCurve 非空、failureRecords 恒空；
+ *     口径——速度/加速度/jerk 三维；jerk 校验仅 v2 运动律执行，见
+ *     peakJointJerk 注）、timeCurve 非空、failureRecords 恒空；
  *   - LimitUnreachable/LawFailed：timeParam 为空（**不伪造节拍**——
  *     §12.4"无时间参数化结果时不得伪造节拍"，调用方不得以 0 或估计值
  *     回填 totalDurationS）、segmentDurationsS 为空、峰值统计不携带有效
@@ -444,6 +492,18 @@ struct TimeParamResult {
     rw::math::Q peakJointVelocity;
     /// 逐关节峰值加速度（rad/s² 或 m/s²；仅 Ok 有效——口径同上）。
     rw::math::Q peakJointAcceleration;
+    /// 逐关节峰值 jerk（rad/s³ 或 m/s³；仅 Ok 有效——口径同上；WP-16-T14
+    /// 批增列，TRJ-08-S1"限值满足断言"的观测面：调用方/评估组装以本统
+    /// 计对 jerkLimit 作峰值≤限值断言。统计面两运动律统一产出——v1 五次
+    /// 样条的 jerk 分段二次多项式在结点处跳变，本统计取采样口径（结点取
+    /// 左段极限）与限值检测同口径；**jerk 限值校验本身仅 v2 运动律执行**
+    /// ——统计是观察、校验是约束，v1 下 jerk 无约束语义（TRJ-05 口径），
+    /// 本字段在 v1 下是纯观察统计，不构成 v1 行为变化（T08 校验/缩放行
+    /// 为零改动）。注意 §6.5 守护边界：本字段是 TimeParamResult 的峰值
+    /// 统计，不是 TimedSample 成员（"TimedSample 无 jerk 成员"守护不受
+    /// 影响——离散采样视图仍只承载 q/qd/qdd；jerk 由样条连续求值面内部
+    /// 计算，不入离散样本）。
+    rw::math::Q peakJointJerk;
     /// 连续求值面（仅 Ok 非空——ITimeCurve 注；C² 检查/动画/导出的消费
     /// 面；调用方持有 shared_ptr）。
     std::shared_ptr<const ITimeCurve> timeCurve;
@@ -463,6 +523,7 @@ struct TimeParamResult {
             && segmentDurationsS == o.segmentDurationsS
             && peakJointVelocity == o.peakJointVelocity
             && peakJointAcceleration == o.peakJointAcceleration
+            && peakJointJerk == o.peakJointJerk
             && timeCurve == o.timeCurve && failureRecords == o.failureRecords;
     }
     bool operator!=(const TimeParamResult& o) const { return !(*this == o); }
@@ -474,30 +535,37 @@ struct TimeParamResult {
 
 /**
  * @brief 按关节速度/加速度限制对冻结几何做时间参数化（§12/§15.8 签名
- *        ——TRJ-05 的唯一执行点，限值校验唯一判定点〔§12.2〕）。
+ *        ——TRJ-05 的唯一执行点，限值校验唯一判定点〔§12.2〕；v2 运动律
+ *        septic-spline-c3 下并纳入关节 jerk 限值——TRJ-08-S1，WP-16-T14
+ *        批）。
  *
  * 执行序（每步语义见行内注释；算法细节与实现补全登记见 TimeParam.cpp
  * 头注）：
  *   1. 前置校验（调用方契约违约 → TrajectoryError fail-fast——token
- *      "trajectory/time-param/..."）；
+ *      "trajectory/time-param/..."；含运动律词表分派与 jerk 限值的 token
+ *      相关消费校验——v1 拒绝有限 jerkLimit）；
  *   2. 取消轮询（命中 → Canceled，零素材）；
- *   3. 初值时间分配（§12.2 步骤 1——按段逐轴采样路径长度/最严关节估
- *      计，确定性公式见实现 TU）；
- *   4. 构造样条（§12.1 运动律——结点 C² 五次 Hermite：端点零速零加
- *      速度、驻留结点两侧导数为零、内部结点时间中心差分）；
- *   5. 采样求峰值（§12.2 步骤 2——事件对齐＋均匀步长，逐关节 qd/qdd
- *      最大绝对值）；
- *   6. 限值校验（§12.2 步骤 3/5——附录 D 第 10 项相对 1×10⁻⁹＋C7 ε_abs
+ *   3. 限值未定义扫描（§12.6——+inf→时间无界；v2 运动律含 jerk 维度）；
+ *   4. 初值时间分配（§12.2 步骤 1——按段逐轴采样路径长度/最严关节估
+ *      计，确定性公式见实现 TU；v2 追加 jerk 项）；
+ *   5. 构造样条（§12.1 运动律——按 token 分派：quintic 结点 C² 五次
+ *      Hermite / septic 结点 C³ 七次 Hermite；端点零速零加速度、驻留结
+ *      点两侧导数为零、内部结点时间中心差分、高阶导恒 0）；
+ *   6. 采样求峰值（§12.2 步骤 2——事件对齐＋均匀步长，逐关节 qd/qdd
+ *      最大绝对值＋qddd〔jerk〕统计——v2 并作限值检测）；
+ *   7. 限值校验（§12.2 步骤 3/5——附录 D 第 10 项相对 1×10⁻⁹＋ε_abs
  *      逐元素判定；限值未定义〔+inf〕→LimitUnreachable＋TRJ-TIME-PARAM-
  *      FAILED 素材，不伪造节拍）；
- *   7. 超限→等比放大时间轴（§12.2 步骤 4——α=max(峰值速度比, √峰值加
- *      速度比)，全部运动段时长×α、驻留不变）→重算，至达标或达迭代上
- *      限（达上限→LimitUnreachable＋TRJ-LIMIT-EXCEEDED 比较型素材）；
- *   8. 连续性守卫（§12.5/§9.1——结点两侧速度/加速度差全链检查，违约
+ *   8. 超限→等比放大时间轴（§12.2 步骤 4——α=max(峰值速度比, √峰值加
+ *      速度比〔, ∛峰值 jerk 比——v2〕)，全部运动段时长×α、驻留不变）→
+ *      重算，至达标或达迭代上限（达上限→LimitUnreachable＋TRJ-LIMIT-
+ *      EXCEEDED 比较型素材——正常输入不可达的防御路径，见实现 TU 头注）；
+ *   9. 连续性守卫（§12.5/§9.1——结点两侧速度/加速度差全链检查，违约
  *      →LawFailed＋TRJ-CONTINUITY-BROKEN 素材；实现上 C² 由构造结构性
- *      保证，守卫为黄金回归拦截面）；
- *   9. 组装产物（TimeParameterization＋segmentDurationsS＋峰值统计＋
- *      timeCurve）→ Ok。
+ *      保证，守卫为黄金回归拦截面；v2 运动律追加 jerk 连续第三维——C³
+ *      结构承诺的回归拦截面）；
+ *  10. 组装产物（TimeParameterization＋segmentDurationsS＋峰值统计〔含
+ *      peakJointJerk〕＋timeCurve）→ Ok。
  *
  * 本函数不消费 policy（碰撞/阈值零触碰——复检协议的职责）、不做几何变
  * 换（缩放只改时间轴不改几何路径——§12.2 步骤 4 括注）、不判任务可行
@@ -510,7 +578,8 @@ struct TimeParamResult {
  * @return 时间参数化结果（TimeParamResult 四态；值语义）
  *
  * @throws TrajectoryError 调用方契约违约（token "trajectory/time-param/
- *         ..."——段序列/维度/限值视图/token 词表/采样步长/迭代上限等；
+ *         ..."——段序列/维度/限值视图/token 词表/jerk 限值与运动律的
+ *         消费组合〔v1 拒绝有限 jerkLimit〕/采样步长/迭代上限等；
  *         见各校验点）
  *
  * 纯函数（零副作用/零修订/零写盘）；线程安全（单线程使用）；确定性

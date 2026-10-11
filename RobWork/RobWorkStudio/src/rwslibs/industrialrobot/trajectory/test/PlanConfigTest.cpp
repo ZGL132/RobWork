@@ -141,13 +141,36 @@ TEST(TrjPlanConfig, LimitsScaleDomainRejected_WP16T04_ACC2)
     EXPECT_THROW(validateTrajectoryPlanConfiguration(b), TrajectoryError);
 }
 
-/** 运动律词表外 token→拒绝（§5.5 封闭词表 v1——唯一合法值）。 */
+/** 运动律词表外 token→拒绝（§5.5 封闭词表——合法值两值）。 */
 TEST(TrjPlanConfig, TimeParamMethodWordlistRejected_WP16T04_ACC2)
 {
     IRD_TEST_INFO(std::vector<std::string>{"TRJ-08"}, std::vector<std::string>{});
     auto c = makeValidConfig();
     c.timeParamMethod = "septic-spline-c4";  // 词表外——扩展走卡面增量修订
     EXPECT_THROW(validateTrajectoryPlanConfiguration(c), TrajectoryError);
+}
+
+/**
+ * 运动律词表第二值合法（WP-16-T14 批——TRJ-08-S1 运动律
+ * septic-spline-c3 经 §6.6.3 词表递进入表）：validate 通过＋canonical
+ * roundtrip 保词形（变长串段——词表扩值不改字节布局，布局兼容性随本
+ * 用例钉扎）。
+ */
+TEST(TrjPlanConfig, TimeParamMethodSepticAccepted_WP16T14)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1"},
+                  std::vector<std::string>{});
+    auto c = makeValidConfig();
+    c.timeParamMethod = sdurws::ird::trajectory::kTimeParamMethodSepticSplineC3;
+    EXPECT_NO_THROW(validateTrajectoryPlanConfiguration(c));
+
+    TrajectoryPlanConfigCodec codec;
+    const auto bytes = codec.encode(c);
+    const auto decoded = codec.decode(bytes);
+    EXPECT_EQ(
+        decoded.timeParamMethod,
+        std::string(sdurws::ird::trajectory::kTimeParamMethodSepticSplineC3));
+    EXPECT_TRUE(decoded == c);
 }
 
 /** 规划器家族空 token／参数表 NUL→拒绝（canonical 串安全下限）。 */

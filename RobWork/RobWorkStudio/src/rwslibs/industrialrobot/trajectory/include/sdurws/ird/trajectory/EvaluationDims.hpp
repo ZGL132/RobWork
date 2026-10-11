@@ -1,31 +1,29 @@
 /**
  * @file   EvaluationDims.hpp
- * @brief  评估维度扩展点（WP-16-T11）——TRJ-08"首版轨迹评估接口保持可扩
- *         展，不创建空字段、空页面或占位模块"的接口约束承载头。
+ * @brief  评估维度扩展点（WP-16-T11 铺设；WP-16-T14 首次真实递进——
+ *         TRJ-08-S1 启用批）——TRJ-08"首版轨迹评估接口保持可扩展，不创
+ *         建空字段、空页面或占位模块"的接口约束承载头。
  *
  * 设计依据：
  *   - units/trajectory.md §6.6（扩展机制——TRJ-08 接口约束的设计承载四条：
- *     ①载荷版本化 kindToken="trj.sequence-plan.v1"，v2 起新 kindToken＋新
- *     canonical schema、旧 payload 永久可读；②Profile 版本化＝证据项集合
- *     显式变化，不新增"静默维度"；③运动律词表封闭、新增值＝本卡增量修订
- *     ＋实现＋黄金算例四者同批；④能力声明＝descriptor 依赖声明与 Profile
- *     引用即能力边界——无"空接口"）、§12.7（可扩展维度接口——motionLaw-
- *     Token 词表＋运动律分派点当前单分支零空分支；jerk/工艺速度/连续工艺
- *     段对应的新证据项不在 v1 Profile 注册——零占位）、§6.5（R1 范围守护
- *     ——不建 jerk 字段/工艺速度槽位/ContinuousProcess 段类型/空页面）、
- *     §13.3（trj RequiredEvidenceProfile 逐行实例化表——itemId 列标注
- *     "实现落位冻结"）、§13.4（EvaluationOutput.payload kindToken=
- *     "trj.sequence-plan.v1"）、§19.1（R2 接口交接——TRJ-08-S1～S3 各自
- *     的启用承接点）、§19.2（对 optimization 的交接——"评估键/Profile/
- *     payload 契约稳定"）
- *   - 需求 TRJ-08（P1/C/R1——首版轨迹评估接口保持可扩展〔为 jerk、工艺
- *     速度、连续工艺段预留评估维度〕，不创建空字段、空页面或占位模块；
- *     三个后续用户功能按 TRJ-08-S1～S3 分期交付，V13-02 拆分：接口约束
- *     R1、用户功能分期并独立验收）；OPT-03/06/07（优化域经 ③端口按
- *     descriptor 判断可组合性——本头即"契约稳定面"的落值）
- *   - 任务契约 tasks/foundation/WP-16-T11.json（acceptance 1——评估维度
- *     扩展点可扩展性评审通过；acceptance 2——零空字段/空页面/占位模块，
- *     不实现 TRJ-08-S1～S3 用户功能）
+ *     ①载荷版本化 kindToken，v2 起新 kindToken＋新 canonical schema、旧
+ *     payload 永久可读；②Profile 版本化＝证据项集合显式变化，不新增"静
+ *     默维度"；③运动律词表封闭、新增值＝本卡增量修订＋实现＋黄金算例四
+ *     者同批；④能力声明＝descriptor 依赖声明与 Profile 引用即能力边界
+ *     ——无"空接口"）、§12.7（可扩展维度接口——S1 启用时新增运动律
+ *     token＋限值消费扩展＋payload v2）、§6.5（范围守护——S1 的承载面
+ *     是 payload kindToken v2＋Profile 版本递进，不是 TimedSample 成员/
+ *     quality 指标/诊断码）、§13.3（trj RequiredEvidenceProfile v1 五行
+ *     "实现落位冻结"；v2 集合随 TRJ-08-S1 递进）、§13.4（payload kindToken
+ *     基线）、§19.1（R2 接口交接——TRJ-08-S1 行交接物全单落位）、§19.2
+ *     （对 optimization 的交接——"评估键/Profile/payload 契约稳定"）
+ *   - 需求 TRJ-08（P1/C/R1——接口约束本体；S1～S3 分期交付 V13-02）、
+ *     TRJ-08-S1（P1/R2——jerk 上限约束：时间参数化纳入关节 jerk 限值；
+ *     验收＝限值满足断言＋超限段定位诊断）；OPT-03/06/07（优化域经 ③端
+ *     口按 descriptor 判断可组合性——本头即"契约稳定面"的落值）
+ *   - 任务契约 tasks/foundation/WP-16-T11.json（acceptance 1/2——扩展
+ *     点铺设，已验收）、tasks/foundation/WP-16-T14.json（acceptance 2
+ *     ——扩展点消费经本头词表，TRJ-08 接口约束不破坏、零空字段/零占位）
  *
  * 背景说明（"可扩展"在本项目的准确含义——第一读者须知）：
  *   TRJ-08 的"可扩展"**不是**预建 jerk/工艺速度/连续工艺的字段或模块等
@@ -34,25 +32,26 @@
  *   且该通道 today 就以真实接口存在并经测试钉扎。四条通道与它们的落位：
  *
  *   1. **载荷版本化**（§6.6.1）：本头 kTrjPayloadKindToken 是评估器
- *      DomainPayload.kindToken 的唯一书写点（当前值 "trj.sequence-plan.
- *      v1"）。S1/S2/S3 任一启用时递进为新 token（如 "trj.sequence-plan.
- *      v2"）＋新 canonical schema，旧 token 与旧 payload 永久可读（不
- *      可变历史 PA-2）。消费面的分派协议＝isKnownTrjPayloadKindToken：
- *      已知 token 走对应版本分支；未知 token 必须拒绝（消费面 fail-fast
- *      ——**不允许静默按 v1 处理**，那是把未知 schema 当已知解读的数据
- *      完整性违约）。词表只增不删。
- *   2. **Profile 版本化**（§6.6.2）：本头 trjProfileV1Items() 是 trj 域
- *      证据项 v1 注册集的唯一书写点（§13.3 表"实现落位冻结"列的五项）。
- *      新增证据维度（如 S1 的 trj.jerk-limit-record）＝**新 itemId 常量
- *      ＋Profile 版本递进**四者同批（evidence.md §9.5 注册期验证），不得
- *      把新维度项静默塞进 v1 清单（"静默维度"禁止）。isTrjProfileV1ItemId
- *      即"该 itemId 是否属于 v1 注册集"的判定面——评估器组装与黄金数据
- *      集据此校验"未注册证据项不得入 v1 Profile 的证据集合"。
- *   3. **运动律词表**（§6.6.3/§12.7）：kTimeParamMethodQuinticSplineC2
- *      （PlanConfig.hpp）是封闭词表当前唯一值；TimeParam.cpp 的分派点为
- *      "词表校验→唯一实现分支→词表外 fail-fast"——零空分支。S1 启用时
- *      新增 token＋新运动律构造＋黄金算例同批（本头只钉扎词表唯一值纪律，
- *      不预建第二分支）。
+ *      DomainPayload.kindToken 的唯一书写点。**WP-16-T14 批（2026-10-11，
+ *      TRJ-08-S1 启用）执行首次递进**：当前产出值递进为 "trj.sequence-
+ *      plan.v2"（v2 canonical schema 承载 jerk 限值校验维度）；v1 值转
+ *      为 kTrjPayloadKindTokenV1（历史已知值——isKnownTrjPayloadKindToken
+ *      词表两项，旧 payload 永久可读，不可变历史 PA-2）。消费面的分派协
+ *      议＝isKnownTrjPayloadKindToken：已知 token 走对应版本分支；未知
+ *      token 必须拒绝（消费面 fail-fast——**不允许静默按任一版本处理**，
+ *      那是把未知 schema 当已知解读的数据完整性违约）。词表只增不删。
+ *   2. **Profile 版本化**（§6.6.2）：trjProfileV1Items()（v1 注册集——
+ *      §13.3 表五行，已交付面**永不增改**，PA-2）与 trjProfileV2Items()
+ *      （WP-16-T14 批递进——v1 五项＋trj.jerk-limit-record，§12.7 点名
+ *      词形）并存。isTrjProfileV1ItemId/isTrjProfileV2ItemId 为各自集合
+ *      的判定面——评估器组装与黄金数据集按载荷 token 选集合校验"未注册
+ *      证据项不得入对应 Profile 的证据集合"。v1 集合永不收编新维度项
+ *      （"静默维度"禁止——§6.6.2）。
+ *   3. **运动律词表**（§6.6.3/§12.7）：PlanConfig.hpp 词表已递进为两值
+ *      （kTimeParamMethodQuinticSplineC2 / kTimeParamMethodSepticSplineC3
+ *      ——WP-16-T14 批"本卡增量修订＋实现＋黄金算例"同批）；TimeParam.cpp
+ *      的分派点为"词表校验→按 token 分派实现分支→词表外 fail-fast"——
+ *      每分支真实存在，零空分支。
  *   4. **能力声明**（§6.6.4）：kTrjEvaluationKey/kTrjEvaluatorContract-
  *      Version（TrjTypes.hpp，既有）即评估器能力边界——优化域经 ③端口
  *      按 descriptor 判断可组合性，无空接口（本头不重复承载，仅注释
@@ -60,9 +59,12 @@
  *
  *   **零占位守护（§6.5 反向约束）**：本头与配套测试把"不建"也机器化——
  *   v1 证据项清单零 jerk/工艺速度/连续工艺词根（TRJ-08 禁止项不得以任何
- *   占位 itemId 混入 v1）；SegmentSpaceType 两值词表、TimedSample 五成员、
- *   SegmentConstraint 三成员的封闭性编译期/运行期断言；TRJ-* 码表零 jerk
- *   码（见 test/EvaluationDimsTest.cpp 用例注释逐项对应）。
+ *   占位 itemId 混入 v1；v2 集合的 jerk 项是 S1 启用批的**真实交付**，
+ *   非占位——有实现、有校验、有黄金算例）；SegmentSpaceType 两值词表、
+ *   TimedSample 五成员、SegmentConstraint 三成员的封闭性编译期/运行期
+ *   断言（S1 的 jerk 表达走峰值统计/限值视图，不扩 TimedSample）；
+ *   TRJ-* 码表零 jerk 码（jerk 超限复用 TRJ-LIMIT-EXCEEDED 比较型码——
+ *   "限制超标"语义本体，见 test/EvaluationDimsTest.cpp 用例注释逐项对应）。
  *
  *   **P-TRJ-11 规避登记**（上游基线漂移）：本头纯值面——只依赖 C++
  *   标准库（string_view/array/cstdint），零上游单元 include、零 rw 符号，
@@ -90,9 +92,8 @@ namespace sdurws::ird::trajectory {
 // =====================================================================
 
 /**
- * @brief 轨迹域评估器 DomainPayload.kindToken 当前值（§13.4 冻结基线
- *        "kindToken=\"trj.sequence-plan.v1\""的字面落值；§6.6.1 载荷版
- *        本化的版本锚）。
+ * @brief 轨迹域评估器 DomainPayload.kindToken 当前产出值（§13.4 基线经
+ *        §6.6.1 版本递进后的字面落值；载荷版本化的版本锚）。
  *
  * 为什么需要唯一书写点：payload 的 kindToken 是"载荷 schema 版本"的唯
  * 一标识——消费面（评估器组装、缓存判定 judgeCacheHit、优化域 ③端口组
@@ -102,23 +103,41 @@ namespace sdurws::ird::trajectory {
  * isKnownTrjPayloadKindToken 词表的"历史已知值"保留（旧 payload 永久
  * 可读），不得删除。
  *
+ * 版本递进台账（本头即台账权威——词表只增不删）：
+ *   - v1 "trj.sequence-plan.v1"：TRJ-08 接口约束批（WP-16-T11）冻结产
+ *     出值；TRJ-08-S1 启用（WP-16-T14 批）起为历史已知值（kTrjPayload-
+ *     KindTokenV1）——v1 载荷永久可读（旧 payload 不回写不改写，PA-2）。
+ *   - v2 "trj.sequence-plan.v2"：TRJ-08-S1 启用批（WP-16-T14，2026-10-11）
+ *     起的当前产出值——canonical schema 承载 jerk 限值校验维度（v1 schema
+ *     ＋trj.jerk-limit-record 证据项对应维度的显式扩展；§19.1 S1 行交接
+ *     物"payload v2＋Profile 递进"）。
+ *
  * 词形契约：点分小写 kebab＋"v<阿拉伯数字>"版本后缀（§13.4 原文形态；
  * 消费面按精确串匹配——大小写敏感、无空白容忍，见 isKnownTrjPayloadKindToken）。
  */
-inline constexpr std::string_view kTrjPayloadKindToken = "trj.sequence-plan.v1";
+inline constexpr std::string_view kTrjPayloadKindToken = "trj.sequence-plan.v2";
+
+/**
+ * @brief 载荷 kindToken 历史已知值 v1（TRJ-08 接口约束批产出形态——
+ *        §6.6.1"旧 payload 永久可读"的词表承载；只增不删，禁删除禁复用
+ *        该词形指代其他 schema）。
+ */
+inline constexpr std::string_view kTrjPayloadKindTokenV1 = "trj.sequence-plan.v1";
 
 /**
  * @brief 判定 payload kindToken 是否为轨迹域**已知**词表值（§6.6.1 消
  *        费面分派点——"分派点已存在但当前无空分支"的机器面，§12.7）。
  *
  * 词表演进纪律（本函数是唯一判定面，禁第二处词表副本）：
- *   - 当前词表 v1＝{ "trj.sequence-plan.v1" }（单一已知值——与唯一产出
- *     面一致；未来版本递进时在**本函数实现处表尾追加**历史值，只增不删
- *     ——旧 payload 永久可读，PA-2 同源纪律）；
+ *   - 当前词表＝{ "trj.sequence-plan.v2"（当前产出）, "trj.sequence-plan.
+ *     v1"（历史已知——WP-16-T14 批递进） }；未来版本递进时在**本函数实
+ *     现处表尾追加**历史值，只增不删——旧 payload 永久可读，PA-2 同源
+ *     纪律；
  *   - 返回 true＝消费面可按该 token 对应版本的 schema 解读载荷；
  *   - 返回 false＝未知 token（词表外/未来版本回读旧程序/损坏数据）——
- *     **消费面必须拒绝**（fail-fast 或显式错误语义），禁止静默按 v1 处
- *     理（未知 schema 当已知解读＝数据完整性违约，NFR-COR-03 不静默）。
+ *     **消费面必须拒绝**（fail-fast 或显式错误语义），禁止静默按任一已
+ *     知版本处理（未知 schema 当已知解读＝数据完整性违约，NFR-COR-03
+ *     不静默）。
  *
  * 匹配语义：精确串等值（大小写敏感、首尾空白即不同值——token 是身份面
  * 词形，不做任何规范化；身份面宽容＝身份漂移通道）。
@@ -127,13 +146,14 @@ inline constexpr std::string_view kTrjPayloadKindToken = "trj.sequence-plan.v1";
  *              空串合法入参——判定结果 false）
  * @return true＝已知词表值；false＝未知（消费面拒绝分派）
  *
- * 纯函数；线程安全；确定性。O(词表长度×token 长度)，词表当前 1 项。
+ * 纯函数；线程安全；确定性。O(词表长度×token 长度)，词表当前 2 项。
  */
 inline bool isKnownTrjPayloadKindToken(std::string_view token)
 {
-    // 词表 v1：当前唯一已知值（版本递进时此处表尾追加历史值——只增不删，
-    // 每个 if 分支对应一个真实存在的 schema 版本，零空分支）。
-    if (token == kTrjPayloadKindToken) { return true; }
+    // 词表（版本递进时此处表尾追加历史值——只增不删，每个 if 分支对应
+    // 一个真实存在的 schema 版本，零空分支）。
+    if (token == kTrjPayloadKindToken) { return true; }    // v2（当前产出）
+    if (token == kTrjPayloadKindTokenV1) { return true; }  // v1（历史已知）
     return false;
 }
 
@@ -170,6 +190,16 @@ inline constexpr std::string_view kTrjItemIdCyclePhaseBreakdown
 inline constexpr std::string_view kTrjItemIdAnimationData
     = "trj.animation-data";
 
+/// trj Profile v2 新增行（WP-16-T14 批——TRJ-08-S1 启用）：jerk 限值校
+/// 验记录（§12.7 点名词形"trj.jerk-limit-record"；§19.1 S1 行"Profile
+/// 递进"的交接物）。适用条件＝v2 运动律（jerk 受限评估）——纯 quintic
+/// 评估该证据项 NotApplicable 不计缺失（类比 HasCartesianSegment 的条件
+/// 豁免语义）；该记录是 TRJ-08-S1"限值满足断言"的证据承载（校验事实：
+/// 峰值统计 vs 限值＋达标判定），v1 Profile 永不注册本项（§12.7 零占位
+/// 守护——isTrjProfileV1ItemId 对本词形恒 false）。
+inline constexpr std::string_view kTrjItemIdJerkLimitRecord
+    = "trj.jerk-limit-record";
+
 /**
  * @brief 证据项类别词表（§13.3 表 itemClass 列两值——封闭词表）。
  *
@@ -203,6 +233,11 @@ enum class TrjEvidenceItemApplicability : std::uint8_t {
     TimeParamSucceeded,
     /// 仅当成功轨迹（行 5；失败/取消轨迹无动画数据——§6.7 部分结果语义）。
     SuccessfulTrajectory,
+    /// 仅当运动律为 jerk 受限形态（WP-16-T14 批表尾追加——v2 Profile 行
+    /// 6 trj.jerk-limit-record：septic-spline-c3 评估适用；纯 quintic 评
+    /// 估→NotApplicable 不计缺失。词表只增不删——追加经本卡增量修订，
+    /// 本批即 §6.6.3"增量修订＋实现＋黄金算例"同批）。
+    JerkLimitedMotionLaw,
 };
 
 /**
@@ -285,9 +320,76 @@ inline std::array<TrjEvidenceItemSpec, 5> trjProfileV1Items()
  */
 inline bool isTrjProfileV1ItemId(std::string_view itemId)
 {
-    // 单一数据源：直接遍历 v1 注册集——未来 v2 集合落位时本函数语义不变
-    // （仍只认 v1 五项），版本递进不回写旧判定面（旧 Profile 永久可读）。
+    // 单一数据源：直接遍历 v1 注册集——版本递进后本函数语义不变（仍只
+    // 认 v1 五项），递进不回写旧判定面（旧 Profile 永久可读）。
     for (const TrjEvidenceItemSpec& item : trjProfileV1Items()) {
+        if (item.itemId == itemId) { return true; }
+    }
+    return false;
+}
+
+/**
+ * @brief trj RequiredEvidenceProfile **v2** 证据项注册集（WP-16-T14 批
+ *        ——TRJ-08-S1 启用的 Profile 版本递进；§13.3 v1 表＋新增行的唯
+ *        一书写点）。
+ *
+ * 版本化纪律（§6.6.2——"Profile 版本递进＝证据项集合显式变化"）：
+ *   - v2＝v1 五项**原样**（行序不变，PA-2——已交付行零改写）＋表尾新
+ *     增行 6：trj.jerk-limit-record（Required / JerkLimitedMotionLaw）。
+ *     与 kTrjPayloadKindToken 的 "v2" 后缀**同批生效**（§19.1 S1 行交接
+ *     物：payload v2＋Profile 递进）；后续 S2/S3 递进以 v3 形态新落，本
+ *     v2 集合届时转为历史已知集合（只增不删——v1 同款纪律）。
+ *   - 返回方式：按值返回 std::array（调用方持有副本）——零静态初始化顺
+ *     序问题、零共享可变状态（线程安全）；顺序＝行序（确定性，NFR-COR-02）。
+ *
+ * @return v2 注册集（恰 6 项；行序＝v1 五行＋jerk 行）
+ *
+ * 纯函数；线程安全；确定性。
+ */
+inline std::array<TrjEvidenceItemSpec, 6> trjProfileV2Items()
+{
+    // v1 五项原样转写（行序/类别/条件零改写——PA-2；与 trjProfileV1Items
+    // 的清单数据源一致性由测试钉扎〔逐项对照〕）。
+    return { {
+        { kTrjItemIdPathAndTimeRecord,
+          TrjEvidenceItemClass::Required,
+          TrjEvidenceItemApplicability::Always },
+        { kTrjItemIdSmoothRecheckEvidence,
+          TrjEvidenceItemClass::Required,
+          TrjEvidenceItemApplicability::Always },
+        { kTrjItemIdCartesianIkContinuity,
+          TrjEvidenceItemClass::Required,
+          TrjEvidenceItemApplicability::HasCartesianSegment },
+        { kTrjItemIdCyclePhaseBreakdown,
+          TrjEvidenceItemClass::Suggested,
+          TrjEvidenceItemApplicability::TimeParamSucceeded },
+        { kTrjItemIdAnimationData,
+          TrjEvidenceItemClass::Suggested,
+          TrjEvidenceItemApplicability::SuccessfulTrajectory },
+        // TRJ-08-S1 新增行（§12.7 点名词形；适用条件＝v2 运动律）。
+        { kTrjItemIdJerkLimitRecord,
+          TrjEvidenceItemClass::Required,
+          TrjEvidenceItemApplicability::JerkLimitedMotionLaw },
+    } };
+}
+
+/**
+ * @brief 判定证据项 ID 是否属于 trj Profile **v2** 注册集（WP-16-T14 批
+ *        判定面——评估器组装面在 payload token=v2 时据此校验证据集合注
+ *        册资格；黄金数据集/契约测试以本函数锁定 v2 集合封闭性）。
+ *
+ * 消费语义与 isTrjProfileV1ItemId 对称：匹配语义＝精确串等值（大小写敏
+ * 感；缺 "trj." 域前缀即 false——itemId 是身份面词形，不做规范化）。
+ *
+ * @param itemId [in] 待判定证据项 ID；空串合法入参（判定 false）
+ * @return true＝属于 v2 注册集；false＝不属于（含一切未注册词形）
+ *
+ * 纯函数；线程安全；确定性。实现＝遍历 trjProfileV2Items()（单一数据源
+ * ——禁第二处清单副本）。
+ */
+inline bool isTrjProfileV2ItemId(std::string_view itemId)
+{
+    for (const TrjEvidenceItemSpec& item : trjProfileV2Items()) {
         if (item.itemId == itemId) { return true; }
     }
     return false;
