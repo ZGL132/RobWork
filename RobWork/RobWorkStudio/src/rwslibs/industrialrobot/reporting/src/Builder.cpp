@@ -23,10 +23,14 @@
  *     时刻快照——§7.1"生成期间项目后台写入"行"构建前枚举的 finalize 运行
  *     集"；此后 HEAD 前进/迟到结果〔AT-10〕不影响已锚定视图、不入本报告，
  *     acceptance 4）；③逐结果：envelope→资格→当前性（三个注入源调用，
- *     取消检查点每结果一个）；④模型摘要：随 RPT-T12（IModelSummaryProvider
- *     未落位——框架章节边界登记于 Builder.hpp 类注与单元卡 §14.4 v0.8）；
- *     ⑤快照一致性；⑥章节组装＋逐条目绑定校验；⑦冻结：ReviewReport::make
- *     （字段校验→ReportCodec 身份计算→不可变对象——冻结时刻＝build() 返回）。
+ *     取消检查点每结果一个）；④模型摘要：经构造注入的 IModelSummaryProvider
+ *     （RPT-T14 起消费——input-summary 章节/外部资源状态数据源，P-RPT-2
+ *     注入形态；空＝缺项表达不伪造）；⑤快照一致性；⑥章节组装〔RPT-T14
+ *     起级别范围全量：框架章节走 BuiltinFrameworkSections 内建投影、域章节
+ *     走注册表查找＋未注册缺项表达〕＋逐条目绑定校验〔框架条目为元数据
+ *     条目，无绑定语义——§9.2"结论条目必填"的分化面〕；⑦冻结：
+ *     ReviewReport::make（字段校验→ReportCodec 身份计算→不可变对象——
+ *     冻结时刻＝build() 返回）。
  *
  * 错误语义（AGENTS.md 错误二分在本单元的落点）：
  *   - 调用方契约违约（请求字段非法/演化种子不一致/对终态会话推进）→
@@ -205,6 +209,11 @@ public:
 
     /// 取并集（首次出现序——确定性输出；容器被搬空）。
     std::vector<DiagRefEntry> take() { return std::move(m_entries); }
+
+    /// 当前并集快照（只读——RPT-T14 diagnostics 框架章节投影的数据源：
+    /// 章节按词表序组装，投影时点之前并入的诊断（结果级＋先行章节级）
+    /// 即该章节应呈现的并集；不搬空——take() 仍是冻结前的唯一移交面）。
+    const std::vector<DiagRefEntry>& snapshot() const { return m_entries; }
 
 private:
     /// 合并键（全部定位字段以单元分隔符拼接——token 词表不含控制字符，
@@ -435,11 +444,16 @@ ReportBuildSession::~ReportBuildSession()
 ReviewReportBuilder::ReviewReportBuilder(const project::IProjectQueryPort& queryPort,
                                          IReportResultSource& resultSource,
                                          const SectionRegistry& sections,
-                                         const diagnostics::IDiagnosticRegistry* codeRegistry)
+                                         const diagnostics::IDiagnosticRegistry* codeRegistry,
+                                         const IModelSummaryProvider* modelSummary)
     : m_queryPort(&queryPort)
     , m_resultSource(&resultSource)
     , m_sections(&sections)
     , m_codeRegistry(codeRegistry)
+    // 框架章节内建投影器（RPT-T14）：借用同源注入——project-scheme 经
+    // queryPort（锚定修订元数据）、input-summary 经 modelSummary（可空＝
+    // 未装配，缺项表达不伪造）。
+    , m_framework(queryPort, modelSummary)
 {
 }
 
@@ -774,9 +788,11 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
         }
 
         session.advanceTo(ReportBuildStage::Building);
-        // 章节进度分母＝级别范围内域章节数（§5.2 范围图——确定性计数）。
+        // 章节进度分母＝级别范围内全量章节数（§5.2 范围图全侧投影——框架
+        // ＋域；RPT-T14 起章节组装覆盖级别范围全量，确定性计数）。
+        const std::vector<std::string> sectionsInScopeList = sectionsInScope(request.level);
         const std::uint64_t sectionTotal =
-            static_cast<std::uint64_t>(domainSectionsInScope(request.level).size());
+            static_cast<std::uint64_t>(sectionsInScopeList.size());
         emitProgress(progress, 0, sectionTotal, "building");
 
         // =============================================================
@@ -806,16 +822,82 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
         std::vector<SectionStatusEntry> scopeStates;  // C 级范围判定的状态投影（checkSectionScope 输入）
         const UnitPreference& units = request.units.value_or(UnitPreference{});
 
-        for (const std::string& sectionId : domainSectionsInScope(request.level)) {
+        for (const std::string& sectionId : sectionsInScopeList) {
             // 取消检查点（章节解析粒度——§7.1 取消行/acceptance 5）。
             if (cancel != nullptr && cancel->isCancelled()) {
                 session.cancel();
                 return assembleCanceledOutcome();
             }
 
-            // 词表内 token 的行号必在（domainSectionsInScope 输出即词表成员
+            // 词表内 token 的行号必在（sectionsInScope 输出即词表成员
             // ——nullopt 不可能；解引用前不判空即文档化的前置事实）。
             const std::uint16_t order = *trySectionOrder(sectionId);
+
+            // ---- 框架章节：内建投影直接驱动（§5.1 词表规则"框架章节由
+            // reporting 内建提供方实现（不注册、不可覆盖）"——不经注册表；
+            // RPT-T14 落位面）。产出为元数据条目（无结果/证据绑定语义——
+            // FrameworkSections.hpp 文件头注），绑定校验循环不适用。
+            if (isFrameworkSectionId(sectionId)) {
+                // 投影输入＝会话内已冻结事实（锚定视图/复现块/当前诊断并集
+                // ——诊断章节〔词表序 7〕在域章节〔3~6〕之后组装，投影时点
+                // 的并集已含先行章节诊断——§4.2 diagRefs 并集的组装序语义）。
+                FrameworkSectionInput frameworkInput;
+                frameworkInput.revision = request.revision;
+                frameworkInput.revisionSeq = view->seq;
+                frameworkInput.revisionSummary = view->commandSummary;
+                frameworkInput.diagRefs = &diagMerger.snapshot();
+                frameworkInput.reproduction = &(*reproduction);
+
+                SectionContent content = m_framework.project(sectionId, frameworkInput);
+
+                // 结构自检（与域章节同闸——firstSectionContentViolation 的
+                // presence 纪律对框架内容同样强制；违例码 DataInvalid）。
+                if (const auto violation = firstSectionContentViolation(content)) {
+                    throw ReportError(*violation,
+                                      std::string("build: 框架章节 '") + sectionId
+                                          + "' 内建投影结构违约（§5.3/§9.2）");
+                }
+
+                // 冻结章节视图（§4.3.4 字段表——框架条目无绑定，sourceResults/
+                // sourceObjects 恒空【§4.3.4"框架章节可空"】；资格说明缺席
+                // 〔不引结果——无聚合面〕；章节当前性缺席〔不引 Superseded
+                // 结果〕）。
+                ReviewReportSection section;
+                section.sectionId = sectionId;
+                section.sectionVersion = content.providerContractVersion;
+                section.status = content.status;
+                section.entries = content.entries;
+                section.missingItems = content.missingItems;
+                section.renderHint = content.renderHint;
+                section.order = order;
+
+                // 选择：显式覆盖优先，缺省＝§5 默认规则（框架章节与域章节
+                // 同一选择语义——§9.1 sectionOverrides 未排除框架章节）。
+                section.selected = defaultSelectionForStatus(content.status);
+                for (const SectionSelection& overrideSel : request.sectionOverrides) {
+                    if (overrideSel.sectionId == sectionId) {
+                        section.selected = overrideSel.selected;   // 用户显式覆盖
+                        break;
+                    }
+                }
+
+                // 章节诊断入并（框架投影不产诊断——空集空转；保留对称面）。
+                for (const core::DiagnosticRecord& record : content.diagnostics) {
+                    DiagRefEntry ref;
+                    if (makeDiagRef(m_codeRegistry, record, sectionId, std::nullopt, ref)) {
+                        diagMerger.add(std::move(ref));
+                    }
+                }
+
+                sections.push_back(std::move(section));
+                scopeStates.push_back(SectionStatusEntry{sectionId, content.status});
+                emitProgress(progress, static_cast<std::uint64_t>(sections.size()),
+                             sectionTotal, "building");
+                continue;
+            }
+
+            // ---- 域章节：注册表查找（§5.1 词表规则——域章节由对应单元装配
+            // 期注册；未注册＝缺项表达非空壳）。
             IReportSectionProvider* provider = m_sections->find(sectionId);
 
             // ---- 未注册域章节：缺项表达，非空壳（§5.1 词表规则——"章节
@@ -1171,9 +1253,13 @@ ReportBuildOutcome ReviewReportBuilder::build(const ReportBuildRequest& request,
         // 落地刷新（§14.4 v0.8 范围登记）。
         fields.coverageSummary = CaseCoverageSummary{};
         // externalResourceSummary：数据源＝runtime 摘要资源清单（ModelSummary
-        // ——RPT-T12 落位面）；本任务无来源注入，以空集承载（§4.2"可空集"
-        // 合法值——空＝本构建器未获知任何外部资源状态，非"确认无外部资源"）。
-        fields.externalResourceSummary = {};
+        // ——RPT-T12 schema；RPT-T14 起经框架投影器消费——锚定修订的资源
+        // 固化状态投影，Recorded 态条目即 §6.4 行 3"外部验证未完成"限定语
+        // 的数据源）。提供方未注入/摘要不可解析＝空集（§4.2"可空集"合法
+        // 值——空＝本构建器未获知任何外部资源状态，非"确认无外部资源"，
+        // 不伪造）。
+        fields.externalResourceSummary =
+            m_framework.externalResourceEntries(request.revision);
         fields.reproduction = std::move(*reproduction);
         fields.sections = std::move(sections);
         if (request.reviewSeed.has_value()) {

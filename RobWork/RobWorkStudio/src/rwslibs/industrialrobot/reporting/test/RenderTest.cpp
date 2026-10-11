@@ -736,8 +736,12 @@ TEST(FieldMatrixTest, ValueProjection_FourStateWords_ToChars_AndUnitConversion_R
     ASSERT_NE(badRaw, nullptr);
     EXPECT_EQ(badRaw->valueRepr, "abc");
 
-    // status 维度＝绑定结果工程判定 token（§6.6 结论列——AT-22 status 维度）。
-    EXPECT_EQ(count->status, "feasible");
+    // status 维度＝绑定结果工程判定 token（§6.6 结论列——AT-22 status 维度；
+    // RPT-T14 绑定语义分化：域章节条目携带、框架章节元数据条目缺席——
+    // project-scheme 数据源为平台元数据，无结果绑定语义）。
+    EXPECT_EQ(reach->status, "feasible") << "域条目 status＝绑定结果判定 token";
+    EXPECT_FALSE(count->status.has_value())
+        << "框架条目 status 缺席（元数据条目——§9.2『结论条目必填』的分化面）";
 }
 
 TEST(FieldMatrixTest, UnitPreferenceConflict_Rejected_DataInvalid_RPT06_ACC2)

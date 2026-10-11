@@ -59,6 +59,16 @@ BuilderCrossUnitContractTest.cpp 局部 `MinimalResultSource`）收敛/替换为
    "ik-converged" 条目、"1.5 mm" 数值）是结构契约的载体，不宣称任何真实
    机构的可达性/碰撞/动力学结论；真实域章节内容归 RPT-T14/T15 真实注册
    联调（§12.3：真实章节内容不得以替身数据冒充验收——AT-32 必须真实链路）。
+
+   **RPT-T14 落位登记（2026-10-12）**：B 级真实章节接入已随
+   `LevelBEndToEndTest.cpp` 落地——真实链路口径＝章节内容全部从注入数据
+   投影（envelope 经 evidence make 构造边界／ModelSummary 经 RPT-T12 冻结
+   schema／锚定元数据经 project 契约类型），域章节条目由四域提供方适配器
+   消费 `SectionRequest.results` 的真实字段投影并经构建器完整绑定校验后
+   冻结；各域**产品级**提供方实现仍归各域单元（§12.2 交接表——本单元零
+   业务域编译边〔R-1〕），适配器为测试内投影载体；ScriptedSectionProvider
+   的脚本内容自此仅用于结构契约用例（RPT-T04/T05/T11 面），不再出现在
+   AT-32 B 部分的验收链上（其 C 级联调随 RPT-T15）。
 4. **上游契约基线（P-RPT-9）**：替身消费的 evidence/core 契约以各卡 v0.1
    Draft 为基线；冻结出 diff 后按影响面同步替身脚本面与用例（本节即同步
    义务的登记位）。

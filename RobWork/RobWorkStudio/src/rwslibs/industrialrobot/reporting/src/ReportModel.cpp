@@ -35,6 +35,8 @@
 #include <map>
 #include <utility>
 
+#include <sdurws/ird/reporting/Sections.hpp>  // kFrameworkSectionIds（§5.1 词表权威单点——RPT-T14 框架条目分化校验的消费面；实现文件 include 不构成头循环）
+
 #include "ReportCodec.hpp"   // 单元内私有头（§3.1 src/ 行——身份计算唯一入口）
 
 namespace sdurws::ird::reporting {
@@ -510,6 +512,24 @@ std::optional<ReportErrorCode> validateImpl(const ReviewReportFields& f,
                 }
             }
             // 结果绑定：可解析到 resultRefs（追溯链第一跳——RP-TRACE-1）。
+            // 绑定义务的语义边界（RPT-T14 分化落位，DTB §5.4 登记）：§9.2
+            // ResultBinding 行原文为"**结论条目**必填"——框架章节（§5.1
+            // 行 1/2/7/8 等 kFrameworkSectionIds 成员）的条目是元数据呈现
+            // （项目元数据/模型摘要/诊断引用/外部资源状态），其数据源为
+            // 平台侧冻结事实，不来自任何评估运行——伪造 runId 绑定反而
+            // 违反 NFR-COR-04（结论定位到快照）。故框架章节条目豁免结果
+            // 绑定检查；同时保守约束：框架条目不得携带证据绑定（框架数据
+            // 源无证据对象——携带即结构违约，防"借框架通道伪造结论"）。
+            // 域章节条目仍为结论条目——完整绑定检查原样保留。
+            const bool frameworkEntries = isFrameworkSectionId(s.sectionId);
+            if (frameworkEntries) {
+                if (!e.evidence.empty()) {
+                    note(detail, ewhere + ": 框架章节条目携带证据绑定（框架数据源无证据"
+                                  "对象——§5.1 框架章节数据源为平台元数据，非评估结论）");
+                    return ReportErrorCode::EvidenceRefInvalid;
+                }
+                continue;   // 元数据条目——无结果/证据绑定语义，后续检查不适用
+            }
             const auto bindIt = runIndex.find(e.result.runId);
             if (!e.result.runId.isValid() || e.result.fieldPath.empty()) {
                 note(detail, ewhere + ": result 绑定不完整（runId/fieldPath 必填——§9.2）");
@@ -520,6 +540,7 @@ std::optional<ReportErrorCode> validateImpl(const ReviewReportFields& f,
                 return ReportErrorCode::EvidenceRefInvalid;
             }
             const ResultRefSnapshot& bound = f.resultRefs[bindIt->second];
+            (void)bound;   // bound 仅供下方证据 caseScope 检查的所属结果锚
             // 证据绑定：caseScope ⊆ 所属结果 caseScope（§4.7 关系约束——
             // 防引用错位）。
             for (std::size_t m = 0; m < e.evidence.size(); ++m) {

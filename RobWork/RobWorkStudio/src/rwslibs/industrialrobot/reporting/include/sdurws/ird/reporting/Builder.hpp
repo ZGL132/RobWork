@@ -83,6 +83,7 @@
 #include <sdurws/ird/project/QueryPort.hpp>     // project::IProjectQueryPort（C-4 锚定/运行清单）
 
 #include <sdurws/ird/reporting/Errors.hpp>      // ReportError/ReportErrorCode/diagcodes
+#include <sdurws/ird/reporting/FrameworkSections.hpp>  // BuiltinFrameworkSections（B 级框架章节内建投影——RPT-T14）
 #include <sdurws/ird/reporting/Identity.hpp>    // ReportId/ReportLevel
 #include <sdurws/ird/reporting/ReportModel.hpp> // ReviewReport/ReviewMetadata/UnitPreference/CurrentnessSnapshot
 #include <sdurws/ird/reporting/SectionProvider.hpp>  // SectionRegistry/IReportSectionProvider（RPT-T04）
@@ -549,15 +550,20 @@ public:
  *   - IDiagnosticRegistry（可选）：码表元数据只读查询（severity/category/
  *     reportable 过滤——§4.3.3"reportable=false 的码不进报告"；空指针＝
  *     码表未装配，诊断引用以默认元数据承载、码表元数据由渲染层补全，
- *     不私设第二权威）。
+ *     不私设第二权威）；
+ *   - IModelSummaryProvider（可选，RPT-T14 增设）：runtime 只读摘要投影
+ *     （input-summary 章节与报告级 externalResourceSummary 的数据源——
+ *     P-RPT-2 注入形态；空指针＝未装配，缺项/空集表达不伪造）。
  *
- * 框架章节边界（RPT-T05 落位范围登记，§14.4 v0.8）：§5.1 六个框架章节
- * （project-scheme/input-summary/diagnostics/external-validation-boundary/
- * review-signoff/variant-diff）的内建投影**不在本任务交付面**——其数据源
- * 依赖 IModelSummaryProvider（runtime 摘要 schema，随 RPT-T12 落位）、
- * diagnostics exportSafeSummary 投影与 ui 采集面（§12 交接清单）；本实现
- * 组装域章节（已注册提供方投影＋未注册缺项表达），框架章节随其数据源
- * 任务收口（§11 任务拆分链）。
+ * 框架章节边界（RPT-T14 落位更新，§14.4 v0.17）：B 级四个框架章节
+ * （project-scheme/input-summary/diagnostics/external-validation-boundary）
+ * 的内建投影已随 RPT-T14 落位（FrameworkSections.hpp——数据源＝锚定修订
+ * 元数据/IModelSummaryProvider〔构造可选注入——nullptr＝input-summary
+ * 缺项表达，不伪造〕/报告级诊断并集/复现块），由本实现直接驱动（不注册、
+ * 不可覆盖——§5.1 词表规则/D-13）；C 专属框架两项（review-signoff/
+ * variant-diff）的内建投影随 RPT-T15 落位，落位前不入组装范围（不预建
+ * 空章节）。本实现组装＝级别范围内全量章节（sectionsInScope——框架走
+ * 内建投影、域走注册表查找＋未注册缺项表达）。
  *
  * 线程契约：build 并发安全——全部注入引用只读消费、无共享可变状态；
  * 每次调用构造独立 ReportBuildSession（§9.1"每次调用独立会话"）。
@@ -568,17 +574,24 @@ public:
      * @brief 注入构造（L5 装配绑定——引用借用语义，见类注）。
      *
      * @param queryPort    [in] project 查询端口（borrow——存续期覆盖全部
-     *                     build() 调用；只读消费）
+     *                     build() 调用；只读消费；RPT-T14 起框架章节投影
+     *                     增消费 metadataAt〔锚定修订元数据——锚定纪律口径，
+     *                     DTB §5.4 登记〕）
      * @param resultSource [in] 归档结果注入源（borrow——同上）
      * @param sections     [in] 章节提供方注册表（borrow——运行期只读）
      * @param codeRegistry [in] 稳定码注册表（可选 borrow——空＝码表元数据
      *                     未装配，诊断引用以默认元数据承载）
+     * @param modelSummary [in] 模型摘要提供方（可选 borrow——RPT-T14 增设：
+     *                     input-summary/外部资源状态的数据源〔P-RPT-2 注入
+     *                     形态〕；空＝未装配，相关章节/字段以缺项/空集表达，
+     *                     不伪造）
      */
     explicit ReviewReportBuilder(const project::IProjectQueryPort& queryPort,
                                  IReportResultSource& resultSource,
                                  const SectionRegistry& sections,
                                  const diagnostics::IDiagnosticRegistry* codeRegistry
-                                 = nullptr);
+                                 = nullptr,
+                                 const IModelSummaryProvider* modelSummary = nullptr);
 
     /// 非拷贝（借用语义——拷贝即双属主）。
     ReviewReportBuilder(const ReviewReportBuilder&) = delete;
@@ -593,6 +606,7 @@ private:
     IReportResultSource* m_resultSource;                  ///< 归档结果注入源（借用）
     const SectionRegistry* m_sections;                    ///< 章节注册表（借用；只读）
     const diagnostics::IDiagnosticRegistry* m_codeRegistry; ///< 码表元数据（借用；可空）
+    BuiltinFrameworkSections m_framework;                 ///< B 级框架章节内建投影器（RPT-T14——值成员，借用注入同源）
 };
 
 }  // namespace sdurws::ird::reporting

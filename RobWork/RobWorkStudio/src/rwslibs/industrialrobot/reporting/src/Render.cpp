@@ -961,13 +961,17 @@ void appendQualifier(std::vector<QualifierToken>& out, QualifierToken token)
  * RegionCoverageEvidence.downgraded↔参考值字段）未在 §4 报告模型冻结
  * ——不在单元格上伪标注（ERR-01），其**报告级**呈现义务由渲染器的
  * 外部验证边界章（Recorded 态限定语）与覆盖摘要块（EVI-REGION-COVERAGE-
- * DOWNGRADED 诊断码——P-EV-5 承接）承接（v0.9 登记的条目级关联键收口
- * 安排不变，随框架章节数据源任务落地）。
+ * DOWNGRADED 诊断码——P-EV-5 承接）承接。
+ *
+ * RPT-T14 框架条目适配：bound 为可空指针——框架章节元数据条目无绑定
+ * 语义（§9.2"结论条目必填"的分化面），结果级推导（④⑥⑦⑧）不适用；
+ * 字段级（①②）与章节级（⑤）推导照常（限定语推导序不变——确定性
+ * 组成部分）。
  */
 std::vector<QualifierToken> qualifiersFor(const ReviewReportSection& section,
                                           const SectionEntryView& entry,
                                           const FieldValue& field,
-                                          const ResultRefSnapshot& bound)
+                                          const ResultRefSnapshot* bound)
 {
     std::vector<QualifierToken> out;
 
@@ -981,7 +985,7 @@ std::vector<QualifierToken> qualifiersFor(const ReviewReportSection& section,
         appendQualifier(out, QualifierToken::Estimated);
     }
     // ③data-insufficient（证据状态源）：绑定证据 Missing/Invalid/Unverified
-    //   ——不满足态跟随结论出现（§6.4 行 2）。
+    //   ——不满足态跟随结论出现（§6.4 行 2；框架条目无证据绑定——空集空转）。
     for (const EvidenceBinding& binding : entry.evidence) {
         if (binding.status == evidence::EvidenceItemStatus::Missing
             || binding.status == evidence::EvidenceItemStatus::Invalid
@@ -990,31 +994,40 @@ std::vector<QualifierToken> qualifiersFor(const ReviewReportSection& section,
             break;   // 任一不满足即触发——一词一位
         }
     }
-    // ④data-insufficient（工程判定源）：绑定结果汇总判定。
-    if (bound.engineeringStatus == core::EngineeringStatus::DataInsufficient) {
-        appendQualifier(out, QualifierToken::DataInsufficient);
+    // ④~⑧为结果级推导（依赖绑定结果；bound==nullptr〔框架元数据条目——
+    //   无绑定语义〕时整段不适用：元数据不是工程结论，不得携带结果级
+    //   限定语——伪造判定语义面）。⑤与绑定无关，仍按推导序在④⑥之间
+    //   执行（固定推导序＝确定性组成部分，语序不可调整）。
+    if (bound != nullptr) {
+        // ④data-insufficient（工程判定源）：绑定结果汇总判定。
+        if (bound->engineeringStatus == core::EngineeringStatus::DataInsufficient) {
+            appendQualifier(out, QualifierToken::DataInsufficient);
+        }
     }
     // ⑤data-insufficient（章节状态源）：§5.3"选中＋缺失项全量清单＋数据
-    //   不足限定语"——章节级状态跟随数值与结论出现（§8.2④）。
+    //   不足限定语"——章节级状态跟随数值与结论出现（§8.2④；与绑定无关
+    //   ——框架章节 DataInsufficient 形态同样携带章节级限定语）。
     if (section.status == SectionStatus::DataInsufficient) {
         appendQualifier(out, QualifierToken::DataInsufficient);
     }
-    // ⑥screening-only：Quick 模式——"不得单独支撑正式通过"（§8.1 表 1）。
-    if (bound.mode == core::EvaluationMode::Quick) {
-        appendQualifier(out, QualifierToken::ScreeningOnly);
-    }
-    // ⑦historical-superseded：当前性 Superseded——"输入已变化"标记。
-    if (bound.currentness.status.has_value()
-        && *bound.currentness.status == evidence::CurrentnessStatus::Superseded) {
-        appendQualifier(out, QualifierToken::HistoricalSuperseded);
-    }
-    // ⑧outcome 状态事实（§6.4 行 8——interrupted/canceled/failed；构建
-    //   校验保证结论条目只绑 Completed 结果，本推导为词表完备性承载）。
-    switch (bound.outcome) {
-    case core::TaskOutcome::Completed: break;
-    case core::TaskOutcome::Interrupted: appendQualifier(out, QualifierToken::Interrupted); break;
-    case core::TaskOutcome::Canceled:    appendQualifier(out, QualifierToken::Canceled);    break;
-    case core::TaskOutcome::Failed:      appendQualifier(out, QualifierToken::Failed);      break;
+    if (bound != nullptr) {
+        // ⑥screening-only：Quick 模式——"不得单独支撑正式通过"（§8.1 表 1）。
+        if (bound->mode == core::EvaluationMode::Quick) {
+            appendQualifier(out, QualifierToken::ScreeningOnly);
+        }
+        // ⑦historical-superseded：当前性 Superseded——"输入已变化"标记。
+        if (bound->currentness.status.has_value()
+            && *bound->currentness.status == evidence::CurrentnessStatus::Superseded) {
+            appendQualifier(out, QualifierToken::HistoricalSuperseded);
+        }
+        // ⑧outcome 状态事实（§6.4 行 8——interrupted/canceled/failed；构建
+        //   校验保证结论条目只绑 Completed 结果，本推导为词表完备性承载）。
+        switch (bound->outcome) {
+        case core::TaskOutcome::Completed: break;
+        case core::TaskOutcome::Interrupted: appendQualifier(out, QualifierToken::Interrupted); break;
+        case core::TaskOutcome::Canceled:    appendQualifier(out, QualifierToken::Canceled);    break;
+        case core::TaskOutcome::Failed:      appendQualifier(out, QualifierToken::Failed);      break;
+        }
     }
     return out;
 }
@@ -1081,15 +1094,23 @@ FieldMatrix extractFieldMatrix(const ReviewReport& report)
     // 遍历序（§8.4 冻结序）：章节按存储序（构建校验保证 order 严格递增
     // ——存储序即 §5 order 序），条目按 entryKey 稳定序，字段按存储序。
     for (const ReviewReportSection& section : report.sections()) {
+        // 框架章节（RPT-T14）：元数据条目无结果绑定语义（§9.2"结论条目
+        // 必填"的分化面）——结果级七元组维度（status/resultRef/currentness）
+        // 以缺席承载（FieldCell 对应成员为 optional——三格式对缺席的呈现
+        // 面已按可选处理），限定语只走字段级/章节级推导。
+        const bool frameworkEntries = isFrameworkSectionId(section.sectionId);
         for (const std::size_t entryIndex : entryOrderIndices(section)) {
             const SectionEntryView& entry = section.entries[entryIndex];
-            const auto boundIt = resultIndex.find(entry.result.runId.toCanonical());
-            if (boundIt == resultIndex.end()) {
-                throw ReportError(ReportErrorCode::DataInvalid,
-                                  "条目结果绑定越界（resultRefs 无该运行）："
-                                      + entry.result.runId.toCanonical());
+            const ResultRefSnapshot* bound = nullptr;
+            if (!frameworkEntries) {
+                const auto boundIt = resultIndex.find(entry.result.runId.toCanonical());
+                if (boundIt == resultIndex.end()) {
+                    throw ReportError(ReportErrorCode::DataInvalid,
+                                      "条目结果绑定越界（resultRefs 无该运行）："
+                                          + entry.result.runId.toCanonical());
+                }
+                bound = boundIt->second;
             }
-            const ResultRefSnapshot& bound = *boundIt->second;
 
             // 字段键条目内唯一性防御（§9.2 fields 键唯一——构建校验保证，
             // 重复键会使矩阵 fieldKey 碰撞，显式拒绝不静默）。
@@ -1108,16 +1129,18 @@ FieldMatrix extractFieldMatrix(const ReviewReport& report)
                 const ValueProjection projection = projectFieldValue(report, section, entry, field);
                 cell.valueRepr = projection.text;
                 cell.unit = projection.unit;
-                // status 维度＝绑定结果工程判定 token（§6.6 结论列——AT-22
-                // 七元组的 status；core toToken 同码同串）。
-                cell.status = std::string(core::toToken(bound.engineeringStatus));
+                if (bound != nullptr) {
+                    // status 维度＝绑定结果工程判定 token（§6.6 结论列——AT-22
+                    // 七元组的 status；core toToken 同码同串）。
+                    cell.status = std::string(core::toToken(bound->engineeringStatus));
+                    cell.resultRef = bound->runId.toCanonical();
+                    cell.currentness = currentnessToken(bound->currentness);
+                }
                 cell.qualifier = qualifiersFor(section, entry, field, bound);
-                cell.resultRef = bound.runId.toCanonical();
                 cell.evidenceRef = evidenceRefTexts(entry);
                 for (const core::ObjectId& caseId : entry.caseScope) {
                     cell.caseScope.push_back(caseId.toCanonical());
                 }
-                cell.currentness = currentnessToken(bound.currentness);
                 matrix.push_back(std::move(cell));
             }
         }

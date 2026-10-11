@@ -191,6 +191,7 @@ class FakeQueryPort final : public project::IProjectQueryPort {
 public:
     // 脚本数据（默认＝锚定视图在闭包内＋run1 已 finalize）。
     bool revisionExists = true;
+    bool metadataExists = true;   // RPT-T14：锚定修订元数据在案（false＝project-scheme 缺项触发面）
     std::vector<project::RunInfo> runs{};
     project::RevisionView view = anchoredView();
 
@@ -200,6 +201,7 @@ public:
     mutable int headCalls = 0;
     mutable int tryRevisionCalls = 0;
     mutable int listRunsCalls = 0;
+    mutable int metadataAtCalls = 0;
 
     project::RevisionView head() const override
     {
@@ -222,6 +224,26 @@ public:
         return runs;   // 仅 finalize 口径的脚本清单（D-13——未 finalize 不列入）
     }
 
+    // RPT-T14：锚定修订元数据（project-scheme 框架章节数据源——§5.1 行 1；
+    // 构建器以 metadataAt(锚定修订) 锚定取值〔锚定纪律口径，DTB §5.4〕，
+    // 不取 currentMetadata 的 HEAD 当前值）。脚本预置一份最小合法元数据。
+    std::optional<project::ProjectMetadataView> metadataAt(core::RevisionId id) const override
+    {
+        record("metadataAt");
+        if (!metadataExists || !(id == view.id)) {
+            return std::nullopt;
+        }
+        project::ProjectMetadataView meta;
+        project::BranchRecord branch;
+        branch.branchId = fixedBranch();
+        branch.label = "main";
+        branch.tipRevisionId = view.id;
+        meta.record.projectDisplayName = "测试项目";
+        meta.record.primaryBranchId = fixedBranch();
+        meta.record.branches = {branch};
+        return meta;
+    }
+
     // —— 以下方法构建器绝不可调用：调用即留痕判红（零项目写/零越权读的
     //    反向断言面——acceptance 2"查询端口桩零调用"；noexcept 的 tryObject
     //    以留痕＋空返回表达，避免 noexcept 内抛出导致 terminate）。 ——
@@ -232,10 +254,6 @@ public:
     project::ProjectMetadataView currentMetadata() const override
     {
         unexpected("currentMetadata");
-    }
-    std::optional<project::ProjectMetadataView> metadataAt(core::RevisionId) const override
-    {
-        unexpected("metadataAt");
     }
     std::vector<project::BranchTip> branchTips() const override { unexpected("branchTips"); }
     std::vector<project::RevisionView> branchHistory(core::BranchId, std::uint32_t) const override
@@ -269,6 +287,8 @@ private:
             ++tryRevisionCalls;
         } else if (std::string(method) == "listRuns") {
             ++listRunsCalls;
+        } else if (std::string(method) == "metadataAt") {
+            ++metadataAtCalls;
         }
     }
 
@@ -613,16 +633,18 @@ TEST(ReviewReportBuilderTest, BuildsBLevelReport_WithSnapshotsAndAnchoring_RPT05
     EXPECT_EQ(*ref.currentness.status, evidence::CurrentnessStatus::Current);
     EXPECT_TRUE(ref.currentness.evaluatedAgainst.headRevision == fixedRevision());
 
-    // 章节组装：B 级域四章节按词表序（order 严格递增——§4.7）；kin 已注册
-    // Populated，其余未注册＝缺项非空壳（§5.1 词表规则）。
-    const std::vector<std::string> scope = domainSectionsInScope(ReportLevel::B);
+    // 章节组装：B 级全量八章节按词表序（order 严格递增——§4.7；RPT-T14 起
+    // 框架四项内建投影在列）；kin 域章节已注册 Populated，model/requirements/
+    // optimization-candidates 未注册＝缺项非空壳（§5.1 词表规则）。
+    const std::vector<std::string> scope = sectionsInScope(ReportLevel::B);
+    ASSERT_EQ(scope.size(), std::size_t{8});   // RPT-01-B 完整章节集（§5.2 范围图外框）
     ASSERT_EQ(report.sections().size(), scope.size());
     for (std::size_t i = 0; i < report.sections().size(); ++i) {
         const ReviewReportSection& section = report.sections()[i];
         EXPECT_EQ(section.sectionId, scope[i]);
         EXPECT_EQ(section.order, *trySectionOrder(scope[i]));
     }
-    const ReviewReportSection& kin = report.sections()[2];   // 词表行 5——kinematics-collision
+    const ReviewReportSection& kin = report.sections()[4];   // 词表行 5——kinematics-collision
     ASSERT_FALSE(kin.entries.empty());
     EXPECT_EQ(kin.status, SectionStatus::Populated);
     EXPECT_TRUE(kin.selected);                               // Populated 默认选中（§5 默认规则）
@@ -630,7 +652,7 @@ TEST(ReviewReportBuilderTest, BuildsBLevelReport_WithSnapshotsAndAnchoring_RPT05
     ASSERT_TRUE(kin.eligibilityNote.has_value());
     EXPECT_TRUE(kin.eligibilityNote->formalPassAllowed);     // 资格聚合（所引结果成立）
     EXPECT_FALSE(kin.eligibilityNote->reviewRecordAllowed);
-    const ReviewReportSection& unregistered = report.sections()[0];   // model——未注册
+    const ReviewReportSection& unregistered = report.sections()[2];   // model——未注册（词表行 3）
     EXPECT_EQ(unregistered.status, SectionStatus::NoFormalResult);
     EXPECT_FALSE(unregistered.selected);                     // 缺正式结果默认不选（§16 验收要点）
     ASSERT_EQ(unregistered.missingItems.size(), 1u);
@@ -643,14 +665,20 @@ TEST(ReviewReportBuilderTest, BuildsBLevelReport_WithSnapshotsAndAnchoring_RPT05
     EXPECT_EQ(report.evidenceRefs()[0].sourceSection, "kinematics-collision");
     EXPECT_EQ(report.evidenceRefs()[0].status, evidence::EvidenceItemStatus::Satisfied);
 
-    // 锚定纪律（acceptance 4）：head/tryRevision/listRuns 各恰一次。
+    // 锚定纪律（acceptance 4）：head/tryRevision/listRuns 各恰一次；
+    // RPT-T14 增：metadataAt 恰一次（project-scheme 框架章节数据源——锚定
+    // 修订元数据，锚定纪律口径）。
     EXPECT_EQ(scene.queryPort.headCalls, 1);
     EXPECT_EQ(scene.queryPort.tryRevisionCalls, 1);
     EXPECT_EQ(scene.queryPort.listRunsCalls, 1);
-    // 零项目写（acceptance 2/4）：调用日志只含三个只读方法——本测试桩对
-    // 其余方法一律抛异常（调用即测试失败），日志为正向核对面。
+    EXPECT_EQ(scene.queryPort.metadataAtCalls, 1);
+    // 零项目写（acceptance 2/4）：调用日志只含三个锚定只读方法＋锚定元数据
+    // 读取（RPT-T14——全部只读）——本测试桩对其余方法一律抛异常（调用即
+    // 测试失败），日志为正向核对面。
     for (const std::string& call : scene.queryPort.callLog) {
-        EXPECT_TRUE(call == "head" || call == "tryRevision" || call == "listRuns") << call;
+        EXPECT_TRUE(call == "head" || call == "tryRevision" || call == "listRuns"
+                    || call == "metadataAt")
+            << call;
     }
 }
 
@@ -789,9 +817,11 @@ TEST(ReviewReportBuilderTest, CLevelWithPopulatedCSection_Builds_RPT05_ACC1)
     const ReportBuildOutcome outcome = builder.build(request);
     ASSERT_NE(outcome.report, nullptr);
     EXPECT_EQ(outcome.report->level(), ReportLevel::C);
-    // C 级域范围＝8 章节（§5.2——B 全部＋C 追加的域八项）。
+    // C 级组装范围＝12 章节（§5.2——B 全部八项＋C 追加域四项；C 专属框架
+    // 两项的内建投影随 RPT-T15 落位，落位前不入组装范围——不预建空章节）。
     EXPECT_EQ(outcome.report->sections().size(),
-              domainSectionsInScope(ReportLevel::C).size());
+              sectionsInScope(ReportLevel::C).size());
+    EXPECT_EQ(sectionsInScope(ReportLevel::C).size(), std::size_t{12});
 }
 
 TEST(ReviewReportBuilderTest, CLevelUserDeselectAllCSections_RejectedScopeInsufficient_RPT05_ACC1)
@@ -976,7 +1006,9 @@ TEST(ReviewReportBuilderTest, ZeroProjectWrites_OnFailureAndSuccess_RPT05_ACC2_A
     ReviewReportBuilder okBuilder(okScene.queryPort, okScene.resultSource, okScene.registry);
     const ReportBuildOutcome okOutcome = okBuilder.build(standardRequest(run));
     ASSERT_NE(okOutcome.report, nullptr);
-    EXPECT_EQ(okScene.queryPort.callLog.size(), 3u);   // head＋tryRevision＋listRuns 恰三次
+    // 成功路径：head＋tryRevision＋listRuns 恰三次＋metadataAt 恰一次
+    //（RPT-T14——project-scheme 框架章节数据源；全部只读）。
+    EXPECT_EQ(okScene.queryPort.callLog.size(), 4u);
 
     StandardScene failScene = StandardScene::withRun(run);
     failScene.queryPort.revisionExists = false;
@@ -1096,8 +1128,9 @@ TEST(ReviewReportBuilderTest, SupersededCurrentness_CarriesReasonsAndSectionMark
     EXPECT_EQ(*ref.currentness.status, evidence::CurrentnessStatus::Superseded);
     ASSERT_EQ(ref.currentness.reasons.size(), 1u);
     EXPECT_EQ(ref.currentness.reasons[0].kind, evidence::InvalidationKind::ObjectContentChanged);
-    // 章节引用 Superseded 结果——章节级当前性必填（构建器冻结面）。
-    const ReviewReportSection& kin = outcome.report->sections()[2];
+    // 章节引用 Superseded 结果——章节级当前性必填（构建器冻结面；词表行 5
+    // ——kinematics-collision，RPT-T14 起下标 4）。
+    const ReviewReportSection& kin = outcome.report->sections()[4];
     ASSERT_TRUE(kin.currentness.has_value());
     ASSERT_TRUE(kin.currentness->status.has_value());
     EXPECT_EQ(*kin.currentness->status, evidence::CurrentnessStatus::Superseded);
