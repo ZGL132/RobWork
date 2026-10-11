@@ -581,6 +581,21 @@ target_sources(sdurws_ird_trajectory_contract_test PRIVATE
                                                    #   ui 公共面——两模式皆
                                                    #   跑；dynamics ASM-PLUG
                                                    #   契约测试同位面）
+target_sources(sdurws_ird_trajectory_contract_test PRIVATE
+    contract_test/At06GoldenContractTest.cpp)  # WP-16-T13：AT-06 四反例黄
+                                                #   金数据集（testdata/golden/
+                                                #   trj-at06-recheck-golden）
+                                                #   登记契约——DatasetManifest
+                                                #   全量装载校验＋covered-
+                                                #   Requirements 逐项 lint 面
+                                                #   ＋P-06 冻结数值表物化对照
+                                                #   （inputs.protocol ↔ make-
+                                                #   P06FrozenRecheckParameters）
+                                                #   ＋四反例解析量黄金对照（闭
+                                                #   式重算——testkit 装载器真
+                                                #   实消费零桩化；被测面纯 std
+                                                #   ＋inline 值函数零 rw 符号
+                                                #   ——非条件源，两模式皆跑）
 
 # KinematicsPortContractTest 为集成模式条件源（WP-16-T05——③端口消费契
 # 约：R-1 源码扫描零 kinematics include／请求字段透传钉扎／确定性解序／

@@ -1,0 +1,208 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "trj-at06",
+  "version": "1.0.0",
+  "basis": "appendixD#9 (解析算例/独立参考实现对照——标量相对 1e-9，数据集逐例声明 eps_abs 1e-12) ＋ appendixD#10 (时间参数化限制校验容差——相对 1e-9，AT-06 验证列) —— 测试侧黄金对照容差（units/trajectory.md §17.1：黄金数据集 trj-* 与容差档案随 WP-16-T13 落位；附录 D C7：本档案只服务黄金数据对照，不构成任何产品运行校验阈值——TRJ-05 限制校验的运行容差走附录 D 第 10 项固定值，不经本档案）。零参考量（margin/netDisplacement/centerAngleDeviation 恒等式精确零）由 eps_abs 分量承载（C4：零参考退化为 eps_abs，不要求精确零）。",
+  "entries": [
+    {
+      "fieldPath": "cases[*].recheck.actualMaxJointStep",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].recheck.actualMaxCartesianStep",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].collisionInterval.lower",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].collisionInterval.upper",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].candidateCollisionInterval.lower",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].candidateCollisionInterval.upper",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].firstHitPathParameter",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].centerAngleDeviation",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].stepOverDefault",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].netDisplacement",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].totalTravel",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].detour.tcp.x",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].detour.tcp.y",
+      "quantityKind": "length",
+      "unit": "m",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].detour.clearanceToBand",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].violation.pathParameter",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].violation.actualQ",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].violation.boundQ",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].peak.s",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].peak.q",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].peak.exceed",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].zeroMarginAnchor.q",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].zeroMarginAnchor.bound",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].zeroMarginAnchor.margin",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 0.0, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].nearZeroProbe.limitUpper",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    },
+    {
+      "fieldPath": "cases[*].nearZeroProbe.exceed",
+      "quantityKind": "angle",
+      "unit": "rad",
+      "tolerance": { "relative": 1e-9, "absolute": 1e-12 },
+      "source": "appendixD-fixed",
+      "allowedMax": { "relative": 1e-9, "absolute": 1e-12 }
+    }
+  ]
+}

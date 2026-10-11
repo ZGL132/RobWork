@@ -1,0 +1,14 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\evidence\Release\sdurws_ird_evidence.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\project\Release\sdurws_ird_project.lib
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\runtime\Release\sdurws_ird_runtime.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\trajectory\Release\sdurws_ird_trajectory.lib
+  sdurws_ird_trajectory_plugin.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\trajectory\Release\sdurws_ird_trajectory_plugin.lib
+  sdurws_ird_trajectory_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt\build-smoke\trajectory\Release\sdurws_ird_trajectory_contract_test.exe

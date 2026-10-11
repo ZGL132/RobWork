@@ -1,0 +1,96 @@
+{
+  "schema": "trj-at06-inputs/1",
+  "note": "AT-06 轨迹链四反例黄金算例的唯一数据源（WP-16-T13）。全部场景几何/路径/协议参数在此声明，期望值由 generate/make_trj_at06_golden.mjs 按 units/trajectory.md §11.1/§11.5/§15.6 复检协议与 REQUIREMENTS 附录 C《P-06 冻结数值表》闭式直算产出——与产品实现（trajectory/src/Recheck.cpp 等）零共享。protocol 块是 P-06 冻结表的物化声明（数值零自设——八值与附录 C 冻结表行 1~8 一致，消费测试与产品物化点 makeP06FrozenRecheckParameters 逐字段对照，任一侧漂移即显性失败）。",
+  "protocol": {
+    "maxJointStepRevolute": 0.05,
+    "jointSubdivisionCeilingRevolute": 0.2,
+    "maxCartesianStep": 0.005,
+    "cartesianSubdivisionCeiling": 0.02,
+    "maxSubdivisionDepth": 10,
+    "maxSubsegments": 1024
+  },
+  "cases": [
+    {
+      "id": "recheck-collision",
+      "counterExample": "segment-interior-collision",
+      "device": {
+        "dof": 1,
+        "jointType": "revolute",
+        "tcpRadius": 0.5
+      },
+      "path": {
+        "space": "joint",
+        "startQ": 0.0,
+        "endQ": 1.0
+      },
+      "obstacle": {
+        "kind": "box-swept-sector",
+        "centerAngle": 0.5,
+        "radialDistance": 0.3,
+        "halfWidth": 0.05
+      },
+      "representPoints": "tcp-single"
+    },
+    {
+      "id": "budget-exhausted",
+      "counterExample": "subdivision-budget-exhausted",
+      "device": {
+        "dof": 1,
+        "jointType": "revolute",
+        "tcpRadius": 0.5
+      },
+      "path": {
+        "space": "joint",
+        "legUp": 30.0,
+        "legDown": -30.0
+      },
+      "representPoints": "tcp-single"
+    },
+    {
+      "id": "replan-success",
+      "counterExample": "initial-collision-replan-ok",
+      "device": {
+        "dof": 2,
+        "link1": 0.4,
+        "link2": 0.3
+      },
+      "candidatePath": {
+        "startQ1": 0.0,
+        "startQ2": 0.0,
+        "endQ1": 1.2,
+        "endQ2": 0.6
+      },
+      "obstacleBand": {
+        "jointIndex": 0,
+        "lowerQ": 0.45,
+        "upperQ": 0.75
+      },
+      "detourConfig": {
+        "q1": 0.2,
+        "q2": 0.9
+      }
+    },
+    {
+      "id": "limit-exceeded",
+      "counterExample": "limit-violation-localization",
+      "device": {
+        "dof": 1,
+        "jointType": "revolute"
+      },
+      "jointLimit": {
+        "lower": -1.0,
+        "upper": 0.5
+      },
+      "basePath": {
+        "slope": 0.5
+      },
+      "smoothBulge": {
+        "amplitude": 0.2,
+        "form": "half-sine"
+      },
+      "nearZeroProbe": {
+        "exceed": 1.0e-6
+      }
+    }
+  ]
+}

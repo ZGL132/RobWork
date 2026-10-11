@@ -1,0 +1,99 @@
+{
+  "schema": "trj-at06-expected/1",
+  "note": "AT-06 四反例黄金期望值——由 generate/make_trj_at06_golden.mjs 独立参考实现产出（units/trajectory.md §11.1/§11.5/§15.6 复检协议与 REQUIREMENTS 附录 C P-06 冻结数值表闭式直算，与产品 C++ 实现零共享）。整数计数（层数/子段数/采样下标）经消费测试精确断言；浮点解析量经容差档案 trj-at06@1.0.0 对照（附录 D 第 9 项标量相对 1e-9）。",
+  "cases": [
+    {
+      "id": "recheck-collision",
+      "counterExample": "segment-interior-collision",
+      "conclusion": "Collision",
+      "materialCode": "TRJ-RECHECK-COLLISION",
+      "recheck": {
+        "subdivisionDepthUsed": 7,
+        "finalSubsegments": 128,
+        "subsegmentsExamined": 255,
+        "actualMaxJointStep": 0.0078125,
+        "actualMaxCartesianStep": 0.00390625,
+        "budgetExhausted": false
+      },
+      "collisionInterval": {
+        "lower": 0.33485132258537315,
+        "upper": 0.6651486774146269
+      },
+      "firstHitSampleIndex": 43,
+      "firstHitPathParameter": 0.3359375,
+      "lastHitSampleIndex": 85,
+      "hitSamplesCount": 43,
+      "centerSampleIndex": 64,
+      "centerAngleDeviation": 0
+    },
+    {
+      "id": "budget-exhausted",
+      "counterExample": "subdivision-budget-exhausted",
+      "conclusion": "DataInsufficient",
+      "insufficientReason": "BudgetExhausted",
+      "materialCode": "TRJ-RECHECK-BUDGET-EXHAUSTED",
+      "recheck": {
+        "subdivisionDepthUsed": 10,
+        "finalSubsegments": 1024,
+        "subsegmentsExamined": 2047,
+        "actualMaxJointStep": 0.05859375,
+        "actualMaxCartesianStep": 0.029296875,
+        "budgetExhausted": true
+      },
+      "totalTravel": 60,
+      "netDisplacement": 0,
+      "stepOverDefault": 0.008593749999999997,
+      "collisionQueriesExecuted": 0,
+      "budgetDominance": "关节界需求 n≥1200、笛卡尔界需求 n≥6000（R·60 m 弧长/0.005 m），两界同超预算上限——双上界取严语义下账目停在 1024（关节界 60/1024 rad 为登记的实际步长）"
+    },
+    {
+      "id": "replan-success",
+      "counterExample": "initial-collision-replan-ok",
+      "candidateCollisionInterval": {
+        "lower": 0.375,
+        "upper": 0.625
+      },
+      "taskFeasible": true,
+      "detour": {
+        "q1": 0.2,
+        "q2": 0.9,
+        "tcp": {
+          "x": 0.5281054675641699,
+          "y": 0.34682994033645514
+        },
+        "clearanceToBand": 0.25,
+        "insideBand": false
+      }
+    },
+    {
+      "id": "limit-exceeded",
+      "counterExample": "limit-violation-localization",
+      "violation": {
+        "axis": 0,
+        "axisKind": "revolute",
+        "upper": true,
+        "pathParameter": 0.7929360601168091,
+        "actualQ": 0.5175865839195515,
+        "boundQ": 0.5,
+        "unit": "rad",
+        "materialCode": "TRJ-LIMIT-EXCEEDED"
+      },
+      "peak": {
+        "s": 0.7929360601168091,
+        "q": 0.5175865839195515,
+        "exceed": 0.01758658391955148
+      },
+      "zeroMarginAnchor": {
+        "q": 0.5,
+        "bound": 0.5,
+        "margin": 0,
+        "triggersViolation": false
+      },
+      "nearZeroProbe": {
+        "limitUpper": 0.5175855839195515,
+        "exceed": 0.0000010000000000287557,
+        "mustDetect": true
+      }
+    }
+  ]
+}
