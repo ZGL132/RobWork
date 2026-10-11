@@ -6991,6 +6991,128 @@
       "registeredAt": "2026-10-10",
       "title": "ui_gui_test 5 个 WorkbenchShell 布局类用例依赖真实窗口管理器——QT_QPA_PLATFORM=offscreen 下失败、真实平台全绿（失败用例的实现文件 ui/src/ 本批零触碰＝非送验缺陷）；套件无平台敏感性标注机制，offscreen 环境（验收/CI 常态）系统性误报",
       "owner": "testkit 批次（平台敏感性标注或跳过机制——如用例级标注〔offscreen 期望失败/SKIP+归因〕或 testkit 探测 QT_QPA_PLATFORM 后自动归因；参照 F-617 剪贴板可用性预探先例）"
+    },
+    {
+      "id": "F-717",
+      "source": "acc/wp-16-t11/1 验收记录 §9.1（origin/acc/wp-16-t11/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t11-20261011.md，记录提交 739e843ab7e5c6481a2c0c0a39646398018d439c，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T11 验收：gate-all 全量一键门禁未完整走完——实施会话在第 4 步（全新 TEMP 冒烟树配置构建，约 75 分钟处）主动中止，以 ird_gates 单跑零命中＋双模式构建＋四份测试报告为准并如实登记（T09/T10 同口径）；验收定性：第 4 步验证 fresh 环境配置能力，与本任务代码改动面无关，建议级",
+      "owner": "治理/门禁侧（后续窗口期补跑完整 gate-all 消账）",
+      "resolution": "治理批 2026-10-12 第 4 步补跑（fresh 冒烟树全新独立配置＋构建，等效命令参数由治理批侦察确定、流水线后续步骤确定性执行），留痕 traceability/builds/gate-all-step4-makeup/——留痕由流水线后续步骤产出，本条先以描述性引用登记。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（gate-all 第 4 步补跑，B 项侦察就绪）"
+    },
+    {
+      "id": "F-718",
+      "source": "acc/wp-16-t11/1 验收记录 §9.2（origin/acc/wp-16-t11/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t11-20261011.md，记录提交 739e843ab7e5c6481a2c0c0a39646398018d439c，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T11 验收：主仓库存在他任务在途未提交产物（traceability/builds/ui-t74/smoke-tour/ 下 console-tour.log、driver-verdict.log、tour-5-final-state.png 三件）——非本任务范围，登记供治理侧知悉",
+      "owner": "治理侧（择机收敛在途产物）",
+      "resolution": "治理批 2026-10-12 以 [governance] ui-t74 冒烟留痕补录提交（dcdb9958）将三件在途产物入库——UI-T74 契约 status=done，实现提交 0bfb17eb8 与合入收尾 da2dfa045 均已在 redesign-main（git branch --contains 实测），知悉项随之消账。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（D1 ui-t74 三件补录提交 dcdb9958）"
+    },
+    {
+      "id": "F-719",
+      "source": "acc/wp-16-t12/1 验收记录「结论与建议项」S-1（origin/acc/wp-16-t12/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t12-20261011.md，记录提交 ee918b67ab650926ce0eb912e4778a555dc6638c，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T12 验收 S-1：trajectory 插件界面 GUI 人工点验（单元卡 §17.4 流程第②步起）尚未执行——harness sdurws_ird_trajectory_app 已建成可构建、登记输出就绪；实施侧已如实登记不标注通过（单元卡 §17.4 无人值守不启动 GUI 口径一致），本条仅为后续动作不遗失的提示",
+      "owner": "宿主装配批或首次人工点验窗口（执行 §17.4 第②~⑨步并截图留痕）"
+    },
+    {
+      "id": "F-720",
+      "source": "acc/wp-16-t12/1 验收记录「结论与建议项」S-2（origin/acc/wp-16-t12/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t12-20261011.md，记录提交 ee918b67ab650926ce0eb912e4778a555dc6638c，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T12 验收 S-2：单元卡 §16.3 宿主半区缺口（ui.md 双向登记/真实 registrar 工厂/ui 链接边白名单增登）如实维持登记——ui.md 与治理白名单文件不在 T12 allowedFiles、单侧不可代登（note 豁免成立，不计缺失）；宿主装配批收口时须按 dynamics ASM-PLUG→ASM-STUDIO 同款程序办理",
+      "owner": "宿主装配批次（治理侧跟踪该批次排期）"
+    },
+    {
+      "id": "F-721",
+      "source": "acc/wp-16-t13/1 首轮验收记录（origin/acc/wp-16-t13/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t13-20261011.md，记录提交 38ce83516b1c8c062390dcac8b59fdd097c3ef25，验收日期 2026-10-11，verdict=fail——阻断 B-1）建议级 S-1",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T13 首轮验收 S-1：At06GoldenContractTest.cpp:282 与 :301 注释自相矛盾（六项 vs 八值）——建议 B-1 修正时一并统一，避免下一位读者二次困惑",
+      "owner": "WP-16-T13 返工（随 B-1 统一口径）",
+      "resolution": "已随 B-1 返工（c513f366）闭合：测试注释统一「八项/八值」并载明返工消账说明（:280-293，六/八矛盾消除）；acc/wp-16-t13/2（attempt 2，verdict=pass）返工闭环核对表复核确认 S-1 闭合。"
+    },
+    {
+      "id": "F-722",
+      "source": "acc/wp-16-t13/1 首轮验收记录（origin/acc/wp-16-t13/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t13-20261011.md，记录提交 38ce83516b1c8c062390dcac8b59fdd097c3ef25，验收日期 2026-10-11，verdict=fail——阻断 B-1）建议级 S-2",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T13 首轮验收 S-2：manifest.json:103 history.reReviewedBy＝「WP-16-T13 实施会话（验收段独立复核待验收者留痕）」待回填——首轮记录明示不要求返工",
+      "owner": "治理批随动（合入后更新为验收分支引用）",
+      "resolution": "已由验收记录消账：acc/wp-16-t13/1 记录本身即该留痕（首轮记录原文「本记录即该留痕；合入后可随治理批更新为验收分支引用（不要求返工）」）；acc/wp-16-t13/2 复核维持原状、定性不构成缺失。"
+    },
+    {
+      "id": "F-723",
+      "source": "acc/wp-16-t14/1 验收记录 §四 观察项 O-1（origin/acc/wp-16-t14/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t14-20261011.md，记录提交 bae7d2975f74653df3643748968d1aa282295f7a，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T14 验收 O-1（信息性观察项，非阻断）：TRJ-LIMIT-EXCEEDED jerk 形态的管线产面无端到端触发——超限素材为测试侧直构（非 timeParameterize 产出）；定性：正常输入数学不可达（初值闭式恰在限值线、多段耦合由缩放环一轮精确收敛、maxIterations≥1 由 §15.8 前置校验强制，管线产面仅浮点病态下可达），实现 TU 头注与单元卡 §17.1 均已如实登记；验收标准「超限段定位诊断」由①jerk 缺失限值素材真实端到端诊断链＋②超限素材组装面两轨共同满足，与 WP-16-T08 验收先例同口径——不构成缺失",
+      "owner": "后续评估器批（登记于此供评估器组装批参考）"
+    },
+    {
+      "id": "F-724",
+      "source": "acc/wp-16-t14/1 验收记录 §四 观察项 O-2（origin/acc/wp-16-t14/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t14-20261011.md，记录提交 bae7d2975f74653df3643748968d1aa282295f7a，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T14 验收 O-2：本地 redesign-main 引用落后 origin 一提交（origin/redesign-main 已含 T12 合入 4a698acb，本地停在 9d7aa292）——合入段所有者侧状态，与实施分支无关，不影响本验收",
+      "owner": "合入段所有者（推送/同步时知悉）",
+      "resolution": "已随合入消账：T12~T16 链全部合入落地后本地引用同步推进（本批登记时 redesign-main HEAD＝439e960c「trajectory 链收官：T01~T16 全链合入收尾」，落后状态不复存在）。"
+    },
+    {
+      "id": "F-725",
+      "source": "acc/wp-16-t14/1 验收记录 §一.2 互证段（origin/acc/wp-16-t14/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t14-20261011.md，记录提交 bae7d2975f74653df3643748968d1aa282295f7a，验收日期 2026-10-11，verdict=pass）——实施批 gate-all 首跑环境性失败",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T14 实施批 gate-all 首跑 42/44 两项环境性失败（ui_test 因 python313.dll 运行时 PATH 缺失 0xc0000135 误报、第 4 步冒烟树配置缺 Qt 前缀）——实施提交 How 段如实登记，属环境参数缺失非代码缺陷",
+      "owner": "实施批随动（补参重跑即消）",
+      "resolution": "已补参重跑消账：补 -QtPrefix/-Toolchain 参数后 gate-all 全绿 85/85（实施留痕 traceability/builds/wp16-t14/gates-wp16-t14.log 载明；acc/wp-16-t14/1 §一.2 红线互证段采信并如实转述）。"
+    },
+    {
+      "id": "F-726",
+      "source": "acc/wp-16-t15/1 验收记录 发现清单 S-1（origin/acc/wp-16-t15/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t15-20261011.md，记录提交 10ac1409424518dc4fc4eeda4051d36430a3b27a，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "closed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T15 验收 S-1（建议级·说明项）：主仓库 traceability/builds/ui-t74/smoke-tour/ 三个未提交修改字面落在契约 allowedFiles 通配 traceability/** 内——经核实属 ui-t74 并行任务既有残留（早于本验收会话存在），与本任务交付面（builds/wp16-t15、gtest-reports/wp-16-t15）无交集，不构成 WP-16-T15 的范围违规",
+      "owner": "流水线治理侧（择机收敛）",
+      "resolution": "治理批 2026-10-12 以 [governance] ui-t74 冒烟留痕补录提交（dcdb9958）将三件入库——字面通配顾虑随在途产物入库消除（与 F-718 同源消账），备查项闭环。"
+    },
+    {
+      "id": "F-727",
+      "source": "acc/wp-16-t16/1 验收记录 §10 建议级 S-1（origin/acc/wp-16-t16/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t16-20261011.md，记录提交 4e426de379f5201d18cec319d9d0727ae4959829，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T16 验收 S-1（量纲声明口径的持续提示）：连续工艺段边界校验比较型素材单位 token 恒为 rad/s（Angular 族转写），移动关节段速度量纲实为 m/s——实现注释已如实声明「混合关节链取 Angular 族、两族 C7 默认同值使结论不变」（ContinuousProcess.cpp:109-117），数值结论不受影响；建议后续消费观测面时按段关节类型细化单位呈现",
+      "owner": "trajectory 评估器批（评估器组装批细化单位呈现）"
+    },
+    {
+      "id": "F-728",
+      "source": "acc/wp-16-t16/1 验收记录 §10 建议级 S-2（origin/acc/wp-16-t16/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t16-20261011.md，记录提交 4e426de379f5201d18cec319d9d0727ae4959829，验收日期 2026-10-11，verdict=pass）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-12",
+      "title": "WP-16-T16 验收 S-2（遗留观察）：gate-all.ps1 在 ui 单元 sdurws_ird_ui_test 的 ctest 执行处挂住逾 1 小时（实施提交如实登记未跑完、以 ird_gates 零命中为口径；T15 批同现象同口径）——非本任务引入的环境遗留现象，记录建议治理批定位该 ctest 挂住并闭环",
+      "owner": "治理/门禁所有者",
+      "resolution": "随治理批 2026-10-12 gate-all 补跑口径闭环：第 4 步等效命令侦察完成（gateSmokeDir/配置与构建参数已备好），完整补跑由流水线后续步骤确定性执行并留痕 traceability/builds/gate-all-step4-makeup/（描述性引用，留痕由后续步骤产出）——补跑全绿即证实挂住为验收批会话环境遗留而非产品/门禁缺陷；若补跑复现挂住则本条重开并定位。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（B 项 gate-all 补跑口径，流水线后续步骤执行）"
     }
   ]
 }
