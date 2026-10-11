@@ -46,11 +46,13 @@
       "id": "F-463",
       "source": "UI-T41 批次A 收尾门禁核查（2026-10-03）——gate-all.ps1 -QtPrefix 通道 ird_gates 项 FAIL；基线归因实测：checkout 基点 295d60e0 的本批改动路径后 ird_gates 目标仍 FATAL 命中 98 处，先于本批存在",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-03",
       "title": "ird_gates cmake 目标在 redesign-main 现况命中 98 处恒 FATAL（gate-all 通道恒红）——与验收通道『ird_gates 引擎直跑＋归一化比对零新增』口径分叉：命中集含 kinematics->ui〔sdurws_ird_kinematics_plugin〕等已按 DTB §4.5 登记的许可边与测试目标同单元链接行，cmake 通道未消费该登记口径",
       "owner": "治理会话（WP-01-T03 门禁白名单/引擎口径统一裁决）",
-      "resolution": "UI-T41 实测归因：基点 295d60e0 即 98 命中（本批改动路径 checkout 后复跑），本批曾新增第 99 处（modeling_test→sdurws_ird_ui）已随后续提交回退归零——本批净增零命中。修复方向：cmake 通道消费 DTB §4.5 登记许可集或补齐白名单文件与 dependency-graph.json 的一致性。"
+      "resolution": "UI-T41 实测归因：基点 295d60e0 即 98 命中（本批改动路径 checkout 后复跑），本批曾新增第 99 处（modeling_test→sdurws_ird_ui）已随后续提交回退归零——本批净增零命中。修复方向：cmake 通道消费 DTB §4.5 登记许可集或补齐白名单文件与 dependency-graph.json 的一致性。【2026-10-12 治理批翻牌（fix-plan §五.2）】审计二轮实测 ird_gates 引擎直跑 EXIT=0 零命中（2026-10-10；round2-report.md R2-1，取证 evidence/build/ird-gates-target.log），与登记册门禁红互证的存量命中已消——本条翻 fixed。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（审计二轮账面翻牌，依据 2026-10-10 二轮实测引擎直跑零命中）"
     },
     {
       "id": "F-005",
@@ -197,11 +199,13 @@
       "id": "F-019",
       "source": "TK-T07 实施段 gate-all 自查（2026-09-11）：ird_gates 门禁目标报 2 处命中，逐项解码定位后核实为先于本任务存在",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-11",
       "title": "ird_gates 自 TK-T03 合入起即为红：TK-T03 交付的 lint 工具 sdurws_ird_testdata_lint（testkit/CMakeLists.txt）以 PRIVATE 链接 sdurws_ird_testkit，触发 IRD-GATE-T1（产品目标不得链接 testkit——目标名无 _test/_contract_test/_plugin/_worker 后缀被归为产品面）＋IRD-GATE-SUB（testdata_lint→testkit 边不在 ARCH §3.5 白名单）。基线 e743f61（TK-T06 合入点）已含该链接行（git show 实证）；TK-T03 验收记录无门禁检查记载。修复动作（DTB §4.5 例外登记＋cmake/ird_gates_whitelist.cmake 边登记，或门禁侧工具目标归类）均落在 TK-T07 allowedFiles 之外，无法随本任务处置",
       "owner": "WP-01 构建所有者＋testkit 详设所有者",
-      "resolution": "处置建议＝lint 工具按 units/testkit.md §3.6 定性（CI 独立运行、不进产品安装面）在 DTB §4.5 登记例外＋ird_gates_whitelist.cmake 登记 testdata_lint→testkit 边（ PRIVATE 工具边，不随产品分发）；或门禁增加 <unit>_tools/* 目标归类规则。登记后 gate-all 应恢复 15/15。TK-T07 自身变更面（testkit 库＋测试）零门禁命中，其余 14 项 gate-all 检查两模式全过——见 traceability/acceptance/TK-T07-20260911.md。"
+      "resolution": "处置建议＝lint 工具按 units/testkit.md §3.6 定性（CI 独立运行、不进产品安装面）在 DTB §4.5 登记例外＋ird_gates_whitelist.cmake 登记 testdata_lint→testkit 边（ PRIVATE 工具边，不随产品分发）；或门禁增加 <unit>_tools/* 目标归类规则。登记后 gate-all 应恢复 15/15。TK-T07 自身变更面（testkit 库＋测试）零门禁命中，其余 14 项 gate-all 检查两模式全过——见 traceability/acceptance/TK-T07-20260911.md。【2026-10-12 治理批翻牌（fix-plan §五.2）】审计二轮实测 ird_gates 引擎直跑 EXIT=0 零命中（2026-10-10；round2-report.md R2-1，取证 evidence/build/ird-gates-target.log），与登记册门禁红互证的存量命中已消——本条翻 fixed。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（审计二轮账面翻牌，依据 2026-10-10 二轮实测引擎直跑零命中）"
     },
     {
       "id": "F-020",
@@ -517,11 +521,13 @@
       "id": "F-051",
       "source": "RT-T12 实施段（2026-09-12，分支 wp06-t12）：契约套件 RT-RES-3/数据集 lint/ird_gates 自查检出",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-12",
       "title": "ird_gates 引擎与白名单登记矛盾：ird_gates_whitelist.cmake T-1 段明文声明允许形态“sdurws_ird_<unit>_test / _contract_test → { 同单元产品目标, sdurws_ird_testkit, gtest 系 }”，但 ird_gates.cmake 的 IRD-GATE-SUB 形态一判定（测试目标直链他单元产品目标）对 →sdurws_ird_testkit 边未做豁免——RT-T12 依 units/testkit.md §10.2 交接表 runtime 行（runtime 从 testkit 接收集合/数值断言、契约夹具）与 units/runtime.md §11 设施行增链 sdurws_ird_runtime_test→sdurws_ird_testkit 后产生第 3 处命中（此前基线＝F-019 既有 2 项：testdata_lint 工具边）",
       "owner": "WP-01 构建所有者（门禁引擎/白名单一致性处置；cmake/ 不在 RT-T12 allowedFiles，实施者不得私改）",
-      "resolution": "处置建议＝引擎 SUB 形态一对 _l_face==product 且 _lib==sdurws_ird_testkit 且 _t_face==test 的边按白名单 T-1 段豁免（与注释语义一致）；或在 DTB §4.5/白名单数据面显式登记 runtime_test→testkit 边及登记出处。登记前 gate-all 维持红（F-019 2 项＋本项 1 项），其余检查不受影响"
+      "resolution": "处置建议＝引擎 SUB 形态一对 _l_face==product 且 _lib==sdurws_ird_testkit 且 _t_face==test 的边按白名单 T-1 段豁免（与注释语义一致）；或在 DTB §4.5/白名单数据面显式登记 runtime_test→testkit 边及登记出处。登记前 gate-all 维持红（F-019 2 项＋本项 1 项），其余检查不受影响【2026-10-12 治理批翻牌（fix-plan §五.2）】审计二轮实测 ird_gates 引擎直跑 EXIT=0 零命中（2026-10-10；round2-report.md R2-1，取证 evidence/build/ird-gates-target.log），与登记册门禁红互证的存量命中已消——本条翻 fixed。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（审计二轮账面翻牌，依据 2026-10-10 二轮实测引擎直跑零命中）"
     },
     {
       "id": "F-052",
@@ -728,11 +734,13 @@
       "id": "F-072",
       "source": "EV-T11 实施段（2026-09-12，分支 wp05-t11）：ird_gates 自查检出——evidence 单元测试目标按 testkit.md §10.2 交接表 evidence 行（须自行提供 envelope 访问器特化供 checkEnvelopeCombination 消费＋切片契约夹具数据集）与 evidence.md §11 用例登记要求（每条用例经 IRD_TEST_INFO）增链 sdurws_ird_testkit 后，ird_gates 命中从 3 项基线（F-019 两项＋F-051 一项）增至 5 项",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-12",
       "title": "IRD-GATE-SUB 对测试目标→sdurws_ird_testkit 边的命中再增两处（sdurws_ird_evidence_test→sdurws_ird_testkit、sdurws_ird_evidence_contract_test→sdurws_ird_testkit）——与 F-051 同根因：ird_gates_whitelist.cmake T-1 段明文允许测试目标链接 sdurws_ird_testkit，但 ird_gates.cmake 的 IRD-GATE-SUB 形态一判定未对『测试目标→sdurws_ird_testkit』边豁免。两链接均为任务交付面所必需：_contract_test 链接＝envelope 访问器特化（testkit 泛型谓词消费）与数据集装载（GoldenDataset/ToleranceProfile/JsonLite）的 §10.2 交接消费面本体，不可去除；_test 链接＝evidence.md §11『每条用例经 IRD_TEST_INFO 登记』的测试设施依赖（testkit/gtest/AssertMacros.hpp），去除则 §11 登记要求空转",
       "owner": "WP-01 构建所有者（门禁引擎/白名单一致性处置——与 F-051 同一处置动作一并裁决；cmake/ 不在 EV-T11 allowedFiles，实施者不得私改）",
-      "resolution": "处置建议＝与 F-051 合并处置：ird_gates.cmake SUB 形态一对『测试目标→sdurws_ird_testkit』的测试侧边按白名单 T-1 段豁免（一处引擎修正同时消账 F-051 与本项的 4 处命中，testdata_lint 产品目标 2 处命中仍归 F-019）；或按 DTB §4.5 在门禁数据面显式登记 evidence/runtime 两单元的 testkit 消费边。登记前 ird_gates 维持红（基线 3 项＋本项 2 项），任务目标面构建与测试不受影响（EV-T11 双模式 205/205＋14/14 留痕）。编号顺延自 F-071。"
+      "resolution": "处置建议＝与 F-051 合并处置：ird_gates.cmake SUB 形态一对『测试目标→sdurws_ird_testkit』的测试侧边按白名单 T-1 段豁免（一处引擎修正同时消账 F-051 与本项的 4 处命中，testdata_lint 产品目标 2 处命中仍归 F-019）；或按 DTB §4.5 在门禁数据面显式登记 evidence/runtime 两单元的 testkit 消费边。登记前 ird_gates 维持红（基线 3 项＋本项 2 项），任务目标面构建与测试不受影响（EV-T11 双模式 205/205＋14/14 留痕）。编号顺延自 F-071。【2026-10-12 治理批翻牌（fix-plan §五.2）】审计二轮实测 ird_gates 引擎直跑 EXIT=0 零命中（2026-10-10；round2-report.md R2-1，取证 evidence/build/ird-gates-target.log），与登记册门禁红互证的存量命中已消——本条翻 fixed。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（审计二轮账面翻牌，依据 2026-10-10 二轮实测引擎直跑零命中）"
     },
     {
       "id": "F-073",
@@ -1468,11 +1476,13 @@
       "id": "F-145",
       "source": "traceability/acceptance/PRJ-T08-20260916.md#4.6/附（attempt 1，送验对象 3e19fc6798d6c0285fe9d544dcebd895159fccb2，分支 wp04-t08）：验收者实跑 ird_gates 与 PRJ-T07 基线（8 命中零 project 项）比对",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-16",
       "title": "ird_gates 新增命中 1 处（本任务引入，实施侧自查缺位未发现——F-144 同根）：IRD-GATE-R4（不做 RobWork 名称前缀拼接/剥离的启发式扫描）命中 project/src/ProjectStoreImpl.cpp:104『constexpr const char* kCreatedWithToolVersion = \"RobWork-IndustrialRobot/0.1\"』——语义核查：该常量为 units/project.md §4.2 createdWithToolVersion 字段的创建工具版本透传串（随 project.json 持久化，诊断/兼容排查用），并非 RobWork 对象名称的拼接/剥离解析逻辑，红线 R-4 本体未违反；但门禁命中消息明示『例外须 DTB §4.5 登记』，而 DTB 不在本任务 allowedFiles 内，实施侧无法自行登记，且实施侧因 F-144（未实跑门禁）未发现该命中。后果：不登记则 ird_gates 基线由 8 命中（F-019×2＋F-051 家族×6）升至 9 命中，后续全部任务的自查/验收持续带此红",
       "owner": "构建约定所有者／DTB §4.5 例外登记所有者（project 实现所有者配合提供语义依据）；实施侧不得私改送验对象与 DTB",
-      "resolution": "处置建议＝所有者在 DTB §4.5 登记该常量例外（R-4 扫描对 createdWithToolVersion 类工具版本透传串的豁免，注明 §4.2 字段语义依据），或裁决改值（如去 RobWork 前缀的工具名——需评估 §4.2 字段语义与已发布项目文件的兼容性）；登记后基线回 8。后续单元落位任务若需自证可在 ird-test-report.json 引用本条编号。编号顺延自 F-144，合入时由所有者确认。"
+      "resolution": "处置建议＝所有者在 DTB §4.5 登记该常量例外（R-4 扫描对 createdWithToolVersion 类工具版本透传串的豁免，注明 §4.2 字段语义依据），或裁决改值（如去 RobWork 前缀的工具名——需评估 §4.2 字段语义与已发布项目文件的兼容性）；登记后基线回 8。后续单元落位任务若需自证可在 ird-test-report.json 引用本条编号。编号顺延自 F-144，合入时由所有者确认。【2026-10-12 治理批翻牌（fix-plan §五.2）】审计二轮实测 ird_gates 引擎直跑 EXIT=0 零命中（2026-10-10；round2-report.md R2-1，取证 evidence/build/ird-gates-target.log），与登记册门禁红互证的存量命中已消——本条翻 fixed。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（审计二轮账面翻牌，依据 2026-10-10 二轮实测引擎直跑零命中）"
     },
     {
       "id": "F-146",
@@ -2966,11 +2976,13 @@
       "id": "F-292",
       "source": "WP-13-T02 实施段（2026-09-22，分支 wp13-t02）：ird_gates 自查检出——modeling 测试目标按 testkit 报告设施接入（RecordListener/IRD_TEST_INFO——io IO-T07/PRJ-T15/EV-T11 同款先例）链接 sdurws_ird_testkit 后，ird_gates 命中集 base..branch diff 新增恰 2 项（gates-hit-set-diff.txt 留痕 traceability/builds/wp13-t02/）：sdurws_ird_modeling_test→sdurws_ird_testkit、sdurws_ird_modeling_contract_test→sdurws_ird_testkit",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-09-22",
       "title": "IRD-GATE-SUB 对测试目标→sdurws_ird_testkit 边的命中再增两处（sdurws_ird_modeling_test、sdurws_ird_modeling_contract_test）——与 F-051/F-072 同根因：ird_gates_whitelist.cmake T-1 段明文允许测试目标链接 sdurws_ird_testkit（{同单元产品目标, sdurws_ird_testkit, gtest 系}），但 ird_gates.cmake 的 IRD-GATE-SUB 形态一判定未对『测试目标→sdurws_ird_testkit』边豁免。链接为任务交付面所必需：两测试目标的 ird-test-report.json 用例级明细（AGENTS §4.2 留痕面）依赖 testkit RecordListener 安装（test/TestMainReport.cpp 与 contract_test/ContractTestMain.cpp 自有 main——gtest_main 固定入口无监听器安装点），去除则留痕要求空转；产品目标 sdurws_ird_modeling 零 testkit 边（配置期守卫＋BuildGraphContractTest NoTestkitEdge 用例双面钉住）。modeling 产品面其余门禁项零命中（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02——base..branch diff 零 modeling 产品面引用），六边登记后 IRD-GATE-GRAPH 零命中",
       "owner": "WP-01 构建所有者（门禁引擎/白名单一致性处置——与 F-051 同一处置动作一并裁决；cmake/ird_gates.cmake 不在本任务 allowedFiles，实施者不得私改引擎）",
-      "resolution": "处置建议＝与 F-051 合并处置：ird_gates.cmake SUB 形态一对『测试目标→sdurws_ird_testkit』的测试侧边按白名单 T-1 段豁免（一处引擎修正同时消账 F-051 及本项与在册各实例的命中，testdata_lint 产品目标命中仍归 F-019）；登记前 ird_gates 维持红（既有基线 44 项＋本项 2 项），任务目标面构建与测试不受影响（WP-13-T02 双模式构建零错误、集成 17/17＋5/5、冒烟 17/17＋5/5 留痕 traceability/builds/wp13-t02/）。编号顺延自 F-291。"
+      "resolution": "处置建议＝与 F-051 合并处置：ird_gates.cmake SUB 形态一对『测试目标→sdurws_ird_testkit』的测试侧边按白名单 T-1 段豁免（一处引擎修正同时消账 F-051 及本项与在册各实例的命中，testdata_lint 产品目标命中仍归 F-019）；登记前 ird_gates 维持红（既有基线 44 项＋本项 2 项），任务目标面构建与测试不受影响（WP-13-T02 双模式构建零错误、集成 17/17＋5/5、冒烟 17/17＋5/5 留痕 traceability/builds/wp13-t02/）。编号顺延自 F-291。【2026-10-12 治理批翻牌（fix-plan §五.2）】审计二轮实测 ird_gates 引擎直跑 EXIT=0 零命中（2026-10-10；round2-report.md R2-1，取证 evidence/build/ird-gates-target.log），与登记册门禁红互证的存量命中已消——本条翻 fixed。",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "治理批 2026-10-12（审计二轮账面翻牌，依据 2026-10-10 二轮实测引擎直跑零命中）"
     },
     {
       "id": "F-293",
@@ -4996,7 +5008,7 @@
       "status": "open",
       "registeredAt": "2026-10-04",
       "title": "需求三维区域采样结果状态着色未闭环（宿主审核 P1）：当前仅有包围盒＋采样格线骨架，缺采样点通过/失败/未采样三态、达标颜色区分、覆盖率颜色映射、校验项点击定位采样点、颜色图例；颜色必须由统一 UI 词表提供（建议语义：绿=通过/红=未通过/灰=未采样/黄=警告/蓝框=当前选中），禁止三维后端各自硬编码",
-      "owner": "两批链落位：上游批 UI-T64（kinematics 覆盖评估执行通道产品装配——2026-10-05 落位 ready 待独立验收，ui-t64@2972b5d7）＋消费卡 UI-T65（三态着色/覆盖率框色映射/统一供色图例——2026-10-06 落位 ready 待独立验收，ui-t65 堆叠 ui-t64）；数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/图例 全通〔校验项点击定位＝L-R1 jumpTarget 区域级现成机制，样本级定位随诊断素材粒度留后续〕；两批独立验收 pass 后本条闭合"
+      "owner": "两批链落位：上游批 UI-T64（kinematics 覆盖评估执行通道产品装配——2026-10-05 落位 ready 待独立验收，ui-t64@2972b5d7）＋消费卡 UI-T65（三态着色/覆盖率框色映射/统一供色图例——2026-10-06 落位 ready 待独立验收，ui-t65 堆叠 ui-t64）；数据链 RequirementEvaluationResult→SamplePointState→View3DSampleCell→颜色/图例 全通〔校验项点击定位＝L-R1 jumpTarget 区域级现成机制，样本级定位随诊断素材粒度留后续〕；两批独立验收 pass 后本条闭合；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（三维采样四态着色）——所有者宿主复验通过后翻 fixed。"
     },
     {
       "id": "F-496",
@@ -5445,7 +5457,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）；【2026-10-08 修复落地（UI-T76——②工位标记/区域框会话预览链排查）】三处根因修复：①宿主世界帧名映射 World→WORLD（RobWork 根帧实名＝StateStructure FixedFrame「WORLD」，WorkCell::findFrame 仅对全大写特判返回根帧——混合大小写查找恒落空＝标记全数跳过/区域框「参考系不可解析」的直接原因）；②渲染后端增会话预览锚（宿主无发布 WorkCell 时装仅含根帧的场景层锚 WC「ird-session-preview」——studio 模型层零触碰不扰发布链 INV-B4 单入口；场景挂接 API 无 WC 即抛异常＝框架硬约束，「无锚不画」此前使草稿期三维恒空白）；③区域 World 引用系恒等直投（角点/格线本即世界系坐标，不经宿主帧解析）。修复后增工位/区域的三维标记/框/格在首应用前即可见；待所有者宿主复验后翻转 fixed。模型几何渲染与 ray-cast 拾取仍归 WP-10-T05（未实施——本修复不覆盖）",
-      "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）；【2026-10-08 修复落地（UI-T77——三维预览专项：发布后模型骨架呈现）】挂接点＝HostWorkCellPresentationObject::apply（发布链宿主单入口 setWorkCell 之后的呈现半区）：编译产物 WC 装入宿主后，按帧树/SerialDevice 挂「ird-model-skeleton-」组——①全帧小轴阵（0.12 m，WORLD 根帧除外）②每台 SerialDevice 基座→关节→末端连杆链线（DeviceChainRender 挂基座、按 info._state 实时 worldT 取位姿——关节运动链形即时跟随）③设备基座/末端 Qt 纹理化标签（F-556 承载件复用）。**边界如实登记＝本交付是骨架示意（帧结构/运动链可视化，使发布后模型三维可见），真实网格几何渲染（visual/collision mesh）仍归 WP-10-T05 资源链**——建模域 GeometryRef 只存引用＋resourceManifest 本体（io 字节读取已就位、mesh 解析加载器/GeometryRef.localTransform 编译域透传/S6 挂接/L5 装配四段缺口），且当前模板模型 resourceManifest 为空（mesh 数据面不存在——骨架呈现与资源链互不依赖）。生命周期＝drawable 挂发布 WC 场景节点，setWorkCell 换 WC 随旧节点树整体收口（零残留零清理名单）；onSceneCleared 既有收口不受影响。待所有者宿主复验（应用草稿后三维应出现模型骨架——轴/链线/标签，关节示教时链形跟随）后翻转 fixed"
+      "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）；【2026-10-08 修复落地（UI-T77——三维预览专项：发布后模型骨架呈现）】挂接点＝HostWorkCellPresentationObject::apply（发布链宿主单入口 setWorkCell 之后的呈现半区）：编译产物 WC 装入宿主后，按帧树/SerialDevice 挂「ird-model-skeleton-」组——①全帧小轴阵（0.12 m，WORLD 根帧除外）②每台 SerialDevice 基座→关节→末端连杆链线（DeviceChainRender 挂基座、按 info._state 实时 worldT 取位姿——关节运动链形即时跟随）③设备基座/末端 Qt 纹理化标签（F-556 承载件复用）。**边界如实登记＝本交付是骨架示意（帧结构/运动链可视化，使发布后模型三维可见），真实网格几何渲染（visual/collision mesh）仍归 WP-10-T05 资源链**——建模域 GeometryRef 只存引用＋resourceManifest 本体（io 字节读取已就位、mesh 解析加载器/GeometryRef.localTransform 编译域透传/S6 挂接/L5 装配四段缺口），且当前模板模型 resourceManifest 为空（mesh 数据面不存在——骨架呈现与资源链互不依赖）。生命周期＝drawable 挂发布 WC 场景节点，setWorkCell 换 WC 随旧节点树整体收口（零残留零清理名单）；onSceneCleared 既有收口不受影响。待所有者宿主复验（应用草稿后三维应出现模型骨架——轴/链线/标签，关节示教时链形跟随）后翻转 fixed；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（首应用前三维骨架）——所有者宿主复验通过后翻 fixed。"
     },
     {
       "id": "F-551",
@@ -5463,7 +5475,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "新建项目触发程序退出（crash）——项目已打开＋已应用修订＋草稿编辑态下点击 File→工业机器人项目→新建项目，进程直接终止（无错误对话框）。版本口径：所有者实例 exe 构建于 2f74ef03 基线（含 UI-T73/T74 主链修复；未含并行批次 WP-22-T05/T06 的关闭/切换统一确认编排——定位时须区分既有缺陷/新增装配析构顺序〔UI-T73/T74 新增成员 m_systemDefaultPolicyProvider/m_draftAwareNameContext/注入的 attachCompilePort 在项目切换 teardown 的存活期〕/WP-22-T06 已修面）。另同实例置灰「应用草稿」悬停无提示文字（禁用原因呈现面缺口——ERR-01 禁用必带原因口径）",
-      "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）；【2026-10-08 修复落地——dev log 定性钉扎】宿主实例 dev log（ird-ui-plugin-logs）捕获违约原文：ui/session: openProject 仅可在 NoProject 态调用（当前态非无项目——已打开会话的切换走 beginSwitch，§5.4 S2）＝新建项目流程无会话状态守卫直调 openProject（INV-SES-2 违约）。修复＝openViaSessionController 入口统一收口双态防线（有会话→beginSwitch 切换编排〔确认对话框/决议四态/Draining——与 openRecentProject 同款已证防线〕；无会话→原打开协议）——全部调用方一并受保护。修复待所有者复验（新建项目于已打开项目态→应呈现切换确认对话框而非退出）后翻转"
+      "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）；【2026-10-08 修复落地——dev log 定性钉扎】宿主实例 dev log（ird-ui-plugin-logs）捕获违约原文：ui/session: openProject 仅可在 NoProject 态调用（当前态非无项目——已打开会话的切换走 beginSwitch，§5.4 S2）＝新建项目流程无会话状态守卫直调 openProject（INV-SES-2 违约）。修复＝openViaSessionController 入口统一收口双态防线（有会话→beginSwitch 切换编排〔确认对话框/决议四态/Draining——与 openRecentProject 同款已证防线〕；无会话→原打开协议）——全部调用方一并受保护。修复待所有者复验（新建项目于已打开项目态→应呈现切换确认对话框而非退出）后翻转；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（新建项目不闪退）——所有者宿主复验通过后翻 fixed。"
     },
     {
       "id": "F-553",
@@ -5481,7 +5493,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "宿主需求就绪门控/就绪绑定的五处计算点全部以空 CheckContext（closureRefs 空）调用域检查器——首应用前根引用表四槽未回填（R0 闭包核对天然跳过）缺陷潜伏；首应用后四槽被 allocateNew 回填（槽有值），R0 以空闭包判定恒「根引用表槽指向的对象不在修订闭包中（悬空）」→Blocking→applyDraftDisablement 恒禁用＝应用草稿恒灰（首应用成功后不论做什么）。五处＝applyDraftDisablement 门控/wireRequirementsSession 首刷/setPostEditAction 编辑后重估/refreshRequirementsFromSession 重导线/空根初始化路径；面板校验页同源同误（呈现与门控一致地错误——自洽但均失真）。域检查器/域逻辑零缺陷（测试面传入正确闭包全绿）",
-      "owner": "UI-T75 返工段修复（currentRequirementsCheckContext() 现取 HEAD objectRefs 统一五处；十套件回归全绿）；待所有者换装新 exe 复验（首应用→二次编辑→应用应保持可用）后翻转 fixed。关联观察：requirements captureTcpAsFixedPoint 内 CheckContext{} 同形调用（需求域内部口径——是否需真闭包随 F-551/F-496 链路后续核对）；【2026-10-08 返工补登——freeglut 初始化缺位（第三层）】F-550② 后端锚修复让绘制首次深入工位名标签构造（RenderText＝GLUT 承载件），产品主程序 StudioMain 缺 glutInit（框架 RobWorkStudioApp 同位有、产品路径未继承）→freeglut 全局态未初始化→位图字体度量即崩＝新增工位即退出的直接机理（插桩定位：addRender 前最后探针；WER c0000005 在案）。修复＝StudioMain 按 RWS_HAVE_GLUT 宏 glutInit（框架同款先例）；插桩探针已移除。复验=巡检 TOUR_PASS＋MTOUR_PASS（glutInit 后 39 轮绘制标记/标签全程构造成功）"
+      "owner": "UI-T75 返工段修复（currentRequirementsCheckContext() 现取 HEAD objectRefs 统一五处；十套件回归全绿）；待所有者换装新 exe 复验（首应用→二次编辑→应用应保持可用）后翻转 fixed。关联观察：requirements captureTcpAsFixedPoint 内 CheckContext{} 同形调用（需求域内部口径——是否需真闭包随 F-551/F-496 链路后续核对）；【2026-10-08 返工补登——freeglut 初始化缺位（第三层）】F-550② 后端锚修复让绘制首次深入工位名标签构造（RenderText＝GLUT 承载件），产品主程序 StudioMain 缺 glutInit（框架 RobWorkStudioApp 同位有、产品路径未继承）→freeglut 全局态未初始化→位图字体度量即崩＝新增工位即退出的直接机理（插桩定位：addRender 前最后探针；WER c0000005 在案）。修复＝StudioMain 按 RWS_HAVE_GLUT 宏 glutInit（框架同款先例）；插桩探针已移除。复验=巡检 TOUR_PASS＋MTOUR_PASS（glutInit 后 39 轮绘制标记/标签全程构造成功）；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（就绪门控）——所有者宿主复验通过后翻 fixed。"
     },
     {
       "id": "F-555",
@@ -5510,7 +5522,7 @@
       "status": "open",
       "registeredAt": "2026-10-08",
       "title": "命令被处理器拒绝后的拒绝反馈以空禁用键调 resolveText——WorkbenchContent submitCommand 拒绝分支 resolveText(a.disableReasonKey) 在处理器拒绝（非可用性禁用，禁用键为空）时按 UiText fail-fast 设计抛 invalid_argument，异常穿透 Qt 事件循环直达 StudioMain 顶层 catch＝红叉对话框＋进程退出（return -1）。同面第二处＝refreshCommandEnablement 的按钮 tooltip。抛本身是 UiText 缺键 fail-fast 的正确设计——缺陷在调用面未处理「处理器拒绝无禁用键」的合法空态",
-      "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）"
+      "owner": "UI-T76 返工段修复（两处空键守卫：非空才进 resolveText，空键＝诚实通用文案「命令未执行」）；待所有者复验（关闭项目不再红叉对话框＋退出）。同族排查：F-553（置灰无 tooltip——同空键家族的呈现面）；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（拒绝反馈不崩）——所有者宿主复验通过后翻 fixed。"
     },
     {
       "id": "F-558",
@@ -6016,7 +6028,7 @@
       "registeredAt": "2026-10-09",
       "title": "诊断面 schema 演进：DiagnosticRecord 增设级别字段（警告/错误）、builder 按级别拒绝——消除警告与错误共用注册码必然相撞的结构性根因（F-593 取专用警告码①先行止血，本条为治本排期项）",
       "owner": "runtime/diagnostics 所有者：诊断面 schema 演进批次排期（涉及公共契约，波及全部生产者/消费者，须增量修订单元卡后实施）〔所有者排期 2026-10-09：audit-p2 合入后的独立批次实施——先增量修订 diagnostics/runtime 单元卡（公共契约面）再动代码；audit-p2 引入的 RT-BOUNDS-MAGNITUDE 覆盖码面随本批次收编〕",
-      "resolution": "修复（分支 diag-schema-level，先单元卡后代码）：①三卡先行——core.md v0.12 增列 DiagnosticLevel 词表（Error/Warning）与 DiagnosticRecord.level（表尾追加、缺省 Error 的 fail-closed 语义＋序列化尾追加兼容口径），diagnostics.md v0.14 增列 CodeDescriptor.level（注册期验证强制 severity==Error ⇔ level==Error、其余 severity ⇒ level==Warning——severity 为映射唯一语义源）并收编 RT-BOUNDS-MAGNITUDE（87→88 码，warning 级正式注册，runtime.md §10.11 v0.19 待收编注闭合），runtime.md v0.20 诊断块拒绝判据改按 record.level（硬失败码集 isHardErrorDiagCode 废除）＋编码升版 canonical-model/1.1（诊断记录尾追加 level 字节，kVersionMinor 0→1；全字段编码仅存续于会话内 worker 物化通道不入 .rwdesign、诊断块不入身份域——无跨版本存量字节）；②实现——DiagnosticRecord.level＋make() 尾参缺省 Error（238 处既有构造调用零改写）、RT-Codec 序列化往返、StableCodeRegistry 第⑨检查（level-severity 映射一致）＋manifest 编码升 IRDDCM1→IRDDCM2、CanonicalModel builder 第 10 步按级别拒绝、runtime 四处警告产码点（warningRecord/RT-CAPABILITY-MISSING/RT-CANCELLED/RT-NAME-DISAMBIGUATED）显式 Warning；③域消费面——8 处产码点（dynamics/kinematics/trajectory/optimization/io 的 makeDescriptor＋modeling 8 码＋requirements 7 码＋ui ShellSupport 行表）按 severity 派生 level；④钉——core DiagRecordLevel.DefaultErrorAndEquality_F618、runtime CodecTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618（级别往返＋词表外字节拒绝）、CanonicalModelTest.RejectsErrorLevelDiagnostics 重写（UnitMismatch error 级仍阻断＋同码 Warning 级放行＝级别是唯一判据的物证＋Cancelled Warning 放行）、CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593 改按 level 断言、StableCodeRegistryTest F618_LevelMappingAcrossBuiltinTable＋F618_LevelSeverityMismatchRejected。复验：集成 40 套件直跑 8448 用例 0 失败 0 错误 9 设计性跳过；双模式构建 sdurws_ird_* 零错误（排除面 RWSimulatorPlugin/bt_plugin 73 错误照 DTB §5.1 不入验收面）；ird_gates 7 命中与 wp22-t05 基线逐码一致（全为自测预期检出）；validate-docs PASS。留痕 traceability/builds/diag-schema-level/。",
+      "resolution": "修复（分支 diag-schema-level，先单元卡后代码）：①三卡先行——core.md v0.12 增列 DiagnosticLevel 词表（Error/Warning）与 DiagnosticRecord.level（表尾追加、缺省 Error 的 fail-closed 语义＋序列化尾追加兼容口径），diagnostics.md v0.14 增列 CodeDescriptor.level（注册期验证强制 severity==Error ⇔ level==Error、其余 severity ⇒ level==Warning——severity 为映射唯一语义源）并收编 RT-BOUNDS-MAGNITUDE（87→88 码，warning 级正式注册，runtime.md §10.11 v0.19 待收编注闭合），runtime.md v0.20 诊断块拒绝判据改按 record.level（硬失败码集 isHardErrorDiagCode 废除）＋编码升版 canonical-model/1.1（诊断记录尾追加 level 字节，kVersionMinor 0→1；全字段编码仅存续于会话内 worker 物化通道不入 .rwdesign、诊断块不入身份域——无跨版本存量字节）；②实现——DiagnosticRecord.level＋make() 尾参缺省 Error（238 处既有构造调用零改写）、RT-Codec 序列化往返、StableCodeRegistry 第⑨检查（level-severity 映射一致）＋manifest 编码升 IRDDCM1→IRDDCM2、CanonicalModel builder 第 10 步按级别拒绝、runtime 四处警告产码点（warningRecord/RT-CAPABILITY-MISSING/RT-CANCELLED/RT-NAME-DISAMBIGUATED）显式 Warning；③域消费面——8 处产码点（dynamics/kinematics/trajectory/optimization/io 的 makeDescriptor＋modeling 8 码＋requirements 7 码＋ui ShellSupport 行表）按 severity 派生 level；④钉——core DiagRecordLevel.DefaultErrorAndEquality_F618、runtime CodecTest.DiagnosticLevelRoundtripsAndRejectsUnknownByte_F618（级别往返＋词表外字节拒绝）、CanonicalModelTest.RejectsErrorLevelDiagnostics 重写（UnitMismatch error 级仍阻断＋同码 Warning 级放行＝级别是唯一判据的物证＋Cancelled Warning 放行）、CompilerTest.BoundsMagnitudeWarningPublishesWithDedicatedCode_F593 改按 level 断言、StableCodeRegistryTest F618_LevelMappingAcrossBuiltinTable＋F618_LevelSeverityMismatchRejected。复验：集成 40 套件直跑 4270（40 套件，2026-10-10 二轮实测） 用例 0 失败 0 错误 9 设计性跳过；双模式构建 sdurws_ird_* 零错误（排除面 RWSimulatorPlugin/bt_plugin 73 错误照 DTB §5.1 不入验收面）；ird_gates 7 命中与 wp22-t05 基线逐码一致（全为自测预期检出）；validate-docs PASS。留痕 traceability/builds/diag-schema-level/。",
       "fixedAt": "2026-10-10"
     },
     {
@@ -6082,28 +6094,34 @@
       "id": "F-625",
       "source": "traceability/acceptance/diag-schema-level-20261010.md（独立子会话对抗式验收 attempt 1，2026-10-10）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "Codec.cpp parse 版本拒绝文案硬编码\"本编码器＝1.0\"——F-618 将 kVersionMinor 0→1（canonical-model/1.1）后该用户可见诊断串失实（拒绝判定本身用常量比较、功能不受影响，仅文案谎报编码器版本）",
-      "owner": "runtime 单元：升版时同步动态化（拼 kVersionMajor.kVersionMinor）或修正该串；随下次 runtime 批次顺带修复，修后核对 CodecNegativeTest 语境文案断言"
+      "owner": "runtime 单元：升版时同步动态化（拼 kVersionMajor.kVersionMinor）或修正该串；随下次 runtime 批次顺带修复，修后核对 CodecNegativeTest 语境文案断言",
+      "resolution": "【2026-10-12 治理批翻牌（fix-plan §五.2/§五.3）】已由治理收尾微批 61f75b5b（2026-10-10）修复——Codec.cpp 版本拒绝文案随 kVersionMajor/kVersionMinor 常量动态拼接（worktree 实测 runtime/src/Codec.cpp:912-913 核实），翻 fixed。",
+      "fixedAt": "2026-10-10"
     },
     {
       "id": "F-626",
       "source": "traceability/acceptance/diag-schema-level-20261010.md（独立子会话对抗式验收 attempt 1，2026-10-10）",
       "severity": "suggestion",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "kVersionMinor 0→1 的\"旧 minor=0 字节显式拒绝\"有实现（parse 版本门 major!=kVersionMajor||minor!=kVersionMinor 同分支）与三卡写实声明，但无 minor 专项钉——CodecNegativeTest.RejectsMalformedEncodings 仅翻 major 字节（bad.at(8)），minor 位（bytes 10-11）旧值拒绝行为缺直接回归物证",
-      "owner": "runtime 单元：CodecNegativeTest 增翻 minor 字节用例（bad.at(10) 归零→断言 InputInvalid 版本不受支持）；与 F-625 同批顺带"
+      "owner": "runtime 单元：CodecNegativeTest 增翻 minor 字节用例（bad.at(10) 归零→断言 InputInvalid 版本不受支持）；与 F-625 同批顺带",
+      "resolution": "已由治理收尾微批 61f75b5b（2026-10-10）补钉——CodecTest.cpp:132-157 旧 minor=0 字节拒绝专项钉（原位回拨 bytes 10-11 归零、断言版本不符拒绝；worktree 实测核实）——fix-plan §五.3 处置为 fixed。【2026-10-12 治理批翻牌】",
+      "fixedAt": "2026-10-10"
     },
     {
       "id": "F-627",
       "source": "traceability/acceptance/diag-schema-level-20261010.md（独立子会话对抗式验收 attempt 1，2026-10-10）",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-10",
       "title": "diag-schema-level 批次复验留痕用例总数簿记双加：README 与本册 F-618 resolution 声称集成 8448/冒烟 7748 用例，验收者独立直跑实测集成 4224/冒烟 3874（恰为 2 倍——root testsuites 属性与 testsuite 子行双重累加）；0 失败/0 错误/跳过数等实质结论经独立复现成立，仅总数登记失实",
-      "owner": "diag-schema-level 实施者：builds/diag-schema-level/README.md 与本册 F-618 resolution 的用例总数更正为实测数（4224/3874），并核对聚合脚本口径（避免 root+children 双加）"
+      "owner": "diag-schema-level 实施者：builds/diag-schema-level/README.md 与本册 F-618 resolution 的用例总数更正为实测数（4224/3874），并核对聚合脚本口径（避免 root+children 双加）",
+      "resolution": "已由治理收尾微批 61f75b5b（2026-10-10）更正 builds/diag-schema-level/README.md 用例总数（集成 4224/冒烟 3874，worktree 实测核实）；本册 F-618 resolution 的 8448 更正由治理批 2026-10-12 转登按 fix-plan §五.3 原文同步执行（更正为「4270（40 套件，2026-10-10 二轮实测）」）——两项簿记更正齐备，翻 fixed。【2026-10-12 治理批翻牌】",
+      "fixedAt": "2026-10-12"
     },
     {
       "id": "F-628",
@@ -7113,6 +7131,607 @@
       "resolution": "随治理批 2026-10-12 gate-all 补跑口径闭环：第 4 步等效命令侦察完成（gateSmokeDir/配置与构建参数已备好），完整补跑由流水线后续步骤确定性执行并留痕 traceability/builds/gate-all-step4-makeup/（描述性引用，留痕由后续步骤产出）——补跑全绿即证实挂住为验收批会话环境遗留而非产品/门禁缺陷；若补跑复现挂住则本条重开并定位。",
       "fixedAt": "2026-10-12",
       "fixedBy": "治理批 2026-10-12（B 项 gate-all 补跑口径，流水线后续步骤执行）"
+    },
+    {
+      "id": "F-729",
+      "source": "audit/round2-20261010（R2-B3 批；主审★；v1.1 复审降级 P0→P1）；2026-10-12 治理批转登（草案预编号 F-630→F-729，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "OPT-08 采用 API 对真实两级编排产出必然失败：Run.cpp:260-263 合并序 Quick 批在前＋EvaluatorPorts.cpp:834 Verified 批复用同 candidateId（candidateIdOf(baselineRoot,baselineCv,patch) 同源同算）＋Applier.cpp:97-107 检索首见即用→任何通过 Quick 筛选的幸存候选（即所有合法可采用者）必先命中其 Quick 记录（screeningOnly=true）→恒抛 OPT-APPLY-PLAN-INVALID。Applier.hpp 自身契约『检索＋screeningOnly==false』被违背；测试全绿因 ApplierTest/OptGoldenDatasetTest 从未构造 Quick+Verified 并存的合并形态。【v1.1 复审】buildApplyPlan 全仓零产品调用点（plugin 模型层 L-O1~L-O9 均为呈现流、workflow/ui 零引用）——缺陷真实但产品当前不可达，采用流接线前必修",
+      "resolution": "由修复批 audit-r2b「optimization API 面」（fix-plan §二 B-1）修复并合入主线：合入提交 6a238899（2026-10-11），验收 pass（traceability/acceptance/audit-r2b-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-730",
+      "source": "audit/round2-20261010（R2-A3 批；主审★结构＋解析核实）；2026-10-12 治理批转登（草案预编号 F-631→F-730，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "a≠0 旋转关节 DH 链一般位姿位置发散（F-590/F-591 修复不彻底）：展开把 Tx(a)Rx(α) 烘入本关节 origin（DhConvert.cpp:225/:369 配方），运行时组合 origin·R(axis,q) 的转轴过子关节原点而非标准 DH 的父原点 z_{i-1}——独立解析验算位置误差＝2a·sin(θ/2)（a=0.5m、q=1.1rad 实测 0.5227m，姿态差 2.5e-16 精确；a=0 逐位一致；移动关节精确）。工业六轴臂 a₂/a₃ 常态触发；现有测试只钉零位 origin/axis/世界轴或参数 roundtrip，等价验证两侧同构误差相消——结构性不可见（与 F-590 原缺陷同机理换层重现）",
+      "resolution": "由修复批 audit-r2a「数值与导入止血」（fix-plan §一 A-1）修复并合入主线：合入提交 41d4adc2（2026-10-11），验收 pass（traceability/acceptance/audit-r2a-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-731",
+      "source": "audit/round2-20261010（R2-B2 批；主审★）；2026-10-12 治理批转登（草案预编号 F-632→F-731，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "dynamics Provided 摩擦参数（fv/fc/bias）无非有限复检——InverseDynamics.cpp:519-535 摩擦三元组裸赋值（同函数连杆物性 :504 assertPropertiesFiniteAndSymmetric、零位 :473、重力 :875、轴 :464、样本 :916-929 均有 isfinite，唯摩擦裸通道）；NaN 摩擦经 :1211 frictionTerm 叠加，而样本有限性判定在 :1158 仅查摩擦叠加前四通道 RNEA 输出→NaN 样本以 SampleNumericState::Ok（:1243）＋validity=Complete 入序列，违反 NFR-COR-03/DYN-06，下游 RMS/能量/统计静默污染",
+      "resolution": "由修复批 audit-r2a「数值与导入止血」（fix-plan §一 A-2）修复并合入主线：合入提交 41d4adc2（2026-10-11），验收 pass（traceability/acceptance/audit-r2a-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-732",
+      "source": "audit/round2-20261010（R2-A1 批；主审★）；2026-10-12 治理批转登（草案预编号 F-633→F-732，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "URDF origin xyz/rpy 接受 nan/inf 字面量：parseDoubleStable（Import.cpp:100-130）注释明言『有限性由调用方按字段语义另行判定』，但 parseOriginAttributes（:196-216）及其全部三个调用点（:789 inertial/:876 attachment/:962 joint）均无 isfinite（对照轴路径 F-587 判定 :1657-1665）→NaN 位姿/质心/几何变换以 Provided 落入草稿且 submittable=true，prepare 断言域不复核",
+      "resolution": "由修复批 audit-r2a「数值与导入止血」（fix-plan §一 A-3）修复并合入主线：合入提交 41d4adc2（2026-10-11），验收 pass（traceability/acceptance/audit-r2a-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-733",
+      "source": "audit/round2-20261010（R2-B3 批；主审★；v1.1 复审确认＝一轮审查 P1 #9 未登未修）；2026-10-12 治理批转登（草案预编号 F-634→F-733，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "量化补丁按原始值验边界，头文件契约失实：CandidatePatch.hpp:239-240 明文『量化项先按 step 网格 round-half-even 对齐再验边界（对齐后越界仍拒绝）』，实现 Scalar 分支在 CandidatePatch.cpp:299 以原始值验界、:343 才量化对齐——对齐后越界/非正值可产出（例 bounds[0,1]、step=0.6、值 0.9→对齐 1.2 越界产出，I-OPT-9 违背；一轮 #9 例：边界 0.1、step 0.25→对齐 0.0 低于下界）。LHS 生成器路径安全（域已收缩），仅直调 API 可触。【v1.1 复审】与一轮全单元代码审查 P1 清单 #9（CandidatePatch.cpp:297）同一缺陷——当时即未转登未修复，二轮独立再发现，是一轮未登存量真实存在之实证",
+      "resolution": "由修复批 audit-r2b「optimization API 面」（fix-plan §二 B-2）修复并合入主线：合入提交 6a238899（2026-10-11），验收 pass（traceability/acceptance/audit-r2b-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-734",
+      "source": "audit/round2-20261010（R2-B3 批；主审★；v1.1 复审降级 P1→P2）；2026-10-12 治理批转登（草案预编号 F-635→F-734，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "optimization 候选表 statusText 直调可空 textResolver：OptimizationPanelWidget.cpp:41-48 statusText 无空缝守卫、:427-429 直传 m_module.services.textResolver——runResultSource 在位而 textResolver 未装配时 std::bad_function_call 崩 UI 线程。面板其余文本全走 resolvePanelText 空缝守卫，唯此处绕过。【v1.1 复审】生产装配（OptPanelModule）两缝均在位，崩溃仅文档支持的开发装配态可触——降级 P2",
+      "resolution": "由修复批 audit-r2b「optimization API 面」（fix-plan §二 B-4）修复并合入主线：合入提交 6a238899（2026-10-11），验收 pass（traceability/acceptance/audit-r2b-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-735",
+      "source": "audit/round2-20261010（R2-A2 批；主审★）；2026-10-12 治理批转登（草案预编号 F-636→F-735，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "F-600 修复引入新问题——redo 成功后无条件 pop_back（UndoRedoServiceImpl.cpp:408-415 仅剩 !empty() 守卫）：注释论据『外部并发提交必被拒绝』对 undo 路径不成立。时序＝A redo 提交落地（tip 前移）与 A 重入锁弹出之间，B undo 完整落账（清栈＋压 redo 记录 X）→A 弹出误删 X 并把 lastServiceTip 从 U 回退到 Ra——B 的 redo 能力永久静默丢失（无崩溃/历史损坏；原 back().undoRevision==tip 守卫恰防此错弹）",
+      "resolution": "由修复批 audit-r2c「主路径与账面防线」（fix-plan §三 C-2）修复并合入主线：合入提交 c028c550（2026-10-11），验收 pass（traceability/acceptance/audit-r2c-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-736",
+      "source": "audit/round2-20261010（R2-A4 批；主审★）；2026-10-12 治理批转登（草案预编号 F-637→F-736，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "requirements decode 值面契约最后残留分配点：CommandHandlers.cpp:209 对报文头原始 count（uint32）直接 payload.objects.reserve(count)——伪造合法头＋count=0xFFFFFFFF＋空体在进入逐项 nullopt 防线前即抛 length_error/bad_alloc，穿出 decode『值面 nullopt』契约与 prepare（框架 executePlan 亦不接）。一轮横切主题『先按流内计数分配』在本单元的最后残留点（Codec.cpp 已全部 capped）",
+      "resolution": "由修复批 audit-r2c「主路径与账面防线」（fix-plan §三 C-3）修复并合入主线：合入提交 c028c550（2026-10-11），验收 pass（traceability/acceptance/audit-r2c-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-737",
+      "source": "audit/round2-20261010（R2-B1 批；主审★）；2026-10-12 治理批转登（草案预编号 F-638→F-737，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "StoreCloseSupervisor::start() 把 join() 放在 m_running 判断之前（CloseSupervisor.cpp:55-72）：监督进行中重复 start 阻塞宿主线程直至监督结束（最长阈值 15s＋宽限 15s），与头文件/行注『重复 start 幂等 no-op』契约失实。非死锁（监督循环只观测、有界收敛）",
+      "resolution": "由修复批 audit-r2c「主路径与账面防线」（fix-plan §三 C-4）修复并合入主线：合入提交 c028c550（2026-10-11），验收 pass（traceability/acceptance/audit-r2c-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-738",
+      "source": "audit/round2-20261010（R2-A1 批）；2026-10-12 治理批转登（草案预编号 F-639→F-738，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "未标记 CSV 嗅探遍 SingleFileBytes 与交付遍双计（Csv.cpp:1356-1360 对 1654-1658）——与收尾注释『SingleFile 以交付遍实际值入账』自相矛盾；外部 scope 下文件贴近 256 MiB 上限即被误拒。一轮漏网既有缺陷",
+      "resolution": "由修复批 audit-r2c「主路径与账面防线」（fix-plan §三 C-5）修复并合入主线：合入提交 c028c550（2026-10-11），验收 pass（traceability/acceptance/audit-r2c-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-739",
+      "source": "audit/round2-20261010（R2-B3 批）；2026-10-12 治理批转登（草案预编号 F-640→F-739，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "optimization 会话缓存底账以 sliceId 单键索引不含 mode（EvaluatorPorts.cpp:594-601、:672）：Quick 记录可被同 sliceId 的 Verified 记录覆盖，后续 Quick FullHit 回放可能取出 Verified 记录（screeningOnly=false）混入 quickRecords，破坏『Quick 记录 screeningOnly 恒 true』效力面不变式。R1 产品编排零 storeResult，触发依赖外部登记面（测试/装配模拟）",
+      "resolution": "由修复批 audit-r2b「optimization API 面」（fix-plan §二 B-3）修复并合入主线：合入提交 6a238899（2026-10-11），验收 pass（traceability/acceptance/audit-r2b-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-740",
+      "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-641→F-740，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "Screening.cpp:208 static_cast<int>(std::ceil(over))——ambientTemp 仅校验有限无上界，极端大值（1e30 级）double→int 溢出 UB，MSVC 下可能产负档数把降额系数反转为放大、误放行不合格候选【v1.1 位置勘误：文件实际在 selection/src/Screening.cpp，非 dynamics/src/——实施时代码核实更正】",
+      "resolution": "由修复批 audit-r2a「数值与导入止血」（fix-plan §一 A-4）修复并合入主线：合入提交 41d4adc2（2026-10-11），验收 pass（traceability/acceptance/audit-r2a-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-741",
+      "source": "audit/round2-20261010（R2-A5 批；主审★）；2026-10-12 治理批转登（草案预编号 F-642→F-741，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "units/runtime.md §10.11 把 RT-ROBWORK-ERROR 列入 level=Warning，与内置表 severity=Error⇒level=Error 机械映射（DiagCodes.cpp:313）矛盾——按卡面理解会与 builder 拒绝行为冲突（契约文档即代码）",
+      "resolution": "fix-plan §四 D-2（批 D 契约兑现与小修）——修复方向：随 units 小步修订删/改该括注。"
+    },
+    {
+      "id": "F-742",
+      "source": "audit/round2-20261010（R2-A5 批；主审★8448 实测仍在）；2026-10-12 治理批转登（草案预编号 F-643→F-742，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "F-627 整改半完成：README 双计数已更正，但 findings.json F-618 resolution 仍写『集成 8448 用例』（owner 更正点清单漏改；实测基线 40 套件 4270 用例）；61f75b5b 提交信息宣称 F-625/F-626/F-627 清账但三者 status 仍 open，违反『完成状态随实现提交登记』",
+      "resolution": "fix-plan §五.3（治理批）：F-618 resolution 用例数更正（8448→4270，40 套件 2026-10-10 二轮实测）＋F-625/626/627 三条状态处置——本治理批（2026-10-12）转登时已同步执行本条处置（见本批 F-618 更正与 F-625/626/627 翻牌），随收口提交落地即可翻 fixed。"
+    },
+    {
+      "id": "F-743",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-644→F-743，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "ForwardDynamics.cpp:355 初始状态以 q 长度索引 qd（一轮 P2，未修未登）",
+      "resolution": "由修复批 audit-r2a「数值与导入止血」（fix-plan §一 A-5）修复并合入主线：合入提交 41d4adc2（2026-10-11），验收 pass（traceability/acceptance/audit-r2a-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-744",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-645→F-744，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "InverseDynamics.cpp:298 惯量『相对容差』实为绝对 1e-12——注释失实加重（一轮 P2 未修未登）",
+      "resolution": "由修复批 audit-r2a「数值与导入止血」（fix-plan §一 A-5）修复并合入主线：合入提交 41d4adc2（2026-10-11），验收 pass（traceability/acceptance/audit-r2a-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-745",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-646→F-745，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "minor",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "TemplateArray.cpp:751 镜像法向归一化无上溢防护——1e200 级法向使镜像命令静默 no-op 且 ok=true（与一轮 OrientationResolution 同型）【v1.1 位置勘误：文件实际在 requirements/src/TemplateArray.cpp，非 modeling/src/——实施时代码核实更正】",
+      "resolution": "由修复批 audit-r2a「数值与导入止血」（fix-plan §一 A-5）修复并合入主线：合入提交 41d4adc2（2026-10-11），验收 pass（traceability/acceptance/audit-r2a-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-746",
+      "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-647→F-746，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "『decode 不抛』五处接口二轮核实：已修 2（requirements/Codec F-586、diagnostics/Factory F-602——后者缺非空 params 精确形态回归钉）；仍 open 3：①modeling/Readiness 契约已修订但根因未修（伪造字节 Continuous＋workingRange=Invalid 可解码成功→L11→evaluateTravelLimits 抛 logic_error，CommandHandlers.cpp:298-302）；②policy/PolicyPort 未动（PolicyInput.cpp:801 缺锚串、:416-430 ScopeTarget 值面缺失，resolvePolicy 复检在端口 try/catch 外抛 PolicyError）；③kinematics/Ik 迭代发散 std::logic_error（Ik.cpp:498/539/577）不在 hpp 豁免面仍外抛。附带 TxEngine 提交点后回调零提交维持 open",
+      "resolution": "fix-plan §四 D-1（批 D——三接口各出方案合并为方案包交所有者裁决后实施，不许可代码先行）——修复方向：按各接口裁走异常转值面或如实修订 hpp 契约（含豁免面边界）。"
+    },
+    {
+      "id": "F-747",
+      "source": "audit/round2-20261010（R2-A1 批）；2026-10-12 治理批转登（草案预编号 F-648→F-747，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Csv.cpp:1494-1508 判限与诊断 unit=chars 实为字节计数，多字节 UTF-8 下与 Budget.hpp:70『字符数』契约失实（保守方向）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Csv 判限诊断 unit 改 bytes 或实现改字符计数（择保守方向并与 Budget.hpp:70 对齐）。"
+    },
+    {
+      "id": "F-748",
+      "source": "audit/round2-20261010（R2-A1 批）；2026-10-12 治理批转登（草案预编号 F-649→F-748，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Import.cpp:2144-2186 <inertial> 缺 origin/inertia 时 NotProvided 降级无 defaults 登记，与同函数惯例不一致（疑似）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：<inertial> 缺省补全进 defaults 清单（对齐同函数惯例）。"
+    },
+    {
+      "id": "F-749",
+      "source": "audit/round2-20261010（R2-A1 批）；2026-10-12 治理批转登（草案预编号 F-650→F-749，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "fixed",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Csv.cpp:1494-1495 F-572 修复伴生——逐行调用 limitOf＝每行一次 16 维账本快照堆分配（大表吞吐回归，非正确性）",
+      "resolution": "由修复批 audit-r2c「主路径与账面防线」（fix-plan §三 C-5）修复并合入主线：合入提交 c028c550（2026-10-11），验收 pass（traceability/acceptance/audit-r2c-20261011.md）。",
+      "fixedAt": "2026-10-11"
+    },
+    {
+      "id": "F-750",
+      "source": "audit/round2-20261010（R2-A2 批）；2026-10-12 治理批转登（草案预编号 F-651→F-750，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：TaskPresentation.cpp:394-395 refresh 的 DropRegression 分支注释称『不静默』但无 logDev 调用（pollOnce :330 有）——注释失实",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：TaskPresentation refresh 的 DropRegression 分支补 logDev（对齐 pollOnce :330）。"
+    },
+    {
+      "id": "F-751",
+      "source": "audit/round2-20261010（R2-A2 批）；2026-10-12 治理批转登（草案预编号 F-652→F-751，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：F-598/F-599/F-600/F-601/F-610 五项修复无定向回归钉（修复回退现有套件不红灯；对照 F-576/F-577/F-611 均有钉）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：补六项旧修复回归钉：F-598（commit 失败暂存清理）、F-599（固化缓存并发）、F-600（redo 基准——批 C 已带）、F-601（cacheInsert 幂等）、F-610（进度基线）、F-602（兜底码＋非空 params 精确形态）各一钉。"
+    },
+    {
+      "id": "F-752",
+      "source": "audit/round2-20261010（R2-A2 批）；2026-10-12 治理批转登（草案预编号 F-653→F-752，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：WorkerSupervisor.cpp:1064 正常终结不更新 record.phase/m_statusView——一拍窗口内 status() 对已退出 worker 报 Running（瞬态知情项）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：WorkerSupervisor 正常终结更新 record.phase/m_statusView。"
+    },
+    {
+      "id": "F-753",
+      "source": "audit/round2-20261010（R2-A2 批）；2026-10-12 治理批转登（草案预编号 F-654→F-753，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Logging.cpp:1373 flush 失败文案『累计 N+1 次』未实际递增 writeFailures（预存在，计数展示虚一）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Logging flush 失败文案与实际递增一致。"
+    },
+    {
+      "id": "F-754",
+      "source": "audit/round2-20261010（R2-A2 批）；2026-10-12 治理批转登（草案预编号 F-655→F-754，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Scheduler.cpp:117 析构摘闸无同步普通写——依赖『tick 驱动先停』装配纪律（现网核实一致，留档知情）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Scheduler 析构摘闸补同步（atomic 或锁）。"
+    },
+    {
+      "id": "F-755",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-656→F-755，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：能量链永久断裂（一轮 P2 未登——评估失败后能量链不恢复）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：能量链断裂恢复语义（按卡面裁决：恢复或如实登记边界）。"
+    },
+    {
+      "id": "F-756",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-657→F-756，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Export 奇数对静默取整",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Export 奇数对显式处理（拒绝或注记，不静默取整）。"
+    },
+    {
+      "id": "F-757",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-658→F-757，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：PowerEnergy.hpp『缺口时长计入 Δt』旧机制残留措辞",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。"
+    },
+    {
+      "id": "F-758",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-659→F-758，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：RT-RESOURCE-RECORDED 未入 StableCodeRegistry（与 F-593 姊妹码 RT-BOUNDS-MAGNITUDE 处置不一致）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：RT-RESOURCE-RECORDED 收编注册或如实降为非码面。"
+    },
+    {
+      "id": "F-759",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-660→F-759，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：rneaTorques 头注释旧力臂口径残留",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。"
+    },
+    {
+      "id": "F-760",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-661→F-760，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：callRneaSample『零填充』注释失实",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：PowerEnergy.hpp/rneaTorques/callRneaSample 注释对齐实现（fix-plan 表行 F-658/660/661 共行）。"
+    },
+    {
+      "id": "F-761",
+      "source": "audit/round2-20261010（R2-A3 批）；2026-10-12 治理批转登（草案预编号 F-662→F-761，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：缺行型缺口仍插值（当前管线不可达，建议登记边界）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：缺行型缺口插值行为登记边界（卡面增量）。"
+    },
+    {
+      "id": "F-762",
+      "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-663→F-762，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：ProcessRunnerTest.cpp:416,418 断言字面量 \\d/\\f 转义失真（运行时串无反斜杠含 FormFeed），第二条断言未钉『纯反斜杠』意图；2N+1 主钉有效",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ProcessRunnerTest 断言转义修正（\\\\\\\\d/\\\\\\\\f 意图钉）。"
+    },
+    {
+      "id": "F-763",
+      "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-664→F-763，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：SetCheck.hpp:306-361 歧义探测逐配对重建闭包 O(P·nL²·nR)（100k 护栏下超时悬崖）；:310 逆序迭代与 matched 记录序注释不符",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：SetCheck 歧义探测降复杂度（闭包增量维护）或如实登记超时边界＋迭代序注释更正。"
+    },
+    {
+      "id": "F-764",
+      "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-665→F-764，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：EditorTest.cpp:512 F-585 钉『非末位删除』依赖随机 ObjectId（≈50% 触发），红灯能力非逐次确定",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：EditorTest F-585 钉改确定性构造（指定非末位目标）。"
+    },
+    {
+      "id": "F-765",
+      "source": "audit/round2-20261010（R2-A4 批）；2026-10-12 治理批转登（草案预编号 F-666→F-765，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：CommandHandlers.cpp:248 注释『Invalid 态由解码边界拒绝』与建模解码实现不符（无 Continuous↔workingRange 配对校验）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：CommandHandlers.cpp :248 注释更正（对齐建模解码实况）。"
+    },
+    {
+      "id": "F-766",
+      "source": "audit/round2-20261010（R2-A5 批）；2026-10-12 治理批转登（草案预编号 F-667→F-766，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：gate-all.ps1:101 worktree 漏传 -Toolchain 时自检报错文案不指向对策（建议追加提示行）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：gate-all.ps1 漏参报错文案追加对策提示行。"
+    },
+    {
+      "id": "F-767",
+      "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-668→F-767，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：WorkflowCommandCatalog find() 未判 end() 即解引用（两表漂移即 UB 而非 fail-fast）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：WorkflowCommandCatalog find() 判 end()→fail-fast。"
+    },
+    {
+      "id": "F-768",
+      "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-669→F-768，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：WorkflowHostAdapters 三处环境异常静默折叠零留痕（违反自身『留痕』纪律；unappliedDraftModules 折叠丢磁盘草稿事实）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：WorkflowHostAdapters 三处静默折叠补留痕（logDev）。"
+    },
+    {
+      "id": "F-769",
+      "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-670→F-769，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：drainBounded 用 yield 忙等最长 30s（UI 线程冻结＋烧核；同仓先例均 1ms sleep）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：drainBounded 忙等改 1ms sleep（对齐同仓先例）。"
+    },
+    {
+      "id": "F-770",
+      "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-671→F-770，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：注释事实错误三处（『九接缝』实列十项；Settings.cpp:438 %APPDATA%/RobWork/ 过期路径等）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：三处注释事实错误更正（九接缝计数、Settings.cpp:438 过期路径等）。"
+    },
+    {
+      "id": "F-771",
+      "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-672→F-771，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Ctrl+Return（代码两处一致）vs Ctrl+Enter（ui.md §7.1）词形漂移",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Ctrl+Return/Enter 词形统一（代码与 ui.md §7.1 对齐——以 ui.md v1.91 现状为准）。"
+    },
+    {
+      "id": "F-772",
+      "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-673→F-772，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：CloseFlow Switch 不拒绝候选==当前项目（与 SchemeBranchSwitchFlow 同分支 fail-fast 口径不一致）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：CloseFlow Switch 拒绝候选==当前项目（对齐 SchemeBranchSwitchFlow 口径）。"
+    },
+    {
+      "id": "F-773",
+      "source": "audit/round2-20261010（R2-B1 批）；2026-10-12 治理批转登（草案预编号 F-674→F-773，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：兜底链依赖宿主 tick 持续驱动——建议登记为装配批次验收检查项",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：兜底链 tick 依赖登记为装配批次验收检查项（DTB/卡面）。"
+    },
+    {
+      "id": "F-774",
+      "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-675→F-774，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：ID.cpp:928-934 死代码有限性预检循环",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ID.cpp 死代码预检删除或启用。"
+    },
+    {
+      "id": "F-775",
+      "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-676→F-775，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Backfill.cpp 判定 5 注释宣称『多写登记诊断』实际未登记",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Backfill 判定 5 补登记诊断或更正注释。"
+    },
+    {
+      "id": "F-776",
+      "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-677→F-776，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Backfill 组装面 lockObjectId 全零时静默跳过身份核对（prepare 可兜住）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Backfill 组装面 lockObjectId 全零走拒绝面。"
+    },
+    {
+      "id": "F-777",
+      "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-678→F-777，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：selection 编解码（Backfill/CombinationCheck ByteWriter）注释称『小端』实为本机序 memcpy——与 dynamics 显式小端纪律不一致，跨平台静默改 canonical 身份",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：selection ByteWriter 注释更正或实现改显式小端（择一，与 dynamics 纪律统一）。"
+    },
+    {
+      "id": "F-778",
+      "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-679→F-778，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：连杆 Provided 负质量不查正性（与负载 mass fail-fast 口径不对称，卡面留白）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：连杆负质量补正性检查（对齐负载 mass 口径）。"
+    },
+    {
+      "id": "F-779",
+      "source": "audit/round2-20261010（R2-B2 批）；2026-10-12 治理批转登（草案预编号 F-680→F-779，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：组合校核逐格全候选扫描性能（R-SEL-6 已知）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：组合校核性能优化（可只登记已知项）。"
+    },
+    {
+      "id": "F-780",
+      "source": "audit/round2-20261010（R2-B3 批）；2026-10-12 治理批转登（草案预编号 F-681→F-780，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Objective.cpp:187-209,251 ObjectiveEntry.metricId 无枚举值域防御（强转越界→UB）",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：ObjectiveEntry.metricId 值域防御。"
+    },
+    {
+      "id": "F-781",
+      "source": "audit/round2-20261010（R2-B3 批）；2026-10-12 治理批转登（草案预编号 F-682→F-781，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Export.cpp:749-768 MD 报告直接下标 metrics 八槽，安全性依赖 CSV 先抛的调用序耦合",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Export 八槽下标改安全访问。"
+    },
+    {
+      "id": "F-782",
+      "source": "audit/round2-20261010（R2-B3 批）；2026-10-12 治理批转登（草案预编号 F-683→F-782，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "P3：Preflight.cpp:638-641 检查#19 static_cast<uint64_t> 在 >70 二元枚举维度时 UB，警告可被静默丢失",
+      "resolution": "fix-plan §四 D-3（批 D P3 随手修）表行：Preflight #19 cast 补上界防护。"
+    },
+    {
+      "id": "F-783",
+      "source": "audit/round2-20261010（治理面观察；v1.1 勘误）；2026-10-12 治理批转登（草案预编号 F-684→F-783，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "治理：一轮审查 P1 清单实测 69 条（README 标头『52 条』系汇总计数错误），登记册 source 引一轮审查者仅 38 条（P0×3＋P1 35：34 fixed＋F-578 closed）——未转登约 34 条，且其中 #9（CandidatePatch 量化验界序）至今未修（＝本轮 F-634）——需治理逐条复核（对照 69 条清单 vs 登记册 vs 当前代码：已修销账／降级补登／真实漏修立卡）。另 14 条实际已修未翻牌（含 F-495/F-552 blocking）建议随治理小批统一处置；ui-t77 已于 2026-10-10 合入主线（aa9f7aa3，验收 pass）——原『合流时重编号＋实现替换』义务随合入消账",
+      "resolution": "fix-plan §五.4（治理批）：34 条旧账复核——产出三对照表（一轮 69 条清单 × 登记册 × 当前代码），逐条裁定「已修销账／降级补登／真实漏修立卡」交所有者过目后入账；其中 #9（CandidatePatch 量化验界序＝草案 F-634→正式 F-733）已由批 B 修复销账。"
+    },
+    {
+      "id": "F-784",
+      "source": "audit/round2-20261010（批 A 实施期发现，F-645 同族——audit-r2a 实施代理上报）；2026-10-12 治理批转登（草案预编号 F-685→F-784，映射 traceability/gov-r2-id-remap.md）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-10",
+      "title": "runtime 侧惯量校验为绝对容差，与需求附录 D 第 6 项『相对 1×10⁻ⁿ』口径不一致：CanonicalModelBuilder::requireValidInertia（runtime/src/CanonicalModel.cpp:290-297）用绝对 1e-12；F-645 已把 dynamics 侧改为相对容差 ‖Δ‖∞/‖(I+Iᵀ)/2‖F≤1e-12——两层口径差异需 runtime 侧对齐或如实登记豁免面",
+      "resolution": "修复方向：runtime requireValidInertia 改相对容差对齐附录 D，或与所有者确认两层语义后登记差异。（audit-r2a 验收 §4.8 确认非批 A 范围——归属批次待所有者指派）"
+    },
+    {
+      "id": "F-785",
+      "source": "traceability/acceptance/audit-r2a-20261011.md §五 建议级 S1（批 A 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "`requirements/src/TemplateArray.cpp` applyMirror 归一化仅查 `isfinite(normSq)` 未查 `normSq>0`：1e-200 级法向分量平方和下溢 0 → 除零产 Inf 单位法向（先于本批存在、非本批引入；与 F-646 同面，对照 F-587 三分支判定先例）〔注：文中 F-646 为草案预编号，正式编号 F-745——映射 traceability/gov-r2-id-remap.md〕",
+      "resolution": "处置建议（验收记录原文）：补 `normSq>0` 分支走既有 axis-normal 非法面＋一钉"
+    },
+    {
+      "id": "F-786",
+      "source": "traceability/acceptance/audit-r2a-20261011.md §五 建议级 S2（批 A 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "F-632 新增\"已提供但非有限\"input-invalid 拒绝语义的 units/dynamics.md §5.5 卡面增量未随批落卡（progress.md 已声明随治理批统一落卡）",
+      "resolution": "处置建议（验收记录原文）：治理批转登时核对 §5.3/§5.5 补登"
+    },
+    {
+      "id": "F-787",
+      "source": "traceability/acceptance/audit-r2a-20261011.md §五 建议级 S3（批 A 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "`ModelingPanelGuiTest.PreviewPane_MultiTypeChain_UI_T59` 依赖机器全局剪贴板，并行会话抢占时假失败（本验收首跑实证、3 连绿复证）",
+      "resolution": "处置建议（验收记录原文）：fixture 前后保存/恢复剪贴板或改确定性断言接缝"
+    },
+    {
+      "id": "F-788",
+      "source": "traceability/acceptance/audit-r2a-20261011.md §五 建议级 S4（批 A 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "批 A 收口取证未含 gate-all 留痕（fix-plan 每批 DoD 第 4 条）——本次由验收者三跑闭合（84/85，唯一失败见 S5）",
+      "resolution": "处置建议（验收记录原文）：后续批次收口清单显式列入 gate-all 一项"
+    },
+    {
+      "id": "F-789",
+      "source": "traceability/acceptance/audit-r2a-20261011.md §五 建议级 S5（批 A 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "`sdurws_ird_ui_test` 在 **ctest 执行上下文**启动即挂起（进程 CPU≈16ms 后冻结；验收会话内 3/3 确定性复现、终止后 gate-all 方可续行），同 exe **直跑**三树全绿（集成 257 用例、冒烟 240 用例、实施方双次）——挂起与产品逻辑无关、属测试基建/执行环境问题（疑 ctest 管道输出或 QTest 平台初始化交互）；另 gate-all 默认冒烟目录 `%TEMP%/ird-gate-smoke` 为全局共享路径，多会话并行时互相删树（本验收次跑 49/85 实证）",
+      "resolution": "处置建议（验收记录原文）：排查 ui_test ctest 挂起根因；gate-all 冒烟目录默认值改含 PID/时间戳唯一化（F-628 同族对策）"
+    },
+    {
+      "id": "F-790",
+      "source": "traceability/acceptance/audit-r2b-20261011.md §五 建议级 S6（批 B 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "vcpkg z-applocal 部署步在多会话并行构建下偶发 MSB3075 瞬态失败（本批集成复现 1 例、实施方批 B 收口 3 例同类；单目标复验即绿）",
+      "resolution": "处置建议（验收记录原文）：收口取证遇 applocal 失败先单目标复验再定性；治理面可登记为已知并发噪声类"
+    },
+    {
+      "id": "F-791",
+      "source": "traceability/acceptance/audit-r2b-20261011.md §五 建议级 S7（批 B 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "`OptimizationPanelWidget.cpp:884` 有符号/无符号比较警告 C4018（重建时暴露的既有测试代码告警，非本批引入）",
+      "resolution": "处置建议（验收记录原文）：随下批 optimization 触碰顺手修正"
+    },
+    {
+      "id": "F-792",
+      "source": "traceability/acceptance/audit-r2c-20261011.md §五 建议级 S8（批 C 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "F-636 并发插入失配守卫（记录身份门槛）无确定性测试承载：区分窗口在服务内部锁区间，顺序测试结构性不可达（验收变异实证——门槛恒真变异全绿）〔注：文中 F-636/F-638 为草案预编号，正式编号 F-735/F-737——映射 traceability/gov-r2-id-remap.md〕",
+      "resolution": "处置建议（验收记录原文）：project 单元补真线程窗口注入缝或时序测试（可控慢速接缝同 F-638 先例），钉守卫失配让位行为"
+    },
+    {
+      "id": "F-793",
+      "source": "traceability/acceptance/audit-r2c-20261011.md §五 建议级 S9（批 C 验收 pass，2026-10-11）——2026-10-12 治理批转登",
+      "severity": "suggestion",
+      "status": "open",
+      "registeredAt": "2026-10-11",
+      "title": "F-460 配套⑤代码物理落位于 fde7ccb3（F-637 提交）而语义归属 F-460——两提交正文交叉声明在案，但逐 fix 粒度的\"代码与测试同 commit\"纪律出现一处交叉〔注：文中 F-637 为草案预编号，正式编号 F-736；F-460 为登记册正式编号不变——映射 traceability/gov-r2-id-remap.md〕",
+      "resolution": "处置建议（验收记录原文）：后续批次配套改动随语义归属提交，或提交标题并列标注"
     }
   ]
 }
