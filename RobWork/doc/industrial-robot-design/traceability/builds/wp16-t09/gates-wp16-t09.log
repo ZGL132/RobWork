@@ -1,0 +1,23 @@
+# WP-16-T09 ird_gates 全量门禁留痕（2026-10-11，任务实施批实跑）
+
+# 命令（pipeline-wt 工作树根执行）：
+#   pwsh -File RobWork/scripts/industrialrobot/gate-all.ps1 -QtPrefix D:/software/Qt/6.11.1/msvc2022_64
+# （带 Qt 前缀——T08 返工轮同口径：无前缀首跑 43/44，唯一失败项＝冒烟配置
+#  缺前缀〔F-455：testkit_qt 自 WP-10-T02 起要求 Qt6〕，带参重跑全过）
+# 退出码：0
+# 终局输出（后台捕获转码；PowerShell 控制台 GBK 混排的完整 raw 不入库）：
+#
+#   PASS  冒烟测试 sdurws_ird_workflow_test
+#   ================================================
+#   结果: 85/85 通过
+#
+# 覆盖面：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 静态门禁（产品树
+# 扫描零命中）＋85 项全量门（各单元构建/测试/冒烟/契约门，含 trajectory
+# sdurws_ird_trajectory_test/contract_test/plugin——本批新增
+# src/FailureLocate.cpp 非条件源与 contract_test/FailureLocateContractTest.cpp
+# 两模式编译面、test/FailureLocateTest.cpp 集成条件源均随门禁实跑通过）。
+# 结论：ird_gates 零命中（85/85，exit 0）——契约 acceptance 2 门禁项达成。
+
+validate-docs（同日同工作树，T09 单元卡增量修订后实跑）：
+  pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1
+  → PASS (20 units, 12 trace entries, 313 task files)

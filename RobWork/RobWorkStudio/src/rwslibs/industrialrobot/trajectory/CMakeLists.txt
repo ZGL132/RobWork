@@ -102,7 +102,10 @@ find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 add_library(sdurws_ird_trajectory STATIC
     src/DiagCodes.cpp
     src/TrjTypes.cpp
-    src/PlanConfig.cpp)
+    src/PlanConfig.cpp
+    src/FailureLocate.cpp)  # §14.4 失败段诊断定位（素材→DiagnosticEntry 组装
+                            #   ——WP-16-T09；纯值面零 Q 构造，两模式皆可
+                            #   编译——TrjTypes.cpp 同款非条件源）
 
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_trajectory PRIVATE
@@ -391,6 +394,13 @@ if(TARGET sdurw_kinematics)
                                         #   敛＋附录 D 第 10 项容差边缘＋驻
                                         #   留/节拍输出＋V-16/17/18 词表与素
                                         #   材轨＋取消/确定性/前置违约族）
+    target_sources(sdurws_ird_trajectory_test PRIVATE
+        test/FailureLocateTest.cpp)     # WP-16-T09：TRJ-06/ERR-01（四类失败
+                                        #   定位端到端——T08 真实管线产素材
+                                        #   →诊断条目＋素材直构四类＋定位上
+                                        #   下文/ERR-01 字段/违约族/确定性；
+                                        #   构造 rw::math::Q 对象——集成条
+                                        #   件，同上）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
@@ -477,11 +487,24 @@ add_executable(sdurws_ird_trajectory_contract_test
     contract_test/TrajectoryPluginAssemblyContractTest.cpp
     contract_test/PlanConfigContractTest.cpp
     contract_test/PathPlannerContractTest.cpp
-    contract_test/RecheckContractTest.cpp)  # WP-16-T07：P-06 冻结数值表物化
+    contract_test/RecheckContractTest.cpp  # WP-16-T07：P-06 冻结数值表物化
                                             #   对照＋R-POL-5 结构防覆盖（零私
                                             #   有阈值字段）＋AT-06 三反例素材
                                             #   词表锁定（纯文本/inline 值面
                                             #   ——非条件源，两模式皆跑）
+    )
+# FailureLocateContractTest 为非条件源但引用纯值面产品头（构造 FailedSegmen-
+# tRecord＋诊断注册表/工厂——零 Q 构造零 rw 符号引用，两模式皆可编译链
+# 接——TrjTypes.cpp/FailureLocate.cpp 同款口径）；独立 target_sources 语句
+# 便于留注释与条件源区分。
+target_sources(sdurws_ird_trajectory_contract_test PRIVATE
+    contract_test/FailureLocateContractTest.cpp)  # WP-16-T09：ERR-01 字段
+                                                   #   义务锁定＋码表元数据
+                                                   #   对照（severity 映射/
+                                                   #   requiresComparison 一
+                                                   #   致）＋回退绑定链＋违约
+                                                   #   族 fail-fast＋确定性
+                                                   #   （纯值面——两模式皆跑）
 
 # KinematicsPortContractTest 为集成模式条件源（WP-16-T05——③端口消费契
 # 约：R-1 源码扫描零 kinematics include／请求字段透传钉扎／确定性解序／
