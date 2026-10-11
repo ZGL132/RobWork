@@ -31,7 +31,12 @@
  *     指标（TrajectoryQuality/RecheckBudgetUsage）是 WP-16-T08 的消费面
  *     ——按 NFR-MNT-04（不预建占位）本批**不含**这两个类型，Trajectory
  *     的对应字段随 T08 增列（结构演进＝单元卡 §21.5 增量登记；本头注释
- *     即登记锚点）。
+ *     即登记锚点）。T08 批实况（2026-10-11 登记）：TimedSample/
+ *     TimeParameterization 已随 WP-16-T08 落位于 TimeParam.hpp（§4.2 布
+ *     局表 TimeParam.hpp 行——"§12 时间参数化与节拍"）；TrajectoryQuality
+ *     全量组装（含 policy 间距/复检预算/采样完整性消费面）仍归 T10 评估
+ *     器批，其 totalDurationS/segmentDurationsS 节拍字段唯一来源＝T08
+ *     TimeParamResult 的同名输出（§12.4/OPT-D）。
  *   - SegmentSpaceType 词表两值一次落全（封闭词表——§6.2 原文；Cartesian-
  *     Line 值由 WP-16-T05 的笛卡尔段规划产出消费，本批仅作展开产物的
  *     空间类型标记，不产生其几何）。
@@ -106,6 +111,11 @@ inline constexpr char kPhaseSmooth[] = "smooth";
 /// 生面：recheckSegment 的预算耗尽/验证器缺失/检出违例素材 phaseToken 取
 /// 本常量）。
 inline constexpr char kPhaseRecheck[] = "recheck";
+
+/// 失败阶段 token：时间参数化（§14.1.6 phase 词表第六值——WP-16-T08 产
+/// 生面：timeParameterize 的限值未定义/迭代缩放达上限仍超限/连续性守卫
+/// 违约素材 phaseToken 取本常量；§12.6 超限与失败定位的时间侧）。
+inline constexpr char kPhaseTimeParam[] = "time-param";
 
 // =====================================================================
 // 取消观测（§15.0 通用约定——一切长计算接口经注入取消观测）

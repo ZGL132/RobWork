@@ -1,0 +1,32 @@
+=== WP-16-T08 独立冒烟模式构建留痕（2026-10-11，返工轮全量重跑）===
+
+背景：首跑提交 7f34e91b 的冒烟 gtest XML 真实（25/19 用例集）但被同时复制为"集成"名（acc/wp-16-t08/1
+阻断 B-1）。本日志为返工轮独立冒烟模式的真实执行记录：冒烟 XML 以本轮运行原始产物重新落位。
+
+工作树：pipeline-wt（分支 wp16-t08）；冒烟构建树：build-smoke/（脱离 RobWorkStudio，vcpkg 工具链＋Qt6 前缀）。
+
+[配置命令] cmake -S <WT>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B <WT>/build-smoke -G 'Visual Studio 17 2022' -A x64 -DCMAKE_TOOLCHAIN_FILE=<repo>/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64
+（树已存在，本轮为增量构建——配置面未变，未重跑配置）
+
+[构建命令] cmake --build <WT>/build-smoke --config Release
+[结论] 全量构建零 error 零 warning（冒烟口径覆盖 DiagCodes/TrjTypes/PlanConfig 全编译面＋TimeParam.hpp
+  值类型/接口声明面——TimeParam.cpp/TimeParamTest.cpp/SmoothRecheckTest.cpp 等为集成模式条件源，
+  rw::math::Q 构造面 gating，T04 先例同款）
+
+[构建输出 error 计数（grep -icE 'error'）] 0
+---（上行数字＝error 计数，0＝零错误）---
+
+[运行 1] <build-smoke>/trajectory/Release/sdurws_ird_trajectory_test.exe --gtest_output=xml:<build-smoke>/smoke-ird-test.xml --ird_report=<build-smoke>/ird-test-report-trajectory-test-smoke.json
+[结论] 25 tests from 3 test suites ran. [ PASSED ] 25 tests.（exit=0）
+  XML：tests="25" failures="0" timestamp=2026-10-11T07:32:52 ——落位 gtest-reports/wp-16-t08/sdurws_ird_trajectory_test-smoke.xml
+  json：summary total=25 passed=25 failed=0 decisive=true ——落位本目录 ird-test-report-trajectory-test-smoke.json
+
+[运行 2] <build-smoke>/trajectory/Release/sdurws_ird_trajectory_contract_test.exe --gtest_output=xml:<build-smoke>/smoke-ird-contract.xml --ird_report=<build-smoke>/ird-test-report-trajectory-contract-test-smoke.json
+[结论] 19 tests from 5 test suites ran. [ PASSED ] 19 tests.（exit=0）
+  XML：tests="19" failures="0" timestamp=2026-10-11T07:32:57 ——落位 gtest-reports/wp-16-t08/sdurws_ird_trajectory_contract_test-smoke.xml
+  json：summary total=19 passed=19 failed=0 decisive=true ——落位本目录 ird-test-report-trajectory-contract-test-smoke.json
+
+[冒烟/集成用例集差异说明] 冒烟 25 用例＝TrjDiagCodes 5＋TrjBuildRedLine 4＋TrjPlanConfig 16（两模式皆编译
+  的三个测试文件）；集成 111 用例另含集成专属套件（TrjPtp/TrjSequence/TrjCartesianLine/TrjPlannerAvoidance/
+  TrjSmoothRecheck/TimeParamGoldenTest/TimeParamFailureTest 等）。两用例集分离、四份 XML 互异——
+  acc/wp-16-t08/1 B-1 指认的"同一进程一次运行的复制"不再存在。
