@@ -4,7 +4,7 @@
   "unit": "trajectory",
   "masterWp": "WP-F",
   "title": "实现工艺速度约束（R2）",
-  "status": "ready",
+  "status": "done",
   "dependsOn": ["WP-16-T08", "WP-16-T11"],
   "requirements": ["TRJ-08-S2"],
   "designRefs": [
@@ -30,5 +30,5 @@
     "指定段（如作业段）TCP 速度受限或恒定：工艺速度约束满足断言＋超限诊断（TRJ-08-S2 验收标准）",
     "扩展点消费经 WP-16-T11 EvaluationDims 词表（§12.7/§6.6）——TRJ-08 接口约束不破坏（零空字段/零占位）；ird_gates 零命中；未执行测试不得标注通过"
   ],
-  "note": "DOC-T15 编译（2026-10-06）。blocked：R2 分期子项（TRJ-08-S2，P1/R2）。解冻后补齐 ready 必备字段。解冻条件进展注（2026-10-10，GOV-UNFROZEN 批）：TRJ-08-S2 的 R2 批次已启动（REQUIREMENTS v1.17 该行解冻注）——解冻条件达成半区；本卡仍维持 blocked：实现前置 WP-16-T08/T11 未完成（其前置 P-06 链——WP-16-T02 冻结落位前置，《P-06 建议值草案》见 DTB §2.28 待所有者确认），依赖诚实不提前翻转。P-06 冻结登记（2026-10-10，FREEZE-P06 批）：P-06 已冻结——所有者 2026-10-10 确认《P-06 建议值草案》，四类数值按草案原样（零修改）正式并入 REQUIREMENTS 附录 C《P-06 冻结数值表》（REQUIREMENTS v1.18；WP-16-T02 执行、随本提交落位），本卡解冻条件的 P-06 链半区随之闭合；仍维持 blocked——实现前置 WP-16-T08/T11 实现未完成，依赖诚实不提前翻转。解冻登记（2026-10-11，阶梯流水线治理）：实现前置 WP-16-T08（81d9ba3c，acc/wp-16-t08/2 pass）/WP-16-T11（04c46a14，acc/wp-16-t11/1 pass）已完成合入 origin/redesign-main——TRJ-08-S2 的 R2 批次解冻条件全区闭合，本卡 blocked→ready，ready 必备字段（allowedFiles/forbiddenFiles/outputs/acceptance/branch/interUnit/knownPitfalls）随本批补齐；需求语义与验收标准以 REQUIREMENTS §17.1 TRJ-08-S2 行原文为准（v1.17 行内注：本行需求 ID/优先级/验收标准不变，交付仍绑 R2 独立验收）。"
+  "note": "DOC-T15 编译（2026-10-06）。blocked：R2 分期子项（TRJ-08-S2，P1/R2）。解冻后补齐 ready 必备字段。解冻条件进展注（2026-10-10，GOV-UNFROZEN 批）：TRJ-08-S2 的 R2 批次已启动（REQUIREMENTS v1.17 该行解冻注）——解冻条件达成半区；本卡仍维持 blocked：实现前置 WP-16-T08/T11 未完成（其前置 P-06 链——WP-16-T02 冻结落位前置，《P-06 建议值草案》见 DTB §2.28 待所有者确认），依赖诚实不提前翻转。P-06 冻结登记（2026-10-10，FREEZE-P06 批）：P-06 已冻结——所有者 2026-10-10 确认《P-06 建议值草案》，四类数值按草案原样（零修改）正式并入 REQUIREMENTS 附录 C《P-06 冻结数值表》（REQUIREMENTS v1.18；WP-16-T02 执行、随本提交落位），本卡解冻条件的 P-06 链半区随之闭合；仍维持 blocked——实现前置 WP-16-T08/T11 实现未完成，依赖诚实不提前翻转。解冻登记（2026-10-11，阶梯流水线治理）：实现前置 WP-16-T08（81d9ba3c，acc/wp-16-t08/2 pass）/WP-16-T11（04c46a14，acc/wp-16-t11/1 pass）已完成合入 origin/redesign-main——TRJ-08-S2 的 R2 批次解冻条件全区闭合，本卡 blocked→ready，ready 必备字段（allowedFiles/forbiddenFiles/outputs/acceptance/branch/interUnit/knownPitfalls）随本批补齐；需求语义与验收标准以 REQUIREMENTS §17.1 TRJ-08-S2 行原文为准（v1.17 行内注：本行需求 ID/优先级/验收标准不变，交付仍绑 R2 独立验收）。合入收尾（2026-10-11，PIPE §4.7⑤ 口径）：实现提交 5641e221 经编排侧 cherry-pick 合入为主线提交 9fb2bdb2（与 T13 同单元并行推送冲突处置——单元卡冲突取双方并集升 v0.16，合并树实测 _test 164/164＋契约 63/63＋ird_gates 零命中后推送），验收 acc/wp-16-t15/1 pass（10ac1409）——ready→done。"
 }
