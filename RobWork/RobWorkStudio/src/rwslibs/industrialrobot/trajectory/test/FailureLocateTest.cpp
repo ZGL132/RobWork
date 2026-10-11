@@ -411,3 +411,129 @@ TEST_F(FailureLocateTest, RepeatedAssemblyIsValueDeterministic)
         EXPECT_EQ(first.locatedRecords[i], second.locatedRecords[i]);
     }
 }
+
+// =====================================================================
+// WP-16-T14——TRJ-08-S1 的超限/失败段定位诊断（jerk 维度素材链）
+// =====================================================================
+
+/**
+ * 端到端（TRJ-08-S1/§12.6 行 3 jerk 半区——失败定位诊断全链）：v2 运动
+ * 律（septic-spline-c3）＋jerk 限值未设（+inf）→真实 timeParameterize 产
+ * 出 TRJ-TIME-PARAM-FAILED 素材（cause 定位 jerk 缺失）→ locateFailures
+ * 组装 →断言条目：全轨迹级上下文、error 阻断、jerk 文案透传、建议动作
+ * 指向补设 jerk 限值。
+ */
+TEST_F(FailureLocateTest, EndToEndSepticUndefinedJerkLimitMaterializesDiagnostic)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "TRJ-06", "ERR-01"},
+                  std::vector<std::string>{}, std::nullopt);
+
+    // ---- 第一步：真实时间参数化（v2＋jerk 限值未设——§12.6 行 3 同源
+    // 语义的 S1 半区：时间无界→LimitUnreachable，不伪造节拍）。
+    trj::TimeParamRequest timeRequest = baseTimeRequest();
+    timeRequest.motionLawToken = trj::kTimeParamMethodSepticSplineC3;
+    timeRequest.segments.push_back([&] {
+        trj::TimeParamSegment segment;
+        segment.segmentIndex = 0u;
+        segment.geometry = jointPath({0.0, 1.0});
+        return segment;
+    }());
+    trj::JointDynamicLimits limits = limits1(1.0, 10.0);
+    limits.jerkLimit = std::numeric_limits<double>::infinity();  // 未设值
+    timeRequest.jointLimits.push_back(limits);
+    const trj::TimeParamResult timeResult =
+        trj::timeParameterize(timeRequest);
+
+    // 管线素材前置断言（产面正确性——WP-16-T14 契约回归锚）。
+    ASSERT_EQ(timeResult.status, trj::TimeParamStatus::LimitUnreachable);
+    ASSERT_FALSE(timeResult.timeParam.has_value());
+    ASSERT_EQ(timeResult.failureRecords.size(), 1u);
+    EXPECT_EQ(timeResult.failureRecords[0].reasonToken,
+              std::string(trj::kTrjTimeParamFailed));
+    EXPECT_NE(timeResult.failureRecords[0].cause.find("jerk"),
+              std::string::npos);
+
+    // ---- 第二步：素材投递组装（真实全链）。
+    trj::FailureLocateRequest request = baseRequest();
+    request.subjectFallback = someObject("00000000000000000000000000000024");
+    request.records = timeResult.failureRecords;
+    const trj::FailureLocateResult result =
+        trj::locateFailures(request, m_registry, *m_factory);
+
+    // ---- 第三步：诊断条目断言（ERR-01 字段＋TRJ-06/§12.6 定位）。
+    ASSERT_EQ(result.entries.size(), 1u);
+    const diag::DiagnosticEntry& entry = result.entries[0];
+    EXPECT_EQ(entry.record.code, std::string(trj::kTrjTimeParamFailed));
+    EXPECT_EQ(entry.record.context, "全轨迹级（阶段 time-param）");
+    EXPECT_NE(entry.record.cause.find("jerk"), std::string::npos);
+    EXPECT_NE(entry.record.recommendedAction.find("jerk"), std::string::npos);
+    EXPECT_EQ(entry.record.level, core::DiagnosticLevel::Error);
+    EXPECT_FALSE(entry.record.comparison.has_value());  // 限值缺失无数值对
+    ASSERT_TRUE(entry.record.subject.has_value());
+    EXPECT_EQ(*entry.record.subject,
+              someObject("00000000000000000000000000000024"));
+}
+
+/**
+ * 超限段定位素材组装（TRJ-08-S1——jerk 超限素材的比较型倍数形态经诊断
+ * 链）：直构段级 jerk 超限素材（segmentIndex=3、s=0.75、comparison＝实
+ * 测/限值倍数〔无量纲 token "1"——core 单位注册表无 rad/s³ 词形的合规
+ * 承载，见 TimeParam.cpp 头注登记；SI 直值经 cause 文案〕）→ locateFa-
+ * ilures →断言条目：段定位上下文（段 3＋s=0.750000）、TRJ-LIMIT-EXCEEDED
+ * 比较型三要素保留（无量纲倍数 1.25 vs 限值线 1.0）、error 阻断级。
+ * 素材产面（达上限防御路径——正常输入数学不可达，TimeParam.cpp 头注登
+ * 记）由本用例以同款形态直构覆盖其**组装面**；管线产面正确性随 T08 速
+ * 度/加速度半区同构（makeJerkLimitExceededRecord 与 makeLimitExceededRec-
+ * ord 同一组装骨架）。
+ */
+TEST_F(FailureLocateTest, JerkLimitExceededRatioMaterialLocatesSegment)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "TRJ-06"},
+                  std::vector<std::string>{}, std::nullopt);
+
+    trj::FailureLocateRequest request = baseRequest();
+    request.subjectFallback = someObject("00000000000000000000000000000025");
+
+    // jerk 超限段级素材（WP-16-T14 倍数形态——comparison.actual＝峰值相
+    // 对限值的倍数 1.25、expected＝限值线 1.0、单位 token "1"）。
+    trj::FailedSegmentRecord jerkLimit = segmentRecord(
+        std::string(trj::kTrjLimitExceeded), 3u, trj::kPhaseTimeParam, 0.75);
+    jerkLimit.cause =
+        "关节 0 峰值 jerk 超限（实测 125000.000000，限值 100000.000000，"
+        "单位 rad/s^3——缩放迭代达上限仍超——§12.6/TRJ-08-S1）";
+    jerkLimit.recommendedAction = "放宽该关节 jerk 限值或降低 limitsScaleFactor 后重评";
+    core::ComparativeFields cmp;
+    cmp.actual.quantity = core::SourcedValue<double>::provided(
+        1.25,
+        core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly, {},
+                                    {}, std::string("time-param-peak-jerk-ratio")));
+    cmp.actual.unit = *core::UnitToken::find("1");
+    cmp.expected.quantity = core::SourcedValue<double>::provided(
+        1.0,
+        core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly, {},
+                                    {}, std::string("time-param-limit")));
+    cmp.expected.unit = *core::UnitToken::find("1");
+    jerkLimit.comparison = std::move(cmp);
+    request.records.push_back(std::move(jerkLimit));
+
+    const trj::FailureLocateResult result =
+        trj::locateFailures(request, m_registry, *m_factory);
+
+    ASSERT_EQ(result.entries.size(), 1u);
+    const diag::DiagnosticEntry& entry = result.entries[0];
+    // 超限段定位诊断（TRJ-08-S1 验收后半——段序号＋段内参数进上下文）。
+    EXPECT_EQ(entry.record.code, std::string(trj::kTrjLimitExceeded));
+    EXPECT_EQ(entry.record.context,
+              "轨迹段 3（阶段 time-param） 路径参数 s=0.750000");
+    EXPECT_NE(entry.record.cause.find("jerk"), std::string::npos);
+    EXPECT_NE(entry.record.cause.find("rad/s^3"), std::string::npos)
+        << "比较型素材的 SI 直值量纲应经文案承载: " << entry.record.cause;
+    // 比较型三要素保留（无量纲倍数——单位 token 透传不换算）。
+    ASSERT_TRUE(entry.record.comparison.has_value());
+    EXPECT_EQ(std::string(entry.record.comparison->actual.unit.symbol()), "1");
+    ASSERT_TRUE(entry.record.comparison->actual.quantity.tryValue().has_value());
+    EXPECT_DOUBLE_EQ(*entry.record.comparison->actual.quantity.tryValue(), 1.25);
+    EXPECT_DOUBLE_EQ(*entry.record.comparison->expected.quantity.tryValue(), 1.0);
+    EXPECT_EQ(entry.severity, diag::DiagnosticSeverity::Error);
+    EXPECT_EQ(entry.record.level, core::DiagnosticLevel::Error);
+}

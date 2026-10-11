@@ -1,7 +1,9 @@
 /**
  * @file   TimeParam.cpp
  * @brief  时间参数化算法的唯一实现翻译单元（§12 运动律＋§12.2 限值校验
- *         与时间缩放＋§12.4 节拍输出；WP-16-T08 批）。
+ *         与时间缩放＋§12.4 节拍输出；WP-16-T08 批；WP-16-T14 批经
+ *         §12.7 扩展点新增 septic-spline-c3 运动律并纳入 TRJ-08-S1 关节
+ *         jerk 限值消费）。
  *
  * 设计依据（头文件 TimeParam.hpp 的设计依据此处不重复；本注登记实现补
  * 全——DTB §5.4 偏差/补全登记，单元卡 §22 同批登记）：
@@ -13,32 +15,84 @@
  *     立，段内三阶导可跳——jerk 连续属 R2 不承诺）。端点零加速度与驻
  *     留结点零加速度由该纪律天然满足；驻留结点的"两侧导数为零"对一阶
  *     导单独强制（中心差分只用于普通内部结点）。
+ *   - **结点三阶导恒取 0（WP-16-T14 批）**：septic-spline-c3 七次样条
+ *     的同源推广——结点二阶/三阶导恒取 0，相邻段在结点处二阶导同值 0
+ *     →C²、三阶导同值 0→**整体 C³（jerk 连续）**，§12.1"jerk 连续属
+ *     R2（TRJ-08-S1）"的结构性成立形态。七次 Hermite 段多项式（对归一
+ *     化参数 u；m̂=h·m 为对 u 的结点一阶导）：
+ *       Q(u) = q0·h0 + m̂0·h1 + q1·h2 + m̂1·h3，其中
+ *       h0 = 1 − 35u⁴ + 84u⁵ − 70u⁶ + 20u⁷   （值基，q0 侧）
+ *       h1 = u − 20u⁴ + 45u⁵ − 36u⁶ + 10u⁷   （一阶导基，q0 侧）
+ *       h2 = 35u⁴ − 84u⁵ + 70u⁶ − 20u⁷       （值基，q1 侧）
+ *       h3 = −15u⁴ + 39u⁵ − 34u⁶ + 10u⁷      （一阶导基，q1 侧）
+ *     端点条件（逐基验证）：h_i 的 (值,一阶,二阶,三阶导) 在两端为脉冲
+ *     形——例如 h1'(0)=1、h1''(0)=h1'''(0)=h1'(1)=h1''(1)=h1'''(1)=0。
+ *     二阶/三阶导基项恒缺（结点高阶导 0 纪律）使八条件中四个平凡，段
+ *     多项式由 (q0, m̂0, q1, m̂1) 唯一确定——与五次形态共用 SplineSpan
+ *     数据结构（零高阶导字段）。黄金算例在测试侧独立书写同一闭式
+ *     （NFR-COR-01 双向对照）。
  *   - **初值时间分配公式**（§12.2 步骤 1"按段路径长度/最严关节估计"的
  *     确定性展开）：逐运动段以 kInitialLengthProbeSpans 个等参区间采样
  *     段几何，逐轴折线长度 D_i（rad|m 混合计量逐轴）；需求时长按静止-
- *     静止五次剖面的解析峰值系数估计——
- *     t_seg = max( 1.875·max_i(D_i/v_i^eff) , sqrt((10/√3)·max_i(D_i/
- *     a_i^eff)) , kInitialDurationFloorS )——速度项系数 15/8 与加速度项
- *     系数 10/√3 是五次剖面（端点零导）峰值的精确闭式：初值恰使"端点
- *     驱动单段"的峰值在线达标（浮动误差被限值校验 1e-9 相对容差吸收，
- *     不触发虚假缩放），多段耦合/interior 结点的更严需求由缩放环兜底。
- *     探针密度是**初值估计的实现参数**（非协议数值；缩放收敛性与其无
- *     关——见下条）。段内结点区间时长按相邻结点构型的关节空间 L1 距
- *     离比例分配（同源确定性）。
+ *     静止剖面的解析峰值系数估计——
+ *     quintic：t_seg = max( 1.875·max_i(D_i/v_i^eff) ,
+ *                          sqrt((10/√3)·max_i(D_i/a_i^eff)) ,
+ *                          kInitialDurationFloorS )
+ *     septic（WP-16-T14 批追加 jerk 项）：
+ *              t_seg = max( 同上两项 ,
+ *                          (52.5·max_i(D_i/j_i^eff))^(1/3) ,
+ *                          kInitialDurationFloorS )
+ *     ——速度项系数 15/8 与加速度项系数 10/√3 是五次剖面（端点零导）峰
+ *     值的精确闭式；jerk 项系数 52.5＝840/16 是七次剖面（端点/结点一阶
+ *     导为零的高阶导纪律形态）峰值 jerk 的精确闭式：Q'''(u) = 840·D·u·
+ *     (1−6u+10u²−5u³)，全局峰值在 jerk 换向的中点 u=1/2 处
+ *     |u·(1−6u+10u²−5u³)| = 1/16（代数精确；两侧临界点 u=(1±√(3/5))/2
+ *     处为 1/20 次峰），故峰值 |Q'''| = 840·D/16 = 52.5·D，需求时长
+ *     (52.5·D/j)^(1/3)。初值恰使
+ *     "端点驱动单段"的峰值在线达标（浮动误差被限值校验 1e-9 相对容差吸
+ *     收，不触发虚假缩放），多段耦合/interior 结点的更严需求由缩放环兜
+ *     底。探针密度是**初值估计的实现参数**（非协议数值；缩放收敛性与
+ *     其无关——见下条）。段内结点区间时长按相邻结点构型的关节空间 L1
+ *     距离比例分配（同源确定性）。
  *   - **缩放收敛性**（§12.2 步骤 4"等比放大时间轴"的实现依据）：样条形
  *     状只依赖结点值与结点导数；全部运动段时长同乘 α 后，中心差分结点
  *     导数精确 ÷α、段多项式在归一化参数 u=τ/h 下不变 ⇒ 速度峰值精确
- *     ÷α、加速度峰值精确 ÷α²（驻留段常值不受影响）。因此 α 由峰值/限
- *     值比直接计算后，一轮缩放即把各量精确带到限值线上（±浮点舍入，被
- *     附录 D 第 10 项 1×10⁻⁹ 容差吸收）——迭代循环实为"检测→缩放→复
- *     检"确认环；"达迭代上限仍超限"是浮点病态防御路径（正常有限输入不
- *     可达），触发时如实产出 TRJ-TIME-PARAM-FAILED＋TRJ-LIMIT-EXCEEDED
- *     比较型素材（§12.6），不静默放行。
+ *     ÷α、加速度峰值精确 ÷α²、jerk 峰值精确 ÷α³（三阶导链式法则 ÷h³
+ *     ——七次与五次形态同性质；驻留段常值不受影响）。因此 α 由峰值/
+ *     限值比直接计算后，一轮缩放即把各量精确带到限值线上（±浮点舍入，
+ *     被附录 D 第 10 项 1×10⁻⁹ 容差吸收）——迭代循环实为"检测→缩放→
+ *     复检"确认环；"达迭代上限仍超限"是浮点病态防御路径（正常有限输入
+ *     不可达），触发时如实产出 TRJ-TIME-PARAM-FAILED＋TRJ-LIMIT-EXCEE-
+ *     DED 比较型素材（§12.6），不静默放行。
  *   - **峰值统计口径**：§13.1"全轨迹逐关节最大绝对值（采样+样条解析峰
  *     值取严）"落为采样峰值——采样含全部结点（解析值：结点速度＝中心
  *     差分/0、结点加速度＝0 位级），段内峰值由均匀网格近似；因缩放的精
  *     确重参数化性质，达标判定在"同一采样计划"下自洽（检测与验证同口
- *     径，§6.3"采样计划入身份"）。
+ *     径，§6.3"采样计划入身份"）。WP-16-T14 批起峰值统计三维（速度/加
+ *     速度/jerk——TimeParamResult.peakJointJerk）；jerk 统计两运动律统
+ *     一产出（观察面），jerk 限值**校验**仅 septic 分支执行（约束面——
+ *     TRJ-08-S1；v1 五次样条 jerk 分段二次多项式结点跳变，§12.1 不承诺
+ *     jerk 连续，也无 jerk 约束语义）。
+ *   - **jerk 校验的 ε_abs＝纯相对（WP-16-T14 批登记）**：附录 D C7 运行
+ *     校验 ε_abs 按量纲默认表（角度 1e-12/长度 1e-12/速度 1e-9/加速度
+ *     1e-9/力矩 1e-9/无量纲 1e-12）**无 jerk 条目**，且 core 词表（
+ *     QuantityKind/单位注册表）为 R1 冻结面、"新增须走需求变更"（C7 原
+ *     文）——本域不得私设数值自建"jerk 量纲默认"。处置：jerk 达标判定
+ *     取 C4 公式的 ε_abs=0 纯相对形态 peak ≤ limit·(1+1×10⁻⁹)（第 10
+ *     项原文只承诺"相对 1×10⁻⁹"；限值合法域恒为有限正值，零参考退化
+ *     场景不存在——ε_abs 分量在数学上不参与）。若后续需求变更补 jerk
+ *     量纲默认，经 core::runtimeAbsoluteTolerance 接入（调用点已按
+ *     withinLimit(peak, limit, absTol) 形态留位）。
+ *   - **jerk 超限素材的比较型单位＝无量纲倍数（WP-16-T14 批登记）**：
+ *     §12.6 比较型三要素（实际/期望/单位）的单位侧承载经 core::UnitToken
+ *     （"显示单位（已注册 token）"——core 单位注册表 R1 全量 17 条**无
+ *     rad/s³ 词形**，扩表走需求变更）。处置：jerk 超限素材的 comparison
+ *     携带"实测峰值相对有效限值的倍数"（无量纲，单位 token "1"——已注
+ *     册词形；actual=peak/limit、expected=1.0＝限值线），峰值/限值的 SI
+ *     直值（rad/s³|m/s³）经 cause 中文文案承载（文案面自由文本不受单位
+ *     注册表约束）——量纲诚实（不谎报既有 token 为 jerk 单位）、UX-03
+ *     三要素齐备、判定语义完整（倍数>1 即超限）。速度/加速度素材维持
+ *     T08 直值＋rad/s、rad/s² 形态（行为零变化）。
  *   - **相邻段端点位级相等守卫**：§9.3"几何连续性（位置/姿态/分支）：
  *     段构建与段连接时即时检查"归 Continuity（T05）；本头作为时间化的
  *     输入守卫取最强关节维契约——相邻运动段端点构型必须 rw::math::Q 位
@@ -48,20 +102,27 @@
  *     经 core::runtimeAbsoluteTolerance 取值（D-06 单点转写）；转动/移动
  *     两族量纲默认同值，本域限值视图不携带关节类型（投影面最小化），
  *     统一取 AngularVelocity/AngularAcceleration 族转写值——两族同值使
- *     该选择对结果无影响（测试钉扎）。
+ *     该选择对结果无影响（测试钉扎）。jerk 的 ε_abs 处置见上条（纯相对）。
+ *   - **v1 拒绝有限 jerkLimit（WP-16-T14 批登记）**：quintic-spline-c2
+ *     是 TRJ-05"按关节速度、加速度限制"的运动律（行原文口径）——jerk
+ *     限值不消费；请求携带有限 jerkLimit＝调用方契约违约 fail-fast（拒
+ *     绝优于静默忽略：静默忽略会使"配置写了什么"与"算了什么"脱钩，
+ *     NFR-COR-03）。默认 +inf（未设值）的既有调用零影响。
  *   - **驻留段的显式常值求值**：§9.1"驻留＝零速零加速度常值段"以独立
  *     分支落地（SplineSpan.constant）——不可套用"m=0、q0==q1"的统一
  *     Hermite 公式：位置虽恒定（值基和恒 1 的代数恒等）但加速度为
  *     −60u²(1−u)·q/h²（值基二阶导和不为零），会误触发加速度超限缩放并
- *     违反驻留语义——实现陷阱，测试以驻留区间三零采样钉扎。
+ *     违反驻留语义——实现陷阱，测试以驻留区间三零采样钉扎。七次形态同
+ *     陷阱同处置（常值分支在分派之前短路，两形态共享）。
  *   - **连续性守卫的极限比较形态**：§12.5"速度/加速度连续性检查在时间
  *     化完成后全链执行"以"相邻段端点极限直接比较"实现（左段 τ=h vs 右
  *     段 τ=0 的解析值）——不取邻域差分：有限差分带 O(δ·jerk) 固有偏差，
  *     任何 jerk≠0 的合法曲线都会被绝对容差误判（实现陷阱；守卫阈值
  *     1e-12 相对/绝对——qd 两侧经不同段长的舍入路径允许 ulp 级噪声，
- *     qdd 两侧数学恒 0）。
- *   - 需求 TRJ-05/06、NFR-COR-01/02/03（见 TimeParam.hpp）；错误二分见
- *     Errors.hpp。
+ *     qdd 两侧数学恒 0）。WP-16-T14 批 v2 运动律追加第三维 jerk 连续
+ *     守卫（C³ 结构承诺的回归拦截面——jerk 两侧数学恒 0，同阈值）。
+ *   - 需求 TRJ-05/06、TRJ-08-S1、NFR-COR-01/02/03（见 TimeParam.hpp）；
+ *     错误二分见 Errors.hpp。
  *
  * 集成模式条件源（Ptp.cpp/Smooth.cpp 同款 gating）：Q 构造析构面消费
  * rw::math::Q 的库内虚析构符号——冒烟模式无框架库可链，不编译本 TU；
@@ -114,17 +175,30 @@ inline constexpr double kQuinticPeakVelocityFactor = 1.875;
 inline constexpr double kQuinticPeakAccelFactor =
     10.0 / 1.7320508075688772935274463415059;
 
+/// 静止-静止七次剖面的解析峰值 jerk 系数（52.5＝840/16——WP-16-T14 批；
+/// 初值估计的"jerk 项"系数：h ≥ (系数·D/j)^(1/3) 时峰值 jerk ≤ j）。
+/// 闭式推导：静止-静止七次剖面 Q(u)=Δq·(35u⁴−84u⁵+70u⁶−20u⁷)（结点导
+/// 数全 0 形态），三阶导 Q'''(u) = Δq·840·u·(1−6u+10u²−5u³)；临界点由
+/// 其导数因式分解 1−12u+30u²−20u³ = −(2u−1)(10u²−10u+1) 得 u=1/2 与
+/// u=(1±√(3/5))/2；|u(1−6u+10u²−5u³)| 在 u=1/2 处 = 1/16（代数精确：
+/// 1/2−3/2+5/4−5/16 = −1/16——中段 jerk 换向处为全局峰值，两侧根处为
+/// 1/20 次峰），故峰值 |Q'''| = 840/16·|Δq| = 52.5·|Δq|。测试侧独立书
+/// 写同一闭式（NFR-COR-01 双向对照）。
+inline constexpr double kSepticPeakJerkFactor = 52.5;
+
 // =====================================================================
-// 五次 Hermite 基函数族（u∈[0,1] 归一化段参数；值/一阶/二阶导数——
-// Smooth.cpp 值基族的超集，本 TU 需要速度/加速度求值故三阶并列；独立
-// 书写于实现侧，测试侧另有黄金参照——NFR-COR-01 双向对照）
+// 五次 Hermite 基函数族（u∈[0,1] 归一化段参数；值/一阶/二阶/三阶导数——
+// Smooth.cpp 值基族的超集，本 TU 需要速度/加速度/jerk 求值故四阶并列；
+// 独立书写于实现侧，测试侧另有黄金参照——NFR-COR-01 双向对照）。
+// 三阶导为 WP-16-T14 批增列（peakJointJerk 统计的两形态公共求值面）。
 // =====================================================================
 
-/// 单基三阶值（对归一化参数 u 的位置/一阶/二阶导数——无量纲基值）。
+/// 单基四阶值（对归一化参数 u 的位置/一阶/二阶/三阶导数——无量纲基值）。
 struct BasisValues {
     double p;    ///< 基函数值
     double d1;   ///< 对 u 的一阶导数
     double d2;   ///< 对 u 的二阶导数
+    double d3;   ///< 对 u 的三阶导数（WP-16-T14 批增列——jerk 统计面）
 };
 
 /// 值基 h0000：端点条件 p(0)=1，其余五条件全 0（1−10u³+15u⁴−6u⁵）。
@@ -135,7 +209,14 @@ inline BasisValues basisH0000(double u)
     BasisValues b;
     b.p = 1.0 - 10.0 * u3 + 15.0 * u2 * u2 - 6.0 * u3 * u2;
     b.d1 = -30.0 * u2 + 60.0 * u3 - 30.0 * u2 * u2;
-    b.d2 = -60.0 * u + 120.0 * u2 - 60.0 * u3;
+    // 二阶导修正（WP-16-T14 批登记——T08 批遗留笔误）：d1 对 u 求导应为
+    // −60u+180u²−120u³，原实现误写 −60u+120u²−60u³。既有黄金算例未暴露
+    // 的原因：全部零起点（q0=0 → h0000 加权项为零）＋结点处各基 d2 端点
+    // 值两版本同为 0（C² 守卫不敏感）；数值实验（中心差分对照解析）定位。
+    // 修正后 h0000''+h0001'' 恒 0（值基和恒 1 的二阶导）恢复结构性成立。
+    b.d2 = -60.0 * u + 180.0 * u2 - 120.0 * u3;
+    // 三阶导（WP-16-T14 批）：d2 对 u 求导——常值 −60＋180·2u−120·3u²。
+    b.d3 = -60.0 + 360.0 * u - 360.0 * u2;
     return b;
 }
 
@@ -148,6 +229,8 @@ inline BasisValues basisH0010(double u)
     b.p = u - 6.0 * u3 + 8.0 * u2 * u2 - 3.0 * u3 * u2;
     b.d1 = 1.0 - 18.0 * u2 + 32.0 * u3 - 15.0 * u2 * u2;
     b.d2 = -36.0 * u + 96.0 * u2 - 60.0 * u3;
+    // 三阶导（WP-16-T14 批增列）。
+    b.d3 = -36.0 + 192.0 * u - 180.0 * u2;
     return b;
 }
 
@@ -160,6 +243,8 @@ inline BasisValues basisH0001(double u)
     b.p = 10.0 * u3 - 15.0 * u2 * u2 + 6.0 * u3 * u2;
     b.d1 = 30.0 * u2 - 60.0 * u3 + 30.0 * u2 * u2;
     b.d2 = 60.0 * u - 180.0 * u2 + 120.0 * u3;
+    // 三阶导（WP-16-T14 批增列）。
+    b.d3 = 60.0 - 360.0 * u + 360.0 * u2;
     return b;
 }
 
@@ -172,6 +257,86 @@ inline BasisValues basisH0011(double u)
     b.p = -4.0 * u3 + 7.0 * u2 * u2 - 3.0 * u3 * u2;
     b.d1 = -12.0 * u2 + 28.0 * u3 - 15.0 * u2 * u2;
     b.d2 = -24.0 * u + 84.0 * u2 - 60.0 * u3;
+    // 三阶导（WP-16-T14 批增列）。
+    b.d3 = -24.0 + 168.0 * u - 180.0 * u2;
+    return b;
+}
+
+// =====================================================================
+// 七次 Hermite 基函数族（WP-16-T14 批——septic-spline-c3 运动律；端点
+// 条件各 4 个：值/一阶/二阶/三阶导——二阶三阶导基项恒缺〔结点高阶导 0
+// 纪律〕，段多项式由 (q0, h·m0, q1, h·m1) 唯一确定。闭式推导见文件头
+// 注；测试侧独立书写同一闭式作黄金对照——NFR-COR-01 双向对照）
+// =====================================================================
+
+/// 七次值基 s0：端点条件 p(0)=1，其余七条件全 0
+/// （1 − 35u⁴ + 84u⁵ − 70u⁶ + 20u⁷）。
+inline BasisValues septicS0(double u)
+{
+    const double u2 = u * u;
+    const double u3 = u2 * u;
+    const double u4 = u2 * u2;
+    const double u5 = u4 * u;
+    const double u6 = u5 * u;
+    BasisValues b;
+    b.p = 1.0 - 35.0 * u4 + 84.0 * u5 - 70.0 * u6 + 20.0 * u5 * u2;
+    b.d1 = -140.0 * u3 + 420.0 * u4 - 420.0 * u5 + 140.0 * u6;
+    b.d2 = -420.0 * u2 + 1680.0 * u3 - 2100.0 * u4 + 840.0 * u5;
+    b.d3 = -840.0 * u + 5040.0 * u2 - 8400.0 * u3 + 4200.0 * u4;
+    return b;
+}
+
+/// 七次一阶导基 s1：端点条件 p'(0)=1，其余七条件全 0
+/// （u − 20u⁴ + 45u⁵ − 36u⁶ + 10u⁷）。
+inline BasisValues septicS1(double u)
+{
+    const double u2 = u * u;
+    const double u3 = u2 * u;
+    const double u4 = u2 * u2;
+    const double u5 = u4 * u;
+    const double u6 = u5 * u;
+    BasisValues b;
+    b.p = u - 20.0 * u4 + 45.0 * u5 - 36.0 * u6 + 10.0 * u5 * u2;
+    b.d1 = 1.0 - 80.0 * u3 + 225.0 * u4 - 216.0 * u5 + 70.0 * u6;
+    b.d2 = -240.0 * u2 + 900.0 * u3 - 1080.0 * u4 + 420.0 * u5;
+    b.d3 = -480.0 * u + 2700.0 * u2 - 4320.0 * u3 + 2100.0 * u4;
+    return b;
+}
+
+/// 七次值基 s2：端点条件 p(1)=1，其余七条件全 0
+/// （35u⁴ − 84u⁵ + 70u⁶ − 20u⁷——与 s0 的值部互补：s0+s2 恒 1）。
+inline BasisValues septicS2(double u)
+{
+    const double u2 = u * u;
+    const double u3 = u2 * u;
+    const double u4 = u2 * u2;
+    const double u5 = u4 * u;
+    const double u6 = u5 * u;
+    BasisValues b;
+    b.p = 35.0 * u4 - 84.0 * u5 + 70.0 * u6 - 20.0 * u5 * u2;
+    b.d1 = 140.0 * u3 - 420.0 * u4 + 420.0 * u5 - 140.0 * u6;
+    b.d2 = 420.0 * u2 - 1680.0 * u3 + 2100.0 * u4 - 840.0 * u5;
+    b.d3 = 840.0 * u - 5040.0 * u2 + 8400.0 * u3 - 4200.0 * u4;
+    return b;
+}
+
+/// 七次一阶导基 s3：端点条件 p'(1)=1，其余七条件全 0
+/// （−15u⁴ + 39u⁵ − 34u⁶ + 10u⁷）。
+inline BasisValues septicS3(double u)
+{
+    const double u2 = u * u;
+    const double u3 = u2 * u;
+    const double u4 = u2 * u2;
+    const double u5 = u4 * u;
+    const double u6 = u5 * u;
+    BasisValues b;
+    b.p = -15.0 * u4 + 39.0 * u5 - 34.0 * u6 + 10.0 * u5 * u2;
+    b.d1 = -60.0 * u3 + 195.0 * u4 - 204.0 * u5 + 70.0 * u6;
+    // 二阶/三阶导（逐次求导：s3''＝−180u²+780u³−1020u⁴+420u⁵、
+    // s3'''＝−360u+2340u²−4080u³+2100u⁴；端点校验 s3''(1)=0、
+    // s3'''(1)=0——C³ 结构条件的基级前提，测试端点矩阵钉扎）。
+    b.d2 = -180.0 * u2 + 780.0 * u3 - 1020.0 * u4 + 420.0 * u5;
+    b.d3 = -360.0 * u + 2340.0 * u2 - 4080.0 * u3 + 2100.0 * u4;
     return b;
 }
 
@@ -237,77 +402,128 @@ struct SpanDesc {
 };
 
 /**
- * @brief 段内求值（τ∈[0,h]；五次 Hermite 三阶合成——逐轴 double 循环避
- *        免 Q 临时对象，确定性算术序）。
+ * @brief 运动律形态（§12.7 分派点的实现侧词形——token 字符串在
+ *        validateRequest 解析一次后以本枚举贯穿计算面；两值各对应一个
+ *        真实实现分支，零空分支）。
+ */
+enum class LawForm {
+    /// quintic-spline-c2（TRJ-05——五次 Hermite，结点二阶导恒 0，C²）。
+    Quintic,
+    /// septic-spline-c3（TRJ-08-S1——七次 Hermite，结点二/三阶导恒 0，
+    /// C³/jerk 连续；jerk 限值参与校验）。
+    Septic,
+};
+
+/// 段内四阶求值结果（位置/速度/加速度/jerk——TimedSample 无 jerk 成员
+/// 〔§6.5 守护〕，jerk 走独立通道供峰值统计与连续性守卫消费，不入离散
+/// 样本视图）。
+struct SpanDerivs {
+    rw::math::Q q;     ///< 位置（rad|m）
+    rw::math::Q qd;    ///< 速度（rad/s|m/s）
+    rw::math::Q qdd;   ///< 加速度（rad/s²|m/s²）
+    rw::math::Q qddd;  ///< jerk（rad/s³|m/s³）
+};
+
+/**
+ * @brief 段内求值（τ∈[0,h]；Hermite 四阶合成——逐轴 double 循环避免 Q
+ *        临时对象，确定性算术序；form 分派五次/七次基族）。
  *
- * 数学（文件头注运动律）：q(τ)=h0000·q0+h0010·h·m0+h0001·q1+h0011·
- * h·m1；qd=q'(u)/h；qdd=q''(u)/h²（u=τ/h；二阶导基项恒缺——结点二
- * 阶导 0 纪律）。单位换算：m 的积（h·m0）量纲 rad、除 h² 后 qdd 得
- * rad/s²——链式量纲自洽。
+ * 数学（文件头注运动律）：
+ *   - quintic：q(τ)=h0000·q0+h0010·h·m0+h0001·q1+h0011·h·m1；qd=q'(u)/h；
+ *     qdd=q''(u)/h²；qddd=q'''(u)/h³（u=τ/h；二/三阶导基项〔结点高阶导
+ *     0 纪律下〕无自由度——三阶导来自值/一阶导基的导数）。
+ *   - septic：同形态换七次基族 s0..s3（结点二/三阶导恒 0——三阶导在结
+ *     点两侧恒 0，C³）。
+ * 单位换算：h·m0 量纲 rad|m，除 h/h²/h³ 后 qd/qdd/qddd 得 rad/s、
+ * rad/s²、rad/s³——链式量纲自洽。
  *
  * 匿名命名空间自由函数（非方法）：连续性守卫需要对同一函数取"段端点极
  * 限"（u=1 与 u=0——两侧极限的直接比较，见守卫环注），故与曲线类解耦。
  */
-TimedSample evaluateSpan(const SplineSpan& span, double tau)
+SpanDerivs evaluateSpanDerivs(const SplineSpan& span, double tau, LawForm form)
 {
     const std::size_t n = static_cast<std::size_t>(span.q0.size());
-    TimedSample sample;
-    sample.t = span.t0 + tau;
+    SpanDerivs d;
     // 注意（框架语义）：rw::math::Q(n) 单参构造**不零初始化**（Eigen 动
-    // 态向量默认构造语义）——零导数面（qd/qdd）必须显式 Q::zero，否则
-    // 常值段/边界结点携带未定义值（实现陷阱，登记于单元卡 §22）。
-    sample.q = rw::math::Q::zero(n);
-    sample.qd = rw::math::Q::zero(n);
-    sample.qdd = rw::math::Q::zero(n);
+    // 态向量默认构造语义）——零导数面（qd/qdd/qddd）必须显式 Q::zero，
+    // 否则常值段/边界结点携带未定义值（实现陷阱，登记于单元卡 §22）。
+    d.q = rw::math::Q::zero(n);
+    d.qd = rw::math::Q::zero(n);
+    d.qdd = rw::math::Q::zero(n);
+    d.qddd = rw::math::Q::zero(n);
     // 驻留常值段：显式零导数求值（§9.1"驻留＝零速零加速度常值段"——
-    // 不可套用 Hermite 公式，见 SplineSpan 结构注的陷阱登记）；q0/q1
-    // 位级相等（构建保证），取 q0。
+    // 不可套用 Hermite 公式，见 SplineSpan 结构注的陷阱登记；陷阱在两
+    // 形态同样存在——统一 Hermite 公式对常值段的加速度不为零，故常值
+    // 分支在形态分派之前短路）；q0/q1 位级相等（构建保证），取 q0。
     if (span.constant) {
-        sample.q = span.q0;
-        return sample;  // qd/qdd 已零初始化（TimedSample 构造面）
+        d.q = span.q0;
+        return d;  // qd/qdd/qddd 已零初始化（构造面）
     }
     // τ 钳位检查（段内舍入可能给出 τ=−ε/+ε——钳位到 [0,h] 而非越
     // 界抛错：本调用点 t 已在总区间内，段边界舍入属数值噪声，静默
     // 归边不影响位级可复现性；与 sampleAt 的越界 fail-fast 分工——
     // 那里是调用方语义越界，这里是实现内数值归边）。
     const double u = std::clamp(tau / span.h, 0.0, 1.0);
-    const BasisValues b00 = basisH0000(u);
-    const BasisValues b10 = basisH0010(u);
-    const BasisValues b01 = basisH0001(u);
-    const BasisValues b11 = basisH0011(u);
-    // 逐轴合成：四基加权（位置）＋导数基加权后除 h、h²（时间导数链
-    // 式法则）——每轴独立的标量算术，无跨轴归约（确定性算术序）。
+    const double h2 = span.h * span.h;
+    const double h3 = h2 * span.h;
+    // 形态分派（§12.7——每分支一个真实运动律；基族选择在此单点）。
+    const BasisValues b00 = form == LawForm::Quintic ? basisH0000(u) : septicS0(u);
+    const BasisValues b10 = form == LawForm::Quintic ? basisH0010(u) : septicS1(u);
+    const BasisValues b01 = form == LawForm::Quintic ? basisH0001(u) : septicS2(u);
+    const BasisValues b11 = form == LawForm::Quintic ? basisH0011(u) : septicS3(u);
+    // 逐轴合成：四基加权（位置）＋导数基加权后除 h、h²、h³（时间导数
+    // 链式法则）——每轴独立的标量算术，无跨轴归约（确定性算术序）。
     for (std::size_t i = 0; i < n; ++i) {
         const double q0 = span.q0[i];
         const double q1 = span.q1[i];
         const double hm0 = span.h * span.m0[i];  // h·m0：量纲 rad|m
         const double hm1 = span.h * span.m1[i];
-        sample.q[i] = b00.p * q0 + b10.p * hm0 + b01.p * q1 + b11.p * hm1;
-        sample.qd[i] = (b00.d1 * q0 + b10.d1 * hm0 + b01.d1 * q1
-                        + b11.d1 * hm1)
-                       / span.h;
-        sample.qdd[i] = (b00.d2 * q0 + b10.d2 * hm0 + b01.d2 * q1
-                         + b11.d2 * hm1)
-                        / (span.h * span.h);
+        d.q[i] = b00.p * q0 + b10.p * hm0 + b01.p * q1 + b11.p * hm1;
+        d.qd[i] = (b00.d1 * q0 + b10.d1 * hm0 + b01.d1 * q1
+                   + b11.d1 * hm1)
+                  / span.h;
+        d.qdd[i] = (b00.d2 * q0 + b10.d2 * hm0 + b01.d2 * q1
+                    + b11.d2 * hm1)
+                   / h2;
+        d.qddd[i] = (b00.d3 * q0 + b10.d3 * hm0 + b01.d3 * q1
+                     + b11.d3 * hm1)
+                    / h3;
     }
+    return d;
+}
+
+/**
+ * @brief 段内求值的 TimedSample 投影（q/qd/qdd 三阶——ITimeCurve 离散
+ *        视图与采样计划的面；jerk 不入 TimedSample〔§6.5 守护——离散
+ *        样本视图不扩成员〕，由 evaluateSpanDerivs 的独立通道承载）。
+ */
+TimedSample evaluateSpan(const SplineSpan& span, double tau, LawForm form)
+{
+    const SpanDerivs d = evaluateSpanDerivs(span, tau, form);
+    TimedSample sample;
+    sample.t = span.t0 + tau;
+    sample.q = d.q;
+    sample.qd = d.qd;
+    sample.qdd = d.qdd;
     return sample;
 }
 
 /**
- * @brief 时间曲线求值器（ITimeCurve 产品实现——段表二分定位＋五次
- *        Hermite 三阶求值；无状态纯计算，并发只读安全）。
+ * @brief 时间曲线求值器（ITimeCurve 产品实现——段表二分定位＋Hermite
+ *        求值〔五次/七次按构建时冻结的形态分派〕；无状态纯计算——形态
+ *        成员为构建期常量，并发只读安全）。
  *
  * 求值语义（TimeParam.hpp ITimeCurve 契约的落地）：t∈[t_first, t_last]
- * 越界 fail-fast；结点时刻取左段极限（二分 upper_bound−1——C² 保证左
- * 右极限位级相等，取侧无观测差异）；驻留段经统一 Hermite 公式退化为常
- * 值（m=0 且 q0==q1 时多项式代数恒等于常值——无需特判分支，减少分叉
- * 即减少不一致面）。
+ * 越界 fail-fast；结点时刻取左段极限（二分 upper_bound−1——C²（七次为
+ * C³）保证左右极限位级相等，取侧无观测差异）；驻留段经常值分支退化为
+ * 常值（evaluateSpanDerivs 的 constant 分支——显式零导数，见该函数注）。
  */
-class QuinticTimeCurve final : public ITimeCurve {
+class SplineTimeCurve final : public ITimeCurve {
 public:
-    /// 构造（段表构建期组装后一次冻结；spans 非空且 h>0——构建面保证）。
-    explicit QuinticTimeCurve(std::vector<SplineSpan> spans)
-        : m_spans(std::move(spans))
+    /// 构造（段表构建期组装后一次冻结；spans 非空且 h>0——构建面保证；
+    /// form＝构建请求解析出的运动律形态——求值与构建同律）。
+    SplineTimeCurve(std::vector<SplineSpan> spans, LawForm form)
+        : m_spans(std::move(spans)), m_form(form)
     {
     }
 
@@ -336,12 +552,14 @@ public:
                                   "内部定位失败（不可达路径——实现缺陷）");
         }
         const SplineSpan& span = *std::prev(it);
-        return evaluateSpan(span, t - span.t0);
+        return evaluateSpan(span, t - span.t0, m_form);
     }
 
 private:
     /// 段表（构建期一次冻结；求值只读——并发安全）。
     std::vector<SplineSpan> m_spans;
+    /// 运动律形态（构建期冻结——与段表的多项式族一致；只读）。
+    LawForm m_form;
 };
 
 // =====================================================================
@@ -349,33 +567,50 @@ private:
 // =====================================================================
 
 /**
+ * @brief 解析运动律 token 为实现形态（§12.7 分派点——token 字符串→
+ *        LawForm 的唯一映射；词表外 token 无实现对应，拒绝而非静默回退：
+ *        静默回退会使"配置写了什么"与"算了什么"脱钩，NFR-COR-03）。
+ *
+ * @throws TrajectoryError token 不在封闭词表（两值）
+ */
+LawForm resolveMotionLaw(const std::string& token)
+{
+    if (token == kTimeParamMethodQuinticSplineC2) {
+        return LawForm::Quintic;
+    }
+    if (token == kTimeParamMethodSepticSplineC3) {
+        return LawForm::Septic;
+    }
+    throw TrajectoryError(
+        "trajectory/time-param/motion-law",
+        "运动律 token 非法：请求 \"" + token + "\"，封闭词表合法值 \""
+            + std::string(kTimeParamMethodQuinticSplineC2) + "\" / \""
+            + std::string(kTimeParamMethodSepticSplineC3)
+            + "\"（§12.7——扩展走单元卡增量修订＋实现＋黄金算例同批）");
+}
+
+/**
  * @brief 请求合法域全表校验（timeParameterize 步骤 1；非法即抛——文案
  *        含首错定位与实际值）。
  *
  * 校验序（确定性——同一坏请求必报同一首错）：
- *   1. motionLawToken ∈ 封闭词表（§12.7 当前唯一值）；
+ *   1. motionLawToken ∈ 封闭词表两值（§12.7——resolveMotionLaw 分派）；
  *   2. segments 非空；条目二分形态（运动段：geometry 非空＋dwell==0＋
  *      interiorS 合法；驻留段：geometry 空＋dwell>0 有限＋interiorS 空）；
  *   3. 首条目必须为运动段、驻留段前一条目必须为运动段（常值段语义附着
  *      于运动——无前置运动的驻留没有可驻留的构型）；
  *   4. 相邻运动段端点构型位级相等（文件头注登记的守卫）；
- *   5. jointLimits 与段几何同维度、逐轴合法域（>0 有限或 +inf）；
+ *   5. jointLimits 与段几何同维度、逐轴合法域（>0 有限或 +inf——三维
+ *      同规）；v1 运动律不消费 jerk 限值——携带有限 jerkLimit 即调用方
+ *      契约违约 fail-fast（WP-16-T14 批登记；默认 +inf 零影响）；
  *   6. limitsScaleFactor ∈ (0,1] 有限；
  *   7. sampleStepS 有限且 >0（s）；
  *   8. maxIterations ≥1。
  */
 void validateRequest(const TimeParamRequest& request)
 {
-    // 1. 运动律词表（§12.7 单分支分派点——词表外 token 无实现对应，拒
-    //    绝而非静默回退：静默回退会使"配置写了什么"与"算了什么"脱钩）。
-    if (request.motionLawToken != kTimeParamMethodQuinticSplineC2) {
-        throw TrajectoryError(
-            "trajectory/time-param/motion-law",
-            "运动律 token 非法：请求 \"" + request.motionLawToken
-                + "\"，封闭词表当前唯一合法值 \""
-                + std::string(kTimeParamMethodQuinticSplineC2)
-                + "\"（§12.7——扩展走单元卡增量修订＋实现＋黄金算例同批）");
-    }
+    // 1. 运动律词表（§12.7 分派点——见 resolveMotionLaw 注）。
+    const LawForm form = resolveMotionLaw(request.motionLawToken);
     // 2. 段序列非空。
     if (request.segments.empty()) {
         throw TrajectoryError("trajectory/time-param/segments-empty",
@@ -491,7 +726,8 @@ void validateRequest(const TimeParamRequest& request)
     }
     // 5. 限值视图维度与合法域（+inf＝未设值合法；NaN/≤0＝投影面数据违
     //    约——CanonicalJoint 语义里限值不存在 SourcedValue 无效态直通，
-    //    非正限值没有工程意义）。
+    //    非正限值没有工程意义；三维同规——jerk 合法域与速度/加速度一致，
+    //    消费与否是 token 相关语义，非法值任何 token 下都拒绝）。
     if (request.jointLimits.size() != jointCount) {
         throw TrajectoryError(
             "trajectory/time-param/limits-dim",
@@ -507,13 +743,31 @@ void validateRequest(const TimeParamRequest& request)
         const bool aOk = std::isinf(lim.accelerationLimit)
                          || (std::isfinite(lim.accelerationLimit)
                              && lim.accelerationLimit > 0.0);
-        if (!vOk || !aOk) {
+        const bool jOk = std::isinf(lim.jerkLimit)
+                         || (std::isfinite(lim.jerkLimit)
+                             && lim.jerkLimit > 0.0);
+        if (!vOk || !aOk || !jOk) {
             throw TrajectoryError(
                 "trajectory/time-param/limits-domain",
                 "限值视图非法（关节 " + std::to_string(i) + "）：velocity="
                     + std::to_string(lim.velocityLimit)
                     + "，acceleration=" + std::to_string(lim.accelerationLimit)
+                    + "，jerk=" + std::to_string(lim.jerkLimit)
                     + "（要求 >0 有限或 +inf＝未设值；NaN/零/负拒绝）");
+        }
+        // v1 运动律不消费 jerk 限值（TRJ-05 口径"按关节速度、加速度限
+        // 制"——WP-16-T14 批登记）：携带有限 jerkLimit＝调用方要求 v1 运
+        // 动律执行 jerk 约束，语义不可达——fail-fast 拒绝而非静默忽略
+        // （静默忽略会使"请求写了什么"与"算了什么"脱钩，NFR-COR-03）。
+        // 默认 +inf（未设值）的既有调用零影响。
+        if (form == LawForm::Quintic && !std::isinf(lim.jerkLimit)) {
+            throw TrajectoryError(
+                "trajectory/time-param/jerk-limit-motion-law",
+                "quintic-spline-c2 运动律不消费 jerk 限值（TRJ-05 限值面"
+                "＝速度/加速度；TRJ-08-S1 jerk 约束须用运动律 \""
+                    + std::string(kTimeParamMethodSepticSplineC3)
+                    + "\"）：关节 " + std::to_string(i) + " 的 jerkLimit="
+                    + std::to_string(lim.jerkLimit) + "（要求 +inf 未设值）");
         }
     }
     // 6. 限值使用比例（§5.5 (0,1]）。
@@ -547,17 +801,28 @@ void validateRequest(const TimeParamRequest& request)
 // =====================================================================
 
 /**
- * @brief 扫描限值视图中的未设值（+inf）；命中返回其下标，否则 nullopt。
+ * @brief 扫描限值视图中的未设值（+inf）；命中返回其下标与量名，否则
+ *        nullopt。
  *
  * §12.6"时间参数化输入缺限值（模型未设限速）：+inf 语义→时间无界"——
  * 任一关节任一量缺失即整链不可时间化（部分时间化没有可交付语义：节拍
  * 是全轨迹量）。前置校验已保证视图无 NaN/非正值，本扫描只面对 +inf。
+ * 扫描维度 token 相关（WP-16-T14 批）：v2 运动律三维全扫（jerk 缺失与
+ * 速度/加速度缺失同源——"最短时间"对缺任一限值维度无定义）；v1 只扫
+ * 速度/加速度（jerk 不消费——validateRequest 已拒绝有限值，+inf 是 v1
+ * 下唯一合法形态，不参与扫描）。
  */
-std::optional<std::size_t> findUndefinedLimit(const TimeParamRequest& request)
+std::optional<std::size_t> findUndefinedLimit(const TimeParamRequest& request,
+                                              LawForm form)
 {
+    // jerk 是否参与"未设值"扫描（v2 消费 jerk——+inf 即不可时间化）。
+    const bool jerkConsumed = form == LawForm::Septic;
     for (std::size_t i = 0; i < request.jointLimits.size(); ++i) {
         if (std::isinf(request.jointLimits[i].velocityLimit)
             || std::isinf(request.jointLimits[i].accelerationLimit)) {
+            return i;
+        }
+        if (jerkConsumed && std::isinf(request.jointLimits[i].jerkLimit)) {
             return i;
         }
     }
@@ -570,18 +835,32 @@ std::optional<std::size_t> findUndefinedLimit(const TimeParamRequest& request)
  *
  * 非超限类素材：comparison 不填（"超限类素材必填"——本类是限值缺失，
  * 没有"实际 vs 期望"的数值对）；cause/recommendedAction 中文（ERR-01）。
+ * missingJerk 区分缺失量（WP-16-T14 批——v2 的 jerk 缺失素材文案与建议
+ * 动作按量定位：建议动作指向补设 jerk 限值而非速度/加速度）。
  */
-FailedSegmentRecord makeUndefinedLimitRecord(std::size_t jointIndex)
+FailedSegmentRecord makeUndefinedLimitRecord(std::size_t jointIndex,
+                                             bool missingJerk)
 {
     FailedSegmentRecord rec;
     rec.segmentIndex = 0xFFFFFFFFu;              // 全轨迹级失败（§6.2）
     rec.phaseToken = kPhaseTimeParam;            // "time-param"（§14.1.6）
     rec.reasonToken = std::string(kTrjTimeParamFailed);
-    rec.cause = "限值未定义：关节 " + std::to_string(jointIndex)
-                + " 的速度或加速度限值为 +inf（模型未显式设值）——时间无界，"
-                  "不产出节拍（§12.6/NFR-COR-03 不伪造）";
-    rec.recommendedAction = "为该关节补设 CanonicalJoint.maxVelocity/"
-                            "maxAcceleration（模型侧显式设值）后重新评估";
+    if (missingJerk) {
+        // TRJ-08-S1 半区：jerk 限值未设（§12.6 行 3 同源——不伪造节拍）。
+        rec.cause = "限值未定义：关节 " + std::to_string(jointIndex)
+                    + " 的 jerk 限值为 +inf（模型未显式设值）——septic 运动"
+                      "律的 jerk 约束无界，时间无界，不产出节拍（§12.6/"
+                      "NFR-COR-03 不伪造）";
+        rec.recommendedAction = "为该关节补设 jerk 限值（模型侧显式设值；"
+                                "或改用 " + std::string(kTimeParamMethodQuinticSplineC2)
+                                + " 运动律——TRJ-05 面）后重新评估";
+    } else {
+        rec.cause = "限值未定义：关节 " + std::to_string(jointIndex)
+                    + " 的速度或加速度限值为 +inf（模型未显式设值）——时间无界，"
+                      "不产出节拍（§12.6/NFR-COR-03 不伪造）";
+        rec.recommendedAction = "为该关节补设 CanonicalJoint.maxVelocity/"
+                                "maxAcceleration（模型侧显式设值）后重新评估";
+    }
     return rec;
 }
 
@@ -691,6 +970,19 @@ inline core::UnitToken accelerationUnitToken()
     return *token;
 }
 
+/// 取无量纲单位 token（"1"——已注册词形；jerk 比较型素材的倍数标注面，
+/// 见 makeJerkLimitExceededRecord 注）。
+inline core::UnitToken dimensionlessUnitToken()
+{
+    const auto token = core::UnitToken::find("1");
+    if (!token.has_value()) {
+        throw TrajectoryError("trajectory/time-param/unit-token",
+                              "core 单位注册表缺少无量纲 token \"1\"（环境"
+                              "缺陷，fail-fast——比较型素材单位口径不可用）");
+    }
+    return *token;
+}
+
 /**
  * @brief 组装单条超限素材（TRJ-LIMIT-EXCEEDED 比较型——实际峰值/限值/
  *        单位＋段定位 segmentIndex/pathParameter/subject；§12.2 步骤 5、
@@ -734,6 +1026,60 @@ FailedSegmentRecord makeLimitExceededRecord(std::uint32_t segmentIndex,
     return rec;
 }
 
+/**
+ * @brief 组装单条 jerk 超限素材（TRJ-LIMIT-EXCEEDED 比较型——WP-16-T14
+ *        批 TRJ-08-S1 半区；比较型单位＝无量纲倍数，见文件头注登记）。
+ *
+ * 单位承载说明（core 单位注册表 R1 全量 17 条无 rad/s³ 词形——扩表走
+ * 需求变更，本域不越权）：comparison.actual＝实测峰值相对有效限值的倍
+ * 数（peak/limit，无量纲）、comparison.expected＝1.0（限值线）——单位
+ * token 取已注册的无量纲词形 "1"；UX-03 三要素齐备（实际/期望/单位）
+ * 且量纲诚实（不谎报既有 token 为 jerk 单位）；峰值/限值 SI 直值
+ * （rad/s³|m/s³）经 cause 中文文案承载（文案面自由文本）。定位要素
+ * （segmentIndex/pathParameter/subject）与速度/加速度素材同构——超限
+ * 段定位语义一致（TRJ-08-S1 验收"超限段定位诊断"的素材承载面）。
+ *
+ * @param segmentIndex [in] 峰值所在请求段序号
+ * @param pathParam    [in] 峰值所在段内归一化路径参数（无量纲，[0,1]）
+ * @param subject      [in] 段来源任务点投影（可空——直接透传）
+ * @param jointIndex   [in] 超限关节（文案定位）
+ * @param peak         [in] 实测峰值 jerk（SI；rad/s³|m/s³——仅入文案）
+ * @param limit        [in] 有效限值（视图×缩放系数；同量纲——仅入文案）
+ * @param action       [in] 中文建议动作（ERR-01）
+ */
+FailedSegmentRecord makeJerkLimitExceededRecord(
+    std::uint32_t segmentIndex, double pathParam,
+    std::optional<core::ObjectId> subject, std::size_t jointIndex,
+    double peak, double limit, const char* action)
+{
+    FailedSegmentRecord rec;
+    rec.segmentIndex = segmentIndex;
+    rec.phaseToken = kPhaseTimeParam;  // "time-param"（§14.1.6 词表）
+    rec.reasonToken = std::string(kTrjLimitExceeded);
+    rec.pathParameter = pathParam;
+    rec.subject = std::move(subject);
+    // 中文文案携带 SI 直值与量纲说明（rad/s³|m/s³——逐轴按关节类型，SI
+    // 真值；本域素材统一以转动族词形标注量纲，与速度/加速度素材的量纲
+    // 取舍同源〔限值视图不携带关节类型，两族同值〕）。
+    rec.cause = std::string("关节 ") + std::to_string(jointIndex)
+                + " 峰值 jerk 超限（实测 "
+                + std::to_string(peak) + "，限值 "
+                + std::to_string(limit) + "，单位 rad/s^3——缩放迭代达上限"
+                                          "仍超——§12.6/TRJ-08-S1）";
+    rec.recommendedAction = action;
+    // 比较型三要素：倍数形态（无量纲——core 注册表无 jerk 单位词形的
+    // 合规承载，见函数注/文件头注登记）。
+    core::ComparativeFields cmp;
+    cmp.actual.quantity = core::SourcedValue<double>::provided(
+        peak / limit, derivedProvenance("time-param-peak-jerk-ratio"));
+    cmp.actual.unit = dimensionlessUnitToken();
+    cmp.expected.quantity = core::SourcedValue<double>::provided(
+        1.0, derivedProvenance("time-param-limit"));
+    cmp.expected.unit = dimensionlessUnitToken();
+    rec.comparison = std::move(cmp);
+    return rec;
+}
+
 }  // namespace
 
 // =====================================================================
@@ -742,8 +1088,10 @@ FailedSegmentRecord makeLimitExceededRecord(std::uint32_t segmentIndex,
 
 TimeParamResult timeParameterize(const TimeParamRequest& request)
 {
-    // ---- 步骤 1：前置校验（调用方契约违约 fail-fast——validateRequest）。
+    // ---- 步骤 1：前置校验（调用方契约违约 fail-fast——validateRequest；
+    // 含运动律词表分派——token 解析一次，形态贯穿计算面）。
     validateRequest(request);
+    const LawForm form = resolveMotionLaw(request.motionLawToken);
 
     // ---- 步骤 2：取消轮询（命中 → Canceled，零素材——UX-03）。
     if (request.cancel && request.cancel()) {
@@ -752,29 +1100,54 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
         return result;
     }
 
-    // ---- 步骤 6 前置半区：限值未定义扫描（§12.6——+inf→时间无界，在
-    // 任何构造前快速失败；素材轨返回，不抛不伪造节拍）。
-    if (const std::optional<std::size_t> undefined = findUndefinedLimit(request);
+    // ---- 步骤 3：限值未定义扫描（§12.6——+inf→时间无界，在任何构造前
+    // 快速失败；素材轨返回，不抛不伪造节拍；v2 扫描含 jerk 维度——缺失
+    // 量区分进素材文案，见 makeUndefinedLimitRecord）。
+    if (const std::optional<std::size_t> undefined =
+            findUndefinedLimit(request, form);
         undefined.has_value()) {
+        // 缺失量判定（文案定位用）：该关节的 jerk 是否为 +inf 且 v2 消费
+        // jerk——是则按 jerk 缺失组装；否则按速度/加速度缺失（T08 文案）。
+        const bool missingJerk =
+            form == LawForm::Septic
+            && std::isinf(request.jointLimits[*undefined].jerkLimit);
         TimeParamResult result;
         result.status = TimeParamStatus::LimitUnreachable;
-        result.failureRecords.push_back(makeUndefinedLimitRecord(*undefined));
+        result.failureRecords.push_back(
+            makeUndefinedLimitRecord(*undefined, missingJerk));
         return result;
     }
 
     // ---- 有效限值面（视图×缩放系数——+inf 已排除，全为有限正值；缩放
-    // 系数只作用于有限限值，未设值语义不被掩盖——TimeParam.hpp 请求注）。
+    // 系数只作用于有限限值，未设值语义不被掩盖——TimeParam.hpp 请求注；
+    // v2 起 jerk 维度同规——TRJ-08-S1 限值消费扩展）。
     const std::size_t jointCount = request.jointLimits.size();
     std::vector<double> vLimit(jointCount);
     std::vector<double> aLimit(jointCount);
+    std::vector<double> jLimit(jointCount);
     for (std::size_t i = 0; i < jointCount; ++i) {
         vLimit[i] = request.jointLimits[i].velocityLimit
                     * request.limitsScaleFactor;
         aLimit[i] = request.jointLimits[i].accelerationLimit
                     * request.limitsScaleFactor;
+        // v1 不消费 jerk（validateRequest 已保证 v1 下 jerkLimit 恒 +inf
+        // ——不会走到这里；本行对 v1 形态写 0 占位值，永不参与校验——
+        // 初值分配/校验/缩放的 jerk 项全部以 jerkConsumed 门控）。
+        jLimit[i] = form == LawForm::Septic
+                        ? request.jointLimits[i].jerkLimit
+                              * request.limitsScaleFactor
+                        : 0.0;
     }
     const double vAbsTol = velocityAbsTolerance();
     const double aAbsTol = accelerationAbsTolerance();
+    // jerk 校验 ε_abs＝纯相对（0.0）——C7 量纲默认表无 jerk 条目（core
+    // 词表冻结，新增须走需求变更），本域不私设数值；第 10 项原文只承诺
+    // "相对 1×10⁻⁹"，限值合法域恒有限正值、零参考退化场景不存在（WP-16-
+    // T14 批登记，见文件头注）。若需求变更补 jerk 量纲默认，此处改为经
+    // core::runtimeAbsoluteTolerance 转写接入。
+    const double jAbsTol = 0.0;
+    // jerk 限值是否参与校验/缩放（约束面 token 相关——统计面两形态统一）。
+    const bool jerkConsumed = form == LawForm::Septic;
 
     // ---- 步骤 3：初值时间分配（§12.2 步骤 1——文件头注登记公式；产
     // 物＝各请求条目的初值时长，缩放只作用于运动段条目）。
@@ -803,19 +1176,30 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
         }
         // 最严关节需求时长（文件头注登记公式的解析系数形态）：速度项
         // 1.875·D/v（静止-静止剖面峰值速度恰达限值的时长）、加速度项
-        // sqrt((10/√3)·D/a)（峰值加速度恰达限值的时长）、下限防零退化。
+        // sqrt((10/√3)·D/a)（峰值加速度恰达限值的时长）、jerk 项（v2）
+        // (42·D/j)^(1/3)（静止-静止七次剖面峰值 jerk 恰达限值的时长——
+        // kSepticPeakJerkFactor 闭式见该常量注）、下限防零退化。
         // 解析系数使初值对"端点驱动的单段"首轮即在线达标（容差内），
         // 缩放环对多段耦合/interior 结点的更严需求兜底。
         double need = 0.0;
         double worstV = 0.0;
         double worstA = 0.0;
+        double worstJ = 0.0;
         for (std::size_t i = 0; i < jointCount; ++i) {
             worstV = std::max(worstV, axisLength[i] / vLimit[i]);
             worstA = std::max(worstA, axisLength[i] / aLimit[i]);
+            if (jerkConsumed) {
+                worstJ = std::max(worstJ, axisLength[i] / jLimit[i]);
+            }
         }
         need = std::max(need, kQuinticPeakVelocityFactor * worstV);
         need = std::max(need,
                         std::sqrt(kQuinticPeakAccelFactor * worstA));
+        if (jerkConsumed) {
+            // 立方根收敛（std::cbrt 正确处理正实数——jerk 项需求时长）。
+            need = std::max(
+                need, std::cbrt(kSepticPeakJerkFactor * worstJ));
+        }
         segmentDurations[segIdx] = std::max(need, kInitialDurationFloorS);
     }
 
@@ -825,11 +1209,15 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
     std::vector<SplineKnot> knots;
     rw::math::Q peakV(jointCount);   // 逐关节峰值速度（rad/s|m/s）
     rw::math::Q peakA(jointCount);   // 逐关节峰值加速度（rad/s²|m/s²）
+    rw::math::Q peakJ(jointCount);   // 逐关节峰值 jerk（rad/s³|m/s³——
+                                     //   WP-16-T14 批统计面；校验面 v2 门控）
     // 峰值定位（超限素材的段/段内参数——argmax 伴随记录）。
     std::vector<std::uint32_t> peakVSegment(jointCount, 0);
     std::vector<std::uint32_t> peakASegment(jointCount, 0);
+    std::vector<std::uint32_t> peakJSegment(jointCount, 0);
     std::vector<double> peakVS(jointCount, 0.0);
     std::vector<double> peakAS(jointCount, 0.0);
+    std::vector<double> peakJS(jointCount, 0.0);
     bool withinAllLimits = false;
 
     for (std::uint32_t iteration = 0; iteration <= request.maxIterations;
@@ -956,16 +1344,22 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
             spans.push_back(std::move(span));
         }
 
-        // ---- 步骤 5：采样求峰值（事件对齐＋均匀步长——每样条段 n=
+        // ---- 步骤 6：采样求峰值（事件对齐＋均匀步长——每样条段 n=
         // ceil(h/sampleStepS) 等分、段起点必含（结点时刻全采样），总末
-        // 点补采；峰值记录携带定位（段序号＋段内归一化参数））。
+        // 点补采；峰值记录携带定位（段序号＋段内归一化参数）。jerk 统计
+        // 同面采集（WP-16-T14 批——四阶求值一次完成 q/qd/qdd/qddd；采样
+        // 视图的 TimedSample 不携带 jerk〔§6.5 守护〕，本环为内部统计通
+        // 道）。jerk 限值校验仅 v2 门控执行，统计两形态统一产出。
         peakV = rw::math::Q::zero(jointCount);  // Q(n) 构造不零初始化——显式零
         peakA = rw::math::Q::zero(jointCount);
+        peakJ = rw::math::Q::zero(jointCount);
         std::fill(peakVSegment.begin(), peakVSegment.end(), 0U);
         std::fill(peakASegment.begin(), peakASegment.end(), 0U);
+        std::fill(peakJSegment.begin(), peakJSegment.end(), 0U);
         std::fill(peakVS.begin(), peakVS.end(), 0.0);
         std::fill(peakAS.begin(), peakAS.end(), 0.0);
-        QuinticTimeCurve curve(spans);
+        std::fill(peakJS.begin(), peakJS.end(), 0.0);
+        SplineTimeCurve curve(spans, form);
         const double totalS = knots.back().t;
         for (std::size_t sp = 0; sp < spans.size(); ++sp) {
             const SplineSpan& span = spans[sp];
@@ -977,7 +1371,8 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
             // 段起点 + 内部等分点（末点由下一段起点/总末点承担）。
             for (std::size_t j = 0; j < divisions; ++j) {
                 const double tSample = span.t0 + static_cast<double>(j) * step;
-                const TimedSample sample = curve.sampleAt(tSample);
+                const SpanDerivs sample =
+                    evaluateSpanDerivs(span, tSample - span.t0, form);
                 const double sNorm =
                     span.s1 > span.s0
                         ? span.s0
@@ -997,25 +1392,36 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
                         peakASegment[i] = span.segmentIndex;
                         peakAS[i] = sNorm;
                     }
+                    const double j = std::abs(sample.qddd[i]);
+                    if (j > peakJ[i]) {
+                        peakJ[i] = j;
+                        peakJSegment[i] = span.segmentIndex;
+                        peakJS[i] = sNorm;
+                    }
                 }
             }
         }
         // 总末点补采（totalS 处——末结点：速度/加速度按边界条件为 0，
         // 仍采样以保 samples 覆盖 [0, totalS] 的端点封闭性）。
         {
-            const TimedSample sample = curve.sampleAt(totalS);
+            const SpanDerivs sample =
+                evaluateSpanDerivs(spans.back(), totalS - spans.back().t0,
+                                   form);
             for (std::size_t i = 0; i < jointCount; ++i) {
                 peakV[i] = std::max(peakV[i], std::abs(sample.qd[i]));
                 peakA[i] = std::max(peakA[i], std::abs(sample.qdd[i]));
+                peakJ[i] = std::max(peakJ[i], std::abs(sample.qddd[i]));
             }
         }
 
-        // ---- 步骤 6：限值校验（附录 D 第 10 项——逐元素 closeWithin；
-        // 全达标→退出确认环）。
+        // ---- 步骤 7：限值校验（附录 D 第 10 项——逐元素单向判定；
+        // jerk 维 v2 门控〔jerkConsumed——TRJ-08-S1〕；全达标→退出确认环）。
         withinAllLimits = true;
         for (std::size_t i = 0; i < jointCount; ++i) {
             if (!withinLimit(peakV[i], vLimit[i], vAbsTol)
-                || !withinLimit(peakA[i], aLimit[i], aAbsTol)) {
+                || !withinLimit(peakA[i], aLimit[i], aAbsTol)
+                || (jerkConsumed
+                    && !withinLimit(peakJ[i], jLimit[i], jAbsTol))) {
                 withinAllLimits = false;
                 break;
             }
@@ -1029,8 +1435,9 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
             break;
         }
 
-        // ---- 步骤 7：等比放大时间轴（α=max(速度比, √加速度比)——全部
-        // 运动段时长×α、驻留不变；缩放精确性见文件头注登记）。
+        // ---- 步骤 8：等比放大时间轴（α=max(速度比, √加速度比〔, ∛jerk
+        // 比——v2：峰值 jerk ∝ 1/α³，见文件头注缩放收敛性〕)——全部运动
+        // 段时长×α、驻留不变；缩放精确性见文件头注登记）。
         double alpha = 1.0;
         for (std::size_t i = 0; i < jointCount; ++i) {
             if (!withinLimit(peakV[i], vLimit[i], vAbsTol)) {
@@ -1038,6 +1445,11 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
             }
             if (!withinLimit(peakA[i], aLimit[i], aAbsTol)) {
                 alpha = std::max(alpha, std::sqrt(peakA[i] / aLimit[i]));
+            }
+            if (jerkConsumed
+                && !withinLimit(peakJ[i], jLimit[i], jAbsTol)) {
+                // 立方根收敛（峰值 jerk ∝ α⁻³——α ≥ ∛(峰值/限值)）。
+                alpha = std::max(alpha, std::cbrt(peakJ[i] / jLimit[i]));
             }
         }
         for (std::size_t segIdx = 0; segIdx < request.segments.size();
@@ -1066,7 +1478,10 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
         result.failureRecords.push_back(std::move(total));
         // 逐超限量素材：比较型三要素（实际峰值/限值/单位——UX-03）＋
         // 段定位（segmentIndex＋pathParameter＋subject）——构造经统一辅
-        // 助（makeLimitExceededRecord——来源标记/单位口径单点化）。
+        // 助（makeLimitExceededRecord——来源标记/单位口径单点化；jerk 半
+        // 区经 makeJerkLimitExceededRecord——倍数形态单位承载，WP-16-T14
+        // 批登记）。段定位即 TRJ-08-S1 验收"超限段定位诊断"的素材承载
+        // 面（segmentIndex/pathParameter/subject 与 v/a 同构）。
         const core::UnitToken vUnit = velocityUnitToken();
         const core::UnitToken aUnit = accelerationUnitToken();
         for (std::size_t i = 0; i < jointCount; ++i) {
@@ -1084,11 +1499,19 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
                     "加速度", peakA[i], aLimit[i], aUnit,
                     "放宽该关节加速度限值或降低 limitsScaleFactor 后重评"));
             }
+            if (jerkConsumed
+                && !withinLimit(peakJ[i], jLimit[i], jAbsTol)) {
+                result.failureRecords.push_back(makeJerkLimitExceededRecord(
+                    peakJSegment[i], peakJS[i],
+                    request.segments[peakJSegment[i]].sourceTaskPoint, i,
+                    peakJ[i], jLimit[i],
+                    "放宽该关节 jerk 限值或降低 limitsScaleFactor 后重评"));
+            }
         }
         return result;
     }
 
-    // ---- 步骤 8：连续性守卫（§12.5/§9.1——结点两侧速度/加速度全链
+    // ---- 步骤 9：连续性守卫（§12.5/§9.1——结点两侧速度/加速度全链
     // 检查；C² 由构造结构性保证：相邻段共享结点导数〔qd 两侧极限同一
     // m_k〕＋结点二阶导恒 0〔qdd 两侧极限同 0〕），守卫取"两侧极限直
     // 接比较"形态——左段 τ=h 与右段 τ=0 的解析端点值。不取邻域差分：
@@ -1096,8 +1519,10 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
     // 级绝对容差误判（实现陷阱，登记于单元卡 §22）。守卫阈值取 1e-12 相
     // 对＋1e-12 绝对（比限值容差严三个数量级的回归拦截线——qd 两侧经
     // (h_L·m)/h_L 与 (h_R·m)/h_R 两条舍入路径，允许 ulp 级噪声；qdd 两
-    // 侧数学恒 0，同阈值覆盖）。违约＝实现缺陷→LawFailed＋TRJ-CONTINUITY-
-    // BROKEN 比较型素材，不静默放行。
+    // 侧数学恒 0，同阈值覆盖）。v2 运动律追加第三维 jerk 连续守卫（§12.1
+    // "jerk 连续属 R2〔TRJ-08-S1〕"的 C³ 结构承诺回归拦截面——jerk 两侧
+    // 数学恒 0〔结点三阶导 0 纪律〕，同阈值覆盖）。违约＝实现缺陷→
+    // LawFailed＋TRJ-CONTINUITY-BROKEN 比较型素材，不静默放行。
     {
         const core::Tolerance continuityTol{1e-12, 1e-12};
         for (std::size_t sp = 0; sp + 1 < spans.size(); ++sp) {
@@ -1105,8 +1530,9 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
             const SplineSpan& right = spans[sp + 1];
             // 相邻段共享结点（构建保证——本段 knotB 即下一段 knotA）；
             // 左段取末点极限（τ=h）、右段取起点极限（τ=0）。
-            const TimedSample leftEnd = evaluateSpan(left, left.h);
-            const TimedSample rightStart = evaluateSpan(right, 0.0);
+            const SpanDerivs leftEnd = evaluateSpanDerivs(left, left.h, form);
+            const SpanDerivs rightStart =
+                evaluateSpanDerivs(right, 0.0, form);
             for (std::size_t i = 0; i < jointCount; ++i) {
                 if (!core::closeWithin(leftEnd.qd[i], rightStart.qd[i],
                                        continuityTol)) {
@@ -1170,11 +1596,53 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
                     result.failureRecords.push_back(std::move(rec));
                     return result;
                 }
+                // jerk 连续第三维（v2 门控——五次样条 jerk 结点跳变是设
+                // 计内形态〔§12.1"段内三阶导可跳"〕，不守卫；七次样条的
+                // C³ 是结构承诺，违约即实现缺陷）。
+                if (jerkConsumed
+                    && !core::closeWithin(leftEnd.qddd[i],
+                                          rightStart.qddd[i],
+                                          continuityTol)) {
+                    TimeParamResult result;
+                    result.status = TimeParamStatus::LawFailed;
+                    FailedSegmentRecord rec;
+                    rec.segmentIndex = right.segmentIndex;
+                    rec.phaseToken = kPhaseTimeParam;
+                    rec.reasonToken = std::string(kTrjContinuityBroken);
+                    rec.pathParameter = right.s0;
+                    rec.subject =
+                        request.segments[right.segmentIndex].sourceTaskPoint;
+                    rec.cause = "jerk 连续性守卫违约（段边界 t="
+                                + std::to_string(left.t0 + left.h) + " s，关"
+                                  "节 " + std::to_string(i)
+                                + "）——septic 运动律实现缺陷（C³/TRJ-08-S1"
+                                  " 结构承诺）";
+                    rec.recommendedAction = "登记缺陷并回归黄金算例（§12.6）";
+                    core::ComparativeFields cmp;
+                    // 单位承载说明：jerk 差值素材复用加速度族 token
+                    // （"rad/s^2"）不可行——量纲谎报；该素材是两侧极限差
+                    // 的回归拦截线（预期恒 0——正常不可达路径），与超限
+                    // 素材的倍数形态同理取无量纲面（差值量级为守卫阈值
+                    // 级，量纲信息经 cause 文案承载）。WP-16-T14 批登记。
+                    cmp.actual.quantity =
+                        core::SourcedValue<double>::provided(
+                            std::abs(leftEnd.qddd[i] - rightStart.qddd[i]),
+                            derivedProvenance("time-param-continuity"));
+                    cmp.actual.unit = dimensionlessUnitToken();
+                    cmp.expected.quantity =
+                        core::SourcedValue<double>::provided(
+                            1e-12 + 1e-12 * std::abs(rightStart.qddd[i]),
+                            derivedProvenance("time-param-continuity"));
+                    cmp.expected.unit = dimensionlessUnitToken();
+                    rec.comparison = std::move(cmp);
+                    result.failureRecords.push_back(std::move(rec));
+                    return result;
+                }
             }
         }
     }
 
-    // ---- 步骤 9：组装产物（Ok 态——TimeParamResult 状态—字段联动表）。
+    // ---- 步骤 10：组装产物（Ok 态——TimeParamResult 状态—字段联动表）。
     TimeParamResult result;
     result.status = TimeParamStatus::Ok;
     TimeParameterization tp;
@@ -1188,7 +1656,7 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
     // 同源"）：重放采样（峰值环内曲线为局部对象，此处重建一次——确定性
     // 同序采样，结果与检测环位级一致）。
     {
-        QuinticTimeCurve curve(spans);
+        SplineTimeCurve curve(spans, form);
         for (std::size_t sp = 0; sp < spans.size(); ++sp) {
             const SplineSpan& span = spans[sp];
             const std::size_t divisions =
@@ -1207,8 +1675,12 @@ TimeParamResult timeParameterize(const TimeParamRequest& request)
     result.segmentDurationsS = segmentDurations;
     result.peakJointVelocity = peakV;
     result.peakJointAcceleration = peakA;
-    result.timeCurve = std::make_shared<const QuinticTimeCurve>(
-        std::move(spans));
+    // jerk 峰值统计（WP-16-T14 批——TRJ-08-S1"限值满足断言"的观测面；
+    // 两形态统一产出——观察面，校验面 v2 门控；v1 下该统计不参与任何校
+    // 验/缩放判定，T08 行为零变化）。
+    result.peakJointJerk = peakJ;
+    result.timeCurve = std::make_shared<const SplineTimeCurve>(
+        std::move(spans), form);
     return result;
 }
 

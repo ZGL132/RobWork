@@ -472,9 +472,12 @@ TEST(TimeParamLimitTest, ToleranceEdgeRelative1e9)
     // ===== 容差外半区：初值估计局限下的真实加速度超限→缩放处置。
     // 几何 [0,1,1.01]＋interiorS={0.5}：初值时长由速度项主导（1.8889 s
     // ——按全轨迹行程估计）；段内 L1 比例分配使末子区间时长仅 0.0187 s，
-    // 其局部峰值加速度＝(10/√3)·0.01/0.0187²≈165 rad/s²——超出 A=150
-    // 约 10%（初值估计无法预知局部短区间的加速度集中，缩放环兜底——
-    // 恰是 §12.2 步骤 4 的真实触发场景）。A=1e6 不参与（速度远离限值）。
+    // 其局部峰值加速度（中心差分结点导数 m̂0 项主导）≈112 rad/s²——超出
+    // A=100 约 12%（初值估计无法预知局部短区间的加速度集中，缩放环兜底
+    // ——恰是 §12.2 步骤 4 的真实触发场景）。A=1e6 不参与（速度远离限值）。
+    // 注：限值原取 150（WP-16-T14 批调整）——h0000 二阶导系数修正（实现
+    // TU 头注登记）后该几何的真实局部峰值 ≈112，A=150 时不再超限；本用
+    // 例"容差外必处置"语义不变，限值收紧到 100 保持触发场景。
     trj::TimeParamRequest beyond = base;
     beyond.sampleStepS = 0.0005;
     beyond.segments.clear();
@@ -483,20 +486,20 @@ TEST(TimeParamLimitTest, ToleranceEdgeRelative1e9)
     segB.geometry = jointPath({0.0, 1.0, 1.01});
     segB.interiorS = {0.5};  // 折线均匀参数化：s=0.5 恰为中点路点 1.0
     beyond.segments = {segB};
-    beyond.jointLimits = {limits1(1.0, 150.0)};
+    beyond.jointLimits = {limits1(1.0, 100.0)};
     const double initB = initialDuration(1.0, 1.01);
     ASSERT_GT(initB, 1.0) << "初值应由速度项主导（速度项 1.8889 s）";
     const trj::TimeParamResult rBeyond = trj::timeParameterize(beyond);
     ASSERT_EQ(rBeyond.status, trj::TimeParamStatus::Ok);
     ASSERT_TRUE(rBeyond.timeParam.has_value());
-    // 初值即超限（局部加速度≈165＞150，容差外）→缩放必发生（总时长严
+    // 初值即超限（局部加速度≈112＞100，容差外）→缩放必发生（总时长严
     // 格大于初值分配）。
     EXPECT_GT(rBeyond.timeParam->totalDurationS, initB)
-        << "10% 加速度超限（容差外）必须触发缩放处置";
+        << "12% 加速度超限（容差外）必须触发缩放处置";
     // 处置后达标（终态峰值在限值容差带内）。
     EXPECT_LE(rBeyond.peakJointAcceleration[0],
-              150.0 * (1.0 + trj::kTimeParamLimitRelativeTolerance) + 1e-9);
-    EXPECT_GE(rBeyond.peakJointAcceleration[0], 150.0 * (1.0 - 5e-3))
+              100.0 * (1.0 + trj::kTimeParamLimitRelativeTolerance) + 1e-9);
+    EXPECT_GE(rBeyond.peakJointAcceleration[0], 100.0 * (1.0 - 5e-3))
         << "缩放应把峰值带到限值线（采样欠估有界）";
     // 速度峰值同步缩放仍达标。
     EXPECT_LE(rBeyond.peakJointVelocity[0],
@@ -1059,4 +1062,319 @@ TEST(TimeParamScaleFactorTest, HalvedScaleDoublesDuration)
     expectNearRel(rHalf.timeParam->totalDurationS,
                   2.0 * rFull.timeParam->totalDurationS, 1e-9,
                   "scale=0.5 时长应倍增（速度约束主导）");
+}
+
+// =====================================================================
+// WP-16-T14——septic-spline-c3 运动律与 jerk 限值（TRJ-08-S1：时间参数
+// 化纳入关节 jerk 限值；验收＝限值满足断言＋超限/失败段定位诊断）
+// =====================================================================
+
+namespace {
+
+// ---------------------------------------------------------------------
+// 七次剖面独立解析参照（NFR-COR-01——与实现 TU 无共享代码；静止-静止
+// septic 剖面的唯一非平凡基 s2＝35u⁴−84u⁵+70u⁶−20u⁷，结点导数全 0）。
+// ---------------------------------------------------------------------
+
+/// s2 值（位置黄金对照——中点 refS2(0.5)＝0.5）。
+inline double refS2(double u)
+{
+    return 35.0 * u * u * u * u - 84.0 * u * u * u * u * u
+           + 70.0 * u * u * u * u * u * u - 20.0 * u * u * u * u * u * u * u;
+}
+/// s2 一阶导（峰值 @u=0.5 ＝ 35/16＝2.1875）。
+inline double refD1S2(double u)
+{
+    return 140.0 * u * u * u - 420.0 * u * u * u * u
+           + 420.0 * u * u * u * u * u - 140.0 * u * u * u * u * u * u;
+}
+/// s2 二阶导（@u=0.5 ＝ 0——中点加速度过零；峰值 |4.2·√0.6| 于两侧临界点）。
+inline double refD2S2(double u)
+{
+    return 420.0 * u * u - 1680.0 * u * u * u + 2100.0 * u * u * u * u
+           - 840.0 * u * u * u * u * u;
+}
+/// s2 三阶导（jerk 基——峰值 |·| 于 u=0.5 处＝52.5：840·u·(1−6u+10u²−5u³)
+/// 的全局峰值，代数精确 |f(1/2)|＝1/16）。
+inline double refD3S2(double u)
+{
+    return 840.0 * u - 5040.0 * u * u + 8400.0 * u * u * u
+           - 4200.0 * u * u * u * u;
+}
+
+/// 带 jerk 限值的单关节限值视图（v2 用——rad/s、rad/s²、rad/s³）。
+trj::JointDynamicLimits limitsJ1(double velocity, double acceleration,
+                                 double jerk)
+{
+    trj::JointDynamicLimits lim = limits1(velocity, acceleration);
+    lim.jerkLimit = jerk;
+    return lim;
+}
+
+/// v2 请求骨架（baseRequest 换 septic token——其余合法域默认同源）。
+trj::TimeParamRequest septicRequest()
+{
+    trj::TimeParamRequest request = baseRequest();
+    request.motionLawToken = trj::kTimeParamMethodSepticSplineC3;
+    return request;
+}
+
+}  // namespace
+
+/**
+ * 用例（TRJ-08-S1/NFR-COR-01——septic 黄金算例＋jerk 限值满足断言）：
+ * 单关节两点路径（0→0.1 rad）、V=10、A=1000、J=1000。初值时长取三闭式
+ * 估计的最大者：速度项 1.875·0.1/10＝0.01875、加速度项 sqrt((10/√3)·
+ * 0.1/1000)＝0.02403、jerk 项 (52.5·0.1/1000)^(1/3)＝0.08067——jerk 主
+ * 导（TRJ-08-S1 限值面的直接观测窗口）。断言：Ok；总时长＝jerk 项闭式
+ * （初值恰线零缩放）；解析黄金对照（中点位置/速度/加速度三阶独立书写）；
+ * **jerk 限值满足断言**（TRJ-08-S1 验收前半）：peakJointJerk ≤
+ * J·(1+1e-9)（附录 D 第 10 项相对容差；jerk ε_abs 纯相对——实现 TU 头
+ * 注登记）且贴近限值线（≥ J·(1−5e-3)——采样欠估界）；峰值 jerk 与闭式
+ * 52.5·Δq/h³ 对照；速度/加速度限值同步达标（三维校验另两维）。
+ */
+TEST(TimeParamSepticTest, RestToRestGoldenProfileJerkLimited)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "TRJ-05",
+                                           "NFR-COR-01"},
+                  std::vector<std::string>{});
+
+    constexpr double kDelta = 0.1;  // 行程（rad）
+    trj::TimeParamRequest request = septicRequest();
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, kDelta});
+    request.segments = {seg};
+    request.jointLimits = {limitsJ1(10.0, 1000.0, 1000.0)};
+
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+
+    // 初值时长＝jerk 项闭式（三闭式最大者；测试侧独立书写——52.5·D/J
+    // 的立方根）。初值恰使峰值 jerk 在限值线上，不触发缩放。
+    const double expectedH = std::cbrt(52.5 * kDelta / 1000.0);
+    EXPECT_NEAR(result.timeParam->totalDurationS, expectedH, 1e-12);
+
+    // 解析黄金对照（中点采样——采样计划含全部结点与均匀填充，中点必含）。
+    const double mid = expectedH / 2.0;
+    bool sawMidSample = false;
+    for (const trj::TimedSample& s : result.timeParam->samples) {
+        if (std::abs(s.t - mid) < 1e-15) {
+            sawMidSample = true;
+            expectNearRel(s.q[0], refS2(0.5) * kDelta, 1e-12,
+                          "septic 中点位置黄金值");
+            expectNearRel(s.qd[0], refD1S2(0.5) * kDelta / expectedH, 1e-12,
+                          "septic 中点速度黄金值（35/16·Δq/h）");
+            expectNearRel(s.qdd[0],
+                          refD2S2(0.5) * kDelta / (expectedH * expectedH),
+                          1e-9, "septic 中点加速度黄金值（s2''(0.5)=0）");
+            break;
+        }
+    }
+    ASSERT_TRUE(sawMidSample) << "采样计划未覆盖中点时刻";
+
+    // TRJ-08-S1 验收前半——jerk 限值满足断言（附录 D 第 10 项单向判定
+    // 语义：peak ≤ limit·(1+1e-9)+ε_abs，jerk ε_abs=0 纯相对）。
+    EXPECT_LE(result.peakJointJerk[0],
+              1000.0 * (1.0 + trj::kTimeParamLimitRelativeTolerance));
+    // 峰值贴近限值线（初值闭式精确——采样欠估有界，放宽到千分之五）。
+    EXPECT_GE(result.peakJointJerk[0], 1000.0 * (1.0 - 5e-3));
+    // 峰值 jerk 与独立闭式对照（52.5·Δq/h³——refD3S2(0.5)=±52.5）。
+    expectNearRel(result.peakJointJerk[0],
+                  std::abs(refD3S2(0.5)) * kDelta
+                      / (expectedH * expectedH * expectedH),
+                  5e-3, "septic 峰值 jerk 闭式对照（52.5·Δq/h³）");
+    // 速度/加速度限值同步达标（三维校验的另两维）。
+    EXPECT_LE(result.peakJointVelocity[0],
+              10.0 * (1.0 + trj::kTimeParamLimitRelativeTolerance) + 1e-9);
+    EXPECT_LE(result.peakJointAcceleration[0],
+              1000.0 * (1.0 + trj::kTimeParamLimitRelativeTolerance) + 1e-9);
+}
+
+/**
+ * 用例（TRJ-08-S1——septic 缩放确认环含 jerk 维）：interior 结点耦合场
+ * 景（几何 [0,1,1.01]、interiorS={0.5}——T08 容差边缘用例同款几何）。
+ * 结点中心差分导数非零，子区间局部峰值脱离静止-静止闭式形态——缩放环
+ * 等比放大（峰值 jerk ∝ α⁻³，α≥∛比）收敛。断言：Ok（守卫 C³ 通过——
+ * jerk 连续违约会 LawFailed）；**限值满足断言**：三维峰值全部在限值线
+ * 内（TRJ-08-S1 验收语义）；总时长不小于 jerk 项闭式初值（α≥1 只增不减）。
+ */
+TEST(TimeParamSepticTest, JerkScalingConvergesWithInteriorKnots)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "TRJ-06"},
+                  std::vector<std::string>{});
+
+    trj::TimeParamRequest request = septicRequest();
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, 1.0, 1.01});
+    seg.interiorS = {0.5};
+    request.segments = {seg};
+    request.jointLimits = {limitsJ1(100.0, 1e6, 500.0)};
+
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+    // TRJ-08-S1 限值满足断言（三维——jerk 维为 S1 新增观测面）。
+    EXPECT_LE(result.peakJointVelocity[0],
+              100.0 * (1.0 + trj::kTimeParamLimitRelativeTolerance) + 1e-9);
+    EXPECT_LE(result.peakJointAcceleration[0],
+              1e6 * (1.0 + trj::kTimeParamLimitRelativeTolerance) + 1e-9);
+    EXPECT_LE(result.peakJointJerk[0],
+              500.0 * (1.0 + trj::kTimeParamLimitRelativeTolerance));
+    // 时长下界＝jerk 项闭式初值（52.5·D/J 立方根；缩放 α≥1 只增不减）。
+    const double initialJerkBound = std::cbrt(52.5 * 1.01 / 500.0);
+    EXPECT_GE(result.timeParam->totalDurationS,
+              initialJerkBound * (1.0 - 1e-12));
+}
+
+/**
+ * 用例（TRJ-08-S1——C³ 结点匹配：jerk 连续的结构承诺）：三段轨迹（运动
+ * ＋驻留＋运动）下 septic 样条的结点两侧导数连续性。守卫（实现内步骤 9）
+ * 对 jerk 维做两侧极限直接比较（结点三阶导恒 0 纪律——C³）——守卫违约
+ * 即 LawFailed＋TRJ-CONTINUITY-BROKEN 素材。断言：Ok（守卫全链通过即是
+ * C³ 的机器断言——与 C² 用例同款承载形态）；驻留区间三零采样（§9.1——
+ * 七次形态不破坏驻留语义）；段边界邻域的速度/加速度差有界（曲线求值面
+ * 的可观察连续面）。
+ */
+TEST(TimeParamSepticTest, C3KnotContinuityWithDwell)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "TRJ-05"},
+                  std::vector<std::string>{});
+
+    trj::TimeParamRequest request = septicRequest();
+    trj::TimeParamSegment move1;
+    move1.segmentIndex = 0;
+    move1.geometry = jointPath({0.0, 0.2});
+    trj::TimeParamSegment dwell;
+    dwell.segmentIndex = 1;
+    dwell.dwellDurationS = 0.05;  // s——驻留时长
+    trj::TimeParamSegment move2;
+    move2.segmentIndex = 2;
+    move2.geometry = jointPath({0.2, 0.05});
+    request.segments = {move1, dwell, move2};
+    request.jointLimits = {limitsJ1(1.0, 100.0, 1000.0)};
+
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+    // 驻留区间三零采样（§9.1——常值段语义在七次形态下同样成立）。
+    const double t1 = result.segmentDurationsS.at(0);
+    for (const trj::TimedSample& s : result.timeParam->samples) {
+        if (s.t > t1 + 1e-9 && s.t < t1 + 0.05 - 1e-9) {
+            EXPECT_EQ(s.qd[0], 0.0) << "驻留区间速度非零（t=" << s.t << "）";
+            EXPECT_EQ(s.qdd[0], 0.0) << "驻留区间加速度非零";
+        }
+    }
+    // 结点邻域的导数连续（曲线求值面——ε=1e-7 s 邻域差有界：C³ 保证
+    // jerk 有界且连续，速度/加速度邻域差 →0）。
+    const double knotT = t1;  // 第一段末结点（运动→驻留边界）
+    const trj::TimedSample before = result.timeCurve->sampleAt(knotT - 1e-7);
+    const trj::TimedSample after = result.timeCurve->sampleAt(knotT + 1e-7);
+    EXPECT_LT(std::abs(before.qd[0] - after.qd[0]), 1e-6);
+    EXPECT_LT(std::abs(before.qdd[0] - after.qdd[0]), 1e-4);
+}
+
+/**
+ * 用例（TRJ-08-S1/§12.6 行 3 jerk 半区——jerk 限值未设→失败素材轨，不
+ * 伪造节拍）：v2 请求携带 jerkLimit=+inf（模型未设值语义）。断言：
+ * LimitUnreachable；failureRecords 恰 1 条全轨迹级素材（segmentIndex=
+ * 0xFFFFFFFF）；reasonToken＝TRJ-TIME-PARAM-FAILED；cause 中文含 "jerk"
+ * 定位（缺失量区分——WP-16-T14 批素材文案面）；建议动作指向补设 jerk
+ * 限值；timeParam 空、segmentDurationsS 空（NFR-COR-03 不伪造节拍）；
+ * 素材可经 FailureLocate 组装为诊断条目（超限/失败定位诊断的真实链，
+ * 组装面用例见 FailureLocateTest 的 jerk 形态条目用例）。
+ */
+TEST(TimeParamSepticTest, UndefinedJerkLimitMaterial)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "TRJ-06"},
+                  std::vector<std::string>{});
+
+    trj::TimeParamRequest request = septicRequest();
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, 0.1});
+    request.segments = {seg};
+    request.jointLimits = {limitsJ1(1.0, 10.0,
+                                    std::numeric_limits<double>::infinity())};
+
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::LimitUnreachable);
+    // 不伪造节拍（§12.4/NFR-COR-03）。
+    EXPECT_FALSE(result.timeParam.has_value());
+    EXPECT_TRUE(result.segmentDurationsS.empty());
+    // 素材轨：恰 1 条全轨迹级 TRJ-TIME-PARAM-FAILED，cause 定位 jerk。
+    ASSERT_EQ(result.failureRecords.size(), 1U);
+    const trj::FailedSegmentRecord& rec = result.failureRecords.front();
+    EXPECT_EQ(rec.segmentIndex, 0xFFFFFFFFU);
+    EXPECT_EQ(rec.reasonToken, std::string(trj::kTrjTimeParamFailed));
+    EXPECT_NE(rec.cause.find("jerk"), std::string::npos)
+        << "jerk 缺失素材文案未定位缺失量: " << rec.cause;
+    EXPECT_NE(rec.recommendedAction.find("jerk"), std::string::npos)
+        << "建议动作未指向补设 jerk 限值: " << rec.recommendedAction;
+}
+
+/**
+ * 用例（WP-16-T14 批登记——v1 运动律拒绝有限 jerkLimit）：quintic 是
+ * TRJ-05"按关节速度、加速度限制"的运动律，jerk 限值不消费——携带有限
+ * 值＝调用方契约违约 fail-fast（拒绝优于静默忽略，NFR-COR-03）。断言：
+ * TrajectoryError 抛出；文案含 v2 运动律指引（septic-spline-c3）。
+ */
+TEST(TimeParamSepticTest, QuinticRejectsFiniteJerkLimit)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "NFR-COR-03"},
+                  std::vector<std::string>{});
+
+    trj::TimeParamRequest request = baseRequest();  // quintic 默认 token
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, 0.1});
+    request.segments = {seg};
+    request.jointLimits = {limitsJ1(1.0, 10.0, 100.0)};  // 有限 jerk 限值
+
+    bool threw = false;
+    try {
+        (void)trj::timeParameterize(request);
+    } catch (const trj::TrajectoryError& e) {
+        threw = true;
+        EXPECT_NE(std::string(e.what()).find("septic-spline-c3"),
+                  std::string::npos)
+            << "错误文案未指引 v2 运动律: " << e.what();
+    }
+    EXPECT_TRUE(threw) << "v1 携带有限 jerkLimit 应 fail-fast";
+}
+
+/**
+ * 用例（WP-16-T14 批——v1 行为零变化＋jerk 统计观察面）：quintic 默认
+ * 调用（jerkLimit=+inf 未设）行为与 T08 基线一致（Ok、总时长＝五次剖面
+ * 初值闭式——零 jerk 语义介入），同时 peakJointJerk 统计观察面有效且与
+ * 五次剖面 jerk 闭式对照（h0001''' 端点值 60——峰值 jerk＝60·Δq/h³，
+ * 端点 t=0 处解析精确）。统计是观察、校验是约束：v1 的 jerk 统计不参与
+ * 任何校验/缩放判定。
+ */
+TEST(TimeParamSepticTest, QuinticJerkStatisticsObservationOnly)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "TRJ-05"},
+                  std::vector<std::string>{});
+
+    trj::TimeParamRequest request = baseRequest();  // quintic＋默认 jerk=+inf
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, 0.1});
+    request.segments = {seg};
+    request.jointLimits = {limits1(1.0, 10.0)};
+
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+    // T08 基线：初值闭式（1.875·D/V＝0.1875 vs sqrt((10/√3)·D/A)＝
+    // 0.24028——加速度主导）零缩放。
+    EXPECT_NEAR(result.timeParam->totalDurationS,
+                std::sqrt((10.0 / std::sqrt(3.0)) * 0.1 / 10.0), 1e-12);
+    // jerk 统计观察面：峰值在端点 t=0（h0001'''(0)=60，解析精确——采样
+    // 含端点，位级一致；放宽相对 1e-9 吸收除法舍入）。
+    const double h = result.timeParam->totalDurationS;
+    expectNearRel(result.peakJointJerk[0], 60.0 * 0.1 / (h * h * h), 1e-9,
+                  "五次剖面峰值 jerk 闭式对照（60·Δq/h³）");
 }

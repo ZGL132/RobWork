@@ -83,10 +83,29 @@ inline constexpr std::size_t kTrajectoryPlanConfigMagicSize = 9U;
 /// token 归 evidence 依赖键词表域，非评估键）。
 inline constexpr char kConfigTrjKindToken[] = "config.trj";
 
-/// 运动律词表（§5.5 timeParamMethod"封闭词表，当前唯一值＝唯一实现"——
-/// quintic-spline-c2；§12 运动律选择。新增值＝本卡增量修订＋实现＋黄金
-/// 算例四者同批落地，§6.6 词表纪律）。
+/// 运动律词表（§5.5 timeParamMethod"封闭词表"；§12 运动律选择。新增值＝
+/// 本卡增量修订＋实现＋黄金算例四者同批落地，§6.6 词表纪律）。
+///
+/// 词表演进登记（WP-16-T14 批，TRJ-08-S1 启用——§6.6.3"新增值＝本卡增量
+/// 修订＋实现＋黄金算例，四者同批"的执行）：原唯一值 quintic-spline-c2
+/// （TRJ-05 的"至少加速度连续"运动律，R1 语义零变化）之外表尾新增
+/// septic-spline-c3——七次样条 C³（结点三阶导恒 0 的构造纪律使 jerk 在
+/// 结点两侧同值 0→整体 C³，jerk 连续），TRJ-08-S1"时间参数化纳入关节
+/// jerk 限值"的运动律承载（限值消费扩展归 TimeParam 域——请求面
+/// JointDynamicLimits.jerkLimit）。两值都是已实现的封闭词表值，词表外
+/// token 一律拒绝（validateTrajectoryPlanConfiguration 校验序第 10 项）。
+/// 配置默认值保持 quintic-spline-c2 不变——既有配置/缓存身份零漂移
+/// （v2 是显式选择项而非静默替换，NFR-COR-03 不静默）。
+/// quintic-spline-c2 的词形语义（TRJ-05 五次样条 C²）见 §12.1。
 inline constexpr char kTimeParamMethodQuinticSplineC2[] = "quintic-spline-c2";
+
+/// 运动律词表第二值（WP-16-T14 批新增——TRJ-08-S1 jerk 限值约束的运动
+/// 律：七次样条 C³，分段七次多项式、结点位置/一阶/二阶/三阶导匹配——
+/// 高阶导取 0 的构造纪律与 quintic 的"结点二阶导恒 0"同源（Smooth.cpp
+/// §11.4 数学纪律的七次推广），jerk 连续结构性成立。限值校验三维：速度/
+/// 加速度/jerk（附录 D 第 10 项相对 1×10⁻⁹ 同容差语义；jerk 的 ε_abs
+/// 纯相对——C7 量纲默认表无 jerk 条目，见 TimeParam.cpp 头注登记）。
+inline constexpr char kTimeParamMethodSepticSplineC3[] = "septic-spline-c3";
 
 // =====================================================================
 // 枚举词表（§5.5 三处 enum 字段的域内封闭词表）
@@ -181,9 +200,10 @@ struct TrajectoryPlanConfiguration {
     double smoothToleranceJoint = 1e-3;
     /// 简化/平滑几何保持容差——TCP 域（m；>0 有限——同上）。
     double smoothToleranceTcp = 1e-3;
-    /// 运动律 token（§5.5 封闭词表——当前唯一合法值
-    /// kTimeParamMethodQuinticSplineC2；TRJ-08 扩展点经新 token＋新实现
-    /// 承载，本结构不预留空槽）。
+    /// 运动律 token（§5.5 封闭词表——合法值 {kTimeParamMethodQuinticSplineC2,
+    /// kTimeParamMethodSepticSplineC3}；TRJ-08 扩展点经词表递进承载——
+    /// WP-16-T14 批新增 septic-spline-c3（TRJ-08-S1 jerk 限值运动律），
+    /// 本结构不预留空槽）。默认值保持 quintic（既有配置身份零漂移）。
     std::string timeParamMethod{kTimeParamMethodQuinticSplineC2};
     /// 关节速度/加速度限值使用比例（无量纲，(0,1]；保守缩放，1.0＝全
     /// 限值——§5.5；真值来源＝CanonicalJoint，本配置只存比例不存限值，
@@ -232,7 +252,8 @@ struct TrajectoryPlanConfiguration {
  *   7. ikContinuityThreshold 有限且 >0（rad|m 逐轴）；
  *   8. smoothToleranceJoint 有限且 >0（rad）；
  *   9. smoothToleranceTcp 有限且 >0（m）；
- *  10. timeParamMethod ∈ {quintic-spline-c2}（封闭词表 v1）；
+ *  10. timeParamMethod ∈ {quintic-spline-c2, septic-spline-c3}（封闭词表
+ *      两值——WP-16-T14 批词表递进，TRJ-08-S1 运动律）；
  *  11. limitsScaleFactor 有限且 ∈ (0,1]；
  *  12. dwellPolicy 枚举值域。
  *
