@@ -1,38 +1,41 @@
 /**
  * @file   EvaluationDimsContractTest.cpp
- * @brief  评估维度扩展点的契约测试（WP-16-T11 铺设＋WP-16-T14 递进）——
- *         TRJ-08 接口约束的交付面契约：①载荷 kindToken 与 trj Profile
- *         证据项 ID 的**唯一书写点**（产品面源码扫描——词表值字面量在代
- *         码中各恰一次且均在 EvaluationDims.hpp，禁第二处字面量漂移）；
- *         ②接口交付面词形契约（点分小写 kebab／版本后缀——经接口消费
- *         逐项钉扎）。
+ * @brief  评估维度扩展点的契约测试（WP-16-T11 铺设＋WP-16-T14 递进＋
+ *         WP-16-T15 递进）——TRJ-08 接口约束的交付面契约：①载荷
+ *         kindToken 与 trj Profile 证据项 ID 的**唯一书写点**（产品面源
+ *         码扫描——词表值字面量在代码中各恰一次且均在 EvaluationDims.
+ *         hpp，禁第二处字面量漂移）；②接口交付面词形契约（点分小写
+ *         kebab／版本后缀——经接口消费逐项钉扎）。
  *
  * 设计依据：
  *   - units/trajectory.md §6.6（扩展机制——载荷版本化/Profile 版本化的
  *     版本锚必须单一，"静默维度"禁止）、§12.7（可扩展维度接口——S1 启
- *     用：payload v2＋trj.jerk-limit-record）、§13.3（trj Profile 行
- *     "实现落位冻结"）、§13.4（payload kindToken 基线）、§20 追踪矩阵
- *     TRJ-08 行（评审项＋零占位断言）
+ *     用：payload v2＋trj.jerk-limit-record；S2 启用：段约束扩展版本＋
+ *     trj.process-speed-record）、§13.3（trj Profile 行"实现落位冻结"）、
+ *     §13.4（payload kindToken 基线）、§20 追踪矩阵 TRJ-08 行（评审项＋
+ *     零占位断言）
  *   - 需求 TRJ-08（接口保持可扩展，不创建空字段、空页面或占位模块）、
- *     TRJ-08-S1（P1/R2——jerk 上限约束）
+ *     TRJ-08-S1（P1/R2——jerk 上限约束）、TRJ-08-S2（P1/R2——工艺速
+ *     度约束：指定段 TCP 速度受限或恒定）
  *   - AGENTS §2.5/仓库域常量纪律（词表值唯一书写点——"禁字符串拼码/
  *     第二处字面量"，DiagCodes.hpp 码值纪律同源）
  *   - 任务契约 tasks/foundation/WP-16-T11.json（acceptance 1/2——铺设
- *     已验收）、tasks/foundation/WP-16-T14.json（acceptance 2）
+ *     已验收）、tasks/foundation/WP-16-T14.json（acceptance 2——已验
+ *     收）、tasks/foundation/WP-16-T15.json（acceptance 2）
  *
  * 本套件为**两模式皆跑**（非条件源）：被测面 EvaluationDims.hpp 纯值面
  * （零 rw 符号零上游依赖——P-TRJ-11 暴露面为零）；源码扫描用例与
  * BuildGraphContractTest 同款基础设施（IRD_TRAJECTORY_UNIT_ROOT 注入源
  * 码树根，两模式皆可定位源码树）。
  *
- * 扫描口径说明（为什么不锁运动律 token 词形）：本头八词表值（payload
- * kindToken v2/v1＋六 itemId——v2 递进批新增 v2 token 与 jerk 项）的
- * **判定/注册语义**落在本头单点，字面量在产品面代码中出现第二次即第二
- * 判定面（漂移通道）。运动律 token 的词表定义单点在 PlanConfig.hpp（既
- * 有 T03/T08/T14 验收面），src/Playback.cpp 与 TimeParam.cpp 错误文案中
- * 的词形引用是文案呈现而非判定逻辑（不构成第二词表副本），故不作字面量
- * 计数对象——运动律词表纪律由 test/EvaluationDimsTest.cpp 的词表值断言
- * 与 TimeParamTest 的分派拒绝族承载。
+ * 扫描口径说明（为什么不锁运动律 token 词形）：本头十词表值（payload
+ * kindToken v3/v2/v1＋七 itemId——v3 递进批新增 v3 token 与工艺速度
+ * 项）的**判定/注册语义**落在本头单点，字面量在产品面代码中出现第二次
+ * 即第二判定面（漂移通道）。运动律 token 的词表定义单点在 PlanConfig.
+ * hpp（既有 T03/T08/T14 验收面），src/Playback.cpp 与 TimeParam.cpp 错
+ * 误文案中的词形引用是文案呈现而非判定逻辑（不构成第二词表副本），故
+ * 不作字面量计数对象——运动律词表纪律由 test/EvaluationDimsTest.cpp 的
+ * 词表值断言与 TimeParamTest 的分派拒绝族承载。
  */
 
 #include <sdurws/ird/trajectory/EvaluationDims.hpp>
@@ -174,11 +177,12 @@ std::string stripComments(const std::string& src)
 }
 
 /// 唯一书写点扫描的对象集（词表值字面量——各应在产品面代码中恰出现 1
-/// 次，且所在文件均为 EvaluationDims.hpp；行序无语义，仅清单。WP-16-T14
-/// 批递进：v2 token 为当前产出值、v1 为历史已知值常量——两词形各恰一
-/// 处；jerk 项为 v2 Profile 新增行）。
+/// 次，且所在文件均为 EvaluationDims.hpp；行序无语义，仅清单。WP-16-T15
+/// 批递进：v3 token 为当前产出值、v2/v1 为历史已知值常量——三词形各恰
+/// 一处；工艺速度项为 v3 Profile 新增行）。
 constexpr const char* kSingleWriteSiteLiterals[] = {
-    "trj.sequence-plan.v2",           // 载荷 kindToken 当前产出（§6.6.1 递进）
+    "trj.sequence-plan.v3",           // 载荷 kindToken 当前产出（§6.6.1 二次递进）
+    "trj.sequence-plan.v2",           // 载荷 kindToken 历史已知值（WP-16-T15 批表尾追加）
     "trj.sequence-plan.v1",           // 载荷 kindToken 历史已知值（PA-2）
     "trj.path-and-time-record",       // Profile v1 行 1（§13.3）
     "trj.smooth-recheck-evidence",    // Profile v1 行 2
@@ -186,6 +190,7 @@ constexpr const char* kSingleWriteSiteLiterals[] = {
     "trj.cycle-phase-breakdown",      // Profile v1 行 4
     "trj.animation-data",             // Profile v1 行 5
     "trj.jerk-limit-record",          // Profile v2 行 6（§12.7——TRJ-08-S1）
+    "trj.process-speed-record",       // Profile v3 行 7（§12.7 点名词形族——TRJ-08-S2）
 };
 
 /// 唯一书写点常量所在的头文件名（出现处断言的目标文件——文件名级断言
@@ -233,15 +238,15 @@ TEST(TrjEvaluationDimsContract, KindTokenAndItemIdsSingleWriteSite_WP16T11_ACC2)
 
 /**
  * 接口交付面词形契约（acceptance 1——经接口消费的交付面钉扎）：Profile
- * v1/v2 清单经 trjProfileV1Items()/trjProfileV2Items() 遍历消费，逐项
- * 校验词形与注册资格——
+ * v1/v2/v3 清单经 trjProfileV1Items()/trjProfileV2Items()/trjProfileV3-
+ * Items() 遍历消费，逐项校验词形与注册资格——
  *   - itemId 词形＝"trj." 前缀＋点分小写 kebab（全小写字母/数字/连字
  *     符/点，无空白无下划线——证据项 ID 是身份面词形，跨域引用与黄金
  *     数据集按词形精确匹配）；
- *   - 每项过对应版本 isTrjProfileV{1,2}ItemId（判定面与清单单一数据源
- *     的一致性——在真实消费序上验证，非仅常量值对照）；
+ *   - 每项过对应版本 isTrjProfileV{1,2,3}ItemId（判定面与清单单一数据
+ *     源的一致性——在真实消费序上验证，非仅常量值对照）；
  *   - payload kindToken 词形＝itemId 词形＋".v<数字>"版本后缀（§13.4
- *     形态；词表锚 v2——WP-16-T14 批递进）。
+ *     形态；词表锚 v3——WP-16-T15 批递进，v2/v1 为历史锚）。
  * 词形漂移（大写/下划线/空格）即破坏跨域消费契约——优化域 ③端口组合
  * （§19.2"评估键/Profile/payload 契约稳定"）与黄金数据集均按词形引用。
  */
@@ -279,28 +284,46 @@ TEST(TrjEvaluationDimsContract, InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC
             << "v2 清单内项未过注册判定: " << item.itemId;
     }
 
-    // payload kindToken 词形与词表锚（当前产出值 v2——历史 v1 词形经
-    // kTrjPayloadKindTokenV1 常量同面可读）。
+    // v3 递进集合同面钉扎（WP-16-T15 批——TRJ-08-S2 启用的词形/判定面/
+    // 集合封闭性；工艺速度项词形消费是本批 acceptance 2 的交付面）。
+    const std::array<trj::TrjEvidenceItemSpec, 7> itemsV3 =
+        trj::trjProfileV3Items();
+    ASSERT_EQ(itemsV3.size(), 7U);
+    for (const trj::TrjEvidenceItemSpec& item : itemsV3) {
+        EXPECT_TRUE(std::regex_match(std::string(item.itemId), itemIdShape))
+            << "v3 itemId 词形违约: " << item.itemId;
+        EXPECT_TRUE(trj::isTrjProfileV3ItemId(item.itemId))
+            << "v3 清单内项未过注册判定: " << item.itemId;
+    }
+
+    // payload kindToken 词形与词表锚（当前产出值 v3——历史 v2/v1 词形经
+    // kTrjPayloadKindTokenV2/V1 常量同面可读；词表只增不删）。
     EXPECT_TRUE(std::regex_match(std::string(trj::kTrjPayloadKindToken),
                                  kindTokenShape))
         << "payload kindToken 词形违约: " << trj::kTrjPayloadKindToken;
     EXPECT_TRUE(std::regex_match(std::string(trj::kTrjPayloadKindTokenV1),
                                  kindTokenShape))
         << "历史 kindToken 词形违约: " << trj::kTrjPayloadKindTokenV1;
-    EXPECT_EQ(trj::kTrjPayloadKindToken, "trj.sequence-plan.v2");
+    EXPECT_TRUE(std::regex_match(std::string(trj::kTrjPayloadKindTokenV2),
+                                 kindTokenShape))
+        << "历史 kindToken 词形违约: " << trj::kTrjPayloadKindTokenV2;
+    EXPECT_EQ(trj::kTrjPayloadKindToken, "trj.sequence-plan.v3");
     EXPECT_EQ(trj::kTrjPayloadKindTokenV1, "trj.sequence-plan.v1");
+    EXPECT_EQ(trj::kTrjPayloadKindTokenV2, "trj.sequence-plan.v2");
     EXPECT_TRUE(trj::isKnownTrjPayloadKindToken(trj::kTrjPayloadKindToken));
     EXPECT_TRUE(trj::isKnownTrjPayloadKindToken(trj::kTrjPayloadKindTokenV1));
+    EXPECT_TRUE(trj::isKnownTrjPayloadKindToken(trj::kTrjPayloadKindTokenV2));
 
     // Profile 标识词形（§13.3 profileId="trj"——单段小写）。
     EXPECT_EQ(trj::kTrjProfileId, "trj");
 
     // 词表枚举封闭性（运行期"全值出现"断言——§13.3 表逐行对应：类别
-    // 两值在 v1 清单、适用条件四值在 v1 清单各至少出现一次；WP-16-T14
-    // 批新增的 JerkLimitedMotionLaw 由 v2 递进行承载（下方 v2 遍历覆
-    // 盖）。新增枚举值时本断言不变仍绿（新值可不在既有清单中），但下方
-    // switch 的全值覆盖意图显性化——消费面处理新值的义务由评估器批按
-    // Profile 版本递进承载，本头词表扩值＝本卡增量修订纪律，见
+    // 两值在 v1 清单、前四个适用条件值在 v1 清单各至少出现一次；WP-16-
+    // T14 批新增的 JerkLimitedMotionLaw 由 v2 递进行承载、WP-16-T15 批
+    // 新增的 ProcessSpeedConstrainedSegment 由 v3 递进行承载（下方 v2/v3
+    // 遍历覆盖）。新增枚举值时本断言不变仍绿（新值可不在既有清单中），
+    // 但下方 switch 的全值覆盖意图显性化——消费面处理新值的义务由评估
+    // 器批按 Profile 版本递进承载，本头词表扩值＝本卡增量修订纪律，见
     // EvaluationDims.hpp 词表注释）。
     bool sawRequired = false;
     bool sawSuggested = false;
@@ -336,6 +359,10 @@ TEST(TrjEvaluationDimsContract, InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC
             // v1 清单不含该值（WP-16-T14 批表尾追加，v2 递进行承载）——
             // 此分支仅为全值覆盖完备性（无 default 的编译期提醒）。
             break;
+        case trj::TrjEvidenceItemApplicability::ProcessSpeedConstrainedSegment:
+            // v1 清单不含该值（WP-16-T15 批表尾追加，v3 递进行承载）——
+            // 同上全值覆盖完备性。
+            break;
         }
     }
     EXPECT_TRUE(sawRequired);
@@ -344,8 +371,8 @@ TEST(TrjEvaluationDimsContract, InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC
     EXPECT_TRUE(sawHasCartesianSegment);
     EXPECT_TRUE(sawTimeParamSucceeded);
     EXPECT_TRUE(sawSuccessfulTrajectory);
-    // 新增条件值经 v2 清单真实承载（递进同批的机器断言——不只是枚举值
-    // 存在，而是有清单行消费它）。
+    // 新增条件值经 v2/v3 清单真实承载（递进同批的机器断言——不只是枚举
+    // 值存在，而是有清单行消费它）。
     bool sawJerkLimitedMotionLaw = false;
     for (const trj::TrjEvidenceItemSpec& item : itemsV2) {
         if (item.applicability
@@ -355,4 +382,13 @@ TEST(TrjEvaluationDimsContract, InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC
         }
     }
     EXPECT_TRUE(sawJerkLimitedMotionLaw);
+    bool sawProcessSpeedConstrainedSegment = false;
+    for (const trj::TrjEvidenceItemSpec& item : itemsV3) {
+        if (item.applicability
+            == trj::TrjEvidenceItemApplicability::ProcessSpeedConstrainedSegment) {
+            EXPECT_EQ(item.itemId, trj::kTrjItemIdProcessSpeedRecord);
+            sawProcessSpeedConstrainedSegment = true;
+        }
+    }
+    EXPECT_TRUE(sawProcessSpeedConstrainedSegment);
 }
