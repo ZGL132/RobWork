@@ -1,0 +1,57 @@
+=== WP-16-T08 集成模式构建与测试留痕（2026-10-11，返工轮全量重跑）===
+
+背景：首跑提交 7f34e91b 的"集成"名 gtest XML 为冒烟运行副本（acc/wp-16-t08/1 阻断 B-1）。
+本日志为返工轮在集成模式（build/ 树，RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 缓存确认）的真实执行记录：
+实现与测试代码零改动，仅重建＋重跑＋落位原始产物。
+
+工作树：pipeline-wt（分支 wp16-t08 @ 7f34e91b 起步）；构建树：build/（VS2022 x64，Release）。
+
+[命令 1] cmake --build <WT>/build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test sdurws_ird_trajectory_plugin
+[结论] 三目标零 error 零 warning（增量构建——trajectory 库、两测试 exe 与插件全部为当前源码最新编译产物；本轮无任何 warning 行，含框架库）
+
+[命令 1 输出筛误（grep -icE 'error'）] 0
+---（上行数字＝error 计数，0＝零错误）---
+
+[命令 2] cmake --build <WT>/build --config Release --target sdurws_ird_trajectory_test_report
+[结论] 111 tests from 19 test suites ran. [ PASSED ] 111 tests.（gtest XML 直写构建树
+  build/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/gtest_reports/sdurws_ird_trajectory_test.xml，
+  tests="111" failures="0"，timestamp=2026-10-11T07:31:15——本目录 sdurws_ird_trajectory_test.xml 与
+  ../gtest-reports/wp-16-t08/sdurws_ird_trajectory_test.xml 均为该原始文件复制）
+
+[命令 2 输出尾部]
+  [==========] 111 tests from 19 test suites ran. (653 ms total)
+  [  PASSED  ] 111 tests.
+
+[命令 3] cmake --build <WT>/build --config Release --target sdurws_ird_trajectory_contract_test_report
+[结论] 26 tests from 6 test suites ran. [ PASSED ] 26 tests.（gtest XML 直写同目录
+  sdurws_ird_trajectory_contract_test.xml，tests="26" failures="0"，timestamp=2026-10-11T07:31:32）
+
+[命令 3 输出尾部]
+  [==========] 26 tests from 6 test suites ran. (66 ms total)
+  [  PASSED  ] 26 tests.
+
+[命令 4] sdurws_ird_trajectory_test.exe --ird_report=<本目录>/ird-test-report-trajectory-test.json --gtest_output=xml:<构建树>/repro-ird-test.xml（构建树 bin/Release 直跑，ReportListener 自维护参数直写 ird-test-report/1 json）
+[结论] ird-test-report-trajectory-test.json：summary total=111 passed=111 failed=0 decisive=true
+
+[命令 5] sdurws_ird_trajectory_contract_test.exe --ird_report=<本目录>/ird-test-report-trajectory-contract-test.json
+[结论] ird-test-report-trajectory-contract-test.json：summary total=26 passed=26 failed=0 decisive=true
+
+[落位物对照（本目录）]
+  integrate-build-wp16-t08.log                       ——本文件
+  ird-test-report-trajectory-test.json               ——集成 sdurws_ird_trajectory_test 直写（111/111）
+  ird-test-report-trajectory-contract-test.json      ——集成 sdurws_ird_trajectory_contract_test 直写（26/26）
+  ird-test-report-trajectory-test-smoke.json         ——冒烟直写（25/25，见 smoke-build-wp16-t08.log）
+  ird-test-report-trajectory-contract-test-smoke.json ——冒烟直写（19/19，见 smoke-build-wp16-t08.log）
+  sdurws_ird_trajectory_test.xml                     ——集成 gtest XML（111 用例，与 gtest-reports/wp-16-t08/ 同源复制）
+  sdurws_ird_trajectory_contract_test.xml            ——集成 gtest XML（26 用例，同上）
+  gates-wp16-t08.log                                 ——ird_gates 全量门禁运行留痕
+  smoke-build-wp16-t08.log                           ——独立冒烟模式构建与运行留痕
+
+[四份 gtest XML 独立性自证（SHA-256，gtest-reports/wp-16-t08/）]
+  sdurws_ird_trajectory_test.xml             b04a309b2262d20a753b479a537e88462273276b97a31c3b62f58bd86ab4c826（111 用例）
+  sdurws_ird_trajectory_contract_test.xml    4c4112e6dab15b4b457ea019554b078a3cd876d2ecf1ad33fc524b2037c2b6b1（26 用例）
+  sdurws_ird_trajectory_test-smoke.xml       cfab6ffe8a82eecf71f202df8dcf5f9c493a233cc29f82af60681be1b155a34a（25 用例）
+  sdurws_ird_trajectory_contract_test-smoke.xml a9b9d7dd4a29d333c0e87eaa39e7a5f428bb048d7b1dfe8c0f9fe25f4180dcee（19 用例）
+  ——四值互异；"集成"名两份（111/26 用例集，含集成专属 TimeParam/Smooth/Recheck/Ptp/CartesianLine/Planner 套件）
+    与"冒烟"名两份（25/19 用例集）内容分离，timestamp 分属两次独立进程运行——acc/wp-16-t08/1 B-1 的
+    逐字节复制失实状态自本批起消除。
