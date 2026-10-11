@@ -14,7 +14,7 @@
 [ird-ui-plugin] [central-guard] 保留量未达成：中央 18 px < 320 px（本插件 Dock 已收缩到各自下限；窗口物理宽度不足，不再对抗用户）
 [ird-ui-smoke-tour] started
 [ird-ui-smoke-tour] step 1 create-open-project
-[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-tour-demo-rOSFgK（可写：是）
+[ird-ui-plugin] 项目已打开：C:/Users/zgl18/AppData/Local/Temp/ird-tour-demo-RFkNLi（可写：是）
 [ird-ui-smoke-tour] pass step1 project-opened
 [ird-ui-smoke-tour] pass step1 panel-present
 [ird-ui-smoke-tour] pass step1 panel-visible (取证前提——非静窗)
