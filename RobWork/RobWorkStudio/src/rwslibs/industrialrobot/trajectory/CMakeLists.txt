@@ -299,12 +299,22 @@ endif()
 # 不在扫描域——Qt 红线的文件域隔离，dynamics/selection 同款先例）；装配
 # 契约头＝assembly/（plugin 目标的 PUBLIC include 面——宿主装配层只见
 # 门面头，零插件私有头依赖——R-2；workflow O-45 教训前移，落位即建）。
-# 本批次零 Q_OBJECT 类（界面控件随 WP-16-T12 落位时引入），故不开
-# AUTOMOC；首个 Q_OBJECT 类落位任务按 modeling/requirements 先例置
-# AUTOMOC ON（DTB §5.1 v0.17 行口径）。
+# WP-16-T12 落位面板/命令登记面后仍零 Q_OBJECT 类（面板/曲线视图均为
+# QWidget 派生纯虚 override 形态——Qt5 函数指针 connect 语法无 moc 需
+# 求，dynamics 先例同款），AUTOMOC 保持 OFF（DTB §5.1 v0.17 行口径；
+# 首个 Q_OBJECT 类落位任务按 modeling/requirements 先例置 AUTOMOC ON）。
 add_library(sdurws_ird_trajectory_plugin STATIC
-    plugin/TrajectoryPluginAssembly.cpp)  # 装配门面实现（assembly/
-                                          #   公共头的私有实现）
+    plugin/TrajectoryPluginAssembly.cpp  # 装配门面实现（assembly/
+                                         #   公共头的私有实现——T12 批含
+                                         #   翻译注册面＋模块面板工厂落点）
+    plugin/TrajPanelCommandCatalog.cpp   # 命令目录现产（§14.5.1 七命令——
+                                         #   token 词表唯一投影；WP-16-T12）
+    plugin/TrajUiModule.cpp              # §11.2 模块半区（投影翻译/恒
+                                         #   nullopt 草稿——WP-16-T12）
+    plugin/TrajectoryPanelWidget.cpp     # 工作流面板（工作流页＋曲线视图
+                                         #   入口合一 Tab——WP-16-T12）
+    plugin/TrajCurveView.cpp)            # 曲线视图（自绘折线——show-curve
+                                         #   呈现面；WP-16-T12）
 set_target_properties(sdurws_ird_trajectory_plugin PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
@@ -314,9 +324,17 @@ if(MSVC)
 endif()
 
 # 插件私有头解析（plugin/*.hpp——PRIVATE，不外溢；dynamics/selection 同
-# 款先例；T03 仅单实现 TU，仍按先例登记以稳定后续批次形态）。
+# 款先例）。
 target_include_directories(sdurws_ird_trajectory_plugin PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})
+# ui 公共头解析（WP-16-T12——translatePluginUiDescriptor/registerWithHost-
+# Registrar 消费 <sdurws/ird/ui/IPluginUiRegistrar.hpp> 等公共头；PRIVATE
+# 指向 ui 单元 include/ 公共面——ird_gates 第 3 步 include 路径检查只拦
+# 他单元私有面 src/|test/，公共面合法）。★ 零 sdurws_ird_ui 链接（编译
+# 边治理：纯头消费零符号依赖——真实 registrar 工厂归宿主装配批次收口，
+# 届时先走单元卡增量修订＋白名单增登，见本文件链接面注与单元卡 §16.3）。
+target_include_directories(sdurws_ird_trajectory_plugin PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ui/include)
 # 装配层（宿主插件）消费 <sdurws/ird/trajectory/TrajectoryPluginAssembly.hpp>
 # ——PUBLIC include 面（非 include/ 产品扫描域——零 Qt 红线文件域隔离同
 # plugin/ 口径）。
@@ -331,13 +349,16 @@ target_include_directories(sdurws_ird_trajectory_plugin PUBLIC
 #     selection/modeling/requirements/kinematics/workflow 六 plugin 同款
 #     形态）；
 #   - Qt 三件套＝plugin 分类面（ird_gates R-3 仅查 product/worker 形态；
-#     T03 源码零 Qt 类消费，链接面先行建立——WP-16-T12 面板批次直接
-#     增列源文件即可）；
+#     T03 源码零 Qt 类消费，链接面先行建立——WP-16-T12 面板批次已增列
+#     源文件消费 Qt 控件〔零 Q_OBJECT〕）；
 #   - 零 sdurws_ird_ui（与 modeling/requirements/kinematics 插件的
 #     "→本计算库＋sdurws_ird_ui"三边形态不同：selection/dynamics 落位
-#     批已立"自持描述符、零 ui 编译边"先例——trajectory 插件界面随
-#     WP-16-T12 以真实 ui 类型落位，届时若需 ui 编译边，先走单元卡增
-#     量修订＋白名单增登）。
+#     批已立"自持描述符、零 ui 编译边"先例；WP-16-T12 以【纯头消费】
+#     落位 ui 类型翻译注册面——ui 公共头经上方 PRIVATE include 路径可
+#     达，虚调用经调用方注入实例完成，零 ui 库符号依赖；真实 registrar
+#     工厂（ui 库符号）归宿主装配批次收口，届时先走单元卡增量修订＋
+#     白名单增登〔units/trajectory.md §16.3 衔接缝宿主半区——DTB §5.4
+#     偏差登记载明〕）。
 target_link_libraries(sdurws_ird_trajectory_plugin PUBLIC
     sdurws_ird_trajectory
     Qt6::Core Qt6::Gui Qt6::Widgets)
@@ -549,6 +570,17 @@ target_sources(sdurws_ird_trajectory_contract_test PRIVATE
                                                    #   致）＋回退绑定链＋违约
                                                    #   族 fail-fast＋确定性
                                                    #   （纯值面——两模式皆跑）
+target_sources(sdurws_ird_trajectory_contract_test PRIVATE
+    contract_test/TrajectoryUiRegistrationContractTest.cpp)  # WP-16-T12：
+                                                   #   ui 类型翻译逐字段＋注
+                                                   #   册端口链路（RegistrarSpy
+                                                   #   替身——端口/状态/错误
+                                                   #   传播）＋零修订四常量
+                                                   #   对账锚＋T12 面 zero-
+                                                   #   本地位扫描（纯头消费
+                                                   #   ui 公共面——两模式皆
+                                                   #   跑；dynamics ASM-PLUG
+                                                   #   契约测试同位面）
 
 # KinematicsPortContractTest 为集成模式条件源（WP-16-T05——③端口消费契
 # 约：R-1 源码扫描零 kinematics include／请求字段透传钉扎／确定性解序／
@@ -581,6 +613,15 @@ target_link_libraries(sdurws_ird_trajectory_contract_test PRIVATE sdurws_ird_tra
 target_compile_definitions(sdurws_ird_trajectory_contract_test PRIVATE
     IRD_TRAJECTORY_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
 
+# WP-16-T12 契约测试 include 面：单元根（TrajectoryUiRegistrationContractTest
+# 消费同单元私有头 plugin/TrajPanelTypes.hpp——会话态完整类型；同单元测
+# 试 TU 消费同单元私有头合法，R-2 只禁跨单元私有头）＋ui 公共头（ui 类型
+# 翻译/注册端口/View3D 契约对账——纯头消费零 ui 链接，同 plugin 目标
+# 口径；ui include 路径指向其 include/ 公共面，ird_gates 第 3 步合法）。
+target_include_directories(sdurws_ird_trajectory_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ui/include)
+
 # 运行期 DLL 拷贝（vcpkg gtest 动态库＋插件目标 Qt 传染面——同 _test
 # 目标的 POST_BUILD 口径）。
 add_custom_command(TARGET sdurws_ird_trajectory_contract_test POST_BUILD
@@ -598,6 +639,56 @@ ird_add_gtest(sdurws_ird_trajectory_contract_test)
 # §17.4，本批次无 GUI 载体用例）。
 set_tests_properties(sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test
     PROPERTIES LABELS "ird")
+
+# ---- 开发验证 harness：sdurws_ird_trajectory_app（WP-16-T12——单元卡
+#      §17.4 GUI 手动验证通道载体）----
+# 先例＝dynamics_app（WP-17-T09）/kinematics_app（WP-15-T12）/modeling_app
+# （WP-13-T15）；_app 后缀＝ird_gates 分类面 Qt 合法形态；源码在 app/
+# 子目录（产品扫描域零触碰）；本目标非测试（不入 ctest 标签）、非产品
+# 交付路径（真实宿主装配层挂位归宿主装配批次收口——单元卡 §16.3 衔接
+# 缝宿主半区，插件面零改动）。无人值守门禁不做 GUI 运行验证：本目标的
+# **构建**属交付留痕，**运行**属手动点验流程（§17.4），未启动如实登记
+# 不标注通过（AGENTS §4.2）。
+# 集成条件目标（if(TARGET sdurw_kinematics) gating——T04 条件源同款口
+# 径）：HarnessMain.cpp 消费 rw::math::Q 构造与 src/Playback.cpp 库符号
+# （查表/曲线投影——缝组装侧真实数据面），冒烟树无框架库可链；GUI 手
+# 动点验流程第①步即"构建集成模式"，冒烟口径（目标注册＋include 路径）
+# 不承载 GUI 点验——BuildGraph 契约的目标名扫描面向 CMakeLists 文本，
+# 条件块内目标名仍入登记（allowed 集已含 _app）。
+if(TARGET sdurw_kinematics)
+add_executable(sdurws_ird_trajectory_app
+    app/HarnessMain.cpp)
+
+target_compile_features(sdurws_ird_trajectory_app PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_trajectory_app PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_trajectory_app PRIVATE /utf-8)
+endif()
+
+# app/ 需解析本单元插件私有头（plugin/TrajPanelTypes.hpp 等——同单元内
+# 消费，R-2 不跨单元；单元根 include 目录 PRIVATE 注入）＋ui 公共头
+# （assembly 公共头自 WP-16-T12 起携带 ui 头依赖——翻译注册面；harness
+# 纯头消费同 plugin 目标口径，零 ui 链接）。
+target_include_directories(sdurws_ird_trajectory_app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ui/include)
+
+# 单行链接语句＝构建图契约测试的登记形态约束（dynamics_app 同款）。
+# 零 sdurws_ird_ui（harness 扮演装配层最小角色——真实 registrar 工厂消
+# 费归宿主装配批次收口，见 plugin 链接面注）。
+target_link_libraries(sdurws_ird_trajectory_app PRIVATE sdurws_ird_trajectory_plugin)
+
+# 运行期 DLL 就位（dynamics_app 同款）：TARGET_RUNTIME_DLLS 复制 Qt 三件
+# 套等共享库到 exe 旁——绝对路径启动免 PATH 依赖。
+add_custom_command(TARGET sdurws_ird_trajectory_app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_trajectory_app>
+            $<TARGET_FILE_DIR:sdurws_ird_trajectory_app>
+    COMMAND_EXPAND_LISTS)
+endif()
 
 # ---- 依赖红线守卫（配置期断言——卡 §3.2，dynamics/selection/drivetrain
 #      foreach 同款）----

@@ -123,23 +123,25 @@ constexpr std::array<const char*, 6> kDirectAccessSymbols{
  * 两字段必须逐字等于 ui.md 登记值——pluginId＝"trajectory"（§11.1 白
  * 名单 token）、titleKey＝"plugin.trajectory.title"（§3.5 键族
  * plugin.<id>.title，id 词表＝白名单 token）。多次调用同值（纯值工厂
- * ——无缓存无状态）。
+ * ——无缓存无状态）。★ WP-16-T12 访问路径注：工厂产物自 T12 批起为
+ * 装配门面（descriptor 成员承载登记值——dynamics WP-17-T09 先例同款
+ * 演进），T03 登记值逐字保留，本用例仅调整访问路径（.descriptor.<字段>）。
  */
 TEST(TrjPluginAssembly, DescriptorMatchesUiRegistrations_WP16T03_ACC1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"NFR-MNT-01"},
                   std::vector<std::string>{});
 
-    const auto descriptor = sdurws::ird::trajectory::createTrajectoryPluginAssembly();
-    EXPECT_EQ(descriptor.pluginId, "trajectory")
+    const auto bundle = sdurws::ird::trajectory::createTrajectoryPluginAssembly();
+    EXPECT_EQ(bundle.descriptor.pluginId, "trajectory")
         << "pluginId 必须＝ui.md §11.1 白名单 token（显示名永不替代身份——ARC-04）";
-    EXPECT_EQ(descriptor.titleKey, "plugin.trajectory.title")
+    EXPECT_EQ(bundle.descriptor.titleKey, "plugin.trajectory.title")
         << "titleKey 必须＝ui.md §3.5 键族 plugin.<id>.title（UX-02：值归 ui 文案资源）";
 
     // 纯值工厂：两次调用产生同值实例（无共享状态——文件头线程模型注）。
     const auto again = sdurws::ird::trajectory::createTrajectoryPluginAssembly();
-    EXPECT_EQ(again.pluginId, descriptor.pluginId);
-    EXPECT_EQ(again.titleKey, descriptor.titleKey);
+    EXPECT_EQ(again.descriptor.pluginId, bundle.descriptor.pluginId);
+    EXPECT_EQ(again.descriptor.titleKey, bundle.descriptor.titleKey);
 }
 
 /**
@@ -172,18 +174,41 @@ TEST(TrjPluginAssembly, PluginFaceHasZeroComputationSymbols_WP16T03_ACC2)
  * 插件零计算红线·直接访问扫描（acceptance 2——协作红线机器可断言面）：
  * 插件面不直接读文件、不直接写项目目录（文件访问经 io 通道、归档经
  * 执行通道——卡 §14.3"trajectory 不直接写盘"）。
+ *
+ * WP-16-T12 具名豁免（诚实登记——dynamics ASM-PLUG 收口批先例同款）：
+ * plugin/TrajUiModule.cpp 对 "sdurws/ird/project/" 一项豁免——ui.md
+ * §11.2 冻结接口 IPluginUiModule::buildDraftCommand 的返回值 optional 携
+ * 带 project 信封类型，`return std::nullopt` 的构造/析构实例化要求该元
+ * 素完整类型，实现 TU 必须自含该公共头（modeling/requirements/kinematics/
+ * workflow/dynamics 五先例的 UiModule 实现同款包含面）。豁免面仅该头包
+ * 含行：TrajUiModule 零 project 业务访问（不调用任何 project 实现符号
+ * ——本函数恒返回空语义），红线语义（项目访问唯一经端口）不松动；该
+ * TU 对其余符号与其余插件面文件全量扫描不变。
  */
 TEST(TrjPluginAssembly, PluginFaceHasNoDirectFileOrProjectAccess_WP16T03_ACC2)
 {
     IRD_TEST_INFO(std::vector<std::string>{"ARC-02"},
                   std::vector<std::string>{});
 
+    // 具名豁免清单（文件名 → 豁免符号）：WP-16-T12 唯一一条——§11.2 接
+    // 口签名的完整类型要求（见用例注）。新增豁免须先在此登记理由，不
+    // 允许静默放宽。
+    constexpr std::array<const char*, 1> kUiModuleHeaderOnly{
+        "sdurws/ird/project/"};
+
     const auto files = collectPluginFaceFiles();
     ASSERT_FALSE(files.empty()) << "插件面无源文件（落位形态缺失）";
 
     for (const auto& file : files) {
         const std::string text = readFile(file);
+        // 豁免判定：TrajUiModule.cpp 仅放行 "sdurws/ird/project/" 一项
+        // （接口实现必需——具名豁免），其余符号照常扫描。
+        const bool isUiModuleTu =
+            file.filename().string() == "TrajUiModule.cpp";
         for (const char* symbol : kDirectAccessSymbols) {
+            if (isUiModuleTu && symbol == kUiModuleHeaderOnly[0]) {
+                continue;  // 具名豁免（§11.2 接口完整类型——非业务访问）
+            }
             EXPECT_EQ(text.find(symbol), std::string::npos)
                 << "插件面出现直接访问符号（文件/项目访问唯一经端口——"
                    "卡 §14.3）: " << symbol << " @ " << file.string();
