@@ -103,9 +103,17 @@ add_library(sdurws_ird_trajectory STATIC
     src/DiagCodes.cpp
     src/TrjTypes.cpp
     src/PlanConfig.cpp
-    src/FailureLocate.cpp)  # §14.4 失败段诊断定位（素材→DiagnosticEntry 组装
+    src/FailureLocate.cpp  # §14.4 失败段诊断定位（素材→DiagnosticEntry 组装
                             #   ——WP-16-T09；纯值面零 Q 构造，两模式皆可
                             #   编译——TrjTypes.cpp 同款非条件源）
+    src/Commands.cpp     # §15.11/§14.5.1 领域命令适配器（七命令词表查表＋零
+                         #   修订会话契约——WP-16-T10；纯 std 零 rw/io 符号
+                         #   面，双模式无条件编译——dynamics Commands.cpp
+                         #   先例；契约测试两模式皆可运行时调 handle）
+    src/Export.cpp)      # §15.13 标准轨迹导出（魔数行＋身份块＋逐时刻逐
+                         #   关节长表——WP-16-T10；payload 只做 const 分量
+                         #   级读取零 Q 构造/析构点，io ICsvWriter 通道双
+                         #   模式可达——TrjTypes.cpp"零 Q 构造面"同款先例）
 
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_trajectory PRIVATE
@@ -127,9 +135,14 @@ if(TARGET sdurw_kinematics)
                                #   /PathSequence/三态结论——WP-16-T07 第二提
                                #   交；Q 构造面＋policy 会话消费——集成条
                                #   件，见上）
-        src/TimeParam.cpp)     # §12 时间参数化与节拍（五次样条 C²＋限速
+        src/TimeParam.cpp      # §12 时间参数化与节拍（五次样条 C²＋限速
                                #   缩放＋节拍输出——WP-16-T08；Q 构造面
                                #   ＋IPathGeometry 消费——集成条件，见上）
+        src/Playback.cpp)      # §14.5 会话域面三件（动画播放查表＋曲线只读
+                               #   投影＋路点局部重规划编排——WP-16-T10；Q
+                               #   构造面〔插值帧/样本表副本/段表产物〕＋
+                               #   smooth/recheck/timeParameterize 复用——
+                               #   集成条件，见上）
 endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
@@ -395,12 +408,18 @@ if(TARGET sdurw_kinematics)
                                         #   留/节拍输出＋V-16/17/18 词表与素
                                         #   材轨＋取消/确定性/前置违约族）
     target_sources(sdurws_ird_trajectory_test PRIVATE
-        test/FailureLocateTest.cpp)     # WP-16-T09：TRJ-06/ERR-01（四类失败
+        test/FailureLocateTest.cpp     # WP-16-T09：TRJ-06/ERR-01（四类失败
                                         #   定位端到端——T08 真实管线产素材
                                         #   →诊断条目＋素材直构四类＋定位上
                                         #   下文/ERR-01 字段/违约族/确定性；
                                         #   构造 rw::math::Q 对象——集成条
                                         #   件，同上）
+        test/PlaybackExportTest.cpp)    # WP-16-T10：TRJ-07（动画查表黄金/越
+                                        #   界拒用/段归投影/曲线只读投影/局
+                                        #   部重规划冻结编排〔复用三纯函数
+                                        #   ＋复检强制边〕/标准导出黄金布局
+                                        #   ＋读回往返＋确定性＋失败保留先前
+                                        #   输出＋AT-04 零修订素材族）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
@@ -492,7 +511,13 @@ add_executable(sdurws_ird_trajectory_contract_test
                                             #   有阈值字段）＋AT-06 三反例素材
                                             #   词表锁定（纯文本/inline 值面
                                             #   ——非条件源，两模式皆跑）
-    )
+    contract_test/CommandsBoundaryContractTest.cpp)  # WP-16-T10：§14.5.1 七
+                                            #   命令 token 冻结＋AT-04 零修订
+                                            #   四常量钉扎＋handle 运行时受理
+                                            #   语义＋T10 三 TU 零修订/零命令
+                                            #   权威/零会话驱动源码扫描（纯文
+                                            #   本/std 面——非条件源，两模式
+                                            #   皆跑）
 # FailureLocateContractTest 为非条件源但引用纯值面产品头（构造 FailedSegmen-
 # tRecord＋诊断注册表/工厂——零 Q 构造零 rw 符号引用，两模式皆可编译链
 # 接——TrjTypes.cpp/FailureLocate.cpp 同款口径）；独立 target_sources 语句
