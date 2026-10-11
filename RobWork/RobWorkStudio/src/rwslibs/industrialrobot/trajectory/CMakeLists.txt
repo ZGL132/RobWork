@@ -374,6 +374,17 @@ add_executable(sdurws_ird_trajectory_test
     test/PlanConfigTest.cpp)         # WP-16-T04：§5.5 求解配置（校验/canonical
                                      #   往返/确定性/digest 身份面）
 
+# EvaluationDimsTest 为非条件源（WP-16-T11——TRJ-08 接口约束：载荷 kind-
+# Token 词表分派语义＋Profile v1 注册集冻结＋零占位守护族；被测面 Evalua-
+# tionDims.hpp 纯值面零 rw 符号，两模式皆可编译运行——DiagCodesTest 同款
+# 口径）；独立 target_sources 语句便于留注释与条件源区分。
+target_sources(sdurws_ird_trajectory_test PRIVATE
+    test/EvaluationDimsTest.cpp)     # WP-16-T11：TRJ-08（§20 矩阵"评审项
+                                     #   ＋零占位断言"执行面——词表封闭/
+                                     #   清单冻结/SFINAE 负向成员探测（编
+                                     #   译期零 rw 符号）/码表零 jerk 词
+                                     #   根/消费分派协议）
+
 # PtpSequenceTest 为集成模式条件源（同产品面 Ptp.cpp/Sequence.cpp 的 gating
 # 口径——用例构造 rw::math::Q 对象，冒烟模式无框架库符号可链；V-01/02/03
 # 解析算例的真实执行归集成模式测试运行）。
@@ -511,13 +522,21 @@ add_executable(sdurws_ird_trajectory_contract_test
                                             #   有阈值字段）＋AT-06 三反例素材
                                             #   词表锁定（纯文本/inline 值面
                                             #   ——非条件源，两模式皆跑）
-    contract_test/CommandsBoundaryContractTest.cpp)  # WP-16-T10：§14.5.1 七
+    contract_test/CommandsBoundaryContractTest.cpp  # WP-16-T10：§14.5.1 七
                                             #   命令 token 冻结＋AT-04 零修订
                                             #   四常量钉扎＋handle 运行时受理
                                             #   语义＋T10 三 TU 零修订/零命令
                                             #   权威/零会话驱动源码扫描（纯文
                                             #   本/std 面——非条件源，两模式
                                             #   皆跑）
+    contract_test/EvaluationDimsContractTest.cpp)  # WP-16-T11：TRJ-08 契约
+                                            #   面——六词表值唯一书写点源码
+                                            #   扫描（剥注释计数恰 1 次且均在
+                                            #   EvaluationDims.hpp）＋接口交
+                                            #   付面词形契约（itemId/kindToken
+                                            #   词形正则＋判定面与清单同源消
+                                            #   费序＋词表全值出现；纯文本/
+                                            #   std 面——非条件源，两模式皆跑）
 # FailureLocateContractTest 为非条件源但引用纯值面产品头（构造 FailedSegmen-
 # tRecord＋诊断注册表/工厂——零 Q 构造零 rw 符号引用，两模式皆可编译链
 # 接——TrjTypes.cpp/FailureLocate.cpp 同款口径）；独立 target_sources 语句
