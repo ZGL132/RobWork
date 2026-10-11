@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "WorkCell 反向导入通道（MDL-18/AT-33，R2/阶段 D——有损提取＋提取报告；本契约为 planned 占位登记，阶段门禁未启用不得领取实施）",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [
     "WP-13-T05",
     "IO-T05"
@@ -54,5 +54,5 @@
     "有损提取报告是本任务的验收核心（AT-33 字面）——不可表达/未保留内容逐项列出不是附属品，缺失即验收 fail"
   ],
   "branch": "wp13-t17",
-  "note": "【planned 占位登记（2026-10-05，队列治理批次）】MDL-18 .wc.xml 互操作按所有者队列指令'另立任务'落位本契约（此前仅 DTB §2.14 表行占位无契约文件；表行依赖 WP-11-T06 系 io 旧编号——落位实绩＝IO-T05 资源导入服务 reader 面，已 done）。R2/阶段 D 门禁未启用：①所有者阶段启用裁决未作；②io 卡 IResourceReader GenericXml 签名未冻结（modeling.md §6.6 原文'R2 启用前由 io 卡冻结'——须 io 侧增补契约后方可持续）。两前置齐备前本契约保持 planned 不得领取；status 翻转 ready 归所有者/编排者。R1 边界现状＝IModelImportMapper::mapWorkCellXml 返回 NotImplemented 稳定诊断（§9.4.9；'workcell-channel-r2' 引导词表已登记于 ImportUnsupportedItem kind）——用户引导链已通，通道本体待阶段 D。"
+  "note": "【planned 占位登记（2026-10-05，队列治理批次）】MDL-18 .wc.xml 互操作按所有者队列指令'另立任务'落位本契约（此前仅 DTB §2.14 表行占位无契约文件；表行依赖 WP-11-T06 系 io 旧编号——落位实绩＝IO-T05 资源导入服务 reader 面，已 done）。R2/阶段 D 门禁未启用：①所有者阶段启用裁决未作；②io 卡 IResourceReader GenericXml 签名未冻结（modeling.md §6.6 原文'R2 启用前由 io 卡冻结'——须 io 侧增补契约后方可持续）。两前置齐备前本契约保持 planned 不得领取；status 翻转 ready 归所有者/编排者。R1 边界现状＝IModelImportMapper::mapWorkCellXml 返回 NotImplemented 稳定诊断（§9.4.9；'workcell-channel-r2' 引导词表已登记于 ImportUnsupportedItem kind）——用户引导链已通，通道本体待阶段 D。阶段 D 启用登记（2026-10-12，所有者指令「planned 4 个阶段启动」＝阶段 D 启用裁决）：领取前置①满足；前置②由治理批直接执行——io.md §9.6 增补 IResourceReader GenericXml 具名签名（按 io.md 既有预留「IResourceReader::openXml(...) 同一通道——P-1 角色＋预算＋快照＋依赖树」口径冻结，io 卡版本行随增补 bump），本卡 outputs 第 3 条口径不变（不授权 io/**——签名冻结由治理批完成，本卡仅消费该接口）；planned→ready。"
 }

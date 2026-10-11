@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.9（IO-T06 落位同步；v0.8＝IO-T05 落位同步；v0.7＝IO-T04 落位同步＋JSON-SYNTAX 码追加；v0.6＝P-IO-3 选型冻结登记；v0.5＝IO-T03 落位同步；v0.4＝IO-T02 落位同步；v0.3＝IO-T01 落位同步；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
+| 文档版本 | v0.10（WP-13-T17 阶段 D 启用随批：§9.6 增补 `IResourceReader::openGenericXml` 具名签名＋GenericXmlNode/GenericXmlDoc 值类型——GenericXml 通用 XML 通道接口冻结〔治理批 2026-10-12；v0.9＝IO-T06 落位同步；v0.8＝IO-T05 落位同步；v0.7＝IO-T04 落位同步＋JSON-SYNTAX 码追加；v0.6＝P-IO-3 选型冻结登记；v0.5＝IO-T03 落位同步；v0.4＝IO-T02 落位同步；v0.3＝IO-T01 落位同步；v0.2＝全链一致性审计消账；v0.1＝首版草案） |
 | 日期 | 2026-09-17 |
 | 状态 | **`Draft`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试通过或正式验收） |
 | 文档代号 | UNIT-IO |
@@ -1203,6 +1203,26 @@ public:
     virtual IoResult<ResourceDependencyTree>
         dependencyTree(const std::filesystem::path& importRoot, IBudgetGuard*,
                        IoCancelToken*, IoProgressCallback = {}) = 0;
+    // GenericXml 通用 XML 通道（R2/阶段 D——MDL-18 .wc.xml 反向导入的读取面，
+    // WP-13-T17 消费）：安全解析为结构树＋文本＋摘要；WorkCell 语义解释归
+    // modeling（有损提取/不可表达判定）——io 不因语义不可解释判定工程不可行。
+    // 解析器自实现（expat 消费点同款），不引入框架 sdurw_loaders（DTB §4.6 表行）。
+    virtual IoResult<GenericXmlDoc>
+        openGenericXml(const std::filesystem::path&, const ResourceOpenSpec&,
+                       IBudgetGuard*, IoCancelToken*) = 0;
+};
+
+// GenericXml 通道值类型（§9.6 增补——WP-13-T17 阶段 D 启用随批冻结）
+struct GenericXmlNode {                         // 元素节点（递归；文档序保留）
+    IoString name;                              // 元素名
+    std::vector<std::pair<IoString, IoString>> attrs;  // 属性序＝文档序（有损提取逐项对照需要）
+    std::vector<GenericXmlNode> children;       // 子元素（文档序）
+    IoString text;                              // 直接子文本聚合
+};
+struct GenericXmlDoc {                          // 解析结果
+    GenericXmlNode root;                        // 文档根元素
+    std::size_t totalBytes = 0;                 // 源字节量（预算对账）
+    core::ContentDigest digest;                 // 内容摘要（ContentDigester——内容身份口径同 snapshot）
 };
 ```
 
@@ -1217,6 +1237,7 @@ public:
 | 生命周期 | 服务进程级；句柄会话级（RAII 关闭） |
 | 所有权 | 字节流归句柄；snapshot/树归调用方；**摘要经 core ContentDigester** |
 | 副作用 | 只读文件系统；诊断上报 |
+| GenericXml 通道 | openGenericXml：安全解析（expat 消费点同款，自实现——不引入 sdurw_loaders）；属性/子元素保文档序（有损提取逐项对照）；摘要经 core ContentDigester；WorkCell 语义解释归 modeling——io 不因语义不可解释判定工程不可行（§6.6） |
 | 调用示例 | URDF 导入：`depTree = reader.dependencyTree(userDir, …)` → modeling 消费 |
 | 合法调用 | P-1 用户源（含 UNC/网络盘，跟随链接但快照按实体路径） |
 | 非法调用 | 以 snapshot.digest 之外的任何东西（路径/mtime）作内容身份；用本接口读取 `.rwdesign` 内部对象（须经 §9.7 项目字节源） |
