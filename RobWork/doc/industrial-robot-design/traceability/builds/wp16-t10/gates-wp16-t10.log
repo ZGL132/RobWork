@@ -1,0 +1,113 @@
+# WP-16-T10 ird_gates 全量门禁留痕（2026-10-11）
+
+# 命令（pipeline-wt2 工作树根执行）：
+#   pwsh -File RobWork/scripts/industrialrobot/gate-all.ps1 -QtPrefix D:/software/Qt/6.11.1/msvc2022_64
+# 第三轮（终局轮）带 PATH 前缀 D:/software/Miniconda3（ui_test 加载期依赖 python313.dll——
+# 其目录缺席时 Windows 加载器弹隐藏模态错误框＝进程 0 CPU 挂起假象；根因与处置见下）。
+# 退出码：0（85/85 全过，零 FAIL）
+
+## 首轮/第二轮如实登记（均为 84/85，唯一失败项＝集成测试 sdurws_ird_ui_test）
+# 首轮（09:22 起）：门禁运行期间实施会话曾并发对同一集成构建树执行 _report 目标（编排失误，
+#   竞争致 09:33 启动的 ui_test 启动即挂），实施会话于 11:35 终止挂起进程后门禁续行至 84/85。
+# 第二轮（12:14 起，无并发复跑）：ui_test 同点复现挂起（0.06 CPU 静止），排除并发因素；
+#   12:38 终止挂起进程后续行至 84/85。
+# 根因定位（独立直跑复现）：sdurws_ird_ui_test.exe 直接运行报 'error while loading shared
+#   libraries: python313.dll'——加载期依赖在该会话 PATH 下不可解析，Windows 加载器弹隐藏
+#   模态错误框（进程 3 线程、近零 CPU、无可见窗口＝挂起假象）。补 PATH 前缀 D:/software/
+#   Miniconda3 后直跑 sdurws_ird_ui_test.exe → 258/258 全绿（1613 ms）——测试本体零缺陷，
+#   纯环境 PATH 问题；与 T10 改动面无关（挂起发生于加载期早于任何用例）。
+# 第三轮（12:44 起，PATH 前缀补齐＋无并发）：85/85 全过。
+
+## 第三轮（终局）结果行（UTF-8 转写；PowerShell 控制台中文为 GBK 混排）
+
+================ gate-all 汇总 ================
+PASS  集成树缓存确认（RWS_BUILD_INDUSTRIALROBOT=ON 已在位）
+PASS  ird_gates（依赖红线/补丁门禁）
+PASS  集成模式测试发现（40 个注册: sdurws_ird_core_test, sdurws_ird_diagnostics_contract_test, sdurws_ird_diagnostics_test, sdurws_ird_drivetrain_contract_test, sdurws_ird_drivetrain_test, sdurws_ird_dynamics_contract_test, sdurws_ird_dynamics_test, sdurws_ird_evidence_contract_test, sdurws_ird_evidence_test, sdurws_ird_execution_contract_test, sdurws_ird_execution_test, sdurws_ird_io_contract_test, sdurws_ird_io_test, sdurws_ird_kinematics_contract_test, sdurws_ird_kinematics_test, sdurws_ird_modeling_contract_test, sdurws_ird_modeling_gui_test, sdurws_ird_modeling_test, sdurws_ird_optimization_contract_test, sdurws_ird_optimization_test, sdurws_ird_policy_contract_test, sdurws_ird_policy_test, sdurws_ird_project_contract_test, sdurws_ird_project_test, sdurws_ird_reporting_contract_test, sdurws_ird_reporting_test, sdurws_ird_requirements_contract_test, sdurws_ird_requirements_gui_test, sdurws_ird_requirements_test, sdurws_ird_runtime_test, sdurws_ird_selection_contract_test, sdurws_ird_selection_test, sdurws_ird_testkit_test, sdurws_ird_trajectory_contract_test, sdurws_ird_trajectory_test, sdurws_ird_ui_contract_test, sdurws_ird_ui_gui_test, sdurws_ird_ui_test, sdurws_ird_workflow_contract_test, sdurws_ird_workflow_test）
+PASS  集成测试 sdurws_ird_core_test
+PASS  集成测试 sdurws_ird_diagnostics_contract_test
+PASS  集成测试 sdurws_ird_diagnostics_test
+PASS  集成测试 sdurws_ird_drivetrain_contract_test
+PASS  集成测试 sdurws_ird_drivetrain_test
+PASS  集成测试 sdurws_ird_dynamics_contract_test
+PASS  集成测试 sdurws_ird_dynamics_test
+PASS  集成测试 sdurws_ird_evidence_contract_test
+PASS  集成测试 sdurws_ird_evidence_test
+PASS  集成测试 sdurws_ird_execution_contract_test
+PASS  集成测试 sdurws_ird_execution_test
+PASS  集成测试 sdurws_ird_io_contract_test
+PASS  集成测试 sdurws_ird_io_test
+PASS  集成测试 sdurws_ird_kinematics_contract_test
+PASS  集成测试 sdurws_ird_kinematics_test
+PASS  集成测试 sdurws_ird_modeling_contract_test
+PASS  集成测试 sdurws_ird_modeling_gui_test
+PASS  集成测试 sdurws_ird_modeling_test
+PASS  集成测试 sdurws_ird_optimization_contract_test
+PASS  集成测试 sdurws_ird_optimization_test
+PASS  集成测试 sdurws_ird_policy_contract_test
+PASS  集成测试 sdurws_ird_policy_test
+PASS  集成测试 sdurws_ird_project_contract_test
+PASS  集成测试 sdurws_ird_project_test
+PASS  集成测试 sdurws_ird_reporting_contract_test
+PASS  集成测试 sdurws_ird_reporting_test
+PASS  集成测试 sdurws_ird_requirements_contract_test
+PASS  集成测试 sdurws_ird_requirements_gui_test
+PASS  集成测试 sdurws_ird_requirements_test
+PASS  集成测试 sdurws_ird_runtime_test
+PASS  集成测试 sdurws_ird_selection_contract_test
+PASS  集成测试 sdurws_ird_selection_test
+PASS  集成测试 sdurws_ird_testkit_test
+PASS  集成测试 sdurws_ird_trajectory_contract_test
+PASS  集成测试 sdurws_ird_trajectory_test
+PASS  集成测试 sdurws_ird_ui_contract_test
+PASS  集成测试 sdurws_ird_ui_gui_test
+PASS  集成测试 sdurws_ird_ui_test
+PASS  集成测试 sdurws_ird_workflow_contract_test
+PASS  集成测试 sdurws_ird_workflow_test
+PASS  冒烟树配置（standalone smoke，toolchain 在位）
+PASS  冒烟模式测试发现（40 个注册）
+PASS  冒烟测试 sdurws_ird_core_test
+PASS  冒烟测试 sdurws_ird_diagnostics_contract_test
+PASS  冒烟测试 sdurws_ird_diagnostics_test
+PASS  冒烟测试 sdurws_ird_drivetrain_contract_test
+PASS  冒烟测试 sdurws_ird_drivetrain_test
+PASS  冒烟测试 sdurws_ird_dynamics_contract_test
+PASS  冒烟测试 sdurws_ird_dynamics_test
+PASS  冒烟测试 sdurws_ird_evidence_contract_test
+PASS  冒烟测试 sdurws_ird_evidence_test
+PASS  冒烟测试 sdurws_ird_execution_contract_test
+PASS  冒烟测试 sdurws_ird_execution_test
+PASS  冒烟测试 sdurws_ird_io_contract_test
+PASS  冒烟测试 sdurws_ird_io_test
+PASS  冒烟测试 sdurws_ird_kinematics_contract_test
+PASS  冒烟测试 sdurws_ird_kinematics_test
+PASS  冒烟测试 sdurws_ird_modeling_contract_test
+PASS  冒烟测试 sdurws_ird_modeling_gui_test
+PASS  冒烟测试 sdurws_ird_modeling_test
+PASS  冒烟测试 sdurws_ird_optimization_contract_test
+PASS  冒烟测试 sdurws_ird_optimization_test
+PASS  冒烟测试 sdurws_ird_policy_contract_test
+PASS  冒烟测试 sdurws_ird_policy_test
+PASS  冒烟测试 sdurws_ird_project_contract_test
+PASS  冒烟测试 sdurws_ird_project_test
+PASS  冒烟测试 sdurws_ird_reporting_contract_test
+PASS  冒烟测试 sdurws_ird_reporting_test
+PASS  冒烟测试 sdurws_ird_requirements_contract_test
+PASS  冒烟测试 sdurws_ird_requirements_gui_test
+PASS  冒烟测试 sdurws_ird_requirements_test
+PASS  冒烟测试 sdurws_ird_runtime_test
+PASS  冒烟测试 sdurws_ird_selection_contract_test
+PASS  冒烟测试 sdurws_ird_selection_test
+PASS  冒烟测试 sdurws_ird_testkit_test
+PASS  冒烟测试 sdurws_ird_trajectory_contract_test
+PASS  冒烟测试 sdurws_ird_trajectory_test
+PASS  冒烟测试 sdurws_ird_ui_contract_test
+PASS  冒烟测试 sdurws_ird_ui_gui_test
+PASS  冒烟测试 sdurws_ird_ui_test
+PASS  冒烟测试 sdurws_ird_workflow_contract_test
+PASS  冒烟测试 sdurws_ird_workflow_test
+================================================
+结果: 85/85 通过（85 项全过、零失败——ird_gates 零命中）
+
+## 覆盖面：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 静态门禁＋85 项全量门（各单元构建/测试/冒烟/契约门，
+#   含 trajectory sdurws_ird_trajectory_test/contract_test/plugin 三门）＋validate-docs PASS（20 units, 12 trace entries, 313 task files）。
