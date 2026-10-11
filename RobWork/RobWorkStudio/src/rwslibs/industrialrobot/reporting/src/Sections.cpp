@@ -157,6 +157,23 @@ std::vector<std::string> domainSectionsInScope(ReportLevel level)
     return out;
 }
 
+std::vector<std::string> sectionsInScope(ReportLevel level)
+{
+    // B 级＝词表行 1~8 全量（RPT-01-B 完整章节集：框架 4＋域 4，§5.2 范围图
+    // 外框）；C 级＝行 1~12（B 全部＋C 专属域四项——C 专属框架两项
+    // review-signoff/variant-diff 的内建投影随 RPT-T15 落位，落位前不入
+    // 组装范围——不预建空章节〔TRJ-08 同精神〕，见头函数注的阶段语义行）。
+    // 实现＝按 kAllSectionIds 词表序线性取前缀（词表序即 §5.1 行号序——
+    // 报告 sections 按 order 严格递增的组装序权威，NFR-COR-02）。
+    const std::size_t count = (level == ReportLevel::B) ? 8 : 12;
+    std::vector<std::string> out;
+    out.reserve(count);
+    for (std::size_t i = 0; i < count; ++i) {
+        out.emplace_back(kAllSectionIds[i]);
+    }
+    return out;
+}
+
 MissingItemView unregisteredSectionMissingItem(std::string_view sectionId)
 {
     MissingItemView item;

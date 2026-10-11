@@ -59,6 +59,7 @@
 #include <sdurws/ird/reporting/Errors.hpp>
 #include <sdurws/ird/reporting/Export.hpp>
 #include <sdurws/ird/reporting/Identity.hpp>
+#include <sdurws/ird/reporting/ModelSummary.hpp>  // IModelSummaryProvider/ModelSummary（RPT-T14 场景适配器）
 #include <sdurws/ird/reporting/Render.hpp>
 #include <sdurws/ird/reporting/ReportModel.hpp>
 #include <sdurws/ird/reporting/SectionProvider.hpp>
@@ -103,6 +104,7 @@ inline std::chrono::system_clock::time_point fixedTime(std::int64_t unixSeconds)
 class FakeQueryPort final : public project::IProjectQueryPort {
 public:
     bool revisionExists = true;
+    bool metadataExists = true;   // RPT-T14：锚定修订元数据在案（false＝project-scheme 缺项触发面）
     std::vector<project::RunInfo> runs{};
     project::RevisionView view{};
 
@@ -119,6 +121,7 @@ public:
     mutable int headCalls = 0;
     mutable int tryRevisionCalls = 0;
     mutable int listRunsCalls = 0;
+    mutable int metadataAtCalls = 0;
 
     project::RevisionView head() const override
     {
@@ -141,14 +144,30 @@ public:
         return runs;
     }
 
+    // RPT-T14：锚定修订元数据（project-scheme 框架章节数据源——构建器以
+    // metadataAt(锚定修订) 锚定取值〔锚定纪律口径，DTB §5.4〕）。脚本预置
+    // 一份最小合法元数据（显示名/主分支/单分支表——确定性铺位值）。
+    std::optional<project::ProjectMetadataView> metadataAt(core::RevisionId id) const override
+    {
+        record("metadataAt");
+        if (!metadataExists || !(id == view.id)) {
+            return std::nullopt;
+        }
+        project::ProjectMetadataView meta;
+        project::BranchRecord branch;
+        branch.branchId = fixedBranch();
+        branch.label = "main";
+        branch.tipRevisionId = view.id;
+        meta.record.projectDisplayName = "RP 套件项目";
+        meta.record.primaryBranchId = fixedBranch();
+        meta.record.branches = {branch};
+        return meta;
+    }
+
     // —— 构建器绝不可调用的方法：调用即留痕判红（零项目写/零越权读反向
     //    断言面；noexcept 的 tryObject 以留痕＋空返回表达）。 ——
     project::RevisionView revision(core::RevisionId) const override { unexpected("revision"); }
     project::ProjectMetadataView currentMetadata() const override { unexpected("currentMetadata"); }
-    std::optional<project::ProjectMetadataView> metadataAt(core::RevisionId) const override
-    {
-        unexpected("metadataAt");
-    }
     std::vector<project::BranchTip> branchTips() const override { unexpected("branchTips"); }
     std::vector<project::RevisionView> branchHistory(core::BranchId, std::uint32_t) const override
     {
@@ -180,6 +199,8 @@ private:
             ++tryRevisionCalls;
         } else if (std::string(method) == "listRuns") {
             ++listRunsCalls;
+        } else if (std::string(method) == "metadataAt") {
+            ++metadataAtCalls;
         }
     }
     [[noreturn]] static void unexpected(const char* method)
@@ -1000,6 +1021,75 @@ inline void registerContent(SectionRegistry& registry, const ContentSpec& spec)
         sectionContentOf(spec)));
 }
 
+// =====================================================================
+// RPT-T14：模型摘要提供方场景适配器（真实投影值——非脚本字符串）
+// =====================================================================
+
+/**
+ * @brief IModelSummaryProvider 场景适配器（持一份经 RPT-T12 冻结 schema
+ *        构造的 ModelSummary 值原样返回——"同修订同投影"的确定性形态）。
+ *
+ * 替身边界声明（§10 同口径）：本适配器验证的是 reporting 构建器对
+ * IModelSummaryProvider 注入面的消费（input-summary/外部资源状态数据源），
+ * 不构成 runtime 摘要行为的正确性证明（runtime 侧适配归 L5——P-RPT-2）；
+ * 摘要值经 RPT-T12 schema 的公共构造面组装（保留值纪律与全字段填充的
+ * 合法形态），非脚本字符串投影。
+ */
+class RpModelSummaryProvider final : public IModelSummaryProvider {
+public:
+    explicit RpModelSummaryProvider(ModelSummary summary) : m_summary(std::move(summary)) {}
+
+    std::optional<ModelSummary> trySummary(core::RevisionId revision) const override
+    {
+        // 同修订同投影（§9.7 确定性行）：仅锚定修订命中——其余修订不在
+        // 权威闭包（try 轨 nullopt 不伪造）。
+        if (!(revision == m_summary.revision)) {
+            return std::nullopt;
+        }
+        return m_summary;
+    }
+
+private:
+    ModelSummary m_summary;
+};
+
+/// 套件标准模型摘要（确定性铺位值——RP 场景的 input-summary/外部资源
+/// 状态数据源；快照在案全字段形态——provenanceNote 空）。
+inline ModelSummary standardModelSummary()
+{
+    ModelSummary summary;
+    summary.revision = fixedRevision();
+    summary.snapshotIdentity = test_fakes::scriptedCid(0x10);
+    summary.modelIdentity = test_fakes::scriptedCid(0x61);
+    summary.nameMapIdentity = test_fakes::scriptedCid(0x62);
+    summary.policyContentIdentity = test_fakes::scriptedCid(0x63);
+    summary.jointCount = 6;          // 轴数（无量纲计数——六轴工业机械臂场景）
+    summary.allRevolute = true;      // 全旋转关节链
+    summary.installPresetToken = "Ground";   // 呈现 token（禁止参与判定——§9.7）
+    summary.capabilities.hasDynamicWorkCell = true;
+    summary.capabilities.hasFullMassInertia = true;
+    summary.capabilities.hasJointVelocityLimits = true;
+    summary.capabilities.hasCollisionGeometry = true;
+    summary.capabilities.hasTools = true;
+    summary.capabilities.hasScene = false;        // 能力缺失位（降级非阻断——如实呈现）
+    summary.capabilities.hasFrictionModel = false;
+    summary.capabilities.hasCouplingMatrix = false;
+    ResourceSummary recorded;    // Recorded 态资源——external-validation-incomplete 限定语源
+    recorded.resourceId = "mesh/flange-cover.stl";
+    recorded.state = ResourceStateKind::Recorded;
+    recorded.digest = test_fakes::scriptedCid(0x64).bytes;
+    ResourceSummary solidified;  // Solidified 态资源——已固化
+    solidified.resourceId = "model/ur5e-canonical";
+    solidified.state = ResourceStateKind::Solidified;
+    solidified.digest = test_fakes::scriptedCid(0x65).bytes;
+    summary.resources = {recorded, solidified};
+    ConfigSummary config;
+    config.configKindToken = "kin-analysis";
+    config.contentIdentity = test_fakes::scriptedCid(0x66);
+    summary.configurations = {config};
+    return summary;
+}
+
 /// 构建场景（查询端口＋具名结果源＋注册表——构建器注入三元组的套件形态）。
 struct BuildScene {
     FakeQueryPort queryPort;
@@ -1025,6 +1115,13 @@ struct BuildScene {
         registerContent(registry, s);
     }
 
+    /// 注入标准模型摘要（RPT-T14：启用 input-summary Populated 形态——
+    /// 摘要值＝standardModelSummary() 铺位；重复调用以最后一次为准）。
+    void enableModelSummary()
+    {
+        m_summaryProvider = std::make_unique<RpModelSummaryProvider>(standardModelSummary());
+    }
+
     ReportBuildRequest request(ReportLevel level) const
     {
         ReportBuildRequest request;
@@ -1039,11 +1136,18 @@ struct BuildScene {
     }
 
     /// 构建器实例（每次调用独立——ReviewReportBuilder 不可拷贝/移动，经
-    /// 堆承载；unique_ptr 临时在调用全表达式内存活，`->build(...)` 直达）。
+    /// 堆承载；unique_ptr 临时在调用全表达式内存活，`->build(...)` 直达。
+    /// RPT-T14：已 enableModelSummary() 时注入摘要提供方——提供方生命周期
+    /// 随本对象，builder() 返回的构建器只应在本对象存活期内使用）。
     std::unique_ptr<ReviewReportBuilder> builder()
     {
-        return std::make_unique<ReviewReportBuilder>(queryPort, resultSource, registry);
+        return std::make_unique<ReviewReportBuilder>(queryPort, resultSource, registry,
+                                                     nullptr, m_summaryProvider.get());
     }
+
+private:
+    /// 摘要提供方（enableModelSummary() 创建——借用生命周期随本对象）。
+    std::unique_ptr<RpModelSummaryProvider> m_summaryProvider;
 };
 
 /// 标准单运行场景（B 级＋kin Populated——各用例单点变异的基线）。

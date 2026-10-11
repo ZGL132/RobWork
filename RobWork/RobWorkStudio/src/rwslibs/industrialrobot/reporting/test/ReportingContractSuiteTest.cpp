@@ -11,12 +11,13 @@
  *   - 任务契约 tasks/foundation/RPT-T11.json acceptance 1（矩阵逐条执行通过
  *     并留痕）～6（P-RPT-9/O-13 陷阱处置）
  *
- * 阶段 A 范围如实登记（不私扩验收面）：
- *   - RP-SCOPE-1/2 的"8/14 章节全量"含框架章节（§5.1 行 1/2/7/8 与 C 追加
- *     的 review-signoff/variant-diff 等）；框架章节内建投影不在 RPT-T05
- *     交付面（单元卡 §14.4 v0.8 登记——数据源依赖 RPT-T12/诊断采集/ui），
- *     其用例面如实收敛为"域章节全量＋词表序＋结构完整＋框架位缺项事实"，
- *     端到端 8/14 项随 RPT-T12/T14/T15 收口（§11 任务拆分链）；
+ * 阶段范围如实登记（不私扩验收面；RPT-T14 刷新）：
+ *   - RP-SCOPE-1 的 B 级 8 章节全量已随 RPT-T14 收口（框架四项内建投影
+ *     落位——FrameworkSections.hpp；用例升级为真实数据版：真实 envelope＋
+ *     真实 ModelSummary〔RPT-T12 schema〕＋真实锚定元数据）；RP-SCOPE-2
+ *     的 C 级组装范围＝12 章节（B 全部＋C 追加域四项），C 专属框架两项
+ *     （review-signoff/variant-diff）的内建投影随 RPT-T15 落位——落位前
+ *     不入组装范围（不预建空章节），届时扩至全 14 项；
  *   - RP-COV-1 的报告级 coverageSummary 聚合语义未冻结（§14.4 v0.12——
  *     Builder.cpp 置零值），用例面收敛为条目级覆盖呈现（包络合并标注/漏验
  *     缺项呈现），聚合计数随其冻结任务收口；
@@ -339,17 +340,22 @@ TEST_F(ReportingContractSuite, RP_MDL_3_IdentityIndependentOfPathAndName)
 // =====================================================================
 
 /**
- * §10.1 RP-SCOPE-1：B 级章节完整性——域提供方就绪（替身），build(B)：
- * 域章节集＝§5.1 B 级域项且按 order；每章节结构完整（状态/条目/绑定）。
- * 框架章节（词表行 1/2/7/8）内建投影不在 RPT-T05 交付面（§14.4 v0.8），
- * 端到端 8 项随 RPT-T12/T14 收口——本用例如实收敛为域四项＋词表事实。
+ * §10.1 RP-SCOPE-1：B 级章节完整性（RPT-T14 真实数据版）——8 个 B 章节
+ * 提供方就绪（域四项经注册联调＋框架四项内建投影），build(B)：章节集＝
+ * §5.1 前 8 项且按 order；每章节结构完整（状态/条目/绑定——域条目带
+ * 结论绑定、框架条目为元数据呈现）。真实链路＝真实 envelope（evidence
+ * make 构造边界）＋真实 ModelSummary（RPT-T12 schema）＋真实锚定元数据
+ * （project 契约类型），非脚本章节内容冒充（RP-STATE-4 边界）。
  */
 TEST_F(ReportingContractSuite, RP_SCOPE_1_BLevelSectionCompleteness)
 {
-    IRD_TEST_INFO(std::vector<std::string>{"RPT-01-B"}, {std::string{"AT-32"}}, std::nullopt);
+    IRD_TEST_INFO(std::vector<std::string>{"RPT-01-B", "RPT-01"},
+                  {std::string{"AT-32"}}, std::nullopt);
 
     const core::RunId run = runAt(0x14);
     BuildScene scene = standardScene(run);
+    // 模型摘要注入（input-summary/外部资源状态数据源——真实 schema 值）。
+    scene.enableModelSummary();
     // B 级域四章节提供方全部就绪（Populated——kin 由 standardScene 注册，
     // 补齐其余三个；条目绑定同一运行，绑定校验通过面）。
     for (const std::string_view id : {kSectionModel, kSectionRequirements,
@@ -362,31 +368,87 @@ TEST_F(ReportingContractSuite, RP_SCOPE_1_BLevelSectionCompleteness)
 
     const ReviewReport report = buildOk(scene, ReportLevel::B);
 
-    // 词表事实：B 级词表 8 项＝框架 4＋域 4；报告承载域 4 项全量。
+    // 词表事实：B 级词表 8 项＝框架 4＋域 4（RPT-01-B 完整章节集）。
     ASSERT_EQ(kBLevelSectionIds.size(), std::size_t{8});
-    const std::vector<std::string> domainScope = domainSectionsInScope(ReportLevel::B);
-    ASSERT_EQ(report.sections().size(), domainScope.size());
+    const std::vector<std::string> bScope = sectionsInScope(ReportLevel::B);
+    ASSERT_EQ(bScope.size(), std::size_t{8});
+    ASSERT_EQ(report.sections().size(), bScope.size());
     // 章节集与 §5.1 order 逐项断言（枚举与 order 断言——观测点原文）。
     for (std::size_t i = 0; i < report.sections().size(); ++i) {
         const ReviewReportSection& section = report.sections()[i];
         IRD_EXPECT_IDENTICAL("section.order[" + std::to_string(i) + "]", section.sectionId,
-                             domainScope[i]);
+                             bScope[i]);
         EXPECT_EQ(section.order, *trySectionOrder(section.sectionId)) << "order＝词表行号";
-        // 结构完整（Populated：状态/条目/绑定齐备——§5.3 presence 纪律）。
-        ASSERT_EQ(section.status, SectionStatus::Populated);
-        ASSERT_FALSE(section.entries.empty());
-        for (const SectionEntryView& entry : section.entries) {
-            EXPECT_FALSE(entry.result.runId.toCanonical().empty()) << "结果绑定在场";
-            ASSERT_FALSE(entry.evidence.empty()) << "证据绑定在场";
+        // 结构完整（§5.3 presence 纪律）：Populated ⇒ 条目非空；每章节
+        // selected＝defaultSelectionForStatus(status)（§5 默认规则）。
+        if (section.status == SectionStatus::Populated) {
+            ASSERT_FALSE(section.entries.empty()) << section.sectionId << ": 条目在场";
+        } else if (section.status == SectionStatus::NoFormalResult
+                   || section.status == SectionStatus::DataInsufficient) {
+            ASSERT_FALSE(section.missingItems.empty())
+                << section.sectionId << ": 缺项清单在场（NoFormalResult/DataInsufficient）";
+        } else {
+            // NotApplicable：显式不适用（原因在提供方产出面承载——报告侧以
+            // 状态词呈现，不计缺失——§5.3）。
+            EXPECT_TRUE(section.entries.empty()) << section.sectionId << ": 不适用无条目";
         }
-        EXPECT_TRUE(section.selected) << "Populated 默认选中（§5 默认规则）";
+        EXPECT_EQ(section.selected, defaultSelectionForStatus(section.status))
+            << section.sectionId << ": 默认选择规则";
+        // 绑定语义分化（RPT-T14）：域章节条目带结论绑定（结果＋证据）；
+        // 框架章节条目为元数据呈现（无绑定——§9.2"结论条目必填"的分化面）。
+        if (isDomainSectionId(section.sectionId)) {
+            ASSERT_EQ(section.status, SectionStatus::Populated);
+            for (const SectionEntryView& entry : section.entries) {
+                EXPECT_TRUE(entry.result.runId.isValid()) << "域条目结果绑定在场";
+                EXPECT_FALSE(entry.result.fieldPath.empty()) << "域条目字段路径在场";
+                ASSERT_FALSE(entry.evidence.empty()) << "域条目证据绑定在场";
+            }
+        } else {
+            for (const SectionEntryView& entry : section.entries) {
+                EXPECT_FALSE(entry.result.runId.isValid())
+                    << section.sectionId << ": 框架条目无结果绑定（元数据条目）";
+                EXPECT_TRUE(entry.evidence.empty())
+                    << section.sectionId << ": 框架条目无证据绑定";
+                ASSERT_FALSE(entry.fields.empty()) << "框架条目至少一字段";
+            }
+        }
     }
+    // 框架章节内容抽查（真实数据投影面——§5.1 行 1/2/7/8 数据源列）：
+    // project-scheme＝Populated（显示名/分支表来自锚定元数据）；input-summary
+    // ＝Populated（快照身份块/链型摘要/资源清单来自 ModelSummary）；
+    // diagnostics＝NotApplicable（本场景无诊断——显式不适用，不伪造缺项）；
+    // external-validation-boundary＝Populated（复现块条目）。
+    const ReviewReportSection& scheme = report.sections()[0];
+    EXPECT_EQ(scheme.status, SectionStatus::Populated);
+    bool hasDisplayName = false;
+    for (const SectionEntryView& entry : scheme.entries) {
+        for (const FieldValue& field : entry.fields) {
+            if (field.key == "display-name" && field.text.has_value()) {
+                hasDisplayName = true;
+            }
+        }
+    }
+    EXPECT_TRUE(hasDisplayName) << "项目显示名来自锚定元数据（§5.1 行 1）";
+    const ReviewReportSection& inputSummary = report.sections()[1];
+    EXPECT_EQ(inputSummary.status, SectionStatus::Populated);
+    const ReviewReportSection& diagnosticsSection = report.sections()[6];
+    EXPECT_EQ(diagnosticsSection.status, SectionStatus::NotApplicable)
+        << "无诊断场景＝显式不适用（§5.3——不计缺失；不适用原因在提供方产出面承载"
+           "——SectionContent 契约，报告侧以状态词呈现）";
+    const ReviewReportSection& externalBoundary = report.sections()[7];
+    EXPECT_EQ(externalBoundary.status, SectionStatus::Populated);
+    // 报告级外部资源状态（§4.2——Recorded 态条目即 external-validation-incomplete
+    // 限定语数据源；数据面随框架章节数源任务收口——v0.9 登记兑现面）。
+    ASSERT_EQ(report.externalResourceSummary().size(), std::size_t{2});
+    EXPECT_EQ(report.externalResourceSummary()[0].state, ExternalResourceState::Recorded);
+    EXPECT_EQ(report.externalResourceSummary()[1].state, ExternalResourceState::Solidified);
 }
 
 /**
- * §10.1 RP-SCOPE-2：C 级章节完整性——B＋C 提供方就绪：域八章节全选＋评审
- * 签署块（ReviewMetadata 字段——报告对象 review() 面；框架六项的端到端
- * 随 RPT-T12/T15，见文件头阶段 A 范围登记）。
+ * §10.1 RP-SCOPE-2：C 级章节完整性——B＋C 提供方就绪：组装范围十二章节
+ * （B 全部八项＋C 追加域四项——C 专属框架两项的内建投影随 RPT-T15 落位，
+ * 落位前不入组装范围——不预建空章节）＋评审签署块（ReviewMetadata 字段
+ * ——报告对象 review() 面）。
  */
 TEST_F(ReportingContractSuite, RP_SCOPE_2_CLevelSectionCompleteness)
 {
@@ -410,14 +472,25 @@ TEST_F(ReportingContractSuite, RP_SCOPE_2_CLevelSectionCompleteness)
     const ReviewReport report = buildOk(scene, ReportLevel::C);
     EXPECT_EQ(report.level(), ReportLevel::C);
 
-    // 域八章节全选（C＝B 域全部＋C 追加域四——§5.2 范围图域侧）。
-    const std::vector<std::string> domainScope = domainSectionsInScope(ReportLevel::C);
+    // 组装范围＝12 章节（§5.2 全侧投影——词表行 1~12 序；域八项 Populated
+    // 全选，框架四项按内建投影如实形态）。
+    const std::vector<std::string> cScope = sectionsInScope(ReportLevel::C);
+    ASSERT_EQ(cScope.size(), std::size_t{12});
     ASSERT_EQ(kDomainSectionIds.size(), std::size_t{8});
-    ASSERT_EQ(report.sections().size(), domainScope.size());
+    ASSERT_EQ(report.sections().size(), cScope.size());
     for (std::size_t i = 0; i < report.sections().size(); ++i) {
         const ReviewReportSection& section = report.sections()[i];
-        EXPECT_EQ(section.sectionId, domainScope[i]);
-        EXPECT_TRUE(section.selected) << "全选场景——Populated 默认选中";
+        EXPECT_EQ(section.sectionId, cScope[i]) << "组装序＝词表行号序";
+        if (isDomainSectionId(section.sectionId)) {
+            ASSERT_EQ(section.status, SectionStatus::Populated);
+            EXPECT_TRUE(section.selected) << "域全选场景——Populated 默认选中";
+        } else {
+            // 框架章节（本场景未注入模型摘要、有取消诊断源——如实形态）：
+            // project-scheme Populated；input-summary NoFormalResult（提供方
+            // 未注入——缺项表达）；diagnostics/external-validation-boundary
+            // 由数据源决定（不逐帧断言——RP_SCOPE_1 已覆盖内容面）。
+            EXPECT_EQ(section.selected, defaultSelectionForStatus(section.status));
+        }
     }
     // 评审签署块（§4.5 ReviewMetadata——构建器冻结的报告对象面）。
     EXPECT_TRUE(report.review().basisRevision == fixedRevision()) << "basisRevision＝锚定修订";
@@ -436,7 +509,8 @@ TEST_F(ReportingContractSuite, RP_SCOPE_3_CMissingEvidence_DegradeOrReject)
 
     const core::RunId run = runAt(0x14);
     // ①部分 C 章节缺正式结果（仅 trajectory-cycle Populated——其余 C 域缺）
-    // →生成，缺失章节缺项表达（§5.4 保守处置不拒绝部分缺失）。
+    // →生成，缺失域章节缺项表达（§5.4 保守处置不拒绝部分缺失；框架章节
+    // 不属"C 章节缺正式结果"判定范围——按内建投影如实形态呈现）。
     {
         BuildScene scene = standardScene(run);
         ContentSpec cSpec;
@@ -445,19 +519,21 @@ TEST_F(ReportingContractSuite, RP_SCOPE_3_CMissingEvidence_DegradeOrReject)
         cSpec.boundRun = run;
         registerContent(scene.registry, cSpec);
         const ReviewReport report = buildOk(scene, ReportLevel::C);
-        const std::vector<std::string> domainScope = domainSectionsInScope(ReportLevel::C);
-        ASSERT_EQ(report.sections().size(), domainScope.size());
+        const std::vector<std::string> cScope = sectionsInScope(ReportLevel::C);
+        ASSERT_EQ(report.sections().size(), cScope.size());
         for (const ReviewReportSection& section : report.sections()) {
-            if (section.sectionId == kSectionTrajectoryCycle) {
+            if (section.sectionId == kSectionTrajectoryCycle
+                || section.sectionId == kSectionKinematicsCollision) {
                 EXPECT_EQ(section.status, SectionStatus::Populated);
                 EXPECT_TRUE(section.selected);
-            } else if (section.sectionId == kSectionKinematicsCollision) {
-                EXPECT_EQ(section.status, SectionStatus::Populated);
-            } else {
-                // 缺失章节：NoFormalResult＋默认不选＋缺项清单（§16 验收要点）。
+            } else if (isDomainSectionId(section.sectionId)) {
+                // 缺失域章节：NoFormalResult＋默认不选＋缺项清单（§16 验收要点）。
                 EXPECT_EQ(section.status, SectionStatus::NoFormalResult);
                 EXPECT_FALSE(section.selected) << "缺正式结果默认不选";
                 ASSERT_FALSE(section.missingItems.empty()) << "缺项显示";
+            } else {
+                // 框架章节（词表行 1/2/7/8——内建投影如实形态；结构完整即可）。
+                EXPECT_EQ(section.selected, defaultSelectionForStatus(section.status));
             }
         }
     }
@@ -608,8 +684,9 @@ TEST_F(ReportingContractSuite, RP_STATE_2_DataInsufficient_Expression)
     EXPECT_EQ(report.resultRefs()[0].engineeringStatus,
               core::EngineeringStatus::DataInsufficient);
 
-    // 章节：DataInsufficient＋缺失项全量清单（计数与内容——观测点原文）。
-    const ReviewReportSection& kin = report.sections()[2];
+    // 章节：DataInsufficient＋缺失项全量清单（计数与内容——观测点原文；
+    // 词表行 5 下标 4——RPT-T14 起框架四项在列）。
+    const ReviewReportSection& kin = report.sections()[4];
     ASSERT_EQ(kin.sectionId, kSectionKinematicsCollision);
     EXPECT_EQ(kin.status, SectionStatus::DataInsufficient);
     ASSERT_EQ(kin.missingItems.size(), spec.missingItems.size());
@@ -909,7 +986,7 @@ TEST_F(ReportingContractSuite, RP_COV_1_CaseCoverageDisplay)
         content.entryCaseScope = {caseA};
         registerContent(scene.registry, content);
         const ReviewReport report = buildOk(scene, ReportLevel::B);
-        const ReviewReportSection& kin = report.sections()[2];
+        const ReviewReportSection& kin = report.sections()[4];   // 词表行 5（RPT-T14 起）
         EXPECT_EQ(kin.status, SectionStatus::DataInsufficient);
         ASSERT_EQ(kin.missingItems.size(), std::size_t{1});
         EXPECT_EQ(kin.missingItems[0].itemId, caseB.toCanonical()) << "漏验工况定位";
@@ -946,9 +1023,21 @@ TEST_F(ReportingContractSuite, RP_TRACE_1_EvidenceTraceabilityChain)
     }
     EXPECT_FALSE(resultIndex.empty()) << "扫描失效防护（至少一条结果引用）";
 
-    // 逐章节逐条目遍历（§9.2 结论条目全量——不抽样）。
+    // 逐章节逐条目遍历（§9.2 结论条目全量——不抽样；RPT-T14 绑定语义分化：
+    // 域章节条目为结论条目走追溯链核对，框架章节条目为元数据条目——无绑定
+    // 语义，核对"无伪造绑定"面）。
     for (const ReviewReportSection& section : report.sections()) {
         for (const SectionEntryView& entry : section.entries) {
+            if (isFrameworkSectionId(section.sectionId)) {
+                // 框架条目：无结果/证据绑定（元数据呈现——追溯锚为修订/快照
+                // 身份，非运行绑定——不伪造 runId）。
+                EXPECT_FALSE(entry.result.runId.isValid())
+                    << section.sectionId << ": 框架条目无结果绑定";
+                EXPECT_TRUE(entry.evidence.empty())
+                    << section.sectionId << ": 框架条目无证据绑定";
+                EXPECT_FALSE(entry.fields.empty()) << "元数据字段在场";
+                continue;
+            }
             // ResultBinding.runId→resultRefs 可解析；快照/切片可解析到
             // envelope 绑定面（NFR-COR-04 第一跳）。
             const auto it = resultIndex.find(entry.result.runId.toCanonical());
@@ -1151,7 +1240,16 @@ TEST_F(ReportingContractSuite, RP_CONS_2_CsvEscapeRoundtrip)
 
     const ReviewReport report = buildOk(scene, ReportLevel::B);
     const FieldMatrix matrix = extractFieldMatrix(report);
-    ASSERT_EQ(matrix.size(), samples.size());
+    // 矩阵规模（RPT-T14 分化面）：域章节（kin）单元格数＝样本数；框架章节
+    // （project-scheme/external-validation-boundary——内建投影）另有单元格，
+    // 不计入本用例的转义样本比对面（其后逐 fieldKey 比对覆盖全矩阵）。
+    std::size_t domainCells = 0;
+    for (const FieldCell& cell : matrix) {
+        if (!isFrameworkSectionId(cell.sectionId)) {
+            ++domainCells;
+        }
+    }
+    ASSERT_EQ(domainCells, samples.size());
 
     // 导出（含 CSV）→回读→矩阵重建比对。
     tk::TempDir dir("rp-cons2");

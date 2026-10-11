@@ -147,6 +147,7 @@ add_library(sdurws_ird_reporting STATIC
     src/ReportCodec.cpp
     src/Sections.cpp
     src/Builder.cpp
+    src/FrameworkSections.cpp
     src/Render.cpp
     src/Consistency.cpp
     src/Archive.cpp
@@ -243,6 +244,12 @@ enable_testing()
 #     通道/确定性/快照已释放注记/try 轨 nullopt（acceptance 1/2/5）；
 #   - test/TaskStatusSourceTest.cpp——try 轨/已中断呈现（TASK-02/NFR-REL-03）/
 #     终态↔原因对应/进度值形态/确定性/词表冻结（acceptance 3/5）。
+# RPT-T14 增列（§11 RPT-T14 行产物：集成测试——B 级真实章节接入）：
+#   - include/sdurws/ird/reporting/FrameworkSections.hpp＋src/FrameworkSections.cpp
+#     ——B 级框架章节内建投影器（§5.1 行 1/2/7/8；不注册不可覆盖——D-13）；
+#   - test/LevelBEndToEndTest.cpp——B 级端到端集成测试（AT-32 B 部分＋
+#     RP-SCOPE-1 真实数据：真实 envelope/ModelSummary/锚定元数据的完整链路，
+#     四域提供方注册联调的章节装配与逐章追溯，C 级结构性拒绝）。
 add_executable(sdurws_ird_reporting_test
     test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
@@ -251,6 +258,7 @@ add_executable(sdurws_ird_reporting_test
     test/SectionsTest.cpp
     test/SectionProviderTest.cpp
     test/BuilderTest.cpp
+    test/LevelBEndToEndTest.cpp
     test/RenderTest.cpp
     test/ConsistencyTest.cpp
     test/ArchiveExportTest.cpp

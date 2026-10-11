@@ -133,9 +133,19 @@ public:
     {
         throw std::logic_error("contract: 未预期调用");
     }
-    std::optional<project::ProjectMetadataView> metadataAt(core::RevisionId) const override
+    // RPT-T14：锚定修订元数据（project-scheme 框架章节数据源——构建器以
+    // metadataAt(锚定修订) 的合法只读消费；最小应答＝显示名/主分支的最小
+    // 合法形态，分支表可空——project INV-M1 的 ≥1 约束属发布期校验，本
+    // 契约面只驱动投影）。
+    std::optional<project::ProjectMetadataView> metadataAt(core::RevisionId id) const override
     {
-        throw std::logic_error("contract: 未预期调用");
+        if (!(id == view.id)) {
+            return std::nullopt;
+        }
+        project::ProjectMetadataView meta;
+        meta.record.projectDisplayName = "contract 最小元数据";
+        meta.record.primaryBranchId = view.branch;
+        return meta;
     }
     std::vector<project::BranchTip> branchTips() const override
     {
