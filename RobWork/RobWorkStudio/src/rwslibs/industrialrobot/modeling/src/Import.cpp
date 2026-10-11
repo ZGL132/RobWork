@@ -3,7 +3,8 @@
  * @brief  URDF 导入字段映射的实现——pugixml DOM 解析（O-40）、§6.3 字段
  *         映射表逐行落位、MDL-11 轴语义、§6.7 资源映射与四清单/待确认/
  *         关节状态/错误项报告；mapXacroExpanded 同边界委托＋来源留痕；
- *         mapWorkCellXml R1 边界响应（MDL-18）。
+ *         mapWorkCellXml R2 通道（MDL-18/WP-13-T17）委托
+ *         WorkCellReverseImport 提取引擎。
  *
  * 设计依据：
  *   - units/modeling.md §6.1～§6.4/§6.7（管线三分/字段映射表/轴语义/临时
@@ -38,6 +39,7 @@
 #include <sdurws/ird/core/Provenance.hpp>    // core::ValueProvenance/ProvenanceKind::ImportMapped——来源标记
 #include <sdurws/ird/io/IoDiagnostics.hpp>   // io::errorCodeToken——IO-RES-MISSING 码面唯一来源
 #include <sdurws/ird/modeling/DiagCodes.hpp> // MDL-IMPORT-* 码值常量（唯一书写点）
+#include <sdurws/ird/modeling/WorkCellReverseImport.hpp>  // extractWorkCellDevice——mapWorkCellXml 委托（WP-13-T17 R2 通道）
 
 #include "InertiaMath.hpp"  // 单元私有头（R-2）——I-MDL-5 SPD/三角不等式单一实现（§6.3 错误项判定）
 #include "RpyMath.hpp"      // 单元私有头（R-2）——RPY 正解唯一实现（UI-T53 提升共享）
@@ -2439,27 +2441,11 @@ ImportOutcome ModelImportMapper::mapWorkCellXml(const ValidatedSource& source,
                                                 const ImportOptions& options,
                                                 std::vector<core::DiagnosticRecord>& diags) const
 {
-    (void)options;
-    (void)diags;  // R1 无已注册码面（§9.5 无对应行）——引导经报告条目承载
-    // MDL-18 R2 边界（§6.6"R1 不实现、不留桩代码"）：稳定错误＋通道引导，
-    // 不产草稿；阶段 D 启用时由 WP-13-T17 领取实现（有损提取＋提取报告，
-    // 不可表达内容按 MDL-10/12 同一判定规则处置）。
-    ImportOutcome outcome;
-    outcome.report.sourceLabel = source.dependencyTree.rootRel;
-    ImportUnsupportedItem item;
-    item.kind = "workcell-channel-r2";
-    item.subject = "mapWorkCellXml";
-    item.reason = "WorkCell 反向导入为 R2/阶段 D 通道（MDL-18）——R1 不实现、不留桩";
-    item.guidance = "请使用 URDF/Xacro 导入通道，或等待阶段 D 启用";
-    item.span = ImportSourceSpan{source.dependencyTree.rootRel, 0, 0};
-    outcome.report.unsupported.push_back(std::move(item));
-    ImportError err;
-    err.code = ImportErrorCode::NotImplemented;
-    err.params.emplace_back("channel", "mapWorkCellXml");
-    err.params.emplace_back("stage", "R2");
-    err.detail = "WorkCell 反向导入（有损提取）属 R2/阶段 D——WP-13-T17";
-    outcome.error = std::move(err);
-    return outcome;
+    // MDL-18 R2/阶段 D（WP-13-T17）：R1 边界响应（NotImplemented＋
+    // "workcell-channel-r2" 引导条目）已随通道实现退役——委托 WorkCell
+    // 反向导入提取引擎（§6.6 有损提取＋提取报告的单一实现；诊断稳定
+    // 排序/报告无条件产出等契约在引擎内逐条兑现）。
+    return extractWorkCellDevice(source, options, diags);
 }
 
 }  // namespace sdurws::ird::modeling

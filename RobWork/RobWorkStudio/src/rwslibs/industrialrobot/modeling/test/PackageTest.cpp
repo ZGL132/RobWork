@@ -439,16 +439,17 @@ TEST(MdlPackage, ImportRejectsForeignArtifact_WP13T13_ACC3)
     //      以空字节文本文件形态归并场景一（容器层已拒）——此处以
     //      "manifest 条目缺失"形态由包内自检覆盖（TamperedPackageRejected）。
 
-    // ---- mapWorkCellXml R1 边界不受影响（同输入语义：仍是 NotImplemented）----
+    // ---- mapWorkCellXml 通道实现后边界语义更新（WP-13-T17 阶段 D：R1 的
+    //      NotImplemented 已退役——非 WorkCell 字节在提取引擎根检查/DOM
+    //      解析层拒绝，仍无草稿、仍 fail-closed；引导语义归报告条目）----
     ModelImportMapper mapper;
     std::vector<core::DiagnosticRecord> mapperDiags;
     const ImportOptions options;
     const ImportOutcome boundary = mapper.mapWorkCellXml(source, options, mapperDiags);
     ASSERT_TRUE(boundary.error.has_value());
-    EXPECT_EQ(boundary.error->code, ImportErrorCode::NotImplemented)
-        << "MDL-18 WorkCell 反向导入仍为 R1 边界（WP-13-T17 领取）";
-    EXPECT_FALSE(boundary.draft.has_value()) << "R1 不产草稿";
-    EXPECT_TRUE(mapperDiags.empty()) << "R1 无已注册诊断码面——引导经报告条目";
+    EXPECT_EQ(boundary.error->code, ImportErrorCode::SourceInconsistent)
+        << "非 WorkCell 字节＝源不一致（WP-13-T17 通道实现——R1 边界退役）";
+    EXPECT_FALSE(boundary.draft.has_value()) << "非 .wc.xml 不产草稿";
 }
 
 // =====================================================================

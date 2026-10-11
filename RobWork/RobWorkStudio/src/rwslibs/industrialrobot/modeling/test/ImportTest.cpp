@@ -30,12 +30,15 @@
 #include <sdurws/ird/io/IoDiagnostics.hpp>          // io::errorCodeToken——IO-RES-MISSING 码面
 #include <sdurws/ird/modeling/Codec.hpp>            // draft 字节级确定性比对
 #include <sdurws/ird/modeling/DiagCodes.hpp>        // MDL-IMPORT-* 码值常量
+#include <sdurws/ird/modeling/RobotDesign.hpp>      // checkInvariants——值模型不变量核查（WP-13-T17）
+#include <sdurws/ird/modeling/WorkCellReverseImport.hpp>  // extractWorkCellDevice——接口/引擎同源钉扎（WP-13-T17）
 #include <sdurws/ird/runtime/Errors.hpp>            // runtime::Expected（encode 载体）
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <cmath>       // std::cos/sin/M_PI——RPY deg→rad 断言（WP-13-T17）
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -207,6 +210,86 @@ ValidatedSource makeFullSource()
                        meshEdge("package://pkg/meshes/l2.stl")});
 }
 
+// =====================================================================
+// WorkCell 反向导入 fixture（WP-13-T17——MDL-18/AT-33 提取语义载体；
+// 格式语义对照 RobWork 框架 XMLRWLoader 文法：Pos=m、RPY=deg、PosLimit
+// Revolute 单位 deg/Prismatic 单位 m、Q=rad、CollisionSetup/场景/相机）
+// =====================================================================
+
+/**
+ * 两关节 WorkCell 样例（提取语义逐项覆盖面）：链＝Fixed 基帧＋Revolute
+ * （Pos/RPY/PosLimit(deg)/VelLimit/Drawable→Polytope 存在网格）＋
+ * Prismatic（PosLimit(m)/CollisionModel→Polytope 缺失网格）；Q 首配置
+ * （Home，对位两可动关节）＋备选构型（Alt）；设备级 CollisionSetup
+ * 外部引用；WorkCell 级场景 Frame/Drawable/Camera。
+ */
+const char* kWorkCellTwoJoint = R"(<?xml version="1.0" encoding="UTF-8"?>
+<WorkCell name="demo cell">
+  <SerialDevice name="arm">
+    <Frame name="base" type="Fixed">
+      <Pos>0 0 0</Pos>
+      <RPY>0 0 0</RPY>
+    </Frame>
+    <Joint name="j1" type="Revolute">
+      <Pos>0 0 0.2</Pos>
+      <RPY>0 0 90</RPY>
+      <PosLimit min="-170" max="170"/>
+      <VelLimit max="1.5"/>
+      <Drawable name="l1mesh"><Polytope file="meshes/l1.stl"/></Drawable>
+    </Joint>
+    <Joint name="j2" type="Prismatic">
+      <Pos>0 0 0.4</Pos>
+      <PosLimit min="0" max="0.5"/>
+      <CollisionModel name="l2mesh"><Polytope file="meshes/missing.stl"/></CollisionModel>
+    </Joint>
+    <Q name="Home"> 0.5 -0.1 </Q>
+    <Q name="Alt"> 1 2 </Q>
+    <CollisionSetup file="collision/setup.xml"/>
+  </SerialDevice>
+  <Frame name="table" type="Fixed"/>
+  <Drawable name="scene-prop"><Polytope file="scene/table.stl"/></Drawable>
+  <Camera name="cam"/>
+</WorkCell>
+)";
+
+/// 两关节 WorkCell 的依赖树：l1.stl 存在、missing.stl 缺失。
+ValidatedSource makeWorkCellSource(const std::string& xml = kWorkCellTwoJoint)
+{
+    return makeSource(xml,
+                      {existingNode("meshes/l1.stl", 11), missingNode("meshes/missing.stl")},
+                      {});
+}
+
+/// 两设备 WorkCell（目标设备选择——§6.4 同机制载体）。
+const char* kWorkCellTwoDevices = R"(<?xml version="1.0"?>
+<WorkCell name="twin cell">
+  <SerialDevice name="arm-a">
+    <Joint name="a1" type="Revolute">
+      <PosLimit min="-90" max="90"/>
+    </Joint>
+  </SerialDevice>
+  <SerialDevice name="arm-b">
+    <Joint name="b1" type="Revolute">
+      <PosLimit min="0" max="180"/>
+    </Joint>
+  </SerialDevice>
+</WorkCell>
+)";
+
+/// 不可表达面 WorkCell：Spherical 多自由度关节＋Depend 从动关节＋
+/// MovableFrame 自由帧——逐项清单载体（无草稿）。
+const char* kWorkCellUnsupported = R"(<?xml version="1.0"?>
+<WorkCell name="odd cell">
+  <SerialDevice name="weird">
+    <Joint name="s1" type="Spherical"/>
+    <Joint name="d1" type="Revolute">
+      <Depend on="s1" gain="1" offset="0"/>
+    </Joint>
+    <Frame name="f1" type="Movable"/>
+  </SerialDevice>
+</WorkCell>
+)";
+
 /// 在诊断清单中查找指定码的首条记录（无则返回 false）。
 bool hasDiag(const std::vector<sdurws::ird::core::DiagnosticRecord>& diags,
              std::string_view code)
@@ -224,24 +307,28 @@ bool hasDiag(const std::vector<sdurws::ird::core::DiagnosticRecord>& diags,
 // =====================================================================
 
 /**
- * mapWorkCellXml R1 边界（acceptance 1——"后者 R1 返回 NotImplemented
- * 稳定诊断，MDL-18 R2 边界不留桩实现"）：NotImplemented 稳定错误＋无
- * 草稿＋通道引导条目；不产修订不落盘（无草稿即无落位面）。
+ * mapWorkCellXml 通道实现（acceptance 1——WP-13-T17 阶段 D：R1 边界响应
+ * 退役，WP13T05 版 R1 用例〔NotImplemented＋workcell-channel-r2〕随通道
+ * 实现更新为"真实提取"验证——MDL-18 R2 有损提取＋提取报告）：无 R1 残留
+ * 面＋报告完整产出；草稿/报告细节见下方 WP-13-T17 用例组（MdlWorkCell
+ * Import——ImportTest 内联会随本组迁移，本用例只钉 R1 退役事实）。
  */
-TEST(MdlImport, MapWorkCellXml_R1BoundaryNoStub_WP13T05_ACC1)
+TEST(MdlImport, MapWorkCellXml_ChannelImplementedR1Retired_WP13T17_ACC1)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-18"},
-                  std::vector<std::string>{});
+                  std::vector<std::string>{"AT-33"});
 
     const ModelImportMapper mapper;
     std::vector<sdurws::ird::core::DiagnosticRecord> diags;
-    const ImportOutcome outcome = mapper.mapWorkCellXml(makeSource("<WorkCell/>"),
+    const ImportOutcome outcome = mapper.mapWorkCellXml(makeSource(kWorkCellTwoJoint),
                                                         ImportOptions{}, diags);
-    ASSERT_TRUE(outcome.error.has_value());
-    EXPECT_EQ(outcome.error->code, ImportErrorCode::NotImplemented);
-    EXPECT_FALSE(outcome.draft.has_value()) << "R1 不得产出草稿（不留桩实现）";
-    ASSERT_EQ(outcome.report.unsupported.size(), 1U);
-    EXPECT_EQ(outcome.report.unsupported[0].kind, "workcell-channel-r2");
+    // 通道实现：合法 WorkCell→草稿产出（R1 的 NotImplemented 不再出现）。
+    ASSERT_TRUE(outcome.draft.has_value()) << "R2 通道应产出草稿";
+    EXPECT_FALSE(outcome.error.has_value()) << "合法文档无阻断错误";
+    for (const ImportUnsupportedItem& item : outcome.report.unsupported) {
+        EXPECT_NE(item.kind, "workcell-channel-r2")
+            << "R1 引导词表已退役——不再产出";
+    }
 }
 
 /**
@@ -1594,4 +1681,403 @@ TEST(MdlImport, AxisNormSqOverflow_ReportInvalidNotSubmittable_F587)
     ASSERT_TRUE(outcome.error.has_value());
     EXPECT_EQ(outcome.error->code, ImportErrorCode::ZeroAxisReported);
     EXPECT_FALSE(outcome.report.submittable) << "量级上溢轴不得静默成零轴提交";
+}
+
+// =====================================================================
+// WP-13-T17：WorkCell 反向导入通道（MDL-18/AT-33，R2/阶段 D——有损提取
+// ＋提取报告；units/modeling.md §6.6/§9.4.9；tasks/foundation/
+// WP-13-T17.json acceptance 逐条具名自证）
+// =====================================================================
+
+namespace {
+
+/// 在 WorkCell 通道报告中按 kind 查找 unsupported 条目（无则返回 nullptr）。
+const ImportUnsupportedItem* findUnsupported(const ImportReport& report,
+                                             std::string_view kind,
+                                             std::string_view subjectPart = {})
+{
+    for (const ImportUnsupportedItem& item : report.unsupported) {
+        if (item.kind == kind
+            && (subjectPart.empty()
+                || item.subject.find(subjectPart) != std::string::npos)) {
+            return &item;
+        }
+    }
+    return nullptr;
+}
+
+}  // namespace
+
+/**
+ * AT-33 主体（acceptance 1——从 .wc.xml 创建草稿模型＋提取报告）：两关节
+ * WorkCell 的提取语义逐项验证——关节类型（Revolute/Prismatic/Fixed）、
+ * 限位（Revolute 源 deg→rad；Prismatic 源 m）、位姿（Pos m＋RPY 源 deg
+ * →rad）、轴（RobWork Joint 固定局部 z 轴——报告注明来源）。
+ */
+TEST(MdlWorkCellImport, Extract_JointTypeLimitPoseAxis_WP13T17_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18", "MDL-11"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapWorkCellXml(makeWorkCellSource(), ImportOptions{}, diags);
+
+    // —— 草稿产出（通道实现——R1 边界已退役）。
+    ASSERT_TRUE(outcome.draft.has_value()) << "两关节 WorkCell 应产出草稿";
+    EXPECT_FALSE(outcome.error.has_value()) << "合法文档无阻断错误";
+    EXPECT_TRUE(outcome.report.submittable) << "缺失网格不置不可提交（V-08）";
+    EXPECT_EQ(outcome.draft->authority, sdurws::ird::modeling::AuthorityMode::Explicit);
+    EXPECT_EQ(outcome.draft->displayName, "demo cell");
+
+    // —— 链结构：Fixed 基帧＋Revolute＋Prismatic；links==joints+1（I-MDL-1）。
+    ASSERT_EQ(outcome.draft->joints.size(), 3U);
+    ASSERT_EQ(outcome.draft->links.size(), 4U);
+    EXPECT_EQ(outcome.draft->joints[0].localName, "base");
+    EXPECT_EQ(outcome.draft->joints[0].type,
+              sdurws::ird::modeling::JointType::Fixed);
+    EXPECT_EQ(outcome.draft->joints[1].localName, "j1");
+    EXPECT_EQ(outcome.draft->joints[1].type,
+              sdurws::ird::modeling::JointType::Revolute);
+    EXPECT_EQ(outcome.draft->joints[2].localName, "j2");
+    EXPECT_EQ(outcome.draft->joints[2].type,
+              sdurws::ird::modeling::JointType::Prismatic);
+
+    // —— j1 位姿（Pos m＋RPY 源 deg→rad：yaw 90°→π/2；π/2 的期望值以
+    //     自定义常量表达——MSVC 的 M_PI 需 _USE_MATH_DEFINES，不引入）。
+    namespace rwmath = rw::math;
+    constexpr double kHalfPi = 3.14159265358979323846 / 2.0;
+    ASSERT_EQ(outcome.draft->joints[1].origin.state(), FieldState::Provided);
+    const rwmath::Transform3D<double> o1 = outcome.draft->joints[1].origin.value();
+    EXPECT_DOUBLE_EQ(o1.P()[0], 0.0);
+    EXPECT_DOUBLE_EQ(o1.P()[2], 0.2) << "Pos 单位 m——原样提取";
+    EXPECT_NEAR(o1.R()(0, 0), std::cos(kHalfPi), 1e-12)
+        << "RPY 源单位 deg 已换算 rad（90°→π/2）";
+    EXPECT_NEAR(o1.R()(1, 0), std::sin(kHalfPi), 1e-12);
+
+    // —— j1 轴：RobWork Joint 固定局部 z 轴（无源轴元素——报告注明）。
+    ASSERT_EQ(outcome.draft->joints[1].axis.state(), FieldState::Provided);
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[1].axis.value()[0], 0.0);
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[1].axis.value()[1], 0.0);
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[1].axis.value()[2], 1.0);
+
+    // —— j1 限位：PosLimit min=-170 max=170（源 deg→rad）。
+    constexpr double kDegToRadTest = 3.14159265358979323846 / 180.0;
+    ASSERT_EQ(outcome.draft->joints[1].bounds.state(), FieldState::Provided);
+    EXPECT_NEAR(outcome.draft->joints[1].bounds.value().first,
+                -170.0 * kDegToRadTest, 1e-12)
+        << "Revolute 限位源单位 deg 已换算 rad（框架 convFactor 同口径）";
+    EXPECT_NEAR(outcome.draft->joints[1].bounds.value().second,
+                170.0 * kDegToRadTest, 1e-12);
+
+    // —— j2 限位：Prismatic 源单位 m——原样（0, 0.5）。
+    ASSERT_EQ(outcome.draft->joints[2].bounds.state(), FieldState::Provided);
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[2].bounds.value().first, 0.0);
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[2].bounds.value().second, 0.5)
+        << "Prismatic 限位单位 m——不换算";
+
+    // —— 提取报告逐项可观察（四清单面——mapped 覆盖类型/限位/位姿/轴）。
+    bool mappedLimit = false;
+    bool mappedOrigin = false;
+    bool mappedAxis = false;
+    for (const auto& m : outcome.report.mapped) {
+        if (m.targetField.find(".bounds") != std::string::npos) { mappedLimit = true; }
+        if (m.targetField.find(".origin") != std::string::npos) { mappedOrigin = true; }
+        if (m.targetField.find(".axis") != std::string::npos) { mappedAxis = true; }
+    }
+    EXPECT_TRUE(mappedLimit) << "限位映射逐行可观察";
+    EXPECT_TRUE(mappedOrigin) << "位姿映射逐行可观察";
+    EXPECT_TRUE(mappedAxis) << "轴映射（来源注明）逐行可观察";
+}
+
+/**
+ * Q 构型提取（acceptance 1——Q 构型→RobotDesign 草稿）：首命名构型对位
+ * 可动关节→zeroOffset（权威零位＝源初始姿态）；备选构型未保留逐项列出。
+ */
+TEST(MdlWorkCellImport, Extract_QConfigToZeroOffsetResidualListed_WP13T17_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapWorkCellXml(makeWorkCellSource(), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+
+    // —— 首配置 Home=[0.5, -0.1] 对位可动关节（j1/j2——Fixed 基帧不占位）。
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[1].zeroOffset, 0.5)
+        << "Q 首配置→zeroOffset（rad；q_authoritative = q_zeroOffset + q_rw）";
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[2].zeroOffset, -0.1)
+        << "Prismatic zeroOffset 单位 m——对位序＝可动关节文档序";
+    EXPECT_DOUBLE_EQ(outcome.draft->joints[0].zeroOffset, 0.0)
+        << "Fixed 基帧不占 Q 位——zeroOffset 维持 0";
+
+    // —— 备选构型 Alt：未保留逐项列出（q-config-residual）。
+    const ImportUnsupportedItem* residual =
+        findUnsupported(outcome.report, "q-config-residual", "Alt");
+    ASSERT_NE(residual, nullptr) << "备选构型必须逐项列出（AT-33 未保留面）";
+}
+
+/**
+ * 几何/碰撞提取（acceptance 1/2——几何与资源状态表）：Drawable→visual、
+ * CollisionModel→collision；Polytope→Mesh 资源 Recorded 登记（存在叶带
+ * digest、缺失叶 IO-RES-MISSING 事实＋missing 状态——缺失≠不可行）。
+ */
+TEST(MdlWorkCellImport, Extract_GeometryResourceRecorded_WP13T17_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18", "CON-03"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapWorkCellXml(makeWorkCellSource(), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+
+    // —— links[i+1]＝链元素 i：j1 连杆（links[2]）visual＝l1.stl（存在叶
+    //     ——Recorded 带 digest）。
+    ASSERT_TRUE(outcome.draft->links[2].visual.has_value());
+    EXPECT_EQ(outcome.draft->links[2].visual->resourceRefId, "meshes/l1.stl");
+
+    // —— 缺失叶：资源清单照常登记（Recorded——§6.7 缺失≠不可行；GeometryRef
+    //     亦产——缺失是资源事实非几何错误，草稿可携带）。
+    ASSERT_TRUE(outcome.draft->links[3].collision.has_value())
+        << "缺失网格仍产 GeometryRef（资源事实经 manifest/报告承载）";
+    bool missingRegistered = false;
+    for (const sdurws::ird::modeling::ResourceRef& ref : outcome.draft->resourceManifest) {
+        if (ref.resourceId == "meshes/missing.stl") {
+            missingRegistered = true;
+            EXPECT_EQ(ref.state, sdurws::ird::modeling::ResourceState::Recorded);
+        }
+    }
+    EXPECT_TRUE(missingRegistered) << "缺失网格仍登记 Recorded（V-08 草稿可携带）";
+
+    // —— 资源状态表：两行（recorded/missing 各一）＋IO-RES-MISSING 诊断。
+    ASSERT_EQ(outcome.report.resources.size(), 2U);
+    EXPECT_EQ(outcome.report.resources[0].state, "recorded");
+    EXPECT_FALSE(outcome.report.resources[0].digestHex.empty());
+    EXPECT_EQ(outcome.report.resources[1].state, "missing");
+    EXPECT_TRUE(outcome.report.resources[1].digestHex.empty());
+    bool missingDiag = false;
+    for (const auto& d : diags) {
+        if (d.code == sdurws::ird::io::errorCodeToken(
+                          sdurws::ird::io::IoErrorCode::ResMissing)) {
+            missingDiag = true;
+        }
+    }
+    EXPECT_TRUE(missingDiag) << "缺失叶事实诊断（IO-RES-MISSING——不置阻断）";
+}
+
+/**
+ * 碰撞设置/场景/备选构型未保留面＋有损报告逐项列出断言（acceptance 2
+ * ——AT-33"不可表达/未保留内容逐项列出"字面：CollisionSetup 外部引用、
+ * WorkCell 场景 Frame/Drawable、VelLimit、Camera 忽略面）。
+ */
+TEST(MdlWorkCellImport, Extract_LossyReportItemsListed_WP13T17_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18", "MDL-03"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapWorkCellXml(makeWorkCellSource(), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+
+    // —— 碰撞设置（外部文件引用——排除对未提取，未保留逐项列出）。
+    ASSERT_NE(findUnsupported(outcome.report, "collision-setup-external"),
+              nullptr) << "CollisionSetup 必须逐项列出（AT-33）";
+    // —— 设备基帧安装（MDL-22 默认地面——未保留）。
+    ASSERT_NE(findUnsupported(outcome.report, "base-placement"), nullptr);
+    // —— VelLimit（无 schema 落点——未保留）。
+    ASSERT_NE(findUnsupported(outcome.report, "joint-velocity-limit", "j1"),
+              nullptr) << "VelLimit 必须逐项列出";
+    // —— 场景内容（单设备草稿不携带）。
+    ASSERT_NE(findUnsupported(outcome.report, "scene-object", "table"), nullptr);
+    ASSERT_NE(findUnsupported(outcome.report, "scene-object", "scene-prop"), nullptr);
+    // —— Camera：呈现面——ignored 清单。
+    bool cameraIgnored = false;
+    for (const auto& ig : outcome.report.ignored) {
+        if (ig.element == "Camera") { cameraIgnored = true; }
+    }
+    EXPECT_TRUE(cameraIgnored) << "Camera 入忽略清单（报告不解释）";
+    // —— 物性 NotProvided 默认清单（WorkCell 不承载惯性——逐连杆登记）＋
+    //     basePlacement 缺省（MDL-22）为最低集；origin 缺省补零（本 fixture
+    //     j2 无 RPY）会追加条目——因此用 GE 断言下界。
+    EXPECT_GE(outcome.report.defaults.size(), outcome.draft->links.size() + 1U)
+        << "逐连杆物性默认＋basePlacement——不静默（NFR-COR-03）";
+}
+
+/**
+ * 不可表达清单（acceptance 2——MDL-10/12 同一判定规则）：Spherical 多
+ * 自由度/MovableFrame 自由帧/Depend 从动——无草稿＋UnsupportedJointType
+ * ＋逐项清单（joint-type/mimic-joint）＋不可提交。
+ */
+TEST(MdlWorkCellImport, Extract_UnsupportedTypesNoDraft_WP13T17_ACC2)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-10", "MDL-12"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapWorkCellXml(makeSource(kWorkCellUnsupported), ImportOptions{}, diags);
+
+    // —— 无草稿（不可表达——不得转 FixedFrame 绕过，M-6）。
+    EXPECT_FALSE(outcome.draft.has_value()) << "不可表达关节无草稿产出";
+    ASSERT_TRUE(outcome.error.has_value());
+    EXPECT_EQ(outcome.error->code, ImportErrorCode::UnsupportedJointType);
+    EXPECT_FALSE(outcome.report.submittable);
+
+    // —— 逐项清单：Spherical（joint-type）＋Movable Frame（joint-type）。
+    ASSERT_NE(findUnsupported(outcome.report, "joint-type", "s1"), nullptr);
+    ASSERT_NE(findUnsupported(outcome.report, "joint-type", "f1"), nullptr);
+    // —— Depend 从动＝mimic 同款（识别＋报告＋阻断——类型保留语义本用例
+    //     无草稿可挂，仅清单）。
+    ASSERT_NE(findUnsupported(outcome.report, "mimic-joint", "d1"), nullptr);
+    EXPECT_TRUE(hasDiag(diags, kMdlImportUnsupportedJoint))
+        << "MDL-IMPORT-UNSUPPORTED-JOINT 诊断（MDL-12 同一判定）";
+}
+
+/**
+ * 目标设备选择（acceptance 1——§6.4 同机制）：多 SerialDevice 文件产
+ * 分支报告；未选链拒绝（无草稿）；显式选链后提取所选设备。
+ */
+TEST(MdlWorkCellImport, Extract_MultiDeviceBranchSelection_WP13T17_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+
+    // —— 未选链：MultiBranchNeedsSelection 无草稿＋分支报告逐项。
+    const ImportOutcome unselected =
+        mapper.mapWorkCellXml(makeSource(kWorkCellTwoDevices), ImportOptions{}, diags);
+    EXPECT_FALSE(unselected.draft.has_value()) << "未选链不产草稿（§6.4 红线）";
+    ASSERT_TRUE(unselected.error.has_value());
+    EXPECT_EQ(unselected.error->code, ImportErrorCode::MultiBranchNeedsSelection);
+    ASSERT_EQ(unselected.report.branches.size(), 2U);
+    EXPECT_EQ(unselected.report.branches[0].branchRoot, "arm-a");
+    EXPECT_EQ(unselected.report.branches[1].branchRoot, "arm-b");
+    EXPECT_TRUE(hasDiag(diags, kMdlImportBranchSelection));
+
+    // —— 显式选链 arm-b：提取该设备（aux 候选不构成拒绝）。
+    ImportOptions options;
+    options.selectedMainBranch = "arm-b";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diagsSelected;
+    const ImportOutcome selected =
+        mapper.mapWorkCellXml(makeSource(kWorkCellTwoDevices), options, diagsSelected);
+    ASSERT_TRUE(selected.draft.has_value());
+    EXPECT_EQ(selected.draft->joints[0].localName, "b1") << "提取所选设备链";
+    ASSERT_EQ(selected.report.branches.size(), 2U);
+    EXPECT_EQ(selected.report.branches[0].disposition, "aux-candidate");
+    EXPECT_EQ(selected.report.branches[1].disposition, "selected");
+
+    // —— 选链不存在：调用方契约违约（SourceInconsistent）。
+    options.selectedMainBranch = "no-such-device";
+    std::vector<sdurws::ird::core::DiagnosticRecord> diagsBad;
+    const ImportOutcome bad =
+        mapper.mapWorkCellXml(makeSource(kWorkCellTwoDevices), options, diagsBad);
+    ASSERT_TRUE(bad.error.has_value());
+    EXPECT_EQ(bad.error->code, ImportErrorCode::SourceInconsistent);
+    EXPECT_FALSE(bad.draft.has_value());
+}
+
+/**
+ * 草稿不产生修订（acceptance 3——PA-1 权威唯一：不经确认不产生修订，
+ * 不经 project/**）：导入产物为纯值返回（无落盘/无命令路径）；对象身份
+ * 全部为确定性临时句柄（同输入两次调用逐字节相等）；草稿通过值模型
+ * 不变量核查（可提交草稿形态）。
+ */
+TEST(MdlWorkCellImport, DraftIsPureValueNoRevision_WP13T17_ACC3)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diagsFirst;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diagsSecond;
+    const ImportOutcome first =
+        mapper.mapWorkCellXml(makeWorkCellSource(), ImportOptions{}, diagsFirst);
+    const ImportOutcome second =
+        mapper.mapWorkCellXml(makeWorkCellSource(), ImportOptions{}, diagsSecond);
+
+    // —— 确定性（同输入→同输出）：草稿逐字段相等（含临时句柄同源——
+    //     §6.7"tmp-<序号> 不入库"；真实 ObjectId 归命令 prepare 分配，
+    //     PA-1——映射期无修订产生面）。
+    ASSERT_TRUE(first.draft.has_value());
+    ASSERT_TRUE(second.draft.has_value());
+    EXPECT_EQ(first.report, second.report);
+    for (std::size_t i = 0; i < first.draft->joints.size(); ++i) {
+        EXPECT_EQ(first.draft->joints[i].objectId, second.draft->joints[i].objectId)
+            << "确定性临时句柄——同输入同句柄（非随机）";
+    }
+
+    // —— 值模型合法性：可提交草稿通过 I-MDL-1~10 全量核查（不变量满足
+    //     ＝草稿形态自证；修订/落盘语义不在值模型承载面——ImportOutcome
+    //     为纯值聚合，无任何修订/存储句柄字段）。
+    const auto violations = sdurws::ird::modeling::checkInvariants(*first.draft);
+    EXPECT_TRUE(violations.empty()) << "可提交草稿应通过全量不变量核查";
+}
+
+/**
+ * 主链能力结论＋诊断稳定排序（acceptance 1——MDL-12 同一判定复用：
+ * judgeChainCapability 单一实现；诊断按源行序稳定排序——NFR-COR-02）。
+ */
+TEST(MdlWorkCellImport, CapabilityAndDiagOrder_WP13T17_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-12", "NFR-COR-02"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const ImportOutcome outcome =
+        mapper.mapWorkCellXml(makeWorkCellSource(), ImportOptions{}, diags);
+    ASSERT_TRUE(outcome.draft.has_value());
+
+    // —— 能力结论：1 revolute＋1 prismatic→BeyondTemplateRange（含
+    //     prismatic——类型保留不降级，V12-01；R1 范围口径）。
+    EXPECT_EQ(outcome.report.chainCapability.kind,
+              sdurws::ird::modeling::ChainCapabilityKind::BeyondTemplateRange);
+    EXPECT_EQ(outcome.report.chainCapability.movableAxes, 2U);
+    EXPECT_TRUE(outcome.report.chainCapability.containsPrismatic);
+    EXPECT_TRUE(hasDiag(diags, kMdlImportTemplateRange));
+
+    // —— 诊断稳定排序（NFR-COR-02：按（行，列）非降序）。
+    for (std::size_t i = 1; i < diags.size(); ++i) {
+        const auto lineOf = [](const std::string& context) {
+            // context 形如 "workcell-import@relFile:line:col"——解析行号。
+            const std::size_t colon1 = context.rfind(':');
+            const std::size_t colon2 = context.rfind(':', colon1 - 1);
+            return std::stoi(context.substr(colon2 + 1));
+        };
+        EXPECT_LE(lineOf(diags[i - 1].context), lineOf(diags[i].context))
+            << "诊断按源行序稳定排序";
+    }
+}
+
+/**
+ * 经接口消费的公共面钉扎（契约测试面——IModelImportMapper::mapWorkCellXml
+ * 接口与 WorkCellReverseImport 提取引擎同源）：接口调用与直接调用引擎的
+ * 产出逐字段相等（单一实现——无第二份提取逻辑）。
+ */
+TEST(MdlWorkCellImport, InterfaceDelegatesToEngine_WP13T17_ACC1)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-18"},
+                  std::vector<std::string>{"AT-33"});
+
+    const ModelImportMapper mapper;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diagsViaInterface;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diagsViaEngine;
+    const ImportOutcome viaInterface =
+        mapper.mapWorkCellXml(makeWorkCellSource(), ImportOptions{}, diagsViaInterface);
+    const ImportOutcome viaEngine =
+        sdurws::ird::modeling::extractWorkCellDevice(makeWorkCellSource(),
+                                                     ImportOptions{},
+                                                     diagsViaEngine);
+    EXPECT_EQ(viaInterface, viaEngine) << "接口＝引擎委托（单一实现）";
+    EXPECT_EQ(diagsViaInterface, diagsViaEngine) << "诊断产出同源";
 }

@@ -3,8 +3,8 @@
   "taskId": "WP-13-T17",
   "unit": "modeling",
   "masterWp": "WP-E",
-  "title": "WorkCell 反向导入通道（MDL-18/AT-33，R2/阶段 D——有损提取＋提取报告；本契约为 planned 占位登记，阶段门禁未启用不得领取实施）",
-  "status": "ready",
+  "title": "WorkCell 反向导入通道（MDL-18/AT-33，R2/阶段 D——有损提取＋提取报告；已实现落位——io 侧 openGenericXml 通道＋modeling 侧 WorkCellReverseImport 提取引擎＋mapWorkCellXml 真实提取）",
+  "status": "done",
   "dependsOn": [
     "WP-13-T05",
     "IO-T05"
@@ -55,5 +55,5 @@
     "有损提取报告是本任务的验收核心（AT-33 字面）——不可表达/未保留内容逐项列出不是附属品，缺失即验收 fail"
   ],
   "branch": "wp13-t17",
-  "note": "【planned 占位登记（2026-10-05，队列治理批次）】MDL-18 .wc.xml 互操作按所有者队列指令'另立任务'落位本契约（此前仅 DTB §2.14 表行占位无契约文件；表行依赖 WP-11-T06 系 io 旧编号——落位实绩＝IO-T05 资源导入服务 reader 面，已 done）。R2/阶段 D 门禁未启用：①所有者阶段启用裁决未作；②io 卡 IResourceReader GenericXml 签名未冻结（modeling.md §6.6 原文'R2 启用前由 io 卡冻结'——须 io 侧增补契约后方可持续）。两前置齐备前本契约保持 planned 不得领取；status 翻转 ready 归所有者/编排者。R1 边界现状＝IModelImportMapper::mapWorkCellXml 返回 NotImplemented 稳定诊断（§9.4.9；'workcell-channel-r2' 引导词表已登记于 ImportUnsupportedItem kind）——用户引导链已通，通道本体待阶段 D。阶段 D 启用登记（2026-10-12，所有者指令「planned 4 个阶段启动」＝阶段 D 启用裁决）：领取前置①满足；前置②由治理批直接执行——io.md §9.6 增补 IResourceReader GenericXml 具名签名（按 io.md 既有预留「IResourceReader::openXml(...) 同一通道——P-1 角色＋预算＋快照＋依赖树」口径冻结，io 卡版本行随增补 bump），本卡 outputs 第 3 条口径不变（不授权 io/**——签名冻结由治理批完成（io.md v0.10）；io 侧 openGenericXml 实现与测试随本卡实施批交付——status 翻转时的契约增量修订扩授权（outputs 第 3 条既定机制：allowedFiles 扩至 io/** 实现面，接口契约面以 io.md v0.10 冻结为准）；planned→ready。"
+  "note": "【planned 占位登记（2026-10-05，队列治理批次）】MDL-18 .wc.xml 互操作按所有者队列指令'另立任务'落位本契约（此前仅 DTB §2.14 表行占位无契约文件；表行依赖 WP-11-T06 系 io 旧编号——落位实绩＝IO-T05 资源导入服务 reader 面，已 done）。R2/阶段 D 门禁未启用：①所有者阶段启用裁决未作；②io 卡 IResourceReader GenericXml 签名未冻结（modeling.md §6.6 原文'R2 启用前由 io 卡冻结'——须 io 侧增补契约后方可持续）。两前置齐备前本契约保持 planned 不得领取；status 翻转 ready 归所有者/编排者。R1 边界现状＝IModelImportMapper::mapWorkCellXml 返回 NotImplemented 稳定诊断（§9.4.9；'workcell-channel-r2' 引导词表已登记于 ImportUnsupportedItem kind）——用户引导链已通，通道本体待阶段 D。阶段 D 启用登记（2026-10-12，所有者指令「planned 4 个阶段启动」＝阶段 D 启用裁决）：领取前置①满足；前置②由治理批直接执行——io.md §9.6 增补 IResourceReader GenericXml 具名签名（按 io.md 既有预留「IResourceReader::openXml(...) 同一通道——P-1 角色＋预算＋快照＋依赖树」口径冻结，io 卡版本行随增补 bump），本卡 outputs 第 3 条口径不变（不授权 io/**——签名冻结由治理批完成（io.md v0.10）；io 侧 openGenericXml 实现与测试随本卡实施批交付——status 翻转时的契约增量修订扩授权（outputs 第 3 条既定机制：allowedFiles 扩至 io/** 实现面，接口契约面以 io.md v0.10 冻结为准）；planned→ready。【done 落位登记（2026-10-12 实施批，分支 wp13-t17）】三段交付全部落位：①io 侧 openGenericXml 实现（ResourceIo.hpp/.cpp——expat 自实现文档序结构树＋ContentDigester 摘要＋SafePath/预算/SP-6 防护同 snapshot；★等价调整登记＝io.md §9.6 卡面字段类型 core::ContentDigest 按 core::Digest256 落位〔该类型名 core 公共头不存在——摘要值类型唯一 Digest256，ResourceSnapshot.contentDigest 同型先例〕，算法/宽度/语义零变更；io.md 未改动——units/io.md 不在本卡授权内）；②modeling 侧 WorkCellReverseImport.hpp/.cpp 提取引擎＋mapWorkCellXml 真实提取（modeling.md §6.6 更新为已实现＋§15 v0.47 增量登记——提取语义逐条：目标设备选择 §6.4 同机制/MDL-12 同一判定/DHJoint 全旋转同质链经 dhToExplicit 展开〔T09 单一实现〕/deg→rad 换算点显式/Q→zeroOffset/几何 Recorded/碰撞设置与场景未保留逐项列出；'workcell-channel-r2' 词表退役＋追加六值）；③草稿红线保持（不经 project/**——零 project 依赖）；'从 WorkCell XML 新建项目来源'明确不做未触碰。验证：集成构建零错误（industrialrobot 全链；框架 RobWorkSim 侧 RWSimulatorPlugin/bt_plugin 两目标在本构建树预存在编译失败——框架头/eigen 宏冲突，SA-02 不予触碰）＋独立冒烟零错误；测试全绿＝主测试 2659/2659〔io 127（+4）/modeling 371（+9）/其余 12 目标零回归〕＋contract_test 417/417＋gui 42＋drivetrain 37；ird_gates/validate 结论与构建日志见 traceability/builds/wp13-t17/。"
 }

@@ -221,8 +221,13 @@ struct ImportIgnoredItem {
  *   （box/cylinder/sphere——§6.3 未登记映射语义）、"joint-velocity-limit"
  *   （<limit velocity>——§4.3-A 无 maxVelocity 字段，不发明 schema）、
  *   "multiple-visual"/"multiple-collision"（多几何引用——schema 单引用，
- *   仅首个映射其余逐条报告）、"workcell-channel-r2"（mapWorkCellXml 的
- *   R1 边界引导——MDL-18 R2/阶段 D）。
+ *   仅首个映射其余逐条报告）。
+ *
+ * WorkCell 通道追加值（WP-13-T17——WorkCellReverseImport.hpp 词表常量；
+ * 表尾追加纪律同款）：'workcell-channel-r2' 引导面已随通道实现退役
+ * （R1 边界响应不再产出——R2/阶段 D 启用，modeling.md §9.4.9 随批登记）；
+ * 新增 device-type/scene-object/collision-setup-external/q-config-residual/
+ * joint-acceleration-limit/base-placement 六值（语义见 WorkCellReverseImport.hpp）。
  */
 struct ImportUnsupportedItem {
     std::string kind;             ///< 不支持类别（上行词表）
@@ -546,11 +551,12 @@ enum class ImportErrorCode : std::uint8_t {
     /// ——I-MDL-2）。
     NameConflict,
     /// "SourceInconsistent"——源不一致（字节与依赖树不匹配/URDF 结构
-    /// 违例（悬空引用/多根/断链）——io 良构检查之上 URDF 语义层的结构性
-    /// 破损；无草稿产出）。
+    /// 违例（悬空引用/多根/断链）/WorkCell 通道的根元素或选链违例——io
+    /// 良构检查之上语义层的结构性破损；无草稿产出）。
     SourceInconsistent,
-    /// "NotImplemented"——mapWorkCellXml 的 R1 边界响应（MDL-18 R2/
-    /// 阶段 D；不留桩实现——§6.6）。
+    /// "NotImplemented"——保留值（历史 R1 边界响应码；mapWorkCellXml 随
+    /// WP-13-T17 阶段 D 实现已不再产出——枚举值保留以维持 wire/判别
+    /// 兼容，表尾追加纪律不重排既有值）。
     NotImplemented,
 };
 
@@ -668,18 +674,21 @@ public:
                          std::vector<core::DiagnosticRecord>& diags) const = 0;
 
     /**
-     * @brief WorkCell 反向导入（MDL-18——R2/阶段 D 通道；§6.6）。
+     * @brief WorkCell 反向导入（MDL-18——R2/阶段 D 通道，已实现；§6.6）。
      *
-     * R1 边界响应：返回 NotImplemented 稳定错误＋报告说明（unsupported
-     * 清单 "workcell-channel-r2" 引导条目），不产草稿、不留桩实现
-     * （§6.6"R1 不实现、不留桩代码"原文）；阶段 D 启用时由 WP-13-T17
-     * 领取实现（有损提取＋提取报告）。R1 无已注册诊断码面（§9.5 无
-     * 对应行——分批纪律不私定码值），引导经报告条目承载，diags 不产出。
+     * R2/阶段 D 实现（WP-13-T17 落位）：有损提取＋提取报告——委托
+     * WorkCellReverseImport 提取引擎（extractWorkCellDevice，§6.6 单一
+     * 实现）；产出草稿（不产生修订、不落盘、不经 project/**——PA-1）＋
+     * 提取报告（不可表达/未保留内容逐项列出——AT-33 验收核心）。R1 的
+     * NotImplemented 边界响应与 'workcell-channel-r2' 引导条目已退役
+     * （词表退役登记见 ImportUnsupportedItem 注与 modeling.md §9.4.9）。
      *
-     * @param source  [in] io 已验证产物（R2 消费；R1 不解释）
-     * @param options [in] 导入选项（R2 消费；R1 不解释）
-     * @param diags   [out] 诊断输出（R1 不追加——无注册码面）
-     * @return ImportOutcome{无草稿, 报告（通道引导）, NotImplemented}
+     * @param source  [in] io 已验证产物（ValidatedSource 契约同 mapUrdf）
+     * @param options [in] 导入选项（selectedMainBranch＝目标设备名——
+     *                §6.4 选链回填语义；单设备文件留空）
+     * @param diags   [out] 诊断输出（追加不清空；按源文件行序稳定排序；
+     *                码面＝已注册 MDL-IMPORT-族与 IO-族稳定码）
+     * @return ImportOutcome{draft?, report, error?}（三元关系同 mapUrdf）
      */
     virtual ImportOutcome
         mapWorkCellXml(const ValidatedSource& source,
