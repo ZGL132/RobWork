@@ -138,11 +138,15 @@ if(TARGET sdurw_kinematics)
         src/TimeParam.cpp      # §12 时间参数化与节拍（五次样条 C²＋限速
                                #   缩放＋节拍输出——WP-16-T08；Q 构造面
                                #   ＋IPathGeometry 消费——集成条件，见上）
-        src/Playback.cpp)      # §14.5 会话域面三件（动画播放查表＋曲线只读
+        src/Playback.cpp       # §14.5 会话域面三件（动画播放查表＋曲线只读
                                #   投影＋路点局部重规划编排——WP-16-T10；Q
                                #   构造面〔插值帧/样本表副本/段表产物〕＋
                                #   smooth/recheck/timeParameterize 复用——
                                #   集成条件，见上）
+        src/ProcessSpeed.cpp)  # 工艺速度约束校验（指定段 TCP 速度受限/恒
+                               #   定——TRJ-08-S2/WP-16-T15；经 ITimeCurve::
+                               #   sampleAt 消费 Q 构造面＋FK 端口——集成条
+                               #   件，见上）
 endif()
 
 # C++17（core.md 决策 D-01 同源）：逐目标显式设定，不设全局标准。
@@ -446,12 +450,19 @@ if(TARGET sdurw_kinematics)
                                         #   下文/ERR-01 字段/违约族/确定性；
                                         #   构造 rw::math::Q 对象——集成条
                                         #   件，同上）
-        test/PlaybackExportTest.cpp)    # WP-16-T10：TRJ-07（动画查表黄金/越
+        test/PlaybackExportTest.cpp     # WP-16-T10：TRJ-07（动画查表黄金/越
                                         #   界拒用/段归投影/曲线只读投影/局
                                         #   部重规划冻结编排〔复用三纯函数
                                         #   ＋复检强制边〕/标准导出黄金布局
                                         #   ＋读回往返＋确定性＋失败保留先前
                                         #   输出＋AT-04 零修订素材族）
+        test/ProcessSpeedTest.cpp)      # WP-16-T15：TRJ-08-S2（匀速/正弦/
+                                        #   静止解析黄金算例＋受限满足断言/
+                                        #   超限比较型素材＋恒定带满足/越带
+                                        #   诊断＋驻留口径＋端口 PortError/
+                                        #   Canceled 分流＋取消＋违约族＋空
+                                        #   段合法＋确定性＋多段观测/FK 直
+                                        #   穿计数——Q 构造面，集成条件，同上）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_test PRIVATE cxx_std_17)
@@ -604,6 +615,14 @@ target_sources(sdurws_ird_trajectory_contract_test PRIVATE
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_trajectory_contract_test PRIVATE
         contract_test/KinematicsPortContractTest.cpp)
+    target_sources(sdurws_ird_trajectory_contract_test PRIVATE
+        contract_test/ProcessSpeedContractTest.cpp)  # WP-16-T15：TRJ-08-S2
+                                        #   契约面——S2 启用后 SegmentConstraint
+                                        #   零槽位守护（SFINAE 编译期）＋违例
+                                        #   码复用元数据（真实 StableCodeRegistry
+                                        #   find）＋m/s 单位环境面＋违约 token
+                                        #   前缀族＋v3 词表消费序（调用 check-
+                                        #   ProcessSpeed 库符号——集成条件同上）
 endif()
 
 target_compile_features(sdurws_ird_trajectory_contract_test PRIVATE cxx_std_17)
