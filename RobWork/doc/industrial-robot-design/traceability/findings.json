@@ -7106,13 +7106,11 @@
       "id": "F-728",
       "source": "acc/wp-16-t16/1 验收记录 §10 建议级 S-2（origin/acc/wp-16-t16/1 :: RobWork/doc/industrial-robot-design/traceability/acceptance/wp-16-t16-20261011.md，记录提交 4e426de379f5201d18cec319d9d0727ae4959829，验收日期 2026-10-11，verdict=pass）",
       "severity": "suggestion",
-      "status": "fixed",
+      "status": "open",
       "registeredAt": "2026-10-12",
       "title": "WP-16-T16 验收 S-2（遗留观察）：gate-all.ps1 在 ui 单元 sdurws_ird_ui_test 的 ctest 执行处挂住逾 1 小时（实施提交如实登记未跑完、以 ird_gates 零命中为口径；T15 批同现象同口径）——非本任务引入的环境遗留现象，记录建议治理批定位该 ctest 挂住并闭环",
       "owner": "治理/门禁所有者",
-      "resolution": "随治理批 2026-10-12 gate-all 补跑口径闭环：第 4 步等效命令侦察完成（gateSmokeDir/配置与构建参数已备好），完整补跑由流水线后续步骤确定性执行并留痕 traceability/builds/gate-all-step4-makeup/（描述性引用，留痕由后续步骤产出）——补跑全绿即证实挂住为验收批会话环境遗留而非产品/门禁缺陷；若补跑复现挂住则本条重开并定位。",
-      "fixedAt": "2026-10-12",
-      "fixedBy": "治理批 2026-10-12（B 项 gate-all 补跑口径，流水线后续步骤执行）"
+      "resolution": "治理批 2026-10-12 勘误：本条此前按 fixed 登记属误标——gate-all 第 4 步 fresh 冒烟树补跑（traceability/builds/gate-all-step4-makeup/，提交 1c586a1d）只覆盖配置＋构建两步（留痕 README 自述不含任何 ctest），而 gate-all.ps1:175-184 的第 4 步完整实现含逐目标 ctest，ui ctest 挂住的定位与闭环并未发生，fixed 与留痕直接矛盾。勘误口径：gate-all 第 4 步 fresh 冒烟树能力已由治理批 2026-10-12 补跑消账（traceability/builds/gate-all-step4-makeup/）；第 3 步/逐目标 ctest 的 ui 挂住定位与闭环仍 open，待专项。"
     }
   ]
 }
