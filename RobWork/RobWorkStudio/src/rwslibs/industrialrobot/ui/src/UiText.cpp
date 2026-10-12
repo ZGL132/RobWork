@@ -724,6 +724,29 @@ std::string resolveText(const TextKey& key, const std::vector<std::string>& args
 }
 
 // =====================================================================
+// 禁用原因 tooltip 决策（ERR-01 呈现半区——F-553；契约见头文件）
+// =====================================================================
+
+std::string disableReasonToolTip(bool enabled, const std::string& reasonKey,
+                                 const std::string& baseToolTip)
+{
+    // 可用态：还原基础悬停文案（可用项不应残留上一次禁用原因——刷新点
+    // 每拍重写 tooltip，本分支保证状态翻转后呈现随之归位）。
+    if (enabled) {
+        return baseToolTip;
+    }
+    // 禁用且有原因键：统一原因解析（ERR-01「禁用必带原因」——原因文案
+    // 与状态行/命令面板同源一词表；未登记键按 resolveText 契约 fail-fast，
+    // 不静默回显键名）。
+    if (!reasonKey.empty()) {
+        return resolveText(reasonKey);
+    }
+    // 禁用但键为空：F-557 同面守卫（空键＝处理器拒绝的非可用性禁用，
+    // 无原因可解析）——不进解析保持基础文案，不渲染空白 tooltip。
+    return baseToolTip;
+}
+
+// =====================================================================
 // 数值＋单位显示（§6.6）
 // =====================================================================
 
