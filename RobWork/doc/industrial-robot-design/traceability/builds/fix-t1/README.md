@@ -16,16 +16,18 @@
 
 ## 受影响单元回归（fresh worktree 集成树实跑）
 
-**留痕构成更正（attempt 1 验收 B-1 返工——2026-10-12）**：首次实施提交 25a7f92a 的六套件运行未产出 gtest XML（`--gtest_output=xml:<MSYS 风格路径>` 的 `/d/...` 前缀不被 Windows 运行时解析，XML 静默未产出），而 README/提交正文声称"XML 落库"＝申报失实——attempt 1 验收（acc/fix-t1/1 @78fc038b）如实判 fail。本返工轮以 Windows 风格路径（`xml:D:/...`）真实重跑六套件，XML 与 ird-test-report JSON 同次运行产出、全部落库 xml/ 与 reports/；下表"结果"列以返工轮 XML 为准。
+**留痕构成更正（attempt 1 验收 B-1 返工——2026-10-12）**：首次实施提交 25a7f92a 的六套件运行未产出 gtest XML（`--gtest_output=xml:<MSYS 风格路径>` 的 `/d/...` 前缀不被 Windows 运行时解析，XML 静默未产出），而 README/提交正文声称"XML 落库"＝申报失实——attempt 1 验收（acc/fix-t1/1 @78fc038b）如实判 fail。返工轮以 Windows 风格路径（`xml:D:/...`）真实重跑六套件，XML 与 ird-test-report JSON 同次运行产出、全部落库 xml/ 与 reports/。
 
-| 套件 | 结果（返工轮 XML 实证） | 留痕 |
+**二次更正（attempt 2 验收 B-2——2026-10-12）**：上一版本表 requirements_test 与 ui_test 两行用例数转抄写反（267↔214）——attempt 2 验收（acc/fix-t1/2 @f67267f8）机器比对 XML 实值判 fail。本版表格数值由 XML 机器提取（`<testsuites tests=>` 属性逐文件 grep）回填，不再手工转抄。
+
+| 套件 | 结果（XML 机器提取值） | 留痕 |
 | --- | --- | --- |
 | sdurws_ird_modeling_test | 375/375 PASS（failures=0，含新增 2 用例） | xml/modeling_test.xml＋reports/ird-test-report-modeling_test.json＋modeling_test.log |
-| sdurws_ird_requirements_test | 267 用例全 PASS（failures=0；含环境条件 skip） | xml/requirements_test.xml＋reports/…requirements_test.json＋requirements_test.log |
-| sdurws_ird_ui_test | 214 用例全 PASS（failures=0；含环境条件 skip） | xml/ui_test.xml＋reports/…ui_test.json＋ui_test.log |
-| sdurws_ird_modeling_gui_test | 42 用例（41 过＋1 环境条件 skip——F-620 剪贴板面，failures=0） | xml/modeling_gui_test.xml＋reports/…modeling_gui_test.json＋modeling_gui_test.log |
+| sdurws_ird_requirements_test | 214 用例（213 过＋1 环境条件 skip〔ACC1 豁免〕；failures=0） | xml/requirements_test.xml＋reports/…requirements_test.json＋requirements_test.log |
+| sdurws_ird_ui_test | 267/267 全过（failures=0，零 skip） | xml/ui_test.xml＋reports/…ui_test.json＋ui_test.log |
+| sdurws_ird_modeling_gui_test | 42 用例（41 过＋1 环境条件 skip——F-620 剪贴板面；failures=0） | xml/modeling_gui_test.xml＋reports/…modeling_gui_test.json＋modeling_gui_test.log |
 | sdurws_ird_requirements_gui_test | 47/47 PASS（failures=0） | xml/requirements_gui_test.xml＋reports/…requirements_gui_test.json |
-| sdurws_ird_ui_gui_test | 81 用例（80 过＋1 环境条件 skip，failures=0） | xml/ui_gui_test.xml＋reports/…ui_gui_test.json |
+| sdurws_ird_ui_gui_test | 81 用例（80 过＋1 环境条件 skip；failures=0） | xml/ui_gui_test.xml＋reports/…ui_gui_test.json |
 
 （attempt 1 验收者亲跑的独立口径：requirements 213+1 skip／ui 267 全过／ui_gui 80+1 skip——与返工轮同绿，skip 均为环境条件面非缺陷。）
 
