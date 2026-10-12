@@ -4,7 +4,7 @@
   "unit": "delivery",
   "masterWp": "WP-I",
   "title": "编写性能基准清单与测量协议登记",
-  "status": "planned",
+  "status": "ready",
   "dependsOn": [],
   "requirements": [
     "NFR-PERF-01",
@@ -25,6 +25,13 @@
     "RobWork/doc/industrial-robot-design/performance-baseline.md",
     "RobWork/doc/industrial-robot-design/traceability/**"
   ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/DETAILED-DESIGN.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**"
+  ],
   "outputs": [
     "design-doc",
     "traceability-update"
@@ -42,5 +49,5 @@
   "acceptance": [
     "新建 doc/industrial-robot-design/performance-baseline.md（基准清单＋黄金项目定义＋协议）：基准清单覆盖全部 PERF 条目；PM-16 协议（冷/热分组、≥15+15 样本、P95 线性插值）落位；不以 3 次中位数替代 P95（DTB 行禁止项）"
   ],
-  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"可在阶段 A 产出、阶段 C 启用\"。P-TK-5（大体绩黄金数据存储/CI 策略——首个大数据集出现时裁决）与 O-22（同源）为黄金项目定义的已登记裁决挂靠；testkit.md §10.1 performance-baseline 类预留为启用面。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。"
+  "note": "DTB §2.24 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"可在阶段 A 产出、阶段 C 启用\"。P-TK-5（大体绩黄金数据存储/CI 策略——首个大数据集出现时裁决）与 O-22（同源）为黄金项目定义的已登记裁决挂靠；testkit.md §10.1 performance-baseline 类预留为启用面。dependsOn 按实际可挂契约如实登记：DTB 行原文前置中尚未立契约者（见各 note）不伪造依赖，协作语义由 knownPitfalls/note 承载（WP-19-T12 先例）。编译放行（2026-10-13，WP-23-T01 实施段）：status planned→ready＋补齐 ready 必备字段（forbiddenFiles 补登——四份主文档与产品源码禁改，DTB 禁改为本任务偏差登记的契约面钉住；allowedFiles/outputs/acceptance/branch 既有字段复核齐备）。放行依据＝所有者 2026-10-13『开始执行』指令＋实现分支 wp23-t01；仍待独立评审放行与验收段对抗式验收（AGENTS §6.4 三段式）。产物 performance-baseline.md v0.1：基准清单 B-01~B-08（NFR-PERF-01~06＋PM-16 全覆盖＋NFR-COR-02 确定性基准）、黄金项目定义（PM-16 口径 1,000 对象/100 修订，来源引 REQUIREMENTS §17 原文）、测量协议（冷/热分组、每组有效样本 ≥15+15 合计 ≥30、P95 线性插值、冷启动软指标单独报告不作门禁、并行吞吐不含首次编译与导入、归约容差引附录 D 第 8 项）、T02~T09 达标判据挂点（照抄 DTB 各行语义）。偏差登记：本分支不改 development-task-breakdown.md——DTB 版本行登记延后至验收合入批统一处理（避免与主线并行批次撞号），由合入批补登。"
 }
