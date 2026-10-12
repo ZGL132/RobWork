@@ -551,7 +551,8 @@ IrdWorkbenchHostPlugin::IrdWorkbenchHostPlugin()
     // 原生插件（TreeView 等）命名风格一致；类名保持 IrdWorkbenchHostPlugin
     // 不变（插件仍是全部 IRD Dock/菜单/投影的宿主装配体，更名只作用于
     // 显示名——宿主 QSettings 布局记忆键随名一次性轮换，旧键残留无害）。
-    : rws::RobWorkStudioPlugin(QString::fromUtf8("工业项目树"), QIcon())
+    : rws::RobWorkStudioPlugin(QString::fromUtf8("工业项目树"), QIcon()),
+      m_crashTailSource(m_diag)  // WP-24-T02——快照源绑定诊断栈（成员声明序保证 m_diag 先构造）
 {
 }
 
@@ -577,6 +578,10 @@ void IrdWorkbenchHostPlugin::initialize()
         m_diag.pipeline->logDev(kPluginDevChannel,
                                 "插件诊断栈就绪（开发日志目录：" + devlogDir.u8string() + "）");
     }
+    // WP-24-T02——崩溃捕获快照源接线（装配序后段）：进程入口装捕获时点
+    // 本栈尚不存在，栈就绪后把 dev 日志尾（§7.6 第③段）接进崩溃报告。
+    // 捕获未安装（开发期动态装载通道）时为无操作——静默无害。
+    studio::setCrashSnapshotSource(&m_crashTailSource);
     reportLine("诊断栈就绪（开发日志目录：" + devlogDir.u8string() + "）");
 
     // ---- 装配第二步：端口适配器（O-31 装配层特权边——复用 harness 形态）----
@@ -1169,6 +1174,10 @@ void IrdWorkbenchHostPlugin::initialize()
 
 IrdWorkbenchHostPlugin::~IrdWorkbenchHostPlugin()
 {
+    // WP-24-T02——崩溃捕获快照源解除注册：本源（m_crashTailSource）随插件
+    // 消亡，不及时解绑会让崩溃路径在源生命周期之后悬挂解引用（注册为
+    // 裸指针——设施契约"注册方以成员/静态存储期持有"的退出半区）。
+    studio::setCrashSnapshotSource(nullptr);
     // 有界拆卸（幂等）：正常退出路径已随 aboutToQuit 收口——此处兜底
     // （插件实例由 QPluginLoader 持有到进程退出，析构可能不执行）。
     if (m_content) {

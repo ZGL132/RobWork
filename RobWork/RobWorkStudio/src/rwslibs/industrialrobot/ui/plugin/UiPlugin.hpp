@@ -82,6 +82,7 @@
 #include "DomainAssembly.hpp"                    // 域插件装配产物（WP-24-T03 首版装配）
 #include "app/DiagnosticsAssembly.hpp"           // 诊断栈装配（与 harness 共用序列）
 #include "app/PortAdapters.hpp"                  // 端口适配器集（O-31 装配层特权边——复用形态）
+#include "studio/CrashCapture.hpp"               // 崩溃捕获快照源接线（WP-24-T02——dev 日志尾段）
 
 class QAction;    // 框架菜单动作（setupMenu 注入面——完整定义在 Qt 头）
 class QDockWidget;  // 同级 Dock（UI-T18 多 Dock 拓扑——完整定义在 Qt 头）
@@ -131,6 +132,53 @@ class KinEvaluationExecutor;       // kinematics 覆盖评估执行器（UI-T64�
 namespace sdurws {
 namespace ird {
 namespace ui {
+
+/**
+ * @brief 开发日志尾快照源（WP-24-T02——崩溃捕获 diagnostics.md §7.6 第③段
+ *        "最近 512 行开发日志快照"的接线体）。
+ *
+ * 背景说明（为什么由插件提供此源）：会话诊断栈（LoggingPipeline）在插件
+ * initialize 装配（成员 m_diag——进程入口 StudioMain 装崩溃捕获时点尚不
+ * 存在）；捕获设施只认 studio::CrashReportSnapshotSource 接口，插件装配
+ * 完成后经 studio::setCrashSnapshotSource 把本源接上——装配序后段接线，
+ * 不产生入口→插件的逆向依赖。崩溃时快照在崩溃线程采集
+ * （devTailSnapshot 线程安全——Logging.hpp 契约），尽力而为：栈未就绪
+ * （空指针）即第③段如实留空，不伪造数据。
+ *
+ * 活动任务/finding/打开项目三段：其登记权威在 project/execution 会话态
+ * （宿主插件壳侧无可达引用）——本源如实不填（留空），取舍登记于
+ * WP-24-T02 note 与 ui.md §16.7。
+ *
+ * 生命周期：插件成员（m_diag 之后声明——引用其栈）；析构时插件析构函数
+ * 经 setCrashSnapshotSource(nullptr) 解除注册——防止"源随插件消亡后捕获
+ * 路径悬挂解引用"。
+ */
+class PluginDevTailCrashSource final : public studio::CrashReportSnapshotSource {
+public:
+    /// @brief 构造（绑定插件诊断栈——非拥有引用，须覆盖本源生命周期）。
+    explicit PluginDevTailCrashSource(app::DiagnosticsStack& stack)
+        : m_stack(stack)
+    {
+    }
+
+    /// @brief 采集 dev 日志尾快照（崩溃线程调用——设施侧已整体异常隔离）。
+    /// 返回类型带 studio:: 限定（本类在 sdurws::ird::ui——基类返回类型
+    /// 的名字空间不可达即"未知重写说明符"）。
+    studio::CrashContextSegments snapshot() override
+    {
+        studio::CrashContextSegments segments;
+        // 栈在插件 initialize 装配、进程退出前恒在位——空指针防御是
+        // "装配序早于接线"（源先于栈构造）窗口的兜底：该窗口第③段留空。
+        if (m_stack.pipeline) {
+            segments.devLogTail = m_stack.pipeline->devTailSnapshot(
+                diagnostics::kCrashReportDevTailLines);
+        }
+        return segments;
+    }
+
+private:
+    app::DiagnosticsStack& m_stack;  ///< 插件诊断栈（非拥有——见类注生命周期）
+};
 
 /**
  * @brief 工作台宿主插件（ui 单元唯一 _plugin 目标的根类型）。
@@ -341,6 +389,9 @@ private:
     //      引用；控制器/内容装配面为本插件独占成员——析构序＝声明逆序，
     //      控制器与内容装配面先于端口适配器消亡）----
     app::DiagnosticsStack m_diag;                                 ///< 诊断栈（与 harness 同装配序列）
+    /// 崩溃捕获 dev 日志尾快照源（WP-24-T02——§7.6 第③段接线体；绑定
+    /// m_diag——声明在其后保证初始化序安全；接线见 initialize 装配第一步）。
+    PluginDevTailCrashSource m_crashTailSource;
     std::shared_ptr<app::UnloadedPolicySource> m_policySource;    ///< 策略未装载占位（C-10）
     /// 名称解析端口（C-11）：装配起点＝NullUiNameResolver 桩（恒 nullopt）；
     /// F-551 起需求域可用时升级为需求域解析前端（RequirementsNameResolver

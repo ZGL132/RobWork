@@ -23,9 +23,23 @@
 
 #include <sdurws/ird/testkit/gtest/RecordListener.hpp>
 
-/// 测试入口：构造 QCoreApplication→初始化 gtest→安装报告监听器→执行用例。
+// 子进程模式分派契约（WP-24-T02——进程级崩溃契约子进程 av/abort/hang）。
+#include "StudioCrashChild.hpp"
+
+#include <string>
+
+/// 测试入口：子进程模式拦截（先于 QCoreApplication——子进程是裸崩溃现场，
+/// 不进入测试框架）→构造 QCoreApplication→初始化 gtest→安装报告监听器
+/// →执行用例。
 int main(int argc, char** argv)
 {
+    // WP-24-T02 进程级崩溃契约子进程分派（--ird-wp24-t02-child <mode>；
+    // 拦截先于 Qt/GTest——LockContractTest 子进程拦截同款先例。防误触：
+    // 全 token 精确匹配＋模式白名单在 runCrashTestChild 内封闭）。
+    if (argc >= 3 && std::string(argv[1]) == "--ird-wp24-t02-child") {
+        return sdurws::ird::ui::studio::runCrashTestChild(argv[2]);
+    }
+
     // QCoreApplication：headless 契约测试形态（无需 GUI 平台插件——ui.md
     // §3.1 该目标行的运行环境约定）。
     QCoreApplication app(argc, argv);

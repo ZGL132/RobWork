@@ -1,0 +1,25 @@
+WP-24-T02 真机实证记录（sdurws_ird_studio 产品二进制——AT-11 崩溃链路端到端）
+==============================================================================
+环境：集成构建树 build/（Release），sdurws_ird_studio.exe（WP-24-T02 产物）。
+执行序：
+  1) rm -rf %LOCALAPPDATA%\sdurws-ird\industrial-robot-studio\crash   （清场）
+  2) sdurws_ird_studio.exe --ird-crash-test av
+     → 进程受控访问违例（volatile 空指针写）→ SEH 过滤器路径
+     → CrashReportInput 六段组装 → CrashReportWriter 写用户目录
+     → 进程以异常码终结（bash 报 "Segmentation fault"，exit 139＝128+11 映射）
+  3) 断言：crash\ 下恰一份 crash-<epochMs>-<pid>.log，内容见
+     crash-file-sample-real-studio.log——关键行：
+       format=ird-crash-report/1
+       process=sdurws_ird_studio (industrial-robot-studio, x64)
+       exceptionType=seh-access-violation          ← SEH 路径实证
+       exceptionMessage=code=[ADDR] address=00007FF61C458006
+       activeTasks=0 / activeFindings=0 / devLogTail=0   ← 壳侧如实留空形态
+     （真机启动通道下插件未 initialize，dev 尾段诚实留空——与产品装配序一致）
+  4) 参数面防误触实测：
+       --ird-crash-test bogus    → stderr "unknown --ird-crash-test mode" → exit 2
+       --ird-crash-test          → stderr "requires a mode (av|abort)"   → exit 2
+结论：AT-11 观测点"诊断文件写出且脱敏"在真实产品二进制上成立（本用例消息
+无凭据/路径供数；脱敏断言由进程级契约用例 StudioCrashReport.* 承载——
+凭据/令牌/用户名/目录名零命中＋替换标记在案，见 integration-ui-contract-test-run.log）。
+诚实边界：RobWorkStudio.ini 模板缺位（fresh worktree——F-007 既知前置）使正常
+无参 GUI 全程启动未在本树点验；GUI 面经本崩溃通道与参数面实测覆盖。

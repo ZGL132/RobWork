@@ -360,7 +360,15 @@ add_executable(sdurws_ird_ui_test
     test/RuntimePublishBridgeTest.cpp
     test/SelectionServiceTest.cpp   # UI-T21——选择服务：写入口/L2/L3 四分支/INV-B4/订阅
     test/IndustrialProjectTreeModelTest.cpp   # UI-T21——树模型：五分组封闭/注册协议/重建四拒绝/定位
-    test/PropertyInspectorModelTest.cpp)      # UI-T22——检查器模型：注册纪律/L1 刷新/D5D6 分野/激活编排
+    test/PropertyInspectorModelTest.cpp       # UI-T22——检查器模型：注册纪律/L1 刷新/D5D6 分野/激活编排
+    test/CrashCaptureTest.cpp)      # WP-24-T02——崩溃捕获发射核心模型面（六段组装/降级/防重入；零 Qt）
+
+# WP-24-T02 增列：被测 TU 同源编入（发射核心 emitCrashReportTo 与产品同一
+# 翻译单元——HostCompilePort 同款"同源码编入测试目标"先例形态；设施零 Qt，
+# 两模式可跑；测试面消费无新链接边——diagnostics/core 经 sdurws_ird_ui
+# PUBLIC 传染到达）。绝对锚定 CMAKE_CURRENT_SOURCE_DIR——不随目录层级漂移。
+target_sources(sdurws_ird_ui_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/studio/CrashCapture.cpp)
 
 target_compile_features(sdurws_ird_ui_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_test PROPERTIES
@@ -462,7 +470,14 @@ add_executable(sdurws_ird_ui_contract_test
     contract_test/DraftContractTest.cpp
     contract_test/InteractionTaskContractTest.cpp
     contract_test/PeerBridgeContractTest.cpp
-    contract_test/Section12RegistryTest.cpp)
+    contract_test/Section12RegistryTest.cpp
+    contract_test/StudioCrashContractTest.cpp  # WP-24-T02——进程级崩溃契约（AT-11：子崩→文件落盘脱敏）
+    contract_test/StudioCrashChild.cpp)        # WP-24-T02——子进程模式实现（main 拦截分派——Tx15Child 同款）
+
+# WP-24-T02 增列：被测 TU 同源编入（捕获发射核心与产品同一翻译单元——
+# 子进程装捕获走产品真实路径；零 Qt，两模式可跑）。绝对锚定同 ui_test 段。
+target_sources(sdurws_ird_ui_contract_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/studio/CrashCapture.cpp)
 
 target_compile_features(sdurws_ird_ui_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_ui_contract_test PROPERTIES
@@ -747,6 +762,7 @@ add_custom_command(TARGET sdurws_ird_ui_app POST_BUILD
 if(TARGET sdurws)
     add_library(sdurws_ird_ui_plugin MODULE
         plugin/UiPlugin.cpp
+        studio/CrashCapture.cpp  # WP-24-T02——崩溃捕获设施（UiPlugin 快照源接线消费——同单元共享 TU 随宿主装配面编入）
         plugin/DomainAssembly.cpp   # WP-24-T03 首版装配——registrar 装配＋建模面板挂位＋UiText 接线
         plugin/ExtraDomainAssembly.cpp  # ASM-UI——dynamics/selection/optimization 三新域承接（ASM-STUDIO 批起本目标与 studio 两同源目标均编入——studio 三条 unit 级边已随该批增登）
         plugin/DomainModuleRunner.cpp  # UI-T23——draft.apply 多模块遍历编排（acceptance 2；零 Qt）
@@ -870,6 +886,7 @@ endif()
 if(TARGET sdurws)
     add_executable(sdurws_ird_studio WIN32
         studio/StudioMain.cpp
+        studio/CrashCapture.cpp  # WP-24-T02——OS 级崩溃捕获装配（零 Qt——捕获路径纪律；同单元私有装配面 TU）
         plugin/UiPlugin.cpp
         plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
         plugin/ExtraDomainAssembly.cpp  # ASM-STUDIO——三新域承接（studio→三域 unit 级边本批增登后编入；与插件目标同源，IRD_UI_PLUGIN_EXTRA_DOMAINS 定义区分段生效）

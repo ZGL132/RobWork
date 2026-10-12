@@ -1,0 +1,10 @@
+format=ird-crash-report/1
+writtenEpochMs=1791823178135
+pid=29932
+process=sdurws_ird_studio (industrial-robot-studio, x64)
+exceptionType=seh-access-violation
+exceptionMessage=code=[ADDR] address=00007FF784A18006
+project=-
+activeTasks=0
+activeFindings=0
+devLogTail=0
