@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "UI-T78",
+  "unit": "ui",
+  "masterWp": "WP-I",
+  "title": "三维模型几何渲染＋ray-cast 拾取对接（WP-10-T05 阶段 B 三维交互批次 ui 侧——F-550 剩余面收口）",
+  "status": "ready",
+  "dependsOn": [
+    "RT-T15",
+    "UI-T77"
+  ],
+  "requirements": [
+    "UX-11（三维视图交互九项清单——View3DContract.hpp view3DInteractionManifest 冻结序，清单即阶段 B 验收边界：不得缩水，亦不得清单外扩面）",
+    "KIN-06／AT-04（三维拾取回写仅会话姿态——view3DSessionPoseContract 四布尔钉住：不写设计模型、不产生修订、不触发结果失效）",
+    "AT-23（三维拾取载体——拾取上行经既有 HostView3DGateway.pickFrame 缝→SA-05 反解→域分发＋View3DPick 选中）",
+    "ARC-04（呈现侧只读——渲染消费已发布快照的 WorkCell，零第二编译路径、零修订写入、零缓存身份参与）"
+  ],
+  "designRefs": [
+    "units/ui.md#13",
+    "units/ui.md#14.1",
+    "units/runtime.md#12",
+    "development-task-breakdown.md#2.11",
+    "traceability/findings.json#F-550",
+    "industrialrobot/ui/include/sdurws/ird/ui/View3DContract.hpp（九项交互清单＋KIN-06 语义钉住常量）",
+    "industrialrobot/ui/plugin/HostView3DGateway.hpp（pickFrame 上行拾取缝——Ctrl+双击→pickFrame→SA-05 反解→域分发）"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+    "RobWork/doc/industrial-robot-design/units/ui.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/UI-T78.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改；RWStudioView3D／WorkCellScene 等框架三维能力只消费不修改，框架级三维工具栏等缺能力须走 patches 流程）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**（并行会话在途——避让）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**（并行会话在途——避让；mesh 解析加载器亦归 io 阶段 B）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**（并行会话在途——避让）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**（并行会话在途——避让）",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md（零需求语义变更）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**（几何产物由 RT-T15 交付——本卡只消费其编译产物，不改 runtime 源码）"
+  ],
+  "outputs": [
+    "发布模型几何渲染面：HostWorkCellPresentationObject 呈现半区（UI-T77 发布链宿主单入口挂接点）消费已发布快照 WorkCell 帧树＋RT-T15 编译图元几何——模型 drawable 经发布/重编译/项目切换既有编排入场景（INV-B4 单入口不旁路）；生命周期随发布 WC 场景节点整体收口（UI-T77 骨架组同款纪律：换 WC 随旧节点树收口、零残留零清理名单），与骨架组（帧轴阵/链线/标签）共存不冲突",
+    "ray-cast 拾取对接面：发布模型帧/Drawable 纳入既有 pickFrame 通道——Ctrl+双击命中模型对象后经 SA-05 反解→域分发＋View3DPick 选中（缝机制零重写，只补发布模型的命中面）；拾取结果写回语义受 view3DSessionPoseContract 约束（仅会话姿态）",
+    "九项清单交付边界核对：View3DInteractionItem 九项逐项交付状态登记——宿主原生提供项（标准/相机视图、缩放、透视正交、线框透明、渲染分组显隐、PNG 截图）随 RWStudioView3D 集成既有在位，本批逐项核对验收、不重实现（SA-02）；本批网关交付项＝几何渲染＋拾取对接两面；渲染分组显隐须对本批模型 drawable 生效",
+    "测试与留痕：网关呈现后拾取可达 gui 用例＋渲染生命周期用例（发布→渲染→重编译→切换收口零残留）；ctest 全单元＋ird_gates＋validate-docs PASS；留痕 traceability/builds/ui-t78/"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_ui_plugin",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/ui -C Release（ui_test/ui_contract_test 全绿；ui_gui_test 按 §12.2 Windows GUI 口径执行并如实登记环境障碍）",
+    "cmake --build build --config Release --target ird_gates（零新增；增量须按 §4.5 登记）",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1"
+  ],
+  "acceptance": [
+    "渲染面：应用草稿（发布后）三维视图呈现模型几何（RT-T15 图元——连杆圆柱/包围盒随帧位姿，关节示教随动）——F-550『发布后三维视图仍仅网格』的剩余面收口；项目切换后旧几何随发布链收口零残留（具名用例）",
+    "拾取面：发布后 Ctrl+双击模型对象拾取可达（pickFrame 命中→SA-05 反解→域分发）——F-550 step6『三维视图无模型对象可拾取』收口；拾取写回零修订、零结果失效（KIN-06 四布尔钉住用例）",
+    "清单边界：九项清单逐项核对登记在案——宿主原生提供项不重实现不缩水登记；碰撞高亮与组掩码项渲染承载在位、其业务数据面（碰撞会话）归域侧消费任务（诚实边界登记，不虚构交付）；渲染分组显隐对本批 drawable 生效具名用例",
+    "mesh 保真度边界：本批渲染消费 RT-T15 基本图元；真实 visual/collision mesh 渲染（mesh 解析加载器／GeometryRef.localTransform 编译域透传／资源字节消费）＝待所有者裁决的保真度升级项，不在本批验收（卡面登记不私裁）",
+    "回归门槛：UI-T33/52/65/76/77 既有三维预览链与骨架呈现零回归；双模式构建零错误；gtest XML＋ird-test-report.json 留痕 traceability/builds/ui-t78/；ird_gates 命中集零新增或增量登记"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "F-550"
+  ],
+  "branch": "ui-t78",
+  "note": "WP-10-T05 阶段 B 三维交互批次 ui 侧卡（2026-10-12 立项——先卡后码；F-550 owner『阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道）』承接；F-496 十步的拾取/TCP-视觉半区以本批为前置）。编号口径：立项输入称 UI 系已用到 UI-T76，卡面实测（findings.json 30 处＋分支 ui-t76 提交 1a9b5523、ui-t77 merge aa9f7aa3 均已合入 redesign-main）显示 UI-T77 已占用——按『取下一个可用号』原则取 UI-T78（T78 全仓 md/json/分支实测未占用）。dependsOn=RT-T15：渲染几何源（runtime 编译图元挂接）；dependsOn=UI-T77：呈现挂接点（HostWorkCellPresentationObject 发布链单入口呈现半区）与骨架组共存面。interUnit=true 判定＝消费 runtime 编译产物（RT-T15）且拾取反解消费 SA-05 端口。status=ready 待独立评审放行。"
+}

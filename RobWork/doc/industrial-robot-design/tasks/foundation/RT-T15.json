@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "RT-T15",
+  "unit": "runtime",
+  "masterWp": "WP-D",
+  "title": "编译器基本图元几何挂接（S6 增量——mesh 资源通道预留；保真度升级待所有者裁决）",
+  "status": "ready",
+  "dependsOn": [
+    "RT-T11"
+  ],
+  "requirements": [
+    "ARC-03（编译产物 WorkCell 为三维呈现与拾取的唯一几何来源——运行时快照承载发布产物，呈现侧零第二构造路径〔SA-18 D10 既有约束的几何面延伸〕）",
+    "ARC-04（显示代理几何不入模型身份——图元为呈现代理，派生自模型参数但不进 RT-Codec 身份域、不入缓存键，§4.3.6 显示字段纪律）"
+  ],
+  "designRefs": [
+    "units/runtime.md#5.2",
+    "units/runtime.md#8.6",
+    "units/runtime.md#4.3.6",
+    "units/runtime.md#12",
+    "units/runtime.md#15.4",
+    "development-task-breakdown.md#2.7",
+    "traceability/findings.json#F-550",
+    "industrialrobot/runtime/src/WorkCellCompiler.cpp（几何挂接欠账注释——『几何资源（visual/collision）的 WC 挂接随资源消费任务落位』，§15.4 v0.8⑦ 同源）"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/RT-T15.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/（industrialrobot 外框架源码——SA-02 零源码修改）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/**（mesh 解析加载器与 IRuntimeResourceProvider 实现归 io 阶段 B——本批只预留接口位不实现；并行会话在途——避让）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/**（并行会话在途——避让）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**（并行会话在途——避让）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/**（并行会话在途——避让）",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**（渲染消费方归 UI-T78——本批不改 ui 源码）",
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md（零需求语义变更）"
+  ],
+  "outputs": [
+    "WorkCellCompiler S6 增量：为设备链连杆／工具／场景对象帧挂接基本图元几何（圆柱连杆／盒包围）——最小形态＝编译器内建图元（零外部资源依赖，当前模板模型 resourceManifest 为空亦可交付）；图元派生规则须确定性（同模型同图元）并于实施卡评审冻结后随落位登记；几何承载不得新增映射外帧名、不得改变 Frame 树／Device／Joint／限位既有产物语义",
+    "mesh 资源通道预留：IRuntimeResourceProvider 接口位（§8.6 已冻结契约面，零修改）在编译路径的接线预留——resourceManifest 为空或 provider 缺位时诚实跳过（不虚构几何、不产错误、不阻塞编译）；mesh 解析加载器／GeometryRef.localTransform 编译域透传／资源字节消费＝保真度升级，待所有者裁决（F-550 登记的四段缺口之①②④，本批只消账③挂接位的图元形态）",
+    "测试：RT-GEO 族（图元挂接面：几何随帧位姿一致性——worldTframe 同源随 FK／State；诚实跳过面：manifest 空／provider 缺位零虚构零阻塞）＋RT-ID／RT-CACHE／RT-NM 族回归（显示代理不入身份域与缓存键、映射帧名集零变化）",
+    "文档与留痕：runtime.md §12 RT-T15 行落位标记＋§15.4 变更记录行；双模式构建＋gtest XML＋ird-test-report.json 留痕 traceability/builds/wp06-t15/"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime",
+    "ctest --test-dir build/RobWorkStudio/src/rwslibs/industrialrobot/runtime -C Release -L \"^ird$\"",
+    "cmake --build build --config Release --target ird_gates（零新增或增量登记）",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1"
+  ],
+  "acceptance": [
+    "图元挂接面：设备链（连杆圆柱）／工具／场景对象（盒包围）图元挂接其映射帧，几何位姿随帧（worldTframe 同源，FK／State 变化随动）；S6 既有产物（Frame 树／Device／Joint／限位）与映射条目零变化——具名用例钉住",
+    "诚实跳过面：resourceManifest 为空（当前模板模型现状——F-550 登记）或 provider 缺位时编译成功且零虚构几何、不产错误级诊断——既有编译链全部用例回归通过（RT-T01~T14 面零回归）",
+    "身份面：显示代理图元不入 CanonicalModel 身份域、不入任何缓存键（§4.3.6 显示字段纪律——RT-ID／RT-CACHE 族既有用例回归钉住）；图元派生确定性（同输入同产物）",
+    "保真度裁决边界：真实 mesh 渲染通道（io 侧解析加载器／GeometryRef.localTransform 透传／IRuntimeResourceProvider 资源字节消费）＝待所有者裁决的保真度升级项——本批只保留接口位不实现（卡面登记不私裁；裁决后如涉契约面变更走 DTB §5.4 增量修订）",
+    "回归门槛：双模式构建零错误（冒烟模式被测面按既有 gating 纪律如实登记）；既有 RT-T01~T14 契约面与公共头零修改（增量在 src 编译器实现内）；gtest XML＋ird-test-report.json 留痕 traceability/builds/wp06-t15/；ird_gates 命中集零新增或增量登记"
+  ],
+  "interUnit": true,
+  "knownPitfalls": [
+    "F-550",
+    "P-RT-3"
+  ],
+  "branch": "rt-t15",
+  "note": "units/runtime.md §15.4 v0.8⑦＋WorkCellCompiler.cpp 几何挂接欠账注释的立卡消账（2026-10-12 立项——先卡后码；F-550 owner『阶段 B 三维交互批次』runtime 侧）。最小形态＝编译器内建基本图元（圆柱连杆／盒包围，零外部资源依赖）；真实 mesh＝保真度升级，留待所有者裁决（卡面明确登记此裁决项；裁决前 mesh 通道只保留 §8.6 接口位——IRuntimeResourceProvider 契约面随 RT-T09 已落位，本批零契约面改动）。knownPitfalls：F-550＝本卡消账对象（三维视图无模型渲染/拾取——其『发布后模型骨架呈现』半区已由 UI-T77 交付，真实网格渲染与本卡图元形态互补）；P-RT-3＝L1 RobWork 依赖边界（图元构造消费基线几何类，依赖集不扩——新增边随 P-RT-3 口径登记）。interUnit=true 判定＝编译产物几何为 UI-T78 渲染/拾取的直接消费源。dependsOn=RT-T11：挂接点在十段链 S6 段内，随 compile() 整体事务交付。DTB 对应行＝WP-06-T15（≙RT-T15，沿 WP-06-T14 惯例）。status=ready 待独立评审放行。"
+}
