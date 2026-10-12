@@ -1,23 +1,25 @@
 /**
  * @file   Tx11Tx13SuiteTest.cpp
- * @brief  PRJ-T15 补齐 §11 表两行具名用例体：PRJ-TX-13（只读上下文遍历
- *         全部写 API——一律拒绝＋稳定诊断，错误码集合＝设计清单）与
- *         PRJ-TX-11（复制一致性——前置未就绪的显式阻塞登记）。
+ * @brief  §11 表两行具名用例体：PRJ-TX-13（只读上下文遍历全部写 API
+ *         ——一律拒绝＋稳定诊断，错误码集合＝设计清单）与 PRJ-TX-11
+ *         （复制一致性——另存为换 projectId 全链引用走查＋包导入哈希
+ *         与引用一致；PRJ-T18 实体落位后由阻塞登记转为真实执行）。
  *
  * 设计依据：
  *   - units/project.md §12 PRJ-T15 行（产物：PRJ-TX-1～14 用例体——
- *     其中 TX-13 的"全入口遍历"与 TX-11 的"前置未就绪处置"为本任务
- *     新增落位面；其余 TX 组的用例体已随 PRJ-T02～T14 落位，本任务
- *     以执行留痕消账）、§11 PRJ-TX-13 行（PM-07：只读打开→逐个调用→
- *     一律拒绝＋稳定诊断→错误码集合＝设计清单）、§11 PRJ-TX-11 行
- *     （PM-05/AT-20——另存为/包导入导出的引用一致性）、§13.1（另存为/
- *     包导入导出实体＝阶段 B——WP-04-T17/T18）、§5.8（ISaveAsService/
- *     IPackageService 阶段 B 落地、接口先冻结）、§9.6（失权/只读门卫
- *     ——全部写入口的统一拒绝语义）、§10.1（归档 begin 锁面校验）；
+ *     其中 TX-13 的"全入口遍历"为本任务新增落位面；TX-11 原为前置未
+ *     就绪的显式阻塞登记〔GTEST_SKIP〕，随 PRJ-T18 实体落位转真实
+ *     执行——用例体语义按 §11 行原文）、§11 PRJ-TX-13 行（PM-07：只读
+ *     打开→逐个调用→一律拒绝＋稳定诊断→错误码集合＝设计清单）、
+ *     §11 PRJ-TX-11 行（PM-05/AT-20——另存为/包导入导出的引用一致性；
+ *     观测点＝新旧 projectId 比对＋闭包校验通过）、§8.8～§8.10（另存
+ *     为/选择性复制/包导入导出协议——PRJ-T18 落位的实体消费面）、
+ *     §5.8（ISaveAsService/IPackageService 冻结签名）、§9.6（失权/只读
+ *     门卫——全部写入口的统一拒绝语义）、§10.1（归档 begin 锁面校验）；
  *   - units/testkit.md §6.2（TempDir 消费——unit 目标的 testkit 接入
  *     面，任务契约 acceptance 2）、§7.3（IRD_TEST_INFO 追溯登记）；
- *   - 需求 PM-07（只读打开：可查看不可写）、PM-05（另存为/包——阶段
- *     B）、AT-20、NFR-REL-01（写路径门卫）。
+ *   - 需求 PM-07（只读打开：可查看不可写）、PM-05（另存为/包存储侧）、
+ *     AT-20、NFR-REL-01（写路径门卫）。
  *
  * 错误码清单口径（TX-13 预期列"错误码集合＝设计清单"）：只读打开的
  * 写拒绝统一走 LockHeldByOther 门卫（§5.1——写权限唯一依据 SA-17），
@@ -30,21 +32,29 @@
 #include <sdurws/ird/core/Identity.hpp>
 #include <sdurws/ird/project/ArchivePort.hpp>
 #include <sdurws/ird/project/DraftService.hpp>
+#include <sdurws/ird/project/PackageService.hpp>
 #include <sdurws/ird/project/QueryPort.hpp>
 #include <sdurws/ird/project/UndoRedo.hpp>
 #include <sdurws/ird/testkit/Fixture.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
+#include "PackageStubs.hpp"
 #include "StubHandlers.hpp"
 
 #include <gtest/gtest.h>
 
 #include <filesystem>
+#include <fstream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
 namespace fs = std::filesystem;
+
+// 测试侧命名空间别名（core 为 sdurws::ird 的嵌套命名空间——TX-11
+// 转真实用例的断言代码保持与产品代码同形的限定名）。
+namespace core = sdurws::ird::core;
 
 using sdurws::ird::core::BranchId;
 using sdurws::ird::core::RevisionId;
@@ -61,8 +71,18 @@ using sdurws::ird::project::ProjectStore;
 using sdurws::ird::project::ProjectStoreFactory;
 using sdurws::ird::project::SaveResult;
 using sdurws::ird::project::StoreErrorCode;
+using sdurws::ird::project::BranchTip;
+using sdurws::ird::project::ObjectRef;
+using sdurws::ird::project::PackageExportOptions;
+using sdurws::ird::project::PackageExportResult;
+using sdurws::ird::project::PackageImportResult;
+using sdurws::ird::project::RevisionView;
+using sdurws::ird::project::RunInfo;
+using sdurws::ird::project::SaveAsOptions;
+using sdurws::ird::project::SaveAsResult;
 using sdurws::ird::project::stub::AppendObjectHandler;
 using sdurws::ird::project::stub::AppendUndoHandler;
+using sdurws::ird::project::stub::PackageFixture;
 using sdurws::ird::project::stub::StubSink;
 using sdurws::ird::testkit::TempDir;
 
@@ -262,30 +282,158 @@ TEST(Tx13ReadOnlyAllWrites, TraversesEveryWriteEntry_AllRejectedWithStableDiag)
 }
 
 // =====================================================================
-// 用例组：Tx11CopyConsistency（PRJ-TX-11——前置未就绪的显式阻塞登记）
+// 用例组：Tx11CopyConsistency（PRJ-TX-11——复制一致性；PRJ-T18 转真实
+// 用例——另存为/包导入导出实体已落位，本用例体按 §11 行原文执行）
 // =====================================================================
 
 /**
- * 锚定：PRJ-TX-11／PM-05／AT-20；units/project.md §13.1（另存为/包导入
- * 导出实体＝阶段 B——WP-04-T17/T18 承接）＋§5.8（接口先冻结、实体未
- * 落地）；任务契约 acceptance 3"前置未就绪的用例如实标注阻塞原因，
- * 不带病前进"。
+ * 锚定：PRJ-TX-11／PM-05／AT-20；units/project.md §11 PRJ-TX-11 行
+ * 原文（"另存为（换 projectId）后全链引用走查；包导入后哈希与引用
+ * 一致｜对象/修订/分支引用可解析；results 保持原五元组；报告-结果引
+ * 用缺失时报告不复制｜新旧 projectId 比对；闭包校验通过"）＋§8.8/
+ * §8.9/§8.10（另存为协议/选择性复制/包导入导出——实体随 PRJ-T18 落
+ * 位，本用例由阻塞登记（GTEST_SKIP）转为真实执行）。
  *
- * 处置：本用例**显式跳过**（GTEST_SKIP——gtest 计 skipped、
- * ird-test-report.json 计 skipped 不计通过，§7.2 四类分列），阻塞原因
- * ＝被测实体（ISaveAsService/IPackageService 实现体）未落地。§11 行的
- * 用例体语义（另存为换 projectId 后全链引用走查；包导入后哈希与引用
- * 一致）在 WP-04-T17/T18 的任务卡内执行并留痕——本登记保证 §11 表的
- * 逐行消账可见（"未执行"不被静默标注为"通过"，AGENTS §4.2）。
+ * 前置：健康源项目（修订闭包＋一个完整运行＋草稿＋报告树——其中
+ * rep-missing-ref 引用不存在的运行）。
+ * 操作：全勾选另存为 → 新项目全链引用走查；随后全勾选导出→导入 →
+ * 导入项目哈希与引用走查。
+ * 预期：
+ *   - 另存为：newProjectId 有效且 ≠ 源（新旧 projectId 比对面）；分支/
+ *     修订/对象引用全部可解析（branchTips 全等；闭包逐修订视图全等；
+ *     对象字节逐字节相同）；results 的 RunManifest 五元组保持原
+ *     projectId（历史运行事实不改写）；rep-missing-ref 不复制；
+ *   - 包导入：projectId 保持源值（整体搬运不改写）；HEAD 字节与源
+ *     全等（哈希面）；闭包引用可解析、对象字节逐字节相同；
+ *   - 两路副本的打开协议（闭包校验）随进入完成——打开成功即通过面。
+ * 观测点：新旧 projectId 比对＋引用走查＋磁盘字节（ird-test-report.
+ * json trace 登记）。
  */
-TEST(Tx11CopyConsistency, StageBPrerequisiteNotReady_SkipRegistered)
+TEST(Tx11CopyConsistency, SaveAsAndPackageImport_ReferenceWalkConsistent)
 {
     IRD_TEST_INFO(std::vector<std::string>{"PM-05"},
                   std::vector<std::string>{"AT-20"});
-    GTEST_SKIP()
-        << "前置未就绪：另存为/包导入导出实体归阶段 B（units/project.md "
-           "§13.1——WP-04-T17/T18；§5.8 接口先冻结、实体未落地）。"
-           "PRJ-TX-11 用例体（另存为换 projectId 后全链引用走查；包导入后"
-           "哈希与引用一致）在实体落位任务中执行并留痕——本跳过即任务契约 "
-           "acceptance 3『如实标注阻塞原因』的登记形态。";
+    PackageFixture f("ird-prj-tx11-consistency");
+
+    const core::ProjectId sourceId = f.store().projectId();
+    const RevisionView sourceHead = f.store().query().head();
+    const std::vector<BranchTip> sourceTips = f.store().query().branchTips();
+    const std::vector<RunInfo> sourceRuns
+        = f.store().query().listRuns(sourceHead.id);
+    ASSERT_EQ(sourceRuns.size(), std::size_t{1});
+
+    // ---- 半区 1：另存为（换 projectId）后全链引用走查。
+    SaveAsOptions saveAsOptions;
+    saveAsOptions.targetDir = f.dir.parent_path() / (f.dir.filename().string() + "-tx11-copy");
+    saveAsOptions.copyResults = true;
+    saveAsOptions.copyReports = true;
+    saveAsOptions.copyDrafts = true;
+    const SaveAsResult copied = f.saveAsService->saveAs(saveAsOptions);
+    ASSERT_TRUE(copied.ok) << (copied.error ? copied.error->what() : "ok==false");
+    ASSERT_NE(copied.store, nullptr);
+    ProjectStore& copyStore = *copied.store;
+    // 装配对齐（hasUnresolvedPayload 判据的会话面——两侧注册同形后
+    // 视图全等断言才反映数据本身）。
+    copyStore.handlerRegistry().registerHandler(
+        std::make_unique<AppendObjectHandler>());
+
+    // 新旧 projectId 比对（core 分配的新身份——必不相同且有效）。
+    EXPECT_TRUE(copied.newProjectId.isValid());
+    EXPECT_NE(copied.newProjectId, sourceId);
+    EXPECT_EQ(copyStore.projectId(), copied.newProjectId);
+
+    // 分支引用可解析：分支表与源全等（ID/label/base/tip 原样）。
+    const std::vector<BranchTip> copyTips = copyStore.query().branchTips();
+    ASSERT_EQ(copyTips.size(), sourceTips.size());
+    for (std::size_t i = 0; i < sourceTips.size(); ++i) {
+        EXPECT_TRUE(copyTips[i] == sourceTips[i]) << "分支条目 " << i << " 失真";
+    }
+
+    // 修订/对象引用可解析（闭包逐修订：视图全等＋对象字节逐字节相同
+    // ——AT-20 引用一致半区；闭包校验随 PM-02 打开协议进入完成）。
+    std::optional<core::RevisionId> cursor = sourceHead.id;
+    while (cursor.has_value()) {
+        const std::optional<RevisionView> sourceRev
+            = f.store().query().tryRevision(*cursor);
+        ASSERT_TRUE(sourceRev.has_value());
+        const std::optional<RevisionView> copyRev
+            = copyStore.query().tryRevision(*cursor);
+        ASSERT_TRUE(copyRev.has_value())
+            << "副本修订不可解析: " << cursor->toCanonical();
+        EXPECT_TRUE(*copyRev == *sourceRev);
+        for (const ObjectRef& ref : sourceRev->objectRefs) {
+            EXPECT_TRUE(copyStore.query().object(ref.objectId, ref.contentVersion)
+                        == f.store().query().object(ref.objectId, ref.contentVersion));
+        }
+        cursor = sourceRev->parent;
+    }
+
+    // results 保持原五元组（历史运行事实——taskIdentity.projectId 不
+    // 改写；读取侧不校验 manifest 的 projectId 归属，§8.8）。
+    const std::vector<RunInfo> copyRuns
+        = copyStore.query().listRuns(copyStore.query().head().id);
+    ASSERT_EQ(copyRuns.size(), std::size_t{1});
+    EXPECT_TRUE(copyRuns[0] == sourceRuns[0]);
+    EXPECT_EQ(copyRuns[0].task.project, sourceId);
+
+    // 报告-结果引用缺失时报告不复制（§8.9——rep-missing-ref 引用的
+    // run 不在勾选集）。
+    ASSERT_EQ(copied.skippedReports.size(), std::size_t{1});
+    EXPECT_EQ(copied.skippedReports[0], "rep-missing-ref");
+    EXPECT_FALSE(fs::exists(saveAsOptions.targetDir / "reports" / "rep-missing-ref"));
+    copyStore.requestClose();
+
+    // ---- 半区 2：包导入后哈希与引用一致。
+    const fs::path packFile = f.dir.parent_path() / "tx11.rwpack";
+    PackageExportOptions exportOptions;
+    exportOptions.targetFile = packFile;
+    exportOptions.includeResults = true;
+    exportOptions.includeReports = true;
+    exportOptions.includeDrafts = true;
+    const PackageExportResult exported
+        = f.packageService->exportPackage(exportOptions);
+    ASSERT_TRUE(exported.ok) << (exported.error ? exported.error->what() : "ok==false");
+
+    const fs::path importDir
+        = f.dir.parent_path() / (f.dir.filename().string() + "-tx11-import");
+    PackageImportResult imported = f.packageService->importPackage(packFile, importDir);
+    ASSERT_TRUE(imported.ok) << (imported.error ? imported.error->what() : "ok==false");
+    ASSERT_NE(imported.store, nullptr);
+    ProjectStore& importStore = *imported.store;
+    // 装配对齐（hasUnresolvedPayload 判据的会话面——同前：两侧注册
+    // 同形后视图全等断言才反映数据本身）。
+    importStore.handlerRegistry().registerHandler(
+        std::make_unique<AppendObjectHandler>());
+
+    // 导入不改写身份（项目整体搬运——与另存为换新相反）＋HEAD 哈希面
+    // 逐字节一致（导入零改写的字节级口径）。
+    EXPECT_EQ(imported.importedProjectId, sourceId);
+    {
+        std::ifstream sourceHeadFile(f.dir / "HEAD", std::ios::binary);
+        std::ifstream importHeadFile(importDir / "HEAD", std::ios::binary);
+        std::ostringstream sourceHeadBytes;
+        std::ostringstream importHeadBytes;
+        sourceHeadBytes << sourceHeadFile.rdbuf();
+        importHeadBytes << importHeadFile.rdbuf();
+        EXPECT_EQ(importHeadBytes.str(), sourceHeadBytes.str());
+    }
+
+    // 引用一致：闭包逐修订可解析＋对象字节逐字节相同。
+    cursor = sourceHead.id;
+    while (cursor.has_value()) {
+        const std::optional<RevisionView> sourceRev
+            = f.store().query().tryRevision(*cursor);
+        ASSERT_TRUE(sourceRev.has_value());
+        const std::optional<RevisionView> importRev
+            = importStore.query().tryRevision(*cursor);
+        ASSERT_TRUE(importRev.has_value())
+            << "导入修订不可解析: " << cursor->toCanonical();
+        EXPECT_TRUE(*importRev == *sourceRev);
+        for (const ObjectRef& ref : sourceRev->objectRefs) {
+            EXPECT_TRUE(importStore.query().object(ref.objectId, ref.contentVersion)
+                        == f.store().query().object(ref.objectId, ref.contentVersion));
+        }
+        cursor = sourceRev->parent;
+    }
+    EXPECT_EQ(importStore.requestClose(), 0u);
 }

@@ -1,0 +1,16 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\core\Release\sdurws_ird_core.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\project\Release\sdurws_ird_project.lib
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\core\Release\sdurws_ird_core.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\project\Release\sdurws_ird_project.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_project_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\project\Release\sdurws_ird_project_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\core\Release\sdurws_ird_core.lib
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\project\Release\sdurws_ird_project.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_project_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\pipeline-wt4\build-smoke-t18\project\Release\sdurws_ird_project_contract_test.exe

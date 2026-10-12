@@ -166,6 +166,21 @@ find_package(GTest CONFIG REQUIRED)
 # externalResourceGateData〔数据非判定——N-9〕；SolidifyServiceImpl.hpp
 # 为 src/ 私有实现头——R-2；对象类型 token＝"ExternalResource"〔域
 # 登记，实现口径③〕）。
+# PRJ-T18 增列：src/StoreClone.cpp＋src/SaveAsServiceImpl.cpp＋
+# src/PackageServiceImpl.cpp（另存为与项目包实体落位——阶段 B 平台服务
+# 域补全批：§8.8 另存为协议〔同卷临时位完整复制→闭包校验→换新
+# projectId 三处改写〔D-16〕→发布→按 PM-02 打开协议进入；results 的
+# RunManifest 五元组保持原样〕＋§8.9 选择性复制与引用完整性〔reports
+# 引用 run 不在勾选集→不复制＋诊断列出〕＋§8.10 包导出导入〔导出＝
+# D-17 快照一致数据视图＋编解码执行；导入＝同卷临时位解包校验→打开
+# 协议校验→rename 发布，失败/取消不留目标目录〕＋消费窄接口
+# IPackageCodec/ISnapshotFileSource〔公共头 PackageService.hpp——§3.1
+# 预留落位＋§5.8 冻结签名零偏差：SaveAsOptions/PackageExportOptions/
+# PackageImportResult、ISaveAsService/IPackageService；O-09 注入式协作
+# 零 io 编译依赖——零 io 头/零 io 链接边，真实编解码随 L5 装配注入〕
+# ＋既有 AtomicFile/publishNew 原语复用〔不绕过事务原语私写〕；
+# StoreClone.hpp/SaveAsServiceImpl.hpp/PackageServiceImpl.hpp 为 src/
+# 私有实现头——R-2）。
 add_library(sdurws_ird_project STATIC
     src/Project.cpp
     src/Codec.cpp
@@ -180,6 +195,9 @@ add_library(sdurws_ird_project STATIC
     src/UndoRedoServiceImpl.cpp
     src/ArchiveServiceImpl.cpp
     src/SolidifyServiceImpl.cpp
+    src/StoreClone.cpp
+    src/SaveAsServiceImpl.cpp
+    src/PackageServiceImpl.cpp
     src/win32/AtomicFile.cpp
     src/win32/StoreLock.cpp
     src/win32/PathCanonical.cpp)
@@ -341,6 +359,20 @@ endif()
 # 中止〔V26〕/预算超限中止〔V06/V16 语义〕/探测三态透传/判据数据面
 # 〔EVI-01 数据半区——N-9〕/草稿形态投影 round-trip＋token 词表/
 # 注册协议〔token 冻结语法＋重复注册 fail-fast〕/调用方错误 fail-fast）。
+# PRJ-T18 增列一：PackageStubs.hpp（测试支撑——IPackageCodec fake
+# 〔导出/导入两向内存搬运：roundtrip 字节表/取消检查点/预算超限/损坏
+# 包/路径穿越样例诊断——io 域码直书 io.md §9.12 收编 token，零 io 头
+# 消费的注入缝自证〕＋导出中途并发提交钩子〔D-17 快照一致性的驱动
+# 面〕）。
+# PRJ-T18 增列二：SaveAsServiceTest（acceptance 1/2 单元面＝三处改写点
+# 逐字节核验＋对象/修订/分支 ID 原样＋RunManifest 五元组不改写／选择性
+# 复制〔§8.9：报告引用 run 不在勾选集→不复制＋诊断列出；drafts 独立；
+# results 完整运行整目录〕／失败清理不留半成品〔故障注入经 IFileOps
+# 接缝——复制中途写失败→目标零残留〕／调用方错误 fail-fast 矩阵）。
+# PRJ-T18 增列三：PackageServiceTest（acceptance 3 单元面＝导出导入
+# roundtrip 逐字节还原＋D-17 快照一致〔导出中途并发提交——包内容锚定
+# 快照 HEAD〕／取消〔目标零产出〕／损坏包/预算超限/路径穿越〔诊断透传
+# ＋目标零写入＋临时区清理〕／目标占用 fail-fast 与发布期竞态）。
 enable_testing()
 
 add_executable(sdurws_ird_project_test
@@ -360,6 +392,8 @@ add_executable(sdurws_ird_project_test
     test/ArchiveServiceTest.cpp
     test/Tx11Tx13SuiteTest.cpp
     test/SolidifyServiceTest.cpp
+    test/SaveAsServiceTest.cpp
+    test/PackageServiceTest.cpp
     test/StubHandlers.cpp
     test/TestMainReport.cpp)
 
