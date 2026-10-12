@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-24-T05",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "生成安装包依赖清单",
+  "status": "planned",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-SEC-05"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#19.5",
+    "units/testkit.md#2.4",
+    "units/testkit.md#3.6",
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/scripts/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "dependency-manifest",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-24-T05.json"
+  ],
+  "branch": "wp24-t05",
+  "interUnit": false,
+  "acceptance": [
+    "清单与安装树一致；安装树零 testkit 组件扫描通过（NFR-SEC-05——REQUIREMENTS §19.5：安装包附带依赖清单（组件、版本、许可证、哈希））；清单落 share/（组件/版本/许可证/哈希四字段，DTB §2.25 行输出列）；T-1 红线（testkit.md §2.4：产品目标不得链接或包含 testkit）经安装树扫描复验——排除面＝sdurws_ird_testkit* 目标、testdata/、tools/testdata 零命中（testkit.md §3.6，WP-02-T10 移交的排除扫描建议）"
+  ],
+  "note": "DTB §2.25 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"WP-24-T01\"（冻结版本基线首版）全库无契约（tasks/ 与 tasks/foundation/ 均无）——基线字段（组件/版本/许可证清单）为本卡清单生成输入面，不伪造依赖如实登记（WP-25-T03 同款措辞），归 WP-24-T01 后续立卡时挂靠。需求追溯\"T-1 红线\"＝units/testkit.md §2.4 分发红线——非 REQUIREMENTS ID，requirements 数组不登记，由 designRefs 锚点（§2.4/§3.6）＋acceptance 承载；testkit.md §3.6 安装/打包排除\"门禁实施归 WP-01/WP-24\"即本卡承接位。横切执行面（share/ 清单生成＋安装树扫描复验）不新增跨单元编译边与协作端口，interUnit=false 待 CCP 复核。立卡依据：所有者 2026-10-13\"开始执行\"指令——WP-24-T04~T07 四行按 DTB §2.25 行补立 canonical 契约（同批先例＝WP-21/WP-23/WP-25/WP-13-T19 二十二张 planned 卡）。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。"
+}

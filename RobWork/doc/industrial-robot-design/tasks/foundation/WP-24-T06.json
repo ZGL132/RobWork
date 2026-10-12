@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-24-T06",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "制作离线安装包",
+  "status": "planned",
+  "dependsOn": [
+    "WP-24-T03",
+    "WP-24-T05"
+  ],
+  "requirements": [
+    "NFR-DEP-01",
+    "NFR-DEP-02",
+    "NFR-DEP-03"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#19.6",
+    "ARCHITECTURE.md#5.4",
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/scripts/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "offline-installer",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-24-T06.json"
+  ],
+  "branch": "wp24-t06",
+  "interUnit": false,
+  "acceptance": [
+    "不依赖开发机路径；离线安装/卸载/版本并存验收通过（NFR-DEP-01/02/03——REQUIREMENTS §19.6：首版只对 Windows x64 做正式发布验收；安装包含所需 RobWork/RobWorkStudio/RobWorkSim/Qt 与运行库、不依赖开发机路径；企业内网离线安装/卸载/版本并存、不依赖在线账号或云服务）；包结构＝bin/plugins/share（DTB §2.25 行输出列，ARCH §5.4 部署视图）；规模 L——打包脚本/验证两提交（DTB 行规模列，契约 schema 无规模字段于此登记）"
+  ],
+  "note": "DTB §2.25 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"WP-24-T03/T05\"两契约均在案如实挂靠（WP-24-T03 done；WP-24-T05 本批同仓立卡——validate-task 依赖解析以卡文件为准）；\"M7 前\"为里程碑排期约束非契约依赖（DTB §1：M7＝阶段 E 交付——WP-22 整合＋WP-24 安装包＋WP-25 试点材料）。横切执行面（ui/CMakeLists 全产品唯一 install 段消费＋打包脚本）不新增跨单元编译边与协作端口，interUnit=false 待 CCP 复核。立卡依据：所有者 2026-10-13\"开始执行\"指令——WP-24-T04~T07 四行按 DTB §2.25 行补立 canonical 契约（同批先例＝WP-21/WP-23/WP-25/WP-13-T19 二十二张 planned 卡）。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。"
+}

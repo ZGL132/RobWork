@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-24-T07",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "安装包签名与升级完整性校验",
+  "status": "planned",
+  "dependsOn": [
+    "WP-24-T06"
+  ],
+  "requirements": [
+    "NFR-SEC-06"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#19.5",
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/scripts/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "code-signing",
+    "upgrade-verification",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-24-T07.json"
+  ],
+  "branch": "wp24-t07",
+  "interUnit": false,
+  "acceptance": [
+    "按企业策略验收留痕（NFR-SEC-06——REQUIREMENTS §19.5：安装包签名与升级完整性校验，按企业部署策略单独验收）；企业部署策略面属外部输入，实施时如实登记不私裁"
+  ],
+  "note": "DTB §2.25 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"WP-24-T06\"契约在案（本批同仓立卡）如实挂靠。NFR-SEC-06 语义自带\"按企业部署策略单独验收\"（REQUIREMENTS §19.5 行原文）——策略面为外部输入，验收动作以留痕为产出。横切执行面（签名与升级校验脚本）不新增跨单元编译边与协作端口，interUnit=false 待 CCP 复核。立卡依据：所有者 2026-10-13\"开始执行\"指令——WP-24-T04~T07 四行按 DTB §2.25 行补立 canonical 契约（同批先例＝WP-21/WP-23/WP-25/WP-13-T19 二十二张 planned 卡）。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。"
+}

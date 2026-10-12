@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-24-T04",
+  "unit": "delivery",
+  "masterWp": "WP-I",
+  "title": "旧链路清理",
+  "status": "planned",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-MNT-06"
+  ],
+  "designRefs": [
+    "REQUIREMENTS.md#19.2",
+    "development-task-breakdown.md#2.25"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "outputs": [
+    "legacy-cleanup",
+    "traceability-update"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/WP-24-T04.json"
+  ],
+  "branch": "wp24-t04",
+  "interUnit": false,
+  "acceptance": [
+    "同阶段删除旧实现；无未引用目标与废弃构建选项残留（代码审查清单）（NFR-MNT-06——REQUIREMENTS §19.2：新能力替换旧链路后，在同一阶段删除旧实现、仅验证旧接口的测试和无用依赖）；删除范围＝DTB §2.25 行输出列三类：各阶段替换后的旧实现/仅验证旧接口的测试/无用依赖"
+  ],
+  "note": "DTB §2.25 行逐一对应（标题/单元/前置/输入/输出/需求追溯/验收标准照抄）。前置\"对应新能力替换完成的阶段\"为阶段性前置语义——A～E 各阶段新能力替换完成即随段清理，非单一契约依赖，dependsOn 置 [] 不伪造依赖（WP-23-T02 里程碑门禁同型措辞）；阶段触发协作语义由本 note 承载（WP-19-T12 先例）。横切执行面（各单元旧实现/仅验证旧接口测试/无用依赖删除）不新增跨单元编译边与协作端口，interUnit=false 待 CCP 复核。立卡依据：所有者 2026-10-13\"开始执行\"指令——WP-24-T04~T07 四行按 DTB §2.25 行补立 canonical 契约（同批先例＝WP-21/WP-23/WP-25/WP-13-T19 二十二张 planned 卡）。status=planned：待阶段门禁与独立评审放行（CCP 契约编译前形态——ready/done 必备字段如 designRefs 锚点精化/interUnit 复核随编译补齐）。"
+}
