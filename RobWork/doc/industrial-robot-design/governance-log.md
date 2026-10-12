@@ -2,7 +2,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.0（随 WP-00-T01 建立，2026-09-10） |
+| 文档版本 | v1.1（2026-10-12 治理批台账滞后修正——8 行按对端消账事实回改；v1.0＝随 WP-00-T01 建立，2026-09-10；变更记录见 §6） |
 | 文档代号 | GOV-LOG |
 | 用途 | 11 张单元卡全部 P-\* 待裁决项与 development-task-breakdown §4 O-01~O-33 的**集中流转登记**：编号/所有者/状态/消账留痕一表可查 |
 | 基本纪律 | **只登记流转、不裁决任何 P-\*/O-\* 项**——裁决权归各登记行"所有者"列对应的文档所有者（需求/架构/详设/构建约定）；本文件状态翻转仅跟随权威文档的消账事实（增量修订/验收记录/定稿行），不自行宣布裁决 |
@@ -49,7 +49,7 @@
 | P-EV-6 | project.md 磁盘不完整（§8~§15 缺失） | project 详设所有者 | **stale** | 2026-09-10 实测 project.md §1~§15 完整（DTB §4.4 定稿行；runtime P-RT-9 同源指出）——本登记已过时，卡内待翻转；接口联合复核仍需执行（phase-one §2） |
 | P-EV-7 | 空必验工况集/全不适用工况的判定口径（同源：O-13） | 需求所有者 | open | 卡按保守处置（DataInsufficient） |
 | P-EV-8 | EvidenceItemStatus 五值实现词表（Unverified 为扩展，同源：O-13） | 需求所有者＋reporting/ui | open | 不作需求级冻结契约；需求侧未来定义枚举则增量对齐 |
-| P-EV-9 | 必验工况标记权威 schema 归 requirements（同源：O-14） | requirements 卡 | open | WP-14-T01 冻结后回接 evidence §4.1.3 |
+| P-EV-9 | 必验工况标记权威 schema 归 requirements（同源：O-14） | requirements 卡 | **closed** | 2026-09-22 消账（WP-14-T01）：requirements.md v0.1 §6.2 冻结 enabled/mandatory schema（mandatory≡(level==Must)）＋evidence.md §15.3 P-EV-9 已消账（§4.1.3 权威锚点回接，O-14 同步消账）——本行按维护规则③以卡为准回改（治理批 2026-10-12） |
 
 ### 1.4 runtime（9 项）
 
@@ -58,7 +58,7 @@
 | P-RT-1 | core v0.1 Draft 契约基线漂移 | core 详设所有者＋本卡 | open | core 冻结时出 diff 清单 |
 | P-RT-2 | ARCH Draft 待评审（同源：O-03） | 架构所有者 | open | 评审后增量修订 |
 | P-RT-3 | L2 合法 L1 依赖集（§2.3 vs §7.3 措辞，同源：O-15） | 架构所有者 | open | WP-06-T01 已按 §7.3 明文执行并留痕 |
-| P-RT-4 | 安装预设轴向单侧选择（同源：O-16） | modeling 详设所有者＋需求侧 | open | WP-13-T11 交叉核对后冻结 |
+| P-RT-4 | 安装预设轴向单侧选择（同源：O-16） | modeling 详设所有者＋需求侧 | **closed** | 2026-10 前后消账（WP-13-T11 交叉核对完成）：交叉核对留痕 traceability/wp13-t11-prt4-crosscheck.md——唯一权威产出点＝runtime BaseWorldTransform.hpp::installationPresetRotation()（倒挂 R_x(π)／壁装 R_y(π/2)），modeling 只存参数不存矩阵；runtime.md §15.3 P-RT-4 随批补注（治理批 2026-10-12） |
 | P-RT-5 | IRobotDesignReader 注入 vs modeling 直解 | modeling 详设所有者＋本卡 | open | modeling 详设起草时交叉核对 |
 | P-RT-6 | ResourceBytes 生命周期（=P-IO-2，同源：O-17） | io 详设所有者 | **closed** | 设计级关闭（io §8.6 五条裁决，2026-09-10 回接）；实现测试待 IO-T05/06 执行 |
 | P-RT-7 | 耦合矩阵"病态"阈值 1×10⁸ 归属（同源：O-18） | 需求所有者＋policy 卡 | open | 建议并入 EngineeringPolicySet；归 policy 时走其登记 |
@@ -73,7 +73,7 @@
 | P-POL-2 | 安全间距/近限位比/条件数阈值无冻结默认（同源：O-10） | 需求所有者＋WP-07 | open | 裁决前 nullopt＝显式不适用 |
 | P-POL-3 | SEL-05 惯量比阈值归属（同源：O-11） | 需求所有者＋selection 卡 | open | 建议归 EngineeringPolicySet；WP-19-T01 起草时核对 |
 | P-POL-4 | 三份协作输入＋ARCH 均 Draft | 各详设所有者＋本卡 | open | 各自冻结时出 diff 清单 |
-| P-POL-5 | 碰撞后端版本取值依赖 NFR-DEP-05 基线（同源：O-20） | 版本基线所有者（WP-24） | open | WP-24-T01 冻结时锁定 |
+| P-POL-5 | 碰撞后端版本取值依赖 NFR-DEP-05 基线（同源：O-20） | 版本基线所有者（WP-24） | **closed** | 2026-09-26 消账（WP-24-T01 基线首版登记）：NFR-DEP-05 冻结版本基线已产出（ird/share/baseline.md v1.0，backendVersion=rw-31b8184）；policy.md §15.3 P-POL-5 已消账在案——本行按维护规则③以卡为准回改（治理批 2026-10-12） |
 | P-POL-6 | project.md 磁盘不完整（与 P-EV-6 同源） | project 详设所有者 | **stale** | 2026-09-10 实测完整（DTB §4.4）——登记过时，卡内待翻转；策略编辑适配器细节随 project 联合复核 |
 | P-POL-7 | 按工况差异化策略阈值口径 | 需求所有者 | open | 卡按"全项目统一、场景对象集表达"设计（D-14） |
 | P-POL-8 | R-4 例外登记措辞补充（policy 只读消费整名，同源：O-12） | 架构所有者 | **partial** | DTB §4.5 已预登记该例外行（状态"待确认"）；架构侧措辞确认后转生效 |
@@ -86,10 +86,10 @@
 | P-PR-1 | core v0.1 Draft 契约基线漂移 | core 详设所有者 | open | core 冻结时出 diff 清单 |
 | P-PR-2 | ARCH Draft 待评审（同源：O-03） | 架构所有者 | open | 评审后增量修订 |
 | P-PR-3 | §7.1 图示"前置断言"位置读法（编排 vs 判定，同源：O-08） | 架构所有者 | open | project 已按"编排归 project、判定归注入处理器＋④端口"设计 |
-| P-PR-4 | 归档调用线程与 RunRegistry 对接 | execution 详设所有者 | **partial** | execution §9.5 已冻结方案（调度线程＋writer 互斥＋幂等）；待 project 侧确认消账（与 P-EX-5 成对） |
+| P-PR-4 | 归档调用线程与 RunRegistry 对接 | execution 详设所有者 | **closed** | 两侧对端确认完成，成对消账：execution §9.5 单侧冻结兑现（runtime.md v0.6 登记——调度线程＋writer 互斥＋幂等）；project.md §15.3 P-PR-4〔PRJ-T16 状态同步 2026-09-17〕已消账（对端已冻结、两侧逐项核对一致，本文确认）——本行按维护规则③以卡为准回改（治理批 2026-10-12；同案对端 P-EX-5 同批翻转） |
 | P-PR-5 | project→io 依赖边未登记（同源：O-09/P-IO-1） | 架构所有者 | open | 注入式先行；阶段 B 落地前裁决补边或确认注入 |
 | P-PR-6 | PRJ-\* 稳定码与 sink 形态待 diagnostics 冻结 | diagnostics 详设所有者 | open | 与 P-EX-8/P-DIAG-5 同案（sink 统一未裁决——phase-one §2.1 确认） |
-| P-PR-7 | ICommandInteraction/IModelCompilePort 对端确认 | ui/runtime 详设所有者 | open | runtime 已承接（P-RT-8）；ui 侧待 WP-10 起草核对 |
+| P-PR-7 | ICommandInteraction/IModelCompilePort 对端确认 | ui/runtime 详设所有者 | **closed** | 2026-09-17 消账（PRJ-T16 状态同步，project.md §15.3 P-PR-7 已消账在案）：ui 半区 ui.md §9.2/§16.3 D-4 交叉核对通过、runtime 半区 P-RT-8 承接答复"兼容"（两处差异按同步命令路径语义确认无增量需求）——本行按维护规则③以卡为准回改（治理批 2026-10-12；runtime 卡 P-RT-8 行随批补注） |
 | P-PR-8 | 分支 label 不可改名是否满足 PM-11（同源：O-19） | 需求所有者 | open | 维持创建时写入；需求侧确认口径 |
 
 ### 1.7 execution（10 项）
@@ -100,7 +100,7 @@
 | P-EX-2 | ARCH Draft 待评审（同源：O-03） | 架构所有者 | open | 评审后增量修订 |
 | P-EX-3 | 任务指令"可依赖六单元"vs ARCH §3.5 四条边 | 架构所有者 | open | 卡按注入消费（D-17）；如需直连走架构修订 |
 | P-EX-4 | 11 态 vs 九态词表 | 需求所有者 | open | 按上游九态执行；三态显式化走需求变更 |
-| P-EX-5 | 归档对接（=P-PR-4 对端） | project 详设所有者 | **partial** | execution §9.5 已冻结；project 确认后成对消账 |
+| P-EX-5 | 归档对接（=P-PR-4 对端） | project 详设所有者 | **closed** | 与 P-PR-4 同案对端、同事实成对消账：execution §9.5 冻结＋project.md §15.3 P-PR-4〔PRJ-T16 2026-09-17〕已消账（"对端 P-EX-5 消账由其卡修订承接"——execution 卡 v0.12 已登记 P-EX-5 消账）——本行按维护规则③以卡为准回改（治理批 2026-10-12） |
 | P-EX-6 | 排队任务崩溃不呈现"已中断"的判据 | 需求所有者＋project 卡 | open | 维持 D-12/D-13（磁盘痕迹唯一经 project） |
 | P-EX-7 | 评估器运行期能力声明承载位置 | evidence 详设所有者 | open | execution 侧注册表扩展（§5.5）；登记为 evidence 交接 |
 | P-EX-8 | EX-\* 稳定码与 sink 形态待 diagnostics 冻结 | diagnostics 详设所有者 | open | 与 P-PR-6/P-DIAG-5 同案 |
@@ -181,13 +181,13 @@
 | O-11 | P-POL-3 同源登记（惯量比阈值归属） | 需求所有者＋selection 卡 | open | 见 P-POL-3 |
 | O-12 | P-POL-8 同源登记（R-4 例外措辞） | 架构所有者 | open | DTB §4.5 预登记行"待确认"；WP-01-T01 验收含 O-12 处置核对 |
 | O-13 | P-EV-3/P-EV-7/P-EV-8 同源登记 | 需求所有者 | open | 见对应 P 项 |
-| O-14 | P-EV-9 同源登记（必验工况 schema） | requirements 卡 | open | WP-14-T01 冻结后回接 |
+| O-14 | P-EV-9 同源登记（必验工况 schema） | requirements 卡 | **closed** | 2026-09-22 消账（WP-14-T01，DTB §4 O-14 行已登记）：requirements.md §6.2 冻结 schema＋evidence §4.1.3 回接——本行按维护规则③以 DTB/卡为准回改（治理批 2026-10-12） |
 | O-15 | P-RT-3 同源登记（L2 合法 L1 依赖集） | 架构所有者 | open | 见 P-RT-3 |
 | O-16 | P-RT-4 同源登记（安装预设轴向） | modeling 卡 | open | 见 P-RT-4 |
 | O-17 | ResourceBytes 生命周期（=P-RT-6/P-IO-2） | io 详设所有者 | **closed** | 设计级关闭（io §8.6）；实现测试待 IO-T05/06 |
 | O-18 | P-RT-7 同源登记（病态阈值归属） | 需求所有者＋policy 卡 | open | 见 P-RT-7 |
 | O-19 | P-PR-8 同源登记（分支 label） | 需求所有者 | open | 见 P-PR-8 |
-| O-20 | P-POL-5 同源登记（碰撞后端版本基线） | 版本基线所有者（WP-24） | open | 见 P-POL-5 |
+| O-20 | P-POL-5 同源登记（碰撞后端版本基线） | 版本基线所有者（WP-24） | **closed** | 2026-09-26 消账（WP-24-T01 基线首版登记，见 P-POL-5 行；DTB §4 O-20 行随治理批 2026-10-12 回改） |
 | O-21 | P-TK-4 同源登记（testkit 边） | 架构所有者 | **closed** | 2026-09-10 消账（WP-01-T01 验收含 O-21 消账项：ARCH §3.5 补登＋门禁白名单收录） |
 | O-22 | P-TK-5 同源登记（大数据集策略） | 构建负责人＋WP-02 | open | 见 P-TK-5 |
 | O-23 | P-TK-7 同源登记（lint 字典维护） | 需求所有者＋WP-02 | open | 见 P-TK-7 |
@@ -229,6 +229,7 @@
 ## 4. 状态汇总与维护规则
 
 - 汇总（2026-09-17）：P-\* 93 项——closed 10（P-ENV-1/P-ENV-2/P-TK-1/P-POL-1/P-RT-6/P-IO-2/P-IO-3/P-RPT-6/P-RT-9/P-POL-9；其中 P-RT-6 与 P-IO-2 为同案双登记，去重后 9 案）、partial 5（P-TK-3/P-PR-4/P-EX-5/P-POL-8/P-RPT-8）、stale 2（P-EV-6/P-POL-6）、open 76；O-\* 33 项——closed 6（O-04/O-05/O-06/O-17/O-21/O-25）、deferred 1（O-28）、open 26。
+- 汇总（2026-10-12，治理批台账滞后修正——按维护规则③以卡/DTB 为准回改）：本批翻转 8 行——P-EV-9（2026-09-22 消账，WP-14-T01）、P-POL-5（2026-09-26 消账，WP-24-T01 基线）、P-PR-4 与 P-EX-5（成对，2026-09-17 PRJ-T16 对端确认）、P-PR-7（2026-09-17 PRJ-T16 两侧交叉核对）、P-RT-4（WP-13-T11 交叉核对留痕）、O-14（2026-09-22 消账）、O-20（2026-09-26 消账）——各对端消账事实均先复核后翻转（证据见各行留痕）；翻转后口径：closed P-\* 93 项中 16 行（含本批 6 行）、partial 3（P-TK-3/P-POL-8/P-RPT-8）、open 74；O-\* closed 8（含本批 O-14/O-20）、deferred 1、open 24。逐处依据：2026-10-12 全面盘点报告第五节（账实不符族）＋本批逐条复核。
 - 维护规则：①各卡/DTB 增量修订消账后，其任务提交或紧随治理提交同步翻转本表对应行（留痕＝消账文档版本/验收记录/findings 编号）；②本表不新增待裁决项——新待裁决一律先登记到所属卡/DTB §4，再在本表补行（保持权威方向）；③发现本表与卡/DTB 不一致：以卡/DTB 为准回改本表并在提交信息注明。
 
 ## 5. 与 phase-one-readiness.md 状态口径的一致性核对（acceptance 第 3 条）
@@ -248,3 +249,4 @@
 | 版本 | 日期 | 说明 |
 | --- | --- | --- |
 | v1.0 | 2026-09-10 | 随 WP-00-T01 建立：11 卡 93 项 P-\*（core 6/testkit 7/evidence 9/runtime 9/policy 9/project 8/execution 10/diagnostics 9/io 7/reporting 9/ui 10）＋O-01~O-33 集中登记；逐卡零丢失矩阵；与 phase-one-readiness §2 口径核对一致；只登记不裁决 |
+| v1.1 | 2026-10-12 | 治理批台账滞后修正（纯登记面回改，零新裁决）：①P-EV-9/O-14 翻 closed（对端 evidence.md P-EV-9 已消账 2026-09-22 WP-14-T01＋DTB O-14 行已登记）；②P-POL-5/O-20 翻 closed（对端 policy.md P-POL-5 已消账 2026-09-26 WP-24-T01 基线首版登记；DTB O-20 行同步回改）；③P-PR-4 与对端 P-EX-5 翻 closed（project.md P-PR-4〔PRJ-T16 2026-09-17〕已消账＋execution §9.5 冻结）；④P-PR-7 翻 closed（project.md P-PR-7〔PRJ-T16〕两侧交叉核对已消账）；⑤P-RT-4 翻 closed（modeling WP-13-T11 交叉核对留痕 traceability/wp13-t11-prt4-crosscheck.md）；⑥§4 追加 2026-10-12 汇总行。全部翻转先复核对端消账事实再回改（2026-10-12 全面盘点报告第五节来源），裁决归属零变更 |

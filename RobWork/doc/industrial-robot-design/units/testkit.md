@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.3（2026-10-12，TK-T12 实现落位登记——§13；v1.2＝2026-10-12 TK-T12 立项登记；v1.1＝2026-09-19 `sdurws_ird_testkit_qt` 启用落位登记；v1.0＝2026-09-11 TK-T11 触发式补登；v0.9（TK-T10 落位登记；v0.4~v0.8＝TK-T03/T04/T06/T07/T08 落位登记；v0.3＝TK-T01 实施偏差登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案）） |
+| 文档版本 | v1.4（2026-10-12，治理批台账滞后修正——§12.3 P-TK-4 行补注已消账（对端 governance-log P-TK-4/O-21 与 DTB O-21 行早已 closed：2026-09-10 WP-01-T01 ARCH §3.5 补登 testkit→core＋门禁白名单收录——本卡"待增量修订同步翻转"的滞留义务随批兑现）＋§13 v1.4 行；纯登记零语义；v1.3＝2026-10-12 TK-T12 实现落位登记——§13；v1.2＝2026-10-12 TK-T12 立项登记；v1.1＝2026-09-19 `sdurws_ird_testkit_qt` 启用落位登记；v1.0＝2026-09-11 TK-T11 触发式补登；v0.9（TK-T10 落位登记；v0.4~v0.8＝TK-T03/T04/T06/T07/T08 落位登记；v0.3＝TK-T01 实施偏差登记；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案）） |
 | 日期 | 2026-09-11 |
 | 状态 | **`Draft-Structured`**（本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收） |
 | 文档代号 | UNIT-TESTKIT |
@@ -903,7 +903,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | P-TK-1 | **已关闭（2026-09-10，CR-07）**：gtest 接入机制定稿——vcpkg＋`find_package(GTest CONFIG REQUIRED)` 唯一机制，失败即停不回落 | development-task-breakdown v0.2 §5.5（O-05 实测：USE_gtest=OFF、gtestTargets.cmake 从未生成）；core.md P-ENV-2 同源关闭 | （已消除）原 TK-T01 落地方式悬空 | 按 §5.5 执行；安装＋版本登记随 TK-T01；find_package 失败→TK-T01 转 blocked | 构建约定所有者（已定稿） |
 | P-TK-2 | testkit 消费的 core 契约以 core.md v0.1（Draft）为基线，其冻结版可能调整签名/字段 | core.md 文档头状态行 | TK-T04~T07 与档案/断言形状返工 | core 冻结时出 diff 清单，testkit 按影响面增量修订并留痕；本文不私改 core 语义 | core 详设所有者 |
 | P-TK-3 | 本文局部任务编号 TK-Txx 与未来 development-task-breakdown 的 WP 分配对齐方式 | 该文件缺失（ARCH §11.1"后续产出"） | 任务追踪双轨 | breakdown 产出后以映射表增量登记，不重排本文编号 | 任务分解所有者 |
-| P-TK-4 | ARCHITECTURE §3.5 单元依赖表未列 testkit（其为测试单元）；建议补登记"testkit→core（仅测试目标可用）"有向边及 T-1/T-2 红线 | ARCH v0.11 §3.5 表；本文 §2.4 | 依赖门禁数据源不含测试侧红线时，T-1 仅靠本文执行 | 架构下次修订在 §3.5 或 §3.2 附注补登；本文先行自律（TK-BUILD） | 架构所有者 |
+| P-TK-4 | ARCHITECTURE §3.5 单元依赖表未列 testkit（其为测试单元）；建议补登记"testkit→core（仅测试目标可用）"有向边及 T-1/T-2 红线 | ARCH v0.11 §3.5 表；本文 §2.4 | 依赖门禁数据源不含测试侧红线时，T-1 仅靠本文执行 | 架构下次修订在 §3.5 或 §3.2 附注补登；本文先行自律（TK-BUILD）。**〔治理批 2026-10-12 消账补注〕已消账（2026-09-10，WP-01-T01）**：ARCH §3.5 已补登 testkit→core 行＋门禁白名单收录该边＋dependency-graph.json 补行（governance-log P-TK-4/O-21 与 DTB O-21 行均早已 closed）——本行"待增量修订同步翻转"的卡侧滞留义务随本批兑现 | 架构所有者 |
 | P-TK-5 | 大体绩黄金数据（点云/大规模采样快照）的存储与 CI 获取策略（git 内 vs LFS vs 制品） | 仓库现状无 LFS 配置；CI 通道未定（gitlab-ci 仅有基线框架配置） | 数据集交付与 CI 时效 | 阶段 A 数据小（解析算例为主）源内即可；首个大数据集出现时裁决 | 构建负责人（WP-01）＋WP-02 |
 | P-TK-6 | JsonLite 与未来统一测试侧 JSON 机制的归并 | D-02 边界声明 | 可能重复实现 | breakdown 若统一机制，JsonLite 退役换源，manifest schema 不变 | 构建约定所有者 |
 | P-TK-7 | `requirements-ids.json` lint 字典的维护责任（随 REQUIREMENTS 修订同步） | §12.2 R-4 | lint 有效性 | 建议随需求变更流程一并更新该字典（WP-02 执行、需求所有者复核） | 需求所有者＋WP-02 |
@@ -927,6 +927,7 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 | v1.1 | 2026-09-19 | `sdurws_ird_testkit_qt` 启用落位登记（WP-10-T02≙UI-T02，任务契约 tasks/foundation/UI-T02.json acceptance 4）：①§10.1 启用表更新为"触发已成立（2026-09-19，UI-T02 建立 ui 三测试目标）——已随 WP-10-T02 启用落位"；②§9"阶段 A 不含"清单同步注记；③落位形态＝INTERFACE 目标载体（Qt6::Core 链接接口＋公共头根传播；设施本体随首消费者 UI-T13/T14 落地后升级 STATIC——目标名不变；INTERFACE 而非 STATIC 的原因：启用期无消费者设施源码，且任务契约 allowedFiles 仅含 testkit/CMakeLists.txt、不含 testkit/src/**——无翻译单元可落，锚点翻译单元不可建于本单元目录树）＋§3.5 隔离纪律钉住（本体永不链接——配置期守卫拦截；只被 GUI/模型测试目标链接——首消费者＝sdurws_ird_ui_gui_test；零 ird 单元边——设施目标非依赖节点）；④设施头/实现（事件循环驱动、控件探针——§6.7/§10.2）随首消费者 UI-T13/T14 落地，不预建占位实现（NFR-MNT-04；首消费者理由登记于 ui.md §13 UI-T13 行——§3.5 必要性登记规则兑现） |
 | v1.2 | 2026-10-12 | TK-T12 立项登记（F-789 专项——所有者 2026-10-12 授权，先卡后码零产品源码改动）：①§9 任务表补登 TK-T12 行（ui_test ctest 上下文挂起根因排查与修复＋gate-all 冒烟目录默认值唯一化；触发已成立＝F-789 批 A 验收 3/3 确定性复现转登＋批 B/C/D gate-all 历次 84/85 唯一失败项）；②§10 阶段 A 注记行同步（TK-T12 不属阶段 A 范围界定面）；③DTB §2.3 新增 WP-02-T12 行（≙TK-T12）；④契约 tasks/foundation/TK-T12.json 立卡（ready 待独立评审放行）。本版为纯登记——设施本体随 TK-T12 实施落位 |
 | v1.3 | 2026-10-12 | TK-T12 实现落位登记（F-789 闭合——实施者＝所有者授权独立会话；契约 status ready→done）：①**根因实证**（audit/tkt12-investigation/——差异矩阵 9 格＋dumpbin 递归闭包 35 模块＋相依链三证）：ui_test 经框架 sdurws 静态库接口面导入 python313.dll（conda 发行形态同目录相依 zlib.dll），运行期前置未内化时 ctest 上下文＝加载器对话框挂起（r2a 所录）或退出码 8（acc-audit-r2d-1 两轮所录）——非产品缺陷、非 QTest 交互（立项疑点排除）；②**gate-all.ps1 三改动**（提交 14b08399）：第 0.5 步 python 运行库前置五级探测/注入（-PythonDir 参数/SDURWS_IRD_PYTHON_DIR/既有 PATH/conda-python 命令反推安装根/常见 conda 安装位）＋0xC0000135 族不可达记 SKIP＋归因不判 FAIL（F-715 同文处置——验收/CI 不误伤）＋冒烟目录默认 ird-gate-smoke-<PID>-<时点> 唯一化（F-628 同族）；③**验证**＝ui_test ctest 三连 EXIT=0＋直跑 258/258 对照（python-free 配置 RWS_ENABLE_PYTHON=OFF 对齐主线构建形态——零 PATH 供给）＋gate-all 85/85 EXIT=0（记录以来首次全项全绿——verify2-* 五件留痕 audit/tkt12-investigation/）；④F-789 翻牌 fixed；框架根因面（RWS_USE_PYTHON3 环境依赖判定致同批源码分岔两种加载面）登记 F-828 归所有者 patch 批。DTB §2.3 WP-02-T12 行随批注落位 |
+| v1.4 | 2026-10-12 | 治理批台账滞后修正（纯文档零代码，pipeline5/redesign-main；2026-10-12 全面盘点报告第五节账实不符族来源）：§12.3 P-TK-4 行补注已消账——对端 governance-log P-TK-4/O-21 与 DTB O-21 行早已 closed（2026-09-10 WP-01-T01：ARCH §3.5 补登 testkit→core＋门禁白名单收录＋dependency-graph.json 补行），本行原文"架构下次修订…补登；本文先行自律"的滞留状态与事实不符，随批补注翻转（卡侧"待增量修订同步翻转"义务兑现）；裁决归属零变更、契约语义零变更 |
 
 ---
 
