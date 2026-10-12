@@ -107,7 +107,10 @@ add_library(sdurws_ird_kinematics STATIC
     src/Bounds.cpp
     src/Ik.cpp
     src/SolutionSet.cpp
-    src/Sampling.cpp)
+    src/Sampling.cpp
+    src/PoseReach.cpp)  # T16 增列：独立位姿可达性分析（KIN-11——目标生成/
+                        #   方向覆盖计算/执行核/载荷编码/评估器形态；
+                        #   WP-15-T16——PoseReach.hpp/.cpp 公共头对）
 
 # ---- T07 增列（仅集成模式）：src/Collision.cpp 消费 policy 公共头的
 # 完整类型面（CollisionEvaluationSession 评估调用点）——冒烟模式无框架
@@ -390,6 +393,8 @@ add_executable(sdurws_ird_kinematics_test
     test/RecomputeTest.cpp
     test/AnalysisConfigTest.cpp
     test/RenderTest.cpp
+    test/PoseReachTest.cpp    # T16：独立位姿可达性用例组（KIN-11/AT-26——
+                              #   计划预览/方向覆盖/协作取消/黄金设施复用）
     test/PluginPanelTest.cpp   # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
     test/HostMigrationTest.cpp)  # T18：宿主迁移三接入面用例（O-44 v1 诚实边界——模型层）
 
