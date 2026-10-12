@@ -1,0 +1,5 @@
+[31;1mException: [0mD:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\validate-task.ps1:116[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m 116 | [0m бн 0-9]+)$') { [36;1mthrow "invalid knownPitfalls id '$p' (expect O-nn / CR-nn[0m бн[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1minvalid knownPitfalls id 'F-550' (expect O-nn / CR-nn / P-XX-nn): RT-T15[0m

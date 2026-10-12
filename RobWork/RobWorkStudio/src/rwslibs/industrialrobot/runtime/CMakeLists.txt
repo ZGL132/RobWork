@@ -243,6 +243,14 @@ endif()
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_runtime_test PRIVATE
         test/WorkCellCompilerTest.cpp
+        test/WorkCellGeometryTest.cpp   # RT-T15：RT-GEO 族（图元挂接存在性/位姿
+                                        # 随帧同源/单位正确性/派生确定性/诚实
+                                        # 跳过〔manifest 空/provider 缺位零虚构
+                                        # 零阻塞零资源消费〕/S6 既有产物与映射
+                                        # 条目零变化＋显示代理不入身份域回归）；
+                                        # 被测面（S6 编译器图元挂接）构造真实
+                                        # Cylinder/Box/RigidObject——与产品侧
+                                        # 增列同因仅集成模式
         test/DynamicWorkCellCompilerTest.cpp
         test/SnapshotTest.cpp          # RT-T09：RT-SNAP-1～4（只读并发/worker 隔离
                                         # 物化/项目切换旧快照/释放后引用）、

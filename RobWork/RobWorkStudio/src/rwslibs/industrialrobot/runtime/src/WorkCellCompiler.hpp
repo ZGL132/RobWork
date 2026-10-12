@@ -36,6 +36,8 @@
 #include <sdurws/ird/core/Identity.hpp>            // core::ObjectId（scopedFullName 参数）
 #include <sdurws/ird/runtime/CanonicalModel.hpp>   // 输入：CanonicalModel
 #include <sdurws/ird/runtime/NameMap.hpp>          // RuntimeNameMap/NameScope（命名唯一源）
+#include <sdurws/ird/runtime/Resource.hpp>         // IRuntimeResourceProvider（mesh 资源通道
+                                                   //  接线预留参数——RT-T15；§8.6 契约面零修改）
 
 namespace sdurws::ird::runtime {
 
@@ -91,7 +93,14 @@ struct WorkCellCompileOutcome {
  *   6. S9 防御性自检（§12 RT-T07 测试列"RT-BW-4〔S9 部分〕"——BaseMount
  *      读回值 vs T_world_base，checkBaseMountConsistency 不一致即
  *      BaseWorldInconsistent：实现缺陷类失败，不得放行）；
- *   7. 全程 try/catch：RobWork 异常/bad_alloc/其他 std 异常经
+ *   7. 基本图元几何挂接（RT-T15——S6 增量的呈现代理面）：连杆帧挂圆柱
+ *      （跨度/朝向由子关节 T_parent_joint 平移推导——DH a/d 在显式表示下
+ *      的对应量）、法兰/TCP/场景对象帧挂标记小盒；全部为编译器内建图元
+ *      （零外部资源依赖），经 RigidObject 载体入 WC——呈现消费方
+ *      （UI-T78/WorkCellScene updateSceneGraph）按帧取用；
+ *   8. mesh 资源通道接线预留（attachResourceMeshGeometry——诚实跳过；
+ *      真实 visual/collision mesh 渲染＝保真度升级，待所有者裁决）；
+ *   9. 全程 try/catch：RobWork 异常/bad_alloc/其他 std 异常经
  *      translateRobWorkError（§8.4）转译后以 RuntimeError fail-fast——
  *      转译不吞异常、不发布半成品（MDL-06）。
  *
@@ -108,6 +117,13 @@ struct WorkCellCompileOutcome {
  *
  * @param model [in] 规范模型（应为 CanonicalModelBuilder 产物——S5 构造
  *              不变量成立；只读，本函数不修改）
+ * @param resourceProvider [in] 资源提供者（io 注入；可空）。★ RT-T15 起
+ *              为 mesh 资源通道的**接线预留参数**：句柄经编译链
+ *              （CompileRequest.resources）透传至 S6，供未来真实 mesh 挂接
+ *              实现消费——本批**不消费该句柄**（资源字节读取为零调用，
+ *              attachResourceMeshGeometry 诚实跳过）；真实 mesh 渲染＝保真度
+ *              升级项，待所有者裁决（卡面 RT-T15 登记，不私裁）。缺位/清单
+ *              为空＝诚实跳过：不虚构几何、不产错误、不阻塞编译（§8.6）。
  *
  * @return 编译产物（workCell 非空；值语义独立——每次调用全新对象树）
  *
@@ -118,7 +134,8 @@ struct WorkCellCompileOutcome {
  *
  * 复杂度：O(链长＋场景＋工具)（RobWork 对象构造线性；无迭代求解）。
  */
-WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model);
+WorkCellCompileOutcome compileWorkCell(const CanonicalModel& model,
+                                       const IRuntimeResourceProvider* resourceProvider = nullptr);
 
 /**
  * @brief 从映射取"某对象某范围"条目的消歧后全名（S6/S7 编译器共用的命名
