@@ -5454,7 +5454,9 @@
       "id": "F-550",
       "source": "F-496 十步人工验收 runbook 所有者执行实录（2026-10-08——step6 三维视图无对象可拾取；备用路径六轴重置后同样无模型对象）",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "UI-T76 三处根因修复（①World→WORLD 帧名映射＋②会话预览锚 ird-session-preview＋③区域 World 恒等直投）＋UI-T77 发布后模型骨架呈现＋RT-T15 连杆图元与 UI-T78 ray-cast 拾取（B 行收口合入 6dd85ec3 及 wp10-t05 合入）；2026-10-12 所有者宿主实机复验通过——草稿期工位标记/区域框可见，应用后骨架（轴阵/链线/标签）、关节跟随、图元与拾取均正常。①草稿三维预览通道候选与真实网格保真度仍为独立裁决项，不随本翻牌关闭",
       "registeredAt": "2026-10-08",
       "title": "首应用前三维视图无模型对象可拾取——草稿模型无发布前三维通道（三维视图渲染发布后运行时快照；六轴重置等建模编辑只落草稿，apply 提交后才经 S5 编译/发布入三维）；另工位标记（UI-T33，World 缺省参考系）理论上应于增工位后可见，所有者实拍未见——标记渲染链（emitStationMarkers→applyPreview frameMarkers）待人工复核定位；【2026-10-08 扩展（所有者继续实录）】**发布后同样无模型渲染**——应用提交（树增 7 建模对象＋状态行「已应用： structure/reset-six-axis」＋S5 双编译/发布贯通）后三维视图仍仅网格：模型几何渲染与 ray-cast 拾取＝WP-10-T05（阶段 B）登记任务未实施，当前 View3D 预览契约仅承载 frameMarkers/boxOutline/sampleGrid 三类投影（UI-T33/64/65）；【2026-10-08 修复落地（UI-T76——②工位标记/区域框会话预览链排查）】三处根因修复：①宿主世界帧名映射 World→WORLD（RobWork 根帧实名＝StateStructure FixedFrame「WORLD」，WorkCell::findFrame 仅对全大写特判返回根帧——混合大小写查找恒落空＝标记全数跳过/区域框「参考系不可解析」的直接原因）；②渲染后端增会话预览锚（宿主无发布 WorkCell 时装仅含根帧的场景层锚 WC「ird-session-preview」——studio 模型层零触碰不扰发布链 INV-B4 单入口；场景挂接 API 无 WC 即抛异常＝框架硬约束，「无锚不画」此前使草稿期三维恒空白）；③区域 World 引用系恒等直投（角点/格线本即世界系坐标，不经宿主帧解析）。修复后增工位/区域的三维标记/框/格在首应用前即可见；待所有者宿主复验后翻转 fixed。模型几何渲染与 ray-cast 拾取仍归 WP-10-T05（未实施——本修复不覆盖）",
       "owner": "阶段 B 三维交互批次（WP-10-T05——模型几何渲染＋ray-cast 拾取通道；F-496 十步的拾取/TCP-视觉半区以其为前置）＋①草稿三维预览通道＝需求语义候选（所有者裁定）；②工位标记可见性复核＝UI-T33 链排查。F-496 十步执行顺序已更正（runbook v2——拾取/TCP 结构性不可执行步骤如实登记不阻塞其余步骤）；【2026-10-08 修复落地（UI-T77——三维预览专项：发布后模型骨架呈现）】挂接点＝HostWorkCellPresentationObject::apply（发布链宿主单入口 setWorkCell 之后的呈现半区）：编译产物 WC 装入宿主后，按帧树/SerialDevice 挂「ird-model-skeleton-」组——①全帧小轴阵（0.12 m，WORLD 根帧除外）②每台 SerialDevice 基座→关节→末端连杆链线（DeviceChainRender 挂基座、按 info._state 实时 worldT 取位姿——关节运动链形即时跟随）③设备基座/末端 Qt 纹理化标签（F-556 承载件复用）。**边界如实登记＝本交付是骨架示意（帧结构/运动链可视化，使发布后模型三维可见），真实网格几何渲染（visual/collision mesh）仍归 WP-10-T05 资源链**——建模域 GeometryRef 只存引用＋resourceManifest 本体（io 字节读取已就位、mesh 解析加载器/GeometryRef.localTransform 编译域透传/S6 挂接/L5 装配四段缺口），且当前模板模型 resourceManifest 为空（mesh 数据面不存在——骨架呈现与资源链互不依赖）。生命周期＝drawable 挂发布 WC 场景节点，setWorkCell 换 WC 随旧节点树整体收口（零残留零清理名单）；onSceneCleared 既有收口不受影响。待所有者宿主复验（应用草稿后三维应出现模型骨架——轴/链线/标签，关节示教时链形跟随）后翻转 fixed；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（首应用前三维骨架）——所有者宿主复验通过后翻 fixed。"
@@ -5474,7 +5476,9 @@
       "id": "F-552",
       "source": "F-496 十步人工验收所有者执行实录（2026-10-08——项目已打开＋已应用修订态下点击 File→新建项目，程序直接退出；悬停置灰项无提示与退出先后发生在同一实例）",
       "severity": "blocking",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-12",
+      "fixedBy": "openViaSessionController 双态防线（宿主装配批：有会话→beginSwitch 切换编排〔确认对话框/决议四态〕、无会话→原打开协议，全部调用方统一受保护）；2026-10-12 所有者宿主实机复验通过——已打开＋已应用修订态点击 File→新建项目呈现切换确认对话框，确认切换无退出",
       "registeredAt": "2026-10-08",
       "title": "新建项目触发程序退出（crash）——项目已打开＋已应用修订＋草稿编辑态下点击 File→工业机器人项目→新建项目，进程直接终止（无错误对话框）。版本口径：所有者实例 exe 构建于 2f74ef03 基线（含 UI-T73/T74 主链修复；未含并行批次 WP-22-T05/T06 的关闭/切换统一确认编排——定位时须区分既有缺陷/新增装配析构顺序〔UI-T73/T74 新增成员 m_systemDefaultPolicyProvider/m_draftAwareNameContext/注入的 attachCompilePort 在项目切换 teardown 的存活期〕/WP-22-T06 已修面）。另同实例置灰「应用草稿」悬停无提示文字（禁用原因呈现面缺口——ERR-01 禁用必带原因口径）",
       "owner": "宿主装配批次（F-496 验收链定位批次）：①调试器复现定位（Release exe 附调试器重放操作序列：新建项目→增工位→应用→再新建）——区分三类嫌疑（UI-T73/T74 新增成员 teardown／既有切换路径／WP-22-T06 已修面）；②修复后所有者复验；③置灰无提示的禁用原因呈现缺口随修（F-553）；【2026-10-08 修复落地——dev log 定性钉扎】宿主实例 dev log（ird-ui-plugin-logs）捕获违约原文：ui/session: openProject 仅可在 NoProject 态调用（当前态非无项目——已打开会话的切换走 beginSwitch，§5.4 S2）＝新建项目流程无会话状态守卫直调 openProject（INV-SES-2 违约）。修复＝openViaSessionController 入口统一收口双态防线（有会话→beginSwitch 切换编排〔确认对话框/决议四态/Draining——与 openRecentProject 同款已证防线〕；无会话→原打开协议）——全部调用方一并受保护。修复待所有者复验（新建项目于已打开项目态→应呈现切换确认对话框而非退出）后翻转；【2026-10-12 治理批注记（fix-plan §五.2）】列入审计二轮治理批「待宿主复验」清单（新建项目不闪退）——所有者宿主复验通过后翻 fixed。"
