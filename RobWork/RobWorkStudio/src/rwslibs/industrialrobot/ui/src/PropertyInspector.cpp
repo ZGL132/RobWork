@@ -282,10 +282,17 @@ ComplexPageActivationReport PropertyInspectorModel::activateComplexPage(
 
     // 编排②：pageKey 须在该对象已声明入口集内——面板只可能传递入口按钮
     // 绑定的键，未知键＝调用方违约（防御性拒绝，不越声明集转调）。
+    // F-820：命中后把 hosted 快照为局部值——原裸指针 entry=&declared 指入
+    // m_view.complexEntries，跨下方可重入 provider.activateComplexPage
+    // （宿装页嵌套事件循环内选中刷新会替换 m_view → complexEntries 重分
+    // 配）调用后 :304/:312 的 entry->hosted 即 UAF；转调后只用快照，
+    // 指针生命期不再跨可重入边界。
     const ComplexPageEntry* entry = nullptr;
+    bool entryHosted = false;
     for (const ComplexPageEntry& declared : m_view.complexEntries) {
         if (declared.pageKey == pageKey) {
             entry = &declared;
+            entryHosted = declared.hosted;
             break;
         }
     }
@@ -300,7 +307,7 @@ ComplexPageActivationReport PropertyInspectorModel::activateComplexPage(
     // 声明与行为错位属 Provider 契约违约（呈现侧拒绝采纳，Dev 留痕）。
     IUiPropertyPagesProvider& provider = *m_providers[m_answerIndex];
     report = provider.activateComplexPage(object, pageKey, parent);
-    if (entry->hosted && report.hostedWidget == nullptr) {
+    if (entryHosted && report.hostedWidget == nullptr) {
         report.ok = false;
         report.hostedWidget = nullptr;
         report.reason = "activation-hosted-null-widget";
@@ -308,7 +315,7 @@ ComplexPageActivationReport PropertyInspectorModel::activateComplexPage(
                     + pageKey + ")");
         return report;
     }
-    if (!entry->hosted && report.hostedWidget != nullptr) {
+    if (!entryHosted && report.hostedWidget != nullptr) {
         // 自持页却回传视图：检查器不宿装不接管（视图由 Provider 以
         // parent 创建的话已挂父子树——呈现面零采纳，违约交由 Dev 留痕
         // 与验收对抗项处理，不做内存善后——善后即接管，恰恰越界）。
