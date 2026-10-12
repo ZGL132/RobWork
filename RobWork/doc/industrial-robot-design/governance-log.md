@@ -87,7 +87,7 @@
 | P-PR-2 | ARCH Draft 待评审（同源：O-03） | 架构所有者 | open | 评审后增量修订 |
 | P-PR-3 | §7.1 图示"前置断言"位置读法（编排 vs 判定，同源：O-08） | 架构所有者 | open | project 已按"编排归 project、判定归注入处理器＋④端口"设计 |
 | P-PR-4 | 归档调用线程与 RunRegistry 对接 | execution 详设所有者 | **partial** | execution §9.5 已冻结方案（调度线程＋writer 互斥＋幂等）；待 project 侧确认消账（与 P-EX-5 成对） |
-| P-PR-5 | project→io 依赖边未登记（同源：O-09/P-IO-1） | 架构所有者 | open | 注入式先行；阶段 B 落地前裁决补边或确认注入 |
+| P-PR-5 | project→io 依赖边未登记（同源：O-09/P-IO-1） | 架构所有者 | **closed** | 2026-10-12 裁决：注入式协作形态维持（裁决申请方案②——wp04-t16-adjudication-requests.md），ARCH §3.5 补登 io↔project/io↔runtime 两条协作边说明（非编译边）；WP-04-T17/T18 按注入式落地（io.md/project.md 单元卡消账同步） |
 | P-PR-6 | PRJ-\* 稳定码与 sink 形态待 diagnostics 冻结 | diagnostics 详设所有者 | open | 与 P-EX-8/P-DIAG-5 同案（sink 统一未裁决——phase-one §2.1 确认） |
 | P-PR-7 | ICommandInteraction/IModelCompilePort 对端确认 | ui/runtime 详设所有者 | open | runtime 已承接（P-RT-8）；ui 侧待 WP-10 起草核对 |
 | P-PR-8 | 分支 label 不可改名是否满足 PM-11（同源：O-19） | 需求所有者 | open | 维持创建时写入；需求侧确认口径 |
@@ -125,7 +125,7 @@
 
 | 编号 | 主题 | 所有者 | 状态 | 消账留痕/流转备注 |
 | --- | --- | --- | --- | --- |
-| P-IO-1 | io↔project/io↔runtime 边未登记（同源：O-09/P-PR-5） | 架构所有者 | open | io 侧已免依赖（IO-D02 注入先行）；与 P-PR-5/P-RPT-1 同案合并裁决 |
+| P-IO-1 | io↔project/io↔runtime 边未登记（同源：O-09/P-PR-5） | 架构所有者 | **closed** | 2026-10-12 裁决：维持注入式（io 公共头零改动承诺兑现）；ARCH §3.5 补登两条协作边说明（非编译边）；P-RPT-1（reporting→io）不在本案裁决范围，维持 open |
 | P-IO-2 | ResourceBytes 生命周期（=P-RT-6，同源：O-17） | io 详设所有者 | **closed** | io §8.6 五条裁决（2026-09-10）；实现测试待 IO-T05/06 |
 | P-IO-3 | ZIP/XML 库选型（libzip/miniz；expat/pugixml） | WP-11 评审（实现期） | **closed** | 2026-09-17 所有者裁决冻结：ZIP＝libzip 1.11.4、XML＝expat 2.8.3（vcpkg x64-windows 经典模式，版本以仓库根 vendored ports 树为准）——依据 IO-T01 候选全集可用性验证（traceability/io-pio3-dependency-probe.md）＋io.md §15.3 原建议；expat 已随裁决装机＋缓存预热；io.md v0.6 同步登记；IO-T04 解除阻塞 |
 | P-IO-4 | §4.5.1 预算默认数值表冻结 | 架构评审 | open | 数值＝本卡建议默认（Draft） |
@@ -176,7 +176,7 @@
 | O-06 | 单元 README 任务卡指向同步 | —（执行项） | **closed** | 2026-09-10 文档级完成 |
 | O-07 | drivetrain/dynamics→runtime 边未登记 | 架构所有者＋两卡 | open | WP-17-T01/WP-18-T01 起草时处置 |
 | O-08 | P-PR-3 同源登记 | 架构所有者 | open | 见 P-PR-3 |
-| O-09 | P-PR-5 同源登记（project→io 边） | 架构所有者 | open | 见 P-PR-5/P-IO-1；阻塞 WP-04-T18 编译形态，不阻塞注入式设计 |
+| O-09 | P-PR-5 同源登记（project→io 边） | 架构所有者 | **closed** | 2026-10-12 裁决（同 P-PR-5/P-IO-1）：注入形态确认——ARCH §3.5 协作边说明补登（非编译边），WP-04-T18 编译形态阻塞解除 |
 | O-10 | P-POL-2 同源登记（阈值冻结默认） | 需求所有者＋WP-07 | open | 见 P-POL-2 |
 | O-11 | P-POL-3 同源登记（惯量比阈值归属） | 需求所有者＋selection 卡 | open | 见 P-POL-3 |
 | O-12 | P-POL-8 同源登记（R-4 例外措辞） | 架构所有者 | open | DTB §4.5 预登记行"待确认"；WP-01-T01 验收含 O-12 处置核对 |
